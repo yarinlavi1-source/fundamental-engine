@@ -1,0 +1,21 @@
+{
+  ".github/workflows/test.yml": "0189e55d3224115df430f53364811cddb3332a266643718bf17d6670d5539900",
+  ".gitignore": "50744e14440bd3b422bb514787f3ea5f7c007ebbc1cd258b89df1a1581860beb",
+  "CLAUDE.md": "fc19b5877dd44a986d184caa9ef1baa1e74d4db629e53868e1a26bfbf72d8524",
+  "README.md": "9baf5abe007b1a89d85f9320ed1bf0e04db7572829b568e00d07ceb51400e4af",
+  "docs/BUILD_STATUS.md": "74b8cbfcd5e7abaa60fa5a32fe5f74ba600f0e6c2709e5a9d876b6a87adb48ab",
+  "docs/INPUT_CONTRACT.md": "dc674e4508622459921af0e04c0586269f4043cfc9c96ad284cfa8ed0bf4d01f",
+  "docs/RESEARCH_THEORY_HE.md": "77f1425c79eb0f07824c4d5b0c4d24c0f9325d480f2aac8311daac6e1bb12d09",
+  "examples/demo_report.html": "0c1eaf45b507d6241452ea76df072b46664ce660325e1e9d54dade7278eca0ad",
+  "examples/emerging_demo.json": "24acd6f0f41413ac485437dd92f00ef690b0f3d27fab9d92602efcd7214a2eb3",
+  "fundamental_engine/__init__.py": "6867279d7e6a104e24b4c700606007daae12c93af38426cba6a70ac219b81b29",
+  "fundamental_engine/__main__.py": "6d8b7d7846a845059d7a3107143f11131f63c5511d669b44085b15ec5e3d2279",
+  "fundamental_engine/cli.py": "fedff34f921a518c4e914b1d2272860bcbad00c10bcfee54fb8b65a9c75d794a",
+  "fundamental_engine/engine.py": "98f2eee90738432cc04ebec278a3df6f00e1d8ef2d0f5bb67d93a495ee1b4035",
+  "fundamental_engine/finance.py": "4730dc055fd260fe60aff6732a5437a6820275fb6acc61b26bfe90f7d52a3b6b",
+  "fundamental_engine/report.py": "b39cf051460eb0e2b741af19d17a5e25327aebbcca718dfcb294edd0220544ae",
+  "fundamental_engine/sec.py": "0b4be93f833f5d218814b0294fcf5b81bcebc949295677061c6113a9de5ab8c6",
+  "fundamental_engine/store.py": "1eb3872ea92e71b98992d0f2df19c565b5e1e02d081b32ed1f7d609608768286",
+  "pyproject.toml": "16f2495e8afe4f591a268980133d319ab78b35ad7acb7243652ed2772ff5cb06",
+  "tests/test_engine.py": "6ecaad3b91fe723f3bacfbfeb317f4917446db1f879bbd44d07ab782e3f78653"
+}
