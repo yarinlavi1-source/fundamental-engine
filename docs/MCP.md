@@ -69,3 +69,27 @@ source bodies at 2 MiB; search defaults to five excerpts of at most 1,800 charac
 The corpus is local and persistent; calculations are deterministic. No embeddings,
 cloud retry loop or hidden network operation. SEC fetching is an explicit CLI
 operation with contact identification, caching and bounded retries.
+
+## Research brain tools added in v0.3
+
+| Tool | Purpose |
+|---|---|
+| research_plan | Route a ticker/question to relevant playbooks using known client capabilities |
+| research_packet | Retrieve one installed protocol/playbook by whitelisted ID |
+| research_review | Audit dossier evidence, countercase and numerical input; return next questions |
+| research_checkpoint | Append immutable dossier/review; optimistic expected_revision guard |
+| research_load | Resume a saved case, optionally at an earlier revision |
+| research_history | Find research revisions for a company |
+| research_compare | Explain changes in claim assessments and completion gates |
+
+Read START_HERE.md and the `dossier_contract` packet. `research_review` returns
+compact financial summaries to reduce context; `analyze_company` or a loaded
+checkpoint supplies the full financial audit. The research journal is stored beside
+the configured corpus as `research-journal.sqlite`, so an absolute corpus path also
+makes research persistence independent of client working directory.
+
+The package wheel includes all 23 brain packets. `scripts/check_wheel.py` verifies
+loading every packet and running a dossier review from an extracted installed
+package in a separate directory. Local subprocess tests also exercise the full
+review -> checkpoint -> update -> compare -> resume cycle. These are actual local
+protocol/runtime tests, not an assertion about the user's live Claude session.

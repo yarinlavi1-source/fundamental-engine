@@ -247,7 +247,7 @@ class IntegrationTests(unittest.TestCase):
             self.assertEqual(run.returncode,0,run.stderr)
             responses=[json.loads(line) for line in run.stdout.splitlines()]
             self.assertEqual(len(responses),5)
-            self.assertEqual(len(responses[1]['result']['tools']),4)
+            self.assertTrue({'analyze_company','research_review','research_checkpoint'} <= {t['name'] for t in responses[1]['result']['tools']})
             report=json.loads(responses[2]['result']['content'][0]['text'])
             self.assertEqual(report['potential']['status'],'early_evidence')
             self.assertEqual(len(json.loads(responses[-1]['result']['content'][0]['text'])['results']),1)

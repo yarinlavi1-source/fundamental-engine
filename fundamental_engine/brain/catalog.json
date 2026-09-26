@@ -1,0 +1,120 @@
+{
+  "version": "0.3.0",
+  "packets": [
+    {
+      "id": "operating_system",
+      "title": "Research operating system",
+      "file": "protocols/operating_system.md"
+    },
+    {
+      "id": "connector_contract",
+      "title": "Use the client's existing connections",
+      "file": "protocols/connector_contract.md"
+    },
+    {
+      "id": "evidence",
+      "title": "Evidence ledger and competing claims",
+      "file": "protocols/evidence.md"
+    },
+    {
+      "id": "business",
+      "title": "Explain the economic machine",
+      "file": "protocols/business.md"
+    },
+    {
+      "id": "earnings_quality",
+      "title": "Financial and earnings-quality investigation",
+      "file": "protocols/earnings_quality.md"
+    },
+    {
+      "id": "revenue_decline",
+      "title": "Is the setback temporary, structural or mixed?",
+      "file": "protocols/revenue_decline.md"
+    },
+    {
+      "id": "potential",
+      "title": "Underwrite potential before conventional earnings",
+      "file": "protocols/potential.md"
+    },
+    {
+      "id": "funding",
+      "title": "Financing and value retained by the current share",
+      "file": "protocols/funding.md"
+    },
+    {
+      "id": "valuation",
+      "title": "Choose the valuation model for the economic claim",
+      "file": "protocols/valuation.md"
+    },
+    {
+      "id": "expectations",
+      "title": "What does the price require?",
+      "file": "protocols/expectations.md"
+    },
+    {
+      "id": "adversarial",
+      "title": "Mandatory adversarial review",
+      "file": "protocols/adversarial.md"
+    },
+    {
+      "id": "management",
+      "title": "Management and capital allocation",
+      "file": "protocols/management.md"
+    },
+    {
+      "id": "portfolio",
+      "title": "Portfolio context without changing company truth",
+      "file": "protocols/portfolio.md"
+    },
+    {
+      "id": "synthesis",
+      "title": "Hebrew research output",
+      "file": "protocols/synthesis.md"
+    },
+    {
+      "id": "software",
+      "title": "Software and subscription economics",
+      "file": "playbooks/software.md"
+    },
+    {
+      "id": "platform",
+      "title": "Platforms, marketplaces and advertising",
+      "file": "playbooks/platform.md"
+    },
+    {
+      "id": "industrial",
+      "title": "Industrial and cyclical businesses",
+      "file": "playbooks/industrial.md"
+    },
+    {
+      "id": "consumer",
+      "title": "Consumer, retail and brands",
+      "file": "playbooks/consumer.md"
+    },
+    {
+      "id": "infrastructure",
+      "title": "Infrastructure, data centers and capital-heavy growth",
+      "file": "playbooks/infrastructure.md"
+    },
+    {
+      "id": "financials",
+      "title": "Banks and insurers \u2014 dedicated valuation required",
+      "file": "playbooks/financials.md"
+    },
+    {
+      "id": "biotech",
+      "title": "Biotech and clinical optionality \u2014 specialist model required",
+      "file": "playbooks/biotech.md"
+    },
+    {
+      "id": "conglomerate",
+      "title": "Conglomerates and multiple economic engines",
+      "file": "playbooks/conglomerate.md"
+    },
+    {
+      "id": "dossier_contract",
+      "title": "Dossier input contract",
+      "file": "protocols/dossier_contract.md"
+    }
+  ]
+}

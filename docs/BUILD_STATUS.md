@@ -1,39 +1,54 @@
-# Build status — v0.2.0 — 2026-09-26
+# Build status — v0.3.0 — 2026-09-26
 
-## Implemented and locally verified
+## Implemented
 
-- Existing v0.1 functionality retained, with 27 regression tests.
-- Event evidence/status, symmetric normalization, source/date exclusions.
-- Business drivers, commercialization stages and investigation priorities.
-- Growth-linked DCF/reverse DCF and explicit ownership/financing scenarios.
-- SEC exact-concept annual/quarter/YTD/TTM normalization with provenance/conflicts.
-- Local source corpus, deduplicated dated retrieval, TXT/MD/PDF import path.
-- Executable stdio MCP server with subprocess client integration test.
-- Hebrew HTML reports, three manually reviewed real historical fixtures, synthetic
-  integrated financing/business/event fixture, updated documentation.
+Retains v0.2 financial/event/ownership analysis, source corpus, SEC normalization,
+Hebrew reports and executable MCP. Adds:
 
-Local test suite: **65 tests passed**. Meaningful checks include known-answer
-valuation, retained cash versus dividends, debt tax/interest/repayment, dilution
-and financing failure, recurring costs and exceptional gains, future evidence,
-quarter derivation/conflicts, source immutability, provider 403/429/cache behavior,
-MCP lifecycle and end-to-end tool calls, and selected primary-source numeric checks.
+- A research supervisor that routes the client's existing connectors into a staged
+  research plan with on-demand methods and eight economic archetype playbooks.
+- A structured evidence dossier distinguishing facts, guidance, hypotheses,
+  opinions and assumptions; date/source gates and same-definition numeric conflicts.
+- Required business mechanism, material-claim review, counter-thesis and falsifiers.
+- Actual financial-input execution with identity/provenance checks; price conclusions
+  require a named executed valuation basis and cannot bypass financing/sector limits.
+- Original management promise/outcome tracking with matched economic definitions.
+- Recorded search budgets and repeat/unproductive-query detection; unresolved
+  questions remain unresolved when retrieval is exhausted.
+- Append-only local research revisions, optimistic concurrency, resume/history and
+  material-claim/gate comparisons across revisions.
+- Seven additional MCP tools and matching CLI commands.
+- START_HERE.md, compact CLAUDE.md, 23 packaged brain packets, synthetic dossier,
+  independent-install package check and adversarial process evaluation protocol.
 
-Three real CLI runs successfully produced HTML, JSON and immutable SQLite snapshots.
-Synthetic integration also ran successfully, demonstrating funding with dilution
-and a funding gap without the hypothetical raise. The real cases withhold valuation
-because market prices and reviewed forecasts are not supplied.
+## Verification actually performed
 
-## Not verified or not implemented
+- **93 unit/integration tests passed locally**, including the previous 65 tests.
+- **12/12 synthetic adversarial process cases passed** in scripts/evaluate_brain.py.
+- Subprocess MCP: initialize, discover tools, analyze, corpus operations, dossier
+  review, checkpoint revisions, comparison and resume.
+- A built wheel loaded all **23 packets** and executed dossier review outside the
+  checkout using an isolated Python process.
+- v0.2's three historical issuer examples remain regression cases. Their inputs
+  were manually reviewed, and no live quote/forecast valuation was fabricated.
 
-- SEC live HTTP transport: no SEC_USER_AGENT contact configuration supplied.
-  Provider behavior tested with mocks; no bypass or synthetic data fallback.
-- User's Claude installation/account: not configured or exercised. MCP tested
-  using a local subprocess client, not a live Claude conversation.
-- PDF success on a real document and browser visual/cross-browser QA: not claimed.
-- End-to-end automatic company extraction, live prices, research automation,
-  dedicated sector valuations, full options/tax/FX/stub-period support: unfinished.
-- Event causality, forecast accuracy, source truth and investment performance:
-  not established by software tests. No alpha or 99% completeness claim.
+These checks validate selected engineering behavior. They do not measure a model's
+semantic source comprehension, source truth, causal inference, investment returns
+or performance relative to humans. benchmarks/README.md specifies the separate
+held-out Claude evaluation that is still needed in the user's environment.
 
-GitHub branch: feature/business-events-financing-mcp. Remote CI is checked separately
-from these local results; this document records local evidence only.
+## External boundaries
+
+No connection to the user's private Claude session, Interactive Brokers account or
+other live client integrations was available to this build process. The architecture
+reuses those existing connections rather than replacing them; compatibility with
+that exact session must be exercised there. No credentials or private holdings
+were requested, copied to the repository or used in public fixtures.
+
+No server-side paid model calls or broker order tools. No autonomous scheduler.
+Specialist financial-sector/biotech/SOTP valuations, full tax/options/FX/stub-period
+models and verified real-time extraction remain outside the implemented calculator.
+The brain explicitly routes or withholds those conclusions rather than faking support.
+
+The latest GitHub CI result is recorded in GitHub Actions, separately from this
+local verification record.

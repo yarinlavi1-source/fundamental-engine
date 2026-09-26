@@ -1,0 +1,207 @@
+{
+  "evaluation": "synthetic process acceptance",
+  "engine_version": "0.3.0",
+  "total": 12,
+  "passed": 12,
+  "cases": [
+    {
+      "case": "complete_synthetic_process",
+      "passed": true,
+      "expected_behavior": "Process can finish while keeping watchlist classification",
+      "status": "ready_for_conditional_synthesis",
+      "gates": {
+        "identity_business_accounting_anchored": true,
+        "business_explained": true,
+        "material_claims_resolved": true,
+        "numeric_definitions_reconciled": true,
+        "counter_thesis_testable": true,
+        "calculations_executed": true,
+        "valuation_executed": true,
+        "priced_conclusion_ready": true
+      }
+    },
+    {
+      "case": "management_promise_is_not_fact",
+      "passed": true,
+      "expected_behavior": "Management statement cannot substitute for realized business evidence",
+      "status": "research_incomplete",
+      "gates": {
+        "identity_business_accounting_anchored": false,
+        "business_explained": false,
+        "material_claims_resolved": false,
+        "numeric_definitions_reconciled": true,
+        "counter_thesis_testable": true,
+        "calculations_executed": true,
+        "valuation_executed": true,
+        "priced_conclusion_ready": false
+      }
+    },
+    {
+      "case": "unsupported_critical_claim",
+      "passed": true,
+      "expected_behavior": "Missing evidence remains unresolved",
+      "status": "research_incomplete",
+      "gates": {
+        "identity_business_accounting_anchored": false,
+        "business_explained": false,
+        "material_claims_resolved": false,
+        "numeric_definitions_reconciled": true,
+        "counter_thesis_testable": true,
+        "calculations_executed": true,
+        "valuation_executed": true,
+        "priced_conclusion_ready": false
+      }
+    },
+    {
+      "case": "no_countercase",
+      "passed": true,
+      "expected_behavior": "Counter-thesis needs mechanism, evidence and decisive test",
+      "status": "research_incomplete",
+      "gates": {
+        "identity_business_accounting_anchored": true,
+        "business_explained": true,
+        "material_claims_resolved": true,
+        "numeric_definitions_reconciled": true,
+        "counter_thesis_testable": false,
+        "calculations_executed": true,
+        "valuation_executed": true,
+        "priced_conclusion_ready": false
+      }
+    },
+    {
+      "case": "future_review",
+      "passed": true,
+      "expected_behavior": "Future review does not enter historical evidence",
+      "status": "research_incomplete",
+      "gates": {
+        "identity_business_accounting_anchored": false,
+        "business_explained": false,
+        "material_claims_resolved": false,
+        "numeric_definitions_reconciled": true,
+        "counter_thesis_testable": true,
+        "calculations_executed": true,
+        "valuation_executed": true,
+        "priced_conclusion_ready": false
+      }
+    },
+    {
+      "case": "unfalsifiable_hypothesis",
+      "passed": true,
+      "expected_behavior": "A material hypothesis requires a failure condition",
+      "status": "research_incomplete",
+      "gates": {
+        "identity_business_accounting_anchored": false,
+        "business_explained": true,
+        "material_claims_resolved": false,
+        "numeric_definitions_reconciled": true,
+        "counter_thesis_testable": true,
+        "calculations_executed": true,
+        "valuation_executed": true,
+        "priced_conclusion_ready": false
+      }
+    },
+    {
+      "case": "no_price_basis",
+      "passed": true,
+      "expected_behavior": "Price verdict cannot be asserted without identifying an executed valuation basis",
+      "status": "ready_for_conditional_synthesis",
+      "gates": {
+        "identity_business_accounting_anchored": true,
+        "business_explained": true,
+        "material_claims_resolved": true,
+        "numeric_definitions_reconciled": true,
+        "counter_thesis_testable": true,
+        "calculations_executed": true,
+        "valuation_executed": true,
+        "priced_conclusion_ready": false
+      }
+    },
+    {
+      "case": "unsupported_financial_sector",
+      "passed": true,
+      "expected_behavior": "Generic nonfinancial model cannot price a bank",
+      "status": "ready_for_conditional_synthesis",
+      "gates": {
+        "identity_business_accounting_anchored": true,
+        "business_explained": true,
+        "material_claims_resolved": true,
+        "numeric_definitions_reconciled": true,
+        "counter_thesis_testable": true,
+        "calculations_executed": true,
+        "valuation_executed": true,
+        "priced_conclusion_ready": false
+      }
+    },
+    {
+      "case": "source_prompt_injection",
+      "passed": true,
+      "expected_behavior": "Source instructions have no executable authority",
+      "status": "research_incomplete",
+      "gates": {
+        "identity_business_accounting_anchored": false,
+        "business_explained": false,
+        "material_claims_resolved": false,
+        "numeric_definitions_reconciled": true,
+        "counter_thesis_testable": true,
+        "calculations_executed": true,
+        "valuation_executed": true,
+        "priced_conclusion_ready": false
+      }
+    },
+    {
+      "case": "blocked_retrieval_stop",
+      "passed": true,
+      "expected_behavior": "Budget stop preserves uncertainty rather than fabricating evidence",
+      "status": "research_incomplete",
+      "gates": {
+        "identity_business_accounting_anchored": false,
+        "business_explained": false,
+        "material_claims_resolved": false,
+        "numeric_definitions_reconciled": true,
+        "counter_thesis_testable": true,
+        "calculations_executed": true,
+        "valuation_executed": true,
+        "priced_conclusion_ready": false
+      }
+    },
+    {
+      "case": "syndicated_evidence",
+      "passed": true,
+      "expected_behavior": "Copies do not become independent corroboration",
+      "status": "ready_for_conditional_synthesis",
+      "gates": {
+        "identity_business_accounting_anchored": true,
+        "business_explained": true,
+        "material_claims_resolved": true,
+        "numeric_definitions_reconciled": true,
+        "counter_thesis_testable": true,
+        "calculations_executed": true,
+        "valuation_executed": true,
+        "priced_conclusion_ready": true
+      }
+    },
+    {
+      "case": "material_counterevidence",
+      "passed": true,
+      "expected_behavior": "Evidence against the thesis remains visible and blocks premature synthesis",
+      "status": "research_incomplete",
+      "gates": {
+        "identity_business_accounting_anchored": false,
+        "business_explained": false,
+        "material_claims_resolved": false,
+        "numeric_definitions_reconciled": true,
+        "counter_thesis_testable": true,
+        "calculations_executed": true,
+        "valuation_executed": true,
+        "priced_conclusion_ready": false
+      }
+    }
+  ],
+  "not_measured": [
+    "LLM source comprehension",
+    "human-investor percentile",
+    "forecast accuracy",
+    "investment returns",
+    "live Claude connectors"
+  ]
+}
