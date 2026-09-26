@@ -1,0 +1,19 @@
+{
+  "ticker": "DEMO",
+  "as_of": "2026-09-26",
+  "question": "האם ההפרעה הבדויה זמנית, והאם הצמיחה משאירה ערך למניה אחרי גיוס?",
+  "archetypes": [
+    "infrastructure"
+  ],
+  "triggers": [
+    "revenue_decline",
+    "dilution"
+  ],
+  "capabilities": {
+    "filings": "available",
+    "web": "available",
+    "prices": "available",
+    "execution": "available",
+    "portfolio": "unknown"
+  }
+}

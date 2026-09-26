@@ -22,7 +22,10 @@ def fetch_companyfacts(cik, user_agent, cache_dir, refresh=False):
     root.mkdir(parents=True, exist_ok=True)
     path = root / f"CIK{cik}.json"
     if path.exists() and not refresh:
-        return json.loads(path.read_text(encoding="utf-8"))
+        payload = json.loads(path.read_text(encoding="utf-8"))
+        if str(payload.get("cik")).zfill(10) != cik or not isinstance(payload.get("facts"), dict):
+            raise ValueError("SEC cache has wrong identity or schema")
+        return payload
     url = f"https://data.sec.gov/api/xbrl/companyfacts/CIK{cik}.json"
     request = Request(url, headers={"User-Agent": user_agent, "Accept": "application/json"})
     # Sequential CLI, below SEC's published 10 req/s ceiling.

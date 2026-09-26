@@ -72,8 +72,16 @@ def dcf(base_revenue, shares, excess_cash, debt, other_claims, scenario):
         growth = number(year["growth"], "growth", -0.99, 5)
         margin = number(year["operating_margin"], "operating_margin", -5, 1)
         tax = number(year["cash_tax_rate"], "cash_tax_rate", 0, 1)
-        reinvest = number(year["reinvestment"], "reinvestment", 0)
+        previous_revenue = rev
         rev *= 1 + growth
+        if scenario.get("reinvestment_mode", "absolute") == "sales_to_capital":
+            efficiency = number(year["sales_to_capital"], "sales_to_capital", 1e-12)
+            base = number(year.get("base_net_reinvestment", 0), "base_net_reinvestment", 0)
+            reinvest = max(rev-previous_revenue, 0)/efficiency + base
+        elif scenario.get("reinvestment_mode", "absolute") == "absolute":
+            reinvest = number(year["reinvestment"], "reinvestment", 0)
+        else:
+            raise ValueError("Unknown reinvestment mode")
         ebit = rev * margin
         # No automatic cash benefit on losses; tax/NOL model is analyst supplied.
         nopat = ebit - max(ebit, 0) * tax
@@ -120,7 +128,7 @@ def reverse_dcf(target_price, base_revenue, shares, cash, debt, claims, scenario
             hi = mid
     return {"status": "solved", "growth": (lo+hi)/2, "bounds": [lower, upper],
             "reconstructed_price": value((lo+hi)/2),
-            "limitation": "Constant growth; margins, absolute reinvestment, financing and WACC held fixed"}
+            "limitation": ("Constant growth; reinvestment follows revenue through sales-to-capital; margins and WACC fixed; financing separate" if scenario.get("reinvestment_mode") == "sales_to_capital" else "Constant growth; margins, absolute reinvestment, financing and WACC held fixed")}
 
 
 def funding_path(cash, periods):

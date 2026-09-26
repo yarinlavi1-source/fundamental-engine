@@ -1,4 +1,7 @@
-# Input contract v1
+# Input contract v1 (legacy sections)
+
+For current optional sections and changed basis support, see INPUT_V02.md.
+The caveats below about separate financing describe the legacy `valuation` model.
 
 The executable reference is `examples/emerging_demo.json`; `engine.validate`
 performs structural and domain checks. JSON NaN/Infinity are rejected by the CLI.

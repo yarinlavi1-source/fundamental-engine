@@ -1,0 +1,578 @@
+{
+  "schema_version": 1,
+  "is_demo": true,
+  "as_of": "2026-09-26",
+  "currency": "USD",
+  "unit": "absolute",
+  "company": {
+    "id": "demo-emerging",
+    "name": "Demo Compute — fictional",
+    "ticker": "DEMO",
+    "currency": "USD",
+    "sector": "infrastructure"
+  },
+  "sources": [
+    {
+      "id": "demo-fin",
+      "title": "Fictional annual statements",
+      "kind": "synthetic",
+      "locator": "examples/emerging_demo.json",
+      "published_at": "2026-03-01",
+      "available_at": "2026-03-01"
+    },
+    {
+      "id": "demo-adoption",
+      "title": "Fictional customer deployment review",
+      "kind": "synthetic",
+      "locator": "synthetic://deployment",
+      "published_at": "2026-08-01",
+      "available_at": "2026-08-01"
+    },
+    {
+      "id": "demo-model",
+      "title": "Analyst assumptions — synthetic, not consensus",
+      "kind": "synthetic",
+      "locator": "examples/emerging_demo.json",
+      "published_at": "2026-09-26",
+      "available_at": "2026-09-26"
+    }
+  ],
+  "financials": [
+    {
+      "start": "2024-01-01",
+      "end": "2024-12-31",
+      "available_at": "2026-03-01",
+      "currency": "USD",
+      "basis": "GAAP",
+      "source_ids": [
+        "demo-fin"
+      ],
+      "revenue": 30000000.0,
+      "gross_profit": 10500000.0,
+      "ebit": -12000000.0,
+      "net_income": -13000000.0,
+      "cfo": -10000000.0,
+      "capex": 12000000.0,
+      "sbc": 5000000.0,
+      "cash": 50000000.0,
+      "debt": 15000000.0,
+      "shares": 20000000.0,
+      "invested_capital": 70000000.0
+    },
+    {
+      "start": "2025-01-01",
+      "end": "2025-12-31",
+      "available_at": "2026-03-01",
+      "currency": "USD",
+      "basis": "GAAP",
+      "source_ids": [
+        "demo-fin"
+      ],
+      "revenue": 50000000.0,
+      "gross_profit": 17500000.0,
+      "ebit": -10000000.0,
+      "net_income": -11000000.0,
+      "cfo": -8000000.0,
+      "capex": 16000000.0,
+      "sbc": 5000000.0,
+      "cash": 50000000.0,
+      "debt": 15000000.0,
+      "shares": 20000000.0,
+      "invested_capital": 70000000.0
+    }
+  ],
+  "quote": {
+    "price": 12,
+    "currency": "USD",
+    "as_of": "2026-09-26",
+    "source_ids": [
+      "demo-model"
+    ]
+  },
+  "signals": [
+    {
+      "id": "s0",
+      "dimension": "market",
+      "claim": "Customers face a growing compute capacity constraint",
+      "direction": "positive",
+      "review_status": "unverified",
+      "observed_at": "2026-08-01",
+      "reviewed_at": "2026-09-26",
+      "source_ids": [
+        "demo-adoption"
+      ]
+    },
+    {
+      "id": "s1",
+      "dimension": "adoption",
+      "claim": "Two customers paid for pilot deployments",
+      "direction": "positive",
+      "review_status": "supported",
+      "observed_at": "2026-08-01",
+      "reviewed_at": "2026-09-26",
+      "source_ids": [
+        "demo-adoption"
+      ]
+    },
+    {
+      "id": "s2",
+      "dimension": "advantage",
+      "claim": "Proprietary design may reduce energy cost",
+      "direction": "positive",
+      "review_status": "unverified",
+      "observed_at": "2026-08-01",
+      "reviewed_at": "2026-09-26",
+      "source_ids": [
+        "demo-adoption"
+      ]
+    },
+    {
+      "id": "s3",
+      "dimension": "execution",
+      "claim": "First installation passed acceptance testing",
+      "direction": "positive",
+      "review_status": "supported",
+      "observed_at": "2026-08-01",
+      "reviewed_at": "2026-09-26",
+      "source_ids": [
+        "demo-adoption"
+      ]
+    },
+    {
+      "id": "s4",
+      "dimension": "unit_economics",
+      "claim": "Positive unit margin at target utilization is not yet demonstrated",
+      "direction": "positive",
+      "review_status": "unverified",
+      "observed_at": "2026-08-01",
+      "reviewed_at": "2026-09-26",
+      "source_ids": [
+        "demo-adoption"
+      ]
+    }
+  ],
+  "milestones": [
+    {
+      "id": "m1",
+      "description": "Commission first commercial installation",
+      "due_at": "2027-03-31",
+      "success_criterion": "Customer acceptance and paid deployment at positive gross margin",
+      "failure_criterion": "Delay beyond two quarters or project budget overrun above 30%"
+    }
+  ],
+  "thesis": {
+    "summary": "An emerging infrastructure provider may convert deployments into recurring revenue. This is a fictional demonstration.",
+    "bear_case": "Customer concentration and construction delays could require new equity.",
+    "falsifier": "Paid deployments do not scale or unit gross margins remain negative."
+  },
+  "funding": {
+    "assumptions_as_of": "2026-09-26",
+    "source_ids": [
+      "demo-model"
+    ],
+    "available_cash": 50000000.0,
+    "periods": [
+      {
+        "operating_cash_flow": -8000000.0,
+        "capex": 10000000.0,
+        "debt_repayment": 0,
+        "committed_financing": 0
+      },
+      {
+        "operating_cash_flow": -8000000.0,
+        "capex": 10000000.0,
+        "debt_repayment": 0,
+        "committed_financing": 0
+      },
+      {
+        "operating_cash_flow": -8000000.0,
+        "capex": 10000000.0,
+        "debt_repayment": 0,
+        "committed_financing": 0
+      },
+      {
+        "operating_cash_flow": -8000000.0,
+        "capex": 10000000.0,
+        "debt_repayment": 0,
+        "committed_financing": 0
+      }
+    ]
+  },
+  "valuation": {
+    "assumptions_as_of": "2026-09-26",
+    "source_ids": [
+      "demo-model"
+    ],
+    "share_equivalents": 20000000.0,
+    "excess_cash": 10000000.0,
+    "debt": 15000000.0,
+    "other_claims": 0,
+    "sbc_policy": "future_expensed_existing_claims_in_shares",
+    "scenarios": [
+      {
+        "name": "bear",
+        "rationale": "Synthetic bear case; growth and margins are assumptions; future SBC included in margins. Financing not included.",
+        "wacc": 0.15,
+        "terminal_growth": 0.025,
+        "terminal_roic": 0.15,
+        "years": [
+          {
+            "growth": 0.1,
+            "operating_margin": -0.05600000000000001,
+            "cash_tax_rate": 0.25,
+            "sales_to_capital": 2,
+            "base_net_reinvestment": 2000000
+          },
+          {
+            "growth": 0.09200000000000001,
+            "operating_margin": -0.01200000000000001,
+            "cash_tax_rate": 0.25,
+            "sales_to_capital": 2,
+            "base_net_reinvestment": 2000000
+          },
+          {
+            "growth": 0.084,
+            "operating_margin": 0.032,
+            "cash_tax_rate": 0.25,
+            "sales_to_capital": 2,
+            "base_net_reinvestment": 2000000
+          },
+          {
+            "growth": 0.07600000000000001,
+            "operating_margin": 0.07599999999999998,
+            "cash_tax_rate": 0.25,
+            "sales_to_capital": 2,
+            "base_net_reinvestment": 2000000
+          },
+          {
+            "growth": 0.06799999999999999,
+            "operating_margin": 0.12000000000000002,
+            "cash_tax_rate": 0.25,
+            "sales_to_capital": 2,
+            "base_net_reinvestment": 2000000
+          }
+        ],
+        "reinvestment_mode": "sales_to_capital"
+      },
+      {
+        "name": "base",
+        "rationale": "Synthetic base case; growth and margins are assumptions; future SBC included in margins. Financing not included.",
+        "wacc": 0.12,
+        "terminal_growth": 0.025,
+        "terminal_roic": 0.15,
+        "years": [
+          {
+            "growth": 0.25,
+            "operating_margin": -0.036000000000000004,
+            "cash_tax_rate": 0.25,
+            "sales_to_capital": 2,
+            "base_net_reinvestment": 2000000
+          },
+          {
+            "growth": 0.23,
+            "operating_margin": 0.027999999999999997,
+            "cash_tax_rate": 0.25,
+            "sales_to_capital": 2,
+            "base_net_reinvestment": 2000000
+          },
+          {
+            "growth": 0.21,
+            "operating_margin": 0.092,
+            "cash_tax_rate": 0.25,
+            "sales_to_capital": 2,
+            "base_net_reinvestment": 2000000
+          },
+          {
+            "growth": 0.19,
+            "operating_margin": 0.156,
+            "cash_tax_rate": 0.25,
+            "sales_to_capital": 2,
+            "base_net_reinvestment": 2000000
+          },
+          {
+            "growth": 0.16999999999999998,
+            "operating_margin": 0.22,
+            "cash_tax_rate": 0.25,
+            "sales_to_capital": 2,
+            "base_net_reinvestment": 2000000
+          }
+        ],
+        "reinvestment_mode": "sales_to_capital"
+      },
+      {
+        "name": "bull",
+        "rationale": "Synthetic bull case; growth and margins are assumptions; future SBC included in margins. Financing not included.",
+        "wacc": 0.11,
+        "terminal_growth": 0.025,
+        "terminal_roic": 0.15,
+        "years": [
+          {
+            "growth": 0.4,
+            "operating_margin": -0.020000000000000004,
+            "cash_tax_rate": 0.25,
+            "sales_to_capital": 2,
+            "base_net_reinvestment": 2000000
+          },
+          {
+            "growth": 0.36800000000000005,
+            "operating_margin": 0.06,
+            "cash_tax_rate": 0.25,
+            "sales_to_capital": 2,
+            "base_net_reinvestment": 2000000
+          },
+          {
+            "growth": 0.336,
+            "operating_margin": 0.14000000000000004,
+            "cash_tax_rate": 0.25,
+            "sales_to_capital": 2,
+            "base_net_reinvestment": 2000000
+          },
+          {
+            "growth": 0.30400000000000005,
+            "operating_margin": 0.22,
+            "cash_tax_rate": 0.25,
+            "sales_to_capital": 2,
+            "base_net_reinvestment": 2000000
+          },
+          {
+            "growth": 0.27199999999999996,
+            "operating_margin": 0.30000000000000004,
+            "cash_tax_rate": 0.25,
+            "sales_to_capital": 2,
+            "base_net_reinvestment": 2000000
+          }
+        ],
+        "reinvestment_mode": "sales_to_capital"
+      }
+    ]
+  },
+  "events": [
+    {
+      "source_ids": [
+        "demo-fin"
+      ],
+      "reviewed_at": "2026-09-26",
+      "id": "plant",
+      "observed_at": "2025-12-31",
+      "description": "השבתת מפעל בדויה שהסתיימה",
+      "cause": "strike",
+      "management_claim": "אירוע מבודד",
+      "cash_effect": "delayed",
+      "recurrence": "isolated",
+      "recovery_requirements": [
+        "מסירות חוזרות לקצב רגיל"
+      ],
+      "falsifiers": [
+        "אובדן הזמנות"
+      ],
+      "evidence": [
+        {
+          "source_ids": [
+            "demo-fin"
+          ],
+          "reviewed_at": "2026-09-26",
+          "role": "supports_temporary",
+          "claim": "ראיית הדגמה בדויה",
+          "status": "supported"
+        },
+        {
+          "source_ids": [
+            "demo-fin"
+          ],
+          "reviewed_at": "2026-09-26",
+          "role": "recovery",
+          "claim": "ראיית הדגמה בדויה",
+          "status": "supported"
+        },
+        {
+          "source_ids": [
+            "demo-fin"
+          ],
+          "reviewed_at": "2026-09-26",
+          "role": "attribution",
+          "claim": "ראיית הדגמה בדויה",
+          "status": "supported"
+        }
+      ],
+      "impacts": [
+        {
+          "source_ids": [
+            "demo-fin"
+          ],
+          "reviewed_at": "2026-09-26",
+          "id": "plant-cost",
+          "metric": "ebit",
+          "period_end": "2025-12-31",
+          "reported_effect": -3000000,
+          "classification": "booked_exceptional",
+          "measurement": "disclosed",
+          "review_status": "supported"
+        }
+      ]
+    }
+  ],
+  "business": {
+    "source_ids": [
+      "demo-fin"
+    ],
+    "reviewed_at": "2026-09-26",
+    "description": "חברת הדגמה בדויה: יחידות שירות כפול מחיר ליחידה.",
+    "revenue_driver": {
+      "label": "Revenue",
+      "unit": "USD",
+      "op": "product",
+      "children": [
+        {
+          "source_ids": [
+            "demo-fin"
+          ],
+          "reviewed_at": "2026-09-26",
+          "label": "Units",
+          "unit": "units",
+          "op": "input",
+          "value": 100000
+        },
+        {
+          "source_ids": [
+            "demo-fin"
+          ],
+          "reviewed_at": "2026-09-26",
+          "label": "Price",
+          "unit": "USD/unit",
+          "op": "input",
+          "value": 500
+        }
+      ]
+    },
+    "claims": [
+      {
+        "source_ids": [
+          "demo-fin"
+        ],
+        "reviewed_at": "2026-09-26",
+        "kind": "moat",
+        "claim": "עלויות מעבר — השערה לבדיקה",
+        "status": "unverified"
+      }
+    ],
+    "opportunities": [
+      {
+        "source_ids": [
+          "demo-fin"
+        ],
+        "reviewed_at": "2026-09-26",
+        "name": "שירות חדש בדוי",
+        "claimed_stage": "scaling",
+        "stage_evidence": [
+          {
+            "source_ids": [
+              "demo-fin"
+            ],
+            "reviewed_at": "2026-09-26",
+            "stage": "paying_customers",
+            "status": "supported",
+            "claim": "לקוחות משלמים בדוגמה בלבד"
+          }
+        ],
+        "shareholder_risks": [
+          "צורך בגיוס והנפקה במחיר נמוך"
+        ],
+        "milestones": [
+          {
+            "due_at": "2027-06-30",
+            "success_criterion": "הזמנות חוזרות",
+            "failure_criterion": "אי חידוש",
+            "cost": 10000000
+          }
+        ]
+      }
+    ]
+  },
+  "ownership_valuation": {
+    "assumptions_as_of": "2026-09-26",
+    "source_ids": [
+      "demo-fin"
+    ],
+    "cash": 50000000,
+    "debt": 15000000,
+    "shares": 20000000,
+    "minimum_cash": 5000000,
+    "other_claims": 0,
+    "cost_equity": 0.15,
+    "terminal_capitalization_rate": 0.12,
+    "terminal_growth": 0.025,
+    "terminal_roic": 0.15,
+    "sbc_policy": "cash_equivalent_expensed_no_extra_dilution",
+    "scenarios": [
+      {
+        "name": "צמיחה עם גיוס היפותטי",
+        "rationale": "תרחיש סינתטי, לא תחזית לחברה אמיתית",
+        "years": [
+          {
+            "growth": 0.3,
+            "operating_margin": -0.2,
+            "cash_tax_rate": 0.25,
+            "sales_to_capital": 2,
+            "base_net_reinvestment": 2000000,
+            "debt_interest_rate": 0.08,
+            "debt_repayment": 0,
+            "dividend": 0,
+            "financing": [
+              {
+                "kind": "equity",
+                "commitment": "hypothetical",
+                "gross_amount": 30000000,
+                "fee_rate": 0.03,
+                "issue_price": 5
+              }
+            ]
+          },
+          {
+            "growth": 0.3,
+            "operating_margin": 0,
+            "cash_tax_rate": 0.25,
+            "sales_to_capital": 2,
+            "base_net_reinvestment": 2000000,
+            "debt_interest_rate": 0.08,
+            "debt_repayment": 0,
+            "dividend": 0,
+            "financing": []
+          },
+          {
+            "growth": 0.3,
+            "operating_margin": 0.12,
+            "cash_tax_rate": 0.25,
+            "sales_to_capital": 2,
+            "base_net_reinvestment": 2000000,
+            "debt_interest_rate": 0.08,
+            "debt_repayment": 5000000,
+            "dividend": 0,
+            "financing": []
+          },
+          {
+            "growth": 0.3,
+            "operating_margin": 0.2,
+            "cash_tax_rate": 0.25,
+            "sales_to_capital": 2,
+            "base_net_reinvestment": 2000000,
+            "debt_interest_rate": 0.08,
+            "debt_repayment": 5000000,
+            "dividend": 0,
+            "financing": []
+          },
+          {
+            "growth": 0.3,
+            "operating_margin": 0.25,
+            "cash_tax_rate": 0.25,
+            "sales_to_capital": 2,
+            "base_net_reinvestment": 2000000,
+            "debt_interest_rate": 0.08,
+            "debt_repayment": 5000000,
+            "dividend": 0,
+            "financing": []
+          }
+        ]
+      }
+    ]
+  }
+}

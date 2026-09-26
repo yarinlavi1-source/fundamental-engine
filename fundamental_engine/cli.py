@@ -7,6 +7,8 @@ from .engine import analyze
 from .report import render
 from .sec import fetch_companyfacts, select_facts
 from .store import Store
+from .periods import normalize_concept
+from .corpus import Corpus
 
 
 def read_json(path):
@@ -34,6 +36,50 @@ def main():
     x.add_argument("--tag", required=True)
     x.add_argument("--unit", required=True)
     x.add_argument("--as-of", required=True)
+    n = subs.add_parser("sec-periods", help="Exact concept annual/quarter/YTD/TTM normalization")
+    n.add_argument("input")
+    n.add_argument("--taxonomy", default="us-gaap")
+    n.add_argument("--tag", required=True)
+    n.add_argument("--unit", required=True)
+    n.add_argument("--as-of", required=True)
+    n.add_argument("--basis", choices=["GAAP", "IFRS"], default="GAAP")
+    c = subs.add_parser("source-ingest", help="Ingest source JSON containing body and dated metadata")
+    c.add_argument("input")
+    c.add_argument("--db", default="runs/sources.sqlite")
+    imp = subs.add_parser("source-import", help="Import text/Markdown/searchable PDF plus source metadata JSON")
+    imp.add_argument("metadata")
+    imp.add_argument("file")
+    imp.add_argument("--db", default="runs/sources.sqlite")
+    q = subs.add_parser("source-search")
+    q.add_argument("query")
+    q.add_argument("--as-of", required=True)
+    q.add_argument("--db", default="runs/sources.sqlite")
+    m = subs.add_parser("mcp", help="Start local stdio MCP server")
+    m.add_argument("--corpus", default="runs/sources.sqlite")
+    rp = subs.add_parser("research-plan", help="Plan research using existing client connectors")
+    rp.add_argument("input")
+    rr = subs.add_parser("research-review", help="Audit a structured research dossier")
+    rr.add_argument("input")
+    rr.add_argument("--out", help="Optional JSON report destination")
+    pk = subs.add_parser("research-packet", help="Read a research protocol/playbook")
+    pk.add_argument("topic")
+    cp = subs.add_parser("research-checkpoint")
+    cp.add_argument("input")
+    cp.add_argument("--case-id")
+    cp.add_argument("--expected-revision",type=int,default=0)
+    cp.add_argument("--db",default="runs/research-journal.sqlite")
+    cl = subs.add_parser("research-load")
+    cl.add_argument("case_id")
+    cl.add_argument("--revision",type=int)
+    cl.add_argument("--db",default="runs/research-journal.sqlite")
+    ch = subs.add_parser("research-history")
+    ch.add_argument("company_id")
+    ch.add_argument("--db",default="runs/research-journal.sqlite")
+    cc = subs.add_parser("research-compare")
+    cc.add_argument("case_id")
+    cc.add_argument("first_revision",type=int)
+    cc.add_argument("second_revision",type=int)
+    cc.add_argument("--db",default="runs/research-journal.sqlite")
     h = subs.add_parser("history")
     h.add_argument("company_id")
     h.add_argument("--db", default="runs/research.sqlite")
@@ -67,6 +113,43 @@ def main():
             print(json.dumps({"cik":data['cik'],"entityName":data.get('entityName'),"cache":str(Path(args.cache).resolve())}))
         elif args.command == "sec-extract":
             print(json.dumps(select_facts(read_json(args.input),args.taxonomy,args.tag,args.unit,args.as_of),indent=2))
+        elif args.command == "sec-periods":
+            print(json.dumps(normalize_concept(read_json(args.input),args.taxonomy,args.tag,args.unit,args.as_of,args.basis),indent=2))
+        elif args.command in {"source-ingest", "source-search", "source-import"}:
+            corpus = Corpus(args.db)
+            try:
+                if args.command == "source-import":
+                    from .imports import import_document
+                    value = corpus.ingest(import_document(read_json(args.metadata),args.file))
+                else:
+                    value = corpus.ingest(read_json(args.input)) if args.command == "source-ingest" else corpus.search(args.query,args.as_of)
+                print(json.dumps(value,ensure_ascii=False,indent=2))
+            finally:
+                corpus.close()
+        elif args.command in {"research-plan", "research-review", "research-packet"}:
+            from .supervisor import plan, review, packet
+            if args.command == "research-plan": value = plan(read_json(args.input))
+            elif args.command == "research-packet": value = packet(args.topic)
+            else: value = review(read_json(args.input))
+            rendered = json.dumps(value,ensure_ascii=False,indent=2,allow_nan=False)
+            if args.command == "research-review" and args.out:
+                dest = Path(args.out);dest.parent.mkdir(parents=True,exist_ok=True)
+                dest.write_text(rendered,encoding="utf-8")
+                print(json.dumps({"status":value["status"],"report":str(dest.resolve())}))
+            else: print(rendered)
+        elif args.command in {"research-checkpoint", "research-load", "research-history", "research-compare"}:
+            from .journal import Journal
+            journal = Journal(args.db)
+            try:
+                if args.command == "research-checkpoint": value = journal.save(read_json(args.input),args.case_id,args.expected_revision)
+                elif args.command == "research-load": value = journal.load(args.case_id,args.revision)
+                elif args.command == "research-history": value = journal.history(args.company_id)
+                else: value = journal.compare(args.case_id,args.first_revision,args.second_revision)
+                print(json.dumps(value,ensure_ascii=False,indent=2,allow_nan=False))
+            finally: journal.close()
+        elif args.command == "mcp":
+            from .mcp import serve
+            serve(args.corpus)
         else:
             store = Store(args.db)
             try:

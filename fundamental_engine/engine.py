@@ -3,6 +3,8 @@ from copy import deepcopy
 from datetime import date
 from .finance import number, ratio, dcf, reverse_dcf, funding_path
 from . import __version__
+from .research import Evidence, analyze_events, analyze_business, investigation, market_context
+from .ownership import financing_scenarios
 
 DIMENSIONS = ("market", "adoption", "advantage", "execution", "unit_economics")
 SUPPORTED_DCF = {"software", "platform", "industrial", "infrastructure", "nonfinancial"}
@@ -51,8 +53,8 @@ def validate(data):
         last_end = end
         if day(p["available_at"]) < end:
             raise ValueError("Historical financial data available before period end")
-        if p["currency"] != data["currency"] or p["basis"] != "GAAP":
-            raise ValueError("Financials require common currency and GAAP basis")
+        if p["currency"] != data["currency"] or p["basis"] not in {"GAAP", "IFRS"}:
+            raise ValueError("Financials require common currency and explicit GAAP/IFRS basis")
         known(p["source_ids"])
         for key in ("revenue", "gross_profit", "ebit", "net_income", "cfo", "capex",
                     "sbc", "cash", "debt", "shares", "invested_capital"):
@@ -86,7 +88,7 @@ def validate(data):
         for key in ("id", "description", "success_criterion", "failure_criterion"):
             require_text(milestone[key], key)
         day(milestone["due_at"])
-    for section in ("valuation", "funding"):
+    for section in ("valuation", "funding", "ownership_valuation"):
         if data.get(section):
             day(data[section]["assumptions_as_of"])
             known(data[section]["source_ids"])
@@ -118,7 +120,7 @@ def analyze(data):
     metrics = []
     for i, p in enumerate(active):
         prev = active[i-1] if i else None
-        contiguous = prev and (day(p["start"]) - day(prev["end"])).days == 1
+        contiguous = prev and p["basis"] == prev["basis"] and (day(p["start"]) - day(prev["end"])).days == 1
         growth = (ratio(p.get("revenue"), prev.get("revenue")) if contiguous else None)
         fcf = p["cfo"] - p["capex"] if p.get("cfo") is not None and p.get("capex") is not None else None
         metrics.append({"end": p["end"], "revenue_growth": growth-1 if growth is not None else None,
@@ -213,15 +215,53 @@ def analyze(data):
         status = "financing_required"
     if data.get("is_demo"):
         issues.insert(0, "SYNTHETIC DEMO: all figures, sources and claims are fictional")
-    return {"engine_version": __version__, "as_of": data["as_of"], "company": data["company"],
+    event_analysis = analyze_events(data, active)
+    business_analysis = analyze_business(data)
+    owner_valuations = []
+    owner = data.get("ownership_valuation")
+    if owner and assumptions_ok(owner):
+        if data["company"]["sector"] not in SUPPORTED_DCF:
+            issues.append("Ownership model unsupported for this sector")
+        elif not latest or latest.get("revenue") is None:
+            issues.append("Ownership model needs eligible reported base revenue")
+        else:
+            for scenario in owner["scenarios"]:
+                model = {**owner, **scenario, "base_revenue":latest["revenue"]}
+                try:
+                    result = financing_scenarios(model)
+                    result.update(name=scenario["name"], rationale=scenario["rationale"], source_ids=owner["source_ids"])
+                    owner_valuations.append(result)
+                except (ValueError, KeyError, OverflowError) as error:
+                    issues.append(f"Ownership scenario {scenario.get('name')} unavailable: {error}")
+    elif owner:
+        issues.append("Ownership assumptions excluded: after cutoff")
+    if owner_valuations:
+        status = "conditional_ownership_valuation"
+        if any(v["status"] == "financing_gap" for v in owner_valuations):
+            status = "financing_required"
+    report = {"engine_version": __version__, "as_of": data["as_of"], "company": data["company"],
             "currency": data["currency"], "is_demo": bool(data.get("is_demo")), "status": status,
             "financial_metrics": metrics, "potential": {"status": potential_status, "evidence": evidence,
             "missing_dimensions": missing, "note": "Review labels are supplied by the analyst, not automatically verified"},
-            "funding": funding, "quote": quote, "valuations": valuations, "milestones": milestones,
+            "event_analysis": event_analysis, "business_analysis": business_analysis,
+            "owner_valuations": owner_valuations, "funding": funding, "quote": quote, "valuations": valuations, "milestones": milestones,
             "issues": issues, "sources": [s for s in sources.values() if day(s["available_at"]) <= as_of],
             "thesis": data.get("thesis", {}),
             "limitations": ["Annual financial input; no automatic investment recommendation",
                             "Scenario assumptions are user supplied, not predictions or analyst consensus",
                             "No sector-specific valuation for banks, insurers, REITs or pre-revenue biotech",
-                            "Funding simulation is separate; no automatic new-equity or debt financing model",
+                            "Legacy DCF financing remains separate; ownership scenarios model annual financing and dilution explicitly",
                             "No calibrated success probabilities or target-date price forecast"]}
+
+    report["investigation_priorities"] = investigation(report)
+    report["assessment"] = {
+        "business_quality": "requires_review_of_business_claims",
+        "potential": potential_status,
+        "valuation": "conditional_scenarios" if valuations or owner_valuations else "insufficient_data",
+        "temporary_vs_structural": {e["id"]:e["status"] for e in event_analysis["events"]},
+        "market_overreaction": "not_established",
+        "suitability": "not_assessed",
+        "note": "A falling share price or a temporary event does not establish undervaluation. No composite buy score."}
+    report["market_context"] = market_context(data, report)
+    report["assessment"]["market_overreaction"] = report["market_context"]["status"]
+    return report

@@ -1,43 +1,54 @@
-# Build status — 2026-09-26
+# Build status — v0.3.0 — 2026-09-26
 
-## Delivered
+## Implemented
 
-Python 0.1.0 source, deterministic valuation and normalization helpers, funding
-simulation, emerging-potential evidence map, SEC raw adapter/exact extraction,
-SQLite snapshots/diff, Hebrew HTML report, synthetic example, tests, CI config,
-Claude workflow instructions and research specification.
+Retains v0.2 financial/event/ownership analysis, source corpus, SEC normalization,
+Hebrew reports and executable MCP. Adds:
+
+- A research supervisor that routes the client's existing connectors into a staged
+  research plan with on-demand methods and eight economic archetype playbooks.
+- A structured evidence dossier distinguishing facts, guidance, hypotheses,
+  opinions and assumptions; date/source gates and same-definition numeric conflicts.
+- Required business mechanism, material-claim review, counter-thesis and falsifiers.
+- Actual financial-input execution with identity/provenance checks; price conclusions
+  require a named executed valuation basis and cannot bypass financing/sector limits.
+- Original management promise/outcome tracking with matched economic definitions.
+- Recorded search budgets and repeat/unproductive-query detection; unresolved
+  questions remain unresolved when retrieval is exhausted.
+- Append-only local research revisions, optimistic concurrency, resume/history and
+  material-claim/gate comparisons across revisions.
+- Seven additional MCP tools and matching CLI commands.
+- START_HERE.md, compact CLAUDE.md, 23 packaged brain packets, synthetic dossier,
+  independent-install package check and adversarial process evaluation protocol.
 
 ## Verification actually performed
 
-- `python3 -m unittest discover -s tests -v`: 27 tests passed.
-- `python3 -m fundamental_engine analyze examples/emerging_demo.json --out runs/demo`:
-  successful end-to-end CLI, SQLite snapshot, JSON and HTML report generation.
-- Demonstration status: `financing_required`, potential status `early_evidence`.
-- DCF tested against a known perpetuity; reverse DCF tested by round trip.
-- Future-dated sources/reviews, restatements, overlapping periods, invalid terminal
-  assumptions, unknown sources and non-finite values covered by tests.
-- Existing snapshot preservation and HTML escaping covered by tests.
+- **93 unit/integration tests passed locally**, including the previous 65 tests.
+- **12/12 synthetic adversarial process cases passed** in scripts/evaluate_brain.py.
+- Subprocess MCP: initialize, discover tools, analyze, corpus operations, dossier
+  review, checkpoint revisions, comparison and resume.
+- A built wheel loaded all **23 packets** and executed dossier review outside the
+  checkout using an isolated Python process.
+- v0.2's three historical issuer examples remain regression cases. Their inputs
+  were manually reviewed, and no live quote/forecast valuation was fabricated.
 
-No historical investment performance has been established. Tests validate selected
-engineering behavior, not forecast accuracy. SEC live network transport and the
-GitHub Actions workflow were not run in their external environments. HTML was
-generated and escaping tested; no cross-browser visual QA is claimed.
+These checks validate selected engineering behavior. They do not measure a model's
+semantic source comprehension, source truth, causal inference, investment returns
+or performance relative to humans. benchmarks/README.md specifies the separate
+held-out Claude evaluation that is still needed in the user's environment.
 
-## External blockers
+## External boundaries
 
-GitHub repository access was resolved on 2026-09-26. The target is the
-public repository yarinlavi1-source/fundamental-engine, initially empty.
-The source is prepared for publication there; remote CI status is separate
-from the local test results recorded above.
+No connection to the user's private Claude session, Interactive Brokers account or
+other live client integrations was available to this build process. The architecture
+reuses those existing connections rather than replacing them; compatibility with
+that exact session must be exercised there. No credentials or private holdings
+were requested, copied to the repository or used in public fixtures.
 
-The supplied Google Docs URL could not be read by the web tool. Its contents are
-unknown and have not been incorporated. Upload its text/Markdown/DOCX export to
-reconcile requirements before further development.
+No server-side paid model calls or broker order tools. No autonomous scheduler.
+Specialist financial-sector/biotech/SOTP valuations, full tax/options/FX/stub-period
+models and verified real-time extraction remain outside the implemented calculator.
+The brain explicitly routes or withholds those conclusions rather than faking support.
 
-## Next integration gate
-
-Publish this source tree to the accessible repository and check CI. Continue
-development against the actual repository.
-Subsequent scope: reviewed normalization of real SEC company data, live end-to-end
-company case, price adapter, Claude/API or MCP integration, financing scenarios,
-sector-specific models and scheduled monitoring.
+The latest GitHub CI result is recorded in GitHub Actions, separately from this
+local verification record.

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fundamental-engine"
-version = "0.1.0"
+version = "0.3.0"
 description = "Evidence-first fundamental and emerging-potential research engine"
 requires-python = ">=3.11"
 dependencies = []
@@ -14,3 +14,6 @@ fundamental = "fundamental_engine.cli:main"
 
 [tool.setuptools.packages.find]
 include = ["fundamental_engine*"]
+
+[tool.setuptools.package-data]
+fundamental_engine = ["brain/*.json", "brain/protocols/*.md", "brain/playbooks/*.md"]
