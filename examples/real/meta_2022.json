@@ -1,0 +1,184 @@
+{
+  "schema_version": 1,
+  "as_of": "2023-02-01",
+  "currency": "USD",
+  "unit": "absolute",
+  "is_demo": false,
+  "company": {
+    "id": "meta",
+    "name": "Meta Platforms",
+    "ticker": "META",
+    "currency": "USD",
+    "sector": "platform"
+  },
+  "sources": [
+    {
+      "id": "meta-release",
+      "title": "Meta Platforms annual results release",
+      "locator": "https://investor.atmeta.com/investor-news/press-release-details/2023/Meta-Reports-Fourth-Quarter-and-Full-Year-2022-Results/default.aspx",
+      "kind": "earnings_release",
+      "published_at": "2023-02-01",
+      "available_at": "2023-02-01",
+      "origin_id": "META-issuer",
+      "retrieved_at": "2026-09-26",
+      "capture_method": "Manually transcribed from issuer website; tables in millions multiplied by 1,000,000",
+      "review_mode": "Retrospective date-level reconstruction, not a contemporaneous archived research record"
+    }
+  ],
+  "financials": [
+    {
+      "start": "2021-01-01",
+      "end": "2021-12-31",
+      "available_at": "2023-02-01",
+      "currency": "USD",
+      "basis": "GAAP",
+      "source_ids": [
+        "meta-release"
+      ],
+      "revenue": 117929000000,
+      "ebit": 46753000000,
+      "net_income": 39370000000,
+      "cfo": 57683000000,
+      "capex": 18690000000
+    },
+    {
+      "start": "2022-01-01",
+      "end": "2022-12-31",
+      "available_at": "2023-02-01",
+      "currency": "USD",
+      "basis": "GAAP",
+      "source_ids": [
+        "meta-release"
+      ],
+      "revenue": 116609000000,
+      "ebit": 28944000000,
+      "net_income": 23200000000,
+      "cfo": 50475000000,
+      "capex": 31431000000
+    }
+  ],
+  "events": [
+    {
+      "source_ids": [
+        "meta-release"
+      ],
+      "reviewed_at": "2023-02-01",
+      "id": "fx",
+      "observed_at": "2022-12-31",
+      "description": "השפעת מטבע על ההכנסות",
+      "cause": "fx",
+      "management_claim": "החברה הציגה הכנסות גבוהות יותר בשערי התקופה המקבילה",
+      "recurrence": "unknown",
+      "cash_effect": "unknown",
+      "evidence": [
+        {
+          "source_ids": [
+            "meta-release"
+          ],
+          "reviewed_at": "2023-02-01",
+          "role": "attribution",
+          "claim": "גשר המטבע מפריד השפעת תרגום מההכנסות המדווחות",
+          "status": "supported"
+        }
+      ],
+      "impacts": [
+        {
+          "source_ids": [
+            "meta-release"
+          ],
+          "reviewed_at": "2023-02-01",
+          "id": "fx-revenue",
+          "metric": "revenue",
+          "period_end": "2022-12-31",
+          "reported_effect": -5956000000,
+          "classification": "comparability",
+          "measurement": "disclosed",
+          "review_status": "supported"
+        }
+      ],
+      "recovery_requirements": [],
+      "falsifiers": [
+        "גם לאחר בחינת מטבע נמשכת חולשה בביקוש ובמונטיזציה"
+      ]
+    },
+    {
+      "source_ids": [
+        "meta-release"
+      ],
+      "reviewed_at": "2023-02-01",
+      "id": "restructuring",
+      "observed_at": "2022-12-31",
+      "description": "הוצאות ארגון מחדש והמשך צפוי",
+      "cause": "restructuring",
+      "management_claim": "ההנהלה צופה הוצאות נוספות גם ב-2023",
+      "recurrence": "repeated",
+      "cash_effect": "unknown",
+      "evidence": [
+        {
+          "source_ids": [
+            "meta-release"
+          ],
+          "reviewed_at": "2023-02-01",
+          "role": "attribution",
+          "claim": "החברה דיווחה הוצאות ארגון מחדש בשנת 2022",
+          "status": "supported"
+        }
+      ],
+      "impacts": [
+        {
+          "source_ids": [
+            "meta-release"
+          ],
+          "reviewed_at": "2023-02-01",
+          "id": "restructuring-ebit",
+          "metric": "ebit",
+          "period_end": "2022-12-31",
+          "reported_effect": -4610000000,
+          "classification": "booked_exceptional",
+          "measurement": "disclosed",
+          "review_status": "supported"
+        }
+      ],
+      "recovery_requirements": [
+        "בחינת ההוצאה החוזרת והחיסכון בפועל"
+      ],
+      "falsifiers": []
+    }
+  ],
+  "signals": [
+    {
+      "source_ids": [
+        "meta-release"
+      ],
+      "reviewed_at": "2023-02-01",
+      "id": "users",
+      "dimension": "adoption",
+      "claim": "מספר המשתמשים היומי במשפחת האפליקציות עלה לעומת השנה הקודמת",
+      "direction": "positive",
+      "review_status": "supported",
+      "observed_at": "2022-12-31"
+    }
+  ],
+  "thesis": {
+    "scope": "Historical reconstruction, no live quote or investment verdict. Unknown financial fields remain missing.",
+    "fcf_definition": "CFO minus gross PP&E purchases. Differs from issuer FCF, which nets disposal proceeds and includes finance lease principal."
+  },
+  "business": {
+    "source_ids": [
+      "meta-release"
+    ],
+    "reviewed_at": "2023-02-01",
+    "description": "פלטפורמות חברתיות עם מונטיזציה בפרסום והשקעה בפעילות Reality Labs.",
+    "claims": [
+      {
+        "source_ids": [
+          "meta-release"
+        ],
+        "reviewed_at": "2023-02-01",
+        "kind": "segment",
+        "claim": "יש להפריד בין Family of Apps לבין Reality Labs",
+        "status": "supported"
+      }
+    ]
+  }
+}

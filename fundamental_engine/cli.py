@@ -7,6 +7,8 @@ from .engine import analyze
 from .report import render
 from .sec import fetch_companyfacts, select_facts
 from .store import Store
+from .periods import normalize_concept
+from .corpus import Corpus
 
 
 def read_json(path):
@@ -34,6 +36,26 @@ def main():
     x.add_argument("--tag", required=True)
     x.add_argument("--unit", required=True)
     x.add_argument("--as-of", required=True)
+    n = subs.add_parser("sec-periods", help="Exact concept annual/quarter/YTD/TTM normalization")
+    n.add_argument("input")
+    n.add_argument("--taxonomy", default="us-gaap")
+    n.add_argument("--tag", required=True)
+    n.add_argument("--unit", required=True)
+    n.add_argument("--as-of", required=True)
+    n.add_argument("--basis", choices=["GAAP", "IFRS"], default="GAAP")
+    c = subs.add_parser("source-ingest", help="Ingest source JSON containing body and dated metadata")
+    c.add_argument("input")
+    c.add_argument("--db", default="runs/sources.sqlite")
+    imp = subs.add_parser("source-import", help="Import text/Markdown/searchable PDF plus source metadata JSON")
+    imp.add_argument("metadata")
+    imp.add_argument("file")
+    imp.add_argument("--db", default="runs/sources.sqlite")
+    q = subs.add_parser("source-search")
+    q.add_argument("query")
+    q.add_argument("--as-of", required=True)
+    q.add_argument("--db", default="runs/sources.sqlite")
+    m = subs.add_parser("mcp", help="Start local stdio MCP server")
+    m.add_argument("--corpus", default="runs/sources.sqlite")
     h = subs.add_parser("history")
     h.add_argument("company_id")
     h.add_argument("--db", default="runs/research.sqlite")
@@ -67,6 +89,22 @@ def main():
             print(json.dumps({"cik":data['cik'],"entityName":data.get('entityName'),"cache":str(Path(args.cache).resolve())}))
         elif args.command == "sec-extract":
             print(json.dumps(select_facts(read_json(args.input),args.taxonomy,args.tag,args.unit,args.as_of),indent=2))
+        elif args.command == "sec-periods":
+            print(json.dumps(normalize_concept(read_json(args.input),args.taxonomy,args.tag,args.unit,args.as_of,args.basis),indent=2))
+        elif args.command in {"source-ingest", "source-search", "source-import"}:
+            corpus = Corpus(args.db)
+            try:
+                if args.command == "source-import":
+                    from .imports import import_document
+                    value = corpus.ingest(import_document(read_json(args.metadata),args.file))
+                else:
+                    value = corpus.ingest(read_json(args.input)) if args.command == "source-ingest" else corpus.search(args.query,args.as_of)
+                print(json.dumps(value,ensure_ascii=False,indent=2))
+            finally:
+                corpus.close()
+        elif args.command == "mcp":
+            from .mcp import serve
+            serve(args.corpus)
         else:
             store = Store(args.db)
             try:

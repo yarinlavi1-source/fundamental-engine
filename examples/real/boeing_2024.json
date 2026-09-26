@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "as_of": "2025-01-28",
+  "currency": "USD",
+  "unit": "absolute",
+  "is_demo": false,
+  "company": {
+    "id": "ba",
+    "name": "Boeing",
+    "ticker": "BA",
+    "currency": "USD",
+    "sector": "industrial"
+  },
+  "sources": [
+    {
+      "id": "ba-release",
+      "title": "Boeing annual results release",
+      "locator": "https://investors.boeing.com/investors/news/press-release-details/2025/Boeing-Reports-Fourth-Quarter-Results/default.aspx",
+      "kind": "earnings_release",
+      "published_at": "2025-01-28",
+      "available_at": "2025-01-28",
+      "origin_id": "BA-issuer",
+      "retrieved_at": "2026-09-26",
+      "capture_method": "Manually transcribed from issuer website; tables in millions multiplied by 1,000,000",
+      "review_mode": "Retrospective date-level reconstruction, not a contemporaneous archived research record"
+    }
+  ],
+  "financials": [
+    {
+      "start": "2023-01-01",
+      "end": "2023-12-31",
+      "available_at": "2025-01-28",
+      "currency": "USD",
+      "basis": "GAAP",
+      "source_ids": [
+        "ba-release"
+      ],
+      "revenue": 77794000000,
+      "ebit": -773000000,
+      "net_income": -2242000000,
+      "cfo": 5960000000,
+      "capex": 1527000000
+    },
+    {
+      "start": "2024-01-01",
+      "end": "2024-12-31",
+      "available_at": "2025-01-28",
+      "currency": "USD",
+      "basis": "GAAP",
+      "source_ids": [
+        "ba-release"
+      ],
+      "revenue": 66517000000,
+      "ebit": -10707000000,
+      "net_income": -11829000000,
+      "cfo": -12080000000,
+      "capex": 2230000000
+    }
+  ],
+  "events": [
+    {
+      "source_ids": [
+        "ba-release"
+      ],
+      "reviewed_at": "2025-01-28",
+      "id": "strike",
+      "observed_at": "2024-12-31",
+      "description": "שביתה לצד סיכוני ביצוע בתוכניות",
+      "cause": "strike",
+      "management_claim": "החברה מייחסת חלק מהפגיעה לשביתה ולהסכם העבודה",
+      "recurrence": "unknown",
+      "cash_effect": "delayed",
+      "evidence": [
+        {
+          "source_ids": [
+            "ba-release"
+          ],
+          "reviewed_at": "2025-01-28",
+          "role": "supports_temporary",
+          "claim": "השביתה הסתיימה והייצור בתוכניות הרלוונטיות חודש",
+          "status": "supported"
+        },
+        {
+          "source_ids": [
+            "ba-release"
+          ],
+          "reviewed_at": "2025-01-28",
+          "role": "supports_structural",
+          "claim": "התוצאות כוללות גם חיובים בתוכניות ביטחוניות; חידוש ייצור לבדו אינו התאוששות כלכלית",
+          "status": "supported"
+        }
+      ],
+      "impacts": [],
+      "recovery_requirements": [
+        "עלייה במסירות ותזרים ללא חיובים חוזרים גדולים"
+      ],
+      "falsifiers": [
+        "דחיות נוספות ועלויות שחורגות מהתחזית"
+      ]
+    }
+  ],
+  "signals": [],
+  "thesis": {
+    "scope": "Historical reconstruction, no live quote or investment verdict. Unknown financial fields remain missing."
+  },
+  "business": {
+    "source_ids": [
+      "ba-release"
+    ],
+    "reviewed_at": "2025-01-28",
+    "description": "מטוסים מסחריים, ביטחון ושירותים; הכרה בהכנסה ומזומן תלויים גם בביצוע ובמסירות.",
+    "claims": [
+      {
+        "source_ids": [
+          "ba-release"
+        ],
+        "reviewed_at": "2025-01-28",
+        "kind": "capital_allocation",
+        "claim": "גיוס הון במהלך הרבעון חיזק נזילות; אינו מוכיח יצירת ערך למניה",
+        "status": "supported"
+      }
+    ]
+  }
+}

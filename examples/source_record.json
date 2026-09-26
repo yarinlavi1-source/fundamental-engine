@@ -1,0 +1,10 @@
+{
+  "id": "workflow-note-v1",
+  "title": "Research workflow example",
+  "locator": "local:workflow-note",
+  "origin_id": "workflow-example",
+  "published_at": "2026-09-26",
+  "available_at": "2026-09-26",
+  "kind": "user_note",
+  "body": "Revenue changes require investigation of price, volume, currency, scope and timing. This is a workflow note, not evidence about a real company."
+}

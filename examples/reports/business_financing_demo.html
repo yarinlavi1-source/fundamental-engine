@@ -1,0 +1,501 @@
+<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Demo Compute — fictional · Fundamental Engine</title><style>body{font-family:system-ui,sans-serif;background:#101827;color:#e6edf6;margin:0;padding:24px;line-height:1.7}main{max-width:1120px;margin:auto}header{padding:30px 0}h1{font-size:2.3rem}section{background:#1a2638;padding:22px;margin:18px 0;border-radius:14px}h2{font-size:1.2rem;color:#70d6c2}h3{font-size:1rem}table{border-collapse:collapse;width:100%;font-size:.88rem}td,th{padding:10px;border-bottom:1px solid #34445a;text-align:start;vertical-align:top;overflow-wrap:anywhere}.scroll{overflow:auto}pre{white-space:pre-wrap;overflow-wrap:anywhere;text-align:left}.warning{background:#6f4519;padding:18px;border-radius:12px}.notice{border:1px solid #34445a;padding:14px}.muted{color:#9bacbf}.value{font-size:1.6rem}details{margin-top:16px}@media print{body{background:white;color:#111}section{background:#fff;border:1px solid #ccc;break-inside:avoid}h2{color:#075a50}}</style></head><body><main><div class="warning">הדגמה סינתטית — הנתונים והחברה בדויים</div><header><p>FUNDAMENTAL ENGINE · 0.2.0</p><h1>Demo Compute — fictional · DEMO</h1><p>מועד המחקר: 2026-09-26 | שווי למניה עם תרחישי מימון</p></header><section><h2>1 · מסקנה ומידת הוודאות</h2><p class="value">שווי למניה עם תרחישי מימון</p><p>אין כאן מסקנת קנייה אוטומטית. איכות העסק, הפוטנציאל והשווי נבחנים בנפרד. תגובת יתר של השוק לא הוכחה.</p><ul><li>SYNTHETIC DEMO: all figures, sources and claims are fictional</li><li>Funding gap: valuation does not include hypothetical financing dilution</li></ul><div class="scroll"><table><thead><tr><th>priority</th><th>question</th><th>why</th></tr></thead><tbody><tr><td>1</td><td>מה מקור המימון, מחיר ההנפקה והחלופה אם הגיוס נכשל?</td><td>סיכון לנזילות ולחלקה של המניה הקיימת</td></tr><tr><td>2</td><td>מה הראיה לשלב המסחרי של שירות חדש בדוי?</td><td>הצהרת שלב אינה ראיית אימוץ</td></tr></tbody></table></div></section><section><h2>2 · כיצד העסק פועל</h2><p>חברת הדגמה בדויה: יחידות שירות כפול מחיר ליחידה.</p><details><summary>עץ מניעי ההכנסות</summary><pre dir="ltr">{
+  &quot;label&quot;: &quot;Revenue&quot;,
+  &quot;unit&quot;: &quot;USD&quot;,
+  &quot;op&quot;: &quot;product&quot;,
+  &quot;value&quot;: 50000000.0,
+  &quot;children&quot;: [
+    {
+      &quot;label&quot;: &quot;Units&quot;,
+      &quot;unit&quot;: &quot;units&quot;,
+      &quot;op&quot;: &quot;input&quot;,
+      &quot;value&quot;: 100000.0,
+      &quot;source_ids&quot;: [
+        &quot;demo-fin&quot;
+      ],
+      &quot;status&quot;: &quot;available&quot;
+    },
+    {
+      &quot;label&quot;: &quot;Price&quot;,
+      &quot;unit&quot;: &quot;USD/unit&quot;,
+      &quot;op&quot;: &quot;input&quot;,
+      &quot;value&quot;: 500.0,
+      &quot;source_ids&quot;: [
+        &quot;demo-fin&quot;
+      ],
+      &quot;status&quot;: &quot;available&quot;
+    }
+  ]
+}</pre></details><p class="muted">אין נתונים זמינים בסעיף זה.</p></section><section><h2>3 · יתרון תחרותי</h2><div class="scroll"><table><thead><tr><th>טענה</th><th>מצב</th><th>מקורות</th></tr></thead><tbody><tr><td>עלויות מעבר — השערה לבדיקה</td><td>לא אומת</td><td>[&quot;demo-fin&quot;]</td></tr></tbody></table></div><p>היעדר ראיה ליתרון אינו הוכחה שאין יתרון.</p></section><section><h2>4 · נזילות, מימון ודילול</h2><details><summary>מסלול מימון נפרד — ללא דילול</summary><pre dir="ltr">{
+  &quot;first_gap_period&quot;: 3,
+  &quot;periods&quot;: [
+    {
+      &quot;period&quot;: 1,
+      &quot;cash_before_uncommitted_financing&quot;: 32000000.0,
+      &quot;cumulative_shortfall&quot;: 0
+    },
+    {
+      &quot;period&quot;: 2,
+      &quot;cash_before_uncommitted_financing&quot;: 14000000.0,
+      &quot;cumulative_shortfall&quot;: 0
+    },
+    {
+      &quot;period&quot;: 3,
+      &quot;cash_before_uncommitted_financing&quot;: -4000000.0,
+      &quot;cumulative_shortfall&quot;: 4000000.0
+    },
+    {
+      &quot;period&quot;: 4,
+      &quot;cash_before_uncommitted_financing&quot;: -22000000.0,
+      &quot;cumulative_shortfall&quot;: 22000000.0
+    }
+  ],
+  &quot;maximum_shortfall&quot;: 22000000.0
+}</pre></details><h3>צמיחה עם גיוס היפותטי</h3><div class="scroll"><table><thead><tr><th>מצב</th><th>חלק הבעלים המקוריים</th><th>שווי למניה מקורית</th></tr></thead><tbody><tr><td>מסלול המימון מכסה את התרחיש</td><td>0.7692</td><td>6.5621</td></tr></tbody></table></div><details><summary>מה קורה ללא הגיוסים ההיפותטיים?</summary><pre dir="ltr">{
+  &quot;status&quot;: &quot;financing_gap&quot;,
+  &quot;gap_year&quot;: 3,
+  &quot;required_cash&quot;: 2338500.0,
+  &quot;forecast&quot;: [
+    {
+      &quot;year&quot;: 1,
+      &quot;revenue&quot;: 65000000.0,
+      &quot;ebit&quot;: -13000000.0,
+      &quot;interest&quot;: 1200000.0,
+      &quot;tax&quot;: 0.0,
+      &quot;net_reinvestment&quot;: 9500000.0,
+      &quot;cash_to_equity_before_financing&quot;: -23700000.0,
+      &quot;opening_cash&quot;: 50000000.0,
+      &quot;cash_after_start_financing&quot;: 50000000.0,
+      &quot;closing_cash&quot;: 26300000.0,
+      &quot;opening_debt&quot;: 15000000.0,
+      &quot;closing_debt&quot;: 15000000.0,
+      &quot;opening_shares&quot;: 20000000.0,
+      &quot;closing_shares&quot;: 20000000.0,
+      &quot;original_ownership&quot;: 1.0,
+      &quot;dividend_per_share&quot;: 0.0,
+      &quot;financing&quot;: []
+    },
+    {
+      &quot;year&quot;: 2,
+      &quot;revenue&quot;: 84500000.0,
+      &quot;ebit&quot;: 0.0,
+      &quot;interest&quot;: 1200000.0,
+      &quot;tax&quot;: 0.0,
+      &quot;net_reinvestment&quot;: 11750000.0,
+      &quot;cash_to_equity_before_financing&quot;: -12950000.0,
+      &quot;opening_cash&quot;: 26300000.0,
+      &quot;cash_after_start_financing&quot;: 26300000.0,
+      &quot;closing_cash&quot;: 13350000.0,
+      &quot;opening_debt&quot;: 15000000.0,
+      &quot;closing_debt&quot;: 15000000.0,
+      &quot;opening_shares&quot;: 20000000.0,
+      &quot;closing_shares&quot;: 20000000.0,
+      &quot;original_ownership&quot;: 1.0,
+      &quot;dividend_per_share&quot;: 0.0,
+      &quot;financing&quot;: []
+    },
+    {
+      &quot;year&quot;: 3,
+      &quot;revenue&quot;: 109850000.0,
+      &quot;ebit&quot;: 13182000.0,
+      &quot;interest&quot;: 1200000.0,
+      &quot;tax&quot;: 2995500.0,
+      &quot;net_reinvestment&quot;: 14675000.0,
+      &quot;cash_to_equity_before_financing&quot;: -10688500.0,
+      &quot;opening_cash&quot;: 13350000.0,
+      &quot;cash_after_start_financing&quot;: 13350000.0,
+      &quot;closing_cash&quot;: 2661500.0,
+      &quot;opening_debt&quot;: 15000000.0,
+      &quot;closing_debt&quot;: 10000000.0,
+      &quot;opening_shares&quot;: 20000000.0,
+      &quot;closing_shares&quot;: 20000000.0,
+      &quot;original_ownership&quot;: 1.0,
+      &quot;dividend_per_share&quot;: 0.0,
+      &quot;financing&quot;: []
+    }
+  ],
+  &quot;value_per_initial_share&quot;: null,
+  &quot;failure_value&quot;: null,
+  &quot;note&quot;: &quot;Plan infeasible; liquidation/recovery not modeled. A funding gap is not automatically a zero valuation.&quot;
+}</pre></details><details><summary>ציר מימון, מזומן ומניות</summary><pre dir="ltr">[
+  {
+    &quot;year&quot;: 1,
+    &quot;revenue&quot;: 65000000.0,
+    &quot;ebit&quot;: -13000000.0,
+    &quot;interest&quot;: 1200000.0,
+    &quot;tax&quot;: 0.0,
+    &quot;net_reinvestment&quot;: 9500000.0,
+    &quot;cash_to_equity_before_financing&quot;: -23700000.0,
+    &quot;opening_cash&quot;: 50000000.0,
+    &quot;cash_after_start_financing&quot;: 79100000.0,
+    &quot;closing_cash&quot;: 55400000.0,
+    &quot;opening_debt&quot;: 15000000.0,
+    &quot;closing_debt&quot;: 15000000.0,
+    &quot;opening_shares&quot;: 20000000.0,
+    &quot;closing_shares&quot;: 26000000.0,
+    &quot;original_ownership&quot;: 0.7692307692307693,
+    &quot;dividend_per_share&quot;: 0.0,
+    &quot;financing&quot;: [
+      {
+        &quot;kind&quot;: &quot;equity&quot;,
+        &quot;commitment&quot;: &quot;hypothetical&quot;,
+        &quot;gross_amount&quot;: 30000000,
+        &quot;fee_rate&quot;: 0.03,
+        &quot;issue_price&quot;: 5,
+        &quot;net_cash&quot;: 29100000.0
+      }
+    ]
+  },
+  {
+    &quot;year&quot;: 2,
+    &quot;revenue&quot;: 84500000.0,
+    &quot;ebit&quot;: 0.0,
+    &quot;interest&quot;: 1200000.0,
+    &quot;tax&quot;: 0.0,
+    &quot;net_reinvestment&quot;: 11750000.0,
+    &quot;cash_to_equity_before_financing&quot;: -12950000.0,
+    &quot;opening_cash&quot;: 55400000.0,
+    &quot;cash_after_start_financing&quot;: 55400000.0,
+    &quot;closing_cash&quot;: 42450000.0,
+    &quot;opening_debt&quot;: 15000000.0,
+    &quot;closing_debt&quot;: 15000000.0,
+    &quot;opening_shares&quot;: 26000000.0,
+    &quot;closing_shares&quot;: 26000000.0,
+    &quot;original_ownership&quot;: 0.7692307692307693,
+    &quot;dividend_per_share&quot;: 0.0,
+    &quot;financing&quot;: []
+  },
+  {
+    &quot;year&quot;: 3,
+    &quot;revenue&quot;: 109850000.0,
+    &quot;ebit&quot;: 13182000.0,
+    &quot;interest&quot;: 1200000.0,
+    &quot;tax&quot;: 2995500.0,
+    &quot;net_reinvestment&quot;: 14675000.0,
+    &quot;cash_to_equity_before_financing&quot;: -10688500.0,
+    &quot;opening_cash&quot;: 42450000.0,
+    &quot;cash_after_start_financing&quot;: 42450000.0,
+    &quot;closing_cash&quot;: 31761500.0,
+    &quot;opening_debt&quot;: 15000000.0,
+    &quot;closing_debt&quot;: 10000000.0,
+    &quot;opening_shares&quot;: 26000000.0,
+    &quot;closing_shares&quot;: 26000000.0,
+    &quot;original_ownership&quot;: 0.7692307692307693,
+    &quot;dividend_per_share&quot;: 0.0,
+    &quot;financing&quot;: []
+  },
+  {
+    &quot;year&quot;: 4,
+    &quot;revenue&quot;: 142805000.0,
+    &quot;ebit&quot;: 28561000.0,
+    &quot;interest&quot;: 800000.0,
+    &quot;tax&quot;: 6940250.0,
+    &quot;net_reinvestment&quot;: 18477500.0,
+    &quot;cash_to_equity_before_financing&quot;: -2656750.0,
+    &quot;opening_cash&quot;: 31761500.0,
+    &quot;cash_after_start_financing&quot;: 31761500.0,
+    &quot;closing_cash&quot;: 29104750.0,
+    &quot;opening_debt&quot;: 10000000.0,
+    &quot;closing_debt&quot;: 5000000.0,
+    &quot;opening_shares&quot;: 26000000.0,
+    &quot;closing_shares&quot;: 26000000.0,
+    &quot;original_ownership&quot;: 0.7692307692307693,
+    &quot;dividend_per_share&quot;: 0.0,
+    &quot;financing&quot;: []
+  },
+  {
+    &quot;year&quot;: 5,
+    &quot;revenue&quot;: 185646500.0,
+    &quot;ebit&quot;: 46411625.0,
+    &quot;interest&quot;: 400000.0,
+    &quot;tax&quot;: 11502906.25,
+    &quot;net_reinvestment&quot;: 23420750.0,
+    &quot;cash_to_equity_before_financing&quot;: 6087968.75,
+    &quot;opening_cash&quot;: 29104750.0,
+    &quot;cash_after_start_financing&quot;: 29104750.0,
+    &quot;closing_cash&quot;: 35192718.75,
+    &quot;opening_debt&quot;: 5000000.0,
+    &quot;closing_debt&quot;: 0.0,
+    &quot;opening_shares&quot;: 26000000.0,
+    &quot;closing_shares&quot;: 26000000.0,
+    &quot;original_ownership&quot;: 0.7692307692307693,
+    &quot;dividend_per_share&quot;: 0.0,
+    &quot;financing&quot;: []
+  }
+]</pre></details></section><section><h2>5 · פוטנציאל ושלב מסחרי</h2><p>ראיות מוקדמות</p><p>תוויות התמיכה מבוססות על בדיקת האנליסט; המערכת אינה מאמתת את המקור באופן עצמאי.</p><h3>שוק</h3><div class="scroll"><table><thead><tr><th>מצב</th><th>טענה</th><th>מקורות</th></tr></thead><tbody><tr><td>לא אומת</td><td>Customers face a growing compute capacity constraint</td><td>[&quot;demo-adoption&quot;]</td></tr></tbody></table></div><h3>אימוץ</h3><div class="scroll"><table><thead><tr><th>מצב</th><th>טענה</th><th>מקורות</th></tr></thead><tbody><tr><td>ראיות תומכות</td><td>Two customers paid for pilot deployments</td><td>[&quot;demo-adoption&quot;]</td></tr></tbody></table></div><h3>יתרון</h3><div class="scroll"><table><thead><tr><th>מצב</th><th>טענה</th><th>מקורות</th></tr></thead><tbody><tr><td>לא אומת</td><td>Proprietary design may reduce energy cost</td><td>[&quot;demo-adoption&quot;]</td></tr></tbody></table></div><h3>ביצוע</h3><div class="scroll"><table><thead><tr><th>מצב</th><th>טענה</th><th>מקורות</th></tr></thead><tbody><tr><td>ראיות תומכות</td><td>First installation passed acceptance testing</td><td>[&quot;demo-adoption&quot;]</td></tr></tbody></table></div><h3>כלכלת יחידה</h3><div class="scroll"><table><thead><tr><th>מצב</th><th>טענה</th><th>מקורות</th></tr></thead><tbody><tr><td>לא אומת</td><td>Positive unit margin at target utilization is not yet demonstrated</td><td>[&quot;demo-adoption&quot;]</td></tr></tbody></table></div><div class="scroll"><table><thead><tr><th>הזדמנות</th><th>שלב נטען</th><th>שלב עם ראיות</th><th>מצב</th><th>סיכונים למניה</th></tr></thead><tbody><tr><td>שירות חדש בדוי</td><td>התרחבות</td><td>לקוחות משלמים</td><td>השלב הנטען טרם הוכח</td><td>[&quot;צורך בגיוס והנפקה במחיר נמוך&quot;]</td></tr></tbody></table></div></section><section><h2>6 · חולשה זמנית או פגיעה מבנית?</h2><h3>השבתת מפעל בדויה שהסתיימה</h3><p>יש ראיות לחולשה זמנית</p><div class="scroll"><table><thead><tr><th>טענת ההנהלה</th><th>השפעה על מזומן</th><th>הישנות</th><th>מקורות</th></tr></thead><tbody><tr><td>אירוע מבודד</td><td>delayed</td><td>isolated</td><td>[&quot;demo-fin&quot;]</td></tr></tbody></table></div><div class="scroll"><table><thead><tr><th>טענה</th><th>תפקיד</th><th>מצב</th><th>מקורות</th></tr></thead><tbody><tr><td>ראיית הדגמה בדויה</td><td>supports_temporary</td><td>נתמך לפי בדיקת האנליסט</td><td>[&quot;demo-fin&quot;]</td></tr><tr><td>ראיית הדגמה בדויה</td><td>recovery</td><td>נתמך לפי בדיקת האנליסט</td><td>[&quot;demo-fin&quot;]</td></tr><tr><td>ראיית הדגמה בדויה</td><td>attribution</td><td>נתמך לפי בדיקת האנליסט</td><td>[&quot;demo-fin&quot;]</td></tr></tbody></table></div><details><summary>כימות ההשפעה והחלטות הנרמול</summary><pre dir="ltr">[
+  {
+    &quot;source_ids&quot;: [
+      &quot;demo-fin&quot;
+    ],
+    &quot;reviewed_at&quot;: &quot;2026-09-26&quot;,
+    &quot;id&quot;: &quot;plant-cost&quot;,
+    &quot;metric&quot;: &quot;ebit&quot;,
+    &quot;period_end&quot;: &quot;2025-12-31&quot;,
+    &quot;reported_effect&quot;: -3000000,
+    &quot;classification&quot;: &quot;booked_exceptional&quot;,
+    &quot;measurement&quot;: &quot;disclosed&quot;,
+    &quot;review_status&quot;: &quot;supported&quot;,
+    &quot;adjustment&quot;: 3000000.0,
+    &quot;accepted&quot;: true,
+    &quot;reason&quot;: null
+  }
+]</pre></details></section><section><h2>7 · מדווח לעומת מנורמל</h2><div class="scroll"><table><thead><tr><th>סוף תקופה</th><th>מדד</th><th>מדווח</th><th>התאמות</th><th>מנורמל</th></tr></thead><tbody><tr><td>2025-12-31</td><td>רווח תפעולי</td><td>-10,000,000</td><td>[{&quot;event_id&quot;: &quot;plant&quot;, &quot;impact_id&quot;: &quot;plant-cost&quot;, &quot;amount&quot;: 3000000.0, &quot;accepted&quot;: true}]</td><td>-7,000,000</td></tr></tbody></table></div><p>הנרמול אינו מחליף את הדיווח המקורי ואינו מוזן אוטומטית לתחזית.</p><div class="scroll"><table><thead><tr><th>סוף תקופה</th><th>צמיחת הכנסות</th><th>שיעור רווח תפעולי</th><th>תזרים חופשי מדווח</th><th>SBC להכנסות</th><th>מקורות</th></tr></thead><tbody><tr><td>2024-12-31</td><td>לא זמין</td><td>-0.4</td><td>-22,000,000</td><td>0.1667</td><td>[&quot;demo-fin&quot;]</td></tr><tr><td>2025-12-31</td><td>0.6667</td><td>-0.2</td><td>-24,000,000</td><td>0.1</td><td>[&quot;demo-fin&quot;]</td></tr></tbody></table></div><p class="muted">יחסים מוצגים כשבר עשרוני: 0.10 = 10%. סכומים ביחידות מטבע מלאות.</p></section><section><h2>8 · שווי, תרחישים ורגישות</h2><h3>bear</h3><p>Synthetic bear case; growth and margins are assumptions; future SBC included in margins. Financing not included.</p><p class="value">0.3131 USD למניה</p><div class="scroll"><table><thead><tr><th>wacc</th><th>value_per_share</th></tr></thead><tbody><tr><td>0.13</td><td>0.642</td></tr><tr><td>0.15</td><td>0.3131</td></tr><tr><td>0.17</td><td>0.0873</td></tr></tbody></table></div><details><summary>תחזית וגשר לשווי ההון</summary><pre dir="ltr">{
+  &quot;operating_value&quot;: 11262569.896601032,
+  &quot;equity_value&quot;: 6262569.8966010325,
+  &quot;value_per_share&quot;: 0.3131284948300516,
+  &quot;raw_equity_negative&quot;: false,
+  &quot;terminal_pv&quot;: 22876208.601378933,
+  &quot;terminal_fraction&quot;: 2.0311712878499266,
+  &quot;forecast&quot;: [
+    {
+      &quot;year&quot;: 1,
+      &quot;revenue&quot;: 55000000.00000001,
+      &quot;ebit&quot;: -3080000.000000001,
+      &quot;nopat&quot;: -3080000.000000001,
+      &quot;reinvestment&quot;: 4500000.000000004,
+      &quot;fcff&quot;: -7580000.000000005
+    },
+    {
+      &quot;year&quot;: 2,
+      &quot;revenue&quot;: 60060000.000000015,
+      &quot;ebit&quot;: -720720.0000000008,
+      &quot;nopat&quot;: -720720.0000000008,
+      &quot;reinvestment&quot;: 4530000.000000004,
+      &quot;fcff&quot;: -5250720.000000005
+    },
+    {
+      &quot;year&quot;: 3,
+      &quot;revenue&quot;: 65105040.00000002,
+      &quot;ebit&quot;: 2083361.2800000007,
+      &quot;nopat&quot;: 1562520.9600000004,
+      &quot;reinvestment&quot;: 4522520.000000004,
+      &quot;fcff&quot;: -2959999.0400000033
+    },
+    {
+      &quot;year&quot;: 4,
+      &quot;revenue&quot;: 70053023.04000002,
+      &quot;ebit&quot;: 5324029.7510400005,
+      &quot;nopat&quot;: 3993022.3132800004,
+      &quot;reinvestment&quot;: 4473991.52,
+      &quot;fcff&quot;: -480969.2067199992
+    },
+    {
+      &quot;year&quot;: 5,
+      &quot;revenue&quot;: 74816628.60672003,
+      &quot;ebit&quot;: 8977995.432806406,
+      &quot;nopat&quot;: 6733496.574604805,
+      &quot;reinvestment&quot;: 4381802.783360004,
+      &quot;fcff&quot;: 2351693.7912448
+    }
+  ],
+  &quot;equity_bridge&quot;: {
+    &quot;excess_cash&quot;: 10000000.0,
+    &quot;debt&quot;: 15000000.0,
+    &quot;other_claims&quot;: 0.0,
+    &quot;share_equivalents&quot;: 20000000.0
+  },
+  &quot;name&quot;: &quot;bear&quot;,
+  &quot;rationale&quot;: &quot;Synthetic bear case; growth and margins are assumptions; future SBC included in margins. Financing not included.&quot;,
+  &quot;sensitivity&quot;: [
+    {
+      &quot;wacc&quot;: 0.13,
+      &quot;value_per_share&quot;: 0.6420204714133692
+    },
+    {
+      &quot;wacc&quot;: 0.15,
+      &quot;value_per_share&quot;: 0.3131284948300516
+    },
+    {
+      &quot;wacc&quot;: 0.16999999999999998,
+      &quot;value_per_share&quot;: 0.08727237795014604
+    }
+  ],
+  &quot;source_ids&quot;: [
+    &quot;demo-model&quot;
+  ],
+  &quot;gap_vs_quote&quot;: -0.9739059587641624,
+  &quot;reverse_dcf&quot;: {
+    &quot;status&quot;: &quot;no_bracket&quot;,
+    &quot;growth&quot;: null,
+    &quot;bounds&quot;: [
+      -0.2,
+      0.8
+    ]
+  }
+}</pre></details><h3>base</h3><p>Synthetic base case; growth and margins are assumptions; future SBC included in margins. Financing not included.</p><p class="value">4.6503 USD למניה</p><div class="scroll"><table><thead><tr><th>wacc</th><th>value_per_share</th></tr></thead><tbody><tr><td>0.1</td><td>6.7597</td></tr><tr><td>0.12</td><td>4.6503</td></tr><tr><td>0.14</td><td>3.3178</td></tr></tbody></table></div><details><summary>תחזית וגשר לשווי ההון</summary><pre dir="ltr">{
+  &quot;operating_value&quot;: 98005080.59412274,
+  &quot;equity_value&quot;: 93005080.59412274,
+  &quot;value_per_share&quot;: 4.6502540297061365,
+  &quot;raw_equity_negative&quot;: false,
+  &quot;terminal_pv&quot;: 109022507.66258952,
+  &quot;terminal_fraction&quot;: 1.1124168971820374,
+  &quot;forecast&quot;: [
+    {
+      &quot;year&quot;: 1,
+      &quot;revenue&quot;: 62500000.0,
+      &quot;ebit&quot;: -2250000.0000000005,
+      &quot;nopat&quot;: -2250000.0000000005,
+      &quot;reinvestment&quot;: 8250000.0,
+      &quot;fcff&quot;: -10500000.0
+    },
+    {
+      &quot;year&quot;: 2,
+      &quot;revenue&quot;: 76875000.0,
+      &quot;ebit&quot;: 2152500.0,
+      &quot;nopat&quot;: 1614375.0,
+      &quot;reinvestment&quot;: 9187500.0,
+      &quot;fcff&quot;: -7573125.0
+    },
+    {
+      &quot;year&quot;: 3,
+      &quot;revenue&quot;: 93018750.0,
+      &quot;ebit&quot;: 8557725.0,
+      &quot;nopat&quot;: 6418293.75,
+      &quot;reinvestment&quot;: 10071875.0,
+      &quot;fcff&quot;: -3653581.25
+    },
+    {
+      &quot;year&quot;: 4,
+      &quot;revenue&quot;: 110692312.5,
+      &quot;ebit&quot;: 17268000.75,
+      &quot;nopat&quot;: 12951000.5625,
+      &quot;reinvestment&quot;: 10836781.25,
+      &quot;fcff&quot;: 2114219.3125
+    },
+    {
+      &quot;year&quot;: 5,
+      &quot;revenue&quot;: 129510005.62499999,
+      &quot;ebit&quot;: 28492201.237499997,
+      &quot;nopat&quot;: 21369150.928124998,
+      &quot;reinvestment&quot;: 11408846.562499993,
+      &quot;fcff&quot;: 9960304.365625005
+    }
+  ],
+  &quot;equity_bridge&quot;: {
+    &quot;excess_cash&quot;: 10000000.0,
+    &quot;debt&quot;: 15000000.0,
+    &quot;other_claims&quot;: 0.0,
+    &quot;share_equivalents&quot;: 20000000.0
+  },
+  &quot;name&quot;: &quot;base&quot;,
+  &quot;rationale&quot;: &quot;Synthetic base case; growth and margins are assumptions; future SBC included in margins. Financing not included.&quot;,
+  &quot;sensitivity&quot;: [
+    {
+      &quot;wacc&quot;: 0.09999999999999999,
+      &quot;value_per_share&quot;: 6.7596776329295505
+    },
+    {
+      &quot;wacc&quot;: 0.12,
+      &quot;value_per_share&quot;: 4.6502540297061365
+    },
+    {
+      &quot;wacc&quot;: 0.13999999999999999,
+      &quot;value_per_share&quot;: 3.317763135884473
+    }
+  ],
+  &quot;source_ids&quot;: [
+    &quot;demo-model&quot;
+  ],
+  &quot;gap_vs_quote&quot;: -0.612478830857822,
+  &quot;reverse_dcf&quot;: {
+    &quot;status&quot;: &quot;solved&quot;,
+    &quot;growth&quot;: 0.47475238825935995,
+    &quot;bounds&quot;: [
+      -0.2,
+      0.8
+    ],
+    &quot;reconstructed_price&quot;: 11.999999999999996,
+    &quot;limitation&quot;: &quot;Constant growth; reinvestment follows revenue through sales-to-capital; margins and WACC fixed; financing separate&quot;
+  }
+}</pre></details><h3>bull</h3><p>Synthetic bull case; growth and margins are assumptions; future SBC included in margins. Financing not included.</p><p class="value">13.6686 USD למניה</p><div class="scroll"><table><thead><tr><th>wacc</th><th>value_per_share</th></tr></thead><tbody><tr><td>0.09</td><td>19.8648</td></tr><tr><td>0.11</td><td>13.6686</td></tr><tr><td>0.13</td><td>9.9347</td></tr></tbody></table></div><details><summary>תחזית וגשר לשווי ההון</summary><pre dir="ltr">{
+  &quot;operating_value&quot;: 278372763.7671016,
+  &quot;equity_value&quot;: 273372763.7671016,
+  &quot;value_per_share&quot;: 13.668638188355079,
+  &quot;raw_equity_negative&quot;: false,
+  &quot;terminal_pv&quot;: 284738777.46866393,
+  &quot;terminal_fraction&quot;: 1.022868665796947,
+  &quot;forecast&quot;: [
+    {
+      &quot;year&quot;: 1,
+      &quot;revenue&quot;: 70000000.0,
+      &quot;ebit&quot;: -1400000.0000000002,
+      &quot;nopat&quot;: -1400000.0000000002,
+      &quot;reinvestment&quot;: 12000000.0,
+      &quot;fcff&quot;: -13400000.0
+    },
+    {
+      &quot;year&quot;: 2,
+      &quot;revenue&quot;: 95760000.0,
+      &quot;ebit&quot;: 5745600.0,
+      &quot;nopat&quot;: 4309200.0,
+      &quot;reinvestment&quot;: 14880000.0,
+      &quot;fcff&quot;: -10570800.0
+    },
+    {
+      &quot;year&quot;: 3,
+      &quot;revenue&quot;: 127935360.0,
+      &quot;ebit&quot;: 17910950.400000006,
+      &quot;nopat&quot;: 13433212.800000004,
+      &quot;reinvestment&quot;: 18087680.0,
+      &quot;fcff&quot;: -4654467.1999999955
+    },
+    {
+      &quot;year&quot;: 4,
+      &quot;revenue&quot;: 166827709.44,
+      &quot;ebit&quot;: 36702096.076799996,
+      &quot;nopat&quot;: 27526572.0576,
+      &quot;reinvestment&quot;: 21446174.72,
+      &quot;fcff&quot;: 6080397.3376
+    },
+    {
+      &quot;year&quot;: 5,
+      &quot;revenue&quot;: 212204846.40768,
+      &quot;ebit&quot;: 63661453.92230401,
+      &quot;nopat&quot;: 47746090.44172801,
+      &quot;reinvestment&quot;: 24688568.483840004,
+      &quot;fcff&quot;: 23057521.957888007
+    }
+  ],
+  &quot;equity_bridge&quot;: {
+    &quot;excess_cash&quot;: 10000000.0,
+    &quot;debt&quot;: 15000000.0,
+    &quot;other_claims&quot;: 0.0,
+    &quot;share_equivalents&quot;: 20000000.0
+  },
+  &quot;name&quot;: &quot;bull&quot;,
+  &quot;rationale&quot;: &quot;Synthetic bull case; growth and margins are assumptions; future SBC included in margins. Financing not included.&quot;,
+  &quot;sensitivity&quot;: [
+    {
+      &quot;wacc&quot;: 0.09,
+      &quot;value_per_share&quot;: 19.86482705798827
+    },
+    {
+      &quot;wacc&quot;: 0.11,
+      &quot;value_per_share&quot;: 13.668638188355079
+    },
+    {
+      &quot;wacc&quot;: 0.13,
+      &quot;value_per_share&quot;: 9.934749520302871
+    }
+  ],
+  &quot;source_ids&quot;: [
+    &quot;demo-model&quot;
+  ],
+  &quot;gap_vs_quote&quot;: 0.1390531823629233,
+  &quot;reverse_dcf&quot;: {
+    &quot;status&quot;: &quot;solved&quot;,
+    &quot;growth&quot;: 0.30015259760962965,
+    &quot;bounds&quot;: [
+      -0.2,
+      0.8
+    ],
+    &quot;reconstructed_price&quot;: 11.999999999999995,
+    &quot;limitation&quot;: &quot;Constant growth; reinvestment follows revenue through sales-to-capital; margins and WACC fixed; financing separate&quot;
+  }
+}</pre></details><h3>צמיחה עם גיוס היפותטי</h3><p>תרחיש סינתטי, לא תחזית לחברה אמיתית</p><div class="scroll"><table><thead><tr><th>issue_price_factor</th><th>status</th><th>value_per_initial_share</th></tr></thead><tbody><tr><td>0.5</td><td>מסלול המימון מכסה את התרחיש</td><td>5.3317</td></tr><tr><td>1</td><td>מסלול המימון מכסה את התרחיש</td><td>6.5621</td></tr><tr><td>1.5</td><td>מסלול המימון מכסה את התרחיש</td><td>7.1089</td></tr></tbody></table></div><p>המודלים מותנים בהנחות; איכות העסק לבדה אינה מעידה על מחיר אטרקטיבי.</p></section><section><h2>9 · מה המחיר דורש?</h2><div class="scroll"><table><thead><tr><th>תרחיש</th><th>תוצאה</th></tr></thead><tbody><tr><td>bear</td><td>{&quot;status&quot;: &quot;no_bracket&quot;, &quot;growth&quot;: null, &quot;bounds&quot;: [-0.2, 0.8]}</td></tr><tr><td>base</td><td>{&quot;status&quot;: &quot;solved&quot;, &quot;growth&quot;: 0.47475238825935995, &quot;bounds&quot;: [-0.2, 0.8], &quot;reconstructed_price&quot;: 11.999999999999996, &quot;limitation&quot;: &quot;Constant growth; reinvestment follows revenue through sales-to-capital; margins and WACC fixed; financing separate&quot;}</td></tr><tr><td>bull</td><td>{&quot;status&quot;: &quot;solved&quot;, &quot;growth&quot;: 0.30015259760962965, &quot;bounds&quot;: [-0.2, 0.8], &quot;reconstructed_price&quot;: 11.999999999999995, &quot;limitation&quot;: &quot;Constant growth; reinvestment follows revenue through sales-to-capital; margins and WACC fixed; financing separate&quot;}</td></tr></tbody></table></div><details><summary>בדיקת חלון תגובת השוק</summary><pre dir="ltr">{
+  &quot;status&quot;: &quot;not_established&quot;,
+  &quot;reason&quot;: &quot;No matched event-window market data&quot;
+}</pre></details><p>Reverse DCF הוא פתרון תחת הנחות, לא זיהוי ודאי של קונצנזוס השוק. בלי מחיר מתוארך אין מסקנת תמחור.</p></section><section><h2>10 · הטיעון הנגדי</h2><p class="muted">לא סופק מידע.</p><p>נדרשת גם בדיקת נגד עצמאית; הרשימה מציגה רק ראיות שהוזנו.</p></section><section><h2>11 · מה יפריך את התזה?</h2><ul><li>אובדן הזמנות</li></ul></section><section><h2>12 · אבני דרך ובדיקות המשך</h2><div class="scroll"><table><thead><tr><th>תיאור</th><th>מועד</th><th>הצלחה</th><th>כישלון</th><th>עלות</th></tr></thead><tbody><tr><td>Commission first commercial installation</td><td>2027-03-31</td><td>Customer acceptance and paid deployment at positive gross margin</td><td>Delay beyond two quarters or project budget overrun above 30%</td><td>לא זמין</td></tr><tr><td>שירות חדש בדוי</td><td>2027-06-30</td><td>הזמנות חוזרות</td><td>אי חידוש</td><td>10,000,000</td></tr></tbody></table></div><ul><li>מסירות חוזרות לקצב רגיל</li></ul></section><section><h2>13 · שינויים מאז המחקר הקודם</h2><p>הדוח הזה הוא תמונת מצב. להשוואה שמורה יש להפעיל את פקודת compare עם מזהי שתי ריצות; אין שינוי מוסק בלי ריצה קודמת.</p><details><summary>תזה שסופקה — פרשנות של המשתמש</summary><pre dir="ltr">{
+  &quot;summary&quot;: &quot;An emerging infrastructure provider may convert deployments into recurring revenue. This is a fictional demonstration.&quot;,
+  &quot;bear_case&quot;: &quot;Customer concentration and construction delays could require new equity.&quot;,
+  &quot;falsifier&quot;: &quot;Paid deployments do not scale or unit gross margins remain negative.&quot;
+}</pre></details></section><section><h2>14 · מקורות ומגבלות</h2><div class="scroll"><table><thead><tr><th>מזהה</th><th>כותרת</th><th>סוג</th><th>זמין מתאריך</th><th>כתובת או מיקום</th></tr></thead><tbody><tr><td>demo-fin</td><td>Fictional annual statements</td><td>synthetic</td><td>2026-03-01</td><td>examples/emerging_demo.json</td></tr><tr><td>demo-adoption</td><td>Fictional customer deployment review</td><td>synthetic</td><td>2026-08-01</td><td>synthetic://deployment</td></tr><tr><td>demo-model</td><td>Analyst assumptions — synthetic, not consensus</td><td>synthetic</td><td>2026-09-26</td><td>examples/emerging_demo.json</td></tr></tbody></table></div><ul><li>Annual financial input; no automatic investment recommendation</li><li>Scenario assumptions are user supplied, not predictions or analyst consensus</li><li>No sector-specific valuation for banks, insurers, REITs or pre-revenue biotech</li><li>Legacy DCF financing remains separate; ownership scenarios model annual financing and dilution explicitly</li><li>No calibrated success probabilities or target-date price forecast</li></ul></section></main></body></html>

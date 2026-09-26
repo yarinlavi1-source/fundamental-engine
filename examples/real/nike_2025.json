@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "as_of": "2025-06-26",
+  "currency": "USD",
+  "unit": "absolute",
+  "is_demo": false,
+  "company": {
+    "id": "nke",
+    "name": "NIKE",
+    "ticker": "NKE",
+    "currency": "USD",
+    "sector": "nonfinancial"
+  },
+  "sources": [
+    {
+      "id": "nke-release",
+      "title": "NIKE annual results release",
+      "locator": "https://investors.nike.com/investors/news-events-and-reports/investor-news/investor-news-details/2025/NIKE-Inc--Reports-Fiscal-2025-Fourth-Quarter-and-Full-Year-Results/default.aspx",
+      "kind": "earnings_release",
+      "published_at": "2025-06-26",
+      "available_at": "2025-06-26",
+      "origin_id": "NKE-issuer",
+      "retrieved_at": "2026-09-26",
+      "capture_method": "Manually transcribed from issuer website; tables in millions multiplied by 1,000,000",
+      "review_mode": "Retrospective date-level reconstruction, not a contemporaneous archived research record"
+    }
+  ],
+  "financials": [
+    {
+      "start": "2023-06-01",
+      "end": "2024-05-31",
+      "available_at": "2025-06-26",
+      "currency": "USD",
+      "basis": "GAAP",
+      "source_ids": [
+        "nke-release"
+      ],
+      "revenue": 51362000000,
+      "gross_profit": 22887000000,
+      "net_income": 5700000000
+    },
+    {
+      "start": "2024-06-01",
+      "end": "2025-05-31",
+      "available_at": "2025-06-26",
+      "currency": "USD",
+      "basis": "GAAP",
+      "source_ids": [
+        "nke-release"
+      ],
+      "revenue": 46309000000,
+      "gross_profit": 19790000000,
+      "net_income": 3219000000
+    }
+  ],
+  "events": [
+    {
+      "source_ids": [
+        "nke-release"
+      ],
+      "reviewed_at": "2025-06-26",
+      "id": "turnaround",
+      "observed_at": "2025-05-31",
+      "description": "ירידה במכירות ובמרווחים במהלך שינוי עסקי",
+      "cause": "demand",
+      "management_claim": "ההנהלה מצפה להתמתנות הלחצים עם ביצוע תוכנית השיפור",
+      "recurrence": "unknown",
+      "cash_effect": "lost",
+      "evidence": [
+        {
+          "source_ids": [
+            "nke-release"
+          ],
+          "reviewed_at": "2025-06-26",
+          "role": "supports_temporary",
+          "claim": "תחזית ההנהלה לשיפור היא ציפייה, לא התאוששות מוכחת",
+          "status": "unverified"
+        },
+        {
+          "source_ids": [
+            "nke-release"
+          ],
+          "reviewed_at": "2025-06-26",
+          "role": "supports_structural",
+          "claim": "ירידה בערוצים ובאזורים לצד לחץ הנחות מחייבת בדיקת ביקוש, מעבר למטבע",
+          "status": "supported"
+        }
+      ],
+      "impacts": [],
+      "recovery_requirements": [
+        "שיפור מכירות ומרווחים בלי תלות בהנחות מוגברות"
+      ],
+      "falsifiers": [
+        "חולשה מתמשכת במכירות ובמחיר הממומש"
+      ]
+    }
+  ],
+  "signals": [],
+  "thesis": {
+    "scope": "Historical reconstruction, no live quote or investment verdict. Unknown financial fields remain missing."
+  },
+  "business": {
+    "source_ids": [
+      "nke-release"
+    ],
+    "reviewed_at": "2025-06-26",
+    "description": "מוצרי ספורט הנמכרים במכירה ישירה ובסיטונאות.",
+    "claims": [
+      {
+        "source_ids": [
+          "nke-release"
+        ],
+        "reviewed_at": "2025-06-26",
+        "kind": "value_chain",
+        "claim": "תמהיל ערוצי המכירה משפיע על המרווח",
+        "status": "supported"
+      }
+    ]
+  }
+}

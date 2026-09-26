@@ -13,3 +13,7 @@ jobs:
           python-version: ${{ matrix.python }}
       - run: python -m unittest discover -s tests -v
       - run: python -m fundamental_engine analyze examples/emerging_demo.json --out runs/smoke
+      - run: python -m fundamental_engine analyze examples/business_financing_demo.json --out runs/integration
+      - run: python -m fundamental_engine analyze examples/real/meta_2022.json --out runs/real
+      - run: python -m fundamental_engine analyze examples/real/boeing_2024.json --out runs/real
+      - run: python -m fundamental_engine analyze examples/real/nike_2025.json --out runs/real
