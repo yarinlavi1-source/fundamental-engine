@@ -1,5 +1,5 @@
 {
-  "version": "0.3.0",
+  "version": "0.4.0",
   "packets": [
     {
       "id": "operating_system",
@@ -115,6 +115,16 @@
       "id": "dossier_contract",
       "title": "Dossier input contract",
       "file": "protocols/dossier_contract.md"
+    },
+    {
+      "id": "annual_valuation",
+      "title": "Annual fair-value underwriting and model routing",
+      "file": "protocols/annual_valuation.md"
+    },
+    {
+      "id": "valuation_research",
+      "title": "Primary research, method decisions and boundaries",
+      "file": "protocols/valuation_research.md"
     }
   ]
 }

@@ -93,3 +93,15 @@ loading every packet and running a dossier review from an extracted installed
 package in a separate directory. Local subprocess tests also exercise the full
 review -> checkpoint -> update -> compare -> resume cycle. These are actual local
 protocol/runtime tests, not an assertion about the user's live Claude session.
+
+## v0.4 valuation tools
+
+- `value_company({case})`: execute a valuation_version=1 case and return annual values.
+- `valuation_diagnostics({case})`: operating-case sensitivity, shocks and reverse price.
+- `asset_replacement_schedule({cohorts: {cohorts: [...], boundaries: [...]}})`:
+  explicit asset lives/depreciation/replacement cash; see valuation_tools.py.
+- `forecast_score({evaluation: {observations: [...]}})`: dated ex-post operating
+  forecast errors and interval coverage; no win-rate interpretation.
+
+All four are read-only calculations and do not fetch, execute source instructions,
+write to GitHub, or trade. See docs/ANNUAL_VALUATION.md for the case contract.

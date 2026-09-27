@@ -1,0 +1,708 @@
+{
+  "valuation_version": 1,
+  "is_demo": true,
+  "as_of": "2026-09-27",
+  "company_id": "fictional-test",
+  "ticker": "FICTIONAL",
+  "currency": "USD",
+  "unit": "absolute",
+  "archetype": "infrastructure",
+  "method": "operating",
+  "quote": {
+    "price": 20,
+    "currency": "USD",
+    "as_of": "2026-09-27",
+    "source_ids": [
+      "synthetic"
+    ]
+  },
+  "sources": [
+    {
+      "id": "synthetic",
+      "title": "Fictional arithmetic fixture",
+      "url": "synthetic://fixture",
+      "kind": "synthetic",
+      "published_at": "2026-09-27",
+      "available_at": "2026-09-27"
+    }
+  ],
+  "assumptions": [
+    {
+      "id": "demo",
+      "kind": "analyst",
+      "as_of": "2026-09-27",
+      "review_status": "reviewed",
+      "source_ids": [
+        "synthetic"
+      ],
+      "rationale": "Synthetic demonstration, not calibrated.",
+      "falsifier": "Never use as an actual company valuation."
+    }
+  ],
+  "opening": {
+    "as_of": "2026-09-27",
+    "assumption_ids": [
+      "demo"
+    ],
+    "unrestricted_cash": 1000000000.0,
+    "debt": 300000000.0,
+    "shares": 100000000.0,
+    "deferred_revenue": 100000000.0,
+    "tax_loss_carryforward": 50000000.0
+  },
+  "report_dates": [
+    "2026-09-27",
+    "2026-12-31",
+    "2027-12-31",
+    "2028-12-31",
+    "2029-12-31",
+    "2030-12-31"
+  ],
+  "scenarios": [
+    {
+      "name": "bear",
+      "thesis": "Fictional bear case; no probability estimate.",
+      "assumption_ids": [
+        "demo"
+      ],
+      "cost_of_equity": 0.18,
+      "sbc_policy": "explicit_shares",
+      "periods": [
+        {
+          "start": "2026-09-27",
+          "end": "2026-12-31",
+          "assumption_ids": [
+            "demo"
+          ],
+          "segments": [
+            {
+              "name": "Compute",
+              "driver": "capacity",
+              "average_units": 700.0,
+              "annual_revenue_per_unit": 1000000.0,
+              "utilization": 0.8,
+              "cash_cost_ratio": 0.42
+            }
+          ],
+          "fixed_cash_costs": 40000000.0,
+          "sbc_expense": 5000000.0,
+          "sbc_shares": 250000,
+          "depreciation": 10000000.0,
+          "debt_draw": 200000000.0,
+          "debt_repayment": 0,
+          "interest_rate": 0.08,
+          "nol_usage_limit": 0.8,
+          "tax_rate": 0.25,
+          "customer_prepayments": 100000000.0,
+          "revenue_from_prepayments": 20000000.0,
+          "change_working_capital_excluding_deferred": 5000000.0,
+          "maintenance_capex": 10000000.0,
+          "growth_capex": 400000000.0,
+          "equity_proceeds": 200000000.0,
+          "equity_issue_price": 20,
+          "equity_fee_rate": 0.02,
+          "debt_fees": 4000000.0,
+          "financing_status": "assumed",
+          "minimum_cash": 100000000.0,
+          "payout_fraction": 0
+        },
+        {
+          "start": "2026-12-31",
+          "end": "2027-12-31",
+          "assumption_ids": [
+            "demo"
+          ],
+          "segments": [
+            {
+              "name": "Compute",
+              "driver": "capacity",
+              "average_units": 1120.0,
+              "annual_revenue_per_unit": 1000000.0,
+              "utilization": 0.8,
+              "cash_cost_ratio": 0.42
+            }
+          ],
+          "fixed_cash_costs": 140000000.0,
+          "sbc_expense": 20000000.0,
+          "sbc_shares": 1000000.0,
+          "depreciation": 90000000.0,
+          "debt_draw": 0,
+          "debt_repayment": 0,
+          "interest_rate": 0.08,
+          "nol_usage_limit": 0.8,
+          "tax_rate": 0.25,
+          "customer_prepayments": 0,
+          "revenue_from_prepayments": 45000000.0,
+          "change_working_capital_excluding_deferred": 20000000.0,
+          "maintenance_capex": 100000000.0,
+          "growth_capex": 500000000.0,
+          "equity_proceeds": 0,
+          "equity_issue_price": 20,
+          "equity_fee_rate": 0.02,
+          "debt_fees": 0,
+          "financing_status": "none",
+          "minimum_cash": 100000000.0,
+          "payout_fraction": 0
+        },
+        {
+          "start": "2027-12-31",
+          "end": "2028-12-31",
+          "assumption_ids": [
+            "demo"
+          ],
+          "segments": [
+            {
+              "name": "Compute",
+              "driver": "capacity",
+              "average_units": 1540.0,
+              "annual_revenue_per_unit": 1000000.0,
+              "utilization": 0.8,
+              "cash_cost_ratio": 0.42
+            }
+          ],
+          "fixed_cash_costs": 140000000.0,
+          "sbc_expense": 20000000.0,
+          "sbc_shares": 1000000.0,
+          "depreciation": 90000000.0,
+          "debt_draw": 0,
+          "debt_repayment": 0,
+          "interest_rate": 0.08,
+          "nol_usage_limit": 0.8,
+          "tax_rate": 0.25,
+          "customer_prepayments": 0,
+          "revenue_from_prepayments": 45000000.0,
+          "change_working_capital_excluding_deferred": 20000000.0,
+          "maintenance_capex": 100000000.0,
+          "growth_capex": 500000000.0,
+          "equity_proceeds": 0,
+          "equity_issue_price": 20,
+          "equity_fee_rate": 0.02,
+          "debt_fees": 0,
+          "financing_status": "none",
+          "minimum_cash": 100000000.0,
+          "payout_fraction": 0
+        },
+        {
+          "start": "2028-12-31",
+          "end": "2029-12-31",
+          "assumption_ids": [
+            "demo"
+          ],
+          "segments": [
+            {
+              "name": "Compute",
+              "driver": "capacity",
+              "average_units": 1959.9999999999998,
+              "annual_revenue_per_unit": 1000000.0,
+              "utilization": 0.8,
+              "cash_cost_ratio": 0.42
+            }
+          ],
+          "fixed_cash_costs": 140000000.0,
+          "sbc_expense": 20000000.0,
+          "sbc_shares": 1000000.0,
+          "depreciation": 90000000.0,
+          "debt_draw": 0,
+          "debt_repayment": 100000000.0,
+          "interest_rate": 0.08,
+          "nol_usage_limit": 0.8,
+          "tax_rate": 0.25,
+          "customer_prepayments": 0,
+          "revenue_from_prepayments": 45000000.0,
+          "change_working_capital_excluding_deferred": 20000000.0,
+          "maintenance_capex": 100000000.0,
+          "growth_capex": 150000000.0,
+          "equity_proceeds": 0,
+          "equity_issue_price": 20,
+          "equity_fee_rate": 0.02,
+          "debt_fees": 0,
+          "financing_status": "none",
+          "minimum_cash": 100000000.0,
+          "payout_fraction": 0.4
+        },
+        {
+          "start": "2029-12-31",
+          "end": "2030-12-31",
+          "assumption_ids": [
+            "demo"
+          ],
+          "segments": [
+            {
+              "name": "Compute",
+              "driver": "capacity",
+              "average_units": 2380.0,
+              "annual_revenue_per_unit": 1000000.0,
+              "utilization": 0.8,
+              "cash_cost_ratio": 0.42
+            }
+          ],
+          "fixed_cash_costs": 140000000.0,
+          "sbc_expense": 20000000.0,
+          "sbc_shares": 1000000.0,
+          "depreciation": 90000000.0,
+          "debt_draw": 0,
+          "debt_repayment": 100000000.0,
+          "interest_rate": 0.08,
+          "nol_usage_limit": 0.8,
+          "tax_rate": 0.25,
+          "customer_prepayments": 0,
+          "revenue_from_prepayments": 45000000.0,
+          "change_working_capital_excluding_deferred": 20000000.0,
+          "maintenance_capex": 100000000.0,
+          "growth_capex": 150000000.0,
+          "equity_proceeds": 0,
+          "equity_issue_price": 20,
+          "equity_fee_rate": 0.02,
+          "debt_fees": 0,
+          "financing_status": "none",
+          "minimum_cash": 100000000.0,
+          "payout_fraction": 0.4
+        }
+      ],
+      "terminal": {
+        "assumption_ids": [
+          "demo"
+        ],
+        "growth": 0.025,
+        "wacc": 0.13,
+        "roic": 0.15,
+        "operating_margin": 0.32,
+        "tax_rate": 0.25,
+        "sbc_in_margin": true,
+        "net_runoff_obligation": 0,
+        "other_claims": 0,
+        "working_capital_rationale": "No remaining advance balance; ongoing reinvestment through terminal ROIC."
+      }
+    },
+    {
+      "name": "base",
+      "thesis": "Fictional base case; no probability estimate.",
+      "assumption_ids": [
+        "demo"
+      ],
+      "cost_of_equity": 0.15,
+      "sbc_policy": "explicit_shares",
+      "periods": [
+        {
+          "start": "2026-09-27",
+          "end": "2026-12-31",
+          "assumption_ids": [
+            "demo"
+          ],
+          "segments": [
+            {
+              "name": "Compute",
+              "driver": "capacity",
+              "average_units": 1000.0,
+              "annual_revenue_per_unit": 1000000.0,
+              "utilization": 0.8,
+              "cash_cost_ratio": 0.42
+            }
+          ],
+          "fixed_cash_costs": 40000000.0,
+          "sbc_expense": 5000000.0,
+          "sbc_shares": 250000,
+          "depreciation": 10000000.0,
+          "debt_draw": 200000000.0,
+          "debt_repayment": 0,
+          "interest_rate": 0.08,
+          "nol_usage_limit": 0.8,
+          "tax_rate": 0.25,
+          "customer_prepayments": 100000000.0,
+          "revenue_from_prepayments": 20000000.0,
+          "change_working_capital_excluding_deferred": 5000000.0,
+          "maintenance_capex": 10000000.0,
+          "growth_capex": 400000000.0,
+          "equity_proceeds": 200000000.0,
+          "equity_issue_price": 20,
+          "equity_fee_rate": 0.02,
+          "debt_fees": 4000000.0,
+          "financing_status": "assumed",
+          "minimum_cash": 100000000.0,
+          "payout_fraction": 0
+        },
+        {
+          "start": "2026-12-31",
+          "end": "2027-12-31",
+          "assumption_ids": [
+            "demo"
+          ],
+          "segments": [
+            {
+              "name": "Compute",
+              "driver": "capacity",
+              "average_units": 1600.0,
+              "annual_revenue_per_unit": 1000000.0,
+              "utilization": 0.8,
+              "cash_cost_ratio": 0.42
+            }
+          ],
+          "fixed_cash_costs": 140000000.0,
+          "sbc_expense": 20000000.0,
+          "sbc_shares": 1000000.0,
+          "depreciation": 90000000.0,
+          "debt_draw": 0,
+          "debt_repayment": 0,
+          "interest_rate": 0.08,
+          "nol_usage_limit": 0.8,
+          "tax_rate": 0.25,
+          "customer_prepayments": 0,
+          "revenue_from_prepayments": 45000000.0,
+          "change_working_capital_excluding_deferred": 20000000.0,
+          "maintenance_capex": 100000000.0,
+          "growth_capex": 500000000.0,
+          "equity_proceeds": 0,
+          "equity_issue_price": 20,
+          "equity_fee_rate": 0.02,
+          "debt_fees": 0,
+          "financing_status": "none",
+          "minimum_cash": 100000000.0,
+          "payout_fraction": 0
+        },
+        {
+          "start": "2027-12-31",
+          "end": "2028-12-31",
+          "assumption_ids": [
+            "demo"
+          ],
+          "segments": [
+            {
+              "name": "Compute",
+              "driver": "capacity",
+              "average_units": 2200.0,
+              "annual_revenue_per_unit": 1000000.0,
+              "utilization": 0.8,
+              "cash_cost_ratio": 0.42
+            }
+          ],
+          "fixed_cash_costs": 140000000.0,
+          "sbc_expense": 20000000.0,
+          "sbc_shares": 1000000.0,
+          "depreciation": 90000000.0,
+          "debt_draw": 0,
+          "debt_repayment": 0,
+          "interest_rate": 0.08,
+          "nol_usage_limit": 0.8,
+          "tax_rate": 0.25,
+          "customer_prepayments": 0,
+          "revenue_from_prepayments": 45000000.0,
+          "change_working_capital_excluding_deferred": 20000000.0,
+          "maintenance_capex": 100000000.0,
+          "growth_capex": 500000000.0,
+          "equity_proceeds": 0,
+          "equity_issue_price": 20,
+          "equity_fee_rate": 0.02,
+          "debt_fees": 0,
+          "financing_status": "none",
+          "minimum_cash": 100000000.0,
+          "payout_fraction": 0
+        },
+        {
+          "start": "2028-12-31",
+          "end": "2029-12-31",
+          "assumption_ids": [
+            "demo"
+          ],
+          "segments": [
+            {
+              "name": "Compute",
+              "driver": "capacity",
+              "average_units": 2800.0,
+              "annual_revenue_per_unit": 1000000.0,
+              "utilization": 0.8,
+              "cash_cost_ratio": 0.42
+            }
+          ],
+          "fixed_cash_costs": 140000000.0,
+          "sbc_expense": 20000000.0,
+          "sbc_shares": 1000000.0,
+          "depreciation": 90000000.0,
+          "debt_draw": 0,
+          "debt_repayment": 100000000.0,
+          "interest_rate": 0.08,
+          "nol_usage_limit": 0.8,
+          "tax_rate": 0.25,
+          "customer_prepayments": 0,
+          "revenue_from_prepayments": 45000000.0,
+          "change_working_capital_excluding_deferred": 20000000.0,
+          "maintenance_capex": 100000000.0,
+          "growth_capex": 150000000.0,
+          "equity_proceeds": 0,
+          "equity_issue_price": 20,
+          "equity_fee_rate": 0.02,
+          "debt_fees": 0,
+          "financing_status": "none",
+          "minimum_cash": 100000000.0,
+          "payout_fraction": 0.4
+        },
+        {
+          "start": "2029-12-31",
+          "end": "2030-12-31",
+          "assumption_ids": [
+            "demo"
+          ],
+          "segments": [
+            {
+              "name": "Compute",
+              "driver": "capacity",
+              "average_units": 3400.0,
+              "annual_revenue_per_unit": 1000000.0,
+              "utilization": 0.8,
+              "cash_cost_ratio": 0.42
+            }
+          ],
+          "fixed_cash_costs": 140000000.0,
+          "sbc_expense": 20000000.0,
+          "sbc_shares": 1000000.0,
+          "depreciation": 90000000.0,
+          "debt_draw": 0,
+          "debt_repayment": 100000000.0,
+          "interest_rate": 0.08,
+          "nol_usage_limit": 0.8,
+          "tax_rate": 0.25,
+          "customer_prepayments": 0,
+          "revenue_from_prepayments": 45000000.0,
+          "change_working_capital_excluding_deferred": 20000000.0,
+          "maintenance_capex": 100000000.0,
+          "growth_capex": 150000000.0,
+          "equity_proceeds": 0,
+          "equity_issue_price": 20,
+          "equity_fee_rate": 0.02,
+          "debt_fees": 0,
+          "financing_status": "none",
+          "minimum_cash": 100000000.0,
+          "payout_fraction": 0.4
+        }
+      ],
+      "terminal": {
+        "assumption_ids": [
+          "demo"
+        ],
+        "growth": 0.025,
+        "wacc": 0.1,
+        "roic": 0.15,
+        "operating_margin": 0.32,
+        "tax_rate": 0.25,
+        "sbc_in_margin": true,
+        "net_runoff_obligation": 0,
+        "other_claims": 0,
+        "working_capital_rationale": "No remaining advance balance; ongoing reinvestment through terminal ROIC."
+      }
+    },
+    {
+      "name": "bull",
+      "thesis": "Fictional bull case; no probability estimate.",
+      "assumption_ids": [
+        "demo"
+      ],
+      "cost_of_equity": 0.12,
+      "sbc_policy": "explicit_shares",
+      "periods": [
+        {
+          "start": "2026-09-27",
+          "end": "2026-12-31",
+          "assumption_ids": [
+            "demo"
+          ],
+          "segments": [
+            {
+              "name": "Compute",
+              "driver": "capacity",
+              "average_units": 1300.0,
+              "annual_revenue_per_unit": 1000000.0,
+              "utilization": 0.8,
+              "cash_cost_ratio": 0.42
+            }
+          ],
+          "fixed_cash_costs": 40000000.0,
+          "sbc_expense": 5000000.0,
+          "sbc_shares": 250000,
+          "depreciation": 10000000.0,
+          "debt_draw": 200000000.0,
+          "debt_repayment": 0,
+          "interest_rate": 0.08,
+          "nol_usage_limit": 0.8,
+          "tax_rate": 0.25,
+          "customer_prepayments": 100000000.0,
+          "revenue_from_prepayments": 20000000.0,
+          "change_working_capital_excluding_deferred": 5000000.0,
+          "maintenance_capex": 10000000.0,
+          "growth_capex": 400000000.0,
+          "equity_proceeds": 200000000.0,
+          "equity_issue_price": 20,
+          "equity_fee_rate": 0.02,
+          "debt_fees": 4000000.0,
+          "financing_status": "assumed",
+          "minimum_cash": 100000000.0,
+          "payout_fraction": 0
+        },
+        {
+          "start": "2026-12-31",
+          "end": "2027-12-31",
+          "assumption_ids": [
+            "demo"
+          ],
+          "segments": [
+            {
+              "name": "Compute",
+              "driver": "capacity",
+              "average_units": 2080.0,
+              "annual_revenue_per_unit": 1000000.0,
+              "utilization": 0.8,
+              "cash_cost_ratio": 0.42
+            }
+          ],
+          "fixed_cash_costs": 140000000.0,
+          "sbc_expense": 20000000.0,
+          "sbc_shares": 1000000.0,
+          "depreciation": 90000000.0,
+          "debt_draw": 0,
+          "debt_repayment": 0,
+          "interest_rate": 0.08,
+          "nol_usage_limit": 0.8,
+          "tax_rate": 0.25,
+          "customer_prepayments": 0,
+          "revenue_from_prepayments": 45000000.0,
+          "change_working_capital_excluding_deferred": 20000000.0,
+          "maintenance_capex": 100000000.0,
+          "growth_capex": 500000000.0,
+          "equity_proceeds": 0,
+          "equity_issue_price": 20,
+          "equity_fee_rate": 0.02,
+          "debt_fees": 0,
+          "financing_status": "none",
+          "minimum_cash": 100000000.0,
+          "payout_fraction": 0
+        },
+        {
+          "start": "2027-12-31",
+          "end": "2028-12-31",
+          "assumption_ids": [
+            "demo"
+          ],
+          "segments": [
+            {
+              "name": "Compute",
+              "driver": "capacity",
+              "average_units": 2860.0,
+              "annual_revenue_per_unit": 1000000.0,
+              "utilization": 0.8,
+              "cash_cost_ratio": 0.42
+            }
+          ],
+          "fixed_cash_costs": 140000000.0,
+          "sbc_expense": 20000000.0,
+          "sbc_shares": 1000000.0,
+          "depreciation": 90000000.0,
+          "debt_draw": 0,
+          "debt_repayment": 0,
+          "interest_rate": 0.08,
+          "nol_usage_limit": 0.8,
+          "tax_rate": 0.25,
+          "customer_prepayments": 0,
+          "revenue_from_prepayments": 45000000.0,
+          "change_working_capital_excluding_deferred": 20000000.0,
+          "maintenance_capex": 100000000.0,
+          "growth_capex": 500000000.0,
+          "equity_proceeds": 0,
+          "equity_issue_price": 20,
+          "equity_fee_rate": 0.02,
+          "debt_fees": 0,
+          "financing_status": "none",
+          "minimum_cash": 100000000.0,
+          "payout_fraction": 0
+        },
+        {
+          "start": "2028-12-31",
+          "end": "2029-12-31",
+          "assumption_ids": [
+            "demo"
+          ],
+          "segments": [
+            {
+              "name": "Compute",
+              "driver": "capacity",
+              "average_units": 3640.0,
+              "annual_revenue_per_unit": 1000000.0,
+              "utilization": 0.8,
+              "cash_cost_ratio": 0.42
+            }
+          ],
+          "fixed_cash_costs": 140000000.0,
+          "sbc_expense": 20000000.0,
+          "sbc_shares": 1000000.0,
+          "depreciation": 90000000.0,
+          "debt_draw": 0,
+          "debt_repayment": 100000000.0,
+          "interest_rate": 0.08,
+          "nol_usage_limit": 0.8,
+          "tax_rate": 0.25,
+          "customer_prepayments": 0,
+          "revenue_from_prepayments": 45000000.0,
+          "change_working_capital_excluding_deferred": 20000000.0,
+          "maintenance_capex": 100000000.0,
+          "growth_capex": 150000000.0,
+          "equity_proceeds": 0,
+          "equity_issue_price": 20,
+          "equity_fee_rate": 0.02,
+          "debt_fees": 0,
+          "financing_status": "none",
+          "minimum_cash": 100000000.0,
+          "payout_fraction": 0.4
+        },
+        {
+          "start": "2029-12-31",
+          "end": "2030-12-31",
+          "assumption_ids": [
+            "demo"
+          ],
+          "segments": [
+            {
+              "name": "Compute",
+              "driver": "capacity",
+              "average_units": 4420.0,
+              "annual_revenue_per_unit": 1000000.0,
+              "utilization": 0.8,
+              "cash_cost_ratio": 0.42
+            }
+          ],
+          "fixed_cash_costs": 140000000.0,
+          "sbc_expense": 20000000.0,
+          "sbc_shares": 1000000.0,
+          "depreciation": 90000000.0,
+          "debt_draw": 0,
+          "debt_repayment": 100000000.0,
+          "interest_rate": 0.08,
+          "nol_usage_limit": 0.8,
+          "tax_rate": 0.25,
+          "customer_prepayments": 0,
+          "revenue_from_prepayments": 45000000.0,
+          "change_working_capital_excluding_deferred": 20000000.0,
+          "maintenance_capex": 100000000.0,
+          "growth_capex": 150000000.0,
+          "equity_proceeds": 0,
+          "equity_issue_price": 20,
+          "equity_fee_rate": 0.02,
+          "debt_fees": 0,
+          "financing_status": "none",
+          "minimum_cash": 100000000.0,
+          "payout_fraction": 0.4
+        }
+      ],
+      "terminal": {
+        "assumption_ids": [
+          "demo"
+        ],
+        "growth": 0.025,
+        "wacc": 0.07,
+        "roic": 0.15,
+        "operating_margin": 0.32,
+        "tax_rate": 0.25,
+        "sbc_in_margin": true,
+        "net_runoff_obligation": 0,
+        "other_claims": 0,
+        "working_capital_rationale": "No remaining advance balance; ongoing reinvestment through terminal ROIC."
+      }
+    }
+  ]
+}

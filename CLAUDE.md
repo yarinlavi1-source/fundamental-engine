@@ -35,3 +35,15 @@ Ready-for-synthesis does not establish forecast accuracy or investment merit.
 
 Developer workflow: run the full unittest suite after code changes. Packaged brain
 files must remain available after installation. Keep benchmark claims honest.
+
+## Annual valuation is a required output when the user asks for value
+
+Load annual_valuation and valuation_research. Build the economic forecast, then
+call value_company and valuation_diagnostics. Deliver today's value and each
+calendar year through 2030: bear/base/bull, fixed current quote and gap. Do not
+stop at a generic potential narrative, or substitute an arbitrary FCF/multiple
+sensitivity for an underwritten base case. Future values are dated conditional
+values, not predicted exchange prices. See docs/ANNUAL_VALUATION.md.
+Use annual_valuation_input in the dossier and valuation_basis.model=annual_path
+when selecting that executed current-date result. Specialist snapshots remain
+subject to explicit financing and economic underwriting; no automatic endorsement.

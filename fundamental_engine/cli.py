@@ -87,9 +87,31 @@ def main():
     d.add_argument("first")
     d.add_argument("second")
     d.add_argument("--db", default="runs/research.sqlite")
+    vt = subs.add_parser("value", help="Annual fair-value scenarios with dated funding and dilution")
+    vt.add_argument("input")
+    vt.add_argument("--out", default="runs/valuation")
+    vt.add_argument("--diagnostics", action="store_true")
     args = parser.parse_args()
     try:
-        if args.command in {"validate", "analyze"}:
+        if args.command == "value":
+            from .valuation import value_company, sensitivity
+            from .valuation_report import render_valuation
+            from .valuation_tools import stress_test, reverse_price
+            from hashlib import sha256
+            inputs = read_json(args.input)
+            result = value_company(inputs)
+            if args.diagnostics and inputs["method"] == "operating":
+                result["sensitivity"] = sensitivity(inputs)
+                result["stress_tests"] = stress_test(inputs)
+                result["reverse_price"] = reverse_price(inputs)
+            digest = sha256(json.dumps(inputs,sort_keys=True,allow_nan=False).encode()).hexdigest()[:16]
+            dest = Path(args.out) / digest
+            dest.mkdir(parents=True,exist_ok=True)
+            (dest / "input.json").write_text(json.dumps(inputs,ensure_ascii=False,indent=2,allow_nan=False),encoding="utf-8")
+            (dest / "valuation.json").write_text(json.dumps(result,ensure_ascii=False,indent=2,allow_nan=False),encoding="utf-8")
+            (dest / "valuation.html").write_text(render_valuation(result),encoding="utf-8")
+            print(json.dumps({"status":result["status"],"annual_values":result["annual_values"],"report":str((dest/"valuation.html").resolve())},ensure_ascii=False,indent=2))
+        elif args.command in {"validate", "analyze"}:
             inputs = read_json(args.input)
             result = analyze(inputs)
             if args.command == "validate":

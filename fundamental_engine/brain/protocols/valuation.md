@@ -23,3 +23,8 @@ valuation date; prepare a reviewed stub/starting forecast when material.
 A good business can be expensive. A low multiple can reflect declining earning power.
 Never solve an attractive price by changing assumptions without new justification.
 Store the actual calculator inputs/results so later reviews can reconstruct them.
+
+v0.4 adds executable dedicated calculators. Read annual_valuation and
+valuation_research; select the correct route and preserve its limitations.
+The annual operating route explicitly values existing holders through future
+financing. Specialist snapshots are narrower and require external underwriting.

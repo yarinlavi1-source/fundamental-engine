@@ -1,54 +1,55 @@
-# Build status — v0.3.0 — 2026-09-26
+# Build status — v0.4.0 — 2026-09-27
 
-## Implemented
+## Implemented and exercised
 
-Retains v0.2 financial/event/ownership analysis, source corpus, SEC normalization,
-Hebrew reports and executable MCP. Adds:
+Retains v0.3 research, source, historical normalization, financial/event analysis,
+local journal and MCP. Adds:
 
-- A research supervisor that routes the client's existing connectors into a staged
-  research plan with on-demand methods and eight economic archetype playbooks.
-- A structured evidence dossier distinguishing facts, guidance, hypotheses,
-  opinions and assumptions; date/source gates and same-definition numeric conflicts.
-- Required business mechanism, material-claim review, counter-thesis and falsifiers.
-- Actual financial-input execution with identity/provenance checks; price conclusions
-  require a named executed valuation basis and cannot bypass financing/sector limits.
-- Original management promise/outcome tracking with matched economic definitions.
-- Recorded search budgets and repeat/unproductive-query detection; unresolved
-  questions remain unresolved when retrieval is exhausted.
-- Append-only local research revisions, optimistic concurrency, resume/history and
-  material-claim/gate comparisons across revisions.
-- Seven additional MCP tools and matching CLI commands.
-- START_HERE.md, compact CLAUDE.md, 23 packaged brain packets, synthetic dossier,
-  independent-install package check and adversarial process evaluation protocol.
+- Dated valuation contract with separate current-date and requested year-end values.
+- Operating revenue drivers and ACT/365.25 stub periods; cash/debt/prepayment/share
+  ledgers, taxes/NOL, SBC alternatives, explicit financing costs and dilution.
+- Current-holder distribution/terminal-equity valuation with an auditable bridge.
+- Funding shortfalls block unsupported going-concern output rather than create
+  free equity or assume a zero recovery value.
+- Financial-firm residual-income terminal with clean-surplus book and capital check.
+- NAV, SOTP and rNPV **snapshot calculators**, with clearly narrower coverage than
+  the operating route. They do not auto-underwrite their financing or probabilities.
+- Asset replacement/depreciation schedules, five fixed operating stresses,
+  discount/growth sensitivity, reverse unit-price sensitivity and forecast scoring.
+- Hebrew HTML table with full audit; content-addressed inputs/JSON; four new MCP
+  tools; CLI value command; optional annual valuation attached to dossier review.
+- Two new packaged method packets and primary research bibliography, five fictional
+  model fixtures, contract documentation and CI smoke checks.
 
 ## Verification actually performed
 
-- **93 unit/integration tests passed locally**, including the previous 65 tests.
-- **12/12 synthetic adversarial process cases passed** in scripts/evaluate_brain.py.
-- Subprocess MCP: initialize, discover tools, analyze, corpus operations, dossier
-  review, checkpoint revisions, comparison and resume.
-- A built wheel loaded all **23 packets** and executed dossier review outside the
-  checkout using an isolated Python process.
-- v0.2's three historical issuer examples remain regression cases. Their inputs
-  were manually reviewed, and no live quote/forecast valuation was fabricated.
+- 143 unit/integration tests passed locally (50 added in this release).
+- Existing 12 synthetic adversarial process cases passed.
+- Wheel built; isolated installation loaded all 25 packets and ran both dossier
+  review and annual valuation outside the repository checkout.
+- Annual valuation CLI with sensitivity/stress diagnostics generated HTML and JSON.
+- All five model routes ran on synthetic fixtures; bank/NAV/SOTP/rNPV formulas,
+  cash reconciliation, dividend PV, dilution, stubs, lookahead and source identity
+  were checked independently in tests.
 
-These checks validate selected engineering behavior. They do not measure a model's
-semantic source comprehension, source truth, causal inference, investment returns
-or performance relative to humans. benchmarks/README.md specifies the separate
-held-out Claude evaluation that is still needed in the user's environment.
+This is evidence of selected implementation behavior, not forecast accuracy or
+outperformance. No real-company 2026–2030 target series has been calibrated here.
+No 99%-accuracy or superiority claim is supported by these tests.
 
-## External boundaries
+## Known boundaries that remain explicit
 
-No connection to the user's private Claude session, Interactive Brokers account or
-other live client integrations was available to this build process. The architecture
-reuses those existing connections rather than replacing them; compatibility with
-that exact session must be exercised there. No credentials or private holdings
-were requested, copied to the repository or used in public fixtures.
-
-No server-side paid model calls or broker order tools. No autonomous scheduler.
-Specialist financial-sector/biotech/SOTP valuations, full tax/options/FX/stub-period
-models and verified real-time extraction remain outside the implemented calculator.
-The brain explicitly routes or withholds those conclusions rather than faking support.
-
-The latest GitHub CI result is recorded in GitHub Actions, separately from this
-local verification record.
+- Claude/client must retrieve, read and interpret actual sources; assumption review
+  labels are not independent semantic verification. No access to user's private
+  Claude/broker session was used, and there are no trading tools.
+- Operating model uses a blended debt bucket, no automatic options/convertibles,
+  lease conversion, covenant waterfall, FX or jurisdiction-specific tax engine.
+- Cash checked at period boundaries only; monthly construction models are needed
+  for intra-year funding risk. Cash interest defaults to zero.
+- Terminal economics require maturity and reinvestment support; the model may need
+  explicit years beyond 2030. ROIC, discount rates and failure probabilities are
+  not inferred or calibrated automatically.
+- Bank route assumes constant shares, clean surplus and book/regulatory reconciliation;
+  insurance reserves, OCI and recapitalizations need specialist extensions.
+- NAV/rNPV/SOTP require externally underwritten component forecasts and financing.
+- Stresses are conditional shocks, not a probability distribution. Forecast scoring
+  describes supplied held-out observations, not an investment backtest.

@@ -1,0 +1,276 @@
+{
+  "valuation_version": 1,
+  "is_demo": true,
+  "as_of": "2026-09-27",
+  "company_id": "fictional-test",
+  "ticker": "FICTIONAL",
+  "currency": "USD",
+  "unit": "absolute",
+  "archetype": "financials",
+  "method": "residual_income",
+  "quote": {
+    "price": 20,
+    "currency": "USD",
+    "as_of": "2026-09-27",
+    "source_ids": [
+      "synthetic"
+    ]
+  },
+  "sources": [
+    {
+      "id": "synthetic",
+      "title": "Fictional arithmetic fixture",
+      "url": "synthetic://fixture",
+      "kind": "synthetic",
+      "published_at": "2026-09-27",
+      "available_at": "2026-09-27"
+    }
+  ],
+  "assumptions": [
+    {
+      "id": "demo",
+      "kind": "analyst",
+      "as_of": "2026-09-27",
+      "review_status": "reviewed",
+      "source_ids": [
+        "synthetic"
+      ],
+      "rationale": "Synthetic demonstration, not calibrated.",
+      "falsifier": "Never use as an actual company valuation."
+    }
+  ],
+  "opening": {
+    "as_of": "2026-09-27",
+    "assumption_ids": [
+      "demo"
+    ],
+    "book_equity": 1000000000.0,
+    "shares": 100000000.0
+  },
+  "report_dates": [
+    "2026-09-27",
+    "2026-12-31",
+    "2027-12-31",
+    "2028-12-31",
+    "2029-12-31",
+    "2030-12-31"
+  ],
+  "scenarios": [
+    {
+      "name": "bear",
+      "thesis": "Fictional bear case; no probability estimate.",
+      "assumption_ids": [
+        "demo"
+      ],
+      "cost_of_equity": 0.11,
+      "periods": [
+        {
+          "start": "2026-09-27",
+          "end": "2026-12-31",
+          "assumption_ids": [
+            "demo"
+          ],
+          "roe": 0.08,
+          "payout_fraction": 0.4,
+          "risk_weighted_assets": 6000000000.0,
+          "required_capital_ratio": 0.12
+        },
+        {
+          "start": "2026-12-31",
+          "end": "2027-12-31",
+          "assumption_ids": [
+            "demo"
+          ],
+          "roe": 0.08,
+          "payout_fraction": 0.4,
+          "risk_weighted_assets": 6000000000.0,
+          "required_capital_ratio": 0.12
+        },
+        {
+          "start": "2027-12-31",
+          "end": "2028-12-31",
+          "assumption_ids": [
+            "demo"
+          ],
+          "roe": 0.08,
+          "payout_fraction": 0.4,
+          "risk_weighted_assets": 6000000000.0,
+          "required_capital_ratio": 0.12
+        },
+        {
+          "start": "2028-12-31",
+          "end": "2029-12-31",
+          "assumption_ids": [
+            "demo"
+          ],
+          "roe": 0.08,
+          "payout_fraction": 0.4,
+          "risk_weighted_assets": 6000000000.0,
+          "required_capital_ratio": 0.12
+        },
+        {
+          "start": "2029-12-31",
+          "end": "2030-12-31",
+          "assumption_ids": [
+            "demo"
+          ],
+          "roe": 0.08,
+          "payout_fraction": 0.4,
+          "risk_weighted_assets": 6000000000.0,
+          "required_capital_ratio": 0.12
+        }
+      ],
+      "terminal": {
+        "assumption_ids": [
+          "demo"
+        ],
+        "growth": 0.025,
+        "roe": 0.08
+      }
+    },
+    {
+      "name": "base",
+      "thesis": "Fictional base case; no probability estimate.",
+      "assumption_ids": [
+        "demo"
+      ],
+      "cost_of_equity": 0.11,
+      "periods": [
+        {
+          "start": "2026-09-27",
+          "end": "2026-12-31",
+          "assumption_ids": [
+            "demo"
+          ],
+          "roe": 0.13,
+          "payout_fraction": 0.4,
+          "risk_weighted_assets": 6000000000.0,
+          "required_capital_ratio": 0.12
+        },
+        {
+          "start": "2026-12-31",
+          "end": "2027-12-31",
+          "assumption_ids": [
+            "demo"
+          ],
+          "roe": 0.13,
+          "payout_fraction": 0.4,
+          "risk_weighted_assets": 6000000000.0,
+          "required_capital_ratio": 0.12
+        },
+        {
+          "start": "2027-12-31",
+          "end": "2028-12-31",
+          "assumption_ids": [
+            "demo"
+          ],
+          "roe": 0.13,
+          "payout_fraction": 0.4,
+          "risk_weighted_assets": 6000000000.0,
+          "required_capital_ratio": 0.12
+        },
+        {
+          "start": "2028-12-31",
+          "end": "2029-12-31",
+          "assumption_ids": [
+            "demo"
+          ],
+          "roe": 0.13,
+          "payout_fraction": 0.4,
+          "risk_weighted_assets": 6000000000.0,
+          "required_capital_ratio": 0.12
+        },
+        {
+          "start": "2029-12-31",
+          "end": "2030-12-31",
+          "assumption_ids": [
+            "demo"
+          ],
+          "roe": 0.13,
+          "payout_fraction": 0.4,
+          "risk_weighted_assets": 6000000000.0,
+          "required_capital_ratio": 0.12
+        }
+      ],
+      "terminal": {
+        "assumption_ids": [
+          "demo"
+        ],
+        "growth": 0.025,
+        "roe": 0.13
+      }
+    },
+    {
+      "name": "bull",
+      "thesis": "Fictional bull case; no probability estimate.",
+      "assumption_ids": [
+        "demo"
+      ],
+      "cost_of_equity": 0.11,
+      "periods": [
+        {
+          "start": "2026-09-27",
+          "end": "2026-12-31",
+          "assumption_ids": [
+            "demo"
+          ],
+          "roe": 0.18,
+          "payout_fraction": 0.4,
+          "risk_weighted_assets": 6000000000.0,
+          "required_capital_ratio": 0.12
+        },
+        {
+          "start": "2026-12-31",
+          "end": "2027-12-31",
+          "assumption_ids": [
+            "demo"
+          ],
+          "roe": 0.18,
+          "payout_fraction": 0.4,
+          "risk_weighted_assets": 6000000000.0,
+          "required_capital_ratio": 0.12
+        },
+        {
+          "start": "2027-12-31",
+          "end": "2028-12-31",
+          "assumption_ids": [
+            "demo"
+          ],
+          "roe": 0.18,
+          "payout_fraction": 0.4,
+          "risk_weighted_assets": 6000000000.0,
+          "required_capital_ratio": 0.12
+        },
+        {
+          "start": "2028-12-31",
+          "end": "2029-12-31",
+          "assumption_ids": [
+            "demo"
+          ],
+          "roe": 0.18,
+          "payout_fraction": 0.4,
+          "risk_weighted_assets": 6000000000.0,
+          "required_capital_ratio": 0.12
+        },
+        {
+          "start": "2029-12-31",
+          "end": "2030-12-31",
+          "assumption_ids": [
+            "demo"
+          ],
+          "roe": 0.18,
+          "payout_fraction": 0.4,
+          "risk_weighted_assets": 6000000000.0,
+          "required_capital_ratio": 0.12
+        }
+      ],
+      "terminal": {
+        "assumption_ids": [
+          "demo"
+        ],
+        "growth": 0.025,
+        "roe": 0.18
+      }
+    }
+  ]
+}
