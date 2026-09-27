@@ -87,3 +87,6 @@ a ticker is known. `discovery_scan({case})` validates the evidence/causal chain 
 returns research actions without a mature-profitability gate. The paired
 `discovery_compare({before,after})` tracks progress across dated revisions. See
 `docs/DISCOVERY.md`; these are research tools, not automated stock-entry filters.
+
+For Yarin's Cowork session, load `session_capabilities` with `connector_contract`.
+It records dated user-reported tool availability and structured-numeric-first routing.

@@ -58,3 +58,12 @@ paid adoption and value capture, not famous partner logos. Run discovery_compare
 for progress; retain the opportunity while independently underwriting price/risk.
 Attach discovery_input to the dossier for audited provenance. Discovery does not
 change valuation arithmetic or grant permission to place trades.
+
+## Session-specific numeric collection priority
+
+Read the `session_capabilities` packet alongside connector_contract in Yarin's
+Cowork session. It contains his reported 2026-09-27 live capability probes against
+AXTI. Prefer AV/FMP structured numeric evidence and IB prices before generic web
+search. Untested capabilities stay unknown; known FMP tier denials use fallbacks
+without retry loops. Reconfirm after session/plan changes; do not claim these probes
+were executed by this engine. External targets/DCF remain attributed estimates.
