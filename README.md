@@ -1,3 +1,23 @@
+# Fundamental Engine v0.4 — annual fair-value research
+
+The engine now produces a Hebrew table of fair values **today and at each year-end
+through 2030**, with bear/base/bull assumptions, current-price comparison and an
+expandable calculation audit. A future fair value is not a market-price forecast.
+
+```bash
+python -m fundamental_engine value examples/valuation/infrastructure.json --diagnostics
+```
+
+This command uses a **fictional fixture**, not IREN data. Replace it with a reviewed
+company case; see [annual valuation contract](docs/ANNUAL_VALUATION.md) and
+[research basis](fundamental_engine/brain/protocols/valuation_research.md).
+
+New: operating-driver cash/share forecasts; financing and prepayment ledgers;
+SBC policies; asset replacement schedules; bank residual-income/capital checks;
+NAV, SOTP and program rNPV snapshot calculators; stress/sensitivity/reverse-pricing
+checks; frozen forecast scoring; CLI and four new MCP tools. Specialist calculators
+have explicit boundaries, not universal company-understanding or accuracy claims.
+
 # Fundamental Engine · 0.3.0
 
 מנוע מחקר עסקי, פונדמנטלי ופוטנציאל מוקדם, עם חישובים ב־Python ודוח בעברית.

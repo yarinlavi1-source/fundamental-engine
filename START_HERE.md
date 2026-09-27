@@ -70,3 +70,12 @@ and state that numerical execution is unavailable. Do not simulate a tool result
 
 No credentials, holdings or private filings should be committed to the public
 repository. Local `runs/` is ignored by Git. This workflow cannot place trades.
+
+## v0.4 annual valuation
+
+The primary company-value output now comes from `value_company` (MCP) or
+`python -m fundamental_engine value INPUT.json --diagnostics`. Read the
+`annual_valuation` packet and `docs/ANNUAL_VALUATION.md`. Five fictional route
+examples are in `examples/valuation/`. They demonstrate formats, not target prices.
+The operating route includes business drivers, cash/debt/deferred-revenue/share
+ledgers, funding gaps, a terminal equity bridge and dated values through 2030.

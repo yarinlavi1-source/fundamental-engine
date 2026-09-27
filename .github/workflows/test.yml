@@ -19,5 +19,7 @@ jobs:
       - run: python -m fundamental_engine analyze examples/real/nike_2025.json --out runs/real
       - run: python -m fundamental_engine research-review examples/research_dossier_demo.json --out runs/research-review.json
       - run: python scripts/evaluate_brain.py
+      - run: python -m fundamental_engine value examples/valuation/infrastructure.json --diagnostics
+      - run: python -m fundamental_engine value examples/valuation/bank.json
       - run: python -m pip wheel --no-deps --wheel-dir runs/wheels .
       - run: python scripts/check_wheel.py

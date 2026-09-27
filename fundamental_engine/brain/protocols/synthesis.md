@@ -27,3 +27,12 @@ End the research cycle with a durable checkpoint. If no new evidence is accessib
 state exactly which question remains unresolved and why; do not repeat an endless
 search or fill the gap with confidence. Do not imply monitoring is scheduled unless
 an actual scheduler has been configured and verified.
+
+## Required annual valuation presentation (v0.4)
+
+When asked for fair value, load annual_valuation and execute value_company. Show
+TODAY and each requested year-end through 2030; columns: bear/base/bull, current
+quote, base gap. Explain source-supported business drivers and the decisive
+assumptions. Future values belong to their stated dates, not to today's valuation.
+Never silently turn a synthetic example or a reverse-price sensitivity into the
+company's base case. State how financing and dilution affect the existing share.

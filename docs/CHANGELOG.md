@@ -17,3 +17,14 @@ Hebrew reports and three historical primary-source examples.
 
 Deterministic annual financial analysis, DCF/reverse DCF, emerging-potential evidence,
 funding-gap simulation, SEC transport, immutable run snapshots and Hebrew report.
+
+## 0.4.0 — 2026-09-27
+
+Annual value paths and dedicated model routes. Adds operating-driver revenue,
+prepayment/cash/debt/share reconciliation, explicit financing and SBC alternatives,
+terminal FCFF-to-equity bridge, annual current-holder values, funding gates,
+residual-income capital checks, NAV/rNPV/SOTP snapshots, asset-cohort schedules,
+stress/sensitivity/reverse-price tools, frozen forecast scoring, Hebrew report,
+CLI and MCP integration, and primary methodology research. 50 new tests; 143 total.
+All shipped new valuation examples are fictional. No calibrated issuer targets or
+predictive-accuracy claims are included.

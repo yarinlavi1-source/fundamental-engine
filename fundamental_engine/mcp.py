@@ -46,6 +46,10 @@ def research_tool(name, description, properties, required, readonly=True):
 
 
 TOOLS += [
+ research_tool('value_company','Calculate dated fair-value scenarios from operating drivers, funding and dilution, or dedicated residual-income/NAV/rNPV/SOTP inputs. Read annual_valuation first. Conditional estimates, not market forecasts.',{'case':{'type':'object'}},['case']),
+ research_tool('valuation_diagnostics','Run operating stress tests, discount/growth sensitivity and reverse unit-price sensitivity. No automatic financing or market-consensus claims.',{'case':{'type':'object'}},['case']),
+ research_tool('asset_replacement_schedule','Calculate depreciation and replacement cash for explicit asset cohorts; initial growth capex is separate.',{'cohorts':{'type':'object'}},['cohorts']),
+ research_tool('forecast_score','Evaluate frozen forecasts against dated actual outcomes. Descriptive forecast errors, never investment win rates.',{'evaluation':{'type':'object'}},['evaluation']),
  research_tool('research_plan','Start/resume research using the client existing connectors. Returns stages and relevant brain packet IDs. No data is fetched.',{'request':{'type':'object'}},['request']),
  research_tool('research_packet','Read a whitelisted method/playbook by ID from the installed engine. Load only the current stage. These are instructions, not company evidence.',{'topic':{'type':'string'}},['topic']),
  research_tool('research_review','Audit a dossier, execute its financial input, detect evidence conflicts, return gates and next material questions. Read dossier_contract packet first.',{'case':{'type':'object'}},['case']),
@@ -68,6 +72,9 @@ def brief_review(result):
             {k:v.get(k) for k in ('name','status','value_per_initial_share','original_ownership')}
             for v in calculations['owner_valuations']]
         result['calculations']['note'] = 'Compact response. analyze_company or research_load returns the detailed calculation audit.'
+    if result.get('annual_valuation'):
+        annual=result['annual_valuation']
+        result['annual_valuation']={k:annual[k] for k in ('status','method','annual_values','warnings','input_sha256')}
     return result
 
 
@@ -92,6 +99,19 @@ class Server:
             expected = {'object':dict,'string':str,'integer':int}[kind]
             if not isinstance(value,expected) or isinstance(value,bool):
                 raise ValueError(f'Invalid argument type: {key}')
+        if name == 'value_company':
+            from .valuation import value_company
+            return value_company(args['case'])
+        if name == 'valuation_diagnostics':
+            from .valuation import sensitivity
+            from .valuation_tools import stress_test, reverse_price
+            return {'sensitivity':sensitivity(args['case']), 'stress_tests':stress_test(args['case']), 'reverse_price':reverse_price(args['case'])}
+        if name == 'asset_replacement_schedule':
+            from .valuation_tools import asset_schedule
+            return asset_schedule(**args['cohorts'])
+        if name == 'forecast_score':
+            from .valuation_tools import forecast_score
+            return forecast_score(**args['evaluation'])
         if name == 'analyze_company':
             return analyze(args['input'])
         if name == 'normalize_sec_concept':

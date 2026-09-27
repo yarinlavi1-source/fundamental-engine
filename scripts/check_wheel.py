@@ -18,9 +18,12 @@ records=catalog()['packets']
 assert all(packet(r['id'])['content'] for r in records)
 case=json.loads(open(sys.argv[2],encoding='utf-8').read())
 assert review(case)['status']=='ready_for_conditional_synthesis'
-print(json.dumps({'version':__version__,'packaged_packets':len(records),'installed_review':'passed'}))
+from fundamental_engine.valuation import value_company
+v=json.loads(open(sys.argv[3],encoding='utf-8').read())
+assert len(value_company(v)['annual_values'])==6
+print(json.dumps({'annual_valuation':'passed','version':__version__,'packaged_packets':len(records),'installed_review':'passed'}))
 '''
-    completed=subprocess.run([sys.executable,'-I','-c',code,temp,str(ROOT/'examples/research_dossier_demo.json')],
+    completed=subprocess.run([sys.executable,'-I','-c',code,temp,str(ROOT/'examples/research_dossier_demo.json'),str(ROOT/'examples/valuation/infrastructure.json')],
                               cwd=temp,text=True,capture_output=True,timeout=20)
     if completed.returncode:raise SystemExit(completed.stderr)
     print(completed.stdout.strip())
