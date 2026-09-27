@@ -135,6 +135,11 @@
       "id": "frontier_research",
       "title": "Research basis and AI value-chain hypotheses",
       "file": "protocols/frontier_research.md"
+    },
+    {
+      "id": "session_capabilities",
+      "title": "Yarin Cowork connector capabilities \u2014 user-reported 2026-09-27 probes",
+      "file": "protocols/session_capabilities.md"
     }
   ]
 }
