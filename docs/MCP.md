@@ -97,6 +97,10 @@ protocol/runtime tests, not an assertion about the user's live Claude session.
 ## v0.4 valuation tools
 
 - `value_company({case})`: execute a valuation_version=1 case and return annual values.
+- `classify_company({case})`: life-cycle stage, Lynch category, flags and research focus.
+- `forensic_scores({case})`: Piotroski, Altman, Beneish, ROIC, Rule of 40.
+- `import_statements({income, balance?, cash_flow?, years?, as_of?})`: map Alpha
+  Vantage statement payloads into history rows (no fetching).
 - `plain_verdict({case})`: plain_version=1 reported history (+ optional valuation_case,
   executed here) -> Hebrew labels per metric, four axes, bottom line and `text`. See
   docs/PLAIN_LANGUAGE.md.

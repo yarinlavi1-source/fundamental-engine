@@ -11,6 +11,9 @@ from datetime import date
 from hashlib import sha256
 import json
 from .finance import number
+from .history import txt as _txt, history as _history
+from .profile import classify
+from .scores import scorecards, forecast_base_rate
 from . import __version__
 
 GRADES = {5: ('מצוין', '🟢'), 4: ('טוב', '🟢'), 3: ('בינוני', '🟡'), 2: ('חלש', '🟠'), 1: ('מדאיג', '🔴')}
@@ -26,16 +29,6 @@ PROFILE = {'software': 'high_margin', 'platform': 'high_margin', 'biotech': 'hig
            'nonfinancial': 'general', 'turnaround': 'general', 'consumer': 'thin_margin',
            'commodity': 'thin_margin'}
 STAGES = {'mature', 'growth', 'emerging'}
-
-
-def _txt(v, k):
-    if not isinstance(v, str) or not v.strip():
-        raise ValueError(k + ': nonempty text required')
-    return v
-
-
-def _opt(row, key, low=None):
-    return None if row.get(key) is None else number(row[key], key, low)
 
 
 def _grade(value, bars, higher_is_better=True):
@@ -115,29 +108,6 @@ def multiple_words(m):
 
 def per_hundred(margin, currency):
     return f'מכל 100 {currency} של מכירות נשארים בערך {round(margin * 100)}'
-
-
-def _history(case):
-    rows = case['history']
-    if not isinstance(rows, list) or not 1 <= len(rows) <= 15:
-        raise ValueError('history: supply 1..15 fiscal years, oldest first')
-    ends = []
-    for r in rows:
-        _txt(r['fiscal_year'], 'fiscal_year')
-        end = date.fromisoformat(r['period_end'])
-        if end > date.fromisoformat(case['as_of']):
-            raise ValueError('History period ends after as_of')
-        number(r['revenue'], 'revenue', 0)
-        for k in ('gross_profit', 'operating_income', 'net_income', 'operating_cash_flow'):
-            _opt(r, k)
-        for k in ('capex', 'shares_diluted'):
-            _opt(r, k, 0)
-        if not isinstance(r.get('source_ids'), list) or not r['source_ids']:
-            raise ValueError('Every history row needs source_ids (where the number came from)')
-        ends.append(end)
-    if ends != sorted(set(ends)):
-        raise ValueError('history must be ordered oldest first with distinct period_end')
-    return rows
 
 
 def _growth(rows, stage):
@@ -290,7 +260,7 @@ def _dilution(rows):
 def _valuation(case):
     source = case.get('valuation_case')
     if source is None:
-        return None, None
+        return None, None, None
     from .valuation import value_company
     result = value_company(source)
     if source['ticker'] != case['ticker'] or source['currency'] != case['currency']:
@@ -302,7 +272,7 @@ def _valuation(case):
                'is_demo': result['is_demo'], 'warnings': result['warnings'], 'annual_values': result['annual_values'],
                'base_issues': next((x.get('issues', []) for x in result['scenarios'] if x['name'] == 'base'), [])}
     if status == 'funding_blocked' or today.get('base') is None:
-        return summary, {'bucket': 'blocked', 'light': '🔴', 'headline': 'אי אפשר לתת שווי כרגע',
+        return summary, result, {'bucket': 'blocked', 'light': '🔴', 'headline': 'אי אפשר לתת שווי כרגע',
                          'explain': 'לפי התחזית החברה צריכה כסף שאין לו מקור מוכח. עד שיהיה מימון ברור, כל "שווי" הוא ניחוש. זו נורת אזהרה, לא הערכת שווי.'}
     bear, base, bull = today['bear'], today['base'], today['bull']
     ratio = quote / base if base > 0 else float('inf')
@@ -328,12 +298,16 @@ def _valuation(case):
         end = path[-1]
         explain += (f' אם תרחיש הבסיס מתממש, השווי ב-{end["date"][:4]} יהיה בערך {end["base"]:,.2f} {cur}'
                     f' ({change_words(end["base"], quote)} של היום). זה שווי מותנה בתחזית, לא תחזית למחיר בבורסה.')
-    return summary, {'bucket': bucket, 'light': light, 'headline': head, 'explain': explain,
+    return summary, result, {'bucket': bucket, 'light': light, 'headline': head, 'explain': explain,
                      'quote': quote, 'bear': bear, 'base': base, 'bull': bull, 'price_to_base_value': ratio}
 
 
-def _confidence(case, valuation, items):
+def _confidence(case, valuation, items, base_rate=None, scores=None):
     reasons = []
+    if base_rate and base_rate['flags']:
+        reasons.append('התרחיש הבסיסי מניח צמיחה שנדירה ביחס להיסטוריה ולשיעורי בסיס')
+    if scores and scores['beneish'].get('zone') == 'likely_manipulator':
+        reasons.append('מדד בניש מסמן סיכון לניפוח רווחים — צריך לבדוק את הדוחות לעומק')
     review = case.get('research_status')
     if review != 'ready_for_conditional_synthesis':
         reasons.append('המחקר עוד לא עבר את בדיקת התהליך (research_review) עד הסוף')
@@ -352,6 +326,64 @@ def _confidence(case, valuation, items):
         reasons.append('חסרים נתונים לחלק מהבדיקות')
     level = 'גבוה' if not reasons else ('בינוני' if len(reasons) <= 1 else 'נמוך')
     return {'level': level, 'reasons': reasons}
+
+
+def _score_items(scores, profile):
+    out = []
+    r = scores['roic']
+    if r['status'] == 'computed':
+        v = r['roic_last']
+        points = _grade(v, (.2, .12, .08, .04))
+        head = {5: 'מחזיר המון על כל שקל שהושקע', 4: 'מחזיר יפה על ההשקעה', 3: 'מחזיר בערך את עלות הכסף',
+                2: 'מחזיר פחות מעלות הכסף', 1: 'לא מחזיר את ההשקעה'}[points]
+        explain = (f'על כל 100 שהושקעו בעסק (הון וחוב) הוא מרוויח בשנה בערך {round(v * 100)} אחרי מס. '
+                   + ('זה הרבה מעל מה שעולה לגייס כסף — סימן לחפיר (יתרון תחרותי).' if points >= 4 else
+                      'זה בערך מה שעולה לגייס כסף — הצמיחה לא מייצרת הרבה ערך.' if points == 3 else
+                      'זה פחות ממה שעולה לגייס כסף — כל צמיחה כזו עלולה דווקא להרוס ערך.'))
+        inc = r['incremental_roic']
+        if inc is not None:
+            explain += (' והכסף החדש שהושקע בשנים האחרונות מחזיר אפילו יותר — מצוין.' if inc > v + .03 else
+                        ' אבל הכסף החדש שהושקע מחזיר פחות — שווה לבדוק למה.' if inc < v - .05 else '')
+        out.append(_item('roic', 'תשואה על ההון', points, head, explain, {'roic': v, 'incremental_roic': inc}))
+    b = scores['beneish']
+    if b['status'] == 'computed':
+        points = {'unlikely': 4, 'watch': 3, 'likely_manipulator': 1}[b['zone']]
+        head = {'unlikely': 'אין סימן לניפוח רווחים', 'watch': 'כדאי לשים עין על הדוחות', 'likely_manipulator': 'דגל אדום בדוחות'}[b['zone']]
+        explain = {'unlikely': 'בדיקת בניש (מודל מוכר לזיהוי ניפוח רווחים) לא מצאה סימנים חשודים.',
+                   'watch': 'בדיקת בניש קרובה לקו האזהרה. לרוב זה בגלל צמיחה מהירה, אבל שווה לבדוק לקוחות שלא משלמים ומלאי.',
+                   'likely_manipulator': 'בדיקת בניש מעל קו האזהרה: לקוחות שלא משלמים, רווח שלא נכנס כמזומן או שינויים חשבונאיים. זה לא הוכחה — אבל חייבים לבדוק לפני שסומכים על המספרים.'}[b['zone']]
+        out.append(_item('accounting_risk', 'אמינות הדוחות', points, head, explain, {'beneish_m': b['m']}))
+    a = scores['altman']
+    if a['status'] == 'computed':
+        points = {'safe': 5, 'grey': 3, 'distress': 1}[a['zone']]
+        head = {'safe': 'רחוק מסכנת קריסה', 'grey': 'אזור אפור', 'distress': 'סימני מצוקה כספית'}[a['zone']]
+        explain = {'safe': 'מדד אלטמן (בדיקה מוכרת לסיכון פשיטת רגל) נמצא באזור הבטוח.',
+                   'grey': 'מדד אלטמן באזור האפור — לא מסוכן, אבל גם לא בטוח לגמרי. שווה לבדוק חוב ותזרים.',
+                   'distress': 'מדד אלטמן באזור המצוקה. זה לא אומר שהחברה תקרוס, אבל היסטורית זה אזור של סיכון גבוה.'}[a['zone']]
+        out.append(_item('distress', 'סיכון קריסה', points, head, explain, {'altman_z': a['z']}))
+    f = scores['piotroski']
+    if f['status'] == 'computed':
+        points = {'strong': 5, 'mixed': 3, 'weak': 1}[f['zone']]
+        head = {'strong': 'המצב הכספי משתפר', 'mixed': 'המצב הכספי מעורב', 'weak': 'המצב הכספי נחלש'}[f['zone']]
+        explain = (f'בדיקת פיוטרוסקי (9 סימנים לשיפור: רווח, מזומן, חוב, נזילות, דילול, רווחיות ויעילות) — '
+                   f'{f["score"]} מתוך {f["out_of"]} סימנים חיוביים.')
+        out.append(_item('fscore', 'מגמה כספית', points, head, explain, {'piotroski': f['score'], 'out_of': f['out_of']}))
+    r40 = scores['rule_of_40']
+    if r40['status'] == 'computed':
+        v = r40['score']
+        points = _grade(v, (.5, .4, .25, .1))
+        head = {5: 'איזון מצוין בין צמיחה לרווח', 4: 'עובר את כלל ה-40', 3: 'קרוב, אבל לא עובר את כלל ה-40',
+                2: 'צמיחה ורווח חלשים יחד', 1: 'לא צומח ולא מרוויח מספיק'}[points]
+        explain = (f'בתוכנה בודקים "כלל 40": קצב הצמיחה ועוד הרווח המזומן צריכים לעבור יחד 40. כאן זה בערך {round(v * 100)}. '
+                   'רוב חברות התוכנה הציבוריות לא עוברות אותו.')
+        out.append(_item('rule_of_40', 'כלל ה-40', points, head, explain, {'rule_of_40': v}))
+    return out
+
+
+# Axis weights by life-cycle stage: early companies are judged mostly on growth and
+# survival; mature ones on quality of returns and cash (Damodaran life cycle).
+WEIGHTS = {'start_up': (.2, .5, .3), 'young_growth': (.2, .5, .3), 'high_growth': (.35, .4, .25),
+           'mature_growth': (.45, .3, .25), 'mature_stable': (.5, .15, .35), 'decline': (.4, .2, .4)}
 
 
 def _avg(items, keys):
@@ -374,36 +406,52 @@ def plain_verdict(case):
     for k in ('company', 'ticker', 'currency'):
         _txt(case[k], k)
     date.fromisoformat(case['as_of'])
-    stage = case.get('stage', 'mature')
-    if stage not in STAGES:
-        raise ValueError('stage must be mature/growth/emerging')
     archetype = case.get('archetype', 'nonfinancial')
     if archetype in {'financials', 'reit', 'asset_holding'}:
         raise ValueError('Banks/insurers/REITs need dedicated metrics (book value, capital, NAV); not graded with operating margins')
     if archetype not in PROFILE:
         raise ValueError('Unknown archetype')
     rows = _history(case)
+    if case.get('market_cap') is not None:
+        number(case['market_cap'], 'market_cap', 0)
+    kind = classify(case, rows)
+    stage = case.get('stage', kind['plain_stage'])
+    if stage not in STAGES:
+        raise ValueError('stage must be mature/growth/emerging')
     cur = case['currency']
     items = [i for i in [_growth(rows, stage)] if i]
     items += _margins(rows, MARGIN_BARS[PROFILE[archetype]], cur, stage)
     items += _cash(rows, case.get('balance'), cur, stage)
     d = _dilution(rows)
     if d: items.append(d)
-    valuation, price = _valuation(case)
+    if kind['lynch'] == 'cyclical' and 'normalized_operating_margin' in kind['evidence']:
+        om = next((i for i in items if i['key'] == 'operating_margin'), None)
+        if om:
+            om['explain'] += (' זו חברה מחזורית: בממוצע לאורך השנים נשארים בערך '
+                              f"{round(kind['evidence']['normalized_operating_margin'] * 100)} מכל 100 — וזה המספר שצריך להעריך לפיו, לא השנה האחרונה.")
+    scores = scorecards(rows, archetype, case.get('market_cap'))
+    items += _score_items(scores, kind)
+    valuation, result, price = _valuation(case)
+    base_rate = forecast_base_rate(rows, result)
     axes = [
-        _axis('איכות העסק', _avg(items, {'gross_margin', 'operating_margin', 'free_cash_flow', 'earnings_quality'}),
+        _axis('איכות העסק', _avg(items, {'gross_margin', 'operating_margin', 'free_cash_flow', 'earnings_quality', 'roic', 'accounting_risk'}),
               {5: 'עסק מצוין', 4: 'עסק טוב', 3: 'עסק בינוני', 2: 'עסק חלש', 1: 'עסק בעייתי'}),
-        _axis('צמיחה', _avg(items, {'growth'}),
+        _axis('צמיחה', _avg(items, {'growth', 'rule_of_40'}),
               {5: 'צומח מהר מאוד', 4: 'צומח יפה', 3: 'צומח לאט', 2: 'כמעט לא צומח', 1: 'מתכווץ'}),
-        _axis('חוסן כספי', _avg(items, {'balance_sheet', 'runway', 'dilution'}),
+        _axis('חוסן כספי', _avg(items, {'balance_sheet', 'runway', 'dilution', 'distress', 'fscore'}),
               {5: 'חזק מאוד', 4: 'חזק', 3: 'סביר', 2: 'רגיש', 1: 'שביר'}),
     ]
+    weights = [w for w, a in zip(WEIGHTS[kind['stage']], axes) if a['score'] is not None]
     scored = [a['score'] for a in axes if a['score'] is not None]
-    business = sum(scored) / len(scored) if scored else None
+    business = sum(w * x for w, x in zip(weights, scored)) / sum(weights) if scored else None
     bottom = _bottom_line(business, price, stage)
-    confidence = _confidence(case, valuation, items)
+    if any(i['key'] in {'accounting_risk', 'distress'} and i['points'] == 1 for i in items):
+        bottom = {**bottom, 'light': '🔴' if bottom['light'] != '⚪' else bottom['light'],
+                  'explain': bottom['explain'] + ' שים לב: יש דגל אדום (דוחות או סיכון קריסה) — קודם לברר אותו.'}
+    confidence = _confidence(case, valuation, items, base_rate, scores)
     out = {'version': __version__, 'company': case['company'], 'ticker': case['ticker'], 'as_of': case['as_of'],
-           'currency': cur, 'stage': stage, 'archetype': archetype, 'items': items, 'axes': axes,
+           'currency': cur, 'stage': stage, 'archetype': archetype, 'company_type': kind, 'scores': scores,
+           'forecast_base_rate': base_rate, 'items': items, 'axes': axes, 'axis_weights': WEIGHTS[kind['stage']],
            'business_score': round(business, 2) if business is not None else None,
            'price': price, 'valuation': valuation, 'bottom_line': bottom, 'confidence': confidence,
            'input_sha256': sha256(json.dumps(case, sort_keys=True, ensure_ascii=False, allow_nan=False).encode()).hexdigest(),
@@ -445,7 +493,14 @@ def render_plain(r):
     cur = r['currency']
     lines = [f"# {r['company']} ({r['ticker']}) — בגובה העיניים", '',
              f"**שורה תחתונה: {r['bottom_line']['light']} {r['bottom_line']['call']}**", '',
-             r['bottom_line']['explain'], '', '## התמונה בארבע שורות', '']
+             r['bottom_line']['explain'], '']
+    k = r['company_type']
+    lines += ['## איזה סוג חברה זו', '',
+              f"**{k['stage_he']}** (שלב בחיי החברה) · **{k['lynch_he']}** (לפי פיטר לינץ').", '', k['lynch_note_he'], '',
+              'מה באמת קובע את הערך שלה:']
+    lines += [f'- {x}' for x in k['what_decides_value_he']]
+    lines += [f"- ⚠️ {f['he']}" for f in k['flags']]
+    lines += ['', '## התמונה בארבע שורות', '']
     for a in r['axes']:
         lines.append(f"- {a['light']} **{a['axis']}:** {a['label']}")
     p = r['price']
@@ -466,6 +521,9 @@ def render_plain(r):
             for row in rows:
                 lines.append(f"| {row['date']} | {fmt(row['bear'])} | {fmt(row['base'])} | {fmt(row['bull'])} | {fmt(row['current_quote'])} |")
             lines.append('')
+        br = r.get('forecast_base_rate')
+        if br and br['flags']:
+            lines += [f"⚠️ {f['he']}" for f in br['flags']] + ['']
     else:
         lines += ['לא הורצה הערכת שווי. בלי זה אי אפשר להגיד אם המניה זולה או יקרה.', '']
     c = r['confidence']

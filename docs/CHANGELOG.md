@@ -45,3 +45,11 @@ sector-aware margin bars, stage-aware treatment of losses and cash burn, separat
 quality/growth/strength/price axes, a plain bottom line, and price versus executed
 bear/base/bull value in words through 2030. Synthesis now leads with this layer.
 11 new tests; 189 total. Research indication only; no orders or promised returns.
+
+## 0.7.0 — 2026-09-27
+
+Company typing (Damodaran life cycle + Lynch), acquisition and cycle detection,
+Piotroski/Altman/Beneish/ROIC/Rule-of-40 scorecards, forecast base-rate check,
+Alpha Vantage statement mapper, master_process/company_type/forensic packets, three
+MCP tools, classify and import-av CLI, stage-weighted plain verdict. Real Broadcom
+regression example. 14 new tests; 203 total. Screens direct research; no return odds.

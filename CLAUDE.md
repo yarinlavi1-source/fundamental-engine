@@ -48,6 +48,14 @@ Use annual_valuation_input in the dossier and valuation_basis.model=annual_path
 when selecting that executed current-date result. Specialist snapshots remain
 subject to explicit financing and economic underwriting; no automatic endorsement.
 
+## Company type first (v0.7)
+
+Follow master_process. After retrieving history, run classify_company: a young
+grower, a mature compounder (e.g. Broadcom), a cyclical and a turnaround need
+different questions, metrics and valuation models (company_type). Run
+forensic_scores (Piotroski/Altman/Beneish/ROIC/Rule of 40) and carry every flag into
+the counter-thesis. Map AV statements with import_statements; reconcile to filings.
+
 ## User preference: eye-level answers, clear labels
 
 Yarin wants the final answer in simple Hebrew, not finance jargon: every material

@@ -9,6 +9,9 @@ Do not rebuild integrations or ask for information already available through the
 2. Resolve issuer/security identity and cutoff. Retrieve the latest local research
    checkpoint when available; compare new information to the prior thesis.
 3. Call research_plan with ticker, question, archetypes and known capabilities.
+   Once history is retrieved, run classify_company: the life-cycle stage and Lynch
+   category decide which questions, metrics and valuation model matter (company_type,
+   master_process).
    Archetype is economic behavior, not just an exchange sector label; hybrids can
    need two playbooks. Plan flags are hypotheses, never factual evidence.
 4. Read operating_system, connector_contract and evidence. Load each remaining

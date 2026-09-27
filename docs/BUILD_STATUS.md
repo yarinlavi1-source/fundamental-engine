@@ -1,4 +1,19 @@
-# Current build — v0.6.0 — 2026-09-27
+# Current build — v0.7.0 — 2026-09-27
+
+Company type first. `classify_company` computes the Damodaran life-cycle stage and
+Lynch category from reported history, detects large acquisitions (goodwill jumps)
+and cycle peaks/troughs, and returns what decides value, key metrics, valuation fit
+and packets for that type. `forensic_scores` adds Piotroski F, Altman Z/Z'', Beneish
+M, ROIC/incremental ROIC and Rule of 40; a forecast base-rate check flags base cases
+that need rare sustained growth. `import_statements` maps Alpha Vantage statements
+into history rows. plain_verdict now includes the type section, the new checks in
+plain Hebrew, stage-weighted axes and red flags in the bottom line. New packets:
+master_process, company_type, forensic. Sources in docs/RESEARCH_BASIS.md.
+
+Validation: **203 tests** (14 new) including a real Broadcom (AV) regression case
+classified as mature compounder with the FY2024 acquisition flagged.
+
+## Previous build — v0.6.0
 
 Adds the eye-level Hebrew verdict layer (`plain_verdict`). Every material metric
 from reported history — growth, product margin, operating margin, free cash, cash

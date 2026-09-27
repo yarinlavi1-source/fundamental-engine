@@ -99,9 +99,25 @@ def main():
     pl.add_argument("--valuation", help="value_company input JSON to execute and explain")
     pl.add_argument("--out", default="runs/plain")
     pl.add_argument("--json", action="store_true", help="Print the full JSON result instead of the Hebrew text")
+    ty = subs.add_parser("classify", help="Company type: life-cycle stage, Lynch category and research focus")
+    ty.add_argument("input")
+    im = subs.add_parser("import-av", help="Map saved Alpha Vantage statement JSON files into plain history rows")
+    im.add_argument("income")
+    im.add_argument("--balance")
+    im.add_argument("--cash-flow")
+    im.add_argument("--years", type=int, default=5)
+    im.add_argument("--as-of")
     args = parser.parse_args()
     try:
-        if args.command == "plain":
+        if args.command == "classify":
+            from .profile import classify_company
+            print(json.dumps(classify_company(read_json(args.input)),ensure_ascii=False,indent=2,allow_nan=False))
+        elif args.command == "import-av":
+            from .connectors import from_alpha_vantage
+            value = from_alpha_vantage(read_json(args.income), read_json(args.balance) if args.balance else None,
+                                       read_json(args.cash_flow) if args.cash_flow else None, args.years, args.as_of)
+            print(json.dumps(value,ensure_ascii=False,indent=2,allow_nan=False))
+        elif args.command == "plain":
             from .plain import plain_verdict
             inputs = read_json(args.input)
             if args.valuation:

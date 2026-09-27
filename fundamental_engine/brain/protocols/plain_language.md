@@ -32,6 +32,8 @@ Order — shortest path to a clear picture:
    אבל יקר"), then one or two sentences why.
 2. **מה החברה עושה** — like explaining to a friend: what it sells, to whom, how it earns
    on each sale, what makes customers come back. No jargon.
+   **איזה סוג חברה זו** — the tool's life-cycle stage and Lynch category in one plain
+   sentence, what decides value for this type, and any acquisition/cycle flag.
 3. **התמונה בארבע שורות** — quality, growth, financial strength, price vs value.
 4. **מה טוב ומה לא** — the tool's table; next to every item a label, never a bare number.
 5. **ההסבר** — one short paragraph per item: what it means for the owner of a share.

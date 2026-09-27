@@ -100,3 +100,11 @@ Hebrew `text`: bottom line, good/not-good label per metric, price versus value i
 words and the annual table through 2030. Load the `plain_language` packet for the
 writing rules. CLI: `python -m fundamental_engine plain examples/plain_demo.json
 --valuation examples/valuation/infrastructure.json`. See `docs/PLAIN_LANGUAGE.md`.
+
+## v0.7 company type first
+
+Read `master_process`. After retrieving statements (AV payloads map with
+`import_statements`), run `classify_company`: the life-cycle stage and Lynch category
+choose the questions, metrics and valuation model (`company_type`). Run
+`forensic_scores` and carry flags into the counter-thesis. plain_verdict includes
+all of this automatically. Sources: `docs/RESEARCH_BASIS.md`.

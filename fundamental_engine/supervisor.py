@@ -59,7 +59,7 @@ def plan(request):
              'emerging_growth':'frontier_discovery','bottleneck':'frontier_discovery','early_adoption':'frontier_discovery'}
     if not isinstance(triggers,list) or any(t not in mapping for t in triggers):
         raise ValueError('Unknown research trigger')
-    topics=['operating_system','connector_contract','dossier_contract','evidence','earnings_quality','business',
+    topics=['operating_system','master_process','connector_contract','dossier_contract','evidence','company_type','earnings_quality','forensic','business',
             'valuation','annual_valuation','valuation_research','adversarial','synthesis','plain_language']
     if any(t in {'emerging_growth','bottleneck','early_adoption'} for t in triggers):
         topics += ['frontier_research','potential']

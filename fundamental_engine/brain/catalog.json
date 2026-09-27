@@ -1,5 +1,5 @@
 {
-  "version": "0.6.0",
+  "version": "0.7.0",
   "packets": [
     {
       "id": "operating_system",
@@ -70,6 +70,21 @@
       "id": "synthesis",
       "title": "Hebrew research output",
       "file": "protocols/synthesis.md"
+    },
+    {
+      "id": "master_process",
+      "title": "Master research process: best-practice order of work",
+      "file": "protocols/master_process.md"
+    },
+    {
+      "id": "company_type",
+      "title": "Company type (life cycle + Lynch) decides the research",
+      "file": "protocols/company_type.md"
+    },
+    {
+      "id": "forensic",
+      "title": "Forensic and quality scorecards",
+      "file": "protocols/forensic.md"
     },
     {
       "id": "plain_language",
