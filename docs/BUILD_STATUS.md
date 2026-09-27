@@ -1,3 +1,27 @@
+# Current build — v0.5.0 — 2026-09-27
+
+Adds independent emerging-growth discovery without profitability/FCF/P-E gates:
+causal driver-to-beneficiary paths, future pressure scenarios, payer/value capture,
+pilot/design-win/paid/production/repeat stages, counterevidence, milestones and
+comparable metric trajectories. Adds theme-first planning, revision comparison,
+dossier provenance checks, three MCP tools, discover CLI, two brain packets and
+one fictional unprofitable early-adoption example.
+
+Validation: **178 tests** passed locally (35 new); 12 prior process benchmarks;
+isolated wheel execution of research review, annual valuation and discovery;
+**27 packaged packets** loaded successfully. New checks cover premature rejection
+AND unsupported promotion. They do not establish future winner detection or returns.
+
+The engine supplies research structure and arithmetic. Claude still supplies the
+reasoned causal hypotheses and reviews retrieved evidence. No autonomous prediction
+of unknown inventions, no monitoring scheduler and no stock-entry/trading tool.
+The early-discovery lane does not bypass price/funding underwriting. Research sources
+and access limits are documented in frontier_research; the shipped case is synthetic.
+
+The previous release's valuation functionality and limits remain below.
+
+---
+
 # Build status — v0.4.0 — 2026-09-27
 
 ## Implemented and exercised

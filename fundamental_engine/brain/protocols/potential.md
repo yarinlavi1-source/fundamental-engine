@@ -26,3 +26,10 @@ Milestones need cost, due date, success criterion, failure criterion and source.
 Keep the possibility of technical success but poor equity return visible. Negative
 profit today does not reject potential; unavailable funding does not disappear
 because the addressable market is large.
+
+
+v0.5: load frontier_discovery and frontier_research. Execute discovery_scan even
+when conventional valuation is not yet available. Keep the discovery lane distinct
+from readiness for a priced conclusion; losses, high P/E and a short reporting
+history do not reject an emerging opportunity. Discovery evidence and causal
+hypotheses now have a dedicated dated case format and revision comparison.

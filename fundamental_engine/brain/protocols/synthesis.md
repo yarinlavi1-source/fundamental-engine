@@ -36,3 +36,9 @@ quote, base gap. Explain source-supported business drivers and the decisive
 assumptions. Future values belong to their stated dates, not to today's valuation.
 Never silently turn a synthetic example or a reverse-price sensitivity into the
 company's base case. State how financing and dilution affect the existing share.
+
+
+For emerging-growth cases, lead with the potential mechanism and evidenced stage,
+then what improved, the next falsifiable milestone and value capture. Report the
+discovery lane alongside price/funding status. Never translate 'valuation incomplete'
+into 'bad company' or a failed investment. Never translate a promising lane into buy.

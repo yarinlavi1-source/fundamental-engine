@@ -79,3 +79,11 @@ The primary company-value output now comes from `value_company` (MCP) or
 examples are in `examples/valuation/`. They demonstrate formats, not target prices.
 The operating route includes business drivers, cash/debt/deferred-revenue/share
 ledgers, funding gaps, a terminal equity bridge and dated values through 2030.
+
+## v0.5 theme-first discovery
+
+Start early-growth research with `frontier_plan({request:{theme,as_of}})` even before
+a ticker is known. `discovery_scan({case})` validates the evidence/causal chain and
+returns research actions without a mature-profitability gate. The paired
+`discovery_compare({before,after})` tracks progress across dated revisions. See
+`docs/DISCOVERY.md`; these are research tools, not automated stock-entry filters.

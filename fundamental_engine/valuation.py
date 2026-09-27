@@ -8,6 +8,7 @@ from copy import deepcopy
 from datetime import date
 import json
 from .finance import number
+from . import __version__
 
 OPERATING = {'software', 'platform', 'industrial', 'consumer', 'infrastructure',
              'commodity', 'nonfinancial', 'turnaround'}
@@ -364,7 +365,7 @@ def value_company(case):
         table.append(row)
     from hashlib import sha256
     fingerprint = sha256(json.dumps(case, sort_keys=True, ensure_ascii=False, allow_nan=False).encode()).hexdigest()
-    output = {'input_sha256': fingerprint, 'version': '0.4.0', 'ticker': case['ticker'], 'currency': case['currency'],
+    output = {'input_sha256': fingerprint, 'version': __version__, 'ticker': case['ticker'], 'currency': case['currency'],
             'as_of': case['as_of'], 'company_id': case['company_id'], 'method': case['method'], 'is_demo': bool(case.get('is_demo')),
             'status': 'funding_blocked' if any(r['status'] == 'funding_blocked' for r in results) else ('unreviewed' if unreviewed else 'conditional_valuation'),
             'annual_values': table, 'scenarios': results, 'warnings': warnings,

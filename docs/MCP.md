@@ -105,3 +105,10 @@ protocol/runtime tests, not an assertion about the user's live Claude session.
 
 All four are read-only calculations and do not fetch, execute source instructions,
 write to GitHub, or trade. See docs/ANNUAL_VALUATION.md for the case contract.
+
+## v0.5 discovery tools
+
+`frontier_plan({request:{theme,as_of}})`, `discovery_scan({case})`, and
+`discovery_compare({before,after})` are read-only tools. Read frontier_discovery and
+docs/DISCOVERY.md. A theme agenda needs no ticker; a discovery case needs issuer
+identity and explicit evidence, but no positive earnings or fair-value calculation.
