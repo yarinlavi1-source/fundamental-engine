@@ -21,9 +21,12 @@ assert review(case)['status']=='ready_for_conditional_synthesis'
 from fundamental_engine.valuation import value_company
 v=json.loads(open(sys.argv[3],encoding='utf-8').read())
 assert len(value_company(v)['annual_values'])==6
-print(json.dumps({'annual_valuation':'passed','version':__version__,'packaged_packets':len(records),'installed_review':'passed'}))
+from fundamental_engine.discovery import scan
+d=json.loads(open(sys.argv[4],encoding='utf-8').read())
+assert scan(d)['opportunities'][0]['research_lane']=='underwrite_early_growth'
+print(json.dumps({'discovery':'passed','annual_valuation':'passed','version':__version__,'packaged_packets':len(records),'installed_review':'passed'}))
 '''
-    completed=subprocess.run([sys.executable,'-I','-c',code,temp,str(ROOT/'examples/research_dossier_demo.json'),str(ROOT/'examples/valuation/infrastructure.json')],
+    completed=subprocess.run([sys.executable,'-I','-c',code,temp,str(ROOT/'examples/research_dossier_demo.json'),str(ROOT/'examples/valuation/infrastructure.json'),str(ROOT/'examples/discovery_demo.json')],
                               cwd=temp,text=True,capture_output=True,timeout=20)
     if completed.returncode:raise SystemExit(completed.stderr)
     print(completed.stdout.strip())

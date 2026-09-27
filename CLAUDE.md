@@ -47,3 +47,14 @@ values, not predicted exchange prices. See docs/ANNUAL_VALUATION.md.
 Use annual_valuation_input in the dossier and valuation_basis.model=annual_path
 when selecting that executed current-date result. Specialist snapshots remain
 subject to explicit financing and economic underwriting; no automatic endorsement.
+
+## User preference: emerging quality, not mature-profitability screening
+
+For early-growth / future-constraint questions, start with frontier_plan and packets
+frontier_discovery/frontier_research. Use discovery_scan without requiring positive
+earnings, positive FCF, a low P/E or a completed DCF. Keep promising-but-expensive,
+commercially early, and funding-conditional separate from a weak business. Follow
+paid adoption and value capture, not famous partner logos. Run discovery_compare
+for progress; retain the opportunity while independently underwriting price/risk.
+Attach discovery_input to the dossier for audited provenance. Discovery does not
+change valuation arithmetic or grant permission to place trades.

@@ -1,3 +1,19 @@
+# v0.5 — emerging growth and future bottlenecks
+
+Discovery now runs independently of mature-company valuation filters. A loss-making
+company can remain a promising research candidate; price/funding underwriting remains
+separate. Use `frontier_plan` to research a theme before picking a ticker, then
+`discovery_scan` and `discovery_compare` through MCP.
+
+```bash
+python -m fundamental_engine discover examples/discovery_demo.json
+```
+
+The fixture is fictional. The output connects a driver, constraint, solution and
+beneficiary; distinguishes hypotheses from observed adoption; tracks milestones,
+comparable metrics, substitutes, economic capture and counterevidence. No buy signal
+or calibrated winner probability is produced. See [discovery contract](docs/DISCOVERY.md).
+
 # Fundamental Engine v0.4 — annual fair-value research
 
 The engine now produces a Hebrew table of fair values **today and at each year-end

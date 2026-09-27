@@ -134,7 +134,6 @@ class ValuationTests(unittest.TestCase):
   o={'company_id':'x','metric':'revenue','target_date':'2026-12-31','forecast_as_of':'2026-01-01','actual_available_at':'2027-02-01','forecast_currency':'USD','actual_currency':'USD','forecast_basis':'GAAP','actual_basis':'GAAP','forecast':100,'actual':80,'low':70,'high':110}
   r=forecast_score([o]);self.assertEqual(r['mean_absolute_error'],20);self.assertEqual(r['interval_coverage'],1);o['forecast_as_of']='2027-01-01'
   with self.assertRaises(ValueError):forecast_score([o])
-if __name__=='__main__':unittest.main()
 
 class IntegrationAuditTests(unittest.TestCase):
  def annual_dossier(self):
@@ -174,3 +173,5 @@ class IntegrationAuditTests(unittest.TestCase):
  def test_specialist_opening_scenarios(self):
   c=fixture('reit');c['scenarios'][0]['opening_snapshot']=dict(c['opening'],asset_value=200e6)
   r=value_company(c);self.assertLess(r['annual_values'][0]['bear'],r['annual_values'][0]['base'])
+
+if __name__=='__main__':unittest.main()

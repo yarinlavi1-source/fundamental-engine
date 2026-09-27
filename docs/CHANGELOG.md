@@ -28,3 +28,11 @@ stress/sensitivity/reverse-price tools, frozen forecast scoring, Hebrew report,
 CLI and MCP integration, and primary methodology research. 50 new tests; 143 total.
 All shipped new valuation examples are fictional. No calibrated issuer targets or
 predictive-accuracy claims are included.
+
+## 0.5.0 — 2026-09-27
+
+Theme-first discovery, causal bottleneck paths, payer/value-capture checks, adoption
+stages, comparable progress metrics, milestones, evidence revisions and independent
+discovery/valuation lanes. Adds three MCP tools, discover CLI, dossier integration,
+two research packets and a fictional unprofitable early-adoption case. 35 new tests;
+178 total. No trading, automatic surveillance or calibrated winner probabilities.

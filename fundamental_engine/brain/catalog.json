@@ -1,5 +1,5 @@
 {
-  "version": "0.4.0",
+  "version": "0.5.0",
   "packets": [
     {
       "id": "operating_system",
@@ -125,6 +125,16 @@
       "id": "valuation_research",
       "title": "Primary research, method decisions and boundaries",
       "file": "protocols/valuation_research.md"
+    },
+    {
+      "id": "frontier_discovery",
+      "title": "Emerging growth and future bottleneck discovery",
+      "file": "protocols/frontier_discovery.md"
+    },
+    {
+      "id": "frontier_research",
+      "title": "Research basis and AI value-chain hypotheses",
+      "file": "protocols/frontier_research.md"
     }
   ]
 }

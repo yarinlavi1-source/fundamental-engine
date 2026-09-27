@@ -46,6 +46,9 @@ def research_tool(name, description, properties, required, readonly=True):
 
 
 TOOLS += [
+ research_tool('frontier_plan','Theme-first research agenda for emerging constraints and suppliers, before selecting a ticker. No profitability gate or trade signal.',{'request':{'type':'object'}},['request']),
+ research_tool('discovery_scan','Audit causal bottleneck hypotheses and early adoption; preserve potential separately from valuation/funding. Read frontier_discovery first.',{'case':{'type':'object'}},['case']),
+ research_tool('discovery_compare','Compare dated emerging-opportunity revisions and commercial stages; no hindsight backdating.',{'before':{'type':'object'},'after':{'type':'object'}},['before','after']),
  research_tool('value_company','Calculate dated fair-value scenarios from operating drivers, funding and dilution, or dedicated residual-income/NAV/rNPV/SOTP inputs. Read annual_valuation first. Conditional estimates, not market forecasts.',{'case':{'type':'object'}},['case']),
  research_tool('valuation_diagnostics','Run operating stress tests, discount/growth sensitivity and reverse unit-price sensitivity. No automatic financing or market-consensus claims.',{'case':{'type':'object'}},['case']),
  research_tool('asset_replacement_schedule','Calculate depreciation and replacement cash for explicit asset cohorts; initial growth capex is separate.',{'cohorts':{'type':'object'}},['cohorts']),
@@ -99,6 +102,15 @@ class Server:
             expected = {'object':dict,'string':str,'integer':int}[kind]
             if not isinstance(value,expected) or isinstance(value,bool):
                 raise ValueError(f'Invalid argument type: {key}')
+        if name == 'frontier_plan':
+            from .discovery import frontier_plan
+            return frontier_plan(args['request'])
+        if name == 'discovery_scan':
+            from .discovery import scan
+            return scan(args['case'])
+        if name == 'discovery_compare':
+            from .discovery import compare_discovery
+            return compare_discovery(args['before'],args['after'])
         if name == 'value_company':
             from .valuation import value_company
             return value_company(args['case'])

@@ -91,9 +91,21 @@ def main():
     vt.add_argument("input")
     vt.add_argument("--out", default="runs/valuation")
     vt.add_argument("--diagnostics", action="store_true")
+    ds = subs.add_parser("discover", help="Emerging opportunity research, independent of mature-profitability filters")
+    ds.add_argument("input")
+    ds.add_argument("--out", default="runs/discovery")
     args = parser.parse_args()
     try:
-        if args.command == "value":
+        if args.command == "discover":
+            from .discovery import scan
+            inputs=read_json(args.input)
+            result=scan(inputs)
+            dest=Path(args.out)/result['input_sha256'][:16]
+            dest.mkdir(parents=True,exist_ok=True)
+            for name,obj in [('input',inputs),('discovery',result)]:
+                (dest/(name+'.json')).write_text(json.dumps(obj,ensure_ascii=False,indent=2,allow_nan=False),encoding='utf-8')
+            print(json.dumps(result,ensure_ascii=False,indent=2,allow_nan=False))
+        elif args.command == "value":
             from .valuation import value_company, sensitivity
             from .valuation_report import render_valuation
             from .valuation_tools import stress_test, reverse_price

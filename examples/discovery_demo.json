@@ -1,0 +1,225 @@
+{
+  "discovery_version": 1,
+  "is_demo": true,
+  "as_of": "2026-09-27",
+  "company_id": "fictional-discovery",
+  "ticker": "DEMO-EARLY",
+  "sources": [
+    {
+      "id": "demo",
+      "title": "Fictional discovery observations",
+      "url": "synthetic://discovery",
+      "kind": "synthetic",
+      "origin_id": "fictional-original",
+      "published_at": "2026-01-01",
+      "available_at": "2026-01-01"
+    }
+  ],
+  "nodes": [
+    {
+      "id": "workload",
+      "kind": "driver",
+      "description": "More autonomous workloads"
+    },
+    {
+      "id": "control",
+      "kind": "constraint",
+      "description": "More machine permissions to govern"
+    },
+    {
+      "id": "product",
+      "kind": "solution",
+      "description": "Hypothetical identity control product"
+    },
+    {
+      "id": "firm",
+      "kind": "beneficiary",
+      "description": "Fictional early-stage supplier"
+    }
+  ],
+  "edges": [
+    {
+      "id": "e0",
+      "from": "workload",
+      "to": "control",
+      "mechanism": "More delegated actions require access governance",
+      "condition": "Hypothesis requires buyer validation",
+      "falsifier": "Existing bundled controls suffice",
+      "kind": "hypothesis",
+      "reviewed": true,
+      "lag_months": 12,
+      "as_of": "2026-09-27",
+      "source_ids": [
+        "demo"
+      ]
+    },
+    {
+      "id": "e1",
+      "from": "control",
+      "to": "product",
+      "mechanism": "Buyers may fund a dedicated solution",
+      "condition": "Hypothesis requires buyer validation",
+      "falsifier": "Existing bundled controls suffice",
+      "kind": "hypothesis",
+      "reviewed": true,
+      "lag_months": 12,
+      "as_of": "2026-09-27",
+      "source_ids": [
+        "demo"
+      ]
+    },
+    {
+      "id": "e2",
+      "from": "product",
+      "to": "firm",
+      "mechanism": "Supplier may retain recurring fees",
+      "condition": "Hypothesis requires buyer validation",
+      "falsifier": "Existing bundled controls suffice",
+      "kind": "hypothesis",
+      "reviewed": true,
+      "lag_months": 12,
+      "as_of": "2026-09-27",
+      "source_ids": [
+        "demo"
+      ]
+    }
+  ],
+  "observations": [
+    {
+      "id": "pilot",
+      "role": "pilot",
+      "statement": "Fictional pilot evidence",
+      "location": "synthetic fixture",
+      "direction": "supports",
+      "kind": "reported",
+      "reviewed": true,
+      "observed_at": "2026-09-01",
+      "reviewed_at": "2026-09-27",
+      "source_ids": [
+        "demo"
+      ]
+    },
+    {
+      "id": "paid_adoption",
+      "role": "paid_adoption",
+      "statement": "Fictional paid_adoption evidence",
+      "location": "synthetic fixture",
+      "direction": "supports",
+      "kind": "reported",
+      "reviewed": true,
+      "observed_at": "2026-09-01",
+      "reviewed_at": "2026-09-27",
+      "source_ids": [
+        "demo"
+      ]
+    },
+    {
+      "id": "value_capture",
+      "role": "value_capture",
+      "statement": "Fictional value_capture evidence",
+      "location": "synthetic fixture",
+      "direction": "supports",
+      "kind": "reported",
+      "reviewed": true,
+      "observed_at": "2026-09-01",
+      "reviewed_at": "2026-09-27",
+      "source_ids": [
+        "demo"
+      ]
+    }
+  ],
+  "financial_context": {
+    "net_income": -10000000,
+    "free_cash_flow": -15000000,
+    "note": "Losses are not discovery rejection criteria; funding still requires underwriting."
+  },
+  "opportunities": [
+    {
+      "id": "agent-controls",
+      "problem": "More machine access may expand operational risk",
+      "payer": "Enterprise security budget owner, to be verified",
+      "product": "Hypothetical machine identity control",
+      "capture_mechanism": "Fictional paid usage; durable pricing remains a hypothesis",
+      "substitutes": "Bundled cloud controls and open source",
+      "supply_response": "Incumbents may add similar functionality",
+      "why_now": "Pilot conversion signals before profitability",
+      "falsifier": "No incremental paid demand or retention",
+      "path": [
+        "e0",
+        "e1",
+        "e2"
+      ],
+      "observation_ids": [
+        "pilot",
+        "paid_adoption",
+        "value_capture"
+      ],
+      "pressure_cases": [
+        {
+          "case": "base",
+          "kind": "scenario",
+          "date": "2028-12-31",
+          "unit": "controlled-workload equivalents",
+          "scope": "Fictional matched workload population",
+          "demand": 150,
+          "supply": 100,
+          "rationale": "Illustrative only, not a real forecast",
+          "source_ids": [
+            "demo"
+          ]
+        }
+      ],
+      "milestones": [
+        {
+          "due_at": "2027-03-31",
+          "test": "Paid customers renew after deployment",
+          "success": "Renewals and contribution improve",
+          "failure": "Customers revert to bundled alternative",
+          "action_if_success": "Update retention/pricing and funding assumptions",
+          "action_if_failure": "Reduce adoption assumptions; examine product differentiation"
+        }
+      ]
+    }
+  ],
+  "trajectories": [
+    {
+      "metric": "paid_customers",
+      "definition": "Customers with recognized paid service, excluding pilots",
+      "unit": "customers",
+      "scope": "same product",
+      "better": "higher",
+      "points": [
+        {
+          "date": "2026-03-31",
+          "value": 3,
+          "period_days": 90,
+          "unit": "customers",
+          "scope": "same product",
+          "source_ids": [
+            "demo"
+          ]
+        },
+        {
+          "date": "2026-06-30",
+          "value": 8,
+          "period_days": 90,
+          "unit": "customers",
+          "scope": "same product",
+          "source_ids": [
+            "demo"
+          ]
+        },
+        {
+          "date": "2026-09-01",
+          "value": 15,
+          "period_days": 90,
+          "unit": "customers",
+          "scope": "same product",
+          "source_ids": [
+            "demo"
+          ]
+        }
+      ]
+    }
+  ]
+}
