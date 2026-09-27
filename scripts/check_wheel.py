@@ -24,9 +24,12 @@ assert len(value_company(v)['annual_values'])==6
 from fundamental_engine.discovery import scan
 d=json.loads(open(sys.argv[4],encoding='utf-8').read())
 assert scan(d)['opportunities'][0]['research_lane']=='underwrite_early_growth'
-print(json.dumps({'discovery':'passed','annual_valuation':'passed','version':__version__,'packaged_packets':len(records),'installed_review':'passed'}))
+from fundamental_engine.plain import plain_verdict
+p=json.loads(open(sys.argv[5],encoding='utf-8').read());p['valuation_case']=v
+assert plain_verdict(p)['price']['bucket']=='cheap'
+print(json.dumps({'plain_verdict':'passed','discovery':'passed','annual_valuation':'passed','version':__version__,'packaged_packets':len(records),'installed_review':'passed'}))
 '''
-    completed=subprocess.run([sys.executable,'-I','-c',code,temp,str(ROOT/'examples/research_dossier_demo.json'),str(ROOT/'examples/valuation/infrastructure.json'),str(ROOT/'examples/discovery_demo.json')],
+    completed=subprocess.run([sys.executable,'-I','-c',code,temp,str(ROOT/'examples/research_dossier_demo.json'),str(ROOT/'examples/valuation/infrastructure.json'),str(ROOT/'examples/discovery_demo.json'),str(ROOT/'examples/plain_demo.json')],
                               cwd=temp,text=True,capture_output=True,timeout=20)
     if completed.returncode:raise SystemExit(completed.stderr)
     print(completed.stdout.strip())

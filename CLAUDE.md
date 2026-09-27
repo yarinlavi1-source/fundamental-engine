@@ -48,6 +48,15 @@ Use annual_valuation_input in the dossier and valuation_basis.model=annual_path
 when selecting that executed current-date result. Specialist snapshots remain
 subject to explicit financing and economic underwriting; no automatic endorsement.
 
+## User preference: eye-level answers, clear labels
+
+Yarin wants the final answer in simple Hebrew, not finance jargon: every material
+metric gets a label (מצוין/טוב/בינוני/חלש/מדאיג) and a sentence on what it means,
+not a bare number. Load plain_language and finish with plain_verdict, passing the
+executed valuation_case so price-versus-value comes from real math. Lead with a clear
+bottom line, what the company does, good vs not good, then the annual valuation in
+words. Still a research indication: no buy/sell orders or promised returns.
+
 ## User preference: emerging quality, not mature-profitability screening
 
 For early-growth / future-constraint questions, start with frontier_plan and packets

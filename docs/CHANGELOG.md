@@ -36,3 +36,12 @@ stages, comparable progress metrics, milestones, evidence revisions and independ
 discovery/valuation lanes. Adds three MCP tools, discover CLI, dossier integration,
 two research packets and a fictional unprofitable early-adoption case. 35 new tests;
 178 total. No trading, automatic surveillance or calibrated winner probabilities.
+
+## 0.6.0 — 2026-09-27
+
+Eye-level Hebrew verdicts. `plain_verdict` (MCP), `plain` CLI and the plain_language
+packet turn reported history into good/not-good labels with everyday explanations,
+sector-aware margin bars, stage-aware treatment of losses and cash burn, separate
+quality/growth/strength/price axes, a plain bottom line, and price versus executed
+bear/base/bull value in words through 2030. Synthesis now leads with this layer.
+11 new tests; 189 total. Research indication only; no orders or promised returns.

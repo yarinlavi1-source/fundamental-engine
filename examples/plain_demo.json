@@ -1,0 +1,16 @@
+{
+  "plain_version": 1,
+  "is_demo": true,
+  "company": "FICTIONAL Infrastructure Co.",
+  "ticker": "FICTIONAL",
+  "as_of": "2026-09-27",
+  "currency": "USD",
+  "archetype": "infrastructure",
+  "stage": "growth",
+  "history": [
+    {"fiscal_year": "FY2023", "period_end": "2023-12-31", "revenue": 400000000, "gross_profit": 190000000, "operating_income": 40000000, "net_income": 25000000, "operating_cash_flow": 70000000, "capex": 60000000, "shares_diluted": 90000000, "source_ids": ["synthetic"]},
+    {"fiscal_year": "FY2024", "period_end": "2024-12-31", "revenue": 520000000, "gross_profit": 255000000, "operating_income": 68000000, "net_income": 45000000, "operating_cash_flow": 105000000, "capex": 80000000, "shares_diluted": 94000000, "source_ids": ["synthetic"]},
+    {"fiscal_year": "FY2025", "period_end": "2025-12-31", "revenue": 700000000, "gross_profit": 350000000, "operating_income": 105000000, "net_income": 72000000, "operating_cash_flow": 150000000, "capex": 95000000, "shares_diluted": 97000000, "source_ids": ["synthetic"]}
+  ],
+  "balance": {"as_of": "2026-06-30", "cash": 180000000, "debt": 320000000}
+}

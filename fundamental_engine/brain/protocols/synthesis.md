@@ -1,5 +1,10 @@
 # Hebrew research output
 
+For Yarin, the delivered answer starts with the eye-level layer from the
+plain_language packet (plain_verdict: bottom line, labels per metric, price versus
+value in everyday words). The 14 sections below are the research backbone; present
+them in the same plain style and keep technical detail for when he asks.
+
 Lead with the conclusion's scope and confidence: what is known, inferred and unresolved.
 Avoid dumping JSON or making a single score look like a scientific probability.
 Provide these 14 sections, adapting length to materiality:

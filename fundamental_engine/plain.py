@@ -1,0 +1,475 @@
+"""Plain-language verdicts: turn reported history and an executed valuation into
+eye-level Hebrew labels ("good / not good") with a short everyday explanation.
+
+The thresholds are transparent rules of thumb, adjusted by business economics.
+They grade reported numbers; they do not verify sources, predict prices or place
+trades. Quality, growth, financial strength and price stay separate axes. The
+price verdict exists only when value_company actually ran in this call.
+"""
+from copy import deepcopy
+from datetime import date
+from hashlib import sha256
+import json
+from .finance import number
+from . import __version__
+
+GRADES = {5: ('מצוין', '🟢'), 4: ('טוב', '🟢'), 3: ('בינוני', '🟡'), 2: ('חלש', '🟠'), 1: ('מדאיג', '🔴')}
+# Gross/operating margin bars differ by economics: software keeps most of each sale,
+# a factory or a retailer structurally keeps less. Never a reason to relabel a sector.
+MARGIN_BARS = {
+    'high_margin': {'gross': (.75, .6, .45, .3), 'operating': (.3, .18, .08, 0)},
+    'general': {'gross': (.5, .38, .25, .15), 'operating': (.2, .12, .06, 0)},
+    'thin_margin': {'gross': (.35, .25, .17, .1), 'operating': (.12, .08, .04, 0)},
+}
+PROFILE = {'software': 'high_margin', 'platform': 'high_margin', 'biotech': 'high_margin',
+           'industrial': 'general', 'infrastructure': 'general', 'conglomerate': 'general',
+           'nonfinancial': 'general', 'turnaround': 'general', 'consumer': 'thin_margin',
+           'commodity': 'thin_margin'}
+STAGES = {'mature', 'growth', 'emerging'}
+
+
+def _txt(v, k):
+    if not isinstance(v, str) or not v.strip():
+        raise ValueError(k + ': nonempty text required')
+    return v
+
+
+def _opt(row, key, low=None):
+    return None if row.get(key) is None else number(row[key], key, low)
+
+
+def _grade(value, bars, higher_is_better=True):
+    """bars = thresholds for grades 5,4,3,2 (descending when higher is better)."""
+    for points, bar in zip((5, 4, 3, 2), bars):
+        if (value >= bar) if higher_is_better else (value <= bar):
+            return points
+    return 1
+
+
+def _item(key, topic, points, headline, explain, figure=None, trend=None):
+    label, light = GRADES[points]
+    return {'key': key, 'topic': topic, 'points': points, 'label': label, 'light': light,
+            'headline': headline, 'explain': explain, 'figure': figure, 'trend': trend}
+
+
+def fraction_words(x):
+    """Everyday Hebrew for a share of the whole: 'בערך רבע', 'קצת יותר משליש'."""
+    if x <= 0:
+        return 'כלום'
+    if x < .07:
+        return 'חלק קטן מאוד'
+    if x > .95:
+        return 'כמעט הכל'
+    anchors = [(.1, 'עשירית'), (.2, 'חמישית'), (.25, 'רבע'), (1 / 3, 'שליש'), (.5, 'חצי'),
+               (2 / 3, 'שני שלישים'), (.75, 'שלושה רבעים')]
+    value, word = min(anchors, key=lambda a: abs(a[0] - x))
+    if abs(value - x) < .025:
+        return 'בערך ' + word
+    return ('קצת יותר מ' if x > value else 'קצת פחות מ') + word
+
+
+def years_words(y):
+    if y < .5:
+        return 'כמה חודשים'
+    if y < 1:
+        return 'פחות משנה'
+    if y < 1.5:
+        return 'בערך שנה'
+    if y < 2.5:
+        return 'בערך שנתיים'
+    return f'בערך {round(y)} שנים'
+
+
+def price_vs_value_words(price, value):
+    """'המחיר הוא בערך חצי מהשווי' / 'המחיר גבוה מהשווי בערך בשליש'."""
+    r = price / value
+    if .93 <= r <= 1.07:
+        return 'המחיר קרוב מאוד לשווי'
+    if r < 1:
+        return 'המחיר הוא ' + fraction_words(r) + ' מהשווי'
+    if r >= 1.9:
+        return 'המחיר גבוה מהשווי ' + multiple_words(r)
+    return 'המחיר גבוה מהשווי ב' + fraction_words(r - 1).replace('בערך ', 'בערך ב')
+
+
+def change_words(new, old):
+    """Change from old to new in words, for scenario values against the quote."""
+    r = new / old
+    if r < 1:
+        return ('ירידה קטנה' if r > .9 else 'ירידה של ' + fraction_words(1 - r)) + ' מהמחיר'
+    return ('עלייה קטנה' if r < 1.1 else multiple_words(r)) + ' לעומת המחיר'
+
+
+def multiple_words(m):
+    """A growth factor in words: 1.05 -> 'בערך אותו דבר', 2.1 -> 'בערך פי 2'."""
+    if m < .5:
+        return 'פחות מחצי ממה שהיה'
+    if m < .95:
+        return 'ירידה של ' + fraction_words(1 - m)
+    if m <= 1.05:
+        return 'בערך אותו דבר'
+    if m < 1.9:
+        return 'עלייה של ' + fraction_words(m - 1)
+    return 'בערך פי ' + (str(round(m)) if m >= 2.75 else ('2' if m < 2.25 else '2.5'))
+
+
+def per_hundred(margin, currency):
+    return f'מכל 100 {currency} של מכירות נשארים בערך {round(margin * 100)}'
+
+
+def _history(case):
+    rows = case['history']
+    if not isinstance(rows, list) or not 1 <= len(rows) <= 15:
+        raise ValueError('history: supply 1..15 fiscal years, oldest first')
+    ends = []
+    for r in rows:
+        _txt(r['fiscal_year'], 'fiscal_year')
+        end = date.fromisoformat(r['period_end'])
+        if end > date.fromisoformat(case['as_of']):
+            raise ValueError('History period ends after as_of')
+        number(r['revenue'], 'revenue', 0)
+        for k in ('gross_profit', 'operating_income', 'net_income', 'operating_cash_flow'):
+            _opt(r, k)
+        for k in ('capex', 'shares_diluted'):
+            _opt(r, k, 0)
+        if not isinstance(r.get('source_ids'), list) or not r['source_ids']:
+            raise ValueError('Every history row needs source_ids (where the number came from)')
+        ends.append(end)
+    if ends != sorted(set(ends)):
+        raise ValueError('history must be ordered oldest first with distinct period_end')
+    return rows
+
+
+def _growth(rows, stage):
+    if len(rows) < 2:
+        return None
+    last, prev = rows[-1]['revenue'], rows[-2]['revenue']
+    if prev <= 0:
+        return _item('growth', 'צמיחה', 3, 'עוד אין בסיס מכירות להשוואה',
+                     'בשנה הקודמת כמעט לא היו מכירות, אז אחוזי צמיחה כאן מטעים. מה שחשוב זה אם הלקוחות משלמים ומזמינים שוב.',
+                     {'revenue_last': last, 'revenue_previous': prev})
+    yoy = last / prev - 1
+    years = len(rows) - 1
+    first = rows[0]['revenue']
+    cagr = (last / first) ** (1 / years) - 1 if first > 0 and years > 1 else None
+    points = _grade(yoy, (.3, .15, .05, 0))
+    words = {5: 'המכירות גדלות מהר מאוד', 4: 'המכירות גדלות יפה', 3: 'המכירות גדלות לאט',
+             2: 'המכירות כמעט עומדות במקום', 1: 'המכירות יורדות'}[points]
+    explain = f'בשנה האחרונה: {multiple_words(last / prev)} לעומת השנה הקודמת.'
+    if cagr is not None:
+        explain += f' לאורך {years} שנים: {multiple_words(last / first)} בסך הכל.'
+    trend = None
+    if len(rows) >= 3 and rows[-3]['revenue'] > 0:
+        before = prev / rows[-3]['revenue'] - 1
+        if yoy > before + .05:
+            trend, explain = 'accelerating', explain + ' והקצב מאיץ — סימן טוב.'
+        elif yoy < before - .05:
+            trend, explain = 'decelerating', explain + ' אבל הקצב מאט — צריך להבין למה (זמני או מבני).'
+    if points == 1:
+        explain += ' ירידה במכירות היא לא סוף העולם אם היא זמנית — אבל חייבים לבדוק אם הלקוחות עוזבים.'
+    if stage == 'emerging' and points >= 4:
+        explain += ' בשלב מוקדם צמיחה מבסיס קטן קלה יותר; מה שקובע זה אם היא נמשכת כשהבסיס גדל.'
+    return _item('growth', 'צמיחה', points, words, explain,
+                 {'revenue_growth_last_year': yoy, 'revenue_cagr': cagr}, trend)
+
+
+def _margins(rows, bars, currency, stage):
+    out = []
+    last = rows[-1]
+    rev = last['revenue']
+    if rev <= 0:
+        return out
+    gp = last.get('gross_profit')
+    if gp is not None:
+        gm = gp / rev
+        points = _grade(gm, bars['gross'])
+        words = {5: 'המוצר רווחי מאוד מהיסוד', 4: 'המוצר רווחי', 3: 'רווחיות מוצר סבירה',
+                 2: 'המוצר מרוויח מעט', 1: 'המוצר כמעט לא מרוויח'}[points]
+        out.append(_item('gross_margin', 'רווחיות המוצר', points, words,
+                         per_hundred(gm, currency) + ' אחרי עלות הייצור/השירות עצמו (לפני משכורות הנהלה, שיווק ופיתוח).'
+                         + (' זה אומר שיש כוח תמחור — הלקוחות מוכנים לשלם הרבה מעבר לעלות.' if points >= 4 else '')
+                         + (' זה אומר שקשה להעלות מחירים או שהעלויות גבוהות — כל טעות קטנה פוגעת ברווח.' if points <= 2 else ''),
+                         {'gross_margin': gm}))
+    oi = last.get('operating_income')
+    if oi is not None:
+        om = oi / rev
+        trend = None
+        first = rows[0]
+        if len(rows) >= 2 and first['revenue'] > 0 and first.get('operating_income') is not None:
+            delta = om - first['operating_income'] / first['revenue']
+            trend = 'improving' if delta > .03 else ('worsening' if delta < -.03 else 'stable')
+        points = _grade(om, bars['operating'])
+        if om < 0:
+            head = 'העסק עוד מפסיד'
+            explain = f'כרגע כל 100 {currency} מכירות עולים לחברה בערך {round(100 - om * 100)} — היא מוציאה יותר ממה שהיא מכניסה.'
+            if stage == 'emerging':
+                points = 3 if trend == 'improving' else 2
+                explain += ' בחברה צעירה זה נורמלי כל עוד ההפסד מצטמצם והכסף בקופה מספיק לדרך.'
+        else:
+            head = {5: 'העסק מרוויח המון', 4: 'העסק מרוויח יפה', 3: 'העסק מרוויח, אבל לא הרבה',
+                    2: 'העסק בקושי מרוויח', 1: 'העסק בקושי מרוויח'}[points]
+            explain = per_hundred(om, currency) + ' אחרי כל ההוצאות של הפעילות (משכורות, שיווק, פיתוח) — לפני מס וריבית.'
+        explain += {'improving': ' והמגמה משתפרת לאורך השנים.', 'worsening': ' והמגמה נשחקת לאורך השנים — צריך להבין למה.',
+                    'stable': ' והרמה די יציבה לאורך השנים.', None: ''}[trend]
+        out.append(_item('operating_margin', 'רווחיות העסק', points, head, explain, {'operating_margin': om}, trend))
+    return out
+
+
+def _cash(rows, balance, currency, stage):
+    out = []
+    last = rows[-1]
+    ocf, capex, ni = last.get('operating_cash_flow'), last.get('capex'), last.get('net_income')
+    fcf = None
+    if ocf is not None and capex is not None and last['revenue'] > 0:
+        fcf = ocf - capex
+        fm = fcf / last['revenue']
+        points = _grade(fm, (.2, .1, .03, 0))
+        head = {5: 'מייצר הרבה כסף מזומן', 4: 'מייצר כסף מזומן יפה', 3: 'מייצר קצת כסף מזומן',
+                2: 'כמעט לא נשאר כסף מזומן', 1: 'שורף כסף מזומן'}[points]
+        explain = ('אחרי שהחברה משלמת על הכל, כולל השקעות בציוד ובמבנים, ' +
+                   (f'נשארים לה בערך {round(fm * 100)} {currency} מזומן מכל 100 {currency} מכירות. זה הכסף האמיתי שאפשר להשתמש בו לצמיחה, להחזר חוב או לבעלי המניות.'
+                    if fcf >= 0 else 'יוצא ממנה יותר כסף ממה שנכנס. מישהו צריך לממן את הפער — הקופה, הלוואות או הנפקת מניות.'))
+        if fcf < 0 and stage == 'emerging':
+            points = max(points, 2)
+            explain += ' בשלב מוקדם זה צפוי; השאלה היא לכמה זמן הכסף מספיק.'
+        out.append(_item('free_cash_flow', 'כסף מזומן', points, head, explain, {'free_cash_flow': fcf, 'free_cash_flow_margin': fm}))
+    if ocf is not None and ni is not None and ni > 0:
+        q = ocf / ni
+        points = _grade(q, (1.1, .9, .7, .5))
+        head = 'הרווח אמיתי — הוא נכנס לקופה' if q >= .9 else ('הרווח חלקית על הנייר' if q >= .5 else 'הרווח בעיקר על הנייר')
+        explain = ('הכסף שנכנס בפועל מהפעילות גדול או שווה לרווח שמדווח. זה סימן בריא.' if q >= .9 else
+                   'הרווח בדוחות גדול מהכסף שנכנס בפועל. לפעמים זה בגלל מלאי או לקוחות שעוד לא שילמו — צריך לבדוק שזה לא הופך להרגל.')
+        out.append(_item('earnings_quality', 'איכות הרווח', points, head, explain, {'cash_to_net_income': q}))
+    if balance:
+        cash, debt = number(balance['cash'], 'cash', 0), number(balance['debt'], 'debt', 0)
+        net = debt - cash
+        if net <= 0:
+            points, head = 5, 'יש יותר מזומן מחוב'
+            explain = 'לחברה יש בקופה יותר כסף ממה שהיא חייבת. היא לא תלויה בבנקים ויכולה לעבור תקופה קשה.'
+            years_to_pay = None
+        elif ocf is not None and ocf > 0:
+            years_to_pay = net / ocf
+            points = _grade(years_to_pay, (0, 1, 3, 5), higher_is_better=False)
+            head = {4: 'חוב קטן', 3: 'חוב סביר', 2: 'חוב כבד', 1: 'חוב כבד מאוד'}[points]
+            explain = f'כדי להחזיר את החוב נטו (חוב פחות מזומן) מהכסף שהפעילות מייצרת, צריך {years_words(years_to_pay)}. ' + (
+                'זה בסדר גמור.' if points >= 4 else 'זה סביר, אבל עלייה בריבית או שנה חלשה ירגישו.' if points == 3 else
+                'זה הרבה — בשנה רעה החוב עלול להפוך לבעיה ולהכריח גיוס כסף.')
+        else:
+            points, head, years_to_pay = 1, 'חוב בלי כסף שנכנס לשלם אותו', None
+            explain = 'לחברה יש חוב נטו והפעילות עוד לא מייצרת מזומן. היא תלויה במימון חיצוני.'
+        out.append(_item('balance_sheet', 'חוב וקופה', points, head, explain,
+                         {'cash': cash, 'debt': debt, 'net_debt': net, 'net_debt_to_operating_cash_years': years_to_pay}))
+        if fcf is not None and fcf < 0:
+            runway = cash / -fcf
+            points = _grade(runway, (5, 3, 1.5, .75))
+            head = {5: 'הכסף מספיק להרבה זמן', 4: 'הכסף מספיק לכמה שנים', 3: 'הכסף מספיק לשנה-שנתיים',
+                    2: 'הכסף נגמר תוך כשנה', 1: 'הכסף עומד להיגמר'}[points]
+            explain = f'בקצב השריפה הנוכחי הקופה מחזיקה {years_words(runway)}.' + (
+                ' צפוי גיוס הון, וגיוס כזה מקטין את החלק שלך בחברה (דילול).' if points <= 3 else '')
+            out.append(_item('runway', 'כמה זמן הכסף מחזיק', points, head, explain, {'runway_years': runway}))
+    return out
+
+
+def _dilution(rows):
+    known = [r for r in rows if r.get('shares_diluted')]
+    if len(known) < 2:
+        return None
+    years = (date.fromisoformat(known[-1]['period_end']) - date.fromisoformat(known[0]['period_end'])).days / 365.25
+    if years <= 0:
+        return None
+    rate = (known[-1]['shares_diluted'] / known[0]['shares_diluted']) ** (1 / years) - 1
+    points = _grade(rate, (0, .02, .05, .1), higher_is_better=False)
+    head = {5: 'לא מדללת — ואפילו קונה מניות בחזרה' if rate < -.005 else 'לא מדללת את בעלי המניות',
+            4: 'דילול קטן', 3: 'דילול מורגש', 2: 'דילול כבד', 1: 'דילול כבד מאוד'}[points]
+    explain = ('כמות המניות לא עולה, אז כל הצמיחה שייכת לך באותו חלק.' if points == 5 else
+               'החברה מוסיפה מניות כל שנה (לעובדים או לגיוס כסף). העוגה גדלה, אבל מתחלקת לעוד חתיכות — ' +
+               ('זה עדיין קטן.' if points == 4 else 'זה אוכל חלק מהתשואה שלך.' if points == 3 else 'זה אוכל חלק גדול מהתשואה שלך.'))
+    return _item('dilution', 'דילול', points, head, explain, {'share_count_growth_per_year': rate})
+
+
+def _valuation(case):
+    source = case.get('valuation_case')
+    if source is None:
+        return None, None
+    from .valuation import value_company
+    result = value_company(source)
+    if source['ticker'] != case['ticker'] or source['currency'] != case['currency']:
+        raise ValueError('valuation_case ticker/currency must match the plain case')
+    status = result['status']
+    today = result['annual_values'][0]
+    quote = today['current_quote']
+    summary = {'executed': True, 'input_sha256': result['input_sha256'], 'status': status,
+               'is_demo': result['is_demo'], 'warnings': result['warnings'], 'annual_values': result['annual_values'],
+               'base_issues': next((x.get('issues', []) for x in result['scenarios'] if x['name'] == 'base'), [])}
+    if status == 'funding_blocked' or today.get('base') is None:
+        return summary, {'bucket': 'blocked', 'light': '🔴', 'headline': 'אי אפשר לתת שווי כרגע',
+                         'explain': 'לפי התחזית החברה צריכה כסף שאין לו מקור מוכח. עד שיהיה מימון ברור, כל "שווי" הוא ניחוש. זו נורת אזהרה, לא הערכת שווי.'}
+    bear, base, bull = today['bear'], today['base'], today['bull']
+    ratio = quote / base if base > 0 else float('inf')
+    if bear is not None and quote <= bear:
+        bucket, light, head = 'cheap_even_bear', '🟢', 'זול — גם בתרחיש הרע'
+    elif ratio <= .8:
+        bucket, light, head = 'cheap', '🟢', 'זול ביחס לשווי'
+    elif ratio <= 1.1:
+        bucket, light, head = 'fair', '🟡', 'בערך במחיר הוגן'
+    elif bull is not None and quote <= bull:
+        bucket, light, head = 'expensive', '🟠', 'יקר — המחיר כבר מניח הצלחה'
+    else:
+        bucket, light, head = 'very_expensive', '🔴', 'יקר מאוד — גם לעומת התרחיש האופטימי'
+    cur = case['currency']
+    explain = (f'המחיר היום בערך {quote:,.2f} {cur}. לפי התרחיש הסביר (בסיס) המניה שווה היום בערך {base:,.2f} {cur}'
+               + (f' — {price_vs_value_words(quote, base)}.' if base > 0 else '.'))
+    if bear is not None:
+        explain += f' בתרחיש הרע השווי בערך {bear:,.2f} {cur}' + (f' ({change_words(bear, quote)}).' if bear > 0 else ' (כמעט כלום).')
+    if bull is not None:
+        explain += f' בתרחיש הטוב בערך {bull:,.2f} {cur} ({change_words(bull, quote)}).'
+    path = [r for r in result['annual_values'][1:] if r.get('base') is not None]
+    if path:
+        end = path[-1]
+        explain += (f' אם תרחיש הבסיס מתממש, השווי ב-{end["date"][:4]} יהיה בערך {end["base"]:,.2f} {cur}'
+                    f' ({change_words(end["base"], quote)} של היום). זה שווי מותנה בתחזית, לא תחזית למחיר בבורסה.')
+    return summary, {'bucket': bucket, 'light': light, 'headline': head, 'explain': explain,
+                     'quote': quote, 'bear': bear, 'base': base, 'bull': bull, 'price_to_base_value': ratio}
+
+
+def _confidence(case, valuation, items):
+    reasons = []
+    review = case.get('research_status')
+    if review != 'ready_for_conditional_synthesis':
+        reasons.append('המחקר עוד לא עבר את בדיקת התהליך (research_review) עד הסוף')
+    if valuation:
+        if valuation['is_demo']:
+            reasons.append('זו דוגמה מומצאת, לא חברה אמיתית')
+        if valuation['status'] == 'unreviewed':
+            reasons.append('יש הנחות בהערכת השווי שעוד לא נבדקו')
+        if any('80%' in w for w in valuation['base_issues']):
+            reasons.append('רוב השווי מגיע משנים רחוקות')
+        if any('7 calendar days' in w for w in valuation['warnings']):
+            reasons.append('המחיר שהושווה ישן מיותר משבוע')
+    if len(case['history']) < 3:
+        reasons.append('יש פחות משלוש שנים של נתונים')
+    if len(items) < 4:
+        reasons.append('חסרים נתונים לחלק מהבדיקות')
+    level = 'גבוה' if not reasons else ('בינוני' if len(reasons) <= 1 else 'נמוך')
+    return {'level': level, 'reasons': reasons}
+
+
+def _avg(items, keys):
+    pts = [i['points'] for i in items if i['key'] in keys]
+    return sum(pts) / len(pts) if pts else None
+
+
+def _axis(name, score, words):
+    if score is None:
+        return {'axis': name, 'score': None, 'label': 'אין מספיק נתונים', 'light': '⚪'}
+    points = max(1, min(5, round(score)))
+    return {'axis': name, 'score': round(score, 2), 'label': words[points], 'light': GRADES[points][1]}
+
+
+def plain_verdict(case):
+    case = deepcopy(case)
+    if case.get('plain_version') != 1:
+        raise ValueError('plain_version must be 1')
+    json.dumps(case, allow_nan=False)
+    for k in ('company', 'ticker', 'currency'):
+        _txt(case[k], k)
+    date.fromisoformat(case['as_of'])
+    stage = case.get('stage', 'mature')
+    if stage not in STAGES:
+        raise ValueError('stage must be mature/growth/emerging')
+    archetype = case.get('archetype', 'nonfinancial')
+    if archetype in {'financials', 'reit', 'asset_holding'}:
+        raise ValueError('Banks/insurers/REITs need dedicated metrics (book value, capital, NAV); not graded with operating margins')
+    if archetype not in PROFILE:
+        raise ValueError('Unknown archetype')
+    rows = _history(case)
+    cur = case['currency']
+    items = [i for i in [_growth(rows, stage)] if i]
+    items += _margins(rows, MARGIN_BARS[PROFILE[archetype]], cur, stage)
+    items += _cash(rows, case.get('balance'), cur, stage)
+    d = _dilution(rows)
+    if d: items.append(d)
+    valuation, price = _valuation(case)
+    axes = [
+        _axis('איכות העסק', _avg(items, {'gross_margin', 'operating_margin', 'free_cash_flow', 'earnings_quality'}),
+              {5: 'עסק מצוין', 4: 'עסק טוב', 3: 'עסק בינוני', 2: 'עסק חלש', 1: 'עסק בעייתי'}),
+        _axis('צמיחה', _avg(items, {'growth'}),
+              {5: 'צומח מהר מאוד', 4: 'צומח יפה', 3: 'צומח לאט', 2: 'כמעט לא צומח', 1: 'מתכווץ'}),
+        _axis('חוסן כספי', _avg(items, {'balance_sheet', 'runway', 'dilution'}),
+              {5: 'חזק מאוד', 4: 'חזק', 3: 'סביר', 2: 'רגיש', 1: 'שביר'}),
+    ]
+    scored = [a['score'] for a in axes if a['score'] is not None]
+    business = sum(scored) / len(scored) if scored else None
+    bottom = _bottom_line(business, price, stage)
+    confidence = _confidence(case, valuation, items)
+    out = {'version': __version__, 'company': case['company'], 'ticker': case['ticker'], 'as_of': case['as_of'],
+           'currency': cur, 'stage': stage, 'archetype': archetype, 'items': items, 'axes': axes,
+           'business_score': round(business, 2) if business is not None else None,
+           'price': price, 'valuation': valuation, 'bottom_line': bottom, 'confidence': confidence,
+           'input_sha256': sha256(json.dumps(case, sort_keys=True, ensure_ascii=False, allow_nan=False).encode()).hexdigest(),
+           'meaning': 'Rule-of-thumb grades of supplied reported figures plus an executed valuation. Research indication only: not verified facts, not a price forecast, not an order or a promised return.'}
+    out['text'] = render_plain(out)
+    json.dumps(out, allow_nan=False)
+    return out
+
+
+def _bottom_line(business, price, stage):
+    if business is None:
+        return {'light': '⚪', 'call': 'אין מספיק נתונים', 'explain': 'חסרים נתונים בסיסיים כדי לשפוט את העסק.'}
+    good, ok = business >= 3.5, business >= 2.5
+    if price is None:
+        call = 'עסק טוב — המחיר עוד לא נבדק' if good else ('עסק בינוני — המחיר עוד לא נבדק' if ok else 'עסק חלש — המחיר עוד לא נבדק')
+        return {'light': '🟡' if ok else '🟠', 'call': call,
+                'explain': 'לא הורצה הערכת שווי, אז אי אפשר להגיד אם זה זול או יקר. אל תסיק מזה שום דבר על המחיר.'}
+    b = price['bucket']
+    if b == 'blocked':
+        return {'light': '🔴', 'call': 'זהירות — בעיית מימון', 'explain': 'גם אם העסק מעניין, בלי מימון ברור בעלי המניות של היום עלולים להידלל או להפסיד.'}
+    cheap, fair = b in {'cheap', 'cheap_even_bear'}, b == 'fair'
+    if good and cheap:
+        return {'light': '🟢', 'call': 'מעניין מאוד', 'explain': 'עסק טוב שנראה זול ביחס לשווי שחישבנו. שווה להעמיק ולבדוק מה השוק יודע שאנחנו לא.'}
+    if good and fair:
+        return {'light': '🟡', 'call': 'עסק טוב במחיר הוגן', 'explain': 'אין פה מציאה. התשואה תבוא רק אם העסק ימשיך לבצע כמו בתרחיש הבסיס.'}
+    if good:
+        return {'light': '🟠', 'call': 'עסק טוב אבל יקר', 'explain': 'המחיר כבר מגלם הצלחה גדולה. שווה לחכות למחיר נמוך יותר או להוכחה שהעסק עוקף את התרחיש הבסיסי.'}
+    if ok and cheap:
+        return {'light': '🟡', 'call': 'זול, אבל עם סימני שאלה', 'explain': 'המחיר נמוך מהשווי, אבל העסק עצמו לא מושלם. צריך להבין למה הוא זול לפני שמתלהבים.'}
+    if ok:
+        return {'light': '🟠', 'call': 'לא מספיק משכנע', 'explain': 'עסק בינוני במחיר שלא משאיר מרווח ביטחון.'}
+    if cheap:
+        return {'light': '🟠', 'call': 'זול מסיבה — אולי מלכודת', 'explain': 'המספרים של העסק חלשים. מחיר נמוך לבד לא מספיק; צריך סיבה ברורה לשיפור.'}
+    return {'light': '🔴', 'call': 'להתרחק כרגע', 'explain': 'עסק חלש במחיר שלא מפצה על הסיכון.'}
+
+
+def render_plain(r):
+    """Hebrew Markdown for the user: labels and everyday words first, numbers last."""
+    cur = r['currency']
+    lines = [f"# {r['company']} ({r['ticker']}) — בגובה העיניים", '',
+             f"**שורה תחתונה: {r['bottom_line']['light']} {r['bottom_line']['call']}**", '',
+             r['bottom_line']['explain'], '', '## התמונה בארבע שורות', '']
+    for a in r['axes']:
+        lines.append(f"- {a['light']} **{a['axis']}:** {a['label']}")
+    p = r['price']
+    lines.append(f"- {p['light']} **מחיר מול שווי:** {p['headline']}" if p else '- ⚪ **מחיר מול שווי:** לא נבדק')
+    lines += ['', '## מה טוב ומה לא', '', '| נושא | ציון | בקיצור |', '|---|---|---|']
+    for i in r['items']:
+        lines.append(f"| {i['topic']} | {i['light']} {i['label']} | {i['headline']} |")
+    lines += ['', '## ההסבר', '']
+    for i in r['items']:
+        lines += [f"**{i['topic']} — {i['label']}.** {i['explain']}", '']
+    lines += ['## הערכת שווי', '']
+    if p:
+        lines += [f"{p['light']} **{p['headline']}.** {p['explain']}", '']
+        rows = r['valuation']['annual_values'] if r['valuation'] else []
+        if rows and p['bucket'] != 'blocked':
+            lines += [f'| תאריך | רע | סביר (בסיס) | טוב | מחיר היום ({cur}) |', '|---|---|---|---|---|']
+            fmt = lambda v: '—' if v is None else f'{v:,.2f}'
+            for row in rows:
+                lines.append(f"| {row['date']} | {fmt(row['bear'])} | {fmt(row['base'])} | {fmt(row['bull'])} | {fmt(row['current_quote'])} |")
+            lines.append('')
+    else:
+        lines += ['לא הורצה הערכת שווי. בלי זה אי אפשר להגיד אם המניה זולה או יקרה.', '']
+    c = r['confidence']
+    lines += [f"## כמה לסמוך על זה: {c['level']}", '']
+    lines += [f'- {x}' for x in c['reasons']] or ['- הנתונים עברו את בדיקות התהליך.']
+    lines += ['', '_זו אינדיקציה מחקרית לפי כללי אצבע שקופים ונתונים מדווחים — לא הוראת קנייה או מכירה ולא הבטחה לתשואה._']
+    return '\n'.join(lines)

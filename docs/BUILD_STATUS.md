@@ -1,4 +1,20 @@
-# Current build — v0.5.0 — 2026-09-27
+# Current build — v0.6.0 — 2026-09-27
+
+Adds the eye-level Hebrew verdict layer (`plain_verdict`). Every material metric
+from reported history — growth, product margin, operating margin, free cash, cash
+backing of profit, debt/cash, runway and dilution — gets a label (מצוין/טוב/בינוני/
+חלש/מדאיג) and an everyday explanation instead of a bare number. Quality, growth,
+financial strength and price versus value stay separate axes; the bottom line
+combines them into a plain call. The price verdict exists only when the supplied
+valuation_case is executed through value_company in the same call. Adds the
+plain_language brain packet, `plain` CLI, MCP tool and a fictional demo.
+
+Validation: **189 tests** passed locally (11 new); 12 process benchmarks; isolated
+wheel execution now includes plain_verdict; **29 packaged packets**. Grades are
+transparent rules of thumb by business economics, not verified facts, predictions
+or orders.
+
+## Previous build — v0.5.0
 
 Adds independent emerging-growth discovery without profitability/FCF/P-E gates:
 causal driver-to-beneficiary paths, future pressure scenarios, payer/value capture,

@@ -97,6 +97,9 @@ protocol/runtime tests, not an assertion about the user's live Claude session.
 ## v0.4 valuation tools
 
 - `value_company({case})`: execute a valuation_version=1 case and return annual values.
+- `plain_verdict({case})`: plain_version=1 reported history (+ optional valuation_case,
+  executed here) -> Hebrew labels per metric, four axes, bottom line and `text`. See
+  docs/PLAIN_LANGUAGE.md.
 - `valuation_diagnostics({case})`: operating-case sensitivity, shocks and reverse price.
 - `asset_replacement_schedule({cohorts: {cohorts: [...], boundaries: [...]}})`:
   explicit asset lives/depreciation/replacement cash; see valuation_tools.py.

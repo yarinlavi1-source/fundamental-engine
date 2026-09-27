@@ -94,9 +94,26 @@ def main():
     ds = subs.add_parser("discover", help="Emerging opportunity research, independent of mature-profitability filters")
     ds.add_argument("input")
     ds.add_argument("--out", default="runs/discovery")
+    pl = subs.add_parser("plain", help="Eye-level Hebrew verdict: good/not good per metric plus price versus value")
+    pl.add_argument("input")
+    pl.add_argument("--valuation", help="value_company input JSON to execute and explain")
+    pl.add_argument("--out", default="runs/plain")
+    pl.add_argument("--json", action="store_true", help="Print the full JSON result instead of the Hebrew text")
     args = parser.parse_args()
     try:
-        if args.command == "discover":
+        if args.command == "plain":
+            from .plain import plain_verdict
+            inputs = read_json(args.input)
+            if args.valuation:
+                inputs["valuation_case"] = read_json(args.valuation)
+            result = plain_verdict(inputs)
+            dest = Path(args.out) / result["input_sha256"][:16]
+            dest.mkdir(parents=True, exist_ok=True)
+            (dest / "input.json").write_text(json.dumps(inputs,ensure_ascii=False,indent=2,allow_nan=False),encoding="utf-8")
+            (dest / "plain.json").write_text(json.dumps(result,ensure_ascii=False,indent=2,allow_nan=False),encoding="utf-8")
+            (dest / "plain.md").write_text(result["text"],encoding="utf-8")
+            print(json.dumps(result,ensure_ascii=False,indent=2,allow_nan=False) if args.json else result["text"])
+        elif args.command == "discover":
             from .discovery import scan
             inputs=read_json(args.input)
             result=scan(inputs)

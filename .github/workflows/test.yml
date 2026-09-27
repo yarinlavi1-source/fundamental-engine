@@ -22,5 +22,6 @@ jobs:
       - run: python -m fundamental_engine discover examples/discovery_demo.json > runs/discovery-smoke.json
       - run: python -m fundamental_engine value examples/valuation/infrastructure.json --diagnostics
       - run: python -m fundamental_engine value examples/valuation/bank.json
+      - run: python -m fundamental_engine plain examples/plain_demo.json --valuation examples/valuation/infrastructure.json
       - run: python -m pip wheel --no-deps --wheel-dir runs/wheels .
       - run: python scripts/check_wheel.py
