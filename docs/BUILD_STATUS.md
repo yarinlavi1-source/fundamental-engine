@@ -1,4 +1,11 @@
-# Current build — v0.7.1 — 2026-09-28
+# Current build — v0.8.0 — 2026-09-28
+
+Two valuation lanes (intrinsic vs growth premium), tail scenario, probability-weighted
+payoff, expectation momentum, multiples view and reverse revenue check. Palantir
+point-in-time check: momentum weak Feb-2023, strong Aug-2024 (one case, not a backtest).
+215 tests.
+
+## v0.7.1 — 2026-09-28
 
 v0.7.1: recent-quarter inflection/slowdown detection, current share count dilution,
 red bottom line when price exceeds the bull value; AXTI real regression case; 206 tests.

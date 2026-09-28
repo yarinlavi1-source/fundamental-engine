@@ -56,6 +56,7 @@ TOOLS += [
  research_tool('classify_company','Identify company type from reported history: Damodaran life-cycle stage and Lynch category, acquisition/cycle flags, what decides value, key metrics, valuation fit and packets. Same input as plain_verdict. Read company_type.',{'case':{'type':'object'}},['case']),
  research_tool('forensic_scores','Piotroski F, Altman Z (or Z-double-prime), Beneish M, ROIC/incremental ROIC and Rule of 40 from history rows; missing fields stay unavailable. Screens, not verdicts. Read forensic.',{'case':{'type':'object'}},['case']),
  research_tool('import_statements','Map Alpha Vantage INCOME_STATEMENT/BALANCE_SHEET/CASH_FLOW payloads (already retrieved by the client) into history rows. Fetches nothing.',{'income':{'type':'object'},'balance':{'type':'object'},'cash_flow':{'type':'object'},'years':{'type':'integer'},'as_of':{'type':'string'}},['income']),
+ research_tool('expectations_momentum','Is the business outrunning expectations? Acceleration, margin expansion, beats/raises and estimate revisions from recent_quarters, expectations_track and estimate_revisions. Read growth_valuation.',{'case':{'type':'object'}},['case']),
  research_tool('plain_verdict','Grade reported history in eye-level Hebrew (good/not good per metric, separate quality/growth/strength/price axes) and, when valuation_case is supplied, execute value_company and explain price versus value in everyday words. Read plain_language first. Research indication, not an order.',{'case':{'type':'object'}},['case']),
  research_tool('research_plan','Start/resume research using the client existing connectors. Returns stages and relevant brain packet IDs. No data is fetched.',{'request':{'type':'object'}},['request']),
  research_tool('research_packet','Read a whitelisted method/playbook by ID from the installed engine. Load only the current stage. These are instructions, not company evidence.',{'topic':{'type':'string'}},['topic']),
@@ -126,6 +127,9 @@ class Server:
         if name == 'import_statements':
             from .connectors import from_alpha_vantage
             return from_alpha_vantage(args['income'], args.get('balance'), args.get('cash_flow'), args.get('years', 5), args.get('as_of'))
+        if name == 'expectations_momentum':
+            from .growth import momentum
+            return momentum(args['case'])
         if name == 'plain_verdict':
             from .plain import plain_verdict
             return plain_verdict(args['case'])

@@ -37,7 +37,10 @@ Order — shortest path to a clear picture:
 3. **התמונה בארבע שורות** — quality, growth, financial strength, price vs value.
 4. **מה טוב ומה לא** — the tool's table; next to every item a label, never a bare number.
 5. **ההסבר** — one short paragraph per item: what it means for the owner of a share.
-6. **הערכת שווי** — today's value and each year to 2030 (bear/base/bull, fixed current
+6. **הערכת שווי** — first say which lane (classic by the numbers, or growth lane
+   "does it deserve a premium") and why; for the growth lane show momentum signals,
+   the risk/reward bet, the analyst-multiple view and what the price requires.
+   Then — today's value and each year to 2030 (bear/base/bull, fixed current
    quote). Say in words: "המחיר הוא בערך חצי מהשווי", "בתרחיש הרע יורדים בערך רבע".
 7. **מה יכול להשתבש** — the strongest counter-thesis in two or three plain sentences.
 8. **מה לבדוק הלאה** — the next milestone that would prove or break the story.

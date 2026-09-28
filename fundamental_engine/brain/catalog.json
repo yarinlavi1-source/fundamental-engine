@@ -1,5 +1,5 @@
 {
-  "version": "0.7.1",
+  "version": "0.8.0",
   "packets": [
     {
       "id": "operating_system",
@@ -85,6 +85,11 @@
       "id": "forensic",
       "title": "Forensic and quality scorecards",
       "file": "protocols/forensic.md"
+    },
+    {
+      "id": "growth_valuation",
+      "title": "Two valuation lanes: intrinsic versus justified growth premium",
+      "file": "protocols/growth_valuation.md"
     },
     {
       "id": "plain_language",

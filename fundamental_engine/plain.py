@@ -14,6 +14,7 @@ from .finance import number
 from .history import txt as _txt, history as _history
 from .profile import classify
 from .scores import scorecards, forecast_base_rate
+from .growth import growth_lane
 from . import __version__
 
 GRADES = {5: ('מצוין', '🟢'), 4: ('טוב', '🟢'), 3: ('בינוני', '🟡'), 2: ('חלש', '🟠'), 1: ('מדאיג', '🔴')}
@@ -467,6 +468,9 @@ def plain_verdict(case):
     items += _score_items(scores, kind)
     valuation, result, price = _valuation(case)
     base_rate = forecast_base_rate(rows, result)
+    minority = case.get('minority_share', 0)
+    number(minority, 'minority_share', 0, .99)
+    lane = growth_lane(case, kind, rows, result, minority)
     axes = [
         _axis('איכות העסק', _avg(items, {'gross_margin', 'operating_margin', 'free_cash_flow', 'earnings_quality', 'roic', 'accounting_risk', 'recent_margin'}),
               {5: 'עסק מצוין', 4: 'עסק טוב', 3: 'עסק בינוני', 2: 'עסק חלש', 1: 'עסק בעייתי'}),
@@ -482,10 +486,15 @@ def plain_verdict(case):
     if any(i['key'] in {'accounting_risk', 'distress'} and i['points'] == 1 for i in items):
         bottom = {**bottom, 'light': '🔴' if bottom['light'] != '⚪' else bottom['light'],
                   'explain': bottom['explain'] + ' שים לב: יש דגל אדום (דוחות או סיכון קריסה) — קודם לברר אותו.'}
+    if lane['verdict'] and lane['lane']['lane'] == 'potential' and price and price['bucket'] != 'blocked':
+        bottom = {**lane['verdict'], 'explain': lane['verdict']['explain']}
     confidence = _confidence(case, valuation, items, base_rate, scores)
+    if lane['payoff'] and lane['payoff']['probabilities_are_default']:
+        confidence['reasons'].append('ההסתברויות לתרחישים הן ברירת מחדל לא מכוילת')
+        confidence['level'] = 'נמוך' if len(confidence['reasons']) > 1 else 'בינוני'
     out = {'version': __version__, 'company': case['company'], 'ticker': case['ticker'], 'as_of': case['as_of'],
            'currency': cur, 'stage': stage, 'archetype': archetype, 'company_type': kind, 'scores': scores,
-           'forecast_base_rate': base_rate, 'items': items, 'axes': axes, 'axis_weights': WEIGHTS[kind['stage']],
+           'forecast_base_rate': base_rate, 'valuation_lane': lane, 'items': items, 'axes': axes, 'axis_weights': WEIGHTS[kind['stage']],
            'business_score': round(business, 2) if business is not None else None,
            'price': price, 'valuation': valuation, 'bottom_line': bottom, 'confidence': confidence,
            'input_sha256': sha256(json.dumps(case, sort_keys=True, ensure_ascii=False, allow_nan=False).encode()).hexdigest(),
@@ -550,14 +559,50 @@ def render_plain(r):
     for i in r['items']:
         lines += [f"**{i['topic']} — {i['label']}.** {i['explain']}", '']
     lines += ['## הערכת שווי', '']
+    g = r.get('valuation_lane')
+    if g:
+        lane_he = 'הערכה קלאסית לפי המספרים' if g['lane']['lane'] == 'intrinsic' else 'מסלול צמיחה (האם מגיעה לה "הנחה")'
+        lines += [f"**איך מעריכים אותה: {lane_he}.** {g['lane']['why_he']}", '']
+        m = g['momentum']
+        if m['signals']:
+            head = {'strong': '🟢 העסק רץ מהר מהציפיות', 'neutral': '🟡 העסק עומד בערך בציפיות', 'weak': '🔴 העסק מפגר אחרי הציפיות'}[m['label']]
+            lines += [f'**{head}:**'] + [f"- {'✅' if s['score'] > 0 else ('❌' if s['score'] < 0 else '➖')} {s['he']}" for s in m['signals']] + ['']
+        pay = g['payoff']
+        if pay:
+            lines.append(f"**הימור: כמה אפשר להפסיד מול כמה אפשר להרוויח.** השווי הממוצע כשמשקללים את כל התרחישים לפי הסיכוי שלהם"
+                         f"{' (כולל ההצלחה הגדולה)' if 'tail' in pay['probabilities'] else ''}: בערך {pay['expected_value']:,.2f} {cur} — "
+                         f"{price_vs_value_words(p['quote'], pay['expected_value']) if p else ''}. "
+                         f"בתרחיש הרע: {change_words(p['bear'], p['quote']) if p and p['bear'] else '—'}; "
+                         f"בתרחיש הכי טוב: {change_words(max(v for k, v in r['valuation']['annual_values'][0].items() if k in ('bear','base','bull','tail') and v is not None), p['quote']) if p else '—'}. "
+                         f"הסיכוי (לפי ההנחות) לסיים מתחת למחיר של היום: בערך {fraction_words(pay['probability_below_price'])}.")
+            lines.append('')
+        mv = g['multiples']
+        if mv and mv['rows']:
+            bull_row = next((x for x in mv['rows'] if x['scenario'] == 'bull'), None)
+            base_row = next((x for x in mv['rows'] if x['scenario'] == 'base'), None)
+            if base_row and bull_row:
+                lo, mid, hi = mv['exit_pe']
+                lines.append(f"**איך אנליסטים מגיעים למחירי יעד גבוהים:** הם לוקחים רווח עתידי וכופלים במכפיל. ב-{base_row['year']} הרווח למניה בתרחיש הסביר בערך "
+                             f"{base_row['eps']:.2f} ובתרחיש הטוב {bull_row['eps']:.2f}. אם השוק ישלם אז פי {hi} — המחיר יהיה בערך "
+                             f"{base_row['price_in_year_at_pe'][hi]:,.0f}–{bull_row['price_in_year_at_pe'][hi]:,.0f} {cur}; אם רק פי {lo} — בערך "
+                             f"{base_row['price_in_year_at_pe'][lo]:,.0f}–{bull_row['price_in_year_at_pe'][lo]:,.0f}. המכפיל הוא הימור על מצב הרוח של השוק, לא על העסק.")
+                lines.append('')
+        req = g['required']
+        if req and req['ratio']:
+            lines.append(f"**מה המחיר דורש:** כדי שהמחיר של היום ייתן תשואה סבירה, החברה צריכה להגיע בעוד כחמש שנים למכירות של בערך "
+                         f"{req['required_revenue_5y'] / 1e6:,.0f} מיליון {cur} — {multiple_words(req['ratio'])} ביחס לתרחיש הסביר.")
+            lines.append('')
     if p:
         lines += [f"{p['light']} **{p['headline']}.** {p['explain']}", '']
         rows = r['valuation']['annual_values'] if r['valuation'] else []
         if rows and p['bucket'] != 'blocked':
-            lines += [f'| תאריך | רע | סביר (בסיס) | טוב | מחיר היום ({cur}) |', '|---|---|---|---|---|']
+            has_tail = any(row.get('tail') is not None for row in rows)
+            lines += [f'| תאריך | רע | סביר (בסיס) | טוב |' + (' הצלחה גדולה |' if has_tail else '') + f' מחיר היום ({cur}) |',
+                      '|---|---|---|---|' + ('---|' if has_tail else '') + '---|']
             fmt = lambda v: '—' if v is None else f'{v:,.2f}'
             for row in rows:
-                lines.append(f"| {row['date']} | {fmt(row['bear'])} | {fmt(row['base'])} | {fmt(row['bull'])} | {fmt(row['current_quote'])} |")
+                lines.append(f"| {row['date']} | {fmt(row['bear'])} | {fmt(row['base'])} | {fmt(row['bull'])} |"
+                             + (f" {fmt(row.get('tail'))} |" if has_tail else '') + f" {fmt(row['current_quote'])} |")
             lines.append('')
         br = r.get('forecast_base_rate')
         if br and br['flags']:

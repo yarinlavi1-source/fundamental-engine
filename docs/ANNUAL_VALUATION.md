@@ -9,7 +9,8 @@ All included fixtures are FICTIONAL. They are not IREN forecasts or price target
 
 `valuation_version:1`, `company_id`, `ticker`, `as_of` (ISO date), `currency`,
 `unit: absolute`, `archetype`, `method`, `quote`, `sources`, `assumptions`, `opening`,
-`report_dates`, and exactly `bear`, `base`, `bull` scenarios. See executable examples.
+`report_dates`, and `bear`, `base`, `bull` scenarios plus an optional `tail`
+(large-outcome case for the growth lane; see growth_valuation). See executable examples.
 One security and currency only. No automatic ADR/share-class/FX conversion.
 
 Each source: id, title, url, kind, published_at, available_at. Each assumption:

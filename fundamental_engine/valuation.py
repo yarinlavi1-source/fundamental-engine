@@ -87,8 +87,8 @@ def validate(case):
         raise ValueError('Invalid report horizon')
     names = set()
     for s in case['scenarios']:
-        if s['name'] not in {'bear', 'base', 'bull'} or s['name'] in names:
-            raise ValueError('Use unique bear/base/bull scenarios')
+        if s['name'] not in {'bear', 'base', 'bull', 'tail'} or s['name'] in names:
+            raise ValueError('Use unique bear/base/bull (and optional tail) scenarios')
         names.add(s['name']); text(s['thesis'], 'thesis'); audit(s)
         n(s, 'cost_of_equity', .000001, 1)
         rows = s['periods']
@@ -105,7 +105,7 @@ def validate(case):
         if s.get('opening_snapshot'):
             audit(s['opening_snapshot'])
             if s['opening_snapshot']['as_of']!=case['as_of']: raise ValueError('Snapshot opening date mismatch')
-    if names != {'bear', 'base', 'bull'}: raise ValueError('Require bear, base and bull')
+    if not {'bear', 'base', 'bull'} <= names: raise ValueError('Require bear, base and bull')
     return ledger
 
 
@@ -362,6 +362,8 @@ def value_company(case):
                 row['base_gap_vs_quote'] = found['gap_vs_current_quote'] if found else None
         if all(row.get(k) is not None for k in ('bear', 'base', 'bull')) and not row['bear'] <= row['base'] <= row['bull']:
             warnings.append(d + ': scenario values cross; labels were not silently sorted')
+        if row.get('tail') is not None and row.get('bull') is not None and row['tail'] < row['bull']:
+            warnings.append(d + ': tail value below bull; a tail scenario must be the larger-outcome case')
         table.append(row)
     from hashlib import sha256
     fingerprint = sha256(json.dumps(case, sort_keys=True, ensure_ascii=False, allow_nan=False).encode()).hexdigest()

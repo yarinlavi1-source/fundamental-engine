@@ -61,3 +61,13 @@ and plain verdicts see inflections or slowdowns that annual history hides; a rec
 quarterly profitability item; `current_shares` catches issuance after the last annual
 report; a price above even the bull value now yields a red bottom line. Found while
 running AXTI; real AXTI regression example added. 3 new tests; 206 total.
+
+## 0.8.0 — 2026-09-28
+
+Two valuation lanes. Intrinsic (numbers-dominant, e.g. Nvidia) versus potential
+(young/unprofitable/inflecting). Optional executed `tail` scenario in value_company;
+probability-weighted payoff; expectation momentum (acceleration, margin expansion,
+beats/raises, estimate revisions, gross margin); analyst-style multiples view;
+reverse revenue requirement; lane verdicts that allow a premium only with strong
+momentum. growth_valuation packet, expectations_momentum MCP tool, point-in-time
+Palantir momentum case, AXTI tail case. 9 new tests; 215 total. No return prediction.

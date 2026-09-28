@@ -56,6 +56,15 @@ different questions, metrics and valuation models (company_type). Run
 forensic_scores (Piotroski/Altman/Beneish/ROIC/Rule of 40) and carry every flag into
 the counter-thesis. Map AV statements with import_statements; reconcile to filings.
 
+## Two valuation lanes (v0.8)
+
+Load growth_valuation. plain_verdict picks the lane: intrinsic for reliably profitable
+firms (Nvidia-type), potential for young/unprofitable/inflecting firms. For the potential
+lane add an executed `tail` scenario, explicit scenario_probabilities with rationale,
+8 recent_quarters and, when available, expectations_track/estimate_revisions. A
+premium above base value is allowed only with strong expectation momentum; weak
+momentum means "expensive without evidence". Report the multiples view as sentiment.
+
 ## User preference: eye-level answers, clear labels
 
 Yarin wants the final answer in simple Hebrew, not finance jargon: every material
