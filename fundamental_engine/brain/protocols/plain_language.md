@@ -63,3 +63,7 @@ from it; do not relabel them to force the generic tool, or claim this renderer h
 implemented a new bank valuation. When valuation is unavailable, deliver a useful
 qualitative conclusion and say which business milestone would enable pricing.
 Demo/unreviewed/funding-blocked cases cannot display an approved discount.
+
+Confidence (v0.9.2): the paragraph ends with the level and its first reason, e.g.
+'רמת הביטחון בהערכה: בינוני — נתוני המאזן לא נקראו ישירות מהדוח עצמו'. Do not
+replace the engine's level with a higher one; you may explain a lower one.

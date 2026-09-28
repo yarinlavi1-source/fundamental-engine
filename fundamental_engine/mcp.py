@@ -51,7 +51,9 @@ TOOLS += [
  research_tool('discovery_scan','Audit causal bottleneck hypotheses and early adoption; preserve potential separately from valuation/funding. Read frontier_discovery first.',{'case':{'type':'object'}},['case']),
  research_tool('discovery_compare','Compare dated emerging-opportunity revisions and commercial stages; no hindsight backdating.',{'before':{'type':'object'},'after':{'type':'object'}},['before','after']),
  research_tool('value_company','Calculate dated fair-value scenarios from operating drivers, funding and dilution, or dedicated residual-income/NAV/rNPV/SOTP inputs. Read annual_valuation first. Conditional estimates, not market forecasts.',{'case':{'type':'object'}},['case']),
- research_tool('valuation_diagnostics','Run operating stress tests, discount/growth sensitivity and reverse unit-price sensitivity. No automatic financing or market-consensus claims.',{'case':{'type':'object'}},['case']),
+ research_tool('valuation_diagnostics','Run operating stress tests, discount/growth sensitivity, reverse unit-price sensitivity, implied cost of equity and a +/-1pt discount-rate band. No automatic financing or market-consensus claims.',{'case':{'type':'object'}},['case']),
+ research_tool('build_valuation_from_drivers','Expand a driver_version 1 spec (growth and costs as % of revenue, deferred-revenue ratio, capex/SBC ratios) into a value_company case, execute it and return the case plus values. Every ratio still needs sourced assumptions. Read annual_valuation.',{'spec':{'type':'object'}},['spec']),
+ research_tool('implied_growth_shift','For a driver spec: uniform growth shift that makes the scenario value equal the quote, with all ratios fixed. A sensitivity, not market consensus.',{'spec':{'type':'object'},'scenario':{'type':'string'}},['spec']),
  research_tool('asset_replacement_schedule','Calculate depreciation and replacement cash for explicit asset cohorts; initial growth capex is separate.',{'cohorts':{'type':'object'}},['cohorts']),
  research_tool('forecast_score','Evaluate frozen forecasts against dated actual outcomes. Descriptive forecast errors, never investment win rates.',{'evaluation':{'type':'object'}},['evaluation']),
  research_tool('classify_company','Identify company type from reported history: Damodaran life-cycle stage and Lynch category, acquisition/cycle flags, what decides value, key metrics, valuation fit and packets. Same input as plain_verdict. Read company_type.',{'case':{'type':'object'}},['case']),
@@ -144,7 +146,18 @@ class Server:
         if name == 'valuation_diagnostics':
             from .valuation import sensitivity
             from .valuation_tools import stress_test, reverse_price
-            return {'sensitivity':sensitivity(args['case']), 'stress_tests':stress_test(args['case']), 'reverse_price':reverse_price(args['case'])}
+            from .valuation_tools import implied_cost_of_equity, discount_rate_band
+            return {'sensitivity':sensitivity(args['case']), 'stress_tests':stress_test(args['case']), 'reverse_price':reverse_price(args['case']),
+                    'implied_cost_of_equity':implied_cost_of_equity(args['case']), 'discount_rate_band':discount_rate_band(args['case'])}
+        if name == 'build_valuation_from_drivers':
+            from .drivers import build_case
+            from .valuation import value_company
+            case = build_case(args['spec']); r = value_company(case)
+            return {'case':case, 'input_sha256':r['input_sha256'], 'status':r['status'], 'annual_values':r['annual_values'],
+                    'warnings':r['warnings'], 'underwriting_audit':r['underwriting_audit']}
+        if name == 'implied_growth_shift':
+            from .drivers import implied_growth_shift
+            return implied_growth_shift(args['spec'], args.get('scenario','base'))
         if name == 'asset_replacement_schedule':
             from .valuation_tools import asset_schedule
             return asset_schedule(**args['cohorts'])

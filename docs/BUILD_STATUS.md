@@ -1,4 +1,14 @@
-# Current version: 0.9.0
+# Current version: 0.9.2 — 2026-09-28
+
+Fixes from the first full real-company run (ServiceNow, see NOW_RUN_2026-09-28.md):
+input-aware confidence (source access, discount-rate band), implied cost of equity,
+ratio driver specs with implied growth, and ledger-safe price stress/reverse checks.
+
+Validation: 262 unit/integration tests passed locally, CLI smoke runs (value-drivers
+with diagnostics, plain with the NOW regression) and isolated wheel check including
+driver specs. These are software checks, not investment accuracy measurements.
+
+## Previous: 0.9.0 / 0.9.1
 
 Valuation integrity is enforced at calculator, research-review and plain-output
 boundaries. Arithmetic is retained for inspection; unreviewed live price conclusions

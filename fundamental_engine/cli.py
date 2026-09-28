@@ -91,6 +91,8 @@ def main():
     vt.add_argument("input")
     vt.add_argument("--out", default="runs/valuation")
     vt.add_argument("--diagnostics", action="store_true")
+    vd = subs.add_parser("value-drivers", help="Build a valuation case from a ratio driver spec, execute it and run diagnostics")
+    vd.add_argument("input"); vd.add_argument("--out", default="runs/valuation"); vd.add_argument("--diagnostics", action="store_true")
     va = subs.add_parser("valuation-audit", help="Execute and reconcile valuation inputs before a price conclusion")
     va.add_argument("input")
     ds = subs.add_parser("discover", help="Emerging opportunity research, independent of mature-profitability filters")
@@ -165,6 +167,32 @@ def main():
             (dest / "valuation.json").write_text(json.dumps(result,ensure_ascii=False,indent=2,allow_nan=False),encoding="utf-8")
             (dest / "valuation.html").write_text(render_valuation(result),encoding="utf-8")
             print(json.dumps({"status":result["status"],"annual_values":result["annual_values"],"report":str((dest/"valuation.html").resolve())},ensure_ascii=False,indent=2))
+        elif args.command == "value-drivers":
+            from .drivers import build_case, implied_growth_shift
+            from .valuation import value_company, sensitivity
+            from .valuation_report import render_valuation
+            from .valuation_tools import stress_test, reverse_price, implied_cost_of_equity, discount_rate_band
+            spec = read_json(args.input)
+            case = build_case(spec)
+            result = value_company(case)
+            if args.diagnostics:
+                result["sensitivity"] = sensitivity(case)
+                result["stress_tests"] = stress_test(case)
+                result["reverse_price"] = reverse_price(case)
+                result["implied_cost_of_equity"] = implied_cost_of_equity(case)
+                result["discount_rate_band"] = discount_rate_band(case)
+                result["implied_growth_shift"] = implied_growth_shift(spec)
+            dest = Path(args.out) / result["input_sha256"][:16]
+            dest.mkdir(parents=True,exist_ok=True)
+            (dest / "spec.json").write_text(json.dumps(spec,ensure_ascii=False,indent=2,allow_nan=False),encoding="utf-8")
+            (dest / "case.json").write_text(json.dumps(case,ensure_ascii=False,indent=2,allow_nan=False),encoding="utf-8")
+            (dest / "valuation.json").write_text(json.dumps(result,ensure_ascii=False,indent=2,allow_nan=False),encoding="utf-8")
+            (dest / "valuation.html").write_text(render_valuation(result),encoding="utf-8")
+            summary = {"status":result["status"],"annual_values":result["annual_values"],"case":str((dest/"case.json").resolve()),
+                       "report":str((dest/"valuation.html").resolve())}
+            for key in ("implied_cost_of_equity","discount_rate_band","implied_growth_shift"):
+                if key in result: summary[key] = result[key]
+            print(json.dumps(summary,ensure_ascii=False,indent=2,allow_nan=False))
         elif args.command in {"validate", "analyze"}:
             inputs = read_json(args.input)
             result = analyze(inputs)

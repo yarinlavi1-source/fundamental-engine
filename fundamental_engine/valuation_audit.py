@@ -8,6 +8,26 @@ from math import isclose
 from .finance import number
 
 
+def source_access(case):
+    """Which primary sources behind the opening balance were read in the original document.
+
+    Informational, not a publication gate: vendor-normalized or search-excerpt access
+    can be consistent, but lowers confidence until the filing itself is inspected.
+    """
+    from .valuation import VALUATION_PRIMARY_KINDS
+    sources = {s['id']: s for s in case['sources']}
+    assumptions = {a['id']: a for a in case['assumptions']}
+    rec = case.get('underwriting', {}).get('opening_reconciliation', {})
+    ids = set(rec.get('assumption_ids', [])) | set(case.get('opening', {}).get('assumption_ids', []))
+    used = sorted({sid for aid in ids if aid in assumptions for sid in assumptions[aid]['source_ids']})
+    primary = [sources[sid] for sid in used if sid in sources and sources[sid]['kind'] in VALUATION_PRIMARY_KINDS]
+    direct = [s['id'] for s in primary if s.get('retrieval') == 'primary_document']
+    indirect = [{'id': s['id'], 'retrieval': s.get('retrieval', 'unrecorded')} for s in primary if s.get('retrieval') != 'primary_document']
+    status = 'demo' if case.get('is_demo') else ('primary_read' if primary and not indirect else ('no_primary_source' if not primary else 'secondary_access'))
+    return {'status': status, 'primary_read': direct, 'not_read_directly': indirect,
+            'meaning': 'primary_read requires retrieval=primary_document on every primary source behind the opening balance.'}
+
+
 def audit_valuation(case, results):
     issues, comparisons, transitions = [], [], []
     sources = {s['id']: s for s in case['sources']}
@@ -166,6 +186,7 @@ def audit_valuation(case, results):
         else:
             raise ValueError('Material issue status must be resolved/unresolved')
     return {'eligible_for_research_synthesis': not issues and not case.get('is_demo', False),
+            'source_access': source_access(case),
             'status': 'requires_review' if issues else 'internally_reconciled',
             'issues': issues, 'comparisons': comparisons, 'terminal_transitions': transitions,
             'meaning': 'Checks supplied definitions and evidence references, not source truth. Full research_review is still required. Bull is a modeled scenario, never a price ceiling.'}

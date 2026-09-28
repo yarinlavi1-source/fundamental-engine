@@ -132,3 +132,14 @@ missing reconciliation returns underwriting_required, even if arithmetic succeed
 Pass the full research_dossier to plain_verdict; it must execute the same valuation
 input. All gates are process checks, not independent verification or forecast accuracy.
 Discovery needs no positive earnings/FCF or low multiple. Preserve early opportunities.
+
+## Valuation input and diagnostics added in v0.9.2
+
+| Tool | Purpose |
+|---|---|
+| build_valuation_from_drivers | Expand a `driver_version: 1` spec (growth and costs as % of revenue) into a `value_company` case, execute it, return the case, hash, values and audit |
+| implied_growth_shift | Driver spec only: uniform growth shift that equates scenario value and quote, all ratios fixed |
+| valuation_diagnostics | Now also returns `implied_cost_of_equity` and a ±1-point `discount_rate_band` |
+
+Pass the returned `case` unchanged to `valuation_audit`, the dossier's
+`annual_valuation_input` and `plain_verdict.valuation_case`; the hashes must match.

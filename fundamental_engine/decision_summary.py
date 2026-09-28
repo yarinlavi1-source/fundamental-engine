@@ -117,7 +117,9 @@ def decision_summary(report, case):
         parts.append('הסיכון המרכזי: ' + notes['risk']['text'] + '.')
     if 'milestone' in notes:
         parts.append('מה שיכריע: ' + notes['milestone']['text'] + '.')
-    parts.append('רמת הביטחון בהערכה: ' + report['confidence']['level'] + '.')
+    reasons = report['confidence'].get('reasons') or []
+    # One short reason keeps the paragraph honest without turning it into a report.
+    parts.append('רמת הביטחון בהערכה: ' + report['confidence']['level'] + (f' — {reasons[0]}.' if reasons else '.'))
     return {'text': ' '.join(parts), 'price_conclusion_eligible': bool(eligible),
             'metrics': metrics, 'notes': notes,
             'semantics': 'Conditional estimates, not observed true value or promised prices; scenario range is not a confidence interval.'}

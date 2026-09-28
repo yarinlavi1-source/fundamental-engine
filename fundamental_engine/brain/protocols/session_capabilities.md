@@ -114,3 +114,17 @@ A current mutable overview cannot establish historical point-in-time knowledge.
 If the original publication/availability date cannot be established, record that
 limitation; do not manufacture a date to pass the input validator. Vendors repeating
 the same filing are not independent confirmation of its contents.
+
+## Addendum — 2026-09-28 NOW valuation (Claude Code cloud session, not Cowork)
+
+Observed while running ServiceNow; applies to that session's tools and network:
+- Alpha Vantage INCOME_STATEMENT, BALANCE_SHEET, CASH_FLOW, COMPANY_OVERVIEW and
+  TREASURY_YIELD returned data (large payloads saved to file, then import_statements).
+  EARNINGS_ESTIMATES failed with a rate-limit message after ~6 calls in a burst; the
+  message cited a free-key limit of 25 requests/day and 1/second. Budget roughly 6-8
+  AV calls per company and space them; the user's actual plan was not verified.
+- IB search_contracts + get_price_snapshot returned a REALTIME quote (conid 109911821).
+- WebFetch to sec.gov, investor.servicenow.com, newsroom and most finance sites was
+  blocked by that environment's egress proxy; WebSearch worked. This is a property
+  of the cloud container, not evidence that Cowork is blocked. In Cowork, read the
+  10-Q/earnings release directly and set sources[].retrieval=primary_document.

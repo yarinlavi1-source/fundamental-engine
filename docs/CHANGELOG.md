@@ -1,3 +1,17 @@
+## 0.9.2 — honest confidence, driver specs and reverse diagnostics (from the NOW run)
+
+- `sources[].retrieval` and `underwriting_audit.source_access`: confidence drops when
+  opening balances rest on primary sources that were not read directly.
+- `discount_rate_band` (±1pt) and `implied_cost_of_equity`; confidence drops when a
+  one-point change flips cheap/expensive or moves value by more than 25%.
+- The concise paragraph now names the main confidence reason.
+- `driver_version: 1` specs: `build_valuation_from_drivers` (MCP), `value-drivers`
+  CLI, `implied_growth_shift`; fictional `examples/valuation/software_drivers.json`.
+- `prepayment_price_linkage` (scaled/fixed): price stress and reverse sensitivity no
+  longer break deferred-revenue ledgers; reverse search restricted to funded domain.
+- NOW regression input and run notes (`docs/NOW_RUN_2026-09-28.md`); dated connector
+  observations appended to session_capabilities. No accuracy claim.
+
 ## 0.9.1 — concise decisions and potential underwriting
 
 - Default plain/MCP/CLI text is one Hebrew investment paragraph; full detail retained.

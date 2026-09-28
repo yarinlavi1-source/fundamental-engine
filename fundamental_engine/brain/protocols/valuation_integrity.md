@@ -107,3 +107,13 @@ reading and a substantive research_review are still required. Existing fixtures
 and passing tests validate mechanics, not a 99% investing edge.
 
 CLI with an audited real dossier: `python -m fundamental_engine plain PLAIN.json --valuation VALUATION.json --dossier DOSSIER.json`. The two valuation inputs must match exactly.
+
+## Confidence is about inputs, not only process (v0.9.2)
+
+A completed review does not make every conclusion high-confidence. plain_verdict
+lowers confidence when the opening balance rests on primary sources that were not
+read directly (underwriting_audit.source_access), when a one-point change in cost
+of equity flips cheap/expensive, or when that change moves value by more than 25%.
+Say which reason applies. Do not upgrade retrieval labels to raise confidence; read
+the filing instead. Treat implied_cost_of_equity as the return the price implies
+IF the modeled cash flows occur, not as the market's forecast.

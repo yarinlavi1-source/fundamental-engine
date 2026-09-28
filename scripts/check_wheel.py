@@ -33,9 +33,16 @@ p=json.loads(open(sys.argv[5],encoding='utf-8').read());p['valuation_case']=v
 assert plain_verdict(p)['price']['bucket']=='cheap'
 from fundamental_engine.profile import classify_company
 assert classify_company(json.loads(open(sys.argv[6],encoding='utf-8').read()))['lynch']=='stalwart'
-print(json.dumps({'plain_verdict':'passed','discovery':'passed','annual_valuation':'passed','version':__version__,'packaged_packets':len(records),'installed_review':'passed'}))
+from fundamental_engine.drivers import build_case, implied_growth_shift
+from fundamental_engine.valuation_tools import implied_cost_of_equity
+spec=json.loads(open(sys.argv[7],encoding='utf-8').read())
+dc=build_case(spec)
+assert value_company(dc)['status']=='conditional_valuation'
+assert implied_cost_of_equity(dc)['status']=='solved'
+assert implied_growth_shift(spec)['status']=='solved'
+print(json.dumps({'drivers':'passed','plain_verdict':'passed','discovery':'passed','annual_valuation':'passed','version':__version__,'packaged_packets':len(records),'installed_review':'passed'}))
 '''
-    completed=subprocess.run([sys.executable,'-I','-c',code,temp,str(ROOT/'examples/research_dossier_demo.json'),str(ROOT/'examples/valuation/infrastructure.json'),str(ROOT/'examples/discovery_demo.json'),str(ROOT/'examples/plain_demo.json'),str(ROOT/'examples/real/avgo_plain_2025.json')],
+    completed=subprocess.run([sys.executable,'-I','-c',code,temp,str(ROOT/'examples/research_dossier_demo.json'),str(ROOT/'examples/valuation/infrastructure.json'),str(ROOT/'examples/discovery_demo.json'),str(ROOT/'examples/plain_demo.json'),str(ROOT/'examples/real/avgo_plain_2025.json'),str(ROOT/'examples/valuation/software_drivers.json')],
                               cwd=temp,text=True,capture_output=True,timeout=20)
     if completed.returncode:raise SystemExit(completed.stderr)
     print(completed.stdout.strip())

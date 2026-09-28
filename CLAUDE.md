@@ -102,3 +102,11 @@ AXTI. Prefer AV/FMP structured numeric evidence and IB prices before generic web
 search. Untested capabilities stay unknown; known FMP tier denials use fallbacks
 without retry loops. Reconfirm after session/plan changes; do not claim these probes
 were executed by this engine. External targets/DCF remain attributed estimates.
+
+## v0.9.2 — driver specs and input-aware confidence
+
+For ratio-driven businesses build a `driver_version: 1` spec and call
+build_valuation_from_drivers; reuse the returned case everywhere (hashes must match).
+Set `sources[].retrieval` honestly (primary_document only when the filing was read).
+Report implied_cost_of_equity / discount_rate_band and, for specs, implied_growth_shift.
+Never raise the engine's confidence level; explain its reason. See docs/NOW_RUN_2026-09-28.md.

@@ -62,6 +62,7 @@ def stress_test(case):
                 for seg in p['segments']:
                     if shock == 'prices_down_20pct': seg['annual_revenue_per_unit'] *= .8
                     if shock == 'cash_costs_up_15pct': seg['cash_cost_ratio'] *= 1.15
+                if shock == 'prices_down_20pct': _scale_prepayments(c, p, .8)
                 if shock == 'cash_costs_up_15pct': p['fixed_cash_costs'] *= 1.15
                 if shock == 'capex_up_25pct':
                     p['growth_capex'] *= 1.25; p['maintenance_capex'] *= 1.25
@@ -97,6 +98,7 @@ def reverse_price(case, low=.25, high=4.):
         s = next(s for s in c['scenarios'] if s['name'] == 'base')
         for p in s['periods']:
             for seg in p['segments']: seg['annual_revenue_per_unit'] *= x
+            _scale_prepayments(c, p, x)
         r = value_company(c)
         return r['annual_values'][0]['base']
     samples = [(low + (high - low) * i / 20) for i in range(21)]
@@ -104,19 +106,110 @@ def reverse_price(case, low=.25, high=4.):
         values = [calc(x) for x in samples]
     except ValueError as e:
         return {'status':'invalid_search_domain','multiplier':None,'limitation':str(e)}
-    note = 'Uniform unit-price sensitivity, NOT inferred market expectations. Fixed capacity, capex, financing, terminal margin and cost ratios. Must re-underwrite feasibility.'
+    note = ('Uniform unit-price sensitivity, NOT inferred market expectations. Fixed capacity, capex, financing, terminal margin and cost ratios. '
+            'Absolute SBC, capex and fixed costs do not scale, so low multipliers can create artificial funding gaps. '
+            'Must re-underwrite feasibility. Also see implied_cost_of_equity and, for driver specs, implied_growth_shift.')
+    domain_note = None
     if any(v is None for v in values):
-        return {'status': 'funding_gap_in_search_domain', 'multiplier': None, 'limitation': note}
+        # Low multipliers can starve cash because absolute costs do not scale. Search
+        # only the contiguous funded upper part of the domain and say so explicitly.
+        first = next((i for i, v in enumerate(values) if v is not None), None)
+        if first is None or any(v is None for v in values[first:]):
+            return {'status': 'funding_gap_in_search_domain', 'multiplier': None, 'limitation': note}
+        low, samples, values = samples[first], samples[first:], values[first:]
+        domain_note = f'Multipliers below {low:.3f} create a funding gap; searched the funded domain only.'
     if any(b < a - 1e-8 for a, b in zip(values, values[1:])):
         return {'status': 'nonmonotonic', 'multiplier': None, 'limitation': note}
     if not values[0] <= target <= values[-1] or abs(values[-1] - values[0]) < 1e-10:
         return {'status': 'not_bracketed', 'multiplier': None, 'limitation': note}
     for _ in range(60):
         mid = (low + high) / 2
-        if calc(mid) < target: low = mid
+        v = calc(mid)
+        if v is None or v < target: low = mid
         else: high = mid
-    return {'status': 'solved', 'multiplier': (low + high) / 2,
-            'reconstructed_price': calc((low + high) / 2), 'limitation': note}
+    out = {'status': 'solved', 'multiplier': (low + high) / 2,
+           'reconstructed_price': calc((low + high) / 2), 'limitation': note}
+    if domain_note: out['search_domain'] = domain_note
+    return out
+
+
+def _scale_prepayments(case, period, factor):
+    """Apply a price shock to the deferred-revenue ledger.
+
+    prepayment_price_linkage='scaled' (subscription billing, set by driver specs):
+    billings and recognition move with price. Default 'fixed' (contracted advances):
+    amounts stay, but recognition can never exceed the shocked period revenue.
+    """
+    if case.get('prepayment_price_linkage', 'fixed') == 'scaled':
+        for key in ('customer_prepayments', 'revenue_from_prepayments'):
+            if key in period:
+                period[key] *= factor
+    elif 'revenue_from_prepayments' in period:
+        revenue = sum(seg['average_units'] * seg['annual_revenue_per_unit'] * seg['utilization'] for seg in period['segments']) * years(period['start'], period['end'])
+        period['revenue_from_prepayments'] = min(period['revenue_from_prepayments'], revenue)
+
+
+def _shifted_value(case, scenario, shift):
+    c = deepcopy(case)
+    s = next((x for x in c['scenarios'] if x['name'] == scenario), None)
+    if s is None: raise ValueError('Unknown scenario')
+    s['cost_of_equity'] += shift
+    if c['method'] == 'operating': s['terminal']['wacc'] += shift
+    try:
+        return value_company(c)['annual_values'][0][scenario]
+    except ValueError:
+        return None
+
+
+def discount_rate_band(case, scenario='base', shift=.01):
+    """Value today at cost of equity (and terminal WACC) minus/plus one shift.
+
+    Answers: does a modest, defensible change in required return flip the price
+    conclusion? It is not a probability interval.
+    """
+    if case['method'] not in {'operating', 'residual_income'}: raise ValueError('Discount band requires a cash-flow model')
+    number(shift, 'shift', .001, .05)
+    low_rate, central, high_rate = (_shifted_value(case, scenario, x) for x in (-shift, 0, shift))
+    quote = case['quote']['price']
+    flips = None
+    if None not in (low_rate, central, high_rate):
+        flips = min(low_rate, high_rate) <= quote <= max(low_rate, high_rate)
+    relative_width = (low_rate - high_rate) / central if None not in (low_rate, central, high_rate) and central > 0 else None
+    return {'scenario': scenario, 'shift': shift, 'value_lower_rate': low_rate, 'value': central, 'value_higher_rate': high_rate,
+            'relative_width': relative_width, 'quote_inside_band': flips,
+            'meaning': 'Values with cost of equity and terminal WACC moved together by the shift. A quote inside the band means a one-step change in required return changes the cheap/expensive call.'}
+
+
+def implied_cost_of_equity(case, scenario='base', low=-.08, high=.12):
+    """Cost-of-equity shift (with terminal WACC) at which the scenario value equals the quote.
+
+    Holds every cash flow fixed. It says what return the price implies IF these cash
+    flows occur; it is not the market's forecast and not a recommended hurdle rate.
+    """
+    if case['method'] not in {'operating', 'residual_income'}: raise ValueError('Implied rate requires a cash-flow model')
+    s = next((x for x in case['scenarios'] if x['name'] == scenario), None)
+    if s is None: raise ValueError('Unknown scenario')
+    target = case['quote']['price']
+    ke = s['cost_of_equity']
+    low = max(low, -ke + .005)
+    if case['method'] == 'operating':
+        # Terminal WACC must stay above terminal growth.
+        low = max(low, s['terminal']['growth'] - s['terminal']['wacc'] + .0025)
+    lo_v, hi_v = _shifted_value(case, scenario, low), _shifted_value(case, scenario, high)
+    note = 'Cash flows held fixed; required return that equates scenario value and quote. Not a market forecast or hurdle recommendation.'
+    if lo_v is None or hi_v is None:
+        return {'status': 'invalid_search_domain', 'implied_cost_of_equity': None, 'limitation': note}
+    if not hi_v <= target <= lo_v:
+        return {'status': 'not_bracketed', 'implied_cost_of_equity': None, 'range_values': [hi_v, lo_v], 'limitation': note}
+    for _ in range(60):
+        mid = (low + high) / 2
+        v = _shifted_value(case, scenario, mid)
+        if v is None: return {'status': 'invalid_search_domain', 'implied_cost_of_equity': None, 'limitation': note}
+        if v > target: low = mid
+        else: high = mid
+    shift = (low + high) / 2
+    return {'status': 'solved', 'scenario': scenario, 'model_cost_of_equity': ke, 'implied_cost_of_equity': ke + shift,
+            'shift': shift, 'limitation': note}
 
 
 def forecast_score(observations):

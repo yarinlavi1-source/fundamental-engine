@@ -12,6 +12,11 @@ from . import __version__
 
 OPERATING = {'software', 'platform', 'industrial', 'consumer', 'infrastructure',
              'commodity', 'nonfinancial', 'turnaround'}
+# How the analyst actually obtained a source's content. Only primary_document means
+# the filing/release itself was read; vendor normalization and search excerpts can
+# be consistent yet still differ from the original definitions or footnotes.
+RETRIEVAL = {'primary_document', 'provider_normalized', 'search_excerpt', 'market_feed'}
+VALUATION_PRIMARY_KINDS = {'filing', 'earnings_release', 'issuer_release'}
 ROUTES = {**{k: 'operating' for k in OPERATING}, 'financials': 'residual_income',
           'reit': 'nav', 'asset_holding': 'nav', 'biotech': 'rnpv', 'conglomerate': 'sotp'}
 
@@ -43,6 +48,8 @@ def validate(case):
     text(case['company_id'], 'company_id'); text(case['ticker'], 'ticker'); text(case['currency'], 'currency')
     if case['unit'] != 'absolute':
         raise ValueError('Use absolute currency and share units')
+    if case.get('prepayment_price_linkage', 'fixed') not in {'fixed', 'scaled'}:
+        raise ValueError('prepayment_price_linkage must be fixed or scaled')
     if case['archetype'] not in ROUTES or case['method'] != ROUTES[case['archetype']]:
         raise ValueError('Model/archetype mismatch; use the dedicated economic model')
     sources = {}
@@ -54,6 +61,8 @@ def validate(case):
             raise ValueError('Source unavailable at valuation cutoff')
         if s['kind'] == 'synthetic' and not case.get('is_demo'):
             raise ValueError('Synthetic inputs require is_demo=true')
+        if s.get('retrieval') is not None and s['retrieval'] not in RETRIEVAL:
+            raise ValueError('source.retrieval must be one of ' + ', '.join(sorted(RETRIEVAL)))
         sources[sid] = s
     ledger = {}
     for a in case['assumptions']:

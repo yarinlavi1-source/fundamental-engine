@@ -121,3 +121,12 @@ input. All gates are process checks, not independent verification or forecast ac
 Discovery needs no positive earnings/FCF or low multiple. Preserve early opportunities.
 
 CLI with an audited real dossier: `python -m fundamental_engine plain PLAIN.json --valuation VALUATION.json --dossier DOSSIER.json`. The two valuation inputs must match exactly.
+
+## v0.9.2 driver specs and honest confidence
+
+For software/subscription businesses write a ratio spec (`driver_version: 1`, format in
+`examples/valuation/software_drivers.json`) and call MCP `build_valuation_from_drivers`
+or `python -m fundamental_engine value-drivers SPEC.json --diagnostics`. Pass the
+returned case unchanged to audit, dossier and plain_verdict. Mark `sources[].retrieval`
+truthfully; confidence falls when filings were not read directly or when a one-point
+change in required return flips the call. Test plan: `docs/NOW_RUN_2026-09-28.md`.

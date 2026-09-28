@@ -51,6 +51,14 @@ class DecisionSummaryTests(unittest.TestCase):
             self.assertIsNone(out['metrics']['five_year'])
             self.assertNotIn('100.0', out['text'])
 
+    def test_confidence_names_its_main_reason(self):
+        r, c = inputs()
+        self.assertIn('רמת הביטחון בהערכה: בינוני.', decision_summary(r, c)['text'])
+        r['confidence'] = {'level': 'בינוני', 'reasons': ['נתוני המאזן לא נקראו ישירות מהדוח עצמו', 'סיבה שנייה']}
+        text = decision_summary(r, c)['text']
+        self.assertIn('בינוני — נתוני המאזן לא נקראו ישירות מהדוח עצמו.', text)
+        self.assertNotIn('סיבה שנייה', text)
+
     def test_zero_value_and_premium(self):
         r, c = inputs(); r['price'].update(bucket='expensive', quote=120)
         out = decision_summary(r, c)
