@@ -48,6 +48,38 @@ Use annual_valuation_input in the dossier and valuation_basis.model=annual_path
 when selecting that executed current-date result. Specialist snapshots remain
 subject to explicit financing and economic underwriting; no automatic endorsement.
 
+## Company type first (v0.7)
+
+Follow master_process. After retrieving history, run classify_company: a young
+grower, a mature compounder (e.g. Broadcom), a cyclical and a turnaround need
+different questions, metrics and valuation models (company_type). Run
+forensic_scores (Piotroski/Altman/Beneish/ROIC/Rule of 40) and carry every flag into
+the counter-thesis. Map AV statements with import_statements; reconcile to filings.
+
+## Valuation integrity (v0.9)
+
+Load valuation_integrity and growth_valuation. Before live price conclusions, supply
+underwriting reconciliation, run valuation_audit and research_review, then attach
+that full research_dossier to plain_verdict with the identical valuation_case.
+A research_status string no longer authorizes a price conclusion. Incomplete
+underwriting is a visible draft; research/discovery can continue normally.
+
+Preserve exact inputs, output and hash. Show investment assets separately from
+spendable cash; use point-in-time shares for ownership and weighted averages for
+EPS. Model maturity independently of the requested 2030 reporting endpoint.
+No default scenario odds or momentum-based permission to pay a premium. Bull is
+not a price ceiling. Do not force a high or low valuation to satisfy any narrative.
+See docs/AXTI_AUDIT_2026-09-28.md for the real regression and unresolved rerun work.
+
+## User preference: eye-level answers, clear labels
+
+Yarin wants the final answer in simple Hebrew, not finance jargon: every material
+metric gets a label (מצוין/טוב/בינוני/חלש/מדאיג) and a sentence on what it means,
+not a bare number. Load plain_language and finish with plain_verdict, passing the
+executed valuation_case so price-versus-value comes from real math. Lead with a clear
+bottom line, what the company does, good vs not good, then the annual valuation in
+words. Still a research indication: no buy/sell orders or promised returns.
+
 ## User preference: emerging quality, not mature-profitability screening
 
 For early-growth / future-constraint questions, start with frontier_plan and packets

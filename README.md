@@ -1,3 +1,7 @@
+> Current release: **v0.9.0**. Start with START_HERE.md. Valuation integrity checks
+> now distinguish reproducible draft arithmetic from reviewed price conclusions.
+> See `docs/AXTI_AUDIT_2026-09-28.md`; no validated replacement AXTI target yet.
+
 # v0.5 — emerging growth and future bottlenecks
 
 Discovery now runs independently of mature-company valuation filters. A loss-making

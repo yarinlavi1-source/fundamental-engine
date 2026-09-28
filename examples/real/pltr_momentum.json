@@ -1,0 +1,138 @@
+{
+ "note": "Real Palantir quarterly revenue from its earnings releases (quarter sums reconcile to FY2021-2024 10-K totals: 1,541.9 / 1,905.9 / 2,225.0 / 2,865.5 $M). GAAP operating income only where confirmed: Q2-2023 ~$10M, Q2-2024 $105.3M. Point-in-time snapshots use only quarters reported before each as_of. Used to test expectation-momentum signals, not to claim prediction of returns.",
+ "sources": [
+  {
+   "id": "pltr_releases",
+   "title": "Palantir quarterly earnings releases (SEC 8-K Ex.99.1) and 10-K FY2022-2024",
+   "url": "https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=1321655&type=8-K"
+  }
+ ],
+ "snapshots": [
+  {
+   "as_of": "2023-02-14",
+   "price_context": "about $8 per share",
+   "recent_quarters": [
+    {
+     "period_end": "2021-03-31",
+     "revenue": 341200000.0,
+     "source_ids": [
+      "pltr_releases"
+     ]
+    },
+    {
+     "period_end": "2021-06-30",
+     "revenue": 375600000.0,
+     "source_ids": [
+      "pltr_releases"
+     ]
+    },
+    {
+     "period_end": "2021-09-30",
+     "revenue": 392100000.0,
+     "source_ids": [
+      "pltr_releases"
+     ]
+    },
+    {
+     "period_end": "2021-12-31",
+     "revenue": 432900000.0,
+     "source_ids": [
+      "pltr_releases"
+     ]
+    },
+    {
+     "period_end": "2022-03-31",
+     "revenue": 446400000.0,
+     "source_ids": [
+      "pltr_releases"
+     ]
+    },
+    {
+     "period_end": "2022-06-30",
+     "revenue": 473000000.0,
+     "source_ids": [
+      "pltr_releases"
+     ]
+    },
+    {
+     "period_end": "2022-09-30",
+     "revenue": 477900000.0,
+     "source_ids": [
+      "pltr_releases"
+     ]
+    },
+    {
+     "period_end": "2022-12-31",
+     "revenue": 508600000.0,
+     "source_ids": [
+      "pltr_releases"
+     ]
+    }
+   ]
+  },
+  {
+   "as_of": "2024-08-06",
+   "price_context": "about $27 per share",
+   "recent_quarters": [
+    {
+     "period_end": "2022-09-30",
+     "revenue": 477900000.0,
+     "source_ids": [
+      "pltr_releases"
+     ]
+    },
+    {
+     "period_end": "2022-12-31",
+     "revenue": 508600000.0,
+     "source_ids": [
+      "pltr_releases"
+     ]
+    },
+    {
+     "period_end": "2023-03-31",
+     "revenue": 525200000.00000006,
+     "source_ids": [
+      "pltr_releases"
+     ]
+    },
+    {
+     "period_end": "2023-06-30",
+     "revenue": 533299999.99999994,
+     "source_ids": [
+      "pltr_releases"
+     ],
+     "operating_income": 10000000.0
+    },
+    {
+     "period_end": "2023-09-30",
+     "revenue": 558200000.0,
+     "source_ids": [
+      "pltr_releases"
+     ]
+    },
+    {
+     "period_end": "2023-12-31",
+     "revenue": 608400000.0,
+     "source_ids": [
+      "pltr_releases"
+     ]
+    },
+    {
+     "period_end": "2024-03-31",
+     "revenue": 634300000.0,
+     "source_ids": [
+      "pltr_releases"
+     ]
+    },
+    {
+     "period_end": "2024-06-30",
+     "revenue": 678100000.0,
+     "source_ids": [
+      "pltr_releases"
+     ],
+     "operating_income": 105300000.0
+    }
+   ]
+  }
+ ]
+}

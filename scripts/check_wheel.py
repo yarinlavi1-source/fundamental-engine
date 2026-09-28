@@ -21,12 +21,21 @@ assert review(case)['status']=='ready_for_conditional_synthesis'
 from fundamental_engine.valuation import value_company
 v=json.loads(open(sys.argv[3],encoding='utf-8').read())
 assert len(value_company(v)['annual_values'])==6
+assert 'underwriting_audit' in value_company(v)
+assert 'reproduction_input' in value_company(v)
+from fundamental_engine.valuation_audit import audit_valuation
+assert packet('valuation_integrity')['content']
 from fundamental_engine.discovery import scan
 d=json.loads(open(sys.argv[4],encoding='utf-8').read())
 assert scan(d)['opportunities'][0]['research_lane']=='underwrite_early_growth'
-print(json.dumps({'discovery':'passed','annual_valuation':'passed','version':__version__,'packaged_packets':len(records),'installed_review':'passed'}))
+from fundamental_engine.plain import plain_verdict
+p=json.loads(open(sys.argv[5],encoding='utf-8').read());p['valuation_case']=v
+assert plain_verdict(p)['price']['bucket']=='cheap'
+from fundamental_engine.profile import classify_company
+assert classify_company(json.loads(open(sys.argv[6],encoding='utf-8').read()))['lynch']=='stalwart'
+print(json.dumps({'plain_verdict':'passed','discovery':'passed','annual_valuation':'passed','version':__version__,'packaged_packets':len(records),'installed_review':'passed'}))
 '''
-    completed=subprocess.run([sys.executable,'-I','-c',code,temp,str(ROOT/'examples/research_dossier_demo.json'),str(ROOT/'examples/valuation/infrastructure.json'),str(ROOT/'examples/discovery_demo.json')],
+    completed=subprocess.run([sys.executable,'-I','-c',code,temp,str(ROOT/'examples/research_dossier_demo.json'),str(ROOT/'examples/valuation/infrastructure.json'),str(ROOT/'examples/discovery_demo.json'),str(ROOT/'examples/plain_demo.json'),str(ROOT/'examples/real/avgo_plain_2025.json')],
                               cwd=temp,text=True,capture_output=True,timeout=20)
     if completed.returncode:raise SystemExit(completed.stderr)
     print(completed.stdout.strip())

@@ -90,3 +90,34 @@ returns research actions without a mature-profitability gate. The paired
 
 For Yarin's Cowork session, load `session_capabilities` with `connector_contract`.
 It records dated user-reported tool availability and structured-numeric-first routing.
+
+## v0.6 eye-level answer (the final step)
+
+Finish every company answer with `plain_verdict({case})` after the research and the
+annual valuation. Pass 3–5 years of reported history, current cash/debt and the
+same `valuation_case` given to value_company; the tool executes it and returns a
+Hebrew `text`: bottom line, good/not-good label per metric, price versus value in
+words and the annual table through 2030. Load the `plain_language` packet for the
+writing rules. CLI: `python -m fundamental_engine plain examples/plain_demo.json
+--valuation examples/valuation/infrastructure.json`. See `docs/PLAIN_LANGUAGE.md`.
+
+## v0.7 company type first
+
+Read `master_process`. After retrieving statements (AV payloads map with
+`import_statements`), run `classify_company`: the life-cycle stage and Lynch category
+choose the questions, metrics and valuation model (`company_type`). Run
+`forensic_scores` and carry flags into the counter-thesis. plain_verdict includes
+all of this automatically. Sources: `docs/RESEARCH_BASIS.md`.
+
+## v0.9 valuation integrity
+
+Read the `valuation_integrity` packet and the executable fictional contract in
+`examples/valuation/audited_infrastructure.json`. Run
+`python -m fundamental_engine valuation-audit INPUT.json` or MCP `valuation_audit`.
+Calculations preserve reproduction_input and underwriting_audit. A live model with
+missing reconciliation returns underwriting_required, even if arithmetic succeeds.
+Pass the full research_dossier to plain_verdict; it must execute the same valuation
+input. All gates are process checks, not independent verification or forecast accuracy.
+Discovery needs no positive earnings/FCF or low multiple. Preserve early opportunities.
+
+CLI with an audited real dossier: `python -m fundamental_engine plain PLAIN.json --valuation VALUATION.json --dossier DOSSIER.json`. The two valuation inputs must match exactly.

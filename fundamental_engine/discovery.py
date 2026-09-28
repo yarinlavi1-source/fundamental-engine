@@ -9,6 +9,7 @@ from datetime import date
 from hashlib import sha256
 import json
 from .finance import number
+from . import __version__
 
 ROLES={'technical','pilot','design_win','paid_adoption','production','repeat',
        'scaling','unit_economics','value_capture','demand','supply','substitute','funding'}
@@ -148,7 +149,7 @@ def scan(case):
         if deltas:trajectory='improving' if all(d*sign>0 for d in deltas) else 'deteriorating' if all(d*sign<0 for d in deltas) else 'mixed_or_flat'
         trends.append({'metric':series['metric'],'definition':series['definition'],'status':trajectory,'changes':deltas,'points':points,
                        'note':'Descriptive change, not causation or forecast; compare seasonally matched periods.'})
-    result={'version':'0.5.0','company_id':c['company_id'],'ticker':c['ticker'],'as_of':c['as_of'],'is_demo':bool(c.get('is_demo')),
+    result={'version':__version__,'company_id':c['company_id'],'ticker':c['ticker'],'as_of':c['as_of'],'is_demo':bool(c.get('is_demo')),
       'sources':[v for v in sources.values() if day(v['available_at'])<=cutoff],
       'opportunities':opportunities,'trajectories':trends,'excluded_ids':excluded,'stale_observation_ids':stale,
       'input_sha256':sha256(json.dumps(c,sort_keys=True,ensure_ascii=False).encode()).hexdigest(),

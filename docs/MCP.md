@@ -97,6 +97,15 @@ protocol/runtime tests, not an assertion about the user's live Claude session.
 ## v0.4 valuation tools
 
 - `value_company({case})`: execute a valuation_version=1 case and return annual values.
+- `classify_company({case})`: life-cycle stage, Lynch category, flags and research focus.
+- `forensic_scores({case})`: Piotroski, Altman, Beneish, ROIC, Rule of 40.
+- `import_statements({income, balance?, cash_flow?, years?, as_of?})`: map Alpha
+  Vantage statement payloads into history rows (no fetching).
+- `expectations_momentum({case})`: acceleration, margin expansion, beats/raises,
+  estimate revisions (growth_valuation).
+- `plain_verdict({case})`: plain_version=1 reported history (+ optional valuation_case,
+  executed here) -> Hebrew labels per metric, four axes, bottom line and `text`. See
+  docs/PLAIN_LANGUAGE.md.
 - `valuation_diagnostics({case})`: operating-case sensitivity, shocks and reverse price.
 - `asset_replacement_schedule({cohorts: {cohorts: [...], boundaries: [...]}})`:
   explicit asset lives/depreciation/replacement cash; see valuation_tools.py.
@@ -112,3 +121,14 @@ write to GitHub, or trade. See docs/ANNUAL_VALUATION.md for the case contract.
 `discovery_compare({before,after})` are read-only tools. Read frontier_discovery and
 docs/DISCOVERY.md. A theme agenda needs no ticker; a discovery case needs issuer
 identity and explicit evidence, but no positive earnings or fair-value calculation.
+
+## v0.9 valuation integrity
+
+Read the `valuation_integrity` packet and the executable fictional contract in
+`examples/valuation/audited_infrastructure.json`. Run
+`python -m fundamental_engine valuation-audit INPUT.json` or MCP `valuation_audit`.
+Calculations preserve reproduction_input and underwriting_audit. A live model with
+missing reconciliation returns underwriting_required, even if arithmetic succeeds.
+Pass the full research_dossier to plain_verdict; it must execute the same valuation
+input. All gates are process checks, not independent verification or forecast accuracy.
+Discovery needs no positive earnings/FCF or low multiple. Preserve early opportunities.

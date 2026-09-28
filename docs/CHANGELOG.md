@@ -1,3 +1,15 @@
+# v0.9.0 — valuation integrity and AXTI regression
+
+Separates calculation success from permission to publish a price conclusion. Adds
+opening assets/share bridge, investment ledger, comparable-consensus review,
+terminal maturity review, exact reproduction input and executed dossier binding.
+Corrects AV cash/share definitions and AXTI point-in-time dilution. Removes default
+scenario probabilities, momentum valuation overrides, and fixed five-year 25x claims.
+Preserves Claude v0.6–v0.8 classification, recent-quarter and forensic work with
+regressions. No replacement AXTI target or investment-accuracy claim.
+
+## Historical release notes (superseded where v0.9 changes behavior)
+
 # Changelog
 
 ## 0.3.0
@@ -36,3 +48,38 @@ stages, comparable progress metrics, milestones, evidence revisions and independ
 discovery/valuation lanes. Adds three MCP tools, discover CLI, dossier integration,
 two research packets and a fictional unprofitable early-adoption case. 35 new tests;
 178 total. No trading, automatic surveillance or calibrated winner probabilities.
+
+## 0.6.0 — 2026-09-27
+
+Eye-level Hebrew verdicts. `plain_verdict` (MCP), `plain` CLI and the plain_language
+packet turn reported history into good/not-good labels with everyday explanations,
+sector-aware margin bars, stage-aware treatment of losses and cash burn, separate
+quality/growth/strength/price axes, a plain bottom line, and price versus executed
+bear/base/bull value in words through 2030. Synthesis now leads with this layer.
+11 new tests; 189 total. Research indication only; no orders or promised returns.
+
+## 0.7.0 — 2026-09-27
+
+Company typing (Damodaran life cycle + Lynch), acquisition and cycle detection,
+Piotroski/Altman/Beneish/ROIC/Rule-of-40 scorecards, forecast base-rate check,
+Alpha Vantage statement mapper, master_process/company_type/forensic packets, three
+MCP tools, classify and import-av CLI, stage-weighted plain verdict. Real Broadcom
+regression example. 14 new tests; 203 total. Screens direct research; no return odds.
+
+## 0.7.1 — 2026-09-28
+
+Turning points. Optional `recent_quarters` (AV mapper fills them) let company typing
+and plain verdicts see inflections or slowdowns that annual history hides; a recent
+quarterly profitability item; `current_shares` catches issuance after the last annual
+report; a price above even the bull value now yields a red bottom line. Found while
+running AXTI; real AXTI regression example added. 3 new tests; 206 total.
+
+## 0.8.0 — 2026-09-28
+
+Two valuation lanes. Intrinsic (numbers-dominant, e.g. Nvidia) versus potential
+(young/unprofitable/inflecting). Optional executed `tail` scenario in value_company;
+probability-weighted payoff; expectation momentum (acceleration, margin expansion,
+beats/raises, estimate revisions, gross margin); analyst-style multiples view;
+reverse revenue requirement; lane verdicts that allow a premium only with strong
+momentum. growth_valuation packet, expectations_momentum MCP tool, point-in-time
+Palantir momentum case, AXTI tail case. 9 new tests; 215 total. No return prediction.

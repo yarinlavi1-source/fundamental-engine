@@ -87,8 +87,8 @@ def validate(case):
         raise ValueError('Invalid report horizon')
     names = set()
     for s in case['scenarios']:
-        if s['name'] not in {'bear', 'base', 'bull'} or s['name'] in names:
-            raise ValueError('Use unique bear/base/bull scenarios')
+        if s['name'] not in {'bear', 'base', 'bull', 'tail'} or s['name'] in names:
+            raise ValueError('Use unique bear/base/bull (and optional tail) scenarios')
         names.add(s['name']); text(s['thesis'], 'thesis'); audit(s)
         n(s, 'cost_of_equity', .000001, 1)
         rows = s['periods']
@@ -105,7 +105,7 @@ def validate(case):
         if s.get('opening_snapshot'):
             audit(s['opening_snapshot'])
             if s['opening_snapshot']['as_of']!=case['as_of']: raise ValueError('Snapshot opening date mismatch')
-    if names != {'bear', 'base', 'bull'}: raise ValueError('Require bear, base and bull')
+    if not {'bear', 'base', 'bull'} <= names: raise ValueError('Require bear, base and bull')
     return ledger
 
 
@@ -144,6 +144,7 @@ def _roll_back(case, s, rows, terminal_per_share):
 def operating(case, s):
     op = case['opening']
     cash, debt, shares = n(op, 'unrestricted_cash', 0), n(op, 'debt', 0), n(op, 'shares', 1e-12)
+    investments = number(op.get('marketable_investments', 0), 'marketable_investments', 0)
     deferred, nol = n(op, 'deferred_revenue', 0), n(op, 'tax_loss_carryforward', 0)
     rows, issues = [], ['Cash is checked at period boundaries only; use monthly periods for construction or near-term refinancing risk.']
     blocked = False
@@ -195,7 +196,14 @@ def operating(case, s):
             issues.append(p['end'] + ': financing is assumed, not committed')
         cash_before = cash
         debt += draws - repay
-        cash += cfo - maintenance - growth + draws - repay + equity - fees
+        liquidation = number(p.get('investment_liquidation', 0), 'investment_liquidation', 0)
+        if liquidation > investments + 1e-7:
+            raise ValueError('Investment liquidation exceeds remaining investments')
+        investments -= liquidation
+        # Net cash investment income and minority distributions need explicit attribution/tax assumptions.
+        investment_income = number(p.get('investment_income_after_tax', 0), 'investment_income_after_tax', 0)
+        minority_paid = number(p.get('noncontrolling_distributions', 0), 'noncontrolling_distributions', 0)
+        cash += cfo - maintenance - growth + draws - repay + equity - fees + liquidation + investment_income - minority_paid
         min_cash = n(p, 'minimum_cash', 0)
         gap = max(0, min_cash - cash)
         if gap > 1e-7: blocked = True
@@ -205,8 +213,10 @@ def operating(case, s):
                      'revenue': revenue, 'ebitda_before_sbc': ebitda_before_sbc, 'ebit': ebit,
                      'interest': interest, 'cash_taxes': taxes, 'nol_remaining': nol,
                      'cfo': cfo, 'maintenance_capex': maintenance, 'growth_capex': growth,
-                     'fcfe_before_new_equity': cfo - maintenance - growth + draws - repay - n(p, 'debt_fees', 0),
+                     'fcfe_before_new_equity': cfo - maintenance - growth + draws - repay - n(p, 'debt_fees', 0) + investment_income - minority_paid,
                      'cash_open': cash_before, 'cash': cash, 'debt': debt, 'shares': shares,
+                     'marketable_investments': investments, 'investment_liquidation': liquidation,
+                     'investment_income_after_tax': investment_income, 'noncontrolling_distributions': minority_paid,
                      'new_financing_shares': issued, 'sbc_shares': sbc_shares,
                      'original_ownership': op['shares'] / shares, 'deferred_revenue': deferred,
                      'minimum_cash': min_cash, 'funding_gap': gap,
@@ -224,11 +234,11 @@ def operating(case, s):
     runoff = n(t, 'net_runoff_obligation', 0)
     text(t['working_capital_rationale'], 'terminal working capital rationale')
     excess_cash = max(0, cash - rows[-1]['minimum_cash'])
-    raw_equity = ev + excess_cash - debt - n(t, 'other_claims', 0) - runoff
+    raw_equity = ev + excess_cash + investments - debt - n(t, 'other_claims', 0) - runoff
     terminal_price = max(0, raw_equity) / shares
     bridge = {'enterprise_value': ev, 'next_year_revenue': terminal_rev, 'next_year_nopat': nopat,
               'next_year_fcff': terminal_fcff, 'reinvestment_rate': g / roic,
-              'excess_cash': excess_cash, 'debt': debt, 'other_claims': t['other_claims'],
+              'excess_cash': excess_cash, 'marketable_investments': investments, 'debt': debt, 'other_claims': t['other_claims'],
               'net_runoff_obligation': runoff, 'raw_equity_value': raw_equity,
               'shares': shares, 'value_per_share': terminal_price}
     if blocked: issues.append('Unfunded cash requirement: going-concern values withheld; supply executable funding or a recovery scenario')
@@ -362,6 +372,8 @@ def value_company(case):
                 row['base_gap_vs_quote'] = found['gap_vs_current_quote'] if found else None
         if all(row.get(k) is not None for k in ('bear', 'base', 'bull')) and not row['bear'] <= row['base'] <= row['bull']:
             warnings.append(d + ': scenario values cross; labels were not silently sorted')
+        if row.get('tail') is not None and row.get('bull') is not None and row['tail'] < row['bull']:
+            warnings.append(d + ': tail value below bull; a tail scenario must be the larger-outcome case')
         table.append(row)
     from hashlib import sha256
     fingerprint = sha256(json.dumps(case, sort_keys=True, ensure_ascii=False, allow_nan=False).encode()).hexdigest()
@@ -371,6 +383,14 @@ def value_company(case):
             'annual_values': table, 'scenarios': results, 'warnings': warnings,
             'assumptions': case['assumptions'], 'sources': case['sources'],
             'meaning': 'Values at each stated date, conditional on the scenario; not predicted market prices. Current price is a fixed comparison, not a forecast. No accuracy or investment win-rate claim.'}
+    from .valuation_audit import audit_valuation
+    output['underwriting_audit'] = audit_valuation(case, results)
+    output['calculation_status'] = output['status']
+    if not output['is_demo'] and output['status'] == 'conditional_valuation' and not output['underwriting_audit']['eligible_for_research_synthesis']:
+        output['status'] = 'underwriting_required'
+    output['reproduction_input'] = case
+    output['annual_path_semantics'] = ('Conditional ex-distribution values rolled back from terminal equity; without dividends the path compounds at the assumed cost of equity. These are not independent annual market-price forecasts.'
+                                     if case['method'] in {'operating', 'residual_income'} else 'Independently supplied conditional snapshots, not market-price forecasts.')
     json.dumps(output, allow_nan=False)
     return output
 

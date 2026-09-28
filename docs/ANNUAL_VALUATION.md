@@ -9,7 +9,8 @@ All included fixtures are FICTIONAL. They are not IREN forecasts or price target
 
 `valuation_version:1`, `company_id`, `ticker`, `as_of` (ISO date), `currency`,
 `unit: absolute`, `archetype`, `method`, `quote`, `sources`, `assumptions`, `opening`,
-`report_dates`, and exactly `bear`, `base`, `bull` scenarios. See executable examples.
+`report_dates`, and `bear`, `base`, `bull` scenarios plus an optional `tail`
+(large-outcome case for the growth lane; see growth_valuation). See executable examples.
 One security and currency only. No automatic ADR/share-class/FX conversion.
 
 Each source: id, title, url, kind, published_at, available_at. Each assumption:
@@ -146,3 +147,14 @@ rNPV caution: cash-flow probabilities and discount rates address different risks
 Do not add the same clinical failure penalty again to the discount rate. Historical
 cohort rates require stage, indication, modality and vintage matching. The engine
 cannot infer those clinical distinctions from a ticker.
+
+## v0.9 valuation integrity
+
+Read the `valuation_integrity` packet and the executable fictional contract in
+`examples/valuation/audited_infrastructure.json`. Run
+`python -m fundamental_engine valuation-audit INPUT.json` or MCP `valuation_audit`.
+Calculations preserve reproduction_input and underwriting_audit. A live model with
+missing reconciliation returns underwriting_required, even if arithmetic succeeds.
+Pass the full research_dossier to plain_verdict; it must execute the same valuation
+input. All gates are process checks, not independent verification or forecast accuracy.
+Discovery needs no positive earnings/FCF or low multiple. Preserve early opportunities.
