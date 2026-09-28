@@ -39,8 +39,8 @@ files must remain available after installation. Keep benchmark claims honest.
 ## Annual valuation is a required output when the user asks for value
 
 Load annual_valuation and valuation_research. Build the economic forecast, then
-call value_company and valuation_diagnostics. Deliver today's value and each
-calendar year through 2030: bear/base/bull, fixed current quote and gap. Do not
+call value_company and valuation_diagnostics. Compute today's value and each
+calendar year through at least the fifth anniversary internally: bear/base/bull, fixed current quote and gap. Do not
 stop at a generic potential narrative, or substitute an arbitrary FCF/multiple
 sensitivity for an underwritten base case. Future values are dated conditional
 values, not predicted exchange prices. See docs/ANNUAL_VALUATION.md.
@@ -71,14 +71,17 @@ No default scenario odds or momentum-based permission to pay a premium. Bull is
 not a price ceiling. Do not force a high or low valuation to satisfy any narrative.
 See docs/AXTI_AUDIT_2026-09-28.md for the real regression and unresolved rerun work.
 
-## User preference: eye-level answers, clear labels
+## User preference: one concise investment paragraph (latest, v0.9.1)
 
-Yarin wants the final answer in simple Hebrew, not finance jargon: every material
-metric gets a label (מצוין/טוב/בינוני/חלש/מדאיג) and a sentence on what it means,
-not a bare number. Load plain_language and finish with plain_verdict, passing the
-executed valuation_case so price-versus-value comes from real math. Lead with a clear
-bottom line, what the company does, good vs not good, then the annual valuation in
-words. Still a research indication: no buy/sell orders or promised returns.
+After full research, return ONE simple Hebrew paragraph, normally 80–140 words:
+whether investment looks attractive at the price, one reason, estimated current
+value and discount, conditional five-year value/price change, key risk/confidence.
+Load plain_language. plain_verdict.text defaults to this paragraph; detailed_text
+and calculations stay behind the scenes unless requested. Supply evidenced
+ decision_notes for company-specific potential/risk/milestone. Do not dump tables.
+Keep potential distinct from price. A growth company without a reliable valuation
+can still be promising; state that the discount cannot yet be assessed.
+Future values are estimates, not promised market prices. No claim of perfection.
 
 ## User preference: emerging quality, not mature-profitability screening
 

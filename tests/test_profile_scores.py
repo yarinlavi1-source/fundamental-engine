@@ -131,7 +131,7 @@ class ConnectorAndIntegrationTests(unittest.TestCase):
     def test_plain_uses_type_and_scores(self):
         r=plain_verdict(load('examples/real/avgo_plain_2025.json'))
         self.assertEqual(r['company_type']['lynch'],'stalwart');self.assertEqual(r['stage'],'growth')
-        self.assertIn('איזה סוג חברה זו',r['text']);self.assertIn('איתנה',r['text'])
+        self.assertIn('איזה סוג חברה זו',r['detailed_text']);self.assertIn('איתנה',r['detailed_text'])
         keys={i['key'] for i in r['items']}
         self.assertTrue({'roic','distress','fscore','rule_of_40'}<=keys)
         self.assertEqual(list(r['axis_weights']),[.45,.3,.25])

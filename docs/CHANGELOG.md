@@ -1,3 +1,13 @@
+## 0.9.1 — concise decisions and potential underwriting
+
+- Default plain/MCP/CLI text is one Hebrew investment paragraph; full detail retained.
+- Separate current-value discount from upside and dated five-year conditional price.
+- Withhold approved values for demo, unresolved review and funding blocks.
+- Traceable short analyst notes connect potential, risk and milestones to observations.
+- Add SOFI lessons on economic inference, flow/stock, segment/margin definitions,
+  financial-sector capital and discounted future targets to existing brain packets.
+- This improves process and delivery, not a claim of validated forecast accuracy.
+
 # v0.9.0 — valuation integrity and AXTI regression
 
 Separates calculation success from permission to publish a price conclusion. Adds

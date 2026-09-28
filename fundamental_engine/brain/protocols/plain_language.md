@@ -1,73 +1,65 @@
-# Eye-level Hebrew verdicts (plain_language)
+# Simple investment conclusion — default delivery
 
-Yarin's standing preference: the final answer must be understandable without finance
-training. Raw figures ("revenue was 712M") do not help him. Every material number is
-translated into a judgement — good / average / weak / worrying — and a sentence that
-says WHY in everyday words. The full research discipline still applies underneath;
-this packet changes how the result is told, never what the evidence supports.
+Yarin's latest instruction (2026-09-28) supersedes older long-report presentation:
+complete the full company-specific research privately, then deliver ONE concise
+Hebrew paragraph, normally 80–140 words. No headings, scorecards, annual tables,
+raw financial statements or technical vocabulary unless explicitly requested.
 
 ## Execution
 
-1. Finish the research loop (dossier, research_review, annual valuation when value is
-   asked). Collect 3–5 fiscal years of reported revenue, gross profit, operating
-   income, net income, operating cash flow, capex and diluted shares, plus current
-   unrestricted cash and debt. Prefer AV/FMP structured statements per
-   session_capabilities; keep source_ids per row.
-2. Call `plain_verdict` with `plain_version:1`, company, ticker, as_of, currency,
-   archetype, stage (mature/growth/emerging), history (oldest first), balance and the
-   executed `valuation_case` (the same input given to value_company). Pass
-   the full `research_dossier`; the tool re-executes research_review and verifies
-   the identical valuation input hash. A research_status string is insufficient. The tool executes the
-   valuation itself; never hand-type values into the plain answer.
-3. Use the returned `text` as the skeleton and add what only research can add: what
-   the company actually does, who pays it, and why the grades look the way they do.
+Finish research_plan -> company/sector packets -> evidence -> dossier ->
+research_review -> valuation_audit and deterministic valuation before concluding
+on price. Load potential and financials when applicable. These stages remain
+mandatory internally; brevity must not reduce research depth.
 
-Banks, insurers and REITs are refused by the tool (they need capital/NAV metrics);
-explain them in the same plain style from the dedicated valuation instead.
+Call plain_verdict with plain_version:1, history, matching valuation_case and full
+research_dossier. Its default text is now the short paragraph; detailed_text and
+structured metrics preserve the audit. response_style:detailed explicitly opts in
+to the former report. Never append that report to the paragraph by default.
 
-## How to write the answer
+Supply decision_notes to give the paragraph company-specific meaning:
+- potential: {text: short Hebrew causal thesis, observation_ids: [reviewed IDs]}
+- risk: {text: strongest material counter-thesis, observation_ids: [reviewed IDs]}
+- milestone: {text: next discriminating business milestone, observation_ids: [IDs]}
+Each text is at most 25 words, one line, without computed valuation figures.
+The notes are analyst inferences. Dated references establish traceability, not
+semantic correctness; inspect source meaning and contradicting evidence yourself.
+Notes never unlock price conclusions or override accounting/funding problems.
 
-Order — shortest path to a clear picture:
+## Required paragraph
 
-1. **שורה תחתונה** — one light and one short call (e.g. "🟢 מעניין מאוד", "🟠 עסק טוב
-   אבל יקר"), then one or two sentences why.
-2. **מה החברה עושה** — like explaining to a friend: what it sells, to whom, how it earns
-   on each sale, what makes customers come back. No jargon.
-   **איזה סוג חברה זו** — the tool's life-cycle stage and Lynch category in one plain
-   sentence, what decides value for this type, and any acquisition/cycle flag.
-3. **התמונה בארבע שורות** — quality, growth, financial strength, price vs value.
-4. **מה טוב ומה לא** — the tool's table; next to every item a label, never a bare number.
-5. **ההסבר** — one short paragraph per item: what it means for the owner of a share.
-6. **הערכת שווי** — first say which lane (classic by the numbers, or growth lane
-   business-driver research) and why; show business progress separately from
-   audited value, and label any multiples view as an illustrative sensitivity.
-   Then — today's value and each year to 2030 (bear/base/bull, fixed current
-   quote). Say in words: "המחיר הוא בערך חצי מהשווי", "בתרחיש הרע יורדים בערך רבע".
-7. **מה יכול להשתבש** — the strongest counter-thesis in two or three plain sentences.
-8. **מה לבדוק הלאה** — the next milestone that would prove or break the story.
-9. **כמה לסמוך על זה** — the tool's confidence plus research gaps.
+State whether the price looks attractive for investment, fair, unattractive, or
+not yet assessable; one company-specific reason; estimated value TODAY (central
+estimate and scenario range); discount against that estimate; conditional value
+in about five years and possible price change; strongest risk and confidence.
+Do not repeat 'what is a share' explanations or append generic boilerplate.
+This is a research opinion, not a trade instruction or a suitability assessment.
 
-Style rules:
+Discount = 1 - price / value. Upside = value / price - 1. They differ.
+For price 80 and value 100, discount is 20%, upside is 25%.
+Future conditional values are not today's values. Discount future exit prices
+using justified cost of equity and actual elapsed time. Do not confuse WACC with
+cost of equity or manufacture a technology multiple to reach a desired answer.
+Never claim to know an exact true value or promise how much a stock will rise.
 
-- Short sentences. Everyday words: "מכירות" not "הכנסות מוכרות", "כסף מזומן שנשאר"
-  not "FCF". If a technical term is unavoidable, explain it in parentheses once.
-- Prefer comparisons over figures: "פי 2", "בערך שליש", "מכל 100 דולר נשארים 15",
-  "הקופה מחזיקה בערך שנתיים". Absolute amounts only where needed (prices, values).
-- Always say direction and meaning: not "margin 12%" but "העסק מרוויח, אבל לא הרבה —
-  ולשמחתנו זה משתפר".
-- Be decisive where the evidence is decisive and say plainly where it is not.
-- A research indication, not an order: do not tell him to buy/sell, do not promise
-  returns, and never present future values as predicted exchange prices.
-- Growth companies: losses and cash burn are graded against stage (is the loss
-  shrinking, how long does the cash last) — do not call a promising early company bad
-  only because it is not yet profitable, and do not call it cheap without a valuation.
+Use an explicit model boundary at the fifth anniversary or next year-end (at
+most 100 days later), label the actual date. For September 2026, December 2030
+is NOT five years; model through September/December 2031. Extend operating and
+funding forecasts, do not extrapolate the final price or force terminal maturity.
+If no reviewed five-year boundary exists, say the five-year estimate is missing.
+Price changes exclude dividends; use total-return calculations when dividends matter.
 
-## Honesty limits
+## Potential without reliable valuation
 
-Grades are transparent rules of thumb over supplied reported numbers, adjusted by
-economics (software/platform bars are higher than factories or retailers). They do
-not verify the numbers, replace research_review, or measure future accuracy. If the
-valuation is unreviewed, demo, funding-blocked or mostly terminal value, say so in
-plain words next to the verdict.
+Research early companies even without profit, free cash flow or a low multiple.
+Say 'יש פוטנציאל בגלל [evidence-backed mechanism], אבל עדיין אין בסיס אמין
+לשווי ולכן לא ניתן לקבוע שהמחיר זול; מה שיכריע הוא [milestone]'.
+A short history or incomplete valuation does not make the business bad. A promising
+story does not prove a discount. Carry funded scale, dilution and substitution risk.
 
-Load valuation_integrity. Real valuations lacking the audited opening bridge, comparable estimates review or executed full dossier must lead with "הערכת השווי עדיין בבדיקה". Never bury this below a red/green price verdict. Optional probabilities are uncalibrated assumptions, not future loss odds.
+Banks/insurers/REITs remain outside plain_verdict's operating-margin grading.
+Use their dedicated executed/reviewed valuation and compose this same paragraph
+from it; do not relabel them to force the generic tool, or claim this renderer has
+implemented a new bank valuation. When valuation is unavailable, deliver a useful
+qualitative conclusion and say which business milestone would enable pricing.
+Demo/unreviewed/funding-blocked cases cannot display an approved discount.

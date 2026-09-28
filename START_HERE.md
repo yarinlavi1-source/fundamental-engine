@@ -96,8 +96,8 @@ It records dated user-reported tool availability and structured-numeric-first ro
 Finish every company answer with `plain_verdict({case})` after the research and the
 annual valuation. Pass 3–5 years of reported history, current cash/debt and the
 same `valuation_case` given to value_company; the tool executes it and returns a
-Hebrew `text`: bottom line, good/not-good label per metric, price versus value in
-words and the annual table through 2030. Load the `plain_language` packet for the
+Hebrew `text`: one concise investment paragraph with current value/discount and
+conditional five-year value. `detailed_text` retains the full report on request. Load the `plain_language` packet for the
 writing rules. CLI: `python -m fundamental_engine plain examples/plain_demo.json
 --valuation examples/valuation/infrastructure.json`. See `docs/PLAIN_LANGUAGE.md`.
 
