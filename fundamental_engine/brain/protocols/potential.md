@@ -33,3 +33,26 @@ when conventional valuation is not yet available. Keep the discovery lane distin
 from readiness for a priced conclusion; losses, high P/E and a short reporting
 history do not reject an emerging opportunity. Discovery evidence and causal
 hypotheses now have a dedicated dated case format and revision comparison.
+
+
+## Causal underwriting before pricing potential (SOFI lesson)
+
+For every material growth thesis preserve in the dossier:
+1. Structural demand change with dated independent evidence and substitution risk.
+2. Budget owner, willingness to pay, adoption timing and market definition/units.
+3. Why THIS company captures value: alternatives, pricing, retention and distribution.
+4. Commercial proof: paid adoption and customer economics, not partnership logos.
+5. Per-share economics after reinvestment, regulatory capital, funding and dilution.
+6. Strongest competing explanation, falsifier and dated milestone.
+7. Explicit forecast driver mapping, plausible range, cost and downside if delayed.
+
+Cross-sell does not prove lower acquisition cost, lifetime value or lock-in.
+High gross margin alone does not prove pricing power; test competition and costs.
+Registered users / adult population is not an economic market-share estimate.
+Annual transaction FLOW is not average reserve STOCK: model turnover and balances.
+A launch is not proven cost savings; gross reserve yield is not net profit.
+Show annual and sequential changes together; explain one-offs with evidence and
+avoid hiding deterioration through a favorable comparison window.
+Do not assume industry demand automatically translates into company earnings.
+Scenarios reflect evidence and base rates, never a requested analyst target.
+Missing proof triggers targeted research, not rejection of early-stage potential.

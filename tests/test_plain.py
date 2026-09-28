@@ -24,14 +24,15 @@ class PlainTests(unittest.TestCase):
         self.assertEqual(item(r,'operating_margin')['trend'],'improving')
         self.assertIsNone(r['price'])
         self.assertIn('המחיר עוד לא נבדק',r['bottom_line']['call'])
-        self.assertIn('לא הורצה הערכת שווי',r['text'])
+        self.assertIn('אין עדיין הערכת שווי מאושרת',r['text'])
 
     def test_valuation_is_executed_and_translated(self):
         c=demo();c['valuation_case']=valuation();r=plain_verdict(c)
         self.assertTrue(r['valuation']['executed']);self.assertEqual(len(r['valuation']['annual_values']),6)
         self.assertEqual(r['price']['bucket'],'cheap')
         self.assertEqual(r['bottom_line']['call'],'מעניין מאוד')
-        self.assertIn('2030',r['text']);self.assertIn('לא תחזית למחיר',r['text'])
+        self.assertIn('2030',r['detailed_text']);self.assertIn('לא תחזית למחיר',r['detailed_text'])
+        self.assertIn('הדגמה בלבד', r['text'])
         self.assertIn('זו דוגמה מומצאת, לא חברה אמיתית',r['confidence']['reasons'])
         self.assertEqual(r['confidence']['level'],'נמוך')
 
@@ -103,7 +104,7 @@ class PlainTests(unittest.TestCase):
         s=Server(':memory:');s.initialized=True
         out=s.handle({'jsonrpc':'2.0','id':1,'method':'tools/call','params':{'name':'plain_verdict','arguments':{'case':demo()}}})
         self.assertFalse(out['result']['isError'])
-        self.assertIn('בגובה העיניים',json.loads(out['result']['content'][0]['text'])['text'])
+        self.assertIn('הדגמה בלבד',json.loads(out['result']['content'][0]['text'])['text'])
 
 
 if __name__=='__main__':

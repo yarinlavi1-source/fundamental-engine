@@ -170,7 +170,7 @@ class PublicationAndRegressionTests(unittest.TestCase):
             r = plain_verdict(c)
             self.assertEqual(r['price']['bucket'], 'review_required')
             self.assertEqual(r['bottom_line']['light'], '⚪')
-            self.assertIn('טיוטה', r['text'])
+            self.assertIn('טיוטה', r['detailed_text'])
             self.assertIsNone(r['valuation_lane']['payoff'])
 
     def test_dates_and_demo_identity_cannot_bypass_gate(self):

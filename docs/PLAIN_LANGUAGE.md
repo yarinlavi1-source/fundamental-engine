@@ -55,3 +55,19 @@ missing reconciliation returns underwriting_required, even if arithmetic succeed
 Pass the full research_dossier to plain_verdict; it must execute the same valuation
 input. All gates are process checks, not independent verification or forecast accuracy.
 Discovery needs no positive earnings/FCF or low multiple. Preserve early opportunities.
+
+
+## v0.9.1 concise default (supersedes older presentation)
+
+`text` is now one Hebrew paragraph. `detailed_text` retains the old report;
+`response_style: "detailed"` selects it explicitly. `decision_summary.metrics`
+contains discount, upside, and a dated conditional five-year price change (not
+total return); absent approved valuation yields null metrics, not invented values.
+A fifth-anniversary or next-year-end model boundary is required; a 2030 endpoint
+must not be called five years from late 2026. Demo values remain demo-only.
+
+Optional `decision_notes` keys: `potential`, `risk`, `milestone`. Each is
+`{"text":"short Hebrew sentence (up to 25 words)","observation_ids":["id"]}`.
+Attach the matching `research_dossier` with reviewed observations and available
+sources. Notes remain analyst inferences, not verified facts. See plain_language
+for the required substantive review. Banks still use their specialist route.

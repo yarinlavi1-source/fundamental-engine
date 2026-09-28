@@ -158,8 +158,8 @@ def _margins(rows, bars, currency, stage):
                  2: 'המוצר מרוויח מעט', 1: 'המוצר כמעט לא מרוויח'}[points]
         out.append(_item('gross_margin', 'רווחיות המוצר', points, words,
                          per_hundred(gm, currency) + ' אחרי עלות הייצור/השירות עצמו (לפני משכורות הנהלה, שיווק ופיתוח).'
-                         + (' זה אומר שיש כוח תמחור — הלקוחות מוכנים לשלם הרבה מעבר לעלות.' if points >= 4 else '')
-                         + (' זה אומר שקשה להעלות מחירים או שהעלויות גבוהות — כל טעות קטנה פוגעת ברווח.' if points <= 2 else ''),
+                         + (' הרווח הגולמי גבוה; צריך לבדוק אם הוא נובע מיתרון עמיד, מתמהיל או משלב במחזור.' if points >= 4 else '')
+                         + (' הרווח הגולמי נמוך; צריך לבדוק את תמהיל המוצרים והעלויות לפני מסקנה על כוח התמחור.' if points <= 2 else ''),
                          {'gross_margin': gm}))
     oi = last.get('operating_income')
     if oi is not None:
@@ -523,7 +523,13 @@ def plain_verdict(case):
            'price': price, 'valuation': valuation, 'bottom_line': bottom, 'confidence': confidence,
            'input_sha256': sha256(json.dumps(case, sort_keys=True, ensure_ascii=False, allow_nan=False).encode()).hexdigest(),
            'meaning': 'Rule-of-thumb grades of supplied reported figures plus an executed valuation. Research indication only: not verified facts, not a price forecast, not an order or a promised return.'}
-    out['text'] = render_plain(out)
+    from .decision_summary import decision_summary
+    out['decision_summary'] = decision_summary(out, case)
+    out['detailed_text'] = render_plain(out)
+    style = case.get('response_style', 'concise')
+    if style not in {'concise', 'detailed'}:
+        raise ValueError('response_style must be concise or detailed')
+    out['text'] = out['detailed_text'] if style == 'detailed' else out['decision_summary']['text']
     json.dumps(out, allow_nan=False)
     return out
 

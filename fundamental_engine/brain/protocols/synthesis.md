@@ -1,13 +1,13 @@
 # Hebrew research output
 
 For Yarin, the delivered answer starts with the eye-level layer from the
-plain_language packet (plain_verdict: bottom line, labels per metric, price versus
-value in everyday words). The 14 sections below are the research backbone; present
-them in the same plain style and keep technical detail for when he asks.
+plain_language packet: ONE short Hebrew paragraph with investment opinion,
+current value/discount, conditional five-year value, potential, risk and confidence.
+The 14 sections below are internal research only; disclose detail on request.
 
 Lead with the conclusion's scope and confidence: what is known, inferred and unresolved.
 Avoid dumping JSON or making a single score look like a scientific probability.
-Provide these 14 sections, adapting length to materiality:
+Complete these 14 sections INTERNALLY, adapting depth to materiality:
 1. Conclusion and what could change it.
 2. Business mechanism and revenue/cash drivers.
 3. Competitive advantage and erosion evidence.
@@ -35,8 +35,8 @@ an actual scheduler has been configured and verified.
 
 ## Required annual valuation presentation (v0.4)
 
-When asked for fair value, load annual_valuation and execute value_company. Show
-TODAY and each requested year-end through 2030; columns: bear/base/bull, current
+When asked for fair value, load annual_valuation and execute value_company. Preserve internally
+TODAY and each requested year-end through at least the fifth anniversary; columns: bear/base/bull, current
 quote, base gap. Explain source-supported business drivers and the decisive
 assumptions. Future values belong to their stated dates, not to today's valuation.
 Never silently turn a synthetic example or a reverse-price sensitivity into the
