@@ -46,6 +46,7 @@ def research_tool(name, description, properties, required, readonly=True):
 
 
 TOOLS += [
+ research_tool('valuation_audit','Execute valuation and audit opening assets/shares, comparable estimates, terminal maturity and evidence links. Returns concrete gaps; no profitability gate or truth guarantee.',{'case':{'type':'object'}},['case']),
  research_tool('frontier_plan','Theme-first research agenda for emerging constraints and suppliers, before selecting a ticker. No profitability gate or trade signal.',{'request':{'type':'object'}},['request']),
  research_tool('discovery_scan','Audit causal bottleneck hypotheses and early adoption; preserve potential separately from valuation/funding. Read frontier_discovery first.',{'case':{'type':'object'}},['case']),
  research_tool('discovery_compare','Compare dated emerging-opportunity revisions and commercial stages; no hindsight backdating.',{'before':{'type':'object'},'after':{'type':'object'}},['before','after']),
@@ -136,6 +137,10 @@ class Server:
         if name == 'value_company':
             from .valuation import value_company
             return value_company(args['case'])
+        if name == 'valuation_audit':
+            from .valuation import value_company
+            r = value_company(args['case'])
+            return {'input_sha256': r['input_sha256'], **r['underwriting_audit']}
         if name == 'valuation_diagnostics':
             from .valuation import sensitivity
             from .valuation_tools import stress_test, reverse_price

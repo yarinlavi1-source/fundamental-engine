@@ -91,12 +91,15 @@ def main():
     vt.add_argument("input")
     vt.add_argument("--out", default="runs/valuation")
     vt.add_argument("--diagnostics", action="store_true")
+    va = subs.add_parser("valuation-audit", help="Execute and reconcile valuation inputs before a price conclusion")
+    va.add_argument("input")
     ds = subs.add_parser("discover", help="Emerging opportunity research, independent of mature-profitability filters")
     ds.add_argument("input")
     ds.add_argument("--out", default="runs/discovery")
     pl = subs.add_parser("plain", help="Eye-level Hebrew verdict: good/not good per metric plus price versus value")
     pl.add_argument("input")
     pl.add_argument("--valuation", help="value_company input JSON to execute and explain")
+    pl.add_argument("--dossier", help="Full research dossier to re-execute and bind to the valuation input")
     pl.add_argument("--out", default="runs/plain")
     pl.add_argument("--json", action="store_true", help="Print the full JSON result instead of the Hebrew text")
     ty = subs.add_parser("classify", help="Company type: life-cycle stage, Lynch category and research focus")
@@ -109,7 +112,11 @@ def main():
     im.add_argument("--as-of")
     args = parser.parse_args()
     try:
-        if args.command == "classify":
+        if args.command == "valuation-audit":
+            from .valuation import value_company
+            r = value_company(read_json(args.input))
+            print(json.dumps({'input_sha256': r['input_sha256'], **r['underwriting_audit']},ensure_ascii=False,indent=2,allow_nan=False))
+        elif args.command == "classify":
             from .profile import classify_company
             print(json.dumps(classify_company(read_json(args.input)),ensure_ascii=False,indent=2,allow_nan=False))
         elif args.command == "import-av":
@@ -122,6 +129,8 @@ def main():
             inputs = read_json(args.input)
             if args.valuation:
                 inputs["valuation_case"] = read_json(args.valuation)
+            if args.dossier:
+                inputs["research_dossier"] = read_json(args.dossier)
             result = plain_verdict(inputs)
             dest = Path(args.out) / result["input_sha256"][:16]
             dest.mkdir(parents=True, exist_ok=True)

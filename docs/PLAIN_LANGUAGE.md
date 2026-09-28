@@ -44,3 +44,14 @@ Confidence drops for an unfinished research_review, demo inputs, unreviewed
 assumptions, >80% terminal value, a quote older than 7 days, fewer than three
 years, or missing metrics. These are transparent rules of thumb for communication;
 they do not verify inputs, forecast prices, rank stocks or place orders.
+
+## v0.9 valuation integrity
+
+Read the `valuation_integrity` packet and the executable fictional contract in
+`examples/valuation/audited_infrastructure.json`. Run
+`python -m fundamental_engine valuation-audit INPUT.json` or MCP `valuation_audit`.
+Calculations preserve reproduction_input and underwriting_audit. A live model with
+missing reconciliation returns underwriting_required, even if arithmetic succeeds.
+Pass the full research_dossier to plain_verdict; it must execute the same valuation
+input. All gates are process checks, not independent verification or forecast accuracy.
+Discovery needs no positive earnings/FCF or low multiple. Preserve early opportunities.

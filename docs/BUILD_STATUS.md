@@ -1,3 +1,13 @@
+# Current version: 0.9.0
+
+Valuation integrity is enforced at calculator, research-review and plain-output
+boundaries. Arithmetic is retained for inspection; unreviewed live price conclusions
+are withheld. See valuation_integrity and AXTI_AUDIT_2026-09-28.md.
+
+Validation: 240 unit/integration tests and 12 synthetic research-process cases passed locally. Wheel installation checks passed; these are software checks, not investment accuracy measurements.
+
+## Prior build notes (historical; growth premium rules superseded)
+
 # Current build — v0.8.0 — 2026-09-28
 
 Two valuation lanes (intrinsic vs growth premium), tail scenario, probability-weighted

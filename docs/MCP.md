@@ -121,3 +121,14 @@ write to GitHub, or trade. See docs/ANNUAL_VALUATION.md for the case contract.
 `discovery_compare({before,after})` are read-only tools. Read frontier_discovery and
 docs/DISCOVERY.md. A theme agenda needs no ticker; a discovery case needs issuer
 identity and explicit evidence, but no positive earnings or fair-value calculation.
+
+## v0.9 valuation integrity
+
+Read the `valuation_integrity` packet and the executable fictional contract in
+`examples/valuation/audited_infrastructure.json`. Run
+`python -m fundamental_engine valuation-audit INPUT.json` or MCP `valuation_audit`.
+Calculations preserve reproduction_input and underwriting_audit. A live model with
+missing reconciliation returns underwriting_required, even if arithmetic succeeds.
+Pass the full research_dossier to plain_verdict; it must execute the same valuation
+input. All gates are process checks, not independent verification or forecast accuracy.
+Discovery needs no positive earnings/FCF or low multiple. Preserve early opportunities.

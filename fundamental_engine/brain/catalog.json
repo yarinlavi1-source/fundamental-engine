@@ -1,5 +1,5 @@
 {
-  "version": "0.8.0",
+  "version": "0.9.0",
   "packets": [
     {
       "id": "operating_system",
@@ -88,7 +88,7 @@
     },
     {
       "id": "growth_valuation",
-      "title": "Two valuation lanes: intrinsic versus justified growth premium",
+      "title": "Growth scenarios without automatic valuation premiums",
       "file": "protocols/growth_valuation.md"
     },
     {
@@ -123,12 +123,12 @@
     },
     {
       "id": "financials",
-      "title": "Banks and insurers \u2014 dedicated valuation required",
+      "title": "Banks and insurers — dedicated valuation required",
       "file": "playbooks/financials.md"
     },
     {
       "id": "biotech",
-      "title": "Biotech and clinical optionality \u2014 specialist model required",
+      "title": "Biotech and clinical optionality — specialist model required",
       "file": "playbooks/biotech.md"
     },
     {
@@ -163,8 +163,13 @@
     },
     {
       "id": "session_capabilities",
-      "title": "Yarin Cowork connector capabilities \u2014 user-reported 2026-09-27 probes",
+      "title": "Yarin Cowork connector capabilities — user-reported 2026-09-27 probes",
       "file": "protocols/session_capabilities.md"
+    },
+    {
+      "id": "valuation_integrity",
+      "title": "Reconcile assets, shares, consensus and terminal maturity before price conclusions",
+      "file": "protocols/valuation_integrity.md"
     }
   ]
 }

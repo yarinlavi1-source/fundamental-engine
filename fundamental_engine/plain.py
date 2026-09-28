@@ -243,14 +243,17 @@ def _cash(rows, balance, currency, stage):
 
 def _dilution(rows, current=None):
     known = [r for r in rows if r.get('shares_diluted')]
-    if current and known:
-        jump = current['shares'] / known[-1]['shares_diluted'] - 1
-        if jump > .1:
+    point_history = [r for r in rows if r.get('shares_outstanding')]
+    if current and current.get('basis') == 'point_in_time_common_outstanding' and point_history:
+        prior = point_history[-1]
+        if current['as_of'] > prior['period_end']:
+            jump = current['shares'] / prior['shares_outstanding'] - 1
             points = _grade(jump, (0, .02, .05, .1), higher_is_better=False)
-            return _item('dilution', 'דילול', points, 'דילול כבד לאחרונה',
-                         f"מאז הדוח השנתי האחרון מספר המניות עלה ב{fraction_words(jump)} (בעיקר מגיוס כסף בהנפקה). "
-                         'העוגה מתחלקת לעוד הרבה חתיכות. גיוס במחיר גבוה פוגע פחות, והכסף יכול לבנות צמיחה — '
-                         'אבל כל שקל רווח עתידי מתחלק עכשיו בין יותר מניות.', {'shares_increase_since_last_annual': jump})
+            return _item('dilution', 'שינוי במספר המניות', points,
+                         'דילול כבד לאחרונה' if jump > .1 else 'שינוי במספר המניות בפועל',
+                         f"בין {prior['period_end']} ל־{current['as_of']} מספר המניות בפועל השתנה ב־{jump:.1%}. "
+                         'יש לבדוק הנפקות, תגמול מנייתי, רכישות עצמיות ופיצולים; השינוי אינו מלמד לבדו למה הונפקו מניות.',
+                         {'shares_increase_since_last_annual': jump, 'basis': 'point_in_time_common_outstanding'})
     if len(known) < 2:
         return None
     years = (date.fromisoformat(known[-1]['period_end']) - date.fromisoformat(known[0]['period_end'])).days / 365.25
@@ -263,7 +266,7 @@ def _dilution(rows, current=None):
     explain = ('כמות המניות לא עולה, אז כל הצמיחה שייכת לך באותו חלק.' if points == 5 else
                'החברה מוסיפה מניות כל שנה (לעובדים או לגיוס כסף). העוגה גדלה, אבל מתחלקת לעוד חתיכות — ' +
                ('זה עדיין קטן.' if points == 4 else 'זה אוכל חלק מהתשואה שלך.' if points == 3 else 'זה אוכל חלק גדול מהתשואה שלך.'))
-    return _item('dilution', 'דילול', points, head, explain, {'share_count_growth_per_year': rate})
+    return _item('dilution', 'מגמת ממוצע המניות', points, head, explain + ' זהו שינוי בממוצע מניות מדולל בין שנים; אינו מדידת דילול מאז סוף השנה.', {'share_count_growth_per_year': rate, 'basis': 'weighted_average_diluted'})
 
 
 def _valuation(case):
@@ -272,17 +275,35 @@ def _valuation(case):
         return None, None, None
     from .valuation import value_company
     result = value_company(source)
-    if source['ticker'] != case['ticker'] or source['currency'] != case['currency']:
-        raise ValueError('valuation_case ticker/currency must match the plain case')
+    if source['ticker'] != case['ticker'] or source['currency'] != case['currency'] or source['as_of'] != case['as_of'] or bool(source.get('is_demo')) != bool(case.get('is_demo')):
+        raise ValueError('valuation_case ticker/currency/date/demo must match the plain case')
     status = result['status']
     today = result['annual_values'][0]
     quote = today['current_quote']
     summary = {'executed': True, 'input_sha256': result['input_sha256'], 'status': status,
+               'underwriting_audit': result['underwriting_audit'], 'annual_path_semantics': result['annual_path_semantics'],
                'is_demo': result['is_demo'], 'warnings': result['warnings'], 'annual_values': result['annual_values'],
                'base_issues': next((x.get('issues', []) for x in result['scenarios'] if x['name'] == 'base'), [])}
     if status == 'funding_blocked' or today.get('base') is None:
         return summary, result, {'bucket': 'blocked', 'light': '🔴', 'headline': 'אי אפשר לתת שווי כרגע',
                          'explain': 'לפי התחזית החברה צריכה כסף שאין לו מקור מוכח. עד שיהיה מימון ברור, כל "שווי" הוא ניחוש. זו נורת אזהרה, לא הערכת שווי.'}
+    research_ok = False
+    dossier = case.get('research_dossier')
+    if dossier is not None:
+        from .supervisor import review
+        checked = review(dossier)
+        executed = checked.get('annual_valuation')
+        if not executed or executed['input_sha256'] != result['input_sha256']:
+            raise ValueError('research_dossier must execute the identical valuation input')
+        research_ok = checked['gates']['priced_conclusion_ready']
+        case['_executed_research_status'] = checked['status']
+    summary['research_review_executed'] = dossier is not None
+    summary['priced_conclusion_ready'] = research_ok and result['underwriting_audit']['eligible_for_research_synthesis']
+    if not result['is_demo'] and not summary['priced_conclusion_ready']:
+        return summary, result, {'bucket': 'review_required', 'light': '⚪',
+            'headline': 'השווי דורש בדיקה לפני מסקנת מחיר',
+            'explain': 'החישוב מוצג כטיוטה מותנית. יש להשלים התאמת נתונים ובדיקת מחקר על אותו מודל; אין עדיין בסיס לקביעה זול או יקר.',
+            'quote': quote, 'bear': today['bear'], 'base': today['base'], 'bull': today['bull']}
     bear, base, bull = today['bear'], today['base'], today['bull']
     ratio = quote / base if base > 0 else float('inf')
     if bear is not None and quote <= bear:
@@ -317,10 +338,12 @@ def _confidence(case, valuation, items, base_rate=None, scores=None):
         reasons.append('התרחיש הבסיסי מניח צמיחה שנדירה ביחס להיסטוריה ולשיעורי בסיס')
     if scores and scores['beneish'].get('zone') == 'likely_manipulator':
         reasons.append('מדד בניש מסמן סיכון לניפוח רווחים — צריך לבדוק את הדוחות לעומק')
-    review = case.get('research_status')
+    review = case.get('_executed_research_status', case.get('research_status') if case.get('is_demo') else None)
     if review != 'ready_for_conditional_synthesis':
         reasons.append('המחקר עוד לא עבר את בדיקת התהליך (research_review) עד הסוף')
     if valuation:
+        if not valuation['is_demo'] and not valuation.get('priced_conclusion_ready'):
+            reasons.append('נתוני השווי והנחותיו טרם עברו התאמה ובדיקת מחקר על אותו קלט')
         if valuation['is_demo']:
             reasons.append('זו דוגמה מומצאת, לא חברה אמיתית')
         if valuation['status'] == 'unreviewed':
@@ -447,6 +470,8 @@ def plain_verdict(case):
     current = case.get('current_shares')
     if current is not None:
         number(current['shares'], 'current_shares.shares', 1)
+        if current.get('basis') != 'point_in_time_common_outstanding':
+            raise ValueError('current_shares requires point_in_time_common_outstanding; weighted EPS averages belong in history')
         if date.fromisoformat(current['as_of']) > date.fromisoformat(case['as_of']) or not current.get('source_ids'):
             raise ValueError('current_shares needs as_of <= case as_of and source_ids')
     d = _dilution(rows, current)
@@ -486,8 +511,7 @@ def plain_verdict(case):
     if any(i['key'] in {'accounting_risk', 'distress'} and i['points'] == 1 for i in items):
         bottom = {**bottom, 'light': '🔴' if bottom['light'] != '⚪' else bottom['light'],
                   'explain': bottom['explain'] + ' שים לב: יש דגל אדום (דוחות או סיכון קריסה) — קודם לברר אותו.'}
-    if lane['verdict'] and lane['lane']['lane'] == 'potential' and price and price['bucket'] != 'blocked':
-        bottom = {**lane['verdict'], 'explain': lane['verdict']['explain']}
+    # Growth momentum never overrides an audited price conclusion.
     confidence = _confidence(case, valuation, items, base_rate, scores)
     if lane['payoff'] and lane['payoff']['probabilities_are_default']:
         confidence['reasons'].append('ההסתברויות לתרחישים הן ברירת מחדל לא מכוילת')
@@ -513,11 +537,13 @@ def _bottom_line(business, price, stage):
         return {'light': '🟡' if ok else '🟠', 'call': call,
                 'explain': 'לא הורצה הערכת שווי, אז אי אפשר להגיד אם זה זול או יקר. אל תסיק מזה שום דבר על המחיר.'}
     b = price['bucket']
+    if b == 'review_required':
+        return {'light': '⚪', 'call': 'הערכת השווי עדיין בבדיקה', 'explain': price['explain']}
     if b == 'blocked':
         return {'light': '🔴', 'call': 'זהירות — בעיית מימון', 'explain': 'גם אם העסק מעניין, בלי מימון ברור בעלי המניות של היום עלולים להידלל או להפסיד.'}
     if b == 'very_expensive':
         return {'light': '🔴', 'call': 'יקר מאוד — המחיר מעל גם התרחיש האופטימי',
-                'explain': 'גם אם הכל ילך טוב לפי התרחיש הטוב שחישבנו, השווי יוצא נמוך מהמחיר. המחיר מגלם הצלחה גדולה עוד יותר ממה שהמודל מצליח להצדיק.'
+                'explain': 'המחיר מעל התרחיש האופטימי שהוזן. זהו פער מהמודל, ולא תקרה למחיר או לכל תוצאה עסקית אפשרית. המחיר מגלם הצלחה גדולה עוד יותר ממה שהמודל מצליח להצדיק.'
                            + (' העסק עצמו חזק — הבעיה היא המחיר, לא החברה.' if good else '')}
     cheap, fair = b in {'cheap', 'cheap_even_bear'}, b == 'fair'
     if good and cheap:
@@ -561,11 +587,11 @@ def render_plain(r):
     lines += ['## הערכת שווי', '']
     g = r.get('valuation_lane')
     if g:
-        lane_he = 'הערכה קלאסית לפי המספרים' if g['lane']['lane'] == 'intrinsic' else 'מסלול צמיחה (האם מגיעה לה "הנחה")'
+        lane_he = 'הערכה קלאסית לפי המספרים' if g['lane']['lane'] == 'intrinsic' else 'מסלול צמיחה: ביקוש, קיבולת, מימון ותוצאות אפשריות'
         lines += [f"**איך מעריכים אותה: {lane_he}.** {g['lane']['why_he']}", '']
         m = g['momentum']
         if m['signals']:
-            head = {'strong': '🟢 העסק רץ מהר מהציפיות', 'neutral': '🟡 העסק עומד בערך בציפיות', 'weak': '🔴 העסק מפגר אחרי הציפיות'}[m['label']]
+            head = {'strong': '🟢 סימני התקדמות בעסק', 'neutral': '🟡 סימני התקדמות מעורבים', 'weak': '🔴 סימני היחלשות בעסק'}[m['label']]
             lines += [f'**{head}:**'] + [f"- {'✅' if s['score'] > 0 else ('❌' if s['score'] < 0 else '➖')} {s['he']}" for s in m['signals']] + ['']
         pay = g['payoff']
         if pay:
@@ -573,8 +599,8 @@ def render_plain(r):
                          f"{' (כולל ההצלחה הגדולה)' if 'tail' in pay['probabilities'] else ''}: בערך {pay['expected_value']:,.2f} {cur} — "
                          f"{price_vs_value_words(p['quote'], pay['expected_value']) if p else ''}. "
                          f"בתרחיש הרע: {change_words(p['bear'], p['quote']) if p and p['bear'] else '—'}; "
-                         f"בתרחיש הכי טוב: {change_words(max(v for k, v in r['valuation']['annual_values'][0].items() if k in ('bear','base','bull','tail') and v is not None), p['quote']) if p else '—'}. "
-                         f"הסיכוי (לפי ההנחות) לסיים מתחת למחיר של היום: בערך {fraction_words(pay['probability_below_price'])}.")
+                         f"בתרחיש הגבוה ביותר שהוזן: {change_words(max(v for k, v in r['valuation']['annual_values'][0].items() if k in ('bear','base','bull','tail') and v is not None), p['quote']) if p else '—'}. "
+                         f"משקל התרחישים שבהם השווי הנוכחי נמוך מהמחיר (אינו הסתברות להפסד עתידי): בערך {fraction_words(pay['probability_below_price'])}.")
             lines.append('')
         mv = g['multiples']
         if mv and mv['rows']:
@@ -582,10 +608,10 @@ def render_plain(r):
             base_row = next((x for x in mv['rows'] if x['scenario'] == 'base'), None)
             if base_row and bull_row:
                 lo, mid, hi = mv['exit_pe']
-                lines.append(f"**איך אנליסטים מגיעים למחירי יעד גבוהים:** הם לוקחים רווח עתידי וכופלים במכפיל. ב-{base_row['year']} הרווח למניה בתרחיש הסביר בערך "
+                lines.append(f"**רגישות להנחות מכפיל — אינה שחזור של מודל אנליסט:** ב-{base_row['year']} אומדן רווח תפעולי לאחר מימון ומס למניה בתרחיש הבסיס בערך "
                              f"{base_row['eps']:.2f} ובתרחיש הטוב {bull_row['eps']:.2f}. אם השוק ישלם אז פי {hi} — המחיר יהיה בערך "
                              f"{base_row['price_in_year_at_pe'][hi]:,.0f}–{bull_row['price_in_year_at_pe'][hi]:,.0f} {cur}; אם רק פי {lo} — בערך "
-                             f"{base_row['price_in_year_at_pe'][lo]:,.0f}–{bull_row['price_in_year_at_pe'][lo]:,.0f}. המכפיל הוא הימור על מצב הרוח של השוק, לא על העסק.")
+                             f"{base_row['price_in_year_at_pe'][lo]:,.0f}–{bull_row['price_in_year_at_pe'][lo]:,.0f}. המכפיל הוא הנחה; האומדן אינו רווח GAAP או רווח מתואם מאומת לבעלי החברה.")
                 lines.append('')
         req = g['required']
         if req and req['ratio']:
@@ -596,6 +622,11 @@ def render_plain(r):
         lines += [f"{p['light']} **{p['headline']}.** {p['explain']}", '']
         rows = r['valuation']['annual_values'] if r['valuation'] else []
         if rows and p['bucket'] != 'blocked':
+            lines += ['שווי מותנה בהנחות; התרחיש הגבוה אינו תקרת מחיר. בשיטת התזרים, בהיעדר חלוקות, המסלול השנתי משקף גם את שיעור ההיוון ואינו תחזית מסחר עצמאית לכל שנה.', '']
+            if p['bucket'] == 'review_required':
+                lines += ['**טיוטה לחישוב בלבד — טרם הושלמה בקרת השווי.**', '']
+                lines += ['- ' + i['message'] + ' [' + i['path'] + ']' for i in r['valuation']['underwriting_audit']['issues']]
+                lines.append('')
             has_tail = any(row.get('tail') is not None for row in rows)
             lines += [f'| תאריך | רע | סביר (בסיס) | טוב |' + (' הצלחה גדולה |' if has_tail else '') + f' מחיר היום ({cur}) |',
                       '|---|---|---|---|' + ('---|' if has_tail else '') + '---|']

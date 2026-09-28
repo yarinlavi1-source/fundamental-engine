@@ -21,6 +21,10 @@ assert review(case)['status']=='ready_for_conditional_synthesis'
 from fundamental_engine.valuation import value_company
 v=json.loads(open(sys.argv[3],encoding='utf-8').read())
 assert len(value_company(v)['annual_values'])==6
+assert 'underwriting_audit' in value_company(v)
+assert 'reproduction_input' in value_company(v)
+from fundamental_engine.valuation_audit import audit_valuation
+assert packet('valuation_integrity')['content']
 from fundamental_engine.discovery import scan
 d=json.loads(open(sys.argv[4],encoding='utf-8').read())
 assert scan(d)['opportunities'][0]['research_lane']=='underwrite_early_growth'

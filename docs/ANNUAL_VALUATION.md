@@ -147,3 +147,14 @@ rNPV caution: cash-flow probabilities and discount rates address different risks
 Do not add the same clinical failure penalty again to the discount rate. Historical
 cohort rates require stage, indication, modality and vintage matching. The engine
 cannot infer those clinical distinctions from a ticker.
+
+## v0.9 valuation integrity
+
+Read the `valuation_integrity` packet and the executable fictional contract in
+`examples/valuation/audited_infrastructure.json`. Run
+`python -m fundamental_engine valuation-audit INPUT.json` or MCP `valuation_audit`.
+Calculations preserve reproduction_input and underwriting_audit. A live model with
+missing reconciliation returns underwriting_required, even if arithmetic succeeds.
+Pass the full research_dossier to plain_verdict; it must execute the same valuation
+input. All gates are process checks, not independent verification or forecast accuracy.
+Discovery needs no positive earnings/FCF or low multiple. Preserve early opportunities.

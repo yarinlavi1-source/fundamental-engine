@@ -56,14 +56,20 @@ different questions, metrics and valuation models (company_type). Run
 forensic_scores (Piotroski/Altman/Beneish/ROIC/Rule of 40) and carry every flag into
 the counter-thesis. Map AV statements with import_statements; reconcile to filings.
 
-## Two valuation lanes (v0.8)
+## Valuation integrity (v0.9)
 
-Load growth_valuation. plain_verdict picks the lane: intrinsic for reliably profitable
-firms (Nvidia-type), potential for young/unprofitable/inflecting firms. For the potential
-lane add an executed `tail` scenario, explicit scenario_probabilities with rationale,
-8 recent_quarters and, when available, expectations_track/estimate_revisions. A
-premium above base value is allowed only with strong expectation momentum; weak
-momentum means "expensive without evidence". Report the multiples view as sentiment.
+Load valuation_integrity and growth_valuation. Before live price conclusions, supply
+underwriting reconciliation, run valuation_audit and research_review, then attach
+that full research_dossier to plain_verdict with the identical valuation_case.
+A research_status string no longer authorizes a price conclusion. Incomplete
+underwriting is a visible draft; research/discovery can continue normally.
+
+Preserve exact inputs, output and hash. Show investment assets separately from
+spendable cash; use point-in-time shares for ownership and weighted averages for
+EPS. Model maturity independently of the requested 2030 reporting endpoint.
+No default scenario odds or momentum-based permission to pay a premium. Bull is
+not a price ceiling. Do not force a high or low valuation to satisfy any narrative.
+See docs/AXTI_AUDIT_2026-09-28.md for the real regression and unresolved rerun work.
 
 ## User preference: eye-level answers, clear labels
 

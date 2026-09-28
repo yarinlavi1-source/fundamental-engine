@@ -1,27 +1,13 @@
-"""Which valuation lane fits, and when does a growth stock deserve a premium?
+"""Growth research signals and explicitly assumed scenario sensitivities.
 
-Two lanes (Damodaran life cycle: numbers dominate mature firms, narrative plus
-evidence dominates young ones):
-- intrinsic: profitable, cash-generating firms with a reliable record (e.g. Nvidia
-  after 2023). A DCF of the base case is the anchor; price above the bull value is
-  expensive.
-- potential: young/high-growth/inflecting firms where a base-case DCF almost always
-  says "expensive" because value sits in a right tail. Here the anchor becomes the
-  probability-weighted value INCLUDING an executed tail scenario, and the premium
-  above the base case is allowed only when the business is outrunning expectations.
-
-Evidence of outrunning expectations (Mauboussin & Rappaport, Expectations Investing;
-estimate-revision research): accelerating growth, expanding margins, beat-and-raise
-quarters and upward estimate revisions, plus quality of growth (Rule of 40 / gross
-margin). Probabilities are explicit analyst assumptions; defaults are labelled
-uncalibrated. Nothing here predicts which stock becomes a multi-bagger, places
-orders or promises returns.
+Potential never exempts a business from valuation. Momentum cannot validate a
+premium, and scenario weights are not calibrated investment-loss probabilities.
 """
 from datetime import date
 from .finance import number
 from .history import quarters, txt
 
-DEFAULT_PROBABILITIES = {'bear': .25, 'base': .45, 'bull': .22, 'tail': .08}
+# No implicit scenario probabilities: absence means unavailable.
 DEFAULT_EXIT_PE = (15, 25, 40)
 
 
@@ -40,7 +26,7 @@ def momentum(case, rows=None):
     if len(yoy) >= 2:
         first, last = yoy[0][1], yoy[-1][1]
         if last > first + .05:
-            add('acceleration', 1, 'הצמיחה מאיצה — כל רבעון צומח מהר יותר מהקודם', last - first)
+            add('acceleration', 1, 'קצב הצמיחה השנתי ברבעון האחרון גבוה מהראשון שנבדק', last - first)
         elif last < first - .05:
             add('acceleration', -1, 'הצמיחה מאטה ברבעונים האחרונים', last - first)
         else:
@@ -57,6 +43,9 @@ def momentum(case, rows=None):
             date.fromisoformat(t['period_end'])
             if not t.get('source_ids'):
                 raise ValueError('expectations_track rows need source_ids')
+            if not (t.get('expectation_available_at') and t.get('actual_available_at')) or not (
+                t['expectation_available_at'] <= t['period_end'] <= t['actual_available_at'] <= case['as_of']):
+                raise ValueError('expectations_track requires pre-result expectations and available actuals')
             expected = t.get('guidance_midpoint', t.get('consensus_revenue'))
             if expected is not None and number(t['revenue'], 'revenue', 0) > number(expected, 'expected revenue', 0) * 1.01:
                 beats += 1
@@ -72,13 +61,16 @@ def momentum(case, rows=None):
         for r in revs:
             if date.fromisoformat(r['as_of']) > date.fromisoformat(case['as_of']) or not r.get('source_ids'):
                 raise ValueError('estimate_revisions need as_of <= case as_of and source_ids')
+        definition = ('metric', 'period_end', 'basis', 'currency', 'unit')
+        if any(not r.get(k) for r in revs for k in definition) or len({tuple(r[k] for k in definition) for r in revs}) != 1:
+            raise ValueError('estimate_revisions must share metric, target period, basis, currency and unit')
         change = number(revs[-1]['value'], 'estimate', 1e-12) / number(revs[0]['value'], 'estimate', 1e-12) - 1
         add('revisions', 1 if change > .05 else (-1 if change < -.05 else 0),
             'האנליסטים מעלים את התחזיות לשנה הבאה' if change > .05 else ('האנליסטים מורידים תחזיות' if change < -.05 else 'התחזיות יציבות'), change)
     if len(qs) >= 4 and qs[-1]['revenue'] > 0 and qs[-1].get('gross_profit') is not None:
         gm = qs[-1]['gross_profit'] / qs[-1]['revenue']
         add('gross_margin', 1 if gm >= .6 else (-1 if gm < .3 else 0),
-            'המוצר רווחי מאוד (יש כוח תמחור)' if gm >= .6 else ('המוצר עם רווחיות נמוכה' if gm < .3 else 'רווחיות מוצר סבירה'), gm)
+            'שיעור הרווח הגולמי גבוה; כוח תמחור דורש בדיקה נפרדת' if gm >= .6 else ('שיעור הרווח הגולמי נמוך לפי סף כללי; יש לבדוק ביחס לענף' if gm < .3 else 'רווחיות גולמית בטווח הביניים של הסף הכללי'), gm)
     score = sum(s['score'] for s in signals)
     label = 'strong' if score >= 2 else ('weak' if score <= -1 else 'neutral')
     return {'score': score, 'label': label, 'signals': signals,
@@ -99,16 +91,15 @@ def choose_lane(kind, rows):
     if not inflecting and (kind['stage'] in {'mature_growth', 'mature_stable', 'decline'} or (reliable and kind['stage'] == 'high_growth')):
         lane, why = 'intrinsic', 'רווחית, מייצרת מזומן ועם היסטוריה אמינה — מעריכים לפי המספרים (כמו אנבידיה).'
     else:
-        lane, why = 'potential', 'חברה צעירה, צומחת מהר או בנקודת מפנה — הערכת שווי רגילה כמעט תמיד תגיד "יקר", כי הערך נמצא בסיכוי להצלחה גדולה. בודקים אם העסק מצדיק "הנחה".'
+        lane, why = 'potential', 'חברה צעירה, צומחת מהר או בנקודת מפנה — בונים מסלולי ביקוש, קיבולת ורווחיות, כולל הצלחה גדולה וסיכוני ביצוע. אין הנחת מחיר אוטומטית בגלל צמיחה.'
     return {'lane': lane, 'why_he': why, 'evidence': {'operating_margin': om, 'fcf_margin': fcf, 'profitable_years': profitable_years}}
 
 
 def payoff(annual_today, quote, probabilities=None):
-    probs = dict(probabilities or DEFAULT_PROBABILITIES)
-    calibrated = probabilities is not None
+    if probabilities is None:
+        return None
+    probs = dict(probabilities)
     names = [k for k in ('bear', 'base', 'bull', 'tail') if annual_today.get(k) is not None]
-    if 'tail' not in names and not calibrated:
-        probs = {'bear': .27, 'base': .5, 'bull': .23}
     if set(probs) != set(names):
         raise ValueError('scenario_probabilities must cover exactly the executed scenarios: ' + ', '.join(names))
     for k, v in probs.items():
@@ -120,63 +111,61 @@ def payoff(annual_today, quote, probabilities=None):
     upside = max(annual_today[k] for k in names) / quote - 1
     loss_prob = sum(probs[k] for k in names if annual_today[k] < quote)
     return {'expected_value': ev, 'expected_vs_price': ev / quote - 1, 'probabilities': probs,
-            'probabilities_are_default': not calibrated, 'downside_to_bear': downside, 'upside_to_best': upside,
+            'probabilities_are_default': False, 'calibrated': False, 'downside_to_bear': downside, 'upside_to_best': upside,
             'probability_below_price': loss_prob,
-            'note': 'Probability-weighted present value of executed scenarios. Default probabilities are uncalibrated placeholders; tail probability should reflect base rates (few firms sustain hypergrowth).'}
+            'note': 'Analyst-weighted conditional present value; supplied probabilities remain uncalibrated. Weight below current price is not a future loss probability.'}
 
 
 def multiples_view(result, quote, minority_share=0.0, exit_pe=DEFAULT_EXIT_PE, year_index=4):
     """Analyst-style check: scenario earnings per share in a future year x P/E, discounted back."""
     out = []
+    if minority_share:
+        return {'rows': [], 'exit_pe': list(exit_pe), 'note': 'A flat minority haircut to all parent earnings is not supported. Supply attributable earnings reconciliation.'}
     for s in result['scenarios']:
         rows = s.get('forecast') or []
         if len(rows) <= year_index or 'ebit' not in rows[year_index] or not s.get('timeline'):
             continue
         p = rows[year_index]
+        duration = (date.fromisoformat(p['end']) - date.fromisoformat(p['start'])).days / 365.25
+        if not .9 <= duration <= 1.01:
+            continue
         eps = (p['ebit'] - p['interest'] - p['cash_taxes']) * (1 - minority_share) / p['shares']
         yrs = (date.fromisoformat(p['end']) - date.fromisoformat(result['as_of'])).days / 365.25
         ke = result.get('_cost_of_equity', {}).get(s['name'], .1)
+        if eps <= 0:
+            continue  # P/E is not meaningful for negative earnings.
         vals = {pe: eps * pe / (1 + ke) ** yrs for pe in exit_pe}
         out.append({'scenario': s['name'], 'year': p['end'][:4], 'eps': eps,
                     'price_in_year_at_pe': {pe: eps * pe for pe in exit_pe}, 'discounted_today_at_pe': vals})
     return {'rows': out, 'exit_pe': list(exit_pe),
-            'note': 'What the market might pay if it keeps a given multiple; this is how most price targets are built. Multiples are assumptions about future sentiment, not value.'}
+            'note': 'Illustrative multiples sensitivity, not analyst-method attribution. EPS is an operating earnings proxy; reconcile investment income, minority interests, GAAP adjustments and weighted shares before comparing consensus.'}
 
 
-def required_revenue(market_cap, net_cash, cost_of_equity, margin, tax=.2, exit_pe=25, years=5):
-    """Reverse check: revenue needed in N years for today's price to earn the required return."""
-    ev_needed = (market_cap - max(net_cash, 0)) * (1 + cost_of_equity) ** years
-    return ev_needed / (margin * (1 - tax) * exit_pe)
+def required_revenue(market_cap, terminal_net_cash, cost_of_equity, margin,
+                     tax=.2, exit_nopat_multiple=25, years=5):
+    """No-dividend equity-return hurdle translated with EV/NOPAT, never P/E.
+
+    terminal_net_cash is a FUTURE net asset value, not today's cash compounded.
+    Fixed share count/claims only. This sensitivity is not an executable expansion plan.
+    """
+    number(market_cap, 'market_cap', 0)
+    number(terminal_net_cash, 'terminal_net_cash')
+    number(cost_of_equity, 'cost_of_equity', 0, 1)
+    number(margin, 'margin', 1e-12, 1); number(tax, 'tax', 0, .999999)
+    number(exit_nopat_multiple, 'exit_nopat_multiple', 1e-12)
+    number(years, 'years', 1e-12)
+    enterprise_needed = max(0, market_cap * (1 + cost_of_equity) ** years - terminal_net_cash)
+    return enterprise_needed / (margin * (1 - tax) * exit_nopat_multiple)
 
 
 def lane_verdict(lane, mom, pay, today, quote):
-    base, bull = today['base'], today['bull']
-    tail = today.get('tail')
-    if lane == 'intrinsic':
-        if quote <= base * 1.1:
-            return {'light': '🟢' if quote <= base * .8 else '🟡', 'call': 'מתומחרת בסביר לפי המספרים' if quote > base * .8 else 'זולה לפי המספרים',
-                    'explain': 'חברה שהמספרים שלה אמינים, והמחיר לא גבוה מהשווי בתרחיש הסביר.'}
-        if quote <= bull:
-            return {'light': '🟠', 'call': 'יקרה — המחיר מניח את התרחיש הטוב',
-                    'explain': 'כדי שהמחיר יהיה מוצדק, צריך שהתרחיש הטוב יתממש. אין פה מרווח ביטחון.'}
-        return {'light': '🔴', 'call': 'יקרה מאוד — מעל גם התרחיש הטוב', 'explain': 'גם התרחיש הטוב לא מצדיק את המחיר.'}
-    ev = pay['expected_value']
-    m = mom['label']
-    if m == 'weak':
-        return {'light': '🔴', 'call': 'יקרה בלי ראיות', 'explain': 'המחיר גבוה, והעסק לא רץ מהר מהציפיות — לא מגיעה לו "הנחה". זה האזור שבו מניות צמיחה קורסות.'}
-    if quote <= base * 1.1:
-        return {'light': '🟢', 'call': 'מניית צמיחה במחיר סביר', 'explain': 'אפילו בלי לשלם על ההצלחה הגדולה, המחיר מכוסה בתרחיש הסביר.'}
-    if quote <= ev:
-        if m == 'strong':
-            return {'light': '🟢', 'call': 'יקרה על הנייר — אבל הימור צמיחה מוצדק',
-                    'explain': 'הערכת שווי רגילה אומרת יקר, אבל העסק רץ מהר מהציפיות, וכשמחשבים גם את הסיכוי להצלחה הגדולה — השווי הממוצע מעל המחיר. מגיעה לה "הנחה". גודל פוזיציה צריך להתאים להימור: אפשר גם להפסיד.'}
-        return {'light': '🟡', 'call': 'הימור צמיחה אפשרי — צריך עוד הוכחות',
-                'explain': 'השווי הממוצע (כולל ההצלחה הגדולה) מעל המחיר, אבל הראיות שהעסק עוקף ציפיות עוד לא חזקות.'}
-    if tail is not None and quote <= tail:
-        return {'light': '🟠' if m == 'strong' else '🔴', 'call': 'המחיר כבר מתמחר את ההצלחה הגדולה',
-                'explain': 'המחיר מעל השווי הממוצע. הוא מוצדק רק אם התרחיש הגדול באמת יקרה — אתה משלם היום על הזנב, בלי מרווח.'
-                           + (' העסק כן רץ מהר — שווה לעקוב ולחכות למחיר טוב יותר.' if m == 'strong' else '')}
-    return {'light': '🔴', 'call': 'יקרה גם כהימור צמיחה', 'explain': 'המחיר גבוה אפילו מהתרחיש הגדול ביותר שחישבנו.'}
+    """Descriptive scenario location; momentum never grants a valuation premium."""
+    highest = max(today[k] for k in ('bear', 'base', 'bull', 'tail') if today.get(k) is not None)
+    if quote > highest:
+        return {'light': '🟠', 'call': 'המחיר מעל התרחישים שהוזנו',
+                'explain': 'יש לבדוק אם חסר מסלול עסקי נתמך או שהמחיר דורש הנחות חזקות יותר. התרחיש הגבוה אינו תקרת מחיר.'}
+    return {'light': '🟡', 'call': 'המחיר בתוך טווח התרחישים שהוזנו',
+            'explain': 'אין מסקנת כדאיות מתוך מומנטום או משקלי תרחישים בלבד. נדרשת בקרת המחקר והערכת השווי.'}
 
 
 def growth_lane(case, kind, rows, result, minority_share=0.0):
@@ -194,15 +183,8 @@ def growth_lane(case, kind, rows, result, minority_share=0.0):
     kes = {s['name']: s['cost_of_equity'] for s in case['valuation_case']['scenarios']}
     result = dict(result, _cost_of_equity=kes)
     mult = multiples_view(result, quote, minority_share)
+    # No hardcoded five-year reverse case, terminal margin or 25x P/E.
+    # Use valuation_diagnostics for an explicitly labeled driver sensitivity.
     req = None
-    if case.get('market_cap') and case.get('balance'):
-        base_s = next(s for s in case['valuation_case']['scenarios'] if s['name'] == 'base')
-        margin = base_s.get('terminal', {}).get('operating_margin', .2)
-        need = required_revenue(case['market_cap'], case['balance']['cash'] - case['balance']['debt'], kes['base'], margin)
-        forecast = next(s for s in result['scenarios'] if s['name'] == 'base')['forecast']
-        base5 = forecast[5]['revenue'] if len(forecast) > 5 else forecast[-1]['revenue']
-        req = {'required_revenue_5y': need, 'base_revenue_5y': base5, 'ratio': need / base5 if base5 else None,
-               'assumed_margin': margin, 'exit_pe': 25,
-               'note': 'Revenue needed in ~5 years for today\'s price to earn the base cost of equity at the base terminal margin and a 25x exit P/E.'}
     return {'lane': lane, 'momentum': mom, 'payoff': pay, 'multiples': mult, 'required': req,
             'verdict': lane_verdict(lane['lane'], mom, pay, today, quote)}

@@ -14,8 +14,10 @@ AV_MAP = {
                 'current_liabilities': 'totalCurrentLiabilities', 'total_liabilities': 'totalLiabilities',
                 'retained_earnings': 'retainedEarnings', 'receivables': 'currentNetReceivables',
                 'ppe': 'propertyPlantEquipment', 'long_term_debt': 'longTermDebt', 'total_debt': 'shortLongTermDebtTotal',
-                'cash': 'cashAndShortTermInvestments', 'equity': 'totalShareholderEquity',
-                'shares_diluted': 'commonStockSharesOutstanding', 'goodwill': 'goodwill'},
+                'cash': 'cashAndCashEquivalentsAtCarryingValue',
+                'cash_including_short_term_investments': 'cashAndShortTermInvestments',
+                'short_term_investments': 'shortTermInvestments', 'long_term_investments': 'longTermInvestments', 'equity': 'totalShareholderEquity',
+                'shares_outstanding': 'commonStockSharesOutstanding', 'goodwill': 'goodwill'},
     'cash': {'operating_cash_flow': 'operatingCashflow', 'capex': 'capitalExpenditures',
              'depreciation': 'depreciationDepletionAndAmortization', 'dividends_paid': 'dividendPayout'},
 }
@@ -73,7 +75,7 @@ def from_alpha_vantage(income, balance=None, cash_flow=None, years=5, as_of=None
         raise ValueError('No annual revenue found')
     rows = [by_date[d] for d in dates]
     qrows = []
-    for rep in sorted(parts['income'].get('quarterlyReports', []), key=lambda x: x['fiscalDateEnding'])[-8:]:
+    for rep in sorted([r for r in parts['income'].get('quarterlyReports', []) if not as_of or r['fiscalDateEnding'] <= as_of], key=lambda x: x['fiscalDateEnding'])[-8:]:
         d = rep['fiscalDateEnding']
         if as_of and d > as_of or _num(rep.get('totalRevenue')) is None:
             continue
@@ -83,6 +85,6 @@ def from_alpha_vantage(income, balance=None, cash_flow=None, years=5, as_of=None
                 q[field] = _num(rep[key])
         qrows.append(q)
     return {'ticker': symbol, 'currency': currency, 'history': rows, 'recent_quarters': qrows,
-            'notes': ['shares_diluted mapped from period-end common shares outstanding (AV); prefer diluted weighted shares from filings when material',
-                      'cash = cash and short-term investments; confirm restricted cash in filings',
+            'notes': ['shares_outstanding is a point-in-time balance, never weighted-average diluted EPS shares',
+                      'cash is cash/equivalents only; combined cash-and-short-term-investments remains a separate field. Do not add combined and component balances.',
                       'Provider-normalized fields; reconcile material figures to the 10-K/20-F']}

@@ -1,3 +1,15 @@
+# v0.9.0 — valuation integrity and AXTI regression
+
+Separates calculation success from permission to publish a price conclusion. Adds
+opening assets/share bridge, investment ledger, comparable-consensus review,
+terminal maturity review, exact reproduction input and executed dossier binding.
+Corrects AV cash/share definitions and AXTI point-in-time dilution. Removes default
+scenario probabilities, momentum valuation overrides, and fixed five-year 25x claims.
+Preserves Claude v0.6–v0.8 classification, recent-quarter and forensic work with
+regressions. No replacement AXTI target or investment-accuracy claim.
+
+## Historical release notes (superseded where v0.9 changes behavior)
+
 # Changelog
 
 ## 0.3.0

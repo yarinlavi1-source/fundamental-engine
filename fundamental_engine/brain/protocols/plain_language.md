@@ -16,7 +16,8 @@ this packet changes how the result is told, never what the evidence supports.
 2. Call `plain_verdict` with `plain_version:1`, company, ticker, as_of, currency,
    archetype, stage (mature/growth/emerging), history (oldest first), balance and the
    executed `valuation_case` (the same input given to value_company). Pass
-   `research_status` = the latest research_review status. The tool executes the
+   the full `research_dossier`; the tool re-executes research_review and verifies
+   the identical valuation input hash. A research_status string is insufficient. The tool executes the
    valuation itself; never hand-type values into the plain answer.
 3. Use the returned `text` as the skeleton and add what only research can add: what
    the company actually does, who pays it, and why the grades look the way they do.
@@ -38,8 +39,8 @@ Order — shortest path to a clear picture:
 4. **מה טוב ומה לא** — the tool's table; next to every item a label, never a bare number.
 5. **ההסבר** — one short paragraph per item: what it means for the owner of a share.
 6. **הערכת שווי** — first say which lane (classic by the numbers, or growth lane
-   "does it deserve a premium") and why; for the growth lane show momentum signals,
-   the risk/reward bet, the analyst-multiple view and what the price requires.
+   business-driver research) and why; show business progress separately from
+   audited value, and label any multiples view as an illustrative sensitivity.
    Then — today's value and each year to 2030 (bear/base/bull, fixed current
    quote). Say in words: "המחיר הוא בערך חצי מהשווי", "בתרחיש הרע יורדים בערך רבע".
 7. **מה יכול להשתבש** — the strongest counter-thesis in two or three plain sentences.
@@ -68,3 +69,5 @@ economics (software/platform bars are higher than factories or retailers). They 
 not verify the numbers, replace research_review, or measure future accuracy. If the
 valuation is unreviewed, demo, funding-blocked or mostly terminal value, say so in
 plain words next to the verdict.
+
+Load valuation_integrity. Real valuations lacking the audited opening bridge, comparable estimates review or executed full dossier must lead with "הערכת השווי עדיין בבדיקה". Never bury this below a red/green price verdict. Optional probabilities are uncalibrated assumptions, not future loss odds.

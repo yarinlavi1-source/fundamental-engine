@@ -1,259 +1,277 @@
 {
- "plain_version": 1,
- "company": "AXT, Inc.",
- "ticker": "AXTI",
- "as_of": "2026-09-28",
- "currency": "USD",
- "archetype": "industrial",
- "market_cap": 4796730180.0,
- "history": [
-  {
-   "fiscal_year": "FY2021",
-   "period_end": "2021-12-31",
-   "source_ids": [
-    "alphavantage:AXTI:income:2021-12-31",
-    "alphavantage:AXTI:balance:2021-12-31",
-    "alphavantage:AXTI:cash:2021-12-31"
-   ],
-   "revenue": 137393000.0,
-   "gross_profit": 47414000.0,
-   "operating_income": 12897000.0,
-   "net_income": 14575000.0,
-   "pretax_income": 17602000.0,
-   "income_tax": 1093000.0,
-   "sga": 24189000.0,
-   "interest_expense": 213000.0,
-   "total_assets": 332441000.0,
-   "current_assets": 160185000.0,
-   "current_liabilities": 47822000.0,
-   "total_liabilities": 52210000.0,
-   "retained_earnings": -29970000.0,
-   "receivables": 34839000.0,
-   "ppe": 144739000.0,
-   "total_debt": 16539000.0,
-   "cash": 36763000.0,
-   "equity": 211529000.0,
-   "shares_diluted": 42720000.0,
-   "operating_cash_flow": -3305000.0,
-   "capex": 29645000.0,
-   "depreciation": 7078000.0,
-   "dividends_paid": 1077000.0
+  "plain_version": 1,
+  "company": "AXT, Inc.",
+  "ticker": "AXTI",
+  "as_of": "2026-09-28",
+  "currency": "USD",
+  "archetype": "industrial",
+  "history": [
+    {
+      "fiscal_year": "FY2021",
+      "period_end": "2021-12-31",
+      "source_ids": [
+        "alphavantage:AXTI:income:2021-12-31",
+        "alphavantage:AXTI:balance:2021-12-31",
+        "alphavantage:AXTI:cash:2021-12-31"
+      ],
+      "revenue": 137393000.0,
+      "gross_profit": 47414000.0,
+      "operating_income": 12897000.0,
+      "net_income": 14575000.0,
+      "pretax_income": 17602000.0,
+      "income_tax": 1093000.0,
+      "sga": 24189000.0,
+      "interest_expense": 213000.0,
+      "total_assets": 332441000.0,
+      "current_assets": 160185000.0,
+      "current_liabilities": 47822000.0,
+      "total_liabilities": 52210000.0,
+      "retained_earnings": -29970000.0,
+      "receivables": 34839000.0,
+      "ppe": 144739000.0,
+      "total_debt": 16539000.0,
+      "cash": 36763000.0,
+      "equity": 211529000.0,
+      "shares_diluted": 42720000.0,
+      "operating_cash_flow": -3305000.0,
+      "capex": 29645000.0,
+      "depreciation": 7078000.0,
+      "dividends_paid": 1077000.0
+    },
+    {
+      "fiscal_year": "FY2022",
+      "period_end": "2022-12-31",
+      "source_ids": [
+        "alphavantage:AXTI:income:2022-12-31",
+        "alphavantage:AXTI:balance:2022-12-31",
+        "alphavantage:AXTI:cash:2022-12-31"
+      ],
+      "revenue": 141118000.0,
+      "gross_profit": 52121000.0,
+      "operating_income": 12554000.0,
+      "net_income": 15811000.0,
+      "pretax_income": 20927000.0,
+      "income_tax": 2185000.0,
+      "sga": 25654000.0,
+      "interest_expense": 1071000.0,
+      "total_assets": 370072000.0,
+      "current_assets": 183545000.0,
+      "current_liabilities": 75326000.0,
+      "total_liabilities": 80326000.0,
+      "retained_earnings": -14159000.0,
+      "receivables": 29252000.0,
+      "ppe": 161017000.0,
+      "total_debt": 48885000.0,
+      "cash": 34948000.0,
+      "equity": 221607000.0,
+      "shares_diluted": 42715000.0,
+      "operating_cash_flow": -8765000.0,
+      "capex": 28465000.0,
+      "depreciation": 8119000.0
+    },
+    {
+      "fiscal_year": "FY2023",
+      "period_end": "2023-12-31",
+      "source_ids": [
+        "alphavantage:AXTI:income:2023-12-31",
+        "alphavantage:AXTI:balance:2023-12-31",
+        "alphavantage:AXTI:cash:2023-12-31"
+      ],
+      "revenue": 75795000.0,
+      "gross_profit": 13318000.0,
+      "operating_income": -21569000.0,
+      "net_income": -17881000.0,
+      "pretax_income": -19033000.0,
+      "income_tax": 160000.0,
+      "sga": 23374000.0,
+      "interest_expense": 1527000.0,
+      "total_assets": 358701000.0,
+      "current_assets": 170656000.0,
+      "current_liabilities": 81557000.0,
+      "total_liabilities": 89555000.0,
+      "retained_earnings": -32040000.0,
+      "receivables": 19256000.0,
+      "total_debt": 55730000.0,
+      "cash": 37752000.0,
+      "equity": 203989000.0,
+      "shares_diluted": 42643000.0,
+      "operating_cash_flow": 3403000.0,
+      "capex": 10475000.0,
+      "depreciation": 8722000.0
+    },
+    {
+      "fiscal_year": "FY2024",
+      "period_end": "2024-12-31",
+      "source_ids": [
+        "alphavantage:AXTI:income:2024-12-31",
+        "alphavantage:AXTI:balance:2024-12-31",
+        "alphavantage:AXTI:cash:2024-12-31"
+      ],
+      "revenue": 99361000.0,
+      "gross_profit": 23836000.0,
+      "operating_income": -14803000.0,
+      "net_income": -11624000.0,
+      "pretax_income": -10657000.0,
+      "income_tax": 1134000.0,
+      "sga": 24096000.0,
+      "interest_expense": 1340000.0,
+      "total_assets": 339314000.0,
+      "current_assets": 158272000.0,
+      "current_liabilities": 74176000.0,
+      "total_liabilities": 84406000.0,
+      "retained_earnings": -43664000.0,
+      "receivables": 25640000.0,
+      "total_debt": 49777000.0,
+      "cash": 22833000.0,
+      "equity": 192770000.0,
+      "shares_diluted": 43154000.0,
+      "operating_cash_flow": -12112000.0,
+      "capex": 5771000.0,
+      "depreciation": 8979000.0
+    },
+    {
+      "fiscal_year": "FY2025",
+      "period_end": "2025-12-31",
+      "source_ids": [
+        "alphavantage:AXTI:income:2025-12-31",
+        "alphavantage:AXTI:balance:2025-12-31",
+        "alphavantage:AXTI:cash:2025-12-31",
+        "sec:AXTI:10-Q:2026-06-30"
+      ],
+      "revenue": 88326000.0,
+      "gross_profit": 11242000.0,
+      "operating_income": -21976000.0,
+      "net_income": -21260000.0,
+      "pretax_income": -21544000.0,
+      "income_tax": 1658000.0,
+      "sga": 24169000.0,
+      "interest_expense": 1257000.0,
+      "total_assets": 433751000.0,
+      "current_assets": 246556000.0,
+      "current_liabilities": 90541000.0,
+      "total_liabilities": 99120000.0,
+      "retained_earnings": -64924000.0,
+      "receivables": 26849000.0,
+      "total_debt": 64816000.0,
+      "cash": 120266000.0,
+      "equity": 273290000.0,
+      "shares_diluted": 43933000.0,
+      "operating_cash_flow": -12783000.0,
+      "capex": 5995000.0,
+      "depreciation": 9108000.0,
+      "shares_outstanding": 55337000
+    }
+  ],
+  "balance": {
+    "as_of": "2026-06-30",
+    "cash": 412167000,
+    "debt": 85400000.0,
+    "short_term_investments": 5031000,
+    "long_term_investments": 298600000,
+    "restricted_cash": 33050000,
+    "source_ids": [
+      "sec:AXTI:10-Q:2026-06-30"
+    ]
   },
-  {
-   "fiscal_year": "FY2022",
-   "period_end": "2022-12-31",
-   "source_ids": [
-    "alphavantage:AXTI:income:2022-12-31",
-    "alphavantage:AXTI:balance:2022-12-31",
-    "alphavantage:AXTI:cash:2022-12-31"
-   ],
-   "revenue": 141118000.0,
-   "gross_profit": 52121000.0,
-   "operating_income": 12554000.0,
-   "net_income": 15811000.0,
-   "pretax_income": 20927000.0,
-   "income_tax": 2185000.0,
-   "sga": 25654000.0,
-   "interest_expense": 1071000.0,
-   "total_assets": 370072000.0,
-   "current_assets": 183545000.0,
-   "current_liabilities": 75326000.0,
-   "total_liabilities": 80326000.0,
-   "retained_earnings": -14159000.0,
-   "receivables": 29252000.0,
-   "ppe": 161017000.0,
-   "total_debt": 48885000.0,
-   "cash": 34948000.0,
-   "equity": 221607000.0,
-   "shares_diluted": 42715000.0,
-   "operating_cash_flow": -8765000.0,
-   "capex": 28465000.0,
-   "depreciation": 8119000.0
+  "recent_quarters": [
+    {
+      "period_end": "2024-09-30",
+      "revenue": 23645000.0,
+      "source_ids": [
+        "alphavantage:AXTI:income_q:2024-09-30"
+      ],
+      "operating_income": -3406000.0,
+      "gross_profit": 5682000.0,
+      "net_income": -2937000.0
+    },
+    {
+      "period_end": "2024-12-31",
+      "revenue": 25105000.0,
+      "source_ids": [
+        "alphavantage:AXTI:income_q:2024-12-31"
+      ],
+      "operating_income": -6165000.0,
+      "gross_profit": 4408000.0,
+      "net_income": -5088000.0
+    },
+    {
+      "period_end": "2025-03-31",
+      "revenue": 19356000.0,
+      "source_ids": [
+        "alphavantage:AXTI:income_q:2025-03-31"
+      ],
+      "operating_income": -10275000.0,
+      "gross_profit": -1241000.0,
+      "net_income": -8798000.0
+    },
+    {
+      "period_end": "2025-06-30",
+      "revenue": 17974000.0,
+      "source_ids": [
+        "alphavantage:AXTI:income_q:2025-06-30"
+      ],
+      "operating_income": -6745000.0,
+      "gross_profit": 1433000.0,
+      "net_income": -7008000.0
+    },
+    {
+      "period_end": "2025-09-30",
+      "revenue": 27955000.0,
+      "source_ids": [
+        "alphavantage:AXTI:income_q:2025-09-30"
+      ],
+      "operating_income": -1123000.0,
+      "gross_profit": 6224000.0,
+      "net_income": -1906000.0
+    },
+    {
+      "period_end": "2025-12-31",
+      "revenue": 23041000.0,
+      "source_ids": [
+        "alphavantage:AXTI:income_q:2025-12-31"
+      ],
+      "operating_income": -3833000.0,
+      "gross_profit": 4826000.0,
+      "net_income": -3548000.0
+    },
+    {
+      "period_end": "2026-03-31",
+      "revenue": 26924000.0,
+      "source_ids": [
+        "alphavantage:AXTI:income_q:2026-03-31"
+      ],
+      "operating_income": -1585000.0,
+      "gross_profit": 7978000.0,
+      "net_income": -1620000.0
+    },
+    {
+      "period_end": "2026-06-30",
+      "revenue": 47589000.0,
+      "source_ids": [
+        "alphavantage:AXTI:income_q:2026-06-30"
+      ],
+      "operating_income": 10423000.0,
+      "gross_profit": 21366000.0,
+      "net_income": 11128000.0
+    }
+  ],
+  "current_shares": {
+    "as_of": "2026-06-30",
+    "shares": 65570000,
+    "basis": "point_in_time_common_outstanding",
+    "source_ids": [
+      "sec:AXTI:10-Q:2026-06-30"
+    ]
   },
-  {
-   "fiscal_year": "FY2023",
-   "period_end": "2023-12-31",
-   "source_ids": [
-    "alphavantage:AXTI:income:2023-12-31",
-    "alphavantage:AXTI:balance:2023-12-31",
-    "alphavantage:AXTI:cash:2023-12-31"
-   ],
-   "revenue": 75795000.0,
-   "gross_profit": 13318000.0,
-   "operating_income": -21569000.0,
-   "net_income": -17881000.0,
-   "pretax_income": -19033000.0,
-   "income_tax": 160000.0,
-   "sga": 23374000.0,
-   "interest_expense": 1527000.0,
-   "total_assets": 358701000.0,
-   "current_assets": 170656000.0,
-   "current_liabilities": 81557000.0,
-   "total_liabilities": 89555000.0,
-   "retained_earnings": -32040000.0,
-   "receivables": 19256000.0,
-   "total_debt": 55730000.0,
-   "cash": 37752000.0,
-   "equity": 203989000.0,
-   "shares_diluted": 42643000.0,
-   "operating_cash_flow": 3403000.0,
-   "capex": 10475000.0,
-   "depreciation": 8722000.0
-  },
-  {
-   "fiscal_year": "FY2024",
-   "period_end": "2024-12-31",
-   "source_ids": [
-    "alphavantage:AXTI:income:2024-12-31",
-    "alphavantage:AXTI:balance:2024-12-31",
-    "alphavantage:AXTI:cash:2024-12-31"
-   ],
-   "revenue": 99361000.0,
-   "gross_profit": 23836000.0,
-   "operating_income": -14803000.0,
-   "net_income": -11624000.0,
-   "pretax_income": -10657000.0,
-   "income_tax": 1134000.0,
-   "sga": 24096000.0,
-   "interest_expense": 1340000.0,
-   "total_assets": 339314000.0,
-   "current_assets": 158272000.0,
-   "current_liabilities": 74176000.0,
-   "total_liabilities": 84406000.0,
-   "retained_earnings": -43664000.0,
-   "receivables": 25640000.0,
-   "total_debt": 49777000.0,
-   "cash": 22833000.0,
-   "equity": 192770000.0,
-   "shares_diluted": 43154000.0,
-   "operating_cash_flow": -12112000.0,
-   "capex": 5771000.0,
-   "depreciation": 8979000.0
-  },
-  {
-   "fiscal_year": "FY2025",
-   "period_end": "2025-12-31",
-   "source_ids": [
-    "alphavantage:AXTI:income:2025-12-31",
-    "alphavantage:AXTI:balance:2025-12-31",
-    "alphavantage:AXTI:cash:2025-12-31"
-   ],
-   "revenue": 88326000.0,
-   "gross_profit": 11242000.0,
-   "operating_income": -21976000.0,
-   "net_income": -21260000.0,
-   "pretax_income": -21544000.0,
-   "income_tax": 1658000.0,
-   "sga": 24169000.0,
-   "interest_expense": 1257000.0,
-   "total_assets": 433751000.0,
-   "current_assets": 246556000.0,
-   "current_liabilities": 90541000.0,
-   "total_liabilities": 99120000.0,
-   "retained_earnings": -64924000.0,
-   "receivables": 26849000.0,
-   "total_debt": 64816000.0,
-   "cash": 120266000.0,
-   "equity": 273290000.0,
-   "shares_diluted": 43933000.0,
-   "operating_cash_flow": -12783000.0,
-   "capex": 5995000.0,
-   "depreciation": 9108000.0
-  }
- ],
- "balance": {
-  "as_of": "2026-06-30",
-  "cash": 412200000.0,
-  "debt": 85400000.0
- },
- "recent_quarters": [
-  {
-   "period_end": "2024-09-30",
-   "revenue": 23645000.0,
-   "source_ids": [
-    "alphavantage:AXTI:income_q:2024-09-30"
-   ],
-   "operating_income": -3406000.0,
-   "gross_profit": 5682000.0,
-   "net_income": -2937000.0
-  },
-  {
-   "period_end": "2024-12-31",
-   "revenue": 25105000.0,
-   "source_ids": [
-    "alphavantage:AXTI:income_q:2024-12-31"
-   ],
-   "operating_income": -6165000.0,
-   "gross_profit": 4408000.0,
-   "net_income": -5088000.0
-  },
-  {
-   "period_end": "2025-03-31",
-   "revenue": 19356000.0,
-   "source_ids": [
-    "alphavantage:AXTI:income_q:2025-03-31"
-   ],
-   "operating_income": -10275000.0,
-   "gross_profit": -1241000.0,
-   "net_income": -8798000.0
-  },
-  {
-   "period_end": "2025-06-30",
-   "revenue": 17974000.0,
-   "source_ids": [
-    "alphavantage:AXTI:income_q:2025-06-30"
-   ],
-   "operating_income": -6745000.0,
-   "gross_profit": 1433000.0,
-   "net_income": -7008000.0
-  },
-  {
-   "period_end": "2025-09-30",
-   "revenue": 27955000.0,
-   "source_ids": [
-    "alphavantage:AXTI:income_q:2025-09-30"
-   ],
-   "operating_income": -1123000.0,
-   "gross_profit": 6224000.0,
-   "net_income": -1906000.0
-  },
-  {
-   "period_end": "2025-12-31",
-   "revenue": 23041000.0,
-   "source_ids": [
-    "alphavantage:AXTI:income_q:2025-12-31"
-   ],
-   "operating_income": -3833000.0,
-   "gross_profit": 4826000.0,
-   "net_income": -3548000.0
-  },
-  {
-   "period_end": "2026-03-31",
-   "revenue": 26924000.0,
-   "source_ids": [
-    "alphavantage:AXTI:income_q:2026-03-31"
-   ],
-   "operating_income": -1585000.0,
-   "gross_profit": 7978000.0,
-   "net_income": -1620000.0
-  },
-  {
-   "period_end": "2026-06-30",
-   "revenue": 47589000.0,
-   "source_ids": [
-    "alphavantage:AXTI:income_q:2026-06-30"
-   ],
-   "operating_income": 10423000.0,
-   "gross_profit": 21366000.0,
-   "net_income": 11128000.0
-  }
- ],
- "current_shares": {
-  "as_of": "2026-06-30",
-  "shares": 63474000.0,
-  "source_ids": [
-   "alphavantage:AXTI:balance_q:2026-06-30"
+  "note": "Partial historical regression fixture, NOT a valuation or live quote. AV history requires line-by-line reconciliation. Primary Q2 balance and point-in-time shares checked on 2026-09-28. No September opening bridge, consensus model or original $8/$38 valuation input is available. Do not reuse that price conclusion. Keep investment assets separate from spendable cash; reconcile subsidiary claims and commitments.",
+  "sources": [
+    {
+      "id": "sec:AXTI:10-Q:2026-06-30",
+      "url": "https://www.sec.gov/Archives/edgar/data/1051627/000143774926027677/axti20260630_10q.htm",
+      "kind": "filing",
+      "period_end": "2026-06-30",
+      "retrieved_at": "2026-09-28",
+      "note": "Balance table and Note 2 inspected. Annual common shares 55.337m; quarter end 65.570m. EPS weighted average is not a point balance."
+    }
   ]
- },
- "note": "Real Alpha Vantage statements (annual FY2021-25, quarters to 2026-06-30), IB quote 2026-09-28 ($75.57). Regression case: annual history shows decline, recent quarters an inflection; 2026 share issuance must show as heavy dilution. Reconcile to 10-Q before conclusions."
 }

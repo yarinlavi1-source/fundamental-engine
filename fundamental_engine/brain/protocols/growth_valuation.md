@@ -1,53 +1,38 @@
-# Two valuation lanes: when does a growth stock deserve a premium?
+# Growth valuation without automatic premiums
 
-A base-case DCF values mature, profitable firms well (numbers dominate). For young,
-hypergrowth or inflecting firms it almost always says "expensive", because much of the
-value sits in a right tail. Yarin's requirement: distinguish a stock that deserves a
-premium ("הנחה") despite failing a conventional valuation from one that is simply
-expensive — and value large profitable firms (e.g. Nvidia) conventionally.
+Load valuation_integrity. Both mature and emerging businesses have economic value.
+Discovery must not require current profits or positive FCF. Forecast underwriting
+must still connect demand to production, pricing, margins, investment, funding and
+value retained by current shares. A DCF need not be pessimistic: its assumptions
+and duration must represent the business, including long runways where supported.
 
-## Lane choice (automatic inside plain_verdict)
+The intrinsic/potential labels select research emphasis only. Momentum cannot
+prove a growth premium is justified or override the audited price conclusion.
 
-- **intrinsic**: mature_growth/mature_stable/decline, or high_growth that is already
-  reliably profitable (operating margin >= 10%, positive FCF, profitable 3 years).
-  Anchor = base-case value; above bull = expensive.
-- **potential**: start_up/young_growth, unprofitable high growth, or an inflection flag.
-  Anchor = probability-weighted value INCLUDING an executed `tail` scenario, and the
-  premium is allowed only when expectation momentum is strong.
+For the potential lane:
+1. Build bear/base/bull. Add tail only if supported by distinct causal assumptions,
+   capacity, addressable demand, competition and an executable funding path. Tail
+   is not a workaround to manufacture upside.
+2. No default probabilities. Optional scenario_probabilities require a rationale;
+   supplied weights remain analyst assumptions, not calibrated odds. The weight of
+   present values below today's price is NOT probability of a future investment loss.
+3. Supply eight standalone recent_quarters. Acceleration compares endpoints, not
+   proof every intermediate quarter accelerated. High gross margin alone does not
+   prove pricing power. Business progress is not necessarily a consensus beat.
+4. expectations_track needs source_ids, expectation_available_at before the period
+   ends, and actual_available_at no later than as_of. estimate_revisions must share
+   metric, target period_end, accounting basis, currency and unit. Do not compare
+   FY2026 yesterday with FY2027 today or adjusted EPS with GAAP EPS.
+5. Plain output may show illustrative P/E sensitivities on an operating earnings
+   proxy for a full forecast year. This is not an actual analyst's model or verified
+   EPS. A flat minority_share haircut is refused for this view; attribute earnings
+   at subsidiary level. Negative earnings do not receive a P/E valuation.
+6. Use valuation_diagnostics for documented reverse driver sensitivity. No automatic
+   five-year, 25x P/E revenue requirement. Required revenue depends on assumptions;
+   it is not a unique inference from price and cannot use current TAM as a hard
+   future ceiling. Project addressable units, substrate/device scope and prices.
 
-## What to supply for the potential lane
-
-1. `valuation_case` with bear/base/bull AND a `tail` scenario: the large-outcome case
-   with explicit drivers (market size, share, capacity, funding, dilution). Executed by
-   value_company like the others. Never a hand-typed price.
-2. `scenario_probabilities` + `probability_rationale`. Anchor the tail probability in
-   base rates (McKinsey/Mauboussin: few firms sustain >20% growth); single-digit % is
-   typical. Without them the engine uses labelled uncalibrated defaults and lowers
-   confidence.
-3. `recent_quarters` (8 standalone quarters), and when available
-   `expectations_track` (actual vs prior guidance/consensus, raises) and
-   `estimate_revisions` (dated next-year consensus). These produce the momentum
-   signals: acceleration, margin expansion, beats/raises, revisions, gross margin.
-4. `minority_share` when part of the operating company belongs to others.
-
-## Verdicts (potential lane)
-
-- 🔴 weak momentum → "expensive without evidence", whatever the story.
-- 🟢 price <= base → growth stock at a reasonable price.
-- 🟢 price <= probability-weighted value and strong momentum → "expensive on paper,
-  but a justified growth bet" (size it as a bet: loss is possible).
-- 🟡 same price zone, neutral momentum → possible bet, needs more proof.
-- 🟠/🔴 price between weighted value and tail → paying today for the tail.
-- 🔴 price above tail → expensive even as a bet.
-
-Also reported: analyst-style multiple view (scenario EPS in 2030 x 15/25/40, the way
-most price targets are built — a bet on future sentiment, not value) and the reverse
-check (revenue needed in ~5 years for today's price at the base margin and 25x exit).
-
-## Honesty
-
-Palantir test (examples/real/pltr_momentum.json, point-in-time): Feb-2023 momentum
-reads weak (growth was decelerating; the engine would have missed the first leg);
-Aug-2024 reads strong (acceleration + margin expansion) before the largest move. This
-is one case, not a backtest. No signal predicts multiple expansion or guarantees a
-multi-bagger; momentum can reverse. Never convert a green lane verdict into an order.
+An inflection can justify further research at a high multiple. It cannot justify
+ignoring missing data, financing or the strongest countercase. Do not demand that
+an early opportunity already be a mature success; preserve it in discovery while
+its price underwriting is incomplete.
