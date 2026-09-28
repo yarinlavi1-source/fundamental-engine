@@ -155,3 +155,34 @@ class ConnectorAndIntegrationTests(unittest.TestCase):
 
 if __name__=='__main__':
     unittest.main()
+
+
+class InflectionTests(unittest.TestCase):
+    def test_axti_quarterly_inflection_and_recent_dilution(self):
+        c=load('examples/real/axti_plain_2026q2.json')
+        k=classify_company(c)
+        self.assertEqual((k['stage'],k['lynch']),('high_growth','turnaround'))
+        self.assertIn('inflection',[f['key'] for f in k['flags']])
+        self.assertGreater(k['evidence']['quarter_momentum']['latest_quarter_yoy'],1)
+        r=plain_verdict(c)
+        items={i['key']:i for i in r['items']}
+        self.assertEqual(items['dilution']['label'],'מדאיג')
+        self.assertEqual(items['recent_margin']['label'],'מצוין')
+        self.assertEqual(items['growth']['label'],'טוב')
+        no_q=deepcopy(c);no_q.pop('recent_quarters')
+        self.assertEqual(classify_company(no_q)['stage'],'decline')
+
+    def test_quarter_guards_and_slowdown(self):
+        c=case([row(2024,100,operating_income=20),row(2025,130,operating_income=30)])
+        q=lambda d,v:{'period_end':d,'revenue':v,'operating_income':v*.1,'source_ids':['s']}
+        c['recent_quarters']=[q('2025-03-31',40),q('2025-06-30',40),q('2025-09-30',40),q('2025-12-31',40),q('2026-03-31',25)]
+        self.assertIn('slowdown',[f['key'] for f in classify_company(c)['flags']])
+        c['recent_quarters'].reverse()
+        with self.assertRaisesRegex(ValueError,'oldest first'):classify_company(c)
+
+    def test_price_above_bull_is_red_bottom_line(self):
+        c=json.loads((ROOT/'examples/plain_demo.json').read_text());v=load('examples/valuation/infrastructure.json')
+        v['quote']['price']=500;c['valuation_case']=v
+        r=plain_verdict(c)
+        self.assertEqual(r['price']['bucket'],'very_expensive');self.assertEqual(r['bottom_line']['light'],'🔴')
+        self.assertIn('יקר מאוד',r['bottom_line']['call'])

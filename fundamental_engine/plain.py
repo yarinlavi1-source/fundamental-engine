@@ -240,8 +240,16 @@ def _cash(rows, balance, currency, stage):
     return out
 
 
-def _dilution(rows):
+def _dilution(rows, current=None):
     known = [r for r in rows if r.get('shares_diluted')]
+    if current and known:
+        jump = current['shares'] / known[-1]['shares_diluted'] - 1
+        if jump > .1:
+            points = _grade(jump, (0, .02, .05, .1), higher_is_better=False)
+            return _item('dilution', 'דילול', points, 'דילול כבד לאחרונה',
+                         f"מאז הדוח השנתי האחרון מספר המניות עלה ב{fraction_words(jump)} (בעיקר מגיוס כסף בהנפקה). "
+                         'העוגה מתחלקת לעוד הרבה חתיכות. גיוס במחיר גבוה פוגע פחות, והכסף יכול לבנות צמיחה — '
+                         'אבל כל שקל רווח עתידי מתחלק עכשיו בין יותר מניות.', {'shares_increase_since_last_annual': jump})
     if len(known) < 2:
         return None
     years = (date.fromisoformat(known[-1]['period_end']) - date.fromisoformat(known[0]['period_end'])).days / 365.25
@@ -420,21 +428,47 @@ def plain_verdict(case):
         raise ValueError('stage must be mature/growth/emerging')
     cur = case['currency']
     items = [i for i in [_growth(rows, stage)] if i]
+    qm = kind['evidence'].get('quarter_momentum')
+    if qm and items and items[0]['key'] == 'growth':
+        g = items[0]
+        q = qm['latest_quarter_yoy']
+        g['explain'] += (f" ברבעון האחרון ({qm['latest_quarter_end']}): {multiple_words(1 + q)} לעומת אותו רבעון בשנה שעברה"
+                         + (' — ובמצב של רווח תפעולי.' if (qm['latest_quarter_operating_margin'] or 0) > 0 else '.'))
+        if q >= .5 and g['points'] < 4:
+            g['points'], g['label'], g['light'] = 4, GRADES[4][0], GRADES[4][1]
+            g['headline'] = 'השנים המלאות חלשות, אבל עכשיו המכירות מזנקות'
+        elif q <= -.2 and g['points'] > 2:
+            g['points'], g['label'], g['light'] = 2, GRADES[2][0], GRADES[2][1]
+            g['headline'] = 'המכירות נחלשות ברבעונים האחרונים'
+        g['figure']['latest_quarter_yoy'] = q
     items += _margins(rows, MARGIN_BARS[PROFILE[archetype]], cur, stage)
     items += _cash(rows, case.get('balance'), cur, stage)
-    d = _dilution(rows)
+    current = case.get('current_shares')
+    if current is not None:
+        number(current['shares'], 'current_shares.shares', 1)
+        if date.fromisoformat(current['as_of']) > date.fromisoformat(case['as_of']) or not current.get('source_ids'):
+            raise ValueError('current_shares needs as_of <= case as_of and source_ids')
+    d = _dilution(rows, current)
     if d: items.append(d)
     if kind['lynch'] == 'cyclical' and 'normalized_operating_margin' in kind['evidence']:
         om = next((i for i in items if i['key'] == 'operating_margin'), None)
         if om:
             om['explain'] += (' זו חברה מחזורית: בממוצע לאורך השנים נשארים בערך '
                               f"{round(kind['evidence']['normalized_operating_margin'] * 100)} מכל 100 — וזה המספר שצריך להעריך לפיו, לא השנה האחרונה.")
+    qm = kind['evidence'].get('quarter_momentum')
+    if qm and qm['latest_quarter_operating_margin'] is not None:
+        m = qm['latest_quarter_operating_margin']
+        points = _grade(m, MARGIN_BARS[PROFILE[archetype]]['operating'])
+        items.append(_item('recent_margin', 'רווחיות ברבעון האחרון', points,
+                           'ברבעון האחרון העסק מרוויח' if m > 0 else 'גם ברבעון האחרון העסק מפסיד',
+                           (per_hundred(m, cur) + ' רווח תפעולי ברבעון האחרון. ' if m > 0 else 'ברבעון האחרון ההוצאות עדיין גבוהות מההכנסות. ')
+                           + 'רבעון אחד הוא לא הוכחה — צריך לראות שזה חוזר ברבעונים הבאים.', {'latest_quarter_operating_margin': m}))
     scores = scorecards(rows, archetype, case.get('market_cap'))
     items += _score_items(scores, kind)
     valuation, result, price = _valuation(case)
     base_rate = forecast_base_rate(rows, result)
     axes = [
-        _axis('איכות העסק', _avg(items, {'gross_margin', 'operating_margin', 'free_cash_flow', 'earnings_quality', 'roic', 'accounting_risk'}),
+        _axis('איכות העסק', _avg(items, {'gross_margin', 'operating_margin', 'free_cash_flow', 'earnings_quality', 'roic', 'accounting_risk', 'recent_margin'}),
               {5: 'עסק מצוין', 4: 'עסק טוב', 3: 'עסק בינוני', 2: 'עסק חלש', 1: 'עסק בעייתי'}),
         _axis('צמיחה', _avg(items, {'growth', 'rule_of_40'}),
               {5: 'צומח מהר מאוד', 4: 'צומח יפה', 3: 'צומח לאט', 2: 'כמעט לא צומח', 1: 'מתכווץ'}),
@@ -472,6 +506,10 @@ def _bottom_line(business, price, stage):
     b = price['bucket']
     if b == 'blocked':
         return {'light': '🔴', 'call': 'זהירות — בעיית מימון', 'explain': 'גם אם העסק מעניין, בלי מימון ברור בעלי המניות של היום עלולים להידלל או להפסיד.'}
+    if b == 'very_expensive':
+        return {'light': '🔴', 'call': 'יקר מאוד — המחיר מעל גם התרחיש האופטימי',
+                'explain': 'גם אם הכל ילך טוב לפי התרחיש הטוב שחישבנו, השווי יוצא נמוך מהמחיר. המחיר מגלם הצלחה גדולה עוד יותר ממה שהמודל מצליח להצדיק.'
+                           + (' העסק עצמו חזק — הבעיה היא המחיר, לא החברה.' if good else '')}
     cheap, fair = b in {'cheap', 'cheap_even_bear'}, b == 'fair'
     if good and cheap:
         return {'light': '🟢', 'call': 'מעניין מאוד', 'explain': 'עסק טוב שנראה זול ביחס לשווי שחישבנו. שווה להעמיק ולבדוק מה השוק יודע שאנחנו לא.'}

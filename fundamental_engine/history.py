@@ -104,3 +104,40 @@ def organic_cagr(rows):
     for x in steps:
         product *= x
     return product ** (1 / len(steps)) - 1 if product > 0 else None
+
+
+def quarters(case):
+    """Optional recent standalone quarters (oldest first) to catch inflections that
+    annual history hides. Revenue required; operating_income/gross_profit optional."""
+    rows = case.get('recent_quarters')
+    if rows is None:
+        return []
+    if not isinstance(rows, list) or not 1 <= len(rows) <= 12:
+        raise ValueError('recent_quarters: supply 1..12 quarters, oldest first')
+    ends = []
+    for r in rows:
+        end = date.fromisoformat(r['period_end'])
+        if end > date.fromisoformat(case['as_of']):
+            raise ValueError('Quarter ends after as_of')
+        number(r['revenue'], 'quarter revenue', 0)
+        for k in ('operating_income', 'gross_profit', 'net_income'):
+            opt(r, k)
+        if not isinstance(r.get('source_ids'), list) or not r['source_ids']:
+            raise ValueError('Every quarter needs source_ids')
+        ends.append(end)
+    if ends != sorted(set(ends)):
+        raise ValueError('recent_quarters must be ordered oldest first with distinct period_end')
+    return rows
+
+
+def quarter_momentum(qs):
+    if len(qs) < 5 or qs[-5]['revenue'] <= 0:
+        return None
+    last = qs[-1]
+    out = {'latest_quarter_end': last['period_end'], 'latest_quarter_yoy': last['revenue'] / qs[-5]['revenue'] - 1,
+           'latest_quarter_operating_margin': last['operating_income'] / last['revenue']
+           if last.get('operating_income') is not None and last['revenue'] > 0 else None}
+    if len(qs) >= 8:
+        now, before = sum(q['revenue'] for q in qs[-4:]), sum(q['revenue'] for q in qs[-8:-4])
+        out['ttm_growth'] = now / before - 1 if before > 0 else None
+    return out

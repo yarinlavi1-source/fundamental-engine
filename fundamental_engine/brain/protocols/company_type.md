@@ -15,6 +15,11 @@ available; `plain_verdict` runs it automatically. It returns:
   acquired_revenue), cycle peak/trough, short history.
 - What decides value, key metrics, valuation fit, traps and packets to load.
 
+Pass `recent_quarters` (import_statements returns them): annual history can hide a
+turning point. An inflection flag means the type follows the latest quarters, and the
+research must test whether the change is durable. Pass `current_shares` when shares
+were issued after the last annual report.
+
 The rules are coarse. Override with `type_override: {stage, lynch, reason}` when the
 evidence supports it (e.g. a segment-level cyclical inside a stable group, a spin-off,
 a regulated monopoly). Hybrid businesses: research each economic engine with its own

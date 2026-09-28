@@ -10,7 +10,7 @@ explicit reason; the override and the computed evidence are both returned. The t
 selects research focus, metrics and valuation fit. It never changes source truth.
 """
 from statistics import pstdev
-from .history import history, cagr, span_years, margins, organic_growth, txt, acquisition_years, organic_cagr
+from .history import history, cagr, span_years, margins, organic_growth, txt, acquisition_years, organic_cagr, quarters, quarter_momentum
 
 STAGES = ('start_up', 'young_growth', 'high_growth', 'mature_growth', 'mature_stable', 'decline')
 LYNCH = ('fast_grower', 'stalwart', 'slow_grower', 'cyclical', 'turnaround', 'asset_play')
@@ -121,6 +121,17 @@ def classify(case, rows=None):
         stage = 'young_growth'; reasons.append('loss-making without a mature revenue base')
     else:
         stage = 'mature_stable'; reasons.append('low growth with established operations')
+    # Recent quarters can overturn what annual history shows (turning points).
+    momentum = quarter_momentum(quarters(case))
+    inflection = slowdown = False
+    if momentum:
+        qy, qm = momentum['latest_quarter_yoy'], momentum['latest_quarter_operating_margin']
+        if qy >= .5 and (qm is None or qm > 0) and stage in {'decline', 'mature_stable', 'young_growth', 'mature_growth'}:
+            inflection = True
+            reasons.append(f'annual history said {stage}, but the latest quarter grew {qy:.0%} year on year' + (' and is profitable' if qm else ''))
+            stage = 'high_growth'
+        elif qy <= -.2 and stage in {'high_growth', 'mature_growth', 'young_growth'}:
+            slowdown = True
     # Lynch category.
     market_cap = case.get('market_cap')
     net_cash = None
@@ -128,7 +139,7 @@ def classify(case, rows=None):
         net_cash = case['balance']['cash'] - case['balance']['debt']
     cyclical = archetype in CYCLICAL_ARCHETYPES or bool(case.get('cyclical')) or (
         archetype in MAYBE_CYCLICAL and volatility is not None and volatility >= .05 and revenue_drop)
-    if last_om is not None and last_om < 0 and was_profitable or (stage == 'decline' and recovered):
+    if (last_om is not None and last_om < 0 and was_profitable) or (stage == 'decline' and recovered) or (inflection and last_om is not None and last_om < 0):
         lynch = 'turnaround'
     elif cyclical:
         lynch = 'cyclical'
@@ -152,6 +163,10 @@ def classify(case, rows=None):
         elif last_om < avg - .05:
             flags.append({'key': 'cycle_trough', 'he': 'הרווחיות עכשיו נמוכה בהרבה מהממוצע שלה — ייתכן שזו תחתית מחזורית. השאלה היא אם המחזור יחזור.'})
         evidence['normalized_operating_margin'] = avg
+    if inflection:
+        flags.append({'key': 'inflection', 'he': 'נקודת מפנה: השנים המלאות נראות חלשות, אבל ברבעונים האחרונים המכירות זינקו והחברה עברה לרווח. צריך לבדוק אם זה שינוי אמיתי ומתמשך או קפיצה זמנית.'})
+    if slowdown:
+        flags.append({'key': 'slowdown', 'he': 'ברבעון האחרון המכירות ירדו חזק לעומת השנה שעברה — הצמיחה של השנים הקודמות אולי נגמרת.'})
     if n < 3:
         flags.append({'key': 'short_history', 'he': 'יש פחות משלוש שנים של נתונים — הסיווג זהיר.'})
     override = case.get('type_override')
@@ -162,6 +177,7 @@ def classify(case, rows=None):
         txt(override.get('reason'), 'type_override.reason')
         stage = override.get('stage') or stage
         lynch = override.get('lynch') or lynch
+    evidence['quarter_momentum'] = momentum
     evidence.update({'revenue_cagr': growth, 'growth_used_for_type': g, 'acquisition_years': bought, 'large_mature_profile': large_mature, 'revenue_growth_last_year': yoy, 'organic_growth_last_year': organic,
                      'operating_margin_last': last_om, 'operating_margin_change': om_trend,
                      'operating_margin_volatility': volatility, 'years_of_history': n})

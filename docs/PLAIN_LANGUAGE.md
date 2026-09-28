@@ -6,7 +6,10 @@ Input (`plain_version: 1`): `company`, `ticker`, `as_of`, `currency`, `archetype
 with `fiscal_year`, `period_end`, `revenue`, `source_ids`, and optionally
 `gross_profit`, `operating_income`, `net_income`, `operating_cash_flow`, `capex`,
 `shares_diluted`), optional `balance` (`cash` = unrestricted, `debt`), optional
-`research_status` (latest research_review status) and optional `valuation_case`
+`research_status` (latest research_review status), optional `recent_quarters`
+(standalone quarters, oldest first: period_end, revenue, source_ids, optional
+operating_income/gross_profit/net_income), optional `current_shares` ({as_of, shares,
+source_ids}) for issuance after the last annual report, and optional `valuation_case`
 (a value_company input — executed inside the call; results are never typed by hand).
 
 ## Grades (5 = מצוין … 1 = מדאיג)

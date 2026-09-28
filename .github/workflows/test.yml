@@ -25,5 +25,6 @@ jobs:
       - run: python -m fundamental_engine plain examples/plain_demo.json --valuation examples/valuation/infrastructure.json
       - run: python -m fundamental_engine classify examples/real/avgo_plain_2025.json
       - run: python -m fundamental_engine plain examples/real/avgo_plain_2025.json
+      - run: python -m fundamental_engine plain examples/real/axti_plain_2026q2.json
       - run: python -m pip wheel --no-deps --wheel-dir runs/wheels .
       - run: python scripts/check_wheel.py

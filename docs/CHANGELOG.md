@@ -53,3 +53,11 @@ Piotroski/Altman/Beneish/ROIC/Rule-of-40 scorecards, forecast base-rate check,
 Alpha Vantage statement mapper, master_process/company_type/forensic packets, three
 MCP tools, classify and import-av CLI, stage-weighted plain verdict. Real Broadcom
 regression example. 14 new tests; 203 total. Screens direct research; no return odds.
+
+## 0.7.1 — 2026-09-28
+
+Turning points. Optional `recent_quarters` (AV mapper fills them) let company typing
+and plain verdicts see inflections or slowdowns that annual history hides; a recent
+quarterly profitability item; `current_shares` catches issuance after the last annual
+report; a price above even the bull value now yields a red bottom line. Found while
+running AXTI; real AXTI regression example added. 3 new tests; 206 total.

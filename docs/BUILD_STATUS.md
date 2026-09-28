@@ -1,4 +1,9 @@
-# Current build — v0.7.0 — 2026-09-27
+# Current build — v0.7.1 — 2026-09-28
+
+v0.7.1: recent-quarter inflection/slowdown detection, current share count dilution,
+red bottom line when price exceeds the bull value; AXTI real regression case; 206 tests.
+
+## v0.7.0 — 2026-09-27
 
 Company type first. `classify_company` computes the Damodaran life-cycle stage and
 Lynch category from reported history, detects large acquisitions (goodwill jumps)

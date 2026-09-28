@@ -72,7 +72,17 @@ def from_alpha_vantage(income, balance=None, cash_flow=None, years=5, as_of=None
     if not dates:
         raise ValueError('No annual revenue found')
     rows = [by_date[d] for d in dates]
-    return {'ticker': symbol, 'currency': currency, 'history': rows,
+    qrows = []
+    for rep in sorted(parts['income'].get('quarterlyReports', []), key=lambda x: x['fiscalDateEnding'])[-8:]:
+        d = rep['fiscalDateEnding']
+        if as_of and d > as_of or _num(rep.get('totalRevenue')) is None:
+            continue
+        q = {'period_end': d, 'revenue': _num(rep['totalRevenue']), 'source_ids': [f'alphavantage:{symbol}:income_q:{d}']}
+        for field, key in (('operating_income', 'operatingIncome'), ('gross_profit', 'grossProfit'), ('net_income', 'netIncome')):
+            if _num(rep.get(key)) is not None:
+                q[field] = _num(rep[key])
+        qrows.append(q)
+    return {'ticker': symbol, 'currency': currency, 'history': rows, 'recent_quarters': qrows,
             'notes': ['shares_diluted mapped from period-end common shares outstanding (AV); prefer diluted weighted shares from filings when material',
                       'cash = cash and short-term investments; confirm restricted cash in filings',
                       'Provider-normalized fields; reconcile material figures to the 10-K/20-F']}
