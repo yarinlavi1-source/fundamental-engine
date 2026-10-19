@@ -484,3 +484,24 @@ class IbMcpShapeTests(unittest.TestCase):
         self.assertEqual(sorted(p['symbol'] for p in book['positions']), ['BRND', 'SEMA'])
         self.assertEqual(book['reconciliation']['status'], 'reconciled')
         self.assertAlmostEqual(analyze(book)['concentration']['top1']['weight'], 0.5)
+
+
+class PrivacyAndFunds(unittest.TestCase):
+    def test_account_key_never_becomes_symbol(self):
+        p = {FAKE_ACCT: {'position': 10, 'mktPrice': 5.0, 'mktValue': 50.0, 'currency': 'USD', 'assetClass': 'STK'},
+             'DU1234567': {'position': 1, 'mktPrice': 5.0, 'mktValue': 5.0, 'currency': 'USD', 'assetClass': 'STK'}}
+        b = from_ib(p, {}, AS_OF)
+        self.assertNotIn(FAKE_ACCT, json.dumps(b))
+        self.assertNotIn('DU1234567', json.dumps(b))
+        named = from_ib({'ABCD': {'position': 1, 'mktPrice': 5.0, 'mktValue': 5.0, 'currency': 'USD', 'assetClass': 'STK'}}, {}, AS_OF)
+        self.assertEqual([x['symbol'] for x in named['positions']], ['ABCD'])
+
+    def test_etf_without_info_is_diversified_and_stock_flagged(self):
+        b = from_ib({'positions': [row('FUNDX', 2001, 100, 10.0, ac='ETF'), row('ONEX', 2002, 100, 10.0)]},
+                    {'netliquidation': {'amount': 2000.0, 'currency': 'USD'}}, AS_OF)
+        a = analyze(b, {}, {})
+        self.assertTrue(a['holdings']['FUNDX']['diversified'])
+        self.assertFalse(a['holdings']['ONEX']['diversified'])
+        codes = {t['holding']: [c['code'] for c in t['triggers']] for t in a['review_needed']}
+        self.assertIn('fund_status_unknown', codes.get('ONEX', []))
+        self.assertNotIn('fund_status_unknown', codes.get('FUNDX', []))

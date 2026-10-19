@@ -48,6 +48,8 @@ AC = {'STK': 'STK', 'STOCK': 'STK', 'EQUITY': 'STK', 'COMMON': 'STK', 'CS': 'STK
       'FUND': 'FUND', 'MF': 'FUND', 'OPT': 'OPT', 'OPTION': 'OPT', 'FOP': 'OPT', 'WAR': 'WAR', 'WARRANT': 'WAR',
       'FUT': 'FUT', 'FUTURE': 'FUT', 'CASH': 'CASH', 'FX': 'CASH', 'FOREX': 'CASH', 'CURRENCY': 'CASH',
       'BOND': 'BOND', 'BND': 'BOND', 'CFD': 'CFD', 'CRYPTO': 'CRYPTO'}
+ACCOUNT_LIKE = re.compile(r'^([A-Z]{0,2}\d{5,}|\d+)$', re.I)
+FUND_CLASSES = {'ETF', 'FUND', 'MF'}
 ALIASES = {'symbol': ('symbol', 'ticker', 'localsymbol', 'contractsymbol'),
            'description': ('description', 'contractdesc', 'contractdescription', 'name', 'fullname', 'longname', 'companyname'),
            'conid': ('conid', 'contractid', 'conidex'),
@@ -154,7 +156,9 @@ def _rows(p, unparsed, path='positions'):
             sub = f'{path}{{{i}}}'
             if isinstance(v, dict) and _rowish(v):
                 f = {_k(a) for a in v}
-                out.append((v if f & set(ALIASES['symbol']) else {**v, 'symbol': k}, sub))   # {symbol: row}
+                named = f & set(ALIASES['symbol'] + ALIASES['description'] + ALIASES['conid'])
+                # {symbol: row}; a key that looks like an account or contract id is never used as a symbol
+                out.append((v if named or not isinstance(k, str) or ACCOUNT_LIKE.match(k.strip()) else {**v, 'symbol': k}, sub))
             elif isinstance(v, (list, dict)):
                 out += _rows(v, unparsed, sub)
             elif _k(k) not in {'accountid', 'acctid', 'account', 'count', 'total', 'page', 'timestamp'}:
@@ -419,6 +423,9 @@ def _casefile(s, price_now=None):
     out['downside_basis'] = ('bear_value / current price - 1' if out['bear_value'] is not None and p
                              else 'as supplied' if out['downside_to_bear'] is not None else None)
     out['research_support'] = SUPPORT.get(out['verdict'], 'unknown_verdict' if out['verdict'] else 'no_verdict')
+    out['verdict_status'] = s.get('verdict_status')
+    if out['research_support'] == 'supports_price' and (s.get('price_claim_withheld') or s.get('verdict_status') == 'draft'):
+        out['research_support'] = 'draft_unreviewed'   # a withheld price claim never supports buying
     return out
 
 
@@ -474,7 +481,12 @@ def _holdings(book, info, specs):
         h['sector'] = i.get('sector') or h['ib_sector'] or 'unclassified'
         h['sector_source'] = 'holdings_info' if i.get('sector') else ('ib_position' if h['ib_sector'] else 'none')
         h['industry'] = i.get('industry') or h['ib_industry'] or 'unclassified'
-        h['diversified'] = bool(i.get('diversified'))
+        if i.get('diversified') is not None:
+            h['diversified'], h['diversified_source'] = bool(i.get('diversified')), 'holdings_info'
+        elif set(h['asset_classes']) & FUND_CLASSES:
+            h['diversified'], h['diversified_source'] = True, 'asset_class_default'
+        else:
+            h['diversified'], h['diversified_source'] = False, 'assumed_single_name' if not h['has_info'] else 'holdings_info'
         h['derivative'] = any(a in DERIV for a in h['asset_classes'])
         h['price_comparable'] = ((i.get('casefile_summary') or {}).get('currency') or h['price_ccy']) == h['price_ccy']
         h['cf'] = _casefile(i.get('casefile_summary'), h['price'] if h['price_comparable'] else None)
@@ -725,6 +737,10 @@ def _review(book, hold, ov, o, cap):
     for key, h in hold.items():
         i, cf, t = h['info'] or {}, h['cf'], []
         raw = i.get('casefile_summary') or {}
+        if h.get('diversified_source') == 'assumed_single_name' and 'STK' in h['asset_classes']:
+            t.append({'code': 'fund_status_unknown', 'severity': 'medium',
+                      'detail': 'listed as a stock with no holdings info: treated as a single issuer; if it is an ETF/fund, '
+                                'set diversified in holdings info so concentration is not overstated'})
         if not cf:
             t.append({'code': 'no_analysis', 'severity': 'low' if h['diversified'] else 'high',
                       'detail': 'no casefile summary: quality, price and risk unassessed'})

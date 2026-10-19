@@ -10,7 +10,7 @@ A stage that cannot run records why and the later stages degrade honestly (e.g. 
 the decision says the price cannot be assessed). Exceptions are recorded, never swallowed silently.
 """
 from copy import deepcopy
-from datetime import date
+from datetime import date, datetime, timezone
 import json
 import os
 
@@ -66,8 +66,16 @@ def factbook_from_run_dir(raw_dir, company, as_of):
     when = {}
     for c in manifest.get('calls', manifest if isinstance(manifest, list) else []):
         if isinstance(c, dict) and c.get('file'):
-            when[c['file']] = c.get('retrieved_utc') or c.get('retrieved_at')
+            when[c['file']] = c.get('retrieved_at_utc') or c.get('retrieved_utc') or c.get('retrieved_at')
     fb = F.new(company, as_of)
+    notes = fb.setdefault('collection_notes', [])
+
+    def later(d, what):
+        # information dated after the cutoff is skipped, never relabelled to the cutoff (no look-ahead)
+        if d and str(d)[:10] > as_of:
+            notes.append(f'{what} dated {str(d)[:10]} is after as_of {as_of}; not used')
+            return True
+        return False
     for kind in ('annual', 'quarter'):
         parts = {}
         for part in ('income', 'balance', 'cashflow'):
@@ -77,7 +85,10 @@ def factbook_from_run_dir(raw_dir, company, as_of):
                 if isinstance(data, list) and data:
                     parts[part] = data
         if parts:
-            F.from_fmp_as_reported(fb, parts, when.get(f'fmp__as-reported-income-statements__{kind}.json') or as_of, kind=kind)
+            got = when.get(f'fmp__as-reported-income-statements__{kind}.json')
+            if got and str(got)[:10] > as_of:
+                notes.append(f'FMP as-reported {kind} retrieved {str(got)[:10]} after as_of; facts are dated by their filing dates')
+            F.from_fmp_as_reported(fb, parts, got or as_of, kind=kind)
     av = {k: _load(p(f'av__{k}.json')) for k in ('income', 'balance', 'cashflow') if os.path.exists(p(f'av__{k}.json'))}
     if av:
         F.from_alpha_vantage(fb, av, when.get('av__income.json') or as_of)
@@ -86,27 +97,31 @@ def factbook_from_run_dir(raw_dir, company, as_of):
     sf = p('fmp__shares-float__current.json')
     if os.path.exists(sf):
         rows = _load(sf)
-        if isinstance(rows, list) and rows and rows[0].get('outstandingShares'):
-            r = rows[0]
+        r = rows[0] if isinstance(rows, list) and rows and rows[0].get('outstandingShares') else None
+        end = r and (_period_end_from_filing_url(r.get('source')) or (r.get('date') or '')[:10])
+        seen = r and ((r.get('date') or '')[:10] or end)
+        if r and end and not (later(end, 'vendor share count period') or later(seen, 'vendor share count')):
             F.add_source(fb, 'fmp:shares_float', 'fmp', 'shares-float', 'vendor_normalized', when.get('fmp__shares-float__current.json') or as_of,
                          sha=F.digest(rows), url=r.get('source'), note='vendor reading of the latest periodic filing cover; dated by the vendor')
-            end = _period_end_from_filing_url(r.get('source')) or r['date'][:10]
             F.add_fact(fb, 'shares_outstanding_vendor', 'I@' + end, end, r['outstandingShares'], 'fmp:shares_float', 'normalized',
-                       min(r['date'][:10], as_of), unit='shares')
+                       seen, unit='shares')
     est = p('fmp__financial-estimates__annual.json')
     if os.path.exists(est):
         rows = _load(est)
-        if isinstance(rows, list):
-            F.from_fmp_estimates(fb, rows, when.get('fmp__financial-estimates__annual.json') or as_of, as_of=as_of)
+        got = when.get('fmp__financial-estimates__annual.json')
+        if isinstance(rows, list) and not later(got, 'consensus estimates retrieval'):
+            F.from_fmp_estimates(fb, rows, got or as_of, as_of=(got or as_of)[:10])
     snap = p(f"ib__price-snapshot-{company['ticker'].upper()}__current.json")
     if os.path.exists(snap):
         s = _load(snap)
         last = (s.get('last') or {})
-        if last.get('price'):
+        ts = last.get('ts')
+        d = datetime.fromtimestamp(ts, timezone.utc).date().isoformat() if ts else (when.get(os.path.basename(snap)) or '')[:10]
+        if last.get('price') and not later(d, 'price snapshot'):
+            if not d:
+                notes.append('price snapshot has no timestamp; dated as_of')
             F.add_source(fb, 'ib:snapshot', 'ib', 'price-snapshot', 'market_feed', when.get(os.path.basename(snap)) or as_of, sha=F.digest(s))
-            ts = last.get('ts')
-            d = date.fromtimestamp(ts).isoformat() if ts else as_of
-            F.set_price(fb, last['price'], min(d, as_of), 'ib:snapshot', kind='close' if last.get('is_close') else 'last')
+            F.set_price(fb, last['price'], d or as_of, 'ib:snapshot', kind='close' if last.get('is_close') else 'last')
     return fb
 
 
@@ -166,7 +181,8 @@ def run(fb, inputs=None):
     from . import dataqa, analysis, model_card, forecast, risk, review, decision
     inputs = deepcopy(inputs or {})
     cf = {'casefile_version': 1, 'engine_version': __version__, 'company': fb['company'], 'as_of': fb['as_of'],
-          'factbook_sha256': F.fingerprint(fb), 'inputs_sha256': F.digest(inputs), 'errors': [], 'stages': {}}
+          'factbook_sha256': F.fingerprint(fb), 'inputs_sha256': F.digest(inputs), 'errors': [], 'stages': {},
+          'collection_notes': list(fb.get('collection_notes') or [])}
 
     def stage(name, fn):
         try:
@@ -200,7 +216,9 @@ def summary(cf):
     dc, val = cf.get('dc') or {}, cf.get('val') or {}
     er = dc.get('expected_return') or {}
     today = ((val.get('result') or {}).get('annual_values') or [{}])[0]
-    return {'symbol': cf['company']['ticker'], 'as_of': cf['as_of'], 'verdict': (dc.get('verdict') or {}).get('code'),
+    v = dc.get('verdict') or {}
+    return {'symbol': cf['company']['ticker'], 'as_of': cf['as_of'], 'verdict': v.get('code'),
+            'verdict_status': v.get('status'), 'price_claim_withheld': bool(v.get('price_claim_withheld', True)),
             'confidence': (dc.get('confidence') or {}).get('level'),
             'quality': ((dc.get('assessments') or {}).get('business_quality') or {}).get('level'),
             'risk_level': ((cf.get('rk') or {}).get('error_size') or {}).get('level'),
