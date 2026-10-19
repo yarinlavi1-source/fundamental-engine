@@ -27,8 +27,8 @@ RATIO_KEYS = {
     'cash_cost_ratio': (None, 0, 2),
     'sbc_pct': (0, 0, 1),
     'depreciation_pct': (0, 0, 1),
-    'maintenance_capex_pct': (0, 0, 1),
-    'growth_capex_pct': (0, 0, 1),
+    'maintenance_capex_pct': (0, 0, 5),   # capital-heavy builders can spend more than revenue in a year
+    'growth_capex_pct': (0, 0, 5),
     'tax_rate': (None, 0, 1),
     'interest_rate': (0, 0, 1),
     'deferred_revenue_ratio': (0, 0, 5),
