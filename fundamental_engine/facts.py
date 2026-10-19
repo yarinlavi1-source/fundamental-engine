@@ -353,12 +353,15 @@ BUNDLE_METRICS = {  # evidence-bundle metric names -> FactBook metrics (duration
     'revenue': 'revenue', 'operating_income_gaap': 'operating_income', 'operating_income': 'operating_income',
     'net_income_gaap': 'net_income', 'net_income': 'net_income', 'cfo': 'cfo', 'capex': 'capex', 'buybacks': 'buybacks',
     'sbc': 'sbc', 'rpo': 'rpo', 'arr': 'arr', 'shares_outstanding': 'shares_outstanding_cover',
-    'cash': 'cash', 'short_term_investments': 'short_term_investments', 'commercial_paper': 'short_term_borrowings',
+    'cash': 'cash', 'short_term_investments': 'short_term_investments',
+    'commercial_paper': 'commercial_paper_info',   # issuers' debt totals usually include it: informational only
+    'deferred_revenue_current': 'deferred_revenue_current', 'deferred_revenue_noncurrent': 'deferred_revenue_noncurrent',
     'debt': 'long_term_debt_tagged',            # issuer totals: scope (incl. current portion or not) resolved by dataqa
     'deferred_revenue': 'deferred_revenue_total', 'cash_and_investments': 'cash_and_investments_total',
 }
 BUNDLE_INSTANT = {'shares_outstanding_cover', 'rpo', 'arr', 'deferred_revenue_total', 'cash_and_investments_total', 'cash',
-                  'short_term_investments', 'short_term_borrowings', 'long_term_debt_tagged'}
+                  'short_term_investments', 'commercial_paper_info', 'long_term_debt_tagged', 'deferred_revenue_current',
+                  'deferred_revenue_noncurrent'}
 SOURCE_KIND = {'issuer_release': 'document', 'filing': 'document', 'press': 'document', 'analysis': 'document'}
 
 
@@ -386,7 +389,10 @@ def add_qualitative_bundle(fb, bundle, provider='web'):
         dates = [pub.get(s) for s in q['source_ids'] if pub.get(s)]
         avail, est = (max(dates), False) if dates else (_est_available(q['period_end'], 'quarter'), True)
         end = q.get('measured_at') if metric == 'shares_outstanding_cover' and q.get('measured_at') else q['period_end']
-        period = ('YTD@' if ytd else 'I@' if metric in BUNDLE_INSTANT else 'Q@') + end
+        label = str(q.get('period') or '')
+        ytd = ytd or 'YTD' in label.upper()
+        annual = not ytd and metric not in BUNDLE_INSTANT and label.upper().startswith('FY') and 'Q' not in label.upper()[2:]
+        period = ('YTD@' + end if ytd else 'I@' + end if metric in BUNDLE_INSTANT else label.upper() if annual else 'Q@' + end)
         add_fact(fb, metric, period, end, q['value'], 'web:' + q['source_ids'][0],
                  'as_reported' if not est else 'normalized', avail, estimated=est,
                  unit='shares' if metric == 'shares_outstanding_cover' else None, concept='bundle:' + q['metric'])
@@ -469,6 +475,9 @@ def ttm(fb, metric):
     if a:
         a_end = _d(a[-1][0])
         post = [x for x in q if _d(x[0]) > a_end]
+        steps = [(_d(b[0]) - _d(a0[0])).days for a0, b in zip([(a[-1][0],)] + post, post)]
+        if post and not all(60 <= d <= 120 for d in steps):
+            post = []                              # a missing quarter would silently drop its growth: not a TTM
         if post:                                   # TTM = last FY + year-to-date - same quarters a year earlier
             prior = []
             for end, _, _ in post:

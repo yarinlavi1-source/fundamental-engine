@@ -149,3 +149,36 @@ class YtdTests(unittest.TestCase):
         F.add_fact(fb, 'cfo', 'YTD@2026-08-28', '2026-08-28', 80, 's', 'as_reported', '2026-09-20')
         t = F.ttm(fb, 'cfo')
         self.assertEqual((t['method'], t['value'], t['period_end']), ('annual_plus_ytd', 110, '2026-08-28'))
+
+
+class BundleRegressionTests(unittest.TestCase):
+    """Found on the real Adobe bundle (20.10.2026): FY rows loaded as quarters inflated TTM revenue to 43.5bn."""
+
+    def bundle_fb(self):
+        fb = F.new({'ticker': 'FIX', 'currency': 'USD'}, '2026-10-19')
+        F.add_source(fb, 'f', 'fmp', 'x', 'filing_derived', '2026-10-19')
+        F.add_fact(fb, 'revenue', 'FY2025', '2025-11-28', 100, 'f', 'as_reported', '2026-01-15')
+        src = [{'id': 's', 'title': 'releases', 'url': 'https://example.com', 'kind': 'issuer_release', 'published_at': '2026-09-20'}]
+        rows = [('FY2025', '2025-11-28', 100)] + [(f'FY2025Q{i}', e, v) for i, e, v in ((1, '2025-02-28', 22), (2, '2025-05-30', 24), (3, '2025-08-29', 25))] \
+            + [(f'FY2026Q{i}', e, v) for i, e, v in ((1, '2026-02-27', 26), (2, '2026-05-29', 27), (3, '2026-08-28', 28))]
+        F.add_qualitative_bundle(fb, {'sources': src, 'quarterly_facts': [{'metric': 'revenue', 'period': p, 'period_end': e, 'value': v, 'source_ids': ['s']}
+                                                                          for p, e, v in rows]
+                                      + [{'metric': 'commercial_paper', 'period': 'FY2026Q3', 'period_end': '2026-08-28', 'value': 5, 'source_ids': ['s']},
+                                         {'metric': 'debt', 'period': 'FY2026Q3', 'period_end': '2026-08-28', 'value': 50, 'source_ids': ['s']}]})
+        return fb
+
+    def test_fiscal_year_rows_stay_annual(self):
+        fb = self.bundle_fb()
+        t = F.ttm(fb, 'revenue')
+        self.assertEqual((t['method'], t['value']), ('annual_plus_ytd', 100 + 26 + 27 + 28 - 22 - 24 - 25))
+        self.assertNotIn('2025-11-28', [e for e, _, _ in F.series(fb, 'revenue', 'quarter')])
+
+    def test_commercial_paper_is_not_added_to_issuer_debt_total(self):
+        fb = self.bundle_fb()
+        self.assertEqual(F.series(fb, 'short_term_borrowings', 'instant'), [])
+        self.assertEqual(F.latest_instant(fb, 'long_term_debt_tagged')['value'], 50)
+
+    def test_gap_in_quarters_does_not_make_a_ttm(self):
+        fb = self.bundle_fb()
+        fb['facts'] = [f for f in fb['facts'] if f['period_end'] not in ('2026-05-29', '2025-05-30')]
+        self.assertEqual(F.ttm(fb, 'revenue')['method'], 'latest_fiscal_year')
