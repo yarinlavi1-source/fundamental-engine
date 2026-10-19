@@ -80,6 +80,7 @@ INSTANT_TAGS = {
     'operating_lease_noncurrent': ['operatingleaseliabilitynoncurrent'],
     'total_liabilities': ['liabilities'],
     'equity': ['stockholdersequity', 'stockholdersequityincludingportionattributabletononcontrollinginterest'],
+    'retained_earnings': ['retainedearningsaccumulateddeficit'],
     'liabilities_and_equity': ['liabilitiesandstockholdersequity'],
     'shares_outstanding': ['commonstocksharesoutstanding'],
     'treasury_shares': ['treasurystockcommonshares'],
@@ -267,14 +268,14 @@ AV_MAP = {  # Alpha Vantage normalized statement fields
     'deferredRevenue': 'deferred_revenue_current', 'totalCurrentLiabilities': 'current_liabilities',
     'currentLongTermDebt': 'current_portion_ltd', 'longTermDebtNoncurrent': 'long_term_debt',
     'shortLongTermDebtTotal': 'debt_total_vendor', 'totalLiabilities': 'total_liabilities',
-    'totalShareholderEquity': 'equity', 'commonStockSharesOutstanding': 'shares_outstanding',
+    'totalShareholderEquity': 'equity', 'commonStockSharesOutstanding': 'shares_outstanding', 'retainedEarnings': 'retained_earnings',
 }
 AV_INSTANT = {v for k, v in AV_MAP.items() if k in {
     'cashAndCashEquivalentsAtCarryingValue', 'shortTermInvestments', 'longTermInvestments', 'currentNetReceivables', 'inventory',
     'totalCurrentAssets', 'propertyPlantEquipment', 'goodwill', 'intangibleAssetsExcludingGoodwill', 'totalAssets',
     'currentAccountsPayable', 'deferredRevenue', 'totalCurrentLiabilities', 'currentLongTermDebt', 'longTermDebtNoncurrent',
     'shortLongTermDebtTotal',
-    'totalLiabilities', 'totalShareholderEquity', 'commonStockSharesOutstanding'}}
+    'totalLiabilities', 'totalShareholderEquity', 'commonStockSharesOutstanding', 'retainedEarnings'}}
 
 
 def from_alpha_vantage(fb, payloads, retrieved_at, prefix='av'):

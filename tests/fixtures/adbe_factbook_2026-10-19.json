@@ -18,7 +18,7 @@
 "provider": "fmp",
 "dataset": "as-reported-income-annual",
 "kind": "filing_derived",
-"retrieved_at": "2026-10-19T22:10:00Z",
+"retrieved_at": "2026-10-19",
 "sha256": "6b7acb3e9f332f27745904843b49790cd9b650075432eb44d3ad31750bdf8685",
 "url": null,
 "note": null
@@ -28,7 +28,7 @@
 "provider": "fmp",
 "dataset": "as-reported-cashflow-annual",
 "kind": "filing_derived",
-"retrieved_at": "2026-10-19T22:10:00Z",
+"retrieved_at": "2026-10-19",
 "sha256": "77f1c47c18182b1d8c0f99927a08a1d859ea37803816bbb372098e68b1ae2986",
 "url": null,
 "note": null
@@ -38,7 +38,7 @@
 "provider": "fmp",
 "dataset": "as-reported-balance-annual",
 "kind": "filing_derived",
-"retrieved_at": "2026-10-19T22:10:00Z",
+"retrieved_at": "2026-10-19",
 "sha256": "16fdd8ffe386b0fb061f5bda4bde8913fd69043b0c4ab3a3b833fdbcfdfff62d",
 "url": null,
 "note": null
@@ -48,17 +48,17 @@
 "provider": "fmp",
 "dataset": "shares-float",
 "kind": "vendor_normalized",
-"retrieved_at": "2026-10-19T22:12:00Z",
+"retrieved_at": "2026-10-19",
 "sha256": "7ab847e67ea9b1f8bc83fd1869519b7a9951fe4bafbc62377496d9fca972c890",
-"url": null,
-"note": "vendor share count; source document named adbe-20260828.htm (10-Q for quarter ended 2026-08-28)"
+"url": "https://www.sec.gov/Archives/edgar/data/796343/000079634326000156/adbe-20260828.htm",
+"note": "vendor reading of the latest periodic filing cover; dated by the vendor"
 },
 "ib:snapshot": {
 "id": "ib:snapshot",
 "provider": "ib",
 "dataset": "price-snapshot",
 "kind": "market_feed",
-"retrieved_at": "2026-10-19T22:14:00Z",
+"retrieved_at": "2026-10-19",
 "sha256": "887f58c90132282941753422ee22a5af05da5ce23f989044305125cd9aa6fe57",
 "url": null,
 "note": null
@@ -1842,6 +1842,18 @@
 "concept": "stockholdersequity"
 },
 {
+"metric": "retained_earnings",
+"period": "I@2025-11-28",
+"period_end": "2025-11-28",
+"value": 45354000000.0,
+"unit": "USD",
+"source_id": "fmp:as_reported_balance_annual",
+"basis": "as_reported",
+"available_at": "2026-02-11",
+"available_at_estimated": true,
+"concept": "retainedearningsaccumulateddeficit"
+},
+{
 "metric": "liabilities_and_equity",
 "period": "I@2025-11-28",
 "period_end": "2025-11-28",
@@ -2094,6 +2106,18 @@
 "concept": "stockholdersequity"
 },
 {
+"metric": "retained_earnings",
+"period": "I@2024-11-29",
+"period_end": "2024-11-29",
+"value": 38470000000.0,
+"unit": "USD",
+"source_id": "fmp:as_reported_balance_annual",
+"basis": "as_reported",
+"available_at": "2025-02-12",
+"available_at_estimated": true,
+"concept": "retainedearningsaccumulateddeficit"
+},
+{
 "metric": "liabilities_and_equity",
 "period": "I@2024-11-29",
 "period_end": "2024-11-29",
@@ -2332,6 +2356,18 @@
 "available_at": "2024-02-14",
 "available_at_estimated": true,
 "concept": "stockholdersequity"
+},
+{
+"metric": "retained_earnings",
+"period": "I@2023-12-01",
+"period_end": "2023-12-01",
+"value": 33346000000.0,
+"unit": "USD",
+"source_id": "fmp:as_reported_balance_annual",
+"basis": "as_reported",
+"available_at": "2024-02-14",
+"available_at_estimated": true,
+"concept": "retainedearningsaccumulateddeficit"
 },
 {
 "metric": "liabilities_and_equity",
@@ -2586,6 +2622,18 @@
 "concept": "stockholdersequity"
 },
 {
+"metric": "retained_earnings",
+"period": "I@2022-12-02",
+"period_end": "2022-12-02",
+"value": 28319000000.0,
+"unit": "USD",
+"source_id": "fmp:as_reported_balance_annual",
+"basis": "as_reported",
+"available_at": "2023-02-15",
+"available_at_estimated": true,
+"concept": "retainedearningsaccumulateddeficit"
+},
+{
 "metric": "liabilities_and_equity",
 "period": "I@2022-12-02",
 "period_end": "2022-12-02",
@@ -2814,6 +2862,18 @@
 "concept": "stockholdersequity"
 },
 {
+"metric": "retained_earnings",
+"period": "I@2021-12-03",
+"period_end": "2021-12-03",
+"value": 23905000000.0,
+"unit": "USD",
+"source_id": "fmp:as_reported_balance_annual",
+"basis": "as_reported",
+"available_at": "2022-02-16",
+"available_at_estimated": true,
+"concept": "retainedearningsaccumulateddeficit"
+},
+{
 "metric": "liabilities_and_equity",
 "period": "I@2021-12-03",
 "period_end": "2021-12-03",
@@ -2860,5 +2920,5 @@
 },
 "estimates": [],
 "qualitative": [],
-"fixture_note": "Reported values are Adobe Inc. 10-K figures (fiscal 2021-2025, SEC filings) read through the FMP as-reported endpoints; filing dates were not available so availability is estimated (flagged). The 10-Q share count is the vendor reading of the 10-Q cover. Vendor consensus estimates are deliberately not stored in Git. Price: IB last trade 2026-10-19. Used for software and data-accuracy tests; not a recommendation."
+"fixture_note": "Reported values are 10-K figures read through the FMP as-reported endpoints (filing dates not available, availability estimated and flagged); the 10-Q share count is the vendor reading of the filing cover; price is the dated IB last trade. Vendor consensus is deliberately not stored in Git."
 }
