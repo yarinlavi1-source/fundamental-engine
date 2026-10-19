@@ -81,14 +81,18 @@ INSTANT_TAGS = {
     'total_liabilities': ['liabilities'],
     'equity': ['stockholdersequity', 'stockholdersequityincludingportionattributabletononcontrollinginterest'],
     'retained_earnings': ['retainedearningsaccumulateddeficit'],
+    'convertible_debt': ['convertiblenotespayable', 'convertibledebtnoncurrent', 'convertibledebt', 'convertiblenotespayablecurrent'],
+    'debt_fair_value': ['longtermdebtfairvalue', 'debtinstrumentfairvalue'],
+    'warrants_outstanding': ['classofwarrantorrightoutstanding'],
     'liabilities_and_equity': ['liabilitiesandstockholdersequity'],
     'shares_outstanding': ['commonstocksharesoutstanding'],
     'treasury_shares': ['treasurystockcommonshares'],
 }
 UNITS = {'eps_diluted': 'USD/share', 'shares_basic_wavg': 'shares', 'shares_diluted_wavg': 'shares',
-         'shares_outstanding': 'shares', 'treasury_shares': 'shares'}
+         'shares_outstanding': 'shares', 'treasury_shares': 'shares', 'warrants_outstanding': 'shares'}
 KINDS = {'filing_derived', 'vendor_normalized', 'market_feed', 'consensus', 'document', 'synthetic'}
 BASIS_RANK = {'as_reported': 0, 'derived': 1, 'normalized': 2}
+SAME_PERIOD_DAYS = 7
 
 
 def _d(s):
@@ -219,7 +223,8 @@ def from_sec_companyfacts(fb, payload, retrieved_at, sid='sec:companyfacts'):
                 n += 1
             if unit == 'USD':
                 for end, (v, filed) in quarterly({'us-gaap': {lower[c]: gaap[lower[c]]}}, [lower[c]]).items():
-                    add_fact(fb, metric, f'Q@{end}', end, v, sid, 'as_reported',
+                    q4 = any(abs((_d(end) - _d(a)).days) <= SAME_PERIOD_DAYS for a in annual)   # Q4 = FY - 9M YTD
+                    add_fact(fb, metric, f'Q@{end}', end, v, sid, 'derived' if q4 else 'as_reported',
                              (_d(filed) + timedelta(days=LAG_DAYS)).isoformat(), concept=lower[c])
                     n += 1
             if annual:
@@ -428,7 +433,9 @@ def series(fb, metric, kind='annual'):
             continue
         if kind == 'instant' and not f['period'].startswith('I@'):
             continue
-        keep.setdefault(f['period_end'], f)
+        if f['period_end'] in keep or any(abs((_d(f['period_end']) - _d(e)).days) <= SAME_PERIOD_DAYS for e in keep):
+            continue                     # same fiscal period dated differently (52/53-week calendar vs month-end)
+        keep[f['period_end']] = f
     return [(e, keep[e]['value'], keep[e]) for e in sorted(keep)]
 
 
