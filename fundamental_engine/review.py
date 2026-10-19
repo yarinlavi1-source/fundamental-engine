@@ -13,22 +13,35 @@ Three layers; none of them proves that a source is true:
    versus the risk-free rate, year-1 revenue versus consensus, margins versus best history, the
    share-count path versus history, and the valuation opening versus validated balances.
 3. reviewer: an optional signed, independent review input. It is validated and recorded, never
-   fabricated. Its assumption sign-offs are applied by RE-RUNNING the underwriting audit on a copy
-   of the executed case, so a sign-off cannot close a gap that is not a review gap.
+   fabricated. It is ACCEPTED only when valid, independent and bound to this valuation (valuation_sha256
+   equals the executed input_sha256; reviewed_at between the valuation cutoff and today). Its assumption
+   sign-offs are applied by RE-RUNNING the underwriting audit on a copy of the executed case in which every
+   author-side review status is reset first: 'reviewed' statuses written in the forecast spec (or its
+   'reviews' input) are author notes, never sign-offs, so no price conclusion exists without an accepted
+   independent reviewer, whatever the valuation status. A sign-off cannot close a gap that is not a review
+   gap; a gap that even a full sign-off leaves open (e.g. no primary source behind the opening balance) is
+   reported as such ('primary_evidence_missing'), never as a missing review.
 
 The price conclusion needs every gate; `reasons` explains each one that is closed. Demo cases never
-pass. A business not yet understood (model card completeness insufficient) withholds the conclusion as an
+pass. Evidenced going-concern doubt, material weakness or restatement (risk register withhold_price)
+withholds the conclusion until the accepted reviewer documents an override (risk_overrides). A business
+not yet understood (model card completeness insufficient) withholds the conclusion as an
 evidence gap ('understanding_insufficient', status unreviewed_draft), never as a disqualifying judgement.
 needs_explanation / needs_evidence items are open questions for the reviewer, not vetoes.
 """
 from copy import deepcopy
 from datetime import date
+import re
 from . import redteam
 from .valuation import years
 from .valuation_audit import audit_valuation
 
 REVIEW_ONLY = {'unreviewed_assumption', 'evidence_missing'}
+UNDERWRITTEN = ('conditional_valuation', 'underwriting_required', 'unreviewed')
+AUTHOR_NOTES = ("review statuses written by the forecast author (spec review_status / forecast 'reviews') are notes; "
+                'only an accepted independent reviewer signs an assumption off')
 SEVERITIES = {'critical', 'major', 'minor'}
+SBC_MIN_SHARE = .5      # modelled SBC share of revenue below half of history is a token charge unless a fade is evidenced
 HARD = {'dataqa_missing', 'data_blocked', 'risk_not_assessed', 'disqualifying_risk', 'redteam_not_usable',
         'consistency_failure', 'critical_finding_unresolved'}
 
@@ -124,21 +137,27 @@ def derive_model(an, fc, result, case, today):
     put('prepayments_treatment', 'working_capital_with_reversal',
         'valuation.operating carries a deferred-revenue ledger: prepayments add cash and reverse as revenue is recognized')
     hist = metric(an, 'sbc_pct_revenue')
+    fade = sorted(a['id'] for a in (fc or {}).get('assumptions') or [] if a.get('kind') in ('reported', 'guidance') and a.get('source_ids')
+                  and re.search(r'\bsbc\b|stock[- ]based|share[- ]based|equity award', f"{a.get('id', '')} {a.get('topic', '')}".lower()))
     per = []
     for s, r in zip(case['scenarios'], result['scenarios']):
         rev = sum(x['revenue'] for x in r['forecast'])
         sbc = sum(num(p.get('sbc_expense')) or 0 for p in s['periods'])
         per.append((s['name'], s.get('sbc_policy'), sbc / rev if rev else None, sum(num(p.get('sbc_shares')) or 0 for p in s['periods'])))
     shown = {n: pct for n, _, pct, _ in per}
-    if all(pol == 'cash_equivalent' and pct and pct > 0 for _, pol, pct, _ in per):
-        put('sbc_treatment', 'expensed', f'every scenario charges SBC as a cash-equivalent cost (share of revenue {shown}); terminal margin includes SBC')
+    # a token charge is not expensing: each scenario must carry at least half the historical SBC share unless a fade is evidenced
+    token = [n for n, _, pct, _ in per if hist is not None and hist > .01 and (pct or 0) < SBC_MIN_SHARE * hist]
+    if all(pol == 'cash_equivalent' and pct and pct > 0 for _, pol, pct, _ in per) and (not token or fade):
+        put('sbc_treatment', 'expensed', f'every scenario charges SBC as a cash-equivalent cost (share of revenue {shown}); terminal margin includes SBC'
+            + (f'; {token} below {SBC_MIN_SHARE:.0%} of the {hist:.1%} history on the evidenced fade {fade}' if token else ''))
         put('margin_basis', 'ebit_after_sbc', 'EBIT in the executed rows is after SBC expense')
     elif all(pol == 'explicit_shares' and sh > 0 for _, pol, _, sh in per):
         put('sbc_treatment', 'diluted', 'every scenario settles SBC in explicit new shares')
         put('margin_basis', 'ebit_after_sbc', 'EBIT in the executed rows is after SBC expense')
     elif hist is not None and hist > .01:
-        put('margin_basis', 'adjusted_ebitda', f'a scenario charges no SBC (share of revenue {shown}) while history shows {hist:.1%} of revenue')
-        put('sbc_treatment', None, 'historical SBC is excluded from at least one scenario and not modeled as dilution')
+        put('margin_basis', 'adjusted_ebitda', f'a scenario charges no SBC or less than {SBC_MIN_SHARE:.0%} of the {hist:.1%} history '
+            f'(share of revenue {shown}) without an evidenced fade (a reported/guidance SBC assumption with sources)')
+        put('sbc_treatment', None, 'historical SBC is excluded (or reduced to a token charge) in at least one scenario and not modeled as dilution')
     elif hist is not None:
         put('sbc_treatment', 'expensed', f'historical SBC immaterial ({hist:.1%} of revenue); nothing material to expense')
     else:
@@ -253,10 +272,20 @@ def redteam_check(fb, qa, an, fc, val):
 
 # ---------------------------------------------------------------- reviewer input
 
-def check_reviewer(reviewer, case=None, result=None):
-    """Validate the shape of a signed review; record it, never invent one."""
+def _today(today):
+    return date.fromisoformat(today) if isinstance(today, str) else (today or date.today())
+
+
+def check_reviewer(reviewer, case=None, result=None, today=None, known_ids=None):
+    """Validate the shape of a signed review; record it, never invent one.
+
+    accepted = valid AND independent AND bound to the executed valuation (valuation_sha256 is mandatory: an
+    unbound review could be reused for any later revision that keeps the assumption ids). reviewed_at must lie
+    between the valuation cutoff and `today` (injectable clock; default date.today()). risk_overrides
+    {risk id: {justification, evidence_ids}} document why a withheld governance red flag does not preclude a
+    price conclusion; evidence ids must be known (`known_ids`) when supplied."""
     out = {'present': reviewer is not None, 'valid': False, 'independent': False, 'errors': [], 'reviewed': [], 'rejected': [],
-           'unresolved_critical': [], 'unresolved_major': [], 'bound_to_valuation': False}
+           'unresolved_critical': [], 'unresolved_major': [], 'bound_to_valuation': False, 'accepted': False, 'risk_overrides': []}
     if reviewer is None:
         return out
     if not isinstance(reviewer, dict):
@@ -267,9 +296,11 @@ def check_reviewer(reviewer, case=None, result=None):
         if not isinstance(reviewer.get(k), str) or not reviewer[k].strip():
             e.append(f'{k}: nonempty text required')
     try:
-        when = date.fromisoformat(str(reviewer.get('reviewed_at')))
+        when, now = date.fromisoformat(str(reviewer.get('reviewed_at'))), _today(today)
         if case and when < date.fromisoformat(case['as_of']):
             e.append('reviewed_at precedes the valuation cutoff: the review cannot cover this casefile')
+        if when > now:
+            e.append(f'reviewed_at {when.isoformat()} is after today {now.isoformat()}: a review cannot be dated in the future')
     except ValueError:
         e.append('reviewed_at: ISO date required')
     if reviewer.get('independent') is not True:
@@ -302,12 +333,29 @@ def check_reviewer(reviewer, case=None, result=None):
     if not isinstance(findings, list):
         e.append('findings must be a list')
     sha = reviewer.get('valuation_sha256')
-    if sha is not None:
-        if result and sha != result.get('input_sha256'):
-            e.append('valuation_sha256 does not match the executed valuation: the review covers a different case')
-        out['bound_to_valuation'] = bool(result and sha == result.get('input_sha256'))
+    if not isinstance(sha, str) or not sha.strip():
+        e.append('valuation_sha256: required (input_sha256 of the executed valuation the review covers); an unbound review '
+                 'could be reused for a different revision')
+    elif result and sha != result.get('input_sha256'):
+        e.append('valuation_sha256 does not match the executed valuation: the review covers a different case')
+    out['bound_to_valuation'] = bool(result and isinstance(sha, str) and sha == result.get('input_sha256'))
+    ro = reviewer.get('risk_overrides', {})
+    if not isinstance(ro, dict):
+        e.append('risk_overrides must map risk id -> {justification, evidence_ids}'); ro = {}
+    for rid, o in ro.items():
+        o = o if isinstance(o, dict) else {}
+        ev = o.get('evidence_ids')
+        if not isinstance(o.get('justification'), str) or len(o['justification'].split()) < 5:
+            e.append(f'risk_overrides.{rid}: documented justification required (at least 5 words)')
+        elif not isinstance(ev, list) or not ev or not all(isinstance(x, str) and x for x in ev):
+            e.append(f'risk_overrides.{rid}: evidence_ids required (nonempty list of ids)')
+        elif known_ids is not None and set(ev) - set(known_ids):
+            e.append(f"risk_overrides.{rid}: unknown evidence ids {sorted(set(ev) - set(known_ids))}")
+        else:
+            out['risk_overrides'].append(rid)
     out['independent'] = reviewer.get('independent') is True
     out['valid'] = not e
+    out['accepted'] = out['valid'] and out['independent'] and out['bound_to_valuation']
     return out
 
 
@@ -324,7 +372,7 @@ def _risk_free(fc):
 def consistency(fb, qa, an, fc, val, rt=None, rc=None):
     result, case, today, price = valuation_parts(val)
     out = []
-    reviewed = set((rc or {}).get('reviewed') or [])
+    reviewed = set((rc or {}).get('reviewed') or []) if (rc or {}).get('accepted') else set()     # only an accepted reviewer signs off
 
     def add(code, status, severity, message, **detail):
         out.append({'code': code, 'status': status, 'severity': severity, 'message': message, 'detail': detail})
@@ -394,12 +442,13 @@ def consistency(fb, qa, an, fc, val, rt=None, rc=None):
     elif peak <= best + .10:
         add('margin_vs_history', 'pass', 'major', f'Peak modeled operating margin {peak:.1%} within 10pp of best history {best:.1%}.', model_peak_margin=peak, best_history=best)
     else:
-        margin_a = [a for a in (fc or {}).get('assumptions', []) if 'margin' in str(a.get('topic', '')).lower()]
+        margin_a = [a for a in (fc or {}).get('assumptions', []) if 'margin' in f"{a.get('id', '')} {a.get('topic', '')}".lower()]
         evidenced = any(a.get('kind') in ('reported', 'guidance') and a.get('source_ids') for a in margin_a)
-        ids = {a['id'] for a in margin_a} | terminal_ids
+        ids = {a['id'] for a in margin_a}          # margin-specific only: a signed terminal/generic id does not cover the margin
         status = 'reviewed' if ids and ids <= reviewed else ('evidenced' if evidenced else 'needs_evidence')
         add('margin_vs_history', status, 'major', f'Peak modeled operating margin {peak:.1%} exceeds best history {best:.1%} by more than 10pp: '
-            'needs reported/guided evidence or an explicit reviewer sign-off.', model_peak_margin=peak, best_history=best)
+            'needs reported/guided evidence or an explicit reviewer sign-off of a margin-specific assumption.', model_peak_margin=peak,
+            best_history=best, margin_assumption_ids=sorted(ids))
     hist_sh = metric(an, 'share_count_cagr_3y')
     rows = br['forecast']
     span = years(case['as_of'], rows[-1]['end'])
@@ -447,19 +496,67 @@ def _opening_check(qa, case, val):
 
 # ---------------------------------------------------------------- audit
 
-def _reaudit(case, result, rc):
-    """Underwriting audit re-run with the independent reviewer's sign-offs applied to a copy."""
+def _reaudit(case, result, signed):
+    """Underwriting audit re-run on a copy in which ONLY the ids in `signed` are reviewed: author-side review
+    statuses are reset first, so they can never stand in for an independent sign-off."""
     c = deepcopy(case)
     for a in c['assumptions']:
-        if a['id'] in rc['reviewed']:
-            a['review_status'] = 'reviewed'
+        a['review_status'] = 'reviewed' if a['id'] in signed else 'unreviewed'
     return audit_valuation(c, result['scenarios'])
 
 
-def audit(fb, qa, an, card, fc, val, rk, reviewer=None):
-    result, case, today, price = valuation_parts(val)
+def _paths(issues):
+    return ', '.join(sorted({i['code'] + '@' + (i['path'] or '-') for i in issues}))
+
+
+def _underwriting_gate(case, result, rc, va, no):
+    """Close the underwriting gate only through an accepted independent reviewer, in every valuation status."""
+    ids = [a['id'] for a in case['assumptions']]
+    author = sorted(a['id'] for a in case['assumptions'] if a.get('review_status') == 'reviewed')
+    if author:
+        va['author_review_notes'] = {'assumption_ids': author, 'meaning': AUTHOR_NOTES}
+    blind, full = _reaudit(case, result, ()), _reaudit(case, result, set(ids))
+    other = sorted({i['code'] for i in blind['issues']} - REVIEW_ONLY)
+    primary = [i for i in full['issues'] if i['code'] == 'evidence_missing' and 'primary source' in i['message']]
+    va['full_signoff_would_close'] = full['eligible_for_research_synthesis']
+    if other:
+        no('underwriting_incomplete', f"underwriting issues beyond review: {', '.join(other)}")
+    elif primary:
+        no('primary_evidence_missing', f'no primary source (filing, earnings or issuer release) behind {_paths(primary)}: a reviewer '
+           'sign-off cannot close this; link the primary document to the opening assumptions')
+    elif not full['eligible_for_research_synthesis']:
+        no('underwriting_incomplete', f"evidence not linked to any assumption ({_paths(full['issues'])}): a reviewer sign-off cannot close this")
+    elif not rc['accepted']:
+        why = '; '.join(rc['errors']) or ('reviewer not independent' if not rc['independent'] else 'review not bound to this valuation')
+        no('review_required', 'only review gaps remain; a valid, independent review bound to this valuation (valuation_sha256) is required'
+           + (f' (reviewer input not accepted: {why})' if rc['present'] else '') + (f"; author review notes on {', '.join(author)} do not count" if author else ''))
+    elif rc['rejected']:
+        no('assumption_rejected', f"reviewer rejected: {', '.join(rc['rejected'])}")
+    else:
+        missing = sorted(i for i in ids if i not in rc['reviewed'])
+        re_ = _reaudit(case, result, set(rc['reviewed']))
+        va['reaudit_with_reviewer'] = {'eligible': re_['eligible_for_research_synthesis'], 'issues': re_['issues']}
+        if missing:
+            no('review_incomplete', f"assumptions not signed off by the independent reviewer: {', '.join(missing)}")
+        elif not re_['eligible_for_research_synthesis']:
+            no('review_incomplete', f"gaps remain after sign-off: {_paths(re_['issues'])}")
+        else:
+            va['basis'] = 'accepted independent reviewer (bound to this valuation) signs off every assumption and closes every remaining underwriting gap'
+
+
+def _known_ids(fb, case, rk):
+    ids = set((fb or {}).get('sources') or {}) | {q.get('id') for q in (fb or {}).get('qualitative') or []}
+    ids |= {s.get('id') for s in (case or {}).get('sources') or []}
+    for r in (rk or {}).get('register') or []:
+        ids |= set(r.get('evidence_ids') or [])
+    return {i for i in ids if isinstance(i, str)}
+
+
+def audit(fb, qa, an, card, fc, val, rk, reviewer=None, today=None):
+    """Review gate. `today` is the clock for reviewed_at (date or ISO string; default date.today())."""
+    result, case, _, _ = valuation_parts(val)
     rt = redteam_check(fb, qa, an, fc, val)
-    rc = check_reviewer(reviewer, case, result)
+    rc = check_reviewer(reviewer, case, result, today, _known_ids(fb, case, rk))
     cons = consistency(fb, qa, an, fc, val, rt, rc)
     ua = (result or {}).get('underwriting_audit') or {}
     va = {'valuation_status': (result or {}).get('status', (val or {}).get('status', 'not_computed')),
@@ -481,27 +578,8 @@ def audit(fb, qa, an, card, fc, val, rk, reviewer=None):
         no('valuation_not_executed', (val or {}).get('reason') or 'no executed valuation')
     elif va['is_demo']:
         no('is_demo', 'synthetic demo inputs never support a real price conclusion')
-    elif va['valuation_status'] == 'conditional_valuation' and va['eligible']:
-        va['basis'] = 'underwriting audit eligible'
-    elif va['valuation_status'] in ('underwriting_required', 'unreviewed'):
-        other = sorted(set(va['issue_codes']) - REVIEW_ONLY)
-        if other:
-            no('underwriting_incomplete', f"underwriting issues beyond review: {', '.join(other)}")
-        elif not (rc['valid'] and rc['independent']):
-            no('review_required', 'only review/evidence gaps remain; a valid signed independent review is required'
-               + (f" (reviewer input invalid: {'; '.join(rc['errors'])})" if rc['present'] else ''))
-        elif rc['rejected']:
-            no('assumption_rejected', f"reviewer rejected: {', '.join(rc['rejected'])}")
-        else:
-            missing = sorted(a['id'] for a in case['assumptions'] if a['review_status'] != 'reviewed' and a['id'] not in rc['reviewed'])
-            re = _reaudit(case, result, rc)
-            va['reaudit_with_reviewer'] = {'eligible': re['eligible_for_research_synthesis'], 'issues': re['issues']}
-            if missing:
-                no('review_incomplete', f"assumptions not signed off: {', '.join(missing)}")
-            elif not re['eligible_for_research_synthesis']:
-                no('review_incomplete', f"gaps remain after sign-off: {', '.join(sorted({i['code'] + '@' + i['path'] for i in re['issues']}))}")
-            else:
-                va['basis'] = 'independent reviewer sign-off closes every remaining underwriting gap'
+    elif va['valuation_status'] in UNDERWRITTEN:
+        _underwriting_gate(case, result, rc, va, no)
     elif va['valuation_status'] == 'funding_blocked':
         no('funding_blocked', 'a scenario has an unfunded cash requirement; values are withheld until financing is modeled')
     else:
@@ -516,6 +594,13 @@ def audit(fb, qa, an, card, fc, val, rk, reviewer=None):
         no('risk_not_assessed', 'risk stage did not run')
     elif rk.get('disqualifying'):
         no('disqualifying_risk', ', '.join(rk['disqualifying']))
+    held = [r for r in (rk or {}).get('register') or [] if r.get('withhold_price')]
+    overridden = set(rc['risk_overrides']) if rc['accepted'] else set()
+    open_flags = [r for r in held if r['id'] not in overridden]
+    if open_flags:
+        no('governance_red_flag', '; '.join(f"{r['id']} ({', '.join(r.get('evidence_ids') or [])})" for r in open_flags)
+           + ': evidenced going-concern doubt, material weakness or restatement; the price conclusion waits for an accepted independent '
+           'reviewer to document an override (risk_overrides with justification and evidence ids)')
     if not rt['usable']:
         why = rt['critical_failed'] + rt['critical_unverifiable'] or [rt['error'] or rt['verdict']]
         no('redteam_not_usable', f"critical red-team checks failed or unverifiable: {', '.join(map(str, why))}")
@@ -531,6 +616,7 @@ def audit(fb, qa, an, card, fc, val, rk, reviewer=None):
     return {'mechanical': {'dataqa': status_qa, 'dataqa_blocking': (qa or {}).get('blocking', []), 'dataqa_limited': (qa or {}).get('limited', []),
                            'valuation_audit': va, 'redteam': rt, 'consistency': cons},
             'reviewer': deepcopy(reviewer) if reviewer is not None else None, 'reviewer_check': rc,
+            'risk_overrides_applied': sorted(r['id'] for r in held if r['id'] in overridden),
             'price_conclusion_allowed': allowed,
             'status': 'reviewed' if allowed else ('blocked' if HARD & set(codes) else 'unreviewed_draft'),
             'reasons': reasons, 'reason_codes': codes, 'open_items': open_items,

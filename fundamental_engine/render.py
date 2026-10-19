@@ -456,8 +456,12 @@ def _review(cf):
     m = rv.get('mechanical') or {}
     out += [f"Status: **{rv.get('status')}**; price conclusion allowed: **{rv.get('price_conclusion_allowed')}**"]
     out += [f'- {r}' for r in rv.get('reasons') or []]
+    rt = m.get('redteam') or {}
+    bc = rt.get('by_construction') or []
     out += [f"- Mechanical: dataqa {m.get('dataqa')}; valuation audit {_dig(m, 'valuation_audit', 'status') or 'n/a'}; "
-            f"red team {_dig(m, 'redteam', 'verdict') or 'n/a'}; consistency findings {len(m.get('consistency') or [])}"]
+            f"red team {rt.get('verdict') or 'n/a'} (capital structure from {rt.get('capital_structure_source') or 'n/a'}; "
+            + (f"passing by construction, not independent evidence: {', '.join(map(str, bc))}" if bc else 'no check passes by construction')
+            + f"); consistency findings {len(m.get('consistency') or [])}"]
     out += [f"  - {c.get('code')}: {c.get('status')} ({c.get('severity')}) — {c.get('message')}" if isinstance(c, dict) else f'  - {c}'
             for c in m.get('consistency') or []]
     r = rv.get('reviewer')

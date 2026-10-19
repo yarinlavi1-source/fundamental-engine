@@ -4,13 +4,15 @@ Fixtures: the fictional software driver example (is_demo), synthetic NON-demo va
 their 'filing' sources and numbers are fictional, labelled as such), and the real ADBE FactBook (10-K values)
 with hand-built dataqa/analysis inputs and an ILLUSTRATIVE driver spec (test assumptions, not a forecast).
 Upstream stage outputs are constructed by hand per docs/MODULE_CONTRACTS.md so these tests do not depend on
-other modules' heuristics.
+other modules' heuristics. Reviews are dated against a fixed clock (TODAY); signed() binds to the executed
+valuation unless a test overrides valuation_sha256.
 """
 import json
 import unittest
 from copy import deepcopy
+from datetime import date
 from pathlib import Path
-from fundamental_engine import facts as F, risk, review
+from fundamental_engine import facts as F, render, risk, review
 from fundamental_engine.drivers import build_case
 from fundamental_engine.scores import scorecards
 from fundamental_engine.valuation import value_company
@@ -19,6 +21,8 @@ ROOT = Path(__file__).resolve().parents[1]
 SPEC = json.loads((ROOT / 'examples/valuation/software_drivers.json').read_text())
 ADBE = json.loads((ROOT / 'tests/fixtures/adbe_factbook_2026-10-19.json').read_text())
 AS_OF = '2026-09-27'
+TODAY = date(2026, 10, 1)                      # injected review clock
+BIND = 'bind-to-executed-valuation'            # run() replaces this with the executed valuation's input_sha256
 
 
 def m(v):
@@ -108,7 +112,7 @@ def live_spec():
 def signed(**over):
     r = {'reviewer': 'Independent reviewer (test double)', 'reviewed_at': '2026-09-28', 'independent': True, 'assumption_reviews': {'a1': 'reviewed'},
          'findings': [{'severity': 'major', 'text': 'Terminal margin needs a peer comparison.', 'resolved': True, 'response': 'Peer range 22-30% cited.'}],
-         'statement': 'I read the casefile and the sources; the assumptions are supportable.'}
+         'statement': 'I read the casefile and the sources; the assumptions are supportable.', 'valuation_sha256': BIND}
     r.update(over)
     return r
 
@@ -128,12 +132,14 @@ def scen(spec, name):
     return next(s for s in spec['scenarios'] if s['name'] == name)
 
 
-def run(spec=None, fb=None, q=None, an=None, cd=None, fc=None, val=None, reviewer=None):
+def run(spec=None, fb=None, q=None, an=None, cd=None, fc=None, val=None, reviewer=None, today=TODAY):
     spec = live_spec() if spec is None else spec
     fb, q, an, cd = fb or factbook(), q or qa(), an or analysis(), cd or card()
     fc, val = fc or forecast(spec), val or valuate(spec)
     rk = risk.assess(fb, q, an, cd, fc, val)
-    rv = review.audit(fb, q, an, cd, fc, val, rk, reviewer)
+    if isinstance(reviewer, dict) and reviewer.get('valuation_sha256') == BIND:
+        reviewer = dict(reviewer, valuation_sha256=(val.get('result') or {}).get('input_sha256'))
+    rv = review.audit(fb, q, an, cd, fc, val, rk, reviewer, today)
     json.dumps(rk, allow_nan=False)
     json.dumps(rv, allow_nan=False)
     return rk, rv
@@ -188,18 +194,20 @@ class DemoAndSignOff(unittest.TestCase):
     def test_reviewer_shape_is_validated_and_recorded(self):
         spec = live_spec()
         val = valuate(spec)
-        cases = {'independent': signed(independent=False), 'precedes the valuation cutoff': signed(reviewed_at='2026-09-01'),
-                 'unknown assumption id': signed(assumption_reviews={'a1': 'reviewed', 'zz': 'reviewed'}),
-                 'needs a response': signed(findings=[{'severity': 'minor', 'text': 'x', 'resolved': True}]),
+        sha = val['result']['input_sha256']
+        cases = {'independent': signed(independent=False, valuation_sha256=sha), 'precedes the valuation cutoff': signed(reviewed_at='2026-09-01', valuation_sha256=sha),
+                 'unknown assumption id': signed(assumption_reviews={'a1': 'reviewed', 'zz': 'reviewed'}, valuation_sha256=sha),
+                 'needs a response': signed(findings=[{'severity': 'minor', 'text': 'x', 'resolved': True}], valuation_sha256=sha),
                  'different case': signed(valuation_sha256='0' * 64)}
         for needle, r in cases.items():
             _, rv = run(spec, val=val, reviewer=r)
             self.assertFalse(rv['price_conclusion_allowed'], needle)
             self.assertTrue(any(needle in e for e in rv['reviewer_check']['errors']), (needle, rv['reviewer_check']['errors']))
             self.assertEqual(rv['reviewer'], r)                                     # recorded as supplied
-        _, rv = run(spec, val=val, reviewer=signed(valuation_sha256=val['result']['input_sha256']))
+        _, rv = run(spec, val=val, reviewer=signed(valuation_sha256=sha))
         self.assertTrue(rv['price_conclusion_allowed'])
         self.assertTrue(rv['reviewer_check']['bound_to_valuation'])
+        self.assertTrue(rv['reviewer_check']['accepted'])
 
     def test_rejection_and_unresolved_critical_finding(self):
         _, rv = run(reviewer=signed(assumption_reviews={'a1': 'rejected'}))
@@ -457,8 +465,8 @@ class Consistency(unittest.TestCase):
         self.assertEqual(c['margin_vs_history']['status'], 'needs_evidence')
         self.assertEqual(c['terminal_growth_vs_risk_free']['status'], 'fail')
         self.assertEqual(c['share_path_vs_history']['status'], 'needs_explanation')
-        _, rv = run(an=an, reviewer=signed())
-        self.assertEqual(self.codes(rv)['margin_vs_history']['status'], 'reviewed')
+        _, rv = run(an=an, reviewer=signed())                                      # a1 is generic (terminal ids), not margin-specific
+        self.assertEqual(self.codes(rv)['margin_vs_history']['status'], 'needs_evidence')
         _, rv = run(fc=forecast(live_spec(), risk_free=None))
         self.assertEqual(self.codes(rv)['terminal_growth_vs_risk_free']['status'], 'skip')
 
@@ -469,6 +477,198 @@ class Consistency(unittest.TestCase):
         self.assertEqual((c['status'], c['severity']), ('fail', 'critical'))
         self.assertIn('consistency_failure', rv['reason_codes'])
         self.assertEqual(rv['status'], 'blocked')
+
+
+class ReviewerGate(unittest.TestCase):
+    """Regressions: no price conclusion without an accepted (valid, independent, bound, dated) reviewer."""
+
+    def test_author_review_status_is_a_note_not_a_signoff(self):
+        spec = live_spec()
+        spec['assumptions'][0].update(review_status='reviewed', reviewer='me (the analyst who wrote the forecast)')
+        val = valuate(spec)
+        self.assertEqual(val['result']['status'], 'conditional_valuation')         # the author's own status satisfies the audit
+        self.assertTrue(val['result']['underwriting_audit']['eligible_for_research_synthesis'])
+        _, rv = run(spec, val=val)
+        self.assertFalse(rv['price_conclusion_allowed'])
+        self.assertIn('review_required', rv['reason_codes'])
+        self.assertEqual(rv['mechanical']['valuation_audit']['author_review_notes']['assumption_ids'], ['a1'])
+        self_review = signed(reviewer='me', independent=False)
+        _, rv = run(spec, val=val, reviewer=self_review)                            # an invalid reviewer is not ignored
+        self.assertFalse(rv['price_conclusion_allowed'])
+        self.assertIn('review_required', rv['reason_codes'])
+        self.assertTrue(any('independent must be true' in e for e in rv['reviewer_check']['errors']))
+        _, rv = run(spec, val=val, reviewer=signed(assumption_reviews={}))         # accepted, but signs nothing: author notes do not fill in
+        self.assertFalse(rv['price_conclusion_allowed'])
+        self.assertIn('review_incomplete', rv['reason_codes'])
+        _, rv = run(spec, val=val, reviewer=signed())
+        self.assertTrue(rv['price_conclusion_allowed'], rv['reasons'])
+
+    def test_review_must_be_bound_to_this_valuation(self):
+        _, rv = run(reviewer=signed(valuation_sha256=None))
+        self.assertFalse(rv['price_conclusion_allowed'])
+        self.assertFalse(rv['reviewer_check']['valid'])
+        self.assertTrue(any('valuation_sha256: required' in e for e in rv['reviewer_check']['errors']))
+        spec_a, spec_b = live_spec(), live_spec()
+        for s in spec_b['scenarios']:
+            s['terminal']['operating_margin'] += .08                               # revision B, never seen by the reviewer
+        review_of_a = signed(valuation_sha256=valuate(spec_a)['result']['input_sha256'])
+        _, rv_a = run(spec_a, reviewer=review_of_a)
+        _, rv_b = run(spec_b, reviewer=review_of_a)
+        self.assertTrue(rv_a['price_conclusion_allowed'])
+        self.assertFalse(rv_b['price_conclusion_allowed'])
+        self.assertFalse(rv_b['reviewer_check']['bound_to_valuation'])
+
+    def test_reviewed_at_must_lie_between_cutoff_and_today(self):
+        early = signed(reviewed_at='2026-10-05')
+        _, rv = run(reviewer=early, today=date(2026, 10, 1))
+        self.assertFalse(rv['price_conclusion_allowed'])
+        self.assertTrue(any('after today 2026-10-01' in e for e in rv['reviewer_check']['errors']), rv['reviewer_check']['errors'])
+        _, rv = run(reviewer=early, today='2026-10-10')
+        self.assertTrue(rv['price_conclusion_allowed'], rv['reasons'])
+        _, rv = run(reviewer=signed(reviewed_at='2099-12-31'), today=None)          # default clock: date.today()
+        self.assertFalse(rv['reviewer_check']['valid'])
+        self.assertFalse(rv['price_conclusion_allowed'])
+
+    def test_gap_no_signoff_can_close_is_primary_evidence_missing(self):
+        spec = live_spec()
+        spec['sources'][0]['kind'] = 'document'                                    # the 10-K reached only as a generic document
+        val = valuate(spec)
+        self.assertTrue({i['code'] for i in val['result']['underwriting_audit']['issues']} <= review.REVIEW_ONLY)
+        for reviewer in (None, signed()):
+            _, rv = run(spec, val=val, reviewer=reviewer)
+            self.assertFalse(rv['price_conclusion_allowed'])
+            self.assertEqual(rv['reason_codes'], ['primary_evidence_missing'])
+            self.assertIn('cannot close', rv['reasons'][0])
+            self.assertFalse(rv['mechanical']['valuation_audit']['full_signoff_would_close'])
+            self.assertEqual(rv['status'], 'unreviewed_draft')
+
+
+class ErrorSizeScope(unittest.TestCase):
+    def test_process_gaps_do_not_raise_the_valuation_error(self):
+        rk0, _ = run()
+        rk1, _ = run(q=qa('limited', limited=['debt']), cd=card(completeness='partial', dims={}))
+        e0, e1 = rk0['error_size'], rk1['error_size']
+        self.assertEqual(e0['level'], 'medium')
+        self.assertEqual(e1['level'], e0['level'])                                   # same valuation, same possible valuation error
+        self.assertEqual(e1['reasons'], e0['reasons'])
+        self.assertEqual([g['code'] for g in e0['process_gaps']], ['dimensions_unassessed'])     # moat, retention not in the card
+        self.assertEqual([g['code'] for g in e1['process_gaps']], ['data_limited', 'understanding_partial', 'dimensions_unassessed'])
+        self.assertIn('biz.competition', next(g for g in e1['process_gaps'] if g['code'] == 'dimensions_unassessed')['ids'])
+        rk2, _ = run(q=qa('blocked', blocking=['debt']), cd=card(completeness='insufficient'))
+        self.assertEqual(rk2['error_size']['level'], 'medium')
+        self.assertEqual({g['code']: g['severity'] for g in rk2['error_size']['process_gaps']},
+                         {'data_blocked': 'high', 'understanding_insufficient': 'high', 'dimensions_unassessed': 'medium'})
+
+
+class PermanentLossSeverity(unittest.TestCase):
+    def test_shrinking_bear_permanent_loss_is_not_milder_than_bear(self):
+        spec = live_spec()
+        bear_growth = [-.20, -.15, -.10, -.05, -.02, 0., 0.]
+        scen(spec, 'bear')['growth'] = bear_growth
+        for kind, cd, expect in (('growth_stall', card(), bear_growth), ('funding_failure', card(stage='early'), [g * 1.5 for g in bear_growth])):
+            s2, _ = risk.variant_spec(spec, kind)
+            for got, want in zip(scen(s2, 'bear')['growth'], expect):
+                self.assertAlmostEqual(got, want)
+            rk, _ = run(spec, cd=cd)
+            by = {s['name']: s for s in rk['failure_scenarios']}
+            perm = by['permanent_loss:' + kind]
+            self.assertLess(perm['value_per_share'], by['bear']['value_per_share'], kind)
+            self.assertIs(perm['not_more_severe_than_bear'], False)
+            self.assertGreater(rk['downside']['loss_to_permanent'], rk['downside']['loss_to_bear'])
+        s2, _ = risk.variant_spec(live_spec(), 'funding_failure')                  # growing bear: half the growth, as before
+        self.assertAlmostEqual(scen(s2, 'bear')['growth'][0], scen(live_spec(), 'bear')['growth'][0] / 2)
+
+    def test_variant_not_below_bear_is_flagged(self):
+        p = risk._permanent(live_spec(), 'growth_stall', -.25, 50, bear_value=0.)
+        self.assertEqual(p['status'], 'computed')
+        self.assertIs(p['not_more_severe_than_bear'], True)
+        self.assertIn('not below the bear', p['severity_note'])
+
+
+class SbcAndMarginSignoff(unittest.TestCase):
+    def test_token_sbc_is_not_expensed(self):
+        spec = live_spec()
+        for s in spec['scenarios']:
+            s['sbc_pct'] = .002                                                    # history 12% of revenue
+        rk, rv = run(spec, reviewer=signed())
+        rt = rv['mechanical']['redteam']
+        self.assertIsNone(rt['derived_inputs']['sbc_treatment']['value'])
+        self.assertEqual(rt['derived_inputs']['margin_basis']['value'], 'adjusted_ebitda')
+        self.assertIn('sbc', rt['critical_failed'])
+        self.assertFalse(rv['price_conclusion_allowed'])
+        fade = {'id': 'sbc_fade', 'topic': 'stock-based compensation fade', 'kind': 'guidance', 'source_ids': ['10k']}
+        _, rv = run(spec, fc=forecast(spec, [fade]), reviewer=signed())
+        d = rv['mechanical']['redteam']['derived_inputs']['sbc_treatment']
+        self.assertEqual(d['value'], 'expensed')
+        self.assertIn('evidenced fade', d['derived_from'])
+        _, rv = run(reviewer=signed())                                             # 10% of revenue modelled vs 12% history: expensed
+        self.assertEqual(rv['mechanical']['redteam']['derived_inputs']['sbc_treatment']['value'], 'expensed')
+
+    def test_margin_signoff_needs_a_margin_specific_assumption(self):
+        an = analysis(operating_margin_best_3y=.05)
+        _, rv = run(an=an, reviewer=signed())                                      # only the terminal/generic id a1 is signed
+        c = next(x for x in rv['mechanical']['consistency'] if x['code'] == 'margin_vs_history')
+        self.assertEqual(c['status'], 'needs_evidence')
+        margin = {'id': 'a1', 'topic': 'mature operating margin (after SBC)', 'kind': 'analyst', 'source_ids': ['10k']}
+        _, rv = run(an=an, fc=forecast(live_spec(), [margin]), reviewer=signed())
+        c = next(x for x in rv['mechanical']['consistency'] if x['code'] == 'margin_vs_history')
+        self.assertEqual((c['status'], c['detail']['margin_assumption_ids']), ('reviewed', ['a1']))
+        _, rv = run(an=an, fc=forecast(live_spec(), [margin]), reviewer=signed(independent=False))
+        c = next(x for x in rv['mechanical']['consistency'] if x['code'] == 'margin_vs_history')
+        self.assertEqual(c['status'], 'needs_evidence')                            # a sign-off counts only from an accepted reviewer
+
+
+class GovernanceDimensions(unittest.TestCase):
+    def test_weak_governance_and_management_enter_the_register(self):
+        cd = card(dims={'governance': {'assessment': 'weak', 'evidence_ids': ['syn'], 'note': 'dual-class shares, related-party leases'},
+                        'management': {'assessment': 'weak', 'evidence_ids': ['syn'], 'note': 'CFO resigned; auditor dismissed'}})
+        rk, rv = run(cd=cd, reviewer=signed())
+        for rid in ('biz.governance', 'biz.management'):
+            r = entry(rk, rid)
+            self.assertEqual((r['class'], r['severity'], r['assessed']), ('pricing', 'high', True), rid)
+        self.assertEqual(rk['withhold_price'], [])                                 # weak, but no evidenced red flag
+        self.assertTrue(rv['price_conclusion_allowed'], rv['reasons'])
+        rk, _ = run(cd=card(dims={}))
+        self.assertEqual({entry(rk, f'biz.{d}')['status'] for d in ('governance', 'management', 'moat', 'retention')}, {'unassessed'})
+        self.assertEqual(entry(rk, 'biz.retention')['severity'], 'high')            # subscription software
+
+    def test_evidenced_red_flags_withhold_the_price_until_a_documented_override(self):
+        cd = card(dims={'governance': {'assessment': 'weak', 'evidence_ids': ['syn'], 'note': 'material weakness in internal control; restatement of FY2024'}})
+        fb = factbook()
+        F.add_qualitative(fb, 'q_gc', 'auditor report', 'The auditor expressed substantial doubt about the ability to continue as a going concern.',
+                          'reported', ['syn'], AS_OF)
+        rk, rv = run(fb=fb, cd=cd, reviewer=signed())
+        self.assertEqual(rk['withhold_price'], ['gov.going_concern', 'gov.material_weakness', 'gov.restatement'])
+        self.assertEqual(rk['disqualifying'], [])                                   # withheld, not vetoed
+        self.assertIn('q_gc', entry(rk, 'gov.going_concern')['evidence_ids'])
+        self.assertFalse(rv['price_conclusion_allowed'])
+        self.assertIn('governance_red_flag', rv['reason_codes'])
+        self.assertEqual(rv['status'], 'unreviewed_draft')
+        why = 'Remediation was completed and tested by the auditor in the following annual report.'
+        ov = {rid: {'justification': why, 'evidence_ids': ['syn']} for rid in rk['withhold_price']}
+        _, rv = run(fb=fb, cd=cd, reviewer=signed(risk_overrides=ov))
+        self.assertTrue(rv['price_conclusion_allowed'], rv['reasons'])
+        self.assertEqual(rv['risk_overrides_applied'], rk['withhold_price'])
+        _, rv = run(fb=fb, cd=cd, reviewer=signed(risk_overrides={'gov.going_concern': {'justification': 'fine', 'evidence_ids': ['zz']}}))
+        self.assertFalse(rv['price_conclusion_allowed'])
+        self.assertTrue(any('risk_overrides.gov.going_concern' in e for e in rv['reviewer_check']['errors']))
+
+    def test_negated_or_unevidenced_statements_are_not_red_flags(self):
+        fb = factbook()
+        F.add_qualitative(fb, 'q_icfr', 'internal control', 'Management concluded there was no material weakness in internal control.', 'reported', ['syn'], AS_OF)
+        F.add_qualitative(fb, 'q_op', 'short report', 'A short seller alleges a restatement of revenue is coming.', 'opinion', ['syn'], AS_OF)
+        cd = card(dims={'governance': {'assessment': 'weak', 'evidence_ids': [], 'note': 'possible material weakness (asserted)'}})
+        rk, rv = run(fb=fb, cd=cd, reviewer=signed())
+        self.assertEqual(rk['withhold_price'], [])
+        self.assertNotIn('governance_red_flag', rv['reason_codes'])
+
+
+class RenderReview(unittest.TestCase):
+    def test_review_section_names_checks_that_pass_by_construction(self):
+        _, rv = run(reviewer=signed())
+        text = '\n'.join(render._review({'rv': rv}))
+        self.assertIn('capital structure from dataqa_resolved', text)
+        self.assertIn('passing by construction, not independent evidence: cash_reconciles, debt_complete, shares_current', text)
 
 
 def adbe_inputs():

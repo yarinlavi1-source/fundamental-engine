@@ -14,13 +14,25 @@ hides how a thesis fails. The register keeps the owner's three classes apart:
 - accepted_priced: risks the executed bear scenario already models (in_bear_case: the bear rows
   are materially worse than base on exactly the levers the risk acts on, measured from execution,
   not from labels) or that an explicit discount-rate component covers.
-Unknown business dimensions become 'unassessed' entries whose severity is their relevance to the
-business type: an unknown is an open research question, never an invented risk.
+- withhold_price: evidenced going-concern doubt, material weakness or restatement (a 'reported'
+  FactBook qualitative item, or a weak governance/management assessment with evidence ids). A
+  pricing entry, not a veto; review withholds the price conclusion until an independent reviewer
+  documents an override.
+Unknown business dimensions (including governance, management, moat and retention) become
+'unassessed' entries whose severity is their relevance to the business type: an unknown is an open
+research question, never an invented risk.
 
 Failure scenarios re-run drivers.build_case + valuation.value_company on documented edits of the
-bear driver row (type-specific permanent-loss mechanisms); when that path runs out of cash the gap is
+bear driver row (type-specific permanent-loss mechanisms); every edit is at least as severe as the bear
+on the lever it changes (a shrinking bear keeps shrinking), and a variant whose value is still not below
+the bear is flagged not_more_severe_than_bear. When that path runs out of cash the gap is
 filled with equity at a depressed price, so the loss shows up as dilution instead of a withheld
 number. Severity thresholds are descriptive screens, never automatic rejections.
+
+error_size measures only the possible VALUATION error (scenario range, discount-rate sensitivity,
+terminal dependence, unverifiable red-team checks). Data limits, business understanding and unassessed
+dimensions are process gaps listed separately (error_size.process_gaps): they lower confidence, and
+must not also widen the valuation error or the required return.
 """
 from copy import deepcopy
 from datetime import date, timedelta
@@ -35,21 +47,33 @@ from .valuation import value_company, years
 
 CRITICAL_FIELDS = {'shares_outstanding', 'cash_and_liquid_investments', 'investments', 'debt', 'convertibles', 'post_period_events',
                    'revenue_ttm', 'operating_income_ttm', 'cfo_ttm', 'capex_ttm', 'sbc_ttm'}
-DIMENSIONS = ('competition', 'substitutes', 'customer_concentration', 'technology_ai', 'regulation', 'geopolitics')
+DIMENSIONS = ('competition', 'substitutes', 'customer_concentration', 'technology_ai', 'regulation', 'geopolitics',
+              'governance', 'management', 'moat', 'retention')
 # relevance of each dimension (order above) by business model: H/M/L sets the severity of an UNASSESSED dimension
-RELEVANCE = {'subscription_software': 'HMLHLL', 'platform_marketplace': 'HMLHHM', 'semiconductor': 'HMHHMH',
-             'hardware_manufacturing': 'HMHMLH', 'capital_intensive_infrastructure': 'MMHMHM', 'consumer_brand': 'HHMLMM',
-             'industrial': 'MMMMMM', 'financials': 'MMLMHM', 'pre_revenue_biotech': 'HHLMHL', 'conglomerate': 'MMMMMM',
-             'reit': 'MLMLML', 'commodity': 'MMMLHH'}
+RELEVANCE = {'subscription_software': 'HMLHLLMMHH', 'platform_marketplace': 'HMLHHMMMHM', 'semiconductor': 'HMHHMHMMML',
+             'hardware_manufacturing': 'HMHMLHMMML', 'capital_intensive_infrastructure': 'MMHMHMMMMM', 'consumer_brand': 'HHMLMMMMHM',
+             'industrial': 'MMMMMMMMMM', 'financials': 'MMLMHMMMMM', 'pre_revenue_biotech': 'HHLMHLMHML', 'conglomerate': 'MMMMMMMMMM',
+             'reit': 'MLMLMLMMLM', 'commodity': 'MMMLHHMMLL'}
 LEVEL = {'H': 'high', 'M': 'medium', 'L': 'low'}
 DIM_LEVERS = {'competition': ('growth', 'margin'), 'substitutes': ('growth', 'margin'), 'customer_concentration': ('growth',),
-              'technology_ai': ('growth', 'margin'), 'regulation': ('margin',), 'geopolitics': ('growth',)}
+              'technology_ai': ('growth', 'margin'), 'regulation': ('margin',), 'geopolitics': ('growth',),
+              'governance': (), 'management': ('growth', 'margin'), 'moat': ('margin',), 'retention': ('growth',)}
 # a business risk counts as in the bear case only when the bear names it (thesis, or an assumption whose bear value differs)
 DIM_LINK = {'competition': r'competit|share loss|price war|pricing pressure', 'substitutes': r'substitut',
             'customer_concentration': r'customer|concentrat|churn', 'technology_ai': r'\bai\b|artificial intelligence|technolog|disrupt|automation',
-            'regulation': r'regulat|antitrust|licen[cs]', 'geopolitics': r'geopolit|tariff|export control|sanction|china|taiwan'}
+            'regulation': r'regulat|antitrust|licen[cs]', 'geopolitics': r'geopolit|tariff|export control|sanction|china|taiwan',
+            'governance': r'governance', 'management': r'management|\bceo\b|\bcfo\b|execution|capital allocation',
+            'moat': r'moat|competitive advantage|pricing power|commoditi', 'retention': r'retention|churn|renewal'}
 DIM_RATE_WORDS = {'competition': (), 'substitutes': (), 'customer_concentration': ('concentrat',), 'technology_ai': ('technolog', 'disrupt'),
-                  'regulation': ('regulat',), 'geopolitics': ('country', 'geopolit', 'sovereign')}
+                  'regulation': ('regulat',), 'geopolitics': ('country', 'geopolit', 'sovereign'), 'governance': ('governance',),
+                  'management': ('management', 'key_person'), 'moat': (), 'retention': ()}
+# evidenced red flags that withhold a price conclusion until an independent reviewer documents an override
+RED_FLAGS = {'going_concern': (r'substantial doubt|ability to continue as a going concern|going[- ]concern (?:doubt|uncertaint|qualif|warning|opinion|paragraph|emphasis)',
+                               'going-concern doubt', 'ספק מהותי ביכולת החברה להמשיך לפעול'),
+             'material_weakness': (r'material weakness', 'material weakness in internal control', 'חולשה מהותית בבקרה הפנימית על הדיווח הכספי'),
+             'restatement': (r'restatement|restated (?:[\w-]+ ){0,4}financial statements|non[- ]reliance on previously issued',
+                             'restatement of financial statements', 'הצגה מחדש של דוחות כספיים')}
+NEGATED = re.compile(r'\b(?:no|without|absence of|free of|did not identify(?: any)?|not identified any|there (?:were|was|are|is) no)\s+(?:\w+\s+){0,2}$')
 LOSS = {'subscription_software': 'growth_stall', 'platform_marketplace': 'growth_stall', 'consumer_brand': 'growth_stall',
         'conglomerate': 'growth_stall', 'financials': 'growth_stall', 'industrial': 'cyclical_collapse',
         'hardware_manufacturing': 'cyclical_collapse', 'semiconductor': 'cyclical_collapse', 'commodity': 'cyclical_collapse',
@@ -326,6 +350,23 @@ def _business(add, card):
                 level, evidence=[f'model_card.dimensions.{d}'], assessed=False, status='unassessed', relevance=level)
 
 
+def _red_flags(add, fb, card):
+    """Going-concern doubt, material weakness, restatement: evidenced only by a 'reported' FactBook qualitative item or a
+    weak governance/management assessment that carries evidence ids. Explicit negations ('no material weakness') do not count."""
+    texts = [(f"{q.get('topic', '')}: {q.get('statement', '')}", [q['id']] + list(q.get('source_ids') or []))
+             for q in (fb or {}).get('qualitative') or [] if q.get('kind') == 'reported' and q.get('id')]
+    for d in ('governance', 'management'):
+        x = ((card or {}).get('dimensions') or {}).get(d) or {}
+        if x.get('assessment') == 'weak' and x.get('evidence_ids') and x.get('note'):
+            texts.append((str(x['note']), list(x['evidence_ids']) + [f'model_card.dimensions.{d}']))
+    for key, (pattern, label, label_he) in RED_FLAGS.items():
+        hits = [(t, ev) for t, ev in texts for mt in re.finditer(pattern, t, re.I) if not NEGATED.search(t[max(0, mt.start() - 60):mt.start()].lower())]
+        if hits:
+            add(f'gov.{key}', 'governance', f'Evidenced {label}: ' + ' | '.join(dict.fromkeys(t.strip() for t, _ in hits)) + '. The price conclusion is withheld '
+                'until an independent reviewer documents an override (review risk_overrides).', 'high', cls='pricing',
+                evidence=[i for _, ev in hits for i in ev], withhold_price=True, description_he=label_he)
+
+
 def _execution(add, an, card, result, case, val):
     f = (card or {}).get('funding') or {}
     if f.get('value') == 'needs_external':
@@ -475,35 +516,44 @@ def _expand(row, key, count, default=0.):
 
 
 def variant_spec(spec, kind, drop=-.25):
-    """Driver spec whose bear row is replaced by a permanent-loss mechanism; returns (spec, edits)."""
+    """Driver spec whose bear row is replaced by a permanent-loss mechanism; returns (spec, edits).
+    Each edit is at least as severe as the bear on its lever: growth never above the bear path (a shrinking bear keeps
+    shrinking), cash costs never below it."""
     s2 = deepcopy(spec)
     count = len(s2['boundaries'])
     stub = 1 if s2.get('stub_annual_revenue_rate') is not None else 0
     gcount = count - stub
     bear = deepcopy(scen(s2, 'bear'))
     ccr, sbc, dep = _expand(bear, 'cash_cost_ratio', count), _expand(bear, 'sbc_pct', count), _expand(bear, 'depreciation_pct', count)
+    g = _expand(bear, 'growth', gcount)
     t, tm, edits = bear['terminal'], None, []
     cap = lambda k: RATIO_KEYS[k][2]
+    floor = lambda c0: [min(max(x, c0), cap('cash_cost_ratio')) for x in ccr]       # never cheaper than the bear path
     if kind == 'growth_stall':
         c0, s = min(ccr[0] + .03, cap('cash_cost_ratio')), max(sbc)
-        bear.update(growth=[0.] * gcount, cash_cost_ratio=c0, sbc_pct=s)
-        tm = max(.01, min(t['operating_margin'] - .03, 1 - c0 - s - dep[-1]))
-        edits = ['revenue growth 0% in every forecast year', f'cash cost ratio held at {c0:.3f} (bear first year +3pp; no operating leverage)',
+        cc = floor(c0)
+        bear.update(growth=[min(x, 0.) for x in g], cash_cost_ratio=cc, sbc_pct=s)
+        tm = max(.01, min(t['operating_margin'] - .03, 1 - cc[-1] - s - dep[-1]))
+        edits = ['revenue growth min(bear, 0%) in every forecast year (growth stops; a shrinking bear keeps shrinking)',
+                 f'cash cost ratio at least {c0:.3f} (bear first year +3pp; no operating leverage) and never below the bear path',
                  f'SBC held at {s:.1%} of revenue (bear peak)']
     elif kind in ('cyclical_collapse', 'utilization_collapse'):
         c0, scale = min(ccr[0] + (.08 if kind == 'cyclical_collapse' else .10), cap('cash_cost_ratio')), 1 / (1 + drop)
+        cc = floor(c0)
         maint, gcap, ir = _expand(bear, 'maintenance_capex_pct', count), _expand(bear, 'growth_capex_pct', count), _expand(bear, 'interest_rate', count)
-        bear.update(growth=[drop] + [0.] * (gcount - 1), cash_cost_ratio=c0, depreciation_pct=[min(x * scale, cap('depreciation_pct')) for x in dep],
+        bear.update(growth=[min(drop, g[0])] + [min(x, 0.) for x in g[1:]], cash_cost_ratio=cc,
+                    depreciation_pct=[min(x * scale, cap('depreciation_pct')) for x in dep],
                     maintenance_capex_pct=[min(x * scale, cap('maintenance_capex_pct')) for x in maint],
                     growth_capex_pct=[min(x * scale, cap('growth_capex_pct')) if i < stub + 2 else x for i, x in enumerate(gcap)],
                     interest_rate=[min(x + .02, cap('interest_rate')) for x in ir])
-        tm = max(.01, min(t['operating_margin'] * .6, 1 - c0 - sbc[-1] - min(dep[-1] * scale, cap('depreciation_pct'))))
-        edits = [f'revenue {drop:+.0%} in the first full year, then flat', f'cash cost ratio {c0:.3f} (fixed costs do not flex)',
+        tm = max(.01, min(t['operating_margin'] * .6, 1 - cc[-1] - sbc[-1] - min(dep[-1] * scale, cap('depreciation_pct'))))
+        edits = [f'revenue min(bear, {drop:+.0%}) in the first full year, then min(bear, 0%)',
+                 f'cash cost ratio at least {c0:.3f} (fixed costs do not flex) and never below the bear path',
                  'depreciation and maintenance capex kept in absolute terms (asset base unchanged); committed growth capex kept for two periods',
                  'interest rate +2pp (stressed refinancing)']
     elif kind == 'funding_failure':
-        bear['growth'] = [x * .5 for x in _expand(bear, 'growth', gcount)]
-        edits = ['revenue growth at half the bear path']
+        bear['growth'] = [x - .5 * abs(x) for x in g]
+        edits = ['revenue growth g - 0.5|g| on the bear path (half the growth; a decline 1.5x deeper)']
         if bear.get('financing_status') == 'assumed':
             bear.update(debt_draw=0, financing_status='none')
             edits.append('uncommitted (assumed) debt draws removed')
@@ -554,7 +604,7 @@ def _bear(result, case, today, price):
             'source': 'executed valuation, bear scenario'}
 
 
-def _permanent(spec, kind, drop, price):
+def _permanent(spec, kind, drop, price, bear_value=None):
     g = (_expand(scen(spec, 'base') or {}, 'growth', 1, 0.)[0]) if spec else 0.
     out = {'name': 'permanent_loss:' + kind, 'kind': 'permanent_loss', 'mechanism': MECHANISM[kind]}
     if not spec:
@@ -577,9 +627,14 @@ def _permanent(spec, kind, drop, price):
             edits.append(f'funding gaps closed with {raised:,.0f} of equity at {issue:.4g} per share ({ISSUE_DISCOUNT:.0%} below the quote, {ISSUE_FEE:.0%} fees)')
             r2 = r3
         v = num(r2['annual_values'][0]['bear'])
-        return {**out, 'status': 'computed', 'value_per_share': v, 'loss_from_price': _loss(v, price), 'gap_vs_price': _gap(v, price),
-                'edits': edits, 'dilution': dilution, 'input_sha256': r2['input_sha256'],
-                'calculation': 'drivers.build_case + valuation.value_company with the bear driver row replaced by the listed edits'}
+        milder = None if v is None or bear_value is None else v >= bear_value
+        out = {**out, 'status': 'computed', 'value_per_share': v, 'loss_from_price': _loss(v, price), 'gap_vs_price': _gap(v, price),
+               'edits': edits, 'dilution': dilution, 'input_sha256': r2['input_sha256'], 'not_more_severe_than_bear': milder,
+               'calculation': 'drivers.build_case + valuation.value_company with the bear driver row replaced by the listed edits'}
+        if milder:
+            out['severity_note'] = (f'value {v:.4g} is not below the bear {bear_value:.4g}: this mechanism is not a worse case than the executed bear '
+                                    '(e.g. shrinking a loss-making business faster reduces losses); the bear is the more severe stress')
+        return out
     except (ValueError, KeyError, ZeroDivisionError, StopIteration) as e:
         out.setdefault('observable_signs', [s.format(g=g, d=drop) for s in SIGNS[kind] if '{m' not in s])
         return {**out, 'status': 'not_computed', 'value_per_share': None, 'reason': f'{type(e).__name__}: {e}'}
@@ -599,12 +654,16 @@ def failure_scenarios(card, fc, result, case, today, price):
                 'reason': 'no executed valuation'}]
         return out + [{**_permanent(None, k, drop, None), 'reason': 'no executed valuation'} for k in kinds]
     spec = (fc or {}).get('spec') if case.get('method') == 'operating' else None
-    return [_bear(result, case, today, price)] + [_permanent(spec, k, drop, price) for k in kinds]
+    bear = _bear(result, case, today, price)
+    return [bear] + [_permanent(spec, k, drop, price, bear['value_per_share']) for k in kinds]
 
 
 # ---------------------------------------------------------------- size of error
 
 def error_size(result, case, today, val, qa, card, reg, rt):
+    """Size of a possible VALUATION error from valuation triggers only (range, discount-rate sensitivity, terminal share,
+    unverifiable red-team checks). Process gaps (data, understanding, unassessed dimensions) go to `process_gaps`: they
+    are confidence matters and must not raise the error level (and through it the required return) a second time."""
     high, med = [], []
     v = {k: num(today.get(k)) for k in ('bear', 'base', 'bull')}
     rel = (v['bull'] - v['bear']) / v['base'] if None not in v.values() and v['base'] > 0 else None
@@ -633,24 +692,31 @@ def error_size(result, case, today, val, qa, card, reg, rt):
     ts = num((scen(result, 'base') or {}).get('terminal_share_of_present_value')) if result else None
     if ts is not None and ts > .8:
         med.append(f'{ts:.0%} of value from terminal equity')
-    qs = (qa or {}).get('status')
-    if qs == 'blocked' or not qa:
-        high.append('critical data blocked or not validated')
-    elif qs == 'limited' or (qa or {}).get('limited'):
-        med.append(f"data limited: {', '.join((qa or {}).get('limited') or []) or 'see dataqa'}")
-    cs = ((card or {}).get('completeness') or {}).get('status')
-    if cs == 'insufficient':
-        high.append('business understanding insufficient')
-    elif cs == 'partial':
-        med.append('business understanding partial')
     if rt['critical_unverifiable']:
         med.append('red-team checks unverifiable: ' + ', '.join(rt['critical_unverifiable']))
+    gaps = []
+
+    def gap(code, severity, detail, **extra):
+        gaps.append({'code': code, 'severity': severity, 'detail': detail, **extra})
+    qs = (qa or {}).get('status')
+    if qs == 'blocked' or not qa:
+        gap('data_blocked', 'high', 'critical data blocked or not validated', fields=list((qa or {}).get('blocking') or []))
+    elif qs == 'limited' or (qa or {}).get('limited'):
+        gap('data_limited', 'medium', f"data limited: {', '.join((qa or {}).get('limited') or []) or 'see dataqa'}", fields=list((qa or {}).get('limited') or []))
+    cs = ((card or {}).get('completeness') or {}).get('status')
+    if cs == 'insufficient':
+        gap('understanding_insufficient', 'high', 'business understanding insufficient')
+    elif cs == 'partial':
+        gap('understanding_partial', 'medium', 'business understanding partial')
     open_high = [r['id'] for r in reg if r.get('status') == 'unassessed' and r['severity'] == 'high']
     if open_high:
-        med.append('high-relevance business dimensions unassessed: ' + ', '.join(open_high))
+        gap('dimensions_unassessed', 'medium', 'high-relevance business dimensions unassessed: ' + ', '.join(open_high), ids=open_high)
     level = 'high' if high or len(med) >= 3 else ('medium' if med else 'low')
     return {'level': level, 'value_range_rel': rel, 'discount_rate_band': band, 'discount_rate_band_source': src, 'terminal_share': ts,
-            'reasons': high + med or ['range, discount-rate sensitivity, terminal dependence and data limitations within tolerance'],
+            'reasons': high + med or ['range, discount-rate sensitivity, terminal dependence and red-team verifiability within tolerance'],
+            'process_gaps': gaps,
+            'scope': 'level and reasons use valuation triggers only; process_gaps (data, understanding, unassessed dimensions) are '
+                     'confidence inputs, not part of the valuation error or the required return',
             'rule': 'high if any high trigger or three medium triggers; medium if any medium trigger. Descriptive thresholds, not calibrated probabilities.',
             'formula': 'value_range_rel = (bull - bear) / base at today; band = base value at cost of equity and terminal WACC -/+ 1pp'}
 
@@ -669,6 +735,7 @@ def assess(fb, qa, an, card, fc, val):
     _dilution(add, an, fb)
     weak_cash = _accounting(add, an)
     _business(add, card)
+    _red_flags(add, fb, card)
     _execution(add, an, card, result, case, val)
     _valuation(add, an, result, today, price, val)
     scenarios = failure_scenarios(card, fc, result, case, today, price)
@@ -681,6 +748,7 @@ def assess(fb, qa, an, card, fc, val):
                 'permanent_loss_value': worst['value_per_share'] if worst else None,
                 'loss_to_permanent': _loss(worst['value_per_share'], price) if worst else None,
                 'permanent_loss_case': worst['name'] if worst else None,
+                'not_more_severe_than_bear': [x['name'] for x in pl if x.get('not_more_severe_than_bear')],
                 'not_computed': {x['name']: x.get('reason') for x in scenarios if x.get('value_per_share') is None},
                 'meaning': 'loss = max(0, 1 - value / price) on today\'s conditional values; scenarios are not probabilities or price forecasts.'}
     count = lambda k, v: sum(1 for r in reg if r.get(k) == v)
@@ -688,6 +756,7 @@ def assess(fb, qa, an, card, fc, val):
             'error_size': error_size(result, case, today, val, qa, card, reg, rt),
             'disqualifying': [r['id'] for r in reg if r['class'] == 'disqualifying'],
             'evidence_gaps': [r['id'] for r in reg if r.get('evidence_gap')],
+            'withhold_price': [r['id'] for r in reg if r.get('withhold_price')],
             'summary': {'disqualifying': count('class', 'disqualifying'), 'pricing': count('class', 'pricing'),
                         'accepted_priced': count('class', 'accepted_priced'), 'unassessed': count('status', 'unassessed')},
             'bear_levers': levers, 'liquidity': liq,
