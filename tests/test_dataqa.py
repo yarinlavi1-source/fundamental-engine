@@ -96,6 +96,13 @@ def clean_cs(as_of='2026-06-30', debt_principal=500 * M, extra_debt=()):
                       'maturity': '2030-03-01', 'source_id': 'sec:cf'}] + list(extra_debt)}
 
 
+def cs_cited(cs, sid):
+    for g in ('cash', 'shares', 'debt', 'quasi_debt'):
+        for x in cs.get(g, []):
+            x['source_id'] = sid
+    return cs
+
+
 # ---------------------------------------------------------------- Adobe (real fixture)
 
 class AdobeFixture(unittest.TestCase):
@@ -195,7 +202,8 @@ class SyntheticClean(unittest.TestCase):
         fb = syn()
         F.add_qualitative(fb, 'pp1', 'post_period_event', 'No financing or M&A after 30 Jun 2026 (8-K review)', 'reported',
                           ['sec:cf'], '2026-10-01')
-        qa = dataqa.validate(fb, clean_cs())
+        F.add_source(fb, 'doc:10q', 'issuer', 'filing', 'issuer_document', '2026-10-19')   # the structure read from the 10-Q itself
+        qa = dataqa.validate(fb, cs_cited(clean_cs(), 'doc:10q'))
         self.assertEqual(qa['status'], 'ok', qa['limited'])
         self.assertEqual(len(checks(qa, 'capital_structure_crosscheck', 'pass')), 2)
         self.assertEqual(qa['fields']['cash_and_liquid_investments']['status'], 'verified')
@@ -530,6 +538,134 @@ class MixedProviderQuarters(unittest.TestCase):
         f = dataqa.validate(fb)['fields']['revenue_ttm']
         self.assertEqual((f['method'], f['value'], f['period_end']), ('quarters', 430 * M, '2026-06-27'))
         self.assertEqual(f['status'], 'verified')                 # SEC and AV agree on every quarter
+
+
+
+# ---------------------------------------------------------------- review 2026-10-19 (scratchpad findings, data area; SYNTHETIC data)
+
+def _quarterly_book():
+    fb = F.new({'ticker': 'SYN', 'name': 'Synthetic (test data)', 'currency': 'USD'}, '2026-10-19')
+    F.add_source(fb, 'k', 'sec', '10-K', 'filing_derived', '2026-10-19')
+    F.add_source(fb, 'q', 'sec', '10-Q', 'filing_derived', '2026-10-19')
+    F.add_fact(fb, 'revenue', 'FY2025', '2025-12-31', 400.0, 'k', 'as_reported', '2026-02-20')
+    for end, v in (('2025-03-31', 90), ('2025-06-30', 100), ('2025-09-30', 110), ('2026-03-31', 110), ('2026-06-30', 120), ('2026-09-30', 130)):
+        F.add_fact(fb, 'revenue', 'Q@' + end, end, float(v), 'q', 'as_reported', min(_plus(end, 30), '2026-10-15'))
+    F.add_fact(fb, 'capex', 'FY2025', '2025-12-31', -40.0, 'k', 'as_reported', '2026-02-20')
+    F.add_fact(fb, 'capex', 'YTD@2026-09-30', '2026-09-30', -33.0, 'q', 'as_reported', '2026-10-15')
+    F.add_fact(fb, 'capex', 'YTD@2025-09-30', '2025-09-30', -28.0, 'q', 'as_reported', '2025-10-15')
+    return fb
+
+
+class TtmNeverResummed(unittest.TestCase):
+    def test_annual_plus_ytd_subtracts_the_prior_year(self):
+        fb = _quarterly_book()
+        qa = dataqa.validate(fb)
+        r = qa['fields']['revenue_ttm']
+        self.assertEqual((r['method'], r['value']), ('annual_plus_ytd', F.ttm(fb, 'revenue')['value']))
+        self.assertEqual(r['value'], 460.0)                                   # was 1060: prior-year quarters added
+        self.assertEqual(r['signs'], [1, 1, 1, 1, -1, -1, -1])
+        self.assertEqual(qa['fields']['capex_ttm']['value'], 45.0)            # 40 + 33 - 28, sign-normalised
+        self.assertTrue(checks(qa, 'ttm_matches_facts', 'pass'))
+        self.assertFalse(checks(qa, 'ttm_matches_facts', 'fail'))
+
+
+class StaleTtm(unittest.TestCase):
+    def test_ttm_older_than_twice_the_limit_is_missing(self):
+        fb = F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-10-19')
+        F.add_source(fb, 'k', 'sec', '10-K', 'filing_derived', '2026-10-19')
+        for m in ('revenue', 'cfo'):
+            F.add_fact(fb, m, 'FY2017', '2017-12-31', 100.0, 'k', 'as_reported', '2018-02-20')
+        qa = dataqa.validate(fb)
+        r = qa['fields']['revenue_ttm']
+        self.assertEqual((r['status'], r['source_status']), ('missing', 'reported'))
+        self.assertIn('revenue_ttm', qa['blocking'])
+        fb['as_of'] = '2018-12-31'                      # 365 days: stale, not missing
+        self.assertEqual(dataqa.validate(fb)['fields']['revenue_ttm']['status'], 'stale')
+
+
+class SplitPriceDecisive(unittest.TestCase):
+    def issuance_book(self, price_after):
+        """SYNTHETIC: the count doubles in FY2024 with flat profit (EPS halves, weighted shares double)."""
+        fb = F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-10-19')
+        F.add_source(fb, 'k', 'sec', '10-K', 'filing_derived', '2026-10-19')
+        for end, so, wavg in (('2022-12-31', 50e6, 50e6), ('2023-12-31', 51e6, 51e6), ('2024-12-31', 102e6, 95e6), ('2025-12-31', 104e6, 103e6)):
+            av = _plus(end, 50)
+            F.add_fact(fb, 'shares_diluted_wavg', f'FY{end[:4]}', end, wavg, 'k', 'as_reported', av)
+            F.add_fact(fb, 'eps_diluted', f'FY{end[:4]}', end, 51e6 / wavg, 'k', 'as_reported', av, unit='USD/share')
+            F.add_fact(fb, 'shares_outstanding', 'I@' + end, end, so, 'k', 'as_reported', av)
+            F.add_fact(fb, 'total_assets', 'I@' + end, end, 900e6, 'k', 'as_reported', av)
+        px = {'2022': 20.0, '2023': 20.0, '2024': price_after, '2025': price_after}
+        fb['market']['price_history'] = [{'date': end, 'close': px[end[:4]]} for end in
+                                         ('2022-12-28', '2023-12-28', '2024-12-27', '2025-12-29')]
+        return fb
+
+    def test_flat_price_overrides_per_share_evidence(self):
+        qa = dataqa.validate(self.issuance_book(20.0))
+        self.assertEqual(qa['splits'], [])
+        c = checks(qa, 'large_share_change')[0]
+        self.assertEqual(c['detail']['evidence']['decided_by'], 'price')
+        self.assertTrue(c['detail']['evidence']['eps_supports_split'])       # per-share data alone would have said split
+        self.assertIn('share price did not move inversely', c['message'])
+
+    def test_price_halving_confirms_the_split(self):
+        qa = dataqa.validate(self.issuance_book(10.0))
+        self.assertEqual([(s['factor'], s['decided_by']) for s in qa['splits']], [(2, 'price')])
+
+
+class SourceIndependence(unittest.TestCase):
+    def test_same_source_typed_twice_is_not_a_confirmation(self):
+        fb = F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-10-19')
+        F.add_source(fb, 'q', 'sec', '10-Q', 'filing_derived', '2026-10-19')
+        F.add_fact(fb, 'shares_outstanding_cover', 'I@2026-10-01', '2026-10-01', 100e6, 'q', 'as_reported', '2026-10-10', unit='shares')
+        cs = {'as_of': '2026-10-01', 'currency': 'USD', 'shares': [{'id': 'common', 'kind': 'common', 'count': 100e6, 'source_id': 'q'}]}
+        qa = dataqa.validate(fb, cs)
+        self.assertEqual(qa['fields']['shares_outstanding']['status'], 'reported')
+        self.assertFalse(checks(qa, 'share_routes')[0]['detail']['agree'][0]['independent'])
+
+    def test_same_source_capital_structure_ties_without_verifying(self):
+        qa = dataqa.validate(syn(), clean_cs())                               # statements and structure both cite sec:cf
+        self.assertEqual(qa['fields']['cash_and_liquid_investments']['status'], 'reported')
+        self.assertIn('not an independent confirmation', qa['fields']['cash_and_liquid_investments']['note'])
+        self.assertTrue(checks(qa, 'capital_structure_crosscheck', 'pass'))
+
+    def test_secondary_source_never_conflicts_with_a_filing_value(self):
+        def book(with_blog):
+            fb = F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-10-19')
+            F.from_fmp_as_reported(fb, {'income': [{'fiscalYear': 2026, 'period': 'FY', 'date': '2026-06-30',
+                                                    'data': {'Revenues': 1000e6}}]}, '2026-10-19', filed_by_end={'2026-06-30': '2026-08-01'})
+            if with_blog:
+                F.add_qualitative_bundle(fb, {'sources': [{'id': 'ai', 'kind': 'analysis', 'published_at': '2026-08-05'}],
+                                              'quarterly_facts': [{'metric': 'revenue', 'period': 'FY2026', 'period_end': '2026-06-30',
+                                                                   'value': 989e6, 'source_ids': ['ai']}]})
+            return fb
+        qa = dataqa.validate(book(True))
+        r = qa['fields']['revenue_ttm']
+        self.assertEqual(r['status'], 'reported')                              # was conflict (blocking)
+        self.assertNotIn('revenue_ttm', qa['blocking'])
+        self.assertIn('secondary source web:ai', r['note'])
+        self.assertEqual(r['status'], dataqa.validate(book(False))['fields']['revenue_ttm']['status'])
+
+    def test_secondary_only_value_is_single_source(self):
+        fb = F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-10-19')
+        F.add_qualitative_bundle(fb, {'sources': [{'id': 'p', 'kind': 'press', 'published_at': '2026-08-05'}],
+                                      'quarterly_facts': [{'metric': 'revenue', 'period': 'FY2026', 'period_end': '2026-06-30',
+                                                           'value': 989e6, 'source_ids': ['p']}]})
+        self.assertEqual(dataqa.validate(fb)['fields']['revenue_ttm']['status'], 'single_source')
+
+
+class LatestBalanceDate(unittest.TestCase):
+    def test_partial_quarter_end_lines_set_the_latest_balance_date(self):
+        fb = adbe()
+        F.add_qualitative_bundle(fb, {'as_of': '2026-10-19', 'sources': [{'id': 'q3', 'kind': 'filing', 'published_at': '2026-09-18'}],
+                                      'quarterly_facts': [{'metric': m, 'period': 'FY2026Q3', 'period_end': '2026-08-28', 'value': v,
+                                                           'source_ids': ['q3']} for m, v in (('cash', 4.0e9), ('short_term_investments', 1.2e9))]})
+        qa = dataqa.validate(fb)
+        self.assertEqual(qa['fields']['post_period_events']['as_of'], '2026-08-28')
+        self.assertEqual(qa['resolved']['cash']['as_of'], F.latest_instant(fb, 'cash')['period_end'])
+        inv = qa['fields']['investments']
+        self.assertNotEqual(inv['status'], 'missing')                          # was "no balance sheet usable at as_of"
+        self.assertEqual((inv['value'], inv['as_of']), (0.0, '2025-11-28'))
+        self.assertIn('partial', inv['note'])
 
 
 if __name__ == '__main__':

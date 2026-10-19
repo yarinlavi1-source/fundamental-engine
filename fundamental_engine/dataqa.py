@@ -8,11 +8,13 @@ therefore matter as much as numbers. Every critical field is resolved here with 
 definition, a dated source, the checks that confirm it and a status:
 
   verified       two independent confirmations: independent providers agree within tolerance, or a
-                 filing-derived value passes an identity / continuity check that involves it
-  reported       one filing-derived value, not yet confirmed
-  single_source  vendor-normalized only (or an unresolved definitional choice)
+                 filing-derived value passes an identity / continuity check that involves it. Independent means
+                 different providers and no shared source id (one document typed twice confirms nothing)
+  reported       one filing-derived or issuer-document value, not yet confirmed
+  single_source  vendor-normalized or secondary (press, analysis) only, or an unresolved definitional choice;
+                 a secondary source never confirms nor contradicts a filing or issuer value (recorded as a note)
   conflict       sources disagree beyond tolerance, or a like-for-like identity fails
-  missing        not available (or an instrument exists without its terms)
+  missing        not available (or an instrument exists without its terms; a TTM older than twice its age limit)
   stale          too old for the as_of date (newer reports exist but are absent)
 
 conflict / missing on shares, cash, debt, revenue_ttm or cfo_ttm blocks a price conclusion; the rest
@@ -42,9 +44,11 @@ CRITICAL = ('shares_outstanding', 'cash_and_liquid_investments', 'investments', 
             'post_period_events') + tuple(n for n, _ in TTM_FIELDS)
 BLOCKING = {'shares_outstanding', 'cash_and_liquid_investments', 'debt', 'revenue_ttm', 'cfo_ttm'}
 RANK = {'conflict': 0, 'missing': 1, 'stale': 2, 'single_source': 3, 'reported': 4, 'verified': 5}
-FILING_KINDS = {'filing_derived', 'document'}
+FILING_KINDS = F.REPORTED_KINDS                  # filing_derived, issuer_document (legacy 'document')
 BS_TAGS = ('total_assets', 'total_liabilities', 'liabilities_and_equity', 'current_assets', 'equity')
 DEBT_PARTS = ('long_term_debt', 'long_term_debt_tagged', 'current_portion_ltd', 'short_term_borrowings')
+BS_LINES = BS_TAGS + ('cash', 'cash_incl_restricted', 'short_term_investments', 'long_term_investments',
+                      'deferred_revenue_current', 'deferred_revenue_noncurrent') + DEBT_PARTS
 HYPOTHESES = ('noncurrent+current', 'tagged_total', 'tagged_plus_current')
 SHARE_ROUTES = (('shares_outstanding_cover', 'cover'), ('shares_outstanding', 'balance_sheet'),
                 ('shares_outstanding_vendor', 'vendor_float'))
@@ -176,14 +180,25 @@ class _QA:
     def grade(self, f):
         return 'reported' if self.src(f).get('kind') in FILING_KINDS and f['basis'] != 'normalized' else 'single_source'
 
+    def secondary(self, f):
+        return self.src(f).get('kind') == 'secondary'
+
     def has_bs(self, end):
+        """A full balance sheet (totals) at the date: absent lines on it read as zero."""
         return any(self.best(m, end) for m in BS_TAGS)
 
     def age(self, end):
         return _days(end, self.as_of)
 
-    def latest_bs(self):
-        ends = [tl[-1][0] for tl in (self.timeline(m, 'instant') for m in BS_TAGS) if tl]
+    def latest_bs(self, until=None):
+        """Latest full balance sheet (on or before `until`)."""
+        ends = [e for m in BS_TAGS for e, _ in self.timeline(m, 'instant') if until is None or _days(e, until) >= -7]
+        return max(ends) if ends else None
+
+    def latest_instant(self):
+        """Latest balance-sheet date with any usable line, partial quarter-end data from evidence bundles included:
+        the date facts.latest_instant (and the valuation's opening balance) reads."""
+        ends = [tl[-1][0] for tl in (self.timeline(m, 'instant') for m in BS_LINES) if tl]
         return max(ends) if ends else None
 
     def idents(self, metric, end):
@@ -214,7 +229,14 @@ def _stale(q, fld, kind, what):
         return fld
     age = q.age(fld['as_of'])
     fld['age_days'] = age
-    if age > q.max_age[kind]:
+    if kind == 'ttm' and age > 2 * q.max_age[kind]:
+        fld['source_status'], fld['status'] = fld['status'], 'missing'
+        fld['note'] = '; '.join(x for x in (fld['note'], f'{what} dated {fld["as_of"]} is {age} days old at {q.as_of}, more than '
+                                            f'twice the {q.max_age[kind]}-day limit: no current figure, treated as missing') if x)
+        fld['checks'] = sorted(set(fld['checks']) | {'staleness'})
+        q.add('staleness', 'fail', 'critical', f"{fld['field']}: {what} is {age} days old (treated as missing)", period=fld['as_of'],
+              detail={'as_of': fld['as_of'], 'age_days': age, 'limit_days': q.max_age[kind]}, fields=(fld['field'],))
+    elif age > q.max_age[kind]:
         fld['source_status'], fld['status'] = fld['status'], 'stale'
         fld['note'] = '; '.join(x for x in (fld['note'], f'{what} dated {fld["as_of"]} is {age} days old at {q.as_of} '
                                             f'(limit {q.max_age[kind]}): newer reports exist but are absent') if x)
@@ -245,11 +267,18 @@ def _cross(q, metric, f):
     key = (metric, f['period_end'], _kind(f), f['source_id'])
     if key in q.cross:
         return q.cross[key]
-    mine, others = q.provider(f), {}
+    mine, others, sec = q.provider(f), {}, []
     for g in q.near(metric, f['period_end'], _kind(f)):
+        if g['source_id'] == f['source_id']:
+            continue
+        if q.secondary(g) and not q.secondary(f):     # press/analysis never confirm nor contradict a filing or issuer value
+            sec.append(g)
+            continue
         others.setdefault(q.provider(g), g)
     others.pop(mine, None)
-    out = {'agree': [], 'disagree': [], 'explained': [], 'compared': bool(others)}
+    out = {'agree': [], 'disagree': [], 'explained': [], 'compared': bool(others),
+           'secondary': [{'source_id': g['source_id'], 'value': _val(metric, g),
+                          'rel_diff': round(_rel(_val(metric, f), _val(metric, g)), 6)} for g in sec]}
     a, tol = _val(metric, f), q.tol.get(metric, DEFAULT_TOL)
     base = None
     if _kind(f) in ('annual', 'quarter') and metric != 'revenue':
@@ -288,9 +317,13 @@ def _status_of(q, metric, f, corroborated=False):
     ids = q.idents(metric, f['period_end'])
     codes = [x['code'] for x in ids] + (['cross_source'] if cx['compared'] else [])
     notes = [f"{r['provider']} reports {_fmt(r['value'])}: {r['definition']}" for r in cx['explained']]
+    notes += [f"secondary source {r['source_id']} gives {_fmt(r['value'])} ({r['rel_diff']:.2%} apart): recorded, neither a "
+              f"confirmation nor a conflict" for r in cx['secondary'] if r['rel_diff'] > q.tol.get(metric, DEFAULT_TOL)]
     failed = sorted({x['code'] for x in ids if x['status'] == 'fail' and x['lfl']})
     if failed:
         return 'conflict', codes, notes + [f"{metric} {f['period']} fails {', '.join(failed)}"]
+    if q.secondary(f):
+        return grade, codes, notes + [f"{metric} {f['period']} from a secondary source only ({f['source_id']}): single source"]
     id_ok = grade == 'reported' and (corroborated or any(x['status'] == 'pass' for x in ids))
     if cx['disagree']:
         who = ', '.join(f"{r['provider']} {_fmt(r['value'])}" for r in cx['disagree'])
@@ -463,19 +496,20 @@ def _capital(q, cs):
             'share_kinds': {s['kind'] for s in cs.get('shares', [])}}
 
 
-def _cs_compare(q, cs, field, label, stmt_value, stmt_end, kinds_group, explain=None):
+def _cs_compare(q, cs, field, label, stmt_value, stmt_end, kinds_group, explain=None, stmt_sources=()):
     """Cross-check the capital structure against the statements at the statement date.
 
-    Returns (use_cs, corroborated, conflict, note). A structure dated at the statement date must tie; a newer one
-    (a bridge with post-period lines) is compared on its statement-dated lines and then used as the newer source."""
+    Returns (use_cs, tie, conflict, note); tie is 'independent', 'same_source' or None. A structure dated at the statement
+    date must tie; a newer one (a bridge with post-period lines) is compared on its statement-dated lines and then used as
+    the newer source. A tie confirms (verifies) only when the lines cite none of the statement facts' source ids."""
     group, kinds = kinds_group
     newer = _days(stmt_end, cs['as_of']) > 7 if stmt_end else True
     older = _days(cs['as_of'], stmt_end) > 7 if stmt_end else False
     if older:
-        return False, False, False, f'capital structure ({cs["as_of"]}) older than the statements: not used for {label}'
+        return False, None, False, f'capital structure ({cs["as_of"]}) older than the statements: not used for {label}'
     xs = cs['lines'](group, kinds, until=(_d(stmt_end) + timedelta(days=7)).isoformat() if stmt_end else None)
     if stmt_value is None or stmt_end is None:
-        return True, False, False, f'{label} from the capital structure only (no statement value to compare)'
+        return True, None, False, f'{label} from the capital structure only (no statement value to compare)'
     cs_v = cs['debt_amount'](xs) if group == 'debt' else cs['amount'](xs, 'count' if group == 'shares' else 'amount')
     tol = q.tol.get('debt' if group == 'debt' else 'shares_outstanding' if group == 'shares' else 'cash', DEFAULT_TOL)
     r = _rel(stmt_value, cs_v)
@@ -489,18 +523,23 @@ def _cs_compare(q, cs, field, label, stmt_value, stmt_end, kinds_group, explain=
           detail={'statement': stmt_value, 'capital_structure': cs_v, 'rel_diff': round(r, 6), 'tolerance': tol,
                   'explanation': why, 'post_period_lines': post, 'capital_structure_as_of': cs['as_of']})
     if ok:
-        return newer, True, False, (f'capital structure ties to the statements at {stmt_end}' + (f' ({why})' if why else '')
-                                    + ('; newer capital structure used' if newer else ''))
+        shared = sorted({x['source_id'] for x in xs} & set(stmt_sources))
+        note = (f'capital structure ties to the statements at {stmt_end}' + (f' ({why})' if why else '')
+                + (f'; it cites the same source ({", ".join(shared)}): not an independent confirmation' if shared else '')
+                + ('; newer capital structure used' if newer else ''))
+        return newer, 'same_source' if shared else 'independent', False, note
     if newer:   # exchanges/repayments after the statement date can change pre-existing lines: limited, not a conflict
-        return True, False, False, (f'capital structure lines dated by {stmt_end} ({_fmt(cs_v)}) do not tie to the statements '
+        return True, None, False, (f'capital structure lines dated by {stmt_end} ({_fmt(cs_v)}) do not tie to the statements '
                                     f'({_fmt(stmt_value)}); may reflect post-period exchanges or repayments: confirm')
-    return False, False, True, (f'capital structure {label} {_fmt(cs_v)} does not tie to the statements {_fmt(stmt_value)} '
+    return False, None, True, (f'capital structure {label} {_fmt(cs_v)} does not tie to the statements {_fmt(stmt_value)} '
                                 f'at {stmt_end}: an instrument may be missing or a balance-sheet scope is wrong')
 
 
 # ---------------------------------------------------------------- shares
 
 def _split_evidence(q, a, b, k):
+    """(evidence, supports a split, tested). The price test is decisive when it ran: EPS and weighted-average shares
+    move the same way under a real issuance with flat profit, only the share price tells a split from issuance."""
     ev = {}
     for metric, key in (('eps_diluted', 'eps'), ('shares_diluted_wavg', 'wavg')):
         x0, x1 = q.best(metric, a['as_of'], 'annual'), q.best(metric, b['as_of'], 'annual')
@@ -514,7 +553,11 @@ def _split_evidence(q, a, b, k):
         r = p1[-1] / p0[-1]
         ev['price_ratio'] = r
         ev['price_supports_split'] = abs(log(r * k)) < abs(log(r))
+    if 'price_supports_split' in ev:
+        ev['decided_by'] = 'price'
+        return ev, ev['price_supports_split'], True
     tested = [x for x in ev if x.endswith('supports_split')]
+    ev['decided_by'] = 'per_share' if tested else 'untested'
     return ev, any(ev[x] for x in tested), bool(tested)
 
 
@@ -581,12 +624,13 @@ def _shares(q, cs):
             msg = (f"share count x{b['value'] / a['value']:.3f} between {a['as_of']} and {b['as_of']} is near a "
                    + (f'{k:g}:1 split: ' if k > 1 else f'1:{1 / k:g} reverse split: ')
                    + ('treated as a split, not dilution - restate per-share history before comparing' if code == 'possible_split'
-                      else 'per-share data do not move inversely: treated as real issuance/consolidation - verify'))
+                      else ('the share price' if ev.get('decided_by') == 'price' else 'per-share data')
+                      + ' did not move inversely: treated as real issuance/consolidation - verify'))
             q.add(code, 'fail', 'major', msg, period=f"{a['as_of']}..{b['as_of']}", fields=('shares_outstanding',),
                   detail={'factor': k, 'ratio': b['value'] / a['value'], 'evidence': ev, 'per_share_tested': tested,
                           'from': a['as_of'], 'to': b['as_of']})
             if code == 'possible_split':
-                splits.append({'from': a['as_of'], 'to': b['as_of'], 'factor': k, 'evidence': ev})
+                splits.append({'from': a['as_of'], 'to': b['as_of'], 'factor': k, 'evidence': ev, 'decided_by': ev['decided_by']})
                 if b is pick:
                     last_cont = 'split'
                 continue
@@ -607,10 +651,13 @@ def _shares(q, cs):
             status = 'verified'
     # independent routes dated within a week of the pick (vendor vs filing, structure vs filing)
     agree, disagree = [], []
+    pick_ids = {f['source_id']} if f else set(pick.get('source_ids') or [])
     for r in routes:
         if r is pick or abs(_days(r['as_of'], pick['as_of'])) > 7 or not r['value']:
             continue
-        indep = (r['fact'] is None) != (f is None) or (r['fact'] is not None and f is not None and q.provider(r['fact']) != q.provider(f))
+        r_ids = {r['fact']['source_id']} if r['fact'] else set(r.get('source_ids') or [])
+        indep = not (r_ids & pick_ids) and not (r['fact'] and q.secondary(r['fact'])) and (
+            (r['fact'] is None) != (f is None) or (r['fact'] is not None and f is not None and q.provider(r['fact']) != q.provider(f)))
         rr = _rel(pick['value'], r['value'])
         row = {'basis': r['basis'], 'as_of': r['as_of'], 'value': r['value'], 'rel_diff': round(rr, 6), 'independent': indep}
         if rr <= q.tol['shares_outstanding']:
@@ -679,7 +726,7 @@ def _shares(q, cs):
 def _cash(q, cs):
     fb, ccy, res = q.fb, q.ccy, {}
     tl = q.timeline('cash', 'instant')
-    bs_end = q.latest_bs()
+    bs_end = q.latest_instant()
     notes, cash_f, fallback = [], None, False
     if tl:
         end, cash_f = tl[-1]
@@ -739,12 +786,13 @@ def _cash(q, cs):
             return ('capital structure counts restricted cash as unrestricted' if parts.get('restricted_cash')
                     and _rel(sv + parts['restricted_cash'], cv) <= q.tol['cash'] else None)
         use, corr, conf, note = _cs_compare(q, cs, 'cash_and_liquid_investments', 'cash + short-term investments', value, end,
-                                            ('cash', {'unrestricted', 'short_term_investments'}), expl)
+                                            ('cash', {'unrestricted', 'short_term_investments'}), expl,
+                                            {x['source_id'] for x in facts})
         notes.append(note)
         checks.append('capital_structure_crosscheck')
         if conf:
             st.append('conflict')
-        if corr:
+        if corr == 'independent':
             st = ['verified' if x == 'reported' else x for x in st]
         if use:
             un, sti_l, lti_l, rc_l = (cs['lines']('cash', {k}) for k in ('unrestricted', 'short_term_investments',
@@ -782,6 +830,18 @@ def _cash(q, cs):
         inv = _field(q, 'investments', 'reported', 0.0, ccy, end,
                      notes=[f'no long-term investment line on the balance sheet dated {end}: taken as none (conservative)'],
                      basis='balance_sheet', assumed_zero=True)
+    elif end and q.latest_bs(end):
+        full = q.latest_bs(end)            # partial quarter-end lines (evidence bundle): read the latest full balance sheet
+        g, part = q.best('long_term_investments', full), f'balance data at {end} are partial (no long-term investment line)'
+        if g:
+            s, c, n = _status_of(q, 'long_term_investments', g)
+            inv = _field(q, 'investments', s, g['value'], ccy, full, [g], c,
+                         n + [f'{part}: latest full balance sheet ({full}) used; not spendable cash, excluded from net cash'],
+                         basis='balance_sheet')
+        else:
+            inv = _field(q, 'investments', 'reported', 0.0, ccy, full,
+                         notes=[f'{part}; no long-term investment line on the latest full balance sheet ({full}): taken as none'],
+                         basis='balance_sheet', assumed_zero=True)
     else:
         inv = _field(q, 'investments', 'missing', None, ccy, None, notes=['no balance sheet usable at as_of'])
     if inv['value'] is not None:
@@ -954,7 +1014,8 @@ def _debt(q, cs, mcap):
                       f"debt {end}: resolved {_fmt(value)} vs {q.provider(vt)} total {_fmt(vt['value'])}" + (f' ({why})' if why and not ok else ''),
                       period=end, fields=('debt',), detail={'resolved': value, 'vendor': vt['value'], 'rel_diff': round(r, 6), 'definition': why})
                 checks.append('cross_source')
-                indep = q.provider(vt) not in {q.provider(g) for g in facts}
+                indep = q.provider(vt) not in {q.provider(g) for g in facts} and vt['source_id'] not in {g['source_id'] for g in facts} \
+                    and not q.secondary(vt)
                 if ok and indep and status in ('reported', 'single_source') and decisive:
                     status = 'verified'
                 elif why and not ok:
@@ -993,12 +1054,13 @@ def _debt(q, cs, mcap):
                 return 'capital structure includes lease lines as debt'
             return 'carrying value below principal (unamortized discount/issuance costs)' if 0 < cv - sv <= .03 * cv else None
         use, corr, conf, note = _cs_compare(q, cs, 'debt', 'debt', stmt_value, stmt_end,
-                                            ('debt', {k for k in capital.DEBT_KINDS if k != 'lease'}), expl)
+                                            ('debt', {k for k in capital.DEBT_KINDS if k != 'lease'}), expl,
+                                            {g['source_id'] for g in facts})
         notes.append(note)
         checks.append('capital_structure_crosscheck')
         if conf:
             status = 'conflict'
-        elif corr and status == 'reported':
+        elif corr == 'independent' and status == 'reported':
             status = 'verified'
         if use:
             lines = cs['lines']('debt', {k for k in capital.DEBT_KINDS if k != 'lease'})
@@ -1098,21 +1160,17 @@ def _post_period(q, cs, bs_end):
 # ---------------------------------------------------------------- TTM flows
 
 def _ttm(q, metric):
-    """facts.ttm, re-pointed at the best fact of each period.
-
-    A vendor's month-end can shadow a 52/53-week filing end (facts.series keys periods by exact date), which makes
-    facts.ttm fall back to the fiscal year or pick a vendor figure; quarters are re-clustered within 7 days here."""
+    """facts.ttm unchanged (value, period, method): the facts are re-pointed at the best fact of each period only for
+    the status. The value is never re-summed - annual_plus_ytd subtracts the year-earlier quarters (facts.ttm signs);
+    capex is sign-normalised per fact."""
     t = F.ttm(q.fb, metric)
-    qs = q.timeline(metric, 'quarter')
-    if (not t or t['method'] != 'quarters') and len(qs) >= 4:
-        last4, a = qs[-4:], q.timeline(metric, 'annual')
-        if 250 <= _days(last4[0][0], last4[-1][0]) <= 300 and (not a or _days(a[-1][0], last4[-1][0]) >= -7):
-            t = {'period_end': last4[-1][0], 'method': 'quarters', 'facts': [f for _, f in last4],
-                 'reclustered': 'providers date the same quarters differently; quarters matched within 7 days'}
     if not t:
         return None
+    signs = t.get('signs') or [1] * len(t['facts'])
+    value = sum(s * _val(metric, f) for s, f in zip(signs, t['facts'])) if metric == 'capex' else t['value']
     fs = [q.best(metric, f['period_end'], _kind(f)) or f for f in t['facts']]
-    return {**t, 'facts': fs, 'value': sum(_val(metric, f) for f in fs)}
+    return {**t, 'facts': fs, 'signs': signs, 'value': value,
+            'repointed_value': sum(s * _val(metric, f) for s, f in zip(signs, fs))}
 
 
 def _ttm_field(q, name, metric):
@@ -1125,8 +1183,20 @@ def _ttm_field(q, name, metric):
         sts.append(s)
         checks += c
         notes += n
-    fld = _field(q, name, _weakest(sts), t['value'], q.ccy, t['period_end'], t['facts'], checks,
-                 notes + ([t['reclustered']] if t.get('reclustered') else []), method=t['method'], period_end=t['period_end'])
+    ref = F.ttm(q.fb, metric)['value']
+    ok = _rel(abs(t['value']), abs(ref)) <= 1e-9
+    q.add('ttm_matches_facts', 'pass' if ok else 'fail', 'minor' if ok else 'critical',
+          f"{name} {_fmt(t['value'])} vs facts.ttm {_fmt(ref)} ({t['method']}, {t['period_end']})", period=t['period_end'],
+          fields=(name,), detail={'value': t['value'], 'facts_ttm': ref, 'method': t['method'], 'signs': t['signs']})
+    checks.append('ttm_matches_facts')
+    if not ok:
+        sts.append('conflict')
+    if _rel(t['repointed_value'], t['value']) > q.tol.get(metric, DEFAULT_TOL):
+        notes.append(f"the best fact of each period gives {_fmt(t['repointed_value'])}: facts.ttm value kept, see cross_source")
+    fld = _field(q, name, _weakest(sts), t['value'], q.ccy, t['period_end'], t['facts'], checks, notes,
+                 method=t['method'], period_end=t['period_end'], signs=t['signs'])
+    if t.get('ytd_rejected'):
+        fld['note'] = '; '.join(x for x in (fld['note'], t['ytd_rejected']) if x)
     if t['method'] == 'latest_fiscal_year':
         fld['note'] = '; '.join(x for x in (fld['note'], f"TTM is the fiscal year ended {t['period_end']} (no four contiguous quarters)") if x)
     _stale(q, fld, 'ttm', 'trailing period' + (' (quarterly data missing)' if t['method'] == 'latest_fiscal_year' else ''))
@@ -1157,7 +1227,7 @@ def validate(fb, capital_structure=None, options=None):
     res.update(cash_res)
     fields['debt'], res['debt'], res['lease_liabilities'] = _debt(q, cs, mcap)
     fields['convertibles'] = _convertibles(q, cs)
-    fields['post_period_events'] = _post_period(q, cs, q.latest_bs())
+    fields['post_period_events'] = _post_period(q, cs, q.latest_instant())
     for name, metric in TTM_FIELDS:
         fields[name] = _ttm_field(q, name, metric)
     ends = [x[-1][0] for x in (q.timeline(m, 'annual') for m in ('revenue', 'cfo')) if x]

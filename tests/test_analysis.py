@@ -339,14 +339,17 @@ class AcquisitionYear(unittest.TestCase):
 
 
 class SplitCase(unittest.TestCase):
-    def test_split_pair_excluded_and_flagged(self):
-        sh = {2021: 100e6, 2022: 102e6, 2023: 208e6, 2024: 210e6}
-        rows = {y: dict(revenue=1000e6 + 50e6 * i, shares_outstanding=s, cfo=100e6, capex=10e6, total_assets=1e9, equity=8e8, cash=1e8)
+    def rows(self, sh, eps=None):
+        return {y: dict(revenue=1000e6 + 50e6 * i, shares_outstanding=s, cfo=100e6, capex=10e6, total_assets=1e9, equity=8e8, cash=1e8,
+                        **({'eps_diluted': eps[y]} if eps else {}))
                 for i, (y, s) in enumerate(sh.items())}
-        an = analyze(synth(rows))
+
+    def test_dataqa_split_divided_out_and_flagged(self):
+        fb = synth(self.rows({2021: 100e6, 2022: 102e6, 2023: 208e6, 2024: 210e6}))
+        an = analyze(fb, _dataqa.validate(fb))
         s = an['metrics']['share_count_cagr_3y']
-        self.assertAlmostEqual(s['value'], (1.02 * 210 / 208) ** .5 - 1, places=9)
-        self.assertEqual(s['steps_used'], 2)
+        self.assertAlmostEqual(s['value'], (210 / 100 / 2) ** (1 / 3) - 1, places=9)   # issuance in the split year kept
+        self.assertEqual((s['steps_used'], s['split_basis']), (3, 'dataqa'))
         self.assertEqual(s['excluded_split_pairs'][0]['factor'], 2)
         f = flags(an)
         self.assertEqual(f['possible_split']['kind'], 'data')
@@ -354,10 +357,51 @@ class SplitCase(unittest.TestCase):
         self.assertNotIn('dilution', f)
 
     def test_reverse_split(self):
-        sh = {2022: 300e6, 2023: 30.5e6, 2024: 31e6, 2025: 31.5e6}
-        an = analyze(synth({y: dict(revenue=100e6, shares_outstanding=s) for y, s in sh.items()}))
+        fb = synth({y: dict(revenue=100e6, shares_outstanding=s) for y, s in {2022: 300e6, 2023: 30.5e6, 2024: 31e6, 2025: 31.5e6}.items()})
+        an = analyze(fb, _dataqa.validate(fb))
         self.assertEqual(an['metrics']['share_count_cagr_3y']['excluded_split_pairs'][0]['factor'], -10)
         self.assertIn('reverse', flags(an)['possible_split']['message'])
+
+    def test_issuance_with_flat_price_is_dilution_not_a_split(self):
+        """SYNTHETIC: count doubles, profit flat (EPS halves), price unchanged: dataqa's price test says issuance."""
+        sh = {2022: 50e6, 2023: 51e6, 2024: 102e6, 2025: 104e6}
+        fb = synth(self.rows(sh, eps={2022: 1.0, 2023: 1.0, 2024: .5, 2025: .5}))
+        fb['market']['price_history'] = [{'date': f'{y}-12-30', 'close': 20.0} for y in sh]
+        qa = _dataqa.validate(fb)
+        self.assertEqual(qa['splits'], [])
+        an = analyze(fb, qa)
+        s = an['metrics']['share_count_cagr_3y']
+        self.assertAlmostEqual(s['value'], (104 / 50) ** (1 / 3) - 1, places=9)        # was 2.0%: the issuance was hidden
+        self.assertEqual(s['excluded_split_pairs'], [])
+        self.assertEqual(flags(an)['dilution']['severity'], 'high')
+
+    def test_three_for_two_split_from_dataqa(self):
+        sh = {2022: 100e6, 2023: 100e6, 2024: 150e6, 2025: 150e6}
+        fb = synth(self.rows(sh))
+        fb['market']['price_history'] = [{'date': f'{y}-12-30', 'close': 30.0 if y < 2024 else 20.0} for y in sh]
+        qa = _dataqa.validate(fb)
+        self.assertEqual([x['factor'] for x in qa['splits']], [1.5])
+        an = analyze(fb, qa)
+        self.assertAlmostEqual(an['metrics']['share_count_cagr_3y']['value'], 0.0, places=12)   # was 14.5% "dilution"
+        self.assertNotIn('dilution', flags(an))
+        self.assertIn('1.5-for-1', flags(an)['possible_split']['message'])
+
+    def test_without_dataqa_an_unexplained_jump_counts_as_issuance(self):
+        an = analyze(synth(self.rows({2021: 100e6, 2022: 102e6, 2023: 208e6, 2024: 210e6})))
+        s = an['metrics']['share_count_cagr_3y']
+        self.assertAlmostEqual(s['value'], (210 / 100) ** (1 / 3) - 1, places=9)
+        self.assertEqual(s['excluded_split_pairs'], [])
+        self.assertEqual(s['unverified_split_like'][0]['factor'], 2)
+        f = flags(an)
+        self.assertIn('no price or per-share evidence', f['possible_split']['message'])
+        self.assertEqual(f['dilution']['severity'], 'high')
+
+    def test_without_dataqa_per_share_evidence_supports_the_split(self):
+        eps = {2021: 2.0, 2022: 2.1, 2023: 1.1, 2024: 1.2}
+        an = analyze(synth(self.rows({2021: 100e6, 2022: 102e6, 2023: 208e6, 2024: 210e6}, eps=eps)))
+        s = an['metrics']['share_count_cagr_3y']
+        self.assertAlmostEqual(s['value'], (210 / 100 / 2) ** (1 / 3) - 1, places=9)
+        self.assertEqual(s['excluded_split_pairs'][0]['basis'], 'factbook_evidence')
 
 
 class MissingData(unittest.TestCase):
@@ -402,28 +446,37 @@ class MissingData(unittest.TestCase):
 
 
 class DebtScope(unittest.TestCase):
-    def test_current_portion_added_only_when_roll_forward_supports_it(self):
+    def test_tagged_scope_follows_roll_forward_else_conservative(self):
         base = dict(revenue=500e6, cfo=60e6, capex=10e6, total_assets=1e9, equity=5e8, cash=1e8)
         rows = {2023: dict(base, long_term_debt_tagged=1000e6, current_portion_ltd=200e6),     # first year: no roll-forward
-                2024: dict(base, long_term_debt_tagged=1000e6, current_portion_ltd=200e6),     # no flows: total stays 1000
-                2025: dict(base, long_term_debt_tagged=800e6, current_portion_ltd=200e6),      # 800 + 200 = 1000 = roll-forward
+                2024: dict(base, long_term_debt_tagged=1000e6, current_portion_ltd=200e6),     # no flows: 1200 carried = plus
+                2025: dict(base, long_term_debt_tagged=1000e6, current_portion_ltd=200e6, debt_repaid=200e6),   # 1200 - 200 = tagged
                 2026: dict(base, long_term_debt=700e6, current_portion_ltd=100e6)}
         an = analyze(synth(rows, as_of='2027-06-30'))
         a = an['annual']
-        self.assertEqual((a['2023-12-31']['debt'], a['2023-12-31']['debt_method']), (1000e6, 'tagged_total'))
-        self.assertEqual((a['2024-12-31']['debt'], a['2024-12-31']['debt_method']), (1000e6, 'tagged_total'))
-        self.assertEqual((a['2025-12-31']['debt'], a['2025-12-31']['debt_method']), (1000e6, 'tagged_plus_current'))
+        self.assertEqual((a['2023-12-31']['debt'], a['2023-12-31']['debt_method']), (1200e6, 'tagged_plus_current'))
+        self.assertEqual((a['2024-12-31']['debt'], a['2024-12-31']['debt_method']), (1200e6, 'tagged_plus_current'))
+        self.assertEqual((a['2025-12-31']['debt'], a['2025-12-31']['debt_method']), (1000e6, 'tagged_total'))
         self.assertEqual((a['2026-12-31']['debt'], a['2026-12-31']['debt_method']), (800e6, 'noncurrent+current'))
         notes = {x['period_end']: x['decision'] for x in an['assumptions'] if x['code'] == 'debt_scope'}
+        self.assertIn('conservative', notes['2023-12-31'])
         self.assertIn('no roll-forward', notes['2023-12-31'])
-        self.assertIn('does not support', notes['2024-12-31'])
-        self.assertIn('supports it', notes['2025-12-31'])
-        rows[2025]['debt_repaid'] = 200e6                                # a repayment makes 800 the supported total
-        a = analyze(synth(rows, as_of='2027-06-30'))['annual']
-        self.assertEqual((a['2025-12-31']['debt'], a['2025-12-31']['debt_method']), (800e6, 'tagged_total'))
+        self.assertIn('supports it', notes['2024-12-31'])
+        self.assertIn('supports the tagged total', notes['2025-12-31'])
         # nwc removes the current portion from current liabilities whatever the debt scope
         rows[2026].update(current_assets=300e6, current_liabilities=250e6)
         self.assertEqual(analyze(synth(rows, as_of='2027-06-30'))['annual']['2026-12-31']['nwc'], 300e6 - 1e8 - 0 - (250e6 - 100e6))
+
+    def test_unresolved_scope_default_matches_dataqa(self):
+        """SYNTHETIC (review finding 9): no debt flows to test the scope - both modules add the current portion."""
+        rows = {y: dict(revenue=2000e6, operating_income=300e6, long_term_debt_tagged=t, current_portion_ltd=c, cash=200e6,
+                        equity=1500e6, total_assets=4000e6) for y, t, c in ((2024, 1000e6, 500e6), (2025, 900e6, 400e6))}
+        fb = synth(rows)
+        qa = _dataqa.validate(fb)
+        self.assertEqual(qa['resolved']['debt']['method'], 'tagged_plus_current')
+        a = analyze(fb, qa)['annual']
+        self.assertEqual((a['2024-12-31']['debt'], a['2024-12-31']['debt_method']), (1500e6, 'tagged_plus_current'))   # was 1000
+        self.assertEqual(a['2025-12-31']['debt'], qa['resolved']['debt']['value'])
 
     def test_leverage_flag(self):
         rows = {y: dict(revenue=1000e6, operating_income=80e6, d_and_a=20e6, interest_expense=50e6, long_term_debt=600e6,
@@ -527,6 +580,63 @@ class FiscalCalendar(unittest.TestCase):
         self.assertEqual([s['fiscal_period'] for s in m['revenue_growth_series']['value']], ['FY2021', 'FY2024'])
         self.assertIn('fiscal_calendar_gap', flags(an))
         self.assertIsNone(m['revenue_cagr_full']['value'])
+
+
+
+# ---------------------------------------------------------------- review 2026-10-19: TTM and current-year M&A (SYNTHETIC bundles)
+
+def adbe_with_quarters(acq_ytd=None):
+    """ADBE fixture + a SYNTHETIC evidence bundle of FY2025/FY2026 quarters (round numbers, not Adobe's)."""
+    fb = deepcopy(ADBE)
+    src = [{'id': 'q', 'kind': 'issuer_release', 'published_at': '2026-09-20'}, {'id': 'k', 'kind': 'filing', 'published_at': '2026-09-25'}]
+    qf = [{'metric': 'revenue', 'period': p, 'period_end': e, 'value': v, 'source_ids': ['q']}
+          for p, e, v in (('FY2025Q1', '2025-02-28', 5.7e9), ('FY2025Q2', '2025-05-30', 5.9e9), ('FY2025Q3', '2025-08-29', 6.0e9),
+                          ('FY2026Q1', '2026-02-27', 6.4e9), ('FY2026Q2', '2026-05-29', 6.6e9), ('FY2026Q3', '2026-08-28', 6.8e9))]
+    if acq_ytd is not None:
+        qf.append({'metric': 'acquisitions_ytd', 'period': 'FY2026Q3YTD', 'period_end': '2026-08-28', 'value': acq_ytd, 'source_ids': ['k']})
+    F.add_qualitative_bundle(fb, {'as_of': '2026-10-19', 'sources': src, 'quarterly_facts': qf})
+    return fb
+
+
+class TtmConsistency(unittest.TestCase):
+    def test_dataqa_analysis_and_facts_agree(self):
+        fb = adbe_with_quarters()
+        qa = _dataqa.validate(fb)
+        an = analyze(fb, qa)
+        t = F.ttm(fb, 'revenue')
+        want = 23.769e9 + (6.4 + 6.6 + 6.8 - 5.7 - 5.9 - 6.0) * 1e9
+        self.assertEqual(t['method'], 'annual_plus_ytd')
+        self.assertAlmostEqual(t['value'], want, places=0)
+        self.assertEqual(qa['fields']['revenue_ttm']['value'], t['value'])     # was FY + 2026 quarters + 2025 quarters
+        self.assertEqual(an['ttm']['revenue'], t['value'])
+        self.assertNotIn('dataqa_mismatch', an['ttm'])
+        self.assertNotIn('ttm_inconsistent', flags(an))
+
+    def test_mismatch_is_flagged(self):
+        fb = adbe_with_quarters()
+        qa = _dataqa.validate(fb)
+        qa['fields']['revenue_ttm'] = dict(qa['fields']['revenue_ttm'], value=61.1e9)
+        an = analyze(fb, qa)
+        self.assertEqual(an['ttm']['dataqa_mismatch'][0]['field'], 'revenue_ttm')
+        self.assertEqual(flags(an)['ttm_inconsistent']['severity'], 'high')
+
+
+class CurrentYearAcquisitions(unittest.TestCase):
+    def test_year_to_date_acquisitions_enter_the_window(self):
+        an = analyze(adbe_with_quarters(acq_ytd=1.5e9), _dataqa.validate(adbe_with_quarters(acq_ytd=1.5e9)))
+        m = an['metrics']['acquisition_spend_pct_revenue_3y']
+        self.assertEqual(m['window_kind'], 'fiscal_3y_plus_ytd')
+        self.assertEqual(m['window'], 'FY2023..FY2025 + year to date 2026-08-28')
+        self.assertAlmostEqual(m['value'], (17e6 + 1.5e9) / (19409e6 + 21505e6 + 23769e6 + 19.8e9), places=9)   # was 0.03%
+        self.assertEqual(m['year_to_date']['acquisitions'], 1.5e9)
+        f = flags(an)['acquisition_current_year']
+        self.assertEqual(f['severity'], 'medium')
+        self.assertIn('YTD@2026-08-28', [a['fiscal_period'] for a in an['acquisition_years']])
+
+    def test_newer_revenue_without_acquisition_data_says_so(self):
+        m = analyze(adbe_with_quarters(), adbe_qa())['metrics']['acquisition_spend_pct_revenue_3y']
+        self.assertEqual((m['window_kind'], m['window']), ('fiscal_3y', 'FY2023..FY2025'))
+        self.assertIn('not counted', m['note'])
 
 
 if __name__ == '__main__':
