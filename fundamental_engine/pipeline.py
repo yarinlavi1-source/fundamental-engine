@@ -1,0 +1,208 @@
+"""The single analysis route: sources -> validation -> understanding -> analysis -> forecast ->
+valuation -> risk -> independent review -> decision (docs/ARCHITECTURE.md).
+
+Python cannot call the user's connectors (they live in Claude's session), so collection is split in two:
+`collection_plan` lists the exact connector calls and the file name each raw payload must be saved
+under (outside Git), and `factbook_from_run_dir` turns that folder into a FactBook without retyping
+numbers. Everything after that is deterministic and reproducible from the casefile's inputs.
+
+A stage that cannot run records why and the later stages degrade honestly (e.g. no valuation ->
+the decision says the price cannot be assessed). Exceptions are recorded, never swallowed silently.
+"""
+from copy import deepcopy
+from datetime import date
+import json
+import os
+
+from . import __version__
+from . import facts as F
+
+STAGES = ('dataqa', 'analysis', 'model_card', 'forecast', 'valuation', 'risk', 'review', 'decision')
+
+
+def collection_plan(ticker, as_of, cik=None):
+    """Connector calls for one company, in priority order, with the raw file name for each payload.
+
+    Save each payload verbatim under runs/<TICKER>_<as_of>/raw/<file> (gitignored) and record retrieval
+    time and sha256 in MANIFEST.json. Denied or rate-limited calls are recorded, not retried in loops."""
+    t = ticker.upper()
+    plan = [
+        ('fmp', 'mcp__FMP__statements', {'endpoint': 'as-reported-income-statements', 'symbol': t, 'period': 'annual', 'limit': 6}, 'fmp__as-reported-income-statements__annual.json'),
+        ('fmp', 'mcp__FMP__statements', {'endpoint': 'as-reported-balance-statements', 'symbol': t, 'period': 'annual', 'limit': 6}, 'fmp__as-reported-balance-statements__annual.json'),
+        ('fmp', 'mcp__FMP__statements', {'endpoint': 'as-reported-cashflow-statements', 'symbol': t, 'period': 'annual', 'limit': 6}, 'fmp__as-reported-cashflow-statements__annual.json'),
+        ('fmp', 'mcp__FMP__statements', {'endpoint': 'as-reported-income-statements', 'symbol': t, 'period': 'quarter', 'limit': 8}, 'fmp__as-reported-income-statements__quarter.json'),
+        ('fmp', 'mcp__FMP__statements', {'endpoint': 'as-reported-balance-statements', 'symbol': t, 'period': 'quarter', 'limit': 8}, 'fmp__as-reported-balance-statements__quarter.json'),
+        ('fmp', 'mcp__FMP__statements', {'endpoint': 'as-reported-cashflow-statements', 'symbol': t, 'period': 'quarter', 'limit': 8}, 'fmp__as-reported-cashflow-statements__quarter.json'),
+        ('fmp', 'mcp__FMP__company', {'endpoint': 'shares-float', 'symbol': t}, 'fmp__shares-float__current.json'),
+        ('fmp', 'mcp__FMP__company', {'endpoint': 'profile-symbol', 'symbol': t}, 'fmp__profile-symbol__current.json'),
+        ('fmp', 'mcp__FMP__analyst', {'endpoint': 'financial-estimates', 'symbol': t, 'period': 'annual', 'limit': 6}, 'fmp__financial-estimates__annual.json'),
+        ('fmp', 'mcp__FMP__statements', {'endpoint': 'revenue-product-segmentation', 'symbol': t, 'period': 'annual'}, 'fmp__revenue-product-segmentation__annual.json'),
+        ('alpha_vantage', 'mcp__Alpha_Vantage_MCP_Server__INCOME_STATEMENT', {'symbol': t}, 'av__income.json'),
+        ('alpha_vantage', 'mcp__Alpha_Vantage_MCP_Server__BALANCE_SHEET', {'symbol': t}, 'av__balance.json'),
+        ('alpha_vantage', 'mcp__Alpha_Vantage_MCP_Server__CASH_FLOW', {'symbol': t}, 'av__cashflow.json'),
+        ('ib', 'mcp__Interactive_Brokers__search_contracts', {'query': t}, f'ib__search-contracts-{t}__current.json'),
+        ('ib', 'mcp__Interactive_Brokers__get_price_snapshot', {'contract_id': '<from search>', 'market_data_names': ['last', 'prior_close', 'misc_statistics']}, f'ib__price-snapshot-{t}__current.json'),
+    ]
+    if cik:
+        plan.append(('sec', 'curl data.sec.gov companyfacts (only where the network allows it)', {'cik': cik}, 'sec__companyfacts.json'))
+    return {'ticker': t, 'as_of': as_of, 'folder': f'runs/{t}_{as_of}/raw/',
+            'calls': [{'provider': p, 'tool': tool, 'args': a, 'file': f} for p, tool, a, f in plan],
+            'rules': ['Save payloads verbatim (copy saved tool-result files byte for byte); never retype numbers.',
+                      'Second source: SEC companyfacts or Alpha Vantage statements for cross-checks when available.',
+                      'Primary documents (10-K/10-Q/8-K) resolve definition conflicts; note what was read directly.',
+                      'Portfolio data is read-only and private: never inside Git.']}
+
+
+def _load(path):
+    with open(path, encoding='utf-8') as f:
+        return json.load(f)
+
+
+def factbook_from_run_dir(raw_dir, company, as_of):
+    """Build a FactBook from a raw folder written per collection_plan (file names are the contract)."""
+    def p(name):
+        return os.path.join(raw_dir, name)
+    manifest = _load(p('MANIFEST.json')) if os.path.exists(p('MANIFEST.json')) else {}
+    when = {}
+    for c in manifest.get('calls', manifest if isinstance(manifest, list) else []):
+        if isinstance(c, dict) and c.get('file'):
+            when[c['file']] = c.get('retrieved_utc') or c.get('retrieved_at')
+    fb = F.new(company, as_of)
+    for kind in ('annual', 'quarter'):
+        parts = {}
+        for part in ('income', 'balance', 'cashflow'):
+            name = f'fmp__as-reported-{part}-statements__{kind}.json'
+            if os.path.exists(p(name)):
+                data = _load(p(name))
+                if isinstance(data, list) and data:
+                    parts[part] = data
+        if parts:
+            F.from_fmp_as_reported(fb, parts, when.get(f'fmp__as-reported-income-statements__{kind}.json') or as_of, kind=kind)
+    av = {k: _load(p(f'av__{k}.json')) for k in ('income', 'balance', 'cashflow') if os.path.exists(p(f'av__{k}.json'))}
+    if av:
+        F.from_alpha_vantage(fb, av, when.get('av__income.json') or as_of)
+    if os.path.exists(p('sec__companyfacts.json')):
+        F.from_sec_companyfacts(fb, _load(p('sec__companyfacts.json')), when.get('sec__companyfacts.json') or as_of)
+    sf = p('fmp__shares-float__current.json')
+    if os.path.exists(sf):
+        rows = _load(sf)
+        if isinstance(rows, list) and rows and rows[0].get('outstandingShares'):
+            r = rows[0]
+            F.add_source(fb, 'fmp:shares_float', 'fmp', 'shares-float', 'vendor_normalized', when.get('fmp__shares-float__current.json') or as_of,
+                         sha=F.digest(rows), url=r.get('source'), note='vendor reading of the latest periodic filing cover; dated by the vendor')
+            end = _period_end_from_filing_url(r.get('source')) or r['date'][:10]
+            F.add_fact(fb, 'shares_outstanding_vendor', 'I@' + end, end, r['outstandingShares'], 'fmp:shares_float', 'normalized',
+                       min(r['date'][:10], as_of), unit='shares')
+    est = p('fmp__financial-estimates__annual.json')
+    if os.path.exists(est):
+        rows = _load(est)
+        if isinstance(rows, list):
+            F.from_fmp_estimates(fb, rows, when.get('fmp__financial-estimates__annual.json') or as_of, as_of=as_of)
+    snap = p(f"ib__price-snapshot-{company['ticker'].upper()}__current.json")
+    if os.path.exists(snap):
+        s = _load(snap)
+        last = (s.get('last') or {})
+        if last.get('price'):
+            F.add_source(fb, 'ib:snapshot', 'ib', 'price-snapshot', 'market_feed', when.get(os.path.basename(snap)) or as_of, sha=F.digest(s))
+            ts = last.get('ts')
+            d = date.fromtimestamp(ts).isoformat() if ts else as_of
+            F.set_price(fb, last['price'], min(d, as_of), 'ib:snapshot', kind='close' if last.get('is_close') else 'last')
+    return fb
+
+
+def _period_end_from_filing_url(url):
+    """'.../adbe-20260828.htm' -> '2026-08-28' (the filing's period date); None when absent."""
+    if not url:
+        return None
+    base = url.rsplit('/', 1)[-1]
+    digits = ''.join(ch for ch in base if ch.isdigit())
+    if len(digits) >= 8:
+        d = digits[-8:]
+        try:
+            return date(int(d[:4]), int(d[4:6]), int(d[6:])).isoformat()
+        except ValueError:
+            return None
+    return None
+
+
+def valuate(fb, qa, fc, inputs=None):
+    """Execute the forecast with the one canonical valuation route and its diagnostics."""
+    from .drivers import build_case
+    from .valuation import value_company, sensitivity
+    from . import valuation_tools as vt
+    if not fc or not fc.get('spec'):
+        return {'status': 'not_computed', 'reason': (fc or {}).get('reason') or 'no forecast spec for this valuation method'}
+    case = build_case(fc['spec'])
+    result = value_company(case)
+    diag, errors = {}, []
+    for name, fn in (('discount_rate_band', lambda: vt.discount_rate_band(case)),
+                     ('implied_cost_of_equity', lambda: {s['name']: vt.implied_cost_of_equity(case, s['name']) for s in case['scenarios']}),
+                     ('reverse_price', lambda: vt.reverse_price(case)),
+                     ('sensitivity', lambda: sensitivity(case))):
+        try:
+            diag[name] = fn()
+        except (ValueError, ZeroDivisionError, KeyError) as e:
+            errors.append({'diagnostic': name, 'error': str(e)})
+    wmbt = None
+    try:
+        from .forecast import what_must_be_true
+        wmbt = what_must_be_true(fc['spec'], fb['market']['price']['value'])
+    except (ValueError, ZeroDivisionError, KeyError, ImportError) as e:
+        errors.append({'diagnostic': 'what_must_be_true', 'error': str(e)})
+    cap = None
+    cs = fb.get('capital_structure')
+    if cs and fb.get('market', {}).get('price'):
+        from .capital import market_view
+        mv = market_view(cs, fb['market']['price']['value'])
+        cap = {'market_view': mv, 'opening_shares': case['opening']['shares'],
+               'difference': mv['fully_diluted_shares'] / case['opening']['shares'] - 1}
+    return {'status': result['status'], 'case': case, 'result': result, 'diagnostics': diag,
+            'what_must_be_true': wmbt, 'capital_check': cap, 'errors': errors}
+
+
+def run(fb, inputs=None):
+    """Run every stage on one FactBook. inputs: {'card': ..., 'forecast': ..., 'reviewer': ..., 'decision': ...}."""
+    from . import dataqa, analysis, model_card, forecast, risk, review, decision
+    inputs = deepcopy(inputs or {})
+    cf = {'casefile_version': 1, 'engine_version': __version__, 'company': fb['company'], 'as_of': fb['as_of'],
+          'factbook_sha256': F.fingerprint(fb), 'inputs_sha256': F.digest(inputs), 'errors': [], 'stages': {}}
+
+    def stage(name, fn):
+        try:
+            out = fn()
+            cf['stages'][name] = 'ok'
+            return out
+        except (ValueError, KeyError, ZeroDivisionError, TypeError) as e:
+            cf['stages'][name] = 'failed'
+            cf['errors'].append({'stage': name, 'error': f'{type(e).__name__}: {e}'})
+            return None
+
+    qa = stage('dataqa', lambda: dataqa.validate(fb, fb.get('capital_structure')))
+    an = stage('analysis', lambda: analysis.analyze(fb, qa)) if qa else None
+    card = stage('model_card', lambda: model_card.build(fb, an, qa, inputs.get('card'))) if an else None
+    fc = stage('forecast', lambda: forecast.build(fb, an, card, qa, inputs.get('forecast'))) if card else None
+    val = stage('valuation', lambda: valuate(fb, qa, fc, inputs)) if fc else {'status': 'not_computed', 'reason': 'forecast unavailable'}
+    if val is None:
+        val = {'status': 'not_computed', 'reason': 'valuation failed: ' + cf['errors'][-1]['error']}
+    rk = stage('risk', lambda: risk.assess(fb, qa, an, card, fc, val)) if card else None
+    rv = stage('review', lambda: review.audit(fb, qa, an, card, fc, val, rk, inputs.get('reviewer'))) if rk else None
+    parts = {'fb': fb, 'qa': qa, 'an': an, 'card': card, 'fc': fc, 'val': val, 'rk': rk, 'rv': rv}
+    dc = stage('decision', lambda: decision.decide(parts, inputs.get('decision')))
+    cf.update({'qa': qa, 'an': an, 'card': card, 'fc': fc, 'val': val, 'rk': rk, 'rv': rv, 'dc': dc})
+    json.dumps(cf, allow_nan=False, default=str)
+    cf['casefile_sha256'] = F.digest(json.loads(json.dumps({k: v for k, v in cf.items() if k != 'casefile_sha256'}, default=str)))
+    return cf
+
+
+def summary(cf):
+    """Compact record used by the portfolio layer, monitoring and discovery comparisons."""
+    dc, val = cf.get('dc') or {}, cf.get('val') or {}
+    er = dc.get('expected_return') or {}
+    today = ((val.get('result') or {}).get('annual_values') or [{}])[0]
+    return {'symbol': cf['company']['ticker'], 'as_of': cf['as_of'], 'verdict': (dc.get('verdict') or {}).get('code'),
+            'confidence': (dc.get('confidence') or {}).get('level'),
+            'quality': ((dc.get('assessments') or {}).get('business_quality') or {}).get('level'),
+            'risk_level': ((cf.get('rk') or {}).get('error_size') or {}).get('level'),
+            'price': today.get('current_quote'), 'bear_value': today.get('bear'), 'base_value': today.get('base'),
+            'bull_value': today.get('bull'), 'base_irr': er.get('base_irr'), 'bear_irr': er.get('bear_irr'),
+            'review_status': (cf.get('rv') or {}).get('status'), 'casefile_sha256': cf.get('casefile_sha256')}
