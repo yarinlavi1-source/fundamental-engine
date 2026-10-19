@@ -74,6 +74,8 @@ TOOLS += [
  research_tool('research_compare','Compare material claims and gates across revisions of one local case.',{'case_id':{'type':'string'},'first_revision':{'type':'integer'},'second_revision':{'type':'integer'}},['case_id','first_revision','second_revision']), research_tool('collection_plan','Step 1 of the single decision path: exact connector calls and raw file names for one company. Fetches nothing; payloads must be saved verbatim outside Git. Read pipeline.',{'ticker':{'type':'string'},'as_of':{'type':'string'},'cik':{'type':'string'}},['ticker','as_of']),
  research_tool('run_pipeline','The single decision path on a FactBook: data validation, business model card, financial analysis, bear/base/bull forecast, valuation, risks, independent review, four separate assessments and a closed verdict. Returns verdict, Hebrew paragraph, markdown report and hashes (full=true adds the casefile). Research indication, never an order. Read pipeline.',{'factbook':{'type':'object'},'inputs':{'type':'object'},'full':{'type':'integer','minimum':0,'maximum':1}},['factbook']),
  research_tool('portfolio_analyze','READ-ONLY portfolio view from Interactive Brokers payloads the client already retrieved: weights, concentration, economic exposure overlaps, scenario stress, holdings that need review. Nothing is stored; never orders.',{'positions':{'type':'object'},'summary':{'type':'object'},'as_of':{'type':'string'},'holdings_info':{'type':'object'},'options':{'type':'object'}},['positions','as_of']),
+ research_tool('screen_universe','Discovery before full analysis: universe rows (screening/SEC/FactBook grades) -> eight separate dimensions, five opportunity lenses (quality compounder, quality at a fair price, early commercial growth, mispriced/turning, structural tailwind), near misses and a diverse shortlist with what to check first. Not recommendations; no ranking by cheapness. Read pipeline.',{'rows':{'type':'object'},'options':{'type':'object'}},['rows']),
+ research_tool('screen_changes','Compare two discovery scans: entered, left, lens moves and the dimension changes behind them.',{'before':{'type':'object'},'after':{'type':'object'}},['before','after']),
  research_tool('portfolio_compare','Compare a researched candidate with existing holdings, a broad index and cash: reasoned options (add, add to, trim, replace, index, cash, nothing) with risk, diversification and tax effects. Options only, never orders.',{'candidate':{'type':'object'},'book_analysis':{'type':'object'},'alternatives':{'type':'object'},'options':{'type':'object'}},['candidate','book_analysis']),
 ]
 
@@ -136,6 +138,15 @@ class Server:
             if args.get('full'):
                 out['casefile'] = cf
             return out
+        if name == 'screen_universe':
+            from .screen import scan
+            rows = args['rows'].get('rows') if isinstance(args['rows'].get('rows'), list) else None
+            if rows is None:
+                raise ValueError('rows must be {"rows": [...]}')
+            return scan(rows, args.get('options'))
+        if name == 'screen_changes':
+            from .screen import rank_changes
+            return rank_changes(args['before'], args['after'])
         if name == 'portfolio_analyze':
             from .portfolio import from_ib, analyze as analyze_book
             book = from_ib(args['positions'], args.get('summary'), as_of=args['as_of'])

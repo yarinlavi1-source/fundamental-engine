@@ -117,6 +117,10 @@ def main():
     pr.add_argument("--inputs", help="JSON with analyst inputs (card, forecast, reviewer, decision)")
     pr.add_argument("--qualitative", help="JSON with dated sources and qualitative items to add to the FactBook")
     pr.add_argument("--out", required=True, help="Output folder (keep it outside Git for private or vendor data)")
+    sc = subs.add_parser("screen", help="Discovery scan of universe rows (JSON list or {rows: [...]}) into lenses and a shortlist")
+    sc.add_argument("rows")
+    sc.add_argument("--options", help="JSON options (themes, top_n, sector cap, anchors)")
+    sc.add_argument("--out")
     pf = subs.add_parser("portfolio", help="READ-ONLY analysis of saved Interactive Brokers payloads; prints to stdout, stores nothing")
     pf.add_argument("positions")
     pf.add_argument("--summary")
@@ -148,6 +152,16 @@ def main():
             (out / "report.md").write_text(markdown(cf), encoding="utf-8")
             (out / "paragraph.txt").write_text(hebrew_paragraph(cf), encoding="utf-8")
             print(json.dumps({'summary': summary(cf), 'stages': cf['stages'], 'errors': cf['errors'], 'out': str(out)}, indent=2, ensure_ascii=False))
+            return
+        if args.command == "screen":
+            from .screen import scan
+            data = read_json(args.rows)
+            result = scan(data['rows'] if isinstance(data, dict) else data, read_json(args.options) if args.options else None)
+            text = json.dumps(result, indent=2, ensure_ascii=False)
+            if args.out:
+                Path(args.out).write_text(text, encoding="utf-8")
+            print(json.dumps({'shortlist': [s['symbol'] for s in result['shortlist']], 'lenses': {k: [c['symbol'] for c in v] for k, v in result['lenses'].items()},
+                              'no_data': len(result['no_data']), 'notes': result['notes'][:3]}, indent=2, ensure_ascii=False))
             return
         if args.command == "portfolio":
             from .portfolio import from_ib, analyze as analyze_book
