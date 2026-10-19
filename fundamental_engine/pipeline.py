@@ -138,6 +138,7 @@ def valuate(fb, qa, fc, inputs=None):
     for name, fn in (('discount_rate_band', lambda: vt.discount_rate_band(case)),
                      ('implied_cost_of_equity', lambda: {s['name']: vt.implied_cost_of_equity(case, s['name']) for s in case['scenarios']}),
                      ('reverse_price', lambda: vt.reverse_price(case)),
+                     ('stress', lambda: vt.stress_test(case)),
                      ('sensitivity', lambda: sensitivity(case))):
         try:
             diag[name] = fn()

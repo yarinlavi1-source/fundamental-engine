@@ -1,0 +1,538 @@
+"""Independent review between valuation and decision (pipeline stage 'review').
+
+Three layers; none of them proves that a source is true:
+1. mechanical: dataqa status, the valuation underwriting audit and the red-team. The red-team
+   package is DERIVED from executed facts: capital structure from the FactBook (or, when absent, a
+   minimal capital.py structure built from dataqa's resolved balances), reported balances from
+   dataqa, model flags from the executed driver spec and valuation rows. Flags a forecast declares
+   about itself are never read: a model whose rows show a funding gap fails the funding check even
+   if its author wrote 'financing modeled'. When the structure is built from dataqa, the cash, debt
+   and share reconciliations pass by construction and are labelled so; the substantive opening test
+   is then the consistency check 'opening_vs_validated_data'.
+2. consistency: scenario order today, terminal ROIC versus demonstrated returns, terminal growth
+   versus the risk-free rate, year-1 revenue versus consensus, margins versus best history, the
+   share-count path versus history, and the valuation opening versus validated balances.
+3. reviewer: an optional signed, independent review input. It is validated and recorded, never
+   fabricated. Its assumption sign-offs are applied by RE-RUNNING the underwriting audit on a copy
+   of the executed case, so a sign-off cannot close a gap that is not a review gap.
+
+The price conclusion needs every gate; `reasons` explains each one that is closed. Demo cases never
+pass. A business not yet understood (model card completeness insufficient) withholds the conclusion as an
+evidence gap ('understanding_insufficient', status unreviewed_draft), never as a disqualifying judgement.
+needs_explanation / needs_evidence items are open questions for the reviewer, not vetoes.
+"""
+from copy import deepcopy
+from datetime import date
+from . import redteam
+from .valuation import years
+from .valuation_audit import audit_valuation
+
+REVIEW_ONLY = {'unreviewed_assumption', 'evidence_missing'}
+SEVERITIES = {'critical', 'major', 'minor'}
+HARD = {'dataqa_missing', 'data_blocked', 'risk_not_assessed', 'disqualifying_risk', 'redteam_not_usable',
+        'consistency_failure', 'critical_finding_unresolved'}
+
+
+def num(x):
+    if isinstance(x, dict):
+        x = x.get('value')
+    if isinstance(x, bool) or not isinstance(x, (int, float)) or x != x or x in (float('inf'), float('-inf')):
+        return None
+    return float(x)
+
+
+def metric(an, name):
+    return num(((an or {}).get('metrics') or {}).get(name))
+
+
+def scen(obj, name):
+    return next((s for s in (obj or {}).get('scenarios') or [] if s.get('name') == name), None)
+
+
+def resolved(qa, key):
+    return num(((qa or {}).get('resolved') or {}).get(key))
+
+
+def valuation_parts(val):
+    """(value_company result, executed case, today's row, quote) from the pipeline bundle; Nones when not executed."""
+    result = val.get('result') if isinstance(val, dict) else None
+    if not isinstance(result, dict) or not result.get('annual_values'):
+        return None, None, {}, None
+    case = result.get('reproduction_input') or val.get('case')
+    today = result['annual_values'][0]
+    return result, case, today, num(today.get('current_quote')) or num(case['quote']['price'])
+
+
+def annual_revenue(row):
+    d = years(row['start'], row['end'])
+    return row['revenue'] / d if d > 0 else None
+
+
+# ---------------------------------------------------------------- red-team derived from execution
+
+def derive_model(an, fc, result, case, today):
+    """Red-team model flags computed from the executed spec/rows; provenance says how each was obtained."""
+    model, prov = {}, {}
+
+    def put(k, v, how):
+        if v is not None:
+            model[k] = v
+        prov[k] = {'value': v, 'derived_from': how}
+    spec = (fc or {}).get('spec') or {}
+    start = num(spec.get('last_full_year_revenue'))
+    recognized = [(e, num((row or {}).get('revenue'))) for e, row in sorted(((an or {}).get('annual') or {}).items())]
+    if num(((an or {}).get('ttm') or {}).get('revenue')) is not None:
+        recognized.append(('ttm', num(an['ttm']['revenue'])))
+    tie = next(((e, v) for e, v in reversed(recognized) if v and start and abs(start / v - 1) <= .01), None)
+    how = f'spec.last_full_year_revenue {start:g} ties to recognized revenue {tie[1]:g} ({tie[0]}) within 1%' if tie else None
+    for a in (fc or {}).get('assumptions') or [] if start and not tie else []:
+        v = a.get('values') if isinstance(a.get('values'), dict) else {}
+        rv, g = num(v.get('revenue')), num(v.get('growth'))
+        if rv is None or abs(rv / start - 1) > .01:
+            continue
+        if a.get('kind') == 'guidance' and a.get('source_ids'):
+            tie, how = a['id'], f"start revenue {start:g} is dated guidance (assumption {a['id']}, sources {a['source_ids']})"
+            break
+        bridge = next(((e, r) for e, r in reversed(recognized) if g is not None and r and abs(r * (1 + g) / start - 1) <= .01), None)
+        if bridge:
+            tie, how = a['id'], (f"start revenue {start:g} = recognized {bridge[1]:g} ({bridge[0]}) x (1 {g:+.2%}) per documented assumption "
+                                 f"{a['id']}: recognized basis with a one-step current-year bridge (the growth is an assumption under review)")
+            break
+    put('revenue_basis', 'recognized' if tie else None, how or
+        ('no driver spec: start revenue cannot be traced' if start is None else
+         f'spec.last_full_year_revenue {start:g} does not tie to recognized annual/TTM revenue, dated guidance or a documented one-step bridge: undeclared'))
+    if spec:
+        put('backlog_treatment', 'not_used', 'drivers.build_case has no backlog/RPO input; revenue = growth on recognized revenue')
+    if not result or not case:
+        return model, prov
+    method = case.get('method')
+    base_r, base_c = scen(result, 'base'), scen(case, 'base')
+    put('valuation_basis', 'fcff' if method == 'operating' else method,
+        f'valuation.{method}: explicit cash flows after capex, terminal FCFF = NOPAT x (1 - g/ROIC)' if method == 'operating'
+        else f'valuation method {method} as executed')
+    put('terminal_share', num((base_r or {}).get('terminal_share_of_present_value')),
+        'valuation result base.terminal_share_of_present_value (PV of terminal equity / value today)')
+    vals = {k: num(today.get(k)) for k in ('bear', 'base', 'bull')}
+    put('scenario_values', vals if None not in vals.values() else None,
+        'valuation annual_values[0] (today)' if None not in vals.values() else 'a scenario value is withheld (funding gap) or missing')
+    if method != 'operating' or not base_r or not base_c:
+        if method == 'residual_income' and base_r:
+            gap = sum(r.get('capital_shortfall', 0) for r in base_r['forecast'])
+            put('funding_need', gap, 'residual_income base capital_shortfall rows')
+            put('financing_modeled', gap <= 1e-7, 'no regulatory capital shortfall in base rows' if gap <= 1e-7 else 'capital shortfall not recapitalized')
+        return model, prov
+    put('prepayments_treatment', 'working_capital_with_reversal',
+        'valuation.operating carries a deferred-revenue ledger: prepayments add cash and reverse as revenue is recognized')
+    hist = metric(an, 'sbc_pct_revenue')
+    per = []
+    for s, r in zip(case['scenarios'], result['scenarios']):
+        rev = sum(x['revenue'] for x in r['forecast'])
+        sbc = sum(num(p.get('sbc_expense')) or 0 for p in s['periods'])
+        per.append((s['name'], s.get('sbc_policy'), sbc / rev if rev else None, sum(num(p.get('sbc_shares')) or 0 for p in s['periods'])))
+    shown = {n: pct for n, _, pct, _ in per}
+    if all(pol == 'cash_equivalent' and pct and pct > 0 for _, pol, pct, _ in per):
+        put('sbc_treatment', 'expensed', f'every scenario charges SBC as a cash-equivalent cost (share of revenue {shown}); terminal margin includes SBC')
+        put('margin_basis', 'ebit_after_sbc', 'EBIT in the executed rows is after SBC expense')
+    elif all(pol == 'explicit_shares' and sh > 0 for _, pol, _, sh in per):
+        put('sbc_treatment', 'diluted', 'every scenario settles SBC in explicit new shares')
+        put('margin_basis', 'ebit_after_sbc', 'EBIT in the executed rows is after SBC expense')
+    elif hist is not None and hist > .01:
+        put('margin_basis', 'adjusted_ebitda', f'a scenario charges no SBC (share of revenue {shown}) while history shows {hist:.1%} of revenue')
+        put('sbc_treatment', None, 'historical SBC is excluded from at least one scenario and not modeled as dilution')
+    elif hist is not None:
+        put('sbc_treatment', 'expensed', f'historical SBC immaterial ({hist:.1%} of revenue); nothing material to expense')
+    else:
+        put('sbc_treatment', None, 'SBC history unavailable and the model charges none')
+    ci = metric(an, 'capex_pct_revenue')
+    put('capex_to_revenue_recent', ci, 'analysis.metrics.capex_pct_revenue' if ci is not None else 'capex/revenue history unavailable')
+    rows = base_r['forecast']
+    growing = [i for i in range(1, len(rows)) if (annual_revenue(rows[i]) or 0) > (annual_revenue(rows[i - 1]) or 0)]
+    t = base_c['terminal']
+    linked = not growing or any(rows[i]['growth_capex'] > 0 for i in growing)
+    put('capex_linked_to_growth', linked,
+        f"base rows: growth capex in {sum(rows[i]['growth_capex'] > 0 for i in growing)} of {len(growing)} growing periods; "
+        f"terminal reinvestment rate g/ROIC = {(num(t.get('growth')) or 0) / num(t['roic']):.3f}")
+    needs = {}
+    for s, r in zip(case['scenarios'], result['scenarios']):
+        ext = sum((num(p.get('debt_draw')) or 0) + (num(p.get('equity_proceeds')) or 0) for p in s['periods'])
+        gap = sum(x['funding_gap'] for x in r['forecast'])
+        needs[s['name']] = {'external_financing': ext, 'funding_gap': gap,
+                            'uncommitted': [p['end'] for p in s['periods'] if p.get('financing_status') == 'assumed'
+                                            and ((num(p.get('debt_draw')) or 0) or (num(p.get('equity_proceeds')) or 0))]}
+    b = needs['base']
+    put('funding_need', b['external_financing'] + b['funding_gap'],
+        f"base plan: explicit external financing {b['external_financing']:g} + unfunded gaps {b['funding_gap']:g}; all scenarios: {needs}")
+    put('financing_modeled', b['funding_gap'] <= 1e-7,
+        'base rows have no funding gap: every need is financed by explicit draws/equity at stated prices' if b['funding_gap'] <= 1e-7
+        else 'base rows show an unfunded cash requirement')
+    return model, prov
+
+
+def _structure_from_qa(fb, qa):
+    """Minimal capital.py structure from dataqa's resolved balances (source ids carried, never invented)."""
+    res = (qa or {}).get('resolved') or {}
+    shares = resolved(qa, 'shares_outstanding')
+    if not shares or shares <= 0:
+        return None, 'no validated share count: cannot build a capital structure'
+
+    def src(key, field):
+        r = res.get(key) if isinstance(res.get(key), dict) else {}
+        ids = r.get('source_ids') or r.get('sources') or []
+        f = ((qa or {}).get('fields') or {}).get(field) or {}
+        return r.get('source_id') or (ids[0] if ids else None) or (f.get('sources') or [None])[0] or f'dataqa:resolved.{key}'
+
+    def when(key):
+        r = res.get(key) if isinstance(res.get(key), dict) else {}
+        return r.get('as_of') or fb['as_of']
+    cs = {'as_of': fb['as_of'], 'currency': fb['company']['currency'], 'cash': [], 'debt': [],
+          'shares': [{'id': 'dataqa_common', 'kind': 'common', 'count': shares, 'source_id': src('shares_outstanding', 'shares_outstanding'),
+                      'as_of': when('shares_outstanding')}]}
+    for key, kind, field in (('cash', 'unrestricted', 'cash_and_liquid_investments'),
+                             ('short_term_investments', 'short_term_investments', 'cash_and_liquid_investments'),
+                             ('long_term_investments', 'long_term_investments', 'investments')):
+        v = resolved(qa, key)
+        if v:
+            cs['cash'].append({'id': 'dataqa_' + key, 'kind': kind, 'amount': v, 'source_id': src(key, field), 'as_of': when(key)})
+    d = resolved(qa, 'debt')
+    if d:
+        cs['debt'].append({'id': 'dataqa_debt', 'kind': 'other', 'principal': d, 'source_id': src('debt', 'debt'), 'as_of': when('debt')})
+    return cs, None
+
+
+def _reported(qa):
+    res, rep = (qa or {}).get('resolved') or {}, {}
+    cash = resolved(qa, 'cash')
+    if cash is not None:
+        rep.update(cash_and_equivalents=cash, short_term_investments=resolved(qa, 'short_term_investments') or 0)
+        if isinstance(res.get('cash'), dict) and res['cash'].get('as_of'):
+            rep['statement_as_of'] = res['cash']['as_of']
+    if resolved(qa, 'debt') is not None:
+        rep['debt_principal_outstanding'] = resolved(qa, 'debt')
+    if resolved(qa, 'shares_outstanding') is not None:
+        rep['shares_count'] = resolved(qa, 'shares_outstanding')
+        rep['shares_count_date'] = (res.get('shares_outstanding') or {}).get('as_of')
+        if not rep['shares_count_date']:
+            del rep['shares_count'], rep['shares_count_date']
+    return rep
+
+
+def redteam_check(fb, qa, an, fc, val):
+    """Run redteam.audit on a package derived from execution, then read it conservatively:
+    any critical FAILED or critical UNVERIFIABLE check makes the valuation unusable for price."""
+    result, case, today, _ = valuation_parts(val)
+    model, prov = derive_model(an, fc, result, case, today)
+    cs, source, by_construction, err = (fb or {}).get('capital_structure'), 'factbook', [], None
+    if cs is None:
+        cs, err = _structure_from_qa(fb or {}, qa)
+        source = 'dataqa_resolved' if cs else 'unavailable'
+        by_construction = ['cash_reconciles', 'debt_complete', 'shares_current'] if cs else []
+    else:
+        res = (qa or {}).get('resolved') or {}
+        by_construction = [code for key, code in (('cash', 'cash_reconciles'), ('debt', 'debt_complete'), ('shares_outstanding', 'shares_current'))
+                           if isinstance(res.get(key), dict) and 'capital_structure' in (res[key].get('basis'), res[key].get('method'))]
+    reported = _reported(qa)
+    out = {'inputs_derived': True, 'capital_structure_source': source, 'by_construction': by_construction,
+           'derived_inputs': prov, 'reported': reported, 'result': None, 'error': err}
+    if cs is not None:
+        try:
+            if date.fromisoformat(cs['as_of']) > date.fromisoformat(fb['as_of']):
+                raise ValueError('capital structure dated after the FactBook as_of (look-ahead)')
+            out['result'] = redteam.audit({'as_of': fb['as_of'], 'capital_structure': cs, 'reported': reported, 'model': model})
+        except (ValueError, KeyError, TypeError) as e:
+            out['error'] = f'{type(e).__name__}: {e}'
+    checks = (out['result'] or {}).get('checks', [])
+    out['critical_failed'] = out['critical_failures'] = [c['code'] for c in checks if c['severity'] == 'critical' and c['status'] == redteam.FAILED]
+    out['critical_unverifiable'] = [c['code'] for c in checks if c['severity'] == 'critical' and c['status'] == redteam.UNVERIFIABLE]
+    out['verdict'] = (out['result'] or {}).get('verdict', redteam.UNVERIFIABLE)
+    out['redteam_usable'] = bool((out['result'] or {}).get('valuation_usable'))
+    out['usable'] = out['redteam_usable'] and not out['critical_failed'] and not out['critical_unverifiable']
+    out['meaning'] = ('Inputs derived from executed facts, not self-declared flags. Checks listed in by_construction compare a '
+                      'structure with the balances it was built from and are not independent evidence.')
+    return out
+
+
+# ---------------------------------------------------------------- reviewer input
+
+def check_reviewer(reviewer, case=None, result=None):
+    """Validate the shape of a signed review; record it, never invent one."""
+    out = {'present': reviewer is not None, 'valid': False, 'independent': False, 'errors': [], 'reviewed': [], 'rejected': [],
+           'unresolved_critical': [], 'unresolved_major': [], 'bound_to_valuation': False}
+    if reviewer is None:
+        return out
+    if not isinstance(reviewer, dict):
+        out['errors'].append('reviewer input must be an object')
+        return out
+    e = out['errors']
+    for k in ('reviewer', 'statement'):
+        if not isinstance(reviewer.get(k), str) or not reviewer[k].strip():
+            e.append(f'{k}: nonempty text required')
+    try:
+        when = date.fromisoformat(str(reviewer.get('reviewed_at')))
+        if case and when < date.fromisoformat(case['as_of']):
+            e.append('reviewed_at precedes the valuation cutoff: the review cannot cover this casefile')
+    except ValueError:
+        e.append('reviewed_at: ISO date required')
+    if reviewer.get('independent') is not True:
+        e.append('independent must be true: a self-review is recorded but is not an independent review')
+    known = {a['id'] for a in (case or {}).get('assumptions', [])}
+    reviews = reviewer.get('assumption_reviews', {})
+    if not isinstance(reviews, dict):
+        e.append('assumption_reviews must map assumption id -> reviewed|rejected'); reviews = {}
+    for aid, st in reviews.items():
+        if st not in ('reviewed', 'rejected'):
+            e.append(f'assumption_reviews.{aid}: reviewed or rejected')
+        elif case and aid not in known:
+            e.append(f'assumption_reviews.{aid}: unknown assumption id')
+        else:
+            out[st].append(aid)
+    findings = reviewer.get('findings', [])
+    for i, f in enumerate(findings if isinstance(findings, list) else []):
+        if not isinstance(f, dict):
+            e.append(f'findings[{i}]: object required'); continue
+        if f.get('severity') not in SEVERITIES:
+            e.append(f'findings[{i}].severity: critical|major|minor')
+        if not isinstance(f.get('text'), str) or not f['text'].strip():
+            e.append(f'findings[{i}].text: nonempty text required')
+        if not isinstance(f.get('resolved'), bool):
+            e.append(f'findings[{i}].resolved: boolean required')
+        elif f['resolved'] and (not isinstance(f.get('response'), str) or not f['response'].strip()):
+            e.append(f'findings[{i}]: a resolved finding needs a response')
+        if f.get('resolved') is not True and f.get('severity') in ('critical', 'major'):
+            out['unresolved_' + f['severity']].append(f.get('text'))
+    if not isinstance(findings, list):
+        e.append('findings must be a list')
+    sha = reviewer.get('valuation_sha256')
+    if sha is not None:
+        if result and sha != result.get('input_sha256'):
+            e.append('valuation_sha256 does not match the executed valuation: the review covers a different case')
+        out['bound_to_valuation'] = bool(result and sha == result.get('input_sha256'))
+    out['independent'] = reviewer.get('independent') is True
+    out['valid'] = not e
+    return out
+
+
+# ---------------------------------------------------------------- consistency
+
+def _risk_free(fc):
+    comp = ((fc or {}).get('cost_of_equity') or {}).get('components') or {}
+    for k in ('risk_free', 'risk_free_rate', 'rf'):
+        if num(comp.get(k)) is not None:
+            return num(comp[k]), f'forecast.cost_of_equity.components.{k}'
+    return None, None
+
+
+def consistency(fb, qa, an, fc, val, rt=None, rc=None):
+    result, case, today, price = valuation_parts(val)
+    out = []
+    reviewed = set((rc or {}).get('reviewed') or [])
+
+    def add(code, status, severity, message, **detail):
+        out.append({'code': code, 'status': status, 'severity': severity, 'message': message, 'detail': detail})
+    if not result:
+        add('valuation', 'skip', 'minor', 'No executed valuation: consistency checks not applicable.')
+        return out
+    v = {k: num(today.get(k)) for k in ('bear', 'base', 'bull')}
+    if None in v.values():
+        add('scenario_order_today', 'skip', 'major', 'A scenario value is withheld or missing; order cannot be checked.', values=v)
+    else:
+        ok = v['bear'] <= v['base'] <= v['bull']
+        add('scenario_order_today', 'pass' if ok else 'fail', 'critical', 'bear <= base <= bull today.' if ok else 'Scenario values cross today.', values=v)
+    if case.get('method') != 'operating':
+        add('operating_checks', 'skip', 'minor', f"Method {case.get('method')}: terminal ROIC/growth/margin checks apply to operating models only.")
+        return out
+    bc, br = scen(case, 'base'), scen(result, 'base')
+    t = bc['terminal']
+    terminal_ids = set(t.get('assumption_ids') or [])
+    evidence = {k: metric(an, k) for k in ('roic', 'roic_ex_goodwill', 'incremental_roic_3y')}
+    known = [x for x in evidence.values() if x is not None]
+    if not known:
+        add('terminal_roic_vs_evidence', 'needs_evidence', 'minor', 'No demonstrated ROIC in analysis to support the terminal ROIC.', terminal_roic=t['roic'])
+    elif t['roic'] <= max(known) + .10:
+        add('terminal_roic_vs_evidence', 'pass', 'major', 'Terminal ROIC within 10pp of the best demonstrated return measure.', terminal_roic=t['roic'], evidence=evidence)
+    else:
+        add('terminal_roic_vs_evidence', 'reviewed' if terminal_ids and terminal_ids <= reviewed else 'needs_evidence', 'major',
+            f"Terminal ROIC {t['roic']:.1%} exceeds the best demonstrated measure {max(known):.1%} by more than 10pp: evidence of a durable advantage is required.",
+            terminal_roic=t['roic'], evidence=evidence)
+    rf, rf_src = _risk_free(fc)
+    tg = {s['name']: s['terminal']['growth'] for s in case['scenarios']}
+    if rf is None:
+        add('terminal_growth_vs_risk_free', 'skip', 'major', 'Risk-free rate not supplied with the cost of equity; check not run (no default invented).', terminal_growth=tg)
+    else:
+        bad = {k: g for k, g in tg.items() if g > rf + 1e-12}
+        add('terminal_growth_vs_risk_free', 'fail' if bad else 'pass', 'major',
+            f'Terminal growth above the risk-free rate {rf:.2%} in {sorted(bad)}: perpetual outgrowth of the economy.' if bad else
+            f'Terminal growth at or below the risk-free rate {rf:.2%}.', terminal_growth=tg, risk_free=rf, risk_free_source=rf_src)
+    cutoff = date.fromisoformat(fb['as_of'])
+    ests = sorted((e for e in (fb or {}).get('estimates', []) if e.get('metric') == 'revenue' and num(e.get('value'))
+                   and date.fromisoformat(e['as_of']) <= cutoff and date.fromisoformat(e['period_end']) > cutoff), key=lambda e: e['period_end'])
+    full = [r for r in br['forecast'] if years(r['start'], r['end']) > .9]
+    match = next(((e, r) for e in ests for r in full if abs((date.fromisoformat(r['end']) - date.fromisoformat(e['period_end'])).days) <= 45), None)
+    if not ests:
+        add('revenue_vs_consensus', 'skip', 'minor', 'No consensus revenue available at the cutoff (later estimates are never used).')
+    elif not match:
+        add('revenue_vs_consensus', 'skip', 'minor', 'No full forecast year matches a consensus fiscal year within 45 days.')
+    else:
+        e, r = match
+        diff = r['revenue'] / e['value'] - 1
+        comps = ((case.get('underwriting') or {}).get('consensus_review') or {}).get('comparisons', [])
+        explained = any(c.get('metric') == 'revenue' and c.get('difference_explanation') and
+                        abs((date.fromisoformat(c['period_end']) - date.fromisoformat(r['end'])).days) <= 45 for c in comps)
+        explained = explained or any('consensus' in str(a.get('topic', '')).lower() and a.get('rationale') for a in (fc or {}).get('assumptions', []))
+        add('revenue_vs_consensus', 'pass' if abs(diff) <= .20 else ('explained' if explained else 'needs_explanation'), 'major',
+            f"First full forecast year revenue differs from consensus by {diff:+.1%}" + ('' if abs(diff) <= .20 else '; a difference above 20% needs a written explanation.'),
+            model_revenue=r['revenue'], period_end=r['end'], consensus=e['value'], consensus_period_end=e['period_end'],
+            consensus_source=e.get('source_id'), provenance='vendor_estimate', relative_difference=diff)
+    best = metric(an, 'operating_margin_best_3y')
+    if best is None:
+        hist = [num(x.get('operating_income')) / num(x['revenue']) for x in ((an or {}).get('annual') or {}).values()
+                if num((x or {}).get('operating_income')) is not None and (num((x or {}).get('revenue')) or 0) > 0]
+        best = max(hist) if hist else None
+    rows_margin = [r['ebit'] / r['revenue'] for r in br['forecast'] if r['revenue'] > 0]
+    peak = max(rows_margin + [t['operating_margin']])
+    if best is None:
+        add('margin_vs_history', 'skip', 'major', 'No operating-margin history to compare.', model_peak_margin=peak)
+    elif peak <= best + .10:
+        add('margin_vs_history', 'pass', 'major', f'Peak modeled operating margin {peak:.1%} within 10pp of best history {best:.1%}.', model_peak_margin=peak, best_history=best)
+    else:
+        margin_a = [a for a in (fc or {}).get('assumptions', []) if 'margin' in str(a.get('topic', '')).lower()]
+        evidenced = any(a.get('kind') in ('reported', 'guidance') and a.get('source_ids') for a in margin_a)
+        ids = {a['id'] for a in margin_a} | terminal_ids
+        status = 'reviewed' if ids and ids <= reviewed else ('evidenced' if evidenced else 'needs_evidence')
+        add('margin_vs_history', status, 'major', f'Peak modeled operating margin {peak:.1%} exceeds best history {best:.1%} by more than 10pp: '
+            'needs reported/guided evidence or an explicit reviewer sign-off.', model_peak_margin=peak, best_history=best)
+    hist_sh = metric(an, 'share_count_cagr_3y')
+    rows = br['forecast']
+    span = years(case['as_of'], rows[-1]['end'])
+    model_sh = (rows[-1]['shares'] / case['opening']['shares']) ** (1 / span) - 1 if span > 0 else 0
+    sbc_hist = metric(an, 'sbc_pct_revenue') or 0
+    expensed = ((rt or {}).get('derived_inputs') or {}).get('sbc_treatment', {}).get('value') == 'expensed'
+    if hist_sh is None:
+        add('share_path_vs_history', 'skip', 'minor', 'No share-count history.', model_cagr=model_sh)
+    elif hist_sh > model_sh + .02 and not (expensed and hist_sh <= sbc_hist):
+        add('share_path_vs_history', 'needs_explanation', 'major', f'History shows {hist_sh:+.1%}/yr share growth; the model path is {model_sh:+.1%}/yr. '
+            'Cash-equivalent SBC covers award dilution, not financing issuance.', history_cagr=hist_sh, model_cagr=model_sh)
+    else:
+        add('share_path_vs_history', 'pass', 'major', f'Model share path {model_sh:+.1%}/yr versus history {hist_sh:+.1%}/yr'
+            + (' (buybacks are not credited unless modeled as payouts).' if hist_sh < model_sh - .02 else '.'), history_cagr=hist_sh, model_cagr=model_sh)
+    out.append(_opening_check(qa, case, val))
+    return out
+
+
+def _opening_check(qa, case, val):
+    """The valuation opening must not overstate cash or understate debt/shares versus validated balances."""
+    op = case['opening']
+    q = {k: resolved(qa, k) for k in ('cash', 'short_term_investments', 'long_term_investments', 'debt', 'shares_outstanding')}
+    rec = (case.get('underwriting') or {}).get('opening_reconciliation') or {}
+    fails, notes = [], []
+    if q['shares_outstanding'] is not None and op['shares'] < q['shares_outstanding'] * .995:
+        fails.append(f"opening shares {op['shares']:g} below validated outstanding {q['shares_outstanding']:g}")
+    liquid_q = None if q['cash'] is None else q['cash'] + (q['short_term_investments'] or 0) + (q['long_term_investments'] or 0)
+    liquid_o = (num(op.get('unrestricted_cash')) or 0) + (num(op.get('marketable_investments')) or 0)
+    bridged = bool(rec.get('bridge_events'))
+    if liquid_q is not None and liquid_o > liquid_q * 1.02 + 1:
+        (notes if bridged else fails).append(f'opening cash+investments {liquid_o:g} above validated {liquid_q:g}' + (' (bridge events supplied)' if bridged else ''))
+    if q['debt'] is not None and (num(op.get('debt')) or 0) < q['debt'] * .98 - 1:
+        (notes if bridged else fails).append(f"opening debt {op.get('debt'):g} below validated {q['debt']:g}" + (' (bridge events supplied)' if bridged else ''))
+    rc_cash = num(rec.get('cash_and_equivalents'))
+    if q['cash'] is not None and rc_cash is not None and abs(rc_cash - q['cash']) > .01 * max(q['cash'], 1):
+        notes.append('opening reconciliation statement cash differs from dataqa resolved cash (dates or definitions differ)')
+    cap = (val or {}).get('capital_check') or {}
+    if num(cap.get('difference')) is not None and cap['difference'] > .02:
+        notes.append(f"fully diluted shares at the current price exceed opening shares by {cap['difference']:.1%} (in-the-money converts/options)")
+    status = 'fail' if fails else ('needs_explanation' if notes else ('skip' if all(x is None for x in q.values()) else 'pass'))
+    return {'code': 'opening_vs_validated_data', 'status': status, 'severity': 'critical' if fails else 'major',
+            'message': '; '.join(fails + notes) or 'Valuation opening consistent with validated balances (no overstated cash, no understated debt/shares).',
+            'detail': {'validated': q, 'opening': {k: op.get(k) for k in ('unrestricted_cash', 'marketable_investments', 'debt', 'shares')}}}
+
+
+# ---------------------------------------------------------------- audit
+
+def _reaudit(case, result, rc):
+    """Underwriting audit re-run with the independent reviewer's sign-offs applied to a copy."""
+    c = deepcopy(case)
+    for a in c['assumptions']:
+        if a['id'] in rc['reviewed']:
+            a['review_status'] = 'reviewed'
+    return audit_valuation(c, result['scenarios'])
+
+
+def audit(fb, qa, an, card, fc, val, rk, reviewer=None):
+    result, case, today, price = valuation_parts(val)
+    rt = redteam_check(fb, qa, an, fc, val)
+    rc = check_reviewer(reviewer, case, result)
+    cons = consistency(fb, qa, an, fc, val, rt, rc)
+    ua = (result or {}).get('underwriting_audit') or {}
+    va = {'valuation_status': (result or {}).get('status', (val or {}).get('status', 'not_computed')),
+          'calculation_status': (result or {}).get('calculation_status'), 'is_demo': bool((result or {}).get('is_demo')),
+          'status': ua.get('status'), 'eligible': bool(ua.get('eligible_for_research_synthesis')),
+          'issues': ua.get('issues', []), 'issue_codes': sorted({i['code'] for i in ua.get('issues', [])}),
+          'source_access': ua.get('source_access'), 'input_sha256': (result or {}).get('input_sha256'),
+          'warnings': (result or {}).get('warnings', [])}
+    reasons, codes = [], []
+
+    def no(code, message):
+        codes.append(code); reasons.append(f'{code}: {message}')
+    status_qa = (qa or {}).get('status')
+    if not qa:
+        no('dataqa_missing', 'data validation did not run')
+    elif status_qa == 'blocked':
+        no('data_blocked', f"critical fields blocked: {', '.join(qa.get('blocking', [])) or 'see dataqa'}")
+    if not result:
+        no('valuation_not_executed', (val or {}).get('reason') or 'no executed valuation')
+    elif va['is_demo']:
+        no('is_demo', 'synthetic demo inputs never support a real price conclusion')
+    elif va['valuation_status'] == 'conditional_valuation' and va['eligible']:
+        va['basis'] = 'underwriting audit eligible'
+    elif va['valuation_status'] in ('underwriting_required', 'unreviewed'):
+        other = sorted(set(va['issue_codes']) - REVIEW_ONLY)
+        if other:
+            no('underwriting_incomplete', f"underwriting issues beyond review: {', '.join(other)}")
+        elif not (rc['valid'] and rc['independent']):
+            no('review_required', 'only review/evidence gaps remain; a valid signed independent review is required'
+               + (f" (reviewer input invalid: {'; '.join(rc['errors'])})" if rc['present'] else ''))
+        elif rc['rejected']:
+            no('assumption_rejected', f"reviewer rejected: {', '.join(rc['rejected'])}")
+        else:
+            missing = sorted(a['id'] for a in case['assumptions'] if a['review_status'] != 'reviewed' and a['id'] not in rc['reviewed'])
+            re = _reaudit(case, result, rc)
+            va['reaudit_with_reviewer'] = {'eligible': re['eligible_for_research_synthesis'], 'issues': re['issues']}
+            if missing:
+                no('review_incomplete', f"assumptions not signed off: {', '.join(missing)}")
+            elif not re['eligible_for_research_synthesis']:
+                no('review_incomplete', f"gaps remain after sign-off: {', '.join(sorted({i['code'] + '@' + i['path'] for i in re['issues']}))}")
+            else:
+                va['basis'] = 'independent reviewer sign-off closes every remaining underwriting gap'
+    elif va['valuation_status'] == 'funding_blocked':
+        no('funding_blocked', 'a scenario has an unfunded cash requirement; values are withheld until financing is modeled')
+    else:
+        no('valuation_status', f"valuation status {va['valuation_status']}")
+    if rc['rejected'] and 'assumption_rejected' not in codes:
+        no('assumption_rejected', f"reviewer rejected: {', '.join(rc['rejected'])}")
+    comp = ((card or {}).get('completeness') or {})
+    if not card or comp.get('status') == 'insufficient':
+        no('understanding_insufficient', 'business not yet understood (model card ' + ('missing' if not card else 'completeness insufficient: '
+           + (', '.join(map(str, comp.get('missing') or [])) or 'unspecified')) + '): an evidence gap, not a judgement on the company')
+    if rk is None:
+        no('risk_not_assessed', 'risk stage did not run')
+    elif rk.get('disqualifying'):
+        no('disqualifying_risk', ', '.join(rk['disqualifying']))
+    if not rt['usable']:
+        why = rt['critical_failed'] + rt['critical_unverifiable'] or [rt['error'] or rt['verdict']]
+        no('redteam_not_usable', f"critical red-team checks failed or unverifiable: {', '.join(map(str, why))}")
+    crit = [c['code'] for c in cons if c['status'] == 'fail' and c['severity'] == 'critical']
+    if crit:
+        no('consistency_failure', ', '.join(crit))
+    if rc['unresolved_critical']:
+        no('critical_finding_unresolved', ' | '.join(map(str, rc['unresolved_critical'])))
+    allowed = not reasons
+    open_items = [{'code': c['code'], 'status': c['status'], 'message': c['message']} for c in cons
+                  if c['status'] in ('needs_explanation', 'needs_evidence') or (c['status'] == 'fail' and c['severity'] != 'critical')]
+    open_items += [{'code': 'reviewer_major_finding', 'status': 'unresolved', 'message': m} for m in rc['unresolved_major']]
+    return {'mechanical': {'dataqa': status_qa, 'dataqa_blocking': (qa or {}).get('blocking', []), 'dataqa_limited': (qa or {}).get('limited', []),
+                           'valuation_audit': va, 'redteam': rt, 'consistency': cons},
+            'reviewer': deepcopy(reviewer) if reviewer is not None else None, 'reviewer_check': rc,
+            'price_conclusion_allowed': allowed,
+            'status': 'reviewed' if allowed else ('blocked' if HARD & set(codes) else 'unreviewed_draft'),
+            'reasons': reasons, 'reason_codes': codes, 'open_items': open_items,
+            'meaning': 'Process and consistency audit of supplied evidence, not an independent fact check. A reviewed status '
+                       'permits a dated, conditional price conclusion; it does not establish forecast accuracy or investment merit.'}
