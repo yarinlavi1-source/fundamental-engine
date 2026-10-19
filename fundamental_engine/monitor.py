@@ -8,10 +8,16 @@ changes from price moves; only material deviations alert, each saying why it mat
 the record and its forecasts into the append-only ledger with the system time, so `score` can later
 say whether a miss was an analysis error (business outside the envelope), a valuation error (business
 on track, realized return outside the expected band) or an external shock (only when an event with
-evidence was recorded in the ledger; never inferred). The recurring-error report uses only original
-forecasts the ledger proves were recorded before their outcomes, needs several companies before it
-calls anything a pattern, never filters by which stocks went up, and only suggests what to review:
-it does not tune any assumption, so the engine cannot fit itself to winners or to hindsight.
+evidence was recorded in the ledger before the result became public; never inferred, and an event
+written afterwards is reported as a post-hoc explanation). The recurring-error report uses only
+original forecasts the ledger proves were recorded on time (within 7 days of made_at) and before
+their outcomes, needs several companies before it calls anything a pattern, never filters by which
+stocks went up, and only suggests what to review: it does not tune any assumption, so the engine
+cannot fit itself to winners or to hindsight.
+
+The current fiscal year (the stub period the valuation starts with) is frozen too: revenue at the
+revenue_current_fy anchor with the +/-3% band of its falsifier, plus revenue and margin triggers.
+Growth thresholds always compare one fiscal year with the previous one (never a two-year CAGR).
 
 Thresholds (DEFAULTS) are monitoring tolerances, not investment rules.
 """
@@ -20,7 +26,8 @@ from math import comb, sqrt
 import json
 from . import __version__
 from . import facts as F
-from .ledger import Ledger, stamp, day, cmp, envelope, effective_outcomes, mismatch, observed, is_legacy
+from .ledger import (Ledger, stamp, day, cmp, envelope, effective_outcomes, mismatch, observed, is_legacy, is_late,
+                     recording_lag_days, LATE_RECORDING_DAYS)
 
 DEFAULTS = {
     'fy_match_days': 12,            # 52/53-week fiscal years end on different calendar days
@@ -31,6 +38,7 @@ DEFAULTS = {
     'net_debt_increase_mcap': .10,  # net debt above the planned path by 10% of equity value at analysis
     'debt_issue_mcap': .05,         # net debt raised in one new period >= 5% of equity value at analysis
     'ttm_growth_shortfall': .03,    # provisional: trailing growth below the bear-year growth by 3 points
+    'current_year_band': .03,       # current fiscal year revenue band: the revenue_current_fy falsifier (differs by > 3%)
     'irr_change': .0025,
     'review_max_days': 365, 'filing_lag_days': 75,
     'min_return_years': 1.0, 'return_noise': .10,   # realized-return noise allowance, scaled by 1/sqrt(years)
@@ -66,6 +74,7 @@ FAMILY = {'revenue': 'revenue', 'revenue_growth': 'revenue', 'operating_margin':
 SCEN = ('bear', 'base', 'bull')
 IMPACT_OF = {'revenue': ['value'], 'margin': ['business_quality', 'value'], 'fcf': ['business_quality', 'value'],
              'shares': ['value'], 'debt': ['value', 'business_quality'], 'tax': ['value']}
+ONE_YEAR = (.9, 1.1)            # growth is only compared over about one fiscal year (52/53-week years included)
 
 
 def _years(a, b):
@@ -74,6 +83,10 @@ def _years(a, b):
 
 def _div(a, b):
     return a / b if a is not None and b not in (None, 0) else None
+
+
+def _one_year(a, b):
+    return bool(a and b) and ONE_YEAR[0] <= _years(a, b) <= ONE_YEAR[1]
 
 
 def _order(b, m, u):
@@ -295,10 +308,12 @@ def _direction(b, m):
     return None
 
 
-def _assumptions(fc, case, ends_all, ends_full, triggers, tol):
+def _assumptions(fc, case, ends_all, ends_full, triggers, tol, current=None):
     """Thesis assumptions with falsifiers; those with an observable same-meaning metric get a bear-value trigger.
 
-    Periods where bear equals base carry no range (e.g. the current-year starting margin) and get no threshold."""
+    Periods where bear equals base carry no range (e.g. the current-year starting margin) and get no threshold.
+    The current-year revenue anchor is checked through its frozen forecast (below the band: revenue trigger;
+    above it: above_bull_case), so its trigger names those instead of a second threshold."""
     out = []
     raw = fc.get('assumptions') or [dict(a, topic=a.get('id')) for a in (case or {}).get('assumptions', [])]
     for a in raw:
@@ -307,7 +322,13 @@ def _assumptions(fc, case, ends_all, ends_full, triggers, tol):
         vals, suf = _assumption_values(a, raw)
         b, m = vals.get('bear'), vals.get('base')
         trig = None
-        if observable and suf in (None, 'base') and b is not None and m is not None:
+        if current and current.get('assumption_id') and a.get('id') == current['assumption_id']:
+            e0 = current['period_end']
+            metric, observable, m = 'revenue', True, current['base']
+            trig = {'metric': 'revenue', 'op': 'outside', 'threshold': [current['low'], current['high']], 'tolerance': 0,
+                    'period_kind': 'fiscal_year', 'period_end': e0, 'forecast_id': current['id'],
+                    'evaluated_by': [f'revenue_below_bear@{e0}', 'above_bull_case']}
+        elif observable and suf in (None, 'base') and b is not None and m is not None:
             op, thr = _direction(b, m), b
             if isinstance(b, list):
                 ends = ends_all if len(b) == len(ends_all) else ends_full if len(b) == len(ends_full) else None
@@ -323,6 +344,37 @@ def _assumptions(fc, case, ends_all, ends_full, triggers, tol):
                     'source_ids': a.get('source_ids') or [], 'trigger': trig, 'linked_triggers': linked,
                     'monitor': 'filings' if trig or linked else metric if metric in ('valuation_review', 'manual') else 'manual'})
     return out
+
+
+def _current_year(fc, sc, as_of, last_end, tol):
+    """The fiscal year the valuation's stub period completes, with its revenue anchor, or None.
+
+    Anchor, in order: the revenue_current_fy assumption (forecast.py; its falsifier is 'reported revenue
+    differs by more than 3%'), forecast anchors.current_fiscal_year, or a driver spec's
+    last_full_year_revenue when the spec has a stub (drivers.build_case grows the first full year from
+    exactly that number). Nothing is guessed when the forecast's current year is another period."""
+    rows = (sc.get('base') or {}).get('forecast') or []
+    if not rows or ('start' in rows[0] and _years(rows[0]['start'], rows[0]['end']) >= .9) or day(rows[0]['end']) <= day(as_of):
+        return None
+    end = rows[0]['end']
+    near = lambda e: isinstance(e, str) and abs((day(e) - day(end)).days) <= tol
+    an = (fc.get('anchors') or {}).get('current_fiscal_year') or {}
+    if an.get('end') and not near(an['end']):
+        return None
+    pos = lambda x: isinstance(x, (int, float)) and not isinstance(x, bool) and x > 0
+    a = next((x for x in fc.get('assumptions') or [] if x.get('id') == 'revenue_current_fy'), None)
+    rev = ((a or {}).get('values') or {}).get('revenue')
+    sp = fc.get('spec') or {}
+    if pos(rev):
+        found = (float(rev), 'revenue_current_fy assumption', 'revenue_current_fy')
+    elif pos(an.get('revenue')):
+        found = (float(an['revenue']), 'forecast anchors.current_fiscal_year', None)
+    elif sp.get('stub_annual_revenue_rate') is not None and pos(sp.get('last_full_year_revenue')) and near((sp.get('boundaries') or [None])[0]):
+        found = (float(sp['last_full_year_revenue']), 'driver spec last_full_year_revenue (the year the stub completes)', None)
+    else:
+        return None
+    start = last_end if _one_year(last_end, end) else (day(end) - timedelta(days=364)).isoformat()
+    return {'period_start': start, 'period_end': end, 'revenue': found[0], 'source': found[1], 'assumption_id': found[2]}
 
 
 def thesis_from_casefile(cf, clock=None, options=None):
@@ -380,16 +432,37 @@ def thesis_from_casefile(cf, clock=None, options=None):
                'fcf_margin': _div(fcf, la.get('revenue')), 'fcf_after_sbc_margin': _div(fcfs, la.get('revenue')),
                'shares': shares0, 'net_debt': nd0, 'market_cap': p0 * shares0 if p0 and shares0 else None,
                'formula': 'last fiscal year in the casefile analysis; shares/net debt from the valuation opening balance; market cap = price x shares'}
-    # ---- forecasts (fiscal-year rows of the executed case; stub periods are not fiscal-year forecasts)
-    forecasts, skipped = [], []
+    # ---- forecasts (fiscal-year rows of the executed case; the stub period stands for the current fiscal
+    # year, frozen as its revenue anchor +/- the falsifier band; other short periods are not forecasts)
+    forecasts, skipped, current, cur_margin = [], [], None, None
     sc = {s['name']: s for s in (res or {}).get('scenarios', [])}
     ends_all = [r.get('end') for r in (sc.get('base') or {}).get('forecast') or []]
     if case and all(n in sc for n in ('bear', 'base', 'bull')):
         defs = _metric_defs(case)
         prev = {'end': last_end, **{n: la.get('revenue') for n in ('bear', 'base', 'bull')}} if la.get('revenue') else None
+        cy = _current_year(fc, sc, as_of, last_end, o['fy_match_days'])
+        if cy:
+            r0, band, e0, unit = cy['revenue'], o['current_year_band'], cy['period_end'], case['currency']
+            v = {'bear': r0 * (1 - band), 'base': r0, 'bull': r0 * (1 + band)}
+            current = {'id': f"{tid}:revenue:{e0}", 'metric': 'revenue', 'period_start': cy['period_start'], 'period_end': e0,
+                       'period_kind': 'fiscal_year', 'horizon_years': round(_years(as_of, e0), 3), 'value': r0, 'low': v['bear'],
+                       'high': v['bull'], **v, 'unit': unit, 'currency': unit if unit == currency else None, 'basis': BASES['revenue'],
+                       'scenario_order': 'ascending', 'sided': 'two', 'provenance': 'assumption', 'current_fiscal_year': True,
+                       'assumption_id': cy['assumption_id'], 'anchor_source': cy['source'],
+                       'formula': f"current fiscal year revenue anchor ({cy['source']}) +/- {band:.0%}, the band of the revenue_current_fy "
+                                  'falsifier; bear/bull are the band edges, not model scenarios'}
+            lr = la.get('revenue')
+            current['growth'] = {n: v[n] / lr - 1 if lr and _one_year(last_end, e0) else None for n in ('bear', 'base', 'bull')}
+            forecasts.append(current)
+            prev = {'end': e0, **{n: r0 for n in ('bear', 'base', 'bull')}}   # every scenario grows from the same current year
+            stub = {n: next((r for r in sc[n].get('forecast') or [] if r.get('end') == e0), None) for n in ('bear', 'base', 'bull')}
+            if all(stub.values()):
+                ms = {n: _div(stub[n].get('ebit'), stub[n].get('revenue')) for n in stub}
+                cur_margin = ms if all(x is not None for x in ms.values()) else None
         for b in sc['base'].get('forecast') or []:
             if 'start' not in b or _years(b['start'], b['end']) < .9:
-                skipped.append({'period_end': b.get('end'), 'reason': 'stub period (< 0.9 year): not a fiscal-year forecast'})
+                if not (current and b.get('end') == current['period_end']):
+                    skipped.append({'period_end': b.get('end'), 'reason': 'stub period (< 0.9 year) without a current fiscal-year revenue anchor'})
                 continue
             rows = {n: next((r for r in sc[n].get('forecast') or [] if r.get('end') == b['end']), None) for n in ('bear', 'base', 'bull')}
             if any(r is None for r in rows.values()):
@@ -409,15 +482,18 @@ def thesis_from_casefile(cf, clock=None, options=None):
                         'sided': sided, 'provenance': 'calculation',
                         'formula': f'valuation.value_company forecast row for the period ({bas}); low/high = envelope of bear/base/bull'}
                 if metric == 'revenue' and prev:
-                    yrs = _years(prev['end'], b['end'])
-                    item['growth'] = {n: (v[n] / prev[n]) ** (1 / yrs) - 1 if prev[n] and v[n] / prev[n] > 0 and yrs > .5 else None
-                                      for n in ('bear', 'base', 'bull')}
+                    one = _one_year(prev['end'], b['end'])      # never a multi-year CAGR: TTM growth is one year
+                    item['growth'] = {n: v[n] / prev[n] - 1 if one and prev[n] else None for n in ('bear', 'base', 'bull')}
                     prev = {'end': b['end'], **v}
                 forecasts.append(item)
     else:
         limits.append('no executed valuation with bear/base/bull: no business forecasts frozen; monitoring is event- and balance-sheet-based')
+    if current:
+        limits.append(f"current fiscal year ending {current['period_end']}: revenue frozen at the {current['anchor_source']} "
+                      f"+/- {o['current_year_band']:.0%} (its falsifier band, not model scenarios); its operating margin is monitored "
+                      'by a trigger, not frozen')
     if skipped:
-        limits.append('stub periods are not frozen; the first full fiscal year is the first scored forecast')
+        limits.append('stub periods without a current fiscal-year revenue anchor are not frozen; the first full fiscal year is the first scored forecast')
     if five and p0 and all(exp.get(n) is not None for n in ('bear', 'base', 'bull')):
         v = {n: exp[n] for n in ('bear', 'base', 'bull')}
         forecasts.append({'id': f"{tid}:{RETURN_METRIC}:{five['date']}", 'metric': RETURN_METRIC, 'period_start': price_at['as_of'],
@@ -434,13 +510,26 @@ def thesis_from_casefile(cf, clock=None, options=None):
     for e in ends:
         r, m = by.get(('revenue', e)), by.get(('operating_margin', e))
         if r:
-            trig.append({'id': f'revenue_below_bear@{e}', 'metric': 'revenue', 'op': '<', 'threshold': r['bear'], 'period_kind': 'fiscal_year',
-                         'period_end': e, 'impact': ['value'], 'severity': 'high',
-                         'why': 'Revenue below the bear path: even the slowest demand case was too optimistic, so every scenario value is overstated until re-underwritten.'})
+            t = {'id': f'revenue_below_bear@{e}', 'metric': 'revenue', 'op': '<', 'threshold': r['bear'], 'period_kind': 'fiscal_year',
+                 'period_end': e, 'impact': ['value'], 'severity': 'high',
+                 'why': 'Revenue below the bear path: even the slowest demand case was too optimistic, so every scenario value is overstated until re-underwritten.'}
+            if r.get('current_fiscal_year'):
+                t.update(current_fiscal_year=True, why=f"Current fiscal year revenue more than {o['current_year_band']:.0%} below its anchor "
+                         '(the revenue_current_fy falsifier): every scenario grows from too high a starting revenue.')
+            if r.get('assumption_id'):
+                t['assumption_ids'] = [r['assumption_id']]
+            trig.append(t)
         if m:
             trig.append({'id': f'operating_margin_below_bear@{e}', 'metric': 'operating_margin', 'op': '<', 'threshold': m['bear'] - o['margin_tolerance'],
                          'period_kind': 'fiscal_year', 'period_end': e, 'impact': ['business_quality', 'value'], 'severity': 'high',
                          'why': 'Operating margin below the bear case beyond definition noise: unit economics or pricing power are weaker than the worst case assumed.'})
+        elif current and cur_margin and e == current['period_end']:
+            trig.append({'id': f'operating_margin_below_bear@{e}', 'metric': 'operating_margin', 'op': '<',
+                         'threshold': min(cur_margin.values()) - o['margin_tolerance'], 'period_kind': 'fiscal_year', 'period_end': e,
+                         'impact': ['business_quality', 'value'], 'severity': 'high', 'current_fiscal_year': True,
+                         'formula': 'lowest scenario operating margin of the stub period that completes the current fiscal year - margin tolerance',
+                         'why': 'Current fiscal year operating margin below the lowest margin any scenario starts from, beyond definition noise: '
+                                'every margin path starts too high.'})
         if fm and by.get((fm, e)):
             anc = anchors.get(fm)
             thr = min(anc - o['fcf_margin_drop'], by[(fm, e)]['bear']) if anc is not None else by[(fm, e)]['bear'] - o['fcf_margin_drop']
@@ -478,7 +567,7 @@ def thesis_from_casefile(cf, clock=None, options=None):
                      'threshold': 'bear..bull value per share interpolated at the price date', 'impact': ['expected_return'], 'severity': 'medium',
                      'why': 'Price left the bear..bull value band: expected return moved outside every scenario of the thesis.'})
     full = [r.get('end') for r in (sc.get('base') or {}).get('forecast') or [] if 'start' in r and _years(r['start'], r['end']) >= .9]
-    assumptions = _assumptions(fc, case, ends_all, full, trig, o['assumption_tolerance'])
+    assumptions = _assumptions(fc, case, ends_all, full, trig, o['assumption_tolerance'], current)
     rb = day(as_of) + timedelta(days=o['review_max_days'] if ends else o['review_max_days'] // 2)
     if ends:
         rb = min(rb, day(ends[0]) + timedelta(days=o['filing_lag_days']))
@@ -496,6 +585,9 @@ def thesis_from_casefile(cf, clock=None, options=None):
             'valuation_method': (card.get('valuation') or {}).get('method'), 'price_at_analysis': price_at, 'values': values,
             'expected_return': exp, 'irr_at_analysis': mon, 'irr_basis': basis, 'anchors': anchors, 'assumptions': assumptions, 'forecasts': forecasts,
             'triggers': trig, 'review_by': rb.isoformat(), 'review_events': events, 'skipped_periods': skipped,
+            'current_fiscal_year': {**{k: current[k] for k in ('period_start', 'period_end', 'base', 'low', 'high', 'anchor_source', 'assumption_id')},
+                                    'forecast_id': current['id'], 'band': o['current_year_band'], 'operating_margin_by_scenario': cur_margin}
+                                   if current else None,
             'limitations': limits + ['valuation paths pay excess cash as distributions; buybacks show up as fewer actual shares, not as a miss',
                                      'value per share is conditional on the scenario; it is never scored as a price forecast']}
 
@@ -592,7 +684,7 @@ def check(thesis, new_fb, new_an=None, price=None, options=None):
         if key in alerts:
             return alerts[key]
         a = {'code': code, 'period': period, 'severity': t.get('severity', 'high'), 'message': message, 'why_it_matters': t['why'],
-             'impact': t['impact'], 'evidence': ev, 'assumption_ids': [], 'provisional': bool(t.get('provisional')),
+             'impact': t['impact'], 'evidence': ev, 'assumption_ids': list(t.get('assumption_ids') or []), 'provisional': bool(t.get('provisional')),
              'family': FAMILY.get(t.get('metric'))}
         alerts[key] = a
         out['alerts'].append(a)
@@ -621,9 +713,13 @@ def check(thesis, new_fb, new_an=None, price=None, options=None):
             elif ch['position'] == 'below' and f['sided'] == 'upper':
                 out['confirmations'].append(f'{label} below the modeled range {rng}: fewer shares (buybacks), not a miss')
             elif ch['position'] == 'above' and f['metric'] in ('revenue', 'ebit', 'fcf', 'fcf_after_sbc'):
-                alert('above_bull_case', f['period_end'], f"{label} above the bull case {_fmt(f['high'], f['unit'])}",
+                cyf = bool(f.get('current_fiscal_year'))
+                alert('above_bull_case', f['period_end'], f"{label} above the {'current-year band' if cyf else 'bull case'} {_fmt(f['high'], f['unit'])}",
                       {'severity': 'medium', 'impact': ['value'], 'metric': f['metric'],
-                       'why': 'The business is running ahead of the most optimistic case: values and the verdict are stale on the upside; re-underwrite before acting.'},
+                       'assumption_ids': [f['assumption_id']] if f.get('assumption_id') else [],
+                       'why': ('Current fiscal year revenue is above its anchor band (the revenue_current_fy falsifier): every scenario grows '
+                               'from too low a starting revenue; re-underwrite before acting.') if cyf else
+                              'The business is running ahead of the most optimistic case: values and the verdict are stale on the upside; re-underwrite before acting.'},
                       actual=a, high=f['high'], source_ids=r['source_ids'])
         for t in trig:
             if t['period_kind'] == 'fiscal_year' and abs((day(t['period_end']) - day(e)).days) <= tol and r.get(t['metric']) is not None:
@@ -646,7 +742,7 @@ def check(thesis, new_fb, new_an=None, price=None, options=None):
                 alert(t['id'], d, f"{d}: {t['metric']} {_fmt(a, unit)} above threshold {_fmt(thr, unit)}", t, actual=a, threshold=thr,
                       source_ids=src, formula=t['buffer'])
     # assumption falsifiers that map to an observable quantity
-    for asm in (x for x in thesis['assumptions'] if x.get('trigger')):
+    for asm in (x for x in thesis['assumptions'] if x.get('trigger') and not x['trigger'].get('evaluated_by')):
         t = asm['trigger']
         for r in fys:
             thr = t['threshold']
@@ -741,22 +837,30 @@ def check(thesis, new_fb, new_an=None, price=None, options=None):
 def freeze(ledger, thesis, clock=None):
     """Write the thesis record and its forecasts with the system time; idempotent per thesis_id.
 
-    Forecasts the ledger refuses (e.g. a period that has already ended) are reported, never forced."""
+    Forecasts the ledger refuses (e.g. a period that has already ended) are reported, never forced. A thesis
+    the ledger refuses (e.g. frozen more than the allowed lag after it was made) is reported with all its
+    forecasts unwritten: a frozen record must be written when it is made."""
     L = ledger if isinstance(ledger, Ledger) else Ledger(ledger)
     if clock is not None:
-        L = Ledger(L.path, clock=clock)
+        L = Ledger(L.path, clock=clock, max_recording_lag_days=L.max_recording_lag_days)
     rows = L.lines()
     tid = thesis['thesis_id']
     have = next((r for r in rows if r.get('type') == 'thesis' and r.get('thesis_id') == tid), None)
     made = have['made_at'] if have else thesis['created_at']
     written, skipped, rejected = [], [], []
+    ids = {r.get('id') for r in rows}
     if have:
         skipped.append(tid)
     else:
-        L.thesis(thesis_id=tid, entity=thesis['ticker'], made_at=made, model_version=f'monitor/{__version__}',
-                 record={k: v for k, v in thesis.items() if k != 'irr_basis'} | {'thesis_sha256': F.digest(thesis)})
-        written.append(tid)
-    ids = {r.get('id') for r in rows}
+        try:
+            L.thesis(thesis_id=tid, entity=thesis['ticker'], made_at=made, model_version=f'monitor/{__version__}',
+                     record={k: v for k, v in thesis.items() if k != 'irr_basis'} | {'thesis_sha256': F.digest(thesis)})
+            written.append(tid)
+        except ValueError as e:
+            why = str(e)
+            rejected = [{'id': tid, 'reason': why}] + [{'id': f['id'], 'reason': 'thesis record refused: ' + why}
+                                                       for f in thesis['forecasts'] if f['id'] not in ids]
+            return {'thesis_id': tid, 'made_at': made, 'written': written, 'skipped': skipped, 'rejected': rejected, 'ledger': L.verify()}
     fc_rows = [r for r in rows if r.get('type') == 'forecast']
     breakers = {}                    # falsifiers by metric family; the thesis entry keeps all of them
     for a in thesis['assumptions']:
@@ -772,6 +876,8 @@ def freeze(ledger, thesis, clock=None):
         ctx = {'thesis_id': tid, 'stage': thesis.get('stage'), 'business_model': thesis.get('business_model'), 'verdict': thesis.get('verdict'),
                'valuation_method': thesis.get('valuation_method'), 'horizon_years': f['horizon_years'], 'sided': f['sided'],
                'period_start': f['period_start'], 'period_kind': f['period_kind'], 'vintage': 'revision' if prior else 'original'}
+        if f.get('current_fiscal_year'):
+            ctx.update(current_fiscal_year=True, assumption_id=f.get('assumption_id'), anchor_source=f.get('anchor_source'))
         try:
             L.forecast(id=f['id'], entity=thesis['ticker'], made_at=made, metric=f['metric'], period_end=f['period_end'],
                        scenarios={k: f[k] for k in ('bear', 'base', 'bull')}, unit=f['unit'], currency=f['currency'], basis=f['basis'],
@@ -869,7 +975,8 @@ def _recurring(items, o):
         out.append(g)
     out.sort(key=lambda g: (not g['status'].startswith('recurring'), g['sign_test_p'], str(g['group'])))
     return {'eligible': len(elig), 'excluded': excluded, 'groups': out, 'recurring': [g for g in out if g['status'].startswith('recurring')],
-            'rules': [f"only original (non-revised) forecasts recorded by the ledger before the actual existed; legacy rows excluded",
+            'rules': [f"only original (non-revised) forecasts recorded by the ledger before the actual existed and within {LATE_RECORDING_DAYS} "
+                      'days of made_at; legacy and late recordings excluded',
                       f"a pattern needs >= {o['recurring_min_n']} forecasts from >= {o['recurring_min_entities']} companies, sign-test p <= "
                       f"{o['recurring_max_p']} and a median error of at least {o['recurring_min_rel']:.0%} ({o['recurring_min_pp']:.0%} points for ratios)",
                       'groups are by metric and ex-ante labels (stage, business model, horizon, verdict) only; never by realized stock return',
@@ -920,9 +1027,9 @@ def score(ledger, actuals=None, options=None):
         within = pos == 'within' or (sided == 'upper' and pos == 'below')
         ratio = f.get('unit') == 'ratio'
         err = (a - s['base']) if ratio else _div(a - s['base'], abs(s['base']))
-        legacy = is_legacy(f)
+        legacy, late_rec = is_legacy(f), is_late(f)
         pre = (not legacy) and bool(f.get('recorded_at')) and cmp(f['recorded_at'], act['observed_at']) < 0
-        ev, late = [], []
+        ev, post = [], []
         if f['metric'] == RETURN_METRIC:
             attr = 'return_within_range' if within else 'return_outside_range'
         elif within:
@@ -930,38 +1037,49 @@ def score(ledger, actuals=None, options=None):
         else:
             hits = [e for e in shocks if e['entity'] == f['entity'] and (not e.get('affects') or f['metric'] in e['affects'] or f['id'] in e['affects'])
                     and cmp(e['occurred_at'], f['made_at']) > 0 and day(e['occurred_at']) <= day(f['period_end'])]
-            ev = [e['id'] for e in hits]
-            late = [e['id'] for e in hits if cmp(e['recorded_at'], act['observed_at']) > 0]   # visible: explanations written after the result
+            # only an event on file before the result became public can explain the miss; one written later is post-hoc
+            ev = [e['id'] for e in hits if not is_legacy(e) and e.get('recorded_at') and cmp(e['recorded_at'], act['observed_at']) < 0]
+            post = [e['id'] for e in hits if e['id'] not in ev]
             attr = 'external_shock' if ev else 'analysis_error'
-        excl = 'legacy' if legacy else 'not_recorded_before_outcome' if not pre else 'revision' if f.get('supersedes') or ctx.get('vintage') == 'revision' else None
+        excl = ('legacy' if legacy else 'late_recording' if late_rec else 'not_recorded_before_outcome' if not pre
+                else 'revision' if f.get('supersedes') or ctx.get('vintage') == 'revision' else None)
         items.append({'forecast_id': f['id'], 'thesis_id': f.get('thesis_id') or ctx.get('thesis_id'), 'entity': f['entity'], 'metric': f['metric'],
                       'period_end': f['period_end'], 'made_at': f['made_at'], 'recorded_at': f.get('recorded_at'), 'horizon_years': ctx.get('horizon_years'),
                       'stage': ctx.get('stage'), 'business_model': ctx.get('business_model'), 'verdict': ctx.get('verdict'),
                       'base': s['base'], 'low': lo, 'high': hi, 'actual': a, 'position': pos, 'within': within, 'sided': sided,
                       'error': err, 'error_kind': 'pp' if ratio else 'relative', 'abs_error': a - s['base'], 'unit': f.get('unit'),
                       'basis': f.get('basis'), 'outcome_source': act['source'], 'observed_at': act['observed_at'], 'corrected': act['corrected'],
-                      'attribution': attr, 'external_events': ev, 'events_recorded_after_outcome': late, 'legacy': legacy,
-                      'recorded_before_outcome': pre,
+                      'attribution': attr, 'external_events': ev, 'post_hoc_explanations': post, 'events_recorded_after_outcome': post,
+                      'legacy': legacy, 'late_recording': late_rec, 'recording_lag_days': recording_lag_days(f), 'recorded_before_outcome': pre,
                       'eligible_for_learning': excl is None, 'learning_exclusion': excl})
-    # metric aggregates
+    # metric aggregates (late recordings never count toward coverage or error)
     by_metric = {}
     for m in sorted({i['metric'] for i in items}):
-        its = [i for i in items if i['metric'] == m]
+        every = [i for i in items if i['metric'] == m]
+        its = [i for i in every if not i['late_recording']]
         s = _stats(its)
-        by_metric[m] = {**s, 'error_kind': its[0]['error_kind'], 'median_abs_error': _median([abs(i['error']) for i in its if i['error'] is not None])}
+        by_metric[m] = {**s, 'error_kind': every[0]['error_kind'], 'median_abs_error': _median([abs(i['error']) for i in its if i['error'] is not None]),
+                        'excluded_late_recordings': len(every) - len(its)}
     # thesis-level attribution
     theses = {r['thesis_id']: r for r in rows if r.get('type') == 'thesis'}
     ret_fc = {r.get('thesis_id'): r for r in fcs if r['metric'] == RETURN_METRIC}
     by_thesis = {}
     for tid in sorted({i['thesis_id'] for i in items if i['thesis_id']} | set(theses) | {k for k in ret_fc if k}):
-        its = [i for i in items if i['thesis_id'] == tid]
+        every = [i for i in items if i['thesis_id'] == tid]
+        late_ids = [i['forecast_id'] for i in every if i['late_recording']]
+        its = [i for i in every if not i['late_recording']]       # late recordings: no attribution, no pick return
         biz = [i for i in its if i['metric'] != RETURN_METRIC]
         rf = ret_fc.get(tid)
+        rf_late = bool(rf) and is_late(rf)
+        if rf_late and rf['id'] not in late_ids:
+            late_ids.append(rf['id'])
         rec = (theses.get(tid) or {}).get('record') or {}
-        entity = (theses.get(tid) or rf or (its[0] if its else {})).get('entity')
+        entity = (theses.get(tid) or rf or (every[0] if every else {})).get('entity')
         ret = None
         final = next((i for i in its if i['metric'] == RETURN_METRIC), None)
-        if rf and final:
+        if rf and rf_late:
+            pass
+        elif rf and final:
             ret = {'realized': final['actual'], 'years': rf['context'].get('horizon_years'), 'final': True, 'date': final['observed_at']}
         elif rf and rf.get('price'):
             p0_date = (rec.get('price_at_analysis') or {}).get('as_of') or rf['context'].get('period_start') or rf['made_at']
@@ -982,12 +1100,21 @@ def score(ledger, actuals=None, options=None):
             ret['noise_allowance'] = noise
         errs = [i['forecast_id'] for i in biz if i['attribution'] == 'analysis_error']
         shock = [i['forecast_id'] for i in biz if i['attribution'] == 'external_shock']
+        post = sorted({x for i in biz for x in i['post_hoc_explanations']})
         if errs:
             attr = 'analysis_error'
-            why = f'{len(errs)} business forecast(s) outside the bear..bull envelope without a recorded external event.'
+            why = f'{len(errs)} business forecast(s) outside the bear..bull envelope without an external event recorded before the result.'
+            if post:
+                why += (f" {len(post)} event(s) recorded after the result became public ({', '.join(post)}) are post-hoc explanations "
+                        'and do not change the attribution.')
         elif shock:
             attr = 'external_shock'
-            why = 'Business misses coincide with recorded external events (with evidence) that occurred after the forecast.'
+            why = ('Business misses coincide with external events (with evidence) that occurred after the forecast and were recorded '
+                   'before the result became public.')
+        elif not biz and late_ids:
+            attr = 'not_assessable_late_recording'
+            why = (f'Forecasts recorded more than {LATE_RECORDING_DAYS} days after their made_at date: hindsight cannot be ruled out, '
+                   'so they are not used for attribution, returns or learning.')
         elif not biz:
             attr, why = 'not_assessable_yet', 'No business forecast resolved yet.'
         elif ret and ret['diverged']:
@@ -1001,6 +1128,7 @@ def score(ledger, actuals=None, options=None):
             attr, why = 'business_on_track_return_not_assessable', 'Business inside the envelope; no return observation of at least one year yet.'
         by_thesis[tid] = {'thesis_id': tid, 'entity': entity, 'verdict': rec.get('verdict'), 'n_business': len(biz),
                           'n_outside': sum(not i['within'] for i in biz), 'analysis_errors': errs, 'external_shocks': shock,
+                          'post_hoc_explanations': post, 'late_recordings': late_ids,
                           'return': ret, 'attribution': attr, 'explanation': why,
                           'provisional': bool(ret and not ret['final'])}
     rec_report = _recurring(items, o)
@@ -1013,6 +1141,8 @@ def score(ledger, actuals=None, options=None):
     return {'items': items, 'by_metric': by_metric, 'by_thesis': by_thesis, 'recurring_errors': rec_report,
             'unresolved': unresolved, 'not_scored': not_scored, 'evaluated_at': eval_at,
             'limitations': ['Errors are descriptive; a small sample says little about skill.',
-                            'external_shock requires a ledger event with evidence that occurred after the forecast; it is never inferred.',
+                            'external_shock requires a ledger event with evidence that occurred after the forecast and was recorded before '
+                            'the result became public; it is never inferred, and later events are listed as post-hoc explanations only.',
+                            f'Forecasts recorded more than {LATE_RECORDING_DAYS} days after made_at are excluded from coverage, returns and learning.',
                             'valuation_error compares realized return with the expected IRR band; before the horizon it is provisional and noisy.',
                             'No win rate or accuracy guarantee is claimed.']}

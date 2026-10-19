@@ -7,7 +7,11 @@ line breaks the chain.
 Time is the point of a ledger, so it is not left to the caller (v2, review of 2026-10-19):
 - every entry carries `recorded_at`, the system clock at append time (injectable for tests); the
   caller's `made_at` may not be later than recorded_at, nor earlier than any made_at already on file
-  (no backdating behind existing entries); recorded_at itself may never run backwards;
+  (no backdating behind existing entries), nor more than `max_recording_lag_days` (default 7) before
+  recorded_at, even on a fresh ledger; recorded_at itself may never run backwards;
+- a recording more than LATE_RECORDING_DAYS after made_at (written before that refusal existed, or
+  allowed by a larger configured lag) stays on file flagged `late_recording` and is excluded from
+  coverage, return and error aggregates: hindsight cannot be ruled out;
 - a forecast whose target period had already ended at recorded_at is refused: that is not a forecast;
 - an outcome needs the period to have ended by the clock, and there is one outcome per forecast; a
   later fix is an explicit correction that names the outcome it replaces and why (both stay on file);
@@ -17,6 +21,7 @@ Time is the point of a ledger, so it is not left to the caller (v2, review of 20
 - a revised forecast is a new id that `supersedes` the old one; the original stays and is still scored.
 Entries written before v2 (no recorded_at / ledger_version) stay readable and are reported as legacy:
 their timing was never verified, so learning reports exclude them.
+The file is created by the first successful append: a refused call leaves nothing on disk.
 
 Scores: forecast error, scenario calibration (did the realized value fall inside the scenario
 envelope at the stated frequency), and pick returns versus a stated benchmark.
@@ -25,6 +30,7 @@ import hashlib, json, os
 from datetime import date, datetime, timezone
 
 LEDGER_VERSION = 2
+LATE_RECORDING_DAYS = 7          # made_at more than this before recorded_at: hindsight possible
 NON_MONETARY_UNITS = {'shares', 'ratio', 'pct', 'count', 'x', 'years', 'bp'}
 EVENT_KINDS = {'external_shock', 'company_event', 'guidance', 'financing', 'note'}
 ORDERS = {'ascending', 'descending', 'crossing'}
@@ -94,6 +100,19 @@ def is_legacy(row):
     return 'ledger_version' not in row
 
 
+def recording_lag_days(row):
+    """Days between made_at and the system recording time; None when unknown (legacy rows)."""
+    if is_legacy(row) or not row.get('recorded_at') or not row.get('made_at'):
+        return None
+    return (day(row['recorded_at']) - day(row['made_at'])).days
+
+
+def is_late(row, days=LATE_RECORDING_DAYS):
+    """Recorded more than `days` after it was made (whether refused today or not)."""
+    lag = recording_lag_days(row)
+    return lag is not None and lag > days
+
+
 def observed(outcome):
     """Date the actual became known. Legacy outcomes stored it, caller-supplied, under recorded_at."""
     return outcome.get('observed_at') or outcome.get('recorded_at')
@@ -125,15 +144,21 @@ def effective_outcomes(rows):
 
 
 class Ledger:
-    def __init__(self, path, clock=None):
-        self.path, self.clock = path, clock
-        if not os.path.exists(path):
-            open(path, 'w').close()
+    def __init__(self, path, clock=None, max_recording_lag_days=LATE_RECORDING_DAYS):
+        """path: the JSON-lines file (created by the first successful append). max_recording_lag_days:
+        refuse made_at more than this many days before the system recording time (None: no refusal;
+        recordings later than LATE_RECORDING_DAYS are still flagged late and excluded from scores)."""
+        if max_recording_lag_days is not None and (isinstance(max_recording_lag_days, bool) or not isinstance(max_recording_lag_days, int)
+                                                   or max_recording_lag_days < 0):
+            raise ValueError('max_recording_lag_days must be a non-negative integer or None')
+        self.path, self.clock, self.max_recording_lag_days = path, clock, max_recording_lag_days
 
     def now(self):
         return stamp(self.clock() if self.clock else None)
 
     def lines(self):
+        if not os.path.exists(self.path):
+            return []
         with open(self.path, encoding='utf-8') as f:
             return [json.loads(x) for x in f if x.strip()]
 
@@ -172,6 +197,10 @@ class Ledger:
         parse(made_at)
         if cmp(made_at, now) > 0:
             raise ValueError(f'made_at {made_at} is later than the system recording time {now}')
+        lag = (day(now) - day(made_at)).days
+        if self.max_recording_lag_days is not None and lag > self.max_recording_lag_days:
+            raise ValueError(f'made_at {made_at} is {lag} days before the system recording time {now} (limit '
+                             f'{self.max_recording_lag_days}): record a forecast when it is made; a later analysis is a new entry dated today')
         for r in rows:
             if r.get('made_at') and cmp(made_at, r['made_at']) < 0:
                 raise ValueError(f"made_at {made_at} is earlier than an entry already on file ({r['made_at']}): backdating refused")
@@ -281,10 +310,12 @@ class Ledger:
                              'correction_reason': correction_reason})
 
     def score(self):
+        """Late recordings (made_at more than LATE_RECORDING_DAYS before recorded_at) are listed but
+        excluded from coverage, error and return aggregates."""
         rows = self.lines()
         fc = {r['id']: r for r in rows if r.get('type') == 'forecast'}
         heads, counts = effective_outcomes(rows)
-        out, not_scored, inside = [], [], 0
+        out, not_scored = [], []
         for fid, o in heads.items():
             f = fc.get(fid)
             if f is None:
@@ -297,19 +328,21 @@ class Ledger:
             lo, hi = envelope(s)
             err = (a - s['base']) / abs(s['base']) if s['base'] else None
             within = lo <= a <= hi
-            inside += within
             item = {'id': f['id'], 'entity': f['entity'], 'metric': f['metric'], 'base': s['base'], 'actual': a,
                     'base_error': err, 'inside_bear_bull': within, 'legacy': is_legacy(f),
                     'basis_unverified': is_legacy(f) or 'basis' not in o, 'corrected': counts[fid] > 1,
-                    'late_recording': (f.get('recording_lag_days') or 0) > 7}
+                    'late_recording': is_late(f), 'recording_lag_days': recording_lag_days(f)}
             if f.get('price') and o.get('price_now'):
                 item['stock_return'] = o['price_now'] / f['price'] - 1
                 if o.get('benchmark_return') is not None:
                     item['excess_return'] = item['stock_return'] - o['benchmark_return']
             out.append(item)
-        errs = sorted(abs(x['base_error']) for x in out if x['base_error'] is not None)
-        ex = [x['excess_return'] for x in out if 'excess_return' in x]
-        return {'resolved': len(out), 'median_abs_base_error': errs[len(errs) // 2] if errs else None,
-                'bear_bull_coverage': inside / len(out) if out else None,
+        on_time = [x for x in out if not x['late_recording']]
+        errs = sorted(abs(x['base_error']) for x in on_time if x['base_error'] is not None)
+        ex = [x['excess_return'] for x in on_time if 'excess_return' in x]
+        return {'resolved': len(out), 'excluded_late_recordings': len(out) - len(on_time),
+                'median_abs_base_error': errs[len(errs) // 2] if errs else None,
+                'bear_bull_coverage': sum(x['inside_bear_bull'] for x in on_time) / len(on_time) if on_time else None,
                 'mean_excess_return': sum(ex) / len(ex) if ex else None, 'items': out, 'not_scored': not_scored,
-                'meaning': 'Coverage far below the intended range (e.g. <70% for bear..bull) means scenarios are too narrow.'}
+                'meaning': 'Coverage far below the intended range (e.g. <70% for bear..bull) means scenarios are too narrow. '
+                           f'Aggregates exclude forecasts recorded more than {LATE_RECORDING_DAYS} days after made_at.'}

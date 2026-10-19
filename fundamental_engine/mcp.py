@@ -1,7 +1,8 @@
 """Small stdio MCP server. No network, paid API calls, shell or arbitrary file tools.
 
 Protocol reference: modelcontextprotocol.io/specification/2025-06-18.
-Local mutation is confined to the operator-selected corpus database.
+Local mutation is confined to the operator-selected corpus directory: its databases and forecast-ledger
+files named (.jsonl) relative to it; absolute paths, '..' and links that resolve outside are refused.
 """
 import argparse
 import json
@@ -45,6 +46,10 @@ def research_tool(name, description, properties, required, readonly=True):
             'annotations':{'readOnlyHint':readonly,'destructiveHint':False,'openWorldHint':False}}
 
 
+# Forecast-ledger files: names relative to the corpus directory, never absolute paths.
+LEDGER_NAME = {'type':'string','description':'Ledger file name ending in .jsonl, relative to the server corpus directory (no absolute path, no "..").'}
+
+
 TOOLS += [
  research_tool('valuation_audit','Execute valuation and audit opening assets/shares, comparable estimates, terminal maturity and evidence links. Returns concrete gaps; no profitability gate or truth guarantee.',{'case':{'type':'object'}},['case']),
  research_tool('frontier_plan','Theme-first research agenda for emerging constraints and suppliers, before selecting a ticker. No profitability gate or trade signal.',{'request':{'type':'object'}},['request']),
@@ -70,7 +75,7 @@ TOOLS += [
  research_tool('capital_bridge','Instrument-level capital structure: spendable vs restricted cash, accreted convertible claims, rational conversion, warrants/options, prepayments. Mode market (price) or value (enterprise_value). Read valuation_integrity.',{'capital_structure':{'type':'object'},'price':{'type':'number'},'enterprise_value':{'type':'number'}},['capital_structure']),
  research_tool('redteam_audit','Independent accounting/valuation red-team: cash, debt, converts, shares after financing, ARR/backlog/prepayment/SBC/reinvestment/funding faults. Verdict passed / passed_with_limitations / failed / unable_to_verify; a critical failure marks the valuation unverified.',{'package':{'type':'object'}},['package']),
  research_tool('expectation_gap','What the price already assumes versus the evidence: one driver model (revenue->EBIT after SBC->reinvestment->FCFF->per share via capital_bridge), each lever solved alone, components with source ids. Probabilities only from a supplied base rate.',{'case':{'type':'object'}},['case']),
- research_tool('forecast_ledger','Append-only hashed forecast ledger with system timestamps: action forecast | outcome | event | thesis | score | verify. Forecasts and outcomes need unit, currency and basis; no backdating, no forecasting a period that already ended; a second outcome must name the one it corrects.',{'path':{'type':'string'},'action':{'type':'string'},'entry':{'type':'object'}},['path','action']),
+ research_tool('forecast_ledger','Append-only hashed forecast ledger with system timestamps: action forecast | outcome | event | thesis | score | verify. path = ledger file name (.jsonl) inside the server corpus directory; the file appears on the first successful append. Forecasts and outcomes need unit, currency and basis; no backdating, made_at at most 7 days before recording, no forecasting a period that already ended; a second outcome must name the one it corrects.',{'path':LEDGER_NAME,'action':{'type':'string'},'entry':{'type':'object'}},['path','action'],False),
  research_tool('research_compare','Compare material claims and gates across revisions of one local case.',{'case_id':{'type':'string'},'first_revision':{'type':'integer'},'second_revision':{'type':'integer'}},['case_id','first_revision','second_revision']), research_tool('collection_plan','Step 1 of the single decision path: exact connector calls and raw file names for one company. Fetches nothing; payloads must be saved verbatim outside Git. Read pipeline.',{'ticker':{'type':'string'},'as_of':{'type':'string'},'cik':{'type':'string'}},['ticker','as_of']),
  research_tool('run_pipeline','The single decision path on a FactBook: data validation, business model card, financial analysis, bear/base/bull forecast, valuation, risks, independent review, four separate assessments and a closed verdict. Returns verdict, Hebrew paragraph, markdown report and hashes (full=true adds the casefile). Research indication, never an order. Read pipeline.',{'factbook':{'type':'object'},'inputs':{'type':'object'},'full':{'type':'integer','minimum':0,'maximum':1}},['factbook']),
  research_tool('portfolio_analyze','READ-ONLY portfolio view from Interactive Brokers payloads the client already retrieved: weights, concentration, economic exposure overlaps, scenario stress, holdings that need review. Nothing is stored; never orders.',{'positions':{'type':'object'},'summary':{'type':'object'},'as_of':{'type':'string'},'holdings_info':{'type':'object'},'options':{'type':'object'}},['positions','as_of']),
@@ -78,8 +83,8 @@ TOOLS += [
  research_tool('screen_changes','Compare two discovery scans: entered, left, lens moves and the dimension changes behind them.',{'before':{'type':'object'},'after':{'type':'object'}},['before','after']),
  research_tool('thesis_record','Turn a pipeline casefile into a dated thesis: key assumptions with falsifiers, forecasts (bear/base/bull per fiscal year), material triggers and a review date. Pure; freeze it with thesis_freeze.',{'casefile':{'type':'object'}},['casefile']),
  research_tool('thesis_check','Compare a thesis with a newer FactBook (and optional price): what changed, whether it touches business quality, value, expected return or only the price, and alerts only for material deviations.',{'thesis':{'type':'object'},'factbook':{'type':'object'},'price':{'type':'number'}},['thesis','factbook']),
- research_tool('thesis_freeze','Write a thesis and its forecasts into the append-only ledger at the time they are made (idempotent per thesis).',{'path':{'type':'string'},'thesis':{'type':'object'}},['path','thesis'],False),
- research_tool('thesis_score','Score frozen forecasts against actual outcomes; attribute misses to analysis, valuation or a recorded external shock; recurring-error report from forecasts made before outcomes only.',{'path':{'type':'string'}},['path']),
+ research_tool('thesis_freeze','Write a thesis and its forecasts into the append-only ledger at the time they are made (idempotent per thesis; refused more than 7 days after the thesis was made). path = ledger file name (.jsonl) inside the server corpus directory.',{'path':LEDGER_NAME,'thesis':{'type':'object'}},['path','thesis'],False),
+ research_tool('thesis_score','Score frozen forecasts against actual outcomes; attribute misses to analysis, valuation or an external shock recorded before the result (later events are post-hoc explanations); recurring-error report from on-time forecasts made before outcomes only. path = existing ledger name in the corpus directory; actuals (optional) = a FactBook, {"factbooks": [...]} and/or {"prices": [{entity, date, price, dividends_per_share?, benchmark_return?}]}.',{'path':LEDGER_NAME,'actuals':{'type':'object'}},['path']),
  research_tool('portfolio_compare','Compare a researched candidate with existing holdings, a broad index and cash: reasoned options (add, add to, trim, replace, index, cash, nothing) with risk, diversification and tax effects. Options only, never orders.',{'candidate':{'type':'object'},'book_analysis':{'type':'object'},'alternatives':{'type':'object'},'options':{'type':'object'}},['candidate','book_analysis']),
 ]
 
@@ -100,6 +105,30 @@ def brief_review(result):
         annual=result['annual_valuation']
         result['annual_valuation']={k:annual[k] for k in ('status','method','annual_values','warnings','input_sha256')}
     return result
+
+
+def ledger_file(corpus_path, name):
+    """Absolute path of a forecast-ledger file named relative to the corpus directory.
+
+    Refuses absolute or home-relative names, any '..' component, names not ending in .jsonl (so the
+    corpus and journal databases cannot be overwritten), and anything that resolves outside the corpus
+    directory (including through a symbolic link). Nothing is created here."""
+    from pathlib import PureWindowsPath
+    if not isinstance(name, str) or not name.strip() or '\x00' in name:
+        raise ValueError('ledger path must be a non-empty file name')
+    if Path(name).is_absolute() or name.startswith('~') or '\\' in name or PureWindowsPath(name).drive:
+        raise ValueError('ledger path must be a name relative to the corpus directory, not an absolute path')
+    if '..' in Path(name).parts:
+        raise ValueError("ledger path must not contain '..'")
+    if not name.endswith('.jsonl'):
+        raise ValueError('ledger file name must end with .jsonl')
+    base = Path(corpus_path).resolve().parent
+    target = (base / name).resolve()
+    if base not in target.parents:
+        raise ValueError('ledger path resolves outside the corpus directory')
+    if not target.parent.is_dir():
+        raise ValueError('ledger directory does not exist inside the corpus directory')
+    return str(target)
 
 
 class Server:
@@ -160,8 +189,12 @@ class Server:
         if name in {'thesis_freeze', 'thesis_score'}:
             from .ledger import Ledger
             from .monitor import freeze, score
-            L = Ledger(args['path'])
-            return freeze(L, args['thesis']) if name == 'thesis_freeze' else score(L)
+            path = ledger_file(self.path, args['path'])
+            if name == 'thesis_freeze':
+                return freeze(Ledger(path), args['thesis'])
+            if not Path(path).is_file():
+                raise ValueError('no ledger with that name in the corpus directory')
+            return score(Ledger(path), args.get('actuals'))
         if name == 'portfolio_analyze':
             from .portfolio import from_ib, analyze as analyze_book
             book = from_ib(args['positions'], args.get('summary'), as_of=args['as_of'])
@@ -187,7 +220,13 @@ class Server:
             return expectation_gap(case)
         if name == 'forecast_ledger':
             from .ledger import Ledger
-            L = Ledger(args['path']); a = args['action']; e = args.get('entry', {})
+            a = args['action']; e = args.get('entry', {})
+            if a not in {'forecast', 'outcome', 'event', 'thesis', 'score', 'verify'}:
+                raise ValueError('action must be forecast|outcome|event|thesis|score|verify')
+            path = ledger_file(self.path, args['path'])
+            if a in {'score', 'verify'} and not Path(path).is_file():
+                raise ValueError('no ledger with that name in the corpus directory')
+            L = Ledger(path)          # the file is created by the first successful append only
             if a == 'forecast': return L.forecast(**e)
             if a == 'outcome': return L.outcome(**e)
             if a == 'event': return L.event(**e)

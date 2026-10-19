@@ -2,7 +2,9 @@ import json
 import os
 import tempfile
 import unittest
+from datetime import datetime, timedelta, timezone
 from fundamental_engine.ledger import Ledger, _h
+from fundamental_engine.mcp import Server
 
 
 class Clock:
@@ -198,6 +200,140 @@ class LedgerTests(unittest.TestCase):
         L.forecast(id='new', entity='OLD', made_at='2026-10-19', metric='revenue_usd', period_end='2027-12-31',
                    scenarios={'bear': 1, 'base': 2, 'bull': 3}, model_version='v', **REV)
         self.assertTrue(L.verify()['ok'])
+
+
+def _chain(path, bodies):
+    """Write already-hashed rows (as an older engine version would have) to a ledger file."""
+    rows, prev = [], None
+    for body in bodies:
+        row = dict(body, prev=prev); row['hash'] = _h(row); prev = row['hash']; rows.append(row)
+    with open(path, 'w') as f:
+        f.write(''.join(json.dumps(r) + '\n' for r in rows))
+
+
+class RecordingLagTests(unittest.TestCase):
+    """Finding 5: a forecast is recorded when it is made; late recordings never count as skill."""
+    def setUp(self):
+        self.dir = tempfile.mkdtemp()
+        self.clock = Clock('2026-10-19T12:00:00+00:00')
+
+    def test_backdated_made_at_refused_on_fresh_ledger(self):
+        L = Ledger(os.path.join(self.dir, 'fresh.jsonl'), clock=self.clock)
+        with self.assertRaisesRegex(ValueError, 'days before the system recording time'):
+            L.forecast(id='syn-rev', entity='SYN', made_at='2024-01-02', metric='revenue', period_end='2026-12-31',
+                       scenarios={'bear': 90, 'base': 100, 'bull': 110}, model_version='x', price=50.0, **REV)
+        with self.assertRaisesRegex(ValueError, 'days before the system recording time'):
+            L.thesis(thesis_id='T', entity='SYN', made_at='2026-10-11', record={}, model_version='x')
+        # up to seven days of lag is a recording delay, not a backdate
+        row = L.forecast(id='syn-rev', entity='SYN', made_at='2026-10-12', metric='revenue', period_end='2026-12-31',
+                         scenarios={'bear': 90, 'base': 100, 'bull': 110}, model_version='x', **REV)
+        self.assertEqual(row['recording_lag_days'], 7)
+
+    def test_configured_lag_is_allowed_but_late_rows_never_count(self):
+        L = Ledger(os.path.join(self.dir, 'cfg.jsonl'), clock=self.clock, max_recording_lag_days=400)
+        L.forecast(id='late', entity='SYN', made_at='2026-01-02', metric='revenue', period_end='2026-12-31',
+                   scenarios={'bear': 90, 'base': 100, 'bull': 110}, model_version='x', price=50.0, **REV)
+        L.forecast(id='ontime', entity='OTH', made_at='2026-10-19', metric='revenue', period_end='2026-12-31',
+                   scenarios={'bear': 90, 'base': 100, 'bull': 110}, model_version='x', price=50.0, **REV)
+        self.clock.t = '2027-02-15T12:00:00+00:00'
+        L.outcome(forecast_id='late', actual=104, source_id='10k', observed_at='2027-02-10', price_now=150.0, benchmark_return=.3, **REV)
+        L.outcome(forecast_id='ontime', actual=80, source_id='10k', observed_at='2027-02-10', price_now=45.0, benchmark_return=.0, **REV)
+        s = L.score()
+        items = {i['id']: i for i in s['items']}
+        self.assertTrue(items['late']['late_recording'])
+        self.assertFalse(items['ontime']['late_recording'])
+        self.assertEqual(s['resolved'], 2)
+        self.assertEqual(s['excluded_late_recordings'], 1)
+        self.assertEqual(s['bear_bull_coverage'], 0.0)                       # only the on-time miss counts
+        self.assertAlmostEqual(s['mean_excess_return'], 45 / 50 - 1)         # the hindsight pick return is excluded
+        self.assertAlmostEqual(s['median_abs_base_error'], .2)
+
+    def test_late_rows_already_on_file_are_excluded(self):
+        path = os.path.join(self.dir, 'old.jsonl')
+        _chain(path, [
+            {'type': 'forecast', 'ledger_version': 2, 'id': 'SYN:rev:FY26', 'entity': 'SYN', 'made_at': '2024-01-02',
+             'recorded_at': '2026-10-19T12:00:00+00:00', 'recording_lag_days': 1021, 'metric': 'revenue', 'period_end': '2026-12-31',
+             'scenarios': {'bear': 90, 'base': 100, 'bull': 110}, 'scenario_order': 'ascending', **REV, 'price': 50.0, 'benchmark': None,
+             'model_version': 'x', 'inputs_hash': None, 'thesis_breakers': [], 'note': '', 'thesis_id': None, 'supersedes': None, 'context': {}},
+            {'type': 'outcome', 'ledger_version': 2, 'forecast_id': 'SYN:rev:FY26', 'observed_at': '2027-02-10',
+             'recorded_at': '2027-02-15T12:00:00+00:00', 'actual': 104.0, **REV, 'source_id': '10-K', 'benchmark_return': .3,
+             'price_now': 150.0, 'corrects': None, 'correction_reason': None}])
+        L = Ledger(path, clock=Clock('2027-03-01T00:00:00+00:00'))
+        self.assertTrue(L.verify()['ok'])
+        s = L.score()
+        self.assertTrue(s['items'][0]['late_recording'])
+        self.assertEqual(s['excluded_late_recordings'], 1)
+        self.assertIsNone(s['mean_excess_return'])
+        self.assertIsNone(s['bear_bull_coverage'])
+        self.assertIsNone(s['median_abs_base_error'])
+
+
+def _today():
+    return datetime.now(timezone.utc).date()
+
+
+class LedgerFileTests(unittest.TestCase):
+    """Finding 7: the file appears on the first successful append; MCP names stay inside the corpus directory."""
+    def setUp(self):
+        self.cwd = os.getcwd()
+        self.sandbox = tempfile.mkdtemp()           # relative paths that escaped would land here, not in the repository
+        self.corpus = os.path.join(self.sandbox, 'corpus')
+        self.outside = os.path.join(self.sandbox, 'outside')
+        os.makedirs(self.corpus); os.makedirs(self.outside)
+        os.chdir(self.sandbox)
+
+    def tearDown(self):
+        os.chdir(self.cwd)
+
+    def entry(self, **over):
+        t = _today()
+        e = dict(id='mcp-rev', entity='SYN', made_at=t.isoformat(), metric='revenue', period_end=(t + timedelta(days=400)).isoformat(),
+                 scenarios={'bear': 90, 'base': 100, 'bull': 110}, model_version='x', **REV)
+        e.update(over)
+        return e
+
+    def test_failing_calls_create_no_file(self):
+        path = os.path.join(self.corpus, 'new.jsonl')
+        L = Ledger(path, clock=Clock('2026-10-19T12:00:00+00:00'))
+        self.assertFalse(os.path.exists(path))
+        with self.assertRaisesRegex(ValueError, 'unit required'):
+            L.forecast(id='a', entity='X', made_at='2026-10-19', metric='m', period_end='2027-01-01',
+                       scenarios={'bear': 1, 'base': 2, 'bull': 3}, model_version='v')
+        self.assertFalse(os.path.exists(path))
+        self.assertEqual(L.verify(), {'ok': True, 'entries': 0, 'legacy_entries': 0})
+        self.assertEqual(L.score()['resolved'], 0)
+        self.assertEqual(L.lines(), [])
+        self.assertFalse(os.path.exists(path))
+        L.forecast(id='a', entity='X', made_at='2026-10-19', metric='m', period_end='2027-01-01',
+                   scenarios={'bear': 1, 'base': 2, 'bull': 3}, model_version='v', **REV)
+        self.assertTrue(os.path.exists(path))
+        self.assertTrue(L.verify()['ok'])
+
+    def test_mcp_ledger_names_resolve_under_the_corpus_directory(self):
+        srv = Server(os.path.join(self.corpus, 'sources.sqlite'))
+        escape = os.path.join(self.outside, 'x.jsonl')
+        for bad in (escape, '../outside/x.jsonl', 'sub/../../outside/x.jsonl', '..', '', 'sources.sqlite', '~/x.jsonl'):
+            with self.assertRaises(ValueError, msg=bad):
+                srv.call('forecast_ledger', {'path': bad, 'action': 'forecast', 'entry': self.entry()})
+        os.symlink(escape, os.path.join(self.corpus, 'link.jsonl'))            # a link inside that points outside
+        with self.assertRaises(ValueError):
+            srv.call('forecast_ledger', {'path': 'link.jsonl', 'action': 'forecast', 'entry': self.entry()})
+        self.assertEqual(os.listdir(self.outside), [])
+        self.assertFalse(os.path.exists(os.path.join(self.sandbox, 'x.jsonl')))
+        # failing calls leave nothing behind
+        with self.assertRaises(ValueError):
+            srv.call('forecast_ledger', {'path': 'mine.jsonl', 'action': 'bogus'})
+        with self.assertRaises(ValueError):
+            srv.call('forecast_ledger', {'path': 'mine.jsonl', 'action': 'forecast', 'entry': self.entry(unit=None)})
+        with self.assertRaises(ValueError):
+            srv.call('forecast_ledger', {'path': 'mine.jsonl', 'action': 'verify'})       # nothing there yet: say so
+        self.assertFalse(os.path.exists(os.path.join(self.corpus, 'mine.jsonl')))
+        # the first successful append creates the file inside the corpus directory
+        row = srv.call('forecast_ledger', {'path': 'mine.jsonl', 'action': 'forecast', 'entry': self.entry()})
+        self.assertEqual(row['id'], 'mcp-rev')
+        self.assertTrue(os.path.exists(os.path.join(self.corpus, 'mine.jsonl')))
+        self.assertEqual(srv.call('forecast_ledger', {'path': 'mine.jsonl', 'action': 'verify'})['entries'], 1)
+        self.assertEqual(sorted(os.listdir(self.corpus)), ['link.jsonl', 'mine.jsonl'])
 
 
 if __name__ == '__main__':

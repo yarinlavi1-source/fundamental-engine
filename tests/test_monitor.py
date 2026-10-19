@@ -144,22 +144,26 @@ class ThesisTests(unittest.TestCase):
         self.assertEqual(th['price_at_analysis']['value'], 246.87)
         self.assertEqual(th['values']['5y']['date'], '2031-11-21')
         self.assertTrue(th['values']['five_year_reached'])
+        self.assertEqual(th['review_by'], '2027-02-10')            # annual report of the current fiscal year (FY2026 + 75 days)
         t = th['values']['today']
         self.assertTrue(t['bear'] < 246.87 < t['bull'])
         json.dumps(th, allow_nan=False)
 
     def test_forecasts_per_fiscal_year(self):
         fy = [f for f in self.th['forecasts'] if f['period_kind'] == 'fiscal_year']
-        self.assertEqual(sorted({f['period_end'] for f in fy}), ENDS[1:])          # stub FY2026 is not a fiscal-year forecast
-        self.assertEqual({f['metric'] for f in fy}, {'revenue', 'ebit', 'operating_margin', 'shares_outstanding', 'fcf_after_sbc', 'fcf_after_sbc_margin'})
-        self.assertEqual(self.th['skipped_periods'][0]['period_end'], FY26)
+        self.assertEqual(sorted({f['period_end'] for f in fy}), ENDS)                # the current fiscal year (stub) is frozen too
+        self.assertEqual({f['metric'] for f in fy if f['period_end'] != FY26},
+                         {'revenue', 'ebit', 'operating_margin', 'shares_outstanding', 'fcf_after_sbc', 'fcf_after_sbc_margin'})
+        cur = [f for f in fy if f['period_end'] == FY26]
+        self.assertEqual([(f['metric'], f['base']) for f in cur], [('revenue', 25.6e9)])     # driver spec last_full_year_revenue
+        self.assertEqual(self.th['skipped_periods'], [])
         for f in fy:
             self.assertTrue(f['low'] <= f['base'] <= f['high'])
             self.assertIn(f['unit'], ('USD', 'ratio', 'shares'))
             self.assertEqual(f['currency'], 'USD' if f['unit'] == 'USD' else None)
         rev = fc(self.th, 'revenue', FY27)
         self.assertEqual(rev['basis'], 'reported_revenue')
-        self.assertAlmostEqual(rev['growth']['base'], (rev['base'] / F.value(ADBE, 'revenue', 'FY2025')) ** (1 / M._years('2025-11-28', FY27)) - 1)
+        self.assertAlmostEqual(rev['growth']['base'], rev['base'] / 25.6e9 - 1)       # one year from the current fiscal year
         self.assertEqual(fc(self.th, 'shares_outstanding', FY27)['sided'], 'upper')
         ret = next(f for f in self.th['forecasts'] if f['metric'] == M.RETURN_METRIC)
         self.assertEqual(ret['period_end'], '2031-11-21')
@@ -177,8 +181,10 @@ class ThesisTests(unittest.TestCase):
     def test_triggers_from_casefile(self):
         ids = {t['id'] for t in self.th['triggers']}
         for k in (f'revenue_below_bear@{FY27}', f'operating_margin_below_bear@{FY27}', f'fcf_margin_drop@{FY27}', 'dilution_above_assumption',
-                  'net_debt_increase', 'revenue_ttm_growth_below_bear', 'guidance_change', 'financing_event', 'price_outside_value_band'):
+                  'net_debt_increase', 'revenue_ttm_growth_below_bear', 'guidance_change', 'financing_event', 'price_outside_value_band',
+                  f'revenue_below_bear@{FY26}', f'operating_margin_below_bear@{FY26}'):
             self.assertIn(k, ids)
+        self.assertNotIn(f'fcf_margin_drop@{FY26}', ids)
         t = {t['id']: t for t in self.th['triggers']}
         self.assertEqual(t[f'revenue_below_bear@{FY27}']['threshold'], fc(self.th, 'revenue', FY27)['bear'])
         anchor = self.th['anchors']['fcf_after_sbc_margin']
@@ -230,7 +236,7 @@ class CheckTests(unittest.TestCase):
     def test_on_track_small_price_move_is_price_only(self):
         r = M.check(self.th, later_fb(fy27_values=fy27(self.th)), price={'value': 252.0, 'as_of': '2028-02-20'})
         self.assertEqual(r['alerts'], [])
-        rev = next(c for c in r['changes'] if c['metric'] == 'revenue')
+        rev = next(c for c in r['changes'] if c['metric'] == 'revenue' and c['period'] == FY27)
         self.assertEqual((rev['period'], rev['position']), (FY27, 'within'))
         self.assertTrue(r['impact']['price_only'])
         self.assertEqual(r['impact']['business_quality'], [])
@@ -240,7 +246,7 @@ class CheckTests(unittest.TestCase):
         self.assertEqual(r['rereview_reasons'], [f"scheduled review date {self.th['review_by']} reached"])
 
     def test_small_price_moves_never_alert_before_review_date(self):
-        fb = later_fb(as_of='2027-03-01')
+        fb = later_fb(as_of='2027-02-01')                     # before review_by (FY2026 annual report + 75 days)
         for p in (240.0, 255.0, 230.0):
             r = M.check(self.th, fb, price=p)
             self.assertEqual(r['alerts'], [], p)
@@ -354,13 +360,23 @@ class FreezeTests(unittest.TestCase):
         self.assertEqual(len(L.lines()), n + 1)
 
     def test_freeze_after_a_period_ended_refuses_those_forecasts(self):
-        th = thesis()
-        L = ledger(Clock('2027-12-15T00:00:00+00:00'))
+        th = M.thesis_from_casefile(casefile(), clock=Clock('2026-12-01T00:00:00+00:00'))    # made after FY2026 closed
+        L = ledger(Clock('2026-12-02T00:00:00+00:00'))
         r = M.freeze(L, th)
         rej = {x['id'].split(':')[-1] for x in r['rejected']}
-        self.assertEqual(rej, {FY27})
+        self.assertEqual(rej, {FY26})
         self.assertTrue(all('cannot forecast the past' in x['reason'] for x in r['rejected']))
-        self.assertTrue(any(i.endswith(FY28) for i in r['written']))
+        self.assertTrue(any(i.endswith(FY27) for i in r['written']))
+
+    def test_freeze_long_after_the_thesis_was_made_is_refused(self):
+        th = thesis()                                                    # made 2026-10-19
+        L = ledger(Clock('2027-12-15T00:00:00+00:00'))
+        r = M.freeze(L, th)
+        self.assertEqual(r['written'], [])
+        self.assertEqual(len(r['rejected']), len(th['forecasts']) + 1)
+        self.assertIn('days before the system recording time', r['rejected'][0]['reason'])
+        self.assertEqual(L.lines(), [])
+        self.assertFalse(os.path.exists(L.path))                        # nothing appended, no file created
 
     def test_revision_links_to_original(self):
         clock = Clock('2026-10-19T15:00:00+00:00')
@@ -465,19 +481,30 @@ class PipelineIntegrationTests(unittest.TestCase):
         fy = [f for f in th['forecasts'] if f['period_kind'] == 'fiscal_year']
         self.assertTrue(fy and all(f['low'] <= f['base'] <= f['high'] for f in fy))
         self.assertTrue(all(f['period_end'] > A for f in fy))
+        cy = next((a for a in self.cf['fc'].get('assumptions') or [] if a['id'] == 'revenue_current_fy'), None)
+        if cy:                                                          # the current fiscal year is frozen from its anchor
+            cur = [f for f in fy if f.get('current_fiscal_year')]
+            self.assertEqual([(f['metric'], f['assumption_id']) for f in cur], [('revenue', 'revenue_current_fy')])
+            self.assertAlmostEqual(cur[0]['base'], cy['values']['revenue'])
+            self.assertAlmostEqual(cur[0]['bear'], cy['values']['revenue'] * .97)
+            first = min(f['period_end'] for f in fy if not f.get('current_fiscal_year'))
+            g = next(f for f in fy if f['metric'] == 'revenue' and f['period_end'] == first)['growth']
+            self.assertAlmostEqual(g['base'], next(f for f in fy if f['metric'] == 'revenue' and f['period_end'] == first)['base'] / cy['values']['revenue'] - 1)
         trig = {a['id']: a['trigger'] for a in th['assumptions']}
         self.assertTrue(any(t and t['metric'] == 'revenue_growth' for t in trig.values()))     # forecast.py per-scenario rows merged
         json.dumps(th, allow_nan=False)
 
     def test_on_track_year_is_quiet_and_freezes(self):
         th = self.th
-        e = min(f['period_end'] for f in th['forecasts'] if f['period_kind'] == 'fiscal_year')
+        e = min(f['period_end'] for f in th['forecasts'] if f['period_kind'] == 'fiscal_year' and not f.get('current_fiscal_year'))
         g = lambda m: next(f for f in th['forecasts'] if f['metric'] == m and f['period_end'] == e)['base']
         rev = g('revenue') * 1.01
         fm = g('fcf_after_sbc_margin')
         v = {'revenue': rev, 'operating_income': g('operating_margin') * rev, 'sbc': .08 * rev, 'capex': .02 * rev, 'd_and_a': .03 * rev,
              'cfo': (fm + .10) * rev, 'shares_outstanding': 375e6, 'cash': 7e9, 'long_term_debt_tagged': 6.2e9}
-        fb = later_fb(fy27_values=v)
+        cy = th['current_fiscal_year']
+        fy26 = dict(FY26_VALUES, revenue=cy['base'], operating_income=cy['operating_margin_by_scenario']['base'] * cy['base']) if cy else FY26_VALUES
+        fb = later_fb(fy26=fy26, fy27_values=v)
         r = M.check(th, fb, price={'value': 255.0, 'as_of': '2028-02-20'})
         self.assertEqual(r['alerts'], [], [a['message'] for a in r['alerts']])
         self.assertTrue(r['impact']['price_only'])
@@ -558,6 +585,237 @@ class RecurringErrorTests(unittest.TestCase):
         self.assertTrue(next(i for i in s['items'] if i['forecast_id'] == 'o0')['eligible_for_learning'])
         self.assertEqual(sum(u['overdue'] for u in s['unresolved']), 3)
         self.assertTrue(s['recurring_errors']['warnings'])
+
+
+CURRENT_FY = {'id': 'revenue_current_fy', 'topic': 'current fiscal year revenue', 'kind': 'guidance',
+              'values': {'revenue': 25.4e9, 'growth': 25.4e9 / 23.769e9 - 1, 'stub_annual_rate': 25.6e9},
+              'rationale': 'synthetic guidance midpoint', 'falsifier': f'Reported FY ending {FY26} revenue differs from 25,400,000,000 by more than 3%.',
+              'source_ids': []}
+
+
+def quarters(fb, growth, last_avail='2027-06-27'):
+    """Eight synthetic quarters; the latest four are `growth` above the prior four (TTM growth)."""
+    ends = ['2025-08-29', '2025-11-28', '2026-02-27', '2026-05-29', '2026-08-28', '2026-11-27', '2027-02-26', '2027-05-28']
+    prior = [6.0e9, 6.2e9, 6.3e9, 6.4e9]
+    for i, (e, v) in enumerate(zip(ends, prior + [x * (1 + growth) for x in prior])):
+        avail = last_avail if i == 7 else ('2026-10-01' if e < A else '2027-04-01')
+        F.add_fact(fb, 'revenue', 'Q@' + e, e, v, 'synthetic:test', 'as_reported', avail)
+    return fb
+
+
+class CurrentFiscalYearTests(unittest.TestCase):
+    """Finding 1: the fiscal year the stub completes is frozen and monitored (base = revenue_current_fy, +/-3% = its falsifier)."""
+    @classmethod
+    def setUpClass(cls):
+        cf = casefile()
+        cf['fc']['assumptions'] = ASSUMPTIONS + [CURRENT_FY]
+        cls.th = M.thesis_from_casefile(cf, clock=Clock('2026-10-19T14:00:00+00:00'))
+
+    def test_current_year_forecast_and_triggers(self):
+        th = self.th
+        cur = fc(th, 'revenue', FY26)
+        self.assertEqual(cur['period_kind'], 'fiscal_year')
+        self.assertEqual(cur['assumption_id'], 'revenue_current_fy')
+        self.assertEqual(cur['base'], 25.4e9)                           # the assumption, not the driver spec's 25.6B
+        self.assertAlmostEqual(cur['bear'], 25.4e9 * .97)
+        self.assertAlmostEqual(cur['bull'], 25.4e9 * 1.03)
+        self.assertEqual(cur['period_start'], '2025-11-28')            # the fiscal year, not the stub
+        self.assertEqual([f['metric'] for f in th['forecasts'] if f['period_end'] == FY26], ['revenue'])
+        self.assertEqual(th['skipped_periods'], [])
+        t = {x['id']: x for x in th['triggers']}
+        self.assertAlmostEqual(t[f'revenue_below_bear@{FY26}']['threshold'], 25.4e9 * .97)
+        self.assertEqual(t[f'revenue_below_bear@{FY26}']['assumption_ids'], ['revenue_current_fy'])
+        self.assertAlmostEqual(t[f'operating_margin_below_bear@{FY26}']['threshold'], .29 - .01)     # stub bear margin - tolerance
+        asm = next(a for a in th['assumptions'] if a['id'] == 'revenue_current_fy')
+        self.assertEqual(asm['trigger']['evaluated_by'], [f'revenue_below_bear@{FY26}', 'above_bull_case'])
+        self.assertEqual(asm['monitor'], 'filings')
+        self.assertEqual(th['review_by'], '2027-02-10')                 # after the current year's annual report
+        r = M.freeze(ledger(Clock('2026-10-19T15:00:00+00:00')), th)
+        self.assertIn(cur['id'], r['written'])
+        self.assertEqual(r['rejected'], [])
+
+    def test_current_year_collapse_alerts(self):
+        fy26 = dict(FY26_VALUES, revenue=22.0e9, operating_income=3.3e9)
+        r = M.check(self.th, later_fb(as_of='2027-02-01', fy26=fy26))
+        got = {(a['code'], a['period']) for a in r['alerts']}
+        self.assertIn(('revenue_below_bear', FY26), got)
+        self.assertIn(('operating_margin_below_bear', FY26), got)
+        rev = next(a for a in r['alerts'] if a['code'] == 'revenue_below_bear')
+        self.assertIn('revenue_current_fy', rev['assumption_ids'])
+        self.assertTrue(r['needs_rereview'])
+        self.assertTrue(r['impact']['value'])
+        up = M.check(self.th, later_fb(as_of='2027-02-01', fy26=dict(FY26_VALUES, revenue=26.5e9, operating_income=9.5e9)))
+        self.assertEqual([(a['code'], a['period']) for a in up['alerts']], [('above_bull_case', FY26)])
+        self.assertIn('revenue_current_fy', up['alerts'][0]['assumption_ids'])
+
+    def test_current_year_on_track_is_quiet(self):
+        r = M.check(self.th, later_fb(as_of='2027-02-01'))            # FY2026 revenue 25.5B: inside 24.6B..26.2B
+        self.assertEqual(r['alerts'], [])
+        self.assertFalse(r['needs_rereview'])
+        ch = next(c for c in r['changes'] if c['period'] == FY26 and c['metric'] == 'revenue')
+        self.assertEqual(ch['position'], 'within')
+
+    def test_current_year_scored_from_factbook(self):
+        L = ledger(Clock('2026-10-19T15:00:00+00:00'))
+        M.freeze(L, self.th)
+        s = M.score(L, later_fb(as_of='2027-02-01', fy26=dict(FY26_VALUES, revenue=22.0e9)))
+        it = next(i for i in s['items'] if i['period_end'] == FY26)
+        self.assertEqual((it['metric'], it['outcome_source'], it['attribution']), ('revenue', 'factbook', 'analysis_error'))
+
+
+class GrowthSpanTests(unittest.TestCase):
+    """Finding 4: growth triggers compare one-year growth with one-year growth."""
+    @classmethod
+    def setUpClass(cls):
+        cls.th = thesis()
+
+    def test_first_full_year_growth_from_current_year(self):
+        rev27 = fc(self.th, 'revenue', FY27)
+        for n in ('bear', 'base', 'bull'):
+            self.assertAlmostEqual(rev27['growth'][n], rev27[n] / 25.6e9 - 1)       # current fiscal year revenue, one year earlier
+        self.assertLess(abs(rev27['growth']['bear'] - .02), .005)                  # the bear assumption, not a two-year CAGR
+        cur = fc(self.th, 'revenue', FY26)
+        self.assertAlmostEqual(cur['growth']['base'], 25.6e9 / 23.769e9 - 1)
+        tt = next(t for t in self.th['triggers'] if t['id'] == 'revenue_ttm_growth_below_bear')
+        win = next(w for w in tt['threshold_by_period'] if w[1] == FY27)
+        self.assertAlmostEqual(win[2], rev27['growth']['bear'] - .03)
+        self.assertEqual(win[0], FY26)
+
+    def test_no_growth_over_a_two_year_span(self):
+        cf = casefile()
+        cf['fc'] = {'assumptions': ASSUMPTIONS}                          # no current-year anchor anywhere
+        th = M.thesis_from_casefile(cf, clock=Clock('2026-10-19T14:00:00+00:00'))
+        self.assertFalse(any(f['period_end'] == FY26 for f in th['forecasts']))
+        rev27 = fc(th, 'revenue', FY27)
+        self.assertEqual(rev27['growth'], {'bear': None, 'base': None, 'bull': None})   # FY2025 -> FY2027 is two years
+        tt = next(t for t in th['triggers'] if t['id'] == 'revenue_ttm_growth_below_bear')
+        self.assertFalse(any(w[1] == FY27 for w in tt['threshold_by_period']))
+        self.assertTrue(all(.9 <= M._years(w[0], w[1]) <= 1.1 for w in tt['threshold_by_period']))
+
+    def test_ttm_growth_between_bear_and_base_does_not_alert(self):
+        r = M.check(self.th, quarters(later_fb(as_of='2027-07-01'), .005))
+        self.assertNotIn('revenue_ttm_growth_below_bear', {a['code'] for a in r['alerts']})
+        self.assertTrue(any(c.startswith('TTM revenue growth 0.5%') for c in r['confirmations']))
+        r = M.check(self.th, quarters(later_fb(as_of='2027-07-01'), -.05))
+        self.assertIn('revenue_ttm_growth_below_bear', {a['code'] for a in r['alerts']})
+
+
+class LateRecordingScoreTests(unittest.TestCase):
+    """Finding 5: forecasts recorded long after their made_at date never feed returns, coverage or learning."""
+    def test_late_recordings_excluded(self):
+        clock = Clock('2026-10-19T12:00:00+00:00')
+        L = Ledger(os.path.join(tempfile.mkdtemp(), 'ledger.jsonl'), clock=clock, max_recording_lag_days=400)
+        L.thesis(thesis_id='T-late', entity='SYN', made_at='2026-01-02', record={'verdict': 'attractive_at_price'}, model_version='x')
+        kw = dict(metric='revenue', period_end='2026-12-31', scenarios={'bear': 90, 'base': 100, 'bull': 110}, unit='USD', currency='USD',
+                  basis='reported_revenue', model_version='x')
+        L.forecast(id='late', entity='SYN', made_at='2026-01-02', thesis_id='T-late', context={'thesis_id': 'T-late', 'sided': 'two'}, **kw)
+        L.forecast(id='late-ret', entity='SYN', made_at='2026-01-02', thesis_id='T-late', price=50.0, unit='ratio', currency=None,
+                   basis='annualized_total_return_from_analysis_price', metric=M.RETURN_METRIC, period_end='2031-01-02',
+                   scenarios={'bear': .0, 'base': .1, 'bull': .2}, model_version='x',
+                   context={'thesis_id': 'T-late', 'horizon_years': 5.0, 'period_start': '2026-01-02'})
+        L.forecast(id='ontime', entity='OTH', made_at='2026-10-19', context={'sided': 'two'}, **kw)
+        clock.t = '2027-02-15T12:00:00+00:00'
+        for fid, actual in (('late', 104.0), ('ontime', 80.0)):
+            L.outcome(forecast_id=fid, actual=actual, source_id='10k', unit='USD', currency='USD', basis='reported_revenue', observed_at='2027-02-10')
+        s = M.score(L, {'prices': [{'entity': 'SYN', 'date': '2027-02-15', 'price': 150.0}]})
+        it = {i['forecast_id']: i for i in s['items']}
+        self.assertTrue(it['late']['late_recording'])
+        self.assertEqual(it['late']['recording_lag_days'], 290)
+        self.assertFalse(it['late']['eligible_for_learning'])
+        self.assertEqual(it['late']['learning_exclusion'], 'late_recording')
+        self.assertTrue(it['ontime']['eligible_for_learning'])
+        self.assertEqual(s['by_metric']['revenue']['n'], 1)                    # coverage from the on-time forecast only
+        self.assertEqual(s['by_metric']['revenue']['coverage'], 0.0)
+        self.assertEqual(s['by_metric']['revenue']['excluded_late_recordings'], 1)
+        self.assertEqual(s['recurring_errors']['excluded'].get('late_recording'), 1)
+        bt = s['by_thesis']['T-late']
+        self.assertIsNone(bt['return'])                                        # no hindsight pick return
+        self.assertEqual(bt['attribution'], 'not_assessable_late_recording')
+        self.assertEqual(sorted(bt['late_recordings']), ['late', 'late-ret'])
+
+
+class PostHocEventTests(unittest.TestCase):
+    """Finding 6: an event written after the result became public cannot re-attribute that miss."""
+    def run_case(self, event_recorded):
+        clock = Clock('2026-10-19T12:00:00+00:00')
+        L = Ledger(os.path.join(tempfile.mkdtemp(), 'ledger.jsonl'), clock=clock)
+        L.thesis(thesis_id='T1', entity='SYN', made_at='2026-10-19', record={'verdict': 'attractive_at_price'}, model_version='x')
+        L.forecast(id='T1:revenue:2027', entity='SYN', made_at='2026-10-19', metric='revenue', period_end='2027-11-30',
+                   scenarios={'bear': 90, 'base': 100, 'bull': 110}, unit='USD', currency='USD', basis='reported_revenue',
+                   model_version='x', thesis_id='T1', context={'thesis_id': 'T1', 'horizon_years': 1.1, 'sided': 'two'})
+        event = dict(id='E1', entity='SYN', kind='external_shock', occurred_at='2027-06-01', description='tariff', evidence_ids=['news:1'],
+                     why_unforeseeable='not announced at analysis time')
+        if event_recorded == 'before':
+            clock.t = '2027-06-05T12:00:00+00:00'
+            L.event(**event)
+        clock.t = '2028-01-20T12:00:00+00:00'
+        L.outcome(forecast_id='T1:revenue:2027', actual=70, source_id='10-K', unit='USD', currency='USD', basis='reported_revenue',
+                  observed_at='2028-01-15')
+        if event_recorded == 'after':
+            clock.t = '2028-02-01T12:00:00+00:00'
+            L.event(**event)
+        return M.score(L)
+
+    def test_event_recorded_after_the_result_is_post_hoc(self):
+        s = self.run_case('after')
+        it = s['items'][0]
+        self.assertEqual(it['attribution'], 'analysis_error')
+        self.assertEqual(it['external_events'], [])
+        self.assertEqual(it['post_hoc_explanations'], ['E1'])
+        bt = s['by_thesis']['T1']
+        self.assertEqual(bt['attribution'], 'analysis_error')
+        self.assertEqual(bt['post_hoc_explanations'], ['E1'])
+        self.assertIn('post-hoc', bt['explanation'])
+
+    def test_event_recorded_before_the_result_still_attributes(self):
+        s = self.run_case('before')
+        it = s['items'][0]
+        self.assertEqual((it['attribution'], it['external_events'], it['post_hoc_explanations']), ('external_shock', ['E1'], []))
+        self.assertEqual(s['by_thesis']['T1']['attribution'], 'external_shock')
+
+
+class McpThesisToolTests(unittest.TestCase):
+    """Findings 7 and 9: thesis ledgers live under the corpus directory; thesis_score takes actuals."""
+    def setUp(self):
+        from fundamental_engine.mcp import Server
+        self.cwd = os.getcwd()
+        self.sandbox = tempfile.mkdtemp()
+        self.corpus = os.path.join(self.sandbox, 'corpus')
+        self.outside = os.path.join(self.sandbox, 'outside')
+        os.makedirs(self.corpus); os.makedirs(self.outside)
+        os.chdir(self.sandbox)
+        self.srv = Server(os.path.join(self.corpus, 'sources.sqlite'))
+
+    def tearDown(self):
+        os.chdir(self.cwd)
+
+    def test_thesis_freeze_stays_in_the_corpus_directory(self):
+        th = M.thesis_from_casefile(casefile())                         # created now: frozen at the time it is made
+        for bad in (os.path.join(self.outside, 'l.jsonl'), '../outside/l.jsonl'):
+            with self.assertRaises(ValueError):
+                self.srv.call('thesis_freeze', {'path': bad, 'thesis': th})
+        with self.assertRaises((ValueError, KeyError)):
+            self.srv.call('thesis_freeze', {'path': 'bad.jsonl', 'thesis': {'thesis_id': 'x'}})
+        self.assertEqual(os.listdir(self.outside), [])
+        self.assertFalse(os.path.exists(os.path.join(self.corpus, 'bad.jsonl')))
+        r = self.srv.call('thesis_freeze', {'path': 'adbe.jsonl', 'thesis': th})
+        self.assertIn(th['thesis_id'], r['written'])
+        self.assertTrue(os.path.exists(os.path.join(self.corpus, 'adbe.jsonl')))
+        with self.assertRaises(ValueError):
+            self.srv.call('thesis_score', {'path': '../corpus/adbe.jsonl'})
+        with self.assertRaises(ValueError):
+            self.srv.call('thesis_score', {'path': 'missing.jsonl'})
+        self.assertFalse(os.path.exists(os.path.join(self.corpus, 'missing.jsonl')))
+
+    def test_thesis_score_accepts_actuals(self):
+        th = thesis()
+        M.freeze(Ledger(os.path.join(self.corpus, 'adbe.jsonl'), clock=Clock('2026-10-19T15:00:00+00:00')), th)
+        fb = later_fb(fy27_values=fy27(th))
+        s = self.srv.call('thesis_score', {'path': 'adbe.jsonl', 'actuals': {'factbooks': [fb]}})
+        mine = [i for i in s['items'] if i['entity'] == 'ADBE']
+        self.assertIn((FY27, 'revenue'), {(i['period_end'], i['metric']) for i in mine})
+        self.assertTrue(all(i['outcome_source'] == 'factbook' for i in mine))
+        self.assertEqual(self.srv.call('thesis_score', {'path': 'adbe.jsonl'})['items'], [])
 
 
 if __name__ == '__main__':
