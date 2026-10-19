@@ -1,0 +1,43 @@
+{
+  "_note": "NBIS capital structure after the 24.8.2026 note closing. Statement figures: 6-K Q2 2026 (filed 2026-08-12). Events: 6-K 2026-07-17 (secured facility), 6-K 2026-08-20 and 2026-08-24 (convertible notes + exchange). Issue/maturity days for 2025 notes are month-precision (20-F 2025 gives month and accretion; exact day not used by the tests). Q3 operating cash flow is NOT included: this is a financing-only bridge, so cash is a limitation for any price conclusion after 24.8.",
+  "as_of": "2026-08-24",
+  "capital_structure": {
+    "as_of": "2026-08-24", "currency": "USD",
+    "cash": [
+      {"id": "cash_30jun", "kind": "unrestricted", "amount": 8042.1e6, "source_id": "6k_q2_2026", "as_of": "2026-06-30"},
+      {"id": "cash_secured_jul", "kind": "unrestricted", "amount": 775e6, "source_id": "6k_2026-07-17", "as_of": "2026-07-10"},
+      {"id": "cash_notes_aug", "kind": "unrestricted", "amount": 5680e6, "source_id": "6k_2026-08-20", "as_of": "2026-08-24"},
+      {"id": "restricted_30jun", "kind": "restricted", "amount": 1056.0e6, "source_id": "6k_q2_2026", "as_of": "2026-06-30"},
+      {"id": "nonmarketable_stakes", "kind": "long_term_investments", "amount": 1606.7e6, "haircut": 0.25, "source_id": "6k_q2_2026", "as_of": "2026-06-30"}
+    ],
+    "shares": [
+      {"id": "class_a_b_30jun", "kind": "common", "count": 271855218, "source_id": "6k_q2_2026", "as_of": "2026-06-30"},
+      {"id": "exchange_shares_aug", "kind": "common", "count": 15800000, "source_id": "6k_2026-08-24", "as_of": "2026-08-24"},
+      {"id": "nvidia_prefunded", "kind": "prefunded_warrant", "count": 21065936, "strike": 0.0001, "source_id": "6k_q2_2026", "as_of": "2026-03-11"}
+    ],
+    "debt": [
+      {"id": "cv_2029_jun", "kind": "convertible", "principal": 100e6, "accretion_to": 1.175, "issue_date": "2025-06-05", "maturity": "2029-06-01", "conversion_price": 51.45, "coupon": 0.02, "source_id": "20f_2025"},
+      {"id": "cv_2031_jun", "kind": "convertible", "principal": 100e6, "accretion_to": 1.225, "issue_date": "2025-06-05", "maturity": "2031-06-01", "conversion_price": 51.45, "coupon": 0.03, "source_id": "20f_2025"},
+      {"id": "cv_2030_sep", "kind": "convertible", "principal": 1580e6, "accretion_to": 1.1509, "issue_date": "2025-09-15", "maturity": "2030-09-15", "conversion_price": 138.75, "coupon": 0.01, "source_id": "20f_2025"},
+      {"id": "cv_2032_sep", "kind": "convertible", "principal": 1580e6, "accretion_to": 1.1509, "issue_date": "2025-09-15", "maturity": "2032-09-15", "conversion_price": 138.75, "coupon": 0.0275, "source_id": "20f_2025"},
+      {"id": "cv_2031_mar", "kind": "convertible", "principal": 2587.5e6, "accretion_to": 1.20, "issue_date": "2026-03-20", "maturity": "2031-03-15", "conversion_price": 183.22, "coupon": 0.0125, "source_id": "6k_q2_2026"},
+      {"id": "cv_2033_mar", "kind": "convertible", "principal": 1750e6, "accretion_to": 1.20, "issue_date": "2026-03-20", "maturity": "2033-03-15", "conversion_price": 180.31, "coupon": 0.02625, "source_id": "6k_q2_2026"},
+      {"id": "cv_2030_feb", "kind": "convertible", "principal": 3450e6, "accretion_to": 1.10, "issue_date": "2026-08-24", "maturity": "2030-02-15", "conversion_price": 313.46, "coupon": 0.005, "source_id": "6k_2026-08-24"},
+      {"id": "cv_2034_feb", "kind": "convertible", "principal": 2300e6, "accretion_to": 1.25, "issue_date": "2026-08-24", "maturity": "2034-02-15", "conversion_price": 324.65, "coupon": 0.045, "source_id": "6k_2026-08-24"},
+      {"id": "secured_2030", "kind": "secured", "principal": 775e6, "issue_date": "2026-07-10", "maturity": "2030-10-31", "coupon": "SOFR+2.50%", "source_id": "6k_2026-07-17"}
+    ],
+    "quasi_debt": [
+      {"id": "deferred_revenue_30jun", "kind": "customer_prepayment", "amount": 5975.2e6, "treatment": "operating", "source_id": "6k_q2_2026", "as_of": "2026-06-30"}
+    ]
+  },
+  "reported": {
+    "cash_and_equivalents": 8042.1e6, "short_term_investments": 0,
+    "debt_principal_outstanding": 8497.5e6,
+    "shares_count": 271855218, "shares_count_date": "2026-06-30", "prefunded_warrants": 21065936
+  },
+  "events_after_statement": [
+    {"date": "2026-07-10", "type": "secured_debt", "cash_delta": 775e6, "debt_principal_delta": 775e6, "source_id": "6k_2026-07-17"},
+    {"date": "2026-08-24", "type": "convertible_issue", "cash_delta": 5680e6, "debt_principal_delta": 5750e6, "source_id": "6k_2026-08-24"},
+    {"date": "2026-08-24", "type": "note_exchange", "debt_principal_delta": -800e6, "shares_delta": 15800000, "source_id": "6k_2026-08-24"}
+  ]
+}
