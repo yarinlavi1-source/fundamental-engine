@@ -4,6 +4,27 @@
 checkpoint workflow. Use the data connections already available in the user's
 session. Start working; do not ask the user to repeat setup that already exists.
 
+## v0.11 — one decision path (use this first)
+
+Sources -> data validation -> business understanding -> financial analysis -> forecast -> valuation ->
+risks and failure scenarios -> independent review -> investment decision. One module per step, one casefile.
+
+```bash
+python -m fundamental_engine pipeline-plan ADBE 2026-10-19 --cik 0000796343   # which connector calls, which file names
+# collect the raw files with the session's connectors (FMP/AV/IB/SEC) into runs/<TICKER>_<date>/raw/
+python -m fundamental_engine pipeline runs/ADBE_2026-10-19/raw --company company.json --as-of 2026-10-19 \
+    --qualitative evidence_bundle.json --inputs analyst_inputs.json --out runs/ADBE_2026-10-19/out
+python -m fundamental_engine pipeline --factbook tests/fixtures/adbe_factbook_2026-10-19.json --out runs/smoke
+```
+
+Outputs: factbook.json (every number with source, basis and availability date), casefile.json (all stages,
+hashes), report.md, paragraph.txt (the Hebrew paragraph). MCP: `collection_plan`, `run_pipeline`.
+Discovery: `screen` / `screen_universe`. Portfolio (read-only, private, never in Git): `portfolio` /
+`portfolio_analyze`, `portfolio_compare`. Monitoring: `thesis_record`, `thesis_check`, `thesis_freeze`.
+Contracts: docs/ARCHITECTURE.md, docs/MODULE_CONTRACTS.md. What is proven and what is not:
+docs/EVIDENCE_STATUS.md and docs/LIMITATIONS.md. Without an independent signed review a price verdict is
+a visible draft, never a conclusion.
+
 ## First session
 
 1. Confirm the repository version (`fundamental_engine/__init__.py`) and branch.
