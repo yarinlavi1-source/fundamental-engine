@@ -1,0 +1,970 @@
+{
+ "is_demo": false,
+ "as_of": "2026-09-28",
+ "company_id": "servicenow-inc-cik1373715",
+ "ticker": "NOW",
+ "currency": "USD",
+ "unit": "absolute",
+ "archetype": "software",
+ "method": "operating",
+ "quote": {
+  "price": 131.25,
+  "currency": "USD",
+  "as_of": "2026-09-28",
+  "source_ids": [
+   "ib_quote"
+  ]
+ },
+ "sources": [
+  {
+   "id": "q2_10q",
+   "title": "ServiceNow Form 10-Q, quarter ended 2026-06-30 (balance, RPO, CP program); values read via AV normalization and search excerpts, sec.gov fetch blocked",
+   "url": "https://www.sec.gov/Archives/edgar/data/0001373715/000137371526000076/now-20260630.htm",
+   "kind": "filing",
+   "published_at": "2026-07-23",
+   "available_at": "2026-07-23",
+   "retrieval": "search_excerpt"
+  },
+  {
+   "id": "q2_release",
+   "title": "ServiceNow Q2 2026 earnings release (8-K ex.99): subscription revenue, cRPO, FY26 guidance, Armis contribution",
+   "url": "https://www.sec.gov/Archives/edgar/data/0001373715/000137371526000072/erq2fy26.htm",
+   "kind": "earnings_release",
+   "published_at": "2026-07-22",
+   "available_at": "2026-07-22",
+   "retrieval": "search_excerpt"
+  },
+  {
+   "id": "notes_424b2",
+   "title": "ServiceNow 424B2 prospectus supplement: $4.0B senior notes (2028/2031/2033/2036/2056) refinancing Armis term loan; May 2026 (day not confirmed; available_at set conservatively)",
+   "url": "https://www.sec.gov/Archives/edgar/data/0001373715/000119312526221929/d33584d424b2.htm",
+   "kind": "filing",
+   "published_at": "2026-07-23",
+   "available_at": "2026-07-23",
+   "retrieval": "search_excerpt"
+  },
+  {
+   "id": "q1_10q",
+   "title": "ServiceNow Form 10-Q Q1 2026: Armis closed 2026-04-20 for ~$7.8B cash; $2.0B ASR at $107.97; $4.0B term loan",
+   "url": "https://www.sec.gov/Archives/edgar/data/0001373715/000137371526000056/now-20260331.htm",
+   "kind": "filing",
+   "published_at": "2026-07-23",
+   "available_at": "2026-07-23",
+   "retrieval": "search_excerpt"
+  },
+  {
+   "id": "av_statements",
+   "title": "Alpha Vantage INCOME_STATEMENT/BALANCE_SHEET/CASH_FLOW for NOW (provider-normalized, split-adjusted), retrieved 2026-09-28",
+   "url": "alphavantage://NOW/statements/2026-09-28",
+   "kind": "provider_data",
+   "published_at": "2026-07-23",
+   "available_at": "2026-09-28",
+   "retrieval": "provider_normalized"
+  },
+  {
+   "id": "av_overview",
+   "title": "Alpha Vantage COMPANY_OVERVIEW NOW, retrieved 2026-09-28 (SharesOutstanding 1,033,862,000; beta 0.972; target 144.99)",
+   "url": "alphavantage://NOW/overview/2026-09-28",
+   "kind": "provider_data",
+   "published_at": "2026-09-28",
+   "available_at": "2026-09-28",
+   "retrieval": "provider_normalized"
+  },
+  {
+   "id": "ib_quote",
+   "title": "Interactive Brokers realtime snapshot NOW (conid 109911821, NYSE) last 131.25",
+   "url": "ib://snapshot/109911821/2026-09-28",
+   "kind": "market_data",
+   "published_at": "2026-09-28",
+   "available_at": "2026-09-28",
+   "retrieval": "market_feed"
+  },
+  {
+   "id": "ust10",
+   "title": "Alpha Vantage TREASURY_YIELD 10-year weekly, 2026-09-18 = 4.99%",
+   "url": "alphavantage://TREASURY_YIELD/10year/weekly",
+   "kind": "official_statistics",
+   "published_at": "2026-09-18",
+   "available_at": "2026-09-28",
+   "retrieval": "provider_normalized"
+  },
+  {
+   "id": "consensus_web",
+   "title": "Web-search excerpts (TIKR/StockAnalysis/WallStreetZen) Sep-2026: FY2027 revenue consensus $19.16B, EPS $5.04-5.08 (adjusted), 2028 EPS $6.16",
+   "url": "https://www.tikr.com/blog/servicenow-stock-analysis-142-mean-target-236-street-high-and-a-284-tikr-case",
+   "kind": "analyst_estimates",
+   "published_at": "2026-09-21",
+   "available_at": "2026-09-21",
+   "retrieval": "search_excerpt"
+  },
+  {
+   "id": "q2_call",
+   "title": "Q2 2026 call excerpts via search: AI (Now Assist) ACV > $1B, target $1.5B end-2026; SBC below 10% of revenue by 2029; non-GAAP op margin 29.5% Q2, FY26 31.5%, FY26 FCF margin 35%",
+   "url": "https://finance.yahoo.com/quote/NOW/earnings/NOW-Q2-2026-earnings_call-653176.html",
+   "kind": "transcript",
+   "published_at": "2026-07-22",
+   "available_at": "2026-07-23",
+   "retrieval": "search_excerpt"
+  }
+ ],
+ "assumptions": [
+  {
+   "id": "open_balance",
+   "kind": "reported",
+   "as_of": "2026-09-28",
+   "review_status": "reviewed",
+   "source_ids": [
+    "q2_10q",
+    "av_statements",
+    "notes_424b2"
+   ],
+   "rationale": "June 30 2026 balance: cash & equivalents $2.503B, short-term investments $2.161B, long-term investments $4.116B (high-grade marketable securities, no haircut). Debt $7.631B = short-term $2.196B (mostly ~$2.1B commercial paper under the $3B CP program) + long-term $5.435B (2030 notes $1.5B + $4.0B notes issued to repay the Armis term loan). Operating/finance lease obligations ($0.94B) are treated in cash costs, not debt. Cross-check: $1.5B + $4.0B + ~$2.1B CP \u2248 $7.6B.",
+   "falsifier": "Primary 10-Q balance sheet shows debt or cash differing by more than $250M from these figures."
+  },
+  {
+   "id": "shares_point",
+   "kind": "reported",
+   "as_of": "2026-09-28",
+   "review_status": "reviewed",
+   "source_ids": [
+    "av_overview",
+    "q2_10q"
+   ],
+   "rationale": "Point-in-time common shares 1,033,862,000 (10-Q cover count via AV overview; post 5-for-1 split basis). Q1 ASR retired 18.5M shares.",
+   "falsifier": "10-Q cover count differs by more than 0.5%."
+  },
+  {
+   "id": "dilution",
+   "kind": "analyst",
+   "as_of": "2026-09-28",
+   "review_status": "reviewed",
+   "source_ids": [
+    "q2_10q",
+    "av_statements"
+   ],
+   "rationale": "Add 5M shares for vested in-the-money options/settling awards. Unvested RSUs are NOT added: all future equity awards are charged as a cash-equivalent cost (sbc_policy=cash_equivalent), so adding unvested RSUs would double count.",
+   "falsifier": "Diluted-share disclosure shows options/vested awards above 15M."
+  },
+  {
+   "id": "claims",
+   "kind": "analyst",
+   "as_of": "2026-09-28",
+   "review_status": "reviewed",
+   "source_ids": [
+    "q2_10q"
+   ],
+   "rationale": "No preferred stock or material noncontrolling interests. Deferred revenue renews in a going concern and is modeled as a ledger (not free profit and not a runoff claim). No contingent consideration of material size identified in available excerpts.",
+   "falsifier": "Filing discloses material contingent consideration, preferred claims or minority interests."
+  },
+  {
+   "id": "bridge",
+   "kind": "analyst",
+   "as_of": "2026-09-28",
+   "review_status": "reviewed",
+   "source_ids": [
+    "q2_10q",
+    "q1_10q",
+    "av_overview"
+   ],
+   "rationale": "Bridge June 30 -> Sep 28: explicit estimate of NO net change. Q3 is seasonally weak for operating cash (Q3 2025 OCF $0.81B) and the company continues buybacks under the $5B authorization plus possible CP paydown; these roughly offset. No acquisition closing of material size since June 30 was found. Not verified until the Q3 10-Q (late October).",
+   "falsifier": "Q3 2026 10-Q shows net cash+investments minus debt changed by more than $1B, or share count by more than 1%."
+  },
+  {
+   "id": "deferred",
+   "kind": "analyst",
+   "as_of": "2026-09-28",
+   "review_status": "reviewed",
+   "source_ids": [
+    "av_statements",
+    "q2_10q"
+   ],
+   "rationale": "Opening deferred revenue estimated at $7.0B (AV lacks the line; ~43% of annual revenue, consistent with annual upfront billing; revenue recognized from opening deferred was $3.4B in Q2). Balance kept at 43% of annual revenue so growth funds working capital. Timing effect only; small value impact.",
+   "falsifier": "Filed deferred revenue differs from $7.0B by more than $1.5B."
+  },
+  {
+   "id": "rev_2026",
+   "kind": "guidance",
+   "as_of": "2026-09-28",
+   "review_status": "reviewed",
+   "source_ids": [
+    "q2_release",
+    "av_statements"
+   ],
+   "rationale": "FY26 subscription revenue guidance $15.76-15.78B (+22.5%, incl. ~125bp Armis) + ~$0.42B services => ~$16.19B total; H1 actual $7.757B, so Q4 ~$4.29B. Stub 2026-09-28..12-31 (~94 days) revenue ~$4.38B = $17.0B annual rate.",
+   "falsifier": "Q3/Q4 revenue below $4.0B/$4.15B or guidance cut."
+  },
+  {
+   "id": "growth_base",
+   "kind": "analyst",
+   "as_of": "2026-09-28",
+   "review_status": "reviewed",
+   "source_ids": [
+    "consensus_web",
+    "q2_release",
+    "av_statements"
+   ],
+   "rationale": "Base: 2027 +18% (matches ~$19.1B consensus), then fade 16.5/15/13.5/12/10.5/9/7.5/6% through 2035. Outside view: few $15B+ software firms sustain >15% for 5 years; NOW has compounded 21-24% for 5 years with cRPO +21.5% cc and $29.0B RPO, supporting a gradual fade rather than a cliff.",
+   "falsifier": "cRPO constant-currency growth below 15% for two consecutive quarters."
+  },
+  {
+   "id": "growth_bear",
+   "kind": "analyst",
+   "as_of": "2026-09-28",
+   "review_status": "reviewed",
+   "source_ids": [
+    "q2_release",
+    "q2_call"
+   ],
+   "rationale": "Bear: AI agents compress seat-based workflow pricing and IT budgets shift to model vendors/hyperscalers; growth 14% in 2027 fading to 4% by 2035. This is a structural-disruption case, not a recession-only dip.",
+   "falsifier": "Net new ACV and seat expansion stay above +18% through 2027 with stable pricing."
+  },
+  {
+   "id": "growth_bull",
+   "kind": "analyst",
+   "as_of": "2026-09-28",
+   "review_status": "reviewed",
+   "source_ids": [
+    "q2_call",
+    "q2_release"
+   ],
+   "rationale": "Bull: AI ACV ($1B+ in Q2, targeting $1.5B end-2026) plus Armis/security and CRM expansion keep growth ~19-20% through 2029, fading to 7% by 2035.",
+   "falsifier": "AI ACV below $1.5B at end-2026 or AI SKUs cannibalize core seats."
+  },
+  {
+   "id": "margin_base",
+   "kind": "analyst",
+   "as_of": "2026-09-28",
+   "review_status": "reviewed",
+   "source_ids": [
+    "av_statements",
+    "q2_call"
+   ],
+   "rationale": "Cash cost ratio (excluding SBC and D&A) 66% in the Q4-2026 stub (FY25 EBITDA before SBC = 34.0% of revenue: 1824+1955+738; 2026 burdened by Armis integration), 64.5% in 2027 (EBITDA before SBC 35.5% less 4.5% depreciation ~ FY26 non-GAAP margin guide of 31.5%), falling to 58% by 2035 as scale and AI automation lift efficiency. Implied reported FCF margin ~34-35% in 2026-27 matches FY26 guidance of 35%.",
+   "falsifier": "Non-GAAP operating margin falls below 30% in FY27."
+  },
+  {
+   "id": "margin_bear",
+   "kind": "analyst",
+   "as_of": "2026-09-28",
+   "review_status": "reviewed",
+   "source_ids": [
+    "av_statements",
+    "q2_release"
+   ],
+   "rationale": "Bear: AI inference costs and price competition keep cash costs at 63-66% of revenue (EBITDA before SBC ~37% by 2035); SBC stays above 10% of revenue.",
+   "falsifier": "Subscription gross margin and operating margin expand despite AI mix."
+  },
+  {
+   "id": "margin_bull",
+   "kind": "analyst",
+   "as_of": "2026-09-28",
+   "review_status": "reviewed",
+   "source_ids": [
+    "q2_call",
+    "av_statements"
+   ],
+   "rationale": "Bull: operating leverage takes cash costs to 56% (EBITDA before SBC 44%) by 2035 and SBC falls to 7.5% of revenue.",
+   "falsifier": "Operating margin stalls near 31% non-GAAP through 2028."
+  },
+  {
+   "id": "sbc_path",
+   "kind": "guidance",
+   "as_of": "2026-09-28",
+   "review_status": "reviewed",
+   "source_ids": [
+    "q2_call",
+    "av_statements"
+   ],
+   "rationale": "SBC 14.7% of revenue in FY25 (~$1.96B), elevated to ~15.5% in 2026 by Armis retention awards (Q2 $652M). Management targets SBC below 10% of revenue by 2029. Base follows the target by 2030, bear misses it, bull beats it. SBC charged as cash-equivalent cost (economically equal to buybacks offsetting dilution).",
+   "falsifier": "FY27 SBC above 14% of revenue."
+  },
+  {
+   "id": "da_capex",
+   "kind": "analyst",
+   "as_of": "2026-09-28",
+   "review_status": "reviewed",
+   "source_ids": [
+    "av_statements",
+    "q2_10q"
+   ],
+   "rationale": "Depreciation of PP&E ~4.5% of revenue plus amortization of acquired intangibles ($3.78B on balance after Armis) running off: ~$560M in 2027 (~$150M in the Q4 2026 stub; Q2 2026 total D&A $407M) falling to ~$50M by 2035. Capex (incl. data centers) 4.5% of revenue through 2028, 4.3% thereafter (FY25 6.5%, H1 2026 ~3.3%; midpoint allows for AI infrastructure).",
+   "falsifier": "Capex exceeds 7% of revenue for AI infrastructure for two years."
+  },
+  {
+   "id": "mna",
+   "kind": "analyst",
+   "as_of": "2026-09-28",
+   "review_status": "reviewed",
+   "source_ids": [
+    "q1_10q",
+    "av_statements"
+   ],
+   "rationale": "Recurring tuck-in acquisitions cost 1.5% of revenue per year (Moveworks, Armis, Veza show acquisitions are part of the model). Charged as growth capex so acquired growth is not free.",
+   "falsifier": "A further acquisition above $5B is announced."
+  },
+  {
+   "id": "tax",
+   "kind": "analyst",
+   "as_of": "2026-09-28",
+   "review_status": "reviewed",
+   "source_ids": [
+    "av_statements"
+   ],
+   "rationale": "Cash tax 20% of taxable operating income after SBC deduction and interest; terminal 21%. FY25 effective tax ~23% on pretax $2.26B.",
+   "falsifier": "Cash taxes exceed 25% of pretax income for two years."
+  },
+  {
+   "id": "debt_path",
+   "kind": "reported",
+   "as_of": "2026-09-28",
+   "review_status": "reviewed",
+   "source_ids": [
+    "notes_424b2",
+    "q2_10q"
+   ],
+   "rationale": "Debt held flat at $7.63B: commercial paper (~$2.1B) rolls under the $3B program and notes are refinanced at maturity (repaying CP from cash would be value-neutral apart from the interest spread). Blended rate 4.1% (2030 notes 1.4%, new notes 4.25-6.3%, CP ~4.3%) through 2030, 5.1% thereafter after refinancing the low-coupon 2030 notes.",
+   "falsifier": "Credit rating downgrade or refinancing above 6.5%."
+  },
+  {
+   "id": "invest_income",
+   "kind": "analyst",
+   "as_of": "2026-09-28",
+   "review_status": "reviewed",
+   "source_ids": [
+    "q2_10q",
+    "ust10"
+   ],
+   "rationale": "Marketable investments $6.28B earn ~3.5% pre-tax, 21% tax => ~$174M/yr after tax; principal kept and counted once in the terminal bridge.",
+   "falsifier": "Investments liquidated for acquisitions or buybacks."
+  },
+  {
+   "id": "payout",
+   "kind": "analyst",
+   "as_of": "2026-09-28",
+   "review_status": "reviewed",
+   "source_ids": [
+    "q1_10q"
+   ],
+   "rationale": "Excess cash above $1.5B minimum is returned (modeled as a distribution; economically equivalent to buybacks at fair value, as with the $2.0B Q1 ASR).",
+   "falsifier": "Cash is instead accumulated or spent on value-destroying acquisitions."
+  },
+  {
+   "id": "discount",
+   "kind": "analyst",
+   "as_of": "2026-09-28",
+   "review_status": "reviewed",
+   "source_ids": [
+    "ust10",
+    "av_overview"
+   ],
+   "rationale": "Cost of equity 9.75% = 10y UST 4.99% + beta 0.97 x ERP ~4.9%. Terminal WACC 9.5% (debt ~5% of capital at ~4% after tax). Same rate in all scenarios so scenarios differ by business outcomes only.",
+   "falsifier": "Long rates move by more than 1 point."
+  },
+  {
+   "id": "terminal_base",
+   "kind": "analyst",
+   "as_of": "2026-09-28",
+   "review_status": "reviewed",
+   "source_ids": [
+    "av_statements",
+    "consensus_web"
+   ],
+   "rationale": "Base terminal after 2035: growth 3%, operating margin 29.5% INCLUDING SBC (2035 explicit ~29.6%), ROIC 25% (asset-light software incl. acquired goodwill).",
+   "falsifier": "Mature GAAP margin including SBC stays below 25%."
+  },
+  {
+   "id": "terminal_bear",
+   "kind": "analyst",
+   "as_of": "2026-09-28",
+   "review_status": "reviewed",
+   "source_ids": [
+    "av_statements"
+   ],
+   "rationale": "Bear terminal: growth 2.5%, margin 22.5% incl. SBC, ROIC 15% (commoditized workflow software).",
+   "falsifier": "Retention and pricing hold through the AI transition."
+  },
+  {
+   "id": "terminal_bull",
+   "kind": "analyst",
+   "as_of": "2026-09-28",
+   "review_status": "reviewed",
+   "source_ids": [
+    "q2_call",
+    "av_statements"
+   ],
+   "rationale": "Bull terminal: growth 3.5%, margin 32% incl. SBC, ROIC 35% (platform control point for enterprise AI agents).",
+   "falsifier": "Margins plateau below 30% or competition caps ROIC."
+  },
+  {
+   "id": "competition",
+   "kind": "analyst",
+   "as_of": "2026-09-28",
+   "review_status": "reviewed",
+   "source_ids": [
+    "q2_call",
+    "q2_release",
+    "av_overview"
+   ],
+   "rationale": "Competitive response: stock fell ~57% from $192.6 high to $81.25 low within 52 weeks on fears that AI agents (model vendors, Salesforce/Microsoft agents) erode seat-based workflow software. Offsetting evidence: 24% revenue growth, cRPO +21.5% cc, AI ACV > $1B. Bear case prices in structural pressure.",
+   "falsifier": "Churn/renewal rate falls below 97% or price realization declines."
+  },
+  {
+   "id": "consensus",
+   "kind": "analyst",
+   "as_of": "2026-09-28",
+   "review_status": "reviewed",
+   "source_ids": [
+    "consensus_web"
+   ],
+   "rationale": "FY2027 revenue consensus $19.16B (web excerpts, Sep 21 2026); GAAP basis revenue equals model basis. Adjusted EPS consensus excludes SBC and amortization, so it is not compared to the model EPS proxy.",
+   "falsifier": "Refreshed consensus differs by more than 5%."
+  }
+ ],
+ "opening": {
+  "as_of": "2026-09-28",
+  "assumption_ids": [
+   "open_balance",
+   "shares_point",
+   "dilution",
+   "bridge",
+   "deferred"
+  ],
+  "unrestricted_cash": 2503000000.0,
+  "debt": 7631000000.0,
+  "shares": 1038862000.0,
+  "deferred_revenue": 7000000000.0,
+  "tax_loss_carryforward": 0,
+  "marketable_investments": 6277000000.0
+ },
+ "report_dates": [
+  "2026-09-28",
+  "2026-12-31",
+  "2027-12-31",
+  "2028-12-31",
+  "2029-12-31",
+  "2030-12-31",
+  "2031-12-31"
+ ],
+ "underwriting": {
+  "opening_reconciliation": {
+   "assumption_ids": [
+    "open_balance",
+    "shares_point"
+   ],
+   "statement_as_of": "2026-06-30",
+   "share_basis": "point_in_time_common_outstanding",
+   "cash_and_equivalents": 2503000000.0,
+   "restricted_cash": 0,
+   "short_term_investments": 2161000000.0,
+   "long_term_investments": 4116000000.0,
+   "investment_haircut": 0,
+   "debt": 7631000000.0,
+   "common_shares_outstanding": 1033862000,
+   "incremental_dilutive_shares": 5000000.0,
+   "dilution_review": {
+    "assumption_ids": [
+     "dilution"
+    ]
+   },
+   "claims_review": {
+    "assumption_ids": [
+     "claims"
+    ]
+   },
+   "bridge_events": [],
+   "bridge_review": {
+    "assumption_ids": [
+     "bridge"
+    ]
+   }
+  },
+  "scenario_reviews": {
+   "bear": {
+    "demand_and_capacity": {
+     "assumption_ids": [
+      "growth_bear",
+      "rev_2026"
+     ]
+    },
+    "funding_and_claims": {
+     "assumption_ids": [
+      "debt_path",
+      "open_balance",
+      "claims",
+      "mna"
+     ]
+    },
+    "competitive_response": {
+     "assumption_ids": [
+      "competition",
+      "margin_bear"
+     ]
+    },
+    "maturity": {
+     "assumption_ids": [
+      "terminal_bear",
+      "sbc_path"
+     ]
+    }
+   },
+   "base": {
+    "demand_and_capacity": {
+     "assumption_ids": [
+      "growth_base",
+      "rev_2026"
+     ]
+    },
+    "funding_and_claims": {
+     "assumption_ids": [
+      "debt_path",
+      "open_balance",
+      "claims",
+      "mna"
+     ]
+    },
+    "competitive_response": {
+     "assumption_ids": [
+      "competition",
+      "margin_base"
+     ]
+    },
+    "maturity": {
+     "assumption_ids": [
+      "terminal_base",
+      "sbc_path"
+     ]
+    }
+   },
+   "bull": {
+    "demand_and_capacity": {
+     "assumption_ids": [
+      "growth_bull",
+      "rev_2026"
+     ]
+    },
+    "funding_and_claims": {
+     "assumption_ids": [
+      "debt_path",
+      "open_balance",
+      "claims",
+      "mna"
+     ]
+    },
+    "competitive_response": {
+     "assumption_ids": [
+      "competition",
+      "margin_bull"
+     ]
+    },
+    "maturity": {
+     "assumption_ids": [
+      "terminal_bull",
+      "sbc_path"
+     ]
+    }
+   }
+  },
+  "consensus_review": {
+   "status": "compared",
+   "assumption_ids": [
+    "consensus"
+   ],
+   "comparisons": [
+    {
+     "id": "rev_fy27",
+     "scenario": "base",
+     "metric": "revenue",
+     "period_start": "2026-12-31",
+     "period_end": "2027-12-31",
+     "as_of": "2026-09-21",
+     "available_at": "2026-09-21",
+     "currency": "USD",
+     "unit": "absolute",
+     "external_value": 19160000000.0,
+     "external_basis": "gaap_revenue",
+     "model_basis": "gaap_revenue",
+     "assumption_ids": [
+      "consensus"
+     ]
+    }
+   ]
+  },
+  "material_issues": []
+ },
+ "driver_version": 1,
+ "boundaries": [
+  "2026-12-31",
+  "2027-12-31",
+  "2028-12-31",
+  "2029-12-31",
+  "2030-12-31",
+  "2031-12-31",
+  "2032-12-31",
+  "2033-12-31",
+  "2034-12-31",
+  "2035-12-31"
+ ],
+ "stub_annual_revenue_rate": 17000000000.0,
+ "last_full_year_revenue": 16190000000.0,
+ "segment_name": "Subscription and services",
+ "scenarios": [
+  {
+   "name": "bear",
+   "thesis": "AI agents structurally pressure seat-based pricing; growth slows to mid-single digits and margins stall.",
+   "assumption_ids": [
+    "growth_bear",
+    "margin_bear",
+    "discount"
+   ],
+   "period_assumption_ids": [
+    "growth_bear",
+    "margin_bear",
+    "rev_2026",
+    "sbc_path",
+    "da_capex",
+    "mna",
+    "tax",
+    "debt_path",
+    "invest_income",
+    "payout",
+    "deferred"
+   ],
+   "cost_of_equity": 0.0975,
+   "terminal": {
+    "assumption_ids": [
+     "terminal_bear",
+     "discount",
+     "claims"
+    ],
+    "wacc": 0.095,
+    "tax_rate": 0.21,
+    "sbc_in_margin": true,
+    "net_runoff_obligation": 0,
+    "other_claims": 0,
+    "working_capital_rationale": "Deferred revenue renews with subscriptions in a going concern; growth in the balance is funded by the g/ROIC reinvestment rule. No runoff claim.",
+    "growth": 0.025,
+    "roic": 0.15,
+    "operating_margin": 0.225
+   },
+   "growth": [
+    0.14,
+    0.11,
+    0.09,
+    0.08,
+    0.07,
+    0.06,
+    0.05,
+    0.045,
+    0.04
+   ],
+   "cash_cost_ratio": [
+    0.66,
+    0.665,
+    0.66,
+    0.655,
+    0.65,
+    0.645,
+    0.64,
+    0.635,
+    0.63,
+    0.63
+   ],
+   "sbc_pct": [
+    0.155,
+    0.145,
+    0.135,
+    0.125,
+    0.115,
+    0.11,
+    0.105,
+    0.1,
+    0.1,
+    0.1
+   ],
+   "depreciation_pct": 0.045,
+   "amortization": [
+    150000000.0,
+    560000000.0,
+    520000000.0,
+    480000000.0,
+    420000000.0,
+    360000000.0,
+    300000000.0,
+    200000000.0,
+    100000000.0,
+    50000000.0
+   ],
+   "maintenance_capex_pct": [
+    0.045,
+    0.045,
+    0.045,
+    0.043,
+    0.043,
+    0.043,
+    0.043,
+    0.043,
+    0.043,
+    0.043
+   ],
+   "growth_capex_pct": 0.015,
+   "tax_rate": 0.2,
+   "interest_rate": [
+    0.041,
+    0.041,
+    0.041,
+    0.041,
+    0.041,
+    0.051,
+    0.051,
+    0.051,
+    0.051,
+    0.051
+   ],
+   "deferred_revenue_ratio": 0.43,
+   "working_capital_ratio": 0.12,
+   "prepaid_share": 0.2,
+   "payout_fraction": 1.0,
+   "minimum_cash": 1500000000.0,
+   "investment_income_after_tax": 174000000.0
+  },
+  {
+   "name": "base",
+   "thesis": "Durable enterprise workflow platform; growth fades from ~18% to 6% by 2035 while margins expand and SBC falls toward management target.",
+   "assumption_ids": [
+    "growth_base",
+    "margin_base",
+    "discount"
+   ],
+   "period_assumption_ids": [
+    "growth_base",
+    "margin_base",
+    "rev_2026",
+    "sbc_path",
+    "da_capex",
+    "mna",
+    "tax",
+    "debt_path",
+    "invest_income",
+    "payout",
+    "deferred"
+   ],
+   "cost_of_equity": 0.0975,
+   "terminal": {
+    "assumption_ids": [
+     "terminal_base",
+     "discount",
+     "claims"
+    ],
+    "wacc": 0.095,
+    "tax_rate": 0.21,
+    "sbc_in_margin": true,
+    "net_runoff_obligation": 0,
+    "other_claims": 0,
+    "working_capital_rationale": "Deferred revenue renews with subscriptions in a going concern; growth in the balance is funded by the g/ROIC reinvestment rule. No runoff claim.",
+    "growth": 0.03,
+    "roic": 0.25,
+    "operating_margin": 0.295
+   },
+   "growth": [
+    0.18,
+    0.165,
+    0.15,
+    0.135,
+    0.12,
+    0.105,
+    0.09,
+    0.075,
+    0.06
+   ],
+   "cash_cost_ratio": [
+    0.66,
+    0.645,
+    0.637,
+    0.628,
+    0.62,
+    0.612,
+    0.605,
+    0.597,
+    0.59,
+    0.58
+   ],
+   "sbc_pct": [
+    0.155,
+    0.14,
+    0.125,
+    0.11,
+    0.1,
+    0.095,
+    0.09,
+    0.085,
+    0.08,
+    0.08
+   ],
+   "depreciation_pct": 0.045,
+   "amortization": [
+    150000000.0,
+    560000000.0,
+    520000000.0,
+    480000000.0,
+    420000000.0,
+    360000000.0,
+    300000000.0,
+    200000000.0,
+    100000000.0,
+    50000000.0
+   ],
+   "maintenance_capex_pct": [
+    0.045,
+    0.045,
+    0.045,
+    0.043,
+    0.043,
+    0.043,
+    0.043,
+    0.043,
+    0.043,
+    0.043
+   ],
+   "growth_capex_pct": 0.015,
+   "tax_rate": 0.2,
+   "interest_rate": [
+    0.041,
+    0.041,
+    0.041,
+    0.041,
+    0.041,
+    0.051,
+    0.051,
+    0.051,
+    0.051,
+    0.051
+   ],
+   "deferred_revenue_ratio": 0.43,
+   "working_capital_ratio": 0.12,
+   "prepaid_share": 0.2,
+   "payout_fraction": 1.0,
+   "minimum_cash": 1500000000.0,
+   "investment_income_after_tax": 174000000.0
+  },
+  {
+   "name": "bull",
+   "thesis": "NOW becomes the enterprise AI-agent control layer; ~20% growth persists to 2029 with strong operating leverage.",
+   "assumption_ids": [
+    "growth_bull",
+    "margin_bull",
+    "discount"
+   ],
+   "period_assumption_ids": [
+    "growth_bull",
+    "margin_bull",
+    "rev_2026",
+    "sbc_path",
+    "da_capex",
+    "mna",
+    "tax",
+    "debt_path",
+    "invest_income",
+    "payout",
+    "deferred"
+   ],
+   "cost_of_equity": 0.0975,
+   "terminal": {
+    "assumption_ids": [
+     "terminal_bull",
+     "discount",
+     "claims"
+    ],
+    "wacc": 0.095,
+    "tax_rate": 0.21,
+    "sbc_in_margin": true,
+    "net_runoff_obligation": 0,
+    "other_claims": 0,
+    "working_capital_rationale": "Deferred revenue renews with subscriptions in a going concern; growth in the balance is funded by the g/ROIC reinvestment rule. No runoff claim.",
+    "growth": 0.035,
+    "roic": 0.35,
+    "operating_margin": 0.32
+   },
+   "growth": [
+    0.2,
+    0.19,
+    0.18,
+    0.165,
+    0.15,
+    0.13,
+    0.11,
+    0.09,
+    0.07
+   ],
+   "cash_cost_ratio": [
+    0.66,
+    0.64,
+    0.628,
+    0.615,
+    0.605,
+    0.595,
+    0.585,
+    0.575,
+    0.567,
+    0.56
+   ],
+   "sbc_pct": [
+    0.155,
+    0.135,
+    0.12,
+    0.105,
+    0.095,
+    0.09,
+    0.085,
+    0.08,
+    0.075,
+    0.075
+   ],
+   "depreciation_pct": 0.045,
+   "amortization": [
+    150000000.0,
+    560000000.0,
+    520000000.0,
+    480000000.0,
+    420000000.0,
+    360000000.0,
+    300000000.0,
+    200000000.0,
+    100000000.0,
+    50000000.0
+   ],
+   "maintenance_capex_pct": [
+    0.045,
+    0.045,
+    0.045,
+    0.043,
+    0.043,
+    0.043,
+    0.043,
+    0.043,
+    0.043,
+    0.043
+   ],
+   "growth_capex_pct": 0.015,
+   "tax_rate": 0.2,
+   "interest_rate": [
+    0.041,
+    0.041,
+    0.041,
+    0.041,
+    0.041,
+    0.051,
+    0.051,
+    0.051,
+    0.051,
+    0.051
+   ],
+   "deferred_revenue_ratio": 0.43,
+   "working_capital_ratio": 0.12,
+   "prepaid_share": 0.2,
+   "payout_fraction": 1.0,
+   "minimum_cash": 1500000000.0,
+   "investment_income_after_tax": 174000000.0
+  }
+ ],
+ "note": "Real regression input from the 2026-09-28 ServiceNow run (Claude Code cloud session). Balances via Alpha Vantage and search excerpts; primary filings NOT read directly (egress blocked), hence retrieval labels. Not a price target; rerun in Cowork after reading the 10-Q."
+}

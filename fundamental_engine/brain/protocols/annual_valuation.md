@@ -15,13 +15,23 @@ scenario interval is a statistically calibrated confidence interval.
    relabel June cash as September cash. Customer advances are not spare equity.
 3. Build a valuation_version=1 case using examples/valuation as FORMAT ONLY.
    Read docs/ANNUAL_VALUATION.md for definitions. Replace every synthetic input.
+   For ratio-driven businesses (software, subscriptions) write a driver_version=1
+   spec (growth and costs as % of revenue; examples/valuation/software_drivers.json)
+   and call build_valuation_from_drivers; pass the returned case on unchanged.
+   Record sources[].retrieval honestly: primary_document only if the filing itself
+   was read, otherwise provider_normalized / search_excerpt / market_feed.
 4. Forecast business drivers under bear/base/bull, cite sources and write specific
    analyst assumptions and falsifiers. Guidance is not reported revenue. Decompose
    actual cohorts/segments; use average units operating during the period.
 5. Build capex, replacement cohorts, taxes, prepayment recognition, debt maturity,
    interest, issuance prices/fees and share count. Match periods and currencies.
+   Roll commercial paper and maturing notes unless repayment from cash is evidenced;
+   an invented repayment can create a false funding block under stress.
 6. Run value_company. Run valuation_diagnostics for the operating route. Review
    funding gaps, terminal dependence, terminal margin jumps and unreviewed inputs.
+   Read implied_cost_of_equity and discount_rate_band: if the price conclusion
+   flips within one point of required return, say so. For driver specs also run
+   implied_growth_shift to state what growth the price needs.
 7. Resolve the largest VALUE-SENSITIVE uncertainties. Use a full contract or note
    when needed; repeated articles do not resolve a missing contractual fact.
 8. Save annual_valuation_input in the dossier, execute research_review, checkpoint,

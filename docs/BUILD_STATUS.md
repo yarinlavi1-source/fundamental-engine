@@ -6,7 +6,18 @@ H1 calibration PASS, H2 return edge FAIL, H3 momentum interaction passes the lit
 statistically distinguishable from luck and reverses in the design window -> forward test only.
 Validation: 307 unit/integration tests passed locally (software checks, not investment accuracy).
 
-## Previous: 0.9.0
+## Previous: 0.9.2 — 2026-09-28 (merged into the 0.10 line on 20.10.2026)
+
+Fixes from the first full real-company run (ServiceNow, see NOW_RUN_2026-09-28.md):
+input-aware confidence (source access, discount-rate band), implied cost of equity,
+ratio driver specs with implied growth, and ledger-safe price stress/reverse checks.
+
+Validation: 262 unit/integration tests passed locally, CLI smoke runs (value-drivers
+with diagnostics, plain with the NOW regression) and isolated wheel check including
+driver specs. These are software checks, not investment accuracy measurements.
+
+
+## Previous: 0.9.0 / 0.9.1
 
 Valuation integrity is enforced at calculator, research-review and plain-output
 boundaries. Arithmetic is retained for inspection; unreviewed live price conclusions

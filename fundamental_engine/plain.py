@@ -283,7 +283,11 @@ def _valuation(case):
     summary = {'executed': True, 'input_sha256': result['input_sha256'], 'status': status,
                'underwriting_audit': result['underwriting_audit'], 'annual_path_semantics': result['annual_path_semantics'],
                'is_demo': result['is_demo'], 'warnings': result['warnings'], 'annual_values': result['annual_values'],
-               'base_issues': next((x.get('issues', []) for x in result['scenarios'] if x['name'] == 'base'), [])}
+               'base_issues': next((x.get('issues', []) for x in result['scenarios'] if x['name'] == 'base'), []),
+               'source_access': result['underwriting_audit'].get('source_access')}
+    if source['method'] in {'operating', 'residual_income'} and result['annual_values'][0].get('base') is not None:
+        from .valuation_tools import discount_rate_band
+        summary['discount_rate_band'] = discount_rate_band(source)
     if status == 'funding_blocked' or today.get('base') is None:
         return summary, result, {'bucket': 'blocked', 'light': '🔴', 'headline': 'אי אפשר לתת שווי כרגע',
                          'explain': 'לפי התחזית החברה צריכה כסף שאין לו מקור מוכח. עד שיהיה מימון ברור, כל "שווי" הוא ניחוש. זו נורת אזהרה, לא הערכת שווי.'}
@@ -352,6 +356,14 @@ def _confidence(case, valuation, items, base_rate=None, scores=None):
             reasons.append('רוב השווי מגיע משנים רחוקות')
         if any('7 calendar days' in w for w in valuation['warnings']):
             reasons.append('המחיר שהושווה ישן מיותר משבוע')
+        access = valuation.get('source_access') or {}
+        if not valuation['is_demo'] and access.get('status') in {'secondary_access', 'no_primary_source'}:
+            reasons.append('נתוני המאזן לא נקראו ישירות מהדוח עצמו (רק מספק נתונים או מקטעי חיפוש)')
+        band = valuation.get('discount_rate_band') or {}
+        if band.get('quote_inside_band'):
+            reasons.append('שינוי של נקודת אחוז אחת בתשואה הנדרשת הופך את המסקנה זול/יקר')
+        elif band.get('relative_width') is not None and band['relative_width'] > .5:
+            reasons.append('השווי רגיש מאוד לתשואה הנדרשת (שינוי של נקודת אחוז אחת מזיז אותו ביותר מ-25%)')
     if len(case['history']) < 3:
         reasons.append('יש פחות משלוש שנים של נתונים')
     if len(items) < 4:

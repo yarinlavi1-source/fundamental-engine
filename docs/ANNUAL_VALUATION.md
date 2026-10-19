@@ -158,3 +158,57 @@ missing reconciliation returns underwriting_required, even if arithmetic succeed
 Pass the full research_dossier to plain_verdict; it must execute the same valuation
 input. All gates are process checks, not independent verification or forecast accuracy.
 Discovery needs no positive earnings/FCF or low multiple. Preserve early opportunities.
+
+## v0.9.2 — driver specs, source access and discount-rate diagnostics
+
+### Driver specs (`driver_version: 1`)
+
+For subscription/software and other ratio-driven businesses, write the forecast as
+ratios and let `build_valuation_from_drivers` (MCP) or
+`python -m fundamental_engine value-drivers SPEC.json --diagnostics` generate the
+absolute period inputs. Fictional format: `examples/valuation/software_drivers.json`.
+
+Top level: every ordinary case field (as_of, ticker, quote, sources, assumptions,
+opening, report_dates, underwriting) plus `boundaries` (period ends, first period
+starts at as_of), `last_full_year_revenue` (annual revenue the first full year grows
+from) and optional `stub_annual_revenue_rate` (annual run rate of a short first
+period; that period has no growth entry).
+
+Per scenario: name, thesis, assumption_ids, optional period_assumption_ids,
+cost_of_equity, terminal and these drivers (a single number or one value per period):
+`growth` (one per non-stub period), `cash_cost_ratio` (cash costs excluding SBC and
+D&A / revenue), `sbc_pct`, `depreciation_pct`, `amortization` (absolute), 
+`maintenance_capex_pct`, `growth_capex_pct` (use it for recurring acquisitions),
+`tax_rate`, `interest_rate`, `deferred_revenue_ratio` (balance / annual revenue),
+`prepaid_share` (share of revenue recognized from the liability; ledger split only),
+`working_capital_ratio` (x change in annual revenue), `payout_fraction`,
+`minimum_cash`, `investment_income_after_tax` (annual), `debt_draw`,
+`debt_repayment`, `fixed_cash_costs`. SBC is charged as a cash-equivalent cost.
+
+Generated cases carry `generated_from.spec_sha256` and
+`prepayment_price_linkage: scaled`, so price stresses move billings with price.
+Hand-built cases default to `fixed` (contracted advances), where amounts stay and
+recognition is only capped at shocked revenue. The spec adds arithmetic, not
+evidence: each ratio still needs sourced assumptions and falsifiers.
+
+### Source access (`sources[].retrieval`)
+
+Optional: `primary_document`, `provider_normalized`, `search_excerpt`,
+`market_feed`. `underwriting_audit.source_access` lists the primary sources behind
+the opening balance and whether each was actually read in the original document.
+Anything other than `primary_read` lowers plain_verdict confidence; it does not
+block publication, because vendor data can be consistent while definitions or
+footnotes still differ. Unrecorded retrieval counts as not read directly.
+
+### Diagnostics
+
+- `implied_cost_of_equity`: the required return (terminal WACC shifted equally) at
+  which the scenario value equals the quote, cash flows fixed.
+- `discount_rate_band`: value at Ke −1pt / +1pt. If the quote falls inside, the
+  cheap/expensive call depends on a one-point judgement; confidence drops. A band
+  wider than 50% of the central value also lowers confidence.
+- `implied_growth_shift` (driver specs): uniform growth uplift that justifies the
+  quote with every ratio fixed.
+- `reverse_price` now searches only the funded part of its multiplier domain and
+  says so, instead of failing when low multipliers starve cash.
+All are sensitivities of the supplied model, never market consensus or odds.

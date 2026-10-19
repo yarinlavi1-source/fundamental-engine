@@ -40,3 +40,11 @@ remain `research_incomplete` with market overreaction `not_established`. Full nu
 valuation/financing/MCP execution is exercised by the separate clearly synthetic
 business_financing_demo case. That is a material coverage limit, not a real-company
 valuation validation claim.
+
+## ServiceNow driver regression (v0.9.2)
+
+`examples/real/now_drivers_2026q3.json` is the executed 2026-09-28 ServiceNow input
+as a driver spec, with a dated quote and full underwriting. Its balances came from
+Alpha Vantage and search excerpts (sources carry `retrieval` labels), so it tests the
+conversion and the reduced-confidence path, not the value's correctness. See
+`docs/NOW_RUN_2026-09-28.md`; `NowRegressionTests` pins the executed outputs.
