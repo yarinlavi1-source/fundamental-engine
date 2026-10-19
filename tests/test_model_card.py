@@ -107,6 +107,26 @@ def bank_fb(company=None):
         shares_outstanding=[1e8] * 5))
 
 
+def fee_network_fb(sector, industry):
+    """SYNTHETIC Visa-like payment network: 80% gross margin, 67% operating margin, low capex, lender-unlike balance sheet."""
+    rev = [2.4e10, 2.9e10, 3.29e10, 3.58e10, 4.0e10]
+    return synth_fb({'sector': sector, 'industry': industry}, series_years(
+        5, revenue=rev, gross_profit=[r * .80 for r in rev], operating_income=[r * .67 for r in rev], net_income=[r * .53 for r in rev],
+        cfo=[r * .55 for r in rev], capex=[r * .03 for r in rev], d_and_a=[r * .03 for r in rev], sbc=[r * .03 for r in rev],
+        cash=[1.6e10] * 5, long_term_debt=[2.0e10] * 5, equity=[3.6e10, 3.5e10, 3.9e10, 3.9e10, 3.8e10], total_assets=[8.5e10] * 5,
+        total_liabilities=[4.7e10] * 5, shares_outstanding=[2.1e9, 2.08e9, 2.05e9, 2.0e9, 1.96e9]))
+
+
+def steady_fb(sector, industry, rev, om, gm, capex_pct):
+    """SYNTHETIC operating company with the given revenue path, operating margins, gross margin and capex intensity."""
+    n = len(rev)
+    return synth_fb({'sector': sector, 'industry': industry}, series_years(
+        n, revenue=rev, gross_profit=[r * gm for r in rev], operating_income=[r * m for r, m in zip(rev, om)],
+        cfo=[r * (m + .08) for r, m in zip(rev, om)], capex=[r * capex_pct for r in rev], d_and_a=[r * .04 for r in rev],
+        cash=[r * .3 for r in rev], equity=[r * .8 for r in rev], long_term_debt=[r * .2 for r in rev], total_assets=[r * 1.6 for r in rev],
+        total_liabilities=[r * .8 for r in rev], shares_outstanding=[1e9] * n))
+
+
 def ai_infra_fb(industry='Software—Infrastructure'):
     return synth_fb({'sector': 'Technology', 'industry': industry}, series_years(
         3, start=2023, revenue=[1e8, 3e8, 8e8], gross_profit=[3e7, 1.2e8, 3.6e8], operating_income=[-6e7, -1.5e8, -2.4e8],
@@ -226,6 +246,25 @@ class BankTests(unittest.TestCase):
     def test_payment_network_is_platform(self):
         c = card(bank_fb({'sector': 'Financials', 'industry': 'Transaction & Payment Processing Services'}))
         self.assertEqual(c['business_model']['primary'], 'platform_marketplace')
+
+    def test_fee_networks_and_exchanges_get_operating_routes(self):
+        for ind in ('Transaction & Payment Processing Services', 'Financial Exchanges & Data'):
+            c = card(fee_network_fb('Financials', ind))
+            bm, v = c['business_model'], c['valuation']
+            self.assertEqual(bm['primary'], 'platform_marketplace', ind)
+            self.assertNotIn('financials', bm['secondary'])                    # the sector is only a fallback
+            self.assertFalse(bm['flags']['text_financials'])
+            self.assertIn(v['method'], M.OPERATING_METHODS, ind)
+        # vendor label lists lenders and networks together: conservative, but a reasoned override clears it
+        fb = fee_network_fb('Financial Services', 'Financial - Credit Services')
+        self.assertEqual(card(fb)['valuation']['method'], 'residual_income')
+        c = card(fb, {'business_model': {'primary': 'platform_marketplace', 'reason': 'fee network: no loans, deposits or float (10-K)'},
+                      'method_override': {'method': 'fcff_annual_path', 'reason': 'asset-light fee network'}})
+        self.assertFalse(c['business_model']['flags']['text_financials'])
+        self.assertTrue(c['business_model']['computed']['text_financials'])
+        self.assertNotIn('financials', c['business_model']['secondary'])
+        self.assertEqual(c['valuation']['method'], 'fcff_annual_path')
+        self.assertNotIn('override_rejected', c['valuation'])
 
 
 class GrowthInfrastructureTests(unittest.TestCase):
@@ -401,6 +440,23 @@ class UnderstandingTests(unittest.TestCase):
         self.assertEqual(tree['customers']['data_status'], 'available')
         self.assertEqual(tree['net_revenue_retention']['data_status'], 'missing')
 
+    def test_evidence_published_after_as_of_is_not_evidence(self):
+        rev = [1e9, 1.2e9, 1.4e9, 1.6e9]
+        fb = synth_fb({'sector': 'Information Technology', 'industry': 'Application Software'}, series_years(
+            4, revenue=rev, gross_profit=[r * .8 for r in rev], operating_income=[r * .2 for r in rev], cfo=[r * .25 for r in rev],
+            capex=[r * .02 for r in rev], cash=[5e8] * 4, equity=[1e9] * 4, shares_outstanding=[1e8] * 4), as_of='2025-12-01')
+        facts.add_qualitative_bundle(fb, {'retrieved_at': '2026-10-19T00:00:00Z',
+            'sources': [{'id': 'q3_call', 'kind': 'issuer_release', 'title': 'Q3 FY2026 call', 'published_at': '2026-09-15'}],
+            'items': [{'id': 'later', 'topic': 'retention', 'statement': 'NRR 120%', 'kind': 'reported', 'source_ids': ['q3_call'],
+                       'as_of': '2026-09-15'}]})
+        c = card(fb, {'understanding': {'why_they_dont_switch': {'answer': 'NRR 120%', 'evidence_ids': ['web:q3_call']}},
+                      'assessments': {'retention': {'assessment': 'strong', 'evidence_ids': ['web:q3_call']}}})
+        q = next(x for x in c['understanding'] if x['id'] == 'why_they_dont_switch')
+        self.assertEqual(q['status'], 'asserted')
+        self.assertIn('web:q3_call', q['note'])
+        self.assertEqual(c['dimensions']['retention']['evidence_status'], 'asserted')
+        self.assertEqual(c['dimensions']['retention']['unknown_evidence_ids'], ['web:q3_call'])
+
     def test_insufficient_without_business_model_evidence(self):
         rev = [1e8, 1.1e8, 1.2e8, 1.3e8]
         fb = synth_fb({}, series_years(4, revenue=rev, gross_profit=[r * .4 for r in rev], operating_income=[r * .1 for r in rev],
@@ -435,6 +491,35 @@ class OtherTypesTests(unittest.TestCase):
         self.assertEqual(c['cyclical']['position'], 'peak')
         self.assertEqual(c['valuation']['method'], 'normalized_cycle_fcff')
         self.assertEqual(c['valuation']['archetype'], 'commodity')
+
+    def test_industry_cyclicality_is_a_flag_unless_history_or_analyst_shows_a_cycle(self):
+        rev = [2.74e10, 3.32e10, 3.58e10, 3.95e10, 4.35e10]
+        fb = steady_fb('Information Technology', 'Semiconductors', rev, [.40, .42, .41, .42, .43], .70, .02)   # Broadcom-like
+        c = card(fb)
+        cy, v = c['cyclical'], c['valuation']
+        self.assertEqual((cy['value'], cy['industry_flag'], cy['data_shows_cycle'], cy['normalize']), (True, True, False, False))
+        self.assertEqual(v['method'], 'fcff_annual_path')
+        self.assertTrue(any('not normalized' in x for x in v['limitations']))
+        c = card(fb, {'cyclical': {'value': True, 'reason': 'memory pricing cycle visible in 2019 and 2023 segment data'}})
+        self.assertEqual((c['cyclical']['basis'], c['valuation']['method']), ('analyst', 'normalized_cycle_fcff'))
+        with self.assertRaises(ValueError):
+            card(fb, {'cyclical': {'value': True}})
+        # a booking platform labelled with hotels and cruise lines: platform signature, 'hotel' does not normalize it
+        rev = [1.0e10, 1.25e10, 1.5e10, 1.8e10, 2.1e10]
+        c = card(steady_fb('Consumer Discretionary', 'Hotels, Resorts & Cruise Lines', rev, [.2, .25, .27, .28, .3], .82, .02))
+        self.assertEqual((c['business_model']['primary'], c['business_model']['secondary']), ('platform_marketplace', ['consumer_brand']))
+        self.assertEqual(c['valuation']['method'], 'fcff_annual_path')
+
+    def test_vendor_dash_labels_and_mixed_labels(self):
+        tt = lambda sec, ind: (M.text_type({'sector': sec, 'industry': ind}) or {}).get('type')
+        self.assertEqual(tt('Consumer Cyclical', 'Auto - Manufacturers'), 'hardware_manufacturing')
+        self.assertEqual(tt('Healthcare', 'Medical - Devices'), 'hardware_manufacturing')
+        self.assertEqual(tt('Financials', 'Multi-Sector Holdings'), 'conglomerate')
+        self.assertEqual(tt('Real Estate', 'REIT - Mortgage'), 'financials')
+        rev = [4.70e11, 5.14e11, 5.75e11, 6.38e11, 7.17e11]                  # Amazon-like: retail margins, heavy capex
+        c = card(steady_fb('Consumer Discretionary', 'Broadline Retail', rev, [.053, .024, .064, .108, .11], .48, .17))
+        self.assertEqual((c['business_model']['primary'], c['business_model']['secondary']), ('consumer_brand', ['platform_marketplace']))
+        self.assertTrue(any('hybrid' in x for x in c['valuation']['limitations']))
 
     def test_specialist_routes_need_their_data(self):
         rev = [5e8] * 4

@@ -29,6 +29,7 @@ import math
 from . import facts as F
 from .expectations import growth_path
 from .inflection import features, stage as _stage
+from .model_card import cyclical_word, text_type
 from .pit import ttm_at, latest_at, shares_at
 from .scores import piotroski as _piotroski, roic as _roic
 
@@ -60,6 +61,8 @@ DEFAULTS = {'as_of': None, 'universe': None, 'top_n': 3, 'sector_cap': 2, 'disco
             'sustainable_growth_bounds': [-.05, .15], 'priced_in_tolerance': .04, 'perfection_growth': .30,
             'min_percentile_n': 5, 'min_sector_peers': 4, 'early_growth_min': .20, 'drawdown_overreaction': -.30,
             'shortlist_mode': 'distinct', 'themes': {}, 'structural_industries': [], 'unsupported_industries': None, 'anchors': {}}
+TAX = .21            # statutory US rate: a convention for after-tax operating profit, not the company's rate
+UNSUPPORTED_TYPES = ('financials', 'reit')     # model_card text types whose economics the screen cannot describe
 UNSUPPORTED_INDUSTRIES = ('Diversified Banks', 'Regional Banks', 'Life & Health Insurance', 'Property & Casualty Insurance',
                           'Multi-line Insurance', 'Reinsurance', 'Consumer Finance', 'Investment Banking & Brokerage',
                           'Commercial & Residential Mortgage Finance', 'Thrifts & Mortgage Finance', 'Multi-Sector Holdings')
@@ -81,22 +84,24 @@ LABELS = {'roic': ('ROIC', 'pct'), 'gross_margin': ('gross margin', 'pct'), 'ope
           'dilution_yoy': ('share count change', 'pct1'), 'organic': ('acquired-growth hint', 'pct'),
           'net_debt_to_ebitda': ('net debt / EBITDA', 'x'), 'interest_coverage': ('interest coverage', 'x'),
           'altman': ('Altman zone', 'str'), 'fcf_margin': ('FCF margin', 'pct'), 'runway_years': ('cash runway', 'yrs'),
-          'ev_to_fcf': ('EV / FCF', 'x'), 'pe': ('P/E', 'x'), 'ev_sales_per_r40': ('EV/sales per Rule-of-40 point', 'x2')}
+          'ev_to_fcf': ('EV / FCF', 'x'), 'pe': ('P/E', 'x'), 'ev_sales_per_r40': ('EV/sales per Rule-of-40 point', 'x2'),
+          'consensus_outlook': ('consensus revenue growth', 'pct')}
 WORD = {1: 'supports', 0: 'neutral', -1: 'weighs against', None: 'unknown'}
 
-ER_FORMULA = ('expected_return_proxy = owner FCF yield on EV ((FCF - SBC) / EV) + sustainable growth - excess dilution. '
+ER_FORMULA = ('expected_return_proxy = owner FCF yield on equity ((FCF - SBC) / market cap; FCF is after interest, so its '
+              'denominator is the equity, not EV) + sustainable growth - excess dilution. '
               'Sustainable growth = geometric mean of a 10-year path that holds the start growth (consensus 2y revenue CAGR, '
               'else demonstrated 3y CAGR, else latest growth; bounded) for 2 years and fades linearly to terminal growth '
               '(expectations.growth_path), then bounded. Excess dilution = max(0, share growth - SBC / market cap), so SBC is '
               'charged once. Assumes a constant multiple and FCF growing with revenue.')
 MEANINGS = {
     'business_quality': 'Returns on capital, margin level and stability, cash conversion, Piotroski. strong = high and durable economics today.',
-    'growth_quality': 'Growth level, consistency, acceleration, operating leverage, per-share dilution and acquired-growth hints. strong = sizeable growth that is repeatable, organic and accrues per share.',
+    'growth_quality': 'Growth level, consistency, acceleration, operating leverage, per-share dilution, acquired-growth hints and consensus far below demonstrated growth. strong = sizeable growth that is repeatable, organic and accrues per share.',
     'financial_strength': 'Net debt/EBITDA, interest coverage, Altman zone, FCF sign and cash runway. strong = no funding dependence.',
     'valuation': 'EV/FCF, P/E and EV/sales per Rule-of-40 point. strong = undemanding multiples. Cheapness alone is not a selection signal (H2 failed).',
     'expected_return_proxy': 'ROUGH screening-grade annual return proxy; see formula. Not an IRR, not a forecast, never a target. Unknown when owner FCF <= 0 (yield-based proxies cannot see a J-curve).',
-    'priced_in': 'Growth the EV / owner-FCF multiple implies under a standard fade model, versus consensus or demonstrated growth. strong = price assumes less than the evidence; weak = more, or priced for perfection. A crash-risk check, not a return predictor.',
-    'risk': 'Leverage, distress, dilution, funding runway, priced-for-perfection and volatility flags. strong = no material flag; weak = a high-severity flag.',
+    'priced_in': 'Growth the EV / after-tax operating profit multiple implies under a standard fade model (market cap / owner FCF when operating profit is thin or unknown; the other basis is shown as a cross-check), versus consensus or demonstrated growth. strong = price assumes less than the evidence; weak = more, or priced for perfection. A crash-risk check, not a return predictor.',
+    'risk': 'Leverage, distress, dilution, funding runway, priced-for-perfection, cyclical-peak, consensus-downside and volatility flags. strong = no material flag; weak = a high-severity flag.',
     'data_uncertainty': 'Coverage of key metrics and the data grade. strong = low uncertainty (validated FactBook); screening-grade data is at best adequate.',
 }
 LENS_RULES = {
@@ -104,13 +109,14 @@ LENS_RULES = {
         'label': 'Quality company with strong growth',
         'scope': 'growth_level >= growth anchor (12%/yr). Fast growth is not treated as risky by itself.',
         'conditions': ['business_quality strong or adequate', 'growth_quality strong (repeatable, organic, per share)',
-                       'financial_strength not weak'],
+                       'financial_strength not weak', 'not a cyclical industry at a possible peak (cyclical names otherwise tagged through_cycle)'],
         'ordering': 'quality tier (strong before adequate), then not priced for perfection before priced for perfection, then expected-return proxy (desc). Meaning: among comparable quality, the price that leaves the most return ranks first.'},
     'quality_fair_price': {
         'label': 'Quality company at an attractive or fair price',
         'scope': 'business_quality strong (size is irrelevant; a mega cap qualifies).',
-        'conditions': ['valuation strong or adequate', 'priced_in strong or adequate', 'growth_quality not weak or unknown (guards value traps)',
-                       'financial_strength not weak', 'expected_return_proxy strong or adequate'],
+        'conditions': ['valuation strong or adequate', 'priced_in strong or adequate (EV / after-tax operating profit, so growth capex does not read as expensive)',
+                       'growth_quality not weak or unknown (guards value traps)', 'financial_strength not weak',
+                       'expected_return_proxy strong or adequate', 'not a cyclical industry at a possible peak (peak FCF is not a fair price)'],
         'ordering': 'expected-return proxy (desc), then business-quality percentile (desc). Meaning: rough return for the price among strong businesses; not a valuation gap ranking.'},
     'early_commercial_growth': {
         'label': 'Earlier-stage growth with commercial proof',
@@ -123,13 +129,15 @@ LENS_RULES = {
         'scope': 'at least one improvement signal, or a >= 30% drawdown from the high when price data is supplied.',
         'conditions': ['>= 2 improvement signals incl. a profit/cash one, or overreaction path (drawdown with intact quality and growth)',
                        'the price lags: priced_in strong, or valuation strong when priced_in is unknown, or (overreaction path) priced_in not weak',
-                       'share count growth <= 8%/yr', 'financial_strength not weak'],
+                       'share count growth <= 8%/yr', 'financial_strength not weak', 'not a cyclical industry at a possible peak'],
         'ordering': 'improvement-signal count (desc), then priced_in (strong, adequate, unknown), then expected-return proxy (desc). Meaning: business evidence first, price second.'},
     'structural_tailwind': {
         'label': 'Structural long-term opportunity',
         'scope': 'an analyst theme for the symbol (options.themes) or industry (options.structural_industries), or the numeric footprint of an improving competitive position (growth in the top quartile of its sector in this universe with a non-falling gross margin).',
         'conditions': ['durable growth: 3y CAGR >= 8% without repeated declines', 'business_quality not weak',
-                       'potential not already priced (priced_in not weak)', 'financial_strength not weak'],
+                       'potential not already priced (priced_in not weak; unknown counts only with an analyst theme)',
+                       'share count growth <= 10%/yr and no high funding/dilution flag', 'financial_strength not weak',
+                       'not a cyclical industry at a possible peak'],
         'ordering': 'priced_in (strong, adequate, unknown), then expected-return proxy (desc), then growth (desc). Meaning: of real tailwinds, those the price has not fully absorbed first. Themes are analyst hypotheses, not evidence.'},
 }
 LENS_CHECKS = {
@@ -286,6 +294,8 @@ def rows_from_fmp_screen(records, universe_meta=None, as_of=None, prices=None):
             put('fcf_margin', _div(fps, rps), 'FMP FCF per share / revenue per share (TTM)')
         if nps and nps > 0:
             put('fcf_conversion', _div(fps, nps), 'FMP FCF per share / net income per share (TTM)')
+        if 'revenue_ttm' not in m and rps and fps and m.get('fcf_ttm'):
+            put('revenue_ttm', rps * m['fcf_ttm'] / fps, 'FMP revenue per share x shares (FCF TTM / FCF per share)')
         z = g(sc, 'altmanZScore')
         if z is not None:
             put('altman_z', z, 'FMP altmanZScore (original Z: safe > 2.99, distress < 1.81)')
@@ -296,13 +306,20 @@ def rows_from_fmp_screen(records, universe_meta=None, as_of=None, prices=None):
         if gr:
             last = gr[-1]
             rg, gpg, oig = _f(last.get('revenueGrowth')), _f(last.get('grossProfitGrowth')), _f(last.get('operatingIncomeGrowth'))
-            gm, om = m.get('gross_margin'), m.get('operating_margin')
+            fcg = _f(last.get('freeCashFlowGrowth'))
+            gm, om, fm = m.get('gross_margin'), m.get('operating_margin'), m.get('fcf_margin')
             if None not in (rg, gpg, gm) and 1 + rg > 0 and 1 + gpg > 0:
                 rel = (1 + gpg) / (1 + rg)
                 put('gross_margin_change', gm - gm / rel, 'approx: TTM gross margin x (1 - (1+revenueGrowth)/(1+grossProfitGrowth)), last FY')
-            if None not in (rg, oig, om) and om > 0 and 1 + rg > 0 and 1 + oig > 0:
-                rel = (1 + oig) / (1 + rg)
-                put('operating_margin_trend', om - om / rel, 'approx: TTM operating margin with last FY operatingIncomeGrowth vs revenueGrowth')
+            # prior-year margin = margin x (1 + revenue growth) / (1 + item growth); vendor growth is (x_t - x_t-1) / x_t-1 with its
+            # raw sign, so the identity holds for losses and sign changes (a loss-making grower can show operating leverage)
+            if None not in (rg, oig, om) and 1 + rg > 0 and 1 + oig != 0:
+                om0 = om * (1 + rg) / (1 + oig)
+                put('operating_margin_trend', om - om0, 'approx: TTM operating margin minus prior-FY margin from operatingIncomeGrowth vs revenueGrowth')
+                if rg >= .05:
+                    put('incremental_operating_margin', (om * (1 + rg) - om0) / rg, 'approx: change in operating income / change in revenue, last FY')
+            if None not in (rg, fcg, fm) and 1 + rg > 0 and 1 + fcg != 0:
+                put('fcf_margin_change', fm - fm * (1 + rg) / (1 + fcg), 'approx: TTM FCF margin minus prior-FY margin from freeCashFlowGrowth vs revenueGrowth')
             dil = [_f(x.get('weightedAverageSharesDilutedGrowth')) for x in gr]
             dil = [x for x in dil if x is not None]
             if dil:
@@ -379,13 +396,15 @@ def rows_from_pit(records, prices, t, meta=None):
         put('acquisition_driven', f.get('acquisition_driven_risk'), 'goodwill jump > 10% of revenue in a year (inflection.features)')
         put('goodwill_jump_to_revenue', f.get('goodwill_jump_to_rev'), 'goodwill change over ~1 year / revenue TTM')
         cash = (latest_at(rec.get('cash') or {}, t) or 0) + (latest_at(rec.get('sti') or {}, t) or 0)
-        debt = (latest_at(rec.get('ltd') or {}, t) or 0) + (latest_at(rec.get('ltd_cur') or {}, t) or 0)
-        put('net_debt', debt - cash, 'term debt + current debt - cash - short-term investments (converts/leases not included)')
+        dparts = [latest_at(rec.get(k) or {}, t) for k in ('ltd', 'ltd_cur')]
+        debt = None if all(x is None for x in dparts) else sum(x or 0 for x in dparts)    # no debt fact usable at t: unknown, never 0
+        if debt is not None:
+            put('net_debt', debt - cash, 'term debt + current debt - cash - short-term investments (converts/leases not included)')
         if f.get('oi_ttm') is not None:
             put('ebitda', f['oi_ttm'], 'EBIT proxy: D&A is not in the PIT record (overstates leverage)')
             eq = latest_at(rec.get('equity') or {}, t)
-            if eq is not None and eq + debt - cash > 0:
-                put('roic', f['oi_ttm'] * .79 / (eq + debt - cash), 'approx: operating income TTM x (1 - 21%) / (equity + debt - cash)')
+            if eq is not None and debt is not None and eq + debt - cash > 0:
+                put('roic', f['oi_ttm'] * (1 - TAX) / (eq + debt - cash), 'approx: operating income TTM x (1 - 21%) / (equity + debt - cash)')
         price, mcap = _f(p.get('price')), _f(p.get('market_cap'))
         if mcap is None and price:
             _, sh, sh_src = shares_at(rec, t)
@@ -395,7 +414,8 @@ def rows_from_pit(records, prices, t, meta=None):
         if mcap:
             b.setdefault('market_cap', 'supplied market cap')
             m['market_cap'] = mcap
-            put('ev', mcap + debt - cash, 'market cap + debt - cash')
+            if debt is not None:
+                put('ev', mcap + debt - cash, 'market cap + debt - cash')
             if ni and ni > 0:
                 put('pe', mcap / ni, 'market cap / net income TTM')
         put('volatility_1y', _f(p.get('volatility_1y')), 'supplied price data')
@@ -435,13 +455,13 @@ def rows_from_sec_frames(frame_rows, prices=None, history=None, as_of=None):
         if fcf is not None and ni and ni > 0:
             put('fcf_conversion', fcf / ni, 'FCF / net income (frame)')
         cash = (_f(r.get('cash')) or 0) + (_f(r.get('short_term_investments')) or 0)
-        debt = _f(r.get('debt'))
-        if debt is not None or r.get('cash') is not None:
-            put('net_debt', (debt or 0) - cash, f"debt ({r.get('debt_scope', 'unknown')} scope) - cash - short-term investments")
+        debt = _f(r.get('debt'))          # None (scope 'missing'): net debt, EV and ROIC unknown, never net cash
+        if debt is not None:
+            put('net_debt', debt - cash, f"debt ({r.get('debt_scope', 'unknown')} scope) - cash - short-term investments")
         put('ebitda', oi, 'EBIT proxy: D&A not in frames (overstates leverage)')
         eq = _f(r.get('equity'))
-        if oi is not None and eq is not None and eq + (debt or 0) - cash > 0:
-            put('roic', oi * .79 / (eq + (debt or 0) - cash), 'approx: operating income x (1 - 21%) / (equity + debt - cash)')
+        if oi is not None and eq is not None and debt is not None and eq + debt - cash > 0:
+            put('roic', oi * (1 - TAX) / (eq + debt - cash), 'approx: operating income x (1 - 21%) / (equity + debt - cash)')
         mcap = _f(p.get('market_cap')) or _f(r.get('market_cap'))
         price = _f(p.get('price')) or _f(r.get('price'))
         if mcap is None and price and _f(r.get('shares_outstanding')):
@@ -450,7 +470,8 @@ def rows_from_sec_frames(frame_rows, prices=None, history=None, as_of=None):
         if mcap:
             b.setdefault('market_cap', 'supplied market cap')
             m['market_cap'] = mcap
-            put('ev', mcap + (m.get('net_debt') or 0), 'market cap + net debt')
+            if m.get('net_debt') is not None:
+                put('ev', mcap + m['net_debt'], 'market cap + net debt')
             if ni and ni > 0:
                 put('pe', mcap / ni, 'market cap / net income (frame)')
         prev = [h.get(sym) for h in hist]
@@ -571,8 +592,8 @@ def rows_from_factbooks(factbooks, analyses=None, qas=None, prices=None):
         nc = (res.get('net_cash') or {}).get('value')
         if nc is not None:
             put('net_debt', -nc, 'dataqa resolved net cash (negated)')
-        elif bal.get('debt') is not None or bal.get('cash') is not None:
-            put('net_debt', (bal.get('debt') or 0) - cash, f'debt - cash - investments ({how})')
+        elif bal.get('debt') is not None:              # debt unknown: net debt and EV unknown, never net cash
+            put('net_debt', bal['debt'] - cash, f'debt - cash - investments ({how})')
         if ttm.get('operating_income') is not None:
             put('ebitda', ttm['operating_income'] + (ttm.get('d_and_a') or 0),
                 'operating income + D&A (TTM)' if ttm.get('d_and_a') is not None else 'EBIT proxy (D&A unknown)')
@@ -613,7 +634,8 @@ def rows_from_factbooks(factbooks, analyses=None, qas=None, prices=None):
                 sh_basis = f"latest share count {fact['metric']} at {e} (source {fact['source_id']})"
         if price and sh:
             put('market_cap', price * sh, f'price x {sh_basis}')
-            put('ev', price * sh + (m.get('net_debt') or 0), 'market cap + net debt')
+            if m.get('net_debt') is not None:
+                put('ev', price * sh + m['net_debt'], 'market cap + net debt')
             if (ttm.get('net_income') or 0) > 0:
                 put('pe', price * sh / ttm['net_income'], 'market cap / net income (TTM)')
         est = sorted((e['period_end'], _f(e['value'])) for e in fb.get('estimates') or []
@@ -655,6 +677,8 @@ def _derive(m, b):
     put('sbc_ttm', m['sbc_to_revenue'] * rev if m.get('sbc_to_revenue') is not None and rev else None, 'SBC / revenue x revenue')
     if fcf is not None and m.get('sbc_ttm') is not None:
         put('owner_fcf', fcf - m['sbc_ttm'], 'FCF - SBC')
+    if m.get('operating_margin') is not None and rev and rev > 0:
+        put('nopat', m['operating_margin'] * rev * (1 - TAX), 'operating margin x revenue x (1 - 21%, tax-rate convention)')
     nd, eb = m.get('net_debt'), m.get('ebitda')
     if nd is not None and eb is not None and eb > 0 and nd > 0:
         put('net_debt_to_ebitda', nd / eb, 'net debt / EBITDA')
@@ -823,11 +847,36 @@ def _growth_quality(c):
                                    note='per-share growth leaks when shares grow'),
               'organic': _inp(c, 'organic', m.get('acquisitions_pct_revenue', m.get('goodwill_jump_to_revenue')), org,
                               metric='acquisitions_pct_revenue', note='acquired growth is not organic' if org == -1 else None)}
+    down = _consensus_downside(m)
+    inputs['consensus_outlook'] = _inp(c, 'consensus_outlook', m['consensus_growth_2y'] if down else None, -1 if down else None,
+                                       metric='consensus_growth_2y', note=down or None)
     d = _dim(inputs)
     if d['level'] == 'strong' and inputs['growth_level']['signal'] != 1:
         d['level'] = 'adequate'
         d['reasons'].append('capped at adequate: strong growth quality needs growth at or above the level anchor')
     return d
+
+
+def _consensus_downside(m):
+    """Text when consensus revenue growth is more than 10 points below demonstrated growth (analysts expect a slowdown or a
+    decline: cycle, lost customer, tough comparisons), else ''. Only a downside gap counts against growth quality."""
+    demo, cons = m.get('revenue_cagr_3y', m.get('revenue_growth')), m.get('consensus_growth_2y')
+    if demo is None or cons is None or cons >= demo - .10:
+        return ''
+    return f'consensus {_fmt(cons)}/yr is far below demonstrated {_fmt(demo)}/yr: the demonstrated growth is not expected to repeat'
+
+
+def _cycle(c):
+    """Cyclical industry (model_card.CYCLICAL_WORDS in the industry/sector text) and possible-peak signs from screening data."""
+    word = cyclical_word(c['row'])
+    if not word:
+        return None
+    m = c['m']
+    signs = [x for x in (_consensus_downside(m),) if x]
+    g, tr, om = m.get('revenue_growth'), m.get('operating_margin_trend'), m.get('operating_margin')
+    if g is not None and tr is not None and om is not None and g >= .20 and tr >= .03 and om >= c['anchors']['operating_margin'][1]:
+        signs.append(f'revenue +{_fmt(g)} with operating margin {_fmt(tr, "pts")} to {_fmt(om)} (boom-like)')
+    return {'word': word, 'peak': bool(signs), 'signs': signs}
 
 
 def _financial_strength(c):
@@ -902,43 +951,69 @@ def _reference_growth(m):
 
 
 def _priced_in(c, o):
-    m = c['m']
-    base, basis = (m.get('owner_fcf'), 'owner FCF (FCF - SBC)') if m.get('owner_fcf') is not None else (m.get('fcf_ttm'), 'FCF (SBC unknown: overstated)')
-    ev = m.get('ev')
+    """What growth the price requires. Primary basis EV / after-tax operating profit (unlevered over unlevered; growth capex
+    does not depress it); market cap / owner FCF (levered over equity, the return-proxy basis) when operating profit is unknown
+    or thin (operating margin below its weak anchor without strong ROIC, e.g. an early grower near breakeven), and as a
+    cross-check otherwise."""
+    m, A = c['m'], c['anchors']
+    owner, obasis = (m['owner_fcf'], 'owner FCF (FCF - SBC)') if m.get('owner_fcf') is not None else (m.get('fcf_ttm'), 'FCF (SBC unknown: overstated)')
+    ev, mc, nopat, om = m.get('ev'), m.get('market_cap'), m.get('nopat'), m.get('operating_margin')
     ref, ref_basis = _reference_growth(m)
-    out = {'level': 'unknown', 'class': 'not_assessable', 'implied_growth': None, 'status': None, 'multiple': None, 'multiple_basis': basis,
+    out = {'level': 'unknown', 'class': 'not_assessable', 'implied_growth': None, 'status': None, 'multiple': None, 'multiple_basis': None,
            'reference_growth': ref, 'reference_basis': ref_basis, 'demonstrated_growth': m.get('revenue_cagr_3y', m.get('revenue_growth')),
-           'consensus_growth': m.get('consensus_growth_2y'), 'gap': None,
+           'consensus_growth': m.get('consensus_growth_2y'), 'gap': None, 'cross_check': None,
            'model': {'discount_rate': o['discount_rate'], 'terminal_growth': o['terminal_growth'], 'high_years': o['fade_high_years'],
                      'years': o['fade_years'], 'path': 'expectations.growth_path'}, 'reasons': []}
-    if ev is None or base is None:
-        out['reasons'].append('EV or FCF unknown')
+    eq = None
+    if mc and mc > 0 and owner is not None and owner > 0:
+        g_eq, st_eq = implied_growth(mc / owner, o)
+        eq = {'basis': f'market cap / {obasis}', 'short': 'market cap / owner FCF', 'multiple': mc / owner, 'implied_growth': g_eq, 'status': st_eq}
+    op = (ev is not None and ev > 0 and nopat is not None and nopat > 0 and om is not None
+          and (om >= A['operating_margin'][1] or (m.get('roic') or 0) >= A['roic'][0]))
+    fallback = None
+    if op:
+        mult, basis, short = ev / nopat, 'EV / after-tax operating profit (NOPAT, 21% tax convention)', 'EV / NOPAT'
+        out['cross_check'] = eq
+    elif eq:
+        mult, basis, short = eq['multiple'], eq['basis'], eq['short']
+        fallback = 'operating profit unknown or thin (margin below its weak anchor without strong ROIC): price read on ' + basis
+    else:
+        if owner is not None and owner <= 0:
+            out['class'] = 'not_assessable_negative_fcf'
+            out['reasons'].append('owner FCF <= 0 and operating profit thin or negative: a cash-flow multiple cannot say what the price '
+                                  'requires; deep analysis must run expectations.expectation_gap with company drivers')
+        elif ev is not None and ev <= 0:
+            out['class'] = 'not_assessable_negative_ev'
+            out['reasons'].append('EV <= 0 (net cash above market cap) and owner FCF unknown')
+        else:
+            out['reasons'].append('EV and operating profit, or market cap and FCF, unknown')
         return out
-    if ev <= 0 or base <= 0:
-        out['class'] = 'not_assessable_negative_fcf' if base <= 0 else 'not_assessable_negative_ev'
-        out['reasons'].append('owner FCF <= 0: a cash-flow multiple cannot say what the price requires; deep analysis must run '
-                              'expectations.expectation_gap with company drivers' if base <= 0 else 'EV <= 0 (net cash above market cap)')
-        return out
-    mult = ev / base
     g, status = implied_growth(mult, o)
-    out.update({'multiple': mult, 'implied_growth': g, 'status': status})
+    out.update({'multiple': mult, 'multiple_basis': basis, 'implied_growth': g, 'status': status})
     tol = o['priced_in_tolerance']
     if g >= o['perfection_growth'] or status == 'above_range':
         out.update(level='weak', **{'class': 'priced_for_perfection'})
-        out['reasons'].append(f"EV/{basis} {mult:.0f}x implies ~{_fmt(g)}/yr for {o['fade_high_years']} years: priced for perfection "
+        out['reasons'].append(f"{short} {mult:.0f}x implies ~{_fmt(g)}/yr for {o['fade_high_years']} years: priced for perfection "
                               '(implied >= 30% halved ~3-4x as often in the 2018-2025 holdout; a crash-risk measure, not a return signal)')
     elif ref is None:
         out.update(level='unknown', **{'class': 'no_reference_growth'})
-        out['reasons'].append(f'implied ~{_fmt(g)}/yr; no consensus or demonstrated growth to compare')
+        out['reasons'].append(f'{short} {mult:.0f}x implies ~{_fmt(g)}/yr; no consensus or demonstrated growth to compare')
     else:
         gap = g - ref
         out['gap'] = gap
         cls = 'price_assumes_less_than_evidence' if gap <= -tol else ('roughly_consistent' if gap <= tol else 'price_assumes_more_than_evidence')
         out.update(level={'price_assumes_less_than_evidence': 'strong', 'roughly_consistent': 'adequate'}.get(cls, 'weak'), **{'class': cls})
-        out['reasons'].append(f"EV/{basis} {mult:.0f}x implies ~{_fmt(g)}/yr growth for {o['fade_high_years']} years then fade to "
+        out['reasons'].append(f"{short} {mult:.0f}x implies ~{_fmt(g)}/yr growth for {o['fade_high_years']} years then fade to "
                               f"{_fmt(o['terminal_growth'])}; {ref_basis} {_fmt(ref)} ({cls.replace('_', ' ')})")
+    if fallback:
+        out['reasons'].append(fallback)
+    if op:
+        out['reasons'].append('NOPAT is read as owner cash: heavy reinvestors need more growth than shown'
+                              + (f"; cross-check {eq['short']} {eq['multiple']:.0f}x implies ~{_fmt(eq['implied_growth'])}/yr" if eq else ''))
     if m.get('consensus_growth_2y') is not None and m.get('revenue_cagr_3y') is not None and m['consensus_growth_2y'] > m['revenue_cagr_3y'] + .10:
         out['reasons'].append(f"consensus {_fmt(m['consensus_growth_2y'])} far above demonstrated {_fmt(m['revenue_cagr_3y'])}")
+    if _consensus_downside(m):
+        out['reasons'].append(_consensus_downside(m) + ' (a low multiple may be pricing the slowdown, not a mistake)')
     return out
 
 
@@ -946,16 +1021,16 @@ def _expected_return(c, o):
     m, A = c['m'], c['anchors']
     base, note = (m.get('owner_fcf'), None) if m.get('owner_fcf') is not None else (m.get('fcf_ttm'), 'SBC unknown: yield before SBC (overstated)')
     out = {'level': 'unknown', 'value': None, 'status': 'unknown', 'formula': ER_FORMULA, 'components': {}, 'bounded': [], 'reasons': []}
-    ev, mc = m.get('ev'), m.get('market_cap')
+    mc = m.get('market_cap')
     g0, g0_basis = _reference_growth(m)
-    if base is None or ev is None or ev <= 0 or g0 is None:
-        out['reasons'].append('needs EV > 0, FCF and a growth estimate')
+    if base is None or mc is None or mc <= 0 or g0 is None:
+        out['reasons'].append('needs market cap > 0, FCF and a growth estimate')
         return out
     if base <= 0:
         out.update(status='not_meaningful')
         out['reasons'].append('owner FCF <= 0: a yield-based proxy cannot see a J-curve; underwrite in the pipeline instead')
         return out
-    y = base / ev
+    y = base / mc
     lo, hi = o['growth_start_bounds']
     g0b = _clamp(g0, lo, hi)
     if g0b != g0:
@@ -968,14 +1043,15 @@ def _expected_return(c, o):
     gsb = _clamp(gs, slo, shi)
     if gsb != gs:
         out['bounded'].append(f'sustainable growth {_fmt(gs, "pct1")} bounded to {_fmt(gsb, "pct1")}')
-    sbc_dil = _div(m.get('sbc_ttm'), mc) if mc and mc > 0 else None
+    sbc_dil = _div(m.get('sbc_ttm'), mc)
     dil = m.get('dilution_yoy')
     excess = max(0., dil - (sbc_dil or 0)) if dil is not None else None
     er = y + gsb - (excess or 0)
     out.update(value=er, status='computed', level={1: 'strong', 0: 'adequate', -1: 'weak'}[_sig(er, A['expected_return_proxy'])],
-               components={'owner_fcf_yield_on_ev': y, 'growth_start': g0b, 'growth_start_basis': g0_basis, 'sustainable_growth': gsb,
+               components={'owner_fcf_yield': y, 'yield_basis': '(FCF - SBC) / market cap' if note is None else 'FCF / market cap',
+                           'growth_start': g0b, 'growth_start_basis': g0_basis, 'sustainable_growth': gsb,
                            'sbc_implied_dilution': sbc_dil, 'share_count_growth': dil, 'excess_dilution': excess})
-    out['reasons'].append(f'{_fmt(y, "pct1")} owner yield + {_fmt(gsb, "pct1")} sustainable growth ({g0_basis} {_fmt(g0)} fading)'
+    out['reasons'].append(f'{_fmt(y, "pct1")} owner yield on equity + {_fmt(gsb, "pct1")} sustainable growth ({g0_basis} {_fmt(g0)} fading)'
                           + (f' - {_fmt(excess, "pct1")} excess dilution' if excess else '') + f' = {_fmt(er, "pct1")}/yr (rough)')
     if note:
         out['reasons'].append(note)
@@ -1016,6 +1092,11 @@ def _risk(c, o, pi):
         add('volatility', 'medium', f'annualized volatility {v * 100:.0f}%')
     if m.get('acquisition_driven') is True:
         add('acquired_growth', 'low', 'growth may be bought, not organic')
+    cy = c.get('cycle')
+    if cy and cy['peak']:
+        add('cyclical_peak', 'medium', f"cyclical industry ('{cy['word']}') at a possible peak: " + '; '.join(cy['signs']))
+    elif _consensus_downside(m):
+        add('consensus_downside', 'low', _consensus_downside(m))
     known = any(m.get(k) is not None for k in ('net_debt', 'net_debt_to_ebitda', 'interest_coverage', 'altman_zone'))
     sev = {f['severity'] for f in flags}
     lvl = 'weak' if 'high' in sev else ('adequate' if 'medium' in sev else ('strong' if known else 'unknown'))
@@ -1062,7 +1143,8 @@ def _price_phrase(c):
     m, pi, er = c['m'], c['dims']['priced_in'], c['dims']['expected_return_proxy']
     s = f"EV/FCF {_fmt(m.get('ev_to_fcf'), 'x')}, P/E {_fmt(m.get('pe'), 'x')}"
     if pi['implied_growth'] is not None:
-        s += f"; the price implies ~{_fmt(pi['implied_growth'])}/yr growth" + (f" vs {pi['reference_basis']} {_fmt(pi['reference_growth'])}" if pi['reference_growth'] is not None else '')
+        s += (f"; the price implies ~{_fmt(pi['implied_growth'])}/yr growth ({pi['multiple_basis'].split(' (')[0]} {pi['multiple']:.0f}x)"
+              + (f" vs {pi['reference_basis']} {_fmt(pi['reference_growth'])}" if pi['reference_growth'] is not None else ''))
     if er['value'] is not None:
         s += f"; return proxy {_fmt(er['value'], 'pct1')}/yr (rough)"
     return s
@@ -1098,26 +1180,31 @@ def _lens(name, c, o):
                                                          'expected_return_proxy'))
     erv, gl = d['expected_return_proxy']['value'], m.get('growth_level')
     fs_c = ('financial_strength', fs != 'weak', f'financial strength weak: {_neg(d["financial_strength"])}')
+    cy = c.get('cycle')
+    cyc_c = ('not_cyclical_peak', not (cy and cy['peak']), f"cyclical industry ('{(cy or {}).get('word')}') at a possible peak "
+             f"({'; '.join((cy or {}).get('signs') or [])}): current margins and FCF may not persist; judge on through-cycle economics")
+    cyc_t = ['through_cycle'] if cy else []          # cyclical industry not at a visible peak: judge it through the cycle
     if name == 'quality_compounder':
         scope = gl is not None and gl >= c['anchors']['growth_level'][0]
         ppf = d['priced_in']['class'] == 'priced_for_perfection'
         conds = [('business_quality', bq in ('strong', 'adequate'), f'fast growth without demonstrated quality ({bq}): {_neg(d["business_quality"])}'),
-                 ('growth_quality', gq == 'strong', f'growth quality {gq}, needs strong: {_neg(d["growth_quality"])}'), fs_c]
+                 ('growth_quality', gq == 'strong', f'growth quality {gq}, needs strong: {_neg(d["growth_quality"])}'), fs_c, cyc_c]
         order = [('quality tier (0 strong, 1 adequate)', 0 if bq == 'strong' else 1, 'asc'), ('priced for perfection (0 no, 1 yes)', int(ppf), 'asc'),
                  ('expected-return proxy', erv, 'desc')]
         why = (f"Revenue grows {_fmt(gl)}/yr with {gq} growth quality and {bq} business quality ({_quality_phrase(c)}). Price check: {_price_phrase(c)}"
                + ('. Priced for perfection: high growth already assumed.' if ppf else '.'))
-        return scope, conds, order, why, (['priced_for_perfection'] if ppf else [])
+        return scope, conds, order, why, (['priced_for_perfection'] if ppf else []) + cyc_t
     if name == 'quality_fair_price':
         conds = [('valuation', val in ('strong', 'adequate'), f'quality but expensive: {_neg(d["valuation"])}'),
                  ('priced_in', pi in ('strong', 'adequate'), f"price assumption {d['priced_in']['class'].replace('_', ' ')}: "
                   + '; '.join(d['priced_in']['reasons'][:1])),
                  ('trajectory', gq in ('strong', 'adequate'), f'growth quality {gq}: {_neg(d["growth_quality"])} (cannot rule out deterioration)'),
                  fs_c,
-                 ('expected_return', er in ('strong', 'adequate'), f"return proxy {er}: {'; '.join(d['expected_return_proxy']['reasons'][:1])}")]
+                 ('expected_return', er in ('strong', 'adequate'), f"return proxy {er}: {'; '.join(d['expected_return_proxy']['reasons'][:1])}"),
+                 cyc_c]
         order = [('expected-return proxy', erv, 'desc'), ('business-quality percentile', d['business_quality']['percentile'], 'desc')]
         why = f"Strong business ({_quality_phrase(c)}) with {gq} growth ({_fmt(gl)}/yr) at a price rated {val}: {_price_phrase(c)}."
-        return bq == 'strong', conds, order, why, []
+        return bq == 'strong', conds, order, why, cyc_t
     if name == 'early_commercial_growth':
         om, nm, fm = m.get('operating_margin'), m.get('net_margin'), m.get('fcf_margin')
         early = (om is not None and om < .10) or (nm is not None and nm <= 0) or (fm is not None and fm < .05)
@@ -1154,13 +1241,13 @@ def _lens(name, c, o):
         conds = [('improvement_evidence', evid, f"one improvement signal is not a turn ({'; '.join(t for _, _, t in imp) or 'none'})"
                   + ('' if m.get('drawdown_from_high') is None else f"; drawdown {_fmt(m['drawdown_from_high'])} but quality {bq}/growth {gq}")),
                  ('not_priced_in', price_ok, f"the price does not lag the improvement: priced_in {pi} ({d['priced_in']['class'].replace('_', ' ')}), valuation {val}"),
-                 ('dilution', dil is None or dil <= .08, f'share count +{_fmt(dil)}/yr consumes per-share gains'), fs_c]
+                 ('dilution', dil is None or dil <= .08, f'share count +{_fmt(dil)}/yr consumes per-share gains'), fs_c, cyc_c]
         order = [('improvement-signal count', len(imp) + int(over), 'desc'), ('priced_in rank (0 strong .. 3 weak)', PI_RANK[pi], 'asc'),
                  ('expected-return proxy', erv, 'desc')]
         why = ((f"Improving: {'; '.join(t for _, _, t in imp)}. " if imp else '')
                + (f"Down {_fmt(-m['drawdown_from_high'])} from its high with {bq} quality and {gq} growth: possible overreaction, test temporary vs structural. " if over else '')
                + f"Price check: {_price_phrase(c)}.")
-        return scope, conds, order, why, (['overreaction_candidate'] if over else []) + [k for k, _, _ in imp]
+        return scope, conds, order, why, (['overreaction_candidate'] if over else []) + [k for k, _, _ in imp] + cyc_t
     if name == 'structural_tailwind':
         themes = (o['themes'] or {}).get(c['row']['symbol']) or []
         ind = c['row'].get('industry') in (o['structural_industries'] or [])
@@ -1168,16 +1255,24 @@ def _lens(name, c, o):
         footprint = sp is not None and sp >= .75 and (m.get('gross_margin_change') is None or m['gross_margin_change'] >= -.01)
         scope = bool(themes) or ind or footprint
         cg = m.get('revenue_cagr_3y', gl)
+        dil = m.get('dilution_yoy')
+        heavy = [f['message'] for f in d['risk']['flags'] if f['code'] in ('funding', 'dilution') and f['severity'] == 'high']
+        unpriced = pi != 'weak' and (pi != 'unknown' or bool(themes) or ind)
         conds = [('durable_growth', cg is not None and cg >= .08 and _consistency(m.get('revenue_growth_series')) != -1,
                   f'growth {_fmt(cg)} 3y or repeated declines: no durable footprint yet'),
                  ('business_quality', bq != 'weak', f'economics weak: {_neg(d["business_quality"])}'),
-                 ('not_already_priced', pi != 'weak', 'potential appears already priced: ' + '; '.join(d['priced_in']['reasons'][:1])), fs_c]
+                 ('not_already_priced', unpriced, 'potential appears already priced: ' + '; '.join(d['priced_in']['reasons'][:1]) if pi == 'weak' else
+                  'numbers only and the price check is unavailable (' + '; '.join(d['priced_in']['reasons'][:1]) + '): cannot show the potential '
+                  'is not already priced; supply an analyst theme or run expectations.expectation_gap with company drivers'),
+                 ('per_share_funding', (dil is None or dil <= .10) and not heavy,
+                  f"share count {_fmt(dil)}/yr" + (f"; {'; '.join(heavy)}" if heavy else '') + ': the tailwind would accrue to new '
+                  'shareholders, not current ones'), fs_c, cyc_c]
         order = [('priced_in rank (0 strong .. 3 weak)', PI_RANK[pi], 'asc'), ('expected-return proxy', erv, 'desc'), ('growth level', gl, 'desc')]
         src = ('analyst theme: ' + ', '.join(t if isinstance(t, str) else t.get('theme', '?') for t in themes) if themes else
                ('structural industry (analyst list)' if ind else f'improving competitive position: growth in the top quartile of its sector (percentile {sp})'))
         why = (f"{src} (a hypothesis, not evidence). Footprint: {_fmt(cg)}/yr growth, {bq} business quality. "
                f"Already priced? {_price_phrase(c)}" + (' (price check unavailable: FCF <= 0)' if pi == 'unknown' else '') + '.')
-        return scope, conds, order, why, ['analyst_theme' if themes or ind else 'numeric_footprint']
+        return scope, conds, order, why, ['analyst_theme' if themes or ind else 'numeric_footprint'] + cyc_t
     raise ValueError(f'unknown lens {name}')
 
 
@@ -1207,11 +1302,24 @@ def _options(options):
 
 
 def _unsupported(row, o):
+    """Balance-sheet economics: XBRL bank/insurer markers, the industry list, or (default list only) model_card's text rules
+    typing the industry (the sector when no industry is given) as financials or REIT. options.unsupported_industries
+    replaces the list and the text rules."""
     ind = row.get('industry') or ''
-    lst = o['unsupported_industries'] if o['unsupported_industries'] is not None else UNSUPPORTED_INDUSTRIES
-    if row['metrics'].get('financial_statements') or ind in lst or 'REIT' in ind:
-        return ('bank/insurer/REIT-type economics: FCF, EV and gross-margin metrics do not describe them; needs a sector-specific '
-                'screen (book value/ROE, FFO). Not relabelled to force a generic model.')
+    why = None
+    if row['metrics'].get('financial_statements'):
+        why = 'bank/insurer XBRL markers'
+    elif o['unsupported_industries'] is not None:
+        why = f"industry '{ind}' in options.unsupported_industries" if ind in o['unsupported_industries'] or 'REIT' in ind else None
+    elif ind in UNSUPPORTED_INDUSTRIES:
+        why = f"industry '{ind}'"
+    else:
+        t = text_type({'industry': row.get('industry'), 'sector': row.get('sector')})
+        if t and t['type'] in UNSUPPORTED_TYPES:
+            why = f"{t['field']} '{t['text']}' matches '{t['keyword']}' -> {t['type']} (model_card text rules)"
+    if why:
+        return (f'bank/insurer/REIT-type economics ({why}): FCF, EV and gross-margin metrics do not describe them; needs a '
+                'sector-specific screen (book value/ROE, FFO). Not relabelled to force a generic model.')
     return None
 
 
@@ -1265,6 +1373,7 @@ def scan(rows, options=None):
         m, b = dict(r['metrics']), dict(r['basis'])
         _derive(m, b)
         ctx[s] = {'row': r, 'm': m, 'b': b, 'anchors': {k: tuple(v) for k, v in o['anchors'].items()}}
+        ctx[s]['cycle'] = _cycle(ctx[s])
     unsupported = {s: _unsupported(c['row'], o) for s, c in ctx.items()}
     supported = {s: c for s, c in ctx.items() if not unsupported[s]}
     for s, c in ctx.items():          # the return proxy is computed first so its percentile can join the table
@@ -1283,7 +1392,8 @@ def scan(rows, options=None):
                      'priced_in': pi, 'risk': _risk(c, o, pi), 'data_uncertainty': _data_uncertainty(c, as_of)}
         r = c['row']
         dims[s] = {'profile': {'name': r.get('name'), 'sector': r.get('sector'), 'industry': r.get('industry'), 'market_cap': c['m'].get('market_cap'),
-                               'data_grade': r['data_grade'], 'source': r.get('source'), 'as_of': r.get('as_of'), 'stage': c['m'].get('stage')},
+                               'data_grade': r['data_grade'], 'source': r.get('source'), 'as_of': r.get('as_of'), 'stage': c['m'].get('stage'),
+                               'cyclical': c['cycle']},
                    **c['dims'], 'metrics': c['m'], 'basis': c['b']}
     disq = {}
     for s, c in ctx.items():
@@ -1312,12 +1422,15 @@ def scan(rows, options=None):
         passed.sort()
         cand, per = [], {}
         for _, s, order, why, tags in passed:
-            sec = ctx[s]['row'].get('sector') or 'unknown'
-            if o['sector_cap'] and per.get(sec, 0) >= o['sector_cap']:
+            row = ctx[s]['row']
+            sec = row.get('sector') or row.get('industry')       # no sector: industry; neither: no cap (never one 'unknown' bucket)
+            if o['sector_cap'] and sec and per.get(sec, 0) >= o['sector_cap']:
                 nm.append({'symbol': s, 'failed': 'sector_cap', 'reason': f"sector cap: {per[sec]} higher-ranked {sec} names already in this lens "
-                                                                         f"(cap {o['sector_cap']}); qualifies otherwise"})
+                                                                         f"(cap {o['sector_cap']}{'' if row.get('sector') else '; no sector given, industry used'}); "
+                                                                         'qualifies otherwise'})
                 continue
-            per[sec] = per.get(sec, 0) + 1
+            if sec:
+                per[sec] = per.get(sec, 0) + 1
             c = ctx[s]
             cand.append({'rank': len(cand) + 1, 'symbol': s, 'name': c['row'].get('name'), 'sector': c['row'].get('sector'), 'why': why,
                          'ordering': {'fields': [{'name': lab, 'value': v, 'order': way} for lab, v, way in order], 'meaning': LENS_RULES[ln]['ordering']},
@@ -1409,6 +1522,9 @@ def _check_first(c, lenses):
         out.append('Earnings quality: accruals, working capital, capitalized costs.')
     if d['priced_in']['class'] == 'not_assessable_negative_fcf':
         out.append('What the price requires cannot be read from a cash-flow multiple: build the company-driver forecast.')
+    if c.get('cycle'):
+        out.append(f"Cyclical industry ('{c['cycle']['word']}'): judge margins and FCF through the cycle, not the latest year "
+                   '(model_card normalizes only when the reported history shows a cycle or an analyst confirms one).')
     return list(dict.fromkeys(out))
 
 
@@ -1444,7 +1560,8 @@ def _notes(o, ctx, no_data):
          'missing an anchor does not remove a company.',
          'The expected-return proxy is rough (constant multiple, FCF growing with revenue, bounded growth). It orders candidates '
          'within a lens; it is not an IRR, not a forecast and not compared with a target. The owner aspiration is not used.',
-         'priced_in uses a standard FCF fade model (not the pre-registered calibrated revenue model and without base rates): '
+         'priced_in uses a standard fade model on EV / after-tax operating profit (market cap / owner FCF when operating profit is '
+         'thin or unknown; not the pre-registered calibrated revenue model and without base rates): '
          'read it as "what the price requires", a crash-risk check. Valuation-gap ranking failed out of sample (docs/GAP_TEST_RESULTS.md).',
          'Paid adoption, retention, moat, management and capital allocation are not in screening data: lenses use numeric proxies '
          'and say so; the deep analysis must test them.',

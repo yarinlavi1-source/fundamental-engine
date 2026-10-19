@@ -35,6 +35,20 @@ class SecFramesTests(unittest.TestCase):
         self.assertEqual((rows['BBB']['debt'], rows['BBB']['debt_scope']), (7.0, 'noncurrent_plus_current'))
         self.assertEqual(S.rows(merged, {}), [])
 
+    def test_missing_debt_is_unknown_not_net_cash(self):
+        from fundamental_engine import screen
+        v = {'revenue': 5e9, 'gross_profit': 2e9, 'operating_income': 6e8, 'net_income': 3e8, 'cfo': 7e8, 'capex': 2e8,
+             'cash': 4e8, 'equity': 1e9, 'shares_outstanding': 1e8}      # debt tagged outside FRAME_METRICS (e.g. convertible notes)
+        merged = {101: {'name': 'Levered Co', **{k: {'value': x} for k, x in v.items()}}}
+        rows = S.rows(merged, {101: 'LEV'}, {'LEV': {'sector': 'Industrials', 'industry': 'Building Products'}})
+        self.assertEqual((rows[0]['debt'], rows[0]['debt_scope']), (None, 'missing'))
+        r = screen.rows_from_sec_frames(rows, prices={'LEV': {'market_cap': 4e9}}, as_of='2026-10-19')[0]
+        for k in ('net_debt', 'ev', 'roic'):
+            self.assertNotIn(k, r['metrics'])
+        fs = screen.scan([r], {'as_of': '2026-10-19'})['dimensions']['LEV']['financial_strength']
+        self.assertFalse(any('net cash' in x for x in fs['reasons']))
+        self.assertIsNone(fs['inputs']['net_debt_to_ebitda']['signal'])
+
 
 if __name__ == '__main__':
     unittest.main()

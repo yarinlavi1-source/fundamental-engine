@@ -64,7 +64,9 @@ def rows(merged, tickers, sectors=None):
     """Universe rows for screen.py: tickers {cik: ticker}; sectors {ticker: {'sector','industry'}} optional.
 
     Debt: noncurrent + current portion when the unambiguous noncurrent tag exists; otherwise the tagged
-    LongTermDebt is reported with scope 'ambiguous' (a screen may use it, a valuation may not)."""
+    LongTermDebt is reported with scope 'ambiguous' (a screen may use it, a valuation may not). Neither tag:
+    debt None with scope 'missing', which means unknown (net debt, EV and ROIC stay unknown downstream),
+    never zero debt or net cash."""
     out = []
     for cik, r in merged.items():
         t = tickers.get(cik)

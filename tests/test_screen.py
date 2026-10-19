@@ -272,7 +272,8 @@ class Mechanics(unittest.TestCase):
         self.assertIn('ONLYCAP', [x['symbol'] for x in out['no_data']])
         self.assertIn('HALF', out['dimensions'])
         half = out['dimensions']['HALF']
-        self.assertIn('SBC unknown', half['priced_in']['multiple_basis'])           # computed on FCF before SBC, and says so
+        self.assertIn('NOPAT', half['priced_in']['multiple_basis'])
+        self.assertIn('SBC unknown', half['priced_in']['cross_check']['basis'])     # owner-FCF cross-check before SBC, and says so
         self.assertTrue(any('SBC unknown' in x for x in half['expected_return_proxy']['reasons']))
         self.assertEqual(half['business_quality']['inputs']['piotroski']['signal'], None)
         self.assertEqual(S.scan([])['shortlist'], [])
@@ -302,9 +303,9 @@ class Mechanics(unittest.TestCase):
         out = run()
         er = out['dimensions']['MEGA']['expected_return_proxy']
         c = er['components']
-        self.assertAlmostEqual(er['value'], c['owner_fcf_yield_on_ev'] + c['sustainable_growth'] - (c['excess_dilution'] or 0), places=12)
+        self.assertAlmostEqual(er['value'], c['owner_fcf_yield'] + c['sustainable_growth'] - (c['excess_dilution'] or 0), places=12)
         m = out['dimensions']['MEGA']['metrics']
-        self.assertAlmostEqual(c['owner_fcf_yield_on_ev'], (m['fcf_ttm'] - m['sbc_ttm']) / m['ev'], places=12)
+        self.assertAlmostEqual(c['owner_fcf_yield'], (m['fcf_ttm'] - m['sbc_ttm']) / m['market_cap'], places=12)   # FCF after interest / equity
         self.assertEqual(c['excess_dilution'], 0.)                         # buybacks are not added back
         hype = out['dimensions']['HYPE']
         self.assertIsNone(hype['expected_return_proxy']['value'])
@@ -471,7 +472,9 @@ class Adapters(unittest.TestCase):
         early = S.rows_from_pit({'PITS': rec}, {'PITS': {'price': 10.}}, date(2023, 6, 1))[0]
         self.assertEqual(early['status'], 'no_data')                     # fewer than 8 usable quarters then
         before_cash = S.rows_from_pit({'PITS': rec}, {'PITS': {'price': 10.}}, date(2026, 2, 5))[0]
-        self.assertAlmostEqual(before_cash['metrics']['net_debt'], 0.)     # the 2025-12-31 balance sheet was not yet filed
+        self.assertNotIn('net_debt', before_cash['metrics'])               # 2025-12-31 balance sheet not yet filed: debt unknown,
+        self.assertNotIn('ev', before_cash['metrics'])                     # never 0 (which would read as net cash)
+        self.assertNotIn('roic', before_cash['metrics'])
 
     def test_sec_frames_rows_are_accepted(self):
         cur = [{'symbol': 'FRM', 'cik': 1, 'name': 'Frame Co', 'sector': 'Industrials', 'industry': 'Machinery', 'revenue': 1100.,
@@ -487,6 +490,130 @@ class Adapters(unittest.TestCase):
         self.assertIn('ambiguous', r['basis']['net_debt'])
         out = S.scan(cur)                                                 # flat sec_frames rows convert automatically
         self.assertIn('FRM', out['dimensions'])
+
+
+def fmp(sym, mcap, nd, rev, gm, om, nm, fcfm, sbcm, roic, growth, dom=0., dgm=0., dfm=None, dil=0., cons=None, pio=7, z=5., icov=None):
+    """SYNTHETIC FMP-shaped screening record (as runs/universe_*/batches lines). growth: FY revenue growth oldest first;
+    dom/dgm/dfm: last-FY change in operating/gross/FCF margin, written as vendor item growth with its raw sign."""
+    fcf, ni, ev = rev * fcfm, rev * nm, mcap + nd
+    g = growth[-1]
+    item = lambda m1, d: None if d is None or m1 - d == 0 else ((1 + g) * m1 - (m1 - d)) / (m1 - d)
+    gr = [{'date': f'{2025 - len(growth) + 1 + i}-12-31', 'revenueGrowth': x, 'grossProfitGrowth': .0 if i < len(growth) - 1 else item(gm, dgm),
+           'operatingIncomeGrowth': None if i < len(growth) - 1 else item(om, dom), 'weightedAverageSharesDilutedGrowth': dil,
+           'freeCashFlowGrowth': None if i < len(growth) - 1 else item(fcfm, dfm)} for i, x in enumerate(growth)]
+    est = [{'date': f'{y}-12-31', 'revenueAvg': rev * 1.03 * (1 + cons) ** k, 'numAnalystsRevenue': 20}
+           for k, y in enumerate((2026, 2027, 2028))] if cons is not None else []
+    return {'symbol': sym, 'retrieved_utc': AS_OF + 'T20:00:00Z', 'errors': {},
+            'km': {'marketCap': mcap, 'enterpriseValueTTM': ev, 'evToFreeCashFlowTTM': ev / fcf if fcf else None,
+                   'evToEBITDATTM': ev / (rev * (om + .04)) if om + .04 else None, 'freeCashFlowYieldTTM': fcf / mcap,
+                   'returnOnInvestedCapitalTTM': roic, 'stockBasedCompensationToRevenueTTM': sbcm},
+            'rt': {'grossProfitMarginTTM': gm, 'operatingProfitMarginTTM': om, 'netProfitMarginTTM': nm, 'interestCoverageRatioTTM': icov,
+                   'priceToEarningsRatioTTM': mcap / ni if ni else None, 'freeCashFlowPerShareTTM': fcf / 1e9,
+                   'revenuePerShareTTM': rev / 1e9, 'netIncomePerShareTTM': ni / 1e9},
+            'growth': gr, 'scores': {'altmanZScore': z, 'piotroskiScore': pio, 'revenue': rev, 'marketCap': mcap}, 'estimates': est}
+
+
+B = 1e9
+GOOG_LIKE = ('GOOGLIKE', 2000 * B, -80 * B, 370 * B, .59, .32, .29, .20, .065, .30, [.09, .14, .14])
+FILLERS = [fmp(f'F{i}', mc, 2 * B, rev, .40, .15, .11, .10, .01, .15, [.05, .05, .06], cons=.05, z=4)
+           for i, (mc, rev) in enumerate(((50 * B, 20 * B), (40 * B, 15 * B), (30 * B, 10 * B), (20 * B, 8 * B)))]
+
+
+def fmp_scan(recs, sectors, industries=None, **opts):
+    meta = [{'symbol': r['symbol'], 'sector': sectors.get(r['symbol'], 'Industrials'),
+             'sub_industry': (industries or {}).get(r['symbol'], 'Diversified Support Services')} for r in recs]
+    return S.scan(S.rows_from_fmp_screen(recs, meta, as_of=AS_OF), {'as_of': AS_OF, **opts})
+
+
+class ReviewRegressions(unittest.TestCase):
+    """Discovery review findings (SYNTHETIC companies, FMP-shaped records through the adapter)."""
+
+    def test_google_like_megacap_is_found_at_a_fair_price(self):
+        out = fmp_scan([fmp(*GOOG_LIKE, dom=.02, dgm=.01, dil=-.02, cons=.11, z=12)] + FILLERS,
+                       {'GOOGLIKE': 'Communication Services'}, {'GOOGLIKE': 'Interactive Media & Services'})
+        self.assertIn('GOOGLIKE', syms(out, 'quality_fair_price'))           # P/E ~19, 11% consensus, ROIC 30%
+        pi = out['dimensions']['GOOGLIKE']['priced_in']
+        self.assertIn('NOPAT', pi['multiple_basis'])                          # capex/SBC do not read as an expensive price
+        self.assertIn(pi['level'], ('strong', 'adequate'))
+        self.assertGreater(pi['cross_check']['multiple'], 35)                 # owner-FCF view still shown (~40x)
+
+    def test_return_proxy_is_owner_fcf_over_equity(self):
+        cash = fmp('CASHBOX', 10 * B, -8.5 * B, 6 * B, .50, .12, .10, .10, .005, .30, [.03, .02, .04], cons=.03, z=8)
+        out = fmp_scan([cash] + FILLERS, {'CASHBOX': 'Consumer Discretionary'}, {'CASHBOX': 'Apparel Retail'})
+        er, m = out['dimensions']['CASHBOX']['expected_return_proxy'], out['dimensions']['CASHBOX']['metrics']
+        self.assertLess(er['value'], .12)                                     # was 41%: FCF incl. interest on cash / EV of 1.5bn
+        self.assertAlmostEqual(er['components']['owner_fcf_yield'], m['owner_fcf'] / m['market_cap'])
+
+    def test_cyclical_peak_is_not_ranked_as_a_compounder(self):
+        peak = fmp('PEAKCYC', 12 * B, -1 * B, 20 * B, .25, .18, .14, .12, .002, .22, [.05, .35, .30], dgm=.04, dom=.05, dil=-.03,
+                   cons=-.10, pio=8, z=4)
+        grow = fmp('BUILDER', 25 * B, 1 * B, 8 * B, .22, .13, .09, .10, .01, .21, [.15, .18, .16], dom=.015, cons=.14, z=5, icov=20)
+        out = fmp_scan([peak, grow] + FILLERS, {'PEAKCYC': 'Materials'}, {'PEAKCYC': 'Steel', 'BUILDER': 'Construction & Engineering'})
+        for ln in ('quality_compounder', 'quality_fair_price', 'mispriced_turning'):
+            self.assertNotIn('PEAKCYC', syms(out, ln), ln)
+            self.assertIn(('PEAKCYC', 'not_cyclical_peak'), [(x['symbol'], x['failed']) for x in out['near_misses'][ln]], ln)
+        d = out['dimensions']['PEAKCYC']
+        self.assertIn('cyclical_peak', [f['code'] for f in d['risk']['flags']])
+        self.assertEqual(d['growth_quality']['inputs']['consensus_outlook']['signal'], -1)
+        self.assertNotIn('PEAKCYC', [e['symbol'] for e in out['shortlist']])
+        builder = next(c for c in out['lenses']['quality_compounder'] if c['symbol'] == 'BUILDER')
+        self.assertIn('through_cycle', builder['tags'])                       # cyclical industry, no peak signs: tagged, not barred
+
+    def test_fmp_loss_making_grower_can_prove_commercial_traction(self):
+        burn = fmp('BURN', 12 * B, -1.5 * B, 1 * B, .75, -.12, -.10, -.03, .18, -.10, [.55, .48, .42], dgm=.02, dom=.18, dfm=.12,
+                   dil=.04, cons=.35, pio=5, z=6)
+        row = S.rows_from_fmp_screen([burn], [{'symbol': 'BURN', 'sector': 'Information Technology', 'sub_industry': 'Systems Software'}],
+                                     as_of=AS_OF)[0]
+        self.assertAlmostEqual(row['metrics']['operating_margin_trend'], .18)  # -30% -> -12%, from a negative base
+        self.assertAlmostEqual(row['metrics']['fcf_margin_change'], .12)       # freeCashFlowGrowth: -15% -> -3%
+        out = S.scan([row], {'as_of': AS_OF})
+        self.assertEqual(syms(out, 'early_commercial_growth'), ['BURN'])
+        self.assertEqual(out['lenses']['early_commercial_growth'][0]['ordering']['fields'][0]['value'], 4)
+
+    def test_structural_lens_needs_per_share_funding_and_a_price_check(self):
+        story = fmp('STORY30', 6 * B, -1.5 * B, .3 * B, .45, -.60, -.62, -.55, .25, None, [.60, .50, .45], dgm=.03, dom=.15, dil=.30,
+                    cons=.45, pio=3, z=3.1)
+        burn = fmp('BURN', 12 * B, -1.5 * B, 1 * B, .75, -.12, -.10, -.03, .18, -.10, [.55, .48, .42], dgm=.02, dom=.18, dil=.04, cons=.35, z=6)
+        out = fmp_scan([story, burn] + FILLERS, {})
+        self.assertNotIn('STORY30', syms(out, 'structural_tailwind'))
+        self.assertNotIn('STORY30', [e['symbol'] for e in out['shortlist']])
+        nm = {x['symbol']: x for x in out['near_misses']['structural_tailwind']}
+        self.assertEqual(nm['BURN']['failed'], 'not_already_priced')          # numbers only, price check unavailable
+        themed = fmp_scan([story, burn] + FILLERS, {}, themes={'BURN': ['grid software'], 'STORY30': ['electrification']})
+        self.assertIn('BURN', syms(themed, 'structural_tailwind'))
+        nm = {x['symbol']: x for x in themed['near_misses']['structural_tailwind']}
+        self.assertEqual(nm['STORY30']['failed'], 'per_share_funding')        # a theme does not excuse 30%/yr dilution
+
+    def test_missing_debt_is_never_net_cash_in_factbook_rows(self):
+        fb = load_fix()
+        debt = ('long_term_debt', 'long_term_debt_tagged', 'current_portion_ltd', 'short_term_borrowings')
+        fb['facts'] = [f for f in fb['facts'] if f['metric'] not in debt]
+        m = S.rows_from_factbooks([fb])[0]['metrics']
+        self.assertGreater(m['market_cap'], 0)
+        self.assertNotIn('net_debt', m)
+        self.assertNotIn('ev', m)
+
+    def test_sector_cap_without_sector_uses_industry_or_nothing(self):
+        recs = [fmp(f'Q{i}', 30 * B, -1 * B, 10 * B, .5, .25, .2, .18, .01, .25, [.08, .09, .10], dil=-.01, cons=.08, z=6)
+                for i in range(5)]
+        meta = [{'symbol': r['symbol'], 'sub_industry': 'Household Products' if i < 3 else None} for i, r in enumerate(recs)]
+        out = S.scan(S.rows_from_fmp_screen(recs, meta, as_of=AS_OF), {'as_of': AS_OF})
+        fair = syms(out, 'quality_fair_price')
+        self.assertEqual(len(fair), 4)                                        # 2 Household Products + 2 without any label
+        capped = [x for x in out['near_misses']['quality_fair_price'] if x['failed'] == 'sector_cap']
+        self.assertEqual(len(capped), 1)
+        self.assertIn('Household Products', capped[0]['reason'])
+
+    def test_unsupported_reuses_model_card_text_rules(self):
+        recs = [fmp(sym, 300 * B, 150 * B, 80 * B, .5, .38, .28, .30, .01, .11, [.05, .06, .04], cons=.04, z=.3)
+                for sym in ('BANKF', 'MREIT', 'PAYNET')]
+        recs[2] = fmp('PAYNET', 650 * B, 5 * B, 40 * B, .80, .67, .53, .52, .03, .40, [.11, .10, .11], dil=-.02, cons=.10, z=9)
+        out = fmp_scan(recs + FILLERS, {'BANKF': 'Financial Services', 'MREIT': 'Real Estate', 'PAYNET': 'Financials'},
+                       {'BANKF': 'Banks - Diversified', 'MREIT': 'REIT - Mortgage', 'PAYNET': 'Transaction & Payment Processing Services'})
+        self.assertTrue(out['excluded']['BANKF'].startswith('not supported'))
+        self.assertTrue(out['excluded']['MREIT'].startswith('not supported'))
+        self.assertFalse(out['excluded'].get('PAYNET', '').startswith('not supported'))
+        self.assertEqual(out['universe']['not_supported'], 2)
 
 
 if __name__ == '__main__':

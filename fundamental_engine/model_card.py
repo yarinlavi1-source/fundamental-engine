@@ -78,12 +78,14 @@ VERY_LARGE = 2e10            # very large, very profitable: 15-30% growth usuall
 STALE_ANNUAL_DAYS = 465      # fiscal year end + ~15 months: a newer 10-K should exist
 RUNWAY_YEARS = 3.0           # cash runway below this needs external funding
 
-# Text rules: first match per field (industry before sector). Order = specificity; '(?<![a-z])' prefix
-# boundary avoids 'oil' in 'soil'. Fee-based payment networks/exchanges are platforms; balance-sheet
-# lenders and insurers are financials (conservative: 'credit services' lists both, so it maps to financials).
+# Text rules: first match per field; the industry decides and the sector is only a fallback. Order =
+# specificity; '(?<![a-z])' prefix boundary avoids 'oil' in 'soil'; text and keywords are compared after
+# clean_text (dashes -> spaces, whitespace collapsed: 'Auto - Manufacturers' == 'auto manufacturers').
+# Fee-based payment networks/exchanges are platforms; balance-sheet lenders and insurers are financials
+# (conservative: 'credit services' lists both, so it maps to financials; an analyst override can clear it).
 TEXT_RULES = (
     (('industrial conglomerate', 'conglomerate', 'multi-sector holding', 'diversified holding'), 'conglomerate'),
-    (('mortgage reit', 'mortgage real estate'), 'financials'),
+    (('mortgage reit', 'reit mortgage', 'mortgage real estate'), 'financials'),
     (('transaction & payment', 'payment processing', 'financial exchanges', 'exchanges & data', 'stock exchanges',
       'financial data'), 'platform_marketplace'),
     (('real estate services', 'real estate brokerage'), 'industrial'),
@@ -115,6 +117,14 @@ TEXT_RULES = (
       'engineering', 'electrical equipment', 'trading companies', 'airline', 'marine', 'trucking', 'freight',
       'logistics', 'commercial services', 'professional services', 'environmental services', 'auto parts',
       'chemical', 'packaging', 'life sciences tools', 'waste'), 'industrial'),
+)
+# Labels that mix platforms with operators: (keywords, default type, platform type, what the label mixes).
+# The platform type is primary only when the signature is a platform's (gross margin >= 70%, capex <= 8% of
+# revenue); the other type is kept as a secondary type either way.
+MIXED_RULES = (
+    (('broadline retail',), 'consumer_brand', 'platform_marketplace', 'department stores and online marketplaces'),
+    (('hotels, resorts & cruise', 'hotels resorts & cruise', 'travel services'), 'consumer_brand', 'platform_marketplace',
+     'hotel and cruise operators and online-travel platforms'),
 )
 CYCLICAL_WORDS = ('semiconductor', 'oil', 'mining', 'metals', 'steel', 'chemical', 'automobile', 'auto ',
                   'airline', 'homebuild', 'residential construction', 'machinery', 'paper', 'forest', 'marine',
@@ -355,7 +365,11 @@ def _evidence(fb, an, keys):
 
 
 def _valid_ids(fb):
-    return set(fb.get('sources') or {}) | {q['id'] for q in _qualitative(fb)}
+    """Source ids usable as evidence at as_of (a source published later is not) and PIT-usable qualitative ids."""
+    cut = date.fromisoformat(fb['as_of'])
+    ok = {sid for sid, src in (fb.get('sources') or {}).items()
+          if not (src or {}).get('published_at') or date.fromisoformat(str(src['published_at'])[:10]) <= cut}
+    return ok | {q['id'] for q in _qualitative(fb)}
 
 
 # ---------------------------------------------------------------- data extraction
@@ -394,19 +408,47 @@ def _signature(fb, rows, end):
     }
 
 
+def clean_text(s):
+    """Lower case, dashes as spaces, whitespace collapsed (vendor 'Medical - Devices' == GICS 'Medical Devices')."""
+    return re.sub(r'\s+', ' ', re.sub(r'[-—–]', ' ', str(s or '').lower())).strip()
+
+
+def _hit(kws, low):
+    return next((k for k in kws if re.search(r'(?<![a-z])' + re.escape(clean_text(k)), low)), None)
+
+
 def _text_matches(company):
     out = []
     for field in ('industry', 'sector'):
         raw = company.get(field)
         if not isinstance(raw, str) or not raw.strip():
             continue
-        low = raw.lower().replace('—', ' ').replace('–', ' ').replace('-', ' ')
-        for kws, t in TEXT_RULES:
-            hit = next((k for k in kws if re.search(r'(?<![a-z])' + re.escape(k), low)), None)
+        low = clean_text(raw)
+        for kws, t, alt, mixes in MIXED_RULES:
+            hit = _hit(kws, low)
             if hit:
-                out.append({'field': field, 'text': raw, 'keyword': hit, 'type': t})
+                out.append({'field': field, 'text': raw, 'keyword': hit, 'type': t, 'alt': alt, 'mixes': mixes})
                 break
+        else:
+            for kws, t in TEXT_RULES:
+                hit = _hit(kws, low)
+                if hit:
+                    out.append({'field': field, 'text': raw, 'keyword': hit, 'type': t})
+                    break
     return out
+
+
+def text_type(company):
+    """The text match that decides the type: the industry match, else the sector match (fallback), else None."""
+    m = _text_matches(company or {})
+    return next((t for t in m if t['field'] == 'industry'), m[0] if m else None)
+
+
+def cyclical_word(company):
+    """First CYCLICAL_WORDS entry in the industry/sector text, or None (an industry flag, not evidence of a cycle)."""
+    text = ' ' + clean_text(' '.join(str((company or {}).get(k) or '') for k in ('industry', 'sector'))) + ' '
+    w = next((w for w in CYCLICAL_WORDS if w in text), None)
+    return w.strip() if w else None
 
 
 # ---------------------------------------------------------------- business model
@@ -414,12 +456,20 @@ def _text_matches(company):
 def _business_model(fb, rows, end, sig, inputs):
     company = fb.get('company') or {}
     text = _text_matches(company)
+    used = next((t for t in text if t['field'] == 'industry'), text[0] if text else None)   # sector only as a fallback
     sv = {k: (v['value'] if isinstance(v, dict) else v) for k, v in sig.items()}
     reasons, secondary = [], []
     rev = _row_val(rows.get(end), 'revenue') if end else None
+    gm, dr, cx, inv = sv['gross_margin'], sv['deferred_revenue_pct_revenue'], sv['capex_pct_revenue'], sv['inventory_pct_revenue']
     for t in text:
-        reasons.append(f"{t['field']} '{t['text']}' matches '{t['keyword']}' -> {t['type']}")
-    text_types = [t['type'] for t in text]
+        reasons.append(f"{t['field']} '{t['text']}' matches '{t['keyword']}' -> {t['type']}"
+                       + ('' if t is used else ' (not used: the industry label is more specific)'))
+    text_types = [used['type']] if used else []
+    if used and used.get('alt'):
+        plat = gm is not None and cx is not None and gm >= .70 and cx <= .08
+        text_types = [used['alt'], used['type']] if plat else [used['type'], used['alt']]
+        reasons.append(f"'{used['text']}' mixes {used['mixes']}: gross margin {_pct(gm)}, capex {_pct(cx)} of revenue -> "
+                       f"{text_types[0]} (rule: platform when gross margin >= 70% and capex <= 8%); {text_types[1]} kept as secondary")
     text_financials = 'financials' in text_types
     pharma_text = 'pre_revenue_biotech' in text_types
     if pharma_text:
@@ -430,7 +480,6 @@ def _business_model(fb, rows, end, sig, inputs):
                            f'{_pct(sv["rd_pct_revenue"])} of revenue): not pre-revenue; no listed type fits a commercial '
                            'drug company, so the label is not forced; an analyst override with a reason is expected')
     sig_types = []
-    gm, dr, cx, inv = sv['gross_margin'], sv['deferred_revenue_pct_revenue'], sv['capex_pct_revenue'], sv['inventory_pct_revenue']
     if gm is not None and dr is not None and cx is not None and gm >= .65 and dr >= .15 and cx <= .08 and (inv or 0) <= .05:
         sig_types.append('subscription_software')
         reasons.append(f'financial signature {end}: gross margin {_pct(gm)}, deferred revenue {_pct(dr)} of revenue, '
@@ -438,8 +487,8 @@ def _business_model(fb, rows, end, sig, inputs):
     if cx is not None and cx >= .25:
         sig_types.append('capital_intensive_infrastructure')
         reasons.append(f'financial signature {end}: capex {_pct(cx)} of revenue -> capital-intensive economics (rule: capex >= 25%)')
-    possible_financial = (not text and sv['liabilities_to_assets'] is not None and sv['liabilities_to_assets'] >= .85
-                          and not sv['has_cost_of_revenue'])
+    lender_sig = sv['liabilities_to_assets'] is not None and sv['liabilities_to_assets'] >= .85 and not sv['has_cost_of_revenue']
+    possible_financial = not text and lender_sig
     if possible_financial:
         reasons.append(f"no sector text; liabilities are {_pct(sv['liabilities_to_assets'])} of assets with no cost of revenue: "
                        'looks like a balance-sheet lender or insurer; confirm before choosing any model')
@@ -465,7 +514,7 @@ def _business_model(fb, rows, end, sig, inputs):
             reasons.append('neither sector/industry text nor the financial signature supports a listed type: unclassified; '
                            'drivers fall back to revenue level until an analyst sets the business model with a reason')
     secondary = [t for t in dict.fromkeys(secondary) if t != primary]
-    computed = {'primary': primary, 'secondary': secondary, 'evidence': evidence}
+    computed = {'primary': primary, 'secondary': secondary, 'evidence': evidence, 'text_financials': text_financials}
     override = None
     ov = inputs.get('business_model')
     if ov is not None:
@@ -474,9 +523,18 @@ def _business_model(fb, rows, end, sig, inputs):
         txt(ov.get('reason'), 'business_model.reason')
         if ov.get('primary') not in TYPES:
             raise ValueError('business_model.primary must be one of ' + ', '.join(TYPES))
+        clear = text_financials and ov['primary'] != 'financials'
+        if clear and lender_sig:
+            clear = False
+            reasons.append(f"override kept the bank/insurer flag: liabilities are {_pct(sv['liabilities_to_assets'])} of assets with "
+                           'no cost of revenue (a lender/insurer balance sheet); correct the FactBook or supply segment data')
+        elif clear:
+            text_financials = False
+            reasons.append("analyst override clears the bank/insurer text flag (the balance sheet is not lender-like: liabilities "
+                           f"{_pct(sv['liabilities_to_assets'])} of assets); the computed flag is kept in 'computed'")
         sec = ov.get('secondary')
         if sec is None:
-            sec = [t for t in [primary] + secondary if t not in (ov['primary'], UNCLASSIFIED)]
+            sec = [t for t in [primary] + secondary if t not in (ov['primary'], UNCLASSIFIED) and not (clear and t == 'financials')]
         elif not isinstance(sec, list) or any(t not in TYPES for t in sec):
             raise ValueError('business_model.secondary must list known types')
         override = {'primary': ov['primary'], 'secondary': list(sec), 'reason': ov['reason'],
@@ -695,14 +753,14 @@ def _stage_out(value, reasons, data, inputs, confidence):
 
 # ---------------------------------------------------------------- cyclical, capital intensity, funding
 
-def _cyclical(fb, rows, primary):
-    company = fb.get('company') or {}
-    text = ' '.join(str(company.get(k) or '') for k in ('industry', 'sector')).lower() + ' '
+def _cyclical(fb, rows, primary, inputs):
+    """Industry words/type are a flag; only a cycle in the reported history or an analyst's confirmation (inputs.cyclical,
+    reason mandatory) routes the valuation to normalized mid-cycle margins ('normalize')."""
     reasons = []
-    word = next((w for w in CYCLICAL_WORDS if w in text), None)
-    sector = primary in CYCLICAL_TYPES or bool(word)
-    if sector:
-        reasons.append(f"sector economics are cyclical ({'type ' + primary if primary in CYCLICAL_TYPES else repr(word.strip())}); "
+    word = cyclical_word(fb.get('company'))
+    flag = primary in CYCLICAL_TYPES or bool(word)
+    if flag:
+        reasons.append(f"industry economics are cyclical ({'type ' + primary if primary in CYCLICAL_TYPES else repr(word)}); "
                        'five years of data may not span a full cycle')
     ends = [e for e in rows if _row_val(rows[e], 'revenue')]
     oms = [_div(_row_val(rows[e], 'operating_income'), _row_val(rows[e], 'revenue')) for e in ends]
@@ -719,10 +777,23 @@ def _cyclical(fb, rows, primary):
                        f'>= 3 points' + (', revenue fell >= 10% and recovered' if drop_recovered else ''))
     elif ms:
         reasons.append(f'reported history shows no cycle pattern (margin standard deviation {_pct(vol)}, {reversals} reversal(s))')
-    value = sector or data_cyc
-    out = {'value': value, 'reasons': reasons,
+    value, normalize, basis, override = flag or data_cyc, data_cyc, 'data' if data_cyc else ('industry_flag' if flag else None), None
+    ov = inputs.get('cyclical')
+    if ov is not None:
+        if not isinstance(ov, dict) or not isinstance(ov.get('value'), bool):
+            raise ValueError('cyclical override needs a boolean value and a reason')
+        txt(ov.get('reason'), 'cyclical.reason')
+        override = {'value': ov['value'], 'reason': ov['reason'], 'evidence_ids': list(ov.get('evidence_ids') or [])}
+        value = normalize = ov['value']
+        basis = 'analyst'
+        reasons.append(f"analyst {'confirms' if ov['value'] else 'rejects'} a cycle ({ov['reason']})")
+    elif flag and not data_cyc:
+        reasons.append('industry flag only: the valuation is not normalized to a historical mean unless the reported history '
+                       'shows a cycle or an analyst confirms one (inputs.cyclical with a reason)')
+    out = {'value': value, 'normalize': normalize, 'basis': basis, 'industry_flag': flag, 'data_shows_cycle': data_cyc,
+           'computed': flag or data_cyc, 'override': override, 'reasons': reasons,
            'margin_volatility': _num(vol, 'population standard deviation of annual operating margins', ends[-1] if ends else None)}
-    if value and len(ms) >= 3:
+    if (out['computed'] or value) and len(ms) >= 3:
         avg = mean(ms)
         out['normalized_operating_margin'] = _num(avg, f'mean annual operating margin over {len(ms)} years ({pairs[0][0]}..{pairs[-1][0]})',
                                                   pairs[-1][0])
@@ -927,7 +998,7 @@ def _valuation(fb, an, qa, bm, stage, cyc, fund, rows, inputs, cur):
             v = pick('not_reliably_valuable', arche, 'an operating model needs at least two fiscal years of revenue, operating income and '
                      'operating cash flow; they are missing', 'fcff_annual_path')
         elif fund['value'] == 'needs_external' or stage['value'] == 'early' or (
-                om < 0 and not sd.get('established_profit_record') and not (cyc['value'] and ever_profitable)):
+                om < 0 and not sd.get('established_profit_record') and not (cyc['normalize'] and ever_profitable)):
             v = pick('scenario_survival_fcff', arche, 'loss-making or funding-dependent: value depends on reaching target economics and on '
                      'surviving the funding path; operating route with explicit financing, dilution and a failure case. Lack of profit is '
                      'not a rejection: promising-but-funding-conditional is a legitimate outcome')
@@ -936,8 +1007,9 @@ def _valuation(fb, an, qa, bm, stage, cyc, fund, rows, inputs, cur):
                     'paid adoption and milestone evidence for the base case']
             cross += ['reverse_dcf (valuation_tools.reverse_price)', 'what_must_be_true (forecast.what_must_be_true)']
             lim += ['terminal value usually dominates; small changes in target margin move value a lot']
-        elif cyc['value']:
-            v = pick('normalized_cycle_fcff', arche, 'cyclical: value on a mid-cycle margin, not the latest year; peak margins are not permanent')
+        elif cyc['normalize']:
+            v = pick('normalized_cycle_fcff', arche, 'cyclical (' + ('analyst-confirmed' if cyc['basis'] == 'analyst' else 'reported history '
+                     'shows a cycle') + '): value on a mid-cycle margin, not the latest year; peak margins are not permanent')
             cross += ['reverse_dcf (valuation_tools.reverse_price)', 'value at trough margins']
             nm = (cyc.get('normalized_operating_margin') or {}).get('value')
             req += [f'mid-cycle operating margin (history average {_pct(nm)})' if nm is not None else 'mid-cycle operating margin']
@@ -964,6 +1036,11 @@ def _valuation(fb, an, qa, bm, stage, cyc, fund, rows, inputs, cur):
             cross += ['reverse_dcf (valuation_tools.reverse_price)', 'fcf_yield_after_sbc', 'earnings_yield']
             req += ['bear/base/bull scenarios', 'reinvestment linked to growth (no growth without investment)']
             lim += ['peak margins must not be treated as permanent without a moat explanation']
+        if cyc['value'] and not cyc['normalize'] and v['method'] != 'not_reliably_valuable':
+            nm = (cyc.get('normalized_operating_margin') or {}).get('value')
+            lim.append('cyclical industry, but the reported history shows no cycle: not normalized to a historical mean'
+                       + (f"; latest margin {_pct(om)} vs {_pct(nm)} average looks like a possible peak: confirm structural vs "
+                          'cyclical (inputs.cyclical) before extrapolating it' if cyc.get('position') == 'peak' else ''))
         if om is not None and om < 0 and v['method'] != 'scenario_survival_fcff':
             lim.append('latest fiscal year is a loss: start the path from normal margins only with evidence that the loss is one-off')
         if bm['secondary'] and v['method'] != 'not_reliably_valuable':
@@ -1039,7 +1116,7 @@ def _understanding(fb, inputs, fund, cur):
             row['status'] = 'evidenced'
         elif answer:
             row['status'] = 'asserted'
-            row['note'] = ('evidence ids not found in FactBook sources or qualitative items: ' + ', '.join(bad)) if bad else 'no evidence ids'
+            row['note'] = ('evidence ids not usable at as_of (unknown, or published after as_of): ' + ', '.join(bad)) if bad else 'no evidence ids'
         else:
             row['status'] = 'open'
         if qid == 'who_funds_growth' and not answer:
@@ -1166,7 +1243,7 @@ def build(fb, an, qa, inputs=None):
     company = fb.get('company') or {}
     cur = company.get('currency') or 'USD'
     notes = []
-    extra = set(inputs) - {'business_model', 'stage', 'assessments', 'understanding', 'method_override'}
+    extra = set(inputs) - {'business_model', 'stage', 'assessments', 'understanding', 'method_override', 'cyclical'}
     if extra:
         notes.append('ignored unknown input keys: ' + ', '.join(sorted(extra)))
     rows = _years(an)
@@ -1174,7 +1251,7 @@ def build(fb, an, qa, inputs=None):
     last = ends[-1] if ends else None
     sig = _signature(fb, rows, last)
     bm = _business_model(fb, rows, last, sig, inputs)
-    cyc = _cyclical(fb, rows, bm['primary'])
+    cyc = _cyclical(fb, rows, bm['primary'], inputs)
     stage = _stage(fb, an, rows, inputs, cur, cyc['value'])
     stage['cross_check'] = _profile_cross_check(rows, ends, fb['as_of'], bm['primary']) if ends else None
     cross = stage['cross_check'] or {}
