@@ -15,6 +15,7 @@ from .history import txt as _txt, history as _history
 from .profile import classify
 from .scores import scorecards, forecast_base_rate
 from .growth import growth_lane
+from .decision_summary import red_flag_gate
 from . import __version__
 
 GRADES = {5: ('מצוין', '🟢'), 4: ('טוב', '🟢'), 3: ('בינוני', '🟡'), 2: ('חלש', '🟠'), 1: ('מדאיג', '🔴')}
@@ -447,6 +448,11 @@ def plain_verdict(case):
     if case.get('plain_version') != 1:
         raise ValueError('plain_version must be 1')
     json.dumps(case, allow_nan=False)
+    # Leading-underscore keys are engine-internal (e.g. the executed research status). A caller
+    # must never be able to supply them and skip the research_review that produces them.
+    ignored = sorted(k for k in case if k.startswith('_'))
+    for k in ignored:
+        case.pop(k)
     for k in ('company', 'ticker', 'currency'):
         _txt(case[k], k)
     date.fromisoformat(case['as_of'])
@@ -459,9 +465,15 @@ def plain_verdict(case):
     if case.get('market_cap') is not None:
         number(case['market_cap'], 'market_cap', 0)
     kind = classify(case, rows)
-    stage = case.get('stage', kind['plain_stage'])
+    computed = kind['plain_stage']
+    stage = case.get('stage', computed)
     if stage not in STAGES:
         raise ValueError('stage must be mature/growth/emerging')
+    # Stage changes the grading bars, so an override is an analyst judgement that needs a reason.
+    if stage != computed and (not isinstance(case.get('stage_reason'), str) or not case['stage_reason'].strip()):
+        raise ValueError(f'stage {stage} differs from the computed stage {computed}; supply stage_reason')
+    stage_basis = {'computed': computed, 'used': stage, 'override': stage != computed,
+                   'reason': case.get('stage_reason') if stage != computed else None}
     cur = case['currency']
     items = [i for i in [_growth(rows, stage)] if i]
     qm = kind['evidence'].get('quarter_momentum')
@@ -504,6 +516,12 @@ def plain_verdict(case):
     scores = scorecards(rows, archetype, case.get('market_cap'))
     items += _score_items(scores, kind)
     valuation, result, price = _valuation(case)
+    gate = red_flag_gate(case, items)
+    if gate['price_call'] == 'withheld' and price and price['bucket'] not in {'blocked', 'review_required'}:
+        # Beneish/Altman red flag: keep the numbers, withhold the cheap/expensive wording.
+        price = {**price, 'bucket': 'review_required', 'light': '⚪', 'withheld_bucket': price['bucket'],
+                 'headline': 'דגל אדום — מסקנת המחיר מושהית',
+                 'explain': 'בדיקות הדוחות או החוסן הכספי הדליקו דגל אדום. עד שיתברר (או שיתועד בראיות למה הוא לא רלוונטי) לא קובעים אם המחיר זול או יקר.'}
     base_rate = forecast_base_rate(rows, result)
     minority = case.get('minority_share', 0)
     number(minority, 'minority_share', 0, .99)
@@ -529,10 +547,11 @@ def plain_verdict(case):
         confidence['reasons'].append('ההסתברויות לתרחישים הן ברירת מחדל לא מכוילת')
         confidence['level'] = 'נמוך' if len(confidence['reasons']) > 1 else 'בינוני'
     out = {'version': __version__, 'company': case['company'], 'ticker': case['ticker'], 'as_of': case['as_of'],
-           'currency': cur, 'stage': stage, 'archetype': archetype, 'company_type': kind, 'scores': scores,
+           'currency': cur, 'stage': stage, 'stage_basis': stage_basis, 'archetype': archetype, 'company_type': kind, 'scores': scores,
            'forecast_base_rate': base_rate, 'valuation_lane': lane, 'items': items, 'axes': axes, 'axis_weights': WEIGHTS[kind['stage']],
            'business_score': round(business, 2) if business is not None else None,
            'price': price, 'valuation': valuation, 'bottom_line': bottom, 'confidence': confidence,
+           'red_flag_gate': gate, 'ignored_private_keys': ignored,
            'input_sha256': sha256(json.dumps(case, sort_keys=True, ensure_ascii=False, allow_nan=False).encode()).hexdigest(),
            'meaning': 'Rule-of-thumb grades of supplied reported figures plus an executed valuation. Research indication only: not verified facts, not a price forecast, not an order or a promised return.'}
     from .decision_summary import decision_summary

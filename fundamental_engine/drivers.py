@@ -8,6 +8,11 @@ does that conversion deterministically and records the spec hash in the case.
 It adds NO economic judgement: every ratio, rate and balance is still an analyst
 input that needs sources, rationale and falsifiers in the ordinary assumption ledger.
 The generated case is then executed and audited by value_company exactly as before.
+
+Ratio keys with a default (zero SBC, interest, depreciation, capex, working capital, payout;
+80% prepaid share) are economic assumptions, not neutral blanks. Each default actually
+used is listed in generated_from.defaulted_keys with a warning; spec['strict_drivers']=True
+refuses to default any ratio key.
 """
 from copy import deepcopy
 from hashlib import sha256
@@ -72,7 +77,15 @@ def build_case(spec):
     case['scenarios'] = []
     segment_name = spec.get('segment_name', 'Revenue')
     driver = spec.get('segment_driver', 'subscribers')
+    strict = spec.get('strict_drivers', False)
+    if not isinstance(strict, bool):
+        raise ValueError('strict_drivers must be boolean')
+    defaulted = []
     for sc in spec['scenarios']:
+        missing = [k for k in RATIO_KEYS if k not in sc]
+        if strict and missing:
+            raise ValueError(f"drivers: strict_drivers forbids defaults; scenario {sc['name']} is missing {', '.join(missing)}")
+        defaulted += [{'scenario': sc['name'], 'key': k, 'default': RATIO_KEYS[k][0]} for k in missing if RATIO_KEYS[k][0] is not None]
         growth = _series(sc, 'growth', growth_count, None, -.9, 3)
         ratios = {k: _series(sc, k, count, *RATIO_KEYS[k]) for k in RATIO_KEYS}
         absolutes = {k: _series(sc, k, count, 0, 0) for k in ABSOLUTE_KEYS}
@@ -127,7 +140,10 @@ def build_case(spec):
                                   'periods': periods, 'terminal': deepcopy(sc['terminal'])})
     case['prepayment_price_linkage'] = 'scaled'
     case['generated_from'] = {'tool': 'drivers.build_case', 'driver_version': 1,
-                              'spec_sha256': sha256(json.dumps(spec, sort_keys=True, ensure_ascii=False).encode()).hexdigest()}
+                              'spec_sha256': sha256(json.dumps(spec, sort_keys=True, ensure_ascii=False).encode()).hexdigest(),
+                              'strict_drivers': strict, 'defaulted_keys': defaulted,
+                              'warnings': ['Defaulted driver ratios are silent economic assumptions; declare them explicitly: '
+                                           + ', '.join(sorted({f"{d['key']}={d['default']}" for d in defaulted}))] if defaulted else []}
     return case
 
 

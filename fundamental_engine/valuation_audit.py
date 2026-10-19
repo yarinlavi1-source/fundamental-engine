@@ -61,6 +61,10 @@ def audit_valuation(case, results):
         add('stale_quote', 'Refresh the dated comparison quote.', 'quote')
     if any(r['status'] == 'funding_blocked' for r in results):
         add('funding_gap', 'Resolve cash requirements before a going-concern price conclusion.')
+    # Assumed (uncommitted) financing keeps the plan solvent only on paper. The reviewed funding_and_claims
+    # evidence per scenario is required below; the dependency is also surfaced so the decision layer can
+    # treat the price conclusion as funding-conditional (decision.py) instead of silently funded.
+    assumed = sorted({r['name'] for r in results for p in r.get('forecast', []) if p.get('financing_status') == 'assumed'})
     for when in case['report_dates']:
         values = {r['name']: next((p['value_per_share'] for p in r['timeline'] if p['date'] == when), None) for r in results}
         if all(values.get(k) is not None for k in ('bear', 'base', 'bull')) and not values['bear'] <= values['base'] <= values['bull']:
@@ -189,4 +193,5 @@ def audit_valuation(case, results):
             'source_access': source_access(case),
             'status': 'requires_review' if issues else 'internally_reconciled',
             'issues': issues, 'comparisons': comparisons, 'terminal_transitions': transitions,
+            'financing_assumed_scenarios': assumed,
             'meaning': 'Checks supplied definitions and evidence references, not source truth. Full research_review is still required. Bull is a modeled scenario, never a price ceiling.'}

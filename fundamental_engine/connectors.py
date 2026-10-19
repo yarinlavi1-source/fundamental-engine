@@ -3,8 +3,14 @@
 The client (Claude) retrieves statements with its own connectors; this module only
 maps field names. It fetches nothing. Provider data remains a secondary source that
 should be reconciled to filings for material conclusions.
+
+Alpha Vantage rows carry a fiscal period end but no filing date. A historical as_of must
+not see a period that was not yet filed, so each row gets an ESTIMATED availability
+(period end + annual_lag_days / quarterly_lag_days, defaults 75 / 45 = 10-K / 10-Q
+accelerated-filer deadlines) and rows not available by as_of are excluded. The estimate
+is labelled; replace it with the actual filing date when known.
 """
-from datetime import date
+from datetime import date, timedelta
 
 AV_MAP = {
     'income': {'revenue': 'totalRevenue', 'gross_profit': 'grossProfit', 'operating_income': 'operatingIncome',
@@ -39,10 +45,19 @@ def _payload(p):
     return p
 
 
-def from_alpha_vantage(income, balance=None, cash_flow=None, years=5, as_of=None):
+def _available(period_end, lag):
+    return (date.fromisoformat(period_end) + timedelta(days=lag)).isoformat()
+
+
+def from_alpha_vantage(income, balance=None, cash_flow=None, years=5, as_of=None, annual_lag_days=75, quarterly_lag_days=45):
     """Return history rows (oldest first) from AV INCOME_STATEMENT/BALANCE_SHEET/CASH_FLOW."""
     if not 1 <= years <= 15:
         raise ValueError('years must be 1..15')
+    for lag in (annual_lag_days, quarterly_lag_days):
+        if isinstance(lag, bool) or not isinstance(lag, int) or not 0 <= lag <= 366:
+            raise ValueError('filing lag days must be an integer 0..366')
+    if as_of:
+        as_of = date.fromisoformat(as_of[:10]).isoformat()
     parts = {'income': _payload(income)}
     if balance is not None: parts['balance'] = _payload(balance)
     if cash_flow is not None: parts['cash'] = _payload(cash_flow)
@@ -55,13 +70,14 @@ def from_alpha_vantage(income, balance=None, cash_flow=None, years=5, as_of=None
         for rep in payload['annualReports']:
             d = rep['fiscalDateEnding']
             date.fromisoformat(d)
-            if as_of and d > as_of:
+            if as_of and _available(d, annual_lag_days) > as_of:
                 continue
             cur = rep.get('reportedCurrency')
             if currency and cur and cur != currency:
                 raise ValueError('Mixed reporting currencies; convert explicitly before grading')
             currency = currency or cur
             row = by_date.setdefault(d, {'fiscal_year': 'FY' + d[:4], 'period_end': d,
+                                         'available_at': _available(d, annual_lag_days), 'available_at_estimated': True,
                                          'source_ids': []})
             row['source_ids'].append(f'alphavantage:{symbol}:{kind}:{d}')
             for field, key in AV_MAP[kind].items():
@@ -75,11 +91,12 @@ def from_alpha_vantage(income, balance=None, cash_flow=None, years=5, as_of=None
         raise ValueError('No annual revenue found')
     rows = [by_date[d] for d in dates]
     qrows = []
-    for rep in sorted([r for r in parts['income'].get('quarterlyReports', []) if not as_of or r['fiscalDateEnding'] <= as_of], key=lambda x: x['fiscalDateEnding'])[-8:]:
+    for rep in sorted([r for r in parts['income'].get('quarterlyReports', []) if not as_of or _available(r['fiscalDateEnding'], quarterly_lag_days) <= as_of], key=lambda x: x['fiscalDateEnding'])[-8:]:
         d = rep['fiscalDateEnding']
-        if as_of and d > as_of or _num(rep.get('totalRevenue')) is None:
+        if _num(rep.get('totalRevenue')) is None:
             continue
-        q = {'period_end': d, 'revenue': _num(rep['totalRevenue']), 'source_ids': [f'alphavantage:{symbol}:income_q:{d}']}
+        q = {'period_end': d, 'revenue': _num(rep['totalRevenue']), 'available_at': _available(d, quarterly_lag_days),
+             'available_at_estimated': True, 'source_ids': [f'alphavantage:{symbol}:income_q:{d}']}
         for field, key in (('operating_income', 'operatingIncome'), ('gross_profit', 'grossProfit'), ('net_income', 'netIncome')):
             if _num(rep.get(key)) is not None:
                 q[field] = _num(rep[key])
@@ -87,4 +104,6 @@ def from_alpha_vantage(income, balance=None, cash_flow=None, years=5, as_of=None
     return {'ticker': symbol, 'currency': currency, 'history': rows, 'recent_quarters': qrows,
             'notes': ['shares_outstanding is a point-in-time balance, never weighted-average diluted EPS shares',
                       'cash is cash/equivalents only; combined cash-and-short-term-investments remains a separate field. Do not add combined and component balances.',
-                      'Provider-normalized fields; reconcile material figures to the 10-K/20-F']}
+                      'Provider-normalized fields; reconcile material figures to the 10-K/20-F',
+                      f'available_at is ESTIMATED as period end + {annual_lag_days} days (annual) / {quarterly_lag_days} days (quarterly); rows not available by as_of were excluded'],
+            'availability': {'annual_lag_days': annual_lag_days, 'quarterly_lag_days': quarterly_lag_days, 'estimated': True}}

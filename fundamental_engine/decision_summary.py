@@ -6,23 +6,38 @@ machine-verified business truth. They cannot unlock a price conclusion.
 from datetime import date
 from math import isfinite
 
+# Beneish likely-manipulator / Altman distress items (points == 1). Either withholds the price
+# call unless a documented override, linked to reviewed evidence, covers every raised flag.
+RED_FLAG_KEYS = ('accounting_risk', 'distress')
+
 
 def _positive(value):
     return isinstance(value, (int, float)) and not isinstance(value, bool) and isfinite(value) and value > 0
+
+
+def _evidence(case, refs, label):
+    """Every reference must be a reviewed observation of a matching, dated research_dossier."""
+    dossier = case.get('research_dossier') or {}
+    identity = dossier.get('identity', {})
+    if identity.get('ticker') != case['ticker'] or dossier.get('as_of') != case['as_of']:
+        raise ValueError(label + ' require a matching dated research_dossier')
+    observations = {o['id']: o for o in dossier.get('observations', [])}
+    sources = {s['id']: s for s in dossier.get('sources', [])}
+    cutoff = date.fromisoformat(case['as_of'])
+    for ref in refs:
+        o = observations.get(ref, {})
+        s = sources.get(o.get('source_id'), {})
+        if not o.get('reviewed') or not o.get('review_note') or not s.get('available_at'):
+            raise ValueError(label + ' require reviewed observations and dated sources')
+        for stamp in (s['available_at'], o.get('reviewed_at'), o.get('observed_at')):
+            if not stamp or date.fromisoformat(stamp[:10]) > cutoff:
+                raise ValueError(label + ' evidence must be available by as_of')
 
 
 def _notes(case):
     notes = case.get('decision_notes', {})
     if not isinstance(notes, dict) or set(notes) - {'potential', 'risk', 'milestone'}:
         raise ValueError('decision_notes accepts potential, risk, milestone')
-    dossier = case.get('research_dossier') or {}
-    if notes:
-        identity = dossier.get('identity', {})
-        if identity.get('ticker') != case['ticker'] or dossier.get('as_of') != case['as_of']:
-            raise ValueError('decision_notes require a matching dated research_dossier')
-    observations = {o['id']: o for o in dossier.get('observations', [])}
-    sources = {s['id']: s for s in dossier.get('sources', [])}
-    cutoff = date.fromisoformat(case['as_of'])
     result = {}
     for key, note in notes.items():
         text = note.get('text', '')
@@ -30,17 +45,39 @@ def _notes(case):
         if (not isinstance(text, str) or not text.strip() or len(text.split()) > 25
                 or '\n' in text or not isinstance(refs, list) or not refs):
             raise ValueError('Each decision note needs one short sentence and observation_ids')
-        for ref in refs:
-            o = observations.get(ref, {})
-            s = sources.get(o.get('source_id'), {})
-            if not o.get('reviewed') or not o.get('review_note') or not s.get('available_at'):
-                raise ValueError('decision_notes require reviewed observations and dated sources')
-            for stamp in (s['available_at'], o.get('reviewed_at'), o.get('observed_at')):
-                if not stamp or date.fromisoformat(stamp[:10]) > cutoff:
-                    raise ValueError('decision_notes evidence must be available by as_of')
+        _evidence(case, refs, 'decision_notes')
         result[key] = {'text': text.strip().rstrip('.'), 'observation_ids': refs,
                        'kind': 'analyst_inference'}
     return result
+
+
+def red_flags(items):
+    return sorted({i['key'] for i in items if i.get('key') in RED_FLAG_KEYS and i.get('points') == 1})
+
+
+def red_flag_gate(case, items):
+    """Red forensic flags withhold the price call; only a documented, evidence-linked override
+    naming every raised flag releases it. The flag text is always kept."""
+    flags = red_flags(items)
+    o = case.get('red_flag_override')
+    override = None
+    if o is not None:
+        if not isinstance(o, dict) or set(o) - {'flags', 'justification', 'observation_ids'}:
+            raise ValueError('red_flag_override accepts flags, justification, observation_ids')
+        named, why, refs = o.get('flags'), o.get('justification'), o.get('observation_ids')
+        if not isinstance(named, list) or not named or set(named) - set(RED_FLAG_KEYS):
+            raise ValueError('red_flag_override.flags must list accounting_risk and/or distress')
+        if not isinstance(why, str) or len(why.split()) < 5:
+            raise ValueError('red_flag_override.justification must explain why the flag does not apply (5+ words)')
+        if not isinstance(refs, list) or not refs:
+            raise ValueError('red_flag_override needs observation_ids')
+        _evidence(case, refs, 'red_flag_override')
+        override = {'flags': named, 'justification': why.strip(), 'observation_ids': refs,
+                    'kind': 'analyst_override'}
+    covered = bool(flags) and override is not None and set(flags) <= set(override['flags'])
+    return {'flags': flags, 'override': override,
+            'price_call': 'not_applicable' if not flags else 'override_accepted' if covered else 'withheld',
+            'note': 'Forensic scores are screens, not proof; an override records the analyst judgement beside the flag.'}
 
 
 def decision_summary(report, case):
@@ -48,7 +85,8 @@ def decision_summary(report, case):
     p = report.get('price') or {}
     v = report.get('valuation') or {}
     demo = bool(case.get('is_demo'))
-    eligible = (not demo and v.get('priced_conclusion_ready') is True
+    gate = red_flag_gate(case, report['items'])
+    eligible = (not demo and v.get('priced_conclusion_ready') is True and gate['price_call'] != 'withheld'
                 and p.get('bucket') not in {None, 'blocked', 'review_required'})
     quote, base = p.get('quote'), p.get('base')
     eligible = eligible and _positive(quote) and _positive(base)
@@ -121,5 +159,5 @@ def decision_summary(report, case):
     # One short reason keeps the paragraph honest without turning it into a report.
     parts.append('רמת הביטחון בהערכה: ' + report['confidence']['level'] + (f' — {reasons[0]}.' if reasons else '.'))
     return {'text': ' '.join(parts), 'price_conclusion_eligible': bool(eligible),
-            'metrics': metrics, 'notes': notes,
+            'metrics': metrics, 'notes': notes, 'red_flag_gate': gate,
             'semantics': 'Conditional estimates, not observed true value or promised prices; scenario range is not a confidence interval.'}

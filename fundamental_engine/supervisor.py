@@ -28,6 +28,12 @@ DIMENSIONS = {'identity','business','accounting','demand','moat','management','p
               'funding','valuation','expectations','risk','catalyst'}
 PRIMARY_KINDS = {'filing','earnings_release','issuer_release','regulator','official_statistics'}
 LEVELS = {'critical':0,'high':1,'medium':2,'low':3}
+# Price-direction acceptance: a bare sign test (value > quote) is not a margin of safety.
+# Defaults are engine conventions, overridable per dossier with a written rationale.
+MARGIN_DEFAULTS = {'base_margin':.10,'bear_tolerance':.25}
+# Valuation-only labels with a dossier equivalent; generic labels (nonfinancial, turnaround)
+# and NAV labels have none, so they cannot stand in for the dossier's economic archetype.
+VALUATION_ARCHETYPE_ALIASES = {'commodity':'industrial'}
 
 
 def catalog():
@@ -101,6 +107,37 @@ def _ids(rows,label):
             raise ValueError('Duplicate '+label+' id')
         out[rid]=row
     return out
+
+
+def _price_test(conclusions,selected,quote,annual,calculations):
+    """Margin of safety for 'conditional_attractive': base above the quote by a margin AND the
+    lowest executed scenario not far below it. Failing either keeps the call, relabelled
+    'conditional_attractive_low_margin', so a thin or fragile discount is visible, not hidden."""
+    mos=conclusions.get('margin_of_safety')
+    terms=dict(MARGIN_DEFAULTS)
+    if mos is not None:
+        if not isinstance(mos,dict) or set(mos)-{'base_margin','bear_tolerance','rationale'}:
+            raise ValueError('margin_of_safety accepts base_margin, bear_tolerance, rationale')
+        text(mos.get('rationale'),'margin_of_safety.rationale')
+        for k in ('base_margin','bear_tolerance'):
+            if k in mos: terms[k]=number(mos[k],'margin_of_safety.'+k,0,1)
+    if selected['model']=='annual_path':
+        base=annual['annual_values'][0]['base'];tested=min(selected['value_per_share'],base) if base is not None else selected['value_per_share']
+        bear=annual['annual_values'][0]['bear'];bear_basis='annual_path.bear'
+    else:
+        values=[v.get('value_per_share') for v in calculations['valuations']] if selected['model']=='legacy_dcf' else [v.get('value_per_initial_share') for v in calculations['owner_valuations']]
+        tested=selected['value_per_share'];values=[v for v in values if v is not None]
+        bear=min(values) if values else None;bear_basis='lowest executed '+selected['model']+' scenario'
+    margin=tested/quote-1
+    bear_gap=bear/quote-1 if bear is not None else None
+    margin_ok=margin>=terms['base_margin']
+    bear_ok=bear_gap is not None and bear_gap>=-terms['bear_tolerance']
+    return {'quote':quote,'tested_value':tested,'margin':margin,'required_margin':terms['base_margin'],
+            'bear_value':bear,'bear_basis':bear_basis,'bear_gap':bear_gap,'bear_tolerance':terms['bear_tolerance'],
+            'terms_source':'dossier' if mos is not None else 'engine_default','rationale':(mos or {}).get('rationale'),
+            'margin_ok':margin_ok,'bear_ok':bear_ok,
+            'classification':'conditional_attractive' if margin_ok and bear_ok else 'conditional_attractive_low_margin',
+            'formula':'margin = tested_value/quote - 1 >= required_margin; bear_gap = bear_value/quote - 1 >= -bear_tolerance'}
 
 
 def review(case):
@@ -200,6 +237,9 @@ def review(case):
         if c['materiality'] in {'critical','high'}:
             if status in {'unsubstantiated','contested','challenged'}:
                 ask(LEVELS[c['materiality']],c['dimension'],'What observation would resolve: '+c['statement'],status,cid)
+            elif c['materiality']=='critical' and not supporting:
+                # The analyst-chosen kind (opinion/assumption) cannot exempt a critical claim from evidence.
+                ask(0,c['dimension'],'Support with a reviewed observation or downgrade materiality: '+c['statement'],'Critical claim has no reviewed supporting observation',cid)
             if c['kind']=='hypothesis' and not c.get('falsifier'):
                 ask(1,'adversarial','Define a measurable failure condition for: '+c['statement'],'Material hypothesis has no falsifier',cid)
     eligible_claims={a['id']:a for a in assessments}
@@ -284,7 +324,8 @@ def review(case):
     valuation_ready=valuation_ready or bool(annual and annual['status']=='conditional_valuation')
     if not valuation_ready:
         ask(2,'valuation','Select an appropriate model and run bear/base/bull assumptions, including financing.','No usable valuation scenario')
-    material_open=[a for a in assessments if a['materiality'] in {'critical','high'} and (a['status'] in {'unsubstantiated','contested','challenged'} or (a['kind']=='hypothesis' and not a['falsifier']))]
+    material_open=[a for a in assessments if a['materiality'] in {'critical','high'} and (a['status'] in {'unsubstantiated','contested','challenged'} or (a['kind']=='hypothesis' and not a['falsifier']))
+                   or (a['materiality']=='critical' and not a['support_ids'])]
     adequate_claims=all(any(a['dimension']==dim and a['status']=='evidence_supported' for a in assessments) for dim in ('identity','business','accounting'))
     if not adequate_claims:
         ask(0,'evidence','Establish primary evidence for issuer identity, business mechanism and accounting baseline.','Required factual anchors missing')
@@ -315,6 +356,15 @@ def review(case):
         priced_ready=False
         for issue in annual['underwriting_audit']['issues']:
             ask(1,'valuation',issue['message'],issue['code'] + ': ' + issue['path'])
+    blockers=[]
+    archetype_ok=True
+    if annual:
+        # A bank residual-income model inside an infrastructure dossier answers a different question.
+        va=annual_input['archetype']
+        archetype_ok=VALUATION_ARCHETYPE_ALIASES.get(va,va) in archetypes
+        if not archetype_ok:
+            priced_ready=False;blockers.append('archetype_mismatch')
+            ask(0,'valuation','Valuation archetype '+va+' ('+annual['method']+') is not among the dossier archetypes '+', '.join(archetypes)+'; use the matching economic model or correct the dossier.','archetype_mismatch')
     selected=None
     selection=conclusions.get('valuation_basis',{})
     if selection.get('model')=='annual_path':
@@ -336,13 +386,33 @@ def review(case):
         if family=='legacy_dcf' and calculations['owner_valuations']:
             # Prefer financing-aware equity claims when such a model is supplied.
             priced_ready=False
+    hypothetical=[v['name'] for v in (calculations or {}).get('owner_valuations',[])
+                  if v.get('status')=='funded' and v.get('conditional_on_hypothetical_financing')
+                  and (v.get('without_hypothetical_financing') or {}).get('status')!='funded']
+    financing_dependency=None
+    if hypothetical:
+        # 'funded' only because uncommitted financing was assumed: a conditional path, not a price
+        # basis. It blocks whenever the ownership model is (or, without an annual path, would be)
+        # the price basis; an executed annual path carries and audits its own financing inputs.
+        blocks=selection.get('model')=='ownership' or not annual
+        financing_dependency={'status':'conditional_on_hypothetical_financing','scenarios':hypothetical,'blocks_price_conclusion':blocks,
+                              'meaning':'Ownership scenarios are funded only if uncommitted financing happens at the assumed terms; without it they show a financing gap.'}
+        ask(1,'funding','Scenarios '+', '.join(hypothetical)+' are funded only by hypothetical financing; evidence committed financing or value the unfunded path.','conditional_on_hypothetical_financing')
+        if blocks:
+            priced_ready=False;blockers.append('conditional_on_hypothetical_financing')
+    price_test=None
+    effective=requested
     if requested in {'conditional_attractive','not_attractive'}:
         priced_ready=priced_ready and bool(selected and selected['value_per_share'] is not None and conclusions.get('rationale'))
         if priced_ready:
             relative=selected['value_per_share']-quote['price']
             if (requested=='conditional_attractive' and relative<=0) or (requested=='not_attractive' and relative>0):
                 priced_ready=False
+            elif requested=='conditional_attractive':
+                price_test=_price_test(conclusions,selected,quote['price'],annual,calculations)
+                effective=price_test['classification']
     rejected=requested in {'conditional_attractive','not_attractive'} and not priced_ready
+    questions.sort(key=lambda x:(x['priority'],x['topic'],x['claim_id'] or ''))  # late valuation/funding asks keep priority order
     return {'case_version':1,'as_of':case['as_of'],'identity':identity,'question':case['question'],
        'status':status,'is_demo':bool(case.get('is_demo')),'claim_assessments':assessments,'numeric_conflicts':conflicts,
        'excluded_observation_ids':excluded,'questions':questions,
@@ -351,9 +421,11 @@ def review(case):
        'gates':{'identity_business_accounting_anchored':adequate_claims,'business_explained':not missing_business and business_backed,
          'material_claims_resolved':not material_open,'numeric_definitions_reconciled':not conflicts,
          'counter_thesis_testable':counter_ready,'calculations_executed':calculations is not None,
-         'valuation_executed':valuation_ready,'priced_conclusion_ready':priced_ready},
+         'valuation_executed':valuation_ready,'valuation_archetype_matches_dossier':archetype_ok,
+         'funded_without_hypothetical_financing':not hypothetical,'priced_conclusion_ready':priced_ready},
        'candidate_conclusion':{'requested':requested,'accepted_for_synthesis':not rejected,
-         'effective_classification':'unresolved' if rejected else requested,'valuation_basis':selected,
+         'effective_classification':'unresolved' if rejected else effective,'valuation_basis':selected,
+         'price_test':price_test,'price_blockers':blockers,'financing_dependency':financing_dependency,
          'note':'Process eligibility, not endorsement of an investment conclusion.'},
        'calculations':calculations,'annual_valuation':annual,'discovery':discovery,
        'stop_condition':(control['next_instruction'] if control['budget_exhausted'] else 'Synthesize with explicit assumptions and unresolved nonmaterial limitations.' if ready else 'Resolve next material question or checkpoint the access/evidence blocker; no circular search.'),

@@ -49,7 +49,7 @@ class PlainTests(unittest.TestCase):
         self.assertEqual(r['price']['bucket'],'blocked');self.assertEqual(r['bottom_line']['light'],'🔴')
 
     def test_declining_weak_business(self):
-        c=demo();c.pop('balance')
+        c=demo();c.pop('balance');c['stage_reason']='Test fixture keeps the demo stage while swapping in a declining history.'
         c['history']=[row(2023,1000,gross_profit=150,operating_income=20,net_income=10,operating_cash_flow=5,capex=30,shares_diluted=100),
                       row(2024,900,gross_profit=120,operating_income=-10,net_income=-20,operating_cash_flow=-5,capex=30,shares_diluted=115)]
         r=plain_verdict(c)
@@ -59,6 +59,7 @@ class PlainTests(unittest.TestCase):
 
     def test_emerging_losses_graded_by_stage_and_runway(self):
         c=demo();c['stage']='emerging';c['archetype']='software';c['balance']={'as_of':'2026-06-30','cash':300,'debt':0}
+        c['stage_reason']='Analyst override under test: pre-scale software judged emerging.'
         c['history']=[row(2024,100,gross_profit=70,operating_income=-80,operating_cash_flow=-60,capex=10),
                       row(2025,200,gross_profit=150,operating_income=-40,operating_cash_flow=-40,capex=10)]
         r=plain_verdict(c)
@@ -69,7 +70,7 @@ class PlainTests(unittest.TestCase):
         self.assertEqual(item(plain_verdict(mature),'operating_margin')['points'],1)
 
     def test_sector_bars_differ(self):
-        c=demo();c['history']=[row(2025,100,gross_profit=40)]
+        c=demo();c['history']=[row(2025,100,gross_profit=40)];c['stage_reason']='Test fixture keeps the demo stage on a one-year history.'
         self.assertEqual(item(plain_verdict(c),'gross_margin')['label'],'טוב')
         c['archetype']='software';self.assertEqual(item(plain_verdict(c),'gross_margin')['label'],'חלש')
 

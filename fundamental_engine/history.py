@@ -2,7 +2,9 @@
 
 Rows are fiscal years, oldest first, in absolute currency units. Only revenue and
 source_ids are required; every other field is optional and a check that needs a
-missing field reports itself as unavailable rather than guessing.
+missing field reports itself as unavailable rather than guessing. An optional
+available_at (filing/availability date, possibly estimated) must not be after as_of:
+a period that ended before as_of may still have been unpublished then.
 """
 from datetime import date
 from .finance import number
@@ -24,16 +26,28 @@ def opt(row, key, low=None):
     return None if row.get(key) is None else number(row[key], key, low)
 
 
+def _availability(r, end, cutoff, label):
+    if r.get('available_at') is None:
+        return
+    available = date.fromisoformat(r['available_at'][:10])
+    if available < end:
+        raise ValueError(label + ' available_at precedes its period end')
+    if available > cutoff:
+        raise ValueError(label + ' not available by as_of (available_at after as_of: look-ahead)')
+
+
 def history(case):
     rows = case['history']
     if not isinstance(rows, list) or not 1 <= len(rows) <= 15:
         raise ValueError('history: supply 1..15 fiscal years, oldest first')
     ends = []
+    cutoff = date.fromisoformat(case['as_of'])
     for r in rows:
         txt(r['fiscal_year'], 'fiscal_year')
         end = date.fromisoformat(r['period_end'])
-        if end > date.fromisoformat(case['as_of']):
+        if end > cutoff:
             raise ValueError('History period ends after as_of')
+        _availability(r, end, cutoff, 'History row')
         number(r['revenue'], 'revenue', 0)
         for k in SIGNED:
             opt(r, k)
@@ -119,6 +133,7 @@ def quarters(case):
         end = date.fromisoformat(r['period_end'])
         if end > date.fromisoformat(case['as_of']):
             raise ValueError('Quarter ends after as_of')
+        _availability(r, end, date.fromisoformat(case['as_of']), 'Quarter')
         number(r['revenue'], 'quarter revenue', 0)
         for k in ('operating_income', 'gross_profit', 'net_income'):
             opt(r, k)
