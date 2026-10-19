@@ -464,6 +464,24 @@ def _margin_targets(route, h, warn):
     return t, why
 
 
+def _revenue_guidance(fb):
+    """Latest dated company revenue guidance per fiscal-year label ('FY2026'), issued on or before as_of."""
+    out = {}
+    for g in fb.get('guidance', []):
+        if g.get('metric') != 'revenue' or not str(g.get('period', '')).startswith('FY') or len(str(g['period'])) != 6:
+            continue
+        if g.get('issued_at') and _d(g['issued_at']) > _d(fb['as_of']):
+            continue
+        lo, hi = _num(g.get('low')), _num(g.get('high'))
+        if lo is None or hi is None or hi < lo:
+            continue
+        prev = out.get(g['period'])
+        if prev is None or (g.get('issued_at') or '') > (prev.get('issued_at') or ''):
+            out[g['period']] = {'value': (lo + hi) / 2, 'low': lo, 'high': hi, 'issued_at': g.get('issued_at'),
+                                'source_ids': g.get('source_ids', [])}
+    return out
+
+
 def _params(route, h, cal, cons, rf, ke, debt0, price, shares, ov, warn):
     st = STAGE[route['stage']]
     s2c_range = route['type'][0]
@@ -472,9 +490,14 @@ def _params(route, h, cal, cons, rf, ke, debt0, price, shares, ov, warn):
     k = cal['fiscal_years_since_last_report']
     b1 = cal['boundaries'][0]
     # current fiscal year (the year the stub belongs to)
+    gd = h.get('guidance', {}).get(f'FY{b1[:4]}')
     if b1 in cons:
         r_fy, g_cur = cons[b1]['value'], (cons[b1]['value'] / h['last_revenue']) ** (1 / k) - 1
         cur_basis = f"consensus revenue for the fiscal year ending {b1} ({cons[b1]['source_id']}, {cons[b1].get('as_of')})"
+    elif gd:
+        r_fy, g_cur = gd['value'], (gd['value'] / h['last_revenue']) ** (1 / k) - 1
+        cur_basis = (f"company guidance midpoint for the fiscal year ending {b1} ({gd['low']:,.0f}-{gd['high']:,.0f}, issued "
+                     f"{gd.get('issued_at')}; management guidance, not a reported fact)")
     else:
         g_cur = h['g_cycle'] if route['method'] == 'normalized_cycle_fcff' else h['g_trailing']
         g_cur = _clamp(g_cur, -.5, 2.)
@@ -782,6 +805,7 @@ def build(fb, an, card, qa, inputs=None):
     if bm in NON_OPERATING_TYPES:
         return empty('method_not_supported_by_forecast', f'business model {bm} routes to {NON_OPERATING_TYPES[bm]}, not an operating forecast', method)
     h = _history(fb, an, warn)
+    h['guidance'] = _revenue_guidance(fb)
     if h is None:
         return empty('insufficient_data', 'no fiscal year with positive revenue available at as_of', method)
     h['g_anchor'] = h['g_trailing']
@@ -922,7 +946,10 @@ def build(fb, an, card, qa, inputs=None):
     if (_d(as_of) - _d(stmt)).days > 150:
         warn('stale_balance_sheet', f'balance sheet dated {stmt} is more than 150 days before as_of; valuation_audit will require a newer statement', 'high')
     # revenue and growth
-    cur_kind = 'analyst' if B[0] in cons else 'model'
+    gd = h.get('guidance', {}).get(f'FY{B[0][:4]}')
+    cur_kind = 'analyst' if B[0] in cons else ('guidance' if gd else 'model')
+    if cur_kind == 'guidance':
+        rev_srcs = list(rev_srcs) + [x for x in gd['source_ids'] if x not in rev_srcs]
     add('revenue_current_fy', 'current fiscal year revenue', cur_kind,
         {'revenue': meta['r_fy'], 'growth': meta['g_cur'], 'stub_annual_rate': meta['stub_rate']},
         f"{fy(B[0])} revenue {meta['r_fy']:,.0f} ({meta['cur_basis']}); growth {_pct(meta['g_cur'])} vs the last report. The stub "

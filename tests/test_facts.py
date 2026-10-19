@@ -138,3 +138,14 @@ class TtmTests(unittest.TestCase):
         self.assertEqual([e for e, _, _ in F.series(fb, 'revenue', 'quarter')], ['2026-05-29'])   # Q3 published after as_of
         self.assertEqual(fb['qualitative'], [])
         self.assertEqual(fb['sources']['web:s1']['retrieval'], 'search_excerpt')
+
+
+class YtdTests(unittest.TestCase):
+    def test_ttm_from_year_to_date_cash_flows(self):
+        fb = F.new({'ticker': 'FIX', 'currency': 'USD'}, '2026-10-01')
+        F.add_source(fb, 's', 'sec', 'x', 'filing_derived', '2026-10-01')
+        F.add_fact(fb, 'cfo', 'FY2025', '2025-11-28', 100, 's', 'as_reported', '2026-01-15')
+        F.add_fact(fb, 'cfo', 'YTD@2025-08-29', '2025-08-29', 70, 's', 'as_reported', '2025-09-20')
+        F.add_fact(fb, 'cfo', 'YTD@2026-08-28', '2026-08-28', 80, 's', 'as_reported', '2026-09-20')
+        t = F.ttm(fb, 'cfo')
+        self.assertEqual((t['method'], t['value'], t['period_end']), ('annual_plus_ytd', 110, '2026-08-28'))

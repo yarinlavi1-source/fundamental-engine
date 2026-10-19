@@ -352,10 +352,13 @@ def add_qualitative(fb, qid, topic, statement, kind, source_ids, as_of):
 BUNDLE_METRICS = {  # evidence-bundle metric names -> FactBook metrics (duration unless listed in BUNDLE_INSTANT)
     'revenue': 'revenue', 'operating_income_gaap': 'operating_income', 'operating_income': 'operating_income',
     'net_income_gaap': 'net_income', 'net_income': 'net_income', 'cfo': 'cfo', 'capex': 'capex', 'buybacks': 'buybacks',
-    'sbc': 'sbc', 'shares_outstanding': 'shares_outstanding', 'rpo': 'rpo', 'arr': 'arr',
-    'deferred_revenue': 'deferred_revenue_total', 'cash_and_investments': 'cash_and_investments_total', 'debt': 'debt_total_reported',
+    'sbc': 'sbc', 'rpo': 'rpo', 'arr': 'arr', 'shares_outstanding': 'shares_outstanding_cover',
+    'cash': 'cash', 'short_term_investments': 'short_term_investments', 'commercial_paper': 'short_term_borrowings',
+    'debt': 'long_term_debt_tagged',            # issuer totals: scope (incl. current portion or not) resolved by dataqa
+    'deferred_revenue': 'deferred_revenue_total', 'cash_and_investments': 'cash_and_investments_total',
 }
-BUNDLE_INSTANT = {'shares_outstanding', 'rpo', 'arr', 'deferred_revenue_total', 'cash_and_investments_total', 'debt_total_reported'}
+BUNDLE_INSTANT = {'shares_outstanding_cover', 'rpo', 'arr', 'deferred_revenue_total', 'cash_and_investments_total', 'cash',
+                  'short_term_investments', 'short_term_borrowings', 'long_term_debt_tagged'}
 SOURCE_KIND = {'issuer_release': 'document', 'filing': 'document', 'press': 'document', 'analysis': 'document'}
 
 
@@ -376,15 +379,17 @@ def add_qualitative_bundle(fb, bundle, provider='web'):
         fb['sources'][sid]['retrieval'] = src.get('retrieval', 'search_excerpt')
         pub[src['id']] = src.get('published_at')
     for q in bundle.get('quarterly_facts', []):
-        metric = BUNDLE_METRICS.get(q['metric'])
-        if metric is None or not q.get('source_ids'):
+        ytd = q['metric'].endswith('_ytd')
+        metric = BUNDLE_METRICS.get(q['metric'][:-4] if ytd else q['metric'])
+        if metric is None or not q.get('source_ids') or q.get('value') is None:
             continue
         dates = [pub.get(s) for s in q['source_ids'] if pub.get(s)]
         avail, est = (max(dates), False) if dates else (_est_available(q['period_end'], 'quarter'), True)
-        period = ('I@' if metric in BUNDLE_INSTANT else 'Q@') + q['period_end']
-        add_fact(fb, metric, period, q['period_end'], q['value'], 'web:' + q['source_ids'][0],
+        end = q.get('measured_at') if metric == 'shares_outstanding_cover' and q.get('measured_at') else q['period_end']
+        period = ('YTD@' if ytd else 'I@' if metric in BUNDLE_INSTANT else 'Q@') + end
+        add_fact(fb, metric, period, end, q['value'], 'web:' + q['source_ids'][0],
                  'as_reported' if not est else 'normalized', avail, estimated=est,
-                 unit='shares' if metric == 'shares_outstanding' else None, concept='bundle:' + q['metric'])
+                 unit='shares' if metric == 'shares_outstanding_cover' else None, concept='bundle:' + q['metric'])
     for g in bundle.get('guidance', []):
         if _d(g.get('issued_at') or fb['as_of']) <= _d(fb['as_of']):
             fb.setdefault('guidance', []).append({**g, 'source_ids': ['web:' + s for s in g.get('source_ids', [])]})
@@ -474,6 +479,15 @@ def ttm(fb, metric):
                 v = a[-1][1] + sum(x[1] for x in post) - sum(x[1] for x in prior)
                 return {'value': v, 'period_end': post[-1][0], 'method': 'annual_plus_ytd',
                         'facts': [a[-1][2]] + [x[2] for x in post] + [x[2] for x in prior]}
+        ytd = [f for f in candidates(fb, metric) if f['period'].startswith('YTD@')]
+        cur = sorted((f for f in ytd if _d(f['period_end']) > a_end), key=lambda f: f['period_end'])
+        if cur:                                   # TTM = last FY + YTD now - YTD a year earlier (10-Q cash-flow statements)
+            now = cur[-1]
+            want = _d(now['period_end']) - timedelta(days=364)
+            prev = [f for f in ytd if abs((_d(f['period_end']) - want).days) <= 10]
+            if prev:
+                return {'value': a[-1][1] + now['value'] - prev[0]['value'], 'period_end': now['period_end'],
+                        'method': 'annual_plus_ytd', 'facts': [a[-1][2], now, prev[0]]}
         return {'value': a[-1][1], 'period_end': a[-1][0], 'method': 'latest_fiscal_year', 'facts': [a[-1][2]],
                 'newer_quarters_unmatched': [x[0] for x in post]}
     return None
