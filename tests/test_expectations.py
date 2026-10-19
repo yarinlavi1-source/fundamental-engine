@@ -78,3 +78,22 @@ class GapReport(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class ValueDestruction(unittest.TestCase):
+    def test_low_return_growth_lever_reports_destruction(self):
+        # margin 5%, tax 0, s2c 1.0 -> ROIC on new capital 5% < WACC 10%: more growth lowers value
+        d = drivers(m1=0.05, m_mature=0.05, sales_to_capital=1.0, terminal_roic=None)
+        r = solve_lever(d, CS_PLAIN, 1e6, 'growth_level')
+        self.assertEqual(r['status'], 'not_reachable')
+        self.assertIn('DESTROYS', r['why'])
+
+    def test_mcp_expectation_gap_with_base_rate_table(self):
+        from fundamental_engine.mcp import Server
+        import tempfile, os
+        s = Server(os.path.join(tempfile.mkdtemp(), 'c.sqlite'))
+        d = drivers(g1=0.10, m_mature=0.2)
+        price = value_per_share(drivers(g1=0.30, m_mature=0.2), CS_PLAIN)[0]
+        r = s.call('expectation_gap', {'case': {'price': price, 'capital_structure': CS_PLAIN, 'anchor': d,
+                                                 'base_rate_table': [[0.0, 0.6], [0.2, 0.2], [0.4, 0.05]]}})
+        self.assertLess(r['prob_beat_implied_growth'], 0.2)

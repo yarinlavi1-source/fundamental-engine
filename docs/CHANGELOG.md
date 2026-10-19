@@ -1,3 +1,17 @@
+## 0.10.0 — expectation gap, capital bridge, red-team, point-in-time validation (19.10.2026)
+
+- capital.py: instrument-level capital structure (accreted converts, rational conversion fixed point,
+  pre-funded warrants, post-statement events, prepayments kept out of net cash). Golden NBIS fixture.
+- redteam.py: independent audit of a valuation package; critical failure = valuation UNVERIFIED.
+- expectations.py / expectations_vec.py: one driver model (revenue -> EBIT after SBC -> reinvestment
+  -> FCFF), reverse-solve one lever at a time, detects when growth destroys value.
+- pit.py / inflection.py: point-in-time SEC companyfacts (first filed value, filed+2d), Q4 derivation,
+  multi-class cover shares; acceleration, incremental margins, acquisition flag, stage, transparent scorecard.
+- ledger.py: append-only hash-chained forecast ledger.
+- scripts/: pit_build, pit_panel, gap_backtest (pre-registered), case_suite, gap_card, gap_explore (exploratory).
+- MCP tools capital_bridge, redteam_audit, expectation_gap, forecast_ledger.
+- Results of the pre-registered universe test: docs/GAP_TEST_RESULTS.md. Calibration is not a return edge.
+
 ## 0.9.1 — concise decisions and potential underwriting
 
 - Default plain/MCP/CLI text is one Hebrew investment paragraph; full detail retained.

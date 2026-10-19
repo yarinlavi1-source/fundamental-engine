@@ -53,5 +53,33 @@ listed, and named examples from both tails.
 Changing buckets, assumptions, thresholds or windows after looking at holdout results. If a bug is found,
 fix it, re-run everything, and log the bug and both results here.
 
-## Deviations log
-(none yet)
+## Deviations log (written 19.10.2026, same day; no assumption, bucket, threshold or window was changed)
+
+Implementation differences from the text above, present from the first full run:
+- Panel months 2010-01..2025-09 (not 2011-01..2025-12): the last month with a 1-month forward price.
+  Holdout return statistics run 2018-01..2025-08; 3-year outcomes exist only for starts through ~2022-09.
+- "Last filing ≤ 150 days" is implemented as: latest TTM quarter END ≤ 150 days before t (stricter
+  than filing age). Cover shares/balance sheet ≤ 200 days old.
+- Financials are identified by XBRL markers (Deposits, interest/dividend income, premiums, loans),
+  not SIC 6000-6799 (SIC is not in companyfacts).
+- H3 "earnings momentum + near 52w high" is approximated with: revenue-surprise rank ≥ 0.9 and earnings
+  surprise rank ≥ 0.5 in the month a new quarter becomes available, price ≥ 85% of the 12-month high,
+  3-month hold. Months in which the filtered sleeve is empty are excluded from its CAGR.
+- Stage table "% still listed" is not computed: the price set contains only currently listed tickers,
+  so it cannot be measured (survivorship; see GAP_TEST_RESULTS.md).
+- A dry run on partial data (964 of ~3,400 priced companies) was executed and seen before the full run,
+  to debug code. No parameter was changed after it.
+
+Bugs found after the first full run, fixed, everything re-run (all runs are reported in GAP_TEST_RESULTS.md):
+- Run 1 -> 2: (a) 16-week fiscal quarters (Costco Q4 etc.) were dropped (quarter window 80-100 days ->
+  80-120); (b) multi-class issuers whose cover shares are only class-dimensioned had no share count ->
+  fallback chain dei cover -> us-gaap CommonStockSharesOutstanding -> weighted basic shares;
+  (c) panel rows were labelled with the first ticker even when another ticker's prices were used.
+- Run 2 -> 3: (d) across revenue concepts the FIRST concept in the list won each period, so a value
+  filed a year later under the ASC 606 tag replaced the value filed on time under the old tag, removing
+  ~1/3 of companies in 2018 (eligible companies fell from ~940 to ~850, Feb-2018 455); now the earliest
+  filed value across concepts wins (ties: concept order); (e) non-positive vendor adjusted closes
+  (e.g. NFE, giving r36 of -387%) are dropped; (f) within a concept a directly reported quarter filed
+  a year later (quarterly note of the next 10-K) overrode the on-time FY - 9M derivation, delaying
+  e.g. MSFT's Q4 FY15 operating income by a year; now the earliest filed of direct/derived wins.
+  Run 3 is the run with all fixes; it is the one judged. Runs 1 and 2 are reported, not hidden.

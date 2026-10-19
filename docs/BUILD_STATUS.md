@@ -1,4 +1,12 @@
-# Current version: 0.9.0
+# Current version: 0.10.0 — 19.10.2026
+
+Expectation gap, instrument-level capital bridge, independent red-team, point-in-time SEC panel,
+inflection features, forecast ledger. Pre-registered universe test (docs/GAP_TEST_RESULTS.md):
+H1 calibration PASS, H2 return edge FAIL, H3 momentum interaction passes the literal rule but is not
+statistically distinguishable from luck and reverses in the design window -> forward test only.
+Validation: 307 unit/integration tests passed locally (software checks, not investment accuracy).
+
+## Previous: 0.9.0
 
 Valuation integrity is enforced at calculator, research-review and plain-output
 boundaries. Arithmetic is retained for inspection; unreviewed live price conclusions

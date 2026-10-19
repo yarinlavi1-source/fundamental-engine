@@ -71,6 +71,18 @@ No default scenario odds or momentum-based permission to pay a premium. Bull is
 not a price ceiling. Do not force a high or low valuation to satisfy any narrative.
 See docs/AXTI_AUDIT_2026-09-28.md for the real regression and unresolved rerun work.
 
+## Expectation gap and red-team (v0.10, 19.10.2026)
+
+Before any live price conclusion: build the instrument-level capital structure (capital_bridge;
+converts at accreted claims, pre-funded warrants, exchanges after the statement), run expectation_gap
+with company drivers (what must be true, each lever alone), then redteam_audit. A critical red-team
+failure means the valuation is UNVERIFIED — show it as a draft, never as a conclusion. Freeze every
+published base case in forecast_ledger. Universe-level evidence for the gap signal lives in
+docs/prereg_expectation_gap.md and docs/GAP_TEST_RESULTS.md; do not claim more than those results show:
+P(beat) is calibrated (says correctly how often the priced growth happens) but did NOT beat the universe;
+a low P(beat) is a crash-risk flag, not a short signal; the uniform screen gives young winners and
+failures the same ~0, so young growth names need company drivers. scripts/gap_card.py = live card.
+
 ## User preference: one concise investment paragraph (latest, v0.9.1)
 
 After full research, return ONE simple Hebrew paragraph, normally 80–140 words:

@@ -65,6 +65,10 @@ TOOLS += [
  research_tool('research_checkpoint','Append a local immutable research revision. Supply expected_revision to prevent overwrites. Never publishes private inputs to GitHub.',{'case':{'type':'object'},'case_id':{'type':'string'},'expected_revision':{'type':'integer'}},['case'],False),
  research_tool('research_load','Load a local research case/checkpoint for continuation. Omit revision for latest.',{'case_id':{'type':'string'},'revision':{'type':'integer'}},['case_id']),
  research_tool('research_history','List local case IDs and revisions for a company identifier.',{'company_id':{'type':'string'}},['company_id']),
+ research_tool('capital_bridge','Instrument-level capital structure: spendable vs restricted cash, accreted convertible claims, rational conversion, warrants/options, prepayments. Mode market (price) or value (enterprise_value). Read valuation_integrity.',{'capital_structure':{'type':'object'},'price':{'type':'number'},'enterprise_value':{'type':'number'}},['capital_structure']),
+ research_tool('redteam_audit','Independent accounting/valuation red-team: cash, debt, converts, shares after financing, ARR/backlog/prepayment/SBC/reinvestment/funding faults. Verdict passed / passed_with_limitations / failed / unable_to_verify; a critical failure marks the valuation unverified.',{'package':{'type':'object'}},['package']),
+ research_tool('expectation_gap','What the price already assumes versus the evidence: one driver model (revenue->EBIT after SBC->reinvestment->FCFF->per share via capital_bridge), each lever solved alone, components with source ids. Probabilities only from a supplied base rate.',{'case':{'type':'object'}},['case']),
+ research_tool('forecast_ledger','Append-only hashed forecast ledger: action forecast | outcome | score | verify. Freezes predictions before outcomes and scores them later.',{'path':{'type':'string'},'action':{'type':'string'},'entry':{'type':'object'}},['path','action']),
  research_tool('research_compare','Compare material claims and gates across revisions of one local case.',{'case_id':{'type':'string'},'first_revision':{'type':'integer'},'second_revision':{'type':'integer'}},['case_id','first_revision','second_revision']),
 ]
 
@@ -105,9 +109,40 @@ class Server:
             raise ValueError('Unknown or missing tool arguments')
         for key,value in args.items():
             kind = contract['properties'][key]['type']
-            expected = {'object':dict,'string':str,'integer':int}[kind]
+            expected = {'object':dict,'string':str,'integer':int,'number':(int,float)}[kind]
             if not isinstance(value,expected) or isinstance(value,bool):
                 raise ValueError(f'Invalid argument type: {key}')
+        if name == 'capital_bridge':
+            from .capital import market_view, per_share
+            if 'price' in args:
+                return market_view(args['capital_structure'], args['price'])
+            if 'enterprise_value' in args:
+                return per_share(args['capital_structure'], args['enterprise_value'])
+            raise ValueError('Supply price or enterprise_value')
+        if name == 'redteam_audit':
+            from .redteam import audit
+            return audit(args['package'])
+        if name == 'expectation_gap':
+            from .expectations import expectation_gap
+            case = dict(args['case']); case.pop('base_rate_fn', None)
+            table = case.pop('base_rate_table', None)            # [[implied_cagr, prob_beat], ...] increasing in cagr
+            if table:
+                pts = sorted((float(a), float(b)) for a, b in table)
+                def br(g):
+                    if g <= pts[0][0]: return pts[0][1]
+                    for (g0, p0), (g1, p1) in zip(pts, pts[1:]):
+                        if g <= g1: return p0 + (p1 - p0) * (g - g0) / (g1 - g0)
+                    return pts[-1][1]
+                case['base_rate_fn'] = br
+            return expectation_gap(case)
+        if name == 'forecast_ledger':
+            from .ledger import Ledger
+            L = Ledger(args['path']); a = args['action']; e = args.get('entry', {})
+            if a == 'forecast': return L.forecast(**e)
+            if a == 'outcome': return L.outcome(**e)
+            if a == 'score': return L.score()
+            if a == 'verify': return L.verify()
+            raise ValueError('action must be forecast|outcome|score|verify')
         if name == 'frontier_plan':
             from .discovery import frontier_plan
             return frontier_plan(args['request'])
