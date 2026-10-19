@@ -20,6 +20,8 @@ jobs:
       - run: python -m fundamental_engine research-review examples/research_dossier_demo.json --out runs/research-review.json
       - run: python scripts/evaluate_brain.py
       - run: python -m fundamental_engine discover examples/discovery_demo.json > runs/discovery-smoke.json
+      - run: python -m fundamental_engine pipeline --factbook tests/fixtures/adbe_factbook_2026-10-19.json --out runs/pipeline-smoke
+      - run: python -m fundamental_engine pipeline-plan ADBE 2026-10-19 --cik 0000796343 > runs/pipeline-plan.json
       - run: python -m fundamental_engine value examples/valuation/infrastructure.json --diagnostics
       - run: python -m fundamental_engine value examples/valuation/bank.json
       - run: python -m fundamental_engine value-drivers examples/valuation/software_drivers.json --diagnostics --out runs/valuation

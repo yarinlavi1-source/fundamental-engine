@@ -111,9 +111,10 @@ def main():
     pp.add_argument("as_of")
     pp.add_argument("--cik")
     pr = subs.add_parser("pipeline", help="Single decision path from a raw connector folder to verdict, report and Hebrew paragraph")
-    pr.add_argument("raw_dir")
-    pr.add_argument("--company", required=True, help="JSON file with ticker, name, currency, sector, industry, ...")
-    pr.add_argument("--as-of", required=True)
+    pr.add_argument("raw_dir", nargs="?", help="Raw connector folder written per pipeline-plan")
+    pr.add_argument("--factbook", help="Existing FactBook JSON instead of a raw folder")
+    pr.add_argument("--company", help="JSON file with ticker, name, currency, sector, industry, ... (with raw_dir)")
+    pr.add_argument("--as-of", help="Information cutoff (with raw_dir)")
     pr.add_argument("--inputs", help="JSON with analyst inputs (card, forecast, reviewer, decision)")
     pr.add_argument("--qualitative", help="JSON with dated sources and qualitative items to add to the FactBook")
     pr.add_argument("--out", required=True, help="Output folder (keep it outside Git for private or vendor data)")
@@ -142,7 +143,14 @@ def main():
             from .pipeline import factbook_from_run_dir, run, summary
             from .render import markdown, hebrew_paragraph
             from .facts import add_qualitative_bundle
-            fb = factbook_from_run_dir(args.raw_dir, read_json(args.company), args.as_of)
+            if bool(args.raw_dir) == bool(args.factbook):
+                raise ValueError("give either raw_dir (with --company and --as-of) or --factbook")
+            if args.factbook:
+                fb = read_json(args.factbook)
+            elif not (args.company and args.as_of):
+                raise ValueError("raw_dir needs --company and --as-of")
+            else:
+                fb = factbook_from_run_dir(args.raw_dir, read_json(args.company), args.as_of)
             if args.qualitative:
                 add_qualitative_bundle(fb, read_json(args.qualitative))
             cf = run(fb, read_json(args.inputs) if args.inputs else None)
