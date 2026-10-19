@@ -1,10 +1,14 @@
 import random
 import unittest
-import numpy as np
+try:                                    # numpy is an optional research dependency (scripts only); CI has none
+    import numpy as np
+    from fundamental_engine.expectations_vec import ev_vec, solve_growth
+except ImportError:
+    np = None
 from fundamental_engine.expectations import run_model
-from fundamental_engine.expectations_vec import ev_vec, solve_growth
 
 
+@unittest.skipIf(np is None, 'numpy not installed (vectorised research twin only)')
 class VecTwin(unittest.TestCase):
     def test_matches_scalar_model(self):
         rnd = random.Random(7)
