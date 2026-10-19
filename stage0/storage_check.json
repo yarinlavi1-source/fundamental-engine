@@ -1,0 +1,82 @@
+{
+ "checked_utc": "2026-10-19T21:58:00Z",
+ "files": {
+  "stage0_golden_public_sec.tar.xz": {
+   "sha256": "ad0e4fd0f929043d58a3667246fd889d10644ec92ff7f2ebb7e3eb96ae5e49aa",
+   "bytes": 3829112,
+   "content": "public SEC data only: raw companyfacts members, SEC submissions, point-in-time views, filing index, availability, MANIFEST"
+  },
+  "stage0_private_prices_and_project.tar.xz": {
+   "sha256": "5365e40da96c4039aaf59bc6b9626c4ea5a5c8edcbc8109e40bdac3036114471",
+   "bytes": 231300,
+   "content": "private: vendor price files, price audit, the project files read in this session (contain position sizes), extract manifest, and the private stage 0 tree"
+  },
+  "stage0_private_price_pack.json": {
+   "sha256": "a65d53d627b66e70718b66c9dc85f845abc9d452a7b586c4fc0f1dfa7139ecc4",
+   "bytes": 351777,
+   "content": "private: the same vendor price files as UTF-8 strings in one JSON, with manifest entries"
+  },
+  "MANIFEST.json": {
+   "sha256": "c2694081cdf3a91504efabbbfa2b192ef0ee08eafc3bfc3e49b52dfb5d320f8b",
+   "bytes": 76132
+  },
+  "stage0_private_tree.json": {
+   "sha256": "7ccdfb989fee54f7c3a0ba21f1a847cccd08398520c90f2ee44b89172b0a2cd5",
+   "bytes": 1220484,
+   "content": "private stage 0 tree as UTF-8 strings: harness, legacy code copies, fixtures, field-by-field results, known-error register, private tests, detailed report"
+  }
+ },
+ "locations": [
+  {
+   "where": "Yarin's computer, Documents folder, subfolder fundamental-engine-stage0 (written via the desktop bridge after a folder grant)",
+   "files": [
+    "stage0_golden_public_sec.tar.xz",
+    "stage0_private_prices_and_project.tar.xz",
+    "stage0_private_price_pack.json",
+    "stage0_private_tree.json",
+    "MANIFEST.json",
+    "SHA256SUMS"
+   ],
+   "read_back": "all six staged back into the container; SHA-256 identical",
+   "note": "read-back is what proves a write: twice the bridge refused to read a file right after writing it (hardlinked), and once a rewrite under the same staged name left the OLD bundle on the computer although the write was reported as done; it was found only by the SHA-256 read-back and fixed by writing from a fresh staged name, then read back again"
+  },
+  {
+   "where": "claude.ai Project 'trading', doc claude/stage0/stage0_private_price_pack.json",
+   "files": [
+    "stage0_private_price_pack.json"
+   ],
+   "read_back": "project_read -> SHA-256 identical"
+  },
+  {
+   "where": "claude.ai Project 'trading' (original location)",
+   "files": [
+    "the project files themselves (code, records, notes)"
+   ],
+   "read_back": "every file was read through the connector; when read more than once, all reads were byte-identical (extract_manifest all_reads_identical)"
+  }
+ ],
+ "not_available": [
+  {
+   "where": "Google Drive (connector)",
+   "result": "write -> read of a small text file works (SHA-256 identical, file 'fundamental-engine-stage0-drive-roundtrip-test.txt'); the connector only accepts content passed inline in the tool call, so the bundles (3.8 MB binary) cannot be uploaded from this environment"
+  },
+  {
+   "where": "claude.ai Project for the binary SEC bundle",
+   "result": "refused: project docs cannot store binary (NUL bytes)"
+  },
+  {
+   "where": "GitHub draft release asset for the public SEC bundle",
+   "result": "creating the release was blocked by this session's permission policy; not retried or worked around"
+  },
+  {
+   "where": "claude.ai Project for the private stage 0 tree (1.2 MB, and a 263 KB version without the results file)",
+   "result": "refused twice: the project is at its maximum size; no docs were deleted to make room"
+  }
+ ],
+ "E6": {
+  "private_price_data": "MET (computer + Project, read back identical)",
+  "private_project_files": "MET (computer + the Project itself)",
+  "private_stage0_tree": "NOT MET: 1 verified location outside the container (computer); the Project is full",
+  "public_sec_golden_bundle": "NOT MET: 1 verified location outside the container (computer)"
+ }
+}

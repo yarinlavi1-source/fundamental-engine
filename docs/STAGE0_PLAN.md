@@ -121,4 +121,26 @@ Stage 0 stores the filing index (accession, form, filed date, URL) needed for th
 - `docs/STAGE0_PLAN.md` (this), `docs/STAGE0_BASELINE.md` (report), `docs/SNAPSHOT_POLICY.md`
 
 ## Change log
-(none yet)
+All changes after the plan was committed (4b7ce68), with the reason. None changes the golden set, the as-of dates or
+the pass criteria.
+
+1. Added case 1b next to 1a (12.10 portfolio run): the only preserved engine.py contains the 13.10 addendum, so 1a runs it
+   as preserved and 1b removes only that marked block. Both are reported; 1a is not hidden.
+2. Added case 3b (the 18.10 portfolio run): the brain-fix runs of cases 4 and 5 start from an 18.10 engine record,
+   so that record is reproduced first.
+3. Facts in cases 1, 2, 3b, 4, 5 are recomputed by the original `facts.py` from SEC data rebuilt out of the 19.10 bulk
+   file (filed on or before each run date) instead of being fed from the records. Stronger than planned.
+4. Harness comparison fixes before the final run (the harness, not legacy code): brain_lite asymmetry is not capped
+   (the harness had wrongly capped it at 9.9); for INCY the table's "fails" cell describes the after-fix run, so it
+   is not compared with the as-run output; in the 13.10 note "מ-34.7%" is Hebrew "from 34.7%", not a negative number.
+5. Files added beyond the list: `scripts/stage0_legacy.py` (splits bundled project files byte-exact, redacts private
+   lines), `scripts/stage0_pr7_check.py` (E8), `stage0/known_wrong.json`, `stage0/storage_check.json`,
+   `stage0/pr7_pit_check.json`. The availability/filing index lives in the data store (`golden/availability.json`,
+   `golden/index/`), not in Git, because it sits next to the SEC files it indexes.
+6. The manual-extraction list grew from the automatic check: cover-page shares are also missing for PLTR and NBIS.
+7. Storage: a GitHub draft release for the public SEC bundle was blocked by the session's permission policy and was
+   not retried; Drive accepts only inline content. See `stage0/storage_check.json`; E6 is reported as not met.
+8. Privacy split (before the first push of results): the legacy code and records name held positions, so
+   `stage0/legacy/`, `stage0/fixtures/`, `repro_results.json`, the known-error register, the harness
+   (`stage0_repro.py`, `stage0_legacy.py`) and their tests moved to the private stage 0 store. The repository keeps
+   the tooling that names no positions, the public results, aggregate tests and this report without names.
