@@ -1,6 +1,11 @@
 {
-  "version": "0.9.0",
+  "version": "0.11.0",
   "packets": [
+    {
+      "id": "pipeline",
+      "title": "The single decision path (sources to decision)",
+      "file": "protocols/pipeline.md"
+    },
     {
       "id": "operating_system",
       "title": "Research operating system",
@@ -170,6 +175,11 @@
       "id": "valuation_integrity",
       "title": "Reconcile assets, shares, consensus and terminal maturity before price conclusions",
       "file": "protocols/valuation_integrity.md"
+    },
+    {
+      "id": "semiconductor",
+      "title": "Semiconductors and AI compute suppliers",
+      "file": "playbooks/semiconductor.md"
     }
   ]
 }
