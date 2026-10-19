@@ -1,3 +1,32 @@
+## 0.11.0 — one decision path from sources to verdict; discovery, portfolio and monitoring layers (20.10.2026)
+
+- facts.py: FactBook, one schema with provenance and availability date for every number; adapters for FMP
+  as-reported statements, SEC companyfacts (first filed, filed+2d), Alpha Vantage, IB prices, vendor share
+  counts, consensus and researched evidence bundles; point-in-time accessors; TTM from quarters or FY + YTD.
+- dataqa.py: eleven critical fields (verified / reported / single_source / conflict / missing / stale), accounting
+  identities, cross-provider checks, debt-scope resolution by roll-forward, split-aware share continuity.
+- analysis.py, model_card.py: ~35 traced metrics; business type, stage, funding, driver tree, valuation method by
+  type x stage, understanding checklist evidenced only with dated evidence.
+- forecast.py: bear/base/bull driver specs (guidance or consensus anchored, growth fade, margins after SBC,
+  reinvestment linked to growth, explicit funding, cost of equity from a documented table), what-must-be-true.
+- pipeline.py: collection plan, raw folder -> FactBook, one valuation route (drivers -> value_company + diagnostics),
+  run() over all stages with failures recorded, summary().
+- risk.py, review.py: disqualifying vs pricing vs accepted risks, permanent-loss and funding-failure cases,
+  red-team package derived from execution, independent reviewer sign-off validated by re-running the audit.
+- decision.py, render.py: four separate assessments, IRR at today's price vs index-based hurdle (14% only as a
+  comparison), closed verdict set with gates, price for hurdle, governed overrides; markdown report and Hebrew
+  paragraph.
+- screen.py, sec_frames.py: discovery lenses (quality compounder, quality at a fair price, early commercial growth,
+  mispriced/turning, structural) on eight separate dimensions; whole-market SEC frames adapter.
+- portfolio.py: read-only IBKR book, concentration, economic exposure overlaps, scenario stress, review triggers,
+  candidate vs holdings vs index vs cash options (never orders).
+- monitor.py + ledger v2: thesis records, material-only alerts, frozen forecasts with system timestamps,
+  error attribution; no backdating, no forecasting the past.
+- Hardening of earlier gates (redteam precedence, margin of safety, archetype match, hypothetical financing,
+  red-flag gate, stage override reason, driver defaults, Alpha Vantage availability).
+- CLI: pipeline-plan, pipeline, screen, portfolio. MCP: collection_plan, run_pipeline, screen_universe,
+  screen_changes, portfolio_analyze, portfolio_compare, thesis_record/check/freeze/score.
+
 ## 0.10.0 — expectation gap, capital bridge, red-team, point-in-time validation (19.10.2026)
 
 - capital.py: instrument-level capital structure (accreted converts, rational conversion fixed point,

@@ -1,4 +1,11 @@
-# Current version: 0.10.0 — 19.10.2026
+# Current version: 0.11.0 — 20.10.2026
+
+One decision path from connector payloads to a reviewed verdict (docs/ARCHITECTURE.md), plus discovery,
+read-only portfolio and monitoring layers on the same objects. Validation: see `python scripts/test_layers.py`
+(software / data accuracy / analysis behaviour / decision rules) and docs/EVIDENCE_STATUS.md for what is NOT
+proven (excess return). Remaining limitations: docs/LIMITATIONS.md.
+
+## Previous: 0.10.0 — 19.10.2026
 
 Expectation gap, instrument-level capital bridge, independent red-team, point-in-time SEC panel,
 inflection features, forecast ledger. Pre-registered universe test (docs/GAP_TEST_RESULTS.md):
