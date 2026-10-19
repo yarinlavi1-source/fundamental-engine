@@ -106,6 +106,22 @@ def main():
     pl.add_argument("--json", action="store_true", help="Print the full JSON result instead of the Hebrew text")
     ty = subs.add_parser("classify", help="Company type: life-cycle stage, Lynch category and research focus")
     ty.add_argument("input")
+    pp = subs.add_parser("pipeline-plan", help="Connector calls and raw file names for one company (fetches nothing)")
+    pp.add_argument("ticker")
+    pp.add_argument("as_of")
+    pp.add_argument("--cik")
+    pr = subs.add_parser("pipeline", help="Single decision path from a raw connector folder to verdict, report and Hebrew paragraph")
+    pr.add_argument("raw_dir")
+    pr.add_argument("--company", required=True, help="JSON file with ticker, name, currency, sector, industry, ...")
+    pr.add_argument("--as-of", required=True)
+    pr.add_argument("--inputs", help="JSON with analyst inputs (card, forecast, reviewer, decision)")
+    pr.add_argument("--qualitative", help="JSON with dated sources and qualitative items to add to the FactBook")
+    pr.add_argument("--out", required=True, help="Output folder (keep it outside Git for private or vendor data)")
+    pf = subs.add_parser("portfolio", help="READ-ONLY analysis of saved Interactive Brokers payloads; prints to stdout, stores nothing")
+    pf.add_argument("positions")
+    pf.add_argument("--summary")
+    pf.add_argument("--as-of", required=True)
+    pf.add_argument("--holdings", help="JSON {symbol: {sector, exposures, exposure_weights, casefile_summary, ...}}")
     im = subs.add_parser("import-av", help="Map saved Alpha Vantage statement JSON files into plain history rows")
     im.add_argument("income")
     im.add_argument("--balance")
@@ -114,6 +130,30 @@ def main():
     im.add_argument("--as-of")
     args = parser.parse_args()
     try:
+        if args.command == "pipeline-plan":
+            from .pipeline import collection_plan
+            print(json.dumps(collection_plan(args.ticker, args.as_of, args.cik), indent=2))
+            return
+        if args.command == "pipeline":
+            from .pipeline import factbook_from_run_dir, run, summary
+            from .render import markdown, hebrew_paragraph
+            from .facts import add_qualitative_bundle
+            fb = factbook_from_run_dir(args.raw_dir, read_json(args.company), args.as_of)
+            if args.qualitative:
+                add_qualitative_bundle(fb, read_json(args.qualitative))
+            cf = run(fb, read_json(args.inputs) if args.inputs else None)
+            out = Path(args.out); out.mkdir(parents=True, exist_ok=True)
+            (out / "factbook.json").write_text(json.dumps(fb, indent=1, ensure_ascii=False), encoding="utf-8")
+            (out / "casefile.json").write_text(json.dumps(cf, indent=1, ensure_ascii=False, default=str), encoding="utf-8")
+            (out / "report.md").write_text(markdown(cf), encoding="utf-8")
+            (out / "paragraph.txt").write_text(hebrew_paragraph(cf), encoding="utf-8")
+            print(json.dumps({'summary': summary(cf), 'stages': cf['stages'], 'errors': cf['errors'], 'out': str(out)}, indent=2, ensure_ascii=False))
+            return
+        if args.command == "portfolio":
+            from .portfolio import from_ib, analyze as analyze_book
+            book = from_ib(read_json(args.positions), read_json(args.summary) if args.summary else None, as_of=args.as_of)
+            print(json.dumps({'book': book, 'analysis': analyze_book(book, read_json(args.holdings) if args.holdings else None)}, indent=2, ensure_ascii=False))
+            return
         if args.command == "valuation-audit":
             from .valuation import value_company
             r = value_company(read_json(args.input))

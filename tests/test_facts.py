@@ -106,3 +106,35 @@ class FactBookTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class TtmTests(unittest.TestCase):
+    def test_annual_plus_year_to_date(self):
+        fb = F.new({'ticker': 'FIX', 'currency': 'USD'}, '2026-10-01')
+        F.add_source(fb, 's', 'sec', 'x', 'filing_derived', '2026-10-01')
+        F.add_fact(fb, 'revenue', 'FY2025', '2025-11-28', 100, 's', 'as_reported', '2026-01-15')
+        for end, v in (('2025-02-28', 22), ('2025-05-30', 24), ('2026-02-27', 25), ('2026-05-29', 27)):
+            F.add_fact(fb, 'revenue', 'Q@' + end, end, v, 's', 'as_reported', '2026-07-01')
+        t = F.ttm(fb, 'revenue')
+        self.assertEqual((t['method'], t['value'], t['period_end']), ('annual_plus_ytd', 106, '2026-05-29'))
+
+    def test_unmatched_newer_quarter_is_reported_not_mixed(self):
+        fb = F.new({'ticker': 'FIX', 'currency': 'USD'}, '2026-10-01')
+        F.add_source(fb, 's', 'sec', 'x', 'filing_derived', '2026-10-01')
+        F.add_fact(fb, 'revenue', 'FY2025', '2025-11-28', 100, 's', 'as_reported', '2026-01-15')
+        F.add_fact(fb, 'revenue', 'Q@2026-02-27', '2026-02-27', 25, 's', 'as_reported', '2026-04-01')
+        t = F.ttm(fb, 'revenue')
+        self.assertEqual((t['method'], t['value'], t['newer_quarters_unmatched']), ('latest_fiscal_year', 100, ['2026-02-27']))
+
+    def test_bundle_dates_gate_availability(self):
+        fb = F.new({'ticker': 'FIX', 'currency': 'USD'}, '2026-09-15')
+        F.add_qualitative_bundle(fb, {'sources': [{'id': 's1', 'title': 'Q3 release', 'url': 'https://example.com/q3', 'kind': 'issuer_release',
+                                                   'published_at': '2026-09-20', 'retrieval': 'search_excerpt'},
+                                                  {'id': 's2', 'title': 'Q2 release', 'url': 'https://example.com/q2', 'kind': 'issuer_release',
+                                                   'published_at': '2026-06-12', 'retrieval': 'search_excerpt'}],
+                                      'quarterly_facts': [{'metric': 'revenue', 'period': 'FY2026Q3', 'period_end': '2026-08-28', 'value': 7.0, 'source_ids': ['s1']},
+                                                          {'metric': 'revenue', 'period': 'FY2026Q2', 'period_end': '2026-05-29', 'value': 6.0, 'source_ids': ['s2']}],
+                                      'items': [{'id': 'i1', 'topic': 'moat', 'statement': 'later', 'kind': 'opinion', 'source_ids': ['s1'], 'as_of': '2026-09-20'}]})
+        self.assertEqual([e for e, _, _ in F.series(fb, 'revenue', 'quarter')], ['2026-05-29'])   # Q3 published after as_of
+        self.assertEqual(fb['qualitative'], [])
+        self.assertEqual(fb['sources']['web:s1']['retrieval'], 'search_excerpt')

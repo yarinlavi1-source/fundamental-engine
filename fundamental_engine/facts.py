@@ -344,6 +344,53 @@ def add_qualitative(fb, qid, topic, statement, kind, source_ids, as_of):
                               'source_ids': list(source_ids), 'as_of': as_of})
 
 
+BUNDLE_METRICS = {  # evidence-bundle metric names -> FactBook metrics (duration unless listed in BUNDLE_INSTANT)
+    'revenue': 'revenue', 'operating_income_gaap': 'operating_income', 'operating_income': 'operating_income',
+    'net_income_gaap': 'net_income', 'net_income': 'net_income', 'cfo': 'cfo', 'capex': 'capex', 'buybacks': 'buybacks',
+    'sbc': 'sbc', 'shares_outstanding': 'shares_outstanding', 'rpo': 'rpo', 'arr': 'arr',
+    'deferred_revenue': 'deferred_revenue_total', 'cash_and_investments': 'cash_and_investments_total', 'debt': 'debt_total_reported',
+}
+BUNDLE_INSTANT = {'shares_outstanding', 'rpo', 'arr', 'deferred_revenue_total', 'cash_and_investments_total', 'debt_total_reported'}
+SOURCE_KIND = {'issuer_release': 'document', 'filing': 'document', 'press': 'document', 'analysis': 'document'}
+
+
+def add_qualitative_bundle(fb, bundle, provider='web'):
+    """Load a researched evidence bundle: {sources, quarterly_facts, guidance, items, conflicts, open_questions}.
+
+    Sources keep their publication date; a fact or item is usable only from its source's publication date
+    (unknown date -> period end + deadline, flagged). Issuer releases and filings read through search excerpts
+    stay 'document' sources with retrieval recorded, so confidence reflects that the filing was not read."""
+    pub = {}
+    for src in bundle.get('sources', []):
+        sid = 'web:' + src['id']
+        prov = 'issuer' if src.get('kind') in ('issuer_release', 'filing') else provider
+        add_source(fb, sid, prov, src.get('kind', 'document'), SOURCE_KIND.get(src.get('kind'), 'document'),
+                   bundle.get('retrieved_at') or fb['as_of'], url=src.get('url'),
+                   note=f"{src.get('title', '')} | {src.get('publisher', '')} | retrieval={src.get('retrieval', 'search_excerpt')}")
+        fb['sources'][sid]['published_at'] = src.get('published_at')
+        fb['sources'][sid]['retrieval'] = src.get('retrieval', 'search_excerpt')
+        pub[src['id']] = src.get('published_at')
+    for q in bundle.get('quarterly_facts', []):
+        metric = BUNDLE_METRICS.get(q['metric'])
+        if metric is None or not q.get('source_ids'):
+            continue
+        dates = [pub.get(s) for s in q['source_ids'] if pub.get(s)]
+        avail, est = (max(dates), False) if dates else (_est_available(q['period_end'], 'quarter'), True)
+        period = ('I@' if metric in BUNDLE_INSTANT else 'Q@') + q['period_end']
+        add_fact(fb, metric, period, q['period_end'], q['value'], 'web:' + q['source_ids'][0],
+                 'as_reported' if not est else 'normalized', avail, estimated=est,
+                 unit='shares' if metric == 'shares_outstanding' else None, concept='bundle:' + q['metric'])
+    for g in bundle.get('guidance', []):
+        if _d(g.get('issued_at') or fb['as_of']) <= _d(fb['as_of']):
+            fb.setdefault('guidance', []).append({**g, 'source_ids': ['web:' + s for s in g.get('source_ids', [])]})
+    for it in bundle.get('items', []):
+        ids = ['web:' + s for s in it.get('source_ids', []) if 'web:' + s in fb['sources']]
+        if ids and _d(it.get('as_of') or fb['as_of']) <= _d(fb['as_of']):
+            add_qualitative(fb, it['id'], it['topic'], it['statement'], it['kind'], ids, it.get('as_of') or fb['as_of'])
+    fb.setdefault('research_notes', {}).update({'conflicts': bundle.get('conflicts', []), 'open_questions': bundle.get('open_questions', [])})
+    return fb
+
+
 # ---------------------------------------------------------------- accessors (point-in-time)
 
 def usable(fb, fact):
@@ -408,7 +455,20 @@ def ttm(fb, metric):
             return {'value': sum(x[1] for x in last4), 'period_end': last4[-1][0], 'method': 'quarters',
                     'facts': [x[2] for x in last4]}
     if a:
-        return {'value': a[-1][1], 'period_end': a[-1][0], 'method': 'latest_fiscal_year', 'facts': [a[-1][2]]}
+        a_end = _d(a[-1][0])
+        post = [x for x in q if _d(x[0]) > a_end]
+        if post:                                   # TTM = last FY + year-to-date - same quarters a year earlier
+            prior = []
+            for end, _, _ in post:
+                want = _d(end) - timedelta(days=364)
+                match = [x for x in q if abs((_d(x[0]) - want).days) <= 10]
+                prior.append(match[0] if match else None)
+            if all(prior):
+                v = a[-1][1] + sum(x[1] for x in post) - sum(x[1] for x in prior)
+                return {'value': v, 'period_end': post[-1][0], 'method': 'annual_plus_ytd',
+                        'facts': [a[-1][2]] + [x[2] for x in post] + [x[2] for x in prior]}
+        return {'value': a[-1][1], 'period_end': a[-1][0], 'method': 'latest_fiscal_year', 'facts': [a[-1][2]],
+                'newer_quarters_unmatched': [x[0] for x in post]}
     return None
 
 

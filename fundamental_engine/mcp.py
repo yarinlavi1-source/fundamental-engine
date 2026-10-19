@@ -71,7 +71,10 @@ TOOLS += [
  research_tool('redteam_audit','Independent accounting/valuation red-team: cash, debt, converts, shares after financing, ARR/backlog/prepayment/SBC/reinvestment/funding faults. Verdict passed / passed_with_limitations / failed / unable_to_verify; a critical failure marks the valuation unverified.',{'package':{'type':'object'}},['package']),
  research_tool('expectation_gap','What the price already assumes versus the evidence: one driver model (revenue->EBIT after SBC->reinvestment->FCFF->per share via capital_bridge), each lever solved alone, components with source ids. Probabilities only from a supplied base rate.',{'case':{'type':'object'}},['case']),
  research_tool('forecast_ledger','Append-only hashed forecast ledger: action forecast | outcome | score | verify. Freezes predictions before outcomes and scores them later.',{'path':{'type':'string'},'action':{'type':'string'},'entry':{'type':'object'}},['path','action']),
- research_tool('research_compare','Compare material claims and gates across revisions of one local case.',{'case_id':{'type':'string'},'first_revision':{'type':'integer'},'second_revision':{'type':'integer'}},['case_id','first_revision','second_revision']),
+ research_tool('research_compare','Compare material claims and gates across revisions of one local case.',{'case_id':{'type':'string'},'first_revision':{'type':'integer'},'second_revision':{'type':'integer'}},['case_id','first_revision','second_revision']), research_tool('collection_plan','Step 1 of the single decision path: exact connector calls and raw file names for one company. Fetches nothing; payloads must be saved verbatim outside Git. Read pipeline.',{'ticker':{'type':'string'},'as_of':{'type':'string'},'cik':{'type':'string'}},['ticker','as_of']),
+ research_tool('run_pipeline','The single decision path on a FactBook: data validation, business model card, financial analysis, bear/base/bull forecast, valuation, risks, independent review, four separate assessments and a closed verdict. Returns verdict, Hebrew paragraph, markdown report and hashes (full=true adds the casefile). Research indication, never an order. Read pipeline.',{'factbook':{'type':'object'},'inputs':{'type':'object'},'full':{'type':'integer','minimum':0,'maximum':1}},['factbook']),
+ research_tool('portfolio_analyze','READ-ONLY portfolio view from Interactive Brokers payloads the client already retrieved: weights, concentration, economic exposure overlaps, scenario stress, holdings that need review. Nothing is stored; never orders.',{'positions':{'type':'object'},'summary':{'type':'object'},'as_of':{'type':'string'},'holdings_info':{'type':'object'},'options':{'type':'object'}},['positions','as_of']),
+ research_tool('portfolio_compare','Compare a researched candidate with existing holdings, a broad index and cash: reasoned options (add, add to, trim, replace, index, cash, nothing) with risk, diversification and tax effects. Options only, never orders.',{'candidate':{'type':'object'},'book_analysis':{'type':'object'},'alternatives':{'type':'object'},'options':{'type':'object'}},['candidate','book_analysis']),
 ]
 
 
@@ -121,6 +124,25 @@ class Server:
             if 'enterprise_value' in args:
                 return per_share(args['capital_structure'], args['enterprise_value'])
             raise ValueError('Supply price or enterprise_value')
+        if name == 'collection_plan':
+            from .pipeline import collection_plan
+            return collection_plan(args['ticker'], args['as_of'], args.get('cik'))
+        if name == 'run_pipeline':
+            from .pipeline import run, summary
+            from .render import markdown, hebrew_paragraph
+            cf = run(args['factbook'], args.get('inputs'))
+            out = {'summary': summary(cf), 'stages': cf['stages'], 'errors': cf['errors'], 'paragraph': hebrew_paragraph(cf),
+                   'report_markdown': markdown(cf), 'casefile_sha256': cf['casefile_sha256'], 'factbook_sha256': cf['factbook_sha256']}
+            if args.get('full'):
+                out['casefile'] = cf
+            return out
+        if name == 'portfolio_analyze':
+            from .portfolio import from_ib, analyze as analyze_book
+            book = from_ib(args['positions'], args.get('summary'), as_of=args['as_of'])
+            return {'book': book, 'analysis': analyze_book(book, args.get('holdings_info'), args.get('options'))}
+        if name == 'portfolio_compare':
+            from .portfolio import compare
+            return compare(args['candidate'], args['book_analysis'], args.get('alternatives'), args.get('options'))
         if name == 'redteam_audit':
             from .redteam import audit
             return audit(args['package'])
