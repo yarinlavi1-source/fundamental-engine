@@ -174,3 +174,24 @@ class NowRegressionTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class EquityRaiseTests(unittest.TestCase):
+    """Equity raises dilute existing holders at an explicit issue price instead of a debt stand-in."""
+
+    def test_equity_proceeds_issue_shares_at_the_stated_price(self):
+        import json
+        from fundamental_engine.drivers import build_case
+        from fundamental_engine.valuation import value_company
+        spec = json.load(open('examples/valuation/software_drivers.json'))
+        base = next(s for s in spec['scenarios'] if s['name'] == 'base')
+        n = len(spec['boundaries'])
+        base['equity_proceeds'] = [100e6] + [0] * (n - 1)
+        base['equity_issue_price'] = 40.0
+        base['financing_status'] = 'committed'
+        case = build_case(spec)
+        p0 = case['scenarios'][[s['name'] for s in case['scenarios']].index('base')]['periods'][0]
+        self.assertEqual((p0['equity_proceeds'], p0['equity_issue_price'], p0['financing_status']), (100e6, 40.0, 'committed'))
+        rows = next(r for r in value_company(case)['scenarios'] if r['name'] == 'base')['forecast']
+        self.assertAlmostEqual(rows[0]['new_financing_shares'], 2.5e6)
+        self.assertLess(rows[0]['original_ownership'], 1.0)

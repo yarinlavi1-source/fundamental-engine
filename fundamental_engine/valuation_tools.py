@@ -161,6 +161,9 @@ def _shifted_value(case, scenario, shift):
         return None
 
 
+shifted_value = _shifted_value   # public name; decision.price_for_hurdle uses it
+
+
 def discount_rate_band(case, scenario='base', shift=.01):
     """Value today at cost of equity (and terminal WACC) minus/plus one shift.
 

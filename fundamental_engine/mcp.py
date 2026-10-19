@@ -70,12 +70,16 @@ TOOLS += [
  research_tool('capital_bridge','Instrument-level capital structure: spendable vs restricted cash, accreted convertible claims, rational conversion, warrants/options, prepayments. Mode market (price) or value (enterprise_value). Read valuation_integrity.',{'capital_structure':{'type':'object'},'price':{'type':'number'},'enterprise_value':{'type':'number'}},['capital_structure']),
  research_tool('redteam_audit','Independent accounting/valuation red-team: cash, debt, converts, shares after financing, ARR/backlog/prepayment/SBC/reinvestment/funding faults. Verdict passed / passed_with_limitations / failed / unable_to_verify; a critical failure marks the valuation unverified.',{'package':{'type':'object'}},['package']),
  research_tool('expectation_gap','What the price already assumes versus the evidence: one driver model (revenue->EBIT after SBC->reinvestment->FCFF->per share via capital_bridge), each lever solved alone, components with source ids. Probabilities only from a supplied base rate.',{'case':{'type':'object'}},['case']),
- research_tool('forecast_ledger','Append-only hashed forecast ledger: action forecast | outcome | score | verify. Freezes predictions before outcomes and scores them later.',{'path':{'type':'string'},'action':{'type':'string'},'entry':{'type':'object'}},['path','action']),
+ research_tool('forecast_ledger','Append-only hashed forecast ledger with system timestamps: action forecast | outcome | event | thesis | score | verify. Forecasts and outcomes need unit, currency and basis; no backdating, no forecasting a period that already ended; a second outcome must name the one it corrects.',{'path':{'type':'string'},'action':{'type':'string'},'entry':{'type':'object'}},['path','action']),
  research_tool('research_compare','Compare material claims and gates across revisions of one local case.',{'case_id':{'type':'string'},'first_revision':{'type':'integer'},'second_revision':{'type':'integer'}},['case_id','first_revision','second_revision']), research_tool('collection_plan','Step 1 of the single decision path: exact connector calls and raw file names for one company. Fetches nothing; payloads must be saved verbatim outside Git. Read pipeline.',{'ticker':{'type':'string'},'as_of':{'type':'string'},'cik':{'type':'string'}},['ticker','as_of']),
  research_tool('run_pipeline','The single decision path on a FactBook: data validation, business model card, financial analysis, bear/base/bull forecast, valuation, risks, independent review, four separate assessments and a closed verdict. Returns verdict, Hebrew paragraph, markdown report and hashes (full=true adds the casefile). Research indication, never an order. Read pipeline.',{'factbook':{'type':'object'},'inputs':{'type':'object'},'full':{'type':'integer','minimum':0,'maximum':1}},['factbook']),
  research_tool('portfolio_analyze','READ-ONLY portfolio view from Interactive Brokers payloads the client already retrieved: weights, concentration, economic exposure overlaps, scenario stress, holdings that need review. Nothing is stored; never orders.',{'positions':{'type':'object'},'summary':{'type':'object'},'as_of':{'type':'string'},'holdings_info':{'type':'object'},'options':{'type':'object'}},['positions','as_of']),
  research_tool('screen_universe','Discovery before full analysis: universe rows (screening/SEC/FactBook grades) -> eight separate dimensions, five opportunity lenses (quality compounder, quality at a fair price, early commercial growth, mispriced/turning, structural tailwind), near misses and a diverse shortlist with what to check first. Not recommendations; no ranking by cheapness. Read pipeline.',{'rows':{'type':'object'},'options':{'type':'object'}},['rows']),
  research_tool('screen_changes','Compare two discovery scans: entered, left, lens moves and the dimension changes behind them.',{'before':{'type':'object'},'after':{'type':'object'}},['before','after']),
+ research_tool('thesis_record','Turn a pipeline casefile into a dated thesis: key assumptions with falsifiers, forecasts (bear/base/bull per fiscal year), material triggers and a review date. Pure; freeze it with thesis_freeze.',{'casefile':{'type':'object'}},['casefile']),
+ research_tool('thesis_check','Compare a thesis with a newer FactBook (and optional price): what changed, whether it touches business quality, value, expected return or only the price, and alerts only for material deviations.',{'thesis':{'type':'object'},'factbook':{'type':'object'},'price':{'type':'number'}},['thesis','factbook']),
+ research_tool('thesis_freeze','Write a thesis and its forecasts into the append-only ledger at the time they are made (idempotent per thesis).',{'path':{'type':'string'},'thesis':{'type':'object'}},['path','thesis'],False),
+ research_tool('thesis_score','Score frozen forecasts against actual outcomes; attribute misses to analysis, valuation or a recorded external shock; recurring-error report from forecasts made before outcomes only.',{'path':{'type':'string'}},['path']),
  research_tool('portfolio_compare','Compare a researched candidate with existing holdings, a broad index and cash: reasoned options (add, add to, trim, replace, index, cash, nothing) with risk, diversification and tax effects. Options only, never orders.',{'candidate':{'type':'object'},'book_analysis':{'type':'object'},'alternatives':{'type':'object'},'options':{'type':'object'}},['candidate','book_analysis']),
 ]
 
@@ -147,6 +151,17 @@ class Server:
         if name == 'screen_changes':
             from .screen import rank_changes
             return rank_changes(args['before'], args['after'])
+        if name == 'thesis_record':
+            from .monitor import thesis_from_casefile
+            return thesis_from_casefile(args['casefile'])
+        if name == 'thesis_check':
+            from .monitor import check
+            return check(args['thesis'], args['factbook'], price=args.get('price'))
+        if name in {'thesis_freeze', 'thesis_score'}:
+            from .ledger import Ledger
+            from .monitor import freeze, score
+            L = Ledger(args['path'])
+            return freeze(L, args['thesis']) if name == 'thesis_freeze' else score(L)
         if name == 'portfolio_analyze':
             from .portfolio import from_ib, analyze as analyze_book
             book = from_ib(args['positions'], args.get('summary'), as_of=args['as_of'])
@@ -175,9 +190,11 @@ class Server:
             L = Ledger(args['path']); a = args['action']; e = args.get('entry', {})
             if a == 'forecast': return L.forecast(**e)
             if a == 'outcome': return L.outcome(**e)
+            if a == 'event': return L.event(**e)
+            if a == 'thesis': return L.thesis(**e)
             if a == 'score': return L.score()
             if a == 'verify': return L.verify()
-            raise ValueError('action must be forecast|outcome|score|verify')
+            raise ValueError('action must be forecast|outcome|event|thesis|score|verify')
         if name == 'frontier_plan':
             from .discovery import frontier_plan
             return frontier_plan(args['request'])

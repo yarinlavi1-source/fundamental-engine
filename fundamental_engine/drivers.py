@@ -37,7 +37,8 @@ RATIO_KEYS = {
     'nol_usage_limit': (0, 0, 1),
     'payout_fraction': (0, 0, 1),
 }
-ABSOLUTE_KEYS = ('amortization', 'minimum_cash', 'investment_income_after_tax', 'debt_draw', 'debt_repayment', 'fixed_cash_costs')
+ABSOLUTE_KEYS = ('amortization', 'minimum_cash', 'investment_income_after_tax', 'debt_draw', 'debt_repayment', 'fixed_cash_costs',
+                 'equity_proceeds')
 
 
 def _series(spec_row, key, count, default=None, low=None, high=None):
@@ -129,8 +130,13 @@ def build_case(spec):
                 'growth_capex': ratios['growth_capex_pct'][i] * revenue,
                 'minimum_cash': absolutes['minimum_cash'][i], 'payout_fraction': ratios['payout_fraction'][i],
                 'investment_income_after_tax': absolutes['investment_income_after_tax'][i] * dur,
-                'equity_proceeds': 0, 'equity_issue_price': case['quote']['price'], 'equity_fee_rate': 0,
-                'financing_status': sc.get('financing_status', 'committed' if debt_draw else 'none'),
+                # equity raises dilute existing holders at an explicit issue price (default: today's quote)
+                'equity_proceeds': absolutes['equity_proceeds'][i],
+                'equity_issue_price': number((sc.get('equity_issue_price') or [case['quote']['price']] * count)[i]
+                                             if isinstance(sc.get('equity_issue_price'), list) else
+                                             (sc.get('equity_issue_price') or case['quote']['price']), 'equity_issue_price', 1e-9),
+                'equity_fee_rate': number(sc.get('equity_fee_rate', 0), 'equity_fee_rate', 0, .2),
+                'financing_status': sc.get('financing_status', 'committed' if (debt_draw or absolutes['equity_proceeds'][i]) else 'none'),
             })
             rate_prev = rate
         if sc.get('sbc_policy', 'cash_equivalent') != 'cash_equivalent':

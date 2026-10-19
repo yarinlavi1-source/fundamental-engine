@@ -30,7 +30,7 @@ from .history import cagr
 from .plain import MARGIN_BARS
 from .scores import COST_OF_CAPITAL_REFERENCE
 from .decision_summary import RED_FLAG_KEYS
-from .valuation_tools import implied_cost_of_equity, _shifted_value
+from .valuation_tools import implied_cost_of_equity, shifted_value
 
 ASSESSMENTS = ('business_quality', 'trajectory', 'price_attractiveness', 'risk_and_error',
                'growth_quality', 'financial_strength', 'management_capital_allocation', 'data_uncertainty')
@@ -86,13 +86,15 @@ OVERRIDE_EFFECT = {'business_quality': 'verdict quality test and bear-loss toler
 DEMONSTRATED = {'growth': ('revenue_cagr_3y', '3y revenue CAGR'), 'mature_margin': ('operating_margin', 'current operating margin')}
 # risk.py marks every gate as class 'disqualifying'; only some are negative judgements (avoid). The others are
 # evidence gaps (insufficient_evidence) or the funding condition, routed to their own precedence step.
-RISK_GATES = {'gate.blocked_data': 'data_blocked', 'gate.thesis_without_basis': 'understanding',
+# Evidence gaps (rk['evidence_gaps'], class pricing) are routed the same way: understanding -> insufficient_evidence.
+# Routing is by id, not category (gate.unfunded_plan has category 'execution').
+RISK_GATES = {'gate.blocked_data': 'data_blocked', 'gap.understanding_insufficient': 'understanding',
               'gate.redteam_critical_failure': 'valuation_unverified', 'gate.unfunded_plan': 'funding', 'gate.equity_impaired': 'impaired'}
 # A gated verdict may only be overridden toward an outcome that is at least as restrictive.
 GATE_ALLOWED = {'disqualifying_risk': {'avoid'}, 'impaired_equity': {'avoid'},
                 'data_blocked': {'avoid', 'insufficient_evidence'}, 'review_blocked': {'avoid', 'insufficient_evidence'},
                 'valuation_unverified': {'avoid', 'insufficient_evidence'},
-                'understanding_insufficient': {'avoid', 'insufficient_evidence'},
+                'understanding_insufficient': {'avoid', 'insufficient_evidence'}, 'evidence_gap': {'avoid', 'insufficient_evidence'},
                 'unfunded_plan': {'avoid', 'insufficient_evidence', 'promising_funding_conditional'},
                 'no_valuation': {'avoid', 'insufficient_evidence', 'interesting_not_yet_valuable', 'index_preferable'}}
 FIELD_HE = {'shares_outstanding': 'מספר המניות', 'cash_and_liquid_investments': 'המזומן וההשקעות הנזילות',
@@ -651,7 +653,7 @@ def price_for_hurdle(case, hurdle):
     if case is None or case.get('method') not in ('operating', 'residual_income') or hurdle is None:
         return None
     base = next(s for s in case['scenarios'] if s['name'] == 'base')
-    v = _shifted_value(case, 'base', hurdle - base['cost_of_equity'])
+    v = shifted_value(case, 'base', hurdle - base['cost_of_equity'])
     if v is None:
         return {'value': None, 'status': 'invalid', 'reason': 'hurdle makes the terminal invalid (WACC <= growth) or the case unfunded'}
     return {'value': v, 'status': 'solved', 'hurdle': hurdle,
@@ -677,9 +679,12 @@ def _forecast_view(an, res, view):
 
 def _gates(parts, view, an):
     qa, card, val, rk, rv = (parts.get(k) for k in ('qa', 'card', 'val', 'rk', 'rv'))
-    g = {'disqualifying': [], 'impaired': False, 'data_blocked': [], 'review_blocked': [],
+    g = {'disqualifying': [], 'evidence_gaps': [], 'impaired': False, 'data_blocked': [], 'review_blocked': [],
          'valuation_unverified': [], 'understanding': [], 'funding': [], 'no_valuation': [], 'draft': [], 'red_flags': _forensic_flags(an)}
     reg = {r.get('id'): r for r in (rk or {}).get('register') or [] if isinstance(r, dict)}
+    for i in (rk or {}).get('evidence_gaps') or []:
+        g['understanding' if RISK_GATES.get(i) == 'understanding' else 'evidence_gaps'].append(
+            'risk register ' + i + ': ' + str((reg.get(i) or {}).get('description') or i))
     for i in (rk or {}).get('disqualifying') or []:
         r = reg.get(i) or {}
         item = {'id': i, 'description': r.get('description'), 'description_he': r.get('description_he'), 'category': r.get('category')}
@@ -756,13 +761,16 @@ def _verdict(A, g, er, view, index, pfh_fn):
         return {'code': code, 'label_he': VERDICTS[code], 'gate': gate, 'reason': reason, 'reason_he': reason_he,
                 'what_would_change_it': change, 'what_would_change_it_he': change_he, 'hurdle_used': hurdle, 'risk_premium_used': prem}
 
-    if g['understanding']:
+    if g['understanding'] or g['evidence_gaps']:
         # We cannot conclude without understanding the business: an evidence gap, never a negative judgement
         # ('avoid'). Disqualifying risks found meanwhile stay listed in the reason and in the risk assessment.
         dq = [str(x['description'] or x['id']) for x in g['disqualifying']] + (['impaired equity'] if g['impaired'] else [])
-        return out('insufficient_evidence', 'understanding_insufficient', 'Insufficient evidence: ' + '; '.join(g['understanding'])
+        gaps = g['understanding'] + g['evidence_gaps']
+        return out('insufficient_evidence', 'understanding_insufficient' if g['understanding'] else 'evidence_gap',
+                   'Insufficient evidence: ' + '; '.join(gaps)
                    + (f"; disqualifying risks also recorded: {'; '.join(dq)}" if dq else ''),
-                   'שאלות מהותיות על איך העסק מרוויח עדיין פתוחות', ['resolve: ' + x for x in g['understanding']],
+                   'שאלות מהותיות על איך העסק מרוויח עדיין פתוחות' if g['understanding'] else 'חסרות ראיות מהותיות להחלטה',
+                   ['resolve: ' + x for x in gaps],
                    'מענה מבוסס ראיות לשאלות ההבנה הפתוחות והרצה מחדש')
     if g['disqualifying'] or g['impaired']:
         items = [str(x['description'] or x['id']) for x in g['disqualifying']]
@@ -888,8 +896,9 @@ def _confidence(g, A, view, rk, card, val, qa):
         hard.append(('demo valuation inputs (synthetic)', 'זו דוגמה מומצאת, לא חברה אמיתית'))
     if g['data_blocked']:
         hard.append(('critical data blocked: ' + '; '.join(g['data_blocked']), 'נתונים קריטיים חסרים או סותרים'))
-    if g['understanding']:
-        hard.append(('business understanding insufficient', 'שאלות מהותיות על העסק עדיין פתוחות'))
+    if g['understanding'] or g['evidence_gaps']:
+        hard.append(('business understanding insufficient' if g['understanding'] else 'material evidence gap',
+                     'שאלות מהותיות על העסק עדיין פתוחות' if g['understanding'] else 'חסרות ראיות מהותיות'))
     if g['valuation_unverified']:
         hard.append(('valuation unverified by the red team', 'בדיקת האדום לא אישרה את חישוב השווי'))
     if g['no_valuation']:

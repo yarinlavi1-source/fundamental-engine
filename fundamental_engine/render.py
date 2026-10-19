@@ -462,9 +462,13 @@ def _review(cf):
             for c in m.get('consistency') or []]
     r = rv.get('reviewer')
     if r:
-        out.append(f"- Reviewer: {r.get('reviewer') or r.get('name') or 'n/a'} ({r.get('signed_at') or r.get('date') or 'undated'})")
+        rc = rv.get('reviewer_check') or {}
+        out.append(f"- Reviewer: {r.get('reviewer') or r.get('name') or 'n/a'} (reviewed_at {r.get('reviewed_at') or r.get('signed_at') or r.get('date') or 'undated'}; "
+                   f"independent: {r.get('independent')}; valid: {rc.get('valid', 'n/a')}) — {r.get('statement') or ''}")
+        out += [f'  - check error: {e}' for e in rc.get('errors') or []]
         for f in r.get('findings') or []:
-            out.append(f"  - {_cell(f)}")
+            out.append(f"  - [{f.get('severity')}] {f.get('text')} — {'resolved: ' + str(f.get('response')) if f.get('resolved') else 'UNRESOLVED'}"
+                       if isinstance(f, dict) else f'  - {f}')
     else:
         out.append('- No signed reviewer input.')
     return out + ['']

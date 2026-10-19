@@ -1059,7 +1059,7 @@ def build(fb, an, card, qa, inputs=None):
                                         'reinvestment', 'working_capital', 'tax', 'funding_policy', 'debt_interest', 'investment_income'],
               'cost_of_equity': _r(P[s]['ke']), 'sbc_policy': 'cash_equivalent', 'growth': p['growth']}
         for k in list(RATIO_KEYS) + list(ABSOLUTE_KEYS):
-            sc[k] = list(p[k])
+            sc[k] = list(p[k]) if k in p else [0.0] * len(p['cash_cost_ratio'])   # e.g. equity_proceeds: no raise modelled
         sc['terminal'] = {'assumption_ids': [f'terminal_{s}', 'cost_of_equity', 'claims'], 'growth': _r(P[s]['g_terminal']),
                           'wacc': _r(P[s]['wacc']), 'roic': _r(P[s]['roic']), 'operating_margin': _r(1 - p['cash_cost_ratio'][-1] - p['sbc_pct'][-1] - p['depreciation_pct'][-1]),
                           'tax_rate': _r(P[s]['tax']), 'sbc_in_margin': True, 'net_runoff_obligation': 0, 'other_claims': 0,

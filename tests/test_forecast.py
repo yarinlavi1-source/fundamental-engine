@@ -255,6 +255,7 @@ class AdbeForecastTests(unittest.TestCase):
         again = forecast.build(*adbe())
         self.assertEqual(again['spec_sha256'], self.fc['spec_sha256'])
         self.assertEqual(json.dumps(again['spec'], sort_keys=True), json.dumps(self.fc['spec'], sort_keys=True))
+        json.dumps(self.fc, allow_nan=False)                                       # whole output is JSON-safe (no NaN/inf)
 
     def test_what_must_be_true(self):
         price = self.fc['spec']['quote']['price']

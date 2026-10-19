@@ -263,19 +263,28 @@ class DecisionTests(unittest.TestCase):
         self.assertIn('Related-party', d['verdict']['reason'])                    # the risk stays visible
 
     def test_risk_module_gates_route_to_the_right_verdict(self):
-        expect = {'gate.thesis_without_basis': ('insufficient_evidence', 'understanding_insufficient'),
-                  'gate.blocked_data': ('insufficient_evidence', 'data_blocked'),
+        expect = {'gate.blocked_data': ('insufficient_evidence', 'data_blocked'),
                   'gate.redteam_critical_failure': ('insufficient_evidence', 'valuation_unverified'),
                   'gate.unfunded_plan': ('promising_funding_conditional', 'unfunded_plan'),
                   'gate.equity_impaired': ('avoid', 'impaired_equity'),
                   'gate.manipulation_signal': ('avoid', 'disqualifying_risk')}
         for gid, (code, gate) in expect.items():
             rk = deepcopy(RK)
-            rk['register'].append({'id': gid, 'category': 'test', 'description': f'{gid} (test)', 'class': 'disqualifying', 'severity': 'high',
-                                   'in_bear_case': False, 'evidence_ids': []})
+            rk['register'].append({'id': gid, 'category': 'execution' if gid == 'gate.unfunded_plan' else 'test', 'description': f'{gid} (test)',
+                                   'class': 'disqualifying', 'severity': 'high', 'in_bear_case': False, 'evidence_ids': []})
             rk['disqualifying'] = [gid]
             d = decide(parts(35, rk=rk))
             self.assertEqual((d['verdict']['code'], d['verdict']['gate']), (code, gate), gid)
+        # risk.py: the understanding gap is a high-severity PRICING entry listed in evidence_gaps, never a veto
+        rk = deepcopy(RK)
+        rk['register'].append({'id': 'gap.understanding_insufficient', 'category': 'business', 'class': 'pricing', 'severity': 'high',
+                               'description': 'Business not yet understood (test)', 'in_bear_case': False, 'evidence_ids': [], 'evidence_gap': True})
+        rk['evidence_gaps'] = ['gap.understanding_insufficient']
+        d = decide(parts(35, rk=rk))
+        self.assertEqual((d['verdict']['code'], d['verdict']['gate']), ('insufficient_evidence', 'understanding_insufficient'))
+        lift = {'target': 'verdict', 'value': 'attractive_at_price', 'justification': 'Analyst believes the business model is obvious enough',
+                'evidence_ids': ['synthetic']}
+        self.assertEqual(decide(parts(35, rk=rk), {'overrides': [lift]})['verdict']['code'], 'insufficient_evidence')
 
     def test_override_rejected_without_justification_or_known_evidence(self):
         p = self.p[70]
@@ -399,6 +408,13 @@ class RenderTests(unittest.TestCase):
         self.assertIn('| 2025-12-31 |', md)                                        # five-year financial table
         blocked = markdown(self.cases['blocked'])
         self.assertIn('insufficient_evidence', blocked)
+        cf = deepcopy(self.cases['attractive'])
+        cf['rv'] = {**RV_OK, 'reviewer': {'reviewer': 'Second analyst', 'reviewed_at': '2026-09-28', 'independent': True, 'statement': 'Checked inputs.',
+                                          'findings': [{'severity': 'major', 'text': 'Terminal margin aggressive', 'resolved': True, 'response': 'Cut to 24%'}]},
+                    'reviewer_check': {'valid': True, 'errors': []}}
+        md = markdown(cf)
+        self.assertIn('reviewed_at 2026-09-28', md)
+        self.assertIn('[major] Terminal margin aggressive', md)
 
 
 def adbe_parts():
