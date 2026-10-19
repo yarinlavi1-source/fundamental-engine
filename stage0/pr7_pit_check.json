@@ -1,0 +1,1142 @@
+[
+ {
+  "tk": "NBIS",
+  "asof": "2026-10-19",
+  "ttm_rev_full": [
+   null,
+   null
+  ],
+  "ttm_rev_golden": [
+   null,
+   null
+  ],
+  "ttm_oi_full": [
+   null,
+   null
+  ],
+  "ttm_oi_golden": [
+   null,
+   null
+  ],
+  "ttm_ni_full": [
+   null,
+   null
+  ],
+  "ttm_ni_golden": [
+   null,
+   null
+  ],
+  "ttm_ocf_full": [
+   null,
+   null
+  ],
+  "ttm_ocf_golden": [
+   null,
+   null
+  ],
+  "ttm_capex_full": [
+   null,
+   null
+  ],
+  "ttm_capex_golden": [
+   null,
+   null
+  ],
+  "shares_at_full": [
+   null,
+   null,
+   null
+  ],
+  "shares_at_golden": [
+   null,
+   null,
+   null
+  ],
+  "identical": true,
+  "shares_missing_in_pit": true,
+  "golden_manual_cover_shares": true
+ },
+ {
+  "tk": "ASTS",
+  "asof": "2026-10-19",
+  "ttm_rev_full": [
+   115299000.0,
+   "2026-06-30"
+  ],
+  "ttm_rev_golden": [
+   115299000.0,
+   "2026-06-30"
+  ],
+  "ttm_oi_full": [
+   -2374272.0,
+   "2021-03-31"
+  ],
+  "ttm_oi_golden": [
+   -2374272.0,
+   "2021-03-31"
+  ],
+  "ttm_ni_full": [
+   -618761000.0,
+   "2026-06-30"
+  ],
+  "ttm_ni_golden": [
+   -618761000.0,
+   "2026-06-30"
+  ],
+  "ttm_ocf_full": [
+   -144705000.0,
+   "2026-06-30"
+  ],
+  "ttm_ocf_golden": [
+   -144705000.0,
+   "2026-06-30"
+  ],
+  "ttm_capex_full": [
+   1493334000.0,
+   "2026-06-30"
+  ],
+  "ttm_capex_golden": [
+   1493334000.0,
+   "2026-06-30"
+  ],
+  "shares_at_full": [
+   "2026-06-30",
+   299061662.0,
+   "weighted_basic"
+  ],
+  "shares_at_golden": [
+   "2026-06-30",
+   299061662.0,
+   "weighted_basic"
+  ],
+  "identical": true,
+  "shares_missing_in_pit": false,
+  "golden_manual_cover_shares": true
+ },
+ {
+  "tk": "NOW",
+  "asof": "2026-10-19",
+  "ttm_rev_full": [
+   14732000000.0,
+   "2026-06-30"
+  ],
+  "ttm_rev_golden": [
+   14732000000.0,
+   "2026-06-30"
+  ],
+  "ttm_oi_full": [
+   1680000000.0,
+   "2026-06-30"
+  ],
+  "ttm_oi_golden": [
+   1680000000.0,
+   "2026-06-30"
+  ],
+  "ttm_ni_full": [
+   1670000000.0,
+   "2026-06-30"
+  ],
+  "ttm_ni_golden": [
+   1670000000.0,
+   "2026-06-30"
+  ],
+  "ttm_ocf_full": [
+   5308000000.0,
+   "2026-06-30"
+  ],
+  "ttm_ocf_golden": [
+   5308000000.0,
+   "2026-06-30"
+  ],
+  "ttm_capex_full": [
+   728000000.0,
+   "2026-06-30"
+  ],
+  "ttm_capex_golden": [
+   728000000.0,
+   "2026-06-30"
+  ],
+  "shares_at_full": [
+   "2026-06-30",
+   1034000000.0,
+   "dei_cover"
+  ],
+  "shares_at_golden": [
+   "2026-06-30",
+   1034000000.0,
+   "dei_cover"
+  ],
+  "identical": true,
+  "shares_missing_in_pit": false,
+  "golden_manual_cover_shares": false
+ },
+ {
+  "tk": "PLTR",
+  "asof": "2026-10-19",
+  "ttm_rev_full": [
+   6155941000.0,
+   "2026-06-30"
+  ],
+  "ttm_rev_golden": [
+   6155941000.0,
+   "2026-06-30"
+  ],
+  "ttm_oi_full": [
+   2634652000.0,
+   "2026-06-30"
+  ],
+  "ttm_oi_golden": [
+   2634652000.0,
+   "2026-06-30"
+  ],
+  "ttm_ni_full": [
+   3016692000.0,
+   "2026-06-30"
+  ],
+  "ttm_ni_golden": [
+   3016692000.0,
+   "2026-06-30"
+  ],
+  "ttm_ocf_full": [
+   3400291000.0,
+   "2026-06-30"
+  ],
+  "ttm_ocf_golden": [
+   3400291000.0,
+   "2026-06-30"
+  ],
+  "ttm_capex_full": [
+   42019000.0,
+   "2026-06-30"
+  ],
+  "ttm_capex_golden": [
+   42019000.0,
+   "2026-06-30"
+  ],
+  "shares_at_full": [
+   "2026-06-30",
+   2402897000.0,
+   "balance_sheet"
+  ],
+  "shares_at_golden": [
+   "2026-06-30",
+   2402897000.0,
+   "balance_sheet"
+  ],
+  "identical": true,
+  "shares_missing_in_pit": false,
+  "golden_manual_cover_shares": true
+ },
+ {
+  "tk": "APH",
+  "asof": "2026-10-19",
+  "ttm_rev_full": [
+   29011600000.0,
+   "2026-06-30"
+  ],
+  "ttm_rev_golden": [
+   29011600000.0,
+   "2026-06-30"
+  ],
+  "ttm_oi_full": [
+   7841400000.0,
+   "2026-06-30"
+  ],
+  "ttm_oi_golden": [
+   7841400000.0,
+   "2026-06-30"
+  ],
+  "ttm_ni_full": [
+   5143400000.0,
+   "2026-06-30"
+  ],
+  "ttm_ni_golden": [
+   5143400000.0,
+   "2026-06-30"
+  ],
+  "ttm_ocf_full": [
+   5871700000.0,
+   "2026-06-30"
+  ],
+  "ttm_ocf_golden": [
+   5871700000.0,
+   "2026-06-30"
+  ],
+  "ttm_capex_full": [
+   1158000000.0,
+   "2026-06-30"
+  ],
+  "ttm_capex_golden": [
+   1158000000.0,
+   "2026-06-30"
+  ],
+  "shares_at_full": [
+   "2026-07-28",
+   1232983457.0,
+   "dei_cover"
+  ],
+  "shares_at_golden": [
+   "2026-07-28",
+   1232983457.0,
+   "dei_cover"
+  ],
+  "identical": true,
+  "shares_missing_in_pit": false,
+  "golden_manual_cover_shares": false
+ },
+ {
+  "tk": "COST",
+  "asof": "2016-06-30",
+  "ttm_rev_full": [
+   117937000000.0,
+   "2016-05-08"
+  ],
+  "ttm_rev_golden": [
+   117937000000.0,
+   "2016-05-08"
+  ],
+  "ttm_oi_full": [
+   3637000000.0,
+   "2016-05-08"
+  ],
+  "ttm_oi_golden": [
+   3637000000.0,
+   "2016-05-08"
+  ],
+  "ttm_ni_full": [
+   2338000000.0,
+   "2016-05-08"
+  ],
+  "ttm_ni_golden": [
+   2338000000.0,
+   "2016-05-08"
+  ],
+  "ttm_ocf_full": [
+   4489000000.0,
+   "2016-05-08"
+  ],
+  "ttm_ocf_golden": [
+   4489000000.0,
+   "2016-05-08"
+  ],
+  "ttm_capex_full": [
+   2605000000.0,
+   "2016-05-08"
+  ],
+  "ttm_capex_golden": [
+   2605000000.0,
+   "2016-05-08"
+  ],
+  "shares_at_full": [
+   "2016-05-25",
+   438065563.0,
+   "dei_cover"
+  ],
+  "shares_at_golden": [
+   "2016-05-25",
+   438065563.0,
+   "dei_cover"
+  ],
+  "identical": true,
+  "shares_missing_in_pit": false,
+  "golden_manual_cover_shares": false
+ },
+ {
+  "tk": "MSFT",
+  "asof": "2016-06-30",
+  "ttm_rev_full": [
+   86886000000.0,
+   "2016-03-31"
+  ],
+  "ttm_rev_golden": [
+   86886000000.0,
+   "2016-03-31"
+  ],
+  "ttm_oi_full": [
+   15049000000.0,
+   "2016-03-31"
+  ],
+  "ttm_oi_golden": [
+   15049000000.0,
+   "2016-03-31"
+  ],
+  "ttm_ni_full": [
+   10179000000.0,
+   "2016-03-31"
+  ],
+  "ttm_ni_golden": [
+   10179000000.0,
+   "2016-03-31"
+  ],
+  "ttm_ocf_full": [
+   31375000000.0,
+   "2016-03-31"
+  ],
+  "ttm_ocf_golden": [
+   31375000000.0,
+   "2016-03-31"
+  ],
+  "ttm_capex_full": [
+   7469000000.0,
+   "2016-03-31"
+  ],
+  "ttm_capex_golden": [
+   7469000000.0,
+   "2016-03-31"
+  ],
+  "shares_at_full": [
+   "2016-04-15",
+   7860466856.0,
+   "dei_cover"
+  ],
+  "shares_at_golden": [
+   "2016-04-15",
+   7860466856.0,
+   "dei_cover"
+  ],
+  "identical": true,
+  "shares_missing_in_pit": false,
+  "golden_manual_cover_shares": false
+ },
+ {
+  "tk": "V",
+  "asof": "2016-06-30",
+  "ttm_rev_full": [
+   14280000000.0,
+   "2016-03-31"
+  ],
+  "ttm_rev_golden": [
+   14280000000.0,
+   "2016-03-31"
+  ],
+  "ttm_oi_full": [
+   9375000000.0,
+   "2016-03-31"
+  ],
+  "ttm_oi_golden": [
+   9375000000.0,
+   "2016-03-31"
+  ],
+  "ttm_ni_full": [
+   6857000000.0,
+   "2016-03-31"
+  ],
+  "ttm_ni_golden": [
+   6857000000.0,
+   "2016-03-31"
+  ],
+  "ttm_ocf_full": [
+   6664000000.0,
+   "2016-03-31"
+  ],
+  "ttm_ocf_golden": [
+   6664000000.0,
+   "2016-03-31"
+  ],
+  "ttm_capex_full": [
+   462000000.0,
+   "2016-03-31"
+  ],
+  "ttm_capex_golden": [
+   462000000.0,
+   "2016-03-31"
+  ],
+  "shares_at_full": [
+   null,
+   null,
+   null
+  ],
+  "shares_at_golden": [
+   null,
+   null,
+   null
+  ],
+  "identical": true,
+  "shares_missing_in_pit": true,
+  "golden_manual_cover_shares": true
+ },
+ {
+  "tk": "CRWD",
+  "asof": "2020-06-30",
+  "ttm_rev_full": [
+   563414000.0,
+   "2020-04-30"
+  ],
+  "ttm_rev_golden": [
+   563414000.0,
+   "2020-04-30"
+  ],
+  "ttm_oi_full": [
+   -142865000.0,
+   "2020-04-30"
+  ],
+  "ttm_oi_golden": [
+   -142865000.0,
+   "2020-04-30"
+  ],
+  "ttm_ni_full": [
+   -135024000.0,
+   "2020-04-30"
+  ],
+  "ttm_ni_golden": [
+   -135024000.0,
+   "2020-04-30"
+  ],
+  "ttm_ocf_full": [
+   197105000.0,
+   "2020-04-30"
+  ],
+  "ttm_ocf_golden": [
+   197105000.0,
+   "2020-04-30"
+  ],
+  "ttm_capex_full": [
+   74351000.0,
+   "2020-04-30"
+  ],
+  "ttm_capex_golden": [
+   74351000.0,
+   "2020-04-30"
+  ],
+  "shares_at_full": [
+   null,
+   null,
+   null
+  ],
+  "shares_at_golden": [
+   null,
+   null,
+   null
+  ],
+  "identical": true,
+  "shares_missing_in_pit": true,
+  "golden_manual_cover_shares": true
+ },
+ {
+  "tk": "UBER",
+  "asof": "2023-06-30",
+  "ttm_rev_full": [
+   33846000000.0,
+   "2023-03-31"
+  ],
+  "ttm_rev_golden": [
+   33846000000.0,
+   "2023-03-31"
+  ],
+  "ttm_oi_full": [
+   -1612000000.0,
+   "2023-03-31"
+  ],
+  "ttm_oi_golden": [
+   -1612000000.0,
+   "2023-03-31"
+  ],
+  "ttm_ni_full": [
+   -3369000000.0,
+   "2023-03-31"
+  ],
+  "ttm_ni_golden": [
+   -3369000000.0,
+   "2023-03-31"
+  ],
+  "ttm_ocf_full": [
+   1233000000.0,
+   "2023-03-31"
+  ],
+  "ttm_ocf_golden": [
+   1233000000.0,
+   "2023-03-31"
+  ],
+  "ttm_capex_full": [
+   247000000.0,
+   "2023-03-31"
+  ],
+  "ttm_capex_golden": [
+   247000000.0,
+   "2023-03-31"
+  ],
+  "shares_at_full": [
+   "2023-04-27",
+   2023827162.0,
+   "dei_cover"
+  ],
+  "shares_at_golden": [
+   "2023-04-27",
+   2023827162.0,
+   "dei_cover"
+  ],
+  "identical": true,
+  "shares_missing_in_pit": false,
+  "golden_manual_cover_shares": false
+ },
+ {
+  "tk": "ENPH",
+  "asof": "2019-06-30",
+  "ttm_rev_full": [
+   346337000.0,
+   "2019-03-31"
+  ],
+  "ttm_rev_golden": [
+   346337000.0,
+   "2019-03-31"
+  ],
+  "ttm_oi_full": [
+   11205000.0,
+   "2019-03-31"
+  ],
+  "ttm_oi_golden": [
+   11205000.0,
+   "2019-03-31"
+  ],
+  "ttm_ni_full": [
+   -3734000.0,
+   "2019-03-31"
+  ],
+  "ttm_ni_golden": [
+   -3734000.0,
+   "2019-03-31"
+  ],
+  "ttm_ocf_full": [
+   29834000.0,
+   "2019-03-31"
+  ],
+  "ttm_ocf_golden": [
+   29834000.0,
+   "2019-03-31"
+  ],
+  "ttm_capex_full": [
+   3766000.0,
+   "2019-03-31"
+  ],
+  "ttm_capex_golden": [
+   3766000.0,
+   "2019-03-31"
+  ],
+  "shares_at_full": [
+   "2019-04-23",
+   110226728.0,
+   "dei_cover"
+  ],
+  "shares_at_golden": [
+   "2019-04-23",
+   110226728.0,
+   "dei_cover"
+  ],
+  "identical": true,
+  "shares_missing_in_pit": false,
+  "golden_manual_cover_shares": false
+ },
+ {
+  "tk": "PTON",
+  "asof": "2021-03-31",
+  "ttm_rev_full": [
+   2954400000.0,
+   "2020-12-31"
+  ],
+  "ttm_rev_golden": [
+   2954400000.0,
+   "2020-12-31"
+  ],
+  "ttm_oi_full": [
+   159300000.0,
+   "2020-12-31"
+  ],
+  "ttm_oi_golden": [
+   159300000.0,
+   "2020-12-31"
+  ],
+  "ttm_ni_full": [
+   166400000.0,
+   "2020-12-31"
+  ],
+  "ttm_ni_golden": [
+   166400000.0,
+   "2020-12-31"
+  ],
+  "ttm_ocf_full": [
+   853700000.0,
+   "2020-12-31"
+  ],
+  "ttm_ocf_golden": [
+   853700000.0,
+   "2020-12-31"
+  ],
+  "ttm_capex_full": [
+   183100000.0,
+   "2020-09-30"
+  ],
+  "ttm_capex_golden": [
+   183100000.0,
+   "2020-09-30"
+  ],
+  "shares_at_full": [
+   "2020-12-31",
+   292462184.0,
+   "weighted_basic"
+  ],
+  "shares_at_golden": [
+   "2020-12-31",
+   292462184.0,
+   "weighted_basic"
+  ],
+  "identical": true,
+  "shares_missing_in_pit": false,
+  "golden_manual_cover_shares": true
+ },
+ {
+  "tk": "TDOC",
+  "asof": "2021-03-31",
+  "ttm_rev_full": [
+   1093962000.0,
+   "2020-12-31"
+  ],
+  "ttm_rev_golden": [
+   1093962000.0,
+   "2020-12-31"
+  ],
+  "ttm_oi_full": [
+   -506421000.0,
+   "2020-12-31"
+  ],
+  "ttm_oi_golden": [
+   -506421000.0,
+   "2020-12-31"
+  ],
+  "ttm_ni_full": [
+   -485136000.0,
+   "2020-12-31"
+  ],
+  "ttm_ni_golden": [
+   -485136000.0,
+   "2020-12-31"
+  ],
+  "ttm_ocf_full": [
+   -53511000.0,
+   "2020-12-31"
+  ],
+  "ttm_ocf_golden": [
+   -53511000.0,
+   "2020-12-31"
+  ],
+  "ttm_capex_full": [
+   4024000.0,
+   "2020-12-31"
+  ],
+  "ttm_capex_golden": [
+   4024000.0,
+   "2020-12-31"
+  ],
+  "shares_at_full": [
+   "2021-02-25",
+   152699999.0,
+   "dei_cover"
+  ],
+  "shares_at_golden": [
+   "2021-02-25",
+   152699999.0,
+   "dei_cover"
+  ],
+  "identical": true,
+  "shares_missing_in_pit": false,
+  "golden_manual_cover_shares": false
+ },
+ {
+  "tk": "BYND",
+  "asof": "2020-06-30",
+  "ttm_rev_full": [
+   354765000.0,
+   "2020-03-28"
+  ],
+  "ttm_rev_golden": [
+   354765000.0,
+   "2020-03-28"
+  ],
+  "ttm_oi_full": [
+   6618000.0,
+   "2020-03-28"
+  ],
+  "ttm_oi_golden": [
+   6618000.0,
+   "2020-03-28"
+  ],
+  "ttm_ni_full": [
+   -3979000.0,
+   "2020-03-28"
+  ],
+  "ttm_ni_golden": [
+   -3979000.0,
+   "2020-03-28"
+  ],
+  "ttm_ocf_full": [
+   -50917000.0,
+   "2020-03-28"
+  ],
+  "ttm_ocf_golden": [
+   -50917000.0,
+   "2020-03-28"
+  ],
+  "ttm_capex_full": [
+   32398000.0,
+   "2020-03-28"
+  ],
+  "ttm_capex_golden": [
+   32398000.0,
+   "2020-03-28"
+  ],
+  "shares_at_full": [
+   "2020-05-11",
+   62236723.0,
+   "dei_cover"
+  ],
+  "shares_at_golden": [
+   "2020-05-11",
+   62236723.0,
+   "dei_cover"
+  ],
+  "identical": true,
+  "shares_missing_in_pit": false,
+  "golden_manual_cover_shares": false
+ },
+ {
+  "tk": "CVNA",
+  "asof": "2021-09-30",
+  "ttm_rev_full": [
+   8951015000.0,
+   "2021-06-30"
+  ],
+  "ttm_rev_golden": [
+   8951015000.0,
+   "2021-06-30"
+  ],
+  "ttm_oi_full": [
+   null,
+   null
+  ],
+  "ttm_oi_golden": [
+   null,
+   null
+  ],
+  "ttm_ni_full": [
+   -84423000.0,
+   "2021-06-30"
+  ],
+  "ttm_ni_golden": [
+   -84423000.0,
+   "2021-06-30"
+  ],
+  "ttm_ocf_full": [
+   -1571990000.0,
+   "2021-06-30"
+  ],
+  "ttm_ocf_golden": [
+   -1571990000.0,
+   "2021-06-30"
+  ],
+  "ttm_capex_full": [
+   382744000.0,
+   "2021-06-30"
+  ],
+  "ttm_capex_golden": [
+   382744000.0,
+   "2021-06-30"
+  ],
+  "shares_at_full": [
+   null,
+   null,
+   null
+  ],
+  "shares_at_golden": [
+   null,
+   null,
+   null
+  ],
+  "identical": true,
+  "shares_missing_in_pit": true,
+  "golden_manual_cover_shares": true
+ },
+ {
+  "tk": "INTC",
+  "asof": "2021-06-30",
+  "ttm_rev_full": [
+   77712000000.0,
+   "2021-03-27"
+  ],
+  "ttm_rev_golden": [
+   77712000000.0,
+   "2021-03-27"
+  ],
+  "ttm_oi_full": [
+   20334000000.0,
+   "2021-03-27"
+  ],
+  "ttm_oi_golden": [
+   20334000000.0,
+   "2021-03-27"
+  ],
+  "ttm_ni_full": [
+   18599000000.0,
+   "2021-03-27"
+  ],
+  "ttm_ni_golden": [
+   18599000000.0,
+   "2021-03-27"
+  ],
+  "ttm_ocf_full": [
+   34774000000.0,
+   "2021-03-27"
+  ],
+  "ttm_ocf_golden": [
+   34774000000.0,
+   "2021-03-27"
+  ],
+  "ttm_capex_full": [
+   14963000000.0,
+   "2021-03-27"
+  ],
+  "ttm_capex_golden": [
+   14963000000.0,
+   "2021-03-27"
+  ],
+  "shares_at_full": [
+   "2021-03-27",
+   4038000000.0,
+   "dei_cover"
+  ],
+  "shares_at_golden": [
+   "2021-03-27",
+   4038000000.0,
+   "dei_cover"
+  ],
+  "identical": true,
+  "shares_missing_in_pit": false,
+  "golden_manual_cover_shares": false
+ },
+ {
+  "tk": "ZM",
+  "asof": "2020-12-31",
+  "ttm_rev_full": [
+   1957134000.0,
+   "2020-10-31"
+  ],
+  "ttm_rev_golden": [
+   1957134000.0,
+   "2020-10-31"
+  ],
+  "ttm_oi_full": [
+   414284000.0,
+   "2020-10-31"
+  ],
+  "ttm_oi_golden": [
+   414284000.0,
+   "2020-10-31"
+  ],
+  "ttm_ni_full": [
+   427045000.0,
+   "2020-10-31"
+  ],
+  "ttm_ni_golden": [
+   427045000.0,
+   "2020-10-31"
+  ],
+  "ttm_ocf_full": [
+   1108335000.0,
+   "2020-10-31"
+  ],
+  "ttm_ocf_golden": [
+   1108335000.0,
+   "2020-10-31"
+  ],
+  "ttm_capex_full": [
+   68469000.0,
+   "2020-10-31"
+  ],
+  "ttm_capex_golden": [
+   68469000.0,
+   "2020-10-31"
+  ],
+  "shares_at_full": [
+   "2020-10-31",
+   284783006.0,
+   "weighted_basic"
+  ],
+  "shares_at_golden": [
+   "2020-10-31",
+   284783006.0,
+   "weighted_basic"
+  ],
+  "identical": true,
+  "shares_missing_in_pit": false,
+  "golden_manual_cover_shares": true
+ },
+ {
+  "tk": "SNOW",
+  "asof": "2021-11-30",
+  "ttm_rev_full": [
+   851201000.0,
+   "2021-07-31"
+  ],
+  "ttm_rev_golden": [
+   851201000.0,
+   "2021-07-31"
+  ],
+  "ttm_oi_full": [
+   -775587000.0,
+   "2021-07-31"
+  ],
+  "ttm_oi_golden": [
+   -775587000.0,
+   "2021-07-31"
+  ],
+  "ttm_ni_full": [
+   -760763000.0,
+   "2021-07-31"
+  ],
+  "ttm_ni_golden": [
+   -760763000.0,
+   "2021-07-31"
+  ],
+  "ttm_ocf_full": [
+   15603000.0,
+   "2021-07-31"
+  ],
+  "ttm_ocf_golden": [
+   15603000.0,
+   "2021-07-31"
+  ],
+  "ttm_capex_full": [
+   38216000.0,
+   "2021-07-31"
+  ],
+  "ttm_capex_golden": [
+   38216000.0,
+   "2021-07-31"
+  ],
+  "shares_at_full": [
+   "2021-08-20",
+   300900000.0,
+   "dei_cover"
+  ],
+  "shares_at_golden": [
+   "2021-08-20",
+   300900000.0,
+   "dei_cover"
+  ],
+  "identical": true,
+  "shares_missing_in_pit": false,
+  "golden_manual_cover_shares": false
+ },
+ {
+  "tk": "PYPL",
+  "asof": "2021-07-31",
+  "ttm_rev_full": [
+   23846000000.0,
+   "2021-06-30"
+  ],
+  "ttm_rev_golden": [
+   23846000000.0,
+   "2021-06-30"
+  ],
+  "ttm_oi_full": [
+   4109000000.0,
+   "2021-06-30"
+  ],
+  "ttm_oi_golden": [
+   4109000000.0,
+   "2021-06-30"
+  ],
+  "ttm_ni_full": [
+   4869000000.0,
+   "2021-06-30"
+  ],
+  "ttm_ni_golden": [
+   4869000000.0,
+   "2021-06-30"
+  ],
+  "ttm_ocf_full": [
+   5031000000.0,
+   "2021-06-30"
+  ],
+  "ttm_ocf_golden": [
+   5031000000.0,
+   "2021-06-30"
+  ],
+  "ttm_capex_full": [
+   935000000.0,
+   "2021-06-30"
+  ],
+  "ttm_capex_golden": [
+   935000000.0,
+   "2021-06-30"
+  ],
+  "shares_at_full": [
+   "2021-07-23",
+   1175032150.0,
+   "dei_cover"
+  ],
+  "shares_at_golden": [
+   "2021-07-23",
+   1175032150.0,
+   "dei_cover"
+  ],
+  "identical": true,
+  "shares_missing_in_pit": false,
+  "golden_manual_cover_shares": false
+ },
+ {
+  "tk": "NKE",
+  "asof": "2021-11-30",
+  "ttm_rev_full": [
+   46192000000.0,
+   "2021-08-31"
+  ],
+  "ttm_rev_golden": [
+   46192000000.0,
+   "2021-08-31"
+  ],
+  "ttm_oi_full": [
+   null,
+   null
+  ],
+  "ttm_oi_golden": [
+   null,
+   null
+  ],
+  "ttm_ni_full": [
+   6083000000.0,
+   "2021-08-31"
+  ],
+  "ttm_ni_golden": [
+   6083000000.0,
+   "2021-08-31"
+  ],
+  "ttm_ocf_full": [
+   6886000000.0,
+   "2021-08-31"
+  ],
+  "ttm_ocf_golden": [
+   6886000000.0,
+   "2021-08-31"
+  ],
+  "ttm_capex_full": [
+   703000000.0,
+   "2021-08-31"
+  ],
+  "ttm_capex_golden": [
+   703000000.0,
+   "2021-08-31"
+  ],
+  "shares_at_full": [
+   "2021-08-31",
+   1581900000.0,
+   "weighted_basic"
+  ],
+  "shares_at_golden": [
+   "2021-08-31",
+   1581900000.0,
+   "weighted_basic"
+  ],
+  "identical": true,
+  "shares_missing_in_pit": false,
+  "golden_manual_cover_shares": true
+ }
+]

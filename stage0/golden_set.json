@@ -1,0 +1,127 @@
+{
+ "frozen": "2026-10-20",
+ "approved_by": "Yarin 19.10.2026",
+ "note": "Do not edit after results are seen; see docs/STAGE0_PLAN.md",
+ "companies": [
+  {
+   "tk": "NBIS",
+   "cik": 1513845,
+   "asof": "2026-10-19",
+   "group": "current"
+  },
+  {
+   "tk": "ASTS",
+   "cik": 1780312,
+   "asof": "2026-10-19",
+   "group": "current"
+  },
+  {
+   "tk": "NOW",
+   "cik": 1373715,
+   "asof": "2026-10-19",
+   "group": "current"
+  },
+  {
+   "tk": "PLTR",
+   "cik": 1321655,
+   "asof": "2026-10-19",
+   "group": "current"
+  },
+  {
+   "tk": "APH",
+   "cik": 820313,
+   "asof": "2026-10-19",
+   "group": "current"
+  },
+  {
+   "tk": "COST",
+   "cik": 909832,
+   "asof": "2016-06-30",
+   "group": "established"
+  },
+  {
+   "tk": "MSFT",
+   "cik": 789019,
+   "asof": "2016-06-30",
+   "group": "established"
+  },
+  {
+   "tk": "V",
+   "cik": 1403161,
+   "asof": "2016-06-30",
+   "group": "established"
+  },
+  {
+   "tk": "CRWD",
+   "cik": 1535527,
+   "asof": "2020-06-30",
+   "group": "growth_early"
+  },
+  {
+   "tk": "UBER",
+   "cik": 1543151,
+   "asof": "2023-06-30",
+   "group": "growth_turning_profitable"
+  },
+  {
+   "tk": "ENPH",
+   "cik": 1463101,
+   "asof": "2019-06-30",
+   "group": "growth_turning_profitable"
+  },
+  {
+   "tk": "PTON",
+   "cik": 1639825,
+   "asof": "2021-03-31",
+   "group": "failed"
+  },
+  {
+   "tk": "TDOC",
+   "cik": 1477449,
+   "asof": "2021-03-31",
+   "group": "failed"
+  },
+  {
+   "tk": "BYND",
+   "cik": 1655210,
+   "asof": "2020-06-30",
+   "group": "failed"
+  },
+  {
+   "tk": "CVNA",
+   "cik": 1690820,
+   "asof": "2021-09-30",
+   "group": "failed_then_recovered"
+  },
+  {
+   "tk": "INTC",
+   "cik": 50863,
+   "asof": "2021-06-30",
+   "group": "established_declined"
+  },
+  {
+   "tk": "ZM",
+   "cik": 1585521,
+   "asof": "2020-12-31",
+   "group": "quality_priced_high"
+  },
+  {
+   "tk": "SNOW",
+   "cik": 1640147,
+   "asof": "2021-11-30",
+   "group": "quality_priced_high"
+  },
+  {
+   "tk": "PYPL",
+   "cik": 1633917,
+   "asof": "2021-07-31",
+   "group": "quality_priced_high"
+  },
+  {
+   "tk": "NKE",
+   "cik": 320187,
+   "asof": "2021-11-30",
+   "group": "quality_priced_high"
+  }
+ ]
+}

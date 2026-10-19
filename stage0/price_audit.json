@@ -1,0 +1,885 @@
+{
+ "generated_utc": "2026-10-19T21:12:53Z",
+ "tolerance": 0.01,
+ "summary": {
+  "VERIFIED_IB": [
+   "NBIS",
+   "ASTS",
+   "NOW",
+   "PLTR",
+   "APH",
+   "UBER",
+   "SNOW",
+   "NKE"
+  ],
+  "VERIFIED_YAHOO": [
+   "COST",
+   "MSFT",
+   "V",
+   "CRWD",
+   "ENPH",
+   "PTON",
+   "TDOC",
+   "BYND",
+   "CVNA",
+   "INTC",
+   "ZM",
+   "PYPL"
+  ],
+  "UNVERIFIED": [],
+  "MISSING": []
+ },
+ "companies": [
+  {
+   "tk": "NBIS",
+   "asof": "2026-10-19",
+   "group": "current",
+   "av": {
+    "file": "prices/alphavantage/NBIS_TIME_SERIES_MONTHLY_ADJUSTED.csv",
+    "sha256": "225d67fdd3088c3a60c9b55800f7bf1b5d1f40ce084167af3d0290bd629a9ca8",
+    "retrieved_utc": "2026-10-19T21:07:24.638Z",
+    "first_bar": "2011-06-30",
+    "last_bar": "2026-10-19",
+    "n_bars": 181,
+    "inferred_splits": [],
+    "splits_endpoint": null
+   },
+   "as_traded": {
+    "bar_date": "2026-10-19",
+    "close": 170.24,
+    "adjusted_close": 170.24,
+    "later_adjustment_factor": 1.0,
+    "note": "month-to-date bar; pulled 2026-10-19T21:07:24.638Z (after the 20:00 UTC close)"
+   },
+   "checks": {
+    "ib": {
+     "close": 170.24,
+     "bar": "2026-10-19",
+     "file": "prices/ibkr/88819736_ONE_DAY_ONE_WEEK.json",
+     "step": "day",
+     "rel_diff": 0.0
+    },
+    "yahoo": {
+     "unavailable": "no Yahoo file"
+    }
+   },
+   "status": "VERIFIED_IB"
+  },
+  {
+   "tk": "ASTS",
+   "asof": "2026-10-19",
+   "group": "current",
+   "av": {
+    "file": "prices/alphavantage/ASTS_TIME_SERIES_MONTHLY_ADJUSTED.csv",
+    "sha256": "8e858e85f0948b58856306b216a0ebaaf47704fc2d06d785b93898f9dc2b06d1",
+    "retrieved_utc": "2026-10-19T21:07:22.743Z",
+    "first_bar": "2019-12-31",
+    "last_bar": "2026-10-19",
+    "n_bars": 83,
+    "inferred_splits": [],
+    "splits_endpoint": null
+   },
+   "as_traded": {
+    "bar_date": "2026-10-19",
+    "close": 41.87,
+    "adjusted_close": 41.87,
+    "later_adjustment_factor": 1.0,
+    "note": "month-to-date bar; pulled 2026-10-19T21:07:22.743Z (after the 20:00 UTC close)"
+   },
+   "checks": {
+    "ib": {
+     "close": 41.87,
+     "bar": "2026-10-19",
+     "file": "prices/ibkr/480745767_ONE_DAY_ONE_WEEK.json",
+     "step": "day",
+     "rel_diff": 0.0
+    },
+    "yahoo": {
+     "close_split_adjusted": 40.65999984741211,
+     "close_as_traded": 40.65999984741211,
+     "later_splits_undone": [],
+     "rel_diff": -0.0289
+    }
+   },
+   "status": "VERIFIED_IB"
+  },
+  {
+   "tk": "NOW",
+   "asof": "2026-10-19",
+   "group": "current",
+   "av": {
+    "file": "prices/alphavantage/NOW_TIME_SERIES_MONTHLY_ADJUSTED.csv",
+    "sha256": "16b50f498cf1ef4a3be96fc10a2f69bc965f985117c5bc7ef93f0102f10295e1",
+    "retrieved_utc": "2026-10-19T21:07:10.423Z",
+    "first_bar": "2012-07-31",
+    "last_bar": "2026-10-19",
+    "n_bars": 172,
+    "inferred_splits": [
+     {
+      "between": [
+       "2025-11-28",
+       "2025-12-31"
+      ],
+      "factor": 5.0
+     }
+    ],
+    "splits_endpoint": null
+   },
+   "as_traded": {
+    "bar_date": "2026-10-19",
+    "close": 145.33,
+    "adjusted_close": 145.33,
+    "later_adjustment_factor": 1.0,
+    "note": "month-to-date bar; pulled 2026-10-19T21:07:10.423Z (after the 20:00 UTC close)"
+   },
+   "checks": {
+    "ib": {
+     "close": 145.36,
+     "bar": "2026-10-19",
+     "file": "prices/ibkr/109911821_ONE_DAY_ONE_WEEK.json",
+     "step": "day",
+     "rel_diff": 0.00021
+    },
+    "yahoo": {
+     "close_split_adjusted": 141.97000122070312,
+     "close_as_traded": 141.97000122070312,
+     "later_splits_undone": [],
+     "rel_diff": -0.02312
+    }
+   },
+   "status": "VERIFIED_IB"
+  },
+  {
+   "tk": "PLTR",
+   "asof": "2026-10-19",
+   "group": "current",
+   "av": {
+    "file": "prices/alphavantage/PLTR_TIME_SERIES_MONTHLY_ADJUSTED.csv",
+    "sha256": "06530b83c6830aa8a8e9a15afc5b56bda38da301a677e721b492300697c110d0",
+    "retrieved_utc": "2026-10-19T21:07:18.085Z",
+    "first_bar": "2020-10-30",
+    "last_bar": "2026-10-19",
+    "n_bars": 73,
+    "inferred_splits": [],
+    "splits_endpoint": null
+   },
+   "as_traded": {
+    "bar_date": "2026-10-19",
+    "close": 194.15,
+    "adjusted_close": 194.15,
+    "later_adjustment_factor": 1.0,
+    "note": "month-to-date bar; pulled 2026-10-19T21:07:18.085Z (after the 20:00 UTC close)"
+   },
+   "checks": {
+    "ib": {
+     "close": 194.15,
+     "bar": "2026-10-19",
+     "file": "prices/ibkr/444857009_ONE_DAY_ONE_WEEK.json",
+     "step": "day",
+     "rel_diff": 0.0
+    },
+    "yahoo": {
+     "close_split_adjusted": 186.02999877929688,
+     "close_as_traded": 186.02999877929688,
+     "later_splits_undone": [],
+     "rel_diff": -0.04182
+    }
+   },
+   "status": "VERIFIED_IB"
+  },
+  {
+   "tk": "APH",
+   "asof": "2026-10-19",
+   "group": "current",
+   "av": {
+    "file": "prices/alphavantage/APH_TIME_SERIES_MONTHLY_ADJUSTED.csv",
+    "sha256": "55247c9fbf6611c5918bc49d5b6f74098d134fb0ed68d0431941830852b7aa0a",
+    "retrieved_utc": "2026-10-19T21:07:21.202Z",
+    "first_bar": "1999-12-31",
+    "last_bar": "2026-10-19",
+    "n_bars": 323,
+    "inferred_splits": [
+     {
+      "between": [
+       "2000-03-31",
+       "2000-04-28"
+      ],
+      "factor": 2.0
+     },
+     {
+      "between": [
+       "2004-02-27",
+       "2004-03-31"
+      ],
+      "factor": 2.0001
+     },
+     {
+      "between": [
+       "2007-03-30",
+       "2007-04-30"
+      ],
+      "factor": 1.9999
+     },
+     {
+      "between": [
+       "2014-09-30",
+       "2014-10-31"
+      ],
+      "factor": 2.0
+     },
+     {
+      "between": [
+       "2021-02-26",
+       "2021-03-31"
+      ],
+      "factor": 2.009
+     },
+     {
+      "between": [
+       "2024-05-31",
+       "2024-06-28"
+      ],
+      "factor": 2.0032
+     },
+     {
+      "between": [
+       "2026-08-31",
+       "2026-09-30"
+      ],
+      "factor": 2.003
+     }
+    ],
+    "splits_endpoint": null
+   },
+   "as_traded": {
+    "bar_date": "2026-10-19",
+    "close": 80.26,
+    "adjusted_close": 80.26,
+    "later_adjustment_factor": 1.0,
+    "note": "month-to-date bar; pulled 2026-10-19T21:07:21.202Z (after the 20:00 UTC close)"
+   },
+   "checks": {
+    "ib": {
+     "close": 80.28,
+     "bar": "2026-10-19",
+     "file": "prices/ibkr/4493_ONE_DAY_ONE_WEEK.json",
+     "step": "day",
+     "rel_diff": 0.00025
+    },
+    "yahoo": {
+     "close_split_adjusted": 79.3499984741211,
+     "close_as_traded": 79.3499984741211,
+     "later_splits_undone": [],
+     "rel_diff": -0.01134
+    }
+   },
+   "status": "VERIFIED_IB"
+  },
+  {
+   "tk": "COST",
+   "asof": "2016-06-30",
+   "group": "established",
+   "av": {
+    "file": "prices/alphavantage/COST_TIME_SERIES_MONTHLY_ADJUSTED.csv",
+    "sha256": "13c2e13bf23fed0ae80f1e71176c1d7001aefaaffe49670622c88cac4478ed1f",
+    "retrieved_utc": "2026-10-19T21:06:08.926Z",
+    "first_bar": "1999-12-31",
+    "last_bar": "2026-10-19",
+    "n_bars": 323,
+    "inferred_splits": [
+     {
+      "between": [
+       "1999-12-31",
+       "2000-01-31"
+      ],
+      "factor": 2.0
+     }
+    ],
+    "splits_endpoint": "{\"result\":\"effective_date,split_factor\\r\\n2000-01-14,2.0000\\r\\n\"}"
+   },
+   "as_traded": {
+    "bar_date": "2016-06-30",
+    "close": 157.04,
+    "adjusted_close": 132.4211,
+    "later_adjustment_factor": 1.185914
+   },
+   "checks": {
+    "ib": {
+     "unavailable": "no IB contract searched"
+    },
+    "yahoo": {
+     "close_split_adjusted": 157.0399932861328,
+     "close_as_traded": 157.0399932861328,
+     "later_splits_undone": [],
+     "rel_diff": -0.0
+    }
+   },
+   "status": "VERIFIED_YAHOO"
+  },
+  {
+   "tk": "MSFT",
+   "asof": "2016-06-30",
+   "group": "established",
+   "av": {
+    "file": "prices/alphavantage/MSFT_TIME_SERIES_MONTHLY_ADJUSTED.csv",
+    "sha256": "48716420cbfb57a1c45f0a7a831bbfa2149af33a7ec28c3306daf4204dfee974",
+    "retrieved_utc": "2026-10-19T21:06:24.141Z",
+    "first_bar": "1999-12-31",
+    "last_bar": "2026-10-19",
+    "n_bars": 323,
+    "inferred_splits": [
+     {
+      "between": [
+       "2003-01-31",
+       "2003-02-28"
+      ],
+      "factor": 2.0065
+     }
+    ],
+    "splits_endpoint": "{\"result\":\"effective_date,split_factor\\r\\n2003-02-18,2.0000\\r\\n1999-03-29,2.0000\\r\\n\"}"
+   },
+   "as_traded": {
+    "bar_date": "2016-06-30",
+    "close": 51.17,
+    "adjusted_close": 45.1555,
+    "later_adjustment_factor": 1.133195
+   },
+   "checks": {
+    "ib": {
+     "unavailable": "no IB contract searched"
+    },
+    "yahoo": {
+     "close_split_adjusted": 51.16999816894531,
+     "close_as_traded": 51.16999816894531,
+     "later_splits_undone": [],
+     "rel_diff": -0.0
+    }
+   },
+   "status": "VERIFIED_YAHOO"
+  },
+  {
+   "tk": "V",
+   "asof": "2016-06-30",
+   "group": "established",
+   "av": {
+    "file": "prices/alphavantage/V_TIME_SERIES_MONTHLY_ADJUSTED.csv",
+    "sha256": "288de6a99f2c8211cfcb7ffabca30da207391f6cdcd8083dbf511e6edc25a40a",
+    "retrieved_utc": "2026-10-19T21:06:26.208Z",
+    "first_bar": "2008-04-30",
+    "last_bar": "2026-10-19",
+    "n_bars": 223,
+    "inferred_splits": [
+     {
+      "between": [
+       "2015-02-27",
+       "2015-03-31"
+      ],
+      "factor": 4.0
+     }
+    ],
+    "splits_endpoint": "{}"
+   },
+   "as_traded": {
+    "bar_date": "2016-06-30",
+    "close": 74.17,
+    "adjusted_close": 69.0012,
+    "later_adjustment_factor": 1.074909
+   },
+   "checks": {
+    "ib": {
+     "unavailable": "no IB contract searched"
+    },
+    "yahoo": {
+     "close_split_adjusted": 74.16999816894531,
+     "close_as_traded": 74.16999816894531,
+     "later_splits_undone": [],
+     "rel_diff": -0.0
+    }
+   },
+   "status": "VERIFIED_YAHOO"
+  },
+  {
+   "tk": "CRWD",
+   "asof": "2020-06-30",
+   "group": "growth_early",
+   "av": {
+    "file": "prices/alphavantage/CRWD_TIME_SERIES_MONTHLY_ADJUSTED.csv",
+    "sha256": "616fa3849ff75ed1bcd7de64943f9a2c716f228ef076a32d80770d0332154a68",
+    "retrieved_utc": "2026-10-19T21:06:28.257Z",
+    "first_bar": "2019-07-31",
+    "last_bar": "2026-10-19",
+    "n_bars": 88,
+    "inferred_splits": [
+     {
+      "between": [
+       "2026-06-30",
+       "2026-07-31"
+      ],
+      "factor": 4.0
+     }
+    ],
+    "splits_endpoint": "{\"result\":\"effective_date,split_factor\\r\\n2026-07-02,4.0000\\r\\n\"}"
+   },
+   "as_traded": {
+    "bar_date": "2020-06-30",
+    "close": 100.29,
+    "adjusted_close": 25.0725,
+    "later_adjustment_factor": 4.0
+   },
+   "checks": {
+    "ib": {
+     "unavailable": "no IB contract searched"
+    },
+    "yahoo": {
+     "close_split_adjusted": 25.072500228881836,
+     "close_as_traded": 100.29000091552734,
+     "later_splits_undone": [
+      [
+       "2026-07-01",
+       4.0,
+       1.0
+      ]
+     ],
+     "rel_diff": 0.0
+    }
+   },
+   "status": "VERIFIED_YAHOO"
+  },
+  {
+   "tk": "UBER",
+   "asof": "2023-06-30",
+   "group": "growth_turning_profitable",
+   "av": {
+    "file": "prices/alphavantage/UBER_TIME_SERIES_MONTHLY_ADJUSTED.csv",
+    "sha256": "e4485eec70607354181fcc09f4e4999b03d58f2b41927668b50f859a2cb15851",
+    "retrieved_utc": "2026-10-19T21:06:30.479Z",
+    "first_bar": "2019-06-28",
+    "last_bar": "2026-10-19",
+    "n_bars": 89,
+    "inferred_splits": [],
+    "splits_endpoint": "{}"
+   },
+   "as_traded": {
+    "bar_date": "2023-06-30",
+    "close": 43.17,
+    "adjusted_close": 43.17,
+    "later_adjustment_factor": 1.0
+   },
+   "checks": {
+    "ib": {
+     "close": 43.17,
+     "bar": "2023-06-01",
+     "file": "prices/ibkr/365207014_ONE_MONTH_FIVE_YEARS.json",
+     "step": "month",
+     "corp_actions_in_file": false,
+     "rel_diff": 0.0
+    },
+    "yahoo": {
+     "close_split_adjusted": 43.16999816894531,
+     "close_as_traded": 43.16999816894531,
+     "later_splits_undone": [],
+     "rel_diff": -0.0
+    }
+   },
+   "status": "VERIFIED_IB"
+  },
+  {
+   "tk": "ENPH",
+   "asof": "2019-06-30",
+   "group": "growth_turning_profitable",
+   "av": {
+    "file": "prices/alphavantage/ENPH_TIME_SERIES_MONTHLY_ADJUSTED.csv",
+    "sha256": "dcbac5e8f39bbbebb0abc9da0d77b29e2f4969af4fbb5b7d4dc17c5133063fc0",
+    "retrieved_utc": "2026-10-19T21:06:32.633Z",
+    "first_bar": "2012-04-30",
+    "last_bar": "2026-10-19",
+    "n_bars": 175,
+    "inferred_splits": [],
+    "splits_endpoint": "{}"
+   },
+   "as_traded": {
+    "bar_date": "2019-06-28",
+    "close": 18.23,
+    "adjusted_close": 18.23,
+    "later_adjustment_factor": 1.0
+   },
+   "checks": {
+    "ib": {
+     "unavailable": "no IB contract searched"
+    },
+    "yahoo": {
+     "close_split_adjusted": 18.229999542236328,
+     "close_as_traded": 18.229999542236328,
+     "later_splits_undone": [],
+     "rel_diff": -0.0
+    }
+   },
+   "status": "VERIFIED_YAHOO"
+  },
+  {
+   "tk": "PTON",
+   "asof": "2021-03-31",
+   "group": "failed",
+   "av": {
+    "file": "prices/alphavantage/PTON_TIME_SERIES_MONTHLY_ADJUSTED.csv",
+    "sha256": "eeac3d453c35034b2f1e7a2cc1d164a213e74747a72ba1a7ea47a20e128be6b5",
+    "retrieved_utc": "2026-10-19T21:06:44.475Z",
+    "first_bar": "2019-10-31",
+    "last_bar": "2026-10-19",
+    "n_bars": 85,
+    "inferred_splits": [],
+    "splits_endpoint": "{}"
+   },
+   "as_traded": {
+    "bar_date": "2021-03-31",
+    "close": 112.44,
+    "adjusted_close": 112.44,
+    "later_adjustment_factor": 1.0
+   },
+   "checks": {
+    "ib": {
+     "unavailable": "no IB contract searched"
+    },
+    "yahoo": {
+     "close_split_adjusted": 112.44000244140625,
+     "close_as_traded": 112.44000244140625,
+     "later_splits_undone": [],
+     "rel_diff": 0.0
+    }
+   },
+   "status": "VERIFIED_YAHOO"
+  },
+  {
+   "tk": "TDOC",
+   "asof": "2021-03-31",
+   "group": "failed",
+   "av": {
+    "file": "prices/alphavantage/TDOC_TIME_SERIES_MONTHLY_ADJUSTED.csv",
+    "sha256": "b7b9996b8c3c1d6154235da28c5a0fe8a29d35795d6f38fbf0ed7c0e9359ea4a",
+    "retrieved_utc": "2026-10-19T21:06:46.234Z",
+    "first_bar": "2015-08-31",
+    "last_bar": "2026-10-16",
+    "n_bars": 135,
+    "inferred_splits": [],
+    "splits_endpoint": "{}"
+   },
+   "as_traded": {
+    "bar_date": "2021-03-31",
+    "close": 181.75,
+    "adjusted_close": 181.75,
+    "later_adjustment_factor": 1.0
+   },
+   "checks": {
+    "ib": {
+     "unavailable": "no IB contract searched"
+    },
+    "yahoo": {
+     "close_split_adjusted": 181.75,
+     "close_as_traded": 181.75,
+     "later_splits_undone": [],
+     "rel_diff": 0.0
+    }
+   },
+   "status": "VERIFIED_YAHOO"
+  },
+  {
+   "tk": "BYND",
+   "asof": "2020-06-30",
+   "group": "failed",
+   "av": {
+    "file": "prices/alphavantage/BYND_TIME_SERIES_MONTHLY_ADJUSTED.csv",
+    "sha256": "6f11cdaa94e2f5cd893f6332818fee8c2dca6a93a12db7969c8acfd3fad9678e",
+    "retrieved_utc": "2026-10-19T21:06:49.380Z",
+    "first_bar": "2019-06-28",
+    "last_bar": "2026-10-19",
+    "n_bars": 89,
+    "inferred_splits": [
+     {
+      "between": [
+       "2026-07-31",
+       "2026-08-31"
+      ],
+      "factor": 0.0333
+     }
+    ],
+    "splits_endpoint": "{}"
+   },
+   "as_traded": {
+    "bar_date": "2020-06-30",
+    "close": 133.98,
+    "adjusted_close": 4019.4,
+    "later_adjustment_factor": 0.033333
+   },
+   "checks": {
+    "ib": {
+     "unavailable": "no IB contract searched"
+    },
+    "yahoo": {
+     "close_split_adjusted": 4019.39990234375,
+     "close_as_traded": 133.97999674479166,
+     "later_splits_undone": [
+      [
+       "2026-08-01",
+       1.0,
+       30.0
+      ]
+     ],
+     "rel_diff": -0.0
+    }
+   },
+   "status": "VERIFIED_YAHOO"
+  },
+  {
+   "tk": "CVNA",
+   "asof": "2021-09-30",
+   "group": "failed_then_recovered",
+   "av": {
+    "file": "prices/alphavantage/CVNA_TIME_SERIES_MONTHLY_ADJUSTED.csv",
+    "sha256": "af6895e388a219fc6e03dd1e4857912f95b92d2c18e9fc97f6b62d5e02eafb28",
+    "retrieved_utc": "2026-10-19T21:06:50.669Z",
+    "first_bar": "2017-05-31",
+    "last_bar": "2026-10-19",
+    "n_bars": 114,
+    "inferred_splits": [
+     {
+      "between": [
+       "2026-04-30",
+       "2026-05-29"
+      ],
+      "factor": 5.0
+     }
+    ],
+    "splits_endpoint": "{}"
+   },
+   "as_traded": {
+    "bar_date": "2021-09-30",
+    "close": 301.54,
+    "adjusted_close": 60.308,
+    "later_adjustment_factor": 5.0
+   },
+   "checks": {
+    "ib": {
+     "unavailable": "no IB contract searched"
+    },
+    "yahoo": {
+     "close_split_adjusted": 60.30799865722656,
+     "close_as_traded": 301.5399932861328,
+     "later_splits_undone": [
+      [
+       "2026-05-01",
+       5.0,
+       1.0
+      ]
+     ],
+     "rel_diff": -0.0
+    }
+   },
+   "status": "VERIFIED_YAHOO"
+  },
+  {
+   "tk": "INTC",
+   "asof": "2021-06-30",
+   "group": "established_declined",
+   "av": {
+    "file": "prices/alphavantage/INTC_TIME_SERIES_MONTHLY_ADJUSTED.csv",
+    "sha256": "981dcc63a9c61163f46b4818618d94b07c47937ab7259546c87c5cfaa14284cf",
+    "retrieved_utc": "2026-10-19T21:06:52.324Z",
+    "first_bar": "1999-12-31",
+    "last_bar": "2026-10-19",
+    "n_bars": 323,
+    "inferred_splits": [
+     {
+      "between": [
+       "2000-06-30",
+       "2000-07-31"
+      ],
+      "factor": 2.0
+     }
+    ],
+    "splits_endpoint": "{}"
+   },
+   "as_traded": {
+    "bar_date": "2021-06-30",
+    "close": 56.14,
+    "adjusted_close": 51.3562,
+    "later_adjustment_factor": 1.093149
+   },
+   "checks": {
+    "ib": {
+     "unavailable": "no IB contract searched"
+    },
+    "yahoo": {
+     "close_split_adjusted": 56.13999938964844,
+     "close_as_traded": 56.13999938964844,
+     "later_splits_undone": [],
+     "rel_diff": -0.0
+    }
+   },
+   "status": "VERIFIED_YAHOO"
+  },
+  {
+   "tk": "ZM",
+   "asof": "2020-12-31",
+   "group": "quality_priced_high",
+   "av": {
+    "file": "prices/alphavantage/ZM_TIME_SERIES_MONTHLY_ADJUSTED.csv",
+    "sha256": "f2da29afaf54cf8ad0a2d1204c325971e84cd5c66ee97b8347668ed0abedbb61",
+    "retrieved_utc": "2026-10-19T21:07:02.462Z",
+    "first_bar": "2019-05-31",
+    "last_bar": "2026-10-19",
+    "n_bars": 90,
+    "inferred_splits": [],
+    "splits_endpoint": null
+   },
+   "as_traded": {
+    "bar_date": "2020-12-31",
+    "close": 337.32,
+    "adjusted_close": 337.32,
+    "later_adjustment_factor": 1.0
+   },
+   "checks": {
+    "ib": {
+     "unavailable": "no IB contract searched"
+    },
+    "yahoo": {
+     "close_split_adjusted": 337.32000732421875,
+     "close_as_traded": 337.32000732421875,
+     "later_splits_undone": [],
+     "rel_diff": 0.0
+    }
+   },
+   "status": "VERIFIED_YAHOO"
+  },
+  {
+   "tk": "SNOW",
+   "asof": "2021-11-30",
+   "group": "quality_priced_high",
+   "av": {
+    "file": "prices/alphavantage/SNOW_TIME_SERIES_MONTHLY_ADJUSTED.csv",
+    "sha256": "e4c5eee3fe0403e49de1d4a9ba6f78c84150d506539500b0f7b6864a71c5f0f0",
+    "retrieved_utc": "2026-10-19T21:07:04.379Z",
+    "first_bar": "2020-10-30",
+    "last_bar": "2026-10-19",
+    "n_bars": 73,
+    "inferred_splits": [],
+    "splits_endpoint": null
+   },
+   "as_traded": {
+    "bar_date": "2021-11-30",
+    "close": 340.15,
+    "adjusted_close": 340.15,
+    "later_adjustment_factor": 1.0
+   },
+   "checks": {
+    "ib": {
+     "close": 340.15,
+     "bar": "2021-11-01",
+     "file": "prices/ibkr/444884769_ONE_MONTH_FIVE_YEARS.json",
+     "step": "month",
+     "corp_actions_in_file": false,
+     "rel_diff": 0.0
+    },
+    "yahoo": {
+     "close_split_adjusted": 340.1499938964844,
+     "close_as_traded": 340.1499938964844,
+     "later_splits_undone": [],
+     "rel_diff": -0.0
+    }
+   },
+   "status": "VERIFIED_IB"
+  },
+  {
+   "tk": "PYPL",
+   "asof": "2021-07-31",
+   "group": "quality_priced_high",
+   "av": {
+    "file": "prices/alphavantage/PYPL_TIME_SERIES_MONTHLY_ADJUSTED.csv",
+    "sha256": "ffd9992e5d48488ecca932ae0a7ca2fec39e86749c5d55ca9ec9de27cb213779",
+    "retrieved_utc": "2026-10-19T21:07:06.253Z",
+    "first_bar": "2015-08-31",
+    "last_bar": "2026-10-19",
+    "n_bars": 135,
+    "inferred_splits": [],
+    "splits_endpoint": null
+   },
+   "as_traded": {
+    "bar_date": "2021-07-30",
+    "close": 275.53,
+    "adjusted_close": 272.4803,
+    "later_adjustment_factor": 1.011192
+   },
+   "checks": {
+    "ib": {
+     "unavailable": "no IB contract searched"
+    },
+    "yahoo": {
+     "close_split_adjusted": 275.5299987792969,
+     "close_as_traded": 275.5299987792969,
+     "later_splits_undone": [],
+     "rel_diff": -0.0
+    }
+   },
+   "status": "VERIFIED_YAHOO"
+  },
+  {
+   "tk": "NKE",
+   "asof": "2021-11-30",
+   "group": "quality_priced_high",
+   "av": {
+    "file": "prices/alphavantage/NKE_TIME_SERIES_MONTHLY_ADJUSTED.csv",
+    "sha256": "c9d3d4f45000f8b6d5de09f2d8eff283739de0238bf832981d50cd13752c4853",
+    "retrieved_utc": "2026-10-19T21:07:08.212Z",
+    "first_bar": "1999-12-31",
+    "last_bar": "2026-10-19",
+    "n_bars": 323,
+    "inferred_splits": [
+     {
+      "between": [
+       "2007-03-30",
+       "2007-04-30"
+      ],
+      "factor": 2.0
+     },
+     {
+      "between": [
+       "2012-11-30",
+       "2012-12-31"
+      ],
+      "factor": 2.0043
+     },
+     {
+      "between": [
+       "2015-11-30",
+       "2015-12-31"
+      ],
+      "factor": 2.0049
+     }
+    ],
+    "splits_endpoint": null
+   },
+   "as_traded": {
+    "bar_date": "2021-11-30",
+    "close": 169.24,
+    "adjusted_close": 154.4181,
+    "later_adjustment_factor": 1.095986
+   },
+   "checks": {
+    "ib": {
+     "close": 169.24,
+     "bar": "2021-11-01",
+     "file": "prices/ibkr/10291_ONE_MONTH_FIVE_YEARS.json",
+     "step": "month",
+     "corp_actions_in_file": true,
+     "rel_diff": 0.0
+    },
+    "yahoo": {
+     "close_split_adjusted": 169.24000549316406,
+     "close_as_traded": 169.24000549316406,
+     "later_splits_undone": [],
+     "rel_diff": 0.0
+    }
+   },
+   "status": "VERIFIED_IB"
+  }
+ ]
+}
