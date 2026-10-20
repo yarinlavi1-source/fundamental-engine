@@ -9,6 +9,9 @@ Every channel has a ROLE, and the role decides how its output is used:
 - lead: a person's thesis (an analyst, a newsletter, the owner's channels); enters the exploratory path only with a
   written reason and dated evidence, and is verified independently.
 - evidence: primary documents (10-K, 10-Q, 8-K, transcripts) that answer the research questions.
+- event: a filed transaction or registration (tender offer, spin-off or IPO registration, 13D stake) to read; channels that
+  also emit red flags (late filings, auditor changes, restatements) are listed under the role of their main output.
+The per-lead roles (leads.ROLES) add red_flag for filed warnings.
 Syndicated repetition of one story counts once (CLAUDE.md: repeated content is not independent evidence).
 """
 

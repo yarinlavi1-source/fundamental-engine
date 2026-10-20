@@ -21,7 +21,7 @@ class CalibrationTests(unittest.TestCase):
 
 class SourceTests(unittest.TestCase):
     def test_roles_and_attention_reading(self):
-        self.assertTrue(all(c['role'] in ('screen', 'signal', 'attention', 'lead', 'evidence') for c in S.CHANNELS))
+        self.assertTrue(all(c['role'] in ('screen', 'signal', 'attention', 'lead', 'evidence', 'event') for c in S.CHANNELS))
         self.assertEqual(S.attention_reading(.0047, .0001, .03), 'under_followed')
         self.assertEqual(S.attention_reading(.13, .01, .137), 'crowded')
         with self.assertRaises(ValueError):
