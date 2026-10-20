@@ -438,6 +438,12 @@ class RenderTests(unittest.TestCase):
         self.assertLessEqual(yr['rows'][-1]['date'], att['dc']['valuation_view']['five_year']['date'])
         self.assertIn('| מועד | תרחיש רע | תרחיש סביר | תרחיש טוב |', t)
         self.assertIn('| היום |', t)
+        from fundamental_engine.render import lynch_type
+        for cf in self.cases.values():
+            k = lynch_type(cf)
+            self.assertIn(k, (None, 'בהתאוששות', 'מחזורית', 'צעירה, עדיין מפסידה', 'צומחת מהר', 'יציבה וצומחת', 'צומחת לאט'))
+            if k:
+                self.assertIn(f'| סוג החברה | {k} |', hebrew_table(cf))
         draft = hebrew_table(self.cases['draft'])
         self.assertIn('טיוטה', draft)
         blocked = hebrew_table(self.cases['blocked'])

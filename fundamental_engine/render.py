@@ -319,6 +319,31 @@ def _horizon(view, n):
     return h.get(n) or h.get(str(n))
 
 
+def lynch_type(casefile):
+    """Peter Lynch's company kinds (One Up on Wall Street), read from the model card's route and the 3-year revenue CAGR:
+    cyclical, turnaround, young and still losing money, fast grower (>= 20% a year), stalwart (8-20%), slow grower (< 8%).
+    Each kind is judged differently (a cyclical looks cheapest at its peak; a fast grower lives on how long growth lasts).
+    Without a route (no forecast built) only a loss-making company is typed."""
+    cf = casefile or {}
+    route = (((cf.get('fc') or {}).get('anchors') or {}).get('route') or {})
+    m = ((cf.get('an') or {}).get('metrics') or {})
+    g = (m.get('revenue_cagr_3y') or {}).get('value')
+    mg = (m.get('operating_margin') or {}).get('value')
+    if not route:
+        return 'צעירה, עדיין מפסידה' if _n(mg) and mg < 0 else None
+    if route.get('stage') == 'turnaround':
+        return 'בהתאוששות'
+    if route.get('cyclical'):
+        return 'מחזורית'
+    if _n(mg) and mg < 0:
+        return 'צעירה, עדיין מפסידה'
+    if _n(g) and g >= .20:
+        return 'צומחת מהר'
+    if _n(g) and g >= .08:
+        return 'יציבה וצומחת'
+    return 'צומחת לאט' if _n(g) else None
+
+
 def hebrew_table(casefile):
     """The owner's valuation format (20.10.2026): one clear table in plain Hebrew words and a few short explanations; the
     calculations and the business detail stay in the casefile. Every row is read from the executed casefile, nothing is
@@ -380,6 +405,9 @@ def hebrew_table(casefile):
         rows.append(('שווי הוגן', 'אין עדיין שווי אמין להצגה'))
         notes.append('הסיבה: ' + (st['state'] if st.get('hold') else (v.get('reason_he') or 'הערכת השווי לא הושלמה')) + '.')
     q = ((dc.get('assessments') or {}).get('business_quality') or {})
+    kind = lynch_type(cf)
+    if kind:
+        rows.append(('סוג החברה', kind))
     if q.get('level_he'):
         rows.append(('איכות העסק', q['level_he']))
     ov = _horizon((((cf.get('fc') or {}).get('anchors') or {}).get('outside_view') or {}).get('base'), 10)
