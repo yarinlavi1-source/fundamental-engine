@@ -128,5 +128,23 @@ class ReviewBinding(unittest.TestCase):
         self.assertIsNotNone(s['hurdle'])
 
 
+class SegmentViewTests(unittest.TestCase):
+    def test_second_value_when_segments_disagree_with_the_consolidated_path(self):
+        fb = deepcopy(ADBE)
+        F.add_source(fb, 'sec:annual_report', 'sec', '10-K', 'filing_derived', '2026-01-20T00:00:00Z', note='test business map')
+        fast, slow = 9e9, 15e9                                                  # SYNTHETIC segment table (not ADBE's)
+        fb['business_map'] = {'source_id': 'sec:annual_report', 'source': {'form': '10-K'}, 'tables': {'segment': {
+            'reconciliation': {'status': 'reconciles'},
+            'derived': {'Fast': {'latest': fast, 'cagr': .55, 'share_of_total': .375, 'span': '2023-2025'},
+                        'Slow': {'latest': slow, 'cagr': .0, 'share_of_total': .625, 'span': '2023-2025'}}}}}
+        cf = pipeline.run(fb)
+        sv = cf['segment_view']
+        self.assertEqual(sv['status'], 'computed')
+        self.assertGreater(sv['growth_segment_path'][0], sv['growth_consolidated'][0])
+        self.assertGreater(sv['base_value_segment_path'], sv['base_value_consolidated'])
+        base = pipeline.summary(cf)['base_value']
+        self.assertAlmostEqual(base, sv['base_value_consolidated'])            # the base case itself is unchanged
+
+
 if __name__ == '__main__':
     unittest.main()

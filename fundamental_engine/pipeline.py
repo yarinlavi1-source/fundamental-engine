@@ -265,9 +265,51 @@ def run(fb, inputs=None):
     from . import business
     base = [p.get('growth') for p in ((fc or {}).get('paths') or {}).get('base') or [] if isinstance(p, dict) and p.get('growth') is not None]
     cf['business'] = stage('business', lambda: business.summary(fb.get('business_map'), base[:5]))
+    cf['segment_view'] = stage('segment_view', lambda: segment_view(fb, an, card, qa, fc, val, cf['business'], inputs))
     json.dumps(cf, allow_nan=False, default=str)
     cf['casefile_sha256'] = F.digest(json.loads(json.dumps({k: v for k, v in cf.items() if k != 'casefile_sha256'}, default=str)))
     return cf
+
+
+def segment_view(fb, an, card, qa, fc, val, biz, inputs):
+    """What the company is worth if its segments grow at their own pace (business.segment_path) instead of the consolidated
+    base path, when the two differ by more than 2 points a year: the base scenario is rebuilt with the segment-built growth for
+    the five full years after the current fiscal year (then fading to the base path's last rate) and valued again. A second
+    view for the analyst, never a silent replacement of the base case. None when not applicable."""
+    from . import forecast
+    cross, sp = (biz or {}).get('cross_check'), (biz or {}).get('segment_path')
+    if not cross or not sp or abs(cross['difference']) <= .02 or not fc or fc.get('status') != 'built' or (fc.get('spec') or {}).get('valuation_version'):
+        return None
+    if (val or {}).get('status') in (None, 'not_computed'):
+        return None
+    sc = next(x for x in fc['spec']['scenarios'] if x['name'] == 'base')
+    g = list(sc['growth'])
+    seg = sp['growth']
+    alt = g[:1] + [seg[i - 1] if i <= len(seg) else None for i in range(1, len(g))]
+    last = next((i for i in range(len(alt) - 1, -1, -1) if alt[i] is not None), 0)
+    rest = len(alt) - last - 1
+    if rest:
+        from .business import _fade
+        alt[last + 1:] = _fade(alt[last], g[-1], 2.5, rest)
+    src = (fb.get('business_map') or {}).get('source_id')
+    if not src:
+        return None
+    fin = deepcopy((inputs or {}).get('forecast') or {})
+    fin['overrides'] = list(fin.get('overrides') or []) + [{'path': 'growth', 'scenario': 'base', 'value': [float(x) for x in alt],
+                                                           'reason': 'segment-built growth path (business.segment_path): second view',
+                                                           'evidence_ids': [src]}]
+    fc2 = forecast.build(fb, an, card, qa, fin)
+    if fc2.get('status') != 'built':
+        return {'status': 'not_computed', 'reason': fc2.get('reason')}
+    v2 = valuate(fb, qa, fc2, inputs)
+    today = ((v2.get('result') or {}).get('annual_values') or [{}])[0]
+    now = ((val.get('result') or {}).get('annual_values') or [{}])[0]
+    b1, b2 = now.get('base'), today.get('base')
+    return {'status': 'computed', 'reading': cross['reading'], 'basis': sp['basis'], 'growth_consolidated': g[1:6], 'growth_segment_path': alt[1:6],
+            'base_value_consolidated': b1, 'base_value_segment_path': b2,
+            'difference': (b2 / b1 - 1) if b1 and b2 else None, 'quote': now.get('current_quote'),
+            'meaning': 'the base case valued again with each segment at its own pace; which view holds is a research question '
+                       '(mix shift, acquisitions inside a segment, guidance by segment)'}
 
 
 def route_qa(qa, card):
