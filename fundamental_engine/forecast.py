@@ -79,6 +79,12 @@ TYPE = {
     'consumer_brand':                   ((1.5, 3.5), .15, .25, 'consumer'),
     'industrial':                       ((1.0, 2.5), .12, .20, 'industrial'),
     'commodity':                        ((0.4, 1.2), .15, .30, 'commodity'),
+    # order of magnitude from US industry operating-margin tables (drugs and devices about 20-25%, hospitals and labs about
+    # 10-12%, IT services about 10-12%, wholesale distribution about 3-6%): documented assumptions, not peer studies
+    'healthcare_products':              ((0.8, 2.5), .22, .40, 'nonfinancial'),
+    'healthcare_services':              ((1.0, 3.0), .11, .18, 'nonfinancial'),
+    'it_services':                      ((2.0, 5.0), .12, .20, 'nonfinancial'),
+    'distribution':                     ((3.0, 8.0), .05, .10, 'industrial'),
 }
 DEFAULT_TYPE = ((1.0, 3.0), .15, .25, 'nonfinancial')
 NON_OPERATING_TYPES = {'financials': 'residual_income', 'reit': 'nav', 'pre_revenue_biotech': 'rnpv', 'conglomerate': 'sotp'}

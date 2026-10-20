@@ -235,6 +235,12 @@ class AdobeRealData(unittest.TestCase):
         self.assertEqual(s['status'], 'stale')
 
 
+    def test_missing_status_from_an_input_does_not_crash(self):
+        # a dataqa 'missing' status on an input leaves a value without a reason (Ferguson 2026-10: KeyError 'reason')
+        m = analyze(ADBE, adbe_qa(revenue_ttm={'field': 'revenue_ttm', 'status': 'missing', 'as_of': '2025-11-28'}))['metrics']
+        self.assertEqual(m['operating_margin_trend_3y']['status'], 'missing')
+        self.assertIn('operating_margin', m['operating_margin_trend_3y']['reason'])
+
     def test_net_cash_refused_by_dataqa_is_not_rederived(self):
         qa = adbe_qa(debt={'field': 'debt', 'status': 'conflict', 'as_of': '2025-11-28'})
         qa['resolved']['net_cash'] = {'value': None, 'as_of': None, 'status': 'conflict'}

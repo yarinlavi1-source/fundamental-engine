@@ -77,6 +77,12 @@ class OpeningAuditTests(unittest.TestCase):
         self.assertAlmostEqual(a['terminal']['excess_cash'] - b['terminal']['excess_cash'], 100e6)
         c['scenarios'][0]['periods'][1]['investment_liquidation'] = 1
         with self.assertRaisesRegex(ValueError, 'liquidation'): value_company(c)
+        # the whole balance liquidated in float steps that sum a hair above it is not an error (Roblox, Boeing 2026-10)
+        inv = c['opening']['marketable_investments']
+        for s in c['scenarios']:
+            s['periods'][0]['investment_liquidation'] = inv * .3
+            s['periods'][1]['investment_liquidation'] = inv * .7 * (1 + 1e-12)
+        self.assertEqual(base(value_company(c))['terminal']['marketable_investments'], 0)
 
     def test_investment_assets_not_automatic_spendable_cash(self):
         c = fixture(); c['opening']['unrestricted_cash'] = 0

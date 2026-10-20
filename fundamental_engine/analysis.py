@@ -809,7 +809,8 @@ def _metrics(fb, qa, years, labels, cells, ttm, tc, rs):
         else:
             m0 = ratio(b3, num, 'revenue', '')
             val = M[name]['value'] - m0['value'] if None not in (M[name]['value'], m0['value']) else None
-            miss = [m['reason'] for m in (m0, M[name]) if m['status'] == 'missing']
+            # status 'missing' can come from an input reference while the value exists (no reason then): Ferguson 2026
+            miss = [m.get('reason') or f"an input of {name} is missing" for m in (m0, M[name]) if m['status'] == 'missing']
             M[name + '_trend_3y'] = _m(val, 'ratio', f, M[name]['inputs'] + m0['inputs'], _span(labels, b3, last),
                                        M[name].get('reason') or m0.get('reason'), missing=miss,
                                        start=m0['value'], end=M[name]['value'])

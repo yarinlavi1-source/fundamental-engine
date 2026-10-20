@@ -36,7 +36,7 @@ from . import profile
 CARD_VERSION = 1
 TYPES = ('subscription_software', 'platform_marketplace', 'semiconductor', 'hardware_manufacturing',
          'capital_intensive_infrastructure', 'consumer_brand', 'industrial', 'financials', 'pre_revenue_biotech',
-         'conglomerate', 'reit', 'commodity')
+         'conglomerate', 'reit', 'commodity', 'healthcare_products', 'healthcare_services', 'it_services', 'distribution')
 UNCLASSIFIED = 'unclassified'
 STAGES = ('early', 'growth', 'maturing', 'mature', 'decline', 'turnaround')
 METHODS = ('fcff_annual_path', 'normalized_cycle_fcff', 'scenario_survival_fcff', 'residual_income', 'nav', 'rnpv',
@@ -49,12 +49,14 @@ ARCHETYPE = {'subscription_software': 'software', 'platform_marketplace': 'platf
              'hardware_manufacturing': 'industrial', 'capital_intensive_infrastructure': 'infrastructure',
              'consumer_brand': 'consumer', 'industrial': 'industrial', 'financials': 'financials',
              'pre_revenue_biotech': 'biotech', 'conglomerate': 'conglomerate', 'reit': 'reit', 'commodity': 'commodity',
-             UNCLASSIFIED: 'nonfinancial'}
+             'healthcare_products': 'nonfinancial', 'healthcare_services': 'nonfinancial', 'it_services': 'nonfinancial',
+             'distribution': 'industrial', UNCLASSIFIED: 'nonfinancial'}
 PLAYBOOKS = {'subscription_software': ['software'], 'platform_marketplace': ['platform'], 'semiconductor': ['industrial'],
              'hardware_manufacturing': ['industrial'], 'capital_intensive_infrastructure': ['infrastructure'],
              'consumer_brand': ['consumer'], 'industrial': ['industrial'], 'financials': ['financials'],
              'pre_revenue_biotech': ['biotech'], 'conglomerate': ['conglomerate'], 'reit': ['infrastructure'],
-             'commodity': ['industrial'], UNCLASSIFIED: []}
+             'commodity': ['industrial'], 'healthcare_products': ['biotech', 'industrial'], 'healthcare_services': ['industrial'],
+             'it_services': ['industrial'], 'distribution': ['industrial'], UNCLASSIFIED: []}
 LEVELS = ('strong', 'adequate', 'weak', 'unknown')
 DIMENSIONS = ('moat', 'switching_costs', 'pricing_power', 'retention', 'customer_concentration', 'market_size',
               'competition', 'substitutes', 'management', 'capital_allocation', 'governance', 'regulation',
@@ -102,20 +104,30 @@ TEXT_RULES = (
     (('reit', 'real estate investment trust', 'equity real estate', 'real estate operating', 'real estate development',
       'real estate holding', 'diversified real estate', 'real estate'), 'reit'),
     (('biotechnology', 'biotech', 'pharmaceutical', 'drug manufacturer'), 'pre_revenue_biotech'),
+    (('health care equipment', 'medical device', 'medical instrument', 'medical/dental', 'medical electronics',
+      'medical specialities', 'medical specialties', 'diagnostic', 'life sciences tools', 'laboratory analytical',
+      'electromedical', 'surgical', 'orthopedic', 'ophthalmic', 'health care supplies'), 'healthcare_products'),
+    (('hospital', 'nursing', 'health care services', 'health care facilities', 'medical laboratories', 'home health',
+      'health care providers'), 'healthcare_services'),
+    (('it services', 'edp services', 'it consulting', 'computer programming', 'data processing', 'integrated systems design',
+      'information technology services', 'computer services'), 'it_services'),
+    (('wholesale', 'distributors', 'food distribution', 'industrial distribution'), 'distribution'),
     (('semiconductor',), 'semiconductor'),
     (('application software', 'systems software', 'software'), 'subscription_software'),
     (('interactive media', 'internet content', 'internet & direct marketing', 'internet retail', 'marketplace',
       'online travel'), 'platform_marketplace'),
     (('data center', 'internet services & infrastructure', 'utilities', 'utility', 'independent power',
       'renewable electricity', 'telecom', 'wireless', 'cable', 'tower', 'storage & transportation', 'midstream',
-      'pipeline', 'airport', 'toll road', 'railroad'), 'capital_intensive_infrastructure'),
+      'pipeline', 'pipe lines', 'natural gas distribution', 'airport', 'toll road', 'railroad'), 'capital_intensive_infrastructure'),
     (('oil & gas', 'oil and gas', 'integrated oil', 'exploration & production', 'refining', 'coal', 'metals & mining',
       'mining', 'gold', 'silver', 'copper', 'steel', 'aluminum', 'uranium', 'commodity chemicals', 'fertilizer',
-      'agricultural products', 'paper & forest', 'forest products', 'construction materials'), 'commodity'),
+      'agricultural products', 'paper & forest', 'forest products', 'construction materials', 'petroleum', 'oilfield',
+      'precious metals', 'paper'), 'commodity'),
     (('technology hardware', 'computer hardware', 'electronic equipment', 'electronic components',
       'communications equipment', 'consumer electronics', 'automobile manufacturer', 'auto manufacturer', 'automobiles',
-      'health care equipment', 'medical device', 'medical instrument', 'scientific & technical instruments',
-      'storage & peripherals'), 'hardware_manufacturing'),
+      'scientific & technical instruments', 'storage & peripherals', 'computer manufacturing', 'electronic computers',
+      'computer peripheral', 'computer & office equipment', 'printed circuit', 'electronic connectors', 'electrical products'),
+     'hardware_manufacturing'),
     (('household products', 'personal products', 'personal care', 'beverage', 'food', 'apparel', 'footwear',
       'textile', 'luxury', 'restaurant', 'retail', 'tobacco', 'leisure', 'hotel', 'casino', 'consumer staples',
       'consumer discretionary', 'consumer defensive', 'consumer cyclical', 'distiller', 'brewer', 'soft drink',
@@ -123,7 +135,7 @@ TEXT_RULES = (
     (('industrials', 'industrial', 'machinery', 'aerospace', 'defense', 'building products', 'construction',
       'engineering', 'electrical equipment', 'trading companies', 'airline', 'marine', 'trucking', 'freight',
       'logistics', 'commercial services', 'professional services', 'environmental services', 'auto parts',
-      'chemical', 'packaging', 'life sciences tools', 'waste'), 'industrial'),
+      'chemical', 'packaging', 'waste'), 'industrial'),
 )
 # Labels that mix platforms with operators: (keywords, default type, platform type, what the label mixes).
 # The platform type is primary only when the signature is a platform's (gross margin >= 70% and capex <= 8% of
@@ -250,6 +262,41 @@ DRIVERS = {
          '(cash + short-term investments) / annual burn', ('cash',)),
         ('market_size', 'treated population x share x net price decides peak sales', 'addressable patients / peak sales',
          ('addressable_patients', 'market_size', 'tam', 'peak_sales')),
+    ],
+    'healthcare_products': [
+        ('products_exclusivity', 'revenue sits in specific products; patent expiry and generic or biosimilar entry decide how long it lasts',
+         'revenue by product and loss-of-exclusivity dates', ('product_revenue', 'patent_expiry', 'loss_of_exclusivity', 'exclusivity')),
+        ('pipeline_launches', 'late-stage programs and launches replace products that lose exclusivity',
+         'late-stage programs, approvals and launches', ('pipeline', 'launches', 'approvals', 'clinical_programs')),
+        ('net_price_reimbursement', 'net price after rebates, payer and government negotiation decides the margin',
+         'net price / reimbursement', ('net_price', 'pricing', 'reimbursement', 'rebates')),
+        ('volume_installed_base', 'patients treated, procedures, placements and consumables pulled through',
+         'volume / procedures / installed base', ('procedures', 'units', 'installed_base', 'placements', 'volume')),
+        ('rd_productivity', 'research spend versus products approved', 'R&D / revenue', ('rd',)),
+    ],
+    'healthcare_services': [
+        ('volume', 'patients, admissions, tests or studies performed', 'admissions / visits / tests / backlog',
+         ('admissions', 'visits', 'tests', 'procedures', 'volume', 'backlog', 'book_to_bill')),
+        ('reimbursement_mix', 'payer mix and rates (government versus commercial) decide revenue per unit',
+         'revenue per unit and payer mix', ('payer_mix', 'reimbursement', 'revenue_per_unit', 'rate')),
+        ('labor_cost', 'staff and wage inflation are the main cost', 'salaries / revenue', ('salaries', 'labor_cost', 'wages', 'sga')),
+        ('capital', 'facilities and equipment needed per unit of volume', 'capex / revenue', ('capex_pct_revenue',)),
+    ],
+    'it_services': [
+        ('bookings_backlog', 'bookings and backlog lead revenue', 'bookings / backlog / book-to-bill',
+         ('bookings', 'backlog', 'book_to_bill', 'remaining_performance_obligations')),
+        ('headcount_utilization', 'revenue = billable staff x utilization x rate; AI automation can shrink billable work',
+         'headcount and utilization', ('headcount', 'employees', 'utilization', 'billable')),
+        ('rate_vs_wages', 'bill rates versus wage inflation set the margin', 'pricing and wage costs', ('pricing', 'bill_rate', 'wages')),
+        ('client_concentration', 'large clients and government contracts', 'largest clients share', ('customer_concentration', 'largest_customer')),
+    ],
+    'distribution': [
+        ('volume_customers', 'units, lines and customers served', 'volume / customers', ('volume', 'units', 'customers')),
+        ('gross_margin', 'pricing and supplier rebates', 'gross profit / revenue', ('gross_margin',)),
+        ('operating_cost', 'warehouse, freight and selling cost per dollar of sales decide the thin operating margin',
+         'SG&A / revenue', ('sga',)),
+        ('working_capital', 'inventory and receivables financed against supplier payables', 'inventory, receivables, payables / revenue',
+         ('inventory', 'receivables', 'payables')),
     ],
     'commodity': [
         ('volume', 'production volume', 'production / shipments', ('production', 'volume', 'shipments', 'units')),
@@ -439,8 +486,12 @@ def _signature(fb, rows, end):
     inv = _instant_fact(fb, 'inventory', end)
     ta, tl = _instant_fact(fb, 'total_assets', end), _instant_fact(fb, 'total_liabilities', end)
     cor = _annual_fact(fb, 'cost_of_revenue', end)
+    gp = _row_val(r, 'gross_profit')
+    # filers that tag cost of revenue but no gross-profit line (Alphabet): gross margin from revenue - cost of revenue
+    gm = (_num(_div(gp, rev), 'gross_profit / revenue', end) if gp is not None or not (cor and rev) else
+          _num(_div(rev - cor['value'], rev), '(revenue - cost_of_revenue) / revenue (no gross-profit line)', end))
     return {
-        'gross_margin': _num(_div(_row_val(r, 'gross_profit'), rev), 'gross_profit / revenue', end),
+        'gross_margin': gm,
         'capex_pct_revenue': _num(_div(capex, rev), 'capex / revenue', end),
         'deferred_revenue_pct_revenue': _num(_div(_row_val(r, 'deferred_revenue'), rev),
                                              'deferred revenue (current + noncurrent) / revenue', end),
@@ -466,7 +517,16 @@ def _hit(kws, low):
 # SEC Standard Industrial Classification ranges whose economics live on the balance sheet (same ranges as universe.py):
 # banks, credit companies, broker-dealers and insurance carriers (incl. managed care, SIC 6324) are financials; 6798 REIT.
 # A SIC code from the filer's own SEC record outranks a listing label ('Medical Specialities' for Cigna)
-SIC_TYPES = ((6000, 6199, 'financials'), (6200, 6221, 'financials'), (6300, 6399, 'financials'), (6798, 6798, 'reit'))
+SIC_TYPES = ((6000, 6199, 'financials'), (6200, 6221, 'financials'), (6300, 6399, 'financials'), (6798, 6798, 'reit'),
+             # wholesale trade and health services: the SIC is more precise than listing labels ('Other Pharmaceuticals' for
+             # Cardinal Health, 'Medical Specialities' for Quest and LabCorp, 'Automotive Aftermarket' for Genuine Parts)
+             (5000, 5199, 'distribution'), (8000, 8099, 'healthcare_services'))
+# Used when no industry label matches (before a sector-level fallback): the filer's own SIC code
+SIC_FALLBACK = ((2833, 2836, 'healthcare_products'), (3826, 3826, 'healthcare_products'), (3840, 3851, 'healthcare_products'),
+                (8731, 8734, 'healthcare_services'), (7370, 7379, 'it_services'), (3570, 3579, 'hardware_manufacturing'),
+                (3660, 3699, 'hardware_manufacturing'), (1000, 1499, 'commodity'), (2600, 2631, 'commodity'),
+                (2900, 2999, 'commodity'), (4600, 4619, 'capital_intensive_infrastructure'),
+                (4900, 4949, 'capital_intensive_infrastructure'))
 
 
 def _text_matches(company):
@@ -478,6 +538,7 @@ def _text_matches(company):
             out.append({'field': 'industry', 'text': f"SEC SIC {sic} ({company.get('sic_description') or ''})", 'keyword': f'SIC {sic}',
                         'type': t})
             return out
+    fb_sic = next((t for lo, hi, t in SIC_FALLBACK if lo <= sic <= hi), None) if isinstance(sic, int) else None
     for field in ('industry', 'sector'):
         raw = company.get(field)
         if not isinstance(raw, str) or not raw.strip():
@@ -494,6 +555,10 @@ def _text_matches(company):
                 if hit:
                     out.append({'field': field, 'text': raw, 'keyword': hit, 'type': t})
                     break
+    if fb_sic and not any(t['field'] == 'industry' for t in out):
+        # no industry label matched: the filer's SIC code ranks ahead of a sector-level fallback
+        out.insert(0, {'field': 'industry', 'text': f"SEC SIC {sic} ({company.get('sic_description') or ''})", 'keyword': f'SIC {sic}',
+                       'type': fb_sic})
     return out
 
 
@@ -568,10 +633,20 @@ def _business_model(fb, an, rows, end, sig, inputs):
     if pharma_text:
         pre_commercial = rev is None or rev < PRE_REVENUE_BIOTECH or (sv['rd_pct_revenue'] or 0) >= 1
         if not pre_commercial:
-            text_types = [t for t in text_types if t != 'pre_revenue_biotech']
+            text_types = ['healthcare_products' if t == 'pre_revenue_biotech' else t for t in text_types]
             reasons.append(f'biotech/pharma label but commercial revenue ({_money(rev, company.get("currency", ""))}, R&D '
-                           f'{_pct(sv["rd_pct_revenue"])} of revenue): not pre-revenue; no listed type fits a commercial '
-                           'drug company, so the label is not forced; an analyst override with a reason is expected')
+                           f'{_pct(sv["rd_pct_revenue"])} of revenue): not pre-revenue -> healthcare_products (marketed drugs, '
+                           'devices or tools: exclusivity, pipeline and reimbursement decide value)')
+    if text_types and text_types[0] == 'it_services':
+        # 'computer programming, data processing' covers IT consultancies, software vendors and ad platforms alike: the
+        # gross margin decides (Alphabet and AppLovin are not consultancies)
+        om_end = _div(_row_val(rows.get(end), 'operating_income'), rev) if end else None
+        econ = ('subscription_software' if gm is not None and gm >= .65 else
+                'platform_marketplace' if gm is not None and gm >= .45 and om_end is not None and om_end >= .20 else None)
+        if econ:
+            text_types = [econ, 'it_services']
+            reasons.append(f"IT/data-processing label with gross margin {_pct(gm)} and operating margin {_pct(om_end)} -> {econ} "
+                           '(rule: gross margin >= 65% software; >= 45% with operating margin >= 20% platform); it_services kept as secondary')
     sig_types = []
     if gm is not None and dr is not None and cx is not None and gm >= .65 and dr >= .15 and cx <= .08 and (inv or 0) <= .05:
         sig_types.append('subscription_software')
@@ -717,7 +792,7 @@ def _profile_cross_check(rows, ends, as_of, primary):
         if _row_val(r, 'dividends') is not None:
             h['dividends_paid'] = abs(_row_val(r, 'dividends'))
         hist.append(h)
-    arche = {'commodity': 'commodity', 'consumer_brand': 'consumer', 'industrial': 'industrial',
+    arche = {'commodity': 'commodity', 'consumer_brand': 'consumer', 'industrial': 'industrial', 'distribution': 'industrial',
              'capital_intensive_infrastructure': 'infrastructure', 'semiconductor': 'industrial'}.get(primary, 'nonfinancial')
     try:
         p = profile.classify({'archetype': arche, 'as_of': as_of, 'history': hist[-15:]})

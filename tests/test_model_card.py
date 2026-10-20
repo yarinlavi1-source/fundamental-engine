@@ -514,13 +514,28 @@ class OtherTypesTests(unittest.TestCase):
     def test_vendor_dash_labels_and_mixed_labels(self):
         tt = lambda sec, ind: (M.text_type({'sector': sec, 'industry': ind}) or {}).get('type')
         self.assertEqual(tt('Consumer Cyclical', 'Auto - Manufacturers'), 'hardware_manufacturing')
-        self.assertEqual(tt('Healthcare', 'Medical - Devices'), 'hardware_manufacturing')
+        self.assertEqual(tt('Healthcare', 'Medical - Devices'), 'healthcare_products')
+        self.assertEqual(tt('Health Care', 'Hospital/Nursing Management'), 'healthcare_services')
+        self.assertEqual(tt('Industrials', 'Food Distributors'), 'distribution')
+        # the filer's SIC outranks the listing label for wholesalers and health services; a SIC fallback when no label matches
+        self.assertEqual(M.text_type({'sector': 'Health Care', 'industry': 'Other Pharmaceuticals', 'sic': 5122})['type'], 'distribution')
+        self.assertEqual(M.text_type({'sector': 'Health Care', 'industry': 'Medical Specialities', 'sic': 8071})['type'], 'healthcare_services')
+        self.assertEqual(M.text_type({'sector': 'Technology', 'industry': 'Electronic Computers'})['type'], 'hardware_manufacturing')
+        self.assertEqual(M.text_type({'sector': 'Energy', 'industry': 'Unusual Label', 'sic': 1311})['type'], 'commodity')
         self.assertEqual(tt('Financials', 'Multi-Sector Holdings'), 'conglomerate')
         self.assertEqual(tt('Real Estate', 'REIT - Mortgage'), 'financials')
         rev = [4.70e11, 5.14e11, 5.75e11, 6.38e11, 7.17e11]                  # Amazon-like: retail margins, heavy capex
         c = card(steady_fb('Consumer Discretionary', 'Broadline Retail', rev, [.053, .024, .064, .108, .11], .48, .17))
         self.assertEqual((c['business_model']['primary'], c['business_model']['secondary']), ('consumer_brand', ['platform_marketplace']))
         self.assertTrue(any('hybrid' in x for x in c['valuation']['limitations']))
+
+    def test_data_processing_label_is_decided_by_economics(self):
+        rev = [2.8e11, 3.1e11, 3.5e11, 4.0e11]
+        ads = steady_fb('Technology', 'Services-Computer Programming, Data Processing, Etc.', rev, [.27, .30, .32, .32], .58, .12)
+        self.assertEqual(card(ads)['business_model']['primary'], 'platform_marketplace')     # an ad platform, not a consultancy
+        rev = [1.9e10, 1.9e10, 1.95e10, 2.0e10]
+        cons = steady_fb('Technology', 'EDP Services', rev, [.15, .15, .15, .15], .34, .02)
+        self.assertEqual(card(cons)['business_model']['primary'], 'it_services')
 
     def test_specialist_routes_need_their_data(self):
         rev = [5e8] * 4
@@ -552,7 +567,8 @@ class OtherTypesTests(unittest.TestCase):
         self.assertNotEqual(c['business_model']['primary'], 'pre_revenue_biotech')
         self.assertIn('biotech', c['playbooks'])
         self.assertEqual(c['valuation']['method'], 'fcff_annual_path')
-        self.assertTrue(any('not forced' in r for r in c['business_model']['reasons']))
+        self.assertEqual(c['business_model']['primary'], 'healthcare_products')
+        self.assertTrue(any('healthcare_products' in r for r in c['business_model']['reasons']))
 
     def test_empty_analysis_is_unknown_not_crash(self):
         c = M.build(ADBE, {}, None)

@@ -132,7 +132,9 @@ BEAR_LOSS_TOLERANCE = {'strong': .40, 'adequate': .30}
 ROIC_STRONG = .15                                     # well above the ~8% cost-of-capital reference
 MARGIN_PROFILE = {'subscription_software': 'high_margin', 'platform_marketplace': 'high_margin', 'semiconductor': 'general',
                   'hardware_manufacturing': 'general', 'industrial': 'general', 'conglomerate': 'general',
-                  'capital_intensive_infrastructure': 'general', 'consumer_brand': 'general', 'commodity': 'thin_margin'}
+                  'capital_intensive_infrastructure': 'general', 'consumer_brand': 'general', 'commodity': 'thin_margin',
+                  'healthcare_products': 'general', 'healthcare_services': 'general', 'it_services': 'general',
+                  'distribution': 'thin_margin'}
 NOT_MARGIN_GRADED = {'financials', 'reit', 'pre_revenue_biotech'}
 BALANCE_SHEET_LENDERS = {'financials'}               # banks/insurers: leverage is the business; net cash is no strength measure
 COMPETITIVE_DIMS = ('moat', 'switching_costs', 'pricing_power', 'retention')

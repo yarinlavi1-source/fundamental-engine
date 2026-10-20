@@ -186,6 +186,7 @@ def operating(case, s):
     op = case['opening']
     cash, debt, shares = n(op, 'unrestricted_cash', 0), n(op, 'debt', 0), n(op, 'shares', 1e-12)
     investments = number(op.get('marketable_investments', 0), 'marketable_investments', 0)
+    liq_tol = 1e-6 + 1e-9 * investments          # summed liquidations of the whole balance carry float rounding (Roblox, Boeing)
     deferred, nol = n(op, 'deferred_revenue', 0), n(op, 'tax_loss_carryforward', 0)
     converts = _convertibles(op)
     if sum(c['claim'] for c in converts) > debt + 1e-6:
@@ -252,8 +253,9 @@ def operating(case, s):
         financial_open = investments + max(0., cash - held_min)      # riskless assets held during the period (valued at face)
         debt += draws - repay
         liquidation = number(p.get('investment_liquidation', 0), 'investment_liquidation', 0)
-        if liquidation > investments + 1e-7:
+        if liquidation > investments + liq_tol:
             raise ValueError('Investment liquidation exceeds remaining investments')
+        liquidation = min(liquidation, investments)
         investments -= liquidation
         # Net cash investment income and minority distributions need explicit attribution/tax assumptions.
         investment_income = number(p.get('investment_income_after_tax', 0), 'investment_income_after_tax', 0)

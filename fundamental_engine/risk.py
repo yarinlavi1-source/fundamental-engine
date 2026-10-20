@@ -61,7 +61,8 @@ DIMENSIONS = ('competition', 'substitutes', 'customer_concentration', 'technolog
 RELEVANCE = {'subscription_software': 'HMLHLLMMHH', 'platform_marketplace': 'HMLHHMMMHM', 'semiconductor': 'HMHHMHMMML',
              'hardware_manufacturing': 'HMHMLHMMML', 'capital_intensive_infrastructure': 'MMHMHMMMMM', 'consumer_brand': 'HHMLMMMMHM',
              'industrial': 'MMMMMMMMMM', 'financials': 'MMLMHMMMMM', 'pre_revenue_biotech': 'HHLMHLMHML', 'conglomerate': 'MMMMMMMMMM',
-             'reit': 'MLMLMLMMLM', 'commodity': 'MMMLHHMMLL'}
+             'reit': 'MLMLMLMMLM', 'commodity': 'MMMLHHMMLL', 'healthcare_products': 'HHMMHMMMHL',
+             'healthcare_services': 'MMMMHLMMML', 'it_services': 'HHMHLMMMMH', 'distribution': 'HMMLLMMMML'}
 DEFAULT_RELEVANCE = 'M' * len(DIMENSIONS)   # an unclassified business (blank label, publishing, hospitals...): medium on every dimension
 assert all(len(v) == len(DIMENSIONS) and set(v) <= set('HML') for v in RELEVANCE.values()), 'RELEVANCE needs one H/M/L per dimension'
 LEVEL = {'H': 'high', 'M': 'medium', 'L': 'low'}
@@ -87,7 +88,9 @@ NEGATED = re.compile(r'\b(?:no|without|absence of|free of|did not identify(?: an
 LOSS = {'subscription_software': 'growth_stall', 'platform_marketplace': 'growth_stall', 'consumer_brand': 'growth_stall',
         'conglomerate': 'growth_stall', 'financials': 'growth_stall', 'industrial': 'cyclical_collapse',
         'hardware_manufacturing': 'cyclical_collapse', 'semiconductor': 'cyclical_collapse', 'commodity': 'cyclical_collapse',
-        'capital_intensive_infrastructure': 'utilization_collapse', 'reit': 'utilization_collapse', 'pre_revenue_biotech': 'funding_failure'}
+        'capital_intensive_infrastructure': 'utilization_collapse', 'reit': 'utilization_collapse', 'pre_revenue_biotech': 'funding_failure',
+        'healthcare_products': 'growth_stall', 'healthcare_services': 'growth_stall', 'it_services': 'growth_stall',
+        'distribution': 'growth_stall'}
 DROP = {'semiconductor': -.30, 'commodity': -.30, 'hardware_manufacturing': -.20, 'industrial': -.20}
 ISSUE_DISCOUNT, ISSUE_FEE = .5, .05      # distressed raise: half the current quote, 5% fees (stated stress, not a forecast)
 MECHANISM = {
