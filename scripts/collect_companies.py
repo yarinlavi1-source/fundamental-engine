@@ -37,6 +37,19 @@ def _cover_missing(raw):
     return not cover or (bs and max(cover) < (datetime.fromisoformat(max(bs)) - __import__('datetime').timedelta(days=200)).date().isoformat())
 
 
+def _has_convertibles(raw):
+    """companyfacts tags convertible debt dated in the last two years (the convertibles check would need the terms)."""
+    p = os.path.join(raw, 'sec__companyfacts.json')
+    if not os.path.exists(p):
+        return False
+    with open(p, encoding='utf-8') as f:
+        g = json.load(f).get('facts', {}).get('us-gaap', {})
+    cut = (datetime.now(timezone.utc).date().replace(day=1).isoformat()[:4])
+    recent = str(int(cut) - 2)
+    return any('convertible' in k.lower() and any((r.get('end') or '') >= recent for u in v.get('units', {}).values() for r in u)
+               for k, v in g.items())
+
+
 def collect(folder, c, ua, docs=True, only_quarterly=False):
     """Fetch one company's SEC payloads (skipped when already saved) and its listing price; -> identity check."""
     os.makedirs(c['raw'], exist_ok=True)
@@ -68,7 +81,10 @@ def collect(folder, c, ua, docs=True, only_quarterly=False):
             docs_list = handoff.filing_documents(json.load(f), c['cik'])
         docs = docs_list
         if only_quarterly:
-            docs = [d for d in docs if d['file'] == 'sec__latest_quarterly.htm'] if _cover_missing(c['raw']) else []
+            # the quarterly report when cover shares are missing; both reports when companyfacts shows convertible debt (the
+            # per-instrument conversion terms live in the inline XBRL, often only in the annual report)
+            conv = _has_convertibles(c['raw'])
+            docs = [d for d in docs if conv or (d['file'] == 'sec__latest_quarterly.htm' and _cover_missing(c['raw']))]
         for d in docs:
             path = os.path.join(c['raw'], d['file'])
             if os.path.exists(path) and (old.get(d['file']) or {}).get('accession') == d['accession']:

@@ -1216,6 +1216,13 @@ class ThinMarginCapTests(unittest.TestCase):
         self.assertIn('own median margin', why)
         self.assertGreaterEqual(t['bull'], .041)
 
+    def test_swinging_margins_are_not_structurally_thin(self):
+        h = self._h()
+        h['m_all'] = [-.29, -.10, .127, -.036, -.041, .049, .076, .03, .02, .036]       # losses and a 12.7% year: scaling, not thin
+        t, why = forecast._margin_targets(self._route('maturing'), h, lambda *a: None)
+        self.assertNotIn('own median margin', why)
+        self.assertGreater(t['base'], .05)
+
     def test_growth_stage_still_converges(self):
         t, _ = forecast._margin_targets(self._route('growth'), self._h(), lambda *a: None)
         self.assertGreater(t['base'], .08)

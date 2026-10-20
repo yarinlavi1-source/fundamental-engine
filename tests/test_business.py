@@ -108,5 +108,25 @@ class ProFormaTests(unittest.TestCase):
                                                       'acquisition': 'Target Co'}])
 
 
+class ConvertibleTermsTests(unittest.TestCase):
+    def test_terms_per_instrument_and_both_ratio_conventions(self):
+        ax = 'us-gaap:DebtInstrumentAxis'
+        html = (ctx('A1', '2026-01-01', '2026-06-30', dims={ax: 'syn:ConvertibleSeniorNotesDue2030Member'})
+                + ctx('A2', instant='2026-06-30', dims={ax: 'syn:ConvertibleSeniorNotesDue2030Member'})
+                + ctx('B1', '2023-02-10', '2023-02-10', dims={ax: 'syn:TwoPctNotesDue2029Member'})
+                + ctx('B2', instant='2026-06-30', dims={ax: 'syn:TwoPctNotesDue2029Member'})
+                + ctx('C2', instant='2026-06-30', dims={ax: 'syn:TermLoanMember'})
+                + fact('us-gaap:DebtInstrumentConvertibleConversionRatio1', 'A1', '0.003425', scale=0)
+                + fact('us-gaap:DebtInstrumentCarryingAmount', 'A2', '2,750')
+                + fact('us-gaap:DebtInstrumentConvertibleConversionRatio1', 'B1', '27.3553', scale=0)
+                + fact('us-gaap:DebtInstrumentCarryingAmount', 'B2', '241.5')
+                + fact('us-gaap:DebtInstrumentCarryingAmount', 'C2', '500'))           # a term loan is not convertible
+        t = B.convertible_terms(html)
+        self.assertEqual(set(t), {'syn:ConvertibleSeniorNotesDue2030Member', 'syn:TwoPctNotesDue2029Member'})
+        self.assertAlmostEqual(t['syn:ConvertibleSeniorNotesDue2030Member']['conversion_price'], 1 / .003425)
+        self.assertAlmostEqual(t['syn:TwoPctNotesDue2029Member']['conversion_price'], 1000 / 27.3553)
+        self.assertEqual(t['syn:TwoPctNotesDue2029Member']['maturity'], '2029-12-31')
+
+
 if __name__ == '__main__':
     unittest.main()

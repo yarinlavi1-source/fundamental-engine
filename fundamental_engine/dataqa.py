@@ -1498,6 +1498,30 @@ def _convertibles(q, cs):
             status, blocks, note = 'missing', True, f'evidence of convertibles ({len(ev)} item(s)) but the capital structure lists none'
         else:
             status, note = 'reported', f"capital structure as of {cs['as_of']} lists no convertible instruments"
+    elif (fb.get('convertible_terms') or {}).get('instruments'):
+        # terms read from the filings' inline XBRL by instrument (pipeline._business): complete instruments are used, an
+        # instrument without a principal or conversion price still blocks (the footnote must be read)
+        ct = fb['convertible_terms']
+        for x in ct['instruments']:
+            miss = [k for k in ('principal', 'conversion_price') if not x.get(k)]
+            if miss:
+                gaps.append({'id': x['id'], 'missing_terms': miss})
+                continue
+            src = next((sid for sid in x['source_ids'] if sid in fb['sources']), None)
+            rows.append({'id': x['id'], 'principal': float(x['principal']), 'conversion_price': float(x['conversion_price']),
+                         'maturity': x.get('maturity'), 'conversion_shares': float(x['principal']) / float(x['conversion_price']),
+                         'accreted_claim': float(x['principal']), 'source_id': src, 'price_basis': x.get('price_basis'),
+                         'maturity_basis': x.get('maturity_basis')})
+        if gaps:
+            status, blocks, note = 'missing', True, f'convertible instrument(s) in the filings without terms: {gaps}'
+            share = _convert_share(fb, ev)
+            if share is not None and share < CONVERT_MATERIAL:
+                status, blocks = 'single_source', False
+                note += f'; about {share:.1%} of market value (below {CONVERT_MATERIAL:.0%}): immaterial, not a block'
+        else:
+            status = 'reported' if all(fb['sources'].get(r['source_id'], {}).get('kind') in FILING_KINDS for r in rows) else 'single_source'
+            note = (f"{len(rows)} convertible instrument(s) with terms from the filings' inline XBRL as of {ct['as_of']} "
+                    '(principal at par: accreting notes need the footnote)')
     elif ev:
         status, blocks, note = 'missing', True, 'evidence of convertibles without instrument terms (supply a capital structure)'
         share = _convert_share(fb, ev)
@@ -1512,7 +1536,8 @@ def _convertibles(q, cs):
     q.add('convertible_terms', 'fail' if blocks else 'pass' if status != 'missing' else 'skip', 'critical' if blocks else 'minor',
           note, detail={'evidence': ev, 'instruments': rows, 'gaps': gaps}, fields=('convertibles',))
     value = sum(r['principal'] for r in rows) if rows else (0.0 if status == 'reported' else None)
-    fld = _field(q, 'convertibles', status, value, q.ccy, cs['as_of'] if cs else None, checks=['convertible_terms'], notes=[note],
+    fld = _field(q, 'convertibles', status, value, q.ccy, cs['as_of'] if cs else (fb.get('convertible_terms') or {}).get('as_of'),
+                 checks=['convertible_terms'], notes=[note],
                  instruments=rows, evidence=ev, conversion_shares=sum(r['conversion_shares'] for r in rows) if rows else None)
     fld['_blocks'] = blocks
     return fld

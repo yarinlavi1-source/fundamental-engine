@@ -529,6 +529,18 @@ class Convertibles(unittest.TestCase):
         self.assertNotIn('convertibles', qa2['blocking'])
         self.assertAlmostEqual(qa2['fields']['convertibles']['value'], 200 * M)
 
+    def test_terms_read_from_the_filings_resolve_the_block(self):
+        fb = syn()
+        F.add_fact(fb, 'convertible_notes', 'I@2026-06-30', '2026-06-30', 200 * M, 'sec:cf', 'as_reported', '2026-08-04',
+                   concept='convertiblenotespayable')
+        fb['convertible_terms'] = {'as_of': '2026-06-30', 'instruments': [
+            {'id': 'syn:NotesDue2031Member', 'principal': 200 * M, 'conversion_price': 150., 'maturity': '2031-12-31', 'source_ids': ['sec:cf']}]}
+        qa = dataqa.validate(fb)
+        self.assertNotIn('convertibles', qa['blocking'])
+        self.assertAlmostEqual(qa['fields']['convertibles']['conversion_shares'], 200 * M / 150.)
+        fb['convertible_terms']['instruments'][0]['conversion_price'] = None          # no conversion term in the filings: still blocks
+        self.assertIn('convertibles', dataqa.validate(fb)['blocking'])
+
     def test_capital_structure_after_as_of_is_ignored(self):
         cs = clean_cs(as_of='2026-12-31')
         qa = dataqa.validate(syn(), cs)

@@ -140,6 +140,7 @@ def _business(fb, raw_dir, manifest, as_of, notes):
     report covers -> point-in-time share counts per class. A document filed after as_of is skipped (no look-ahead)."""
     from . import business
     calls = {c.get('file'): c for c in manifest.get('calls', []) if isinstance(c, dict)}
+    convs, latest_bs = {}, None
     for name in ('sec__annual_report.htm', 'sec__latest_quarterly.htm'):
         path, rec = os.path.join(raw_dir, name), calls.get(name) or {}
         if not os.path.exists(path):
@@ -157,6 +158,14 @@ def _business(fb, raw_dir, manifest, as_of, notes):
                      sha=rec.get('sha256'), url=rec.get('url'), note='inline XBRL of the primary document')
         bm = business.business_map(html, src)
         avail = (date.fromisoformat(filed) + timedelta(days=1)).isoformat()
+        for m, x in business.convertible_terms(html).items():
+            cur = convs.setdefault(m, {'member': m, 'name': x['name'], 'amounts': {}, 'source_ids': set()})
+            cur['source_ids'].add(sid)
+            for k in ('conversion_price', 'price_basis', 'maturity', 'maturity_basis'):
+                if x.get(k) and not cur.get(k):
+                    cur[k] = x[k]
+            for k, by in x['amounts'].items():
+                cur['amounts'].setdefault(k, {}).update({d: v for d, v in by.items() if d <= as_of})
         for pf in business.pro_forma_revenue(html):
             if pf['end'] <= as_of and not any(x['metric'] == 'revenue_pro_forma' and x.get('period_start') == pf['start']
                                               and x['period_end'] == pf['end'] for x in fb['facts']):
@@ -171,6 +180,22 @@ def _business(fb, raw_dir, manifest, as_of, notes):
         if name == 'sec__annual_report.htm':
             bm['source_id'] = sid
             fb['business_map'] = bm
+        if rec.get('report_date') and rec['report_date'] <= as_of:
+            latest_bs = max(latest_bs or rec['report_date'], rec['report_date'])
+    # convertible notes outstanding at the latest balance sheet: an instrument with no amount within 100 days of it was repaid
+    out = []
+    for m, x in convs.items():
+        pts = sorted((d, v, k) for k, by in x['amounts'].items() for d, v in by.items())
+        if not pts or not latest_bs or (date.fromisoformat(latest_bs) - date.fromisoformat(pts[-1][0])).days > 100:
+            continue
+        last = pts[-1][0]
+        principal = (x['amounts'].get('face') or {}).get(last) or (x['amounts'].get('carrying') or {}).get(last)
+        out.append({'id': m, 'name': x['name'], 'principal': principal, 'amount_as_of': last, 'conversion_price': x.get('conversion_price'),
+                    'price_basis': x.get('price_basis'), 'maturity': x.get('maturity'), 'maturity_basis': x.get('maturity_basis'),
+                    'source_ids': sorted(x['source_ids'])})
+    if out:
+        fb['convertible_terms'] = {'as_of': latest_bs, 'instruments': out,
+                                   'basis': 'inline XBRL of the saved annual and quarterly reports (DebtInstrumentAxis)'}
 
 
 def _period_end_from_filing_url(url):

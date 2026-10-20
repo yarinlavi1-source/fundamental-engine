@@ -915,7 +915,10 @@ def _margin_targets(route, h, warn):
         why = f'below type-typical: base closes {st["catch_up"]:.0%} of the gap from {_pct(m0)} to {_pct(typ)} (not below the best of 3 years {_pct(best)})'
         hist = [m for m in (h.get('m_all') or [])[-10:] if m is not None]
         own = max(m0, sorted(hist)[len(hist) // 2]) if hist else None
-        if route['stage'] in ('maturing', 'mature', 'decline') and len(hist) >= 5 and max(hist + [m0]) < typ and base > own:
+        # structurally thin = five profitable years inside a 5-point band (McKesson, Cigna, CVS); a company whose margins swing
+        # through losses while it scales its costs (Pinterest: -4% to +13%) is not thin, it keeps the catch-up
+        thin = len(hist) >= 5 and min(hist[-5:]) > 0 and max(hist[-5:]) - min(hist[-5:]) <= .05
+        if route['stage'] in ('maturing', 'mature', 'decline') and thin and max(hist + [m0]) < typ and base > own:
             # an established company that never earned the type-typical margin in ten years is structurally thin-margin
             # (distributors, managed care, retailers): converging to the typical margin invented 3-8 points of margin for
             # McKesson and Cigna (2026-10). The base holds its own median margin of those years (today's if higher), not its
@@ -1695,7 +1698,14 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
         cs_, cl_ = _num(x.get('conversion_shares')), _num(x.get('accreted_claim')) or _num(x.get('principal'))
         if cs_ and cs_ > 0 and cl_ is not None:
             converts.append({'id': str(x.get('id')), 'claim': cl_, 'conversion_shares': cs_, 'conversion_price': _num(x.get('conversion_price'))})
-    if converts and sum(c['claim'] for c in converts) > open_bal['debt'] + 1:
+    # debt is carried net of issuance costs while the claim is the principal (Pinterest: 981m carried, 1bn principal): within 5%
+    # the opening debt is lifted to the principal (the claim at maturity), stated; beyond that the definitions differ
+    claims = sum(c['claim'] for c in converts)
+    if converts and open_bal['debt'] + 1 < claims <= open_bal['debt'] * 1.05 + 1:
+        warn('debt_at_convertible_principal', f"opening debt {open_bal['debt']:,.0f} (carrying value) lifted to the convertible principal "
+                                              f'{claims:,.0f}: unamortized issuance costs are not a reduction of the claim', 'low')
+        open_bal['debt'] = claims
+    if converts and claims > open_bal['debt'] + 1:
         warn('convertibles_outside_debt', 'convertible claims exceed the resolved debt: if-converted treatment skipped; reconcile the debt '
                                           'definition', 'high')
         material.append({'id': 'convertibles_unapplied', 'status': 'unresolved', 'assumption_ids': ['dilution'],

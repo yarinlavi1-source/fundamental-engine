@@ -151,6 +151,48 @@ def _derive(members, total):
     return out
 
 
+CONVERT_KEYS = {'us-gaap:DebtInstrumentConvertibleConversionRatio1': 'ratio', 'us-gaap:DebtInstrumentConvertibleConversionPrice1': 'price',
+                'us-gaap:DebtInstrumentFaceAmount': 'face', 'us-gaap:DebtInstrumentCarryingAmount': 'carrying'}
+DEBT_AXIS = 'us-gaap:DebtInstrumentAxis'
+
+
+def convertible_terms(html):
+    """Convertible notes by instrument (DebtInstrumentAxis member) from inline XBRL: conversion ratio or price, face and carrying
+    amounts by date, maturity year from the member name ('...Due2030Member'). A ratio below 1 is shares per 1 unit of principal,
+    else per 1,000 (both conventions occur: DoorDash 0.003425, Collegium 27.3553). -> {member: {...}}; only members with a
+    conversion term or 'Convertible' in the name."""
+    ix = parse_ixbrl(html)
+    out = {}
+    for f in ix['facts']:
+        k = CONVERT_KEYS.get(f['concept'])
+        c = ix['contexts'].get(f['context'])
+        if not k or not c:
+            continue
+        dims = _clean_dims(c['dims'])
+        m = dims.get(DEBT_AXIS)
+        if not m or set(dims) - {DEBT_AXIS, 'us-gaap:LongtermDebtTypeAxis'}:
+            continue
+        x = out.setdefault(m, {'member': m, 'name': _human(m), 'amounts': {}, 'convertible_label': 'convertible' in m.lower()
+                               or dims.get('us-gaap:LongtermDebtTypeAxis') == 'us-gaap:ConvertibleDebtMember'})
+        when = c['instant'] or c['end']
+        if k in ('face', 'carrying'):
+            x['amounts'].setdefault(k, {})[when] = f['value']
+        elif k == 'ratio' and f['value'] > 0:
+            x['conversion_price'] = 1 / f['value'] if f['value'] < 1 else 1000 / f['value']
+            x['price_basis'] = 'conversion ratio ' + ('per 1 of principal' if f['value'] < 1 else 'per 1,000 of principal')
+        elif k == 'price' and f['value'] > 0:
+            x['conversion_price'], x['price_basis'] = f['value'], 'conversion price tagged'
+    res = {}
+    for m, x in out.items():
+        if not (x.get('conversion_price') or x['convertible_label']):
+            continue
+        y = re.search(r'Due(20\d\d)', m)
+        x['maturity'] = f'{y.group(1)}-12-31' if y else None
+        x['maturity_basis'] = 'year from the instrument name (date not tagged)' if y else None
+        res[m] = x
+    return res
+
+
 PRO_FORMA_REVENUE = 'us-gaap:BusinessAcquisitionsProFormaRevenue'
 
 
