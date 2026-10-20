@@ -119,3 +119,37 @@ def summary_he(merged, prelisting, top=25):
         for x in sorted(prelisting, key=lambda x: x['date'], reverse=True)[:30]:
             lines.append(f"- {x['date']} {x['company']} ({x['form']}): {x['note']}")
     return '\n'.join(lines)
+
+
+# What a session collects through its connectors, and where it saves each reply (the engine cannot call connectors itself).
+# 'per' = 'market' (one call covers many companies) or 'candidate' (one call per researched company; quota-limited).
+COLLECTION_PLAN = (
+    {'channel': 'news_sentiment', 'tool': 'Alpha Vantage NEWS_SENTIMENT (tickers=<up to ~5 candidates>, limit=1000)',
+     'file': 'av_news_<as_of>_<n>.json', 'per': 'candidate', 'quota': 'Alpha Vantage free tier: 25 calls a day for all tools'},
+    {'channel': 'estimate_revisions', 'tool': 'Alpha Vantage EARNINGS_ESTIMATES (symbol)', 'file': 'av_estimates_<SYMBOL>.json',
+     'per': 'candidate', 'quota': 'shares the 25-a-day limit'},
+    {'channel': 'earnings_surprises', 'tool': 'Alpha Vantage EARNINGS (symbol)', 'file': 'av_earnings_<SYMBOL>.json',
+     'per': 'candidate', 'quota': 'shares the 25-a-day limit'},
+    {'channel': 'social_attention', 'tool': 'LunarCrush stocks (sort=social_dominance, limit up to 1000; or per sector)',
+     'file': 'lunarcrush_<as_of>_<sector or all>.md (the table as returned)', 'per': 'market', 'quota': 'limited data mode'},
+    {'channel': 'analyst_targets', 'tool': 'FMP analyst price-target-consensus (symbol)', 'file': 'fmp_targets_<SYMBOL>.json',
+     'per': 'candidate', 'quota': 'FMP plan quota (rate-limited on 20.10.2026)'},
+    {'channel': 'ibkr_connections', 'tool': 'Interactive Brokers get_company_connections (contract_id from search_contracts)',
+     'file': 'ibkr_connections_<SYMBOL>.json', 'per': 'candidate', 'quota': 'read-only'},
+    {'channel': 'owner_channels', 'tool': 'stock-idea-sourcing skill or web search: one normalized lead per thesis',
+     'file': 'leads_<source>_<as_of>.json (leads.lead fields)', 'per': 'candidate', 'quota': 'manual'},
+    {'channel': 'product_adoption', 'tool': 'web search: app-store ranks, search trends, traffic, reviews with their date',
+     'file': 'leads_adoption_<as_of>.json (role attention)', 'per': 'candidate', 'quota': 'manual'},
+)
+
+
+def plan(symbols, as_of):
+    """Connector calls for these candidates (market-wide calls once), with the file name each reply is saved under."""
+    out = []
+    for p in COLLECTION_PLAN:
+        if p['per'] == 'market':
+            out.append({**p, 'file': p['file'].replace('<as_of>', as_of)})
+        else:
+            for s in symbols:
+                out.append({**p, 'symbol': s, 'file': p['file'].replace('<SYMBOL>', s).replace('<as_of>', as_of)})
+    return out

@@ -113,5 +113,14 @@ class MergeTests(unittest.TestCase):
             self.assertIn('ספין-אוף', channels.summary_he(L.merge(got['leads']), got['prelisting']))
 
 
+class PlanTests(unittest.TestCase):
+    def test_plan_names_every_file(self):
+        p = channels.plan(['ABC'], '2026-10-20')
+        files = {x['file'] for x in p}
+        self.assertIn('av_estimates_ABC.json', files)
+        self.assertIn('lunarcrush_2026-10-20_<sector or all>.md (the table as returned)', files)
+        self.assertEqual(sum(1 for x in p if x['per'] == 'market'), 1)
+
+
 if __name__ == '__main__':
     unittest.main()
