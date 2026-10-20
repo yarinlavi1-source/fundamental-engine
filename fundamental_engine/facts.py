@@ -282,6 +282,28 @@ def _prior_comparable(fb, gaap, tags, sid):
     return len(first)
 
 
+def _ebit_proxy(fb, sid):
+    """Issuers that no longer present an operating-income subtotal (Genuine Parts, Lennar: none in the latest annual
+    report): operating income derived for each period without one as pretax income + interest expense (interest 0 where
+    none is tagged, e.g. capitalized by homebuilders), basis 'derived'; reported subtotals are never replaced. Without it
+    the forecast set the margin to a type-typical level (Genuine Parts: 15% against about 8%)."""
+    own = lambda m: {f['period']: f for f in fb['facts'] if f['metric'] == m and f['source_id'] == sid}
+    pre, intr, oi, n = own('pretax_income'), own('interest_expense'), own('operating_income'), 0
+    rev = sorted((f['period_end'], p) for p, f in own('revenue').items() if p.startswith('FY'))
+    if not rev or rev[-1][1] in oi:
+        return 0
+    for period, f in sorted(pre.items()):
+        if period in oi:
+            continue
+        i = intr.get(period)
+        add_fact(fb, 'operating_income', period, f['period_end'], f['value'] + (i['value'] if i else 0.), sid, 'derived',
+                 max(f['available_at'], i['available_at']) if i else f['available_at'], period_start=f.get('period_start'),
+                 concept='derived: pretax_income + interest_expense (no OperatingIncomeLoss tagged)',
+                 derived_from=[x for x in (f.get('concept'), i and i.get('concept')) if x])
+        n += 1
+    return n
+
+
 def _pro_forma(fb, gaap, sid):
     """Undimensioned BusinessAcquisitionsProFormaRevenue (one acquisition in the period) as 'revenue_pro_forma' with period
     PF@start..end, first filed per period; facts tagged per acquisition come from the filing's inline XBRL (pipeline)."""
@@ -369,6 +391,7 @@ def from_sec_companyfacts(fb, payload, retrieved_at, sid='sec:companyfacts'):
         add_fact(fb, 'shares_outstanding_cover', 'I@' + end, end, v, sid, 'as_reported',
                  (_d(filed) + timedelta(days=LAG_DAYS)).isoformat(), unit='shares', concept='dei:entitycommonstocksharesoutstanding')
         n += 1
+    n += _ebit_proxy(fb, sid)
     return n
 
 

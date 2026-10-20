@@ -458,10 +458,27 @@ def _scale_cap(rev, backlog):
     return SCALE_CAPS[i - 1 if lifted else i][1], lifted
 
 
+def _comparable_from(h, an):
+    """(first index of the latest comparable run of fiscal years, first index of revenue at today's scale). A gap between
+    fiscal years (fresh-start reorganization, fiscal-year change: ends more than 380 days apart) starts a new run; a
+    material acquisition step (analysis acquisition year with a growth step) starts today's revenue scale the year after.
+    Chesapeake's pre-bankruptcy impairments and the Southwestern merger had put Expand Energy's mid-cycle margin at the 2%
+    floor and its mid-cycle revenue far below today's scale."""
+    ends = h['ends']
+    run = max([i for i in range(1, len(ends)) if (_d(ends[i]) - _d(ends[i - 1])).days > 380] or [0])
+    bought = {a['period_end'] for a in an.get('acquisition_years') or [] if a.get('growth_step_in_table')}
+    scale = max([run] + [i + 1 for i, e in enumerate(ends) if e in bought and i >= run])
+    return run, min(scale, len(ends))
+
+
 def _cycle_stats(h):
     """Mid-cycle revenue: window mean placed at the window's mid date, a log-linear trend slope bounded to a long-run
-    rate, and the historical peak / trough relative to that trend."""
-    ends, rev = h['ends'][-10:], h['revenue'][-10:]
+    rate, and the historical peak / trough relative to that trend. Only revenue at today's scale (_comparable_from); None
+    with fewer than three such years."""
+    k = h.get('scale_from', 0)
+    ends, rev = h['ends'][k:][-10:], h['revenue'][k:][-10:]
+    if len(rev) < 3:
+        return None
     x = [years(ends[0], e) for e in ends]
     y = [math.log(r) for r in rev]
     xm, ym = sum(x) / len(x), sum(y) / len(y)
@@ -516,7 +533,8 @@ def _history(fb, an, warn):
     cagr = lambda n: (rev[-1] / rev[-1 - n]) ** (1 / n) - 1 if len(rev) > n and rev[-1 - n] > 0 else None
     c3 = _metric(an, 'revenue_cagr_3y'); c3 = cagr(3) if c3 is None else c3
     c5 = _metric(an, 'revenue_cagr_5y'); c5 = cagr(5) if c5 is None else c5
-    h.update(g_last=g_last, cagr_3y=c3, cagr_5y=c5)
+    h.update(g_last=g_last, cagr_3y=c3, cagr_5y=c5,
+             cagr_5y_ex_acq=((((an.get('metrics') or {}).get('revenue_cagr_5y') or {}).get('detail') or {}).get('ex_acquisition_years')))
     g_recent, yrs, recent_how = None, years(ends[-1], t_end) if t_end else 0, None
     ytd = h['ytd']
     if ytd and ytd['prior'] and ytd['prior'] > 0 and years(ends[-1], ytd['end']) >= .2:
@@ -606,6 +624,11 @@ def _history(fb, an, warn):
     h['operating_margins'] = [ot[e]['operating_income'] / ot[e]['revenue'] for e in sorted(ot)[-5:]
                               if ot[e].get('revenue') and ot[e].get('operating_income') is not None]
     h['nd_ebitda'] = _metric(an, 'net_debt_to_ebitda')
+    h['run_from'], h['scale_from'] = _comparable_from(h, an)
+    if h['scale_from']:
+        warn('history_window_cut', f"cycle statistics use fiscal years from {ends[h['run_from']]} (margins) and "
+                                   f"{ends[h['scale_from']] if h['scale_from'] < len(ends) else 'none'} (revenue scale): earlier years "
+                                   'are before a reorganization gap or a material acquisition and are not comparable', 'medium')
     h['cycle'] = _cycle_stats(h) if len(rev) >= 3 else None
     dist, fcf = 0., 0.
     for _, r in rows[-3:]:
@@ -827,7 +850,7 @@ def _cycle_margin(h):
     """Through-the-cycle operating margin = sum(EBIT) / sum(revenue) over the window used for the revenue normalization (last
     ten fiscal years): the cycle's own average EBIT relative to its average revenue. The simple mean of yearly margins drops the
     revenue-margin covariance (operating leverage) and understates mid-cycle EBIT. Trough and peak are yearly margins."""
-    rows = [(r['revenue'], _num(r.get('operating_income'))) for _, r in h['rows'][-10:]]
+    rows = [(r['revenue'], _num(r.get('operating_income'))) for _, r in h['rows'][h.get('run_from', 0):][-10:]]
     rows = [(r, e) for r, e in rows if e is not None and r > 0]
     if not rows:
         return None
@@ -885,15 +908,15 @@ def _margin_targets(route, h, warn):
             base = max(base, min(best, typ))
         why = f'below type-typical: base closes {st["catch_up"]:.0%} of the gap from {_pct(m0)} to {_pct(typ)} (not below the best of 3 years {_pct(best)})'
         hist = [m for m in (h.get('m_all') or [])[-10:] if m is not None]
-        if route['stage'] in ('maturing', 'mature', 'decline') and len(hist) >= 5 and base > max(hist + [m0]):
+        own = max(m0, sorted(hist)[len(hist) // 2]) if hist else None
+        if route['stage'] in ('maturing', 'mature', 'decline') and len(hist) >= 5 and max(hist + [m0]) < typ and base > own:
             # an established company that never earned the type-typical margin in ten years is structurally thin-margin
             # (distributors, managed care, retailers): converging to the typical margin invented 3-8 points of margin for
-            # McKesson and Cigna (2026-10). The base holds its own best demonstrated margin; evidence of a structural change
-            # (an analyst mature_margin override) lifts it
-            cap = max(hist + [m0])
-            why += (f'; capped at its own best margin of the last {len(hist)} years {_pct(cap)}: an established company that never '
-                    'reached the typical margin is not assumed to (analyst override with evidence lifts it)')
-            base = cap
+            # McKesson and Cigna (2026-10). The base holds its own median margin of those years (today's if higher), not its
+            # best year (CVS, Tyson: the best year is the bull case); an analyst mature_margin override with evidence lifts it
+            why += (f'; held at its own median margin of the last {len(hist)} years {_pct(own)} (best {_pct(max(hist))}): an '
+                    'established company that never reached the typical margin is not assumed to (analyst override with evidence lifts it)')
+            base = own
         t = {'base': base, 'bear': base - sp, 'bull': min(ceil, base + .75 * sp)}
     if route['cycle_peak'] and cm and not route['cycle_path']:
         # analyst says structural: the bear still tests a return to the cycle's own average margin
@@ -1055,8 +1078,16 @@ def _params(route, h, cal, cons, rf, ku, debt0, ov, warn):
         cyc_meta = dict(cyc, trend_at_current_fy=trend_b1, level=level, elapsed_at_current_fy=e0, long_run_growth=g_long,
                         level_factor=factor, conv=CYCLE_CONV)
     else:
-        # bought revenue is a level shift in the current year, not growth to repeat: the fade starts from organic growth
-        start = _fade(h['acq']['organic'] if h.get('acq') else g_cur, gT['base'], hl, 1)[0]
+        # bought revenue is a level shift in the current year, not growth to repeat: the fade starts from organic growth. A
+        # cyclical business's change this year is the cycle (prices and volumes), not a trend: it starts from its long-run
+        # like-for-like growth (Expand Energy 2026: +25% on gas prices had been faded as if it were demand)
+        g0 = h['acq']['organic'] if h.get('acq') else g_cur
+        lr = next((x for x in (h.get('cagr_5y_ex_acq'), h.get('cagr_5y'), h.get('cagr_3y')) if x is not None), None)
+        if route['cyclical'] and not h.get('acq') and not cg and lr is not None and abs(g0 - lr) > .02:
+            warn('cyclical_growth_start', f"cyclical business: next-year growth fades from its long-run like-for-like growth {_pct(lr)} "
+                                          f"(5-year CAGR without acquisition steps, else 3-year), not this year's {_pct(g0)} (the cycle, not a trend)", 'medium')
+            g0 = h['cyclical_start'] = lr
+        start = _fade(g0, gT['base'], hl, 1)[0]
         cap = (h.get('g_scale_cap') or {}).get('cap')
         if not cg and cap is not None and start > cap:
             # the revenue-scale base rate bounds the first forecast year too, not only the trailing anchor: fading a year-to-date
@@ -1756,7 +1787,10 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
         g = paths[s]['growth']
         why = {'base': (f"Years 1-{len(meta['consensus_growth'])} follow revenue consensus, then fade" if meta['growth_kind'] == 'analyst'
                         else 'Revenue reverts from today\'s level to the mid-cycle trend (cycle_normalization), then grows at the trend fading to terminal'
-                        if cyc else (f"Faded from organic growth {_pct(h['acq']['organic'])}, not the current fiscal year's "
+                        if cyc else (f"Faded from the long-run like-for-like growth {_pct(h['cyclical_start'])} (5-year CAGR without acquisition steps, else "
+                                     f"3-year), not the current fiscal year's {_pct(meta['g_cur'])}: a cyclical business's change this "
+                                     'year is the cycle, not a trend' if h.get('cyclical_start') is not None else
+                                     f"Faded from organic growth {_pct(h['acq']['organic'])}, not the current fiscal year's "
                                      f"{_pct(meta['g_cur'])} that includes acquired revenue ({h['acq']['statement']}); the acquired "
                                      'revenue is a level shift in the current year' if h.get('acq') else
                                      f"Faded from the current fiscal year's growth {_pct(meta['g_cur'])} ("

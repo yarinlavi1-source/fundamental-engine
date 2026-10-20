@@ -615,6 +615,19 @@ class RepairRegressionTests(unittest.TestCase):
             cash=[6e8] * 5, equity=[5e8] * 5))
         self.assertFalse(card(bio)['cyclical']['value'])
 
+    def test_boom_then_bust_and_write_downs_at_scale_read_as_a_cycle(self):
+        # SYNTHETIC refiner-like history starting at a trough (HF Sinclair's starts in 2020): boom, then bust, no recovery yet
+        rev = [11e9, 18e9, 38e9, 32e9, 28.6e9, 26.9e9]
+        c = card(steady_fb('Energy', 'Natural Gas Distribution', rev, [-.066, .041, .106, .069, .009, .035], .1, .03))
+        self.assertTrue(c['cyclical']['data_shows_cycle'])
+        self.assertTrue(any('boom then bust' in r for r in c['cyclical']['reasons']))
+        # SYNTHETIC gas producer at established scale with impairment years (losses larger than revenue): a cycle, not noise
+        rev = [7.8e9, 11.6e9, 7.7e9, 9.4e9, 11.6e9, 12.3e9, 17.5e9, 21e9, 12.8e9, 7.9e9]
+        om = [.34, .125, -1.16, .30, .25, -.14, .12, .17, -1.48, -.56]
+        c = card(steady_fb('Energy', 'Crude Petroleum & Natural Gas', rev, om, .5, .3))
+        self.assertTrue(c['cyclical']['data_shows_cycle'])
+        self.assertTrue(c['cyclical']['industry_flag'])                      # 'petroleum'
+
     def test_scale_up_from_losses_to_profit_is_not_a_cycle(self):
         rev = [2e8 * 1.4 ** i for i in range(6)]
         fb = steady_fb('Information Technology', 'Application Software', rev, [-.27, -.40, -.25, -.30, .006, .074], .45, .03)

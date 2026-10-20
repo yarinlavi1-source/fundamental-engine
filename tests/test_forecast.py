@@ -1210,10 +1210,11 @@ class ThinMarginCapTests(unittest.TestCase):
         return {'m0': .036, 'm_best3': .041, 'm_all': ms, 'rows': [(str(2016 + i), {'revenue': 100., 'operating_income': m * 100})
                                                                     for i, m in enumerate(ms)]}
 
-    def test_mature_base_holds_own_best_margin(self):
+    def test_mature_base_holds_own_median_margin(self):
         t, why = forecast._margin_targets(self._route('mature'), self._h(), lambda *a: None)
-        self.assertAlmostEqual(t['base'], .041)
-        self.assertIn('capped at its own best margin', why)
+        self.assertAlmostEqual(t['base'], .036)                       # today's 3.6% (above the 3.5% median); never the best year 4.1%
+        self.assertIn('own median margin', why)
+        self.assertGreaterEqual(t['bull'], .041)
 
     def test_growth_stage_still_converges(self):
         t, _ = forecast._margin_targets(self._route('growth'), self._h(), lambda *a: None)
@@ -1261,6 +1262,18 @@ class AcquiredRevenueTests(unittest.TestCase):
         self.assertLess(scen(fc['spec'], 'base')['growth'][0], .04)   # pre-deal like-for-like 3%
         w = {x['code']: x for x in fc['warnings']}
         self.assertEqual(w['acquired_growth_unverified']['severity'], 'high')
+
+
+class CyclicalGrowthStartTests(unittest.TestCase):
+    def test_flagged_cyclical_starts_from_long_run_growth(self):
+        fb, an, card, qa = ytd_surge()
+        an['metrics']['revenue_cagr_5y'] = {'value': .04, 'formula': 'test fixture', 'status': 'reported'}
+        card['cyclical'] = {'value': True, 'normalize': False, 'basis': 'industry_flag', 'industry_flag': True}
+        fc = forecast.build(fb, an, card, qa)
+        self.assertLess(scen(fc['spec'], 'base')['growth'][0], .05)     # not the +100% year to date faded
+        self.assertIn('cyclical_growth_start', {w['code'] for w in fc['warnings']})
+        g = next(a for a in fc['assumptions'] if a['id'] == 'growth_base')
+        self.assertIn('long-run like-for-like growth 4.0%', g['rationale'])
 
 
 if __name__ == '__main__':

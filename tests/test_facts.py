@@ -104,6 +104,33 @@ class FactBookTests(unittest.TestCase):
             F.add_qualitative(fb, 'q1', 'moat', 'later claim', 'opinion', ['s'], '2026-07-01')
 
 
+class EbitProxyTests(unittest.TestCase):
+    def test_operating_income_derived_only_when_no_subtotal_is_tagged(self):
+        def r(start, end, val, filed='2026-02-20'):
+            return {'start': start, 'end': end, 'val': val, 'filed': filed, 'form': '10-K', 'fp': 'FY', 'accn': 'k25'}
+        pay = {'cik': 3, 'entityName': 'Synthetic Distributor', 'facts': {'us-gaap': {
+            'Revenues': {'units': {'USD': [r('2025-01-01', '2025-12-31', 1000.)]}},
+            'IncomeLossFromContinuingOperationsBeforeIncomeTaxesExtraordinaryItemsNoncontrollingInterest': {'units': {'USD': [
+                r('2025-01-01', '2025-12-31', 60.)]}},
+            'InterestExpenseNonoperating': {'units': {'USD': [r('2025-01-01', '2025-12-31', 15.)]}}}}}
+        fb = F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-06-30')
+        F.from_sec_companyfacts(fb, pay, '2026-06-30T00:00:00Z')
+        oi = F.get(fb, 'operating_income', 'FY2025')
+        self.assertEqual((oi['value'], oi['basis']), (75., 'derived'))
+        self.assertIn('pretax_income + interest_expense', oi['concept'])
+        g = pay['facts']['us-gaap']
+        g['Revenues']['units']['USD'].append(r('2024-01-01', '2024-12-31', 900., '2025-02-20'))
+        g['OperatingIncomeLoss'] = {'units': {'USD': [r('2024-01-01', '2024-12-31', 70., '2025-02-20')]}}   # dropped in 2025
+        fb = F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-06-30')
+        F.from_sec_companyfacts(fb, pay, '2026-06-30T00:00:00Z')
+        self.assertEqual(F.get(fb, 'operating_income', 'FY2025')['basis'], 'derived')
+        self.assertEqual(F.get(fb, 'operating_income', 'FY2024')['value'], 70.)       # a reported subtotal is never replaced
+        g['OperatingIncomeLoss']['units']['USD'].append(r('2025-01-01', '2025-12-31', 80.))
+        fb = F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-06-30')
+        F.from_sec_companyfacts(fb, pay, '2026-06-30T00:00:00Z')
+        self.assertEqual(F.get(fb, 'operating_income', 'FY2025')['value'], 80.)       # latest report has it: nothing derived
+
+
 class ComparativeAndProFormaTests(unittest.TestCase):
     """SYNTHETIC companyfacts: a divestiture restates the prior year in the next annual report; an acquisition discloses pro
     forma revenue. First-filed values stay the point-in-time facts; the comparative and pro forma figures are kept beside them."""

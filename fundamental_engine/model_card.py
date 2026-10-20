@@ -156,7 +156,7 @@ CYCLICAL_WORDS = ('semiconductor', 'oil', 'mining', 'metals', 'steel', 'chemical
                   'airline', 'homebuild', 'residential construction', 'machinery', 'paper', 'forest', 'marine',
                   'shipping', 'trucking', 'freight', 'building products', 'construction', 'hotel', 'casino', 'leisure',
                   'coal', 'aluminum', 'copper', 'gold', 'silver', 'travel', 'memory', 'commodity', 'fertilizer',
-                  'refining', 'household durables')
+                  'refining', 'household durables', 'petroleum')
 CYCLICAL_TYPES = {'commodity', 'semiconductor'}
 
 # Driver templates: (driver, why it decides revenue/profit, metric, evidence keys). A key is found as an
@@ -921,6 +921,9 @@ def _cyclical(fb, rows, primary, inputs):
     vol = pstdev(ms) if len(ms) >= 3 else None
     revs = [_row_val(rows[e], 'revenue') for e in ends]
     drop_recovered = any(revs[i] < .9 * revs[i - 1] and revs[-1] > revs[i] for i in range(1, len(revs) - 1))
+    # boom then bust: a fall of 10% or more right after a rise of 15% or more (a refiner from 2022 to 2023, HF Sinclair's
+    # history starting in 2020), before any recovery is visible
+    boom_bust = any(revs[i] < .9 * revs[i - 1] and revs[i - 1] > 1.15 * revs[i - 2] for i in range(2, len(revs)))
     # a margin reversal is a cycle signal only when the low-margin year also shows a demand dip: revenue falling, or growth
     # more than 5 points below both neighbouring years and under half the company's median growth. Write-downs and fines on
     # steadily growing revenue are one-offs, not a
@@ -943,16 +946,21 @@ def _cyclical(fb, rows, primary, inputs):
             (lows if weak(low) else one_offs).add(low)
     reversals = len(lows)
     always_grew = len(revs) >= 2 and all(revs[i] > revs[i - 1] for i in range(1, len(revs)))
-    pre_commercial = any(m <= -1 for m in ms)
+    # losses larger than revenue are pre-commercial noise in most years or while revenue is still small; an occasional one at
+    # established scale is a write-down (Chesapeake / Expand Energy impairments in 2009, 2015 and 2020 on $5-20bn of revenue)
+    top = max(revs) if revs else 0
+    huge = [(m, _row_val(rows[e], 'revenue')) for e, m in pairs if m <= -1]
+    pre_commercial = bool(huge) and (2 * len(huge) > len(ms) or any(r < .2 * top for _, r in huge))
     loss_grower = always_grew and bool(ms) and ms[-1] < 0
     # revenue up every year and margins from losses to the window high: a scale-up path; averaging it would value the
     # company on its start-up losses (Global-E 2026-10: -14% mean margin against +7% reported)
     scale_up = always_grew and bool(ms) and min(ms) < 0 < ms[-1] and ms[-1] >= max(ms) - .01
-    data_cyc = ((drop_recovered and (vol or 0) >= .03) or reversals >= 2) and not pre_commercial and not loss_grower and not scale_up
+    data_cyc = (((drop_recovered or boom_bust) and (vol or 0) >= .03) or reversals >= 2) and not pre_commercial and not loss_grower and not scale_up
     if data_cyc:
         reasons.append(f'reported history swings: operating-margin standard deviation {_pct(vol)}, {reversals} margin reversal(s) of '
-                       f'>= 3 points' + (', revenue fell >= 10% and recovered' if drop_recovered else ''))
-    elif ms and (pre_commercial or loss_grower or scale_up) and ((drop_recovered and (vol or 0) >= .03) or reversals >= 2):
+                       f'>= 3 points' + (', revenue fell >= 10% and recovered' if drop_recovered else '')
+                       + (', revenue fell >= 10% right after rising >= 15% (boom then bust)' if boom_bust else ''))
+    elif ms and (pre_commercial or loss_grower or scale_up) and (((drop_recovered or boom_bust) and (vol or 0) >= .03) or reversals >= 2):
         reasons.append('margin swings ignored as a cycle signal: ' + ('losses larger than revenue (pre-commercial noise)' if pre_commercial
                        else 'revenue rose every year while loss-making (investment timing, not a cycle)' if loss_grower
                        else 'revenue rose every year and margins moved from losses to the window high (a scale-up path, not a '
