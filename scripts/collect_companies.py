@@ -78,6 +78,8 @@ def main(argv=None):
     ap.add_argument('folder')
     ap.add_argument('--symbols', nargs='+')
     ap.add_argument('--tries', type=int, default=4, help='candidates tried per lane before the lane is reported empty')
+    ap.add_argument('--name', default=None, help='queue file companies/QUEUE_<name>.json (default QUEUE.json; with --symbols '
+                                                 'QUEUE_symbols.json, so a holdings run never overwrites the discovery queue)')
     a = ap.parse_args(argv)
     ua = os.environ.get('SEC_USER_AGENT', '')
     if '@' not in ua:
@@ -110,7 +112,8 @@ def main(argv=None):
             entry['blocked'].append({'symbol': s, 'reasons': chk['reasons']})
         queue.append(entry)
     os.makedirs(os.path.join(a.folder, 'companies'), exist_ok=True)
-    with open(os.path.join(a.folder, 'companies', 'QUEUE.json'), 'w', encoding='utf-8') as f:
+    name = a.name or ('symbols' if a.symbols else None)
+    with open(os.path.join(a.folder, 'companies', f'QUEUE_{name}.json' if name else 'QUEUE.json'), 'w', encoding='utf-8') as f:
         json.dump({'queue': queue, 'built_at_utc': datetime.now(timezone.utc).isoformat(timespec='seconds')}, f, indent=1)
     print(json.dumps(queue, indent=1))
 

@@ -91,16 +91,25 @@ def identity_check(companyfacts, listing=None, company=None):
     translations: the engine models no FX translation), or (b) the listed security is a depositary share whose implied
     ratio (listing market cap / price vs dei shares outstanding) is not 1 (the engine models no ADS ratio). The check
     reads the saved payloads only; the reasons say what would unblock the company."""
-    counts = {}
+    rows = []
     for tax, concepts in (companyfacts.get('facts') or {}).items():
         if tax == 'dei':
             continue
         for c in concepts.values():
             for unit, rs in (c.get('units') or {}).items():
                 if '/' not in unit and len(unit) == 3 and unit.isupper():
-                    counts[unit] = counts.get(unit, 0) + len(rs)
+                    rows += [(unit, r) for r in rs]
+    # the latest annual report decides (Nebius: Yandex-era RUB history, USD since); else the latest filing; else all facts
+    annual = [r for _, r in rows if r.get('form') in ('10-K', '20-F', '40-F') and r.get('accn')]
+    latest = max(annual or [r for _, r in rows if r.get('accn')], key=lambda r: r.get('filed') or '', default=None)
+    scope = [(u, r) for u, r in rows if latest and r.get('accn') == latest['accn']] or rows
+    counts = {}
+    for u, _ in scope:
+        counts[u] = counts.get(u, 0) + 1
     cur = max(counts, key=counts.get) if counts else None
-    reasons, out = [], {'reporting_currency': cur, 'monetary_units': counts}
+    reasons, out = [], {'reporting_currency': cur, 'monetary_units': counts,
+                        'currency_basis': f"facts of filing {latest['accn']} ({latest.get('form')}, filed {latest.get('filed')})"
+                        if latest and scope is not rows else 'all facts (no filing identifiers)'}
     if cur and cur != 'USD':
         reasons.append(f'reporting currency {cur} ({counts[cur]} facts vs {counts.get("USD", 0)} in USD, which are convenience '
                        'translations): the engine does not translate currencies; a manual FactBook in the reporting currency with a '
@@ -137,9 +146,21 @@ def plan(universe_folder, symbols, rows=None):
     """Company folders and the SEC calls for each queued symbol. rows: universe rows (default rows.json in the folder)."""
     rows = rows if rows is not None else _load(os.path.join(universe_folder, 'rows.json'))
     by = {r['symbol']: r for r in rows}
+    tick = os.path.join(universe_folder, 'raw', 'sec__company_tickers_exchange.json')
+    sec_map = {}
+    if os.path.exists(tick):                 # holdings outside the screened universe still resolve to an SEC filer
+        t = _load(tick)
+        sec_map = {d['ticker'].upper(): d for d in (dict(zip(t['fields'], x)) for x in t['data'])}
     out, missing = [], []
     for s in symbols:
         r = by.get(s)
+        if r is None and s.upper() in sec_map:
+            m = sec_map[s.upper()]
+            lr = listing_row(os.path.join(universe_folder, 'raw'), s) if os.path.exists(
+                os.path.join(universe_folder, 'raw', 'nasdaq__screener_stocks.json')) else None
+            r = {'symbol': s, 'name': m.get('name'), 'source': {'cik': m['cik']}, 'exchange': m.get('exchange'),
+                 'sector': (lr or {}).get('sector') or None, 'industry': (lr or {}).get('industry') or None,
+                 'country': (lr or {}).get('country') or None}
         cik = r and (r.get('source') or {}).get('cik')
         if not cik:
             missing.append(s)

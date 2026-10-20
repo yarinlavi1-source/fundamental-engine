@@ -156,6 +156,7 @@ def main():
     dp.add_argument("folder", help="universe folder (cards.json, companies/<T>/raw)")
     dp.add_argument("--as-of", required=True)
     dp.add_argument("--symbols", nargs="+", help="run these company folders instead of the queue")
+    dp.add_argument("--name", help="read companies/QUEUE_<name>.json and write comparison_<name>.json/_he.md (e.g. holdings)")
     pf = subs.add_parser("portfolio", help="READ-ONLY analysis of saved Interactive Brokers payloads; prints to stdout, stores nothing")
     pf.add_argument("positions")
     pf.add_argument("--summary")
@@ -237,7 +238,11 @@ def main():
             from .render import markdown, hebrew_paragraph
             from .pipeline import summary
             base = Path(args.folder)
-            q = read_json(base / 'companies' / 'QUEUE.json') if not args.symbols else None
+            suffix = f'_{args.name}' if args.name else ''
+            qf = base / 'companies' / f'QUEUE{suffix}.json'
+            q = read_json(qf) if qf.exists() else None
+            if not args.symbols and q is None:
+                raise ValueError(f'{qf} not found: run scripts/collect_companies.py first or pass --symbols')
             syms = args.symbols or [e['symbol'] for e in q['queue'] if e['symbol']]
             card_set = read_json(base / 'cards.json') if (base / 'cards.json').exists() else None
             cfs, ran = [], []
@@ -254,8 +259,9 @@ def main():
             comp = handoff.compare(cfs, card_set)
             comp['blocked'] = [b for e in (q or {}).get('queue', []) for b in e.get('blocked', [])]
             comp['empty_lanes'] = [e['lane'] for e in (q or {}).get('queue', []) if not e['symbol']]
-            (base / 'companies' / 'comparison.json').write_text(json.dumps(comp, indent=1, ensure_ascii=False, allow_nan=False), encoding='utf-8')
-            (base / 'companies' / 'comparison_he.md').write_text(handoff.render_he(comp), encoding='utf-8')
+            (base / 'companies' / f'comparison{suffix}.json').write_text(json.dumps(comp, indent=1, ensure_ascii=False, allow_nan=False),
+                                                                      encoding='utf-8')
+            (base / 'companies' / f'comparison{suffix}_he.md').write_text(handoff.render_he(comp), encoding='utf-8')
             print(json.dumps({'ran': ran, 'blocked': comp['blocked'], 'empty_lanes': comp['empty_lanes'], 'drafts': comp['drafts']},
                              indent=2, ensure_ascii=False, default=str))
             return

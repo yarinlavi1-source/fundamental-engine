@@ -905,8 +905,27 @@ def _cyclical(fb, rows, primary, inputs):
     vol = pstdev(ms) if len(ms) >= 3 else None
     revs = [_row_val(rows[e], 'revenue') for e in ends]
     drop_recovered = any(revs[i] < .9 * revs[i - 1] and revs[-1] > revs[i] for i in range(1, len(revs) - 1))
-    reversals = sum(1 for i in range(1, len(ms) - 1)
-                    if abs(ms[i] - ms[i - 1]) >= .03 and abs(ms[i + 1] - ms[i]) >= .03 and (ms[i] - ms[i - 1]) * (ms[i + 1] - ms[i]) < 0)
+    # a margin reversal is a cycle signal only when the low-margin year also shows a demand dip: revenue falling, or growth
+    # more than 5 points below both neighbouring years and under half the company's median growth. Write-downs and fines on
+    # steadily growing revenue are one-offs, not a
+    # cycle (Microsoft 2012/2015 impairments, Meta 2012 IPO stock pay and 2019 FTC fine had read as a cycle and cut revenue
+    # 25% to a 'mid-cycle trend'); a maturing grower's slower years are not dips either. Each low year counts once.
+    gr = {ends[i]: revs[i] / revs[i - 1] - 1 for i in range(1, len(revs)) if revs[i - 1]}
+    g_med = sorted(gr.values())[len(gr) // 2] if gr else None
+
+    def weak(e):
+        g = gr.get(e)
+        if g is None:
+            return False
+        k = ends.index(e)
+        nb = [gr[x] for x in (ends[k - 1] if k else None, ends[k + 1] if k + 1 < len(ends) else None) if x in gr]
+        return g < 0 or (bool(nb) and g < min(nb) - .05 and g_med is not None and g < .5 * g_med)
+    lows, one_offs = set(), set()
+    for i in range(1, len(ms) - 1):
+        if abs(ms[i] - ms[i - 1]) >= .03 and abs(ms[i + 1] - ms[i]) >= .03 and (ms[i] - ms[i - 1]) * (ms[i + 1] - ms[i]) < 0:
+            low = pairs[i][0] if ms[i] < ms[i - 1] else pairs[i + 1][0]
+            (lows if weak(low) else one_offs).add(low)
+    reversals = len(lows)
     always_grew = len(revs) >= 2 and all(revs[i] > revs[i - 1] for i in range(1, len(revs)))
     pre_commercial = any(m <= -1 for m in ms)
     loss_grower = always_grew and bool(ms) and ms[-1] < 0
@@ -923,7 +942,9 @@ def _cyclical(fb, rows, primary, inputs):
                        else 'revenue rose every year and margins moved from losses to the window high (a scale-up path, not a '
                             'cycle; an analyst can still confirm a cycle with inputs.cyclical)'))
     elif ms:
-        reasons.append(f'reported history shows no cycle pattern (margin standard deviation {_pct(vol)}, {reversals} reversal(s))')
+        reasons.append(f'reported history shows no cycle pattern (margin standard deviation {_pct(vol)}, {reversals} demand-driven '
+                       'reversal(s)' + (f"; margin dips on normal revenue growth in {', '.join(sorted(x[:4] for x in one_offs))} read as one-off "
+                                       'charges, not a cycle' if one_offs else '') + ')')
     position, pos_rule = _margin_position(ms) if len(ms) >= 3 and not pre_commercial else (None, None)
     flag_peak = flag and position == 'peak'
     value, normalize = flag or data_cyc, data_cyc or flag_peak

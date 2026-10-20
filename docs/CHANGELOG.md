@@ -45,6 +45,15 @@
     unknown (Harrow was rated strong on self-funding alone);
   - the base growth rationale states the anchor actually used (the current fiscal year from year-to-date reports), not
     the trailing figure.
+- Systematic undervaluation found on the holdings run (read-only IBKR book, 20.10.2026): the history cycle detector
+  counted any two margin reversals in up to 19 years, so write-downs and fines on growing revenue (Microsoft 2012/2015,
+  Meta 2012/2019) made mature franchises 'cyclical' and reverted their revenue toward a 'mid-cycle trend' (Microsoft:
+  revenue cut 25%, base value $143 against a $529 quote; $329 after the fix). A reversal now counts only when the low
+  year is a demand dip (revenue falling, or growth more than 5 points below both neighbouring years and under half the
+  median); the other dips are listed as one-off charges. Industry flags and analyst confirmation are unchanged.
+- Identity check reads the currency of the latest annual report (Nebius: Yandex-era RUB history, USD now); the handoff
+  resolves holdings outside the screened universe through the SEC ticker map; holdings runs write their own queue and
+  comparison files (`--name holdings`).
 
 - Investments no longer vanish on a tag change: DebtSecuritiesCurrent/Noncurrent read as short/long-term investments;
   listed equity stakes (EquitySecuritiesFvNi) resolved as `equity_securities_fv` and valued once at fair value in the

@@ -33,6 +33,15 @@ class IdentityTests(unittest.TestCase):
         self.assertEqual(chk['status'], 'blocked')
         self.assertIn('reporting currency CNY', chk['reasons'][0])
 
+    def test_latest_annual_report_decides_the_currency(self):
+        def rows(unit, n, filed, accn):
+            return {f'C{unit}{filed}{i}': {'units': {unit: [{'end': filed, 'val': 1.0, 'form': '10-K', 'filed': filed, 'accn': accn}]}}
+                    for i in range(n)}
+        gaap = {**rows('RUB', 80, '2021-03-01', 'old'), **rows('USD', 30, '2026-02-20', 'new')}     # SYNTHETIC: history in RUB
+        chk = H.identity_check({'facts': {'us-gaap': gaap}})
+        self.assertEqual((chk['status'], chk['reporting_currency']), ('ok', 'USD'))
+        self.assertIn('new', chk['currency_basis'])
+
     def test_depositary_ratio_must_be_one_or_modelled(self):
         listing = {'name': 'Synthetic Holdings American Depositary Shares', 'lastsale': '$7.00', 'marketCap': '700000000'}
         five = H.identity_check(facts({'USD': 50}, shares=500e6), listing)                 # 100m ADS, 500m shares

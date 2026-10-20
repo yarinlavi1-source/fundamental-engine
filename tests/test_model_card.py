@@ -620,11 +620,30 @@ class RepairRegressionTests(unittest.TestCase):
         fb = steady_fb('Information Technology', 'Application Software', rev, [-.27, -.40, -.25, -.30, .006, .074], .45, .03)
         c = card(fb)
         self.assertFalse(c['cyclical']['data_shows_cycle'])
-        self.assertTrue(any('scale-up path' in r for r in c['cyclical']['reasons']))
+        self.assertTrue(any('scale-up path' in r or 'no cycle pattern' in r for r in c['cyclical']['reasons']))
         self.assertNotEqual(c['valuation']['method'], 'normalized_cycle_fcff')
         dip = [2e8, 2.8e8, 2.4e8, 3.2e8, 4e8, 5e8]                                  # a revenue fall keeps the cycle reading
         self.assertTrue(card(steady_fb('Information Technology', 'Application Software', dip, [-.27, -.40, -.25, -.30, .006, .074],
                                        .45, .03))['cyclical']['data_shows_cycle'])
+
+    def test_one_off_charges_on_growing_revenue_are_not_a_cycle(self):
+        # SYNTHETIC history shaped like Microsoft's: write-down years (margin dips) while revenue keeps growing
+        def fb(company, rev, om, gm, capex_pct):
+            n = len(rev)
+            return synth_fb(company, series_years(
+                n, start=2025 - n + 1, revenue=rev, gross_profit=[r * gm for r in rev], operating_income=[r * m for r, m in zip(rev, om)],
+                cfo=[r * (m + .08) for r, m in zip(rev, om)], capex=[r * capex_pct for r in rev], d_and_a=[r * .04 for r in rev],
+                cash=[r * .3 for r in rev], equity=[r * .8 for r in rev], long_term_debt=[r * .2 for r in rev],
+                total_assets=[r * 1.6 for r in rev], total_liabilities=[r * .8 for r in rev], shares_outstanding=[1e9] * n))
+        rev = [60e9 * 1.09 ** i for i in range(12)]
+        om = [.37, .35, .38, .38, .29, .34, .32, .19, .24, .30, .34, .37]
+        c = card(fb({'sector': 'Information Technology', 'industry': 'Systems Software'}, rev, om, .68, .03))
+        self.assertFalse(c['cyclical']['data_shows_cycle'])
+        self.assertTrue(any('one-off' in r for r in c['cyclical']['reasons']), c['cyclical']['reasons'])
+        self.assertNotEqual(c['valuation']['method'], 'normalized_cycle_fcff')
+        demand = [60e9, 66e9, 54e9, 63e9, 70e9, 58e9, 66e9, 74e9, 61e9, 70e9, 78e9, 85e9]   # dips come with revenue falls
+        om2 = [.30, .34, .18, .29, .33, .17, .28, .33, .16, .27, .31, .33]
+        self.assertTrue(card(fb({'sector': 'Materials', 'industry': 'Specialty Chemicals'}, demand, om2, .35, .05))['cyclical']['data_shows_cycle'])
 
     def test_fee_brokers_and_asset_managers_are_operators(self):
         rev = [20e9 * 1.09 ** i for i in range(5)]
