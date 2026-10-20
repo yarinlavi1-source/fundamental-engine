@@ -126,7 +126,9 @@ def collect(folder, c, ua, docs=True, only_quarterly=False):
             conv = _has_convertibles(c['raw'])
             annual = _needs_annual(c['raw'], c['company'], handoff.listing_row(os.path.join(folder, 'raw'), c['symbol']))
             docs = [d for d in docs if conv or (d['file'] == 'sec__latest_quarterly.htm' and _cover_missing(c['raw']))
-                    or (annual and d['file'] == 'sec__annual_report.htm')]
+                    or (annual and d['file'] == 'sec__annual_report.htm')
+                    # a document already saved stays recorded: without its manifest row the pipeline cannot date it
+                    or (os.path.exists(os.path.join(c['raw'], d['file'])) and (old.get(d['file']) or {}).get('accession') == d['accession'])]
         for d in docs:
             path = os.path.join(c['raw'], d['file'])
             if os.path.exists(path) and (old.get(d['file']) or {}).get('accession') == d['accession']:

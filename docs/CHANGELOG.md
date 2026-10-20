@@ -195,6 +195,10 @@
   PayPal -> platform, Accenture, Cognizant, EPAM, ADP, Paychex -> IT services, Tesla, GM, Ford -> hardware, Lockheed,
   Northrop, General Dynamics -> industrial; consumer brands and media stay). The sector type is kept as secondary; a specific
   label is never overruled by words. The collection step fetches the annual report for such companies.
+- Collection kept losing documents: a re-collection that did not need a saved annual or quarterly report rewrote the
+  manifest without its row, and the pipeline then ignored the file as undated (the holdings run had dropped them for
+  Microsoft, Meta, Tesla, Palantir, ServiceNow, Amphenol, Reddit and Nebius). A saved document of the same filing now keeps
+  its row; the eight manifests were restored from the SEC filing list (same accession, same period).
 - Business type from the annual report's own words where the SEC code is ambiguous: a machinery or hardware label whose
   annual report mentions semiconductor/wafer/lithography at least 40 times per 100,000 words is typed semiconductor
   (equipment), the label kept as secondary (`business.industry_terms`, `model_card.SEMI_TERMS_DENSITY`; a heuristic, ASML has
