@@ -7,13 +7,17 @@ reinvestment, working capital, SBC, tax, funding and the discount rate. Every nu
 assumption row with a kind, a rationale, a falsifier and sources, and the paths are written as a
 drivers.build_case spec that valuation.value_company executes and valuation_audit reviews.
 
-Growth costs capital (growth capex from incremental sales-to-capital, converging to the terminal g / ROIC rule), funding
-is explicit (investments first, SBC settled in shares, assumed debt within capacity, then assumed equity with priced
-dilution; labelled and flagged, never silent), SBC is a cash-equivalent cost with point-in-time shares (no double counting
-with dilution), the terminal margin equals the last explicit year and depreciation converges to maintenance capex. The
-cost of equity never depends on the quote: leverage is measured against the model's own equity value. Cyclicals start
-from the cycle (mid-cycle trend revenue and margin), declining businesses may keep declining, and the fifth anniversary
-of as_of is always an explicit valuation date.
+Growth costs capital (growth capex from incremental sales-to-capital, converging to the terminal g / ROIC rule; a shrinking
+business releases capital in the explicit years too), funding is explicit (investments first, SBC settled in shares, assumed
+debt within capacity, then assumed equity; new shares are issued at min(quote, the scenario's own value), labelled and
+flagged, never silent), SBC is a cash-equivalent cost with point-in-time shares (no double counting with dilution), the
+terminal margin equals the last explicit year and depreciation converges to maintenance capex with the EBITDA margin held
+(non-cash amortization rolls off unless recurring acquisitions replace it). The cost of equity never depends on the quote:
+the table rate is read at market-average leverage, unlevered with the expected return on debt and relevered against the
+model's own equity value. Cyclicals start from the cycle (mid-cycle trend revenue, through-the-cycle margin = sum of EBIT /
+sum of revenue), an unobserved cyclical peak is never extrapolated silently, declining businesses may keep declining, an
+unassessed moat gets at most a labelled, continuous proxy for base and bull (never the bear) with its value effect shown,
+and the fifth anniversary of as_of is always an explicit valuation date.
 
 The constants below are MODEL ASSUMPTIONS: chosen once from base rates and documented here, cited in
 the ledger through the 'engine:forecast_rules' source, and never tuned toward a return target or
@@ -25,8 +29,9 @@ from datetime import date, timedelta
 from hashlib import sha256
 import json
 import math
+import re
 from . import facts
-from .drivers import build_case, RATIO_KEYS, ABSOLUTE_KEYS
+from .drivers import build_case, RATIO_KEYS, ABSOLUTE_KEYS, reinvest as _reinvest, capex_for_path as _capex_for_path, value_paused as _value_paused, RELEASE_FLOOR
 from .finance import number
 from .valuation import value_company, years, ROUTES
 from .valuation_tools import implied_cost_of_equity
@@ -82,9 +87,20 @@ KE_FACTORS = (  # (condition, add-on, reason) evaluated on the card and the exec
     ('capital_intensity_high', .005, 'high capital intensity (operating leverage on fixed assets)'),
     ('needs_external_funding', .01, 'base plan depends on external funding (executed funding result)'),
 )
-# Financial leverage is NOT a table add-on: Ke is relevered from the unlevered (business-risk) rate with the debt weight
-# taken from the model's own base equity value (fixed point, never the quote): Harris-Pringle, tax shields at the
-# operating risk, Ke = Ku + (Ku - Kd) x D/E and WACC = Ku - w x Kd x tax.
+# Financial leverage is NOT a table add-on. The table rate (risk-free + ERP + business-risk add-ons) is the cost of equity of
+# a company of that business risk at MARKET-AVERAGE leverage: the ERP is measured on levered equities, so treating it as an
+# unlevered rate and relevering on top double counts leverage. Ku unlevers it at MARKET_DE with the EXPECTED return on debt
+# (never the promised coupon: a higher coupon on the same debt is a cash cost, not a lower equity risk), then Harris-Pringle
+# relevers at the company's own D/E taken from the model's own base equity value (fixed point, never the quote):
+#   Ku = (table + Kd_e x MARKET_DE) / (1 + MARKET_DE);  Ke = max(table, Ku + (Ku - Kd_e) x D/E)
+#   WACC = E/V x Ke + D/V x (Kd_e - Kd_promised x tax)  (= Ku - D/V x Kd_promised x tax when Ke is not floored)
+# A company with less than market leverage keeps the table rate (conservative: it is not credited with a lower rate).
+MARKET_DE = .25           # market-average debt / equity behind the ERP (US non-financials, order of magnitude; a model assumption)
+DEBT_EXPECTED_PREMIUM = .01   # expected (not promised) return on corporate debt over risk-free: about a BBB debt beta x ERP
+DEBT_RATE_RANGE = (.005, .06)  # interest / debt below 0.5% or above risk-free + 6pp is flagged as a data issue (it sets interest and the
+                               # tax shield); a coupon below today's risk-free rate is normal for debt issued when rates were lower
+REGULATED_ASSET_RISK = .5     # regulated utilities: asset risk about half the market's (allowed returns, pass-through costs): ERP x 0.5
+REGULATED_WORDS = ('utilities', 'utility')
 W_MAX = .6                # debt weight cap when the modelled equity is tiny (distress): flagged, not hidden
 DEBT_CAPACITY = 3.0       # assumed new borrowing only up to 3x EBITDA before SBC (the usual high-leverage line); beyond -> equity
 EQUITY_FEE = .03          # gross spread on an assumed follow-on equity raise
@@ -96,7 +112,16 @@ SCALE_CAPS = ((1e8, 1.0), (1e9, .6), (1e10, .4), (5e10, .25), (float('inf'), .15
 CYCLE_TREND = (-.03, TERMINAL_GROWTH_CAP + .02)   # bounds on the long-run (trend) growth of a cyclical's revenue
 CYCLE_CONV = {'bear': 2, 'base': 3, 'bull': 4}     # years for a cyclical to revert from today's level to its cycle path
 DECLINE_FLOOR = -.05      # lowest perpetual growth for a structurally declining business
-KNOWN_INPUTS = ('overrides', 'reviews', 'risk_free', 'equity_risk_premium', 'horizon_years', 'financing', 'nol')
+KNOWN_INPUTS = ('overrides', 'reviews', 'risk_free', 'equity_risk_premium', 'horizon_years', 'financing', 'nol', 'cyclical')
+CYCLE_TREATMENTS = ('structural', 'cyclical')   # inputs['cyclical']['treatment'] for an industry-cyclical company at a margin peak
+# Moat proxy (no analyst moat assessment): a continuous weight on the strong-moat rules for base and bull (never the bear, which
+# tests the moat failing), from evidence ramps so a 1pp move in one input never flips the value: multi-year average ROIC
+# (15% -> 25%), measurable incremental ROIC (10% -> 20%) and pricing power (analyst strong = 1; computed: gross margin level
+# 45% -> 75% and stability, range 8pp -> 3pp). Blocked by any analyst moat row (even 'unknown'), an analyst 'weak' on
+# competition / substitutes / technology_ai, or unassessed FactBook evidence on moat, substitutes or technology_ai.
+PROXY_RAMPS = {'roic_avg': (.15, .25), 'incremental_roic': (.10, .20), 'gross_margin': (.45, .75), 'gross_margin_range': (.08, .03)}
+PROXY_BLOCK_DIMS = ('competition', 'substitutes', 'technology_ai')
+PROXY_EVIDENCE_TOPICS = ('moat', 'substitutes', 'technology_ai')
 FINANCING_MODES = ('assumed', 'assumed_debt', 'none')   # 'assumed_debt' kept as the legacy name of the default
 WEAK_DIMENSIONS = ('customer_concentration', 'technology_ai', 'governance', 'competition')
 ECON_LEVERS = ('growth_anchor', 'growth_half_life', 'terminal_growth', 'mature_margin', 'sales_to_capital',
@@ -229,7 +254,45 @@ def _rate_input(fb, spec, default, label):
 
 # ---------------------------------------------------------------- routing and history
 
-def _route(card, h, warn):
+def _ramp(x, lo, hi):
+    """0 at lo, 1 at hi, linear between (hi < lo reverses the direction); None -> 0."""
+    if x is None:
+        return 0.
+    return _clamp((x - lo) / (hi - lo), 0., 1.)
+
+
+def _moat_proxy(card, h, fb, normalize):
+    """Weight (0..1) of the strong-moat rules for base and bull when no analyst assessed the moat, with its evidence."""
+    dims = card.get('dimensions') or {}
+    blocked = []
+    if normalize:
+        blocked.append('cyclical normalization (returns measured over the cycle, not a franchise)')
+    weak = [d for d in PROXY_BLOCK_DIMS if (dims.get(d) or {}).get('assessment') == 'weak' and (dims.get(d) or {}).get('source') == 'analyst']
+    if weak:
+        blocked.append('analyst rates ' + ', '.join(weak) + ' weak')
+    topics = sorted({q.get('topic') for q in fb.get('qualitative', []) if q.get('topic') in PROXY_EVIDENCE_TOPICS
+                     and (dims.get(q.get('topic')) or {}).get('source') != 'analyst'})
+    if topics:
+        blocked.append('the FactBook holds unassessed evidence on ' + ', '.join(topics) + ' (an analyst must weigh it)')
+    pp = dims.get('pricing_power') or {}
+    gms = h.get('gross_margins') or []
+    if pp.get('source') == 'analyst':
+        w_pp, pp_note = (1. if pp.get('assessment') == 'strong' else 0.), f"analyst pricing power {pp.get('assessment')}"
+    elif len(gms) >= 3 and gms[-1] - gms[0] > -.05:
+        w_pp = min(_ramp(gms[-1], *PROXY_RAMPS['gross_margin']), _ramp(max(gms) - min(gms), *PROXY_RAMPS['gross_margin_range']))
+        pp_note = f'gross margin {_pct(gms[-1])}, range {_pct(max(gms) - min(gms))} over {len(gms)} years'
+    else:
+        w_pp, pp_note = 0., 'pricing power not evidenced (fewer than three gross margins, or falling)'
+    roic_avg = h.get('roic_avg')
+    parts = {'pricing_power': w_pp, 'roic_avg': _ramp(roic_avg, *PROXY_RAMPS['roic_avg']),
+             'incremental_roic': _ramp(h.get('inc_roic'), *PROXY_RAMPS['incremental_roic'])}
+    w = 0. if blocked else round(min(parts.values()), 4)
+    note = (f"{pp_note}; average ROIC {_pct(roic_avg)} over {len(h.get('roic_series') or [])} years; incremental ROIC "
+            f"{_pct(h.get('inc_roic'))}" + ('' if h.get('inc_roic') is not None else ' (not measurable: no proxy)'))
+    return {'weight': w, 'parts': parts, 'blocked': blocked, 'evidence': note}
+
+
+def _route(card, h, warn, fb=None, cyc_input=None):
     val = card.get('valuation') or {}
     bm = (card.get('business_model') or {}).get('primary')
     method = val.get('method') or 'fcff_annual_path'
@@ -242,6 +305,18 @@ def _route(card, h, warn):
     cyc_card = card.get('cyclical') or {}
     cyclical = bool(cyc_card.get('value')) or method == 'normalized_cycle_fcff'        # cyclical economics (Ke add-on)
     normalize = method == 'normalized_cycle_fcff' or bool(cyc_card.get('normalize'))   # history shows a cycle: normalize it
+    # an industry-cyclical company at a margin peak the history has not shown to be a cycle (the card's own position 'peak', no
+    # completed cycle in the data, no analyst decision on the card): the peak is never extrapolated silently. Unless an analyst
+    # says structural (inputs['cyclical']) it is valued around the cycle (mid-cycle revenue and margin, the conservative
+    # reading), with an unresolved material issue until a named reviewer accepts the treatment.
+    peak = (bool(cyc_card.get('value')) and cyc_card.get('position') == 'peak' and not cyc_card.get('data_shows_cycle')
+            and cyc_card.get('basis') != 'analyst' and not cyc_card.get('override'))
+    treatment = (cyc_input or {}).get('treatment') if peak else None
+    forced = peak and not normalize and treatment != 'structural'
+    if forced:
+        normalize = True
+    elif peak and treatment == 'structural':
+        normalize = False
     if normalize and stage in ('early', 'growth'):
         warn('cyclical_stage_normalized', f'card stage {stage} for a cyclical business: growth measured into a cyclical peak is not a '
                                           'growth stage; the forecast uses mature-stage parameters around the cycle', 'medium')
@@ -251,20 +326,27 @@ def _route(card, h, warn):
     typ = TYPE.get(bm, DEFAULT_TYPE)
     archetype = val.get('archetype') or typ[3]
     dims = card.get('dimensions') or {}
-    moat, basis = (dims.get('moat') or {}).get('assessment', 'unknown'), 'card'
-    if moat not in ('strong', 'adequate', 'weak'):
-        # unknown moat: use the computed record (labelled as a proxy) instead of silently capping a demonstrated compounder
-        pp, roic, inc = (dims.get('pricing_power') or {}).get('assessment'), h.get('roic'), h.get('inc_roic')
-        if not normalize and pp == 'strong' and (roic or 0) >= .20 and (inc is None or inc >= .15):
-            moat, basis = 'strong', (f'computed proxy (no analyst moat assessment): pricing-power proxy strong, ROIC {_pct(roic)}, '
-                                     f'incremental ROIC {_pct(inc)}')
-            warn('moat_computed_proxy', f'moat unassessed; strong-moat rules applied from the computed record ({basis}); an analyst '
-                                        'assessment with evidence replaces it', 'medium')
+    mrow = dims.get('moat') or {}
+    moat, basis, proxy = mrow.get('assessment', 'unknown'), 'card', None
+    if mrow.get('source') == 'analyst':
+        # an analyst row is final, including 'unknown': a computed proxy never overrides an analyst's judgement
+        basis = f"analyst assessment ({moat})" + (f": {mrow['note']}" if mrow.get('note') else '')
+        moat = moat if moat in ('strong', 'adequate', 'weak') else 'unknown'
+    elif moat not in ('strong', 'adequate', 'weak'):
+        moat = 'unknown'
+        proxy = _moat_proxy(card, h, fb or {}, normalize)
+        if proxy['weight'] > 0:
+            basis = (f"computed proxy, weight {proxy['weight']:.2f} on the strong-moat rules for base and bull (the bear keeps the "
+                     f"unassessed-moat rules): {proxy['evidence']}")
         else:
-            moat, basis = 'unknown', 'no analyst assessment and no computed proxy (pricing power strong and ROIC >= 20%)'
+            basis = ('no analyst moat assessment; no computed proxy (' + ('; '.join(proxy['blocked']) if proxy['blocked'] else
+                                                                           f"evidence too weak: {proxy['evidence']}") + ')')
+    weights = {s: (1. if moat == 'strong' else (proxy['weight'] if proxy and s != 'bear' else 0.)) for s in SCEN}
     return {'method': method, 'business_model': bm, 'stage': stage, 'type': typ, 'archetype': archetype, 'cyclical': cyclical, 'normalize': normalize,
+            'cycle_path': normalize, 'cycle_peak': peak, 'cycle_treatment': treatment if peak else None, 'cycle_forced': forced,
             'capital_intensity': (card.get('capital_intensity') or {}).get('value'),
-            'funding': (card.get('funding') or {}).get('value'), 'moat': moat, 'moat_basis': basis, 'dimensions': dims}
+            'funding': (card.get('funding') or {}).get('value'), 'moat': moat, 'moat_basis': basis, 'moat_proxy': proxy,
+            'moat_weights': weights, 'dimensions': dims}
 
 
 def _latest_src(fb, *metrics):
@@ -434,6 +516,17 @@ def _history(fb, an, warn):
     h['capital_light'] = len(ic) >= 2 and ic[-1][2] > ic[max(0, len(ic) - 4)][2] and ic[-1][1] <= ic[max(0, len(ic) - 4)][1]
     h['roic'] = _metric(an, 'roic')
     h['inc_roic'] = _metric(an, 'incremental_roic_3y')
+    ser = [_num(x.get('roic')) for x in (((an.get('forensics') or {}).get('roic') or {}).get('series') or []) if isinstance(x, dict)]
+    ser = [x for x in ser if x is not None][-5:]
+    h['roic_series'], h['roic_avg'] = ser, (_mean(ser) if ser else None)
+    gt = facts.annual_table(fb, ['revenue', 'gross_profit', 'cost_of_revenue'])
+    gms = []
+    for e in sorted(gt)[-5:]:
+        r = gt[e]
+        gp = r.get('gross_profit') if r.get('gross_profit') is not None else (r['revenue'] - r['cost_of_revenue'] if r.get('revenue') and r.get('cost_of_revenue') is not None else None)
+        if gp is not None and r.get('revenue'):
+            gms.append(gp / r['revenue'])
+    h['gross_margins'] = gms
     h['nd_ebitda'] = _metric(an, 'net_debt_to_ebitda')
     h['cycle'] = _cycle_stats(h) if len(rev) >= 3 else None
     dist, fcf = 0., 0.
@@ -528,10 +621,15 @@ def _fade(start, terminal, half_life, n):
     return [terminal + (start - terminal) * .5 ** (t / half_life) for t in range(1, n + 1)]
 
 
-def _cost_of_equity(route, rf, erp, inputs_notes, external):
-    """Unlevered (business-risk) cost of equity Ku from the documented table; leverage is added by _relever."""
+def _cost_of_equity(route, rf, erp, inputs_notes, external, regulated=False):
+    """Table cost of equity: what a company of this business risk costs at MARKET-AVERAGE leverage (the ERP is measured on
+    levered equities). _solve_capital unlevers it at MARKET_DE and relevers it at the company's own leverage."""
     st = STAGE[route['stage']]
     adj = [{'factor': 'stage:' + route['stage'], 'value': st['ke'], 'reason': f"business-risk add-on for the {route['stage']} stage"}]
+    if regulated:
+        adj.append({'factor': 'regulated_utility', 'value': -(1 - REGULATED_ASSET_RISK) * erp,
+                    'reason': f'regulated utility: allowed returns and pass-through costs, asset risk about {REGULATED_ASSET_RISK:.0%} of the '
+                              "market's (ERP x 0.5); the leverage it carries is priced by the relevering, not by this row"})
     cond = {'cyclical': route['cyclical'], 'capital_intensity_high': route['capital_intensity'] == 'high',
             'needs_external_funding': bool(external)}
     for key, v, why in KE_FACTORS:
@@ -540,105 +638,179 @@ def _cost_of_equity(route, rf, erp, inputs_notes, external):
     for d in WEAK_DIMENSIONS:   # at most 4 x 0.25pp = 1pp
         if (route['dimensions'].get(d) or {}).get('assessment') == 'weak':
             adj.append({'factor': 'weak_' + d, 'value': .0025, 'reason': f'model card rates {d} weak'})
-    ku = _clamp(rf + erp + sum(a['value'] for a in adj), rf + .02, .20)
-    return ku, {'risk_free': rf, 'equity_risk_premium': erp, 'adjustments': adj, 'notes': inputs_notes,
-                'formula': 'Ku = risk-free + equity risk premium + business-risk adjustments (stage, cyclicality, capital intensity, '
-                           'funding need of the executed base plan, weak card dimensions); a documented table, NOT price beta. '
-                           'Ke = Ku + (Ku - Kd) x D/E and terminal WACC = Ku - w x Kd x tax (Harris-Pringle) with D/E and w from '
-                           "the model's own base equity value (fixed point), never the quote; same Ke in every scenario so "
-                           'scenarios differ by business outcomes only'}
+    table = _clamp(rf + erp + sum(a['value'] for a in adj), rf + .02, .20)
+    return table, {'risk_free': rf, 'equity_risk_premium': erp, 'adjustments': adj, 'notes': inputs_notes,
+                   'formula': 'table = risk-free + equity risk premium + business-risk adjustments (stage, regulated utility, cyclicality, '
+                              'capital intensity, funding need of the executed base plan, weak card dimensions): a documented table, NOT price '
+                              f'beta, read as the cost of equity at market-average leverage (D/E {MARKET_DE:.2f}). Ku = (table + Kd_e x '
+                              f'{MARKET_DE:.2f}) / (1 + {MARKET_DE:.2f}) with Kd_e = risk-free + {DEBT_EXPECTED_PREMIUM:.0%} (expected, not promised, '
+                              'return on debt); Ke = max(table, Ku + (Ku - Kd_e) x D/E) and terminal WACC = E/V x Ke + D/V x (Kd_e - Kd_promised x '
+                              "tax) (Harris-Pringle) with D/E and D/V from the model's own base equity value (fixed point), never the quote; same "
+                              'Ke in every scenario so scenarios differ by business outcomes only'}
 
 
-def _ke_parts(parts, ku, lev):
+def _ke_parts(parts, table, lev):
     """Final components: the table rows plus the leverage relevering as its own row (Ke = sum of the rows)."""
     adj = list(parts['adjustments'])
-    if lev['ke'] - ku > 1e-12:
-        adj.append({'factor': 'leverage_relevered', 'value': lev['ke'] - ku,
-                    'reason': f"financial leverage: Ku + (Ku - Kd) x D/E with D/E {lev['d_to_e']:.1%} from the model's own equity value"})
+    if lev['ke'] - table > 1e-12:
+        adj.append({'factor': 'leverage_relevered', 'value': lev['ke'] - table,
+                    'reason': f"financial leverage above the market average: Ku + (Ku - Kd_e) x D/E with D/E {lev['d_to_e']:.1%} from the "
+                              "model's own equity value"})
     flat = {'adjustment_' + a['factor'].replace(':', '_'): a['value'] for a in adj}   # numeric keys for risk.py's priced-via lookup
-    return {**{k: v for k, v in parts.items() if k != 'adjustments'}, **flat, 'adjustments': adj, 'unlevered': ku, 'leverage': lev}
+    # 'unlevered' stays the rate BEFORE the leverage row (consumers show Ke - unlevered as the leverage effect); the asset
+    # (Harris-Pringle) rate behind the relevering is 'asset_unlevered'
+    return {**{k: v for k, v in parts.items() if k != 'adjustments'}, **flat, 'adjustments': adj, 'table_rate': table,
+            'unlevered': table, 'asset_unlevered': lev['unlevered'], 'leverage': lev}
 
 
-def _relever(spec, P, ku, kd, net_debt, ov_ke):
-    """Debt weight from the base scenario's own equity value today (fixed point), so value does not depend on the quote."""
-    shares = spec['opening']['shares']
-    w, it, status, e = 0., 0, 'no_net_debt' if net_debt <= 0 else 'converged', None
+def _solve_capital(spec, P, table, kd_e, kd_p, net_debt, ov_ke, cap_at_quote=True):
+    """One fixed point on the model's own values, never the quote:
+    1. the debt weight from the base scenario's equity value today;
+    2. the issue price of every new share (assumed equity raises and SBC settled in shares) = min(quote, the scenario's own value
+       per share right after the issue): no new investor pays more than the scenario says a share is worth (a bear does not raise
+       at a price it cannot support), and when the quote is below that value existing holders bear the extra dilution
+       (cap_at_quote=False prices at the scenario's own value only: the 'value at a second issue price' disclosure)."""
+    shares, quote, B = spec['opening']['shares'], spec['quote']['price'], spec['boundaries']
+    ku = (table + kd_e * MARKET_DE) / (1 + MARKET_DE)
+    issued = {sc['name']: [i for i in range(len(B)) if sc['equity_proceeds'][i] > 0 or sc['sbc_share_settlement'][i] > 0]
+              for sc in spec['scenarios']}
+    for sc in spec['scenarios']:
+        p0 = sc.get('equity_issue_price', quote)
+        sc['equity_issue_price'] = [float(x) for x in p0] if isinstance(p0, list) else [float(p0)] * len(B)
 
     def apply(w):
         de = w / (1 - w)
-        ke = ku + max(0., ku - kd) * de
+        ke = max(table, ku + (ku - kd_e) * de)
         for sc in spec['scenarios']:
             s = sc['name']
             k_e = ov_ke.get(s, ke)
-            tx = P[s]['tax']
-            wacc = (ku - w * kd * tx) if s not in ov_ke else (1 - w) * k_e + w * kd * (1 - tx)
+            wacc = (1 - w) * k_e + w * (kd_e - kd_p * P[s]['tax'])
             P[s].update(ke=k_e, wacc=max(wacc, P[s]['g_terminal'] + .03))
             sc['cost_of_equity'] = _r(k_e)
             sc['terminal']['wacc'] = _r(P[s]['wacc'])
         return ke, de
+    w, e, it = 0., None, 0
+    status = 'no_net_debt' if net_debt <= 0 else 'converged'
     ke, de = apply(0.)
-    if net_debt > 0:
-        for it in range(1, 41):
-            v = _value(spec)
+    floor = quote * 1e-6
+    hist = {}                                  # (scenario, period) -> recent plain iterates of p = V(p), for Aitken extrapolation
+    for it in range(1, 151):
+        res, err = _run(spec)
+        if err:
+            status = 'invalid: ' + err
+            break
+        changed = False
+        for sc, rs in zip(spec['scenarios'], res['scenarios']):
+            if not issued[sc['name']] or rs['status'] == 'funding_blocked':
+                continue
+            bv = {x['date']: x['value_per_share'] for x in rs.get('boundary_values') or []}
+            for i in issued[sc['name']]:
+                v = bv.get(B[i], quote)
+                new = max(floor, min(quote, v) if cap_at_quote else v)
+                old = sc['equity_issue_price'][i]
+                if abs(new - old) <= max(1e-9 * max(new, old), 2e-9):  # 9 significant digits (prices are stored to 1e-9)
+                    continue
+                h = hist.setdefault((sc['name'], i), [old])
+                h.append(new)
+                if len(h) >= 3:                                        # geometric convergence: jump to the Aitken limit
+                    d1, d2 = h[-2] - h[-3], h[-1] - h[-2]
+                    r = d2 / d1 if d1 else 0.
+                    if 0 < r < .98:
+                        new = h[-1] + d2 * r / (1 - r)
+                        new = max(floor, min(quote, new) if cap_at_quote else new)
+                        hist[(sc['name'], i)] = [new]
+                sc['equity_issue_price'][i], changed = _r(new, 9), True
+        if net_debt > 0:
+            v = res['annual_values'][0]['base']
             if v is None or v <= 0:
-                status = 'equity_not_positive'
-                w = W_MAX
+                status, w2 = 'equity_not_positive', W_MAX
+            else:
+                e = v * shares
+                w2 = min(W_MAX, net_debt / (net_debt + e))
+                status = 'capped' if w2 >= W_MAX - 1e-12 else 'converged'
+            if abs(w2 - w) > 1e-9:
+                w, changed = w2, True
                 ke, de = apply(w)
-                break
-            e = v * shares
-            w2 = min(W_MAX, net_debt / (net_debt + e))
-            if abs(w2 - w) < 1e-7:
-                w = w2
-                break
-            w = w2
-            ke, de = apply(w)
-        else:
-            status = 'not_converged'
-        if w >= W_MAX - 1e-12 and status == 'converged':
-            status = 'capped'
-    return {'ke': ke, 'unlevered': ku, 'kd': kd, 'net_debt': net_debt, 'model_equity': e, 'debt_weight': w, 'd_to_e': de,
-            'iterations': it, 'status': status,
+        if not changed:
+            break
+    else:
+        status = 'not_converged'
+    prices = {sc['name']: [{'period_end': B[i], 'price': sc['equity_issue_price'][i], 'quote_binding': sc['equity_issue_price'][i] >= quote * (1 - 1e-9)}
+                           for i in issued[sc['name']]] for sc in spec['scenarios']}
+    return {'ke': ke, 'unlevered': ku, 'table': table, 'kd': kd_e, 'kd_expected': kd_e, 'kd_promised': kd_p, 'market_debt_to_equity': MARKET_DE,
+            'net_debt': net_debt, 'model_equity': e, 'debt_weight': w, 'd_to_e': de, 'iterations': it, 'status': status,
+            'issue_prices': prices,
             'basis': 'net debt = debt - marketable investments - cash above the first-period minimum; equity = base value today x '
-                     'point-in-time shares (the model\'s own value, not the quote)'}
+                     'point-in-time shares (the model\'s own value, not the quote); new shares issued at min(quote, scenario value after the issue)'}
+
+
+def _cycle_margin(h):
+    """Through-the-cycle operating margin = sum(EBIT) / sum(revenue) over the window used for the revenue normalization (last
+    ten fiscal years): the cycle's own average EBIT relative to its average revenue. The simple mean of yearly margins drops the
+    revenue-margin covariance (operating leverage) and understates mid-cycle EBIT. Trough and peak are yearly margins."""
+    rows = [(r['revenue'], _num(r.get('operating_income'))) for _, r in h['rows'][-10:]]
+    rows = [(r, e) for r, e in rows if e is not None and r > 0]
+    if not rows:
+        return None
+    ms = [e / r for r, e in rows]
+    return {'mid': sum(e for _, e in rows) / sum(r for r, _ in rows), 'trough': min(ms), 'peak': max(ms), 'years': len(rows),
+            'simple_mean': sum(ms) / len(ms)}
 
 
 def _margin_targets(route, h, warn):
     st, (_, typ, ceil, _) = STAGE[route['stage']], route['type']
     m0, best, sp = h['m0'], h['m_best3'], STAGE[route['stage']]['m_spread']
-    if route['method'] == 'normalized_cycle_fcff':
-        hist = h['m_all']
-        if len(hist) < 5:
-            warn('cycle_not_observed', f'only {len(hist)} fiscal years of margins: mid-cycle margin may not span a full cycle', 'high')
-        mid, trough, peak = sum(hist) / len(hist), min(hist), max(hist)
+    cm = _cycle_margin(h)
+    if route['cycle_path'] and cm:
+        if cm['years'] < 5:
+            warn('cycle_not_observed', f"only {cm['years']} fiscal years of margins: mid-cycle margin may not span a full cycle", 'high')
+        mid, trough, peak = cm['mid'], cm['trough'], cm['peak']
         t = {'base': mid, 'bear': mid - max(sp, .5 * (mid - trough)), 'bull': min(ceil, mid + max(sp, .5 * (peak - mid)))}
-        why = (f'mid-cycle = mean operating margin over {len(hist)} fiscal years {_pct(mid)}; around the cycle, not at its extremes: '
-               f'bear = mid - max(stage spread, half the distance to the trough {_pct(trough)}), bull = mid + max(stage spread, half the '
-               f'distance to the peak {_pct(peak)}), capped at the type ceiling')
+        why = (f"mid-cycle = sum(operating income) / sum(revenue) over {cm['years']} fiscal years {_pct(mid)} (the cycle's own average "
+               f"EBIT; the simple mean of yearly margins, {_pct(cm['simple_mean'])}, would drop the operating leverage); around the cycle, "
+               f'not at its extremes: bear = mid - max(stage spread, half the distance to the trough {_pct(trough)}), bull = mid + '
+               f'max(stage spread, half the distance to the peak {_pct(peak)}), capped at the type ceiling')
     elif route['method'] == 'scenario_survival_fcff':
         base = max(typ * .8, min(m0 if m0 is not None else 0, ceil))
-        t = {'base': base, 'bear': min(base - sp, typ * .35), 'bull': min(ceil, max(typ, base + .5 * sp))}
-        why = f'survival model: base reaches 80% of the type-typical mature margin {_pct(typ)}; bear 35%; bull the typical margin'
+        lows = [m for m in h['m_all'][-5:]]
+        floor = max(typ * .35, min(lows) - sp) if lows else typ * .35
+        t = {'base': base, 'bear': min(base - sp, floor), 'bull': min(ceil, max(typ, base + .5 * sp))}
+        why = (f'survival model: base reaches 80% of the type-typical mature margin {_pct(typ)} (or holds today\'s); bear = base - stage '
+               f"spread, never below the company's own 5-year low less the spread ({_pct(min(lows) - sp) if lows else 'n/a'}) or 35% of "
+               'the typical margin, whichever is higher; bull the typical margin')
     elif m0 is None:
         t = {'base': typ, 'bear': typ - sp, 'bull': min(ceil, typ + .75 * sp)}
         why = f'no current margin; type-typical mature margin {_pct(typ)}'
         warn('margin_missing', 'current operating margin unavailable; mature margin set to the type-typical level', 'high')
     elif m0 >= typ:
-        moat = route['moat']
+        moat, wts = route['moat'], route['moat_weights']
+        strong = max(m0, min(ceil, (m0 + (best if best is not None else m0)) / 2))
+        k = .5 if moat == 'weak' else .25
+        other = m0 - k * (m0 - typ)
+        mix = lambda w: other + w * (strong - other)
+        base = mix(wts['base'])
         if moat == 'strong':
-            base = max(m0, min(ceil, (m0 + (best if best is not None else m0)) / 2))
             why = (f'strong moat: current margin {_pct(m0)} held, recovering half-way to the best of 3 years {_pct(best)} only up to the '
                    f'type ceiling {_pct(ceil)} (the ceiling caps assumed expansion; it never cuts an evidenced margin)')
+        elif wts['base'] > 0:
+            why = (f"moat proxy weight {wts['base']:.2f}: base between the unassessed-moat rule ({k:.0%} of the excess of {_pct(m0)} over the "
+                   f"type-typical {_pct(typ)} competed away = {_pct(other)}) and the strong-moat rule ({_pct(strong)}); the bear keeps the "
+                   'unassessed rule (the moat may fail)')
         else:
-            k = .5 if moat == 'weak' else .25
-            base = m0 - k * (m0 - typ)
             why = f'{moat} moat: {k:.0%} of the excess of current margin {_pct(m0)} over the type-typical {_pct(typ)} competed away'
-        t = {'base': base, 'bear': base - sp, 'bull': max(base, min(max(ceil, best or 0), base + .75 * sp))}
+        b_bear = mix(wts['bear'])
+        t = {'base': base, 'bear': b_bear - sp, 'bull': max(base, min(max(ceil, best or 0), mix(wts['bull']) + .75 * sp))}
     else:
         base = m0 + st['catch_up'] * (typ - m0)
         if best is not None:
             base = max(base, min(best, typ))
         t = {'base': base, 'bear': base - sp, 'bull': min(ceil, base + .75 * sp)}
         why = f'below type-typical: base closes {st["catch_up"]:.0%} of the gap from {_pct(m0)} to {_pct(typ)} (not below the best of 3 years {_pct(best)})'
+    if route['cycle_peak'] and cm and not route['cycle_path']:
+        # analyst says structural: the bear still tests a return to the cycle's own average margin
+        if t['bear'] > cm['mid']:
+            why += f"; bear capped at the through-the-cycle margin {_pct(cm['mid'])} (cyclical industry at a margin peak)"
+        t['bear'] = min(t['bear'], cm['mid'])
     for s in SCEN:
         if t[s] < MARGIN_FLOOR:
             warn('margin_floor', f'{s} mature margin {_pct(t[s])} raised to the {MARGIN_FLOOR:.0%} floor so a terminal value exists; '
@@ -701,7 +873,7 @@ def _current_year(route, h, cal, cons):
 def _params(route, h, cal, cons, rf, ku, debt0, ov, warn):
     st = STAGE[route['stage']]
     s2c_range = route['type'][0]
-    cyc = route['method'] == 'normalized_cycle_fcff' and h.get('cycle')
+    cyc = route['cycle_path'] and h.get('cycle')
     if route['stage'] == 'decline':
         gT_base = _clamp(.5 * h['g_trailing'], DECLINE_FLOOR, 0.)
         gT = {'base': gT_base, 'bear': max(DECLINE_FLOOR, gT_base - .01), 'bull': min(gT_base + .02, rf)}
@@ -823,23 +995,28 @@ def _params(route, h, cal, cons, rf, ku, debt0, ov, warn):
     tax = _clamp(tax_eff, .15, .25) if tax_eff is not None else .21
     if tax_eff is not None and tax != tax_eff:
         warn('tax_normalized', f'effective tax {tax_eff:.1%} outside 15-25%; normalized to {tax:.1%} (override with evidence)', 'low')
-    r0 = h['interest_expense'] / debt0 if h['interest_expense'] and debt0 > 0 else None
-    r0 = _clamp(r0, .01, .15) if r0 is not None else rf + st['debt_spread']
+    r_raw = h['interest_expense'] / debt0 if h['interest_expense'] and debt0 > 0 else None
+    r0 = _clamp(r_raw, .01, .15) if r_raw is not None else rf + st['debt_spread']
+    if r_raw is not None and not DEBT_RATE_RANGE[0] <= r_raw <= rf + DEBT_RATE_RANGE[1]:
+        warn('debt_rate_unusual', f'interest expense / debt {r_raw:.2%} is outside {DEBT_RATE_RANGE[0]:.1%}..risk-free + {DEBT_RATE_RANGE[1]:.0%}: '
+                                  'check the debt and interest data (it sets interest and the tax shield; the cost of equity uses the '
+                                  'expected return on debt, never the coupon)', 'medium')
     out = {}
     for s in SCEN:
         k_u = ov(s, 'cost_of_equity', ku)
         tx = ov(s, 'tax_rate', tax)
-        w0 = max(k_u, gT[s] + .03)    # unlevered cost of capital: the hurdle excess returns fade toward (leverage-free)
-        if route['moat'] == 'strong':
-            roic = min(max(h['roic'] or 0, w0 + .05), .40)
-            roic = {'base': roic, 'bear': max(w0 + .02, .7 * roic), 'bull': min(.45, 1.2 * roic)}[s]
-        else:
-            roic = {'base': w0 + .02, 'bear': w0 + .01, 'bull': w0 + .04}[s]
+        w0 = max(k_u, gT[s] + .03)    # table cost of capital: the hurdle excess returns fade toward (leverage-free)
+        roic_s = min(max(h['roic'] or 0, w0 + .05), .40)
+        strong = {'base': roic_s, 'bear': max(w0 + .02, .7 * roic_s), 'bull': min(.45, 1.2 * roic_s)}[s]
+        other = {'base': w0 + .02, 'bear': w0 + .01, 'bull': w0 + .04}[s]
+        wt = route['moat_weights'][s]
+        roic = other + wt * (strong - other)        # the moat proxy weight blends the two rules (bear: unassessed rules)
         roic = ov(s, 'terminal_roic', roic)
         if roic < gT[s]:
             raise ValueError(f'{s}: terminal ROIC below terminal growth')
         mm = ov(s, 'mature_margin', margins[s])
         out[s] = {'growth': [_clamp(x, -.5, 2.) for x in paths[s]], 'g_terminal': gT[s], 'mature_margin': mm,
+                  'margin_final': mm != margins[s],      # an analyst override is the final EBIT margin (no D&A roll-off added)
                   's2c': s2c_s[s], 's2c_terminal': roic / max(mm * (1 - tx), 1e-6), 'ke': k_u, 'tax': tx, 'wacc': w0, 'hurdle': w0,
                   'roic': roic, 'cycle_weights': weights.get(s),
                   'conv': CYCLE_CONV[s] if cyc else (max(2, round(.75 * st['conv'])) if s == 'bear' else st['conv'])}
@@ -855,7 +1032,11 @@ def _paths(P, meta, h, route, cal, open_bal, inv_income):
     """Fiscal-year paths. Depreciation converges to maintenance capex and the capital needed per unit of new revenue converges
     to the terminal g / ROIC rule by the last explicit year, so the last explicit year and the terminal value describe the same
     steady state. Growth capex closes the reinvestment identity per period on the bases drivers.build_case uses:
-    growth capex + change in working capital - change in deferred revenue = change in revenue x capital per unit of revenue."""
+    growth capex + change in working capital - change in deferred revenue = change in revenue x capital per unit of revenue.
+    A declining business (decline stage or negative terminal growth) releases capital in the explicit years too (maintenance
+    capex below depreciation), converging to the terminal g / ROIC release, so the terminal is not a step up in cash flow.
+    D&A is non-cash: as it converges to maintenance capex the EBITDA margin is held and EBIT rises, except for the part of the
+    roll-off that recurring acquisition spend (3-year history) replaces, which stays a cash cost."""
     st = STAGE[route['stage']]
     B = cal['boundaries']
     n = len(B)
@@ -868,6 +1049,8 @@ def _paths(P, meta, h, route, cal, open_bal, inv_income):
     dur = [cal['stub_years']] + [years(a, b) for a, b in zip(B, B[1:])]
     conv_w = [t / (n - 1) if n > 1 else 1. for t in range(n)]          # 0 today -> 1 in the last explicit year
     dep = [dep0 + (maint - dep0) * w for w in conv_w]
+    roll = dep0 - maint
+    acq_share = _clamp((h['acq_pct'] or 0) / roll, 0., 1.) if roll > 1e-9 else 0.
     out, ident = {}, {}
     for s in SCEN:
         p = P[s]
@@ -883,36 +1066,42 @@ def _paths(P, meta, h, route, cal, open_bal, inv_income):
         else:
             margin = [m0] + [mt + (m0 - mt) * max(0., 1 - t / conv) for t in range(1, n)]
         sbc = [sbc0] + [sbc0 * (1 - st['sbc_fade'] * min(1., t / st['conv'])) for t in range(1, n)]
+        # EBIT path: the margin target (measured with today's D&A load) plus the non-cash D&A roll-off not replaced by acquisitions
+        if not p.get('margin_final'):
+            margin = [m + (dep0 - d) * (1 - acq_share) for m, d in zip(margin, dep)]
         ccr = [1 - m - x - d for m, x, d in zip(margin, sbc, dep)]
         if any(c < 0 or c > 2 for c in ccr):
             raise ValueError('cash-cost ratio outside driver bounds (operating losses above 100% of revenue or margins above 100%)')
+        p['s2c_terminal'] = p['roic'] / max(margin[-1] * (1 - p['tax']), 1e-6)     # terminal rule on the final EBIT margin
         capint = [1 / p['s2c'] + (1 / p['s2c_terminal'] - 1 / p['s2c']) * w for w in conv_w]
         fy_rate = [meta['r_fy']] + rates[1:]
-        gc, need = [], []
-        for t in range(n):
-            if t == 0:
-                d_rev = meta['r_fy'] - meta['r_fy'] / (1 + meta['g_cur'])
-                nr, dwc, ddef = d_rev * capint[0] * dur[0], 0., 0.
-            else:
-                d_rev = fy_rate[t] - fy_rate[t - 1]
-                nr, dwc = d_rev * capint[t], wc * d_rev
-                ddef = dr * (rates[t] - (meta['stub_rate'] if t == 1 else rates[t - 1]))
-            need.append(nr)
-            gc.append(max(0., nr - dwc + ddef) / (rates[t] * dur[t]))
+        release = route['stage'] == 'decline' or p['g_terminal'] < 0
+        gc, mcx, need = _reinvest(fy_rate, rates, dur, capint, wc, dr, maint, release,
+                                  d_rev0=meta['r_fy'] - meta['r_fy'] / (1 + meta['g_cur']))
+        if release and p['g_terminal'] < 0 and n > 1:
+            # the terminal never releases capital faster than the last explicit year can (capex is not negative): terminal ROIC
+            # is raised until g / ROIC equals the last year's executed release per unit of NOPAT
+            t = n - 1
+            d_rev = fy_rate[t] - fy_rate[t - 1]
+            net = (mcx[t] + gc[t] - dep[t]) * rates[t] * dur[t] + wc * d_rev - dr * (rates[t] - rates[t - 1])
+            nopat = margin[t] * (1 - p['tax']) * rates[t] * dur[t]
+            if nopat > 0 and net < 0 and g[-1] < 0 and g[-1] * nopat / net > p['roic']:
+                p['roic'], p['release_bounded'] = g[-1] * nopat / net, True
+                p['s2c_terminal'] = p['roic'] / max(margin[-1] * (1 - p['tax']), 1e-6)
         months = P[s].get('cash_months', st['months'])
         min_cash = [max(0., min(months / 12 * c * r, open_bal['cash'])) for c, r in zip(ccr, rates)]
         out[s] = {'growth': [_r(x) for x in g], 'rates': rates, 'operating_margin': [_r(x) for x in margin],
                   'sbc_pct': [_r(x) for x in sbc], 'depreciation_pct': [_r(x) for x in dep], 'cash_cost_ratio': [_r(x) for x in ccr],
-                  'maintenance_capex_pct': [_r(maint)] * n, 'growth_capex_pct': [_r(x) for x in gc],
+                  'maintenance_capex_pct': [_r(x) for x in mcx], 'growth_capex_pct': [_r(x) for x in gc],
                   'tax_rate': [_r(p['tax'])] * n, 'interest_rate': [_r(meta['interest_existing'])] * n,
                   'deferred_revenue_ratio': [_r(dr)] * n, 'working_capital_ratio': [_r(wc)] * n, 'prepaid_share': [_r(prepaid)] * n,
                   'nol_usage_limit': [.8] * n, 'payout_fraction': [0.] * n,
                   'amortization': [0.] * n, 'minimum_cash': [float(round(x)) for x in min_cash],
                   'investment_income_after_tax': [float(round(inv_income * (1 - p['tax'])))] * n,
                   'debt_draw': [0.] * n, 'debt_repayment': [0.] * n, 'fixed_cash_costs': [0.] * n}
-        ident[s] = {'net_reinvestment_target': need, 'capital_per_revenue': capint}
+        ident[s] = {'net_reinvestment_target': need, 'capital_per_revenue': capint, 'release': release}
     return out, {'wc': wc, 'dr': dr, 'prepaid': prepaid, 'maint': maint, 'dep': dep0, 'dep_path': dep, 'm0': m0, 'sbc0': sbc0,
-                 'identity': ident}
+                 'identity': ident, 'acq_share': acq_share, 'roll': roll}
 
 
 # ---------------------------------------------------------------- execution helpers
@@ -1119,6 +1308,18 @@ def build(fb, an, card, qa, inputs=None):
     if inputs.get('horizon_years') is not None and (isinstance(inputs['horizon_years'], bool) or not isinstance(inputs['horizon_years'], int)
                                                     or not 1 <= inputs['horizon_years'] <= 30):
         raise ValueError('horizon_years must be an integer from 1 to 30')
+    cy = inputs.get('cyclical')
+    if cy is not None:
+        if not isinstance(cy, dict) or sorted(set(cy) - {'treatment', 'reason', 'evidence_ids'}):
+            raise ValueError('cyclical: an object with treatment, reason and evidence_ids')
+        if cy.get('treatment') not in CYCLE_TREATMENTS:
+            raise ValueError(f"cyclical.treatment must be one of {', '.join(CYCLE_TREATMENTS)}")
+        if not isinstance(cy.get('reason'), str) or not cy['reason'].strip():
+            raise ValueError('cyclical: a written reason is required')
+        known = set(fb.get('sources', {})) | {q['id'] for q in fb.get('qualitative', [])}
+        ev = cy.get('evidence_ids')
+        if not isinstance(ev, list) or not ev or any(e not in known for e in ev):
+            raise ValueError('cyclical: evidence_ids must be FactBook source or qualitative ids')
     clean = {k: v for k, v in inputs.items() if k in KNOWN_INPUTS}
     out = _build(fb, an, card, qa, clean, None)
     if out.get('status') == 'built' and out['_external'] != out['_external_assumed']:
@@ -1135,7 +1336,7 @@ def build(fb, an, card, qa, inputs=None):
     return out
 
 
-def _build(fb, an, card, qa, inputs, external):
+def _build(fb, an, card, qa, inputs, external, no_proxy=False):
     an, card, qa = an or {}, card or {}, qa or {}
     warnings = []
 
@@ -1164,7 +1365,10 @@ def _build(fb, an, card, qa, inputs, external):
         return empty('insufficient_data', 'no fiscal year with positive revenue available at as_of', method)
     h['guidance'] = _revenue_guidance(fb)
     h['g_anchor'] = h['g_trailing']
-    route = _route(card, h, warn)
+    route = _route(card, h, warn, fb, inputs.get('cyclical'))
+    proxy_w = route['moat_weights']['base'] if route['moat_proxy'] else 0.
+    if no_proxy and route['moat_proxy']:
+        route['moat_weights'] = {x: 0. for x in SCEN}
     if ROUTES.get(route['archetype']) != 'operating':
         return empty('method_not_supported_by_forecast', f"archetype {route['archetype']} is not an operating route", method)
     res = qa.get('resolved') or {}
@@ -1176,6 +1380,7 @@ def _build(fb, an, card, qa, inputs, external):
     if _num(price.get('value')) is None or price.get('currency', fb['company']['currency']) != fb['company']['currency']:
         return empty('insufficient_data', 'no quote in the company currency at as_of', method)
     as_of = fb['as_of']
+    material = []
     open_bal = {'cash': val('cash'), 'sti': val('short_term_investments') or 0., 'lti': val('long_term_investments') or 0.,
                 'debt': val('debt'), 'shares': val('shares_outstanding'), 'deferred_revenue': val('deferred_revenue') or 0.}
     if qa.get('status') == 'blocked':
@@ -1185,7 +1390,7 @@ def _build(fb, an, card, qa, inputs, external):
     external_assumed = external if external is not None else (route['funding'] == 'needs_external' or route['method'] == 'scenario_survival_fcff')
 
     # ---- calendar and horizon
-    cyc_h = route['method'] == 'normalized_cycle_fcff' and h.get('cycle')
+    cyc_h = route['cycle_path'] and h.get('cycle')
     g_probe = h['cycle']['trend_growth'] if cyc_h else h['g_trailing']
     n_full = int(inputs.get('horizon_years') or next(n for lim, n in HORIZON if g_probe > lim))
     cal = _calendar(fb, h, n_full)
@@ -1204,7 +1409,9 @@ def _build(fb, an, card, qa, inputs, external):
                                                f"anniversary of as_of ({cal['fifth_anniversary']}) and one full fiscal year after it", 'low')
     n_full = cal['n_full']
     st = STAGE[route['stage']]
-    ku, ke_parts = _cost_of_equity(route, rf, erp, [rf_note, erp_note], external_assumed)
+    label = ' '.join(str(fb['company'].get(k) or '') for k in ('sector', 'industry')).lower()
+    regulated = 'regulated' in label and any(w in label for w in REGULATED_WORDS)
+    ku, ke_parts = _cost_of_equity(route, rf, erp, [rf_note, erp_note], external_assumed, regulated)   # ku: the table rate (hurdle)
 
     # ---- overrides
     applied = []
@@ -1234,10 +1441,24 @@ def _build(fb, an, card, qa, inputs, external):
     # extend the horizon if any scenario ends far from its terminal growth (valuation_audit flags >10pp cliffs)
     gap_end = max(abs(paths[s]['growth'][-1] - P[s]['g_terminal']) for s in SCEN)
     if gap_end > .03 and n_full < 20 and not inputs.get('horizon_years'):
-        out = _build(fb, an, card, qa, dict(inputs, horizon_years=min(20, n_full + 5)), external)
+        out = _build(fb, an, card, qa, dict(inputs, horizon_years=min(20, n_full + 5)), external, no_proxy)
         out['warnings'].append({'code': 'horizon_extended', 'severity': 'low',
                                 'message': f'explicit horizon extended to {n_full + 5} fiscal years so growth fades before the terminal value'})
         return out
+
+    # ---- value effect of judgement switches the evidence does not settle (shown next to the switch, never hidden)
+    alt_moat = alt_struct = None
+    if route['moat_proxy'] and proxy_w > 0 and not no_proxy:
+        a = _build(fb, an, card, qa, inputs, external, no_proxy=True)
+        alt_moat = a['preview']['today'] if a.get('status') == 'built' and a.get('preview') else None
+    if route['cycle_peak'] and not inputs.get('cyclical'):
+        c2 = deepcopy(card)
+        c2.setdefault('cyclical', {})['normalize'] = False
+        if (c2.get('valuation') or {}).get('method') == 'normalized_cycle_fcff':
+            c2['valuation']['method'] = 'fcff_annual_path'
+        a = _build(fb, an, c2, qa, dict(inputs, cyclical={'treatment': 'structural', 'reason': 'value-effect probe', 'evidence_ids': []}),
+                   external, no_proxy)
+        alt_struct = a['preview']['today'] if a.get('status') == 'built' and a.get('preview') else None
 
     # ---- spec skeleton
     tax_srcs = _latest_src(fb, 'income_tax', 'pretax_income')
@@ -1295,15 +1516,44 @@ def _build(fb, an, card, qa, inputs, external):
         f"Point-in-time common shares {open_bal['shares']:,.0f} at {sh_res.get('as_of')} (basis {sh_res.get('basis')}); weighted-average "
         'EPS shares are not used for ownership.', 'The latest filing cover count differs by more than 1%.', share_srcs)
     conv_f = fields.get('convertibles') or {}
-    add('dilution', 'dilution', 'model', {'incremental_dilutive_shares': 0},
+    converts = []
+    for x in conv_f.get('instruments') or []:
+        cs_, cl_ = _num(x.get('conversion_shares')), _num(x.get('accreted_claim')) or _num(x.get('principal'))
+        if cs_ and cs_ > 0 and cl_ is not None:
+            converts.append({'id': str(x.get('id')), 'claim': cl_, 'conversion_shares': cs_, 'conversion_price': _num(x.get('conversion_price'))})
+    if converts and sum(c['claim'] for c in converts) > open_bal['debt'] + 1:
+        warn('convertibles_outside_debt', 'convertible claims exceed the resolved debt: if-converted treatment skipped; reconcile the debt '
+                                          'definition', 'high')
+        material.append({'id': 'convertibles_unapplied', 'status': 'unresolved', 'assumption_ids': ['dilution'],
+                         'description': 'convertible notes are not reconciled to the opening debt, so their conversion is not modelled'})
+        converts = []
+    conv_sh = sum(c['conversion_shares'] for c in converts)
+    add('dilution', 'dilution', 'model', {'incremental_dilutive_shares': 0, 'convertibles': converts},
         'No incremental shares added today: future equity awards are charged as a cash-equivalent cost (sbc_pct), so adding unvested '
         'awards would double count; shares are added only where a cash shortfall is closed by settling SBC in shares or by an '
-        f"equity raise (see the funding rows). Convertibles/warrants status in dataqa: {conv_f.get('status', 'not reported')}.",
-        'Filings disclose in-the-money convertibles, warrants or vested options above 1% of shares.', share_srcs + [RULES])
+        f"equity raise (see the funding rows). Convertibles/warrants status in dataqa: {conv_f.get('status', 'not reported')}" +
+        (f"; {len(converts)} convertible(s) with {conv_sh:,.0f} conversion shares are held as debt and convert at every valuation date "
+         'where the scenario value per share exceeds claim / conversion shares (if-converted, valuation._roll_back).' if converts else '.'),
+        'Filings disclose in-the-money convertibles, warrants or vested options above 1% of shares that are not modelled here.',
+        share_srcs + [RULES])
     add('claims', 'other claims', 'model', {'other_claims': 0, 'net_runoff_obligation': 0},
         'No preferred stock, minority interests or other senior claims are recorded in the FactBook; deferred revenue renews in '
         'a going concern (ledger, not a runoff claim).', 'A filing shows preferred stock, material minority interests or contingent consideration.',
         bal_srcs + [RULES])
+    ta_s, tl_s = facts.series(fb, 'total_assets', 'instant'), facts.series(fb, 'total_liabilities', 'instant')
+    last_fy = (facts.annual_table(fb, ['revenue', 'cost_of_revenue', 'gross_profit']) or {None: {}})
+    last_fy = last_fy[max(last_fy, key=lambda k: k or '')]
+    lender = None
+    if ta_s and tl_s and ta_s[-1][0] == tl_s[-1][0] and ta_s[-1][1] > 0 and tl_s[-1][1] / ta_s[-1][1] >= .85 \
+            and last_fy.get('cost_of_revenue') is None and last_fy.get('gross_profit') is None:
+        lender = {'liabilities_to_assets': tl_s[-1][1] / ta_s[-1][1], 'as_of': ta_s[-1][0]}
+        add('classification', 'operating classification of a lender-shaped balance sheet', 'model', lender,
+            f"Liabilities are {lender['liabilities_to_assets']:.0%} of assets at {lender['as_of']} and no cost of revenue is reported: the "
+            'balance sheet looks like a lender\'s (deposits or wholesale funding), whatever the industry label. An operating FCFF forecast '
+            'treats that funding as debt and its spread as operating margin; a residual-income model (book equity, ROE, cost of equity) is '
+            'the economic route. A reviewer must confirm the operating classification with evidence or reroute.',
+            'Filings show the liabilities are customer prepayments or trade payables of an operating business, not funding of a loan book.',
+            _latest_src(fb, 'total_assets', 'total_liabilities', 'revenue') + [RULES])
     sh_gap = abs((_d(sh_res.get('as_of') or stmt) - _d(stmt)).days)
     add('bridge', 'statement-to-as_of bridge', 'model', {'statement_as_of': stmt, 'as_of': as_of, 'events': []},
         f'No bridge events applied between the balance-sheet date {stmt} and as_of {as_of}: cash generated, buybacks and financing '
@@ -1350,6 +1600,25 @@ def _build(fb, an, card, qa, inputs, external):
             f"bull at trend x {cyc['level_factor']['bull']:.2f} (half-way to the peak ratio {cyc['peak_ratio']:.2f}).",
             'Revenue stays more than 15% above the trend path for two years after the reversion period (a structural step-up, not a cycle).',
             rev_srcs + [RULES])
+    cmar = _cycle_margin(h)
+    if route['cycle_peak']:
+        tr = route['cycle_treatment']
+        cy_in = inputs.get('cyclical') or {}
+        ev = cy_in.get('evidence_ids') or []
+        cy_srcs = [e for e in ev if e in fb['sources']] + [x for q in fb.get('qualitative', []) if q['id'] in ev for x in q['source_ids']]
+        f2 = lambda v: 'n/a' if not v else ' / '.join('n/a' if v.get(k) is None else f'{v[k]:,.2f}' for k in SCEN)
+        add('cycle_position', 'cycle position: cyclical industry at a margin peak', 'analyst' if tr else 'model',
+            {'position': 'peak', 'treatment': tr or 'cyclical (default until an analyst decides)', 'latest_margin': h['m0'],
+             'through_cycle_margin': cmar and cmar['mid'], 'value_if_structural': alt_struct},
+            (f"The industry is cyclical and the latest operating margin {_pct(h['m0'])} sits at the top of the history (through-the-cycle "
+             f"{_pct(cmar and cmar['mid'])}; the model card's position: peak). " +
+             (f"Analyst treatment '{tr}': {cy_in.get('reason')} (evidence {', '.join(ev)})." if tr else
+              'No analyst has shown the margin to be structural, so it is valued around the cycle (mid-cycle revenue and margin), '
+              f'never extrapolated from the peak. Value today if the margin were structural instead (bear / base / bull): {f2(alt_struct)}.')
+             + (' The bear still tests a return to the through-the-cycle margin.' if tr == 'structural' else '')),
+            'Margins hold above the through-the-cycle level through a full industry downturn (structural), or fall to the trough '
+            '(the cycle turned).', rev_srcs + _latest_src(fb, 'operating_income') + cy_srcs + [RULES],
+            provenance='model_assumption')
     for s in SCEN:
         g = paths[s]['growth']
         why = {'base': (f"Years 1-{len(meta['consensus_growth'])} follow revenue consensus, then fade" if meta['growth_kind'] == 'analyst'
@@ -1381,15 +1650,23 @@ def _build(fb, an, card, qa, inputs, external):
             _latest_src(fb, 'operating_income', 'revenue') + [RULES])
     k_moat = .5 if route['moat'] == 'weak' else .25
     typ_m = route['type'][1]
-    haircut = k_moat * (fixed['m0'] - typ_m) if route['moat'] not in ('strong',) and fixed['m0'] > typ_m and not cyc else 0.
+    w_mo = route['moat_weights']
+    haircut = (1 - w_mo['base']) * k_moat * (fixed['m0'] - typ_m) if route['moat'] != 'strong' and fixed['m0'] > typ_m and not cyc else 0.
+    f3 = lambda v: 'n/a' if not v else ' / '.join('n/a' if v.get(k) is None else f'{v[k]:,.2f}' for k in SCEN)
     add('moat_basis', 'competitive advantage behind margins and returns', 'model',
-        {'moat': route['moat'], 'basis': route['moat_basis'], 'margin_competed_away': haircut, 'terminal_roic_base': P['base']['roic'],
-         'roic_demonstrated': h['roic'], 'unlevered_cost_of_capital': P['base']['hurdle']},
+        {'moat': route['moat'], 'basis': route['moat_basis'], 'proxy_weight': w_mo, 'proxy': route['moat_proxy'],
+         'margin_competed_away': haircut, 'terminal_roic_base': P['base']['roic'],
+         'roic_demonstrated': h['roic'], 'roic_average': h.get('roic_avg'), 'unlevered_cost_of_capital': P['base']['hurdle'],
+         'value_today_without_proxy': alt_moat},
         (f"Moat {route['moat']} ({route['moat_basis']}): " +
          ('current margin held and terminal ROIC max(demonstrated ROIC, Ku+5pp) capped at 40%.' if route['moat'] == 'strong' else
-          f"{k_moat:.0%} of today's margin excess over the type-typical {_pct(typ_m)} is competed away ({haircut:.1%} of revenue) and terminal "
-          f"ROIC fades to Ku+2pp = {_pct(P['base']['roic'])} against a demonstrated ROIC {_pct(h['roic'])}. A quantified model haircut, "
-          'not evidence: an evidenced analyst moat assessment replaces it.')),
+          (f"base and bull blend the strong-moat rules at weight {w_mo['base']:.2f} (base terminal ROIC {_pct(P['base']['roic'])}, "
+           f"{haircut:.1%} of revenue competed away); the bear keeps the unassessed rules (terminal ROIC {_pct(P['bear']['roic'])}). "
+           f"Value today without the proxy (bear / base / bull): {f3(alt_moat)}. A computed proxy, not an analyst judgement: an evidenced "
+           'moat assessment replaces it.' if w_mo['base'] > 0 else
+           f"{k_moat:.0%} of today's margin excess over the type-typical {_pct(typ_m)} is competed away ({haircut:.1%} of revenue) and terminal "
+           f"ROIC fades to Ku+2pp = {_pct(P['base']['roic'])} against a demonstrated ROIC {_pct(h['roic'])}. A quantified model haircut, "
+           'not evidence: an evidenced analyst moat assessment replaces it.'))),
         f"Returns on capital stay above {_pct(P['base']['roic'] + .05)} and margins above {_pct(P['base']['mature_margin'] + .03)} for three years "
         '(haircut too harsh), or fall below the bear path (too generous).', _latest_src(fb, 'operating_income', 'gross_profit', 'equity') + [RULES])
     add('sbc_path', 'stock-based compensation', 'model', {s: paths[s]['sbc_pct'] for s in SCEN},
@@ -1412,7 +1689,9 @@ def _build(fb, an, card, qa, inputs, external):
         f"by the last explicit year to the terminal rule g / ROIC (sales-to-capital = ROIC / NOPAT margin, base {P['base']['s2c_terminal']:.2f}). "
         'Per period growth capex + change in working capital - change in deferred revenue equals that need on the bases drivers uses '
         '(stub: the current year\'s need pro rata, no working-capital step; first year: change from the current fiscal year); growth '
-        f"capex is floored at zero where customer prepayments fund more than the need. Acquisition spend 3y: {_pct(h['acq_pct'])} of revenue.",
+        'capex is floored at zero where customer prepayments fund more than the need; a declining business releases capital through '
+        f"maintenance capex below depreciation (never below {RELEASE_FLOOR:.0%} of the maintenance level). Acquisition spend 3y: "
+        f"{_pct(h['acq_pct'])} of revenue (the share of the D&A roll-off it replaces stays a cash cost: {fixed['acq_share']:.0%}).",
         'Net reinvestment per unit of new revenue over the next two years differs from the base by more than 50%.',
         _latest_src(fb, 'revenue', 'capex', 'equity') + [RULES])
     add('working_capital', 'working capital and deferred revenue', 'model',
@@ -1430,16 +1709,17 @@ def _build(fb, an, card, qa, inputs, external):
         dflt = 1. if (h['payout_history'] or 0) >= .5 or route['stage'] in ('mature', 'maturing', 'decline') else .5
         policy[s] = ov(s, 'payout_fraction', dflt)
     mc0 = paths['base']['minimum_cash'][0]
+    mc_max = max(paths['base']['minimum_cash'])          # the operating balance held at its peak: never released, never valued
     add('funding_policy', 'minimum cash and payout', 'model',
         {'minimum_cash_months': {s: P[s]['cash_months'] for s in SCEN}, 'payout_fraction': policy, 'payout_history_3y': h['payout_history'],
-         'minimum_cash_today': mc0, 'minimum_cash_per_share': mc0 / open_bal['shares']},
-        f"Minimum operating cash = min({P['base']['cash_months']:.0f} months of cash costs, today's cash): {mc0:,.0f} of today's cash "
-        f"{open_bal['cash']:,.0f} (about {mc0 / open_bal['shares']:,.2f} per share) is HELD throughout and never released, so it adds no value "
-        'beyond earning nothing (a judgement: the company already operates with this balance); only cash above it and the investments '
-        f"enter the terminal bridge. Excess cash above it is distributed at {policy['base']:.0%} (buybacks/dividends; history: distributions = "
-        f"{_pct(h['payout_history'])} of FCF over 3 years) only once free cash flow stays positive; retained cash earns nothing in the model "
-        '(conservative). A shortfall is closed by investments, then SBC settled in shares, then assumed debt within capacity, then an '
-        'assumed equity raise.',
+         'minimum_cash_today': mc0, 'minimum_cash_peak': mc_max, 'minimum_cash_per_share': mc_max / open_bal['shares']},
+        f"Minimum operating cash = min({P['base']['cash_months']:.0f} months of cash costs, today's cash), {mc0:,.0f} in the first period "
+        f"rising to {mc_max:,.0f} (base) of today's cash {open_bal['cash']:,.0f}: about {mc_max / open_bal['shares']:,.2f} per share is HELD "
+        'as operating cash and never released, so it adds no value (a judgement: the company already operates with this balance). Cash '
+        f"above it and the investments are valued at face. Excess cash is distributed at {policy['base']:.0%} (buybacks/dividends; history: "
+        f"distributions = {_pct(h['payout_history'])} of FCF over 3 years) only once free cash flow stays positive; cash retained above the "
+        'minimum is still worth face (valuation._roll_back), so the payout policy changes funding, not value. A shortfall is closed by '
+        'investments, then SBC settled in shares, then assumed debt within capacity, then an assumed equity raise.',
         'The company accumulates cash for two years without distributing, or distributes while cash falls below the minimum.',
         _latest_src(fb, 'buybacks', 'cfo', 'cash') + [RULES])
     r_new = rf + st['debt_spread']
@@ -1460,6 +1740,11 @@ def _build(fb, an, card, qa, inputs, external):
         rule = ({'base': 'returns stay above the cost of capital: max(demonstrated ROIC, Ku+5pp), capped at 40%', 'bear': '70% of the base ROIC, '
                  'at least Ku+2pp', 'bull': '120% of the base ROIC, capped at 45%'}[s] if route['moat'] == 'strong' else
                 {'base': 'excess returns competed down to Ku+2pp', 'bear': 'Ku+1pp', 'bull': 'Ku+4pp'}[s])
+        if route['moat'] != 'strong' and route['moat_weights'][s] > 0:
+            rule += f" blended toward the strong-moat rule at proxy weight {route['moat_weights'][s]:.2f}"
+        if P[s].get('release_bounded'):
+            rule += ('; for this shrinking business ROIC is raised so the terminal releases capital no faster than the last explicit '
+                     'year can (capex cannot be negative)')
         add(f'terminal_{s}', f'{s} terminal value', 'model',
             {s: {'growth': P[s]['g_terminal'], 'roic': P[s]['roic'], 'wacc': P[s]['wacc'], 'operating_margin': paths[s]['operating_margin'][-1]}},
             f"After {B[-1]}: growth {_pct(P[s]['g_terminal'])}, operating margin {_pct(paths[s]['operating_margin'][-1])} = the last explicit "
@@ -1490,6 +1775,16 @@ def _build(fb, an, card, qa, inputs, external):
         warn('stale_ttm', f"latest revenue period ends {h['ttm']['period_end']} ({h['ttm']['method']}), more than 200 days before as_of", 'medium')
     if (h['acq_pct'] or 0) > .05:
         warn('acquired_growth', f"acquisitions averaged {_pct(h['acq_pct'])} of revenue over 3 years: trailing growth includes bought growth", 'medium')
+    # an acquisition closed inside the year to date: the year-to-date growth in the anchor includes acquired revenue
+    yacq = _ytd(fb, 'acquisitions', h['last_end'])
+    closed = [q for q in fb.get('qualitative', []) if q.get('kind') == 'reported' and re.search(r'\bacqui', q.get('statement', ''), re.I)
+              and re.search(r'\b(closed|completed)\b', q.get('statement', ''), re.I)
+              and any(_d(h['last_end']) < _d(d) <= _d(as_of) for d in re.findall(r'\b(20\d\d-\d\d-\d\d)\b', q.get('statement', '')))]
+    if closed or (yacq and abs(yacq['value']) > .01 * h['last_revenue']):
+        warn('anchor_includes_acquired_revenue', 'an acquisition closed in the current fiscal year (' +
+             ', '.join([q['id'] for q in closed] + ([f"year-to-date acquisition spend {abs(yacq['value']):,.0f}"] if yacq and abs(yacq['value']) > .01 * h['last_revenue'] else []))
+             + '): year-to-date growth, the current-year revenue and the trailing growth anchor include acquired revenue; organic growth is lower',
+             'medium')
 
     # ---- spec: fiscal-year paths expanded onto the period boundaries (the fifth anniversary may split one fiscal year)
     Pb = cal['periods']
@@ -1518,6 +1813,13 @@ def _build(fb, an, card, qa, inputs, external):
                           'tax_rate': _r(P[s]['tax']), 'sbc_in_margin': True, 'net_runoff_obligation': 0, 'other_claims': 0,
                           'working_capital_rationale': 'Working capital and deferred revenue renew with the business in a going concern; their growth '
                                                        'is funded by the g/ROIC reinvestment rule. No runoff claim.'}
+        idn = fixed['identity'][s]
+        # the engine's own reinvestment rule, per fiscal year (index 0 = the stub), so a growth sensitivity can charge capital
+        # for the growth it adds (what_must_be_true); informational for drivers.build_case, which ignores it
+        sc['reinvestment_rule'] = {'capital_per_revenue': [_r(x) for x in idn['capital_per_revenue']], 'maintenance_capex_pct': _r(fixed['maint']),
+                                   'release': idn['release'], 'stub_revenue_change': _r(meta['r_fy'] - meta['r_fy'] / (1 + meta['g_cur']), 2),
+                                   'rule': 'growth capex + change in working capital - change in deferred revenue = change in revenue x '
+                                           'capital per unit of revenue (forecast._reinvest)'}
         scen.append(sc)
     spec = {'driver_version': 1, 'strict_drivers': True, 'is_demo': False, 'as_of': as_of, 'company_id': company_id, 'ticker': ticker,
             'currency': fb['company']['currency'], 'unit': 'absolute', 'archetype': route['archetype'], 'method': 'operating',
@@ -1526,7 +1828,8 @@ def _build(fb, an, card, qa, inputs, external):
             'opening': {'as_of': as_of, 'assumption_ids': ['open_balance', 'shares_point', 'dilution', 'bridge'],
                         'unrestricted_cash': open_bal['cash'], 'debt': open_bal['debt'], 'shares': open_bal['shares'],
                         'deferred_revenue': open_bal['deferred_revenue'], 'tax_loss_carryforward': float(_num(inputs.get('nol')) or 0),
-                        'marketable_investments': open_bal['sti'] + open_bal['lti']},
+                        'marketable_investments': open_bal['sti'] + open_bal['lti'],
+                        **({'convertibles': [{k: c[k] for k in ('id', 'claim', 'conversion_shares')} for c in converts]} if converts else {})},
             'report_dates': cal['report_dates'], 'boundaries': Pb, 'interim_boundaries': list(cal['interim']),
             'stub_annual_revenue_rate': _r(meta['stub_rate'], 2), 'last_full_year_revenue': _r(meta['r_fy'], 2), 'segment_name': 'Revenue',
             'segment_driver': 'subscribers' if route['business_model'] == 'subscription_software' else 'units', 'scenarios': scen}
@@ -1573,9 +1876,34 @@ def _build(fb, an, card, qa, inputs, external):
             sc['period_assumption_ids'].append(oid)
 
     # ---- assumptions, sources, underwriting (attached before funding runs the spec, refreshed after)
-    material = []
     if qa.get('status') == 'blocked':
         material.append({'id': 'data_blocked', 'status': 'unresolved', 'description': 'dataqa blocked critical fields: ' + ', '.join(qa.get('blocking') or [])})
+    rv_ok = lambda aid: reviews.get(aid, {}).get('status') == 'reviewed'
+    if route['cycle_peak']:
+        if route['cycle_treatment']:
+            warn('cyclical_peak_treatment', f"cyclical industry at a margin peak: analyst treatment '{route['cycle_treatment']}' (cycle_position)", 'low')
+        else:
+            warn('cyclical_peak_unconfirmed', f"cyclical industry with the latest margin {_pct(h['m0'])} at a peak and no completed cycle in the "
+                                              f"history (through-the-cycle {_pct(cmar and cmar['mid'])}): valued around the cycle"
+                                              + (' although the model card did not normalize it' if route['cycle_forced'] else '') +
+                                              "; an analyst decides structural or cyclical (inputs['cyclical']) and a named reviewer accepts it",
+                 'high' if route['cycle_forced'] else 'medium')
+        material.append({'id': 'cyclical_peak_unconfirmed', 'status': 'resolved' if rv_ok('cycle_position') else 'unresolved',
+                         'description': 'cyclical industry at a margin peak: structural or cyclical not established by an analyst with evidence',
+                         'assumption_ids': ['cycle_position']})
+    if route['moat_proxy'] and route['moat_weights']['base'] > 0:
+        warn('moat_computed_proxy', f"moat unassessed: strong-moat rules blended at weight {route['moat_weights']['base']:.2f} for base and bull "
+                                    f"from the computed record; value today without the proxy {f3(alt_moat)} (bear keeps the unassessed rules)", 'medium')
+        material.append({'id': 'moat_proxy', 'status': 'resolved' if rv_ok('moat_basis') else 'unresolved',
+                         'description': 'margins and returns rest on a computed moat proxy, not an analyst assessment', 'assumption_ids': ['moat_basis']})
+    # a lender-shaped balance sheet (liabilities >= 85% of assets, no cost of revenue) is not an operating business whatever its label:
+    # deposits and funding are operating liabilities, so an FCFF / EV bridge misprices it
+    if lender:
+        warn('possible_lender', f"liabilities are {lender['liabilities_to_assets']:.0%} of assets with no cost of revenue: a lender-shaped "
+                                'balance sheet, which an operating FCFF forecast misprices (deposits and funding are operating liabilities)', 'high')
+        material.append({'id': 'possible_lender', 'status': 'resolved' if rv_ok('classification') else 'unresolved', 'assumption_ids': ['classification'],
+                         'description': 'lender-shaped balance sheet valued with an operating FCFF model: route to residual income '
+                                        'or confirm the operating classification with evidence'})
     if sh_gap > 45:
         material.append({'id': 'opening_dates_differ', 'status': 'resolved' if reviews.get('bridge', {}).get('status') == 'reviewed' else 'unresolved',
                          'description': f'shares dated {sh_res.get("as_of")}, balance sheet {stmt}: bridge needed', 'assumption_ids': ['bridge']})
@@ -1674,27 +2002,71 @@ def _build(fb, an, card, qa, inputs, external):
     finalize()
     base_external = fund['info']['base']['status'] in ('assumed_external_financing', 'unfunded')
 
-    # ---- capital structure: debt weight from the model's own value (fixed point), Ke relevered, terminal WACC
+    # ---- capital structure: debt weight and issue prices from the model's own values (fixed point), Ke relevered, terminal WACC
     excess0 = max(0., open_bal['cash'] - _scen(spec, 'base')['minimum_cash'][0])
     net_debt = max(0., open_bal['debt'] - inv0 - excess0)
     ov_ke = {s: float(econ[(s, 'cost_of_equity')]['value']) for s in SCEN if (s, 'cost_of_equity') in econ}
-    lev = _relever(spec, P, ku, meta['interest_existing'], net_debt, ov_ke)
+    kd_e, kd_p = rf + DEBT_EXPECTED_PREMIUM, meta['interest_existing']
+    lev = _solve_capital(spec, P, ku, kd_e, kd_p, net_debt, ov_ke)
     if lev['status'] in ('equity_not_positive', 'capped', 'not_converged'):
         warn('leverage_' + lev['status'], f"debt weight {lev['debt_weight']:.0%} ({lev['status']}): the model's own equity value is too small "
-                                          'to carry the debt; the cost of equity is relevered at the cap', 'high')
+                                          'to carry the debt; the cost of equity is relevered at the cap, so the value is set by the cap '
+                                          'constant, not by a fixed point', 'high')
+        material.append({'id': 'leverage_at_cap', 'status': 'resolved' if reviews.get('cost_of_equity', {}).get('status') == 'reviewed' else 'unresolved',
+                         'description': f"leverage relevering at the {W_MAX:.0%} debt-weight cap ({lev['status']}): the equity value is a "
+                                        'cap artefact, not a valuation, until the capital structure is reviewed', 'assumption_ids': ['cost_of_equity']})
+    # issue prices: who bears the dilution, and whether the per-share value depends on the quote
+    dependent = {}
+    for s in SCEN:
+        f = fund['info'][s]
+        ip = lev['issue_prices'][s]
+        f['issue_price_rule'] = 'min(quote, scenario value per share right after the issue)'
+        f['issue_prices'] = ip
+        f['price_dependent'] = any(x['quote_binding'] for x in ip)
+        if f['status'] == 'self_funded' and f['sbc_settled_in_shares']:
+            f['status'] = 'share_settled'          # self-funded in cash, but part of SBC paid in new shares (dilution at the issue price)
+        if f['price_dependent']:
+            dependent[s] = ip
+    rows_after, _ = _run(spec)
+    for s in SCEN:
+        f = fund['info'][s]
+        rs = next(r for r in rows_after['scenarios'] if r['name'] == s) if rows_after else None
+        if rs:
+            f['new_financing_shares'] = sum(r['new_financing_shares'] for r in rs['forecast'])
+            f['sbc_settlement_shares'] = sum(r.get('sbc_settlement_shares', 0) for r in rs['forecast'])
+    second = None
+    if dependent.get('base'):
+        x = deepcopy(spec)
+        alt = _solve_capital(x, deepcopy(P), ku, kd_e, kd_p, net_debt, ov_ke, cap_at_quote=False)
+        r_alt, _ = _run(x)
+        second = r_alt['annual_values'][0]['base'] if r_alt else None
+        fund['info']['base']['value_if_issued_at_own_value'] = second
+    if dependent:
+        warn('value_depends_on_quote', '; '.join(f"{s}: new shares issued at the quote {spec['quote']['price']:,.2f} in "
+                                                 f"{', '.join(x['period_end'] for x in ip if x['quote_binding'])} (below the scenario's own value)"
+                                                 for s, ip in dependent.items()) +
+             ': per-share value falls if the price falls' + (f'; base value if issued at its own value {second:,.2f}' if second else ''), 'medium')
     ke_parts = _ke_parts(ke_parts, ku, lev)
     ke = P['base']['ke']
+    floored = lev['ke'] <= ku + 1e-12 and lev['d_to_e'] > 0
     add('cost_of_equity', 'cost of equity and terminal WACC', 'model',
-        {'cost_of_equity': {s: P[s]['ke'] for s in SCEN}, 'unlevered': ku, 'terminal_wacc': {s: P[s]['wacc'] for s in SCEN},
-         'debt_weight': lev['debt_weight'], 'net_debt': net_debt, 'model_equity': lev['model_equity'], 'kd': lev['kd']},
-        f"Ke {ke:.2%} = unlevered Ku {ku:.2%} (risk-free {rf:.2%} + ERP {erp:.2%} + business-risk add-ons " +
+        {'cost_of_equity': {s: P[s]['ke'] for s in SCEN}, 'table_rate': ku, 'unlevered': lev['unlevered'],
+         'terminal_wacc': {s: P[s]['wacc'] for s in SCEN}, 'debt_weight': lev['debt_weight'], 'net_debt': net_debt,
+         'model_equity': lev['model_equity'], 'kd_expected': kd_e, 'kd_promised': kd_p, 'issue_prices': lev['issue_prices']},
+        f"Ke {ke:.2%}: table rate {ku:.2%} (risk-free {rf:.2%} + ERP {erp:.2%} + business-risk add-ons " +
         (', '.join(f"{a['factor']} {a['value']:+.2%}" for a in ke_parts['adjustments'] if a['factor'] != 'leverage_relevered') or 'none') +
-        f") + leverage {ke - ku:+.2%} = (Ku - Kd {lev['kd']:.2%}) x D/E {lev['d_to_e']:.1%}. Net debt {net_debt:,.0f} (debt - investments - "
-        f"cash above the minimum) against the model's own base equity value {lev['model_equity'] or 0:,.0f} gives debt weight "
-        f"{lev['debt_weight']:.1%} ({lev['status']}, {lev['iterations']} iterations): a fixed point on the model's value, never the quote, so "
-        f"the value is the same at any price. Terminal WACC {P['base']['wacc']:.2%} = Ku - w x Kd x tax (tax shield at operating risk), "
-        f"floored at terminal growth + 3 points. External-funding add-on {'applied' if external_assumed else 'not applied'} from the "
-        'executed base funding result. Same Ke in all scenarios.',
+        f") is the cost of equity at market-average leverage (D/E {MARKET_DE:.2f}); unlevered Ku {lev['unlevered']:.2%} with the expected "
+        f"return on debt {kd_e:.2%} (risk-free + {DEBT_EXPECTED_PREMIUM:.0%}; the coupon {kd_p:.2%} sets interest and the tax shield, never the "
+        f"discount rate); Ke = max(table, Ku + (Ku - Kd_e) x D/E {lev['d_to_e']:.1%}) = {ke:.2%}" +
+        (' (below-market leverage keeps the table rate: conservative, no credit for a lower rate)' if floored or lev['d_to_e'] == 0 else '') +
+        f". Net debt {net_debt:,.0f} (debt - investments - cash above the minimum) against the model's own base equity value "
+        f"{lev['model_equity'] or 0:,.0f} gives debt weight {lev['debt_weight']:.1%} ({lev['status']}, {lev['iterations']} iterations): a "
+        "fixed point on the model's value, never the quote, so the discount rate does not move with the price" +
+        ('' if not dependent else ' (per-share values of ' + ', '.join(dependent) + ' still depend on the quote: new shares are issued at '
+         'the quote below their own value)') +
+        f". Terminal WACC {P['base']['wacc']:.2%} = E/V x Ke + D/V x (Kd_e - Kd_promised x tax), floored at terminal growth + 3 points. "
+        f"External-funding add-on {'applied' if external_assumed else 'not applied'} from the executed base funding result. Same Ke in all "
+        'scenarios.',
         'Long-term risk-free rate moves by more than 1 point, the company changes its leverage materially, or the base plan '
         'starts or stops needing external funding.', rf_ids + erp_ids + [RULES])
     for s in SCEN:
@@ -1741,7 +2113,8 @@ def _build(fb, an, card, qa, inputs, external):
                'tax': {'effective_3y': meta['tax_effective'], 'used': meta['tax_used']}, 'interest_rate_existing': meta['interest_existing'],
                'roic': h['roic'], 'payout_history_3y': h['payout_history'], 'net_debt_to_ebitda': h['nd_ebitda'], 'opening': open_bal,
                'reinvestment_identity': fixed['identity'],
-               'route': {k: route[k] for k in ('method', 'business_model', 'stage', 'archetype', 'cyclical', 'capital_intensity', 'funding', 'moat', 'moat_basis')},
+               'route': {k: route[k] for k in ('method', 'business_model', 'stage', 'archetype', 'cyclical', 'capital_intensity', 'funding', 'moat', 'moat_basis',
+                                               'moat_weights', 'cycle_path', 'cycle_peak', 'cycle_treatment')},
                'calendar': {k: cal[k] for k in ('boundaries', 'periods', 'interim', 'fifth_anniversary', 'report_dates', 'fiscal_year_end', 'report_rule')}}
     json.dumps(spec, allow_nan=False)
     return {'forecast_version': FORECAST_VERSION, 'status': 'built', 'reason': None, 'method': method, 'spec': spec,
@@ -1749,6 +2122,8 @@ def _build(fb, an, card, qa, inputs, external):
             'cost_of_equity': {'bear': P['bear']['ke'], 'base': P['base']['ke'], 'bull': P['bull']['ke'], 'components': ke_parts,
                                'terminal_wacc': {s: P[s]['wacc'] for s in SCEN}},
             'funding': fund['info'], 'overrides': applied, 'preview': preview, 'warnings': warnings,
+            'moat_proxy': {'weights': route['moat_weights'], 'basis': route['moat_basis'], 'value_today_with_proxy': preview['today'],
+                           'value_today_without_proxy': alt_moat} if route['moat_proxy'] and route['moat_weights']['base'] > 0 else None,
             '_external': base_external, '_external_assumed': bool(external_assumed)}
 
 
@@ -1817,23 +2192,32 @@ def what_must_be_true(spec, price):
     first5 = [i - stub for i in steps[:5]]
     g_anchor = sum(gl[i] for i in first5) / len(first5)
 
+    rule = base.get('reinvestment_rule')
+
     def grow(shift):
         x = deepcopy(s)
-        _scen(x, 'base')['growth'] = [v + shift if i in first5 else v for i, v in enumerate(gl)]
-        return _value(x)
+        sc = _scen(x, 'base')
+        sc['growth'] = [v + shift if i in first5 else v for i, v in enumerate(gl)]
+        if rule:          # growth costs capital: the engine's own capital per unit of new revenue on the shifted path
+            sc['growth_capex_pct'], sc['maintenance_capex_pct'] = _capex_for_path(x, sc, rule)
+        return _value_paused(x)
     lo_g = max(-.3, -.85 - min(gl[i] for i in first5))
-    d, st, rng = _bisect(grow, lo_g, .5, s['quote']['price'], None)
+    hi_g = next((h for h in (.5, .3, .2, .12, .08, .05, .03) if grow(h) is not None), .5)   # above it the path is unfunded
+    d, st, rng = _bisect(grow, lo_g, hi_g, s['quote']['price'], None)
+    capital_note = ('growth capex recomputed from the engine\'s capital per unit of new revenue (growth is not free)' if rule else
+                    'capital needs as a fixed share of revenue')
     if d is not None:
         req = g_anchor + d
         row('growth', 'average revenue growth, next five fiscal years', 'solved', req, g_anchor,
             f'At {price:,.2f} the base case needs average revenue growth of {req:.1%} a year over the next five fiscal years '
-            f'(base {g_anchor:.1%}), with later years, terminal growth, margins, capital needs and the discount rate unchanged.', 'ratio',
-            {'search_status': 'solved', 'growth_shift': d, 'years_shifted': len(first5), 'range_values': rng,
+            f'(base {g_anchor:.1%}), with {capital_note}; later years, terminal growth, margins and the discount rate unchanged.', 'ratio',
+            {'search_status': 'solved', 'growth_shift': d, 'years_shifted': len(first5), 'range_values': rng, 'capital': capital_note,
              'limitation': 'Shift of the first five fiscal-year growth rates of this spec, everything else fixed; a sensitivity, not market consensus.'})
     else:
         row('growth', 'average revenue growth, next five fiscal years', st, None, g_anchor,
-            f'No five-year growth shift between {lo_g:+.0%} and +50 points reconciles the base case with this price' + side(rng) + '.', 'ratio',
-            {'search_status': st, 'range_values': rng})
+            f'No five-year growth shift between {lo_g:+.0%} and {hi_g:+.0%} reconciles the base case with this price ({capital_note}'
+            + ('; faster growth than that is unfunded on these terms' if hi_g < .5 else '') + ')' + side(rng) + '.', 'ratio',
+            {'search_status': st, 'range_values': rng, 'capital': capital_note, 'funded_up_to_shift': hi_g})
     # mature margin: cash-cost ratio lowered by delta, ramped in over five full years; terminal margin + delta
     t_m = base['terminal']['operating_margin']
     ccr = base['cash_cost_ratio']
@@ -1865,7 +2249,7 @@ def what_must_be_true(spec, price):
         sc['terminal']['roic'] = min(1., roic / k) if k > 0 else 1.
         if sc['terminal']['roic'] < gt:
             return None
-        return _value(x)
+        return _value_paused(x)
     k_hi = min(6., roic / gt - 1e-6) if gt > 0 else 6.
     k, st, rng = _bisect(capital, 0., k_hi, s['quote']['price'], False)
     row('capital_efficiency', 'growth investment per unit of new revenue (x base)', st, k, 1.,

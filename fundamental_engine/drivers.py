@@ -164,11 +164,91 @@ def build_case(spec):
     return case
 
 
+RELEASE_FLOOR = .5        # a declining business keeps replacing at least half of its maintenance capex (forecast reinvestment rule)
+
+
+def reinvest(fy_rate, rates, dur, capint, wc, dr, maint, release, d_rev0=None):
+    """Per fiscal year: (growth capex %, maintenance capex %, net reinvestment need) from the identity
+    growth capex + change in working capital - change in deferred revenue = change in revenue x capital per unit of revenue,
+    on the bases drivers.build_case uses (year 0 = the stub: the current year's need pro rata, no working-capital step;
+    year 1: deferred revenue moves from the stub rate). A negative need (a shrinking business releasing capital) is taken from
+    maintenance capex (assets not replaced, never below half the maintenance level: a shrinking business still replaces part of
+    what it keeps) when release is True, else growth capex is floored at zero."""
+    gc, mc, need = [], [], []
+    for t in range(len(rates)):
+        if t == 0:
+            d_rev = d_rev0
+            nr, dwc, ddef = d_rev * capint[0] * dur[0], 0., 0.
+        else:
+            d_rev = fy_rate[t] - fy_rate[t - 1]
+            nr, dwc = d_rev * capint[t], wc * d_rev
+            ddef = dr * (rates[t] - (rates[0] if t == 1 else rates[t - 1]))
+        need.append(nr)
+        x = (nr - dwc + ddef) / (rates[t] * dur[t])
+        if x >= 0 or not release:
+            gc.append(max(0., x))
+            mc.append(maint)
+        else:
+            gc.append(0.)
+            mc.append(max(RELEASE_FLOOR * maint, maint + x))
+    return gc, mc, need
+
+
+def capex_for_path(spec, sc, rule):
+    """Per-period growth / maintenance capex % of revenue from the reinvestment rule on this scenario's growth path."""
+    B, n = spec['boundaries'], len(spec['boundaries'])
+    starts = [spec['as_of']] + B[:-1]
+    interim = set(spec.get('interim_boundaries') or [])
+    fy = []                                    # period indices per fiscal year; index 0 = the stub
+    for i in range(n):
+        if i and starts[i] in interim:
+            fy[-1].append(i)
+        else:
+            fy.append([i])
+    g = sc['growth']
+    rates, prev = [spec['stub_annual_revenue_rate']], spec['last_full_year_revenue']
+    for t in range(1, len(fy)):
+        prev *= 1 + g[fy[t][0] - 1]
+        rates.append(prev)
+    fy_rate = [spec['last_full_year_revenue']] + rates[1:]
+    dur = [years(starts[ix[0]], B[ix[-1]]) for ix in fy]
+    first = lambda v: v[0] if isinstance(v, list) else v
+    gc, mc, _ = reinvest(fy_rate, rates, dur, rule['capital_per_revenue'], first(sc['working_capital_ratio']), first(sc['deferred_revenue_ratio']),
+                         rule['maintenance_capex_pct'], rule['release'], d_rev0=rule['stub_revenue_change'])
+    pg, pm = [0.] * n, [0.] * n
+    for t, ix in enumerate(fy):
+        for i in ix:
+            pg[i], pm[i] = round(gc[t], 6), round(mc[t], 6)
+    return pg, pm
+
+
+def value_paused(spec, name='base'):
+    """Scenario value today; a funding gap first pauses the earlier distributions (the company keeps cash to fund the path,
+    value-neutral now that retained cash is worth face), and only a gap left after that makes the case unfunded (None)."""
+    sc = next(x for x in spec['scenarios'] if x['name'] == name)
+    for _ in range(len(sc['payout_fraction']) + 1):
+        try:
+            r = value_company(build_case(spec))
+        except ValueError:
+            return None
+        rs = next(x for x in r['scenarios'] if x['name'] == name)
+        if rs['status'] != 'funding_blocked':
+            return r['annual_values'][0][name]
+        j = next(i for i, row in enumerate(rs['forecast']) if row['funding_gap'] > 1e-6)
+        paid = [k for k in range(j) if sc['payout_fraction'][k] > 0]
+        if not paid:
+            return None
+        for k in paid:
+            sc['payout_fraction'][k] = 0.
+    return None
+
+
 def implied_growth_shift(spec, scenario='base', low=-.15, high=.30):
     """Uniform growth shift (every non-stub period) at which the scenario value equals the quote.
 
-    Margins, SBC, capex ratios, financing and terminal assumptions stay fixed. The
-    answer is a sensitivity of THIS spec, not the market's expectation, and must be
+    Margins, SBC, financing and terminal assumptions stay fixed. Capex ratios stay fixed too, unless the scenario carries
+    the forecast's reinvestment_rule (capital per unit of new revenue): then growth capex is recomputed on the shifted path,
+    so faster growth costs capital. The answer is a sensitivity of THIS spec, not the market's expectation, and must be
     re-underwritten for demand, capacity and competition before it is used.
     """
     base = next((s for s in spec['scenarios'] if s['name'] == scenario), None)
@@ -187,6 +267,11 @@ def implied_growth_shift(spec, scenario='base', low=-.15, high=.30):
         sc = next(s for s in s2['scenarios'] if s['name'] == scenario)
         g = sc['growth']
         sc['growth'] = [x + (0 if c else shift) for x, c in zip(g, cont)] if isinstance(g, list) else g + shift
+        if sc.get('reinvestment_rule') and isinstance(sc['growth'], list) and stub:
+            sc['growth_capex_pct'], sc['maintenance_capex_pct'] = capex_for_path(s2, sc, sc['reinvestment_rule'])
+            v = value_paused(s2, scenario)       # the faster path keeps cash first (distributions paused, value-neutral)
+            if v is None:
+                return None, None
         try:
             r = value_company(build_case(s2))
         except ValueError:
@@ -194,9 +279,15 @@ def implied_growth_shift(spec, scenario='base', low=-.15, high=.30):
         final = next(x for x in r['scenarios'] if x['name'] == scenario)['forecast'][-1]
         return r['annual_values'][0][scenario], final['revenue'] / years(final['start'], final['end'])
 
-    note = 'Uniform growth shift with all ratios fixed; a sensitivity of this spec, not market consensus. Re-underwrite feasibility.'
+    note = ('Uniform growth shift with ' + ('growth capex recomputed from the reinvestment rule' if base.get('reinvestment_rule') else
+                                           'all ratios fixed') + '; a sensitivity of this spec, not market consensus. Re-underwrite feasibility.')
     lo_v, _ = calc(low)
     hi_v, _ = calc(high)
+    for h in (.2, .12, .08, .05, .03):            # above some shift the path is unfunded even with distributions paused
+        if hi_v is not None or h >= high:
+            break
+        high = h
+        hi_v, _ = calc(high)
     if lo_v is None or hi_v is None:
         return {'status': 'invalid_search_domain', 'growth_shift': None, 'limitation': note}
     if not lo_v <= target <= hi_v:

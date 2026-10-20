@@ -27,7 +27,7 @@ class PlainTests(unittest.TestCase):
         self.assertIn('אין עדיין הערכת שווי מאושרת',r['text'])
 
     def test_valuation_is_executed_and_translated(self):
-        c=demo();c['valuation_case']=valuation();r=plain_verdict(c)
+        c=demo();v=valuation();v['quote']['price']=25;c['valuation_case']=v;r=plain_verdict(c)   # bear ~21.6: 20 is below even the bear
         self.assertTrue(r['valuation']['executed']);self.assertEqual(len(r['valuation']['annual_values']),6)
         self.assertEqual(r['price']['bucket'],'cheap')
         self.assertEqual(r['bottom_line']['call'],'מעניין מאוד')

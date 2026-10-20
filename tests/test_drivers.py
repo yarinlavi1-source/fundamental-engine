@@ -163,8 +163,10 @@ class NowRegressionTests(unittest.TestCase):
         s = json.loads((ROOT / 'examples/real/now_drivers_2026q3.json').read_text())
         r = value_company(build_case(s))
         today = r['annual_values'][0]
-        self.assertAlmostEqual(today['base'], 95.05, delta=.05)
-        self.assertTrue(today['bear'] < today['base'] < today['bull'] < s['quote']['price'])
+        # 95.05 before 2026-10-20: the 6.28bn of marketable investments were held to the horizon earning risk-free after tax
+        # and discounted at Ke (about 60% of face); financial assets are now worth face (valuation._roll_back)
+        self.assertAlmostEqual(today['base'], 97.56, delta=.05)
+        self.assertTrue(today['bear'] < today['base'] < s['quote']['price'] and today['base'] < today['bull'])
         # the 2026-09-28 spec reinvests nothing in its last explicit year while growing 6%, then the terminal reinvests
         # g/ROIC = 12%: a cash-flow cliff the audit now flags until a reviewed transition exception is supplied
         tr = {t['scenario']: t for t in r['underwriting_audit']['terminal_transitions']}
@@ -174,8 +176,8 @@ class NowRegressionTests(unittest.TestCase):
         self.assertEqual(r['status'], 'underwriting_required')
         self.assertEqual({i['path'] for i in r['underwriting_audit']['issues']}, {f'{x}.transition_exception' for x in ('bear', 'base', 'bull')})
         self.assertEqual(r['underwriting_audit']['source_access']['status'], 'secondary_access')
-        self.assertAlmostEqual(implied_cost_of_equity(build_case(s))['implied_cost_of_equity'], .0806, delta=.001)
-        self.assertAlmostEqual(implied_growth_shift(s)['growth_shift'], .0455, delta=.001)
+        self.assertAlmostEqual(implied_cost_of_equity(build_case(s))['implied_cost_of_equity'], .0813, delta=.001)   # .0806 before investments at face
+        self.assertAlmostEqual(implied_growth_shift(s)['growth_shift'], .0428, delta=.001)                            # .0455 before
 
 
 if __name__ == '__main__':

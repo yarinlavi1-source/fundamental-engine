@@ -319,6 +319,29 @@ class PricingRisks(unittest.TestCase):
         check = next(c for c in rv['mechanical']['redteam']['result']['checks'] if c['code'] == 'terminal_share')
         self.assertEqual(check['status'], 'passed_with_limitations')
 
+    def test_unclassified_business_gets_medium_relevance_on_every_dimension(self):
+        # regression: RELEVANCE.get(primary, 'MMMMMM') had 6 letters for 10 dimensions -> IndexError for every unclassified
+        # business (publishing, hospitals, big pharma, a blank label), so pipeline.run produced no casefile
+        rk, _ = run(cd=card(primary='unclassified', dims={}))
+        ents = [e for e in rk['register'] if e['id'].startswith('biz.')]
+        self.assertEqual(len(ents), len(risk.DIMENSIONS))
+        self.assertEqual({e['severity'] for e in ents}, {'medium'})
+        self.assertTrue(all(len(v) == len(risk.DIMENSIONS) for v in risk.RELEVANCE.values()))
+
+    def test_pre_revenue_unlabelled_company_completes_the_pipeline(self):
+        from fundamental_engine import pipeline
+        fb = F.new({'ticker': 'PREREV', 'name': 'Pre-revenue synthetic test double', 'currency': 'USD', 'sector': '', 'industry': ''}, AS_OF)
+        F.add_source(fb, 'syn', 'synthetic', 'synthetic statements', 'synthetic', AS_OF)
+        for y, oi in ((2024, -40e6), (2025, -55e6)):
+            for metric, v in (('operating_income', oi), ('net_income', oi), ('cfo', oi * .8), ('capex', 3e6)):
+                F.add_fact(fb, metric, f'FY{y}', f'{y}-12-31', v, 'syn', 'as_reported', f'{y + 1}-03-01')
+        for metric, v in (('cash', 300e6), ('shares_outstanding', 60e6), ('total_assets', 320e6), ('total_liabilities', 20e6)):
+            F.add_fact(fb, metric, 'I@2025-12-31', '2025-12-31', v, 'syn', 'as_reported', '2026-03-01')
+        F.set_price(fb, 9., AS_OF, 'syn')
+        cf = pipeline.run(fb)
+        self.assertEqual(cf['stages']['risk'], 'ok', cf['errors'])
+        self.assertIn(cf['stages']['decision'], ('ok', 'failed'))           # decision may fail on its own; risk must not crash the run
+
     def test_unassessed_dimensions_get_type_relevance_not_invented_risk(self):
         rk, _ = run(cd=card(primary='semiconductor', dims={}))
         g = entry(rk, 'biz.geopolitics')
@@ -583,6 +606,42 @@ class PermanentLossSeverity(unittest.TestCase):
         self.assertEqual(p['status'], 'computed')
         self.assertIs(p['not_more_severe_than_bear'], True)
         self.assertIn('not below the bear', p['severity_note'])
+
+    def test_variants_drop_the_bears_own_funding_plan(self):
+        # regression (2026-10-20 review): every variant kept the bear's assumed equity/debt and its SBC settled in shares, so
+        # value_company raised ('Funding marked none but cash financing supplied'; 'SBC share settlement exceeds the SBC expense')
+        # and the funding-dependent names lost their permanent-loss value
+        spec = live_spec()
+        n = len(spec['boundaries'])
+        stub = spec['stub_annual_revenue_rate'] * (date(2026, 12, 31) - date(2026, 9, 27)).days / 365.25
+        scen(spec, 'bear').update(financing_status='assumed', debt_draw=[0., 50e6] + [0.] * (n - 2), interest_rate=[.05] + [.06] * (n - 1),
+                                  equity_proceeds=[0., 0., 80e6] + [0.] * (n - 3),
+                                  sbc_share_settlement=[.099 * stub, .099 * 950e6 * 1.1] + [0.] * (n - 2))
+        self.assertIsNotNone(value_company(build_case(spec))['annual_values'][0]['bear'])     # the bear itself is a valid case
+        for kind in ('funding_failure', 'growth_stall', 'cyclical_collapse', 'utilization_collapse'):
+            s2, edits = risk.variant_spec(spec, kind)
+            vb = scen(s2, 'bear')
+            self.assertEqual(vb['financing_status'], 'none', kind)
+            for k in ('equity_proceeds', 'debt_draw', 'sbc_share_settlement'):
+                self.assertEqual(sum(vb[k]), 0., (kind, k))
+            if kind in ('funding_failure', 'growth_stall'):
+                self.assertEqual(vb['interest_rate'], [.05] * n)                                 # existing-debt rate, no assumed new money
+            self.assertIn("bear's own funding plan removed", edits[0])
+            p = risk._permanent(spec, kind, -.25, 50)
+            self.assertEqual(p['status'], 'computed', (kind, p.get('reason')))
+            self.assertIsNotNone(p['value_per_share'])
+
+    def test_variant_gaps_use_investments_before_a_depressed_raise(self):
+        spec = live_spec()
+        bear = scen(spec, 'bear')
+        bear.update(cash_cost_ratio=[.95] * len(spec['boundaries']), payout_fraction=0.)       # a burner: the variant runs short
+        detail = {}
+        case = build_case(risk.variant_spec(spec, 'growth_stall')[0])
+        res, raised, issue = risk.fund_with_equity(case, 'bear', 50, detail)
+        self.assertIsNotNone(res)
+        self.assertGreater(detail['investments_liquidated'], 99e6)                              # the 100m of investments go first
+        self.assertGreater(raised, 0)
+        self.assertEqual(issue, 50 * (1 - risk.ISSUE_DISCOUNT))
 
 
 class SbcAndMarginSignoff(unittest.TestCase):

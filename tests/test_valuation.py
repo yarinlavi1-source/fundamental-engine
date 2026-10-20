@@ -10,6 +10,8 @@ from fundamental_engine.mcp import Server
 ROOT=Path(__file__).resolve().parents[1]
 def fixture(name='infrastructure'):return json.loads((ROOT/'examples/valuation'/f'{name}.json').read_text())
 def base(r):return next(s for s in r['scenarios'] if s['name']=='base')
+def credit(p,ke=.15):
+ a=p['financial_assets_open'];return (a-(a+p['investment_income_after_tax'])/(1+ke)**years(p['start'],p['end']))/p['shares_open']
 class ValuationTests(unittest.TestCase):
  def test_all_five_routes(self):
   for name in ('infrastructure','bank','reit','biotech','conglomerate'):
@@ -26,10 +28,12 @@ class ValuationTests(unittest.TestCase):
  def test_explicit_dividend_exit_present_value(self):
   c=fixture();r=base(value_company(c));pv=sum(p['dividend_per_share']/1.15**years(c['as_of'],p['end']) for p in r['forecast'])
   pv+=r['terminal']['value_per_share']/1.15**years(c['as_of'],r['forecast'][-1]['end'])
+  # financial assets held in a period are worth face (valuation._roll_back credit), not their own low return discounted at Ke
+  pv+=sum(credit(p)/1.15**years(c['as_of'],p['start']) for p in r['forecast'])
   self.assertAlmostEqual(r['timeline'][0]['value_per_share'],pv)
  def test_ex_dividend_rollforward(self):
   r=base(value_company(fixture()));vs={x['date']:x['value_per_share'] for x in r['timeline']}
-  for p in r['forecast']:self.assertAlmostEqual(vs[p['start']],(vs[p['end']]+p['dividend_per_share'])/1.15**years(p['start'],p['end']))
+  for p in r['forecast']:self.assertAlmostEqual(vs[p['start']],(vs[p['end']]+p['dividend_per_share'])/1.15**years(p['start'],p['end'])+credit(p))
  def test_dilution_reduces_owner_value(self):
   c=fixture();b=base(value_company(c))
   for s in c['scenarios']:s['periods'][0]['equity_issue_price']/=2

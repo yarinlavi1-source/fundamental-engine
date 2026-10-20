@@ -116,11 +116,17 @@ def _irr(basis, price, at):
         return None
     flows = [(_years(at, d), x) for d, x in basis['flows'] if day(d) > day(at) and x]
     flows.append((_years(at, basis['terminal'][0]), basis['terminal'][1]))
-    flows = [(t, x) for t, x in flows if t > 0]
+    # financial assets are valued at face (valuation._roll_back): each period holds them at its start and returns them
+    # grown at their own after-tax yield at its end; at Ke these pairs add exactly the roll-back credit
+    for start, end, a, b in basis.get('financial') or []:
+        if day(end) > day(at):
+            flows += [(max(0., _years(at, start)), a), (_years(at, end), -b)]
+    flows = [(t, x) for t, x in flows if t >= 0 and (t > 0 or x)]
     if not flows or sum(x for _, x in flows) <= 0:
         return None
     pv = lambda r: sum(x / (1 + r) ** t for t, x in flows) - price
-    lo, hi = -.95, 3.0
+    # the held-asset pairs make the value non-monotonic only at absurd rates: bracket from the lowest sensible bound
+    lo, hi = next((x for x in (-.95, -.9, -.75, -.5) if pv(x) >= 0), -.5), 3.0
     if pv(lo) < 0 or pv(hi) > 0:
         return None
     for _ in range(100):
@@ -440,7 +446,10 @@ def thesis_from_casefile(cf, clock=None, options=None):
         rows, term = s.get('forecast') or [], s.get('terminal') or {}
         if s.get('status') != 'funding_blocked' and rows and 'end' in rows[-1] and term.get('value_per_share') is not None:
             basis[s['name']] = {'flows': [[r['end'], r.get('dividend_per_share') or 0] for r in rows],
-                                'terminal': [rows[-1]['end'], term['value_per_share']]}
+                                'terminal': [rows[-1]['end'], term['value_per_share']],
+                                'financial': [[r['start'], r['end'], r['financial_assets_open'] / r['shares_open'],
+                                               (r['financial_assets_open'] + (r.get('investment_income_after_tax') or 0)) / r['shares_open']]
+                                              for r in rows if (r.get('financial_assets_open') or 0) > 0 and r.get('shares_open')]}
     mon = {n: _irr(basis.get(n), p0, price_at['as_of']) if p0 else None for n in SCEN}
     er = dc.get('expected_return') or {}
     exp = {n: er.get(n + '_irr') for n in SCEN}
@@ -565,9 +574,13 @@ def thesis_from_casefile(cf, clock=None, options=None):
                                 'every margin path starts too high.'})
         if fm and by.get((fm, e)):
             anc = anchors.get(fm)
-            thr = min(anc - o['fcf_margin_drop'], by[(fm, e)]['bear']) if anc is not None else by[(fm, e)]['bear'] - o['fcf_margin_drop']
+            # a slower-growing bear reinvests less, so its FCF margin can sit ABOVE base in early years: the threshold never exceeds
+            # the base path less the margin tolerance, so an on-track base year cannot trigger it
+            cap_base = by[(fm, e)]['base'] - o['margin_tolerance'] if by[(fm, e)].get('base') is not None else float('inf')
+            thr = min(anc - o['fcf_margin_drop'], by[(fm, e)]['bear'], cap_base) if anc is not None else min(by[(fm, e)]['bear'] - o['fcf_margin_drop'], cap_base)
             trig.append({'id': f'fcf_margin_drop@{e}', 'metric': fm, 'op': '<', 'threshold': thr, 'period_kind': 'fiscal_year', 'period_end': e,
-                         'impact': ['business_quality', 'value'], 'severity': 'high', 'formula': 'min(anchor margin - drop, bear forecast margin)',
+                         'impact': ['business_quality', 'value'], 'severity': 'high',
+                         'formula': 'min(anchor margin - drop, bear forecast margin, base forecast margin - tolerance)',
                          'why': f"FCF margin fell more than {o['fcf_margin_drop']:.0%} points from the analysis anchor and below the bear case: cash conversion is deteriorating, not just growth."})
     if shares0:
         sp = [[as_of, shares0]] + [[e, by[('shares_outstanding', e)]['base']] for e in ends if by.get(('shares_outstanding', e))]

@@ -3,6 +3,10 @@
 Operating models project cash, debt and shares, then discount distributions and
 terminal equity PER SHARE. This avoids subtracting future funding twice. All
 financing prices are external assumptions; there is no circular auto-funding.
+Riskless financial assets (investments and cash above the minimum operating balance)
+are worth face whenever they are held, so the payout policy does not change value;
+tax-loss carryforwards left at the horizon are a terminal bridge item; convertibles
+listed in the opening convert rationally at every reported date.
 """
 from copy import deepcopy
 from datetime import date
@@ -131,13 +135,29 @@ def segment_revenue(seg, duration):
     return units * price * utilization * duration
 
 
-def _roll_back(case, s, rows, terminal_per_share):
-    """Ex-distribution value at each boundary; dividends are not counted twice."""
+def _roll_back(case, s, rows, terminal_per_share, convertibles=()):
+    """Ex-distribution value at each boundary; dividends are not counted twice.
+
+    Financial assets (marketable investments and cash above the minimum operating balance) are riskless: discounting their
+    own low return at the cost of equity would value a dollar of Treasuries held to the horizon at roughly half a dollar, and
+    would make retained cash (credited with no return) destroy value, so the payout policy would change value. Each period
+    therefore adds back the financial assets held at its start, net of the same assets grown at their own after-tax return
+    and discounted at the cost of equity: credit = (A - (A + income) / (1 + Ke)^t) / shares. Financial assets are worth face
+    whenever they are held, and the operating cash flows are the only part discounted at Ke (Modigliani-Miller: the
+    distribution policy does not change value). Convertibles convert rationally at every date: the common value per share is
+    min(straight, (straight x shares + claim) / (shares + conversion shares))."""
     values = {rows[-1]['end']: terminal_per_share}
     v = terminal_per_share
     for row in reversed(rows):
-        v = (v + row['dividend_per_share']) / (1 + s['cost_of_equity']) ** years(row['start'], row['end'])
+        disc = (1 + s['cost_of_equity']) ** years(row['start'], row['end'])
+        fa, inc = row.get('financial_assets_open', 0.), row.get('investment_income_after_tax', 0.)
+        credit = (fa - (fa + inc) / disc) / row['shares_open'] if fa > 0 else 0.
+        v = (v + row['dividend_per_share']) / disc + credit
         values[row['start']] = v
+    shares_at = {case['as_of']: rows[0].get('shares_open', rows[0]['shares']), **{r['end']: r['shares'] for r in rows}}
+    if convertibles:
+        claim, extra = sum(c['claim'] for c in convertibles), sum(c['conversion_shares'] for c in convertibles)
+        values = {d: min(x, (x * shares_at[d] + claim) / (shares_at[d] + extra)) for d, x in values.items()}
     out = []
     for d in case['report_dates']:
         elapsed = years(case['as_of'], d)
@@ -149,6 +169,16 @@ def _roll_back(case, s, rows, terminal_per_share):
                     'discounted_price_component_today': values[d] / (1 + s['cost_of_equity']) ** elapsed,
                     'cumulative_dividend_per_share': paid,
                     'annualized_endpoint_return': (wealth / case['quote']['price']) ** (1 / elapsed) - 1 if elapsed > 0 else None})
+    return out, values
+
+
+def _convertibles(op):
+    """opening['convertibles']: [{'id', 'claim', 'conversion_shares'}]; the claim is inside opening debt (held as debt)."""
+    out = []
+    for c in op.get('convertibles') or []:
+        text(c.get('id'), 'convertible id')
+        out.append({'id': c['id'], 'claim': number(c['claim'], 'convertible claim', 0),
+                    'conversion_shares': number(c['conversion_shares'], 'conversion shares', 1e-9)})
     return out
 
 
@@ -157,6 +187,9 @@ def operating(case, s):
     cash, debt, shares = n(op, 'unrestricted_cash', 0), n(op, 'debt', 0), n(op, 'shares', 1e-12)
     investments = number(op.get('marketable_investments', 0), 'marketable_investments', 0)
     deferred, nol = n(op, 'deferred_revenue', 0), n(op, 'tax_loss_carryforward', 0)
+    converts = _convertibles(op)
+    if sum(c['claim'] for c in converts) > debt + 1e-6:
+        raise ValueError('Convertible claims exceed opening debt (the claim must be inside debt)')
     rows, issues = [], ['Cash is checked at period boundaries only; use monthly periods for construction or near-term refinancing risk.']
     blocked = False
     for p in s['periods']:
@@ -206,6 +239,7 @@ def operating(case, s):
         fees = equity * n(p, 'equity_fee_rate', 0, .99) + n(p, 'debt_fees', 0)
         issued = equity / issue_price
         settle_shares = settled / issue_price
+        shares_open = shares
         shares += issued + sbc_shares + settle_shares
         if p['financing_status'] not in {'committed', 'assumed', 'none'}:
             raise ValueError('Unknown financing_status')
@@ -214,6 +248,8 @@ def operating(case, s):
         if p['financing_status'] == 'assumed' and (draws or equity):
             issues.append(p['end'] + ': financing is assumed, not committed')
         cash_before = cash
+        held_min = rows[-1]['minimum_cash'] if rows else n(p, 'minimum_cash', 0)
+        financial_open = investments + max(0., cash - held_min)      # riskless assets held during the period (valued at face)
         debt += draws - repay
         liquidation = number(p.get('investment_liquidation', 0), 'investment_liquidation', 0)
         if liquidation > investments + 1e-7:
@@ -233,7 +269,8 @@ def operating(case, s):
                      'interest': interest, 'cash_taxes': taxes, 'nol_remaining': nol,
                      'cfo': cfo, 'maintenance_capex': maintenance, 'growth_capex': growth,
                      'fcfe_before_new_equity': cfo - maintenance - growth + draws - repay - n(p, 'debt_fees', 0) + investment_income - minority_paid,
-                     'cash_open': cash_before, 'cash': cash, 'debt': debt, 'shares': shares,
+                     'cash_open': cash_before, 'cash': cash, 'debt': debt, 'shares': shares, 'shares_open': shares_open,
+                     'financial_assets_open': financial_open,
                      'marketable_investments': investments, 'investment_liquidation': liquidation,
                      'investment_income_after_tax': investment_income, 'noncontrolling_distributions': minority_paid,
                      'new_financing_shares': issued, 'sbc_shares': sbc_shares, 'sbc_settled_in_shares': settled,
@@ -251,14 +288,24 @@ def operating(case, s):
     nopat = terminal_rev * n(t, 'operating_margin', .000001, 1) * (1 - n(t, 'tax_rate', 0, 1))
     terminal_fcff = nopat * (1 - g / roic)
     ev = terminal_fcff / (wacc - g)
+    # tax-loss carryforwards left at the horizon shelter terminal operating profit (same usage limit and tax rate as the
+    # last explicit period), discounted at the terminal WACC; a separate bridge item, never hidden in the margin
+    nol_shield, left, ebit_t = 0., nol, terminal_rev * n(t, 'operating_margin', .000001, 1)
+    limit, rate = n(s['periods'][-1], 'nol_usage_limit', 0, 1), n(t, 'tax_rate', 0, 1)
+    k = 0
+    while left > 1e-6 and limit > 0 and rate > 0 and k < 200:
+        k += 1
+        used = min(left, ebit_t * (1 + g) ** (k - 1) * limit)
+        nol_shield += used * rate / (1 + wacc) ** k
+        left -= used
     # Any terminal working-capital/deferred runoff must be separately quantified.
     runoff = n(t, 'net_runoff_obligation', 0)
     text(t['working_capital_rationale'], 'terminal working capital rationale')
     excess_cash = max(0, cash - rows[-1]['minimum_cash'])
-    raw_equity = ev + excess_cash + investments - debt - n(t, 'other_claims', 0) - runoff
+    raw_equity = ev + nol_shield + excess_cash + investments - debt - n(t, 'other_claims', 0) - runoff
     terminal_price = max(0, raw_equity) / shares
     bridge = {'enterprise_value': ev, 'next_year_revenue': terminal_rev, 'next_year_nopat': nopat,
-              'next_year_fcff': terminal_fcff, 'reinvestment_rate': g / roic,
+              'next_year_fcff': terminal_fcff, 'reinvestment_rate': g / roic, 'nol_remaining': nol, 'nol_tax_shield': nol_shield,
               'excess_cash': excess_cash, 'marketable_investments': investments, 'debt': debt, 'other_claims': t['other_claims'],
               'net_runoff_obligation': runoff, 'raw_equity_value': raw_equity,
               'shares': shares, 'value_per_share': terminal_price}
@@ -272,13 +319,17 @@ def operating(case, s):
         issues.append('Terminal revenue annualized from a short period; seasonality review required')
     if deferred:
         issues.append('Terminal deferred revenue remains; verify renewal versus runoff treatment')
-    timeline = [] if blocked else _roll_back(case, s, rows, terminal_price)
+    timeline, by_date = ([], {}) if blocked else _roll_back(case, s, rows, terminal_price, converts)
+    if converts:
+        issues.append('Convertibles convert at a date when the per-share value exceeds claim / conversion shares (if-converted; '
+                      'future coupons after a conversion are not added back: slightly conservative)')
     today = timeline[0]['value_per_share'] if timeline else 0
     terminal_pv = terminal_price / (1 + s['cost_of_equity']) ** years(case['as_of'], rows[-1]['end'])
     if today > 0 and terminal_pv / today > .8:
         issues.append('More than 80% of present value comes from terminal equity; prioritize terminal assumptions and extend explicit forecast if needed')
     return {'name': s['name'], 'status': 'funding_blocked' if blocked else 'conditional',
             'issues': issues, 'timeline': timeline, 'forecast': rows, 'terminal': bridge,
+            'boundary_values': [{'date': d, 'value_per_share': by_date[d]} for d in sorted(by_date)],
             'terminal_share_of_present_value': terminal_pv / today if today > 0 else None}
 
 
@@ -313,7 +364,7 @@ def residual_income(case, s):
     equity = book * (roe - g) / (ke - g)
     if blocked: issues.append('Regulatory capital shortfall or nonpositive book: recapitalization not modeled')
     return {'name': s['name'], 'status': 'funding_blocked' if blocked else 'conditional',
-            'issues': issues, 'forecast': rows, 'timeline': [] if blocked else _roll_back(case, s, rows, max(0, equity) / shares),
+            'issues': issues, 'forecast': rows, 'timeline': [] if blocked else _roll_back(case, s, rows, max(0, equity) / shares)[0],
             'terminal': {'equity_value': equity, 'book_equity': book, 'implied_price_to_book': (roe - g) / (ke - g)}}
 
 

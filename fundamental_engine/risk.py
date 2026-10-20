@@ -54,6 +54,8 @@ RELEVANCE = {'subscription_software': 'HMLHLLMMHH', 'platform_marketplace': 'HML
              'hardware_manufacturing': 'HMHMLHMMML', 'capital_intensive_infrastructure': 'MMHMHMMMMM', 'consumer_brand': 'HHMLMMMMHM',
              'industrial': 'MMMMMMMMMM', 'financials': 'MMLMHMMMMM', 'pre_revenue_biotech': 'HHLMHLMHML', 'conglomerate': 'MMMMMMMMMM',
              'reit': 'MLMLMLMMLM', 'commodity': 'MMMLHHMMLL'}
+DEFAULT_RELEVANCE = 'M' * len(DIMENSIONS)   # an unclassified business (blank label, publishing, hospitals...): medium on every dimension
+assert all(len(v) == len(DIMENSIONS) and set(v) <= set('HML') for v in RELEVANCE.values()), 'RELEVANCE needs one H/M/L per dimension'
 LEVEL = {'H': 'high', 'M': 'medium', 'L': 'low'}
 DIM_LEVERS = {'competition': ('growth', 'margin'), 'substitutes': ('growth', 'margin'), 'customer_concentration': ('growth',),
               'technology_ai': ('growth', 'margin'), 'regulation': ('margin',), 'geopolitics': ('growth',),
@@ -331,7 +333,7 @@ def _accounting(add, an):
 def _business(add, card):
     dims = (card or {}).get('dimensions') or {}
     primary = ((card or {}).get('business_model') or {}).get('primary')
-    rel = RELEVANCE.get(primary, 'MMMMMM')
+    rel = RELEVANCE.get(primary, DEFAULT_RELEVANCE)
     early = ((card or {}).get('stage') or {}).get('value') == 'early'
     for i, d in enumerate(DIMENSIONS):
         level = 'high' if d == 'customer_concentration' and early else LEVEL[rel[i]]
@@ -515,15 +517,40 @@ def _expand(row, key, count, default=0.):
     return list(v) if isinstance(v, list) else [v] * count
 
 
+EXTERNAL_ROWS = ('equity_proceeds', 'debt_draw', 'sbc_share_settlement')
+
+
+def _strip_funding(s2, bear, count):
+    """Remove the bear's executed funding plan: assumed debt and equity and SBC settled in shares were sized for the bear's
+    OWN cash flows (an SBC settlement above the variant's smaller SBC charge is invalid, and financing_status 'none' with
+    cash financing is rejected). Investment liquidations stay (an internal source, never above the balance). The variant's
+    gaps are re-closed by fund_with_equity: paused distributions, remaining investments, then equity at a depressed price."""
+    had = [k for k in EXTERNAL_ROWS if any(x for x in _expand(bear, k, count))]
+    if not had and bear.get('financing_status', 'none') == 'none':
+        return []
+    if any(x for x in _expand(bear, 'debt_draw', count)) and 'interest_rate' in bear:
+        # the forecast blends the existing rate with assumed new money; without the new debt the existing rate applies
+        firsts = [_expand(x, 'interest_rate', count)[0] for x in s2['scenarios'] if not _expand(x, 'debt_draw', count)[0]]
+        r0 = min(firsts) if firsts else _expand(bear, 'interest_rate', count)[0]
+        bear['interest_rate'] = [r0] * count
+    for k in EXTERNAL_ROWS:
+        bear[k] = [0.] * count
+    bear['financing_status'] = 'none'
+    return [f"the bear's own funding plan removed ({', '.join(had) or 'financing status'}): it was sized for the bear's cash flows; "
+            'gaps are re-closed by pausing distributions, remaining investments, then equity at a depressed price']
+
+
 def variant_spec(spec, kind, drop=-.25):
     """Driver spec whose bear row is replaced by a permanent-loss mechanism; returns (spec, edits).
     Each edit is at least as severe as the bear on its lever: growth never above the bear path (a shrinking bear keeps
-    shrinking), cash costs never below it."""
+    shrinking), cash costs never below it. The bear's executed funding plan (assumed debt and equity, SBC settled in shares)
+    is removed first: it was sized for different cash flows and would make value_company reject the variant."""
     s2 = deepcopy(spec)
     count = len(s2['boundaries'])
     stub = 1 if s2.get('stub_annual_revenue_rate') is not None else 0
     gcount = count - stub
     bear = deepcopy(scen(s2, 'bear'))
+    pre = _strip_funding(s2, bear, count)
     ccr, sbc, dep = _expand(bear, 'cash_cost_ratio', count), _expand(bear, 'sbc_pct', count), _expand(bear, 'depreciation_pct', count)
     g = _expand(bear, 'growth', gcount)
     t, tm, edits = bear['terminal'], None, []
@@ -553,10 +580,8 @@ def variant_spec(spec, kind, drop=-.25):
                  'interest rate +2pp (stressed refinancing)']
     elif kind == 'funding_failure':
         bear['growth'] = [x - .5 * abs(x) for x in g]
-        edits = ['revenue growth g - 0.5|g| on the bear path (half the growth; a decline 1.5x deeper)']
-        if bear.get('financing_status') == 'assumed':
-            bear.update(debt_draw=0, financing_status='none')
-            edits.append('uncommitted (assumed) debt draws removed')
+        edits = ['revenue growth g - 0.5|g| on the bear path (half the growth; a decline 1.5x deeper)',
+                 'no uncommitted (assumed) debt or equity at the quote: financing only at a depressed price']
     else:
         raise ValueError(f'unknown failure mechanism {kind}')
     if tm is not None:
@@ -564,21 +589,40 @@ def variant_spec(spec, kind, drop=-.25):
         edits += [f'terminal operating margin {tm:.1%} (no recovery above the explicit margin)', f"terminal growth {t['growth']:.1%}"]
     bear['thesis'] = MECHANISM[kind]
     s2['scenarios'] = [bear] + [s for s in s2['scenarios'] if s['name'] in ('base', 'bull')]
-    return s2, edits
+    return s2, pre + edits
 
 
-def fund_with_equity(case, name, price):
-    """Close each funding gap of one scenario with new equity at a depressed price; (result, raised, issue_price) or (None, ...)."""
+def fund_with_equity(case, name, price, detail=None):
+    """Close each funding gap of one scenario, cheapest source first: pause the latest earlier distribution, liquidate the
+    remaining marketable investments (their income falls with the balance), then issue equity at a depressed price.
+    Returns (result, raised, issue_price) or (None, ...); detail (a dict) receives the liquidations and paused payouts."""
     issue, raised = price * (1 - ISSUE_DISCOUNT), 0.
     sc = scen(case, name)
-    for _ in range(len(sc['periods']) + 2):
+    inv = num(case['opening'].get('marketable_investments')) or 0.
+    detail = {} if detail is None else detail
+    detail.update(investments_liquidated=0., payouts_paused=[])
+    for _ in range(4 * len(sc['periods']) + 5):
         r = value_company(case)
         res = scen(r, name)
         if res['status'] != 'funding_blocked':
             return r, raised, issue
         i = next(i for i, row in enumerate(res['forecast']) if row['funding_gap'] > 1e-7)
-        amount = res['forecast'][i]['funding_gap'] / (1 - ISSUE_FEE) * 1.001 + 1
+        gap = res['forecast'][i]['funding_gap']
+        paid = [k for k in range(i) if (num(sc['periods'][k].get('payout_fraction')) or 0) > 0]
+        if paid:
+            sc['periods'][paid[-1]]['payout_fraction'] = 0.
+            detail['payouts_paused'].append(sc['periods'][paid[-1]]['end'])
+            continue
         p = sc['periods'][i]
+        left = inv - sum(num(q.get('investment_liquidation')) or 0 for q in sc['periods'])
+        if left > 1:
+            x = min(left, gap * 1.001 + 1)
+            p['investment_liquidation'] = (num(p.get('investment_liquidation')) or 0) + x
+            for q in sc['periods'][i:]:
+                q['investment_income_after_tax'] = (num(q.get('investment_income_after_tax')) or 0) * (left - x) / left
+            detail['investments_liquidated'] += x
+            continue
+        amount = gap / (1 - ISSUE_FEE) * 1.001 + 1
         p.update(equity_proceeds=(num(p.get('equity_proceeds')) or 0) + amount, equity_issue_price=issue, equity_fee_rate=ISSUE_FEE, financing_status='assumed')
         raised += amount
     return None, raised, issue
@@ -617,14 +661,20 @@ def _permanent(spec, kind, drop, price, bear_value=None):
         c2 = build_case(s2)
         r2, dilution = value_company(c2), None
         if scen(r2, 'bear')['status'] == 'funding_blocked':
-            r3, raised, issue = fund_with_equity(c2, 'bear', price)
+            det = {}
+            r3, raised, issue = fund_with_equity(c2, 'bear', price, det)
             if r3 is None:
                 return {**out, 'status': 'not_computed', 'value_per_share': None, 'edits': edits,
                         'reason': 'funding gap not closed with equity at the depressed price within the search: loss could approach 100%'}
             rows = scen(r3, 'bear')['forecast']
             dilution = {'equity_raised': raised, 'issue_price': issue, 'issue_discount_to_quote': ISSUE_DISCOUNT, 'fee_rate': ISSUE_FEE,
-                        'new_shares': sum(r['new_financing_shares'] for r in rows), 'original_ownership_retained': rows[-1]['original_ownership']}
-            edits.append(f'funding gaps closed with {raised:,.0f} of equity at {issue:.4g} per share ({ISSUE_DISCOUNT:.0%} below the quote, {ISSUE_FEE:.0%} fees)')
+                        'new_shares': sum(r['new_financing_shares'] for r in rows), 'original_ownership_retained': rows[-1]['original_ownership'],
+                        'investments_liquidated': det['investments_liquidated'], 'payouts_paused': det['payouts_paused']}
+            if det['payouts_paused'] or det['investments_liquidated']:
+                edits.append(f"before any raise: distributions paused ({len(det['payouts_paused'])} period(s)) and "
+                             f"{det['investments_liquidated']:,.0f} of remaining investments liquidated")
+            if raised:
+                edits.append(f'funding gaps closed with {raised:,.0f} of equity at {issue:.4g} per share ({ISSUE_DISCOUNT:.0%} below the quote, {ISSUE_FEE:.0%} fees)')
             r2 = r3
         v = num(r2['annual_values'][0]['bear'])
         milder = None if v is None or bear_value is None else v >= bear_value

@@ -284,8 +284,12 @@ class AdbeForecastTests(unittest.TestCase):
         self.assertEqual(rows['growth']['detail']['years_shifted'], 5)
         self.assertIn('next five fiscal years', rows['growth']['meaning'])
         steps = [i for i, e in enumerate(spec['boundaries'][:-1]) if e not in spec['interim_boundaries']][:5]
-        scen(spec, 'base')['growth'] = [g + (shift if i in steps else 0) for i, g in enumerate(scen(spec, 'base')['growth'])]
+        b = scen(spec, 'base')
+        b['growth'] = [g + (shift if i in steps else 0) for i, g in enumerate(b['growth'])]
+        # growth costs capital: capex follows the engine's own capital per unit of new revenue on the shifted path
+        b['growth_capex_pct'], b['maintenance_capex_pct'] = forecast._capex_for_path(spec, b, b['reinvestment_rule'])
         self.assertAlmostEqual(value_company(build_case(spec))['annual_values'][0]['base'], price, delta=.01)
+        self.assertIn('growth is not free', rows['growth']['meaning'])
         far = {r['lever']: r for r in forecast.what_must_be_true(self.fc['spec'], 1e6)}
         self.assertTrue(all(r['status'] == 'not_reachable' and r['required'] is None for r in far.values()))
         self.assertEqual(forecast.what_must_be_true(None, 10), [])
@@ -468,7 +472,8 @@ class SyntheticCompanyTests(unittest.TestCase):
         fc = forecast.build(fb, an, card, qa_for(100e6, 200e6, 150e6, '2025-12-31'))
         self.assertEqual(fc['status'], 'built')
         base = scen(fc['spec'], 'base')
-        self.assertAlmostEqual(base['terminal']['operating_margin'], sum(margins) / len(margins), places=6)
+        revs = (900e6, 1100e6, 1300e6, 1000e6, 1200e6)          # through the cycle: sum(EBIT) / sum(revenue), not the mean margin
+        self.assertAlmostEqual(base['terminal']['operating_margin'], sum(r * m for r, m in zip(revs, margins)) / sum(revs), places=6)
         self.assertLess(scen(fc['spec'], 'bear')['terminal']['operating_margin'], base['terminal']['operating_margin'])
         self.assertIn('cyclical', json.dumps(fc['cost_of_equity']['components']['adjustments']))
         val = value_company(build_case(fc['spec']))
@@ -556,10 +561,16 @@ class ValuationIntegrityTests(unittest.TestCase):
         lev = comp['leverage']
         self.assertEqual(lev['status'], 'converged')
         self.assertGreater(lev['debt_weight'], .2)                       # model value, not the quote, carries the weight
-        # Ke relevered from Ku (Harris-Pringle) and listed as its own row: Ke = sum of the rows; WACC = Ku - w Kd t
-        self.assertAlmostEqual(fc['cost_of_equity']['base'], comp['unlevered'] + (comp['unlevered'] - lev['kd']) * lev['d_to_e'])
+        # the table rate is the cost of equity at market-average leverage: unlevered at MARKET_DE with the EXPECTED return on debt,
+        # relevered (Harris-Pringle) at the model's own D/E; Ke = sum of the rows; WACC = E/V Ke + D/V (Kd_e - Kd_promised x tax)
+        ku = (comp['table_rate'] + lev['kd_expected'] * forecast.MARKET_DE) / (1 + forecast.MARKET_DE)
+        self.assertAlmostEqual(comp['asset_unlevered'], ku)
+        self.assertAlmostEqual(lev['kd_expected'], forecast.RF_DEFAULT + forecast.DEBT_EXPECTED_PREMIUM)
+        self.assertAlmostEqual(fc['cost_of_equity']['base'], max(comp['table_rate'], ku + (ku - lev['kd_expected']) * lev['d_to_e']))
         self.assertAlmostEqual(fc['cost_of_equity']['base'], comp['risk_free'] + comp['equity_risk_premium'] + sum(a['value'] for a in comp['adjustments']))
-        self.assertAlmostEqual(fc['cost_of_equity']['terminal_wacc']['base'], comp['unlevered'] - lev['debt_weight'] * lev['kd'] * .21, places=6)
+        w = lev['debt_weight']
+        self.assertAlmostEqual(fc['cost_of_equity']['terminal_wacc']['base'],
+                               (1 - w) * fc['cost_of_equity']['base'] + w * (lev['kd_expected'] - lev['kd_promised'] * .21), places=6)
         self.assertIn('adjustment_leverage_relevered', comp)
 
     def test_cyclical_at_peak_is_valued_around_the_cycle(self):
@@ -580,11 +591,14 @@ class ValuationIntegrityTests(unittest.TestCase):
         for j, p in enumerate(base):
             if j >= forecast.CYCLE_CONV['base']:                                  # reverted: on the mid-cycle trend path
                 self.assertLess(p['revenue_rate'], 1.01 * trend * (1 + cyc['long_run_growth']['base']) ** j)
-        self.assertAlmostEqual(scen(fc['spec'], 'base')['terminal']['operating_margin'], sum(m for _, _, m in hist) / len(hist), places=6)
+        agg = sum(r * m for _, r, m in hist) / sum(r for _, r, _ in hist)              # the cycle's own average EBIT / average revenue
+        self.assertAlmostEqual(scen(fc['spec'], 'base')['terminal']['operating_margin'], agg, places=6)
+        self.assertGreater(agg, sum(m for _, _, m in hist) / len(hist) + .02)            # operating leverage: above the simple mean
         for j in range(len(base)):
             rb, rm, ru = (fc['paths'][s][j]['revenue_rate'] for s in SCEN)
             self.assertTrue(rb <= rm <= ru)
-        self.assertLess(fc['paths']['base'][-1]['revenue_rate'] * scen(fc['spec'], 'base')['terminal']['operating_margin'], 220e6 * .25 * .6)
+        j = forecast.CYCLE_CONV['base']                                                # reverted: mid-cycle EBIT, not peak EBIT
+        self.assertLess(fc['paths']['base'][j]['revenue_rate'] * fc['paths']['base'][j]['operating_margin'], 220e6 * .25 * .6)
         today = value_company(build_case(fc['spec']))['annual_values'][0]
         self.assertTrue(today['bear'] <= today['base'] <= today['bull'] < 3 * today['base'])
 
@@ -727,20 +741,65 @@ class ValuationIntegrityTests(unittest.TestCase):
 
     def test_unknown_moat_uses_the_computed_record_or_states_the_haircut(self):
         fb, an, card, qa = adbe()
+        an['metrics']['incremental_roic_3y'] = {'value': .25}
+        an['forensics'] = {'roic': {'series': [{'fiscal_year': f'FY{y}', 'roic': r} for y, r in zip(range(2021, 2026), (.37, .38, .44, .45, .62))]}}
         card['dimensions'] = {'moat': {'assessment': 'unknown'},
                               'pricing_power': {'assessment': 'strong', 'source': 'computed', 'evidence_ids': ['fmp:as_reported_income_annual']}}
         fc = forecast.build(fb, an, card, qa)
-        self.assertEqual(fc['anchors']['route']['moat'], 'strong')
-        self.assertIn('computed proxy', fc['anchors']['route']['moat_basis'])
-        self.assertIn('moat_computed_proxy', {w['code'] for w in fc['warnings']})
-        del card['dimensions']['pricing_power']
-        fc2 = forecast.build(fb, an, card, qa)
-        row = next(a for a in fc2['assumptions'] if a['id'] == 'moat_basis')
-        self.assertEqual(row['values']['moat'], 'unknown')
-        self.assertGreater(row['values']['margin_competed_away'], .02)                # quantified, not silent
-        self.assertIn('moat_basis', fc2['spec']['underwriting']['scenario_reviews']['base']['competitive_response']['assumption_ids'])
-        self.assertLess(value_company(build_case(fc2['spec']))['annual_values'][0]['base'],
-                        value_company(build_case(fc['spec']))['annual_values'][0]['base'])
+        route, row = fc['anchors']['route'], next(a for a in fc['assumptions'] if a['id'] == 'moat_basis')
+        self.assertEqual(route['moat'], 'unknown')
+        self.assertIn('computed proxy', route['moat_basis'])
+        w = row['values']['proxy_weight']
+        self.assertEqual((w['base'], w['bull'], w['bear']), (1., 1., 0.))           # the bear tests the moat failing
+        t = {s: scen(fc['spec'], s)['terminal'] for s in SCEN}
+        hurdle = next(a for a in fc['assumptions'] if a['id'] == 'moat_basis')['values']['unlevered_cost_of_capital']
+        self.assertAlmostEqual(t['bear']['roic'], hurdle + .01, places=6)           # unassessed-moat bear rule, not 70% of a 40% ROIC
+        self.assertGreater(t['base']['roic'], .3)
+        self.assertIn('moat_computed_proxy', {x['code'] for x in fc['warnings']})
+        alt = row['values']['value_today_without_proxy']                              # the proxy's value effect is shown
+        self.assertLess(alt['base'], fc['preview']['today']['base'])
+        self.assertAlmostEqual(alt['bear'], fc['preview']['today']['bear'], delta=.02 * alt['bear'])
+        self.assertIn('moat_proxy', {m['id'] for m in fc['spec']['underwriting']['material_issues'] if m['status'] == 'unresolved'})
+        # blocked: a missing incremental ROIC is not a pass; an analyst row (even 'unknown') is final; an analyst 'weak' on AI or
+        # substitutes, and unassessed FactBook evidence on the moat, block the proxy
+        for change in ('no_incremental', 'analyst_unknown', 'weak_ai', 'moat_evidence'):
+            fb2, an2, card2 = deepcopy(fb), deepcopy(an), deepcopy(card)
+            if change == 'no_incremental':
+                del an2['metrics']['incremental_roic_3y']
+            elif change == 'analyst_unknown':
+                card2['dimensions']['moat'] = {'assessment': 'unknown', 'source': 'analyst', 'evidence_ids': ['fmp:as_reported_income_annual']}
+            elif change == 'weak_ai':
+                card2['dimensions']['technology_ai'] = {'assessment': 'weak', 'source': 'analyst', 'evidence_ids': ['fmp:as_reported_income_annual']}
+            else:
+                facts.add_qualitative(fb2, 'q1', 'moat', 'Research firm cut its moat rating (TEST ITEM)', 'opinion', ['fmp:as_reported_income_annual'],
+                                      fb2['as_of'])
+            fc2 = forecast.build(fb2, an2, card2, qa)
+            r2 = next(a for a in fc2['assumptions'] if a['id'] == 'moat_basis')
+            self.assertEqual(r2['values']['proxy_weight'], {'bear': 0., 'base': 0., 'bull': 0.}, change)
+            self.assertNotIn('moat_computed_proxy', {x['code'] for x in fc2['warnings']}, change)
+            self.assertGreater(r2['values']['margin_competed_away'], .02, change)   # quantified, not silent
+            if change == 'analyst_unknown':
+                self.assertIn('analyst assessment', fc2['anchors']['route']['moat_basis'])
+            self.assertLess(fc2['preview']['today']['base'], fc['preview']['today']['base'])
+        self.assertIn('moat_basis', fc['spec']['underwriting']['scenario_reviews']['base']['competitive_response']['assumption_ids'])
+
+    def test_moat_proxy_is_continuous_in_its_evidence(self):
+        # a 1pp move in gross margin around the old 60% pricing-power cutoff no longer flips base value by half
+        fb, an, card, qa = adbe()
+        an['metrics']['incremental_roic_3y'] = {'value': .25}
+        an['forensics'] = {'roic': {'series': [{'fiscal_year': f'FY{y}', 'roic': .3} for y in range(2021, 2026)]}}
+        card['dimensions'] = {'moat': {'assessment': 'unknown'}}
+        vals = []
+        for gm in (.59, .60):
+            fb2 = deepcopy(fb)
+            for f in fb2['facts']:
+                if f['metric'] == 'gross_profit':
+                    rev = next(x['value'] for x in fb2['facts'] if x['metric'] == 'revenue' and x['period_end'] == f['period_end'] and x['period'] == f['period'])
+                    f['value'] = gm * rev
+            fc = forecast.build(fb2, an, card, qa)
+            vals.append((fc['preview']['today']['base'], next(a for a in fc['assumptions'] if a['id'] == 'moat_basis')['values']['proxy_weight']['base']))
+        self.assertTrue(0 < vals[0][1] < vals[1][1] < 1, vals)
+        self.assertLess(abs(vals[1][0] / vals[0][0] - 1), .05, vals)
 
     def test_guidance_provenance_sbc_period_and_no_revenue(self):
         fb, an, card, qa = adbe()
@@ -782,6 +841,246 @@ class ValuationIntegrityTests(unittest.TestCase):
             forecast.build(fb, an, card, qa, {'financing': 'equity_only'})
         with self.assertRaisesRegex(ValueError, 'unknown keys'):
             forecast.build(fb, an, card, qa, {'risk_free': {'value': .04, 'title': 'x', 'date': '2026-01-01'}})
+
+
+
+def utility(industry='Utilities - Regulated Electric', debt=13.9e9):
+    """SYNTHETIC regulated electric utility (test data only): 40% operating margin, capex above CFO, net debt about 4.4x EBITDA."""
+    rev = [4.4e9, 4.7e9, 5.0e9, 5.3e9, 5.6e9]
+    annual = {f'{y}-12-31': {'revenue': r, 'operating_income': r * .40, 'sbc': r * .004, 'd_and_a': r * .16, 'capex': r * .42,
+                             'cfo': r * .5, 'pretax_income': r * .40 - debt * .045, 'income_tax': (r * .40 - debt * .045) * .21,
+                             'interest_expense': debt * .045} for y, r in zip(range(2021, 2026), rev)}
+    inst = {'2025-12-31': {'cash': .25e9, 'shares_outstanding': 4e8, 'receivables': .6e9, 'payables': .5e9, 'long_term_debt': debt},
+            '2022-12-31': {'receivables': .5e9, 'payables': .42e9}}
+    fb = synth('2026-03-20', annual, inst, 60.0, kind='filing_derived')
+    fb['company'].update(sector='Utilities', industry=industry)
+    an = make_an(fb, revenue_growth_last=.057, revenue_cagr_3y=.06, growth_volatility=.005, roic=.065, sales_to_capital_incremental_3y=.35)
+    card = {'business_model': {'primary': 'capital_intensive_infrastructure'}, 'stage': {'value': 'mature'}, 'funding': {'value': 'self_funded'},
+            'capital_intensity': {'value': 'high'}, 'valuation': {'method': 'fcff_annual_path', 'archetype': 'infrastructure'},
+            'dimensions': {'moat': {'assessment': 'adequate'}}}
+    return fb, an, card, qa_for(4e8, .25e9, debt, '2025-12-31')
+
+
+def steel_at_peak():
+    """SYNTHETIC steel maker whose margin rose every year to a record (no completed cycle in the history; test data only)."""
+    hist = [(2021, 9e9, .06), (2022, 10e9, .09), (2023, 12e9, .14), (2024, 15e9, .20), (2025, 18e9, .27)]
+    annual = {f'{y}-12-31': {'revenue': r, 'operating_income': r * m, 'sbc': r * .005, 'd_and_a': r * .04, 'capex': r * .05,
+                             'cfo': r * (m + .03), 'pretax_income': r * m, 'income_tax': r * m * .21, 'interest_expense': 50e6}
+              for y, r, m in hist}
+    inst = {'2025-12-31': {'cash': 2e9, 'shares_outstanding': 2e8, 'receivables': 2e9, 'inventory': 2.5e9, 'payables': 1.5e9, 'long_term_debt': 1e9},
+            '2022-12-31': {'receivables': 1.2e9, 'inventory': 1.5e9, 'payables': 1e9}}
+    fb = synth('2026-03-20', annual, inst, 118.0, kind='filing_derived')
+    an = make_an(fb, revenue_growth_last=.2, revenue_cagr_3y=(18 / 10) ** (1 / 3) - 1, growth_volatility=.05, roic=.4,
+                 sales_to_capital_incremental_3y=1.2)
+    card = {'business_model': {'primary': 'commodity'}, 'stage': {'value': 'growth'}, 'funding': {'value': 'self_funded'},
+            'cyclical': {'value': True, 'normalize': False, 'position': 'peak', 'basis': 'industry_flag', 'data_shows_cycle': False},
+            'valuation': {'method': 'fcff_annual_path', 'archetype': 'commodity'}, 'dimensions': {'moat': {'assessment': 'adequate'}}}
+    return fb, an, card, qa_for(2e8, 2e9, 1e9, '2025-12-31'), hist
+
+
+class RepairRegressionTests(unittest.TestCase):
+    """2026-10-20 adversarial review of the forecast/valuation rewrite: each test failed on the engine before the repair."""
+
+    def test_higher_coupon_on_the_same_debt_lowers_equity_value(self):
+        # the promised coupon used to be the relevering Kd: a higher coupon lowered Ke and the terminal WACC and RAISED value
+        seen = []
+        for interest in (48e6, 72e6, 96e6):
+            fb, an, card, qa = levered(30.)
+            for f in fb['facts']:
+                if f['metric'] == 'interest_expense':
+                    f['value'] = interest
+            for e in an['annual']:
+                an['annual'][e]['interest_expense'] = interest
+            fc = forecast.build(fb, an, card, qa)
+            lev = fc['cost_of_equity']['components']['leverage']
+            seen.append((fc['preview']['today']['base'], fc['cost_of_equity']['base'], lev['kd_expected'], lev['kd_promised'],
+                         {w['code'] for w in fc['warnings']}))
+        self.assertTrue(seen[0][0] > seen[1][0] > seen[2][0], seen)
+        self.assertTrue(seen[0][1] <= seen[1][1] <= seen[2][1], seen)           # never a lower Ke for a costlier borrower
+        self.assertEqual({x[2] for x in seen}, {forecast.RF_DEFAULT + forecast.DEBT_EXPECTED_PREMIUM})
+        self.assertAlmostEqual(seen[2][3], .12)
+        self.assertIn('debt_rate_unusual', seen[2][4])                              # 12% is outside risk-free + 0..6pp: a data question
+
+    def test_regulated_utility_is_not_double_levered_and_a_capped_weight_is_a_draft(self):
+        fc = forecast.build(*utility())
+        comp, lev = fc['cost_of_equity']['components'], fc['cost_of_equity']['components']['leverage']
+        self.assertIn('regulated_utility', [a['factor'] for a in comp['adjustments']])
+        self.assertEqual(lev['status'], 'converged')
+        self.assertTrue(.065 < fc['cost_of_equity']['base'] < .10, fc['cost_of_equity']['base'])   # was ~18.9% (leverage on a beta-1 Ku)
+        self.assertGreater(fc['preview']['today']['base'], 30)
+        merchant = forecast.build(*utility('Utilities - Renewable'))                   # no regulated returns: market asset risk
+        self.assertNotIn('regulated_utility', [a['factor'] for a in merchant['cost_of_equity']['components']['adjustments']])
+        self.assertGreater(merchant['cost_of_equity']['base'], fc['cost_of_equity']['base'])
+        capped = forecast.build(*utility('Utilities - Renewable', debt=30e9))
+        self.assertEqual(capped['cost_of_equity']['components']['leverage']['status'], 'capped')
+        issues = {m['id']: m for m in capped['spec']['underwriting']['material_issues']}
+        self.assertEqual(issues['leverage_at_cap']['status'], 'unresolved')             # the cap constant sets the value: a draft
+        self.assertIn('leverage_capped', {w['code'] for w in capped['warnings']})
+
+    def test_new_shares_are_issued_at_the_lower_of_quote_and_own_value(self):
+        rev = [470e6, 660e6, 900e6]
+        annual = {f'{y}-12-31': {'revenue': r, 'operating_income': r * m, 'sbc': r * .25, 'd_and_a': r * .03, 'capex': r * .04,
+                                 'cfo': r * c, 'pretax_income': r * m, 'income_tax': 0.} for y, r, m, c in
+                  zip((2023, 2024, 2025), rev, (-.30, -.22, -.14), (.08, .15, .20))}
+        an_card = lambda fb: (make_an(fb, revenue_growth_last=900 / 660 - 1, revenue_cagr_3y=None, growth_volatility=.05, sales_to_capital_incremental_3y=2.5),
+                              {'business_model': {'primary': 'subscription_software'}, 'stage': {'value': 'growth'}, 'funding': {'value': 'needs_external'},
+                               'valuation': {'method': 'fcff_annual_path', 'archetype': 'software'}, 'dimensions': {'moat': {'assessment': 'adequate'}}})
+        out = {}
+        for q in (2., 71., 200.):
+            fb = synth('2026-03-20', annual, {'2025-12-31': {'cash': 60e6, 'shares_outstanding': 192e6, 'receivables': 160e6, 'payables': 36e6},
+                                              '2023-12-31': {'receivables': 85e6, 'payables': 19e6}}, q)
+            an, card = an_card(fb)
+            out[q] = forecast.build(fb, an, card, qa_for(192e6, 60e6, 0., '2025-12-31'))
+        b = {q: fc['funding']['base'] for q, fc in out.items()}
+        self.assertEqual(b[71.]['status'], 'share_settled')                            # not 'self_funded': SBC is partly paid in shares
+        self.assertGreater(b[71.]['sbc_settled_in_shares'], 0)
+        # above the scenario's own value the quote no longer matters (it moved 24% between quotes 20 and 200 before)
+        self.assertAlmostEqual(out[71.]['preview']['today']['base'], out[200.]['preview']['today']['base'], places=6)
+        self.assertTrue(all(x['price'] <= 71. and not x['quote_binding'] for x in b[71.]['issue_prices']))
+        self.assertFalse(b[71.]['price_dependent'])
+        # a quote below the scenario's value dilutes at the quote: stated, with the value at the scenario's own price
+        self.assertTrue(b[2.]['price_dependent'])
+        self.assertIn('value_depends_on_quote', {w['code'] for w in out[2.]['warnings']})
+        self.assertGreater(b[2.]['value_if_issued_at_own_value'], out[2.]['preview']['today']['base'])
+        self.assertNotIn('same at any price', next(a for a in out[2.]['assumptions'] if a['id'] == 'cost_of_equity')['rationale'])
+
+    def test_growth_lever_charges_capital_for_the_growth_it_adds(self):
+        fb, an, card, qa = industrial()
+        fc = forecast.build(fb, an, card, qa)
+        price = 1.3 * fc['preview']['today']['base']
+        row = next(r for r in forecast.what_must_be_true(fc['spec'], price) if r['lever'] == 'growth')
+        self.assertEqual(row['status'], 'solved')
+        shift = row['detail']['growth_shift']
+        spec = deepcopy(fc['spec'])
+        spec['quote']['price'] = price
+        b = scen(spec, 'base')
+        steps = [i for i, e in enumerate(spec['boundaries'][:-1]) if e not in spec['interim_boundaries']][:5]
+        b['growth'] = [g + (shift if i in steps else 0) for i, g in enumerate(b['growth'])]
+        free = forecast._value_paused(deepcopy(spec))                                    # the old lever: capex a fixed share of revenue
+        b['growth_capex_pct'], b['maintenance_capex_pct'] = forecast._capex_for_path(spec, b, b['reinvestment_rule'])
+        # distributions pause where the faster path needs the cash (value-neutral); then the solved path reproduces the price
+        self.assertAlmostEqual(forecast._value_paused(spec), price, delta=.01 * price)
+        self.assertGreater(free, price * 1.001)                                          # growth was nearly free before
+
+    def test_implied_growth_shift_also_charges_capital(self):
+        from fundamental_engine.drivers import implied_growth_shift
+        fb, an, card, qa = industrial()
+        fc = forecast.build(fb, an, card, qa)
+        spec = deepcopy(fc['spec'])
+        spec['quote']['price'] = 1.1 * fc['preview']['today']['base']
+        r = implied_growth_shift(spec)
+        self.assertEqual(r['status'], 'solved', r)
+        self.assertIn('reinvestment rule', r['limitation'])
+        b = scen(spec, 'base')
+        steps = [i for i, e in enumerate(spec['boundaries'][:-1]) if e not in spec['interim_boundaries']]
+        b['growth'] = [g + (r['growth_shift'] if i in steps else 0) for i, g in enumerate(b['growth'])]
+        b['growth_capex_pct'], b['maintenance_capex_pct'] = forecast._capex_for_path(spec, b, b['reinvestment_rule'])
+        self.assertAlmostEqual(value_company(build_case(spec))['annual_values'][0]['base'], spec['quote']['price'], delta=.001 * spec['quote']['price'])
+
+    def test_declining_business_releases_capital_in_the_explicit_years(self):
+        rev = [500e6 * .92 ** i for i in range(5)]
+        annual = {f'{2021 + i}-12-31': {'revenue': r, 'operating_income': r * .15, 'sbc': r * .01, 'd_and_a': r * .05, 'capex': r * .03,
+                                         'cfo': r * .19, 'pretax_income': r * .15, 'income_tax': r * .15 * .21, 'interest_expense': 1e6}
+                  for i, r in enumerate(rev)}
+        fb = synth('2026-03-20', annual, {'2025-12-31': {'cash': 50e6, 'shares_outstanding': 20e6, 'receivables': 40e6, 'payables': 20e6}},
+                   20.0, kind='filing_derived')
+        an = make_an(fb, revenue_growth_last=-.08, revenue_cagr_3y=-.08, growth_volatility=.005, roic=.15)
+        card = {'business_model': {'primary': 'industrial'}, 'stage': {'value': 'decline'}, 'funding': {'value': 'self_funded'},
+                'valuation': {'method': 'fcff_annual_path', 'archetype': 'industrial'}, 'dimensions': {'moat': {'assessment': 'weak'}}}
+        fc = forecast.build(fb, an, card, qa_for(20e6, 50e6, 0., '2025-12-31'))
+        res = value_company(build_case(fc['spec']))
+        for tr in res['underwriting_audit']['terminal_transitions']:
+            self.assertFalse(tr['reinvestment_jump'], tr)                                 # the default build passes its own continuity check
+            self.assertLess(tr['last_net_reinvestment_rate'], 0)
+        self.assertNotIn('transition_exception', json.dumps(res['underwriting_audit']['issues']))
+        self.assertNotIn('replacement_exception', json.dumps(res['underwriting_audit']['issues']))   # assets still partly replaced
+        base = scen(fc['spec'], 'base')
+        self.assertLess(min(base['maintenance_capex_pct']), fc['anchors']['capex_pct_3y'] - 1e-6)   # assets not replaced: capital released
+
+    def test_amortization_roll_off_is_not_a_recurring_cash_cost(self):
+        fb, an, card, qa = adbe()                                                          # strong moat card: margin target held
+        fc = forecast.build(fb, an, card, qa)
+        sc = scen(fc['spec'], 'base')
+        ebitda = [1 - c for c in sc['cash_cost_ratio']]                                    # EBITDA before SBC
+        dep0, maint = fc['anchors']['da_pct'], sc['maintenance_capex_pct'][-1]
+        self.assertGreater(dep0 - maint, .02)
+        target = next(a for a in fc['assumptions'] if a['id'] == 'margin_base')['values']['base']['mature']
+        acq = .0003 / (dep0 - maint)
+        self.assertAlmostEqual(sc['terminal']['operating_margin'], target + (dep0 - maint) * (1 - acq), places=5)
+        self.assertGreater(ebitda[-1], ebitda[0] - sc['sbc_pct'][0] + sc['sbc_pct'][-1] - .005)   # EBITDA not cut by the D&A roll-off
+        an['metrics']['acquisition_spend_pct_revenue_3y'] = {'value': .05}                # recurring acquisitions: amortization is a cost
+        fc2 = forecast.build(fb, an, card, qa)
+        self.assertAlmostEqual(scen(fc2['spec'], 'base')['terminal']['operating_margin'], target, places=5)
+
+    def test_cyclical_peak_without_card_normalization_is_valued_around_the_cycle(self):
+        fb, an, card, qa, hist = steel_at_peak()
+        fc = forecast.build(fb, an, card, qa)
+        route = fc['anchors']['route']
+        self.assertTrue(route['cycle_path'] and route['cycle_peak'])
+        self.assertEqual(route['stage'], 'mature')                                        # never staged as a grower at the peak
+        w = {x['code']: x for x in fc['warnings']}
+        self.assertEqual(w['cyclical_peak_unconfirmed']['severity'], 'high')
+        issues = {m['id']: m for m in fc['spec']['underwriting']['material_issues']}
+        self.assertEqual(issues['cyclical_peak_unconfirmed']['status'], 'unresolved')
+        mid = sum(r * m for _, r, m in hist) / sum(r for _, r, _ in hist)
+        self.assertLessEqual(scen(fc['spec'], 'bear')['terminal']['operating_margin'], mid)
+        self.assertAlmostEqual(scen(fc['spec'], 'base')['terminal']['operating_margin'], mid, places=5)
+        self.assertLess(fc['anchors']['current_fiscal_year']['revenue'], 18e9)          # the peak is not grown
+        row = next(a for a in fc['assumptions'] if a['id'] == 'cycle_position')
+        self.assertGreater(row['values']['value_if_structural']['base'], fc['preview']['today']['base'])   # the switch's value effect
+        # an analyst who shows the margin is structural keeps the margin path, but the bear still tests the cycle
+        ok = {'treatment': 'structural', 'reason': 'new low-cost capacity (TEST)', 'evidence_ids': ['syn:fs']}
+        fc2 = forecast.build(fb, an, card, qa, {'cyclical': ok})
+        self.assertFalse(fc2['anchors']['route']['cycle_path'])
+        self.assertLessEqual(scen(fc2['spec'], 'bear')['terminal']['operating_margin'], mid + 1e-9)
+        self.assertEqual({m['id']: m['status'] for m in fc2['spec']['underwriting']['material_issues']}['cyclical_peak_unconfirmed'], 'unresolved')
+        rv = {'cycle_position': {'status': 'reviewed', 'reviewer': 'independent test reviewer'}}
+        fc3 = forecast.build(fb, an, card, qa, {'cyclical': ok, 'reviews': rv})
+        self.assertEqual({m['id']: m['status'] for m in fc3['spec']['underwriting']['material_issues']}['cyclical_peak_unconfirmed'], 'resolved')
+        for bad in ({'treatment': 'maybe', 'reason': 'x', 'evidence_ids': ['syn:fs']}, {'treatment': 'structural', 'reason': '', 'evidence_ids': ['syn:fs']},
+                    {'treatment': 'structural', 'reason': 'x', 'evidence_ids': ['nope']}):
+            with self.assertRaises(ValueError):
+                forecast.build(fb, an, card, qa, {'cyclical': bad})
+
+    def test_lender_shaped_balance_sheet_is_a_visible_draft(self):
+        fb, an, card, qa = industrial()
+        for m, v in (('total_assets', 10e9), ('total_liabilities', 9.1e9)):
+            facts.add_fact(fb, m, 'I@2025-12-31', '2025-12-31', v, 'syn:fs', 'as_reported', '2026-02-10')
+        fc = forecast.build(fb, an, card, qa)
+        self.assertIn('possible_lender', {w['code'] for w in fc['warnings']})
+        self.assertEqual({m['id']: m['status'] for m in fc['spec']['underwriting']['material_issues']}['possible_lender'], 'unresolved')
+        facts.add_fact(fb, 'cost_of_revenue', 'FY2025', '2025-12-31', 300e6, 'syn:fs', 'as_reported', '2026-02-10')   # an operating business
+        self.assertNotIn('possible_lender', {w['code'] for w in forecast.build(fb, an, card, qa)['warnings']})
+
+    def test_survival_bear_margin_is_anchored_to_the_companys_history(self):
+        fb, an, card, qa = utility()
+        card['valuation']['method'] = 'scenario_survival_fcff'
+        fc = forecast.build(fb, an, card, qa)
+        bear = scen(fc['spec'], 'bear')['terminal']['operating_margin']
+        self.assertGreater(bear, .40 - forecast.STAGE['mature']['m_spread'] - .01)        # was 0.35 x the 30% type margin = 10.5%
+
+    def test_minimum_cash_disclosure_uses_the_peak_and_acquired_revenue_is_flagged(self):
+        fb, an, card, qa = adbe()
+        facts.add_qualitative(fb, 'acq1', 'revenue_sources', 'Acquisition of a SEO software company closed 2026-04-28 for $1.9B (TEST ITEM).',
+                              'reported', ['fmp:as_reported_income_annual'], '2026-08-28')
+        fc = forecast.build(fb, an, card, qa)
+        row = next(a for a in fc['assumptions'] if a['id'] == 'funding_policy')
+        peak = max(scen(fc['spec'], 'base')['minimum_cash'])
+        self.assertAlmostEqual(row['values']['minimum_cash_peak'], peak, delta=1)
+        self.assertAlmostEqual(row['values']['minimum_cash_per_share'], peak / 389.2e6, places=6)
+        self.assertIn('anchor_includes_acquired_revenue', {w['code'] for w in fc['warnings']})
+
+    def test_convertibles_from_dataqa_are_valued_if_converted(self):
+        fb, an, card, qa = industrial()
+        qa['fields'] = {'convertibles': {'status': 'reported', 'instruments': [{'id': 'cv29', 'principal': 80e6, 'conversion_price': 10.,
+                                                                                'conversion_shares': 8e6, 'accreted_claim': 80e6, 'source_id': 'syn:fs'}]}}
+        fc = forecast.build(fb, an, card, qa)
+        self.assertEqual(fc['spec']['opening']['convertibles'], [{'id': 'cv29', 'claim': 80e6, 'conversion_shares': 8e6}])
+        plain = forecast.build(*industrial())
+        v, w = fc['preview']['today']['base'], plain['preview']['today']['base']
+        self.assertGreater(w, 10)                                                          # deep in the money at the model's value
+        self.assertLess(v, w)
+        self.assertIn('if-converted', next(a for a in fc['assumptions'] if a['id'] == 'dilution')['rationale'])
 
 
 if __name__ == '__main__':

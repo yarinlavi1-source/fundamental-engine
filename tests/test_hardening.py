@@ -162,17 +162,17 @@ def attractive_at(price, **extra):
 class SupervisorMarginOfSafety(unittest.TestCase):
     """Fix 5: value > quote is not enough; base margin and bear tolerance decide the label."""
     def test_wide_margin_and_tolerable_bear_is_attractive(self):
-        c = attractive_at(20)          # base 44.6, bear 19.1
+        c = attractive_at(20)          # base 48.5, bear 22.5 (financial assets at face since v0.11)
         self.assertEqual(c['effective_classification'], 'conditional_attractive')
         self.assertTrue(c['price_test']['margin_ok'] and c['price_test']['bear_ok'])
         self.assertEqual(c['price_test']['terms_source'], 'engine_default')
 
     def test_thin_margin_or_fragile_bear_is_low_margin(self):
-        thin = attractive_at(42.5)     # +4.9% vs base: a bare sign test accepted this
+        thin = attractive_at(46.2)     # +5.0% vs base: a bare sign test accepted this
         self.assertTrue(thin['accepted_for_synthesis'])
         self.assertEqual(thin['effective_classification'], 'conditional_attractive_low_margin')
         self.assertFalse(thin['price_test']['margin_ok'])
-        fragile = attractive_at(30)    # +49% vs base, but bear 36% below the quote
+        fragile = attractive_at(35)    # +39% vs base, but bear 36% below the quote
         self.assertTrue(fragile['price_test']['margin_ok'])
         self.assertFalse(fragile['price_test']['bear_ok'])
         self.assertEqual(fragile['effective_classification'], 'conditional_attractive_low_margin')
