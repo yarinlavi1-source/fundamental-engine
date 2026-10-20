@@ -676,6 +676,20 @@ def _business(cf):
                    f"{sv['base_value_consolidated']:,.2f} on the consolidated path ({_p0(sv['difference'])}); quote {sv['quote']}. "
                    'Which view holds is a research question, not a model choice.')
     out += ['- Not in the XBRL (read the text): ' + '; '.join(f"{x['item']} ({x['where']})" for x in b.get('not_disclosed') or []), '']
+    m = cf.get('management')
+    if m:
+        out += ['**How management is paid (proxy statement, pay versus performance)**', '',
+                f"- Measures: {', '.join(m['measures']) or 'not tagged (smaller reporting companies may omit the list)'}"
+                + (f"; company-selected: {m['company_selected_measure']}" if m.get('company_selected_measure') else ''),
+                f"- Orientation: {m['orientation'].replace('_', ' ')} (per-share or return words: {', '.join(m['per_share_words']) or 'none'}; "
+                f"size words: {', '.join(m['size_words']) or 'none'}): a reading of the stated measures, not of the plan's weights"]
+        cap, tsr = m.get('peo_comp_actually_paid') or {}, m.get('total_shareholder_return') or {}
+        if cap and tsr:
+            y = max(set(cap) & set(tsr), default=None)
+            if y:
+                out.append(f"- CEO pay actually paid {cap[y]:,.0f} in the year to {y}; shareholder return index {tsr[y]:,.0f} "
+                           f"(peer group {(m.get('peer_tsr') or {}).get(y, 'n/a')})")
+        out.append('')
     return out
 
 

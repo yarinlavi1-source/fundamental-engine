@@ -193,6 +193,41 @@ def convertible_terms(html):
     return res
 
 
+PER_SHARE_WORDS = ('per share', 'eps', 'return on', 'roic', 'rotce', 'roe', 'roa', 'total shareholder return', 'tsr', 'free cash flow per',
+                   'economic profit', 'economic value', 'cash flow per')
+SIZE_WORDS = ('revenue', 'sales', 'bookings', 'ebitda', 'operating income', 'net income', 'gross profit', 'arr', 'growth', 'volume',
+              'subscribers', 'users')
+
+
+def pay_measures(html):
+    """Pay-versus-performance disclosure of a proxy statement (ecd taxonomy): the company-selected measure, the 'most important
+    measures' list, CEO (PEO) total and actually-paid pay and total shareholder return by fiscal year, and an orientation:
+    'per_share_or_returns' when the measures reward per-share value or returns on capital, 'size' when only revenue, EBITDA or
+    growth, 'mixed' otherwise (a reading of the stated measures, not of the plan's weights)."""
+    ix = parse_ixbrl(html)
+    names = []
+    for name, inner in re.findall(r'<ix:nonNumeric\b[^>]*name="ecd:(CoSelectedMeasureName|MeasureName)"[^>]*>(.*?)</ix:nonNumeric>', html, re.S):
+        t = re.sub(r'\s+', ' ', re.sub(r'<[^>]+>', ' ', inner)).strip()
+        if t and t not in names:
+            names.append(t)
+    sel = re.search(r'<ix:nonNumeric\b[^>]*name="ecd:CoSelectedMeasureName"[^>]*>(.*?)</ix:nonNumeric>', html, re.S)
+    by = {}
+    for f in ix['facts']:
+        c = ix['contexts'].get(f['context'])
+        if f['concept'].startswith('ecd:') and c and not _clean_dims(c['dims']):
+            by.setdefault(f['concept'].split(':', 1)[1], {})[c['end'] or c['instant']] = f['value']
+    if not names and not by:
+        return None
+    low = ' '.join(names).lower()
+    ps = [w for w in PER_SHARE_WORDS if w in low]
+    sz = [w for w in SIZE_WORDS if re.search(r'(?<![a-z])' + re.escape(w), low)]
+    orient = 'per_share_or_returns' if ps and not sz else 'size' if sz and not ps else 'mixed' if ps and sz else 'unknown'
+    return {'company_selected_measure': re.sub(r'\s+', ' ', re.sub(r'<[^>]+>', ' ', sel.group(1))).strip() if sel else None,
+            'measures': names, 'orientation': orient, 'per_share_words': ps, 'size_words': sz,
+            'peo_total_comp': by.get('PeoTotalCompAmt'), 'peo_comp_actually_paid': by.get('PeoActuallyPaidCompAmt'),
+            'total_shareholder_return': by.get('TotalShareholderRtnAmt'), 'peer_tsr': by.get('PeerGroupTotalShareholderRtnAmt')}
+
+
 PRO_FORMA_REVENUE = 'us-gaap:BusinessAcquisitionsProFormaRevenue'
 
 

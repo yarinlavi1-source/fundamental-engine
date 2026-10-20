@@ -128,5 +128,18 @@ class ConvertibleTermsTests(unittest.TestCase):
         self.assertEqual(t['syn:TwoPctNotesDue2029Member']['maturity'], '2029-12-31')
 
 
+class PayMeasuresTests(unittest.TestCase):
+    def test_measures_orientation_and_amounts(self):
+        nn = lambda name, cid, text: f'<ix:nonNumeric name="ecd:{name}" contextRef="{cid}">{text}</ix:nonNumeric>'
+        html = (ctx('P1', '2025-01-01', '2025-12-31') + nn('CoSelectedMeasureName', 'P1', 'Adjusted <b>EBITDA</b>')
+                + nn('MeasureName', 'P1', 'Adjusted EBITDA') + nn('MeasureName', 'P1', 'Net Sales')
+                + fact('ecd:PeoActuallyPaidCompAmt', 'P1', '12.5') + fact('ecd:TotalShareholderRtnAmt', 'P1', '140', scale=0))
+        m = B.pay_measures(html)
+        self.assertEqual((m['company_selected_measure'], m['measures'], m['orientation']), ('Adjusted EBITDA', ['Adjusted EBITDA', 'Net Sales'], 'size'))
+        self.assertEqual(m['peo_comp_actually_paid'], {'2025-12-31': 12.5e6})
+        self.assertEqual(B.pay_measures(html.replace('Net Sales', 'Free Cash Flow per Share').replace('Adjusted <b>EBITDA</b>', 'ROIC')
+                                        .replace('Adjusted EBITDA', 'ROIC'))['orientation'], 'per_share_or_returns')
+
+
 if __name__ == '__main__':
     unittest.main()

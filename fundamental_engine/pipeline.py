@@ -141,7 +141,7 @@ def _business(fb, raw_dir, manifest, as_of, notes):
     from . import business
     calls = {c.get('file'): c for c in manifest.get('calls', []) if isinstance(c, dict)}
     convs, latest_bs = {}, None
-    for name in ('sec__annual_report.htm', 'sec__latest_quarterly.htm'):
+    for name in ('sec__annual_report.htm', 'sec__latest_quarterly.htm', 'sec__proxy.htm'):
         path, rec = os.path.join(raw_dir, name), calls.get(name) or {}
         if not os.path.exists(path):
             continue
@@ -156,6 +156,11 @@ def _business(fb, raw_dir, manifest, as_of, notes):
         sid = 'sec:' + name.split('__')[1].split('.')[0]
         F.add_source(fb, sid, 'sec', rec.get('form') or 'filing', 'filing_derived', rec.get('retrieved_at_utc') or as_of,
                      sha=rec.get('sha256'), url=rec.get('url'), note='inline XBRL of the primary document')
+        if name == 'sec__proxy.htm':
+            pay = business.pay_measures(html)
+            if pay:
+                fb['management'] = {**pay, 'source_id': sid, 'source': src}
+            continue
         bm = business.business_map(html, src)
         avail = (date.fromisoformat(filed) + timedelta(days=1)).isoformat()
         for m, x in business.convertible_terms(html).items():
@@ -291,6 +296,7 @@ def run(fb, inputs=None):
     base = [p.get('growth') for p in ((fc or {}).get('paths') or {}).get('base') or [] if isinstance(p, dict) and p.get('growth') is not None]
     cf['business'] = stage('business', lambda: business.summary(fb.get('business_map'), base[:5]))
     cf['segment_view'] = stage('segment_view', lambda: segment_view(fb, an, card, qa, fc, val, cf['business'], inputs))
+    cf['management'] = fb.get('management')           # how management is paid (proxy statement), evidence for the analyst
     json.dumps(cf, allow_nan=False, default=str)
     cf['casefile_sha256'] = F.digest(json.loads(json.dumps({k: v for k, v in cf.items() if k != 'casefile_sha256'}, default=str)))
     return cf

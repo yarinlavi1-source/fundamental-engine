@@ -148,12 +148,13 @@ ANNUAL_FORMS = ('10-K', '20-F', '40-F')
 def filing_documents(submissions, cik):
     """Latest annual report and latest quarterly report with inline XBRL, from an SEC submissions payload:
     [{'file','url','accession','form','filed','report_date'}]. The annual report carries the segment note, the business
-    description and the risk factors; the quarterly report the latest cover share count."""
+    description and the risk factors; the quarterly report the latest cover share count; the proxy statement (DEF 14A) how
+    management is paid (pay-versus-performance table, inline XBRL since 2022)."""
     r = (submissions.get('filings') or {}).get('recent') or {}
     rows = list(zip(r.get('form', []), r.get('accessionNumber', []), r.get('primaryDocument', []), r.get('filingDate', []),
                     r.get('reportDate', []), r.get('isInlineXBRL', [0] * len(r.get('form', [])))))
     out = []
-    for kind, forms in (('annual_report', ANNUAL_FORMS), ('latest_quarterly', ('10-Q',))):
+    for kind, forms in (('annual_report', ANNUAL_FORMS), ('latest_quarterly', ('10-Q',)), ('proxy', ('DEF 14A',))):
         hit = next((x for x in rows if x[0] in forms and x[5]), None)
         if hit:
             form, accn, doc, filed, rep, _ = hit
