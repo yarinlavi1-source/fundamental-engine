@@ -12,6 +12,10 @@
 - The revenue-scale base rate bounds the first forecast year when the current year comes from a year-to-date surge
   (`growth_start_capped`); before, NVIDIA's +96% year to date started the next year at +73% while the warning claimed a 15%
   cap. Consensus, company guidance or an analyst override with evidence still replaces it.
+- An analyst growth path is charged its own capital: raw `growth` overrides now recompute growth/maintenance capex with the
+  engine's capital per unit of new revenue (`growth_capex_recomputed`) unless capex paths are overridden too, and the recorded
+  reinvestment assumption shows the executed path. Before, the capex of the discarded engine path was kept (NVIDIA: a change
+  to that discarded path moved the value by about $20 a share).
 
 ## 0.11.1 — verified review-fix cycle (20.10.2026)
 

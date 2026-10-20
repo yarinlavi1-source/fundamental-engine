@@ -1198,3 +1198,31 @@ class GrowthStartCapTests(unittest.TestCase):
         fc = forecast.build(fb, an, card, qa, {'overrides': [{'path': 'growth_anchor', 'scenario': 'base', 'value': .6,
                                                              'reason': 'company guidance for next year (test)', 'evidence_ids': ['syn:fs']}]})
         self.assertAlmostEqual(scen(fc['spec'], 'base')['growth'][0], .6)
+
+
+class GrowthOverrideReinvestmentTests(unittest.TestCase):
+    """Regression from the NVIDIA 2026-10-20 run: a raw growth override kept the growth capex of the discarded engine path."""
+
+    def test_growth_override_is_charged_its_own_capital(self):
+        fb, an, card, qa = ytd_surge()
+        n = len(scen(forecast.build(fb, an, card, qa)['spec'], 'base')['growth'])
+        def capex(path):
+            fc = forecast.build(fb, an, card, qa, {'overrides': [{'path': 'growth', 'scenario': 'base', 'value': [path] * n,
+                                                                 'reason': 'test path', 'evidence_ids': ['syn:fs']}]})
+            sc = scen(fc['spec'], 'base')
+            return sc['growth_capex_pct'], fc
+        fast, fc = capex(.30)
+        slow, _ = capex(.02)
+        self.assertGreater(sum(fast[1:]), sum(slow[1:]) * 2)          # more growth, more capital
+        self.assertIn('growth_capex_recomputed', {w['code'] for w in fc['warnings']})
+        reinv = next(a for a in fc['assumptions'] if a['id'] == 'reinvestment')
+        self.assertEqual([round(x, 6) for x in fast], [round(x, 6) for x in reinv['values']['base']['growth_capex_pct']])
+
+    def test_explicit_capex_override_is_respected(self):
+        fb, an, card, qa = ytd_surge()
+        sc0 = scen(forecast.build(fb, an, card, qa)['spec'], 'base')
+        n, m = len(sc0['growth']), len(sc0['growth_capex_pct'])
+        fc = forecast.build(fb, an, card, qa, {'overrides': [
+            {'path': 'growth', 'scenario': 'base', 'value': [.3] * n, 'reason': 'test path', 'evidence_ids': ['syn:fs']},
+            {'path': 'growth_capex_pct', 'scenario': 'base', 'value': [.01] * m, 'reason': 'test capex', 'evidence_ids': ['syn:fs']}]})
+        self.assertEqual(scen(fc['spec'], 'base')['growth_capex_pct'], [.01] * m)

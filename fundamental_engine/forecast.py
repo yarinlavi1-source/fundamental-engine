@@ -1898,6 +1898,19 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
                                                             - (sc['amortization'][-1] + sc['fixed_cash_costs'][-1]) / last_rev)
             applied.append({'id': o['id'], 'path': o['path'], 'scenario': s, 'original': orig, 'value': o['value'],
                             'reason': o['reason'], 'evidence_ids': o['evidence_ids']})
+    # growth costs capital: an analyst growth path is charged the engine's own capital per unit of new revenue, unless the
+    # analyst also set the capex paths (NVIDIA 2026-10-20: the override replaced growth but kept the reinvestment of the
+    # original path, so changing the cap on the discarded path moved the value by about $20 a share)
+    for s, keys in locked.items():
+        sc = _scen(spec, s)
+        if 'growth' in keys and not keys & {'growth_capex_pct', 'maintenance_capex_pct'} and sc.get('reinvestment_rule'):
+            sc['growth_capex_pct'], sc['maintenance_capex_pct'] = _capex_for_path(spec, sc, sc['reinvestment_rule'])
+            paths[s]['growth_capex_pct'] = list(sc['growth_capex_pct'])
+            for r in rows:          # the recorded reinvestment assumption must show what the spec executes
+                if r['id'] == 'reinvestment' and isinstance(r['values'].get(s), dict):
+                    r['values'][s]['growth_capex_pct'] = list(sc['growth_capex_pct'])
+            warn('growth_capex_recomputed', f'{s}: growth capex recomputed for the analyst growth path (capital per unit of new revenue '
+                                            'unchanged)', 'low')
     by_id = {}
     for a in applied:
         by_id.setdefault(a['id'], []).append(a)
