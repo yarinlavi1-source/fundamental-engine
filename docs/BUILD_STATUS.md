@@ -1,14 +1,25 @@
 # Current version: 0.11.2 (in progress) — 20.10.2026
 
 Completing the engine end to end: every discovery channel as leads, banks and insurers valued, acquisition-aware growth,
-new economic types, deeper filing extraction (segments, convertibles, maturities, pay), a walk-forward test of the engine
-itself with the edge reliability it implies, and one run from discovery to a proposed book (docs/CHANGELOG.md, 0.11.2).
+new economic types, deeper filing extraction (segments, convertibles, maturities, pay), foreign issuers in their own
+currency, cyclical secular growers, the analyst sheet (the owner's six questions per company), wider discovery coverage,
+a walk-forward test of the engine itself with the edge reliability it implies, and one run from discovery to a proposed
+book (docs/CHANGELOG.md, 0.11.2).
 
-Verification actually performed on 20.10.2026: `python -m unittest discover -s tests -q`: 1,070 tests, OK, 6 skipped;
-`scripts/run_all.py --skip-collect` ran discovery, research, calibration and the run on the saved 2,470-company universe;
-the 491-company sweep and 19 financials ran through the pipeline; the walk-forward test (4,910 company-years) ran on the
-engine of commit 08c2263. These are software and process checks; the investment evidence is the walk-forward result
-(docs/BACKTEST_ENGINE_2026-10-20.md: no demonstrated edge) and the forward ledger from here on.
+Verification actually performed on 20.10.2026 (this container):
+- `python -m unittest discover -s tests -q`: 1,099 tests, OK, 6 skipped.
+- `scripts/run_all.py --skip-collect --sweep` with the read-only portfolio files: discovery, the 491-company sweep,
+  calibration, the discovery queue and the holdings, and the run report all completed; 507 casefiles, every one with an
+  analyst sheet, no failed stage. Engine market return 6.9% a year (396 companies, 91% of the sweep's value).
+- Foreign issuers TSMC, Novo Nordisk, ASML, SAP and Trip.com collected and run in their reporting currencies.
+- Walk-forward test (4,910 company-years, 2016-2025) on three engine versions (08c2263, 4237d25, e48a29c): no
+  demonstrated edge in any (docs/BACKTEST_ENGINE_2026-10-20.md); edge reliability 0.47 is applied to every edge.
+- Discovery universe rebuilt after the coverage fix: 2,673 issuers (was 2,470).
+
+These are software and process checks. Investment accuracy is not established by them: the evidence is the walk-forward
+result above and, from here on, the forward ledger. Open items by severity: docs/LIMITATIONS.md (consensus estimates and
+interim data for foreign filers missing, no independent reviewer, local bond yields not yet downloaded because FRED timed
+out, the analyst sheet's qualitative questions need read evidence).
 
 ## Previous: 0.11.1 — 20.10.2026
 
