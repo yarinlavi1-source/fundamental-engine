@@ -267,6 +267,10 @@
   20.10.2026, two were affected (APH, MNST).
 - Debt: LongTermDebtAndCapitalLeaseObligationsCurrent maps to current maturities, and the filer's own total including
   current maturities settles the scope of the long-term tag (Amphenol's $1.6bn current portion had been missed).
+- Missing debt guard: interest expense above 25% of the debt read (and above 0.5% of revenue) raises `debt_incomplete`, a
+  held material issue (decision.MATERIAL_HOLD): no value is shown and the company leaves ranked lists (held issues are now
+  judgement disqualifiers). T-Mobile's long-term debt under issuer tags had produced a false +74% upside. Open from the
+  same screen: noncontrolling interests are not yet deducted (Charter, Tenet) and fertilizer producers type as industrial.
 - Learning loop (`learning.py`, `scripts/learning_report.py`): reads every research round's evidenced inputs and executed
   casefiles and reports where the analyst corrected the engine (lever, scenario, business type, direction, median move),
   the special inputs used, recurring warnings, engine fixes per company researched (from `docs/learning_log.json`) and the

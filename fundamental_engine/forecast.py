@@ -119,6 +119,7 @@ CYCLE_TREND = (-.03, TERMINAL_GROWTH_CAP + .02)   # bounds on the long-run (tren
 CYCLE_CONV = {'bear': 2, 'base': 3, 'bull': 4}     # years for a cyclical to revert from today's level to its cycle path
 CYCLE_FIT_MIN_YEARS = 6   # fewer years than about one full cycle (3-5 years) plus a leg: the fitted slope is one up-leg, not a trend
 DECLINE_FLOOR = -.05      # lowest perpetual growth for a structurally declining business
+DEBT_INCOMPLETE_RATE = .25     # interest / debt above this (no investment-grade or bank rate) means debt lines are missing
 KNOWN_INPUTS = ('overrides', 'reviews', 'risk_free', 'equity_risk_premium', 'horizon_years', 'financing', 'nol', 'cyclical',
                 'operating_funding', 'nonrecurring', 'debt_like_claims')
 # inputs['nonrecurring'] = [{kind, period_end, revenue, operating_income, reason, evidence_ids}]: a one-off inside reported
@@ -2282,6 +2283,16 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
         material.append({'id': 'cyclical_peak_unconfirmed', 'status': 'resolved' if rv_ok('cycle_position') else 'unresolved',
                          'description': 'cyclical industry at a margin peak: structural or cyclical not established by an analyst with evidence',
                          'assumption_ids': ['cycle_position']})
+    # interest expense far above any plausible rate on the debt found: debt lines are missing (T-Mobile 2026-10: long-term
+    # debt under issuer tags, $6.1bn of short-term borrowings read against about $3.5bn of yearly interest, +74% 'upside')
+    ie, d0 = h.get('interest_expense'), open_bal['debt'] or 0.
+    if ie and ie > 0 and (ie / d0 if d0 > 0 else float('inf')) > DEBT_INCOMPLETE_RATE and ie > .005 * h['last_revenue']:
+        warn('debt_incomplete', f"interest expense {ie:,.0f} is {('%.0f%%' % (100 * ie / d0)) if d0 > 0 else 'charged with no debt found'}"
+                                f"{' of the debt found ' + format(d0, ',.0f') if d0 > 0 else ''}: debt lines are probably missing "
+                                "(issuer tags, leases or financing obligations); supply the debt (capital structure or debt_like_claims)", 'high')
+        material.append({'id': 'debt_incomplete', 'status': 'resolved' if rv_ok('open_balance') else 'unresolved',
+                         'description': 'interest expense implies debt far above the debt read from the filings',
+                         'assumption_ids': ['open_balance']})
     if route.get('cycle_override'):
         material.append({'id': 'cycle_treatment_override', 'status': 'resolved' if rv_ok('cycle_position') else 'unresolved',
                          'description': f"analyst treated a cycle the model card read from the history as {route['cycle_override']}",

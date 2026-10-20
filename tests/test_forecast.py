@@ -1481,3 +1481,15 @@ class ResearchRoundOneInputsTests(unittest.TestCase):
         x, st, _ = forecast._bisect(f, -.3, .5, 120.)
         self.assertEqual(st, 'solved')
         self.assertAlmostEqual(x, .2, places=3)
+
+
+class IncompleteDebtTests(unittest.TestCase):
+    def test_interest_far_above_the_debt_found_is_a_material_issue(self):
+        # T-Mobile 2026-10: long-term debt under issuer tags, only short-term borrowings read (SYNTHETIC numbers)
+        fb, an, card, qa = industrial()
+        qa['resolved']['debt']['value'] = 5e6                     # interest 4m a year on 5m of debt: 80%
+        fc = forecast.build(fb, an, card, qa)
+        self.assertIn('debt_incomplete', [w['code'] for w in fc['warnings']])
+        self.assertIn('debt_incomplete', [m['id'] for m in fc['spec']['underwriting']['material_issues']])
+        fb, an, card, qa = industrial()                            # 4% on 100m: no flag
+        self.assertNotIn('debt_incomplete', [w['code'] for w in forecast.build(fb, an, card, qa)['warnings']])

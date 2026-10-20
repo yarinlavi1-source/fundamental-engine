@@ -211,8 +211,10 @@ MATERIAL_HE = {'possible_lender': 'מאזן של גוף מלווה (פיקדונ
                'convertibles_unapplied': 'אג"ח להמרה שהדילול שלהן עוד לא נכלל בשווי',
                'opening_dates_differ': 'נתוני המניות והמאזן הם מתאריכים שונים ועוד לא גושרו',
                'data_blocked': 'נתונים קריטיים חסרים או סותרים',
-               'assumed_financing': 'התוכנית נשענת על מימון חיצוני מונח שעוד לא נבדק'}
-MATERIAL_HOLD = {'possible_lender', 'leverage_at_cap'}
+               'assumed_financing': 'התוכנית נשענת על מימון חיצוני מונח שעוד לא נבדק',
+               'debt_incomplete': 'הוצאות הריבית גבוהות בהרבה ממה שהחוב שנקרא מהדוחות מסביר: חלק מהחוב כנראה חסר',
+               'cycle_treatment_override': 'האנליסט קבע שהשינוי מבני למרות מחזור שנראה בהיסטוריה; נדרש אישור בודק'}
+MATERIAL_HOLD = {'possible_lender', 'leverage_at_cap', 'debt_incomplete'}     # debt missing: the per-share number is not a value
 FUNDING_SCENARIOS = ('bear', 'base')               # the plan the verdict rests on (base IRR, bear margin of safety)
 # risk register pricing_status (when risk.py supplies one): the decision keeps the more conservative of the register's
 # claim and its own check (in the bear path, or a quantified material adjustment); synonyms map to one vocabulary
@@ -2269,6 +2271,9 @@ def _judgement(g, A, er, view, pricing, rk):
     if g['impaired'] and not any('impair' in str(d['what']).lower() for d in dq):
         dq.append({'kind': 'unacceptable_risk', 'what': 'equity impaired: base value today at or below zero'})
     dq += [{'kind': 'reliability', 'what': x} for x in g['data_blocked'] + g['valuation_unverified'] + g['valuation_failed']]
+    # a 'hold' material issue (missing debt, a lender valued as an operating company): the number is not a value, so the
+    # company leaves ranked lists until it is resolved
+    dq += [{'kind': 'reliability', 'what': m.get('description') or m.get('id')} for m in g.get('material_issues') or [] if m.get('hold')]
     dq += [{'kind': 'thesis_basis', 'what': x, 'resolves_by': 'evidence for the open business questions (a research task, not a '
             'negative judgement)'} for x in g['understanding'] + g['evidence_gaps']]
     fac = {'for': [], 'neutral': [], 'against': [], 'unknown': []}

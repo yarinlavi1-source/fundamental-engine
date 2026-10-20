@@ -121,6 +121,45 @@
      "fix": "tag mapped; the filer's total including current maturities settles the scope of the long-term debt tag"
     }
    ]
+  },
+  {
+   "round": "upside_screen_2026-10-20",
+   "date": "2026-10-20",
+   "companies": [
+    "CHTR",
+    "CF",
+    "THC",
+    "TMUS",
+    "PYPL",
+    "FISV",
+    "ZTS"
+   ],
+   "fixes": [
+    {
+     "ticker": "TMUS",
+     "kind": "engine_bug",
+     "finding": "long-term debt under issuer tags not read: net debt $3bn instead of about $80bn, a false +74% upside",
+     "fix": "interest expense above 25% of the debt found is a held material issue (debt_incomplete): no value shown, excluded from ranked lists until the debt is supplied"
+    },
+    {
+     "ticker": "PYPL",
+     "kind": "data_gap",
+     "finding": "SEC companyfacts did not yet carry the 10-Q filed 28.7.2026: balance sheet and TTM 7 months old",
+     "fix": "H1 statements loaded from the 8-K exhibit through the evidence bundle"
+    },
+    {
+     "ticker": "CHTR",
+     "kind": "open",
+     "finding": "minority interests (CHTR $6.9bn incl. redeemable, THC $4.0bn and $423m a year of income) are not deducted from equity value; with Charter's equity at 12% of EV and 3% perpetual growth on shrinking revenue the screen showed +396%",
+     "fix": "open: add noncontrolling interests to the bridge"
+    },
+    {
+     "ticker": "CF",
+     "kind": "open",
+     "finding": "nitrogen fertilizer typed industrial (not commodity) at a cyclical peak: +171%",
+     "fix": "open: classification of fertilizer producers"
+    }
+   ]
   }
  ]
 }
