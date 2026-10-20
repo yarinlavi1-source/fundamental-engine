@@ -925,6 +925,9 @@ def markdown(casefile):
     dc = cf.get('dc') or {}
     out = _header(cf, dc)
     out += ['## In one paragraph', '', hebrew_paragraph(cf), '']
+    if cf.get('analyst_sheet'):
+        from .analyst_sheet import render_he
+        out += render_he(cf['analyst_sheet']).split('\n') + ['']
     out += _verdict_box(dc) + _assessments(dc) + _expected(dc) + _judgement(dc) + _business(cf) + _card(cf) + _financials(cf) + _dataqa(cf)
     out += _forecast(cf) + _valuation(cf, dc) + _risks(cf, dc) + _review(cf) + _limitations(cf, dc)
     out += ['## Provenance legend', ''] + _table(['class', 'meaning'], PROVENANCE) + ['']

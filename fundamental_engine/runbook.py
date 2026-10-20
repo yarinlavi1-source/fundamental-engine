@@ -128,6 +128,10 @@ def report_he(res):
     for r in res['research']:
         out.append(f"| {r['symbol']} | {', '.join(r.get('origin') or [])} | {p(r['edge_vs_market'])} | {p(r.get('loss_to_bear'), 0)} | "
                    f"{r.get('confidence')} | {'טיוטה' if r.get('price_claim_withheld', True) else 'נבדק'} |")
+    theses = [r for r in res['research'] if r.get('thesis_he')]
+    if theses:
+        out += ['', '### דף אנליסט בקצרה (טיוטות: שאלות פתוחות הן סדר העבודה)', '']
+        out += [f"- **{r['symbol']}**: {r['thesis_he']}" for r in theses]
     out += ['', '## התיק המוצע מול התיק הנוכחי והמדד', '', allocation.render_he(plan), '']
     if res['book']['total']:
         out.append(f"- שווי התיק הנוכחי (מניות): {res['book']['total']:,.0f} {res['book']['currency'] or ''}; קריאה בלבד.")

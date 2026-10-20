@@ -358,7 +358,8 @@ def valuate(fb, qa, fc, inputs=None):
 
 
 def run(fb, inputs=None):
-    """Run every stage on one FactBook. inputs: {'card': ..., 'forecast': ..., 'reviewer': ..., 'decision': ..., 'analyst': name(s)?}.
+    """Run every stage on one FactBook. inputs: {'card': ..., 'forecast': ..., 'reviewer': ..., 'decision': ..., 'analyst': name(s)?,
+    'analyst_sheet': the analyst's evidenced readings of the six questions (analyst_sheet.py)}.
 
     The reviewer signs valuation_sha256 (the executed valuation) and inputs_sha256 = review.inputs_digest(val, inputs), which
     also covers inputs.decision/card/forecast as supplied (rv['binding'] shows the value to sign): an analyst override added
@@ -399,6 +400,9 @@ def run(fb, inputs=None):
     cf['business'] = stage('business', lambda: business.summary(fb.get('business_map'), base[:5]))
     cf['segment_view'] = stage('segment_view', lambda: segment_view(fb, an, card, qa, fc, val, cf['business'], inputs))
     cf['management'] = fb.get('management')           # how management is paid (proxy statement), evidence for the analyst
+    from . import analyst_sheet
+    cond = stage('conditional_values', lambda: analyst_sheet.conditional_values(fb, an, card, qa, inputs.get('forecast'))) if fc else None
+    cf['analyst_sheet'] = stage('analyst_sheet', lambda: analyst_sheet.build(fb, cf, inputs, cond))
     json.dumps(cf, allow_nan=False, default=str)
     cf['casefile_sha256'] = F.digest(json.loads(json.dumps({k: v for k, v in cf.items() if k != 'casefile_sha256'}, default=str)))
     return cf

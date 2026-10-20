@@ -152,6 +152,21 @@
   engine's capital per unit of new revenue (`growth_capex_recomputed`) unless capex paths are overridden too, and the recorded
   reinvestment assumption shows the executed path. Before, the capex of the discarded engine path was kept (NVIDIA: a change
   to that discarded path moved the value by about $20 a share).
+- Analyst sheet (`analyst_sheet.py`, a pipeline stage, first in report.md, one line per company in the run report): the
+  owner's six questions answered the way an analyst reads a casefile, not as gates. (1) Is it a good business: the graded
+  quality, growth, strength and capital allocation, red flags, and that a strong grade without an evidenced advantage is a
+  result, not an explanation. (2) Is it mispriced: base value against the price and the growth the price needs
+  (what_must_be_true); a strong business far above the model is read as a question about how long its advantage lasts, a
+  cheap one as an opportunity or a trap until the market's fear is checked. (3) Geopolitics: revenue and long-lived assets
+  in sensitive regions from the annual report (customers and production are different exposures; TSMC: 80% of assets at
+  home, ASML: 29% of revenue from China), with the analyst's explicit scenario priced as a share of value. (4) Asymmetry:
+  gain to the bull case against loss to the bear and permanent-loss cases. (5) Bottleneck: the moat evidence in numbers and
+  what confirming it is worth in the model (`conditional_values`: the forecast rebuilt with an analyst's strong moat;
+  Visa +38%, TSMC +21%). (6) Future relevance: which business lines grow fastest, contracted revenue, and what evidence of
+  structural demand is still needed. Each question is evidenced, numbers only or open, with what would close it; analyst
+  readings come in through inputs['analyst_sheet'] and close a question only with evidence ids.
+- Business map: IFRS revenue axes (products, geography, segments) and long-lived assets by region (`assets_by_geography`,
+  including company extensions for plant and equipment).
 - Foreign issuers are valued in their own currency instead of being blocked (`fx.py`, facts, pipeline, handoff):
   - the latest annual report's monetary facts decide the reporting currency (USD convenience translations beside it are
     ignored); IFRS filers are read from the ifrs-full taxonomy with their own tag map (revenue, operating profit, cash flows,

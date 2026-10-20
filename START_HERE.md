@@ -18,8 +18,12 @@ python -m fundamental_engine run runs/universe_<date> --as-of <date> --calibrati
     --positions ... --backtest ...          # the last step alone, on data already collected
 ```
 
-Output: `run_<date>/report_he.md` (what was searched, what the history of the engine says, the research list, the
-proposed book against the holdings and the index, what is missing) and `plan.json` with every number. Read
+Output: `run_<date>/report_he.md` (what was searched, what the history of the engine says, the research list with each
+company's analyst-sheet thesis, the proposed book against the holdings and the index, what is missing) and `plan.json`
+with every number. Each company's report.md opens with its analyst sheet (`analyst_sheet.py`): quality, mispricing,
+geopolitics, asymmetry, bottleneck, future relevance, each evidenced, numbers only or open. The open questions are the
+research agenda: read the sources, then pass evidenced readings in `inputs.json` under `analyst_sheet` (and a moat
+rating under `card` when a bottleneck is proven) and rerun. Read
 docs/BACKTEST_ENGINE_2026-10-20.md first: the engine's ranking has no demonstrated edge on its own, the index is the
 default, edges are shrunk by their measured reliability and nothing is an order.
 

@@ -19,11 +19,15 @@ from html import unescape
 import re
 
 REVENUE = ('us-gaap:Revenues', 'us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax',
-           'us-gaap:RevenueFromContractWithCustomerIncludingAssessedTax', 'us-gaap:SalesRevenueNet')
-OPERATING = ('us-gaap:OperatingIncomeLoss',)
-GROSS = ('us-gaap:GrossProfit',)
+           'us-gaap:RevenueFromContractWithCustomerIncludingAssessedTax', 'us-gaap:SalesRevenueNet',
+           'ifrs-full:Revenue', 'ifrs-full:RevenueFromContractsWithCustomers')
+OPERATING = ('us-gaap:OperatingIncomeLoss', 'ifrs-full:ProfitLossFromOperatingActivities')
+GROSS = ('us-gaap:GrossProfit', 'ifrs-full:GrossProfit')
 AXES = {'segment': 'us-gaap:StatementBusinessSegmentsAxis', 'product': 'srt:ProductOrServiceAxis',
         'geography': 'srt:StatementGeographicalAxis'}
+# IFRS filers (TSMC, Novo Nordisk) tag the same splits on the ifrs-full axes; used when the US axis has no revenue
+IFRS_AXES = {'segment': ('ifrs-full:SegmentsAxis',), 'product': ('ifrs-full:ProductsAndServicesAxis',),
+             'geography': ('ifrs-full:GeographicalAreasAxis', 'ifrs-full:MarketsOfCustomersAxis')}
 TRANSPARENT = {('us-gaap:ConsolidationItemsAxis', 'us-gaap:OperatingSegmentsMember')}
 ELIMINATION = {'us-gaap:IntersegmentEliminationMember', 'us-gaap:CorporateNonSegmentMember', 'us-gaap:MaterialReconcilingItemsMember',
                'srt:ConsolidationEliminationsMember'}
@@ -125,6 +129,37 @@ def _table(ix, concepts, axis):
             out.setdefault(m, {}).setdefault(c['end'], {})[f['concept']] = f['value']
     pick = lambda d: {e: next(v[k] for k in concepts if k in v) for e, v in d.items()}
     return {m: pick(v) for m, v in out.items()}, pick(total)
+
+
+NONCURRENT = ('us-gaap:NoncurrentAssets', 'us-gaap:LongLivedAssets', 'us-gaap:PropertyPlantAndEquipmentNet',
+              'ifrs-full:NoncurrentAssetsOtherThanFinancialInstrumentsDeferredTaxAssetsPostemploymentBenefitAssetsAndRightsArisingUnderInsuranceContracts',
+              'ifrs-full:NoncurrentAssets', 'ifrs-full:PropertyPlantAndEquipment')
+GEO_AXES = (AXES['geography'],) + IFRS_AXES['geography']
+
+
+def assets_by_geography(ix):
+    """Long-lived (non-current) assets by country or region at the latest balance-sheet date: where the plants, fabs and
+    offices are (geopolitical exposure of production, not of customers). {'as_of', 'concept', 'assets': {region: value},
+    'total', 'shares'} or None when not tagged."""
+    rows = {}
+    for f in ix['facts']:
+        # the standard lines, or a company extension for plant and equipment (ASML: asml:PropertyPlantAndEquipmentAnd...)
+        if f['concept'] not in NONCURRENT and not re.search(r':PropertyPlantAndEquipment\w*$', f['concept']):
+            continue
+        c = ix['contexts'].get(f['context']) or {}
+        if not c.get('instant'):
+            continue
+        dims = _clean_dims(c['dims'])
+        if len(dims) == 1 and next(iter(dims)) in GEO_AXES:
+            rows.setdefault((f['concept'], c['instant']), {})[_human(next(iter(dims.values())))] = f['value']
+    if not rows:
+        return None
+    rank = lambda c: NONCURRENT.index(c) if c in NONCURRENT else len(NONCURRENT)
+    concept, when = min(rows, key=lambda k: (rank(k[0]), -int(k[1].replace('-', ''))))
+    assets = rows[(concept, when)]
+    tot = sum(v for v in assets.values() if v > 0)
+    return {'as_of': when, 'concept': concept, 'assets': assets, 'total': tot,
+            'shares': {k: v / tot for k, v in assets.items()} if tot else {}}
 
 
 def _cross(ix, concepts):
@@ -343,10 +378,15 @@ def business_map(html, source=None, consolidated_revenue=None):
     groups = []
     for name, axis in AXES.items():
         rev, tot = _table(ix, REVENUE, axis)
+        for alt in IFRS_AXES[name] if not rev else ():
+            rev, tot = _table(ix, REVENUE, alt)
+            if rev:
+                axis = alt
+                break
         if name == 'product':
             # standard members (us-gaap:ProductMember, ServiceOtherMember, LicenseMember...) are a revenue-TYPE split that
             # overlaps the company's own product lines: two tables, each reconciled on its own
-            std = {m: v for m, v in rev.items() if m.split(':')[0] in ('us-gaap', 'srt')}
+            std = {m: v for m, v in rev.items() if m.split(':')[0] in ('us-gaap', 'srt', 'ifrs-full')}
             groups += [('revenue_type', axis, std, tot), ('product', axis, {m: v for m, v in rev.items() if m not in std}, tot)]
         else:
             groups.append((name, axis, rev, tot))
@@ -436,6 +476,7 @@ def business_map(html, source=None, consolidated_revenue=None):
     return {'business_map_version': 1, 'source': source, 'tables': tables, 'customer_concentration': conc, 'rpo': rpo,
             'cover_shares': shares, 'disclosed': disclosed, 'not_disclosed': not_disclosed, 'notes': notes,
             'industry_terms': industry_terms(text=text), 'business_terms': business_terms(text),
+            'assets_by_geography': assets_by_geography(ix),
             'fact_count': len(ix['facts']),
             'meaning': 'facts as tagged in the annual report; member names humanized from XBRL; not adjusted, not forecast'}
 

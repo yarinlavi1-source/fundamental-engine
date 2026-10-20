@@ -280,8 +280,10 @@ def row(cf, card=None):
     evidenced = [r for r in reg if r.get('pricing_status') != 'open_question' and not str(r.get('id', '')).startswith('data.')]
     open_q = [r for r in reg if r.get('pricing_status') == 'open_question' and r.get('severity') == 'high']
     comp = ((cf.get('fc') or {}).get('cost_of_equity') or {}).get('components') or {}
+    sheet = cf.get('analyst_sheet') or {}
     return {'symbol': cf['company']['ticker'], 'name': cf['company'].get('name'),
             'currency': cf['company'].get('currency'), 'risk_free': comp.get('risk_free'),
+            'thesis_he': sheet.get('thesis_he'), 'open_questions': sheet.get('open'),
             'lanes': lanes, 'group': GROUPS.get(lanes[0]) if lanes else None,
             'why_found': (card or {}).get('why_found'),
             'stages_failed': [k for k, s in (cf.get('stages') or {}).items() if s != 'ok'],
