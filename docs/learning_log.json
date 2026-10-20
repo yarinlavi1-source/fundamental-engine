@@ -272,6 +272,39 @@
      "fix": "consensus saved to raw/web__consensus-estimates__annual.json; the base case now needs growth only 8% of giant companies reached (outside view flags it)"
     }
    ]
+  },
+  {
+   "round": "SKHY_2026-10-20",
+   "date": "2026-10-20",
+   "companies": [
+    "SKHY"
+   ],
+   "fixes": [
+    {
+     "ticker": "SKHY",
+     "kind": "engine_bug",
+     "finding": "reporting_currency defaulted to 'USD' when companyfacts had no annual monetary facts (foreign private issuer, only the F-1 fee exhibit), overriding the declared won and mislabelling every figure",
+     "fix": "reporting_currency returns None when no annual monetary facts; the caller keeps the declared currency"
+    },
+    {
+     "ticker": "SKHY",
+     "kind": "engine_bug",
+     "finding": "the listing market-cap share cross-check read an ADS market cap as a 10x split of the ordinary count (ADS = 1/10 share)",
+     "fix": "multiply the implied count by shares-per-ADS before the split test (dataqa)"
+    },
+    {
+     "ticker": "SKHY",
+     "kind": "missing_input",
+     "finding": "the US ADR listing issued 17.79m new shares two weeks after the last balance sheet; opening cash and shares did not reflect it",
+     "fix": "inputs.forecast.capital_events for post-statement issues/buybacks, as bridge events"
+    },
+    {
+     "ticker": "SKHY",
+     "kind": "judgement",
+     "finding": "memory is deeply cyclical and Q2 2026 is a peak (76% operating margin); net income is inflated by one-off Kioxia fair-value gains",
+     "fix": "cyclical treatment (mid-cycle normalization); the Kioxia gains sit below the operating line the forecast uses"
+    }
+   ]
   }
  ]
 }

@@ -324,6 +324,17 @@
   the reviewer (`investment_adjustments` in review's opening check). Microsoft: about 25% of OpenAI at its $852bn March 2026
   round, 25% haircut, less $24.6bn of non-marketable investments = $135bn added; plus its $66.6bn of finance leases as a
   debt-like claim and FY2027-28 consensus.
+- Just-listed foreign ADRs (SK hynix / SKHY, full research): three fixes so a company whose only SEC structured data is the
+  filing-fee exhibit and whose financials are a researched K-IFRS evidence bundle can be valued:
+  - `facts.reporting_currency` returns None (not 'USD') when companyfacts hold no annual monetary facts, so the declared
+    reporting currency (won) is kept instead of relabelling every figure USD (`pipeline.factbook_from_run_dir`);
+  - the share-count listing cross-check multiplies the implied count by the ordinary-shares-per-depositary-share ratio before
+    testing for a split: an ADS market cap no longer looks like a 10x split of the ordinary count (`dataqa`);
+  - `inputs.forecast.capital_events` [{kind share_issue | share_buyback, date, cash, shares, reason, evidence_ids}] adds a
+    share issue or buyback completed after the balance-sheet date and by as_of to opening cash (and shares when the
+    point-in-time count predates it), listed as a bridge event for the reviewer (SK hynix's 14 July 2026 ADR listing:
+    17.79m new shares for W39.9tn). SK hynix values as cyclical at a cycle peak (quality_but_expensive): mid-cycle fair
+    value well below the price, the per-year bad/likely/good table showing mean reversion.
 
 ## 0.11.1 — verified review-fix cycle (20.10.2026)
 

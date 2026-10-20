@@ -177,11 +177,14 @@ MONETARY = re.compile(r'^[A-Z]{3}$')
 
 def reporting_currency(payload):
     """Currency of the latest annual report's monetary facts (USD figures beside another currency are convenience
-    translations): the most frequent 3-letter unit among the facts of the latest 10-K/20-F/40-F accession; 'USD' when unknown."""
+    translations): the most frequent 3-letter unit among the facts of the latest 10-K/20-F/40-F accession. None when the
+    companyfacts hold no annual monetary facts (a foreign private issuer whose only structured data is the filing-fee
+    exhibit, e.g. a just-listed ADR): the caller keeps the declared currency instead of defaulting the reporting currency
+    to USD and mislabelling won or euro figures."""
     rows = [(r.get('accn'), r.get('filed') or '', u) for tax in (payload.get('facts') or {}).values() for v in tax.values()
             for u, rs in (v.get('units') or {}).items() if MONETARY.match(u) for r in rs if r.get('form') in ('10-K', '20-F', '40-F')]
     if not rows:
-        return 'USD'
+        return None
     latest = max(rows, key=lambda x: x[1])[0]
     count = {}
     for a, _, u in rows:

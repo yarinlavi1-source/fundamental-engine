@@ -798,6 +798,19 @@ class TaggedSplits(unittest.TestCase):
         fb['market']['listing_market_cap']['value'] = 104e6 * 40.          # buybacks/issuance since the count: no flag
         self.assertNotEqual(dataqa.validate(fb)['fields']['shares_outstanding']['status'], 'conflict')
 
+    def test_depositary_listing_market_cap_is_not_read_as_a_split(self):
+        # a depositary issuer (SK hynix ADR): the listing's market cap and price are in ADS; 711m ordinary x 10 ADS matches
+        # the ~7.1bn ADS the listing implies, so it is not a 10x split. The conversion ratio is read like pipeline sets it.
+        fb = _count_book(dict(zip(self.ENDS, (711e6, 711e6, 711e6, 711e6))))
+        fb['company']['depositary_shares'] = True
+        fb['market']['price'] = dict(fb['market'].get('price') or {}, conversion={'shares_per_depositary_share': 0.1})
+        fb['market']['listing_market_cap'] = {'value': 711e6 / 0.1 * 136.49, 'price': 136.49, 'date': '2026-10-19', 'provider': 'nasdaq'}
+        qa = dataqa.validate(fb)
+        self.assertNotEqual(qa['fields']['shares_outstanding']['status'], 'conflict')
+        self.assertFalse(checks(qa, 'implied_shares_split_factor'))
+        del fb['market']['price']['conversion']                            # without the ratio the ADS cap still looks like a 10x split
+        self.assertEqual(dataqa.validate(fb)['fields']['shares_outstanding']['status'], 'conflict')
+
     def test_a_ratio_tagged_over_a_whole_year_is_not_placed_at_year_end(self):
         fb = _count_book(dict(zip(self.ENDS, (100e6, 101e6, 102e6, 103e6))))
         F.from_sec_companyfacts(fb, self.payload(2, start='2025-01-01', end='2025-12-31'), '2026-10-19')
@@ -1120,3 +1133,4 @@ class DepreciationTagTests(unittest.TestCase):
         fb = F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-10-20')
         F.from_sec_companyfacts(fb, payload, '2026-10-20')
         self.assertEqual([f['value'] for f in fb['facts'] if f['metric'] == 'd_and_a'], [23.0])
+

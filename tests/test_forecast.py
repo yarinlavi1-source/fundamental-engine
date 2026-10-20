@@ -1607,3 +1607,37 @@ class NonOperatingAssetTests(unittest.TestCase):
         chk = review._opening_check(self.qa, fc['spec'], {})
         self.assertEqual(chk['status'], 'needs_explanation')
         self.assertIn('non-operating stakes', chk['message'])
+
+
+class CapitalEventTests(unittest.TestCase):
+    """A share issue after the balance sheet (SK hynix's July 2026 US listing, two weeks after its June statement)."""
+
+    def setUp(self):
+        self.fb, self.an, self.card, self.qa = industrial()
+        ResearchRoundOneInputsTests.evid(None, self.fb)
+        self.stmt = self.qa['resolved']['cash']['as_of']
+
+    def ev(self, **kw):
+        when = (date.fromisoformat(self.stmt) + timedelta(days=10)).isoformat()
+        return {'kind': 'share_issue', 'date': when, 'cash': 40e6, 'shares': 2e6, 'reason': 'listing', 'evidence_ids': ['i1'], **kw}
+
+    def test_issue_after_the_statement_adds_cash_and_shares_once(self):
+        base = forecast.build(self.fb, self.an, self.card, self.qa)
+        qa = deepcopy(self.qa)
+        qa['resolved']['shares_outstanding']['as_of'] = self.stmt              # count dated before the event
+        fc = forecast.build(self.fb, self.an, self.card, qa, {'capital_events': [self.ev()]})
+        self.assertAlmostEqual(fc['spec']['opening']['unrestricted_cash'] - base['spec']['opening']['unrestricted_cash'], 40e6)
+        self.assertAlmostEqual(fc['spec']['opening']['shares'] - base['spec']['opening']['shares'], 2e6)
+        self.assertEqual(len(fc['spec']['underwriting']['opening_reconciliation']['bridge_events']), 1)
+        later = deepcopy(self.qa)
+        later['resolved']['shares_outstanding']['as_of'] = self.ev()['date'][:8] + '28'   # a later count already holds the shares
+        fc2 = forecast.build(self.fb, self.an, self.card, later, {'capital_events': [self.ev()]})
+        self.assertAlmostEqual(fc2['spec']['opening']['shares'], base['spec']['opening']['shares'])
+        self.assertFalse(fc2['spec']['underwriting']['opening_reconciliation']['bridge_events'][0]['shares_applied'])
+
+    def test_event_before_the_statement_is_ignored_and_bad_input_refused(self):
+        fc = forecast.build(self.fb, self.an, self.card, self.qa, {'capital_events': [self.ev(date=self.stmt)]})
+        self.assertIn('capital_event_before_statement', [w['code'] for w in fc['warnings']])
+        for bad in (self.ev(kind='split'), self.ev(cash=-1.), self.ev(date='2099-01-01'), self.ev(evidence_ids=[])):
+            with self.assertRaises(ValueError):
+                forecast.build(self.fb, self.an, self.card, self.qa, {'capital_events': [bad]})

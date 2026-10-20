@@ -37,7 +37,7 @@ def write_fx(folder, sid, rows):
 class CurrencyTests(unittest.TestCase):
     def test_latest_annual_report_decides_and_usd_translations_are_ignored(self):
         self.assertEqual(F.reporting_currency(ifrs_payload()), 'EUR')
-        self.assertEqual(F.reporting_currency({'facts': {}}), 'USD')
+        self.assertIsNone(F.reporting_currency({'facts': {}}))   # no annual monetary facts: caller keeps the declared currency
 
     def test_ifrs_facts_are_read_in_the_reporting_currency(self):
         fb = F.new({'ticker': 'SNV', 'currency': 'EUR'}, '2026-10-20')

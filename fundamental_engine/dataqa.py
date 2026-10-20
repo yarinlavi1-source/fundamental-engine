@@ -1041,6 +1041,12 @@ def _shares(q, cs):
     lm = (fb.get('market') or {}).get('listing_market_cap') or {}
     if lm.get('value') and lm.get('price') and value:
         implied = lm['value'] / lm['price']
+        # a depositary issuer's listing market cap and price are in depositary shares, not ordinary shares: the implied count
+        # is a count of depositary shares, so multiply by the ordinary-shares-per-depositary-share ratio before comparing to
+        # the ordinary count (SK hynix: 711m ordinary x 10 ADS = 7.1bn ADS, not a 10x split)
+        ratio = ((fb.get('market') or {}).get('price') or {}).get('conversion', {}).get('shares_per_depositary_share')
+        if ratio:
+            implied *= ratio
         k = _split_factor(implied / value)
         if k and abs(k - 1) > .01:
             msg = (f"listing market cap {_fmt(lm['value'])} at {lm['price']:g} ({lm.get('date')}) implies {_fmt(implied)} shares, "

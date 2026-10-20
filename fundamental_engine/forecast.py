@@ -136,7 +136,7 @@ CYCLE_FIT_MIN_YEARS = 6   # fewer years than about one full cycle (3-5 years) pl
 DECLINE_FLOOR = -.05      # lowest perpetual growth for a structurally declining business
 DEBT_INCOMPLETE_RATE = .25     # interest / debt above this (no investment-grade or bank rate) means debt lines are missing
 KNOWN_INPUTS = ('overrides', 'reviews', 'risk_free', 'equity_risk_premium', 'horizon_years', 'financing', 'nol', 'cyclical',
-                'operating_funding', 'nonrecurring', 'debt_like_claims', 'non_operating_assets')
+                'operating_funding', 'nonrecurring', 'debt_like_claims', 'non_operating_assets', 'capital_events')
 # inputs['nonrecurring'] = [{kind, period_end, revenue, operating_income, reason, evidence_ids}]: a one-off inside reported
 # figures (the effect it had, removed from the history the paths start from: TTM, fiscal years, year to date). Only kinds
 # that do not recur by nature; restructuring, SBC or 'adjusted' costs are not one-offs (never erase recurring costs).
@@ -153,6 +153,11 @@ KNOWN_INPUTS = ('overrides', 'reviews', 'risk_free', 'equity_risk_premium', 'hor
 # understates the addition). The haircut is the analyst's: illiquidity, preference terms, tax on a sale. Investments enter the
 # value at face, so the addition moves the value one for one; the reviewer accepts it like a debt reclassification.
 NON_OPERATING_KINDS = ('private_stake', 'equity_method_stake')
+# inputs['capital_events'] = [{kind, date, cash, shares, reason, evidence_ids}]: a share issue or buyback completed after the
+# balance-sheet date and by as_of (SK hynix's July 2026 US listing: 17.79m new shares for W39.9tn, two weeks after its June
+# balance sheet). The cash moves the opening cash (in for an issue, out for a buyback); the shares move the opening count only
+# when the point-in-time count is dated before the event (a later count already holds them). Listed as bridge events for review.
+CAPITAL_EVENT_KINDS = ('share_issue', 'share_buyback')
 DEBT_LIKE_KINDS = ('royalty_financing', 'litigation', 'pension_deficit', 'deferred_consideration', 'preferred_or_minority',
                    'finance_leases')     # finance-lease payments are not in operating costs (amortisation and interest)
 NONRECURRING_KINDS = ('acquired_iprd', 'impairment', 'gain_or_loss_on_sale', 'litigation_settlement', 'one_time_license_revenue',
@@ -1674,6 +1679,29 @@ def build(fb, an, card, qa, inputs=None):
             ev = it.get('evidence_ids')
             if not isinstance(ev, list) or not ev or any(e not in known for e in ev):
                 raise ValueError(f'non_operating_assets {i}: evidence_ids must be FactBook source or qualitative ids')
+    ce = inputs.get('capital_events')
+    if ce is not None:
+        known = set(fb.get('sources', {})) | {q['id'] for q in fb.get('qualitative', [])}
+        if not isinstance(ce, list):
+            raise ValueError('capital_events: a list of items')
+        for i, it in enumerate(ce):
+            if not isinstance(it, dict) or sorted(set(it) - {'kind', 'date', 'cash', 'shares', 'reason', 'evidence_ids'}):
+                raise ValueError(f'capital_events {i}: kind, date, cash, shares, reason, evidence_ids')
+            if it.get('kind') not in CAPITAL_EVENT_KINDS:
+                raise ValueError(f"capital_events {i}: kind must be one of {', '.join(CAPITAL_EVENT_KINDS)}")
+            try:
+                when = _d(it.get('date'))
+            except (TypeError, ValueError):
+                raise ValueError(f'capital_events {i}: date must be a date') from None
+            if when > _d(fb['as_of']):
+                raise ValueError(f'capital_events {i}: dated after as_of (look-ahead)')
+            if _num(it.get('cash')) is None or it['cash'] <= 0 or _num(it.get('shares')) is None or it['shares'] <= 0:
+                raise ValueError(f'capital_events {i}: cash and shares must be positive numbers (the kind gives the direction)')
+            if not isinstance(it.get('reason'), str) or not it['reason'].strip():
+                raise ValueError(f'capital_events {i}: a written reason is required')
+            ev = it.get('evidence_ids')
+            if not isinstance(ev, list) or not ev or any(e not in known for e in ev):
+                raise ValueError(f'capital_events {i}: evidence_ids must be FactBook source or qualitative ids')
     of = inputs.get('operating_funding')
     if of is not None:
         if not isinstance(of, dict) or sorted(set(of) - {'amount', 'reason', 'evidence_ids'}):
@@ -1770,6 +1798,24 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
         open_bal['debt'] = (open_bal['debt'] or 0.) + claims_added
         warn('debt_like_claims_added', f"{claims_added:,.0f} of debt-like claims added to opening debt: "
              + '; '.join(f"{it['kind']} {float(it['amount']):,.0f} ({it['reason']})" for it in inputs['debt_like_claims']), 'medium')
+    bridge = []
+    stmt_date = min(_d((res.get('cash') or {}).get('as_of') or as_of), _d((res.get('debt') or {}).get('as_of') or as_of))
+    sh_date = (res.get('shares_outstanding') or {}).get('as_of')
+    for it in inputs.get('capital_events') or []:
+        sign = 1. if it['kind'] == 'share_issue' else -1.
+        if _d(it['date']) <= stmt_date:
+            warn('capital_event_before_statement', f"{it['kind']} on {it['date']} is not after the balance sheet ({stmt_date}): "
+                                                   'already in the reported cash; ignored', 'low')
+            continue
+        open_bal['cash'] = (open_bal['cash'] or 0.) + sign * float(it['cash'])
+        count = not sh_date or _d(sh_date) < _d(it['date'])
+        if count:
+            open_bal['shares'] = (open_bal['shares'] or 0.) + sign * float(it['shares'])
+        bridge.append({'kind': it['kind'], 'date': it['date'], 'cash': sign * float(it['cash']), 'shares': sign * float(it['shares']),
+                       'shares_applied': count, 'evidence_ids': it['evidence_ids']})
+        warn('capital_event_applied', f"{it['kind']} on {it['date']}: cash {sign * float(it['cash']):+,.0f}"
+             + (f", shares {sign * float(it['shares']):+,.0f}" if count else ' (shares already in the point-in-time count)')
+             + f" after the {stmt_date} balance sheet ({it['reason']})", 'medium')
     assets_added = 0.
     for it in inputs.get('non_operating_assets') or []:
         add_i = float(it['fair_value']) * (1 - float(it['haircut'])) - float(it['book_value_in_bridge'])
@@ -1918,7 +1964,8 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
         {'cash': open_bal['cash'], 'short_term_investments': open_bal['sti'], 'long_term_investments': open_bal['lti'],
          'equity_securities_fv_included': val('equity_securities_fv') or 0.,
          'debt': open_bal['debt'], 'deferred_revenue': open_bal['deferred_revenue'], 'statement_as_of': stmt,
-         'operating_funding_excluded': op_fund, 'debt_like_claims_added': claims_added, 'non_operating_assets_added': assets_added},
+         'operating_funding_excluded': op_fund, 'debt_like_claims_added': claims_added, 'non_operating_assets_added': assets_added,
+         'capital_events_after_statement': bridge},
         f"dataqa-resolved balance at {stmt}: cash {open_bal['cash']:,.0f}, investments {open_bal['sti'] + open_bal['lti']:,.0f} "
         f"(of which listed equity stakes at fair value {val('equity_securities_fv') or 0.:,.0f}; "
         + (f"plus {assets_added:,.0f} of evidenced private stakes at fair value less haircut and book value) " if assets_added else
@@ -2435,7 +2482,7 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
                 'long_term_investments': open_bal['lti'], 'investment_haircut': 0, 'debt': open_bal['debt'],
                 'common_shares_outstanding': open_bal['shares'], 'incremental_dilutive_shares': 0,
                 'dilution_review': {'assumption_ids': ['dilution']}, 'claims_review': {'assumption_ids': ['claims']},
-                'bridge_events': [], 'bridge_review': {'assumption_ids': ['bridge']},
+                'bridge_events': bridge, 'bridge_review': {'assumption_ids': ['bridge']},
                 # evidenced analyst reclassifications of the validated debt (not events after the statement): review.py
                 # compares the opening with validated debt plus these, and asks the reviewer to accept them
                 'debt_adjustments': [a for a in ({'kind': 'operating_funding_excluded', 'amount': -op_fund},
