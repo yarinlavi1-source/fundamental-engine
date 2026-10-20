@@ -1188,6 +1188,38 @@ class LongWindowSalesToCapitalTests(unittest.TestCase):
         self.assertIn('base 0.86', used['rationale'])         # 5-year ratio (440-200)/(380-100), not the plateau's 0.22
 
 
+
+class MoatProxyFallbackTests(unittest.TestCase):
+    def test_operating_margin_stands_in_when_no_gross_margin_is_reported(self):
+        h = {'gross_margins': [], 'operating_margins': [.56, .57, .58, .58, .58], 'roic_avg': .45, 'roic_series': [1] * 5, 'inc_roic': .40}
+        p = forecast._moat_proxy({'dimensions': {}}, h, {'qualitative': []}, False)
+        self.assertGreater(p['weight'], .9)
+        self.assertIn('no gross margin reported', p['evidence'])
+        h['operating_margins'] = [.40, .30, .22, .25, .21]                     # falling and volatile: no pricing-power evidence
+        self.assertEqual(forecast._moat_proxy({'dimensions': {}}, h, {'qualitative': []}, False)['weight'], 0.)
+
+
+class ThinMarginCapTests(unittest.TestCase):
+    """An established company that never earned the type-typical margin keeps its own best margin (McKesson, Cigna 2026-10)."""
+    def _route(self, stage):
+        return {'stage': stage, 'type': (None, .15, .30, None), 'cycle_path': False, 'method': 'fcff', 'moat': 'unknown',
+                'moat_weights': {'base': 0, 'bear': 0, 'bull': 0}, 'cycle_peak': False}
+
+    def _h(self):
+        ms = [.032, .034, .033, .035, .036, .034, .035, .036, .041, .036]
+        return {'m0': .036, 'm_best3': .041, 'm_all': ms, 'rows': [(str(2016 + i), {'revenue': 100., 'operating_income': m * 100})
+                                                                    for i, m in enumerate(ms)]}
+
+    def test_mature_base_holds_own_best_margin(self):
+        t, why = forecast._margin_targets(self._route('mature'), self._h(), lambda *a: None)
+        self.assertAlmostEqual(t['base'], .041)
+        self.assertIn('capped at its own best margin', why)
+
+    def test_growth_stage_still_converges(self):
+        t, _ = forecast._margin_targets(self._route('growth'), self._h(), lambda *a: None)
+        self.assertGreater(t['base'], .08)
+
+
 if __name__ == '__main__':
     unittest.main()
 

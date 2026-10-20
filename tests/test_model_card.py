@@ -676,6 +676,11 @@ class RepairRegressionTests(unittest.TestCase):
         self.assertIn('override_rejected', c['valuation'])
         self.assertNotIn(c['valuation']['method'], M.OPERATING_METHODS)
         self.assertEqual(M.text_type({'industry': 'Financial - Mortgages'})['type'], 'financials')
+        # the filer's own SEC SIC code outranks the listing label: managed care (6324) filed under 'Medical Specialities'
+        self.assertEqual(M.text_type({'industry': 'Medical Specialities', 'sic': 6324, 'sic_description': 'Hospital & Medical Service Plans'})['type'],
+                         'financials')
+        self.assertEqual(M.text_type({'industry': 'Real Estate Investment Trusts', 'sic': 6798})['type'], 'reit')
+        self.assertNotEqual((M.text_type({'industry': 'Software', 'sic': 7372}) or {}).get('type'), 'financials')
 
     def test_filing_whose_facts_arrive_after_as_of_is_not_evidence(self):
         rev = [1e9, 1.2e9, 1.4e9, 1.6e9]

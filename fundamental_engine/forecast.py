@@ -119,7 +119,9 @@ CYCLE_TREATMENTS = ('structural', 'cyclical')   # inputs['cyclical']['treatment'
 # (15% -> 25%), measurable incremental ROIC (10% -> 20%) and pricing power (analyst strong = 1; computed: gross margin level
 # 45% -> 75% and stability, range 8pp -> 3pp). Blocked by any analyst moat row (even 'unknown'), an analyst 'weak' on
 # competition / substitutes / technology_ai, or unassessed FactBook evidence on moat, substitutes or technology_ai.
-PROXY_RAMPS = {'roic_avg': (.15, .25), 'incremental_roic': (.10, .20), 'gross_margin': (.45, .75), 'gross_margin_range': (.08, .03)}
+PROXY_RAMPS = {'roic_avg': (.15, .25), 'incremental_roic': (.10, .20), 'gross_margin': (.45, .75), 'gross_margin_range': (.08, .03),
+               # fallback when no cost of revenue is reported (networks, many service companies): operating margin level and range
+               'operating_margin': (.20, .35), 'operating_margin_range': (.08, .03)}
 PROXY_BLOCK_DIMS = ('competition', 'substitutes', 'technology_ai')
 PROXY_EVIDENCE_TOPICS = ('moat', 'substitutes', 'technology_ai')
 FINANCING_MODES = ('assumed', 'assumed_debt', 'none')   # 'assumed_debt' kept as the legacy name of the default
@@ -294,6 +296,12 @@ def _moat_proxy(card, h, fb, normalize):
     elif len(gms) >= 3 and gms[-1] - gms[0] > -.05:
         w_pp = min(_ramp(gms[-1], *PROXY_RAMPS['gross_margin']), _ramp(max(gms) - min(gms), *PROXY_RAMPS['gross_margin_range']))
         pp_note = f'gross margin {_pct(gms[-1])}, range {_pct(max(gms) - min(gms))} over {len(gms)} years'
+    elif len(gms) < 3 and len(h.get('operating_margins') or []) >= 3 and h['operating_margins'][-1] - h['operating_margins'][0] > -.05:
+        # no cost of revenue reported (Mastercard, Visa): a high, stable operating margin is the pricing-power evidence instead
+        oms = h['operating_margins']
+        w_pp = min(_ramp(oms[-1], *PROXY_RAMPS['operating_margin']), _ramp(max(oms) - min(oms), *PROXY_RAMPS['operating_margin_range']))
+        pp_note = (f'no gross margin reported; operating margin {_pct(oms[-1])}, range {_pct(max(oms) - min(oms))} over {len(oms)} years '
+                   '(fallback evidence of pricing power)')
     else:
         w_pp, pp_note = 0., 'pricing power not evidenced (fewer than three gross margins, or falling)'
     roic_avg = h.get('roic_avg')
@@ -543,6 +551,9 @@ def _history(fb, an, warn):
         if gp is not None and r.get('revenue'):
             gms.append(gp / r['revenue'])
     h['gross_margins'] = gms
+    ot = facts.annual_table(fb, ['revenue', 'operating_income'])
+    h['operating_margins'] = [ot[e]['operating_income'] / ot[e]['revenue'] for e in sorted(ot)[-5:]
+                              if ot[e].get('revenue') and ot[e].get('operating_income') is not None]
     h['nd_ebitda'] = _metric(an, 'net_debt_to_ebitda')
     h['cycle'] = _cycle_stats(h) if len(rev) >= 3 else None
     dist, fcf = 0., 0.
@@ -821,8 +832,18 @@ def _margin_targets(route, h, warn):
         base = m0 + st['catch_up'] * (typ - m0)
         if best is not None:
             base = max(base, min(best, typ))
-        t = {'base': base, 'bear': base - sp, 'bull': min(ceil, base + .75 * sp)}
         why = f'below type-typical: base closes {st["catch_up"]:.0%} of the gap from {_pct(m0)} to {_pct(typ)} (not below the best of 3 years {_pct(best)})'
+        hist = [m for m in (h.get('m_all') or [])[-10:] if m is not None]
+        if route['stage'] in ('maturing', 'mature', 'decline') and len(hist) >= 5 and base > max(hist + [m0]):
+            # an established company that never earned the type-typical margin in ten years is structurally thin-margin
+            # (distributors, managed care, retailers): converging to the typical margin invented 3-8 points of margin for
+            # McKesson and Cigna (2026-10). The base holds its own best demonstrated margin; evidence of a structural change
+            # (an analyst mature_margin override) lifts it
+            cap = max(hist + [m0])
+            why += (f'; capped at its own best margin of the last {len(hist)} years {_pct(cap)}: an established company that never '
+                    'reached the typical margin is not assumed to (analyst override with evidence lifts it)')
+            base = cap
+        t = {'base': base, 'bear': base - sp, 'bull': min(ceil, base + .75 * sp)}
     if route['cycle_peak'] and cm and not route['cycle_path']:
         # analyst says structural: the bear still tests a return to the cycle's own average margin
         if t['bear'] > cm['mid']:

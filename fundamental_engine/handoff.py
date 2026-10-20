@@ -196,6 +196,11 @@ def run_company(folder, as_of, inputs=None, qualitative=None):
     """FactBook from <folder>/raw + pipeline.run. inputs / evidence_bundle.json in the folder are used when not passed.
     -> (factbook, casefile)."""
     company = _load(os.path.join(folder, 'company.json'))
+    sub = os.path.join(folder, 'raw', 'sec__submissions.json')
+    if os.path.exists(sub) and not company.get('sic'):
+        d = _load(sub)                                    # the filer's own SEC record: SIC code and description
+        if str(d.get('sic') or '').isdigit():
+            company = {**company, 'sic': int(d['sic']), 'sic_description': d.get('sicDescription')}
     fb = pipeline.factbook_from_run_dir(os.path.join(folder, 'raw'), company, as_of)
     q = qualitative if qualitative is not None else (_load(os.path.join(folder, 'evidence_bundle.json'))
                                                     if os.path.exists(os.path.join(folder, 'evidence_bundle.json')) else None)

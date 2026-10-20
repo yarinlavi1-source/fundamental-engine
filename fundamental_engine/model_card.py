@@ -463,8 +463,21 @@ def _hit(kws, low):
     return next((k for k in kws if re.search(r'(?<![a-z])' + re.escape(clean_text(k)), low)), None)
 
 
+# SEC Standard Industrial Classification ranges whose economics live on the balance sheet (same ranges as universe.py):
+# banks, credit companies, broker-dealers and insurance carriers (incl. managed care, SIC 6324) are financials; 6798 REIT.
+# A SIC code from the filer's own SEC record outranks a listing label ('Medical Specialities' for Cigna)
+SIC_TYPES = ((6000, 6199, 'financials'), (6200, 6221, 'financials'), (6300, 6399, 'financials'), (6798, 6798, 'reit'))
+
+
 def _text_matches(company):
     out = []
+    sic = company.get('sic')
+    if isinstance(sic, int):
+        t = next((t for lo, hi, t in SIC_TYPES if lo <= sic <= hi), None)
+        if t:
+            out.append({'field': 'industry', 'text': f"SEC SIC {sic} ({company.get('sic_description') or ''})", 'keyword': f'SIC {sic}',
+                        'type': t})
+            return out
     for field in ('industry', 'sector'):
         raw = company.get(field)
         if not isinstance(raw, str) or not raw.strip():

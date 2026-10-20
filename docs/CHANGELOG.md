@@ -89,6 +89,20 @@
 - Identity check reads the currency of the latest annual report (Nebius: Yandex-era RUB history, USD now); the handoff
   resolves holdings outside the screened universe through the SEC ticker map; holdings runs write their own queue and
   comparison files (`--name holdings`).
+- Biases found on the 491-company large-cap sweep (20.10.2026) and fixed before ranking anything:
+  - moat proxy without a gross margin: networks and service companies that report no cost of revenue (Mastercard, Visa)
+    got no pricing-power evidence and an unassessed-moat haircut; a high, stable operating margin is now the fallback
+    evidence (level 20% -> 35%, range 8pp -> 3pp), labelled as such;
+  - thin-margin established companies converged toward the type-typical margin they had never earned (McKesson, Cigna:
+    3-8 invented points of margin); at the maturing, mature and decline stages the base now holds the company's own best
+    margin of the last ten years, an analyst override with evidence lifts it;
+  - the filer's own SEC SIC code now routes the type before the listing label: managed care filed as 'Medical
+    Specialities' (Cigna, SIC 6324) is an insurer, not an operating company; banks, credit, broker-dealers, insurance
+    carriers and REITs likewise.
+- `scripts/calibrate.py` (engine market return from a sweep: 6.28% over 351 of 491 companies, 81% of their value, against
+  the 8.75% assumption), `scripts/rank_opportunities.py` (edge over that return with bear loss, quality, confidence,
+  stage, disqualifiers and origin side by side; a research priority, not a recommendation) and `scripts/record_theses.py`
+  (freeze casefiles into the forward ledger).
 
 - Investments no longer vanish on a tag change: DebtSecuritiesCurrent/Noncurrent read as short/long-term investments;
   listed equity stakes (EquitySecuritiesFvNi) resolved as `equity_securities_fv` and valued once at fair value in the
