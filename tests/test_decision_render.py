@@ -14,7 +14,7 @@ from pathlib import Path
 from fundamental_engine import facts as F
 from fundamental_engine.decision import decide, price_for_hurdle, ASSESSMENTS, VERDICTS
 from fundamental_engine.drivers import build_case
-from fundamental_engine.render import hebrew_paragraph, markdown
+from fundamental_engine.render import hebrew_paragraph, markdown, CALL_HE
 from fundamental_engine.valuation import value_company
 from fundamental_engine.valuation_tools import discount_rate_band, implied_cost_of_equity
 
@@ -24,7 +24,7 @@ ADBE = json.loads((ROOT / 'tests/fixtures/adbe_factbook_2026-10-19.json').read_t
 CERTAINTY = ('בוודאות', 'ודאי', 'מובטח', 'בטוח', 'חד משמעית', 'ללא סיכון', 'אין סיכון')
 SECTIONS = ('## In one paragraph', '## Verdict', '## The four questions', '## Expected return', '## Business understanding',
             '## Financial analysis', '## Data validation', '## Forecast assumptions', '## Valuation', '## Risks and failure scenarios',
-            '## Independent review', '## Limitations', '## Provenance legend')
+            '## Review: mechanical check and independent reviewer', '## Limitations', '## Provenance legend')
 
 
 def valuation_of(spec, price=None, demo=False):
@@ -46,6 +46,8 @@ def valuation_of(spec, price=None, demo=False):
 def fb_saas(price):
     fb = F.new({'ticker': 'FICTSAAS', 'name': 'Fictional SaaS', 'currency': 'USD'}, '2026-09-27')
     F.add_source(fb, 'synthetic', 'synthetic', 'test fixture', 'synthetic', '2026-09-27')
+    # a filing stand-in: override evidence must be a filing/issuer document or a reported/guidance statement, never synthetic data
+    F.add_source(fb, 'test-10k', 'issuer', 'annual report (test stand-in)', 'issuer_document', '2026-09-27')
     F.add_qualitative(fb, 'q-retention', 'retention', 'Net revenue retention above 115% (test statement)', 'reported', ['synthetic'], '2026-09-27')
     F.set_price(fb, price, '2026-09-27', 'synthetic')
     return fb
@@ -204,10 +206,10 @@ class DecisionTests(unittest.TestCase):
         self.assertEqual(d['verdict']['status'], 'draft')
         self.assertTrue(d['verdict']['price_claim_withheld'])
         text = hebrew_paragraph(casefile(p, d))
-        base = d['valuation_view']['base']
-        self.assertNotIn(f'{base:,.1f}', text)
-        self.assertNotIn('הנחה של', text)
+        self.assertNotIn('הנחה של', text)                                         # draft numbers are never phrased as a conclusion
+        self.assertNotIn(CALL_HE['attractive_at_price'], text)
         self.assertIn('טיוטה', text)
+        self.assertIn('לא מסקנה', text)
 
     def test_insufficient_evidence_when_data_blocked(self):
         qa = {**QA_OK, 'status': 'blocked', 'blocking': ['shares_outstanding'],
@@ -220,7 +222,7 @@ class DecisionTests(unittest.TestCase):
         self.assertEqual(d['assessments']['data_uncertainty']['level'], 'weak')
         self.assertEqual(d['assessments']['business_quality']['level'], 'strong')   # still assessed, never hidden
         ok = {'target': 'verdict', 'value': 'index_preferable', 'justification': 'The share count is irrelevant to this view of the business',
-              'evidence_ids': ['synthetic']}
+              'evidence_ids': ['test-10k']}
         d2 = decide(p, {'overrides': [ok]})
         self.assertEqual(d2['verdict']['code'], 'insufficient_evidence')
         self.assertEqual(d2['overrides'][0]['status'], 'rejected')
@@ -283,7 +285,7 @@ class DecisionTests(unittest.TestCase):
         d = decide(parts(35, rk=rk))
         self.assertEqual((d['verdict']['code'], d['verdict']['gate']), ('insufficient_evidence', 'understanding_insufficient'))
         lift = {'target': 'verdict', 'value': 'attractive_at_price', 'justification': 'Analyst believes the business model is obvious enough',
-                'evidence_ids': ['synthetic']}
+                'evidence_ids': ['test-10k']}
         self.assertEqual(decide(parts(35, rk=rk), {'overrides': [lift]})['verdict']['code'], 'insufficient_evidence')
 
     def test_override_rejected_without_justification_or_known_evidence(self):
@@ -296,10 +298,17 @@ class DecisionTests(unittest.TestCase):
             d = decide(p, {'overrides': [o]})
             self.assertEqual(d['verdict']['code'], 'quality_but_expensive')
             self.assertEqual(d['overrides'][0]['status'], 'rejected', o)
-        good = {'target': 'verdict', 'value': 'attractive_at_price', 'justification': 'Contracted price increases from the last renewal cycle are not in the base case',
-                'evidence_ids': ['q-retention']}
+        # below the required return the price test fails: a verdict override cannot reach attractive_at_price (change the
+        # forecast inputs instead); an evidenced move to an allowed outcome is accepted and stored beside the mechanical one
+        up = {'target': 'verdict', 'value': 'attractive_at_price', 'justification': 'Contracted price increases from the last renewal cycle are not in the base case',
+              'evidence_ids': ['q-retention']}
+        d = decide(p, {'overrides': [up]})
+        self.assertEqual(d['verdict']['code'], 'quality_but_expensive')
+        self.assertEqual(d['overrides'][0]['status'], 'rejected')
+        self.assertIn('cannot lift', d['overrides'][0]['reason'])
+        good = {**up, 'value': 'index_preferable', 'justification': 'Renewal pricing evidence suggests the franchise is weaker than modelled'}
         d = decide(p, {'overrides': [good]})
-        self.assertEqual(d['verdict']['code'], 'attractive_at_price')
+        self.assertEqual(d['verdict']['code'], 'index_preferable')
         self.assertEqual(d['verdict']['overridden_from'], 'quality_but_expensive')
         self.assertEqual(d['mechanical_verdict']['code'], 'quality_but_expensive')
         self.assertEqual(d['overrides'][0]['status'], 'accepted')
@@ -328,7 +337,7 @@ class DecisionTests(unittest.TestCase):
         self.assertEqual(d['verdict']['code'], 'promising_funding_conditional')
         self.assertEqual(d['verdict']['gate'], 'unfunded_plan')
         lift = {'target': 'verdict', 'value': 'attractive_at_price', 'justification': 'Banks indicated they would lend when asked informally',
-                'evidence_ids': ['synthetic']}
+                'evidence_ids': ['test-10k']}
         self.assertEqual(decide(p, {'overrides': [lift]})['verdict']['code'], 'promising_funding_conditional')
 
     def test_weak_business_cheap_on_model_prefers_index(self):
@@ -351,7 +360,7 @@ class DecisionTests(unittest.TestCase):
         d = decide(p)
         self.assertTrue(d['verdict']['price_claim_withheld'])
         rel = {'target': 'red_flags', 'value': ['accounting_risk'], 'justification': 'Receivables jump is the annual billing change documented in the filing',
-               'evidence_ids': ['synthetic']}
+               'evidence_ids': ['test-10k']}
         d2 = decide(p, {'overrides': [rel]})
         self.assertFalse(d2['verdict']['price_claim_withheld'])
         self.assertEqual(d2['gates']['red_flags'], ['accounting_risk'])           # the flag stays on record
@@ -387,7 +396,8 @@ class RenderTests(unittest.TestCase):
         for name, cf in self.cases.items():
             text = hebrew_paragraph(cf)
             n = len(text.split())
-            self.assertTrue(60 <= n <= 160, (name, n, text))
+            lo, hi = (80, 140) if name in ('attractive', 'expensive', 'draft') else (60, 160)   # owner target 80-140 for price answers
+            self.assertTrue(lo <= n <= hi, (name, n, text))
             self.assertNotIn('\n', text)
             for w in CERTAINTY:
                 self.assertNotIn(w, text, name)
@@ -402,7 +412,7 @@ class RenderTests(unittest.TestCase):
         md = markdown(self.cases['attractive'])
         for s in SECTIONS:
             self.assertIn(s, md)
-        for label in ('[reported', '[calculation]', 'model_assumption', 'Price at which the base IRR equals'):
+        for label in ('[reported', '[calculation]', 'model_assumption', 'Value at your required return', 'price at which the base IRR equals'):
             self.assertIn(label, md)
         self.assertIn('2031-12-31', md)
         self.assertIn('| 2025-12-31 |', md)                                        # five-year financial table
@@ -498,7 +508,7 @@ class AdobeFixtureTests(unittest.TestCase):
         self.assertIn('23,769', md)                                               # FY2025 revenue, USD m
         self.assertIn('Adobe Inc.', md)
         n = len(hebrew_paragraph(cf).split())
-        self.assertTrue(60 <= n <= 160, n)
+        self.assertTrue(80 <= n <= 140, n)                                        # unreviewed draft, numbers labelled
         q = a['business_quality']
         cheaper = deepcopy(p)
         F.set_price(cheaper['fb'], 246.87 * .8, '2026-10-19', 'ib:snapshot')

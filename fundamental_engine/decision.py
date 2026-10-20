@@ -8,17 +8,31 @@ error are assessed from their own evidence and are never averaged together. Busi
 price input at all, so it cannot move when only the price moves. Growth is a trajectory question: a
 great business growing moderately keeps its quality level.
 
-Price attractiveness is the base-case internal rate of return at today's price
-(valuation_tools.implied_cost_of_equity: the cost of equity at which the base value equals the price,
-cash flows held fixed) against a hurdle = index expected return + a premium scaled by the assessed risk.
-The owner's 14% aspiration is a separate comparison, never the hurdle and never a tuning target.
+One required return everywhere. The index expected return is, by default, the market return of the
+forecast's own cost-of-equity framework (risk-free + equity risk premium), unless the user supplies an
+index assumption; which one was used is recorded. The required return (hurdle) = that index return + a
+premium for the risk of PERMANENT loss in this business and balance sheet (single-stock concentration,
+balance sheet, funding dependence, cyclicality, durability of quality, flags one step from a gate), shown
+component by component. Valuation error (scenario range, rate sensitivity, terminal share) is not a
+company risk: it widens the marginal band around the hurdle and lowers confidence instead. Data and
+understanding gaps lower confidence once. The owner's 14% aspiration is a separate comparison, never
+the hurdle and never a tuning target.
 
-The verdict comes from one precedence list (VERDICT_RULES). Disqualifying gates (disqualifying risk,
+Price attractiveness is the base-case internal rate of return at today's price (cash flows held fixed)
+against that hurdle. The value the owner sees for the decision is the price at which the base IRR equals
+the hurdle ("value at your required return"); the base value at the model's cost of equity is secondary.
+A price inside the marginal band (hurdle +/- 1pp widened by valuation error, and the index range) keeps
+the verdict code but marks it 'marginal' and says so.
+
+The verdict comes from one precedence list (VERDICT_RULES). Every route has a gate id whose allowed
+analyst verdict overrides are listed in GATE_ALLOWED: disqualifying conditions (disqualifying risk,
 impaired equity, blocked data, insufficient understanding, critical red-team failure, unfunded plan, no
-valuation) are separated from attractiveness factors and from risks that can be priced. Analyst
-overrides need a written justification plus evidence ids, are stored beside the untouched mechanical
-verdict, and can never lift a gate. Thresholds are stated rules of thumb (adjusted by business economics
-where noted); a missing input leaves a signal unknown, never zero or imputed.
+valuation) can never be lifted, and attractive_at_price is reachable by override only where the
+mechanical price test passes. Overrides need a written justification plus evidence ids of filing,
+issuer or reported/guidance qualitative kinds relevant to the target (market feeds, vendor share counts,
+consensus, assumptions and synthetic data are rejected), are stored beside the untouched mechanical
+verdict, and the hurdle, expected return and price assessment are recomputed after an accepted
+assessment override. Thresholds are stated rules of thumb; a missing input stays unknown, never imputed.
 """
 from copy import deepcopy
 from datetime import date
@@ -26,10 +40,12 @@ import json
 from math import isfinite, log, exp
 from .facts import digest
 from .finance import number
+from .forecast import RF_DEFAULT, ERP_DEFAULT
 from .history import cagr
 from .plain import MARGIN_BARS
 from .scores import COST_OF_CAPITAL_REFERENCE
 from .decision_summary import RED_FLAG_KEYS
+from .valuation import value_company
 from .valuation_tools import implied_cost_of_equity, shifted_value
 
 ASSESSMENTS = ('business_quality', 'trajectory', 'price_attractiveness', 'risk_and_error',
@@ -50,25 +66,40 @@ VERDICT_RULES = [
     ('insufficient_evidence', 'business understanding insufficient (model card completeness insufficient / critical question '
                               'open): checked first, because an evidence gap is never a negative judgement'),
     ('avoid', 'a disqualifying risk in the risk register, or impaired equity (base value today is zero)'),
-    ('insufficient_evidence', 'critical data blocked, review blocked, critical red-team failure, or (no valuation / quality '
-                              'unknown) without positive business evidence'),
+    ('insufficient_evidence', 'critical data blocked'),
     ('interesting_not_yet_valuable', 'method not_reliably_valuable or valuation not computable, but business evidence '
-                                     'positive; or quality not yet demonstrated while trajectory/growth is strong and the '
-                                     'model price clears the hurdle'),
+                                     'positive (checked before the review gate: a missing valuation is the cause, not the review)'),
+    ('insufficient_evidence', 'review blocked or critical red-team failure, or no valuation without positive business evidence'),
     ('promising_funding_conditional', 'plan needs external funding that is not secured, business evidence positive'),
-    ('attractive_at_price', 'quality strong/adequate, base IRR >= hurdle, bear-case loss within the tolerance for that quality'),
-    ('quality_but_expensive', 'quality strong/adequate, base IRR < hurdle (or bear-case loss beyond tolerance)'),
+    ('attractive_at_price', 'quality strong/adequate, base IRR >= required return, bear-case loss within the tolerance for that quality'),
+    ('quality_but_expensive', 'quality strong/adequate, base IRR < required return (or bear-case loss beyond tolerance)'),
+    ('interesting_not_yet_valuable', 'quality not yet demonstrated while trajectory/growth is strong and the model price clears the hurdle'),
     ('index_preferable', 'no quality edge (weak or unproven) and/or base IRR not above index + risk premium'),
 ]
+INDEX_RANGE = .01            # +-1pp around the market return: equity-premium uncertainty (implied-ERP studies centre ~4-5%)
 INDEX_DEFAULT = {
-    'value': .07, 'low': .05, 'high': .09, 'provenance': 'model_assumption', 'source': 'engine default (no dated index input)',
-    'basis': ('Long-run nominal return of a broad equity index ~= shareholder yield (dividends + net buybacks, ~2-3%) + nominal '
-              'per-share earnings growth (~4-5%: real growth plus ~2-2.5% inflation). The 5-9% range reflects starting-'
-              'valuation uncertainty. Not a forecast; supply inputs.index {value, basis, source} to replace it.')}
-# Extra return demanded over a diversified index for single-stock concentration and model error, by the
-# risk_and_error level (strong = limited downside, small error). Unknown risk is treated as above average.
-RISK_PREMIUM = {'strong': .01, 'adequate': .02, 'weak': .04, 'unknown': .03}
+    'value': RF_DEFAULT + ERP_DEFAULT, 'low': RF_DEFAULT + ERP_DEFAULT - INDEX_RANGE, 'high': RF_DEFAULT + ERP_DEFAULT + INDEX_RANGE,
+    'provenance': 'model_assumption', 'origin': 'engine_default',
+    'source': 'engine default: forecast.RF_DEFAULT + forecast.ERP_DEFAULT (no forecast cost-of-equity components, no index input)',
+    'components': {'risk_free': RF_DEFAULT, 'equity_risk_premium': ERP_DEFAULT},
+    'basis': ('Market return of the same framework that sets the model cost of equity: risk-free + equity risk premium. '
+              'The +-1pp range reflects equity-premium uncertainty. Not a forecast; supply inputs.index {value, basis, source, low?, high?} to replace it.')}
+# Premium over the index for the risk of PERMANENT loss in this business and balance sheet (model assumptions, stated
+# per component and capped). Valuation error is deliberately absent: it widens the marginal band and lowers confidence.
+PREMIUM = {
+    'single_stock': .01,                                                      # one stock instead of a diversified index
+    'balance_sheet': {'strong': 0., 'adequate': .005, 'weak': .015, 'unknown': .005},
+    'funding_dependence': {'self_funded': 0., 'needs_external': .015, 'unknown': .005},
+    'cyclicality': .01,
+    'quality_durability': {'strong': 0., 'adequate': .005, 'weak': .015, 'unknown': .01},
+    'durability_flag': .005,                                                  # weak ROIC durability / competitive position under a strong-adequate grade
+    'near_disqualifying_each': .01, 'near_disqualifying_max': .02,            # forensic or governance red flags one step from a gate
+    'cap': .06}
 OWNER_ASPIRATION = .14
+# Marginal band: the hurdle is moved by BAND_STEP plus a widening by the size of possible valuation error, and the
+# index low/high (+ premium) are tested too. A verdict that changes anywhere inside the band is 'marginal'.
+BAND_STEP = .01
+ERROR_WIDENING = {'low': 0., 'medium': .005, 'high': .01, 'unknown': .005}
 # Largest acceptable loss from today's price to the bear value today, by business quality. A stronger
 # business is more likely to recover from a bad-case markdown, so it tolerates a deeper one.
 BEAR_LOSS_TOLERANCE = {'strong': .40, 'adequate': .30}
@@ -77,12 +108,16 @@ MARGIN_PROFILE = {'subscription_software': 'high_margin', 'platform_marketplace'
                   'hardware_manufacturing': 'general', 'industrial': 'general', 'conglomerate': 'general',
                   'capital_intensive_infrastructure': 'general', 'consumer_brand': 'general', 'commodity': 'thin_margin'}
 NOT_MARGIN_GRADED = {'financials', 'reit', 'pre_revenue_biotech'}
+BALANCE_SHEET_LENDERS = {'financials'}               # banks/insurers: leverage is the business; net cash is no strength measure
 COMPETITIVE_DIMS = ('moat', 'switching_costs', 'pricing_power', 'retention')
 MANAGEMENT_DIMS = ('management', 'capital_allocation', 'governance')
-OVERRIDE_EFFECT = {'business_quality': 'verdict quality test and bear-loss tolerance', 'trajectory': 'positive-business-evidence test',
-                   'growth_quality': 'positive-business-evidence test', 'risk_and_error': 'hurdle risk premium',
-                   'price_attractiveness': 'price test (only when no cash-flow IRR exists)', 'financial_strength': 'recorded; ranking only',
-                   'management_capital_allocation': 'recorded; ranking only', 'data_uncertainty': 'confidence reasons'}
+OVERRIDE_EFFECT = {'business_quality': 'verdict quality test, bear-loss tolerance and the quality-durability premium component',
+                   'trajectory': 'positive-business-evidence test', 'growth_quality': 'positive-business-evidence test',
+                   'risk_and_error': 'recorded; does not move the hurdle (the premium comes from business and balance-sheet risk)',
+                   'price_attractiveness': 'price test (only when no cash-flow IRR exists)',
+                   'financial_strength': 'balance-sheet premium component of the required return',
+                   'management_capital_allocation': 'recorded; ranking only',
+                   'data_uncertainty': 'confidence reasons (an evidence-backed upgrade removes the data reason; a downgrade never does)'}
 DEMONSTRATED = {'growth': ('revenue_cagr_3y', '3y revenue CAGR'), 'mature_margin': ('operating_margin', 'current operating margin')}
 # risk.py marks every gate as class 'disqualifying'; only some are negative judgements (avoid). The others are
 # evidence gaps (insufficient_evidence) or the funding condition, routed to their own precedence step.
@@ -90,17 +125,37 @@ DEMONSTRATED = {'growth': ('revenue_cagr_3y', '3y revenue CAGR'), 'mature_margin
 # Routing is by id, not category (gate.unfunded_plan has category 'execution').
 RISK_GATES = {'gate.blocked_data': 'data_blocked', 'gap.understanding_insufficient': 'understanding',
               'gate.redteam_critical_failure': 'valuation_unverified', 'gate.unfunded_plan': 'funding', 'gate.equity_impaired': 'impaired'}
-# A gated verdict may only be overridden toward an outcome that is at least as restrictive.
+# Every verdict route has a gate id. An analyst verdict override must be one of the allowed outcomes for the route the
+# mechanical (or assessment-overridden) verdict took. attractive_at_price is allowed only where the price test passes.
+_NOT_PRICE = {'avoid', 'insufficient_evidence'}
 GATE_ALLOWED = {'disqualifying_risk': {'avoid'}, 'impaired_equity': {'avoid'},
-                'data_blocked': {'avoid', 'insufficient_evidence'}, 'review_blocked': {'avoid', 'insufficient_evidence'},
-                'valuation_unverified': {'avoid', 'insufficient_evidence'},
-                'understanding_insufficient': {'avoid', 'insufficient_evidence'}, 'evidence_gap': {'avoid', 'insufficient_evidence'},
-                'unfunded_plan': {'avoid', 'insufficient_evidence', 'promising_funding_conditional'},
-                'no_valuation': {'avoid', 'insufficient_evidence', 'interesting_not_yet_valuable', 'index_preferable'}}
+                'data_blocked': set(_NOT_PRICE), 'review_blocked': set(_NOT_PRICE), 'valuation_unverified': set(_NOT_PRICE),
+                'understanding_insufficient': set(_NOT_PRICE), 'evidence_gap': set(_NOT_PRICE),
+                'unfunded_plan': _NOT_PRICE | {'promising_funding_conditional'},
+                'no_valuation': _NOT_PRICE | {'interesting_not_yet_valuable', 'index_preferable'},
+                'price_undetermined': _NOT_PRICE | {'interesting_not_yet_valuable', 'index_preferable'},
+                'quality_unproven': _NOT_PRICE | {'interesting_not_yet_valuable', 'index_preferable'},
+                'quality_unknown': _NOT_PRICE | {'interesting_not_yet_valuable', 'index_preferable'},
+                'weak_quality': _NOT_PRICE | {'index_preferable'},
+                'no_quality_edge': _NOT_PRICE | {'index_preferable'},
+                'below_hurdle': _NOT_PRICE | {'index_preferable', 'quality_but_expensive'},
+                'bear_loss_beyond_tolerance': _NOT_PRICE | {'index_preferable', 'quality_but_expensive', 'attractive_at_price'},
+                'price_test_passed': set(VERDICTS)}
+PRICE_ROUTES = ('price_test_passed', 'bear_loss_beyond_tolerance', 'below_hurdle', 'quality_unproven', 'quality_unknown',
+                'weak_quality', 'no_quality_edge')
+# Override evidence: only filing / issuer documents and reported or guidance qualitative statements count; a price feed, a
+# vendor share count, consensus, an assumption, a question or synthetic data is not evidence for changing a judgement.
+EVIDENCE_ACCEPTED = {'filing', 'qualitative'}
+EVIDENCE_BY_TARGET = {'data_uncertainty': {'filing'}}    # data accuracy needs the document itself
+FILING_KINDS = {'filing_derived', 'issuer_document', 'document', 'filing', 'issuer'}
 FIELD_HE = {'shares_outstanding': 'מספר המניות', 'cash_and_liquid_investments': 'המזומן וההשקעות הנזילות',
             'investments': 'ההשקעות', 'debt': 'החוב', 'convertibles': 'האג"ח להמרה', 'post_period_events': 'אירועים אחרי תאריך הדוח',
             'revenue_ttm': 'ההכנסות בשנה האחרונה', 'operating_income_ttm': 'הרווח התפעולי בשנה האחרונה',
             'cfo_ttm': 'תזרים המזומנים מפעילות', 'capex_ttm': 'ההשקעות ברכוש קבוע', 'sbc_ttm': 'התגמול מבוסס המניות'}
+DIM_HE = {'competition': 'תחרות', 'substitutes': 'תחליפים', 'customer_concentration': 'ריכוז לקוחות', 'technology_ai': 'השפעת בינה מלאכותית',
+          'regulation': 'רגולציה', 'geopolitics': 'גאופוליטיקה', 'governance': 'ממשל תאגידי', 'management': 'הנהלה', 'moat': 'היתרון התחרותי',
+          'retention': 'שימור לקוחות'}
+PRIORITY_DIMS = ('technology_ai', 'competition', 'substitutes', 'moat', 'retention')
 
 
 def _num(v):
@@ -117,6 +172,14 @@ def _he_pct(v, near=None):
         return 'לא ידוע'
     d = 1 if near is not None and abs(v - near) < .01 else 0
     return f'{v * 100:.{d}f}%'
+
+
+def _g3(v):
+    """A plain number with at most three significant figures (no unformatted floats in reasons)."""
+    x = _num(v)
+    if x is None:
+        return v
+    return f'{x:,.0f}' if abs(x) >= 1000 else f'{x:.3g}'
 
 
 def _metric(an, name):
@@ -200,7 +263,50 @@ def _competitive(card):
     return ('strong' if strong * 2 > n and not weak else 'weak' if weak * 2 > n else 'adequate'), used, ignored
 
 
-def financial_strength(an, card):
+def _roe(an):
+    """Return on equity for a balance-sheet lender: analysis metric 'roe', else latest net income / average equity."""
+    v = _val(an, 'roe')
+    if v is not None:
+        return v, [_ref(an, 'roe')], 'analysis.metrics.roe'
+    ann = (an or {}).get('annual') or {}
+    ends = sorted(ann)
+    if not ends:
+        return None, [], None
+    last = ann[ends[-1]] or {}
+    ni, eq = _num(last.get('net_income')), _num(last.get('equity'))
+    prev = _num((ann[ends[-2]] or {}).get('equity')) if len(ends) > 1 else None
+    base = (eq + prev) / 2 if eq is not None and prev is not None else eq
+    if ni is None or base is None or base <= 0:
+        return None, [], None
+    return ni / base, [{'metric': 'net_income', 'value': ni, 'period': ends[-1]}, {'metric': 'equity', 'value': eq, 'period': ends[-1]}], \
+        f'net income {ends[-1]} / ' + ('average equity' if prev is not None else 'year-end equity')
+
+
+def _lender_strength(an, fc):
+    """Banks and insurers: leverage IS the business, so net cash and interest coverage say nothing. Graded on ROE versus
+    the cost of equity (and capital ratios when the analysis supplies them); otherwise not assessed."""
+    ke = _num((((fc or {}).get('cost_of_equity') or {}).get('base')))
+    coe, coe_src = (ke, 'forecast base cost of equity') if ke is not None else (COST_OF_CAPITAL_REFERENCE, 'cost-of-capital reference')
+    sig = []
+    roe, ev, how = _roe(an)
+    rule = f'ROE >= cost of equity + 3pp strong, >= cost of equity adequate, else weak ({coe_src} {_pct(coe)})'
+    if roe is None:
+        sig.append(_signal('roe_vs_cost_of_equity', None, 'unknown', rule, core=True,
+                           note='not assessed: ROE unavailable; net cash is not a strength measure for a bank or insurer'))
+    else:
+        sig.append(_signal('roe_vs_cost_of_equity', roe, _band(roe, coe + .03, coe), rule, core=True, evidence=ev,
+                           shown=f'ROE {_pct(roe)} vs {_pct(coe)} ({how})'))
+    cet1 = _val(an, 'cet1_ratio')
+    sig.append(_signal('capital_ratio', cet1, _band(cet1, .12, .10), 'CET1 >= 12% strong, >= 10% adequate', evidence=[_ref(an, 'cet1_ratio')],
+                       note=None if cet1 is not None else 'not assessed: capital ratios are not in the analysis'))
+    a = _assessment(sig, min_known=1)
+    a['reasons'].append('leverage, net cash and interest coverage are not graded for a balance-sheet lender')
+    return a
+
+
+def financial_strength(an, card, fc=None):
+    if _card(card, 'business_model', 'primary') in BALANCE_SHEET_LENDERS:
+        return _lender_strength(an, fc)
     sig = []
     nc, nd = _val(an, 'net_cash'), _val(an, 'net_debt_to_ebitda')
     if nc is not None and nc >= 0:
@@ -388,7 +494,7 @@ def data_uncertainty(qa, val, fb):
     return _assessment(sig, how='worst', min_known=1, semantics=sem)
 
 
-def risk_and_error(rk, an, view):
+def risk_and_error(rk, an, view, pricing=None):
     sem = 'strong = limited downside and small possible error; weak = deep downside, large error or disqualifying risk'
     rk = rk or {}
     sig = []
@@ -397,7 +503,8 @@ def risk_and_error(rk, an, view):
                        evidence=[{'metric': 'bear_value_today', 'value': view.get('bear'), 'provenance': 'calculation'}]))
     err = (rk.get('error_size') or {})
     sig.append(_signal('error_size', err.get('level'), {'low': 'strong', 'medium': 'adequate', 'high': 'weak'}.get(err.get('level'), 'unknown'),
-                       'risk.error_size level low / medium / high', evidence=[{'risk': 'error_size', 'reasons': err.get('reasons') or []}]))
+                       'risk.error_size level low / medium / high (valuation error only; widens the marginal band, not the hurdle)',
+                       evidence=[{'risk': 'error_size', 'reasons': err.get('reasons') or []}]))
     flags = [f for f in (an or {}).get('flags') or [] if f.get('severity') == 'high']
     raised = _forensic_flags(an)
     n = len(flags) + len(raised)
@@ -412,6 +519,10 @@ def risk_and_error(rk, an, view):
     ts = view.get('terminal_share')
     if ts is not None and ts > .8:
         extra.append(f'terminal value is {_pct(ts, 0)} of base value today: most value sits beyond the explicit forecast')
+    part = [p for p in pricing or [] if p['status'] == 'partially_priced']
+    if part:
+        extra.append('partially priced (not in the bear path; any explicit adjustment is small): '
+                     + '; '.join(f"{p['id']} ({p['basis']})" for p in part[:4]))
     a = _assessment(sig, how='worst', min_known=1, semantics=sem, extra=extra)
     if not [s for s in sig[:2] if s['level'] in POINTS]:
         a['level'] = 'unknown'
@@ -434,14 +545,15 @@ def _forensic_flags(an):
 
 
 def price_attractiveness(er, view, wmbt, an=None):
-    """Is the stock attractive at today's price: base IRR against the hurdle; margin of safety against base
-    and bear values; what the price requires versus what is demonstrated (valuation what_must_be_true)."""
+    """Is the stock attractive at today's price: base IRR against the required return (hurdle); margin of safety
+    against the value at the required return, base and bear values; what the price requires versus what is
+    demonstrated (valuation what_must_be_true)."""
     irr, hurdle = er.get('base_irr'), er.get('hurdle')
     sig = []
-    rule = 'base IRR >= hurdle + 2pp strong, >= hurdle adequate, below weak'
+    rule = 'base IRR >= required return + 2pp strong, >= required return adequate, below weak'
     if irr is not None and hurdle is not None:
         lvl = 'strong' if irr >= hurdle + .02 else 'adequate' if irr >= hurdle else 'weak'
-        sig.append(_signal('base_irr_vs_hurdle', irr, lvl, rule, core=True, shown=f'{_pct(irr)} vs hurdle {_pct(hurdle)}',
+        sig.append(_signal('base_irr_vs_hurdle', irr, lvl, rule, core=True, shown=f'{_pct(irr)} vs required return {_pct(hurdle)}',
                            evidence=[{'metric': 'base_irr', 'value': irr, 'provenance': 'calculation'},
                                      {'metric': 'hurdle', 'value': hurdle, 'provenance': 'model_assumption'}]))
     elif er.get('base_irr_bound') and hurdle is not None:
@@ -455,15 +567,20 @@ def price_attractiveness(er, view, wmbt, an=None):
     else:
         sig.append(_signal('base_irr_vs_hurdle', None, 'unknown', rule, core=True, note='no executed valuation'))
     extra = []
+    pfh = (er.get('price_for_hurdle') or {}).get('value')
+    if pfh is not None and view.get('price'):
+        extra.append(f"value at your required return ({_pct(hurdle)}): {_g3(pfh)}; price {_g3(view['price'])} is "
+                     f"{_pct(abs(1 - view['price'] / pfh), 0)} {'below' if view['price'] <= pfh else 'above'} it")
     if view.get('discount_to_base') is not None:
-        extra.append(f"discount to base value today: {_pct(view['discount_to_base'], 0)} (1 - price/base; negative = premium)")
+        extra.append(f"discount to base value at the model cost of equity (secondary): {_pct(view['discount_to_base'], 0)} "
+                     '(1 - price/base; negative = premium)')
     if view.get('loss_to_bear') is not None:
         extra.append(f"loss to bear value today: {_pct(view['loss_to_bear'], 0)}")
     hard = []
     for w in wmbt or []:
         if not isinstance(w, dict):
             continue
-        f = (lambda x: _pct(_num(x)) if _num(x) is not None else x) if w.get('unit') == 'ratio' else (lambda x: x)
+        f = (lambda x: _pct(_num(x)) if _num(x) is not None else x) if w.get('unit') == 'ratio' else _g3
         shown = DEMONSTRATED.get(w.get('lever'))
         hist = f" vs demonstrated {_pct(_val(an, shown[0]))} ({shown[1]})" if shown and _val(an, shown[0]) is not None else ''
         extra.append(f"what must be true - {w.get('label') or w.get('lever')}: price requires {f(w.get('required'))} vs base case "
@@ -484,20 +601,35 @@ def _case_and_result(val):
     return val.get('case'), val.get('result')
 
 
-def five_year_row(annual_values, as_of):
-    """Fifth anniversary or the first model boundary up to 100 days later (plain_language protocol);
-    never an earlier row relabelled as five years, never an extrapolation."""
-    start = date.fromisoformat(as_of)
+FIVE_YEAR_WINDOW_DAYS = 183
+
+
+def _anniversary(start, years):
     try:
-        target = start.replace(year=start.year + 5)
-    except ValueError:
-        target = start.replace(year=start.year + 5, day=28)
-    rows = [(date.fromisoformat(r['date']), r) for r in (annual_values or [])[1:]
-            if 0 <= (date.fromisoformat(r['date']) - target).days <= 100]
+        return start.replace(year=start.year + years)
+    except ValueError:                       # 29 February
+        return start.replace(year=start.year + years, day=28)
+
+
+def five_year_row(annual_values, as_of):
+    """Valuation row for the fifth anniversary of as_of: the row dated exactly on the anniversary when the valuation
+    reports it; otherwise the nearest row within +-183 days, with its real horizon in years stated (e.g. 5.1 or 4.8).
+    A row outside that window is never relabelled as five years: the result then says why (status 'outside_window').
+    Returns None only when there are no rows beyond today."""
+    start = date.fromisoformat(as_of)
+    target = _anniversary(start, 5)
+    rows = [(date.fromisoformat(r['date']), r) for r in (annual_values or [])[1:] if isinstance(r, dict) and r.get('date')]
     if not rows:
         return None
-    d, row = min(rows, key=lambda x: x[0])
-    return {'date': d.isoformat(), 'years': (d - start).days / 365.25, 'row': row}
+    d, row = min(rows, key=lambda x: (abs((x[0] - target).days), -x[0].toordinal()))
+    off = (d - target).days
+    yrs = (d - start).days / 365.25
+    if abs(off) > FIVE_YEAR_WINDOW_DAYS:
+        return {'status': 'outside_window', 'date': None, 'row': None, 'target': target.isoformat(), 'nearest': d.isoformat(),
+                'nearest_years': yrs, 'reason': f'no valuation row within {FIVE_YEAR_WINDOW_DAYS} days of the fifth anniversary '
+                                                f'{target.isoformat()}; the nearest row {d.isoformat()} is {yrs:.1f} years out'}
+    return {'status': 'exact' if off == 0 else 'nearest', 'date': d.isoformat(), 'years': yrs, 'row': row,
+            'target': target.isoformat(), 'offset_days': off}
 
 
 def _view(fb, val):
@@ -513,7 +645,7 @@ def _view(fb, val):
         if view['price'] is None:
             view.update(price=q, currency=case['currency'], price_as_of=case['quote']['as_of'], price_source=(case['quote']['source_ids'] or [None])[0])
         elif abs(q / view['price'] - 1) > .005:
-            view['notes'].append(f"valuation quote {q:g} differs from the FactBook price {view['price']:g}; returns use the FactBook price")
+            view['notes'].append(f"valuation quote {_g3(q)} differs from the FactBook price {_g3(view['price'])}; returns use the FactBook price")
         today = res['annual_values'][0]
         view.update(bear=_num(today.get('bear')), base=_num(today.get('base')), bull=_num(today.get('bull')))
         p = view['price']
@@ -524,16 +656,25 @@ def _view(fb, val):
             view['loss_to_bear'] = max(0., 1 - view['bear'] / p)
         base_sc = next((s for s in res.get('scenarios', []) if s['name'] == 'base'), {})
         view['terminal_share'] = _num(base_sc.get('terminal_share_of_present_value'))
+        view['model_cost_of_equity'] = _num((next((s for s in case['scenarios'] if s['name'] == 'base'), {}) or {}).get('cost_of_equity'))
         five = five_year_row(res['annual_values'], case['as_of'])
-        if five and _num(five['row'].get('base')) is not None and p:
+        if five and five.get('row') is None:
+            view['five_year_unavailable'] = five['reason']
+        elif five and _num(five['row'].get('base')) is not None and p:
             v5 = five['row']['base']
             tl = next((r for r in base_sc.get('timeline', []) if r['date'] == five['date']), {})
-            view['five_year'] = {'date': five['date'], 'years': five['years'], 'base_value': v5,
-                                 'bear_value': _num(five['row'].get('bear')), 'bull_value': _num(five['row'].get('bull')),
-                                 'cumulative_dividends_base': _num(tl.get('cumulative_dividend_per_share')) or 0.,
+            dist = _num(tl.get('cumulative_dividend_per_share')) or 0.
+            view['five_year'] = {'date': five['date'], 'years': five['years'], 'status': five['status'], 'target': five['target'],
+                                 'base_value': v5, 'bear_value': _num(five['row'].get('bear')), 'bull_value': _num(five['row'].get('bull')),
+                                 'cumulative_distributions_base': dist, 'cumulative_dividends_base': dist,
                                  'price_change_excluding_dividends': v5 / p - 1,
+                                 'price_change_including_distributions': (v5 + dist) / p - 1,
                                  'annualized_price_change_excluding_dividends': (v5 / p) ** (1 / five['years']) - 1 if v5 > 0 else None,
-                                 'semantics': 'conditional base-case value at that date, not a predicted market price'}
+                                 'rate': 'model cost of equity',
+                                 'semantics': 'conditional base-case value at that date at the model cost of equity, not a predicted market price; '
+                                              'distributions are base-case buybacks/dividends paid by then'}
+        elif five is None:
+            view['five_year_unavailable'] = 'the valuation reports no date after today'
     return view
 
 
@@ -580,71 +721,184 @@ def _solve_irr(case, scenario):
     return {'value': None, 'status': r['status'], 'bound': None, 'reason': r.get('limitation')}
 
 
+class _Rates:
+    """Base-scenario annual values with the cost of equity (and terminal WACC, the convention of implied_cost_of_equity
+    and price_for_hurdle) moved to a given required return; cached per rate. Value today at rate h is the price at
+    which the base IRR equals h ('value at your required return')."""
+
+    def __init__(self, case, price):
+        self.case, self.price, self.memo = case, price, {}
+        self.base = next((s for s in (case or {}).get('scenarios') or [] if s.get('name') == 'base'), None)
+        self.ok = case is not None and case.get('method') in ('operating', 'residual_income') and self.base is not None
+
+    def values(self, rate):
+        if not self.ok or _num(rate) is None:
+            return None
+        k = round(rate, 10)
+        if k not in self.memo:
+            c = deepcopy(self.case)
+            s = next(x for x in c['scenarios'] if x['name'] == 'base')
+            shift = rate - s['cost_of_equity']
+            s['cost_of_equity'] += shift
+            if c['method'] == 'operating':
+                s['terminal']['wacc'] += shift
+            try:
+                self.memo[k] = value_company(c)['annual_values']
+            except (ValueError, KeyError, ZeroDivisionError):
+                self.memo[k] = None
+        return self.memo[k]
+
+    def pfh(self, rate):
+        if not self.ok or _num(rate) is None:
+            return None
+        av = self.values(rate)
+        v = _num(av[0].get('base')) if av else None
+        if v is None:
+            return {'value': None, 'status': 'invalid', 'hurdle': rate,
+                    'reason': 'this required return makes the terminal invalid (WACC <= growth) or the case unfunded'}
+        out = {'value': v, 'status': 'solved', 'hurdle': rate, 'label': 'value at your required return',
+               'formula': 'base value with cost of equity (and terminal WACC, shifted equally) = required return; the base IRR at this price equals the required return'}
+        if self.price:
+            out['change_from_price'] = v / self.price - 1
+        return out
+
+
 def _decomposition(case, res, view, an):
-    """Base 5-year return split into business growth x multiple change x cash yield (log-additive, exact):
+    """Re-rating scenario at the model's cost of equity, NOT the return at your required return and not the IRR.
+    Base 5-year return split into business growth x multiple change x cash yield (log-additive, exact):
     (V_T + D_T) / P_0 = (F_T / F_0) * ((V_T / F_T) / (P_0 / F_0)) * ((V_T + D_T) / V_T), where F is per-share
-    FCF after SBC (fallback: NOPAT per share), V_T the base value at the five-year boundary, D_T cumulative
-    base distributions (dividends or equivalent buybacks), P_0 today's price. Each factor is annualised as
-    factor^(1/T) - 1, so (1+g)(1+m)(1+c) = 1 + total. The 5-year return assumes the stock trades at the
-    base value at T; base_irr instead holds the cash flows through the terminal value."""
+    FCF after SBC (fallback: NOPAT per share), V_T the base value at the five-year date at the model cost of
+    equity, D_T cumulative base distributions (buybacks or dividends), P_0 today's price. Each factor is
+    annualised as factor^(1/T) - 1, so (1+g)(1+m)(1+c) = 1 + total. It assumes the stock trades at that base
+    value at T (a re-rating to the model's value); base_irr instead holds the cash flows through the terminal value."""
     five = view.get('five_year')
     if not five or not case or case.get('method') != 'operating':
-        return {'status': 'unavailable', 'reason': 'needs an operating cash-flow valuation with a five-year base value'}
-    T, V, D, P = five['years'], five['base_value'], five['cumulative_dividends_base'], view['price']
+        return {'status': 'unavailable', 'reason': view.get('five_year_unavailable') or 'needs an operating cash-flow valuation with a five-year base value'}
+    T, V, D, P = five['years'], five['base_value'], five['cumulative_distributions_base'], view['price']
     rows = next((s['forecast'] for s in res['scenarios'] if s['name'] == 'base'), [])
 
     def dur(r):
         return (date.fromisoformat(r['end']) - date.fromisoformat(r['start'])).days / 365.25
 
-    end = next((r for r in rows if r['end'] == five['date'] and dur(r) > .9), None)
+    fd = date.fromisoformat(five['date'])
     first = next((r for r in rows if dur(r) > .9), None)
-    if end is None or first is None:
-        return {'status': 'unavailable', 'reason': 'no full model year ending at the five-year boundary'}
+    # shares at T: the model row that ends on (or contains) the five-year date
+    at_t = next((r for r in rows if date.fromisoformat(r['start']) < fd <= date.fromisoformat(r['end'])), None)
+    if at_t is None or first is None:
+        return {'status': 'unavailable', 'reason': 'no model row ending on or containing the five-year date'}
+
+    def trailing(flow):
+        # the twelve months ending at T, pro rata over the model rows they overlap (the run-rate at T, whatever the boundaries)
+        lo_t = date.fromordinal(fd.toordinal() - 365)
+        total, covered = 0., 0
+        for r in rows:
+            s0, e0 = date.fromisoformat(r['start']), date.fromisoformat(r['end'])
+            a, b = max(s0, lo_t), min(e0, fd)
+            if b > a and e0 > s0:
+                total += flow(r) * (b - a).days / (e0 - s0).days
+                covered += (b - a).days
+        return total / at_t['shares'] if covered >= 360 and at_t['shares'] else None
+    fcf = lambda r: r['cfo'] - r['maintenance_capex'] - r['growth_capex']
+    nopat = lambda r: r['ebit'] - r['cash_taxes']
     shares0 = case['opening']['shares']
     ttm = (an or {}).get('ttm') or {}
     candidates = []
     fa = _num(ttm.get('fcf_after_sbc'))
     if fa is not None:
         candidates.append(('fcf_after_sbc_per_share', fa / shares0, f"reported TTM FCF after SBC ({ttm.get('period_end')}) / opening shares",
-                           'calculation from reported', lambda r: (r['cfo'] - r['maintenance_capex'] - r['growth_capex']) / r['shares'] / dur(r)))
-    candidates.append(('fcf_after_sbc_per_share', (first['cfo'] - first['maintenance_capex'] - first['growth_capex']) / first['shares'] / dur(first),
-                       f"first full model year to {first['end']}", 'model_assumption',
-                       lambda r: (r['cfo'] - r['maintenance_capex'] - r['growth_capex']) / r['shares'] / dur(r)))
-    candidates.append(('nopat_per_share', (first['ebit'] - first['cash_taxes']) / first['shares'] / dur(first),
-                       f"first full model year to {first['end']} (EBIT - cash taxes)", 'model_assumption',
-                       lambda r: (r['ebit'] - r['cash_taxes']) / r['shares'] / dur(r)))
-    for metric, f0, basis, prov, fn in candidates:
-        fT = fn(end)
+                           'calculation from reported', fcf))
+    candidates.append(('fcf_after_sbc_per_share', fcf(first) / first['shares'] / dur(first), f"first full model year to {first['end']}", 'model_assumption', fcf))
+    candidates.append(('nopat_per_share', nopat(first) / first['shares'] / dur(first),
+                       f"first full model year to {first['end']} (EBIT - cash taxes)", 'model_assumption', nopat))
+    for metric, f0, basis, prov, flow in candidates:
+        fT = trailing(flow)
+        if fT is None:
+            return {'status': 'unavailable', 'reason': 'the model rows do not cover the twelve months before the five-year date'}
         if f0 > 0 and fT > 0 and V > 0 and P:
             G, M, C = fT / f0, (V / fT) / (P / f0), (V + D) / V
             ann = lambda x: exp(log(x) / T) - 1
             return {'status': 'computed', 'metric': metric, 'date': five['date'], 'years': T,
+                    'scenario': 're-rating to the base value at the model cost of equity',
+                    'model_cost_of_equity': view.get('model_cost_of_equity'),
                     'anchor': {'value': f0, 'basis': basis, 'provenance': prov},
-                    'end': {'value': fT, 'basis': f"base model year to {end['end']}", 'provenance': 'model_assumption'},
+                    'end': {'value': fT, 'basis': f"base model, twelve months to {five['date']}", 'provenance': 'model_assumption'},
                     'current_multiple': P / f0, 'exit_multiple': V / fT,
                     'business_growth': ann(G), 'multiple_change': ann(M), 'cash_yield': ann(C),
-                    'total_annualized': ann((V + D) / P), 'formula': _decomposition.__doc__.split('\n')[0] + ' ' +
-                    '(V_T+D_T)/P_0 = (F_T/F_0) * ((V_T/F_T)/(P_0/F_0)) * ((V_T+D_T)/V_T); each factor annualised as x^(1/T)-1.'}
+                    'total_annualized': ann((V + D) / P),
+                    'semantics': ' '.join(x.strip() for x in _decomposition.__doc__.split('\n')),
+                    'formula': '(V_T+D_T)/P_0 = (F_T/F_0) * ((V_T/F_T)/(P_0/F_0)) * ((V_T+D_T)/V_T); each factor annualised as x^(1/T)-1.'}
     return {'status': 'unavailable', 'reason': 'per-share FCF and NOPAT are not positive at both ends; a multiple is not meaningful'}
 
 
-def _index(inputs):
+def _index(inputs, fc=None):
+    """Index expected return: the user's assumption when supplied, else the market return of the forecast's own
+    cost-of-equity components (risk-free + equity risk premium), else the same framework's engine defaults."""
     idx = (inputs or {}).get('index')
     if idx is None:
-        return deepcopy(INDEX_DEFAULT)
+        comp = (((fc or {}).get('cost_of_equity') or {}).get('components')) or {}
+        rf, erp = _num(comp.get('risk_free')), _num(comp.get('equity_risk_premium'))
+        if rf is None or erp is None:
+            return deepcopy(INDEX_DEFAULT)
+        v = rf + erp
+        return {'value': v, 'low': v - INDEX_RANGE, 'high': v + INDEX_RANGE, 'provenance': 'model_assumption',
+                'origin': 'forecast_cost_of_equity', 'components': {'risk_free': rf, 'equity_risk_premium': erp},
+                'source': 'forecast.cost_of_equity.components: risk-free + equity risk premium',
+                'basis': (f'Market return of the framework that sets the model cost of equity: risk-free {_pct(rf, 2)} + equity risk '
+                          f'premium {_pct(erp, 2)}. The +-1pp range reflects equity-premium uncertainty. Supply inputs.index to replace it.')}
     if not isinstance(idx, dict):
         raise ValueError('inputs.index must be {value, basis, source}')
     v = number(idx.get('value'), 'index.value', -.05, .25)
     for k in ('basis', 'source'):
         if not isinstance(idx.get(k), str) or not idx[k].strip():
             raise ValueError(f'inputs.index.{k}: nonempty text required')
-    return {'value': v, 'low': _num(idx.get('low')), 'high': _num(idx.get('high')), 'basis': idx['basis'],
-            'source': idx['source'], 'provenance': idx.get('provenance', 'vendor_estimate')}
+    lo, hi = _num(idx.get('low')), _num(idx.get('high'))
+    if (lo is not None and lo > v) or (hi is not None and hi < v):
+        raise ValueError('inputs.index: low <= value <= high required')
+    return {'value': v, 'low': lo, 'high': hi, 'basis': idx['basis'], 'source': idx['source'], 'origin': 'user_input',
+            'provenance': idx.get('provenance', 'vendor_estimate')}
 
 
-def _hurdle(index, risk_level):
-    prem = RISK_PREMIUM[risk_level if risk_level in RISK_PREMIUM else 'unknown']
-    return round(index['value'] + prem, 10), prem
+def _required_return(A, index, card, g, rk):
+    """Required return = index expected return + premium for the risk of permanent loss in this business and balance
+    sheet, component by component (PREMIUM). Valuation error is not part of it (it widens the marginal band)."""
+    comps = []
+
+    def add(name, value, basis):
+        comps.append({'component': name, 'value': round(value, 6), 'basis': basis})
+    add('single_stock', PREMIUM['single_stock'], 'one stock instead of a diversified index: company-specific outcomes do not average out')
+    fsA = A['financial_strength']
+    if fsA.get('override'):
+        bs, why = fsA['level'], 'financial_strength (analyst override with evidence)'
+    else:
+        sig = [s for s in fsA.get('signals') or [] if s['signal'] != 'funding']
+        bs = _assessment(sig, min_known=1)['level'] if sig else 'unknown'
+        why = ('leverage, interest coverage, Altman zone and cash runway (financial_strength without the funding signal)'
+               if any(s['signal'] == 'leverage' for s in sig) else 'ROE versus cost of equity and capital ratios (balance-sheet lender)')
+    add('balance_sheet', PREMIUM['balance_sheet'][bs], f'balance sheet {bs}: {why}' + ('; unknown is treated as above average' if bs == 'unknown' else ''))
+    fund = _card(card, 'funding', 'value')
+    fk = 'needs_external' if fund == 'needs_external' or g['funding'] else 'self_funded' if fund == 'self_funded' else 'unknown'
+    add('funding_dependence', PREMIUM['funding_dependence'][fk],
+        {'needs_external': 'the plan depends on outside capital: current holders can be diluted or delayed',
+         'self_funded': 'self-funded (model card)', 'unknown': 'funding status not established; treated as above average'}[fk])
+    cyc = _card(card, 'cyclical', 'value')
+    add('cyclicality', PREMIUM['cyclicality'] if cyc is True else 0.,
+        'cyclical business: a downturn can force losses at the bottom of the cycle' if cyc is True else
+        'not cyclical (model card)' if cyc is False else 'cyclicality not established (no premium added)')
+    bq = A['business_quality']
+    q = bq['level']
+    add('quality_durability', PREMIUM['quality_durability'][q], f'business quality {q}' + (' (not demonstrated: treated as above average)' if q == 'unknown' else ''))
+    weak = [s['signal'] for s in bq.get('signals') or [] if s['signal'] in ('roic_durability', 'competitive_position') and s['level'] == 'weak']
+    if weak and q in ('strong', 'adequate'):
+        add('durability_flags', PREMIUM['durability_flag'], 'weak ' + ', '.join(weak) + f' under a {q} grade: returns may not persist')
+    near = list(g['red_flags']) + list((rk or {}).get('withhold_price') or [])
+    if near:
+        add('near_disqualifying', min(PREMIUM['near_disqualifying_each'] * len(near), PREMIUM['near_disqualifying_max']),
+            'flags one step from a gate: ' + ', '.join(near))
+    total = sum(c['value'] for c in comps)
+    prem = min(total, PREMIUM['cap'])
+    return {'premium': round(prem, 10), 'hurdle': round(index['value'] + prem, 10), 'components': comps, 'capped': total > PREMIUM['cap'],
+            'index': index['value'], 'rule': 'required return = index expected return + sum of premium components (cap '
+                                              f"{PREMIUM['cap']:.0%}); valuation error widens the marginal band instead"}
 
 
 def price_for_hurdle(case, hurdle):
@@ -660,12 +914,51 @@ def price_for_hurdle(case, hurdle):
             'formula': 'base value at cost of equity = hurdle (terminal WACC shifted equally); base IRR at this price equals the hurdle'}
 
 
+def _hurdle_band(req, index, err_level, rates):
+    """The marginal band: required return -/+ (1pp + widening by valuation error size), and the index low/high plus the
+    same premium. The verdict is re-run at the lowest and highest required return of the band."""
+    h, prem = req['hurdle'], req['premium']
+    widen = ERROR_WIDENING.get(err_level if err_level in ERROR_WIDENING else 'unknown')
+    step = BAND_STEP + widen
+    tests = [(f'required return - {step * 100:.1f}pp', h - step), (f'required return + {step * 100:.1f}pp', h + step)]
+    if _num(index.get('low')) is not None and _num(index.get('high')) is not None:
+        tests += [('index low + premium', index['low'] + prem), ('index high + premium', index['high'] + prem)]
+    lo, hi = min(x for _, x in tests), max(x for _, x in tests)
+    rows = [{'label': lab, 'hurdle': round(x, 10), 'value_at_required_return': ((rates.pfh(x) if rates else None) or {}).get('value')} for lab, x in tests]
+    return {'hurdle_low': round(lo, 10), 'hurdle_high': round(hi, 10), 'step': step, 'error_level': err_level or 'unknown',
+            'error_widening': widen, 'price_low': ((rates.pfh(hi) if rates else None) or {}).get('value'),
+            'price_high': ((rates.pfh(lo) if rates else None) or {}).get('value'), 'rows': rows,
+            'rule': f'required return -/+ ({BAND_STEP * 100:.0f}pp + valuation-error widening {json.dumps(ERROR_WIDENING)}) and the index '
+                    'range + premium; a verdict that changes inside the band is marginal'}
+
+
+def _five_at_rate(view, rates, rate):
+    five = view.get('five_year')
+    if not five or rates is None or not view.get('price'):
+        return None
+    av = rates.values(rate)
+    row = next((r for r in av or [] if r.get('date') == five['date']), None)
+    v = _num((row or {}).get('base'))
+    if v is None:
+        return None
+    D, P = five['cumulative_distributions_base'], view['price']
+    tot = (v + D) / P
+    return {'date': five['date'], 'years': five['years'], 'status': five['status'], 'rate': rate, 'base_value': v,
+            'cumulative_distributions_base': D, 'total_value_with_distributions': v + D,
+            'change_excluding_distributions': v / P - 1, 'change_including_distributions': tot - 1,
+            'annualized_including_distributions': tot ** (1 / five['years']) - 1 if tot > 0 and five['years'] > 0 else None,
+            'semantics': 'base-case value at that date discounted at your required return, plus the base-case distributions '
+                         '(buybacks/dividends) paid by then; a conditional estimate, not a predicted price'}
+
+
 def _forecast_view(an, res, view):
     five = view.get('five_year')
     if not res or not five:
         return None
     rows = next((s['forecast'] for s in res['scenarios'] if s['name'] == 'base'), [])
-    end = next((r for r in rows if r['end'] == five['date'] and 'revenue' in r), None)
+    fd = date.fromisoformat(five['date'])
+    end = next((r for r in rows if 'revenue' in r and date.fromisoformat(r['start']) < fd <= date.fromisoformat(r['end'])
+                and (date.fromisoformat(r['end']) - date.fromisoformat(r['start'])).days > 300), None)
     ttm = (an or {}).get('ttm') or {}
     rev0, end0 = _num(ttm.get('revenue')), ttm.get('period_end')
     if end is None or rev0 is None or not end0:
@@ -675,13 +968,82 @@ def _forecast_view(an, res, view):
     return {'base_revenue_cagr': cagr(rev0, end['revenue'] / d, yrs), 'through': end['end'], 'from': end0}
 
 
+def _expected(irrs, view, index, req, rates, qcase, res, an, err_level):
+    base_irr = irrs['base']['value']
+    pfh = rates.pfh(req['hurdle']) if rates is not None and view.get('base') is not None else None
+    er = {'base_irr': base_irr, 'bear_irr': irrs['bear']['value'], 'bull_irr': irrs['bull']['value'],
+          'base_irr_bound': irrs['base']['bound'], 'irr_status': {k: {kk: vv for kk, vv in v.items() if kk != 'value'} for k, v in irrs.items()},
+          'price': view['price'],
+          'decomposition': _decomposition(qcase, res, view, an) if qcase is not None else {'status': 'unavailable', 'reason': 'no executed valuation'},
+          'index_expected_return': index, 'risk_premium': req['premium'], 'premium_components': req['components'],
+          'premium_capped': req['capped'], 'hurdle': req['hurdle'], 'required_return': req['hurdle'], 'hurdle_rule': req['rule'],
+          'price_for_hurdle': pfh,
+          'value_at_required_return': (pfh or {}).get('value'),
+          'model_cost_of_equity': view.get('model_cost_of_equity'),
+          'base_value_at_model_cost_of_equity': view.get('base'),
+          'band': _hurdle_band(req, index, err_level, rates if view.get('base') is not None else None),
+          'five_year_at_required_return': _five_at_rate(view, rates, req['hurdle']) if view.get('base') is not None else None,
+          'owner_aspiration': OWNER_ASPIRATION,
+          'meets_owner_aspiration_14pct': None if base_irr is None else base_irr >= OWNER_ASPIRATION,
+          'semantics': ('IRR = cost of equity at which the scenario value equals today\'s price, cash flows held fixed '
+                        '(valuation_tools.implied_cost_of_equity); a conditional return, not a forecast. The value at your required '
+                        'return is the price at which the base IRR equals the required return; the base value at the model cost of '
+                        'equity is secondary. The 14% aspiration is a comparison only.')}
+    return er
+
+
+# ---------------------------------------------------------------- risk pricing (priced / partially priced / not priced)
+
+def _risk_pricing(rk, fc, view, rates):
+    """'Priced' requires the risk to be in the bear (stress) path, or an explicit quantified adjustment that moves value
+    materially (at least half of the base-to-bear markdown, minimum 10%). A small cost-of-equity add-on is 'partially
+    priced'; a register class accepted_priced without either is partially priced too."""
+    comps = (((fc or {}).get('cost_of_equity') or {}).get('components')) or {}
+    base, bear = view.get('base'), view.get('bear')
+    gap = 1 - bear / base if base and bear is not None and base > 0 else None
+    material = max(.5 * gap, .10) if gap is not None and gap > 0 else .15
+    ke = view.get('model_cost_of_equity')
+    out = []
+    for r in (rk or {}).get('register') or []:
+        if not isinstance(r, dict) or not r.get('id'):
+            continue
+        rid, cls = r['id'], r.get('class')
+        if cls == 'disqualifying':
+            status, basis, eff = 'gate', 'disqualifying condition (not priced; a gate)', None
+        elif r.get('in_bear_case'):
+            status, basis, eff = 'priced', 'the executed bear path models it', None
+        elif r.get('priced_via'):
+            key = str(r['priced_via']).rsplit('.', 1)[-1]
+            add = _num(comps.get(key))
+            v0 = (rates.values(ke - add) or [{}])[0].get('base') if rates is not None and ke is not None and add else None
+            eff = 1 - base / v0 if _num(v0) and base else None
+            if eff is not None and eff >= material:
+                status, basis = 'priced', f'cost-of-equity add-on {_pct(add, 2)} lowers base value {_pct(eff, 0)} (material: >= {_pct(material, 0)})'
+            else:
+                status = 'partially_priced'
+                basis = (f'cost-of-equity add-on {_pct(add, 2)} lowers base value only {_pct(eff, 0)}; not in the bear path' if eff is not None
+                         else 'claimed priced via the cost of equity, effect not quantified; not in the bear path')
+        elif cls == 'accepted_priced':
+            status, basis, eff = 'partially_priced', 'classed priced but neither in the bear path nor quantified', None
+        elif r.get('status') == 'unassessed' or r.get('assessed') is False:
+            status, basis, eff = 'open_question', 'not assessed: an open research question', None
+        else:
+            status, basis, eff = 'not_priced', 'not in the bear path and no quantified adjustment', None
+        out.append({'id': rid, 'status': status, 'basis': basis, 'value_effect': eff, 'register_class': cls})
+    return out
+
+
 # ---------------------------------------------------------------- gates and verdict
 
 def _gates(parts, view, an):
     qa, card, val, rk, rv = (parts.get(k) for k in ('qa', 'card', 'val', 'rk', 'rv'))
     g = {'disqualifying': [], 'evidence_gaps': [], 'impaired': False, 'data_blocked': [], 'review_blocked': [],
-         'valuation_unverified': [], 'understanding': [], 'funding': [], 'no_valuation': [], 'draft': [], 'red_flags': _forensic_flags(an)}
+         'valuation_unverified': [], 'understanding': [], 'funding': [], 'no_valuation': [], 'draft': [], 'red_flags': _forensic_flags(an),
+         'draft_codes': [], 'withhold_price': [], 'reviewer_present': False}
     reg = {r.get('id'): r for r in (rk or {}).get('register') or [] if isinstance(r, dict)}
+    for i in (rk or {}).get('withhold_price') or []:
+        r = reg.get(i) or {}
+        g['withhold_price'].append({'id': i, 'description': r.get('description'), 'description_he': r.get('description_he')})
     for i in (rk or {}).get('evidence_gaps') or []:
         g['understanding' if RISK_GATES.get(i) == 'understanding' else 'evidence_gaps'].append(
             'risk register ' + i + ': ' + str((reg.get(i) or {}).get('description') or i))
@@ -703,6 +1065,9 @@ def _gates(parts, view, an):
     elif qa.get('status') == 'blocked':
         g['data_blocked'] += [f"critical field {f}: {((qa.get('fields') or {}).get(f) or {}).get('status', 'blocked')}" for f in qa.get('blocking') or []] or ['dataqa blocked']
     if rv is not None:
+        rc = rv.get('reviewer_check') or {}
+        g['reviewer_present'] = bool(rv.get('reviewer')) and bool(rc.get('accepted', rc.get('valid')))
+        g['draft_codes'] = [str(c) for c in rv.get('reason_codes') or []]
         if rv.get('status') == 'blocked' or (rv.get('status') == 'reviewed' and rv.get('price_conclusion_allowed') is False):
             g['review_blocked'] += [str(r) for r in rv.get('reasons') or []] or ['review blocked the price conclusion']
         crit = (((rv.get('mechanical') or {}).get('redteam') or {}).get('critical_failures')) or []
@@ -711,7 +1076,7 @@ def _gates(parts, view, an):
         if rv.get('status') not in ('blocked', 'reviewed'):
             g['draft'] += ['review status ' + str(rv.get('status')) + ': ' + '; '.join(map(str, rv.get('reasons') or []))]
     else:
-        g['draft'].append('independent review did not run')
+        g['draft'].append('review did not run (no mechanical check, no independent reviewer)')
     if view['is_demo']:
         g['draft'].append('demo / synthetic valuation inputs')
     if card is None:
@@ -750,16 +1115,17 @@ def _positive(A):
     return q in ('strong', 'adequate') or (q == 'unknown' and 'strong' in (A['trajectory']['level'], A['growth_quality']['level']))
 
 
-def _verdict(A, g, er, view, index, pfh_fn):
-    """One pass over VERDICT_RULES in order; returns the first that applies with its reason and gate."""
-    q, risk = A['business_quality']['level'], A['risk_and_error']['level']
-    hurdle, prem = _hurdle(index, risk)
+def _verdict(A, g, er, view, index, rates, req):
+    """One pass over VERDICT_RULES in order; returns the first that applies with its reason and gate (route id)."""
+    q = A['business_quality']['level']
+    hurdle, prem = req['hurdle'], req['premium']
     irr, bound = er.get('base_irr'), er.get('base_irr_bound')
     pos = _positive(A)
 
     def out(code, gate, reason, reason_he, change, change_he):
         return {'code': code, 'label_he': VERDICTS[code], 'gate': gate, 'reason': reason, 'reason_he': reason_he,
-                'what_would_change_it': change, 'what_would_change_it_he': change_he, 'hurdle_used': hurdle, 'risk_premium_used': prem}
+                'what_would_change_it': change, 'what_would_change_it_he': change_he, 'hurdle_used': hurdle, 'risk_premium_used': prem,
+                'allowed_overrides': sorted(GATE_ALLOWED[gate])}
 
     if g['understanding'] or g['evidence_gaps']:
         # We cannot conclude without understanding the business: an evidence gap, never a negative judgement
@@ -787,15 +1153,13 @@ def _verdict(A, g, er, view, index, pfh_fn):
         return out('avoid', 'impaired_equity' if g['impaired'] and not other else 'disqualifying_risk',
                    'Disqualifying: ' + '; '.join(items), he,
                    ['documented evidence that removes each disqualifying risk (re-run risk.assess)'], 'ראיות מתועדות שמבטלות את הסיכון הפוסל')
-    for key, gate, he in (('data_blocked', 'data_blocked', None), ('review_blocked', 'review_blocked', 'הבדיקה הבלתי תלויה חסמה מסקנת מחיר'),
-                          ('valuation_unverified', 'valuation_unverified', 'בדיקת האדום מצאה כשל קריטי בחישוב השווי')):
-        if g[key]:
-            if key == 'data_blocked':
-                fields = [FIELD_HE.get(f.split(':')[0].replace('critical field ', ''), '') for f in g[key]]
-                he = 'נתונים קריטיים חסרים או סותרים' + (f" ({', '.join(x for x in fields if x)})" if any(fields) else '')
-            return out('insufficient_evidence', gate, 'Insufficient evidence: ' + '; '.join(g[key]), he,
-                       ['resolve: ' + x for x in g[key]], 'השלמת הנתונים או ההבנה החסרים והרצה מחדש')
+    if g['data_blocked']:
+        fields = [FIELD_HE.get(f.split(':')[0].replace('critical field ', ''), '') for f in g['data_blocked']]
+        he = 'נתונים קריטיים חסרים או סותרים' + (f" ({', '.join(x for x in fields if x)})" if any(fields) else '')
+        return out('insufficient_evidence', 'data_blocked', 'Insufficient evidence: ' + '; '.join(g['data_blocked']), he,
+                   ['resolve: ' + x for x in g['data_blocked']], 'השלמת הנתונים החסרים או הסותרים והרצה מחדש')
     if g['no_valuation']:
+        # Checked before the review gate: without a valuation the review cannot pass, and the missing valuation is the cause.
         if pos:
             return out('interesting_not_yet_valuable', 'no_valuation',
                        f"Business evidence is positive (quality {q}, trajectory {A['trajectory']['level']}) but "
@@ -810,6 +1174,14 @@ def _verdict(A, g, er, view, index, pfh_fn):
         return out('insufficient_evidence', 'no_valuation', 'No valuation and business quality not established: ' + '; '.join(g['no_valuation']),
                    'איכות העסק עוד לא הוכחה ואין הערכת שווי אמינה', ['evidence of business quality and an executable valuation'],
                    'ראיות לאיכות העסק והערכת שווי שאפשר להריץ')
+    if g['review_blocked']:
+        he = 'הבודק הבלתי תלוי חסם מסקנת מחיר' if g['reviewer_present'] else 'הבדיקה המכנית חסמה מסקנת מחיר'
+        return out('insufficient_evidence', 'review_blocked', 'Insufficient evidence: ' + '; '.join(g['review_blocked']), he,
+                   ['resolve: ' + x for x in g['review_blocked']], 'תיקון מה שהבדיקה מצאה והרצה מחדש')
+    if g['valuation_unverified']:
+        return out('insufficient_evidence', 'valuation_unverified', 'Insufficient evidence: ' + '; '.join(g['valuation_unverified']),
+                   'הבדיקה המכנית של חישוב השווי מצאה כשל קריטי, ולכן השווי אינו מאומת',
+                   ['resolve: ' + x for x in g['valuation_unverified']], 'תיקון הכשל בחישוב השווי והרצה מחדש')
     if g['funding']:
         if pos:
             return out('promising_funding_conditional', 'unfunded_plan', 'Business evidence positive but the plan needs external funding that is not secured: '
@@ -831,54 +1203,55 @@ def _verdict(A, g, er, view, index, pfh_fn):
     else:
         meets = A['price_attractiveness']['level'] in ('strong', 'adequate') if A['price_attractiveness']['level'] in POINTS else None
         irr_txt = 'n/a (no cash-flow IRR; discount to base value used)'
-    pfh_v = (pfh_fn(hurdle) or {}).get('value')
-    price_change = ([f'price at or below {pfh_v:,.2f} (base IRR = hurdle {_pct(hurdle)})'] if pfh_v else []) + \
+    pfh_v = ((rates.pfh(hurdle) if rates is not None else None) or {}).get('value')
+    price_change = ([f'price at or below {pfh_v:,.2f} (value at your required return {_pct(hurdle)}; base IRR = required return)'] if pfh_v else []) + \
                    ['new evidence that raises the base case (see what_must_be_true)']
-    price_change_he = (f'מחיר של כ־{_fmt_price(pfh_v)} ומטה (שבו התשואה בתרחיש הבסיס שווה לסף)' if pfh_v else 'מחיר נמוך יותר או ראיות לתרחיש בסיס טוב יותר')
+    price_change_he = (f'מחיר של כ־{_fmt_price(pfh_v)} ומטה (השווי בתשואה הנדרשת)' if pfh_v else 'מחיר נמוך יותר או ראיות לתרחיש בסיס טוב יותר')
     idx, irr_he, hur_he = index['value'], _he_pct(irr, hurdle) if irr is not None else irr_txt, _he_pct(hurdle, irr)
+    req_txt = f'required return {_pct(hurdle)} (index {_pct(idx)} + {prem * 100:.1f}pp premium)'
+    req_he = f'התשואה הנדרשת, כ־{hur_he} (מדד רחב כ־{_he_pct(idx)} ועוד פרמיית סיכון של כ־{_he_pct(prem)})'
     if meets is None:
-        return out('insufficient_evidence', None, 'Price return could not be determined (IRR not solvable and no usable base value)',
+        return out('insufficient_evidence', 'price_undetermined', 'Price return could not be determined (IRR not solvable and no usable base value)',
                    'אי אפשר היה לחשב את התשואה הצפויה במחיר הנוכחי', ['an executable base case with a solvable IRR'], 'תרחיש בסיס שאפשר לחשב')
     if q in ('strong', 'adequate'):
         loss, tol = view.get('loss_to_bear'), BEAR_LOSS_TOLERANCE[q]
         if meets and (loss is None or loss <= tol):
-            return out('attractive_at_price', None,
-                       f'{q} business; base IRR {irr_txt} >= hurdle {_pct(hurdle)} (index {_pct(idx)} + {prem * 100:.0f}pp risk premium); '
-                       f"bear-case loss {_pct(loss, 0)} within the {tol:.0%} tolerance for {q} quality",
-                       f'עסק באיכות {LEVEL_HE[q]} שהתשואה השנתית המשתמעת ממנו בתרחיש הבסיס, כ־{irr_he}, עוברת את הסף הנדרש של כ־{hur_he} (מדד רחב כ־{_he_pct(idx)} ועוד פרמיית סיכון)',
-                       [f'price above {pfh_v:,.2f} (base IRR would fall below the hurdle)' if pfh_v else 'a higher price',
+            return out('attractive_at_price', 'price_test_passed',
+                       f"{q} business; base IRR {irr_txt} >= {req_txt}; bear-case loss {_pct(loss, 0)} within the {tol:.0%} tolerance for {q} quality",
+                       f'עסק באיכות {LEVEL_HE[q]} שהתשואה השנתית המשתמעת ממנו בתרחיש הבסיס, כ־{irr_he}, עוברת את {req_he}',
+                       [f'price above {pfh_v:,.2f} (base IRR would fall below the required return)' if pfh_v else 'a higher price',
                         'evidence that falsifies a base-case assumption (forecast falsifiers)', f'bear-case loss beyond {tol:.0%}'],
                        f'מחיר גבוה מכ־{_fmt_price(pfh_v)} או ראיה שמפריכה את הנחות תרחיש הבסיס' if pfh_v else 'ראיה שמפריכה את הנחות תרחיש הבסיס')
         if meets:
             safe = view['bear'] / (1 - tol) if view.get('bear') else None
-            return out('quality_but_expensive', None,
-                       f'{q} business and base IRR {irr_txt} clears the hurdle {_pct(hurdle)}, but the bear-case loss {_pct(loss, 0)} '
+            return out('quality_but_expensive', 'bear_loss_beyond_tolerance',
+                       f'{q} business and base IRR {irr_txt} clears the {req_txt}, but the bear-case loss {_pct(loss, 0)} '
                        f'exceeds the {tol:.0%} tolerance for {q} quality: not enough margin of safety',
-                       f'העסק באיכות {LEVEL_HE[q]} והתשואה בתרחיש הבסיס עוברת את הסף, אבל בתרחיש השמרני השווי נמוך בכ־{_he_pct(loss)} מהמחיר, יותר ממרווח הביטחון המתאים',
+                       f'העסק באיכות {LEVEL_HE[q]} והתשואה בתרחיש הבסיס עוברת את התשואה הנדרשת, אבל בתרחיש השמרני השווי נמוך בכ־{_he_pct(loss)} מהמחיר, יותר ממרווח הביטחון המתאים',
                        ([f'price at or below {safe:,.2f} (bear loss within tolerance)'] if safe else []) + ['a better-supported bear case'],
                        f'מחיר של כ־{_fmt_price(safe)} ומטה' if safe else 'תרחיש שמרני טוב יותר')
         below_index = irr is not None and irr < idx
-        return out('quality_but_expensive', None,
-                   f'{q} business, but base IRR {irr_txt} < hurdle {_pct(hurdle)} (index {_pct(idx)} + {prem * 100:.0f}pp)'
-                   + (' and below the index assumption itself' if below_index else ''),
-                   f'העסק באיכות {LEVEL_HE[q]}, אבל במחיר הנוכחי התשואה השנתית המשתמעת בתרחיש הבסיס היא כ־{irr_he}, מתחת לסף של כ־{hur_he}'
-                   + (f' ואף מתחת לתשואה המשוערת של מדד רחב (כ־{_he_pct(idx)})' if below_index else ''),
+        return out('quality_but_expensive', 'below_hurdle',
+                   f'{q} business, but base IRR {irr_txt} < {req_txt}' + (' and below the index assumption itself' if below_index else ''),
+                   f'העסק באיכות {LEVEL_HE[q]}, אבל במחיר הנוכחי התשואה השנתית המשתמעת בתרחיש הבסיס היא כ־{irr_he}, מתחת ל{req_he[1:]}'
+                   + (' ואף מתחת למדד עצמו' if below_index else ''),
                    price_change, price_change_he)
     if q == 'unknown' and meets:
         if 'strong' in (A['trajectory']['level'], A['growth_quality']['level']):
-            return out('interesting_not_yet_valuable', None,
-                       f'Model base IRR {irr_txt} clears the hurdle, but business quality is not yet demonstrated; the price edge rests on unproven economics',
-                       'המודל מראה תשואה שעוברת את הסף, אבל איכות העסק עוד לא הוכחה ולכן השווי עדיין לא אמין',
-                       ['evidence of business quality (unit economics, returns on capital)'], 'ראיות לאיכות העסק, כמו כלכלת יחידה ותשואה על ההון')
-        return out('insufficient_evidence', None, f'Model base IRR {irr_txt} clears the hurdle but business quality is unknown',
+            return out('interesting_not_yet_valuable', 'quality_unproven',
+                       f'Model base IRR {irr_txt} clears the {req_txt}, but business quality is not yet demonstrated; the price edge rests on unproven economics',
+                       'המודל מראה תשואה שעוברת את התשואה הנדרשת, אבל איכות העסק עוד לא הוכחה ולכן השווי עדיין לא אמין',
+                       ['evidence of business quality (unit economics, returns on capital) through a business_quality override with evidence'],
+                       'ראיות לאיכות העסק, כמו כלכלת יחידה ותשואה על ההון')
+        return out('insufficient_evidence', 'quality_unknown', f'Model base IRR {irr_txt} clears the {req_txt} but business quality is unknown',
                    'המודל מראה תשואה סבירה, אבל אין מספיק ראיות לאיכות העסק', ['evidence of business quality'], 'ראיות לאיכות העסק')
     if q == 'weak' and meets:
-        return out('index_preferable', None, f'Base IRR {irr_txt} clears the hurdle on the model, but business quality is weak: a low price alone is not an opportunity',
+        return out('index_preferable', 'weak_quality', f'Base IRR {irr_txt} clears the {req_txt} on the model, but business quality is weak: a low price alone is not an opportunity',
                    'המחיר נראה נמוך לפי המודל, אבל איכות העסק חלשה, ומחיר נמוך לבדו אינו הזדמנות',
                    ['evidence that the weakness is temporary (returns on capital recovering above the ~8% cost of capital)'],
                    'ראיות שהחולשה זמנית, למשל התאוששות בתשואה על ההון')
-    return out('index_preferable', None, f'No demonstrated quality edge ({q}) and base IRR {irr_txt} is not above index + risk premium ({_pct(hurdle)})',
-               f'אין יתרון איכות מוכח, והתשואה המשתמעת (כ־{irr_he}) אינה עוברת את תשואת המדד בתוספת פרמיית סיכון (כ־{hur_he})',
+    return out('index_preferable', 'no_quality_edge', f'No demonstrated quality edge ({q}) and base IRR {irr_txt} is not above the {req_txt}',
+               f'אין יתרון איכות מוכח, והתשואה המשתמעת (כ־{irr_he}) אינה עוברת את {req_he}',
                price_change + ['evidence of business quality'], price_change_he)
 
 
@@ -888,9 +1261,83 @@ def _fmt_price(v):
     return f'{v:,.0f}' if abs(v) >= 100 else f'{v:,.1f}' if abs(v) >= 10 else f'{v:,.2f}'
 
 
+def _margin(A, g, er, view, index, rates, req, verdict):
+    """Re-run the verdict at the lowest and highest required return of the marginal band. 'marginal' when the code
+    changes inside the band (the code itself is kept); 'clear' when it does not; None for routes without a price test."""
+    if verdict.get('gate') not in PRICE_ROUTES:
+        return None
+    band = er.get('band') or {}
+    lo, hi = band.get('hurdle_low'), band.get('hurdle_high')
+    if lo is None or hi is None:
+        return None
+    flips = []
+    for h in (lo, hi):
+        v = _verdict(A, g, er, view, index, rates, {**req, 'hurdle': h})
+        if v['code'] != verdict['code']:
+            flips.append({'hurdle': h, 'code': v['code']})
+    price = view.get('price')
+    pl, ph = band.get('price_low'), band.get('price_high')
+    return {'status': 'marginal' if flips else 'clear', 'flips': flips, 'hurdle_range': [lo, hi], 'value_range': [pl, ph],
+            'price_inside_value_range': (pl <= price <= ph) if None not in (pl, ph, price) else None,
+            'rule': band.get('rule')}
+
+
 # ---------------------------------------------------------------- confidence
 
-def _confidence(g, A, view, rk, card, val, qa):
+def _names(xs, he=None, n=3):
+    xs = [(he or {}).get(x, x) for x in xs]
+    if len(xs) <= n + 1:
+        return ', '.join(xs[:-1]) + (' ו' if len(xs) > 1 else '') + xs[-1] if xs else ''
+    return ', '.join(xs[:n]) + f' ועוד {len(xs) - n}'
+
+
+def _data_reason(qa, du):
+    """One data reason naming the actual gaps (missing / single-source / stale fields, opening balance source)."""
+    fields = (qa or {}).get('fields') or {}
+    groups = {}
+    for f in (qa or {}).get('limited') or []:
+        groups.setdefault((fields.get(f) or {}).get('status') or 'limited', []).append(f)
+    access = (du.get('source_access') or {}).get('value')
+    en, he = [], []
+    for st, label in (('missing', 'missing'), ('conflict', 'conflicting'), ('single_source', 'single-source'), ('stale', 'stale'),
+                      ('limited', 'limited')):
+        if groups.get(st):
+            en.append(f"{label} {', '.join(groups[st])}")
+    if groups.get('missing'):
+        he.append('חסרים ' + _names(groups['missing'], FIELD_HE, 2))
+    if groups.get('conflict'):
+        he.append('יש סתירה בנתונים על ' + _names(groups['conflict'], FIELD_HE, 2))
+    rest = sum(len(groups.get(k) or []) for k in ('single_source', 'stale', 'limited'))
+    if rest:
+        only = (groups.get('single_source') or []) + (groups.get('stale') or []) + (groups.get('limited') or [])
+        he.append((_names(only, FIELD_HE, 2) if rest <= 2 else f'{rest} נתונים') + ' ישנים או ממקור יחיד')
+    if access in ('secondary_access', 'no_primary_source'):
+        en.append('opening balance not read from the primary filing')
+        he.append('המאזן לא נקרא מהדוח עצמו')
+    if not en:
+        return None
+    return 'data gaps: ' + '; '.join(en), 'פערי נתונים: ' + '; '.join(he)
+
+
+def _understanding_reason(card, rk):
+    """One understanding reason: open questions on the model card and high-relevance dimensions not yet assessed."""
+    open_q = [q for q in (card or {}).get('understanding') or [] if q.get('status') == 'open']
+    gaps = ((rk or {}).get('error_size') or {}).get('process_gaps') or []
+    dims = [i for gp in gaps if gp.get('code') == 'dimensions_unassessed' for i in gp.get('ids') or []]
+    dims = sorted({str(i).split('.', 1)[-1] for i in dims}, key=lambda d: (PRIORITY_DIMS.index(d) if d in PRIORITY_DIMS else 9, d))
+    partial = _card(card, 'completeness', 'status') == 'partial'
+    if not (partial or dims):
+        return None
+    en = (['business understanding partial: ' + (f'{len(open_q)} open questions' if open_q else 'part asserted, not evidenced')] if partial else []) \
+        + (['high-relevance dimensions unassessed: ' + ', '.join(dims)] if dims else [])
+    he = (['חלק מההבנה העסקית עוד פתוח' + (f' ({len(open_q)} שאלות)' if open_q else '')] if partial else []) \
+        + (['עוד לא נבדקו לעומק: ' + _names(dims, DIM_HE)] if dims else [])
+    return '; '.join(en), '; '.join(he)
+
+
+def _confidence(g, A, view, rk, card, val, qa, margin=None):
+    """Each cause counts once: data gaps once (dataqa + opening-balance source), understanding once (model card + unassessed
+    dimensions from risk.process_gaps), valuation error once (risk.error_size; terminal share only when it is absent)."""
     hard, soft = [], []
     if g['draft'] and view['is_demo']:
         hard.append(('demo valuation inputs (synthetic)', 'זו דוגמה מומצאת, לא חברה אמיתית'))
@@ -900,60 +1347,100 @@ def _confidence(g, A, view, rk, card, val, qa):
         hard.append(('business understanding insufficient' if g['understanding'] else 'material evidence gap',
                      'שאלות מהותיות על העסק עדיין פתוחות' if g['understanding'] else 'חסרות ראיות מהותיות'))
     if g['valuation_unverified']:
-        hard.append(('valuation unverified by the red team', 'בדיקת האדום לא אישרה את חישוב השווי'))
+        hard.append(('valuation unverified by the mechanical red-team check', 'הבדיקה המכנית לא אישרה את חישוב השווי'))
+    if (margin or {}).get('status') == 'marginal':
+        lo, hi = margin['hurdle_range']
+        soft.append((f'marginal call: a required return between {_pct(lo)} and {_pct(hi)} changes the verdict',
+                     f'ההכרעה גבולית: תשואה נדרשת בין כ־{_he_pct(lo, hi)} לכ־{_he_pct(hi, lo)} משנה אותה'))
     if g['no_valuation']:
         soft.append(('no reliable valuation', 'אין עדיין הערכת שווי אמינה'))
     if [d for d in g['draft'] if 'demo' not in d]:
         soft.append(('not independently reviewed (draft)', 'הניתוח עוד לא עבר בדיקה בלתי תלויה'))
     if g['red_flags']:
         soft.append(('forensic red flag: ' + ', '.join(g['red_flags']), 'בדיקות הדוחות הדליקו דגל אדום שעוד לא הוסבר'))
+    if g['withhold_price']:
+        soft.append(('governance red flag: ' + ', '.join(x['id'] for x in g['withhold_price']),
+                     'יש ראיה ל' + (next((x['description_he'] for x in g['withhold_price'] if x.get('description_he')), None) or 'דגל אדום בממשל התאגידי')))
     du = {x['signal']: x for x in A['data_uncertainty']['signals']}
-    if (du.get('dataqa') or {}).get('value') == 'limited':
-        soft.append(('critical fields single-source or stale: ' + ', '.join((qa or {}).get('limited') or []),
-                     'חלק מהנתונים הקריטיים מגיעים ממקור יחיד או שהם ישנים'))
-    if (du.get('source_access') or {}).get('value') in ('secondary_access', 'no_primary_source'):
-        soft.append(('opening balance not read from the primary filing', 'נתוני המאזן לא נקראו ישירות מהדוח עצמו'))
-    if A['data_uncertainty'].get('override'):
-        soft = [x for x in soft if 'single-source' not in x[0] and 'primary filing' not in x[0]]
-    if ((rk or {}).get('error_size') or {}).get('level') == 'high':
-        soft.append(('large possible valuation error', 'טווח הטעות האפשרי בהערכה גדול'))
-    if (view.get('terminal_share') or 0) > .8:
+    dov = A['data_uncertainty'].get('override') or {}
+    data = _data_reason(qa, du) if (du.get('dataqa') or {}).get('value') == 'limited' or \
+        (du.get('source_access') or {}).get('value') in ('secondary_access', 'no_primary_source') else None
+    if data and dov.get('direction') != 'upgrade' and not g['data_blocked']:   # blocked data is already a hard reason; only an
+        soft.append(data)                                                        # evidence-backed upgrade removes it, never a downgrade
+    err = (rk or {}).get('error_size') or {}
+    if err.get('level') == 'high':
+        soft.append(('large possible valuation error: ' + '; '.join(map(str, err.get('reasons') or [])), 'טווח הטעות האפשרי בהערכת השווי גדול'))
+    elif not err and (view.get('terminal_share') or 0) > .8:
         soft.append(('more than 80% of base value from the terminal', 'רוב השווי מגיע משנים רחוקות'))
-    band = ((val or {}).get('diagnostics') or {}).get('discount_rate_band') or {}
-    if band.get('quote_inside_band'):
-        soft.append(('one point of required return flips cheap/expensive', 'שינוי של נקודת אחוז אחת בתשואה הנדרשת הופך את המסקנה'))
     if any('forecast is more than 10pp above' in (s.get('note') or '') for s in A['trajectory']['signals']):
         soft.append(('base forecast growth far above own history', 'התחזית מניחה צמיחה מהירה בהרבה מההיסטוריה'))
     if any('7 calendar days' in w for w in (((val or {}).get('result') or {}).get('warnings') or [])):
         soft.append(('valuation quote older than a week', 'המחיר שהושווה ישן מיותר משבוע'))
-    if (_card(card, 'completeness', 'status') == 'partial'):
-        soft.append(('part of the business understanding is asserted, not evidenced', 'חלק מההבנה העסקית נשען על טענות ולא על ראיות'))
+    und = None if g['understanding'] or g['evidence_gaps'] else _understanding_reason(card, rk)   # insufficient understanding is already hard
+    if und:
+        soft.append(und)
     reasons = hard + soft
     level = 'low' if hard or len(soft) >= 3 else 'medium' if soft else 'high'
     return {'level': level, 'level_he': {'low': 'נמוכה', 'medium': 'בינונית', 'high': 'גבוהה'}[level],
             'reasons': [r[0] for r in reasons], 'reasons_he': [r[1] for r in reasons],
-            'rule': 'low if any hard reason (demo, blocked data, insufficient understanding, unverified valuation) or 3+ other reasons; medium with 1-2; high with none'}
+            'rule': 'low if any hard reason (demo, blocked data, insufficient understanding, unverified valuation) or 3+ other reasons; '
+                    'medium with 1-2; high with none. Each cause counts once.'}
 
 
 # ---------------------------------------------------------------- overrides
 
-def _known_ids(parts):
+def _evidence_index(parts):
+    """Every id an override may cite, with the kind of thing it is. FactBook sources and qualitative items first."""
     fb, card, fc, val, rk = (parts.get(k) for k in ('fb', 'card', 'fc', 'val', 'rk'))
-    ids = set((fb or {}).get('sources') or {}) | {q.get('id') for q in (fb or {}).get('qualitative') or []}
-    for q in (card or {}).get('understanding') or []:
-        ids |= set(q.get('evidence_ids') or []) | {q.get('id')}
-    for d in ((card or {}).get('dimensions') or {}).values():
-        ids |= set((d or {}).get('evidence_ids') or [])
-    for a in (fc or {}).get('assumptions') or []:
-        ids |= {a.get('id')} | set(a.get('source_ids') or [])
-    for r in (rk or {}).get('register') or []:
-        ids |= {r.get('id')} | set(r.get('evidence_ids') or [])
+    idx = {}
+    for sid, s in ((fb or {}).get('sources') or {}).items():
+        idx[sid] = {'type': 'source', 'kind': (s or {}).get('kind'), 'provider': (s or {}).get('provider')}
+    for q in (fb or {}).get('qualitative') or []:
+        if q.get('id'):
+            idx[q['id']] = {'type': 'qualitative', 'kind': q.get('kind'), 'source_ids': list(q.get('source_ids') or [])}
     case = (val or {}).get('case') or {}
-    ids |= {s.get('id') for s in case.get('sources') or []} | {a.get('id') for a in case.get('assumptions') or []}
-    return {i for i in ids if isinstance(i, str)}
+    for s in case.get('sources') or []:
+        if s.get('id'):
+            idx.setdefault(s['id'], {'type': 'case_source', 'kind': s.get('kind')})
+    for q in (card or {}).get('understanding') or []:
+        if q.get('id'):
+            idx.setdefault(q['id'], {'type': 'question'})
+        for e in q.get('evidence_ids') or []:
+            idx.setdefault(e, {'type': 'unresolved'})
+    for d in ((card or {}).get('dimensions') or {}).values():
+        for e in (d or {}).get('evidence_ids') or []:
+            idx.setdefault(e, {'type': 'unresolved'})
+    for a in list((fc or {}).get('assumptions') or []) + list(case.get('assumptions') or []):
+        if a.get('id'):
+            idx.setdefault(a['id'], {'type': 'assumption', 'kind': a.get('kind')})
+        for e in a.get('source_ids') or []:
+            idx.setdefault(e, {'type': 'unresolved'})
+    for r in (rk or {}).get('register') or []:
+        if r.get('id'):
+            idx.setdefault(r['id'], {'type': 'risk'})
+        for e in r.get('evidence_ids') or []:
+            idx.setdefault(e, {'type': 'unresolved'})
+    return {k: v for k, v in idx.items() if isinstance(k, str)}
 
 
-def _check_override(o, known, seen):
+def _evidence_class(eid, idx):
+    e = idx.get(eid) or {}
+    t, kind = e.get('type'), e.get('kind')
+    if t == 'source':
+        if kind in FILING_KINDS or (e.get('provider') in ('sec', 'issuer') and kind not in ('market_feed', 'consensus', 'synthetic')):
+            return 'filing'
+        return {'market_feed': 'market_feed', 'consensus': 'consensus', 'vendor_normalized': 'vendor', 'synthetic': 'synthetic'}.get(kind, kind or 'other')
+    if t == 'case_source':
+        return 'filing' if kind in FILING_KINDS else kind or 'other'
+    if t == 'qualitative':
+        if kind not in ('reported', 'guidance'):
+            return kind or 'other'                        # opinion / assumption is not evidence for an override
+        src = [_evidence_class(s, idx) for s in e.get('source_ids') or []]
+        return 'vendor' if src and all(c in ('market_feed', 'consensus', 'vendor') for c in src) else 'qualitative'
+    return t or 'unknown'
+
+
+def _check_override(o, idx, seen):
     if not isinstance(o, dict):
         return 'override must be an object'
     t, v, why, ev = o.get('target'), o.get('value'), o.get('justification'), o.get('evidence_ids')
@@ -971,17 +1458,28 @@ def _check_override(o, known, seen):
         return 'documented justification required (at least 5 words)'
     if not isinstance(ev, list) or not ev or not all(isinstance(x, str) and x for x in ev):
         return 'evidence_ids required (nonempty list of ids)'
-    unknown = [x for x in ev if x not in known]
+    unknown = [x for x in ev if x not in idx]
     if unknown:
         return 'unknown evidence ids (not in FactBook sources/qualitative, model card, forecast, risk register or valuation case): ' + ', '.join(unknown)
+    ok = EVIDENCE_BY_TARGET.get(t, EVIDENCE_ACCEPTED)
+    bad = [(x, _evidence_class(x, idx)) for x in ev if _evidence_class(x, idx) not in ok]
+    if bad:
+        need = 'filing or issuer documents' if ok == {'filing'} else 'filing or issuer documents, or reported/guidance qualitative statements'
+        return (f'evidence for {t} must be {need}; not accepted: ' + ', '.join(f'{x} ({c})' for x, c in bad)
+                + ' (a price feed, vendor share count, consensus, opinion, assumption, question, risk entry or synthetic data is not evidence here)')
     return None
+
+
+def _direction(old, new):
+    r = {'strong': 2, 'adequate': 1, 'weak': 0, 'unknown': 0}
+    return 'upgrade' if r[new] > r[old] else 'downgrade' if r[new] < r[old] else 'same'
 
 
 # ---------------------------------------------------------------- entry point
 
 def decide(parts, inputs=None):
     """parts = {'fb','qa','an','card','fc','val','rk','rv'} (any may be None when a stage failed).
-    inputs = {'index': {value, basis, source}?, 'overrides': [{target, value, justification, evidence_ids}]?}."""
+    inputs = {'index': {value, basis, source, low?, high?}?, 'overrides': [{target, value, justification, evidence_ids}]?}."""
     inputs = inputs or {}
     if not isinstance(inputs, dict) or set(inputs) - {'index', 'overrides'}:
         raise ValueError('decision inputs accept index and overrides')
@@ -989,8 +1487,8 @@ def decide(parts, inputs=None):
     if not isinstance(overrides, list):
         raise ValueError('inputs.overrides must be a list')
     parts = parts or {}
-    fb, qa, an, card, val, rk = (parts.get(k) for k in ('fb', 'qa', 'an', 'card', 'val', 'rk'))
-    index = _index(inputs)
+    fb, qa, an, card, fc, val, rk = (parts.get(k) for k in ('fb', 'qa', 'an', 'card', 'fc', 'val', 'rk'))
+    index = _index(inputs, fc)
     view = _view(fb, val)
     case, res = _case_and_result(val)
     qcase = _quote_case(case, view['price']) if res else None
@@ -998,61 +1496,44 @@ def decide(parts, inputs=None):
     irrs = {s: (_irr(qcase, s, diag) if qcase is not None and view.get('base') is not None else
                 {'value': None, 'status': 'not_computable', 'bound': None, 'reason': 'no executed base value'})
             for s in ('bear', 'base', 'bull')}
+    rates = _Rates(qcase, view['price']) if qcase is not None and view.get('base') is not None else None
     fview = _forecast_view(an, res, view)
-    fs = financial_strength(an, card)
+    fs = financial_strength(an, card, fc)
+    pricing = _risk_pricing(rk, fc, view, rates)
     A = {'business_quality': business_quality(an, card, fs['level']), 'trajectory': trajectory(an, card, fview),
          'growth_quality': growth_quality(an), 'financial_strength': fs,
          'management_capital_allocation': management_capital_allocation(an, card),
-         'data_uncertainty': data_uncertainty(qa, val, fb), 'risk_and_error': risk_and_error(rk, an, view)}
-    hurdle, prem = _hurdle(index, A['risk_and_error']['level'])
-    base_irr = irrs['base']['value']
-    er = {'base_irr': base_irr, 'bear_irr': irrs['bear']['value'], 'bull_irr': irrs['bull']['value'],
-          'base_irr_bound': irrs['base']['bound'], 'irr_status': {k: {kk: vv for kk, vv in v.items() if kk != 'value'} for k, v in irrs.items()},
-          'price': view['price'],
-          'decomposition': _decomposition(qcase, res, view, an) if qcase is not None else {'status': 'unavailable', 'reason': 'no executed valuation'},
-          'index_expected_return': index, 'risk_premium': prem, 'hurdle': hurdle,
-          'hurdle_rule': 'index expected return + risk premium by risk_and_error level ' + json.dumps(RISK_PREMIUM),
-          'price_for_hurdle': price_for_hurdle(qcase, hurdle) if qcase is not None and view.get('base') is not None else None,
-          'owner_aspiration': OWNER_ASPIRATION,
-          'meets_owner_aspiration_14pct': None if base_irr is None else base_irr >= OWNER_ASPIRATION,
-          'semantics': ('IRR = cost of equity at which the scenario value equals today\'s price, cash flows held fixed '
-                        '(valuation_tools.implied_cost_of_equity); a conditional return, not a forecast. The 14% aspiration is a comparison only.')}
-    pfh = (er['price_for_hurdle'] or {}).get('value')
-    if pfh is not None and view['price']:
-        er['price_for_hurdle']['change_from_price'] = pfh / view['price'] - 1
-    A['price_attractiveness'] = price_attractiveness(er, view, (val or {}).get('what_must_be_true'), an)
-    A = {k: A[k] for k in ASSESSMENTS}
+         'data_uncertainty': data_uncertainty(qa, val, fb), 'risk_and_error': risk_and_error(rk, an, view, pricing)}
     g = _gates(parts, view, an)
-    cache = {round(hurdle, 12): er['price_for_hurdle']}
-
-    def pfh_fn(h):
-        if round(h, 12) not in cache:
-            r = price_for_hurdle(qcase, h) if qcase is not None and view.get('base') is not None else None
-            if r and r.get('value') is not None and view['price']:
-                r['change_from_price'] = r['value'] / view['price'] - 1
-            cache[round(h, 12)] = r
-        return cache[round(h, 12)]
-
-    mech = _verdict(A, g, er, view, index, pfh_fn)
+    err_level = ((rk or {}).get('error_size') or {}).get('level')
+    wmbt = (val or {}).get('what_must_be_true')
+    req = _required_return(A, index, card, g, rk)
+    er = _expected(irrs, view, index, req, rates, qcase, res, an, err_level)
+    A['price_attractiveness'] = price_attractiveness(er, view, wmbt, an)
+    A = {k: A[k] for k in ASSESSMENTS}
+    mech = _verdict(A, g, er, view, index, rates, req)
+    mech['margin_detail'] = _margin(A, g, er, view, index, rates, req, mech)
     # Overrides: assessments first (re-evaluated through the same gates), then at most one verdict override.
-    known, seen, records, pending = _known_ids(parts), set(), [], None
+    idx, seen, records, pending = _evidence_index(parts), set(), [], None
     eff_A, red_release = deepcopy(A), None
     for o in overrides:
-        err = _check_override(o, known, seen)
+        err = _check_override(o, idx, seen)
         rec = {k: o.get(k) for k in ('target', 'value', 'justification', 'evidence_ids')} if isinstance(o, dict) else {'target': None}
         if err:
             records.append({**rec, 'status': 'rejected', 'reason': err})
             continue
         seen.add(o['target'])
-        if o['target'] == 'price_attractiveness' and base_irr is not None:
+        if o['target'] == 'price_attractiveness' and er['base_irr'] is not None:
             records.append({**rec, 'status': 'rejected', 'reason': 'price attractiveness is arithmetic on the executed valuation; '
                             'change the forecast inputs (forecast.build overrides) instead'})
             continue
         if o['target'] in ASSESSMENTS:
             a = eff_A[o['target']]
+            direction = _direction(a['level'], o['value'])
             a.update(mechanical_level=a['level'], level=o['value'],
-                     override={'value': o['value'], 'justification': o['justification'], 'evidence_ids': o['evidence_ids']})
-            records.append({**rec, 'status': 'accepted', 'reason': 'assessment level replaced; mechanical level kept', 'effect': OVERRIDE_EFFECT[o['target']]})
+                     override={'value': o['value'], 'justification': o['justification'], 'evidence_ids': o['evidence_ids'], 'direction': direction})
+            records.append({**rec, 'status': 'accepted', 'direction': direction, 'reason': 'assessment level replaced; mechanical level kept',
+                            'effect': OVERRIDE_EFFECT[o['target']]})
         elif o['target'] == 'red_flags':
             red_release = o if g['red_flags'] and set(g['red_flags']) <= set(o['value']) else None
             records.append({**rec, 'status': 'accepted' if red_release else 'rejected',
@@ -1060,39 +1541,62 @@ def decide(parts, inputs=None):
                             ('must name every raised forensic flag: ' + ', '.join(g['red_flags'])) if g['red_flags'] else 'no forensic flag raised'})
         else:
             pending = (o, rec)
-    eff = _verdict(eff_A, g, er, view, index, pfh_fn) if any(r['status'] == 'accepted' and r['target'] in ASSESSMENTS for r in records) else deepcopy(mech)
+    eff_er, eff_req = er, req
+    if any(r['status'] == 'accepted' and r['target'] in ASSESSMENTS for r in records):
+        # recompute the required return, expected-return section and price assessment from the effective assessments,
+        # so the report never shows two hurdles without saying which one is effective
+        eff_req = _required_return(eff_A, index, card, g, rk)
+        eff_er = _expected(irrs, view, index, eff_req, rates, qcase, res, an, err_level)
+        if not eff_A['price_attractiveness'].get('override'):
+            eff_A['price_attractiveness'] = price_attractiveness(eff_er, view, wmbt, an)
+        eff = _verdict(eff_A, g, eff_er, view, index, rates, eff_req)
+        eff['margin_detail'] = _margin(eff_A, g, eff_er, view, index, rates, eff_req, eff)
+    else:
+        eff = deepcopy(mech)
+    if eff_req['hurdle'] != req['hurdle']:
+        eff_er['hurdle_basis'] = 'effective: recomputed after accepted assessment overrides (the mechanical hurdle is kept under mechanical)'
+        eff_er['mechanical'] = {'hurdle': req['hurdle'], 'risk_premium': req['premium'], 'premium_components': req['components'],
+                                'price_for_hurdle': er['price_for_hurdle']}
+    else:
+        eff_er['hurdle_basis'] = 'mechanical (no accepted override changed it)'
     if pending:
         o, rec = pending
         gate = eff.get('gate')
-        if gate and o['value'] not in GATE_ALLOWED.get(gate, set()):
+        allowed = GATE_ALLOWED.get(gate, set())
+        if o['value'] not in allowed:
             records.append({**rec, 'status': 'rejected', 'reason': f"cannot lift the '{gate}' gate behind '{eff['code']}' to '{o['value']}' "
-                            f"(allowed: {', '.join(sorted(GATE_ALLOWED.get(gate, set())))}); resolve the gate's cause instead"})
+                            f"(allowed: {', '.join(sorted(allowed))}); resolve the gate's cause or override the assessment it rests on instead"})
         else:
             records.append({**rec, 'status': 'accepted', 'reason': 'analyst verdict replaces the mechanical verdict; both are stored'})
-            eff = {**eff, 'code': o['value'], 'label_he': VERDICTS[o['value']], 'overridden_from': eff['code'],
+            eff = {**eff, 'code': o['value'], 'label_he': VERDICTS[o['value']], 'overridden_from': eff['code'], 'margin_detail': None,
                    'reason': f"Analyst override ({o['justification']}); mechanical: {eff['reason']}",
+                   'reason_he': eff['reason_he'] if o['value'] == eff['code'] else 'הכרעת אנליסט מתועדת בראיות, שונה מהתוצאה המכנית',
                    'what_would_change_it': ['the evidence behind the override is contradicted: ' + ', '.join(o['evidence_ids'])] + eff['what_would_change_it']}
-    conf = _confidence(g, eff_A, view, rk, card, val, qa)
+    conf = _confidence(g, eff_A, view, rk, card, val, qa, eff.get('margin_detail'))
     withheld = list(g['draft'])
     if g['red_flags'] and not red_release:
         withheld.append('forensic red flag raised (' + ', '.join(g['red_flags']) + '); price call withheld until explained with evidence')
-    for v in (mech, eff):
+    for v, e in ((mech, er), (eff, eff_er)):
         v['confidence'] = conf['level']
         v['status'] = 'draft' if withheld else 'final'
         v['price_claim_withheld'] = bool(withheld)
         v['withheld_reasons'] = withheld
-        v['price_for_hurdle'] = pfh_fn(v['hurdle_used']) if v['code'] in ('attractive_at_price', 'quality_but_expensive', 'index_preferable') else None
+        v['margin'] = (v.get('margin_detail') or {}).get('status')
+        v['price_for_hurdle'] = e['price_for_hurdle'] if v['code'] in ('attractive_at_price', 'quality_but_expensive', 'index_preferable') else None
+        v['value_at_required_return'] = e['value_at_required_return']
     for k, a in eff_A.items():
         a['level_he'] = LEVEL_HE[a['level']]
     company = (fb or {}).get('company') or ({'ticker': case['ticker'], 'currency': case['currency']} if case else {})
-    out = {'decision_version': 1, 'as_of': (fb or {}).get('as_of') or (case or {}).get('as_of'),
+    out = {'decision_version': 2, 'as_of': (fb or {}).get('as_of') or (case or {}).get('as_of'),
            'company': {k: company.get(k) for k in ('ticker', 'name', 'currency')},
            'price': {k: view.get(k) for k in ('price', 'currency', 'price_as_of', 'price_source', 'price_kind')},
            'assessments': eff_A, 'mechanical_assessments': {k: a['level'] for k, a in A.items()},
-           'expected_return': er, 'verdict': eff, 'mechanical_verdict': mech, 'overrides': records, 'confidence': conf,
+           'expected_return': eff_er, 'verdict': eff, 'mechanical_verdict': mech, 'overrides': records, 'confidence': conf,
            'valuation_view': {k: v for k, v in view.items() if k not in ('price_source',)},
-           'gates': g, 'rules': {'verdict_precedence': VERDICT_RULES, 'risk_premium': RISK_PREMIUM,
-                                 'bear_loss_tolerance': BEAR_LOSS_TOLERANCE, 'gate_allowed_overrides': {k: sorted(v) for k, v in GATE_ALLOWED.items()}},
+           'risk_pricing': pricing,
+           'gates': g, 'rules': {'verdict_precedence': VERDICT_RULES, 'premium': PREMIUM, 'marginal_band': {'step': BAND_STEP, 'error_widening': ERROR_WIDENING},
+                                 'bear_loss_tolerance': BEAR_LOSS_TOLERANCE, 'gate_allowed_overrides': {k: sorted(v) for k, v in GATE_ALLOWED.items()},
+                                 'override_evidence': {'accepted': sorted(EVIDENCE_ACCEPTED), 'by_target': {k: sorted(v) for k, v in EVIDENCE_BY_TARGET.items()}}},
            'business_reason_he': _business_he(eff_A),
            'semantics': ('Four questions assessed separately and never averaged. Values are conditional estimates, not predicted prices; '
                          'no win rate is claimed. A research opinion, not an order or suitability assessment.')}
@@ -1101,7 +1605,8 @@ def decide(parts, inputs=None):
 
 
 SIGNAL_HE = {'roic': 'תשואה על ההון המושקע', 'operating_margin': 'שולי רווח תפעולי', 'gross_margin': 'שולי רווח גולמי',
-             'fcf_conversion': 'המרת רווח למזומן', 'competitive_position': 'עדויות ליתרון תחרותי'}
+             'fcf_conversion': 'המרת רווח למזומן', 'competitive_position': 'עדויות ליתרון תחרותי',
+             'roe_vs_cost_of_equity': 'תשואה על ההון העצמי'}
 
 
 def _business_he(A):
