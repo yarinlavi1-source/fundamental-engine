@@ -674,6 +674,93 @@ class RepairRegressionTests(unittest.TestCase):
         self.assertFalse(c['cyclical']['value'])
 
 
+def lender_fb(company, cor=False, **extra):
+    """SYNTHETIC lender: bank_fb's balance sheet (liabilities 90% of assets, revenue 4% of assets) with operating income reported."""
+    rev = [2.0e9, 2.1e9, 2.2e9, 2.3e9, 2.4e9]
+    cols = dict(revenue=rev, operating_income=[r * .32 for r in rev], net_income=[r * .25 for r in rev], cfo=[r * .35 for r in rev],
+                capex=[5e7] * 5, d_and_a=[4e7] * 5, cash=[3e9] * 5, equity=[6e9, 6.3e9, 6.6e9, 6.9e9, 7.2e9], total_assets=[6e10] * 5,
+                total_liabilities=[5.4e10] * 5, shares_outstanding=[1e8] * 5, **extra)
+    if cor:
+        cols['gross_profit'] = [r * .6 for r in rev]
+    return synth_fb(company, series_years(5, **cols))
+
+
+def utility_fb(cfo_margin=(.40, .40, .40, .40, .40), om=(.30, .30, .31, .31, .32)):
+    """SYNTHETIC regulated utility: profitable, CFO positive, capex 45% of revenue (above CFO), thin cash."""
+    rev = [3.6e9, 3.9e9, 4.2e9, 4.6e9, 5.0e9]
+    return synth_fb({'sector': 'Utilities', 'industry': 'Utilities - Regulated Electric'}, series_years(
+        5, revenue=rev, gross_profit=[r * .6 for r in rev], operating_income=[r * m for r, m in zip(rev, om)],
+        net_income=[r * .15 for r in rev], cfo=[r * m for r, m in zip(rev, cfo_margin)], capex=[r * .45 for r in rev],
+        d_and_a=[r * .18 for r in rev], cash=[3e8] * 5, equity=[8e9, 8.5e9, 9e9, 9.5e9, 1e10], long_term_debt=[1.2e10, 1.3e10, 1.4e10, 1.5e10, 1.6e10],
+        total_assets=[2.4e10, 2.6e10, 2.8e10, 3e10, 3.24e10], total_liabilities=[1.6e10, 1.75e10, 1.9e10, 2.05e10, 2.24e10],
+        shares_outstanding=[4e8] * 5))
+
+
+class RoutingRegressionTests(unittest.TestCase):
+    """Valuation-type verification (SYNTHETIC FactBooks). Each test failed on the code before this repair."""
+
+    def test_lender_balance_sheet_under_software_label_is_not_fcff(self):
+        fb = lender_fb({'sector': 'Technology', 'industry': 'Software - Infrastructure'})
+        c = card(fb)
+        bm, v = c['business_model'], c['valuation']
+        self.assertEqual(bm['primary'], 'financials')
+        self.assertIn('subscription_software', bm['secondary'])               # the label is kept, the balance sheet decides
+        self.assertTrue(bm['flags']['lender_shaped'])
+        self.assertTrue(any('lender' in r and 'Software - Infrastructure' in r for r in bm['reasons']))
+        self.assertAlmostEqual(bm['signature']['revenue_to_assets']['value'], 2.4e9 / 6e10)
+        self.assertEqual((v['method'], v['route'], v['archetype']), ('residual_income', 'residual_income', 'financials'))
+        self.assertIn('lender', v['why'])
+        rej = card(fb, {'method_override': {'method': 'fcff_annual_path', 'reason': 'analyst prefers DCF'}})['valuation']
+        self.assertEqual(rej['method'], 'residual_income')
+        self.assertIn('lender', rej['override_rejected']['why_rejected'])
+        # no book equity: not valued rather than forced into FCFF
+        noeq = lender_fb({'sector': 'Technology', 'industry': 'Software - Infrastructure'})
+        noeq['facts'] = [f for f in noeq['facts'] if f['metric'] != 'equity']
+        self.assertEqual(card(noeq)['valuation']['method'], 'not_reliably_valuable')
+        # an analyst business model with a reason still routes it as an operating business
+        ov = card(fb, {'business_model': {'primary': 'subscription_software',
+                                          'reason': 'liabilities are customer prepayments for multi-year licences (10-K note 4)'}})
+        self.assertEqual((ov['business_model']['primary'], ov['valuation']['method']), ('subscription_software', 'fcff_annual_path'))
+        self.assertNotIn('financials', ov['business_model']['secondary'])
+        self.assertEqual(ov['business_model']['computed']['primary'], 'financials')
+
+    def test_lending_data_marks_a_lender_even_with_a_cost_of_revenue_line(self):
+        label = {'sector': 'Technology', 'industry': 'Software - Application'}
+        self.assertNotEqual(card(lender_fb(label, cor=True))['valuation']['method'], 'residual_income')
+        c = card(lender_fb(label, cor=True, deposits=[5e10] * 5))
+        self.assertEqual((c['business_model']['primary'], c['valuation']['method']), ('financials', 'residual_income'))
+        # a fee-platform label explains client funds; lending data still decides
+        pay = {'sector': 'Financials', 'industry': 'Transaction & Payment Processing Services'}
+        self.assertEqual(card(lender_fb(pay))['business_model']['primary'], 'platform_marketplace')
+        self.assertEqual(card(lender_fb(pay, net_loans=[4e10] * 5))['valuation']['method'], 'residual_income')
+
+    def test_operating_asset_base_with_high_liabilities_is_not_a_lender(self):
+        rev = [5e10, 5.5e10, 5.8e10, 6.0e10, 6.2e10]                          # airline-like: no cost-of-revenue line, thin equity
+        fb = synth_fb({'sector': 'Industrials', 'industry': 'Passenger Airlines'}, series_years(
+            5, revenue=rev, operating_income=[r * .08 for r in rev], cfo=[r * .12 for r in rev], capex=[r * .09 for r in rev],
+            d_and_a=[r * .05 for r in rev], cash=[r * .15 for r in rev], equity=[r * .17 for r in rev], total_assets=[r * 1.3 for r in rev],
+            total_liabilities=[r * 1.13 for r in rev], shares_outstanding=[1e9] * 5))
+        c = card(fb)
+        self.assertFalse(c['business_model']['flags']['lender_shaped'])
+        self.assertEqual(c['business_model']['primary'], 'industrial')
+        self.assertIn(c['valuation']['method'], M.OPERATING_METHODS)
+        self.assertTrue(any('not a loan book' in r for r in c['business_model']['reasons']))
+
+    def test_profitable_capex_heavy_company_is_not_a_survival_case(self):
+        c = card(utility_fb())
+        self.assertEqual((c['capital_intensity']['value'], c['funding']['value']), ('high', 'needs_external'))
+        v = c['valuation']
+        self.assertEqual(v['method'], 'fcff_annual_path')
+        self.assertEqual(v['confidence'], 'normal')
+        self.assertEqual((v['funding_flag']['basis'], v['funding_flag']['capital_intensity']), ('capex_exceeds_cfo', 'high'))
+        self.assertTrue(any('capex' in x and 'not a survival case' in x for x in v['limitations']))
+        self.assertTrue(any('financing' in r for r in v['requirements']))
+        # one profitable cash year is not a record: still the survival model
+        c = card(utility_fb(cfo_margin=(.40, .40, .40, -.05, .40)))
+        self.assertEqual(c['valuation']['method'], 'scenario_survival_fcff')
+        self.assertNotIn('funding_flag', c['valuation'])
+
+
 @unittest.skipUnless(_analysis and _dataqa, 'analysis.py / dataqa.py not available yet')
 class IntegrationTests(unittest.TestCase):
     def test_adbe_with_real_analysis(self):

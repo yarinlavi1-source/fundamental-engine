@@ -1097,7 +1097,19 @@ def _cash(q, cs):
             g = cs['grade'](un + sti_l) if un + sti_l else 'missing'
             st = [g] + ([] if corr else ['single_source'] if stmt.get('cash') is not None else [])
             notes.append(f'statement values at {end}: {stmt}' if end else 'no statement cash: capital structure only')
-    if value is None:
+    neg = {k: parts[k] for k in ('cash', 'short_term_investments') if value is not None and (parts.get(k) or 0.) < 0}
+    if neg:
+        # cash at carrying value cannot be negative (an overdraft is a borrowing): a data error, never an opening balance
+        q.add('liquid_assets_nonnegative', 'fail', 'critical', f"negative {', '.join(f'{k} {_fmt(v)}' for k, v in neg.items())} at {as_of}: "
+              'impossible at carrying value (an overdraft is a borrowing); rejected as a data error', period=as_of,
+              fields=('cash_and_liquid_investments',), detail={**neg, 'basis': basis})
+        checks.append('liquid_assets_nonnegative')
+        fld = _field(q, 'cash_and_liquid_investments', 'conflict', None, ccy, as_of, facts, checks,
+                     notes + [f"negative {', '.join(neg)} reported ({_fmt(value)} in total): rejected, no usable cash figure"],
+                     basis=basis, rejected_value=value, components={'cash': parts.get('cash'), 'short_term_investments': parts.get('short_term_investments')},
+                     source_ids=src_ids)
+        value = None
+    elif value is None:
         fld = _field(q, 'cash_and_liquid_investments', 'missing', None, ccy, None, checks=checks,
                      notes=notes + ['no cash and cash-equivalents line usable at as_of'])
     else:
@@ -1134,6 +1146,13 @@ def _cash(q, cs):
                          basis='balance_sheet', assumed_zero=True)
     else:
         inv = _field(q, 'investments', 'missing', None, ccy, None, notes=['no balance sheet usable at as_of'])
+    if (inv['value'] or 0.) < 0:
+        q.add('liquid_assets_nonnegative', 'fail', 'critical', f"negative long-term investments {_fmt(inv['value'])} at {inv['as_of']}: "
+              'impossible at carrying value; rejected as a data error', period=inv['as_of'], fields=('investments',),
+              detail={'long_term_investments': inv['value'], 'basis': inv.get('basis')})
+        inv.update(status='conflict', rejected_value=inv['value'], value=None, checks=sorted(set(inv['checks']) | {'liquid_assets_nonnegative'}),
+                   note='; '.join(x for x in (inv['note'], 'negative long-term investments rejected: no usable figure') if x))
+        parts['long_term_investments'] = None
     if inv['value'] is not None:
         _stale(q, inv, 'balance_sheet', 'balance sheet')
     for k in ('cash', 'short_term_investments', 'long_term_investments', 'restricted_cash'):

@@ -878,3 +878,50 @@ class SourceFamilyRegressions(unittest.TestCase):
         rc = checks(qa, 'research_conflict')
         self.assertEqual([c['fields'] for c in rc], [['sbc_ttm']])
         self.assertIn('research_conflict', qa['fields']['sbc_ttm']['checks'])
+
+
+class NegativeLiquidAssets(unittest.TestCase):
+    """UTIL regression: a negative cash balance tied to the cash-flow statement passed as 'verified' (status limited for
+    other fields) and the valuation then crashed on 'unrestricted_cash: below 0'. It is a critical data error now."""
+
+    def shifted(self, metric, by, end=None):
+        fb = syn()
+        for f in fb['facts']:
+            if f['metric'] == metric and (end is None or f['period_end'] == end):
+                f['value'] += by * M                             # every period moves together: the roll-forward still ties
+        return fb
+
+    def test_negative_cash_blocks_and_never_reaches_the_valuation(self):
+        from fundamental_engine import pipeline
+        fb = self.shifted('cash', -1000)
+        qa = dataqa.validate(fb)
+        fld = qa['fields']['cash_and_liquid_investments']
+        self.assertEqual((qa['status'], fld['status'], fld['value'], fld['blocking']), ('blocked', 'conflict', None, True))
+        self.assertIn('cash_and_liquid_investments', qa['blocking'])
+        self.assertAlmostEqual(fld['rejected_value'], (CASH['2026-06-30'] - 1000 + 100) * M)
+        c = checks(qa, 'liquid_assets_nonnegative', 'fail')
+        self.assertEqual([(x['severity'], x['fields']) for x in c], [('critical', ['cash_and_liquid_investments'])])
+        self.assertTrue(checks(qa, 'cash_rollforward', 'pass'))                    # internally consistent, still impossible
+        self.assertIsNone(qa['resolved']['cash']['value'])
+        self.assertIsNone(qa['resolved']['net_cash']['value'])
+        cf = pipeline.run(fb)
+        self.assertEqual(cf['errors'], [])
+        self.assertEqual((cf['stages']['valuation'], cf['val']['status']), ('ok', 'not_computed'))
+        self.assertIn('opening cash', cf['val']['reason'])
+
+    def test_negative_short_term_investments_are_rejected(self):
+        qa = dataqa.validate(self.shifted('short_term_investments', -150, '2026-06-30'))
+        fld = qa['fields']['cash_and_liquid_investments']
+        self.assertEqual((fld['status'], fld['value']), ('conflict', None))
+        self.assertIn('cash_and_liquid_investments', qa['blocking'])
+        self.assertIn('short_term_investments', checks(qa, 'liquid_assets_nonnegative', 'fail')[0]['detail'])
+
+    def test_negative_long_term_investments_are_rejected_not_used(self):
+        qa = dataqa.validate(self.shifted('long_term_investments', -80, '2026-06-30'))
+        inv = qa['fields']['investments']
+        self.assertEqual((inv['status'], inv['value'], inv['blocking']), ('conflict', None, False))
+        self.assertAlmostEqual(inv['rejected_value'], -30 * M)
+        self.assertIn('investments', qa['limited'])
+        self.assertIsNone(qa['resolved']['long_term_investments']['value'])
+        self.assertEqual(checks(qa, 'liquid_assets_nonnegative', 'fail')[0]['fields'], ['investments'])
+        self.assertEqual(qa['fields']['cash_and_liquid_investments']['status'], dataqa.validate(syn())['fields']['cash_and_liquid_investments']['status'])

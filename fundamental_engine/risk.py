@@ -13,11 +13,19 @@ hides how a thesis fails. The register keeps the owner's three classes apart:
   of safety, not in a veto.
 - accepted_priced: risks the executed bear scenario already models (in_bear_case: the bear rows
   are materially worse than base on exactly the levers the risk acts on, measured from execution,
-  not from labels) or that an explicit discount-rate component covers.
+  not from labels) or whose explicit cost-of-equity add-on (priced_via) moves base value materially:
+  removing it raises base value today by at least max(half the base-to-bear markdown, 10%) (15% when
+  the markdown is unknown). A smaller or unquantified add-on leaves the entry in class pricing.
 - withhold_price: evidenced going-concern doubt, material weakness or restatement (a 'reported'
   FactBook qualitative item, or a weak governance/management assessment with evidence ids). A
   pricing entry, not a veto; review withholds the price conclusion until an independent reviewer
   documents an override.
+Every entry carries pricing_status (the rule of decision.risk_pricing): priced (in the bear path or a
+material add-on), partially_priced (an add-on below the bar or not quantifiable; not in the bear path),
+not_priced, open_question (an unassessed dimension) or gate (disqualifying); pricing_basis says why and
+priced_via_effect holds the add-on, the base value without it, the value effect and the bar.
+val.wide_range and val.terminal_share repeat error_size triggers: they are flagged valuation_error
+(the size of possible valuation error, not a company risk).
 Unknown business dimensions (including governance, management, moat and retention) become
 'unassessed' entries whose severity is their relevance to the business type: an unknown is an open
 research question, never an invented risk.
@@ -112,6 +120,12 @@ SIGNS = {
                         'Going-concern language in the auditor report or 10-Q',
                         'Uncommitted facilities not drawn or terms tightened (higher coupons, attached warrants)',
                         'Capex or R&D programs deferred to conserve cash']}
+WMBT_UNREACHABLE_HE = {'growth': 'אף קצב צמיחה סביר לבדו לא מצדיק את המחיר בתרחיש הבסיס',
+                       'mature_margin': 'אף רמת רווחיות בוגרת סבירה לבדה לא מצדיקה את המחיר בתרחיש הבסיס',
+                       'capital_efficiency': 'אף שיפור סביר ביעילות ההון לבדו לא מצדיק את המחיר בתרחיש הבסיס',
+                       None: 'אף שינוי סביר בהנחה אחת לבדה לא מצדיק את המחיר בתרחיש הבסיס'}
+ERROR_SCOPE = ('Counted in error_size: it lowers confidence and widens the marginal band; it is not a business risk and not part of '
+               'the required return.')
 CLASS_ORDER = {'disqualifying': 0, 'pricing': 1, 'accepted_priced': 2}
 SEV_ORDER = {'high': 0, 'medium': 1, 'low': 2}
 
@@ -189,6 +203,8 @@ def liquidity(fb, qa, an):
         cash, _ = _latest(an, 'cash')
         sti, _ = _latest(an, 'investments')
         basis = 'analysis latest cash + investments'
+    if cash is not None and min(cash, sti or 0) < 0:      # a data error (dataqa rejects it), never a liquidity figure
+        cash, sti, basis = None, None, basis + ': negative cash or investments reported (a data error): liquidity unknown'
     liquid = None if cash is None else cash + (sti or 0)
     fcf, fsrc = _latest(an, 'fcf')
     near, nbasis, horizon = None, 'no maturity data', 1
@@ -221,21 +237,66 @@ def bear_text(case, fc):
     return ' '.join(parts).lower(), ids
 
 
-def _register(levers, components, text='', linked_ids=()):
+def rate_effect(case, today):
+    """(effect, material): effect(add) = how much a cost-of-equity add-on lowers base value today (1 - base / base without
+    it), and the materiality bar max(half the base-to-bear markdown, 10%), 15% when the markdown is unknown or not
+    positive. The rule of decision.risk_pricing; None when the add-on cannot be quantified on an executed cash-flow case."""
+    base, bear = num((today or {}).get('base')), num((today or {}).get('bear'))
+    gap = 1 - bear / base if base and base > 0 and bear is not None else None
+    material = max(.5 * gap, .10) if gap is not None and gap > 0 else .15
+    memo = {}
+
+    def effect(add):
+        if add is None or add <= 0 or not base or base <= 0 or (case or {}).get('method') not in ('operating', 'residual_income'):
+            return None
+        if add not in memo:
+            try:
+                v0 = num(vt.shifted_value(case, 'base', -add))
+            except (ValueError, KeyError, ZeroDivisionError):
+                v0 = None
+            memo[add] = {'add_on': add, 'base_value': base, 'base_value_without_add_on': v0,
+                         'value_effect': 1 - base / v0 if v0 and v0 > 0 else None, 'material_threshold': material}
+        return memo[add]
+    return effect, material
+
+
+def _pricing(cls, modeled, via, eff, material, unassessed):
+    """(pricing_status, basis): the decision.risk_pricing rule applied in the register."""
+    if cls == 'disqualifying':
+        return 'gate', 'disqualifying condition (not priced; a gate)'
+    if modeled:
+        return 'priced', 'the executed bear path models it'
+    if via:
+        e, add = (eff or {}).get('value_effect'), (eff or {}).get('add_on')
+        if e is not None and e >= material:
+            return 'priced', f'cost-of-equity add-on {add:.2%} lowers base value {e:.0%} (material: >= {material:.0%})'
+        return 'partially_priced', (f'cost-of-equity add-on {add:.2%} lowers base value only {e:.0%} (material: >= {material:.0%}); '
+                                    'not in the bear path' if e is not None else
+                                    'claimed priced via the cost of equity, effect not quantified; not in the bear path')
+    if unassessed:
+        return 'open_question', 'not assessed: an open research question'
+    return 'not_priced', 'not in the bear path and no quantified adjustment'
+
+
+def _register(levers, components, text='', linked_ids=(), effect=None, material=.15):
     reg = []
 
     def add(rid, category, description, severity, cls=None, evidence=(), lever=(), rate_words=(), link=None, **extra):
         modeled = bool(lever) and all(levers.get(x, {}).get('modeled') for x in lever)
         if modeled and link and rid not in linked_ids and not re.search(link, text):
             modeled, extra['bear_link'] = False, 'bear is worse on these levers but does not name this risk'
-        via = next((f'forecast.cost_of_equity.components.{k}' for k, v in components.items()
-                    if (rate_words and any(w in k.lower() for w in rate_words) and (num(v) or 0) > 0)
+        key = next((k for k, v in components.items() if (rate_words and any(w in k.lower() for w in rate_words) and (num(v) or 0) > 0)
                     or (isinstance(v, dict) and rid in (v.get('covers') or []))), None)
+        via = f'forecast.cost_of_equity.components.{key}' if key else None
+        eff = effect(num(components[key])) if key and effect and cls != 'disqualifying' and not modeled else None
+        status, basis = _pricing(cls, modeled, via, eff, material, extra.get('status') == 'unassessed' or extra.get('assessed') is False)
         row = {'id': rid, 'category': category, 'description': description, 'evidence_ids': sorted(set(map(str, evidence))),
-               'class': cls or ('accepted_priced' if modeled or via else 'pricing'), 'severity': severity,
-               'in_bear_case': modeled and cls != 'disqualifying', 'levers': list(lever)}
+               'class': cls or ('accepted_priced' if status == 'priced' else 'pricing'), 'severity': severity,
+               'in_bear_case': modeled and cls != 'disqualifying', 'levers': list(lever), 'pricing_status': status, 'pricing_basis': basis}
         if via and cls != 'disqualifying':
             row['priced_via'] = via
+            if eff:
+                row['priced_via_effect'] = eff
         row.update(extra)
         reg.append(row)
         return row
@@ -405,22 +466,28 @@ def _valuation(add, an, result, today, price, val):
     base = scen(result, 'base') or {}
     ts = num(base.get('terminal_share_of_present_value'))
     if ts is not None and ts > .8:
-        add('val.terminal_share', 'valuation', f'{ts:.0%} of present value comes from terminal equity: the result rests mostly on maturity assumptions '
-            '(margin, ROIC and growth after the explicit years).', 'high' if ts > .9 else 'medium',
-            evidence=['valuation.result.scenarios.base.terminal_share_of_present_value'], values={'terminal_share': ts})
+        add('val.terminal_share', 'valuation', f'Size of possible valuation error, not a company risk: {ts:.0%} of present value comes from terminal '
+            'equity, so the value rests mostly on maturity assumptions (margin, ROIC and growth after the explicit years). ' + ERROR_SCOPE,
+            'high' if ts > .9 else 'medium', evidence=['valuation.result.scenarios.base.terminal_share_of_present_value', 'risk.error_size'],
+            values={'terminal_share': ts}, valuation_error=True)
     v = {k: num(today.get(k)) for k in ('bear', 'base', 'bull')}
     rel = (v['bull'] - v['bear']) / v['base'] if None not in v.values() and v['base'] > 0 else None
     if rel is not None and rel > 1.0:
-        add('val.wide_range', 'valuation', f'Bear-to-bull range is {rel:.0%} of base value: the outcome is highly uncertain.', 'high' if rel > 2 else 'medium',
-            evidence=['valuation.result.annual_values'], values={'value_range_rel': rel, **v})
+        add('val.wide_range', 'valuation', f'Size of possible valuation error, not a company risk: the bear-to-bull range is {rel:.0%} of base value, '
+            'so the value estimate is highly uncertain. ' + ERROR_SCOPE, 'high' if rel > 2 else 'medium',
+            evidence=['valuation.result.annual_values', 'risk.error_size'], values={'value_range_rel': rel, **v}, valuation_error=True)
     rows = [{'period_end': e, 'revenue': num((r or {}).get('revenue'))} for e, r in sorted(((an or {}).get('annual') or {}).items()) if num((r or {}).get('revenue'))]
     br = forecast_base_rate(rows, result) if rows else None
     for f in (br or {}).get('flags', []):
         g, h = br['implied']['implied_revenue_cagr'], br['historical_cagr']
+        rare = f['key'] == 'rare_sustained_growth'
         text = (f'Base case implies {g:.0%}/yr revenue growth for about five years; sustained growth above 20% is rare (base rates).'
-                if f['key'] == 'rare_sustained_growth' else f'Base case growth {g:.0%}/yr is more than 10pp above the company history {h:.0%}/yr.')
-        add(f"val.base_rate.{f['key']}", 'valuation', text, 'high' if f['key'] == 'rare_sustained_growth' else 'medium',
-            evidence=['scores.forecast_base_rate'], values={'implied': br['implied'], 'historical_cagr': h})
+                if rare else f'Base case growth {g:.0%}/yr is more than 10pp above the company history {h:.0%}/yr.')
+        he = (f'התחזית מניחה צמיחה של כ־{g:.0%} בשנה במשך כחמש שנים, קצב שמעט חברות מחזיקות לאורך זמן' if rare else
+              f'התחזית מניחה צמיחה של כ־{g:.0%} בשנה, הרבה מעל כ־{h:.0%} בשנה שהחברה השיגה בעבר' if h is not None else
+              'התחזית מניחה צמיחה מהירה בהרבה מזו שהחברה השיגה בעבר')
+        add(f"val.base_rate.{f['key']}", 'valuation', text, 'high' if rare else 'medium',
+            evidence=['scores.forecast_base_rate'], values={'implied': br['implied'], 'historical_cagr': h}, description_he=he)
     diag = (val or {}).get('diagnostics') or {}
     rev = diag.get('reverse') or diag.get('reverse_price') or {}
     hist_g = metric(an, 'revenue_cagr_3y') if metric(an, 'revenue_cagr_3y') is not None else metric(an, 'revenue_cagr_5y')
@@ -445,24 +512,27 @@ def _valuation(add, an, result, today, price, val):
         if w.get('status') == 'not_reachable':
             if above:
                 add(f'val.wmbt.{lever}', 'valuation', f'No value of {label} within the search bounds reconciles the base case with the price.', 'high',
-                    evidence=['valuation.what_must_be_true'], values=w)
+                    evidence=['valuation.what_must_be_true'], values=w, description_he=WMBT_UNREACHABLE_HE.get(lever, WMBT_UNREACHABLE_HE[None]))
             continue
         if req is None or anc is None:
             continue
-        sev, why = None, ''
+        sev, why, he = None, '', None
         if lever == 'growth' or ('growth' in label.lower() and lever != 'capital_efficiency'):
             stretch = req - anc
             sev = 'high' if stretch > .10 or (stretch > 0 and req > .20) else ('medium' if stretch > .05 else None)
             why = f' ({req - anc:+.1%} versus base; sustained growth above 20% is rare)' if req > .20 else f' ({req - anc:+.1%} versus base)'
+            he = f'כדי להצדיק את המחיר, הצמיחה הממוצעת בהכנסות צריכה להגיע לכ־{req:.0%} בשנה, מול כ־{anc:.0%} בתרחיש הבסיס'
         elif 'margin' in lever or 'margin' in label.lower():
             sev = 'high' if req - anc > .10 or (best is not None and req > best + .10) else ('medium' if req - anc > .05 else None)
             why = f' (base {anc:.1%}' + (f', best history {best:.1%})' if best is not None else ')')
+            he = f'כדי להצדיק את המחיר, הרווחיות התפעולית הבוגרת צריכה להגיע לכ־{req:.0%}, מול כ־{anc:.0%} בתרחיש הבסיס'
         elif lever == 'capital_efficiency' and req > 0:
             sev = 'high' if req < .5 else ('medium' if req < 2 / 3 else None)
             why = f' (growth must need only {req:.2f}x the capital assumed in base)'
+            he = f'כדי להצדיק את המחיר, הצמיחה צריכה לדרוש רק כ־{req:.0%} מההשקעה שתרחיש הבסיס מניח'
         if sev:
             add(f'val.wmbt.{lever}', 'valuation', f'To justify the price, {label} must reach {req:.4g} versus {anc:.4g}{why}.', sev,
-                evidence=['valuation.what_must_be_true'], values=w)
+                evidence=['valuation.what_must_be_true'], values=w, description_he=he)
 
 
 def _gates(add, fb, qa, an, card, result, val, rt, liq, weak_cash, scenarios):
@@ -762,7 +832,8 @@ def error_size(result, case, today, val, qa, card, reg, rt):
     if open_high:
         gap('dimensions_unassessed', 'medium', 'high-relevance business dimensions unassessed: ' + ', '.join(open_high), ids=open_high)
     level = 'high' if high or len(med) >= 3 else ('medium' if med else 'low')
-    return {'level': level, 'value_range_rel': rel, 'discount_rate_band': band, 'discount_rate_band_source': src, 'terminal_share': ts,
+    return {'label': 'size of possible valuation error (not a company risk)', 'level': level, 'value_range_rel': rel,
+            'discount_rate_band': band, 'discount_rate_band_source': src, 'terminal_share': ts,
             'reasons': high + med or ['range, discount-rate sensitivity, terminal dependence and red-team verifiability within tolerance'],
             'process_gaps': gaps,
             'scope': 'level and reasons use valuation triggers only; process_gaps (data, understanding, unassessed dimensions) are '
@@ -777,7 +848,8 @@ def assess(fb, qa, an, card, fc, val):
     result, case, today, price = valuation_parts(val)
     levers = bear_levers(case, result)
     comps = ((fc.get('cost_of_equity') or {}).get('components') or {})
-    reg, add = _register(levers, comps if isinstance(comps, dict) else {}, *bear_text(case, fc))
+    effect, material = rate_effect(case, today)
+    reg, add = _register(levers, comps if isinstance(comps, dict) else {}, *bear_text(case, fc), effect=effect, material=material)
     liq = liquidity(fb, qa, an)
     rt = redteam_check(fb, qa, an, fc, val)
     _data(add, qa, rt)
@@ -808,8 +880,11 @@ def assess(fb, qa, an, card, fc, val):
             'evidence_gaps': [r['id'] for r in reg if r.get('evidence_gap')],
             'withhold_price': [r['id'] for r in reg if r.get('withhold_price')],
             'summary': {'disqualifying': count('class', 'disqualifying'), 'pricing': count('class', 'pricing'),
-                        'accepted_priced': count('class', 'accepted_priced'), 'unassessed': count('status', 'unassessed')},
-            'bear_levers': levers, 'liquidity': liq,
+                        'accepted_priced': count('class', 'accepted_priced'), 'partially_priced': count('pricing_status', 'partially_priced'),
+                        'unassessed': count('status', 'unassessed'), 'valuation_error': count('valuation_error', True)},
+            'bear_levers': levers, 'liquidity': liq, 'pricing_materiality': material,
             'redteam': {k: rt[k] for k in ('verdict', 'usable', 'critical_failed', 'critical_unverifiable', 'capital_structure_source', 'by_construction')},
             'meaning': 'Disqualifying entries block a price conclusion; pricing entries lower attractiveness or confidence; accepted_priced entries are '
-                       'already in the executed bear case or an explicit discount-rate component. Severity thresholds are descriptive screens.'}
+                       'in the executed bear path or carry a cost-of-equity add-on that moves base value materially (pricing_status priced); '
+                       'a small add-on is partially_priced. valuation_error entries describe the size of possible valuation error '
+                       '(error_size), not a company risk. Severity thresholds are descriptive screens.'}

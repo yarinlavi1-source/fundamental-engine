@@ -1083,5 +1083,80 @@ class RepairRegressionTests(unittest.TestCase):
         self.assertIn('if-converted', next(a for a in fc['assumptions'] if a['id'] == 'dilution')['rationale'])
 
 
+class SourceAndRateContractTests(unittest.TestCase):
+    def test_case_sources_carry_the_document_date_and_how_it_was_read(self):
+        fb = facts.new({'ticker': 'SRC', 'currency': 'USD'}, '2026-10-19')
+        rows = (('web:q', 'issuer_document', 'filing', 'primary_document', '2026-08-01'),
+                ('web:reg', 'primary_document', 'regulator', 'primary_document', '2026-07-01'),
+                ('web:st', 'primary_document', 'official_statistics', None, '2026-06-01'),
+                ('fmp:is', 'filing_derived', 'income-statement', 'primary_document', None),
+                ('fmp:v', 'vendor_normalized', 'ratios', 'not_a_retrieval', None))
+        for sid, kind, ds, retr, pub in rows:
+            facts.add_source(fb, sid, 'web', ds, kind, '2026-10-19T00:00:00Z')
+            if retr:
+                fb['sources'][sid]['retrieval'] = retr
+            if pub:
+                fb['sources'][sid]['published_at'] = pub
+        facts.add_fact(fb, 'revenue', 'Q2-2026', '2026-06-30', 1e9, 'web:q', 'as_reported', '2026-08-03')
+        facts.add_fact(fb, 'revenue', 'FY2025', '2025-12-31', 4e9, 'fmp:is', 'as_reported', '2026-02-20')
+        out = {s['id']: s for s in forecast._case_sources(fb, [r[0] for r in rows], {})}
+        self.assertEqual({k: (s['kind'], s.get('retrieval')) for k, s in out.items()},
+                         {'web:q': ('filing', 'primary_document'), 'web:reg': ('regulator', 'primary_document'),
+                          'web:st': ('official_statistics', 'search_excerpt'), 'fmp:is': ('filing', 'primary_document'),
+                          'fmp:v': ('provider_data', 'provider_normalized')})
+        self.assertEqual((out['web:q']['published_at'], out['web:q']['available_at']), ('2026-08-01', '2026-08-03'))
+        self.assertEqual(out['web:reg']['published_at'], '2026-07-01')                     # document date even without facts
+        self.assertEqual((out['fmp:is']['published_at'], out['fmp:is']['available_at']), ('2026-02-20', '2026-02-20'))
+        self.assertEqual({k for k, s in out.items() if s.get('published_at_estimated')}, {'fmp:is', 'fmp:v'})
+        for s in out.values():
+            self.assertTrue(s['published_at'] <= s['available_at'] <= '2026-10-19', s)
+
+    def test_a_rate_typed_into_the_inputs_is_analyst_input(self):
+        fb, an, card, qa = adbe()
+        rf = {'value': .045, 'as_of': '2026-10-16', 'title': 'US 10y Treasury constant maturity (test value)', 'url': 'https://example.org/dgs10'}
+        for kind in ('filing', ' Filing', 'earnings_release', 'issuer_release', 'official_statistics', 'regulator', 'issuer_document',
+                     'filing_derived'):
+            with self.assertRaisesRegex(ValueError, 'analyst input'):
+                forecast.build(fb, an, card, qa, {'risk_free': dict(rf, kind=kind)})
+        with self.assertRaisesRegex(ValueError, 'retrieval'):
+            forecast.build(fb, an, card, qa, {'risk_free': dict(rf, retrieval='read_it')})
+        fc = forecast.build(fb, an, card, qa, {'risk_free': dict(rf, kind='market_data'),
+                                               'equity_risk_premium': {'value': .05, 'title': 'own ERP view (test)'}})
+        src = {s['id']: s for s in fc['spec']['sources']}
+        rfs, erps = src['input:risk_free'], src['input:equity_risk_premium']
+        self.assertEqual((rfs['kind'], rfs['stated_kind'], rfs['published_at']), ('analyst_input', 'market_data', '2026-10-16'))
+        self.assertNotIn('published_at_estimated', rfs)
+        self.assertEqual(erps['kind'], 'analyst_input')
+        self.assertTrue(erps['published_at_estimated'])                                     # undated: the FactBook date
+
+    def test_terminal_debt_weight_is_in_the_case_and_rate_diagnostics_use_the_equity_weight(self):
+        from fundamental_engine import valuation_tools as vt
+        from fundamental_engine.decision import price_for_hurdle
+        fc = forecast.build(*levered(15.))
+        w = fc['cost_of_equity']['components']['leverage']['debt_weight']
+        self.assertGreater(w, .2)
+        case = build_case(fc['spec'])
+        self.assertEqual({s['terminal']['debt_weight'] for s in case['scenarios']}, {w})
+        self.assertEqual(vt.debt_weight(case)[0], w)
+
+        def at(shift):
+            c = deepcopy(case)
+            b = scen(c, 'base')
+            b['cost_of_equity'] += shift
+            b['terminal']['wacc'] += (1 - w) * shift                                       # Harris-Pringle, never 1:1
+            return value_company(c)['annual_values'][0]['base']
+        band = vt.discount_rate_band(case)
+        self.assertAlmostEqual(band['value_lower_rate'], at(-.01), places=6)
+        self.assertAlmostEqual(band['value_higher_rate'], at(.01), places=6)
+        self.assertAlmostEqual(band['terminal_wacc_shift'], (1 - w) * .01)
+        r = vt.implied_cost_of_equity(case)
+        self.assertEqual(r['status'], 'solved')
+        self.assertAlmostEqual(at(r['shift']), case['quote']['price'], places=4)
+        h = r['implied_cost_of_equity'] + .01                                              # the decision layer's price at a hurdle
+        c = deepcopy(case)
+        c['quote']['price'] = price_for_hurdle(case, h, w)['value']
+        self.assertAlmostEqual(vt.implied_cost_of_equity(c)['implied_cost_of_equity'], h, places=6)
+
+
 if __name__ == '__main__':
     unittest.main()

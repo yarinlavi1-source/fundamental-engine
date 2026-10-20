@@ -18,9 +18,12 @@ What the card does, deterministically and with stated reasons:
   checklist, qualitative dimensions (unknown is legitimate; no blended score) and completeness.
 
 A promising grower is not rejected for lacking profit: it is routed to a funding-and-dilution
-scenario model and asked for paid adoption, milestone progress and an explicit failure scenario.
-A bank or insurer is never routed to FCFF; an unsupported sector is never relabelled to force a
-generic model. Pure function of (fb, an, qa, inputs); reads facts only through facts.py accessors.
+scenario model and asked for paid adoption, milestone progress and an explicit failure scenario. A profitable,
+cash-generating company that needs outside capital (capex above CFO, a refinancing) keeps the annual FCFF path
+with the financing flagged (valuation.funding_flag), not the survival model.
+A bank or insurer is never routed to FCFF, nor is a lender-shaped balance sheet under a non-financial label
+(flags.lender_shaped) unless an analyst business_model states why; an unsupported sector is never relabelled to
+force a generic model. Pure function of (fb, an, qa, inputs); reads facts only through facts.py accessors.
 """
 from datetime import date
 from statistics import mean, pstdev
@@ -85,12 +88,13 @@ RUNWAY_YEARS = 3.0           # cash runway below this needs external funding
 # carry on their balance sheet); balance-sheet lenders and insurers are financials. Financial conglomerates are
 # financials (checked before the generic conglomerate rule). Labels that list fee firms and balance-sheet firms
 # together are BALANCE_MIXED_RULES: decided by the balance sheet, financials when it is lender-like or unknown.
+FEE_FINANCIAL = ('transaction & payment', 'payment processing', 'financial exchanges', 'exchanges & data', 'stock exchanges',
+                 'financial data', 'insurance broker')
 TEXT_RULES = (
     (('financial conglomerate',), 'financials'),
     (('industrial conglomerate', 'conglomerate', 'multi-sector holding', 'diversified holding'), 'conglomerate'),
     (('mortgage reit', 'reit mortgage', 'mortgage real estate'), 'financials'),
-    (('transaction & payment', 'payment processing', 'financial exchanges', 'exchanges & data', 'stock exchanges',
-      'financial data', 'insurance broker'), 'platform_marketplace'),
+    (FEE_FINANCIAL, 'platform_marketplace'),
     (('real estate services', 'real estate brokerage'), 'industrial'),
     (('bank', 'thrift', 'savings institution', 'mortgage finance', 'mortgages', 'consumer finance', 'credit services',
       'insurance', 'reinsurance', 'capital markets', 'investment banking', 'brokerage', 'asset management', 'custody',
@@ -138,6 +142,16 @@ BALANCE_MIXED_RULES = (
      'fee businesses (asset managers, payment networks) and balance-sheet firms (custody banks, lenders)'),
 )
 LENDER_LIABILITIES = .85     # liabilities / assets at or above this with no cost of revenue: lender/insurer balance sheet
+# A lender's assets are financial (loans, securities): revenue is a small share of assets and capex is small. Under a
+# non-financial label the balance sheet decides only when these also hold (an airline or an online-travel agency with thin
+# equity and no cost-of-revenue line is not a loan book). Without a cost-of-revenue line, or with lending data
+# (LENDING_KEYS), such a balance sheet is a lender's; fee-platform labels (FEE_FINANCIAL: client funds, settlement and
+# clearing balances) need the lending data.
+LENDER_TURNOVER = .30        # revenue / total assets at or below this
+LENDER_CAPEX = .10           # capex / revenue below this (or unknown)
+LENDING_KEYS = ('interest_income', 'net_interest_income', 'net_interest_margin', 'loans', 'net_loans', 'loans_receivable',
+                'finance_receivables', 'deposits', 'total_deposits', 'customer_deposits')
+NON_OPERATING_TYPES = ('financials', 'reit', 'pre_revenue_biotech', 'conglomerate')
 CYCLICAL_WORDS = ('semiconductor', 'oil', 'mining', 'metals', 'steel', 'chemical', 'automobile', 'auto ',
                   'airline', 'homebuild', 'residential construction', 'machinery', 'paper', 'forest', 'marine',
                   'shipping', 'trucking', 'freight', 'building products', 'construction', 'hotel', 'casino', 'leisure',
@@ -414,7 +428,8 @@ def _signature(fb, rows, end):
         return {k: _num(None, f, None) for k, f in (('gross_margin', 'gross_profit / revenue'), ('capex_pct_revenue', 'capex / revenue'),
                 ('deferred_revenue_pct_revenue', 'deferred revenue / revenue'), ('rd_pct_revenue', 'R&D expense / revenue'),
                 ('inventory_pct_revenue', 'inventory / revenue'), ('capex_to_da', 'capex / D&A'),
-                ('liabilities_to_assets', 'total liabilities / total assets'))} | {'has_cost_of_revenue': False}
+                ('liabilities_to_assets', 'total liabilities / total assets'), ('revenue_to_assets', 'revenue / total assets'))} | {
+            'has_cost_of_revenue': False}
     capex = _row_val(r, 'capex')
     capex = abs(capex) if capex is not None else None
     rd = _annual_fact(fb, 'rd', end)
@@ -431,6 +446,7 @@ def _signature(fb, rows, end):
         'capex_to_da': _num(_div(capex, _row_val(r, 'd_and_a')), 'capex / depreciation and amortization', end),
         'liabilities_to_assets': _num(_div(tl['value'] if tl else None, ta['value'] if ta else None),
                                       'total liabilities / total assets', end),
+        'revenue_to_assets': _num(_div(rev, ta['value'] if ta else None), 'revenue / total assets', end),
         'has_cost_of_revenue': cor is not None or _row_val(r, 'gross_profit') is not None,
     }
 
@@ -494,7 +510,7 @@ def platform_signature(gm, cx, om=None):
 
 # ---------------------------------------------------------------- business model
 
-def _business_model(fb, rows, end, sig, inputs):
+def _business_model(fb, an, rows, end, sig, inputs):
     company = fb.get('company') or {}
     text = _text_matches(company)
     used = next((t for t in text if t['field'] == 'industry'), text[0] if text else None)   # sector only as a fallback
@@ -565,8 +581,30 @@ def _business_model(fb, rows, end, sig, inputs):
         primary, evidence = sig_types[0], 'financials'
     elif primary in sig_types:
         evidence = 'text+financials'
+    rta, lending = sv['revenue_to_assets'], _evidence(fb, an, LENDING_KEYS)
+    shape = (lta is not None and lta >= LENDER_LIABILITIES and rta is not None and rta <= LENDER_TURNOVER
+             and (cx is None or cx < LENDER_CAPEX))
+    fee_label = bool(used) and used['keyword'] in FEE_FINANCIAL
+    operating_label = bool(text) and primary not in NON_OPERATING_TYPES
+    lender_shaped = operating_label and shape and (bool(lending) or (not sv['has_cost_of_revenue'] and not fee_label))
+    if lender_shaped:
+        reasons.append(f"balance sheet looks like a lender's under the '{used['text']}' label: liabilities {_pct(lta)} of assets, revenue "
+                       f"{_pct(rta)} of assets, capex {_pct(cx)} of revenue, "
+                       + (f"lending data reported ({', '.join(sorted({e['key'] for e in lending}))})" if lending else 'no cost-of-revenue line')
+                       + ' -> financials (economics before labels: deposits and funding are operating liabilities, so FCFF and an EV '
+                       f"bridge misprice it); {primary or 'the label'} kept as a secondary type; a business_model override with a reason "
+                       'routes it as an operating business when the liabilities are customer prepayments or client funds')
+        if primary:
+            secondary.append(primary)
+        primary, evidence = 'financials', 'text+financials' if primary else 'financials'
+    elif operating_label and lender_sig:
+        reasons.append(f"liabilities {_pct(lta)} of assets with no cost-of-revenue line, but "
+                       + (f"revenue {_pct(rta)} of assets and capex {_pct(cx)} of revenue: an operating asset base, not a loan book"
+                          if not shape else f"'{used['text']}' is a fee business whose balance sheet carries client funds, settlement or "
+                          'clearing balances, and no lending data is reported')
+                       + f"; kept as {primary or 'labelled'}; the forecast's lender check asks a reviewer to confirm the operating classification")
     secondary += text_types[1:]
-    if primary not in ('financials', 'reit', 'pre_revenue_biotech', 'conglomerate'):
+    if primary not in NON_OPERATING_TYPES:
         secondary += [t for t in sig_types if t != primary]
     if primary is None:
         primary = UNCLASSIFIED
@@ -600,9 +638,15 @@ def _business_model(fb, rows, end, sig, inputs):
             text_financials = False
             reasons.append("analyst override clears the bank/insurer text flag (the balance sheet is not lender-like or is fiduciary: "
                            f"liabilities {_pct(sv['liabilities_to_assets'])} of assets); the computed flag is kept in 'computed'")
+        shaped_ov = lender_shaped and ov['primary'] != 'financials'
+        if shaped_ov:
+            reasons.append(f"analyst override routes the lender-shaped balance sheet as {ov['primary']} ({ov['reason']}): the liabilities are "
+                           "taken as operating (customer prepayments or client funds), not funding of a loan book; the computed financials type "
+                           "is kept in 'computed'")
         sec = ov.get('secondary')
         if sec is None:
-            sec = [t for t in [primary] + secondary if t not in (ov['primary'], UNCLASSIFIED) and not (clear and t == 'financials')]
+            sec = [t for t in [primary] + secondary
+                   if t not in (ov['primary'], UNCLASSIFIED) and not ((clear or shaped_ov) and t == 'financials')]
         elif not isinstance(sec, list) or any(t not in TYPES for t in sec):
             raise ValueError('business_model.secondary must list known types')
         override = {'primary': ov['primary'], 'secondary': list(sec), 'reason': ov['reason'],
@@ -613,7 +657,7 @@ def _business_model(fb, rows, end, sig, inputs):
     return {'primary': primary, 'secondary': secondary, 'reasons': reasons, 'override': override, 'computed': computed,
             'evidence': evidence, 'text_matches': text, 'signature': {k: v for k, v in sig.items() if isinstance(v, dict)},
             'flags': {'text_financials': text_financials, 'possible_financial': possible_financial, 'pharma_text': pharma_text,
-                      'lender_balance_sheet': lender_sig, 'financial_label': fin_text}}
+                      'lender_balance_sheet': lender_sig, 'financial_label': fin_text, 'lender_shaped': lender_shaped}}
 
 
 # ---------------------------------------------------------------- stage
@@ -1035,7 +1079,7 @@ def _driver_tree(fb, an, bm):
 
 # ---------------------------------------------------------------- valuation method
 
-def _valuation(fb, an, qa, bm, stage, cyc, fund, rows, inputs, cur):
+def _valuation(fb, an, qa, bm, stage, cyc, fund, cap, rows, inputs, cur):
     primary, flags = bm['primary'], bm['flags']
     sd = stage['data']
     om = (sd.get('operating_margin') or {}).get('value')
@@ -1043,21 +1087,27 @@ def _valuation(fb, an, qa, bm, stage, cyc, fund, rows, inputs, cur):
     ends = [e for e in rows if _row_val(rows[e], 'revenue') is not None]
     has = lambda keys: bool(_evidence(fb, an, keys))
     balance_sheet = flags['text_financials'] or primary == 'financials'
+    shaped = flags.get('lender_shaped') and primary == 'financials'
     cross, lim, req = [], [], []
-    conf = 'normal'
+    conf, funding_flag = 'normal', None
 
     def pick(method, arche, why, intended=None):
         return {'method': method, 'archetype': arche, 'why': why, 'intended_method': intended}
 
     if primary == 'financials':
+        lead = 'lender-shaped balance sheet under a non-financial label (business_model reasons): ' if shaped else ''
         if _instant_fact(fb, 'equity') is None and not any(_row_val(rows[e], 'equity') for e in rows):
-            v = pick('not_reliably_valuable', 'financials', 'bank/insurer: residual income needs book equity, which is missing', 'residual_income')
+            v = pick('not_reliably_valuable', 'financials', lead + 'bank/insurer: residual income needs book equity, which is missing',
+                     'residual_income')
         else:
-            v = pick('residual_income', 'financials', 'balance-sheet business: deposits and float are operating funding, not debt, so '
+            v = pick('residual_income', 'financials', lead + 'balance-sheet business: deposits and float are operating funding, not debt, so '
                      'FCFF and an EV bridge mis-state value; equity is valued from book value and ROE versus cost of equity')
             cross += ['price_to_tangible_book_vs_roe', 'dividend_and_excess_capital']
             lim += ['regulatory capital must be reconciled to book equity', 'valuation.residual_income holds the share count constant']
             req += ['ROE path by scenario with credit-loss cycle', 'required capital ratio and risk-weighted assets']
+        if shaped:
+            lim.append('the industry label is not financial: the balance sheet decided; a business_model override with a reason routes it as '
+                       'an operating business when the liabilities are customer prepayments or client funds')
     elif balance_sheet:
         if has(SEGMENT_KEYS):
             v = pick('sotp', 'conglomerate', 'hybrid with a balance-sheet (bank/insurer) part: value the lending/insurance part on '
@@ -1093,13 +1143,19 @@ def _valuation(fb, an, qa, bm, stage, cyc, fund, rows, inputs, cur):
     else:
         arche = ARCHETYPE[primary]
         ever_profitable = any((_div(_row_val(rows[e], 'operating_income'), _row_val(rows[e], 'revenue')) or -1) > 0 for e in ends)
+        # a profitable, cash-generating business that needs outside money (capex above operating cash flow, or a refinancing) is a
+        # going concern with a financing question, not a survival case: positive operating margin and CFO in the latest two years
+        cash_record = len(ends) >= 2 and om is not None and om > 0 and all(
+            (_div(_row_val(rows[e], 'operating_income'), _row_val(rows[e], 'revenue')) or 0) > 0 and (_row_val(rows[e], 'cfo') or 0) > 0
+            for e in ends[-2:])
+        funded_ops = fund['value'] == 'needs_external' and cash_record
         if not rev or (cur == 'USD' and rev < PRE_REVENUE):
             v = pick('not_reliably_valuable', arche, 'no commercial revenue base: scenarios would be pure assumption; track paid adoption '
                      'and milestones until revenue exists', 'scenario_survival_fcff')
         elif len(ends) < 2 or om is None or not any(_row_val(rows[e], 'cfo') is not None for e in ends):
             v = pick('not_reliably_valuable', arche, 'an operating model needs at least two fiscal years of revenue, operating income and '
                      'operating cash flow; they are missing', 'fcff_annual_path')
-        elif fund['value'] == 'needs_external' or stage['value'] == 'early' or (
+        elif (fund['value'] == 'needs_external' and not funded_ops) or stage['value'] == 'early' or (
                 om < 0 and (not sd.get('established_profit_record') or (stage['value'] == 'growth' and sd.get('consecutive_loss_years', 0) >= 2))
                 and not (cyc['normalize'] and ever_profitable)):
             v = pick('scenario_survival_fcff', arche, 'loss-making or funding-dependent: value depends on reaching target economics and on '
@@ -1140,6 +1196,20 @@ def _valuation(fb, an, qa, bm, stage, cyc, fund, rows, inputs, cur):
             cross += ['reverse_dcf (valuation_tools.reverse_price)', 'fcf_yield_after_sbc', 'earnings_yield']
             req += ['bear/base/bull scenarios', 'reinvestment linked to growth (no growth without investment)']
             lim += ['peak margins must not be treated as permanent without a moat explanation']
+        if funded_ops and v['method'] in ('fcff_annual_path', 'normalized_cycle_fcff'):
+            fcf = (fund['data'].get('fcf') or {}).get('value')
+            capex_gap = fcf is not None and fcf < 0
+            why = (f"operating margin and operating cash flow positive in {' and '.join(ends[-2:])}, but "
+                   + (f"capex exceeds operating cash flow (FCF {_money(fcf, cur)}, capital intensity {cap['value']})" if capex_gap else
+                      'near-term debt and dividends exceed liquidity plus FCF (refinancing)')
+                   + ': outside funding is a financing and dilution question for a going concern, not a survival case')
+            funding_flag = {'basis': 'capex_exceeds_cfo' if capex_gap else 'refinancing', 'capital_intensity': cap['value'],
+                            'funding': fund['value'], 'why': why}
+            lim.append(why + '; the annual path must carry that financing in every scenario')
+            req.append(('financing of the capex plan' if capex_gap else 'refinancing of near-term maturities')
+                       + ' in every scenario (source, cost, dilution to current holders)')
+            if capex_gap:
+                cross.append('return on new capex versus cost of capital')
         if cyc['value'] and not cyc['normalize'] and v['method'] != 'not_reliably_valuable':
             nm = (cyc.get('normalized_operating_margin') or {}).get('value')
             lim.append('cyclical industry, but the reported history shows no cycle: not normalized to a historical mean'
@@ -1164,6 +1234,8 @@ def _valuation(fb, an, qa, bm, stage, cyc, fund, rows, inputs, cur):
            'why': v['why'], 'cross_checks': list(dict.fromkeys(cross)), 'limitations': list(dict.fromkeys(lim)),
            'requirements': req, 'confidence': conf, 'intended_method': v['intended_method'],
            'default_for_type': True, 'override_reason': None, 'computed': computed}
+    if funding_flag:
+        out['funding_flag'] = funding_flag
     ov = inputs.get('method_override')
     if ov is not None:
         if not isinstance(ov, dict):
@@ -1175,14 +1247,18 @@ def _valuation(fb, an, qa, bm, stage, cyc, fund, rows, inputs, cur):
             raise ValueError('method_override.archetype must be a valuation.ROUTES key')
         lender = flags.get('lender_balance_sheet') and flags.get('financial_label') and out['route'] != 'operating'
         if ov['method'] in OPERATING_METHODS and (balance_sheet or lender):
+            if shaped:
+                why_rej = ("the balance sheet is a lender's (liabilities >= 85% of mostly financial assets) under a non-financial label: an "
+                           'FCFF route treats deposits/funding as free funding. Set business_model (primary and reason) when the '
+                           'liabilities are customer prepayments or client funds')
+            else:
+                why_rej = (('sector text or business model identifies a bank/insurer' if balance_sheet else
+                            'a financial label with a lender-like balance sheet (liabilities >= 85% of assets, no cost of revenue)')
+                           + ': an FCFF route treats deposits/float as free funding. Correct the company sector/industry in the FactBook '
+                           'if the label is wrong, or set business_model.fiduciary_balance_sheet with a reason when the liabilities are '
+                           'client funds')
             out['override_rejected'] = {'method': ov['method'], 'reason': ov['reason'],
-                                        'why_rejected': ('sector text or business model identifies a bank/insurer' if balance_sheet else
-                                                         'a financial label with a lender-like balance sheet (liabilities >= 85% of assets, '
-                                                         'no cost of revenue)')
-                                                        + ': an FCFF route treats deposits/float as free funding. Correct the company '
-                                                        'sector/industry in the FactBook if the label is wrong, or set business_model.'
-                                                        'fiduciary_balance_sheet with a reason when the liabilities are client funds; the '
-                                                        'card does not relabel to force a generic model'}
+                                        'why_rejected': why_rej + '; the card does not relabel to force a generic model'}
         else:
             m = ov['method']
             if m == 'not_reliably_valuable':
@@ -1359,7 +1435,7 @@ def build(fb, an, qa, inputs=None):
     ends = [e for e in rows if _row_val(rows[e], 'revenue') is not None]
     last = ends[-1] if ends else None
     sig = _signature(fb, rows, last)
-    bm = _business_model(fb, rows, last, sig, inputs)
+    bm = _business_model(fb, an, rows, last, sig, inputs)
     cyc = _cyclical(fb, rows, bm['primary'], inputs)
     stage = _stage(fb, an, rows, inputs, cur, cyc['value'])
     stage['cross_check'] = _profile_cross_check(rows, ends, fb['as_of'], bm['primary']) if ends else None
@@ -1377,7 +1453,7 @@ def build(fb, an, qa, inputs=None):
     if coverage['forecast_basis'] == 'revenue_level':
         notes.append(f"business-model drivers mostly missing ({avail} of {len(prim)} available): the forecast relies on revenue-level "
                      'drivers (growth, margins, reinvestment) and must say so')
-    val = _valuation(fb, an, qa, bm, stage, cyc, fund, rows, inputs, cur)
+    val = _valuation(fb, an, qa, bm, stage, cyc, fund, cap, rows, inputs, cur)
     und = _understanding(fb, inputs, fund, cur)
     dims = _dimensions(fb, an, rows, bm, inputs)
     srev = (stage['data'].get('revenue') or {}).get('value')

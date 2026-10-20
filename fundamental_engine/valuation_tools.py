@@ -149,12 +149,47 @@ def _scale_prepayments(case, period, factor):
         period['revenue_from_prepayments'] = min(period['revenue_from_prepayments'], revenue)
 
 
-def _shifted_value(case, scenario, shift):
+W_CAP = .95   # same clamp as decision._debt_weight
+
+
+def debt_weight(case, scenario='base'):
+    """(w, source): a change in the cost of equity moves the terminal WACC by (1 - w) times that change (Harris-Pringle:
+    WACC = (1 - w) Ke + w Kd (1 - t)), the convention of decision.py. The scenario's terminal.debt_weight (the forecast's own
+    relevering) when the case stores it; else opening net debt (debt - cash - marketable investments) / (net debt + base value
+    x opening shares), like decision._debt_weight; 0 without net debt or for a non-operating case (no terminal WACC)."""
+    if case['method'] != 'operating':
+        return 0., 'no terminal WACC (not an operating case)'
+    s = next((x for x in case['scenarios'] if x['name'] == scenario), None)
+    if s is None: raise ValueError('Unknown scenario')
+    if s['terminal'].get('debt_weight') is not None:
+        w = number(s['terminal']['debt_weight'], 'terminal.debt_weight', 0, 1)
+        return min(w, W_CAP), f'case scenarios[{scenario}].terminal.debt_weight'
+    op = case.get('opening') or {}
+    nd = sum(float(op.get(k) or 0) * m for k, m in (('debt', 1), ('unrestricted_cash', -1), ('marketable_investments', -1)))
+    sh = op.get('shares')
+    if nd <= 0 or not sh:
+        return 0., 'no net debt in the opening balance'
+    try:
+        v = value_company(case)['annual_values'][0].get('base')
+    except ValueError:
+        v = None
+    if not v or v <= 0:
+        return 0., 'no positive base value to weight the opening net debt'
+    return min(nd / (nd + v * sh), W_CAP), 'opening net debt / (net debt + base value x opening shares)'
+
+
+def _weight(case, scenario, w):
+    return debt_weight(case, scenario) if w is None else (min(max(number(w, 'debt weight', 0, 1), 0.), W_CAP), 'supplied')
+
+
+def _shifted_value(case, scenario, shift, w=None):
+    """Scenario value today with the cost of equity moved by shift and an operating terminal WACC by (1 - w) x shift."""
+    if w is None: w = debt_weight(case, scenario)[0]
     c = deepcopy(case)
     s = next((x for x in c['scenarios'] if x['name'] == scenario), None)
     if s is None: raise ValueError('Unknown scenario')
     s['cost_of_equity'] += shift
-    if c['method'] == 'operating': s['terminal']['wacc'] += shift
+    if c['method'] == 'operating': s['terminal']['wacc'] += (1 - w) * shift
     try:
         return value_company(c)['annual_values'][0][scenario]
     except ValueError:
@@ -164,55 +199,62 @@ def _shifted_value(case, scenario, shift):
 shifted_value = _shifted_value   # public name; decision.price_for_hurdle uses it
 
 
-def discount_rate_band(case, scenario='base', shift=.01):
-    """Value today at cost of equity (and terminal WACC) minus/plus one shift.
+def discount_rate_band(case, scenario='base', shift=.01, w=None):
+    """Value today at cost of equity minus/plus one shift, the terminal WACC moved by the equity weight (1 - w) x shift.
 
     Answers: does a modest, defensible change in required return flip the price
     conclusion? It is not a probability interval.
     """
     if case['method'] not in {'operating', 'residual_income'}: raise ValueError('Discount band requires a cash-flow model')
     number(shift, 'shift', .001, .05)
-    low_rate, central, high_rate = (_shifted_value(case, scenario, x) for x in (-shift, 0, shift))
+    w, w_src = _weight(case, scenario, w)
+    low_rate, central, high_rate = (_shifted_value(case, scenario, x, w) for x in (-shift, 0, shift))
     quote = case['quote']['price']
     flips = None
     if None not in (low_rate, central, high_rate):
         flips = min(low_rate, high_rate) <= quote <= max(low_rate, high_rate)
     relative_width = (low_rate - high_rate) / central if None not in (low_rate, central, high_rate) and central > 0 else None
     return {'scenario': scenario, 'shift': shift, 'value_lower_rate': low_rate, 'value': central, 'value_higher_rate': high_rate,
-            'relative_width': relative_width, 'quote_inside_band': flips,
-            'meaning': 'Values with cost of equity and terminal WACC moved together by the shift. A quote inside the band means a one-step change in required return changes the cheap/expensive call.'}
+            'relative_width': relative_width, 'quote_inside_band': flips, 'debt_weight': w, 'debt_weight_source': w_src,
+            'terminal_wacc_shift': (1 - w) * shift if case['method'] == 'operating' else 0.,
+            'meaning': 'Values with the cost of equity moved by the shift and the terminal WACC by the equity weight (1 - debt weight) '
+                       'times the shift (Harris-Pringle; 1:1 without net debt). A quote inside the band means a one-step change in '
+                       'required return changes the cheap/expensive call.'}
 
 
-def implied_cost_of_equity(case, scenario='base', low=-.08, high=.12):
-    """Cost-of-equity shift (with terminal WACC) at which the scenario value equals the quote.
+def implied_cost_of_equity(case, scenario='base', low=-.08, high=.12, w=None):
+    """Cost of equity at which the scenario value equals the quote, the terminal WACC moved by (1 - w) x the shift.
 
     Holds every cash flow fixed. It says what return the price implies IF these cash
     flows occur; it is not the market's forecast and not a recommended hurdle rate.
+    The convention equals decision._irr / price_for_hurdle for the same debt weight.
     """
     if case['method'] not in {'operating', 'residual_income'}: raise ValueError('Implied rate requires a cash-flow model')
     s = next((x for x in case['scenarios'] if x['name'] == scenario), None)
     if s is None: raise ValueError('Unknown scenario')
+    w, w_src = _weight(case, scenario, w)
     target = case['quote']['price']
     ke = s['cost_of_equity']
     low = max(low, -ke + .005)
     if case['method'] == 'operating':
         # Terminal WACC must stay above terminal growth.
-        low = max(low, s['terminal']['growth'] - s['terminal']['wacc'] + .0025)
-    lo_v, hi_v = _shifted_value(case, scenario, low), _shifted_value(case, scenario, high)
+        low = max(low, (s['terminal']['growth'] - s['terminal']['wacc'] + .0025) / (1 - w))
+    lo_v, hi_v = _shifted_value(case, scenario, low, w), _shifted_value(case, scenario, high, w)
     note = 'Cash flows held fixed; required return that equates scenario value and quote. Not a market forecast or hurdle recommendation.'
+    lev = {'debt_weight': w, 'debt_weight_source': w_src}
     if lo_v is None or hi_v is None:
-        return {'status': 'invalid_search_domain', 'implied_cost_of_equity': None, 'limitation': note}
+        return {'status': 'invalid_search_domain', 'implied_cost_of_equity': None, 'limitation': note, **lev}
     if not hi_v <= target <= lo_v:
-        return {'status': 'not_bracketed', 'implied_cost_of_equity': None, 'range_values': [hi_v, lo_v], 'limitation': note}
+        return {'status': 'not_bracketed', 'implied_cost_of_equity': None, 'range_values': [hi_v, lo_v], 'limitation': note, **lev}
     for _ in range(60):
         mid = (low + high) / 2
-        v = _shifted_value(case, scenario, mid)
-        if v is None: return {'status': 'invalid_search_domain', 'implied_cost_of_equity': None, 'limitation': note}
+        v = _shifted_value(case, scenario, mid, w)
+        if v is None: return {'status': 'invalid_search_domain', 'implied_cost_of_equity': None, 'limitation': note, **lev}
         if v > target: low = mid
         else: high = mid
     shift = (low + high) / 2
     return {'status': 'solved', 'scenario': scenario, 'model_cost_of_equity': ke, 'implied_cost_of_equity': ke + shift,
-            'shift': shift, 'limitation': note}
+            'shift': shift, 'terminal_wacc_shift': (1 - w) * shift if case['method'] == 'operating' else 0., 'limitation': note, **lev}
 
 
 def forecast_score(observations):

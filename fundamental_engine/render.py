@@ -15,7 +15,9 @@ A marginal verdict says so and on which side it flips. Every draft is labelled a
 shows its numbers labelled, never as a conclusion; an unreleased forensic or governance red flag, demo inputs
 or a reviewer's rejected assumption withhold value, discount and five-year figures (from structured flags, never
 from words inside free text). A result that rests on an accepted analyst override says so, and the mechanical
-result is always named as such.
+result is always named as such. An unresolved forecast material issue is named (and withholds every value when the
+executed number is not a valuation of this business); a verdict that rests on a priced financing path says it is
+conditional on it.
 """
 
 PRICE_VERDICTS = ('attractive_at_price', 'quality_but_expensive', 'index_preferable')
@@ -180,9 +182,10 @@ def _charged_everywhere(cf):
 
 def _top_risk(cf, dc):
     """Most material risk in Hebrew: disqualifying first; then evidenced governance red flags; then assessed risks by
-    severity (AI and competition first among equals); then high-relevance open questions. Data limits are a
-    confidence matter, a fully priced risk (in the bear path) and a cost every scenario already charges (SBC) are not
-    'the main risk'. An unassessed item is named as an open question, never as an evidenced risk."""
+    severity (AI and competition first among equals); then high-relevance open questions. Data limits and the size of
+    possible valuation error (register valuation_error entries: error_size, a confidence matter) are not company risks, and a
+    fully priced risk (in the bear path) and a cost every scenario already charges (SBC) are not 'the main risk'. An
+    unassessed item is named as an open question, never as an evidenced risk."""
     for x in (dc.get('gates') or {}).get('disqualifying') or []:
         if _risk_he(x):
             return _risk_he(x)
@@ -192,7 +195,7 @@ def _top_risk(cf, dc):
     shown = er.get('value_at_required_return') if _n(er.get('value_at_required_return')) else view.get('base')
     cheap = _n(shown) and _n(view.get('price')) and view['price'] <= shown
     reg = [r for r in ((cf.get('rk') or {}).get('register') or []) if isinstance(r, dict) and r.get('category') != 'data'
-           and r.get('id') not in skip and _risk_he(r, cheap)]
+           and not r.get('valuation_error') and r.get('id') not in skip and _risk_he(r, cheap)]
     if not reg:
         return None
 
@@ -290,9 +293,15 @@ def _marginal_he(v):
     return f', אם כי זו הכרעה גבולית: {he}'
 
 
-def _confidence_he(dc, skip_margin, short=False):
+MATERIAL_REASON_HE = 'בתחזית נותרו שאלות מהותיות פתוחות'
+
+
+def _confidence_he(dc, skip_margin, short=False, skip_material=False):
+    """Confidence with its first reason; a reason the paragraph already states (the marginal call, a named material issue)
+    is not repeated."""
     conf = dc.get('confidence') or {}
-    rs = [r for r in conf.get('reasons_he') or [] if not (skip_margin and r.startswith('ההכרעה גבולית'))]
+    rs = [r for r in conf.get('reasons_he') or [] if not (skip_margin and r.startswith('ההכרעה גבולית'))
+          and not (skip_material and r.startswith(MATERIAL_REASON_HE))]
     first = rs[0].split(';')[0] if rs and short else rs[0] if rs else None
     return 'רמת הביטחון בהערכה: ' + conf.get('level_he', 'לא ידועה') + (f' — {first}.' if first else '.')
 
@@ -319,13 +328,18 @@ def hebrew_paragraph(casefile):
 
 def _state(dc):
     """Structured draft state (never substring tests on prose): unreleased forensic flag, governance flag, demo inputs,
-    a reviewer's rejected assumption, or the first mechanical draft code."""
+    a reviewer's rejected assumption, a failed valuation stage, an unresolved forecast material issue (named), or the
+    first mechanical draft code."""
     gates, view = dc.get('gates') or {}, dc.get('valuation_view') or {}
     codes = gates.get('draft_codes') or []
     forensic = bool(gates.get('red_flags')) and not gates.get('red_flags_released')
     gov = bool(gates.get('withhold_price')) or 'governance_red_flag' in codes
     demo = bool(view.get('is_demo')) or 'is_demo' in codes
     rejected = 'assumption_rejected' in codes
+    # an unresolved forecast material issue is named (decision.MATERIAL_HE); a 'hold' issue means no value is a valuation
+    mat = gates.get('material_issues') or []
+    he = list(dict.fromkeys(m.get('description_he') or str(m.get('id')) for m in mat))
+    material = ('בתחזית נותרה שאלה מהותית פתוחה: ' + he[0] + (f' (ועוד {len(he) - 1})' if len(he) > 1 else '')) if he else None
     if forensic:
         state, change = 'בדיקות הדוחות הדליקו דגל אדום שעוד לא הוסבר', 'הסבר מתועד מהדוחות לדגל האדום ובדיקה בלתי תלויה'
     elif gov:
@@ -337,10 +351,13 @@ def _state(dc):
         state, change = DRAFT_STATE_HE['assumption_rejected'], DRAFT_CHANGE_HE['assumption_rejected']
     elif (gates.get('valuation_failed') or []):
         state, change = 'שלב הערכת השווי נכשל בהרצה', 'תיקון התקלה בשלב הערכת השווי והרצה מחדש'
+    elif mat:
+        state, change = material, 'הכרעה מבוססת ראיות בשאלה הזו ובדיקה בלתי תלויה'
     else:
         state = next((DRAFT_STATE_HE[c] for c in codes if c in DRAFT_STATE_HE), 'הניתוח טרם עבר בדיקה בלתי תלויה')
         change = next((DRAFT_CHANGE_HE[c] for c in codes if c in DRAFT_CHANGE_HE), 'השלמת בדיקה בלתי תלויה של הנתונים וההנחות')
-    return {'state': state, 'change': change, 'hold': forensic or gov or demo or rejected}
+    hold = forensic or gov or demo or rejected or any(m.get('hold') for m in mat)
+    return {'state': state, 'change': change, 'hold': hold, 'material': material}
 
 
 def _analyst_he(dc, v):
@@ -369,14 +386,18 @@ def _paragraph(casefile, short=False, secondary=True, pad=False, compact=False):
     mech = dc.get('mechanical_verdict') or {}
     acc = [o for o in dc.get('overrides') or [] if o.get('status') == 'accepted' and o.get('material', True)]
     st = _state(dc)
+    also = st['material'] + '.' if st['material'] and st['material'] != st['state'] else ''
+    cond = (v.get('conditional_on') or {}).get('text_he')
     parts = []
     if withheld and code in PRICE_VERDICTS:
         if st['hold']:
             parts.append(f"{name}: {st['state']}, ולכן אינני קובע עדיין אם המניה אטרקטיבית במחיר הנוכחי.")
+            parts.append(also)
             parts.append(dc.get('business_reason_he', '') + '.')
             parts.append('בשלב זה אינני מציג שווי, הנחה או ערך לחמש שנים כמסקנה.')
         else:
             parts.append(f"{name}: {st['state']}, ולכן מה שכאן הוא טיוטה שטרם נבדקה ולא מסקנה.")
+            parts.append(also)
             parts.append(dc.get('business_reason_he', '') + '.')
             er = dc.get('expected_return') or {}
             pfh, h = er.get('value_at_required_return'), er.get('hurdle')
@@ -391,19 +412,22 @@ def _paragraph(casefile, short=False, secondary=True, pad=False, compact=False):
                 d = 1 - price / pfh
                 rel = f"נמוך בכ־{abs(d):.0%}" if d >= 0 else f"גבוה בכ־{abs(d):.0%}"
                 parts.append(f'{label}{edge}: שווי של כ־{_ps(pfh)} {cur} בתשואה הנדרשת{adj} (כ־{_hp(h)}), והמחיר {_ps(price)} {rel} ממנו.')
+                parts.append(f'{cond}.' if cond else '')
                 parts.append(_five_he(dc, draft=True, compact=compact))
-                parts.append('אלה מספרי טיוטה שטרם נבדקו, לא מסקנה.')
+                parts.append('' if compact else 'אלה מספרי טיוטה שטרם נבדקו, לא מסקנה.')   # the opening already says it is a draft
             else:
                 parts.append(f'{label}{edge}; אין עדיין שווי בתשואה הנדרשת להצגה.')
     elif withheld:
         # a non-price verdict in a draft is labelled as a draft too
         parts.append(f'{name} (טיוטה שטרם נבדקה, לא מסקנה): {CALL_HE[code]}{_marginal_he(v)}.')
         parts.append('הסיבה העיקרית: ' + v['reason_he'] + '.')
+        parts.append(st['material'] + '.' if st['material'] else '')
         parts.append('מה שכן אפשר לומר כרגע: ' + dc.get('business_reason_he', '') + '; עם זאת, אין כאן הערכת שווי או הנחה כמסקנה.')
         parts.append(_analyst_he(dc, v))
     else:
         parts.append(f'{name}: {CALL_HE[code]}{_marginal_he(v)}.')
         parts.append('הסיבה העיקרית: ' + v['reason_he'] + '.')
+        parts.append(f'{cond}.' if cond else '')
         parts.append(_analyst_he(dc, v))
         if code not in PRICE_VERDICTS:
             parts.append('מה שכן אפשר לומר כרגע: ' + dc.get('business_reason_he', '') + '; עם זאת, אין כאן הערכת שווי או הנחה כמסקנה.')
@@ -430,7 +454,7 @@ def _paragraph(casefile, short=False, secondary=True, pad=False, compact=False):
     if pad:
         parts.append('כל עוד הניתוח לא הושלם ולא עבר בדיקה בלתי תלויה, זו טיוטה ולא המלצה, וכל מספר בה עלול להשתנות.' if withheld else
                      'גם הערכה זו מותנית בראיות שבידינו כעת, והיא עשויה להשתנות כשיתווספו נתונים חדשים על העסק ועל המחיר.')
-    parts.append(_confidence_he(dc, skip_margin=not withheld or code not in PRICE_VERDICTS, short=short))
+    parts.append(_confidence_he(dc, skip_margin=not withheld or code not in PRICE_VERDICTS, short=short, skip_material=bool(st['material'])))
     return ' '.join(p for p in parts if p and p != '.').replace('..', '.').replace('\n', ' ')
 
 
@@ -463,6 +487,8 @@ def _verdict_box(dc):
            + (f"; margin **{v['margin']}**" if v.get('margin') else ''), '>', f"> {v.get('reason', '')}", '>']
     if v.get('price_claim_withheld'):
         out += ['> Price claim withheld: ' + '; '.join(v.get('withheld_reasons') or []), '>']
+    if v.get('conditional_on'):
+        out += ['> Conditional: ' + v['conditional_on']['text'], '>']
     pfh, price = er.get('price_for_hurdle') or {}, view.get('price')
     if _n(pfh.get('value')):
         rel = (f"price {_ps(price)} is {_p(abs(1 - price / pfh['value']), 0)} {'below' if price <= pfh['value'] else 'above'} it"
@@ -495,6 +521,13 @@ def _verdict_box(dc):
         out += [f"> Marginal band: required return {_p(lo, 2)}–{_p(hi, 2)} ↔ value at required return {_ps(pl)}–{_ps(ph)}, and the bear-loss "
                 f"tolerance ±5pp: **{md.get('status')}**" + (f" ({md['text']})" if md.get('text') else ' (verdict unchanged inside the band)')
                 + (f"; applies to {md['applies_to']}" if md.get('applies_to') else ''), '>']
+    mp = (er.get('band') or {}).get('moat_proxy') or {}
+    if mp:
+        wi, wo = (mp.get('value_today_with_proxy') or {}).get('base'), (mp.get('value_today_without_proxy') or {}).get('base')
+        out += [(f"> Computed moat proxy (not an analyst assessment): base value today {_ps(wi)} with it, {_ps(wo)} without it (model cost of "
+                 f"equity); value at your required return without it {_ps(mp.get('value_at_required_return_without_proxy'))}; the verdict is "
+                 're-run without it inside the marginal band') if mp.get('status') == 'computed' else
+                f"> Computed moat proxy applied; band test without it unavailable: {mp.get('reason')}", '>']
     out += ['> What would change it:'] + [f'> - {x}' for x in v.get('what_would_change_it') or []]
     out += ['', 'Confidence reasons: ' + ('; '.join(conf.get('reasons') or []) or 'none') + f" ({conf.get('rule', '')})"]
     if m and m.get('code') != v.get('code'):

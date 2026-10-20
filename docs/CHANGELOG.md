@@ -1,3 +1,58 @@
+## 0.11.1 — verified review-fix cycle (20.10.2026)
+
+Adversarial reviewers attacked every stage; a defect counted only when a script reproduced it. Each fix came with a
+regression test that fails on the earlier code, and a second review attacked the repaired areas again. Counts below are
+verified defects fixed: first review + verification of the repairs + follow-ups (review notes are kept outside the
+repository). Tests: 641 at 0.11.0, 961 now (OK, 4 skipped). Software checks, not investment accuracy. Package metadata
+(pyproject.toml, fundamental_engine.__version__) still reads 0.11.0, so casefiles record engine_version 0.11.0.
+
+- facts / dataqa / analysis — 42 (3 found on real ADBE data + 9 + 29 of 30 + 1): bundle fiscal-year rows stay annual;
+  dataqa takes facts.ttm's signed value (ADBE revenue_ttm was 61.1bn, now 25.97bn) with a `ttm_matches_facts` check; every
+  SEC tag merged per period end; undated filings wait for their deadline (annual 90 days, Q4 rows the annual lag, foreign
+  120/180); facts about periods ending after as_of are unusable; issuer documents vs secondary sources, independence by source
+  family; splits need positive evidence (dated action, as-traded price bar, restated weighted shares) and split + issuance
+  keeps the issuance; FY+YTD TTM checks; debt scope by roll-forward; capital-structure lines issued after as_of not read;
+  negative cash or investments rejected as a data error (`liquid_assets_nonnegative`), never an opening balance.
+- model_card — 6 (4 + 2 follow-ups) plus its share of the discovery verification below: industry text decides the type;
+  fee networks and exchanges get an operating route; cyclical industry words are a flag, normalization needs data or the
+  analyst (`inputs.cyclical`); evidence published after as_of is not evidence; a lender-shaped balance sheet under another
+  label routes to residual income (`flags.lender_shaped`); a profitable company that needs outside money keeps the FCFF path
+  with `valuation.funding_flag` instead of the survival model.
+- screen / sec_frames — 7 in the first review + 38 of 38 in the discovery verification (shared with model_card; the record
+  does not split them by file): owner yield (FCF - SBC) / market cap; priced-in on EV/NOPAT with a cross-check and a price
+  check in every lens; cyclical peaks from data keep peak earners out of compounder/fair-price lenses; missing debt is
+  unknown, never net cash; per-share funding discipline in the structural lens; loss-making growers can show traction.
+- forecast / valuation — 39 (14 + 22 of 26 + 3): value independent of the quote (unlevered table rate relevered on the
+  model's own equity, expected cost of debt, never the coupon); mid-cycle cyclicals and through-the-cycle margins; current
+  year from YTD actuals; funding order investments -> SBC in shares -> debt within 3x EBITDA -> equity at min(quote, own
+  value); investments and excess cash at face; reinvestment converging to g/ROIC; decline stage may keep declining; fifth
+  anniversary always a valuation date; unknown moat only as a labelled, continuous proxy; case sources carry the document
+  date and how it was read; a rate typed into the inputs is `analyst_input`, never a filing; the terminal debt weight is
+  stored in the case and rate diagnostics move the terminal WACC by (1 - w).
+- risk / review — 16 (8 + 2 + 6 follow-ups): only an accepted reviewer unlocks a price call (author statuses are notes);
+  the review is bound to the valuation and to the analyst inputs (`inputs_sha256`, `rv['binding']`); self-review detected
+  by normalized name; red-flag releases need filing documents beyond the flag's own evidence; error size is valuation-only;
+  permanent-loss cases never milder than bear; pre-revenue and unclassified companies and the risk variants complete;
+  `pricing_status` priced / partially_priced / not_priced / open_question / gate; valuation-error entries labelled; Hebrew
+  descriptions for base-rate and what-must-be-true entries; a negative cash figure is never runway.
+- decision / render — 50 (18 + 28 of 31 + 4; the other 3 were review.py items, fixed above): one required return, never
+  below the model's own cost of equity; marginal band; IRR and values at a required return move the terminal WACC by the
+  equity weight; upgrades cannot bypass a gate or lower the hurdle; crashed valuation is an evidence gap; funding gates only
+  blocked or unreviewed financing (a reviewed priced path is valued with `conditional_on`); unresolved forecast material
+  issues keep a named draft; the band is re-run without a computed moat proxy; register pricing status read, never upgraded.
+- portfolio — 2 in the first review (account-like keys never become symbols; ETFs default to diversified) plus the
+  economics/privacy verification (34 regression tests; the record gives no defect count): common factors separate from
+  driver clusters, adds funded from cash then pro-rata sales, order-shaped payloads refused.
+- monitor / ledger / mcp — 6: current fiscal year frozen and checked; one-year growth triggers; backdated recordings
+  refused and late rows excluded from learning; events recorded after an outcome are post-hoc; MCP ledger paths confined
+  to the corpus directory; thesis_score takes actuals.
+- pipeline / cli — 3 (2 + 1): later-dated price, share count and consensus skipped instead of clamped to as_of; a draft
+  verdict no longer reads as supporting a price in `summary`; `summary` carries decision_version, margin, hurdle and
+  value_at_required_return. CLI: `python -m fundamental_engine.cli` works; inline JSON for --company and portfolio --options.
+
+Still open: docs/LIMITATIONS.md (no index-beating evidence, SEC blocked, leverage drift deferred, price-history basis
+not filled, 1:1 sensitivity grid, vendor quotas, no structured GOOGL/NVDA statements).
+
 ## 0.11.0 — one decision path from sources to verdict; discovery, portfolio and monitoring layers (20.10.2026)
 
 - facts.py: FactBook, one schema with provenance and availability date for every number; adapters for FMP

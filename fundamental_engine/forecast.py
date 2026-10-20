@@ -134,6 +134,8 @@ KIND_MAP = {'filing_derived': ('filing', 'provider_normalized'), 'vendor_normali
 # were read is carried in retrieval, so a 10-Q seen through search excerpts counts as primary but not read directly
 ISSUER_DATASETS = {'filing': 'filing', 'issuer_release': 'issuer_release', 'earnings_release': 'earnings_release'}
 RETRIEVALS = ('primary_document', 'provider_normalized', 'search_excerpt', 'market_feed')
+# kinds graded as a primary document somewhere (valuation, supervisor, facts): a rate typed into the inputs never claims one
+PRIMARY_CLAIMS = frozenset({'filing', 'earnings_release', 'issuer_release', 'regulator', 'official_statistics'} | facts.REPORTED_KINDS)
 RULES = 'engine:forecast_rules'
 
 
@@ -246,10 +248,21 @@ def _rate_input(fb, spec, default, label):
         return v, {'fb': sid}, f'{label} {v:.2%} from {sid} ({when})'
     if not spec.get('title'):
         raise ValueError(f'{label}: supply source_id (FactBook source) or title/url for the dated quote')
+    kind = spec.get('kind')
+    if kind is not None and str(kind).strip().lower() in PRIMARY_CLAIMS:
+        raise ValueError(f"{label}: kind {kind!r} claims a primary document, but a value typed into the inputs is analyst input; "
+                         'register the document in the FactBook and cite its source_id')
+    retrieval = spec.get('retrieval', 'provider_normalized')
+    if retrieval not in RETRIEVALS:
+        raise ValueError(f'{label}: retrieval must be one of {list(RETRIEVALS)}')
     sid = 'input:' + label
-    return v, {'case': {'id': sid, 'title': spec['title'], 'url': spec.get('url') or f'input://{label}',
-                        'kind': spec.get('kind', 'official_statistics'), 'published_at': when, 'available_at': when,
-                        'retrieval': spec.get('retrieval', 'provider_normalized')}}, f'{label} {v:.2%} ({spec["title"]}, {when})'
+    src = {'id': sid, 'title': spec['title'], 'url': spec.get('url') or f'input://{label}', 'kind': 'analyst_input',
+           'published_at': when, 'available_at': when, 'retrieval': retrieval}
+    if kind is not None:
+        src['stated_kind'] = str(kind)
+    if not spec.get('as_of'):
+        src['published_at_estimated'] = True
+    return v, {'case': src}, f'{label} {v:.2%} ({spec["title"]}, {when}; analyst input)'
 
 
 # ---------------------------------------------------------------- routing and history
@@ -688,6 +701,7 @@ def _solve_capital(spec, P, table, kd_e, kd_p, net_debt, ov_ke, cap_at_quote=Tru
             P[s].update(ke=k_e, wacc=max(wacc, P[s]['g_terminal'] + .03))
             sc['cost_of_equity'] = _r(k_e)
             sc['terminal']['wacc'] = _r(P[s]['wacc'])
+            sc['terminal']['debt_weight'] = float(w)    # a change in Ke moves this WACC by (1 - w) x the change (valuation_tools)
         return ke, de
     w, e, it = 0., None, 0
     status = 'no_net_debt' if net_debt <= 0 else 'converged'
@@ -1260,6 +1274,10 @@ def _fund(spec, policy, allow, r_new, r0, debt0, locked, inv0):
 # ---------------------------------------------------------------- ledger, sources, underwriting
 
 def _case_sources(fb, ids, extra):
+    """FactBook sources -> case sources. Kind: KIND_MAP; issuer documents (and legacy 'document' with a filing/release
+    dataset) take their dataset, primary_document its bundle kind (regulator, official_statistics). Retrieval: the source's
+    own when it is a valuation RETRIEVAL (any kind), else the kind's default. published_at: the document date when the
+    FactBook has one, else the first availability of its facts flagged published_at_estimated."""
     cutoff = fb['as_of']
     avail = {}
     for f in fb['facts']:
@@ -1279,12 +1297,18 @@ def _case_sources(fb, ids, extra):
         s = fb['sources'][sid]
         kind, retrieval = KIND_MAP.get(s['kind'], (s['kind'], None))
         if s['kind'] == 'issuer_document' or (s['kind'] == 'document' and s.get('dataset') in ISSUER_DATASETS):
-            kind = ISSUER_DATASETS.get(s.get('dataset'), 'document')
-            retrieval = s.get('retrieval') if s.get('retrieval') in RETRIEVALS else 'search_excerpt'
+            kind, retrieval = ISSUER_DATASETS.get(s.get('dataset'), 'document'), 'search_excerpt'
+        elif s['kind'] == 'primary_document':
+            kind, retrieval = s['dataset'], 'search_excerpt'      # regulator / official_statistics: the bundle kind
+        if s.get('retrieval') in RETRIEVALS:
+            retrieval = s['retrieval']                              # how the content was actually read, for every kind
         when = avail.get(sid, cutoff)
+        pub = str(s['published_at'])[:10] if s.get('published_at') else None
         row = {'id': sid, 'title': f"{s['provider']} {s['dataset']}" + (f" ({s['note']})" if s.get('note') else ''),
                'url': s.get('url') or f"connector://{s['provider']}/{s['dataset']}", 'kind': kind,
-               'published_at': when, 'available_at': when}
+               'published_at': pub or when, 'available_at': max(when, pub) if pub else when}
+        if not pub:
+            row['published_at_estimated'] = True                    # no document date: the first availability of its facts
         if retrieval:
             row['retrieval'] = retrieval
         out.append(row)

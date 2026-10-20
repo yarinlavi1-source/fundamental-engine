@@ -1,9 +1,26 @@
-# Current version: 0.11.0 — 20.10.2026
+# Current version: 0.11.1 — 20.10.2026
 
-One decision path from connector payloads to a reviewed verdict (docs/ARCHITECTURE.md), plus discovery,
-read-only portfolio and monitoring layers on the same objects. Validation: see `python scripts/test_layers.py`
-(software / data accuracy / analysis behaviour / decision rules) and docs/EVIDENCE_STATUS.md for what is NOT
-proven (excess return). Remaining limitations: docs/LIMITATIONS.md.
+The 0.11 decision path after a verified review-fix cycle (docs/CHANGELOG.md, 0.11.1): adversarial reviews of every
+stage, each defect reproduced by a script before it counted, each fix covered by a regression test that fails on the
+earlier code, then a second review of the repaired areas. Contracts: docs/ARCHITECTURE.md, docs/MODULE_CONTRACTS.md.
+Package metadata (pyproject.toml, fundamental_engine.__version__) still reads 0.11.0.
+
+Verification actually performed on 20.10.2026 (Python 3.13, this container):
+- `python3 -m unittest discover -s tests -q`: 961 tests, OK, 4 skipped (the Stage 0 tests need the private data store
+  and reproduction results). 641 tests at 0.11.0.
+- `python scripts/test_layers.py`: software 456, data accuracy 129 (4 skipped), analysis behaviour 147, decision rules
+  229; excess return not provable by unit tests (docs/EVIDENCE_STATUS.md).
+- `python -m fundamental_engine pipeline --factbook tests/fixtures/adbe_factbook_2026-10-19.json`: all eight stages ran,
+  no errors; casefile, report and Hebrew paragraph written.
+
+Not performed here: the CI matrix (3.11-3.13), the wheel build/install check and the other CLI smoke runs in
+.github/workflows/test.yml. These are software checks, not investment accuracy measurements. Remaining limitations, by
+severity: docs/LIMITATIONS.md.
+
+## Previous: 0.11.0 — 20.10.2026
+
+One decision path from connector payloads to a reviewed verdict, plus discovery, read-only portfolio and monitoring
+layers on the same objects. 641 tests at the release commit.
 
 ## Previous: 0.10.0 — 19.10.2026
 

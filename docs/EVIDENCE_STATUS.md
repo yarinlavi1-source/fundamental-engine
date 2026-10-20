@@ -1,15 +1,19 @@
-# What is proven, what is not (20.10.2026)
+# What is proven, what is not (20.10.2026, v0.11.1)
 
 Green unit tests prove that code behaves as specified. They do not prove that the engine picks stocks
 that beat an index. This file keeps the two apart; `scripts/test_layers.py` prints it as the fifth layer.
 
 | Layer | Status | Evidence |
 |---|---|---|
-| Software correctness | Tested | `python scripts/test_layers.py` (per-layer counts), CI on 3.11-3.13 |
-| Data accuracy | Partly tested | Accounting identities, cross-source and roll-forward checks run on every FactBook (dataqa); Stage 0 golden snapshots (20 companies, PIT, prices verified by a second source) skip without the private store; no automated comparison of every fixture with the original filing text |
-| Analysis quality | Behaviour tested, accuracy unmeasured | Known-situation tests (splits, banks, acquired growth, loss-making growers); no scored historical forecasts yet: the forecast ledger starts with the pipeline (monitor.freeze) |
-| Decision quality | Rules tested, outcomes unmeasured | Price-invariance of quality, verdict precedence, overrides cannot lift disqualifying gates; whether verdicts were right is only measurable forward |
+| Software correctness | Tested | `python scripts/test_layers.py`: 456 software tests of 961 in total (20.10.2026, all passing); CI workflow on 3.11-3.13. Every defect fixed in the 0.11.1 review cycle was first reproduced by a reviewer's script and is now covered by a regression test that fails on the earlier code |
+| Data accuracy | Partly tested | 129 tests: accounting identities, cross-source checks by source family, roll-forwards, point-in-time availability (filing deadlines, Q4 lag, look-ahead), split evidence and negative-balance rejection run on every FactBook (dataqa); Stage 0 golden snapshots (20 companies, PIT, prices verified by a second source) skip without the private store; no automated comparison of every fixture with the original filing text, and primary filings cannot be fetched here |
+| Analysis quality | Behaviour tested, accuracy unmeasured | 147 known-situation tests (splits and split + issuance, banks and lender-shaped balance sheets, acquired growth, loss-making growers, cyclical peaks, profitable capex-heavy companies, quote-independent value); no scored historical forecasts yet: the forecast ledger starts with the pipeline (monitor.freeze) |
+| Decision quality | Rules tested, outcomes unmeasured | 229 tests: price-invariance of quality, verdict precedence, one required return never below the model's cost of equity, marginal band, overrides cannot lift disqualifying gates or bypass a route, review bound to the valuation and the analyst inputs, self-review rejected, unresolved material issues keep a draft; whether verdicts were right is only measurable forward |
 | Excess return vs index | **Not proven** | See below |
+
+Real-company coverage: ADBE runs end to end from a filing fixture (`tests/fixtures/adbe_factbook_2026-10-19.json`) and its
+verdict is an unreviewed draft. GOOGL and NVDA have no structured statements collected yet (docs/LIMITATIONS.md), so no
+multi-company comparison has been run on the 0.11.1 code.
 
 ## Excess return: current state
 
@@ -19,7 +23,8 @@ that beat an index. This file keeps the two apart; `scripts/test_layers.py` prin
 - Momentum + near-high + achievable price (H3): passes the literal rule in the holdout but reverses in the
   design window, t = 1.25, and 7% of random subsets did as well: **forward test only**.
 - The new pipeline's verdicts have **no track record**. Every decision is written to the ledger at the time
-  it is made so that 12/24/36-month comparisons with SPY, RSP and QQQ become possible.
+  it is made so that 12/24/36-month comparisons with SPY, RSP and QQQ become possible; recordings made more than
+  7 days after the decision are refused or excluded, so the record cannot be backfilled with hindsight.
 
 ## Why a backtest cannot settle it yet
 

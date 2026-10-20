@@ -177,9 +177,14 @@ def valuate(fb, qa, fc, inputs=None):
 
 
 def run(fb, inputs=None):
-    """Run every stage on one FactBook. inputs: {'card': ..., 'forecast': ..., 'reviewer': ..., 'decision': ...}."""
+    """Run every stage on one FactBook. inputs: {'card': ..., 'forecast': ..., 'reviewer': ..., 'decision': ..., 'analyst': name(s)?}.
+
+    The reviewer signs valuation_sha256 (the executed valuation) and inputs_sha256 = review.inputs_digest(val, inputs), which
+    also covers inputs.decision/card/forecast as supplied (rv['binding'] shows the value to sign): an analyst override added
+    after the review voids it. inputs.analyst and every inputs.forecast.reviews signer can never be the independent reviewer."""
     from . import dataqa, analysis, model_card, forecast, risk, review, decision
     inputs = deepcopy(inputs or {})
+    signed = deepcopy(inputs)                     # the inputs as supplied, before any stage reads them
     cf = {'casefile_version': 1, 'engine_version': __version__, 'company': fb['company'], 'as_of': fb['as_of'],
           'factbook_sha256': F.fingerprint(fb), 'inputs_sha256': F.digest(inputs), 'errors': [], 'stages': {},
           'collection_notes': list(fb.get('collection_notes') or [])}
@@ -202,7 +207,8 @@ def run(fb, inputs=None):
     if val is None:
         val = {'status': 'not_computed', 'reason': 'valuation failed: ' + cf['errors'][-1]['error']}
     rk = stage('risk', lambda: risk.assess(fb, qa, an, card, fc, val)) if card else None
-    rv = stage('review', lambda: review.audit(fb, qa, an, card, fc, val, rk, inputs.get('reviewer'))) if rk else None
+    rv = stage('review', lambda: review.audit(fb, qa, an, card, fc, val, rk, inputs.get('reviewer'), inputs_sha256=review.inputs_digest(val, signed),
+                                              authors=review.input_authors(signed))) if rk else None
     parts = {'fb': fb, 'qa': qa, 'an': an, 'card': card, 'fc': fc, 'val': val, 'rk': rk, 'rv': rv}
     dc = stage('decision', lambda: decision.decide(parts, inputs.get('decision')))
     cf.update({'qa': qa, 'an': an, 'card': card, 'fc': fc, 'val': val, 'rk': rk, 'rv': rv, 'dc': dc})
@@ -212,7 +218,8 @@ def run(fb, inputs=None):
 
 
 def summary(cf):
-    """Compact record used by the portfolio layer, monitoring and discovery comparisons."""
+    """Compact record used by the portfolio layer, monitoring and discovery comparisons. margin (marginal|clear|None), hurdle
+    and value_at_required_return come from the decision contract (decision_version 3); None when absent."""
     dc, val = cf.get('dc') or {}, cf.get('val') or {}
     er = dc.get('expected_return') or {}
     today = ((val.get('result') or {}).get('annual_values') or [{}])[0]
@@ -224,4 +231,6 @@ def summary(cf):
             'risk_level': ((cf.get('rk') or {}).get('error_size') or {}).get('level'),
             'price': today.get('current_quote'), 'bear_value': today.get('bear'), 'base_value': today.get('base'),
             'bull_value': today.get('bull'), 'base_irr': er.get('base_irr'), 'bear_irr': er.get('bear_irr'),
+            'decision_version': dc.get('decision_version'), 'margin': v.get('margin'), 'hurdle': er.get('hurdle'),
+            'value_at_required_return': v.get('value_at_required_return', er.get('value_at_required_return')),
             'review_status': (cf.get('rv') or {}).get('status'), 'casefile_sha256': cf.get('casefile_sha256')}

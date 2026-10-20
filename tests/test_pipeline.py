@@ -1,12 +1,17 @@
-"""Pipeline loader and summary: later-dated information is skipped (never relabelled), drafts never read as conclusions.
-All data here is SYNTHETIC."""
+"""Pipeline loader, summary and review binding: later-dated information is skipped (never relabelled), drafts never read as
+conclusions, a review covers the valuation and the analyst inputs it saw. Data here is SYNTHETIC except the real ADBE FactBook
+fixture (10-K values) used for the end-to-end binding runs."""
 import json
 import os
 import tempfile
 import unittest
+from copy import deepcopy
 from datetime import datetime, timezone
-from fundamental_engine import pipeline, portfolio
+from pathlib import Path
+from fundamental_engine import pipeline, portfolio, review
 from fundamental_engine import facts as F
+
+ADBE = json.loads((Path(__file__).resolve().parent / 'fixtures/adbe_factbook_2026-10-19.json').read_text())
 
 CO = {'ticker': 'SYNT', 'currency': 'USD', 'name': 'Synthetic Co'}
 URL = 'https://www.sec.gov/Archives/edgar/data/1/000000000126000001/synt-20260828.htm'
@@ -63,6 +68,64 @@ class SummaryDraft(unittest.TestCase):
 
     def test_missing_status_is_treated_as_withheld(self):
         self.assertTrue(pipeline.summary(self.cf())['price_claim_withheld'])
+
+    def test_summary_carries_margin_hurdle_and_value_at_required_return(self):
+        cf = self.cf(status='draft', price_claim_withheld=True, margin='marginal', value_at_required_return=278.5,
+                     margin_detail={'status': 'marginal', 'flips': []})
+        cf['dc'].update(decision_version=3, expected_return={'hurdle': .0975, 'required_return': .0975, 'value_at_required_return': 278.5,
+                                                             'base_irr': .106})
+        s = pipeline.summary(cf)
+        self.assertEqual((s['decision_version'], s['margin'], s['hurdle'], s['value_at_required_return']), (3, 'marginal', .0975, 278.5))
+        old = pipeline.summary(self.cf())                                           # an older decision contract: unknown, never invented
+        self.assertEqual((old['margin'], old['hurdle'], old['value_at_required_return']), (None, None, None))
+
+
+class ReviewBinding(unittest.TestCase):
+    """The reviewer signs the executed valuation AND the analyst inputs (decision, card, forecast) the pipeline ran with."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.base = pipeline.run(deepcopy(ADBE), {'analyst': 'Yarin Analyst'})
+        if not ((cls.base.get('val') or {}).get('result') and cls.base.get('rv')):
+            raise unittest.SkipTest('pipeline produced no executed valuation/review: ' + json.dumps(cls.base.get('errors'))[:200])
+
+    def reviewer(self):
+        b = self.base['rv']['binding']
+        return {'reviewer': 'Second Reader', 'reviewed_at': ADBE['as_of'], 'independent': True, 'assumption_reviews': {}, 'findings': [],
+                'statement': 'Read the casefile, the sources and the analyst inputs (test double).',
+                'valuation_sha256': b['valuation_sha256'], 'inputs_sha256': b['inputs_sha256']}
+
+    def test_pipeline_passes_the_inputs_hash_and_an_override_after_the_review_voids_it(self):
+        b = self.base['rv']['binding']
+        self.assertEqual(b['supplied_by'], 'pipeline')
+        self.assertEqual(b['valuation_sha256'], self.base['val']['result']['input_sha256'])
+        self.assertEqual(b['inputs_sha256'], review.inputs_digest(self.base['val'], {}))       # no decision/card/forecast inputs
+        cf = pipeline.run(deepcopy(ADBE), {'analyst': 'Yarin Analyst', 'reviewer': self.reviewer()})
+        rc = cf['rv']['reviewer_check']
+        self.assertEqual((rc['bound_to_valuation'], rc['bound_to_inputs'], rc['self_review']), (True, True, []))
+        self.assertFalse([e for e in rc['errors'] if 'sha256' in e or 'author-side' in e], rc['errors'])
+        later = {'overrides': [{'target': 'business_quality', 'value': 'weak', 'evidence_ids': ['fmp:as_reported_income_annual'],
+                                'justification': 'Analyst downgrade added after the review was signed.'}]}
+        cf = pipeline.run(deepcopy(ADBE), {'analyst': 'Yarin Analyst', 'reviewer': self.reviewer(), 'decision': later})
+        rc = cf['rv']['reviewer_check']
+        self.assertEqual((rc['bound_to_valuation'], rc['bound_to_inputs'], rc['accepted']), (True, False, False))
+        self.assertTrue(any('inputs_sha256 does not match' in e for e in rc['errors']), rc['errors'])
+        self.assertNotEqual(cf['rv']['binding']['inputs_sha256'], self.base['rv']['binding']['inputs_sha256'])
+        self.assertFalse(cf['dc']['gates']['reviewer_present'])
+        self.assertTrue(pipeline.summary(cf)['price_claim_withheld'])
+
+    def test_the_analyst_named_in_the_inputs_cannot_review(self):
+        cf = pipeline.run(deepcopy(ADBE), {'analyst': ['Second  Reader'], 'reviewer': self.reviewer()})
+        rc = cf['rv']['reviewer_check']
+        self.assertEqual((rc['independent'], rc['accepted'], rc['self_review']), (False, False, ['Second  Reader']))
+        self.assertTrue(rc['bound_to_inputs'])                                      # the analyst name is not part of the signed hash
+
+    def test_summary_reads_the_decision_contract(self):
+        s, dc = pipeline.summary(self.base), self.base['dc']
+        self.assertEqual(s['decision_version'], 3)
+        self.assertEqual((s['margin'], s['hurdle'], s['value_at_required_return']),
+                         (dc['verdict'].get('margin'), dc['expected_return']['hurdle'], dc['verdict'].get('value_at_required_return')))
+        self.assertIsNotNone(s['hurdle'])
 
 
 if __name__ == '__main__':

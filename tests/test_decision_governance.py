@@ -605,7 +605,10 @@ class OverrideBypassTests(unittest.TestCase):
         d = decide(p, {'overrides': [ov('verdict', 'attractive_at_price', 'sec:inc', why='the bear case is too harsh in my judgement overall')]})
         self.assertEqual(d['verdict']['code'], 'quality_but_expensive')
         weak = an_saas(roic=.03, operating_margin=.02, fcf_margin=.01, cfo_to_net_income=.6, gross_margin=.4, operating_margin_trend_3y=-.04)
-        unfunded = parts(35, an=weak, card=card_saas(funding={'value': 'needs_external', 'reasons': ['test']}))
+        blocked = deepcopy(SPEC)
+        for s in blocked['scenarios']:
+            s['minimum_cash'] = 2e9                                               # the plan needs cash the company does not have
+        unfunded = parts(35, spec=blocked, an=weak, card=card_saas(funding={'value': 'needs_external', 'reasons': ['test']}))
         self.assertEqual(decide(unfunded)['verdict']['code'], 'avoid')
         d = decide(unfunded, {'overrides': [ov('verdict', 'promising_funding_conditional', 'test-10k')]})
         self.assertEqual(d['verdict']['code'], 'avoid')
@@ -827,6 +830,198 @@ class ReportTextTests(unittest.TestCase):
         self.assertAlmostEqual(dec['business_growth_over_anchor_span'], g)
         self.assertGreater(dec['anchor_span_years'], dec['years'])
         self.assertIn('anchor-to-end span', markdown(casefile(parts(35), d)))
+
+
+def raise_spec(status):
+    """The software example with an equity raise in 2027 in bear and base (assumed financing, new shares at 30) and the forecast's
+    assumed-financing material issues in the given status."""
+    s = deepcopy(SPEC)
+    n = len(s['boundaries'])
+    for sc in s['scenarios']:
+        if sc['name'] in ('bear', 'base'):
+            sc.update(financing_status='assumed', equity_proceeds=[0., 6e7] + [0.] * (n - 2), equity_issue_price=[30.] * n, equity_fee_rate=.03)
+    s['underwriting'] = {'material_issues': [{'id': f'assumed_financing_{x}', 'status': status, 'description': f'{x} plan depends on assumed financing',
+                                              'assumption_ids': [f'financing_{x}']} for x in ('bear', 'base')]}
+    return s
+
+
+def fc_funding(status='assumed_external_financing', **over):
+    f = {'status': status, 'debt_assumed': 0., 'equity_raised': 6e7 if status == 'assumed_external_financing' else 0.,
+         'new_financing_shares': 2e6, 'sbc_settlement_shares': 0., 'equity': [{'period_end': '2027-12-31', 'amount': 6e7}],
+         'issue_prices': [{'period_end': b, 'price': 30., 'quote_binding': False} for b in SPEC['boundaries']],
+         'issue_price_rule': 'min(quote, scenario value per share right after the issue)', 'price_dependent': False, **over}
+    return {'assumptions': [], 'funding': {x: deepcopy(f) for x in ('bear', 'base')}}
+
+
+def with_issues(p, *issues):
+    p['val']['case'].setdefault('underwriting', {})['material_issues'] = [
+        {'id': i, 'status': st, 'description': f'{i} (test)', 'assumption_ids': ['test']} for i, st in issues]
+    return p
+
+
+def moat_fc(p, ratio):
+    t = p['val']['result']['annual_values'][0]
+    w = {s: t[s] for s in ('bear', 'base', 'bull')}
+    return {'assumptions': [], 'moat_proxy': {'weights': {'bear': 0., 'base': .6, 'bull': .6}, 'basis': 'computed proxy (test)', 'value_today_with_proxy': w,
+                                              'value_today_without_proxy': {'bear': w['bear'], 'base': w['base'] * ratio, 'bull': w['bull'] * ratio}}}
+
+
+class PrimaryDocumentEvidenceTests(unittest.TestCase):
+    def test_a_primary_document_is_filing_evidence(self):
+        p = parts(35)
+        F.add_source(p['fb'], 'reg:filing', 'regulator', 'regulator filing (test)', 'primary_document', '2026-09-27')
+        F.add_qualitative(p['fb'], 'q-reg', 'capital_allocation', 'Buyback authorisation filed with the regulator (test)', 'reported',
+                          ['reg:filing'], '2026-09-27')
+        for ev in ('reg:filing', 'q-reg'):
+            d = decide(p, {'overrides': [ov('management_capital_allocation', 'strong', ev)]})
+            self.assertEqual(d['overrides'][0]['status'], 'accepted', (ev, d['overrides'][0].get('reason')))
+
+
+class FundingPathTests(unittest.TestCase):
+    def test_a_reviewed_priced_financing_path_is_valued_and_labelled_conditional(self):
+        p = parts(35, spec=raise_spec('resolved'), fc=fc_funding())
+        d = decide(p)
+        v = d['verdict']
+        self.assertIn(v['gate'], ('price_test_passed', 'bear_loss_beyond_tolerance', 'below_hurdle'))   # valued, not the funding gate
+        self.assertEqual(d['gates']['funding'], [])
+        self.assertEqual(v['conditional_on']['kind'], 'funding')
+        self.assertIn('assumed financing in 2027 priced in the valuation', v['reason'])
+        self.assertIn('new shares at 30', v['conditional_on']['text'])
+        comp = next(c for c in d['expected_return']['premium_components'] if c['component'] == 'funding_dependence')
+        self.assertGreater(comp['value'], 0)                                          # still a funding-dependent business
+        text = hebrew_paragraph(casefile(p, d))
+        self.assertIn('השווי מותנה', text)
+        self.assertIn('Conditional: conditional on the priced financing path', markdown(casefile(p, d)))
+
+    def test_unresolved_assumed_financing_keeps_the_funding_gate_and_names_the_issue(self):
+        p = parts(35, spec=raise_spec('unresolved'), fc=fc_funding())
+        d = decide(p)
+        self.assertEqual((d['verdict']['code'], d['verdict']['gate'], d['verdict']['status']), ('promising_funding_conditional', 'unfunded_plan', 'draft'))
+        self.assertTrue(any('assumed_financing_base' in x for x in d['gates']['funding']))
+        self.assertTrue(any('assumed_financing_base' in x for x in d['verdict']['withheld_reasons']))
+        self.assertIn('מימון חיצוני מונח שעוד לא נבדק', hebrew_paragraph(casefile(p, d)))
+        # assumed financing without any material-issue record is unreviewed too
+        spec = raise_spec('resolved')
+        del spec['underwriting']
+        self.assertEqual(decide(parts(35, spec=spec, fc=fc_funding()))['verdict']['gate'], 'unfunded_plan')
+
+    def test_a_model_card_label_alone_is_not_a_funding_gate(self):
+        # the executed plan is self-funded: the card's needs_external moves the premium, never the route
+        p = parts(35, card=card_saas(funding={'value': 'needs_external', 'reasons': ['test']}))
+        d = decide(p)
+        self.assertEqual(d['verdict']['gate'], 'price_test_passed')
+        comp = next(c for c in d['expected_return']['premium_components'] if c['component'] == 'funding_dependence')
+        self.assertGreater(comp['value'], 0)
+
+    def test_sbc_settled_in_shares_is_labelled_conditional(self):
+        fc = fc_funding('share_settled', sbc_settlement_shares=1.5e6, price_dependent=True)
+        p = parts(35, fc=fc)
+        d = decide(p)
+        self.assertEqual(d['verdict']['gate'], 'price_test_passed')
+        self.assertEqual(d['verdict']['conditional_on']['kind'], 'share_settlement')
+        self.assertTrue(d['verdict']['conditional_on']['price_dependent'])
+        self.assertIn('תלוי במחיר המניה', hebrew_paragraph(casefile(p, d)))
+
+
+class MaterialIssueTests(unittest.TestCase):
+    def test_an_unresolved_material_issue_keeps_the_verdict_a_draft_and_is_named(self):
+        base = decide(parts(35))
+        self.assertEqual((base['verdict']['code'], base['verdict']['status']), ('attractive_at_price', 'final'))
+        for issue, he, hold in (('possible_lender', 'גוף מלווה', True), ('leverage_at_cap', 'תקרת המינוף', True),
+                                ('cyclical_peak_unconfirmed', 'שיא מחזורי', False), ('moat_proxy', 'אומדן מחושב ליתרון תחרותי', False),
+                                ('convertibles_unapplied', 'אג"ח להמרה', False)):
+            p = with_issues(parts(35), (issue, 'unresolved'))
+            d = decide(p)
+            self.assertEqual(d['verdict']['status'], 'draft', issue)
+            self.assertTrue(d['verdict']['price_claim_withheld'])
+            self.assertTrue(any(issue in x for x in d['verdict']['withheld_reasons']), issue)
+            self.assertIn(issue, ' '.join(d['confidence']['reasons']))
+            text = hebrew_paragraph(casefile(p, d))
+            self.assertIn(he, text, issue)
+            self.assertIn('unresolved forecast material issue ' + issue, markdown(casefile(p, d)))
+            self.assertEqual('השווי בתשואה הנדרשת' in text or 'שווי של כ־' in text, not hold, issue)   # no value when the number is not a valuation
+            self.assertTrue(80 <= len(text.split()) <= 140, (issue, len(text.split())))
+
+    def test_a_resolved_material_issue_does_not_hold_the_verdict(self):
+        d = decide(with_issues(parts(35), ('possible_lender', 'resolved')))
+        self.assertEqual(d['verdict']['status'], 'final')
+        self.assertEqual(d['gates']['material_issues'], [])
+
+    def test_the_forecast_spec_is_read_when_the_case_carries_no_issues(self):
+        fc = {'assumptions': [], 'spec': {'underwriting': {'material_issues': [{'id': 'possible_lender', 'status': 'unresolved', 'description': 'test'}]}}}
+        d = decide(parts(35, fc=fc))
+        self.assertEqual([m['id'] for m in d['gates']['material_issues']], ['possible_lender'])
+        self.assertEqual(d['verdict']['status'], 'draft')
+
+    def test_a_non_price_draft_names_the_issue_too(self):
+        spec = deepcopy(SPEC)
+        for s in spec['scenarios']:
+            s['minimum_cash'] = 2e9
+        p = with_issues(parts(35, spec=spec), ('convertibles_unapplied', 'unresolved'))
+        d = decide(p)
+        self.assertEqual(d['verdict']['code'], 'promising_funding_conditional')
+        self.assertIn('אג"ח להמרה', hebrew_paragraph(casefile(p, d)))
+
+
+class MoatProxyBandTests(unittest.TestCase):
+    def test_the_band_is_re_run_without_the_computed_moat_proxy(self):
+        p = parts(35)
+        clear = decide(p)
+        self.assertEqual((clear['verdict']['code'], clear['verdict']['margin']), ('attractive_at_price', 'clear'))
+        d = decide(parts(35, fc=moat_fc(p, .7)))
+        md, band = d['verdict']['margin_detail'], d['expected_return']['band']
+        self.assertEqual((d['verdict']['code'], md['status']), ('attractive_at_price', 'marginal'))
+        flip = next(f for f in md['flips'] if f['test'] == 'moat_proxy')
+        self.assertEqual(flip['code'], 'quality_but_expensive')
+        self.assertIn('without the computed moat proxy', md['text'])
+        self.assertIn('יתרון תחרותי', md['text_he'])
+        v = band['moat_proxy']['value_at_required_return_without_proxy']
+        self.assertAlmostEqual(v, .7 * d['expected_return']['value_at_required_return'])
+        self.assertAlmostEqual(md['value_range'][0], v)                               # the value range spans the no-proxy value
+        self.assertLess(band['moat_proxy']['base_irr_without_proxy'], d['expected_return']['base_irr'])
+        self.assertIn('Computed moat proxy', markdown(casefile(parts(35, fc=moat_fc(p, .7)), d)))
+        small = decide(parts(35, fc=moat_fc(p, .99)))
+        self.assertEqual(small['verdict']['margin'], 'clear')
+        self.assertIn('moat_proxy', small['expected_return']['band'])
+
+    def test_no_value_without_the_proxy_is_recorded_not_guessed(self):
+        p = parts(35)
+        fc = moat_fc(p, .7)
+        fc['moat_proxy']['value_today_without_proxy'] = None
+        d = decide(parts(35, fc=fc))
+        self.assertEqual(d['expected_return']['band']['moat_proxy']['status'], 'unavailable')
+        self.assertEqual(d['verdict']['margin'], 'clear')
+
+
+class RegisterPricingStatusTests(unittest.TestCase):
+    def test_the_register_pricing_status_is_read_and_never_upgraded(self):
+        rk = deepcopy(RK)
+        rk['register'] = [dict(rk['register'][0], pricing_status='partially_priced'),
+                          {'id': 'R-ai', 'category': 'technology_ai', 'description': 'AI substitutes (test)', 'class': 'priced', 'severity': 'high',
+                           'in_bear_case': False, 'evidence_ids': [], 'pricing_status': 'priced'},
+                          {'id': 'R-open', 'category': 'moat', 'description': 'moat (test)', 'class': 'pricing', 'severity': 'high',
+                           'in_bear_case': True, 'evidence_ids': [], 'pricing_status': 'unassessed'}]
+        pr = {x['id']: x for x in decide(parts(35, rk=rk))['risk_pricing']}
+        self.assertEqual(pr['R-comp']['status'], 'partially_priced')               # in the bear path, but the register says partial
+        self.assertEqual(pr['R-comp']['register_pricing_status'], 'partially_priced')
+        self.assertEqual(pr['R-ai']['status'], 'partially_priced')                 # claimed priced: neither in the bear path nor quantified
+        self.assertEqual(pr['R-open']['status'], 'open_question')
+
+    def test_a_valuation_error_entry_is_never_the_main_company_risk(self):
+        rk = deepcopy(RK)
+        rk['register'] = [{'id': 'val.terminal_share', 'category': 'valuation', 'class': 'pricing', 'severity': 'high', 'in_bear_case': False,
+                           'description': 'Size of possible valuation error, not a company risk (test)', 'evidence_ids': [], 'valuation_error': True,
+                           'pricing_status': 'not_priced', 'pricing_basis': 'not in the bear path and no quantified adjustment'},
+                          {'id': 'biz.customer_concentration', 'category': 'customer_concentration', 'class': 'pricing', 'severity': 'medium',
+                           'in_bear_case': False, 'description': 'top customers (test)', 'evidence_ids': [], 'pricing_status': 'not_priced'}]
+        p = parts(35, rk=rk)
+        d = decide(p)
+        pr = {x['id']: x for x in d['risk_pricing']}
+        self.assertTrue(pr['val.terminal_share']['valuation_error'])
+        self.assertEqual(pr['val.terminal_share']['register_pricing_basis'], 'not in the bear path and no quantified adjustment')
+        text = hebrew_paragraph(casefile(p, d))
+        self.assertIn('הסיכון המרכזי: ' + RISK_HE['customer_concentration'], text)
+        self.assertNotIn(RISK_HE['terminal_share'], text)
 
 
 if __name__ == '__main__':

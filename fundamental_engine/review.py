@@ -14,7 +14,11 @@ Three layers; none of them proves that a source is true:
    share-count path versus history, and the valuation opening versus validated balances.
 3. reviewer: an optional signed, independent review input. It is validated and recorded, never
    fabricated. It is ACCEPTED only when valid, independent and bound to this valuation (valuation_sha256
-   equals the executed input_sha256; reviewed_at between the valuation cutoff and today). Its assumption
+   equals the executed input_sha256; reviewed_at between the valuation cutoff and today) AND to the analyst's
+   inputs (inputs_sha256 equals inputs_digest: the executed valuation plus inputs.decision, inputs.card and
+   inputs.forecast, so an analyst override added after the review voids it). A reviewer whose normalized name
+   is an author-side signer (a case assumption 'reviewer', a forecast 'reviews' signer or the analyst named
+   in the inputs) is a self-review, never independent. Its assumption
    sign-offs are applied by RE-RUNNING the underwriting audit on a copy of the executed case in which every
    author-side review status is reset first: 'reviewed' statuses written in the forecast spec (or its
    'reviews' input) are author notes, never sign-offs, so no price conclusion exists without an accepted
@@ -24,7 +28,9 @@ Three layers; none of them proves that a source is true:
 
 The price conclusion needs every gate; `reasons` explains each one that is closed. Demo cases never
 pass. Evidenced going-concern doubt, material weakness or restatement (risk register withhold_price)
-withholds the conclusion until the accepted reviewer documents an override (risk_overrides). A business
+withholds the conclusion until the accepted reviewer documents an override (risk_overrides) citing at least one
+FactBook filing or issuer document other than the flag's own evidence, and nothing weaker than filing evidence
+(market feeds, consensus, vendor, synthetic, secondary and analyst-written case sources are rejected). A business
 not yet understood (model card completeness insufficient) withholds the conclusion as an
 evidence gap ('understanding_insufficient', status unreviewed_draft), never as a disqualifying judgement.
 needs_explanation / needs_evidence items are open questions for the reviewer, not vetoes.
@@ -33,6 +39,7 @@ from copy import deepcopy
 from datetime import date
 import re
 from . import redteam
+from .facts import digest
 from .valuation import years
 from .valuation_audit import audit_valuation
 
@@ -44,6 +51,9 @@ SEVERITIES = {'critical', 'major', 'minor'}
 SBC_MIN_SHARE = .5      # modelled SBC share of revenue below half of history is a token charge unless a fade is evidenced
 HARD = {'dataqa_missing', 'data_blocked', 'risk_not_assessed', 'disqualifying_risk', 'redteam_not_usable',
         'consistency_failure', 'critical_finding_unresolved'}
+BOUND_INPUTS = ('decision', 'card', 'forecast')           # analyst inputs the reviewer's inputs_sha256 covers
+RELEASE_CLASSES = {'filing_document', 'filing_dataset'}   # decision._evidence_class values a red-flag release may cite
+RELEASE_DOCS = 'issuer_document, primary_document or document'
 
 
 def num(x):
@@ -276,16 +286,68 @@ def _today(today):
     return date.fromisoformat(today) if isinstance(today, str) else (today or date.today())
 
 
-def check_reviewer(reviewer, case=None, result=None, today=None, known_ids=None):
+def inputs_digest(val, inputs=None):
+    """The reviewer's inputs_sha256: the executed valuation (input_sha256) and the analyst's inputs.decision, inputs.card and
+    inputs.forecast (empty = none). The pipeline computes it; an override added after the review changes it."""
+    result = valuation_parts(val or {})[0]
+    inputs = inputs if isinstance(inputs, dict) else {}
+    return digest({'binding': 'review_inputs_v1', 'valuation_sha256': (result or {}).get('input_sha256'),
+                   **{k: inputs.get(k) or None for k in BOUND_INPUTS}})
+
+
+def input_authors(inputs):
+    """Author-side names in the pipeline inputs: inputs.analyst (text or list) and every inputs.forecast.reviews signer."""
+    inputs = inputs if isinstance(inputs, dict) else {}
+    a = inputs.get('analyst')
+    names = [a] if isinstance(a, str) else list(a) if isinstance(a, list) else []
+    fc = inputs.get('forecast') if isinstance(inputs.get('forecast'), dict) else {}
+    reviews = fc.get('reviews') if isinstance(fc.get('reviews'), dict) else {}
+    names += [r.get('reviewer') for r in reviews.values() if isinstance(r, dict)]
+    return sorted({n.strip() for n in names if isinstance(n, str) and n.strip()})
+
+
+def _person(name):
+    """Normalized person name: case-folded word tokens in sorted order, bracketed remarks dropped ('Lavi, Yarin (author)' = 'yarin lavi')."""
+    if not isinstance(name, str):
+        return ''
+    s = name.casefold()
+    t = re.findall(r'[^\W_]+', re.sub(r'\([^)]*\)|\[[^\]]*\]', ' ', s)) or re.findall(r'[^\W_]+', s)
+    return ' '.join(sorted(t))
+
+
+def _release_errors(rid, ev, own, evidence):
+    """Why a risk override's evidence cannot release a withheld red flag ([] = it can). The flag's own evidence is ignored;
+    every other id must be FactBook filing evidence and at least one a filing/issuer document."""
+    from .decision import _evidence_class
+    fresh = [x for x in ev if x not in own]
+    cls = {x: _evidence_class(x, evidence or {}) for x in fresh}
+    bad = [x for x in fresh if cls[x] not in RELEASE_CLASSES]
+    if bad:
+        return [f"risk_overrides.{rid}: evidence must be FactBook filing documents or filing datasets; not accepted: "
+                + ', '.join(f'{x} ({cls[x]})' for x in bad)]
+    if not any(cls[x] == 'filing_document' for x in fresh):
+        cited = sorted(set(ev) & set(own))
+        return [f"risk_overrides.{rid}: cite at least one FactBook filing or issuer document ({RELEASE_DOCS}) besides the flag's own evidence"
+                + (f" (the flag's own evidence {', '.join(cited)} is ignored)" if cited else '')]
+    return []
+
+
+def check_reviewer(reviewer, case=None, result=None, today=None, known_ids=None, evidence=None, own_evidence=None, authors=(),
+                   inputs_sha256=None):
     """Validate the shape of a signed review; record it, never invent one.
 
     accepted = valid AND independent AND bound to the executed valuation (valuation_sha256 is mandatory: an
-    unbound review could be reused for any later revision that keeps the assumption ids). reviewed_at must lie
-    between the valuation cutoff and `today` (injectable clock; default date.today()). risk_overrides
-    {risk id: {justification, evidence_ids}} document why a withheld governance red flag does not preclude a
-    price conclusion; evidence ids must be known (`known_ids`) when supplied."""
+    unbound review could be reused for any later revision that keeps the assumption ids) AND bound to the analyst
+    inputs (inputs_sha256 is mandatory and must equal `inputs_sha256`, see inputs_digest). reviewed_at must lie
+    between the valuation cutoff and `today` (injectable clock; default date.today()). A reviewer whose normalized
+    name matches one of `authors` (author-side signers) is a self-review. risk_overrides {risk id: {justification,
+    evidence_ids}} document why a withheld governance red flag does not preclude a price conclusion: ids must be known
+    (`known_ids`) when supplied, the flag's own evidence (`own_evidence` {risk id: ids}) is ignored, and the rest must be
+    FactBook filing evidence by decision._evidence_class over `evidence` (decision._evidence_index), at least one a
+    filing/issuer document."""
     out = {'present': reviewer is not None, 'valid': False, 'independent': False, 'errors': [], 'reviewed': [], 'rejected': [],
-           'unresolved_critical': [], 'unresolved_major': [], 'bound_to_valuation': False, 'accepted': False, 'risk_overrides': []}
+           'unresolved_critical': [], 'unresolved_major': [], 'bound_to_valuation': False, 'bound_to_inputs': False, 'accepted': False,
+           'risk_overrides': [], 'self_review': []}
     if reviewer is None:
         return out
     if not isinstance(reviewer, dict):
@@ -305,6 +367,11 @@ def check_reviewer(reviewer, case=None, result=None, today=None, known_ids=None)
         e.append('reviewed_at: ISO date required')
     if reviewer.get('independent') is not True:
         e.append('independent must be true: a self-review is recorded but is not an independent review')
+    me = _person(reviewer.get('reviewer'))
+    out['self_review'] = sorted({n for n in authors or () if me and _person(n) == me})
+    if out['self_review']:
+        e.append(f"reviewer is an author-side signer ({', '.join(out['self_review'])}: the analyst, a case assumption reviewer or a forecast "
+                 'reviews signer): a self-review is recorded but is not an independent review')
     known = {a['id'] for a in (case or {}).get('assumptions', [])}
     reviews = reviewer.get('assumption_reviews', {})
     if not isinstance(reviews, dict):
@@ -339,6 +406,13 @@ def check_reviewer(reviewer, case=None, result=None, today=None, known_ids=None)
     elif result and sha != result.get('input_sha256'):
         e.append('valuation_sha256 does not match the executed valuation: the review covers a different case')
     out['bound_to_valuation'] = bool(result and isinstance(sha, str) and sha == result.get('input_sha256'))
+    ish = reviewer.get('inputs_sha256')
+    if not isinstance(ish, str) or not ish.strip():
+        e.append('inputs_sha256: required (review.inputs_digest: the executed valuation plus inputs.decision, inputs.card and inputs.forecast); '
+                 'an unbound review would also cover analyst overrides added after it')
+    elif inputs_sha256 is not None and ish != inputs_sha256:
+        e.append('inputs_sha256 does not match: the valuation or the analyst inputs (decision, card or forecast) changed after the review')
+    out['bound_to_inputs'] = bool(inputs_sha256 and ish == inputs_sha256)
     ro = reviewer.get('risk_overrides', {})
     if not isinstance(ro, dict):
         e.append('risk_overrides must map risk id -> {justification, evidence_ids}'); ro = {}
@@ -352,10 +426,13 @@ def check_reviewer(reviewer, case=None, result=None, today=None, known_ids=None)
         elif known_ids is not None and set(ev) - set(known_ids):
             e.append(f"risk_overrides.{rid}: unknown evidence ids {sorted(set(ev) - set(known_ids))}")
         else:
-            out['risk_overrides'].append(rid)
-    out['independent'] = reviewer.get('independent') is True
+            why = _release_errors(rid, ev, set((own_evidence or {}).get(rid) or ()), evidence)
+            e += why
+            if not why:
+                out['risk_overrides'].append(rid)
+    out['independent'] = reviewer.get('independent') is True and not out['self_review']
     out['valid'] = not e
-    out['accepted'] = out['valid'] and out['independent'] and out['bound_to_valuation']
+    out['accepted'] = out['valid'] and out['independent'] and out['bound_to_valuation'] and out['bound_to_inputs']
     return out
 
 
@@ -527,8 +604,9 @@ def _underwriting_gate(case, result, rc, va, no):
     elif not full['eligible_for_research_synthesis']:
         no('underwriting_incomplete', f"evidence not linked to any assumption ({_paths(full['issues'])}): a reviewer sign-off cannot close this")
     elif not rc['accepted']:
-        why = '; '.join(rc['errors']) or ('reviewer not independent' if not rc['independent'] else 'review not bound to this valuation')
-        no('review_required', 'only review gaps remain; a valid, independent review bound to this valuation (valuation_sha256) is required'
+        why = '; '.join(rc['errors']) or ('reviewer not independent' if not rc['independent'] else 'review not bound to this valuation and inputs')
+        no('review_required', 'only review gaps remain; a valid, independent review bound to this valuation (valuation_sha256) and the analyst '
+           'inputs (inputs_sha256) is required'
            + (f' (reviewer input not accepted: {why})' if rc['present'] else '') + (f"; author review notes on {', '.join(author)} do not count" if author else ''))
     elif rc['rejected']:
         no('assumption_rejected', f"reviewer rejected: {', '.join(rc['rejected'])}")
@@ -552,11 +630,19 @@ def _known_ids(fb, case, rk):
     return {i for i in ids if isinstance(i, str)}
 
 
-def audit(fb, qa, an, card, fc, val, rk, reviewer=None, today=None):
-    """Review gate. `today` is the clock for reviewed_at (date or ISO string; default date.today())."""
+def audit(fb, qa, an, card, fc, val, rk, reviewer=None, today=None, inputs_sha256=None, authors=()):
+    """Review gate. `today` is the clock for reviewed_at (date or ISO string; default date.today()). `inputs_sha256` is the
+    pipeline's inputs_digest(val, inputs) the reviewer must sign (default: inputs_digest(val), i.e. no analyst inputs);
+    `authors` are author-side names from the inputs (input_authors), checked with every case/spec assumption reviewer."""
+    from .decision import _evidence_index
     result, case, _, _ = valuation_parts(val)
     rt = redteam_check(fb, qa, an, fc, val)
-    rc = check_reviewer(reviewer, case, result, today, _known_ids(fb, case, rk))
+    bind = inputs_sha256 or inputs_digest(val)
+    signers = set(authors or ()) | {a['reviewer'] for a in list((case or {}).get('assumptions') or []) + list(((fc or {}).get('spec') or {}).get('assumptions') or [])
+                                    if isinstance(a, dict) and isinstance(a.get('reviewer'), str)}
+    own = {r.get('id'): list(r.get('evidence_ids') or []) for r in (rk or {}).get('register') or [] if isinstance(r, dict)}
+    idx = _evidence_index({'fb': fb, 'card': card, 'fc': fc, 'val': val, 'rk': rk})
+    rc = check_reviewer(reviewer, case, result, today, _known_ids(fb, case, rk), idx, own, sorted(signers), bind)
     cons = consistency(fb, qa, an, fc, val, rt, rc)
     ua = (result or {}).get('underwriting_audit') or {}
     va = {'valuation_status': (result or {}).get('status', (val or {}).get('status', 'not_computed')),
@@ -600,7 +686,8 @@ def audit(fb, qa, an, card, fc, val, rk, reviewer=None, today=None):
     if open_flags:
         no('governance_red_flag', '; '.join(f"{r['id']} ({', '.join(r.get('evidence_ids') or [])})" for r in open_flags)
            + ': evidenced going-concern doubt, material weakness or restatement; the price conclusion waits for an accepted independent '
-           'reviewer to document an override (risk_overrides with justification and evidence ids)')
+           'reviewer to document an override (risk_overrides with a justification and FactBook filing-document evidence other than the '
+           "flag's own)")
     if not rt['usable']:
         why = rt['critical_failed'] + rt['critical_unverifiable'] or [rt['error'] or rt['verdict']]
         no('redteam_not_usable', f"critical red-team checks failed or unverifiable: {', '.join(map(str, why))}")
@@ -616,6 +703,11 @@ def audit(fb, qa, an, card, fc, val, rk, reviewer=None, today=None):
     return {'mechanical': {'dataqa': status_qa, 'dataqa_blocking': (qa or {}).get('blocking', []), 'dataqa_limited': (qa or {}).get('limited', []),
                            'valuation_audit': va, 'redteam': rt, 'consistency': cons},
             'reviewer': deepcopy(reviewer) if reviewer is not None else None, 'reviewer_check': rc,
+            'binding': {'valuation_sha256': (result or {}).get('input_sha256'), 'inputs_sha256': bind,
+                        'covers': ['valuation input_sha256'] + [f'inputs.{k}' for k in BOUND_INPUTS],
+                        'supplied_by': 'pipeline' if inputs_sha256 else 'review default: no analyst inputs (inputs_digest(val))',
+                        'meaning': 'a reviewer signs valuation_sha256 and inputs_sha256; any later change to the valuation or to these '
+                                   'analyst inputs voids the review'},
             'risk_overrides_applied': sorted(r['id'] for r in held if r['id'] in overridden),
             'price_conclusion_allowed': allowed,
             'status': 'reviewed' if allowed else ('blocked' if HARD & set(codes) else 'unreviewed_draft'),

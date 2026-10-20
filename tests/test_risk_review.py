@@ -5,7 +5,7 @@ their 'filing' sources and numbers are fictional, labelled as such), and the rea
 with hand-built dataqa/analysis inputs and an ILLUSTRATIVE driver spec (test assumptions, not a forecast).
 Upstream stage outputs are constructed by hand per docs/MODULE_CONTRACTS.md so these tests do not depend on
 other modules' heuristics. Reviews are dated against a fixed clock (TODAY); signed() binds to the executed
-valuation unless a test overrides valuation_sha256.
+valuation and to the default inputs digest (no analyst inputs) unless a test overrides valuation_sha256/inputs_sha256.
 """
 import json
 import unittest
@@ -22,7 +22,7 @@ SPEC = json.loads((ROOT / 'examples/valuation/software_drivers.json').read_text(
 ADBE = json.loads((ROOT / 'tests/fixtures/adbe_factbook_2026-10-19.json').read_text())
 AS_OF = '2026-09-27'
 TODAY = date(2026, 10, 1)                      # injected review clock
-BIND = 'bind-to-executed-valuation'            # run() replaces this with the executed valuation's input_sha256
+BIND = 'bind-to-executed-valuation'            # run() replaces this with the executed valuation's input_sha256 / inputs digest
 
 
 def m(v):
@@ -112,7 +112,7 @@ def live_spec():
 def signed(**over):
     r = {'reviewer': 'Independent reviewer (test double)', 'reviewed_at': '2026-09-28', 'independent': True, 'assumption_reviews': {'a1': 'reviewed'},
          'findings': [{'severity': 'major', 'text': 'Terminal margin needs a peer comparison.', 'resolved': True, 'response': 'Peer range 22-30% cited.'}],
-         'statement': 'I read the casefile and the sources; the assumptions are supportable.', 'valuation_sha256': BIND}
+         'statement': 'I read the casefile and the sources; the assumptions are supportable.', 'valuation_sha256': BIND, 'inputs_sha256': BIND}
     r.update(over)
     return r
 
@@ -132,14 +132,16 @@ def scen(spec, name):
     return next(s for s in spec['scenarios'] if s['name'] == name)
 
 
-def run(spec=None, fb=None, q=None, an=None, cd=None, fc=None, val=None, reviewer=None, today=TODAY):
+def run(spec=None, fb=None, q=None, an=None, cd=None, fc=None, val=None, reviewer=None, today=TODAY, **bind):
     spec = live_spec() if spec is None else spec
     fb, q, an, cd = fb or factbook(), q or qa(), an or analysis(), cd or card()
     fc, val = fc or forecast(spec), val or valuate(spec)
     rk = risk.assess(fb, q, an, cd, fc, val)
     if isinstance(reviewer, dict) and reviewer.get('valuation_sha256') == BIND:
         reviewer = dict(reviewer, valuation_sha256=(val.get('result') or {}).get('input_sha256'))
-    rv = review.audit(fb, q, an, cd, fc, val, rk, reviewer, today)
+    if isinstance(reviewer, dict) and reviewer.get('inputs_sha256') == BIND:
+        reviewer = dict(reviewer, inputs_sha256=review.inputs_digest(val))
+    rv = review.audit(fb, q, an, cd, fc, val, rk, reviewer, today, **bind)
     json.dumps(rk, allow_nan=False)
     json.dumps(rv, allow_nan=False)
     return rk, rv
@@ -194,11 +196,12 @@ class DemoAndSignOff(unittest.TestCase):
     def test_reviewer_shape_is_validated_and_recorded(self):
         spec = live_spec()
         val = valuate(spec)
-        sha = val['result']['input_sha256']
-        cases = {'independent': signed(independent=False, valuation_sha256=sha), 'precedes the valuation cutoff': signed(reviewed_at='2026-09-01', valuation_sha256=sha),
-                 'unknown assumption id': signed(assumption_reviews={'a1': 'reviewed', 'zz': 'reviewed'}, valuation_sha256=sha),
-                 'needs a response': signed(findings=[{'severity': 'minor', 'text': 'x', 'resolved': True}], valuation_sha256=sha),
-                 'different case': signed(valuation_sha256='0' * 64)}
+        sha, ish = val['result']['input_sha256'], review.inputs_digest(val)
+        cases = {'independent': signed(independent=False, valuation_sha256=sha, inputs_sha256=ish),
+                 'precedes the valuation cutoff': signed(reviewed_at='2026-09-01', valuation_sha256=sha, inputs_sha256=ish),
+                 'unknown assumption id': signed(assumption_reviews={'a1': 'reviewed', 'zz': 'reviewed'}, valuation_sha256=sha, inputs_sha256=ish),
+                 'needs a response': signed(findings=[{'severity': 'minor', 'text': 'x', 'resolved': True}], valuation_sha256=sha, inputs_sha256=ish),
+                 'different case': signed(valuation_sha256='0' * 64, inputs_sha256=ish)}
         for needle, r in cases.items():
             _, rv = run(spec, val=val, reviewer=r)
             self.assertFalse(rv['price_conclusion_allowed'], needle)
@@ -552,6 +555,47 @@ class ReviewerGate(unittest.TestCase):
         self.assertFalse(rv['reviewer_check']['valid'])
         self.assertFalse(rv['price_conclusion_allowed'])
 
+    def test_an_author_side_signer_cannot_be_the_independent_reviewer(self):
+        spec = live_spec()
+        spec['assumptions'][0].update(review_status='reviewed', reviewer='Jane Analyst (author)')
+        val = valuate(spec)
+        _, rv = run(spec, val=val, reviewer=signed(reviewer='jane  ANALYST'))      # case assumption reviewer, normalized
+        rc = rv['reviewer_check']
+        self.assertFalse(rv['price_conclusion_allowed'])
+        self.assertEqual((rc['valid'], rc['independent'], rc['accepted'], rc['self_review']), (False, False, False, ['Jane Analyst (author)']))
+        self.assertIn('review_required', rv['reason_codes'])
+        self.assertTrue(any('author-side signer' in e for e in rc['errors']), rc['errors'])
+        inputs = {'analyst': 'Lavi, Dana', 'forecast': {'reviews': {'a1': {'status': 'unreviewed', 'reviewer': 'Omer Ben-Ami'}}}}
+        authors = review.input_authors(inputs)
+        self.assertEqual(authors, ['Lavi, Dana', 'Omer Ben-Ami'])
+        for name in ('Dana Lavi', 'omer ben ami (independent)'):                     # analyst named in inputs; forecast 'reviews' signer
+            _, rv = run(reviewer=signed(reviewer=name), authors=authors)
+            self.assertFalse(rv['price_conclusion_allowed'], name)
+            self.assertFalse(rv['reviewer_check']['independent'], name)
+            self.assertEqual(len(rv['reviewer_check']['self_review']), 1, name)
+        _, rv = run(reviewer=signed(reviewer='Noa Second Reader'), authors=authors)
+        self.assertTrue(rv['price_conclusion_allowed'], rv['reasons'])
+        self.assertEqual(rv['reviewer_check']['self_review'], [])
+
+    def test_review_is_bound_to_the_analyst_inputs(self):
+        val = valuate(live_spec())
+        self.assertEqual(review.inputs_digest(val), review.inputs_digest(val, {'decision': {}, 'reviewer': {'x': 1}}))  # empty = none; reviewer excluded
+        after = {'decision': {'overrides': [{'target': 'business_quality', 'value': 'strong', 'justification': 'added after the review was signed',
+                                             'evidence_ids': ['syn']}]}}
+        for k, v in (('decision', after['decision']), ('card', {'business_model': {'primary': 'industrial'}}), ('forecast', {'horizon_years': 7})):
+            self.assertNotEqual(review.inputs_digest(val, {k: v}), review.inputs_digest(val), k)
+        _, rv = run(val=val, reviewer=signed(), inputs_sha256=review.inputs_digest(val, after))   # signed before the override was added
+        rc = rv['reviewer_check']
+        self.assertFalse(rv['price_conclusion_allowed'])
+        self.assertEqual((rc['bound_to_valuation'], rc['bound_to_inputs'], rc['accepted']), (True, False, False))
+        self.assertTrue(any('inputs_sha256 does not match' in e for e in rc['errors']), rc['errors'])
+        self.assertEqual(rv['binding']['inputs_sha256'], review.inputs_digest(val, after))
+        _, rv = run(val=val, reviewer=signed(inputs_sha256=review.inputs_digest(val, after)), inputs_sha256=review.inputs_digest(val, after))
+        self.assertTrue(rv['price_conclusion_allowed'], rv['reasons'])
+        _, rv = run(val=val, reviewer=signed(inputs_sha256=None))
+        self.assertFalse(rv['reviewer_check']['accepted'])
+        self.assertTrue(any('inputs_sha256: required' in e for e in rv['reviewer_check']['errors']))
+
     def test_gap_no_signoff_can_close_is_primary_evidence_missing(self):
         spec = live_spec()
         spec['sources'][0]['kind'] = 'document'                                    # the 10-K reached only as a generic document
@@ -694,6 +738,7 @@ class GovernanceDimensions(unittest.TestCase):
     def test_evidenced_red_flags_withhold_the_price_until_a_documented_override(self):
         cd = card(dims={'governance': {'assessment': 'weak', 'evidence_ids': ['syn'], 'note': 'material weakness in internal control; restatement of FY2024'}})
         fb = factbook()
+        F.add_source(fb, 'k10_next', 'issuer', 'following annual report (test double)', 'issuer_document', AS_OF)
         F.add_qualitative(fb, 'q_gc', 'auditor report', 'The auditor expressed substantial doubt about the ability to continue as a going concern.',
                           'reported', ['syn'], AS_OF)
         rk, rv = run(fb=fb, cd=cd, reviewer=signed())
@@ -704,13 +749,43 @@ class GovernanceDimensions(unittest.TestCase):
         self.assertIn('governance_red_flag', rv['reason_codes'])
         self.assertEqual(rv['status'], 'unreviewed_draft')
         why = 'Remediation was completed and tested by the auditor in the following annual report.'
-        ov = {rid: {'justification': why, 'evidence_ids': ['syn']} for rid in rk['withhold_price']}
+        ov = {rid: {'justification': why, 'evidence_ids': ['k10_next']} for rid in rk['withhold_price']}
         _, rv = run(fb=fb, cd=cd, reviewer=signed(risk_overrides=ov))
         self.assertTrue(rv['price_conclusion_allowed'], rv['reasons'])
         self.assertEqual(rv['risk_overrides_applied'], rk['withhold_price'])
         _, rv = run(fb=fb, cd=cd, reviewer=signed(risk_overrides={'gov.going_concern': {'justification': 'fine', 'evidence_ids': ['zz']}}))
         self.assertFalse(rv['price_conclusion_allowed'])
         self.assertTrue(any('risk_overrides.gov.going_concern' in e for e in rv['reviewer_check']['errors']))
+
+    def test_risk_override_needs_filing_documents_beyond_the_flags_own_evidence(self):
+        fb = factbook()
+        for sid, kind in (('k10_fy25', 'issuer_document'), ('k10a', 'issuer_document'), ('snap', 'market_feed'), ('cons', 'consensus'),
+                          ('vend', 'vendor_normalized'), ('press', 'secondary')):
+            F.add_source(fb, sid, 'test', f'{sid} (test double)', kind, AS_OF)
+        F.add_qualitative(fb, 'q_gc', 'auditor report', 'The auditor expressed substantial doubt about the ability to continue as a going concern.',
+                          'reported', ['k10_fy25'], AS_OF)
+        rk, _ = run(fb=fb)
+        self.assertEqual(rk['withhold_price'], ['gov.going_concern'])
+        self.assertEqual(set(entry(rk, 'gov.going_concern')['evidence_ids']), {'q_gc', 'k10_fy25'})
+        why = 'The amended annual report records the completed refinancing and the auditor withdrew the doubt.'
+
+        def release(ev):
+            return run(fb=fb, reviewer=signed(risk_overrides={'gov.going_concern': {'justification': why, 'evidence_ids': ev}}))[1]
+        # a filing document alongside never launders a weaker id; '10k' is an analyst-written case source, not a FactBook source
+        for sid, cls in (('snap', 'market_feed'), ('cons', 'consensus'), ('vend', 'vendor'), ('syn', 'synthetic'), ('press', 'secondary'),
+                         ('10k', 'analyst_input')):
+            rv = release([sid, 'k10a'])
+            self.assertFalse(rv['price_conclusion_allowed'], sid)
+            self.assertIn('governance_red_flag', rv['reason_codes'])
+            self.assertEqual(rv['risk_overrides_applied'], [])
+            self.assertTrue(any(f'{sid} ({cls})' in e for e in rv['reviewer_check']['errors']), rv['reviewer_check']['errors'])
+        rv = release(['k10_fy25', 'q_gc'])                                          # the flag's own evidence never releases it
+        self.assertFalse(rv['price_conclusion_allowed'])
+        self.assertTrue(any("besides the flag's own evidence" in e and 'k10_fy25, q_gc is ignored' in e for e in rv['reviewer_check']['errors']),
+                        rv['reviewer_check']['errors'])
+        rv = release(['k10_fy25', 'k10a'])                                          # own evidence may be cited beside a fresh filing document
+        self.assertTrue(rv['price_conclusion_allowed'], rv['reasons'])
+        self.assertEqual(rv['risk_overrides_applied'], ['gov.going_concern'])
 
     def test_negated_or_unevidenced_statements_are_not_red_flags(self):
         fb = factbook()

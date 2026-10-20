@@ -45,6 +45,13 @@ rejected); conservative downgrades are never blocked. Releasing a forensic red f
 independent reviewer and filing evidence. Overrides are stored beside the untouched mechanical verdict and
 the owner text says when a result rests on one. Thresholds are stated rules of thumb; a missing input stays
 unknown, never imputed.
+
+Funding is a gate only when the bear/base plan is blocked (an unfunded cash requirement) or rests on assumed financing whose
+forecast material issue is unresolved. Financing the forecast prices (debt within capacity, equity at the issue-price rule,
+dilution in per-share values) and a reviewer resolved is valued like any other path and the verdict is labelled conditional
+on it; SBC settled in new shares is labelled the same way. Any unresolved forecast material issue (possible lender, unconfirmed
+cyclical peak, computed moat proxy, leverage at the cap, convertibles not applied, ...) keeps the verdict a draft and is named
+in the owner text. A computed moat proxy also widens the marginal band: the verdict is re-run without it.
 """
 from copy import deepcopy
 from datetime import date
@@ -84,7 +91,9 @@ VERDICT_RULES = [
     ('interesting_not_yet_valuable', 'method not_reliably_valuable or valuation not computable, but business evidence '
                                      'positive (checked before the review gate: a missing valuation is the cause, not the review)'),
     ('insufficient_evidence', 'review blocked or critical red-team failure, or no valuation without positive business evidence'),
-    ('promising_funding_conditional', 'plan needs external funding that is not secured, business evidence positive'),
+    ('promising_funding_conditional', 'bear/base plan blocked for funding, or resting on assumed financing whose material issue is '
+                                      'unresolved, business evidence positive (a reviewed, priced financing path is valued and labelled '
+                                      'conditional instead)'),
     ('attractive_at_price', 'quality strong/adequate, base IRR >= required return, bear-case loss (bear value at the same required '
                             'return) within the tolerance for that quality'),
     ('quality_but_expensive', 'quality strong/adequate, base IRR < required return (or bear-case loss beyond tolerance)'),
@@ -190,6 +199,24 @@ DIM_HE = {'competition': 'תחרות', 'substitutes': 'תחליפים', 'custome
           'regulation': 'רגולציה', 'geopolitics': 'גאופוליטיקה', 'governance': 'ממשל תאגידי', 'management': 'הנהלה', 'moat': 'היתרון התחרותי',
           'retention': 'שימור לקוחות'}
 PRIORITY_DIMS = ('technology_ai', 'competition', 'substitutes', 'moat', 'retention')
+# Forecast material issues (forecast.build -> case.underwriting.material_issues). Any unresolved one keeps the verdict a
+# draft and is named in the owner text; 'hold' issues mean the executed number is not a valuation of this business (an
+# FCFF model on a lender's balance sheet, a value set by the leverage cap), so no value is shown even as a draft.
+MATERIAL_HE = {'possible_lender': 'מאזן של גוף מלווה (פיקדונות ומימון הם חלק מהפעילות) שהוערך במודל של עסק תפעולי',
+               'cyclical_peak_unconfirmed': 'הרווחיות הנוכחית נראית כשיא מחזורי, ועוד לא נקבע בראיות אם היא קבועה או זמנית',
+               'moat_proxy': 'הרווחיות בתחזית נשענת על אומדן מחושב ליתרון תחרותי, לא על הערכה מבוססת',
+               'leverage_at_cap': 'החוב גבוה ביחס לשווי ההון, ולכן השווי נקבע מתקרת המינוף של המודל ולא מהערכה',
+               'convertibles_unapplied': 'אג"ח להמרה שהדילול שלהן עוד לא נכלל בשווי',
+               'opening_dates_differ': 'נתוני המניות והמאזן הם מתאריכים שונים ועוד לא גושרו',
+               'data_blocked': 'נתונים קריטיים חסרים או סותרים',
+               'assumed_financing': 'התוכנית נשענת על מימון חיצוני מונח שעוד לא נבדק'}
+MATERIAL_HOLD = {'possible_lender', 'leverage_at_cap'}
+FUNDING_SCENARIOS = ('bear', 'base')               # the plan the verdict rests on (base IRR, bear margin of safety)
+# risk register pricing_status (when risk.py supplies one): the decision keeps the more conservative of the register's
+# claim and its own check (in the bear path, or a quantified material adjustment); synonyms map to one vocabulary
+PRICING_RANK = {'not_priced': 0, 'partially_priced': 1, 'priced': 2}
+PRICING_ALIASES = {'accepted_priced': 'priced', 'unpriced': 'not_priced', 'partial': 'partially_priced', 'unassessed': 'open_question',
+                   'disqualifying': 'gate'}
 
 
 def _num(v):
@@ -913,6 +940,53 @@ class _Rates:
         return out
 
 
+class _Scaled:
+    """_Rates with each scenario's values scaled by a fixed ratio (the band test without the computed moat proxy)."""
+
+    def __init__(self, rates, ratio):
+        self.r, self.k, self.price, self.ok = rates, ratio, rates.price, rates.ok
+
+    def values(self, rate):
+        av = self.r.values(rate)
+        return None if av is None else [{**row, **{s: row[s] * self.k[s] for s in SCENARIOS if _num(row.get(s)) is not None}} for row in av]
+
+    def at(self, rate, scenario='base'):
+        v = self.r.at(rate, scenario)
+        return None if v is None else v * self.k[scenario]
+
+    def pfh(self, rate):
+        out = self.r.pfh(rate)
+        if out and _num(out.get('value')) is not None:
+            out = {**out, 'value': out['value'] * self.k['base'], 'label': 'value at your required return without the computed moat proxy'}
+            if self.price:
+                out['change_from_price'] = out['value'] / self.price - 1
+        return out
+
+
+def _moat_test(fc, qcase, view, w, rates):
+    """The computed moat proxy (forecast.moat_proxy: base and bull blended toward strong-moat rules from the computed record,
+    not an analyst assessment) as a marginal-band test. Without it each scenario's values are the executed values times the
+    forecast's own without/with ratio (today, model cost of equity) at every rate, and the base IRR is re-solved at the
+    equivalent price (price / base ratio). None when the proxy is not applied."""
+    mp = (fc or {}).get('moat_proxy')
+    if not isinstance(mp, dict) or rates is None or not view.get('price'):
+        return None
+    wi, wo = mp.get('value_today_with_proxy') or {}, mp.get('value_today_without_proxy') or {}
+    out = {'weights': mp.get('weights'), 'basis': mp.get('basis'), 'value_today_with_proxy': wi, 'value_today_without_proxy': wo or None}
+    k = {s: wo[s] / wi[s] if _num(wo.get(s)) is not None and _num(wi.get(s)) and wi[s] > 0 else None for s in SCENARIOS}
+    if k['base'] is None or k['base'] <= 0:
+        return {**out, 'status': 'unavailable', 'reason': 'the forecast reports no positive base value without the computed moat proxy'}
+    k = {s: r if r is not None and r > 0 else 1. for s, r in k.items()}
+    irr = _irr(_quote_case(qcase, view['price'] / k['base']), 'base', None, w)
+    if irr['value'] is None and not irr['bound']:
+        return {**out, 'status': 'unavailable', 'ratios': k, 'reason': 'base IRR without the computed moat proxy not solvable: ' + str(irr.get('reason'))}
+    return {**out, 'status': 'computed', 'ratios': k, 'base_irr': irr['value'], 'base_irr_bound': irr['bound'], 'rates': _Scaled(rates, k)}
+
+
+def _moat_public(moat):
+    return None if moat is None else {k: v for k, v in moat.items() if k != 'rates'}
+
+
 def _decomposition(case, res, view, an):
     """Re-rating scenario at the model's cost of equity, NOT the return at your required return and not the IRR.
     Base 5-year return split into business growth x multiple change x cash yield (log-additive, exact):
@@ -1057,9 +1131,11 @@ def _required_return(A, index, card, g, rk, an=None, ke=None):
                if any(s['signal'] == 'leverage' for s in sig) else 'ROE versus cost of equity and capital ratios (balance-sheet lender)')
     add('balance_sheet', PREMIUM['balance_sheet'][bs], f'balance sheet {bs}: {why}' + ('; unknown is treated as above average' if bs == 'unknown' else ''))
     fund = _card(card, 'funding', 'value')
-    fk = 'needs_external' if fund == 'needs_external' or g['funding'] else 'self_funded' if fund == 'self_funded' else 'unknown'
+    ext = any(c['kind'] == 'external' for c in g.get('funding_conditional') or [])
+    fk = 'needs_external' if fund == 'needs_external' or g['funding'] or ext else 'self_funded' if fund == 'self_funded' else 'unknown'
     add('funding_dependence', PREMIUM['funding_dependence'][fk],
-        {'needs_external': 'the plan depends on outside capital: current holders can be diluted or delayed',
+        {'needs_external': 'the plan depends on outside capital: current holders can be diluted or delayed'
+                           + (' (priced financing path in the valuation)' if ext and not g['funding'] else ''),
          'self_funded': 'self-funded (model card)', 'unknown': 'funding status not established; treated as above average'}[fk])
     cyc = _card(card, 'cyclical', 'value')
     add('cyclicality', PREMIUM['cyclicality'] if cyc is True else 0.,
@@ -1123,10 +1199,11 @@ def price_for_hurdle(case, hurdle, w=0.):
             'formula': 'base value at cost of equity = hurdle (terminal WACC moved by the equity weight); base IRR at this price equals the hurdle'}
 
 
-def _hurdle_band(req, index, err_level, rates):
+def _hurdle_band(req, index, err_level, rates, moat=None):
     """The marginal band: required return -/+ (1pp + widening by valuation error size), and the index low/high plus the same
     permanent-loss premium (never below the model cost of equity, like the hurdle itself). The verdict is re-run at the
-    lowest and highest required return of the band."""
+    lowest and highest required return of the band. When the forecast applied a computed moat proxy, the value range also
+    spans the value at the required return without it, and the verdict is re-run without it."""
     h, prem = req['hurdle'], req.get('permanent_loss_premium', req['premium'])
     fl = (req.get('floor') or {}).get('value')
     widen = ERROR_WIDENING.get(err_level if err_level in ERROR_WIDENING else 'unknown')
@@ -1137,12 +1214,22 @@ def _hurdle_band(req, index, err_level, rates):
                   (('index low + premium', index['low']), ('index high + premium', index['high']))]
     lo, hi = min(x for _, x in tests), max(x for _, x in tests)
     rows = [{'label': lab, 'hurdle': round(x, 10), 'value_at_required_return': ((rates.pfh(x) if rates else None) or {}).get('value')} for lab, x in tests]
+    pl, ph = ((rates.pfh(hi) if rates else None) or {}).get('value'), ((rates.pfh(lo) if rates else None) or {}).get('value')
+    mp = None
+    if (moat or {}).get('status') == 'computed' and rates:
+        v = (moat['rates'].pfh(h) or {}).get('value')
+        rows.append({'label': 'required return, without the computed moat proxy', 'hurdle': round(h, 10), 'value_at_required_return': v})
+        if v is not None:
+            pl, ph = (min(pl, v) if pl is not None else v), (max(ph, v) if ph is not None else v)
+        mp = {'value_at_required_return_without_proxy': v, 'base_irr_without_proxy': moat['base_irr'], 'ratios': moat['ratios']}
+    elif moat:
+        mp = {'status': moat.get('status'), 'reason': moat.get('reason')}
     return {'hurdle_low': round(lo, 10), 'hurdle_high': round(hi, 10), 'step': step, 'error_level': err_level or 'unknown',
-            'error_widening': widen, 'price_low': ((rates.pfh(hi) if rates else None) or {}).get('value'),
-            'price_high': ((rates.pfh(lo) if rates else None) or {}).get('value'), 'rows': rows,
-            'bear_tolerance_step': BEAR_TOLERANCE_STEP,
+            'error_widening': widen, 'price_low': pl, 'price_high': ph, 'rows': rows,
+            'bear_tolerance_step': BEAR_TOLERANCE_STEP, **({'moat_proxy': {**_moat_public(moat), **mp}} if moat else {}),
             'rule': f'required return -/+ ({BAND_STEP * 100:.0f}pp + valuation-error widening {json.dumps(ERROR_WIDENING)}), the index '
-                    f'range + premium, and the bear-loss tolerance -/+ {BEAR_TOLERANCE_STEP * 100:.0f}pp; a verdict that changes inside the band is marginal'}
+                    f'range + premium, the bear-loss tolerance -/+ {BEAR_TOLERANCE_STEP * 100:.0f}pp and, when the forecast applied a '
+                    'computed moat proxy, the values without it; a verdict that changes inside the band is marginal'}
 
 
 def _five_at_rate(view, rates, rate):
@@ -1194,7 +1281,7 @@ def _at_required(view, rates, h):
             'semantics': 'scenario values today with every cost of equity at your required return (terminal WACC moved by the equity weight)'}
 
 
-def _expected(irrs, view, index, req, rates, qcase, res, an, err_level, w=0.):
+def _expected(irrs, view, index, req, rates, qcase, res, an, err_level, w=0., moat=None):
     base_irr = irrs['base']['value']
     pfh = rates.pfh(req['hurdle']) if rates is not None and view.get('base') is not None else None
     er = {'base_irr': base_irr, 'bear_irr': irrs['bear']['value'], 'bull_irr': irrs['bull']['value'],
@@ -1210,7 +1297,7 @@ def _expected(irrs, view, index, req, rates, qcase, res, an, err_level, w=0.):
           'debt_weight': w,
           'model_cost_of_equity': view.get('model_cost_of_equity'),
           'base_value_at_model_cost_of_equity': view.get('base'),
-          'band': _hurdle_band(req, index, err_level, rates if view.get('base') is not None else None),
+          'band': _hurdle_band(req, index, err_level, rates if view.get('base') is not None else None, moat),
           'five_year_at_required_return': _five_at_rate(view, rates, req['hurdle']) if view.get('base') is not None else None,
           'owner_aspiration': OWNER_ASPIRATION,
           'meets_owner_aspiration_14pct': None if base_irr is None else base_irr >= OWNER_ASPIRATION,
@@ -1227,7 +1314,9 @@ def _expected(irrs, view, index, req, rates, qcase, res, an, err_level, w=0.):
 def _risk_pricing(rk, fc, view, rates):
     """'Priced' requires the risk to be in the bear (stress) path, or an explicit quantified adjustment that moves value
     materially (at least half of the base-to-bear markdown, minimum 10%). A small cost-of-equity add-on is 'partially
-    priced'; a register class accepted_priced without either is partially priced too."""
+    priced'; a register class accepted_priced without either is partially priced too. The register's own pricing_status
+    (risk.py applies the same rule) is read and the more conservative of the two is kept; a valuation_error entry (size of
+    possible valuation error, risk.error_size) is marked as such, not as a company risk."""
     comps = (((fc or {}).get('cost_of_equity') or {}).get('components')) or {}
     base, bear = view.get('base'), view.get('bear')
     gap = 1 - bear / base if base and bear is not None and base > 0 else None
@@ -1253,13 +1342,20 @@ def _risk_pricing(rk, fc, view, rates):
                 status = 'partially_priced'
                 basis = (f'cost-of-equity add-on {_pct(add, 2)} lowers base value only {_pct(eff, 0)}; not in the bear path' if eff is not None
                          else 'claimed priced via the cost of equity, effect not quantified; not in the bear path')
-        elif cls == 'accepted_priced':
+        elif cls in ('accepted_priced', 'priced'):
             status, basis, eff = 'partially_priced', 'classed priced but neither in the bear path nor quantified', None
         elif r.get('status') == 'unassessed' or r.get('assessed') is False:
             status, basis, eff = 'open_question', 'not assessed: an open research question', None
         else:
             status, basis, eff = 'not_priced', 'not in the bear path and no quantified adjustment', None
-        out.append({'id': rid, 'status': status, 'basis': basis, 'value_effect': eff, 'register_class': cls})
+        claim = r.get('pricing_status')
+        claim = PRICING_ALIASES.get(claim, claim)
+        if status != 'gate' and (claim in ('gate', 'open_question') or (claim in PRICING_RANK and status in PRICING_RANK
+                                                                         and PRICING_RANK[claim] < PRICING_RANK[status])):
+            status, basis = claim, f"risk register pricing_status '{r['pricing_status']}' (more conservative than the decision check: {basis})"
+        out.append({'id': rid, 'status': status, 'basis': basis, 'value_effect': eff, 'register_class': cls,
+                    'register_pricing_status': r.get('pricing_status'), 'register_pricing_basis': r.get('pricing_basis'),
+                    'valuation_error': bool(r.get('valuation_error'))})
     return out
 
 
@@ -1283,12 +1379,67 @@ def _released_flags(rv, reg, idx):
     return ok, bad
 
 
+def _issues(case, fc):
+    """Forecast material issues of the executed case (fallback: the forecast spec)."""
+    mi = ((case or {}).get('underwriting') or {}).get('material_issues')
+    if mi is None:
+        mi = ((((fc or {}).get('spec') or {}).get('underwriting')) or {}).get('material_issues')
+    return [m for m in mi or [] if isinstance(m, dict)]
+
+
+def _open_issues(issues):
+    out = []
+    for m in issues:
+        if m.get('status') == 'resolved':
+            continue
+        i = str(m.get('id') or 'unnamed')
+        key = 'assumed_financing' if i.startswith('assumed_financing_') else i
+        out.append({'id': i, 'description': str(m.get('description') or i), 'assumption_ids': list(m.get('assumption_ids') or []),
+                    'description_he': MATERIAL_HE.get(key) or f'שאלה מהותית בתחזית ({i})', 'hold': key in MATERIAL_HOLD})
+    return out
+
+
+def _funding(g, case, fc, issues):
+    """Funding gate only on a blocked plan or an unresolved assumed-financing material issue in the bear/base plan. Financing
+    the forecast prices (equity at the issue-price rule, debt within capacity, dilution in per-share values) whose material
+    issue a named reviewer resolved is a valued path, labelled conditional; SBC settled in new shares is labelled too."""
+    unresolved = {m.get('id') for m in issues if m.get('status') != 'resolved'}
+    resolved = {m.get('id') for m in issues if m.get('status') == 'resolved'}
+    info = (fc or {}).get('funding') or {}
+    for s in (case or {}).get('scenarios') or []:
+        nm = s.get('name')
+        if nm not in FUNDING_SCENARIOS:
+            continue
+        mid = f'assumed_financing_{nm}'
+        yrs = sorted({p['end'][:4] for p in s.get('periods', []) if p.get('financing_status') == 'assumed'
+                      and (p.get('debt_draw') or p.get('equity_proceeds'))})
+        f = info.get(nm) or {}
+        if mid in unresolved or (yrs and mid not in resolved):
+            g['funding'].append(f'{nm}: assumed (not committed) financing' + (f" in {', '.join(yrs)}" if yrs else '')
+                                + f' not reviewed (material issue {mid} unresolved)')
+        elif yrs:
+            debt, eq = _num(f.get('debt_assumed')), _num(f.get('equity_raised'))
+            ip = [x for x in f.get('issue_prices') or [] if x.get('period_end') in {e.get('period_end') for e in f.get('equity') or []}]
+            how = ([f'debt {debt:,.0f}'] if debt else []) + ([f'equity {eq:,.0f}'] if eq else []) \
+                + ([f"new shares at {', '.join(str(_g3(x.get('price'))) for x in ip)}"] if ip else []) + [f'material issue {mid} resolved by review']
+            g['funding_conditional'].append({
+                'scenario': nm, 'kind': 'external', 'years': yrs, 'debt': debt, 'equity': eq, 'new_shares': _num(f.get('new_financing_shares')),
+                'issue_prices': ip, 'price_dependent': bool(f.get('price_dependent')), 'material_issue': mid,
+                'text': f"{nm}: assumed financing in {', '.join(yrs)} priced in the valuation ({'; '.join(how)})"})
+        if f.get('status') == 'share_settled' and _num(f.get('sbc_settlement_shares')):
+            g['funding_conditional'].append({
+                'scenario': nm, 'kind': 'share_settlement', 'new_shares': f['sbc_settlement_shares'], 'price_dependent': bool(f.get('price_dependent')),
+                'issue_price_rule': f.get('issue_price_rule'),
+                'text': f"{nm}: part of SBC settled in {f['sbc_settlement_shares']:,.0f} new shares at the issue-price rule "
+                        f"({f.get('issue_price_rule') or 'n/a'})" + ('; per-share value depends on the quote' if f.get('price_dependent') else '')})
+
+
 def _gates(parts, view, an, idx=None):
-    qa, card, val, rk, rv = (parts.get(k) for k in ('qa', 'card', 'val', 'rk', 'rv'))
+    qa, card, fc, val, rk, rv = (parts.get(k) for k in ('qa', 'card', 'fc', 'val', 'rk', 'rv'))
     g = {'disqualifying': [], 'evidence_gaps': [], 'impaired': False, 'data_blocked': [], 'review_blocked': [],
-         'valuation_unverified': [], 'understanding': [], 'funding': [], 'no_valuation': [], 'valuation_failed': [], 'draft': [],
-         'red_flags': _forensic_flags(an), 'red_flags_released': False, 'draft_codes': [], 'withhold_price': [], 'withhold_price_released': [],
-         'reviewer_present': False}
+         'valuation_unverified': [], 'understanding': [], 'funding': [], 'funding_conditional': [], 'no_valuation': [], 'valuation_failed': [],
+         'draft': [], 'material_issues': [], 'red_flags': _forensic_flags(an), 'red_flags_released': False, 'draft_codes': [],
+         'withhold_price': [], 'withhold_price_released': [], 'reviewer_present': False}
     reg = {r.get('id'): r for r in (rk or {}).get('register') or [] if isinstance(r, dict)}
     released, unsupported = _released_flags(rv, reg, idx or {})
     for i in (rk or {}).get('withhold_price') or []:
@@ -1358,16 +1509,9 @@ def _gates(parts, view, an, idx=None):
     case, res = _case_and_result(val)
     if status == 'funding_blocked':
         g['funding'].append('valuation: unfunded cash requirement (funding_blocked)')
-    if case:
-        assumed = sorted({p['end'][:4] for s in case['scenarios'] if s['name'] in ('bear', 'base') for p in s.get('periods', [])
-                          if p.get('financing_status') == 'assumed' and (p.get('debt_draw') or p.get('equity_proceeds'))})
-        if assumed:
-            g['funding'].append('assumed (not committed) financing in ' + ', '.join(assumed))
-    if _card(card, 'funding', 'value') == 'needs_external' and not g['funding']:
-        committed = case and any(p.get('financing_status') == 'committed' and (p.get('debt_draw') or p.get('equity_proceeds'))
-                                 for s in case['scenarios'] for p in s.get('periods', []))
-        if not committed:
-            g['funding'].append('model card: needs external funding; no committed financing in the valuation')
+    issues = _issues(case, fc)
+    _funding(g, case, fc, issues)
+    g['material_issues'] = _open_issues(issues)
     return g
 
 
@@ -1394,6 +1538,22 @@ def _he_req(h, idx, prem, near=None, floor=False, levered=False):
     return f'התשואה הנדרשת, כ־{h * 100:.{d}f}% (מדד רחב כ־{idx * 100:.{d}f}% ועוד פרמיית סיכון של כ־{prem * 100:.{d}f}%)'
 
 
+def _conditional(g):
+    """Label for a price verdict that rests on a priced financing path (reviewed assumed financing) or on SBC settled in new
+    shares: valued, never gated, but conditional on that issuance happening at the modelled prices."""
+    items = g.get('funding_conditional') or []
+    if not items:
+        return None
+    ext = [c for c in items if c['kind'] == 'external']
+    dep = any(c.get('price_dependent') for c in items)
+    he = ('בהנחה שהמימון החיצוני שהונח במודל (חוב והנפקת מניות במחירים שבתחזית, כולל הדילול) אכן יגויס' if ext else
+          'בהנחה שחלק מתגמול העובדים ישולם במניות חדשות במחירי ההנפקה שבתחזית (הדילול כלול בשווי)')
+    return {'kind': 'funding' if ext else 'share_settlement', 'items': items, 'price_dependent': dep,
+            'text': 'conditional on ' + ('the priced financing path' if ext else 'SBC settled in new shares') + ': '
+                    + '; '.join(c['text'] for c in items),
+            'text_he': 'השווי מותנה: ' + he + (', והשווי למניה תלוי במחיר המניה בעת ההנפקה' if dep else '')}
+
+
 def _verdict(A, g, er, view, index, rates, req, tol_shift=0.):
     """One pass over VERDICT_RULES in order; returns the first that applies with its reason and gate (route id).
     tol_shift moves the bear-loss tolerance (marginal-band test only)."""
@@ -1403,9 +1563,13 @@ def _verdict(A, g, er, view, index, rates, req, tol_shift=0.):
     pos = _positive(A)
 
     def out(code, gate, reason, reason_he, change, change_he, **extra):
+        cond = _conditional(g) if gate in PRICE_ROUTES else None
+        if cond:
+            reason += '; ' + cond['text']
+            change = list(change) + ['the financing or share issuance the valuation assumes does not happen at the modelled prices']
         return {'code': code, 'label_he': VERDICTS[code], 'gate': gate, 'reason': reason, 'reason_he': reason_he,
                 'what_would_change_it': change, 'what_would_change_it_he': change_he, 'hurdle_used': hurdle, 'risk_premium_used': prem,
-                'allowed_overrides': sorted(_allowed(gate, code)), **extra}
+                'allowed_overrides': sorted(_allowed(gate, code)), **({'conditional_on': cond} if cond else {}), **extra}
 
     if g['understanding'] or g['evidence_gaps']:
         # We cannot conclude without understanding the business: an evidence gap, never a negative judgement
@@ -1561,10 +1725,11 @@ def _fmt_price(v):
     return f'{v:,.0f}' if abs(v) >= 100 else f'{v:,.1f}' if abs(v) >= 10 else f'{v:,.2f}'
 
 
-def _margin(A, g, er, view, index, rates, req, verdict):
-    """Re-run the verdict at the lowest and highest required return of the marginal band, and with the bear-loss tolerance
-    moved -/+ BEAR_TOLERANCE_STEP. 'marginal' when the code changes anywhere (the code itself is kept), with the side and the
-    required return at which it flips; 'clear' when it does not; None for routes without a price test."""
+def _margin(A, g, er, view, index, rates, req, verdict, moat=None):
+    """Re-run the verdict at the lowest and highest required return of the marginal band, with the bear-loss tolerance
+    moved -/+ BEAR_TOLERANCE_STEP and, when the forecast applied a computed moat proxy, without it. 'marginal' when the code
+    changes anywhere (the code itself is kept), with the side and the required return at which it flips; 'clear' when it
+    does not; None for routes without a price test."""
     if verdict.get('gate') not in PRICE_ROUTES:
         return None
     band = er.get('band') or {}
@@ -1588,6 +1753,12 @@ def _margin(A, g, er, view, index, rates, req, verdict):
             flips.append({'test': 'bear_loss_tolerance', 'side': side, 'tolerance_shift': t, 'code': c,
                           'loss_to_bear': (verdict.get('margin_of_safety') or {}).get('loss_to_bear'),
                           'tolerance': (verdict.get('margin_of_safety') or {}).get('tolerance')})
+    if (moat or {}).get('status') == 'computed':
+        c = _verdict(A, g, {**er, 'base_irr': moat['base_irr'], 'base_irr_bound': moat['base_irr_bound']}, view, index, moat['rates'], req)['code']
+        if c != code:
+            flips.append({'test': 'moat_proxy', 'side': 'without_proxy', 'code': c, 'base_irr_without_proxy': moat['base_irr'],
+                          'value_today_with_proxy': _num((moat.get('value_today_with_proxy') or {}).get('base')),
+                          'value_today_without_proxy': _num((moat.get('value_today_without_proxy') or {}).get('base'))})
     price = view.get('price')
     pl, ph = band.get('price_low'), band.get('price_high')
     out = {'status': 'marginal' if flips else 'clear', 'flips': flips, 'verdict': code, 'hurdle_range': [lo, hi], 'value_range': [pl, ph],
@@ -1609,6 +1780,10 @@ def _margin_text(m):
             loss, tol = f.get('loss_to_bear'), f.get('tolerance')
             en.append(f"the bear-case loss {_pct(loss, 0)} is within {BEAR_TOLERANCE_STEP * 100:.0f}pp of the {_pct(tol, 0)} margin-of-safety tolerance")
             he.append(f'ההפסד בתרחיש השמרני (כ־{_he_pct(loss)}) קרוב לסף מרווח הביטחון ({_he_pct(tol)})')
+        elif f['test'] == 'moat_proxy':
+            en.append(f"without the computed moat proxy (base value today {_g3(f.get('value_today_with_proxy'))} -> "
+                      f"{_g3(f.get('value_today_without_proxy'))} at the model cost of equity) the verdict changes to {f['code']}")
+            he.append('בלי האומדן המחושב ליתרון תחרותי (שלא נבדק בידי אנליסט) המסקנה משתנה')
     return '; '.join(en), ' ו'.join(he) if len(he) == 2 else '; '.join(he)
 
 
@@ -1692,6 +1867,12 @@ def _confidence(g, A, view, rk, card, val, qa, margin=None, overrides=None):
             'התוצאה נשענת גם על הכרעת אנליסט מתועדת ולא רק על הבדיקה המכנית'))
     if g['no_valuation']:
         soft.append(('no reliable valuation', 'אין עדיין הערכת שווי אמינה'))
+    mat = g.get('material_issues') or []
+    if mat:
+        soft.append(('unresolved forecast material issues: ' + '; '.join(f"{m['id']} ({m['description']})" for m in mat),
+                     'בתחזית נותרו שאלות מהותיות פתוחות: ' + '; '.join(list(dict.fromkeys(m['description_he'] for m in mat))[:2])))
+    if any(c['kind'] == 'external' for c in g.get('funding_conditional') or []) and not g['funding']:
+        soft.append(('value conditional on the priced (assumed) financing path', 'השווי מותנה במימון החיצוני שהונח במודל'))
     if [d for d in g['draft'] if 'demo' not in d]:
         soft.append(('not independently reviewed (draft)', 'הניתוח עוד לא עבר בדיקה בלתי תלויה'))
     if g['red_flags'] and g['red_flags_released']:
@@ -1894,12 +2075,13 @@ def decide(parts, inputs=None):
     err_level = ((rk or {}).get('error_size') or {}).get('level')
     wmbt = (val or {}).get('what_must_be_true')
     req = _required_return(A, index, card, g, rk, an, ke)
-    er = _expected(irrs, view, index, req, rates, qcase, res, an, err_level, w)
+    moat = _moat_test(fc, qcase, view, w, rates) if valued else None
+    er = _expected(irrs, view, index, req, rates, qcase, res, an, err_level, w, moat)
     er['debt_weight_source'] = w_src
     A['price_attractiveness'] = price_attractiveness(er, view, wmbt, an)
     A = {k: A[k] for k in ASSESSMENTS}
     mech = _verdict(A, g, er, view, index, rates, req)
-    mech['margin_detail'] = _margin(A, g, er, view, index, rates, req, mech)
+    mech['margin_detail'] = _margin(A, g, er, view, index, rates, req, mech, moat)
     # Overrides: assessments first (re-evaluated through the same gates), then at most one verdict override.
     seen, records, pending, red_release = set(), [], None, None
     eff_A = deepcopy(A)
@@ -1951,12 +2133,12 @@ def decide(parts, inputs=None):
         prem_A = {k: (eA[k] if (eA[k].get('override') or {}).get('direction') == 'downgrade' else A[k]) for k in ASSESSMENTS}
         r = _required_return(prem_A, index, card, g, rk, an, ke)
         e = deepcopy(er) if r['hurdle'] == req['hurdle'] and r['components'] == req['components'] else \
-            _expected(irrs, view, index, r, rates, qcase, res, an, err_level, w)
+            _expected(irrs, view, index, r, rates, qcase, res, an, err_level, w, moat)
         e['debt_weight_source'] = w_src
         if not eA['price_attractiveness'].get('override'):
             eA['price_attractiveness'] = price_attractiveness(e, view, wmbt, an)
         v = _verdict(eA, g, e, view, index, rates, r)
-        v['margin_detail'] = _margin(eA, g, e, view, index, rates, r, v)
+        v['margin_detail'] = _margin(eA, g, e, view, index, rates, r, v, moat)
         return r, e, v
 
     eff_req, eff_er, eff = req, er, deepcopy(mech)
@@ -2021,7 +2203,7 @@ def decide(parts, inputs=None):
             r['effect'] = 'recorded only: no effect on the verdict, the required return or the confidence'
     accepted = [r for r in records if r['status'] == 'accepted' and r.get('material')]
     conf = _confidence(g, eff_A, view, rk, card, val, qa, eff.get('margin_detail'), accepted)
-    withheld = list(g['draft'])
+    withheld = list(g['draft']) + [f"unresolved forecast material issue {m['id']}: {m['description']}" for m in g['material_issues']]
     if g['red_flags'] and not red_release:
         withheld.append('forensic red flag raised (' + ', '.join(g['red_flags']) + '); price call withheld until explained with filing '
                         'evidence and an accepted independent reviewer')

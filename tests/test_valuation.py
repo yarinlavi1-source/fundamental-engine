@@ -177,5 +177,39 @@ class IntegrationAuditTests(unittest.TestCase):
  def test_specialist_opening_scenarios(self):
   c=fixture('reit');c['scenarios'][0]['opening_snapshot']=dict(c['opening'],asset_value=200e6)
   r=value_company(c);self.assertLess(r['annual_values'][0]['bear'],r['annual_values'][0]['base'])
+class RateShiftTests(unittest.TestCase):
+ """A cost-of-equity change moves the terminal WACC by the equity weight (1 - w) x the change (Harris-Pringle), as in decision.py."""
+ def levered(self,w=None):
+  from fundamental_engine.drivers import build_case
+  s=json.loads((ROOT/'examples/valuation/software_drivers.json').read_text());s['opening']['debt']=2.5e9
+  for sc in s['scenarios']:
+   sc['cost_of_equity']=.14;sc['terminal']['wacc']=.08
+   if w is not None:sc['terminal']['debt_weight']=w
+  return build_case(s)
+ def at(self,case,shift,w):
+  c=deepcopy(case);b=base(c);b['cost_of_equity']+=shift;b['terminal']['wacc']+=(1-w)*shift
+  return value_company(c)['annual_values'][0]['base']
+ def test_stored_debt_weight_moves_the_terminal_wacc_by_the_equity_weight(self):
+  from fundamental_engine.valuation_tools import discount_rate_band, implied_cost_of_equity
+  from fundamental_engine.decision import price_for_hurdle
+  c=self.levered(.5);band=discount_rate_band(c)
+  self.assertAlmostEqual(band['value_lower_rate'],self.at(c,-.01,.5),places=6);self.assertAlmostEqual(band['value_higher_rate'],self.at(c,.01,.5),places=6)
+  self.assertNotAlmostEqual(band['value_lower_rate'],self.at(c,-.01,0),places=3)
+  r=implied_cost_of_equity(c);self.assertEqual(r['status'],'solved')
+  self.assertAlmostEqual(self.at(c,r['shift'],.5),c['quote']['price'],places=4)
+  h=.15;c2=deepcopy(c);c2['quote']['price']=price_for_hurdle(c,h,.5)['value']
+  self.assertAlmostEqual(implied_cost_of_equity(c2)['implied_cost_of_equity'],h,places=6)
+  from fundamental_engine.valuation_tools import debt_weight
+  self.assertEqual(debt_weight(c),(.5,'case scenarios[base].terminal.debt_weight'));self.assertEqual((band['debt_weight'],r['debt_weight']),(.5,.5))
+ def test_without_a_stored_weight_the_opening_net_debt_weight_of_the_decision_layer_is_used(self):
+  from fundamental_engine.valuation_tools import discount_rate_band
+  from fundamental_engine.decision import _debt_weight
+  c=self.levered();v=value_company(c)['annual_values'][0]['base'];w=_debt_weight(c,None,v)[0]
+  self.assertGreater(w,.1);self.assertAlmostEqual(discount_rate_band(c)['value_lower_rate'],self.at(c,-.01,w),places=6)
+  from fundamental_engine.valuation_tools import debt_weight
+  self.assertEqual(debt_weight(c),(w,'opening net debt / (net debt + base value x opening shares)'))
+  plain=self.levered();plain['opening']['debt']=2e8                 # net cash: w = 0, the 1:1 convention is unchanged
+  self.assertEqual(debt_weight(plain)[0],0.);self.assertAlmostEqual(discount_rate_band(plain)['value_lower_rate'],self.at(plain,-.01,0),places=6)
+  self.assertEqual(debt_weight(fixture('bank'))[0],0.)
 
 if __name__=='__main__':unittest.main()
