@@ -548,6 +548,22 @@ class OtherTypesTests(unittest.TestCase):
         fab['business_map'] = {'industry_terms': {'per_100k_words': {'semiconductor': 8.}}}     # chip shortages as a supply risk
         self.assertEqual(card(fab)['business_model']['primary'], 'industrial')
 
+    def test_generic_label_is_decided_by_the_business_section(self):
+        rev = [2.8e10, 3.2e10, 3.6e10, 4.0e10]
+        net = steady_fb('Consumer Discretionary', 'Business Services', rev, [.65, .66, .67, .67], .80, .03)
+        self.assertEqual(card(net)['business_model']['primary'], 'consumer_brand')            # the sector alone
+        net['business_map'] = {'business_terms': {'per_10k_words': {'payment_network': 86., 'marketplace': 2.}}}   # SYNTHETIC
+        bm = card(net)['business_model']
+        self.assertEqual((bm['primary'], bm['secondary']), ('platform_marketplace', ['consumer_brand']))
+        self.assertIn('payment network terms', bm['reasons'][-1])
+        svc = steady_fb('Consumer Discretionary', 'Business Services', rev, [.15] * 4, .32, .02)
+        svc['business_map'] = {'business_terms': {'per_10k_words': {'it_services': 120., 'marketplace': 5.}}}
+        self.assertEqual(card(svc)['business_model']['primary'], 'it_services')
+        # a specific label is never overruled by words
+        hw = steady_fb('Technology', 'Computer Manufacturing', rev, [.3] * 4, .45, .03)
+        hw['business_map'] = {'business_terms': {'per_10k_words': {'marketplace': 90.}}}
+        self.assertEqual(card(hw)['business_model']['primary'], 'hardware_manufacturing')
+
     def test_specialist_routes_need_their_data(self):
         rev = [5e8] * 4
         base = dict(revenue=rev, operating_income=[1.5e8] * 4, cfo=[2.5e8] * 4, capex=[3e8] * 4, cash=[1e8] * 4, equity=[4e9] * 4)

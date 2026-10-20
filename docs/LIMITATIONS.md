@@ -139,4 +139,5 @@ Companion to docs/EVIDENCE_STATUS.md, which separates what tests prove from what
     5% long-run bound only by its fitted slope less two standard errors, within the revenue-scale base rate, from six or
     more years at today's scale; pandemic years or a reorganization inside the window distort the fit (Trip.com's window
     starts in 2021, so 2025 reads as 1.4x its trend). The semiconductor text rule (40 mentions per 100,000 words) is
-    calibrated on one document.
+    calibrated on one document, the Item 1 vocabulary rules on 34 (in sample); Expedia's business section uses none of the
+    marketplace words and stays a consumer brand, and a report whose Item 1 cannot be found keeps its label.

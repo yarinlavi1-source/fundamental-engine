@@ -518,6 +518,15 @@ def _hit(kws, low):
 # is read as semiconductor equipment. A heuristic, not a calibrated cut: ASML's 2025 20-F has about 260; a machinery maker that
 # only names chip shortages as a supply risk has a few. A business_model override with a reason replaces it.
 SEMI_TERMS_DENSITY = 40
+# Item 1 vocabulary densities (business.BUSINESS_TERMS, per 10,000 words) that decide the type where only a sector or no
+# label matched, first match wins. Set on 34 annual reports (2025-2026): payment networks 85-87 vs at most 11 elsewhere;
+# marketplaces 35-218 vs at most 27; defense 216-372 vs at most 63; vehicles 56-209 (GD 48); IT and payroll services 77-185
+# vs at most 53 (Visa). Expedia (1.8 marketplace terms) and reports without a findable Item 1 stay on their label.
+BUSINESS_TERM_RULES = (('payment_network', 40, 'platform_marketplace'), ('marketplace', 30, 'platform_marketplace'),
+                       ('defense', 150, 'industrial'), ('vehicles', 50, 'hardware_manufacturing'),
+                       ('it_services', 70, 'it_services'))
+NON_LABEL_TYPES = ('financials', 'reit', 'pre_revenue_biotech', 'conglomerate')   # balance-sheet routes are never relabelled by words
+
 # SEC codes whose label does not tell the economics (equipment for chip makers or for food plants): the annual report is
 # collected so its own words can decide (scripts/collect_companies.py --docs-when-needed)
 AMBIGUOUS_SIC = (3559, 3825, 3827, 3829)
@@ -655,6 +664,18 @@ def _business_model(fb, an, rows, end, sig, inputs):
             text_types = [econ, 'it_services']
             reasons.append(f"IT/data-processing label with gross margin {_pct(gm)} and operating margin {_pct(om_end)} -> {econ} "
                            '(rule: gross margin >= 65% software; >= 45% with operating margin >= 20% platform); it_services kept as secondary')
+    bt = (((fb.get('business_map') or {}).get('business_terms') or {}).get('per_10k_words')) or {}
+    sector_only = not used or used['field'] != 'industry'
+    if sector_only and bt and (not text_types or text_types[0] not in NON_LABEL_TYPES):
+        # generic labels ('Business Services, NEC', a sector): the annual report's own business section decides
+        hit = next(((k, t) for k, cut, t in BUSINESS_TERM_RULES if bt.get(k, 0) >= cut), None)
+        if hit and (not text_types or hit[1] != text_types[0]):
+            k, t = hit
+            reasons.append(f"annual report Item 1: {bt[k]:.0f} {k.replace('_', ' ')} terms per 10,000 words (rule: >= "
+                           f"{dict((a, c) for a, c, _ in BUSINESS_TERM_RULES)[k]}) where the label is generic"
+                           + (f" ('{used['text']}')" if used else '') + f' -> {t}'
+                           + (f'; {text_types[0]} kept as secondary' if text_types else ''))
+            text_types = [t] + text_types
     terms = ((fb.get('business_map') or {}).get('industry_terms') or {}).get('per_100k_words') or {}
     if text_types and text_types[0] in ('industrial', 'hardware_manufacturing') and terms.get('semiconductor', 0) >= SEMI_TERMS_DENSITY:
         # a machinery or equipment label whose own annual report is about chips (ASML, Lam Research: SIC 3559 'Special Industry

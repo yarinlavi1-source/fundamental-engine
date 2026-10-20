@@ -187,6 +187,14 @@
   collapsed onto the base under the 20% industrial ceiling). The moat proxy is no longer blocked for every cyclical: with at
   least six years of ROIC the lowest year of the last ten replaces the average (a franchise earns its excess return at the
   trough). ASML base value: 245 -> 525 EUR a share against a 1,462 EUR quote (still far below: no consensus, unknown moat).
+- Generic labels no longer decide the business model: where no industry or SIC rule matches ('Services-Business
+  Services, NEC' for Visa, Mastercard, Uber, DoorDash, MercadoLibre and Accenture; a sector label alone), the annual
+  report's business section (Item 1) decides by what it talks about, per 10,000 words: payment-network, marketplace,
+  defense, vehicle and IT/payroll-services vocabularies (`business.business_terms`, `model_card.BUSINESS_TERM_RULES`; set on
+  34 annual reports, in sample: Visa and Mastercard -> platform, Booking, Airbnb, Uber, DoorDash, Etsy, MercadoLibre,
+  PayPal -> platform, Accenture, Cognizant, EPAM, ADP, Paychex -> IT services, Tesla, GM, Ford -> hardware, Lockheed,
+  Northrop, General Dynamics -> industrial; consumer brands and media stay). The sector type is kept as secondary; a specific
+  label is never overruled by words. The collection step fetches the annual report for such companies.
 - Business type from the annual report's own words where the SEC code is ambiguous: a machinery or hardware label whose
   annual report mentions semiconductor/wafer/lithography at least 40 times per 100,000 words is typed semiconductor
   (equipment), the label kept as secondary (`business.industry_terms`, `model_card.SEMI_TERMS_DENSITY`; a heuristic, ASML has

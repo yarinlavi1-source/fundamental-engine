@@ -286,6 +286,33 @@ def industry_terms(html=None, text=None):
     return {'words': words, 'counts': counts, 'per_100k_words': {k: (v / words * 1e5 if words else 0.) for k, v in counts.items()}}
 
 
+# What the business section (Item 1) talks about, per 10,000 of its words: evidence for the business model where the labels
+# are generic (SIC 7389 'Business Services, NEC' covers Visa, Uber, Accenture and DoorDash). Vocabularies and the cut-offs
+# in model_card.BUSINESS_TERM_RULES were set on 34 annual reports of 2025-2026 (payment networks, marketplaces, IT and payroll
+# services, consumer brands, media, autos, defense): a heuristic with the reason shown, not a validated classifier.
+BUSINESS_TERMS = {
+    'payment_network': re.compile(r'payments? network|payments? volume|cross-border|processed transactions|issuers?\b|acquirers?\b|'
+                                  r'cardholders|account holders', re.I),
+    'marketplace': re.compile(r'marketplaces?|two-sided|gross bookings|gross merchandise|\bGMV\b|take rate|hosts and guests|'
+                              r'buyers and sellers|drivers?\b|couriers|dashers|merchants|room nights|travel partners', re.I),
+    'it_services': re.compile(r'consulting|outsourc|managed services|systems integration|digital transformation|'
+                              r'professional services|clients?\b|engagements?', re.I),
+    'defense': re.compile(r'defen[cs]e|department of defense|u\.s\. government|government customers|missiles?|aircraft|'
+                          r'programs?\b|contracts?\b', re.I),
+    'vehicles': re.compile(r'vehicles?|automotive|dealers?', re.I),
+}
+
+
+def business_terms(text):
+    """{'item1_words', 'per_10k_words': {group: density}} of the annual report's Item 1, or None when no Item 1 is found."""
+    item1 = sections(text).get('item1_business')
+    if not item1:
+        return None
+    words = len(item1.split())
+    return {'item1_words': words,
+            'per_10k_words': {k: len(rx.findall(item1)) / words * 1e4 for k, rx in BUSINESS_TERMS.items()}}
+
+
 PRO_FORMA_REVENUE = 'us-gaap:BusinessAcquisitionsProFormaRevenue'
 
 
@@ -405,9 +432,10 @@ def business_map(html, source=None, consolidated_revenue=None):
         not_disclosed.insert(0, {'item': 'reportable segments (single segment or not tagged)', 'where': 'segment note'})
     if not conc:
         notes.append('no tagged concentration: either no customer is material (often stated in Item 1/1A) or it is untagged')
+    text = html_text(html)
     return {'business_map_version': 1, 'source': source, 'tables': tables, 'customer_concentration': conc, 'rpo': rpo,
             'cover_shares': shares, 'disclosed': disclosed, 'not_disclosed': not_disclosed, 'notes': notes,
-            'industry_terms': industry_terms(html),
+            'industry_terms': industry_terms(text=text), 'business_terms': business_terms(text),
             'fact_count': len(ix['facts']),
             'meaning': 'facts as tagged in the annual report; member names humanized from XBRL; not adjusted, not forecast'}
 
