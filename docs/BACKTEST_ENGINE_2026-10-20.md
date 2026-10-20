@@ -88,8 +88,34 @@ Reading: the fixes made individual valuations more defensible (audited company b
 predictive power where it was: no demonstrated edge, about the same as a free-cash-flow-yield rank, with one year (2020)
 carrying the whole average. The conclusions above stand unchanged.
 
-A third run (engine_v3) covers the later changes of 20.10 (cyclical secular growers, foreign issuers); it is reported
-as it comes out.
+## Third run: the final engine of 20.10 (engine_v3)
+
+Engine of commit e48a29c (cyclical secular growers: fitted trend, measured trend growth, geometric gap closing, evidenced
+peak margins, through-cycle moat proxy; foreign issuers). Same universe, dates, costs and controls. Rows:
+`runs/backtest/engine_v3/`.
+
+| Portfolio (average names) | CAGR | vs the average stock in the universe, mean (t) | vs S&P 500, mean |
+|---|---|---|---|
+| Engine top fifth (64) | 27.2% | +6.8 pp (t 0.9) | +15.1 pp |
+| Engine top fifth, data not blocked (56) | 28.5% | +8.7 pp (t 1.0) | +16.9 pp |
+| Engine bottom fifth (64) | 21.3% | -1.6 pp (t -0.5) | +6.7 pp |
+| Positive edge over the engine market (160) | 23.1% | +0.3 pp (t 0.2) | +8.5 pp |
+| Positive edge and a positive bear return (130) | 20.5% | -3.0 pp (t -1.5) | +5.3 pp |
+| Control: cheapest fifth by FCF yield (68) | 26.4% | +6.0 pp (t 0.8) | +14.2 pp |
+| Control: cheapest fifth by earnings yield (75) | 18.5% | -4.5 pp (t -1.9) | +3.8 pp |
+
+By year (top / bottom / universe average / SPY, %): 2016 37/30/28/18, 2017 10/28/22/14, 2018 10/14/13/10, 2019 0/30/12/7,
+2020 138/50/65/41, 2021 4/-23/-9/-11, 2022 27/29/26/19, 2023 31/23/25/24, 2024 24/22/24/15, 2025 31/27/38/22. Without 2020
+the top fifth trails the universe average by 0.4 points (t -0.1); top minus bottom +8.4 points (t 0.8); top minus the
+FCF-yield control +0.8 points (t 0.4). Rank correlation with the next year's return: mean 0.035 (t 0.7). Edge reliability:
+median 0.47 (mean 0.71, t 1.0).
+
+Reading: three engine versions, the same answer. The valuation changes moved individual companies (ASML, TSMC, the
+cyclicals) and barely moved the ranking statistics. A mechanical rank of the engine's implied return is about a
+free-cash-flow-yield rank with one good year; it is not, on this evidence, a way to beat the index. What the test cannot
+see (a reviewed thesis on a few companies, evidence about a moat or a bottleneck, consensus history) is judged only by
+the forward ledger. The system default stays the index; edges are multiplied by the measured reliability (0.47) before
+any size.
 
 ## Bias and limits
 

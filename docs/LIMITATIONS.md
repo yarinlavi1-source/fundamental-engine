@@ -133,8 +133,9 @@ Companion to docs/EVIDENCE_STATUS.md, which separates what tests prove from what
     can be only a year from the instrument name, and a 10-Q without a conversion term keeps the block (Rubrik, Okta)
     until the annual report is read.
 35. **Engine version drift in the tests.** The first walk-forward run used the engine before the 20.10 fixes, the second
-    (commit 4237d25) the engine after them: both show no demonstrated edge. The cyclical-trend and foreign-issuer changes
-    came later; a third run covers them. Each run is reported as it comes out and nothing is tuned to it.
+    (commit 4237d25) the engine after them, the third (e48a29c) the final engine of 20.10: all three show no demonstrated
+    edge (top fifth +6.7 to +7.6 points over the universe average, t about 1, nothing without 2020). Each run is reported
+    as it comes out and nothing is tuned to it.
 36. **Cyclical trend growth is a statistical lower bound.** A secular grower in a cyclical industry may grow above the
     5% long-run bound only by its fitted slope less two standard errors, within the revenue-scale base rate, from six or
     more years at today's scale; pandemic years or a reorganization inside the window distort the fit (Trip.com's window
