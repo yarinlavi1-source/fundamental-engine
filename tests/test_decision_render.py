@@ -12,7 +12,7 @@ from copy import deepcopy
 from pathlib import Path
 
 from fundamental_engine import facts as F
-from fundamental_engine.decision import decide, price_for_hurdle, ASSESSMENTS, VERDICTS
+from fundamental_engine.decision import decide, price_for_hurdle, ASSESSMENTS, VERDICTS, _g3
 from fundamental_engine.drivers import build_case
 from fundamental_engine.render import hebrew_paragraph, markdown, CALL_HE
 from fundamental_engine.valuation import value_company
@@ -48,7 +48,8 @@ def fb_saas(price):
     F.add_source(fb, 'synthetic', 'synthetic', 'test fixture', 'synthetic', '2026-09-27')
     # a filing stand-in: override evidence must be a filing/issuer document or a reported/guidance statement, never synthetic data
     F.add_source(fb, 'test-10k', 'issuer', 'annual report (test stand-in)', 'issuer_document', '2026-09-27')
-    F.add_qualitative(fb, 'q-retention', 'retention', 'Net revenue retention above 115% (test statement)', 'reported', ['synthetic'], '2026-09-27')
+    # a reported statement counts as override evidence only when one of its sources is a filing (here the 10-K stand-in)
+    F.add_qualitative(fb, 'q-retention', 'retention', 'Net revenue retention above 115% (test statement)', 'reported', ['test-10k'], '2026-09-27')
     F.set_price(fb, price, '2026-09-27', 'synthetic')
     return fb
 
@@ -100,6 +101,8 @@ RK = {'register': [{'id': 'R-comp', 'category': 'competition', 'description': 'B
       'failure_scenarios': [], 'downside': {}, 'error_size': {'level': 'medium', 'reasons': ['test']}, 'disqualifying': []}
 RV_OK = {'status': 'reviewed', 'price_conclusion_allowed': True, 'reasons': [], 'mechanical': {'dataqa': 'ok'}, 'reviewer': None}
 RV_DRAFT = {'status': 'unreviewed_draft', 'price_conclusion_allowed': False, 'reasons': ['no signed reviewer input'], 'mechanical': {}, 'reviewer': None}
+RV_REVIEWER = {**RV_OK, 'reviewer': {'reviewer': 'Second analyst', 'reviewed_at': '2026-09-28', 'independent': True, 'statement': 'Checked (test).'},
+               'reviewer_check': {'valid': True, 'accepted': True, 'independent': True, 'bound_to_valuation': True, 'errors': []}}
 
 
 def parts(price=35, spec=None, **over):
@@ -168,7 +171,7 @@ class DecisionTests(unittest.TestCase):
         self.assertLess(d['expected_return']['base_irr'], d['expected_return']['hurdle'])
         pfh = d['verdict']['price_for_hurdle']['value']
         self.assertLess(pfh, 70)
-        self.assertTrue(any(f'{pfh:,.2f}' in x for x in d['verdict']['what_would_change_it']))
+        self.assertTrue(any(f'at or below {_g3(pfh)} ' in x for x in d['verdict']['what_would_change_it']))   # 3 significant figures
 
     def test_quality_unchanged_when_only_price_moves_20pct(self):
         base = self.d[50]
@@ -361,9 +364,14 @@ class DecisionTests(unittest.TestCase):
         self.assertTrue(d['verdict']['price_claim_withheld'])
         rel = {'target': 'red_flags', 'value': ['accounting_risk'], 'justification': 'Receivables jump is the annual billing change documented in the filing',
                'evidence_ids': ['test-10k']}
-        d2 = decide(p, {'overrides': [rel]})
+        alone = decide(p, {'overrides': [rel]})                                  # the analyst's own override is not enough
+        self.assertTrue(alone['verdict']['price_claim_withheld'])
+        self.assertIn('independent reviewer', alone['overrides'][0]['reason'])
+        reviewed = parts(35, an=an, rv=RV_REVIEWER)
+        d2 = decide(reviewed, {'overrides': [rel]})
         self.assertFalse(d2['verdict']['price_claim_withheld'])
         self.assertEqual(d2['gates']['red_flags'], ['accounting_risk'])           # the flag stays on record
+        self.assertTrue(d2['gates']['red_flags_released'])
 
     def test_missing_stages_degrade_honestly(self):
         d = decide({'fb': fb_saas(35)})
