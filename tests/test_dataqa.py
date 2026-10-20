@@ -768,6 +768,36 @@ class TaggedSplits(unittest.TestCase):
                          [('2025-12-31', '2026-03-31', 3.0, 'corporate_action')])
         self.assertEqual(qa['unresolved_splits'], [])
 
+    def test_a_split_after_the_last_published_count_restates_it(self):
+        # Amphenol 2-for-1 on 2026-09-03 after its July count (published before the split); the quote is post-split
+        fb = F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-10-20')
+        F.add_source(fb, 'k', 'sec', '10-Q', 'filing_derived', '2026-10-20')
+        for end, so, av in (('2026-04-24', 1.230e9, '2026-04-30'), ('2026-07-28', 1.233e9, '2026-07-31')):
+            F.add_fact(fb, 'shares_outstanding', 'I@' + end, end, so, 'k', 'as_reported', av)
+        ca = {'corp_actions': [{'type': 'CashDividends', 'date': '20260922', 'value': '0.125'},
+                               {'type': 'Splits', 'date': '20260903', 'announce_date': '20260806', 'value': '2.0'},
+                               {'type': 'Splits', 'date': '20261101', 'value': '3.0'}]}           # after as_of: ignored
+        self.assertEqual(F.from_ib_corporate_actions(fb, ca, '2026-10-20'), 1)
+        qa = dataqa.validate(fb)
+        self.assertEqual(qa['resolved']['shares_outstanding']['value'], 2.466e9)
+        self.assertTrue(checks(qa, 'split_after_count'))
+        # a count published after the split is already restated: not multiplied again (Powell)
+        fb2 = F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-10-20')
+        F.add_source(fb2, 'k', 'sec', '10-Q', 'filing_derived', '2026-10-20')
+        F.add_fact(fb2, 'shares_outstanding', 'I@2026-08-31', '2026-08-31', 2.466e9, 'k', 'as_reported', '2026-10-05')
+        F.from_ib_corporate_actions(fb2, ca, '2026-10-20')
+        self.assertEqual(dataqa.validate(fb2)['resolved']['shares_outstanding']['value'], 2.466e9)
+
+    def test_listing_market_cap_off_by_a_split_factor_is_a_share_conflict(self):
+        # Monster: the listing's market cap implies 3x the filed count and no dated split explains it
+        fb = _count_book(dict(zip(self.ENDS, (100e6, 101e6, 102e6, 103e6))))
+        fb['market']['listing_market_cap'] = {'value': 309e6 * 40., 'price': 40., 'date': '2026-10-19', 'provider': 'nasdaq'}
+        qa = dataqa.validate(fb)
+        self.assertEqual(qa['fields']['shares_outstanding']['status'], 'conflict')
+        self.assertTrue(checks(qa, 'implied_shares_split_factor'))
+        fb['market']['listing_market_cap']['value'] = 104e6 * 40.          # buybacks/issuance since the count: no flag
+        self.assertNotEqual(dataqa.validate(fb)['fields']['shares_outstanding']['status'], 'conflict')
+
     def test_a_ratio_tagged_over_a_whole_year_is_not_placed_at_year_end(self):
         fb = _count_book(dict(zip(self.ENDS, (100e6, 101e6, 102e6, 103e6))))
         F.from_sec_companyfacts(fb, self.payload(2, start='2025-01-01', end='2025-12-31'), '2026-10-19')

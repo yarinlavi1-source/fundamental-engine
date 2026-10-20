@@ -1016,9 +1016,46 @@ def _shares(q, cs):
         fld['note'] = '; '.join([fld['note']] + [f"split-like change x{x['evidence']['count_ratio']:.3f} between {x['from']} and "
                                                   f"{x['to']} not established as a split: counted as issuance, unverified" for x in unresolved])
         fld['checks'] = sorted(set(fld['checks']) | {'split_unresolved'})
+    # a split dated after the latest count and by the valuation date, effective after that count was published: the count
+    # predates it (Amphenol's 2-for-1 of 3.9.2026 after its July count had valued each post-split share at twice its worth).
+    # A count published after the split is already restated (Powell) and is not multiplied again.
+    published = (f or {}).get('available_at') or pick['as_of']
+    post = [{'date': str(x['date'])[:10], 'factor': float(x['factor']), 'source_id': x.get('source_id')}
+            for x in (fb.get('market') or {}).get('splits') or []
+            if x.get('date') and x.get('factor') and float(x['factor']) > 0 and abs(float(x['factor']) - 1) > .01
+            and _days(pick['as_of'], x['date']) > 0 and _d(x['date']) <= _d(q.as_of) and _d(published) < _d(x['date'])]
+    value = pick['value']
+    for x in post:
+        value *= x['factor']
+    if post:
+        msg = (f"count {_fmt(pick['value'])} dated {pick['as_of']} (published {published}) predates "
+               + ', '.join(f"a x{x['factor']:g} split on {x['date']} ({x['source_id']})" for x in post) + f": restated to {_fmt(value)}")
+        q.add('split_after_count', 'pass', 'major', msg, period=pick['as_of'], fields=('shares_outstanding',),
+              detail={'splits': post, 'count': pick['value'], 'restated': value})
+        fld['value'] = value
+        fld['note'] = '; '.join([fld['note'], msg])
+        fld['checks'] = sorted(set(fld['checks']) | {'split_after_count'})
+    # cross-check against the listing's market cap / last sale (the shares a quote vendor counts today): off by a split factor
+    # means a split or reverse split after the count that no dated action explains (Monster's 3-for-1, Amphenol's 2-for-1
+    # before its IBKR action was saved); the per-share value would be off by that factor, so the count is a conflict
+    lm = (fb.get('market') or {}).get('listing_market_cap') or {}
+    if lm.get('value') and lm.get('price') and value:
+        implied = lm['value'] / lm['price']
+        k = _split_factor(implied / value)
+        if k and abs(k - 1) > .01:
+            msg = (f"listing market cap {_fmt(lm['value'])} at {lm['price']:g} ({lm.get('date')}) implies {_fmt(implied)} shares, "
+                   f"{implied / value:.2f}x the count {_fmt(value)}: a {k:g}x split after the count without a dated corporate action "
+                   "(save IBKR corporate actions or read the 8-K)")
+            q.add('implied_shares_split_factor', 'fail', 'critical', msg, period=pick['as_of'], fields=('shares_outstanding',),
+                  detail={'implied': implied, 'count': value, 'factor': k, 'listing': lm})
+            fld['status'] = 'conflict'
+            fld['note'] = '; '.join([fld['note'], msg])
+            fld['checks'] = sorted(set(fld['checks']) | {'implied_shares_split_factor'})
     _stale(q, fld, 'shares', 'share count')
-    res = {'value': pick['value'], 'as_of': pick['as_of'], 'basis': pick['basis'], 'status': fld['status'],
+    res = {'value': value, 'as_of': pick['as_of'], 'basis': pick['basis'], 'status': fld['status'],
            'source_id': f['source_id'] if f else (pick.get('source_ids') or [None])[0], 'definition': DEFINITIONS['shares_outstanding']}
+    if post:
+        res['splits_after_count'] = post
     if cs and cs['summary']:
         res['basic_economic_shares'] = cs['summary']['basic_economic_shares']     # common + pre-funded + zero-strike
         res['rsu_shares'], res['economic_shares_as_of'] = cs['summary']['rsu_shares'], cs['as_of']
@@ -1316,7 +1353,15 @@ def _debt(q, cs, mcap):
             gap = abs(tot['tagged_plus_current'] - tot['tagged_total'])
             hist = [w for w in (_tagged_winner(pr) for pr in pairs) if w]
             wit, cur_p = q.best('debt_noncurrent_witness', end), parts['current_portion_ltd']
-            if wit and cur_p and gap > 0 and _rel(tg['value'], wit['value'] + cur_p['value']) <= q.tol['debt']:
+            tot_w = q.best('debt_total_witness', end)
+            win = None if not (tot_w and gap > 0) else (
+                'tagged_total' if _rel(tot['tagged_total'], tot_w['value']) <= q.tol['debt'] else
+                'tagged_plus_current' if _rel(tot['tagged_plus_current'], tot_w['value']) <= q.tol['debt'] else None)
+            if win:
+                # the filer's own total including current maturities says which scope the LongTermDebt-type tag has
+                method, decisive, basis = win, True, 'total_witness'
+                scope['total_witness'] = {'concept': tot_w.get('concept'), 'value': tot_w['value']}
+            elif wit and cur_p and gap > 0 and _rel(tg['value'], wit['value'] + cur_p['value']) <= q.tol['debt']:
                 # the face lines add up to the tag: noncurrent (another tag) + current = LongTermDebt, so the tag is the total
                 method, decisive, basis = 'tagged_total', True, 'noncurrent_witness'
                 scope['noncurrent_witness'] = {'concept': wit.get('concept'), 'value': wit['value']}

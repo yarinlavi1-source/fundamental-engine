@@ -92,7 +92,8 @@ INSTANT_TAGS = {
     'deferred_revenue_current': ['contractwithcustomerliabilitycurrent', 'deferredrevenuecurrent'],
     'deferred_revenue_noncurrent': ['contractwithcustomerliabilitynoncurrent', 'deferredrevenuenoncurrent'],
     'current_liabilities': ['liabilitiescurrent'],
-    'current_portion_ltd': ['longtermdebtcurrent', 'debtcurrent', 'longtermnotespayablecurrent', 'notespayablecurrent'],
+    'current_portion_ltd': ['longtermdebtcurrent', 'debtcurrent', 'longtermnotespayablecurrent', 'notespayablecurrent',
+                            'longtermdebtandcapitalleaseobligationscurrent'],
     'short_term_borrowings': ['shorttermborrowings', 'commercialpaper'],
     'long_term_debt': ['longtermdebtnoncurrent'],
     # scope ambiguous: issuers tag the noncurrent face line or the total as LongTermDebt; dataqa resolves it
@@ -102,6 +103,9 @@ INSTANT_TAGS = {
     # a noncurrent debt line under another tag (MercadoLibre: LongTermLoansPayable 4.1bn, current 6.5bn, LongTermDebt 10.6bn):
     # never added to debt, only a witness that settles the scope of the LongTermDebt tag in dataqa
     'debt_noncurrent_witness': ['longtermloanspayable', 'otherlongtermdebtnoncurrent', 'loanspayablenoncurrent'],
+    # an explicit total including current maturities (Amphenol: LongTermDebtAndCapitalLeaseObligations 17.2bn noncurrent +
+    # current 1.6bn = IncludingCurrentMaturities 18.8bn): a witness of the tag's scope, never added to debt itself
+    'debt_total_witness': ['longtermdebtandcapitalleaseobligationsincludingcurrentmaturities'],
     'operating_lease_current': ['operatingleaseliabilitycurrent'],
     'operating_lease_noncurrent': ['operatingleaseliabilitynoncurrent'],
     'total_liabilities': ['liabilities'],
@@ -538,6 +542,35 @@ def _split_actions(fb, gaap, lower, sid):
             continue
         out.append({'date': d, 'factor': float(r['val']), 'source_id': sid, 'concept': 'us-gaap:StockholdersEquityNoteStockSplitConversionRatio',
                     'available_at': (_d(r['filed']) + timedelta(days=LAG_DAYS)).isoformat(), 'filed': r['filed']})
+        n += 1
+    return n
+
+
+def from_ib_corporate_actions(fb, payload, retrieved_at, sid='ib:corporate_actions'):
+    """Splits from an IBKR price-history payload saved with include_corporate_actions (`corp_actions` rows of type 'Splits',
+    date YYYYMMDD, value = shares after / before) -> fb['market']['splits'], dated corporate actions from a market feed.
+    Only splits effective by as_of; a date already recorded (e.g. from the issuer's own tag) is not added twice.
+    Amphenol 2026-10-20: the 2-for-1 of 3.9.2026 came after its last filing, so no filing could carry it yet."""
+    rows = [x for x in (payload or {}).get('corp_actions') or [] if str(x.get('type', '')).lower() == 'splits']
+    out = fb.setdefault('market', {}).setdefault('splits', [])
+    have = {str(x.get('date'))[:10] for x in out}
+    n = 0
+    for x in rows:
+        raw = str(x.get('date') or '')
+        d = f'{raw[:4]}-{raw[4:6]}-{raw[6:8]}' if len(raw) == 8 and raw.isdigit() else raw[:10]
+        try:
+            k = float(x.get('value'))
+            ok = bool(d) and _d(d) <= _d(fb['as_of'])
+        except (TypeError, ValueError):
+            continue
+        if not ok or k <= 0 or d in have:
+            continue
+        if sid not in fb['sources']:
+            add_source(fb, sid, 'ib', 'corporate-actions', 'market_feed', retrieved_at)
+        ann = str(x.get('announce_date') or '')
+        out.append({'date': d, 'factor': k, 'source_id': sid,
+                    'announced': f'{ann[:4]}-{ann[4:6]}-{ann[6:8]}' if len(ann) == 8 and ann.isdigit() else None})
+        have.add(d)
         n += 1
     return n
 

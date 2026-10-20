@@ -258,6 +258,15 @@
   them). The opening reconciliation carries these as `debt_adjustments`; the review's opening check compares with
   validated debt plus them and asks the reviewer to accept them instead of failing, and the revenue-basis check accepts
   recognized revenue less evidenced one-offs.
+- Splits after the last filing (Amphenol 2-for-1 on 3.9.2026, Monster 3-for-1): the post-split quote had been divided by
+  the pre-split count, doubling or tripling value per share (APH showed $121 'attractive' instead of about $60). IBKR
+  corporate actions (`ib__corporate-actions-<T>__current.json`, in the connector plan) become dated splits; a split dated
+  after a count that was published before it restates the count (a count published after the split is already restated);
+  the listing's market cap over its last sale, off from the count by a split factor with no dated split to explain it, makes
+  the share count a conflict (blocked). `handoff.listing_price` now keeps the listing market cap. Of 536 casefiles of
+  20.10.2026, two were affected (APH, MNST).
+- Debt: LongTermDebtAndCapitalLeaseObligationsCurrent maps to current maturities, and the filer's own total including
+  current maturities settles the scope of the long-term tag (Amphenol's $1.6bn current portion had been missed).
 - Learning loop (`learning.py`, `scripts/learning_report.py`): reads every research round's evidenced inputs and executed
   casefiles and reports where the analyst corrected the engine (lever, scenario, business type, direction, median move),
   the special inputs used, recurring warnings, engine fixes per company researched (from `docs/learning_log.json`) and the

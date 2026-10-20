@@ -42,6 +42,8 @@ def collection_plan(ticker, as_of, cik=None):
         ('alpha_vantage', 'mcp__Alpha_Vantage_MCP_Server__CASH_FLOW', {'symbol': t}, 'av__cashflow.json'),
         ('ib', 'mcp__Interactive_Brokers__search_contracts', {'query': t}, f'ib__search-contracts-{t}__current.json'),
         ('ib', 'mcp__Interactive_Brokers__get_price_snapshot', {'contract_id': '<from search>', 'market_data_names': ['last', 'prior_close', 'misc_statistics']}, f'ib__price-snapshot-{t}__current.json'),
+        # splits after the last filing (the share count predates them): price history with corporate actions
+        ('ib', 'mcp__Interactive_Brokers__get_price_history', {'contract_id': '<from search>', 'security_type': 'STK', 'step': 'ONE_MONTH', 'period': 'ONE_YEAR', 'outside_rth': False, 'include_corporate_actions': True}, f'ib__corporate-actions-{t}__current.json'),
     ]
     if cik:
         plan.append(('sec', 'curl data.sec.gov companyfacts (only where the network allows it)', {'cik': cik}, 'sec__companyfacts.json'))
@@ -125,6 +127,11 @@ def factbook_from_run_dir(raw_dir, company, as_of):
         got = when.get('fmp__financial-estimates__annual.json')
         if isinstance(rows, list) and not later(got, 'consensus estimates retrieval'):
             F.from_fmp_estimates(fb, rows, got or as_of, as_of=(got or as_of)[:10])
+    ca = p(f"ib__corporate-actions-{company['ticker'].upper()}__current.json")
+    if os.path.exists(ca):
+        n = F.from_ib_corporate_actions(fb, _load(ca), when.get(os.path.basename(ca)) or as_of)
+        if n:
+            notes.append(f'{n} split(s) from IBKR corporate actions (market feed)')
     snap = p(f"ib__price-snapshot-{company['ticker'].upper()}__current.json")
     if os.path.exists(snap):
         s = _load(snap)
@@ -139,6 +146,12 @@ def factbook_from_run_dir(raw_dir, company, as_of):
                         currency=s.get('currency') or company.get('quote_currency') or company['currency'])
     _business(fb, raw_dir, manifest, as_of, notes)
     lp = p(f"listing__price-{company['ticker'].upper()}__current.json")
+    if os.path.exists(lp):
+        s = _load(lp)
+        if s.get('market_cap') and s.get('price') and s.get('date') and not later(s['date'], 'listing market cap'):
+            # the vendor's market cap with its own last sale: dataqa's cross-check of the share count (a missed split)
+            fb['market']['listing_market_cap'] = {'value': s['market_cap'], 'price': s['price'], 'date': s['date'],
+                                                  'provider': s.get('provider')}
     if not fb['market'].get('price') and os.path.exists(lp):
         # fallback when no broker quote was saved: the listing feed's last sale at retrieval (handoff.listing_price)
         s = _load(lp)

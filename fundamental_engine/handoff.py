@@ -73,7 +73,8 @@ def listing_price(universe_raw, symbol):
     if not r or not _num(r.get('lastsale')):
         return None
     d, closed = session_date(call['retrieved_at_utc'])
-    return {'symbol': symbol.upper(), 'price': _num(r['lastsale']), 'date': d, 'provider': 'nasdaq', 'dataset': 'screener stocks (last sale)',
+    return {'symbol': symbol.upper(), 'price': _num(r['lastsale']), 'date': d, 'market_cap': _num(r.get('marketCap')),
+            'provider': 'nasdaq', 'dataset': 'screener stocks (last sale)',
             'url': call.get('url'), 'retrieved_at_utc': call['retrieved_at_utc'], 'sha256_of_listing_file': call.get('sha256'),
             'note': (f"listing last sale retrieved {call['retrieved_at_utc']}; "
                      + ('a closing price (retrieved outside the session)' if closed else 'an intraday last sale')
