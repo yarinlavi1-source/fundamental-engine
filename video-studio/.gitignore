@@ -1,0 +1,13 @@
+# Media is heavy and often private: keep it out of Git.
+projects/*/
+!projects/_template/
+*.mp4
+*.mov
+*.mkv
+*.webm
+*.wav
+*.mp3
+*.m4a
+*.aac
+*.jpg
+*.png

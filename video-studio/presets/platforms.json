@@ -1,0 +1,9 @@
+{
+  "tiktok":    {"width": 1080, "height": 1920, "fps": 30, "video_bitrate": "12M", "lufs": -14, "max_seconds": 600, "note": "9:16 vertical"},
+  "reels":     {"width": 1080, "height": 1920, "fps": 30, "video_bitrate": "10M", "lufs": -14, "max_seconds": 180, "note": "9:16 vertical"},
+  "shorts":    {"width": 1080, "height": 1920, "fps": 30, "video_bitrate": "12M", "lufs": -14, "max_seconds": 180, "note": "9:16 vertical"},
+  "youtube":   {"width": 1920, "height": 1080, "fps": 30, "video_bitrate": "16M", "lufs": -14, "max_seconds": null, "note": "16:9 landscape"},
+  "ad-square": {"width": 1080, "height": 1080, "fps": 30, "video_bitrate": "8M",  "lufs": -14, "max_seconds": 60,  "note": "1:1 feed ad"},
+  "ad-feed":   {"width": 1080, "height": 1350, "fps": 30, "video_bitrate": "8M",  "lufs": -14, "max_seconds": 60,  "note": "4:5 feed ad"},
+  "ad-story":  {"width": 1080, "height": 1920, "fps": 30, "video_bitrate": "10M", "lufs": -14, "max_seconds": 60,  "note": "9:16 story ad"}
+}
