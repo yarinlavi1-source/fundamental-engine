@@ -143,6 +143,11 @@ def main():
     sc.add_argument("rows")
     sc.add_argument("--options", help="JSON options (themes, top_n, sector cap, anchors)")
     sc.add_argument("--out")
+    un = subs.add_parser("universe", help="Build broad discovery rows from a saved raw folder (scripts/collect_universe.py) and scan them")
+    un.add_argument("folder", help="runs/universe_<date> (raw/ inside; written by scripts/collect_universe.py)")
+    un.add_argument("--as-of", required=True)
+    un.add_argument("--min-market-cap", type=float, default=2e8)
+    un.add_argument("--options", help="JSON options passed to screen.scan")
     pf = subs.add_parser("portfolio", help="READ-ONLY analysis of saved Interactive Brokers payloads; prints to stdout, stores nothing")
     pf.add_argument("positions")
     pf.add_argument("--summary")
@@ -194,6 +199,22 @@ def main():
                 Path(args.out).write_text(text, encoding="utf-8")
             print(json.dumps({'shortlist': [s['symbol'] for s in result['shortlist']], 'lenses': {k: [c['symbol'] for c in v] for k, v in result['lenses'].items()},
                               'no_data': len(result['no_data']), 'notes': result['notes'][:3]}, indent=2, ensure_ascii=False))
+            return
+        if args.command == "universe":
+            from .universe import build, sec_profiles, apply_profiles
+            from .screen import scan
+            raw = Path(args.folder) / 'raw'
+            rows, report = build(str(raw), args.as_of, args.min_market_cap)
+            prof = sec_profiles(str(raw), {int(r['source']['cik']): r['symbol'] for r in rows if (r.get('source') or {}).get('cik')})
+            apply_profiles(rows, prof)
+            result = scan(rows, read_json(args.options) if args.options else None)
+            for name, obj in (('rows.json', rows), ('scan.json', result), ('coverage.json', report)):
+                (Path(args.folder) / name).write_text(json.dumps(obj, ensure_ascii=False, allow_nan=False), encoding='utf-8')
+            print(json.dumps({'rows': len(rows), 'sec_profiles': len(prof), 'excluded': report['excluded'],
+                              'lenses': {k: [c['symbol'] for c in v] for k, v in result['lenses'].items()},
+                              'shortlist': [c['symbol'] for c in result['shortlist']],
+                              'next': 'scripts/verify_candidates.py fetches SEC profiles for new candidates; rerun this command'},
+                             indent=2, ensure_ascii=False))
             return
         if args.command == "portfolio":
             options = json_object_arg(args.options, "--options") if args.options else None

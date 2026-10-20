@@ -75,3 +75,17 @@ class SecFramesTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class RevenueComponentTests(unittest.TestCase):
+    def test_component_tagged_as_revenues_does_not_win(self):
+        # SYNTHETIC: shaped like Verra Mobility CY2025 ('Revenues' tagged on one stream: 133 vs 900 total)
+        merged = S.merge_frames([
+            {'metric': 'revenue', 'tag': 'Revenues', 'payload': frame([(1, 'A', 133.0)])},
+            {'metric': 'revenue', 'tag': 'RevenueFromContractWithCustomerExcludingAssessedTax', 'payload': frame([(1, 'A', 900.0)])},
+            {'metric': 'operating_income', 'tag': 'OperatingIncomeLoss', 'payload': frame([(1, 'A', 238.0)])},
+            {'metric': 'operating_income', 'tag': 'OperatingIncomeLoss', 'payload': frame([(1, 'A', 999.0)])},   # non-revenue: first wins
+        ])
+        self.assertEqual(merged[1]['revenue']['value'], 900.0)
+        self.assertEqual(merged[1]['revenue']['replaced']['value'], 133.0)
+        self.assertEqual(merged[1]['operating_income']['value'], 238.0)

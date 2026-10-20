@@ -1,5 +1,17 @@
 ## 0.11.2 (in progress, 20.10.2026)
 
+- Broad discovery universe on real data: `scripts/collect_universe.py` saves SEC XBRL frames (2021-2025, all filers),
+  the SEC ticker map and the Nasdaq listings file with a manifest; `universe.build` makes one row per issuer (multi-class
+  market caps summed) with a coverage report (exchanges, countries, sectors, size bands, every exclusion counted with its
+  reason); `fundamental_engine universe FOLDER --as-of D` builds and scans. 20.10.2026: 2,470 issuers >= $200m on NYSE and
+  Nasdaq scanned in about 5 seconds.
+- Discovery stage 3, data check before ranking: `universe.sanity` drops impossible values (margins above 100% of revenue,
+  P/E on negligible or non-operating earnings, FCF/NI outliers) and records flags; a critical flag makes the row's data
+  uncertainty weak so it cannot be ranked until verified. `scripts/verify_candidates.py` fetches SEC submissions for the
+  candidates only (760 on 20.10.2026); the SIC code replaces the coarse listing industry and balance-sheet SIC ranges
+  (banks, credit, broker-dealers, insurance carriers, REITs, blank checks) are routed away from operating lenses.
+- SEC frames revenue: the larger total of the same period wins over a component tagged 'Revenues' (Verra Mobility).
+
 - Investments no longer vanish on a tag change: DebtSecuritiesCurrent/Noncurrent read as short/long-term investments;
   listed equity stakes (EquitySecuritiesFvNi) resolved as `equity_securities_fv` and valued once at fair value in the
   opening balance; a line present within the last 400 days but missing on the latest balance sheet fails

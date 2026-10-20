@@ -50,14 +50,21 @@ def merge_frames(payloads):
     """payloads: [{'metric', 'tag', 'payload': frames JSON}] -> {cik: {metric: {'value','end','accn','tag'}}}.
 
     Concept priority follows FRAME_METRICS order: a later tag never overwrites an earlier tag's value
-    for the same company (no silent substitution of components for totals)."""
+    for the same company (no silent substitution of components for totals). Revenue is the exception that proves the
+    rule: the larger value of the same period wins, because a total is never below a component (recorded in 'replaced')."""
     order = {(m, t): i for m, (tags, _, _) in FRAME_METRICS.items() for i, t in enumerate(tags)}
     out = {}
     for p in sorted(payloads, key=lambda x: order.get((x['metric'], x['tag']), 99)):
         for r in (p.get('payload') or {}).get('data', []):
             row = out.setdefault(int(r['cik']), {'name': r.get('entityName')})
-            if p['metric'] not in row:
-                row[p['metric']] = {'value': float(r['val']), 'end': r.get('end'), 'accn': r.get('accn'), 'tag': p['tag']}
+            cur, val = row.get(p['metric']), float(r['val'])
+            if cur is None:
+                row[p['metric']] = {'value': val, 'end': r.get('end'), 'accn': r.get('accn'), 'tag': p['tag']}
+            elif p['metric'] == 'revenue' and val > cur['value'] and r.get('end') == cur.get('end'):
+                # total revenue is never below a component: an issuer that tags a segment or a single revenue stream as
+                # 'Revenues' (Verra Mobility CY2025: $133m against ~$0.9bn) would otherwise enter the screen at a fraction
+                row[p['metric']] = {'value': val, 'end': r.get('end'), 'accn': r.get('accn'), 'tag': p['tag'],
+                                    'replaced': {'tag': cur['tag'], 'value': cur['value'], 'why': 'larger total revenue tag for the same period'}}
     return out
 
 

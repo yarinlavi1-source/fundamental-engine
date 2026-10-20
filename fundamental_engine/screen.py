@@ -1405,6 +1405,14 @@ def _data_uncertainty(c, scan_as_of):
         reasons.append('vendor calls failed: ' + ', '.join(f'{k} {v}' for k, v in sorted(calls.items())))
     if bad:
         reasons.append('invalid values read as unknown: ' + ', '.join(bad))
+    flags = [f for f in row.get('data_flags') or [] if isinstance(f, dict)]
+    crit = [f for f in flags if f.get('severity') == 'critical']
+    if crit:            # an implausible core value (a component tagged as revenue, units, a lender's P/E): verify before ranking
+        lvl = 'weak'
+        reasons.insert(0, 'data check failed: ' + '; '.join(f"{f['code']} ({f['message']})" for f in crit))
+    elif any(f.get('severity') == 'major' for f in flags):
+        lvl = 'adequate' if lvl == 'strong' else lvl
+    reasons += [f"data flag {f['code']}: {f['message']}" for f in flags if f.get('severity') != 'critical']
     denied = sorted(k for k, v in calls.items() if v == 'access_denied')
     if row.get('as_of') and scan_as_of:
         age = (_date(scan_as_of) - _date(row['as_of'])).days
@@ -1710,8 +1718,13 @@ def _support(row, o):
     t = text_type({'industry': row.get('industry'), 'sector': row.get('sector')}) if o['unsupported_defaults'] else None
     lta = m.get('liabilities_to_assets')
     lender = lta is not None and lta >= LENDER_LIABILITIES and (m.get('gross_margin') or 0) <= 0
+    prof = row.get('sec_profile') or {}
     if m.get('financial_statements'):
         why = 'bank/insurer XBRL markers'
+    elif prof.get('balance_sheet_economics'):
+        why = f"SEC SIC {prof.get('sic')} {prof.get('sic_description')}: {prof['balance_sheet_economics']}"
+    elif prof.get('fee_flag'):
+        flag = ('fiduciary_balance_sheet', 'low', f"SEC SIC {prof.get('sic')}: {prof['fee_flag']}")
     elif clean_text(ind) in user:
         why = f"industry '{ind}' in options.unsupported_industries"
     elif clean_text(ind) in defaults:
