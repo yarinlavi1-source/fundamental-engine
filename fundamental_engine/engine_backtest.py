@@ -109,9 +109,34 @@ def _spearman(a, b):
     return 1 - 6 * d2 / (n * (n * n - 1))
 
 
+def edge_reliability(periods_rows):
+    """How much of a predicted edge materialized: per formation, the slope of (stock return - universe average) on (implied
+    return - engine market return, both clipped like calibration); the median of the yearly slopes is the reliability used to
+    shrink edges in allocation (the pooled slope is reported but one extreme year can dominate it)."""
+    def slope(pts):
+        if len(pts) < 10:
+            return None
+        mx, my = sum(x for x, _ in pts) / len(pts), sum(y for _, y in pts) / len(pts)
+        sxx = sum((x - mx) ** 2 for x, _ in pts)
+        return sum((x - mx) * (y - my) for x, y in pts) / sxx if sxx else None
+    yearly, pooled = {}, []
+    for f, (rows, mkt, ew) in periods_rows.items():
+        pts = [(min(max(r['base_irr'], CLIP[0]), CLIP[1]) - mkt, r['fwd'] - ew) for r in rows]
+        b = slope(pts)
+        if b is not None:
+            yearly[f] = b
+            pooled += pts
+    vals = sorted(yearly.values())
+    st = _stats(vals) if len(vals) > 1 else {'n': len(vals)}
+    return {'by_formation': yearly, 'median': vals[len(vals) // 2] if vals else None, 'mean': st.get('mean'), 't': st.get('t'),
+            'pooled': slope(pooled), 'n_stock_years': len(pooled),
+            'meaning': 'share of a predicted edge (implied return over the engine market) that showed up as excess return over the '
+                       'universe in a typical year; allocation multiplies edges by the median, clipped to 0..1'}
+
+
 def evaluate(rows_by_date, prices, cost=.002, benchmark='SPY'):
     """rows_by_date: {formation: [company_row]} -> per-period portfolio returns and summary statistics."""
-    periods = []
+    periods, for_rel = [], {}
     for formation in sorted(rows_by_date):
         rows = [dict(r) for r in rows_by_date[formation]]
         as_of = rows[0]['as_of'] if rows else None
@@ -137,6 +162,8 @@ def evaluate(rows_by_date, prices, cost=.002, benchmark='SPY'):
             'earnings_yield_top_quintile': _q(rows, 'earnings_yield'),
             'fcf_yield_top_quintile': _q(rows, 'fcf_yield'),
         }
+        if mkt is not None:
+            for_rel[formation] = (valued, mkt, sum(r['fwd'] for r in rows) / len(rows))
         rec = {'formation': formation, 'as_of': as_of, 'n': len(rows), 'n_valued': len(valued), 'engine_market_return': mkt,
                'benchmark': bm, 'universe_ew': sum(r['fwd'] for r in rows) / len(rows),
                'universe_cw': sum(c * x for c, x in caps) / sum(c for c, _ in caps) if caps else None,
@@ -157,6 +184,7 @@ def evaluate(rows_by_date, prices, cost=.002, benchmark='SPY'):
         summary[k] = {'cagr': _cagr(rs), 'years': len(rs)}
     ics = [p['ic'] for p in periods if p['ic'] is not None]
     summary['information_coefficient'] = _stats(ics)
+    summary['edge_reliability'] = edge_reliability(for_rel)
     return {'periods': periods, 'summary': summary, 'cost_per_year': cost, 'benchmark': benchmark,
             'caveats': ["survivorship: the universe is today's large caps; every stock portfolio and especially cheapness tilts "
                         'are flattered (companies that looked cheap and then failed are absent); compare the engine with the '

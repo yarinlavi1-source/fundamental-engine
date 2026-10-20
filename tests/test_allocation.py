@@ -47,5 +47,16 @@ class ConstructTests(unittest.TestCase):
         self.assertIn('לא פקודה', A.render_he(plan))
 
 
+class ReliabilityTests(unittest.TestCase):
+    def test_edges_shrink_by_the_measured_reliability(self):
+        row = {'symbol': 'A', 'irr': {'bear': .02, 'base': .20, 'bull': .30}, 'index_expected_return': .06, 'loss_to_bear': .6,
+               'confidence': 'high', 'valuation_error_size': 'low', 'verdict_status': 'final', 'material_disqualifier': False}
+        full = A.construct([row])['targets'][0]
+        third = A.construct([row], options={'edge_reliability': .35})['targets'][0]
+        self.assertAlmostEqual(third['edge_after_haircut'], .14 * .35 - .007)
+        self.assertLess(third['target_weight'], full['target_weight'])
+        self.assertEqual(A.construct([row], options={'edge_reliability': 0.})['targets'][0]['target_weight'], 0.)
+
+
 if __name__ == '__main__':
     unittest.main()

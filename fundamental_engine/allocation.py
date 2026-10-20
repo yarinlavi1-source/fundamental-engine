@@ -16,7 +16,7 @@ from .finance import number
 
 DEFAULTS = {'kelly_fraction': .25, 'single_name_cap': .10, 'driver_cap': .25, 'active_budget': .80, 'downside_floor': .25,
             'trading_cost': .002, 'error_haircut': {'low': .005, 'medium': .01, 'high': .02, None: .015},
-            'confidence_factor': {'high': 1., 'medium': .6, 'low': .3, None: .3}, 'min_weight': .01}
+            'confidence_factor': {'high': 1., 'medium': .6, 'low': .3, None: .3}, 'min_weight': .01, 'edge_reliability': 1.}
 
 
 def _status(r):
@@ -31,7 +31,8 @@ def construct(rows, current=None, exposures=None, options=None):
     """rows: handoff.compare()['rows'] (candidates and holdings); current: {symbol: weight} of the read-only book;
     exposures: {symbol: [economic driver tags]}. -> target weights, index weight, expected return range, driver exposure."""
     o = {**DEFAULTS, **(options or {})}
-    for k in ('kelly_fraction', 'single_name_cap', 'driver_cap', 'active_budget', 'downside_floor', 'trading_cost', 'min_weight'):
+    for k in ('kelly_fraction', 'single_name_cap', 'driver_cap', 'active_budget', 'downside_floor', 'trading_cost', 'min_weight',
+              'edge_reliability'):
         o[k] = number(o[k], k, 0, 1)
     current, exposures = current or {}, exposures or {}
     lines = []
@@ -39,13 +40,16 @@ def construct(rows, current=None, exposures=None, options=None):
         st = _status(r)
         irr, idx = r.get('irr') or {}, r.get('index_expected_return')
         hair = o['error_haircut'].get(r.get('valuation_error_size'), o['error_haircut'][None]) + o['trading_cost']
-        edge = irr['base'] - idx - hair if st not in ('excluded', 'no_return_estimate') else None
+        # edge_reliability: the share of a model edge that materialized historically (engine_backtest.edge_reliability); the
+        # model's edge is shrunk by it before the haircut (1 = taken at face value, the default when nothing was measured)
+        edge = (irr['base'] - idx) * o['edge_reliability'] - hair if st not in ('excluded', 'no_return_estimate') else None
         down = max(r.get('loss_to_bear') if r.get('loss_to_bear') is not None else 1., o['downside_floor'])
         conf = o['confidence_factor'].get(r.get('confidence'), o['confidence_factor'][None])
         raw = o['kelly_fraction'] * edge / down ** 2 * conf if edge is not None and edge > 0 else 0.
         why = ('material disqualifier: ' + str(r.get('judgement')) if st == 'excluded' else
                'no expected return (valuation not computed)' if st == 'no_return_estimate' else
-               f"edge {edge * 100:+.1f} pp over the index after a {hair * 100:.1f} pp haircut; bear loss {down:.0%}; confidence {r.get('confidence')}")
+               f"edge {edge * 100:+.1f} pp over the index after reliability x{o['edge_reliability']:.2f} and a {hair * 100:.1f} pp haircut; "
+               f"bear loss {down:.0%}; confidence {r.get('confidence')}")
         lines.append({'symbol': r['symbol'], 'status': st, 'edge_after_haircut': edge, 'downside': down, 'confidence': r.get('confidence'),
                       'raw_weight': min(raw, o['single_name_cap']), 'capped': raw > o['single_name_cap'], 'why': why,
                       'drivers': list(exposures.get(r['symbol']) or []), 'current_weight': current.get(r['symbol'], 0.),
@@ -92,7 +96,7 @@ def construct(rows, current=None, exposures=None, options=None):
             'driver_exposure': dict(sorted(drivers.items(), key=lambda x: -x[1])), 'holdings_to_review': review,
             'provisional': any(ln['status'] == 'provisional' and ln['target_weight'] for ln in lines), 'options': o,
             'rules': {'size': 'kelly_fraction x edge / max(bear loss, floor)^2 x confidence factor, capped per name',
-                      'edge': 'base IRR - index expected return - (valuation-error haircut + trading cost)',
+                      'edge': '(base IRR - index expected return) x edge reliability - (valuation-error haircut + trading cost)',
                       'drivers': f"names sharing an economic driver scaled to at most {o['driver_cap']:.0%} together",
                       'index': 'everything not earned by an active edge stays in the index'},
             'meaning': ('illustrative target book that follows the research; not an order, not tax-aware (portfolio.compare is), '
