@@ -309,7 +309,9 @@ def build(fb, cf, inputs=None, conditional=None):
 
     questions = [{'key': k, 'question_he': q, **qs[k], 'status_he': STATUS_HE[qs[k]['status']]} for k, q in QUESTIONS]
     open_ = [x['key'] for x in questions if x['status'] != 'evidenced']
+    kr = _analyst(inputs, 'key_risk', fb)          # the analyst's main risk in plain words (shown in the valuation table)
     return {'sheet_version': 1, 'questions': questions, 'thesis_he': _thesis(qs, dc, price, base, ccy), 'open': open_,
+            'key_risk': kr if kr and kr.get('reading_he') and not kr['opinion'] and not kr['unknown_ids'] else None,
             'meaning': 'an analyst reading of the casefile: numbers from the engine, judgement from evidence; open questions are '
                        'the research agenda; values are drafts until reviewed'}
 

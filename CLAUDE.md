@@ -83,7 +83,14 @@ P(beat) is calibrated (says correctly how often the priced growth happens) but d
 a low P(beat) is a crash-risk flag, not a short signal; the uniform screen gives young winners and
 failures the same ~0, so young growth names need company drivers. scripts/gap_card.py = live card.
 
-## User preference: one concise investment paragraph (latest, v0.9.1)
+## User preference: valuation table (latest, 20.10.2026)
+
+Every valuation: ONE clear table in simple Hebrew words plus a few short simple explanations; all calculations and
+the business detail stay behind the scenes. Use `render.hebrew_table` (written as out/table_he.md by `deep` and
+`pipeline`) and supply an evidenced `analyst_sheet.key_risk` {reading_he, evidence_ids} so the risk row is specific.
+Add sources as links under the table when the web was used. The paragraph below is for non-valuation summaries.
+
+## User preference: one concise investment paragraph (v0.9.1)
 
 After full research, return ONE simple Hebrew paragraph, normally 80–140 words:
 whether investment looks attractive at the price, one reason, estimated current

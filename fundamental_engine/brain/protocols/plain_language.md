@@ -1,5 +1,12 @@
 # Simple investment conclusion — default delivery
 
+Yarin's latest instruction (2026-10-20) for every valuation: one clear table in plain Hebrew words and a few short,
+simple explanations; calculations and business detail stay behind the scenes (in the casefile). The pipeline writes it
+as `out/table_he.md` (`render.hebrew_table`): price, fair value and the gap, bad/good scenario, expected annual return
+against the market's, the conditional five-year value, business quality, how rare the forecast growth is, the main risk
+(the analyst's evidenced `analyst_sheet.key_risk` in plain words), confidence and the call. A draft says it is a draft.
+The paragraph below remains for portfolio and discovery summaries.
+
 Yarin's latest instruction (2026-09-28) supersedes older long-report presentation:
 complete the full company-specific research privately, then deliver ONE concise
 Hebrew paragraph, normally 80–140 words. No headings, scorecards, annual tables,

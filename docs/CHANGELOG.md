@@ -310,6 +310,18 @@
   (rf + ERP 9.35%), market return implied by the engine's cash flows 6.96%, rate shift 2.81 -> 2.33pp, median value +6.9%,
   share below price 90% -> 85%; value-weighted, the base cases need growth only 24% of companies of the same size reached.
   Amazon: cost of equity 9.75% -> 9.35%, terminal ROIC 11.75% -> 15.4%, value $138 -> $161, market-consistent $275 at $262.5.
+- Valuation table (owner, 20.10.2026: "every valuation as a clear table in simple words, calculations behind the scenes"):
+  `render.hebrew_table` reads the executed casefile (price, fair value at the required return and the gap, bad/good
+  scenario, expected annual return against the market's, five-year conditional value, business quality, how rare the
+  forecast growth is, the main risk, confidence, the call) and adds short explanations, including why a stock can be dear at
+  the required return yet cheap against the market; `deep` and `pipeline` write it as out/table_he.md. The analyst's main
+  risk in plain words comes from an evidenced `analyst_sheet.key_risk`.
+- Private stakes: `inputs.forecast.non_operating_assets` [{kind private_stake | equity_method_stake, fair_value, haircut,
+  book_value_in_bridge, reason, evidence_ids}] adds fair value x (1 - haircut) less what the bridge already holds to opening
+  investments (valued at face), excluded from the net debt that sets leverage (a stake does not repay debt), reconciled for
+  the reviewer (`investment_adjustments` in review's opening check). Microsoft: about 25% of OpenAI at its $852bn March 2026
+  round, 25% haircut, less $24.6bn of non-marketable investments = $135bn added; plus its $66.6bn of finance leases as a
+  debt-like claim and FY2027-28 consensus.
 
 ## 0.11.1 — verified review-fix cycle (20.10.2026)
 

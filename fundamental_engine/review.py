@@ -560,8 +560,13 @@ def _opening_check(qa, case, val):
                                                + (q['equity_securities_fv'] or 0))    # listed stakes enter the opening once (forecast)
     liquid_o = (num(op.get('unrestricted_cash')) or 0) + (num(op.get('marketable_investments')) or 0)
     bridged = bool(rec.get('bridge_events'))
-    if liquid_q is not None and liquid_o > liquid_q * 1.02 + 1:
-        (notes if bridged else fails).append(f'opening cash+investments {liquid_o:g} above validated {liquid_q:g}' + (' (bridge events supplied)' if bridged else ''))
+    inv_adj = sum(num(a.get('amount')) or 0 for a in rec.get('investment_adjustments') or [])
+    if liquid_q is not None and liquid_o > (liquid_q + inv_adj) * 1.02 + 1:
+        (notes if bridged else fails).append(f'opening cash+investments {liquid_o:g} above validated {liquid_q:g}'
+                                             + (f' adjusted by {inv_adj:+g}' if inv_adj else '') + (' (bridge events supplied)' if bridged else ''))
+    elif inv_adj and liquid_q is not None:
+        notes.append(f'opening cash+investments {liquid_o:g} = validated {liquid_q:g} + non-operating stakes {inv_adj:+g} at fair value less '
+                     'haircut: analyst addition for the reviewer to accept')
     adj = rec.get('debt_adjustments') or []
     adj_sum = sum(num(a.get('amount')) or 0 for a in adj)
     if q['debt'] is not None and (num(op.get('debt')) or 0) < (q['debt'] + adj_sum) * .98 - 1:

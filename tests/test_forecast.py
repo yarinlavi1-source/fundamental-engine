@@ -1561,3 +1561,49 @@ class EvidenceBasedRatesTests(unittest.TestCase):
             out = handoff.with_market_inputs({}, market, d)
             self.assertNotIn('risk_free', out['forecast'])                             # a EUR reporter keeps its own yield
             self.assertEqual(out['forecast']['equity_risk_premium']['value'], .042)
+
+
+class NonOperatingAssetTests(unittest.TestCase):
+    """A stake carried far below its value (Microsoft's ~25% of OpenAI at book, 2026-10-20)."""
+
+    def setUp(self):
+        self.fb, self.an, self.card, self.qa = industrial()
+        ResearchRoundOneInputsTests.evid(None, self.fb)
+
+    def stake(self, **kw):
+        return {'kind': 'equity_method_stake', 'fair_value': 100e6, 'haircut': .25, 'book_value_in_bridge': 20e6,
+                'reason': 'last funding round x ownership', 'evidence_ids': ['i1'], **kw}
+
+    def test_fair_value_less_haircut_less_book_enters_at_face(self):
+        base = forecast.build(self.fb, self.an, self.card, self.qa)
+        fc = forecast.build(self.fb, self.an, self.card, self.qa, {'non_operating_assets': [self.stake()]})
+        added = 100e6 * .75 - 20e6
+        self.assertAlmostEqual(fc['spec']['opening']['marketable_investments'] - base['spec']['opening']['marketable_investments'], added)
+        ob = next(a for a in fc['assumptions'] if a['id'] == 'open_balance')['values']
+        self.assertAlmostEqual(ob['non_operating_assets_added'], added)
+        self.assertIn('non_operating_assets_added', [w['code'] for w in fc['warnings']])
+        rec = fc['spec']['underwriting']['opening_reconciliation']
+        self.assertEqual(rec['investment_adjustments'], [{'kind': 'non_operating_assets_added', 'amount': added}])
+        shares = fc['spec']['opening']['shares']
+        # about one for one: the stake does not offset debt, but the higher equity value lowers the debt weight a little
+        self.assertAlmostEqual((fc['preview']['today']['base'] - base['preview']['today']['base']) * shares, added, delta=.03 * added)
+        self.assertLess(abs(fc['cost_of_equity']['components']['leverage']['d_to_e']
+                            - base['cost_of_equity']['components']['leverage']['d_to_e']), .005)
+
+    def test_book_value_at_or_above_the_haircut_value_adds_nothing(self):
+        fc = forecast.build(self.fb, self.an, self.card, self.qa, {'non_operating_assets': [self.stake(book_value_in_bridge=80e6)]})
+        self.assertIn('non_operating_asset_not_added', [w['code'] for w in fc['warnings']])
+        self.assertEqual(next(a for a in fc['assumptions'] if a['id'] == 'open_balance')['values']['non_operating_assets_added'], 0.)
+
+    def test_validation(self):
+        for bad in (self.stake(kind='brand'), self.stake(haircut=1.), self.stake(haircut=None), self.stake(fair_value=-1.),
+                    self.stake(book_value_in_bridge=None), self.stake(reason=' '), self.stake(evidence_ids=['nope'])):
+            with self.assertRaises(ValueError):
+                forecast.build(self.fb, self.an, self.card, self.qa, {'non_operating_assets': [bad]})
+
+    def test_review_accepts_the_addition_only_as_a_note(self):
+        from fundamental_engine import review
+        fc = forecast.build(self.fb, self.an, self.card, self.qa, {'non_operating_assets': [self.stake()]})
+        chk = review._opening_check(self.qa, fc['spec'], {})
+        self.assertEqual(chk['status'], 'needs_explanation')
+        self.assertIn('non-operating stakes', chk['message'])

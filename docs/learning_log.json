@@ -245,6 +245,33 @@
      "fix": "class rebuilt from the appendix observation counts; a test checks that every row is a distribution"
     }
    ]
+  },
+  {
+   "round": "MSFT_2026-10-20",
+   "date": "2026-10-20",
+   "companies": [
+    "MSFT"
+   ],
+   "fixes": [
+    {
+     "ticker": "MSFT",
+     "kind": "data",
+     "finding": "finance lease liabilities of $66.6bn (datacenters) were outside the $40.3bn of debt read, as at Amazon",
+     "fix": "debt_like_claims finance_leases from the 10-K; candidate engine default: read FinanceLeaseLiability tags into debt"
+    },
+    {
+     "ticker": "MSFT",
+     "kind": "missing_input",
+     "finding": "about 25% of OpenAI carried at equity-method book value while OpenAI was priced at $852bn",
+     "fix": "non_operating_assets input (fair value less haircut less book in bridge), excluded from net debt"
+    },
+    {
+     "ticker": "MSFT",
+     "kind": "data",
+     "finding": "the large-cap sweep had no consensus for Microsoft: FY2027 growth came from the trailing 15% cap instead of consensus 17.9% / FY2028 19.7%",
+     "fix": "consensus saved to raw/web__consensus-estimates__annual.json; the base case now needs growth only 8% of giant companies reached (outside view flags it)"
+    }
+   ]
   }
  ]
 }

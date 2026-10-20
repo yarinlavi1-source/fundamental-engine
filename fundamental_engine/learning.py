@@ -20,7 +20,7 @@ import os
 from collections import Counter, defaultdict
 
 CANDIDATE_MIN_COMPANIES = 3     # a lever moved the same way for at least this many companies of one type: candidate default
-SPECIAL_INPUTS = ('nonrecurring', 'debt_like_claims', 'operating_funding', 'cyclical')
+SPECIAL_INPUTS = ('nonrecurring', 'debt_like_claims', 'operating_funding', 'cyclical', 'non_operating_assets')
 
 
 def _load(path):
@@ -55,7 +55,7 @@ def company_record(folder, round_name=None):
         if not v:
             continue
         for it in (v if isinstance(v, list) else [v]):
-            special.append({'input': k, 'kind': it.get('kind') or it.get('treatment'), 'amount': it.get('amount'),
+            special.append({'input': k, 'kind': it.get('kind') or it.get('treatment'), 'amount': it.get('amount', it.get('fair_value')),
                             'revenue': it.get('revenue'), 'operating_income': it.get('operating_income'), 'reason': it.get('reason')})
     sheet = inputs.get('analyst_sheet') or {}
     return {'round': round_name or os.path.basename(os.path.dirname(os.path.abspath(folder))),

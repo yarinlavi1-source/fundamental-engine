@@ -416,6 +416,27 @@ class RenderTests(unittest.TestCase):
         self.assertIn('הנחה של', att)
         self.assertNotIn('2030', att)
 
+    def test_hebrew_table_is_plain_and_read_from_the_casefile(self):
+        from fundamental_engine.render import hebrew_table
+        for name, cf in self.cases.items():
+            t = hebrew_table(cf)
+            self.assertIn('| מחיר היום |', t)
+            self.assertIn('| רמת ביטחון |', t)
+            self.assertIn('| שורה תחתונה |', t)
+            for w in CERTAINTY:
+                self.assertNotIn(w, t, name)
+        att = self.cases['attractive']
+        t = hebrew_table(att)
+        er = att['dc']['expected_return']
+        self.assertIn(f"{er['value_at_required_return']:,.1f}" if er['value_at_required_return'] < 100 else
+                      f"{er['value_at_required_return']:,.0f}", t)                 # the executed value, not a recomputation
+        self.assertIn('| שווי הוגן (תרחיש סביר) |', t)
+        self.assertIn('הערכה מותנית, לא תחזית', t)
+        draft = hebrew_table(self.cases['draft'])
+        self.assertIn('טיוטה', draft)
+        blocked = hebrew_table(self.cases['blocked'])
+        self.assertNotIn('| שווי הוגן (תרחיש סביר) |', blocked)                   # no value without a price verdict
+
     def test_markdown_contains_all_sections_and_provenance(self):
         md = markdown(self.cases['attractive'])
         for s in SECTIONS:

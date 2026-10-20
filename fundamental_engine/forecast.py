@@ -136,7 +136,7 @@ CYCLE_FIT_MIN_YEARS = 6   # fewer years than about one full cycle (3-5 years) pl
 DECLINE_FLOOR = -.05      # lowest perpetual growth for a structurally declining business
 DEBT_INCOMPLETE_RATE = .25     # interest / debt above this (no investment-grade or bank rate) means debt lines are missing
 KNOWN_INPUTS = ('overrides', 'reviews', 'risk_free', 'equity_risk_premium', 'horizon_years', 'financing', 'nol', 'cyclical',
-                'operating_funding', 'nonrecurring', 'debt_like_claims')
+                'operating_funding', 'nonrecurring', 'debt_like_claims', 'non_operating_assets')
 # inputs['nonrecurring'] = [{kind, period_end, revenue, operating_income, reason, evidence_ids}]: a one-off inside reported
 # figures (the effect it had, removed from the history the paths start from: TTM, fiscal years, year to date). Only kinds
 # that do not recur by nature; restructuring, SBC or 'adjusted' costs are not one-offs (never erase recurring costs).
@@ -146,6 +146,13 @@ KNOWN_INPUTS = ('overrides', 'reviews', 'risk_free', 'equity_risk_premium', 'hor
 # added to opening debt (they carry interest like debt). BioCryst's royalty financing obligation ($427m at 30.6.2026, paid
 # from ORLADEYO royalties with its non-cash interest in interest expense) was outside the bridge and made 20% look like the
 # rate on its $395m term loan.
+# inputs['non_operating_assets'] = [{kind, fair_value, haircut, book_value_in_bridge, reason, evidence_ids}]: a stake the
+# balance sheet carries far below its value (equity method or at cost; Microsoft's ~25% of OpenAI at book while OpenAI's
+# March 2026 round priced it at $852bn). Added to opening investments at fair_value x (1 - haircut) less what the bridge
+# already holds for it (book_value_in_bridge; when the filing does not split it out, the whole line that contains it, which
+# understates the addition). The haircut is the analyst's: illiquidity, preference terms, tax on a sale. Investments enter the
+# value at face, so the addition moves the value one for one; the reviewer accepts it like a debt reclassification.
+NON_OPERATING_KINDS = ('private_stake', 'equity_method_stake')
 DEBT_LIKE_KINDS = ('royalty_financing', 'litigation', 'pension_deficit', 'deferred_consideration', 'preferred_or_minority',
                    'finance_leases')     # finance-lease payments are not in operating costs (amortisation and interest)
 NONRECURRING_KINDS = ('acquired_iprd', 'impairment', 'gain_or_loss_on_sale', 'litigation_settlement', 'one_time_license_revenue',
@@ -1646,6 +1653,27 @@ def build(fb, an, card, qa, inputs=None):
             ev = it.get('evidence_ids')
             if not isinstance(ev, list) or not ev or any(e not in known for e in ev):
                 raise ValueError(f'debt_like_claims {i}: evidence_ids must be FactBook source or qualitative ids')
+    na = inputs.get('non_operating_assets')
+    if na is not None:
+        known = set(fb.get('sources', {})) | {q['id'] for q in fb.get('qualitative', [])}
+        if not isinstance(na, list):
+            raise ValueError('non_operating_assets: a list of items')
+        for i, it in enumerate(na):
+            if not isinstance(it, dict) or sorted(set(it) - {'kind', 'fair_value', 'haircut', 'book_value_in_bridge', 'reason', 'evidence_ids'}):
+                raise ValueError(f'non_operating_assets {i}: kind, fair_value, haircut, book_value_in_bridge, reason, evidence_ids')
+            if it.get('kind') not in NON_OPERATING_KINDS:
+                raise ValueError(f"non_operating_assets {i}: kind must be one of {', '.join(NON_OPERATING_KINDS)}")
+            if _num(it.get('fair_value')) is None or it['fair_value'] <= 0:
+                raise ValueError(f'non_operating_assets {i}: fair_value must be a positive number')
+            if _num(it.get('haircut')) is None or not 0 <= it['haircut'] < 1:
+                raise ValueError(f'non_operating_assets {i}: haircut must be at least 0 and below 1 (state it; 0 is a choice too)')
+            if _num(it.get('book_value_in_bridge')) is None or it['book_value_in_bridge'] < 0:
+                raise ValueError(f'non_operating_assets {i}: book_value_in_bridge must be a number >= 0 (what the investments already hold)')
+            if not isinstance(it.get('reason'), str) or not it['reason'].strip():
+                raise ValueError(f'non_operating_assets {i}: a written reason is required')
+            ev = it.get('evidence_ids')
+            if not isinstance(ev, list) or not ev or any(e not in known for e in ev):
+                raise ValueError(f'non_operating_assets {i}: evidence_ids must be FactBook source or qualitative ids')
     of = inputs.get('operating_funding')
     if of is not None:
         if not isinstance(of, dict) or sorted(set(of) - {'amount', 'reason', 'evidence_ids'}):
@@ -1742,6 +1770,20 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
         open_bal['debt'] = (open_bal['debt'] or 0.) + claims_added
         warn('debt_like_claims_added', f"{claims_added:,.0f} of debt-like claims added to opening debt: "
              + '; '.join(f"{it['kind']} {float(it['amount']):,.0f} ({it['reason']})" for it in inputs['debt_like_claims']), 'medium')
+    assets_added = 0.
+    for it in inputs.get('non_operating_assets') or []:
+        add_i = float(it['fair_value']) * (1 - float(it['haircut'])) - float(it['book_value_in_bridge'])
+        if add_i <= 0:
+            warn('non_operating_asset_not_added', f"{it['kind']}: fair value {float(it['fair_value']):,.0f} after a {float(it['haircut']):.0%} "
+                                                  f"haircut does not exceed the {float(it['book_value_in_bridge']):,.0f} already in investments", 'low')
+            continue
+        assets_added += add_i
+    if assets_added:
+        open_bal['lti'] += assets_added
+        warn('non_operating_assets_added', f"{assets_added:,.0f} of non-operating stakes added to opening investments at fair value less "
+             'haircut less book value already held: ' + '; '.join(
+                 f"{it['kind']} {float(it['fair_value']):,.0f} x (1 - {float(it['haircut']):.0%}) - {float(it['book_value_in_bridge']):,.0f} "
+                 f"({it['reason']})" for it in inputs['non_operating_assets']), 'medium')
     op_fund = 0.
     if inputs.get('operating_funding') and open_bal['debt']:
         op_fund = min(float(inputs['operating_funding']['amount']), open_bal['debt'])
@@ -1876,9 +1918,11 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
         {'cash': open_bal['cash'], 'short_term_investments': open_bal['sti'], 'long_term_investments': open_bal['lti'],
          'equity_securities_fv_included': val('equity_securities_fv') or 0.,
          'debt': open_bal['debt'], 'deferred_revenue': open_bal['deferred_revenue'], 'statement_as_of': stmt,
-         'operating_funding_excluded': op_fund, 'debt_like_claims_added': claims_added},
+         'operating_funding_excluded': op_fund, 'debt_like_claims_added': claims_added, 'non_operating_assets_added': assets_added},
         f"dataqa-resolved balance at {stmt}: cash {open_bal['cash']:,.0f}, investments {open_bal['sti'] + open_bal['lti']:,.0f} "
-        f"(of which listed equity stakes at fair value {val('equity_securities_fv') or 0.:,.0f}; private stakes excluded) "
+        f"(of which listed equity stakes at fair value {val('equity_securities_fv') or 0.:,.0f}; "
+        + (f"plus {assets_added:,.0f} of evidenced private stakes at fair value less haircut and book value) " if assets_added else
+           'private stakes at book value only) ') +
         f"(kept as assets earning risk-free after tax; liquidated before any external financing is assumed), debt {open_bal['debt']:,.0f} "
         f"({debt_res.get('method', 'dataqa')}; operating leases treated in cash costs"
         + (f"; {op_fund:,.0f} of operating funding excluded, its cost is in operating costs" if op_fund else '')
@@ -2395,7 +2439,8 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
                 # evidenced analyst reclassifications of the validated debt (not events after the statement): review.py
                 # compares the opening with validated debt plus these, and asks the reviewer to accept them
                 'debt_adjustments': [a for a in ({'kind': 'operating_funding_excluded', 'amount': -op_fund},
-                                                 {'kind': 'debt_like_claims_added', 'amount': claims_added}) if a['amount']]},
+                                                 {'kind': 'debt_like_claims_added', 'amount': claims_added}) if a['amount']],
+                'investment_adjustments': [{'kind': 'non_operating_assets_added', 'amount': assets_added}] if assets_added else []},
             'scenario_reviews': {s: {'demand_and_capacity': {'assumption_ids': [f'growth_{s}', 'revenue_current_fy', 'growth_fade']
                                                              + (['cycle_normalization'] if cyc else [])},
                                      'funding_and_claims': {'assumption_ids': ['funding_policy', 'debt_interest', 'open_balance', 'claims'] + fin(s)},
@@ -2468,7 +2513,8 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
 
     # ---- capital structure: debt weight and issue prices from the model's own values (fixed point), Ke relevered, terminal WACC
     excess0 = max(0., open_bal['cash'] - _scen(spec, 'base')['minimum_cash'][0])
-    net_debt = max(0., open_bal['debt'] - inv0 - excess0)
+    # an evidenced private stake is an asset, not liquidity: it does not offset debt in the leverage that sets the cost of capital
+    net_debt = max(0., open_bal['debt'] - (inv0 - assets_added) - excess0)
     ov_ke = {s: float(econ[(s, 'cost_of_equity')]['value']) for s in SCEN if (s, 'cost_of_equity') in econ}
     kd_e, kd_p = rf + DEBT_EXPECTED_PREMIUM, meta['interest_existing']
     lev = _solve_capital(spec, P, ku, kd_e, kd_p, net_debt, ov_ke)

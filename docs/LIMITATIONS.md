@@ -166,4 +166,7 @@ Companion to docs/EVIDENCE_STATUS.md, which separates what tests prove from what
     from Damodaran's industry costs of equity (January 2026: utilities 5.0%, retail 7.5%, software 9.6%, semiconductors
     10.7%). Excess returns regress toward Ku, not the sector's own mean, and below-typical margins catch up faster than the
     base rates show for established companies (generous; candidate change pending a backtest).
-
+42. **A private stake has one value in every scenario.** `non_operating_assets` enters the opening balance shared by bear, base
+    and bull, so the bear does not test a fall in the stake's value (Microsoft's OpenAI stake at a 25% haircut to the last
+    round); the haircut is the analyst's judgement and the book value already in the bridge is often not disclosed (then the
+    whole line holding it is subtracted, understating the addition).

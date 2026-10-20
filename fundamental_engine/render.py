@@ -310,6 +310,95 @@ MAX_WORDS = 140
 MIN_WORDS = 80
 
 
+def _money(v, cur):
+    return f'{_ps(v)}$' if cur == 'USD' else f'{_ps(v)} {cur}'
+
+
+def _horizon(view, n):
+    h = ((view or {}).get('horizons') or {})
+    return h.get(n) or h.get(str(n))
+
+
+def hebrew_table(casefile):
+    """The owner's valuation format (20.10.2026): one clear table in plain Hebrew words and a few short explanations; the
+    calculations and the business detail stay in the casefile. Every row is read from the executed casefile, nothing is
+    recomputed: price, fair value at the required return and the gap, the bear-bull range at that return, the expected
+    annual return at today's price against the market's, the conditional five-year value, business quality, how rare the
+    forecast growth is (base rates), the main risk (the analyst's evidenced key_risk first), confidence and the call.
+    A draft says so; a held valuation shows no value."""
+    cf = casefile or {}
+    dc = cf.get('dc') or {}
+    v = dc.get('verdict') or {}
+    company = dc.get('company') or cf.get('company') or {}
+    name = company.get('name') or company.get('ticker') or 'החברה'
+    view, er = dc.get('valuation_view') or {}, dc.get('expected_return') or {}
+    cur = (dc.get('price') or {}).get('currency') or company.get('currency') or ''
+    price = view.get('price')
+    st = _state(dc) if v else {'hold': True, 'state': 'שלב ההחלטה לא רץ'}
+    code, withheld = v.get('code'), bool(v.get('price_claim_withheld'))
+    rows = [('מחיר היום', _money(price, cur) if _n(price) else 'לא ידוע')]
+    fair = er.get('value_at_required_return') if _n(er.get('value_at_required_return')) else view.get('base')
+    req = er.get('hurdle') if _n(er.get('hurdle')) else view.get('model_cost_of_equity')
+    show = bool(v) and code in PRICE_VERDICTS and not st['hold'] and _n(fair) and fair > 0 and _n(price)
+    notes = []
+    if show:
+        gap = price / fair - 1
+        rows.append(('שווי הוגן (תרחיש סביר)', _money(fair, cur)))
+        rows.append(('המחיר מול השווי', f"{'יקרה' if gap > 0 else 'זולה'} בכ־{abs(gap):.0%}" if abs(gap) >= .03 else 'בערך במחיר השווי'))
+        ar = er.get('at_required_return') or {}
+        lo, hi = (ar.get('bear'), ar.get('bull')) if _n(ar.get('bear')) and _n(ar.get('bull')) else (view.get('bear'), view.get('bull'))
+        if _n(lo) and _n(hi):
+            rows.append(('תרחיש רע / תרחיש טוב', f'{_money(lo, cur)} / {_money(hi, cur)}'))
+        irr = er.get('base_irr')
+        mkt = (view.get('market_consistent') or {}).get('market_return')
+        if not _n(mkt):
+            mkt = (er.get('index_expected_return') or {}).get('value')
+        if _n(irr):
+            vs = ''
+            if _n(mkt):
+                d = irr - mkt
+                vs = (f' (השוק כולו: כ־{mkt * 100:.1f}%; ' + ('בערך כמו השוק)' if abs(d) < .005 else
+                                                         f"{'יותר' if d > 0 else 'פחות'} מהשוק בכ־{abs(d) * 100:.1f}% בשנה)"))
+            rows.append(('תשואה שנתית צפויה במחיר של היום', f'כ־{irr * 100:.1f}% בשנה{vs}'))
+        f5 = er.get('five_year_at_required_return') or {}
+        if _n(f5.get('base_value')):
+            dist = f5.get('cumulative_distributions_base') or 0.
+            rows.append((f"שווי משוער בעוד 5 שנים ({f5.get('date', '')[:4]})",
+                         _money(f5['base_value'], cur) + (f' + כ־{_money(dist, cur)} חלוקות לבעלי המניות' if dist > .005 * price else '')))
+        notes.append('שווי הוגן = כמה המניה שווה היום אם התרחיש הסביר מתממש' + (f' ואתה דורש תשואה של כ־{req * 100:.1f}% בשנה.'
+                                                                                 if _n(req) else '.'))
+        edge = (irr - mkt) if _n(irr) and _n(mkt) and _n(req) else None
+        if edge is not None and gap > .03 and edge > .005:
+            notes.append(f'למה "יקרה" אבל מניבה יותר מהשוק: השווי מחושב לפי תשואה של כ־{req * 100:.1f}% בשנה, והשוק כולו מתומחר '
+                         f'היום לכ־{mkt * 100:.1f}% בלבד; ביחס למניות אחרות היא לא יקרה.')
+        elif edge is not None and gap < -.03 and edge < -.005:
+            notes.append(f'למה "זולה" אבל מניבה פחות מהשוק: גם בתשואה הנדרשת יש מרווח, אבל השוק כולו מתומחר לתשואה גבוהה יותר '
+                         f'(כ־{mkt * 100:.1f}%); ביחס למניות אחרות היא לא זולה.')
+        notes.append('תשואה צפויה = מה תרוויח בשנה, בממוצע, אם תקנה היום והתרחיש הסביר יתממש.')
+        notes.append('שווי בעוד 5 שנים הוא הערכה מותנית, לא תחזית למחיר המניה.')
+    elif v:
+        rows.append(('שווי הוגן', 'אין עדיין שווי אמין להצגה'))
+        notes.append('הסיבה: ' + (st['state'] if st.get('hold') else (v.get('reason_he') or 'הערכת השווי לא הושלמה')) + '.')
+    q = ((dc.get('assessments') or {}).get('business_quality') or {})
+    if q.get('level_he'):
+        rows.append(('איכות העסק', q['level_he']))
+    ov = _horizon((((cf.get('fc') or {}).get('anchors') or {}).get('outside_view') or {}).get('base'), 10)
+    if show and ov:
+        rows.append(('כמה התחזית אופטימית', f"מניחה צמיחה של כ־{_hp(ov['real_cagr'])} בשנה (מעבר לאינפלציה) לעשר שנים; "
+                                             f"רק כ־{ov['share_at_least']:.0%} מהחברות בגודל הזה הצליחו בכך בעבר"))
+    kr = (cf.get('analyst_sheet') or {}).get('key_risk') or {}
+    risk = kr.get('reading_he') or _top_risk(cf, dc) or 'שהצמיחה והרווחיות לא יתממשו כפי שהונח'
+    rows.append(('הסיכון המרכזי', str(risk).rstrip('.')))
+    rows.append(('רמת ביטחון', (dc.get('confidence') or {}).get('level_he', 'לא ידועה')))
+    call = CALL_HE.get(code, 'אין עדיין מסקנה') if v else 'אין עדיין מסקנה'
+    rows.append(('שורה תחתונה', call + (' (טיוטה שעוד לא נבדקה)' if withheld else '')))
+    if withheld:
+        notes.append('זו טיוטה: הניתוח עוד לא עבר בדיקה בלתי תלויה, ולכן זו לא מסקנה סופית.')
+    out = [f"**{name} ({company.get('ticker', '')}) — הערכת שווי, {cf.get('as_of') or dc.get('as_of') or ''}**", '',
+           '| | |', '|---|---|'] + [f'| {k} | {str(x).replace("|", "/")} |' for k, x in rows]
+    return '\n'.join(out + ([''] + [f'- {n}' for n in notes] if notes else []))
+
+
 def hebrew_paragraph(casefile):
     """ONE plain Hebrew paragraph (normally 80-140 words): the call, one reason, the value at the required return and
     the discount, the conditional five-year value with distributions, the key risk and the confidence. Future values
