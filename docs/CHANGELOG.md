@@ -152,6 +152,13 @@
   engine's capital per unit of new revenue (`growth_capex_recomputed`) unless capex paths are overridden too, and the recorded
   reinvestment assumption shows the executed path. Before, the capex of the discarded engine path was kept (NVIDIA: a change
   to that discarded path moved the value by about $20 a share).
+- Found on the ServiceNow valuation (20.10.2026): the issuer's own split tag (StockholdersEquityNoteStockSplitConversionRatio1,
+  5-for-1 of December 2025) is now a dated corporate action for dataqa (direction checked against the counts, so a 1-for-10
+  tagged as 10 reads as a reverse split; a ratio tagged over a whole year is not placed at year end). Before, the split
+  stayed 'unresolved' and was counted as issuance: share growth 72.8% a year, growth quality 'weak' and dilution as the
+  main risk in the paragraph. Weighted-average diluted shares straddling a split are restated by it. Consensus read from a
+  public page (`web__consensus-estimates__annual.json`, `facts.from_consensus_table`) is recorded as consensus from a
+  secondary source, dated at retrieval, when the vendor feeds are over quota.
 - Discovery coverage: the screen read two revenue tags, so about 700 listed US companies above $200m never entered it
   (Valero and refiners report revenue including excise taxes, utilities tag regulated and unregulated revenue, brokers net
   of interest; also CrowdStrike, TJX, NextEra, SanDisk, Seagate, Western Digital). The frames now carry the facts layer's

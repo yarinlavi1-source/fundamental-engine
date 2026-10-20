@@ -458,6 +458,7 @@ def from_sec_companyfacts(fb, payload, retrieved_at, sid='sec:companyfacts', cur
             n += 1
     n += _debt_components(fb, gaap, lower, sid, ccy)
     n += _da_components(fb, gaap, lower, sid, ccy)
+    n += _split_actions(fb, gaap, lower, sid)
     cover = payload.get('facts', {}).get('dei', {}).get('EntityCommonStockSharesOutstanding', {}).get('units', {}).get('shares', [])
     per = {}
     for r in cover:                      # multi-class issuers: one row per class in the same filing
@@ -508,6 +509,34 @@ def from_annual_inline(fb, payload, after, retrieved_at, url, sid='sec:annual_re
     keep = [f for f in tmp['facts'] if after is None or _d(f['period_end']) > _d(after)]
     fb['facts'].extend(keep)
     return len(keep)
+
+
+SPLIT_TAGS = ('stockholdersequitynotestocksplitconversionratio1', 'stockholdersequitynotestocksplitconversionratio')
+
+
+def _split_actions(fb, gaap, lower, sid):
+    """Stock splits the issuer tags itself (StockholdersEquityNoteStockSplitConversionRatio1: ServiceNow's 5-for-1 of
+    December 2025) -> fb['market']['splits'] as dated corporate actions, first filed per date, usable two days after the
+    filing. dataqa reads them as decisive split evidence; the direction (split or reverse split) is checked there against
+    the share counts."""
+    first = {}
+    for tag in (lower[c] for c in SPLIT_TAGS if c in lower):
+        for r in gaap[tag].get('units', {}).get('pure', []):
+            if r.get('start') and r.get('end') and (_d(r['end']) - _d(r['start'])).days > 92:
+                continue                   # tagged over a fiscal year: the split date inside it is unknown (never placed at year end)
+            d = r.get('end') or r.get('start')
+            if d and r.get('val') and (d not in first or (r.get('filed') or '') < (first[d].get('filed') or '')):
+                first[d] = r
+    out = (fb.setdefault('market', {})).setdefault('splits', [])
+    have = {x.get('date') for x in out}
+    n = 0
+    for d, r in sorted(first.items()):
+        if d in have or not r.get('filed') or _d(r['filed']) + timedelta(days=LAG_DAYS) > _d(fb['as_of']):
+            continue
+        out.append({'date': d, 'factor': float(r['val']), 'source_id': sid, 'concept': 'us-gaap:StockholdersEquityNoteStockSplitConversionRatio',
+                    'available_at': (_d(r['filed']) + timedelta(days=LAG_DAYS)).isoformat(), 'filed': r['filed']})
+        n += 1
+    return n
 
 
 # IFRS depreciation and amortisation tagged only as two lines (TSMC: DepreciationExpense and AmortisationExpense): the annual
@@ -676,6 +705,25 @@ def from_fmp_estimates(fb, rows, retrieved_at, as_of=None, sid='fmp:financial_es
             fb['estimates'].append({'metric': metric, 'period_end': r['date'][:10], 'fiscal_year': int(r['date'][:4]),
                                     'value': float(r[k]), 'low': r.get(lo), 'high': r.get(hi), 'n_analysts': r.get(nk),
                                     'source_id': sid, 'as_of': when, **({'as_of_requested': asked} if asked else {})})
+
+
+def from_consensus_table(fb, payload, sid='web:consensus'):
+    """Analyst consensus read from a public page (Yahoo Finance, stockanalysis.com): {'provider', 'url', 'retrieved_at',
+    'rows': [{'metric', 'period_end', 'value', 'low', 'high', 'n_analysts'}]}. Recorded as consensus from a secondary source
+    (never graded as a vendor feed or a filing), dated at retrieval: a page read today is never treated as known earlier."""
+    got = str(payload['retrieved_at'])[:10]
+    if _d(got) > _d(fb['as_of']):
+        raise ValueError('consensus page retrieved after the FactBook as_of (look-ahead)')
+    add_source(fb, sid, payload.get('provider') or 'web', 'consensus-page', 'consensus', payload['retrieved_at'],
+               sha=digest(payload), url=payload.get('url'), note='read from a public page; secondary, not a vendor feed')
+    fb['sources'][sid]['retrieval'] = 'secondary'
+    n = 0
+    for r in payload.get('rows') or []:
+        fb['estimates'].append({'metric': r['metric'], 'period_end': r['period_end'], 'fiscal_year': int(r['period_end'][:4]),
+                                'value': float(r['value']), 'low': r.get('low'), 'high': r.get('high'),
+                                'n_analysts': r.get('n_analysts'), 'source_id': sid, 'as_of': got})
+        n += 1
+    return n
 
 
 def add_qualitative(fb, qid, topic, statement, kind, source_ids, as_of):

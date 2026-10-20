@@ -734,6 +734,8 @@ def _split_decision(q, a, b, k):
             k = 1.0
             for f in fs:
                 k *= f
+            if k > 0 and r > 0 and abs(log(r * k)) < abs(log(r / k)):
+                k = 1 / k                 # a tagged ratio of 10 for a 1-for-10 reverse split: the counts tell the direction
         tests['corporate_action'] = 'supports' if k else 'untested'
     if not k:
         return None

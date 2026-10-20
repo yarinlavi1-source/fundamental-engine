@@ -113,6 +113,12 @@ def factbook_from_run_dir(raw_dir, company, as_of):
                          sha=F.digest(rows), url=r.get('source'), note='vendor reading of the latest periodic filing cover; dated by the vendor')
             F.add_fact(fb, 'shares_outstanding_vendor', 'I@' + end, end, r['outstandingShares'], 'fmp:shares_float', 'normalized',
                        seen, unit='shares')
+    web_est = p('web__consensus-estimates__annual.json')
+    if os.path.exists(web_est):
+        ce = _load(web_est)
+        if not later(ce.get('retrieved_at'), 'consensus page'):
+            F.from_consensus_table(fb, ce)
+            notes.append(f"consensus from {ce.get('provider')} ({ce.get('url')}), read {str(ce.get('retrieved_at'))[:10]}: a public page, secondary")
     est = p('fmp__financial-estimates__annual.json')
     if os.path.exists(est):
         rows = _load(est)

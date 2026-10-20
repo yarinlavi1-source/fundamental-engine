@@ -1004,8 +1004,17 @@ def _metrics(fb, qa, years, labels, cells, ttm, tc, rs):
                                           net_change_3y_unadjusted=sc[-1]['value'] / sc[0]['value'] - 1)
     if b3:
         d0, d1 = g(b3, 'shares_diluted_wavg'), g(last, 'shares_diluted_wavg')
-        M['diluted_wavg_share_cagr_3y'] = _m(cagr(d0['value'], d1['value'], 3), 'ratio',
-                                             '(diluted weighted-average shares[t] / [t-3]) ^ (1/3) - 1; per-share earnings context only',
+        # first-filed weighted averages straddling a split are on different share bases (ServiceNow's 5-for-1 of 2025): the
+        # dataqa splits dated inside the window are divided out when the averages moved by them
+        kw = 1.0
+        for sp in (qa.get('splits') or []) if isinstance(qa, dict) else []:
+            if sp.get('factor') and b3 < str(sp.get('to') or '')[:10] <= last:
+                kw *= sp['factor']
+        rw = d1['value'] / d0['value'] if d0['value'] and d1['value'] else None
+        adj = kw != 1 and rw is not None and abs(log(rw / kw)) < abs(log(rw))
+        M['diluted_wavg_share_cagr_3y'] = _m(cagr(d0['value'] * kw if adj else d0['value'], d1['value'], 3), 'ratio',
+                                             '(diluted weighted-average shares[t] / [t-3]) ^ (1/3) - 1; per-share earnings context only'
+                                             + (f'; earlier average restated for splits x{kw:g} (dataqa)' if adj else ''),
                                              d0['refs'] + d1['refs'], _span(labels, b3, last),
                                              missing=[k for k, c in (('shares_diluted_wavg ' + lab(b3), d0), ('shares_diluted_wavg ' + lab(last), d1)) if c['value'] is None])
     else:

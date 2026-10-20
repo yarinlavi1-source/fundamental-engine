@@ -736,6 +736,31 @@ class SplitEvidence(unittest.TestCase):
         self.assertEqual(qa['unresolved_splits'][0]['decided_by'], 'conflicting')
 
 
+class TaggedSplits(unittest.TestCase):
+    """The issuer's own split tag is a dated corporate action (ServiceNow 5-for-1, December 2025; SYNTHETIC counts)."""
+    ENDS = ('2022-12-31', '2023-12-31', '2024-12-31', '2025-12-31')
+
+    def payload(self, val, start=None, end='2025-12-05'):
+        row = {'end': end, 'val': val, 'form': '10-K', 'filed': '2026-01-29', 'accn': 'k25'}
+        if start:
+            row['start'] = start
+        return {'cik': 1, 'facts': {'us-gaap': {'StockholdersEquityNoteStockSplitConversionRatio1': {'units': {'pure': [row]}}}}}
+
+    def test_tagged_split_decides_and_a_reverse_split_takes_the_direction_of_the_counts(self):
+        fb = _count_book(dict(zip(self.ENDS, (200e6, 202e6, 204e6, 1030e6))))
+        F.from_sec_companyfacts(fb, self.payload(5), '2026-10-19')
+        self.assertEqual([(s['factor'], s['decided_by']) for s in dataqa.validate(fb)['splits']], [(5.0, 'corporate_action')])
+        rev = _count_book(dict(zip(self.ENDS, (100e6, 101e6, 102e6, 10.3e6))))
+        F.from_sec_companyfacts(rev, self.payload(10), '2026-10-19')    # a 1-for-10 tagged as 10
+        self.assertAlmostEqual(dataqa.validate(rev)['splits'][0]['factor'], .1)
+
+    def test_a_ratio_tagged_over_a_whole_year_is_not_placed_at_year_end(self):
+        fb = _count_book(dict(zip(self.ENDS, (100e6, 101e6, 102e6, 103e6))))
+        F.from_sec_companyfacts(fb, self.payload(2, start='2025-01-01', end='2025-12-31'), '2026-10-19')
+        self.assertEqual(fb['market'].get('splits'), [])
+        self.assertEqual(dataqa.validate(fb)['splits'], [])
+
+
 class SourceIndependence(unittest.TestCase):
     def test_same_source_typed_twice_is_not_a_confirmation(self):
         fb = F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-10-19')

@@ -232,6 +232,20 @@ class AnnualReportInlineTests(unittest.TestCase):
         self.assertIn('USD skipped', fb['collection_notes'][-1])
 
 
+class WebConsensusTests(unittest.TestCase):
+    def test_consensus_from_a_public_page_is_secondary_and_dated_at_retrieval(self):
+        fb = F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-10-20')
+        n = F.from_consensus_table(fb, {'provider': 'yahoo_finance', 'url': 'https://finance.yahoo.com/quote/SYN/analysis/',
+                                        'retrieved_at': '2026-10-20T16:25:00+00:00',
+                                        'rows': [{'metric': 'revenue', 'period_end': '2026-12-31', 'value': 1.6e10, 'n_analysts': 45}]})
+        self.assertEqual(n, 1)
+        self.assertEqual(fb['sources']['web:consensus']['retrieval'], 'secondary')
+        self.assertEqual((fb['estimates'][0]['as_of'], fb['estimates'][0]['value']), ('2026-10-20', 1.6e10))
+        early = F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-10-01')
+        with self.assertRaises(ValueError):                     # a page read after the cutoff is look-ahead
+            F.from_consensus_table(early, {'provider': 'x', 'retrieved_at': '2026-10-20', 'rows': []})
+
+
 class IndustryTermsTests(unittest.TestCase):
     def test_density_per_100k_words(self):
         t = business.industry_terms('<p>' + 'lithography systems for semiconductor wafer fabs ' * 10 + '</p>')
