@@ -124,12 +124,26 @@ def audit_valuation(case, results):
                 growth = (last['revenue'] / dur) / (prev['revenue'] / pdur) - 1
             jump = abs(s['terminal']['operating_margin'] - margin)
             cliff = growth is not None and abs(growth - s['terminal']['growth']) > .10
+            # Reinvestment continuity: net reinvestment / NOPAT in the last explicit period versus the terminal rule g / ROIC
+            # applied to that period's growth (the step in growth itself is growth_cliff). A gap above 10pp means the explicit
+            # years and the terminal value assume different capital needs: a cash-flow cliff hidden behind continuous growth
+            # and margins (e.g. depreciation above capex, or no reinvestment while growing).
+            p = s['periods'][-1]
+            nopat = last['ebit'] * (1 - number(p.get('tax_rate', s['terminal'].get('tax_rate', 0)), 'tax_rate', 0, 1))
+            reinvest = (p['maintenance_capex'] + p['growth_capex'] - p['depreciation'] + p.get('change_working_capital_excluding_deferred', 0)
+                        - (p.get('customer_prepayments', 0) - p.get('revenue_from_prepayments', 0)))
+            rate = reinvest / nopat if nopat > 0 else None
+            target = s['terminal']['growth'] / s['terminal']['roic']
+            at_last = (growth if growth is not None else s['terminal']['growth']) / s['terminal']['roic']
+            rgap = abs(rate - at_last) > .10 if rate is not None else False
             transition = {'scenario': name, 'terminal_date': last['end'], 'last_annualized_growth': growth,
                           'terminal_growth': s['terminal']['growth'], 'last_operating_margin': margin,
                           'terminal_operating_margin': s['terminal']['operating_margin'],
-                          'growth_cliff': cliff, 'margin_jump': jump > .05}
+                          'last_net_reinvestment_rate': rate, 'terminal_reinvestment_rate': target,
+                          'reinvestment_rate_at_last_growth': at_last,
+                          'growth_cliff': cliff, 'margin_jump': jump > .05, 'reinvestment_jump': rgap}
             transitions.append(transition)
-            if cliff or jump > .05 or dur < .9:
+            if cliff or jump > .05 or dur < .9 or rgap:
                 evidence(sr.get('transition_exception', {}), name + '.transition_exception')
             if last['maintenance_capex'] == 0 and case['archetype'] in {'industrial', 'infrastructure', 'commodity'}:
                 evidence(sr.get('replacement_exception', {}), name + '.replacement_exception')

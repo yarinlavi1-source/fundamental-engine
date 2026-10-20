@@ -135,6 +135,36 @@ def _valuation(cf):
     return res, v.get('case') or (res or {}).get('reproduction_input')
 
 
+FLOW_KEYS = ('revenue', 'ebitda_before_sbc', 'ebit', 'interest', 'cash_taxes', 'cfo', 'maintenance_capex', 'growth_capex',
+             'fcfe_before_new_equity', 'investment_liquidation', 'investment_income_after_tax', 'noncontrolling_distributions',
+             'new_financing_shares', 'sbc_shares', 'sbc_settled_in_shares', 'sbc_settlement_shares', 'dividends',
+             'dividend_per_share', 'funding_gap')
+
+
+def _merge_interim(rows, interim):
+    """Fiscal-year rows: a valuation date inside a fiscal year (the fifth anniversary) splits it into two model
+    periods; flows are summed back into one fiscal year, balances come from the year end."""
+    out, i, rows = [], 0, list(rows or [])
+    while i < len(rows):
+        r = rows[i]
+        nxt = rows[i + 1] if i + 1 < len(rows) else None
+        if r.get('end') in interim and nxt and nxt.get('start') == r.get('end'):
+            m = dict(nxt, start=r.get('start'), cash_open=r.get('cash_open', nxt.get('cash_open')), merged_interim=r['end'])
+            for k in FLOW_KEYS:
+                if isinstance(r.get(k), (int, float)) and isinstance(nxt.get(k), (int, float)):
+                    m[k] = r[k] + nxt[k]
+            seg = {}
+            for x in (r.get('segments') or []) + (nxt.get('segments') or []):
+                seg[x.get('name')] = seg.get(x.get('name'), 0) + (x.get('revenue') or 0)
+            m['segments'] = [{'name': k, 'revenue': v} for k, v in seg.items()]
+            out.append(m)
+            i += 2
+        else:
+            out.append(r)
+            i += 1
+    return out
+
+
 def _metric_defs(case):
     """(metric, unit, basis, f(model row), sided) for the executed forecast rows."""
     cur = case['currency']
@@ -436,6 +466,9 @@ def thesis_from_casefile(cf, clock=None, options=None):
     # year, frozen as its revenue anchor +/- the falsifier band; other short periods are not forecasts)
     forecasts, skipped, current, cur_margin = [], [], None, None
     sc = {s['name']: s for s in (res or {}).get('scenarios', [])}
+    interim = set(((fc or {}).get('anchors') or {}).get('calendar', {}).get('interim') or ((fc or {}).get('spec') or {}).get('interim_boundaries') or [])
+    if interim:
+        sc = {n: dict(s, forecast=_merge_interim(s.get('forecast'), interim)) for n, s in sc.items()}
     ends_all = [r.get('end') for r in (sc.get('base') or {}).get('forecast') or []]
     if case and all(n in sc for n in ('bear', 'base', 'bull')):
         defs = _metric_defs(case)

@@ -163,10 +163,16 @@ class NowRegressionTests(unittest.TestCase):
         s = json.loads((ROOT / 'examples/real/now_drivers_2026q3.json').read_text())
         r = value_company(build_case(s))
         today = r['annual_values'][0]
-        self.assertEqual(r['status'], 'conditional_valuation')
         self.assertAlmostEqual(today['base'], 95.05, delta=.05)
         self.assertTrue(today['bear'] < today['base'] < today['bull'] < s['quote']['price'])
-        self.assertEqual(r['underwriting_audit']['status'], 'internally_reconciled')
+        # the 2026-09-28 spec reinvests nothing in its last explicit year while growing 6%, then the terminal reinvests
+        # g/ROIC = 12%: a cash-flow cliff the audit now flags until a reviewed transition exception is supplied
+        tr = {t['scenario']: t for t in r['underwriting_audit']['terminal_transitions']}
+        self.assertTrue(all(t['reinvestment_jump'] for t in tr.values()))
+        self.assertLess(tr['base']['last_net_reinvestment_rate'], 0)
+        self.assertAlmostEqual(tr['base']['terminal_reinvestment_rate'], .12)
+        self.assertEqual(r['status'], 'underwriting_required')
+        self.assertEqual({i['path'] for i in r['underwriting_audit']['issues']}, {f'{x}.transition_exception' for x in ('bear', 'base', 'bull')})
         self.assertEqual(r['underwriting_audit']['source_access']['status'], 'secondary_access')
         self.assertAlmostEqual(implied_cost_of_equity(build_case(s))['implied_cost_of_equity'], .0806, delta=.001)
         self.assertAlmostEqual(implied_growth_shift(s)['growth_shift'], .0455, delta=.001)
@@ -195,3 +201,45 @@ class EquityRaiseTests(unittest.TestCase):
         rows = next(r for r in value_company(case)['scenarios'] if r['name'] == 'base')['forecast']
         self.assertAlmostEqual(rows[0]['new_financing_shares'], 2.5e6)
         self.assertLess(rows[0]['original_ownership'], 1.0)
+
+
+class InterimAndSettlementTests(unittest.TestCase):
+    """A split fiscal year keeps one annual rate; SBC settled in shares is dilution, not cash, and never above the charge."""
+
+    def test_interim_boundary_continues_the_fiscal_year(self):
+        s = spec()
+        b = s['boundaries']
+        mid = '2028-06-30'
+        self.assertTrue(b[1] < mid < b[2])
+        s2 = deepcopy(s)
+        s2['boundaries'] = sorted(b + [mid])
+        s2['interim_boundaries'] = [mid]
+        i = s2['boundaries'].index(mid)
+        for sc in s2['scenarios']:
+            for k, v in list(sc.items()):
+                if isinstance(v, list) and k not in ('growth', 'assumption_ids', 'period_assumption_ids') and len(v) == len(b):
+                    sc[k] = v[:i + 1] + v[i:]
+            if isinstance(sc['growth'], list):
+                sc['growth'] = sc['growth'][:i] + [.5] + sc['growth'][i:]        # ignored: a continuation has no growth step
+        rows0, rows1 = (base_of(value_company(build_case(x)))['forecast'] for x in (s, s2))
+        rate = lambda r: r['revenue'] / years(r['start'], r['end'])
+        self.assertAlmostEqual(rate(rows1[i]), rate(rows1[i + 1]))
+        self.assertAlmostEqual(rows1[i]['revenue'] + rows1[i + 1]['revenue'], rows0[i]['revenue'], delta=1)
+        self.assertAlmostEqual(rows1[-1]['revenue'], rows0[-1]['revenue'], delta=1)
+        s2['interim_boundaries'] = [b[-1]]
+        with self.assertRaisesRegex(ValueError, 'interim_boundaries'):
+            build_case(s2)
+
+    def test_sbc_share_settlement(self):
+        s = spec()
+        n = len(s['boundaries'])
+        r0 = base_of(value_company(build_case(s)))['forecast']
+        base_of(s)['sbc_share_settlement'] = [0, 10e6] + [0] * (n - 2)
+        c = build_case(s)
+        rows = base_of(value_company(c))['forecast']
+        price = base_of(c)['periods'][1]['equity_issue_price']
+        self.assertAlmostEqual(rows[1]['cfo'] - r0[1]['cfo'], 10e6, delta=1)            # not paid in cash
+        self.assertAlmostEqual(rows[1]['sbc_settlement_shares'], 10e6 / price)          # paid in new shares
+        base_of(s)['sbc_share_settlement'] = [0, 1e12] + [0] * (n - 2)
+        with self.assertRaisesRegex(ValueError, 'exceeds the SBC expense'):
+            value_company(build_case(s))

@@ -505,7 +505,8 @@ class PipelineIntegrationTests(unittest.TestCase):
         cy = th['current_fiscal_year']
         fy26 = dict(FY26_VALUES, revenue=cy['base'], operating_income=cy['operating_margin_by_scenario']['base'] * cy['base']) if cy else FY26_VALUES
         fb = later_fb(fy26=fy26, fy27_values=v)
-        r = M.check(th, fb, price={'value': 255.0, 'as_of': '2028-02-20'})
+        band = {k: M._interp([[x['date'], x[k]] for x in th['values']['path']], '2028-02-20') for k in ('bear', 'base')}
+        r = M.check(th, fb, price={'value': (band['bear'] + band['base']) / 2, 'as_of': '2028-02-20'})   # inside the value band
         self.assertEqual(r['alerts'], [], [a['message'] for a in r['alerts']])
         self.assertTrue(r['impact']['price_only'])
         L = ledger(Clock('2026-10-19T21:00:00+00:00'))

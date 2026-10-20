@@ -176,6 +176,13 @@ def operating(case, s):
             raise ValueError('Do not expense SBC as cash and dilute for the same future awards')
         if policy == 'explicit_shares' and sbc and not sbc_shares:
             raise ValueError('Explicit SBC expense needs share settlement')
+        # Under cash_equivalent, part of the SBC charge may be settled in new shares when cash is short (the cost is then
+        # borne once, as dilution at the stated issue price, not also as cash).
+        settled = number(p.get('sbc_share_settlement', 0), 'sbc_share_settlement', 0)
+        if settled and policy != 'cash_equivalent':
+            raise ValueError('SBC share settlement applies to the cash_equivalent policy only')
+        if settled > sbc + 1e-7:
+            raise ValueError('SBC share settlement exceeds the SBC expense')
         dep = n(p, 'depreciation', 0)
         ebit = ebitda_before_sbc - sbc - dep
         draws, repay = n(p, 'debt_draw', 0), n(p, 'debt_repayment', 0)
@@ -192,13 +199,14 @@ def operating(case, s):
             raise ValueError('Prepayment recognition exceeds revenue or liability balance')
         deferred += received - recognized
         delta_wc = n(p, 'change_working_capital_excluding_deferred')
-        cfo = ebitda_before_sbc - (sbc if policy == 'cash_equivalent' else 0) - interest - taxes - delta_wc + received - recognized
+        cfo = ebitda_before_sbc - (sbc - settled if policy == 'cash_equivalent' else 0) - interest - taxes - delta_wc + received - recognized
         maintenance, growth = n(p, 'maintenance_capex', 0), n(p, 'growth_capex', 0)
         equity = n(p, 'equity_proceeds', 0)
         issue_price = n(p, 'equity_issue_price', 1e-12)
         fees = equity * n(p, 'equity_fee_rate', 0, .99) + n(p, 'debt_fees', 0)
         issued = equity / issue_price
-        shares += issued + sbc_shares
+        settle_shares = settled / issue_price
+        shares += issued + sbc_shares + settle_shares
         if p['financing_status'] not in {'committed', 'assumed', 'none'}:
             raise ValueError('Unknown financing_status')
         if p['financing_status'] == 'none' and (draws or equity):
@@ -228,13 +236,15 @@ def operating(case, s):
                      'cash_open': cash_before, 'cash': cash, 'debt': debt, 'shares': shares,
                      'marketable_investments': investments, 'investment_liquidation': liquidation,
                      'investment_income_after_tax': investment_income, 'noncontrolling_distributions': minority_paid,
-                     'new_financing_shares': issued, 'sbc_shares': sbc_shares,
+                     'new_financing_shares': issued, 'sbc_shares': sbc_shares, 'sbc_settled_in_shares': settled,
+                     'sbc_settlement_shares': settle_shares,
                      'original_ownership': op['shares'] / shares, 'deferred_revenue': deferred,
                      'minimum_cash': min_cash, 'funding_gap': gap,
                      'dividends': dividend, 'dividend_per_share': dividend / shares,
                      'financing_status': p['financing_status']})
     t = s['terminal']
-    g, wacc, roic = n(t, 'growth', 0, .08), n(t, 'wacc', .000001, 1), n(t, 'roic', .000001, 1)
+    # A structurally declining business may shrink forever (down to -5%/yr); negative g releases capital (g / ROIC < 0).
+    g, wacc, roic = n(t, 'growth', -.05, .08), n(t, 'wacc', .000001, 1), n(t, 'roic', .000001, 1)
     if g >= wacc or g > roic: raise ValueError('Terminal growth must be below WACC and no greater than ROIC')
     if t['sbc_in_margin'] is not True: raise ValueError('Terminal margin must include economic SBC cost')
     terminal_rev = rows[-1]['revenue'] / years(rows[-1]['start'], rows[-1]['end']) * (1 + g)

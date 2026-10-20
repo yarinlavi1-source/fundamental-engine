@@ -38,7 +38,7 @@ RATIO_KEYS = {
     'payout_fraction': (0, 0, 1),
 }
 ABSOLUTE_KEYS = ('amortization', 'minimum_cash', 'investment_income_after_tax', 'debt_draw', 'debt_repayment', 'fixed_cash_costs',
-                 'equity_proceeds')
+                 'equity_proceeds', 'investment_liquidation', 'sbc_share_settlement')
 
 
 def _series(spec_row, key, count, default=None, low=None, high=None):
@@ -63,6 +63,11 @@ def build_case(spec):
     if not boundaries or boundaries != sorted(set(boundaries)):
         raise ValueError('boundaries must be ascending and distinct')
     as_of = spec['as_of']
+    # interim_boundaries: dates that split a fiscal year (e.g. the fifth anniversary of as_of) so it is an explicit
+    # valuation date. The period starting there continues the same annual rate: no growth step, no working-capital step.
+    interim = spec.get('interim_boundaries') or []
+    if any(d not in boundaries[:-1] for d in interim):
+        raise ValueError('interim_boundaries must be boundaries other than the last')
     starts = [as_of] + boundaries[:-1]
     durations = [years(a, b) for a, b in zip(starts, boundaries)]
     if any(not 0 < d <= 1.01 for d in durations):
@@ -97,6 +102,9 @@ def build_case(spec):
             if i == 0 and stub is not None:
                 rate = number(stub, 'stub_annual_revenue_rate', 1e-9)
                 wc_base = 0  # the stub continues the current fiscal year; no new annual step yet
+            elif start in interim:
+                rate, wc_base = rate_prev, 0  # continuation of a split fiscal year; its growth entry is ignored
+                gi += 1
             else:
                 rate = (last_annual if gi == 0 else rate_prev) * (1 + growth[gi])
                 wc_base = rate - (last_annual if gi == 0 else rate_prev)
@@ -136,6 +144,9 @@ def build_case(spec):
                                              if isinstance(sc.get('equity_issue_price'), list) else
                                              (sc.get('equity_issue_price') or case['quote']['price']), 'equity_issue_price', 1e-9),
                 'equity_fee_rate': number(sc.get('equity_fee_rate', 0), 'equity_fee_rate', 0, .2),
+                'investment_liquidation': absolutes['investment_liquidation'][i],
+                # part of the cash-equivalent SBC charge settled in new shares (at equity_issue_price) instead of cash
+                'sbc_share_settlement': absolutes['sbc_share_settlement'][i],
                 'financing_status': sc.get('financing_status', 'committed' if (debt_draw or absolutes['equity_proceeds'][i]) else 'none'),
             })
             rate_prev = rate
@@ -147,7 +158,7 @@ def build_case(spec):
     case['prepayment_price_linkage'] = 'scaled'
     case['generated_from'] = {'tool': 'drivers.build_case', 'driver_version': 1,
                               'spec_sha256': sha256(json.dumps(spec, sort_keys=True, ensure_ascii=False).encode()).hexdigest(),
-                              'strict_drivers': strict, 'defaulted_keys': defaulted,
+                              'strict_drivers': strict, 'defaulted_keys': defaulted, 'interim_boundaries': list(interim),
                               'warnings': ['Defaulted driver ratios are silent economic assumptions; declare them explicitly: '
                                            + ', '.join(sorted({f"{d['key']}={d['default']}" for d in defaulted}))] if defaulted else []}
     return case
@@ -166,11 +177,16 @@ def implied_growth_shift(spec, scenario='base', low=-.15, high=.30):
     original = base['growth'] if isinstance(base['growth'], list) else None
     target = spec['quote']['price']
 
+    stub = 1 if spec.get('stub_annual_revenue_rate') is not None else 0
+    interim = set(spec.get('interim_boundaries') or [])
+    starts = [spec['as_of']] + spec['boundaries'][:-1]
+    cont = [starts[i + stub] in interim for i in range(len(spec['boundaries']) - stub)]
+
     def calc(shift):
         s2 = deepcopy(spec)
         sc = next(s for s in s2['scenarios'] if s['name'] == scenario)
         g = sc['growth']
-        sc['growth'] = [x + shift for x in g] if isinstance(g, list) else g + shift
+        sc['growth'] = [x + (0 if c else shift) for x, c in zip(g, cont)] if isinstance(g, list) else g + shift
         try:
             r = value_company(build_case(s2))
         except ValueError:
@@ -195,5 +211,5 @@ def implied_growth_shift(spec, scenario='base', low=-.15, high=.30):
     shift = (low + high) / 2
     value, final_rate = calc(shift)
     return {'status': 'solved', 'scenario': scenario, 'growth_shift': shift,
-            'implied_growth_path': [g + shift for g in original] if original else None,
+            'implied_growth_path': [g + (0 if c else shift) for g, c in zip(original, cont)] if original else None,
             'final_period_annual_revenue': final_rate, 'reconstructed_value': value, 'limitation': note}
