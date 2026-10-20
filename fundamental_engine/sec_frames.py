@@ -11,12 +11,15 @@ URL pattern: https://data.sec.gov/api/xbrl/frames/us-gaap/<Tag>/<USD|shares>/<CY
 from .facts import DURATION_TAGS, INSTANT_TAGS
 
 FRAME_METRICS = {   # metric -> (concept candidates in priority order, unit, frame kind)
-    'revenue': (['Revenues', 'RevenueFromContractWithCustomerExcludingAssessedTax'], 'USD', 'duration'),
+    # the facts layer's revenue tags (Valero and other refiners include excise taxes; brokers report net of interest; utilities
+    # tag regulated and unregulated revenue): with two tags, about 700 listed US companies above $200m never entered the screen
+    'revenue': (['Revenues', 'RevenueFromContractWithCustomerExcludingAssessedTax', 'RevenueFromContractWithCustomerIncludingAssessedTax',
+                 'SalesRevenueNet', 'RevenuesNetOfInterestExpense', 'RegulatedAndUnregulatedOperatingRevenue'], 'USD', 'duration'),
     'gross_profit': (['GrossProfit'], 'USD', 'duration'),
     'operating_income': (['OperatingIncomeLoss'], 'USD', 'duration'),
-    'net_income': (['NetIncomeLoss'], 'USD', 'duration'),
-    'cfo': (['NetCashProvidedByUsedInOperatingActivities'], 'USD', 'duration'),
-    'capex': (['PaymentsToAcquirePropertyPlantAndEquipment'], 'USD', 'duration'),
+    'net_income': (['NetIncomeLoss', 'ProfitLoss'], 'USD', 'duration'),
+    'cfo': (['NetCashProvidedByUsedInOperatingActivities', 'NetCashProvidedByUsedInOperatingActivitiesContinuingOperations'], 'USD', 'duration'),
+    'capex': (['PaymentsToAcquirePropertyPlantAndEquipment', 'PaymentsToAcquireProductiveAssets'], 'USD', 'duration'),
     'sbc': (['ShareBasedCompensation'], 'USD', 'duration'),
     'buybacks': (['PaymentsForRepurchaseOfCommonStock'], 'USD', 'duration'),
     'acquisitions': (['PaymentsToAcquireBusinessesNetOfCashAcquired'], 'USD', 'duration'),
@@ -33,6 +36,80 @@ FRAME_METRICS = {   # metric -> (concept candidates in priority order, unit, fra
 }
 
 
+# IFRS filers (20-F, 40-F) tag the ifrs-full taxonomy in their reporting currency: the same metrics from the IFRS elements.
+# Their frames are fetched per currency; USD figures beside a reporting currency are convenience translations and are dropped
+IFRS_FRAME_METRICS = {
+    'revenue': ['Revenue', 'RevenueFromContractsWithCustomers'],
+    'gross_profit': ['GrossProfit'],
+    'operating_income': ['ProfitLossFromOperatingActivities'],
+    'net_income': ['ProfitLoss'],
+    'cfo': ['CashFlowsFromUsedInOperatingActivities'],
+    'capex': ['PurchaseOfPropertyPlantAndEquipmentClassifiedAsInvestingActivities'],
+    'sbc': ['AdjustmentsForSharebasedPayments'],
+    'cash': ['CashAndCashEquivalents'],
+    'equity': ['EquityAttributableToOwnersOfParent'],
+    'total_assets': ['Assets'],
+    'total_liabilities': ['Liabilities'],
+    'goodwill': ['Goodwill'],
+    'long_term_debt': ['NoncurrentPortionOfNoncurrentBorrowings', 'LongtermBorrowings'],
+    'current_portion_ltd': ['CurrentBorrowingsAndCurrentPortionOfNoncurrentBorrowings', 'CurrentPortionOfLongtermBorrowings'],
+}
+IFRS_CURRENCIES = ('USD', 'EUR', 'GBP', 'JPY', 'TWD', 'DKK', 'CHF', 'SEK', 'NOK', 'CAD', 'AUD', 'NZD', 'KRW', 'INR', 'CNY',
+                   'HKD', 'SGD', 'BRL', 'MXN', 'ZAR', 'THB')
+
+
+def ifrs_frame_urls(year, currencies=IFRS_CURRENCIES, metrics=None):
+    """IFRS frame URLs for one calendar year: revenue first for every currency (to learn which currencies have filers), then
+    the other metrics for the currencies passed (collect_universe asks only for currencies that had revenue rows)."""
+    out = []
+    for metric, tags in IFRS_FRAME_METRICS.items():
+        if metrics and metric not in metrics:
+            continue
+        kind = 'instant' if metric in ('cash', 'equity', 'total_assets', 'total_liabilities', 'goodwill', 'long_term_debt',
+                                       'current_portion_ltd') else 'duration'
+        period = f'CY{year}Q4I' if kind == 'instant' else f'CY{year}'
+        for ccy in currencies:
+            for tag in tags:
+                out.append({'metric': metric, 'tag': tag, 'unit': ccy, 'period': period, 'taxonomy': 'ifrs-full',
+                            'url': f'https://data.sec.gov/api/xbrl/frames/ifrs-full/{tag}/{ccy}/{period}.json'})
+    return out
+
+
+def merge_ifrs(payloads, rate):
+    """IFRS frames -> {cik: row} in USD, like merge_frames. payloads: [{'metric','tag','unit','payload'}]; rate(ccy, date) ->
+    units of ccy per USD or None. Per filer the reporting currency is the non-USD currency of its revenue rows (USD rows beside
+    it are convenience translations), else USD. Every monetary value is converted at the rate of its own period end and the
+    row records 'reporting_currency' and the rates used; a filer whose rate is unknown is left out (never converted at a
+    guessed rate)."""
+    by_ccy = {}
+    for p in payloads:
+        by_ccy.setdefault(p.get('unit') or 'USD', []).append(p)
+    merged = {ccy: merge_frames([dict(p, metric=p['metric']) for p in ps], order=IFRS_FRAME_METRICS) for ccy, ps in by_ccy.items()}
+    ciks = {c for m in merged.values() for c, r in m.items() if (r.get('revenue') or {}).get('value')}
+    out, skipped = {}, []
+    for cik in ciks:
+        have = [ccy for ccy, m in merged.items() if (m.get(cik, {}).get('revenue') or {}).get('value')]
+        ccy = next((c for c in have if c != 'USD'), 'USD')
+        row = merged[ccy][cik]
+        conv, rates = {'name': row.get('name'), 'reporting_currency': ccy, 'fx': {}}, {}
+        ok = True
+        for k, x in row.items():
+            if not isinstance(x, dict) or 'value' not in x:
+                continue
+            r = 1. if ccy == 'USD' else rate(ccy, x.get('end'))
+            if not r:
+                ok = False
+                break
+            rates[x.get('end')] = r
+            conv[k] = dict(x, value=x['value'] / r, value_reporting_currency=x['value'])
+        if not ok:
+            skipped.append((cik, ccy))
+            continue
+        conv['fx'] = rates
+        out[cik] = conv
+    return out, skipped
+
+
 def frame_urls(year, quarter=None):
     """Frame URLs to fetch for one calendar period (annual durations, or a quarter with its instant)."""
     out = []
@@ -46,13 +123,14 @@ def frame_urls(year, quarter=None):
     return out
 
 
-def merge_frames(payloads):
+def merge_frames(payloads, order=None):
     """payloads: [{'metric', 'tag', 'payload': frames JSON}] -> {cik: {metric: {'value','end','accn','tag'}}}.
 
     Concept priority follows FRAME_METRICS order: a later tag never overwrites an earlier tag's value
     for the same company (no silent substitution of components for totals). Revenue is the exception that proves the
     rule: the larger value of the same period wins, because a total is never below a component (recorded in 'replaced')."""
-    order = {(m, t): i for m, (tags, _, _) in FRAME_METRICS.items() for i, t in enumerate(tags)}
+    order = ({(m, t): i for m, tags in order.items() for i, t in enumerate(tags)} if order is not None else
+             {(m, t): i for m, (tags, _, _) in FRAME_METRICS.items() for i, t in enumerate(tags)})
     out = {}
     for p in sorted(payloads, key=lambda x: order.get((x['metric'], x['tag']), 99)):
         for r in (p.get('payload') or {}).get('data', []):
@@ -83,7 +161,7 @@ def rows(merged, tickers, sectors=None):
         t = tickers.get(cik)
         if not t:
             continue
-        v = {k: (x['value'] if isinstance(x, dict) else None) for k, x in r.items() if k != 'name'}
+        v = {k: (x['value'] if isinstance(x, dict) and 'value' in x else None) for k, x in r.items() if k not in ('name', 'fx', 'reporting_currency')}
         if v.get('long_term_debt') is not None:
             debt, scope = v['long_term_debt'] + (v.get('current_portion_ltd') or 0), 'noncurrent_plus_current'
         elif v.get('long_term_debt_tagged') is not None:
@@ -99,7 +177,9 @@ def rows(merged, tickers, sectors=None):
                     'debt': debt, 'debt_scope': scope, 'equity': v.get('equity'), 'total_assets': v.get('total_assets'),
                     'total_liabilities': v.get('total_liabilities'),
                     'goodwill': v.get('goodwill'), 'shares_outstanding': v.get('shares_outstanding'),
-                    'data_grade': 'sec_frames', 'source': 'SEC XBRL frames'})
+                    'data_grade': 'sec_frames', 'source': 'SEC XBRL frames' + (f" (IFRS, {r['reporting_currency']} converted to USD at "
+                                                                                   'the period-end H.10 rate)' if r.get('reporting_currency') else ''),
+                    **({'reporting_currency': r['reporting_currency']} if r.get('reporting_currency') else {})})
     return sorted(out, key=lambda x: x['symbol'])
 
 

@@ -162,3 +162,41 @@ class ListingLabelCycleTests(unittest.TestCase):
         self.assertTrue(cy and cy['value'])
         self.assertEqual(cy['word'], 'metals')
         self.assertNotIn('ORE', [c['symbol'] for c in out['lenses']['quality_compounder']])
+
+
+class FrameCoverageTests(unittest.TestCase):
+    """A filer whose newest annual frame is not published keeps last year's (flagged); IFRS frames convert at dated rates."""
+
+    def test_lagging_filer_keeps_the_previous_frame_without_counting_a_year_twice(self):
+        with tempfile.TemporaryDirectory() as d:
+            raw = make_raw(d)
+            with open(os.path.join(raw, 'MANIFEST.json')) as f:
+                man = json.load(f)
+            for c in man['calls']:                       # SYNTHETIC: Op Co (CIK 1) has no CY2025 rows at all
+                if c.get('year') == 2025:
+                    p = os.path.join(raw, c['file'])
+                    with open(p) as f:
+                        fr = json.load(f)
+                    fr['data'] = [r for r in fr['data'] if r['cik'] != 1]
+                    with open(p, 'w') as f:
+                        json.dump(fr, f)
+            rows, rep = universe.build(raw, '2026-10-20')
+            op = next(r for r in rows if r['symbol'] == 'OPCO')
+            self.assertIn('stale_frame', [f['code'] for f in op['data_flags'] if isinstance(f, dict)])
+            self.assertEqual(op['metrics']['revenue_ttm'], 800e6)                  # CY2024 is its latest
+            self.assertNotIn('revenue_growth', op['metrics'])                      # no CY2024-vs-CY2024 'growth'
+            self.assertNotIn('no_revenue_frame_latest_year', ' '.join(rep['excluded']))
+
+    def test_ifrs_rows_use_the_reporting_currency_and_dated_rates(self):
+        from fundamental_engine import sec_frames as S
+        fr = lambda val, cik=9, end='2021-12-31': {'data': [{'cik': cik, 'entityName': 'Syn NV', 'end': end, 'val': val, 'accn': 'x'}]}
+        payloads = [{'metric': 'revenue', 'tag': 'Revenue', 'unit': 'EUR', 'payload': fr(800.)},
+                    {'metric': 'revenue', 'tag': 'Revenue', 'unit': 'USD', 'payload': fr(900.)},     # convenience translation
+                    {'metric': 'cash', 'tag': 'CashAndCashEquivalents', 'unit': 'EUR', 'payload': fr(80.)},
+                    {'metric': 'revenue', 'tag': 'Revenue', 'unit': 'TWD', 'payload': fr(3200., cik=8)}]
+        rate = lambda ccy, end: {'EUR': .8}.get(ccy)                                  # no TWD rate saved
+        rows, skipped = S.merge_ifrs(payloads, rate)
+        self.assertEqual(rows[9]['reporting_currency'], 'EUR')
+        self.assertAlmostEqual(rows[9]['revenue']['value'], 1000.)                  # 800 EUR / 0.8 EUR per USD
+        self.assertEqual(rows[9]['revenue']['value_reporting_currency'], 800.)
+        self.assertEqual(skipped, [(8, 'TWD')])                                       # never converted at a guessed rate

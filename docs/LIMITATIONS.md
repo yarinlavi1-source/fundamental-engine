@@ -136,6 +136,9 @@ Companion to docs/EVIDENCE_STATUS.md, which separates what tests prove from what
     (commit 4237d25) the engine after them, the third (e48a29c) the final engine of 20.10: all three show no demonstrated
     edge (top fifth +6.7 to +7.6 points over the universe average, t about 1, nothing without 2020). Each run is reported
     as it comes out and nothing is tuned to it.
+37. **Discovery does not see every listed company.** Banks (no operating revenue frame), new listings without an annual
+    report and foreign IFRS filers (the SEC serves ifrs-full frames for CY2021 only) are outside the numeric screen; foreign
+    filers can still be researched and valued one by one.
 36. **Cyclical trend growth is a statistical lower bound.** A secular grower in a cyclical industry may grow above the
     5% long-run bound only by its fitted slope less two standard errors, within the revenue-scale base rate, from six or
     more years at today's scale; pandemic years or a reorganization inside the window distort the fit (Trip.com's window

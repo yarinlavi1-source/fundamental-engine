@@ -191,8 +191,7 @@ def _annual_inline(fb, raw_dir, manifest, when, as_of, notes, later):
                      "read from the saved document's own inline XBRL")
 
 
-FX_DIR = os.environ.get('FUNDAMENTAL_ENGINE_FX_DIR') or os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                                                                    'runs', 'macro', 'fred')
+from .fx import DEFAULT_DIR as FX_DIR  # noqa: E402  (saved FRED series)
 
 
 def _convert_quote(fb, raw_dir, as_of, notes):

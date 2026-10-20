@@ -15,7 +15,7 @@ from collections import Counter
 import glob
 import json
 import os
-from . import sec_frames
+from . import fx, sec_frames
 from .screen import rows_from_sec_frames
 
 EXCHANGES = {'Nasdaq', 'NYSE'}          # SEC map labels; NYSE American listings appear as NYSE in the SEC file
@@ -39,12 +39,13 @@ def load(raw_dir):
     tick = j('sec__company_tickers_exchange.json')
     tickers = [dict(zip(tick['fields'], row)) for row in tick['data']]
     nas = j('nasdaq__screener_stocks.json')['data']
-    frames = {}
+    frames, ifrs = {}, {}
     for c in man['calls']:
         if c.get('metric') and c['status'] == 200:
             with open(os.path.join(raw_dir, c['file']), encoding='utf-8') as f:
-                frames.setdefault(c['year'], []).append({'metric': c['metric'], 'tag': c['tag'], 'payload': json.load(f)})
-    return {'tickers': tickers, 'nasdaq': nas, 'frames': frames, 'manifest': man}
+                row = {'metric': c['metric'], 'tag': c['tag'], 'unit': c.get('unit'), 'payload': json.load(f)}
+            (ifrs if c.get('taxonomy') == 'ifrs-full' else frames).setdefault(c['year'], []).append(row)
+    return {'tickers': tickers, 'nasdaq': nas, 'frames': frames, 'ifrs_frames': ifrs, 'manifest': man}
 
 
 def build(raw_dir, as_of, min_market_cap=2e8, data=None):
@@ -56,7 +57,23 @@ def build(raw_dir, as_of, min_market_cap=2e8, data=None):
         by_cik.setdefault(int(t['cik']), []).append(t)
     years = sorted(d['frames'])
     merged = {y: sec_frames.merge_frames(d['frames'][y]) for y in years}
-    latest = merged[years[-1]]
+    ifrs_skipped = []
+    for y in years:
+        # IFRS filers (TSMC, ASML, Novo Nordisk): their own currency converted to USD at the period-end H.10 rate, only for
+        # filers absent from the US-GAAP frames; a filer whose rate is not saved is left out, never converted at a guess
+        if (d.get('ifrs_frames') or {}).get(y):
+            rows_ifrs, skipped = sec_frames.merge_ifrs(d['ifrs_frames'][y], lambda ccy, end: (fx.rate(ccy, end, fx.DEFAULT_DIR) or {}).get('value'))
+            ifrs_skipped += skipped
+            for cik, r in rows_ifrs.items():
+                merged[y].setdefault(cik, r)
+    # the newest annual frame lags (a June or September fiscal year, a late filer): such a filer keeps the previous year's frame
+    # as its latest, flagged, and its history stops a year earlier, instead of leaving the universe (Western Digital, Seagate)
+    latest = dict(merged[years[-1]])
+    stale = set()
+    if len(years) > 1:
+        for cik, r in merged[years[-2]].items():
+            if (r.get('revenue') or {}).get('value') and not ((latest.get(cik) or {}).get('revenue') or {}).get('value'):
+                latest[cik], _ = r, stale.add(cik)
     excluded = Counter()
     chosen, prices, sectors, notes = {}, {}, {}, {}
     for cik, ts in by_cik.items():
@@ -65,7 +82,7 @@ def build(raw_dir, as_of, min_market_cap=2e8, data=None):
             excluded['not_listed_on_nyse_nasdaq_or_no_listing_match'] += 1
             continue
         if cik not in latest or not (latest[cik].get('revenue') or {}).get('value'):
-            excluded['no_us_gaap_revenue_frame_latest_year (IFRS filer, fund, shell or not yet reported)'] += 1
+            excluded['no_revenue_frame_latest_year (fund, shell, not yet reported, or an IFRS filer without a saved rate)'] += 1
             continue
         caps = [(_num(nas[t['ticker'].upper()].get('marketCap')), t) for t in listed]
         caps = [(c, t) for c, t in caps if c]
@@ -85,7 +102,11 @@ def build(raw_dir, as_of, min_market_cap=2e8, data=None):
                         'country': n.get('country') or None, 'exchange': primary['exchange']}
         if len(caps) > 1:
             notes[sym] = 'multi-class: market cap summed over listed classes ' + ', '.join(t['ticker'] for _, t in caps)
-    history = [sec_frames.rows(merged[y], chosen, sectors) for y in years[:-1]]
+    fresh = {c: t for c, t in chosen.items() if c not in stale}
+    history = [sec_frames.rows(merged[y], chosen, sectors) for y in years[:-2]]
+    if len(years) > 1:
+        # a stale filer's previous-year frame is its current row: its history ends a year earlier (no year counted twice)
+        history.append(sec_frames.rows(merged[years[-2]], fresh, sectors))
     current = sec_frames.rows(latest, chosen, sectors)
     rows = rows_from_sec_frames(current, prices=prices, history=history, as_of=as_of)
     for r in rows:
@@ -94,6 +115,10 @@ def build(raw_dir, as_of, min_market_cap=2e8, data=None):
         r['country'], r['exchange'] = extra.get('country'), extra.get('exchange')
         if r['symbol'] in notes:
             r.setdefault('notes', []).append(notes[r['symbol']])
+        if r['symbol'] in {chosen[c] for c in stale if c in chosen}:
+            r.setdefault('notes', []).append(f'newest annual frame (CY{years[-1]}) not published for this filer: CY{years[-2]} used as latest')
+            r.setdefault('data_flags', []).append({'code': 'stale_frame', 'severity': 'low',
+                                                   'message': f'latest annual figures are CY{years[-2]} (the CY{years[-1]} frame is not published for this filer)'})
     report = {
         'as_of': as_of, 'frames_years': years, 'latest_frame': f'CY{years[-1]} annual (not trailing twelve months)',
         'issuers_in_sec_map': len(by_cik), 'nasdaq_listings': len(d['nasdaq']['rows']), 'rows': len(rows),

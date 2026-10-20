@@ -11,6 +11,10 @@ discounted at the US rate would be undervalued by the rate gap every year.
 """
 import os
 
+# saved FRED series (collection scripts write here; runs/ is outside Git)
+DEFAULT_DIR = os.environ.get('FUNDAMENTAL_ENGINE_FX_DIR') or os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                                                                         'runs', 'macro', 'fred')
+
 FRED = {  # currency -> (series, quoted as 'ccy_per_usd' or 'usd_per_ccy')
     'EUR': ('DEXUSEU', 'usd_per_ccy'), 'GBP': ('DEXUSUK', 'usd_per_ccy'), 'AUD': ('DEXUSAL', 'usd_per_ccy'),
     'NZD': ('DEXUSNZ', 'usd_per_ccy'), 'JPY': ('DEXJPUS', 'ccy_per_usd'), 'CNY': ('DEXCHUS', 'ccy_per_usd'),

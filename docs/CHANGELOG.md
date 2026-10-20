@@ -152,6 +152,18 @@
   engine's capital per unit of new revenue (`growth_capex_recomputed`) unless capex paths are overridden too, and the recorded
   reinvestment assumption shows the executed path. Before, the capex of the discarded engine path was kept (NVIDIA: a change
   to that discarded path moved the value by about $20 a share).
+- Discovery coverage: the screen read two revenue tags, so about 700 listed US companies above $200m never entered it
+  (Valero and refiners report revenue including excise taxes, utilities tag regulated and unregulated revenue, brokers net
+  of interest; also CrowdStrike, TJX, NextEra, SanDisk, Seagate, Western Digital). The frames now carry the facts layer's
+  revenue tags plus utility revenue, and the alternative net income, cash-flow and capex tags; a filer whose newest annual
+  frame is not published keeps the previous year's as its latest (flag `stale_frame`, history a year shorter, never a year
+  counted twice). Universe 20.10.2026: 2,470 -> 2,673 issuers (`collect_universe.py --missing-only` fetched the 35 new
+  frames). Still outside: banks (interest income is not operating revenue; they are valued through residual income), new
+  listings without an annual report (tracked as pre-listing leads), preferred shares and notes.
+- IFRS filers in discovery: `sec_frames.ifrs_frame_urls` / `merge_ifrs` read ifrs-full frames per currency, keep each filer's
+  reporting currency (USD convenience translations dropped) and convert at the period-end H.10 rate. On 20.10.2026 the SEC
+  served those frames for CY2021 only, so collection is opt-in (`--ifrs-only`) and foreign filers enter discovery through
+  the holdings, the exploratory path or per-company collection; the valuation side handles them fully.
 - Analyst sheet (`analyst_sheet.py`, a pipeline stage, first in report.md, one line per company in the run report): the
   owner's six questions answered the way an analyst reads a casefile, not as gates. (1) Is it a good business: the graded
   quality, growth, strength and capital allocation, red flags, and that a strong grade without an evidenced advantage is a
