@@ -62,6 +62,35 @@ and +0.35.
 - The run is repeated once on the current engine (after the 20.10 fixes) and reported as it comes out. The fixes were
   made from valuation audits of individual companies, not from this result; nothing is tuned to improve it.
 
+## Second run: the engine after the 20.10 fixes (engine_v2)
+
+Same universe, dates, costs and controls; engine of commit 4237d25 (acquisition-aware growth, like-for-like history,
+cycle and thin-margin rules, new business types, residual income for financials, convertible terms, maturity schedule).
+Nothing was changed because of the first run. Rows: `runs/backtest/engine_v2/`.
+
+| Portfolio (average names) | CAGR | vs the average stock in the universe, mean (t) | vs S&P 500, mean |
+|---|---|---|---|
+| Engine top fifth (65) | 27.0% | +6.7 pp (t 0.9) | +14.9 pp |
+| Engine top fifth, data not blocked (56) | 27.9% | +8.1 pp (t 0.9) | +16.4 pp |
+| Engine bottom fifth (65) | 21.3% | -1.5 pp (t -0.5) | +6.7 pp |
+| Positive edge over the engine market (159) | 22.9% | +0.1 pp | +8.3 pp |
+| Positive edge and a positive bear return (129) | 20.3% | -3.2 pp (t -1.6) | +5.0 pp |
+| Control: cheapest fifth by FCF yield (68) | 26.4% | +6.0 pp (t 0.8) | +14.2 pp |
+| Control: cheapest fifth by earnings yield (75) | 18.5% | -4.5 pp (t -1.9) | +3.8 pp |
+
+By year (top / bottom / universe average / SPY, %): 2016 36/30/28/18, 2017 10/28/22/14, 2018 11/14/13/10, 2019 -1/29/12/7,
+2020 138/49/65/41, 2021 4/-23/-9/-11, 2022 27/28/26/19, 2023 33/23/25/24, 2024 21/24/24/15, 2025 31/27/38/22. Without 2020
+the top fifth trails the universe average by 0.6 points (t -0.2); top minus bottom +8.2 points (t 0.8); top minus the
+FCF-yield control +0.7 points (t 0.3). Rank correlation with the next year's return: mean 0.025 (t 0.5). Edge
+reliability (share of a predicted edge that showed up as excess return, median of yearly slopes): 0.44 (mean 0.66, t 0.9).
+
+Reading: the fixes made individual valuations more defensible (audited company by company) and left the ranking's
+predictive power where it was: no demonstrated edge, about the same as a free-cash-flow-yield rank, with one year (2020)
+carrying the whole average. The conclusions above stand unchanged.
+
+A third run (engine_v3) covers the later changes of 20.10 (cyclical secular growers, foreign issuers); it is reported
+as it comes out.
+
 ## Bias and limits
 
 - Survivorship: today's large caps only; companies that failed or shrank out of the list are absent. This flatters every
