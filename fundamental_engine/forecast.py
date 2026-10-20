@@ -1521,6 +1521,10 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
 
     method = (card.get('valuation') or {}).get('method') or 'fcff_annual_path'
     bm = (card.get('business_model') or {}).get('primary')
+    if method == 'residual_income' and bm == 'financials':
+        from .forecast_financials import build as build_residual_income
+        return build_residual_income(fb, an, card, qa, inputs, (rf, erp, rf_src, erp_src, rf_note, erp_note), reviews, warn, warnings,
+                                     empty)
     if method in NOT_BUILT or method not in BUILT:
         return empty('method_not_supported_by_forecast', f'valuation method {method!r} needs a dedicated model (residual income, '
                      'NAV, rNPV, SOTP) or no reliable valuation; the operating driver forecast does not apply', method)

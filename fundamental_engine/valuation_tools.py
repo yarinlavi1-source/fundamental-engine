@@ -239,6 +239,8 @@ def implied_cost_of_equity(case, scenario='base', low=-.08, high=.12, w=None):
     if case['method'] == 'operating':
         # Terminal WACC must stay above terminal growth.
         low = max(low, (s['terminal']['growth'] - s['terminal']['wacc'] + .0025) / (1 - w))
+    elif case['method'] == 'residual_income':
+        low = max(low, s['terminal']['growth'] - ke + .0025)       # the terminal formula needs Ke above growth
     lo_v, hi_v = _shifted_value(case, scenario, low, w), _shifted_value(case, scenario, high, w)
     note = 'Cash flows held fixed; required return that equates scenario value and quote. Not a market forecast or hurdle recommendation.'
     lev = {'debt_weight': w, 'debt_weight_source': w_src}

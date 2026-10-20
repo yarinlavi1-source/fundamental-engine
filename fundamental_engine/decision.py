@@ -856,7 +856,8 @@ def _solve_irr(case, scenario):
     hi_v, lo_v = (r.get('range_values') or [None, None])
     q = case['quote']['price']
     if r['status'] == 'not_bracketed' and lo_v is not None and q > lo_v:
-        low = max(-.08, -s['cost_of_equity'] + .005, (s['terminal']['growth'] - s['terminal']['wacc'] + .0025) if case['method'] == 'operating' else -1)
+        low = max(-.08, -s['cost_of_equity'] + .005, (s['terminal']['growth'] - s['terminal']['wacc'] + .0025) if case['method'] == 'operating'
+                  else (s['terminal']['growth'] - s['cost_of_equity'] + .0025) if case['method'] == 'residual_income' else -1)
         return {'value': None, 'status': 'below_search_range', 'bound': {'type': 'below', 'rate': s['cost_of_equity'] + low}}
     if r['status'] == 'not_bracketed' and hi_v is not None and q < hi_v:
         return {'value': None, 'status': 'above_search_range', 'bound': {'type': 'above', 'rate': s['cost_of_equity'] + .30}}
@@ -873,6 +874,8 @@ def _solve_irr_levered(case, scenario, w):
     low, high = max(-.08, -ke + .005), .30
     if case['method'] == 'operating':
         low = max(low, (s['terminal']['growth'] - s['terminal']['wacc'] + .0025) / (1 - w))
+    elif case['method'] == 'residual_income':
+        low = max(low, s['terminal']['growth'] - ke + .0025)
 
     def v(shift):
         try:

@@ -195,7 +195,8 @@ def valuate(fb, qa, fc, inputs=None):
     from . import valuation_tools as vt
     if not fc or not fc.get('spec'):
         return {'status': 'not_computed', 'reason': (fc or {}).get('reason') or 'no forecast spec for this valuation method'}
-    case = build_case(fc['spec'])
+    # an operating forecast is a driver spec; the residual-income forecast hands over a valuation case directly
+    case = fc['spec'] if fc['spec'].get('valuation_version') == 1 else build_case(fc['spec'])
     result = value_company(case)
     diag, errors = {}, []
     for name, fn in (('discount_rate_band', lambda: vt.discount_rate_band(case)),
@@ -250,6 +251,7 @@ def run(fb, inputs=None):
     qa = stage('dataqa', lambda: dataqa.validate(fb, fb.get('capital_structure')))
     an = stage('analysis', lambda: analysis.analyze(fb, qa)) if qa else None
     card = stage('model_card', lambda: model_card.build(fb, an, qa, inputs.get('card'))) if an else None
+    qa = route_qa(qa, card)
     fc = stage('forecast', lambda: forecast.build(fb, an, card, qa, inputs.get('forecast'))) if card else None
     val = stage('valuation', lambda: valuate(fb, qa, fc, inputs)) if fc else {'status': 'not_computed', 'reason': 'forecast unavailable'}
     if val is None:
@@ -266,6 +268,23 @@ def run(fb, inputs=None):
     json.dumps(cf, allow_nan=False, default=str)
     cf['casefile_sha256'] = F.digest(json.loads(json.dumps({k: v for k, v in cf.items() if k != 'casefile_sha256'}, default=str)))
     return cf
+
+
+def route_qa(qa, card):
+    """dataqa as it applies to the card's valuation route. A residual-income valuation (banks, insurers) does not use debt,
+    operating cash flow, capex, revenue or cash fields: their blocks become limits, listed in 'not_used_by_route' (Travelers'
+    debt tags and UnitedHealth's cash-flow TTM had blocked valuations that never read them). Other routes are unchanged."""
+    from .forecast_financials import RI_IRRELEVANT_FIELDS
+    if not qa or not card or (card.get('valuation') or {}).get('method') != 'residual_income':
+        return qa
+    moved = [f for f in qa.get('blocking') or [] if f in RI_IRRELEVANT_FIELDS]
+    if not moved:
+        return qa
+    out = dict(qa, blocking=[f for f in qa['blocking'] if f not in moved], limited=list(qa.get('limited') or []) + moved,
+               not_used_by_route={'route': 'residual_income', 'fields': moved, 'status_before': qa.get('status')})
+    if not out['blocking'] and out.get('status') == 'blocked':
+        out['status'] = 'limited'
+    return out
 
 
 def summary(cf):

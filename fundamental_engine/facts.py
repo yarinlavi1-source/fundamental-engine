@@ -43,6 +43,9 @@ DURATION_TAGS = {
                       'incomelossfromcontinuingoperationsbeforeincometaxesminorityinterestandincomelossfromequitymethodinvestments'],
     'income_tax': ['incometaxexpensebenefit'],
     'net_income': ['netincomeloss', 'profitloss'],
+    # banks and insurers (residual income): profit attributable to common holders and the preferred dividend that separates it
+    'net_income_common': ['netincomelossavailabletocommonstockholdersbasic'],
+    'preferred_dividends': ['dividendspreferredstock', 'preferredstockdividendsincomestatementimpact', 'dividendspreferredstockcash'],
     'eps_diluted': ['earningspersharediluted'],
     'shares_basic_wavg': ['weightedaveragenumberofsharesoutstandingbasic'],
     'shares_diluted_wavg': ['weightedaveragenumberofdilutedsharesoutstanding'],
@@ -99,6 +102,8 @@ INSTANT_TAGS = {
     'operating_lease_noncurrent': ['operatingleaseliabilitynoncurrent'],
     'total_liabilities': ['liabilities'],
     'equity': ['stockholdersequity', 'stockholdersequityincludingportionattributabletononcontrollinginterest'],
+    'preferred_equity': ['preferredstockvalue', 'preferredstockvalueoutstanding', 'preferredstockincludingadditionalpaidincapital'],
+    'aoci': ['accumulatedothercomprehensiveincomelossnetoftax'],
     'retained_earnings': ['retainedearningsaccumulateddeficit'],
     'convertible_debt': ['convertiblenotespayable', 'convertibledebtnoncurrent', 'convertibledebt', 'convertiblenotespayablecurrent'],
     'debt_fair_value': ['longtermdebtfairvalue', 'debtinstrumentfairvalue'],
