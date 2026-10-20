@@ -137,7 +137,8 @@ class TtmTests(unittest.TestCase):
                                       'items': [{'id': 'i1', 'topic': 'moat', 'statement': 'later', 'kind': 'opinion', 'source_ids': ['s1'], 'as_of': '2026-09-20'}]})
         self.assertEqual([e for e, _, _ in F.series(fb, 'revenue', 'quarter')], ['2026-05-29'])   # Q3 published after as_of
         self.assertEqual(fb['qualitative'], [])
-        self.assertEqual(fb['sources']['web:s1']['retrieval'], 'search_excerpt')
+        self.assertNotIn('web:s1', fb['sources'])                       # published after as_of: not a citable source
+        self.assertEqual(fb['sources']['web:s2']['retrieval'], 'search_excerpt')
 
 
 class YtdTests(unittest.TestCase):
@@ -261,7 +262,7 @@ class AvailabilityTests(unittest.TestCase):
         self.assertEqual((f['period'], f['available_at'], f['available_at_estimated']), ('FY2025', '2026-02-26', True))   # annual lag
         self.assertFalse(F.usable(fb, f))
         self.assertEqual([x['id'] for x in fb['qualitative']], ['i3'])             # i1 undated -> FY end + 90; i2 waits for 2026-04-22
-        self.assertEqual(fb['qualitative'][0]['available_at'], '2025-12-12')
+        self.assertEqual(fb['qualitative'][0]['available_at'], '2025-12-14')        # published 2025-12-12 + LAG_DAYS
         later = F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-03-01')
         F.add_qualitative_bundle(later, {'sources': [{'id': 'k', 'kind': 'filing'}], 'quarterly_facts': [],
                                          'items': [{'id': 'i1', 'topic': 'segments', 'statement': 'FY segment split', 'kind': 'reported',
@@ -292,7 +293,7 @@ class SourceKindTests(unittest.TestCase):
                           'web:p': ('secondary', 'press', 'search_excerpt'), 'web:a': ('secondary', 'analysis', 'search_excerpt'),
                           'web:b': ('secondary', 'blog', 'search_excerpt')})
         f = fb['facts'][0]
-        self.assertEqual((f['source_id'], f['available_at']), ('web:r', '2026-09-11'))   # issuer source; latest dated citation
+        self.assertEqual((f['source_id'], f['available_at']), ('web:r', '2026-09-12'))   # the issuer release + LAG_DAYS; press ignored
         F.add_source(fb, 'legacy', 'x', 'y', 'document', '2026-10-19')                     # legacy kind still accepted
         self.assertIn('document', F.REPORTED_KINDS)
 
@@ -325,3 +326,196 @@ class YtdWindowTests(unittest.TestCase):
         t = F.ttm(fb, 'revenue')
         self.assertEqual((t['method'], t['value']), ('annual_plus_ytd', 460.0))
         self.assertEqual(sum(s * f['value'] for s, f in zip(t['signs'], t['facts'])), 460.0)
+
+
+# ---------------------------------------------------------------- review 2026-10-20 (point-in-time, arithmetic, sources)
+# Every FactBook and bundle below is SYNTHETIC test data shaped like the reproduced defects (ids such as 'q3' or 'k8' are
+# invented); no real issuer's numbers are used.
+
+def _bundle(fb, sources, rows=(), **extra):
+    F.add_qualitative_bundle(fb, {'as_of': '2026-10-19', 'sources': sources, 'quarterly_facts': list(rows), **extra})
+    return fb
+
+
+def _row(metric, period, end, value, ids, **kw):
+    return {'metric': metric, 'period': period, 'period_end': end, 'value': value, 'source_ids': ids, **kw}
+
+
+class BundleAvailabilityRegressions(unittest.TestCase):
+    def test_undated_filing_beside_an_earlier_8k_waits_for_its_deadline(self):
+        src = [{'id': 'k8', 'kind': 'filing', 'published_at': '2026-04-21'}, {'id': 'q3', 'kind': 'filing'}]
+        rows = [_row('debt', 'FY2026Q3', '2026-08-28', 6.4e9, ['k8', 'q3']), _row('cash', 'FY2026Q3', '2026-08-28', 4.3e9, ['k8', 'q3'])]
+        fb = _bundle(F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-09-01'), src, rows)
+        for f in fb['facts']:          # was: available on the period end itself, as_reported, not estimated
+            self.assertEqual((f['source_id'], f['available_at'], f['available_at_estimated'], f['basis']),
+                             ('web:q3', '2026-10-12', True, 'normalized'))
+            self.assertFalse(F.usable(fb, f))
+
+    def test_item_citing_an_undated_later_filing_waits_for_it(self):
+        src = [{'id': 'r', 'kind': 'issuer_release', 'published_at': '2026-06-11'}, {'id': 'k8', 'kind': 'filing', 'published_at': '2026-04-21'},
+               {'id': 'q3', 'kind': 'filing', 'title': '10-Q for the quarter ended 2026-08-28'}]
+        rows = [_row('cash', 'FY2026Q3', '2026-08-28', 4.3e9, ['q3'])]               # the bundle itself dates q3 to that quarter
+        items = [{'id': 'buyback', 'topic': 'capital_allocation', 'statement': 'authority used; 24.5bn left at quarter end',
+                  'kind': 'reported', 'source_ids': ['k8', 'q3'], 'as_of': '2026-08-28'},
+                 {'id': 'impairment', 'topic': 'risk', 'statement': 'Q2 impairment', 'kind': 'reported', 'source_ids': ['r', 'q3'],
+                  'as_of': '2026-06-11'}]
+        early = _bundle(F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-09-01'), src, rows, items=items)
+        self.assertEqual(early['qualitative'], [])                                    # was: both usable before the 10-Q existed
+        late = _bundle(F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-10-19'), src, rows, items=items)
+        self.assertEqual({x['id']: (x['available_at'], x['available_at_estimated']) for x in late['qualitative']},
+                         {'buyback': ('2026-10-12', True), 'impairment': ('2026-10-12', True)})
+
+    def test_bundle_document_dates_bound_comparatives(self):
+        src = [{'id': 's7', 'kind': 'filing', 'title': 'next-year Q1 10-Q'}, {'id': 's94', 'kind': 'press', 'title': 'summary of a later release'}]
+        rows = [_row('capex', 'FY2025Q1', '2025-02-28', 26e6, ['s7'], reported_in=None, reported_not_before='2026-03-20'),
+                _row('sbc', 'FY2025Q3', '2025-08-29', 497e6, ['s94'], reported_in='2026-09-10')]
+        fb = _bundle(F.new({'ticker': 'SYN', 'currency': 'USD'}, '2025-05-01'), src, rows)
+        got = {f['metric']: (f['available_at'], f['available_at_estimated']) for f in fb['facts']}
+        self.assertEqual(got, {'capex': ('2026-03-22', True), 'sbc': ('2026-09-12', False)})     # were 2025-04-14 and 2025-10-13
+        self.assertFalse(any(F.usable(fb, f) for f in fb['facts']))
+
+    def test_secondary_citations_neither_delay_nor_advance_an_issuer_fact(self):
+        src = [{'id': 'rel', 'kind': 'issuer_release', 'published_at': '2025-09-11'}, {'id': 'an', 'kind': 'analysis', 'published_at': '2026-09-13'},
+               {'id': 'q10', 'kind': 'filing'}, {'id': 'p', 'kind': 'press', 'published_at': '2026-07-20'}]
+        rows = [_row('revenue', 'FY2025Q3', '2025-08-29', 5.99e9, ['rel', 'an']), _row('cash', 'FY2026Q2', '2026-06-30', 4e8, ['q10', 'p'])]
+        fb = _bundle(F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-09-12'), src, rows)
+        rev = next(f for f in fb['facts'] if f['metric'] == 'revenue')
+        self.assertEqual((rev['source_id'], rev['available_at'], rev['basis']), ('web:rel', '2025-09-13', 'as_reported'))   # was 2026-09-13
+        self.assertTrue(F.usable(fb, rev))
+        cash = next(f for f in fb['facts'] if f['metric'] == 'cash')
+        self.assertEqual((cash['source_id'], cash['available_at'], cash['available_at_estimated'], cash['basis']),
+                         ('web:q10', '2026-08-14', True, 'normalized'))                    # was the press date, as_reported
+
+    def test_guidance_needs_a_date_and_sources_known_at_as_of(self):
+        src = [{'id': 's14', 'kind': 'issuer_release', 'published_at': '2025-12-10'}, {'id': 's51', 'kind': 'press', 'published_at': '2026-03-12'}]
+        g = [{'metric': 'revenue', 'period': 'FY2026', 'low': 25.9e9, 'high': 26.1e9, 'issued_at': '2025-12-10', 'reaffirmed_at': '2026-03-12',
+              'source_ids': ['s14', 's51']},
+             {'metric': 'eps_diluted', 'period': 'FY2026', 'low': 23.3, 'high': 23.5, 'source_ids': ['s14']},            # no issue date
+             {'metric': 'operating_margin', 'period': 'FY2026', 'low': .45, 'high': .45, 'issued_at': '2026-03-12', 'source_ids': ['s51']}]
+        fb = _bundle(F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-01-15'), src, guidance=g)
+        self.assertEqual(fb['guidance'], [{'metric': 'revenue', 'period': 'FY2026', 'low': 25.9e9, 'high': 26.1e9, 'issued_at': '2025-12-10',
+                                           'source_ids': ['web:s14']}])
+        self.assertEqual(fb['research_notes']['withheld_at_as_of']['guidance'], 2)
+
+    def test_sources_and_notes_after_as_of_are_withheld(self):
+        src = [{'id': 's19', 'kind': 'filing', 'published_at': '2026-09-03', 'title': '8-K CEO appointment'},
+               {'id': 's1', 'kind': 'issuer_release', 'published_at': '2026-03-12'}, {'id': 'u', 'kind': 'press'}]
+        conflicts = [{'topic': 'balance_sheet', 'description': 'RESOLVED: Q3 deferred revenue is 7,094M', 'source_ids': ['s19']},
+                     {'topic': 'technology_ai', 'description': 'Q1 ARR 250M vs 300M', 'source_ids': ['s1']},
+                     {'topic': 'risk', 'description': 'undated claim', 'source_ids': ['u']}]
+        fb = _bundle(F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-07-01'), src, conflicts=conflicts, open_questions=['which Q3 figure?'])
+        self.assertNotIn('web:s19', fb['sources'])                                 # was registered: a citable evidence id
+        self.assertTrue(fb['sources']['web:u']['undated'])
+        self.assertEqual([c['description'] for c in fb['research_notes']['conflicts']], ['Q1 ARR 250M vs 300M'])
+        self.assertEqual(fb['research_notes']['open_questions'], [])
+        self.assertEqual(fb['research_notes']['withheld_at_as_of'], {'guidance': 0, 'conflicts': 2, 'open_questions': 1})
+
+    def test_documents_are_usable_lag_days_after_publication(self):
+        src = [{'id': 'r', 'kind': 'issuer_release', 'published_at': '2026-09-10'}]
+        rows = [_row('cfo', 'FY2026Q3', '2026-08-28', 2.5e9, ['r'])]
+        same_day = _bundle(F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-09-10'), src, rows)
+        self.assertEqual(same_day['facts'], [])                                    # was usable on the release day
+        self.assertNotIn('web:r', same_day['sources'])
+        later = _bundle(F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-09-12'), src, rows)
+        self.assertEqual([(f['available_at'], F.usable(later, f)) for f in later['facts']], [('2026-09-12', True)])
+
+    def test_consensus_is_never_dated_before_its_retrieval(self):
+        rows = [{'date': '2026-12-31', 'revenueAvg': 1.0e9}]
+        fb = F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-10-19')
+        F.from_fmp_estimates(fb, rows, '2026-10-19T12:00:00Z', as_of='2025-01-15')
+        self.assertEqual((fb['estimates'][0]['as_of'], fb['estimates'][0]['as_of_requested']), ('2026-10-19', '2025-01-15'))
+        snap = F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-10-19')
+        F.from_fmp_estimates(snap, rows, '2026-10-19T12:00:00Z', as_of='2025-01-15', dated_snapshot=True)
+        self.assertEqual(snap['estimates'][0]['as_of'], '2025-01-15')
+
+
+class FiscalYearEndLagRegressions(unittest.TestCase):
+    def test_alpha_vantage_fourth_quarter_waits_for_the_10k(self):
+        q = [('2024-12-31', 95, 60), ('2025-03-31', 100, 55), ('2025-06-30', 110, 52), ('2025-09-30', 120, 50), ('2025-12-31', 130, 5)]
+        av = {'income': {'annualReports': [{'fiscalDateEnding': '2025-12-31', 'totalRevenue': '460'}],
+                         'quarterlyReports': [{'fiscalDateEnding': e, 'totalRevenue': str(r)} for e, r, _ in q]},
+              'balance': {'annualReports': [{'fiscalDateEnding': '2025-12-31', 'cashAndCashEquivalentsAtCarryingValue': '5'}],
+                          'quarterlyReports': [{'fiscalDateEnding': e, 'cashAndCashEquivalentsAtCarryingValue': str(c)} for e, _, c in q]}}
+        fb = F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-02-20')
+        F.from_alpha_vantage(fb, av, '2026-10-19')
+        q4 = next(f for f in fb['facts'] if f['period'] == 'Q@2025-12-31')
+        self.assertEqual((q4['available_at'], q4['available_at_estimated']), ('2026-03-31', True))       # was 2026-02-14
+        t = F.ttm(fb, 'revenue')
+        self.assertEqual((t['method'], t['period_end'], t['value']), ('quarters', '2025-09-30', 425.0))
+        self.assertEqual(F.latest_instant(fb, 'cash')['value'], 50.0)
+
+    def test_bundle_and_fmp_fourth_quarter_rows_take_the_annual_lag(self):
+        rows = [_row('revenue', 'FY2025', '2025-12-31', 460, ['k']), _row('revenue', 'FY2025Q4', '2025-12-31', 130, ['k']),
+                _row('cash', 'FY2025Q4', '2025-12-31', 5, ['k'])]
+        fb = _bundle(F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-02-20'), [{'id': 'k', 'kind': 'filing'}], rows)
+        self.assertEqual({f['period']: f['available_at'] for f in fb['facts']},
+                         {'FY2025': '2026-03-31', 'Q@2025-12-31': '2026-03-31', 'I@2025-12-31': '2026-03-31'})
+        fmp = F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-02-20')
+        F.from_fmp_as_reported(fmp, {'income': [{'fiscalYear': 2025, 'period': 'Q4', 'date': '2025-12-31', 'data': {'Revenues': 130.0}}]},
+                               '2026-10-19', kind='quarter')
+        self.assertEqual(fmp['facts'][0]['available_at'], '2026-03-31')
+
+    def test_foreign_interim_has_no_10q_deadline(self):
+        fpi = F.new({'ticker': 'SYN', 'currency': 'USD', 'filer': 'foreign'}, '2026-10-19')
+        F.from_fmp_as_reported(fpi, {'income': [{'fiscalYear': 2026, 'period': 'Q2', 'date': '2026-06-30', 'data': {'Revenues': 1.0}}]},
+                               '2026-10-19', kind='quarter')
+        self.assertEqual(fpi['facts'][0]['available_at'], '2026-12-27')           # six months, not the 45-day 10-Q deadline
+        half = _bundle(F.new({'ticker': 'SYN', 'currency': 'USD', 'filer': 'foreign'}, '2026-08-20'), [{'id': 'k6', 'kind': 'filing'}],
+                       [_row('revenue', 'FY2026H1', '2026-06-30', 5.0, ['k6'])])
+        self.assertFalse(any(F.usable(half, f) for f in half['facts']))
+
+
+class ArithmeticRegressions(unittest.TestCase):
+    def test_half_year_label_is_never_a_fiscal_year(self):
+        fb = F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-10-19')
+        F.add_source(fb, 'k', 'sec', '10-K', 'filing_derived', '2026-10-19')
+        F.add_fact(fb, 'revenue', 'FY2025', '2025-12-31', 1000.0, 'k', 'as_reported', '2026-02-15')
+        _bundle(fb, [{'id': 'h', 'kind': 'issuer_release', 'published_at': '2026-08-20'}],
+                [_row('revenue', 'FY2026H1', '2026-06-30', 560.0, ['h']), _row('revenue', 'FY2025H2', '2025-12-31', 520.0, ['h']),
+                 _row('revenue', 'FY2026 9M', '2026-09-30', 850.0, ['h'])])
+        self.assertEqual([(e, v) for e, v, _ in F.series(fb, 'revenue')], [('2025-12-31', 1000.0)])   # was + (2026-06-30, 560)
+        self.assertEqual(sorted(f['period'] for f in fb['facts'] if f['source_id'] == 'web:h'), ['YTD@2026-06-30', 'YTD@2026-09-30'])
+        self.assertEqual([r['period'] for r in fb['research_notes']['skipped_rows']], ['FY2025H2'])
+        t = F.ttm(fb, 'revenue')
+        self.assertEqual((t['method'], t['value']), ('latest_fiscal_year', 1000.0))
+
+    def test_payment_ttm_sums_magnitudes(self):
+        fb = F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-11-20')
+        F.add_source(fb, 'k', 'sec', '10-K', 'filing_derived', '2026-11-20')
+        F.add_fact(fb, 'capex', 'FY2025', '2025-12-31', 500.0, 'k', 'as_reported', '2026-02-15')      # tagged positive
+        F.add_fact(fb, 'buybacks', 'FY2025', '2025-12-31', 2000.0, 'k', 'as_reported', '2026-02-15')
+        rows = []
+        for y, cap, bb in ((2025, (100, 120, 130), (400, 500, 600)), (2026, (130, 140, 150), (700, 800, 900))):
+            for i, end in enumerate((f'{y}-03-31', f'{y}-06-30', f'{y}-09-30')):
+                rows += [_row('capex', f'FY{y}Q{i + 1}', end, -cap[i], ['r']), _row('buybacks', f'FY{y}Q{i + 1}', end, -bb[i], ['r'])]
+        _bundle(fb, [{'id': 'r', 'kind': 'issuer_release', 'published_at': '2026-11-01'}], rows)    # cash-flow sign
+        self.assertEqual(F.ttm(fb, 'capex')['value'], 570.0)                     # was 430
+        self.assertEqual(F.ttm(fb, 'buybacks')['value'], 2900.0)                 # was 1100
+
+    def test_newer_year_to_date_beats_an_older_standalone_quarter(self):
+        fb = F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-10-19')
+        F.add_source(fb, 'k', 'sec', '10-K', 'filing_derived', '2026-10-19')
+        F.add_fact(fb, 'cfo', 'FY2025', '2025-11-28', 10000.0, 'k', 'as_reported', '2026-01-20')
+        _bundle(fb, [{'id': 'q1', 'kind': 'issuer_release', 'published_at': '2026-03-12'}, {'id': 'q3', 'kind': 'filing', 'published_at': '2026-09-18'}],
+                [_row('cfo', 'FY2026Q1', '2026-02-27', 2958.0, ['q1']), _row('cfo', 'FY2025Q1', '2025-02-28', 2482.0, ['q1']),
+                 _row('cfo_ytd', 'FY2026Q3YTD', '2026-08-28', 7646.0, ['q3']), _row('cfo_ytd', 'FY2025Q3YTD', '2025-08-29', 6871.0, ['q3'])])
+        t = F.ttm(fb, 'cfo')
+        self.assertEqual((t['method'], t['period_end'], t['value']), ('annual_plus_ytd', '2026-08-28', 10775.0))   # was 10476 to 2026-02-27
+        self.assertEqual([(a['period_end'], a['value']) for a in t['alternatives']], [('2026-02-27', 10476.0)])
+
+
+class SourceRegressions(unittest.TestCase):
+    def test_earnings_release_is_an_issuer_document_and_regulator_primary(self):
+        fb = _bundle(F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-10-19'),
+                     [{'id': 'e', 'kind': 'earnings_release', 'published_at': '2026-08-05', 'retrieval': 'primary_document'},
+                      {'id': 'g', 'kind': 'regulator', 'published_at': '2026-08-05'}])
+        self.assertEqual({k: (v['kind'], v['dataset'], v['retrieval']) for k, v in fb['sources'].items()},
+                         {'web:e': ('issuer_document', 'earnings_release', 'primary_document'),
+                          'web:g': ('primary_document', 'regulator', 'search_excerpt')})     # earnings_release was 'secondary'
+        self.assertIn('primary_document', F.REPORTED_KINDS)
+
+    def test_filing_ranks_before_the_release_it_revises(self):
+        src = [{'id': 'rel', 'kind': 'issuer_release', 'published_at': '2026-07-28'}, {'id': 'q10', 'kind': 'filing', 'published_at': '2026-08-07'}]
+        rows = [_row('cfo', 'FY2026', '2026-06-30', 1000.0, ['rel']), _row('cfo', 'FY2026', '2026-06-30', 950.0, ['q10'])]
+        self.assertEqual(F.value(_bundle(F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-10-19'), src, rows), 'cfo'), 950.0)   # was 1000
+        self.assertEqual(F.value(_bundle(F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-08-01'), src, rows), 'cfo'), 1000.0)

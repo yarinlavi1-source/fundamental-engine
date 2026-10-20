@@ -14,11 +14,14 @@ register, never verdicts; positive observations (customer prepayments funding gr
 
 Definitions fixed here because they change numbers:
 - debt = financial debt (notes, loans, commercial paper); operating leases excluded. The ambiguous
-  LongTermDebt tag is read as the total only when the debt roll-forward (prior debt + issued - repaid) supports
-  it; otherwise the current portion is added (dataqa's conservative rule for an unresolved scope).
-- share splits: exactly dataqa's qa['splits'] (price test decisive, factors incl. 3-for-2) are divided out of
-  the year-end share counts; without a dataqa result a split-like jump is divided out only when the FactBook's
-  own price or per-share data support a split, otherwise it counts as issuance and is flagged.
+  LongTermDebt tag is read per year with dataqa's per-hypothesis roll-forward (prior and current debt under the
+  same scope, prior + issued - repaid): the scope the adjacent year pairs support, else the scope every
+  distinguishable pair supports, else the current portion is added (dataqa's conservative rule). A DebtCurrent tag
+  is the current-debt total: short-term borrowings and commercial paper tagged beside it are not added again.
+- share splits: exactly dataqa's qa['splits'] (positive evidence: a dated split, an as-traded price bar, weighted
+  shares restated by the full ratio; factors incl. 3-for-2, with any residual issuance kept) are divided out of the
+  year-end share counts; dataqa's qa['unresolved_splits'] stay in as issuance and mark the dilution unverified.
+  Without a dataqa result dataqa's own split rule runs on the FactBook.
 - net cash = cash + short-term investments - debt (dataqa's definition: long-term investments, restricted cash
   and leases shown separately, never counted as spendable cash).
 - invested capital (used for ROIC) = equity + debt - cash - investments (financing side). The asset-side
@@ -41,7 +44,8 @@ from .scores import scorecards, roic as scores_roic
 
 ANALYSIS_VERSION = 1
 STATUS_ORDER = ('conflict', 'missing', 'stale', 'single_source', 'reported', 'verified')   # weakest first
-KIND_STATUS = {'filing_derived': 'reported', 'issuer_document': 'reported', 'document': 'reported', 'synthetic': 'reported'}
+KIND_STATUS = {'filing_derived': 'reported', 'issuer_document': 'reported', 'primary_document': 'reported', 'document': 'reported',
+               'synthetic': 'reported'}
 DUR = {'revenue': 'revenue', 'gross_profit': 'gross_profit', 'operating_income': 'operating_income',
        'net_income': 'net_income', 'cfo': 'cfo', 'capex': 'capex', 'sbc': 'sbc', 'd_and_a': 'd_and_a',
        'buybacks': 'buybacks', 'dividends': 'dividends_paid', 'acquisitions': 'acquisitions',
@@ -189,8 +193,20 @@ def _year_ends(fb):
 
 # ---------------------------------------------------------------- annual table
 
-def _debt(c, prior, pe):
-    """Financial debt for one year-end and the method used (dataqa naming)."""
+def _debt_pairs(fb, years):
+    """dataqa's per-hypothesis debt roll-forward for each pair of consecutive fiscal year-ends: {(prior, current): record}."""
+    q, out = DQ._QA(fb, None), {}
+    for a, z in zip(years, years[1:]):
+        rec = DQ._rollforward(q, a, z)
+        if rec:
+            out[(a, z)] = rec
+    return out
+
+
+def _debt(c, pe, prev, nxt, pairs):
+    """Financial debt for one year-end and the method used (dataqa naming). The LongTermDebt tag's scope follows dataqa's
+    per-hypothesis roll-forward of the year pairs around this year-end (each tests prior and current debt under the same
+    scope), else the scope every distinguishable pair supports, else the conservative 'plus current'."""
     ltd, cur, stb, tag, ven = (c[k] for k in ('long_term_debt', 'current_portion_ltd', 'short_term_borrowings',
                                                'long_term_debt_tagged', 'debt_total_vendor'))
     if ltd['value'] is not None:
@@ -200,20 +216,25 @@ def _debt(c, prior, pe):
         if not cur['value']:
             return base, 'tagged_total', None
         plus = _lin((1, base), (1, cur))
-        exp = None
-        if prior is not None and prior['value'] is not None and c['debt_issued']['value'] is not None \
-                and c['debt_repaid']['value'] is not None:
-            exp = prior['value'] + c['debt_issued']['value'] - c['debt_repaid']['value']
-        detail = {'period_end': pe, 'tagged': tag['value'], 'current_portion': cur['value'], 'roll_forward_expected': exp}
-        tol = .05 * max(abs(exp), 1.0) if exp is not None else None
-        if exp is not None and abs(plus['value'] - exp) < abs(base['value'] - exp) and abs(plus['value'] - exp) <= tol:
-            return plus, 'tagged_plus_current', {**detail, 'decision': 'current portion added: roll-forward supports it'}
-        if exp is not None and abs(base['value'] - exp) <= tol:
-            return base, 'tagged_total', {**detail, 'decision': 'current portion not added: roll-forward supports the tagged total'}
+        before, after = pairs.get((prev, pe)), pairs.get((pe, nxt))
+        votes = [w for w in (DQ._tagged_winner(x) for x in (before, after) if x) if w]
+        hist = [w for w in (DQ._tagged_winner(x) for x in pairs.values()) if w]
+        pick = votes[0] if votes and len(set(votes)) == 1 else None
+        exp = ((before or {}).get('hypotheses') or {}).get(pick or 'tagged_plus_current', {}).get('expected')
+        detail = {'period_end': pe, 'tagged': tag['value'], 'current_portion': cur['value'], 'roll_forward_expected': exp,
+                  'roll_forward_passing': {'pair_ending_here': before['passing'] if before else None,
+                                           'pair_starting_here': after['passing'] if after else None}}
+        if pick:
+            return (plus if pick == 'tagged_plus_current' else base), pick, {
+                **detail, 'decision': ('current portion added' if pick == 'tagged_plus_current' else 'current portion not added')
+                + f": dataqa's per-hypothesis roll-forward supports {pick}"}
+        if not votes and len(hist) >= 2 and len(set(hist)) == 1:
+            return (plus if hist[0] == 'tagged_plus_current' else base), hist[0], {
+                **detail, 'decision': f'{hist[0]}: the scope every distinguishable year pair supports (no pair around this year decides)'}
         if abs(cur['value']) <= .01 * max(abs(base['value']), 1.0):
             return base, 'tagged_total', {**detail, 'decision': 'current portion immaterial: scopes agree within 1%'}
         return plus, 'tagged_plus_current', {**detail, 'decision': 'current portion added (conservative, as dataqa): ' + (
-            'no roll-forward available' if exp is None else 'roll-forward supports neither scope')}
+            'the roll-forwards around this year disagree' if votes else 'no roll-forward distinguishes the scopes')}
     if ven['value'] is not None:
         return ven, 'vendor_total', None
     if cur['value'] is not None or stb['value'] is not None:
@@ -239,6 +260,14 @@ def _annual(fb, qa):
         for m, s in inst.items():
             p = _pick(s, pe)
             c[m] = C(p[1], [_ref(fb, p[2])]) if p else C()
+        cp = _pick(inst['current_portion_ltd'], pe)
+        if cp and (cp[2].get('concept') or '').lower() == 'debtcurrent' and c['short_term_borrowings']['value'] is not None:
+            stb = c['short_term_borrowings']['value']
+            extra = DQ._current_debt(cp[2], {'value': stb})[1]      # DebtCurrent already includes borrowings / commercial paper
+            assumptions.append({'code': 'debt_current_total', 'period_end': pe, 'debt_current': cp[1], 'short_term_borrowings': stb,
+                                'added': extra, 'note': 'DebtCurrent is the current-debt total (includes short-term borrowings and '
+                                                        'commercial paper): only an excess over it is added'})
+            c['short_term_borrowings'] = C(extra, [{**r, 'value': extra} for r in c['short_term_borrowings']['refs']])
         bs = next((c[k] for k in ('total_assets', 'equity', 'current_assets') if c[k]['value'] is not None), None)
         for keys, evidence, statement in ((CF_ZERO, c['cfo'], 'cash-flow statement'), (BS_ZERO, bs, 'balance sheet')):
             if evidence is None or evidence['value'] is None:
@@ -255,10 +284,10 @@ def _annual(fb, qa):
         labels[pe] = label
         cells[pe] = c
         c['_latest'] = latest
-    prior = None
-    for pe in years:
+    pairs = _debt_pairs(fb, years)
+    for i, pe in enumerate(years):
         c = cells[pe]
-        debt, method, detail = _debt(c, prior, pe)
+        debt, method, detail = _debt(c, pe, years[i - 1] if i else None, years[i + 1] if i + 1 < len(years) else None, pairs)
         r = res.get('debt') or {}
         if r.get('value') is not None and r.get('as_of') == pe and (
                 debt['value'] is None or abs(debt['value'] - r['value']) > .005 * max(abs(r['value']), 1.0)):
@@ -272,7 +301,6 @@ def _annual(fb, qa):
         if detail:
             assumptions.append({'code': 'debt_scope', 'method': method, **detail})
         c['debt'], c['_debt_method'] = _apply_qa(debt, 'debt', qa, pe, c['_latest']), method
-        prior = c['debt']
     for pe in years:
         c, latest = cells[pe], cells[pe]['_latest']
         for k in ('revenue', 'operating_income', 'cfo', 'capex', 'sbc', 'shares_outstanding', 'cash'):
@@ -389,20 +417,27 @@ def _quarterly(fb):
 
 # ---------------------------------------------------------------- TTM and resolved balance
 
-def _ytd_flow(fb, metric, after):
-    """{period_end: (value, facts)} of a flow since the fiscal year ending `after`: running sums of contiguous standalone
-    quarters, and year-to-date facts ending 8..366 days later."""
-    out, prev, run, used = {}, _d(after), 0.0, []
+def _ytd_flow(fb, metric, after, gaps=False):
+    """{period_end: (value, facts, quarters missing)} of a flow since the fiscal year ending `after`: running sums of
+    contiguous standalone quarters (gaps=True skips a missing quarter and counts it: the sum is then a lower bound), and
+    year-to-date facts ending 8..366 days later (preferred over a lower bound). Payments by magnitude."""
+    out, prev, run, used, missing = {}, _d(after), 0.0, [], 0
     for e, v, f in F.series(fb, metric, 'quarter'):
         if _d(e) <= _d(after) + timedelta(days=7):
             continue
-        if not 60 <= (_d(e) - prev).days <= 120:
+        if _days(after, e) > 373:
             break
-        prev, run, used = _d(e), run + v, used + [f]
-        out[e] = (run, list(used))
+        gap = (_d(e) - prev).days
+        if not 60 <= gap <= 120:
+            if not gaps or gap < 60:
+                break
+            missing += max(1, round(gap / 91.3) - 1)
+        prev, run, used = _d(e), run + F._fv(metric, f), used + [f]
+        out[e] = (run, list(used), missing)
     for f in F.candidates(fb, metric):
-        if f['period'].startswith('YTD@') and 7 < _days(after, f['period_end']) <= 366 and f['period_end'] not in out:
-            out[f['period_end']] = (f['value'], [f])
+        e = f['period_end']
+        if f['period'].startswith('YTD@') and 7 < _days(after, e) <= 366 and (e not in out or out[e][2]):
+            out[e] = (F._fv(metric, f), [f], 0)
     return out
 
 
@@ -709,14 +744,21 @@ def _metrics(fb, qa, years, labels, cells, ttm, tc, rs):
     sa, sr = sum(c['value'] or 0 for c in acq_c), sum(c['value'] or 0 for c in rev_c)
     window, ytd_note, yrefs, ytd = (_span(labels, w3[0], w3[-1]) if w3 else None), None, [], None
     if last:      # current fiscal year to date (acquisitions after the last 10-K, e.g. a deal closed this year)
-        ya, yr = _ytd_flow(fb, 'acquisitions', last), _ytd_flow(fb, 'revenue', last)
+        ya, yr = _ytd_flow(fb, 'acquisitions', last, gaps=True), _ytd_flow(fb, 'revenue', last)
         common = sorted((e, f) for e in ya for f in yr if abs(_days(e, f)) <= 7)
         if common:
             e, fr = common[-1]
-            ytd = {'period_end': e, 'acquisitions': abs(ya[e][0]), 'revenue': yr[fr][0]}
+            ytd = {'period_end': e, 'acquisitions': ya[e][0], 'revenue': yr[fr][0]}
+            if ya[e][2]:
+                ytd.update(lower_bound=True, quarters_missing=ya[e][2])
+                ytd_note = (f'acquisitions in the current fiscal year to {e} are a lower bound: {ya[e][2]} quarter(s) after '
+                            f'{lab(last)} have no acquisition row in the FactBook (check the 10-Q cash-flow statement)')
             yrefs = [_ref(fb, x, abs(x['value']) if x['metric'] == 'acquisitions' else None) for x in ya[e][1] + yr[fr][1]]
             window = f'{window} + year to date {e}' if window else None
             sa, sr = sa + ytd['acquisitions'], sr + ytd['revenue']
+        elif ya:
+            ytd_note = (f"acquisition rows after {lab(last)} ({', '.join(sorted(ya))}) have no revenue year to date to the same "
+                        'date: not counted in the window')
         elif yr:
             ytd_note = (f'revenue is reported to {max(yr)} but no acquisition cash flow after {lab(last)} is in the FactBook: '
                         'acquisitions in the current fiscal year are not counted (check the latest 10-Q cash-flow statement)')
@@ -729,7 +771,7 @@ def _metrics(fb, qa, years, labels, cells, ttm, tc, rs):
     if ytd and ytd['revenue'] > 0 and ytd['acquisitions'] / ytd['revenue'] > ACQ_PCT_REVENUE:
         acq.append({'period_end': ytd['period_end'], 'fiscal_period': f"YTD@{ytd['period_end']}", 'current_year_to_date': True,
                     'acquisitions_pct_revenue': ytd['acquisitions'] / ytd['revenue'], 'goodwill_increase_pct_prior_revenue': None,
-                    'growth_step_in_table': False, 'acquisitions': ytd['acquisitions'],
+                    'growth_step_in_table': False, 'acquisitions': ytd['acquisitions'], 'lower_bound': bool(ytd.get('lower_bound')),
                     'note': 'acquisitions in the current fiscal year to date: TTM and current-year growth include bought revenue'})
 
     # ---- margins
@@ -908,8 +950,9 @@ def _metrics(fb, qa, years, labels, cells, ttm, tc, rs):
 
     # ---- share count, buybacks, SBC
     f = ('(product of split-adjusted year-end ratios) ^ (1/3) - 1 from point-in-time year-end counts; a step containing a '
-         "split dataqa identified (qa['splits'], price test decisive) is divided by its factor; without dataqa only a "
-         'split supported by FactBook price/per-share evidence is divided out')
+         "split dataqa established (qa['splits']: a dated split, an as-traded price bar or weighted shares restated by the full "
+         'ratio) is divided by its factor, any residual issuance kept; an unresolved split-like step counts as issuance '
+         '(unverified); without dataqa the same rule runs on the FactBook')
     if b3 is None:
         M['share_count_cagr_3y'] = need_back('share_count_cagr_3y', 3, b3, 'ratio', f)
     else:
@@ -989,45 +1032,57 @@ def _overlap(s, a, z):
 
 def _split_steps(fb, qa, pts):
     """[(year_end, count)] -> (steps, basis, splits outside the steps). Each step: from, to, ratio, adjusted_ratio and,
-    when split-like, factor (signed), applied, basis, reason.
+    when split-like, factor (signed), applied, basis, reason (unverified=True when split or issuance is not established).
 
     With a dataqa result (qa carries 'splits') exactly its splits are removed: each is assigned to the year step its
-    dates overlap most and divided out when the year-end counts moved by it (counts already split-adjusted are left).
-    Without one (conservative): a step near a split factor is divided out only when the FactBook's price or per-share
-    data support a split (dataqa._split_evidence, price decisive); unexplained, it counts as issuance and is flagged."""
+    dates overlap most and divided out when the year-end counts moved by it (counts already split-adjusted are left);
+    its residual issuance stays in. qa['unresolved_splits'] mark their steps as counted-as-issuance, unverified.
+    Without one, dataqa's split rule (_split_decision: positive evidence only) runs on the FactBook."""
     pairs = list(zip(pts, pts[1:]))
     steps = [{'from': a, 'to': z, 'ratio': cz / ca, 'adjusted_ratio': cz / ca} for (a, ca), (z, cz) in pairs]
     if isinstance(qa, dict) and 'splits' in qa:
         outside = []
-        for sp in qa.get('splits') or []:
+        for sp, kind in [(x, 'split') for x in qa.get('splits') or []] + [(x, 'unresolved') for x in qa.get('unresolved_splits') or []]:
             ov = [(_overlap(sp, st['from'], st['to']), i) for i, st in enumerate(steps)]
             best = max(ov, default=(0, None))
             if best[0] <= 0:
-                outside.append({k: sp.get(k) for k in ('from', 'to', 'factor')})
+                if kind == 'split':
+                    outside.append({k: sp.get(k) for k in ('from', 'to', 'factor')})
                 continue
             st = steps[best[1]]
+            how = sp.get('decided_by') or (sp.get('evidence') or {}).get('decided_by', 'n/a')
+            if kind == 'unresolved':
+                if not st.get('applied'):
+                    st.update(factor=_signed_factor(sp['factor']), applied=False, basis='dataqa', unverified=True,
+                              reason=f"dataqa could not establish a split {sp['from']}..{sp['to']} ({how}): counted as issuance, "
+                                     'dilution unverified (overstated if it was a split)')
+                continue
             k, r = sp['factor'] * (st.get('_k') or 1.0), st['ratio']
             applied = abs(log(r / k)) < abs(log(r))
-            how = sp.get('decided_by') or (sp.get('evidence') or {}).get('decided_by', 'n/a')
             st.update(_k=k, factor=_signed_factor(k), applied=applied, basis='dataqa', adjusted_ratio=r / k if applied else r,
-                      reason=f"dataqa split {sp['from']}..{sp['to']}, decided by {how}"
+                      unverified=False, reason=f"dataqa split {sp['from']}..{sp['to']}, decided by {how}"
                       + ('' if applied else ': year-end counts did not move by the factor (already split-adjusted), not divided'))
         for st in steps:
             st.pop('_k', None)
         return steps, 'dataqa', outside
     q = None
     for st in steps:
-        k = DQ._split_factor(st['ratio'])
-        if not k:
-            continue
+        k, in_band = DQ._split_candidate(st['ratio'])
         q = q or DQ._QA(fb, None)
-        ev, support, tested = DQ._split_evidence(q, {'as_of': st['from']}, {'as_of': st['to']}, k)
-        applied = tested and support
-        st.update(factor=_signed_factor(k), applied=applied, basis='factbook_evidence', evidence=ev,
-                  adjusted_ratio=st['ratio'] / k if applied else st['ratio'],
-                  reason=f"split supported by {ev['decided_by']} evidence" if applied else
-                  ('price/per-share data contradict a split: counted as issuance' if tested else
-                   'no price or per-share evidence: counted as issuance until verified (dilution overstated if it was a split)'))
+        a, z = {'as_of': st['from'], 'value': 1.0}, {'as_of': st['to'], 'value': st['ratio']}
+        dec = DQ._split_decision(q, a, z, k) if k or DQ._split_events(q, a, z) else None
+        if not dec or (not in_band and dec['decision'] != 'split'):
+            continue
+        applied, by = dec['decision'] == 'split', dec['decided_by']
+        tested = {t: x for t, x in dec['evidence']['tests'].items() if x != 'untested'}
+        st.update(factor=_signed_factor(dec['factor']), applied=applied, basis='factbook_evidence', evidence=dec['evidence'],
+                  decided_by=by, unverified=dec['decision'] == 'unresolved',
+                  adjusted_ratio=st['ratio'] / dec['factor'] if applied else st['ratio'],
+                  reason=f'split supported by {by} evidence' if applied else
+                  f'{by} evidence contradicts a split: counted as issuance' if dec['decision'] == 'issuance' else
+                  ('no dated split, no price or per-share evidence: counted as issuance until verified (dilution overstated if '
+                   'it was a split)' if not tested else 'the evidence does not decide (' + ', '.join(f'{t} {x}' for t, x in tested.items())
+                   + '): counted as issuance until verified'))
     return steps, 'factbook_evidence (no dataqa result)', []
 
 
@@ -1057,9 +1112,13 @@ def _flags(years, labels, cells, M, acq, forensics):
     basis = 'point-in-time shares outstanding'
     if d is None and M.get('diluted_wavg_share_cagr_3y', {}).get('value') is not None:
         d, basis = M['diluted_wavg_share_cagr_3y']['value'], 'diluted weighted-average shares (point-in-time count unavailable)'
+    unv = [p for p in sc.get('unverified_split_like') or [] if p.get('unverified')]
     if d is not None and d > .02:
         add('dilution', 'high' if d > .05 else 'medium', f'share count growing {d:.1%} a year ({basis}): per-share value grows '
-            'slower than the business', share_cagr_3y=d, basis=basis)
+            'slower than the business' + (f'; unverified: {len(unv)} split-like step(s) counted as issuance until a split is ruled '
+                                          'out (overstated if it was a split)' if unv else ''),
+            share_cagr_3y=d, basis=basis, unverified=bool(unv), **({'unverified_steps': [{k: p.get(k) for k in ('from', 'to', 'factor')}
+                                                                                      for p in unv]} if unv else {}))
     for p in sc.get('excluded_split_pairs') or []:
         add('possible_split', 'medium', f"shares outstanding changed by a factor of {p['ratio']:.2f} from {p['from']} to {p['to']}: "
             'a ' + ('reverse ' if p['factor'] < 0 else '') + f"{abs(p['factor']):g}-for-1 split ({p['reason']}); divided out of the "
@@ -1093,10 +1152,11 @@ def _flags(years, labels, cells, M, acq, forensics):
             years=[a['fiscal_period'] for a in hit], revenue_cagr_3y_reported=g3.get('reported'),
             revenue_cagr_3y_ex_acquisition_years=g3.get('ex_acquisition_years'))
     for a in (x for x in acq if x.get('current_year_to_date')):
-        add('acquisition_current_year', 'medium', f"acquisitions of {a['acquisitions']:,.0f} ({a['acquisitions_pct_revenue']:.1%} of "
-            f"revenue) in the current fiscal year to {a['period_end']}: TTM and current-year growth include bought revenue; "
-            'separate organic growth before extrapolating', period_end=a['period_end'], acquisitions=a['acquisitions'],
-            acquisitions_pct_revenue=a['acquisitions_pct_revenue'])
+        add('acquisition_current_year', 'medium', f"acquisitions of {'at least ' if a.get('lower_bound') else ''}"
+            f"{a['acquisitions']:,.0f} ({a['acquisitions_pct_revenue']:.1%} of revenue) in the current fiscal year to {a['period_end']}: "
+            'TTM and current-year growth include bought revenue; separate organic growth before extrapolating',
+            period_end=a['period_end'], acquisitions=a['acquisitions'], acquisitions_pct_revenue=a['acquisitions_pct_revenue'],
+            lower_bound=bool(a.get('lower_bound')))
     a = val('accruals_ratio')
     if a is not None and a > .10:
         add('accruals_high', 'medium', f'net income exceeds operating cash flow by {a:.1%} of assets: earnings quality needs checking', accruals_ratio=a)

@@ -13,12 +13,17 @@ from datetime import date, timedelta
 from hashlib import sha256
 import json
 
-LAG_DAYS = 2                       # a filing is usable two days after it is filed (snapshot.PIT_LAG_DAYS)
-# filing deadlines used when the filing date is unknown (flagged): 10-K 90 days (non-accelerated filer), 10-Q 45,
-# 20-F 120 for a foreign filer (company['filer'] == 'foreign' or company['annual_form'] == '20-F')
+LAG_DAYS = 2                       # a filing, or a dated bundle document, is usable two days after it is published (snapshot.PIT_LAG_DAYS)
+# filing deadlines used when the filing date is unknown (flagged): 10-K 90 days (non-accelerated filer), 10-Q 45. A quarter
+# or balance sheet ending at a fiscal-year end is first filed with the annual report: annual lag. Foreign filers
+# (company['filer'] == 'foreign' or company['annual_form'] == '20-F'): 20-F 120 days; their interims have no 10-Q deadline
+# (the exchanges require the half-year report on a 6-K within six months): 180 days.
 EST_LAG = {'annual': 90, 'quarter': 45}
 FOREIGN_ANNUAL_LAG = 120
+FOREIGN_INTERIM_LAG = 180
 FOREIGN_FILERS = {'foreign', 'foreign_private_issuer', 'fpi', '20-f', '40-f'}
+# cash payments and proceeds: sources tag them positive or with the cash-flow sign; every sum uses their magnitudes
+PAYMENT_METRICS = {'capex', 'buybacks', 'dividends_paid', 'acquisitions', 'debt_issued', 'debt_repaid'}
 
 # Canonical metric -> raw XBRL concept names (lower case; SEC camel case is lower-cased before lookup).
 # Order = priority. Only exact concepts are used; no component tags stand in for totals.
@@ -95,11 +100,13 @@ INSTANT_TAGS = {
 UNITS = {'eps_diluted': 'USD/share', 'shares_basic_wavg': 'shares', 'shares_diluted_wavg': 'shares',
          'shares_outstanding': 'shares', 'treasury_shares': 'shares', 'warrants_outstanding': 'shares'}
 # issuer_document: the issuer's own release or filing read outside XBRL (dataset keeps the bundle kind, retrieval how it
-# was read); secondary: press, analysis and anything else - never graded above single_source. 'document' is the legacy
-# name of issuer_document and is graded the same way.
-KINDS = {'filing_derived', 'vendor_normalized', 'market_feed', 'consensus', 'issuer_document', 'secondary', 'document',
-         'synthetic'}
-REPORTED_KINDS = {'filing_derived', 'issuer_document', 'document'}
+# was read); primary_document: a primary non-issuer document (regulator filing, official statistics), graded like an
+# issuer document; secondary: press, analysis and anything else - never graded above single_source. 'document' is the
+# legacy name of issuer_document and is graded the same way.
+KINDS = {'filing_derived', 'vendor_normalized', 'market_feed', 'consensus', 'issuer_document', 'primary_document', 'secondary',
+         'document', 'synthetic'}
+REPORTED_KINDS = {'filing_derived', 'issuer_document', 'primary_document', 'document'}
+RELEASE_DATASETS = {'issuer_release', 'earnings_release'}   # issuer documents that a later filing may revise
 BASIS_RANK = {'as_reported': 0, 'derived': 1, 'normalized': 2}
 SAME_PERIOD_DAYS = 7
 
@@ -156,12 +163,27 @@ def add_fact(fb, metric, period, period_end, value, source_id, basis, available_
 
 def _lag(fb, kind):
     c = (fb or {}).get('company') or {}
-    foreign = str(c.get('filer') or c.get('annual_form') or '').lower() in FOREIGN_FILERS
-    return FOREIGN_ANNUAL_LAG if kind == 'annual' and foreign else EST_LAG[kind]
+    if str(c.get('filer') or c.get('annual_form') or '').lower() in FOREIGN_FILERS:
+        return FOREIGN_ANNUAL_LAG if kind == 'annual' else FOREIGN_INTERIM_LAG
+    return EST_LAG[kind]
 
 
 def _est_available(period_end, kind, fb=None):
     return (_d(period_end) + timedelta(days=_lag(fb, kind))).isoformat()
+
+
+def _plus(d, days):
+    return (_d(d) + timedelta(days=days)).isoformat()
+
+
+def _lag_kind(end, fy_ends):
+    """'annual' for a quarter or balance sheet ending at a fiscal-year end (first public with the annual report: there is
+    no 10-Q for a fourth quarter), else 'quarter'."""
+    return 'annual' if any(abs((_d(end) - _d(e)).days) <= SAME_PERIOD_DAYS for e in fy_ends) else 'quarter'
+
+
+def _annual_ends(fb):
+    return {f['period_end'] for f in fb['facts'] if _is_annual(f)}
 
 
 def fiscal_year(end):
@@ -178,13 +200,16 @@ def _fy_label(fy, kind, fp=None, end=None):
 
 
 def _map_rows(fb, rows, tags, source_id, kind, filed_by_end=None, statement=None):
-    """FMP as-reported rows: [{'fiscalYear','period','date','data':{concept: value}}]."""
+    """FMP as-reported rows: [{'fiscalYear','period','date','data':{concept: value}}]. Without a filing date a Q4 or
+    fiscal-year-end quarter row is estimated at the annual deadline (it is first filed in the 10-K)."""
     added = 0
+    fy_ends = _annual_ends(fb) | {r['date'][:10] for r in rows if r.get('period') in ('FY', 'Q4')}
     for r in rows:
         end = r['date'][:10]
         data = {k.lower(): v for k, v in (r.get('data') or {}).items()}
         filed = (filed_by_end or {}).get(end)
-        avail = (_d(filed) + timedelta(days=LAG_DAYS)).isoformat() if filed else _est_available(end, kind, fb)
+        lag = 'annual' if kind == 'annual' else _lag_kind(end, fy_ends)
+        avail = (_d(filed) + timedelta(days=LAG_DAYS)).isoformat() if filed else _est_available(end, lag, fb)
         label = _fy_label(r.get('fiscalYear'), kind, r.get('period'), end)
         if kind == 'quarter' and r.get('period') == 'FY':
             continue
@@ -315,8 +340,11 @@ def from_alpha_vantage(fb, payloads, retrieved_at, prefix='av'):
     """payloads: {'income':..., 'balance':..., 'cashflow':...} AV statement JSON (annualReports/quarterlyReports).
 
     AV returns current (possibly restated) values without filing dates: availability is estimated
-    and flagged, so historical as_of use is limited (connectors.py note)."""
+    and flagged, so historical as_of use is limited (connectors.py note). A quarter or balance sheet ending at a
+    fiscal-year end (an annualReports date) is estimated at the annual deadline, like the annual row itself."""
     n = 0
+    fy_ends = _annual_ends(fb) | {r['fiscalDateEnding'] for p in payloads.values() if isinstance(p, dict)
+                                  for r in p.get('annualReports', []) if r.get('fiscalDateEnding')}
     for part in ('income', 'balance', 'cashflow'):
         p = payloads.get(part)
         if not p:
@@ -325,6 +353,7 @@ def from_alpha_vantage(fb, payloads, retrieved_at, prefix='av'):
         for kind, key in (('annual', 'annualReports'), ('quarter', 'quarterlyReports')):
             for r in p.get(key, []):
                 end = r['fiscalDateEnding']
+                lag = 'annual' if kind == 'annual' else _lag_kind(end, fy_ends)
                 for field, metric in AV_MAP.items():
                     raw = r.get(field)
                     if raw in (None, 'None', ''):
@@ -333,10 +362,10 @@ def from_alpha_vantage(fb, payloads, retrieved_at, prefix='av'):
                         v = float(raw)
                     except ValueError:
                         continue
-                    if metric == 'capex':
+                    if metric in PAYMENT_METRICS:
                         v = abs(v)
                     period = 'I@' + end if metric in AV_INSTANT else (f'AVFY@{end}' if kind == 'annual' else f'Q@{end}')
-                    add_fact(fb, metric, period, end, v, sid, 'normalized', _est_available(end, kind, fb), estimated=True,
+                    add_fact(fb, metric, period, end, v, sid, 'normalized', _est_available(end, lag, fb), estimated=True,
                              unit=UNITS.get(metric), concept='av:' + field)
                     n += 1
     return n
@@ -351,9 +380,17 @@ def set_price(fb, value, as_of, source_id, kind='last', currency=None):
                              'source_id': source_id, 'kind': kind}
 
 
-def from_fmp_estimates(fb, rows, retrieved_at, as_of=None, sid='fmp:financial_estimates'):
-    """FMP analyst financial-estimates (annual): consensus is a vendor estimate, never a reported fact."""
+def from_fmp_estimates(fb, rows, retrieved_at, as_of=None, sid='fmp:financial_estimates', dated_snapshot=False):
+    """FMP analyst financial-estimates (annual): consensus is a vendor estimate, never a reported fact.
+
+    The endpoint returns today's consensus, so it is dated no earlier than its retrieval: an earlier as_of is honoured
+    only for a dated vendor snapshot (dated_snapshot=True); otherwise it is raised to the retrieval date and the asked
+    date kept in 'as_of_requested' (a consensus fetched today is never treated as known in the past)."""
     add_source(fb, sid, 'fmp', 'financial-estimates-annual', 'consensus', retrieved_at, sha=digest(rows))
+    got = str(retrieved_at)[:10]
+    when, asked = str(as_of or got)[:10], None
+    if as_of and not dated_snapshot and _d(as_of) < _d(got):
+        when, asked = got, str(as_of)[:10]
     for r in rows:
         for metric, k, lo, hi, nk in (('revenue', 'revenueAvg', 'revenueLow', 'revenueHigh', 'numAnalystsRevenue'),
                                       ('eps', 'epsAvg', 'epsLow', 'epsHigh', 'numAnalystsEps'),
@@ -363,7 +400,7 @@ def from_fmp_estimates(fb, rows, retrieved_at, as_of=None, sid='fmp:financial_es
                 continue
             fb['estimates'].append({'metric': metric, 'period_end': r['date'][:10], 'fiscal_year': int(r['date'][:4]),
                                     'value': float(r[k]), 'low': r.get(lo), 'high': r.get(hi), 'n_analysts': r.get(nk),
-                                    'source_id': sid, 'as_of': as_of or retrieved_at[:10]})
+                                    'source_id': sid, 'as_of': when, **({'as_of_requested': asked} if asked else {})})
 
 
 def add_qualitative(fb, qid, topic, statement, kind, source_ids, as_of):
@@ -391,72 +428,192 @@ BUNDLE_METRICS = {  # evidence-bundle metric names -> FactBook metrics (duration
 BUNDLE_INSTANT = {'shares_outstanding_cover', 'rpo', 'arr', 'deferred_revenue_total', 'cash_and_investments_total', 'cash',
                   'short_term_investments', 'commercial_paper_info', 'long_term_debt_tagged', 'deferred_revenue_current',
                   'deferred_revenue_noncurrent'}
-SOURCE_KIND = {'issuer_release': 'issuer_document', 'filing': 'issuer_document'}   # anything else: 'secondary'
+# bundle source kind -> FactBook kind; anything else: 'secondary'
+SOURCE_KIND = {'issuer_release': 'issuer_document', 'earnings_release': 'issuer_document', 'filing': 'issuer_document',
+               'regulator': 'primary_document', 'official_statistics': 'primary_document'}
+_YTD_MARKS = ('YTD', 'H1', '1H', 'HY', '6M', '9M')
+_HALF2_MARKS = ('H2', '2H')
+
+
+def _bundle_period(q, metric):
+    """(period type of a bundle row, reason when it cannot be used): 'instant', 'annual', 'quarter', 'ytd' or None.
+
+    The duration decides when period_start is given (350-380 days annual, 80-100 a quarter, 170-290 a year to date),
+    else an explicit period_type, else the label: YTD/H1/6M/9M marks a year to date, FY<digits> alone a fiscal year,
+    anything else a standalone quarter. A second half (H2) is neither a quarter, a year nor a year to date: skipped."""
+    if metric in BUNDLE_INSTANT:
+        return 'instant', None
+    label = ''.join(str(q.get('period') or '').upper().split())
+    ptype = str(q.get('period_type') or '').lower()
+    if q.get('period_start'):
+        n = (_d(q['period_end']) - _d(q['period_start'])).days
+        kind = 'annual' if 350 <= n <= 380 else 'quarter' if 80 <= n <= 100 else 'ytd' if 170 <= n <= 290 else None
+        if kind == 'ytd' and (any(m in label for m in _HALF2_MARKS) or ptype in ('h2', 'second_half')):
+            kind = None
+        return kind, None if kind else f'period_start..period_end spans {n} days: not a fiscal year, quarter or year to date'
+    if q['metric'].endswith('_ytd') or ptype in ('ytd', 'year_to_date', 'h1', 'first_half', 'six_months', 'nine_months'):
+        return 'ytd', None
+    if ptype in ('annual', 'fy', 'fiscal_year'):
+        return 'annual', None
+    if ptype == 'quarter':
+        return 'quarter', None
+    if any(m in label for m in _HALF2_MARKS) or ptype in ('h2', 'second_half'):
+        return None, f"period {q.get('period')!r} is a second half: neither a quarter, a fiscal year nor a year to date"
+    if any(m in label for m in _YTD_MARKS):
+        return 'ytd', None
+    if label.startswith('FY') and label[2:].isdigit():
+        return 'annual', None
+    return 'quarter', None
 
 
 def add_qualitative_bundle(fb, bundle, provider='web'):
     """Load a researched evidence bundle: {sources, quarterly_facts, guidance, items, conflicts, open_questions}.
 
-    Issuer releases and filings become 'issuer_document' sources, press, analysis and any other kind 'secondary';
-    the bundle kind stays in source['dataset'] and how it was read in source['retrieval'] (default search_excerpt).
-    A fact or item is usable no earlier than the latest dated source it cites (and its own date); with no dated
-    source, period end (an item's as_of) + filing deadline - annual for fiscal-year rows - flagged as estimated
-    and capped at the bundle's retrieval date, by which every cited source was public. A fact is attributed to
-    its first cited issuer source, else its first source."""
+    Kinds: issuer releases, earnings releases and filings become 'issuer_document', regulator and official-statistics
+    documents 'primary_document', press, analysis and anything else 'secondary'; the bundle kind stays in
+    source['dataset'] and how it was read in source['retrieval'] (default search_excerpt). Every dated document is
+    usable LAG_DAYS after publication, like a filing. Only sources usable at fb['as_of'] are registered (citable); an
+    undated source is registered and flagged 'undated'.
+
+    Availability of a fact: its cited issuer documents decide when any is cited (secondary citations neither advance nor
+    delay it), else its secondary sources. A document dated before the period end cannot state the value and is
+    ignored; the earliest remaining dated document makes it public and the fact is attributed to it. With none, an
+    undated document counts at the filing deadline (period end + lag; annual for fiscal-year ends) and no earlier than
+    the deadline of the latest period it alone states in the bundle (a later 10-Q quoted for an earlier quarter dates
+    the value to that 10-Q), capped at the bundle's retrieval date (every cited source was public then); the date is
+    flagged estimated. The row's reported_in (the date of the document that states the value) decides when given; a
+    reported_not_before lower bound raises the date and flags it estimated. An item (a statement that may combine its
+    sources) is available when the latest of its cited documents is, an undated one at its deadline estimate (flagged).
+    Rows whose period length cannot be told (a second half) are skipped and listed in research_notes['skipped_rows'].
+    Guidance needs an issue date usable by as_of and keeps only sources usable by then; a later reaffirmed_at is
+    dropped. Conflicts and open questions written after as_of are kept only when every source they cite is dated and
+    usable by as_of; research_notes['withheld_at_as_of'] counts what was left out."""
     pub, kinds = {}, {}
-    retrieved = bundle.get('retrieved_at') or bundle.get('as_of')
+    as_of = fb['as_of']
+    raw_retrieved = bundle.get('retrieved_at') or bundle.get('as_of')
+    retrieved = str(raw_retrieved)[:10] if raw_retrieved else None
     for src in bundle.get('sources', []):
-        sid, bk = 'web:' + src['id'], src.get('kind') or 'unspecified'
-        kind = SOURCE_KIND.get(bk, 'secondary')
+        bk = src.get('kind') or 'unspecified'
+        p = str(src['published_at'])[:10] if src.get('published_at') else None
+        pub[src['id']], kinds[src['id']] = p, SOURCE_KIND.get(bk, 'secondary')
+        if p and _d(_plus(p, LAG_DAYS)) > _d(as_of):
+            continue                                    # not yet usable at as_of: not a citable source
+        sid, kind = 'web:' + src['id'], kinds[src['id']]
         retrieval = src.get('retrieval') or 'search_excerpt'
-        add_source(fb, sid, 'issuer' if kind == 'issuer_document' else provider, bk, kind, retrieved or fb['as_of'],
-                   url=src.get('url'), note=f"{src.get('title', '')} | {src.get('publisher', '')} | retrieval={retrieval}")
-        fb['sources'][sid]['published_at'] = src.get('published_at')
-        fb['sources'][sid]['retrieval'] = retrieval
-        pub[src['id']], kinds[src['id']] = src.get('published_at'), kind
+        add_source(fb, sid, 'issuer' if kind == 'issuer_document' else bk if kind == 'primary_document' else provider, bk, kind,
+                   raw_retrieved or as_of, url=src.get('url'),
+                   note=f"{src.get('title', '')} | {src.get('publisher', '')} | retrieval={retrieval}")
+        fb['sources'][sid].update(published_at=p, retrieval=retrieval)
+        if not p:
+            fb['sources'][sid]['undated'] = True
+    registered = {s for s in pub if 'web:' + s in fb['sources']}
 
-    def avail(ids, ref, kind):
-        dates = [pub[s] for s in ids if pub.get(s)]
-        if dates:
-            return max([max(dates), str(ref)[:10]]), False
-        est = _est_available(ref, kind, fb)
+    def estimate(ref, lag):
+        est = _est_available(ref, lag, fb)
         if retrieved and _d(retrieved) < _d(est):
-            est = max(str(retrieved)[:10], str(ref)[:10])
-        return est, True
+            est = max(retrieved, ref)                   # every cited source was public when the bundle was retrieved
+        return est
 
-    fy_ends = {f['period_end'] for f in fb['facts'] if _is_annual(f)}
-    for q in bundle.get('quarterly_facts', []):
+    def fact_avail(ids, pe, end, lag, q):
+        pool = [s for s in ids if kinds[s] != 'secondary'] or ids
+        dated = sorted((pub[s], s) for s in pool if pub[s] and pub[s] >= end)
+        if dated:
+            av, est, src = _plus(dated[0][0], LAG_DAYS), False, dated[0][1]
+        else:
+            und = [s for s in pool if not pub[s]]
+            av, est, src = max([estimate(pe, lag), end] + [floor[s] for s in und if s in floor]), True, (und or pool)[0]
+        if q.get('reported_in'):
+            av, est = max(_plus(str(q['reported_in'])[:10], LAG_DAYS), end), False
+        elif q.get('reported_not_before'):
+            nb = _plus(str(q['reported_not_before'])[:10], LAG_DAYS)
+            if nb > av:
+                av, est = nb, True
+        if src not in registered:                       # attribute to a cited document citable at as_of
+            src = next((s for s in pool if s in registered), next((s for s in ids if s in registered), None))
+        return av, est, src
+
+    def item_avail(ids, ref, lag):
+        av = max([_plus(pub[s], LAG_DAYS) for s in ids if pub[s]] + [ref])
+        und = [s for s in ids if not pub[s]]
+        if und:
+            return max([av, estimate(ref, lag)] + [floor[s] for s in und if s in floor]), True
+        return av, False
+
+    rows = bundle.get('quarterly_facts', [])
+    period_of = {id(q): _bundle_period(q, BUNDLE_METRICS.get(q['metric'][:-4] if q['metric'].endswith('_ytd') else q['metric']))
+                 for q in rows}
+    fy_ends = _annual_ends(fb) | {str(q['period_end'])[:10] for q in rows if period_of[id(q)][0] == 'annual'}
+    floor = {}      # undated source -> earliest it can have been public: the filing deadline of the latest period it alone states
+    for q in rows:
+        ids = [s for s in q.get('source_ids') or [] if s in kinds]
+        kind = period_of[id(q)][0]
+        if len(ids) != 1 or pub[ids[0]] or kind is None:
+            continue
+        pe = str(q['period_end'])[:10]
+        d = max(estimate(pe, 'annual' if kind == 'annual' else _lag_kind(pe, fy_ends)), str(q.get('measured_at') or pe)[:10])
+        if not q.get('reported_in') and q.get('reported_not_before'):
+            d = max(d, _plus(str(q['reported_not_before'])[:10], LAG_DAYS))
+        floor[ids[0]] = max(floor.get(ids[0], d), d)
+    skipped = []
+    for q in rows:
         ytd = q['metric'].endswith('_ytd')
         metric = BUNDLE_METRICS.get(q['metric'][:-4] if ytd else q['metric'])
         ids = [s for s in q.get('source_ids') or [] if s in kinds]
         if metric is None or not ids or q.get('value') is None:
             continue
-        end = q.get('measured_at') if metric == 'shares_outstanding_cover' and q.get('measured_at') else q['period_end']
-        label = str(q.get('period') or '').upper()
-        ytd = ytd or 'YTD' in label
-        fy_row = not ytd and label.startswith('FY') and 'Q' not in label[2:]
-        if fy_row:
-            fy_ends.add(q['period_end'])
-        av, est = avail(ids, end, 'annual' if fy_row else 'quarter')
-        period = ('YTD@' + end if ytd else 'I@' + end if metric in BUNDLE_INSTANT else label if fy_row else 'Q@' + end)
-        src = next((s for s in ids if kinds[s] == 'issuer_document'), ids[0])
+        kind, why = period_of[id(q)]
+        if kind is None:
+            skipped.append({'metric': q['metric'], 'period': q.get('period'), 'period_end': q['period_end'], 'reason': why})
+            continue
+        pe = str(q['period_end'])[:10]
+        end = str(q['measured_at'])[:10] if metric == 'shares_outstanding_cover' and q.get('measured_at') else pe
+        av, est, src = fact_avail(ids, pe, end, 'annual' if kind == 'annual' else _lag_kind(pe, fy_ends), q)
+        if src is None:
+            continue                                    # every cited document is dated after as_of
+        label = ''.join(str(q.get('period') or '').upper().split())
+        period = {'ytd': 'YTD@' + end, 'instant': 'I@' + end, 'quarter': 'Q@' + end}.get(kind) or (
+            label if label.startswith('FY') and label[2:].isdigit() else f'FY{fiscal_year(end)}')
         add_fact(fb, metric, period, end, q['value'], 'web:' + src, 'as_reported' if not est else 'normalized', av,
-                 estimated=est, unit='shares' if metric == 'shares_outstanding_cover' else None, concept='bundle:' + q['metric'])
+                 estimated=est, unit='shares' if metric == 'shares_outstanding_cover' else None, concept='bundle:' + q['metric'],
+                 period_start=q.get('period_start'))
+    withheld = {'guidance': 0, 'conflicts': 0, 'open_questions': 0}
     for g in bundle.get('guidance', []):
-        if _d(g.get('issued_at') or fb['as_of']) <= _d(fb['as_of']):
-            fb.setdefault('guidance', []).append({**g, 'source_ids': ['web:' + s for s in g.get('source_ids', [])]})
+        sids = ['web:' + s for s in g.get('source_ids', []) if s in registered]
+        issued = str(g.get('issued_at') or '')[:10]
+        if not issued or _d(_plus(issued, LAG_DAYS)) > _d(as_of) or (g.get('source_ids') and not sids):
+            withheld['guidance'] += 1                   # undated, issued after as_of, or no source usable by then
+            continue
+        row = {**g, 'source_ids': sids}
+        if row.get('reaffirmed_at') and _d(_plus(str(row['reaffirmed_at'])[:10], LAG_DAYS)) > _d(as_of):
+            row.pop('reaffirmed_at')                    # a reaffirmation after as_of is not known at as_of
+        fb.setdefault('guidance', []).append(row)
     for it in bundle.get('items', []):
         ids = [s for s in it.get('source_ids', []) if s in kinds]
-        ref = str(it.get('as_of') or retrieved or fb['as_of'])[:10]
+        ref = str(it.get('as_of') or retrieved or as_of)[:10]
         if not ids:
             continue
-        lag = 'annual' if any(abs((_d(ref) - _d(e)).days) <= SAME_PERIOD_DAYS for e in fy_ends) else 'quarter'
-        av, est = avail(ids, ref, lag)
-        if _d(av) > _d(fb['as_of']):
+        av, est = item_avail(ids, ref, _lag_kind(ref, fy_ends))
+        if _d(av) > _d(as_of) or not all(s in registered for s in ids):
             continue
         add_qualitative(fb, it['id'], it['topic'], it['statement'], it['kind'], ['web:' + s for s in ids], ref)
         fb['qualitative'][-1].update(available_at=av, available_at_estimated=est)
-    fb.setdefault('research_notes', {}).update({'conflicts': bundle.get('conflicts', []), 'open_questions': bundle.get('open_questions', [])})
+
+    def knowable(x):        # a note written at retrieval is knowable at as_of only through sources dated and usable by then
+        ids = x.get('source_ids') if isinstance(x, dict) else None
+        return bool(ids) and all(s in registered and pub.get(s) for s in ids)
+    notes = {}
+    for key in ('conflicts', 'open_questions'):
+        xs = list(bundle.get(key, []))
+        if retrieved and _d(retrieved) > _d(as_of):
+            keep = [x for x in xs if knowable(x)]
+            withheld[key] = len(xs) - len(keep)
+            xs = keep
+        notes[key] = xs
+    fb.setdefault('research_notes', {}).update(notes)
+    if skipped:
+        fb['research_notes']['skipped_rows'] = skipped
+    if any(withheld.values()):
+        fb['research_notes']['withheld_at_as_of'] = withheld
     return fb
 
 
@@ -467,13 +624,21 @@ def usable(fb, fact):
     return _d(fact['available_at']) <= _d(fb['as_of']) and _d(fact['period_end']) <= _d(fb['as_of'])
 
 
+def item_usable(fb, item, missing=False):
+    """A qualitative item is usable once it is available (available_at, else its as_of: usable()'s rule for facts); an
+    undated item counts only where the caller says that is the conservative reading (missing=True)."""
+    when = item.get('available_at') or item.get('as_of')
+    return _d(when) <= _d(fb['as_of']) if when else missing
+
+
 def candidates(fb, metric, period=None, period_end=None):
-    """Usable facts best first: secondary sources last, then basis, filing-derived before other kinds, earliest available."""
+    """Usable facts best first: secondary sources last, then basis, filing-derived before other kinds, an issuer's
+    filing before its earlier release (the filing is the revised figure), earliest available."""
     out = [f for f in fb['facts'] if f['metric'] == metric and usable(fb, f)
            and (period is None or f['period'] == period) and (period_end is None or f['period_end'] == period_end)]
-    kind = lambda f: fb['sources'][f['source_id']]['kind']
-    return sorted(out, key=lambda f: (kind(f) == 'secondary', BASIS_RANK[f['basis']], kind(f) != 'filing_derived',
-                                      f['available_at']))
+    src = lambda f: fb['sources'][f['source_id']]
+    return sorted(out, key=lambda f: (src(f)['kind'] == 'secondary', BASIS_RANK[f['basis']], src(f)['kind'] != 'filing_derived',
+                                      src(f).get('dataset') in RELEASE_DATASETS, f['available_at']))
 
 
 def get(fb, metric, period=None, period_end=None):
@@ -516,58 +681,79 @@ def latest_instant(fb, metric, max_age_days=None):
     return f
 
 
+def _fv(metric, f):
+    """A fact's value for summing: payments and proceeds (PAYMENT_METRICS) by magnitude, whatever sign the source used."""
+    return abs(f['value']) if metric in PAYMENT_METRICS else f['value']
+
+
 def ttm(fb, metric):
-    """Trailing twelve months: four contiguous standalone quarters if available, else the latest fiscal year plus the
-    year to date less the same period a year earlier, else the latest fiscal year.
+    """Trailing twelve months, the most recent of: four contiguous standalone quarters; the latest fiscal year plus the
+    standalone quarters since it less the same quarters a year earlier; the latest fiscal year plus the year to date
+    less the year to date a year earlier (ties go to that order). Else the latest fiscal year.
 
     Returns {'value', 'period_end', 'method': quarters|annual_plus_ytd|latest_fiscal_year, 'facts': [...],
-    'signs': [+1/-1 per fact]} or None; value == sum(sign * fact value). A year-to-date figure ending more than
-    366 days after the latest fiscal year (that year's successor missing) is not used: 'ytd_rejected' says why."""
+    'signs': [+1/-1 per fact]} or None; value == sum(sign * fact value), payments (PAYMENT_METRICS) by magnitude.
+    'alternatives' lists the older candidates not chosen. A year-to-date figure ending more than 366 days after the
+    latest fiscal year (that year's successor missing) is not used: 'ytd_rejected' says why."""
     q = series(fb, metric, 'quarter')
     a = series(fb, metric, 'annual')
     same = timedelta(days=SAME_PERIOD_DAYS)
+    v = lambda f: _fv(metric, f)
+    cands = []                                  # (preference, result)
     if len(q) >= 4:
         last4 = q[-4:]
         span = (_d(last4[-1][0]) - _d(last4[0][0])).days
         if 250 <= span <= 300 and (not a or _d(last4[-1][0]) >= _d(a[-1][0]) - same):
-            return {'value': sum(x[1] for x in last4), 'period_end': last4[-1][0], 'method': 'quarters',
-                    'facts': [x[2] for x in last4], 'signs': [1] * 4}
-    if not a:
-        return None
-    a_end = _d(a[-1][0])
-    post = [x for x in q if _d(x[0]) > a_end + same]
-    steps = [(_d(b[0]) - _d(a0[0])).days for a0, b in zip([(a[-1][0],)] + post, post)]
-    if post and not all(60 <= d <= 120 for d in steps):
-        post = []                              # a missing quarter would silently drop its growth: not a TTM
-    if post:                                   # TTM = last FY + year-to-date - same quarters a year earlier
-        prior = []
-        for end, _, _ in post:
-            want = _d(end) - timedelta(days=364)
-            match = [x for x in q if abs((_d(x[0]) - want).days) <= 10]
-            prior.append(match[0] if match else None)
-        if all(prior):
-            v = a[-1][1] + sum(x[1] for x in post) - sum(x[1] for x in prior)
-            return {'value': v, 'period_end': post[-1][0], 'method': 'annual_plus_ytd',
-                    'facts': [a[-1][2]] + [x[2] for x in post] + [x[2] for x in prior],
-                    'signs': [1] * (1 + len(post)) + [-1] * len(prior)}
-    out = {'value': a[-1][1], 'period_end': a[-1][0], 'method': 'latest_fiscal_year', 'facts': [a[-1][2]], 'signs': [1],
-           'newer_quarters_unmatched': [x[0] for x in post]}
-    ytd = [f for f in candidates(fb, metric) if f['period'].startswith('YTD@')]
-    late = sorted(f['period_end'] for f in ytd if (_d(f['period_end']) - a_end).days > 366)
-    cur = sorted((f for f in ytd if a_end + same < _d(f['period_end']) <= a_end + timedelta(days=366)),
-                 key=lambda f: f['period_end'])
-    if cur:                                   # TTM = last FY + YTD now - YTD a year earlier (10-Q cash-flow statements)
-        now = cur[-1]
-        want = _d(now['period_end']) - timedelta(days=364)
-        prev = [f for f in ytd if abs((_d(f['period_end']) - want).days) <= 10]
-        if prev:
-            return {'value': a[-1][1] + now['value'] - prev[0]['value'], 'period_end': now['period_end'],
-                    'method': 'annual_plus_ytd', 'facts': [a[-1][2], now, prev[0]], 'signs': [1, 1, -1]}
-        out['ytd_rejected'] = f"no year-to-date figure about a year before {now['period_end']}"
-    if late:
-        out['ytd_rejected'] = (f'year-to-date ending {late[-1]} is more than 366 days after the latest fiscal year '
-                               f'({a[-1][0]}): the fiscal year in between is missing, so it is not a trailing twelve months')
-    return out
+            cands.append((0, {'value': sum(v(x[2]) for x in last4), 'period_end': last4[-1][0], 'method': 'quarters',
+                              'facts': [x[2] for x in last4], 'signs': [1] * 4}))
+    out = None
+    if a:
+        a_end, fy = _d(a[-1][0]), a[-1][2]
+        post = [x for x in q if _d(x[0]) > a_end + same]
+        steps = [(_d(b[0]) - _d(a0[0])).days for a0, b in zip([(a[-1][0],)] + post, post)]
+        if post and not all(60 <= d <= 120 for d in steps):
+            post = []                              # a missing quarter would silently drop its growth: not a TTM
+        matched = False
+        if post:                                   # TTM = last FY + quarters since - same quarters a year earlier
+            prior = []
+            for end, _, _ in post:
+                want = _d(end) - timedelta(days=364)
+                match = [x for x in q if abs((_d(x[0]) - want).days) <= 10]
+                prior.append(match[0] if match else None)
+            if all(prior):
+                matched = True
+                cands.append((1, {'value': v(fy) + sum(v(x[2]) for x in post) - sum(v(x[2]) for x in prior),
+                                  'period_end': post[-1][0], 'method': 'annual_plus_ytd',
+                                  'facts': [fy] + [x[2] for x in post] + [x[2] for x in prior],
+                                  'signs': [1] * (1 + len(post)) + [-1] * len(prior)}))
+        out = {'value': v(fy), 'period_end': a[-1][0], 'method': 'latest_fiscal_year', 'facts': [fy], 'signs': [1],
+               'newer_quarters_unmatched': [] if matched else [x[0] for x in post]}
+        ytd = [f for f in candidates(fb, metric) if f['period'].startswith('YTD@')]
+        late = sorted(f['period_end'] for f in ytd if (_d(f['period_end']) - a_end).days > 366)
+        cur = sorted((f for f in ytd if a_end + same < _d(f['period_end']) <= a_end + timedelta(days=366)),
+                     key=lambda f: f['period_end'])
+        if cur:                                   # TTM = last FY + YTD now - YTD a year earlier (10-Q cash-flow statements)
+            now = cur[-1]
+            want = _d(now['period_end']) - timedelta(days=364)
+            prev = [f for f in ytd if abs((_d(f['period_end']) - want).days) <= 10]
+            if prev:
+                cands.append((2, {'value': v(fy) + v(now) - v(prev[0]), 'period_end': now['period_end'],
+                                  'method': 'annual_plus_ytd', 'facts': [fy, now, prev[0]], 'signs': [1, 1, -1]}))
+            else:
+                out['ytd_rejected'] = f"no year-to-date figure about a year before {now['period_end']}"
+        if late:
+            out['ytd_rejected'] = (f'year-to-date ending {late[-1]} is more than 366 days after the latest fiscal year '
+                                   f'({a[-1][0]}): the fiscal year in between is missing, so it is not a trailing twelve months')
+    if not cands:
+        return out
+    latest = max(_d(r['period_end']) for _, r in cands)      # ends within a week are the same period (52/53-week dating)
+    pref, res = min((c for c in cands if (latest - _d(c[1]['period_end'])).days <= SAME_PERIOD_DAYS), key=lambda c: c[0])
+    names = ('four standalone quarters', 'fiscal year + standalone quarters since', 'fiscal year + year to date')
+    alt = [{'method': r['method'], 'basis': names[p], 'period_end': r['period_end'], 'value': r['value']}
+           for p, r in cands if r is not res]
+    if alt:
+        res['alternatives'] = alt
+    return res
 
 
 def annual_table(fb, metrics):

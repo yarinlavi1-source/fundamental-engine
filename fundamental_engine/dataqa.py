@@ -7,13 +7,17 @@ source and -52B in another because one side counted leases and long-term investm
 therefore matter as much as numbers. Every critical field is resolved here with an explicit
 definition, a dated source, the checks that confirm it and a status:
 
-  verified       two independent confirmations: independent providers agree within tolerance, or a
-                 filing-derived value passes an identity / continuity check that involves it. Independent means
-                 different providers and no shared source id (one document typed twice confirms nothing)
+  verified       two independent confirmations: independent source families agree within tolerance, or a
+                 filing-derived value passes an identity / continuity check that involves it. A source family is the
+                 underlying document set: every copy of the issuer's own reports (SEC XBRL, FMP as-reported, the
+                 issuer's releases and filings read directly, the vendor float that reads the filing cover) is one
+                 family; each independently normalizing vendor and each primary non-issuer document provider is its
+                 own; one document typed twice confirms nothing. Only a 'reported' value is ever upgraded
   reported       one filing-derived or issuer-document value, not yet confirmed
   single_source  vendor-normalized or secondary (press, analysis) only, or an unresolved definitional choice;
-                 a secondary source never confirms nor contradicts a filing or issuer value (recorded as a note)
-  conflict       sources disagree beyond tolerance, or a like-for-like identity fails
+                 a secondary source never confirms nor contradicts any value (recorded as a note)
+  conflict       sources disagree beyond tolerance (two transcriptions of one filing included), or a like-for-like
+                 identity fails. A release revised by the later filing is an 'issuer_revision' check that limits the field
   missing        not available (or an instrument exists without its terms; a TTM older than twice its age limit)
   stale          too old for the as_of date (newer reports exist but are absent)
 
@@ -23,6 +27,7 @@ goes through facts.candidates. docs/MODULE_CONTRACTS.md (dataqa.validate) is the
 """
 from datetime import date, timedelta
 from math import log
+import re
 
 from . import capital
 from . import facts as F
@@ -54,6 +59,12 @@ SHARE_ROUTES = (('shares_outstanding_cover', 'cover'), ('shares_outstanding', 'b
                 ('shares_outstanding_vendor', 'vendor_float'))
 ROUTE_PREF = {'cover': 0, 'balance_sheet': 1, 'capital_structure': 2, 'vendor_float': 3}
 POST_TOPICS = {'post_period_event', 'post_period_events', 'subsequent_event', 'subsequent_events'}
+SPLIT_TOPICS = {'stock_split', 'split', 'reverse_split', 'share_split'}
+SPLIT_ISSUANCE_BAND = (.8, 1.25)  # a split identified by evidence: the residual count change (issuance/buybacks) kept
+WAVG_SPLIT_TOL = .04              # weighted-average shares restated by the full count ratio (a split is retroactive): within 4%
+SPLIT_ALT_WINDOW_DAYS = 45        # ...counts as split evidence only when an issuance would have to fall this early in the year
+PRICE_JUMP_TOL = .15              # an as-traded close-to-close move within 15% (log) of 1/factor marks the split bar
+PRICE_BAR_MAX_GAP = 40            # closes further apart than this cannot locate a split bar
 CONVERT_TOPICS = {'convertible', 'convertibles', 'convertible_notes'}
 WARRANT_TOPICS = {'warrant', 'warrants', 'prefunded_warrant', 'pre_funded_warrant', 'prefunded_warrants'}
 DEFINITIONS = {
@@ -112,7 +123,7 @@ def _span_kind(a, b):
 
 
 def _val(metric, f):
-    return abs(f['value']) if metric == 'capex' else f['value']
+    return F._fv(metric, f)          # payments (capex, buybacks, ...) by magnitude, as facts.ttm sums them
 
 
 def _split_factor(r):
@@ -177,6 +188,22 @@ class _QA:
     def provider(self, f):
         return self.src(f).get('provider') or f['source_id'].split(':')[0]
 
+    def family(self, f):
+        """Underlying document family: every copy of the issuer's own reports (filing-derived XBRL through any vendor,
+        issuer documents, the vendor float that reads the filing cover) is 'issuer'; each primary non-issuer document
+        provider and each independently normalizing vendor is its own; each secondary source is its own."""
+        k = self.src(f).get('kind')
+        if k == 'secondary':
+            return 'secondary:' + f['source_id']
+        if k == 'primary_document':
+            return 'primary:' + self.provider(f)
+        if k in FILING_KINDS or f['metric'] == 'shares_outstanding_vendor':
+            return 'issuer'
+        return 'vendor:' + self.provider(f)
+
+    def release(self, f):
+        return self.src(f).get('dataset') in F.RELEASE_DATASETS
+
     def grade(self, f):
         return 'reported' if self.src(f).get('kind') in FILING_KINDS and f['basis'] != 'normalized' else 'single_source'
 
@@ -208,13 +235,33 @@ class _QA:
         p = (self.fb.get('market') or {}).get('price') or {}
         return p['value'] if p.get('value') and p.get('as_of') and _d(p['as_of']) <= _d(self.as_of) else None
 
+    def bars(self):
+        """[(date the close was known, close)] ascending, nothing known after as_of. With market['price_history_bar_date']
+        == 'start' (bars stamped at their start, as IB monthly bars are) a close is known when the next bar starts, so
+        each close moves to the next bar's date and the last bar is dropped."""
+        m = self.fb.get('market') or {}
+        rows = sorted((str(r['date'])[:10], float(r['close'])) for r in m.get('price_history') or [] if r.get('close') and r.get('date'))
+        if m.get('price_history_bar_date') == 'start':
+            rows = [(nxt[0], c) for (_, c), nxt in zip(rows, rows[1:])]
+        return [(d, c) for d, c in rows if _d(d) <= _d(self.as_of)]
+
+    def price_basis(self):
+        """'as_traded', 'split_adjusted' or None (unknown): market['price_history_basis'], else every row's 'basis' or
+        'adjusted' flag. Only an as-traded series can tell a split from an issuance (an adjusted one also carries
+        splits announced after its earlier dates)."""
+        m = self.fb.get('market') or {}
+        if m.get('price_history_basis') in ('as_traded', 'split_adjusted'):
+            return m['price_history_basis']
+        tags = {r.get('basis') or {True: 'split_adjusted', False: 'as_traded'}.get(r.get('adjusted')) for r in m.get('price_history') or []}
+        return next(iter(tags)) if len(tags) == 1 and tags <= {'as_traded', 'split_adjusted'} else None
+
     def closes(self, start, end):
-        return [float(r['close']) for r in (self.fb.get('market') or {}).get('price_history') or []
-                if r.get('close') and r.get('date') and _d(start) < _d(r['date']) <= min(_d(end), _d(self.as_of))]
+        return [c for d, c in self.bars() if _d(start) < _d(d) <= _d(end)]
 
     def dated(self, x, missing=False):
-        """Qualitative item usable at as_of; undated items count only where that is the conservative reading."""
-        return _d(x['as_of']) <= _d(self.as_of) if x.get('as_of') else missing
+        """Qualitative item usable at as_of: available_at, else its as_of (facts.item_usable, the facts.usable rule);
+        undated items count only where that is the conservative reading."""
+        return F.item_usable(self.fb, x, missing)
 
 
 def _field(q, name, status, value, unit, as_of, facts=(), checks=(), notes=(), **extra):
@@ -263,33 +310,44 @@ def _explain(q, metric, f, b):
 
 
 def _cross(q, metric, f):
-    """Compare a chosen fact with every other provider's value for the same period (vendor families count once)."""
+    """Compare a chosen fact with the same period's values from other source families (one value per family).
+
+    Inside the chosen fact's family: another transcription of the same filing (SEC XBRL vs FMP as-reported, XBRL vs the
+    10-Q text) agreeing confirms only the transcription; disagreeing it is a disagreement like any other (one copy is
+    wrong). A release against a filing (or another release) is a revision: an 'issuer_revision' check that limits the
+    field. Secondary sources are recorded as notes, never confirmations or conflicts."""
     key = (metric, f['period_end'], _kind(f), f['source_id'])
     if key in q.cross:
         return q.cross[key]
-    mine, others, sec = q.provider(f), {}, []
+    mine, others, copies, revs, sec = q.family(f), {}, [], [], []
     for g in q.near(metric, f['period_end'], _kind(f)):
         if g['source_id'] == f['source_id']:
             continue
-        if q.secondary(g) and not q.secondary(f):     # press/analysis never confirm nor contradict a filing or issuer value
+        if q.secondary(g) or q.secondary(f):          # press/analysis never confirm nor contradict anything
             sec.append(g)
-            continue
-        others.setdefault(q.provider(g), g)
-    others.pop(mine, None)
-    out = {'agree': [], 'disagree': [], 'explained': [], 'compared': bool(others),
-           'secondary': [{'source_id': g['source_id'], 'value': _val(metric, g),
-                          'rel_diff': round(_rel(_val(metric, f), _val(metric, g)), 6)} for g in sec]}
+        elif q.family(g) == mine and (q.release(f) or q.release(g)):
+            revs.append(g)
+        elif q.family(g) == mine:
+            copies.append(g)
+        else:
+            others.setdefault(q.family(g), g)
     a, tol = _val(metric, f), q.tol.get(metric, DEFAULT_TOL)
     base = None
     if _kind(f) in ('annual', 'quarter') and metric != 'revenue':
         rev = q.best('revenue', f['period_end'], _kind(f))
         base = .2 * abs(rev['value']) if rev else None     # near-zero margins compare on a revenue-scaled base
-    for p, g in sorted(others.items()):
+    out = {'agree': [], 'disagree': [], 'explained': [], 'same_family': [], 'revisions': [], 'compared': bool(others or copies),
+           'secondary': [{'source_id': g['source_id'], 'value': _val(metric, g),
+                          'rel_diff': round(_rel(a, _val(metric, g)), 6)} for g in sec]}
+    rows = [(g, 'same filing, another transcription') for g in copies] + [(g, None) for _, g in sorted(others.items())]
+    for g, copy in rows:
         b = _val(metric, g)
         r = _rel(a, b, base)
-        row = {'provider': p, 'source_id': g['source_id'], 'value': b, 'rel_diff': round(r, 6)}
+        row = {'provider': q.provider(g), 'family': q.family(g), 'source_id': g['source_id'], 'value': b, 'rel_diff': round(r, 6)}
+        if copy:
+            row['note'] = copy
         if r <= tol:
-            out['agree'].append(row)
+            (out['same_family'] if copy else out['agree']).append(row)
             continue
         why = _explain(q, metric, f, b)
         if why:
@@ -298,27 +356,52 @@ def _cross(q, metric, f):
             if q.grade(g) == 'reported' and _d(g['available_at']) > _d(f['available_at']):
                 row['note'] = 'later filing-derived value: possible restatement (first-filed value kept for point-in-time use)'
             out['disagree'].append(row)
-    if others:
+    for g in revs:
+        r = _rel(a, _val(metric, g), base)
+        row = {'provider': q.provider(g), 'source_id': g['source_id'], 'value': _val(metric, g), 'rel_diff': round(r, 6),
+               'available_at': g['available_at'], 'release': q.release(g)}
+        out['same_family'].append(row)
+        if r > tol and not _explain(q, metric, f, _val(metric, g)):
+            out['revisions'].append(row)
+    if out['revisions']:
+        q.add('issuer_revision', 'fail', 'major',
+              f"{metric} {f['period']}: {f['source_id']} {_fmt(a)} vs " + ', '.join(f"{r['source_id']} {_fmt(r['value'])}" for r in out['revisions'])
+              + " - the issuer's own documents disagree: a release revised later (a filing ranks first once public)",
+              detail={'metric': metric, 'value': a, 'source_id': f['source_id'], 'available_at': f['available_at'],
+                      'revisions': out['revisions'], 'tolerance': tol}, period=f['period'])
+    if out['compared']:
         bad = bool(out['disagree'])
         q.add('cross_source', 'fail' if bad else 'pass', 'major' if bad else 'minor',
-              f"{metric} {f['period']}: {mine} {_fmt(a)} vs " + ', '.join(f"{r['provider']} {_fmt(r['value'])}"
-                                                                         for k in ('agree', 'explained', 'disagree') for r in out[k])
-              + (' (beyond tolerance)' if bad else ' (agree or definitional difference)'),
-              detail={'metric': metric, 'value': a, 'provider': mine, 'source_id': f['source_id'], 'tolerance': tol,
-                      **{k: out[k] for k in ('agree', 'explained', 'disagree')}}, period=f['period'])
+              f"{metric} {f['period']}: {q.provider(f)} {_fmt(a)} vs " + ', '.join(f"{r['provider']} {_fmt(r['value'])}"
+                                                                                for k in ('agree', 'same_family', 'explained', 'disagree')
+                                                                                for r in out[k] if 'release' not in r)
+              + (' (beyond tolerance)' if bad else ' (agree or definitional difference)')
+              + ('' if out['agree'] else '; only copies of the same filing agree: not an independent confirmation'
+                 if any('release' not in r for r in out['same_family']) else ''),
+              detail={'metric': metric, 'value': a, 'provider': q.provider(f), 'family': mine, 'source_id': f['source_id'],
+                      'tolerance': tol, **{k: out[k] for k in ('agree', 'explained', 'disagree', 'same_family')}}, period=f['period'])
+    spread = [r for r in out['secondary'] if r['rel_diff'] > tol]
+    if spread and q.secondary(f):
+        q.add('secondary_spread', 'fail', 'minor', f"{metric} {f['period']}: secondary sources disagree - {f['source_id']} {_fmt(a)} vs "
+              + ', '.join(f"{r['source_id']} {_fmt(r['value'])}" for r in spread) + ' (recorded; neither is a filing value)',
+              detail={'metric': metric, 'value': a, 'source_id': f['source_id'], 'others': spread}, period=f['period'])
     q.cross[key] = out
     return out
 
 
 def _status_of(q, metric, f, corroborated=False):
-    """Status of one fact: grade by source, upgraded by an independent confirmation, conflict on unresolved disagreement."""
+    """Status of one fact: grade by source, upgraded (only from 'reported') by an independent family or an identity,
+    conflict on an unresolved disagreement, limited when the issuer's release and filing disagree."""
     grade = q.grade(f)
     cx = _cross(q, metric, f)
     ids = q.idents(metric, f['period_end'])
-    codes = [x['code'] for x in ids] + (['cross_source'] if cx['compared'] else [])
+    codes = [x['code'] for x in ids] + (['cross_source'] if cx['compared'] else []) + (['issuer_revision'] if cx['revisions'] else [])
     notes = [f"{r['provider']} reports {_fmt(r['value'])}: {r['definition']}" for r in cx['explained']]
     notes += [f"secondary source {r['source_id']} gives {_fmt(r['value'])} ({r['rel_diff']:.2%} apart): recorded, neither a "
               f"confirmation nor a conflict" for r in cx['secondary'] if r['rel_diff'] > q.tol.get(metric, DEFAULT_TOL)]
+    notes += [f"{r['source_id']} (the issuer's {'release' if r['release'] else 'filing'}, available {r['available_at']}) gives "
+              f"{_fmt(r['value'])} ({r['rel_diff']:.2%} apart): revised figure - confirm which one the latest filing states"
+              for r in cx['revisions']]
     failed = sorted({x['code'] for x in ids if x['status'] == 'fail' and x['lfl']})
     if failed:
         return 'conflict', codes, notes + [f"{metric} {f['period']} fails {', '.join(failed)}"]
@@ -327,11 +410,14 @@ def _status_of(q, metric, f, corroborated=False):
     id_ok = grade == 'reported' and (corroborated or any(x['status'] == 'pass' for x in ids))
     if cx['disagree']:
         who = ', '.join(f"{r['provider']} {_fmt(r['value'])}" for r in cx['disagree'])
-        if cx['agree'] or id_ok:
-            return 'verified', codes, notes + [f"{metric} {f['period']}: outlier source(s) {who} recorded; chosen value "
-                                               f"corroborated by {'another provider' if cx['agree'] else 'an accounting check'}"]
+        if (cx['agree'] or id_ok) and not cx['revisions']:
+            return 'verified' if grade == 'reported' else grade, codes, notes + [
+                f"{metric} {f['period']}: outlier source(s) {who} recorded; chosen value corroborated by "
+                f"{'another source family' if cx['agree'] else 'an accounting check'}"]
         return 'conflict', codes, notes + [f"{metric} {f['period']}: {q.provider(f)} {_fmt(f['value'])} vs {who} beyond tolerance"]
-    if cx['agree'] or id_ok:
+    if cx['revisions']:
+        return _weakest([grade, 'single_source']), codes, notes
+    if (cx['agree'] or id_ok) and grade == 'reported':
         return 'verified', codes, notes
     return grade, codes, notes
 
@@ -454,10 +540,17 @@ def _line_date(x, cs):
     return x.get('as_of') or x.get('issue_date') or cs['as_of']
 
 
+def _line_latest(x, cs):
+    """The latest date a line carries (its as_of, its issue_date, the structure's as_of): known only once all have passed."""
+    return max((str(d)[:10] for d in (x.get('as_of'), x.get('issue_date'), cs['as_of']) if d), key=_d)
+
+
 def _capital(q, cs):
     """capital.py structure -> amounts by kind, statement-dated subset and post-period lines (validated, never trusted blind).
 
-    A line's date is its as_of, else its issue_date, else the structure's as_of (undated lines read as post-period)."""
+    A line's date is its as_of, else its issue_date, else the structure's as_of (undated lines read as post-period).
+    A line dated (as_of or issue_date) after the FactBook as_of is not knowable then: it is dropped before anything
+    reads the structure, with a 'capital_structure_lookahead' check."""
     if not cs:
         return None
     fb = q.fb
@@ -469,6 +562,20 @@ def _capital(q, cs):
     if _d(cs['as_of']) > _d(q.as_of):
         q.add('capital_structure_lookahead', 'fail', 'critical', f"capital structure dated {cs['as_of']} after as_of {q.as_of}: ignored")
         return None
+    groups = ('cash', 'shares', 'debt', 'quasi_debt')
+    late = [(g, x['id'], _line_latest(x, cs)) for g in groups for x in cs.get(g, []) if _d(_line_latest(x, cs)) > _d(q.as_of)]
+    if late:
+        cs = {**cs, **{g: [x for x in cs[g] if _d(_line_latest(x, cs)) <= _d(q.as_of)] for g in groups if g in cs}}
+        q.add('capital_structure_lookahead', 'fail', 'major',
+              f"{len(late)} capital-structure line(s) dated after as_of {q.as_of} excluded: " + ', '.join(f'{g}:{i} ({d})' for g, i, d in late),
+              detail={'excluded': [{'group': g, 'id': i, 'date': d} for g, i, d in late]},
+              fields=('shares_outstanding', 'cash_and_liquid_investments', 'debt', 'convertibles'))
+        try:
+            capital.validate(cs)
+        except (ValueError, KeyError, TypeError) as e:
+            q.add('capital_structure_valid', 'fail', 'critical', f'capital structure rejected once lines after as_of are excluded: {e}',
+                  fields=('convertibles',))
+            return None
     try:
         summ, err = capital.summarize(cs), None
     except (ValueError, KeyError, TypeError) as e:
@@ -501,7 +608,9 @@ def _cs_compare(q, cs, field, label, stmt_value, stmt_end, kinds_group, explain=
 
     Returns (use_cs, tie, conflict, note); tie is 'independent', 'same_source' or None. A structure dated at the statement
     date must tie; a newer one (a bridge with post-period lines) is compared on its statement-dated lines and then used as
-    the newer source. A tie confirms (verifies) only when the lines cite none of the statement facts' source ids."""
+    the newer source. A tie confirms (verifies) only when every line cites a filing-grade source, none of the statement
+    facts' source ids and none of their providers. Lines citing press, analysis or vendors are a note - neither a
+    confirmation nor a conflict - and their structure is graded by those sources."""
     group, kinds = kinds_group
     newer = _days(stmt_end, cs['as_of']) > 7 if stmt_end else True
     older = _days(cs['as_of'], stmt_end) > 7 if stmt_end else False
@@ -516,18 +625,33 @@ def _cs_compare(q, cs, field, label, stmt_value, stmt_end, kinds_group, explain=
     why = explain(stmt_value, cs_v) if explain and r > tol else None
     ok = r <= tol or bool(why)
     post = [x['id'] for x in cs.get('raw', {}).get(group, []) if x['kind'] in kinds and _d(_line_date(x, cs)) > _d(stmt_end) + timedelta(days=7)]
-    q.add('capital_structure_crosscheck', 'pass' if ok else 'fail', 'minor' if ok else ('major' if newer else 'critical'),
+    srcs = q.fb['sources']
+    line_ids = {x['source_id'] for x in xs}
+    non_filing = sorted(x for x in line_ids if srcs.get(x, {}).get('kind') not in FILING_KINDS)
+    prov = lambda x: srcs.get(x, {}).get('provider') or x.split(':')[0]
+    q.add('capital_structure_crosscheck', 'pass' if ok else 'fail',
+          'minor' if ok or non_filing else ('major' if newer else 'critical'),
           f'{label}: statements {_fmt(stmt_value)} at {stmt_end} vs capital-structure lines dated by then {_fmt(cs_v)}'
-          + (f' ({why})' if why else '') + (f'; post-period lines {post}' if post else ''),
+          + (f' ({why})' if why else '') + (f'; post-period lines {post}' if post else '')
+          + (f'; lines cite non-filing sources ({", ".join(non_filing)}): a note only' if non_filing else ''),
           period=stmt_end, fields=(field,),
           detail={'statement': stmt_value, 'capital_structure': cs_v, 'rel_diff': round(r, 6), 'tolerance': tol,
-                  'explanation': why, 'post_period_lines': post, 'capital_structure_as_of': cs['as_of']})
+                  'explanation': why, 'post_period_lines': post, 'capital_structure_as_of': cs['as_of'],
+                  'non_filing_sources': non_filing})
+    if non_filing:      # press, analysis or vendor lines neither confirm nor contradict the statements
+        return newer, None, False, (
+            f'capital structure {label} {_fmt(cs_v)} ' + ('ties to' if ok else 'does not tie to') + f' the statements at {stmt_end} '
+            f'({_fmt(stmt_value)}), but its lines cite non-filing sources ({", ".join(non_filing)}): recorded, neither a '
+            'confirmation nor a conflict' + ('; newer capital structure used, graded by its sources' if newer else ''))
     if ok:
-        shared = sorted({x['source_id'] for x in xs} & set(stmt_sources))
+        shared = sorted(line_ids & set(stmt_sources))
+        same_prov = sorted({prov(x) for x in line_ids} & {prov(x) for x in stmt_sources})
+        why_not = (f'it cites the same source ({", ".join(shared)})' if shared else
+                   f'its lines and the statements come from the same provider ({", ".join(same_prov)})' if same_prov else None)
         note = (f'capital structure ties to the statements at {stmt_end}' + (f' ({why})' if why else '')
-                + (f'; it cites the same source ({", ".join(shared)}): not an independent confirmation' if shared else '')
+                + (f'; {why_not}: not an independent confirmation' if why_not else '')
                 + ('; newer capital structure used' if newer else ''))
-        return newer, 'same_source' if shared else 'independent', False, note
+        return newer, 'same_source' if why_not else 'independent', False, note
     if newer:   # exchanges/repayments after the statement date can change pre-existing lines: limited, not a conflict
         return True, None, False, (f'capital structure lines dated by {stmt_end} ({_fmt(cs_v)}) do not tie to the statements '
                                     f'({_fmt(stmt_value)}); may reflect post-period exchanges or repayments: confirm')
@@ -537,28 +661,138 @@ def _cs_compare(q, cs, field, label, stmt_value, stmt_end, kinds_group, explain=
 
 # ---------------------------------------------------------------- shares
 
-def _split_evidence(q, a, b, k):
-    """(evidence, supports a split, tested). The price test is decisive when it ran: EPS and weighted-average shares
-    move the same way under a real issuance with flat profit, only the share price tells a split from issuance."""
-    ev = {}
-    for metric, key in (('eps_diluted', 'eps'), ('shares_diluted_wavg', 'wavg')):
-        x0, x1 = q.best(metric, a['as_of'], 'annual'), q.best(metric, b['as_of'], 'annual')
-        if x0 and x1 and x0['value'] and x0['value'] * x1['value'] > 0:
-            r = x1['value'] / x0['value']
-            ev[f'{key}_ratio'] = r
-            ev[f'{key}_supports_split'] = abs(log(r * k)) < abs(log(r)) if key == 'eps' else abs(r / k - 1) <= .25
-    p0, p1 = q.closes((_d(a['as_of']) - timedelta(days=6)).isoformat(), a['as_of']), \
-        q.closes((_d(b['as_of']) - timedelta(days=6)).isoformat(), b['as_of'])
-    if p0 and p1:
-        r = p1[-1] / p0[-1]
-        ev['price_ratio'] = r
-        ev['price_supports_split'] = abs(log(r * k)) < abs(log(r))
-    if 'price_supports_split' in ev:
-        ev['decided_by'] = 'price'
-        return ev, ev['price_supports_split'], True
-    tested = [x for x in ev if x.endswith('supports_split')]
-    ev['decided_by'] = 'per_share' if tested else 'untested'
-    return ev, any(ev[x] for x in tested), bool(tested)
+def _split_candidate(r):
+    """(k, in_band) for a share-count ratio r: k is the split factor (k or 1/k) within SPLIT_BAND of r (in_band), else the
+    factor whose residual r/k stays inside SPLIT_ISSUANCE_BAND and is nearest 1 (a split plus issuance or buybacks in the
+    same step); (None, False) when no factor fits."""
+    if not r or r <= 0:
+        return None, False
+    k = _split_factor(r)
+    if k:
+        return k, True
+    best = None
+    for f in SPLIT_FACTORS:
+        for x in (f, 1.0 / f):
+            res = r / x
+            if SPLIT_ISSUANCE_BAND[0] <= res <= SPLIT_ISSUANCE_BAND[1] and abs(log(res)) < abs(log(r)) \
+                    and (best is None or abs(log(res)) < abs(log(r / best))):
+                best = x
+    return best, False
+
+
+def _wavg_at(q, end):
+    """(weighted-average shares of the period ending at `end`, its kind, its length in days): annual, else quarter;
+    reported, else net income / EPS. Vendor-normalized and secondary figures are not used (vendors restate history)."""
+    ok = lambda g: g and g['value'] and not q.secondary(g) and q.src(g).get('kind') != 'vendor_normalized'
+    for kind, days in (('annual', 365), ('quarter', 91)):
+        for m in ('shares_diluted_wavg', 'shares_basic_wavg'):
+            w = q.best(m, end, kind)
+            if ok(w):
+                return w['value'], kind, days
+        ni, eps = q.best('net_income', end, kind), q.best('eps_diluted', end, kind)
+        if ok(ni) and ok(eps) and ni['value'] / eps['value'] > 0:
+            return ni['value'] / eps['value'], kind, days
+    return None, None, None
+
+
+def _split_events(q, a, b):
+    """Dated splits between two counts: market['splits'] [{date, factor (shares after / before), source_id}] and
+    qualitative items with a split topic (announced up to 30 days before the first count)."""
+    out = []
+    for x in (q.fb.get('market') or {}).get('splits') or []:
+        if x.get('date') and _d(x['date']) <= _d(q.as_of) and _days(a['as_of'], x['date']) > 0 and _days(x['date'], b['as_of']) >= 0:
+            out.append({'date': str(x['date'])[:10], 'factor': x.get('factor'), 'source_id': x.get('source_id')})
+    for x in q.fb.get('qualitative', []):
+        when = x.get('as_of')
+        if x.get('topic') in SPLIT_TOPICS and q.dated(x) and when and _days(a['as_of'], when) > -30 and _days(when, b['as_of']) >= 0:
+            out.append({'date': when, 'factor': x.get('factor'), 'item': x['id']})
+    return out
+
+
+def _split_decision(q, a, b, k):
+    """Split or issuance between two dated counts a -> b: {'decision': split|issuance|unresolved, 'decided_by', 'factor',
+    'residual_ratio', 'evidence'}. Only positive evidence makes a split:
+
+    - corporate_action: a dated split between the counts (market['splits'], a qualitative split item); its factor, when
+      given, is the factor and the rest of the change is issuance or buybacks. Decisive.
+    - price: an as-traded close series (market['price_history_basis'] == 'as_traded', or every row flagged) dense enough
+      to locate the split bar (closes at most 40 days apart): a close-to-close move of about 1/k between the counts
+      supports, its absence contradicts. A split-adjusted or unknown series, or a sparse one, is not used: an adjusted
+      series also carries splits made after its earlier dates, and a year-long price ratio mostly measures performance.
+    - per_share: weighted-average shares restated by the full count ratio (a split is applied retroactively to the whole
+      year, an issuance is weighted by the time outstanding) supports, but only when an issuance would have had to fall
+      in the first SPLIT_ALT_WINDOW_DAYS of the year to look the same; weighted shares moving materially less than any
+      split reading allows contradict. EPS alone cannot tell a split from an issuance at flat profit: recorded only.
+    Agreeing evidence decides; disagreeing or no evidence leaves the step 'unresolved' (counted as issuance, unverified)."""
+    r = b['value'] / a['value']
+    ev, tests = {'count_ratio': r}, {}
+    events = _split_events(q, a, b)
+    if events:
+        ev['split_events'] = events
+        fs = [float(e['factor']) for e in events if e.get('factor')]
+        if fs:
+            k = 1.0
+            for f in fs:
+                k *= f
+        tests['corporate_action'] = 'supports' if k else 'untested'
+    if not k:
+        return None
+    ev['candidate_factor'] = k
+    basis = q.price_basis()
+    ev['price_basis'] = basis or 'unknown'
+    tests['price'] = 'untested'
+    if basis == 'as_traded':
+        pts = [(d, c) for d, c in q.bars() if _days(d, a['as_of']) <= PRICE_BAR_MAX_GAP and _days(d, b['as_of']) >= 0]
+        moves = [(d0, d1, c1 / c0) for (d0, c0), (d1, c1) in zip(pts, pts[1:])
+                 if c0 > 0 and _days(d0, d1) <= PRICE_BAR_MAX_GAP and _days(a['as_of'], d1) > 0]
+        hit = [m for m in moves if abs(log(m[2] * k)) <= log(1 + PRICE_JUMP_TOL)]
+        dense = len(pts) >= 2 and _days(pts[0][0], a['as_of']) >= 0 and _days(pts[-1][0], b['as_of']) <= PRICE_BAR_MAX_GAP \
+            and all(_days(d0, d1) <= PRICE_BAR_MAX_GAP for (d0, _), (d1, _) in zip(pts, pts[1:]))
+        if hit:
+            tests['price'], ev['split_bar'] = 'supports', {'from': hit[0][0], 'to': hit[0][1], 'move': hit[0][2]}
+        elif dense:
+            tests['price'], ev['price_moves_checked'] = 'contradicts', len(moves)
+        else:
+            ev['price_note'] = f'as-traded closes too sparse to locate a split bar (need closes at most {PRICE_BAR_MAX_GAP} days apart)'
+    else:
+        ev['price_note'] = 'close history split-adjusted or of unknown basis: it cannot tell a split from an issuance'
+    eps0, eps1 = q.best('eps_diluted', a['as_of'], 'annual'), q.best('eps_diluted', b['as_of'], 'annual')
+    if eps0 and eps1 and eps0['value'] and eps0['value'] * eps1['value'] > 0:
+        er = eps1['value'] / eps0['value']
+        ev['eps_ratio'], ev['eps_supports_split'] = er, abs(log(er * k)) < abs(log(er))      # informational only
+    wa, ka, days = _wavg_at(q, a['as_of'])
+    wb, kb, _ = _wavg_at(q, b['as_of'])
+    tests['per_share'] = 'untested'
+    if wa and wb and ka == kb:
+        w, rho = wb / wa, r / k
+        window = days * WAVG_SPLIT_TOL * r / abs(r - 1) if r != 1 else float('inf')
+        ev.update(wavg_ratio=w, wavg_to_count=w / r, issuance_lookalike_window_days=round(window, 1))
+        lo, hi = min(1.0, rho), max(1.0, rho)
+        if abs(log(w / r)) <= log(1 + WAVG_SPLIT_TOL) and abs(log(w / k)) < abs(log(w)):
+            tests['per_share'] = 'supports' if window <= SPLIT_ALT_WINDOW_DAYS else 'ambiguous'
+            if window > SPLIT_ALT_WINDOW_DAYS:
+                ev['per_share_note'] = (f'weighted shares moved with the count, but an issuance in the first {window:.0f} days of '
+                                        'the period would look the same')
+        elif lo / (1 + WAVG_SPLIT_TOL) <= w / k <= hi * (1 + WAVG_SPLIT_TOL):
+            tests['per_share'] = 'ambiguous'          # a split with issuance during the year, or an issuance: both fit
+        else:
+            tests['per_share'] = 'contradicts'
+        ev['wavg_supports_split'] = tests['per_share'] == 'supports'
+    ev['tests'] = tests
+    sup = [t for t, x in tests.items() if x == 'supports']
+    con = [t for t, x in tests.items() if x == 'contradicts']
+    if tests.get('corporate_action') == 'supports':
+        decision, by = 'split', 'corporate_action'
+    elif sup and not con:
+        decision, by = 'split', '+'.join(sup)
+    elif con and not sup:
+        decision, by = 'issuance', '+'.join(con)
+    elif sup:
+        decision, by = 'unresolved', 'conflicting'
+    else:
+        decision, by = 'unresolved', 'ambiguous' if 'ambiguous' in tests.values() else 'untested'
+    ev['decided_by'] = by
+    return {'decision': decision, 'decided_by': by, 'factor': k, 'residual_ratio': r / k, 'evidence': ev}
 
 
 def _continuity(q, a, b):
@@ -596,6 +830,20 @@ def _continuity(q, a, b):
     return status
 
 
+def _route_secondary(q, r):
+    """A route that never confirms, contradicts or displaces another: a secondary fact, or a capital structure whose
+    common lines cite any non-filing source (press, analysis, vendor)."""
+    if r['fact'] is not None:
+        return q.secondary(r['fact'])
+    return any(q.fb['sources'].get(x, {}).get('kind') not in FILING_KINDS for x in r.get('source_ids') or [])
+
+
+def _route_family(q, r):
+    if r['fact'] is not None:
+        return q.family(r['fact'])
+    return 'capital_structure:' + ','.join(r.get('providers') or [])
+
+
 def _shares(q, cs):
     fb, routes = q.fb, []
     for metric, basis in SHARE_ROUTES:
@@ -604,36 +852,65 @@ def _shares(q, cs):
     if cs:
         com = cs['lines']('shares', {'common'})
         if com:
+            ids = sorted({x['source_id'] for x in com})
             routes.append({'as_of': max(_line_date(x, cs) for x in com), 'value': cs['amount'](com, 'count'),
-                           'basis': 'capital_structure', 'fact': None, 'grade': cs['grade'](com), 'source_ids': sorted({x['source_id'] for x in com})})
+                           'basis': 'capital_structure', 'fact': None, 'grade': cs['grade'](com), 'source_ids': ids,
+                           'providers': sorted({fb['sources'].get(x, {}).get('provider') or x.split(':')[0] for x in ids})})
     if not routes:
         fld = _field(q, 'shares_outstanding', 'missing', None, 'shares', None,
                      notes=['no point-in-time share count (cover, balance sheet, vendor or capital structure); weighted averages are never used'])
-        return fld, {'value': None, 'as_of': None, 'basis': None, 'status': 'missing'}, []
+        return fld, {'value': None, 'as_of': None, 'basis': None, 'status': 'missing'}, [], []
     merged = {}
-    for r in sorted(routes, key=lambda r: ROUTE_PREF[r['basis']]):     # one count per date cluster, filing routes first
+    # one count per date cluster: a filing or vendor route always wins over a secondary one (a press count never displaces
+    # a filing count), then filing routes before structure and vendor routes
+    for r in sorted(routes, key=lambda r: (_route_secondary(q, r), ROUTE_PREF[r['basis']])):
         if not any(abs(_days(e, r['as_of'])) <= 7 for e in merged):
             merged[r['as_of']] = r
     tl = [merged[e] for e in sorted(merged)]
-    pick, splits, last_cont = tl[-1], [], None
+    pick, splits, unresolved, last_cont = tl[-1], [], [], None
     for a, b in zip(tl, tl[1:]):
-        k = _split_factor(b['value'] / a['value']) if a['value'] else None
-        if k:
-            ev, support, tested = _split_evidence(q, a, b, k)
-            code = 'possible_split' if support or not tested else 'large_share_change'
-            msg = (f"share count x{b['value'] / a['value']:.3f} between {a['as_of']} and {b['as_of']} is near a "
-                   + (f'{k:g}:1 split: ' if k > 1 else f'1:{1 / k:g} reverse split: ')
-                   + ('treated as a split, not dilution - restate per-share history before comparing' if code == 'possible_split'
-                      else ('the share price' if ev.get('decided_by') == 'price' else 'per-share data')
-                      + ' did not move inversely: treated as real issuance/consolidation - verify'))
-            q.add(code, 'fail', 'major', msg, period=f"{a['as_of']}..{b['as_of']}", fields=('shares_outstanding',),
-                  detail={'factor': k, 'ratio': b['value'] / a['value'], 'evidence': ev, 'per_share_tested': tested,
-                          'from': a['as_of'], 'to': b['as_of']})
-            if code == 'possible_split':
-                splits.append({'from': a['as_of'], 'to': b['as_of'], 'factor': k, 'evidence': ev, 'decided_by': ev['decided_by']})
+        ratio = b['value'] / a['value'] if a['value'] else None
+        k, in_band = _split_candidate(ratio) if ratio else (None, False)
+        dec = _split_decision(q, a, b, k) if ratio and (k or _split_events(q, a, b)) else None
+        if dec and (in_band or dec['decision'] == 'split'):
+            k, ev = dec['factor'], dec['evidence']
+            head = (f"share count x{ratio:.3f} between {a['as_of']} and {b['as_of']} is near a "
+                    + (f'{k:g}:1 split' if k > 1 else f'1:{1 / k:g} reverse split'))
+            detail = {'factor': k, 'ratio': ratio, 'residual_ratio': dec['residual_ratio'], 'evidence': ev,
+                      'decided_by': dec['decided_by'], 'from': a['as_of'], 'to': b['as_of']}
+            row = {'from': a['as_of'], 'to': b['as_of'], 'factor': k, 'residual_ratio': dec['residual_ratio'], 'evidence': ev,
+                   'decided_by': dec['decided_by']}
+            if dec['decision'] == 'split':
+                q.add('possible_split', 'fail', 'major', head + f": treated as a split ({dec['decided_by']} evidence)"
+                      + (f"; the remaining x{dec['residual_ratio']:.3f} is issuance/buybacks and stays in the share change"
+                         if abs(dec['residual_ratio'] - 1) > SPLIT_BAND else '')
+                      + ('; weighted-average shares moved by the full ratio (restated for the whole year, the accounting signature '
+                         'of a split): confirm with the 8-K' if dec['decided_by'] == 'per_share' else '')
+                      + ' - restate per-share history before comparing', period=f"{a['as_of']}..{b['as_of']}",
+                      fields=('shares_outstanding',), detail=detail)
+                splits.append(row)
                 if b is pick:
                     last_cont = 'split'
                 continue
+            if dec['decision'] == 'unresolved':
+                tested = {t: x for t, x in ev['tests'].items() if x != 'untested'}
+                q.add('split_unresolved', 'fail', 'major', head + ': split or issuance not established ('
+                      + ('no dated split, as-traded price or weighted-average evidence' if not tested
+                         else 'the evidence does not decide: ' + ', '.join(f'{t} {x}' for t, x in tested.items()))
+                      + f"); both readings: issuance x{ratio:.3f}, or a split leaving x{dec['residual_ratio']:.3f} - counted as "
+                      'issuance (dilution unverified) until confirmed', period=f"{a['as_of']}..{b['as_of']}",
+                      fields=('shares_outstanding',), detail=detail)
+                unresolved.append(row)
+                if b is pick:
+                    last_cont = 'unresolved'
+                continue
+            q.add('large_share_change', 'fail', 'major', head + ': ' + {
+                'price': 'the as-traded share price shows no move of about 1/factor between the counts',
+                'per_share': 'weighted-average shares moved materially less than the count (an issuance is weighted by the time '
+                             'outstanding; a split is restated for the whole year)'}.get(
+                dec['decided_by'], f"{dec['decided_by']} evidence contradicts a split")
+                  + ': treated as real issuance/consolidation - verify', period=f"{a['as_of']}..{b['as_of']}",
+                  fields=('shares_outstanding',), detail=detail)
         st = _continuity(q, a, b)
         if b is pick:
             last_cont = st
@@ -649,17 +926,26 @@ def _shares(q, cs):
         status, facts = pick['grade'], []
         if last_cont == 'pass' and status == 'reported':
             status = 'verified'
-    # independent routes dated within a week of the pick (vendor vs filing, structure vs filing)
+    # other routes dated within a week of the pick: another source family confirms or contradicts; a copy of the same
+    # filing (vendor float vs cover, FMP vs SEC) or a structure citing the same source or provider only ties; a secondary
+    # route (press count, structure lines citing press or vendors) is a note
     agree, disagree = [], []
     pick_ids = {f['source_id']} if f else set(pick.get('source_ids') or [])
+    pick_fam, pick_sec = _route_family(q, pick), _route_secondary(q, pick)
+    pick_prov = {q.provider(f)} if f else set(pick.get('providers') or [])
     for r in routes:
         if r is pick or abs(_days(r['as_of'], pick['as_of'])) > 7 or not r['value']:
             continue
-        r_ids = {r['fact']['source_id']} if r['fact'] else set(r.get('source_ids') or [])
-        indep = not (r_ids & pick_ids) and not (r['fact'] and q.secondary(r['fact'])) and (
-            (r['fact'] is None) != (f is None) or (r['fact'] is not None and f is not None and q.provider(r['fact']) != q.provider(f)))
         rr = _rel(pick['value'], r['value'])
-        row = {'basis': r['basis'], 'as_of': r['as_of'], 'value': r['value'], 'rel_diff': round(rr, 6), 'independent': indep}
+        if pick_sec or _route_secondary(q, r):
+            notes.append(f"{'secondary ' if _route_secondary(q, r) else ''}{r['basis']} count {_fmt(r['value'])} ({r['as_of']}, "
+                         f"{rr:.2%} apart): recorded, neither a confirmation nor a conflict")
+            continue
+        r_ids = {r['fact']['source_id']} if r['fact'] else set(r.get('source_ids') or [])
+        r_prov = {q.provider(r['fact'])} if r['fact'] else set(r.get('providers') or [])
+        indep = not (r_ids & pick_ids) and _route_family(q, r) != pick_fam and not (r_prov & pick_prov)
+        row = {'basis': r['basis'], 'as_of': r['as_of'], 'value': r['value'], 'rel_diff': round(rr, 6), 'independent': indep,
+               'family': _route_family(q, r)}
         if rr <= q.tol['shares_outstanding']:
             agree.append(row)
         elif _split_factor(r['value'] / pick['value']):
@@ -672,7 +958,7 @@ def _shares(q, cs):
               f"{pick['basis']} {_fmt(pick['value'])} ({pick['as_of']}) vs " + ', '.join(f"{r['basis']} {_fmt(r['value'])}" for r in agree + disagree),
               detail={'pick': {k: pick[k] for k in ('basis', 'as_of', 'value')}, 'agree': agree, 'disagree': disagree},
               period=pick['as_of'], fields=('shares_outstanding',))
-    if any(r['independent'] for r in agree) and status in ('reported', 'single_source'):
+    if any(r['independent'] for r in agree) and status == 'reported':
         status = 'verified'
     if disagree and status != 'conflict':
         if any(r['independent'] for r in agree) or last_cont == 'pass':
@@ -709,16 +995,20 @@ def _shares(q, cs):
     if incomplete:
         fld['incomplete'] = True
     if splits:
-        fld['note'] = '; '.join([fld['note']] + [f"possible split x{x['factor']:g} between {x['from']} and {x['to']}: per-share "
-                                                  f"history must be restated before comparing" for x in splits])
+        fld['note'] = '; '.join([fld['note']] + [f"split x{x['factor']:g} between {x['from']} and {x['to']} ({x['decided_by']} evidence): "
+                                                  f"per-share history must be restated before comparing" for x in splits])
         fld['checks'] = sorted(set(fld['checks']) | {'possible_split'})
+    if unresolved:
+        fld['note'] = '; '.join([fld['note']] + [f"split-like change x{x['evidence']['count_ratio']:.3f} between {x['from']} and "
+                                                  f"{x['to']} not established as a split: counted as issuance, unverified" for x in unresolved])
+        fld['checks'] = sorted(set(fld['checks']) | {'split_unresolved'})
     _stale(q, fld, 'shares', 'share count')
     res = {'value': pick['value'], 'as_of': pick['as_of'], 'basis': pick['basis'], 'status': fld['status'],
            'source_id': f['source_id'] if f else (pick.get('source_ids') or [None])[0], 'definition': DEFINITIONS['shares_outstanding']}
     if cs and cs['summary']:
         res['basic_economic_shares'] = cs['summary']['basic_economic_shares']     # common + pre-funded + zero-strike
         res['rsu_shares'], res['economic_shares_as_of'] = cs['summary']['rsu_shares'], cs['as_of']
-    return fld, res, splits
+    return fld, res, splits, unresolved
 
 
 # ---------------------------------------------------------------- cash and investments
@@ -865,12 +1155,22 @@ def _cash(q, cs):
 
 # ---------------------------------------------------------------- debt
 
+def _current_debt(cur_f, stb_f):
+    """(current debt, short-term borrowings to add to it). us-gaap DebtCurrent is the current-debt TOTAL (current
+    maturities, short-term borrowings and commercial paper): borrowings tagged beside it are inside it, so only an
+    excess over it is added. LongTermDebtCurrent (and vendor current-portion lines) exclude them: added in full."""
+    cur = cur_f['value'] if cur_f else 0.0
+    stb = stb_f['value'] if stb_f else 0.0
+    if cur_f and (cur_f.get('concept') or '').lower() == 'debtcurrent':
+        return cur, max(0.0, stb - cur)
+    return cur, stb
+
+
 def _debt_totals(q, end):
     """Candidate total debt at a date under each scope hypothesis; absent lines on a reported balance sheet are zero."""
     p = {m: q.best(m, end) for m in DEBT_PARTS}
     bs = q.has_bs(end)
-    cur = p['current_portion_ltd']['value'] if p['current_portion_ltd'] else 0.0
-    stb = p['short_term_borrowings']['value'] if p['short_term_borrowings'] else 0.0
+    cur, stb = _current_debt(p['current_portion_ltd'], p['short_term_borrowings'])
     out = {}
     if p['long_term_debt']:
         out['noncurrent+current'] = p['long_term_debt']['value'] + cur + stb
@@ -979,6 +1279,14 @@ def _debt(q, cs, mcap):
             use = {'noncurrent+current': ('long_term_debt', 'current_portion_ltd', 'short_term_borrowings'),
                    'tagged_total': ('long_term_debt_tagged', 'short_term_borrowings'),
                    'tagged_plus_current': ('long_term_debt_tagged', 'current_portion_ltd', 'short_term_borrowings')}[method]
+            if ((parts['current_portion_ltd'] or {}).get('concept') or '').lower() == 'debtcurrent' and parts['short_term_borrowings']:
+                extra = _current_debt(parts['current_portion_ltd'], parts['short_term_borrowings'])[1]
+                scope['current_concept'] = 'debtcurrent'
+                notes.append(f"current debt is tagged DebtCurrent ({_fmt(parts['current_portion_ltd']['value'])}), which already includes "
+                             f"short-term borrowings and commercial paper ({_fmt(parts['short_term_borrowings']['value'])}): "
+                             + (f'only the excess {_fmt(extra)} added' if extra else 'not added again'))
+                if not extra:
+                    use = tuple(m for m in use if m != 'short_term_borrowings')
             facts = [parts[m] for m in use if parts[m]]
             rf_ok = bool(latest and method in latest['passing'])
             sts = []
@@ -1014,9 +1322,9 @@ def _debt(q, cs, mcap):
                       f"debt {end}: resolved {_fmt(value)} vs {q.provider(vt)} total {_fmt(vt['value'])}" + (f' ({why})' if why and not ok else ''),
                       period=end, fields=('debt',), detail={'resolved': value, 'vendor': vt['value'], 'rel_diff': round(r, 6), 'definition': why})
                 checks.append('cross_source')
-                indep = q.provider(vt) not in {q.provider(g) for g in facts} and vt['source_id'] not in {g['source_id'] for g in facts} \
+                indep = q.family(vt) not in {q.family(g) for g in facts} and vt['source_id'] not in {g['source_id'] for g in facts} \
                     and not q.secondary(vt)
-                if ok and indep and status in ('reported', 'single_source') and decisive:
+                if ok and indep and status == 'reported' and decisive:      # a vendor total never lifts a non-filing value
                     status = 'verified'
                 elif why and not ok:
                     notes.append(f"{q.provider(vt)} total {_fmt(vt['value'])}: {why}")
@@ -1133,8 +1441,11 @@ def _convertibles(q, cs):
 
 
 def _post_period(q, cs, bs_end):
+    """Events after the latest balance sheet: post-period items dated after it (an older event reviews nothing since)
+    and capital-structure lines dated after it (_capital already dropped every line dated after as_of)."""
     fb = q.fb
-    items = [x for x in fb.get('qualitative', []) if x.get('topic') in POST_TOPICS and q.dated(x)]
+    items = [x for x in fb.get('qualitative', []) if x.get('topic') in POST_TOPICS and q.dated(x)
+             and (not bs_end or not x.get('as_of') or _days(bs_end, x['as_of']) > -7)]
     later = []
     if cs and bs_end:
         for g in ('cash', 'shares', 'debt', 'quasi_debt'):
@@ -1162,12 +1473,12 @@ def _post_period(q, cs, bs_end):
 def _ttm(q, metric):
     """facts.ttm unchanged (value, period, method): the facts are re-pointed at the best fact of each period only for
     the status. The value is never re-summed - annual_plus_ytd subtracts the year-earlier quarters (facts.ttm signs);
-    capex is sign-normalised per fact."""
+    payments (capex, buybacks, ...) are summed by magnitude per fact there."""
     t = F.ttm(q.fb, metric)
     if not t:
         return None
     signs = t.get('signs') or [1] * len(t['facts'])
-    value = sum(s * _val(metric, f) for s, f in zip(signs, t['facts'])) if metric == 'capex' else t['value']
+    value = t['value']
     fs = [q.best(metric, f['period_end'], _kind(f)) or f for f in t['facts']]
     return {**t, 'facts': fs, 'signs': signs, 'value': value,
             'repointed_value': sum(s * _val(metric, f) for s, f in zip(signs, fs))}
@@ -1203,6 +1514,37 @@ def _ttm_field(q, name, metric):
     return fld
 
 
+# ---------------------------------------------------------------- researcher conflicts (evidence bundle)
+
+CONFLICT_FIELDS = (('revenue_ttm', ('revenue',)), ('operating_income_ttm', ('operating income',)),
+                   ('cfo_ttm', ('operating cash flow', 'cash from operations', 'cfo')), ('capex_ttm', ('capex', 'capital expenditure')),
+                   ('sbc_ttm', ('sbc', 'stock-based compensation', 'share-based compensation')),
+                   ('shares_outstanding', ('shares outstanding', 'share count', 'cover-page count')),
+                   ('cash_and_liquid_investments', ('cash and cash equivalents', 'short-term investments')),
+                   ('debt', ('debt', 'borrowings', 'commercial paper')), ('convertibles', ('convertible',)))
+
+
+def _research_conflicts(q, fields):
+    """Unresolved conflicts the researcher recorded in the evidence bundle (fb['research_notes']['conflicts']) become
+    'research_conflict' checks (major when they name a critical field, which also gets a note). Resolved ones
+    (resolved: true, or a description starting 'RESOLVED') are skipped. The text is data, never instructions."""
+    for c in (q.fb.get('research_notes') or {}).get('conflicts') or []:
+        c = c if isinstance(c, dict) else {'description': str(c)}
+        desc = str(c.get('description') or c.get('text') or '')
+        if c.get('resolved') is True or desc.strip().upper().startswith('RESOLVED'):
+            continue
+        text = (desc + ' ' + str(c.get('metric') or '')).lower()
+        hit = [n for n, words in CONFLICT_FIELDS if any(re.search(r'\b' + re.escape(w) + r'\b', text) for w in words)
+               and not (n in ('revenue_ttm', 'operating_income_ttm') and 'non-gaap' in text)]   # the TTM fields are GAAP
+        q.add('research_conflict', 'fail', 'major' if hit else 'minor', f"unresolved researcher conflict ({c.get('topic') or 'unspecified'}): {desc[:240]}",
+              fields=hit, detail={'topic': c.get('topic'), 'description': desc, 'resolved': c.get('resolved'),
+                                  'source_ids': [('web:' + s if 'web:' + s in q.fb['sources'] else s) for s in c.get('source_ids') or []]})
+        for n in hit:
+            fld = fields[n]
+            fld['note'] = '; '.join(x for x in (fld['note'], f'unresolved researcher conflict: {desc[:160]}') if x)
+            fld['checks'] = sorted(set(fld['checks']) | {'research_conflict'})
+
+
 # ---------------------------------------------------------------- entry point
 
 def validate(fb, capital_structure=None, options=None):
@@ -1220,7 +1562,7 @@ def validate(fb, capital_structure=None, options=None):
     cs = _capital(q, fb.get('capital_structure') if capital_structure is None else capital_structure)
     _identities(q)
     fields, res = {}, {}
-    fields['shares_outstanding'], res['shares_outstanding'], splits = _shares(q, cs)
+    fields['shares_outstanding'], res['shares_outstanding'], splits, unresolved = _shares(q, cs)
     price, sh = q.price(), res['shares_outstanding']['value']
     mcap = price * sh if price and sh else None
     fields['cash_and_liquid_investments'], fields['investments'], cash_res = _cash(q, cs)
@@ -1230,6 +1572,7 @@ def validate(fb, capital_structure=None, options=None):
     fields['post_period_events'] = _post_period(q, cs, q.latest_instant())
     for name, metric in TTM_FIELDS:
         fields[name] = _ttm_field(q, name, metric)
+    _research_conflicts(q, fields)
     ends = [x[-1][0] for x in (q.timeline(m, 'annual') for m in ('revenue', 'cfo')) if x]
     if ends:
         age = q.age(max(ends))
@@ -1262,4 +1605,4 @@ def validate(fb, capital_structure=None, options=None):
             limited.append(name)
     return {'status': 'blocked' if blocking else 'limited' if limited else 'ok', 'as_of': q.as_of,
             'fields': fields, 'checks': q.checks, 'resolved': res, 'blocking': blocking, 'limited': limited,
-            'splits': splits}
+            'splits': splits, 'unresolved_splits': unresolved}
