@@ -432,6 +432,12 @@ class RenderTests(unittest.TestCase):
                       f"{er['value_at_required_return']:,.0f}", t)                 # the executed value, not a recomputation
         self.assertIn('| שווי הוגן (תרחיש סביר) |', t)
         self.assertIn('הערכה מותנית, לא תחזית', t)
+        yr = att['dc']['expected_return']['yearly_at_required_return']
+        self.assertGreaterEqual(len(yr['rows']), 3)
+        self.assertEqual(yr['rows'][0]['base'], er['value_at_required_return'])     # today's row is the value at the required return
+        self.assertLessEqual(yr['rows'][-1]['date'], att['dc']['valuation_view']['five_year']['date'])
+        self.assertIn('| מועד | תרחיש רע | תרחיש סביר | תרחיש טוב |', t)
+        self.assertIn('| היום |', t)
         draft = hebrew_table(self.cases['draft'])
         self.assertIn('טיוטה', draft)
         blocked = hebrew_table(self.cases['blocked'])

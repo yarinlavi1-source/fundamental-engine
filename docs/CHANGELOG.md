@@ -315,7 +315,9 @@
   scenario, expected annual return against the market's, five-year conditional value, business quality, how rare the
   forecast growth is, the main risk, confidence, the call) and adds short explanations, including why a stock can be dear at
   the required return yet cheap against the market; `deep` and `pipeline` write it as out/table_he.md. The analyst's main
-  risk in plain words comes from an evidenced `analyst_sheet.key_risk`.
+  risk in plain words comes from an evidenced `analyst_sheet.key_risk`. Below it, one row per date of the annual path
+  (today, each fiscal year end, the fifth anniversary) with the bad / likely / good value at the required return
+  (`expected_return.yearly_at_required_return`, from the executed valuation at that rate; distributions shown apart).
 - Private stakes: `inputs.forecast.non_operating_assets` [{kind private_stake | equity_method_stake, fair_value, haircut,
   book_value_in_bridge, reason, evidence_ids}] adds fair value x (1 - haircut) less what the bridge already holds to opening
   investments (valued at face), excluded from the net debt that sets leverage (a stake does not repay debt), reconciled for

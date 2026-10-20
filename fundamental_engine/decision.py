@@ -1298,6 +1298,23 @@ def _five_at_rate(view, rates, rate):
                          '(a re-rating), so its annual rate can differ from the base IRR; a conditional estimate, not a predicted price'}
 
 
+def _yearly_at_rate(view, rates, rate, res):
+    """Scenario values at the required return on each date of the annual path through the fifth anniversary, with each
+    scenario's cumulative distributions (buybacks/dividends) paid by then: dated conditional values, not predicted prices."""
+    five = view.get('five_year')
+    if not five or rates is None or _num(rate) is None:
+        return None
+    av = rates.values(rate) or []
+    paid = {sc['name']: {t.get('date'): _num(t.get('cumulative_dividend_per_share')) for t in sc.get('timeline') or []}
+            for sc in (res or {}).get('scenarios') or [] if isinstance(sc, dict)}
+    rows = [{'date': r['date'], **{s: _num(r.get(s)) for s in SCENARIOS},
+             'distributions': {s: (paid.get(s) or {}).get(r['date']) for s in SCENARIOS}}
+            for r in av if r.get('date') and r['date'] <= five['date']]
+    return {'rate': rate, 'rows': rows,
+            'semantics': 'value per share on each date at your required return, distributions paid by then shown apart; a dated '
+                         'conditional value of each scenario, not a predicted market price'} if rows else None
+
+
 def _forecast_view(an, res, view):
     five = view.get('five_year')
     if not res or not five:
@@ -1344,6 +1361,7 @@ def _expected(irrs, view, index, req, rates, qcase, res, an, err_level, w=0., mo
           'base_value_at_model_cost_of_equity': view.get('base'),
           'band': _hurdle_band(req, index, err_level, rates if view.get('base') is not None else None, moat),
           'five_year_at_required_return': _five_at_rate(view, rates, req['hurdle']) if view.get('base') is not None else None,
+          'yearly_at_required_return': _yearly_at_rate(view, rates, req['hurdle'], res) if view.get('base') is not None else None,
           'owner_aspiration': OWNER_ASPIRATION,
           'meets_owner_aspiration_14pct': None if base_irr is None else base_irr >= OWNER_ASPIRATION,
           'semantics': ('IRR = cost of equity at which the scenario value equals today\'s price, cash flows held fixed, the terminal '

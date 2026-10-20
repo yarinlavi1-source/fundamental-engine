@@ -396,7 +396,24 @@ def hebrew_table(casefile):
         notes.append('זו טיוטה: הניתוח עוד לא עבר בדיקה בלתי תלויה, ולכן זו לא מסקנה סופית.')
     out = [f"**{name} ({company.get('ticker', '')}) — הערכת שווי, {cf.get('as_of') or dc.get('as_of') or ''}**", '',
            '| | |', '|---|---|'] + [f'| {k} | {str(x).replace("|", "/")} |' for k, x in rows]
+    yearly = _yearly_rows(er, price, cur) if show else []
+    if yearly:
+        out += ['', '**שווי למניה בכל שנה, לפי תרחיש**', '', '| מועד | תרחיש רע | תרחיש סביר | תרחיש טוב |', '|---|---|---|---|'] + yearly
+        notes.append('הטבלה השנתית: כמה המניה תהיה שווה בכל מועד אם התרחיש יתממש (באותה תשואה נדרשת); חלוקות לבעלי המניות '
+                     'משולמות בנוסף.')
     return '\n'.join(out + ([''] + [f'- {n}' for n in notes] if notes else []))
+
+
+def _yearly_rows(er, price, cur):
+    """One row per date of the annual path (today, each fiscal year end, the fifth anniversary) at the required return."""
+    y = (er or {}).get('yearly_at_required_return') or {}
+    out = []
+    for i, r in enumerate(y.get('rows') or []):
+        if not all(_n(r.get(s)) for s in ('bear', 'base', 'bull')):
+            continue
+        when = 'היום' if i == 0 else str(r['date'])[:7].replace('-', '/')
+        out.append(f"| {when} | {_money(r['bear'], cur)} | {_money(r['base'], cur)} | {_money(r['bull'], cur)} |")
+    return out if len(out) >= 3 else []
 
 
 def hebrew_paragraph(casefile):

@@ -85,7 +85,8 @@ failures the same ~0, so young growth names need company drivers. scripts/gap_ca
 
 ## User preference: valuation table (latest, 20.10.2026)
 
-Every valuation: ONE clear table in simple Hebrew words plus a few short simple explanations; all calculations and
+Every valuation: ONE clear table in simple Hebrew words, a yearly bad/likely/good table through the fifth year, and a few
+short simple explanations; all calculations and
 the business detail stay behind the scenes. Use `render.hebrew_table` (written as out/table_he.md by `deep` and
 `pipeline`) and supply an evidenced `analyst_sheet.key_risk` {reading_he, evidence_ids} so the risk row is specific.
 Add sources as links under the table when the web was used. The paragraph below is for non-valuation summaries.
