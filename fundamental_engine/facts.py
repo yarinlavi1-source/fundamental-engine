@@ -425,9 +425,16 @@ BUNDLE_METRICS = {  # evidence-bundle metric names -> FactBook metrics (duration
     'debt': 'long_term_debt_tagged',            # issuer totals: scope (incl. current portion or not) resolved by dataqa
     'deferred_revenue': 'deferred_revenue_total', 'cash_and_investments': 'cash_and_investments_total',
 }
+# full-statement rows, for when structured vendor or XBRL data is unavailable (graded by their sources' kind)
+BUNDLE_METRICS.update({m: m for m in ('gross_profit', 'cost_of_revenue', 'rd', 'sga', 'd_and_a', 'interest_expense', 'pretax_income',
+                                      'income_tax', 'dividends_paid', 'shares_basic_wavg', 'shares_diluted_wavg', 'eps_diluted',
+                                      'total_assets', 'total_liabilities', 'equity', 'current_assets', 'current_liabilities',
+                                      'receivables', 'inventory', 'payables', 'ppe', 'goodwill', 'intangibles',
+                                      'long_term_investments', 'retained_earnings', 'operating_lease_current',
+                                      'operating_lease_noncurrent', 'convertible_debt')})
 BUNDLE_INSTANT = {'shares_outstanding_cover', 'rpo', 'arr', 'deferred_revenue_total', 'cash_and_investments_total', 'cash',
                   'short_term_investments', 'commercial_paper_info', 'long_term_debt_tagged', 'deferred_revenue_current',
-                  'deferred_revenue_noncurrent'}
+                  'deferred_revenue_noncurrent'} | (set(BUNDLE_METRICS.values()) & INSTANT_TAGS.keys())
 # bundle source kind -> FactBook kind; anything else: 'secondary'
 SOURCE_KIND = {'issuer_release': 'issuer_document', 'earnings_release': 'issuer_document', 'filing': 'issuer_document',
                'regulator': 'primary_document', 'official_statistics': 'primary_document'}

@@ -184,6 +184,19 @@ class BundleRegressionTests(unittest.TestCase):
         fb['facts'] = [f for f in fb['facts'] if f['period_end'] not in ('2026-05-29', '2025-05-30')]
         self.assertEqual(F.ttm(fb, 'revenue')['method'], 'latest_fiscal_year')
 
+    def test_full_statement_rows_load_as_durations_and_instants(self):
+        # no vendor/XBRL data reachable: a researched bundle must carry the whole statement set, graded by its sources
+        fb = F.new({'ticker': 'FIX', 'currency': 'USD'}, '2026-10-19')
+        src = [{'id': 'k', 'title': '10-K', 'url': 'https://example.com/10k', 'kind': 'filing', 'published_at': '2026-02-01'}]
+        rows = [('gross_profit', 60), ('d_and_a', 5), ('interest_expense', 1), ('income_tax', 4), ('equity', 70), ('total_assets', 150),
+                ('total_liabilities', 80), ('goodwill', 10), ('shares_diluted_wavg', 9)]
+        F.add_qualitative_bundle(fb, {'sources': src, 'quarterly_facts': [{'metric': m, 'period': 'FY2025', 'period_end': '2025-12-31',
+                                                                           'value': v, 'source_ids': ['k']} for m, v in rows]})
+        self.assertEqual(F.series(fb, 'gross_profit', 'annual')[0][1], 60)
+        self.assertEqual(F.latest_instant(fb, 'equity')['value'], 70)
+        self.assertEqual(F.latest_instant(fb, 'total_assets')['value'], 150)
+        self.assertEqual(fb['sources']['web:k']['kind'], 'issuer_document')
+
 
 # ---------------------------------------------------------------- review 2026-10-19 (scratchpad findings, data area)
 
