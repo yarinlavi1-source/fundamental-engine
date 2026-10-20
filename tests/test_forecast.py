@@ -1160,3 +1160,41 @@ class SourceAndRateContractTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+def ytd_surge():
+    """SYNTHETIC large company whose year to date doubles (shaped like NVIDIA fiscal 2027): $200bn last year, +100% YTD."""
+    rev = {2023: 60e9, 2024: 120e9, 2025: 200e9}
+    annual = {f'{y}-12-31': {'revenue': r, 'operating_income': r * .55, 'sbc': r * .03, 'd_and_a': r * .02, 'capex': r * .03,
+                             'cfo': r * .5, 'pretax_income': r * .55, 'income_tax': r * .55 * .15} for y, r in rev.items()}
+    inst = {'2025-12-31': {'cash': 50e9, 'shares_outstanding': 10e9, 'receivables': 30e9, 'payables': 10e9}}
+    fb = synth('2026-08-20', annual, inst, 100.0, kind='filing_derived')
+    for end, start, r in (('2025-03-31', '2025-01-01', 40e9), ('2025-06-30', '2025-04-01', 45e9),
+                          ('2026-03-31', '2026-01-01', 80e9), ('2026-06-30', '2026-04-01', 90e9)):
+        for m, k in (('revenue', 1.), ('operating_income', .6)):
+            facts.add_fact(fb, m, 'Q@' + end, end, r * k, 'syn:fs', 'as_reported', end[:8] + '28', period_start=start)
+    an = make_an(fb, revenue_growth_last=.667, revenue_cagr_3y=.82, growth_volatility=.2, roic=.8, sales_to_capital_incremental_3y=2.0)
+    card = {'business_model': {'primary': 'semiconductor'}, 'stage': {'value': 'growth'}, 'funding': {'value': 'self_funded'},
+            'cyclical': {'value': False}, 'valuation': {'method': 'fcff_annual_path', 'archetype': 'industrial'},
+            'dimensions': {'moat': {'assessment': 'adequate'}}}
+    return fb, an, card, qa_for(10e9, 50e9, 0., '2025-12-31')
+
+
+class GrowthStartCapTests(unittest.TestCase):
+    """Regression from the NVIDIA 2026-10-20 run: a doubling year to date started the next year at +73% although the
+    warning said the anchor was capped at the 15% revenue-scale base rate."""
+
+    def test_first_forecast_year_respects_the_scale_cap(self):
+        fc = forecast.build(*ytd_surge())
+        self.assertEqual(fc['status'], 'built')
+        self.assertAlmostEqual(fc['anchors']['current_fiscal_year']['growth'], 1.0)      # the current year keeps the evidence
+        base = scen(fc['spec'], 'base')['growth']
+        self.assertAlmostEqual(base[0], .15)
+        self.assertTrue(all(g <= .15 + 1e-9 for g in base))
+        self.assertIn('growth_start_capped', {w['code'] for w in fc['warnings']})
+
+    def test_analyst_override_with_evidence_lifts_the_cap(self):
+        fb, an, card, qa = ytd_surge()
+        fc = forecast.build(fb, an, card, qa, {'overrides': [{'path': 'growth_anchor', 'scenario': 'base', 'value': .6,
+                                                             'reason': 'company guidance for next year (test)', 'evidence_ids': ['syn:fs']}]})
+        self.assertAlmostEqual(scen(fc['spec'], 'base')['growth'][0], .6)

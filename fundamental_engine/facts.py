@@ -46,7 +46,10 @@ DURATION_TAGS = {
     'eps_diluted': ['earningspersharediluted'],
     'shares_basic_wavg': ['weightedaveragenumberofsharesoutstandingbasic'],
     'shares_diluted_wavg': ['weightedaveragenumberofdilutedsharesoutstanding'],
-    'd_and_a': ['depreciationdepletionandamortization', 'depreciationamortizationandaccretionnet', 'depreciationandamortization'],
+    # 'Depreciation' last: Alphabet tags only depreciation of property and equipment (amortization is small and separate);
+    # without it the forecast fell back to capex as a depreciation proxy (16% of revenue instead of about 5%)
+    'd_and_a': ['depreciationdepletionandamortization', 'depreciationamortizationandaccretionnet', 'depreciationandamortization',
+                'depreciation'],
     'sbc': ['sharebasedcompensation', 'allocatedsharebasedcompensationexpense'],
     'cfo': ['netcashprovidedbyusedinoperatingactivities', 'netcashprovidedbyusedinoperatingactivitiescontinuingoperations'],
     'capex': ['paymentstoacquirepropertyplantandequipment', 'paymentstoacquireproductiveassets'],

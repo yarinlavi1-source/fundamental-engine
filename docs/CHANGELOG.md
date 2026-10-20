@@ -6,6 +6,12 @@
   `investment_line_continuity` and limits the cash field instead of reading as zero. Found on NVIDIA (fiscal 2027
   10-Q: about $77bn of marketable securities read as zero). Private stakes without a readily determinable fair value
   stay excluded (conservative; noted in the opening-balance rationale).
+- review's opening check counts listed stakes once, like the forecast (otherwise a correct opening failed as overstated).
+- `us-gaap:Depreciation` read as d_and_a after the combined tags (Alphabet tags only it; the forecast had used capex,
+  16% of revenue, as the depreciation proxy instead of about 5%).
+- The revenue-scale base rate bounds the first forecast year when the current year comes from a year-to-date surge
+  (`growth_start_capped`); before, NVIDIA's +96% year to date started the next year at +73% while the warning claimed a 15%
+  cap. Consensus, company guidance or an analyst override with evidence still replaces it.
 
 ## 0.11.1 — verified review-fix cycle (20.10.2026)
 

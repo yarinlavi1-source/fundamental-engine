@@ -967,7 +967,16 @@ def _params(route, h, cal, cons, rf, ku, debt0, ov, warn):
         cyc_meta = dict(cyc, trend_at_current_fy=trend_b1, level=level, elapsed_at_current_fy=e0, long_run_growth=g_long,
                         level_factor=factor, conv=CYCLE_CONV)
     else:
-        anchor = ov('base', 'growth_anchor', cg[0] if cg else _fade(g_cur, gT['base'], hl, 1)[0])
+        start = _fade(g_cur, gT['base'], hl, 1)[0]
+        cap = (h.get('g_scale_cap') or {}).get('cap')
+        if not cg and cap is not None and start > cap:
+            # the revenue-scale base rate bounds the first forecast year too, not only the trailing anchor: fading a year-to-date
+            # surge (NVIDIA fiscal 2027: +96%) started a $400bn+ business at +73% a year without evidence for it
+            warn('growth_start_capped', f'next-year growth faded from the current year ({_pct(g_cur)}) would be {_pct(start)}, above the '
+                                        f'revenue-scale base rate {_pct(cap)}; capped (consensus or company guidance replaces it, an analyst '
+                                        'override with evidence can lift it)', 'medium')
+            start = cap
+        anchor = ov('base', 'growth_anchor', cg[0] if cg else start)
         if cg and anchor == cg[0]:
             base, g_kind = cg + _fade(cg[-1], gT['base'], hl, n_full - len(cg)), 'analyst'
         else:

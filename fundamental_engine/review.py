@@ -547,12 +547,14 @@ def consistency(fb, qa, an, fc, val, rt=None, rc=None):
 def _opening_check(qa, case, val):
     """The valuation opening must not overstate cash or understate debt/shares versus validated balances."""
     op = case['opening']
-    q = {k: resolved(qa, k) for k in ('cash', 'short_term_investments', 'long_term_investments', 'debt', 'shares_outstanding')}
+    q = {k: resolved(qa, k) for k in ('cash', 'short_term_investments', 'long_term_investments', 'equity_securities_fv', 'debt',
+                                       'shares_outstanding')}
     rec = (case.get('underwriting') or {}).get('opening_reconciliation') or {}
     fails, notes = [], []
     if q['shares_outstanding'] is not None and op['shares'] < q['shares_outstanding'] * .995:
         fails.append(f"opening shares {op['shares']:g} below validated outstanding {q['shares_outstanding']:g}")
-    liquid_q = None if q['cash'] is None else q['cash'] + (q['short_term_investments'] or 0) + (q['long_term_investments'] or 0)
+    liquid_q = None if q['cash'] is None else (q['cash'] + (q['short_term_investments'] or 0) + (q['long_term_investments'] or 0)
+                                               + (q['equity_securities_fv'] or 0))    # listed stakes enter the opening once (forecast)
     liquid_o = (num(op.get('unrestricted_cash')) or 0) + (num(op.get('marketable_investments')) or 0)
     bridged = bool(rec.get('bridge_events'))
     if liquid_q is not None and liquid_o > liquid_q * 1.02 + 1:

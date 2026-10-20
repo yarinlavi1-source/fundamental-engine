@@ -9,7 +9,10 @@ Companion to docs/EVIDENCE_STATUS.md, which separates what tests prove from what
    but ranking by the price/value gap failed (H2). The pipeline's verdicts have no track record. Every frozen
    decision goes to the forecast ledger so that 12/24/36-month comparisons become possible.
    Fix: forward ledger, delisted-company prices, a pre-registered quality-at-a-reasonable-price test.
-2. **Primary filings cannot be read from this environment.** data.sec.gov and www.sec.gov are not reachable
+2. **Primary filings could not be read from this environment until 20.10.2026.** On 20.10.2026 data.sec.gov and
+   www.sec.gov answered from the container (companyfacts, submissions and the 10-Q/8-K documents for GOOGL and NVDA were
+   fetched and read); SEC requires a contact e-mail in the User-Agent, supplied by the user for the session and never
+   stored in the repository. Treat access as variable and re-check it per session. Earlier text, kept for the record: data.sec.gov and www.sec.gov are not reachable
    from the container and web pages cannot be fetched; only search excerpts and vendor feeds (FMP, Alpha
    Vantage, IB) are. Newer quarters come from single-source excerpts, the opening balance is read indirectly
    (source access `secondary_access`), and data status is "limited". Fix: allow the SEC domains in the
@@ -66,6 +69,19 @@ Companion to docs/EVIDENCE_STATUS.md, which separates what tests prove from what
     not removed; the growth anchor can include bought revenue until an analyst override corrects it.
 16. Portfolio exposure weights are analyst judgement unless measured data is supplied; IB themes are a vendor
     classification, not weights. Positions in other currencies need FX rates.
+
+## Found on the GOOGL/NVDA runs (20.10.2026)
+
+21. **No 'cyclical risk without normalization' option.** The card offers cyclical true (normalize to the history's mean
+    revenue trend and margin) or false; NVIDIA needs the cycle in the bear case while a 2017-2026 mean (~$68bn revenue)
+    is meaningless after a 30x change in scale. The run used cyclical false with an explicit downturn bear path; a card
+    option `normalize: false` with the cycle kept in the cost of equity would be cleaner.
+22. **Private stakes are excluded.** Equity securities without a readily determinable fair value (NVIDIA $51bn, Alphabet
+    $131bn non-marketable securities) are not in the opening balance: conservative, about $2 and $11 per share.
+23. **Mandatory convertible preferred is a terminal claim.** Entered through `terminal.other_claims`, it is discounted from
+    the end of the horizon although it converts in 2029; the error is small (Alphabet: about $1 per share) but systematic.
+24. **Explicit reinvestment uses historical sales-to-capital for every year.** For a hyper-grower the first years reinvest
+    $150-280bn a year (NVIDIA) when the incremental capital is mostly working capital; an analyst override is the only lever.
 
 ## Low
 

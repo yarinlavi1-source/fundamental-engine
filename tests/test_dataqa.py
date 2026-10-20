@@ -967,3 +967,33 @@ class InvestmentTagChangeTests(unittest.TestCase):
         self.assertEqual(r['cash']['value'] + r['short_term_investments']['value'],
                          dataqa.validate(syn())['resolved']['cash']['value'] + dataqa.validate(syn())['resolved']['short_term_investments']['value'])
         self.assertEqual(dataqa.validate(syn())['resolved']['equity_securities_fv']['value'], 0.0)
+
+
+class OpeningCheckWithListedStakesTests(unittest.TestCase):
+    def test_listed_stakes_are_part_of_validated_liquid_assets(self):
+        from fundamental_engine import review
+        qa = {'resolved': {'cash': {'value': 22.4}, 'short_term_investments': {'value': 34.1}, 'long_term_investments': {'value': 0.0},
+                           'equity_securities_fv': {'value': 42.8}, 'debt': {'value': 33.4}, 'shares_outstanding': {'value': 24.1}}}
+        case = {'opening': {'unrestricted_cash': 22.4, 'marketable_investments': 76.9, 'debt': 33.4, 'shares': 24.1}}
+        self.assertEqual(review._opening_check(qa, case, None)['status'], 'pass')
+        case['opening']['marketable_investments'] = 90.0          # more than validated: still caught
+        self.assertEqual(review._opening_check(qa, case, None)['status'], 'fail')
+
+
+class DepreciationTagTests(unittest.TestCase):
+    def test_plain_depreciation_tag_is_read_as_d_and_a(self):
+        # SYNTHETIC payload shaped like Alphabet's: only us-gaap:Depreciation is tagged
+        payload = {'cik': 1, 'facts': {'us-gaap': {'Depreciation': {'units': {'USD': [
+            {'start': '2025-01-01', 'end': '2025-12-31', 'val': 21.1, 'filed': '2026-02-04', 'form': '10-K', 'accn': 'a1'}]}}}}}
+        fb = F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-10-20')
+        F.from_sec_companyfacts(fb, payload, '2026-10-20')
+        got = [f for f in fb['facts'] if f['metric'] == 'd_and_a']
+        self.assertEqual([(f['period_end'], f['value']) for f in got], [('2025-12-31', 21.1)])
+
+    def test_combined_tag_still_preferred_in_a_tie(self):
+        rows = lambda v: [{'start': '2025-01-01', 'end': '2025-12-31', 'val': v, 'filed': '2026-02-04', 'form': '10-K', 'accn': 'a1'}]
+        payload = {'cik': 1, 'facts': {'us-gaap': {'Depreciation': {'units': {'USD': rows(20.0)}},
+                                                   'DepreciationDepletionAndAmortization': {'units': {'USD': rows(23.0)}}}}}
+        fb = F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-10-20')
+        F.from_sec_companyfacts(fb, payload, '2026-10-20')
+        self.assertEqual([f['value'] for f in fb['facts'] if f['metric'] == 'd_and_a'], [23.0])
