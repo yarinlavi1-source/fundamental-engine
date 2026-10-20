@@ -162,8 +162,14 @@ def cards(scan, exploratory=None, include='lenses', signals=None, max_signal_car
     # external discovery signals (insider purchase clusters, channel evidence): {symbol: [evidence]}. Attached to lane cards
     # as support; strong ones outside every lane open a 'signal' card for research (decision maybe: a signal is attention or
     # conviction, not evidence about the economics)
+    # red flags and negative signals (leads.card_signals: a late filing, non-reliance, an impairment) attach as questions, never
+    # as support, and never open a card
     added = 0
-    for sym, evs in (signals or {}).items():
+    for sym, all_evs in (signals or {}).items():
+        bad = [e for e in all_evs if e.get('kind') == 'red_flag' or e.get('direction') == 'negative']
+        evs = [e for e in all_evs if e not in bad]
+        if bad and sym in out:
+            out[sym].setdefault('red_flags', []).extend(bad)
         if not evs:
             continue
         if sym in out:
@@ -176,6 +182,8 @@ def cards(scan, exploratory=None, include='lenses', signals=None, max_signal_car
             continue
         c = card(scan, sym, [{'lens': 'signal', 'rank': None, 'why': evs[0]['statement']}])
         c['signals'] = list(evs)
+        if bad:
+            c['red_flags'] = list(bad)
         c['numeric_failures'] = held or None
         c['full_analysis'] = {'decision': 'maybe', 'reason': 'external signal without a numeric lane: research the business first'}
         out[sym] = c

@@ -152,6 +152,8 @@ def main():
                                           "the numeric lanes did not admit")
     un.add_argument("--max-full", type=int, default=6, help="research queue size (full analyses to run next)")
     un.add_argument("--insiders", help="insider purchase clusters JSON (insiders.clusters) attached to cards as signals")
+    un.add_argument("--channels", help="discovery channels folder (fundamental_engine.channels layout): leads from every source "
+                                       "attached to cards; writes leads.json and channels_he.md")
     dp = subs.add_parser("deep", help="Full pipeline for the discovery research queue (companies/QUEUE.json from "
                                       "scripts/collect_companies.py) and a cross-company comparison")
     dp.add_argument("folder", help="universe folder (cards.json, companies/<T>/raw)")
@@ -220,11 +222,22 @@ def main():
             apply_profiles(rows, prof)
             from .candidates import cards, research_queue, render_he
             result = scan(rows, read_json(args.options) if args.options else None)
-            sig = None
+            sig, chan = None, None
             if args.insiders:
                 from .insiders import evidence as insider_evidence
                 sig = {c['symbol']: [insider_evidence(c)] for c in read_json(args.insiders)
                        if c.get('n_buyers', 0) >= 3 or (c.get('share_of_market_cap') or 0) >= .0005}
+            if args.channels:
+                # every saved discovery channel (SEC events, 8-K items, revenue frames, insiders, news, estimates, social...)
+                from . import channels as CH, leads as LD
+                chan = CH.collect(args.channels, rows, args.as_of, submissions_dir=str(raw / 'submissions'))
+                merged = LD.merge(chan['leads'])
+                sig = {**(sig or {}), **LD.card_signals(merged)}
+                (Path(args.folder) / 'leads.json').write_text(json.dumps({'as_of': args.as_of, 'channels': chan['channels'],
+                                                                          'missing': chan['missing'], 'leads': chan['leads'],
+                                                                          'prelisting': chan['prelisting']}, ensure_ascii=False,
+                                                                         allow_nan=False, default=str), encoding='utf-8')
+                (Path(args.folder) / 'channels_he.md').write_text(CH.summary_he(merged, chan['prelisting']), encoding='utf-8')
             card_set = cards(result, read_json(args.exploratory) if args.exploratory else None, signals=sig)
             queue = research_queue(card_set, args.max_full)
             card_set['queue'] = queue
@@ -237,6 +250,8 @@ def main():
                               'lenses': {k: [c['symbol'] for c in v] for k, v in result['lenses'].items()},
                               'shortlist': [c['symbol'] for c in result['shortlist']],
                               'research_queue': queue, 'cards': len(card_set['cards']), 'card_notes': card_set['notes'],
+                              'channels': chan and {'leads_by_channel': chan['channels'], 'missing': chan['missing'],
+                                                    'prelisting': len(chan['prelisting'])},
                               'next': 'scripts/verify_candidates.py fetches SEC profiles for new candidates; rerun this command'},
                              indent=2, ensure_ascii=False))
             return
