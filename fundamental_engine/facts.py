@@ -104,6 +104,13 @@ INSTANT_TAGS = {
     'equity': ['stockholdersequity', 'stockholdersequityincludingportionattributabletononcontrollinginterest'],
     'preferred_equity': ['preferredstockvalue', 'preferredstockvalueoutstanding', 'preferredstockincludingadditionalpaidincapital'],
     'aoci': ['accumulatedothercomprehensiveincomelossnetoftax'],
+    # the principal maturity schedule of the annual report (refinancing wall); dated at the fiscal year end
+    'debt_maturity_y1': ['longtermdebtmaturitiesrepaymentsofprincipalinnexttwelvemonths'],
+    'debt_maturity_y2': ['longtermdebtmaturitiesrepaymentsofprincipalinyeartwo'],
+    'debt_maturity_y3': ['longtermdebtmaturitiesrepaymentsofprincipalinyearthree'],
+    'debt_maturity_y4': ['longtermdebtmaturitiesrepaymentsofprincipalinyearfour'],
+    'debt_maturity_y5': ['longtermdebtmaturitiesrepaymentsofprincipalinyearfive'],
+    'debt_maturity_after5': ['longtermdebtmaturitiesrepaymentsofprincipalafteryearfive'],
     'retained_earnings': ['retainedearningsaccumulateddeficit'],
     'convertible_debt': ['convertiblenotespayable', 'convertibledebtnoncurrent', 'convertibledebt', 'convertiblenotespayablecurrent'],
     'debt_fair_value': ['longtermdebtfairvalue', 'debtinstrumentfairvalue'],

@@ -198,6 +198,17 @@ def bear_levers(case, result):
         'capex': lever(cpb > cps + .005, cpb, cps, 'capex/revenue +0.5pp')}
 
 
+def _schedule(fb):
+    """The latest annual principal maturity schedule (LongTermDebtMaturitiesRepaymentsOfPrincipal...) within 15 months of as_of,
+    or None. Years without a tag count as zero only when the next-twelve-months line is tagged."""
+    y1 = F.latest_instant(fb, 'debt_maturity_y1')
+    if not y1 or (date.fromisoformat(fb['as_of']) - date.fromisoformat(y1['period_end'])).days > 456:
+        return None
+    v = lambda m: F.value(fb, m, period_end=y1['period_end'], default=0.) or 0.
+    return {'as_of': y1['period_end'], 'y1': y1['value'], 'y2': v('debt_maturity_y2'),
+            'y3_5': v('debt_maturity_y3') + v('debt_maturity_y4') + v('debt_maturity_y5'), 'after5': v('debt_maturity_after5')}
+
+
 def liquidity(fb, qa, an):
     """Liquid resources, near-term maturities, refinancing need and runway (inputs and formula recorded)."""
     cash, sti = resolved(qa, 'cash'), resolved(qa, 'short_term_investments')
@@ -217,6 +228,11 @@ def liquidity(fb, qa, an):
         rows = [x for x in cs.get('debt', []) if x.get('kind') != 'lease' and x.get('maturity') and date.fromisoformat(x['maturity']) <= limit]
         near = sum(accreted_value(x, cs['as_of']) for x in rows)
         nbasis = f"capital_structure instruments maturing by {limit.isoformat()}: {[x['id'] for x in rows]}"
+    elif (fb or {}).get('facts') and _schedule(fb):
+        sch = _schedule(fb)
+        horizon, near = 2, sch['y1'] + sch['y2']
+        nbasis = (f"principal maturity schedule of the annual report at {sch['as_of']}: next twelve months {sch['y1']:,.0f} + year two "
+                  f"{sch['y2']:,.0f} (years three to five {sch['y3_5']:,.0f}, after five {sch['after5']:,.0f})")
     elif (fb or {}).get('facts'):
         ref = F.latest_instant(fb, 'total_assets') or F.latest_instant(fb, 'cash')
         if ref:

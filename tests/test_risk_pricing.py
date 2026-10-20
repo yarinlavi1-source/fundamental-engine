@@ -11,6 +11,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from test_risk_review import analysis, card, entry, factbook, forecast, live_spec, qa, run, scen, truncate, valuate  # noqa: E402
 
+from fundamental_engine import facts as F                                                                           # noqa: E402
 from fundamental_engine import decision, risk                                                                     # noqa: E402
 
 STATUSES = {'priced', 'partially_priced', 'not_priced', 'open_question', 'gate'}
@@ -139,6 +140,17 @@ class NegativeCashIsNotLiquidity(unittest.TestCase):
         self.assertEqual(entry(rk, 'fin.runway')['description'], 'Negative free cash flow with unknown liquidity.')
         liq = risk.liquidity(factbook(), qa(cash={'value': -2e8, 'as_of': '2026-06-30'}), analysis())
         self.assertIsNone(liq['liquid'])
+
+
+class MaturitySchedule(unittest.TestCase):
+    def test_two_year_wall_from_the_annual_schedule(self):
+        fb = factbook()
+        sid = next(iter(fb['sources']))
+        for m, v in (('debt_maturity_y1', 4e8), ('debt_maturity_y2', 9e8), ('debt_maturity_y3', 1e8)):     # SYNTHETIC schedule
+            F.add_fact(fb, m, 'I@2025-12-31', '2025-12-31', v, sid, 'as_reported', '2026-02-15')
+        liq = risk.liquidity(fb, qa(), analysis(fcf=1e8))
+        self.assertEqual((liq['near_term_maturities'], liq['horizon_years']), (1.3e9, 2))
+        self.assertIn('maturity schedule', liq['maturity_basis'])
 
 
 if __name__ == '__main__':
