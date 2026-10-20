@@ -14,6 +14,29 @@ class CalibrationTests(unittest.TestCase):
         self.assertAlmostEqual(out['index_input']['low'], .056)
         self.assertIn('reject', out['reading'])                              # 6.6% vs 8.75%: the assumption would reject
 
+    def test_rate_shift_is_the_engines_cost_of_equity_over_the_market_return(self):
+        # 20.10.2026: the engine's own cost of equity for the market was about 2.8pp above the return the market implies
+        rows = [{'symbol': 'BIG', 'base_irr': .06, 'cost_of_equity': .095}, {'symbol': 'SMALL', 'base_irr': .12, 'cost_of_equity': .105}]
+        out = C.market_implied(rows, {'BIG': 9e11, 'SMALL': 1e11}, '2026-10-20')
+        self.assertAlmostEqual(out['engine_market_cost_of_equity'], .096)
+        self.assertAlmostEqual(out['rate_shift'], .096 - .066)
+        self.assertAlmostEqual(out['index_input']['rate_shift'], .03)
+
+    def test_market_consistent_value_puts_a_market_priced_company_at_its_price(self):
+        import json
+        from pathlib import Path
+        from fundamental_engine import pipeline
+        book = json.loads((Path(__file__).resolve().parent / 'fixtures/adbe_factbook_2026-10-19.json').read_text())
+        plain = pipeline.run(json.loads(json.dumps(book)))
+        irr, ke = plain['dc']['expected_return']['base_irr'], plain['dc']['valuation_view']['model_cost_of_equity']
+        # a market that prices like this company: its implied return is the market return, the gap is its own Ke - IRR
+        idx = {'value': irr, 'basis': 'test market', 'source': 'test', 'rate_shift': ke - irr, 'market_cost_of_equity': ke}
+        mc = pipeline.run(json.loads(json.dumps(book)), {'decision': {'index': idx}})['dc']['valuation_view']['market_consistent']
+        self.assertAlmostEqual(mc['rate'], irr, places=9)
+        self.assertAlmostEqual(mc['value'] / plain['dc']['valuation_view']['price'], 1., places=2)
+        self.assertAlmostEqual(mc['edge_vs_market'], 0., places=9)
+        self.assertIsNone(plain['dc']['valuation_view'].get('market_consistent'))     # no calibration, no reading
+
     def test_outliers_are_clipped(self):
         out = C.market_implied([{'symbol': 'X', 'base_irr': 3.0}], {'X': 1e9}, '2026-10-20')
         self.assertEqual(out['engine_market_return'], .40)

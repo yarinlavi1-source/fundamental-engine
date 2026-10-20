@@ -271,6 +271,16 @@
   held material issue (decision.MATERIAL_HOLD): no value is shown and the company leaves ranked lists (held issues are now
   judgement disqualifiers). T-Mobile's long-term debt under issuer tags had produced a false +74% upside. Open from the
   same screen: noncontrolling interests are not yet deducted (Charter, Tenet) and fertilizer producers type as industrial.
+- Market-consistent reading (owner's question: "how do I know the valuation is not too conservative?"). Measured on 330
+  clean casefiles of 20.10.2026: 87% had a base value below the price, median -47%, because each company is discounted at
+  the engine's own cost of equity (cap-weighted 9.68%) while the same engine finds the market priced at 6.87% (median
+  6.68%). The absolute value answers "what to pay for my hurdle"; it is not "cheap or dear against the market".
+  `calibration.market_implied` now records the engine's market cost of equity and the gap (`rate_shift`, 2.8pp) in the
+  index input; with that index `decision` adds `valuation_view.market_consistent`: the base value with the company's cost
+  of equity moved down by the same gap (relative risk kept, the market as a whole at fair value), the upside on it and
+  `edge_vs_market` (base IRR - market implied return). Amazon at $262.5: value at its 9.75% cost of equity $138, market
+  consistent $262, edge +0.1pp: priced like the market, not "40% overvalued". Long-duration values move 20-40% per point
+  of discount rate, so the edge in return points is the steadier comparison. Verdicts keep their own hurdle.
 - Learning loop (`learning.py`, `scripts/learning_report.py`): reads every research round's evidenced inputs and executed
   casefiles and reports where the analyst corrected the engine (lever, scenario, business type, direction, median move),
   the special inputs used, recurring warnings, engine fixes per company researched (from `docs/learning_log.json`) and the

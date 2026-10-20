@@ -27,6 +27,11 @@ rating under `card` when a bottleneck is proven) and rerun. Read
 docs/BACKTEST_ENGINE_2026-10-20.md first: the engine's ranking has no demonstrated edge on its own, the index is the
 default, edges are shrunk by their measured reliability and nothing is an order.
 
+Always pass the calibration as the index (`inputs.decision.index` = calibration.json's `index_input`, or `--index` on the
+CLI): without it the answer compares the stock with an absolute hurdle and nearly every stock looks overpriced. Report the
+expected return against the market's (edge_vs_market) and the market-consistent value beside the value at the engine's
+own cost of equity.
+
 After each research round, run the learning loop and log the engine fixes the round needed in `docs/learning_log.json`:
 `python scripts/learning_report.py runs/research_<date> [more rounds] --ledger runs/ledger/forecasts.jsonl` (where the
 analyst corrected the engine, by lever and business type; repeated corrections are candidate default changes, never

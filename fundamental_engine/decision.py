@@ -1112,8 +1112,36 @@ def _index(inputs, fc=None):
     rng = 'user_input'
     if lo is None or hi is None:
         lo, hi, rng = (v - INDEX_RANGE if lo is None else lo), (v + INDEX_RANGE if hi is None else hi), 'engine default +-1pp where not supplied'
-    return {'value': v, 'low': lo, 'high': hi, 'range_origin': rng, 'basis': idx['basis'], 'source': idx['source'], 'origin': 'user_input',
-            'provenance': idx.get('provenance', 'user_assumption'), 'risk_free_floor': floor}
+    out = {'value': v, 'low': lo, 'high': hi, 'range_origin': rng, 'basis': idx['basis'], 'source': idx['source'], 'origin': 'user_input',
+           'provenance': idx.get('provenance', 'user_assumption'), 'risk_free_floor': floor}
+    if _num(idx.get('rate_shift')) is not None:          # calibration.market_implied: market cost of equity - market return
+        out['rate_shift'] = number(idx['rate_shift'], 'index.rate_shift', -.05, .08)
+        out['market_cost_of_equity'] = _num(idx.get('market_cost_of_equity'))
+    return out
+
+
+def _market_consistent(index, ke, rates, er, view):
+    """Value at the market's own pricing, on the engine's cash flows. The engine values the cap-weighted market at an implied
+    return (calibration.market_implied) about 3pp below its own costs of equity, so at those costs almost every stock looks
+    overpriced (20.10.2026: 87% of 330 companies, median -47%) and the absolute value answers 'what to pay for my hurdle',
+    not 'is it cheap against the market'. Shifting each company's cost of equity by the same calibration gap keeps its relative
+    risk and puts the market as a whole at fair value: a value above the price here means cheaper than the average stock on
+    the same model. A reading for comparison with the index; the verdict keeps its own hurdle."""
+    shift = (index or {}).get('rate_shift')
+    ke = _num(view.get('model_cost_of_equity'))            # the discount rate of the executed base case
+    if shift is None or ke is None or rates is None or not view.get('price'):
+        return None
+    floor = ((index or {}).get('risk_free_floor') or 0.) + .01
+    rate = max(ke - shift, floor)
+    v = (rates.pfh(rate) or {}).get('value')
+    irr = (er or {}).get('base_irr')
+    return {'value': v, 'rate': rate, 'shift': shift, 'model_cost_of_equity': ke, 'market_return': index.get('value'),
+            'upside': (v / view['price'] - 1) if v is not None else None,
+            'edge_vs_market': (irr - index['value']) if irr is not None and _num(index.get('value')) is not None else None,
+            'meaning': 'base value with the cost of equity moved down by the calibration gap (market cost of equity - market implied '
+                       'return): above the price = cheaper than the market on the engine\'s own cash flows; not a price target. '
+                       'Long-duration values move 20-40% per point of discount rate: edge_vs_market (base IRR - market implied '
+                       'return) is the steadier comparison'}
 
 
 def _model_ke(view, fc):
@@ -2095,6 +2123,7 @@ def decide(parts, inputs=None):
     moat = _moat_test(fc, qcase, view, w, rates) if valued else None
     er = _expected(irrs, view, index, req, rates, qcase, res, an, err_level, w, moat)
     er['debt_weight_source'] = w_src
+    view['market_consistent'] = _market_consistent(index, ke, rates, er, view)
     A['price_attractiveness'] = price_attractiveness(er, view, wmbt, an)
     A = {k: A[k] for k in ASSESSMENTS}
     mech = _verdict(A, g, er, view, index, rates, req)

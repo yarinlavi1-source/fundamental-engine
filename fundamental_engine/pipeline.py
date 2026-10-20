@@ -498,6 +498,8 @@ def summary(cf):
             'risk_level': ((cf.get('rk') or {}).get('error_size') or {}).get('level'),
             'price': today.get('current_quote'), 'bear_value': today.get('bear'), 'base_value': today.get('base'),
             'bull_value': today.get('bull'), 'base_irr': er.get('base_irr'), 'bear_irr': er.get('bear_irr'),
+            'cost_of_equity': (dc.get('valuation_view') or {}).get('model_cost_of_equity'),
+            'market_consistent_value': ((dc.get('valuation_view') or {}).get('market_consistent') or {}).get('value'),
             'decision_version': dc.get('decision_version'), 'margin': v.get('margin'), 'hurdle': er.get('hurdle'),
             'value_at_required_return': v.get('value_at_required_return', er.get('value_at_required_return')),
             'review_status': (cf.get('rv') or {}).get('status'), 'casefile_sha256': cf.get('casefile_sha256')}

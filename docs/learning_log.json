@@ -187,6 +187,25 @@
      "fix": "open: separate investment purchases from business acquisitions"
     }
    ]
+  },
+  {
+   "round": "valuation_bias_2026-10-20",
+   "date": "2026-10-20",
+   "companies": [
+    "AMZN",
+    "MSFT",
+    "GOOGL",
+    "META",
+    "APH"
+   ],
+   "fixes": [
+    {
+     "ticker": "AMZN",
+     "kind": "engine_bug",
+     "finding": "owner challenge: Amazon 'worth $160' at $262. Across 330 clean casefiles 87% sat below price (median -47%): values were discounted at the engine's own cost of equity (cap-weighted 9.68%) while the engine prices the market at 6.87%; the calibrated index existed but was not passed in research runs, and the hurdle never goes below the model's own cost of equity",
+     "fix": "calibration records the market cost of equity and the gap; decision reports a market-consistent value and the edge over the market's implied return; START_HERE requires the calibrated index"
+    }
+   ]
   }
  ]
 }
