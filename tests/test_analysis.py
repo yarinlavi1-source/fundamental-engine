@@ -699,6 +699,30 @@ class CurrentYearAcquisitions(unittest.TestCase):
         self.assertIn('not counted', m['note'])
 
 
+class RestatedHistoryTests(unittest.TestCase):
+    """SYNTHETIC: a divestiture in 2023 (first-filed 2022 revenue 150 with the sold business, 95 as restated in the 2023
+    report). Growth is like for like; the first-filed CAGR (-10%) would call a growing business a decliner (FIS 2026)."""
+
+    def test_cagr_chains_like_for_like_steps(self):
+        fb = synth({y: dict(revenue=r, operating_income=r * .15) for y, r in {2021: 140., 2022: 150., 2023: 100., 2024: 104., 2025: 108.}.items()})
+        F.add_fact(fb, 'revenue_prior_comparable', 'CMP@2023-12-31', '2023-12-31', 95., 'syn', 'as_reported', '2024-02-15')
+        m = analyze(fb)['metrics']
+        self.assertAlmostEqual(m['revenue_cagr_3y']['value'], (108 / 95) ** (1 / 3) - 1, places=9)
+        self.assertAlmostEqual(m['revenue_cagr_3y']['detail']['first_filed'], (108 / 150) ** (1 / 3) - 1, places=9)
+        self.assertEqual(m['revenue_cagr_3y']['detail']['restated_bases'], ['FY2023'])
+        steps = {s['fiscal_period']: s for s in m['revenue_growth_series']['value']}
+        self.assertAlmostEqual(steps['FY2023']['growth'], 100 / 95 - 1)
+        self.assertEqual(steps['FY2023']['restated_base'], 95.)
+        self.assertNotIn('restated_base', steps['FY2024'])
+
+    def test_rounding_differences_keep_first_filed_revenue(self):
+        fb = synth({y: dict(revenue=r) for y, r in {2022: 100., 2023: 110., 2024: 121., 2025: 133.1}.items()})
+        F.add_fact(fb, 'revenue_prior_comparable', 'CMP@2023-12-31', '2023-12-31', 100.5, 'syn', 'as_reported', '2024-02-15')
+        m = analyze(fb)['metrics']
+        self.assertAlmostEqual(m['revenue_cagr_3y']['value'], .1, places=9)
+        self.assertNotIn('restated_bases', m['revenue_cagr_3y']['detail'])
+
+
 if __name__ == '__main__':
     unittest.main()
 

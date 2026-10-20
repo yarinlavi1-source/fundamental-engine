@@ -157,6 +157,11 @@ def _business(fb, raw_dir, manifest, as_of, notes):
                      sha=rec.get('sha256'), url=rec.get('url'), note='inline XBRL of the primary document')
         bm = business.business_map(html, src)
         avail = (date.fromisoformat(filed) + timedelta(days=1)).isoformat()
+        for pf in business.pro_forma_revenue(html):
+            if pf['end'] <= as_of and not any(x['metric'] == 'revenue_pro_forma' and x.get('period_start') == pf['start']
+                                              and x['period_end'] == pf['end'] for x in fb['facts']):
+                F.add_fact(fb, 'revenue_pro_forma', f"PF@{pf['start']}..{pf['end']}", pf['end'], pf['value'], sid, 'as_reported', avail,
+                           period_start=pf['start'], concept=business.PRO_FORMA_REVENUE + (f" [{pf['acquisition']}]" if pf['acquisition'] else ''))
         cs = bm.get('cover_shares')
         if cs and cs.get('as_of') and cs['as_of'] <= as_of and not any(
                 x['metric'] == 'shares_outstanding_cover' and x['period_end'] == cs['as_of'] for x in fb['facts']):

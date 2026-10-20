@@ -104,6 +104,33 @@ class FactBookTests(unittest.TestCase):
             F.add_qualitative(fb, 'q1', 'moat', 'later claim', 'opinion', ['s'], '2026-07-01')
 
 
+class ComparativeAndProFormaTests(unittest.TestCase):
+    """SYNTHETIC companyfacts: a divestiture restates the prior year in the next annual report; an acquisition discloses pro
+    forma revenue. First-filed values stay the point-in-time facts; the comparative and pro forma figures are kept beside them."""
+
+    def payload(self):
+        def r(start, end, val, filed, accn, form='10-K'):
+            return {'start': start, 'end': end, 'val': val, 'filed': filed, 'form': form, 'fp': 'FY', 'accn': accn}
+        return {'cik': 2, 'entityName': 'Synthetic Divestor', 'facts': {'us-gaap': {
+            'Revenues': {'units': {'USD': [
+                r('2021-01-01', '2021-12-31', 140.0, '2023-02-20', 'k22'), r('2022-01-01', '2022-12-31', 150.0, '2023-02-20', 'k22'),
+                r('2022-01-01', '2022-12-31', 95.0, '2024-02-20', 'k23'), r('2023-01-01', '2023-12-31', 100.0, '2024-02-20', 'k23')]}},
+            'BusinessAcquisitionsProFormaRevenue': {'units': {'USD': [
+                r('2023-01-01', '2023-12-31', 130.0, '2024-02-20', 'k23')]}}}}}
+
+    def test_restated_prior_year_is_kept_as_the_comparative(self):
+        fb = F.new({'ticker': 'SYN', 'currency': 'USD'}, '2024-06-30')
+        F.from_sec_companyfacts(fb, self.payload(), '2024-06-30T00:00:00Z')
+        self.assertEqual(F.value(fb, 'revenue', 'FY2022'), 150.0)                       # first filed: point in time
+        cmp = F.candidates(fb, 'revenue_prior_comparable')
+        self.assertEqual([(c['period_end'], c['value']) for c in cmp], [('2022-12-31', 140.0), ('2023-12-31', 95.0)])
+        pf = F.candidates(fb, 'revenue_pro_forma')
+        self.assertEqual([(p['period_start'], p['period_end'], p['value']) for p in pf], [('2023-01-01', '2023-12-31', 130.0)])
+        fb['as_of'] = '2024-02-01'                                                      # before the 2023 report: neither is usable
+        self.assertEqual([c['period_end'] for c in F.candidates(fb, 'revenue_prior_comparable')], ['2022-12-31'])
+        self.assertEqual(F.candidates(fb, 'revenue_pro_forma'), [])
+
+
 if __name__ == '__main__':
     unittest.main()
 

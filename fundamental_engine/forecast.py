@@ -402,6 +402,56 @@ def _ytd(fb, metric, last_end, upto=None):
     return None
 
 
+ACQ_UPLIFT = .05        # pro forma prior-period revenue above the reported figure by more than this: bought revenue in the comparison
+ACQ_JUMP = .10          # without pro forma: year-to-date growth this far above the pre-deal growth is read as bought
+
+
+def _acquired(fb, an, h, warn):
+    """Acquired revenue in the year-to-date comparison is a level shift, not growth to extrapolate (Dick's Sporting Goods
+    2026: +58% year to date with Foot Locker, 2.7% organic; the fade had started the next year at 25%). With the filing's
+    pro forma revenue for the same months a year earlier (ASC 805), organic growth = year to date (or its pro forma) / pro
+    forma prior - 1. Without it, an acquisition the analysis flags in the current or last fiscal year whose year-to-date
+    growth is more than ACQ_JUMP above the pre-deal like-for-like growth uses the median pre-deal growth, flagged high.
+    -> {'basis', 'organic', 'timing', ...} or None."""
+    ytd = h['ytd']
+    if not ytd or not ytd.get('prior') or ytd['prior'] <= 0:
+        return None
+    span = (_d(ytd['end']) - _d(h['last_end'])).days
+    pfs = facts.candidates(fb, 'revenue_pro_forma')
+    at = lambda end, days: [f for f in pfs if abs((_d(f['period_end']) - end).days) <= 10 and f.get('period_start')
+                            and abs((_d(f['period_end']) - _d(f['period_start'])).days - days) <= 20]
+    top = lambda fs: max(fs, key=lambda f: f['value'], default=None)
+    prior = top(at(_d(ytd['end']) - timedelta(days=364), span))
+    rows = an.get('acquisition_years') or []
+    timing = ('current_fiscal_year' if any(a.get('current_year_to_date') for a in rows) else
+              'last_fiscal_year' if any(a.get('period_end') == h['last_end'] for a in rows) else 'unknown')
+    if prior and prior['value'] / ytd['prior'] - 1 > ACQ_UPLIFT:
+        cur, fy = top(at(_d(ytd['end']), span)), top(at(_d(h['last_end']), 365))
+        organic = (cur['value'] if cur else ytd['value']) / prior['value'] - 1
+        return {'basis': 'pro_forma', 'organic': organic, 'timing': timing, 'uplift': prior['value'] / ytd['prior'] - 1,
+                'pro_forma_prior': prior['value'], 'pro_forma_current': cur and cur['value'], 'pro_forma_last_fy': fy and fy['value'],
+                'acquired_rate': (prior['value'] - ytd['prior']) / (span / 365.25), 'concept': prior.get('concept'),
+                'source_ids': sorted({f['source_id'] for f in (prior, cur, fy) if f}),
+                'statement': (f"pro forma revenue for the same months a year earlier {prior['value']:,.0f} against {ytd['prior']:,.0f} "
+                              f"reported ({_pct(prior['value'] / ytd['prior'] - 1)} bought): organic growth {_pct(organic)} against "
+                              f"{_pct(ytd['value'] / ytd['prior'] - 1)} reported")}
+    gs = [(x['period_end'], x['growth']) for x in (((an.get('metrics') or {}).get('revenue_growth_series') or {}).get('value') or [])]
+    if timing == 'unknown' or h.get('g_recent') is None:
+        return None
+    pre = sorted(g for e, g in [x for x in gs if timing == 'current_fiscal_year' or _d(x[0]) < _d(h['last_end']) - timedelta(days=20)][-3:])
+    if not pre:
+        return None
+    g_pre = pre[len(pre) // 2]
+    if h['g_recent'] - g_pre <= ACQ_JUMP:
+        return None
+    warn('acquired_growth_unverified', f"year-to-date growth {_pct(h['g_recent'])} includes an acquisition ({timing.replace('_', ' ')}) and the "
+                                       f"saved filings carry no pro forma revenue: the forecast fades from the pre-deal like-for-like growth "
+                                       f"{_pct(g_pre)} (median of the last {len(pre)} years); read the acquisition note for organic growth", 'high')
+    return {'basis': 'pre_deal_growth', 'organic': g_pre, 'timing': timing, 'pre_deal_years': len(pre),
+            'statement': (f"year-to-date growth {_pct(h['g_recent'])} with an acquisition in the {timing.replace('_', ' ')}; no pro forma "
+                          f"revenue saved: organic growth taken as the pre-deal median {_pct(g_pre)}")}
+
+
 def _scale_cap(rev, backlog):
     i = next(k for k, (lim, _) in enumerate(SCALE_CAPS) if rev < lim)
     lifted = backlog is not None and backlog >= rev and i > 0
@@ -474,6 +524,7 @@ def _history(fb, an, warn):
     elif t_method in ('quarters', 'annual_plus_ytd') and yrs >= .45 and t_rev and rev[-1] > 0:
         g_recent, recent_how = (t_rev / rev[-1]) ** (1 / yrs) - 1, 'annualized TTM-vs-last-FY growth'
     h['g_recent'] = g_recent
+    h['acq'] = _acquired(fb, an, h, warn)
     tiny = len(rev) > 3 and rev[-4] < .1 * rev[-1]       # a 3-year CAGR from a tiny base says nothing about the next year
     trail = _mean([g_last, None if tiny else c3])
     if trail is None:
@@ -892,8 +943,21 @@ def _current_year(route, h, cal, cons):
                  f"{gd.get('issued_at')}; management guidance, not a reported fact)")
     elif ytd:
         rem = years(ytd['end'], b1)
+        acq = h.get('acq')
         if ytd['prior'] and 0 < ytd['prior'] < h['last_revenue']:
             left, how = (h['last_revenue'] - ytd['prior']) * ytd['value'] / ytd['prior'], 'the same months a year earlier x year-to-date growth'
+            g1, rest = 1 + (acq or {}).get('organic', 0), h['last_revenue'] - ytd['prior']
+            if acq and acq.get('pro_forma_last_fy') and acq['pro_forma_last_fy'] > acq['pro_forma_prior']:
+                left = (acq['pro_forma_last_fy'] - acq['pro_forma_prior']) * g1
+                how = 'the same months a year earlier on the pro forma basis (acquired business included) x (1 + organic growth)'
+            elif acq and acq['timing'] == 'current_fiscal_year' and acq.get('acquired_rate'):
+                left = rest * g1 + acq['acquired_rate'] * rem
+                how = ('the same months a year earlier x (1 + organic growth) + the acquired business at its pre-deal pro forma '
+                       'run rate')
+            elif acq and acq['timing'] != 'current_fiscal_year':
+                left = rest * g1
+                how = ('the same months a year earlier x (1 + organic growth): the acquired business is in the prior year from its '
+                       'closing; months before the closing are not added (conservative)')
         else:
             left, how = ytd['value'] / years(h['last_end'], ytd['end']) * rem, 'the annualized year-to-date run rate'
         r, kind = ytd['value'] + left, 'model'      # reported year to date plus a modelled remainder
@@ -991,7 +1055,8 @@ def _params(route, h, cal, cons, rf, ku, debt0, ov, warn):
         cyc_meta = dict(cyc, trend_at_current_fy=trend_b1, level=level, elapsed_at_current_fy=e0, long_run_growth=g_long,
                         level_factor=factor, conv=CYCLE_CONV)
     else:
-        start = _fade(g_cur, gT['base'], hl, 1)[0]
+        # bought revenue is a level shift in the current year, not growth to repeat: the fade starts from organic growth
+        start = _fade(h['acq']['organic'] if h.get('acq') else g_cur, gT['base'], hl, 1)[0]
         cap = (h.get('g_scale_cap') or {}).get('cap')
         if not cg and cap is not None and start > cap:
             # the revenue-scale base rate bounds the first forecast year too, not only the trailing anchor: fading a year-to-date
@@ -1691,9 +1756,12 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
         g = paths[s]['growth']
         why = {'base': (f"Years 1-{len(meta['consensus_growth'])} follow revenue consensus, then fade" if meta['growth_kind'] == 'analyst'
                         else 'Revenue reverts from today\'s level to the mid-cycle trend (cycle_normalization), then grows at the trend fading to terminal'
-                        if cyc else f"Faded from the current fiscal year's growth {_pct(meta['g_cur'])} ("
+                        if cyc else (f"Faded from organic growth {_pct(h['acq']['organic'])}, not the current fiscal year's "
+                                     f"{_pct(meta['g_cur'])} that includes acquired revenue ({h['acq']['statement']}); the acquired "
+                                     'revenue is a level shift in the current year' if h.get('acq') else
+                                     f"Faded from the current fiscal year's growth {_pct(meta['g_cur'])} ("
                         + (f"year-to-date reports, see revenue_current_fy; trailing growth {_pct(h['g_trailing'])} for reference"
-                           if meta.get('ytd') else f"trailing growth {_pct(h['g_trailing'])}: {h['g_trailing_formula']}") + ')'),
+                           if meta.get('ytd') else f"trailing growth {_pct(h['g_trailing'])}: {h['g_trailing_formula']}") + ')')),
                'bear': ('Faster reversion to a lower cycle level, lower trend growth' if cyc else
                         f"Realistic disappointment: first-year growth min(base - spread, half of base) with spread {_pct(meta['spread'])} "
                         '(max of stage floor, historical growth volatility and consensus dispersion), faster fade'),

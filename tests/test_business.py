@@ -97,5 +97,16 @@ class BusinessMapTests(unittest.TestCase):
         self.assertIn('new customers', sec['item7_mdna'])
 
 
+class ProFormaTests(unittest.TestCase):
+    def test_pro_forma_revenue_per_acquisition(self):
+        ax = 'us-gaap:BusinessAcquisitionAxis'
+        html = (ctx('P0', '2025-01-01', '2025-06-30', dims={ax: 'syn:TargetCoMember'}) + ctx('R0', '2025-01-01', '2025-06-30')
+                + ctx('X0', '2025-01-01', '2025-06-30', dims={ax: 'syn:TargetCoMember', SEG: 'syn:CloudMember'})
+                + fact('us-gaap:BusinessAcquisitionsProFormaRevenue', 'P0', '10,472') + fact('us-gaap:Revenues', 'R0', '6,821')
+                + fact('us-gaap:BusinessAcquisitionsProFormaRevenue', 'X0', '1,000'))          # a segment slice is not the total
+        self.assertEqual(B.pro_forma_revenue(html), [{'start': '2025-01-01', 'end': '2025-06-30', 'value': 10472e6,
+                                                      'acquisition': 'Target Co'}])
+
+
 if __name__ == '__main__':
     unittest.main()

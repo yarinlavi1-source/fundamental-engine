@@ -151,6 +151,29 @@ def _derive(members, total):
     return out
 
 
+PRO_FORMA_REVENUE = 'us-gaap:BusinessAcquisitionsProFormaRevenue'
+
+
+def pro_forma_revenue(html):
+    """Pro forma revenue of the combined company as if an acquisition had closed at the start of the comparison period
+    (ASC 805 disclosure): [{'start', 'end', 'value', 'acquisition'}]. The prior-year pro forma figure is the like-for-like
+    base that separates acquired revenue from organic growth (Dick's Sporting Goods with Foot Locker, 2026)."""
+    ix = parse_ixbrl(html)
+    out, seen = [], set()
+    for f in ix['facts']:
+        c = ix['contexts'].get(f['context'])
+        if f['concept'] != PRO_FORMA_REVENUE or not c or not c['start'] or not c['end']:
+            continue
+        dims = _clean_dims(c['dims'])
+        if dims and set(dims) != {'us-gaap:BusinessAcquisitionAxis'}:
+            continue
+        key = (c['start'], c['end'], dims.get('us-gaap:BusinessAcquisitionAxis'))
+        if key not in seen:
+            seen.add(key)
+            out.append({'start': c['start'], 'end': c['end'], 'value': f['value'], 'acquisition': key[2] and _human(key[2])})
+    return out
+
+
 def business_map(html, source=None, consolidated_revenue=None):
     """Business map from one annual report's inline XBRL. source: {'url','accession','form','filed','period'}."""
     ix = parse_ixbrl(html)

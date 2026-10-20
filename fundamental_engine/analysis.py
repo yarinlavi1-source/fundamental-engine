@@ -88,6 +88,7 @@ DERIVED = {'fcf': ('cfo', 'capex'), 'fcf_after_sbc': ('cfo', 'capex', 'sbc'), 'i
            'deferred_revenue': ('deferred_revenue_current', 'deferred_revenue_noncurrent')}
 TOL = 20                                  # days: two dates are the same fiscal year end (52/53-week years drift)
 ACQ_PCT_REVENUE, GOODWILL_JUMP_PCT_PRIOR_REVENUE = .05, .10
+RESTATED_BASE_PCT = .02                   # prior-year revenue restated by more than this: growth uses the restated base
 
 
 def _d(s):
@@ -671,6 +672,17 @@ def _metrics(fb, qa, years, labels, cells, ttm, tc, rs):
 
     # ---- growth
     steps = [(years[i - 1], years[i]) for i in range(1, len(years)) if _step_ok(years[i - 1], years[i])]
+    comp = [(f['period_end'], f['value']) for f in F.candidates(fb, 'revenue_prior_comparable')]
+
+    def base_of(a, z):
+        """Revenue of year a as the base for growth into year z: the comparative column of z's annual report when a later
+        divestiture or discontinued operation restated a by more than RESTATED_BASE_PCT (like for like), else a's own
+        first-filed revenue. -> (base, restated?)"""
+        ra = v(a, 'revenue')
+        c = next((x for e, x in comp if abs(_days(e, z)) <= TOL), None)
+        if c and ra and c > 0 and abs(c / ra - 1) > RESTATED_BASE_PCT:
+            return c, True
+        return ra, False
     acq, acq_set = [], set()
     for i, pe in enumerate(years):
         rev, a = v(pe, 'revenue'), v(pe, 'acquisitions')
@@ -695,12 +707,26 @@ def _metrics(fb, qa, years, labels, cells, ttm, tc, rs):
         window = [y for y in years if b <= y <= last]
         excl = [y for y in window[1:] if y in acq_set]
         detail = {'reported': val, 'excluded_acquisition_years': [lab(y) for y in excl]}
+        pairs = list(zip(window, window[1:]))
+        restated = [z for a, z in pairs if base_of(a, z)[1]]
+        if restated and len(pairs) == n and all(_step_ok(a, z) for a, z in pairs) and all(base_of(a, z)[0] and base_of(a, z)[0] > 0
+                                                                                        and v(z, 'revenue') is not None for a, z in pairs):
+            # a divestiture restated part of the window: chain like-for-like steps (each year's growth on its own report's
+            # comparative), never first-filed revenue with the sold business against revenue without it
+            prod = 1.0
+            for a, z in pairs:
+                prod *= v(z, 'revenue') / base_of(a, z)[0]
+            detail.update(first_filed=val, restated_bases=[lab(z) for z in restated],
+                          like_for_like_note='steps into ' + ', '.join(lab(z) for z in restated) + ' use the prior year as restated '
+                          'in that year\'s annual report (divestiture or discontinued operation)')
+            val = detail['reported'] = prod ** (1 / n) - 1 if prod > 0 else None
+            f += '; like-for-like steps where a later report restated the prior year'
         if excl:
-            ws = [(a, z) for a, z in zip(window, window[1:]) if z not in acq_set]
-            ok = all(_step_ok(a, z) for a, z in zip(window, window[1:])) and ws and all(v(a, 'revenue') and v(a, 'revenue') > 0 for a, _ in ws)
+            ws = [(a, z) for a, z in pairs if z not in acq_set]
+            ok = all(_step_ok(a, z) for a, z in pairs) and ws and all(base_of(a, z)[0] and base_of(a, z)[0] > 0 for a, z in ws)
             prod = 1.0
             for a, z in ws:
-                prod *= v(z, 'revenue') / v(a, 'revenue') if ok else 1
+                prod *= v(z, 'revenue') / base_of(a, z)[0] if ok else 1
             detail['ex_acquisition_years'] = prod ** (1 / len(ws)) - 1 if ok and prod > 0 else None
             detail['note'] = ('ex_acquisition_years drops the whole growth step of each flagged year (organic growth in '
                               'those years is dropped too); revenue itself is never adjusted')
@@ -722,10 +748,10 @@ def _metrics(fb, qa, years, labels, cells, ttm, tc, rs):
                                     'needs two or more consecutive fiscal years on one fiscal calendar')
     series, srefs = [], []
     for a, z in steps:
-        ra, rz = v(a, 'revenue'), v(z, 'revenue')
+        (ra, rst), rz = base_of(a, z), v(z, 'revenue')
         if ra and ra > 0 and rz is not None:
             series.append({'period_end': z, 'fiscal_period': lab(z), 'growth': rz / ra - 1,
-                           'acquisition_year': z in acq_set})
+                           'acquisition_year': z in acq_set, **({'restated_base': ra} if rst else {})})
             srefs += g(a, 'revenue')['refs'] + g(z, 'revenue')['refs']
     M['revenue_growth_series'] = _m(series or None, 'ratio', 'revenue[t] / revenue[t-1] - 1 for consecutive fiscal years (350-380 days apart)',
                                     srefs, _span(labels, years[0], last) if years else None, 'needs two consecutive fiscal years')

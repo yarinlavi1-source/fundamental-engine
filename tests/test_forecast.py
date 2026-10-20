@@ -1220,6 +1220,49 @@ class ThinMarginCapTests(unittest.TestCase):
         self.assertGreater(t['base'], .08)
 
 
+def acquirer(pro_forma=True):
+    """SYNTHETIC retailer (shaped like Dick's Sporting Goods 2026): 100 a year growing 3%, buys a business with 60 of yearly
+    revenue during the last fiscal year; the year to date (H1) shows +60% against months before the closing."""
+    rev = {2023: 94.3e9, 2024: 97.1e9, 2025: 125e9}
+    annual = {f'{y}-12-31': {'revenue': r, 'operating_income': r * .08, 'sbc': r * .005, 'd_and_a': r * .03, 'capex': r * .03,
+                             'cfo': r * .09, 'pretax_income': r * .08, 'income_tax': r * .08 * .24} for y, r in rev.items()}
+    inst = {'2025-12-31': {'cash': 5e9, 'shares_outstanding': 1e9, 'receivables': 3e9, 'payables': 8e9}}
+    fb = synth('2026-10-20', annual, inst, 100.0, kind='filing_derived')
+    for end, start, r in (('2025-03-31', '2025-01-01', 25e9), ('2025-06-30', '2025-04-01', 25e9),
+                          ('2026-03-31', '2026-01-01', 40e9), ('2026-06-30', '2026-04-01', 40e9)):
+        for m, k in (('revenue', 1.), ('operating_income', .08)):
+            facts.add_fact(fb, m, 'Q@' + end, end, r * k, 'syn:fs', 'as_reported', end[:8] + '28', period_start=start)
+    if pro_forma:                                                     # H1 2025 as if the business had been owned: 50 + 30
+        facts.add_fact(fb, 'revenue_pro_forma', 'PF@2025-01-01..2025-06-30', '2025-06-30', 78e9, 'syn:fs', 'as_reported',
+                       '2026-07-28', period_start='2025-01-01')
+    an = make_an(fb, revenue_growth_last=.287, revenue_cagr_3y=.10, growth_volatility=.1, roic=.15, sales_to_capital_incremental_3y=2.0)
+    an['acquisition_years'] = [{'period_end': '2025-12-31', 'fiscal_period': 'FY2025'}]
+    an['metrics']['revenue_growth_series'] = {'value': [{'period_end': '2024-12-31', 'growth': .03}, {'period_end': '2025-12-31', 'growth': .287}]}
+    card = {'business_model': {'primary': 'consumer_brand'}, 'stage': {'value': 'mature'}, 'funding': {'value': 'self_funded'},
+            'cyclical': {'value': False}, 'valuation': {'method': 'fcff_annual_path', 'archetype': 'consumer'},
+            'dimensions': {'moat': {'assessment': 'adequate'}}}
+    return fb, an, card, qa_for(1e9, 5e9, 0., '2025-12-31')
+
+
+class AcquiredRevenueTests(unittest.TestCase):
+    def test_pro_forma_makes_bought_revenue_a_level_shift(self):
+        fc = forecast.build(*acquirer())
+        self.assertEqual(fc['status'], 'built')
+        base = scen(fc['spec'], 'base')['growth']
+        self.assertLess(base[0], .04)                                 # organic 80/78 - 1 = 2.6%, never the +60% year to date
+        cur = fc['anchors']['current_fiscal_year']
+        self.assertAlmostEqual(cur['revenue'], 80e9 + (125e9 - 50e9) * 80 / 78, delta=1e6)
+        self.assertIn('organic growth', cur['basis'])
+        g = next(a for a in fc['assumptions'] if a['id'] == 'growth_base')
+        self.assertIn('Faded from organic growth 2.6%', g['rationale'])
+
+    def test_without_pro_forma_pre_deal_growth_is_used_and_flagged(self):
+        fc = forecast.build(*acquirer(pro_forma=False))
+        self.assertLess(scen(fc['spec'], 'base')['growth'][0], .04)   # pre-deal like-for-like 3%
+        w = {x['code']: x for x in fc['warnings']}
+        self.assertEqual(w['acquired_growth_unverified']['severity'], 'high')
+
+
 if __name__ == '__main__':
     unittest.main()
 

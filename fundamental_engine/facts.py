@@ -250,6 +250,52 @@ def from_fmp_as_reported(fb, payloads, retrieved_at, kind='annual', filed_by_end
     return n
 
 
+def _prior_comparable(fb, gaap, tags, sid):
+    """Prior-year revenue as presented in each fiscal year's first annual report (its comparative column), as
+    'revenue_prior_comparable' with period CMP@<that year's end>. A divestiture or discontinued operation restates the
+    prior year there, so it is the like-for-like base for that year's growth; the first-filed revenue facts stay the
+    point-in-time values (Fidelity National Information Services: 2022 first filed at 14.5bn with Worldpay, 9.7bn as
+    presented in the 2023 report)."""
+    by_accn = {}
+    for order, tag in enumerate(tags):
+        for r in gaap[tag].get('units', {}).get('USD', []):
+            if (r.get('start') and r.get('accn') and r.get('form') in ('10-K', '10-K/A', '20-F', '40-F')
+                    and 350 <= (_d(r['end']) - _d(r['start'])).days <= 380):
+                by_accn.setdefault(r['accn'], {}).setdefault(order, []).append(r)
+    first = {}                                              # fiscal year end -> ((filed, tag order), top, prior, tag)
+    for tagged in by_accn.values():
+        for order in sorted(tagged):
+            rs = tagged[order]
+            top = max(rs, key=lambda r: r['end'])
+            prior = next((r for r in rs if abs((_d(top['end']) - _d(r['end'])).days - 365) <= 10), None)
+            if prior is None:
+                continue
+            key = (top['filed'], order)
+            same = next((e for e in first if abs((_d(e) - _d(top['end'])).days) <= SAME_PERIOD_DAYS), None)
+            if same is None or key < first[same][0]:
+                first.pop(same, None)
+                first[top['end']] = (key, top, prior, tags[order])
+            break
+    for end, (_, top, prior, tag) in sorted(first.items()):
+        add_fact(fb, 'revenue_prior_comparable', f'CMP@{end}', end, prior['val'], sid, 'as_reported',
+                 (_d(top['filed']) + timedelta(days=LAG_DAYS)).isoformat(), period_start=prior['start'], concept=tag)
+    return len(first)
+
+
+def _pro_forma(fb, gaap, sid):
+    """Undimensioned BusinessAcquisitionsProFormaRevenue (one acquisition in the period) as 'revenue_pro_forma' with period
+    PF@start..end, first filed per period; facts tagged per acquisition come from the filing's inline XBRL (pipeline)."""
+    tag = next((k for k in gaap if k.lower() == 'businessacquisitionsproformarevenue'), None)
+    first = {}
+    for r in (gaap[tag].get('units', {}).get('USD', []) if tag else []):
+        if r.get('start') and r.get('filed') and ((r['start'], r['end']) not in first or r['filed'] < first[(r['start'], r['end'])]['filed']):
+            first[(r['start'], r['end'])] = r
+    for (start, end), r in sorted(first.items()):
+        add_fact(fb, 'revenue_pro_forma', f'PF@{start}..{end}', end, r['val'], sid, 'as_reported',
+                 (_d(r['filed']) + timedelta(days=LAG_DAYS)).isoformat(), period_start=start, concept=f'us-gaap:{tag}')
+    return len(first)
+
+
 def from_sec_companyfacts(fb, payload, retrieved_at, sid='sec:companyfacts'):
     """SEC companyfacts JSON: annual (10-K, ~1 year) and standalone quarterly facts with real filing dates.
 
@@ -282,6 +328,9 @@ def from_sec_companyfacts(fb, payload, retrieved_at, sid='sec:companyfacts'):
                      (_d(r['filed']) + timedelta(days=LAG_DAYS)).isoformat(), period_start=r['start'], concept=tag,
                      unit=UNITS.get(metric))
             n += 1
+        if metric == 'revenue':
+            n += _prior_comparable(fb, gaap, tags, sid)
+            n += _pro_forma(fb, gaap, sid)
         if unit != 'USD':
             continue
         qs = sorted((filed, order, end, v, tag) for order, tag in enumerate(tags)
