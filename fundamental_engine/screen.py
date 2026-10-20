@@ -42,7 +42,8 @@ GRADES = {'verified': 'FactBook whose dataqa status is ok',
           'sec_frames': 'SEC XBRL frames: one calendar period per concept for all filers, no filing dates',
           'screening': 'vendor TTM ratios (normalized, not reconciled to filings)'}
 GRADE_ORDER = list(GRADES)
-LENSES = ('quality_compounder', 'quality_fair_price', 'early_commercial_growth', 'mispriced_turning', 'structural_tailwind')
+LENSES = ('quality_compounder', 'quality_fair_price', 'early_commercial_growth', 'mispriced_turning', 'structural_tailwind',
+          'recovery_mispriced')
 DIMENSIONS = ('business_quality', 'growth_quality', 'financial_strength', 'valuation', 'expected_return_proxy',
               'priced_in', 'risk', 'data_uncertainty')
 FMP_CALLS = {'A': 'key-metrics-ttm', 'B': 'metrics-ratios-ttm', 'C': 'financial-statement-growth',
@@ -123,7 +124,8 @@ LENS_RULES = {
         'conditions': ['business_quality strong or adequate', 'profitable: operating margin or ROIC at or above its weak anchor (loss-makers belong in early_commercial_growth)',
                        'growth_quality strong (repeatable, organic, per share)', 'per share: share count known and growing <= 5%/yr, no high dilution flag',
                        'financial_strength not weak', 'no high-severity leverage, interest-coverage or funding flag',
-                       'earnings quality: no accounting or cash-conversion flag'],
+                       'earnings quality: no accounting or cash-conversion flag',
+                       'not a cyclical at a possible or unchecked peak (a commodity producer growing into a price peak is not a compounder)'],
         'ordering': 'cyclical peak check (none or through-cycle, incomplete, possible peak), then quality tier (strong before adequate), then price check (assessed, unassessed, demanding or priced for perfection), then expected-return proxy (desc). Meaning: growth that may be a cyclical peak ranks after repeatable growth; among comparable quality an unread or demanding price ranks later; then the price that leaves the most return.'},
     'quality_fair_price': {
         'label': 'Quality company at an attractive or fair price',
@@ -141,13 +143,25 @@ LENS_RULES = {
                        'share count known and growing <= 10%/yr', 'no distress flag'],
         'ordering': 'proof count (desc), then funded before funding-conditional, then cyclical peak check, then price check (assessed, unassessed, demanding: fallback EV/sales per Rule-of-40 point when owner FCF <= 0), then per-share growth (desc). Meaning: measured commercial evidence first; story without numbers is never rewarded, and an extreme price never ties with a moderate one.'},
     'mispriced_turning': {
-        'label': 'Mispriced or turning-point business',
+        'label': 'Turnaround: the business is improving (margins, cash flow, utilization or revenue quality) faster than the price reflects',
         'scope': 'at least one improvement signal (a recovery from a down year counts), or a >= 30% drawdown from the high when price data is supplied (context only).',
         'conditions': ['>= 2 improvement signals incl. a profit/cash one, or overreaction path (drawdown with intact quality and growth plus at least one improvement signal)',
                        'the price lags: priced_in strong, or valuation strong when priced_in is unknown, or (overreaction path) priced_in not weak',
                        'share count known and growing <= 8%/yr', 'financial_strength not weak', 'no high-severity leverage, interest-coverage or funding flag',
                        'not a cyclical at a possible or unchecked peak (peak earnings make a price look like it lags)'],
         'ordering': 'improvement-signal count (desc), then priced_in (strong, adequate, unknown), then expected-return proxy (desc). Meaning: business evidence first, price second.'},
+    'recovery_mispriced': {
+        'label': 'Recovery or mispricing: a recent problem the price treats as permanent, in a business that earned well before',
+        'scope': 'a recent setback (revenue decline, operating-margin drop >= 2 pts, FCF-margin drop >= 3 pts, or a >= 30% drawdown when '
+                 'price data is supplied) with a market value in the data.',
+        'conditions': ['earned well before: the median operating margin of the earlier years at or above its weak anchor and business_quality not weak',
+                       'not a structural decline: revenue not falling in every recent year and gross margin not collapsing (>= 3 pts)',
+                       'price assumes the problem lasts: priced_in strong or adequate, or valuation strong when priced_in is unknown',
+                       'survives the problem: financial_strength not weak and no high-severity balance-sheet flag',
+                       'earnings quality: no accounting or cash-conversion flag', 'share count known and growing <= 8%/yr'],
+        'ordering': 'priced_in (strong, adequate, unknown), then expected-return proxy (desc), then the earlier median margin (desc). Meaning: '
+                    'the more the price assumes a permanent problem in a business that earned well, the earlier it is checked; whether the '
+                    'problem is temporary or structural is the research question, never assumed.'},
     'structural_tailwind': {
         'label': 'Structural long-term opportunity',
         'scope': 'an analyst theme for the symbol (options.themes) or industry (options.structural_industries), or the numeric footprint of fast growth (top quartile of its sector in this universe with a non-falling gross margin; organic share stated when known).',
@@ -163,6 +177,8 @@ LENS_CHECKS = {
     'early_commercial_growth': 'Paid adoption and unit economics from filings (cohorts, retention, gross margin by product), funding runway to the next milestone and dilution to current holders.',
     'mispriced_turning': 'Is the improvement durable (segment/driver evidence over several quarters, not one) or the problem temporary? What does the market fear?',
     'structural_tailwind': 'Value capture: who keeps the profit, supply response and substitutes; how much of the theme the price already assumes.',
+    'recovery_mispriced': 'Temporary or structural: what caused the setback (cycle, one customer, pricing, a product, competition), what the '
+                          'company and competitors report since, and what the price assumes about recovery.',
 }
 
 
@@ -1006,6 +1022,12 @@ def _cycle(c, o):
             word = cyclical_word({'sector': row.get('sector')})
             notes.append(f"'{t['text']}' mixes {t['mixes']}; platform signature ({rule}): the operators' cyclical word does not flag it")
     typ = t['type'] if t and t['type'] in CYCLICAL_TYPES else None
+    if row.get('industry_listing') and not (word or typ):
+        # an SEC SIC description replaced the listing label (universe.apply_profiles); the listing label still carries the cue
+        # (SSR Mining: SIC 'Mineral Royalty Traders', listed as 'Precious Metals')
+        word = cyclical_word({'industry': row['industry_listing']})
+        tl = text_type({'industry': row['industry_listing']})
+        typ = tl['type'] if tl and tl['type'] in CYCLICAL_TYPES else None
     cons, down = m.get('consensus_growth_2y'), _consensus_downside(m)
     boom = _boom_after_downturn(m, A) if (cons is None or down) else ''      # consensus expecting more growth contradicts a boom
     basis = 'industry_word' if word else ('type' if typ else ('data' if boom else None))
@@ -1543,7 +1565,7 @@ def _lens(name, c, o):
                  ('profitable', prof, f"operating margin {_fmt(om)} and ROIC {_fmt(roic)} below their weak anchors: loss-making growth "
                   'belongs in early_commercial_growth'),
                  ('growth_quality', gq == 'strong', f'growth quality {gq}, needs strong: {_neg(d["growth_quality"])}'),
-                 ('per_share', dil is not None and dil <= .05 and not dil_hi, dil_txt(.05)), fs_c, bs_c, eq_c]
+                 ('per_share', dil is not None and dil <= .05 and not dil_hi, dil_txt(.05)), fs_c, bs_c, eq_c, cyc_c]
         order = [('cyclical peak check (0 none or through-cycle, 1 incomplete, 2 possible peak)', crank, 'asc'),
                  ('quality tier (0 strong, 1 adequate)', 0 if bq == 'strong' else 1, 'asc'),
                  ('price check (0 assessed, 1 unassessed, 2 demanding or priced for perfection)', prank, 'asc'),
@@ -1622,6 +1644,32 @@ def _lens(name, c, o):
                + (f"Down {_fmt(-dd)} from its high with {bq} quality and {gq} growth: possible overreaction, test temporary vs structural. " if over else '')
                + f"Price check: {_price_phrase(c)}.")
         return scope, conds, order, why, (['overreaction_candidate'] if over else []) + [k for k, _, _ in imp] + cyc_t
+    if name == 'recovery_mispriced':
+        gr, omt, fmc, dd = m.get('revenue_growth'), m.get('operating_margin_trend'), m.get('fcf_margin_change'), m.get('drawdown_from_high')
+        setback = [t for t, ok in ((f'revenue {_fmt(gr)}', gr is not None and gr < 0),
+                                   (f'operating margin {_fmt(omt, "pts")}', omt is not None and omt <= -.02),
+                                   (f'FCF margin {_fmt(fmc, "pts")}', fmc is not None and fmc <= -.03),
+                                   (f'price {_fmt(dd)} from its high', dd is not None and dd <= o['drawdown_overreaction'])) if ok]
+        scope = bool(setback) and bool(m.get('market_cap'))
+        hist = [x for x in (m.get('operating_margin_history') or [])[:-1] if x is not None]
+        before = sorted(hist)[len(hist) // 2] if hist else None
+        earned = before is not None and before >= A['operating_margin'][1] and bq != 'weak'
+        ser = [x for x in m.get('revenue_growth_series') or [] if x is not None]
+        gmc = m.get('gross_margin_change')
+        structural = (len(ser) >= 3 and all(x < 0 for x in ser[-3:])) or (gmc is not None and gmc <= -.03)
+        price_ok = pi in ('strong', 'adequate') or (pi == 'unknown' and val == 'strong')
+        conds = [('earned_before', earned, f"earlier median operating margin {_fmt(before)} (history {_fmt(hist, 'list')}), business quality {bq}: "
+                  'no record of earning well before the setback'),
+                 ('not_structural_decline', not structural, f"revenue {_fmt(ser[-3:], 'list')} or gross margin {_fmt(gmc, 'pts')}: looks like "
+                  'structural decline, not a temporary setback'),
+                 ('price_assumes_it_lasts', price_ok, f"the price does not assume the problem lasts: priced_in {pi} "
+                  f"({d['priced_in']['class'].replace('_', ' ')}), valuation {val}"),
+                 fs_c, bs_c, eq_c, ('dilution', dil is not None and dil <= .08, dil_txt(.08))]
+        order = [('priced_in rank (0 strong .. 3 weak)', PI_RANK[pi], 'asc'), ('expected-return proxy', erv, 'desc'),
+                 ('earlier median operating margin', before, 'desc')]
+        why = (f"Setback: {'; '.join(setback)}. Earned before: median operating margin {_fmt(before)} in the earlier years. "
+               f"Price check: {_price_phrase(c)}. Temporary or structural is the open question, not an assumption.")
+        return scope, conds, order, why, ['temporary_vs_structural_open'] + cyc_t
     if name == 'structural_tailwind':
         themes = (o['themes'] or {}).get(c['row']['symbol']) or []
         ind = c['row'].get('industry') in (o['structural_industries'] or [])
@@ -1866,7 +1914,9 @@ def scan(rows, options=None):
         r = c['row']
         dims[s] = {'profile': {'name': r.get('name'), 'sector': r.get('sector'), 'industry': r.get('industry'), 'market_cap': c['m'].get('market_cap'),
                                'data_grade': r['data_grade'], 'source': r.get('source'), 'as_of': r.get('as_of'), 'stage': c['m'].get('stage'),
-                               'cyclical': c['cycle']},
+                               'cyclical': c['cycle'], 'data_flags': list(r.get('data_flags') or []),
+                               'sec_profile': r.get('sec_profile'), 'industry_listing': r.get('industry_listing'),
+                               'country': r.get('country'), 'exchange': r.get('exchange')},
                    **c['dims'], 'metrics': c['m'], 'basis': c['b']}
     disq, gaps = {}, []
     for s, c in ctx.items():

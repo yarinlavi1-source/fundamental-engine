@@ -11,6 +11,19 @@
   candidates only (760 on 20.10.2026); the SIC code replaces the coarse listing industry and balance-sheet SIC ranges
   (banks, credit, broker-dealers, insurance carriers, REITs, blank checks) are routed away from operating lenses.
 - SEC frames revenue: the larger total of the same period wins over a component tagged 'Revenues' (Verra Mobility).
+- Six discovery lanes: new `recovery_mispriced` lens (a setback in revenue, margins, cash or price in a business that
+  earned well before, not a three-year decline or a gross-margin collapse, and a price that assumes the setback lasts;
+  temporary-versus-structural stays an open question on the candidate). `mispriced_turning` is labelled as the turnaround
+  lane; `quality_compounder` now requires no unconfirmed cyclical peak; the listing industry label still gives the
+  cyclical cue after the SEC SIC description replaces it (a gold miner no longer passes as a compounder).
+- Candidate cards (`candidates.py`): per company, why it surfaced and in which lane, what could make it exceptional, what
+  the data supports, what is still a hypothesis, what would falsify it, what the price assumes, risks (including data
+  flags), missing data and whether it warrants the full analysis (yes / maybe / no with the reason). Nothing is re-scored:
+  every line is read from the scan. Exploratory path: a name the numeric lanes did not admit enters with a written reason
+  and dated evidence (source, date, statement), keeping its numeric failures on the card; banks and other unsupported
+  economics are not forced through, distress needs a funding view first. `research_queue` rotates across lanes so no
+  lane fills the queue. `universe` writes cards.json and a Hebrew cards_he.md and prints the queue
+  (20.10.2026: 65 cards, queue ANIP, COLL, GLBE, HROW, NOAH, TCOM, one per lane). A queue is a research priority only.
 
 - Investments no longer vanish on a tag change: DebtSecuritiesCurrent/Noncurrent read as short/long-term investments;
   listed equity stakes (EquitySecuritiesFvNi) resolved as `equity_securities_fv` and valued once at fair value in the

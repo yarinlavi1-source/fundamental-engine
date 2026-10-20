@@ -553,7 +553,8 @@ class ReviewRegressions(unittest.TestCase):
             self.assertNotIn('PEAKCYC', syms(out, ln), ln)
             self.assertIn(('PEAKCYC', 'not_cyclical_peak'), [(x['symbol'], x['failed']) for x in out['near_misses'][ln]], ln)
         self.assertNotIn('PEAKCYC', syms(out, 'quality_compounder'))   # consensus -10%/yr: growth not shown to be repeatable
-        self.assertIn(('PEAKCYC', 'growth_quality'), [(x['symbol'], x['failed']) for x in out['near_misses']['quality_compounder']])
+        # fails growth_quality AND (since 20.10.2026) not_cyclical_peak: two failures, so no longer a single-condition near miss
+        self.assertNotIn('PEAKCYC', [x['symbol'] for x in out['near_misses']['quality_compounder']])
         d = out['dimensions']['PEAKCYC']
         self.assertIn('cyclical_peak', [f['code'] for f in d['risk']['flags']])
         self.assertEqual(d['growth_quality']['inputs']['consensus_outlook']['signal'], -1)

@@ -148,6 +148,9 @@ def main():
     un.add_argument("--as-of", required=True)
     un.add_argument("--min-market-cap", type=float, default=2e8)
     un.add_argument("--options", help="JSON options passed to screen.scan")
+    un.add_argument("--exploratory", help="JSON {symbol: {reason, evidence: [{source, date, statement}]}}: business evidence for names "
+                                          "the numeric lanes did not admit")
+    un.add_argument("--max-full", type=int, default=6, help="research queue size (full analyses to run next)")
     pf = subs.add_parser("portfolio", help="READ-ONLY analysis of saved Interactive Brokers payloads; prints to stdout, stores nothing")
     pf.add_argument("positions")
     pf.add_argument("--summary")
@@ -207,12 +210,20 @@ def main():
             rows, report = build(str(raw), args.as_of, args.min_market_cap)
             prof = sec_profiles(str(raw), {int(r['source']['cik']): r['symbol'] for r in rows if (r.get('source') or {}).get('cik')})
             apply_profiles(rows, prof)
+            from .candidates import cards, research_queue, render_he
             result = scan(rows, read_json(args.options) if args.options else None)
-            for name, obj in (('rows.json', rows), ('scan.json', result), ('coverage.json', report)):
+            card_set = cards(result, read_json(args.exploratory) if args.exploratory else None)
+            queue = research_queue(card_set, args.max_full)
+            card_set['queue'] = queue
+            for name, obj in (('rows.json', rows), ('scan.json', result), ('coverage.json', report), ('cards.json', card_set)):
                 (Path(args.folder) / name).write_text(json.dumps(obj, ensure_ascii=False, allow_nan=False), encoding='utf-8')
+            order = {q['symbol']: i for i, q in enumerate(queue)}
+            first = sorted(card_set['cards'], key=lambda c: order.get(c['symbol'], len(order)))
+            (Path(args.folder) / 'cards_he.md').write_text(render_he({'cards': first}, len(queue) or None), encoding='utf-8')
             print(json.dumps({'rows': len(rows), 'sec_profiles': len(prof), 'excluded': report['excluded'],
                               'lenses': {k: [c['symbol'] for c in v] for k, v in result['lenses'].items()},
                               'shortlist': [c['symbol'] for c in result['shortlist']],
+                              'research_queue': queue, 'cards': len(card_set['cards']), 'card_notes': card_set['notes'],
                               'next': 'scripts/verify_candidates.py fetches SEC profiles for new candidates; rerun this command'},
                              indent=2, ensure_ascii=False))
             return

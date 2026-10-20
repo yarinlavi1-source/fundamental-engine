@@ -116,3 +116,49 @@ class SanityTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+def frame_row(sym, rev, oi, ni, cfo, capex, gp=None, shares=100e6, cash=500e6, debt=300e6, equity=2e9):
+    return {'symbol': sym, 'cik': 1, 'name': sym + ' (SYNTHETIC)', 'sector': 'Industrials', 'industry': 'Industrial Machinery',
+            'revenue': rev, 'gross_profit': gp if gp is not None else rev * .4, 'operating_income': oi, 'net_income': ni, 'cfo': cfo,
+            'capex': capex, 'fcf': cfo - capex, 'sbc': rev * .01, 'cash': cash, 'debt': debt, 'debt_scope': 'noncurrent_plus_current',
+            'equity': equity, 'total_assets': 5e9, 'total_liabilities': 2.5e9, 'shares_outstanding': shares}
+
+
+def recovery_rows(sym, revs, margins, gm=None, mcap=1.2e9):
+    hist = [[frame_row(sym, r, r * m, r * m * .75, r * m * 1.1, r * .03, gp=None if gm is None else r * g)]
+            for r, m, g in zip(revs[:-1], margins[:-1], (gm or [None] * len(revs))[:-1])]
+    r, m = revs[-1], margins[-1]
+    cur = [frame_row(sym, r, r * m, r * m * .75, r * m * 1.1, r * .03, gp=None if gm is None else r * gm[-1])]
+    return screen.rows_from_sec_frames(cur, prices={sym: {'market_cap': mcap}}, history=hist, as_of='2026-10-20')
+
+
+class RecoveryLensTests(unittest.TestCase):
+    def test_temporary_setback_in_a_business_that_earned_well(self):
+        rows = recovery_rows('DIP', [2.0e9, 2.2e9, 2.4e9, 2.2e9], [.18, .19, .20, .12])      # margin falls 8 pts, revenue -8%
+        out = screen.scan(rows, {'as_of': '2026-10-20'})
+        self.assertIn('DIP', [c['symbol'] for c in out['lenses']['recovery_mispriced']], out['near_misses'].get('recovery_mispriced'))
+        cand = next(c for c in out['lenses']['recovery_mispriced'] if c['symbol'] == 'DIP')
+        self.assertIn('temporary_vs_structural_open', cand['tags'])
+        self.assertIn('Temporary or structural', cand['why'])
+
+    def test_structural_decline_is_not_a_recovery(self):
+        rows = recovery_rows('MELT', [3.0e9, 2.7e9, 2.4e9, 2.1e9], [.18, .16, .14, .10])     # three falling years
+        out = screen.scan(rows, {'as_of': '2026-10-20'})
+        self.assertNotIn('MELT', [c['symbol'] for c in out['lenses']['recovery_mispriced']])
+
+    def test_never_earned_is_not_a_recovery(self):
+        rows = recovery_rows('NEVER', [2.0e9, 2.2e9, 2.4e9, 2.2e9], [.01, .02, .02, -.04])
+        out = screen.scan(rows, {'as_of': '2026-10-20'})
+        self.assertNotIn('NEVER', [c['symbol'] for c in out['lenses']['recovery_mispriced']])
+
+
+class ListingLabelCycleTests(unittest.TestCase):
+    def test_listing_label_keeps_the_cyclical_cue_after_sic_replacement(self):
+        rows = recovery_rows('ORE', [1.0e9, 1.1e9, 1.0e9, 1.6e9], [.17, -.09, -.32, .28])
+        rows[0]['industry'], rows[0]['industry_listing'] = 'Mineral Royalty Traders', 'Precious Metals'
+        out = screen.scan(rows, {'as_of': '2026-10-20'})
+        cy = out['dimensions']['ORE']['profile']['cyclical']
+        self.assertTrue(cy and cy['value'])
+        self.assertEqual(cy['word'], 'metals')
+        self.assertNotIn('ORE', [c['symbol'] for c in out['lenses']['quality_compounder']])
