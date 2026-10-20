@@ -27,6 +27,7 @@ FRAME_METRICS = {   # metric -> (concept candidates in priority order, unit, fra
     'current_portion_ltd': (['LongTermDebtCurrent', 'DebtCurrent'], 'USD', 'instant'),
     'equity': (['StockholdersEquity'], 'USD', 'instant'),
     'total_assets': (['Assets'], 'USD', 'instant'),
+    'total_liabilities': (['Liabilities'], 'USD', 'instant'),
     'goodwill': (['Goodwill'], 'USD', 'instant'),
     'shares_outstanding': (['CommonStockSharesOutstanding'], 'shares', 'instant'),
 }
@@ -63,6 +64,9 @@ def merge_frames(payloads):
 def rows(merged, tickers, sectors=None):
     """Universe rows for screen.py: tickers {cik: ticker}; sectors {ticker: {'sector','industry'}} optional.
 
+    Every fetched frame reaches the row, including capital allocation (buybacks, acquisitions: the screen's organic-growth
+    and capital-allocation inputs) and total liabilities (the lender-like balance-sheet test for mixed financial labels).
+
     Debt: noncurrent + current portion when the unambiguous noncurrent tag exists; otherwise the tagged
     LongTermDebt is reported with scope 'ambiguous' (a screen may use it, a valuation may not). Neither tag:
     debt None with scope 'missing', which means unknown (net debt, EV and ROIC stay unknown downstream),
@@ -83,8 +87,10 @@ def rows(merged, tickers, sectors=None):
         out.append({'symbol': t, 'cik': cik, 'name': r.get('name'), **(sectors or {}).get(t, {}),
                     'revenue': v.get('revenue'), 'gross_profit': v.get('gross_profit'), 'operating_income': v.get('operating_income'),
                     'net_income': v.get('net_income'), 'cfo': v.get('cfo'), 'capex': v.get('capex'), 'fcf': fcf,
-                    'sbc': v.get('sbc'), 'cash': v.get('cash'), 'short_term_investments': v.get('short_term_investments'),
+                    'sbc': v.get('sbc'), 'buybacks': v.get('buybacks'), 'acquisitions': v.get('acquisitions'),
+                    'cash': v.get('cash'), 'short_term_investments': v.get('short_term_investments'),
                     'debt': debt, 'debt_scope': scope, 'equity': v.get('equity'), 'total_assets': v.get('total_assets'),
+                    'total_liabilities': v.get('total_liabilities'),
                     'goodwill': v.get('goodwill'), 'shares_outstanding': v.get('shares_outstanding'),
                     'data_grade': 'sec_frames', 'source': 'SEC XBRL frames'})
     return sorted(out, key=lambda x: x['symbol'])

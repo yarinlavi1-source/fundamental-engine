@@ -81,16 +81,19 @@ RUNWAY_YEARS = 3.0           # cash runway below this needs external funding
 # Text rules: first match per field; the industry decides and the sector is only a fallback. Order =
 # specificity; '(?<![a-z])' prefix boundary avoids 'oil' in 'soil'; text and keywords are compared after
 # clean_text (dashes -> spaces, whitespace collapsed: 'Auto - Manufacturers' == 'auto manufacturers').
-# Fee-based payment networks/exchanges are platforms; balance-sheet lenders and insurers are financials
-# (conservative: 'credit services' lists both, so it maps to financials; an analyst override can clear it).
+# Fee-based payment networks, exchanges and insurance brokers are platforms (commission on volume they do not
+# carry on their balance sheet); balance-sheet lenders and insurers are financials. Financial conglomerates are
+# financials (checked before the generic conglomerate rule). Labels that list fee firms and balance-sheet firms
+# together are BALANCE_MIXED_RULES: decided by the balance sheet, financials when it is lender-like or unknown.
 TEXT_RULES = (
+    (('financial conglomerate',), 'financials'),
     (('industrial conglomerate', 'conglomerate', 'multi-sector holding', 'diversified holding'), 'conglomerate'),
     (('mortgage reit', 'reit mortgage', 'mortgage real estate'), 'financials'),
     (('transaction & payment', 'payment processing', 'financial exchanges', 'exchanges & data', 'stock exchanges',
-      'financial data'), 'platform_marketplace'),
+      'financial data', 'insurance broker'), 'platform_marketplace'),
     (('real estate services', 'real estate brokerage'), 'industrial'),
-    (('bank', 'thrift', 'savings institution', 'mortgage finance', 'consumer finance', 'credit services', 'insurance',
-      'reinsurance', 'capital markets', 'investment banking', 'brokerage', 'asset management', 'custody',
+    (('bank', 'thrift', 'savings institution', 'mortgage finance', 'mortgages', 'consumer finance', 'credit services',
+      'insurance', 'reinsurance', 'capital markets', 'investment banking', 'brokerage', 'asset management', 'custody',
       'specialty finance', 'specialized finance', 'diversified financial', 'financial services', 'financials'), 'financials'),
     (('reit', 'real estate investment trust', 'equity real estate', 'real estate operating', 'real estate development',
       'real estate holding', 'diversified real estate', 'real estate'), 'reit'),
@@ -119,13 +122,22 @@ TEXT_RULES = (
       'chemical', 'packaging', 'life sciences tools', 'waste'), 'industrial'),
 )
 # Labels that mix platforms with operators: (keywords, default type, platform type, what the label mixes).
-# The platform type is primary only when the signature is a platform's (gross margin >= 70%, capex <= 8% of
-# revenue); the other type is kept as a secondary type either way.
+# The platform type is primary only when the signature is a platform's (gross margin >= 70% and capex <= 8% of
+# revenue; with no cost-of-revenue line, capex <= 8% and operating margin >= 20%); the other type is kept as a
+# secondary type either way.
 MIXED_RULES = (
     (('broadline retail',), 'consumer_brand', 'platform_marketplace', 'department stores and online marketplaces'),
     (('hotels, resorts & cruise', 'hotels resorts & cruise', 'travel services'), 'consumer_brand', 'platform_marketplace',
      'hotel and cruise operators and online-travel platforms'),
 )
+# Labels that list fee businesses with balance-sheet firms: (keywords, default type, fee type, what the label mixes).
+# The fee type is used only when the balance sheet is known and not lender-like (liabilities < 85% of assets);
+# otherwise financials (conservative). Checked before TEXT_RULES ('Asset Management & Custody Banks' has 'bank').
+BALANCE_MIXED_RULES = (
+    (('asset management', 'credit services'), 'financials', 'platform_marketplace',
+     'fee businesses (asset managers, payment networks) and balance-sheet firms (custody banks, lenders)'),
+)
+LENDER_LIABILITIES = .85     # liabilities / assets at or above this with no cost of revenue: lender/insurer balance sheet
 CYCLICAL_WORDS = ('semiconductor', 'oil', 'mining', 'metals', 'steel', 'chemical', 'automobile', 'auto ',
                   'airline', 'homebuild', 'residential construction', 'machinery', 'paper', 'forest', 'marine',
                   'shipping', 'trucking', 'freight', 'building products', 'construction', 'hotel', 'casino', 'leisure',
@@ -365,10 +377,25 @@ def _evidence(fb, an, keys):
 
 
 def _valid_ids(fb):
-    """Source ids usable as evidence at as_of (a source published later is not) and PIT-usable qualitative ids."""
+    """Source ids usable as evidence at as_of and PIT-usable qualitative ids. A dated source counts when published by
+    as_of. An undated source with facts counts only when at least one of its facts is usable at as_of (facts.usable), so a
+    filing whose facts all become available later is not evidence at as_of; an undated source without facts is kept."""
     cut = date.fromisoformat(fb['as_of'])
-    ok = {sid for sid, src in (fb.get('sources') or {}).items()
-          if not (src or {}).get('published_at') or date.fromisoformat(str(src['published_at'])[:10]) <= cut}
+    usable, has = set(), set()
+    for f in fb.get('facts') or []:
+        has.add(f.get('source_id'))
+        if f.get('source_id') not in usable and F.usable(fb, f):
+            usable.add(f['source_id'])
+    day = lambda x: date.fromisoformat(str(x)[:10])
+    ok = set()
+    for sid, src in (fb.get('sources') or {}).items():
+        src = src or {}
+        if src.get('published_at'):
+            good = day(src['published_at']) <= cut
+        else:
+            good = sid in usable or sid not in has
+        if good:
+            ok.add(sid)
     return ok | {q['id'] for q in _qualitative(fb)}
 
 
@@ -424,10 +451,10 @@ def _text_matches(company):
         if not isinstance(raw, str) or not raw.strip():
             continue
         low = clean_text(raw)
-        for kws, t, alt, mixes in MIXED_RULES:
+        for kws, t, alt, mixes, sig in [r + ('platform',) for r in MIXED_RULES] + [r + ('balance_sheet',) for r in BALANCE_MIXED_RULES]:
             hit = _hit(kws, low)
             if hit:
-                out.append({'field': field, 'text': raw, 'keyword': hit, 'type': t, 'alt': alt, 'mixes': mixes})
+                out.append({'field': field, 'text': raw, 'keyword': hit, 'type': t, 'alt': alt, 'mixes': mixes, 'signature': sig})
                 break
         else:
             for kws, t in TEXT_RULES:
@@ -451,6 +478,20 @@ def cyclical_word(company):
     return w.strip() if w else None
 
 
+def platform_signature(gm, cx, om=None):
+    """(True/False/None, rule text): the platform signature for labels that mix platforms with operators. Gross margin
+    >= 70% and capex <= 8% of revenue; with no cost-of-revenue line, capex <= 8% and operating margin >= 20%; with capex
+    unknown, gross margin >= 70% and operating margin >= 20%. None when the inputs that decide it are missing (undetermined:
+    the label's default type is used and the reason says so)."""
+    if gm is not None and cx is not None:
+        return gm >= .70 and cx <= .08, 'platform when gross margin >= 70% and capex <= 8%'
+    if gm is None and cx is not None and om is not None:
+        return cx <= .08 and om >= .20, 'no cost-of-revenue line: platform when capex <= 8% and operating margin >= 20%'
+    if gm is not None and cx is None and om is not None:
+        return gm >= .70 and om >= .20, 'capex unknown: platform when gross margin >= 70% and operating margin >= 20%'
+    return None, 'gross margin, capex or operating margin unknown: platform signature undetermined'
+
+
 # ---------------------------------------------------------------- business model
 
 def _business_model(fb, rows, end, sig, inputs):
@@ -465,12 +506,32 @@ def _business_model(fb, rows, end, sig, inputs):
         reasons.append(f"{t['field']} '{t['text']}' matches '{t['keyword']}' -> {t['type']}"
                        + ('' if t is used else ' (not used: the industry label is more specific)'))
     text_types = [used['type']] if used else []
-    if used and used.get('alt'):
-        plat = gm is not None and cx is not None and gm >= .70 and cx <= .08
+    lta = sv['liabilities_to_assets']
+    lender_sig = lta is not None and lta >= LENDER_LIABILITIES and not sv['has_cost_of_revenue']
+    if used and used.get('signature') == 'balance_sheet':
+        if lta is not None and lta < LENDER_LIABILITIES:
+            text_types = [used['alt']]
+            reasons.append(f"'{used['text']}' lists {used['mixes']}: liabilities {_pct(lta)} of assets (not lender-like) -> "
+                           f"{used['alt']} (fee business); financials not kept")
+        else:
+            text_types = [used['type'], used['alt']]
+            reasons.append(f"'{used['text']}' lists {used['mixes']}: liabilities {_pct(lta)} of assets ("
+                           + ('lender-like' if lta is not None else 'unknown') + f") -> financials (conservative); {used['alt']} kept "
+                           'as secondary; a reasoned business_model override can clear it when the balance sheet is fiduciary')
+    elif used and used.get('alt'):
+        om_end = _div(_row_val(rows.get(end), 'operating_income'), rev) if end else None
+        plat, rule = platform_signature(gm, cx, om_end)
         text_types = [used['alt'], used['type']] if plat else [used['type'], used['alt']]
-        reasons.append(f"'{used['text']}' mixes {used['mixes']}: gross margin {_pct(gm)}, capex {_pct(cx)} of revenue -> "
-                       f"{text_types[0]} (rule: platform when gross margin >= 70% and capex <= 8%); {text_types[1]} kept as secondary")
+        reasons.append(f"'{used['text']}' mixes {used['mixes']}: gross margin {_pct(gm)}, capex {_pct(cx)} of revenue, operating margin "
+                       f"{_pct(om_end)} -> {text_types[0]} (rule: {rule}" + ('; undetermined, so the default type is used' if plat is None else '')
+                       + f'); {text_types[1]} kept as secondary')
     text_financials = 'financials' in text_types
+    fin_text = text_financials or any(t['type'] == 'financials' for t in text)   # any label (industry or sector) says financials
+    if used and used['type'] == 'conglomerate' and any(t['field'] == 'sector' and t['type'] == 'financials' for t in text):
+        text_financials = True
+        text_types = text_types + ['financials']
+        reasons.append(f"conglomerate in a financial sector ('{company.get('sector')}'): treated as a hybrid with a balance-sheet "
+                       '(bank/insurer) part; never one consolidated FCFF')
     pharma_text = 'pre_revenue_biotech' in text_types
     if pharma_text:
         pre_commercial = rev is None or rev < PRE_REVENUE_BIOTECH or (sv['rd_pct_revenue'] or 0) >= 1
@@ -487,7 +548,6 @@ def _business_model(fb, rows, end, sig, inputs):
     if cx is not None and cx >= .25:
         sig_types.append('capital_intensive_infrastructure')
         reasons.append(f'financial signature {end}: capex {_pct(cx)} of revenue -> capital-intensive economics (rule: capex >= 25%)')
-    lender_sig = sv['liabilities_to_assets'] is not None and sv['liabilities_to_assets'] >= .85 and not sv['has_cost_of_revenue']
     possible_financial = not text and lender_sig
     if possible_financial:
         reasons.append(f"no sector text; liabilities are {_pct(sv['liabilities_to_assets'])} of assets with no cost of revenue: "
@@ -523,28 +583,37 @@ def _business_model(fb, rows, end, sig, inputs):
         txt(ov.get('reason'), 'business_model.reason')
         if ov.get('primary') not in TYPES:
             raise ValueError('business_model.primary must be one of ' + ', '.join(TYPES))
+        fid = ov.get('fiduciary_balance_sheet')
+        if fid is not None and not isinstance(fid, bool):
+            raise ValueError('business_model.fiduciary_balance_sheet must be true or false')
         clear = text_financials and ov['primary'] != 'financials'
+        if fid and lender_sig:
+            lender_sig = False
+            reasons.append(f"analyst states the liabilities ({_pct(sv['liabilities_to_assets'])} of assets) are fiduciary client funds "
+                           f"(pass-through, not lending or underwriting funding): lender guard cleared ({ov['reason']})")
         if clear and lender_sig:
             clear = False
             reasons.append(f"override kept the bank/insurer flag: liabilities are {_pct(sv['liabilities_to_assets'])} of assets with "
-                           'no cost of revenue (a lender/insurer balance sheet); correct the FactBook or supply segment data')
+                           'no cost of revenue (a lender/insurer balance sheet); correct the FactBook, supply segment data, or state '
+                           'fiduciary_balance_sheet: true with the reason when the liabilities are client funds')
         elif clear:
             text_financials = False
-            reasons.append("analyst override clears the bank/insurer text flag (the balance sheet is not lender-like: liabilities "
-                           f"{_pct(sv['liabilities_to_assets'])} of assets); the computed flag is kept in 'computed'")
+            reasons.append("analyst override clears the bank/insurer text flag (the balance sheet is not lender-like or is fiduciary: "
+                           f"liabilities {_pct(sv['liabilities_to_assets'])} of assets); the computed flag is kept in 'computed'")
         sec = ov.get('secondary')
         if sec is None:
             sec = [t for t in [primary] + secondary if t not in (ov['primary'], UNCLASSIFIED) and not (clear and t == 'financials')]
         elif not isinstance(sec, list) or any(t not in TYPES for t in sec):
             raise ValueError('business_model.secondary must list known types')
         override = {'primary': ov['primary'], 'secondary': list(sec), 'reason': ov['reason'],
-                    'evidence_ids': list(ov.get('evidence_ids') or [])}
+                    'evidence_ids': list(ov.get('evidence_ids') or []), 'fiduciary_balance_sheet': bool(fid)}
         reasons.append(f"analyst override: {ov['primary']} ({ov['reason']}); computed {primary} kept in 'computed'")
         primary, secondary = ov['primary'], [t for t in dict.fromkeys(sec) if t != ov['primary']]
         evidence = 'override' if evidence == 'none' else evidence + '+override'
     return {'primary': primary, 'secondary': secondary, 'reasons': reasons, 'override': override, 'computed': computed,
             'evidence': evidence, 'text_matches': text, 'signature': {k: v for k, v in sig.items() if isinstance(v, dict)},
-            'flags': {'text_financials': text_financials, 'possible_financial': possible_financial, 'pharma_text': pharma_text}}
+            'flags': {'text_financials': text_financials, 'possible_financial': possible_financial, 'pharma_text': pharma_text,
+                      'lender_balance_sheet': lender_sig, 'financial_label': fin_text}}
 
 
 # ---------------------------------------------------------------- stage
@@ -753,11 +822,34 @@ def _stage_out(value, reasons, data, inputs, confidence):
 
 # ---------------------------------------------------------------- cyclical, capital intensity, funding
 
+def _margin_position(ms):
+    """'peak' | 'trough' | 'mid' for the latest of >= 3 annual operating margins, with the rule that decided it. Peak (a profit
+    peak, so only at a positive margin): latest more than 5 points (or 50%) above the window mean, or the latest is the window
+    high after a climb of >= 5 points (a plateau at the top of an upswing). A narrowing loss is never a peak."""
+    avg, last = mean(ms), ms[-1]
+    if last > 0 and (last > avg + .05 or (avg > 0 and last > 1.5 * avg)):
+        return 'peak', f'latest margin {_pct(last)} vs average {_pct(avg)}'
+    if last > 0 and len(ms) >= 4 and last >= max(ms) - .005 and last - min(ms) >= .05 and last > avg:
+        return 'peak', f'latest margin {_pct(last)} is the window high after a climb from {_pct(min(ms))} (average {_pct(avg)})'
+    if last < avg - .05:
+        return 'trough', f'latest margin {_pct(last)} vs average {_pct(avg)}'
+    return 'mid', f'latest margin {_pct(last)} vs average {_pct(avg)}'
+
+
 def _cyclical(fb, rows, primary, inputs):
-    """Industry words/type are a flag; only a cycle in the reported history or an analyst's confirmation (inputs.cyclical,
-    reason mandatory) routes the valuation to normalized mid-cycle margins ('normalize')."""
+    """Industry words/type are a flag. The valuation is normalized to mid-cycle margins ('normalize') when the reported
+    history shows a cycle, when a flagged industry's latest margin sits at a possible peak (position 'peak': peak margins
+    are not extrapolated), or when an analyst confirms a cycle; an analyst can reject one (inputs.cyclical, reason
+    mandatory). A flag at mid or trough margins stays a flag (e.g. a booking platform with stable margins)."""
     reasons = []
-    word = cyclical_word(fb.get('company'))
+    company = fb.get('company') or {}
+    t = text_type(company)
+    if t and t.get('signature') == 'platform' and primary == t['alt'] and cyclical_word({'industry': t['text']}):
+        word = cyclical_word({'sector': company.get('sector')}) if t['field'] == 'industry' else None
+        reasons.append(f"'{t['text']}' is a mixed label resolved to {primary} by its financial signature: the operators' cyclical word "
+                       f"('{cyclical_word({'industry': t['text']})}') does not flag the platform")
+    else:
+        word = cyclical_word(company)
     flag = primary in CYCLICAL_TYPES or bool(word)
     if flag:
         reasons.append(f"industry economics are cyclical ({'type ' + primary if primary in CYCLICAL_TYPES else repr(word)}); "
@@ -771,13 +863,23 @@ def _cyclical(fb, rows, primary, inputs):
     drop_recovered = any(revs[i] < .9 * revs[i - 1] and revs[-1] > revs[i] for i in range(1, len(revs) - 1))
     reversals = sum(1 for i in range(1, len(ms) - 1)
                     if abs(ms[i] - ms[i - 1]) >= .03 and abs(ms[i + 1] - ms[i]) >= .03 and (ms[i] - ms[i - 1]) * (ms[i + 1] - ms[i]) < 0)
-    data_cyc = (drop_recovered and (vol or 0) >= .03) or reversals >= 2
+    always_grew = len(revs) >= 2 and all(revs[i] > revs[i - 1] for i in range(1, len(revs)))
+    pre_commercial = any(m <= -1 for m in ms)
+    loss_grower = always_grew and bool(ms) and ms[-1] < 0
+    data_cyc = ((drop_recovered and (vol or 0) >= .03) or reversals >= 2) and not pre_commercial and not loss_grower
     if data_cyc:
         reasons.append(f'reported history swings: operating-margin standard deviation {_pct(vol)}, {reversals} margin reversal(s) of '
                        f'>= 3 points' + (', revenue fell >= 10% and recovered' if drop_recovered else ''))
+    elif ms and (pre_commercial or loss_grower) and ((drop_recovered and (vol or 0) >= .03) or reversals >= 2):
+        reasons.append('margin swings ignored as a cycle signal: ' + ('losses larger than revenue (pre-commercial noise)' if pre_commercial
+                       else 'revenue rose every year while loss-making (investment timing, not a cycle)'))
     elif ms:
         reasons.append(f'reported history shows no cycle pattern (margin standard deviation {_pct(vol)}, {reversals} reversal(s))')
-    value, normalize, basis, override = flag or data_cyc, data_cyc, 'data' if data_cyc else ('industry_flag' if flag else None), None
+    position, pos_rule = _margin_position(ms) if len(ms) >= 3 and not pre_commercial else (None, None)
+    flag_peak = flag and position == 'peak'
+    value, normalize = flag or data_cyc, data_cyc or flag_peak
+    basis = 'data' if data_cyc else ('industry_flag+peak' if flag_peak else ('industry_flag' if flag else None))
+    override = None
     ov = inputs.get('cyclical')
     if ov is not None:
         if not isinstance(ov, dict) or not isinstance(ov.get('value'), bool):
@@ -787,21 +889,21 @@ def _cyclical(fb, rows, primary, inputs):
         value = normalize = ov['value']
         basis = 'analyst'
         reasons.append(f"analyst {'confirms' if ov['value'] else 'rejects'} a cycle ({ov['reason']})")
+    elif flag_peak and not data_cyc:
+        reasons.append(f'cyclical industry at a possible peak ({pos_rule}): normalized to mid-cycle margins rather than extrapolating the '
+                       'latest margin; an analyst can reject the cycle with a reason (inputs.cyclical)')
     elif flag and not data_cyc:
-        reasons.append('industry flag only: the valuation is not normalized to a historical mean unless the reported history '
-                       'shows a cycle or an analyst confirms one (inputs.cyclical with a reason)')
+        reasons.append('industry flag only: margins are not at a visible peak, so the valuation is not normalized to a historical mean '
+                       'unless the reported history shows a cycle or an analyst confirms one (inputs.cyclical with a reason)')
     out = {'value': value, 'normalize': normalize, 'basis': basis, 'industry_flag': flag, 'data_shows_cycle': data_cyc,
            'computed': flag or data_cyc, 'override': override, 'reasons': reasons,
            'margin_volatility': _num(vol, 'population standard deviation of annual operating margins', ends[-1] if ends else None)}
-    if (out['computed'] or value) and len(ms) >= 3:
-        avg = mean(ms)
-        out['normalized_operating_margin'] = _num(avg, f'mean annual operating margin over {len(ms)} years ({pairs[0][0]}..{pairs[-1][0]})',
+    if (out['computed'] or value) and position:
+        out['normalized_operating_margin'] = _num(mean(ms), f'mean annual operating margin over {len(ms)} years ({pairs[0][0]}..{pairs[-1][0]})',
                                                   pairs[-1][0])
-        last = ms[-1]
-        out['position'] = ('peak' if last > avg + .05 or (avg > 0 and last > 1.5 * avg) else
-                           'trough' if last < avg - .05 else 'mid')
-        if out['position'] != 'mid':
-            reasons.append(f"latest margin {_pct(last)} vs average {_pct(avg)}: possible cycle {out['position']}; do not extrapolate it")
+        out['position'] = position
+        if position != 'mid':
+            reasons.append(f'{pos_rule}: possible cycle {position}; do not extrapolate it')
     return out
 
 
@@ -998,7 +1100,8 @@ def _valuation(fb, an, qa, bm, stage, cyc, fund, rows, inputs, cur):
             v = pick('not_reliably_valuable', arche, 'an operating model needs at least two fiscal years of revenue, operating income and '
                      'operating cash flow; they are missing', 'fcff_annual_path')
         elif fund['value'] == 'needs_external' or stage['value'] == 'early' or (
-                om < 0 and not sd.get('established_profit_record') and not (cyc['normalize'] and ever_profitable)):
+                om < 0 and (not sd.get('established_profit_record') or (stage['value'] == 'growth' and sd.get('consecutive_loss_years', 0) >= 2))
+                and not (cyc['normalize'] and ever_profitable)):
             v = pick('scenario_survival_fcff', arche, 'loss-making or funding-dependent: value depends on reaching target economics and on '
                      'surviving the funding path; operating route with explicit financing, dilution and a failure case. Lack of profit is '
                      'not a rejection: promising-but-funding-conditional is a legitimate outcome')
@@ -1008,8 +1111,9 @@ def _valuation(fb, an, qa, bm, stage, cyc, fund, rows, inputs, cur):
             cross += ['reverse_dcf (valuation_tools.reverse_price)', 'what_must_be_true (forecast.what_must_be_true)']
             lim += ['terminal value usually dominates; small changes in target margin move value a lot']
         elif cyc['normalize']:
-            v = pick('normalized_cycle_fcff', arche, 'cyclical (' + ('analyst-confirmed' if cyc['basis'] == 'analyst' else 'reported history '
-                     'shows a cycle') + '): value on a mid-cycle margin, not the latest year; peak margins are not permanent')
+            v = pick('normalized_cycle_fcff', arche, 'cyclical (' + {'analyst': 'analyst-confirmed', 'industry_flag+peak': 'cyclical industry '
+                     'with the latest margin at a possible peak'}.get(cyc['basis'], 'reported history shows a cycle')
+                     + '): value on a mid-cycle margin, not the latest year; peak margins are not permanent')
             cross += ['reverse_dcf (valuation_tools.reverse_price)', 'value at trough margins']
             nm = (cyc.get('normalized_operating_margin') or {}).get('value')
             req += [f'mid-cycle operating margin (history average {_pct(nm)})' if nm is not None else 'mid-cycle operating margin']
@@ -1069,11 +1173,16 @@ def _valuation(fb, an, qa, bm, stage, cyc, fund, rows, inputs, cur):
             raise ValueError('method_override.method must be one of ' + ', '.join(METHODS))
         if ov.get('archetype') is not None and ov['archetype'] not in ROUTES:
             raise ValueError('method_override.archetype must be a valuation.ROUTES key')
-        if ov['method'] in OPERATING_METHODS and balance_sheet:
+        lender = flags.get('lender_balance_sheet') and flags.get('financial_label') and out['route'] != 'operating'
+        if ov['method'] in OPERATING_METHODS and (balance_sheet or lender):
             out['override_rejected'] = {'method': ov['method'], 'reason': ov['reason'],
-                                        'why_rejected': 'sector text or business model identifies a bank/insurer: an FCFF route treats '
-                                                        'deposits/float as free funding. Correct the company sector/industry in the '
-                                                        'FactBook if the label is wrong; the card does not relabel to force a generic model'}
+                                        'why_rejected': ('sector text or business model identifies a bank/insurer' if balance_sheet else
+                                                         'a financial label with a lender-like balance sheet (liabilities >= 85% of assets, '
+                                                         'no cost of revenue)')
+                                                        + ': an FCFF route treats deposits/float as free funding. Correct the company '
+                                                        'sector/industry in the FactBook if the label is wrong, or set business_model.'
+                                                        'fiduciary_balance_sheet with a reason when the liabilities are client funds; the '
+                                                        'card does not relabel to force a generic model'}
         else:
             m = ov['method']
             if m == 'not_reliably_valuable':

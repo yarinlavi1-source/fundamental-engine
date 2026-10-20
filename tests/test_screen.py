@@ -81,9 +81,9 @@ def universe():
            gross_margin_change=.01, operating_margin_trend=.04, fcf_margin=.09, fcf_margin_change=.04, fcf_conversion=1.1,
            sbc_to_revenue=.01, roic=.13, piotroski=8, series=[.02, .03, .09], dilution_yoy=-.01, net_debt=1 * B, ebitda=1.3 * B,
            interest_coverage=12, altman_zone='safe', pe=15, consensus_growth_2y=.08, ev_fcf=13),
-        # (d) overreaction: quality intact, price fell 40%
+        # (d) overreaction: quality intact, price fell 40%, FCF margin improving (the drawdown alone never admits a name)
         mk('DIP', 'Health Care', 'Life Sciences Tools & Services', revenue_ttm=8 * B, gross_margin=.55, operating_margin=.22,
-           gross_margin_change=-.005, operating_margin_trend=-.01, fcf_margin=.18, fcf_conversion=1.05, sbc_to_revenue=.02, roic=.16,
+           gross_margin_change=-.005, operating_margin_trend=-.01, fcf_margin=.18, fcf_margin_change=.03, fcf_conversion=1.05, sbc_to_revenue=.02, roic=.16,
            piotroski=6, series=[.08, .07, .06], dilution_yoy=-.01, net_debt=2 * B, ebitda=2.2 * B, interest_coverage=14,
            altman_zone='safe', pe=19, consensus_growth_2y=.06, ev_fcf=17, drawdown_from_high=-.40),
         # (e) structural theme, not priced for perfection
@@ -549,9 +549,11 @@ class ReviewRegressions(unittest.TestCase):
                    cons=-.10, pio=8, z=4)
         grow = fmp('BUILDER', 25 * B, 1 * B, 8 * B, .22, .13, .09, .10, .01, .21, [.15, .18, .16], dom=.015, cons=.14, z=5, icov=20)
         out = fmp_scan([peak, grow] + FILLERS, {'PEAKCYC': 'Materials'}, {'PEAKCYC': 'Steel', 'BUILDER': 'Construction & Engineering'})
-        for ln in ('quality_compounder', 'quality_fair_price', 'mispriced_turning'):
+        for ln in ('quality_fair_price', 'mispriced_turning'):          # peak earnings make the price look low: a hard condition
             self.assertNotIn('PEAKCYC', syms(out, ln), ln)
             self.assertIn(('PEAKCYC', 'not_cyclical_peak'), [(x['symbol'], x['failed']) for x in out['near_misses'][ln]], ln)
+        self.assertNotIn('PEAKCYC', syms(out, 'quality_compounder'))   # consensus -10%/yr: growth not shown to be repeatable
+        self.assertIn(('PEAKCYC', 'growth_quality'), [(x['symbol'], x['failed']) for x in out['near_misses']['quality_compounder']])
         d = out['dimensions']['PEAKCYC']
         self.assertIn('cyclical_peak', [f['code'] for f in d['risk']['flags']])
         self.assertEqual(d['growth_quality']['inputs']['consensus_outlook']['signal'], -1)
@@ -581,8 +583,9 @@ class ReviewRegressions(unittest.TestCase):
         self.assertEqual(nm['BURN']['failed'], 'not_already_priced')          # numbers only, price check unavailable
         themed = fmp_scan([story, burn] + FILLERS, {}, themes={'BURN': ['grid software'], 'STORY30': ['electrification']})
         self.assertIn('BURN', syms(themed, 'structural_tailwind'))
-        nm = {x['symbol']: x for x in themed['near_misses']['structural_tailwind']}
-        self.assertEqual(nm['STORY30']['failed'], 'per_share_funding')        # a theme does not excuse 30%/yr dilution
+        self.assertNotIn('STORY30', syms(themed, 'structural_tailwind'))
+        self.assertIn('per_share_funding', themed['excluded']['STORY30'])     # a theme does not excuse 30%/yr dilution
+        self.assertIn('not_already_priced', themed['excluded']['STORY30'])    # nor a 15x-sales price (fallback read; theme != price check)
 
     def test_missing_debt_is_never_net_cash_in_factbook_rows(self):
         fb = load_fix()
@@ -614,6 +617,348 @@ class ReviewRegressions(unittest.TestCase):
         self.assertTrue(out['excluded']['MREIT'].startswith('not supported'))
         self.assertFalse(out['excluded'].get('PAYNET', '').startswith('not supported'))
         self.assertEqual(out['universe']['not_supported'], 2)
+
+
+def near(out, sym):
+    return {ln: x['failed'] for ln in S.LENSES for x in out['near_misses'][ln] if x['symbol'] == sym}
+
+
+def lens_of(out, ln, sym):
+    return next((c for c in out['lenses'][ln] if c['symbol'] == sym), None)
+
+
+SAAS = lambda sym, mcap, dil=.03: fmp(sym, mcap, -3 * B, 3 * B, .78, -.05, -.06, .12, .20, -.05, [.35, .30, .26], dgm=.01, dom=.08,
+                                      dfm=.05, dil=dil, cons=.22, pio=6, z=6)
+STEEL = dict(mcap=12 * B, nd=-1 * B, rev=20 * B, gm=.25, om=.18, nm=.14, fcfm=.12, sbcm=.002, roic=.22)
+
+
+class RepairRegressions(unittest.TestCase):
+    """Second discovery review (SYNTHETIC companies). Each test failed on the code before this repair."""
+
+    def test_price_blind_names_get_a_fallback_price_check(self):
+        out = fmp_scan([SAAS('SAAS10X', 30 * B), SAAS('SAAS80X', 240 * B)] + FILLERS, {}, {s: 'Application Software' for s in ('SAAS10X', 'SAAS80X')},
+                       sector_cap=None)
+        self.assertEqual(syms(out, 'early_commercial_growth')[:2], ['SAAS10X', 'SAAS80X'])     # 9x sales before 79x, never a tie
+        hi, lo = lens_of(out, 'early_commercial_growth', 'SAAS80X'), lens_of(out, 'early_commercial_growth', 'SAAS10X')
+        self.assertIn('price_demanding', hi['tags'])
+        self.assertIn('price_demanding', hi['risk_flags'])
+        self.assertNotEqual([f['value'] for f in hi['ordering']['fields']], [f['value'] for f in lo['ordering']['fields']])
+        self.assertIn('fallback', hi['why'])                                                    # the why names the price read
+        pc = out['dimensions']['SAAS80X']['priced_in']['price_check']
+        self.assertEqual((pc['source'], pc['level']), ('fallback', 'weak'))
+        # a theme is not a price check: 22x sales with FCF < 0 fails 'not already priced'; the net-cash twin passes
+        pw = lambda sym, mcap: fmp(sym, mcap, -6 * B, 2 * B, .45, .04, .03, -.10, .02, .08, [.12, .25, .40], dgm=.02, dom=.01, dfm=0.,
+                                   dil=.04, cons=.45, pio=6, z=4)
+        out = fmp_scan([pw('AIPWR25X', 50 * B), pw('AIPWR3X', 6 * B)] + FILLERS, {}, {s: 'Independent Power Producers & Energy Traders' for s in ('AIPWR25X', 'AIPWR3X')},
+                       themes={'AIPWR25X': ['AI power demand'], 'AIPWR3X': ['AI power demand']})
+        self.assertEqual(syms(out, 'structural_tailwind'), ['AIPWR3X'])
+        self.assertEqual(near(out, 'AIPWR25X')['structural_tailwind'], 'not_already_priced')
+        self.assertNotIn('AIPWR25X', syms(out, 'quality_compounder'))
+
+    def test_early_scope_needs_stage_evidence_not_a_low_margin(self):
+        boom = fmp('STEELBOOM', 9 * B, 1 * B, 20 * B, .14, .08, .055, .04, .002, .10, [.02, .30, .35], dgm=.03, dom=.04, dfm=.02, cons=.02, z=3.2, icov=9)
+        con = fmp('GRIDCON', 30 * B, 2 * B, 25 * B, .16, .08, .055, .06, .01, .14, [.12, .18, .22], dgm=.01, dom=.03, dfm=.01, cons=.15, z=4, icov=15)
+        out = fmp_scan([boom, con, SAAS('SAAS', 30 * B)] + FILLERS, {}, {'STEELBOOM': 'Steel', 'GRIDCON': 'Construction & Engineering',
+                                                                        'SAAS': 'Application Software'})
+        self.assertEqual(syms(out, 'early_commercial_growth'), ['SAAS'])
+        for s in ('STEELBOOM', 'GRIDCON'):                                   # profitable low-margin operators are out of scope
+            self.assertNotIn('early_commercial_growth', near(out, s))
+            self.assertNotIn('early_commercial_growth', out['excluded'].get(s, ''))
+        self.assertIn('net loss', lens_of(out, 'early_commercial_growth', 'SAAS')['why'])
+
+    def test_recoveries_and_consensus_backed_growth_are_not_peaks(self):
+        turn = fmp('TURNCYC', 8.4 * B, 1.5 * B, 10 * B, .32, .11, .07, .09, .005, .12, [.06, -.12, .22], dgm=.03, dom=.05, dfm=.04, dil=-.01,
+                   cons=.06, pio=8, z=3.5, icov=10)
+        nv = fmp('NVFAIR', 2200 * B, -50 * B, 165 * B, .75, .62, .53, .46, .04, .80, [.0, 1.26, 1.14, .55], dgm=.01, dom=.04, dfm=.02,
+                 dil=-.005, cons=.35, pio=8, z=40)
+        chip = fmp('AICHIP', 900 * B, -30 * B, 60 * B, .72, .55, .48, .45, .03, .60, [.10, .60, .90], dgm=.06, dom=.12, dil=-.005, cons=.45, pio=8, z=20)
+        out = fmp_scan([turn, nv, chip] + FILLERS, {'NVFAIR': 'Information Technology', 'AICHIP': 'Information Technology'},
+                       {'TURNCYC': 'Industrial Machinery & Supplies & Components', 'NVFAIR': 'Semiconductors', 'AICHIP': 'Semiconductors'}, sector_cap=None)
+        t = lens_of(out, 'mispriced_turning', 'TURNCYC')
+        self.assertIsNotNone(t)
+        self.assertIn('recovery', t['tags'])
+        self.assertIn('through_cycle', t['tags'])
+        self.assertIn('NVFAIR', syms(out, 'quality_fair_price'))           # consensus +35% vs latest +55%: a normal fade, not a peak
+        for s in ('TURNCYC', 'NVFAIR', 'AICHIP'):
+            self.assertEqual(out['dimensions'][s]['profile']['cyclical']['peak_check'], 'no_peak_signs', s)
+        # an analyst statement admits or confirms with a reason; without one it is rejected
+        ov = fmp_scan([chip] + FILLERS, {}, {'AICHIP': 'Semiconductors'}, cyclical={'AICHIP': {'value': False, 'reason': 'AI accelerator ramp, '
+                                                                                               'design wins through 2027 (10-K)'}})
+        self.assertEqual(ov['dimensions']['AICHIP']['profile']['cyclical']['basis'], 'analyst')
+        with self.assertRaises(ValueError):
+            fmp_scan([chip] + FILLERS, {}, {}, cyclical={'AICHIP': {'value': False}})
+
+    def test_normal_fade_from_a_high_base_keeps_a_compounder(self):
+        mkd = lambda s, growth, cons: fmp(s, 300 * B, -10 * B, 15 * B, .75, .40, .33, .35, .04, .45, growth, dgm=.01, dom=.03, dfm=.02,
+                                          cons=cons, pio=8, z=20)
+        out = fmp_scan([mkd('DECEL', [.60, .45, .35], .28)] + FILLERS, {}, {'DECEL': 'Systems Software'})
+        gq = out['dimensions']['DECEL']['growth_quality']
+        self.assertEqual(gq['level'], 'strong')
+        self.assertEqual(gq['inputs']['acceleration']['signal'], 0)
+        self.assertIsNone(gq['inputs']['consensus_outlook']['signal'])      # 28% vs latest 35%: not a downside
+        self.assertIn('DECEL', syms(out, 'quality_compounder'))
+
+    def test_priced_in_compares_consensus_on_its_own_horizon(self):
+        o = S._options({})
+        just = S._fade_multiple(.30, o, o['consensus_hold_years'])           # the price consensus (30% for 2 years, then fade) supports
+        rec = fmp('ATPAR', 1 * B, 0., 1 * B, .70, .30, .25, .25, .0, .30, [.30, .30, .30], cons=.30, z=10)
+        rec['km']['marketCap'] = rec['scores']['marketCap'] = just * 1 * B * .30 * (1 - S.TAX)
+        rec['km']['enterpriseValueTTM'] = rec['km']['marketCap']
+        pi = fmp_scan([rec] + FILLERS, {}, {'ATPAR': 'Application Software'})['dimensions']['ATPAR']['priced_in']
+        self.assertAlmostEqual(pi['multiple'], just, places=6)
+        self.assertEqual(pi['class'], 'roughly_consistent')
+        self.assertAlmostEqual(pi['gap'], 0., places=6)
+        self.assertAlmostEqual(pi['justified_multiple'], just, places=6)
+        self.assertLess(pi['reference_equivalent_growth'], .30)
+
+    def test_compounder_needs_profit_and_per_share_growth(self):
+        out = fmp_scan([SAAS('SAAS10X', 30 * B), SAAS('SAASDIL', 30 * B, dil=.14)] + FILLERS, {}, {s: 'Application Software' for s in ('SAAS10X', 'SAASDIL')})
+        self.assertEqual(syms(out, 'quality_compounder'), [])
+        self.assertEqual(near(out, 'SAAS10X')['quality_compounder'], 'profitable')
+        self.assertIn('per_share', out['excluded'].get('SAASDIL', '') + str(near(out, 'SAASDIL')))
+
+    def test_unknown_leverage_is_a_visible_gap(self):
+        nodebt = fmp('NODEBT', 10 * B, 0., 8 * B, .5, .2, .15, .15, .01, .2, [.08, .09, .1], cons=.08, z=3.5)
+        nodebt['km']['enterpriseValueTTM'] = nodebt['km']['evToEBITDATTM'] = None
+        out = fmp_scan([nodebt] + FILLERS, {}, {'NODEBT': 'Building Products'})
+        d = out['dimensions']['NODEBT']
+        self.assertNotEqual(d['risk']['level'], 'strong')                   # Altman alone is not leverage data
+        self.assertIn('leverage_unknown', [f['code'] for f in d['risk']['flags']])
+        self.assertEqual(near(out, 'NODEBT').get('quality_fair_price'), 'leverage_known')
+        self.assertTrue(any(r.startswith('EV unknown') for r in d['priced_in']['reasons']))   # the fallback names the real cause
+
+    def test_structural_theme_without_market_value_is_not_a_price_check(self):
+        rec = fmp('NOMCAP', 40 * B, 1 * B, 9 * B, .36, .19, .14, .14, .01, .22, [.12, .18, .24], dgm=.01, dom=.03, cons=.17, z=5, icov=25)
+        rec['km'].update(marketCap=None, enterpriseValueTTM=None, freeCashFlowYieldTTM=None)
+        rec['scores']['marketCap'] = None
+        out = fmp_scan([rec] + FILLERS, {}, {'NOMCAP': 'Electrical Components & Equipment'}, themes={'NOMCAP': ['AI power demand']})
+        self.assertNotIn('NOMCAP', syms(out, 'structural_tailwind'))
+        nm = {x['symbol']: x for x in out['near_misses']['structural_tailwind']}
+        self.assertIn('market value unknown', nm['NOMCAP']['reason'])
+        self.assertEqual(out['dimensions']['NOMCAP']['priced_in']['class'], 'not_assessable_no_market_value')
+
+    def test_fee_labels_are_screened_or_overridable(self):
+        fee = lambda s: fmp(s, 110 * B, 15 * B, 25 * B, .60, .27, .17, .20, .02, .18, [.09, .08, .09], dgm=.005, dom=.01, dil=-.01, cons=.08, z=4, icov=9)
+        ind = {'BROKER': 'Insurance Brokers', 'ASSETMGR': 'Asset Management & Custody Banks', 'NETFMP': 'Financial - Credit Services'}
+        out = fmp_scan([fee(s) for s in ind] + FILLERS, {s: 'Financials' for s in ind}, ind, sector_cap=None)
+        self.assertIn('BROKER', syms(out, 'quality_fair_price'))
+        self.assertIn('ASSETMGR', syms(out, 'quality_fair_price'))
+        self.assertIn('balance_sheet_unverified', out['dimensions']['ASSETMGR']['risk']['flags'][0]['code'])
+        self.assertTrue(out['excluded']['NETFMP'].startswith('not supported'))
+        self.assertIn('supported_override', out['excluded']['NETFMP'])
+        ok = fmp_scan([fee(s) for s in ind] + FILLERS, {s: 'Financials' for s in ind}, ind, sector_cap=None,
+                      supported_override={'NETFMP': 'payment network: no loans, deposits or float (10-K)'})
+        self.assertIn('NETFMP', syms(ok, 'quality_fair_price'))
+        rows = S.rows_from_fmp_screen([fee('ASSETMGR')], [{'symbol': 'ASSETMGR', 'sector': 'Financials', 'sub_industry': ind['ASSETMGR']}], as_of=AS_OF)
+        rows[0]['metrics'].update(liabilities_to_assets=.92, gross_margin=0.)          # a custody bank's balance sheet
+        self.assertTrue(S.scan(rows, {'as_of': AS_OF})['excluded']['ASSETMGR'].startswith('not supported'))
+
+    def test_exclusion_keeps_scoped_failures_next_to_a_near_miss(self):
+        r = fmp('XQ', 30 * B, -1 * B, 10 * B, .60, .25, .20, .18, .01, .25, [.05, .25, .14], dil=.07, cons=.05, pio=7, z=6)
+        out = fmp_scan([r] + FILLERS, {'XQ': 'Information Technology'}, {'XQ': 'Application Software'})
+        ex = out['excluded']['XQ']
+        self.assertTrue(ex.startswith('near miss in quality_fair_price'))
+        self.assertIn('in scope of quality_compounder but failed 2 conditions', ex)       # why it is not a compounder stays visible
+
+    def test_cyclical_peak_without_boom_or_consensus(self):
+        late = fmp('STEELLATE', **STEEL, growth=[.10, .16, .15], dgm=.01, dom=.02, dil=-.03, cons=None, pio=8, z=4)
+        home = fmp('HOMEPK', 15 * B, 1 * B, 30 * B, .27, .20, .155, .12, .005, .20, [.22, .12, .08], dom=.005, dil=-.03, cons=.04, pio=7, z=4.5, icov=30)
+        plat = fmp('STEELPK', 18 * B, 1 * B, 25 * B, .30, .24, .19, .17, .002, .28, [.30, .40, .04], dgm=.01, dom=.01, dil=-.03, cons=None, pio=8, z=4.5, icov=25)
+        unk = fmp('MACHNOCON', 20 * B, 1 * B, 12 * B, .40, .18, .14, .14, .01, .20, [.08, .09, .10], dil=-.01, cons=None, pio=7, z=5, icov=20)
+        out = fmp_scan([late, home, plat, unk] + FILLERS, {}, {'STEELLATE': 'Steel', 'HOMEPK': 'Residential Construction', 'STEELPK': 'Steel',
+                                                               'MACHNOCON': 'Industrial Machinery'}, sector_cap=None)
+        for s in ('STEELLATE', 'HOMEPK', 'STEELPK', 'MACHNOCON'):
+            self.assertNotIn(s, syms(out, 'quality_fair_price'), s)
+            self.assertNotIn(s, syms(out, 'mispriced_turning'), s)
+            self.assertNotIn('through_cycle', str([c['tags'] for ln in S.LENSES for c in out['lenses'][ln] if c['symbol'] == s]), s)
+        cy = {s: out['dimensions'][s]['profile']['cyclical'] for s in ('STEELLATE', 'HOMEPK', 'STEELPK', 'MACHNOCON')}
+        self.assertTrue(cy['STEELLATE']['peak'] and cy['HOMEPK']['peak'] and cy['STEELPK']['peak'])
+        self.assertTrue(any('plateau' in x for x in cy['STEELPK']['signs']))
+        self.assertEqual(cy['MACHNOCON']['peak_check'], 'incomplete')        # missing consensus is not 'no peak'
+        self.assertEqual(near(out, 'MACHNOCON').get('quality_fair_price'), 'not_cyclical_peak')
+        pi = out['dimensions']['STEELPK']['priced_in']
+        self.assertEqual(pi['reference_growth'], .03)                        # long-run growth, not the 24% boom CAGR
+        comp = syms(out, 'quality_compounder')                                # flagged and ordered after repeatable growth
+        if 'STEELLATE' in comp:
+            self.assertIn('possible_cyclical_peak', lens_of(out, 'quality_compounder', 'STEELLATE')['tags'])
+            self.assertIn('cyclical_peak', lens_of(out, 'quality_compounder', 'STEELLATE')['risk_flags'])
+
+    def test_boom_after_a_downturn_is_cyclical_whatever_the_label(self):
+        mem = dict(mcap=60 * B, nd=-5 * B, rev=30 * B, gm=.55, om=.35, nm=.30, fcfm=.20, sbcm=.02, roic=.30, growth=[-.35, .45, .60])
+        out = fmp_scan([fmp('MEMFMP', **mem, dgm=.10, dom=.25, dil=-.01, pio=8, z=6)] + FILLERS, {'MEMFMP': 'Technology'}, {'MEMFMP': 'Computer Hardware'})
+        cy = out['dimensions']['MEMFMP']['profile']['cyclical']
+        self.assertEqual((cy['basis'], cy['peak']), ('data', True))
+        self.assertIn('cyclical_peak', [f['code'] for f in out['dimensions']['MEMFMP']['risk']['flags']])
+        self.assertNotIn('MEMFMP', syms(out, 'quality_fair_price'))
+
+    def test_high_leverage_fails_the_quality_lenses(self):
+        roll = fmp('ROLL55', 8 * B, 5.5 * B, 5 * B, .35, .16, .04, .08, .01, .07, [.28, .30, .25], dil=.03, cons=.18, pio=5, z=2.2, icov=2.5)
+        out = fmp_scan([roll] + FILLERS, {}, {'ROLL55': 'Specialty Business Services'})
+        for ln in ('quality_compounder', 'quality_fair_price', 'mispriced_turning', 'structural_tailwind'):
+            self.assertNotIn('ROLL55', syms(out, ln), ln)
+        self.assertEqual(near(out, 'ROLL55').get('quality_compounder'), 'balance_sheet')
+        self.assertIn('net debt / EBITDA 5.5x', out['excluded']['ROLL55'])
+
+    def test_buybacks_do_not_hide_shrinking_revenue(self):
+        pub = fmp('PUB3DOWN', 3 * B, .5 * B, 4 * B, .55, .22, .15, .18, .005, .18, [-.02, -.03, -.04], dgm=-.005, dom=-.01, dil=-.04, cons=-.03,
+                  pio=6, z=3.2, icov=12)
+        out = fmp_scan([pub] + FILLERS, {}, {'PUB3DOWN': 'Publishing'})
+        gq = out['dimensions']['PUB3DOWN']['growth_quality']
+        self.assertEqual(gq['inputs']['dilution_yoy']['signal'], 0)
+        self.assertEqual(gq['level'], 'weak')
+        self.assertNotIn('PUB3DOWN', syms(out, 'quality_fair_price'))
+        self.assertEqual(near(out, 'PUB3DOWN').get('quality_fair_price'), 'trajectory')
+        trap = mk('TRAPC', 'Industrials', 'Electrical Components & Equipment', revenue_ttm=10 * B, gross_margin=.40, operating_margin=.18,
+                  gross_margin_change=-.03, operating_margin_trend=-.03, fcf_margin=.12, fcf_conversion=1., sbc_to_revenue=.01, roic=.18, piotroski=7,
+                  series=[.14, .13, .12], dilution_yoy=0., net_debt=0., ebitda=2 * B, interest_coverage=20, altman_zone='safe', pe=9,
+                  consensus_growth_2y=.12, ev_fcf=8)
+        tags = [c['tags'] for ln in S.LENSES for c in S.scan([trap] + universe(), OPTS)['lenses'][ln] if c['symbol'] == 'TRAPC']
+        self.assertTrue(tags and all('possible_value_trap' in t for t in tags))
+
+    def test_financial_conglomerates_and_lender_labels_are_not_screened(self):
+        rec = lambda s: fmp(s, 25 * B, 2 * B, 20 * B, .0, .15, .12, .18, .005, .14, [.08, .09, .10], cons=.07, z=1.2)
+        ind = {'FINCONG': ('Financial Services', 'Financial - Conglomerates'), 'MULTISEC': ('Financials', 'Multi-sector Holdings'),
+               'FINMORT2': (None, 'Financial - Mortgages')}
+        meta = [{'symbol': s, 'sector': v[0], 'sub_industry': v[1]} for s, v in ind.items()]
+        out = S.scan(S.rows_from_fmp_screen([rec(s) for s in ind], meta, as_of=AS_OF), {'as_of': AS_OF})
+        for s in ind:
+            self.assertTrue(out['excluded'][s].startswith('not supported'), s)
+
+    def test_accounting_red_flags_reach_the_candidate(self):
+        fb = load_fix()
+        an = {'years': ['2024-11-29', '2025-11-28'],
+              'annual': {'2024-11-29': {'revenue': 100., 'gross_profit': 80., 'operating_income': 30., 'net_income': 25., 'fcf': 30., 'shares_diluted_wavg': 10.},
+                         '2025-11-28': {'revenue': 125., 'gross_profit': 100., 'operating_income': 38., 'net_income': 31., 'fcf': 35., 'shares_diluted_wavg': 10.}},
+              'ttm': {'revenue': 125., 'gross_profit': 100., 'operating_income': 38., 'net_income': 31., 'fcf': 35., 'sbc': 2., 'method': 'quarters'},
+              'metrics': {'roic': {'value': .3}, 'net_debt_to_ebitda': {'value': .2}},
+              'forensics': {'beneish': {'status': 'computed', 'm': -1.48, 'zone': 'likely_manipulator'}},
+              'flags': [{'code': 'beneish_high', 'severity': 'medium', 'message': 'Beneish M above -1.78'}]}
+        r = S.rows_from_factbooks([fb], analyses=[an])[0]
+        self.assertEqual((r['metrics']['beneish_zone'], r['metrics']['beneish_high']), ('likely_manipulator', True))
+        d = S.scan([r] + universe(), OPTS)
+        self.assertIn('accounting', [f['code'] for f in d['dimensions']['ADBE']['risk']['flags']])
+        for ln in ('quality_compounder', 'quality_fair_price'):
+            self.assertNotIn('ADBE', syms(d, ln), ln)
+        acc = fmp('ACCRUE', 20 * B, -1 * B, 4 * B, .60, .28, .20, .06, .02, .25, [.25, .28, .30], dgm=.01, dom=.01, cons=.22, pio=6, z=5)
+        out = fmp_scan([acc] + FILLERS, {}, {'ACCRUE': 'Application Software'})
+        self.assertIn('cash_conversion', [f['code'] for f in out['dimensions']['ACCRUE']['risk']['flags']])
+        self.assertEqual(near(out, 'ACCRUE').get('quality_compounder'), 'earnings_quality')
+
+    def test_strong_quality_needs_a_strong_return_or_margin(self):
+        roll = fmp('ROLLUP', 8 * B, 4 * B, 5 * B, .35, .16, .04, .08, .01, .07, [.28, .30, .25], dil=.03, cons=.18, pio=5, z=2.0, icov=4.)
+        box = fmp('CASHBOX3', 2 * B, -1.9 * B, .6 * B, .35, .03, .09, .20, .005, .40, [.01, .02, .00], cons=.01, pio=6, z=9)
+        out = fmp_scan([roll, box] + FILLERS, {}, {'ROLLUP': 'Specialty Business Services', 'CASHBOX3': 'Specialty Retail'})
+        self.assertEqual(out['dimensions']['ROLLUP']['business_quality']['level'], 'adequate')
+        self.assertNotEqual(out['dimensions']['CASHBOX3']['business_quality']['level'], 'strong')
+        self.assertEqual(out['dimensions']['CASHBOX3']['business_quality']['inputs']['roic']['signal'], 0)
+        for s in ('ROLLUP', 'CASHBOX3'):
+            self.assertNotIn(s, syms(out, 'quality_fair_price'), s)
+        st = lens_of(out, 'structural_tailwind', 'ROLLUP')
+        if st:
+            self.assertNotIn('improving competitive position', st['why'])
+            self.assertIn('organic share unknown', st['why'])
+        e = next((x for x in out['shortlist'] if x['symbol'] == 'ROLLUP'), None)
+        if e:
+            self.assertTrue(any(x.startswith('Organic versus acquired growth') for x in e['check_first']))
+
+    def test_unknown_dilution_and_widening_losses_are_not_proof(self):
+        def story(sym, dil):
+            r = fmp(sym, 5 * B, -.4 * B, 8e6, .80, -35., -35.05, -37.5, .5, -.5, [1.5, 1.6, 1.4], dgm=0., dom=20., dfm=25., dil=dil or 0., pio=3, z=3.5)
+            for g in r['growth']:
+                if dil is None:
+                    g.pop('weightedAverageSharesDilutedGrowth')
+            return r
+        out = fmp_scan([story('MICRO08', .08), story('MICRONA', None)] + FILLERS, {}, {s: 'Software - Infrastructure' for s in ('MICRO08', 'MICRONA')})
+        self.assertEqual(syms(out, 'early_commercial_growth'), [])
+        self.assertEqual(near(out, 'MICRO08').get('early_commercial_growth'), 'commercial_proof')   # losses widen in dollars
+        self.assertIn('widening in dollars', next(x['reason'] for x in out['near_misses']['early_commercial_growth'] if x['symbol'] == 'MICRO08'))
+        self.assertIn('dilution', out['excluded']['MICRONA'])
+        self.assertIn('dilution_unknown', [f['code'] for f in out['dimensions']['MICRONA']['risk']['flags']])
+
+    def test_user_unsupported_list_adds_to_the_defaults(self):
+        bank = fmp('BANKR', 30 * B, 5 * B, 8 * B, .0, .35, .28, .30, .01, .12, [.05, .06, .04], cons=.04, z=3.1, pio=7)
+        ins = fmp('INSPC', 25 * B, 2 * B, 20 * B, .0, .15, .12, .18, .005, .14, [.08, .09, .10], cons=.07, z=3.1, pio=7)
+        meta = {'BANKR': 'Banks - Regional', 'INSPC': 'Insurance - Property & Casualty'}
+        out = fmp_scan([bank, ins] + FILLERS, {s: 'Financial Services' for s in meta}, meta, unsupported_industries=['Asset Management'])
+        self.assertEqual(out['universe']['not_supported'], 2)
+        off = fmp_scan([bank, ins] + FILLERS, {s: 'Financial Services' for s in meta}, meta, unsupported_defaults=False)
+        self.assertEqual(off['universe']['not_supported'], 0)                 # only the explicit switch drops the built-in rules
+
+    def test_vendor_zero_interest_coverage_is_a_placeholder(self):
+        rec = fmp('BUYBACK', 120 * B, 2 * B, 30 * B, .60, .26, .20, .18, .01, .40, [.07, .08, .09], dil=-.03, cons=.08, pio=8, z=1.7, icov=0)
+        row = S.rows_from_fmp_screen([rec], [{'symbol': 'BUYBACK', 'sector': 'Consumer Discretionary', 'sub_industry': 'Restaurants'}], as_of=AS_OF)[0]
+        self.assertNotIn('interest_coverage', row['metrics'])
+        self.assertTrue(row['metrics']['interest_coverage_vendor_zero'])
+        out = S.scan([row], {'as_of': AS_OF})
+        self.assertFalse(out['excluded'].get('BUYBACK', '').startswith('distress'))
+        self.assertFalse(any(f['code'] == 'interest_coverage' for f in out['dimensions']['BUYBACK']['risk']['flags']))
+
+    def test_fair_price_orders_by_trajectory_before_yield(self):
+        goog = fmp(*GOOG_LIKE, dom=.02, dgm=.01, dil=-.02, cons=.11, z=12)
+        shrink = fmp('SHRINK', 14 * B, 1 * B, 10 * B, .55, .26, .20, .20, .005, .30, [.03, .03, .03], dgm=-.005, dom=-.01, dil=-.04, cons=-.06, pio=7, z=5, icov=30)
+        flat = fmp('FLAT', 14 * B, 1 * B, 10 * B, .55, .26, .20, .20, .005, .30, [.01, .00, .01], dil=-.04, cons=.0, pio=7, z=5, icov=30)
+        out = fmp_scan([goog, shrink, flat] + FILLERS, {'GOOGLIKE': 'Communication Services'}, {'SHRINK': 'Tobacco', 'FLAT': 'Tobacco'}, sector_cap=None)
+        self.assertEqual(syms(out, 'quality_fair_price')[0], 'GOOGLIKE')      # cheapness alone does not rank first
+        self.assertEqual(out['dimensions']['SHRINK']['growth_quality']['inputs']['consensus_outlook']['signal'], -1)
+        fair = syms(out, 'quality_fair_price')
+        if 'SHRINK' in fair:
+            self.assertLess(fair.index('FLAT'), fair.index('SHRINK'))
+
+    def test_duplicate_rows_resolve_independent_of_order(self):
+        new = fmp('RETRY', 40 * B, 1 * B, 10 * B, .50, .25, .20, .18, .01, .25, [.08, .10, .12], dil=-.01, cons=.11, z=6)
+        new['retrieved_utc'] = '2026-10-20T01:05:00Z'
+        old = json.loads(json.dumps(new))
+        old.update(retrieved_utc='2026-10-19T22:30:00Z', estimates=[], scores={}, growth=[],
+                   errors={'C': 'ACCESS DENIED: x', 'D': 'ACCESS DENIED: x', 'E': 'ACCESS DENIED: x'})
+        meta = [{'symbol': 'RETRY', 'sector': 'Industrials', 'sub_industry': 'Diversified Support Services'}]
+        a = S.scan(S.rows_from_fmp_screen([old, new], meta), {'as_of': '2026-10-20'})
+        b = S.scan(S.rows_from_fmp_screen([new, old], meta), {'as_of': '2026-10-20'})
+        self.assertEqual(json.dumps(a, sort_keys=True), json.dumps(b, sort_keys=True))
+        self.assertEqual(a['dimensions']['RETRY']['profile']['as_of'], '2026-10-20')
+        self.assertTrue(any('kept screening as_of 2026-10-20' in n for n in a['notes']))
+
+    def test_junk_values_become_unknown_not_a_crash(self):
+        for k, v in (('roic', 'n/a'), ('net_debt', 'None'), ('piotroski', True), ('revenue_growth_series', 'n/a'), ('altman_zone', 3.2)):
+            rows = universe()
+            rows[0]['metrics'][k] = v
+            out = S.scan(rows, OPTS)
+            self.assertNotIn(k, out['dimensions']['MEGA']['metrics'] if k != 'net_debt' else {})
+            self.assertTrue(any('invalid values' in x for x in out['dimensions']['MEGA']['data_uncertainty']['reasons']), k)
+
+    def test_shortlist_sector_cap_and_concentration(self):
+        tech = [fmp(f'T{i}', 60 * B, -2 * B, 12 * B, .70, .30, .25, .28, .02, .35, [.09, .10, .11], dom=.01, dil=-.02, cons=.10, pio=7, z=8) for i in range(6)]
+        meta = {r['symbol']: 'Application Software' for r in tech}
+        base = fmp_scan(tech + FILLERS, {s: 'Information Technology' for s in meta}, meta, top_n=6, sector_cap=None)
+        self.assertTrue(any(n.startswith('Shortlist concentration') for n in base['notes']))
+        capped = fmp_scan(tech + FILLERS, {s: 'Information Technology' for s in meta}, meta, top_n=6, sector_cap=None, shortlist_sector_cap=2)
+        self.assertEqual(sum(1 for e in capped['shortlist'] if e['sector'] == 'Information Technology'), 2)
+        self.assertTrue(any('skipped by the shortlist sector cap' in v for v in capped['excluded'].values()))
+
+    def test_drawdown_alone_never_admits_a_name(self):
+        rec = lambda s: fmp(s, 20 * B, 2 * B, 10 * B, .50, .20, .15, .14, .01, .18, [.07, .06, .06], dil=-.01, cons=.07, pio=6, z=4, icov=15)
+        meta = [{'symbol': r['symbol'], 'sector': 'Health Care', 'sub_industry': 'Health Care Equipment'} for r in (rec('CALM'), rec('SWING'))]
+        prices = {'CALM': {'volatility_1y': .20, 'drawdown_from_high': -.05}, 'SWING': {'volatility_1y': .60, 'drawdown_from_high': -.35}}
+        out = S.scan(S.rows_from_fmp_screen([rec('CALM'), rec('SWING')], meta, as_of=AS_OF, prices=prices), {'as_of': AS_OF})
+        self.assertNotIn('SWING', syms(out, 'mispriced_turning'))
+        self.assertIn('context', out['policy']['price_path_used_for_selection'])
+
+    def test_vendor_denial_is_a_coverage_gap(self):
+        r = fmp('PARTIAL', 50 * B, 0, 10 * B, .60, .30, .25, .25, .01, .30, [.10, .12, .14], dil=-.01, cons=.12, z=8)
+        r.update(km={}, growth=[], scores={}, estimates=[], errors={k: 'ACCESS DENIED: plan' for k in 'ACDE'})
+        out = fmp_scan([r] + FILLERS, {}, {})
+        self.assertTrue(out['excluded']['PARTIAL'].startswith('coverage gap'))
+        self.assertEqual(out['universe']['coverage_gaps'], 1)
+        self.assertTrue(any('coverage gap' in n and 'PARTIAL' in n for n in out['notes']))
+
+    def test_cyclical_type_without_a_word_and_platform_labels(self):
+        peak = fmp('PEAKAG', 12 * B, -1 * B, 20 * B, .25, .18, .14, .12, .002, .22, [.05, .35, .30], dgm=.04, dom=.05, dil=-.03, cons=-.10, pio=8, z=4)
+        bk = fmp('BOOKPLAT', 160 * B, -5 * B, 24 * B, .85, .33, .25, .30, .03, .45, [.20, .24, .22], dgm=.005, dom=.035, dil=-.04, cons=.12, pio=8, z=6)
+        out = fmp_scan([peak, bk] + FILLERS, {'BOOKPLAT': 'Consumer Discretionary'},
+                       {'PEAKAG': 'Agricultural Products & Services', 'BOOKPLAT': 'Hotels, Resorts & Cruise Lines'})
+        cy = out['dimensions']['PEAKAG']['profile']['cyclical']
+        self.assertEqual((cy['basis'], cy['type']), ('type', 'commodity'))      # model_card's cyclical type, not only its words
+        self.assertNotIn('PEAKAG', syms(out, 'quality_fair_price'))
+        self.assertIsNone(out['dimensions']['BOOKPLAT']['profile']['cyclical'])   # platform signature: not the hotels' word
 
 
 if __name__ == '__main__':

@@ -49,6 +49,29 @@ class SecFramesTests(unittest.TestCase):
         self.assertFalse(any('net cash' in x for x in fs['reasons']))
         self.assertIsNone(fs['inputs']['net_debt_to_ebitda']['signal'])
 
+    def test_capital_allocation_and_liabilities_reach_the_screen(self):
+        from fundamental_engine import screen
+        self.assertIn('total_liabilities', {u['metric'] for u in S.frame_urls(2025)})
+        base = {'revenue': 1e10, 'gross_profit': 5e9, 'operating_income': 2e9, 'net_income': 1.5e9, 'cfo': 2.5e9, 'capex': 3e8, 'sbc': 1e8,
+                'buybacks': 2e9, 'acquisitions': 4e9, 'cash': 1e9, 'long_term_debt': 3e9, 'equity': 8e9, 'total_assets': 2e10,
+                'total_liabilities': 1.2e10, 'goodwill': 6e9, 'shares_outstanding': 1e9}
+        years = []
+        for i, k in enumerate((.8, .9, 1.)):             # three calendar years, oldest first (SYNTHETIC filer)
+            v = {m: x * k for m, x in base.items()}
+            v['operating_income'] = v['revenue'] * (.15 + .02 * i)
+            merged = {1: {'name': 'SYNTH', **{m: {'value': x} for m, x in v.items()}}}
+            years.append(S.rows(merged, {1: 'SYN'}))
+        row = years[-1][0]
+        self.assertEqual((row['buybacks'], row['acquisitions'], row['total_liabilities']), (2e9, 4e9, 1.2e10))
+        m = screen.rows_from_sec_frames(years[-1], prices={'SYN': {'market_cap': 3e10}}, history=years[:-1], as_of='2026-10-19')[0]['metrics']
+        self.assertAlmostEqual(m['acquisitions_pct_revenue'], 4e9 * 2.7 / (1e10 * 2.7))
+        self.assertGreater(m['buybacks_pct_fcf'], 0)
+        self.assertAlmostEqual(m['liabilities_to_assets'], .6)
+        self.assertEqual(len(m['operating_margin_history']), 3)
+        out = screen.scan(screen.rows_from_sec_frames(years[-1], prices={'SYN': {'market_cap': 3e10}}, history=years[:-1], as_of='2026-10-19'),
+                          {'as_of': '2026-10-19'})
+        self.assertEqual(out['dimensions']['SYN']['growth_quality']['inputs']['organic']['signal'], -1)   # 40% of revenue spent on deals
+
 
 if __name__ == '__main__':
     unittest.main()

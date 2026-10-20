@@ -17,19 +17,21 @@ Why it is built this way (docs/GAP_TEST_RESULTS.md):
   needs a balance of signals, so one metric missing an anchor cannot remove a quality company;
   margins are also read against sector peers in the same universe (percentiles shown everywhere).
 - Disqualifying conditions (unsupported sector economics, unreliable data, distress) are kept
-  separate from attractiveness and from risks that can be priced.
+  separate from attractiveness and from risks that can be priced. A possible cyclical peak is a
+  condition only where peak earnings make the price look low (quality_fair_price,
+  mispriced_turning); elsewhere it is a flag and an ordering demotion.
 - No preference for growth, size, volatility or stories: none of them is rewarded by itself.
 """
 from bisect import bisect_left, bisect_right
 from datetime import date
-from statistics import median
+from statistics import mean, median
 import json
 import math
 
 from . import facts as F
 from .expectations import growth_path
 from .inflection import features, stage as _stage
-from .model_card import cyclical_word, text_type
+from .model_card import CYCLICAL_TYPES, LENDER_LIABILITIES, clean_text, cyclical_word, platform_signature, text_type
 from .pit import ttm_at, latest_at, shares_at
 from .scores import piotroski as _piotroski, roic as _roic
 
@@ -53,19 +55,29 @@ ANCHORS = {
     'growth_level': (.12, 0., 'higher'), 'acceleration': (.03, -.08, 'higher'), 'operating_margin_trend': (.02, -.05, 'higher'),
     'dilution_yoy': (-.01, .04, 'lower'), 'net_debt_to_ebitda': (1., 3.5, 'lower'), 'interest_coverage': (8., 3., 'higher'),
     'fcf_margin': (.05, 0., 'higher'), 'runway_years': (4., 2., 'higher'),
-    'ev_to_fcf': (18., 45., 'lower'), 'pe': (18., 45., 'lower'), 'ev_sales_per_r40': (.25, .60, 'lower'),
+    'ev_to_fcf': (18., 45., 'lower'), 'pe': (18., 45., 'lower'), 'ev_sales_per_r40': (.25, .60, 'lower'), 'ev_to_sales': (3., 10., 'lower'),
     'expected_return_proxy': (.11, .06, 'higher'), 'volatility_1y': (.30, .55, 'lower'),
 }
 DEFAULTS = {'as_of': None, 'universe': None, 'top_n': 3, 'sector_cap': 2, 'discount_rate': .09, 'terminal_growth': .03,
             'fade_high_years': 5, 'fade_years': 10, 'consensus_hold_years': 2, 'growth_start_bounds': [-.10, .30],
             'sustainable_growth_bounds': [-.05, .15], 'priced_in_tolerance': .04, 'perfection_growth': .30,
             'min_percentile_n': 5, 'min_sector_peers': 4, 'early_growth_min': .20, 'drawdown_overreaction': -.30,
-            'shortlist_mode': 'distinct', 'themes': {}, 'structural_industries': [], 'unsupported_industries': None, 'anchors': {}}
+            'shortlist_mode': 'distinct', 'shortlist_sector_cap': None, 'themes': {}, 'structural_industries': [],
+            'unsupported_industries': None, 'unsupported_defaults': True, 'supported_override': {}, 'cyclical': {}, 'anchors': {}}
 TAX = .21            # statutory US rate: a convention for after-tax operating profit, not the company's rate
 UNSUPPORTED_TYPES = ('financials', 'reit')     # model_card text types whose economics the screen cannot describe
 UNSUPPORTED_INDUSTRIES = ('Diversified Banks', 'Regional Banks', 'Life & Health Insurance', 'Property & Casualty Insurance',
                           'Multi-line Insurance', 'Reinsurance', 'Consumer Finance', 'Investment Banking & Brokerage',
                           'Commercial & Residential Mortgage Finance', 'Thrifts & Mortgage Finance', 'Multi-Sector Holdings')
+# Labels listing fee businesses with balance-sheet firms (model_card.BALANCE_MIXED_RULES) that stay screenable when the row
+# carries no balance sheet (the pre-fix behaviour; flagged); other mixed labels ('credit services') then need the balance
+# sheet or options.supported_override, because most of their members are lenders.
+SCREEN_MIXED_SUPPORTED = ('asset management',)
+# Metric types a hand-built or CLI row may carry; every other metric must be numeric (anything else becomes unknown).
+STR_METRICS = {'altman_zone': ('safe', 'grey', 'distress'), 'beneish_zone': ('likely_manipulator', 'watch', 'unlikely'),
+               'stage_pit': None}
+BOOL_METRICS = ('acquisition_driven', 'financial_statements', 'accruals_high', 'beneish_high', 'interest_coverage_vendor_zero')
+LIST_METRICS = ('revenue_growth_series', 'operating_margin_history')
 KEY_METRICS = ('revenue_growth', 'revenue_cagr_3y', 'gross_margin', 'operating_margin', 'fcf_margin', 'roic', 'ev',
                'market_cap', 'net_debt', 'dilution_yoy', 'consensus_growth_2y', 'piotroski')
 PCT_METRICS = {'roic': 'higher', 'gross_margin': 'higher', 'operating_margin': 'higher', 'gross_margin_change': 'higher',
@@ -85,7 +97,7 @@ LABELS = {'roic': ('ROIC', 'pct'), 'gross_margin': ('gross margin', 'pct'), 'ope
           'net_debt_to_ebitda': ('net debt / EBITDA', 'x'), 'interest_coverage': ('interest coverage', 'x'),
           'altman': ('Altman zone', 'str'), 'fcf_margin': ('FCF margin', 'pct'), 'runway_years': ('cash runway', 'yrs'),
           'ev_to_fcf': ('EV / FCF', 'x'), 'pe': ('P/E', 'x'), 'ev_sales_per_r40': ('EV/sales per Rule-of-40 point', 'x2'),
-          'consensus_outlook': ('consensus revenue growth', 'pct')}
+          'consensus_outlook': ('consensus revenue growth', 'pct'), 'ev_to_sales': ('EV / sales', 'x')}
 WORD = {1: 'supports', 0: 'neutral', -1: 'weighs against', None: 'unknown'}
 
 ER_FORMULA = ('expected_return_proxy = owner FCF yield on equity ((FCF - SBC) / market cap; FCF is after interest, so its '
@@ -95,50 +107,55 @@ ER_FORMULA = ('expected_return_proxy = owner FCF yield on equity ((FCF - SBC) / 
               '(expectations.growth_path), then bounded. Excess dilution = max(0, share growth - SBC / market cap), so SBC is '
               'charged once. Assumes a constant multiple and FCF growing with revenue.')
 MEANINGS = {
-    'business_quality': 'Returns on capital, margin level and stability, cash conversion, Piotroski. strong = high and durable economics today.',
-    'growth_quality': 'Growth level, consistency, acceleration, operating leverage, per-share dilution, acquired-growth hints and consensus far below demonstrated growth. strong = sizeable growth that is repeatable, organic and accrues per share.',
+    'business_quality': 'Returns on capital, margin level and stability, cash conversion, Piotroski. strong = high and durable economics today (needs a strong ROIC or margin level, not stability and conversion alone).',
+    'growth_quality': 'Growth level, consistency, acceleration (a normal fade from a high base is neutral), operating leverage, per-share dilution (buybacks do not offset shrinking revenue), acquired-growth hints and consensus far below demonstrated growth or expecting a decline. strong = sizeable growth that is repeatable, organic and accrues per share.',
     'financial_strength': 'Net debt/EBITDA, interest coverage, Altman zone, FCF sign and cash runway. strong = no funding dependence.',
     'valuation': 'EV/FCF, P/E and EV/sales per Rule-of-40 point. strong = undemanding multiples. Cheapness alone is not a selection signal (H2 failed).',
     'expected_return_proxy': 'ROUGH screening-grade annual return proxy; see formula. Not an IRR, not a forecast, never a target. Unknown when owner FCF <= 0 (yield-based proxies cannot see a J-curve).',
-    'priced_in': 'Growth the EV / after-tax operating profit multiple implies under a standard fade model (market cap / owner FCF when operating profit is thin or unknown; the other basis is shown as a cross-check), versus consensus or demonstrated growth. strong = price assumes less than the evidence; weak = more, or priced for perfection. A crash-risk check, not a return predictor.',
-    'risk': 'Leverage, distress, dilution, funding runway, priced-for-perfection, cyclical-peak, consensus-downside and volatility flags. strong = no material flag; weak = a high-severity flag.',
-    'data_uncertainty': 'Coverage of key metrics and the data grade. strong = low uncertainty (validated FactBook); screening-grade data is at best adequate.',
+    'priced_in': 'Growth the EV / after-tax operating profit multiple implies under a standard fade model (market cap / owner FCF when operating profit is thin or unknown; the other basis is shown as a cross-check), versus consensus (compared on its own 2-year horizon) or demonstrated growth (a cyclical without consensus is compared with long-run growth). strong = price assumes less than the evidence; weak = more, or priced for perfection. A crash-risk check, not a return predictor. price_check carries a crude fallback (EV/sales per Rule-of-40 point, EV/sales, P/E) when it cannot be read.',
+    'risk': 'Leverage, distress, dilution, funding runway, priced-for-perfection, demanding fallback price, accounting and cash-conversion, cyclical-peak, consensus-downside and volatility flags, plus low data flags (leverage or dilution unknown, unchecked cyclical). strong = leverage data present and no material flag; weak = a high-severity flag.',
+    'data_uncertainty': 'Coverage of key metrics and the data grade. strong = low uncertainty (validated FactBook); screening-grade data is at best adequate. A vendor denial that leaves coverage below half is a coverage gap.',
 }
 LENS_RULES = {
     'quality_compounder': {
         'label': 'Quality company with strong growth',
         'scope': 'growth_level >= growth anchor (12%/yr). Fast growth is not treated as risky by itself.',
-        'conditions': ['business_quality strong or adequate', 'growth_quality strong (repeatable, organic, per share)',
-                       'financial_strength not weak', 'not a cyclical industry at a possible peak (cyclical names otherwise tagged through_cycle)'],
-        'ordering': 'quality tier (strong before adequate), then not priced for perfection before priced for perfection, then expected-return proxy (desc). Meaning: among comparable quality, the price that leaves the most return ranks first.'},
+        'conditions': ['business_quality strong or adequate', 'profitable: operating margin or ROIC at or above its weak anchor (loss-makers belong in early_commercial_growth)',
+                       'growth_quality strong (repeatable, organic, per share)', 'per share: share count known and growing <= 5%/yr, no high dilution flag',
+                       'financial_strength not weak', 'no high-severity leverage, interest-coverage or funding flag',
+                       'earnings quality: no accounting or cash-conversion flag'],
+        'ordering': 'cyclical peak check (none or through-cycle, incomplete, possible peak), then quality tier (strong before adequate), then price check (assessed, unassessed, demanding or priced for perfection), then expected-return proxy (desc). Meaning: growth that may be a cyclical peak ranks after repeatable growth; among comparable quality an unread or demanding price ranks later; then the price that leaves the most return.'},
     'quality_fair_price': {
         'label': 'Quality company at an attractive or fair price',
         'scope': 'business_quality strong (size is irrelevant; a mega cap qualifies).',
         'conditions': ['valuation strong or adequate', 'priced_in strong or adequate (EV / after-tax operating profit, so growth capex does not read as expensive)',
-                       'growth_quality not weak or unknown (guards value traps)', 'financial_strength not weak',
-                       'expected_return_proxy strong or adequate', 'not a cyclical industry at a possible peak (peak FCF is not a fair price)'],
-        'ordering': 'expected-return proxy (desc), then business-quality percentile (desc). Meaning: rough return for the price among strong businesses; not a valuation gap ranking.'},
+                       'trajectory: growth_quality strong or adequate and revenue not shrinking over 3 years (guards value traps; buybacks do not offset)',
+                       'financial_strength not weak', 'leverage known (net debt in the data)', 'no high-severity leverage, interest-coverage or funding flag',
+                       'earnings quality: no accounting or cash-conversion flag', 'expected_return_proxy strong or adequate',
+                       'not a cyclical at a possible or unchecked peak (peak FCF is not a fair price; missing consensus is not "no peak")'],
+        'ordering': 'growth-quality tier (strong before adequate), then expected-return proxy (desc), then business-quality percentile (desc). Meaning: among strong businesses the better trajectory first; the rough return for the price only breaks ties; not a valuation gap ranking.'},
     'early_commercial_growth': {
         'label': 'Earlier-stage growth with commercial proof',
-        'scope': 'earlier stage (operating margin < 10%, net loss, or FCF margin < 5%) and growth >= early_growth_min (20%). Size and missing net profit do not reject.',
-        'conditions': ['commercial proof: >= 3 of 4 (unit economics, operating leverage, cash trajectory, repeat growth)',
-                       'share count growth <= 10%/yr', 'no distress flag'],
-        'ordering': 'proof count (desc), then funded before funding-conditional, then per-share growth (desc). Meaning: measured commercial evidence first; story without numbers is never rewarded.'},
+        'scope': 'earlier stage by evidence (net loss, operating loss, cash burn, inflection stage early_commercial or turning_profitable, or operating margin < 10% with gross margin >= 40% or unknown; a low margin alone does not make a steel maker or contractor early) and growth >= early_growth_min (20%). Size and missing net profit do not reject.',
+        'conditions': ['commercial proof: >= 3 of 4 (unit economics, operating leverage, cash trajectory, repeat growth); operating leverage and cash trajectory count only while the loss or burn is not widening in dollars',
+                       'share count known and growing <= 10%/yr', 'no distress flag'],
+        'ordering': 'proof count (desc), then funded before funding-conditional, then cyclical peak check, then price check (assessed, unassessed, demanding: fallback EV/sales per Rule-of-40 point when owner FCF <= 0), then per-share growth (desc). Meaning: measured commercial evidence first; story without numbers is never rewarded, and an extreme price never ties with a moderate one.'},
     'mispriced_turning': {
         'label': 'Mispriced or turning-point business',
-        'scope': 'at least one improvement signal, or a >= 30% drawdown from the high when price data is supplied.',
-        'conditions': ['>= 2 improvement signals incl. a profit/cash one, or overreaction path (drawdown with intact quality and growth)',
+        'scope': 'at least one improvement signal (a recovery from a down year counts), or a >= 30% drawdown from the high when price data is supplied (context only).',
+        'conditions': ['>= 2 improvement signals incl. a profit/cash one, or overreaction path (drawdown with intact quality and growth plus at least one improvement signal)',
                        'the price lags: priced_in strong, or valuation strong when priced_in is unknown, or (overreaction path) priced_in not weak',
-                       'share count growth <= 8%/yr', 'financial_strength not weak', 'not a cyclical industry at a possible peak'],
+                       'share count known and growing <= 8%/yr', 'financial_strength not weak', 'no high-severity leverage, interest-coverage or funding flag',
+                       'not a cyclical at a possible or unchecked peak (peak earnings make a price look like it lags)'],
         'ordering': 'improvement-signal count (desc), then priced_in (strong, adequate, unknown), then expected-return proxy (desc). Meaning: business evidence first, price second.'},
     'structural_tailwind': {
         'label': 'Structural long-term opportunity',
-        'scope': 'an analyst theme for the symbol (options.themes) or industry (options.structural_industries), or the numeric footprint of an improving competitive position (growth in the top quartile of its sector in this universe with a non-falling gross margin).',
+        'scope': 'an analyst theme for the symbol (options.themes) or industry (options.structural_industries), or the numeric footprint of fast growth (top quartile of its sector in this universe with a non-falling gross margin; organic share stated when known).',
         'conditions': ['durable growth: 3y CAGR >= 8% without repeated declines', 'business_quality not weak',
-                       'potential not already priced (priced_in not weak; unknown counts only with an analyst theme)',
-                       'share count growth <= 10%/yr and no high funding/dilution flag', 'financial_strength not weak',
-                       'not a cyclical industry at a possible peak'],
-        'ordering': 'priced_in (strong, adequate, unknown), then expected-return proxy (desc), then growth (desc). Meaning: of real tailwinds, those the price has not fully absorbed first. Themes are analyst hypotheses, not evidence.'},
+                       'potential not already priced (priced_in not weak; unknown counts only with an analyst theme, a known market value and a fallback price read that is not demanding: a theme is not a price check)',
+                       'share count known and growing <= 10%/yr and no high funding/dilution flag', 'financial_strength not weak',
+                       'no high-severity leverage, interest-coverage or funding flag'],
+        'ordering': 'cyclical peak check, then price rank (priced_in, or the fallback read when unknown: strong, adequate, unassessed, weak), then expected-return proxy (desc), then growth (desc). Meaning: of real tailwinds, those the price has not fully absorbed first. Themes are analyst hypotheses, not evidence.'},
 }
 LENS_CHECKS = {
     'quality_compounder': 'Durability of growth: organic split, customer concentration, reinvestment runway, and what growth the price requires with company drivers (expectations.expectation_gap).',
@@ -285,8 +302,14 @@ def rows_from_fmp_screen(records, universe_meta=None, as_of=None, prices=None):
                        ('sbc_to_revenue', 'stockBasedCompensationToRevenueTTM'), ('capex_to_revenue', 'capexToRevenueTTM')):
             put(k, g(km, src), f'FMP {src}')
         for k, src in (('gross_margin', 'grossProfitMarginTTM'), ('operating_margin', 'operatingProfitMarginTTM'),
-                       ('net_margin', 'netProfitMarginTTM'), ('interest_coverage', 'interestCoverageRatioTTM')):
+                       ('net_margin', 'netProfitMarginTTM')):
             put(k, g(rt, src), f'FMP {src}')
+        icov = g(rt, 'interestCoverageRatioTTM')
+        if icov == 0 and (m.get('operating_margin') or 0) > 0:      # EBIT / interest = 0 with EBIT > 0 is impossible: a placeholder
+            put('interest_coverage_vendor_zero', True, 'vendor interestCoverageRatioTTM = 0 with a positive operating margin: interest '
+                'expense not reported; coverage read as unknown, never as 0x')
+        else:
+            put('interest_coverage', icov, 'FMP interestCoverageRatioTTM')
         if (g(rt, 'priceToEarningsRatioTTM') or 0) > 0:
             put('pe', g(rt, 'priceToEarningsRatioTTM'), 'FMP priceToEarningsRatioTTM')
         fps, rps, nps = g(rt, 'freeCashFlowPerShareTTM'), g(rt, 'revenuePerShareTTM'), g(rt, 'netIncomePerShareTTM')
@@ -494,6 +517,19 @@ def rows_from_sec_frames(frame_rows, prices=None, history=None, as_of=None):
             if g0 is not None and g1 is not None and rev:
                 put('goodwill_jump_to_revenue', (g1 - g0) / rev, 'goodwill change / revenue')
                 put('acquisition_driven', (g1 - g0) / rev > .10, 'goodwill jump > 10% of revenue')
+        window = [x for x in prev[-2:] + [r] if x and (_f(x.get('revenue')) or 0) > 0]
+        if any(_f(x.get('acquisitions')) is not None for x in window):    # capital allocation: acquired growth and buybacks
+            put('acquisitions_pct_revenue', sum(abs(_f(x.get('acquisitions')) or 0) for x in window) / sum(_f(x['revenue']) for x in window),
+                f'acquisition spend / revenue over {len(window)} calendar-year frame(s)')
+        fw = [x for x in window if _f(x.get('fcf')) is not None]
+        if any(_f(x.get('buybacks')) is not None for x in fw) and sum(_f(x['fcf']) for x in fw) > 0:
+            put('buybacks_pct_fcf', sum(abs(_f(x.get('buybacks')) or 0) for x in fw) / sum(_f(x['fcf']) for x in fw),
+                f'buybacks / FCF over {len(fw)} calendar-year frame(s)')
+        oms = [_div(_f(x.get('operating_income')), _f(x.get('revenue'))) for x in prev + [r] if x and (_f(x.get('revenue')) or 0) > 0]
+        if len(oms) >= 3 and None not in oms:
+            put('operating_margin_history', oms[-5:], 'operating income / revenue per calendar-year frame, oldest first')
+        if (_f(r.get('total_assets')) or 0) > 0 and _f(r.get('total_liabilities')) is not None:
+            put('liabilities_to_assets', _f(r['total_liabilities']) / _f(r['total_assets']), 'total liabilities / total assets (frame)')
         put('volatility_1y', _f(p.get('volatility_1y')), 'supplied price data')
         put('drawdown_from_high', _f(p.get('drawdown_from_high')), 'supplied price data')
         out.append(_row(sym, r.get('name'), r.get('sector'), r.get('industry'), as_of or r.get('as_of'), 'sec_frames',
@@ -619,6 +655,21 @@ def rows_from_factbooks(factbooks, analyses=None, qas=None, prices=None):
         alt = fx.get('altman') if isinstance(fx.get('altman'), dict) else {}
         if alt.get('status') == 'computed':
             put('altman_zone', alt['zone'], f"scores.altman {alt.get('model')}")
+        ben = fx.get('beneish') if isinstance(fx.get('beneish'), dict) else {}
+        if ben.get('status') == 'computed' and ben.get('zone') in STR_METRICS['beneish_zone']:
+            put('beneish_zone', ben['zone'], f"analysis forensics.beneish (M {_f(ben.get('m'))})")
+        put('accruals_ratio', mv('accruals_ratio'), 'analysis metric accruals_ratio ((net income - CFO) / average assets)')
+        codes = {x.get('code') for x in (an or {}).get('flags') or [] if isinstance(x, dict)}
+        for code in ('beneish_high', 'accruals_high'):
+            if code in codes:
+                put(code, True, f'analysis flag {code}')
+        oms = [(y['period_end'], _div(y.get('operating_income'), y.get('revenue'))) for y in years if (y.get('revenue') or 0) > 0]
+        oms = [x for x in oms if x[1] is not None][-5:]
+        if len(oms) >= 3:
+            put('operating_margin_history', [x[1] for x in oms], f'annual operating margin {oms[0][0]}..{oms[-1][0]}, oldest first')
+        if years and (years[-1].get('total_assets') or 0) > 0 and years[-1].get('total_liabilities') is not None:
+            put('liabilities_to_assets', years[-1]['total_liabilities'] / years[-1]['total_assets'],
+                f"total liabilities / total assets at {years[-1]['period_end']}")
         if 'roic' not in m and hist:
             ro = _roic(hist)
             if ro.get('status') == 'computed':
@@ -791,14 +842,19 @@ def _business_quality(c):
         ml = -1
     else:
         ml = 0
+    nd, mc = m.get('net_debt'), m.get('market_cap')
+    cash_box = nd is not None and nd < 0 and mc and -nd >= .5 * mc       # net cash is at least half the equity value
+    roic_note = 'very high: small or negative invested capital' if (m.get('roic') or 0) > 1 else None
+    if cash_box and roic_s == 1 and (om_s or 0) <= 0 and (gm_s or 0) <= 0:
+        roic_s, roic_note = 0, (f"ROIC on a small operating base inside a cash-rich company (net cash {_fmt(-nd / mc)} of market cap) "
+                                'without a strong margin: not counted as a quality signal')
     if ml == -1:
         sp = max(c['spct'].get('gross_margin', 0), c['spct'].get('operating_margin', 0))
         if roic_s == 1:
             ml, note = 0, 'low margins offset by high capital turnover (ROIC strong)'
         elif sp >= .75:
             ml, note = 0, 'low in absolute terms but top quartile of its sector in this universe'
-    inputs = {'roic': _inp(c, 'roic', m.get('roic'), roic_s,
-                           note='very high: small or negative invested capital' if (m.get('roic') or 0) > 1 else None),
+    inputs = {'roic': _inp(c, 'roic', m.get('roic'), roic_s, note=roic_note),
               'margin_level': _inp(c, 'margin_level', m.get('gross_margin') if m.get('gross_margin') is not None else m.get('operating_margin'),
                                    ml, metric='gross_margin', note=(note or '') + ('; ' if note else '') + f"operating margin {_fmt(m.get('operating_margin'))}"),
               'gross_margin_change': _inp(c, 'gross_margin_change', m.get('gross_margin_change'), _sig(m.get('gross_margin_change'), A['gross_margin_change']),
@@ -811,7 +867,12 @@ def _business_quality(c):
     inputs['fcf_conversion'] = _inp(c, 'fcf_conversion', conv, fs,
                                     note=None if conv is not None or fs is None else f"net loss; FCF margin {_fmt(m.get('fcf_margin'))}")
     inputs['piotroski'] = _inp(c, 'piotroski', m.get('piotroski'), _sig(m.get('piotroski'), A['piotroski']))
-    return _dim(inputs)
+    d = _dim(inputs)
+    if d['level'] == 'strong' and 1 not in (roic_s, ml):
+        d['level'] = 'adequate'
+        d['reasons'].append('capped at adequate: strong business quality needs a strong return on capital or margin level, not '
+                            'stability and cash conversion alone')
+    return d
 
 
 def _consistency(series):
@@ -829,6 +890,13 @@ def _growth_quality(c):
     acc, acc_s, note = m.get('acceleration'), _sig(m.get('acceleration'), A['acceleration']), None
     if acc_s == 1 and m.get('acceleration_streak') is not None and m['acceleration_streak'] < 2:
         acc_s, note = 0, 'needs >= 2 consecutive improving quarters; one quarter is not an inflection'
+    ser = [x for x in m.get('revenue_growth_series') or [] if x is not None]
+    if acc_s == -1 and len(ser) >= 3:        # deceleration from a high base is normal unless consensus expects a sharp break
+        prior, latest, cons = (ser[-2] + ser[-3]) / 2, ser[-1], m.get('consensus_growth_2y')
+        if prior >= .20 and latest >= A['growth_level'][0] and (
+                (cons is not None and not _consensus_downside(m)) or (cons is None and latest >= .6 * prior)):
+            acc_s, note = 0, (f'normal fade from a high base: latest {_fmt(latest)} vs {_fmt(prior)} before, '
+                              + ('consensus does not expect a sharp break' if cons is not None else 'still >= 60% of the prior rate'))
     org = None
     if m.get('acquisition_driven') is True:
         org = -1
@@ -836,47 +904,179 @@ def _growth_quality(c):
         org = 1 if m['acquisitions_pct_revenue'] < .02 else (-1 if m['acquisitions_pct_revenue'] > .10 else 0)
     elif m.get('acquisition_driven') is False:
         org = 0
-    inputs = {'growth_level': _inp(c, 'growth_level', m.get('growth_level'), _sig(m.get('growth_level'), A['growth_level'])),
+    gl_s = _sig(m.get('growth_level'), A['growth_level'])
+    dil_s, dil_note = _sig(m.get('dilution_yoy'), A['dilution_yoy']), 'per-share growth leaks when shares grow'
+    if dil_s == 1 and gl_s == -1:
+        dil_s, dil_note = 0, 'buybacks do not offset shrinking revenue: per-share gains from a smaller business'
+    inputs = {'growth_level': _inp(c, 'growth_level', m.get('growth_level'), gl_s),
               'consistency': _inp(c, 'consistency', m.get('revenue_growth_series'), _consistency(m.get('revenue_growth_series')),
                                   metric='revenue_growth_series'),
               'acceleration': _inp(c, 'acceleration', acc, acc_s, note=note),
               'operating_margin_trend': _inp(c, 'operating_margin_trend', m.get('operating_margin_trend'),
                                              _sig(m.get('operating_margin_trend'), A['operating_margin_trend']),
                                              note='does growth bring operating leverage?'),
-              'dilution_yoy': _inp(c, 'dilution_yoy', m.get('dilution_yoy'), _sig(m.get('dilution_yoy'), A['dilution_yoy']),
-                                   note='per-share growth leaks when shares grow'),
+              'dilution_yoy': _inp(c, 'dilution_yoy', m.get('dilution_yoy'), dil_s, note=dil_note),
               'organic': _inp(c, 'organic', m.get('acquisitions_pct_revenue', m.get('goodwill_jump_to_revenue')), org,
                               metric='acquisitions_pct_revenue', note='acquired growth is not organic' if org == -1 else None)}
-    down = _consensus_downside(m)
-    inputs['consensus_outlook'] = _inp(c, 'consensus_outlook', m['consensus_growth_2y'] if down else None, -1 if down else None,
+    down, cons = _consensus_downside(m), m.get('consensus_growth_2y')
+    if not down and cons is not None and cons < 0:
+        down = f'consensus expects revenue to decline ({_fmt(cons)}/yr)'
+    inputs['consensus_outlook'] = _inp(c, 'consensus_outlook', cons if down else None, -1 if down else None,
                                        metric='consensus_growth_2y', note=down or None)
     d = _dim(inputs)
     if d['level'] == 'strong' and inputs['growth_level']['signal'] != 1:
         d['level'] = 'adequate'
         d['reasons'].append('capped at adequate: strong growth quality needs growth at or above the level anchor')
+    if d['level'] == 'strong' and inputs['consensus_outlook']['signal'] == -1:
+        d['level'] = 'adequate'
+        d['reasons'].append('capped at adequate: consensus does not expect the demonstrated growth to repeat, so it is not shown to be repeatable')
     return d
 
 
 def _consensus_downside(m):
-    """Text when consensus revenue growth is more than 10 points below demonstrated growth (analysts expect a slowdown or a
-    decline: cycle, lost customer, tough comparisons), else ''. Only a downside gap counts against growth quality."""
-    demo, cons = m.get('revenue_cagr_3y', m.get('revenue_growth')), m.get('consensus_growth_2y')
-    if demo is None or cons is None or cons >= demo - .10:
+    """Text when consensus revenue growth is far below demonstrated growth (analysts expect a slowdown or a decline: cycle, lost
+    customer, tough comparisons), else ''. Demonstrated = the lower of latest growth and the 3y CAGR (older, faster years do
+    not inflate it); 'far below' = more than 10 points and more than half of it, so a 45% grower expected to slow to 30% is
+    a normal fade, not a downside. Only a downside gap counts against growth quality."""
+    demo = [x for x in (m.get('revenue_growth'), m.get('revenue_cagr_3y')) if x is not None]
+    cons = m.get('consensus_growth_2y')
+    if not demo or cons is None:
         return ''
-    return f'consensus {_fmt(cons)}/yr is far below demonstrated {_fmt(demo)}/yr: the demonstrated growth is not expected to repeat'
+    base = min(demo)
+    band = max(.10, .5 * base)
+    if cons >= base - band:
+        return ''
+    return (f'consensus {_fmt(cons)}/yr is far below demonstrated {_fmt(base)}/yr (lower of latest growth and 3y CAGR): the '
+            'demonstrated growth is not expected to repeat')
 
 
-def _cycle(c):
-    """Cyclical industry (model_card.CYCLICAL_WORDS in the industry/sector text) and possible-peak signs from screening data."""
-    word = cyclical_word(c['row'])
-    if not word:
+def _downturn(m):
+    """(index, level, decline) for the most recent revenue decline of >= 10% before the latest year: level = revenue now relative
+    to the year before that decline (1.0 = back to the pre-downturn level). None when there is no such decline."""
+    ser = [x for x in m.get('revenue_growth_series') or [] if x is not None]
+    for i in range(len(ser) - 2, -1, -1):
+        if ser[i] <= -.10:
+            level = 1.
+            for x in ser[i:]:
+                level *= 1 + x
+            return i, level, ser[i]
+    return None
+
+
+def _boom_after_downturn(m, A):
+    """Data sign of a cycle, whatever the label: a >= 10% revenue drop, then growth back to >= 25% above the pre-downturn level, with
+    the latest year +20% or more and the operating margin up >= 3 points at a profitable level (memory-type upswing)."""
+    dt, g, tr, om = _downturn(m), m.get('revenue_growth'), m.get('operating_margin_trend'), m.get('operating_margin')
+    if not dt or None in (g, tr, om) or g < .20 or tr < .03 or om < A['operating_margin'][1] or dt[1] < 1.25:
+        return ''
+    return (f'revenue fell {_fmt(-dt[2])} and is now {_fmt(dt[1] - 1)} above its pre-downturn level; latest +{_fmt(g)} with operating '
+            f'margin {_fmt(tr, "pts")} to {_fmt(om)} (boom after a downturn)')
+
+
+def _recovery(m):
+    """A decline year (>= 5%) followed by growth and an operating-margin recovery (>= 2 points), with revenue still near (< 25% above)
+    its pre-decline level: a turning point, not a peak."""
+    ser = [x for x in m.get('revenue_growth_series') or [] if x is not None]
+    g, tr = m.get('revenue_growth'), m.get('operating_margin_trend')
+    i = next((j for j in range(len(ser) - 2, -1, -1) if ser[j] <= -.05), None)
+    if i is None or g is None or g <= 0 or tr is None or tr < .02:
+        return ''
+    level = 1.
+    for x in ser[i:]:
+        level *= 1 + x
+    if level >= 1.25:
+        return ''
+    return f'revenue recovering after a {_fmt(-ser[i])} decline (now {_fmt(level - 1)} vs the pre-decline level) with operating margin {_fmt(tr, "pts")}'
+
+
+def _cycle(c, o):
+    """Cyclical identity, before any peak test: model_card.CYCLICAL_WORDS in the industry/sector text, a model_card cyclical TYPE
+    (commodity, semiconductor: same definition as the card), or the data (a boom after a downturn, whatever the label). A mixed
+    label whose financial signature is a platform's (a booking platform under 'Hotels, Resorts & Cruise Lines') does not take the
+    operators' word. An analyst confirms or rejects it with a reason (options.cyclical {symbol: {value, reason}}). None when not
+    cyclical and no analyst statement."""
+    row, m, A = c['row'], c['m'], c['anchors']
+    ov = (o['cyclical'] or {}).get(row['symbol'])
+    t = text_type({'industry': row.get('industry'), 'sector': row.get('sector')})
+    word, notes = cyclical_word(row), []
+    if word and t and t.get('signature') == 'platform' and t['field'] == 'industry' and cyclical_word({'industry': t['text']}):
+        cx = m.get('capex_to_revenue')
+        plat, rule = platform_signature(m.get('gross_margin'), abs(cx) if cx is not None else None, m.get('operating_margin'))
+        if plat:
+            word = cyclical_word({'sector': row.get('sector')})
+            notes.append(f"'{t['text']}' mixes {t['mixes']}; platform signature ({rule}): the operators' cyclical word does not flag it")
+    typ = t['type'] if t and t['type'] in CYCLICAL_TYPES else None
+    cons, down = m.get('consensus_growth_2y'), _consensus_downside(m)
+    boom = _boom_after_downturn(m, A) if (cons is None or down) else ''      # consensus expecting more growth contradicts a boom
+    basis = 'industry_word' if word else ('type' if typ else ('data' if boom else None))
+    if ov is None and not basis:
         return None
-    m = c['m']
-    signs = [x for x in (_consensus_downside(m),) if x]
-    g, tr, om = m.get('revenue_growth'), m.get('operating_margin_trend'), m.get('operating_margin')
-    if g is not None and tr is not None and om is not None and g >= .20 and tr >= .03 and om >= c['anchors']['operating_margin'][1]:
-        signs.append(f'revenue +{_fmt(g)} with operating margin {_fmt(tr, "pts")} to {_fmt(om)} (boom-like)')
-    return {'word': word, 'peak': bool(signs), 'signs': signs}
+    out = {'value': bool(basis), 'basis': basis, 'word': word, 'type': typ, 'data_boom': boom or None, 'recovery': _recovery(m) or None,
+           'override': None, 'peak': False, 'peak_check': None, 'signs': [], 'checked': [], 'notes': notes}
+    if ov is not None:
+        out['override'] = {'value': ov['value'], 'reason': ov['reason']}
+        out['value'] = ov['value']
+        out['basis'] = 'analyst'
+        notes.append(f"analyst {'confirms' if ov['value'] else 'rejects'} cyclical economics ({ov['reason']})")
+    return out
+
+
+def _peak(c, o, pi):
+    """Possible-peak signs for a cyclical row, filled into c['cycle'] after the price check. Consensus-free signs exist, so missing
+    consensus is 'incomplete', never 'no peak'. Signs: consensus far below demonstrated growth; boom-like growth with expanding
+    margins (unless consensus expects growth near the demonstrated rate, the year is a recovery, or the margin is not above its own
+    history); a plateau after a boom; a price that discounts falling earnings (an unlevered multiple, EV / NOPAT, implying <= -10%/yr);
+    the operating margin far above its own multi-year history."""
+    cy = c.get('cycle')
+    if not cy or not cy['value']:
+        return
+    m, A = c['m'], c['anchors']
+    g, tr, om, cagr = m.get('revenue_growth'), m.get('operating_margin_trend'), m.get('operating_margin'), m.get('revenue_cagr_3y')
+    cons, down = m.get('consensus_growth_2y'), _consensus_downside(m)
+    confirms = cons is not None and not down
+    hist = [x for x in m.get('operating_margin_history') or [] if x is not None]
+    signs, checked = [], []
+    if cons is not None:
+        checked.append('consensus')
+    if down:
+        signs.append(down)
+    if cy.get('data_boom'):
+        signs.append(cy['data_boom'])
+    elif None not in (g, tr, om) and g >= .15 and tr >= .03 and om >= A['operating_margin'][1] and not confirms and not cy['recovery']:
+        if len(hist) >= 3 and om <= mean(hist[:-1]):
+            cy['notes'].append(f'growth +{_fmt(g)} with margin {_fmt(tr, "pts")}, but the margin {_fmt(om)} is not above its own history '
+                               f'average {_fmt(mean(hist[:-1]))}: not read as a peak')
+        else:
+            signs.append(f'revenue +{_fmt(g)} with operating margin {_fmt(tr, "pts")} to {_fmt(om)} (boom-like)')
+    if cagr is not None and g is not None and cagr >= .15 and g <= cagr / 2 and (tr is None or tr >= -.01) and not confirms:
+        signs.append(f'3y revenue CAGR {_fmt(cagr)} slowed to {_fmt(g)} with the operating margin holding ({_fmt(om)}): a plateau after a boom')
+    unlevered = (pi.get('multiple_basis') or '').startswith('EV') or (m.get('net_debt') is not None and m['net_debt'] <= 0)
+    if pi.get('implied_growth') is not None and pi.get('multiple_basis') and unlevered:     # a levered equity multiple is low by leverage
+        checked.append('price')
+        if pi['status'] == 'below_range' or pi['implied_growth'] <= -.10:
+            signs.append(f"the price discounts falling earnings ({pi['multiple_basis'].split(' (')[0]} {pi['multiple']:.1f}x implies "
+                         f"~{_fmt(pi['implied_growth'])}/yr): peak earnings priced as such")
+    if len(hist) >= 3:
+        checked.append('margin_history')
+        avg, last = mean(hist), hist[-1]
+        if last > 0 and (last > avg + .05 or (avg > 0 and last > 1.5 * avg)):
+            signs.append(f'operating margin {_fmt(last)} vs {_fmt(avg)} average over {len(hist)} years')
+        elif len(hist) >= 4 and last > 0 and last >= max(hist) - .005 and last - min(hist) >= .05 and last > avg:
+            signs.append(f'operating margin {_fmt(last)} is the {len(hist)}-year high after a climb from {_fmt(min(hist))}')
+    cy.update(signs=signs, checked=checked, peak=bool(signs),
+              peak_check='possible_peak' if signs else ('no_peak_signs' if {'consensus', 'margin_history'} & set(checked) else 'incomplete'))
+
+
+CYC_RANK = {None: 0, 'no_peak_signs': 0, 'incomplete': 1, 'possible_peak': 2}
+
+
+def _cyc_state(c):
+    """(peak_check or None, tag) for lens ordering and tags: through_cycle / peak_check_incomplete / possible_cyclical_peak."""
+    cy = c.get('cycle')
+    if not cy or not cy['value']:
+        return None, []
+    pc = cy['peak_check']
+    return pc, [{'no_peak_signs': 'through_cycle', 'incomplete': 'peak_check_incomplete', 'possible_peak': 'possible_cyclical_peak'}[pc]]
 
 
 def _financial_strength(c):
@@ -889,6 +1089,8 @@ def _financial_strength(c):
     else:
         lev, note = _sig(m.get('net_debt_to_ebitda'), A['net_debt_to_ebitda']), None
     cov = m.get('interest_coverage')
+    if cov == 0 and (m.get('operating_margin') or 0) > 0:
+        cov = None                      # vendor placeholder: EBIT / interest cannot be 0 with EBIT > 0
     cov_s = None if (nd is not None and nd <= 0 and not cov) else _sig(cov, A['interest_coverage'])
     zone = m.get('altman_zone')
     inputs = {'net_debt_to_ebitda': _inp(c, 'net_debt_to_ebitda', m.get('net_debt_to_ebitda'), lev, note=note),
@@ -915,10 +1117,12 @@ def _valuation(c):
     return d
 
 
-def _fade_multiple(g, o):
+def _fade_multiple(g, o, hold=None):
+    """PV per $1 of current owner cash when it grows at g for `hold` years (default fade_high_years), then fades linearly to
+    terminal growth by fade_years."""
     r, gt = o['discount_rate'], o['terminal_growth']
     f, pv = 1., 0.
-    for t, gy in enumerate(growth_path(g, gt, o['fade_high_years'], o['fade_years']), 1):
+    for t, gy in enumerate(growth_path(g, gt, o['fade_high_years'] if hold is None else hold, o['fade_years']), 1):
         f *= 1 + gy
         pv += f / (1 + r) ** t
     return pv + f * (1 + gt) / (r - gt) / (1 + r) ** o['fade_years']
@@ -940,43 +1144,70 @@ def implied_growth(multiple, options=None):
     return (lo + hi) / 2, 'solved'
 
 
-def _reference_growth(m):
+def _reference_growth(c, o):
+    """(growth, basis, kind) the price is compared with: consensus 2y CAGR, else demonstrated 3y CAGR, else latest growth. A cyclical
+    row without consensus uses min(demonstrated, terminal growth): a boom-era CAGR is not evidence of repeatable growth."""
+    m = c['m']
     if m.get('consensus_growth_2y') is not None:
-        return m['consensus_growth_2y'], 'consensus 2y revenue CAGR (vendor estimate)'
-    if m.get('revenue_cagr_3y') is not None:
-        return m['revenue_cagr_3y'], 'demonstrated 3y revenue CAGR'
-    if m.get('revenue_growth') is not None:
-        return m['revenue_growth'], 'latest revenue growth'
-    return None, None
+        return m['consensus_growth_2y'], 'consensus 2y revenue CAGR (vendor estimate)', 'consensus'
+    demo, basis = ((m['revenue_cagr_3y'], 'demonstrated 3y revenue CAGR') if m.get('revenue_cagr_3y') is not None else
+                   ((m['revenue_growth'], 'latest revenue growth') if m.get('revenue_growth') is not None else (None, None)))
+    cy = c.get('cycle')
+    if demo is not None and cy and cy['value'] and demo > o['terminal_growth']:
+        return (o['terminal_growth'], f"cyclical without consensus: long-run growth {_fmt(o['terminal_growth'])} (terminal), not the "
+                f'{basis} {_fmt(demo)} that may include a boom', 'cyclical_long_run')
+    return demo, basis, 'demonstrated' if demo is not None else None
+
+
+def _price_check(m, A, pi):
+    """Price read used by every lens: priced_in when assessable; otherwise a fallback multiple (EV/sales per Rule-of-40 point, EV/sales,
+    EV <= 0, P/E); otherwise 'unassessed'. A crude read, labelled as such; it never replaces company-driver expectations."""
+    if pi['level'] != 'unknown':
+        return {'level': pi['level'], 'source': 'priced_in', 'basis': (pi['multiple_basis'] or '').split(' (')[0], 'value': pi['multiple']}
+    for k, lab in (('ev_sales_per_r40', 'EV/sales per Rule-of-40 point'), ('ev_to_sales', 'EV/sales')):
+        if m.get(k) is not None:
+            return {'level': {1: 'strong', 0: 'adequate', -1: 'weak'}[_sig(m[k], A[k])], 'source': 'fallback', 'basis': lab, 'value': m[k]}
+    if m.get('ev') is not None and m['ev'] <= 0 and m.get('market_cap'):
+        return {'level': 'strong', 'source': 'fallback', 'basis': 'EV <= 0 (net cash at or above market cap)', 'value': m['ev']}
+    if m.get('pe') is not None:
+        return {'level': {1: 'strong', 0: 'adequate', -1: 'weak'}[_sig(m['pe'], A['pe'])], 'source': 'fallback', 'basis': 'P/E', 'value': m['pe']}
+    return {'level': 'unassessed', 'source': None, 'basis': 'no market value or no usable multiple', 'value': None}
 
 
 def _priced_in(c, o):
     """What growth the price requires. Primary basis EV / after-tax operating profit (unlevered over unlevered; growth capex
     does not depress it); market cap / owner FCF (levered over equity, the return-proxy basis) when operating profit is unknown
     or thin (operating margin below its weak anchor without strong ROIC, e.g. an early grower near breakeven), and as a
-    cross-check otherwise."""
+    cross-check otherwise. The implied growth is held fade_high_years (the calibrated priced-for-perfection convention); a consensus
+    reference covers consensus_hold_years, so it is compared on the same horizon: the multiple the consensus path justifies
+    (consensus held consensus_hold_years, then the same fade) is converted to its fade_high_years-equivalent growth."""
     m, A = c['m'], c['anchors']
     owner, obasis = (m['owner_fcf'], 'owner FCF (FCF - SBC)') if m.get('owner_fcf') is not None else (m.get('fcf_ttm'), 'FCF (SBC unknown: overstated)')
     ev, mc, nopat, om = m.get('ev'), m.get('market_cap'), m.get('nopat'), m.get('operating_margin')
-    ref, ref_basis = _reference_growth(m)
+    ref, ref_basis, ref_kind = _reference_growth(c, o)
     out = {'level': 'unknown', 'class': 'not_assessable', 'implied_growth': None, 'status': None, 'multiple': None, 'multiple_basis': None,
-           'reference_growth': ref, 'reference_basis': ref_basis, 'demonstrated_growth': m.get('revenue_cagr_3y', m.get('revenue_growth')),
+           'reference_growth': ref, 'reference_basis': ref_basis, 'reference_equivalent_growth': None, 'justified_multiple': None,
+           'demonstrated_growth': m.get('revenue_cagr_3y', m.get('revenue_growth')),
            'consensus_growth': m.get('consensus_growth_2y'), 'gap': None, 'cross_check': None,
            'model': {'discount_rate': o['discount_rate'], 'terminal_growth': o['terminal_growth'], 'high_years': o['fade_high_years'],
+                     'reference_hold_years': o['consensus_hold_years'] if ref_kind == 'consensus' else o['fade_high_years'],
                      'years': o['fade_years'], 'path': 'expectations.growth_path'}, 'reasons': []}
     eq = None
     if mc and mc > 0 and owner is not None and owner > 0:
         g_eq, st_eq = implied_growth(mc / owner, o)
         eq = {'basis': f'market cap / {obasis}', 'short': 'market cap / owner FCF', 'multiple': mc / owner, 'implied_growth': g_eq, 'status': st_eq}
-    op = (ev is not None and ev > 0 and nopat is not None and nopat > 0 and om is not None
-          and (om >= A['operating_margin'][1] or (m.get('roic') or 0) >= A['roic'][0]))
+    thin = om is not None and om < A['operating_margin'][1] and (m.get('roic') or 0) < A['roic'][0]
+    op = ev is not None and ev > 0 and nopat is not None and nopat > 0 and om is not None and not thin
     fallback = None
     if op:
         mult, basis, short = ev / nopat, 'EV / after-tax operating profit (NOPAT, 21% tax convention)', 'EV / NOPAT'
         out['cross_check'] = eq
     elif eq:
         mult, basis, short = eq['multiple'], eq['basis'], eq['short']
-        fallback = 'operating profit unknown or thin (margin below its weak anchor without strong ROIC): price read on ' + basis
+        why = ('EV unknown (net debt or market cap missing)' if ev is None else 'EV <= 0 (net cash at or above market cap)' if ev <= 0 else
+               'operating profit unknown' if nopat is None or om is None else 'operating profit <= 0' if nopat <= 0 else
+               'operating margin below its weak anchor without strong ROIC (thin operating profit)')
+        fallback = f'{why}: price read on {basis}'
     else:
         if owner is not None and owner <= 0:
             out['class'] = 'not_assessable_negative_fcf'
@@ -985,6 +1216,9 @@ def _priced_in(c, o):
         elif ev is not None and ev <= 0:
             out['class'] = 'not_assessable_negative_ev'
             out['reasons'].append('EV <= 0 (net cash above market cap) and owner FCF unknown')
+        elif not mc:
+            out['class'] = 'not_assessable_no_market_value'
+            out['reasons'].append('market value unknown (no market cap or price): no price check at all')
         else:
             out['reasons'].append('EV and operating profit, or market cap and FCF, unknown')
         return out
@@ -999,12 +1233,21 @@ def _priced_in(c, o):
         out.update(level='unknown', **{'class': 'no_reference_growth'})
         out['reasons'].append(f'{short} {mult:.0f}x implies ~{_fmt(g)}/yr; no consensus or demonstrated growth to compare')
     else:
-        gap = g - ref
+        if ref_kind == 'consensus':
+            just = _fade_multiple(ref, o, o['consensus_hold_years'])
+            ref_eq = implied_growth(just, o)[0]
+            out.update(justified_multiple=just, reference_equivalent_growth=ref_eq)
+            ref_txt = (f"{ref_basis} {_fmt(ref)} held {o['consensus_hold_years']} years then fading justifies {just:.0f}x "
+                       f"(~{_fmt(ref_eq)}/yr on the {o['fade_high_years']}-year convention)")
+        else:
+            ref_eq, ref_txt = ref, f'{ref_basis} {_fmt(ref)}'
+            out['reference_equivalent_growth'] = ref_eq
+        gap = g - ref_eq
         out['gap'] = gap
         cls = 'price_assumes_less_than_evidence' if gap <= -tol else ('roughly_consistent' if gap <= tol else 'price_assumes_more_than_evidence')
         out.update(level={'price_assumes_less_than_evidence': 'strong', 'roughly_consistent': 'adequate'}.get(cls, 'weak'), **{'class': cls})
         out['reasons'].append(f"{short} {mult:.0f}x implies ~{_fmt(g)}/yr growth for {o['fade_high_years']} years then fade to "
-                              f"{_fmt(o['terminal_growth'])}; {ref_basis} {_fmt(ref)} ({cls.replace('_', ' ')})")
+                              f"{_fmt(o['terminal_growth'])}; {ref_txt} ({cls.replace('_', ' ')})")
     if fallback:
         out['reasons'].append(fallback)
     if op:
@@ -1022,7 +1265,7 @@ def _expected_return(c, o):
     base, note = (m.get('owner_fcf'), None) if m.get('owner_fcf') is not None else (m.get('fcf_ttm'), 'SBC unknown: yield before SBC (overstated)')
     out = {'level': 'unknown', 'value': None, 'status': 'unknown', 'formula': ER_FORMULA, 'components': {}, 'bounded': [], 'reasons': []}
     mc = m.get('market_cap')
-    g0, g0_basis = _reference_growth(m)
+    g0, g0_basis, _ = _reference_growth(c, o)
     if base is None or mc is None or mc <= 0 or g0 is None:
         out['reasons'].append('needs market cap > 0, FCF and a growth estimate')
         return out
@@ -1061,15 +1304,42 @@ def _expected_return(c, o):
     return out
 
 
+def _cyc_label(cy):
+    return {'industry_word': f"industry '{cy['word']}'", 'type': f"type {cy['type']}", 'data': 'revenue history',
+            'analyst': 'analyst-confirmed'}.get(cy['basis'], 'cyclical')
+
+
+def _earnings_quality(m):
+    """[(code, message)]: accounting red flags (Beneish likely manipulator, analysis accruals flag, CFO / net income < 0.5) and weak
+    cash conversion (FCF / net income < 0.5 when CFO / net income is unknown and capex is not known to be heavy)."""
+    out = []
+    if m.get('beneish_zone') == 'likely_manipulator' or m.get('beneish_high'):
+        out.append(('accounting', 'Beneish M-score in the likely-manipulator zone: receivables, accruals and revenue recognition need '
+                    'checking (fast growers score high by construction: investigate, do not accuse)'))
+    if m.get('accruals_high') or (m.get('accruals_ratio') or 0) > .10:
+        out.append(('accounting', f"accruals high (net income above operating cash flow by {_fmt(m.get('accruals_ratio'))} of assets)"))
+    iq, conv, cx = m.get('income_quality'), m.get('fcf_conversion'), m.get('capex_to_revenue')
+    if iq is not None and (m.get('net_margin') or 0) > 0 and iq < .5:
+        out.append(('accounting', f'operating cash flow / net income {iq:.2f}: earnings are not converting to cash'))
+    elif iq is None and conv is not None and conv < .5 and (cx is None or abs(cx) <= .10):
+        out.append(('cash_conversion', f'FCF / net income {conv:.2f}: accruals, working capital, capitalized costs or capex absorb '
+                    'earnings; verify before calling it quality'))
+    return out
+
+
 def _risk(c, o, pi):
     m, flags = c['m'], []
     add = lambda code, sev, msg: flags.append({'code': code, 'severity': sev, 'message': msg})
     nde, cov, zone = m.get('net_debt_to_ebitda'), m.get('interest_coverage'), m.get('altman_zone')
     nd, fcf, run = m.get('net_debt'), m.get('fcf_ttm'), m.get('runway_years')
+    if cov == 0 and (m.get('operating_margin') or 0) > 0:
+        cov = None                      # EBIT / interest = 0 with EBIT > 0 is a placeholder, never a disqualifier
     if nde is not None and nde > 3.5:
         add('leverage', 'high' if nde > 5 else 'medium', f'net debt / EBITDA {nde:.1f}x')
     if nd is not None and nd > 0 and m.get('ebitda') is not None and m['ebitda'] <= 0:
         add('leverage', 'high', 'net debt with negative EBITDA')
+    if nd is None and nde is None:
+        add('leverage_unknown', 'low', 'net debt unknown (debt tags or EV missing): leverage not verified')
     if cov is not None and cov < 2 and not (nd is not None and nd <= 0):
         add('interest_coverage', 'high' if cov < 1.5 else 'medium', f'interest coverage {cov:.1f}x')
     burn_short = fcf is not None and fcf < 0 and (run is None or run < 1)
@@ -1085,19 +1355,32 @@ def _risk(c, o, pi):
     d = m.get('dilution_yoy')
     if d is not None and d > .05:
         add('dilution', 'high' if d > .10 else 'medium', f'share count +{d * 100:.0f}%/yr')
+    elif d is None:
+        add('dilution_unknown', 'low', 'share count change unknown: dilution to current holders not verified')
     if pi.get('class') == 'priced_for_perfection':
         add('priced_for_perfection', 'medium', 'price requires rare growth (crash-risk flag)')
+    pc = pi.get('price_check') or {}
+    if pi.get('level') == 'unknown' and pc.get('level') == 'weak':
+        add('price_demanding', 'medium', f"priced_in not assessable ({pi['class'].replace('_', ' ')}) and the fallback read is demanding: "
+                                         f"{pc['basis']} {_fmt(pc['value'], 'x2')}")
+    for code, msg in _earnings_quality(m):
+        add(code, 'medium', msg)
     v = m.get('volatility_1y')
     if v is not None and v > c['anchors']['volatility_1y'][1]:
         add('volatility', 'medium', f'annualized volatility {v * 100:.0f}%')
     if m.get('acquisition_driven') is True:
         add('acquired_growth', 'low', 'growth may be bought, not organic')
     cy = c.get('cycle')
-    if cy and cy['peak']:
-        add('cyclical_peak', 'medium', f"cyclical industry ('{cy['word']}') at a possible peak: " + '; '.join(cy['signs']))
+    if cy and cy['value'] and cy['peak']:
+        add('cyclical_peak', 'medium', f'cyclical ({_cyc_label(cy)}) at a possible peak: ' + '; '.join(cy['signs']))
     elif _consensus_downside(m):
         add('consensus_downside', 'low', _consensus_downside(m))
-    known = any(m.get(k) is not None for k in ('net_debt', 'net_debt_to_ebitda', 'interest_coverage', 'altman_zone'))
+    if cy and cy['value'] and cy['peak_check'] == 'incomplete':
+        add('cyclical_unchecked', 'low', f'cyclical ({_cyc_label(cy)}): no consensus or margin history to test for a peak; missing '
+                                         'consensus is not evidence of no peak')
+    if c.get('support_flag'):
+        add(*c['support_flag'])
+    known = any(m.get(k) is not None for k in ('net_debt', 'net_debt_to_ebitda', 'interest_coverage'))   # Altman alone is not leverage data
     sev = {f['severity'] for f in flags}
     lvl = 'weak' if 'high' in sev else ('adequate' if 'medium' in sev else ('strong' if known else 'unknown'))
     return {'level': lvl, 'flags': flags, 'reasons': [f"{f['severity']}: {f['message']}" for f in flags] or (['no material flag'] if known else ['no leverage data']),
@@ -1116,14 +1399,22 @@ def _data_uncertainty(c, scan_as_of):
         reasons.append('missing: ' + ', '.join(missing))
     if (row.get('source') or {}).get('dataqa_status') not in (None, 'ok'):
         reasons.append(f"dataqa status {row['source']['dataqa_status']}: some critical fields single-source, stale or missing")
-    if row.get('errors'):
-        reasons.append('vendor calls failed: ' + ', '.join(f'{k} {v}' for k, v in sorted(row['errors'].items())))
+    calls = {k: v for k, v in (row.get('errors') or {}).items() if v != 'invalid_value'}
+    bad = sorted(k for k, v in (row.get('errors') or {}).items() if v == 'invalid_value')
+    if calls:
+        reasons.append('vendor calls failed: ' + ', '.join(f'{k} {v}' for k, v in sorted(calls.items())))
+    if bad:
+        reasons.append('invalid values read as unknown: ' + ', '.join(bad))
+    denied = sorted(k for k, v in calls.items() if v == 'access_denied')
     if row.get('as_of') and scan_as_of:
         age = (_date(scan_as_of) - _date(row['as_of'])).days
         if age > 120:
             lvl = 'weak' if age > 400 else ('adequate' if lvl == 'strong' else lvl)
             reasons.append(f'data {age} days older than the scan date')
-    return {'level': lvl, 'coverage': round(cov, 3), 'missing': missing, 'reasons': reasons}
+    gap = lvl == 'weak' and cov < .5 and bool(denied)
+    if gap:      # a plan denial is a coverage gap, not evidence about the company: say so first
+        reasons.insert(0, 'coverage gap (vendor denied: ' + ', '.join(denied) + ')')
+    return {'level': lvl, 'coverage': round(cov, 3), 'missing': missing, 'reasons': reasons, 'coverage_gap': gap}
 
 
 # ----------------------------------------------------------------- lenses
@@ -1145,12 +1436,33 @@ def _price_phrase(c):
     if pi['implied_growth'] is not None:
         s += (f"; the price implies ~{_fmt(pi['implied_growth'])}/yr growth ({pi['multiple_basis'].split(' (')[0]} {pi['multiple']:.0f}x)"
               + (f" vs {pi['reference_basis']} {_fmt(pi['reference_growth'])}" if pi['reference_growth'] is not None else ''))
+    pc = pi['price_check']
+    if pi['level'] == 'unknown':
+        s += (f"; priced_in not assessable ({pi['class'].replace('_', ' ')})"
+              + (f": fallback {pc['basis']} {_fmt(pc['value'], 'x2')} reads {pc['level']} (crude)" if pc['source'] == 'fallback'
+                 else ': price unassessed'))
     if er['value'] is not None:
         s += f"; return proxy {_fmt(er['value'], 'pct1')}/yr (rough)"
     return s
 
 
-PI_RANK = {'strong': 0, 'adequate': 1, 'unknown': 2, 'weak': 3}
+PI_RANK = {'strong': 0, 'adequate': 1, 'unknown': 2, 'unassessed': 2, 'weak': 3}
+BALANCE_CODES = ('leverage', 'interest_coverage', 'funding')
+EARNINGS_CODES = ('accounting', 'cash_conversion')
+
+
+def _price_state(c):
+    """(rank, tags) of the price check for lens ordering: 0 assessed and not demanding, 1 unassessed, 2 demanding (priced for
+    perfection, or the fallback multiple reads weak)."""
+    pi = c['dims']['priced_in']
+    pc = pi['price_check']
+    if pi['class'] == 'priced_for_perfection':
+        return 2, ['priced_for_perfection']
+    if pi['level'] != 'unknown':
+        return 0, []
+    if pc['level'] == 'unassessed':
+        return 1, ['price_unassessed']
+    return (2, ['price_demanding']) if pc['level'] == 'weak' else (0, ['price_fallback'])
 
 
 def _improvements(c, o):
@@ -1167,85 +1479,139 @@ def _improvements(c, o):
         out.append(('piotroski', False, f"Piotroski {m['piotroski']:.0f}/9"))
     if m.get('stage') == 'turning_profitable' or m.get('stage_pit') == 'turning_profitable':
         out.append(('turning_profitable', True, 'operating income turned positive'))
+    if _recovery(m):
+        out.append(('recovery', False, _recovery(m)))
     dd = m.get('drawdown_from_high')
+    # the price path never admits a name alone: a drawdown with intact quality lowers the bar from two improvement signals
+    # (one of them profit/cash) to one, and is shown as context (policy.price_path_used_for_selection)
     over = (dd is not None and dd <= o['drawdown_overreaction'] and d['business_quality']['level'] in ('strong', 'adequate')
-            and d['growth_quality']['level'] in ('strong', 'adequate'))
+            and d['growth_quality']['level'] in ('strong', 'adequate') and bool(out))
     return out, over
+
+
+def _losses_narrowing(m, margin, change):
+    """True when a loss/burn is not widening in dollars (or the margin is >= 0), False when it widens, None when unknown."""
+    v, dv, rev, g = m.get(margin), m.get(change), m.get('revenue_ttm'), m.get('revenue_growth')
+    if v is None or v >= 0:
+        return True
+    if dv is not None and rev and g is not None and 1 + g > 0:
+        return v * rev >= (v - dv) * rev / (1 + g)
+    if margin == 'operating_margin' and m.get('incremental_operating_margin') is not None:
+        return m['incremental_operating_margin'] > 0
+    return None
 
 
 def _lens(name, c, o):
     """-> (in_scope, conditions [(name, ok, detail)], ordering [(label, value, asc|desc)], why, tags)."""
     m, d = c['m'], c['dims']
+    A = c['anchors']
     bq, gq, fs, val, pi, er = (d[k]['level'] for k in ('business_quality', 'growth_quality', 'financial_strength', 'valuation', 'priced_in',
                                                          'expected_return_proxy'))
     erv, gl = d['expected_return_proxy']['value'], m.get('growth_level')
+    flags = d['risk']['flags']
     fs_c = ('financial_strength', fs != 'weak', f'financial strength weak: {_neg(d["financial_strength"])}')
+    hard = [f['message'] for f in flags if f['code'] in BALANCE_CODES and f['severity'] == 'high']
+    bs_c = ('balance_sheet', not hard, 'high-severity balance-sheet flag: ' + '; '.join(hard))
+    eq_bad = [f['message'] for f in flags if f['code'] in EARNINGS_CODES]
+    eq_c = ('earnings_quality', not eq_bad, 'earnings quality: ' + '; '.join(eq_bad))
     cy = c.get('cycle')
-    cyc_c = ('not_cyclical_peak', not (cy and cy['peak']), f"cyclical industry ('{(cy or {}).get('word')}') at a possible peak "
-             f"({'; '.join((cy or {}).get('signs') or [])}): current margins and FCF may not persist; judge on through-cycle economics")
-    cyc_t = ['through_cycle'] if cy else []          # cyclical industry not at a visible peak: judge it through the cycle
+    cstate, cyc_t = _cyc_state(c)
+    crank = CYC_RANK[cstate]
+    cyc_c = ('not_cyclical_peak', cstate not in ('possible_peak', 'incomplete'),
+             (f"cyclical ({_cyc_label(cy)}) at a possible peak ({'; '.join(cy['signs'])}): peak margins and FCF make the price look lower "
+              'than through-cycle economics' if cstate == 'possible_peak' else
+              f"cyclical ({_cyc_label(cy) if cy else ''}): peak check incomplete (no consensus or margin history): cannot show margins are not "
+              'at a peak; supply consensus, margin history or an analyst statement (options.cyclical)') if cy else '')
+    prank, ptags = _price_state(c)
+    dil = m.get('dilution_yoy')
+    dil_txt = lambda lim: ('share count change unknown: growth per share and dilution to current holders not verified' if dil is None
+                           else f'share count +{_fmt(dil)}/yr (limit {_fmt(lim)}): growth paid for with current holders\' ownership')
     if name == 'quality_compounder':
-        scope = gl is not None and gl >= c['anchors']['growth_level'][0]
-        ppf = d['priced_in']['class'] == 'priced_for_perfection'
+        scope = gl is not None and gl >= A['growth_level'][0]
+        om, roic = m.get('operating_margin'), m.get('roic')
+        prof = (om is not None and om >= A['operating_margin'][1]) or (roic is not None and roic >= A['roic'][1])
+        dil_hi = any(f['code'] == 'dilution' and f['severity'] == 'high' for f in flags)
         conds = [('business_quality', bq in ('strong', 'adequate'), f'fast growth without demonstrated quality ({bq}): {_neg(d["business_quality"])}'),
-                 ('growth_quality', gq == 'strong', f'growth quality {gq}, needs strong: {_neg(d["growth_quality"])}'), fs_c, cyc_c]
-        order = [('quality tier (0 strong, 1 adequate)', 0 if bq == 'strong' else 1, 'asc'), ('priced for perfection (0 no, 1 yes)', int(ppf), 'asc'),
+                 ('profitable', prof, f"operating margin {_fmt(om)} and ROIC {_fmt(roic)} below their weak anchors: loss-making growth "
+                  'belongs in early_commercial_growth'),
+                 ('growth_quality', gq == 'strong', f'growth quality {gq}, needs strong: {_neg(d["growth_quality"])}'),
+                 ('per_share', dil is not None and dil <= .05 and not dil_hi, dil_txt(.05)), fs_c, bs_c, eq_c]
+        order = [('cyclical peak check (0 none or through-cycle, 1 incomplete, 2 possible peak)', crank, 'asc'),
+                 ('quality tier (0 strong, 1 adequate)', 0 if bq == 'strong' else 1, 'asc'),
+                 ('price check (0 assessed, 1 unassessed, 2 demanding or priced for perfection)', prank, 'asc'),
                  ('expected-return proxy', erv, 'desc')]
         why = (f"Revenue grows {_fmt(gl)}/yr with {gq} growth quality and {bq} business quality ({_quality_phrase(c)}). Price check: {_price_phrase(c)}"
-               + ('. Priced for perfection: high growth already assumed.' if ppf else '.'))
-        return scope, conds, order, why, (['priced_for_perfection'] if ppf else []) + cyc_t
+               + ('. Priced for perfection: high growth already assumed.' if 'priced_for_perfection' in ptags else
+                  '. Demanding price on the fallback multiple.' if 'price_demanding' in ptags else '.'))
+        return scope, conds, order, why, ptags + cyc_t
     if name == 'quality_fair_price':
+        traj = gq in ('strong', 'adequate') and (d['growth_quality']['inputs']['growth_level']['signal'] or 0) >= 0
+        lev_known = m.get('net_debt') is not None or m.get('net_debt_to_ebitda') is not None
         conds = [('valuation', val in ('strong', 'adequate'), f'quality but expensive: {_neg(d["valuation"])}'),
                  ('priced_in', pi in ('strong', 'adequate'), f"price assumption {d['priced_in']['class'].replace('_', ' ')}: "
                   + '; '.join(d['priced_in']['reasons'][:1])),
-                 ('trajectory', gq in ('strong', 'adequate'), f'growth quality {gq}: {_neg(d["growth_quality"])} (cannot rule out deterioration)'),
-                 fs_c,
+                 ('trajectory', traj, f'growth quality {gq}, revenue growth {_fmt(gl)}/yr: {_neg(d["growth_quality"])} (cannot rule out '
+                  'deterioration; buybacks do not offset shrinking revenue)'),
+                 fs_c, ('leverage_known', lev_known, 'leverage unknown (net debt not in the data: debt tags or EV missing): the balance '
+                                                     'sheet is not verified'), bs_c, eq_c,
                  ('expected_return', er in ('strong', 'adequate'), f"return proxy {er}: {'; '.join(d['expected_return_proxy']['reasons'][:1])}"),
                  cyc_c]
-        order = [('expected-return proxy', erv, 'desc'), ('business-quality percentile', d['business_quality']['percentile'], 'desc')]
+        order = [('growth-quality tier (0 strong, 1 adequate)', 0 if gq == 'strong' else 1, 'asc'), ('expected-return proxy', erv, 'desc'),
+                 ('business-quality percentile', d['business_quality']['percentile'], 'desc')]
         why = f"Strong business ({_quality_phrase(c)}) with {gq} growth ({_fmt(gl)}/yr) at a price rated {val}: {_price_phrase(c)}."
         return bq == 'strong', conds, order, why, cyc_t
     if name == 'early_commercial_growth':
-        om, nm, fm = m.get('operating_margin'), m.get('net_margin'), m.get('fcf_margin')
-        early = (om is not None and om < .10) or (nm is not None and nm <= 0) or (fm is not None and fm < .05)
+        om, nm, fm, gm = m.get('operating_margin'), m.get('net_margin'), m.get('fcf_margin'), m.get('gross_margin')
+        stage = m.get('stage') or m.get('stage_pit')
+        ev_early = [x for x, ok in (('net loss', nm is not None and nm <= 0), ('operating loss', om is not None and om < 0),
+                                    ('cash burn', fm is not None and fm < 0), (f'stage {stage}', stage in ('early_commercial', 'turning_profitable')),
+                                    (f'operating margin {_fmt(om)} below 10% with gross margin {_fmt(gm)}',
+                                     om is not None and om < .10 and (gm is None or gm >= .40))) if ok]
         g = max(x for x in (m.get('revenue_growth'), gl, -1) if x is not None)
-        scope = early and g >= o['early_growth_min']
+        scope = bool(ev_early) and g >= o['early_growth_min']
         proofs = []
-        if (m.get('gross_margin') or 0) >= .40 or (m.get('gross_margin_change') or 0) >= .02:
-            proofs.append(f"unit economics: gross margin {_fmt(m.get('gross_margin'))} ({_fmt(m.get('gross_margin_change'), 'pts')})")
-        if (m.get('operating_margin_trend') or 0) >= .02 or ((m.get('incremental_operating_margin') or -9) > (om or 0) + .05):
+        if (gm or 0) >= .40 or (m.get('gross_margin_change') or 0) >= .02:
+            proofs.append(f"unit economics: gross margin {_fmt(gm)} ({_fmt(m.get('gross_margin_change'), 'pts')})")
+        if ((m.get('operating_margin_trend') or 0) >= .02 or ((m.get('incremental_operating_margin') or -9) > (om or 0) + .05)) \
+                and _losses_narrowing(m, 'operating_margin', 'operating_margin_trend'):
             proofs.append(f"operating leverage: operating margin {_fmt(m.get('operating_margin_trend'), 'pts')}")
-        if (m.get('fcf_margin_change') or 0) >= .03 or (fm is not None and fm >= 0):
+        if ((m.get('fcf_margin_change') or 0) >= .03 and _losses_narrowing(m, 'fcf_margin', 'fcf_margin_change')) or (fm is not None and fm >= 0):
             proofs.append(f"cash trajectory: FCF margin {_fmt(fm)} ({_fmt(m.get('fcf_margin_change'), 'pts')})")
         ser = [x for x in m.get('revenue_growth_series') or [] if x is not None]
         if _consistency(ser) == 1 or (len(ser) >= 2 and min(ser) > .15):
             proofs.append(f"repeat growth: {_fmt(ser, 'list')}")
-        dil, run = m.get('dilution_yoy'), m.get('runway_years')
+        widen = [k for k, mg, ch in (('operating loss', 'operating_margin', 'operating_margin_trend'), ('FCF burn', 'fcf_margin', 'fcf_margin_change'))
+                 if _losses_narrowing(m, mg, ch) is False]
+        run = m.get('runway_years')
         funded = (fm is not None and fm >= 0) or (run is not None and run >= 2)
         conds = [('commercial_proof', len(proofs) >= 3, f'growth without enough commercial proof ({len(proofs)} of 4: {"; ".join(proofs) or "none"}); '
-                  f"gross margin {_fmt(m.get('gross_margin'))}, operating margin trend {_fmt(m.get('operating_margin_trend'), 'pts')}, FCF margin {_fmt(fm)}"),
-                 ('dilution', dil is None or dil <= .10, f'share count +{_fmt(dil)}/yr: growth paid for with current holders\' ownership'),
-                 ('no_distress', not d['risk']['disqualifying'] and not any(f['code'] == 'distress' for f in d['risk']['flags']), 'distress flag')]
+                  f"gross margin {_fmt(gm)}, operating margin trend {_fmt(m.get('operating_margin_trend'), 'pts')}, FCF margin {_fmt(fm)}"
+                  + (f"; {' and '.join(widen)} widening in dollars: margin gains on a small base are not proof" if widen else '')),
+                 ('dilution', dil is not None and dil <= .10, dil_txt(.10)),
+                 ('no_distress', not d['risk']['disqualifying'] and not any(f['code'] == 'distress' for f in flags), 'distress flag')]
         order = [('commercial-proof count', len(proofs), 'desc'), ('funding (0 funded, 1 conditional)', 0 if funded else 1, 'asc'),
-                 ('per-share growth', m.get('per_share_growth'), 'desc')]
-        why = (f"Grows {_fmt(g)}/yr at an early stage (operating margin {_fmt(om)}) with commercial proof: {'; '.join(proofs)}. "
+                 ('cyclical peak check (0 none or through-cycle, 1 incomplete, 2 possible peak)', crank, 'asc'),
+                 ('price check (0 assessed, 1 unassessed, 2 demanding)', prank, 'asc'), ('per-share growth', m.get('per_share_growth'), 'desc')]
+        why = (f"Grows {_fmt(g)}/yr at an earlier stage ({'; '.join(ev_early)}) with commercial proof: {'; '.join(proofs)}. "
                + ('Funded by own cash flow or runway.' if funded else f"Funding-conditional (runway {_fmt(run, 'yrs')}, dilution {_fmt(dil)}/yr).")
+               + f' Price check: {_price_phrase(c)}.'
                + ' Paid adoption and cohorts are not in screening data: verify.')
-        return scope, conds, order, why, ['funded' if funded else 'funding_conditional']
+        return scope, conds, order, why, ['funded' if funded else 'funding_conditional'] + ptags + cyc_t
     if name == 'mispriced_turning':
         imp, over = _improvements(c, o)
-        scope = bool(imp) or (m.get('drawdown_from_high') is not None and m['drawdown_from_high'] <= o['drawdown_overreaction'])
+        dd = m.get('drawdown_from_high')
+        scope = bool(imp) or (dd is not None and dd <= o['drawdown_overreaction'])
         evid = (len(imp) >= 2 and any(p for _, p, _ in imp)) or over
         price_ok = pi == 'strong' or (pi == 'unknown' and val == 'strong') or (over and pi != 'weak')
-        dil = m.get('dilution_yoy')
         conds = [('improvement_evidence', evid, f"one improvement signal is not a turn ({'; '.join(t for _, _, t in imp) or 'none'})"
-                  + ('' if m.get('drawdown_from_high') is None else f"; drawdown {_fmt(m['drawdown_from_high'])} but quality {bq}/growth {gq}")),
+                  + ('' if dd is None else f"; drawdown {_fmt(dd)} with quality {bq}/growth {gq} is context, not evidence: a fundamental "
+                     'improvement signal is required')),
                  ('not_priced_in', price_ok, f"the price does not lag the improvement: priced_in {pi} ({d['priced_in']['class'].replace('_', ' ')}), valuation {val}"),
-                 ('dilution', dil is None or dil <= .08, f'share count +{_fmt(dil)}/yr consumes per-share gains'), fs_c, cyc_c]
+                 ('dilution', dil is not None and dil <= .08, dil_txt(.08)), fs_c, bs_c, cyc_c]
         order = [('improvement-signal count', len(imp) + int(over), 'desc'), ('priced_in rank (0 strong .. 3 weak)', PI_RANK[pi], 'asc'),
                  ('expected-return proxy', erv, 'desc')]
         why = ((f"Improving: {'; '.join(t for _, _, t in imp)}. " if imp else '')
-               + (f"Down {_fmt(-m['drawdown_from_high'])} from its high with {bq} quality and {gq} growth: possible overreaction, test temporary vs structural. " if over else '')
+               + (f"Down {_fmt(-dd)} from its high with {bq} quality and {gq} growth: possible overreaction, test temporary vs structural. " if over else '')
                + f"Price check: {_price_phrase(c)}.")
         return scope, conds, order, why, (['overreaction_candidate'] if over else []) + [k for k, _, _ in imp] + cyc_t
     if name == 'structural_tailwind':
@@ -1255,24 +1621,38 @@ def _lens(name, c, o):
         footprint = sp is not None and sp >= .75 and (m.get('gross_margin_change') is None or m['gross_margin_change'] >= -.01)
         scope = bool(themes) or ind or footprint
         cg = m.get('revenue_cagr_3y', gl)
-        dil = m.get('dilution_yoy')
-        heavy = [f['message'] for f in d['risk']['flags'] if f['code'] in ('funding', 'dilution') and f['severity'] == 'high']
-        unpriced = pi != 'weak' and (pi != 'unknown' or bool(themes) or ind)
+        heavy = [f['message'] for f in flags if f['code'] in ('funding', 'dilution') and f['severity'] == 'high']
+        pc = d['priced_in']['price_check']
+        theme_ok = (bool(themes) or ind) and bool(m.get('market_cap')) and pc['level'] in ('strong', 'adequate')
+        unpriced = pi != 'weak' and (pi != 'unknown' or theme_ok)
+        pi_why = '; '.join(d['priced_in']['reasons'][:1])
+        if pi == 'weak':
+            np_txt = 'potential appears already priced: ' + pi_why
+        elif not m.get('market_cap'):
+            np_txt = 'market value unknown (no market cap or price): no price check at all, so the potential cannot be shown to be unpriced'
+        elif themes or ind:
+            np_txt = (f"price check unavailable ({pi_why}); fallback {pc['basis']} reads {pc['level']}: a theme is not a price check")
+        else:
+            np_txt = (f'numbers only and the price check is unavailable ({pi_why}): cannot show the potential is not already priced; '
+                      'supply an analyst theme or run expectations.expectation_gap with company drivers')
         conds = [('durable_growth', cg is not None and cg >= .08 and _consistency(m.get('revenue_growth_series')) != -1,
                   f'growth {_fmt(cg)} 3y or repeated declines: no durable footprint yet'),
                  ('business_quality', bq != 'weak', f'economics weak: {_neg(d["business_quality"])}'),
-                 ('not_already_priced', unpriced, 'potential appears already priced: ' + '; '.join(d['priced_in']['reasons'][:1]) if pi == 'weak' else
-                  'numbers only and the price check is unavailable (' + '; '.join(d['priced_in']['reasons'][:1]) + '): cannot show the potential '
-                  'is not already priced; supply an analyst theme or run expectations.expectation_gap with company drivers'),
-                 ('per_share_funding', (dil is None or dil <= .10) and not heavy,
-                  f"share count {_fmt(dil)}/yr" + (f"; {'; '.join(heavy)}" if heavy else '') + ': the tailwind would accrue to new '
-                  'shareholders, not current ones'), fs_c, cyc_c]
-        order = [('priced_in rank (0 strong .. 3 weak)', PI_RANK[pi], 'asc'), ('expected-return proxy', erv, 'desc'), ('growth level', gl, 'desc')]
+                 ('not_already_priced', unpriced, np_txt),
+                 ('per_share_funding', (dil is not None and dil <= .10) and not heavy,
+                  (dil_txt(.10) if dil is None or dil > .10 else f'share count {_fmt(dil)}/yr') + (f"; {'; '.join(heavy)}" if heavy else '')
+                  + ': the tailwind would accrue to new shareholders, not current ones'), fs_c, bs_c]
+        order = [('cyclical peak check (0 none or through-cycle, 1 incomplete, 2 possible peak)', crank, 'asc'),
+                 ('price rank (0 strong .. 3 weak; fallback read when priced_in is unknown)', PI_RANK[pi if pi != 'unknown' else pc['level']], 'asc'),
+                 ('expected-return proxy', erv, 'desc'), ('growth level', gl, 'desc')]
+        org = d['growth_quality']['inputs']['organic']['signal']
         src = ('analyst theme: ' + ', '.join(t if isinstance(t, str) else t.get('theme', '?') for t in themes) if themes else
-               ('structural industry (analyst list)' if ind else f'improving competitive position: growth in the top quartile of its sector (percentile {sp})'))
+               ('structural industry (analyst list)' if ind else
+                f'growth in the top quartile of its sector (percentile {sp})' + (': an improving competitive position' if org is not None and org >= 0
+                                                                                  else '; organic share unknown (acquisitions not in the data): verify before calling it share gain')))
         why = (f"{src} (a hypothesis, not evidence). Footprint: {_fmt(cg)}/yr growth, {bq} business quality. "
-               f"Already priced? {_price_phrase(c)}" + (' (price check unavailable: FCF <= 0)' if pi == 'unknown' else '') + '.')
-        return scope, conds, order, why, ['analyst_theme' if themes or ind else 'numeric_footprint'] + cyc_t
+               f"Already priced? {_price_phrase(c)}.")
+        return scope, conds, order, why, ['analyst_theme' if themes or ind else 'numeric_footprint'] + ptags + cyc_t
     raise ValueError(f'unknown lens {name}')
 
 
@@ -1288,9 +1668,17 @@ def _options(options):
     if bad:
         raise ValueError(f'unknown screen options: {sorted(bad)}')
     o = {**DEFAULTS, **{k: v for k, v in options.items() if k != 'anchors'}}
-    for k in ('top_n', 'sector_cap'):
+    for k in ('top_n', 'sector_cap', 'shortlist_sector_cap'):
         if o[k] is not None and (isinstance(o[k], bool) or not isinstance(o[k], int) or o[k] < 1):
-            raise ValueError(f'{k} must be a positive integer' + (' or None' if k == 'sector_cap' else ''))
+            raise ValueError(f'{k} must be a positive integer' + ('' if k == 'top_n' else ' or None'))
+    for sym, ov in (o['cyclical'] or {}).items():
+        if not isinstance(ov, dict) or not isinstance(ov.get('value'), bool) or not isinstance(ov.get('reason'), str) or not ov['reason'].strip():
+            raise ValueError(f'cyclical.{sym} needs a boolean value and a written reason (an analyst statement, kept next to the computed flag)')
+    for sym, why in (o['supported_override'] or {}).items():
+        if not isinstance(why, str) or not why.strip():
+            raise ValueError(f'supported_override.{sym} needs a written reason (e.g. fee business: no loans, deposits or float)')
+    if not isinstance(o['unsupported_defaults'], bool):
+        raise ValueError('unsupported_defaults must be true or false')
     a = {**ANCHORS, **(options.get('anchors') or {})}
     for k, v in a.items():
         if len(v) != 3 or v[2] not in ('higher', 'lower'):
@@ -1302,28 +1690,60 @@ def _options(options):
 
 
 def _unsupported(row, o):
-    """Balance-sheet economics: XBRL bank/insurer markers, the industry list, or (default list only) model_card's text rules
-    typing the industry (the sector when no industry is given) as financials or REIT. options.unsupported_industries
-    replaces the list and the text rules."""
+    """Reason the row's economics are not screened, or None (see _support)."""
+    return _support(row, o)[0]
+
+
+def _support(row, o):
+    """(reason or None, low/medium risk flag or None). Balance-sheet economics are not screened: XBRL bank/insurer markers, the
+    industry list (UNSUPPORTED_INDUSTRIES plus options.unsupported_industries, compared after clean_text), and model_card's text
+    rules typing the industry (the sector when no industry is given) as financials or REIT. options.unsupported_industries ADDS
+    labels; options.unsupported_defaults=False is the explicit switch that drops the built-in list and text rules. Labels that list
+    fee businesses with balance-sheet firms (model_card.BALANCE_MIXED_RULES) are decided by the row's balance sheet when it has one;
+    without it 'asset management' stays screenable with a flag and the others need options.supported_override {symbol: reason}."""
     ind = row.get('industry') or ''
-    why = None
-    if row['metrics'].get('financial_statements'):
+    m, sym = row.get('metrics') or {}, row.get('symbol')
+    why, flag = None, None
+    over = (o['supported_override'] or {}).get(sym)
+    user = {clean_text(x) for x in o['unsupported_industries'] or []}
+    defaults = {clean_text(x) for x in UNSUPPORTED_INDUSTRIES} if o['unsupported_defaults'] else set()
+    t = text_type({'industry': row.get('industry'), 'sector': row.get('sector')}) if o['unsupported_defaults'] else None
+    lta = m.get('liabilities_to_assets')
+    lender = lta is not None and lta >= LENDER_LIABILITIES and (m.get('gross_margin') or 0) <= 0
+    if m.get('financial_statements'):
         why = 'bank/insurer XBRL markers'
-    elif o['unsupported_industries'] is not None:
-        why = f"industry '{ind}' in options.unsupported_industries" if ind in o['unsupported_industries'] or 'REIT' in ind else None
-    elif ind in UNSUPPORTED_INDUSTRIES:
+    elif clean_text(ind) in user:
+        why = f"industry '{ind}' in options.unsupported_industries"
+    elif clean_text(ind) in defaults:
         why = f"industry '{ind}'"
-    else:
-        t = text_type({'industry': row.get('industry'), 'sector': row.get('sector')})
-        if t and t['type'] in UNSUPPORTED_TYPES:
-            why = f"{t['field']} '{t['text']}' matches '{t['keyword']}' -> {t['type']} (model_card text rules)"
+    elif t and t.get('signature') == 'balance_sheet':
+        if lta is not None:
+            why = (f"'{t['text']}' lists {t['mixes']}; liabilities {_fmt(lta)} of assets with no gross margin: lender-like" if lender else None)
+            if not lender:
+                flag = ('balance_sheet_checked', 'low', f"'{t['text']}' lists {t['mixes']}; liabilities {_fmt(lta)} of assets: not lender-like, "
+                        'screened as a fee business')
+        elif t['keyword'] in SCREEN_MIXED_SUPPORTED:
+            flag = ('balance_sheet_unverified', 'medium', f"'{t['text']}' lists {t['mixes']}; no balance sheet in this row: a custody bank or "
+                    'lender would be mis-read by FCF/EV metrics; model_card decides from the balance sheet')
+        else:
+            why = (f"'{t['text']}' lists {t['mixes']} and this row has no balance sheet (conservative); a fee business can be admitted with "
+                   'options.supported_override {symbol: reason}')
+    elif t and t['type'] in UNSUPPORTED_TYPES:
+        why = f"{t['field']} '{t['text']}' matches '{t['keyword']}' -> {t['type']} (model_card text rules)"
+    elif t and t['keyword'] == 'insurance broker':
+        flag = ('fiduciary_balance_sheet', 'low', 'insurance broker: client funds held may inflate liabilities and cash; exclude fiduciary '
+                'balances from net debt and EV')
+    if why and over and not m.get('financial_statements') and not lender:
+        return None, ('supported_override', 'low', f'admitted by options.supported_override ({over}); computed: {why}')
     if why:
         return (f'bank/insurer/REIT-type economics ({why}): FCF, EV and gross-margin metrics do not describe them; needs a '
-                'sector-specific screen (book value/ROE, FFO). Not relabelled to force a generic model.')
-    return None
+                'sector-specific screen (book value/ROE, FFO). Not relabelled to force a generic model.'), None
+    return None, flag
 
 
 def _clean_rows(rows):
+    """Validate rows; metric values of the wrong type (a vendor placeholder string, a boolean in a numeric field) become unknown and
+    are named in the row's errors ('invalid_value'), so one bad value never aborts the scan."""
     out = []
     for r in rows:
         if 'metrics' not in r:
@@ -1335,28 +1755,64 @@ def _clean_rows(rows):
             raise ValueError('row without symbol')
         if r.get('data_grade') not in GRADES:
             raise ValueError(f"row {r['symbol']}: data_grade must be one of {GRADE_ORDER}")
-        m = {k: (v if isinstance(v, (bool, str)) or v is None else ([_f(x) for x in v] if isinstance(v, list) else _f(v)))
-             for k, v in (r.get('metrics') or {}).items()}
-        m = {k: v for k, v in m.items() if v is not None}
+        m, errors = {}, dict(r.get('errors') or {})
+        for k, v in (r.get('metrics') or {}).items():
+            if v is None:
+                continue
+            if k in STR_METRICS:
+                ok = isinstance(v, str) and (STR_METRICS[k] is None or v in STR_METRICS[k])
+                val = v if ok else None
+            elif k in BOOL_METRICS:
+                val = v if isinstance(v, bool) else None
+            elif k in LIST_METRICS:
+                val = [_f(x) for x in v] if isinstance(v, list) and not any(isinstance(x, (bool, str)) for x in v) else None
+            else:
+                val = None if isinstance(v, (bool, str, list, dict)) else _f(v)
+                if val is None and _f(v) is None and not isinstance(v, (bool, str, list, dict)):
+                    continue                      # NaN / inf: unknown, as before (not a type error)
+            if val is None:
+                errors[f'metric {k}'] = 'invalid_value'
+            else:
+                m[k] = val
         status, reason = r.get('status') or 'ok', r.get('no_data_reason')
         if status == 'ok' and not any(k in m for k in CORE_METRICS):
-            status, reason = 'no_data', 'no usable metrics after removing nulls and non-finite values'
-        out.append({**r, 'metrics': m, 'basis': dict(r.get('basis') or {}), 'errors': dict(r.get('errors') or {}),
-                    'status': status, 'no_data_reason': reason})
+            status, reason = 'no_data', 'no usable metrics after removing nulls, invalid and non-finite values'
+        out.append({**r, 'metrics': m, 'basis': dict(r.get('basis') or {}), 'errors': errors, 'status': status, 'no_data_reason': reason})
     return out
+
+
+def _dedupe_key(r):
+    """Duplicate rows for one symbol: ok before no data, better grade, latest as_of, fewer vendor errors, more metrics, then the row
+    digest, so the kept row never depends on input order."""
+    day = _date(r['as_of']).toordinal() if r.get('as_of') else 0
+    return (r['symbol'], r['status'] != 'ok', GRADE_ORDER.index(r['data_grade']), -day, len(r['errors']), -len(r['metrics']), F.digest(r))
+
+
+def _value_trap(c):
+    d, m = c['dims'], c['m']
+    return d['valuation']['level'] == 'strong' and (d['growth_quality']['level'] == 'weak' or (
+        (m.get('gross_margin_change') or 0) < -.02 and (m.get('operating_margin_trend') or 0) < -.02))
+
+
+DATA_TAGS = ('leverage_unknown', 'dilution_unknown', 'balance_sheet_unverified', 'fiduciary_balance_sheet', 'supported_override')
 
 
 def scan(rows, options=None):
     """Universe rows (screen.rows_from_* adapters) -> dimensions, lens candidates, shortlist, exclusions, notes.
 
-    Deterministic and order-independent (ties break on symbol). options: see DEFAULTS; anchors override ANCHORS.
-    The output is a research agenda, never a recommendation."""
+    Deterministic and order-independent (ties break on symbol; duplicate rows resolve on grade, as_of, errors and coverage, never
+    on input order). options: see DEFAULTS; anchors override ANCHORS. The output is a research agenda, never a recommendation."""
     o = _options(options)
     rows = _clean_rows(rows)
     best, notes = {}, []
-    for r in sorted(rows, key=lambda r: (r['symbol'], r['status'] != 'ok', GRADE_ORDER.index(r['data_grade']))):
-        if r['symbol'] in best:
-            notes.append(f"duplicate rows for {r['symbol']}: kept {best[r['symbol']]['data_grade']} ({best[r['symbol']]['status']}), dropped {r['data_grade']}")
+    for r in sorted(rows, key=_dedupe_key):
+        k = best.get(r['symbol'])
+        if k is not None:
+            desc = lambda x: f"{x['data_grade']} as_of {x.get('as_of')} ({x['status']}, {len(x['errors'])} vendor error(s), {len(x['metrics'])} metrics)"
+            conflict = (k.get('as_of') == r.get('as_of') and k['data_grade'] == r['data_grade'] and k['status'] == r['status'] == 'ok'
+                        and any(k['metrics'].get(x) != r['metrics'].get(x) for x in set(k['metrics']) & set(r['metrics'])))
+            notes.append(f"duplicate rows for {r['symbol']}: kept {desc(k)}, dropped {desc(r)}"
+                         + ('; CONFLICT: same-date rows disagree on shared metrics, check the source' if conflict else ''))
             continue
         best[r['symbol']] = r
     dates = [r['as_of'] for r in best.values() if r.get('as_of')]
@@ -1373,8 +1829,10 @@ def scan(rows, options=None):
         m, b = dict(r['metrics']), dict(r['basis'])
         _derive(m, b)
         ctx[s] = {'row': r, 'm': m, 'b': b, 'anchors': {k: tuple(v) for k, v in o['anchors'].items()}}
-        ctx[s]['cycle'] = _cycle(ctx[s])
-    unsupported = {s: _unsupported(c['row'], o) for s, c in ctx.items()}
+        ctx[s]['cycle'] = _cycle(ctx[s], o)
+    unsupported = {}
+    for s, c in ctx.items():
+        unsupported[s], c['support_flag'] = _support(c['row'], o)
     supported = {s: c for s, c in ctx.items() if not unsupported[s]}
     for s, c in ctx.items():          # the return proxy is computed first so its percentile can join the table
         c['pct'], c['spct'] = {}, {}
@@ -1387,6 +1845,8 @@ def scan(rows, options=None):
         c['pct'], c['spct'] = pct.get(s, {}), spct.get(s, {})
         c['er']['percentile'] = c['pct'].get('expected_return_proxy')
         pi = _priced_in(c, o)
+        pi['price_check'] = _price_check(c['m'], c['anchors'], pi)
+        _peak(c, o, pi)
         c['dims'] = {'business_quality': _business_quality(c), 'growth_quality': _growth_quality(c),
                      'financial_strength': _financial_strength(c), 'valuation': _valuation(c), 'expected_return_proxy': c['er'],
                      'priced_in': pi, 'risk': _risk(c, o, pi), 'data_uncertainty': _data_uncertainty(c, as_of)}
@@ -1395,12 +1855,15 @@ def scan(rows, options=None):
                                'data_grade': r['data_grade'], 'source': r.get('source'), 'as_of': r.get('as_of'), 'stage': c['m'].get('stage'),
                                'cyclical': c['cycle']},
                    **c['dims'], 'metrics': c['m'], 'basis': c['b']}
-    disq = {}
+    disq, gaps = {}, []
     for s, c in ctx.items():
+        du = c['dims']['data_uncertainty']
         if unsupported[s]:
             disq[s] = 'not supported: ' + unsupported[s]
-        elif c['dims']['data_uncertainty']['level'] == 'weak':
-            disq[s] = 'unreliable data: ' + '; '.join(c['dims']['data_uncertainty']['reasons'][:3])
+        elif du['level'] == 'weak':
+            disq[s] = ('coverage gap, not evidence about the company: ' if du['coverage_gap'] else 'unreliable data: ') + '; '.join(du['reasons'][:4])
+            if du['coverage_gap']:
+                gaps.append(s)
         elif c['dims']['risk']['disqualifying']:
             disq[s] = 'distress: ' + '; '.join(f['message'] for f in c['dims']['risk']['flags'] if f['severity'] == 'high')
     lenses, near, scoped = {}, {}, {}
@@ -1414,6 +1877,8 @@ def scan(rows, options=None):
                 continue
             fails = [x for x in conds if not x[1]]
             if not fails:
+                codes = {f['code'] for f in c['dims']['risk']['flags']}
+                tags = list(dict.fromkeys(tags + [t for t in DATA_TAGS if t in codes] + (['possible_value_trap'] if _value_trap(c) else [])))
                 passed.append((_sortkey(order, s), s, order, why, tags))
             elif len(fails) == 1:
                 nm.append({'symbol': s, 'failed': fails[0][0], 'reason': fails[0][2]})
@@ -1432,12 +1897,13 @@ def scan(rows, options=None):
             if sec:
                 per[sec] = per.get(sec, 0) + 1
             c = ctx[s]
-            cand.append({'rank': len(cand) + 1, 'symbol': s, 'name': c['row'].get('name'), 'sector': c['row'].get('sector'), 'why': why,
+            cand.append({'rank': len(cand) + 1, 'symbol': s, 'name': c['row'].get('name'), 'sector': c['row'].get('sector'),
+                         'industry': c['row'].get('industry'), 'why': why,
                          'ordering': {'fields': [{'name': lab, 'value': v, 'order': way} for lab, v, way in order], 'meaning': LENS_RULES[ln]['ordering']},
                          'levels': {k: c['dims'][k]['level'] for k in DIMENSIONS}, 'tags': tags, 'data_grade': c['row']['data_grade'],
                          'risk_flags': [f['code'] for f in c['dims']['risk']['flags']]})
         lenses[ln], near[ln] = cand, sorted(nm, key=lambda x: x['symbol'])
-    shortlist, seen = _shortlist(lenses, o)
+    shortlist, seen, skipped = _shortlist(lenses, o)
     for e in shortlist:
         c = ctx[e['symbol']]
         first = sorted(e['lenses'], key=lambda x: x['lens'] != e['selected_by'])
@@ -1452,51 +1918,73 @@ def scan(rows, options=None):
     for s, c in ctx.items():
         if s in seen:
             continue
-        excluded[s] = _exclusion(s, c, disq, ranks.get(s), nearest.get(s), scoped.get(s), o)
+        excluded[s] = _exclusion(s, c, disq, ranks.get(s), nearest.get(s), scoped.get(s), o, skipped.get(s))
+    conc = {}
+    for e in shortlist:
+        k = e['sector'] or e.get('industry') or 'unlabelled'
+        conc[k] = conc.get(k, 0) + 1
     return {'screen_version': SCREEN_VERSION, 'as_of': as_of,
             'universe': {'definition': o['universe'], 'rows': len(best), 'with_data': len(ctx), 'no_data': len(no_data),
-                         'not_supported': sum(1 for v in unsupported.values() if v), 'eligible': len(ctx) - len(disq),
+                         'coverage_gaps': len(gaps), 'not_supported': sum(1 for v in unsupported.values() if v), 'eligible': len(ctx) - len(disq),
                          'data_grades': {g: sum(1 for c in ctx.values() if c['row']['data_grade'] == g) for g in GRADE_ORDER}},
             'dimensions': dims, 'dimension_meanings': MEANINGS, 'lenses': lenses, 'lens_rules': LENS_RULES, 'near_misses': near,
-            'shortlist': shortlist, 'excluded': dict(sorted(excluded.items())), 'no_data': no_data,
-            'notes': notes + _notes(o, ctx, no_data), 'options': o,
+            'shortlist': shortlist, 'shortlist_concentration': dict(sorted(conc.items())),
+            'excluded': dict(sorted(excluded.items())), 'no_data': no_data,
+            'notes': notes + _notes(o, ctx, no_data, gaps, conc, skipped), 'options': o,
             'policy': {'is_recommendation': False, 'orders_supported': False, 'valuation_gap_used_for_ranking': False,
-                       'momentum_used_for_selection': False, 'size_or_growth_preference': False,
-                       'single_composite_score': False},
+                       'momentum_used_for_selection': False,
+                       'price_path_used_for_selection': ('only as context: a >= 30% drawdown with intact quality lowers mispriced_turning '
+                                                         'evidence from two improvement signals to one; never admits a name without a '
+                                                         'fundamental improvement signal; volatility never selects'),
+                       'size_or_growth_preference': False, 'single_composite_score': False},
             'input_sha256': F.digest({'rows': [best[s] for s in sorted(best)], 'options': o})}
 
 
 def _shortlist(lenses, o):
     """'distinct' (default): round-robin over lenses, each contributing up to top_n names not already taken, so a name that
     leads several lenses does not crowd out other opportunity types and no lens is privileged by its position.
-    'union': the literal top_n of every lens, deduplicated. Every lens rank of a shortlisted name is recorded."""
+    'union': the literal top_n of every lens, deduplicated. Every lens rank of a shortlisted name is recorded.
+    options.shortlist_sector_cap (None = no cap) limits names per sector on the whole shortlist; a skipped name is recorded."""
     if o['shortlist_mode'] not in ('distinct', 'union'):
         raise ValueError("shortlist_mode must be 'distinct' or 'union'")
+    cap, per, skipped = o['shortlist_sector_cap'], {}, {}
+    sec_of = lambda cd: cd['sector'] or cd.get('industry')
+
+    def capped(cd, ln):
+        k = sec_of(cd)
+        if cap and k and per.get(k, 0) >= cap:
+            skipped.setdefault(cd['symbol'], (ln, k))
+            return True
+        return False
+
+    def take(cd, ln):
+        taken.add(cd['symbol']); picks.append((cd['symbol'], ln))
+        if sec_of(cd):
+            per[sec_of(cd)] = per.get(sec_of(cd), 0) + 1
     picks, taken, cursor, count = [], set(), {ln: 0 for ln in LENSES}, {ln: 0 for ln in LENSES}
     if o['shortlist_mode'] == 'union':
         for ln in LENSES:
             for cd in lenses[ln][:o['top_n']]:
-                if cd['symbol'] not in taken:
-                    taken.add(cd['symbol']); picks.append((cd['symbol'], ln))
+                if cd['symbol'] not in taken and not capped(cd, ln):
+                    take(cd, ln)
     else:
         progress = True
         while progress:
             progress = False
             for ln in LENSES:
                 cands = lenses[ln]
-                while count[ln] < o['top_n'] and cursor[ln] < len(cands) and cands[cursor[ln]]['symbol'] in taken:
+                while count[ln] < o['top_n'] and cursor[ln] < len(cands) and (cands[cursor[ln]]['symbol'] in taken or capped(cands[cursor[ln]], ln)):
                     cursor[ln] += 1
                 if count[ln] < o['top_n'] and cursor[ln] < len(cands):
-                    s = cands[cursor[ln]]['symbol']
-                    taken.add(s); picks.append((s, ln)); count[ln] += 1; progress = True
+                    take(cands[cursor[ln]], ln); count[ln] += 1; progress = True
     shortlist, seen = [], {}
     for s, ln in picks:
         cd = next(c for c in lenses[ln] if c['symbol'] == s)
-        seen[s] = {'symbol': s, 'name': cd['name'], 'sector': cd['sector'], 'data_grade': cd['data_grade'], 'selected_by': ln,
-                   'lenses': [{'lens': x, 'rank': c['rank'], 'why': c['why']} for x in LENSES for c in lenses[x] if c['symbol'] == s],
-                   'levels': cd['levels'], 'risk_flags': cd['risk_flags']}
+        seen[s] = {'symbol': s, 'name': cd['name'], 'sector': cd['sector'], 'industry': cd.get('industry'), 'data_grade': cd['data_grade'],
+                   'selected_by': ln, 'lenses': [{'lens': x, 'rank': c['rank'], 'why': c['why']} for x in LENSES for c in lenses[x] if c['symbol'] == s],
+                   'levels': cd['levels'], 'risk_flags': cd['risk_flags'], 'tags': cd['tags']}
         shortlist.append(seen[s])
-    return shortlist, seen
+    return shortlist, seen, {s: v for s, v in skipped.items() if s not in seen}
 
 
 def _check_first(c, lenses):
@@ -1506,50 +1994,65 @@ def _check_first(c, lenses):
         out.append(f"Reconcile {c['row']['data_grade']}-grade inputs to filings (dataqa: shares, cash, debt, TTM revenue/CFO) before any price conclusion.")
     out += [LENS_CHECKS[x] for x in lenses]
     codes = {f['code'] for f in d['risk']['flags']}
-    if 'priced_for_perfection' in codes:
+    if 'priced_for_perfection' in codes or 'price_demanding' in codes:
         out.append('The price requires rare growth: run company-driver expectations (expectations.expectation_gap) and the bear case first.')
     if 'dilution' in codes or (m.get('dilution_yoy') or 0) > .04:
         out.append('Share count path: SBC, issuance, converts and warrants (capital.py) and dilution to current holders.')
+    if 'dilution_unknown' in codes:
+        out.append('Share count change is not in the data: establish dilution to current holders before reading growth per share.')
     if 'funding' in codes:
         out.append('Funding: runway to the next milestone and the financing the plan needs (finance.funding_path).')
     if 'leverage' in codes or 'interest_coverage' in codes:
         out.append('Debt maturities, covenants and refinancing cost.')
+    if 'leverage_unknown' in codes:
+        out.append('Leverage is not in the data (debt tags or EV missing): establish debt, leases and converts before any price read.')
     if 'distress' in codes:
         out.append('Altman distress zone: confirm or dismiss (retained earnings distorted by buybacks?).')
+    org = d['growth_quality']['inputs']['organic']['signal']
     if m.get('acquisition_driven') or (m.get('acquisitions_pct_revenue') or 0) > .10:
         out.append('Organic versus acquired growth.')
-    if d['business_quality']['inputs']['fcf_conversion']['signal'] == -1:
-        out.append('Earnings quality: accruals, working capital, capitalized costs.')
+    elif org is None and (m.get('growth_level') or 0) >= c['anchors']['growth_level'][0]:
+        out.append('Organic versus acquired growth: acquisition spend and goodwill are not in this row, so bought growth cannot be ruled out.')
+    if d['business_quality']['inputs']['fcf_conversion']['signal'] == -1 or codes & set(EARNINGS_CODES):
+        out.append('Earnings quality: accruals, working capital, capitalized costs' + (' (an accounting red flag is raised: '
+                   + '; '.join(f['message'] for f in d['risk']['flags'] if f['code'] in EARNINGS_CODES) + ')' if codes & set(EARNINGS_CODES) else '.'))
     if d['priced_in']['class'] == 'not_assessable_negative_fcf':
         out.append('What the price requires cannot be read from a cash-flow multiple: build the company-driver forecast.')
-    if c.get('cycle'):
-        out.append(f"Cyclical industry ('{c['cycle']['word']}'): judge margins and FCF through the cycle, not the latest year "
-                   '(model_card normalizes only when the reported history shows a cycle or an analyst confirms one).')
+    cy = c.get('cycle')
+    if cy and cy['value']:
+        out.append(f"Cyclical ({_cyc_label(cy)}; peak check {cy['peak_check']}): judge margins and FCF through the cycle, not the latest "
+                   'year (model_card normalizes when the history shows a cycle, when a flagged industry sits at a margin peak, or when an '
+                   'analyst confirms one).')
+    if 'balance_sheet_unverified' in codes or 'fiduciary_balance_sheet' in codes:
+        out.append('Balance sheet: confirm the liabilities are fee-business (fiduciary) balances, not lending or underwriting funding (model_card).')
     return list(dict.fromkeys(out))
 
 
-def _exclusion(s, c, disq, ranked, nm, scoped, o):
+def _exclusion(s, c, disq, ranked, nm, scoped, o, skipped=None):
     if s in disq:
         return disq[s]
-    if ranked:
-        return f"ranked #{ranked[0]} in {ranked[1]} (shortlist takes up to {o['top_n']} names per lens, {o['shortlist_mode']} mode)"
-    if nm:
-        return f"near miss in {nm[0]}: {nm[1]['reason']}"
     d, m = c['dims'], c['m']
     lv = lambda k: d[k]['level']
+    scoped_txt = [f"in scope of {ln} but failed {len(fails)} conditions ({' | '.join(n + ': ' + t.split(';')[0] for n, _, t in fails)})"
+                  for ln, fails in scoped or []]
+    if ranked:
+        return (f"ranked #{ranked[0]} in {ranked[1]} (shortlist takes up to {o['top_n']} names per lens, {o['shortlist_mode']} mode"
+                + (f"; skipped by the shortlist sector cap: {skipped[1]} already holds {o['shortlist_sector_cap']} names" if skipped else '') + ')'
+                + ('; ' + '; '.join(scoped_txt) if scoped_txt else ''))
+    if nm:
+        return f"near miss in {nm[0]}: {nm[1]['reason']}" + ('; also ' + '; '.join(scoped_txt) if scoped_txt else '')
     tags = []
-    if lv('valuation') == 'strong' and (lv('growth_quality') == 'weak' or ((m.get('gross_margin_change') or 0) < -.02 and (m.get('operating_margin_trend') or 0) < -.02)):
+    if _value_trap(c):
         tags.append('cheap but deteriorating (possible value trap)')
     if lv('business_quality') == 'strong' and (lv('valuation') == 'weak' or lv('priced_in') == 'weak'):
         tags.append('quality but expensive')
-    for ln, fails in scoped or []:
-        tags.append(f"in scope of {ln} but failed {len(fails)} conditions ({' | '.join(n + ': ' + d.split(';')[0] for n, _, d in fails)})")
+    tags += scoped_txt
     return ('no lens matched: ' + (', '.join(tags) + '; ' if tags else '') +
             f"quality {lv('business_quality')}, growth {lv('growth_quality')} ({_fmt(m.get('growth_level'))}), strength {lv('financial_strength')}, "
             f"valuation {lv('valuation')}, priced-in {lv('priced_in')}, return proxy {_fmt(d['expected_return_proxy']['value'], 'pct1')}")
 
 
-def _notes(o, ctx, no_data):
+def _notes(o, ctx, no_data, gaps=(), conc=None, skipped=None):
     grades = sorted({c['row']['data_grade'] for c in ctx.values()}, key=GRADE_ORDER.index)
     n = ['Research agenda only: not a recommendation, not a valuation, no orders. Every shortlisted name must pass pipeline.run '
          '(dataqa, model card, forecast, valuation, risk, review, decision) before any price conclusion.',
@@ -1562,14 +2065,30 @@ def _notes(o, ctx, no_data):
          'within a lens; it is not an IRR, not a forecast and not compared with a target. The owner aspiration is not used.',
          'priced_in uses a standard fade model on EV / after-tax operating profit (market cap / owner FCF when operating profit is '
          'thin or unknown; not the pre-registered calibrated revenue model and without base rates): '
-         'read it as "what the price requires", a crash-risk check. Valuation-gap ranking failed out of sample (docs/GAP_TEST_RESULTS.md).',
+         'read it as "what the price requires", a crash-risk check. A consensus reference is compared on its own 2-year horizon. '
+         'When it cannot be read, a crude fallback (EV/sales per Rule-of-40 point, EV/sales, P/E) orders and flags names; '
+         'valuation-gap ranking failed out of sample (docs/GAP_TEST_RESULTS.md).',
+         'Cyclical rows (industry word, model_card cyclical type, or a boom after a downturn in the data) are tested for a possible '
+         'peak; missing consensus leaves the check incomplete, never "no peak". A possible or unchecked peak fails quality_fair_price '
+         'and mispriced_turning (peak earnings make the price look low) and orders names last elsewhere.',
          'Paid adoption, retention, moat, management and capital allocation are not in screening data: lenses use numeric proxies '
          'and say so; the deep analysis must test them.',
-         'Structural themes are analyst hypotheses supplied in options; numbers alone cannot identify a structural shift.']
-    if no_data:
-        kinds = sorted({v for x in no_data for v in x['errors'].values()})
+         'Structural themes are analyst hypotheses supplied in options; numbers alone cannot identify a structural shift, and a '
+         'theme is not a price check.']
+    if no_data or gaps:
+        kinds = sorted({v for x in no_data for v in x['errors'].values() if v != 'invalid_value'})
         n.append(f'{len(no_data)} symbols without data' + (f" (vendor: {', '.join(kinds)})" if kinds else '') + ': listed under no_data, '
-                 'not excluded on merit. A plan denial is a coverage gap, not evidence about the company.')
+                 'not excluded on merit.' + (f" {len(gaps)} more ({', '.join(sorted(gaps))}) lost most key metrics to vendor denials: "
+                                            'excluded as coverage gaps.' if gaps else '')
+                 + ' A plan denial is a coverage gap, not evidence about the company.')
+    if conc:
+        top, k = max(conc.items(), key=lambda x: (x[1], x[0]))[0], max(conc.values())
+        tot = sum(conc.values())
+        if tot >= 4 and k / tot > .5:
+            n.append(f'Shortlist concentration: {k} of {tot} names in {top}' + (f" (shortlist_sector_cap {o['shortlist_sector_cap']})"
+                     if o['shortlist_sector_cap'] else '; set options.shortlist_sector_cap to cap names per sector on the shortlist') + '.')
+    if skipped:
+        n.append('Shortlist sector cap skipped: ' + ', '.join(f'{s} ({v[1]}, from {v[0]})' for s, v in sorted(skipped.items())) + '.')
     return n
 
 

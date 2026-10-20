@@ -255,16 +255,17 @@ class BankTests(unittest.TestCase):
             self.assertNotIn('financials', bm['secondary'])                    # the sector is only a fallback
             self.assertFalse(bm['flags']['text_financials'])
             self.assertIn(v['method'], M.OPERATING_METHODS, ind)
-        # vendor label lists lenders and networks together: conservative, but a reasoned override clears it
+        # vendor label lists lenders and networks together: the balance sheet decides (55% liabilities: a fee network)
         fb = fee_network_fb('Financial Services', 'Financial - Credit Services')
-        self.assertEqual(card(fb)['valuation']['method'], 'residual_income')
-        c = card(fb, {'business_model': {'primary': 'platform_marketplace', 'reason': 'fee network: no loans, deposits or float (10-K)'},
-                      'method_override': {'method': 'fcff_annual_path', 'reason': 'asset-light fee network'}})
+        c = card(fb)
+        self.assertEqual((c['business_model']['primary'], c['valuation']['method']), ('platform_marketplace', 'fcff_annual_path'))
         self.assertFalse(c['business_model']['flags']['text_financials'])
-        self.assertTrue(c['business_model']['computed']['text_financials'])
-        self.assertNotIn('financials', c['business_model']['secondary'])
-        self.assertEqual(c['valuation']['method'], 'fcff_annual_path')
-        self.assertNotIn('override_rejected', c['valuation'])
+        # the same label on a lender's balance sheet stays financials, and a reasoned override cannot clear it
+        lender = card(bank_fb({'sector': 'Financial Services', 'industry': 'Financial - Credit Services'}),
+                      {'business_model': {'primary': 'platform_marketplace', 'reason': 'card network'},
+                       'method_override': {'method': 'fcff_annual_path', 'reason': 'asset-light'}})
+        self.assertTrue(lender['business_model']['computed']['text_financials'])
+        self.assertNotIn(lender['valuation']['method'], M.OPERATING_METHODS)
 
 
 class GrowthInfrastructureTests(unittest.TestCase):
@@ -586,6 +587,91 @@ try:
     from fundamental_engine import analysis as _analysis, dataqa as _dataqa
 except ImportError:      # written in parallel; the integrator's run exercises this
     _analysis = _dataqa = None
+
+
+class RepairRegressionTests(unittest.TestCase):
+    """Second discovery review (SYNTHETIC FactBooks). Each test failed on the code before this repair."""
+
+    def test_cyclical_industry_at_a_margin_peak_is_normalized(self):
+        up = steady_fb('Materials', 'Steel', [10e9, 11e9, 12.5e9, 14e9, 16e9], [.06, .08, .11, .14, .17], .25, .05)
+        c = card(up)
+        self.assertEqual((c['cyclical']['position'], c['cyclical']['normalize'], c['cyclical']['basis']), ('peak', True, 'industry_flag+peak'))
+        self.assertEqual(c['valuation']['method'], 'normalized_cycle_fcff')
+        plat = steady_fb('Consumer Discretionary', 'Homebuilding', [20e9, 23e9, 26e9, 28e9, 29e9], [.15, .17, .19, .20, .20], .27, .02)
+        self.assertEqual(card(plat)['cyclical']['position'], 'peak')            # a plateau at the top of an upswing
+        rej = card(up, {'cyclical': {'value': False, 'reason': 'mini-mill cost position: margins structural per 10-K segment data'}})
+        self.assertEqual((rej['cyclical']['basis'], rej['valuation']['method']), ('analyst', 'fcff_annual_path'))
+
+    def test_loss_making_grower_margin_noise_is_not_a_cycle(self):
+        rev = [2e9 * x for x in (1, 1.35, 1.755, 2.2464, 2.808)]
+        fb = steady_fb('Information Technology', 'Application Software', rev, [.03, -.15, -.02, -.18, -.06], .75, .03)
+        c = card(fb)
+        self.assertFalse(c['cyclical']['data_shows_cycle'])
+        self.assertFalse(c['cyclical']['normalize'])
+        self.assertEqual(c['valuation']['method'], 'scenario_survival_fcff')
+        self.assertTrue(any('funding modelled' in r for r in c['valuation']['requirements']))
+        bio = synth_fb({'sector': 'Health Care', 'industry': 'Biotechnology'}, series_years(
+            5, revenue=[1e6, 2e6, 3e6, 2e6, 5e6], operating_income=[-5e7, -8e7, -1.8e8, -1.6e8, -2e8], cfo=[-4e7] * 5, capex=[1e6] * 5,
+            cash=[6e8] * 5, equity=[5e8] * 5))
+        self.assertFalse(card(bio)['cyclical']['value'])
+
+    def test_fee_brokers_and_asset_managers_are_operators(self):
+        rev = [20e9 * 1.09 ** i for i in range(5)]
+        broker = synth_fb({'sector': 'Financials', 'industry': 'Insurance Brokers'}, series_years(
+            5, revenue=rev, operating_income=[r * .25 for r in rev], net_income=[r * .19 for r in rev], cfo=[r * .3 for r in rev],
+            capex=[r * .02 for r in rev], cash=[r * .3 for r in rev], equity=[r * .4 for r in rev], total_assets=[r * 4 for r in rev],
+            total_liabilities=[r * 3.6 for r in rev], shares_outstanding=[1e9] * 5))
+        c = card(broker)
+        self.assertEqual((c['business_model']['primary'], c['valuation']['method']), ('platform_marketplace', 'fcff_annual_path'))
+        ov = card(broker, {'business_model': {'primary': 'industrial', 'fiduciary_balance_sheet': True,
+                                              'reason': 'commission broker: fiduciary client funds are pass-through (10-K note 5)'},
+                           'method_override': {'method': 'fcff_annual_path', 'reason': 'fee business'}})
+        self.assertNotIn('override_rejected', ov['valuation'])
+        self.assertEqual(ov['valuation']['method'], 'fcff_annual_path')
+        fid = card(bank_fb({'sector': 'Financial Services', 'industry': 'Financial - Credit Services'}),
+                   {'business_model': {'primary': 'platform_marketplace', 'fiduciary_balance_sheet': True,
+                                       'reason': 'merchant settlement balances held in trust, no lending (10-K note 7)'},
+                    'method_override': {'method': 'fcff_annual_path', 'reason': 'fee processor'}})
+        self.assertEqual(fid['valuation']['method'], 'fcff_annual_path')          # a stated fiduciary reason clears the lender guard
+        am = card(steady_fb('Financials', 'Asset Management & Custody Banks', rev, [.38] * 5, .6, .02))
+        self.assertEqual(am['business_model']['primary'], 'platform_marketplace')
+        custody = card(bank_fb({'sector': 'Financials', 'industry': 'Asset Management & Custody Banks'}))
+        self.assertEqual(custody['business_model']['primary'], 'financials')     # lender-like balance sheet: conservative
+
+    def test_financial_conglomerate_label_is_a_balance_sheet_business(self):
+        c = card(bank_fb({'sector': 'Financial Services', 'industry': 'Financial - Conglomerates'}),
+                 {'method_override': {'method': 'fcff_annual_path', 'reason': 'analyst wants a DCF'}})
+        self.assertEqual(c['business_model']['primary'], 'financials')
+        self.assertTrue(c['business_model']['flags']['text_financials'])
+        self.assertIn('override_rejected', c['valuation'])
+        self.assertNotIn(c['valuation']['method'], M.OPERATING_METHODS)
+        self.assertEqual(M.text_type({'industry': 'Financial - Mortgages'})['type'], 'financials')
+
+    def test_filing_whose_facts_arrive_after_as_of_is_not_evidence(self):
+        rev = [1e9, 1.2e9, 1.4e9, 1.6e9]
+        fb = synth_fb({'sector': 'Information Technology', 'industry': 'Application Software'}, series_years(
+            4, revenue=rev, gross_profit=[r * .8 for r in rev], operating_income=[r * .2 for r in rev], cfo=[r * .25 for r in rev],
+            capex=[r * .02 for r in rev], cash=[5e8] * 4, equity=[1e9] * 4, shares_outstanding=[1e8] * 4), as_of='2025-12-01')
+        facts.add_source(fb, 'sec:10k_fy2025', 'sec', '10-K FY2025', 'filing_derived', '2026-10-19T00:00:00Z')
+        facts.add_fact(fb, 'customers', 'FY2025', '2025-12-31', 5000, 'sec:10k_fy2025', 'as_reported', '2026-02-20')
+        c = card(fb, {'understanding': {'why_customers_pay': {'answer': '5,000 paying customers', 'evidence_ids': ['sec:10k_fy2025']}},
+                      'assessments': {'retention': {'assessment': 'strong', 'evidence_ids': ['sec:10k_fy2025']}}})
+        q = next(x for x in c['understanding'] if x['id'] == 'why_customers_pay')
+        self.assertEqual(q['status'], 'asserted')
+        self.assertEqual(c['dimensions']['retention']['evidence_status'], 'asserted')
+        self.assertEqual(card(fb, {'understanding': {'why_customers_pay': {'answer': 'x', 'evidence_ids': ['syn:10k']}}})['understanding'][0]['status'],
+                         'evidenced')                                            # a source with usable facts still counts
+
+    def test_booking_platform_without_cost_of_revenue(self):
+        rev = [1e10 * 1.12 ** i for i in range(5)]
+        fb = synth_fb({'sector': 'Consumer Discretionary', 'industry': 'Hotels, Resorts & Cruise Lines'}, series_years(
+            5, revenue=rev, operating_income=[r * .30 for r in rev], cfo=[r * .36 for r in rev], capex=[r * .03 for r in rev],
+            d_and_a=[r * .03 for r in rev], cash=[r * .3 for r in rev], equity=[r * .8 for r in rev], total_assets=[r * 1.6 for r in rev],
+            total_liabilities=[r * .8 for r in rev], shares_outstanding=[1e9] * 5))
+        c = card(fb)
+        self.assertEqual(c['business_model']['primary'], 'platform_marketplace')
+        self.assertTrue(any('no cost-of-revenue line' in r for r in c['business_model']['reasons']))
+        self.assertFalse(c['cyclical']['value'])
 
 
 @unittest.skipUnless(_analysis and _dataqa, 'analysis.py / dataqa.py not available yet')
