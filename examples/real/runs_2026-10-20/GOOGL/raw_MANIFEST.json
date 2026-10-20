@@ -1,0 +1,58 @@
+{
+ "ticker": "GOOGL",
+ "as_of": "2026-10-20",
+ "calls": [
+  {
+   "file": "sec__companyfacts.json",
+   "provider": "sec",
+   "tool": "curl data.sec.gov companyfacts",
+   "args": {
+    "cik": "0001652044"
+   },
+   "retrieved_at_utc": "2026-10-20T07:32:28Z",
+   "sha256": "a017f26ee88cb4a639d1c1ddb06d53b4afe22f0ac89cabec7cd67c88919fe1c5",
+   "note": "verbatim payload"
+  },
+  {
+   "file": "sec__submissions.json",
+   "provider": "sec",
+   "tool": "curl data.sec.gov submissions",
+   "args": {
+    "cik": "0001652044"
+   },
+   "retrieved_at_utc": "2026-10-20T07:32:29Z",
+   "sha256": "648cea84d824309b518807fd7e7fdb72d6855e12e8afa221d2caa047d5c9f2ca",
+   "note": "verbatim payload"
+  },
+  {
+   "file": "ib__price-snapshot-GOOGL__current.json",
+   "provider": "ib",
+   "tool": "mcp__Interactive_Brokers__get_price_snapshot",
+   "args": {
+    "contract_id": 208813719,
+    "market_data_names": [
+     "last",
+     "prior_close",
+     "misc_statistics"
+    ]
+   },
+   "retrieved_at_utc": "2026-10-20T07:32:40Z",
+   "sha256": "f19dae1b2e4a5034c3a86d53d12d34b932f0b814b8839b153c7b19d97375bd8d",
+   "note": "copied verbatim from inline tool output"
+  }
+ ],
+ "denials": [
+  {
+   "provider": "fmp",
+   "tool": "mcp__FMP__statements",
+   "error": "Limit Reach (daily plan allowance)",
+   "at": "2026-10-20T07:30Z"
+  },
+  {
+   "provider": "alpha_vantage",
+   "tool": "INCOME_STATEMENT",
+   "error": "rate_limit 25 requests/day",
+   "at": "2026-10-20T07:30Z"
+  }
+ ]
+}

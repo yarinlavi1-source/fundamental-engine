@@ -1,0 +1,96 @@
+{
+ "retrieved_at": "2026-10-20",
+ "sources": [
+  {
+   "id": "googl_pr_q22026",
+   "kind": "earnings_release",
+   "published_at": "2026-07-22",
+   "retrieval": "primary_document",
+   "title": "Alphabet Announces Second Quarter 2026 Results (8-K exhibit 99.1)",
+   "publisher": "Alphabet / SEC EDGAR",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000066/googexhibit991q22026.htm"
+  },
+  {
+   "id": "googl_10q_q22026",
+   "kind": "filing",
+   "published_at": "2026-07-23",
+   "retrieval": "primary_document",
+   "title": "Alphabet Form 10-Q for the quarter ended June 30, 2026",
+   "publisher": "SEC EDGAR",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm"
+  }
+ ],
+ "items": [
+  {
+   "id": "googl_segments",
+   "topic": "demand",
+   "kind": "reported",
+   "as_of": "2026-07-22",
+   "source_ids": [
+    "googl_pr_q22026"
+   ],
+   "statement": "Q2 2026 revenue $119.8bn (+24%, +23% cc): Search & other $63.3bn (+17%), YouTube ads $11.1bn (+13%), subscriptions/platforms/devices $12.9bn (+15%), Google Cloud $24.8bn (+82%) with Cloud operating income $8.8bn (from $2.8bn). Operating margin 34%."
+  },
+  {
+   "id": "googl_backlog",
+   "topic": "demand_visibility",
+   "kind": "reported",
+   "as_of": "2026-07-23",
+   "source_ids": [
+    "googl_10q_q22026"
+   ],
+   "statement": "Revenue backlog (remaining performance obligations) $519.5bn at 2026-06-30, of which $513.9bn Google Cloud; just over 50% expected to be recognized within 24 months."
+  },
+  {
+   "id": "googl_capex_fcf",
+   "topic": "capital_intensity",
+   "kind": "reported",
+   "as_of": "2026-07-22",
+   "source_ids": [
+    "googl_pr_q22026"
+   ],
+   "statement": "Capital expenditures $44.9bn in Q2 2026 (from $22.4bn) and $132.4bn over the trailing twelve months; free cash flow -$5.9bn in Q2 and $53.3bn TTM against operating cash flow of $185.7bn TTM."
+  },
+  {
+   "id": "googl_financing",
+   "topic": "funding",
+   "kind": "reported",
+   "as_of": "2026-07-23",
+   "source_ids": [
+    "googl_pr_q22026",
+    "googl_10q_q22026"
+   ],
+   "statement": "June 2026: Class A/C common stock issued for $30.5bn net ($20.5bn public offering, $10.0bn private placement) and 6.25% mandatory convertible preferred stock for $19.1bn net (19 million shares, converting into Class A/C by May 2029), plus a $40bn at-the-market program (unused at June 30, intended mainly for employee equity tax obligations) and $20.3bn of senior notes in Q2; buybacks stopped (none in 2026 H1 versus $28.3bn a year earlier). Long-term debt $98.2bn."
+  },
+  {
+   "id": "googl_equity_gains",
+   "topic": "earnings_quality",
+   "kind": "reported",
+   "as_of": "2026-07-22",
+   "source_ids": [
+    "googl_pr_q22026"
+   ],
+   "statement": "Other income of $98.0bn in Q2 2026, mainly net unrealized gains on equity securities; net income $112.2bn and EPS $9.11 are therefore not operating earnings. Non-marketable securities $131.5bn (from $68.7bn at 2025 year end)."
+  },
+  {
+   "id": "googl_wiz",
+   "topic": "acquisitions",
+   "kind": "reported",
+   "as_of": "2026-07-23",
+   "source_ids": [
+    "googl_10q_q22026"
+   ],
+   "statement": "Acquisition of Wiz completed on 2026-03-11 for $29.5bn (after purchase price adjustments, excluding post-combination compensation); 2026 H1 acquisition payments $33.7bn."
+  },
+  {
+   "id": "googl_ai_adoption",
+   "topic": "potential",
+   "kind": "opinion",
+   "as_of": "2026-07-22",
+   "source_ids": [
+    "googl_pr_q22026"
+   ],
+   "statement": "Management statement: Gemini App has 950 million monthly active users, Gemini models process 22 billion API tokens per minute, and nearly 90% of the Fortune 100 use Gemini Enterprise."
+  }
+ ]
+}

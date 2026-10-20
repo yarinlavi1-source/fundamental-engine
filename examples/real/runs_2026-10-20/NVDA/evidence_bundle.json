@@ -1,0 +1,165 @@
+{
+ "retrieved_at": "2026-10-20",
+ "sources": [
+  {
+   "id": "nvda_pr_q2fy27",
+   "kind": "earnings_release",
+   "published_at": "2026-08-26",
+   "retrieval": "primary_document",
+   "title": "NVIDIA Announces Financial Results for Second Quarter Fiscal 2027 (8-K exhibit 99.1)",
+   "publisher": "NVIDIA / SEC EDGAR",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/q2fy27pr.htm"
+  },
+  {
+   "id": "nvda_cfo_q2fy27",
+   "kind": "earnings_release",
+   "published_at": "2026-08-26",
+   "retrieval": "primary_document",
+   "title": "CFO Commentary on Second Quarter Fiscal 2027 Results (8-K exhibit 99.2)",
+   "publisher": "NVIDIA / SEC EDGAR",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/q2fy27cfocommentary.htm"
+  },
+  {
+   "id": "yahoo_nvda_fy28",
+   "kind": "news",
+   "published_at": "2026-09-06",
+   "retrieval": "search_excerpt",
+   "title": "Nvidia (NVDA)'s First-Ever Year-Ahead Forecast Puts It on a Path to Pass Apple and Alphabet",
+   "publisher": "Yahoo Finance (citing CNBC, LSEG)",
+   "url": "https://finance.yahoo.com/markets/stocks/articles/nvidia-nvda-first-ever-ahead-223147950.html"
+  },
+  {
+   "id": "valuentum_nvda_fy28",
+   "kind": "analysis",
+   "published_at": "2026-09-21",
+   "retrieval": "search_excerpt",
+   "title": "Nvdia Expects Fiscal 2028 Revenue to Grow 70%",
+   "publisher": "Valuentum",
+   "url": "https://valuentum.com/nvdia-expects-fiscal-2028-revenue-to-grow-70/"
+  },
+  {
+   "id": "nvda_10q_q2fy27",
+   "kind": "filing",
+   "published_at": "2026-08-26",
+   "retrieval": "primary_document",
+   "title": "NVIDIA Form 10-Q for the quarter ended July 26, 2026",
+   "publisher": "SEC EDGAR",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm"
+  }
+ ],
+ "items": [
+  {
+   "id": "nvda_dc_growth",
+   "topic": "demand",
+   "kind": "reported",
+   "as_of": "2026-08-26",
+   "source_ids": [
+    "nvda_cfo_q2fy27"
+   ],
+   "statement": "Q2 FY27 (quarter to 2026-07-26) Data Center revenue $89.0bn, +117% y/y and +18% q/q; Hyperscale $48.7bn (+102% y/y), AI Clouds/Industrial/Enterprise $40.3bn (+138% y/y). Total revenue $96.2bn, +106% y/y. GAAP gross margin 75.0%, operating income $63.7bn."
+  },
+  {
+   "id": "nvda_q3_outlook",
+   "topic": "guidance",
+   "kind": "guidance",
+   "as_of": "2026-08-26",
+   "source_ids": [
+    "nvda_pr_q2fy27"
+   ],
+   "statement": "Q3 FY27 outlook: revenue $108.0bn +/-2% assuming no Data Center compute revenue from China; GAAP gross margin 74.0% +/-50bp; GAAP opex about $9.2bn; FY27 tax rate 16-18%."
+  },
+  {
+   "id": "nvda_supply_commitments",
+   "topic": "demand_visibility",
+   "kind": "reported",
+   "as_of": "2026-08-26",
+   "source_ids": [
+    "nvda_cfo_q2fy27"
+   ],
+   "statement": "Supply and capacity commitments rose from $119bn to $279bn in one quarter (mainly memory): $92bn remainder of FY27, $87bn FY28, $88bn FY29. Management states they secure components to meet demand for the next several years. Fixed commitments also become a loss risk if demand falls."
+  },
+  {
+   "id": "nvda_guarantees",
+   "topic": "counterparty_risk",
+   "kind": "reported",
+   "as_of": "2026-08-26",
+   "source_ids": [
+    "nvda_cfo_q2fy27"
+   ],
+   "statement": "NVIDIA guarantees up to $105bn of land, power and shell obligations at SB Energy's Ohio campus that will host NVIDIA infrastructure under 20-year leases to OpenAI (phased, first in fiscal 2029), plus $3.5bn for other AI clouds: maximum gross exposure $108.5bn. AI cloud agreements add $36bn of commitments and $20bn of leases expected to be reassigned to third parties."
+  },
+  {
+   "id": "nvda_receivable_terms",
+   "topic": "earnings_quality",
+   "kind": "reported",
+   "as_of": "2026-08-26",
+   "source_ids": [
+    "nvda_cfo_q2fy27"
+   ],
+   "statement": "Accounts receivable $63.1bn, DSO 60 days versus 45 the prior quarter, due to extended payment terms on large multi-quarter agreements with certain investment-grade customers; operating cash flow fell to $24.1bn from $50.3bn sequentially on working capital and cash taxes."
+  },
+  {
+   "id": "nvda_capital_returns",
+   "topic": "capital_allocation",
+   "kind": "reported",
+   "as_of": "2026-08-26",
+   "source_ids": [
+    "nvda_pr_q2fy27",
+    "nvda_cfo_q2fy27"
+   ],
+   "statement": "Q2 FY27: about $26.0bn returned through buybacks and dividends, $99.0bn buyback authorization remaining; $25.0bn of senior unsecured notes issued for general corporate purposes. Cash plus marketable debt securities $56.6bn."
+  },
+  {
+   "id": "nvda_equity_stakes",
+   "topic": "investments",
+   "kind": "reported",
+   "as_of": "2026-08-26",
+   "source_ids": [
+    "nvda_pr_q2fy27",
+    "nvda_cfo_q2fy27"
+   ],
+   "statement": "Balance sheet at 2026-07-26: marketable equity securities $42.8bn and non-marketable securities $51.2bn (focused on AI model makers and infrastructure financiers); net equity-securities gains $7.8bn in Q2. A further $25bn of equity investment commitments, $18bn of them in the rest of FY27."
+  },
+  {
+   "id": "nvda_customer_concentration",
+   "topic": "customer_concentration",
+   "kind": "reported",
+   "as_of": "2026-08-26",
+   "source_ids": [
+    "nvda_cfo_q2fy27"
+   ],
+   "statement": "Revenue rose from $46.7bn to $96.2bn per quarter in one year; Hyperscale customers were $48.7bn of the $89.0bn Data Center revenue, so demand depends on a concentrated set of customers' capital spending."
+  },
+  {
+   "id": "nvda_fy28_outlook",
+   "topic": "guidance",
+   "kind": "guidance",
+   "as_of": "2026-09-21",
+   "source_ids": [
+    "yahoo_nvda_fy28",
+    "valuentum_nvda_fy28"
+   ],
+   "statement": "Reported by two secondary sources (CNBC via Yahoo Finance; Valuentum): on the 2026-08-26 call CFO Colette Kress said fiscal 2028 revenue growth will be about 70%, a supply-constrained outlook (memory); Jensen Huang said unconstrained growth would be 'a lot higher'; excludes China data center revenue. LSEG average analyst estimate before the call was about 44%. Not read in a primary transcript."
+  },
+  {
+   "id": "nvda_ar_concentration",
+   "topic": "customer_concentration",
+   "kind": "reported",
+   "as_of": "2026-08-26",
+   "source_ids": [
+    "nvda_10q_q2fy27"
+   ],
+   "statement": "Five direct customers accounted for 22%, 14%, 13%, 11% and 10% of accounts receivable at 2026-07-26 (three customers 25%, 18%, 13% at 2026-01-25)."
+  },
+  {
+   "id": "nvda_regulators",
+   "topic": "competition_regulation",
+   "kind": "reported",
+   "as_of": "2026-08-26",
+   "source_ids": [
+    "nvda_10q_q2fy27"
+   ],
+   "statement": "NVIDIA has received and continues to receive broad requests for information from competition regulators in the EU, US, UK, China and South Korea about its GPU sales, supply allocation, foundation models and investments in and agreements with foundation-model companies; export controls on AI GPUs may become more restrictive and limit exports."
+  }
+ ]
+}

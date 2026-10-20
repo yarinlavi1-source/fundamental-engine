@@ -1,0 +1,58 @@
+{
+ "ticker": "NVDA",
+ "as_of": "2026-10-20",
+ "calls": [
+  {
+   "file": "sec__companyfacts.json",
+   "provider": "sec",
+   "tool": "curl data.sec.gov companyfacts",
+   "args": {
+    "cik": "0001045810"
+   },
+   "retrieved_at_utc": "2026-10-20T07:32:28Z",
+   "sha256": "19ef503a5770f5660964b3c3aea6937579d9b359da344afe6a9adf59c63d26ff",
+   "note": "verbatim payload"
+  },
+  {
+   "file": "sec__submissions.json",
+   "provider": "sec",
+   "tool": "curl data.sec.gov submissions",
+   "args": {
+    "cik": "0001045810"
+   },
+   "retrieved_at_utc": "2026-10-20T07:32:29Z",
+   "sha256": "682c49d59116ae49b317eb4adddf3ef9142dfd97f59c5d8e5a5acad7f9058ab4",
+   "note": "verbatim payload"
+  },
+  {
+   "file": "ib__price-snapshot-NVDA__current.json",
+   "provider": "ib",
+   "tool": "mcp__Interactive_Brokers__get_price_snapshot",
+   "args": {
+    "contract_id": 4815747,
+    "market_data_names": [
+     "last",
+     "prior_close",
+     "misc_statistics"
+    ]
+   },
+   "retrieved_at_utc": "2026-10-20T07:32:40Z",
+   "sha256": "a3b4a07af34f3165c6e909721ae241b5ff38460b5181599d9a48d9719635c5d7",
+   "note": "copied verbatim from inline tool output"
+  }
+ ],
+ "denials": [
+  {
+   "provider": "fmp",
+   "tool": "mcp__FMP__statements",
+   "error": "Limit Reach (daily plan allowance)",
+   "at": "2026-10-20T07:30Z"
+  },
+  {
+   "provider": "alpha_vantage",
+   "tool": "INCOME_STATEMENT",
+   "error": "rate_limit 25 requests/day",
+   "at": "2026-10-20T07:30Z"
+  }
+ ]
+}

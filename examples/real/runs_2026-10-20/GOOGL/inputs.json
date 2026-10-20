@@ -1,0 +1,71 @@
+{
+ "analyst": "Claude (session 01JWeMhv67rYSjQadFXFaLhv)",
+ "forecast": {
+  "overrides": [
+   {
+    "path": "terminal.other_claims",
+    "scenario": "all",
+    "value": 19063000000.0,
+    "reason": "6.25% mandatory convertible preferred stock issued June 2026 for $19.1bn net converts into Class A/C shares by May 2029; it is not in the opening share count, so it is deducted as a claim at its issue value (about 0.45% of market value) instead of building the instrument-level capital structure.",
+    "evidence_ids": [
+     "googl_financing"
+    ]
+   },
+   {
+    "path": "terminal_roic",
+    "scenario": "base",
+    "value": 0.25,
+    "reason": "Return on the new AI capital set near the measured incremental ROIC (24.7%) instead of the strong-moat rule (up to 40%): capex doubled to $44.9bn a quarter and free cash flow turned negative in Q2 2026, so the returns on this spending are not yet demonstrated.",
+    "evidence_ids": [
+     "googl_capex_fcf",
+     "googl_backlog",
+     "sec:companyfacts"
+    ]
+   },
+   {
+    "path": "terminal_roic",
+    "scenario": "bear",
+    "value": 0.15,
+    "reason": "Bear: AI infrastructure returns close to the cost of capital as capacity is competed down.",
+    "evidence_ids": [
+     "googl_capex_fcf",
+     "googl_backlog",
+     "sec:companyfacts"
+    ]
+   },
+   {
+    "path": "terminal_roic",
+    "scenario": "bull",
+    "value": 0.35,
+    "reason": "Bull: Cloud backlog converts at today's Cloud margins and AI lifts Search monetization.",
+    "evidence_ids": [
+     "googl_capex_fcf",
+     "googl_backlog",
+     "sec:companyfacts"
+    ]
+   }
+  ]
+ },
+ "card": {
+  "assessments": {
+   "moat": {
+    "assessment": "strong",
+    "evidence_ids": [
+     "googl_segments",
+     "googl_backlog",
+     "sec:companyfacts"
+    ],
+    "note": "Search & other still grows 17% at $63bn a quarter with a 34% group operating margin; five-year average ROIC about 45% and gross margin stable within about 4pp (SEC data). Strength is in Search/YouTube margins; the open question is the return on AI capital spending, set separately through terminal ROIC."
+   },
+   "technology_ai": {
+    "assessment": "strong",
+    "evidence_ids": [
+     "googl_segments",
+     "googl_backlog",
+     "googl_ai_adoption"
+    ],
+    "note": "Cloud revenue +82% with $513.9bn Cloud backlog (just over half within 24 months) shows paid AI demand; adoption figures are management statements."
+   }
+  }
+ }
+}

@@ -1,0 +1,22 @@
+{
+ "symbol": "NVDA",
+ "as_of": "2026-10-20",
+ "verdict": "avoid",
+ "verdict_status": "draft",
+ "price_claim_withheld": true,
+ "confidence": "low",
+ "quality": "strong",
+ "risk_level": "medium",
+ "price": 216.31,
+ "bear_value": 58.0815965688922,
+ "base_value": 204.79832786588463,
+ "bull_value": 321.8429351499833,
+ "base_irr": 0.09869498202543381,
+ "bear_irr": 0.04254131694274903,
+ "decision_version": 3,
+ "margin": null,
+ "hurdle": 0.1125,
+ "value_at_required_return": 179.60980436179935,
+ "review_status": "blocked",
+ "casefile_sha256": "546ccc377c3fdc1e9509ddc4aa624ba72598104bc21f41edf25a22cd071c93a9"
+}

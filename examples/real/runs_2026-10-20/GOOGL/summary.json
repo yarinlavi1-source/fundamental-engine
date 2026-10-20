@@ -1,0 +1,22 @@
+{
+ "symbol": "GOOGL",
+ "as_of": "2026-10-20",
+ "verdict": "quality_but_expensive",
+ "verdict_status": "draft",
+ "price_claim_withheld": true,
+ "confidence": "low",
+ "quality": "strong",
+ "risk_level": "medium",
+ "price": 344.46,
+ "bear_value": 132.0145597796708,
+ "base_value": 217.40116933815682,
+ "bull_value": 374.5591612401466,
+ "base_irr": 0.07445781174686636,
+ "bear_irr": 0.052202119030455824,
+ "decision_version": 3,
+ "margin": "clear",
+ "hurdle": 0.0975,
+ "value_at_required_return": 217.40116933815682,
+ "review_status": "unreviewed_draft",
+ "casefile_sha256": "09fd9a8165c7bbcf768cff999b7317c3b9888873eea1c996f96f9846b375a31c"
+}

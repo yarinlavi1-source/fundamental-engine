@@ -1,0 +1,162 @@
+{
+ "analyst": "Claude (session 01JWeMhv67rYSjQadFXFaLhv)",
+ "card": {
+  "cyclical": {
+   "value": false,
+   "reason": "Normalizing to the 2017-2026 mean margin and a ~$68bn revenue trend ignores a 30x change in scale: Q3 FY27 guidance of $108bn (+12% q/q), reported FY28 guidance of about +70% (supply-constrained) and $279bn of supply commitments through FY29 give two to three years of demand visibility. The cycle is NOT dismissed: the bear case has a two-year downturn (FY29 -30%, FY30 -15%) like the history in SEC data (FY2009 -16%, FY2020 -7%) and the concentrated hyperscale buyers.",
+   "evidence_ids": [
+    "nvda_ar_concentration",
+    "nvda_customer_concentration",
+    "nvda_fy28_outlook",
+    "nvda_guarantees",
+    "nvda_q3_outlook",
+    "nvda_supply_commitments",
+    "sec:companyfacts"
+   ]
+  }
+ },
+ "forecast": {
+  "overrides": [
+   {
+    "path": "growth",
+    "scenario": "base",
+    "value": [
+     0.6,
+     0.2,
+     0.08,
+     0.04,
+     0.04,
+     0.0,
+     0.04,
+     0.04,
+     0.035,
+     0.035,
+     0.03,
+     0.03,
+     0.03,
+     0.03,
+     0.03,
+     0.03
+    ],
+    "reason": "FY28 +60%: below the reported +70% supply-constrained guidance (execution and memory supply risk) and near the post-call consensus of about $690bn; then a fast fade (FY29 +20%, FY30 +8%) because $87-88bn yearly supply commitments for FY28-29 do not imply another doubling and customers' capital spending cannot compound at this rate.",
+    "evidence_ids": [
+     "nvda_fy28_outlook",
+     "nvda_q3_outlook",
+     "nvda_supply_commitments",
+     "nvda_customer_concentration",
+     "nvda_guarantees",
+     "sec:companyfacts"
+    ]
+   },
+   {
+    "path": "growth",
+    "scenario": "bear",
+    "value": [
+     0.35,
+     -0.3,
+     -0.15,
+     0.05,
+     0.04,
+     0.0,
+     0.04,
+     0.035,
+     0.03,
+     0.03,
+     0.03,
+     0.025,
+     0.025,
+     0.025,
+     0.025,
+     0.025
+    ],
+    "reason": "FY28 +35% (near the pre-guidance 44% consensus, supply or customer delays), then an AI-capex digestion: FY29 -30%, FY30 -15%, as concentrated hyperscale and AI-cloud buyers cut orders; the company's own history shows sharp declines when customer spending turned.",
+    "evidence_ids": [
+     "nvda_fy28_outlook",
+     "nvda_q3_outlook",
+     "nvda_supply_commitments",
+     "nvda_customer_concentration",
+     "nvda_guarantees",
+     "sec:companyfacts"
+    ]
+   },
+   {
+    "path": "growth",
+    "scenario": "bull",
+    "value": [
+     0.7,
+     0.35,
+     0.18,
+     0.1,
+     0.07,
+     0.0,
+     0.06,
+     0.05,
+     0.05,
+     0.04,
+     0.04,
+     0.04,
+     0.035,
+     0.035,
+     0.03,
+     0.03
+    ],
+    "reason": "FY28 at the +70% guidance with demand above supply; slower fade (FY29 +35%, FY30 +18%) as Vera Rubin and the AI-cloud/sovereign buildout extend the cycle.",
+    "evidence_ids": [
+     "nvda_fy28_outlook",
+     "nvda_q3_outlook",
+     "nvda_supply_commitments",
+     "nvda_customer_concentration",
+     "nvda_guarantees",
+     "sec:companyfacts"
+    ]
+   },
+   {
+    "path": "mature_margin",
+    "scenario": "bear",
+    "value": 0.35,
+    "reason": "A downturn with $279bn of fixed supply commitments and $108.5bn of guarantees compresses margins well below today's 65%; 35% is above the FY2023 trough (about 16%) because of scale and software/networking mix, but far below the peak.",
+    "evidence_ids": [
+     "nvda_supply_commitments",
+     "nvda_guarantees",
+     "sec:companyfacts"
+    ]
+   },
+   {
+    "path": "terminal_roic",
+    "scenario": "base",
+    "value": 0.3,
+    "reason": "Terminal ROIC 30%: far below the demonstrated ~110% five-year average (SEC data) because concentrated buyers (five customers 10-22% of receivables each) and competition and regulatory pressure (inquiries in five jurisdictions) should erode returns, but well above the 12% engine default, which assumes no advantage at all for a company earning 75% gross margins.",
+    "evidence_ids": [
+     "sec:companyfacts",
+     "nvda_dc_growth",
+     "nvda_regulators",
+     "nvda_ar_concentration"
+    ]
+   },
+   {
+    "path": "terminal_roic",
+    "scenario": "bear",
+    "value": 0.15,
+    "reason": "Bear: returns fall close to the cost of capital as buyers' own accelerators and regulation compete away the advantage.",
+    "evidence_ids": [
+     "sec:companyfacts",
+     "nvda_dc_growth",
+     "nvda_regulators",
+     "nvda_ar_concentration"
+    ]
+   },
+   {
+    "path": "terminal_roic",
+    "scenario": "bull",
+    "value": 0.4,
+    "reason": "Bull: ecosystem and full-stack advantage keep returns high, still well below today's.",
+    "evidence_ids": [
+     "sec:companyfacts",
+     "nvda_dc_growth",
+     "nvda_regulators",
+     "nvda_ar_concentration"
+    ]
+   }
+  ]
+ }
+}
