@@ -32,10 +32,10 @@ Companion to docs/EVIDENCE_STATUS.md, which separates what tests prove from what
 5. **Vendor quotas and plan limits.** FMP's plan denies the standard statement endpoints (as-reported works), index
    constituents and most symbols, and has a daily quota; Alpha Vantage allows 25 calls a day; SEC frames (code exists) are
    blocked. Discovery runs on rows or FactBooks already collected, not on the whole market.
-6. **Financial companies.** Banks, insurers, REITs, biotech and conglomerates (and lender-shaped balance sheets under
-   other labels, which the model card now routes to residual income) have no executed pipeline valuation: valuation.py
-   has residual-income/NAV/rNPV/SOTP calculators, but forecast.build returns `method_not_supported_by_forecast`. They
-   end as interesting-not-yet-valuable or insufficient evidence instead of a forced operating model.
+6. **REITs, pre-revenue biotech and conglomerates.** Banks, insurers, broker-dealers and managed care are valued by
+   residual income since 20.10.2026 (regulatory capital not checked: risk-weighted assets are not in companyfacts).
+   REITs (NAV needs property NOI), pre-revenue biotech (rNPV needs program data) and conglomerates (segments) still have
+   no executed valuation and end as interesting-not-yet-valuable instead of a forced operating model.
 7. **Historical tests are survivorship-biased.** Prices exist only for currently listed tickers; results
    are an upper bound.
 
@@ -65,8 +65,9 @@ Companion to docs/EVIDENCE_STATUS.md, which separates what tests prove from what
     with the raw sign; this was not confirmed against a live response.
 14. Qualitative judgement (moat, management, AI exposure) is analyst input with evidence ids. The engine checks that
     evidence exists, was available at the cutoff and is of an accepted kind; it does not judge what the evidence means.
-15. Current-year revenue that includes an acquisition closed this year is flagged (`anchor_includes_acquired_revenue`),
-    not removed; the growth anchor can include bought revenue until an analyst override corrects it.
+15. Acquired revenue is separated from organic growth when the filings carry pro forma revenue; without it the
+    pre-deal growth is used and flagged high. Months of the prior year before a closing are not added back
+    (conservative), and an acquisition whose goodwill and spend stay below the analysis thresholds is not detected.
 16. Portfolio exposure weights are analyst judgement unless measured data is supplied; IB themes are a vendor
     classification, not weights. Positions in other currencies need FX rates.
 
@@ -108,3 +109,23 @@ Companion to docs/EVIDENCE_STATUS.md, which separates what tests prove from what
 19. Hebrew output covers the paragraph and verdict; the detailed report is in English.
 20. Performance: single-company runs take seconds; no batch scheduler for monitoring (manual or session
     check-ins).
+
+## Found while completing the engine (20.10.2026)
+
+30. **The engine's ranking has no demonstrated edge** (docs/BACKTEST_ENGINE_2026-10-20.md): on today's large caps,
+    2016-2025, the top fifth beat the universe average by 7.6 points a year with t 1.0, mostly in 2020, about what a
+    free-cash-flow-yield rank did. Edges are shrunk by the measured reliability (0.40) and the index is the default.
+31. **Connector channels depend on quotas.** Alpha Vantage (25 calls a day) and FMP were exhausted on 20.10.2026; their
+    parsers follow the documented response formats and must be checked on the first live payload. LunarCrush returns a
+    markdown table in limited mode. SEC channels are automatic and cover every filer.
+32. **Discovery events need reading.** A 13D may be a founder, a foundation or a parent, not an activist; 8-K item 1.01
+    covers credit facilities as well as customer contracts; Forms 15 and 25 are often other security classes. They are
+    leads or events, never support by themselves. Revenue acceleration can be an acquisition or a commodity price.
+33. **Segment view and pay measures are evidence, not inputs.** The segment-built value is reported beside the base case
+    (which one holds is a research question); the pay orientation reads the stated measures, not the plan's weights;
+    small reporting companies may omit the measures list.
+34. **Convertible terms from XBRL are partial.** Principal is taken at par (accreting notes need the footnote), maturity
+    can be only a year from the instrument name, and a 10-Q without a conversion term keeps the block (Rubrik, Okta)
+    until the annual report is read.
+35. **Engine version drift in the tests.** The first walk-forward run used the engine before the 20.10 fixes; the second
+    run on the current engine is reported as it comes out, and nothing is tuned to it.

@@ -1,4 +1,16 @@
-# Current version: 0.11.1 — 20.10.2026
+# Current version: 0.11.2 (in progress) — 20.10.2026
+
+Completing the engine end to end: every discovery channel as leads, banks and insurers valued, acquisition-aware growth,
+new economic types, deeper filing extraction (segments, convertibles, maturities, pay), a walk-forward test of the engine
+itself with the edge reliability it implies, and one run from discovery to a proposed book (docs/CHANGELOG.md, 0.11.2).
+
+Verification actually performed on 20.10.2026: `python -m unittest discover -s tests -q`: 1,070 tests, OK, 6 skipped;
+`scripts/run_all.py --skip-collect` ran discovery, research, calibration and the run on the saved 2,470-company universe;
+the 491-company sweep and 19 financials ran through the pipeline; the walk-forward test (4,910 company-years) ran on the
+engine of commit 08c2263. These are software and process checks; the investment evidence is the walk-forward result
+(docs/BACKTEST_ENGINE_2026-10-20.md: no demonstrated edge) and the forward ledger from here on.
+
+## Previous: 0.11.1 — 20.10.2026
 
 The 0.11 decision path after a verified review-fix cycle (docs/CHANGELOG.md, 0.11.1): adversarial reviews of every
 stage, each defect reproduced by a script before it counted, each fix covered by a regression test that fails on the

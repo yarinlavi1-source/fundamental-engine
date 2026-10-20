@@ -99,6 +99,38 @@
   - the filer's own SEC SIC code now routes the type before the listing label: managed care filed as 'Medical
     Specialities' (Cigna, SIC 6324) is an insurer, not an operating company; banks, credit, broker-dealers, insurance
     carriers and REITs likewise.
+- Acquired and divested revenue (found on DICK'S, FIS, Omnicom): each annual report's prior-year comparative is kept
+  (`revenue_prior_comparable`) so growth is like for like across divestitures; pro forma revenue (ASC 805, companyfacts
+  and the filings' inline XBRL per acquisition) separates bought from organic growth, the fade starts from organic growth
+  and the acquired revenue is a level shift (DICK'S: +58% year to date, 2.7% organic; base value 434 -> 206).
+- Cycles and margins: boom-then-bust revenue reads as a cycle; impairment years at established scale are not
+  pre-commercial noise; cyclical growth fades from the long-run rate, not this year's price-driven change; cycle windows
+  stop at a reorganization gap or a material acquisition; operating income is derived (pretax + interest) where the
+  latest annual report has no subtotal (Genuine Parts: 15% typical margin invented before); a stable thin-margin company
+  holds its own median margin (five profitable years inside a 5-point band), a company scaling through losses does not.
+- New economic types with drivers, risks and margin profiles: healthcare_products (commercial pharma, devices, tools),
+  healthcare_services, it_services (decided by gross margin: software or platform when the economics say so) and
+  distribution; the filer's SIC decides wholesale and health services and is the fallback when no label matches.
+- Banks and insurers valued (`forecast_financials.py`): residual income on common book equity less preferred stock and
+  AOCI, ROE fading to the company's own median with part of the excess kept (more when it beat the cost of equity in 80%
+  of seven or more years), payout at least what book growth the business can use leaves; regulatory capital stated as
+  not checked; fields the route never reads (debt, cash flow) no longer block it (19 financials valued on 20.10).
+- Discovery from every channel (`leads.py`, `channels.py`, `scripts/collect_channels.py`): EDGAR form-index events
+  (13D stakes as leads, tender offers, late filings, spin-off and IPO registrations), 8-K items for all 2,470 filers,
+  quarterly revenue acceleration from SEC frames, insider clusters, and parsers for Alpha Vantage news, estimates and
+  earnings, LunarCrush tables, FMP targets and IBKR links; syndicated copies count once; red flags never support a card;
+  `universe --channels` attaches them; a collection plan names each connector call and file.
+- Deeper filings: segment view (the base case valued again with each segment at its own pace when the two paths differ
+  by more than 2 points a year); convertible terms per instrument from inline XBRL (DoorDash, Pinterest, Collegium
+  unblocked); the two-year refinancing wall from the annual principal maturity schedule; how management is paid
+  (pay-versus-performance measures from the proxy statement, per-share or size orientation).
+- Walk-forward test of the engine itself (`engine_backtest.py`, docs/BACKTEST_ENGINE_2026-10-20.md): no demonstrated edge
+  (top fifth +7.6 points a year over the universe average, t 1.0; rank correlation 0.02); edge reliability (median yearly
+  slope of realized on predicted edge, 0.40) shrinks every edge in allocation.
+- End-to-end run (`runbook.py`, `fundamental_engine run`, `scripts/run_all.py`): research list, proposed book against the
+  read-only holdings and the index, one Hebrew report; never an order.
+- Fixes: float tolerance on liquidating the whole investment balance (5 crashes), an analysis KeyError (Ferguson), the
+  Beneish disqualifier now needs the growth-neutral score and weak operating cash flow (NVIDIA's growth alone tripped it).
 - `scripts/calibrate.py` (engine market return from a sweep: 6.28% over 351 of 491 companies, 81% of their value, against
   the 8.75% assumption), `scripts/rank_opportunities.py` (edge over that return with bear loss, quality, confidence,
   stage, disqualifiers and origin side by side; a research priority, not a recommendation) and `scripts/record_theses.py`

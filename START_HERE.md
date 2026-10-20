@@ -4,6 +4,25 @@
 checkpoint workflow. Use the data connections already available in the user's
 session. Start working; do not ask the user to repeat setup that already exists.
 
+## The whole cycle (discover -> research -> calibrate -> propose), 20.10.2026
+
+Only when the owner asks to look for companies. Data comes from the collection scripts (SEC, with a contact e-mail in
+SEC_USER_AGENT, never stored) and from the session's connectors saved into the channels folder
+(`fundamental_engine.channels.plan` names each call and file). The portfolio file is read-only and stays outside Git.
+
+```bash
+SEC_USER_AGENT="app contact@example.com" python scripts/run_all.py runs/universe_<date> --as-of <date> \
+    --channels runs/discovery_sources --positions <private>/positions.json --exposures <private>/holdings_info.json \
+    --holdings NVDA MSFT ... --backtest runs/backtest/engine_v2/summary.json [--sweep] [--skip-collect]
+python -m fundamental_engine run runs/universe_<date> --as-of <date> --calibration runs/universe_<date>/calibration.json \
+    --positions ... --backtest ...          # the last step alone, on data already collected
+```
+
+Output: `run_<date>/report_he.md` (what was searched, what the history of the engine says, the research list, the
+proposed book against the holdings and the index, what is missing) and `plan.json` with every number. Read
+docs/BACKTEST_ENGINE_2026-10-20.md first: the engine's ranking has no demonstrated edge on its own, the index is the
+default, edges are shrunk by their measured reliability and nothing is an order.
+
 ## v0.11 — one decision path (use this first)
 
 Sources -> data validation -> business understanding -> financial analysis -> forecast -> valuation ->
