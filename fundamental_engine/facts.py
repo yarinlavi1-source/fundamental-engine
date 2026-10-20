@@ -12,6 +12,7 @@ from copy import deepcopy
 from datetime import date, timedelta
 from hashlib import sha256
 import json
+import re
 
 LAG_DAYS = 2                       # a filing, or a dated bundle document, is usable two days after it is published (snapshot.PIT_LAG_DAYS)
 # filing deadlines used when the filing date is unknown (flagged): 10-K 90 days (non-accelerated filer), 10-Q 45. A quarter
@@ -121,6 +122,67 @@ INSTANT_TAGS = {
 }
 UNITS = {'eps_diluted': 'USD/share', 'shares_basic_wavg': 'shares', 'shares_diluted_wavg': 'shares',
          'shares_outstanding': 'shares', 'treasury_shares': 'shares', 'warrants_outstanding': 'shares'}
+# IFRS filers (20-F, ifrs-full taxonomy: TSMC, Novo Nordisk, SAP): the same metrics from the IFRS elements. Borrowings: the
+# noncurrent line and ONE current line per date (Novo tags its current portion as both CurrentPortionOfLongtermBorrowings and
+# ShorttermBorrowings); 'NumberOfSharesIssued' includes treasury shares (the concept name says so on the fact)
+IFRS_DURATION_TAGS = {
+    'revenue': ['revenue', 'revenuefromcontractswithcustomers'], 'cost_of_revenue': ['costofsales'], 'gross_profit': ['grossprofit'],
+    'rd': ['researchanddevelopmentexpense'], 'sga': ['sellinggeneralandadministrativeexpense'],
+    'operating_income': ['profitlossfromoperatingactivities'],
+    'interest_expense': ['interestexpenseonborrowings', 'interestexpense', 'financecosts'], 'pretax_income': ['profitlossbeforetax'],
+    'income_tax': ['incometaxexpensecontinuingoperations'], 'net_income': ['profitloss'],
+    'net_income_common': ['profitlossattributabletoownersofparent'], 'eps_diluted': ['dilutedearningslosspershare'],
+    'shares_basic_wavg': ['weightedaverageshares'], 'shares_diluted_wavg': ['adjustedweightedaverageshares'],
+    'd_and_a': ['depreciationandamortisationexpense', 'adjustmentsfordepreciationandamortisationexpense',
+                'depreciationamortisationandimpairmentlossreversalofimpairmentlossrecognisedinprofitorloss'],
+    'sbc': ['expensefromsharebasedpaymenttransactionswithemployees', 'adjustmentsforsharebasedpayments'],
+    'cfo': ['cashflowsfromusedinoperatingactivities'],
+    'capex': ['purchaseofpropertyplantandequipmentclassifiedasinvestingactivities', 'purchaseofpropertyplantandequipment',
+              'purchaseofpropertyplantandequipmentintangibleassetsotherthangoodwillinvestmentpropertyandothernoncurrentassets'],
+    'acquisitions': ['cashflowsusedinobtainingcontrolofsubsidiariesorotherbusinessesclassifiedasinvestingactivities'],
+    'buybacks': ['paymentstoacquireorredeementityshares', 'purchaseoftreasuryshares'],
+    'dividends_paid': ['dividendspaidclassifiedasfinancingactivities', 'dividendspaid'],
+    'debt_issued': ['proceedsfromnoncurrentborrowings', 'proceedsfromborrowingsclassifiedasfinancingactivities'],
+    'debt_repaid': ['repaymentsofnoncurrentborrowings', 'repaymentsofborrowingsclassifiedasfinancingactivities'],
+    'change_in_cash': ['increasedecreaseincashandcashequivalents'], 'cfi': ['cashflowsfromusedininvestingactivities'],
+    'cff': ['cashflowsfromusedinfinancingactivities'], 'fx_effect': ['effectofexchangeratechangesoncashandcashequivalents'],
+}
+IFRS_INSTANT_TAGS = {
+    'cash': ['cashandcashequivalents'],
+    'short_term_investments': ['currentinvestments', 'shorttermdepositsnotclassifiedascashequivalents',
+                               'currentfinancialassetsatamortisedcost', 'currentfinancialassetsatfairvaluethroughothercomprehensiveincome'],
+    'receivables': ['tradeandothercurrentreceivables', 'currenttradereceivables'], 'inventory': ['inventories'],
+    'current_assets': ['currentassets'], 'ppe': ['propertyplantandequipment'], 'goodwill': ['goodwill'],
+    'intangibles': ['intangibleassetsotherthangoodwill'], 'total_assets': ['assets'],
+    'payables': ['tradeandothercurrentpayables', 'tradeandothercurrentpayablestotradesuppliers'],
+    'deferred_revenue_current': ['currentcontractliabilities'], 'deferred_revenue_noncurrent': ['noncurrentcontractliabilities'],
+    'current_liabilities': ['currentliabilities'],
+    'current_portion_ltd': ['currentborrowingsandcurrentportionofnoncurrentborrowings', 'currentportionoflongtermborrowings',
+                            'shorttermborrowings'],
+    'long_term_debt': ['noncurrentportionofnoncurrentborrowings', 'longtermborrowings'],
+    'operating_lease_current': ['currentleaseliabilities'], 'operating_lease_noncurrent': ['noncurrentleaseliabilities'],
+    'total_liabilities': ['liabilities'], 'equity': ['equityattributabletoownersofparent', 'equity'],
+    'retained_earnings': ['retainedearnings'],
+    'shares_outstanding': ['numberofsharesoutstanding', 'numberofsharesissuedandfullypaid', 'numberofsharesissued'],
+}
+MONETARY = re.compile(r'^[A-Z]{3}$')
+
+
+def reporting_currency(payload):
+    """Currency of the latest annual report's monetary facts (USD figures beside another currency are convenience
+    translations): the most frequent 3-letter unit among the facts of the latest 10-K/20-F/40-F accession; 'USD' when unknown."""
+    rows = [(r.get('accn'), r.get('filed') or '', u) for tax in (payload.get('facts') or {}).values() for v in tax.values()
+            for u, rs in (v.get('units') or {}).items() if MONETARY.match(u) for r in rs if r.get('form') in ('10-K', '20-F', '40-F')]
+    if not rows:
+        return 'USD'
+    latest = max(rows, key=lambda x: x[1])[0]
+    count = {}
+    for a, _, u in rows:
+        if a == latest:
+            count[u] = count.get(u, 0) + 1
+    if len(count) > 1 and 'USD' in count and max((v for k, v in count.items() if k != 'USD'), default=0) >= .5 * count['USD']:
+        count.pop('USD')
+    return max(count, key=count.get)
 # issuer_document: the issuer's own release or filing read outside XBRL (dataset keeps the bundle kind, retrieval how it
 # was read); primary_document: a primary non-issuer document (regulator filing, official statistics), graded like an
 # issuer document; secondary: press, analysis and anything else - never graded above single_source. 'document' is the
@@ -262,7 +324,7 @@ def from_fmp_as_reported(fb, payloads, retrieved_at, kind='annual', filed_by_end
     return n
 
 
-def _prior_comparable(fb, gaap, tags, sid):
+def _prior_comparable(fb, gaap, tags, sid, ccy='USD'):
     """Prior-year revenue as presented in each fiscal year's first annual report (its comparative column), as
     'revenue_prior_comparable' with period CMP@<that year's end>. A divestiture or discontinued operation restates the
     prior year there, so it is the like-for-like base for that year's growth; the first-filed revenue facts stay the
@@ -270,7 +332,7 @@ def _prior_comparable(fb, gaap, tags, sid):
     presented in the 2023 report)."""
     by_accn = {}
     for order, tag in enumerate(tags):
-        for r in gaap[tag].get('units', {}).get('USD', []):
+        for r in gaap[tag].get('units', {}).get(ccy, []):
             if (r.get('start') and r.get('accn') and r.get('form') in ('10-K', '10-K/A', '20-F', '40-F')
                     and 350 <= (_d(r['end']) - _d(r['start'])).days <= 380):
                 by_accn.setdefault(r['accn'], {}).setdefault(order, []).append(r)
@@ -290,7 +352,7 @@ def _prior_comparable(fb, gaap, tags, sid):
             break
     for end, (_, top, prior, tag) in sorted(first.items()):
         add_fact(fb, 'revenue_prior_comparable', f'CMP@{end}', end, prior['val'], sid, 'as_reported',
-                 (_d(top['filed']) + timedelta(days=LAG_DAYS)).isoformat(), period_start=prior['start'], concept=tag)
+                 (_d(top['filed']) + timedelta(days=LAG_DAYS)).isoformat(), period_start=prior['start'], concept=tag, unit=ccy)
     return len(first)
 
 
@@ -309,28 +371,28 @@ def _ebit_proxy(fb, sid):
             continue
         i = intr.get(period)
         add_fact(fb, 'operating_income', period, f['period_end'], f['value'] + (i['value'] if i else 0.), sid, 'derived',
-                 max(f['available_at'], i['available_at']) if i else f['available_at'], period_start=f.get('period_start'),
+                 max(f['available_at'], i['available_at']) if i else f['available_at'], period_start=f.get('period_start'), unit=f.get('unit'),
                  concept='derived: pretax_income + interest_expense (no OperatingIncomeLoss tagged)',
                  derived_from=[x for x in (f.get('concept'), i and i.get('concept')) if x])
         n += 1
     return n
 
 
-def _pro_forma(fb, gaap, sid):
+def _pro_forma(fb, gaap, sid, ccy='USD'):
     """Undimensioned BusinessAcquisitionsProFormaRevenue (one acquisition in the period) as 'revenue_pro_forma' with period
     PF@start..end, first filed per period; facts tagged per acquisition come from the filing's inline XBRL (pipeline)."""
     tag = next((k for k in gaap if k.lower() == 'businessacquisitionsproformarevenue'), None)
     first = {}
-    for r in (gaap[tag].get('units', {}).get('USD', []) if tag else []):
+    for r in (gaap[tag].get('units', {}).get(ccy, []) if tag else []):
         if r.get('start') and r.get('filed') and ((r['start'], r['end']) not in first or r['filed'] < first[(r['start'], r['end'])]['filed']):
             first[(r['start'], r['end'])] = r
     for (start, end), r in sorted(first.items()):
         add_fact(fb, 'revenue_pro_forma', f'PF@{start}..{end}', end, r['val'], sid, 'as_reported',
-                 (_d(r['filed']) + timedelta(days=LAG_DAYS)).isoformat(), period_start=start, concept=f'us-gaap:{tag}')
+                 (_d(r['filed']) + timedelta(days=LAG_DAYS)).isoformat(), period_start=start, concept=f'us-gaap:{tag}', unit=ccy)
     return len(first)
 
 
-def from_sec_companyfacts(fb, payload, retrieved_at, sid='sec:companyfacts'):
+def from_sec_companyfacts(fb, payload, retrieved_at, sid='sec:companyfacts', currency=None):
     """SEC companyfacts JSON: annual (10-K, ~1 year) and standalone quarterly facts with real filing dates.
 
     Every candidate tag is read and merged per period end: the first-filed value wins (later restatements are ignored
@@ -339,11 +401,15 @@ def from_sec_companyfacts(fb, payload, retrieved_at, sid='sec:companyfacts'):
     from .pit import quarterly
     add_source(fb, sid, 'sec', 'companyfacts', 'filing_derived', retrieved_at, sha=digest(payload),
                url=f"https://data.sec.gov/api/xbrl/companyfacts/CIK{int(payload.get('cik', 0)):010d}.json")
+    ccy = currency or (fb.get('company') or {}).get('currency') or 'USD'
     gaap = payload.get('facts', {}).get('us-gaap', {})
+    dur_tags, inst_tags = DURATION_TAGS, INSTANT_TAGS
+    if not any(k.lower() in DURATION_TAGS['revenue'] for k in gaap) and payload.get('facts', {}).get('ifrs-full'):
+        gaap, dur_tags, inst_tags = payload['facts']['ifrs-full'], IFRS_DURATION_TAGS, IFRS_INSTANT_TAGS
     lower = {k.lower(): k for k in gaap}
     n = 0
-    for metric, cands in DURATION_TAGS.items():
-        unit = 'USD/shares' if metric == 'eps_diluted' else ('shares' if metric.startswith('shares_') else 'USD')
+    for metric, cands in dur_tags.items():
+        unit = f'{ccy}/shares' if metric == 'eps_diluted' else ('shares' if metric.startswith('shares_') else ccy)
         tags = [lower[c] for c in cands if c in lower]
         annual = {}                                         # end -> ((filed, tag order), row, tag)
         for order, tag in enumerate(tags):
@@ -360,15 +426,15 @@ def from_sec_companyfacts(fb, payload, retrieved_at, sid='sec:companyfacts'):
         for end, (_, r, tag) in sorted(annual.items()):
             add_fact(fb, metric, f'FY{fiscal_year(end)}', end, r['val'], sid, 'as_reported',
                      (_d(r['filed']) + timedelta(days=LAG_DAYS)).isoformat(), period_start=r['start'], concept=tag,
-                     unit=UNITS.get(metric))
+                     unit=unit if unit != 'shares' else UNITS.get(metric))
             n += 1
         if metric == 'revenue':
-            n += _prior_comparable(fb, gaap, tags, sid)
-            n += _pro_forma(fb, gaap, sid)
-        if unit != 'USD':
+            n += _prior_comparable(fb, gaap, tags, sid, ccy)
+            n += _pro_forma(fb, gaap, sid, ccy)
+        if unit != ccy:
             continue
         qs = sorted((filed, order, end, v, tag) for order, tag in enumerate(tags)
-                    for end, (v, filed) in quarterly({'us-gaap': {tag: gaap[tag]}}, [tag]).items())
+                    for end, (v, filed) in quarterly({'us-gaap': {tag: gaap[tag]}}, [tag], ccy).items())
         seen = []
         for filed, _, end, v, tag in qs:                     # earliest filed per quarter across tags (pit.quarterly rule)
             if any(abs((_d(end) - _d(x)).days) <= 15 for x in seen):
@@ -376,10 +442,10 @@ def from_sec_companyfacts(fb, payload, retrieved_at, sid='sec:companyfacts'):
             seen.append(end)
             q4 = any(abs((_d(end) - _d(a)).days) <= SAME_PERIOD_DAYS for a in annual)   # Q4 = FY - 9M YTD
             add_fact(fb, metric, f'Q@{end}', end, v, sid, 'derived' if q4 else 'as_reported',
-                     (_d(filed) + timedelta(days=LAG_DAYS)).isoformat(), concept=tag)
+                     (_d(filed) + timedelta(days=LAG_DAYS)).isoformat(), concept=tag, unit=ccy)
             n += 1
-    for metric, cands in INSTANT_TAGS.items():
-        unit = 'shares' if metric in UNITS else 'USD'
+    for metric, cands in inst_tags.items():
+        unit = 'shares' if metric in UNITS else ccy
         first = {}
         for order, tag in enumerate(lower[c] for c in cands if c in lower):
             for r in gaap[tag].get('units', {}).get(unit, []):
@@ -388,9 +454,10 @@ def from_sec_companyfacts(fb, payload, retrieved_at, sid='sec:companyfacts'):
                     first[r['end']] = (key, r, tag)
         for end, (_, r, tag) in sorted(first.items()):
             add_fact(fb, metric, 'I@' + end, end, r['val'], sid, 'as_reported',
-                     (_d(r['filed']) + timedelta(days=LAG_DAYS)).isoformat(), concept=tag, unit=UNITS.get(metric))
+                     (_d(r['filed']) + timedelta(days=LAG_DAYS)).isoformat(), concept=tag, unit=UNITS.get(metric) or unit)
             n += 1
-    n += _debt_components(fb, gaap, lower, sid)
+    n += _debt_components(fb, gaap, lower, sid, ccy)
+    n += _da_components(fb, gaap, lower, sid, ccy)
     cover = payload.get('facts', {}).get('dei', {}).get('EntityCommonStockSharesOutstanding', {}).get('units', {}).get('shares', [])
     per = {}
     for r in cover:                      # multi-class issuers: one row per class in the same filing
@@ -407,6 +474,76 @@ def from_sec_companyfacts(fb, payload, retrieved_at, sid='sec:companyfacts'):
     return n
 
 
+def inline_payload(ix, units, filed, accn, form):
+    """A saved annual report's own inline XBRL (business.parse_ixbrl, business.ix_units) as a companyfacts-shaped payload:
+    undimensioned (consolidated) facts only, each dated by that filing."""
+    out, seen = {}, set()
+    for f in ix['facts']:
+        c = ix['contexts'].get(f['context'])
+        if not c or c['dims'] or ':' not in f['concept']:
+            continue
+        prefix, name = f['concept'].split(':', 1)
+        unit = units.get(f['unit'], f['unit'])
+        row = ({'start': c['start'], 'end': c['end']} if c.get('start') else {'end': c.get('instant')})
+        if not row['end']:
+            continue
+        key = (f['concept'], unit, row.get('start'), row['end'], f['value'])
+        if key in seen:
+            continue
+        seen.add(key)
+        row.update({'val': f['value'], 'filed': filed, 'form': form, 'accn': accn, 'fp': 'FY'})
+        out.setdefault(prefix, {}).setdefault(name, {'units': {}})['units'].setdefault(unit, []).append(row)
+    return {'facts': out}
+
+
+def from_annual_inline(fb, payload, after, retrieved_at, url, sid='sec:annual_report_ixbrl', currency=None):
+    """Facts of a saved annual report that companyfacts does not carry yet (TSMC's 2025 20-F in October 2026): the payload is
+    read with the companyfacts rules, and only periods ending after `after` (the latest annual period companyfacts has) are
+    kept, under their own source. Earlier periods stay with companyfacts (first-filed values)."""
+    tmp = new(fb['company'], fb['as_of'])
+    from_sec_companyfacts(tmp, payload, retrieved_at, sid=sid, currency=currency)
+    src = dict(tmp['sources'][sid], dataset='annual report inline XBRL', url=url,
+               note='read from the filed document because companyfacts lacked its periods')
+    fb['sources'][sid] = src
+    keep = [f for f in tmp['facts'] if after is None or _d(f['period_end']) > _d(after)]
+    fb['facts'].extend(keep)
+    return len(keep)
+
+
+# IFRS depreciation and amortisation tagged only as two lines (TSMC: DepreciationExpense and AmortisationExpense): the annual
+# sum becomes d_and_a (basis 'derived') where no total line exists for that year. Right-of-use depreciation is not added
+# (usually inside depreciation already). US filers' us-gaap:Depreciation is already a d_and_a tag (DURATION_TAGS).
+DA_COMPONENTS = (('depreciationexpense', 'adjustmentsfordepreciationexpense'),
+                 ('amortisationexpense', 'adjustmentsforamortisationexpense'))
+
+
+def _da_components(fb, gaap, lower, sid, ccy='USD'):
+    have = {f['period_end'] for f in fb['facts'] if f['metric'] == 'd_and_a' and f['source_id'] == sid}
+    parts = {}                                              # end -> {group: (filed, tag, value, start)}
+    for gi, group in enumerate(DA_COMPONENTS):
+        for tag in (lower[c] for c in group if c in lower):
+            for r in gaap[tag].get('units', {}).get(ccy, []):
+                if not r.get('start') or r.get('form') not in ('10-K', '10-K/A', '20-F', '40-F'):
+                    continue
+                if not 350 <= (_d(r['end']) - _d(r['start'])).days <= 380:
+                    continue
+                cur = parts.setdefault(r['end'], {}).get(gi)
+                if cur is None or r['filed'] < cur[0]:
+                    parts[r['end']][gi] = (r['filed'], tag, r['val'], r['start'])
+            if any(gi in v for v in parts.values()):
+                break                                       # the first tag of the group that is present
+    n = 0
+    for end, by in sorted(parts.items()):
+        if len(by) < len(DA_COMPONENTS) or any(abs((_d(end) - _d(h)).days) <= SAME_PERIOD_DAYS for h in have):
+            continue
+        xs = [by[g] for g in sorted(by)]
+        add_fact(fb, 'd_and_a', f'FY{fiscal_year(end)}', end, sum(x[2] for x in xs), sid, 'derived',
+                 (_d(max(x[0] for x in xs)) + timedelta(days=LAG_DAYS)).isoformat(), period_start=xs[0][3],
+                 concept='sum:' + '+'.join(x[1] for x in xs), derived_from=[x[1] for x in xs], unit=ccy)
+        n += 1
+    return n
+
+
 # Borrowings tagged only as components, with no total-scope line on that balance sheet (Collegium 2026: term loan as
 # LongTermLoansPayable, LoansPayableCurrent, convertible notes as ConvertibleLongTermNotesPayable). Each group contributes
 # its first tag present at the date; the sum becomes the line (basis 'derived', concept names the parts). Convertible
@@ -420,14 +557,14 @@ DEBT_COMPONENTS = {
 DEBT_TOTAL_LINES = {'long_term_debt': ('long_term_debt', 'long_term_debt_tagged'), 'current_portion_ltd': ('current_portion_ltd',)}
 
 
-def _debt_components(fb, gaap, lower, sid):
+def _debt_components(fb, gaap, lower, sid, ccy='USD'):
     have = {(f['metric'], f['period_end']) for f in fb['facts'] if f['source_id'] == sid}
     n = 0
     for metric, groups in DEBT_COMPONENTS.items():
         parts = {}                                          # end -> {group index: (filed, tag, value)}
         for gi, group in enumerate(groups):
             for order, tag in enumerate(lower[c] for c in group if c in lower):
-                for r in gaap[tag].get('units', {}).get('USD', []):
+                for r in gaap[tag].get('units', {}).get(ccy, []):
                     if 'start' in r:
                         continue
                     cur = parts.setdefault(r['end'], {}).get(gi)
@@ -439,7 +576,7 @@ def _debt_components(fb, gaap, lower, sid):
             xs = [by[g] for g in sorted(by)]
             add_fact(fb, metric, 'I@' + end, end, sum(x[2] for x in xs), sid, 'derived',
                      (_d(max(x[0] for x in xs)) + timedelta(days=LAG_DAYS)).isoformat(),
-                     concept='sum:' + '+'.join(x[1] for x in xs), derived_from=[x[1] for x in xs])
+                     concept='sum:' + '+'.join(x[1] for x in xs), derived_from=[x[1] for x in xs], unit=ccy)
             n += 1
     return n
 
@@ -474,7 +611,7 @@ def from_alpha_vantage(fb, payloads, retrieved_at, prefix='av'):
     AV returns current (possibly restated) values without filing dates: availability is estimated
     and flagged, so historical as_of use is limited (connectors.py note). A quarter or balance sheet ending at a
     fiscal-year end (an annualReports date) is estimated at the annual deadline, like the annual row itself."""
-    n = 0
+    n, ccy, other = 0, fb['company']['currency'], set()
     fy_ends = _annual_ends(fb) | {r['fiscalDateEnding'] for p in payloads.values() if isinstance(p, dict)
                                   for r in p.get('annualReports', []) if r.get('fiscalDateEnding')}
     for part in ('income', 'balance', 'cashflow'):
@@ -485,6 +622,9 @@ def from_alpha_vantage(fb, payloads, retrieved_at, prefix='av'):
         for kind, key in (('annual', 'annualReports'), ('quarter', 'quarterlyReports')):
             for r in p.get(key, []):
                 end = r['fiscalDateEnding']
+                if r.get('reportedCurrency') and r['reportedCurrency'] != ccy:
+                    other.add(r['reportedCurrency'])        # never mixed into the company currency
+                    continue
                 lag = 'annual' if kind == 'annual' else _lag_kind(end, fy_ends)
                 for field, metric in AV_MAP.items():
                     raw = r.get(field)
@@ -498,8 +638,11 @@ def from_alpha_vantage(fb, payloads, retrieved_at, prefix='av'):
                         v = abs(v)
                     period = 'I@' + end if metric in AV_INSTANT else (f'AVFY@{end}' if kind == 'annual' else f'Q@{end}')
                     add_fact(fb, metric, period, end, v, sid, 'normalized', _est_available(end, lag, fb), estimated=True,
-                             unit=UNITS.get(metric), concept='av:' + field)
+                             unit=UNITS.get(metric) or ccy, concept='av:' + field)
                     n += 1
+    if other:
+        fb.setdefault('collection_notes', []).append(f"Alpha Vantage rows in {', '.join(sorted(other))} skipped: the company "
+                                                     f'reports in {ccy} (no currency is mixed)')
     return n
 
 

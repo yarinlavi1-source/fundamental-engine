@@ -514,6 +514,14 @@ def _hit(kws, low):
     return next((k for k in kws if re.search(r'(?<![a-z])' + re.escape(clean_text(k)), low)), None)
 
 
+# Mentions of semiconductor/wafer/lithography per 100,000 words of the annual report above which an industrial or hardware label
+# is read as semiconductor equipment. A heuristic, not a calibrated cut: ASML's 2025 20-F has about 260; a machinery maker that
+# only names chip shortages as a supply risk has a few. A business_model override with a reason replaces it.
+SEMI_TERMS_DENSITY = 40
+# SEC codes whose label does not tell the economics (equipment for chip makers or for food plants): the annual report is
+# collected so its own words can decide (scripts/collect_companies.py --docs-when-needed)
+AMBIGUOUS_SIC = (3559, 3825, 3827, 3829)
+
 # SEC Standard Industrial Classification ranges whose economics live on the balance sheet (same ranges as universe.py):
 # banks, credit companies, broker-dealers and insurance carriers (incl. managed care, SIC 6324) are financials; 6798 REIT.
 # A SIC code from the filer's own SEC record outranks a listing label ('Medical Specialities' for Cigna)
@@ -647,6 +655,14 @@ def _business_model(fb, an, rows, end, sig, inputs):
             text_types = [econ, 'it_services']
             reasons.append(f"IT/data-processing label with gross margin {_pct(gm)} and operating margin {_pct(om_end)} -> {econ} "
                            '(rule: gross margin >= 65% software; >= 45% with operating margin >= 20% platform); it_services kept as secondary')
+    terms = ((fb.get('business_map') or {}).get('industry_terms') or {}).get('per_100k_words') or {}
+    if text_types and text_types[0] in ('industrial', 'hardware_manufacturing') and terms.get('semiconductor', 0) >= SEMI_TERMS_DENSITY:
+        # a machinery or equipment label whose own annual report is about chips (ASML, Lam Research: SIC 3559 'Special Industry
+        # Machinery'): wafer-fab equipment follows the semiconductor capital cycle and its R&D economics
+        text_types = ['semiconductor'] + [t for t in text_types if t != 'semiconductor']
+        reasons.append(f"annual report: {terms['semiconductor']:.0f} mentions of semiconductor/wafer/lithography per 100,000 words "
+                       f"(rule: >= {SEMI_TERMS_DENSITY}) under the '{used['text'] if used else ''}' label -> semiconductor (equipment for chip "
+                       f'makers); {text_types[1] if len(text_types) > 1 else "the label"} kept as secondary')
     sig_types = []
     if gm is not None and dr is not None and cx is not None and gm >= .65 and dr >= .15 and cx <= .08 and (inv or 0) <= .05:
         sig_types.append('subscription_software')

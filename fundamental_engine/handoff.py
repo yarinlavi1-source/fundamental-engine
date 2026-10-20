@@ -11,6 +11,7 @@ picked up automatically from the company folder (inputs.json, evidence_bundle.js
 """
 from datetime import date, datetime, timedelta
 import json
+import re
 import os
 
 from . import pipeline
@@ -84,13 +85,16 @@ def listing_row(universe_raw, symbol):
     return next((x for x in rows if x['symbol'].replace('/', '-').replace('^', '-').upper() == symbol.upper()), None)
 
 
-def identity_check(companyfacts, listing=None, company=None):
+def identity_check(companyfacts, listing=None, company=None, annual_html=None):
     """Issuer, currency and security class before any per-share number (CLAUDE.md: resolve them first).
 
-    blocked when (a) most monetary facts are in a currency other than USD (USD values of such filers are convenience
-    translations: the engine models no FX translation), or (b) the listed security is a depositary share whose implied
-    ratio (listing market cap / price vs dei shares outstanding) is not 1 (the engine models no ADS ratio). The check
-    reads the saved payloads only; the reasons say what would unblock the company."""
+    The latest annual report's monetary facts decide the reporting currency (USD figures beside another currency are
+    convenience translations). A non-USD reporter is valued in its own currency and its quote converted at a dated rate
+    (fx.FRED, H.10 daily): blocked only when no such rate series exists. A depositary share needs the ratio stated in the
+    annual report (business.ads_ratio): blocked when the report is not saved, states none or states several. The ratio
+    implied by the listing market cap is a cross-check only (share counts are dated up to a year apart). The check reads the
+    saved payloads only; the reasons say what would unblock the company."""
+    from . import business, fx
     rows = []
     for tax, concepts in (companyfacts.get('facts') or {}).items():
         if tax == 'dei':
@@ -107,29 +111,50 @@ def identity_check(companyfacts, listing=None, company=None):
     for u, _ in scope:
         counts[u] = counts.get(u, 0) + 1
     cur = max(counts, key=counts.get) if counts else None
-    reasons, out = [], {'reporting_currency': cur, 'monetary_units': counts,
-                        'currency_basis': f"facts of filing {latest['accn']} ({latest.get('form')}, filed {latest.get('filed')})"
-                        if latest and scope is not rows else 'all facts (no filing identifiers)'}
+    if cur == 'USD' and len(counts) > 1:
+        other = max((k for k in counts if k != 'USD'), key=counts.get)
+        if counts[other] >= .5 * counts['USD']:        # USD convenience translations beside the reporting currency
+            cur = other
+    reasons, notes = [], []
+    out = {'reporting_currency': cur, 'monetary_units': counts,
+           'currency_basis': f"facts of filing {latest['accn']} ({latest.get('form')}, filed {latest.get('filed')})"
+           if latest and scope is not rows else 'all facts (no filing identifiers)'}
     if cur and cur != 'USD':
-        reasons.append(f'reporting currency {cur} ({counts[cur]} facts vs {counts.get("USD", 0)} in USD, which are convenience '
-                       'translations): the engine does not translate currencies; a manual FactBook in the reporting currency with a '
-                       'dated FX rate for the quote is needed')
+        if cur in fx.FRED:
+            notes.append(f'reporting currency {cur}: valued in {cur}; the quote is converted at the FRED H.10 rate '
+                         f'({fx.FRED[cur][0]}) dated on or within 7 days before the quote')
+        else:
+            reasons.append(f'reporting currency {cur} ({counts[cur]} facts vs {counts.get("USD", 0)} in USD, which are convenience '
+                           f'translations) has no dated exchange-rate series in fx.FRED: the quote cannot be converted')
     name = (listing or {}).get('name') or ''
-    ads = 'depositary' in name.lower()
+    ads = bool(re.search(r'(?i)depositary|\bADS\b|\bADR\b', name))
     out['depositary_shares'] = ads
+    stated = business.ads_ratio(annual_html) if annual_html else None
+    if stated:
+        out['stated_shares_per_depositary_share'] = {k: stated[k] for k in ('ratio', 'evidence', 'candidates', 'ambiguous')}
+        out['direct_listing'] = bool(stated.get('direct_listing'))
     if ads:
         price, cap = _num((listing or {}).get('lastsale')), _num((listing or {}).get('marketCap'))
         dei = ((companyfacts.get('facts') or {}).get('dei') or {}).get('EntityCommonStockSharesOutstanding') or {}
         sh = [r for rs in (dei.get('units') or {}).values() for r in rs]
         shares = sh and max(sh, key=lambda r: r.get('end') or '')['val']
-        ratio = (shares / (cap / price)) if price and cap and shares else None
-        out['implied_shares_per_ads'] = ratio
-        if ratio is None or abs(ratio - 1) > .06:          # share counts are dated up to a year apart
-            reasons.append('American depositary shares: ' + (f'about {ratio:.2f} ordinary shares per ADS implied by the listing '
-                                                               'market cap; ' if ratio else 'ratio unknown; ')
-                           + 'per-share values need the deposit-agreement ratio from the annual report (not modelled)')
+        implied = (shares / (cap / price)) if price and cap and shares else None
+        out['implied_shares_per_ads'] = implied
+        if not stated or stated.get('direct_listing'):
+            reasons.append('American depositary shares: ' + ('the saved annual report states no depositary ratio' if annual_html else
+                                                              'the annual report is not saved')
+                           + (f' (about {implied:.2f} ordinary shares per ADS implied by the listing market cap)' if implied else '')
+                           + '; per-share values need the ratio stated in the annual report')
+        elif stated['ambiguous']:
+            reasons.append(f"American depositary shares: the annual report states several ratios {stated['candidates']}; "
+                           'a reviewer must name the one for the listed class')
+        elif implied and abs(implied / stated['ratio'] - 1) > .25:
+            notes.append(f"stated ratio {stated['ratio']:g} ordinary shares per ADS vs about {implied:.2f} implied by the listing "
+                         'market cap: check for a ratio change after the annual report')
     if (company or {}).get('annual_form') in ('20-F', '20-F/A', '40-F'):
-        out['note'] = 'foreign private issuer: annual reports only (no 10-Q); interim 6-K figures are not in companyfacts'
+        notes.append('foreign private issuer: annual reports only (no 10-Q); interim 6-K figures are not in companyfacts')
+    if notes:
+        out['note'] = '; '.join(notes)
     out['status'] = 'blocked' if reasons else 'ok'
     out['reasons'] = reasons
     return out

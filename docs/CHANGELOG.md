@@ -152,6 +152,40 @@
   engine's capital per unit of new revenue (`growth_capex_recomputed`) unless capex paths are overridden too, and the recorded
   reinvestment assumption shows the executed path. Before, the capex of the discarded engine path was kept (NVIDIA: a change
   to that discarded path moved the value by about $20 a share).
+- Foreign issuers are valued in their own currency instead of being blocked (`fx.py`, facts, pipeline, handoff):
+  - the latest annual report's monetary facts decide the reporting currency (USD convenience translations beside it are
+    ignored); IFRS filers are read from the ifrs-full taxonomy with their own tag map (revenue, operating profit, cash flows,
+    borrowings, share counts), and every monetary fact carries the reporting currency as its unit, quarters included;
+  - the quote becomes the price of one ordinary share in the reporting currency: quote x the FRED H.10 rate dated on or
+    within seven days before the quote / the ordinary shares per depositary share stated in the annual report
+    (`business.ads_ratio`: numbers, words and share classes; a direct listing such as ASML is one for one). Without a dated
+    rate or a stated ratio nothing is guessed: the quote is left and the forecast reports no quote in the company currency;
+    a USD depositary share without a stated ratio withholds the forecast;
+  - `handoff.identity_check` no longer blocks a non-USD reporter with a rate series; a depositary share needs the stated
+    ratio (blocked when the report is not saved, states none or several); the listing-implied ratio is a cross-check;
+  - `scripts/collect_companies.py --docs-when-needed` fetches the annual report for foreign, depositary and ambiguous-SIC
+    issuers and the FRED series for the reporting currency (generic user agent: the SEC contact e-mail goes only to the SEC);
+  - companyfacts can lag a filing (TSMC's 2025 20-F, filed 2026-04-16, was absent in October): the periods after the latest
+    companyfacts year are read from the saved document's own inline XBRL under their own source (`facts.inline_payload`,
+    `facts.from_annual_inline`);
+  - IFRS cover share classes are summed (Novo Nordisk A and B shares had overwritten each other: blocked as a conflict);
+    IFRS depreciation and amortisation tagged as two lines are summed (TSMC had used capex as the depreciation proxy); SAP's
+    combined capex line is mapped; Alpha Vantage rows in another currency are skipped, never mixed.
+- Cyclical companies with a secular trend (found on ASML, 20.10.2026): the mid-cycle revenue had been the window mean moved
+  to today at a growth rate bounded to 5% even inside the sample, which put ASML's 2026 revenue 25% under its 2025 level
+  although nine years of 18% trend growth left 2025 below its own trend. Now, with at least six years at today's scale,
+  the trend level at the latest year is the fitted value of the log-linear regression (in sample) and only the growth after
+  it is bounded: it may exceed the 5% long-run bound only as far as the data support it with about 95% confidence (slope
+  less two standard errors), within the revenue-scale base rate, fading to terminal. A noisy boom-bust history keeps the
+  bound. Today's distance from the trend closes geometrically (a flat level blended with a fast trend had made a catch-up
+  jump). The cycle's bull margin is capped at the type ceiling or the evidenced peak, whichever is higher (ASML's bull had
+  collapsed onto the base under the 20% industrial ceiling). The moat proxy is no longer blocked for every cyclical: with at
+  least six years of ROIC the lowest year of the last ten replaces the average (a franchise earns its excess return at the
+  trough). ASML base value: 245 -> 525 EUR a share against a 1,462 EUR quote (still far below: no consensus, unknown moat).
+- Business type from the annual report's own words where the SEC code is ambiguous: a machinery or hardware label whose
+  annual report mentions semiconductor/wafer/lithography at least 40 times per 100,000 words is typed semiconductor
+  (equipment), the label kept as secondary (`business.industry_terms`, `model_card.SEMI_TERMS_DENSITY`; a heuristic, ASML has
+  about 260).
 
 ## 0.11.1 — verified review-fix cycle (20.10.2026)
 

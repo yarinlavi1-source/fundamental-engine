@@ -21,7 +21,7 @@ from datetime import datetime, timezone
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 sys.path.insert(0, os.path.dirname(__file__))
 from collect_universe import fetch  # noqa: E402
-from fundamental_engine import handoff  # noqa: E402
+from fundamental_engine import fx, handoff, model_card, pipeline  # noqa: E402
 
 
 def _cover_missing(raw):
@@ -48,6 +48,38 @@ def _has_convertibles(raw):
     recent = str(int(cut) - 2)
     return any('convertible' in k.lower() and any((r.get('end') or '') >= recent for u in v.get('units', {}).values() for r in u)
                for k, v in g.items())
+
+
+def _needs_annual(raw, company, listing):
+    """The annual report is read for: a foreign private issuer or a non-USD reporter (depositary ratio, currency), a depositary
+    share, and an SEC code whose label does not tell the economics (model_card.AMBIGUOUS_SIC: its own words decide the type)."""
+    sub = os.path.join(raw, 'sec__submissions.json')
+    d = {}
+    if os.path.exists(sub):
+        with open(sub, encoding='utf-8') as f:
+            d = json.load(f)
+    sic = int(d['sic']) if str(d.get('sic') or '').isdigit() else company.get('sic')
+    forms = ((d.get('filings') or {}).get('recent') or {}).get('form') or []
+    foreign = company.get('annual_form') in ('20-F', '40-F') or any(f in ('20-F', '40-F') for f in forms[:200])
+    ads = 'depositary' in ((listing or {}).get('name') or '').lower()
+    return foreign or ads or sic in model_card.AMBIGUOUS_SIC
+
+
+def fetch_fx(ccy):
+    """FRED H.10 daily series for the reporting currency into pipeline.FX_DIR (refreshed when older than a day)."""
+    if ccy not in fx.FRED:
+        return None
+    os.makedirs(pipeline.FX_DIR, exist_ok=True)
+    sid = fx.FRED[ccy][0]
+    path = os.path.join(pipeline.FX_DIR, f'{sid}.csv')
+    if os.path.exists(path) and time.time() - os.path.getmtime(path) < 86400:
+        return path
+    status, body = fetch(fx.URL.format(sid), {'User-Agent': 'fundamental-engine'})   # the SEC contact e-mail stays with the SEC
+    if status == 200 and (body.startswith(b'observation_date') or body.startswith(b'DATE')):
+        with open(path, 'wb') as f:
+            f.write(body)
+        return path
+    return None
 
 
 def collect(folder, c, ua, docs=True, only_quarterly=False):
@@ -84,7 +116,9 @@ def collect(folder, c, ua, docs=True, only_quarterly=False):
             # the quarterly report when cover shares are missing; both reports when companyfacts shows convertible debt (the
             # per-instrument conversion terms live in the inline XBRL, often only in the annual report)
             conv = _has_convertibles(c['raw'])
-            docs = [d for d in docs if conv or (d['file'] == 'sec__latest_quarterly.htm' and _cover_missing(c['raw']))]
+            annual = _needs_annual(c['raw'], c['company'], handoff.listing_row(os.path.join(folder, 'raw'), c['symbol']))
+            docs = [d for d in docs if conv or (d['file'] == 'sec__latest_quarterly.htm' and _cover_missing(c['raw']))
+                    or (annual and d['file'] == 'sec__annual_report.htm')]
         for d in docs:
             path = os.path.join(c['raw'], d['file'])
             if os.path.exists(path) and (old.get(d['file']) or {}).get('accession') == d['accession']:
@@ -112,8 +146,18 @@ def collect(folder, c, ua, docs=True, only_quarterly=False):
     facts = os.path.join(c['raw'], 'sec__companyfacts.json')
     if not os.path.exists(facts):
         return {'status': 'blocked', 'reasons': ['SEC companyfacts not retrieved']}
+    annual_path = os.path.join(c['raw'], 'sec__annual_report.htm')
+    html = None
+    if os.path.exists(annual_path):
+        with open(annual_path, encoding='utf-8', errors='replace') as f:
+            html = f.read()
     with open(facts, encoding='utf-8') as f:
-        chk = handoff.identity_check(json.load(f), handoff.listing_row(raw_u, c['symbol']), c['company'])
+        chk = handoff.identity_check(json.load(f), handoff.listing_row(raw_u, c['symbol']), c['company'], annual_html=html)
+    if chk.get('reporting_currency') not in (None, 'USD'):
+        chk['fx_series'] = fetch_fx(chk['reporting_currency'])
+    # the pipeline divides the quote of a depositary share by the stated ratio even when the currencies match
+    with open(os.path.join(c['folder'], 'company.json'), 'w', encoding='utf-8') as f:
+        json.dump({**c['company'], 'depositary_shares': chk.get('depositary_shares')}, f, indent=1, ensure_ascii=False)
     blocked = os.path.join(c['folder'], 'BLOCKED.json')
     if chk['status'] == 'blocked':
         with open(blocked, 'w', encoding='utf-8') as f:
@@ -130,7 +174,9 @@ def main(argv=None):
     ap.add_argument('--tries', type=int, default=4, help='candidates tried per lane before the lane is reported empty')
     ap.add_argument('--no-docs', action='store_true', help='skip the annual and quarterly report documents (faster samples)')
     ap.add_argument('--docs-when-needed', action='store_true', help='fetch the quarterly report only when companyfacts has no '
-                                                                     'recent cover share count (multi-class issuers); no annual report')
+                                                                     'recent cover share count (multi-class issuers); the annual report '
+                                                                     'only for convertibles, foreign or depositary issuers and ambiguous '
+                                                                     'SEC codes')
     ap.add_argument('--name', default=None, help='queue file companies/QUEUE_<name>.json (default QUEUE.json; with --symbols '
                                                  'QUEUE_symbols.json, so a holdings run never overwrites the discovery queue)')
     a = ap.parse_args(argv)

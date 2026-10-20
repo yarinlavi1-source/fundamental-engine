@@ -67,8 +67,15 @@ def factbook_from_run_dir(raw_dir, company, as_of):
     for c in manifest.get('calls', manifest if isinstance(manifest, list) else []):
         if isinstance(c, dict) and c.get('file'):
             when[c['file']] = c.get('retrieved_at_utc') or c.get('retrieved_utc') or c.get('retrieved_at')
+    cfacts = _load(p('sec__companyfacts.json')) if os.path.exists(p('sec__companyfacts.json')) else None
+    rc = F.reporting_currency(cfacts) if cfacts else None
+    if rc and rc != company.get('currency'):
+        # the filings decide the currency of every number; the quote keeps its own (converted per ordinary share below)
+        company = {**company, 'currency': rc, 'quote_currency': company.get('quote_currency') or company.get('currency') or 'USD'}
     fb = F.new(company, as_of)
     notes = fb.setdefault('collection_notes', [])
+    if rc and company.get('quote_currency') and company['quote_currency'] != rc:
+        notes.append(f"the filings report in {rc}; the quote is in {company['quote_currency']} and is converted per ordinary share")
 
     def later(d, what):
         # information dated after the cutoff is skipped, never relabelled to the cutoff (no look-ahead)
@@ -92,8 +99,9 @@ def factbook_from_run_dir(raw_dir, company, as_of):
     av = {k: _load(p(f'av__{k}.json')) for k in ('income', 'balance', 'cashflow') if os.path.exists(p(f'av__{k}.json'))}
     if av:
         F.from_alpha_vantage(fb, av, when.get('av__income.json') or as_of)
-    if os.path.exists(p('sec__companyfacts.json')):
-        F.from_sec_companyfacts(fb, _load(p('sec__companyfacts.json')), when.get('sec__companyfacts.json') or as_of)
+    if cfacts is not None:
+        F.from_sec_companyfacts(fb, cfacts, when.get('sec__companyfacts.json') or as_of)
+        _annual_inline(fb, raw_dir, manifest, when, as_of, notes, later)
     sf = p('fmp__shares-float__current.json')
     if os.path.exists(sf):
         rows = _load(sf)
@@ -121,7 +129,8 @@ def factbook_from_run_dir(raw_dir, company, as_of):
             if not d:
                 notes.append('price snapshot has no timestamp; dated as_of')
             F.add_source(fb, 'ib:snapshot', 'ib', 'price-snapshot', 'market_feed', when.get(os.path.basename(snap)) or as_of, sha=F.digest(s))
-            F.set_price(fb, last['price'], d or as_of, 'ib:snapshot', kind='close' if last.get('is_close') else 'last')
+            F.set_price(fb, last['price'], d or as_of, 'ib:snapshot', kind='close' if last.get('is_close') else 'last',
+                        currency=s.get('currency') or company.get('quote_currency') or company['currency'])
     _business(fb, raw_dir, manifest, as_of, notes)
     lp = p(f"listing__price-{company['ticker'].upper()}__current.json")
     if not fb['market'].get('price') and os.path.exists(lp):
@@ -130,9 +139,82 @@ def factbook_from_run_dir(raw_dir, company, as_of):
         if s.get('price') and s.get('date') and not later(s['date'], 'listing price'):
             F.add_source(fb, 'listing:price', s.get('provider') or 'listing', s.get('dataset') or 'last sale', 'market_feed',
                          s.get('retrieved_at_utc') or s['date'], sha=F.digest(s), url=s.get('url'), note=s.get('note'))
-            F.set_price(fb, s['price'], s['date'], 'listing:price', kind='last')
+            F.set_price(fb, s['price'], s['date'], 'listing:price', kind='last',
+                        currency=s.get('currency') or company.get('quote_currency') or company['currency'])
             notes.append(f"price from the listing feed ({s.get('provider')}), not a broker quote: {s.get('note') or 'last sale at retrieval'}")
+    _convert_quote(fb, raw_dir, as_of, notes)
     return fb
+
+
+def _annual_inline(fb, raw_dir, manifest, when, as_of, notes, later):
+    """companyfacts can lag a filing (TSMC's 2025 20-F, filed 2026-04-16, was absent in October 2026): when the saved annual
+    report covers a later fiscal year than companyfacts, that year's facts are read from the document's own inline XBRL."""
+    from . import business
+    calls = manifest.get('calls', []) if isinstance(manifest, dict) else manifest
+    ann = next((c for c in calls if isinstance(c, dict) and c.get('file') == 'sec__annual_report.htm' and c.get('status') == 200
+                and c.get('filed') and c.get('report_date')), None)
+    path = os.path.join(raw_dir, 'sec__annual_report.htm')
+    if not ann or not os.path.exists(path) or later(ann['filed'], 'annual report'):
+        return
+    have = [f['period_end'] for f in fb['facts'] if f['metric'] == 'revenue' and f['source_id'] == 'sec:companyfacts'
+            and f['period'].startswith('FY')]
+    last = max(have, default=None)
+    if last is not None and (F._d(ann['report_date']) - F._d(last)).days <= F.SAME_PERIOD_DAYS:
+        return
+    with open(path, encoding='utf-8', errors='replace') as f:
+        html = f.read()
+    payload = F.inline_payload(business.parse_ixbrl(html), business.ix_units(html), ann['filed'], ann.get('accession'),
+                               ann.get('form') or '10-K')
+    n = F.from_annual_inline(fb, payload, last, when.get('sec__annual_report.htm') or as_of, ann.get('url'))
+    if n:
+        notes.append(f"companyfacts has no {ann.get('form') or 'annual report'} for {ann['report_date']} (filed {ann['filed']}): {n} facts "
+                     "read from the saved document's own inline XBRL")
+
+
+FX_DIR = os.environ.get('FUNDAMENTAL_ENGINE_FX_DIR') or os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                                                                    'runs', 'macro', 'fred')
+
+
+def _convert_quote(fb, raw_dir, as_of, notes):
+    """A quote in another currency than the filings (a USD depositary share of a TWD, DKK, EUR or CNY reporter) becomes the
+    price of one ordinary share in the reporting currency: quote x (reporting currency per USD on the quote date, FRED H.10)
+    / ordinary shares per depositary share (read from the annual report: 'each ADS represents five common shares'). Without
+    a dated rate or a stated ratio the quote is left as it is and the forecast reports that no quote in the company currency
+    exists (never a guessed rate or ratio)."""
+    from . import business, fx
+    price, ccy = (fb.get('market') or {}).get('price'), fb['company'].get('currency')
+    ads = bool(fb['company'].get('depositary_shares'))
+    if not price or (price.get('currency', ccy) == ccy and not ads):
+        return
+    pccy = price.get('currency', ccy)
+    rate = fx.rate(ccy, price['as_of'], FX_DIR) if pccy == 'USD' else None
+    doc = os.path.join(raw_dir, 'sec__annual_report.htm')
+    ratio = None
+    if os.path.exists(doc):
+        with open(doc, encoding='utf-8', errors='replace') as f:
+            ratio = business.ads_ratio(f.read())
+    if ratio and ratio.get('direct_listing') and ads:
+        ratio = None                     # a depositary share is never one-for-one by default
+    if not rate or not ratio or ratio.get('ambiguous'):
+        notes.append(f"quote in {pccy} not converted to {ccy} per ordinary share: " + ('no dated exchange rate' if not rate else
+                     'the depositary ratio is not stated in the saved annual report' if not ratio else
+                     f"the annual report states several depositary ratios {ratio['candidates']}"))
+        if ads and pccy == ccy:
+            # the price stays per depositary share; dataqa sees the unresolved security class and the valuation is withheld
+            fb['market']['price']['unresolved'] = 'depositary share without a stated ratio'
+        return
+    value = price['value'] * rate['value'] / ratio['ratio']
+    if rate['series']:
+        F.add_source(fb, 'fx:fred', 'fred', rate['series'], 'market_feed', rate['date'], url=rate['source'], note=rate.get('quote'))
+    conv = {'quote': price['value'], 'quote_currency': pccy, 'quote_source_id': price['source_id'],
+            'fx': rate, 'shares_per_depositary_share': ratio['ratio'], 'ratio_evidence': ratio['evidence'],
+            'direct_listing': bool(ratio.get('direct_listing')),
+            'formula': 'quote x reporting currency per USD / ordinary shares per depositary share'}
+    F.set_price(fb, value, price['as_of'], price['source_id'], kind=price.get('kind', 'last'), currency=ccy)
+    fb['market']['price']['conversion'] = conv
+    notes.append(f"quote {price['value']} {pccy} per {'ordinary share (direct listing)' if ratio.get('direct_listing') else 'depositary share'}"
+                 f" = {value:,.2f} {ccy} per ordinary share ({rate['value']:.4f} {ccy}/USD on {rate['date']}, {ratio['ratio']:g} shares per "
+                 'listed share)')
 
 
 def _business(fb, raw_dir, manifest, as_of, notes):

@@ -537,6 +537,17 @@ class OtherTypesTests(unittest.TestCase):
         cons = steady_fb('Technology', 'EDP Services', rev, [.15, .15, .15, .15], .34, .02)
         self.assertEqual(card(cons)['business_model']['primary'], 'it_services')
 
+    def test_machinery_label_with_a_chip_equipment_annual_report(self):
+        rev = [2.2e10, 2.6e10, 2.8e10, 3.2e10]
+        fab = steady_fb('Technology', 'Special Industry Machinery, NEC', rev, [.30, .32, .31, .34], .51, .05)
+        self.assertEqual(card(fab)['business_model']['primary'], 'industrial')             # the label alone: machinery
+        fab['business_map'] = {'industry_terms': {'per_100k_words': {'semiconductor': 250.}}}   # SYNTHETIC report density
+        bm = card(fab)['business_model']
+        self.assertEqual((bm['primary'], bm['secondary']), ('semiconductor', ['industrial']))
+        self.assertIn('per 100,000 words', bm['reasons'][-1])
+        fab['business_map'] = {'industry_terms': {'per_100k_words': {'semiconductor': 8.}}}     # chip shortages as a supply risk
+        self.assertEqual(card(fab)['business_model']['primary'], 'industrial')
+
     def test_specialist_routes_need_their_data(self):
         rev = [5e8] * 4
         base = dict(revenue=rev, operating_income=[1.5e8] * 4, cfo=[2.5e8] * 4, capex=[3e8] * 4, cash=[1e8] * 4, equity=[4e9] * 4)

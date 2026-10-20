@@ -117,6 +117,7 @@ EQUITY_FEE = .03          # gross spread on an assumed follow-on equity raise
 SCALE_CAPS = ((1e8, 1.0), (1e9, .6), (1e10, .4), (5e10, .25), (float('inf'), .15))
 CYCLE_TREND = (-.03, TERMINAL_GROWTH_CAP + .02)   # bounds on the long-run (trend) growth of a cyclical's revenue
 CYCLE_CONV = {'bear': 2, 'base': 3, 'bull': 4}     # years for a cyclical to revert from today's level to its cycle path
+CYCLE_FIT_MIN_YEARS = 6   # fewer years than about one full cycle (3-5 years) plus a leg: the fitted slope is one up-leg, not a trend
 DECLINE_FLOOR = -.05      # lowest perpetual growth for a structurally declining business
 KNOWN_INPUTS = ('overrides', 'reviews', 'risk_free', 'equity_risk_premium', 'horizon_years', 'financing', 'nol', 'cyclical')
 CYCLE_TREATMENTS = ('structural', 'cyclical')   # inputs['cyclical']['treatment'] for an industry-cyclical company at a margin peak
@@ -286,7 +287,9 @@ def _moat_proxy(card, h, fb, normalize):
     """Weight (0..1) of the strong-moat rules for base and bull when no analyst assessed the moat, with its evidence."""
     dims = card.get('dimensions') or {}
     blocked = []
-    if normalize:
+    cycle_roic = [x for x in (h.get('roic_series_all') or [])[-10:]]
+    through_cycle = normalize and len(cycle_roic) >= CYCLE_FIT_MIN_YEARS
+    if normalize and not through_cycle:
         blocked.append('cyclical normalization (returns measured over the cycle, not a franchise)')
     weak = [d for d in PROXY_BLOCK_DIMS if (dims.get(d) or {}).get('assessment') == 'weak' and (dims.get(d) or {}).get('source') == 'analyst']
     if weak:
@@ -311,11 +314,15 @@ def _moat_proxy(card, h, fb, normalize):
     else:
         w_pp, pp_note = 0., 'pricing power not evidenced (fewer than three gross margins, or falling)'
     roic_avg = h.get('roic_avg')
-    parts = {'pricing_power': w_pp, 'roic_avg': _ramp(roic_avg, *PROXY_RAMPS['roic_avg']),
+    # a cyclical's average return is the cycle's; a franchise still earns its excess return at the trough, so with at least
+    # CYCLE_FIT_MIN_YEARS years the LOWEST yearly ROIC of the last ten replaces the 5-year average (ASML: 17% at its trough)
+    roic_used = min(cycle_roic) if through_cycle else roic_avg
+    parts = {'pricing_power': w_pp, 'roic_avg': _ramp(roic_used, *PROXY_RAMPS['roic_avg']),
              'incremental_roic': _ramp(h.get('inc_roic'), *PROXY_RAMPS['incremental_roic'])}
     w = 0. if blocked else round(min(parts.values()), 4)
-    note = (f"{pp_note}; average ROIC {_pct(roic_avg)} over {len(h.get('roic_series') or [])} years; incremental ROIC "
-            f"{_pct(h.get('inc_roic'))}" + ('' if h.get('inc_roic') is not None else ' (not measurable: no proxy)'))
+    note = (f"{pp_note}; " + (f"trough ROIC {_pct(roic_used)} over {len(cycle_roic)} years (cyclical: the cycle's low, not its average)"
+                              if through_cycle else f"average ROIC {_pct(roic_avg)} over {len(h.get('roic_series') or [])} years")
+            + f"; incremental ROIC {_pct(h.get('inc_roic'))}" + ('' if h.get('inc_roic') is not None else ' (not measurable: no proxy)'))
     return {'weight': w, 'parts': parts, 'blocked': blocked, 'evidence': note}
 
 
@@ -478,9 +485,13 @@ def _comparable_from(h, an):
 
 
 def _cycle_stats(h):
-    """Mid-cycle revenue: window mean placed at the window's mid date, a log-linear trend slope bounded to a long-run
-    rate, and the historical peak / trough relative to that trend. Only revenue at today's scale (_comparable_from); None
-    with fewer than three such years."""
+    """Mid-cycle revenue: the log-linear trend of the window, the long-run (out-of-sample) rate bounded, and the historical
+    peak / trough relative to that trend. Only revenue at today's scale (_comparable_from); None with fewer than three such
+    years. With at least CYCLE_FIT_MIN_YEARS years the trend level at the latest fiscal year is the fitted value of the
+    regression itself (in sample, measured); only the growth AFTER it is bounded. With fewer years one up-leg cannot be told
+    from a trend, so the window mean is placed at its mid date and moved at the bounded rate (conservative). Bounding the
+    in-sample slope too had put ASML's mid-cycle revenue 25% below its 2025 level although nine years of 18% trend growth
+    left 2025 below the fitted trend (2026-10)."""
     k = h.get('scale_from', 0)
     ends, rev = h['ends'][k:][-10:], h['revenue'][k:][-10:]
     if len(rev) < 3:
@@ -489,13 +500,26 @@ def _cycle_stats(h):
     y = [math.log(r) for r in rev]
     xm, ym = sum(x) / len(x), sum(y) / len(y)
     sxx = sum((a - xm) ** 2 for a in x)
-    slope = math.exp(sum((a - xm) * (b - ym) for a, b in zip(x, y)) / sxx) - 1 if sxx > 0 else 0.
-    g = _clamp(slope, *CYCLE_TREND)
+    b = sum((a - xm) * (c - ym) for a, c in zip(x, y)) / sxx if sxx > 0 else 0.
+    slope = math.exp(b) - 1
+    g, g_basis, lower = _clamp(slope, *CYCLE_TREND), 'bounded', None
     mid = (_d(ends[0]) + timedelta(days=round(xm * 365.25))).isoformat()
     mean = sum(rev) / len(rev)
-    ratio = [r / (mean * (1 + g) ** years(mid, e)) for e, r in zip(ends, rev)]
-    return {'mean_revenue': mean, 'mid_date': mid, 'slope': slope, 'trend_growth': g, 'years': len(rev),
-            'peak_ratio': max(ratio), 'trough_ratio': min(ratio), 'window': [ends[0], ends[-1]]}
+    fitted = len(rev) >= CYCLE_FIT_MIN_YEARS
+    if fitted and sxx > 0:
+        # a secular grower in a cyclical industry: growth above the long-run bound is used only as far as the data support it
+        # (the slope less two standard errors, about the lower end of a 95% interval), within the revenue-scale base rate
+        se = math.sqrt(sum((c - ym - b * (a - xm)) ** 2 for a, c in zip(x, y)) / (len(x) - 2) / sxx)
+        lower = math.exp(b - 2 * se) - 1
+        cap = (h.get('g_scale_cap') or {}).get('cap')
+        if lower > CYCLE_TREND[1]:
+            g, g_basis = min(lower, cap) if cap is not None else lower, 'measured_lower_bound'
+    trend = ((lambda e: math.exp(ym + b * (years(ends[0], e) - xm))) if fitted else (lambda e: mean * (1 + g) ** years(mid, e)))
+    ratio = [r / trend(e) for e, r in zip(ends, rev)]
+    return {'mean_revenue': mean, 'mid_date': mid, 'slope': slope, 'slope_lower_2se': lower, 'trend_growth': g,
+            'trend_growth_basis': g_basis, 'years': len(rev), 'trend_end': ends[-1], 'trend_level': trend(ends[-1]),
+            'trend_basis': 'fitted' if fitted else 'window_mean', 'peak_ratio': max(ratio), 'trough_ratio': min(ratio),
+            'window': [ends[0], ends[-1]]}
 
 
 def _history(fb, an, warn):
@@ -616,7 +640,9 @@ def _history(fb, an, warn):
     h['roic'] = _metric(an, 'roic')
     h['inc_roic'] = _metric(an, 'incremental_roic_3y')
     ser = [_num(x.get('roic')) for x in (((an.get('forensics') or {}).get('roic') or {}).get('series') or []) if isinstance(x, dict)]
-    ser = [x for x in ser if x is not None][-5:]
+    ser = [x for x in ser if x is not None]
+    h['roic_series_all'] = ser[-10:]
+    ser = ser[-5:]
     h['roic_series'], h['roic_avg'] = ser, (_mean(ser) if ser else None)
     gt = facts.annual_table(fb, ['revenue', 'gross_profit', 'cost_of_revenue'])
     gms = []
@@ -873,11 +899,14 @@ def _margin_targets(route, h, warn):
         if cm['years'] < 5:
             warn('cycle_not_observed', f"only {cm['years']} fiscal years of margins: mid-cycle margin may not span a full cycle", 'high')
         mid, trough, peak = cm['mid'], cm['trough'], cm['peak']
-        t = {'base': mid, 'bear': mid - max(sp, .5 * (mid - trough)), 'bull': min(ceil, mid + max(sp, .5 * (peak - mid)))}
+        # the type ceiling caps assumed expansion, never a margin the company has already earned (ASML's 36% peak against the
+        # 20% industrial ceiling had collapsed its bull to the base)
+        t = {'base': mid, 'bear': mid - max(sp, .5 * (mid - trough)), 'bull': min(max(ceil, peak), mid + max(sp, .5 * (peak - mid)))}
         why = (f"mid-cycle = sum(operating income) / sum(revenue) over {cm['years']} fiscal years {_pct(mid)} (the cycle's own average "
                f"EBIT; the simple mean of yearly margins, {_pct(cm['simple_mean'])}, would drop the operating leverage); around the cycle, "
                f'not at its extremes: bear = mid - max(stage spread, half the distance to the trough {_pct(trough)}), bull = mid + '
-               f'max(stage spread, half the distance to the peak {_pct(peak)}), capped at the type ceiling')
+               f'max(stage spread, half the distance to the peak {_pct(peak)}), capped at the type ceiling {_pct(ceil)} or the '
+               'evidenced peak, whichever is higher')
     elif route['method'] == 'scenario_survival_fcff':
         base = max(typ * .8, min(m0 if m0 is not None else 0, ceil))
         lows = [m for m in h['m_all'][-5:]]
@@ -1021,20 +1050,25 @@ def _params(route, h, cal, cons, rf, ku, debt0, ov, warn):
         gT[s] = ov(s, 'terminal_growth', gT[s])
     hl = ov('base', 'growth_half_life', st['half_life'])
     cur = _current_year(route, h, cal, cons)
-    level, e0 = None, 0.
+    level, e0, dev0 = None, 0., 1.
     if cyc:
-        trend_b1 = cyc['mean_revenue'] * (1 + cyc['trend_growth']) ** years(cyc['mid_date'], b1)
+        trend_at = lambda d: cyc['trend_level'] * (1 + cyc['trend_growth']) ** years(cyc['trend_end'], d)
+        trend_b1 = trend_at(b1)
     if cur:
         r_fy, g_cur, cur_basis, cur_kind = cur['r_fy'], cur['g_cur'], cur['basis'], cur['kind']
         level = r_fy
+        dev0 = r_fy / trend_b1 if cyc else 1.
     elif cyc:
         newer = h['ttm']['period_end'] and _d(h['ttm']['period_end']) > _d(h['last_end']) and h['ttm']['revenue']
         level, l_end = (h['ttm']['revenue'], h['ttm']['period_end']) if newer else (h['last_revenue'], h['last_end'])
         e0 = years(l_end, b1)
         w0 = min(1., e0 / CYCLE_CONV['base'])
-        r_fy = level + (trend_b1 - level) * w0
+        # today's distance from the trend (a ratio) closes geometrically; holding today's level flat while the trend grows
+        # would add a catch-up jump on top of the trend growth for a fast-trending cyclical
+        dev0 = level / trend_at(l_end)
+        r_fy = trend_b1 * dev0 ** (1 - w0)
         g_cur, cur_kind = (r_fy / h['last_revenue']) ** (1 / k) - 1, 'model'
-        cur_basis = (f"cyclical: today's level {level:,.0f} (to {l_end}) moving {w0:.0%} of the way to the mid-cycle trend {trend_b1:,.0f} "
+        cur_basis = (f"cyclical: today's level {level:,.0f} (to {l_end}, {dev0:.2f} x its trend) closing {w0:.0%} of that distance (in log terms) to the mid-cycle trend {trend_b1:,.0f} "
                      f"by {b1} (reversion over {CYCLE_CONV['base']} years; never the peak grown at a trough-to-peak growth rate)")
     else:
         g_cur, cur_kind = _clamp(h['g_trailing'], -.5, 2.), 'model'
@@ -1078,13 +1112,13 @@ def _params(route, h, cal, cons, rf, ku, debt0, ov, warn):
                 trend *= 1 + gt[t - 1]
                 w = min(1., (e0 + t) / CYCLE_CONV[s])
                 weights[s].append(w)
-                r.append(level * (1 - w) + factor[s] * trend * w)
+                r.append(trend * dev0 ** (1 - w) * factor[s] ** w)
             rates[s] = r
         rates['bear'] = [min(x, y * (1 - 1e-3)) if i else x for i, (x, y) in enumerate(zip(rates['bear'], rates['base']))]
         rates['bull'] = [max(x, y * (1 + 1e-3)) if i else x for i, (x, y) in enumerate(zip(rates['bull'], rates['base']))]
         paths = {s: [b / a - 1 for a, b in zip(rates[s], rates[s][1:])] for s in SCEN}
         g_kind = 'model'
-        cyc_meta = dict(cyc, trend_at_current_fy=trend_b1, level=level, elapsed_at_current_fy=e0, long_run_growth=g_long,
+        cyc_meta = dict(cyc, trend_at_current_fy=trend_b1, level=level, distance_from_trend=dev0, elapsed_at_current_fy=e0, long_run_growth=g_long,
                         level_factor=factor, conv=CYCLE_CONV)
     else:
         # bought revenue is a level shift in the current year, not growth to repeat: the fade starts from organic growth. A
@@ -1552,6 +1586,8 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
         return empty('insufficient_data', 'dataqa did not resolve opening ' + ', '.join(missing) + '; no silent opening balance', method)
     if _num(price.get('value')) is None or price.get('currency', fb['company']['currency']) != fb['company']['currency']:
         return empty('insufficient_data', 'no quote in the company currency at as_of', method)
+    if price.get('unresolved'):
+        return empty('insufficient_data', f"the quote is not per ordinary share ({price['unresolved']})", method)
     as_of = fb['as_of']
     material = []
     open_bal = {'cash': val('cash'), 'sti': val('short_term_investments') or 0.,
@@ -1774,12 +1810,24 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
     if cyc:
         add('cycle_normalization', 'mid-cycle revenue', 'model',
             {'mean_revenue': cyc['mean_revenue'], 'mid_date': cyc['mid_date'], 'window': cyc['window'], 'trend_slope': cyc['slope'],
-             'trend_growth': cyc['long_run_growth'], 'trend_at_current_fy': cyc['trend_at_current_fy'], 'level_factor': cyc['level_factor'],
+             'trend_growth': cyc['long_run_growth'], 'trend_growth_basis': cyc['trend_growth_basis'],
+             'slope_lower_2se': cyc['slope_lower_2se'], 'trend_basis': cyc['trend_basis'], 'trend_level': cyc['trend_level'],
+             'trend_end': cyc['trend_end'], 'trend_at_current_fy': cyc['trend_at_current_fy'], 'level_factor': cyc['level_factor'],
              'reversion_years': cyc['conv'], 'peak_ratio': cyc['peak_ratio'], 'trough_ratio': cyc['trough_ratio']},
-            f"Cyclical revenue is anchored to the cycle, not the latest year: mean revenue {cyc['mean_revenue']:,.0f} over {cyc['years']} fiscal "
-            f"years ({cyc['window'][0]}..{cyc['window'][1]}) placed at {cyc['mid_date']} and grown at the long-run trend {_pct(cyc['long_run_growth']['base'])} "
-            f"(log-linear slope {_pct(cyc['slope'])} bounded to {_pct(CYCLE_TREND[0])}..{_pct(CYCLE_TREND[1])}) = {cyc['trend_at_current_fy']:,.0f} at {B[0]}. "
-            f"Revenue and margin revert together from today's level over {CYCLE_CONV['base']} years (bear {CYCLE_CONV['bear']}, bull {CYCLE_CONV['bull']}); "
+            "Cyclical revenue is anchored to the cycle, not the latest year: "
+            + (f"the log-linear trend of {cyc['years']} fiscal years ({cyc['window'][0]}..{cyc['window'][1]}, slope {_pct(cyc['slope'])}) is "
+               f"{cyc['trend_level']:,.0f} at {cyc['trend_end']} (fitted in sample), grown after it at the long-run trend "
+               + (f"{_pct(cyc['long_run_growth']['base'])}: the slope less two standard errors ({_pct(cyc['slope_lower_2se'])}, what the data "
+                  f"support with about 95% confidence) within the revenue-scale base rate, fading to terminal like any growth rate"
+                  if cyc['trend_growth_basis'] == 'measured_lower_bound' else
+                  f"{_pct(cyc['long_run_growth']['base'])} (the slope bounded to {_pct(CYCLE_TREND[0])}..{_pct(CYCLE_TREND[1])}"
+                  + (f"; its lower 2-standard-error bound {_pct(cyc['slope_lower_2se'])} does not support more)" if cyc['slope_lower_2se'] is not None else ')'))
+               if cyc['trend_basis'] == 'fitted' else
+               f"mean revenue {cyc['mean_revenue']:,.0f} over {cyc['years']} fiscal years ({cyc['window'][0]}..{cyc['window'][1]}; fewer than "
+               f"{CYCLE_FIT_MIN_YEARS}, so no fitted trend) placed at {cyc['mid_date']} and grown at the long-run trend "
+               f"{_pct(cyc['long_run_growth']['base'])} (log-linear slope {_pct(cyc['slope'])} bounded to {_pct(CYCLE_TREND[0])}..{_pct(CYCLE_TREND[1])})")
+            + f" = {cyc['trend_at_current_fy']:,.0f} at {B[0]}. "
+            f"Revenue and margin revert together from today's level ({cyc['distance_from_trend']:.2f} x trend; the ratio closes geometrically) over {CYCLE_CONV['base']} years (bear {CYCLE_CONV['bear']}, bull {CYCLE_CONV['bull']}); "
             f"bear settles at trend x {cyc['level_factor']['bear']:.2f} (half-way to the historical trough ratio {cyc['trough_ratio']:.2f} in log terms), "
             f"bull at trend x {cyc['level_factor']['bull']:.2f} (half-way to the peak ratio {cyc['peak_ratio']:.2f}).",
             'Revenue stays more than 15% above the trend path for two years after the reversion period (a structural step-up, not a cycle).',
@@ -1833,7 +1881,7 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
         m = paths[s]['operating_margin']
         add(f'margin_{s}', f'{s} operating margin (after SBC)', 'model', {s: {'path': m, 'mature': P[s]['mature_margin']}},
             f"GAAP operating margin after SBC moves from {_pct(fixed['m0'])} ({h['m0_basis']}) to {_pct(P[s]['mature_margin'])} over "
-            f"{P[s]['conv']} years, then holds. {meta['margin_why'] if s == 'base' else s + ' = base mature margin ' + ('- ' + _pct(st['m_spread']) if s == 'bear' else '+ 0.75 x ' + _pct(st['m_spread']) + ', capped at the type ceiling ' + _pct(route['type'][2]))}. "
+            f"{P[s]['conv']} years, then holds. {meta['margin_why'] if s == 'base' or route['cycle_path'] else s + ' = base mature margin ' + ('- ' + _pct(st['m_spread']) if s == 'bear' else '+ 0.75 x ' + _pct(st['m_spread']) + ', capped at the type ceiling ' + _pct(route['type'][2]))}. "
             'cash_cost_ratio = 1 - (operating margin + sbc_pct + depreciation_pct), matching drivers.operating: '
             'ebit = revenue - cash costs - SBC - depreciation.',
             {'base': f"Reported operating margin for {fy(B[1])} below {_pct(m[1] - st['m_spread'] / 2)} without a one-off explanation.",

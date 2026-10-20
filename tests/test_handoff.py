@@ -28,10 +28,13 @@ class IdentityTests(unittest.TestCase):
         chk = H.identity_check(facts({'USD': 50}), {'name': 'Synthetic Co Ordinary Shares', 'lastsale': '$40', 'marketCap': '4e9'})
         self.assertEqual((chk['status'], chk['reporting_currency'], chk['depositary_shares']), ('ok', 'USD', False))
 
-    def test_foreign_currency_reporter_is_blocked(self):
+    def test_foreign_currency_reporter_is_valued_in_its_currency(self):
         chk = H.identity_check(facts({'CNY': 60, 'USD': 30}))
-        self.assertEqual(chk['status'], 'blocked')
-        self.assertIn('reporting currency CNY', chk['reasons'][0])
+        self.assertEqual((chk['status'], chk['reporting_currency']), ('ok', 'CNY'))
+        self.assertIn('DEXCHUS', chk['note'])                                   # converted at a dated H.10 rate
+        none = H.identity_check(facts({'RUB': 60, 'USD': 30}))                  # no rate series in fx.FRED
+        self.assertEqual(none['status'], 'blocked')
+        self.assertIn('reporting currency RUB', none['reasons'][0])
 
     def test_latest_annual_report_decides_the_currency(self):
         def rows(unit, n, filed, accn):
@@ -42,13 +45,21 @@ class IdentityTests(unittest.TestCase):
         self.assertEqual((chk['status'], chk['reporting_currency']), ('ok', 'USD'))
         self.assertIn('new', chk['currency_basis'])
 
-    def test_depositary_ratio_must_be_one_or_modelled(self):
+    def test_depositary_ratio_comes_from_the_annual_report(self):
         listing = {'name': 'Synthetic Holdings American Depositary Shares', 'lastsale': '$7.00', 'marketCap': '700000000'}
-        five = H.identity_check(facts({'USD': 50}, shares=500e6), listing)                 # 100m ADS, 500m shares
-        self.assertEqual(five['status'], 'blocked')
-        self.assertAlmostEqual(five['implied_shares_per_ads'], 5.0)
-        one = H.identity_check(facts({'USD': 50}, shares=102e6), listing)                  # 1:1 within dated share counts
-        self.assertEqual(one['status'], 'ok')
+        unsaved = H.identity_check(facts({'USD': 50}, shares=500e6), listing)              # 100m ADS, 500m shares
+        self.assertEqual(unsaved['status'], 'blocked')
+        self.assertAlmostEqual(unsaved['implied_shares_per_ads'], 5.0)
+        self.assertIn('annual report is not saved', unsaved['reasons'][0])
+        five = '<p>Each ADS represents five ordinary shares of Synthetic Holdings.</p>'   # SYNTHETIC report text
+        ok = H.identity_check(facts({'USD': 50}, shares=500e6), listing, annual_html=five)
+        self.assertEqual(ok['status'], 'ok')
+        self.assertEqual(ok['stated_shares_per_depositary_share']['ratio'], 5.)
+        off = H.identity_check(facts({'USD': 50}, shares=102e6), listing, annual_html=five)   # implied 1:1 vs stated 5
+        self.assertEqual(off['status'], 'ok')
+        self.assertIn('ratio change', off['note'])
+        two = five + '<p>Each ADS represents ten ordinary shares.</p>'
+        self.assertEqual(H.identity_check(facts({'USD': 50}, shares=500e6), listing, annual_html=two)['status'], 'blocked')
 
     def test_foreign_private_issuer_is_noted(self):
         chk = H.identity_check(facts({'USD': 50}), None, {'annual_form': '20-F'})

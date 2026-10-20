@@ -31,18 +31,18 @@ def _d(s):
     return date.fromisoformat(s)
 
 
-def _rows(facts, concept):
+def _rows(facts, concept, unit='USD'):
     g = facts.get('us-gaap', {}).get(concept)
     if not g:
         return []
-    return g.get('units', {}).get('USD', [])
+    return g.get('units', {}).get(unit, [])
 
 
-def quarterly(facts, concepts):
+def quarterly(facts, concepts, unit='USD'):
     """{period_end: (value, filed)} for standalone ~quarters; per period the earliest filed value across concepts."""
     out, cands = {}, []
     for order, c in enumerate(concepts):
-        rows = _rows(facts, c)
+        rows = _rows(facts, c, unit)
         if not rows:
             continue
         direct, ytd = {}, {}

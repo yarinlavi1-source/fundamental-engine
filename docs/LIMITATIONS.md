@@ -86,11 +86,16 @@ Companion to docs/EVIDENCE_STATUS.md, which separates what tests prove from what
 
 ## Found on the discovery handoff runs (20.10.2026)
 
-25. **No currency translation or ADS ratio.** Issuers reporting in another currency (Noah, Trip.com: CNY) and depositary
-    shares whose ratio is not 1 (Noah: about 5 shares per ADS) are blocked by `handoff.identity_check` and the lane is
-    backfilled; analysing them needs a manual FactBook in the reporting currency, a dated FX rate and the deposit ratio.
-26. **Foreign private issuers are annual-only in SEC data.** 20-F filers (Global-E, monday.com) have no 10-Q facts: the
-    balance sheet and TTM fields are up to a year old and are limited by dataqa; interim 6-K figures need an evidence bundle.
+25. **Foreign issuers: one dated rate, one stated ratio.** Non-USD reporters are valued in their own currency and the quote
+    converted at the FRED H.10 rate of its date (within seven days) and the depositary ratio stated in the annual report.
+    The forecast assumes no currency move after that date; currencies without an H.10 series are blocked; a ratio changed
+    after the annual report is only flagged when the listing-implied ratio differs by more than 25%. Type labels for foreign
+    issuers often come from the sector only (Trip.com: 'Consumer Discretionary' -> consumer_brand, not a travel platform):
+    a reviewer should set the business model.
+26. **Foreign private issuers are annual-only in SEC data.** 20-F filers have no 10-Q facts: the balance sheet and TTM are
+    up to a year old (stale_balance_sheet: no price conclusion) and the current year is modelled from the annual history.
+    Novo Nordisk in October 2026 is valued on trailing growth although its 2026 guidance is a decline; interim 6-K figures
+    or connector quarterly statements in the reporting currency are needed before any conclusion.
 27. **Debt tags are still a coverage risk.** The map now reads notes payable, loans payable and convertible notes and sums
     component-only borrowings, and a debt line that disappears without a repayment blocks instead of reading zero; an
     issuer using another custom concept can still be missed when no earlier line exists to notice the gap.
@@ -129,3 +134,8 @@ Companion to docs/EVIDENCE_STATUS.md, which separates what tests prove from what
     until the annual report is read.
 35. **Engine version drift in the tests.** The first walk-forward run used the engine before the 20.10 fixes; the second
     run on the current engine is reported as it comes out, and nothing is tuned to it.
+36. **Cyclical trend growth is a statistical lower bound.** A secular grower in a cyclical industry may grow above the
+    5% long-run bound only by its fitted slope less two standard errors, within the revenue-scale base rate, from six or
+    more years at today's scale; pandemic years or a reorganization inside the window distort the fit (Trip.com's window
+    starts in 2021, so 2025 reads as 1.4x its trend). The semiconductor text rule (40 mentions per 100,000 words) is
+    calibrated on one document.

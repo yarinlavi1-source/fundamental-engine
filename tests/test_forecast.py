@@ -1351,3 +1351,70 @@ class GrowthOverrideReinvestmentTests(unittest.TestCase):
             {'path': 'growth', 'scenario': 'base', 'value': [.3] * n, 'reason': 'test path', 'evidence_ids': ['syn:fs']},
             {'path': 'growth_capex_pct', 'scenario': 'base', 'value': [.01] * m, 'reason': 'test capex', 'evidence_ids': ['syn:fs']}]})
         self.assertEqual(scen(fc['spec'], 'base')['growth_capex_pct'], [.01] * m)
+
+
+def secular_cyclical(years=9, wobble=(1., 1.06, .97, 1.04, .95, 1.05, 1.0, .98, .96), roic=None):
+    """SYNTHETIC equipment maker in a cyclical industry: 15% trend growth with small cyclical wobbles, the latest year a little
+    below trend, margins between 25% and 36% (test data only)."""
+    hist = [(2017 + i, 1e9 * 1.15 ** i * wobble[i], .25 + .11 * (i % 3) / 2) for i in range(years)]
+    annual = {f'{y}-12-31': {'revenue': r, 'operating_income': r * m, 'sbc': r * .01, 'd_and_a': r * .03, 'capex': r * .05,
+                             'cfo': r * (m + .05), 'pretax_income': r * m, 'income_tax': r * m * .17, 'interest_expense': 1e6}
+              for y, r, m in hist}
+    last = f'{hist[-1][0]}-12-31'
+    inst = {last: {'cash': 500e6, 'shares_outstanding': 100e6, 'receivables': 300e6, 'payables': 150e6, 'long_term_debt': 200e6}}
+    fb = synth(f'{hist[-1][0] + 1}-03-20', annual, inst, 100.0, kind='filing_derived')
+    an = make_an(fb, revenue_growth_last=hist[-1][1] / hist[-2][1] - 1, revenue_cagr_3y=(hist[-1][1] / hist[-4][1]) ** (1 / 3) - 1,
+                 growth_volatility=.06, roic=.6, sales_to_capital_incremental_3y=2.0, incremental_roic_3y=.6)
+    if roic:
+        an['forensics'] = {'roic': {'series': [{'roic': x} for x in roic]}}
+    card = {'business_model': {'primary': 'industrial'}, 'stage': {'value': 'growth'}, 'cyclical': {'value': True, 'normalize': True},
+            'capital_intensity': {'value': 'low'}, 'funding': {'value': 'self_funded'},
+            'valuation': {'method': 'normalized_cycle_fcff', 'archetype': 'industrial'}, 'dimensions': {}}
+    return fb, an, card, qa_for(100e6, 500e6, 200e6, last), hist
+
+
+class SecularCyclicalTests(unittest.TestCase):
+    """A secular grower in a cyclical industry (ASML 2026-10): the cycle is measured around its own trend, not a 5% line."""
+
+    def test_trend_level_is_fitted_and_growth_is_what_the_data_support(self):
+        fb, an, card, qa, hist = secular_cyclical()
+        fc = forecast.build(fb, an, card, qa)
+        cyc = fc['anchors']['cycle']
+        self.assertEqual(cyc['trend_basis'], 'fitted')
+        self.assertEqual(cyc['trend_growth_basis'], 'measured_lower_bound')
+        g = cyc['long_run_growth']['base']
+        self.assertTrue(forecast.CYCLE_TREND[1] < g <= cyc['slope_lower_2se'] + 1e-12 < cyc['slope'])
+        # the latest year sits below its trend: the current year is not cut toward a level the company left years ago
+        self.assertGreater(fc['anchors']['current_fiscal_year']['revenue'], hist[-1][1])
+        # the distance to the trend closes geometrically: no catch-up year grows faster than trend growth plus the gap
+        rates = [p['revenue_rate'] for p in fc['paths']['base']]
+        gap = hist[-1][1] / cyc['trend_level']
+        for a, b in zip(rates[1:], rates[2:]):
+            self.assertLess(b / a - 1, g + abs(1 / gap - 1) + .01)
+
+    def test_short_or_noisy_history_keeps_the_bound(self):
+        fb, an, card, qa, hist = peak_cyclical()                     # six years of boom and bust: wide standard error
+        cyc = forecast.build(fb, an, card, qa)['anchors']['cycle']
+        self.assertEqual(cyc['trend_growth_basis'], 'bounded')
+        self.assertLessEqual(cyc['long_run_growth']['base'], forecast.CYCLE_TREND[1])
+        fb, an, card, qa, hist = secular_cyclical(years=5)          # fewer than CYCLE_FIT_MIN_YEARS: window mean, bounded rate
+        cyc = forecast.build(fb, an, card, qa)['anchors']['cycle']
+        self.assertEqual((cyc['trend_basis'], cyc['trend_growth_basis']), ('window_mean', 'bounded'))
+
+    def test_bull_margin_may_reach_toward_an_evidenced_peak_above_the_type_ceiling(self):
+        fb, an, card, qa, hist = secular_cyclical()
+        fc = forecast.build(fb, an, card, qa)
+        ceil = forecast.TYPE['industrial'][2]
+        base, bull = (scen(fc['spec'], s)['terminal']['operating_margin'] for s in ('base', 'bull'))
+        self.assertGreater(base, ceil)                               # the cycle's own average is above the 20% industrial ceiling
+        self.assertGreater(bull, base)                               # the ceiling no longer collapses the bull onto the base
+        self.assertLessEqual(bull, max(m for _, _, m in hist) + 1e-9)
+
+    def test_moat_proxy_uses_the_trough_return_over_a_full_cycle(self):
+        proxy = lambda fc: next(a for a in fc['assumptions'] if a['id'] == 'moat_basis')['values']['proxy']
+        fb, an, card, qa, hist = secular_cyclical(roic=[.3, .35, .4, .32, .5, .6, .45, .4])
+        p = proxy(forecast.build(fb, an, card, qa))
+        self.assertEqual(p['blocked'], [])
+        self.assertIn('trough ROIC 30.0%', p['evidence'])
+        fb, an, card, qa, hist = secular_cyclical(roic=[.3, .35, .4])
+        self.assertTrue(proxy(forecast.build(fb, an, card, qa))['blocked'])

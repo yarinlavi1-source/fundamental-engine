@@ -87,6 +87,15 @@ def parse_ixbrl(html):
     return {'contexts': ctx, 'facts': facts}
 
 
+def ix_units(html):
+    """Inline XBRL unit ids -> companyfacts unit names: 'TWD', 'shares', 'TWD/shares', 'pure'."""
+    out = {}
+    for uid, body in re.findall(r'<xbrli:unit\b[^>]*id="([^"]+)"[^>]*>(.*?)</xbrli:unit>', html, re.S):
+        m = [x.split(':')[-1] for x in re.findall(r'<xbrli:measure>\s*([^<\s]+)\s*</xbrli:measure>', body)]
+        out[uid] = '/'.join(m[:2]) if '<xbrli:divide>' in body and len(m) >= 2 else (m[0] if m else uid)
+    return out
+
+
 def _days(a, b):
     return (date.fromisoformat(b) - date.fromisoformat(a)).days
 
@@ -228,6 +237,55 @@ def pay_measures(html):
             'total_shareholder_return': by.get('TotalShareholderRtnAmt'), 'peer_tsr': by.get('PeerGroupTotalShareholderRtnAmt')}
 
 
+NUM_WORDS = {'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5, 'six': 6, 'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10,
+             'eleven': 11, 'twelve': 12, 'fifteen': 15, 'twenty': 20, 'twenty-five': 25, 'thirty': 30, 'forty': 40, 'fifty': 50,
+             'one hundred': 100, 'one-half': .5, 'one-third': 1 / 3, 'one-quarter': .25, 'one-fourth': .25, 'one-fifth': .2,
+             'one-tenth': .1}
+ADS_RE = re.compile(r'(?:ADSs?|ADRs?|American depositary (?:shares?|receipts?)|New York Registry [Ss]hares?)[^.;]{0,120}?represent(?:s|ing)?\s+'
+                    r'(?:the right to receive\s+)?(?P<n>\d+(?:\.\d+)?|one hundred|twenty-five|one-(?:half|third|quarter|fourth|fifth|tenth)|'
+                    r'[a-z]+)\s+(?:\(\d+\)\s+)?(?:of\s+(?:our|the)\s+)?(?:[A-Z][\w.]*\s+){0,3}(?:class\s+[ab]\s+)?(?:ordinary|common|registered|'
+                    r'(?:class\s+)?[ab]|series\s+[ab])\s+shares?', re.I)
+
+
+def ads_ratio(html):
+    """Ordinary shares per depositary share from the annual report text ('each ADS represents five common shares'), with the
+    sentence it came from: {'ratio', 'evidence', 'candidates'} or None. Several different stated ratios are returned with
+    the most frequent first and flagged, never averaged."""
+    text = html_text(html)
+    found = []
+    for m in ADS_RE.finditer(text):
+        raw = m.group('n').lower()
+        v = float(raw) if raw[0].isdigit() else NUM_WORDS.get(raw)
+        if v:
+            found.append((v, text[max(0, m.start() - 40):m.end() + 20].strip()))
+    if not found:
+        # no depositary shares: ordinary or common shares registered directly on the exchange (ASML) trade one for one
+        i = text.find('Title of each class')
+        cover = text[i:i + 600] if i >= 0 else ''
+        if cover and re.search(r'(?i)(ordinary|common) shares', cover) and not re.search(r'(?i)depositary|registry', cover):
+            return {'ratio': 1., 'evidence': cover[:200].strip(), 'candidates': {1.: 1}, 'ambiguous': False, 'direct_listing': True}
+        return None
+    counts = {}
+    for v, _ in found:
+        counts[v] = counts.get(v, 0) + 1
+    best = max(counts, key=counts.get)
+    return {'ratio': best, 'evidence': next(e for v, e in found if v == best), 'candidates': counts,
+            'ambiguous': len(counts) > 1}
+
+
+# Industry vocabulary read from the annual report's own words, per 100,000 words: evidence for the business type where the SEC
+# code is ambiguous (SIC 3559 'Special Industry Machinery' covers wafer-fab equipment and food machinery alike)
+INDUSTRY_TERMS = {'semiconductor': re.compile(r'semiconductor|wafer|lithograph', re.I)}
+
+
+def industry_terms(html=None, text=None):
+    """{'words', 'counts': {group: mentions}, 'per_100k_words': {group: density}} of the document text."""
+    text = text if text is not None else html_text(html)
+    words = len(text.split())
+    counts = {k: len(rx.findall(text)) for k, rx in INDUSTRY_TERMS.items()}
+    return {'words': words, 'counts': counts, 'per_100k_words': {k: (v / words * 1e5 if words else 0.) for k, v in counts.items()}}
+
+
 PRO_FORMA_REVENUE = 'us-gaap:BusinessAcquisitionsProFormaRevenue'
 
 
@@ -326,7 +384,9 @@ def business_map(html, source=None, consolidated_revenue=None):
     for f in ix['facts']:
         if f['concept'] == 'dei:EntityCommonStockSharesOutstanding':
             c = ix['contexts'].get(f['context']) or {}
-            cls = c.get('dims', {}).get('us-gaap:StatementClassOfStockAxis', 'all')
+            dims = c.get('dims', {})
+            # us-gaap StatementClassOfStockAxis; IFRS filers use ifrs-full ClassesOfShareCapitalAxis (Novo Nordisk A and B shares)
+            cls = next((v for k, v in dims.items() if 'class' in k.lower()), 'all')
             when = c.get('instant') or c.get('end')
             if when:
                 cover.setdefault(when, {})[_human(cls) if cls != 'all' else 'all'] = f['value']
@@ -347,6 +407,7 @@ def business_map(html, source=None, consolidated_revenue=None):
         notes.append('no tagged concentration: either no customer is material (often stated in Item 1/1A) or it is untagged')
     return {'business_map_version': 1, 'source': source, 'tables': tables, 'customer_concentration': conc, 'rpo': rpo,
             'cover_shares': shares, 'disclosed': disclosed, 'not_disclosed': not_disclosed, 'notes': notes,
+            'industry_terms': industry_terms(html),
             'fact_count': len(ix['facts']),
             'meaning': 'facts as tagged in the annual report; member names humanized from XBRL; not adjusted, not forecast'}
 
