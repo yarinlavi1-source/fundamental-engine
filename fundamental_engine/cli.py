@@ -17,6 +17,26 @@ def read_json(path):
     return json.loads(Path(path).read_text(encoding="utf-8"), parse_constant=reject)
 
 
+def json_object_arg(value, option):
+    """A JSON object given inline (the argument starts with '{') or as a path to a JSON file."""
+    def reject(constant):
+        raise ValueError(f"Non-finite JSON number: {constant}")
+    text = (value or "").strip()
+    if text.startswith("{"):
+        try:
+            data = json.loads(text, parse_constant=reject)
+        except json.JSONDecodeError as error:
+            raise ValueError(f"{option}: inline JSON is invalid ({error.msg} at line {error.lineno} column {error.colno})") from None
+    elif text and Path(text).is_file():
+        data = read_json(text)
+    else:
+        raise ValueError(f"{option}: expected a JSON file path or an inline JSON object starting with '{{'; "
+                         f"got {value!r}, which is neither an existing file nor inline JSON")
+    if not isinstance(data, dict):
+        raise ValueError(f"{option}: expected a JSON object, got {type(data).__name__}")
+    return data
+
+
 def main():
     parser = argparse.ArgumentParser(description="Fundamental and emerging-potential research engine")
     subs = parser.add_subparsers(dest="command", required=True)
@@ -113,7 +133,8 @@ def main():
     pr = subs.add_parser("pipeline", help="Single decision path from a raw connector folder to verdict, report and Hebrew paragraph")
     pr.add_argument("raw_dir", nargs="?", help="Raw connector folder written per pipeline-plan")
     pr.add_argument("--factbook", help="Existing FactBook JSON instead of a raw folder")
-    pr.add_argument("--company", help="JSON file with ticker, name, currency, sector, industry, ... (with raw_dir)")
+    pr.add_argument("--company", help="JSON file, or inline JSON object starting with '{', with ticker, name, currency, sector, "
+                                      "industry, ... (with raw_dir)")
     pr.add_argument("--as-of", help="Information cutoff (with raw_dir)")
     pr.add_argument("--inputs", help="JSON with analyst inputs (card, forecast, reviewer, decision)")
     pr.add_argument("--qualitative", help="JSON with dated sources and qualitative items to add to the FactBook")
@@ -127,6 +148,8 @@ def main():
     pf.add_argument("--summary")
     pf.add_argument("--as-of", required=True)
     pf.add_argument("--holdings", help="JSON {symbol: {sector, exposures, exposure_weights, casefile_summary, ...}}")
+    pf.add_argument("--options", help="JSON file, or inline JSON object starting with '{', of analysis options: scenarios, "
+                                      "single_name_cap, link_threshold, factor_tags, driver_tags, factor_weight_share, ...")
     im = subs.add_parser("import-av", help="Map saved Alpha Vantage statement JSON files into plain history rows")
     im.add_argument("income")
     im.add_argument("--balance")
@@ -140,17 +163,18 @@ def main():
             print(json.dumps(collection_plan(args.ticker, args.as_of, args.cik), indent=2))
             return
         if args.command == "pipeline":
+            if bool(args.raw_dir) == bool(args.factbook):
+                raise ValueError("give either raw_dir (with --company and --as-of) or --factbook")
+            if not args.factbook and not (args.company and args.as_of):
+                raise ValueError("raw_dir needs --company and --as-of")
+            company = None if args.factbook else json_object_arg(args.company, "--company")
             from .pipeline import factbook_from_run_dir, run, summary
             from .render import markdown, hebrew_paragraph
             from .facts import add_qualitative_bundle
-            if bool(args.raw_dir) == bool(args.factbook):
-                raise ValueError("give either raw_dir (with --company and --as-of) or --factbook")
             if args.factbook:
                 fb = read_json(args.factbook)
-            elif not (args.company and args.as_of):
-                raise ValueError("raw_dir needs --company and --as-of")
             else:
-                fb = factbook_from_run_dir(args.raw_dir, read_json(args.company), args.as_of)
+                fb = factbook_from_run_dir(args.raw_dir, company, args.as_of)
             if args.qualitative:
                 add_qualitative_bundle(fb, read_json(args.qualitative))
             cf = run(fb, read_json(args.inputs) if args.inputs else None)
@@ -172,9 +196,11 @@ def main():
                               'no_data': len(result['no_data']), 'notes': result['notes'][:3]}, indent=2, ensure_ascii=False))
             return
         if args.command == "portfolio":
+            options = json_object_arg(args.options, "--options") if args.options else None
             from .portfolio import from_ib, analyze as analyze_book
             book = from_ib(read_json(args.positions), read_json(args.summary) if args.summary else None, as_of=args.as_of)
-            print(json.dumps({'book': book, 'analysis': analyze_book(book, read_json(args.holdings) if args.holdings else None)}, indent=2, ensure_ascii=False))
+            analysis = analyze_book(book, read_json(args.holdings) if args.holdings else None, options)
+            print(json.dumps({'book': book, 'analysis': analysis}, indent=2, ensure_ascii=False))
             return
         if args.command == "valuation-audit":
             from .valuation import value_company
@@ -326,3 +352,7 @@ def main():
     except (ValueError, KeyError, TypeError, OSError, OverflowError) as error:
         print(f"Error: {error}", file=sys.stderr)
         raise SystemExit(2)
+
+
+if __name__ == "__main__":
+    main()

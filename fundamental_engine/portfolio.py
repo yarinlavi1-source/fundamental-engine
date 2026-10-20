@@ -27,13 +27,28 @@ from itertools import combinations
 from .finance import number
 
 ORDER_KEYS = {'order', 'orders', 'ordertype', 'side', 'limitprice', 'stopprice', 'tif', 'timeinforce', 'transmit',
-              'orderinstruction', 'sharestobuy', 'sharestosell', 'quantitytotrade', 'contractstotrade'}
+              'orderinstruction', 'sharestobuy', 'sharestosell', 'quantitytotrade', 'contractstotrade',
+              # IB API / connector order fields (an output never uses these names as fields)
+              'action', 'totalquantity', 'lmtprice', 'auxprice', 'orderref', 'outsiderth', 'orderid', 'permid', 'parentid',
+              'ocagroup', 'trailingpercent', 'trailstopprice', 'goodtilldate', 'goodaftertime', 'cashqty', 'orderstatus',
+              'filledquantity', 'remainingquantity', 'size'}
+# maps keyed by data (symbols, tags, sectors, scenario names): their keys are not fields and are not checked
 DATA_MAPS = {'illustrative_weight_change', 'scenario_changes', 'by_sector', 'by_industry', 'by_tag', 'by_counterparty',
              'by_currency', 'ib_theme_membership', 'holdings', 'shared_tags', 'candidate_tags', 'tag_sources',
-             'exposure_weights', 'exposure_sources', 'scenario_impacts', 'scenarios', 'shocks', 'tag_parts', 'tags'}
+             'exposure_weights', 'exposure_sources', 'scenario_impacts', 'scenarios', 'shocks', 'tag_parts', 'tags', 'shared'}
+# rows of an orders / order-instruction / executions payload are refused as positions
+ORDER_ROW_KEYS = {'ordertype', 'limitprice', 'lmtprice', 'auxprice', 'stopprice', 'tif', 'timeinforce', 'orderid', 'orderref',
+                  'parentid', 'totalquantity', 'filledquantity', 'remainingquantity', 'orderstatus', 'outsiderth', 'transmit',
+                  'orderinstruction', 'ocagroup', 'trailingpercent', 'trailstopprice', 'execid', 'executionid'}
+ORDER_SIDES = {'buy', 'sell', 'sellshort', 'ssh', 'bot', 'sld'}            # 'long'/'short' describe a position, not an order
+ORDER_STATUSES = {'submitted', 'presubmitted', 'pendingsubmit', 'pendingcancel', 'apipending', 'apicancelled', 'cancelled',
+                  'filled', 'partiallyfilled', 'inactive', 'working'}
+ACCOUNT_FIELDS = {'acctid', 'accountid', 'accountcode', 'accounttitle', 'accountalias', 'accountname', 'accountnumber',
+                  'account', 'accttitle', 'acctalias', 'acctcode'}
 STALE_IRR = {'stale_analysis', 'price_moved', 'below_bear_value', 'above_bull_value', 'verdict_changed', 'business_changed'}
 ANALYZE_DEFAULTS = {'single_name_cap': 0.20, 'review_age_days': 120, 'price_band_trigger': 0.20,
-                    'link_threshold': 0.25, 'scenarios': {}, 'previous_verdicts': {}}
+                    'link_threshold': 0.25, 'scenarios': {}, 'previous_verdicts': {},
+                    'factor_weight_share': 0.5, 'factor_tags': [], 'driver_tags': []}
 TAX_SOURCE = "owner's stated regime (25% on realized gains); an input assumption, not tax advice"
 COMPARE_DEFAULTS = {'trial_weight': 0.03, 'tax_rate': 0.25, 'horizon_years': 5, 'max_targets': 5}
 RISK_RANK = {'low': 1, 'medium': 2, 'moderate': 2, 'elevated': 3, 'high': 3, 'very_high': 4, 'extreme': 4,
@@ -64,7 +79,14 @@ ALIASES = {'symbol': ('symbol', 'ticker', 'localsymbol', 'contractsymbol'),
            'multiplier': ('multiplier', 'mult'),
            'underlying': ('undsym', 'underlying', 'underlyingsymbol', 'undsymbol'),
            'sector': ('sector',), 'industry': ('industry', 'group'),
-           'holding_since': ('holdingsince', 'opendate', 'acquired', 'acquisitiondate', 'firsttradedate')}
+           'holding_since': ('holdingsince', 'opendate', 'acquired', 'acquisitiondate', 'firsttradedate'),
+           'right': ('putorcall', 'right', 'putcall', 'callput', 'optiontype', 'optionright')}
+FIELD_KEYS = frozenset(a for v in ALIASES.values() for a in v)
+TICKER_DESC_KEYS = {'contractdesc', 'contractdescription'}   # IB contract description: the ticker for stock rows
+TICKER_RE = re.compile(r'^[A-Z0-9][A-Z0-9.\-/]{0,11}$')
+MASKED = re.compile(r'[*#•]|\d{4,}')     # masked ids (U***4321, XXXX4321) and long digit runs are never symbols
+WRAPPER_KEYS = ('positions', 'data', 'result', 'results', 'items', 'rows', 'holdings')
+SCALAR_SKIP = {'count', 'total', 'page', 'timestamp'} | ACCOUNT_FIELDS
 NLV_TAGS = ('netliquidation', 'netliquidationvalue', 'netliq', 'nlv', 'totalnetliquidation')
 CASH_TAGS = ('totalcashvalue', 'totalcash', 'cash', 'cashbalance', 'totalcashbalance')
 ACCRUAL_TAGS = ('accruedcash', 'accrueddividend', 'accruedinterest')
@@ -128,9 +150,38 @@ def _load(p, unparsed, path):
     return p
 
 
+def _key_symbol(k):
+    """A dict key used as a symbol ({symbol: row}) only when it looks like a ticker: upper-case ticker characters, not an
+    account-like id, no masking characters, no spaces and no long digit run. Otherwise None."""
+    if not isinstance(k, str):
+        return None
+    s = k.strip()
+    return s if TICKER_RE.match(s) and not ACCOUNT_LIKE.match(s) and not MASKED.search(s) and s == k else None
+
+
+def _holds_rows(v, depth=0):
+    """True when v is, or wraps, position rows: a list holding a row with an identifier (or a wrapper), or a dict with a
+    known wrapper key, a {ticker: row} entry or a nested wrapper. Field-valued sub-dicts ({'market_value': {'amount': 1}})
+    and identifier-less sub-lists (e.g. tax lots inside a row) do not count. Scalar totals beside the rows never make a
+    wrapper look like a row: an account block {'market_value': ..., 'positions': [...]} is a wrapper."""
+    if depth > 6:
+        return False
+    if isinstance(v, list):
+        return any((_looks_like_row(r) or _holds_rows(r, depth + 1)) if isinstance(r, dict)
+                   else isinstance(r, list) and _holds_rows(r, depth + 1) for r in v)
+    if isinstance(v, dict):
+        return any(isinstance(x, (list, dict)) and _k(k) not in FIELD_KEYS
+                   and (_k(k) in WRAPPER_KEYS or (isinstance(x, dict) and (_looks_like_row(x) or (_rowish(x) and _key_symbol(k))))
+                        or _holds_rows(x, depth + 1))
+                   for k, x in v.items())
+    return False
+
+
 def _rows(p, unparsed, path='positions'):
-    """[(row, path)] from a list, {'positions': [...]}, {account: [...]}, {symbol: row} or JSON text.
-    Paths use positions, never dict keys, so account identifiers cannot leak into the book."""
+    """[(row, path, symbol_from_key)] from a list, {'positions': [...]}, {account: [...]}, account blocks
+    ({'acctId', 'market_value', 'positions': [...]}), {symbol: row} or JSON text. Paths use positions, never dict keys,
+    and a dict key becomes a symbol only when it looks like a ticker, so account identifiers, aliases and masked ids
+    cannot leak into the book."""
     p = _load(p, unparsed, path)
     if p is None:
         return []
@@ -138,31 +189,34 @@ def _rows(p, unparsed, path='positions'):
         out = []
         for i, r in enumerate(p):
             if isinstance(r, dict):
-                wrapper = not _rowish(r) and any(isinstance(v, (list, dict)) for v in r.values())
-                out += _rows(r, unparsed, f'{path}[{i}]') if wrapper else [(r, f'{path}[{i}]')]
+                wrapper = _holds_rows(r) or (not _rowish(r) and any(isinstance(v, (list, dict)) for v in r.values()))
+                out += _rows(r, unparsed, f'{path}[{i}]') if wrapper else [(r, f'{path}[{i}]', None)]
             elif isinstance(r, list):
                 out += _rows(r, unparsed, f'{path}[{i}]')
             else:
                 unparsed.append({'path': f'{path}[{i}]', 'reason': f'row is {type(r).__name__}, not an object'})
         return out
     if isinstance(p, dict):
-        for k in ('positions', 'data', 'result', 'results', 'items', 'rows', 'holdings'):
+        for k in WRAPPER_KEYS:
             if isinstance(p.get(k), (list, dict)):
                 return _rows(p[k], unparsed, f'{path}.{k}')
-        if _looks_like_row(p):
-            return [(p, path)]
+        if _looks_like_row(p) and not _holds_rows(p):
+            return [(p, path, None)]
         out = []
         for i, (k, v) in enumerate(p.items()):
             sub = f'{path}{{{i}}}'
-            if isinstance(v, dict) and _rowish(v):
-                f = {_k(a) for a in v}
-                named = f & set(ALIASES['symbol'] + ALIASES['description'] + ALIASES['conid'])
-                # {symbol: row}; a key that looks like an account or contract id is never used as a symbol
-                out.append((v if named or not isinstance(k, str) or ACCOUNT_LIKE.match(k.strip()) else {**v, 'symbol': k}, sub))
+            if isinstance(v, dict) and _rowish(v) and not _holds_rows(v):
+                named = {_k(a) for a in v} & set(ALIASES['symbol'] + ALIASES['description'] + ALIASES['conid'])
+                ksym = None if named else _key_symbol(k)
+                if named or ksym:
+                    out.append((v, sub, ksym))
+                else:
+                    unparsed.append({'path': sub, 'reason': 'row without symbol, contract id or description under a key that does '
+                                                            'not look like a ticker (account id, alias or masked value): key not used'})
             elif isinstance(v, (list, dict)):
                 out += _rows(v, unparsed, sub)
-            elif _k(k) not in {'accountid', 'acctid', 'account', 'count', 'total', 'page', 'timestamp'}:
-                unparsed.append({'path': sub, 'reason': 'scalar where a position was expected'})
+            elif _k(k) not in SCALAR_SKIP:
+                unparsed.append({'path': sub, 'reason': 'scalar where a position was expected (an account or block total?)'})
         return out
     unparsed.append({'path': path, 'reason': f'unsupported payload type {type(p).__name__}'})
     return []
@@ -212,22 +266,69 @@ def _sget(summ, tags):
     return None, None
 
 
-def _position(row):
+def _safe_keys(f):
+    """Diagnostics for an unparsed row: recognised field names only, plus a count of the other keys (which may be
+    account ids or other private labels and are never copied)."""
+    return {'keys': sorted(k for k in f if k in FIELD_KEYS), 'other_keys': sum(1 for k in f if k not in FIELD_KEYS)}
+
+
+def _order_like(f):
+    """A row from an orders / order-instruction / executions payload: order-only fields, a BUY/SELL side or action, or
+    an order status. Such a row is a pending or past instruction, never a holding."""
+    return bool(set(f) & ORDER_ROW_KEYS) or any(_k(f.get(x)) in ORDER_SIDES for x in ('side', 'action')) \
+        or _k(f.get('status')) in ORDER_STATUSES
+
+
+def _option_right(f, ac, sym, desc):
+    """'P' / 'C' for options from a put/call field or the contract text (OCC '261218P00090000', 'JAN27 50 C'); else None."""
+    if ac not in DERIV:
+        return None
+    r = _k(_pick(f, 'right', _str) or '')
+    if r in ('p', 'put'):
+        return 'P'
+    if r in ('c', 'call'):
+        return 'C'
+    for text in (sym, desc):
+        toks = str(text or '').upper().split()
+        m = next((re.match(r'^\d{6}([CP])(\d{8})?$', t) for t in toks if re.match(r'^\d{6}([CP])(\d{8})?$', t)), None)
+        if m:
+            return m.group(1)
+        if len(toks) > 1 and toks[-1] in ('P', 'C', 'PUT', 'CALL'):
+            return toks[-1][0]
+    return None
+
+
+def _position(row, key_symbol=None):
     f = {_k(k): v for k, v in row.items()}
+    if _order_like(f):
+        return 'refused', {'reason': 'order-like row (side/action, order type, limit price or order status): an open order, '
+                                     'order instruction or execution is not a position'}
     ac = _str(_pick(f, 'asset_class', _str))
     ac = AC.get(ac.upper(), ac.upper()) if ac else 'UNKNOWN'
     sym, desc, conid = _pick(f, 'symbol', _str), _pick(f, 'description', _str), _pick(f, 'conid', _str)
     und, notes = _pick(f, 'underlying', _str), []
+    sym_source = 'payload_symbol' if sym is not None else None
+    if sym is None and conid is None and set(f) & ACCOUNT_FIELDS and not set(f) & TICKER_DESC_KEYS:
+        # an account summary / account block row: its 'name' or title is the account holder, never a security
+        return 'unparsed', {'reason': 'account-level row (account fields, no symbol or contract id): not a position', **_safe_keys(f)}
+    if sym is None and key_symbol:
+        sym, sym_source = key_symbol, 'dict_key'
     if sym is None and desc and ac != 'CASH':
-        sym = desc.split()[0].upper()
-        notes.append('symbol taken from the first word of the description: confirm the ticker')
+        desc_key = next((a for a in ALIASES['description'] if a in f and _str(f[a]) is not None), None)
+        if desc_key in TICKER_DESC_KEYS and TICKER_RE.match(desc):
+            sym, sym_source = desc, 'contract_description'     # one ticker-like token: given by the payload, not inferred
+        else:
+            sym, sym_source = desc.split()[0].upper(), 'inferred_from_description'
+            notes.append('symbol taken from the first word of the description: confirm the ticker')
     if ac in DERIV and und is None and sym:
         und = sym.split()[0]
     qty, price, val = _pick(f, 'quantity'), _pick(f, 'price'), _pick(f, 'value')
     mult = _pick(f, 'multiplier')
-    keys = sorted(f)
+    right = _option_right(f, ac, sym, desc)
+    if ac == 'OPT' and right is None:
+        notes.append('put/call not stated: analysis counts this option as call-like (positive) exposure')
     if sym is None and conid is None:
-        return 'unparsed', {'reason': 'no symbol, contract id or description', 'keys': keys}
+        return 'unparsed', {'reason': 'no symbol, contract id or description', **_safe_keys(f)}
     if qty == 0 or (qty is None and val == 0):
         return 'skipped', {'symbol': sym, 'reason': 'zero quantity (closed position row)'}
     method = 'reported_market_value'
@@ -243,7 +344,7 @@ def _position(row):
         if ac == 'CASH' and qty is not None:
             val, method = qty, 'cash_balance_quantity'
         else:
-            return 'unparsed', {'symbol': sym, 'reason': 'no market value and no quantity x price', 'keys': keys}
+            return 'unparsed', {'symbol': sym, 'reason': 'no market value and no quantity x price', **_safe_keys(f)}
     upnl, cb_total, avg = _pick(f, 'unrealized_pnl'), _pick(f, 'cost_basis'), _pick(f, 'avg_cost')
     cb, cb_method = None, None
     if cb_total is not None:
@@ -255,7 +356,8 @@ def _position(row):
     if cb is not None and cb_method != 'avg_cost_x_quantity' and avg is not None and qty is not None and ac not in DERIV:
         if abs(avg * qty - cb) > 0.01 * max(abs(cb), 1.0):
             notes.append('average cost x quantity disagrees with the cost implied by unrealized P&L by >1%')
-    return 'ok', {'symbol': sym, 'conid': conid, 'asset_class': ac, 'underlying': und, 'description': desc,
+    return 'ok', {'symbol': sym, 'symbol_source': sym_source, 'conid': conid, 'asset_class': ac, 'underlying': und,
+                  'option_right': right, 'description': desc,
                   'quantity': qty, 'price': price, 'value_local': val, 'value_method': method,
                   'currency': (_pick(f, 'currency', _str) or '').upper() or None, 'multiplier': mult,
                   'cost_basis': cb, 'cost_basis_method': cb_method, 'avg_cost': avg, 'unrealized_pnl': upnl,
@@ -263,16 +365,57 @@ def _position(row):
                   'holding_since': _pick(f, 'holding_since', _str), 'notes': notes}
 
 
+THEME_WRAPPERS = ('linked_themes', 'themes', 'data', 'result', 'results', 'items')
+THEME_FIELDS = {'linkedcompanies', 'theme', 'themename', 'themeid', 'themekey'}
+CONTRACT_FIELDS = {'symbol', 'ticker', 'conid', 'contractid', 'underlyingcontractid', 'localsymbol', 'conidex'}
+
+
+def _theme_row(r):
+    """A theme-shaped row: theme fields (linked_companies, theme, theme_name, ...) or a name+key pair, and no contract
+    identifier at row level (contract-search results carry symbol/conid)."""
+    if not isinstance(r, dict):
+        return False
+    f = {_k(k) for k in r}
+    return not f & CONTRACT_FIELDS and bool(f & THEME_FIELDS or {'name', 'key'} <= f)
+
+
+def _theme_rows(p, depth=0):
+    """The theme row list inside a payload. Known wrappers (linked_themes, themes, data, ...) are unwrapped at any
+    nesting; an unknown key is unwrapped only when its list rows are theme-shaped, or its dict holds such a list. Two
+    or more candidate lists are ambiguous and give None (nothing guessed)."""
+    if depth > 4:
+        return None
+    if isinstance(p, list):
+        return p
+    if not isinstance(p, dict):
+        return None
+    for k in THEME_WRAPPERS:
+        if isinstance(p.get(k), (list, dict)):
+            rows = _theme_rows(p[k], depth + 1)
+            if rows is not None:
+                return rows
+    found = [v for v in p.values() if isinstance(v, list) and v and all(_theme_row(r) for r in v)]
+    found += [rows for v in p.values() if isinstance(v, dict) for rows in [_theme_rows(v, depth + 1)] if rows is not None]
+    return found[0] if len(found) == 1 else None
+
+
 def tags_from_themes(payload):
     """Slug tags from an IB get_company_themes payload (list of names or {'name'|'theme'|'title'} rows).
+    The connector wraps rows as {'linked_themes': [...]}; known wrappers are unwrapped at any nesting (e.g.
+    {'data': {'linked_themes': ...}}, or an account-keyed block). Unknown wrappers are unwrapped only when their rows
+    are theme-shaped, so contract-search results, account lists and other payloads give no tags. Rows that carry a
+    contract identifier, and names that look like account ids, are skipped.
     Theme membership is a vendor classification by name, not an economic exposure weight."""
-    p = _load(payload, [], 'themes')
-    if isinstance(p, dict):
-        p = next((p[k] for k in ('themes', 'data', 'result', 'results', 'items') if isinstance(p.get(k), list)), [])
+    rows = _theme_rows(_load(payload, [], 'themes'))
     out = set()
-    for r in p if isinstance(p, list) else []:
-        name = _str(r) if not isinstance(r, dict) else next((_str(r[k]) for k in ('name', 'theme', 'title', 'theme_name', 'label') if _str(r.get(k))), None)
-        if name:
+    for r in rows or []:
+        if isinstance(r, dict):
+            if {_k(k) for k in r} & CONTRACT_FIELDS:
+                continue
+            name = next((_str(r[k]) for k in ('name', 'theme', 'title', 'theme_name', 'label') if _str(r.get(k))), None)
+        else:
+            name = _str(r)
+        if name and not ACCOUNT_LIKE.match(name) and not re.search(r'[*#•]', name):
             out.add(re.sub(r'[^a-z0-9]+', '_', name.lower()).strip('_'))
     return sorted(out)
 
@@ -294,15 +437,21 @@ def from_ib(positions_payload, summary_payload=None, as_of=None, fx=None, tolera
     cash_s, cash_ccy = _sget(summ, CASH_TAGS)
     base = base or nlv_ccy or cash_ccy
     rates = {str(k).upper(): number(v, f'fx.{k}', 1e-12) for k, v in (fx or {}).items()}
-    lines, cash_rows = [], []
-    for row, path in _rows(positions_payload, unparsed):
-        status, p = _position(row)
-        if status == 'unparsed':
+    lines, cash_rows, refused = [], [], 0
+    for row, path, ksym in _rows(positions_payload, unparsed):
+        status, p = _position(row, ksym)
+        if status == 'refused':
+            refused += 1
+            unparsed.append({'path': path, **p})
+        elif status == 'unparsed':
             unparsed.append({'path': path, **p})
         elif status == 'skipped':
             skipped.append({'path': path, **p})
         else:
             (cash_rows if p['asset_class'] == 'CASH' else lines).append(p)
+    if refused:
+        warnings.append(f'{refused} order-like row(s) refused: an orders, order-instruction or executions payload is not a '
+                        f'list of positions (pass get_account_positions)')
     if base is None:
         ccys = [p['currency'] for p in lines if p['currency']]
         base = max(set(ccys), key=ccys.count) if ccys else None
@@ -382,7 +531,7 @@ def from_ib(positions_payload, summary_payload=None, as_of=None, fx=None, tolera
     if gross_s is not None:
         g = sum(abs(p['value']) for p in merged if p['value'] is not None)
         rec['gross_position_check'] = {'summary': gross_s, 'positions': g, 'difference': gross_s - g}
-    positions = [{k: p[k] for k in ('symbol', 'conid', 'asset_class', 'underlying', 'description', 'quantity', 'price',
+    positions = [{k: p[k] for k in ('symbol', 'symbol_source', 'conid', 'asset_class', 'underlying', 'option_right', 'description', 'quantity', 'price',
                                     'value', 'value_local', 'currency', 'weight', 'cost_basis', 'cost_basis_method',
                                     'avg_cost', 'unrealized_pnl', 'value_method', 'ib_sector', 'ib_industry',
                                     'holding_since', 'notes')} | ({'merged_rows': p['merged_rows']} if 'merged_rows' in p else {})
@@ -397,6 +546,39 @@ def from_ib(positions_payload, summary_payload=None, as_of=None, fx=None, tolera
 
 
 # ---------------------------------------------------------------- analysis
+def _text(x):
+    """Pass-through text fields (mechanism, basis, verdict, ...) stay text: a structured value is kept as JSON text,
+    never as fields, so no caller-supplied structure (e.g. an order) can reach a read-only output."""
+    if x is None or isinstance(x, str):
+        return x
+    if isinstance(x, (int, float)) and not isinstance(x, bool):
+        return str(x)
+    return json.dumps(x, sort_keys=True, default=str, allow_nan=True)
+
+
+def _alerts(raw):
+    """Monitor alerts reduced to fixed text fields (code, detail, date, severity); other keys are dropped."""
+    out = []
+    for a in raw if isinstance(raw, list) else [raw]:
+        if isinstance(a, dict):
+            r = {'code': _text(a.get('code')),
+                 'detail': _text(next((a[k] for k in ('detail', 'message', 'description', 'summary', 'text') if a.get(k) is not None), None)),
+                 'date': _text(a.get('date') or a.get('as_of')), 'severity': _text(a.get('severity'))}
+            r = {k: v for k, v in r.items() if v is not None}
+            out.append(r or {'detail': 'alert without code or detail'})
+        elif a is not None:
+            out.append({'detail': _text(a)})
+    return out
+
+
+def _tag_list(x, label):
+    if x is None:
+        return set()
+    if isinstance(x, str) or not all(isinstance(t, str) for t in x):
+        raise ValueError(f'{label}: expected a list of tag names')
+    return set(x)
+
+
 def _exposure_map(i, label):
     """{tag: weight in [-1, 1]} and {tag: exposure_weights|assumed_full}."""
     raw, ew = i.get('exposures') or [], dict(i.get('exposure_weights') or {})
@@ -417,13 +599,13 @@ def _casefile(s, price_now=None):
         return None
     g = lambda k: _num(s.get(k))
     out = {k: g(k) for k in ('base_irr', 'bear_irr', 'bull_irr', 'bear_value', 'base_value', 'bull_value', 'price')}
-    out.update({k: s.get(k) for k in ('symbol', 'verdict', 'quality', 'risk_level', 'as_of', 'currency', 'previous_verdict')})
+    out.update({k: _text(s.get(k)) for k in ('symbol', 'verdict', 'quality', 'risk_level', 'as_of', 'currency', 'previous_verdict')})
     p = price_now if price_now is not None else out['price']
     out['downside_to_bear'] = out['bear_value'] / p - 1 if out['bear_value'] is not None and p else g('downside_to_bear')
     out['downside_basis'] = ('bear_value / current price - 1' if out['bear_value'] is not None and p
                              else 'as supplied' if out['downside_to_bear'] is not None else None)
     out['research_support'] = SUPPORT.get(out['verdict'], 'unknown_verdict' if out['verdict'] else 'no_verdict')
-    out['verdict_status'] = s.get('verdict_status')
+    out['verdict_status'] = _text(s.get('verdict_status'))
     if out['research_support'] == 'supports_price' and (s.get('price_claim_withheld') or s.get('verdict_status') == 'draft'):
         out['research_support'] = 'draft_unreviewed'   # a withheld price claim never supports buying
     return out
@@ -436,7 +618,7 @@ def _specs(raw):
             raise ValueError(f'scenario {name}: expected {{tag: shock}} or {{"shocks": ..., "mechanism": ...}}')
         src = s['shocks'] if isinstance(s.get('shocks'), dict) else {k: v for k, v in s.items() if k not in ('mechanism', 'combine', 'description')}
         out[name] = {'shocks': {t: number(v, f'scenario {name}.{t}', -1, 10) for t, v in src.items()},
-                     'mechanism': s.get('mechanism') or s.get('description'),
+                     'mechanism': _text(s.get('mechanism') or s.get('description')),
                      'combine': s.get('combine', 'sum') if s.get('combine', 'sum') in ('sum', 'max_abs') else 'sum'}
     return out
 
@@ -450,6 +632,10 @@ def _impact(e, spec):
 
 
 def _holdings(book, info, specs):
+    """Holdings by issuer. A derivative line adds its market value to its underlying's weight with an economic sign:
+    a long put (or a short call) lowers it, so a protective put never adds to long exposure or scenario loss. Market
+    value is not delta: the magnitude stays labelled as not delta-adjusted. Tax (unrealized gain fraction) uses the
+    non-derivative lines when there are any, so an option without cost data does not erase the stock's basis."""
     hold = {}
     for p in book.get('positions', []):
         if p.get('asset_class') == 'CASH' or p.get('weight') is None:
@@ -458,16 +644,26 @@ def _holdings(book, info, specs):
         i = info.get(sym) or (info.get(und) if und else None)
         key = (i or {}).get('issuer') or (und if p.get('asset_class') in DERIV and und else sym)
         i = i or info.get(key)
-        h = hold.setdefault(key, {'key': key, 'symbols': [], 'weight': 0.0, 'value_local': 0.0, 'cost': 0.0,
-                                  'cost_ok': True, 'ccys': set(), 'asset_classes': [], 'price': None, 'price_ccy': None,
-                                  'info': None, 'ib_sector': None, 'ib_industry': None, 'holding_since': None})
+        h = hold.setdefault(key, {'key': key, 'symbols': [], 'weight': 0.0, 'ccys': set(), 'asset_classes': [],
+                                  'price': None, 'price_ccy': None,
+                                  'info': None, 'ib_sector': None, 'ib_industry': None, 'holding_since': None,
+                                  'lines': {True: [0.0, 0.0, True, set(), 0], False: [0.0, 0.0, True, set(), 0]},
+                                  'deriv_value_weight': 0.0, 'puts_netted': 0})
+        deriv = p.get('asset_class') in DERIV
+        put = deriv and p.get('option_right') == 'P'
         h['symbols'].append(sym)
         h['asset_classes'].append(p.get('asset_class'))
-        h['weight'] += p['weight']
-        h['value_local'] += p.get('value_local') or 0.0
+        h['weight'] += -p['weight'] if put else p['weight']
+        if deriv:
+            h['deriv_value_weight'] += p['weight']
+            h['puts_netted'] += 1 if put else 0
+        ln = h['lines'][deriv]          # [value_local, cost, cost_ok, currencies, count] for stock lines / derivative lines
+        ln[0] += p.get('value_local') or 0.0
+        ln[1] += p.get('cost_basis') or 0.0
+        ln[2] = ln[2] and p.get('cost_basis') is not None
+        ln[3].add(p.get('currency'))
+        ln[4] += 1
         h['ccys'].add(p.get('currency'))
-        h['cost_ok'] = h['cost_ok'] and p.get('cost_basis') is not None
-        h['cost'] += p.get('cost_basis') or 0.0
         if p.get('asset_class') not in DERIV and (h['price'] is None or sym == key):
             h['price'], h['price_ccy'] = p.get('price'), p.get('currency')
         h['info'] = h['info'] or i
@@ -490,9 +686,10 @@ def _holdings(book, info, specs):
         h['derivative'] = any(a in DERIV for a in h['asset_classes'])
         h['price_comparable'] = ((i.get('casefile_summary') or {}).get('currency') or h['price_ccy']) == h['price_ccy']
         h['cf'] = _casefile(i.get('casefile_summary'), h['price'] if h['price_comparable'] else None)
-        single_ccy = len(h['ccys']) == 1
-        h['gain'] = ((h['value_local'] - h['cost']) / h['value_local']
-                     if h['cost_ok'] and single_ccy and h['value_local'] > 0 else None)
+        v, c, ok, ccys, _ = h['lines'][False] if h['lines'][False][4] else h['lines'][True]
+        h['gain'] = (v - c) / v if ok and len(ccys) == 1 and v > 0 else None
+        h['gain_basis'] = ('non-derivative lines' if h['lines'][False][4] and h['lines'][True][4]
+                           else 'derivative lines' if not h['lines'][False][4] else 'all lines')
         h['impacts'] = {}
         for name, spec in specs.items():
             sens = (i.get('scenario_sensitivity') or {}).get(name)
@@ -552,63 +749,189 @@ def _tag_table(hold, field='e', srcfield='src', cap=None):
     return dict(sorted(tags.items(), key=lambda x: -abs(x[1]['exposure'])))
 
 
-def _overlaps(hold, cap, thr):
-    """Clusters are tag-centric: holdings that all carry the same tag at |weight| >= thr (same sign).
-    A tag whose holder set sits inside a larger cluster joins it as a further shared tag. No
-    single-linkage chaining (A~B on AI, B~C on rates does not make A~C), and a diversified fund's
-    look-through exposure counts in tag totals but does not define a cluster."""
+def _side(h, t, thr):
+    """Economic direction of a holding on tag t: +1 / -1 = sign(weight x exposure weight) when |exposure weight| >= thr,
+    else 0. A short of a name that carries a tag offsets a long of another name; it is not the same bet."""
+    e = h['e'].get(t, 0.0)
+    if abs(e) < thr or not h['weight']:
+        return 0
+    return 1 if h['weight'] * e > 0 else -1
+
+
+def _groups(hold, thr, exclude=()):
+    """{(tag, direction): frozenset of single names} for every tag carried by >= 2 single names in the same economic
+    direction at |exposure weight| >= thr."""
     single = {k: h for k, h in hold.items() if h['e'] and not h['diversified']}
-    groups = {}
-    for t in {t for h in single.values() for t in h['e']}:
-        for sign in (1, -1):
-            m = frozenset(k for k, h in single.items() if sign * h['e'].get(t, 0) >= thr)
+    out = {}
+    for t in {t for h in single.values() for t in h['e']} - set(exclude):
+        for d in (1, -1):
+            m = frozenset(k for k, h in single.items() if _side(h, t, thr) == d)
             if len(m) >= 2:
-                groups[(t, sign)] = m
+                out[(t, d)] = m
+    return out
+
+
+def _spanned(carriers, groups):
+    """Separate driver groups inside a carrier set: other-tag groups restricted to the carriers (>= 2 names), keeping the
+    maximal ones (a group nested in another is the same cluster), then the largest set of pairwise-disjoint groups.
+    Overlapping groups are not chained together (a holding can carry two drivers). A tag whose carriers contain two or
+    more disjoint driver groups would absorb separate driver clusters."""
+    cs = set(carriers)
+    sets = {frozenset(set(m) & cs) for m in groups.values()}
+    sets = [s for s in sets if len(s) >= 2]
+    maximal = sorted((s for s in sets if not any(s < o for o in sets)), key=lambda s: (-len(s), sorted(s)))
+    best = []
+    if len(maximal) <= 12:                    # exact: largest pairwise-disjoint selection
+        for r in range(len(maximal), 0, -1):
+            best = next((list(c) for c in combinations(maximal, r) if all(not (a & b) for a, b in combinations(c, 2))), [])
+            if best:
+                break
+    else:                                     # greedy, largest groups first
+        for s in maximal:
+            if all(not (s & b) for b in best):
+                best.append(s)
+    return sorted((sorted(s) for s in best), key=lambda c: (-len(c), c))
+
+
+def _common_factors(hold, thr, share_max, listed, drivers, cap):
+    """Broad tags that would merge separate driver clusters into one (e.g. rates/long duration carried by nearly every
+    name merged separate AI-capex, advertising and software clusters). The automatic rule needs both:
+    (1) the single names carrying the tag (|exposure weight| >= thr, same economic direction) hold more than
+    `share_max` of ALL single-name weight (names without stated exposures count in the denominator), and
+    (2) those carriers contain two or more separate driver groups (other tags shared by >= 2 of the carriers).
+    A tag carried by a concentrated group with no separate driver groups inside it (two AI names at 30% of the book)
+    stays a driver cluster: that is the one-economic-bet case the single-name cap exists for. options.factor_tags lists
+    factors by hand; options.driver_tags exempts a tag from the automatic rule. Common factors are reported with their
+    total exposure and do not link clusters."""
+    single = {k: h for k, h in hold.items() if not h['diversified']}
+    total = sum(abs(h['weight']) for h in single.values())
+    uncovered = sum(abs(h['weight']) for h in single.values() if not h['e'])
+    wsum = lambda ks: sum(abs(hold[k]['weight']) for k in ks)
+    tags = {t for h in single.values() for t in h['e']} | ({t for h in hold.values() for t in h['e']} & set(listed))
+    carriers = {t: max(([k for k, h in single.items() if _side(h, t, thr) == d] for d in (1, -1)), key=wsum) for t in tags}
+    share = {t: wsum(c) / total if total else 0.0 for t, c in carriers.items()}
+    broad = {t for t in tags if t not in drivers and share[t] > share_max}
+    groups = _groups(hold, thr, exclude=broad | set(listed))
+    out = []
+    for t in sorted(tags):
+        spans = _spanned(carriers[t], {g: m for g, m in groups.items() if g[0] != t})
+        if t in listed:
+            basis = 'listed in options.factor_tags'
+        elif t in broad and len(spans) >= 2:
+            basis = (f'automatic: carried by more than {share_max:.0%} of single-name weight and spanning {len(spans)} '
+                     f'separate driver groups')
+        else:
+            continue
+        expo = sum(h['weight'] * h['e'][t] for h in hold.values() if t in h['e'])
+        single_expo = sum(h['weight'] * h['e'][t] for h in single.values() if t in h['e'])
+        sectors = sorted({hold[k]['sector'] for k in carriers[t]})
+        out.append({'tag': t, 'basis': basis, 'carrier_weight_share': share[t], 'single_name_weight': total,
+                    'single_name_weight_without_exposures': uncovered,
+                    'holdings': sorted(carriers[t], key=lambda k: -abs(hold[k]['weight'])), 'driver_groups_spanned': spans,
+                    'exposure': expo, 'single_name_exposure': single_expo, 'look_through_exposure': expo - single_expo,
+                    'sectors': sectors, 'hidden_by_sector_labels': len(sectors) > 1,
+                    'above_single_name_cap': cap is not None and abs(expo) > cap,
+                    'formula': 'exposure = sum(holding weight x exposure weight) over all holdings, incl. fund look-through; '
+                               'carrier_weight_share = weight of single names carrying the tag at >= link threshold in one economic '
+                               'direction / weight of all single names (with or without stated exposures)',
+                    'reading': f"common factor: {len(carriers[t])} of {len(single)} single names carry {t} ({share[t]:.0%} of "
+                               f"single-name weight"
+                               + (f'; {uncovered:.1%} of the portfolio sits in single names without stated exposures' if uncovered > 1e-12 else '')
+                               + f"); total exposure {expo:.1%} of the portfolio. Reported on its own; it does not link clusters",
+                    'note': ('a broad tag spanning separate driver groups; list it in options.driver_tags to cluster on it instead'
+                             if basis.startswith('automatic') else 'listed by the user as a market-wide factor')})
+    return sorted(out, key=lambda f: -abs(f['exposure']))
+
+
+def _overlaps(hold, cap, thr, factors=()):
+    """Clusters are tag-centric: single names that all carry the same driver tag at |exposure weight| >= thr in the same
+    economic direction (sign of weight x exposure weight: a short of a name carrying the tag is an offset, not a
+    member). A tag whose holder set sits inside a larger cluster joins it as a further shared tag. No single-linkage
+    chaining (A~B on AI, B~C on rates does not make A~C). Common factors (see `_common_factors`) never define or join a
+    cluster. Opposite-direction single names are listed as offsets and the cap test uses the exposure net of them. A
+    diversified fund's look-through exposure counts in tag totals but does not define a cluster."""
+    fset = {f['tag'] for f in factors}
+    single = {k: h for k, h in hold.items() if h['e'] and not h['diversified']}
+    groups = _groups(hold, thr, exclude=fset)
     expo = lambda t, members: sum(hold[k]['weight'] * hold[k]['e'][t] for k in members)
     clusters = []
-    for (t, sign), m in sorted(groups.items(), key=lambda x: (-len(x[1]), -abs(expo(x[0][0], x[1])))):
+    for (t, d), m in sorted(groups.items(), key=lambda x: (-len(x[1]), -abs(expo(x[0][0], x[1])), x[0][0], -x[0][1])):
         host = next((c for c in clusters if m <= c['_m']), None)
         if host is None:
             host = {'_m': m, 'holdings': sorted(m, key=lambda k: -abs(hold[k]['weight'])), 'defining_tag': t, 'shared_tags': {}}
             clusters.append(host)
-        host['shared_tags'][t] = expo(t, m)
+        host['shared_tags'][t] = host['shared_tags'].get(t, 0.0) + expo(t, m)
     for c in clusters:
         m = c.pop('_m')
         dom = max(c['shared_tags'], key=lambda t: abs(c['shared_tags'][t]))
+        gross = c['shared_tags'][dom]
+        offs = sorted((k for k, h in single.items() if k not in m and abs(h['e'].get(dom, 0.0)) >= thr
+                       and h['weight'] * h['e'][dom] * gross < 0), key=lambda k: -abs(hold[k]['weight']))
+        net = gross + sum(hold[k]['weight'] * hold[k]['e'][dom] for k in offs)
         sectors = sorted({hold[k]['sector'] for k in m})
-        c.update(combined_weight=sum(hold[k]['weight'] for k in m), dominant_tag=dom, dominant_exposure=c['shared_tags'][dom],
-                 sectors=sectors, hidden_by_sector_labels=len(sectors) > 1,
-                 above_single_name_cap=cap is not None and abs(c['shared_tags'][dom]) > cap,
-                 reading=f"{len(m)} holdings share {c['defining_tag']}; largest shared exposure {dom} = {c['shared_tags'][dom]:.1%} "
-                         f"of the portfolio: one economic bet",
-                 rule=f"all members carry {c['defining_tag']} at exposure weight >= {thr} (same sign); "
-                      f"other shared tags are carried by at least two members")
-    clusters.sort(key=lambda c: -abs(c['dominant_exposure']))
+        c.update(combined_weight=sum(hold[k]['weight'] for k in m), dominant_tag=dom, dominant_exposure=gross,
+                 offsets=offs, net_dominant_exposure=net, sectors=sectors, hidden_by_sector_labels=len(sectors) > 1,
+                 above_single_name_cap=cap is not None and abs(net) > cap,
+                 reading=f"{len(m)} holdings share {c['defining_tag']}; largest shared exposure {dom} = {gross:.1%} of the portfolio"
+                         + (f", {net:.1%} net of opposite-direction holdings ({', '.join(offs)})" if offs else '')
+                         + (': one economic bet' if abs(net) >= 0.5 * abs(gross) else ': largely offset by opposite-direction holdings'),
+                 rule=f"all members carry {c['defining_tag']} at exposure weight >= {thr} in the same economic direction "
+                      f"(sign of weight x exposure weight); other shared tags are carried by at least two members; common factors "
+                      f"do not link; the cap test uses the exposure net of offsets")
+    clusters.sort(key=lambda c: (-abs(c['net_dominant_exposure']), c['defining_tag']))
+    econ = lambda h, t: h['weight'] * h['e'][t]
     pairs, label_only = [], []
     for a, b in combinations(single, 2):
-        ea, eb = hold[a]['e'], hold[b]['e']
-        shared = {t: min(abs(ea[t]), abs(eb[t])) for t in set(ea) & set(eb) if ea[t] * eb[t] > 0}
+        ha, hb = hold[a], hold[b]
+        common = set(ha['e']) & set(hb['e'])
+        both = {t: min(abs(ha['e'][t]), abs(hb['e'][t])) for t in common if econ(ha, t) * econ(hb, t) > 0}
+        opposite = sorted(t for t in common if econ(ha, t) * econ(hb, t) < 0 and min(abs(ha['e'][t]), abs(hb['e'][t])) >= thr)
+        shared = {t: v for t, v in both.items() if t not in fset}
         if any(v >= thr for v in shared.values()):
             pairs.append({'holdings': [a, b], 'shared': {t: v for t, v in shared.items() if v >= thr},
-                          'same_sector_label': hold[a]['sector'] == hold[b]['sector']})
-        elif hold[a]['sector'] == hold[b]['sector'] != 'unclassified' and not shared:
-            label_only.append({'holdings': [a, b], 'sector': hold[a]['sector'],
-                               'note': 'same sector label, no shared economic tag: do not treat as one risk'})
+                          'shared_common_factors': sorted(t for t, v in both.items() if t in fset and v >= thr),
+                          'offsetting_tags': opposite, 'same_sector_label': ha['sector'] == hb['sector']})
+        elif ha['sector'] == hb['sector'] != 'unclassified' and not shared:
+            label_only.append({'holdings': [a, b], 'sector': ha['sector'],
+                               'note': 'same sector label, no shared driver tag (common factors aside): do not treat as one risk'})
+    offsets = []
+    for t in sorted({t for h in single.values() for t in h['e']}):
+        pos = [k for k, h in single.items() if _side(h, t, thr) == 1]
+        neg = [k for k, h in single.items() if _side(h, t, thr) == -1]
+        if pos and neg:
+            main, other = (pos, neg) if abs(expo(t, pos)) >= abs(expo(t, neg)) else (neg, pos)
+            net = expo(t, pos) + expo(t, neg)
+            offsets.append({'tag': t, 'holdings': main, 'offsets': other, 'exposure': expo(t, main),
+                            'offset_exposure': expo(t, other), 'net_exposure': net, 'common_factor': t in fset,
+                            'reading': f"{', '.join(other)} offset {', '.join(main)} on {t} (opposite economic direction): net "
+                                       f"{net:.1%} of the portfolio; a hedge on this tag, not one economic bet"})
     shared_tags = []
     for t, r in _tag_table({k: h for k, h in hold.items() if h['e']}, cap=cap).items():
-        members = [x for x in r['holdings'] if x['exposure_weight'] >= thr]
+        up = [x for x in r['holdings'] if abs(x['exposure_weight']) >= thr and x['contribution'] > 0]
+        down = [x for x in r['holdings'] if abs(x['exposure_weight']) >= thr and x['contribution'] < 0]
+        members, offs = (up, down) if sum(x['contribution'] for x in up) >= -sum(x['contribution'] for x in down) else (down, up)
         if len(members) >= 2:
             ex = sum(x['contribution'] for x in members)
-            shared_tags.append({'tag': t, 'holdings': [x['holding'] for x in members],
-                                'offsets': [x['holding'] for x in r['holdings'] if x['exposure_weight'] <= -thr],
-                                'combined_weight': sum(x['weight'] for x in members), 'exposure': ex,
-                                'above_single_name_cap': cap is not None and ex > cap,
-                                'note': 'includes look-through exposure of diversified funds'})
-    return {'clusters': clusters, 'shared_tags': sorted(shared_tags, key=lambda r: -abs(r['exposure'])),
-            'pairs': pairs, 'same_label_different_drivers': label_only}
+            shared_tags.append({'tag': t, 'holdings': [x['holding'] for x in members], 'offsets': [x['holding'] for x in offs],
+                                'combined_weight': sum(x['weight'] for x in members), 'exposure': ex, 'net_exposure': r['exposure'],
+                                'above_single_name_cap': cap is not None and abs(ex) > cap, 'common_factor': t in fset,
+                                'note': 'includes look-through exposure of diversified funds; members share one economic direction'})
+    return {'clusters': clusters, 'common_factors': list(factors), 'offsets': offsets,
+            'shared_tags': sorted(shared_tags, key=lambda r: (-abs(r['exposure']), r['tag'])),
+            'pairs': pairs, 'same_label_different_drivers': label_only,
+            'method': {'link_threshold': thr, 'common_factor_tags': sorted(fset),
+                       'caveats': ['Clusters are tag-centric, not single-linkage: A~B on one tag and B~C on another does not '
+                                   'make A~C; a holding can sit in several clusters.',
+                                   'Direction is economic (weight x exposure weight): a short of a name carrying a tag offsets a '
+                                   'long of another; offsets are listed and the cluster cap test uses the net exposure.',
+                                   'Common factors (a tag carried by most of the single-name weight that spans separate driver '
+                                   'groups, or listed in options.factor_tags) are reported with their total exposure and do not '
+                                   'link clusters; otherwise one broad tag would merge every driver cluster into one.',
+                                   "A diversified fund's look-through exposure counts in tag totals, shared tags and "
+                                   'common-factor exposure but does not define a cluster.']}}
 
 
-def _scenario(name, fallback, hold, clusters, mechanism=None):
+def _scenario(name, fallback, hold, clusters, mechanism=None, factors=()):
     """Portfolio impact of one scenario; `fallback(h)` gives the impact when the scenario is not a tag spec."""
     rows, unknown = [], 0.0
     for key, h in hold.items():
@@ -631,13 +954,31 @@ def _scenario(name, fallback, hold, clusters, mechanism=None):
                                'share_of_loss': cl / loss if loss else None,
                                'basis': "shocks on the cluster's shared tags; whole impact where only a holding estimate exists"})
     by_cluster.sort(key=lambda x: x['loss'])
+    by_factor = []
+    for f in factors:           # shocks on the common-factor tag across all holdings, incl. fund look-through
+        fl, est = 0.0, []
+        for r in rows:
+            if r['impact'] is None:
+                continue
+            if r['tag_parts']:
+                fl += r['weight'] * r['tag_parts'].get(f['tag'], 0.0)
+            elif r['source'] == 'holding_estimate' and f['tag'] in hold[r['holding']]['e']:
+                fl += r['weight'] * r['impact']        # same fallback as by_cluster: the estimate is not split by tag
+                est.append(r['holding'])
+        if fl < 0:
+            by_factor.append({'tag': f['tag'], 'loss': fl, 'share_of_loss': fl / loss if loss else None,
+                              'holding_estimates_included': est,
+                              'basis': 'shocks on the common-factor tag across all holdings, incl. look-through of diversified funds; '
+                                       'where a holding states its own scenario estimate and carries the tag, its whole estimate '
+                                       '(not split by tag, so it may overlap other tags)'})
+    by_factor.sort(key=lambda x: x['loss'])
     top3 = [r for r in rows if r['share_of_loss']][:3]
     return {'mechanism': mechanism, 'portfolio_impact': total, 'portfolio_loss_from_losers': loss,
             'formula': 'sum(weight x impact); impact = holding estimate, else sum of tag shock x exposure weight (floor -100%)',
             'unknown_weight': unknown, 'holdings': rows,
             'no_mapped_exposure': [r['holding'] for r in rows if r['source'] == 'no_mapped_exposure'],
             'top3_share_of_loss': sum(r['share_of_loss'] for r in top3) if top3 else None,
-            'by_cluster': by_cluster,
+            'by_cluster': by_cluster, 'by_common_factor': by_factor,
             'warnings': ([] if mechanism else ['mechanism not stated: a shock without a mechanism is an unexplained correlation'])
                         + ([f'{unknown:.1%} of the portfolio has no impact estimate (no holdings_info or no bear value): unknown, not zero']
                            if unknown else [])
@@ -653,6 +994,8 @@ def analyze(book, holdings_info=None, options=None):
     o = {**ANALYZE_DEFAULTS, **(options or {})}
     cap = number(o['single_name_cap'], 'single_name_cap', 0, 1) if o['single_name_cap'] is not None else None
     thr = number(o['link_threshold'], 'link_threshold', 0, 1)
+    o['review_age_days'] = number(o['review_age_days'], 'review_age_days', 0)
+    o['price_band_trigger'] = number(o['price_band_trigger'], 'price_band_trigger', 0)
     specs = _specs(o['scenarios'])
     hold = _holdings(book, holdings_info or {}, specs)
     ws = {k: h['weight'] for k, h in hold.items()}
@@ -669,7 +1012,11 @@ def analyze(book, holdings_info=None, options=None):
         h['cp_src'] = {c: 'stated_share' if isinstance(cps, dict) and cps.get(c) is not None else 'assumed_full' for c in h['cp']}
         h['themes'] = {t: 1.0 for t in (h['info'] or {}).get('ib_themes') or []}
         h['theme_src'] = {t: 'membership' for t in h['themes']}
-    ov = _overlaps(hold, cap, thr)
+    listed, driver_set = _tag_list(o['factor_tags'], 'factor_tags'), _tag_list(o['driver_tags'], 'driver_tags')
+    if listed & driver_set:
+        raise ValueError(f'tags listed both as factor_tags and driver_tags: {sorted(listed & driver_set)}')
+    share_max = number(o['factor_weight_share'], 'factor_weight_share', 0, 1)
+    ov = _overlaps(hold, cap, thr, _common_factors(hold, thr, share_max, listed, driver_set, cap))
     table = lambda getter: {r['item']: {'weight': r['weight'], 'holdings': r['holdings']} for r in _aggregate(hold, getter)}
     exposures = {'by_sector': table(lambda h: [h['sector']]), 'by_industry': table(lambda h: [h['industry']]),
                  'by_tag': _tag_table(hold, cap=cap),
@@ -680,7 +1027,8 @@ def analyze(book, holdings_info=None, options=None):
                  'unclassified': [k for k, h in hold.items() if not h['has_info']],
                  'note': 'by_tag weights each holding by its exposure weight (economic share), not by name; '
                          'ib_theme_membership is vendor classification by name only.'}
-    scenarios = {name: _scenario(name, None, hold, ov['clusters'], spec['mechanism']) | {'shocks': spec['shocks'], 'combine': spec['combine']}
+    scenarios = {name: _scenario(name, None, hold, ov['clusters'], spec['mechanism'], ov['common_factors'])
+                       | {'shocks': spec['shocks'], 'combine': spec['combine']}
                  for name, spec in specs.items()}
 
     def own_bear(h):
@@ -712,8 +1060,13 @@ def analyze(book, holdings_info=None, options=None):
                        'portfolio_fit': {'over_single_name_cap': cap is not None and not h['diversified'] and abs(h['weight']) > cap,
                                          'clusters': [i for i, c in enumerate(ov['clusters']) if k in c['holdings']]},
                        'tax': {'unrealized_gain_fraction': h['gain'], 'cost_basis_available': h['gain'] is not None,
-                               'holding_since': h['holding_since']},
+                               'gain_basis': h['gain_basis'], 'holding_since': h['holding_since']},
                        'scenario_impacts': {n: v[0] for n, v in h['impacts'].items()}}
+        if h['derivative']:
+            holdings[k]['derivatives'] = {
+                'market_value_weight': h['deriv_value_weight'], 'puts_counted_negative': h['puts_netted'],
+                'note': 'derivative market value is added to the holding weight with an economic sign (long puts and short '
+                        'calls lower it); it is not delta-adjusted, so the magnitude of the exposure is approximate'}
     weights = {'basis': book.get('weight_basis'), 'cash': book.get('cash_weight'),
                'positions': [{'symbol': p.get('symbol'), 'asset_class': p.get('asset_class'), 'weight': p.get('weight')} for p in book.get('positions', [])],
                'holdings': dict(sorted(ws.items(), key=lambda x: -abs(x[1]))),
@@ -723,16 +1076,20 @@ def analyze(book, holdings_info=None, options=None):
            'params': {'single_name_cap': cap,
                       'single_name_cap_source': 'options' if 'single_name_cap' in (options or {}) else 'default (20% cap from the 2026-10 fit-check)',
                       'link_threshold': thr, 'review_age_days': o['review_age_days'], 'price_band_trigger': o['price_band_trigger'],
+                      'factor_weight_share': share_max, 'factor_tags': sorted(listed), 'driver_tags': sorted(driver_set),
                       'scenarios': specs},
            'notes': ['Read-only analysis; no orders are created or suggested.',
                      'A shared tag above the single-name cap means one economic bet larger than any single name is allowed to be.',
+                     'Common factors (overlaps.common_factors) are broad tags carried by most of the single-name weight that span '
+                     'separate driver groups, or tags listed in options.factor_tags; they are reported with their total exposure '
+                     'and do not link clusters. A concentrated driver with no separate groups inside it stays a cluster.',
                      'Private output: derived from account positions; keep out of Git.']}
     return _no_orders(_clean(out))
 
 
 def _review(book, hold, ov, o, cap):
     as_of = date.fromisoformat(book['as_of']) if book.get('as_of') else None
-    band, age_max = number(o['price_band_trigger'], 'price_band_trigger', 0), o['review_age_days']
+    band, age_max = o['price_band_trigger'], o['review_age_days']
     out = []
     for key, h in hold.items():
         i, cf, t = h['info'] or {}, h['cf'], []
@@ -751,7 +1108,7 @@ def _review(book, hold, ov, o, cap):
                     t.append({'code': 'analysis_after_book_date', 'severity': 'high',
                               'detail': f'analysis dated {cf["as_of"]} is after the book as_of (look-ahead or mismatched dates)'})
                 elif age > age_max:
-                    t.append({'code': 'stale_analysis', 'severity': 'medium', 'detail': f'analysis is {age} days old (> {age_max})'})
+                    t.append({'code': 'stale_analysis', 'severity': 'medium', 'detail': f'analysis is {age} days old (> {age_max:g})'})
             elif not cf['as_of']:
                 t.append({'code': 'analysis_date_missing', 'severity': 'medium', 'detail': 'casefile summary has no as_of'})
             if raw.get('currency') and h['price_ccy'] and raw['currency'] != h['price_ccy']:
@@ -773,7 +1130,7 @@ def _review(book, hold, ov, o, cap):
                 t.append({'code': 'verdict_changed', 'severity': 'high', 'detail': f'verdict {prev} -> {cf["verdict"]}'})
             if cf['verdict'] in ('avoid', 'index_preferable', 'insufficient_evidence'):
                 t.append({'code': 'held_against_verdict', 'severity': 'high', 'detail': f'held while the research verdict is {cf["verdict"]}'})
-        alerts = i.get('monitor_alerts') or []
+        alerts = _alerts(i.get('monitor_alerts') or [])
         if alerts:
             t.append({'code': 'business_changed', 'severity': 'high', 'detail': f'{len(alerts)} monitor alert(s) since the thesis was frozen', 'alerts': alerts})
         if cap is not None and not h['diversified'] and abs(h['weight']) > cap:
@@ -781,10 +1138,17 @@ def _review(book, hold, ov, o, cap):
         for c in ov['clusters']:
             if key in c['holdings'] and c['above_single_name_cap']:
                 t.append({'code': 'in_cluster_above_cap', 'severity': 'medium',
-                          'detail': f"cluster sharing {c['defining_tag']} ({', '.join(c['holdings'])}) carries {c['dominant_exposure']:.1%} "
-                                    f"{c['dominant_tag']} exposure, above the {cap:.0%} single-name cap"})
+                          'detail': f"cluster sharing {c['defining_tag']} ({', '.join(c['holdings'])}) carries {c['net_dominant_exposure']:.1%} "
+                                    f"{c['dominant_tag']} exposure" + (' net of offsets' if c['offsets'] else '')
+                                    + f", above the {cap:.0%} single-name cap"})
+        for f in ov['common_factors']:
+            if key in f['holdings'] and f['above_single_name_cap']:
+                t.append({'code': 'carries_common_factor_above_cap', 'severity': 'low',
+                          'detail': f"carries {f['tag']}, a common factor at {f['exposure']:.1%} portfolio exposure, above the "
+                                    f"{cap:.0%} single-name cap: a portfolio-level exposure shared by {len(f['holdings'])} single names"})
         if h['derivative']:
-            t.append({'code': 'derivative_not_delta_adjusted', 'severity': 'low', 'detail': 'option/derivative weight is market value, not economic exposure'})
+            t.append({'code': 'derivative_not_delta_adjusted', 'severity': 'low',
+                      'detail': 'option/derivative weight is market value with an economic sign (puts negative), not delta-adjusted exposure'})
         if t:
             sev = max(SEVERITY[x['severity']] for x in t)
             out.append({'holding': key, 'weight': h['weight'], 'priority': {3: 'high', 2: 'medium', 1: 'low'}[sev], 'triggers': t})
@@ -857,7 +1221,7 @@ def _metrics(state, cap):
         for n, x in v['impacts'].items():
             if x is not None:
                 scen[n] = scen.get(n, 0.0) + v['weight'] * x
-    m.update(tags=tags, scenarios=scen)
+    m.update(tags=tags, scenarios=scen, net_invested=sum(ws.values()))
     return m
 
 
@@ -866,11 +1230,14 @@ def _risk_change(before, after, cap):
     for t in sorted(set(before['tags']) | set(after['tags'])):
         b, a = before['tags'].get(t, 0.0), after['tags'].get(t, 0.0)
         if abs(a - b) > 1e-12:
+            gb, ga = before['gross_invested'], after['gross_invested']
             tags.append({'tag': t, 'before': b, 'after': a, 'change': a - b,
+                         'share_of_invested_before': b / gb if gb else None, 'share_of_invested_after': a / ga if ga else None,
                          'above_single_name_cap_after': cap is not None and a > cap,
                          'crosses_single_name_cap': cap is not None and b <= cap < a})
     pick = lambda m: {'top1': m['top1'], 'top5_weight': m['top5_weight'], 'hhi': m['hhi'], 'effective_n': m['effective_n'],
-                      'over_single_name_cap': [x['holding'] for x in m['over_single_name_cap']]}
+                      'over_single_name_cap': [x['holding'] for x in m['over_single_name_cap']],
+                      'gross_invested': m['gross_invested'], 'net_invested': m['net_invested']}
     return {'before': pick(before), 'after': pick(after),
             'effective_n_change': after['effective_n'] - before['effective_n'] if after['effective_n'] and before['effective_n'] else None,
             'tag_changes': sorted(tags, key=lambda x: -abs(x['change'])),
@@ -892,15 +1259,23 @@ def compare(candidate, book_analysis, alternatives=None, options=None):
     overlap, scenario and tax effect. No option is selected and none is executable."""
     o = {**COMPARE_DEFAULTS, **(options or {})}
     tw = number(o['trial_weight'], 'trial_weight', 1e-6, 1)
+    o['tax_rate'] = number(o['tax_rate'], 'tax_rate', 0, 1)
+    o['horizon_years'] = number(o['horizon_years'], 'horizon_years', 0.5, 50)
+    o['max_targets'] = int(number(o['max_targets'], 'max_targets', 0, 1000))
+    o['tax_rate_source'] = _text(o.get('tax_rate_source')) or TAX_SOURCE
     A, alt = book_analysis, alternatives or {}
     cap, specs = A['params']['single_name_cap'], A['params']['scenarios']
+    thr = A['params'].get('link_threshold', ANALYZE_DEFAULTS['link_threshold'])
     H = A['holdings']
     cash_w = A['weights'].get('cash')
     cash_y = _num((alt.get('cash') or {}).get('yield'))
-    idx = alt.get('index') or {}
+    idx = dict(alt.get('index') or {})
+    idx['symbol'], idx['basis'] = _str(idx.get('symbol')), _text(idx.get('basis'))
     idx_r = _num(idx.get('expected_return'))
-    if not (candidate or {}).get('symbol'):
-        raise ValueError('candidate needs a symbol')
+    idx_down = _num(idx.get('downside'))
+    if not _str((candidate or {}).get('symbol')):
+        raise ValueError('candidate needs a symbol (text)')
+    candidate = dict(candidate, symbol=_str(candidate['symbol']))
     c = _candidate(candidate, specs)
     held_key = next((k for k, h in H.items() if c['symbol'] == k or c['symbol'] in h['symbols']), None)
     ckey = held_key or c['symbol']
@@ -939,23 +1314,163 @@ def compare(candidate, book_analysis, alternatives=None, options=None):
     if support not in ('supports_price',):
         c_reasons_against.append(f"research verdict {c.get('verdict') or 'missing'} ({support}): the research does not support paying today's price")
     options_out = []
+    EPS = 1e-9
+    longs = {k: h['weight'] for k, h in H.items() if h['weight'] > 0}       # shorts are never funding sources
+    ikey = (next((k for k, h in H.items() if idx.get('symbol') and (idx['symbol'] == k or idx['symbol'] in h['symbols'])), None)
+            or f"index:{idx.get('symbol') or 'broad'}")
+    _sums = {}
 
-    def opt(code, label, target, deltas, er, er_formula, bear, tax=None, extra=None, sep=None, why=None, why_not=None, funding='cash', caveats=None):
+    def summ(k):
+        if k not in _sums:
+            _sums[k] = summary(k)
+        return _sums[k]
+
+    def exp_ret(k):
+        r = summ(k)['base_irr']
+        return idx_r if r is None and k == ikey else r
+
+    def down(k):
+        d = summ(k)['downside_to_bear']
+        return idx_down if d is None and k == ikey else d
+
+    def funded(target, r_t, d_t, cash_formula):
+        """Add the trial weight to `target`. Cash pays first; when cash is short, the rest is sold pro-rata
+        across the other long holdings, so the simulated book never goes above 100% invested. Margin is
+        used only when nothing is left to sell, and it is then named. Returns the option's pieces."""
+        avail = None if cash_w is None else max(cash_w, 0.0)
+        from_cash = tw if avail is None else min(tw, avail)
+        short = tw - from_cash
+        pool = {k: w for k, w in longs.items() if k != target}
+        pw = sum(pool.values())
+        sale = min(short, pw) if short > EPS else 0.0
+        margin = short - sale if short > EPS else 0.0
+        sold = {k: sale * w / pw for k, w in pool.items()} if sale > EPS else {}
+        mode = '+'.join(x for x, on in (('cash', from_cash > EPS), ('pro_rata_sale', bool(sold)), ('margin', margin > EPS)) if on) or 'cash'
+        info = {'mode': mode, 'from_cash': from_cash, 'pro_rata_sale': sale, 'margin': margin, 'holdings_sold': len(sold),
+                'cash_before': cash_w, 'rule': 'cash first; any shortfall sold pro-rata across the other long holdings; '
+                                               'margin only when nothing is left to sell'}
+        why_not, cav, tax = [], [], None
+        if mode == 'cash':
+            er = tw * vs(r_t, cash_y) if vs(r_t, cash_y) is not None else None
+            bear = tw * d_t if d_t is not None else None
+            if cash_w is None:
+                cav.append('cash weight unknown: funding from cash is not verified')
+            return {target: tw}, '', er, cash_formula, bear, tax, info, why_not, cav
+        rets = {k: exp_ret(k) for k in sold}
+        unknown = sum(v for k, v in sold.items() if rets[k] is None)
+        if r_t is None or margin > EPS or unknown > EPS or (from_cash > EPS and cash_y is None):
+            er = None
+            formula = ('not computed: ' + '; '.join(x for x, on in (
+                ('target return unknown', r_t is None), ('margin cost not modelled', margin > EPS),
+                (f'base IRR unknown for {unknown / sale:.0%} of the pro-rata sale' if sale > EPS else '', unknown > EPS),
+                ('cash yield unknown', from_cash > EPS and cash_y is None)) if on))
+        else:
+            er = (from_cash * (r_t - cash_y) if from_cash > EPS else 0.0) + sum(v * (r_t - rets[k]) for k, v in sold.items())
+            formula = 'from_cash x (target return - cash yield) + sum(sold_k x (target return - holding_k base IRR))'
+        downs = {k: down(k) for k in sold}
+        no_bear = sum(v for k, v in sold.items() if downs[k] is None)
+        info['sold_weight_without_bear_value'] = no_bear
+        if d_t is None:
+            bear = None
+        else:       # sold holdings with a bear value are netted; the rest is named, not dropped silently
+            bear = tw * d_t - sum(v * downs[k] for k, v in sold.items() if downs[k] is not None)
+            if no_bear > EPS:
+                cav.append(f'bear effect nets the sold holdings that have a bear value; {no_bear:.1%} of the sale has none '
+                           f'and is not netted')
+        why_not.append(f"cash {cash_w:.1%} is below the {tw:.0%} trial weight: the add requires a sale or margin. Simulated as "
+                       f"{from_cash:.1%} from cash and {sale:.1%} sold pro-rata across {len(sold)} existing holding(s)"
+                       + (f"; {margin:.1%} would need margin (nothing left to sell), so the book goes above 100% invested"
+                          if margin > EPS else ", so the book stays within 100% invested"))
+        if sold:
+            t = o['tax_rate']
+            gains = {k: H[k]['tax']['unrealized_gain_fraction'] for k in sold}
+            known = [k for k in sold if gains[k] is not None]
+            no_basis = sum(sold[k] for k in sold if gains[k] is None)
+            gross_gain = sum(max(gains[k], 0.0) * sold[k] for k in known)
+            gross_loss = sum(min(gains[k], 0.0) * sold[k] for k in known)
+            net_gain = gross_gain + gross_loss            # losses realized in the same sale offset its gains
+            imm = t * max(net_gain, 0.0)
+            tax = {'status': 'assessed' if not no_basis else ('partially_assessed' if known else 'not_assessed'),
+                   'kind': 'pro_rata_funding_sale', 'tax_rate': t, 'tax_rate_source': o['tax_rate_source'],
+                   'immediate_tax_share_of_portfolio': imm if known else None,
+                   'realized_gain_share_of_portfolio': gross_gain if known else None,
+                   'realized_loss_share_of_portfolio': gross_loss if known else None,
+                   'loss_carried_forward_share_of_portfolio': max(-net_gain, 0.0) if known else None,
+                   'sold_weight_without_cost_basis': no_basis,
+                   'formula': 'tax rate x max(sum(unrealized gain fraction x sold weight), 0) over sold holdings with cost basis; '
+                              'losses realized in the same sale offset its gains',
+                   'caveats': ['average-cost basis from the broker; lot identification may differ']}
+            losers = sorted(k for k in known if gains[k] < 0)
+            if losers:
+                tax['caveats'].append(f"realized losses on {', '.join(losers)} ({-gross_loss:.2%} of the portfolio) offset gains in the "
+                                      f"same sale (same tax year assumed)"
+                                      + (f'; the net loss {-net_gain:.2%} is carried forward' if net_gain < 0 else ''))
+            if imm > EPS:
+                why_not.append(f"the pro-rata sale realizes gains: about {imm:.2%} of the portfolio in tax now at {t:.0%}"
+                               + (f" after {-gross_loss:.2%} of realized losses" if losers else '')
+                               + (f"; {no_basis:.1%} of the sold weight has no cost basis (tax unknown)" if no_basis > EPS else ''))
+            elif no_basis > EPS:
+                cav.append(f'tax on the pro-rata sale not fully assessed: {no_basis:.1%} of the sold weight has no cost basis')
+        label = (f': {from_cash:.1%} from cash, {sale:.1%} from a pro-rata sale of existing holdings'
+                 + (f', {margin:.1%} on margin' if margin > EPS else '') + ' (cash is insufficient)')
+        return ({target: tw, **{k: -v for k, v in sold.items()}}, label, er, formula, bear, tax, info, why_not, cav)
+
+    def opt(code, label, target, deltas, er, er_formula, bear, tax=None, extra=None, sep=None, why=None, why_not=None, funding='cash',
+            caveats=None, fund=None):
         risk = simulate(deltas, extra) if deltas else _risk_change(base, base, cap)
-        reasons_for, reasons_against = list(why or []), list(why_not or [])
+        reasons_for, reasons_against, cav = list(why or []), list(why_not or []), list(caveats or [])
+        ups = [k for k, d in deltas.items() if d > 0]
+        s_t = (state.get(ups[0]) or (extra or {}).get(ups[0]) or {}) if len(ups) == 1 else {}
+        e_t = s_t.get('e') if len(ups) == 1 else None
+        fund_t = bool(s_t.get('diversified'))         # a diversified fund's look-through never joins a cluster
         for tc in risk['tag_changes']:
+            if cap is None:
+                break
+            tc['added_position_exposure'] = (e_t or {}).get(tc['tag'], 0.0) if e_t is not None else None
+            sb, sa, ew = tc['share_of_invested_before'], tc['share_of_invested_after'], tc['added_position_exposure']
+            detail = '; '.join(x for x in (f'added position exposure {ew:.2f} vs book average {sb:.2f}' if ew is not None and sb is not None else '',
+                                           f'share of invested assets {sb:.1%} -> {sa:.1%}' if sb is not None and sa is not None else '') if x)
             if tc['change'] > 0 and tc['above_single_name_cap_after']:
-                reasons_against.append(f"raises {tc['tag']} exposure by {tc['change'] * 100:+.1f} pp to {tc['after']:.1%}, above the "
-                                       f"{cap:.0%} single-name cap: more of one economic bet")
+                # The cap is on net liquidation everywhere (by_tag, clusters, review). A new breach, an added position that
+                # carries the tag at the link threshold (it joins the bet) or a rising share of invested assets is a reason
+                # against. Only a non-linked carrier of a tag that is already above the cap, whose share falls, is a caveat.
+                crosses, joins = tc['crosses_single_name_cap'], ew is not None and abs(ew) >= thr and not fund_t
+                if crosses or joins or sb is None or sa is None or sa > sb + 1e-12:
+                    reasons_against.append(
+                        (f"pushes {tc['tag']} exposure from {tc['before']:.1%} to {tc['after']:.1%}, above the {cap:.0%} single-name cap: "
+                         f"a new breach" if crosses else
+                         f"raises {tc['tag']} exposure by {tc['change'] * 100:+.1f} pp to {tc['after']:.1%}, above the {cap:.0%} single-name cap")
+                        + (f"; the added position carries {tc['tag']} at {ew:.2f} (link threshold {thr:g}), so it is part of that bet" if joins else '')
+                        + ': more of one economic bet' + (f' ({detail})' if detail else ''))
+                else:
+                    carried = (f"the added position carries {tc['tag']} at {ew:.2f}, below the link threshold {thr:g} and the book average"
+                               if ew else f"the added position does not carry {tc['tag']}")
+                    cav.append(f"{tc['tag']} exposure rises {tc['change'] * 100:+.1f} pp to {tc['after']:.1%} (already above the {cap:.0%} cap); "
+                               f"{carried}, so {tc['tag']}'s share of invested assets falls ({detail})")
+            elif tc['change'] < 0 and tc['before'] > cap:
+                reasons_for.append(f"lowers {tc['tag']} exposure (above the {cap:.0%} cap) by {tc['change'] * 100:+.1f} pp to {tc['after']:.1%}"
+                                   + (f' ({detail})' if detail else ''))
         for k, d in deltas.items():
             if d > 0 and k in risk['after']['over_single_name_cap']:
                 w0 = H[k]['weight'] if k in H else 0.0
                 reasons_against.append(f'{k} weight {w0:.1%} -> {w0 + d:.1%}, above the {cap:.0%} single-name cap')
-        if risk['effective_n_change'] is not None and abs(risk['effective_n_change']) > 1e-9:
-            (reasons_for if risk['effective_n_change'] > 0 else reasons_against).append(
-                f"effective number of holdings {risk['before']['effective_n']:.1f} -> {risk['after']['effective_n']:.1f}")
-        if funding == 'cash' and deltas and cash_w is not None and cash_w < tw:
-            reasons_against.append(f'cash {cash_w:.1%} is below the {tw:.0%} trial weight: funding would need a sale or margin')
+        # effective_n counts names (1 / HHI); names in one cluster or common factor are one bet, so it is information only
+        risk['effective_n_note'] = ('name-count measure (1 / HHI over single names), shown for information: it does not count '
+                                    'independent bets, so it is not used as a reason for or against')
+        nb, na = risk['before']['net_invested'], risk['after']['net_invested']
+        gb, ga = risk['before']['gross_invested'], risk['after']['gross_invested']
+        cash_after = cash_w - (na - nb) if cash_w is not None else None
+        margin_before = (cash_w is not None and cash_w < -EPS) or gb > 1 + EPS
+        margin_after = (cash_after is not None and cash_after < -EPS) or ga > 1 + EPS
+        invested = {'gross_before': gb, 'gross_after': ga, 'net_before': nb, 'net_after': na, 'cash_before': cash_w, 'cash_after': cash_after,
+                    'over_100pct_invested_after': ga > 1 + EPS, 'uses_margin_after': margin_after,
+                    'note': 'weights are shares of the weight basis (net liquidation); above 100% invested or negative cash means margin'}
+        if margin_after and not margin_before and deltas:
+            reasons_against.append(f'simulated book is {ga:.1%} invested with cash {cash_after:.1%}: this option uses margin'
+                                   if cash_after is not None else f'simulated book is {ga:.1%} invested: this option uses margin')
+        elif margin_before:
+            cav.append(f'the book is already {gb:.1%} invested (cash {cash_w:.1%}) before this option: margin in use'
+                       if cash_w is not None else f'the book is already {gb:.1%} invested before this option: margin in use')
         if tax and tax.get('status') == 'assessed' and tax.get('after_tax_hurdle') is not None:
             text = (f"after {tax['tax_rate']:.0%} tax on the realized gain ({tax['immediate_tax_share_of_portfolio']:.2%} of the portfolio now) "
                     f"the replacement must return {tax['after_tax_hurdle']:.1%}/yr vs {tax['pre_tax_hurdle']:.1%} pre-tax over {tax['horizon_years']:g} years"
@@ -963,10 +1478,11 @@ def compare(candidate, book_analysis, alternatives=None, options=None):
             (reasons_for if tax.get('candidate_clears_after_tax') else reasons_against).append(text)
         options_out.append({'option': code, 'label': label, 'target': target, 'executable': False,
                             'illustrative_weight_change': deltas,
+                            'funding': fund or {'mode': funding if deltas else 'none'}, 'invested': invested,
                             'expected_return': {'portfolio_delta': er, 'formula': er_formula, 'reading': _pp(er)},
                             'bear_case_portfolio_effect': bear, 'risk_change': risk, 'tax': tax or {'status': 'no_realization'},
                             'separation': sep or {}, 'reasons_for': reasons_for, 'reasons_against': reasons_against,
-                            'caveats': list(caveats or [])})
+                            'caveats': cav})
 
     cr, cd = c.get('base_irr'), c.get('downside_to_bear')
     sep_c = {'business_quality': c.get('quality'), 'pricing': {'verdict': c.get('verdict'), 'research_support': support, 'base_irr': cr,
@@ -976,10 +1492,11 @@ def compare(candidate, book_analysis, alternatives=None, options=None):
     why = [f'base IRR {cr:.1%} vs cash yield {cash_y:.1%}'] if cr is not None and cash_y is not None else []
     if new_tags:
         why.append(f"adds exposures not yet held: {', '.join(new_tags)}")
-    opt('add_to_existing' if held_key else 'add_new', f'add {c["symbol"]} at an illustrative {tw:.0%} weight from cash', ckey,
-        {ckey: tw}, tw * vs(cr, cash_y) if vs(cr, cash_y) is not None else None, 'trial_weight x (candidate base IRR - cash yield)',
-        tw * cd if cd is not None else None, extra=cand_state, sep=sep_c, why=why, why_not=c_reasons_against
-        + ([f"no exposure tags stated: overlap with holdings unknown"] if not c['e'] else []))
+    d_, lab, er_, f_, bear_, tax_, info, fund_not, fund_cav = funded(ckey, cr, cd, 'trial_weight x (candidate base IRR - cash yield)')
+    add_er, add_mode = er_, info['mode']
+    opt('add_to_existing' if held_key else 'add_new', f'add {c["symbol"]} at an illustrative {tw:.0%} weight' + (lab or ' from cash'), ckey,
+        d_, er_, f_, bear_, tax=tax_, extra=cand_state, sep=sep_c, why=why, why_not=c_reasons_against
+        + ([f"no exposure tags stated: overlap with holdings unknown"] if not c['e'] else []) + fund_not, caveats=fund_cav, fund=info)
     # 2. trim the candidate when already held
     if held_key and H[held_key]['weight'] > 0:
         hk = H[held_key]
@@ -990,20 +1507,21 @@ def compare(candidate, book_analysis, alternatives=None, options=None):
             -sold * cd if cd is not None else None, tax=tax, sep=sep_c, funding='none')
     # 3. add to other holdings / replace other holdings
     others = [k for k in H if k != held_key and not H[k]['diversified'] and H[k]['weight'] > 0]   # shorts are not funding sources
-    sums = {k: summary(k) for k in others}
+    sums = {k: summ(k) for k in others}
     adds = sorted([k for k in others if sums[k]['base_irr'] is not None], key=lambda k: -sums[k]['base_irr'])[:o['max_targets']]
     for k in adds:
         s = sums[k]
         stale = [x for x in review.get(k, []) if x in STALE_IRR]
-        opt('add_to_existing', f'add to {k} at an illustrative {tw:.0%} weight from cash', k, {k: tw},
-            tw * vs(s['base_irr'], cash_y) if vs(s['base_irr'], cash_y) is not None else None, 'trial_weight x (holding base IRR - cash yield)',
-            tw * s['downside_to_bear'] if s['downside_to_bear'] is not None else None,
+        d_, lab, er_, f_, bear_, tax_, info, fund_not, fund_cav = funded(k, s['base_irr'], s['downside_to_bear'],
+                                                                         'trial_weight x (holding base IRR - cash yield)')
+        opt('add_to_existing', f'add to {k} at an illustrative {tw:.0%} weight' + (lab or ' from cash'), k, d_, er_, f_, bear_,
+            tax=tax_, caveats=fund_cav, fund=info,
             sep={'business_quality': s['quality'], 'pricing': {x: s[x] for x in ('verdict', 'base_irr', 'downside_to_bear', 'risk_level')},
                  'portfolio_fit': 'same exposures as already held'},
             why=([f"base IRR {s['base_irr']:.1%} vs cash yield {cash_y:.1%}"] if cash_y is not None else [])
             + ([f"base IRR exceeds the candidate by {s['base_irr'] - cr:.1%}/yr"] if cr is not None and s['base_irr'] > cr else []),
             why_not=([f"base IRR is below the candidate by {cr - s['base_irr']:.1%}/yr"] if cr is not None and s['base_irr'] < cr else [])
-            + ([f"open review triggers ({', '.join(stale)}): its IRR may be stale"] if stale else []))
+            + ([f"open review triggers ({', '.join(stale)}): its IRR may be stale"] if stale else []) + fund_not)
     overlap_first = sorted(others, key=lambda k: (-sum(1 for t in c['e'] if H[k]['exposure_weights'].get(t)),
                                                   sums[k]['base_irr'] if sums[k]['base_irr'] is not None else 9))[:o['max_targets']]
     for k in overlap_first:
@@ -1022,32 +1540,37 @@ def compare(candidate, book_analysis, alternatives=None, options=None):
             why_not=c_reasons_against + ([f'{k} base IRR unknown: return effect not computed'] if s['base_irr'] is None else [])
             + ([f'candidate base IRR is below {k} by {-er / sold:.1%}/yr'] if er is not None and er < 0 else []), funding='sale')
     # 4. broad index, cash, nothing
-    ikey = (next((k for k, h in H.items() if idx.get('symbol') and (idx['symbol'] == k or idx['symbol'] in h['symbols'])), None)
-            or f"index:{idx.get('symbol') or 'broad'}")
     i_e, _ = _exposure_map({'exposures': idx.get('exposures') or {}}, 'index')
     i_sens = idx.get('scenario_sensitivity') or {}
     i_imp = {n: _num(i_sens[n]) if i_sens.get(n) is not None else (_impact(i_e, sp)[0] if i_e else None) for n, sp in specs.items()}
-    idx_down = _num(idx.get('downside'))
     excess = vs(cr, idx_r)
-    opt('index', f"put an illustrative {tw:.0%} in a broad index ({idx.get('symbol') or 'unspecified'})", ikey, {ikey: tw},
-        tw * vs(idx_r, cash_y) if vs(idx_r, cash_y) is not None else None, 'trial_weight x (index expected return - cash yield)',
-        tw * idx_down if idx_down is not None else None,
+    d_, lab, er_, f_, bear_, tax_, info, fund_not, fund_cav = funded(ikey, idx_r, idx_down, 'trial_weight x (index expected return - cash yield)')
+    opt('index', f"put an illustrative {tw:.0%} in a broad index ({idx.get('symbol') or 'unspecified'})" + lab, ikey, d_, er_, f_, bear_,
+        tax=tax_, fund=info,
         extra={} if ikey in H else {ikey: {'diversified': True, 'e': i_e, 'impacts': i_imp}},
         sep={'business_quality': 'diversified basket', 'pricing': {'expected_return': idx_r, 'basis': idx.get('basis')}, 'portfolio_fit': 'diversified sleeve'},
         why=['adds no single-issuer concentration']
         + ([f'index expected return exceeds the candidate base IRR by {-excess:.1%}/yr'] if excess is not None and excess < 0 else [])
         + (['the research does not support the candidate at its price'] if c_reasons_against else []),
-        why_not=[f"candidate base IRR exceeds the index expected return by {excess:.1%}/yr (index basis: {idx.get('basis') or 'not stated'})"]
-        if excess is not None and excess > 0 else ([] if idx_r is not None else ['index expected return not supplied']),
-        caveats=[] if idx.get('exposures') else ['index look-through exposures not supplied: its share of existing tags is not measured'])
+        why_not=([f"candidate base IRR exceeds the index expected return by {excess:.1%}/yr (index basis: {idx.get('basis') or 'not stated'})"]
+                 if excess is not None and excess > 0 else ([] if idx_r is not None else ['index expected return not supplied'])) + fund_not,
+        caveats=([] if idx.get('exposures') else ['index look-through exposures not supplied: its share of existing tags is not measured'])
+        + fund_cav)
     opt('hold_cash', f'keep the illustrative {tw:.0%} in cash', None, {}, 0.0, 'baseline (cash stays at its yield)', 0.0,
         sep={'pricing': {'cash_yield': cash_y}, 'portfolio_fit': 'keeps optionality'},
         why=['no new risk; keeps optionality for a better price'],
-        why_not=[f"forgoes {_pp(tw * vs(cr, cash_y))} vs the candidate base case" if vs(cr, cash_y) is not None
-                 else 'forgone return unknown (cash yield or candidate IRR missing)'])
+        # the forgone return is the add option as funded (cash first, then a pro-rata sale), never cash the book lacks
+        why_not=[f"forgoes {_pp(add_er)} vs adding {c['symbol']} as simulated in the add option (funding: {add_mode})"
+                 if add_er is not None else
+                 f"forgone return unknown: the add option's return is not computed ({add_mode} funding)" if add_mode != 'cash'
+                 else 'forgone return unknown (cash yield or candidate IRR missing)'],
+        caveats=[f'cash is {cash_w:.1%}, below the {tw:.0%} trial weight: there is no {tw:.0%} of cash to keep; '
+                 f'this option is the same as doing nothing'] if cash_w is not None and cash_w < tw - EPS else [])
     unresolved = ([f"{x['holding']} above the single-name cap" for x in base['over_single_name_cap']]
                   + [f"{c_['defining_tag']} cluster ({', '.join(c_['holdings'])}) above the single-name cap"
                      for c_ in A['overlaps']['clusters'] if c_['above_single_name_cap']]
+                  + [f"common factor {f['tag']} at {f['exposure']:.1%} exposure, above the single-name cap"
+                     for f in A['overlaps'].get('common_factors', []) if f.get('above_single_name_cap')]
                   + ([f"{len(A.get('review_needed', []))} holding(s) with open review triggers"] if A.get('review_needed') else []))
     opt('do_nothing', f'do nothing / avoid {c["symbol"]}', None, {}, 0.0, 'baseline', 0.0, sep={'portfolio_fit': 'unchanged'},
         why=['the research does not support the candidate at its price'] if c_reasons_against else [],
@@ -1067,7 +1590,7 @@ def compare(candidate, book_analysis, alternatives=None, options=None):
     out = {'candidate': {k: c.get(k) for k in keep} | {'held': bool(held_key), 'holding_key': held_key},
            'options': options_out, 'diversification': diversification, 'comparisons': comparisons,
            'assumptions': {'trial_weight': tw, 'trial_weight_note': 'illustrative size to measure effects, not a sizing proposal',
-                           'tax_rate': o['tax_rate'], 'tax_rate_source': o.get('tax_rate_source', TAX_SOURCE),
+                           'tax_rate': o['tax_rate'], 'tax_rate_source': o['tax_rate_source'],
                            'horizon_years': o['horizon_years'], 'cash_yield': cash_y, 'index_expected_return': idx_r,
                            'single_name_cap': cap, 'max_targets': o['max_targets']},
            'notes': ['Options only: none is selected, none is executable, no order is created. Listing order is not a ranking.',
