@@ -131,7 +131,8 @@ KNOWN_INPUTS = ('overrides', 'reviews', 'risk_free', 'equity_risk_premium', 'hor
 # added to opening debt (they carry interest like debt). BioCryst's royalty financing obligation ($427m at 30.6.2026, paid
 # from ORLADEYO royalties with its non-cash interest in interest expense) was outside the bridge and made 20% look like the
 # rate on its $395m term loan.
-DEBT_LIKE_KINDS = ('royalty_financing', 'litigation', 'pension_deficit', 'deferred_consideration', 'preferred_or_minority')
+DEBT_LIKE_KINDS = ('royalty_financing', 'litigation', 'pension_deficit', 'deferred_consideration', 'preferred_or_minority',
+                   'finance_leases')     # finance-lease payments are not in operating costs (amortisation and interest)
 NONRECURRING_KINDS = ('acquired_iprd', 'impairment', 'gain_or_loss_on_sale', 'litigation_settlement', 'one_time_license_revenue',
                       'divestiture_in_revenue')
 # inputs['operating_funding'] = {amount, reason, evidence_ids}: borrowings that fund an operating asset (a lending book) and

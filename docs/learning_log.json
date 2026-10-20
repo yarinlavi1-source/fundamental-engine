@@ -160,6 +160,33 @@
      "fix": "open: classification of fertilizer producers"
     }
    ]
+  },
+  {
+   "round": "AMZN_2026-10-20",
+   "date": "2026-10-20",
+   "companies": [
+    "AMZN"
+   ],
+   "fixes": [
+    {
+     "ticker": "AMZN",
+     "kind": "missing_input",
+     "finding": "finance lease liabilities ($13.5bn) outside the bridge while their payments are not operating costs",
+     "fix": "debt_like_claims kind finance_leases"
+    },
+    {
+     "ticker": "AMZN",
+     "kind": "open",
+     "finding": "private AI stakes (Anthropic about $190bn, OpenAI $50bn at Amazon's own Level 3 carrying values, about $22 a share) are excluded from the bridge by policy; reported beside the value, not in it",
+     "fix": "open: an evidenced non_operating_assets input with a mandatory haircut"
+    },
+    {
+     "ticker": "AMZN",
+     "kind": "open",
+     "finding": "'acquisitions, net of cash acquired, non-marketable investments, and other' ($39.8bn, mostly OpenAI and Anthropic stock) read as an acquisition: anchor_includes_acquired_revenue warning without acquired revenue",
+     "fix": "open: separate investment purchases from business acquisitions"
+    }
+   ]
   }
  ]
 }
