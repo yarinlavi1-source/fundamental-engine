@@ -527,6 +527,9 @@ def _history(fb, an, warn):
     ic = [(e, _num(r.get('invested_capital')), r['revenue']) for e, r in rows if _num(r.get('invested_capital')) is not None]
     # revenue grew while invested capital did not: capital-light history (S2C undefined, not unknown)
     h['capital_light'] = len(ic) >= 2 and ic[-1][2] > ic[max(0, len(ic) - 4)][2] and ic[-1][1] <= ic[max(0, len(ic) - 4)][1]
+    # 5-year incremental sales-to-capital: a longer window for when a 3-year revenue plateau distorts the 3-year ratio
+    h['s2c_5y'] = ((ic[-1][2] - ic[-6][2]) / (ic[-1][1] - ic[-6][1])
+                   if len(ic) >= 6 and ic[-1][1] - ic[-6][1] > 0 and ic[-1][2] > ic[-6][2] else None)
     h['roic'] = _metric(an, 'roic')
     h['inc_roic'] = _metric(an, 'incremental_roic_3y')
     ser = [_num(x.get('roic')) for x in (((an.get('forensics') or {}).get('roic') or {}).get('series') or []) if isinstance(x, dict)]
@@ -1007,6 +1010,13 @@ def _params(route, h, cal, cons, rf, ku, debt0, ov, warn):
     elif s2c_h > hi:
         s2c = hi
         warn('sales_to_capital_capped', f'historical incremental sales-to-capital {s2c_h:.2f} above the type range; capped at {hi:.2f} so growth still costs capital', 'low')
+    elif s2c_h < lo and (h.get('s2c_5y') or 0) > s2c_h:
+        # a 3-year plateau with capital still rising (Tesla 2023-25: 0.62) would charge every new dollar of revenue the
+        # stagnation's capital; the 5-year ratio spans the build-out and its revenue
+        s2c = min(max(h['s2c_5y'], .5 * lo), hi)
+        warn('sales_to_capital_long_window', f'3-year incremental sales-to-capital {s2c_h:.2f} is below the type range ({lo}-{hi}) '
+                                             f"while the 5-year ratio is {h['s2c_5y']:.2f}: the 3-year plateau is read as noise; "
+                                             f'used {s2c:.2f}', 'medium')
     elif s2c_h < lo:
         s2c = max(s2c_h, .5 * lo)
         warn('sales_to_capital_low', f'historical incremental sales-to-capital {s2c_h:.2f} below the type range ({lo}-{hi}); the business is more capital-hungry than the type; used {s2c:.2f}', 'medium')

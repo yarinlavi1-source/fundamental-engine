@@ -142,6 +142,26 @@ def lane_candidates(card_set, lane):
     return [c['symbol'] for c in sorted(xs, key=lambda c: (c.get('shortlist_position') or 999, rank(c), c['symbol']))]
 
 
+ANNUAL_FORMS = ('10-K', '20-F', '40-F')
+
+
+def filing_documents(submissions, cik):
+    """Latest annual report and latest quarterly report with inline XBRL, from an SEC submissions payload:
+    [{'file','url','accession','form','filed','report_date'}]. The annual report carries the segment note, the business
+    description and the risk factors; the quarterly report the latest cover share count."""
+    r = (submissions.get('filings') or {}).get('recent') or {}
+    rows = list(zip(r.get('form', []), r.get('accessionNumber', []), r.get('primaryDocument', []), r.get('filingDate', []),
+                    r.get('reportDate', []), r.get('isInlineXBRL', [0] * len(r.get('form', [])))))
+    out = []
+    for kind, forms in (('annual_report', ANNUAL_FORMS), ('latest_quarterly', ('10-Q',))):
+        hit = next((x for x in rows if x[0] in forms and x[5]), None)
+        if hit:
+            form, accn, doc, filed, rep, _ = hit
+            out.append({'file': f'sec__{kind}.htm', 'url': f"https://www.sec.gov/Archives/edgar/data/{int(cik)}/{accn.replace('-', '')}/{doc}",
+                        'accession': accn, 'form': form, 'filed': filed, 'report_date': rep})
+    return out
+
+
 def plan(universe_folder, symbols, rows=None):
     """Company folders and the SEC calls for each queued symbol. rows: universe rows (default rows.json in the folder)."""
     rows = rows if rows is not None else _load(os.path.join(universe_folder, 'rows.json'))
@@ -187,8 +207,31 @@ def run_company(folder, as_of, inputs=None, qualitative=None):
     return fb, pipeline.run(fb, inp)
 
 
+def reading_pack(folder):
+    """Item 1 (business), 1A (risk factors) and 7 (MD&A) of the saved annual report as plain text, for the analyst who
+    answers the business-understanding questions with sources. {} when no annual report was saved."""
+    from . import business
+    path = os.path.join(folder, 'raw', 'sec__annual_report.htm')
+    if not os.path.exists(path):
+        return {}
+    with open(path, encoding='utf-8', errors='replace') as f:
+        return business.sections(business.html_text(f.read()))
+
+
 def _lvl(dc, k):
     return ((dc.get('assessments') or {}).get(k) or {}).get('level')
+
+
+def _business_brief(b):
+    """The parts that make the money, in one line each, from the casefile's business summary."""
+    if not b or b.get('status') != 'parsed':
+        return {'status': 'not parsed'}
+    parts = b.get('parts') or {}
+    t = parts.get('segment') if len((parts.get('segment') or {}).get('rows') or []) > 1 else parts.get('product') or parts.get('revenue_type')
+    rows = (t or {}).get('rows') or []
+    return {'status': 'parsed', 'parts': [{k: x.get(k) for k in ('name', 'share', 'cagr', 'operating_margin')} for x in rows[:5]],
+            'rpo': (b.get('rpo') or {}).get('value'), 'cross_check': b.get('cross_check'),
+            'top_customer': (b.get('customer_concentration_revenue') or [None])[0]}
 
 
 def row(cf, card=None):
@@ -230,6 +273,9 @@ def row(cf, card=None):
             'open_questions': [r['id'].split('.', 1)[-1] for r in open_q[:5]],
             'screening_flags': ((card or {}).get('risks') or [])[:3], 'falsifiers': ((card or {}).get('falsifiers') or [])[:2],
             'what_would_change_it': v.get('what_would_change_it') or [],
+            'judgement': (dc.get('judgement') or {}).get('reading'),
+            'material_disqualifier': (dc.get('judgement') or {}).get('material_disqualifier'),
+            'business': _business_brief(cf.get('business')),
             'portfolio_fit': 'not assessed here: portfolio.compare against the read-only book',
             'casefile_sha256': cf.get('casefile_sha256')}
 
@@ -293,6 +339,13 @@ def render_he(comp):
                     f"- תשואה שנתית משתמעת דובי/בסיס/שורי {_p(r['irr']['bear'], 1)} / {_p(r['irr']['base'], 1)} / {_p(r['irr']['bull'], 1)}; "
                     f"נדרשת {_p(r['required_return'], 1)}; מדד {_p(r['index_expected_return'], 1)}",
                     f"- הפסד עד התרחיש הדובי {_p(r['loss_to_bear'])}; בתרחיש פגיעה קבועה {_p(r['loss_to_permanent'])}",
+                    '- איך מרוויחה: ' + ('; '.join(f"{x['name']} {_p(x['share'])} מההכנסות, צמיחה {_p(x['cagr'])}/שנה"
+                                                    + (f", שולי תפעול {_p(x['operating_margin'])}" if x.get('operating_margin') is not None else '')
+                                                    for x in (r['business'].get('parts') or [])[:4]) or 'לא פוענח מהדוח'),
+                    *([f"- בדיקת מגזרים מול התחזית: {_p(r['business']['cross_check']['segment_built_avg_growth'], 1)} לשנה לפי המגזרים מול "
+                       f"{_p(r['business']['cross_check']['consolidated_base_avg_growth'], 1)} בתחזית המאוחדת"]
+                      if (r['business'].get('cross_check') or {}).get('reading', 'consistent') != 'consistent' else []),
+                    f"- שיפוט: {r['judgement'] or 'n/a'}",
                     f"- סיכונים מהניתוח: {'; '.join(r['key_risks']) or 'לא סומנו'}",
                     f"- שאלות פתוחות מהותיות: {', '.join(r['open_questions']) or 'אין'}", '']
     if comp.get('blocked'):

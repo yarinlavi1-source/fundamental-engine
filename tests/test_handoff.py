@@ -84,6 +84,39 @@ class QueueAndPriceTests(unittest.TestCase):
             self.assertNotIn('price', later['market'])                                       # never relabelled to the cutoff
 
 
+class AnnualReportTests(unittest.TestCase):
+    def _folder(self, d, filed):
+        import test_business as TB
+        os.makedirs(os.path.join(d, 'raw'))
+        with open(os.path.join(d, 'raw', 'sec__annual_report.htm'), 'w') as f:
+            f.write(TB.doc())
+        with open(os.path.join(d, 'raw', 'MANIFEST.json'), 'w') as f:
+            json.dump({'calls': [{'file': 'sec__annual_report.htm', 'form': '10-K', 'filed': filed, 'accession': 'x', 'status': 200,
+                                  'url': 'https://www.sec.gov/synthetic', 'retrieved_at_utc': '2026-10-20T08:00:00Z'}]}, f)
+        with open(os.path.join(d, 'company.json'), 'w') as f:
+            json.dump({'ticker': 'SYNT', 'currency': 'USD'}, f)
+
+    def test_business_map_and_cover_shares_enter_the_factbook(self):
+        import sys as _s
+        _s.path.insert(0, os.path.dirname(__file__))
+        with tempfile.TemporaryDirectory() as d:
+            self._folder(d, '2026-02-20')
+            fb = pipeline.factbook_from_run_dir(os.path.join(d, 'raw'), {'ticker': 'SYNT', 'currency': 'USD'}, '2026-10-20')
+            self.assertIn('segment', fb['business_map']['tables'])
+            cover = [x for x in fb['facts'] if x['metric'] == 'shares_outstanding_cover']
+            self.assertEqual((cover[0]['value'], cover[0]['period_end']), (100e6, '2026-02-10'))
+            self.assertIn('item1a_risk_factors', H.reading_pack(d))
+
+    def test_a_report_filed_after_the_cutoff_is_not_used(self):
+        import sys as _s
+        _s.path.insert(0, os.path.dirname(__file__))
+        with tempfile.TemporaryDirectory() as d:
+            self._folder(d, '2026-11-01')
+            fb = pipeline.factbook_from_run_dir(os.path.join(d, 'raw'), {'ticker': 'SYNT', 'currency': 'USD'}, '2026-10-20')
+            self.assertNotIn('business_map', fb)
+            self.assertTrue(any('not on or before as_of' in n for n in fb['collection_notes']))
+
+
 class CompareTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

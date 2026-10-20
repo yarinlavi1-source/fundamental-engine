@@ -1,0 +1,364 @@
+"""Business map from the annual report itself: how the company makes money, part by part.
+
+Pure module (stdlib). Input: the primary document of a 10-K / 20-F with inline XBRL (saved verbatim by
+scripts/collect_companies.py). Output: the dimensional facts that consolidated companyfacts drops:
+
+- revenue (and operating income where tagged) by reportable segment, by product or service, by geography, and the
+  segment x product cross-table when the filer tags it, for every fiscal year in the report (usually three);
+- customer concentration (share of revenue or receivables per named or anonymous customer);
+- remaining performance obligations (contracted revenue not yet recognized) and the share expected within 12 months;
+- cover-page share counts per class (multi-class issuers, which companyfacts omits).
+
+Each table is reconciled to the consolidated total in the same report; parts that do not add up are reported, not
+forced. Member names are humanized from the XBRL member QName (the label linkbase is not read): 'msft:IntelligentCloudMember'
+-> 'Intelligent Cloud'. What the XBRL does not carry (units, prices, customers, retention, segment capital) is listed under
+not_disclosed with where to look: those come from reading the text (Item 1, Item 7), never from a guess.
+"""
+from datetime import date
+from html import unescape
+import re
+
+REVENUE = ('us-gaap:Revenues', 'us-gaap:RevenueFromContractWithCustomerExcludingAssessedTax',
+           'us-gaap:RevenueFromContractWithCustomerIncludingAssessedTax', 'us-gaap:SalesRevenueNet')
+OPERATING = ('us-gaap:OperatingIncomeLoss',)
+GROSS = ('us-gaap:GrossProfit',)
+AXES = {'segment': 'us-gaap:StatementBusinessSegmentsAxis', 'product': 'srt:ProductOrServiceAxis',
+        'geography': 'srt:StatementGeographicalAxis'}
+TRANSPARENT = {('us-gaap:ConsolidationItemsAxis', 'us-gaap:OperatingSegmentsMember')}
+ELIMINATION = {'us-gaap:IntersegmentEliminationMember', 'us-gaap:CorporateNonSegmentMember', 'us-gaap:MaterialReconcilingItemsMember',
+               'srt:ConsolidationEliminationsMember'}
+NOT_IN_XBRL = [
+    ('customers, units, volumes and price per unit', 'Item 1 (Business) and Item 7 (MD&A) key metrics'),
+    ('retention, churn, net revenue retention and expansion', 'Item 7 key metrics or earnings materials'),
+    ('customer acquisition cost and unit economics', 'Item 7; often not disclosed at all'),
+    ('capital employed and capex by segment', 'segment note (total assets / capex by segment are often omitted)'),
+    ('why customers pay and what stops them switching', 'Item 1 (Business), Item 1A (Risk Factors)'),
+    ('competitors and substitutes', 'Item 1 (Competition), Item 1A'),
+]
+
+
+def _attrs(s):
+    return dict(re.findall(r'([\w:.-]+)="([^"]*)"', s))
+
+
+def _human(qname):
+    name = qname.split(':', 1)[-1]
+    name = re.sub(r'Member$', '', name)
+    name = re.sub(r'(?<=[a-z0-9])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])', ' ', name)
+    return name.strip()
+
+
+def _number(text, a):
+    t = unescape(re.sub(r'<[^>]+>', '', text)).strip()
+    fmt = a.get('format', '')
+    if 'zero' in fmt or t in ('', '-', '—', '–'):
+        v = 0.0
+    else:
+        t = t.replace(' ', '').replace('\xa0', '')
+        if 'numcommadecimal' in fmt.replace('-', '') or 'num-comma-decimal' in fmt:
+            t = t.replace('.', '').replace(',', '.')
+        else:
+            t = t.replace(',', '')
+        try:
+            v = float(t)
+        except ValueError:
+            return None
+    v *= 10 ** int(a.get('scale', '0') or 0)
+    return -v if a.get('sign') == '-' else v
+
+
+def parse_ixbrl(html):
+    """-> {'contexts': {id: {start, end, instant, dims}}, 'facts': [{concept, context, value, unit}]} from inline XBRL."""
+    ctx = {}
+    for cid, body in re.findall(r'<xbrli:context\s+id="([^"]+)"\s*>(.*?)</xbrli:context>', html, re.S):
+        dims = dict(re.findall(r'<xbrldi:explicitMember[^>]*dimension="([^"]+)"[^>]*>\s*([^<\s]+)\s*</xbrldi:explicitMember>', body))
+        if re.search(r'<xbrldi:typedMember', body):
+            dims['__typed__'] = 'typed'
+        g = lambda tag: (re.search(rf'<xbrli:{tag}>\s*([0-9-]+)\s*</xbrli:{tag}>', body) or [None, None])[1]
+        ctx[cid] = {'start': g('startDate'), 'end': g('endDate'), 'instant': g('instant'), 'dims': dims}
+    facts = []
+    for at, inner in re.findall(r'<ix:nonFraction\b([^>]*)>(.*?)</ix:nonFraction>', html, re.S):
+        a = _attrs(at)
+        if not a.get('name') or not a.get('contextRef'):
+            continue
+        v = _number(inner, a)
+        if v is not None:
+            facts.append({'concept': a['name'], 'context': a['contextRef'], 'value': v, 'unit': a.get('unitRef')})
+    return {'contexts': ctx, 'facts': facts}
+
+
+def _days(a, b):
+    return (date.fromisoformat(b) - date.fromisoformat(a)).days
+
+
+def _annual(c):
+    return c['start'] and c['end'] and 330 <= _days(c['start'], c['end']) <= 380
+
+
+def _clean_dims(dims):
+    return {k: v for k, v in dims.items() if (k, v) not in TRANSPARENT}
+
+
+def _table(ix, concepts, axis):
+    """{member: {fy_end: value}} for one concept family on one axis (single-dimension contexts), plus the totals."""
+    out, total = {}, {}
+    for f in ix['facts']:
+        if f['concept'] not in concepts:
+            continue
+        c = ix['contexts'].get(f['context'])
+        if not c or not _annual(c):
+            continue
+        dims = _clean_dims(c['dims'])
+        if not dims:
+            total.setdefault(c['end'], {})[f['concept']] = f['value']
+        elif set(dims) == {axis}:
+            m = dims[axis]
+            out.setdefault(m, {}).setdefault(c['end'], {})[f['concept']] = f['value']
+    pick = lambda d: {e: next(v[k] for k in concepts if k in v) for e, v in d.items()}
+    return {m: pick(v) for m, v in out.items()}, pick(total)
+
+
+def _cross(ix, concepts):
+    """segment x product revenue when tagged with both axes."""
+    out = {}
+    for f in ix['facts']:
+        if f['concept'] not in concepts:
+            continue
+        c = ix['contexts'].get(f['context'])
+        if not c or not _annual(c):
+            continue
+        dims = _clean_dims(c['dims'])
+        if set(dims) == {AXES['segment'], AXES['product']}:
+            out.setdefault(_human(dims[AXES['segment']]), {}).setdefault(_human(dims[AXES['product']]), {})[c['end']] = f['value']
+    return out
+
+
+def _derive(members, total):
+    """Share of the latest year's total, growth over the report's span and contribution to total growth, per member."""
+    ends = sorted({e for v in members.values() for e in v} | set(total))
+    if not ends:
+        return {}
+    last, first = ends[-1], ends[0]
+    out = {}
+    for m, v in members.items():
+        r1, r0 = v.get(last), v.get(first)
+        yrs = _days(first, last) / 365.25 if first != last else None
+        cagr = (r1 / r0) ** (1 / yrs) - 1 if r1 and r0 and r0 > 0 and r1 > 0 and yrs else None
+        d_tot = (total.get(last) or 0) - (total.get(first) or 0)
+        out[m] = {'latest': r1, 'share_of_total': r1 / total[last] if r1 is not None and total.get(last) else None,
+                  'cagr': cagr, 'span': f'{first}..{last}' if yrs else None,
+                  'share_of_growth': (r1 - r0) / d_tot if r1 is not None and r0 is not None and d_tot else None}
+    return out
+
+
+def business_map(html, source=None, consolidated_revenue=None):
+    """Business map from one annual report's inline XBRL. source: {'url','accession','form','filed','period'}."""
+    ix = parse_ixbrl(html)
+    tables, disclosed, notes = {}, [], []
+    groups = []
+    for name, axis in AXES.items():
+        rev, tot = _table(ix, REVENUE, axis)
+        if name == 'product':
+            # standard members (us-gaap:ProductMember, ServiceOtherMember, LicenseMember...) are a revenue-TYPE split that
+            # overlaps the company's own product lines: two tables, each reconciled on its own
+            std = {m: v for m, v in rev.items() if m.split(':')[0] in ('us-gaap', 'srt')}
+            groups += [('revenue_type', axis, std, tot), ('product', axis, {m: v for m, v in rev.items() if m not in std}, tot)]
+        else:
+            groups.append((name, axis, rev, tot))
+    for name, axis, rev, tot in groups:
+        if consolidated_revenue and not tot:
+            tot = consolidated_revenue
+        named = {_human(m): v for m, v in rev.items() if m not in ELIMINATION}
+        if not named:
+            continue
+        elim = {_human(m): v for m, v in rev.items() if m in ELIMINATION}
+        last = max(e for v in named.values() for e in v)
+        parts = sum(v.get(last, 0) for v in named.values()) + sum(v.get(last, 0) for v in elim.values())
+        recon = parts / tot[last] if tot.get(last) else None
+        t = {'axis': axis, 'revenue': named, 'eliminations_or_other': elim or None, 'total_revenue': tot,
+             'reconciliation': {'year': last, 'parts': parts, 'total': tot.get(last), 'ratio': recon,
+                                'status': ('reconciles' if recon is not None and abs(recon - 1) <= .01 else
+                                           'partial (other members or overlapping categories)' if recon is not None else 'no total in report')},
+             'derived': _derive(named, tot)}
+        if name == 'segment':
+            oi, _ = _table(ix, OPERATING, axis)
+            gp, _ = _table(ix, GROSS, axis)
+            if oi:
+                t['operating_income'] = {_human(m): v for m, v in oi.items() if m not in ELIMINATION}
+                t['operating_margin'] = {m: {e: o / t['revenue'][m][e] for e, o in v.items() if t['revenue'].get(m, {}).get(e)}
+                                         for m, v in t['operating_income'].items()}
+            if gp:
+                t['gross_profit'] = {_human(m): v for m, v in gp.items() if m not in ELIMINATION}
+        tables[name] = t
+        disclosed.append(f"revenue by {name} ({len(named)} members, {t['reconciliation']['status']})")
+        if name == 'segment':
+            disclosed.append('operating income by segment' if t.get('operating_income') else None)
+    disclosed = [d for d in disclosed if d]
+    cross = _cross(ix, REVENUE)
+    if cross:
+        tables['segment_x_product'] = cross
+        disclosed.append('revenue by product within segment')
+    conc = []
+    for f in ix['facts']:
+        if f['concept'] != 'us-gaap:ConcentrationRiskPercentage1':
+            continue
+        c = ix['contexts'].get(f['context']) or {}
+        d = c.get('dims', {})
+        bench = d.get('us-gaap:ConcentrationRiskByBenchmarkAxis', '')
+        who = next((v for k, v in d.items() if 'Customer' in k or 'MajorCustomers' in k), None)
+        conc.append({'customer': _human(who) if who else 'unnamed', 'benchmark': _human(bench) if bench else None,
+                     'share': f['value'], 'period_end': c.get('end') or c.get('instant'),
+                     'type': _human(d.get('us-gaap:ConcentrationRiskByTypeAxis', '')) or None})
+    if conc:
+        disclosed.append('customer or supplier concentration')
+    rpo = None
+    for f in ix['facts']:
+        c = ix['contexts'].get(f['context']) or {}
+        if f['concept'] == 'us-gaap:RevenueRemainingPerformanceObligation' and not _clean_dims(c.get('dims', {})) and c.get('instant'):
+            if not rpo or c['instant'] > rpo['as_of']:
+                rpo = {'value': f['value'], 'as_of': c['instant']}
+    if rpo:
+        pct = [f['value'] for f in ix['facts'] if f['concept'] == 'us-gaap:RevenueRemainingPerformanceObligationPercentage'
+               and (ix['contexts'].get(f['context']) or {}).get('instant') == rpo['as_of']]
+        rpo['share_in_first_period'] = pct[0] if pct else None
+        disclosed.append('remaining performance obligations (contracted, unrecognized revenue)')
+    cover = {}
+    for f in ix['facts']:
+        if f['concept'] == 'dei:EntityCommonStockSharesOutstanding':
+            c = ix['contexts'].get(f['context']) or {}
+            cls = c.get('dims', {}).get('us-gaap:StatementClassOfStockAxis', 'all')
+            when = c.get('instant') or c.get('end')
+            if when:
+                cover.setdefault(when, {})[_human(cls) if cls != 'all' else 'all'] = f['value']
+    shares = None
+    if cover:
+        when = max(cover)
+        by = cover[when]
+        shares = {'as_of': when, 'by_class': by, 'total': by['all'] if list(by) == ['all'] else sum(v for k, v in by.items() if k != 'all')}
+        if len(by) > 1:
+            shares['note'] = ('sum of the classes on the cover: right for share classes with equal economic rights (Alphabet, Meta); '
+                              'an Up-C or voting-only class (e.g. units exchangeable into Class A) needs the capital structure instead')
+    not_disclosed = [{'item': i, 'where': w} for i, w in NOT_IN_XBRL]
+    if 'segment' in tables and not tables['segment'].get('operating_income'):
+        not_disclosed.insert(0, {'item': 'operating income by segment', 'where': 'segment note (the measure may be a non-GAAP segment profit)'})
+    if 'segment' not in tables:
+        not_disclosed.insert(0, {'item': 'reportable segments (single segment or not tagged)', 'where': 'segment note'})
+    if not conc:
+        notes.append('no tagged concentration: either no customer is material (often stated in Item 1/1A) or it is untagged')
+    return {'business_map_version': 1, 'source': source, 'tables': tables, 'customer_concentration': conc, 'rpo': rpo,
+            'cover_shares': shares, 'disclosed': disclosed, 'not_disclosed': not_disclosed, 'notes': notes,
+            'fact_count': len(ix['facts']),
+            'meaning': 'facts as tagged in the annual report; member names humanized from XBRL; not adjusted, not forecast'}
+
+
+def _w(word):
+    """A heading word that may be typeset in split small caps ('B USINESS')."""
+    return r'\s?'.join(word)
+
+
+ITEMS = {'item1_business': (rf'item\s*1\.\s*{_w("business")}', rf'item\s*1a\.?\s*{_w("risk")}\s*{_w("factors")}'),
+         'item1a_risk_factors': (rf'item\s*1a\.\s*{_w("risk")}\s*{_w("factors")}',
+                                 rf'item\s*1b\.\s*{_w("unresolved")}|item\s*1c\.\s*{_w("cybersecurity")}|item\s*2\.\s*{_w("properties")}'),
+         'item7_mdna': (rf'item\s*7\.\s*{_w("management")}', rf'item\s*7a\.\s*{_w("quantitative")}|item\s*8\.\s*{_w("financial")}')}
+
+
+def html_text(html):
+    """Plain text of a filing: hidden XBRL header removed, tags stripped, entities decoded, whitespace collapsed."""
+    html = re.sub(r'<ix:header>.*?</ix:header>', ' ', html, flags=re.S)
+    html = re.sub(r'<(script|style)[^>]*>.*?</\1>', ' ', html, flags=re.S | re.I)
+    html = re.sub(r'<br\s*/?>|</p>|</div>|</tr>|</h\d>', '\n', html, flags=re.I)
+    t = unescape(re.sub(r'<[^>]+>', ' ', html))
+    t = re.sub(r'[ \t\xa0]+', ' ', t)
+    return re.sub(r'\n\s*\n+', '\n\n', t).strip()
+
+
+def sections(text):
+    """{item: text} for Item 1, 1A and 7 of a 10-K: the longest span between an item heading and the next item heading
+    (the table of contents produces short spans and is skipped). Missing items are omitted, not guessed."""
+    out = {}
+    low = text.lower()
+    for key, (start, stop) in ITEMS.items():
+        best = None
+        for m in re.finditer(start, low):
+            n = re.search(stop, low[m.end():])
+            end = m.end() + n.start() if n else min(len(low), m.end() + 400000)
+            if best is None or end - m.start() > best[1] - best[0]:
+                best = (m.start(), end)
+        if best and best[1] - best[0] > 2000:
+            out[key] = text[best[0]:best[1]].strip()
+    return out
+
+
+def _fade(g0, terminal, half_life, n):
+    return [terminal + (g0 - terminal) * .5 ** (t / half_life) for t in range(1, n + 1)]
+
+
+def segment_path(bm, years=5, half_life=2.5, terminal=.03, cap=(-.3, .6)):
+    """Revenue growth built part by part: each segment (else each product line, when that table reconciles) grows at its own
+    span CAGR, bounded to the cap and fading to the terminal rate with the half-life; the parts are summed. A cross-check on the
+    consolidated forecast, not a forecast: acquisitions inside a part's CAGR and disclosed mix plans are not modelled."""
+    tables = (bm or {}).get('tables') or {}
+    for name in ('segment', 'product'):
+        t = tables.get(name)
+        if not t or (t.get('reconciliation') or {}).get('status') != 'reconciles':
+            continue
+        parts = {m: d for m, d in (t.get('derived') or {}).items() if d.get('latest') and d.get('cagr') is not None}
+        if len(parts) < 2:
+            continue
+        rev = {m: d['latest'] for m, d in parts.items()}
+        paths = {m: _fade(min(max(d['cagr'], cap[0]), cap[1]), terminal, half_life, years) for m, d in parts.items()}
+        total, prev = [], sum(rev.values())
+        for i in range(years):
+            for m in rev:
+                rev[m] *= 1 + paths[m][i]
+            cur = sum(rev.values())
+            total.append(cur / prev - 1)
+            prev = cur
+        start = sum(d['latest'] for d in parts.values())
+        return {'basis': name, 'parts': {m: {'share': d['latest'] / start, 'cagr': d['cagr'], 'span': d.get('span'),
+                                             'capped': not cap[0] <= d['cagr'] <= cap[1]} for m, d in parts.items()},
+                'growth': total, 'end_mix': {m: v / sum(rev.values()) for m, v in rev.items()},
+                'rule': f'each part: its span CAGR bounded to {cap[0]:.0%}..{cap[1]:.0%}, fading to {terminal:.0%} with a {half_life}-year '
+                        'half-life; parts summed', 'meaning': 'cross-check of the consolidated path, not a forecast'}
+    return None
+
+
+def summary(bm, base_growth=None):
+    """Compact business map for the casefile: the parts, their weight, growth and margin; contracted revenue; concentration;
+    the segment-built growth path against the consolidated base path; what is not disclosed."""
+    if not bm:
+        return {'status': 'no annual report parsed', 'not_disclosed': [{'item': 'segments, products and geography',
+                                                                        'where': 'the annual report (not retrieved)'}]}
+    tables = bm.get('tables') or {}
+    parts = {}
+    for name in ('segment', 'revenue_type', 'product', 'geography'):
+        t = tables.get(name)
+        if not t:
+            continue
+        rows = []
+        for m, d in sorted((t.get('derived') or {}).items(), key=lambda x: -(x[1].get('latest') or 0)):
+            om = (t.get('operating_margin') or {}).get(m) or {}
+            last_om = om[max(om)] if om else None
+            first_om = om[min(om)] if om else None
+            rows.append({'name': m, 'revenue': d.get('latest'), 'share': d.get('share_of_total'), 'cagr': d.get('cagr'), 'span': d.get('span'),
+                         'share_of_growth': d.get('share_of_growth'), 'operating_margin': last_om,
+                         'margin_change': last_om - first_om if last_om is not None and first_om is not None and len(om) > 1 else None})
+        parts[name] = {'rows': rows, 'reconciliation': (t.get('reconciliation') or {}).get('status')}
+    conc = [c for c in bm.get('customer_concentration') or [] if c.get('benchmark') and 'Revenue' in c['benchmark']
+            or (c.get('benchmark') or '').startswith('Sales')]
+    latest = max((c['period_end'] or '' for c in conc), default=None)
+    conc = sorted([c for c in conc if c['period_end'] == latest], key=lambda c: -(c['share'] or 0))[:5]
+    sp = segment_path(bm)
+    cross = None
+    if sp and base_growth:
+        n = min(len(sp['growth']), len(base_growth))
+        if n:
+            seg_avg = sum(sp['growth'][:n]) / n
+            base_avg = sum(base_growth[:n]) / n
+            cross = {'years': n, 'segment_built_avg_growth': seg_avg, 'consolidated_base_avg_growth': base_avg, 'difference': seg_avg - base_avg,
+                     'reading': ('consistent' if abs(seg_avg - base_avg) <= .02 else
+                                 'segment mix implies faster growth than the consolidated base path' if seg_avg > base_avg else
+                                 'segment mix implies slower growth than the consolidated base path')}
+    return {'status': 'parsed', 'source': bm.get('source'), 'parts': parts, 'rpo': bm.get('rpo'), 'customer_concentration_revenue': conc,
+            'segment_path': sp, 'cross_check': cross, 'disclosed': bm.get('disclosed'), 'not_disclosed': bm.get('not_disclosed'),
+            'notes': bm.get('notes'), 'cover_shares': bm.get('cover_shares')}

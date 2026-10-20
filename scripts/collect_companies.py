@@ -49,6 +49,24 @@ def collect(folder, c, ua):
             rec['sha256'] = hashlib.sha256(body).hexdigest()
         calls.append(rec)
         time.sleep(0.12)
+    sub = os.path.join(c['raw'], 'sec__submissions.json')
+    if os.path.exists(sub):
+        with open(sub, encoding='utf-8') as f:
+            docs = handoff.filing_documents(json.load(f), c['cik'])
+        for d in docs:
+            path = os.path.join(c['raw'], d['file'])
+            if os.path.exists(path) and (old.get(d['file']) or {}).get('accession') == d['accession']:
+                calls.append(old[d['file']])
+                continue
+            status, body = fetch(d['url'], {'User-Agent': ua, 'Accept-Encoding': 'gzip'})
+            rec = {**d, 'provider': 'sec', 'status': status, 'retrieved_at_utc': datetime.now(timezone.utc).isoformat(timespec='seconds'),
+                   'note': 'verbatim primary document (inline XBRL)'}
+            if status == 200:
+                with open(path, 'wb') as f:
+                    f.write(body)
+                rec['sha256'] = hashlib.sha256(body).hexdigest()
+            calls.append(rec)
+            time.sleep(0.12)
     raw_u = os.path.join(folder, 'raw')
     lp = handoff.listing_price(raw_u, c['symbol'])
     if lp:

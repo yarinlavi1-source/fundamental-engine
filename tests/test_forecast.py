@@ -92,6 +92,24 @@ def industrial():
     return fb, an, card, qa_for(50e6, 150e6, 100e6, '2025-12-31')
 
 
+def plateau_builder():
+    """SYNTHETIC: six years of build-out, the last three with flat revenue while capital kept rising."""
+    rev = [200e6, 300e6, 420e6, 430e6, 435e6, 440e6]
+    annual = {f'{y}-12-31': {'revenue': r, 'operating_income': r * .1, 'sbc': r * .02, 'd_and_a': r * .05, 'capex': r * .09,
+                             'cfo': r * .15, 'pretax_income': r * .1, 'income_tax': r * .1 * .21, 'interest_expense': 2e6}
+              for y, r in zip(range(2020, 2026), rev)}
+    inst = {'2025-12-31': {'cash': 120e6, 'shares_outstanding': 40e6, 'receivables': 50e6, 'payables': 30e6, 'long_term_debt': 50e6},
+            '2022-12-31': {'receivables': 45e6, 'payables': 27e6}}
+    fb = synth('2026-03-20', annual, inst, 30.0, kind='filing_derived')
+    an = make_an(fb, revenue_growth_last=440 / 435 - 1, revenue_cagr_3y=(440 / 420) ** (1 / 3) - 1, growth_volatility=.15, roic=.08,
+                 sales_to_capital_incremental_3y=20e6 / 90e6)
+    for e, ic in zip(sorted(an['annual']), (100e6, 200e6, 290e6, 330e6, 360e6, 380e6)):
+        an['annual'][e]['invested_capital'] = ic
+    card = {'business_model': {'primary': 'industrial'}, 'stage': {'value': 'maturing'}, 'funding': {'value': 'self_funded'},
+            'valuation': {'method': 'fcff_annual_path', 'archetype': 'industrial'}, 'dimensions': {'moat': {'assessment': 'adequate'}}}
+    return fb, an, card, qa_for(40e6, 120e6, 50e6, '2025-12-31')
+
+
 def grower(margin_scale=1., cash=30e6):
     """Loss-making subscription grower; margin_scale > 1 deepens the losses."""
     rows = ((2023, 150e6, -45e6, 20e6), (2024, 200e6, -40e6, 26e6), (2025, 260e6, -36e6, 33e6))
@@ -1156,6 +1174,18 @@ class SourceAndRateContractTests(unittest.TestCase):
         c = deepcopy(case)
         c['quote']['price'] = price_for_hurdle(case, h, w)['value']
         self.assertAlmostEqual(vt.implied_cost_of_equity(c)['implied_cost_of_equity'], h, places=6)
+
+
+
+class LongWindowSalesToCapitalTests(unittest.TestCase):
+    def test_a_three_year_plateau_does_not_set_the_capital_need(self):
+        fb, an, card, qa = plateau_builder()
+        fc = forecast.build(fb, an, card, qa)
+        codes = {w['code'] for w in fc['warnings']}
+        self.assertIn('sales_to_capital_long_window', codes)
+        used = next(a for a in fc['assumptions'] if a['id'] == 'reinvestment')
+        self.assertIn('history 0.22', used['rationale'])
+        self.assertIn('base 0.86', used['rationale'])         # 5-year ratio (440-200)/(380-100), not the plateau's 0.22
 
 
 if __name__ == '__main__':

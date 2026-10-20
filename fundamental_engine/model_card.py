@@ -381,6 +381,9 @@ def _evidence(fb, an, keys):
             if fb.get('capital_structure'):
                 found.append({'kind': 'capital_structure', 'key': k})
             continue
+        if k in SEGMENT_KEYS and ((fb.get('business_map') or {}).get('tables') or {}).get('segment'):
+            found.append({'kind': 'business_map', 'key': k, 'source_ids': [fb['business_map'].get('source_id')]})
+            continue
         if _metric(an, k) is not None:
             found.append({'kind': 'analysis_metric', 'key': k})
         elif F.candidates(fb, k):

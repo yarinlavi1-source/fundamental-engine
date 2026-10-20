@@ -2234,7 +2234,7 @@ def decide(parts, inputs=None):
            'assessments': eff_A, 'mechanical_assessments': {k: a['level'] for k, a in A.items()},
            'expected_return': eff_er, 'verdict': eff, 'mechanical_verdict': mech, 'overrides': records, 'confidence': conf,
            'valuation_view': {k: v for k, v in view.items() if k not in ('price_source',)},
-           'risk_pricing': pricing,
+           'risk_pricing': pricing, 'judgement': _judgement(g, eff_A, eff_er, view, pricing, rk),
            'gates': g, 'rules': {'verdict_precedence': VERDICT_RULES, 'premium': PREMIUM, 'marginal_band': {'step': BAND_STEP, 'error_widening': ERROR_WIDENING,
                                                                                                           'bear_tolerance_step': BEAR_TOLERANCE_STEP},
                                  'bear_loss_tolerance': BEAR_LOSS_TOLERANCE, 'gate_allowed_overrides': {k: sorted(v) for k, v in GATE_ALLOWED.items()},
@@ -2248,6 +2248,56 @@ def decide(parts, inputs=None):
                          'no win rate is claimed. A research opinion, not an order or suitability assessment.')}
     json.dumps(out, allow_nan=False)
     return out
+
+
+JUDGEMENT_FACTORS = ('business_quality', 'growth_quality', 'trajectory', 'financial_strength', 'management_capital_allocation',
+                     'price_attractiveness')
+
+
+def _judgement(g, A, er, view, pricing, rk):
+    """The owner's three buckets (2026-10-20), kept apart: material disqualifiers (unreliable data or valuation, a risk that
+    cannot be justified, a thesis without a basis yet), factors that make the investment more or less attractive, and risks
+    accepted and priced versus risks still to price. A derived view of the same gates, assessments and risk register: it
+    adds no threshold and changes no verdict. A thesis-basis gap is a research task, never a judgement on the business."""
+    reg = {r.get('id'): r for r in (rk or {}).get('register') or [] if isinstance(r, dict)}
+    dq = [{'kind': 'unacceptable_risk', 'what': it.get('description') or it.get('id')} for it in g['disqualifying']]
+    if g['impaired'] and not any('impair' in str(d['what']).lower() for d in dq):
+        dq.append({'kind': 'unacceptable_risk', 'what': 'equity impaired: base value today at or below zero'})
+    dq += [{'kind': 'reliability', 'what': x} for x in g['data_blocked'] + g['valuation_unverified'] + g['valuation_failed']]
+    dq += [{'kind': 'thesis_basis', 'what': x, 'resolves_by': 'evidence for the open business questions (a research task, not a '
+            'negative judgement)'} for x in g['understanding'] + g['evidence_gaps']]
+    fac = {'for': [], 'neutral': [], 'against': [], 'unknown': []}
+    for k in JUDGEMENT_FACTORS:
+        a = A.get(k) or {}
+        fac[{'strong': 'for', 'adequate': 'neutral', 'weak': 'against'}.get(a.get('level'), 'unknown')].append(
+            {'factor': k, 'level': a.get('level'), 'why': (a.get('reasons') or [])[:2]})
+    idx = er.get('index_expected_return')
+    idx = idx.get('value') if isinstance(idx, dict) else idx
+    base, hurdle = er.get('base_irr'), er.get('hurdle')
+    ret = {'bear_irr': er.get('bear_irr'), 'base_irr': base, 'bull_irr': er.get('bull_irr'), 'index_expected_return': idx,
+           'required_return': hurdle, 'excess_over_index': base - idx if base is not None and idx is not None else None,
+           'excess_over_required': base - hurdle if base is not None and hurdle is not None else None,
+           'loss_to_bear': view.get('loss_to_bear'), 'meets_owner_aspiration_14pct': er.get('meets_owner_aspiration_14pct'),
+           'note': 'returns are conditional on each scenario; the 14% aspiration is reported, never a threshold'}
+    risks = {'priced': [], 'to_price': [], 'open_questions': []}
+    for p in pricing or []:
+        r = reg.get(p.get('id')) or {}
+        item = {'id': p.get('id'), 'what': r.get('description') or p.get('id'), 'severity': r.get('severity')}
+        st = p.get('status')
+        (risks['priced'] if st in ('priced', 'partially_priced') else risks['open_questions'] if st == 'open_question'
+         else risks['to_price']).append(item)
+    material = [d for d in dq if d['kind'] != 'thesis_basis']
+    if material:
+        reading = 'excluded until resolved: ' + '; '.join(str(d['what']) for d in material[:2])
+    elif dq:
+        reading = ('no material disqualifier; the thesis still needs evidence before a decision'
+                   + (f"; economics so far: base return {_pct(base)} vs index {_pct(idx)}" if base is not None and idx is not None else ''))
+    else:
+        reading = 'no disqualifier: the decision rests on attractiveness against the index and the priced risks'
+    return {'disqualifiers': dq, 'material_disqualifier': bool(material), 'attractiveness': fac, 'return_vs_alternatives': ret,
+            'risks': risks, 'reading': reading,
+            'meaning': 'three separate questions: is anything disqualifying, how attractive is it against the index, which risks '
+                       'are accepted and priced; not a checklist and not a score'}
 
 
 SIGNAL_HE = {'roic': 'תשואה על ההון המושקע', 'operating_margin': 'שולי רווח תפעולי', 'gross_margin': 'שולי רווח גולמי',

@@ -10,7 +10,7 @@ A stage that cannot run records why and the later stages degrade honestly (e.g. 
 the decision says the price cannot be assessed). Exceptions are recorded, never swallowed silently.
 """
 from copy import deepcopy
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 import json
 import os
 
@@ -122,6 +122,7 @@ def factbook_from_run_dir(raw_dir, company, as_of):
                 notes.append('price snapshot has no timestamp; dated as_of')
             F.add_source(fb, 'ib:snapshot', 'ib', 'price-snapshot', 'market_feed', when.get(os.path.basename(snap)) or as_of, sha=F.digest(s))
             F.set_price(fb, last['price'], d or as_of, 'ib:snapshot', kind='close' if last.get('is_close') else 'last')
+    _business(fb, raw_dir, manifest, as_of, notes)
     lp = p(f"listing__price-{company['ticker'].upper()}__current.json")
     if not fb['market'].get('price') and os.path.exists(lp):
         # fallback when no broker quote was saved: the listing feed's last sale at retrieval (handoff.listing_price)
@@ -132,6 +133,39 @@ def factbook_from_run_dir(raw_dir, company, as_of):
             F.set_price(fb, s['price'], s['date'], 'listing:price', kind='last')
             notes.append(f"price from the listing feed ({s.get('provider')}), not a broker quote: {s.get('note') or 'last sale at retrieval'}")
     return fb
+
+
+def _business(fb, raw_dir, manifest, as_of, notes):
+    """Annual report -> fb['business_map'] (segments, products, geography, concentration, RPO); annual and quarterly
+    report covers -> point-in-time share counts per class. A document filed after as_of is skipped (no look-ahead)."""
+    from . import business
+    calls = {c.get('file'): c for c in manifest.get('calls', []) if isinstance(c, dict)}
+    for name in ('sec__annual_report.htm', 'sec__latest_quarterly.htm'):
+        path, rec = os.path.join(raw_dir, name), calls.get(name) or {}
+        if not os.path.exists(path):
+            continue
+        filed = rec.get('filed')
+        if not filed or filed > as_of:
+            notes.append(f"{name}: filing date {filed or 'unknown'} not on or before as_of {as_of}; not used")
+            continue
+        with open(path, encoding='utf-8', errors='replace') as f:
+            html = f.read()
+        src = {'url': rec.get('url'), 'accession': rec.get('accession'), 'form': rec.get('form'), 'filed': filed,
+               'period': rec.get('report_date')}
+        sid = 'sec:' + name.split('__')[1].split('.')[0]
+        F.add_source(fb, sid, 'sec', rec.get('form') or 'filing', 'filing_derived', rec.get('retrieved_at_utc') or as_of,
+                     sha=rec.get('sha256'), url=rec.get('url'), note='inline XBRL of the primary document')
+        bm = business.business_map(html, src)
+        avail = (date.fromisoformat(filed) + timedelta(days=1)).isoformat()
+        cs = bm.get('cover_shares')
+        if cs and cs.get('as_of') and cs['as_of'] <= as_of and not any(
+                x['metric'] == 'shares_outstanding_cover' and x['period_end'] == cs['as_of'] for x in fb['facts']):
+            F.add_fact(fb, 'shares_outstanding_cover', 'I@' + cs['as_of'], cs['as_of'], cs['total'], sid, 'as_reported', avail,
+                       unit='shares', concept='dei:EntityCommonStockSharesOutstanding (sum of classes on the cover)'
+                       if len(cs['by_class']) > 1 else 'dei:EntityCommonStockSharesOutstanding')
+        if name == 'sec__annual_report.htm':
+            bm['source_id'] = sid
+            fb['business_map'] = bm
 
 
 def _period_end_from_filing_url(url):
@@ -221,6 +255,9 @@ def run(fb, inputs=None):
     parts = {'fb': fb, 'qa': qa, 'an': an, 'card': card, 'fc': fc, 'val': val, 'rk': rk, 'rv': rv}
     dc = stage('decision', lambda: decision.decide(parts, inputs.get('decision')))
     cf.update({'qa': qa, 'an': an, 'card': card, 'fc': fc, 'val': val, 'rk': rk, 'rv': rv, 'dc': dc})
+    from . import business
+    base = [p.get('growth') for p in ((fc or {}).get('paths') or {}).get('base') or [] if isinstance(p, dict) and p.get('growth') is not None]
+    cf['business'] = stage('business', lambda: business.summary(fb.get('business_map'), base[:5]))
     json.dumps(cf, allow_nan=False, default=str)
     cf['casefile_sha256'] = F.digest(json.loads(json.dumps({k: v for k, v in cf.items() if k != 'casefile_sha256'}, default=str)))
     return cf

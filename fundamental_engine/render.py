@@ -624,6 +624,56 @@ def _expected(dc):
     return out + ['']
 
 
+def _p0(x, d=0):
+    return 'n/a' if x is None else f'{x * 100:.{d}f}%'
+
+
+def _judgement(dc):
+    j = (dc or {}).get('judgement')
+    if not j:
+        return []
+    r = j['return_vs_alternatives']
+    out = ['## Judgement: disqualifiers, attractiveness, risks', '', f"**{j['reading']}**", '',
+           '- Disqualifiers: ' + ('; '.join(f"{d['kind']}: {d['what']}" for d in j['disqualifiers'][:5]) or 'none'),
+           '- For: ' + (', '.join(f['factor'] for f in j['attractiveness']['for']) or '-')
+           + ' | neutral: ' + (', '.join(f['factor'] for f in j['attractiveness']['neutral']) or '-')
+           + ' | against: ' + (', '.join(f['factor'] for f in j['attractiveness']['against']) or '-')
+           + ' | unknown: ' + (', '.join(f['factor'] for f in j['attractiveness']['unknown']) or '-'),
+           f"- Return vs alternatives: bear/base/bull {_p0(r['bear_irr'], 1)} / {_p0(r['base_irr'], 1)} / {_p0(r['bull_irr'], 1)}; index "
+           f"{_p0(r['index_expected_return'], 1)}; required {_p0(r['required_return'], 1)}; excess over index {_p0(r['excess_over_index'], 1)}; "
+           f"loss to bear {_p0(r['loss_to_bear'])} (14% aspiration reported, never a threshold: "
+           f"{'met' if r.get('meets_owner_aspiration_14pct') else 'not met'})",
+           f"- Risks: {len(j['risks']['priced'])} priced in the bear case, {len(j['risks']['to_price'])} still to price, "
+           f"{len(j['risks']['open_questions'])} open research questions", '']
+    return out
+
+
+def _business(cf):
+    b = cf.get('business') or {}
+    out = ['## How the company makes money (annual report XBRL)', '']
+    if b.get('status') != 'parsed':
+        return out + ['Annual report not parsed: segments, products and geography are unknown here (not assumed).', '']
+    src = b.get('source') or {}
+    out += [f"Source: {src.get('form')} filed {src.get('filed')} for the period {src.get('period')} ({src.get('url')}).", '']
+    for name, t in (b.get('parts') or {}).items():
+        out += [f"**By {name.replace('_', ' ')}** ({t.get('reconciliation')})", '']
+        out += _table(['part', 'revenue', 'share', 'growth/yr', 'span', 'share of growth', 'op. margin', 'margin change'],
+                      [[x['name'], x['revenue'], _p0(x['share']), _p0(x['cagr'], 1), x['span'] or '-', _p0(x['share_of_growth']),
+                        _p0(x['operating_margin'], 1), 'n/a' if x['margin_change'] is None else f"{x['margin_change'] * 100:+.1f} pts"]
+                       for x in t['rows'][:12]]) + ['']
+    if b.get('rpo'):
+        out.append(f"- Contracted, not yet recognized revenue (RPO): {b['rpo']['value']:,.0f} at {b['rpo']['as_of']}"
+                   + (f"; {_p0(b['rpo'].get('share_in_first_period'))} expected in the first period" if b['rpo'].get('share_in_first_period') else ''))
+    for c in b.get('customer_concentration_revenue') or []:
+        out.append(f"- Concentration: {c['customer']} {_p0(c['share'], 1)} of {c['benchmark']} ({c['period_end']})")
+    cc = b.get('cross_check')
+    if cc:
+        out.append(f"- Segment-built growth (each part at its own pace, fading) {_p0(cc['segment_built_avg_growth'], 1)}/yr vs the consolidated "
+                   f"base path {_p0(cc['consolidated_base_avg_growth'], 1)}/yr over {cc['years']} years: {cc['reading']}")
+    out += ['- Not in the XBRL (read the text): ' + '; '.join(f"{x['item']} ({x['where']})" for x in b.get('not_disclosed') or []), '']
+    return out
+
+
 def _card(cf):
     card = cf.get('card')
     out = ['## Business understanding (model card)', '']
@@ -856,7 +906,7 @@ def markdown(casefile):
     dc = cf.get('dc') or {}
     out = _header(cf, dc)
     out += ['## In one paragraph', '', hebrew_paragraph(cf), '']
-    out += _verdict_box(dc) + _assessments(dc) + _expected(dc) + _card(cf) + _financials(cf) + _dataqa(cf)
+    out += _verdict_box(dc) + _assessments(dc) + _expected(dc) + _judgement(dc) + _business(cf) + _card(cf) + _financials(cf) + _dataqa(cf)
     out += _forecast(cf) + _valuation(cf, dc) + _risks(cf, dc) + _review(cf) + _limitations(cf, dc)
     out += ['## Provenance legend', ''] + _table(['class', 'meaning'], PROVENANCE) + ['']
     return '\n'.join(out)

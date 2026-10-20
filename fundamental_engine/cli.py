@@ -254,6 +254,11 @@ def main():
                 (out / "casefile.json").write_text(json.dumps(cf, indent=1, ensure_ascii=False, default=str), encoding="utf-8")
                 (out / "report.md").write_text(markdown(cf), encoding="utf-8")
                 (out / "paragraph.txt").write_text(hebrew_paragraph(cf), encoding="utf-8")
+                pack = handoff.reading_pack(str(folder))
+                if pack:
+                    (out / 'reading').mkdir(exist_ok=True)
+                    for k, txt in pack.items():
+                        (out / 'reading' / f'{k}.txt').write_text(txt, encoding='utf-8')
                 cfs.append(json.loads(json.dumps(cf, default=str)))
                 ran.append({'symbol': s, 'stages': cf['stages'], 'errors': cf['errors'], 'summary': summary(cf)})
             comp = handoff.compare(cfs, card_set)

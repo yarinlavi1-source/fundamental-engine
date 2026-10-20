@@ -51,6 +51,23 @@
   revenue cut 25%, base value $143 against a $529 quote; $329 after the fix). A reversal now counts only when the low
   year is a demand dip (revenue falling, or growth more than 5 points below both neighbouring years and under half the
   median); the other dips are listed as one-off charges. Industry flags and analyst confirmation are unchanged.
+- How the company makes money, from the annual report itself (`business.py`): the collector saves the latest 10-K / 20-F
+  and 10-Q verbatim; their inline XBRL gives revenue (and operating income where tagged) by reportable segment, by
+  revenue type (standard Product/Service/License members), by product line and by geography for every year in the
+  report, segment x product tables, customer concentration, remaining performance obligations and cover share counts per
+  class (Meta's multi-class count, which companyfacts omits). Every table is reconciled to the consolidated total; what
+  XBRL does not carry (units, prices, retention, unit economics, segment capital, why customers pay, competitors) is listed
+  with where to read it, and Items 1, 1A and 7 are extracted to out/reading/ for the analyst. A segment-built growth path
+  (each part at its own pace, fading) cross-checks the consolidated forecast (20.10.2026: Microsoft and Meta consistent;
+  Tesla's segments imply ~4%/yr against 11%, Harrow's ~24% against 3%: the open temporary-versus-structural questions).
+  The model card counts the segment table as segment evidence. A document filed after as_of is never used.
+- Judgement block on every decision: material disqualifiers (reliability, unacceptable risk, thesis without a basis yet,
+  the last a research task), attractiveness factors for / neutral / against / unknown with return against the index and
+  the required return, and risks priced in the bear case vs still to price vs open questions. Derived only: no new
+  threshold, no verdict change; the 14% aspiration is reported, never a threshold.
+- Reinvestment: when the 3-year incremental sales-to-capital is below the type range only because revenue plateaued while
+  capital kept rising, the 5-year ratio is used (Tesla: 0.62 had charged every new dollar of revenue $1.60 of capital and
+  produced a funding 'gap' for a company with $43bn of liquidity).
 - Identity check reads the currency of the latest annual report (Nebius: Yandex-era RUB history, USD now); the handoff
   resolves holdings outside the screened universe through the SEC ticker map; holdings runs write their own queue and
   comparison files (`--name holdings`).
