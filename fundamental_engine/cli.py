@@ -151,12 +151,14 @@ def main():
     un.add_argument("--exploratory", help="JSON {symbol: {reason, evidence: [{source, date, statement}]}}: business evidence for names "
                                           "the numeric lanes did not admit")
     un.add_argument("--max-full", type=int, default=6, help="research queue size (full analyses to run next)")
+    un.add_argument("--insiders", help="insider purchase clusters JSON (insiders.clusters) attached to cards as signals")
     dp = subs.add_parser("deep", help="Full pipeline for the discovery research queue (companies/QUEUE.json from "
                                       "scripts/collect_companies.py) and a cross-company comparison")
     dp.add_argument("folder", help="universe folder (cards.json, companies/<T>/raw)")
     dp.add_argument("--as-of", required=True)
     dp.add_argument("--symbols", nargs="+", help="run these company folders instead of the queue")
     dp.add_argument("--name", help="read companies/QUEUE_<name>.json and write comparison_<name>.json/_he.md (e.g. holdings)")
+    dp.add_argument("--index", help="calibration JSON (calibration.market_implied): its index_input becomes inputs.index for every company")
     pf = subs.add_parser("portfolio", help="READ-ONLY analysis of saved Interactive Brokers payloads; prints to stdout, stores nothing")
     pf.add_argument("positions")
     pf.add_argument("--summary")
@@ -218,7 +220,12 @@ def main():
             apply_profiles(rows, prof)
             from .candidates import cards, research_queue, render_he
             result = scan(rows, read_json(args.options) if args.options else None)
-            card_set = cards(result, read_json(args.exploratory) if args.exploratory else None)
+            sig = None
+            if args.insiders:
+                from .insiders import evidence as insider_evidence
+                sig = {c['symbol']: [insider_evidence(c)] for c in read_json(args.insiders)
+                       if c.get('n_buyers', 0) >= 3 or (c.get('share_of_market_cap') or 0) >= .0005}
+            card_set = cards(result, read_json(args.exploratory) if args.exploratory else None, signals=sig)
             queue = research_queue(card_set, args.max_full)
             card_set['queue'] = queue
             for name, obj in (('rows.json', rows), ('scan.json', result), ('coverage.json', report), ('cards.json', card_set)):
@@ -246,9 +253,13 @@ def main():
             syms = args.symbols or [e['symbol'] for e in q['queue'] if e['symbol']]
             card_set = read_json(base / 'cards.json') if (base / 'cards.json').exists() else None
             cfs, ran = [], []
+            index_input = (read_json(args.index).get('index_input') if args.index else None)
             for s in syms:
                 folder = base / 'companies' / s
-                fb, cf = handoff.run_company(str(folder), args.as_of)
+                inp = read_json(folder / 'inputs.json') if (folder / 'inputs.json').exists() else {}
+                if index_input:
+                    inp = {**inp, 'decision': {**(inp.get('decision') or {}), 'index': index_input}}
+                fb, cf = handoff.run_company(str(folder), args.as_of, inputs=inp or None)
                 out = folder / 'out'; out.mkdir(parents=True, exist_ok=True)
                 (out / "factbook.json").write_text(json.dumps(fb, indent=1, ensure_ascii=False), encoding="utf-8")
                 (out / "casefile.json").write_text(json.dumps(cf, indent=1, ensure_ascii=False, default=str), encoding="utf-8")

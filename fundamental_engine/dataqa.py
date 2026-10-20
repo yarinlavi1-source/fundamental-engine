@@ -1450,6 +1450,21 @@ def _debt(q, cs, mcap):
 
 # ---------------------------------------------------------------- convertibles and post-period events
 
+CONVERT_MATERIAL = .02          # convertible amount / market value below which missing terms do not block
+
+
+def _convert_share(fb, ev):
+    """Largest recent convertible amount in the evidence / market value (price x latest point-in-time shares); None when
+    either is unknown."""
+    amounts = [e.get('value') for e in ev if e.get('kind') == 'fact' and e.get('value')]
+    px = ((fb.get('market') or {}).get('price') or {}).get('value')
+    sh = [f for f in fb['facts'] if f['metric'] in ('shares_outstanding_cover', 'shares_outstanding') and F.usable(fb, f)]
+    if not amounts or not px or not sh:
+        return None
+    shares = max(sh, key=lambda f: f['period_end'])['value']
+    return max(amounts) / (px * shares) if shares > 0 else None
+
+
 def _convertibles(q, cs):
     fb, ev = q.fb, []
     for f in fb['facts']:
@@ -1485,6 +1500,13 @@ def _convertibles(q, cs):
             status, note = 'reported', f"capital structure as of {cs['as_of']} lists no convertible instruments"
     elif ev:
         status, blocks, note = 'missing', True, 'evidence of convertibles without instrument terms (supply a capital structure)'
+        share = _convert_share(fb, ev)
+        if share is not None and share < CONVERT_MATERIAL:
+            # immaterial: terms cannot move the value much (ONDS $5m; ServiceNow's senior notes tagged as convertible). A noted
+            # limitation, not a block: a disqualifier needs materiality
+            status, blocks = 'single_source', False
+            note = (f'convertible evidence without terms, about {share:.1%} of market value (below {CONVERT_MATERIAL:.0%}): immaterial '
+                    'to value and dilution; terms not required (check the debt footnote if the tag is a mis-label)')
     else:
         status, note = 'missing', 'no capital structure and no convertible evidence in the FactBook: confirm from the latest debt footnote'
     q.add('convertible_terms', 'fail' if blocks else 'pass' if status != 'missing' else 'skip', 'critical' if blocks else 'minor',

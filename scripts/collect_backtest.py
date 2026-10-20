@@ -10,10 +10,13 @@ overstated for every portfolio, including the equal-weight universe benchmark bu
 Existing files are skipped, so the script can be re-run after an interruption.
 """
 import argparse
+from concurrent.futures import ThreadPoolExecutor
 import hashlib
 import json
 import os
+import re
 import sys
+import threading
 import time
 from datetime import datetime, timezone
 
@@ -72,18 +75,39 @@ def main(argv=None):
         return
     with open(os.path.join(raw, 'sec__company_tickers_exchange.json')) as f:
         t = json.load(f)
-    tickers = sorted({r[2].upper() for r in t['data'] if r[3] in ('Nasdaq', 'NYSE')} | set(BENCHMARKS))
+    # common shares only: warrants, units, rights and preferred lines (-WT, -U, -R, -P...) cannot be universe members
+    tickers = sorted({r[2].upper() for r in t['data'] if r[3] in ('Nasdaq', 'NYSE') and not re.search(r'-(W|WT|WS|U|UN|R|RT|P[A-Z]?)$', r[2].upper())}
+                     | set(BENCHMARKS))
     yh = {'User-Agent': 'Mozilla/5.0', 'Accept': 'application/json'}
-    for i, tk in enumerate(tickers):
+    lock = threading.Lock()
+    have = set(os.listdir(os.path.join(raw, 'prices')))
+
+    def one(tk):
         name = f"prices/{tk.replace('/', '-')}.json"
+        if name in done or name.split('/')[1] in have:
+            return
+        url = YAHOO.format(t=tk.replace('.', '-'))
         try:
-            save(name, YAHOO.format(t=tk.replace('.', '-')), yh, {'ticker': tk, 'provider': 'yahoo'})
+            status, body = fetch(url, yh)
         except RuntimeError as e:
-            calls.append({'file': name, 'status': 'error', 'error': str(e)[:200], 'ticker': tk})
-        time.sleep(0.15)
-        if i % 250 == 0:
-            flush()
-            print(json.dumps({'prices': i, 'of': len(tickers)}), flush=True)
+            with lock:
+                calls.append({'file': name, 'status': 'error', 'error': str(e)[:200], 'ticker': tk})
+            return
+        rec = {'file': name, 'url': url, 'status': status, 'ticker': tk, 'provider': 'yahoo',
+               'retrieved_at_utc': datetime.now(timezone.utc).isoformat(timespec='seconds')}
+        if status == 200:
+            with open(os.path.join(raw, name), 'wb') as f:
+                f.write(body)
+            rec['sha256'] = hashlib.sha256(body).hexdigest()
+        with lock:
+            calls.append(rec)
+            done.add(name)
+    with ThreadPoolExecutor(max_workers=6) as ex:
+        for i, _ in enumerate(ex.map(one, tickers)):
+            if i % 500 == 0:
+                with lock:
+                    flush()
+                print(json.dumps({'prices': i, 'of': len(tickers)}), flush=True)
     flush()
     print(json.dumps({'done': True, 'calls': len(calls)}), flush=True)
 

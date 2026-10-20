@@ -19,6 +19,7 @@ LANES_HE = {
     'structural_tailwind': 'שינוי מבני או צוואר בקבוק',
     'recovery_mispriced': 'התאוששות או תמחור שגוי',
     'exploratory': 'ראיה עסקית (מסלול חקר)',
+    'signal': 'אות חיצוני (קניות בעלי עניין / ערוץ גילוי)',
 }
 # what is NOT in screening data and must come from filings or research before a full conclusion, per lane
 NOT_IN_SCREEN = {
@@ -29,6 +30,7 @@ NOT_IN_SCREEN = {
     'structural_tailwind': ['who captures the value (pricing power, supply response)', 'backlog or contracted demand'],
     'recovery_mispriced': ['cause of the setback (cycle, customer, pricing, product, competition)', 'what peers report since'],
     'exploratory': ['numbers that confirm the business evidence'],
+    'signal': ['what the insiders or the channel may know: the next filing, guidance, contracts'],
 }
 HYPOTHESES = {
     'quality_compounder': 'growth of this quality continues for several more years without a margin give-back',
@@ -38,7 +40,16 @@ HYPOTHESES = {
     'structural_tailwind': 'the tailwind lasts and this company keeps a share of the value',
     'recovery_mispriced': 'the setback is temporary and the earlier economics return',
     'exploratory': 'the supplied business evidence is material and not yet in the numbers',
+    'signal': 'the signal reflects information about the business that the price does not yet carry',
 }
+
+
+# Walk-forward evidence per lane (docs/BACKTEST_DISCOVERY_2026-10-20.md: 2012-2025, July and October formations, equal-weight,
+# survivorship-biased upward). 'negative' = underperformed the S&P 500 and the equal-weight universe in both variants (t about -2
+# in one): research priority lowered, lane kept and re-tested. Data, not tuning: update only from a new out-of-sample test.
+LANE_EVIDENCE = {'quality_compounder': 'mixed', 'quality_fair_price': 'neutral', 'early_commercial_growth': 'positive_noisy',
+                 'mispriced_turning': 'neutral', 'recovery_mispriced': 'negative', 'structural_tailwind': 'negative',
+                 'exploratory': 'untested', 'signal': 'untested'}
 
 
 def _falsifier(lane, m):
@@ -52,6 +63,7 @@ def _falsifier(lane, m):
         'structural_tailwind': 'growth falling to the sector median, or gross margin down 3 pts or more (supply response or substitutes)',
         'recovery_mispriced': 'revenue declining again next year or margins still falling: a structural decline, not a setback',
         'exploratory': 'the evidence is not confirmed by the next filing',
+        'signal': 'the next two quarterly reports show no improvement in the business the signal pointed to',
     }[lane]
 
 
@@ -119,7 +131,7 @@ def card(scan, symbol, lane_hits=None, exploratory=None, shortlisted=False):
             'meaning': 'research priority, not a recommendation; supported items are screening-grade data, hypotheses are untested'}
 
 
-def cards(scan, exploratory=None, include='lenses'):
+def cards(scan, exploratory=None, include='lenses', signals=None, max_signal_cards=10):
     """Cards for every lens candidate (include='lenses') or only the shortlist (include='shortlist'), plus the exploratory
     path: exploratory = {symbol: {'reason': text, 'evidence': [{'source', 'date', 'statement'}]}} (written evidence required)."""
     hits = {}
@@ -147,18 +159,53 @@ def cards(scan, exploratory=None, include='lenses'):
         out[sym] = card(scan, sym, hits.get(sym), exploratory=ev, shortlisted=sym in short)
         if not hits.get(sym):
             out[sym]['numeric_failures'] = scan['excluded'].get(sym) or 'not recorded by the scan'
+    # external discovery signals (insider purchase clusters, channel evidence): {symbol: [evidence]}. Attached to lane cards
+    # as support; strong ones outside every lane open a 'signal' card for research (decision maybe: a signal is attention or
+    # conviction, not evidence about the economics)
+    added = 0
+    for sym, evs in (signals or {}).items():
+        if not evs:
+            continue
+        if sym in out:
+            out[sym].setdefault('signals', []).extend(evs)
+            continue
+        if sym not in scan['dimensions'] or added >= max_signal_cards:
+            continue
+        held = scan['excluded'].get(sym) or ''
+        if held.startswith(('not supported', 'distress', 'unreliable', 'coverage gap')):
+            continue
+        c = card(scan, sym, [{'lens': 'signal', 'rank': None, 'why': evs[0]['statement']}])
+        c['signals'] = list(evs)
+        c['numeric_failures'] = held or None
+        c['full_analysis'] = {'decision': 'maybe', 'reason': 'external signal without a numeric lane: research the business first'}
+        out[sym] = c
+        added += 1
+    for c in out.values():
+        if c.get('signals') and c['full_analysis']['decision'] == 'yes':
+            c['full_analysis']['reason'] += '; supported by an external signal (' + c['signals'][0].get('kind', 'evidence') + ')'
     return {'cards': list(out.values()), 'notes': notes}
 
 
 def research_queue(card_set, max_full=6):
     """Cards marked for full analysis, round-robin across lanes (no lane crowds out the others), at most max_full."""
-    yes = [c for c in card_set['cards'] if c['full_analysis']['decision'] == 'yes']
+    yes = [c for c in card_set['cards'] if c['full_analysis']['decision'] == 'yes'
+           or (c.get('signals') and c['full_analysis']['decision'] == 'maybe' and c['lanes'] and c['lanes'][0]['lens'] != 'signal')]
     by_lane = {}
     for c in yes:
         by_lane.setdefault(c['lanes'][0]['lens'] if c['lanes'] else 'other', []).append(c)
     for lst in by_lane.values():
-        lst.sort(key=lambda c: (c.get('shortlist_position') or 999, c['lanes'][0]['rank'] or 99, c['symbol']))
+        # two independent sources (a numeric lane and an external signal) first, then the shortlist order
+        lst.sort(key=lambda c: (0 if c.get('signals') else 1, c.get('shortlist_position') or 999, c['lanes'][0]['rank'] or 99, c['symbol']))
     queue, taken = [], set()
+    # lanes with negative walk-forward evidence come after the others are exhausted
+    first = [ln for ln in by_lane if LANE_EVIDENCE.get(ln) != 'negative']
+    last = [ln for ln in by_lane if LANE_EVIDENCE.get(ln) == 'negative']
+    for group in (first, last):
+        _fill(queue, taken, {ln: by_lane[ln] for ln in group}, max_full)
+    return queue
+
+
+def _fill(queue, taken, by_lane, max_full):
     while len(queue) < max_full and any(by_lane.values()):
         for ln in list(by_lane):
             while by_lane[ln] and by_lane[ln][0]['symbol'] in taken:
@@ -166,9 +213,9 @@ def research_queue(card_set, max_full=6):
             if by_lane[ln] and len(queue) < max_full:
                 c = by_lane[ln].pop(0)
                 queue.append({'symbol': c['symbol'], 'lane': c['lanes'][0]['lens'] if c['lanes'] else None,
-                              'reason': c['full_analysis']['reason']})
+                              'reason': c['full_analysis']['reason'],
+                              'lane_evidence': LANE_EVIDENCE.get(c['lanes'][0]['lens'] if c['lanes'] else None, 'untested')})
                 taken.add(c['symbol'])
-    return queue
 
 
 def render_he(card_set, limit=None):

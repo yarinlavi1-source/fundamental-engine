@@ -469,6 +469,18 @@ class Debt(unittest.TestCase):
         self.assertAlmostEqual(got[('current_portion_ltd', '2026-06-30')]['value'], 55.0 * M)
         self.assertEqual(got[('long_term_debt', '2025-12-31')]['concept'], 'LongTermDebtNoncurrent')   # a total line wins its date
 
+    def test_immaterial_convertibles_without_terms_do_not_block(self):
+        fb = syn()
+        F.add_fact(fb, 'convertible_debt', 'I@2026-06-30', '2026-06-30', 5 * M, 'sec:cf', 'as_reported', '2026-08-05',
+                   concept='ConvertibleNotesPayable')                       # SYNTHETIC: $5m against ~$8bn of market value
+        qa = dataqa.validate(fb)
+        self.assertNotIn('convertibles', qa['blocking'])
+        self.assertIn('immaterial', qa['fields']['convertibles']['note'])
+        F.add_fact(fb, 'convertible_debt', 'I@2026-06-30', '2026-06-30', 900 * M, 'sec:cf', 'as_reported', '2026-08-05',
+                   concept='ConvertibleSeniorNotes')
+        fb['facts'] = [f for f in fb['facts'] if not (f['metric'] == 'convertible_debt' and f['value'] == 5 * M)]
+        self.assertIn('convertibles', dataqa.validate(fb)['blocking'])       # material: terms required
+
     def test_notes_payable_tag_is_read_as_debt(self):
         self.assertIn('longtermnotespayable', F.INSTANT_TAGS['long_term_debt_tagged'])
         self.assertIn('notespayablecurrent', F.INSTANT_TAGS['current_portion_ltd'])

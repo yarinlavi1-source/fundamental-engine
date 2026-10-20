@@ -24,7 +24,20 @@ from collect_universe import fetch  # noqa: E402
 from fundamental_engine import handoff  # noqa: E402
 
 
-def collect(folder, c, ua):
+def _cover_missing(raw):
+    """companyfacts carries no dei share count dated within ~200 days of its latest balance sheet (class-tagged covers)."""
+    path = os.path.join(raw, 'sec__companyfacts.json')
+    if not os.path.exists(path):
+        return False
+    with open(path, encoding='utf-8') as f:
+        d = json.load(f)
+    cover = [r['end'] for u in (((d.get('facts') or {}).get('dei') or {}).get('EntityCommonStockSharesOutstanding') or {}).get('units', {}).values()
+             for r in u]
+    bs = [r['end'] for u in (((d.get('facts') or {}).get('us-gaap') or {}).get('Assets') or {}).get('units', {}).values() for r in u]
+    return not cover or (bs and max(cover) < (datetime.fromisoformat(max(bs)) - __import__('datetime').timedelta(days=200)).date().isoformat())
+
+
+def collect(folder, c, ua, docs=True, only_quarterly=False):
     """Fetch one company's SEC payloads (skipped when already saved) and its listing price; -> identity check."""
     os.makedirs(c['raw'], exist_ok=True)
     with open(os.path.join(c['folder'], 'company.json'), 'w', encoding='utf-8') as f:
@@ -50,9 +63,12 @@ def collect(folder, c, ua):
         calls.append(rec)
         time.sleep(0.12)
     sub = os.path.join(c['raw'], 'sec__submissions.json')
-    if os.path.exists(sub):
+    if docs and os.path.exists(sub):
         with open(sub, encoding='utf-8') as f:
-            docs = handoff.filing_documents(json.load(f), c['cik'])
+            docs_list = handoff.filing_documents(json.load(f), c['cik'])
+        docs = docs_list
+        if only_quarterly:
+            docs = [d for d in docs if d['file'] == 'sec__latest_quarterly.htm'] if _cover_missing(c['raw']) else []
         for d in docs:
             path = os.path.join(c['raw'], d['file'])
             if os.path.exists(path) and (old.get(d['file']) or {}).get('accession') == d['accession']:
@@ -96,6 +112,9 @@ def main(argv=None):
     ap.add_argument('folder')
     ap.add_argument('--symbols', nargs='+')
     ap.add_argument('--tries', type=int, default=4, help='candidates tried per lane before the lane is reported empty')
+    ap.add_argument('--no-docs', action='store_true', help='skip the annual and quarterly report documents (faster samples)')
+    ap.add_argument('--docs-when-needed', action='store_true', help='fetch the quarterly report only when companyfacts has no '
+                                                                     'recent cover share count (multi-class issuers); no annual report')
     ap.add_argument('--name', default=None, help='queue file companies/QUEUE_<name>.json (default QUEUE.json; with --symbols '
                                                  'QUEUE_symbols.json, so a holdings run never overwrites the discovery queue)')
     a = ap.parse_args(argv)
@@ -121,7 +140,7 @@ def main(argv=None):
             if not p['companies']:
                 entry['blocked'].append({'symbol': s, 'reasons': ['not in the universe rows']})
                 continue
-            chk = collect(a.folder, p['companies'][0], ua)
+            chk = collect(a.folder, p['companies'][0], ua, docs=not a.no_docs or a.docs_when_needed, only_quarterly=a.docs_when_needed)
             if chk['status'] == 'ok':
                 entry['symbol'] = s
                 entry['identity'] = {k: chk.get(k) for k in ('reporting_currency', 'depositary_shares', 'note')}

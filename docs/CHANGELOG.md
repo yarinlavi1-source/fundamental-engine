@@ -51,6 +51,24 @@
   revenue cut 25%, base value $143 against a $529 quote; $329 after the fix). A reversal now counts only when the low
   year is a demand dip (revenue falling, or growth more than 5 points below both neighbouring years and under half the
   median); the other dips are listed as one-off charges. Industry flags and analyst confirmation are unchanged.
+- Honest test against the S&P 500 (`backtest.py`, docs/BACKTEST_DISCOVERY_2026-10-20.md): walk-forward 2012-2025 on SEC
+  frames and monthly prices, no number used before it could have been filed, share-basis mismatches excluded. The numeric
+  screen alone shows no robust edge over SPY; recovery/mispricing and structural tailwind lanes lost in both variants and are
+  demoted in the research queue (`LANE_EVIDENCE`); early commercial growth is promising and unproven. A split-factor bug found
+  during the test (reverse splits inflated past market values) was fixed before any result was recorded.
+- Engine-consistent market return (`calibration.py`): the largest US operating companies valued by the same engine give the
+  market's implied return on the same basis (85-company sample, 20.10.2026: 6.5% cap-weighted vs the 8.75% assumption, only
+  15% of companies above it). `deep --index calibration.json` passes it as inputs.index, so a stock's edge is measured like
+  for like and a shared model bias cancels.
+- Portfolio construction (`allocation.py`): the index is the default; active weight = quarter-Kelly x edge / bear-loss^2 x
+  confidence, after a valuation-error and cost haircut, capped per name and per shared economic driver; drafts are
+  provisional; overweight holdings are listed for review, never as orders.
+- Discovery channels (`sources.py`) with explicit roles (screen, signal, attention, lead, evidence) and SEC insider
+  purchase clusters from the Form 3/4/5 data sets (`insiders.py`, `universe --insiders`): 212 universe companies with
+  clusters in the last 180 days; attached to lane cards, strong ones open 'signal' cards; social attention (LunarCrush) is
+  crowding and leads only.
+- Convertible notes without terms block a price conclusion only when material (>= 2% of market value): ServiceNow's senior
+  notes tagged as convertible and $5m at Ondas no longer exclude the company.
 - How the company makes money, from the annual report itself (`business.py`): the collector saves the latest 10-K / 20-F
   and 10-Q verbatim; their inline XBRL gives revenue (and operating income where tagged) by reportable segment, by
   revenue type (standard Product/Service/License members), by product line and by geography for every year in the
