@@ -65,8 +65,14 @@ DURATION_TAGS = {
 INSTANT_TAGS = {
     'cash': ['cashandcashequivalentsatcarryingvalue'],
     'cash_incl_restricted': ['cashcashequivalentsrestrictedcashandrestrictedcashequivalents'],
-    'short_term_investments': ['shortterminvestments', 'marketablesecuritiescurrent', 'availableforsalesecuritiesdebtsecuritiescurrent'],
-    'long_term_investments': ['longterminvestments', 'marketablesecuritiesnoncurrent', 'availableforsalesecuritiesdebtsecuritiesnoncurrent'],
+    # DebtSecuritiesCurrent/Noncurrent: the tags NVIDIA moved to in fiscal 2027 for its marketable debt securities line
+    'short_term_investments': ['shortterminvestments', 'marketablesecuritiescurrent', 'availableforsalesecuritiesdebtsecuritiescurrent',
+                               'debtsecuritiescurrent'],
+    'long_term_investments': ['longterminvestments', 'marketablesecuritiesnoncurrent', 'availableforsalesecuritiesdebtsecuritiesnoncurrent',
+                              'debtsecuritiesnoncurrent'],
+    # equity securities with a readily determinable fair value (stakes in listed companies): an asset at market value,
+    # not spendable cash; private stakes without a readily determinable value are deliberately not read here
+    'equity_securities_fv': ['equitysecuritiesfvni'],
     'restricted_cash': ['restrictedcashcurrent', 'restrictedcash'],
     'receivables': ['accountsreceivablenetcurrent'],
     'inventory': ['inventorynet'],

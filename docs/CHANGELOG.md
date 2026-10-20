@@ -1,3 +1,12 @@
+## 0.11.2 (in progress, 20.10.2026)
+
+- Investments no longer vanish on a tag change: DebtSecuritiesCurrent/Noncurrent read as short/long-term investments;
+  listed equity stakes (EquitySecuritiesFvNi) resolved as `equity_securities_fv` and valued once at fair value in the
+  opening balance; a line present within the last 400 days but missing on the latest balance sheet fails
+  `investment_line_continuity` and limits the cash field instead of reading as zero. Found on NVIDIA (fiscal 2027
+  10-Q: about $77bn of marketable securities read as zero). Private stakes without a readily determinable fair value
+  stay excluded (conservative; noted in the opening-balance rationale).
+
 ## 0.11.1 — verified review-fix cycle (20.10.2026)
 
 Adversarial reviewers attacked every stage; a defect counted only when a script reproduced it. Each fix came with a

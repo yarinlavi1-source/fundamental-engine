@@ -1405,7 +1405,8 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
         return empty('insufficient_data', 'no quote in the company currency at as_of', method)
     as_of = fb['as_of']
     material = []
-    open_bal = {'cash': val('cash'), 'sti': val('short_term_investments') or 0., 'lti': val('long_term_investments') or 0.,
+    open_bal = {'cash': val('cash'), 'sti': val('short_term_investments') or 0.,
+                'lti': (val('long_term_investments') or 0.) + (val('equity_securities_fv') or 0.),
                 'debt': val('debt'), 'shares': val('shares_outstanding'), 'deferred_revenue': val('deferred_revenue') or 0.}
     if qa.get('status') == 'blocked':
         warn('data_blocked', 'dataqa status blocked (' + ', '.join(qa.get('blocking') or []) + '): no price conclusion until resolved', 'high')
@@ -1497,7 +1498,8 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
             r = res.get(k) or {}
             ids |= set(r.get('source_ids') or []) | ({r['source_id']} if r.get('source_id') else set())
         return sorted(i for i in ids if i in fb['sources']) or _latest_src(fb, *fallback)
-    bal_srcs = (qsrc('cash_and_liquid_investments', ('cash', 'short_term_investments', 'long_term_investments'), 'cash', 'short_term_investments')
+    bal_srcs = (qsrc('cash_and_liquid_investments', ('cash', 'short_term_investments', 'long_term_investments', 'equity_securities_fv'),
+                     'cash', 'short_term_investments')
                 + qsrc('debt', ('debt',), 'long_term_debt_tagged', 'long_term_debt', 'current_portion_ltd'))
     share_srcs = qsrc('shares_outstanding', ('shares_outstanding',), 'shares_outstanding_vendor', 'shares_outstanding_cover', 'shares_outstanding')
     extra = {RULES: {'id': RULES, 'title': 'fundamental_engine.forecast documented model rules (stage fade half-lives, type ranges, '
@@ -1529,8 +1531,10 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
     stmt = min(_d(cash_res.get('as_of') or as_of), _d(debt_res.get('as_of') or as_of)).isoformat()
     add('open_balance', 'opening balance', 'reported',
         {'cash': open_bal['cash'], 'short_term_investments': open_bal['sti'], 'long_term_investments': open_bal['lti'],
+         'equity_securities_fv_included': val('equity_securities_fv') or 0.,
          'debt': open_bal['debt'], 'deferred_revenue': open_bal['deferred_revenue'], 'statement_as_of': stmt},
         f"dataqa-resolved balance at {stmt}: cash {open_bal['cash']:,.0f}, investments {open_bal['sti'] + open_bal['lti']:,.0f} "
+        f"(of which listed equity stakes at fair value {val('equity_securities_fv') or 0.:,.0f}; private stakes excluded) "
         f"(kept as assets earning risk-free after tax; liquidated before any external financing is assumed), debt {open_bal['debt']:,.0f} "
         f"({debt_res.get('method', 'dataqa')}; operating leases treated in cash costs), deferred revenue "
         "{:,.0f} in its own ledger.".format(open_bal['deferred_revenue']),

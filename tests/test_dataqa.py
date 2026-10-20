@@ -925,3 +925,45 @@ class NegativeLiquidAssets(unittest.TestCase):
         self.assertIsNone(qa['resolved']['long_term_investments']['value'])
         self.assertEqual(checks(qa, 'liquid_assets_nonnegative', 'fail')[0]['fields'], ['investments'])
         self.assertEqual(qa['fields']['cash_and_liquid_investments']['status'], dataqa.validate(syn())['fields']['cash_and_liquid_investments']['status'])
+
+
+class InvestmentTagChangeTests(unittest.TestCase):
+    """Regression from the NVIDIA 2026-10-20 run: marketable securities moved from MarketableSecuritiesCurrent to
+    DebtSecuritiesCurrent, listed stakes sit in EquitySecuritiesFvNi, and the engine read ~$77bn of investments as zero."""
+
+    def test_new_tags_are_read_from_companyfacts(self):
+        def rows(v, end, filed):
+            return [{'end': end, 'val': v, 'filed': filed, 'form': '10-Q', 'accn': 'a' + filed}]
+        payload = {'cik': 1, 'facts': {'us-gaap': {
+            'MarketableSecuritiesCurrent': {'units': {'USD': rows(49.0, '2025-10-26', '2025-11-19')}},
+            'DebtSecuritiesCurrent': {'units': {'USD': rows(34.1, '2026-07-26', '2026-08-26')}},
+            'DebtSecuritiesNoncurrent': {'units': {'USD': rows(12.8, '2026-07-26', '2026-08-26')}},
+            'EquitySecuritiesFvNi': {'units': {'USD': rows(42.8, '2026-07-26', '2026-08-26')}}}}}   # SYNTHETIC values
+        fb = F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-10-20')
+        F.from_sec_companyfacts(fb, payload, '2026-10-20')
+        got = {(f['metric'], f['period_end']): f['value'] for f in fb['facts']}
+        self.assertEqual(got[('short_term_investments', '2025-10-26')], 49.0)
+        self.assertEqual(got[('short_term_investments', '2026-07-26')], 34.1)
+        self.assertEqual(got[('long_term_investments', '2026-07-26')], 12.8)
+        self.assertEqual(got[('equity_securities_fv', '2026-07-26')], 42.8)
+
+    def test_vanished_investment_line_is_flagged_not_silently_zero(self):
+        fb = syn()
+        fb['facts'] = [f for f in fb['facts'] if not (f['metric'] == 'short_term_investments' and f['period_end'] == '2026-06-30')]
+        qa = dataqa.validate(fb)
+        hit = checks(qa, 'investment_line_continuity', 'fail')
+        self.assertEqual(len(hit), 1, qa['checks'])
+        self.assertEqual(hit[0]['detail']['last_period_end'], '2026-03-31')
+        self.assertNotEqual(qa['fields']['cash_and_liquid_investments']['status'], 'verified')
+        self.assertIn('cash_and_liquid_investments', qa['limited'])
+        # the clean company keeps no such flag
+        self.assertEqual(checks(dataqa.validate(syn()), 'investment_line_continuity'), [])
+
+    def test_listed_equity_stakes_resolved_separately(self):
+        fb = syn()
+        F.add_fact(fb, 'equity_securities_fv', 'I@2026-06-30', '2026-06-30', 70 * M, 'sec:cf', 'as_reported', _plus('2026-06-30', 35))
+        r = dataqa.validate(fb)['resolved']
+        self.assertEqual(r['equity_securities_fv']['value'], 70 * M)
+        self.assertEqual(r['cash']['value'] + r['short_term_investments']['value'],
+                         dataqa.validate(syn())['resolved']['cash']['value'] + dataqa.validate(syn())['resolved']['short_term_investments']['value'])
+        self.assertEqual(dataqa.validate(syn())['resolved']['equity_securities_fv']['value'], 0.0)

@@ -1050,6 +1050,21 @@ def _cash(q, cs):
                     facts.append(g)
             else:
                 parts[m] = 0.0 if bs else None
+                if bs and m != 'restricted_cash':
+                    # a line that vanishes from one balance sheet to the next is usually a tag change (NVIDIA, fiscal 2027:
+                    # MarketableSecuritiesCurrent -> DebtSecuritiesCurrent), not a sale of every security: never a silent zero
+                    prior = [f for e, f in q.timeline(m, 'instant') if 0 < _days(e, end) <= 400 and (f['value'] or 0) > 0]
+                    if prior:
+                        last = prior[-1]
+                        q.add('investment_line_continuity', 'fail', 'major',
+                              f"{m} not tagged on the balance sheet at {end} but {_fmt(last['value'])} at {last['period_end']}: "
+                              'a tag change can hide investments; read the balance sheet before using zero', period=end,
+                              fields=('cash_and_liquid_investments',), detail={'metric': m, 'last_value': last['value'],
+                                                                              'last_period_end': last['period_end']})
+                        checks.append('investment_line_continuity')
+                        st.append('single_source')
+                        notes.append(f"{m} untagged at {end} (last {_fmt(last['value'])} at {last['period_end']}): taken as zero only "
+                                     'provisionally; confirm on the balance sheet')
         if parts['short_term_investments'] is None:
             st.append('single_source')
             notes.append('no balance sheet context at the cash date: short-term investments unknown, cash only')
@@ -1161,6 +1176,14 @@ def _cash(q, cs):
                   'source_ids': comp_src.get(k, []), 'definition': DEFINITIONS.get(k, 'restricted cash: not spendable, excluded from net cash')}
     if res['long_term_investments']['value'] is None:
         res['long_term_investments']['value'] = inv['value']
+    # listed equity stakes at fair value: an asset at market value, not spendable cash and not net cash; valued once
+    eq_end = end if basis == 'balance_sheet' else None
+    eq = q.best('equity_securities_fv', eq_end) if eq_end else None
+    res['equity_securities_fv'] = {'value': eq['value'] if eq and eq['value'] > 0 else 0.0, 'as_of': eq_end,
+                                   'basis': 'balance_sheet' if eq_end else basis, 'status': fld['status'] if eq else 'reported',
+                                   'source_ids': [eq['source_id']] if eq else [],
+                                   'definition': 'equity securities with a readily determinable fair value (listed stakes): an asset '
+                                                 'at market value, outside net cash; private stakes excluded'}
     dr_end = end or bs_end
     if dr_end:
         drc, drn = q.best('deferred_revenue_current', dr_end), q.best('deferred_revenue_noncurrent', dr_end)
