@@ -57,6 +57,11 @@
       "file": "protocols/expectations.md"
     },
     {
+      "id": "analyst_sheet",
+      "title": "Analyst sheet: the owner's six questions (quality, mispricing, geopolitics, asymmetry, bottleneck, future relevance)",
+      "file": "protocols/analyst_sheet.md"
+    },
+    {
       "id": "adversarial",
       "title": "Mandatory adversarial review",
       "file": "protocols/adversarial.md"
