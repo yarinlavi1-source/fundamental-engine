@@ -910,13 +910,18 @@ def _cyclical(fb, rows, primary, inputs):
     always_grew = len(revs) >= 2 and all(revs[i] > revs[i - 1] for i in range(1, len(revs)))
     pre_commercial = any(m <= -1 for m in ms)
     loss_grower = always_grew and bool(ms) and ms[-1] < 0
-    data_cyc = ((drop_recovered and (vol or 0) >= .03) or reversals >= 2) and not pre_commercial and not loss_grower
+    # revenue up every year and margins from losses to the window high: a scale-up path; averaging it would value the
+    # company on its start-up losses (Global-E 2026-10: -14% mean margin against +7% reported)
+    scale_up = always_grew and bool(ms) and min(ms) < 0 < ms[-1] and ms[-1] >= max(ms) - .01
+    data_cyc = ((drop_recovered and (vol or 0) >= .03) or reversals >= 2) and not pre_commercial and not loss_grower and not scale_up
     if data_cyc:
         reasons.append(f'reported history swings: operating-margin standard deviation {_pct(vol)}, {reversals} margin reversal(s) of '
                        f'>= 3 points' + (', revenue fell >= 10% and recovered' if drop_recovered else ''))
-    elif ms and (pre_commercial or loss_grower) and ((drop_recovered and (vol or 0) >= .03) or reversals >= 2):
+    elif ms and (pre_commercial or loss_grower or scale_up) and ((drop_recovered and (vol or 0) >= .03) or reversals >= 2):
         reasons.append('margin swings ignored as a cycle signal: ' + ('losses larger than revenue (pre-commercial noise)' if pre_commercial
-                       else 'revenue rose every year while loss-making (investment timing, not a cycle)'))
+                       else 'revenue rose every year while loss-making (investment timing, not a cycle)' if loss_grower
+                       else 'revenue rose every year and margins moved from losses to the window high (a scale-up path, not a '
+                            'cycle; an analyst can still confirm a cycle with inputs.cyclical)'))
     elif ms:
         reasons.append(f'reported history shows no cycle pattern (margin standard deviation {_pct(vol)}, {reversals} reversal(s))')
     position, pos_rule = _margin_position(ms) if len(ms) >= 3 and not pre_commercial else (None, None)

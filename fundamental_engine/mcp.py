@@ -79,7 +79,10 @@ TOOLS += [
  research_tool('research_compare','Compare material claims and gates across revisions of one local case.',{'case_id':{'type':'string'},'first_revision':{'type':'integer'},'second_revision':{'type':'integer'}},['case_id','first_revision','second_revision']), research_tool('collection_plan','Step 1 of the single decision path: exact connector calls and raw file names for one company. Fetches nothing; payloads must be saved verbatim outside Git. Read pipeline.',{'ticker':{'type':'string'},'as_of':{'type':'string'},'cik':{'type':'string'}},['ticker','as_of']),
  research_tool('run_pipeline','The single decision path on a FactBook: data validation, business model card, financial analysis, bear/base/bull forecast, valuation, risks, independent review, four separate assessments and a closed verdict. Returns verdict, Hebrew paragraph, markdown report and hashes (full=true adds the casefile). Research indication, never an order. Read pipeline.',{'factbook':{'type':'object'},'inputs':{'type':'object'},'full':{'type':'integer','minimum':0,'maximum':1}},['factbook']),
  research_tool('portfolio_analyze','READ-ONLY portfolio view from Interactive Brokers payloads the client already retrieved: weights, concentration, economic exposure overlaps, scenario stress, holdings that need review. Nothing is stored; never orders.',{'positions':{'type':'object'},'summary':{'type':'object'},'as_of':{'type':'string'},'holdings_info':{'type':'object'},'options':{'type':'object'}},['positions','as_of']),
- research_tool('screen_universe','Discovery before full analysis: universe rows (screening/SEC/FactBook grades) -> eight separate dimensions, five opportunity lenses (quality compounder, quality at a fair price, early commercial growth, mispriced/turning, structural tailwind), near misses and a diverse shortlist with what to check first. Not recommendations; no ranking by cheapness. Read pipeline.',{'rows':{'type':'object'},'options':{'type':'object'}},['rows']),
+ research_tool('screen_universe','Discovery before full analysis: universe rows (screening/SEC/FactBook grades) -> eight separate dimensions, six opportunity lenses (quality compounder, quality at a fair price, early commercial growth, turnaround, structural tailwind, recovery or mispricing), near misses and a diverse shortlist with what to check first. Not recommendations; no ranking by cheapness. Read pipeline.',{'rows':{'type':'object'},'options':{'type':'object'}},['rows']),
+ research_tool('discovery_cards','Candidate cards from a screen_universe scan: why found, lane, what could make it exceptional, supported vs hypothesis, falsifiers, priced-in, risks, missing data and whether a full analysis is warranted; plus a lane-diverse research queue. exploratory = {symbol: {reason, evidence: [{source, date, statement}]}} admits names the numeric lanes missed (numeric failures stay on the card). Research priority, not a recommendation.',{'scan':{'type':'object'},'exploratory':{'type':'object'},'max_full':{'type':'integer','minimum':1,'maximum':30}},['scan']),
+ research_tool('identity_check','Before any per-share number: reporting currency (from SEC companyfacts units) and depositary-share ratio (listing market cap / price vs dei shares). Blocked companies need a manual FactBook in the reporting currency and the ADS ratio.',{'companyfacts':{'type':'object'},'listing':{'type':'object'},'company':{'type':'object'}},['companyfacts']),
+ research_tool('compare_candidates','Cross-opportunity comparison of pipeline casefiles: business quality, growth quality, financial strength, capital allocation, price, expected return vs required return and index, loss to bear, data uncertainty and key risks, each kept separate; no composite score; drafts flagged.',{'casefiles':{'type':'array'},'cards':{'type':'object'}},['casefiles']),
  research_tool('screen_changes','Compare two discovery scans: entered, left, lens moves and the dimension changes behind them.',{'before':{'type':'object'},'after':{'type':'object'}},['before','after']),
  research_tool('thesis_record','Turn a pipeline casefile into a dated thesis: key assumptions with falsifiers, forecasts (bear/base/bull per fiscal year), material triggers and a review date. Pure; freeze it with thesis_freeze.',{'casefile':{'type':'object'}},['casefile']),
  research_tool('thesis_check','Compare a thesis with a newer FactBook (and optional price): what changed, whether it touches business quality, value, expected return or only the price, and alerts only for material deviations.',{'thesis':{'type':'object'},'factbook':{'type':'object'},'price':{'type':'number'}},['thesis','factbook']),
@@ -177,6 +180,17 @@ class Server:
             if rows is None:
                 raise ValueError('rows must be {"rows": [...]}')
             return scan(rows, args.get('options'))
+        if name == 'discovery_cards':
+            from .candidates import cards, research_queue
+            out = cards(args['scan'], args.get('exploratory'))
+            out['queue'] = research_queue(out, int(args.get('max_full') or 6))
+            return out
+        if name == 'identity_check':
+            from .handoff import identity_check
+            return identity_check(args['companyfacts'], args.get('listing'), args.get('company'))
+        if name == 'compare_candidates':
+            from .handoff import compare
+            return compare(args['casefiles'], args.get('cards'))
         if name == 'screen_changes':
             from .screen import rank_changes
             return rank_changes(args['before'], args['after'])

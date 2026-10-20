@@ -478,7 +478,7 @@ def _identities(q):
         chg = q.best('change_in_cash', ce, kind) if kind else None
         if not chg:
             continue
-        incl = 'restricted' in (chg.get('concept') or '')
+        incl = 'restricted' in (chg.get('concept') or '').lower()          # SEC concepts are CamelCase
         lfl = not incl
         bp, bc, basis = p['value'], c['value'], 'cash'
         if incl:
@@ -1273,7 +1273,9 @@ def _debt(q, cs, mcap):
             if not any(abs(_days(x, e)) <= 7 for x in dates):
                 dates.append(e)
     dates.sort()
+    vanished = None
     if dates and bs_end and _days(dates[-1], bs_end) > 7:
+        vanished = dates[-1]
         dates.append(bs_end)       # debt lines gone from the latest balance sheet: test "repaid" with the roll-forward
         notes.append(f'no debt line on the latest balance sheet ({bs_end}); roll-forward tests whether it was repaid')
     leases = None
@@ -1342,7 +1344,19 @@ def _debt(q, cs, mcap):
                 if 'fairvalue' in (g.get('concept') or ''):
                     sts.append('single_source')
                     notes.append(f"{g['metric']} uses a fair-value concept ({g['concept']}), not principal/carrying value")
-            if not facts:
+            ttm_i, rev_i = F.ttm(fb, 'interest_expense'), F.ttm(fb, 'revenue')
+            paying = bool(ttm_i and ttm_i['value'] > 0 and (not rev_i or ttm_i['value'] > .002 * abs(rev_i['value'])))
+            if not facts and vanished and not rf_ok and (_days(vanished, end) <= 400 or paying):
+                # lines tagged until the prior balance sheet, none now, and no repayment in the cash flows: usually a tag the
+                # map does not read (Harrow 2026-06-30: LongTermNotesPayable after LongTermDebt), never a silent zero
+                sts.append('conflict')
+                q.add('debt_line_continuity', 'fail', 'major',
+                      f'debt lines tagged until {vanished} are absent at {end} and no roll-forward shows a repayment'
+                      + (' while interest expense continues' if paying else '') + ': not taken as zero; read the balance sheet',
+                      period=end, fields=('debt',), detail={'last_tagged': vanished, 'balance_sheet': end, 'interest_paid': paying})
+                checks.append('debt_line_continuity')
+                notes.append(f'debt lines tagged until {vanished} are absent at {end} without a repayment: unresolved (blocking)')
+            elif not facts:
                 sts.append('reported' if rf_ok else 'single_source')
                 notes.append(f'no debt line on the balance sheet dated {end}: taken as zero'
                              + (' (consistent with the roll-forward)' if rf_ok else ''))

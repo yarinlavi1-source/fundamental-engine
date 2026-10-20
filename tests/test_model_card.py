@@ -615,6 +615,17 @@ class RepairRegressionTests(unittest.TestCase):
             cash=[6e8] * 5, equity=[5e8] * 5))
         self.assertFalse(card(bio)['cyclical']['value'])
 
+    def test_scale_up_from_losses_to_profit_is_not_a_cycle(self):
+        rev = [2e8 * 1.4 ** i for i in range(6)]
+        fb = steady_fb('Information Technology', 'Application Software', rev, [-.27, -.40, -.25, -.30, .006, .074], .45, .03)
+        c = card(fb)
+        self.assertFalse(c['cyclical']['data_shows_cycle'])
+        self.assertTrue(any('scale-up path' in r for r in c['cyclical']['reasons']))
+        self.assertNotEqual(c['valuation']['method'], 'normalized_cycle_fcff')
+        dip = [2e8, 2.8e8, 2.4e8, 3.2e8, 4e8, 5e8]                                  # a revenue fall keeps the cycle reading
+        self.assertTrue(card(steady_fb('Information Technology', 'Application Software', dip, [-.27, -.40, -.25, -.30, .006, .074],
+                                       .45, .03))['cyclical']['data_shows_cycle'])
+
     def test_fee_brokers_and_asset_managers_are_operators(self):
         rev = [20e9 * 1.09 ** i for i in range(5)]
         broker = synth_fb({'sector': 'Financials', 'industry': 'Insurance Brokers'}, series_years(

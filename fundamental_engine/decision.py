@@ -380,12 +380,22 @@ def financial_strength(an, card, fc=None):
         lev = _signal('leverage', nd, _band(nd, 1, 3, False) if nd >= 0 else 'weak',
                       'net debt/EBITDA <= 1 strong, <= 3 adequate, else weak (negative EBITDA with net debt is weak)',
                       evidence=[_ref(an, 'net_debt_to_ebitda'), _ref(an, 'net_cash')], shown=f'{nd:.1f}x')
+    elif nc is not None and (lambda e: e is not None and e <= 0)(_num((_metric(an, 'net_debt_to_ebitda') or {}).get('ebitda'))):
+        # net debt with EBITDA at or below zero: the rule above calls it weak; reading it as unknown let the remaining
+        # signals rate a leveraged loss-maker strong (Harrow 2026-10: net debt 208m, TTM EBITDA below zero)
+        lev = _signal('leverage', None, 'weak', 'net debt with EBITDA at or below zero is weak',
+                      evidence=[_ref(an, 'net_debt_to_ebitda'), _ref(an, 'net_cash')], shown=f'net debt {-nc / 1e6:,.0f}m, EBITDA <= 0')
     else:
         lev = _signal('leverage', None, 'unknown', 'net cash or net debt/EBITDA required', evidence=[_ref(an, 'net_cash')])
     sig.append(lev)
     cov = _val(an, 'interest_coverage')
-    sig.append(_signal('interest_coverage', cov, _band(cov, 10, 4), 'EBIT/interest >= 10x strong, >= 4x adequate',
-                       evidence=[_ref(an, 'interest_coverage')], shown=None if cov is None else f'{cov:.1f}x'))
+    ic = _metric(an, 'interest_coverage') or {}
+    if cov is None and (_num(ic.get('interest_expense')) or 0) > 0:
+        sig.append(_signal('interest_coverage', None, 'weak', 'operating income at or below zero while paying interest is weak',
+                           evidence=[_ref(an, 'interest_coverage')], shown='not covered'))
+    else:
+        sig.append(_signal('interest_coverage', cov, _band(cov, 10, 4), 'EBIT/interest >= 10x strong, >= 4x adequate',
+                           evidence=[_ref(an, 'interest_coverage')], shown=None if cov is None else f'{cov:.1f}x'))
     z = (((an or {}).get('forensics') or {}).get('altman') or {})
     if z.get('status') == 'computed':
         sig.append(_signal('altman', _num(z.get('z')), {'safe': 'strong', 'grey': 'adequate', 'distress': 'weak'}.get(z.get('zone'), 'unknown'),

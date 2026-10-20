@@ -360,6 +360,17 @@ class GateOrderAndLenderTests(unittest.TestCase):
         self.assertEqual(fs['level'], 'adequate')                                 # 12% ROE vs 9.5% cost of equity
 
 
+class LeveragedLossMakerStrengthTests(unittest.TestCase):
+    def test_net_debt_with_negative_ebitda_and_uncovered_interest_is_weak_not_unknown(self):
+        an = an_saas(net_cash=-2.08e8, net_debt_to_ebitda=None, interest_coverage=None)
+        an['metrics']['net_debt_to_ebitda'] = {'value': None, 'ebitda': -3e6, 'net_debt': 2.08e8, 'status': 'reported'}
+        an['metrics']['interest_coverage'] = {'value': None, 'interest_expense': 2.6e7, 'status': 'reported'}
+        fs = decide(parts(35, an=an, card=card_saas(), fc=FC))['assessments']['financial_strength']
+        lv = {s['signal']: s['level'] for s in fs['signals']}
+        self.assertEqual((lv['leverage'], lv['interest_coverage']), ('weak', 'weak'))
+        self.assertNotEqual(fs['level'], 'strong')                     # self-funding alone cannot carry a leveraged loss-maker
+
+
 class FiveYearRowTests(unittest.TestCase):
     ROWS = [{'date': d, 'base': 1.} for d in ('2026-03-20', '2026-12-31', '2027-12-31', '2028-12-31', '2029-12-31', '2030-12-31', '2031-12-31')]
 

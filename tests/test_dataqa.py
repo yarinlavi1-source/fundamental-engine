@@ -443,6 +443,36 @@ class Debt(unittest.TestCase):
         self.assertIn('debt', qa['limited'])
         self.assertTrue(checks(qa, 'debt_scope', 'fail'))
 
+    def test_vanished_debt_line_without_repayment_blocks_instead_of_zero(self):
+        fb = syn(debt=False)
+        for end in [e for e in CASH if e != '2026-06-30']:
+            F.add_fact(fb, 'long_term_debt_tagged', 'I@' + end, end, 300 * M, 'sec:cf', 'as_reported', _plus(end, 40), concept='LongTermDebt')
+        qa = dataqa.validate(fb)
+        self.assertEqual(qa['fields']['debt']['status'], 'conflict')
+        self.assertIn('debt', qa['blocking'])
+        self.assertTrue(checks(qa, 'debt_line_continuity', 'fail'))
+
+    def test_debt_tagged_only_as_components_is_summed(self):
+        def rows(v, end, filed):
+            return [{'end': end, 'val': v * M, 'filed': filed, 'form': '10-Q', 'fy': 2026, 'fp': 'Q2'}]
+        payload = {'cik': 1, 'facts': {'us-gaap': {                      # SYNTHETIC values shaped like Collegium's tags
+            'LongTermLoansPayable': {'units': {'USD': rows(797.8, '2026-06-30', '2026-08-07')}},
+            'LoansPayableCurrent': {'units': {'USD': rows(55.0, '2026-06-30', '2026-08-07')}},
+            'ConvertibleLongTermNotesPayable': {'units': {'USD': rows(238.7, '2026-06-30', '2026-08-07')}},
+            'LongTermDebtNoncurrent': {'units': {'USD': rows(400.0, '2025-12-31', '2026-02-20')}}}}}
+        fb = F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-10-20')
+        F.from_sec_companyfacts(fb, payload, '2026-10-20')
+        got = {(f['metric'], f['period_end']): f for f in fb['facts']}
+        nc = got[('long_term_debt', '2026-06-30')]
+        self.assertAlmostEqual(nc['value'], (797.8 + 238.7) * M)
+        self.assertEqual((nc['basis'], nc['concept']), ('derived', 'sum:LongTermLoansPayable+ConvertibleLongTermNotesPayable'))
+        self.assertAlmostEqual(got[('current_portion_ltd', '2026-06-30')]['value'], 55.0 * M)
+        self.assertEqual(got[('long_term_debt', '2025-12-31')]['concept'], 'LongTermDebtNoncurrent')   # a total line wins its date
+
+    def test_notes_payable_tag_is_read_as_debt(self):
+        self.assertIn('longtermnotespayable', F.INSTANT_TAGS['long_term_debt_tagged'])
+        self.assertIn('notespayablecurrent', F.INSTANT_TAGS['current_portion_ltd'])
+
     def test_fair_value_only_debt_is_a_limited_proxy(self):
         fb = syn(quarters=False, debt=False)
         F.add_fact(fb, 'debt_fair_value', 'I@2025-12-31', '2025-12-31', 480 * M, 'sec:cf', 'as_reported', '2026-02-14',

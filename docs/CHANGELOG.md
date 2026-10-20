@@ -24,6 +24,27 @@
   economics are not forced through, distress needs a funding view first. `research_queue` rotates across lanes so no
   lane fills the queue. `universe` writes cards.json and a Hebrew cards_he.md and prints the queue
   (20.10.2026: 65 cards, queue ANIP, COLL, GLBE, HROW, NOAH, TCOM, one per lane). A queue is a research priority only.
+- Discovery to deep research without copying (`handoff.py`, `scripts/collect_companies.py`, `fundamental_engine deep`):
+  the queue's companies get SEC companyfacts + submissions saved verbatim, an identity check (reporting currency from the
+  fact units, depositary-share ratio from the listing) blocks what the engine cannot value per share and backfills the
+  lane with its next candidate (20.10.2026: Noah and Trip.com report in CNY -> QuinStreet and monday.com), then
+  `pipeline.run` runs on each and `handoff.compare` writes comparison.json / comparison_he.md: business quality, growth
+  quality, financial strength, capital allocation, price, implied return against the required return and the index, loss
+  to bear, data uncertainty, evidenced risks and open questions, each separate, no composite, drafts flagged. A listing
+  last sale is the price fallback when no broker quote is saved. MCP: discovery_cards, identity_check, compare_candidates.
+- Fixes found on those six real runs:
+  - cash roll-forward compared unlike bases because 'restricted' was matched case-sensitively in CamelCase SEC concepts
+    (Global-E: cash blocked as a conflict);
+  - a scale-up from losses to profit on revenue that rose every year is no longer read as a business cycle (Global-E was
+    valued on its -14% average start-up margin: $1.94 a share; $22.6 after the fix); a revenue fall keeps the cycle reading;
+  - debt: LongTermNotesPayable, SeniorNotes, notes/loans payable current read; borrowings tagged only as components
+    (LongTermLoansPayable + ConvertibleLongTermNotesPayable + LoansPayableCurrent) are summed as derived lines; a debt
+    line that disappears without a repayment (recently, or while interest is still paid) blocks instead of reading zero
+    (Harrow: $292m of notes read as zero; Collegium: $1.09bn read as zero);
+  - financial strength: net debt with EBITDA at or below zero and interest not covered by operating income are weak, not
+    unknown (Harrow was rated strong on self-funding alone);
+  - the base growth rationale states the anchor actually used (the current fiscal year from year-to-date reports), not
+    the trailing figure.
 
 - Investments no longer vanish on a tag change: DebtSecuritiesCurrent/Noncurrent read as short/long-term investments;
   listed equity stakes (EquitySecuritiesFvNi) resolved as `equity_securities_fv` and valued once at fair value in the

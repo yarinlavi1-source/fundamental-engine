@@ -83,6 +83,22 @@ Companion to docs/EVIDENCE_STATUS.md, which separates what tests prove from what
 24. **Explicit reinvestment uses historical sales-to-capital for every year.** For a hyper-grower the first years reinvest
     $150-280bn a year (NVIDIA) when the incremental capital is mostly working capital; an analyst override is the only lever.
 
+## Found on the discovery handoff runs (20.10.2026)
+
+25. **No currency translation or ADS ratio.** Issuers reporting in another currency (Noah, Trip.com: CNY) and depositary
+    shares whose ratio is not 1 (Noah: about 5 shares per ADS) are blocked by `handoff.identity_check` and the lane is
+    backfilled; analysing them needs a manual FactBook in the reporting currency, a dated FX rate and the deposit ratio.
+26. **Foreign private issuers are annual-only in SEC data.** 20-F filers (Global-E, monday.com) have no 10-Q facts: the
+    balance sheet and TTM fields are up to a year old and are limited by dataqa; interim 6-K figures need an evidence bundle.
+27. **Debt tags are still a coverage risk.** The map now reads notes payable, loans payable and convertible notes and sums
+    component-only borrowings, and a debt line that disappears without a repayment blocks instead of reading zero; an
+    issuer using another custom concept can still be missed when no earlier line exists to notice the gap.
+28. **The listing price is a fallback.** Without a saved broker quote the handoff uses the listing file's last sale (dated
+    to the session it belongs to; exchange holidays not modelled).
+29. **Drafts by construction.** The automatic handoff supplies no analyst card, evidence or independent reviewer, so every
+    casefile is a draft with price claims withheld; the comparison says so on every row. Business-understanding questions
+    (why customers pay, switching, what proves the thesis wrong) stay open until an analyst answers them with evidence.
+
 ## Low
 
 17. The lender checks differ at the margin: the model card's rule has revenue and capex limits and a fee-platform

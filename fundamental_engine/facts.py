@@ -88,12 +88,13 @@ INSTANT_TAGS = {
     'deferred_revenue_current': ['contractwithcustomerliabilitycurrent', 'deferredrevenuecurrent'],
     'deferred_revenue_noncurrent': ['contractwithcustomerliabilitynoncurrent', 'deferredrevenuenoncurrent'],
     'current_liabilities': ['liabilitiescurrent'],
-    'current_portion_ltd': ['longtermdebtcurrent', 'debtcurrent'],
+    'current_portion_ltd': ['longtermdebtcurrent', 'debtcurrent', 'longtermnotespayablecurrent', 'notespayablecurrent'],
     'short_term_borrowings': ['shorttermborrowings', 'commercialpaper'],
     'long_term_debt': ['longtermdebtnoncurrent'],
     # scope ambiguous: issuers tag the noncurrent face line or the total as LongTermDebt; dataqa resolves it
     # with the debt roll-forward (prior + issued - repaid) before any use
-    'long_term_debt_tagged': ['longtermdebt', 'longtermdebtandcapitalleaseobligations'],
+    'long_term_debt_tagged': ['longtermdebt', 'longtermdebtandcapitalleaseobligations', 'longtermnotespayable', 'seniornotes',
+                              'seniorlongtermnotes'],
     'operating_lease_current': ['operatingleaseliabilitycurrent'],
     'operating_lease_noncurrent': ['operatingleaseliabilitynoncurrent'],
     'total_liabilities': ['liabilities'],
@@ -306,6 +307,7 @@ def from_sec_companyfacts(fb, payload, retrieved_at, sid='sec:companyfacts'):
             add_fact(fb, metric, 'I@' + end, end, r['val'], sid, 'as_reported',
                      (_d(r['filed']) + timedelta(days=LAG_DAYS)).isoformat(), concept=tag, unit=UNITS.get(metric))
             n += 1
+    n += _debt_components(fb, gaap, lower, sid)
     cover = payload.get('facts', {}).get('dei', {}).get('EntityCommonStockSharesOutstanding', {}).get('units', {}).get('shares', [])
     per = {}
     for r in cover:                      # multi-class issuers: one row per class in the same filing
@@ -318,6 +320,43 @@ def from_sec_companyfacts(fb, payload, retrieved_at, sid='sec:companyfacts'):
         add_fact(fb, 'shares_outstanding_cover', 'I@' + end, end, v, sid, 'as_reported',
                  (_d(filed) + timedelta(days=LAG_DAYS)).isoformat(), unit='shares', concept='dei:entitycommonstocksharesoutstanding')
         n += 1
+    return n
+
+
+# Borrowings tagged only as components, with no total-scope line on that balance sheet (Collegium 2026: term loan as
+# LongTermLoansPayable, LoansPayableCurrent, convertible notes as ConvertibleLongTermNotesPayable). Each group contributes
+# its first tag present at the date; the sum becomes the line (basis 'derived', concept names the parts). Convertible
+# notes count at carrying value, as debt: conversion (dilution) is the convertibles field's question.
+DEBT_COMPONENTS = {
+    'long_term_debt': (('longtermloanspayable',), ('convertiblelongtermnotespayable', 'convertibledebtnoncurrent', 'convertiblenotespayable'),
+                       ('securedlongtermdebt',), ('unsecuredlongtermdebt',), ('otherlongtermdebtnoncurrent',)),
+    'current_portion_ltd': (('loanspayablecurrent',), ('convertiblenotespayablecurrent', 'convertibledebtcurrent'),
+                            ('otherlongtermdebtcurrent',)),
+}
+DEBT_TOTAL_LINES = {'long_term_debt': ('long_term_debt', 'long_term_debt_tagged'), 'current_portion_ltd': ('current_portion_ltd',)}
+
+
+def _debt_components(fb, gaap, lower, sid):
+    have = {(f['metric'], f['period_end']) for f in fb['facts'] if f['source_id'] == sid}
+    n = 0
+    for metric, groups in DEBT_COMPONENTS.items():
+        parts = {}                                          # end -> {group index: (filed, tag, value)}
+        for gi, group in enumerate(groups):
+            for order, tag in enumerate(lower[c] for c in group if c in lower):
+                for r in gaap[tag].get('units', {}).get('USD', []):
+                    if 'start' in r:
+                        continue
+                    cur = parts.setdefault(r['end'], {}).get(gi)
+                    if cur is None or (r['filed'], order) < (cur[0], cur[3]):
+                        parts[r['end']][gi] = (r['filed'], tag, r['val'], order)
+        for end, by in sorted(parts.items()):
+            if any((m, end) in have for m in DEBT_TOTAL_LINES[metric]):
+                continue
+            xs = [by[g] for g in sorted(by)]
+            add_fact(fb, metric, 'I@' + end, end, sum(x[2] for x in xs), sid, 'derived',
+                     (_d(max(x[0] for x in xs)) + timedelta(days=LAG_DAYS)).isoformat(),
+                     concept='sum:' + '+'.join(x[1] for x in xs), derived_from=[x[1] for x in xs])
+            n += 1
     return n
 
 

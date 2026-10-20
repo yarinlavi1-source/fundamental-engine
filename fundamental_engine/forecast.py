@@ -1660,7 +1660,9 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
         g = paths[s]['growth']
         why = {'base': (f"Years 1-{len(meta['consensus_growth'])} follow revenue consensus, then fade" if meta['growth_kind'] == 'analyst'
                         else 'Revenue reverts from today\'s level to the mid-cycle trend (cycle_normalization), then grows at the trend fading to terminal'
-                        if cyc else f"Anchored on trailing growth {_pct(h['g_trailing'])} ({h['g_trailing_formula']}) faded from the current year"),
+                        if cyc else f"Faded from the current fiscal year's growth {_pct(meta['g_cur'])} ("
+                        + (f"year-to-date reports, see revenue_current_fy; trailing growth {_pct(h['g_trailing'])} for reference"
+                           if meta.get('ytd') else f"trailing growth {_pct(h['g_trailing'])}: {h['g_trailing_formula']}") + ')'),
                'bear': ('Faster reversion to a lower cycle level, lower trend growth' if cyc else
                         f"Realistic disappointment: first-year growth min(base - spread, half of base) with spread {_pct(meta['spread'])} "
                         '(max of stage floor, historical growth volatility and consensus dispersion), faster fade'),

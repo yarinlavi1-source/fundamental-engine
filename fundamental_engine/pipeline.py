@@ -122,6 +122,15 @@ def factbook_from_run_dir(raw_dir, company, as_of):
                 notes.append('price snapshot has no timestamp; dated as_of')
             F.add_source(fb, 'ib:snapshot', 'ib', 'price-snapshot', 'market_feed', when.get(os.path.basename(snap)) or as_of, sha=F.digest(s))
             F.set_price(fb, last['price'], d or as_of, 'ib:snapshot', kind='close' if last.get('is_close') else 'last')
+    lp = p(f"listing__price-{company['ticker'].upper()}__current.json")
+    if not fb['market'].get('price') and os.path.exists(lp):
+        # fallback when no broker quote was saved: the listing feed's last sale at retrieval (handoff.listing_price)
+        s = _load(lp)
+        if s.get('price') and s.get('date') and not later(s['date'], 'listing price'):
+            F.add_source(fb, 'listing:price', s.get('provider') or 'listing', s.get('dataset') or 'last sale', 'market_feed',
+                         s.get('retrieved_at_utc') or s['date'], sha=F.digest(s), url=s.get('url'), note=s.get('note'))
+            F.set_price(fb, s['price'], s['date'], 'listing:price', kind='last')
+            notes.append(f"price from the listing feed ({s.get('provider')}), not a broker quote: {s.get('note') or 'last sale at retrieval'}")
     return fb
 
 

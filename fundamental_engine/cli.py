@@ -151,6 +151,11 @@ def main():
     un.add_argument("--exploratory", help="JSON {symbol: {reason, evidence: [{source, date, statement}]}}: business evidence for names "
                                           "the numeric lanes did not admit")
     un.add_argument("--max-full", type=int, default=6, help="research queue size (full analyses to run next)")
+    dp = subs.add_parser("deep", help="Full pipeline for the discovery research queue (companies/QUEUE.json from "
+                                      "scripts/collect_companies.py) and a cross-company comparison")
+    dp.add_argument("folder", help="universe folder (cards.json, companies/<T>/raw)")
+    dp.add_argument("--as-of", required=True)
+    dp.add_argument("--symbols", nargs="+", help="run these company folders instead of the queue")
     pf = subs.add_parser("portfolio", help="READ-ONLY analysis of saved Interactive Brokers payloads; prints to stdout, stores nothing")
     pf.add_argument("positions")
     pf.add_argument("--summary")
@@ -226,6 +231,33 @@ def main():
                               'research_queue': queue, 'cards': len(card_set['cards']), 'card_notes': card_set['notes'],
                               'next': 'scripts/verify_candidates.py fetches SEC profiles for new candidates; rerun this command'},
                              indent=2, ensure_ascii=False))
+            return
+        if args.command == "deep":
+            from . import handoff
+            from .render import markdown, hebrew_paragraph
+            from .pipeline import summary
+            base = Path(args.folder)
+            q = read_json(base / 'companies' / 'QUEUE.json') if not args.symbols else None
+            syms = args.symbols or [e['symbol'] for e in q['queue'] if e['symbol']]
+            card_set = read_json(base / 'cards.json') if (base / 'cards.json').exists() else None
+            cfs, ran = [], []
+            for s in syms:
+                folder = base / 'companies' / s
+                fb, cf = handoff.run_company(str(folder), args.as_of)
+                out = folder / 'out'; out.mkdir(parents=True, exist_ok=True)
+                (out / "factbook.json").write_text(json.dumps(fb, indent=1, ensure_ascii=False), encoding="utf-8")
+                (out / "casefile.json").write_text(json.dumps(cf, indent=1, ensure_ascii=False, default=str), encoding="utf-8")
+                (out / "report.md").write_text(markdown(cf), encoding="utf-8")
+                (out / "paragraph.txt").write_text(hebrew_paragraph(cf), encoding="utf-8")
+                cfs.append(json.loads(json.dumps(cf, default=str)))
+                ran.append({'symbol': s, 'stages': cf['stages'], 'errors': cf['errors'], 'summary': summary(cf)})
+            comp = handoff.compare(cfs, card_set)
+            comp['blocked'] = [b for e in (q or {}).get('queue', []) for b in e.get('blocked', [])]
+            comp['empty_lanes'] = [e['lane'] for e in (q or {}).get('queue', []) if not e['symbol']]
+            (base / 'companies' / 'comparison.json').write_text(json.dumps(comp, indent=1, ensure_ascii=False, allow_nan=False), encoding='utf-8')
+            (base / 'companies' / 'comparison_he.md').write_text(handoff.render_he(comp), encoding='utf-8')
+            print(json.dumps({'ran': ran, 'blocked': comp['blocked'], 'empty_lanes': comp['empty_lanes'], 'drafts': comp['drafts']},
+                             indent=2, ensure_ascii=False, default=str))
             return
         if args.command == "portfolio":
             options = json_object_arg(args.options, "--options") if args.options else None
