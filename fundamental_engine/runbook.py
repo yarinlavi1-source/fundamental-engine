@@ -18,7 +18,7 @@ explicit approval.
 import json
 import os
 
-from . import allocation, handoff, pipeline
+from . import allocation, forecast, handoff, pipeline
 
 
 def _load(p):
@@ -67,10 +67,16 @@ def run(folder, as_of, positions=None, exposures=None, names=('large500', 'holdi
     mkt = (cal or {}).get('engine_market_return')
     if mkt is None:
         notes.append('no calibration: each edge uses the index return in its own decision (risk-free + equity premium)')
+    cal_rf = (cal or {}).get('risk_free') or forecast.RF_DEFAULT
     for r in rows:
         r['origin'] = origin.get(r['symbol'])
         if mkt is not None:
             r['index_expected_return'] = mkt                  # one like-for-like index for every edge
+            if r.get('currency') not in (None, 'USD') and r.get('risk_free') is not None:
+                # a TWD or EUR return is compared with the market return in that currency: the USD market return plus the
+                # rate gap (interest parity), so a low-rate currency is not penalised for its lower rates
+                r['index_expected_return'] = mkt + r['risk_free'] - cal_rf
+                r['index_currency_shift'] = r['risk_free'] - cal_rf
     bt = _load(backtest) if backtest and os.path.exists(backtest) else None
     rel = ((bt or {}).get('summary') or {}).get('edge_reliability') or {}
     reliability = min(max(rel.get('median') if rel.get('median') is not None else 1., 0.), 1.)

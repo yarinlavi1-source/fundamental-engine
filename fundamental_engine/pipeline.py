@@ -143,7 +143,27 @@ def factbook_from_run_dir(raw_dir, company, as_of):
                         currency=s.get('currency') or company.get('quote_currency') or company['currency'])
             notes.append(f"price from the listing feed ({s.get('provider')}), not a broker quote: {s.get('note') or 'last sale at retrieval'}")
     _convert_quote(fb, raw_dir, as_of, notes)
+    _local_rate(fb, as_of, notes)
     return fb
+
+
+def _local_rate(fb, as_of, notes):
+    """A non-USD reporter's cash flows are discounted at its own currency's long-term government yield (fx.local_rate),
+    recorded as fb['market']['risk_free']; without one the forecast warns that the USD default is used."""
+    from . import fx
+    ccy = fb['company'].get('currency')
+    if not ccy or ccy == 'USD':
+        return
+    r = fx.local_rate(ccy, as_of, FX_DIR)
+    if not r:
+        notes.append(f'no {ccy} long-term government yield saved ({fx.LOCAL_RF.get(ccy) or "no series known"}): the forecast '
+                     'falls back to the USD risk-free default')
+        return
+    sid = 'fred:' + r['series']
+    F.add_source(fb, sid, 'fred', r['series'], 'market_feed', r['date'], url=r['source'],
+                 note=f'{ccy} long-term government bond yield, monthly average')
+    fb['market']['risk_free'] = {'value': r['value'], 'as_of': r['date'], 'source_id': sid, 'currency': ccy}
+    notes.append(f"{ccy} cash flows discounted from the {ccy} long-term government yield {r['value']:.2%} ({r['series']}, {r['date']})")
 
 
 def _annual_inline(fb, raw_dir, manifest, when, as_of, notes, later):

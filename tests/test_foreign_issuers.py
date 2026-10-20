@@ -1,11 +1,14 @@
 """Foreign issuers: reporting currency, IFRS facts, dated exchange rates, depositary ratios and the quote per ordinary share.
 Every payload, report sentence and rate below is SYNTHETIC (test data only)."""
 import os
+import sys
 import tempfile
 import unittest
 
-from fundamental_engine import business, fx, pipeline
-from fundamental_engine import facts as F
+sys.path.insert(0, os.path.dirname(__file__))
+from fundamental_engine import business, forecast, fx, pipeline, runbook  # noqa: E402
+from fundamental_engine import facts as F  # noqa: E402
+from test_forecast import secular_cyclical  # noqa: E402
 
 
 def dur(start, end, val, filed, accn, form='20-F'):
@@ -58,6 +61,48 @@ class RateTests(unittest.TestCase):
             self.assertIsNone(fx.rate('JPY', '2026-10-20', d))           # series not saved
             self.assertIsNone(fx.rate('RUB', '2026-10-20', d))           # no series known
             self.assertEqual(fx.rate('USD', '2026-10-20', d)['value'], 1.)
+
+
+class LocalRateTests(unittest.TestCase):
+    def test_local_long_term_yield_dated_and_never_stale(self):
+        with tempfile.TemporaryDirectory() as d:
+            write_fx(d, 'IRLTLT01DEM156N', [('2026-08-01', '2.60'), ('2026-09-01', '2.55')])
+            r = fx.local_rate('EUR', '2026-10-20', d)
+            self.assertEqual((r['value'], r['date']), (.0255, '2026-09-01'))
+            self.assertIsNone(fx.local_rate('EUR', '2026-12-20', d))         # more than 75 days old
+            self.assertIsNone(fx.local_rate('TWD', '2026-10-20', d))         # no series known
+
+    def test_cash_flows_are_discounted_in_their_own_currency(self):
+        def eur(local=None):
+            fb, an, card, qa, _ = secular_cyclical()
+            fb['company']['currency'] = 'EUR'
+            fb['market']['price']['currency'] = 'EUR'
+            if local is not None:
+                F.add_source(fb, 'fred:IRLTLT01DEM156N', 'fred', 'IRLTLT01DEM156N', 'market_feed', '2026-02-01')
+                fb['market']['risk_free'] = {'value': local, 'as_of': '2026-02-01', 'source_id': 'fred:IRLTLT01DEM156N', 'currency': 'EUR'}
+            return forecast.build(fb, an, card, qa)
+        own, usd = eur(.025), eur()
+        self.assertEqual(own['cost_of_equity']['components']['risk_free'], .025)
+        self.assertNotIn('risk_free_currency', {w['code'] for w in own['warnings']})
+        self.assertEqual(usd['cost_of_equity']['components']['risk_free'], forecast.RF_DEFAULT)
+        self.assertIn('risk_free_currency', {w['code'] for w in usd['warnings'] if w['severity'] == 'high'})
+        self.assertLess(own['cost_of_equity']['base'], usd['cost_of_equity']['base'])
+
+    def test_index_return_is_shifted_by_the_rate_gap(self):
+        import json
+        with tempfile.TemporaryDirectory() as d:
+            os.makedirs(os.path.join(d, 'companies', 'SNV', 'out'))
+            with open(os.path.join(d, 'companies', 'QUEUE.json'), 'w') as f:
+                json.dump({'queue': [{'symbol': 'SNV', 'lane': 'quality'}]}, f)
+            cf = {'company': {'ticker': 'SNV', 'currency': 'EUR'}, 'fc': {'cost_of_equity': {'components': {'risk_free': .025}}},
+                  'dc': {'expected_return': {'base_irr': .09, 'index_expected_return': .08}}}
+            with open(os.path.join(d, 'companies', 'SNV', 'out', 'casefile.json'), 'w') as f:
+                json.dump(cf, f)
+            with open(os.path.join(d, 'cal.json'), 'w') as f:
+                json.dump({'engine_market_return': .07}, f)
+            res = runbook.run(d, '2026-10-20', names=('',), calibration=os.path.join(d, 'cal.json'))
+            row = next(r for r in res['rows'] if r['symbol'] == 'SNV')
+            self.assertAlmostEqual(row['index_expected_return'], .07 + .025 - forecast.RF_DEFAULT)
 
 
 class DepositaryRatioTests(unittest.TestCase):

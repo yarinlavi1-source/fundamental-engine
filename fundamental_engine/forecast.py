@@ -1548,7 +1548,15 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
 
     overrides = _check_overrides(fb, inputs.get('overrides') or [])
     reviews = _check_reviews(inputs.get('reviews'))
-    rf, rf_src, rf_note = _rate_input(fb, inputs.get('risk_free'), RF_DEFAULT, 'risk_free')
+    rf_spec, ccy = inputs.get('risk_free'), fb['company'].get('currency', 'USD')
+    local = (fb.get('market') or {}).get('risk_free') or {}
+    if not rf_spec and local.get('currency') == ccy and local.get('source_id') in fb['sources']:
+        rf_spec = {k: local[k] for k in ('value', 'as_of', 'source_id')}       # the reporting currency's own long-term yield
+    rf, rf_src, rf_note = _rate_input(fb, rf_spec, RF_DEFAULT, 'risk_free')
+    if ccy != 'USD' and not rf_spec:
+        warn('risk_free_currency', f'cash flows in {ccy} discounted with the USD risk-free default {RF_DEFAULT:.2%}: a currency with '
+                                   'lower rates (EUR, DKK, JPY, TWD) is undervalued and one with higher rates overvalued by about '
+                                   'the rate gap; supply the local long-term government yield', 'high')
     erp, erp_src, erp_note = _rate_input(fb, inputs.get('equity_risk_premium'), ERP_DEFAULT, 'equity_risk_premium')
 
     def empty(status, reason, method=None):

@@ -66,21 +66,25 @@ def _needs_annual(raw, company, listing):
     return foreign or ads or sic in model_card.AMBIGUOUS_SIC
 
 
-def fetch_fx(ccy):
-    """FRED H.10 daily series for the reporting currency into pipeline.FX_DIR (refreshed when older than a day)."""
-    if ccy not in fx.FRED:
+def fetch_fx(ccy, local=False):
+    """FRED series for the reporting currency into pipeline.FX_DIR (refreshed when older than a day): the H.10 daily
+    exchange rate, or with local=True its long-term government bond yield (fx.LOCAL_RF)."""
+    sid = fx.LOCAL_RF.get(ccy) if local else (fx.FRED.get(ccy) or [None])[0]
+    if not sid:
         return None
     os.makedirs(pipeline.FX_DIR, exist_ok=True)
-    sid = fx.FRED[ccy][0]
     path = os.path.join(pipeline.FX_DIR, f'{sid}.csv')
     if os.path.exists(path) and time.time() - os.path.getmtime(path) < 86400:
         return path
-    status, body = fetch(fx.URL.format(sid), {'User-Agent': 'fundamental-engine'})   # the SEC contact e-mail stays with the SEC
+    try:
+        status, body = fetch(fx.URL.format(sid), {'User-Agent': 'fundamental-engine'})   # the SEC contact e-mail stays with the SEC
+    except RuntimeError:
+        return path if os.path.exists(path) else None      # FRED unreachable: an older saved series is still dated
     if status == 200 and (body.startswith(b'observation_date') or body.startswith(b'DATE')):
         with open(path, 'wb') as f:
             f.write(body)
         return path
-    return None
+    return path if os.path.exists(path) else None
 
 
 def collect(folder, c, ua, docs=True, only_quarterly=False):
@@ -161,6 +165,7 @@ def collect(folder, c, ua, docs=True, only_quarterly=False):
         chk = handoff.identity_check(json.load(f), handoff.listing_row(raw_u, c['symbol']), rec, annual_html=html)
     if chk.get('reporting_currency') not in (None, 'USD'):
         chk['fx_series'] = fetch_fx(chk['reporting_currency'])
+        chk['local_rate_series'] = fetch_fx(chk['reporting_currency'], local=True)
     # the pipeline divides the quote of a depositary share by the stated ratio even when the currencies match; the annual
     # form comes from the filer's own filing list when the universe row lacks it (20-F filers have no 10-Q facts)
     rec['depositary_shares'] = chk.get('depositary_shares')

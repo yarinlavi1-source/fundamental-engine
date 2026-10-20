@@ -4,6 +4,10 @@ rate(ccy, as_of, folder) -> {'value': units of ccy per 1 USD, 'date', 'series', 
 before as_of (at most 7 days earlier: H.10 skips holidays), or None. Series quoted as USD per unit (EUR, GBP, AUD, NZD)
 are inverted. A rate is a market fact on its date; converting a forecast at today's rate assumes no currency move, which
 the report states.
+
+local_rate(ccy, as_of, folder) -> the long-term government bond yield of the currency (OECD monthly series on FRED, at most
+75 days old), so cash flows in that currency are discounted at that currency's risk-free rate: a EUR or DKK cash flow
+discounted at the US rate would be undervalued by the rate gap every year.
 """
 import os
 
@@ -17,6 +21,11 @@ FRED = {  # currency -> (series, quoted as 'ccy_per_usd' or 'usd_per_ccy')
     'ZAR': ('DEXSFUS', 'ccy_per_usd'), 'THB': ('DEXTHUS', 'ccy_per_usd'),
 }
 URL = 'https://fred.stlouisfed.org/graph/fredgraph.csv?id={}'
+# long-term (about 10-year) government bond yields, percent a year, monthly (OECD MEI via FRED); EUR uses the German Bund
+LOCAL_RF = {'USD': 'GS10', 'EUR': 'IRLTLT01DEM156N', 'GBP': 'IRLTLT01GBM156N', 'JPY': 'IRLTLT01JPM156N',
+            'CHF': 'IRLTLT01CHM156N', 'DKK': 'IRLTLT01DKM156N', 'SEK': 'IRLTLT01SEM156N', 'NOK': 'IRLTLT01NOM156N',
+            'CAD': 'IRLTLT01CAM156N', 'AUD': 'IRLTLT01AUM156N', 'NZD': 'IRLTLT01NZM156N', 'KRW': 'IRLTLT01KRM156N',
+            'MXN': 'IRLTLT01MXM156N', 'ZAR': 'IRLTLT01ZAM156N', 'INR': 'INDIRLTLT01STM'}
 
 
 def series(path):
@@ -49,3 +58,19 @@ def rate(ccy, as_of, folder):
         return None
     return {'value': v if quote == 'ccy_per_usd' else 1 / v, 'date': d, 'series': sid, 'source': URL.format(sid),
             'quote': f'{ccy} per USD' + (' (inverted from USD per unit)' if quote == 'usd_per_ccy' else '')}
+
+
+def local_rate(ccy, as_of, folder):
+    """{'value': yield as a fraction, 'date', 'series', 'source'} or None (no series known, not saved, or older than 75 days)."""
+    sid = LOCAL_RF.get(ccy)
+    p = os.path.join(folder, f'{sid}.csv') if sid else None
+    if not p or not os.path.exists(p):
+        return None
+    pts = [x for x in series(p) if x[0] <= as_of]
+    if not pts:
+        return None
+    from datetime import date
+    d, v = pts[-1]
+    if (date.fromisoformat(as_of) - date.fromisoformat(d)).days > 75:
+        return None
+    return {'value': v / 100, 'date': d, 'series': sid, 'source': URL.format(sid)}

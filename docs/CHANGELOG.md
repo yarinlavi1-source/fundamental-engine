@@ -171,6 +171,11 @@
   - IFRS cover share classes are summed (Novo Nordisk A and B shares had overwritten each other: blocked as a conflict);
     IFRS depreciation and amortisation tagged as two lines are summed (TSMC had used capex as the depreciation proxy); SAP's
     combined capex line is mapped; Alpha Vantage rows in another currency are skipped, never mixed.
+- Cash flows are discounted in their own currency: a non-USD reporter uses its currency's long-term government yield
+  (`fx.local_rate`, OECD monthly series on FRED: EUR from the Bund, DKK, JPY, GBP, CHF, ...) as the risk-free rate; without
+  one the forecast keeps the USD default and raises `risk_free_currency` (high: a low-rate currency is undervalued by about
+  the rate gap). The run compares such a company with the market return shifted by the same rate gap (interest parity), so a
+  EUR or TWD return is not judged against a USD figure. TWD and CNY have no series on FRED yet: they keep the warning.
 - Cyclical companies with a secular trend (found on ASML, 20.10.2026): the mid-cycle revenue had been the window mean moved
   to today at a growth rate bounded to 5% even inside the sample, which put ASML's 2026 revenue 25% under its 2025 level
   although nine years of 18% trend growth left 2025 below its own trend. Now, with at least six years at today's scale,
