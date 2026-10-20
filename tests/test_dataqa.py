@@ -754,6 +754,20 @@ class TaggedSplits(unittest.TestCase):
         F.from_sec_companyfacts(rev, self.payload(10), '2026-10-19')    # a 1-for-10 tagged as 10
         self.assertAlmostEqual(dataqa.validate(rev)['splits'][0]['factor'], .1)
 
+    def test_a_split_just_after_a_restated_count_belongs_to_the_step_into_that_count(self):
+        # Powell 3-for-1 on 2026-04-02: the 2026-03-31 count (filed in May) is already restated, the 2026-05-04 cover count
+        # equals it. Was: the split read on 03-31 -> 05-04 (residual x0.333) and the real 3x step left unresolved.
+        fb = F.new({'ticker': 'SYN', 'currency': 'USD'}, '2026-10-19')
+        F.add_source(fb, 'k', 'sec', '10-Q', 'filing_derived', '2026-10-19')
+        for end, so, av in (('2025-09-30', 12.07e6, '2025-11-20'), ('2025-12-31', 12.14e6, '2026-02-06'),
+                            ('2026-03-31', 36.43e6, '2026-05-06'), ('2026-05-04', 36.43e6, '2026-05-06')):
+            F.add_fact(fb, 'shares_outstanding', 'I@' + end, end, so, 'k', 'as_reported', av)
+        F.from_sec_companyfacts(fb, self.payload(3, end='2026-04-02'), '2026-10-19')
+        qa = dataqa.validate(fb)
+        self.assertEqual([(s['from'], s['to'], s['factor'], s['decided_by']) for s in qa['splits']],
+                         [('2025-12-31', '2026-03-31', 3.0, 'corporate_action')])
+        self.assertEqual(qa['unresolved_splits'], [])
+
     def test_a_ratio_tagged_over_a_whole_year_is_not_placed_at_year_end(self):
         fb = _count_book(dict(zip(self.ENDS, (100e6, 101e6, 102e6, 103e6))))
         F.from_sec_companyfacts(fb, self.payload(2, start='2025-01-01', end='2025-12-31'), '2026-10-19')

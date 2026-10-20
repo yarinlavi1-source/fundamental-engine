@@ -7,7 +7,7 @@ import json
 import unittest
 from copy import deepcopy
 from pathlib import Path
-from fundamental_engine import facts as F
+from fundamental_engine import dataqa as DQ, facts as F
 from fundamental_engine.analysis import analyze, STATUS_ORDER
 from fundamental_engine.history import history as check_rows
 
@@ -504,6 +504,13 @@ class DebtScope(unittest.TestCase):
         lone = analyze(synth({2025: dict(base, long_term_debt_tagged=1000e6, current_portion_ltd=200e6)}))
         self.assertEqual(lone['annual']['2025-12-31']['debt_method'], 'tagged_plus_current')
         self.assertIn('no roll-forward distinguishes', [x for x in lone['assumptions'] if x['code'] == 'debt_scope'][0]['decision'])
+        # MercadoLibre: noncurrent loans payable 4.1bn (another tag) + current 6.5bn = LongTermDebt 10.6bn: the tag is the total.
+        # Was 17.1bn (tagged + current, conservative) in the annual table and in dataqa's opening debt
+        wit = {2025: dict(base, long_term_debt_tagged=10.6e9, current_portion_ltd=6.5e9, debt_noncurrent_witness=4.1e9)}
+        fb = synth(wit)
+        self.assertEqual(analyze(fb)['annual']['2025-12-31']['debt_method'], 'tagged_total')
+        r = DQ.validate(fb)['resolved']['debt']
+        self.assertEqual((r['value'], r['method'], r['decisive_basis']), (10.6e9, 'tagged_total', 'noncurrent_witness'))
         # nwc removes the current portion from current liabilities whatever the debt scope
         rows[2026].update(current_assets=300e6, current_liabilities=250e6)
         self.assertEqual(analyze(synth(rows, as_of='2027-06-30'))['annual']['2026-12-31']['nwc'], 300e6 - 1e8 - 0 - (250e6 - 100e6))

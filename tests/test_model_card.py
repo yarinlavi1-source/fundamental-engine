@@ -522,6 +522,8 @@ class OtherTypesTests(unittest.TestCase):
         self.assertEqual(M.text_type({'sector': 'Health Care', 'industry': 'Medical Specialities', 'sic': 8071})['type'], 'healthcare_services')
         self.assertEqual(M.text_type({'sector': 'Technology', 'industry': 'Electronic Computers'})['type'], 'hardware_manufacturing')
         self.assertEqual(M.text_type({'sector': 'Energy', 'industry': 'Unusual Label', 'sic': 1311})['type'], 'commodity')
+        # Powell (SIC 3613 switchgear) had no label match and was left unclassified
+        self.assertEqual(M.text_type({'sic': 3613, 'sic_description': 'Switchgear & Switchboard Apparatus'})['type'], 'industrial')
         self.assertEqual(tt('Financials', 'Multi-Sector Holdings'), 'conglomerate')
         self.assertEqual(tt('Real Estate', 'REIT - Mortgage'), 'financials')
         rev = [4.70e11, 5.14e11, 5.75e11, 6.38e11, 7.17e11]                  # Amazon-like: retail margins, heavy capex

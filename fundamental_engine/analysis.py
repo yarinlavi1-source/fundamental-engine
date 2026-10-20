@@ -56,7 +56,7 @@ INST = ('cash', 'short_term_investments', 'long_term_investments', 'equity', 'go
         'shares_outstanding', 'total_assets', 'current_assets', 'current_liabilities', 'total_liabilities',
         'receivables', 'ppe', 'deferred_revenue_current', 'deferred_revenue_noncurrent', 'long_term_debt',
         'long_term_debt_tagged', 'current_portion_ltd', 'short_term_borrowings', 'debt_total_vendor',
-        'retained_earnings')
+        'retained_earnings', 'debt_noncurrent_witness')
 PAYMENTS = {'capex', 'buybacks', 'dividends', 'acquisitions', 'debt_issued', 'debt_repaid'}   # sign-normalised outflows
 CF_ZERO = ('buybacks', 'dividends', 'acquisitions', 'debt_issued', 'debt_repaid')
 BS_ZERO = ('short_term_investments', 'long_term_investments', 'goodwill', 'intangibles')
@@ -225,6 +225,10 @@ def _debt(c, pe, prev, nxt, pairs):
         detail = {'period_end': pe, 'tagged': tag['value'], 'current_portion': cur['value'], 'roll_forward_expected': exp,
                   'roll_forward_passing': {'pair_ending_here': before['passing'] if before else None,
                                            'pair_starting_here': after['passing'] if after else None}}
+        wit = c['debt_noncurrent_witness']['value']
+        if wit is not None and abs(tag['value'] - (wit + cur['value'])) <= .01 * max(abs(tag['value']), 1.0):
+            return base, 'tagged_total', {**detail, 'decision': 'current portion not added: the noncurrent line (tagged '
+                                          'differently) plus the current portion equals the LongTermDebt tag, which is the total'}
         if pick:
             return (plus if pick == 'tagged_plus_current' else base), pick, {
                 **detail, 'decision': ('current portion added' if pick == 'tagged_plus_current' else 'current portion not added')

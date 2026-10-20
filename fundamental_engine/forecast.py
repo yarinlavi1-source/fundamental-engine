@@ -119,7 +119,24 @@ CYCLE_TREND = (-.03, TERMINAL_GROWTH_CAP + .02)   # bounds on the long-run (tren
 CYCLE_CONV = {'bear': 2, 'base': 3, 'bull': 4}     # years for a cyclical to revert from today's level to its cycle path
 CYCLE_FIT_MIN_YEARS = 6   # fewer years than about one full cycle (3-5 years) plus a leg: the fitted slope is one up-leg, not a trend
 DECLINE_FLOOR = -.05      # lowest perpetual growth for a structurally declining business
-KNOWN_INPUTS = ('overrides', 'reviews', 'risk_free', 'equity_risk_premium', 'horizon_years', 'financing', 'nol', 'cyclical')
+KNOWN_INPUTS = ('overrides', 'reviews', 'risk_free', 'equity_risk_premium', 'horizon_years', 'financing', 'nol', 'cyclical',
+                'operating_funding', 'nonrecurring', 'debt_like_claims')
+# inputs['nonrecurring'] = [{kind, period_end, revenue, operating_income, reason, evidence_ids}]: a one-off inside reported
+# figures (the effect it had, removed from the history the paths start from: TTM, fiscal years, year to date). Only kinds
+# that do not recur by nature; restructuring, SBC or 'adjusted' costs are not one-offs (never erase recurring costs).
+# BioCryst 2026-10-20: a $258m European licence sale in Q4 2025 revenue and a $698m acquired-R&D charge in Q1 2026 had
+# started the forecast at -33% margin and a falling revenue base.
+# inputs['debt_like_claims'] = [{kind, amount, reason, evidence_ids}]: claims ahead of the shares that the debt lines miss,
+# added to opening debt (they carry interest like debt). BioCryst's royalty financing obligation ($427m at 30.6.2026, paid
+# from ORLADEYO royalties with its non-cash interest in interest expense) was outside the bridge and made 20% look like the
+# rate on its $395m term loan.
+DEBT_LIKE_KINDS = ('royalty_financing', 'litigation', 'pension_deficit', 'deferred_consideration', 'preferred_or_minority')
+NONRECURRING_KINDS = ('acquired_iprd', 'impairment', 'gain_or_loss_on_sale', 'litigation_settlement', 'one_time_license_revenue',
+                      'divestiture_in_revenue')
+# inputs['operating_funding'] = {amount, reason, evidence_ids}: borrowings that fund an operating asset (a lending book) and
+# whose interest is already inside operating costs (MercadoLibre books fintech funding costs in cost of revenue). Kept in
+# the bridge they would be paid twice, in the margin and as debt; they leave the bridge and reinvestment must be measured
+# net of them (sales_to_capital override), which the engine asks for when missing.
 CYCLE_TREATMENTS = ('structural', 'cyclical')   # inputs['cyclical']['treatment'] for an industry-cyclical company at a margin peak
 # Moat proxy (no analyst moat assessment): a continuous weight on the strong-moat rules for base and bull (never the bear, which
 # tests the moat failing), from evidence ramps so a 1pp move in one input never flips the value: multi-year average ROIC
@@ -347,6 +364,19 @@ def _route(card, h, warn, fb=None, cyc_input=None):
             and cyc_card.get('basis') != 'analyst' and not cyc_card.get('override'))
     treatment = (cyc_input or {}).get('treatment') if peak else None
     forced = peak and not normalize and treatment != 'structural'
+    # an evidenced analyst decision also governs a cycle the history shows: Powell 2026-10 (oil-and-gas bust 2015-2022, now
+    # two-thirds utilities, commercial and data centers) had its 'structural' input silently ignored and revenue reverted
+    # 8% to the old trend. The decision stays visible and needs a reviewer (cycle_treatment_override).
+    override = None
+    if not peak and (cyc_input or {}).get('treatment') in CYCLE_TREATMENTS:
+        want = cyc_input['treatment'] == 'cyclical'
+        if want != normalize:
+            override, normalize = cyc_input['treatment'], want
+            if not want and method == 'normalized_cycle_fcff':
+                method = 'fcff_annual_path'
+            warn('cycle_treatment_override', f"the model card {'normalized' if not want else 'did not normalize'} the cycle; an analyst "
+                                             f"judged it {cyc_input['treatment']} ({cyc_input['reason']}): valued "
+                                             + ('without' if not want else 'with') + ' cycle normalization until a reviewer accepts it', 'medium')
     if forced:
         normalize = True
     elif peak and treatment == 'structural':
@@ -377,7 +407,8 @@ def _route(card, h, warn, fb=None, cyc_input=None):
                                                                            f"evidence too weak: {proxy['evidence']}") + ')')
     weights = {s: (1. if moat == 'strong' else (proxy['weight'] if proxy and s != 'bear' else 0.)) for s in SCEN}
     return {'method': method, 'business_model': bm, 'stage': stage, 'type': typ, 'archetype': archetype, 'cyclical': cyclical, 'normalize': normalize,
-            'cycle_path': normalize, 'cycle_peak': peak, 'cycle_treatment': treatment if peak else None, 'cycle_forced': forced,
+            'cycle_path': normalize, 'cycle_peak': peak, 'cycle_treatment': treatment if peak else override, 'cycle_forced': forced,
+            'cycle_override': override,
             'capital_intensity': (card.get('capital_intensity') or {}).get('value'),
             'funding': (card.get('funding') or {}).get('value'), 'moat': moat, 'moat_basis': basis, 'moat_proxy': proxy,
             'moat_weights': weights, 'dimensions': dims}
@@ -522,8 +553,9 @@ def _cycle_stats(h):
             'window': [ends[0], ends[-1]]}
 
 
-def _history(fb, an, warn):
-    """Evidence the paths start from; analysis.py metrics first, FactBook accessors as fallback."""
+def _history(fb, an, warn, nonrecurring=None):
+    """Evidence the paths start from; analysis.py metrics first, FactBook accessors as fallback. nonrecurring: evidenced
+    one-offs removed from the fiscal years, TTM and year to date they fall in (inputs['nonrecurring'])."""
     ann = an.get('annual') or {}
     if not ann:
         t = facts.annual_table(fb, ['revenue', 'operating_income', 'sbc', 'd_and_a', 'capex', 'cfo', 'buybacks',
@@ -533,6 +565,19 @@ def _history(fb, an, warn):
     rows = [(e, ann[e]) for e in sorted(ann) if (_num(ann[e].get('revenue')) or 0) > 0 and _d(e) <= _d(fb['as_of'])]
     if not rows:
         return None
+    nr = [dict(it, revenue=_num(it.get('revenue')) or 0., operating_income=_num(it.get('operating_income')) or 0.)
+          for it in nonrecurring or []]
+    inside = lambda it, end, days=366: 0 <= (_d(end) - _d(it['period_end'])).days < days
+    if nr:
+        rows = [(e, dict(r)) for e, r in rows]
+        for it in nr:
+            for e, r in rows:
+                if inside(it, e):
+                    r['revenue'] = r['revenue'] - it['revenue']
+                    if _num(r.get('operating_income')) is not None:
+                        r['operating_income'] = r['operating_income'] - it['operating_income']
+            warn('nonrecurring_removed', f"{it['kind']} at {it['period_end']} removed from the history (revenue {it['revenue']:,.0f}, "
+                                         f"operating income {it['operating_income']:,.0f}): {it['reason']}", 'medium')
     ends, rev = [e for e, _ in rows], [r['revenue'] for _, r in rows]
     g = lambda r, k: _num(r.get(k))
     growth = [b / a - 1 for a, b in zip(rev, rev[1:])]
@@ -544,9 +589,24 @@ def _history(fb, an, warn):
     if t_rev is None:
         t = facts.ttm(fb, 'revenue')
         t_rev, t_end, t_method = (t['value'], t['period_end'], t['method']) if t else (rev[-1], ends[-1], 'latest_fiscal_year')
+    t_oi = _num(ttm.get('operating_income'))
+    for it in nr:
+        if t_end and t_method != 'latest_fiscal_year' and inside(it, t_end):
+            t_rev -= it['revenue']
+            t_oi = t_oi - it['operating_income'] if t_oi is not None else None
+    if nr and t_end and t_method == 'latest_fiscal_year' and t_end == ends[-1]:
+        t_rev = rev[-1]                                   # the fiscal year itself, already adjusted above
     h['ttm'] = {'revenue': t_rev, 'period_end': t_end, 'method': t_method,
-                'operating_income': _num(ttm.get('operating_income')), 'sbc': _num(ttm.get('sbc'))}
+                'operating_income': t_oi, 'sbc': _num(ttm.get('sbc'))}
     h['ytd'] = _ytd(fb, 'revenue', ends[-1])
+    if h['ytd'] and nr:
+        y = h['ytd'] = dict(h['ytd'])
+        span = (_d(y['end']) - _d(ends[-1])).days
+        for it in nr:
+            if inside(it, y['end'], span):
+                y['value'] -= it['revenue']
+            if y.get('prior') is not None and 0 <= (_d(y['end']) - timedelta(days=364) - _d(it['period_end'])).days < span:
+                y['prior'] -= it['revenue']
     use_ttm = h['ttm']['operating_income'] is not None and t_end != ends[-1] and bool(t_rev)
     oi = h['ttm']['operating_income'] if use_ttm else g(rows[-1][1], 'operating_income')
     base_rev = t_rev if use_ttm else rev[-1]
@@ -1279,7 +1339,8 @@ def _paths(P, meta, h, route, cal, open_bal, inv_income):
             net = (mcx[t] + gc[t] - dep[t]) * rates[t] * dur[t] + wc * d_rev - dr * (rates[t] - rates[t - 1])
             nopat = margin[t] * (1 - p['tax']) * rates[t] * dur[t]
             if nopat > 0 and net < 0 and g[-1] < 0 and g[-1] * nopat / net > p['roic']:
-                p['roic'], p['release_bounded'] = g[-1] * nopat / net, True
+                # at most 100% (the valuation's bound): a near-zero last-year release had asked BioCryst's bear for 167%
+                p['roic'], p['release_bounded'] = min(1., g[-1] * nopat / net), True
                 p['s2c_terminal'] = p['roic'] / max(margin[-1] * (1 - p['tax']), 1e-6)
         months = P[s].get('cash_months', st['months'])
         min_cash = [max(0., min(months / 12 * c * r, open_bal['cash'])) for c, r in zip(ccr, rates)]
@@ -1523,6 +1584,57 @@ def build(fb, an, card, qa, inputs=None):
         ev = cy.get('evidence_ids')
         if not isinstance(ev, list) or not ev or any(e not in known for e in ev):
             raise ValueError('cyclical: evidence_ids must be FactBook source or qualitative ids')
+    nr = inputs.get('nonrecurring')
+    if nr is not None:
+        known = set(fb.get('sources', {})) | {q['id'] for q in fb.get('qualitative', [])}
+        if not isinstance(nr, list):
+            raise ValueError('nonrecurring: a list of items')
+        for i, it in enumerate(nr):
+            if not isinstance(it, dict) or sorted(set(it) - {'kind', 'period_end', 'revenue', 'operating_income', 'reason', 'evidence_ids'}):
+                raise ValueError(f'nonrecurring {i}: kind, period_end, revenue, operating_income, reason, evidence_ids')
+            if it.get('kind') not in NONRECURRING_KINDS:
+                raise ValueError(f"nonrecurring {i}: kind must be one of {', '.join(NONRECURRING_KINDS)} (recurring costs are never removed)")
+            try:
+                _d(it.get('period_end'))
+            except (TypeError, ValueError):
+                raise ValueError(f'nonrecurring {i}: period_end must be a date') from None
+            if any(it.get(k) is not None and _num(it[k]) is None for k in ('revenue', 'operating_income')) or \
+                    not any(_num(it.get(k)) for k in ('revenue', 'operating_income')):
+                raise ValueError(f'nonrecurring {i}: revenue and/or operating_income effect as numbers')
+            if not isinstance(it.get('reason'), str) or not it['reason'].strip():
+                raise ValueError(f'nonrecurring {i}: a written reason is required')
+            ev = it.get('evidence_ids')
+            if not isinstance(ev, list) or not ev or any(e not in known for e in ev):
+                raise ValueError(f'nonrecurring {i}: evidence_ids must be FactBook source or qualitative ids')
+    dl = inputs.get('debt_like_claims')
+    if dl is not None:
+        known = set(fb.get('sources', {})) | {q['id'] for q in fb.get('qualitative', [])}
+        if not isinstance(dl, list):
+            raise ValueError('debt_like_claims: a list of items')
+        for i, it in enumerate(dl):
+            if not isinstance(it, dict) or sorted(set(it) - {'kind', 'amount', 'reason', 'evidence_ids'}):
+                raise ValueError(f'debt_like_claims {i}: kind, amount, reason, evidence_ids')
+            if it.get('kind') not in DEBT_LIKE_KINDS:
+                raise ValueError(f"debt_like_claims {i}: kind must be one of {', '.join(DEBT_LIKE_KINDS)}")
+            if _num(it.get('amount')) is None or it['amount'] <= 0:
+                raise ValueError(f'debt_like_claims {i}: amount must be a positive number')
+            if not isinstance(it.get('reason'), str) or not it['reason'].strip():
+                raise ValueError(f'debt_like_claims {i}: a written reason is required')
+            ev = it.get('evidence_ids')
+            if not isinstance(ev, list) or not ev or any(e not in known for e in ev):
+                raise ValueError(f'debt_like_claims {i}: evidence_ids must be FactBook source or qualitative ids')
+    of = inputs.get('operating_funding')
+    if of is not None:
+        if not isinstance(of, dict) or sorted(set(of) - {'amount', 'reason', 'evidence_ids'}):
+            raise ValueError('operating_funding: an object with amount, reason and evidence_ids')
+        if _num(of.get('amount')) is None or of['amount'] <= 0:
+            raise ValueError('operating_funding.amount must be a positive number')
+        if not isinstance(of.get('reason'), str) or not of['reason'].strip():
+            raise ValueError('operating_funding: a written reason is required')
+        known = set(fb.get('sources', {})) | {q['id'] for q in fb.get('qualitative', [])}
+        ev = of.get('evidence_ids')
+        if not isinstance(ev, list) or not ev or any(e not in known for e in ev):
+            raise ValueError('operating_funding: evidence_ids must be FactBook source or qualitative ids')
     clean = {k: v for k, v in inputs.items() if k in KNOWN_INPUTS}
     out = _build(fb, an, card, qa, clean, None)
     if out.get('status') == 'built' and out['_external'] != out['_external_assumed']:
@@ -1575,12 +1687,13 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
                      'NAV, rNPV, SOTP) or no reliable valuation; the operating driver forecast does not apply', method)
     if bm in NON_OPERATING_TYPES:
         return empty('method_not_supported_by_forecast', f'business model {bm} routes to {NON_OPERATING_TYPES[bm]}, not an operating forecast', method)
-    h = _history(fb, an, warn)
+    h = _history(fb, an, warn, inputs.get('nonrecurring'))
     if h is None:
         return empty('insufficient_data', 'no fiscal year with positive revenue available at as_of', method)
     h['guidance'] = _revenue_guidance(fb)
     h['g_anchor'] = h['g_trailing']
     route = _route(card, h, warn, fb, inputs.get('cyclical'))
+    method = route['method']                  # an analyst's structural reading of a card-normalized cycle switches the method
     proxy_w = route['moat_weights']['base'] if route['moat_proxy'] else 0.
     if no_proxy and route['moat_proxy']:
         route['moat_weights'] = {x: 0. for x in SCEN}
@@ -1601,6 +1714,20 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
     open_bal = {'cash': val('cash'), 'sti': val('short_term_investments') or 0.,
                 'lti': (val('long_term_investments') or 0.) + (val('equity_securities_fv') or 0.),
                 'debt': val('debt'), 'shares': val('shares_outstanding'), 'deferred_revenue': val('deferred_revenue') or 0.}
+    claims_added = sum(float(it['amount']) for it in inputs.get('debt_like_claims') or [])
+    if claims_added:
+        open_bal['debt'] = (open_bal['debt'] or 0.) + claims_added
+        warn('debt_like_claims_added', f"{claims_added:,.0f} of debt-like claims added to opening debt: "
+             + '; '.join(f"{it['kind']} {float(it['amount']):,.0f} ({it['reason']})" for it in inputs['debt_like_claims']), 'medium')
+    op_fund = 0.
+    if inputs.get('operating_funding') and open_bal['debt']:
+        op_fund = min(float(inputs['operating_funding']['amount']), open_bal['debt'])
+        open_bal['debt'] -= op_fund
+        warn('operating_funding', f"{op_fund:,.0f} of debt treated as operating funding (its interest is in operating costs) and "
+                                  f"left out of the bridge: {inputs['operating_funding']['reason']}", 'medium')
+        if not any(o['path'] == 'sales_to_capital' for o in inputs.get('overrides') or []):
+            warn('operating_funding_capital', 'historical sales-to-capital counts this funding as invested capital: measure '
+                                              'reinvestment net of it (sales_to_capital override) or growth is charged twice', 'high')
     if qa.get('status') == 'blocked':
         warn('data_blocked', 'dataqa status blocked (' + ', '.join(qa.get('blocking') or []) + '): no price conclusion until resolved', 'high')
     for f in qa.get('limited') or []:
@@ -1725,11 +1852,14 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
     add('open_balance', 'opening balance', 'reported',
         {'cash': open_bal['cash'], 'short_term_investments': open_bal['sti'], 'long_term_investments': open_bal['lti'],
          'equity_securities_fv_included': val('equity_securities_fv') or 0.,
-         'debt': open_bal['debt'], 'deferred_revenue': open_bal['deferred_revenue'], 'statement_as_of': stmt},
+         'debt': open_bal['debt'], 'deferred_revenue': open_bal['deferred_revenue'], 'statement_as_of': stmt,
+         'operating_funding_excluded': op_fund, 'debt_like_claims_added': claims_added},
         f"dataqa-resolved balance at {stmt}: cash {open_bal['cash']:,.0f}, investments {open_bal['sti'] + open_bal['lti']:,.0f} "
         f"(of which listed equity stakes at fair value {val('equity_securities_fv') or 0.:,.0f}; private stakes excluded) "
         f"(kept as assets earning risk-free after tax; liquidated before any external financing is assumed), debt {open_bal['debt']:,.0f} "
-        f"({debt_res.get('method', 'dataqa')}; operating leases treated in cash costs), deferred revenue "
+        f"({debt_res.get('method', 'dataqa')}; operating leases treated in cash costs"
+        + (f"; {op_fund:,.0f} of operating funding excluded, its cost is in operating costs" if op_fund else '')
+        + (f"; includes {claims_added:,.0f} of debt-like claims from inputs" if claims_added else '') + "), deferred revenue "
         "{:,.0f} in its own ledger.".format(open_bal['deferred_revenue']),
         'A primary balance sheet at or after the statement date shows cash, investments or debt differing by more than 2% of market value.',
         bal_srcs)
@@ -2152,6 +2282,10 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
         material.append({'id': 'cyclical_peak_unconfirmed', 'status': 'resolved' if rv_ok('cycle_position') else 'unresolved',
                          'description': 'cyclical industry at a margin peak: structural or cyclical not established by an analyst with evidence',
                          'assumption_ids': ['cycle_position']})
+    if route.get('cycle_override'):
+        material.append({'id': 'cycle_treatment_override', 'status': 'resolved' if rv_ok('cycle_position') else 'unresolved',
+                         'description': f"analyst treated a cycle the model card read from the history as {route['cycle_override']}",
+                         'assumption_ids': ['cycle_position']})
     if route['moat_proxy'] and route['moat_weights']['base'] > 0:
         warn('moat_computed_proxy', f"moat unassessed: strong-moat rules blended at weight {route['moat_weights']['base']:.2f} for base and bull "
                                     f"from the computed record; value today without the proxy {f3(alt_moat)} (bear keeps the unassessed rules)", 'medium')
@@ -2192,7 +2326,11 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
                 'long_term_investments': open_bal['lti'], 'investment_haircut': 0, 'debt': open_bal['debt'],
                 'common_shares_outstanding': open_bal['shares'], 'incremental_dilutive_shares': 0,
                 'dilution_review': {'assumption_ids': ['dilution']}, 'claims_review': {'assumption_ids': ['claims']},
-                'bridge_events': [], 'bridge_review': {'assumption_ids': ['bridge']}},
+                'bridge_events': [], 'bridge_review': {'assumption_ids': ['bridge']},
+                # evidenced analyst reclassifications of the validated debt (not events after the statement): review.py
+                # compares the opening with validated debt plus these, and asks the reviewer to accept them
+                'debt_adjustments': [a for a in ({'kind': 'operating_funding_excluded', 'amount': -op_fund},
+                                                 {'kind': 'debt_like_claims_added', 'amount': claims_added}) if a['amount']]},
             'scenario_reviews': {s: {'demand_and_capacity': {'assumption_ids': [f'growth_{s}', 'revenue_current_fy', 'growth_fade']
                                                              + (['cycle_normalization'] if cyc else [])},
                                      'funding_and_claims': {'assumption_ids': ['funding_policy', 'debt_interest', 'open_balance', 'claims'] + fin(s)},
@@ -2360,6 +2498,8 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
                     for j, (b, i) in enumerate(zip(B, fy_pidx))] for s in SCEN}
     anchors = {'last_fiscal_year_end': h['last_end'], 'last_fiscal_year_revenue': h['last_revenue'], 'fiscal_years': h['n_years'],
                'ttm': h['ttm'], 'year_to_date': h['ytd'],
+               'revenue_adjusted_for_one_offs': ({**dict(zip(h['ends'], h['revenue'])), 'ttm': h['ttm']['revenue']}
+                                                 if inputs.get('nonrecurring') else None),
                'current_fiscal_year': {'end': B[0], 'revenue': meta['r_fy'], 'growth': meta['g_cur'], 'basis': meta['cur_basis'], 'kind': cur_kind},
                'stub': {'start': as_of, 'end': B[0], 'years': cal['stub_years'], 'annual_rate': meta['stub_rate'], 'basis': meta['stub_basis']},
                'growth': {'last': h['g_last'], 'cagr_3y': h['cagr_3y'], 'cagr_5y': h['cagr_5y'], 'recent_annualized': h['g_recent'],
@@ -2392,6 +2532,21 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
 
 def _bisect(f, lo, hi, target, increasing=True, steps=48):
     vlo, vhi = f(lo), f(hi)
+    # an invalid or unfunded extreme narrows the domain toward the valid end instead of ending the search: MercadoLibre's
+    # growth (+50% unfunded) and margin (0.1% invalid) searches had both reported 'not reachable' for a price near the base value
+    if (vlo is None) != (vhi is None):
+        good, bad, vgood = (lo, hi, vlo) if vhi is None else (hi, lo, vhi)
+        for _ in range(16):                 # bisection on validity: the valid end walks to the edge of the valid domain
+            mid = (good + bad) / 2
+            vm = f(mid)
+            if vm is None:
+                bad = mid
+            else:
+                good, vgood = mid, vm
+        if vhi is None:
+            hi, vhi = good, vgood
+        else:
+            lo, vlo = good, vgood
     if vlo is None or vhi is None:
         return None, 'invalid_search_domain', (vlo, vhi)
     if not (min(vlo, vhi) <= target <= max(vlo, vhi)):

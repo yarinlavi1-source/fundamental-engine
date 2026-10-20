@@ -65,6 +65,7 @@ WAVG_SPLIT_TOL = .04              # weighted-average shares restated by the full
 SPLIT_ALT_WINDOW_DAYS = 45        # ...counts as split evidence only when an issuance would have to fall this early in the year
 PRICE_JUMP_TOL = .15              # an as-traded close-to-close move within 15% (log) of 1/factor marks the split bar
 PRICE_BAR_MAX_GAP = 40            # closes further apart than this cannot locate a split bar
+SPLIT_RESTATED_DAYS = 92          # a split this soon after a count filed after the split: that count is already restated
 CONVERT_TOPICS = {'convertible', 'convertibles', 'convertible_notes'}
 WARRANT_TOPICS = {'warrant', 'warrants', 'prefunded_warrant', 'pre_funded_warrant', 'prefunded_warrants'}
 DEFINITIONS = {
@@ -697,14 +698,19 @@ def _wavg_at(q, end):
 
 def _split_events(q, a, b):
     """Dated splits between two counts: market['splits'] [{date, factor (shares after / before), source_id}] and
-    qualitative items with a split topic (announced up to 30 days before the first count)."""
-    out = []
+    qualitative items with a split topic (announced up to 30 days before the first count). A split dated up to
+    SPLIT_RESTATED_DAYS after the later count also belongs here when that count was filed after the split: filings restate
+    the balance-sheet count retroactively (Powell's 3-for-1 of 2 April 2026 is already in its 31 March 2026 count)."""
+    out, avail = [], ((b.get('fact') or {}).get('available_at'))
+    restated = lambda when: bool(avail) and _d(avail) > _d(when) and 0 < _days(b['as_of'], when) <= SPLIT_RESTATED_DAYS
     for x in (q.fb.get('market') or {}).get('splits') or []:
-        if x.get('date') and _d(x['date']) <= _d(q.as_of) and _days(a['as_of'], x['date']) > 0 and _days(x['date'], b['as_of']) >= 0:
+        if x.get('date') and _d(x['date']) <= _d(q.as_of) and _days(a['as_of'], x['date']) > 0 \
+                and (_days(x['date'], b['as_of']) >= 0 or restated(x['date'])):
             out.append({'date': str(x['date'])[:10], 'factor': x.get('factor'), 'source_id': x.get('source_id')})
     for x in q.fb.get('qualitative', []):
         when = x.get('as_of')
-        if x.get('topic') in SPLIT_TOPICS and q.dated(x) and when and _days(a['as_of'], when) > -30 and _days(when, b['as_of']) >= 0:
+        if x.get('topic') in SPLIT_TOPICS and q.dated(x) and when and _days(a['as_of'], when) > -30 \
+                and (_days(when, b['as_of']) >= 0 or restated(when)):
             out.append({'date': when, 'factor': x.get('factor'), 'item': x['id']})
     return out
 
@@ -736,7 +742,13 @@ def _split_decision(q, a, b, k):
                 k *= f
             if k > 0 and r > 0 and abs(log(r * k)) < abs(log(r / k)):
                 k = 1 / k                 # a tagged ratio of 10 for a 1-for-10 reverse split: the counts tell the direction
-        tests['corporate_action'] = 'supports' if k else 'untested'
+            if not (k > 0 and r > 0 and abs(log(r / k)) < abs(log(r))):
+                # the split does not explain this step (both counts already restated, or neither): it belongs to another pair
+                ev['split_events_not_this_step'] = ev.pop('split_events')
+                k = _split_candidate(r)[0] if r > 0 else None
+                if not k:
+                    return None
+        tests['corporate_action'] = 'supports' if 'split_events' in ev else 'untested'
     if not k:
         return None
     ev['candidate_factor'] = k
@@ -1303,7 +1315,12 @@ def _debt(q, cs, mcap):
         elif tg:
             gap = abs(tot['tagged_plus_current'] - tot['tagged_total'])
             hist = [w for w in (_tagged_winner(pr) for pr in pairs) if w]
-            if latest and _tagged_winner(latest):
+            wit, cur_p = q.best('debt_noncurrent_witness', end), parts['current_portion_ltd']
+            if wit and cur_p and gap > 0 and _rel(tg['value'], wit['value'] + cur_p['value']) <= q.tol['debt']:
+                # the face lines add up to the tag: noncurrent (another tag) + current = LongTermDebt, so the tag is the total
+                method, decisive, basis = 'tagged_total', True, 'noncurrent_witness'
+                scope['noncurrent_witness'] = {'concept': wit.get('concept'), 'value': wit['value']}
+            elif latest and _tagged_winner(latest):
                 method, decisive, basis = _tagged_winner(latest), True, 'latest_rollforward'
             elif len(hist) >= 2 and len(set(hist)) == 1:
                 method, decisive, basis = hist[0], True, 'history'

@@ -1418,3 +1418,66 @@ class SecularCyclicalTests(unittest.TestCase):
         self.assertIn('trough ROIC 30.0%', p['evidence'])
         fb, an, card, qa, hist = secular_cyclical(roic=[.3, .35, .4])
         self.assertTrue(proxy(forecast.build(fb, an, card, qa))['blocked'])
+
+
+class ResearchRoundOneInputsTests(unittest.TestCase):
+    """Inputs added in research round 1 (2026-10-20): each was a real case where the engine misread a company (SYNTHETIC data)."""
+
+    def evid(self, fb):
+        facts.add_qualitative_bundle(fb, {'retrieved_at': fb['as_of'], 'sources': [{'id': 'f', 'kind': 'filing', 'published_at': '2026-01-10'}],
+                                          'items': [{'id': 'i1', 'topic': 'x', 'kind': 'reported', 'source_ids': ['f'], 'as_of': '2026-01-10',
+                                                     'statement': 'test'}]})
+        return fb
+
+    def test_operating_funding_leaves_the_bridge_and_asks_for_net_reinvestment(self):
+        fb, an, card, qa = industrial()
+        self.evid(fb)
+        base = forecast.build(fb, an, card, qa)
+        of = {'amount': 60e6, 'reason': 'deposits fund the loan book; their interest is in cost of revenue', 'evidence_ids': ['i1']}
+        fc = forecast.build(fb, an, card, qa, {'operating_funding': of})
+        codes = [w['code'] for w in fc['warnings']]
+        self.assertIn('operating_funding', codes)
+        self.assertIn('operating_funding_capital', codes)                 # no sales_to_capital override: growth charged twice
+        self.assertEqual(fc['spec']['opening']['debt'], 40e6)
+        ob = next(a for a in fc['assumptions'] if a['id'] == 'open_balance')['values']
+        self.assertEqual((ob['debt'], ob['operating_funding_excluded']), (40e6, 60e6))
+        self.assertEqual(next(a for a in base['assumptions'] if a['id'] == 'open_balance')['values']['operating_funding_excluded'], 0.)
+        with self.assertRaises(ValueError):
+            forecast.build(fb, an, card, qa, {'operating_funding': dict(of, evidence_ids=[])})
+
+    def test_debt_like_claims_are_added_to_opening_debt(self):
+        fb, an, card, qa = industrial()
+        self.evid(fb)
+        fc = forecast.build(fb, an, card, qa, {'debt_like_claims': [{'kind': 'royalty_financing', 'amount': 50e6, 'evidence_ids': ['i1'],
+                                                                      'reason': 'royalty financing obligation'}]})
+        self.assertEqual(fc['spec']['opening']['debt'], 150e6)
+        self.assertIn('debt_like_claims_added', [w['code'] for w in fc['warnings']])
+        with self.assertRaises(ValueError):
+            forecast.build(fb, an, card, qa, {'debt_like_claims': [{'kind': 'anything', 'amount': 1., 'evidence_ids': ['i1'], 'reason': 'x'}]})
+
+    def test_nonrecurring_items_leave_the_history_but_recurring_costs_cannot(self):
+        fb, an, card, qa = industrial()
+        self.evid(fb)
+        one_off = [{'kind': 'one_time_license_revenue', 'period_end': '2025-12-31', 'revenue': 60e6, 'operating_income': 60e6,
+                    'reason': 'licence upfront recognised once', 'evidence_ids': ['i1']}]
+        fc = forecast.build(fb, an, card, qa, {'nonrecurring': one_off})
+        hist = forecast.build(fb, an, card, qa)['anchors']
+        self.assertIn('nonrecurring_removed', [w['code'] for w in fc['warnings']])
+        self.assertLess(fc['anchors']['operating_margin']['current'], hist['operating_margin']['current'])
+        with self.assertRaises(ValueError):                            # restructuring is not a one-off by kind
+            forecast.build(fb, an, card, qa, {'nonrecurring': [dict(one_off[0], kind='restructuring')]})
+
+    def test_an_evidenced_structural_reading_governs_a_cycle_the_history_shows(self):
+        fb, an, card, qa, hist = secular_cyclical()
+        self.evid(fb)
+        normal = forecast.build(fb, an, card, qa)
+        self.assertTrue(normal['anchors'].get('cycle'))
+        fc = forecast.build(fb, an, card, qa, {'cyclical': {'treatment': 'structural', 'reason': 'mix changed', 'evidence_ids': ['i1']}})
+        self.assertIn('cycle_treatment_override', [w['code'] for w in fc['warnings']])
+        self.assertNotEqual(fc['method'], 'normalized_cycle_fcff')
+
+    def test_an_unfunded_extreme_narrows_the_search_instead_of_failing(self):
+        f = lambda x: None if x > .3 else 100 + 100 * x               # valid up to 0.3, invalid above (unfunded)
+        x, st, _ = forecast._bisect(f, -.3, .5, 120.)
+        self.assertEqual(st, 'solved')
+        self.assertAlmostEqual(x, .2, places=3)

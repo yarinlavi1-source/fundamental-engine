@@ -1,0 +1,24 @@
+{
+ "about": "Engine fixes found by research rounds (public companies, no portfolio data). Read by fundamental_engine/learning.py: fixes per company researched should fall over time if the engine is learning. kind: engine_bug (wrong result from the engine), missing_input (a pattern the engine could not express; now an evidenced input), classification, data_gap (data the collectors did not bring).",
+ "rounds": [
+  {"round": "NOW_2026-10-20", "date": "2026-10-20", "companies": ["NOW"],
+   "fixes": [
+    {"ticker": "NOW", "kind": "engine_bug", "finding": "5-for-1 split of December 2025 read as 72.8% share issuance", "fix": "issuer split tag (StockholdersEquityNoteStockSplitConversionRatio1) read as a dated corporate action; weighted-average shares restated for splits"},
+    {"ticker": "NOW", "kind": "engine_bug", "finding": "analysis TypeError when a weighted-average share count was missing", "fix": "conditional restatement"},
+    {"ticker": "NOW", "kind": "data_gap", "finding": "no consensus in the structured feeds", "fix": "consensus read from public pages (web__consensus-estimates__annual.json), dated at retrieval"}
+   ]},
+  {"round": "research_2026-10-20", "date": "2026-10-20", "companies": ["POWL", "GLBE", "DECK", "MELI", "BCRX"],
+   "fixes": [
+    {"ticker": "POWL", "kind": "engine_bug", "finding": "3-for-1 split of 2 April 2026 placed after the 31 March count, which the 10-Q had already restated; the real 3x step left unresolved", "fix": "dataqa: a split up to 92 days after a count filed after the split belongs to the step into that count; a dated split counts only for a step it explains"},
+    {"ticker": "POWL", "kind": "classification", "finding": "SIC 3613 (switchgear) matched no label: unclassified", "fix": "SIC 3610-3629 falls back to industrial"},
+    {"ticker": "POWL", "kind": "engine_bug", "finding": "an evidenced 'structural' cycle reading was silently ignored when the model card had normalized the cycle from the history", "fix": "the analyst's evidenced treatment governs, with a warning and a material issue for the reviewer; the forecast reports the routed method"},
+    {"ticker": "MELI", "kind": "engine_bug", "finding": "debt 17.1bn instead of 10.6bn: LongTermDebt (the total) plus its current portion", "fix": "a noncurrent line under another tag (LongTermLoansPayable) that adds up with the current portion to the LongTermDebt tag settles the tag as the total (dataqa and the annual table)"},
+    {"ticker": "MELI", "kind": "missing_input", "finding": "deposit and securitization funding of the credit book, whose interest is in cost of revenue, was subtracted again as debt", "fix": "inputs.forecast.operating_funding (evidenced), with a warning when reinvestment is not measured net of it"},
+    {"ticker": "BCRX", "kind": "missing_input", "finding": "a $258m licence sale in revenue and a $698m acquired-R&D charge started the forecast at -33% margin on a falling revenue base", "fix": "inputs.forecast.nonrecurring: evidenced one-offs of listed kinds removed from fiscal years, TTM and year to date; recurring costs cannot be removed"},
+    {"ticker": "BCRX", "kind": "missing_input", "finding": "royalty financing obligation ($427m) outside the bridge; its interest made the term loan look 20%", "fix": "inputs.forecast.debt_like_claims added to opening debt"},
+    {"ticker": "BCRX", "kind": "engine_bug", "finding": "valuation crashed: release-bounded terminal ROIC 167%", "fix": "terminal ROIC capped at 100%"},
+    {"ticker": "MELI", "kind": "engine_bug", "finding": "what_must_be_true reported 'not reachable' when one end of the search was unfunded or invalid", "fix": "bisection on validity moves the end to the edge of the valid domain"},
+    {"ticker": "GLBE", "kind": "data_gap", "finding": "foreign filer: half-year results only in a 6-K press release, TTM 10 months stale", "fix": "H1 statements loaded through the evidence bundle from the 6-K exhibit (primary document)"}
+   ]}
+ ]
+}

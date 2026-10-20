@@ -145,3 +145,9 @@ Companion to docs/EVIDENCE_STATUS.md, which separates what tests prove from what
     starts in 2021, so 2025 reads as 1.4x its trend). The semiconductor text rule (40 mentions per 100,000 words) is
     calibrated on one document, the Item 1 vocabulary rules on 34 (in sample); Expedia's business section uses none of the
     marketplace words and stays a consumer brand, and a report whose Item 1 cannot be found keeps its label.
+38. **Analyst corrections are judgement, not measurement.** The round-1 inputs (Powell's 14% mature margin, MercadoLibre's
+    operating funding and 3.5x sales-to-capital, BioCryst's one-offs and growth) are evidenced but chosen by the analyst;
+    the learning report counts them, it does not show they were right. Only the forecast ledger, scored against reported
+    results, can do that, and on 20.10.2026 nothing in it is scorable yet. Revenue that starts from consensus for a fiscal
+    year after an unreported one (Powell FY2027) is still flagged unverifiable by the red team.
+

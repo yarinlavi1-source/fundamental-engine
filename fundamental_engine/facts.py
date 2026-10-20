@@ -99,6 +99,9 @@ INSTANT_TAGS = {
     # with the debt roll-forward (prior + issued - repaid) before any use
     'long_term_debt_tagged': ['longtermdebt', 'longtermdebtandcapitalleaseobligations', 'longtermnotespayable', 'seniornotes',
                               'seniorlongtermnotes'],
+    # a noncurrent debt line under another tag (MercadoLibre: LongTermLoansPayable 4.1bn, current 6.5bn, LongTermDebt 10.6bn):
+    # never added to debt, only a witness that settles the scope of the LongTermDebt tag in dataqa
+    'debt_noncurrent_witness': ['longtermloanspayable', 'otherlongtermdebtnoncurrent', 'loanspayablenoncurrent'],
     'operating_lease_current': ['operatingleaseliabilitycurrent'],
     'operating_lease_noncurrent': ['operatingleaseliabilitynoncurrent'],
     'total_liabilities': ['liabilities'],

@@ -106,6 +106,9 @@ def derive_model(an, fc, result, case, today):
     recognized = [(e, num((row or {}).get('revenue'))) for e, row in sorted(((an or {}).get('annual') or {}).items())]
     if num(((an or {}).get('ttm') or {}).get('revenue')) is not None:
         recognized.append(('ttm', num(an['ttm']['revenue'])))
+    # recognized revenue less evidenced one-offs (inputs.forecast.nonrecurring) is still a recognized basis
+    adj = ((fc or {}).get('anchors') or {}).get('revenue_adjusted_for_one_offs') or {}
+    recognized += [(f'{e} less evidenced one-offs', num(v)) for e, v in sorted(adj.items()) if num(v)]
     tie = next(((e, v) for e, v in reversed(recognized) if v and start and abs(start / v - 1) <= .01), None)
     how = f'spec.last_full_year_revenue {start:g} ties to recognized revenue {tie[1]:g} ({tie[0]}) within 1%' if tie else None
     for a in (fc or {}).get('assumptions') or [] if start and not tie else []:
@@ -559,8 +562,15 @@ def _opening_check(qa, case, val):
     bridged = bool(rec.get('bridge_events'))
     if liquid_q is not None and liquid_o > liquid_q * 1.02 + 1:
         (notes if bridged else fails).append(f'opening cash+investments {liquid_o:g} above validated {liquid_q:g}' + (' (bridge events supplied)' if bridged else ''))
-    if q['debt'] is not None and (num(op.get('debt')) or 0) < q['debt'] * .98 - 1:
-        (notes if bridged else fails).append(f"opening debt {op.get('debt'):g} below validated {q['debt']:g}" + (' (bridge events supplied)' if bridged else ''))
+    adj = rec.get('debt_adjustments') or []
+    adj_sum = sum(num(a.get('amount')) or 0 for a in adj)
+    if q['debt'] is not None and (num(op.get('debt')) or 0) < (q['debt'] + adj_sum) * .98 - 1:
+        (notes if bridged else fails).append(f"opening debt {op.get('debt'):g} below validated {q['debt']:g}"
+                                             + (f' adjusted by {adj_sum:+g}' if adj else '') + (' (bridge events supplied)' if bridged else ''))
+    elif adj and q['debt'] is not None:
+        # evidenced reclassifications (operating funding out, debt-like claims in): visible, accepted only by the reviewer
+        notes.append(f"opening debt {op.get('debt'):g} = validated {q['debt']:g} " + ', '.join(f"{a['kind']} {num(a.get('amount')):+g}" for a in adj)
+                     + ': analyst reclassification for the reviewer to accept')
     rc_cash = num(rec.get('cash_and_equivalents'))
     if q['cash'] is not None and rc_cash is not None and abs(rc_cash - q['cash']) > .01 * max(q['cash'], 1):
         notes.append('opening reconciliation statement cash differs from dataqa resolved cash (dates or definitions differ)')

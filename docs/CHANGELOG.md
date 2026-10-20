@@ -238,6 +238,32 @@
   (equipment), the label kept as secondary (`business.industry_terms`, `model_card.SEMI_TERMS_DENSITY`; a heuristic, ASML has
   about 260).
 
+- Research round 1 (POWL, GLBE, DECK, MELI, BCRX; `docs/learning_log.json`) found ten engine problems, now fixed:
+  a split dated just after a count that the later filing had already restated (Powell's 3-for-1 of 2.4.2026 is in its
+  31.3.2026 count) belongs to the step into that count, and a dated split counts only for a step it explains; SIC
+  3610-3629 (switchgear, electrical apparatus) falls back to industrial; a noncurrent debt line under another tag that adds
+  up with the current portion to the LongTermDebt tag settles the tag as the total (MercadoLibre's debt had been read as
+  $17.1bn instead of $10.6bn, in dataqa and in the annual table); the release-bounded terminal ROIC of a shrinking
+  scenario is capped at 100% (BioCryst's bear had crashed the valuation at 167%); `what_must_be_true` bisects to the
+  edge of the valid domain when one end of a search is unfunded or invalid instead of reporting 'not reachable'; an
+  evidenced analyst cycle treatment (`inputs.forecast.cyclical`) now also governs a cycle the model card read from the
+  history (it was silently ignored for Powell), with a warning and a material issue for the reviewer, and the forecast
+  reports the routed method.
+- New evidenced forecast inputs for patterns the engine could not express: `nonrecurring` (one-offs of listed kinds -
+  acquired IPR&D, impairment, gain or loss on sale, litigation settlement, one-time licence revenue, divested business in
+  revenue - removed from the fiscal years, TTM and year to date the paths start from; restructuring and other recurring
+  costs are refused), `debt_like_claims` (royalty financing, litigation, pension deficit, deferred consideration,
+  preferred or minority claims added to opening debt) and `operating_funding` (borrowings that fund a lending book and
+  whose interest is already in operating costs leave the bridge; a high warning until reinvestment is measured net of
+  them). The opening reconciliation carries these as `debt_adjustments`; the review's opening check compares with
+  validated debt plus them and asks the reviewer to accept them instead of failing, and the revenue-basis check accepts
+  recognized revenue less evidenced one-offs.
+- Learning loop (`learning.py`, `scripts/learning_report.py`): reads every research round's evidenced inputs and executed
+  casefiles and reports where the analyst corrected the engine (lever, scenario, business type, direction, median move),
+  the special inputs used, recurring warnings, engine fixes per company researched (from `docs/learning_log.json`) and the
+  forecast ledger's scoring status. A lever moved the same way for three or more companies of one type is listed as a
+  candidate default change; candidates are suggestions, never applied automatically.
+
 ## 0.11.1 — verified review-fix cycle (20.10.2026)
 
 Adversarial reviewers attacked every stage; a defect counted only when a script reproduced it. Each fix came with a

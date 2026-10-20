@@ -538,10 +538,11 @@ SIC_TYPES = ((6000, 6199, 'financials'), (6200, 6221, 'financials'), (6300, 6399
              # wholesale trade and health services: the SIC is more precise than listing labels ('Other Pharmaceuticals' for
              # Cardinal Health, 'Medical Specialities' for Quest and LabCorp, 'Automotive Aftermarket' for Genuine Parts)
              (5000, 5199, 'distribution'), (8000, 8099, 'healthcare_services'))
-# Used when no industry label matches (before a sector-level fallback): the filer's own SIC code
+# Used when no industry label matches (before a sector-level fallback): the filer's own SIC code. 3610-3629 is electrical
+# transmission and industrial apparatus (Powell's switchgear, SIC 3613), sold to utilities, plants and data centers.
 SIC_FALLBACK = ((2833, 2836, 'healthcare_products'), (3826, 3826, 'healthcare_products'), (3840, 3851, 'healthcare_products'),
                 (8731, 8734, 'healthcare_services'), (7370, 7379, 'it_services'), (3570, 3579, 'hardware_manufacturing'),
-                (3660, 3699, 'hardware_manufacturing'), (1000, 1499, 'commodity'), (2600, 2631, 'commodity'),
+                (3660, 3699, 'hardware_manufacturing'), (3610, 3629, 'industrial'), (1000, 1499, 'commodity'), (2600, 2631, 'commodity'),
                 (2900, 2999, 'commodity'), (4600, 4619, 'capital_intensive_infrastructure'),
                 (4900, 4949, 'capital_intensive_infrastructure'))
 

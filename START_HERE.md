@@ -27,6 +27,13 @@ rating under `card` when a bottleneck is proven) and rerun. Read
 docs/BACKTEST_ENGINE_2026-10-20.md first: the engine's ranking has no demonstrated edge on its own, the index is the
 default, edges are shrunk by their measured reliability and nothing is an order.
 
+After each research round, run the learning loop and log the engine fixes the round needed in `docs/learning_log.json`:
+`python scripts/learning_report.py runs/research_<date> [more rounds] --ledger runs/ledger/forecasts.jsonl` (where the
+analyst corrected the engine, by lever and business type; repeated corrections are candidate default changes, never
+applied automatically). Evidenced inputs for what the engine cannot see by itself: `inputs.forecast.nonrecurring`
+(one-offs), `debt_like_claims` (royalty financing and similar), `operating_funding` (deposits funding a loan book) and
+`cyclical` (structural or cyclical, also against a cycle the history shows).
+
 ## v0.11 — one decision path (use this first)
 
 Sources -> data validation -> business understanding -> financial analysis -> forecast -> valuation ->
