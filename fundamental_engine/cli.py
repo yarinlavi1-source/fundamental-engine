@@ -154,6 +154,16 @@ def main():
     un.add_argument("--insiders", help="insider purchase clusters JSON (insiders.clusters) attached to cards as signals")
     un.add_argument("--channels", help="discovery channels folder (fundamental_engine.channels layout): leads from every source "
                                        "attached to cards; writes leads.json and channels_he.md")
+    rp = subs.add_parser("run", help="From discovery to a portfolio proposal on collected data: research list, proposed book vs "
+                                     "the read-only holdings and the index, Hebrew report (runbook.py); never an order")
+    rp.add_argument("folder", help="universe folder (cards, companies/*/out/casefile.json)")
+    rp.add_argument("--as-of", required=True)
+    rp.add_argument("--positions", help="read-only broker positions JSON ({'positions': [...]}, kept outside Git)")
+    rp.add_argument("--exposures", help="JSON {symbol: [economic driver tags]} or a holdings_info file")
+    rp.add_argument("--calibration", help="calibration.json (engine-consistent market return)")
+    rp.add_argument("--backtest", help="engine_backtest summary.json (edge reliability)")
+    rp.add_argument("--names", nargs="+", default=["large500", "holdings", ""])
+    rp.add_argument("--out", help="output folder (default <folder>/run_<as_of>)")
     dp = subs.add_parser("deep", help="Full pipeline for the discovery research queue (companies/QUEUE.json from "
                                       "scripts/collect_companies.py) and a cross-company comparison")
     dp.add_argument("folder", help="universe folder (cards.json, companies/<T>/raw)")
@@ -253,6 +263,20 @@ def main():
                               'channels': chan and {'leads_by_channel': chan['channels'], 'missing': chan['missing'],
                                                     'prelisting': len(chan['prelisting'])},
                               'next': 'scripts/verify_candidates.py fetches SEC profiles for new candidates; rerun this command'},
+                             indent=2, ensure_ascii=False))
+            return
+        if args.command == "run":
+            from . import runbook
+            exp = read_json(args.exposures) if args.exposures else None
+            if isinstance(exp, dict) and 'holdings_info' in exp:
+                exp = {k: v.get('exposures') or [] for k, v in exp['holdings_info'].items()}
+            res = runbook.run(args.folder, args.as_of, read_json(args.positions) if args.positions else None, exp, tuple(args.names),
+                              args.calibration, args.backtest)
+            path = runbook.write(res, args.out or str(Path(args.folder) / f'run_{args.as_of}'))
+            print(json.dumps({'report': path, 'index_weight': res['plan']['index_weight'], 'active_weight': res['plan']['active_weight'],
+                              'edge_reliability': res['reliability'], 'research_list': [r['symbol'] for r in res['research']],
+                              'holdings_to_review': res['plan']['holdings_to_review'], 'notes': res['notes'],
+                              'meaning': 'illustrative research output; no order is placed and no position changes without explicit approval'},
                              indent=2, ensure_ascii=False))
             return
         if args.command == "deep":

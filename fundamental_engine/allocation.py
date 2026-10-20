@@ -103,15 +103,20 @@ def construct(rows, current=None, exposures=None, options=None):
                         'and provisional wherever the research is a draft')}
 
 
-def render_he(plan):
+def render_he(plan, others=8):
+    """Active positions and current holdings, then the next `others` names (the full list is in the plan)."""
     p = lambda x: 'n/a' if x is None else f'{x * 100:.1f}%'
     er = plan['expected_return']
     out = [f"מדד: {p(plan['index_weight'])} מהתיק; פוזיציות פעילות: {p(plan['active_weight'])}"
            + (' (זמני: המחקר עדיין טיוטה)' if plan['provisional'] else ''),
            f"תשואה שנתית צפויה: מדד בלבד {p(er['index_only'])}; התיק המוצע דובי/בסיס/שורי {p(er['portfolio_bear'])} / "
            f"{p(er['portfolio_base'])} / {p(er['portfolio_bull'])}", '']
-    for t in plan['targets']:
+    shown = [t for t in plan['targets'] if t['target_weight'] or t['current_weight']]
+    rest = [t for t in plan['targets'] if t not in shown and t['status'] not in ('excluded', 'no_return_estimate')][:others]
+    for t in shown + rest:
         out.append(f"- {t['symbol']}: יעד {p(t['target_weight'])} (היום {p(t['current_weight'])}) — {t['reading']}")
+    if len(plan['targets']) > len(shown) + len(rest):
+        out.append(f"- ועוד {len(plan['targets']) - len(shown) - len(rest)} חברות בלי משקל פעיל (הרשימה המלאה בקובץ התוכנית)")
     if plan['holdings_to_review']:
         out.append('')
         out.append('אחזקות שהמחקר לא תומך במשקל הנוכחי שלהן (לבדיקה, לא פקודה): ' + ', '.join(plan['holdings_to_review']))

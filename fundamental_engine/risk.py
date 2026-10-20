@@ -591,8 +591,16 @@ def _gates(add, fb, qa, an, card, result, val, rt, liq, weak_cash, scenarios):
         add('gate.redteam_critical_failure', 'valuation', 'Critical red-team failure on inputs derived from execution: ' + ', '.join(rt['critical_failed']) + '.',
             'high', cls='disqualifying', evidence=['review.redteam.' + c for c in rt['critical_failed']])
     fz = (an or {}).get('forensics') or {}
-    if (fz.get('beneish') or {}).get('zone') == 'likely_manipulator' and weak_cash:
-        add('gate.manipulation_signal', 'accounting', 'Beneish likely-manipulator zone AND weak cash conversion: reported earnings are not a reliable valuation base until explained.',
+    # the disqualifier needs the growth-neutral M-score in the zone AND operating cash flow below 80% of positive net income: a
+    # high accruals ratio alone is working capital growing with sales (NVIDIA fiscal 2027: +65% revenue, CFO 86% of net income),
+    # which stays a risk-register question, never a disqualifier
+    ben = fz.get('beneish') or {}
+    ni, _ = _latest(an, 'net_income')
+    cfo_ni = metric(an, 'cfo_to_net_income')
+    cash_weak = cfo_ni is not None and (ni or 0) > 0 and cfo_ni < .8
+    if ben.get('zone_growth_neutral', ben.get('zone')) == 'likely_manipulator' and cash_weak:
+        add('gate.manipulation_signal', 'accounting', 'Beneish likely-manipulator zone (growth-neutral) AND operating cash flow below 80% of net income: '
+            'reported earnings are not a reliable valuation base until explained.',
             'high', cls='disqualifying', evidence=['analysis.forensics.beneish', 'analysis.metrics.cfo_to_net_income', 'analysis.metrics.accruals_ratio'])
     if (fz.get('altman') or {}).get('zone') == 'distress' and liq['fcf'] is not None and liq['fcf'] < 0 and liq['refinancing_need']:
         add('gate.distress', 'financial', 'Altman distress zone AND negative free cash flow AND a near-term refinancing need: survival depends on new capital.',

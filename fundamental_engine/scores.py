@@ -112,7 +112,10 @@ def beneish(rows):
         return {'status': 'unavailable', 'reason': 'a ratio denominator is zero'}
     m = (-4.84 + .92 * dsri + .528 * gmi + .404 * aqi + .892 * sgi + .115 * depi - .172 * sgai + 4.679 * tata - .327 * lvgi)
     zone = 'likely_manipulator' if m > -1.78 else ('watch' if m > -2.22 else 'unlikely')
-    return {'status': 'computed', 'm': m, 'zone': zone,
+    # growth-neutral reading: the sales-growth index set to 1 (no growth); fast growers score high on SGI by construction
+    m0 = m - .892 * (sgi - 1)
+    zone0 = 'likely_manipulator' if m0 > -1.78 else ('watch' if m0 > -2.22 else 'unlikely')
+    return {'status': 'computed', 'm': m, 'zone': zone, 'm_growth_neutral': m0, 'zone_growth_neutral': zone0,
             'components': {'DSRI': dsri, 'GMI': gmi, 'AQI': aqi, 'SGI': sgi, 'DEPI': depi, 'SGAI': sgai, 'LVGI': lvgi, 'TATA': tata},
             'reference': 'Beneish 1999: above −1.78 flags manipulation risk (−2.22 is a common stricter screen). Fast growers score high on SGI by construction — investigate, do not accuse.'}
 

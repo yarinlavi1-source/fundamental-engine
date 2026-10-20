@@ -58,5 +58,21 @@ class ReliabilityTests(unittest.TestCase):
         self.assertEqual(A.construct([row], options={'edge_reliability': 0.})['targets'][0]['target_weight'], 0.)
 
 
+class RunbookTests(unittest.TestCase):
+    def test_book_weights_and_report_without_files(self):
+        import tempfile
+        from fundamental_engine import runbook
+        book = runbook.current_book({'positions': [{'contract_description': 'AAA', 'market_value': 300., 'currency': 'USD', 'asset_class': 'STK'},
+                                                   {'contract_description': 'BBB', 'market_value': 100., 'currency': 'USD', 'asset_class': 'STK'},
+                                                   {'contract_description': 'OPT', 'market_value': 50., 'asset_class': 'OPT'}]})
+        self.assertEqual(book['weights'], {'AAA': .75, 'BBB': .25})
+        with tempfile.TemporaryDirectory() as d:                      # an empty folder: the run still reports what is missing
+            res = runbook.run(d, '2026-10-20')
+            text = runbook.report_he(res)
+            self.assertEqual(res['plan']['index_weight'], 1.)
+            self.assertIn('לא סופקה בדיקה היסטורית', text)
+            self.assertIn('אין כאן פקודה', text)
+
+
 if __name__ == '__main__':
     unittest.main()

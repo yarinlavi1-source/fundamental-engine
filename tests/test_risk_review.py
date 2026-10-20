@@ -260,6 +260,18 @@ class DisqualifyingGates(unittest.TestCase):
         self.assertEqual(rv['status'], 'unreviewed_draft')                          # bear values withheld -> no price claim, not a veto
         self.assertIn('funding_blocked', rv['reason_codes'])
 
+    def test_growth_alone_never_disqualifies(self):
+        # NVIDIA fiscal 2027 shape: M-score in the zone only through growth, accruals above 10% from working capital, CFO 86% of NI
+        grow = deepcopy(SAFE)
+        grow['beneish'] = {'status': 'computed', 'zone': 'likely_manipulator', 'm': -1.16, 'zone_growth_neutral': 'watch',
+                           'm_growth_neutral': -1.74 - .1, 'components': {'SGI': 1.65}}
+        rk, _ = run(an=analysis(grow, cfo_to_net_income=.86, accruals_ratio=.11))
+        self.assertNotIn('gate.manipulation_signal', rk['disqualifying'])
+        self.assertEqual(entry(rk, 'acc.beneish')['severity'], 'high')               # still a question in the register
+        grow['beneish']['zone_growth_neutral'] = 'likely_manipulator'
+        rk, _ = run(an=analysis(grow, cfo_to_net_income=.86, accruals_ratio=.11))     # accruals alone: still not a disqualifier
+        self.assertNotIn('gate.manipulation_signal', rk['disqualifying'])
+
     def test_beneish_needs_weak_cash_conversion_to_disqualify(self):
         manip = deepcopy(SAFE)
         manip['beneish'] = {'status': 'computed', 'zone': 'likely_manipulator', 'm': -1.2, 'components': {'SGI': 1.4}}
