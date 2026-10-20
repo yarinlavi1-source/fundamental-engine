@@ -60,7 +60,8 @@ def _needs_annual(raw, company, listing):
             d = json.load(f)
     sic = int(d['sic']) if str(d.get('sic') or '').isdigit() else company.get('sic')
     forms = ((d.get('filings') or {}).get('recent') or {}).get('form') or []
-    foreign = company.get('annual_form') in ('20-F', '40-F') or any(f in ('20-F', '40-F') for f in forms[:200])
+    latest = company.get('annual_form') or next((f for f in forms if f in handoff.ANNUAL_FORMS), None)   # newest first
+    foreign = latest in ('20-F', '40-F')                    # TSMC files hundreds of 6-Ks between two 20-Fs
     ads = 'depositary' in ((listing or {}).get('name') or '').lower()
     return foreign or ads or sic in model_card.AMBIGUOUS_SIC
 
@@ -151,13 +152,20 @@ def collect(folder, c, ua, docs=True, only_quarterly=False):
     if os.path.exists(annual_path):
         with open(annual_path, encoding='utf-8', errors='replace') as f:
             html = f.read()
+    rec = dict(c['company'])
+    if not rec.get('annual_form') and os.path.exists(sub):
+        with open(sub, encoding='utf-8') as f:
+            forms = ((json.load(f).get('filings') or {}).get('recent') or {}).get('form') or []
+        rec['annual_form'] = next((x for x in forms if x in handoff.ANNUAL_FORMS), None)
     with open(facts, encoding='utf-8') as f:
-        chk = handoff.identity_check(json.load(f), handoff.listing_row(raw_u, c['symbol']), c['company'], annual_html=html)
+        chk = handoff.identity_check(json.load(f), handoff.listing_row(raw_u, c['symbol']), rec, annual_html=html)
     if chk.get('reporting_currency') not in (None, 'USD'):
         chk['fx_series'] = fetch_fx(chk['reporting_currency'])
-    # the pipeline divides the quote of a depositary share by the stated ratio even when the currencies match
+    # the pipeline divides the quote of a depositary share by the stated ratio even when the currencies match; the annual
+    # form comes from the filer's own filing list when the universe row lacks it (20-F filers have no 10-Q facts)
+    rec['depositary_shares'] = chk.get('depositary_shares')
     with open(os.path.join(c['folder'], 'company.json'), 'w', encoding='utf-8') as f:
-        json.dump({**c['company'], 'depositary_shares': chk.get('depositary_shares')}, f, indent=1, ensure_ascii=False)
+        json.dump(rec, f, indent=1, ensure_ascii=False)
     blocked = os.path.join(c['folder'], 'BLOCKED.json')
     if chk['status'] == 'blocked':
         with open(blocked, 'w', encoding='utf-8') as f:

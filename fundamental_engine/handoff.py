@@ -127,9 +127,10 @@ def identity_check(companyfacts, listing=None, company=None, annual_html=None):
             reasons.append(f'reporting currency {cur} ({counts[cur]} facts vs {counts.get("USD", 0)} in USD, which are convenience '
                            f'translations) has no dated exchange-rate series in fx.FRED: the quote cannot be converted')
     name = (listing or {}).get('name') or ''
-    ads = bool(re.search(r'(?i)depositary|\bADS\b|\bADR\b', name))
-    out['depositary_shares'] = ads
     stated = business.ads_ratio(annual_html) if annual_html else None
+    # the listing name may omit it (TSMC): a depositary ratio stated in the annual report marks the US security as one
+    ads = bool(re.search(r'(?i)depositary|\bADS\b|\bADR\b', name)) or bool(stated and not stated.get('direct_listing'))
+    out['depositary_shares'] = ads
     if stated:
         out['stated_shares_per_depositary_share'] = {k: stated[k] for k in ('ratio', 'evidence', 'candidates', 'ambiguous')}
         out['direct_listing'] = bool(stated.get('direct_listing'))

@@ -58,6 +58,8 @@ class IdentityTests(unittest.TestCase):
         off = H.identity_check(facts({'USD': 50}, shares=102e6), listing, annual_html=five)   # implied 1:1 vs stated 5
         self.assertEqual(off['status'], 'ok')
         self.assertIn('ratio change', off['note'])
+        plain = H.identity_check(facts({'USD': 50}, shares=500e6), {'name': 'Synthetic Holdings Ltd.'}, annual_html=five)
+        self.assertTrue(plain['depositary_shares'])                    # the listing name omits it; the report states it
         two = five + '<p>Each ADS represents ten ordinary shares.</p>'
         self.assertEqual(H.identity_check(facts({'USD': 50}, shares=500e6), listing, annual_html=two)['status'], 'blocked')
 
