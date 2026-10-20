@@ -306,6 +306,10 @@
   - unchanged after review: growth fade (consistent with the research), terminal growth min(risk-free, 3%) (today's 2.9% real
     yield overstates nominal growth; incumbents trail the economy), margin competition for an unassessed moat. Flagged, not
     changed: the catch-up of below-typical margins is generous next to the base rates for established companies.
+  Measured on the rerun of 491 large caps: net risk adjustment +0.93pp -> -0.06pp, engine market cost of equity 9.29%
+  (rf + ERP 9.35%), market return implied by the engine's cash flows 6.96%, rate shift 2.81 -> 2.33pp, median value +6.9%,
+  share below price 90% -> 85%; value-weighted, the base cases need growth only 24% of companies of the same size reached.
+  Amazon: cost of equity 9.75% -> 9.35%, terminal ROIC 11.75% -> 15.4%, value $138 -> $161, market-consistent $275 at $262.5.
 
 ## 0.11.1 — verified review-fix cycle (20.10.2026)
 

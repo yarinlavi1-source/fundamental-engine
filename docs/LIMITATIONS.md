@@ -150,7 +150,7 @@ Companion to docs/EVIDENCE_STATUS.md, which separates what tests prove from what
     the learning report counts them, it does not show they were right. Only the forecast ledger, scored against reported
     results, can do that, and on 20.10.2026 nothing in it is scorable yet. Revenue that starts from consensus for a fiscal
     year after an unreported one (Powell FY2027) is still flagged unverifiable by the red team.
-39. **Absolute values are conservative by construction.** Discounting at the engine's own cost of equity (about 2.8pp above
+39. **Absolute values are conservative by construction.** Discounting at the engine's own cost of equity (about 2.3pp above
     the return the engine finds the market priced at) puts most stocks below their price. Read three numbers together: the
     value at the engine's cost of equity (what to pay for that hurdle), the market-consistent value and, steadiest, the
     expected return against the market's (edge_vs_market). None of them is a price target, and the backtests still show no

@@ -124,4 +124,42 @@ Not reached: McKinsey's 2026 pages (HTTP 503), Mauboussin's *The Impact of Intan
 Filled from the rerun of the 481-company sweep with the changed engine and the dated market inputs
 (`runs/universe_2026-10-20`, before: `summaries_before_research_review.json`).
 
-Pending: the sweep rerun was in progress at the first commit of this file.
+491 of the 500 queue entries ran without error (the other 9 entries have no ticker); calibration over 406 with an implied return
+(92% of the sample's market value).
+
+| | before | after |
+|---|---|---|
+| value-weighted net risk adjustment over rf + ERP | +0.93pp | -0.06pp |
+| engine market cost of equity (value-weighted) | 9.68% (rf 4.25 + ERP 4.50 + add-ons) | 9.29% (rf 5.15 + ERP 4.20 = 9.35%) |
+| market return implied by the engine's cash flows at today's prices | 6.87% | 6.96% |
+| rate shift behind the market-consistent value | 2.81pp | 2.33pp |
+| companies valued below their price (same 468) | 90% | 85% |
+| median value / price | 0.44 | 0.49 |
+| median change in base value, same companies | | +6.9% (p10 +2.3%, p90 +22.2%) |
+
+Outside view on the new base cases (318 USD, non-cyclical, 10 years): the median company's base case grows at a rate 46% of
+its size class reached, near the historical middle; value-weighted only 24% of comparable companies grew as fast. The
+largest companies' base cases (which start from consensus) already sit in the top quarter of history: Amazon 6.6% real a
+year for ten years (16% of companies with more than $50bn of 2015-dollar sales did it), Microsoft 5.7% (19%), Alphabet 7.4%
+(13%), Meta 8.1% (11%), Nvidia 12.6% (2%). 27 base cases need growth fewer than 10% of their class reached; 82 grow more
+slowly than 60% of their class did (PayPal, Deckers, Powell, BioCryst among them, each for a stated reason).
+
+Amazon (price $262.53):
+
+| | before | after |
+|---|---|---|
+| cost of equity | 9.75% (4.25 + 4.50 + 1.0) | 9.35% (5.15 + 4.20 + 1.0 - 1.0) |
+| terminal ROIC, base | 11.75% (Ku+2pp) | 15.4% (Ku + half of the 21.4% demonstrated excess) |
+| value at its own cost of equity | $138 | $161 |
+| market-consistent value | $262 (rate 6.94%) | $275 (rate 7.02%) |
+| return implied by the price, base case | 6.93% | 7.19% (market 6.96%: edge +0.2pp) |
+
+Reading. The changes the research supports close about a sixth of the gap between the engine and the market (rate shift
+2.81 -> 2.33pp) and raise values by about 7% at the median. The rest is not engine conservatism these sources support:
+the engine's growth for the largest companies is already above their historical base rates, terminal growth sits where
+the research puts it, and excess returns now persist as the HOLT data show. What remains is that today's prices imply
+either a lower required return (about 7% a year with these cash flows: about 1.8pp over a 5.15% Treasury) or expectations
+beyond the base rates (Damodaran's 4.20% implied ERP itself assumes analysts' growth for five years and growth at the
+5.29% Treasury forever after). The engine cannot tell which; it keeps both readings visible: the value at its own required
+return (what to pay for that hurdle) and the market-consistent value and edge (cheap or dear against the market's own
+pricing). By Kaplan-Ruback and Liu-Nissim-Thomas, differences under about 15% are inside the error of a careful valuation.
