@@ -32,6 +32,12 @@ CLI): without it the answer compares the stock with an absolute hurdle and nearl
 expected return against the market's (edge_vs_market) and the market-consistent value beside the value at the engine's
 own cost of equity.
 
+Pass dated market inputs too (`--market FILE` on `deep`, or `inputs.forecast.risk_free` / `equity_risk_premium`): today's
+10-year Treasury and the latest implied ERP (Damodaran's home page), each {value, as_of, title, url}. The defaults (4.25% /
+4.50%) are undated placeholders. Read each forecast's `anchors.outside_view` (how often companies of the same size grew as
+fast; Base Rate Book) next to the inside view, and the base-rate sentence on the growth the price requires. Why these
+rules: docs/VALUATION_RESEARCH_REVIEW_2026-10-20.md.
+
 After each research round, run the learning loop and log the engine fixes the round needed in `docs/learning_log.json`:
 `python scripts/learning_report.py runs/research_<date> [more rounds] --ledger runs/ledger/forecasts.jsonl` (where the
 analyst corrected the engine, by lever and business type; repeated corrections are candidate default changes, never

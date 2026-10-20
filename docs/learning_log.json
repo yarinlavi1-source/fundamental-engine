@@ -206,6 +206,45 @@
      "fix": "calibration records the market cost of equity and the gap; decision reports a market-consistent value and the edge over the market's implied return; START_HERE requires the calibrated index"
     }
    ]
+  },
+  {
+   "round": "research_review_2026-10-20",
+   "date": "2026-10-20",
+   "companies": [
+    "AMZN"
+   ],
+   "fixes": [
+    {
+     "ticker": "AMZN",
+     "kind": "method",
+     "finding": "business-risk add-ons only add: value-weighted +0.93pp (calibration weights) over risk-free + ERP on the 481-company sweep, against the ERP's own definition (the market's average company earns rf + ERP)",
+     "fix": "forecast.MARKET_NEUTRAL_ADJUSTMENT row (-1pp); calibration reports mean_risk_adjustment after each sweep"
+    },
+    {
+     "ticker": "AMZN",
+     "kind": "data",
+     "finding": "research runs used the undated 4.25% risk-free and 4.50% ERP defaults; on 19.10.2026 the 10-year Treasury was 5.15% and Damodaran's implied ERP (1.10) 4.20%",
+     "fix": "deep --market FILE (handoff.with_market_inputs): dated risk-free (USD reporters) and ERP for every company"
+    },
+    {
+     "ticker": "AMZN",
+     "kind": "method",
+     "finding": "without a moat assessment terminal ROIC faded to Ku+2pp whatever the company earned (Amazon 21.4% -> 11.75%); HOLT data keep about half of the excess over ten years",
+     "fix": "forecast.EXCESS_RETURN_PERSISTENCE: base keeps 50%, bull 71% of the demonstrated excess (bear and weak moat unchanged)"
+    },
+    {
+     "ticker": "AMZN",
+     "kind": "missing_check",
+     "finding": "no outside view: nothing said how rare the growth in a forecast or a price is for a company of that size",
+     "fix": "base_rates.py (Base Rate Book exhibit 4) on every USD forecast and on the price-implied growth"
+    },
+    {
+     "ticker": null,
+     "kind": "source_error",
+     "finding": "Base Rate Book exhibit 4, $325-700m class: printed percentages sum to 92% in every column",
+     "fix": "class rebuilt from the appendix observation counts; a test checks that every row is a distribution"
+    }
+   ]
   }
  ]
 }

@@ -484,6 +484,14 @@ def route_qa(qa, card):
     return out
 
 
+def _risk_adjustment(cf):
+    """Net business-risk adjustment of the cost of equity over risk-free + ERP (the add-on rows, market-neutral row included);
+    None without a forecast cost of equity."""
+    comp = (((cf.get('fc') or {}).get('cost_of_equity') or {}).get('components') or {})
+    rows = comp.get('adjustments')
+    return sum(a.get('value') or 0 for a in rows) if isinstance(rows, list) else None
+
+
 def summary(cf):
     """Compact record used by the portfolio layer, monitoring and discovery comparisons. margin (marginal|clear|None), hurdle
     and value_at_required_return come from the decision contract (decision_version 3); None when absent."""
@@ -500,6 +508,7 @@ def summary(cf):
             'bull_value': today.get('bull'), 'base_irr': er.get('base_irr'), 'bear_irr': er.get('bear_irr'),
             'cost_of_equity': (dc.get('valuation_view') or {}).get('model_cost_of_equity'),
             'market_consistent_value': ((dc.get('valuation_view') or {}).get('market_consistent') or {}).get('value'),
+            'risk_adjustment': _risk_adjustment(cf),
             'decision_version': dc.get('decision_version'), 'margin': v.get('margin'), 'hurdle': er.get('hurdle'),
             'value_at_required_return': v.get('value_at_required_return', er.get('value_at_required_return')),
             'review_status': (cf.get('rv') or {}).get('status'), 'casefile_sha256': cf.get('casefile_sha256')}

@@ -171,6 +171,8 @@ def main():
     dp.add_argument("--symbols", nargs="+", help="run these company folders instead of the queue")
     dp.add_argument("--name", help="read companies/QUEUE_<name>.json and write comparison_<name>.json/_he.md (e.g. holdings)")
     dp.add_argument("--index", help="calibration JSON (calibration.market_implied): its index_input becomes inputs.index for every company")
+    dp.add_argument("--market", help="dated market inputs JSON {risk_free, equity_risk_premium} (each {value, as_of, title, url}): "
+                                     "forecast inputs for every company that does not set its own; risk_free only for USD reporters")
     pf = subs.add_parser("portfolio", help="READ-ONLY analysis of saved Interactive Brokers payloads; prints to stdout, stores nothing")
     pf.add_argument("positions")
     pf.add_argument("--summary")
@@ -293,11 +295,14 @@ def main():
             card_set = read_json(base / 'cards.json') if (base / 'cards.json').exists() else None
             cfs, ran = [], []
             index_input = (read_json(args.index).get('index_input') if args.index else None)
+            market = read_json(args.market) if args.market else None
             for s in syms:
                 folder = base / 'companies' / s
                 inp = read_json(folder / 'inputs.json') if (folder / 'inputs.json').exists() else {}
                 if index_input:
                     inp = {**inp, 'decision': {**(inp.get('decision') or {}), 'index': index_input}}
+                if market:
+                    inp = handoff.with_market_inputs(inp, market, str(folder))
                 fb, cf = handoff.run_company(str(folder), args.as_of, inputs=inp or None)
                 out = folder / 'out'; out.mkdir(parents=True, exist_ok=True)
                 (out / "factbook.json").write_text(json.dumps(fb, indent=1, ensure_ascii=False), encoding="utf-8")

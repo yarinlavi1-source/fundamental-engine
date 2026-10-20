@@ -30,7 +30,7 @@ from hashlib import sha256
 import json
 import math
 import re
-from . import facts
+from . import base_rates, facts
 from .drivers import build_case, RATIO_KEYS, ABSOLUTE_KEYS, reinvest as _reinvest, capex_for_path as _capex_for_path, value_paused as _value_paused, RELEASE_FLOOR
 from .finance import number
 from .valuation import value_company, years, ROUTES
@@ -93,6 +93,21 @@ KE_FACTORS = (  # (condition, add-on, reason) evaluated on the card and the exec
     ('capital_intensity_high', .005, 'high capital intensity (operating leverage on fixed assets)'),
     ('needs_external_funding', .01, 'base plan depends on external funding (executed funding result)'),
 )
+# The ERP is the premium of the value-weighted market over the risk-free rate, so the value-weighted average cost of equity of
+# the market's own companies must equal rf + ERP. The add-ons above only add (no stage, factor or dimension subtracts): on the
+# 481 largest US operating companies valued on 2026-10-20 they averaged 0.93pp with calibration's market values (1.2pp with
+# the listing feed's), so every company was discounted about 1pp above the market's own definition. This row removes the
+# measured average: an average-risk company is discounted at rf + ERP, one with no add-on below it. calibration.market_implied
+# reports the weighted mean of the net adjustment after each sweep (it should stay near zero).
+MARKET_NEUTRAL_ADJUSTMENT = -.01
+# Excess returns on capital fade slowly and only part of the way (Mauboussin, Callahan & Majd, The Base Rate Book, Credit
+# Suisse 2016, from HOLT data since 1950): over ten years the CFROI spread between the top and bottom quintiles shrinks from 18
+# to 9 points (half of the excess left) and the operating-margin spread from 0.21 to 0.15 (71% left); Damodaran: "excess returns
+# seem to last far longer than high growth rates do". Without a moat assessment the terminal ROIC keeps that share of the
+# demonstrated excess over Ku (base 50%, bull 71%; never below the former Ku+2pp / Ku+4pp); the bear still tests a moat that
+# fails (Ku+1pp) and an analyst 'weak' moat keeps the full fade. Demonstrated = the lower of the latest and the 5-year average
+# ROIC, capped at 40% (a single strong year earns no persistence).
+EXCESS_RETURN_PERSISTENCE = {'base': .50, 'bull': .71}
 # Financial leverage is NOT a table add-on. The table rate (risk-free + ERP + business-risk add-ons) is the cost of equity of
 # a company of that business risk at MARKET-AVERAGE leverage: the ERP is measured on levered equities, so treating it as an
 # unlevered rate and relevering on top double counts leverage. Ku unlevers it at MARKET_DE with the EXPECTED return on debt
@@ -833,6 +848,9 @@ def _cost_of_equity(route, rf, erp, inputs_notes, external, regulated=False):
     for d in WEAK_DIMENSIONS:   # at most 4 x 0.25pp = 1pp
         if (route['dimensions'].get(d) or {}).get('assessment') == 'weak':
             adj.append({'factor': 'weak_' + d, 'value': .0025, 'reason': f'model card rates {d} weak'})
+    adj.append({'factor': 'market_neutral', 'value': MARKET_NEUTRAL_ADJUSTMENT,
+                'reason': "the market's value-weighted average add-on, removed so the average company is discounted at risk-free + ERP "
+                          '(the definition of the ERP); measured on the 2026-10-20 large-cap sweep'})
     table = _clamp(rf + erp + sum(a['value'] for a in adj), rf + .02, .20)
     return table, {'risk_free': rf, 'equity_risk_premium': erp, 'adjustments': adj, 'notes': inputs_notes,
                    'formula': 'table = risk-free + equity risk premium + business-risk adjustments (stage, regulated utility, cyclicality, '
@@ -1264,6 +1282,9 @@ def _params(route, h, cal, cons, rf, ku, debt0, ov, warn):
         roic_s = min(max(h['roic'] or 0, w0 + .05), .40)
         strong = {'base': roic_s, 'bear': max(w0 + .02, .7 * roic_s), 'bull': min(.45, 1.2 * roic_s)}[s]
         other = {'base': w0 + .02, 'bear': w0 + .01, 'bull': w0 + .04}[s]
+        shown = [x for x in (h['roic'], h.get('roic_avg')) if x is not None]
+        if s in EXCESS_RETURN_PERSISTENCE and route['moat'] != 'weak' and shown and min(shown) > w0:
+            other = max(other, w0 + EXCESS_RETURN_PERSISTENCE[s] * (min(min(shown), .40) - w0))
         wt = route['moat_weights'][s]
         roic = other + wt * (strong - other)        # the moat proxy weight blends the two rules (bear: unassessed rules)
         roic = ov(s, 'terminal_roic', roic)
@@ -2016,6 +2037,33 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
                                                    'bear': f"above {_pct(paths['base']['growth'][0])} (bear too harsh)",
                                                    'bull': f"below {_pct(paths['base']['growth'][0])} (bull not on track)"}[s]) + '.',
             rev_srcs + (cons_srcs if s == 'base' else []) + [RULES])
+    # outside view: how often companies of this size grew as fast as each scenario (a reality check on the inside view, never an input)
+    outside = None
+    if fb['company'].get('currency', 'USD') == 'USD' and h['last_revenue'] and h['last_revenue'] > 0 and not cyc:
+        full = {s: [meta['g_cur']] * cal['fiscal_years_since_last_report'] + list(paths[s]['growth']) for s in SCEN}
+        outside = {s: base_rates.outside_view(h['last_revenue'], {n: base_rates.cagr(full[s], n) for n in (5, 10)}) for s in SCEN}
+        bh = outside['base']['horizons']
+        n_chk = 10 if 10 in bh else 5 if 5 in bh else None
+        if n_chk:
+            x = bh[n_chk]
+            add('outside_view_growth', 'growth against base rates for companies of this size', 'model',
+                {s: {n: {k: v[k] for k in ('nominal_cagr', 'real_cagr', 'share_at_least', 'class_median_real')}
+                     for n, v in outside[s]['horizons'].items()} for s in SCEN} | {'reference_class': outside['base']['reference_class']},
+                f"Base case: revenue {_pct(x['nominal_cagr'])} a year over {n_chk} fiscal years ({_pct(x['real_cagr'])} after "
+                f"{base_rates.INFLATION:.2%} expected inflation); {x['share_at_least']:.0%} of companies with sales of "
+                f"{outside['base']['reference_class']} (2015 dollars) grew at least that fast in 1950-2015, class median "
+                f"{_pct(x['class_median_real'])} ({base_rates.SOURCE}; sales include acquisitions and survivors only). A reality check on "
+                'the forecast, not a probability for this company: evidence can justify a place in the tail.',
+                'Reported growth over the horizon outside the bear-bull range.', [RULES])
+            if x['share_at_least'] < .10:
+                warn('growth_above_base_rate', f"base case needs {_pct(x['real_cagr'])} real revenue growth a year for {n_chk} years: only "
+                                               f"{x['share_at_least']:.0%} of companies this size did it (base rates, 1950-2015); the "
+                                               'evidence for a tail outcome must be in the case', 'medium')
+            elif x['share_at_least'] > .60:
+                warn('growth_below_base_rate', f"base case grows {_pct(x['real_cagr'])} a year after inflation for {n_chk} years, slower than "
+                                               f"{1 - x['share_at_least']:.0%} of companies this size did (class median "
+                                               f"{_pct(x['class_median_real'])}); conservative unless the evidence says the business is "
+                                               'shrinking or saturated', 'low')
     # margins
     for s in SCEN:
         m = paths[s]['operating_margin']
@@ -2045,8 +2093,11 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
            f"Value today without the proxy (bear / base / bull): {f3(alt_moat)}. A computed proxy, not an analyst judgement: an evidenced "
            'moat assessment replaces it.' if w_mo['base'] > 0 else
            f"{k_moat:.0%} of today's margin excess over the type-typical {_pct(typ_m)} is competed away ({haircut:.1%} of revenue) and terminal "
-           f"ROIC fades to Ku+2pp = {_pct(P['base']['roic'])} against a demonstrated ROIC {_pct(h['roic'])}. A quantified model haircut, "
-           'not evidence: an evidenced analyst moat assessment replaces it.'))),
+           f"ROIC fades to {_pct(P['base']['roic'])} against a demonstrated ROIC {_pct(h['roic'])} ("
+           + ('weak moat: excess returns competed down to Ku+2pp' if route['moat'] == 'weak' else
+              f"Ku {_pct(P['base']['hurdle'])} + {EXCESS_RETURN_PERSISTENCE['base']:.0%} of the demonstrated excess, at least Ku+2pp: the "
+              'share of excess returns left after ten years in the base rates') +
+           '). A quantified model haircut, not evidence: an evidenced analyst moat assessment replaces it.'))),
         f"Returns on capital stay above {_pct(P['base']['roic'] + .05)} and margins above {_pct(P['base']['mature_margin'] + .03)} for three years "
         '(haircut too harsh), or fall below the bear path (too generous).', _latest_src(fb, 'operating_income', 'gross_profit', 'equity') + [RULES])
     add('sbc_path', 'stock-based compensation', 'model', {s: paths[s]['sbc_pct'] for s in SCEN},
@@ -2119,7 +2170,9 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
     def term_row(s):
         rule = ({'base': 'returns stay above the cost of capital: max(demonstrated ROIC, Ku+5pp), capped at 40%', 'bear': '70% of the base ROIC, '
                  'at least Ku+2pp', 'bull': '120% of the base ROIC, capped at 45%'}[s] if route['moat'] == 'strong' else
-                {'base': 'excess returns competed down to Ku+2pp', 'bear': 'Ku+1pp', 'bull': 'Ku+4pp'}[s])
+                {'base': 'excess returns competed down to Ku+2pp', 'bear': 'Ku+1pp', 'bull': 'Ku+4pp'}[s] if route['moat'] == 'weak' else
+                {'base': f"Ku + {EXCESS_RETURN_PERSISTENCE['base']:.0%} of the demonstrated excess return (at least Ku+2pp)", 'bear': 'Ku+1pp',
+                 'bull': f"Ku + {EXCESS_RETURN_PERSISTENCE['bull']:.0%} of the demonstrated excess return (at least Ku+4pp)"}[s])
         if route['moat'] != 'strong' and route['moat_weights'][s] > 0:
             rule += f" blended toward the strong-moat rule at proxy weight {route['moat_weights'][s]:.2f}"
         if P[s].get('release_bounded'):
@@ -2517,7 +2570,7 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
                'growth': {'last': h['g_last'], 'cagr_3y': h['cagr_3y'], 'cagr_5y': h['cagr_5y'], 'recent_annualized': h['g_recent'],
                           'trailing_anchor': h['g_trailing'], 'formula': h['g_trailing_formula'], 'volatility': h['growth_volatility'],
                           'scale_cap': h['g_scale_cap'], 'consensus': {b: e['value'] for b, e in sorted(cons.items())}, 'scenario_spread': meta['spread']},
-               'cycle': cyc,
+               'cycle': cyc, 'outside_view': outside,
                'operating_margin': {'current': h['m0'], 'basis': h['m0_basis'], 'best_3y': h['m_best3'], 'history': h['m_all']},
                'sbc_pct': h['sbc_pct'], 'sbc_basis': h['sbc_basis'], 'da_pct': h['da_pct'], 'capex_pct_3y': h['capex_pct'],
                'sales_to_capital': {'history': meta['s2c_history'], 'used': meta['s2c_used'], 'type_range': meta['s2c_range'],
@@ -2636,10 +2689,18 @@ def what_must_be_true(spec, price):
                     'capital needs as a fixed share of revenue')
     if d is not None:
         req = g_anchor + d
+        need = base_rates.cagr([gl[i] + d for i in first5], len(first5))
+        view = (base_rates.outside_view(s.get('last_full_year_revenue'), {5: need})
+                if s.get('currency') == 'USD' and len(first5) == 5 else None)
+        five = (view or {}).get('horizons', {}).get(5)
         row('growth', 'average revenue growth, next five fiscal years', 'solved', req, g_anchor,
             f'At {price:,.2f} the base case needs average revenue growth of {req:.1%} a year over the next five fiscal years '
-            f'(base {g_anchor:.1%}), with {capital_note}; later years, terminal growth, margins and the discount rate unchanged.', 'ratio',
+            f'(base {g_anchor:.1%}), with {capital_note}; later years, terminal growth, margins and the discount rate unchanged.'
+            + (f" Outside view: {five['share_at_least']:.0%} of companies of this size ({view['reference_class']} in 2015 dollars) grew "
+               f"at least {five['real_cagr']:.1%} a year after inflation over five years in 1950-2015 (class median "
+               f"{five['class_median_real']:.1%})." if five else ''), 'ratio',
             {'search_status': 'solved', 'growth_shift': d, 'years_shifted': len(first5), 'range_values': rng, 'capital': capital_note,
+             'base_rate': view,
              'limitation': 'Shift of the first five fiscal-year growth rates of this spec, everything else fixed; a sensitivity, not market consensus.'})
     else:
         row('growth', 'average revenue growth, next five fiscal years', st, None, g_anchor,

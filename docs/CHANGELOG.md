@@ -286,6 +286,26 @@
   the special inputs used, recurring warnings, engine fixes per company researched (from `docs/learning_log.json`) and the
   forecast ledger's scoring status. A lever moved the same way for three or more companies of one type is listed as a
   candidate default change; candidates are suggestions, never applied automatically.
+- Research-based valuation review (owner: "don't invent; read the research"): docs/VALUATION_RESEARCH_REVIEW_2026-10-20.md
+  records the sources read (Base Rate Book, Damodaran, McKinsey, Chan-Karceski-Lakonishok, Liu-Nissim-Thomas, Kaplan-Ruback,
+  Frankel-Lee, Bernstein-Arnott, QMJ, Lev-Srivastava), how the engine compared and what changed:
+  - market-neutral risk table: the business-risk add-ons only added and averaged about +1pp on the 481-company sweep, so the
+    average company was discounted above risk-free + ERP (the ERP's own definition); `forecast.MARKET_NEUTRAL_ADJUSTMENT`
+    (-1pp, its own visible row) removes the measured average and `calibration.market_implied` reports the value-weighted net
+    adjustment after each sweep (`mean_risk_adjustment`; `pipeline.summary` carries `risk_adjustment`);
+  - dated market inputs: `fundamental_engine deep --market FILE` passes a dated risk-free rate (USD reporters only) and ERP to
+    every company that sets none (`handoff.with_market_inputs`); 20.10.2026: 10-year Treasury 5.15% (FMP, 19.10) and
+    Damodaran's implied ERP 4.20% (1.10), replacing the undated 4.25% / 4.50% defaults in research runs;
+  - excess returns persist: without a moat assessment the terminal ROIC keeps 50% (base) / 71% (bull) of the demonstrated
+    excess over Ku (HOLT CFROI and margin spreads after ten years, Base Rate Book), never below the former Ku+2pp / Ku+4pp;
+    the bear and an analyst 'weak' moat keep the full fade (`forecast.EXCESS_RETURN_PERSISTENCE`);
+  - outside view: `base_rates.py` (Base Rate Book exhibit 4, sales growth by size class 1950-2015 in 2015 dollars; the
+    $325-700m class rebuilt from its observation counts) gives every USD forecast `anchors.outside_view`, an
+    `outside_view_growth` assumption and `growth_above_base_rate` / `growth_below_base_rate` warnings, and the price-implied
+    five-year growth in `what_must_be_true` the share of companies of that size that grew as fast;
+  - unchanged after review: growth fade (consistent with the research), terminal growth min(risk-free, 3%) (today's 2.9% real
+    yield overstates nominal growth; incumbents trail the economy), margin competition for an unassessed moat. Flagged, not
+    changed: the catch-up of below-typical margins is generous next to the base rates for established companies.
 
 ## 0.11.1 — verified review-fix cycle (20.10.2026)
 

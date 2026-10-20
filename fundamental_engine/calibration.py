@@ -25,6 +25,8 @@ def market_implied(summaries, caps, as_of, assumption=.0875, clip=(-.10, .40), b
     cw_bear = sum(min(max(s.get('bear_irr') if s.get('bear_irr') is not None else r, clip[0]), clip[1]) * c for _, r, c, s in pts) / w
     kp = [(s.get('cost_of_equity'), c) for _, _, c, s in pts if isinstance(s.get('cost_of_equity'), (int, float))]
     ke_m = sum(k * c for k, c in kp) / sum(c for _, c in kp) if kp else None
+    ra = [(s.get('risk_adjustment'), c) for _, _, c, s in pts if isinstance(s.get('risk_adjustment'), (int, float))]
+    ra_m = sum(a * c for a, c in ra) / sum(c for _, c in ra) if ra else None
     rs = sorted(r for _, r, _, _ in pts)
     q = lambda f: rs[min(len(rs) - 1, int(f * len(rs)))]
     out = {'status': 'computed', 'as_of': as_of, 'n_sample': len(summaries), 'n_with_return': len(pts), 'coverage_by_value': w / total,
@@ -33,7 +35,10 @@ def market_implied(summaries, caps, as_of, assumption=.0875, clip=(-.10, .40), b
            'share_above_assumption': sum(1 for r in rs if r > assumption) / len(rs), 'assumption': assumption,
            'gap_to_assumption': cw - assumption, 'clip': clip,
            # the engine's own cost of equity for the same market: the gap is how much stricter it is than the market's pricing
-           'engine_market_cost_of_equity': ke_m, 'rate_shift': (ke_m - cw) if ke_m is not None else None}
+           'engine_market_cost_of_equity': ke_m, 'rate_shift': (ke_m - cw) if ke_m is not None else None,
+           # value-weighted net risk adjustment over risk-free + ERP: near zero when the add-ons are market-neutral (the ERP's
+           # definition); forecast.MARKET_NEUTRAL_ADJUSTMENT is re-measured from it
+           'mean_risk_adjustment': ra_m}
     out['index_input'] = {'value': cw, 'low': cw - band, 'high': cw + band,
                           'basis': (f"engine-consistent market return: cap-weighted base-case implied return of {len(pts)} of the {len(summaries)} "
                                     f"largest US operating companies valued by the same engine on {as_of} ({w / total:.0%} of their value)"),

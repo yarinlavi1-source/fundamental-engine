@@ -154,5 +154,16 @@ Companion to docs/EVIDENCE_STATUS.md, which separates what tests prove from what
     the return the engine finds the market priced at) puts most stocks below their price. Read three numbers together: the
     value at the engine's cost of equity (what to pay for that hurdle), the market-consistent value and, steadiest, the
     expected return against the market's (edge_vs_market). None of them is a price target, and the backtests still show no
-    demonstrated edge for the ranking.
+    demonstrated edge for the ranking. The 20.10.2026 research review removed two causes it could justify (risk add-ons
+    above the ERP's definition, a full fade of excess returns) and added dated rates; see
+    docs/VALUATION_RESEARCH_REVIEW_2026-10-20.md for what remains.
+40. **The outside view is a 2016 study of large global companies.** Base Rate Book growth includes acquisitions, keeps only
+    companies that survived each horizon, covers 1950-2015 (faster real GDP growth than projected now) and is restated with
+    a dated CPI and breakeven inflation (refresh `base_rates.CPI_NOW` / `INFLATION`). Non-USD reporters get no outside view
+    yet (no FX restatement of sales). A percentile is a reality check, not a probability for one company.
+41. **The cost-of-equity table is a documented risk table, not bottom-up industry betas.** Its value-weighted mean is
+    re-centred on risk-free + ERP (`MARKET_NEUTRAL_ADJUSTMENT`, measured on one sweep); individual rates can still sit away
+    from Damodaran's industry costs of equity (January 2026: utilities 5.0%, retail 7.5%, software 9.6%, semiconductors
+    10.7%). Excess returns regress toward Ku, not the sector's own mean, and below-typical margins catch up faster than the
+    base rates show for established companies (generous; candidate change pending a backtest).
 

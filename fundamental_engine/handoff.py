@@ -220,6 +220,18 @@ def plan(universe_folder, symbols, rows=None):
     return {'companies': out, 'not_in_universe': missing}
 
 
+def with_market_inputs(inputs, market, folder):
+    """inputs with the dated market inputs ({risk_free, equity_risk_premium}, each a forecast rate spec) added where the company
+    sets none: risk-free only for a USD reporter (others are discounted at their own currency's yield), the ERP for all."""
+    fc = dict((inputs or {}).get('forecast') or {})
+    ccy = _load(os.path.join(folder, 'company.json')).get('currency') if os.path.exists(os.path.join(folder, 'company.json')) else None
+    if market.get('risk_free') and 'risk_free' not in fc and (ccy or 'USD') == 'USD':
+        fc['risk_free'] = market['risk_free']
+    if market.get('equity_risk_premium') and 'equity_risk_premium' not in fc:
+        fc['equity_risk_premium'] = market['equity_risk_premium']
+    return {**(inputs or {}), 'forecast': fc}
+
+
 def run_company(folder, as_of, inputs=None, qualitative=None):
     """FactBook from <folder>/raw + pipeline.run. inputs / evidence_bundle.json in the folder are used when not passed.
     -> (factbook, casefile)."""

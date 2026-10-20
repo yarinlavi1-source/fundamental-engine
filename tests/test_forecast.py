@@ -4,6 +4,7 @@ The analysis / model-card / dataqa inputs are hand-built from the contract (docs
 tests do not depend on the parallel modules; ADBE numbers come from tests/fixtures/adbe_factbook_2026-10-19.json.
 """
 import json
+import os
 import unittest
 from copy import deepcopy
 from datetime import date, timedelta
@@ -924,7 +925,8 @@ class RepairRegressionTests(unittest.TestCase):
         comp, lev = fc['cost_of_equity']['components'], fc['cost_of_equity']['components']['leverage']
         self.assertIn('regulated_utility', [a['factor'] for a in comp['adjustments']])
         self.assertEqual(lev['status'], 'converged')
-        self.assertTrue(.065 < fc['cost_of_equity']['base'] < .10, fc['cost_of_equity']['base'])   # was ~18.9% (leverage on a beta-1 Ku)
+        # was ~18.9% (leverage on a beta-1 Ku); Damodaran's January 2026 industry data: Utility (General) 5.02%, Power 6.10%
+        self.assertTrue(.055 < fc['cost_of_equity']['base'] < .10, fc['cost_of_equity']['base'])
         self.assertGreater(fc['preview']['today']['base'], 30)
         merchant = forecast.build(*utility('Utilities - Renewable'))                   # no regulated returns: market asset risk
         self.assertNotIn('regulated_utility', [a['factor'] for a in merchant['cost_of_equity']['components']['adjustments']])
@@ -1493,3 +1495,69 @@ class IncompleteDebtTests(unittest.TestCase):
         self.assertIn('debt_incomplete', [m['id'] for m in fc['spec']['underwriting']['material_issues']])
         fb, an, card, qa = industrial()                            # 4% on 100m: no flag
         self.assertNotIn('debt_incomplete', [w['code'] for w in forecast.build(fb, an, card, qa)['warnings']])
+
+
+class EvidenceBasedRatesTests(unittest.TestCase):
+    """2026-10-20 literature review (docs/VALUATION_RESEARCH_REVIEW_2026-10-20.md)."""
+
+    def _unassessed(self, moat='unknown'):
+        fb, an, card, qa = adbe()
+        an['metrics']['incremental_roic_3y'] = {'value': .05}                    # no computed moat proxy
+        an['forensics'] = {'roic': {'series': [{'fiscal_year': f'FY{y}', 'roic': .30} for y in range(2021, 2026)]}}
+        card['dimensions'] = {'moat': {'assessment': moat}}
+        fc = forecast.build(fb, an, card, qa)
+        row = next(a for a in fc['assumptions'] if a['id'] == 'moat_basis')
+        return fc, row, {s: scen(fc['spec'], s)['terminal'] for s in SCEN}
+
+    def test_unassessed_moat_keeps_half_the_demonstrated_excess_return(self):
+        fc, row, t = self._unassessed()
+        self.assertEqual(row['values']['proxy_weight']['base'], 0.)
+        k = row['values']['unlevered_cost_of_capital']
+        shown = .30                                                                  # min(latest .62, 5-year average .30)
+        self.assertAlmostEqual(t['base']['roic'], k + .5 * (shown - k), places=6)
+        self.assertAlmostEqual(t['bull']['roic'], k + .71 * (shown - k), places=6)
+        self.assertAlmostEqual(t['bear']['roic'], k + .01, places=6)                # the bear still tests a moat that fails
+        self.assertIn('50% of the demonstrated excess', row['rationale'])
+
+    def test_weak_moat_keeps_the_full_fade(self):
+        fc, row, t = self._unassessed('weak')
+        k = row['values']['unlevered_cost_of_capital']
+        self.assertAlmostEqual(t['base']['roic'], k + .02, places=6)
+        self.assertAlmostEqual(t['bull']['roic'], k + .04, places=6)
+
+    def test_add_ons_are_market_neutral_and_the_identity_holds(self):
+        fb, an, card, qa = adbe()
+        fc = forecast.build(fb, an, card, qa)
+        comp = fc['cost_of_equity']['components']
+        row = next(a for a in comp['adjustments'] if a['factor'] == 'market_neutral')
+        self.assertEqual(row['value'], forecast.MARKET_NEUTRAL_ADJUSTMENT)
+        self.assertAlmostEqual(comp['table_rate'], comp['risk_free'] + comp['equity_risk_premium'] + sum(a['value'] for a in comp['adjustments']))
+
+    def test_outside_view_reads_the_base_case_against_its_size_class(self):
+        fb, an, card, qa = adbe()
+        fc = forecast.build(fb, an, card, qa)
+        ov = fc['anchors']['outside_view']
+        self.assertEqual(ov['base']['reference_class'], '$12,000-25,000m')        # ADBE ~ $24bn sales today, ~ $17bn in 2015 dollars
+        for s in SCEN:
+            for n, x in ov[s]['horizons'].items():
+                self.assertTrue(0 <= x['share_at_least'] <= 1)
+        b, br, bu = (ov[s]['horizons'][10]['share_at_least'] for s in ('base', 'bear', 'bull'))
+        self.assertTrue(bu <= b <= br)                                               # faster growth is rarer
+        self.assertIn('outside_view_growth', {a['id'] for a in fc['assumptions']})
+
+    def test_market_inputs_fill_only_what_the_company_does_not_set(self):
+        import tempfile
+        from fundamental_engine import handoff
+        market = {'risk_free': {'value': .0515, 'as_of': '2026-10-19', 'title': 't'},
+                  'equity_risk_premium': {'value': .042, 'as_of': '2026-10-01', 'title': 'e'}}
+        with tempfile.TemporaryDirectory() as d:
+            with open(os.path.join(d, 'company.json'), 'w') as f:
+                json.dump({'currency': 'USD'}, f)
+            out = handoff.with_market_inputs({'forecast': {'equity_risk_premium': {'value': .05, 'title': 'own'}}}, market, d)
+            self.assertEqual(out['forecast']['risk_free']['value'], .0515)
+            self.assertEqual(out['forecast']['equity_risk_premium']['value'], .05)    # the company's own input wins
+            with open(os.path.join(d, 'company.json'), 'w') as f:
+                json.dump({'currency': 'EUR'}, f)
+            out = handoff.with_market_inputs({}, market, d)
+            self.assertNotIn('risk_free', out['forecast'])                             # a EUR reporter keeps its own yield
+            self.assertEqual(out['forecast']['equity_risk_premium']['value'], .042)
