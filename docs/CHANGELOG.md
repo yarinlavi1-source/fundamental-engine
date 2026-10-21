@@ -1,3 +1,13 @@
+## 0.12.0 — results-day review from analyst comparison (21.10.2026)
+
+Includes the 0.11.2 work below. Adds `quarter_review` (MCP tool, `quarter-review` CLI, packet, trigger
+`earnings_event`): symmetric after-tax one-off normalization (no default tax; non-recurring unusual opex is added back
+in the same pass), opex-vs-revenue spread, adjusted-vs-reported gap, FCF and spendable vs restricted liquidity, segment
+profit carriers, KPI basis, guidance vs prior and attributed consensus, guidance track, peak-cycle run rate,
+dual-listing premium, bank justified P/TBV and required ROTE, EPS x multiple implied returns, numeric falsifiers.
+Four teaching inputs from third-party analyst posts (unverified) in examples/quarter;
+docs/ANALYST_COMPARISON_2026-10.md records what was adopted and what was rejected. 9 new tests. No accuracy claim.
+
 ## 0.11.2 (in progress, 20.10.2026)
 
 - Engine conservatism diagnosed and the honest fix (21.10.2026, `docs/ENGINE_CONSERVATISM_2026-10-21.md`). The 491-company

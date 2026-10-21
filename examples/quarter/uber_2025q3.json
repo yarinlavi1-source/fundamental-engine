@@ -1,0 +1,36 @@
+{
+  "_provenance": "Figures as stated in a third-party community analyst post about Uber Q3 2025 (user-supplied). Prior-year lines are back-calculated from stated growth rates. The ~0.45bn unusual legal/regulatory opex is derived from the post's 'ex-item opex grew ~12-13%'. The 21% tax rate on equity-stake gains and on the legal charge is an explicit assumption. NOT reconciled to Uber filings. as_of is the results date. Teaching case for the quarter_review tool, not a valuation.",
+  "company": "Uber Technologies",
+  "period_end": "2025-09-30",
+  "as_of": "2025-11-04",
+  "currency": "USD",
+  "source_ids": ["analyst_post_uber_2025q3"],
+  "current": {"revenue": 13.46e9, "operating_income": 1.1e9, "adjusted_ebitda": 2.25e9, "net_income": 6.6e9,
+              "operating_expenses": 4.2e9, "operating_cash_flow": 2.33e9, "capex": 0.098e9, "buybacks": 1.46e9},
+  "prior_year": {"revenue": 11.22e9, "operating_income": 1.048e9, "adjusted_ebitda": 1.69e9,
+                 "operating_expenses": 3.333e9, "operating_cash_flow": 2.157e9},
+  "one_offs": [
+    {"label": "Release of deferred-tax valuation allowance", "kind": "gain", "amount": 4.9e9, "pretax": false, "non_cash": true, "source_ids": ["analyst_post_uber_2025q3"]},
+    {"label": "Revaluation gains on equity stakes (Grab, Aurora, Didi)", "kind": "gain", "amount": 1.5e9, "pretax": true, "tax_rate": 0.21, "non_cash": true, "source_ids": ["analyst_post_uber_2025q3"]}
+  ],
+  "unusual_opex": [
+    {"label": "Legal and regulatory settlements", "amount": 0.45e9, "recurring": false, "tax_rate": 0.21, "source_ids": ["analyst_post_uber_2025q3"]}
+  ],
+  "balance": {"cash": 8.4e9, "short_term_investments": 0.5e9, "insurance_reserves": 12e9, "debt": 10.6e9, "source_ids": ["analyst_post_uber_2025q3"]},
+  "segments": [
+    {"name": "Mobility", "revenue": 7.68e9, "prior_revenue": 6.4e9, "profit": 2.04e9, "profit_definition": "segment adjusted EBITDA", "source_ids": ["analyst_post_uber_2025q3"]},
+    {"name": "Delivery", "revenue": 4.48e9, "prior_revenue": 3.473e9, "profit": 0.921e9, "prior_profit": 0.6265e9, "profit_definition": "segment adjusted EBITDA", "source_ids": ["analyst_post_uber_2025q3"]},
+    {"name": "Freight", "revenue": 1.31e9, "prior_revenue": 1.31e9, "profit": -0.02e9, "profit_definition": "segment adjusted EBITDA", "source_ids": ["analyst_post_uber_2025q3"]}
+  ],
+  "kpis": [
+    {"name": "Monthly active platform consumers", "value": 189e6, "prior": 161.5e6, "basis": "balance", "source_ids": ["analyst_post_uber_2025q3"]},
+    {"name": "Trips", "value": 3.512e9, "prior": 2.879e9, "basis": "flow", "source_ids": ["analyst_post_uber_2025q3"]}
+  ],
+  "guidance": [
+    {"metric": "gross bookings Q4 2025", "period": "Q4 2025", "low": 52.25e9, "high": 53.75e9, "source_ids": ["analyst_post_uber_2025q3"]},
+    {"metric": "adjusted EBITDA Q4 2025", "period": "Q4 2025", "low": 2.41e9, "high": 2.51e9, "source_ids": ["analyst_post_uber_2025q3"]}
+  ],
+  "falsifiers": [
+    {"id": "growth_floor", "metric": "gross bookings growth (holder's own 15% floor)", "direction": "below", "threshold": 0.15, "current": 0.21, "source_ids": ["analyst_post_uber_2025q3"]}
+  ]
+}

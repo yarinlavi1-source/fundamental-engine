@@ -62,7 +62,8 @@ def plan(request):
     mapping={'revenue_decline':'revenue_decline','losses':'potential','dilution':'funding',
              'expensive_quality':'expectations','turnaround':'revenue_decline',
              'portfolio_review':'portfolio','management_change':'management',
-             'emerging_growth':'frontier_discovery','bottleneck':'frontier_discovery','early_adoption':'frontier_discovery'}
+             'emerging_growth':'frontier_discovery','bottleneck':'frontier_discovery','early_adoption':'frontier_discovery',
+             'earnings_event':'quarter_review'}
     if not isinstance(triggers,list) or any(t not in mapping for t in triggers):
         raise ValueError('Unknown research trigger')
     topics=['operating_system','master_process','connector_contract','dossier_contract','evidence','company_type','earnings_quality','forensic','business',

@@ -1,0 +1,38 @@
+{
+  "_provenance": "Figures as stated in a third-party community analyst post (user-supplied, 2026-07-30). Prior-year lines are back-calculated from the stated growth rates; segment revenues are back-calculated from stated margins. Cost of equity 10% and long-run growth 4% are explicit assumptions, not engine defaults. Equity of ~10.5bn is inferred from the post's 'almost a fifth of equity' remark. NOT reconciled to SoFi filings. Teaching case for the quarter_review tool, not a valuation.",
+  "company": "SoFi Technologies",
+  "period_end": "2026-06-30",
+  "as_of": "2026-07-30",
+  "currency": "USD",
+  "source_ids": ["analyst_post_sofi_2026q2"],
+  "current": {"revenue": 1.2e9, "adjusted_ebitda": 358e6, "net_income": 157e6, "diluted_shares": 1.308e9},
+  "prior_year": {"revenue": 0.857e9, "adjusted_ebitda": 248.6e6, "net_income": 97.5e6},
+  "segments": [
+    {"name": "Lending", "revenue": 725e6, "profit": 399e6, "prior_profit": 244.8e6, "profit_definition": "contribution profit", "source_ids": ["analyst_post_sofi_2026q2"]},
+    {"name": "Financial services", "revenue": 391e6, "prior_revenue": 303e6, "profit": 179.9e6, "prior_profit": 157.6e6, "profit_definition": "contribution profit", "source_ids": ["analyst_post_sofi_2026q2"]},
+    {"name": "Technology platform", "revenue": 84.3e6, "prior_revenue": 109.5e6, "profit": 11.8e6, "prior_profit": 33.7e6, "profit_definition": "contribution profit", "source_ids": ["analyst_post_sofi_2026q2"]}
+  ],
+  "kpis": [
+    {"name": "Members", "value": 15.8e6, "prior": 11.7e6, "basis": "balance", "source_ids": ["analyst_post_sofi_2026q2"]},
+    {"name": "Products (cumulative, includes repaid loans)", "value": 24.4e6, "prior": 17.18e6, "basis": "cumulative", "source_ids": ["analyst_post_sofi_2026q2"]}
+  ],
+  "guidance": [
+    {"metric": "adjusted EBITDA FY2026", "period": "FY2026", "low": 1.6e9, "high": 1.6e9, "prior_low": 1.6e9, "prior_high": 1.6e9,
+     "related_raised_metric": "revenue FY2026", "source_ids": ["analyst_post_sofi_2026q2"]},
+    {"metric": "EPS FY2026", "period": "FY2026", "low": 0.60, "high": 0.60, "prior_low": 0.60, "prior_high": 0.60,
+     "related_raised_metric": "revenue FY2026", "source_ids": ["analyst_post_sofi_2026q2"]}
+  ],
+  "market": {
+    "price": 15.5, "price_as_of": "2026-07-30", "source_ids": ["analyst_post_sofi_2026q2"],
+    "forward_eps": [{"year": "2026", "value": 0.60, "origin": "consensus", "growth": 0.30, "source_ids": ["analyst_post_sofi_2026q2"]}],
+    "multiple_scenarios": [
+      {"name": "2028 EPS after 30%/yr growth", "target_date": "2028-12-31", "eps": 1.02, "multiples": [20, 25], "cost_of_equity": 0.10, "source_ids": ["analyst_post_sofi_2026q2"]}
+    ]
+  },
+  "bank": {"tangible_book_per_share": 7.34, "rote": 0.085, "cost_of_equity": 0.10, "growth": 0.04,
+           "capital_ratio": 0.188, "target_ratio": 0.135, "minimum_ratio": 0.105, "risk_weighted_assets": 48.7e9,
+           "fair_value_marks": 2.0e9, "equity": 10.5e9, "source_ids": ["analyst_post_sofi_2026q2"]},
+  "falsifiers": [
+    {"id": "rote_path", "metric": "ROTE at least 10% (illustrative test threshold, not management target)", "direction": "below", "threshold": 0.10, "current": 0.085, "source_ids": ["analyst_post_sofi_2026q2"]}
+  ]
+}

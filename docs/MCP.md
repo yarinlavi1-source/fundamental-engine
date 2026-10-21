@@ -101,6 +101,9 @@ protocol/runtime tests, not an assertion about the user's live Claude session.
 - `forensic_scores({case})`: Piotroski, Altman, Beneish, ROIC, Rule of 40.
 - `import_statements({income, balance?, cash_flow?, years?, as_of?})`: map Alpha
   Vantage statement payloads into history rows (no fetching).
+- `quarter_review({case})`: one reported quarter/year: one-off normalization, operating
+  leverage, liquidity, segments/KPIs, guidance vs expectations, cycle, listing premium,
+  bank P/TBV vs ROTE, multiple sensitivities and falsifiers. Read quarter_review.
 - `expectations_momentum({case})`: acceleration, margin expansion, beats/raises,
   estimate revisions (growth_valuation).
 - `plain_verdict({case})`: plain_version=1 reported history (+ optional valuation_case,

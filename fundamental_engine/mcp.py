@@ -64,6 +64,7 @@ TOOLS += [
  research_tool('classify_company','Identify company type from reported history: Damodaran life-cycle stage and Lynch category, acquisition/cycle flags, what decides value, key metrics, valuation fit and packets. Same input as plain_verdict. Read company_type.',{'case':{'type':'object'}},['case']),
  research_tool('forensic_scores','Piotroski F, Altman Z (or Z-double-prime), Beneish M, ROIC/incremental ROIC and Rule of 40 from history rows; missing fields stay unavailable. Screens, not verdicts. Read forensic.',{'case':{'type':'object'}},['case']),
  research_tool('import_statements','Map Alpha Vantage INCOME_STATEMENT/BALANCE_SHEET/CASH_FLOW payloads (already retrieved by the client) into history rows. Fetches nothing.',{'income':{'type':'object'},'balance':{'type':'object'},'cash_flow':{'type':'object'},'years':{'type':'integer'},'as_of':{'type':'string'}},['income']),
+ research_tool('quarter_review','Results-day review of one reported quarter/year: symmetric after-tax one-off normalization, opex vs revenue growth, FCF and spendable versus restricted liquidity, segment/KPI definitions, guidance vs prior and attributed consensus, guidance track, peak-cycle run-rate, dual-listing premium, bank P/TBV vs ROTE, EPS x multiple implied returns and thesis falsifiers. Read quarter_review first. Not a valuation or order.',{'case':{'type':'object'}},['case']),
  research_tool('expectations_momentum','Is the business outrunning expectations? Acceleration, margin expansion, beats/raises and estimate revisions from recent_quarters, expectations_track and estimate_revisions. Read growth_valuation.',{'case':{'type':'object'}},['case']),
  research_tool('plain_verdict','Return one concise Hebrew investment paragraph by default: current value/discount, dated conditional five-year value, potential/risk notes. Execute valuation_case and full research_dossier review; retain detailed_text. response_style:detailed opts into the long report. decision_notes require reviewed observation IDs. Read plain_language first. Research indication, not an order.',{'case':{'type':'object'}},['case']),
  research_tool('research_plan','Start/resume research using the client existing connectors. Returns stages and relevant brain packet IDs. No data is fetched.',{'request':{'type':'object'}},['request']),
@@ -268,6 +269,9 @@ class Server:
         if name == 'import_statements':
             from .connectors import from_alpha_vantage
             return from_alpha_vantage(args['income'], args.get('balance'), args.get('cash_flow'), args.get('years', 5), args.get('as_of'))
+        if name == 'quarter_review':
+            from .quarter import quarter_review
+            return quarter_review(args['case'])
         if name == 'expectations_momentum':
             from .growth import momentum
             return momentum(args['case'])

@@ -180,6 +180,9 @@ def main():
     pf.add_argument("--holdings", help="JSON {symbol: {sector, exposures, exposure_weights, casefile_summary, ...}}")
     pf.add_argument("--options", help="JSON file, or inline JSON object starting with '{', of analysis options: scenarios, "
                                       "single_name_cap, link_threshold, factor_tags, driver_tags, factor_weight_share, ...")
+    qr = subs.add_parser("quarter-review", help="Results-day review: one-offs, operating leverage, guidance, cycle, listing premium, bank checks")
+    qr.add_argument("input")
+    qr.add_argument("--json", action="store_true", help="Print the full JSON result instead of the Hebrew text")
     im = subs.add_parser("import-av", help="Map saved Alpha Vantage statement JSON files into plain history rows")
     im.add_argument("income")
     im.add_argument("--balance")
@@ -345,6 +348,10 @@ def main():
         elif args.command == "classify":
             from .profile import classify_company
             print(json.dumps(classify_company(read_json(args.input)),ensure_ascii=False,indent=2,allow_nan=False))
+        elif args.command == "quarter-review":
+            from .quarter import quarter_review
+            result = quarter_review(read_json(args.input))
+            print(json.dumps(result,ensure_ascii=False,indent=2,allow_nan=False) if args.json else result["text"])
         elif args.command == "import-av":
             from .connectors import from_alpha_vantage
             value = from_alpha_vantage(read_json(args.income), read_json(args.balance) if args.balance else None,

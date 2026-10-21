@@ -1,6 +1,7 @@
 # Fundamental Engine — Claude entry point
 
-Read START_HERE.md first. The user already has filing, web, market-data and portfolio
+Read START_HERE.md first (its "Resuming in a fresh session" section lists what is in Git, what to
+regenerate and the latest-state documents; finish every session by merging to main and updating it). The user already has filing, web, market-data and portfolio
 connections in Claude. Reuse those capabilities; this repository is the RESEARCH
 BRAIN, executable math and local research memory, not a replacement provider stack.
 
@@ -113,6 +114,14 @@ paid adoption and value capture, not famous partner logos. Run discovery_compare
 for progress; retain the opportunity while independently underwriting price/risk.
 Attach discovery_input to the dossier for audited provenance. Discovery does not
 change valuation arithmetic or grant permission to place trades.
+
+## Results-day review (v0.12, 21.10.2026)
+
+When a company just reported, run quarter_review (packet quarter_review, trigger
+earnings_event): normalize one-offs symmetrically, keep restricted funds out of
+liquidity, check KPI basis, compare guidance with prior and attributed consensus,
+flag peak-cycle run rates and listing premiums, and track numeric falsifiers. It is
+not a valuation. See docs/ANALYST_COMPARISON_2026-10.md.
 
 ## Session-specific numeric collection priority
 

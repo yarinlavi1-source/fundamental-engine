@@ -1,0 +1,28 @@
+{
+  "_provenance": "Figures as stated in a third-party community analyst post (user-supplied, 2026-07-31), converted by that author at 1,465 KRW/USD. NOT reconciled to SK hynix filings. The 24% tax rate on investment gains and the 0.1 share-per-ADR ratio are assumptions that reproduce the post's ~31bn normalized profit and ~106 USD local-equivalent; verify both. history_operating_margins are approximate annual figures for illustration only. Teaching case for the quarter_review tool, not a valuation.",
+  "company": "SK hynix (ADR line)",
+  "period_end": "2026-06-30",
+  "as_of": "2026-07-31",
+  "currency": "USD",
+  "reporting_currency": "KRW",
+  "fx": {"rate": 1465, "quote": "KRW per USD", "as_of": "2026-07-31", "source_ids": ["analyst_post_skhy_2026q2"]},
+  "source_ids": ["analyst_post_skhy_2026q2"],
+  "current": {"revenue": 54.1e9, "operating_income": 41.3e9, "adjusted_ebitda": 44.1e9, "net_income": 64.1e9,
+              "operating_cash_flow": 44.9e9, "capex": 7.3e9, "diluted_shares": 7.28e9},
+  "prior_year": {"revenue": 15.15e9, "operating_income": 6.3e9},
+  "prior_quarter": {"revenue": 35.83e9},
+  "one_offs": [
+    {"label": "Gains on sale and revaluation of investments", "kind": "gain", "amount": 43.2e9, "pretax": true,
+     "tax_rate": 0.24, "non_cash": true, "source_ids": ["analyst_post_skhy_2026q2"]}
+  ],
+  "history_operating_margins": [0.52, 0.10, 0.16, 0.29, 0.16, -0.24, 0.35, 0.42],
+  "market": {
+    "price": 132, "price_as_of": "2026-07-31", "source_ids": ["analyst_post_skhy_2026q2"],
+    "other_listing": {"name": "KOSPI common share", "price_local": 1553000, "local_per_quote_currency": 1465,
+                      "local_shares_per_unit": 0.1, "source_ids": ["analyst_post_skhy_2026q2"]},
+    "multiple_scenarios": [
+      {"name": "peak quarter x4 run-rate x multiple (post's table)", "target_date": "2027-07-31", "eps": 17.5,
+       "multiples": [6, 8, 10], "source_ids": ["analyst_post_skhy_2026q2"]}
+    ]
+  }
+}

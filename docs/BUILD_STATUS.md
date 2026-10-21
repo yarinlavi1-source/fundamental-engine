@@ -1,4 +1,8 @@
-# Current version: 0.11.2 (in progress) — 20.10.2026
+# Current version: 0.12.0 — 21.10.2026
+
+0.11.2 content plus the results-day `quarter_review` (docs/CHANGELOG.md, 0.12.0). Earlier verification below is unchanged.
+
+# Previous: 0.11.2 (in progress) — 20.10.2026
 
 Completing the engine end to end: every discovery channel as leads, banks and insurers valued, acquisition-aware growth,
 new economic types, deeper filing extraction (segments, convertibles, maturities, pay), foreign issuers in their own

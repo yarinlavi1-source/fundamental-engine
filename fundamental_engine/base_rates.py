@@ -115,7 +115,7 @@ def share_at_least(freqs, g):
             above += f
         elif g < hi:
             above += f * (hi - g) / (hi - lo)
-    return above / total
+    return min(1., above / total)  # float summation can drift a hair above 1
 
 
 def real(g_nominal, inflation=INFLATION):

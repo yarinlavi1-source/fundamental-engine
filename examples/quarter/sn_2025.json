@@ -1,0 +1,19 @@
+{
+  "_provenance": "Figures as stated in a third-party community analyst post about SharkNinja (user-supplied, 2026-08-26). FY2024 revenue is back-calculated from the stated 15.7% growth. The R&D-intensity falsifier threshold is illustrative. NOT reconciled to SharkNinja filings. Annual review run through the quarter_review tool to exercise guidance-track, concentration and falsifier checks; not a valuation.",
+  "company": "SharkNinja",
+  "period_end": "2025-12-31",
+  "as_of": "2026-08-26",
+  "currency": "USD",
+  "source_ids": ["analyst_post_sn_2026"],
+  "current": {"revenue": 6.4e9},
+  "prior_year": {"revenue": 5.53e9},
+  "concentration": [{"group": "Top 3 retail customers", "share": 0.457, "source_ids": ["analyst_post_sn_2026"]}],
+  "guidance_track": [
+    {"period": "FY2024", "unit": "rate", "low": 0.05, "high": 0.07, "actual": 0.30, "same_basis": true, "source_ids": ["analyst_post_sn_2026"]},
+    {"period": "FY2025", "unit": "rate", "low": 0.10, "high": 0.12, "actual": 0.157, "same_basis": true, "source_ids": ["analyst_post_sn_2026"]}
+  ],
+  "falsifiers": [
+    {"id": "rnd_intensity", "metric": "R&D as share of sales (innovation getting more expensive)", "direction": "above", "threshold": 0.07, "current": 0.058, "prior": 0.058, "source_ids": ["analyst_post_sn_2026"]},
+    {"id": "gross_margin", "metric": "gross margin (retailer bargaining power)", "direction": "below", "threshold": 0.47, "current": 0.50, "source_ids": ["analyst_post_sn_2026"]}
+  ]
+}
