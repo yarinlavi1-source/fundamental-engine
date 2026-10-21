@@ -1,0 +1,41 @@
+{
+ "_provenance": "Filing numbers only, copied from the scratch method run rddt_2026q2.json (2026-10-21): Reddit Q2-26 from the issuer 8-K press release (sec.gov 0001713445-26-000098) and 10-Q (0001713445-26-000100), AV INCOME_STATEMENT/BALANCE_SHEET for the annual margin history and the balance cross-check; the Q2 guide from the Q1-26 release. Every analyst-post, consensus, web-summary, falsifier and market item of the scratch run is removed. quarter_review case shape; WP7 peak-exception fixture (OM 28.8% vs median 13.6% + 15pp = 28.6%; leverage share 0.970).",
+ "company": "Reddit, Inc. (Class A)",
+ "period_end": "2026-06-30",
+ "as_of": "2026-08-26",
+ "currency": "USD",
+ "source_ids": ["rddt_8k_q226", "rddt_10q_q226", "av_income_statement_rddt"],
+ "sources": {"rddt_8k_q226": {"kind": "issuer_release", "available_at": "2026-08-05", "note": "release date approximate; verify"},
+             "rddt_10q_q226": {"kind": "issuer_filing", "available_at": "2026-08-05", "note": "filing date approximate; verify"},
+             "rddt_q126_release": {"kind": "issuer_release", "available_at": "2026-05-01", "note": "Q2 guide; date approximate"},
+             "av_income_statement_rddt": {"kind": "data_provider", "available_at": "2026-10-21"},
+             "av_balance_sheet_rddt": {"kind": "data_provider", "available_at": "2026-10-21"}},
+ "current": {"revenue": 804905000, "gross_profit": 734597000, "operating_income": 231716000, "adjusted_ebitda": 342810000, "net_income": 252848000,
+             "operating_expenses": 502881000, "operating_cash_flow": 261876000, "capex": 1134000, "diluted_shares": 202029721, "sbc": 100952000, "buybacks": 234591000},
+ "prior_year": {"revenue": 499627000, "gross_profit": 453727000, "operating_income": 67711000, "adjusted_ebitda": 166749000, "net_income": 89297000,
+                "operating_expenses": 386016000, "operating_cash_flow": 111331000, "diluted_shares": 199522433, "sbc": 89070000},
+ "prior_quarter": {"revenue": 663411000, "gross_profit": 607144000, "operating_income": 182912000},
+ "segments": [
+  {"name": "US revenue", "revenue": 638000000, "prior_revenue": 409000000, "source_ids": ["rddt_8k_q226"]},
+  {"name": "International revenue", "revenue": 167000000, "prior_revenue": 91000000, "source_ids": ["rddt_8k_q226"]},
+  {"name": "Other revenue (data licensing etc.)", "revenue": 43280000, "prior_revenue": 34842000, "source_ids": ["rddt_10q_q226"]}
+ ],
+ "kpis": [
+  {"name": "DAUq global (m)", "value": 130.3, "prior": 110.4, "basis": "active", "source_ids": ["rddt_8k_q226"]},
+  {"name": "DAUq US (m)", "value": 53.2, "prior": 50.3, "basis": "active", "source_ids": ["rddt_8k_q226"]},
+  {"name": "DAUq US logged-in (m)", "value": 23.1, "prior": 22.9, "basis": "active", "source_ids": ["rddt_8k_q226"]},
+  {"name": "DAUq international (m)", "value": 77.1, "prior": 60.1, "basis": "active", "source_ids": ["rddt_8k_q226"]},
+  {"name": "ARPU US ($/quarter)", "value": 11.85, "prior": 7.87, "basis": "flow", "source_ids": ["rddt_8k_q226"]},
+  {"name": "ARPU international ($/quarter)", "value": 2.26, "prior": 1.73, "basis": "flow", "source_ids": ["rddt_8k_q226"]}
+ ],
+ "guidance": [
+  {"metric": "revenue Q3-26", "period": "Q3-26", "low": 860000000, "high": 870000000, "comparable_actual": 584911000, "source_ids": ["rddt_8k_q226"]},
+  {"metric": "adjusted EBITDA Q3-26", "period": "Q3-26", "low": 385000000, "high": 395000000, "source_ids": ["rddt_8k_q226"]}
+ ],
+ "guidance_track": [
+  {"metric": "revenue Q2-26", "low": 715000000, "high": 725000000, "actual": 804905000, "same_basis": true, "source_ids": ["rddt_q126_release", "rddt_8k_q226"]},
+  {"metric": "adjusted EBITDA Q2-26", "low": 285000000, "high": 295000000, "actual": 342810000, "same_basis": true, "source_ids": ["rddt_q126_release", "rddt_8k_q226"]}
+ ],
+ "history_operating_margins": [0.020, 0.124, 0.010, 0.136, 0.237, 0.319, 0.276],
+ "balance": {"cash": 1486838000, "short_term_investments": 1299519000, "debt": 0, "source_ids": ["rddt_8k_q226", "av_balance_sheet_rddt"]}
+}

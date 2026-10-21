@@ -1,0 +1,347 @@
+{
+ "_schema": "econ_fixture_v1",
+ "_provenance": "analyst post figures (analyst_post_ibkr_2026q3); not reconciled to filings; arithmetic fixture, not truth; pins the design rules, never the analyst conclusions. Prior-period levels in expected are back-calculated from the post's rounded growth rates. The prior pass-through fee of 0 is what the post implies (\"vs 0 a year ago\").",
+ "company": "IBKR",
+ "name": "Interactive Brokers Group (Class A)",
+ "period_end": "2026-09-30",
+ "period": "quarter",
+ "as_of": "2026-10-21",
+ "currency": "USD",
+ "reconciled_to_filings": false,
+ "sources": {
+  "analyst_post_ibkr_2026q3": {
+   "kind": "analyst_post",
+   "available_at": "2026-10-21",
+   "note": "user-supplied third-party post, written about 2026-10-17; supplied 2026-10-21"
+  },
+  "ibkr_econ_2026q2_fixture": {
+   "kind": "prior_review",
+   "available_at": "2026-07-22",
+   "note": "tests/fixtures/econ/ibkr_2026q2.json: growth rates of the prior review"
+  }
+ },
+ "model_hint": {
+  "primary": "broker",
+  "card_type": "financials",
+  "profile_text": "investment brokerage; capital markets",
+  "select_reason": "financials + brokerage text + margin_loans/client_equity/darts KPIs; not the loans/deposits tree"
+ },
+ "lines": {
+  "revenue": {
+   "value": 1870000000.0,
+   "growth": 0.16,
+   "period": "quarter",
+   "label": "net revenues",
+   "source_ids": [
+    "analyst_post_ibkr_2026q3"
+   ]
+  },
+  "net_interest_income": {
+   "value": 1150000000.0,
+   "growth": 0.19,
+   "period": "quarter",
+   "source_ids": [
+    "analyst_post_ibkr_2026q3"
+   ]
+  },
+  "commissions": {
+   "value": 602000000.0,
+   "growth": 0.12,
+   "period": "quarter",
+   "pass_through": 30000000.0,
+   "prior_pass_through": 0.0,
+   "pass_through_label": "SEC fees passed through, ~30m; prior 0 as the post implies",
+   "source_ids": [
+    "analyst_post_ibkr_2026q3"
+   ]
+  },
+  "margin_interest_income": {
+   "value": 1110000000.0,
+   "growth": 0.36,
+   "period": "quarter",
+   "source_ids": [
+    "analyst_post_ibkr_2026q3"
+   ]
+  },
+  "pretax_income": {
+   "value": null,
+   "margin": 0.78,
+   "period": "quarter",
+   "source_ids": [
+    "analyst_post_ibkr_2026q3"
+   ]
+  },
+  "general_and_administrative": {
+   "value": 78000000.0,
+   "growth": 0.26,
+   "period": "quarter",
+   "source_ids": [
+    "analyst_post_ibkr_2026q3"
+   ]
+  },
+  "adjusted_eps": {
+   "value": 0.67,
+   "growth": 0.18,
+   "period": "quarter",
+   "source_ids": [
+    "analyst_post_ibkr_2026q3"
+   ]
+  }
+ },
+ "kpis": [
+  {
+   "id": "accounts",
+   "value": 5580000.0,
+   "growth": 0.35,
+   "kpi_basis": "balance",
+   "scope": "total",
+   "tag": "structural",
+   "source_ids": [
+    "analyst_post_ibkr_2026q3"
+   ]
+  },
+  {
+   "id": "net_new_accounts",
+   "value": 391000.0,
+   "kpi_basis": "flow",
+   "scope": "total",
+   "tag": "structural",
+   "window": "quarter",
+   "source_ids": [
+    "analyst_post_ibkr_2026q3"
+   ]
+  },
+  {
+   "id": "client_equity",
+   "value": 965000000000.0,
+   "growth": 0.27,
+   "kpi_basis": "balance",
+   "scope": "total",
+   "tag": "cyclical",
+   "source_ids": [
+    "analyst_post_ibkr_2026q3"
+   ]
+  },
+  {
+   "id": "darts",
+   "value": 4270000.0,
+   "growth": 0.18,
+   "growth_qoq": -0.11,
+   "kpi_basis": "average",
+   "scope": "total",
+   "tag": "cyclical",
+   "source_ids": [
+    "analyst_post_ibkr_2026q3"
+   ]
+  },
+  {
+   "id": "margin_loans",
+   "value": 105200000000.0,
+   "growth": 0.36,
+   "kpi_basis": "balance",
+   "scope": "total",
+   "tag": "cyclical",
+   "note": "108.5bn at end-June",
+   "source_ids": [
+    "analyst_post_ibkr_2026q3"
+   ]
+  },
+  {
+   "id": "margin_loans",
+   "value": 104000000000.0,
+   "prior": 70800000000.0,
+   "growth": 0.47,
+   "kpi_basis": "average",
+   "scope": "total",
+   "tag": "cyclical",
+   "window": "quarter",
+   "source_ids": [
+    "analyst_post_ibkr_2026q3"
+   ]
+  },
+  {
+   "id": "margin_rate",
+   "value": 0.0425,
+   "prior": 0.046,
+   "kpi_basis": "average",
+   "scope": "total",
+   "tag": "macro",
+   "unit": "rate",
+   "source_ids": [
+    "analyst_post_ibkr_2026q3"
+   ]
+  },
+  {
+   "id": "equity_per_account",
+   "value": 173000.0,
+   "prior": 184000.0,
+   "kpi_basis": "balance",
+   "scope": "total",
+   "tag": "mix",
+   "note": "post's rounded figures; expected recomputes from client_equity/accounts",
+   "source_ids": [
+    "analyst_post_ibkr_2026q3"
+   ]
+  },
+  {
+   "id": "revenue_per_account",
+   "value": 1340.0,
+   "prior": 1560.0,
+   "kpi_basis": "balance",
+   "annualized": true,
+   "scope": "total",
+   "note": "post's rounded figures; expected recomputes",
+   "source_ids": [
+    "analyst_post_ibkr_2026q3"
+   ]
+  }
+ ],
+ "sensitivities": [
+  {
+   "driver": "US policy rate -25bp",
+   "annual_impact": -83000000.0,
+   "base_annual": 4600000000.0,
+   "base_label": "NII quarter x4",
+   "source_ids": [
+    "analyst_post_ibkr_2026q3"
+   ]
+  },
+  {
+   "driver": "other-currency rates -25bp",
+   "annual_impact": -35000000.0,
+   "base_annual": 4600000000.0,
+   "base_label": "NII quarter x4",
+   "source_ids": [
+    "analyst_post_ibkr_2026q3"
+   ]
+  }
+ ],
+ "macro": {
+  "us_policy_rate_change_yoy_bp": -63,
+  "source_ids": [
+   "analyst_post_ibkr_2026q3"
+  ]
+ },
+ "prior_review_growth": {
+  "source_ids": [
+   "ibkr_econ_2026q2_fixture"
+  ],
+  "darts": 0.36,
+  "margin_loans": 0.67,
+  "client_equity": 0.4,
+  "accounts": 0.34
+ },
+ "market": {
+  "price": 85.7,
+  "price_as_of": "2026-10-17",
+  "label": "premarket per the post",
+  "source_ids": [
+   "analyst_post_ibkr_2026q3"
+  ]
+ },
+ "analyst_figures": {
+  "kind": "analyst_estimate",
+  "fy2026_adj_eps": 2.65,
+  "fy2029_adj_eps": 5.0,
+  "prior_fy2029_adj_eps": 5.8,
+  "profit_growth_from_35pct_accounts": [
+   0.15,
+   0.18
+  ],
+  "source_ids": [
+   "analyst_post_ibkr_2026q3"
+  ],
+  "note": "attributed estimates; never engine inputs"
+ },
+ "expected": {
+  "revenue_per_account": {
+   "basis": "end-of-period accounts, quarter x4",
+   "value": 1340.5,
+   "prior": 1560.1,
+   "change": -0.14074,
+   "pct": -14.07,
+   "derived_from": "1.87e9*4/5.58e6; prior (1.87e9/1.16)*4/(5.58e6/1.35)"
+  },
+  "equity_per_account": {
+   "tag": "mix",
+   "value": 172939.0,
+   "prior": 183833.0,
+   "change": -0.05926,
+   "pct": -5.93,
+   "derived_from": "965e9/5.58e6; prior (965e9/1.27)/(5.58e6/1.35)"
+  },
+  "revenue_yield_on_equity": {
+   "tag": "cyclical",
+   "basis": "quarter x4 over end-of-period client equity",
+   "value": 0.007751,
+   "prior": 0.008486,
+   "pct": 0.775,
+   "prior_pct": 0.849,
+   "change": -0.08661,
+   "pct_change": -8.66,
+   "derived_from": "1.87e9*4/965e9; prior (1.87e9/1.16)*4/(965e9/1.27)"
+  },
+  "growth_split": {
+   "line": "revenue",
+   "factors": {
+    "accounts": 1.35,
+    "equity_per_account": 0.94074,
+    "revenue_yield_on_equity": 0.91339
+   },
+   "product": 0.85926,
+   "reported": 1.16,
+   "residual": 0.0,
+   "log_shares": {
+    "structural": 0.3001,
+    "mix": -0.0611,
+    "cyclical": -0.0906
+   },
+   "derived_from": "0.9407*0.9134 = 0.85926 = 1.16/1.35"
+  },
+  "margin_interest_identity": {
+   "balance_factor": 1.4689,
+   "rate_factor": 0.9239,
+   "product": 1.3572,
+   "reported": 1.36,
+   "residual_pp": 0.28,
+   "status": "consistent",
+   "derived_from": "(104/70.8)*(4.25/4.60) vs 1.36"
+  },
+  "commissions_ex_pass_through_growth": {
+   "value": 0.06419,
+   "pct": 6.42,
+   "derived_from": "(602-30)/(602/1.12-0)-1"
+  },
+  "rate_sensitivity_share": {
+   "value": 0.01804,
+   "pct": 1.8,
+   "derived_from": "83e6 / (1.15e9*4)",
+   "label": "per 25bp, share of annualized NII"
+  },
+  "cyclical_deceleration": {
+   "value": true,
+   "rule": "cyclical factors slow by more than 10pp while structural stays within +-3pp",
+   "cyclical_changes_pp": {
+    "darts": -18,
+    "margin_loans": -31,
+    "client_equity": -13
+   },
+   "structural_change_pp": {
+    "accounts": 1
+   }
+  },
+  "per_unit_vs_units": {
+   "fires": true,
+   "rule": "units grow while per-unit value falls more than 5%"
+  },
+  "cyclical_unwind": {
+   "runnable": false,
+   "reason": "no per-unit history supplied"
+  },
+  "render_he": {
+   "how_it_earns": "5.6 מיליון חשבונות (+35% בשנה, צמיחה מבנית) × כ־1,340$ הכנסה לחשבון בשנה (−14%: כ־6% כי החשבונות החדשים קטנים יותר, וכ־9% כי הריבית והמסחר ירדו, מחזורי)",
+   "how_it_earns_len": 152,
+   "max_len": 220
+  }
+ }
+}

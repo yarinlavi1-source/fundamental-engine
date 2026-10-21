@@ -1,0 +1,132 @@
+{
+ "_schema": "econ_fixture_v1",
+ "_provenance": "KPI levels from IBKR 2Q26 8-K Ex.99.1 as carried in the scratch method case ibkr_2q26.json; growth rates are the analyst post's rounded figures (analyst_post_ibkr_2026q2); not reconciled to filings beyond that scratch read; arithmetic fixture, not truth; pins the design rules, never the analyst conclusions. Serves as the prior review for the Q3-26 cyclical_deceleration test (WP3 #7).",
+ "company": "IBKR",
+ "name": "Interactive Brokers Group (Class A)",
+ "period_end": "2026-06-30",
+ "period": "quarter",
+ "as_of": "2026-07-22",
+ "currency": "USD",
+ "reconciled_to_filings": false,
+ "sources": {
+  "ibkr_8k_ex99_2q26": {
+   "kind": "issuer_release",
+   "available_at": "2026-07-22",
+   "note": "release date taken from the scratch case as_of; verify"
+  },
+  "analyst_post_ibkr_2026q2": {
+   "kind": "analyst_post",
+   "available_at": "2026-07-22",
+   "note": "user-supplied third-party post"
+  },
+  "ibkr_2q26_call_transcript": {
+   "kind": "issuer_transcript",
+   "available_at": "2026-07-22",
+   "note": "rate sensitivity as stated by the CFO, per the scratch case"
+  }
+ },
+ "model_hint": {
+  "primary": "broker",
+  "card_type": "financials",
+  "profile_text": "investment brokerage; capital markets"
+ },
+ "lines": {
+  "revenue": {
+   "value": 1896000000.0,
+   "prior": 1480000000.0,
+   "growth": 0.28,
+   "period": "quarter",
+   "label": "net revenues",
+   "source_ids": [
+    "ibkr_8k_ex99_2q26",
+    "analyst_post_ibkr_2026q2"
+   ]
+  },
+  "pretax_income": {
+   "value": null,
+   "margin": 0.77,
+   "prior_margin": 0.75,
+   "period": "quarter",
+   "source_ids": [
+    "ibkr_8k_ex99_2q26",
+    "analyst_post_ibkr_2026q2"
+   ]
+  }
+ },
+ "kpis": [
+  {
+   "id": "accounts",
+   "value": 5190000.0,
+   "growth": 0.34,
+   "kpi_basis": "balance",
+   "scope": "total",
+   "tag": "structural",
+   "source_ids": [
+    "ibkr_8k_ex99_2q26",
+    "analyst_post_ibkr_2026q2"
+   ]
+  },
+  {
+   "id": "client_equity",
+   "value": 930300000000.0,
+   "growth": 0.4,
+   "kpi_basis": "balance",
+   "scope": "total",
+   "tag": "cyclical",
+   "source_ids": [
+    "ibkr_8k_ex99_2q26",
+    "analyst_post_ibkr_2026q2"
+   ]
+  },
+  {
+   "id": "darts",
+   "value": 4820000.0,
+   "growth": 0.36,
+   "kpi_basis": "average",
+   "scope": "total",
+   "tag": "cyclical",
+   "source_ids": [
+    "ibkr_8k_ex99_2q26",
+    "analyst_post_ibkr_2026q2"
+   ]
+  },
+  {
+   "id": "margin_loans",
+   "value": 108500000000.0,
+   "growth": 0.67,
+   "kpi_basis": "balance",
+   "scope": "total",
+   "tag": "cyclical",
+   "source_ids": [
+    "ibkr_8k_ex99_2q26",
+    "analyst_post_ibkr_2026q2"
+   ]
+  }
+ ],
+ "sensitivities": [
+  {
+   "driver": "Fed funds -25bp",
+   "annual_impact": -81000000.0,
+   "base_annual": 4240000000.0,
+   "base_label": "annual net revenues per the scratch case",
+   "source_ids": [
+    "ibkr_2q26_call_transcript"
+   ]
+  }
+ ],
+ "market": {
+  "price": 93.5,
+  "price_as_of": "2026-07-22",
+  "source_ids": [
+   "analyst_post_ibkr_2026q2"
+  ]
+ },
+ "expected": {
+  "growth_snapshot_for_deceleration": {
+   "darts": 0.36,
+   "margin_loans": 0.67,
+   "client_equity": 0.4,
+   "accounts": 0.34
+  }
+ }
+}

@@ -1,0 +1,269 @@
+{
+ "_schema": "econ_fixture_v1",
+ "_provenance": "analyst post figures (analyst_post_sofi_2026q2), the same post as examples/quarter/sofi_2026q2.json; not reconciled to filings; arithmetic fixture, not truth; pins the design rules, never the analyst conclusions. The P/TBV of 2.15 is the post's stated figure (the quarter example computes 2.11 from 15.5/7.34). Cost of equity 10% and long-run growth 4% are explicit assumptions carried from that example. The 3.7% normalized NCO is the analyst's estimate, attributed; the base case supplies only the 2.62% headline so that nco_basis fires.",
+ "company": "SOFI",
+ "name": "SoFi Technologies",
+ "period_end": "2026-06-30",
+ "period": "quarter",
+ "as_of": "2026-07-30",
+ "currency": "USD",
+ "reconciled_to_filings": false,
+ "sources": {
+  "analyst_post_sofi_2026q2": {
+   "kind": "analyst_post",
+   "available_at": "2026-07-30",
+   "note": "user-supplied third-party post"
+  },
+  "assumption_coe_growth": {
+   "kind": "test_assumption",
+   "available_at": "2026-07-30",
+   "note": "COE 10%, g 4%: explicit assumptions, not engine defaults"
+  }
+ },
+ "model_hint": {
+  "primary": "digital_bank",
+  "card_type": "financials"
+ },
+ "lines": {
+  "revenue": {
+   "value": 1200000000.0,
+   "prior": 857000000.0,
+   "period": "quarter",
+   "label": "adjusted net revenue",
+   "source_ids": [
+    "analyst_post_sofi_2026q2"
+   ]
+  },
+  "adjusted_ebitda": {
+   "value": 358000000.0,
+   "prior": 248600000.0,
+   "period": "quarter",
+   "source_ids": [
+    "analyst_post_sofi_2026q2"
+   ]
+  },
+  "net_income": {
+   "value": 157000000.0,
+   "prior": 97500000.0,
+   "period": "quarter",
+   "source_ids": [
+    "analyst_post_sofi_2026q2"
+   ]
+  },
+  "diluted_shares": {
+   "value": 1308000000.0,
+   "period": "quarter",
+   "source_ids": [
+    "analyst_post_sofi_2026q2"
+   ]
+  }
+ },
+ "segments": [
+  {
+   "name": "Lending",
+   "revenue": 725000000.0,
+   "profit": 399000000.0,
+   "prior_profit": 244800000.0,
+   "margin": 0.55,
+   "profit_definition": "contribution profit",
+   "source_ids": [
+    "analyst_post_sofi_2026q2"
+   ]
+  },
+  {
+   "name": "Financial services",
+   "revenue": 391000000.0,
+   "prior_revenue": 303000000.0,
+   "profit": 179900000.0,
+   "prior_profit": 157600000.0,
+   "profit_definition": "contribution profit",
+   "source_ids": [
+    "analyst_post_sofi_2026q2"
+   ]
+  },
+  {
+   "name": "Technology platform",
+   "revenue": 84300000.0,
+   "prior_revenue": 109500000.0,
+   "profit": 11800000.0,
+   "prior_profit": 33700000.0,
+   "profit_definition": "contribution profit",
+   "source_ids": [
+    "analyst_post_sofi_2026q2"
+   ]
+  }
+ ],
+ "kpis": [
+  {
+   "id": "members",
+   "value": 15800000.0,
+   "prior": 11700000.0,
+   "kpi_basis": "balance",
+   "scope": "total",
+   "tag": "structural",
+   "source_ids": [
+    "analyst_post_sofi_2026q2"
+   ]
+  },
+  {
+   "id": "products",
+   "value": 24400000.0,
+   "prior": 17180000.0,
+   "kpi_basis": "cumulative",
+   "scope": "total",
+   "tag": "structural",
+   "note": "cumulative, includes repaid loans; not active",
+   "source_ids": [
+    "analyst_post_sofi_2026q2"
+   ]
+  },
+  {
+   "id": "cross_buy_share",
+   "values": [
+    0.35,
+    0.43,
+    0.51
+   ],
+   "periods": null,
+   "kpi_basis": "rate",
+   "scope": "total",
+   "note": "three successive disclosures as the post lists them; dates not given",
+   "source_ids": [
+    "analyst_post_sofi_2026q2"
+   ]
+  },
+  {
+   "id": "deposits",
+   "value": 45500000000.0,
+   "kpi_basis": "balance",
+   "scope": "total",
+   "tag": "structural",
+   "source_ids": [
+    "analyst_post_sofi_2026q2"
+   ]
+  },
+  {
+   "id": "deposit_cost_advantage",
+   "value": 0.0156,
+   "kpi_basis": "rate",
+   "unit": "rate",
+   "label": "deposits cost 156bp less than warehouse funding",
+   "source_ids": [
+    "analyst_post_sofi_2026q2"
+   ]
+  }
+ ],
+ "funding": {
+  "deposits": 45500000000.0,
+  "spread_vs_alternative": 0.0156,
+  "post_annual_benefit": 712000000.0,
+  "source_ids": [
+   "analyst_post_sofi_2026q2"
+  ]
+ },
+ "bank": {
+  "tangible_book_per_share": 7.34,
+  "diluted_shares": 1308000000.0,
+  "rote": 0.085,
+  "price_to_tangible_book": 2.15,
+  "cost_of_equity": 0.1,
+  "growth": 0.04,
+  "capital_ratio": 0.188,
+  "target_ratio_range": [
+   0.12,
+   0.15
+  ],
+  "minimum_ratio": 0.105,
+  "risk_weighted_assets": 48700000000.0,
+  "fair_value_marks": 2000000000.0,
+  "equity": 10500000000.0,
+  "source_ids": [
+   "analyst_post_sofi_2026q2",
+   "assumption_coe_growth"
+  ],
+  "note": "equity ~10.5bn inferred in the quarter example from \"almost a fifth of equity\"; target range per the post (12-15%)"
+ },
+ "credit": {
+  "loan_sales_disclosed": true,
+  "nco_headline": 0.0262,
+  "nco_normalized": null,
+  "variants": {
+   "normalized_supplied": {
+    "nco_normalized": {
+     "value": 0.037,
+     "kind": "analyst_estimate",
+     "source_ids": [
+      "analyst_post_sofi_2026q2"
+     ]
+    }
+   }
+  },
+  "source_ids": [
+   "analyst_post_sofi_2026q2"
+  ]
+ },
+ "market": {
+  "price": 15.5,
+  "price_as_of": "2026-07-30",
+  "source_ids": [
+   "analyst_post_sofi_2026q2"
+  ]
+ },
+ "expected": {
+  "products_per_member": {
+   "value": 1.544,
+   "label": "cumulative, not active",
+   "derived_from": "24.4e6/15.8e6"
+  },
+  "deposit_benefit": {
+   "computed": 709800000.0,
+   "post": 712000000.0,
+   "diff": -0.0031,
+   "pct": -0.31,
+   "status": "consistent",
+   "derived_from": "45.5e9*0.0156"
+  },
+  "bank_capital": {
+   "excess_capital_range": [
+    1850600000.0,
+    3311600000.0
+   ],
+   "tce": 9600720000.0,
+   "net_income_annual_at_rote": 816061200.0,
+   "rote_if_all_excess_returned": [
+    0.1053,
+    0.1298
+   ],
+   "rote_bound_pct": [
+    10.5,
+    13.0
+   ],
+   "bound_label": "upper bound: ignores the yield the excess earns",
+   "price_implied_rote": 0.169,
+   "price_implied_rote_pct": 16.9,
+   "capital_lever_insufficient": true,
+   "gap_pp": [
+    3.9,
+    6.4
+   ],
+   "headroom_to_minimum_pp": 8.3,
+   "midpoint_never_used": true,
+   "derived_from": "(0.188-0.15)*48.7e9 .. (0.188-0.12)*48.7e9; TCE 7.34*1.308e9; NI 0.085*TCE; NI/(TCE-excess); g + P/TBV*(COE-g)"
+  },
+  "nco_basis": {
+   "base": {
+    "flag": "nco_basis",
+    "severity": "high",
+    "plus": "open question"
+   },
+   "normalized_supplied": {
+    "nco_used": 0.037,
+    "label": "normalized (analyst estimate)"
+   }
+  },
+  "render_he": {
+   "how_it_earns": "15.8 מיליון לקוחות × 1.5 מוצרים ללקוח (ספירה מצטברת); הפיקדונות זולים בכ־710 מיליון$ בשנה ממימון אחר",
+   "price_requires_units_extension": "…; במונחי הבנק: תשואה של כ־17% על ההון המוחשי, מול כ־8.5% היום. גם החזרה של כל ההון העודף מביאה רק לכ־10.5%–13%; השאר צריך לבוא מרווח גבוה יותר"
+  }
+ }
+}

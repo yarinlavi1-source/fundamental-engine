@@ -1,0 +1,165 @@
+{
+ "_schema": "econ_fixture_v1",
+ "_provenance": "analyst post figures (analyst_post_pltr_2026q2); not reconciled to filings except where a line is also carried in pltr_2026q2_filed.json; arithmetic fixture, not truth; pins the design rules, never the analyst conclusions. US commercial customer growth and revenue growth are quarter-on-quarter; the top-20 average is TTM over all customers: the two scopes/windows cannot be compared (design correction 5). The prior top-20 average is back-calculated from the post's +67%.",
+ "company": "PLTR",
+ "name": "Palantir Technologies",
+ "period_end": "2026-06-30",
+ "period": "quarter",
+ "as_of": "2026-08-04",
+ "currency": "USD",
+ "reconciled_to_filings": false,
+ "sources": {
+  "analyst_post_pltr_2026q2": {
+   "kind": "analyst_post",
+   "available_at": "2026-08-04",
+   "note": "user-supplied third-party post; results date used as availability"
+  },
+  "pltr_8k_q2_2026_ex991": {
+   "kind": "issuer_release",
+   "available_at": "2026-08-04",
+   "note": "cross-reference: tests/fixtures/econ/pltr_2026q2_filed.json"
+  }
+ },
+ "model_hint": {
+  "primary": "data_platform_software",
+  "card_type": "subscription_software"
+ },
+ "lines": {
+  "revenue": {
+   "value": 1935000000.0,
+   "growth": 0.93,
+   "period": "quarter",
+   "window": "y/y",
+   "source_ids": [
+    "analyst_post_pltr_2026q2",
+    "pltr_8k_q2_2026_ex991"
+   ]
+  },
+  "operating_expenses": {
+   "value": null,
+   "growth": 0.37,
+   "period": "quarter",
+   "window": "y/y",
+   "source_ids": [
+    "analyst_post_pltr_2026q2"
+   ]
+  },
+  "sbc": {
+   "value": 265000000.0,
+   "period": "quarter",
+   "source_ids": [
+    "analyst_post_pltr_2026q2",
+    "pltr_8k_q2_2026_ex991"
+   ]
+  },
+  "us_commercial_revenue": {
+   "value": 764000000.0,
+   "growth_qoq": 0.28,
+   "period": "quarter",
+   "scope": "us_commercial",
+   "window": "q/q",
+   "source_ids": [
+    "analyst_post_pltr_2026q2",
+    "pltr_8k_q2_2026_ex991"
+   ]
+  }
+ },
+ "revenue_growth_history": {
+  "values": [
+   0.7,
+   0.85,
+   0.93
+  ],
+  "label": "y/y revenue growth of the last three quarters ending Q2-26, in order, as the post states them",
+  "source_ids": [
+   "analyst_post_pltr_2026q2"
+  ]
+ },
+ "kpis": [
+  {
+   "id": "customers",
+   "label": "US commercial customers",
+   "value": null,
+   "growth": 0.06,
+   "window": "q/q",
+   "kpi_basis": "balance",
+   "scope": "us_commercial",
+   "tag": "structural",
+   "source_ids": [
+    "analyst_post_pltr_2026q2"
+   ]
+  },
+  {
+   "id": "net_revenue_retention",
+   "value": 1.57,
+   "prior": 1.5,
+   "kpi_basis": "rate",
+   "window": "TTM",
+   "scope": "total",
+   "tag": "structural",
+   "source_ids": [
+    "analyst_post_pltr_2026q2"
+   ]
+  },
+  {
+   "id": "top_n_average_revenue",
+   "n": 20,
+   "value": 124000000.0,
+   "prior": 74250000.0,
+   "growth": 0.67,
+   "kpi_basis": "flow",
+   "window": "TTM",
+   "scope": "total",
+   "note": "prior back-calculated from +67%",
+   "source_ids": [
+    "analyst_post_pltr_2026q2"
+   ]
+  },
+  {
+   "id": "top_n_share",
+   "n": 20,
+   "value": 0.4,
+   "prior": null,
+   "kpi_basis": "rate",
+   "window": "TTM",
+   "scope": "total",
+   "note": "\"about 40% of revenue\"",
+   "source_ids": [
+    "analyst_post_pltr_2026q2"
+   ]
+  }
+ ],
+ "ttm_revenue": {
+  "value": null,
+  "note": "supply from filings when running top_n_inconsistent; the design test uses a synthetic value >5% away"
+ },
+ "expected": {
+  "expansion": {
+   "revenue_per_customer_growth": 0.20755,
+   "pct": 20.75,
+   "per_unit_log_share": 0.764,
+   "ndr_change": 0.07,
+   "reading": "expansion_led",
+   "rule": "expansion_led needs NDR > 1.10",
+   "window": "q/q, US commercial",
+   "derived_from": "1.28/1.06-1; ln(1.2075)/ln(1.28)"
+  },
+  "top_n": {
+   "average_growth": 0.67,
+   "total": 2480000000.0,
+   "implied_ttm_revenue_at_share": 6200000000.0,
+   "share_trend": "unknown",
+   "inconsistent_if_supplied_ttm_more_than_pct_away": 5,
+   "scope_mismatch_if_compared_with": "us_commercial q/q split",
+   "derived_from": "20*124e6; /0.40"
+  },
+  "peak_exception_inputs": {
+   "opex_growth": 0.37,
+   "revenue_growth": 0.93,
+   "filed_fixture": "pltr_2026q2_filed.json"
+  },
+  "render_he": {
+   "how_it_earns": "לקוחות קיימים קונים יותר: מספר הלקוחות המסחריים בארה״ב +6% ברבעון, וההכנסה מכל לקוח +21%"
+  }
+ }
+}

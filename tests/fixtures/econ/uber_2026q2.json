@@ -1,0 +1,92 @@
+{
+ "_schema": "econ_fixture_v1",
+ "_provenance": "figures recorded in the 2026-10 analyst comparison journal from the analyst's later posts (revenue +12% reported, gross bookings +21-22% constant currency after business-model changes; the lower end is used); not reconciled to filings; arithmetic fixture, not truth; pins the design rules, never the analyst conclusions. variants.reported_basis is a labelled TEST ASSUMPTION (the same +21% on a reported basis) that exercises the take-rate arithmetic; it is not a reported figure. Evidence of the business-model change is NOT supplied: the reclassification tag stays unproven.",
+ "company": "UBER",
+ "name": "Uber Technologies",
+ "period_end": "2026-06-30",
+ "period": "quarter",
+ "as_of": "2026-10-21",
+ "currency": "USD",
+ "reconciled_to_filings": false,
+ "sources": {
+  "comparison_journal_uber_2026q2": {
+   "kind": "comparison_journal",
+   "available_at": "2026-10-21",
+   "note": "docs/ANALYST_COMPARISON_2026-10 working journal; figures only"
+  },
+  "test_assumption_reported_gb": {
+   "kind": "test_assumption",
+   "available_at": "2026-10-21",
+   "note": "synthetic basis switch for WP3 #3b; never a reported figure"
+  }
+ },
+ "model_hint": {
+  "primary": "marketplace",
+  "card_type": "subscription_software",
+  "provider_label": "Software - Application"
+ },
+ "lines": {
+  "revenue": {
+   "value": null,
+   "growth": 0.12,
+   "period": "quarter",
+   "currency_basis": "reported",
+   "window": "y/y",
+   "source_ids": [
+    "comparison_journal_uber_2026q2"
+   ]
+  }
+ },
+ "kpis": [
+  {
+   "id": "gross_bookings",
+   "value": null,
+   "growth": 0.21,
+   "kpi_basis": "flow",
+   "scope": "total",
+   "currency_basis": "constant_currency",
+   "window": "y/y",
+   "source_ids": [
+    "comparison_journal_uber_2026q2"
+   ],
+   "note": "journal range 21-22%; lower end used"
+  }
+ ],
+ "reclassification_evidence": null,
+ "variants": {
+  "reported_basis": {
+   "kpis": [
+    {
+     "id": "gross_bookings",
+     "value": null,
+     "growth": 0.21,
+     "kpi_basis": "flow",
+     "scope": "total",
+     "currency_basis": "reported",
+     "window": "y/y",
+     "source_ids": [
+      "test_assumption_reported_gb"
+     ]
+    }
+   ]
+  }
+ },
+ "expected": {
+  "base": {
+   "take_rate_identity_status": "basis_mismatch",
+   "take_rate_change": null,
+   "shown_side_by_side": {
+    "gross_bookings_growth_cc": 0.21,
+    "revenue_growth_reported": 0.12
+   },
+   "open_question": "supply reported gross bookings growth"
+  },
+  "reported_basis": {
+   "take_rate_change": -0.07438,
+   "pct": -7.44,
+   "flag": "take_rate_shift",
+   "tag": "reclassification only with evidence of the business-model change; otherwise untagged",
+   "derived_from": "(1+0.12)/(1+0.21)-1"
+  }
+ }
+}

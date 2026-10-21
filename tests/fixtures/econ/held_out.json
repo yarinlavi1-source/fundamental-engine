@@ -1,0 +1,64 @@
+{
+ "_schema": "econ_held_out_v1",
+ "_provenance": "Names only, written 2026-10-21 with docs/prereg_econ.md before any phase-C code and before any held-out number was collected. This file holds NO figures: every value is collected at run time from the named documents, point in time, and recorded in docs/ECON_TEST_RESULTS.md whatever it shows. Expected readings are the preregistered pass conditions, not observations.",
+ "rules_frozen_in": "docs/prereg_econ.md",
+ "h1_identities": {
+  "pass_rule": "status in {consistent, partial with a named residual} for at least 6 of 7 names; each miss recorded by name with its residual, never tuned away",
+  "names": [
+   {"ticker": "SCHW", "name": "Charles Schwab", "model": "broker", "core_identity": "revenue_per_account", "kpis": ["accounts", "client_equity"],
+    "documents": ["monthly activity report (IR site)", "10-K Item 7 key metrics"], "periods": ["latest fiscal year", "year-ago"]},
+   {"ticker": "HOOD", "name": "Robinhood Markets", "model": "broker", "core_identity": "revenue_per_account", "kpis": ["accounts", "client_equity"],
+    "documents": ["monthly operating data (IR site)", "10-K key performance metrics"], "periods": ["latest fiscal year", "year-ago"],
+    "note": "listed July 2021: short history"},
+   {"ticker": "DASH", "name": "DoorDash", "model": "marketplace", "core_identity": "take_rate (revenue / marketplace GOV)", "kpis": ["gross_bookings", "orders"],
+    "documents": ["shareholder letter key metrics", "10-K"], "periods": ["latest fiscal year", "year-ago"]},
+   {"ticker": "SNOW", "name": "Snowflake", "model": "data_platform_software", "core_identity": "revenue = customers x revenue per customer", "kpis": ["customers", "net_revenue_retention"],
+    "documents": ["10-K key business metrics", "release supplemental"], "periods": ["latest fiscal year", "year-ago"]},
+   {"ticker": "DDOG", "name": "Datadog", "model": "data_platform_software", "core_identity": "revenue = customers x revenue per customer", "kpis": ["customers", "net_revenue_retention"],
+    "documents": ["10-K key business metrics", "release supplemental"], "periods": ["latest fiscal year", "year-ago"]},
+   {"ticker": "MU", "name": "Micron Technology", "model": "memory_cycle", "core_identity": "revenue = bits x ASP (DRAM and NAND bit growth and ASP change)", "kpis": ["bits", "asp"],
+    "documents": ["10-K MD&A (bit shipment and ASP change)", "release"], "periods": ["latest fiscal year", "year-ago"],
+    "note": "the filings give bit growth and ASP change, not levels: the identity is checked on growth rates (growth_identity_pp)"},
+   {"ticker": "ADBE", "name": "Adobe", "model": "data_platform_software", "core_identity": "revenue = customers x revenue per customer, or partial with the residual named",
+    "fixture": "tests/fixtures/adbe_factbook_2026-10-19.json", "kpis": ["customers (if disclosed)", "net_revenue_retention (if disclosed)"],
+    "documents": ["existing FactBook fixture", "10-K"], "note": "Adobe does not disclose a customer count: the expected reading is `missing` or `partial`, recorded as such"}
+  ]
+ },
+ "h2_vendor_financing": {
+  "pass_rule": "each positive control reads at least `elevated` in FY1999 or FY2000 using only documents available before 2001-01-01 (Nortel's FY2000 10-K is filed in 2001 and counts only for FY1999 unless its availability date is before the cutoff); no negative control reads `high`; live cases are reported only",
+  "positive_controls": [
+   {"name": "Lucent Technologies", "fiscal_years": ["FY1999", "FY2000"], "fiscal_year_end": "September", "documents": ["10-K: customer financing commitments note and MD&A liquidity"],
+    "items": ["customer financing commitments (firm)", "drawn customer financing (funded)", "guarantees (contingent)", "revenue", "CFO", "net income", "receivables (two matched fiscal years)"],
+    "expected_reading": "elevated_or_high", "event": "2001 demand collapse"},
+   {"name": "Nortel Networks", "fiscal_years": ["FY1999", "FY2000"], "fiscal_year_end": "December", "documents": ["10-K / 40-F: customer financing note and MD&A liquidity"],
+    "items": ["customer financing commitments (firm)", "drawn customer financing (funded)", "guarantees (contingent)", "revenue", "CFO", "net income", "receivables (two matched fiscal years)"],
+    "expected_reading": "elevated_or_high", "event": "2001 demand collapse"}
+  ],
+  "negative_controls": [
+   {"name": "Microsoft", "fiscal_years": ["FY2000"], "fiscal_year_end": "June", "kind": "no customer financing, no demand collapse", "documents": ["10-K FY2000"], "expected_reading": "none_or_not_elevated"},
+   {"name": "Apple Computer", "fiscal_years": ["FY2000"], "fiscal_year_end": "September", "kind": "no material customer financing; revenue fell in FY2001 anyway", "documents": ["10-K FY2000"],
+    "expected_reading": "none_or_not_elevated", "note": "specificity control: a demand fall without vendor financing must NOT be flagged; it shows a low screen is not safety"},
+   {"name": "Adobe", "fiscal_years": ["FY2025"], "kind": "software, no funding links", "fixture": "tests/fixtures/adbe_factbook_2026-10-19.json", "expected_reading": "none"}
+  ],
+  "live_cases_reported_only": [
+   {"name": "CoreWeave", "role": "funded customer / compute lessor", "documents": ["10-K, 10-Q: related-party revenue, customer concentration, vendor financing, take-or-pay"], "expected_reading": null},
+   {"name": "Oracle", "role": "compute lessor with customer-concentrated backlog", "documents": ["10-K, 10-Q: RPO, concentration, financing"], "expected_reading": null}
+  ]
+ },
+ "h3_peak_exception_and_process": {
+  "pass_rule": "MU FY2018 and FY2022 read peak_margin_run_rate `high` (memory_cycle is price-cyclical: the exception never applies); PLTR and RDDT filed fixtures read `operating_leverage_or_peak` medium (in-sample, confirmation only); iRobot 2021-2023 process_evidence machine != `working`",
+  "cases": [
+   {"ticker": "MU", "name": "Micron Technology", "periods": ["FY2018 Q4", "FY2022 Q3"], "documents": ["10-K / 10-Q income statements", "annual operating-margin history 2008-2017 and 2012-2021"],
+    "model": "memory_cycle", "expected_reading": "high"},
+   {"ticker": "PLTR", "fixture": "tests/fixtures/econ/pltr_2026q2_filed.json", "expected_reading": "medium", "scope": "in-sample"},
+   {"ticker": "RDDT", "fixture": "tests/fixtures/econ/rddt_2026q2_filed.json", "expected_reading": "medium", "scope": "in-sample"},
+   {"ticker": "IRBT", "name": "iRobot", "fiscal_years": ["2021", "2022", "2023"], "documents": ["10-K: revenue by product category / region, R&D expense, advertising expense"],
+    "model": "consumer_innovator", "expected_reading": "machine in {failing, unproven, unknown}, never working"}
+  ]
+ },
+ "wp12_broker_walk_forward": {
+  "names": ["IBKR", "SCHW", "HOOD"],
+  "metric": "defined in docs/prereg_econ.md section 5; frozen there",
+  "note": "HOOD has formations from 2022 only"
+ }
+}

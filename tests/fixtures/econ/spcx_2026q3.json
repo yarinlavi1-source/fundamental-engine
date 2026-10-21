@@ -1,0 +1,393 @@
+{
+ "_schema": "econ_fixture_v1",
+ "_provenance": "analyst post figures (analyst_post_spcx_2026q3, user-supplied 2026-10-21); not reconciled to filings; arithmetic fixture, not truth; pins the design rules, never the analyst conclusions. The Cursor SBC schedule is not disclosed: straight-line 23.4bn over 3 years is an ASSUMPTION (straight_line_assumed), against which the quarter's observed 1.22bn is compared. sbc_path_test.flat_annual_revenue is a labelled TEST ASSUMPTION (14.6bn x 4). Starlink ARPU is per month.",
+ "company": "SPCX",
+ "name": "SpaceX",
+ "period_end": "2026-09-30",
+ "period": "quarter",
+ "as_of": "2026-10-21",
+ "currency": "USD",
+ "reconciled_to_filings": false,
+ "sources": {
+  "analyst_post_spcx_2026q3": {
+   "kind": "analyst_post",
+   "available_at": "2026-10-21",
+   "note": "user-supplied third-party post; key figures only"
+  },
+  "test_assumption_flat_revenue": {
+   "kind": "test_assumption",
+   "available_at": "2026-10-21",
+   "note": "flat 58.4bn annual revenue for the WP11 sbc_pct path; never a forecast"
+  }
+ },
+ "model_hint": {
+  "primary": "subscriber_network",
+  "secondary": [
+   "compute_leasing",
+   "consumer_innovator"
+  ],
+  "overlays": [
+   "segments",
+   "acquisition_sbc"
+  ],
+  "note": "hybrid; the design's expected statuses below apply per segment"
+ },
+ "lines": {
+  "revenue": {
+   "value": 14600000000.0,
+   "growth": 1.61,
+   "growth_qoq": 0.86,
+   "ex_cursor": {
+    "cursor_contribution": 608000000.0,
+    "growth": 1.5,
+    "growth_qoq": 0.79
+   },
+   "period": "quarter",
+   "source_ids": [
+    "analyst_post_spcx_2026q3"
+   ]
+  },
+  "operating_income": {
+   "value": 2790000000.0,
+   "prior_quarter": -143000000.0,
+   "period": "quarter",
+   "source_ids": [
+    "analyst_post_spcx_2026q3"
+   ]
+  },
+  "net_income": {
+   "value": 4400000000.0,
+   "eps": 0.35,
+   "period": "quarter",
+   "source_ids": [
+    "analyst_post_spcx_2026q3"
+   ]
+  },
+  "adjusted_ebitda": {
+   "value": 8800000000.0,
+   "period": "quarter",
+   "source_ids": [
+    "analyst_post_spcx_2026q3"
+   ]
+  },
+  "operating_cash_flow": {
+   "value": 9600000000.0,
+   "note": "partly prepayments",
+   "period": "quarter",
+   "source_ids": [
+    "analyst_post_spcx_2026q3"
+   ]
+  },
+  "capex": {
+   "value": 19600000000.0,
+   "period": "quarter",
+   "ytd": 48000000000.0,
+   "q4_guide": [
+    35000000000.0,
+    40000000000.0
+   ],
+   "source_ids": [
+    "analyst_post_spcx_2026q3"
+   ]
+  },
+  "sbc": {
+   "value": 2360000000.0,
+   "cursor_tranche_in_period": 1220000000.0,
+   "period": "quarter",
+   "source_ids": [
+    "analyst_post_spcx_2026q3"
+   ]
+  },
+  "other_income": {
+   "value": 1000000000.0,
+   "related_party": 561000000.0,
+   "tax_benefit": 390000000.0,
+   "net_interest": 200000000.0,
+   "period": "quarter",
+   "source_ids": [
+    "analyst_post_spcx_2026q3"
+   ]
+  },
+  "net_income_analyst_adjusted": {
+   "value": 2400000000.0,
+   "eps": 0.19,
+   "kind": "analyst_estimate",
+   "note": "ex related-party income, tax benefit and interest at 21% tax",
+   "source_ids": [
+    "analyst_post_spcx_2026q3"
+   ]
+  }
+ },
+ "balance": {
+  "deferred_revenue_start_of_year": 12100000000.0,
+  "deferred_revenue": 17500000000.0,
+  "cash_and_securities": 89900000000.0,
+  "cash_and_securities_prior": 100000000000.0,
+  "debt": 38800000000.0,
+  "source_ids": [
+   "analyst_post_spcx_2026q3"
+  ]
+ },
+ "segments": [
+  {
+   "name": "Space",
+   "model": "consumer_innovator",
+   "revenue": 1770000000.0,
+   "share_of_revenue_post": 0.12,
+   "growth": 0.06,
+   "operating_income": -7000000.0,
+   "gross_margin": 0.75,
+   "research_and_development": 1230000000.0,
+   "rnd_note": "mostly Starship",
+   "source_ids": [
+    "analyst_post_spcx_2026q3"
+   ]
+  },
+  {
+   "name": "Starlink",
+   "model": "subscriber_network",
+   "revenue": 5250000000.0,
+   "share_of_revenue_post": 0.36,
+   "growth": 0.69,
+   "gross_margin": 0.55,
+   "operating_margin": 0.45,
+   "prior_operating_margin": 0.38,
+   "one_off_in_margin_pp": 3,
+   "underlying_operating_margin": 0.42,
+   "ebitda": 3500000000.0,
+   "capex": 1540000000.0,
+   "source_ids": [
+    "analyst_post_spcx_2026q3"
+   ]
+  },
+  {
+   "name": "SuperIntelligence",
+   "model": "compute_leasing",
+   "revenue": 7560000000.0,
+   "share_of_revenue_post": 0.52,
+   "growth_factor_yoy": 9.3,
+   "operating_income": 431000000.0,
+   "operating_margin": 0.06,
+   "adjusted_ebitda": 4950000000.0,
+   "adjusted_ebitda_margin": 0.65,
+   "depreciation_amortization": 2470000000.0,
+   "sbc": 821000000.0,
+   "cursor_sbc": 1220000000.0,
+   "lines": {
+    "advertising": {
+     "value": 538000000.0,
+     "growth": 0.19,
+     "growth_ytd": -0.06
+    },
+    "ai_solutions_and_infrastructure": {
+     "value": 7020000000.0,
+     "prior_year": 359000000.0,
+     "prior_quarter": 2190000000.0,
+     "ex_cursor": 6410000000.0,
+     "growth_qoq_ex_cursor": 1.92
+    }
+   },
+   "price_per_gw_year": null,
+   "tenor": null,
+   "customer_credit": null,
+   "source_ids": [
+    "analyst_post_spcx_2026q3"
+   ]
+  }
+ ],
+ "kpis": [
+  {
+   "id": "subscribers",
+   "label": "Starlink subscribers",
+   "value": 13600000.0,
+   "prior_quarter": 12000000.0,
+   "net_adds": 1600000.0,
+   "kpi_basis": "balance",
+   "scope": "starlink",
+   "tag": "structural",
+   "source_ids": [
+    "analyst_post_spcx_2026q3"
+   ]
+  },
+  {
+   "id": "arpu",
+   "label": "Starlink ARPU, monthly",
+   "value": 69.0,
+   "growth_qoq": 0.05,
+   "growth": -0.17,
+   "kpi_basis": "average",
+   "scope": "starlink",
+   "tag": "mix",
+   "unit": "USD/month",
+   "source_ids": [
+    "analyst_post_spcx_2026q3"
+   ]
+  },
+  {
+   "id": "installed_capacity",
+   "label": "compute GW",
+   "value": 1.7,
+   "prior_quarter": 1.4,
+   "kpi_basis": "balance",
+   "scope": "superintelligence",
+   "unit": "GW",
+   "tag": "structural",
+   "source_ids": [
+    "analyst_post_spcx_2026q3"
+   ]
+  },
+  {
+   "id": "paid_users",
+   "label": "Grok weekly paying users",
+   "value": 800000.0,
+   "kpi_basis": "average",
+   "scope": "superintelligence",
+   "source_ids": [
+    "analyst_post_spcx_2026q3"
+   ]
+  }
+ ],
+ "acquisition_sbc": {
+  "deal": "Cursor",
+  "price": 60000000000.0,
+  "stock_to_employees": 23400000000.0,
+  "vesting_years": 3,
+  "schedule": null,
+  "straight_line_assumed": true,
+  "observed_tranche_in_period": 1220000000.0,
+  "period": "quarter",
+  "source_ids": [
+   "analyst_post_spcx_2026q3"
+  ]
+ },
+ "guidance": [
+  {
+   "metric": "revenue Q1-27",
+   "period": "Q1-2027",
+   "low": 33000000000.0,
+   "high": 37000000000.0,
+   "source_ids": [
+    "analyst_post_spcx_2026q3"
+   ]
+  },
+  {
+   "metric": "compute GW end-2026",
+   "low": 2.5,
+   "high": 3.0,
+   "source_ids": [
+    "analyst_post_spcx_2026q3"
+   ]
+  },
+  {
+   "metric": "compute GW end-2027",
+   "value": 13.0,
+   "source_ids": [
+    "analyst_post_spcx_2026q3"
+   ]
+  }
+ ],
+ "market": {
+  "price": 160,
+  "price_as_of": "2026-10-21",
+  "label": "premarket per the post",
+  "shares": 13580000000.0,
+  "source_ids": [
+   "analyst_post_spcx_2026q3"
+  ]
+ },
+ "sbc_path_test": {
+  "flat_annual_revenue": 58400000000.0,
+  "years": 5,
+  "source_ids": [
+   "test_assumption_flat_revenue"
+  ]
+ },
+ "expected": {
+  "segments_identity": {
+   "revenue_sum": 14580000000.0,
+   "reported": 14600000000.0,
+   "diff": -0.00137,
+   "diff_pct": -0.14,
+   "operating_income_sum": 2786500000.0,
+   "reported_operating_income": 2790000000.0,
+   "oi_diff": -0.00125,
+   "oi_diff_pct": -0.13,
+   "status": "consistent",
+   "derived_from": "1.77+5.25+7.56; -0.007+5.25*0.45+0.431"
+  },
+  "starlink_identity": {
+   "average_basis_revenue": 2649600000.0,
+   "average_share": 0.5047,
+   "average_share_pct": 50.5,
+   "end_basis_revenue": 2815200000.0,
+   "end_share": 0.5362,
+   "end_share_pct": 53.6,
+   "status": "partial",
+   "residual_named": "not in subscriber ARPU (hardware, enterprise, government?)",
+   "residual_status": "open",
+   "ebitda_minus_capex": 1960000000.0,
+   "capex_per_gw": "not_computed: construction lag",
+   "derived_from": "(12.0+13.6)/2*69*3; 13.6*69*3; 3.5-1.54"
+  },
+  "space": {
+   "rnd_to_segment_revenue": 0.6949,
+   "pct": 69
+  },
+  "superintelligence": {
+   "share_of_segment_revenue": 0.5185,
+   "share_pct": 51.9,
+   "share_of_reported_revenue": 0.5178,
+   "flag": "segment_unexplained",
+   "severity": "high",
+   "missing": [
+    "price_per_gw_year",
+    "tenor",
+    "customer_credit"
+   ],
+   "rule": "segment_material 0.25"
+  },
+  "customer_prepayment_build": {
+   "deferred_revenue_change": 5400000000.0,
+   "pct": 44.6,
+   "flag": "customer_prepayment_build",
+   "derived_from": "17.5-12.1; 17.5/12.1-1"
+  },
+  "acquisition_sbc": {
+   "ongoing_ratio": 0.07808,
+   "ongoing_pct": 7.81,
+   "headline_ratio": 0.1616,
+   "headline_pct": 16.2,
+   "straight_line_tranche_per_year": 7800000000.0,
+   "label": "straight_line_assumed",
+   "observed_annualized": 4880000000.0,
+   "observed_vs_schedule": -0.3744,
+   "pct": -37,
+   "flag": "tranche_schedule_mismatch",
+   "rule": ">20% apart",
+   "open_question": true,
+   "dilution_counted_as_real": true,
+   "derived_from": "(2.36-1.22)/14.6; 2.36/14.6; 23.4/3; 1.22*4; 4.88/7.8-1"
+  },
+  "sbc_pct_path": {
+   "values": [
+    0.2116,
+    0.2116,
+    0.2116,
+    0.0781,
+    0.0781
+   ],
+   "pct": [
+    21.2,
+    21.2,
+    21.2,
+    7.8,
+    7.8
+   ],
+   "today_ratio_carried_forward_pct": 16.2,
+   "derived_from": "ongoing 0.0781 + 7.8/58.4 for years 1-3; ongoing after"
+  },
+  "render_he": {
+   "how_it_earns": "עוד לא ברור איך מגזר הבינה המלאכותית מרוויח (52% מההכנסות): חסרים מחיר החוזים, משך החוזים ואיכות הלקוחות"
+  }
+ }
+}

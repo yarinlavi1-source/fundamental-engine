@@ -1,0 +1,241 @@
+{
+ "_schema": "econ_fixture_v1",
+ "_provenance": "analyst post figures (analyst_post_rddt_2026q2) with the issuer 8-K/10-Q lines carried beside them where the scratch run read them; arithmetic fixture, not truth; pins the design rules, never the analyst conclusions. The US DAUq comparison 53.5 -> 53.2m is quarter-on-quarter (Q1-26 -> Q2-26); the year-ago filed value is 50.3m. The end of the US DAUq disclosure after Q3-26 is a qualitative reported item. The revisions block carries the DESIGN'S figures (FY27 EPS consensus 6.52 -> 6.98, price -21%): the AV snapshot dates and the second price were not recorded in the design and must be pinned (AV EARNINGS_ESTIMATES, IB closes) before the WP8 test is called evidence.",
+ "company": "RDDT",
+ "name": "Reddit, Inc. (Class A)",
+ "period_end": "2026-06-30",
+ "period": "quarter",
+ "as_of": "2026-10-21",
+ "as_of_note": "analysis date: the revisions and the second price are dated 2026-10-21; the post is dated 2026-08-26",
+ "currency": "USD",
+ "reconciled_to_filings": false,
+ "sources": {
+  "analyst_post_rddt_2026q2": {
+   "kind": "analyst_post",
+   "available_at": "2026-08-26",
+   "note": "user-supplied third-party post"
+  },
+  "rddt_8k_q226": {
+   "kind": "issuer_release",
+   "available_at": "2026-08-05",
+   "note": "cross-reference: tests/fixtures/econ/rddt_2026q2_filed.json"
+  },
+  "rddt_10q_q226": {
+   "kind": "issuer_filing",
+   "available_at": "2026-08-05",
+   "note": "Other revenue line and RPO"
+  },
+  "av_earnings_estimates_rddt": {
+   "kind": "data_provider",
+   "available_at": "2026-10-21",
+   "note": "FY27 EPS consensus averages; snapshot dates not recorded in the design"
+  },
+  "ib_daily_close": {
+   "kind": "market_data",
+   "available_at": "2026-08-26",
+   "note": "price on the case date"
+  },
+  "design_record_rddt_revisions": {
+   "kind": "design_record",
+   "available_at": "2026-10-21",
+   "note": "the design's figures for WP8 test; see _provenance"
+  }
+ },
+ "model_hint": {
+  "primary": "ads_platform",
+  "card_type": "platform_marketplace"
+ },
+ "lines": {
+  "revenue": {
+   "value": 804900000.0,
+   "growth": 0.61,
+   "period": "quarter",
+   "window": "y/y",
+   "source_ids": [
+    "analyst_post_rddt_2026q2",
+    "rddt_8k_q226",
+    "rddt_10q_q226"
+   ]
+  },
+  "other_revenue": {
+   "value": null,
+   "share_of_revenue": 0.054,
+   "growth": 0.24,
+   "period": "quarter",
+   "window": "y/y",
+   "label": "Other (data licensing etc.)",
+   "role": "thesis_driver",
+   "source_ids": [
+    "analyst_post_rddt_2026q2"
+   ]
+  },
+  "adjusted_ebitda": {
+   "value": null,
+   "margin": 0.43,
+   "period": "quarter",
+   "source_ids": [
+    "analyst_post_rddt_2026q2"
+   ]
+  }
+ },
+ "kpis": [
+  {
+   "id": "dau",
+   "label": "DAUq US",
+   "value": 53200000.0,
+   "prior_quarter": 53500000.0,
+   "prior_year": 50300000.0,
+   "kpi_basis": "average",
+   "scope": "US",
+   "window": "q/q",
+   "tag": "structural",
+   "role": "core_units",
+   "source_ids": [
+    "analyst_post_rddt_2026q2",
+    "rddt_8k_q226"
+   ]
+  },
+  {
+   "id": "dau",
+   "label": "DAUq US logged-in",
+   "value": 23100000.0,
+   "prior_year": 22900000.0,
+   "growth": 0.009,
+   "kpi_basis": "average",
+   "scope": "US_logged_in",
+   "window": "y/y",
+   "tag": "structural",
+   "source_ids": [
+    "analyst_post_rddt_2026q2",
+    "rddt_8k_q226"
+   ]
+  },
+  {
+   "id": "arpu",
+   "label": "ARPU US ($/quarter)",
+   "value": 11.85,
+   "kpi_basis": "flow",
+   "scope": "US",
+   "tag": "structural",
+   "source_ids": [
+    "analyst_post_rddt_2026q2",
+    "rddt_8k_q226"
+   ]
+  },
+  {
+   "id": "arpu",
+   "label": "ARPU global ($/quarter)",
+   "value": 6.0,
+   "kpi_basis": "flow",
+   "scope": "total",
+   "note": "post: \"~$6 global\"",
+   "source_ids": [
+    "analyst_post_rddt_2026q2"
+   ]
+  }
+ ],
+ "contracts": [
+  {
+   "label": "licensing RPO contracted for 2027",
+   "value": 30100000.0,
+   "pricing": "fixed_fee",
+   "note": "moves only at renewal",
+   "source_ids": [
+    "analyst_post_rddt_2026q2"
+   ]
+  }
+ ],
+ "disclosure_changes": [
+  {
+   "kpi": "dau",
+   "scope": "US",
+   "last_period": "2026-Q3",
+   "kind": "reported",
+   "note": "qualitative, reported: the US DAUq disclosure ends after Q3-26",
+   "source_ids": [
+    "analyst_post_rddt_2026q2"
+   ]
+  }
+ ],
+ "revisions": {
+  "metric": "eps",
+  "target_period": "FY2027",
+  "basis": "consensus_mean",
+  "currency": "USD",
+  "from": {
+   "value": 6.52,
+   "as_of": "2026-08-26",
+   "source_ids": [
+    "av_earnings_estimates_rddt",
+    "design_record_rddt_revisions"
+   ],
+   "note": "as_of approximated to the case date; re-pin"
+  },
+  "to": {
+   "value": 6.98,
+   "as_of": "2026-10-21",
+   "source_ids": [
+    "av_earnings_estimates_rddt"
+   ],
+   "note": "AV average 6.9807 in the scratch run"
+  }
+ },
+ "prices": {
+  "from": {
+   "value": 155.36,
+   "date": "2026-08-26",
+   "source_ids": [
+    "ib_daily_close"
+   ]
+  },
+  "to": {
+   "value": null,
+   "date": "2026-10-21",
+   "source_ids": [
+    "design_record_rddt_revisions"
+   ]
+  },
+  "change": -0.21,
+  "change_source_ids": [
+   "design_record_rddt_revisions"
+  ],
+  "note": "the -21% is the design's figure; fetch the second close before use"
+ },
+ "expected": {
+  "thesis_on_minor_line": {
+   "other_share_of_revenue": 0.054,
+   "other_share_of_incremental_revenue": 0.0276,
+   "pct": 2.76,
+   "severity": "medium",
+   "rule": "minor_line_share 0.10",
+   "derived_from": "share 0.054 of 1.61 vs (that/1.24) over growth 0.61",
+   "filed_cross_check": 0.0276
+  },
+  "core_units_flat": {
+   "us_dau_change": -0.00561,
+   "pct": -0.56,
+   "rule": "flat_units_abs 0.02",
+   "window": "q/q",
+   "derived_from": "53.2/53.5-1"
+  },
+  "falsifier_us_dau": {
+   "status": "unobservable",
+   "from_period": "2026-Q4",
+   "plus_flag": "disclosure_dropped",
+   "severity": "medium"
+  },
+  "price_vs_estimates": {
+   "estimate_change": 0.07055,
+   "pct": 7.06,
+   "price_change": -0.21,
+   "implied_forward_multiple_change": -0.2621,
+   "pct_multiple": -26.2,
+   "reading": "multiple_moved_more",
+   "boundary": "what moved; not a signal; not backtested",
+   "derived_from": "(1+p)/(1+e)-1"
+  },
+  "render_he": {
+   "estimates_vs_price": "התחזיות לרווח עלו כ־7%, אבל המחיר ירד 21%: השוק משלם היום כ־26% פחות על כל דולר של רווח צפוי."
+  }
+ }
+}
