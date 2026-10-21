@@ -13,6 +13,10 @@ Implementation: terminal operating FCFF is valued with WACC; net claims are then
 bridged into terminal equity. Dated dividends and terminal equity per share are
 discounted with Ke. Funding/share issuance is explicit, so a financing gap is not
 subtracted for a second time from the resulting owner value.
+The terminal WACC is built from the mature table (the stage and one-off funding
+add-ons to the cost of equity apply to the explicit years only: the forecast is
+mature by its terminal date; structural rows stay), relevered at the same D/E;
+the explicit years and the roll-back of the terminal value keep the full Ke.
 
 ## Young firms and survival
 Aswath Damodaran, Valuing Young, Start-up and Growth Companies (May 2009), 67 pages:

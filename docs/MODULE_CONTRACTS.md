@@ -154,8 +154,9 @@ LENDING_KEYS, NON_OPERATING_TYPES, MIXED_RULES.
 ```
 {"forecast_version": 1, "status": built|method_not_supported_by_forecast|insufficient_data|invalid_spec, "reason", "method",
  "spec": drivers.build_case spec (driver_version 1; scenarios bear/base/bull with reinvestment_rule, per-period
-         equity_issue_price, terminal {growth, wacc, roic, operating_margin, tax_rate, other_claims, net_runoff_obligation,
-         debt_weight, ...}; interim_boundaries; opening {..., convertibles?}; sources; assumptions; underwriting
+         equity_issue_price, terminal {growth, wacc, cost_of_equity (the terminal's own rate behind wacc), roic, operating_margin,
+         tax_rate, other_claims, net_runoff_obligation, debt_weight, ...}; interim_boundaries; opening {..., convertibles?};
+         sources; assumptions; underwriting
          {material_issues, opening_reconciliation, consensus_review, scenario_reviews}),
  "spec_sha256", "assumptions": [{"id","topic","kind","provenance","values": {"bear","base","bull"},"rationale","falsifier",
                                  "source_ids","review_status"}],
@@ -163,8 +164,11 @@ LENDING_KEYS, NON_OPERATING_TYPES, MIXED_RULES.
              "route": {"method","moat","moat_basis","moat_weights","cycle_path","cycle_peak","cycle_treatment",...},
              "calendar": {"boundaries","periods","interim","fifth_anniversary","report_dates",...}},
  "paths": {"bear","base","bull"},
- "cost_of_equity": {"bear","base","bull","terminal_wacc": {s},"components": {"risk_free","equity_risk_premium","table_rate",
+ "cost_of_equity": {"bear","base","bull","terminal_cost_of_equity": {s},"terminal_wacc": {s},
+                    "components": {"risk_free","equity_risk_premium","table_rate",
                     "unlevered","asset_unlevered","adjustments": [...],"adjustment_<factor>","formula","notes",
+                    "terminal": {"table_rate","dropped": [rows],"kept": [factors],"asset_unlevered","cost_of_equity",
+                                 "leverage_relevered","formula","reason"},
                     "leverage": {"ke","kd": expected,"kd_expected","kd_promised","market_debt_to_equity","net_debt",
                                  "model_equity","debt_weight","d_to_e","issue_prices","status","basis",...}}},
  "funding": {s: {"status","debt_assumed","equity","equity_raised","issue_prices","issue_price_rule","price_dependent",
@@ -173,6 +177,9 @@ LENDING_KEYS, NON_OPERATING_TYPES, MIXED_RULES.
  "overrides": [...], "preview": {...}, "warnings": [{"code","severity","message"}], "moat_proxy": {...} | None, "notes": [...]}
 what_must_be_true -> [{"lever","label","status": solved|not_reachable,"required","anchor","unit","meaning","detail"}]
 ```
+`terminal.wacc` is built from `terminal.cost_of_equity`, the mature table (the explicit table without the stage and one-off
+funding add-ons, `forecast.TERMINAL_KE_DROPPED`) relevered at the same D/E; the explicit years and the roll-back of the
+terminal value use the scenario's `cost_of_equity`.
 `terminal.debt_weight` is the unrounded weight of `cost_of_equity.components.leverage.debt_weight` (the relevering fixed point
 on the model's own base equity value, never the quote; capped at 60% with a warning). Funding status adds `share_settled`.
 Case sources (`spec.sources`): {id, title, url, kind, published_at, available_at, retrieval?, published_at_estimated?}; kind

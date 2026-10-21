@@ -45,6 +45,12 @@ Not reached: McKinsey's 2026 pages (HTTP 503), Mauboussin's *The Impact of Intan
   pass through `fundamental_engine deep --market FILE` (`handoff.with_market_inputs`; risk-free only for USD reporters).
   Amazon now: 5.15 + 4.20 + 1.0 - 1.0 = 9.35%. The higher dated risk-free rate offsets most of the add-on correction:
   the change is consistency, not a lower rate across the board.
+- Change (21.10.2026): the terminal rate is the mature table. The stage add-on and the one-off funding add-on were charged on
+  the perpetuity after a forecast that is mature by its terminal date; Damodaran moves the cost of capital to the mature
+  rate as growth fades (beta toward one in stable growth). The explicit years keep the full table; the terminal WACC is
+  built from the table without those rows (`forecast.TERMINAL_KE_DROPPED`), relevered at the same D/E, and the terminal
+  ROIC hurdle uses the same mature table. Structural rows (cyclicality, capital intensity, regulated utility, weak
+  dimensions, market-neutral) stay in the terminal.
 - Cross-check: Damodaran's January 2026 industry costs of equity (lower treasury then) run from 5.0% (utilities) to 10.7%
   (semiconductors), total market 8.0-8.4%. The engine's table is a documented risk table, not industry betas; replacing it
   with bottom-up industry betas is a candidate, not done.

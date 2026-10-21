@@ -16,6 +16,20 @@
   bound. `terminal_growth_high` and `terminal_growth_capped` now read the growth actually used, after analyst overrides
   (an override in every scenario removes them). The residual-income ledger states its ROE - 0.1pp bound. The drift quoted
   for the old convention is approximate (a ten-point fit).
+- Terminal cost of equity = the mature table (`forecast.TERMINAL_KE_DROPPED`). The stage add-on (early +3pp, growth +1.5pp,
+  maturing +0.5pp, turnaround +2.5pp) and the one-off `needs_external_funding` add-on were charged on the perpetuity after a
+  forecast that is mature by its terminal date (growth faded, mature margin): the risk of a phase the model has ended,
+  discounted forever (Damodaran: beta moves toward one in stable growth; his young-growth model moves the cost of capital
+  to the mature rate). Now they apply to the explicit years only; the terminal WACC is built from the terminal cost of
+  equity = the same table without them (structural rows stay: cyclicality, capital intensity, regulated utility, weak
+  card dimensions, market-neutral), unlevered at `MARKET_DE` and relevered at the same model D/E, floored at g + 3pp as
+  before. The terminal ROIC hurdle (Ku + 2pp, the persistence blend, the strong-moat floor) and the franchise-durability
+  excess are measured against the same mature table (one hurdle for the terminal state; with a binding WACC floor this can
+  lower a levered name slightly). Unchanged: the explicit years and the roll-back of the terminal value at Ke, the mature
+  and decline stages, an analyst `cost_of_equity` override (used for both); the same terminal rate in every scenario (the
+  bear is never below the mature table). Output: `cost_of_equity.terminal_cost_of_equity` {s}, `components.terminal`
+  {table_rate, dropped, kept, asset_unlevered, cost_of_equity, leverage_relevered, formula, reason}, the spec's
+  `terminal.cost_of_equity`, and the cost_of_equity ledger row names the rate and the dropped rows. No constant tuned.
 - Walk-forward ERP: `engine_backtest.IMPLIED_ERP` (Damodaran's start-of-year implied ERP, FCFE, 2009-2026, from
   histimpl.html; implpr.html agrees through 2016) is passed at each formation, point in time (a January formation uses the
   previous year's estimate), instead of the fixed `ERP_DEFAULT` 4.5%; rows record `risk_free` and `erp`.

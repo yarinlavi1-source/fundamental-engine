@@ -588,20 +588,34 @@ class ValuationIntegrityTests(unittest.TestCase):
         self.assertAlmostEqual(fc['cost_of_equity']['base'], max(comp['table_rate'], ku + (ku - lev['kd_expected']) * lev['d_to_e']))
         self.assertAlmostEqual(fc['cost_of_equity']['base'], comp['risk_free'] + comp['equity_risk_premium'] + sum(a['value'] for a in comp['adjustments']))
         w = lev['debt_weight']
-        # floored at terminal growth + 3 points (terminal growth = risk-free: the floor binds for this levered company)
+        # the terminal (21.10.2026): the mature table (the maturing add-on dropped, TERMINAL_KE_DROPPED) unlevered and relevered the
+        # same way at the same D/E; the WACC is built from it and floored at terminal growth + 3 points (terminal growth =
+        # risk-free: the floor binds for this levered company)
+        t = comp['terminal']
+        self.assertAlmostEqual(t['table_rate'], comp['table_rate'] - forecast.STAGE['maturing']['ke'])
+        ku_t = (t['table_rate'] + lev['kd_expected'] * forecast.MARKET_DE) / (1 + forecast.MARKET_DE)
+        self.assertAlmostEqual(t['asset_unlevered'], ku_t)
+        self.assertAlmostEqual(t['cost_of_equity'], max(t['table_rate'], ku_t + (ku_t - lev['kd_expected']) * lev['d_to_e']))
+        self.assertAlmostEqual(fc['cost_of_equity']['terminal_cost_of_equity']['base'], t['cost_of_equity'])
+        self.assertLess(t['cost_of_equity'], fc['cost_of_equity']['base'])
         self.assertAlmostEqual(fc['cost_of_equity']['terminal_wacc']['base'],
-                               max((1 - w) * fc['cost_of_equity']['base'] + w * (lev['kd_expected'] - lev['kd_promised'] * .21),
+                               max((1 - w) * t['cost_of_equity'] + w * (lev['kd_expected'] - lev['kd_promised'] * .21),
                                    scen(fc['spec'], 'base')['terminal']['growth'] + .03), places=6)
         self.assertIn('adjustment_leverage_relevered', comp)
 
     def test_levered_terminal_wacc_formula_where_the_floor_does_not_bind(self):
-        # at a 2% risk-free the g + 3pp floor sits below the blend, so E/V Ke + D/V (Kd_e - Kd_promised x tax) is the WACC itself
+        # at a 2% risk-free with terminal growth evidenced at 1% the g + 3pp floor sits below the blend, so E/V x terminal Ke +
+        # D/V x (Kd_e - Kd_promised x tax) is the WACC itself (with terminal growth = risk-free the floor binds: the terminal Ke
+        # is the mature table, half a point below the explicit maturing rate, since 21.10.2026)
         fb, an, card, qa = levered(30.)
+        g = {'path': 'terminal_growth', 'scenario': 'all', 'value': .01, 'reason': 'test: low-growth terminal', 'evidence_ids': ['syn:fs']}
         fc = forecast.build(fb, an, card, qa, {'risk_free': {'value': .02, 'as_of': '2026-03-20', 'title': 'low-rate test value',
-                                                             'url': 'https://example.org/rf'}})
+                                                             'url': 'https://example.org/rf'}, 'overrides': [g]})
         lev = fc['cost_of_equity']['components']['leverage']
         w = lev['debt_weight']
-        blend = (1 - w) * fc['cost_of_equity']['base'] + w * (lev['kd_expected'] - lev['kd_promised'] * .21)
+        ke_t = fc['cost_of_equity']['terminal_cost_of_equity']['base']
+        self.assertLess(ke_t, fc['cost_of_equity']['base'])
+        blend = (1 - w) * ke_t + w * (lev['kd_expected'] - lev['kd_promised'] * .21)
         self.assertGreater(blend, scen(fc['spec'], 'base')['terminal']['growth'] + .03)
         self.assertAlmostEqual(fc['cost_of_equity']['terminal_wacc']['base'], blend, places=9)
         self.assertAlmostEqual(lev['kd_expected'], .02 + forecast.DEBT_EXPECTED_PREMIUM)
@@ -1509,6 +1523,98 @@ class IncompleteDebtTests(unittest.TestCase):
         self.assertIn('debt_incomplete', [m['id'] for m in fc['spec']['underwriting']['material_issues']])
         fb, an, card, qa = industrial()                            # 4% on 100m: no flag
         self.assertNotIn('debt_incomplete', [w['code'] for w in forecast.build(fb, an, card, qa)['warnings']])
+
+
+class TerminalMatureRateTests(unittest.TestCase):
+    """21.10.2026 (forecast.TERMINAL_KE_DROPPED): the forecast is mature by its terminal date, so the perpetuity is discounted at
+    the mature table (no stage or one-off funding add-on) while the explicit years keep the full table. Each test failed on the
+    previous engine, which charged the stage add-on in perpetuity."""
+
+    def test_growth_stage_and_funding_add_ons_leave_the_terminal_rate(self):
+        fb, an, card, qa = grower()                       # growth stage, base plan funded externally: both rows are explicit-years only
+        fc = forecast.build(fb, an, card, qa)
+        ke, comp = fc['cost_of_equity'], fc['cost_of_equity']['components']
+        rows = {a['factor']: a['value'] for a in comp['adjustments']}
+        self.assertEqual(rows['stage:growth'], forecast.STAGE['growth']['ke'])
+        self.assertEqual(rows['needs_external_funding'], .01)
+        # explicit years: the full table, unchanged (the growth-phase risk is real while it lasts)
+        self.assertAlmostEqual(ke['base'], comp['risk_free'] + comp['equity_risk_premium'] + sum(rows.values()))
+        self.assertAlmostEqual(scen(fc['spec'], 'base')['cost_of_equity'], ke['base'], places=6)
+        t = comp['terminal']
+        self.assertEqual([a['factor'] for a in t['dropped']], ['stage:growth', 'needs_external_funding'])
+        self.assertEqual(t['kept'], ['market_neutral'])
+        self.assertAlmostEqual(t['table_rate'], comp['risk_free'] + comp['equity_risk_premium'] + forecast.MARKET_NEUTRAL_ADJUSTMENT)
+        self.assertAlmostEqual(t['table_rate'], ke['base'] - rows['stage:growth'] - rows['needs_external_funding'])
+        self.assertEqual(comp['leverage']['debt_weight'], 0.)                           # no net debt: nothing to relever
+        for s in SCEN:
+            g = scen(fc['spec'], s)['terminal']['growth']
+            self.assertAlmostEqual(ke['terminal_cost_of_equity'][s], t['table_rate'])
+            self.assertAlmostEqual(scen(fc['spec'], s)['terminal']['cost_of_equity'], t['table_rate'], places=6)
+            self.assertAlmostEqual(ke['terminal_wacc'][s], max(t['table_rate'], g + .03))
+            self.assertAlmostEqual(scen(fc['spec'], s)['terminal']['wacc'], ke['terminal_wacc'][s], places=6)
+            self.assertLess(ke['terminal_wacc'][s], ke[s] - .02)
+        # the same terminal rate in every scenario: the bear is never discounted below the mature table
+        self.assertEqual(len({round(v, 9) for v in ke['terminal_cost_of_equity'].values()}), 1)
+        self.assertGreaterEqual(min(ke['terminal_cost_of_equity'].values()), t['table_rate'] - 1e-12)
+        # the terminal ROIC rules are measured against the same mature table (one hurdle for the terminal state)
+        hurdle = next(a for a in fc['assumptions'] if a['id'] == 'moat_basis')['values']['unlevered_cost_of_capital']
+        self.assertAlmostEqual(hurdle, max(t['table_rate'], scen(fc['spec'], 'base')['terminal']['growth'] + .03))
+        self.assertAlmostEqual(scen(fc['spec'], 'bear')['terminal']['roic'], hurdle + .01, places=6)
+        # the ledger says which rate the terminal uses and what it dropped
+        row = next(a for a in fc['assumptions'] if a['id'] == 'cost_of_equity')
+        self.assertEqual(row['values']['terminal_dropped'], ['stage:growth', 'needs_external_funding'])
+        self.assertAlmostEqual(row['values']['terminal_table_rate'], t['table_rate'])
+        self.assertIn('terminal Ke', row['rationale'])
+        self.assertIn('stage:growth +1.50%', row['rationale'])
+        self.assertIn('mature by its terminal date', t['reason'])
+        json.dumps(fc, allow_nan=False)
+        # the perpetuity alone carries the change: re-discounting it at the explicit rate gives the previous (lower) value
+        case = build_case(fc['spec'])
+        old = deepcopy(case)
+        for sc in old['scenarios']:
+            sc['terminal']['wacc'] = max(sc['cost_of_equity'], sc['terminal']['growth'] + .03)
+        self.assertGreater(value_company(case)['annual_values'][0]['base'], 1.2 * value_company(old)['annual_values'][0]['base'])
+
+    def test_mature_and_declining_businesses_keep_their_table(self):
+        fc = forecast.build(*adbe())                                                    # mature: no stage add-on, nothing to drop
+        ke, t = fc['cost_of_equity'], fc['cost_of_equity']['components']['terminal']
+        self.assertEqual(t['dropped'], [])
+        self.assertAlmostEqual(t['table_rate'], fc['cost_of_equity']['components']['table_rate'])
+        for s in SCEN:
+            self.assertAlmostEqual(ke['terminal_cost_of_equity'][s], ke[s])
+        self.assertIn('no stage or funding add-on to drop', next(a for a in fc['assumptions'] if a['id'] == 'cost_of_equity')['rationale'])
+        fb, an, card, qa = industrial()                                                 # decline: not mature at the terminal, keeps its add-on
+        card['stage']['value'] = 'decline'
+        fc = forecast.build(fb, an, card, qa)
+        self.assertEqual(fc['anchors']['route']['stage'], 'decline')
+        ke, comp = fc['cost_of_equity'], fc['cost_of_equity']['components']
+        self.assertIn('stage:decline', {a['factor'] for a in comp['adjustments']})
+        self.assertEqual(comp['terminal']['dropped'], [])
+        self.assertAlmostEqual(ke['terminal_cost_of_equity']['base'], ke['base'])
+        self.assertAlmostEqual(comp['terminal']['table_rate'], comp['table_rate'])
+
+    def test_structural_rows_stay_in_the_terminal(self):
+        fb, an, card, qa, _ = peak_cyclical(stage='growth')                             # cyclical + high capital intensity + weak moat
+        fc = forecast.build(fb, an, card, qa)
+        comp = fc['cost_of_equity']['components']
+        kept = set(comp['terminal']['kept'])
+        self.assertTrue({'cyclical', 'capital_intensity_high', 'market_neutral'} <= kept, kept)
+        self.assertTrue(all(a['factor'] in forecast.TERMINAL_KE_DROPPED for a in comp['terminal']['dropped']))
+        self.assertAlmostEqual(comp['terminal']['table_rate'],
+                               comp['risk_free'] + comp['equity_risk_premium'] + sum(a['value'] for a in comp['adjustments'] if a['factor'] in kept))
+
+    def test_analyst_cost_of_equity_override_is_the_terminal_rate_too(self):
+        fb, an, card, qa = grower()
+        o = {'path': 'cost_of_equity', 'scenario': 'all', 'value': .12, 'reason': 'test: analyst rate', 'evidence_ids': ['syn:fs']}
+        fc = forecast.build(fb, an, card, qa, {'overrides': [o]})
+        ke = fc['cost_of_equity']
+        for s in SCEN:
+            self.assertEqual(ke[s], .12)
+            self.assertEqual(ke['terminal_cost_of_equity'][s], .12)                   # its components are not the table's: used for both
+            self.assertAlmostEqual(ke['terminal_wacc'][s], max(.12, scen(fc['spec'], s)['terminal']['growth'] + .03))
+        self.assertIn('analyst override', next(a for a in fc['assumptions'] if a['id'] == 'cost_of_equity')['rationale'])
+        hurdle = next(a for a in fc['assumptions'] if a['id'] == 'moat_basis')['values']['unlevered_cost_of_capital']
+        self.assertEqual(hurdle, .12)
 
 
 class EvidenceBasedRatesTests(unittest.TestCase):

@@ -71,7 +71,8 @@ HORIZON = ((.25, 15), (.15, 12), (-9, 10))   # growth anchor above x -> explicit
 # months     minimum operating cash in months of cash costs (capped at today's cash: the company already
 #            operates with its balance).  sbc_fade  share of today's SBC/revenue that falls away at scale.
 # catch_up   share of the gap to the type-typical mature margin a below-typical company closes in base.
-# ke         business-risk add-on to the cost of equity (NOT price beta).
+# ke         business-risk add-on to the cost of equity (NOT price beta) for the explicit years; the terminal rate drops it
+#            (TERMINAL_KE_DROPPED: the forecast is mature by its terminal date).
 # debt_spread spread over risk-free for ASSUMED new financing.
 STAGE = {
     'early':      dict(half_life=2.0, g_spread=.10, m_spread=.10, conv=7, months=6, sbc_fade=.4, catch_up=.6, ke=.03, debt_spread=.07),
@@ -106,7 +107,7 @@ NON_OPERATING_TYPES = {'financials': 'residual_income', 'reit': 'nav', 'pre_reve
 KE_FACTORS = (  # (condition, add-on, reason) evaluated on the card and the executed funding result
     ('cyclical', .005, 'cyclical revenue and margins'),
     ('capital_intensity_high', .005, 'high capital intensity (operating leverage on fixed assets)'),
-    ('needs_external_funding', .01, 'base plan depends on external funding (executed funding result)'),
+    ('needs_external_funding', .01, 'base plan depends on external funding (executed funding result)'),   # explicit years only (TERMINAL_KE_DROPPED)
 )
 # The ERP is the premium of the value-weighted market over the risk-free rate, so the value-weighted average cost of equity of
 # the market's own companies must equal rf + ERP. The add-ons above only add (no stage, factor or dimension subtracts): on the
@@ -115,6 +116,26 @@ KE_FACTORS = (  # (condition, add-on, reason) evaluated on the card and the exec
 # measured average: an average-risk company is discounted at rf + ERP, one with no add-on below it. calibration.market_implied
 # reports the weighted mean of the net adjustment after each sweep (it should stay near zero).
 MARKET_NEUTRAL_ADJUSTMENT = -.01
+# Terminal cost of equity = the MATURE table. The forecast itself makes the business mature by its terminal date (excess growth
+# faded to the terminal rate, the margin at its mature target, reinvestment on the g / ROIC rule out of its own cash flow), yet
+# the stage add-on (early +3pp, growth +1.5pp, maturing +0.5pp, turnaround +2.5pp) and the one-off funding add-on were also
+# charged on the perpetuity after it: the risk of a phase the model has already ended, discounted forever (on the diagnosis's
+# synthetic 31% grower about a third of its value, 21.10.2026). Damodaran: risk should move toward the mature level as growth
+# fades -- a stable-growth firm's beta moves toward one (Investment Valuation, 3rd ed., ch. 12, closure in valuation), and his
+# young-growth model (fcffsimpleginzu.xlsx) moves the cost of capital in years 6-10 to the after-year-10 rate of a mature firm
+# (risk-free + mature ERP by default). So the terminal Ke drops exactly these rows (TERMINAL_KE_DROPPED: the stages whose forecast
+# fades to maturity, and the funding need of the explicit plan, met by the terminal date) and keeps every structural one
+# (cyclicality, capital intensity, regulated utility, weak card dimensions, market-neutral), clamped like the table and relevered
+# at the same D/E (Harris-Pringle); the terminal WACC is built from it and floored at terminal growth + 3 points as before. The
+# terminal ROIC rules (Ku + 2pp, the persistence blend, the strong-moat floor Ku + 5pp) and the franchise-durability excess are
+# measured against the same mature table: one hurdle for the terminal state. Unchanged: the explicit years and the discount of
+# the terminal equity value back to today keep the full table rate (the growth-phase risk is real while it lasts); a declining
+# business keeps its add-on (its terminal still shrinks, DECLINE_FLOOR: it is not mature); an analyst cost-of-equity override
+# is used for both (its components are not the table's). The same terminal rate in every scenario: the bear is never discounted
+# below the mature table (no scenario-specific discount rate); it still differs by outcomes. Not a calibration: no constant was
+# tuned to the walk-forward, and the mature stage (ke 0) is unchanged.
+TERMINAL_MATURE_STAGES = ('early', 'growth', 'maturing', 'turnaround')
+TERMINAL_KE_DROPPED = tuple('stage:' + s for s in TERMINAL_MATURE_STAGES) + ('needs_external_funding',)
 # Excess returns on capital fade slowly and only part of the way (Mauboussin, Callahan & Majd, The Base Rate Book, Credit
 # Suisse 2016, from HOLT data since 1950): over ten years the CFROI spread between the top and bottom quintiles shrinks from 18
 # to 9 points (half of the excess left) and the operating-margin spread from 0.21 to 0.15 (71% left); Damodaran: "excess returns
@@ -941,14 +962,23 @@ def _cost_of_equity(route, rf, erp, inputs_notes, external, regulated=False):
                 'reason': "the market's value-weighted average add-on, removed so the average company is discounted at risk-free + ERP "
                           '(the definition of the ERP); measured on the 2026-10-20 large-cap sweep'})
     table = _clamp(rf + erp + sum(a['value'] for a in adj), rf + .02, .20)
-    return table, {'risk_free': rf, 'equity_risk_premium': erp, 'adjustments': adj, 'notes': inputs_notes,
+    # the mature table for the terminal (TERMINAL_KE_DROPPED): never above the explicit table, never below its own clamp
+    kept = [a for a in adj if a['factor'] not in TERMINAL_KE_DROPPED]
+    dropped = [a for a in adj if a['factor'] in TERMINAL_KE_DROPPED]
+    terminal = {'table_rate': min(table, _clamp(rf + erp + sum(a['value'] for a in kept), rf + .02, .20)),
+                'dropped': dropped, 'kept': [a['factor'] for a in kept],
+                'reason': 'the forecast is mature by its terminal date (growth faded, mature margin): the perpetuity is discounted at '
+                          'the mature table without the stage and one-off funding add-ons; structural rows stay, relevered at the same D/E'}
+    return table, {'risk_free': rf, 'equity_risk_premium': erp, 'adjustments': adj, 'notes': inputs_notes, 'terminal': terminal,
                    'formula': 'table = risk-free + equity risk premium + business-risk adjustments (stage, regulated utility, cyclicality, '
                               'capital intensity, funding need of the executed base plan, weak card dimensions): a documented table, NOT price '
                               f'beta, read as the cost of equity at market-average leverage (D/E {MARKET_DE:.2f}). Ku = (table + Kd_e x '
                               f'{MARKET_DE:.2f}) / (1 + {MARKET_DE:.2f}) with Kd_e = risk-free + {DEBT_EXPECTED_PREMIUM:.0%} (expected, not promised, '
                               'return on debt); Ke = max(table, Ku + (Ku - Kd_e) x D/E) and terminal WACC = E/V x Ke + D/V x (Kd_e - Kd_promised x '
                               "tax) (Harris-Pringle) with D/E and D/V from the model's own base equity value (fixed point), never the quote; same "
-                              'Ke in every scenario so scenarios differ by business outcomes only'}
+                              'Ke in every scenario so scenarios differ by business outcomes only. The terminal (components.terminal) uses the '
+                              'mature table: the same rows without the stage and one-off funding add-ons (TERMINAL_KE_DROPPED), unlevered and '
+                              'relevered the same way; the explicit years and the roll-back of the terminal value keep Ke'}
 
 
 def _ke_parts(parts, table, lev):
@@ -959,21 +989,31 @@ def _ke_parts(parts, table, lev):
                     'reason': f"financial leverage above the market average: Ku + (Ku - Kd_e) x D/E with D/E {lev['d_to_e']:.1%} from the "
                               "model's own equity value"})
     flat = {'adjustment_' + a['factor'].replace(':', '_'): a['value'] for a in adj}   # numeric keys for risk.py's priced-via lookup
+    # the terminal's own rate: the mature table (parts['terminal']) unlevered at MARKET_DE and relevered at the same D/E
+    term = dict(parts['terminal'], asset_unlevered=lev['unlevered_terminal'], cost_of_equity=lev['ke_terminal'],
+                leverage_relevered=max(0., lev['ke_terminal'] - parts['terminal']['table_rate']),
+                formula='terminal table = risk-free + ERP + the structural rows only (dropped: ' +
+                        (', '.join(f"{a['factor']} {a['value']:+.2%}" for a in parts['terminal']['dropped']) or 'none') +
+                        '); terminal Ke = max(terminal table, Ku_T + (Ku_T - Kd_e) x D/E) with the same D/E; terminal WACC = E/V x terminal '
+                        'Ke + D/V x (Kd_e - Kd_promised x tax), floored at terminal growth + 3 points')
     # 'unlevered' stays the rate BEFORE the leverage row (consumers show Ke - unlevered as the leverage effect); the asset
     # (Harris-Pringle) rate behind the relevering is 'asset_unlevered'
     return {**{k: v for k, v in parts.items() if k != 'adjustments'}, **flat, 'adjustments': adj, 'table_rate': table,
-            'unlevered': table, 'asset_unlevered': lev['unlevered'], 'leverage': lev}
+            'unlevered': table, 'asset_unlevered': lev['unlevered'], 'leverage': lev, 'terminal': term}
 
 
-def _solve_capital(spec, P, table, kd_e, kd_p, net_debt, ov_ke, cap_at_quote=True):
+def _solve_capital(spec, P, table, table_t, kd_e, kd_p, net_debt, ov_ke, cap_at_quote=True):
     """One fixed point on the model's own values, never the quote:
     1. the debt weight from the base scenario's equity value today;
     2. the issue price of every new share (assumed equity raises and SBC settled in shares) = min(quote, the scenario's own value
        per share right after the issue): no new investor pays more than the scenario says a share is worth (a bear does not raise
        at a price it cannot support), and when the quote is below that value existing holders bear the extra dilution
-       (cap_at_quote=False prices at the scenario's own value only: the 'value at a second issue price' disclosure)."""
+       (cap_at_quote=False prices at the scenario's own value only: the 'value at a second issue price' disclosure).
+    The explicit years are discounted at Ke from the table; the terminal WACC is built from the terminal Ke, the mature table
+    (table_t, TERMINAL_KE_DROPPED) unlevered and relevered the same way at the same D/E."""
     shares, quote, B = spec['opening']['shares'], spec['quote']['price'], spec['boundaries']
     ku = (table + kd_e * MARKET_DE) / (1 + MARKET_DE)
+    ku_t = (table_t + kd_e * MARKET_DE) / (1 + MARKET_DE)
     issued = {sc['name']: [i for i in range(len(B)) if sc['equity_proceeds'][i] > 0 or sc['sbc_share_settlement'][i] > 0]
               for sc in spec['scenarios']}
     for sc in spec['scenarios']:
@@ -983,18 +1023,20 @@ def _solve_capital(spec, P, table, kd_e, kd_p, net_debt, ov_ke, cap_at_quote=Tru
     def apply(w):
         de = w / (1 - w)
         ke = max(table, ku + (ku - kd_e) * de)
+        ke_t = max(table_t, ku_t + (ku_t - kd_e) * de)      # the terminal: the mature table relevered at the same D/E
         for sc in spec['scenarios']:
             s = sc['name']
-            k_e = ov_ke.get(s, ke)
-            wacc = (1 - w) * k_e + w * (kd_e - kd_p * P[s]['tax'])
-            P[s].update(ke=k_e, wacc=max(wacc, P[s]['g_terminal'] + .03))
+            k_e, k_t = ov_ke.get(s, ke), ov_ke.get(s, ke_t)   # an analyst override is the rate of both
+            wacc = (1 - w) * k_t + w * (kd_e - kd_p * P[s]['tax'])
+            P[s].update(ke=k_e, ke_terminal=k_t, wacc=max(wacc, P[s]['g_terminal'] + .03))
             sc['cost_of_equity'] = _r(k_e)
+            sc['terminal']['cost_of_equity'] = _r(k_t)
             sc['terminal']['wacc'] = _r(P[s]['wacc'])
             sc['terminal']['debt_weight'] = float(w)    # a change in Ke moves this WACC by (1 - w) x the change (valuation_tools)
-        return ke, de
+        return ke, ke_t, de
     w, e, it = 0., None, 0
     status = 'no_net_debt' if net_debt <= 0 else 'converged'
-    ke, de = apply(0.)
+    ke, ke_t, de = apply(0.)
     floor = quote * 1e-6
     hist = {}                                  # (scenario, period) -> recent plain iterates of p = V(p), for Aitken extrapolation
     for it in range(1, 151):
@@ -1033,14 +1075,15 @@ def _solve_capital(spec, P, table, kd_e, kd_p, net_debt, ov_ke, cap_at_quote=Tru
                 status = 'capped' if w2 >= W_MAX - 1e-12 else 'converged'
             if abs(w2 - w) > 1e-9:
                 w, changed = w2, True
-                ke, de = apply(w)
+                ke, ke_t, de = apply(w)
         if not changed:
             break
     else:
         status = 'not_converged'
     prices = {sc['name']: [{'period_end': B[i], 'price': sc['equity_issue_price'][i], 'quote_binding': sc['equity_issue_price'][i] >= quote * (1 - 1e-9)}
                            for i in issued[sc['name']]] for sc in spec['scenarios']}
-    return {'ke': ke, 'unlevered': ku, 'table': table, 'kd': kd_e, 'kd_expected': kd_e, 'kd_promised': kd_p, 'market_debt_to_equity': MARKET_DE,
+    return {'ke': ke, 'unlevered': ku, 'table': table, 'ke_terminal': ke_t, 'unlevered_terminal': ku_t, 'table_terminal': table_t,
+            'kd': kd_e, 'kd_expected': kd_e, 'kd_promised': kd_p, 'market_debt_to_equity': MARKET_DE,
             'net_debt': net_debt, 'model_equity': e, 'debt_weight': w, 'd_to_e': de, 'iterations': it, 'status': status,
             'issue_prices': prices,
             'basis': 'net debt = debt - marketable investments - cash above the first-period minimum; equity = base value today x '
@@ -1202,7 +1245,10 @@ def _current_year(route, h, cal, cons):
     return out
 
 
-def _params(route, h, cal, cons, rf, ku, debt0, ov, warn):
+def _params(route, h, cal, cons, rf, ku, ku_t, ov_ke, debt0, ov, warn):
+    """ku: the table cost of equity of the explicit years; ku_t: the terminal's (the mature table, TERMINAL_KE_DROPPED), the
+    hurdle the terminal ROIC rules and the franchise durability are measured against; ov_ke: analyst cost-of-equity overrides
+    by scenario (the rate of the explicit years and of the terminal alike)."""
     st = STAGE[route['stage']]
     s2c_range = route['type'][0]
     cyc = route['cycle_path'] and h.get('cycle')
@@ -1381,14 +1427,15 @@ def _params(route, h, cal, cons, rf, ku, debt0, ov, warn):
                                   'expected return on debt, never the coupon)', 'medium')
     # a non-cyclical franchise earns a persistence lift from its realized record (durable ROIC and durable margins); a cyclical
     # keeps the floor (its return is the cycle's, assessed through the mid-cycle margin); computed once, the same across scenarios
-    dur, dur_meta = _franchise_durability(h, ku, route)
+    dur, dur_meta = _franchise_durability(h, ku_t, route)
     persist = {s: EXCESS_RETURN_PERSISTENCE[s] + (EXCESS_RETURN_PERSISTENCE_CEIL[s] - EXCESS_RETURN_PERSISTENCE[s]) * dur
                for s in EXCESS_RETURN_PERSISTENCE}
     out = {}
     for s in SCEN:
         k_u = ov(s, 'cost_of_equity', ku)
+        k_t = ov_ke.get(s, ku_t)      # an analyst override is the terminal's rate too
         tx = ov(s, 'tax_rate', tax)
-        w0 = max(k_u, gT[s] + .03)    # table cost of capital: the hurdle excess returns fade toward (leverage-free)
+        w0 = max(k_t, gT[s] + .03)    # mature table cost of capital: the hurdle terminal excess returns fade toward (leverage-free)
         roic_s = min(max(h['roic'] or 0, w0 + .05), .40)
         strong = {'base': roic_s, 'bear': max(w0 + .02, .7 * roic_s), 'bull': min(.45, 1.2 * roic_s)}[s]
         other = {'base': w0 + .02, 'bear': w0 + .01, 'bull': w0 + .04}[s]
@@ -1403,7 +1450,8 @@ def _params(route, h, cal, cons, rf, ku, debt0, ov, warn):
         mm = ov(s, 'mature_margin', margins[s])
         out[s] = {'growth': [_clamp(x, -.5, 2.) for x in paths[s]], 'g_terminal': gT[s], 'mature_margin': mm,
                   'margin_final': mm != margins[s],      # an analyst override is the final EBIT margin (no D&A roll-off added)
-                  's2c': s2c_s[s], 's2c_terminal': roic / max(mm * (1 - tx), 1e-6), 'ke': k_u, 'tax': tx, 'wacc': w0, 'hurdle': w0,
+                  's2c': s2c_s[s], 's2c_terminal': roic / max(mm * (1 - tx), 1e-6), 'ke': k_u, 'ke_terminal': k_t, 'tax': tx, 'wacc': w0,
+                  'hurdle': w0,
                   'roic': roic, 'cycle_weights': weights.get(s), 'roic_persistence': persist.get(s),
                   'conv': CYCLE_CONV[s] if cyc else (max(2, round(.75 * st['conv'])) if s == 'bear' else st['conv'])}
     meta = {'r_fy': r_fy, 'g_cur': g_cur, 'cur_basis': cur_basis, 'cur_kind': cur_kind, 'ytd': cur['ytd'] if cur else None,
@@ -1966,7 +2014,8 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
     st = STAGE[route['stage']]
     label = ' '.join(str(fb['company'].get(k) or '') for k in ('sector', 'industry')).lower()
     regulated = 'regulated' in label and any(w in label for w in REGULATED_WORDS)
-    ku, ke_parts = _cost_of_equity(route, rf, erp, [rf_note, erp_note], external_assumed, regulated)   # ku: the table rate (hurdle)
+    ku, ke_parts = _cost_of_equity(route, rf, erp, [rf_note, erp_note], external_assumed, regulated)   # ku: the explicit table rate
+    ku_t = ke_parts['terminal']['table_rate']                                                           # the terminal's (mature) table rate
 
     # ---- overrides
     applied = []
@@ -1984,9 +2033,10 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
         applied.append({'id': o['id'], 'path': lever, 'scenario': s, 'original': default, 'value': o['value'],
                         'reason': o['reason'], 'evidence_ids': o['evidence_ids']})
         return float(o['value'])
+    ov_ke = {s: float(econ[(s, 'cost_of_equity')]['value']) for s in SCEN if (s, 'cost_of_equity') in econ}
 
     try:
-        P, meta = _params(route, h, cal, cons, rf, ku, open_bal['debt'], ov, warn)
+        P, meta = _params(route, h, cal, cons, rf, ku, ku_t, ov_ke, open_bal['debt'], ov, warn)
         for s in SCEN:
             P[s]['cash_months'] = ov(s, 'minimum_cash_months', st['months'])
         inv_income = (open_bal['sti'] + open_bal['lti']) * rf
@@ -2383,7 +2433,7 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
             {s: {'growth': P[s]['g_terminal'], 'roic': P[s]['roic'], 'wacc': P[s]['wacc'], 'operating_margin': paths[s]['operating_margin'][-1]}},
             f"After {B[-1]}: growth {_pct(P[s]['g_terminal'])}, operating margin {_pct(paths[s]['operating_margin'][-1])} = the last explicit "
             f"year (no jump), reinvestment = g / ROIC = {P[s]['g_terminal'] / P[s]['roic']:.1%} of NOPAT with ROIC {_pct(P[s]['roic'])} "
-            f"({route['moat']} moat, {rule}; Ku = unlevered cost of capital {_pct(P[s]['hurdle'])}); the last explicit year already "
+            f"({route['moat']} moat, {rule}; Ku = the terminal's mature-table cost of capital {_pct(P[s]['hurdle'])}); the last explicit year already "
             f"reinvests on that rule (reinvestment), discounted at WACC {_pct(P[s]['wacc'])}.",
             'Mature-stage margin or returns on capital of the company (or its closest peers) stay below these levels.',
             _latest_src(fb, 'operating_income', 'equity') + [RULES])
@@ -2672,9 +2722,8 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
     excess0 = max(0., open_bal['cash'] - _scen(spec, 'base')['minimum_cash'][0])
     # an evidenced private stake is an asset, not liquidity: it does not offset debt in the leverage that sets the cost of capital
     net_debt = max(0., open_bal['debt'] - (inv0 - assets_added) - excess0)
-    ov_ke = {s: float(econ[(s, 'cost_of_equity')]['value']) for s in SCEN if (s, 'cost_of_equity') in econ}
     kd_e, kd_p = rf + DEBT_EXPECTED_PREMIUM, meta['interest_existing']
-    lev = _solve_capital(spec, P, ku, kd_e, kd_p, net_debt, ov_ke)
+    lev = _solve_capital(spec, P, ku, ku_t, kd_e, kd_p, net_debt, ov_ke)
     if lev['status'] in ('equity_not_positive', 'capped', 'not_converged'):
         warn('leverage_' + lev['status'], f"debt weight {lev['debt_weight']:.0%} ({lev['status']}): the model's own equity value is too small "
                                           'to carry the debt; the cost of equity is relevered at the cap, so the value is set by the cap '
@@ -2704,7 +2753,7 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
     second = None
     if dependent.get('base'):
         x = deepcopy(spec)
-        alt = _solve_capital(x, deepcopy(P), ku, kd_e, kd_p, net_debt, ov_ke, cap_at_quote=False)
+        alt = _solve_capital(x, deepcopy(P), ku, ku_t, kd_e, kd_p, net_debt, ov_ke, cap_at_quote=False)
         r_alt, _ = _run(x)
         second = r_alt['annual_values'][0]['base'] if r_alt else None
         fund['info']['base']['value_if_issued_at_own_value'] = second
@@ -2718,6 +2767,8 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
     floored = lev['ke'] <= ku + 1e-12 and lev['d_to_e'] > 0
     add('cost_of_equity', 'cost of equity and terminal WACC', 'model',
         {'cost_of_equity': {s: P[s]['ke'] for s in SCEN}, 'table_rate': ku, 'unlevered': lev['unlevered'],
+         'terminal_cost_of_equity': {s: P[s]['ke_terminal'] for s in SCEN}, 'terminal_table_rate': ku_t,
+         'terminal_dropped': [a['factor'] for a in ke_parts['terminal']['dropped']],
          'terminal_wacc': {s: P[s]['wacc'] for s in SCEN}, 'debt_weight': lev['debt_weight'], 'net_debt': net_debt,
          'model_equity': lev['model_equity'], 'kd_expected': kd_e, 'kd_promised': kd_p, 'issue_prices': lev['issue_prices']},
         f"Ke {ke:.2%}: table rate {ku:.2%} (risk-free {rf:.2%} + ERP {erp:.2%} + business-risk add-ons " +
@@ -2731,9 +2782,16 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
         "fixed point on the model's value, never the quote, so the discount rate does not move with the price" +
         ('' if not dependent else ' (per-share values of ' + ', '.join(dependent) + ' still depend on the quote: new shares are issued at '
          'the quote below their own value)') +
-        f". Terminal WACC {P['base']['wacc']:.2%} = E/V x Ke + D/V x (Kd_e - Kd_promised x tax), floored at terminal growth + 3 points. "
-        f"External-funding add-on {'applied' if external_assumed else 'not applied'} from the executed base funding result. Same Ke in all "
-        'scenarios.',
+        f". Terminal WACC {P['base']['wacc']:.2%} = E/V x terminal Ke {P['base']['ke_terminal']:.2%} + D/V x (Kd_e - Kd_promised x tax), "
+        'floored at terminal growth + 3 points; the terminal Ke is ' +
+        ('the analyst override (used for the explicit years and the terminal alike)' if ov_ke else
+         f"the mature table {ku_t:.2%}" +
+         (' (the table without ' + ', '.join(f"{a['factor']} {a['value']:+.2%}" for a in ke_parts['terminal']['dropped']) +
+          ': the forecast is mature by its terminal date, so the perpetuity does not carry the risk of a phase the model has ended)'
+          if ke_parts['terminal']['dropped'] else ' (no stage or funding add-on to drop: the same table as the explicit years)') +
+         f", relevered at the same D/E; the explicit years and the roll-back of the terminal value keep Ke {ke:.2%}") +
+        f". External-funding add-on {'applied' if external_assumed else 'not applied'} from the executed base funding result (explicit years). "
+        'Same Ke, and the same terminal rate, in all scenarios.',
         'Long-term risk-free rate moves by more than 1 point, the company changes its leverage materially, or the base plan '
         'starts or stops needing external funding.', rf_ids + erp_ids + [RULES])
     for s in SCEN:
@@ -2789,6 +2847,7 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
     return {'forecast_version': FORECAST_VERSION, 'status': 'built', 'reason': None, 'method': method, 'spec': spec,
             'spec_sha256': _sha(spec), 'assumptions': rows, 'anchors': anchors, 'paths': path_out,
             'cost_of_equity': {'bear': P['bear']['ke'], 'base': P['base']['ke'], 'bull': P['bull']['ke'], 'components': ke_parts,
+                               'terminal_cost_of_equity': {s: P[s]['ke_terminal'] for s in SCEN},
                                'terminal_wacc': {s: P[s]['wacc'] for s in SCEN}},
             'funding': fund['info'], 'overrides': applied, 'preview': preview, 'warnings': warnings,
             'moat_proxy': {'weights': route['moat_weights'], 'basis': route['moat_basis'], 'value_today_with_proxy': preview['today'],
