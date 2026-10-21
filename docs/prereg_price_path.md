@@ -273,3 +273,15 @@ Pre-run clarifications, 21.10.2026, logged before the first evaluation run (no r
 5. Section 6.1, locations. The saved walk-forward data live outside the worktree (`/home/user/fundamental-engine/runs`,
    git-ignored); the script takes absolute `--prices` / `--rates` paths and the engine rows of the fresh 2026-10-21
    baseline run of the current engine (scratchpad `bt_pre/rows.jsonl`, 3,354 rows with base_irr), read-only.
+
+Run record, 21.10.2026 (after the clarifications above, nothing in sections 2-6 changed afterwards):
+
+- First and only full run: commit 86c8a34 of branch price-path, 490 companies x formations 2016-2025 (4,900 pairs; 701 skipped
+  for no price / nothing filed; 3,287 lane rows, 912 excluded for registered reasons, 0 errors). Engine base_irr from the
+  fresh 2026-10-21 engine walk-forward (3,354 rows). Verdict **FAIL**: S2 (bias -0.113 / -0.311 / -0.504 at 1 / 3 / 5 years),
+  S1 and S3 all fail. Results: docs/PRICE_PATH_RESULTS_2026-10-21.md; numbers: runs/backtest/pricepath/summary.json. No
+  threshold, constant, window or sample rule was changed after the results; no re-run. Twenty rows with a share-count or
+  revenue unit defect in the shared data layer (M_0 < 1x: BRK-B, FOXA, CMG 2022, TEVA 2016, MKSI 2018, MPLX 2019) were found
+  and left in the sample, as the rule requires; they are reported in the results document for the data layer to fix.
+- Consequence (6.7): not shown in the valuation table. `pricepath.MEASURED` / `MEASURED_VERDICT` / `TABLE_STATUS` record the
+  measured error in every live output. Any changed method is a new spec_version with its own preregistration.

@@ -29,7 +29,9 @@ same connectors (SEC, Interactive Brokers, Alpha Vantage, FMP, LunarCrush, …).
 - **Latest state (read these to catch up):** `docs/ENGINE_CONSERVATISM_2026-10-21.md` (why the engine looks
   conservative and the reframe shipped), `docs/LIMITATIONS.md` #43, and `docs/learning_log.json`
   (round `engine_conservatism_2026-10-21`); `docs/ANALYST_COMPARISON_2026-10.md` (human analyst vs engine,
-  the results-day `quarter_review`, 0.12.0).
+  the results-day `quarter_review`, 0.12.0); `docs/PRICE_PATH_RESULTS_2026-10-21.md` (the preregistered
+  expected-price-path lane, `docs/prereg_price_path.md`, FAILED its walk-forward: base-path bias -0.11/-0.31/-0.50
+  at 1/3/5 years, the random walk's; not shown in the table; `pricepath.price_path` stays for research).
 - **Session rule (keeps the next session in sync):** work lands on `main`. Before a session ends, merge its
   branch into `main` and add its key documents to the "Latest state" line above. Two sessions on unmerged
   branches is how a new session ends up on an old engine (it happened on 21.10.2026).

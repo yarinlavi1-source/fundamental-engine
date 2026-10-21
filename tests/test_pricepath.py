@@ -342,6 +342,20 @@ class EvaluateTests(unittest.TestCase):
         self.assertAlmostEqual(PP.realized_ratio(px, '2019-06-30', 3), 1.5)    # May 2022 within the two-month tolerance
         self.assertIsNone(PP.realized_ratio(px, '2019-06-30', 5))
 
+    def test_measured_error_and_verdict_are_recorded_and_shown(self):
+        self.assertEqual(sorted(PP.MEASURED), [1, 3, 5])
+        for h, m in PP.MEASURED.items():
+            self.assertGreater(m['n'], 1000)
+            self.assertLess(m['bias_median'], -.10)                             # S2 failed at every horizon: that is the record
+            self.assertGreater(m['mdale'], abs(m['bias_median']) * .9)
+        self.assertTrue(PP.MEASURED_VERDICT.startswith('FAIL'))
+        self.assertEqual(PP.TABLE_STATUS, 'not_shown')
+        out = PP.price_path(ibkr_like())
+        self.assertEqual(out['table_status'], 'not_shown')
+        self.assertEqual(out['measured_error'], PP.MEASURED)
+        for s in ('FAIL', '2016-2025', 'within +-25% in 53%', 'median bias -0.50', 'never authorize a trade'):
+            self.assertIn(s, out['band_statement'])
+
     def test_constants_are_the_registered_ones(self):
         self.assertEqual(sorted(PP.CPI_MAY), list(range(2016, 2026)))
         self.assertEqual((PP.PE_FLOOR, PP.PE_CAP, PP.PE_INPUT_CAP), (5., 60., 60.))

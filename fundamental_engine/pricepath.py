@@ -20,6 +20,11 @@ of the preregistration) are accepted here with evidence ids but are NOT covered 
 
 Point in time: anchors come from the first three pipeline stages (dataqa, analysis, model_card) on a FactBook whose facts
 are usable only when filed by as_of (facts.usable), exactly as the engine walk-forward reads them.
+
+Outcome (21.10.2026, docs/PRICE_PATH_RESULTS_2026-10-21.md): the preregistered walk-forward FAILED. The base path's median log
+error was -0.11 / -0.31 / -0.50 at 1 / 3 / 5 years, the random walk's; EPS rose 38% on the median path while the multiple fell
+28% toward the justified level the market never converged on. The lane is not shown in the valuation table (TABLE_STATUS);
+price_path still runs for research with MEASURED in its band statement. A second version needs a new preregistration.
 """
 from datetime import date, timedelta
 from hashlib import sha256
@@ -67,10 +72,18 @@ FORMATION_YEARS = {1: (2016, 2025), 2: (2016, 2024), 3: (2016, 2023), 4: (2016, 
 VERDICT_HORIZONS = (1, 3, 5)
 MULTIPLE_BUCKETS = ((10, '<10x'), (15, '10-15x'), (20, '15-20x'), (30, '20-30x'), (60, '30-60x'), (float('inf'), '>60x (capped)'))
 WITHIN = math.log(1.25)
-# Measured walk-forward error of the base path (docs/PRICE_PATH_RESULTS_2026-10-21.md). Written after the preregistered run
-# and shown with every live path; None until the run exists. Keys: horizon -> {'mdale', 'within25', 'bias_median', 'n'}.
-MEASURED = None
-MEASURED_VERDICT = None
+# Measured walk-forward error of the base path on the common sample (docs/PRICE_PATH_RESULTS_2026-10-21.md, the first and
+# only run, 21.10.2026: 490 companies x formations 2016-2025, survivors, run-rate + base-rate variant, no guidance). Written
+# AFTER the preregistered run and shown with every live path; it changes no price. Keys: horizon -> {'mdale', 'within25',
+# 'bias_median', 'n'}; e = log(pred / actual). The random walk (today's price) had bias -0.120 / -0.311 / -0.501 and MdALE
+# 0.195 / 0.362 / 0.557 at the same horizons: the base path's five-year price is, on median, today's price.
+MEASURED = {1: {'n': 2600, 'bias_median': -.113, 'mdale': .213, 'within25': .530},
+            3: {'n': 2023, 'bias_median': -.311, 'mdale': .399, 'within25': .288},
+            5: {'n': 1435, 'bias_median': -.504, 'mdale': .588, 'within25': .176}}
+MEASURED_VERDICT = ('FAIL: S2 bias, S1 accuracy and S3 band all failed the preregistered criteria (docs/prereg_price_path.md 6.7); '
+                    'the lane is recorded in docs and not shown in the valuation table')
+# section 6.7: PASS -> the lane may appear next to the DCF; PARTIAL -> a draft row labelled with what failed; FAIL -> not shown
+TABLE_STATUS = {'PASS': 'shown', 'PARTIAL': 'draft', 'FAIL': 'not_shown'}[MEASURED_VERDICT.split(':')[0]]
 RULES = 'engine:price_path_rules'
 
 
@@ -524,7 +537,7 @@ def price_path(anch, inputs=None):
             'years_basis': {h: (live['basis'].get(h) or ('run_rate' if h == 1 else 'base_rate_fade')) for h in HORIZONS},
             'live_inputs_used': bool(live['statements'])}
     out = dict(core, assumptions=ledger, band_statement=band_statement(), measured_error=MEASURED, verdict=MEASURED_VERDICT,
-               input_sha256=_sha({'anchors': anch, 'inputs': inputs or {}, 'spec_version': SPEC_VERSION}), output_sha256=_sha(core))
+               table_status=TABLE_STATUS, input_sha256=_sha({'anchors': anch, 'inputs': inputs or {}, 'spec_version': SPEC_VERSION}), output_sha256=_sha(core))
     return out
 
 
