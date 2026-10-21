@@ -414,6 +414,17 @@ def hebrew_table(casefile):
     if show and ov:
         rows.append(('כמה התחזית אופטימית', f"מניחה צמיחה של כ־{_hp(ov['real_cagr'])} בשנה (מעבר לאינפלציה) לעשר שנים; "
                                              f"רק כ־{ov['share_at_least']:.0%} מהחברות בגודל הזה הצליחו בכך בעבר"))
+    pig = cf.get('price_implied_growth') or {}
+    if show and pig.get('status') == 'solved' and _n(pig.get('implied_real_cagr')):
+        sh = pig.get('growth_shift')
+        n = pig.get('horizon', 10)
+        diff = (f" (כ־{abs(sh) * 100:.0f} נק׳ אחוז {'יותר' if sh > 0 else 'פחות'} בשנה מהתרחיש הסביר)"
+                if _n(sh) and abs(sh) >= .005 else ' (בערך כמו התרחיש הסביר)')
+        tail = (f"; רק כ־{pig['share_at_least']:.0%} מהחברות בגודל הזה הצליחו בכך בעבר" if _n(pig.get('share_at_least')) else '')
+        rows.append(('מה המחיר של היום מניח', f"צמיחה של כ־{_hp(pig['implied_real_cagr'])} בשנה (מעבר לאינפלציה) ל־{n} שנים"
+                                               f"{diff}{tail}"))
+        notes.append('"מה המחיר מניח" = איזו צמיחה צריכה להתממש כדי שהמחיר של היום יהיה מוצדק באותו מודל (רגישות, לא תחזית שוק); '
+                     'כך רואים אם המחיר כבר מגלם צמיחה נדירה, או משאיר מרווח.')
     kr = (cf.get('analyst_sheet') or {}).get('key_risk') or {}
     risk = kr.get('reading_he') or _top_risk(cf, dc) or 'שהצמיחה והרווחיות לא יתממשו כפי שהונח'
     rows.append(('הסיכון המרכזי', str(risk).rstrip('.')))

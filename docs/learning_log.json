@@ -305,6 +305,37 @@
      "fix": "cyclical treatment (mid-cycle normalization); the Kioxia gains sit below the operating line the forecast uses"
     }
    ]
+  },
+  {
+   "round": "engine_conservatism_2026-10-21",
+   "date": "2026-10-21",
+   "companies": [],
+   "fixes": [
+    {
+     "ticker": "*",
+     "kind": "diagnosis",
+     "finding": "owner felt valuations exaggerated vs market prices; the 491-company walk-forward confirmed value/price drifting to ~0.5 by 2024-25 (software 0.33, semis 0.45, growth 0.51), but the deepest-discount names did NOT underperform over 1-3y in this survivor-biased bull-market sample",
+     "fix": "documented in docs/ENGINE_CONSERVATISM_2026-10-21.md; the conservatism on growth is mostly structural (discount rate, growth fade) and largely appropriate, not a bug to tune away"
+    },
+    {
+     "ticker": "*",
+     "kind": "engine_change",
+     "finding": "terminal excess-return persistence was a flat 50%/71% of demonstrated excess, contradicting the cited ROIC-persistence evidence (durable high-ROIC franchises persist more than the average fader)",
+     "fix": "_franchise_durability scales persistence from the floor (0.50/0.71) to a ceiling (0.75/0.85) by realized-ROIC level+stability AND margin durability; withheld from cyclicals (semiconductor/commodity types, route cyclical/cycle_path) and weak moats; bear never lifted"
+    },
+    {
+     "ticker": "*",
+     "kind": "measurement",
+     "finding": "A/B isolation (lift on vs off, same engine) showed the persistence lever moves compounder values under 1% (MSFT +0.2%, ADBE/INTU/ISRG/NOW +0.0%); the +20% seen vs the saved v3 rows was from earlier engine changes, not this one",
+     "fix": "kept the change as a principled, tested refinement but did NOT present it as the fix; chose with the owner to reframe, not inflate"
+    },
+    {
+     "ticker": "*",
+     "kind": "feature",
+     "finding": "a conservative value looked exaggerated because the table showed no context for the gap to price",
+     "fix": "decision.price_implied_growth surfaces drivers.implied_growth_shift as a Hebrew table row: the growth the current price assumes vs the base case and the size-class base rates (a per-spec sensitivity, computed once per table, not in the pipeline/backtest; changes no value)"
+    }
+   ]
   }
  ]
 }

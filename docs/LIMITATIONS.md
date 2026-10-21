@@ -170,3 +170,11 @@ Companion to docs/EVIDENCE_STATUS.md, which separates what tests prove from what
     and bull, so the bear does not test a fall in the stake's value (Microsoft's OpenAI stake at a 25% haircut to the last
     round); the haircut is the analyst's judgement and the book value already in the bridge is often not disclosed (then the
     whole line holding it is subtracted, understating the addition).
+43. **The engine's absolute values run far below market for growth names, by design, and no honest lever closes it.** The
+    491-company walk-forward values the median large cap near half its price by 2024-2025 (software ~0.33x, semis ~0.45x); the
+    deepest-discount names did not go on to underperform over 1-3 years in this survivor-biased, bull-market sample, so "cheap
+    by the engine" is not a reliable "it will fall" signal. The durability-scaled terminal persistence corrects a principled
+    inconsistency but moves value under 1% (A/B isolated). Slower growth fade (+1.5yr) or a 1pp lower discount rate each lift the
+    software cohort only ~0.29 -> ~0.35; reaching price would mean underwriting peak multiples. The engine's edge is in ranking
+    and in refusing to overpay at tops, not in the level. The price-implied-growth table row makes the gap legible rather than
+    closing it; it is a per-spec sensitivity, not a market forecast.

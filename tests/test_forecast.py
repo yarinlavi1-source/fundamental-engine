@@ -1500,24 +1500,62 @@ class IncompleteDebtTests(unittest.TestCase):
 class EvidenceBasedRatesTests(unittest.TestCase):
     """2026-10-20 literature review (docs/VALUATION_RESEARCH_REVIEW_2026-10-20.md)."""
 
-    def _unassessed(self, moat='unknown'):
+    def _unassessed(self, moat='unknown', roic_series=None):
         fb, an, card, qa = adbe()
         an['metrics']['incremental_roic_3y'] = {'value': .05}                    # no computed moat proxy
-        an['forensics'] = {'roic': {'series': [{'fiscal_year': f'FY{y}', 'roic': .30} for y in range(2021, 2026)]}}
+        series = roic_series if roic_series is not None else [.30] * 5
+        an['forensics'] = {'roic': {'series': [{'fiscal_year': f'FY{2026 - len(series) + i}', 'roic': v}
+                                               for i, v in enumerate(series)]}}
         card['dimensions'] = {'moat': {'assessment': moat}}
         fc = forecast.build(fb, an, card, qa)
         row = next(a for a in fc['assumptions'] if a['id'] == 'moat_basis')
         return fc, row, {s: scen(fc['spec'], s)['terminal'] for s in SCEN}
 
-    def test_unassessed_moat_keeps_half_the_demonstrated_excess_return(self):
+    def test_unassessed_moat_lifts_persistence_for_a_durable_roic(self):
+        # a high, perfectly stable realized ROIC over the full window earns the ceiling persistence (0.75 base / 0.85 bull)
         fc, row, t = self._unassessed()
         self.assertEqual(row['values']['proxy_weight']['base'], 0.)
         k = row['values']['unlevered_cost_of_capital']
-        shown = .30                                                                  # min(latest .62, 5-year average .30)
+        shown = .30                                                                  # min(latest, 5-year average .30)
+        self.assertAlmostEqual(t['base']['roic'], k + .75 * (shown - k), places=6)
+        self.assertAlmostEqual(t['bull']['roic'], k + .85 * (shown - k), places=6)
+        self.assertAlmostEqual(t['bear']['roic'], k + .01, places=6)                # the bear still tests a moat that fails
+        self.assertIn('75% of the demonstrated', row['rationale'])
+
+    def test_unassessed_moat_keeps_the_floor_without_a_durable_record(self):
+        # a volatile ROIC record (high coefficient of variation) is not durability: the terminal keeps the 50% / 71% floor
+        fc, row, t = self._unassessed(roic_series=[.05, .55, .10, .50, .08])
+        k = row['values']['unlevered_cost_of_capital']
+        shown = min(.62, sum([.05, .55, .10, .50, .08]) / 5)                         # min(latest metric .62, average .256)
         self.assertAlmostEqual(t['base']['roic'], k + .5 * (shown - k), places=6)
         self.assertAlmostEqual(t['bull']['roic'], k + .71 * (shown - k), places=6)
-        self.assertAlmostEqual(t['bear']['roic'], k + .01, places=6)                # the bear still tests a moat that fails
-        self.assertIn('50% of the demonstrated excess', row['rationale'])
+        self.assertIn('50% of the demonstrated', row['rationale'])
+
+    def test_short_roic_record_earns_no_persistence_lift(self):
+        # fewer than the minimum years of ROIC is not a durable record, whatever the level
+        fc, row, t = self._unassessed(roic_series=[.30] * (forecast.PERSISTENCE_MIN_YEARS - 1))
+        k = row['values']['unlevered_cost_of_capital']
+        shown = .30
+        self.assertAlmostEqual(t['base']['roic'], k + .5 * (shown - k), places=6)
+
+    def test_franchise_durability_is_continuous_and_gated(self):
+        d = forecast._franchise_durability
+        franchise = {'cyclical': False, 'cycle_path': False, 'business_model': 'subscription_software'}
+        gm = lambda: {'gross_margins': [.80] * 6}                                     # a durable, high, stable margin
+        self.assertEqual(d({'roic_series': [.30] * 3, 'roic': .30, 'roic_avg': .30, **gm()}, .08, franchise)[0], 0.)   # too short
+        self.assertEqual(d({'roic_series': [-.1, .4, -.2, .3, .5], 'roic': -.1, 'roic_avg': .18, **gm()}, .08, franchise)[0], 0.)  # latest below hurdle
+        hi = d({'roic_series': [.30] * 6, 'roic': .30, 'roic_avg': .30, **gm()}, .08, franchise)[0]
+        lo = d({'roic_series': [.05, .55, .10, .50, .08, .40], 'roic': .40, 'roic_avg': .28, **gm()}, .08, franchise)[0]
+        self.assertEqual(hi, 1.)                                                     # high ROIC, stable, durable margin -> ceiling
+        self.assertLess(lo, hi)                                                      # same mean ROIC, far more volatile -> less
+        # a cyclical business earns nothing even with the identical high, stable record
+        cyc = {'cyclical': False, 'cycle_path': False, 'business_model': 'semiconductor'}
+        self.assertEqual(d({'roic_series': [.30] * 6, 'roic': .30, 'roic_avg': .30, **gm()}, .08, cyc)[0], 0.)
+        flagged = {'cyclical': True, 'cycle_path': False, 'business_model': 'industrial'}
+        self.assertEqual(d({'roic_series': [.30] * 6, 'roic': .30, 'roic_avg': .30, **gm()}, .08, flagged)[0], 0.)
+        # swinging margins are not a franchise: the same ROIC record with a volatile gross margin earns less than the ceiling
+        swing = d({'roic_series': [.30] * 6, 'roic': .30, 'roic_avg': .30, 'gross_margins': [.20, .55, .25, .50, .22, .48]}, .08, franchise)[0]
+        self.assertLess(swing, hi)
 
     def test_weak_moat_keeps_the_full_fade(self):
         fc, row, t = self._unassessed('weak')

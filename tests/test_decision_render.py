@@ -449,6 +449,25 @@ class RenderTests(unittest.TestCase):
         blocked = hebrew_table(self.cases['blocked'])
         self.assertNotIn('| שווי הוגן (תרחיש סביר) |', blocked)                   # no value without a price verdict
 
+    def test_price_implied_growth_row_reframes_the_gap(self):
+        from fundamental_engine.render import hebrew_table
+        base = self.cases['attractive']
+        self.assertNotIn('מה המחיר של היום מניח', hebrew_table(base))            # absent until the reverse-DCF is attached
+        dear = deepcopy(base)
+        dear['price_implied_growth'] = {'status': 'solved', 'growth_shift': .03, 'horizon': 10,
+                                        'implied_real_cagr': .14, 'share_at_least': .18, 'reference_class': '$12,000-25,000m'}
+        t = hebrew_table(dear)
+        self.assertIn('| מה המחיר של היום מניח |', t)
+        self.assertIn('יותר', t)                                                 # a premium needs faster growth than the base case
+        self.assertIn('18%', t)                                                  # only ~18% of the size class achieved it
+        cheap = deepcopy(base)
+        cheap['price_implied_growth'] = {'status': 'solved', 'growth_shift': -.04, 'horizon': 10,
+                                         'implied_real_cagr': .05, 'share_at_least': .62, 'reference_class': '$12,000-25,000m'}
+        self.assertIn('פחות', hebrew_table(cheap))                               # a discount implies slower growth than the base case
+        unavail = deepcopy(base)
+        unavail['price_implied_growth'] = {'status': 'unavailable'}
+        self.assertNotIn('מה המחיר של היום מניח', hebrew_table(unavail))
+
     def test_markdown_contains_all_sections_and_provenance(self):
         md = markdown(self.cases['attractive'])
         for s in SECTIONS:

@@ -107,7 +107,26 @@ MARKET_NEUTRAL_ADJUSTMENT = -.01
 # demonstrated excess over Ku (base 50%, bull 71%; never below the former Ku+2pp / Ku+4pp); the bear still tests a moat that
 # fails (Ku+1pp) and an analyst 'weak' moat keeps the full fade. Demonstrated = the lower of the latest and the 5-year average
 # ROIC, capped at 40% (a single strong year earns no persistence).
-EXCESS_RETURN_PERSISTENCE = {'base': .50, 'bull': .71}
+# The kept share is not flat across the quintiles: the Base Rate Book's own data and the McKinsey ROIC transition matrices
+# (Koller et al.) both show the firms whose realized ROIC is both HIGH and STABLE over a long record stay high far longer than
+# the average fader -- a wide-moat compounder keeps much more of its excess than a company with one good year. So the base/bull
+# persistence is lifted from the floor toward a ceiling by a continuous, evidence-only durability weight (_franchise_durability):
+# how far realized ROIC clears the hurdle, how stable it has been over at least PERSISTENCE_MIN_YEARS, and whether margins are a
+# durable franchise's. The lift is withheld from cyclicals (their return is the cycle's, assessed through _cycle_margin, not a
+# persistence premium) and from a weak moat; the bear is never lifted; and no analyst input is needed, so an automatic run earns
+# it from the realized record alone. A move in one input never flips the value. NOTE (docs/ENGINE_CONSERVATISM_2026-10-21.md): an
+# A/B on the 491-company walk-forward measured this lever's own effect at under 1% of value -- it corrects a principled
+# inconsistency in the flat 50%, it is NOT the cure for the engine's conservatism on growth names, which is mostly structural
+# (discount rate and growth fade) and largely appropriate. That gap is surfaced, not inflated, via decision.price_implied_growth.
+EXCESS_RETURN_PERSISTENCE = {'base': .50, 'bull': .71}          # floor: a thin or unstable ROIC record keeps only this
+EXCESS_RETURN_PERSISTENCE_CEIL = {'base': .75, 'bull': .85}     # ceiling: a high, stable ROIC over a long record
+PERSISTENCE_EXCESS_RAMP = (.05, .20)        # demonstrated ROIC excess over the hurdle: +5pp -> floor, +20pp -> ceiling
+PERSISTENCE_STABILITY_RAMP = (.50, .20)     # coefficient of variation of the ROIC history: 50% -> floor, 20% -> ceiling
+PERSISTENCE_MIN_YEARS = 5                    # fewer years of ROIC than this earns no lift (a short record is not durability)
+# inherently cyclical business models never earn the premium: across a boom window their trailing ROIC looks high and stable
+# though it is the cycle's, not a franchise's, and the 491-company walk-forward found their value/price signal flat-to-inverse
+# (semiconductors Spearman -0.28). They are valued around the cycle through the mid-cycle margin instead.
+CYCLICAL_LIFT_EXCLUDED_TYPES = ('semiconductor', 'commodity')
 # Financial leverage is NOT a table add-on. The table rate (risk-free + ERP + business-risk add-ons) is the cost of equity of
 # a company of that business risk at MARKET-AVERAGE leverage: the ERP is measured on levered equities, so treating it as an
 # unlevered rate and relevering on top double counts leverage. Ku unlevers it at MARKET_DE with the EXPECTED return on debt
@@ -327,6 +346,47 @@ def _ramp(x, lo, hi):
     if x is None:
         return 0.
     return _clamp((x - lo) / (hi - lo), 0., 1.)
+
+
+def _margin_franchise(h):
+    """0..1 pricing-power weight from the margin record alone: a high, stable gross margin (or operating margin where no cost
+    of revenue is reported, as for a payment network). The same test the moat proxy uses, isolated so a cyclical whose margins
+    swing cannot look like a franchise even when its boom-window ROIC does."""
+    gms, oms = h.get('gross_margins') or [], h.get('operating_margins') or []
+    if len(gms) >= 3 and gms[-1] - gms[0] > -.05:
+        return min(_ramp(gms[-1], *PROXY_RAMPS['gross_margin']), _ramp(max(gms) - min(gms), *PROXY_RAMPS['gross_margin_range'])), \
+            f'gross margin {_pct(gms[-1])}, range {_pct(max(gms) - min(gms))} over {len(gms)} years'
+    if len(oms) >= 3 and oms[-1] - oms[0] > -.05:
+        return min(_ramp(oms[-1], *PROXY_RAMPS['operating_margin']), _ramp(max(oms) - min(oms), *PROXY_RAMPS['operating_margin_range'])), \
+            f'operating margin {_pct(oms[-1])}, range {_pct(max(oms) - min(oms))} over {len(oms)} years (no cost of revenue reported)'
+    return 0., 'margin stability not evidenced (fewer than three margins, or falling)'
+
+
+def _franchise_durability(h, ku, route):
+    """0..1 evidence that today's excess return on capital will persist. A durable franchise shows ALL of: a realized ROIC that
+    clears the hurdle by a wide margin, a stable ROIC record over a long enough window, and a high, stable margin (pricing
+    power). The weakest of the three decides (as in the moat proxy), so a cyclical whose margins swing earns little even when
+    its boom-window ROIC looks high and stable. Withheld entirely from the inherently cyclical business models and from any
+    company the card/analyst already flags cyclical -- their return is the cycle's, assessed through the mid-cycle margin, not a
+    persistence premium. This is the Base Rate Book / McKinsey persistence signal, computable with no analyst input."""
+    if route['cyclical'] or route['cycle_path'] or route['business_model'] in CYCLICAL_LIFT_EXCLUDED_TYPES:
+        return 0., {'durability': 0., 'basis': f"cyclical business ({route['business_model']}): the cycle's average return, no persistence premium"}
+    ser = [x for x in (h.get('roic_series') or []) if x is not None]
+    shown = [x for x in (h.get('roic'), h.get('roic_avg')) if x is not None]
+    if len(ser) < PERSISTENCE_MIN_YEARS or not shown:
+        return 0., {'durability': 0., 'years': len(ser), 'basis': f'ROIC record under {PERSISTENCE_MIN_YEARS} years'}
+    mean = sum(ser) / len(ser)
+    if mean <= 0:
+        return 0., {'durability': 0., 'years': len(ser), 'basis': 'average realized ROIC not positive'}
+    cv = (sum((x - mean) ** 2 for x in ser) / len(ser)) ** .5 / mean
+    excess = _ramp(min(shown) - ku, *PERSISTENCE_EXCESS_RAMP)
+    stability = _ramp(cv, *PERSISTENCE_STABILITY_RAMP)
+    margin, m_basis = _margin_franchise(h)
+    dur = round(min(excess, stability, margin), 4)
+    return dur, {'durability': dur, 'years': len(ser), 'roic_cv': round(cv, 3), 'demonstrated_excess': round(min(shown) - ku, 4),
+                 'excess_weight': round(excess, 3), 'stability_weight': round(stability, 3), 'margin_weight': round(margin, 3),
+                 'basis': f'demonstrated ROIC {_pct(min(shown))} vs hurdle {_pct(ku)} (excess {excess:.2f}); ROIC variation {cv:.0%} '
+                          f'over {len(ser)} years (stability {stability:.2f}); {m_basis} (margin {margin:.2f})'}
 
 
 def _moat_proxy(card, h, fb, normalize):
@@ -1286,6 +1346,11 @@ def _params(route, h, cal, cons, rf, ku, debt0, ov, warn):
         warn('debt_rate_unusual', f'interest expense / debt {r_raw:.2%} is outside {DEBT_RATE_RANGE[0]:.1%}..risk-free + {DEBT_RATE_RANGE[1]:.0%}: '
                                   'check the debt and interest data (it sets interest and the tax shield; the cost of equity uses the '
                                   'expected return on debt, never the coupon)', 'medium')
+    # a non-cyclical franchise earns a persistence lift from its realized record (durable ROIC and durable margins); a cyclical
+    # keeps the floor (its return is the cycle's, assessed through the mid-cycle margin); computed once, the same across scenarios
+    dur, dur_meta = _franchise_durability(h, ku, route)
+    persist = {s: EXCESS_RETURN_PERSISTENCE[s] + (EXCESS_RETURN_PERSISTENCE_CEIL[s] - EXCESS_RETURN_PERSISTENCE[s]) * dur
+               for s in EXCESS_RETURN_PERSISTENCE}
     out = {}
     for s in SCEN:
         k_u = ov(s, 'cost_of_equity', ku)
@@ -1296,7 +1361,7 @@ def _params(route, h, cal, cons, rf, ku, debt0, ov, warn):
         other = {'base': w0 + .02, 'bear': w0 + .01, 'bull': w0 + .04}[s]
         shown = [x for x in (h['roic'], h.get('roic_avg')) if x is not None]
         if s in EXCESS_RETURN_PERSISTENCE and route['moat'] != 'weak' and shown and min(shown) > w0:
-            other = max(other, w0 + EXCESS_RETURN_PERSISTENCE[s] * (min(min(shown), .40) - w0))
+            other = max(other, w0 + persist[s] * (min(min(shown), .40) - w0))
         wt = route['moat_weights'][s]
         roic = other + wt * (strong - other)        # the moat proxy weight blends the two rules (bear: unassessed rules)
         roic = ov(s, 'terminal_roic', roic)
@@ -1306,13 +1371,14 @@ def _params(route, h, cal, cons, rf, ku, debt0, ov, warn):
         out[s] = {'growth': [_clamp(x, -.5, 2.) for x in paths[s]], 'g_terminal': gT[s], 'mature_margin': mm,
                   'margin_final': mm != margins[s],      # an analyst override is the final EBIT margin (no D&A roll-off added)
                   's2c': s2c_s[s], 's2c_terminal': roic / max(mm * (1 - tx), 1e-6), 'ke': k_u, 'tax': tx, 'wacc': w0, 'hurdle': w0,
-                  'roic': roic, 'cycle_weights': weights.get(s),
+                  'roic': roic, 'cycle_weights': weights.get(s), 'roic_persistence': persist.get(s),
                   'conv': CYCLE_CONV[s] if cyc else (max(2, round(.75 * st['conv'])) if s == 'bear' else st['conv'])}
     meta = {'r_fy': r_fy, 'g_cur': g_cur, 'cur_basis': cur_basis, 'cur_kind': cur_kind, 'ytd': cur['ytd'] if cur else None,
             'stub_rate': stub_rate, 'stub_basis': stub_basis, 'consensus_growth': cg,
             'consensus_low': lows, 'consensus_high': highs, 'growth_kind': g_kind, 'spread': spread, 'half_life': hl,
             'margin_why': m_why, 's2c_history': s2c_h, 's2c_used': s2c, 's2c_range': s2c_range, 'tax_effective': tax_eff,
-            'tax_used': tax, 'interest_existing': r0, 'g_terminal': gT, 'cycle': cyc_meta}
+            'tax_used': tax, 'interest_existing': r0, 'g_terminal': gT, 'cycle': cyc_meta,
+            'roic_durability': dur_meta, 'roic_persistence': persist}
     return out, meta
 
 
@@ -2186,8 +2252,9 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
            f"{k_moat:.0%} of today's margin excess over the type-typical {_pct(typ_m)} is competed away ({haircut:.1%} of revenue) and terminal "
            f"ROIC fades to {_pct(P['base']['roic'])} against a demonstrated ROIC {_pct(h['roic'])} ("
            + ('weak moat: excess returns competed down to Ku+2pp' if route['moat'] == 'weak' else
-              f"Ku {_pct(P['base']['hurdle'])} + {EXCESS_RETURN_PERSISTENCE['base']:.0%} of the demonstrated excess, at least Ku+2pp: the "
-              'share of excess returns left after ten years in the base rates') +
+              f"Ku {_pct(P['base']['hurdle'])} + {(P['base'].get('roic_persistence') or EXCESS_RETURN_PERSISTENCE['base']):.0%} of the "
+              f"demonstrated excess, at least Ku+2pp: the base-rate share of excess returns left after ten years, lifted for a high, "
+              f"stable realized ROIC ({meta.get('roic_durability', {}).get('basis', 'floor')})") +
            '). A quantified model haircut, not evidence: an evidenced analyst moat assessment replaces it.'))),
         f"Returns on capital stay above {_pct(P['base']['roic'] + .05)} and margins above {_pct(P['base']['mature_margin'] + .03)} for three years "
         '(haircut too harsh), or fall below the bear path (too generous).', _latest_src(fb, 'operating_income', 'gross_profit', 'equity') + [RULES])
@@ -2262,8 +2329,11 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
         rule = ({'base': 'returns stay above the cost of capital: max(demonstrated ROIC, Ku+5pp), capped at 40%', 'bear': '70% of the base ROIC, '
                  'at least Ku+2pp', 'bull': '120% of the base ROIC, capped at 45%'}[s] if route['moat'] == 'strong' else
                 {'base': 'excess returns competed down to Ku+2pp', 'bear': 'Ku+1pp', 'bull': 'Ku+4pp'}[s] if route['moat'] == 'weak' else
-                {'base': f"Ku + {EXCESS_RETURN_PERSISTENCE['base']:.0%} of the demonstrated excess return (at least Ku+2pp)", 'bear': 'Ku+1pp',
-                 'bull': f"Ku + {EXCESS_RETURN_PERSISTENCE['bull']:.0%} of the demonstrated excess return (at least Ku+4pp)"}[s])
+                {'base': f"Ku + {(P['base'].get('roic_persistence') or EXCESS_RETURN_PERSISTENCE['base']):.0%} of the demonstrated excess return (at least Ku+2pp)",
+                 'bear': 'Ku+1pp',
+                 'bull': f"Ku + {(P['bull'].get('roic_persistence') or EXCESS_RETURN_PERSISTENCE['bull']):.0%} of the demonstrated excess return (at least Ku+4pp)"}[s])
+        if s in EXCESS_RETURN_PERSISTENCE and route['moat'] != 'strong' and route['moat_weights'][s] == 0 and (meta.get('roic_durability') or {}).get('durability'):
+            rule += f" (persistence lifted from the {EXCESS_RETURN_PERSISTENCE[s]:.0%} floor by a durable realized ROIC: {meta['roic_durability']['basis']})"
         if route['moat'] != 'strong' and route['moat_weights'][s] > 0:
             rule += f" blended toward the strong-moat rule at proxy weight {route['moat_weights'][s]:.2f}"
         if P[s].get('release_bounded'):

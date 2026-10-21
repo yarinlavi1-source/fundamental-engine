@@ -200,6 +200,7 @@ def main():
             company = None if args.factbook else json_object_arg(args.company, "--company")
             from .pipeline import factbook_from_run_dir, run, summary
             from .render import markdown, hebrew_paragraph, hebrew_table
+            from .decision import price_implied_growth
             from .facts import add_qualitative_bundle
             if args.factbook:
                 fb = read_json(args.factbook)
@@ -213,6 +214,7 @@ def main():
             (out / "casefile.json").write_text(json.dumps(cf, indent=1, ensure_ascii=False, default=str), encoding="utf-8")
             (out / "report.md").write_text(markdown(cf), encoding="utf-8")
             (out / "paragraph.txt").write_text(hebrew_paragraph(cf), encoding="utf-8")
+            cf['price_implied_growth'] = price_implied_growth(cf)       # reverse-DCF for the table; not run inside the pipeline
             (out / "table_he.md").write_text(hebrew_table(cf), encoding="utf-8")
             print(json.dumps({'summary': summary(cf), 'stages': cf['stages'], 'errors': cf['errors'], 'out': str(out)}, indent=2, ensure_ascii=False))
             return
@@ -285,6 +287,7 @@ def main():
         if args.command == "deep":
             from . import handoff
             from .render import markdown, hebrew_paragraph, hebrew_table
+            from .decision import price_implied_growth
             from .pipeline import summary
             base = Path(args.folder)
             suffix = f'_{args.name}' if args.name else ''
@@ -310,6 +313,7 @@ def main():
                 (out / "casefile.json").write_text(json.dumps(cf, indent=1, ensure_ascii=False, default=str), encoding="utf-8")
                 (out / "report.md").write_text(markdown(cf), encoding="utf-8")
                 (out / "paragraph.txt").write_text(hebrew_paragraph(cf), encoding="utf-8")
+                cf['price_implied_growth'] = price_implied_growth(cf)       # reverse-DCF for the table; not run inside the pipeline
                 (out / "table_he.md").write_text(hebrew_table(cf), encoding="utf-8")
                 pack = handoff.reading_pack(str(folder))
                 if pack:

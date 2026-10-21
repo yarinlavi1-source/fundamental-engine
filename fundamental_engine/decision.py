@@ -2380,3 +2380,40 @@ def _business_he(A):
     tr = A['trajectory']
     t = LEVEL_HE[tr['level']] + (' לפי הכרעת אנליסט' if tr.get('override') else '')
     return f"{q}, והמגמה העסקית {t}"
+
+
+def price_implied_growth(cf):
+    """Reverse-DCF for the plain-language table: the uniform shift to the base-case growth path that makes the engine's OWN
+    value equal the market price (drivers.implied_growth_shift -- margins, capital structure and terminal held fixed, growth
+    capex recomputed from the reinvestment rule so faster growth costs capital), read against the size-class base rates. It
+    reframes a large discount or premium as the growth the price assumes, so a conservative value is legible rather than
+    mysterious. A sensitivity of this spec, not a market forecast, and it changes no value. Expensive (many DCF evaluations),
+    so the caller runs it once for a single valuation's table, never inside the pipeline or the backtest. Returns
+    {'status': ...} and, when solved, the per-year growth shift, the implied 10-year path CAGR and how rare that has been."""
+    fc = (cf or {}).get('fc') or {}
+    spec = fc.get('spec') or {}
+    if (fc.get('status') != 'built' or spec.get('valuation_version') == 1 or not spec.get('scenarios')
+            or not (spec.get('quote') or {}).get('price')):
+        return {'status': 'unavailable'}
+    from .drivers import implied_growth_shift
+    from . import base_rates
+    try:
+        r = implied_growth_shift(spec)
+    except Exception as e:                                   # a reverse-DCF failure never breaks the table
+        return {'status': 'error', 'error': f'{type(e).__name__}: {e}'[:160]}
+    if r.get('status') != 'solved' or not r.get('implied_growth_path'):
+        return {'status': r.get('status', 'unavailable'), 'growth_shift': r.get('growth_shift')}
+    path = r['implied_growth_path']
+    sales = spec.get('last_full_year_revenue')
+    ov = base_rates.outside_view(sales, {k: base_rates.cagr(path, k) for k in (5, 10)}) if sales else None
+    hz = (ov or {}).get('horizons') or {}
+    n = 10 if (10 in hz or '10' in hz) else (5 if (5 in hz or '5' in hz) else min(len(path), 10))   # the longest base-rate horizon reached
+    h = hz.get(n) or hz.get(str(n))
+    base = next((s for s in spec['scenarios'] if s['name'] == 'base'), None)
+    base_path = base.get('growth') if base else None
+    return {'status': 'solved', 'growth_shift': r['growth_shift'], 'horizon': n,
+            'implied_nominal_cagr': base_rates.cagr(path, n),
+            'base_case_nominal_cagr': base_rates.cagr(base_path, n) if isinstance(base_path, list) else None,
+            'reference_class': (ov or {}).get('reference_class'),
+            'implied_real_cagr': (h or {}).get('real_cagr'), 'share_at_least': (h or {}).get('share_at_least'),
+            'limitation': r.get('limitation')}

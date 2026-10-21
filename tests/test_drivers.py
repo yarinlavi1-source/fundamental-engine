@@ -69,6 +69,18 @@ class DriverSpecTests(unittest.TestCase):
         s['quote']['price'] = 1e6
         self.assertEqual(implied_growth_shift(s)['status'], 'not_bracketed')
 
+    def test_price_implied_growth_reframes_the_quote(self):
+        from fundamental_engine.decision import price_implied_growth
+        r = price_implied_growth({'fc': {'status': 'built', 'spec': spec()}})
+        self.assertEqual(r['status'], 'solved')
+        self.assertGreater(r['growth_shift'], 0)                                 # the example quote sits above the base value
+        self.assertIsInstance(r['implied_nominal_cagr'], float)
+        self.assertGreater(r['implied_nominal_cagr'], r['base_case_nominal_cagr'])  # the price assumes faster growth than the base case
+        self.assertIn(r['horizon'], (5, 10))
+        self.assertTrue(0 <= r['share_at_least'] <= 1)
+        self.assertEqual(price_implied_growth({})['status'], 'unavailable')      # no forecast spec -> no reframe, never an error
+        self.assertEqual(price_implied_growth({'fc': {'status': 'built', 'spec': {'valuation_version': 1}}})['status'], 'unavailable')
+
     def test_mcp_tools(self):
         srv = Server(':memory:'); srv.initialized = True
         out = srv.handle({'jsonrpc': '2.0', 'id': 1, 'method': 'tools/call',

@@ -1,5 +1,20 @@
 ## 0.11.2 (in progress, 20.10.2026)
 
+- Engine conservatism diagnosed and the honest fix (21.10.2026, `docs/ENGINE_CONSERVATISM_2026-10-21.md`). The 491-company
+  walk-forward shows the engine's value/price drifting to ~0.5 by 2024-2025 (deepest in software 0.33, semis 0.45, growth
+  0.51), and the deepest-discount names did NOT underperform — the conservatism on growth is mostly structural (discount rate
+  and growth fade) and largely appropriate, not a bug to tune away. Terminal excess-return persistence is now
+  durability-scaled rather than a flat 50%/71%: a franchise with high, stable realized ROIC AND durable margins keeps more of
+  its excess (ceiling 75%/85%), a thin or volatile record keeps the floor, and inherently cyclical businesses
+  (`CYCLICAL_LIFT_EXCLUDED_TYPES`, `route['cyclical']`, `cycle_path`) and weak moats keep the floor; the bear is never lifted
+  (`_franchise_durability`). An A/B measured this lever's own effect at under 1% of value — it corrects a principled
+  inconsistency, it is not the cure for the perceived over-valuation, and is not presented as one.
+- Reframe, not inflate (owner's choice, 21.10.2026): every plain-language table (`render.hebrew_table`) gains a
+  "מה המחיר של היום מניח" row from a reverse-DCF the engine already supports (`drivers.implied_growth_shift` via
+  `decision.price_implied_growth`): the uniform growth the current price assumes, against the base case and the size-class
+  base rates (e.g. ServiceNow — the price assumes ~14% real growth for a decade, ~8pp/yr above the base case, which only ~4%
+  of comparable companies achieved). Computed once per table (never in the pipeline or backtest); it changes no value.
+
 - Broad discovery universe on real data: `scripts/collect_universe.py` saves SEC XBRL frames (2021-2025, all filers),
   the SEC ticker map and the Nasdaq listings file with a manifest; `universe.build` makes one row per issuer (multi-class
   market caps summed) with a coverage report (exchanges, countries, sectors, size bands, every exclusion counted with its
