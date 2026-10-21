@@ -190,6 +190,11 @@
       "id": "quarter_review",
       "title": "Results-day review: normalize, compare with expectations, keep the thesis falsifiable",
       "file": "protocols/quarter_review.md"
+    },
+    {
+      "id": "economic_models",
+      "title": "Economic models: read each business through its own identity (registry brain/economics.json; load with evidence and business)",
+      "file": "protocols/economic_models.md"
     }
   ]
 }

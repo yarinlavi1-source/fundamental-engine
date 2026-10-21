@@ -170,4 +170,14 @@ of each held-out case is recorded next to its reading.
 
 ## Deviations log
 
-(none yet)
+- 21.10.2026, WP1 (registry, before any held-out number was collected): `brain/economics.json` `rules` carries the
+  twelve rows of section 1 under their names and values, plus the rules section 1 states only in prose, under these
+  keys: `per_unit_fall` 0.05, `cyclical_slowdown_pp` 0.10, `structural_stable_pp` 0.03, `expansion_ndr_min` 1.10,
+  `top_n_tolerance` 0.05, `tranche_mismatch` 0.20, `renewal_drawdown` 0.05, `renewal_window_years` 4 (inclusive),
+  `intensity_flat_pp` 0.01, `intensity_rising_pp` 0.02, `machine_growth_min` 0.10, `receivables_windows` 2,
+  `coverage_extension_per_half` 1, `coverage_extension_cap_years` 2. One key that section 1 did not name is added with
+  the same frozen status, from the design's WP11 path rules (cyclical and macro factors revert to the median of at
+  least six supplied years; with less history they are held flat and `no_cycle_history` is raised; `mix` is never
+  reverted): `cycle_history_min_years` 6. None of these values change after the run. `tests/test_econ_registry.py`
+  compares the section-1 table and every one of these keys with the registry, so a rule added to the registry without
+  a line here fails the suite.

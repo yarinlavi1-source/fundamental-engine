@@ -1,0 +1,2214 @@
+{
+ "economics_version": 1,
+ "_provenance": "Registry of economic models for the econ layer (design of 21.10.2026, docs/prereg_econ.md). Identities are arithmetic, tags are the analyst classification of each factor, thresholds are uncalibrated screens. No company data lives here; KPIs enter through facts.add_kpi with sources and available_at.",
+ "rules": {
+  "identity_tolerance": 0.02,
+  "growth_identity_pp": 0.01,
+  "partial_below": 0.9,
+  "firm_exposure_high": 0.25,
+  "cfo_to_ni_min": 0.8,
+  "near_threshold": 0.03,
+  "receivables_gap_pp": 0.1,
+  "minor_line_share": 0.1,
+  "flat_units_abs": 0.02,
+  "segment_material": 0.25,
+  "leverage_share_min": 0.667,
+  "econ_view_min_pp": 0.02,
+  "per_unit_fall": 0.05,
+  "cyclical_slowdown_pp": 0.1,
+  "structural_stable_pp": 0.03,
+  "expansion_ndr_min": 1.1,
+  "top_n_tolerance": 0.05,
+  "tranche_mismatch": 0.2,
+  "renewal_drawdown": 0.05,
+  "renewal_window_years": 4,
+  "intensity_flat_pp": 0.01,
+  "intensity_rising_pp": 0.02,
+  "machine_growth_min": 0.1,
+  "cycle_history_min_years": 6,
+  "receivables_windows": 2,
+  "coverage_extension_per_half": 1,
+  "coverage_extension_cap_years": 2,
+  "_status": "uncalibrated screens chosen with nine analyst posts in view; frozen in docs/prereg_econ.md (21.10.2026); none may change after the held-out run (a bug is fixed, everything re-run, both results logged)"
+ },
+ "bases": {
+  "balance": "level at the period end (accounts, subscribers, client equity)",
+  "average": "average over the period (DARTs, average margin loans, MAPCs)",
+  "flow": "amount during the period (trips, net new accounts, bits shipped)",
+  "cumulative": "count since inception (products ever opened): never evidence of activity",
+  "rate": "a ratio or percentage (NDR, margin rate, a share)"
+ },
+ "tags": {
+  "structural": {
+   "label_he": "מבני",
+   "meaning": "built over time and not lost in a bad year: accounts, customers, subscribers, bits"
+  },
+  "cyclical": {
+   "label_he": "מחזורי",
+   "meaning": "rises and falls with the market, activity or the price cycle: trading, client equity, ASP, utilization"
+  },
+  "macro": {
+   "label_he": "מאקרו",
+   "meaning": "set by rates, FX or policy, not by the company: margin rate, NIM, deposit cost advantage"
+  },
+  "mix": {
+   "label_he": "תמהיל",
+   "meaning": "a change in composition: smaller new accounts, generation mix, top-N share; never reverted to a median"
+  },
+  "reclassification": {
+   "label_he": "סיווג מחדש",
+   "meaning": "an accounting or business-model change in what the line measures; only with evidence, then the unit basis is used"
+  }
+ },
+ "statuses": {
+  "computed": "value calculated, no reported line to check it against",
+  "consistent": "within rules.identity_tolerance on levels, or within rules.growth_identity_pp on growth",
+  "partial": "the identity explains less than rules.partial_below of the line; the residual is named",
+  "inconsistent": "flag raised, numbers left alone",
+  "basis_mismatch": "the inputs mix bases (constant currency vs reported); nothing is divided, both growth rates are shown, a question asks for the same-basis figure",
+  "scope_mismatch": "the inputs differ in scope or window (US commercial vs total, TTM vs quarter, q/q vs y/y); nothing is computed",
+  "missing": "an input is absent; the reading plan names it"
+ },
+ "identity_types": {
+  "per_unit": "line / units, annualized when the line is a quarter; end and average unit bases both shown when both exist",
+  "ratio": "numerator / denominator",
+  "product": "product of the factors against the reported line; the gap is the residual (ln(1+g) = sum ln(1+g_i) + residual)",
+  "share": "part / total, and its share of incremental growth (d part / d total)"
+ },
+ "lines": {
+  "revenue": {
+   "unit": "currency",
+   "basis": "flow"
+  },
+  "gross_profit": {
+   "unit": "currency",
+   "basis": "flow"
+  },
+  "operating_expenses": {
+   "unit": "currency",
+   "basis": "flow",
+   "note": "OM = GM - opex/revenue exactly; the peak exception needs both"
+  },
+  "operating_income": {
+   "unit": "currency",
+   "basis": "flow"
+  },
+  "pretax_income": {
+   "unit": "currency",
+   "basis": "flow"
+  },
+  "adjusted_ebitda": {
+   "unit": "currency",
+   "basis": "flow",
+   "note": "issuer definition stated; never mixed with operating income"
+  },
+  "net_income": {
+   "unit": "currency",
+   "basis": "flow"
+  },
+  "operating_cash_flow": {
+   "unit": "currency",
+   "basis": "flow"
+  },
+  "capex": {
+   "unit": "currency",
+   "basis": "flow",
+   "note": "positive outflow"
+  },
+  "sbc": {
+   "unit": "currency",
+   "basis": "flow"
+  },
+  "research_and_development": {
+   "unit": "currency",
+   "basis": "flow",
+   "xbrl": [
+    "ResearchAndDevelopmentExpense"
+   ]
+  },
+  "advertising": {
+   "unit": "currency",
+   "basis": "flow",
+   "xbrl": [
+    "AdvertisingExpense"
+   ]
+  },
+  "net_interest_income": {
+   "unit": "currency",
+   "basis": "flow"
+  },
+  "margin_interest_income": {
+   "unit": "currency",
+   "basis": "flow"
+  },
+  "commissions": {
+   "unit": "currency",
+   "basis": "flow",
+   "note": "pass-through fees (exchange, regulatory) stated and removed before growth is read"
+  },
+  "other_revenue": {
+   "unit": "currency",
+   "basis": "flow",
+   "note": "the line a thesis may rest on; thesis_on_minor_line reads its share of revenue and of incremental revenue"
+  },
+  "licensing_revenue": {
+   "unit": "currency",
+   "basis": "flow"
+  },
+  "segment_revenue": {
+   "unit": "currency",
+   "basis": "flow",
+   "by": "segment"
+  },
+  "segment_profit": {
+   "unit": "currency",
+   "basis": "flow",
+   "by": "segment",
+   "note": "profit_definition stated (adjusted EBITDA, operating income, contribution)"
+  },
+  "deferred_revenue": {
+   "unit": "currency",
+   "basis": "balance",
+   "xbrl": [
+    "ContractWithCustomerLiability"
+   ],
+   "note": "a build is financing from customers (customer_prepayment_build)"
+  },
+  "receivables": {
+   "unit": "currency",
+   "basis": "balance",
+   "note": "growth compared with revenue growth over matched windows only"
+  },
+  "related_party_revenue": {
+   "unit": "currency",
+   "basis": "flow",
+   "xbrl": [
+    "RevenueFromRelatedParties"
+   ]
+  },
+  "guarantee_maximum_exposure": {
+   "unit": "currency",
+   "basis": "balance",
+   "xbrl": [
+    "GuaranteeObligationsMaximumExposure"
+   ],
+   "note": "a ceiling; never summed into a screen"
+  },
+  "purchase_obligations": {
+   "unit": "currency",
+   "basis": "balance",
+   "xbrl": [
+    "UnrecordedUnconditionalPurchaseObligationBalanceSheetAmount"
+   ]
+  },
+  "deposit_funding_benefit": {
+   "unit": "currency",
+   "basis": "flow",
+   "note": "annual benefit of deposits versus alternative funding, when the issuer or an analyst states one"
+  }
+ },
+ "checks": {
+  "per_unit_vs_units": {
+   "kind": "flag",
+   "severity": "info",
+   "fixed": true,
+   "rule": "units grow while the per-unit value falls more than rules.per_unit_fall"
+  },
+  "cyclical_deceleration": {
+   "kind": "reading",
+   "rule": "across two reviews, cyclical factors slow by more than rules.cyclical_slowdown_pp while structural factors stay within +-rules.structural_stable_pp"
+  },
+  "rate_sensitivity_share": {
+   "kind": "measure",
+   "rule": "annual impact of a 25bp move / annualized net interest income"
+  },
+  "take_rate_shift": {
+   "kind": "flag",
+   "severity": "medium",
+   "fixed": false,
+   "rule": "take rate (revenue / gross bookings) changes on a same-basis comparison; tagged reclassification only with evidence of a business-model change"
+  },
+  "expansion_led": {
+   "kind": "reading",
+   "rule": "per-unit log share of growth above one half and NDR above rules.expansion_ndr_min"
+  },
+  "top_n_inconsistent": {
+   "kind": "flag",
+   "severity": "medium",
+   "fixed": false,
+   "rule": "implied total from top-N average, count and share differs from the supplied TTM by more than rules.top_n_tolerance"
+  },
+  "thesis_on_minor_line": {
+   "kind": "flag",
+   "severity": "medium",
+   "fixed": true,
+   "rule": "the thesis line is below rules.minor_line_share of revenue; its share of incremental revenue is shown"
+  },
+  "core_units_flat": {
+   "kind": "flag",
+   "severity": "medium",
+   "fixed": false,
+   "rule": "core units move less than rules.flat_units_abs"
+  },
+  "disclosure_dropped": {
+   "kind": "flag",
+   "severity": "medium",
+   "fixed": true,
+   "rule": "a falsifier KPI stops being reported; the falsifier becomes unobservable"
+  },
+  "segment_unexplained": {
+   "kind": "flag",
+   "severity": "high",
+   "fixed": true,
+   "rule": "a segment with at least rules.segment_material of revenue or profit has no reconciled identity"
+  },
+  "process_evidence": {
+   "kind": "reading",
+   "rule": "renewed / machine working|failing|unproven|unknown (WP6); evidence to cite, never a moat rating"
+  },
+  "cash_conversion": {
+   "kind": "flag",
+   "severity": "medium",
+   "fixed": true,
+   "rule": "FCF / net income well below one, with the FCF basis labelled"
+  },
+  "peak_margin_run_rate": {
+   "kind": "flag",
+   "severity": "high",
+   "fixed": true,
+   "rule": "owned by quarter._cycle: operating margin far above its own history; a quarter times four is peak earnings"
+  },
+  "operating_leverage_or_peak": {
+   "kind": "flag",
+   "severity": "medium",
+   "fixed": true,
+   "rule": "peak_margin_run_rate with leverage share -d(opex/revenue)/dOM >= rules.leverage_share_min, a model that is not price-cyclical, and gross profit and opex present; both readings shown"
+  },
+  "margin_only_normalized": {
+   "kind": "measure",
+   "rule": "run-rate earnings x evidenced cycle margin / current margin; a floor on the correction because revenue stays at the record run rate"
+  },
+  "lta_unproven": {
+   "kind": "flag",
+   "severity": "info",
+   "fixed": true,
+   "rule": "contract coverage lacks one of: share of next-year volume, price floor or formula, deposits, tenor; no cycle damping"
+  },
+  "customer_concentration": {
+   "kind": "reading",
+   "rule": "largest customers share of revenue and of receivables, from the concentration note"
+  },
+  "customer_prepayment_build": {
+   "kind": "flag",
+   "severity": "info",
+   "fixed": false,
+   "rule": "deferred revenue builds faster than revenue: financing from customers, read with the funding ledger"
+  },
+  "ebitda_minus_capex": {
+   "kind": "measure",
+   "rule": "segment EBITDA less segment capex, both on the issuer definition"
+  },
+  "cumulative_kpi_not_activity": {
+   "kind": "reading",
+   "rule": "a cumulative KPI (products ever opened) is labelled cumulative and never read as activity"
+  },
+  "nco_basis": {
+   "kind": "flag",
+   "severity": "high",
+   "fixed": true,
+   "rule": "loan sales are disclosed but only the headline NCO is supplied; a supplied normalized NCO is used and labelled"
+  },
+  "capital_lever_insufficient": {
+   "kind": "flag",
+   "severity": "medium",
+   "fixed": false,
+   "rule": "ROTE if all excess capital were returned (an upper bound) stays below the ROTE the price implies"
+  },
+  "excess_capital_range": {
+   "kind": "measure",
+   "rule": "excess capital at both ends of an evidenced target range; never the midpoint"
+  },
+  "headroom_to_minimum": {
+   "kind": "measure",
+   "rule": "capital ratio minus the regulatory minimum, in pp"
+  },
+  "funding_level": {
+   "kind": "reading",
+   "rule": "high = firm exposure >= rules.firm_exposure_high and a statement check fails; elevated = one of the two; none otherwise; an analyst_estimate exposed share never sets it"
+  },
+  "cfo_to_ni": {
+   "kind": "measure",
+   "rule": "CFO / NI and CFO / (NI - non-cash gains); below rules.cfo_to_ni_min fails; within rules.near_threshold prints with the threshold"
+  },
+  "receivables_vs_revenue": {
+   "kind": "measure",
+   "rule": "receivables growth minus revenue growth over matched windows only; otherwise not_computed: window_mismatch"
+  },
+  "receivables_build_share": {
+   "kind": "measure",
+   "rule": "receivables build (cash-flow statement, balance change shown beside it) as a share of net income"
+  },
+  "related_party_share": {
+   "kind": "measure",
+   "rule": "related-party revenue / revenue"
+  },
+  "guarantee_ceiling": {
+   "kind": "measure",
+   "rule": "contingent exposure \"if called in full\" against spendable cash; no probability; never summed into a screen"
+  },
+  "chain_exposure": {
+   "kind": "measure",
+   "rule": "own share of revenue via the chain x upstream exposed share, only when both exist; otherwise unquantified with the missing numbers named"
+  },
+  "tranche_schedule_mismatch": {
+   "kind": "flag",
+   "severity": "medium",
+   "fixed": false,
+   "rule": "the period observed tranche, annualized, differs from the schedule by more than rules.tranche_mismatch; an open question"
+  },
+  "straight_line_assumed": {
+   "kind": "reading",
+   "rule": "a schedule given only as a total and a number of years is straight-line and labelled an assumption"
+  },
+  "segment_reconciliation": {
+   "kind": "measure",
+   "rule": "sum of segment revenue and profit against the consolidated lines, within rules.identity_tolerance"
+  },
+  "capex_per_unit_lag": {
+   "kind": "status",
+   "rule": "one quarter's capex over that quarter's capacity additions is refused: not_computed: construction lag"
+  },
+  "basis_mismatch": {
+   "kind": "status",
+   "rule": "constant currency against reported is never divided; both growth rates shown; a question asks for the same-basis figure"
+  },
+  "scope_mismatch": {
+   "kind": "status",
+   "rule": "scope or window differs; nothing is computed"
+  }
+ },
+ "reading_common": {
+  "mechanism": {
+   "doc": "10-K Item 1",
+   "find": [
+    "why_customers_pay",
+    "why_they_stay"
+   ],
+   "connector_hint": "FMP secFilings -> SEC document",
+   "store_as": "qualitative: reported|guidance|opinion",
+   "note": "issuer documents only; analyst posts, consensus and assumptions do not answer these"
+  },
+  "kpis": {
+   "doc": "release supplemental / MD&A key metrics",
+   "periods": [
+    "latest",
+    "prior_quarter",
+    "year_ago"
+   ],
+   "state": [
+    "kpi_basis",
+    "scope",
+    "currency_basis"
+   ],
+   "connector_hint": "AV/FMP structured data first, then the issuer release"
+  },
+  "notes": {
+   "doc": "notes",
+   "find": [
+    "segments",
+    "rpo",
+    "concentration",
+    "commitments",
+    "guarantees",
+    "equity_investments_in_customers",
+    "related_parties",
+    "rate_sensitivity",
+    "loan_sales"
+   ]
+  },
+  "transcript": {
+   "doc": "transcript",
+   "find": [
+    "mechanism behind each KPI move"
+   ],
+   "connector_hint": "FMP earningsTranscript or AV EARNINGS_CALL_TRANSCRIPT",
+   "store_as": "qualitative: reported|guidance|opinion"
+  }
+ },
+ "models": {
+  "marketplace": {
+   "label_he": "מרקטפלייס",
+   "description": "two-sided platform: revenue = gross bookings x take rate; gross bookings = consumers x frequency x bookings per trip",
+   "price_cyclical": false,
+   "select": {
+    "card_types": [
+     "platform_marketplace",
+     "subscription_software"
+    ],
+    "text": [
+     "marketplace",
+     "gross bookings",
+     "mobility",
+     "delivery",
+     "rides"
+    ],
+    "kpi_any": [
+     "gross_bookings",
+     "gmv"
+    ],
+    "note": "a gross_bookings/gmv KPI selects marketplace over the provider label (a ride-hailing company labelled Software - Application)"
+   },
+   "kpis": {
+    "gross_bookings": {
+     "unit": "currency",
+     "basis": [
+      "flow"
+     ],
+     "tag": "structural",
+     "core": true,
+     "note": "gross value of transactions on the platform; not recognized revenue"
+    },
+    "gmv": {
+     "unit": "currency",
+     "basis": [
+      "flow"
+     ],
+     "tag": "structural",
+     "note": "gross merchandise value; same role as gross_bookings for goods marketplaces"
+    },
+    "mapcs": {
+     "unit": "count",
+     "basis": [
+      "average"
+     ],
+     "tag": "structural",
+     "core": true,
+     "note": "monthly active platform consumers, averaged over the quarter"
+    },
+    "trips": {
+     "unit": "count",
+     "basis": [
+      "flow"
+     ],
+     "tag": "structural",
+     "note": "completed trips or orders in the period"
+    },
+    "frequency": {
+     "unit": "count",
+     "basis": [
+      "average"
+     ],
+     "tag": "structural",
+     "note": "trips per active consumer per period; derived when trips and mapcs are both reported"
+    },
+    "incentives": {
+     "unit": "currency",
+     "basis": [
+      "flow"
+     ],
+     "tag": "cyclical",
+     "note": "consumer incentives and supply spend; competitive, moves with rivalry"
+    }
+   },
+   "identities": [
+    {
+     "id": "trips_from_consumers",
+     "type": "product",
+     "line": "trips",
+     "factors": [
+      "mapcs",
+      "frequency"
+     ],
+     "core": true,
+     "note": "growth check: ln(1+g_trips) against ln(1+g_mapcs) + ln(1+g_frequency)"
+    },
+    {
+     "id": "gross_bookings_per_trip",
+     "type": "ratio",
+     "num": "gross_bookings",
+     "den": "trips",
+     "tag": "mix",
+     "note": "basket and price per trip"
+    },
+    {
+     "id": "gross_bookings_identity",
+     "type": "product",
+     "line": "gross_bookings",
+     "factors": [
+      "mapcs",
+      "frequency",
+      "gross_bookings_per_trip"
+     ],
+     "core": true
+    },
+    {
+     "id": "take_rate",
+     "type": "ratio",
+     "num": "revenue",
+     "den": "gross_bookings",
+     "tag": "mix",
+     "check": "take_rate_shift",
+     "note": "same currency basis on both sides or basis_mismatch; tagged reclassification only with evidence of a business-model change, then falsifiers and margins move to the bookings basis"
+    },
+    {
+     "id": "segment_profit_per_gross_bookings",
+     "type": "ratio",
+     "num": "segment_profit",
+     "den": "gross_bookings",
+     "by": "segment",
+     "note": "segment adjusted EBITDA per unit of that segment bookings (profit_definition stated)"
+    },
+    {
+     "id": "incentives_per_gross_bookings",
+     "type": "ratio",
+     "num": "incentives",
+     "den": "gross_bookings",
+     "tag": "cyclical"
+    }
+   ],
+   "growth_split": {
+    "line": "revenue",
+    "factors": [
+     "mapcs",
+     "frequency",
+     "gross_bookings_per_trip",
+     "take_rate"
+    ]
+   },
+   "checks": [
+    "per_unit_vs_units",
+    "take_rate_shift",
+    "segment_unexplained",
+    "basis_mismatch"
+   ],
+   "falsifier_kpis": [
+    "mapcs",
+    "frequency",
+    "take_rate"
+   ],
+   "overlays": [
+    "segments"
+   ],
+   "reading": [
+    {
+     "doc": "release supplemental / MD&A key metrics",
+     "find": [
+      "gross_bookings",
+      "mapcs",
+      "trips",
+      "incentives"
+     ],
+     "state": [
+      "currency_basis: constant currency vs reported",
+      "scope: segment vs total"
+     ]
+    },
+    {
+     "doc": "notes",
+     "find": [
+      "segments",
+      "insurance reserves (not spendable liquidity)",
+      "incentives classification (contra revenue vs cost)"
+     ]
+    },
+    {
+     "doc": "transcript",
+     "find": [
+      "take-rate drivers",
+      "business-model changes that move the revenue basis"
+     ]
+    }
+   ],
+   "questions": [
+    "Is the take-rate change pricing, mix or a reclassification of what is booked as revenue?",
+    "Are more trips coming from more consumers or from more trips per consumer?"
+   ]
+  },
+  "broker": {
+   "label_he": "ברוקר",
+   "description": "revenue = accounts x revenue per account; revenue per account = equity per account (mix) x revenue yield on client equity (cyclical, macro)",
+   "price_cyclical": false,
+   "select": {
+    "card_types": [
+     "financials"
+    ],
+    "text": [
+     "brokerage",
+     "capital markets",
+     "broker-dealer"
+    ],
+    "kpi_any": [
+     "margin_loans",
+     "client_equity",
+     "darts"
+    ],
+    "note": "financials + brokerage text + any of these KPIs: broker, not the loans/deposits tree"
+   },
+   "kpis": {
+    "accounts": {
+     "unit": "count",
+     "basis": [
+      "balance"
+     ],
+     "tag": "structural",
+     "core": true
+    },
+    "net_new_accounts": {
+     "unit": "count",
+     "basis": [
+      "flow"
+     ],
+     "tag": "structural"
+    },
+    "client_equity": {
+     "unit": "currency",
+     "basis": [
+      "balance"
+     ],
+     "tag": "cyclical",
+     "core": true
+    },
+    "darts": {
+     "unit": "count_per_day",
+     "basis": [
+      "average"
+     ],
+     "tag": "cyclical",
+     "note": "daily average revenue trades"
+    },
+    "margin_loans": {
+     "unit": "currency",
+     "basis": [
+      "average",
+      "balance"
+     ],
+     "tag": "cyclical"
+    },
+    "margin_rate": {
+     "unit": "rate",
+     "basis": [
+      "average"
+     ],
+     "tag": "macro",
+     "note": "average rate earned on margin loans"
+    },
+    "rate_sensitivity_25bp": {
+     "unit": "currency",
+     "basis": [
+      "flow"
+     ],
+     "tag": "macro",
+     "note": "annual net-interest-income impact of a 25bp move, from 10-Q Item 3 or the release; per currency when given"
+    }
+   },
+   "identities": [
+    {
+     "id": "revenue_per_account",
+     "type": "per_unit",
+     "line": "revenue",
+     "unit_kpi": "accounts",
+     "annualize": 4,
+     "core": true
+    },
+    {
+     "id": "equity_per_account",
+     "type": "ratio",
+     "num": "client_equity",
+     "den": "accounts",
+     "tag": "mix",
+     "note": "smaller new accounts lower it; never reverted"
+    },
+    {
+     "id": "revenue_yield_on_equity",
+     "type": "ratio",
+     "num": "revenue",
+     "den": "client_equity",
+     "annualize": 4,
+     "tag": "cyclical",
+     "note": "rates and activity; the only part of revenue per account that may revert"
+    },
+    {
+     "id": "margin_interest",
+     "type": "product",
+     "line": "margin_interest_income",
+     "factors": [
+      "margin_loans",
+      "margin_rate"
+     ],
+     "note": "average balance x average rate against the reported line"
+    },
+    {
+     "id": "pretax_margin",
+     "type": "ratio",
+     "num": "pretax_income",
+     "den": "revenue",
+     "tag": "cyclical"
+    }
+   ],
+   "growth_split": {
+    "line": "revenue",
+    "factors": [
+     "accounts",
+     "equity_per_account",
+     "revenue_yield_on_equity"
+    ]
+   },
+   "checks": [
+    "per_unit_vs_units",
+    "rate_sensitivity_share",
+    "cyclical_deceleration"
+   ],
+   "falsifier_kpis": [
+    "net_new_accounts",
+    "revenue_yield_on_equity"
+   ],
+   "overlays": [],
+   "reading": [
+    {
+     "doc": "monthly metrics (IR site)",
+     "find": [
+      "accounts",
+      "darts",
+      "client_equity",
+      "margin_loans"
+     ]
+    },
+    {
+     "doc": "10-Q Item 3",
+     "find": [
+      "rate_sensitivity"
+     ]
+    },
+    {
+     "doc": "transcript",
+     "find": [
+      "client-cash pass-through",
+      "pass-through fees"
+     ]
+    }
+   ],
+   "questions": [
+    "How much of the change in revenue per account is new-account mix, rates or activity?",
+    "How much net interest income moves per 25bp, and in which currencies?"
+   ]
+  },
+  "data_platform_software": {
+   "label_he": "תוכנה / פלטפורמת נתונים",
+   "description": "revenue = customers x revenue per customer; expansion (NDR) against new customers; top-N concentration",
+   "price_cyclical": false,
+   "select": {
+    "card_types": [
+     "subscription_software"
+    ],
+    "text": [
+     "software",
+     "data platform",
+     "subscription",
+     "cloud"
+    ],
+    "kpi_any": [
+     "customers",
+     "net_revenue_retention",
+     "arr"
+    ]
+   },
+   "kpis": {
+    "customers": {
+     "unit": "count",
+     "basis": [
+      "balance"
+     ],
+     "tag": "structural",
+     "core": true,
+     "note": "paying customers; state the scope (US commercial vs total)"
+    },
+    "net_revenue_retention": {
+     "unit": "rate",
+     "basis": [
+      "rate"
+     ],
+     "tag": "structural",
+     "note": "trailing-twelve-month net dollar retention; expansion_led needs more than rules.expansion_ndr_min"
+    },
+    "arr": {
+     "unit": "currency",
+     "basis": [
+      "balance"
+     ],
+     "tag": "structural",
+     "note": "annual recurring revenue on the issuer definition"
+    },
+    "rpo": {
+     "unit": "currency",
+     "basis": [
+      "balance"
+     ],
+     "tag": "structural",
+     "note": "remaining performance obligations; current portion stated"
+    },
+    "top_n_average_revenue": {
+     "unit": "currency",
+     "basis": [
+      "flow"
+     ],
+     "tag": "mix",
+     "note": "average TTM revenue of the top N customers; N and window stated"
+    },
+    "top_n_share": {
+     "unit": "rate",
+     "basis": [
+      "rate"
+     ],
+     "tag": "mix",
+     "note": "top-N customers share of revenue on the same window"
+    },
+    "top_n_total_revenue": {
+     "unit": "currency",
+     "basis": [
+      "flow"
+     ],
+     "tag": "mix",
+     "note": "top-N customers revenue on the same window"
+    }
+   },
+   "identities": [
+    {
+     "id": "revenue_per_customer",
+     "type": "per_unit",
+     "line": "revenue",
+     "unit_kpi": "customers",
+     "annualize": 4,
+     "core": true,
+     "note": "scope must match: US commercial revenue over US commercial customers"
+    },
+    {
+     "id": "revenue_identity",
+     "type": "product",
+     "line": "revenue",
+     "factors": [
+      "customers",
+      "revenue_per_customer"
+     ],
+     "core": true
+    },
+    {
+     "id": "implied_total_from_top_n",
+     "type": "ratio",
+     "num": "top_n_total_revenue",
+     "den": "top_n_share",
+     "check": "top_n_inconsistent",
+     "note": "compared only with TTM revenue on the same window; never with a segment q/q split (scope_mismatch)"
+    },
+    {
+     "id": "sbc_to_revenue",
+     "type": "ratio",
+     "num": "sbc",
+     "den": "revenue"
+    },
+    {
+     "id": "rpo_to_revenue",
+     "type": "ratio",
+     "num": "rpo",
+     "den": "revenue"
+    }
+   ],
+   "growth_split": {
+    "line": "revenue",
+    "factors": [
+     "customers",
+     "revenue_per_customer"
+    ]
+   },
+   "checks": [
+    "per_unit_vs_units",
+    "expansion_led",
+    "top_n_inconsistent",
+    "thesis_on_minor_line",
+    "scope_mismatch"
+   ],
+   "falsifier_kpis": [
+    "customers",
+    "net_revenue_retention"
+   ],
+   "overlays": [
+    "acquisition_sbc",
+    "segments"
+   ],
+   "reading": [
+    {
+     "doc": "release supplemental / MD&A key metrics",
+     "find": [
+      "customers",
+      "net_revenue_retention",
+      "top_n_average_revenue",
+      "top_n_share"
+     ],
+     "state": [
+      "scope: segment vs total",
+      "window: TTM vs quarter, q/q vs y/y"
+     ]
+    },
+    {
+     "doc": "notes",
+     "find": [
+      "rpo",
+      "concentration",
+      "sbc",
+      "capitalized software"
+     ]
+    },
+    {
+     "doc": "transcript",
+     "find": [
+      "why existing customers expand",
+      "new-customer pace against expansion"
+     ]
+    }
+   ],
+   "questions": [
+    "How much of growth is new customers and how much is expansion of existing ones?",
+    "Is the top-N figure on the same scope and window as the growth being discussed?"
+   ]
+  },
+  "consumer_innovator": {
+   "label_he": "מותג צרכני ממציא",
+   "description": "revenue = sum of categories; the moat is a process: category renewal, new categories, innovation intensity",
+   "price_cyclical": false,
+   "select": {
+    "card_types": [
+     "consumer_brand"
+    ],
+    "text": [
+     "household",
+     "appliances",
+     "consumer products",
+     "brands",
+     "beauty"
+    ],
+    "kpi_any": [
+     "category_revenue"
+    ]
+   },
+   "kpis": {
+    "category_revenue": {
+     "unit": "currency",
+     "basis": [
+      "flow"
+     ],
+     "tag": "structural",
+     "core": true,
+     "by": "category",
+     "note": "revenue by product category over several years; a renewal is a fall of at least rules.renewal_drawdown from the peak and a new high within rules.renewal_window_years"
+    },
+    "geographic_revenue": {
+     "unit": "currency",
+     "basis": [
+      "flow"
+     ],
+     "tag": "mix",
+     "by": "geography"
+    }
+   },
+   "identities": [
+    {
+     "id": "category_mix",
+     "type": "share",
+     "part": "category_revenue",
+     "total": "revenue",
+     "by": "category",
+     "core": true,
+     "note": "the shares sum to one when every category is reported; a gap is named, never filled"
+    },
+    {
+     "id": "rd_intensity",
+     "type": "ratio",
+     "num": "research_and_development",
+     "den": "revenue",
+     "note": "innovation intensity"
+    },
+    {
+     "id": "advertising_intensity",
+     "type": "ratio",
+     "num": "advertising",
+     "den": "revenue"
+    },
+    {
+     "id": "geographic_mix",
+     "type": "share",
+     "part": "geographic_revenue",
+     "total": "revenue",
+     "by": "geography"
+    },
+    {
+     "id": "gross_margin",
+     "type": "ratio",
+     "num": "gross_profit",
+     "den": "revenue",
+     "note": "printed as a change in pp, never \"stable\" by assumption"
+    }
+   ],
+   "growth_split": {
+    "line": "revenue",
+    "mode": "additive",
+    "part": "category_revenue",
+    "by": "category"
+   },
+   "checks": [
+    "process_evidence",
+    "cash_conversion",
+    "segment_unexplained"
+   ],
+   "falsifier_kpis": [
+    "category_revenue",
+    "rd_intensity"
+   ],
+   "overlays": [
+    "segments"
+   ],
+   "reading": [
+    {
+     "doc": "10-K segment and category note",
+     "find": [
+      "category_revenue",
+      "geographic_revenue"
+     ],
+     "state": [
+      "five fiscal years when available; a missing year is unknown, never interpolated"
+     ]
+    },
+    {
+     "doc": "income statement",
+     "find": [
+      "research_and_development",
+      "advertising"
+     ],
+     "xbrl": [
+      "ResearchAndDevelopmentExpense",
+      "AdvertisingExpense"
+     ]
+    },
+    {
+     "doc": "transcript",
+     "find": [
+      "new categories launched",
+      "renewal of older categories"
+     ]
+    }
+   ],
+   "questions": [
+    "Which categories fell from a peak and made a new high, and within how many years?",
+    "Did innovation intensity (R&D and advertising over revenue) stay flat while revenue grew?"
+   ]
+  },
+  "memory_cycle": {
+   "label_he": "זיכרון (מחזורי)",
+   "description": "revenue = bits x ASP; margins swing with the price cycle; a record quarter is a run rate, not a base",
+   "price_cyclical": true,
+   "select": {
+    "card_types": [
+     "semiconductor"
+    ],
+    "text": [
+     "memory",
+     "dram",
+     "nand",
+     "hbm"
+    ],
+    "kpi_any": [
+     "bits",
+     "asp"
+    ]
+   },
+   "kpis": {
+    "bits": {
+     "unit": "bits",
+     "basis": [
+      "flow"
+     ],
+     "tag": "structural",
+     "core": true,
+     "note": "bits shipped; usually reported as a growth rate"
+    },
+    "asp": {
+     "unit": "currency_per_bit",
+     "basis": [
+      "average"
+     ],
+     "tag": "cyclical",
+     "core": true,
+     "note": "average selling price per bit; usually reported as a change"
+    },
+    "mix_dram_share": {
+     "unit": "rate",
+     "basis": [
+      "rate"
+     ],
+     "tag": "mix"
+    },
+    "mix_nand_share": {
+     "unit": "rate",
+     "basis": [
+      "rate"
+     ],
+     "tag": "mix"
+    },
+    "hbm_market_share": {
+     "unit": "rate",
+     "basis": [
+      "rate"
+     ],
+     "tag": "structural",
+     "note": "share of the high-bandwidth-memory market; a competitive position, stated with its source"
+    }
+   },
+   "identities": [
+    {
+     "id": "revenue_identity",
+     "type": "product",
+     "line": "revenue",
+     "factors": [
+      "bits",
+      "asp"
+     ],
+     "core": true
+    },
+    {
+     "id": "operating_margin",
+     "type": "ratio",
+     "num": "operating_income",
+     "den": "revenue",
+     "tag": "cyclical"
+    }
+   ],
+   "growth_split": {
+    "line": "revenue",
+    "factors": [
+     "bits",
+     "asp"
+    ]
+   },
+   "checks": [
+    "per_unit_vs_units",
+    "peak_margin_run_rate",
+    "margin_only_normalized",
+    "lta_unproven"
+   ],
+   "falsifier_kpis": [
+    "asp",
+    "bits"
+   ],
+   "overlays": [
+    "contract_coverage",
+    "funded_customer_chain"
+   ],
+   "reading": [
+    {
+     "doc": "release supplemental / MD&A key metrics",
+     "find": [
+      "bits",
+      "asp",
+      "mix_dram_share",
+      "mix_nand_share"
+     ],
+     "state": [
+      "bit growth and ASP change are usually growth rates, not levels"
+     ]
+    },
+    {
+     "doc": "notes",
+     "find": [
+      "long-term agreements: tenor, deposits, price mechanism, share of next-year volume",
+      "capex",
+      "prepayments"
+     ]
+    },
+    {
+     "doc": "transcript",
+     "find": [
+      "HBM share",
+      "pricing direction",
+      "customer inventory"
+     ]
+    }
+   ],
+   "questions": [
+    "How much of revenue growth is bits and how much is ASP, and which part of ASP is HBM mix?",
+    "What share of next-year volume is covered by contracts with a price floor and deposits?"
+   ]
+  },
+  "gpu_vendor": {
+   "label_he": "ספק מאיצי מחשוב",
+   "description": "revenue = gigawatts shipped x revenue per gigawatt, by generation; the funding of the buyers is part of the read",
+   "price_cyclical": true,
+   "select": {
+    "card_types": [
+     "semiconductor"
+    ],
+    "text": [
+     "gpu",
+     "accelerated computing",
+     "data center systems",
+     "accelerators"
+    ],
+    "kpi_any": [
+     "gw_shipped",
+     "revenue_per_gw"
+    ]
+   },
+   "kpis": {
+    "gw_shipped": {
+     "unit": "GW",
+     "basis": [
+      "flow"
+     ],
+     "tag": "cyclical",
+     "core": true,
+     "note": "systems shipped measured in gigawatts; a capex-cycle volume"
+    },
+    "revenue_per_gw": {
+     "unit": "currency_per_GW",
+     "basis": [
+      "average"
+     ],
+     "tag": "mix",
+     "core": true,
+     "by": "generation",
+     "note": "revenue per gigawatt by product generation; the generation mix sets the average"
+    }
+   },
+   "identities": [
+    {
+     "id": "revenue_identity",
+     "type": "product",
+     "line": "revenue",
+     "factors": [
+      "gw_shipped",
+      "revenue_per_gw"
+     ],
+     "by": "generation",
+     "core": true
+    },
+    {
+     "id": "segment_mix",
+     "type": "share",
+     "part": "segment_revenue",
+     "total": "revenue",
+     "by": "segment"
+    },
+    {
+     "id": "gross_margin",
+     "type": "ratio",
+     "num": "gross_profit",
+     "den": "revenue",
+     "tag": "cyclical"
+    }
+   ],
+   "growth_split": {
+    "line": "revenue",
+    "factors": [
+     "gw_shipped",
+     "revenue_per_gw"
+    ]
+   },
+   "checks": [
+    "segment_unexplained",
+    "peak_margin_run_rate",
+    "customer_concentration",
+    "funding_level"
+   ],
+   "falsifier_kpis": [
+    "gw_shipped",
+    "revenue_per_gw"
+   ],
+   "overlays": [
+    "vendor_financing",
+    "segments"
+   ],
+   "reading": [
+    {
+     "doc": "release supplemental / MD&A key metrics",
+     "find": [
+      "segment_revenue",
+      "gw_shipped",
+      "revenue_per_gw"
+     ]
+    },
+    {
+     "doc": "notes",
+     "find": [
+      "concentration",
+      "purchase_obligations",
+      "guarantees",
+      "equity_investments_in_customers",
+      "related_parties",
+      "deferred_revenue"
+     ]
+    },
+    {
+     "doc": "transcript",
+     "find": [
+      "gigawatts shipped",
+      "generation mix",
+      "customer financing"
+     ]
+    }
+   ],
+   "questions": [
+    "How many gigawatts shipped, at what revenue per gigawatt, by generation?",
+    "Who funds the customers' purchases: their own cash flow, debt, or the vendor's investments and guarantees?"
+   ]
+  },
+  "compute_leasing": {
+   "label_he": "השכרת כוח מחשוב",
+   "description": "revenue = energized gigawatts x utilization x price per gigawatt-year; capex per gigawatt, tenor and customer credit decide the return",
+   "price_cyclical": false,
+   "select": {
+    "card_types": [
+     "capital_intensive_infrastructure"
+    ],
+    "text": [
+     "gpu cloud",
+     "compute capacity",
+     "data center",
+     "colocation",
+     "neocloud"
+    ],
+    "kpi_any": [
+     "installed_capacity",
+     "price_per_gw_year",
+     "capacity_additions"
+    ]
+   },
+   "kpis": {
+    "installed_capacity": {
+     "unit": "GW",
+     "basis": [
+      "balance"
+     ],
+     "tag": "structural",
+     "core": true,
+     "note": "energized capacity; capacity under construction earns nothing"
+    },
+    "capacity_additions": {
+     "unit": "GW",
+     "basis": [
+      "flow"
+     ],
+     "tag": "structural"
+    },
+    "utilization": {
+     "unit": "rate",
+     "basis": [
+      "average"
+     ],
+     "tag": "cyclical",
+     "core": true
+    },
+    "price_per_gw_year": {
+     "unit": "currency_per_GW_year",
+     "basis": [
+      "average"
+     ],
+     "tag": "cyclical",
+     "core": true,
+     "note": "contracted price per gigawatt-year"
+    },
+    "contracted_backlog": {
+     "unit": "currency",
+     "basis": [
+      "balance"
+     ],
+     "tag": "structural",
+     "note": "take-or-pay and RPO; who the customers are"
+    }
+   },
+   "identities": [
+    {
+     "id": "revenue_identity",
+     "type": "product",
+     "line": "revenue",
+     "factors": [
+      "installed_capacity",
+      "utilization",
+      "price_per_gw_year"
+     ],
+     "core": true
+    },
+    {
+     "id": "capex_per_gw",
+     "type": "ratio",
+     "num": "capex",
+     "den": "capacity_additions",
+     "lagged": true,
+     "check": "capex_per_unit_lag",
+     "note": "one quarter's capex over that quarter's additions is refused: not_computed: construction lag"
+    },
+    {
+     "id": "backlog_coverage",
+     "type": "ratio",
+     "num": "contracted_backlog",
+     "den": "revenue",
+     "annualize": 4
+    }
+   ],
+   "growth_split": {
+    "line": "revenue",
+    "factors": [
+     "installed_capacity",
+     "utilization",
+     "price_per_gw_year"
+    ]
+   },
+   "checks": [
+    "segment_unexplained",
+    "customer_prepayment_build",
+    "lta_unproven",
+    "customer_concentration",
+    "capex_per_unit_lag"
+   ],
+   "falsifier_kpis": [
+    "installed_capacity",
+    "utilization",
+    "contracted_backlog"
+   ],
+   "overlays": [
+    "contract_coverage",
+    "vendor_financing",
+    "segments"
+   ],
+   "reading": [
+    {
+     "doc": "release supplemental / MD&A key metrics",
+     "find": [
+      "installed_capacity",
+      "capacity_additions",
+      "utilization",
+      "price_per_gw_year",
+      "contracted_backlog"
+     ]
+    },
+    {
+     "doc": "notes",
+     "find": [
+      "commitments",
+      "lease obligations",
+      "customer credit",
+      "concentration",
+      "deferred_revenue"
+     ]
+    },
+    {
+     "doc": "transcript",
+     "find": [
+      "tenor",
+      "pricing",
+      "customer credit"
+     ]
+    }
+   ],
+   "questions": [
+    "What is the price per gigawatt-year, the contract tenor and the credit of the customers behind the backlog?",
+    "How much capacity is energized versus under construction, and who funds the build?"
+   ]
+  },
+  "subscriber_network": {
+   "label_he": "רשת מנויים",
+   "description": "revenue = average subscribers x ARPU; what is not subscriber x ARPU (hardware, enterprise, government) is named",
+   "price_cyclical": false,
+   "select": {
+    "card_types": [
+     "capital_intensive_infrastructure",
+     "hardware_manufacturing",
+     "subscription_software"
+    ],
+    "text": [
+     "subscribers",
+     "satellite",
+     "broadband",
+     "wireless",
+     "telecom",
+     "streaming"
+    ],
+    "kpi_any": [
+     "subscribers",
+     "net_adds"
+    ]
+   },
+   "kpis": {
+    "subscribers": {
+     "unit": "count",
+     "basis": [
+      "balance",
+      "average"
+     ],
+     "tag": "structural",
+     "core": true
+    },
+    "net_adds": {
+     "unit": "count",
+     "basis": [
+      "flow"
+     ],
+     "tag": "structural"
+    },
+    "arpu": {
+     "unit": "currency_per_user",
+     "basis": [
+      "average"
+     ],
+     "tag": "mix",
+     "core": true,
+     "note": "monthly revenue per average subscriber (window: month); state whether hardware is included"
+    },
+    "churn": {
+     "unit": "rate",
+     "basis": [
+      "rate"
+     ],
+     "tag": "structural"
+    },
+    "paid_users": {
+     "unit": "count",
+     "basis": [
+      "average",
+      "balance"
+     ],
+     "tag": "structural",
+     "note": "paid users of a subscription product; the same arithmetic as subscribers"
+    }
+   },
+   "identities": [
+    {
+     "id": "revenue_identity",
+     "type": "product",
+     "line": "revenue",
+     "factors": [
+      "subscribers",
+      "arpu"
+     ],
+     "core": true,
+     "months_per_period": true,
+     "note": "per period = average subscribers x monthly ARPU x months; end and average bases both shown; the residual is named and the identity stays partial"
+    }
+   ],
+   "growth_split": {
+    "line": "revenue",
+    "factors": [
+     "subscribers",
+     "arpu"
+    ]
+   },
+   "checks": [
+    "per_unit_vs_units",
+    "segment_unexplained",
+    "ebitda_minus_capex",
+    "capex_per_unit_lag"
+   ],
+   "falsifier_kpis": [
+    "net_adds",
+    "arpu"
+   ],
+   "overlays": [
+    "segments"
+   ],
+   "reading": [
+    {
+     "doc": "release supplemental / MD&A key metrics",
+     "find": [
+      "subscribers",
+      "net_adds",
+      "arpu",
+      "churn"
+     ],
+     "state": [
+      "average vs end-of-period subscribers",
+      "ARPU with or without hardware"
+     ]
+    },
+    {
+     "doc": "notes",
+     "find": [
+      "segment capex",
+      "deferred_revenue",
+      "spectrum and regulatory obligations"
+     ]
+    },
+    {
+     "doc": "transcript",
+     "find": [
+      "ARPU drivers",
+      "hardware vs service revenue"
+     ]
+    }
+   ],
+   "questions": [
+    "How much of revenue is subscribers x ARPU, and what is the rest?",
+    "Is subscriber growth from new regions (structural) or from price (ARPU)?"
+   ]
+  },
+  "digital_bank": {
+   "label_he": "בנק דיגיטלי",
+   "description": "net interest income = earning assets x NIM; products per member is cumulative; the capital lever is bounded",
+   "price_cyclical": false,
+   "select": {
+    "card_types": [
+     "financials"
+    ],
+    "text": [
+     "bank",
+     "deposits",
+     "lending",
+     "members",
+     "fintech"
+    ],
+    "kpi_any": [
+     "members",
+     "earning_assets",
+     "net_interest_margin"
+    ]
+   },
+   "kpis": {
+    "members": {
+     "unit": "count",
+     "basis": [
+      "balance"
+     ],
+     "tag": "structural",
+     "core": true
+    },
+    "products": {
+     "unit": "count",
+     "basis": [
+      "cumulative"
+     ],
+     "tag": "structural",
+     "note": "products ever opened; cumulative, never activity evidence"
+    },
+    "earning_assets": {
+     "unit": "currency",
+     "basis": [
+      "average",
+      "balance"
+     ],
+     "tag": "structural",
+     "core": true
+    },
+    "net_interest_margin": {
+     "unit": "rate",
+     "basis": [
+      "average"
+     ],
+     "tag": "macro",
+     "core": true
+    },
+    "deposits": {
+     "unit": "currency",
+     "basis": [
+      "balance"
+     ],
+     "tag": "structural"
+    },
+    "cross_buy_share": {
+     "unit": "rate",
+     "basis": [
+      "rate"
+     ],
+     "tag": "mix",
+     "note": "share of new products opened by existing members"
+    },
+    "deposit_cost_advantage": {
+     "unit": "rate",
+     "basis": [
+      "rate"
+     ],
+     "tag": "macro",
+     "note": "deposit cost below the alternative funding rate, in rate terms"
+    },
+    "nco_rate": {
+     "unit": "rate",
+     "basis": [
+      "rate"
+     ],
+     "tag": "cyclical",
+     "note": "headline net charge-off rate; with loan sales disclosed a normalized NCO must be supplied and labelled (nco_basis)"
+    }
+   },
+   "identities": [
+    {
+     "id": "nii_identity",
+     "type": "product",
+     "line": "net_interest_income",
+     "factors": [
+      "earning_assets",
+      "net_interest_margin"
+     ],
+     "core": true
+    },
+    {
+     "id": "products_per_member",
+     "type": "ratio",
+     "num": "products",
+     "den": "members",
+     "tag": "mix",
+     "check": "cumulative_kpi_not_activity",
+     "note": "labelled cumulative, not active"
+    },
+    {
+     "id": "deposit_benefit_identity",
+     "type": "product",
+     "line": "deposit_funding_benefit",
+     "factors": [
+      "deposits",
+      "deposit_cost_advantage"
+     ],
+     "note": "annual benefit against alternative funding; compared with a supplied figure when one exists"
+    }
+   ],
+   "growth_split": {
+    "line": "net_interest_income",
+    "factors": [
+     "earning_assets",
+     "net_interest_margin"
+    ]
+   },
+   "checks": [
+    "nco_basis",
+    "capital_lever_insufficient",
+    "cumulative_kpi_not_activity",
+    "segment_unexplained"
+   ],
+   "falsifier_kpis": [
+    "members",
+    "net_interest_margin",
+    "nco_rate"
+   ],
+   "overlays": [
+    "bank_capital",
+    "segments"
+   ],
+   "reading": [
+    {
+     "doc": "release supplemental / MD&A key metrics",
+     "find": [
+      "members",
+      "products",
+      "deposits",
+      "net_interest_margin",
+      "nco_rate"
+     ]
+    },
+    {
+     "doc": "10-Q notes",
+     "find": [
+      "loan_sales",
+      "fair value marks",
+      "capital ratios and target range",
+      "segment allocations"
+     ]
+    },
+    {
+     "doc": "transcript",
+     "find": [
+      "deposit pricing",
+      "cross-buy",
+      "credit normalization"
+     ]
+    }
+   ],
+   "questions": [
+    "What ROTE does the price require, and can returning all excess capital reach it (an upper bound)?",
+    "Are charge-offs stated before or after delinquent-loan sales?"
+   ]
+  },
+  "ads_platform": {
+   "label_he": "פלטפורמת פרסום",
+   "description": "revenue = daily active users x ARPU, by geography; logged-in vs logged-out; licensing = contracts x renewal price",
+   "price_cyclical": false,
+   "select": {
+    "card_types": [
+     "platform_marketplace"
+    ],
+    "text": [
+     "advertising",
+     "social",
+     "community",
+     "daily active users",
+     "ad revenue"
+    ],
+    "kpi_any": [
+     "dau",
+     "mau"
+    ]
+   },
+   "kpis": {
+    "dau": {
+     "unit": "count",
+     "basis": [
+      "average"
+     ],
+     "tag": "structural",
+     "core": true,
+     "by": "geography",
+     "note": "daily active users; state logged-in vs total and the geography"
+    },
+    "mau": {
+     "unit": "count",
+     "basis": [
+      "average"
+     ],
+     "tag": "structural"
+    },
+    "arpu": {
+     "unit": "currency_per_user",
+     "basis": [
+      "flow"
+     ],
+     "tag": "cyclical",
+     "core": true,
+     "by": "geography",
+     "note": "revenue per average user in the period (window: the period); moves with ad pricing and demand"
+    },
+    "licensing_contracts": {
+     "unit": "count",
+     "basis": [
+      "balance"
+     ],
+     "tag": "structural"
+    },
+    "licensing_price": {
+     "unit": "currency",
+     "basis": [
+      "average"
+     ],
+     "tag": "mix",
+     "note": "contract value at renewal; fixed-fee contracts move only at renewal"
+    }
+   },
+   "identities": [
+    {
+     "id": "revenue_identity",
+     "type": "product",
+     "line": "revenue",
+     "factors": [
+      "dau",
+      "arpu"
+     ],
+     "by": "geography",
+     "core": true
+    },
+    {
+     "id": "logged_in_share",
+     "type": "share",
+     "part": "dau",
+     "total": "dau",
+     "part_scope": "logged_in",
+     "total_scope": "total",
+     "tag": "mix"
+    },
+    {
+     "id": "licensing_identity",
+     "type": "product",
+     "line": "licensing_revenue",
+     "factors": [
+      "licensing_contracts",
+      "licensing_price"
+     ]
+    },
+    {
+     "id": "other_revenue_share",
+     "type": "share",
+     "part": "other_revenue",
+     "total": "revenue",
+     "check": "thesis_on_minor_line"
+    }
+   ],
+   "growth_split": {
+    "line": "revenue",
+    "factors": [
+     "dau",
+     "arpu"
+    ]
+   },
+   "checks": [
+    "thesis_on_minor_line",
+    "core_units_flat",
+    "disclosure_dropped",
+    "per_unit_vs_units"
+   ],
+   "falsifier_kpis": [
+    "dau",
+    "arpu"
+   ],
+   "overlays": [
+    "segments"
+   ],
+   "reading": [
+    {
+     "doc": "release supplemental / MD&A key metrics",
+     "find": [
+      "dau",
+      "arpu",
+      "other_revenue"
+     ],
+     "state": [
+      "geography",
+      "logged-in vs logged-out",
+      "whether the disclosure continues"
+     ]
+    },
+    {
+     "doc": "notes",
+     "find": [
+      "licensing contracts and rpo",
+      "concentration"
+     ]
+    },
+    {
+     "doc": "transcript",
+     "find": [
+      "ad pricing vs impressions",
+      "licensing renewals"
+     ]
+    }
+   ],
+   "questions": [
+    "Is growth coming from more users or from more revenue per user, and in which geography?",
+    "Does the thesis rest on a line that is a small share of revenue and of incremental growth?"
+   ]
+  }
+ },
+ "overlays": {
+  "vendor_financing": {
+   "label_he": "מימון לקוחות על ידי הספק",
+   "applies_to": [
+    "gpu_vendor",
+    "compute_leasing",
+    "memory_cycle",
+    "data_platform_software"
+   ],
+   "inputs": {
+    "funding_links": "list of {id, kind: equity_stake|guarantee|take_or_pay|loan|lease_guarantee|prepayment, status: funded|committed|contingent, amount, amount_is_maximum?, direction: company_funds_customer|company_buys_from_customer|customer_funds_company, source_ids}; the same deal reported by several outlets counts once (de-duplicated by id and source)",
+    "revenue_basis": "{value, period, annualize, source_ids}",
+    "exposed_share": "{value, horizon, kind: reported|analyst_estimate, source_ids}; an analyst_estimate is attributed and never sets the level",
+    "statements": "{cfo, net_income, non_cash_gains, receivables_start, receivables_end, receivables_window_months, revenue_window_months, deferred_revenue_start, deferred_revenue_end, related_party_revenue, spendable_cash}"
+   },
+   "computes": [
+    "each status as a share of annualized revenue: a stock-to-flow scale ratio, not revenue at risk",
+    "firm exposure = funded + committed (take-or-pay included); contingent kept apart and labelled ceiling",
+    "statement checks: cfo_to_ni, receivables_vs_revenue (matched windows only), receivables_build_share, customer_prepayment_build, related_party_share",
+    "funding_level",
+    "guarantee_ceiling against spendable cash"
+   ],
+   "checks": [
+    "funding_level",
+    "cfo_to_ni",
+    "receivables_vs_revenue",
+    "receivables_build_share",
+    "customer_prepayment_build",
+    "related_party_share",
+    "guarantee_ceiling"
+   ],
+   "rules_used": [
+    "firm_exposure_high",
+    "cfo_to_ni_min",
+    "receivables_gap_pp",
+    "receivables_windows",
+    "near_threshold"
+   ],
+   "xbrl": [
+    "GuaranteeObligationsMaximumExposure",
+    "UnrecordedUnconditionalPurchaseObligationBalanceSheetAmount",
+    "RevenueFromRelatedParties",
+    "ContractWithCustomerLiability"
+   ],
+   "boundary": "ratios, never probabilities of a chain break; no default haircut; the bear mechanism funding_chain_break (WP10) needs level high and an exposed share"
+  },
+  "funded_customer_chain": {
+   "label_he": "שרשרת מימון לקוחות",
+   "applies_to": [
+    "memory_cycle",
+    "gpu_vendor",
+    "compute_leasing"
+   ],
+   "inputs": {
+    "upstream_ticker": "the funder up the chain",
+    "upstream_review_sha256": "input_sha256 of the upstream econ review",
+    "share_of_revenue_via_chain": "own revenue share that flows through the funded chain, with source_ids"
+   },
+   "computes": [
+    "chain_exposure = own share x upstream exposed share, only when both exist; otherwise unquantified with the missing numbers named",
+    "upstream numbers are linked by sha256, never copied in as facts"
+   ],
+   "checks": [
+    "chain_exposure"
+   ],
+   "rules_used": [],
+   "boundary": "the link is a citation, not evidence of a dependence; a null share stays unquantified"
+  },
+  "acquisition_sbc": {
+   "label_he": "תגמול הוני מרכישה",
+   "applies_to": [
+    "data_platform_software",
+    "compute_leasing",
+    "ads_platform",
+    "subscriber_network"
+   ],
+   "inputs": {
+    "deal": "name",
+    "stock_to_employees": "total stock consideration to employees",
+    "vesting_years": "term",
+    "schedule": "evidenced vesting schedule per year, or null",
+    "observed_tranche_in_period": "the tranche expensed in the period",
+    "period": "quarter|year",
+    "sbc": "total SBC in the period",
+    "revenue": "revenue in the period"
+   },
+   "computes": [
+    "ongoing ratio = (SBC - tranche in the period) / revenue",
+    "straight-line tranche when only a total and years are given (straight_line_assumed)",
+    "tranche_schedule_mismatch when the annualized observed tranche differs from the schedule by more than rules.tranche_mismatch",
+    "the dilution is counted as real; the ratio ends when the tranche ends (WP11 sbc_pct override)"
+   ],
+   "checks": [
+    "straight_line_assumed",
+    "tranche_schedule_mismatch"
+   ],
+   "rules_used": [
+    "tranche_mismatch"
+   ],
+   "boundary": "a schedule mismatch is an open question, never resolved by assumption"
+  },
+  "segments": {
+   "label_he": "מגזרים",
+   "applies_to": [
+    "*"
+   ],
+   "inputs": {
+    "segments": "list of {name, revenue, prior_revenue?, profit, prior_profit?, profit_definition, model?, kpis?, source_ids}"
+   },
+   "computes": [
+    "segment_reconciliation: sums against consolidated revenue and profit within rules.identity_tolerance",
+    "per-segment identity status under the segment model when one is named",
+    "segment_unexplained for any segment with at least rules.segment_material of revenue or profit and no reconciled identity",
+    "cash_cost_ratio from segment mix only when every segment has a cash-basis EBITDA (WP11); otherwise refused"
+   ],
+   "checks": [
+    "segment_reconciliation",
+    "segment_unexplained",
+    "ebitda_minus_capex"
+   ],
+   "rules_used": [
+    "identity_tolerance",
+    "segment_material"
+   ],
+   "boundary": "one consolidated margin is never applied to segments with very different margins"
+  },
+  "contract_coverage": {
+   "label_he": "כיסוי חוזי",
+   "applies_to": [
+    "memory_cycle",
+    "compute_leasing",
+    "gpu_vendor"
+   ],
+   "inputs": {
+    "share_of_next_year_volume": "share covered by contracts",
+    "price_mechanism": "floor|formula|null",
+    "deposits": "true|false|null",
+    "tenor_years": "number or [min, max]",
+    "customers": "count, optional"
+   },
+   "computes": [
+    "lta_unproven (info) unless all four items are evidenced; no cycle damping without all four",
+    "WP13: +rules.coverage_extension_per_half base-reversion years per 50% covered, capped at rules.coverage_extension_cap_years; the bear never changes"
+   ],
+   "checks": [
+    "lta_unproven"
+   ],
+   "rules_used": [
+    "coverage_extension_per_half",
+    "coverage_extension_cap_years"
+   ],
+   "boundary": "a tenor and a customer count alone prove nothing about price"
+  },
+  "bank_capital": {
+   "label_he": "הון הבנק",
+   "applies_to": [
+    "digital_bank",
+    "broker"
+   ],
+   "inputs": {
+    "capital_ratio": "reported ratio",
+    "target_ratio_range": "[low, high], evidenced",
+    "minimum_ratio": "regulatory minimum",
+    "risk_weighted_assets": "RWA",
+    "tangible_common_equity": "TCE, or tangible_book_per_share x diluted_shares",
+    "net_income_or_rote": "annual NI or ROTE",
+    "price_to_tangible_book": "P/TBV",
+    "cost_of_equity": "explicit input",
+    "growth": "explicit input",
+    "loan_sales_disclosed": "true|false",
+    "nco_headline": "rate",
+    "nco_normalized": "{value, kind, source_ids} or null"
+   },
+   "computes": [
+    "calls quarter._bank and extends it; never duplicates its math",
+    "excess_capital_range at both ends of the target range; never the midpoint",
+    "ROTE if all excess were returned = NI / (TCE - excess): an upper bound (the yield the excess earns is ignored)",
+    "price-implied ROTE from P/TBV = (ROTE - g) / (COE - g)",
+    "capital_lever_insufficient when even the upper bound stays below the price-implied ROTE",
+    "headroom_to_minimum",
+    "nco_basis when loan sales are disclosed and only the headline NCO is supplied"
+   ],
+   "checks": [
+    "excess_capital_range",
+    "capital_lever_insufficient",
+    "headroom_to_minimum",
+    "nco_basis"
+   ],
+   "rules_used": [
+    "near_threshold"
+   ],
+   "boundary": "COE and g are explicit inputs, never defaults; no credit-loss model"
+  }
+ },
+ "new_keys": [
+  "accounts",
+  "bits",
+  "capacity_additions",
+  "category_revenue",
+  "churn",
+  "client_equity",
+  "cross_buy_share",
+  "darts",
+  "deposit_cost_advantage",
+  "earning_assets",
+  "frequency",
+  "geographic_revenue",
+  "gw_shipped",
+  "hbm_market_share",
+  "incentives",
+  "licensing_contracts",
+  "licensing_price",
+  "mapcs",
+  "margin_loans",
+  "margin_rate",
+  "members",
+  "mix_dram_share",
+  "mix_nand_share",
+  "nco_rate",
+  "net_adds",
+  "net_new_accounts",
+  "price_per_gw_year",
+  "products",
+  "rate_sensitivity_25bp",
+  "revenue_per_gw",
+  "top_n_average_revenue",
+  "top_n_share",
+  "top_n_total_revenue",
+  "trips"
+ ],
+ "text_he": {
+  "note": "מבני = נבנה לאורך זמן ולא נעלם בשנה רעה; מחזורי = עולה ויורד עם השוק והריבית.",
+  "boundary": "קריאה של המנוע העסקי; לא הערכת שווי ולא הוראת מסחר."
+ }
+}

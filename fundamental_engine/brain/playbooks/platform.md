@@ -20,3 +20,10 @@ engagement. Distinguish mature core cash generation from long-dated experiments.
 Model operational constraints and unit economics. Cost reductions do not explain
 whether platform usefulness or monetization quality improved. Positive engagement
 with weak earnings can justify deeper research, not immediate undervaluation.
+
+Economic model (registry `brain/economics.json`, packet `economic_models`): a transaction
+platform is `marketplace` (gross bookings = consumers x frequency x bookings per trip; take
+rate = revenue / bookings on the same currency basis, or `basis_mismatch`); an attention
+platform is `ads_platform` (revenue = DAU x ARPU by geography, logged-in share, licensing =
+contracts x renewal price, and `thesis_on_minor_line` when the story rests on a small line).
+A `gross_bookings` or `gmv` KPI selects `marketplace` over the provider's software label.

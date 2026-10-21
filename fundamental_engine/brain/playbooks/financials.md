@@ -44,3 +44,12 @@ against the regulator. Institutional passive ownership is not an active endorsem
 insider purchases and short interest alone do not establish value or price direction.
 
 Method reference: https://pages.stern.nyu.edu/adamodar/New_Home_Page/littlebook/bankvaluedriver.htm
+
+Economic model (registry `brain/economics.json`, packet `economic_models`): a brokerage with
+margin loans, client equity or DARTs is `broker` (revenue = accounts x revenue per account;
+revenue per account = equity per account, a mix effect that is never reverted, x revenue
+yield on equity, the cyclical and rate part), not the loans/deposits tree. A deposit-taking
+lender or fintech bank is `digital_bank` (NII = earning assets x NIM; products per member is a
+cumulative count; the `bank_capital` overlay shows excess capital at both ends of the target
+range and the ROTE that returning all of it could reach, an upper bound against the ROTE the
+price implies; `nco_basis` when loan sales are disclosed and only the headline NCO is given).
