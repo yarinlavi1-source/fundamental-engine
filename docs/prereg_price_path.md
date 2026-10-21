@@ -250,4 +250,26 @@ verdict against 6.7 in those words, the survivorship and in-sample-design caveat
 and named examples from both tails. Hebrew wording for the table row is written only after the verdict.
 
 ## 9. Deviations log (dated; empty at registration)
-(none)
+
+Pre-run clarifications, 21.10.2026, logged before the first evaluation run (no result had been seen; sections 2-6 unchanged):
+
+1. Section 5, backlog ceiling. The text prints the lifted ceilings as {base .25, bull .10}. CEIL is a MINIMUM share of the
+   size class that must have grown at least as fast (share_at_least >= CEIL), so a larger number tightens the constraint;
+   the only reading consistent with "lift the ceiling" is a smaller minimum share. `pricepath.CEIL_BACKLOG` = {base .05,
+   bull .025} (the base takes the bull's level, the bull half of it). Live-engine input only; the backtest never uses it.
+2. Section 3.1, NI_0. `analysis.analyze` keeps a TTM net income only when it was built by the same method as the revenue
+   TTM (four quarters vs annual + year to date); when it drops it for that label, the lane reads `facts.ttm(fb,
+   'net_income')` for the SAME period end (within facts.SAME_PERIOD_DAYS), which is the same twelve months. Flag
+   `ni_ttm_from_facts`, counted in the flag shares. The registered exclusion is for NI_0 <= 0, not for a method label.
+3. Section 3.3, bear / bull margin convergence. "Moves linearly from m_1 to the target over CONV years" is read the way
+   the engine's own margin path (forecast.py: year t is t / conv of the way) and section 3.1's cyclical rule (starts at
+   m_TTM, year h is h / CYC_CONV of the way) count it: m_h(s) = m_1 + (target - m_1) x min(h / CONV, 1), so the bear's
+   margin is below the base's from year 1 (an interrupted earlier draft had used (h - 1) / CONV, which left year 1 equal).
+4. Section 3.4, the "growth adds value only when R > ke" property. It holds where the payout is unclipped (g <= R): with
+   R = ke the forward multiple is 1 / ke for any growth path (trailing (1 + g) / ke). When g > R the registered clip at 0
+   means the path grows faster than full reinvestment at R can fund, and the multiple rises with growth even at R = ke;
+   the formula is unchanged (R_MAX and the lambda ceiling keep such paths rare). The terminal switch g_T = min(rf, g)
+   costs a little value when g > rf (year h+N retains for g, the terminal grows at rf); also as registered.
+5. Section 6.1, locations. The saved walk-forward data live outside the worktree (`/home/user/fundamental-engine/runs`,
+   git-ignored); the script takes absolute `--prices` / `--rates` paths and the engine rows of the fresh 2026-10-21
+   baseline run of the current engine (scratchpad `bt_pre/rows.jsonl`, 3,354 rows with base_irr), read-only.
