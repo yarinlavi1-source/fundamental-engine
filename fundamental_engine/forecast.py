@@ -535,7 +535,7 @@ def _route(card, h, warn, fb=None, cyc_input=None):
     weights = {s: (1. if moat == 'strong' else (proxy['weight'] if proxy and s != 'bear' else 0.)) for s in SCEN}
     return {'method': method, 'business_model': bm, 'stage': stage, 'type': typ, 'archetype': archetype, 'cyclical': cyclical, 'normalize': normalize,
             'cycle_path': normalize, 'cycle_peak': peak, 'cycle_treatment': treatment if peak else override, 'cycle_forced': forced,
-            'cycle_override': override,
+            'cycle_override': override, 'cycle_history': cyc_card.get('history'),
             'capital_intensity': (card.get('capital_intensity') or {}).get('value'),
             'funding': (card.get('funding') or {}).get('value'), 'moat': moat, 'moat_basis': basis, 'moat_proxy': proxy,
             'moat_weights': weights, 'dimensions': dims}
@@ -1354,10 +1354,12 @@ def _params(route, h, cal, cons, rf, ku, ku_t, ov_ke, debt0, ov, warn):
     else:
         # bought revenue is a level shift in the current year, not growth to repeat: the fade starts from organic growth. A
         # cyclical business's change this year is the cycle (prices and volumes), not a trend: it starts from its long-run
-        # like-for-like growth (Expand Energy 2026: +25% on gas prices had been faded as if it were demand)
+        # like-for-like growth (Expand Energy 2026: +25% on gas prices had been faded as if it were demand). Not for a history
+        # the card reads as a scale-up, a loss-making grower or pre-commercial noise (cycle_history): the industry word is a flag
+        # there, and the long-run CAGR is the ramp from a small base, not a like-for-like cycle average
         g0 = h['acq']['organic'] if h.get('acq') else g_cur
         lr = next((x for x in (h.get('cagr_5y_ex_acq'), h.get('cagr_5y'), h.get('cagr_3y')) if x is not None), None)
-        if route['cyclical'] and not h.get('acq') and not cg and lr is not None and abs(g0 - lr) > .02:
+        if route['cyclical'] and not route.get('cycle_history') and not h.get('acq') and not cg and lr is not None and abs(g0 - lr) > .02:
             warn('cyclical_growth_start', f"cyclical business: next-year growth fades from its long-run like-for-like growth {_pct(lr)} "
                                           f"(5-year CAGR without acquisition steps, else 3-year), not this year's {_pct(g0)} (the cycle, not a trend)", 'medium')
             g0 = h['cyclical_start'] = lr
@@ -2841,7 +2843,7 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
                'roic': h['roic'], 'payout_history_3y': h['payout_history'], 'net_debt_to_ebitda': h['nd_ebitda'], 'opening': open_bal,
                'reinvestment_identity': fixed['identity'],
                'route': {k: route[k] for k in ('method', 'business_model', 'stage', 'archetype', 'cyclical', 'capital_intensity', 'funding', 'moat', 'moat_basis',
-                                               'moat_weights', 'cycle_path', 'cycle_peak', 'cycle_treatment')},
+                                               'moat_weights', 'cycle_path', 'cycle_peak', 'cycle_treatment', 'cycle_history')},
                'calendar': {k: cal[k] for k in ('boundaries', 'periods', 'interim', 'fifth_anniversary', 'report_dates', 'fiscal_year_end', 'report_rule')}}
     json.dumps(spec, allow_nan=False)
     return {'forecast_version': FORECAST_VERSION, 'status': 'built', 'reason': None, 'method': method, 'spec': spec,

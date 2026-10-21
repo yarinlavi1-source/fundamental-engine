@@ -33,6 +33,21 @@
 - Walk-forward ERP: `engine_backtest.IMPLIED_ERP` (Damodaran's start-of-year implied ERP, FCFE, 2009-2026, from
   histimpl.html; implpr.html agrees through 2016) is passed at each formation, point in time (a January formation uses the
   previous year's estimate), instead of the fixed `ERP_DEFAULT` 4.5%; rows record `risk_free` and `erp`.
+- Cyclical industry word at a 'peak' on a non-cycle history (`model_card._cyclical`). An industry word (`CYCLICAL_WORDS`:
+  travel, leisure, freight, machinery, construction, ...) plus the 'peak' margin position had normalized the valuation to
+  the window-mean margin even when the reported history was a scale-up from losses, a loss-making grower or pre-commercial
+  noise, the three histories the same function already exempts from the data-cycle test (an Uber-like 'travel' history,
+  -22% .. +11% on revenue rising every year, was valued on its -2% start-up mean: 0.08x price, 0.49x with the engine's own
+  `inputs.cyclical` structural treatment). Now the margin position is read off a cycle-shaped window only (those histories
+  get no position), and without a cycle in the data a 'peak' needs a window of positive margins (an industry word alone
+  does not make a loss year a cycle trough). The word stays a visible analyst question: card `cyclical.history`
+  (scale_up | loss_grower | pre_commercial | None), `cyclical.peak_question`, a reason and a valuation limitation;
+  `inputs.cyclical` (card: value + reason; forecast: treatment) settles it either way, and a confirmed cycle restores the
+  position. Downstream: the forecast's `cyclical_growth_start` (fade from the long-run CAGR instead of this year's growth)
+  is skipped for those histories (route `cycle_history`; the CAGR is the ramp from a small base, not a like-for-like cycle
+  average). Kept as they were: the data-cycle path (a history that shows a cycle, loss years included), the +0.5pp
+  cyclicality row of the cost of equity and the decision premium (industry-economics risk statements, not a peak reading),
+  and the screen's own peak check. No constant tuned.
 
 ## 0.12.0 — results-day review from analyst comparison (21.10.2026)
 

@@ -684,6 +684,50 @@ class RepairRegressionTests(unittest.TestCase):
         self.assertTrue(card(steady_fb('Information Technology', 'Application Software', dip, [-.27, -.40, -.25, -.30, .006, .074],
                                        .45, .03))['cyclical']['data_shows_cycle'])
 
+    def test_industry_word_on_a_scale_up_path_is_a_question_not_a_cycle_peak(self):
+        # SYNTHETIC Uber-like history: 'travel' industry word, revenue up every year, margins from -22% to the +11% window high.
+        # The word plus the 'peak' position had normalized the valuation to the -2% start-up mean (value 0.08x price)
+        rev, om = [17.5e9, 31.9e9, 37.3e9, 44.0e9, 52.0e9], [-.22, -.06, .03, .06, .11]
+        fb = steady_fb('Industrials', 'Travel Services', rev, om, .40, .005)
+        c = card(fb)
+        cy = c['cyclical']
+        self.assertEqual((cy['value'], cy['industry_flag'], cy['data_shows_cycle'], cy['normalize'], cy['basis']),
+                         (True, True, False, False, 'industry_flag'))
+        self.assertEqual((cy['history'], cy.get('position')), ('scale_up', None))
+        self.assertNotIn('normalized_operating_margin', cy)
+        self.assertIn('scale-up path', cy['peak_question'])                                   # the word stays a visible question
+        self.assertTrue(any('not a cycle peak' in r for r in cy['reasons']), cy['reasons'])
+        self.assertNotEqual(c['valuation']['method'], 'normalized_cycle_fcff')
+        self.assertTrue(any('not normalized' in x and 'analyst question' in x for x in c['valuation']['limitations']))
+        # the analyst settles it either way
+        yes = card(fb, {'cyclical': {'value': True, 'reason': 'demand fell with travel in the 10-K segment data (TEST)'}})
+        self.assertEqual((yes['cyclical']['basis'], yes['cyclical']['normalize'], yes['cyclical']['position']), ('analyst', True, 'peak'))
+        self.assertEqual(yes['valuation']['method'], 'normalized_cycle_fcff')
+        self.assertAlmostEqual(yes['cyclical']['normalized_operating_margin']['value'], sum(om) / 5)
+        no = card(fb, {'cyclical': {'value': False, 'reason': 'platform take rate, not a travel operator (TEST)'}})
+        self.assertEqual((no['cyclical']['basis'], no['cyclical']['normalize']), ('analyst', False))
+        # a loss-making grower in the same industry: no position at all (investment timing is not a cycle)
+        lg = card(steady_fb('Industrials', 'Travel Services', rev, [-.22, -.12, -.09, -.06, -.02], .40, .005))['cyclical']
+        self.assertEqual((lg['history'], lg.get('position'), lg['normalize']), ('loss_grower', None, False))
+
+    def test_flag_peak_needs_a_window_of_positive_margins(self):
+        # SYNTHETIC steel maker: one loss year on a 2% revenue dip (no demand-driven cycle in the data), latest margin 12% against a
+        # 5% window mean. An industry word alone does not make the loss year a cycle trough, so the mean is not mid-cycle
+        rev, om = [10e9, 9.8e9, 10.5e9, 11.5e9, 12.5e9], [.05, -.02, .04, .07, .12]
+        c = card(steady_fb('Materials', 'Steel', rev, om, .25, .05))
+        cy = c['cyclical']
+        self.assertFalse(cy['data_shows_cycle'])
+        self.assertEqual((cy['normalize'], cy['basis'], cy['history'], cy.get('position')), (False, 'industry_flag', None, None))
+        self.assertIn('loss year', cy['peak_question'])
+        self.assertNotEqual(c['valuation']['method'], 'normalized_cycle_fcff')
+        # the same shape on positive margins is still a peak to normalize
+        c2 = card(steady_fb('Materials', 'Steel', rev, [.05, .02, .04, .07, .12], .25, .05))
+        self.assertEqual((c2['cyclical']['position'], c2['cyclical']['normalize'], c2['cyclical']['basis']), ('peak', True, 'industry_flag+peak'))
+        self.assertIsNone(c2['cyclical']['peak_question'])
+        # a trough with a loss year stays reported (never normalized, only flagged)
+        c3 = card(steady_fb('Materials', 'Steel', rev, [.08, .07, .09, .06, -.02], .25, .05))
+        self.assertEqual((c3['cyclical']['position'], c3['cyclical']['normalize']), ('trough', False))
+
     def test_one_off_charges_on_growing_revenue_are_not_a_cycle(self):
         # SYNTHETIC history shaped like Microsoft's: write-down years (margin dips) while revenue keeps growing
         def fb(company, rev, om, gm, capex_pct):

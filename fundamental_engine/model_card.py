@@ -1013,7 +1013,9 @@ def _cyclical(fb, rows, primary, inputs):
     """Industry words/type are a flag. The valuation is normalized to mid-cycle margins ('normalize') when the reported
     history shows a cycle, when a flagged industry's latest margin sits at a possible peak (position 'peak': peak margins
     are not extrapolated), or when an analyst confirms a cycle; an analyst can reject one (inputs.cyclical, reason
-    mandatory). A flag at mid or trough margins stays a flag (e.g. a booking platform with stable margins)."""
+    mandatory). A flag at mid or trough margins stays a flag (e.g. a booking platform with stable margins), and so does a
+    flag on a history that is not cycle-shaped ('history': a scale-up from losses, a loss-making grower, pre-commercial
+    noise) or whose window includes losses the data do not show to be a cycle: the open question is kept (peak_question)."""
     reasons = []
     company = fb.get('company') or {}
     t = text_type(company)
@@ -1082,8 +1084,25 @@ def _cyclical(fb, rows, primary, inputs):
         reasons.append(f'reported history shows no cycle pattern (margin standard deviation {_pct(vol)}, {reversals} demand-driven '
                        'reversal(s)' + (f"; margin dips on normal revenue growth in {', '.join(sorted(x[:4] for x in one_offs))} read as one-off "
                                        'charges, not a cycle' if one_offs else '') + ')')
-    position, pos_rule = _margin_position(ms) if len(ms) >= 3 and not pre_commercial else (None, None)
+    # a cycle position is read off a cycle-shaped window only: the histories data_cyc exempts (pre-commercial noise, a loss-maker's
+    # investment timing, a scale-up from losses) are not cycles, so an industry word cannot call their latest margin a 'peak' and
+    # normalize it to the window mean (an Uber-like 'travel' history, -22% .. +11% on revenue rising every year, had been valued
+    # on its -2% start-up mean: 0.08x price). Without a cycle in the data a peak also needs a window of positive margins: an
+    # industry word alone does not make a loss year a cycle trough, so a mean that includes one is not a mid-cycle margin. The
+    # word stays a visible analyst question (peak_question); inputs.cyclical settles it either way.
+    history = 'pre_commercial' if pre_commercial else 'loss_grower' if loss_grower else 'scale_up' if scale_up else None
+    raw, raw_rule = _margin_position(ms) if len(ms) >= 3 else (None, None)
+    profitable = bool(ms) and min(ms) > 0
+    position, pos_rule = (raw, raw_rule) if history is None and (raw != 'peak' or data_cyc or profitable) else (None, None)
     flag_peak = flag and position == 'peak'
+    question = None
+    if flag and not data_cyc and raw == 'peak' and position is None:
+        question = (f'{raw_rule}: the window high in a cyclical industry, but '
+                    + {'scale_up': 'the history is a scale-up path (revenue rose every year, margins from losses to the window high)',
+                       'pre_commercial': 'the window is pre-commercial (losses larger than revenue)'}.get(
+                        history, 'the window includes a loss year the reported history does not show to be a cycle trough')
+                    + ', so its mean is not a mid-cycle margin: not read as a cycle peak and not normalized; cycle or structural is '
+                      'an analyst question (inputs.cyclical with a reason and evidence)')
     value, normalize = flag or data_cyc, data_cyc or flag_peak
     basis = 'data' if data_cyc else ('industry_flag+peak' if flag_peak else ('industry_flag' if flag else None))
     override = None
@@ -1095,7 +1114,11 @@ def _cyclical(fb, rows, primary, inputs):
         override = {'value': ov['value'], 'reason': ov['reason'], 'evidence_ids': list(ov.get('evidence_ids') or [])}
         value = normalize = ov['value']
         basis = 'analyst'
+        if ov['value'] and not pre_commercial:
+            position, pos_rule = raw, raw_rule      # the analyst's cycle: the window is read as one
         reasons.append(f"analyst {'confirms' if ov['value'] else 'rejects'} a cycle ({ov['reason']})")
+    elif question:
+        reasons.append('industry flag at the window high, not a cycle peak: ' + question)
     elif flag_peak and not data_cyc:
         reasons.append(f'cyclical industry at a possible peak ({pos_rule}): normalized to mid-cycle margins rather than extrapolating the '
                        'latest margin; an analyst can reject the cycle with a reason (inputs.cyclical)')
@@ -1103,7 +1126,7 @@ def _cyclical(fb, rows, primary, inputs):
         reasons.append('industry flag only: margins are not at a visible peak, so the valuation is not normalized to a historical mean '
                        'unless the reported history shows a cycle or an analyst confirms one (inputs.cyclical with a reason)')
     out = {'value': value, 'normalize': normalize, 'basis': basis, 'industry_flag': flag, 'data_shows_cycle': data_cyc,
-           'computed': flag or data_cyc, 'override': override, 'reasons': reasons,
+           'computed': flag or data_cyc, 'override': override, 'reasons': reasons, 'history': history, 'peak_question': question,
            'margin_volatility': _num(vol, 'population standard deviation of annual operating margins', ends[-1] if ends else None)}
     if (out['computed'] or value) and position:
         out['normalized_operating_margin'] = _num(mean(ms), f'mean annual operating margin over {len(ms)} years ({pairs[0][0]}..{pairs[-1][0]})',
@@ -1377,7 +1400,8 @@ def _valuation(fb, an, qa, bm, stage, cyc, fund, cap, rows, inputs, cur):
             nm = (cyc.get('normalized_operating_margin') or {}).get('value')
             lim.append('cyclical industry, but the reported history shows no cycle: not normalized to a historical mean'
                        + (f"; latest margin {_pct(om)} vs {_pct(nm)} average looks like a possible peak: confirm structural vs "
-                          'cyclical (inputs.cyclical) before extrapolating it' if cyc.get('position') == 'peak' else ''))
+                          'cyclical (inputs.cyclical) before extrapolating it' if cyc.get('position') == 'peak' else '')
+                       + (f"; {cyc['peak_question']}" if cyc.get('peak_question') else ''))
         if om is not None and om < 0 and v['method'] != 'scenario_survival_fcff':
             lim.append('latest fiscal year is a loss: start the path from normal margins only with evidence that the loss is one-off')
         if bm['secondary'] and v['method'] != 'not_reliably_valuable':

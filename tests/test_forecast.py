@@ -1312,6 +1312,19 @@ class CyclicalGrowthStartTests(unittest.TestCase):
         g = next(a for a in fc['assumptions'] if a['id'] == 'growth_base')
         self.assertIn('long-run like-for-like growth 4.0%', g['rationale'])
 
+    def test_non_cycle_history_in_a_flagged_industry_keeps_its_own_growth_start(self):
+        # the card reads the history as a scale-up (or a loss-making grower): the industry word is a flag, and the long-run CAGR
+        # is the ramp from a small base, not a like-for-like cycle average, so the fade starts from the company's own growth
+        for history in ('scale_up', 'loss_grower', 'pre_commercial'):
+            fb, an, card, qa = ytd_surge()
+            an['metrics']['revenue_cagr_5y'] = {'value': .04, 'formula': 'test fixture', 'status': 'reported'}
+            card['cyclical'] = {'value': True, 'normalize': False, 'basis': 'industry_flag', 'industry_flag': True, 'history': history}
+            fc = forecast.build(fb, an, card, qa)
+            self.assertEqual(fc['anchors']['route']['cycle_history'], history)
+            self.assertNotIn('cyclical_growth_start', {w['code'] for w in fc['warnings']})
+            self.assertAlmostEqual(scen(fc['spec'], 'base')['growth'][0], .15)                 # the scale-capped own growth, not 4%
+            self.assertIn('cyclical', json.dumps(fc['cost_of_equity']['components']['adjustments']))   # the industry add-on stays
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -146,5 +146,56 @@ class SegmentViewTests(unittest.TestCase):
         self.assertAlmostEqual(base, sv['base_value_consolidated'])            # the base case itself is unchanged
 
 
+class ScaleUpInCyclicalIndustryTests(unittest.TestCase):
+    """Regression from the 2026-10-21 valuation-gap diagnosis: a SYNTHETIC Uber-like history ('travel' industry word, revenue up
+    every year, margins -22% .. +11%) was read as a cyclical peak and normalized to its -2% start-up mean (value 0.08x price;
+    0.49x with the engine's own inputs.cyclical structural treatment)."""
+
+    @staticmethod
+    def uber_like(price=95.):
+        rev, om, sbc = [17.5e9, 31.9e9, 37.3e9, 44.0e9, 52.0e9], [-.22, -.06, .03, .06, .11], [.09, .06, .05, .043, .035]
+        as_of = '2026-10-20'
+        fb = F.new({'ticker': 'UBX', 'name': 'Synthetic travel platform', 'currency': 'USD', 'fiscal_year_end': '12-31',
+                    'sector': 'Industrials', 'industry': 'Travel Services'}, as_of)
+        F.add_source(fb, 'syn:fs', 'synthetic', 'test-statements', 'filing_derived', as_of + 'T00:00:00Z', note='SYNTHETIC')
+        F.add_source(fb, 'syn:px', 'synthetic', 'test-price', 'market_feed', as_of + 'T00:00:00Z')
+        for i, (r, m, s) in enumerate(zip(rev, om, sbc)):
+            end = f'{2021 + i}-12-31'
+            oi = r * m
+            flows = {'revenue': r, 'gross_profit': r * .4, 'cost_of_revenue': r * .6, 'operating_income': oi, 'sbc': r * s, 'd_and_a': r * .015,
+                     'capex': r * .005, 'cfo': oi + r * s + r * .015, 'pretax_income': oi, 'income_tax': max(oi, 0) * .21,
+                     'net_income': oi - max(oi, 0) * .21, 'interest_expense': 5e8}
+            for k, v in flows.items():
+                F.add_fact(fb, k, 'FY' + end[:4], end, v, 'syn:fs', 'as_reported', f'{2022 + i}-02-20', period_start=f'{2021 + i}-01-01')
+            c = 9e9 * r / rev[-1]
+            inst = {'cash': c, 'equity': r * .6 + c - 10e9, 'long_term_debt': 10e9, 'total_assets': r * .9 + c, 'total_liabilities': r * .3 + 10e9,
+                    'receivables': r * .15, 'payables': r * .05, 'shares_outstanding': 2.1e9, 'current_assets': c + r * .2,
+                    'current_liabilities': r * .25, 'ppe': r * .05}
+            for k, v in inst.items():
+                F.add_fact(fb, k, 'I@' + end, end, v, 'syn:fs', 'as_reported', f'{2022 + i}-02-10')
+        F.set_price(fb, price, as_of, 'syn:px')
+        return fb
+
+    def test_automatic_card_agrees_with_the_structural_treatment(self):
+        market = {'risk_free': {'value': .0515, 'as_of': '2026-10-19', 'title': 'test', 'retrieval': 'provider_normalized'},
+                  'equity_risk_premium': {'value': .042, 'as_of': '2026-10-01', 'title': 'test', 'retrieval': 'provider_normalized'}}
+        cf = pipeline.run(self.uber_like(), {'forecast': market})
+        cy, route = cf['card']['cyclical'], cf['fc']['anchors']['route']
+        self.assertEqual((cy['value'], cy['normalize'], cy['history'], cy.get('position')), (True, False, 'scale_up', None))
+        self.assertFalse(route['cycle_path'] or route['cycle_peak'])
+        self.assertEqual(route['stage'], 'growth')                                   # not forced to 'mature' around a cycle
+        base = next(s for s in cf['fc']['spec']['scenarios'] if s['name'] == 'base')
+        self.assertGreater(base['terminal']['operating_margin'], .08)                 # not the 2% floor over a negative mean
+        structural = {'treatment': 'structural', 'reason': 'scale-up from losses, not a cycle (TEST)', 'evidence_ids': ['syn:fs']}
+        cf2 = pipeline.run(self.uber_like(), {'forecast': dict(market, cyclical=structural)})
+        self.assertAlmostEqual(pipeline.summary(cf)['base_value'], pipeline.summary(cf2)['base_value'])
+        self.assertGreater(pipeline.summary(cf)['base_value'] / 95., .3)              # was 0.08x price
+        # an analyst who shows a cycle still gets the cycle path
+        cyc = {'treatment': 'cyclical', 'reason': 'bookings fell 40% in the last downturn (TEST)', 'evidence_ids': ['syn:fs']}
+        cf3 = pipeline.run(self.uber_like(), {'forecast': dict(market, cyclical=cyc)})
+        self.assertTrue(cf3['fc']['anchors']['route']['cycle_path'])
+        self.assertLess(pipeline.summary(cf3)['base_value'], pipeline.summary(cf)['base_value'])
+
+
 if __name__ == '__main__':
     unittest.main()
