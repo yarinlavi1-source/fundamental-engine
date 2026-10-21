@@ -594,6 +594,18 @@ class ValuationIntegrityTests(unittest.TestCase):
                                    scen(fc['spec'], 'base')['terminal']['growth'] + .03), places=6)
         self.assertIn('adjustment_leverage_relevered', comp)
 
+    def test_levered_terminal_wacc_formula_where_the_floor_does_not_bind(self):
+        # at a 2% risk-free the g + 3pp floor sits below the blend, so E/V Ke + D/V (Kd_e - Kd_promised x tax) is the WACC itself
+        fb, an, card, qa = levered(30.)
+        fc = forecast.build(fb, an, card, qa, {'risk_free': {'value': .02, 'as_of': '2026-03-20', 'title': 'low-rate test value',
+                                                             'url': 'https://example.org/rf'}})
+        lev = fc['cost_of_equity']['components']['leverage']
+        w = lev['debt_weight']
+        blend = (1 - w) * fc['cost_of_equity']['base'] + w * (lev['kd_expected'] - lev['kd_promised'] * .21)
+        self.assertGreater(blend, scen(fc['spec'], 'base')['terminal']['growth'] + .03)
+        self.assertAlmostEqual(fc['cost_of_equity']['terminal_wacc']['base'], blend, places=9)
+        self.assertAlmostEqual(lev['kd_expected'], .02 + forecast.DEBT_EXPECTED_PREMIUM)
+
     def test_cyclical_at_peak_is_valued_around_the_cycle(self):
         fb, an, card, qa, hist = peak_cyclical(stage='growth')
         fc = forecast.build(fb, an, card, qa)
@@ -1717,6 +1729,40 @@ class TerminalGrowthConventionTests(unittest.TestCase):
         self.assertEqual(scen(fc['spec'], 'base')['terminal']['growth'], .02)
         self.assertEqual(scen(fc['spec'], 'bull')['terminal']['growth'], .045)
         self.assertEqual(forecast.CYCLE_TREND, (-.03, .05))             # its own bound, not the terminal convention + 2pp
+
+    def test_rate_above_the_contract_bound_builds_with_a_visible_flag(self):
+        # a high-rate reporting currency (fb.market.risk_free by currency: MXN, BRL, ZAR...): growth that followed the rate without
+        # bound failed the valuation contract ('growth: above 0.08', status invalid_spec); it stops at the contract's bound, flagged
+        from fundamental_engine import review, valuation
+        for rf in (.09, .12, .2):
+            fc = self.build(rf)
+            self.assertEqual(fc['status'], 'built', fc.get('reason'))
+            self.assertEqual({s: scen(fc['spec'], s)['terminal']['growth'] for s in SCEN}, {'base': .08, 'bull': .08, 'bear': .075})
+            w = {x['code']: x for x in fc['warnings']}
+            self.assertEqual(w['terminal_growth_capped']['severity'], 'high')
+            self.assertNotIn('terminal_growth_high', w)                  # one row explains it
+            row = next(a for a in fc['assumptions'] if a['id'] == 'growth_fade')
+            self.assertIn("held at the valuation contract's 8% bound", row['rationale'])
+        self.assertIs(forecast.TERMINAL_GROWTH_MAX, valuation.TERMINAL_GROWTH_MAX)   # one bound, the contract's
+        fb, an, card, qa = adbe()
+        case = build_case(fc['spec'])
+        res = value_company(case)
+        self.assertGreater(res['annual_values'][0]['base'], 0)
+        out = review.consistency(fb, qa, an, fc, {'result': res, 'case': case})
+        self.assertEqual(next(c for c in out if c['code'] == 'terminal_growth_vs_risk_free')['status'], 'pass')
+
+    def test_flags_read_the_growth_after_overrides(self):
+        ov = {'path': 'terminal_growth', 'scenario': 'all', 'value': .03, 'reason': 'test: evidenced long-run growth',
+              'evidence_ids': ['fmp:as_reported_income_annual']}
+        for rf in (.07, .12):                                           # an override in every scenario replaces number and flag
+            fc = self.build(rf, overrides=[ov])
+            self.assertEqual({scen(fc['spec'], s)['terminal']['growth'] for s in SCEN}, {.03})
+            self.assertFalse({w['code'] for w in fc['warnings']} & {'terminal_growth_high', 'terminal_growth_capped'})
+        fc = self.build(.12, overrides=[dict(ov, scenario='base')])     # only the scenarios still on the rate-based number
+        w = next(x for x in fc['warnings'] if x['code'] == 'terminal_growth_capped')
+        self.assertIn('held at bear 7.5%, bull 8.0%, below', w['message'])
+        fc = self.build(.04, overrides=[dict(ov, scenario='bull', value=.07)])   # an overridden growth this high is still flagged
+        self.assertIn('bull 7.0%', next(x for x in fc['warnings'] if x['code'] == 'terminal_growth_high')['message'])
 
     def test_review_accepts_terminal_growth_rounded_to_the_spec(self):
         from fundamental_engine import review

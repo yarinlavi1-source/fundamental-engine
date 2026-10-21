@@ -40,8 +40,11 @@ stable growth at (never above) the risk-free rate. Implementation (21.10.2026):
 terminal growth = risk-free in base and bull, 0.5pp lower in the bear, paired with
 that ERP; the former min(risk-free, 3%) mixed two conventions and cut every value
 when rates were above 3% (re-solved at g = 3% his Oct 2026 ERP is 2.8%, not 4.2%).
-Growth still costs g/ROIC; a risk-free above 6% is flagged; an evidenced
+Growth still costs g/ROIC; a terminal growth above 6% is flagged; an evidenced
 terminal_growth override wins. Never pair a dated ERP with a different growth rule.
+The convention stops at the valuation contract's 8% bound: a higher local rate
+holds growth at 8% (below the rate, flagged terminal_growth_capped, never a
+failed valuation); value such cash flows in a lower-rate currency where possible.
 
 ## Banks and insurers
 Damodaran, Financial service company characteristics:

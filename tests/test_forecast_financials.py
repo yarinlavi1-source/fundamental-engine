@@ -83,6 +83,21 @@ class ResidualIncomeTests(unittest.TestCase):
         for t in next(a for a in hi['assumptions'] if a['id'] == 'terminal')['values'].values():
             self.assertLessEqual(t['growth'], min(.07, t['roe'] * (1 - payout)) + 1e-6)
 
+    def test_rate_above_the_contract_bound_builds_with_a_visible_flag(self):
+        # ROE x retention 36% and a 12% risk-free: growth that followed the rate failed the contract ('growth: above 0.08')
+        rf = {'value': .12, 'as_of': '2026-10-19', 'title': 'high-rate test value', 'url': 'https://example.org/rf'}
+        cf = pipeline.run(bank(roe=(.40,) * 10, payout=.1), {'forecast': {'risk_free': rf}})
+        fc = cf['fc']
+        self.assertEqual(fc['status'], 'built', fc.get('reason'))
+        from fundamental_engine.valuation import TERMINAL_GROWTH_MAX
+        terms = next(a for a in fc['assumptions'] if a['id'] == 'terminal')
+        self.assertEqual({t['growth'] for t in terms['values'].values()}, {TERMINAL_GROWTH_MAX})
+        self.assertIn('ROE - 0.1pp', terms['rationale'])                 # the ledger states every bound the code applies
+        w = {x['code']: x for x in fc['warnings']}
+        self.assertEqual(w['terminal_growth_capped']['severity'], 'high')
+        self.assertNotIn('terminal_growth_high', w)
+        self.assertGreater(pipeline.summary(cf)['base_value'], 0)
+
     def test_unrealized_losses_are_not_book(self):
         fc = pipeline.run(bank(aoci=-30e9))['fc']
         self.assertGreater(fc['anchors']['book_equity'], 150e9)             # equity less AOCI, not the depressed reported equity

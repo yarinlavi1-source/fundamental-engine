@@ -93,10 +93,13 @@ Not reached: McKinsey's 2026 pages (HTTP 503), Mauboussin's *The Impact of Intan
   consistency rule to growth but not to the ERP it is paired with: his implied ERP (the 4.20% used here) is itself solved
   with earnings growing at the 5.29% Treasury forever, so pairing it with 3% mixed two conventions. Re-solving his own
   1 October 2026 index model at g = 3% gives about 2.8%, not 4.2% (about 1.4pp of the 2.33pp rate shift below), and the
-  walk-forward's value/price drifted with the rate (median about 0.71 - 17 x (rf - 3%)). One convention is kept now: the
+  walk-forward's value/price drifted with the rate (approximately 0.71 - 17 x max(0, rf - 3%): a ten-point fit of yearly
+  medians against the June 10-year yield, correlation about -0.8; not a calibrated relation). One convention is kept now: the
   ERP and the terminal growth both assume perpetual growth at the risk-free rate; reinvestment stays g / ROIC and the
   terminal WACC at least 3 points above g. The cyclical trend bound keeps its own -3%..+5%. The walk-forward also uses
-  Damodaran's start-of-year implied ERP per formation (`engine_backtest.IMPLIED_ERP`) instead of a fixed 4.5%.
+  Damodaran's start-of-year implied ERP per formation (`engine_backtest.IMPLIED_ERP`) instead of a fixed 4.5%. A rate above
+  the valuation contract's 8% bound on perpetual growth (`valuation.TERMINAL_GROWTH_MAX`; a high-rate reporting currency)
+  holds growth at 8%, below the rate, with the warning `terminal_growth_capped`, instead of failing the valuation.
 
 ### 5. Margins (unchanged; one generous rule flagged)
 
@@ -165,7 +168,8 @@ Amazon (price $262.53):
 Reading. The changes the research supports close about a sixth of the gap between the engine and the market (rate shift
 2.81 -> 2.33pp) and raise values by about 7% at the median. The rest is not engine conservatism these sources support:
 the engine's growth for the largest companies is already above their historical base rates, terminal growth sits where
-the research puts it, and excess returns now persist as the HOLT data show. What remains is that today's prices imply
+the research puts it (superseded 21.10.2026: terminal growth now follows the ERP's convention, section 4), and excess
+returns now persist as the HOLT data show. What remains is that today's prices imply
 either a lower required return (about 7% a year with these cash flows: about 1.8pp over a 5.15% Treasury) or expectations
 beyond the base rates (Damodaran's 4.20% implied ERP itself assumes analysts' growth for five years and growth at the
 5.29% Treasury forever after). The engine cannot tell which; it keeps both readings visible: the value at its own required

@@ -23,6 +23,10 @@ RETRIEVAL = {'primary_document', 'provider_normalized', 'search_excerpt', 'marke
 VALUATION_PRIMARY_KINDS = {'filing', 'earnings_release', 'issuer_release'}
 ROUTES = {**{k: 'operating' for k in OPERATING}, 'financials': 'residual_income',
           'reit': 'nav', 'asset_holding': 'nav', 'biotech': 'rnpv', 'conglomerate': 'sotp'}
+# Highest nominal perpetual growth a terminal value accepts (FCFF and residual income; the contract's bound since v0.4). A
+# sanity limit, not a research estimate: above it a Gordon terminal value is a bet on high inflation forever. The forecast's
+# rate convention (terminal growth = risk-free) stops here in a high-rate currency and says so (forecast.TERMINAL_BEAR_GAP).
+TERMINAL_GROWTH_MAX = .08
 
 
 def text(v, label):
@@ -283,7 +287,7 @@ def operating(case, s):
                      'financing_status': p['financing_status']})
     t = s['terminal']
     # A structurally declining business may shrink forever (down to -5%/yr); negative g releases capital (g / ROIC < 0).
-    g, wacc, roic = n(t, 'growth', -.05, .08), n(t, 'wacc', .000001, 1), n(t, 'roic', .000001, 1)
+    g, wacc, roic = n(t, 'growth', -.05, TERMINAL_GROWTH_MAX), n(t, 'wacc', .000001, 1), n(t, 'roic', .000001, 1)
     if g >= wacc or g > roic: raise ValueError('Terminal growth must be below WACC and no greater than ROIC')
     if t['sbc_in_margin'] is not True: raise ValueError('Terminal margin must include economic SBC cost')
     terminal_rev = rows[-1]['revenue'] / years(rows[-1]['start'], rows[-1]['end']) * (1 + g)
@@ -360,7 +364,7 @@ def residual_income(case, s):
                      'shares': shares, 'dividend_per_share': dividend / shares})
         book = close
     t = s['terminal']
-    g, roe = n(t, 'growth', 0, .08), n(t, 'roe', .000001, 2)
+    g, roe = n(t, 'growth', 0, TERMINAL_GROWTH_MAX), n(t, 'roe', .000001, 2)
     if g >= ke or g > roe: raise ValueError('Terminal growth must be below Ke and no greater than ROE')
     # B + (ROE-Ke)*B/(Ke-g) = B*(ROE-g)/(Ke-g)
     equity = book * (roe - g) / (ke - g)

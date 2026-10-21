@@ -91,7 +91,7 @@ def _path(r0, r5, rT, t):
 def build(fb, an, card, qa, inputs, rates, reviews, warn, warnings, empty):
     """-> forecast dict (status built | insufficient_data) with a valuation_version 1 residual_income case as 'spec'."""
     from .forecast import (FORECAST_VERSION, RULES, STAGE, TERMINAL_HIGH_RF, _calendar, _case_sources, _pct, _r, _sha)
-    from .valuation import value_company, years
+    from .valuation import value_company, years, TERMINAL_GROWTH_MAX
     rf, erp, rf_src, erp_src, rf_note, erp_note = rates
     method = 'residual_income'
     as_of = fb['as_of']
@@ -181,19 +181,16 @@ def build(fb, an, card, qa, inputs, rates, reviews, warn, warnings, empty):
     for b in cal['periods']:
         periods.append((prev, b))
         prev = b
-    if rf > TERMINAL_HIGH_RF:
-        warn('terminal_growth_high', f'terminal growth up to risk-free {rf:.2%}, above {TERMINAL_HIGH_RF:.0%}: a nominal perpetual growth '
-                                     'this high only holds with matching inflation in the reporting currency forever (check the rate '
-                                     'and its currency)', 'medium')
-    scen, paths, terms = [], {}, {}
+    scen, paths, terms, gs = [], {}, {}, {}
     for s in ('bear', 'base', 'bull'):
         s0, s5, rT = targets[s]
         if rT < ROE_FLOOR:
             warn('roe_floor', f'{s} terminal ROE {_pct(rT)} raised to {_pct(ROE_FLOOR)} so a terminal value exists', 'high')
             rT = ROE_FLOOR
-        # perpetual growth at the risk-free rate, the implied ERP's own convention (forecast.TERMINAL_BEAR_GAP comment), never above
-        # what retained profit funds at the terminal ROE nor within half a point of the cost of equity
-        g = max(0., min(rf, rT * (1 - payout), rT - .001, ke - .005))
+        # perpetual growth at the risk-free rate, the implied ERP's own convention (forecast.TERMINAL_BEAR_GAP comment), within the
+        # valuation contract's bound, never above what retained profit funds at the terminal ROE, the ROE itself less 0.1pp, nor
+        # within half a point of the cost of equity
+        g = gs[s] = max(0., min(rf, TERMINAL_GROWTH_MAX, rT * (1 - payout), rT - .001, ke - .005))
         rows = []
         for a, b in periods:
             mid = (years(as_of, a) + years(as_of, b)) / 2
@@ -211,6 +208,18 @@ def build(fb, an, card, qa, inputs, rates, reviews, warn, warnings, empty):
                                 'bear': 'a credit or underwriting downturn at its own lower-quartile ROE, then no excess return',
                                 'bull': 'the better of today\'s and the median ROE holds, three quarters of the excess kept'}[s],
                      'periods': rows, 'terminal': {'assumption_ids': ['terminal'], 'growth': _r(g), 'roe': _r(rT)}})
+    # flags read the growth actually used: the contract bound binding below the rate, or a high nominal perpetual growth
+    capped = [s for s, g in gs.items() if rf > TERMINAL_GROWTH_MAX and g == TERMINAL_GROWTH_MAX]
+    if capped:
+        warn('terminal_growth_capped', f'risk-free {rf:.2%} is above the valuation contract\'s {TERMINAL_GROWTH_MAX:.0%} bound on nominal '
+                                       f'perpetual growth: terminal growth held at {TERMINAL_GROWTH_MAX:.0%} in {capped}, below the rate, '
+                                       'so the ERP\'s growth convention no longer holds there and the terminal value is lower than it '
+                                       'would give (check the rate and its currency; value in a currency with a lower rate)', 'high')
+    high = {s: g for s, g in gs.items() if g > TERMINAL_HIGH_RF and s not in capped}
+    if high:
+        warn('terminal_growth_high', f'terminal growth {", ".join(f"{s} {_pct(g)}" for s, g in high.items())} above {TERMINAL_HIGH_RF:.0%} '
+                                     f'(risk-free {rf:.2%}): a nominal perpetual growth this high only holds with matching inflation in '
+                                     'the reporting currency forever (check the rate and its currency)', 'medium')
     eq_ids = sorted({f['source_id'] for f in facts.candidates(fb, 'equity') + facts.candidates(fb, 'preferred_equity')})
     ni_ids = sorted({f['source_id'] for m in ('net_income_common', 'net_income', 'preferred_dividends') for f in facts.candidates(fb, m)})
     pay_ids = sorted({f['source_id'] for m in ('dividends_paid', 'buybacks') for f in facts.candidates(fb, m)})
@@ -256,8 +265,9 @@ def build(fb, an, card, qa, inputs, rates, reviews, warn, warnings, empty):
         f'common-equity growth {_pct(g_book)} (bounded {_pct(BOOK_GROWTH_FLOOR)}-{_pct(BOOK_GROWTH_CAP)}) fading to terminal growth, '
         'so profit beyond that need is paid out (payout = max(history, 1 - book growth / ROE))',
         'Distributions over the next two years differ from this share of profit by more than 20 points.', pay_ids + [RULES])
-    add('terminal', 'terminal growth and ROE', 'model', terms, 'terminal growth = min(risk-free, ROE x retention, Ke - 0.5pp), at least '
-        '0 (perpetual growth at the risk-free rate: the convention of the implied equity risk premium); terminal value '
+    add('terminal', 'terminal growth and ROE', 'model', terms, f'terminal growth = min(risk-free, {TERMINAL_GROWTH_MAX:.0%} (the valuation '
+        'contract\'s bound), ROE x retention, ROE - 0.1pp, Ke - 0.5pp), at least 0 (perpetual growth at the risk-free rate: the '
+        'convention of the implied equity risk premium); terminal value '
         '= book x (ROE - g) / (Ke - g)', 'The terminal ROE is not sustainable at the business\'s regulatory capital and competitive position.',
         rate_ids + [RULES])
     add('cost_of_equity', 'cost of equity', 'model', {'value': ke, 'components': ke_parts},

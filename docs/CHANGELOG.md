@@ -9,6 +9,13 @@
   (`CYCLE_TREND`, was written as cap + 2pp). Residual-income route: terminal growth = min(risk-free, ROE x retention,
   Ke - 0.5pp); book-growth floor kept at 3% as `BOOK_GROWTH_FLOOR`. `review` tolerates the spec's 6-decimal rounding in
   `terminal_growth_vs_risk_free`.
+- Terminal growth stops at the valuation contract's bound (`valuation.TERMINAL_GROWTH_MAX` = 8%, the validator's existing
+  limit, now one named constant): a risk-free rate above it (a high-rate reporting currency, `fb.market.risk_free` by
+  currency) holds base and bull at 8% and the bear at 7.5% with the high-severity warning `terminal_growth_capped`, where
+  growth = rate failed the contract with `invalid_spec` ('growth: above 0.08'); the residual-income route takes the same
+  bound. `terminal_growth_high` and `terminal_growth_capped` now read the growth actually used, after analyst overrides
+  (an override in every scenario removes them). The residual-income ledger states its ROE - 0.1pp bound. The drift quoted
+  for the old convention is approximate (a ten-point fit).
 - Walk-forward ERP: `engine_backtest.IMPLIED_ERP` (Damodaran's start-of-year implied ERP, FCFE, 2009-2026, from
   histimpl.html; implpr.html agrees through 2016) is passed at each formation, point in time (a January formation uses the
   previous year's estimate), instead of the fixed `ERP_DEFAULT` 4.5%; rows record `risk_free` and `erp`.

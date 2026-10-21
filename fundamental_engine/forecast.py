@@ -33,7 +33,7 @@ import re
 from . import base_rates, facts
 from .drivers import build_case, RATIO_KEYS, ABSOLUTE_KEYS, reinvest as _reinvest, capex_for_path as _capex_for_path, value_paused as _value_paused, RELEASE_FLOOR
 from .finance import number
-from .valuation import value_company, years, ROUTES
+from .valuation import value_company, years, ROUTES, TERMINAL_GROWTH_MAX
 from .valuation_tools import implied_cost_of_equity
 
 FORECAST_VERSION = 1
@@ -49,11 +49,15 @@ ERP_DEFAULT = .045       # mature-market equity risk premium (implied-ERP studie
 # min(risk-free, 3%) paired that premium with a lower perpetual growth: re-solving his own 1 Oct 2026 index model at g = 3%
 # gives an ERP of 2.82%, not 4.20%, so whenever the risk-free rate rose above 3% (2023-2026) every company was discounted at
 # a premium solved for one growth and grown at another, and the walk-forward's median value/price drifted with the rate
-# (0.71 - 17 x (rf - 3%), correlation -0.82). Growth is not free: the terminal reinvestment is g / ROIC with ROIC above g, and
-# the terminal WACC stays at least 3 points above g. Bull = base (perpetual outgrowth of the economy is not a bull case); the
-# bear is TERMINAL_BEAR_GAP lower; a declining business keeps its own rule (DECLINE_FLOOR); an analyst override still wins.
+# (approximately 0.71 - 17 x max(0, rf - 3%): a ten-point fit of yearly medians against the June 10-year yield, correlation
+# about -0.8; approximate, not a calibrated relation). Growth is not free: the terminal reinvestment is g / ROIC with ROIC
+# above g, and the terminal WACC stays at least 3 points above g. Bull = base (perpetual outgrowth of the economy is not a
+# bull case); the bear is TERMINAL_BEAR_GAP lower; a declining business keeps its own rule (DECLINE_FLOOR); an analyst
+# override still wins. The convention stops at the valuation contract's bound valuation.TERMINAL_GROWTH_MAX (8%): a rate above
+# it (a high-rate reporting currency) keeps growth at 8%, below the rate, and is flagged 'terminal_growth_capped', never a
+# failed valuation.
 TERMINAL_BEAR_GAP = .005   # bear perpetual growth half a point below base (never below zero unless the risk-free rate is)
-TERMINAL_HIGH_RF = .06     # risk-free above this: the nominal perpetual growth (= risk-free) is flagged (inflation or a rate spike)
+TERMINAL_HIGH_RF = .06     # terminal growth used above this (the risk-free rate, or an override) is flagged (inflation or a rate spike)
 MARGIN_FLOOR = .02       # terminal margin must be positive; a binding floor is flagged, not hidden
 HORIZON = ((.25, 15), (.15, 12), (-9, 10))   # growth anchor above x -> explicit fiscal years (extended to 20 if still far from terminal)
 
@@ -1206,18 +1210,29 @@ def _params(route, h, cal, cons, rf, ku, debt0, ov, warn):
         gT_base = _clamp(.5 * h['g_trailing'], DECLINE_FLOOR, 0.)
         gT = {'base': gT_base, 'bear': max(DECLINE_FLOOR, gT_base - .01), 'bull': min(gT_base + .02, rf)}
     else:
-        gT_base = rf             # the implied ERP's own convention (TERMINAL_BEAR_GAP comment); bear never above base
+        # the implied ERP's own convention (TERMINAL_BEAR_GAP comment), within the valuation contract's bound; bear never above base
+        gT_base = min(rf, TERMINAL_GROWTH_MAX)
         gT = {'base': gT_base, 'bull': gT_base, 'bear': min(gT_base, max(0., gT_base - TERMINAL_BEAR_GAP))}
-        if rf > TERMINAL_HIGH_RF:
-            warn('terminal_growth_high', f'terminal growth = risk-free {rf:.2%}, above {TERMINAL_HIGH_RF:.0%}: a nominal perpetual growth '
-                                         'this high only holds with matching inflation in the reporting currency forever (check '
-                                         'the rate, its currency and the cash-flow currency; override terminal_growth with evidence)',
-                 'medium')
     k = cal['fiscal_years_since_last_report']
     b1 = cal['boundaries'][0]
     n_full = len(cal['boundaries']) - 1
+    gen = dict(gT)
     for s in SCEN:
         gT[s] = ov(s, 'terminal_growth', gT[s])
+    # flags read the growth actually used (after overrides): an evidenced override replaces the rate-based number and its flag
+    capped = [s for s in SCEN if route['stage'] != 'decline' and rf > TERMINAL_GROWTH_MAX and gT[s] == gen[s]]
+    if capped:
+        warn('terminal_growth_capped', f'risk-free {rf:.2%} is above the valuation contract\'s {TERMINAL_GROWTH_MAX:.0%} bound on '
+                                       f'nominal perpetual growth: terminal growth held at {", ".join(f"{s} {_pct(gT[s])}" for s in capped)}, '
+                                       'below the rate, so the ERP\'s growth convention no longer holds there and the terminal value is lower '
+                                       'than it would give. Check the rate and its currency; value the cash flows in a currency with a '
+                                       f'lower rate, or override terminal_growth with evidence (at most {TERMINAL_GROWTH_MAX:.0%})', 'high')
+    high = {s: gT[s] for s in SCEN if gT[s] > TERMINAL_HIGH_RF and s not in capped}
+    if high:
+        warn('terminal_growth_high', f'terminal growth {", ".join(f"{s} {_pct(g)}" for s, g in high.items())} above '
+                                     f'{TERMINAL_HIGH_RF:.0%} (risk-free {rf:.2%}): a nominal perpetual growth this high only holds with '
+                                     'matching inflation in the reporting currency forever (check the rate, its currency and the '
+                                     'cash-flow currency; an evidenced terminal_growth override replaces it)', 'medium')
     hl = ov('base', 'growth_half_life', st['half_life'])
     cur = _current_year(route, h, cal, cons)
     level, e0, dev0 = None, 0., 1.
@@ -2142,7 +2157,9 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
         + (f"for a declining business: half the trailing decline, bounded at {DECLINE_FLOOR:.0%} (base {_pct(P['base']['g_terminal'])}, "
            f"bear {_pct(P['bear']['g_terminal'])}, bull {_pct(P['bull']['g_terminal'])}); the business is not forced to recover."
            if route['stage'] == 'decline' else
-           f"= the risk-free rate {rf:.2%} in base and bull, {TERMINAL_BEAR_GAP:.1%} lower in the bear (base {_pct(P['base']['g_terminal'])}, "
+           f"= the risk-free rate {rf:.2%}"
+           + (f" held at the valuation contract's {TERMINAL_GROWTH_MAX:.0%} bound (flagged terminal_growth_capped)" if rf > TERMINAL_GROWTH_MAX else '')
+           + f" in base and bull, {TERMINAL_BEAR_GAP:.1%} lower in the bear (base {_pct(P['base']['g_terminal'])}, "
            f"bear {_pct(P['bear']['g_terminal'])}, bull {_pct(P['bull']['g_terminal'])}): the convention of the implied equity risk "
            "premium it is paired with (solved with perpetual growth at the Treasury yield; Damodaran sets stable growth at, never "
            "above, the risk-free rate), with terminal reinvestment g / ROIC (growth is not free)."),
