@@ -4,6 +4,23 @@ __pycache__/
 *.egg-info/
 build/
 dist/
-runs/
+# runs/ holds 4.4GB of generated data and the owner's private portfolio; it stays out of Git.
+# A fresh session re-clones without it. Only a few small, PUBLIC, costly-to-regenerate artifacts are
+# kept, at their real paths, so a new session finds them where the engine expects (see START_HERE.md).
+runs/*
+!runs/backtest/
+runs/backtest/*
+!runs/backtest/engine_v3/
+runs/backtest/engine_v3/*
+!runs/backtest/engine_v3/summary.json
+!runs/backtest/engine_v3/rows.jsonl
+!runs/macro/
+runs/macro/*
+!runs/macro/market_2026-10-20.json
+!runs/universe_2026-10-20/
+runs/universe_2026-10-20/*
+!runs/universe_2026-10-20/calibration.json
+# never, under any circumstances, the private portfolio
+runs/private_portfolio_*/
 *.sqlite*
 .env

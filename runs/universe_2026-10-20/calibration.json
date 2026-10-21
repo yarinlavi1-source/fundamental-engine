@@ -1,0 +1,37 @@
+{
+ "status": "computed",
+ "as_of": "2026-10-20",
+ "n_sample": 491,
+ "n_with_return": 406,
+ "coverage_by_value": 0.9195008289847127,
+ "engine_market_return": 0.06958282198188717,
+ "engine_market_bear": 0.04594205754321961,
+ "median": 0.06605394053334115,
+ "percentiles": {
+  "p10": 0.04630017479759306,
+  "p25": 0.053760212484672776,
+  "p50": 0.06607684753912359,
+  "p75": 0.08469836951288498,
+  "p90": 0.10039418857146493
+ },
+ "share_above_assumption": 0.21428571428571427,
+ "assumption": 0.0875,
+ "gap_to_assumption": -0.017917178018112823,
+ "clip": [
+  -0.1,
+  0.4
+ ],
+ "engine_market_cost_of_equity": 0.09288933851651567,
+ "rate_shift": 0.023306516534628494,
+ "mean_risk_adjustment": -0.0006106785758728765,
+ "index_input": {
+  "value": 0.06958282198188717,
+  "low": 0.05958282198188717,
+  "high": 0.07958282198188717,
+  "basis": "engine-consistent market return: cap-weighted base-case implied return of 406 of the 491 largest US operating companies valued by the same engine on 2026-10-20 (92% of their value)",
+  "source": "fundamental_engine.calibration.market_implied over the large-cap sweep casefiles",
+  "rate_shift": 0.023306516534628494,
+  "market_cost_of_equity": 0.09288933851651567
+ },
+ "reading": "the engine implies 7.0% for the market vs the 8.75% assumption: comparing stocks with the assumption would reject almost everything; compare with the engine-consistent value"
+}

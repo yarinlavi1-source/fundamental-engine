@@ -4,6 +4,32 @@
 checkpoint workflow. Use the data connections already available in the user's
 session. Start working; do not ask the user to repeat setup that already exists.
 
+## Resuming in a fresh session — what is here and what to regenerate (21.10.2026)
+
+A new conversation re-clones this repo (default branch `main`) into a fresh, empty container, with the
+same connectors (SEC, Interactive Brokers, Alpha Vantage, FMP, LunarCrush, …). So:
+
+- **In Git, always present:** all code, the `brain/`, `docs/`, `CLAUDE.md`, this file, the examples and
+  tests. The valuation method travels in full. Read `CLAUDE.md`, then this file.
+- **NOT in Git (regenerate on demand):** everything under `runs/` — ~4.4GB of generated data — except four
+  small, public, costly-to-rebuild files kept at their real paths so the engine finds them:
+  `runs/backtest/engine_v3/summary.json` and `rows.jsonl` (the walk-forward the conservatism diagnosis rests
+  on), `runs/universe_2026-10-20/calibration.json` (engine-consistent market return) and
+  `runs/macro/market_2026-10-20.json` (risk-free + ERP). A new session can value companies consistently from
+  these without re-fetching.
+- **Never in Git, re-supplied each session by the owner:** the read-only IBKR portfolio under
+  `runs/private_portfolio_<date>/` (positions, holdings_info). Ask the owner to re-save it when portfolio
+  work is needed; it is deliberately gitignored and must never be committed.
+- **Regenerate the rest** (research casefiles, the universe, the discovery DBs) with the scripts, e.g.:
+  the universe + calibration `SEC_USER_AGENT="app you@example.com" python scripts/collect_universe.py` then
+  `scripts/calibrate.py`; the engine walk-forward `python scripts/backtest_engine.py runs/universe_<date>
+  --name large500 --from 2016 --to 2025 --workers 4`; a single company end-to-end `python -m
+  fundamental_engine deep <universe_folder> --as-of <date> --symbols <TICKER>` (writes `out/table_he.md` with
+  the plain-Hebrew table, including the "מה המחיר של היום מניח" reverse-DCF row).
+- **Latest state (read these to catch up):** `docs/ENGINE_CONSERVATISM_2026-10-21.md` (why the engine looks
+  conservative and the reframe shipped), `docs/LIMITATIONS.md` #43, and `docs/learning_log.json`
+  (round `engine_conservatism_2026-10-21`).
+
 ## The whole cycle (discover -> research -> calibrate -> propose), 20.10.2026
 
 Only when the owner asks to look for companies. Data comes from the collection scripts (SEC, with a contact e-mail in

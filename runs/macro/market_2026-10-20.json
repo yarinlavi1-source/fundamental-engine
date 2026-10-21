@@ -1,0 +1,7 @@
+{
+ "risk_free": {"value": 0.0515, "as_of": "2026-10-19", "title": "US 10-year Treasury constant-maturity yield (FMP treasury-rates)",
+               "url": "https://financialmodelingprep.com/stable/treasury-rates", "retrieval": "provider_normalized"},
+ "equity_risk_premium": {"value": 0.042, "as_of": "2026-10-01",
+               "title": "Damodaran implied ERP for the S&P 500 on 1 October 2026 (trailing 12 months, adjusted payout), treasury 5.29%",
+               "url": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/home.htm", "retrieval": "provider_normalized"}
+}
