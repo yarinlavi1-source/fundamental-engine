@@ -3,8 +3,9 @@
 The discovery backtest (backtest.py) tests the numeric screen. This tests the full decision path: at each formation date
 the complete pipeline (dataqa, analysis, model card, forecast, valuation, risk, review, decision) runs on each company's
 saved SEC companyfacts with as_of = the day before formation, so only facts filed by then are used (facts.usable), with the
-price as traded on that day (split-adjusted monthly close x the splits after it) and the 10-year Treasury yield of the month
-before (FRED GS10, published by then) as the risk-free rate. Documents filed later (the saved 10-K / 10-Q) are skipped by
+price as traded on that day (split-adjusted monthly close x the splits after it), the 10-year Treasury yield of the month
+before (FRED GS10, published by then) as the risk-free rate and Damodaran's implied equity risk premium published at the start
+of that year (IMPLIED_ERP) as the ERP. Documents filed later (the saved 10-K / 10-Q) are skipped by
 pipeline._business. Each company's base-case implied return (IRR) is ranked; the engine market return is the cap-weighted
 IRR of the valued names that date (calibration.market_implied's rule), so the edge is like for like.
 
@@ -27,6 +28,21 @@ from . import facts as F
 from .backtest import _at, _factor, forward, load_prices, _stats, _cagr
 
 CLIP = (-.10, .40)              # calibration.market_implied's clip for the cap-weighted engine market return
+# Damodaran's implied equity risk premium for the S&P 500 at the START of each year (index level, trailing cash yield and the
+# T-bond rate at 31 December of the year before; column "Implied ERP (FCFE)": dividends + buybacks, five years of smoothed /
+# analyst growth, then perpetual growth at the T-bond rate -- the convention forecast.py's terminal growth follows). His table
+# labels each estimate by the year it closes, so the value in force during year Y is his row Y-1. Transcribed from
+# https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/histimpl.html (rows 2008-2025, retrieved 2026-10-21); the
+# older page https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/implpr.html ("Implied Premium (FCFE)", ends with
+# 2016) gives the same values for 2008-2016. A dated public input, not a fitted constant: without it every formation used
+# forecast.ERP_DEFAULT 4.5%, too low for 2016-2021, 2023 and 2024 and too high for 2022, 2025 and 2026.
+IMPLIED_ERP = {2009: .0643, 2010: .0436, 2011: .0520, 2012: .0601, 2013: .0578, 2014: .0496, 2015: .0578, 2016: .0612,
+               2017: .0569, 2018: .0508, 2019: .0596, 2020: .0520, 2021: .0472, 2022: .0424, 2023: .0594, 2024: .0460,
+               2025: .0433, 2026: .0423}
+IMPLIED_ERP_URL = 'https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/histimpl.html'
+# the start-of-year estimate is posted with his January data update (first days of January): treated as available from
+# 1 February, so a formation in January still uses the previous year's estimate (point in time, no look-ahead)
+IMPLIED_ERP_AVAILABLE = (2, 1)
 
 
 def treasury(path):
@@ -41,13 +57,41 @@ def treasury(path):
     return out
 
 
+def implied_erp(as_of):
+    """Damodaran's start-of-year implied ERP published by as_of -> (value, 'yyyy-01-01' the estimate is dated) or (None, None)
+    before the table starts."""
+    d = date.fromisoformat(as_of)
+    y = d.year if (d.month, d.day) >= IMPLIED_ERP_AVAILABLE else d.year - 1
+    while y >= min(IMPLIED_ERP):
+        if y in IMPLIED_ERP:
+            return IMPLIED_ERP[y], f'{y}-01-01'
+        y -= 1
+    return None, None
+
+
 def formation_inputs(formation, rates):
-    """(as_of, risk-free spec) for a formation date 'yyyy-mm-01': as_of is the last day of the prior month; the rate is that
-    month's average (published at its end)."""
+    """(as_of, risk-free, ERP) for a formation date 'yyyy-mm-01': as_of is the last day of the prior month; the rate is that
+    month's average (published at its end); the ERP is the start-of-year implied ERP published by as_of (implied_erp)."""
     f = date.fromisoformat(formation)
     as_of = (f - timedelta(days=1)).isoformat()
     rf = rates.get(as_of[:7])
-    return as_of, rf
+    return as_of, rf, implied_erp(as_of)[0]
+
+
+def rate_inputs(fb, as_of, rf, erp):
+    """Register the dated rates as FactBook sources -> pipeline inputs {'forecast': {...}} (None when neither is known: the
+    forecast's documented defaults apply)."""
+    fc = {}
+    if rf is not None:
+        F.add_source(fb, 'fred:GS10', 'fred', 'GS10 monthly average 10-year Treasury yield', 'market_feed', as_of,
+                     url='https://fred.stlouisfed.org/series/GS10')
+        fc['risk_free'] = {'value': rf, 'as_of': as_of, 'source_id': 'fred:GS10'}
+    if erp is not None:
+        dated = implied_erp(as_of)[1]
+        F.add_source(fb, 'damodaran:implied_erp', 'damodaran', 'implied ERP for the S&P 500 at the start of the year (FCFE, perpetual '
+                     'growth at the T-bond rate)', 'market_feed', as_of, url=IMPLIED_ERP_URL)
+        fc['equity_risk_premium'] = {'value': erp, 'as_of': dated or as_of, 'source_id': 'damodaran:implied_erp'}
+    return {'forecast': fc} if fc else None
 
 
 def traded_price(p, as_of):
@@ -56,8 +100,8 @@ def traded_price(p, as_of):
     return at[0] * _factor(p, as_of) if at else None
 
 
-def company_row(folder, as_of, price, rf):
-    """Run the whole pipeline for one company folder at as_of with the given price and risk-free rate -> summary row or
+def company_row(folder, as_of, price, rf, erp=None):
+    """Run the whole pipeline for one company folder at as_of with the given price, risk-free rate and ERP -> summary row or
     None when nothing usable was filed by then."""
     from . import pipeline
     with open(os.path.join(folder, 'company.json'), encoding='utf-8') as f:
@@ -73,19 +117,15 @@ def company_row(folder, as_of, price, rf):
         return None
     F.add_source(fb, 'backtest:price', 'yahoo', 'monthly close as traded', 'market_feed', as_of)
     F.set_price(fb, price, as_of, 'backtest:price', kind='close')
-    inputs = None
-    if rf is not None:
-        F.add_source(fb, 'fred:GS10', 'fred', 'GS10 monthly average 10-year Treasury yield', 'market_feed', as_of,
-                     url='https://fred.stlouisfed.org/series/GS10')
-        inputs = {'forecast': {'risk_free': {'value': rf, 'as_of': as_of, 'source_id': 'fred:GS10'}}}
-    cf = pipeline.run(fb, inputs)
+    cf = pipeline.run(fb, rate_inputs(fb, as_of, rf, erp))
     s = pipeline.summary(cf)
     ttm = (cf.get('an') or {}).get('ttm') or {}
     sh = (((cf.get('qa') or {}).get('resolved') or {}).get('shares_outstanding') or {}).get('value')
     cap = price * sh if sh else None
     ey = ttm.get('net_income') / cap if cap and ttm.get('net_income') is not None else None
     fy = ttm.get('fcf') / cap if cap and ttm.get('fcf') is not None else None
-    return {'symbol': company['ticker'], 'as_of': as_of, 'price': price, 'market_cap': cap, 'base_irr': s.get('base_irr'),
+    return {'symbol': company['ticker'], 'as_of': as_of, 'price': price, 'risk_free': rf, 'erp': erp, 'market_cap': cap,
+            'base_irr': s.get('base_irr'),
             'bear_irr': s.get('bear_irr'), 'base_value': s.get('base_value'), 'bear_value': s.get('bear_value'),
             'verdict': s.get('verdict'), 'confidence': s.get('confidence'), 'quality': s.get('quality'),
             'review_status': s.get('review_status'), 'qa_status': (cf.get('qa') or {}).get('status'),

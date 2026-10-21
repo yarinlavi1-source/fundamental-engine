@@ -33,6 +33,16 @@ Implementation: stable-growth reinvestment rate equals g/ROIC, and growth cannot
 exceed terminal ROIC or WACC. This is a consistency condition, not proof that a
 chosen terminal ROIC is achievable.
 
+## Terminal growth and the equity risk premium (one convention)
+Damodaran, implied ERP: https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/histimpl.html
+His implied ERP is solved with perpetual growth at the Treasury yield, and he sets
+stable growth at (never above) the risk-free rate. Implementation (21.10.2026):
+terminal growth = risk-free in base and bull, 0.5pp lower in the bear, paired with
+that ERP; the former min(risk-free, 3%) mixed two conventions and cut every value
+when rates were above 3% (re-solved at g = 3% his Oct 2026 ERP is 2.8%, not 4.2%).
+Growth still costs g/ROIC; a risk-free above 6% is flagged; an evidenced
+terminal_growth override wins. Never pair a dated ERP with a different growth rule.
+
 ## Banks and insurers
 Damodaran, Financial service company characteristics:
 https://pages.stern.nyu.edu/adamodar/New_Home_Page/littlebook/financialsvccompanies.htm

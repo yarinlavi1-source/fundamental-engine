@@ -38,8 +38,26 @@ class EvaluateTests(unittest.TestCase):
         self.assertAlmostEqual(E.traded_price(p, '2020-06-30'), 200.)
 
     def test_rate_month_is_the_month_before_formation(self):
-        as_of, rf = E.formation_inputs('2020-07-01', {'2020-06': .0073, '2020-07': .0062})
-        self.assertEqual((as_of, rf), ('2020-06-30', .0073))
+        # the ERP is Damodaran's start-of-2020 implied ERP (his row 2019, 5.20%), published by as_of
+        self.assertEqual(E.formation_inputs('2020-07-01', {'2020-06': .0073, '2020-07': .0062}), ('2020-06-30', .0073, .0520))
+
+    def test_implied_erp_is_point_in_time(self):
+        self.assertEqual(E.implied_erp('2024-06-30'), (.0460, '2024-01-01'))
+        self.assertEqual(E.implied_erp('2024-01-15'), (.0594, '2023-01-01'))       # January: the new estimate is not out yet
+        self.assertEqual(E.implied_erp('2008-06-30'), (None, None))                # before the table: forecast default applies
+        self.assertEqual(sorted(E.IMPLIED_ERP), list(range(2009, 2027)))
+        self.assertEqual((E.IMPLIED_ERP[2016], E.IMPLIED_ERP[2025], E.IMPLIED_ERP[2026]), (.0612, .0433, .0423))
+        self.assertEqual(E.formation_inputs('2025-07-01', {})[2], .0433)
+
+    def test_rate_inputs_cite_dated_sources(self):
+        from fundamental_engine import facts as F
+        fb = F.new({'ticker': 'SYN', 'name': 'synthetic (not real)', 'currency': 'USD'}, '2024-06-30')
+        inp = E.rate_inputs(fb, '2024-06-30', .0431, .0460)['forecast']
+        self.assertEqual(inp['risk_free'], {'value': .0431, 'as_of': '2024-06-30', 'source_id': 'fred:GS10'})
+        self.assertEqual(inp['equity_risk_premium'], {'value': .0460, 'as_of': '2024-01-01', 'source_id': 'damodaran:implied_erp'})
+        self.assertEqual(fb['sources']['damodaran:implied_erp']['url'], E.IMPLIED_ERP_URL)
+        self.assertIsNone(E.rate_inputs(F.new({'ticker': 'SYN', 'name': 'synthetic', 'currency': 'USD'}, '2008-06-30'), '2008-06-30',
+                                        None, None))
 
 
 if __name__ == '__main__':

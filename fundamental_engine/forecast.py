@@ -42,7 +42,18 @@ BUILT = ('fcff_annual_path', 'normalized_cycle_fcff', 'scenario_survival_fcff')
 NOT_BUILT = ('residual_income', 'nav', 'rnpv', 'sotp', 'not_reliably_valuable')
 RF_DEFAULT = .0425       # US 10-year Treasury approximation; replace with a dated quote via inputs['risk_free']
 ERP_DEFAULT = .045       # mature-market equity risk premium (implied-ERP studies centre around 4-5%)
-TERMINAL_GROWTH_CAP = .03  # nominal perpetual growth never above min(risk-free, 3%)
+# Terminal (perpetual) growth = the risk-free rate: the convention of the ERP it is paired with. The implied ERP the engine is
+# fed (Damodaran's: ERP_DEFAULT's order of magnitude, the dated runs/macro input, engine_backtest.IMPLIED_ERP) is solved from
+# the index level with cash flows growing at the Treasury yield forever after year five (his ERPOct26.xlsx: terminal earnings
+# = year-5 earnings x 1.0529 at a 5.29% T-bond), and he sets stable growth at (never above) the risk-free rate. The former
+# min(risk-free, 3%) paired that premium with a lower perpetual growth: re-solving his own 1 Oct 2026 index model at g = 3%
+# gives an ERP of 2.82%, not 4.20%, so whenever the risk-free rate rose above 3% (2023-2026) every company was discounted at
+# a premium solved for one growth and grown at another, and the walk-forward's median value/price drifted with the rate
+# (0.71 - 17 x (rf - 3%), correlation -0.82). Growth is not free: the terminal reinvestment is g / ROIC with ROIC above g, and
+# the terminal WACC stays at least 3 points above g. Bull = base (perpetual outgrowth of the economy is not a bull case); the
+# bear is TERMINAL_BEAR_GAP lower; a declining business keeps its own rule (DECLINE_FLOOR); an analyst override still wins.
+TERMINAL_BEAR_GAP = .005   # bear perpetual growth half a point below base (never below zero unless the risk-free rate is)
+TERMINAL_HIGH_RF = .06     # risk-free above this: the nominal perpetual growth (= risk-free) is flagged (inflation or a rate spike)
 MARGIN_FLOOR = .02       # terminal margin must be positive; a binding floor is flagged, not hidden
 HORIZON = ((.25, 15), (.15, 12), (-9, 10))   # growth anchor above x -> explicit fiscal years (extended to 20 if still far from terminal)
 
@@ -149,7 +160,9 @@ EQUITY_FEE = .03          # gross spread on an assumed follow-on equity raise
 # The Base Rate Book, 2016), NOT a calibrated study. Guidance or consensus replaces the anchor when present; a backlog
 # (RPO) of at least one year of revenue lifts the ceiling one band.
 SCALE_CAPS = ((1e8, 1.0), (1e9, .6), (1e10, .4), (5e10, .25), (float('inf'), .15))
-CYCLE_TREND = (-.03, TERMINAL_GROWTH_CAP + .02)   # bounds on the long-run (trend) growth of a cyclical's revenue
+# bounds on the long-run (trend) growth of a cyclical's revenue: -3% .. +5% nominal (the upper bound was written as the former
+# 3% terminal cap + 2 points; kept as its own number so the terminal-growth convention does not move the cycle fit)
+CYCLE_TREND = (-.03, .05)
 CYCLE_CONV = {'bear': 2, 'base': 3, 'bull': 4}     # years for a cyclical to revert from today's level to its cycle path
 CYCLE_FIT_MIN_YEARS = 6   # fewer years than about one full cycle (3-5 years) plus a leg: the fitted slope is one up-leg, not a trend
 DECLINE_FLOOR = -.05      # lowest perpetual growth for a structurally declining business
@@ -1193,8 +1206,13 @@ def _params(route, h, cal, cons, rf, ku, debt0, ov, warn):
         gT_base = _clamp(.5 * h['g_trailing'], DECLINE_FLOOR, 0.)
         gT = {'base': gT_base, 'bear': max(DECLINE_FLOOR, gT_base - .01), 'bull': min(gT_base + .02, rf)}
     else:
-        gT_base = min(rf, TERMINAL_GROWTH_CAP)
-        gT = {'base': gT_base, 'bull': gT_base, 'bear': max(0., gT_base - .005)}
+        gT_base = rf             # the implied ERP's own convention (TERMINAL_BEAR_GAP comment); bear never above base
+        gT = {'base': gT_base, 'bull': gT_base, 'bear': min(gT_base, max(0., gT_base - TERMINAL_BEAR_GAP))}
+        if rf > TERMINAL_HIGH_RF:
+            warn('terminal_growth_high', f'terminal growth = risk-free {rf:.2%}, above {TERMINAL_HIGH_RF:.0%}: a nominal perpetual growth '
+                                         'this high only holds with matching inflation in the reporting currency forever (check '
+                                         'the rate, its currency and the cash-flow currency; override terminal_growth with evidence)',
+                 'medium')
     k = cal['fiscal_years_since_last_report']
     b1 = cal['boundaries'][0]
     n_full = len(cal['boundaries']) - 1
@@ -2123,8 +2141,13 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
         '>20% growers slow to ~8% in five years and ~5% in ten, Koller et al.); bear fades 25% faster, bull 30% slower. Terminal growth '
         + (f"for a declining business: half the trailing decline, bounded at {DECLINE_FLOOR:.0%} (base {_pct(P['base']['g_terminal'])}, "
            f"bear {_pct(P['bear']['g_terminal'])}, bull {_pct(P['bull']['g_terminal'])}); the business is not forced to recover."
-           if route['stage'] == 'decline' else f"<= min(risk-free {rf:.2%}, 3%)."),
-        'Revenue growth stays more than 5 points above the base path for two consecutive years, or falls below the bear path.', [RULES])
+           if route['stage'] == 'decline' else
+           f"= the risk-free rate {rf:.2%} in base and bull, {TERMINAL_BEAR_GAP:.1%} lower in the bear (base {_pct(P['base']['g_terminal'])}, "
+           f"bear {_pct(P['bear']['g_terminal'])}, bull {_pct(P['bull']['g_terminal'])}): the convention of the implied equity risk "
+           "premium it is paired with (solved with perpetual growth at the Treasury yield; Damodaran sets stable growth at, never "
+           "above, the risk-free rate), with terminal reinvestment g / ROIC (growth is not free)."),
+        'Revenue growth stays more than 5 points above the base path for two consecutive years, or falls below the bear path.',
+        ([RULES] if route['stage'] == 'decline' else rf_ids + erp_ids + [RULES]))
     if cyc:
         add('cycle_normalization', 'mid-cycle revenue', 'model',
             {'mean_revenue': cyc['mean_revenue'], 'mid_date': cyc['mid_date'], 'window': cyc['window'], 'trend_slope': cyc['slope'],

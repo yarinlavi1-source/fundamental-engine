@@ -164,7 +164,7 @@ class AdbeForecastTests(unittest.TestCase):
             self.assertEqual(len(s['growth']), n - 1)
             self.assertEqual(s['sbc_policy'], 'cash_equivalent')
             self.assertTrue(s['terminal']['sbc_in_margin'])
-            self.assertLessEqual(s['terminal']['growth'], min(forecast.RF_DEFAULT, .03))
+            self.assertLessEqual(s['terminal']['growth'], forecast.RF_DEFAULT)      # terminal growth = risk-free (ERP convention)
 
     def test_calendar_stub_and_report_dates(self):
         spec, fc = self.fc['spec'], self.fc
@@ -203,7 +203,7 @@ class AdbeForecastTests(unittest.TestCase):
         bear, base, bull = (scen(spec, s) for s in SCEN)
         steps = [i for i, e in enumerate(spec['boundaries'][:-1]) if e not in spec['interim_boundaries']]   # growth index i = period i+1
         self.assertTrue(all(bear['growth'][i] < base['growth'][i] < bull['growth'][i] for i in steps))
-        self.assertLessEqual(bear['growth'][0], base['growth'][0] / 2 + 1e-9)      # realistic disappointment
+        self.assertLessEqual(bear['growth'][0], base['growth'][0] / 2 + 1e-6)      # realistic disappointment (spec rounds to 1e-6)
         self.assertLess(bear['terminal']['operating_margin'], base['terminal']['operating_margin'])
         self.assertGreaterEqual(bull['terminal']['operating_margin'], base['terminal']['operating_margin'])
         self.assertEqual(len({s['cost_of_equity'] for s in spec['scenarios']}), 1)  # same Ke: scenarios differ by business only
@@ -588,8 +588,10 @@ class ValuationIntegrityTests(unittest.TestCase):
         self.assertAlmostEqual(fc['cost_of_equity']['base'], max(comp['table_rate'], ku + (ku - lev['kd_expected']) * lev['d_to_e']))
         self.assertAlmostEqual(fc['cost_of_equity']['base'], comp['risk_free'] + comp['equity_risk_premium'] + sum(a['value'] for a in comp['adjustments']))
         w = lev['debt_weight']
+        # floored at terminal growth + 3 points (terminal growth = risk-free: the floor binds for this levered company)
         self.assertAlmostEqual(fc['cost_of_equity']['terminal_wacc']['base'],
-                               (1 - w) * fc['cost_of_equity']['base'] + w * (lev['kd_expected'] - lev['kd_promised'] * .21), places=6)
+                               max((1 - w) * fc['cost_of_equity']['base'] + w * (lev['kd_expected'] - lev['kd_promised'] * .21),
+                                   scen(fc['spec'], 'base')['terminal']['growth'] + .03), places=6)
         self.assertIn('adjustment_leverage_relevered', comp)
 
     def test_cyclical_at_peak_is_valued_around_the_cycle(self):
@@ -1679,3 +1681,49 @@ class CapitalEventTests(unittest.TestCase):
         for bad in (self.ev(kind='split'), self.ev(cash=-1.), self.ev(date='2099-01-01'), self.ev(evidence_ids=[])):
             with self.assertRaises(ValueError):
                 forecast.build(self.fb, self.an, self.card, self.qa, {'capital_events': [bad]})
+
+
+class TerminalGrowthConventionTests(unittest.TestCase):
+    """Terminal growth follows the convention of the ERP it is paired with (Damodaran's implied ERP is solved with perpetual
+    growth at the Treasury yield): base = bull = risk-free, bear half a point lower; the former min(risk-free, 3%) is gone."""
+    RF = {'as_of': '2026-10-16', 'title': 'US 10y Treasury constant maturity (test value)', 'url': 'https://example.org/dgs10'}
+
+    def build(self, rf, **inputs):
+        fb, an, card, qa = adbe()
+        return forecast.build(fb, an, card, qa, dict(inputs, risk_free=dict(self.RF, value=rf)))
+
+    def test_terminal_growth_is_the_risk_free_rate_above_three_percent(self):
+        fc = self.build(.045)
+        t = {s: scen(fc['spec'], s)['terminal']['growth'] for s in SCEN}
+        self.assertEqual(t, {'base': .045, 'bull': .045, 'bear': .04})
+        row = next(a for a in fc['assumptions'] if a['id'] == 'growth_fade')
+        self.assertIn('= the risk-free rate 4.50%', row['rationale'])
+        self.assertIn('input:risk_free', row['source_ids'])
+        self.assertNotIn('terminal_growth_high', {w['code'] for w in fc['warnings']})
+        # growth is not free: the terminal reinvestment is g / ROIC with ROIC above g
+        self.assertTrue(all(scen(fc['spec'], s)['terminal']['roic'] > t[s] for s in SCEN))
+
+    def test_high_risk_free_is_flagged_and_low_rates_keep_order(self):
+        fc = self.build(.07)
+        self.assertEqual(scen(fc['spec'], 'base')['terminal']['growth'], .07)
+        self.assertIn('terminal_growth_high', {w['code'] for w in fc['warnings']})
+        low = self.build(.003)                                          # bear floored at zero, never above base
+        self.assertEqual((scen(low['spec'], 'bear')['terminal']['growth'], scen(low['spec'], 'base')['terminal']['growth']), (0., .003))
+
+    def test_analyst_override_and_cycle_bound_unchanged(self):
+        ov = {'path': 'terminal_growth', 'scenario': 'base', 'value': .02, 'reason': 'test: incumbent trails the economy',
+              'evidence_ids': ['fmp:as_reported_income_annual']}
+        fc = self.build(.045, overrides=[ov])
+        self.assertEqual(scen(fc['spec'], 'base')['terminal']['growth'], .02)
+        self.assertEqual(scen(fc['spec'], 'bull')['terminal']['growth'], .045)
+        self.assertEqual(forecast.CYCLE_TREND, (-.03, .05))             # its own bound, not the terminal convention + 2pp
+
+    def test_review_accepts_terminal_growth_rounded_to_the_spec(self):
+        from fundamental_engine import review
+        fb, an, card, qa = adbe()
+        rf = .0451237                                                   # the 6-decimal spec rounds it up to .045124
+        fc = forecast.build(fb, an, card, qa, {'risk_free': dict(self.RF, value=rf)})
+        case = build_case(fc['spec'])
+        out = review.consistency(fb, qa, an, fc, {'result': value_company(case), 'case': case})
+        chk = next(c for c in out if c['code'] == 'terminal_growth_vs_risk_free')
+        self.assertEqual(chk['status'], 'pass', chk)

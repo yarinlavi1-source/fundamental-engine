@@ -486,7 +486,9 @@ def consistency(fb, qa, an, fc, val, rt=None, rc=None):
     if rf is None:
         add('terminal_growth_vs_risk_free', 'skip', 'major', 'Risk-free rate not supplied with the cost of equity; check not run (no default invented).', terminal_growth=tg)
     else:
-        bad = {k: g for k, g in tg.items() if g > rf + 1e-12}
+        # the spec rounds to 6 decimals (forecast._r) and the generated terminal growth equals the risk-free rate: half a unit of
+        # that rounding is not growth above the rate
+        bad = {k: g for k, g in tg.items() if g > rf + 5e-7}
         add('terminal_growth_vs_risk_free', 'fail' if bad else 'pass', 'major',
             f'Terminal growth above the risk-free rate {rf:.2%} in {sorted(bad)}: perpetual outgrowth of the economy.' if bad else
             f'Terminal growth at or below the risk-free rate {rf:.2%}.', terminal_growth=tg, risk_free=rf, risk_free_source=rf_src)

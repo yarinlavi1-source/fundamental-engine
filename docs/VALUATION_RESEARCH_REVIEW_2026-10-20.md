@@ -89,6 +89,14 @@ Not reached: McKinsey's 2026 pages (HTTP 503), Mauboussin's *The Impact of Intan
   about two points slower than the economy. Both readings land near 2.2-3.2%.
 - Engine: min(risk-free, 3%). Kept. Raising it to the treasury would add perpetual growth the research does not support for
   an existing company at today's real rates.
+- SUPERSEDED 21.10.2026: terminal growth = risk-free (base and bull; bear 0.5pp lower). The review applied Damodaran's
+  consistency rule to growth but not to the ERP it is paired with: his implied ERP (the 4.20% used here) is itself solved
+  with earnings growing at the 5.29% Treasury forever, so pairing it with 3% mixed two conventions. Re-solving his own
+  1 October 2026 index model at g = 3% gives about 2.8%, not 4.2% (about 1.4pp of the 2.33pp rate shift below), and the
+  walk-forward's value/price drifted with the rate (median about 0.71 - 17 x (rf - 3%)). One convention is kept now: the
+  ERP and the terminal growth both assume perpetual growth at the risk-free rate; reinvestment stays g / ROIC and the
+  terminal WACC at least 3 points above g. The cyclical trend bound keeps its own -3%..+5%. The walk-forward also uses
+  Damodaran's start-of-year implied ERP per formation (`engine_backtest.IMPLIED_ERP`) instead of a fixed 4.5%.
 
 ### 5. Margins (unchanged; one generous rule flagged)
 

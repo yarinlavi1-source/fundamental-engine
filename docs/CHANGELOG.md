@@ -1,3 +1,18 @@
+## Unreleased — calibration fixes (21.10.2026)
+
+- Terminal growth follows the convention of the ERP it is paired with (`forecast.TERMINAL_BEAR_GAP` comment): base = bull =
+  risk-free, bear 0.5pp lower (never above base), replacing min(risk-free, 3%). Damodaran's implied ERP is solved with
+  perpetual growth at the Treasury yield; pairing it with a 3% cap marked every company down whenever the risk-free rate
+  was above 3% (2023-2026). Reinvestment stays g / ROIC; the terminal WACC floor (g + 3pp) is unchanged and can now bind for
+  levered companies at any rate level, as it already could when rf < 3%. Risk-free above 6% -> warning `terminal_growth_high`.
+  An analyst `terminal_growth` override still wins; decline stage unchanged. The cyclical trend bound keeps -3%..+5%
+  (`CYCLE_TREND`, was written as cap + 2pp). Residual-income route: terminal growth = min(risk-free, ROE x retention,
+  Ke - 0.5pp); book-growth floor kept at 3% as `BOOK_GROWTH_FLOOR`. `review` tolerates the spec's 6-decimal rounding in
+  `terminal_growth_vs_risk_free`.
+- Walk-forward ERP: `engine_backtest.IMPLIED_ERP` (Damodaran's start-of-year implied ERP, FCFE, 2009-2026, from
+  histimpl.html; implpr.html agrees through 2016) is passed at each formation, point in time (a January formation uses the
+  previous year's estimate), instead of the fixed `ERP_DEFAULT` 4.5%; rows record `risk_free` and `erp`.
+
 ## 0.12.0 — results-day review from analyst comparison (21.10.2026)
 
 Includes the 0.11.2 work below. Adds `quarter_review` (MCP tool, `quarter-review` CLI, packet, trigger

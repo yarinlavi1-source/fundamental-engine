@@ -31,7 +31,9 @@ scenario interval is a statistically calibrated confidence interval.
    funding gaps, terminal dependence, terminal margin jumps and unreviewed inputs.
    Read implied_cost_of_equity and discount_rate_band: if the price conclusion
    flips within one point of required return, say so. For driver specs also run
-   implied_growth_shift to state what growth the price needs.
+   implied_growth_shift to state what growth the price needs. Terminal growth
+   follows the ERP's convention (= risk-free, see valuation_research); override
+   it only with evidence.
 7. Resolve the largest VALUE-SENSITIVE uncertainties. Use a full contract or note
    when needed; repeated articles do not resolve a missing contractual fact.
 8. Save annual_valuation_input in the dossier, execute research_review, checkpoint,

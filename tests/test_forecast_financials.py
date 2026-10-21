@@ -67,6 +67,22 @@ class ResidualIncomeTests(unittest.TestCase):
         pays = [p['payout_fraction'] for p in fc['paths']['base']]
         self.assertTrue(all(p >= 1 - .09 / .40 for p in pays[1:]))
 
+    def test_terminal_growth_is_the_risk_free_rate(self):
+        # perpetual growth at the risk-free rate (the implied ERP's convention), not min(risk-free, 3%), while retained profit
+        # funds it (ROE x retention above it); a risk-free rate above 6% is flagged
+        from fundamental_engine.forecast import RF_DEFAULT
+        fc = pipeline.run(bank())['fc']
+        terms = next(a for a in fc['assumptions'] if a['id'] == 'terminal')['values']
+        self.assertEqual((terms['base']['growth'], terms['bull']['growth']), (RF_DEFAULT, RF_DEFAULT))
+        self.assertLessEqual(terms['bear']['growth'], RF_DEFAULT)      # the bear's lower ROE funds less (ROE x retention)
+        self.assertNotIn('terminal_growth_high', {w['code'] for w in fc['warnings']})
+        rf = {'value': .07, 'as_of': '2026-10-19', 'title': 'high-rate test value', 'url': 'https://example.org/rf'}
+        hi = pipeline.run(bank(), {'forecast': {'risk_free': rf}})['fc']
+        self.assertIn('terminal_growth_high', {w['code'] for w in hi['warnings']})
+        payout = next(a for a in hi['assumptions'] if a['id'] == 'payout')['values']['payout_fraction_history']
+        for t in next(a for a in hi['assumptions'] if a['id'] == 'terminal')['values'].values():
+            self.assertLessEqual(t['growth'], min(.07, t['roe'] * (1 - payout)) + 1e-6)
+
     def test_unrealized_losses_are_not_book(self):
         fc = pipeline.run(bank(aoci=-30e9))['fc']
         self.assertGreater(fc['anchors']['book_equity'], 150e9)             # equity less AOCI, not the depressed reported equity

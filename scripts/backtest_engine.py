@@ -3,7 +3,8 @@
     python scripts/backtest_engine.py runs/universe_2026-10-20 --name large500 --from 2016 --to 2025 --workers 4
 
 Company folders come from companies/QUEUE_<name>.json (saved SEC companyfacts), monthly prices from
-runs/backtest/raw/prices (collect_backtest.py), the 10-year Treasury from runs/backtest/raw/macro/fred_GS10.csv. Rows are
+runs/backtest/raw/prices (collect_backtest.py), the 10-year Treasury from runs/backtest/raw/macro/fred_GS10.csv and the ERP
+from engine_backtest.IMPLIED_ERP (Damodaran's start-of-year implied ERP, point in time). Rows are
 appended to <out>/rows.jsonl (resumable); the evaluation is written to <out>/summary.json.
 """
 import argparse
@@ -30,13 +31,13 @@ def _work(job):
     p = load_prices(p_path) if os.path.exists(p_path) else None
     out = []
     for fm in formations:
-        as_of, rf = E.formation_inputs(fm, CTX['rates'])
+        as_of, rf, erp = E.formation_inputs(fm, CTX['rates'])
         px = E.traded_price(p, as_of) if p else None
         if not px:
             out.append({'symbol': sym, 'formation': fm, 'skipped': 'no price'})
             continue
         try:
-            r = E.company_row(os.path.join(CTX['comp'], sym), as_of, px, rf)
+            r = E.company_row(os.path.join(CTX['comp'], sym), as_of, px, rf, erp)
         except Exception as e:                              # recorded, never hidden: a crash is a finding
             r = {'symbol': sym, 'as_of': as_of, 'error': f'{type(e).__name__}: {e}'[:300]}
         out.append(dict(r or {'symbol': sym, 'skipped': 'nothing filed by as_of'}, formation=fm))

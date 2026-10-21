@@ -33,6 +33,8 @@ EXCESS_KEPT = {'base': .5, 'bull': .75}
 # to lose half of it
 PERSISTENT = {'min_years': 7, 'share_above': .8, 'kept': {'base': .75, 'bull': .9}}
 BOOK_GROWTH_CAP = .08     # retained profit beyond what book growth of at most this needs is paid out (no 30%-a-year compounding)
+BOOK_GROWTH_FLOOR = .03   # the five-year book growth used is at least this (the former terminal cap's number, kept as its own
+                          # constant: terminal growth now follows the risk-free rate, forecast.TERMINAL_BEAR_GAP comment)
 ROE_FLOOR = .005          # the terminal formula needs a positive ROE; a lower result is raised and flagged
 RI_IRRELEVANT_FIELDS = ('debt', 'cfo_ttm', 'capex_ttm', 'revenue_ttm', 'operating_income_ttm', 'cash_and_liquid_investments',
                         'investments', 'sbc_ttm')
@@ -88,7 +90,7 @@ def _path(r0, r5, rT, t):
 
 def build(fb, an, card, qa, inputs, rates, reviews, warn, warnings, empty):
     """-> forecast dict (status built | insufficient_data) with a valuation_version 1 residual_income case as 'spec'."""
-    from .forecast import (FORECAST_VERSION, RULES, STAGE, TERMINAL_GROWTH_CAP, _calendar, _case_sources, _pct, _r, _sha)
+    from .forecast import (FORECAST_VERSION, RULES, STAGE, TERMINAL_HIGH_RF, _calendar, _case_sources, _pct, _r, _sha)
     from .valuation import value_company, years
     rf, erp, rf_src, erp_src, rf_note, erp_note = rates
     method = 'residual_income'
@@ -170,22 +172,28 @@ def build(fb, an, card, qa, inputs, rates, reviews, warn, warnings, empty):
     targets = {'base': (r0, r_med, excess(r_med, kept['base'])),
                'bear': (min(r0, r_low), min(r_med, ke), min(r_med, ke) - .01),
                'bull': (max(r0, r_med), hi, excess(hi, kept['bull']))}
-    # book growth the business can use: its own five-year common-equity growth, bounded to [terminal cap, BOOK_GROWTH_CAP]
+    # book growth the business can use: its own five-year common-equity growth, bounded to [BOOK_GROWTH_FLOOR, BOOK_GROWTH_CAP]
     old = _near(ce, (facts._d(stmt) - timedelta(days=round(5 * 365.25))).isoformat(), 60)
-    g_book = (book / old) ** (1 / 5) - 1 if old and old > 0 else TERMINAL_GROWTH_CAP
-    g_book = min(max(g_book, TERMINAL_GROWTH_CAP), BOOK_GROWTH_CAP)
+    g_book = (book / old) ** (1 / 5) - 1 if old and old > 0 else BOOK_GROWTH_FLOOR
+    g_book = min(max(g_book, BOOK_GROWTH_FLOOR), BOOK_GROWTH_CAP)
     cal = _calendar(fb, {'last_end': sorted(profit)[-1] if profit else stmt}, 10)
     periods, prev = [], as_of
     for b in cal['periods']:
         periods.append((prev, b))
         prev = b
+    if rf > TERMINAL_HIGH_RF:
+        warn('terminal_growth_high', f'terminal growth up to risk-free {rf:.2%}, above {TERMINAL_HIGH_RF:.0%}: a nominal perpetual growth '
+                                     'this high only holds with matching inflation in the reporting currency forever (check the rate '
+                                     'and its currency)', 'medium')
     scen, paths, terms = [], {}, {}
     for s in ('bear', 'base', 'bull'):
         s0, s5, rT = targets[s]
         if rT < ROE_FLOOR:
             warn('roe_floor', f'{s} terminal ROE {_pct(rT)} raised to {_pct(ROE_FLOOR)} so a terminal value exists', 'high')
             rT = ROE_FLOOR
-        g = max(0., min(TERMINAL_GROWTH_CAP, rf, rT * (1 - payout), rT - .001, ke - .005))
+        # perpetual growth at the risk-free rate, the implied ERP's own convention (forecast.TERMINAL_BEAR_GAP comment), never above
+        # what retained profit funds at the terminal ROE nor within half a point of the cost of equity
+        g = max(0., min(rf, rT * (1 - payout), rT - .001, ke - .005))
         rows = []
         for a, b in periods:
             mid = (years(as_of, a) + years(as_of, b)) / 2
@@ -245,10 +253,11 @@ def build(fb, an, card, qa, inputs, rates, reviews, warn, warnings, empty):
             f'ROE over the next two fiscal years differs from the {s} path by more than 3 points.', ni_ids + eq_ids + [RULES])
     add('payout', 'distributions', 'model', {'payout_fraction_history': payout, 'history': [_r(x) for x in pays], 'book_growth': g_book},
         pay_basis + f'; book grows by retained profit (clean surplus), at most the growth the business can use: its own five-year '
-        f'common-equity growth {_pct(g_book)} (bounded {_pct(TERMINAL_GROWTH_CAP)}-{_pct(BOOK_GROWTH_CAP)}) fading to terminal growth, '
+        f'common-equity growth {_pct(g_book)} (bounded {_pct(BOOK_GROWTH_FLOOR)}-{_pct(BOOK_GROWTH_CAP)}) fading to terminal growth, '
         'so profit beyond that need is paid out (payout = max(history, 1 - book growth / ROE))',
         'Distributions over the next two years differ from this share of profit by more than 20 points.', pay_ids + [RULES])
-    add('terminal', 'terminal growth and ROE', 'model', terms, 'terminal growth = min(cap, risk-free, ROE x retention); terminal value '
+    add('terminal', 'terminal growth and ROE', 'model', terms, 'terminal growth = min(risk-free, ROE x retention, Ke - 0.5pp), at least '
+        '0 (perpetual growth at the risk-free rate: the convention of the implied equity risk premium); terminal value '
         '= book x (ROE - g) / (Ke - g)', 'The terminal ROE is not sustainable at the business\'s regulatory capital and competitive position.',
         rate_ids + [RULES])
     add('cost_of_equity', 'cost of equity', 'model', {'value': ke, 'components': ke_parts},
