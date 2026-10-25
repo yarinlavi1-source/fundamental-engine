@@ -53,10 +53,14 @@ pq=json.loads(open(sys.argv[9],encoding='utf-8').read())
 ov={'primary':'data_platform_software','reason':'customers x revenue per customer (8-K)','evidence_ids':['pltr_8k_q2_2026_ex991']}
 peak=lambda m:[f['severity'] for f in quarter_review({**pq,'economics':{'model':m}})['flags'] if f['key'] in ('peak_margin_run_rate','operating_leverage_or_peak')]
 assert peak(ov)==['medium'] and peak('data_platform_software')==['high']
-print(json.dumps({'quarter_review':'passed','econ_registry':'passed','econ_review':'passed','econ_peak_exception':'passed','drivers':'passed','plain_verdict':'passed','discovery':'passed','annual_valuation':'passed','version':__version__,'packaged_packets':len(records),'installed_review':'passed'}))
+from fundamental_engine.evidence_pack import to_inputs, to_bundle
+ep=json.loads(open(sys.argv[10],encoding='utf-8').read())
+assert to_inputs(ep)['company_path']['scenarios']['base']['source_tier']=='own_history' and to_bundle(ep)['sources']
+assert 'Position' in packet('master_process')['content'] and 'syndicated' in packet('sources_registry')['content']
+print(json.dumps({'evidence_pack':'passed','skeleton_packets':'passed','quarter_review':'passed','econ_registry':'passed','econ_review':'passed','econ_peak_exception':'passed','drivers':'passed','plain_verdict':'passed','discovery':'passed','annual_valuation':'passed','version':__version__,'packaged_packets':len(records),'installed_review':'passed'}))
 '''
     completed=subprocess.run([sys.executable,'-I','-c',code,temp,str(ROOT/'examples/research_dossier_demo.json'),str(ROOT/'examples/valuation/infrastructure.json'),str(ROOT/'examples/discovery_demo.json'),str(ROOT/'examples/plain_demo.json'),str(ROOT/'examples/real/avgo_plain_2025.json'),str(ROOT/'examples/valuation/software_drivers.json'),
-                               str(ROOT/'tests/fixtures/econ/ibkr_2026q3.json'),str(ROOT/'tests/fixtures/econ/pltr_2026q2_filed.json')],
+                               str(ROOT/'tests/fixtures/econ/ibkr_2026q3.json'),str(ROOT/'tests/fixtures/econ/pltr_2026q2_filed.json'),str(ROOT/'examples/evidence_pack_demo.json')],
                               cwd=temp,text=True,capture_output=True,timeout=20)
     if completed.returncode:raise SystemExit(completed.stderr)
     print(completed.stdout.strip())

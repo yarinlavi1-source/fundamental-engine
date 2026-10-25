@@ -66,7 +66,7 @@ def plan(request):
              'earnings_event':'quarter_review'}
     if not isinstance(triggers,list) or any(t not in mapping for t in triggers):
         raise ValueError('Unknown research trigger')
-    topics=['operating_system','master_process','connector_contract','dossier_contract','evidence','company_type','earnings_quality','forensic','business',
+    topics=['operating_system','master_process','connector_contract','sources_registry','dossier_contract','evidence','company_type','earnings_quality','forensic','business',
             'valuation','annual_valuation','valuation_research','valuation_integrity','growth_valuation','adversarial','synthesis','plain_language']
     if any(t in {'emerging_growth','bottleneck','early_adoption'} for t in triggers):
         topics += ['frontier_research','potential']
