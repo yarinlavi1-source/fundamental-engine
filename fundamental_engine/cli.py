@@ -231,6 +231,11 @@ def main():
     er.add_argument("--options", help="JSON file, or inline JSON object starting with '{': model, or card_type / profile_text / "
                                       "override; prior, upstream (earlier econ reviews); names_he; revisions and prices")
     er.add_argument("--json", action="store_true", help="Print the full JSON result instead of the Hebrew text")
+    ep = subs.add_parser("pack-to-inputs", help="Evidence pack (ticker workflow) -> pipeline inputs.json and the evidence bundle "
+                                               "that registers its sources (strict: unknown keys, missing evidence, tiers)")
+    ep.add_argument("pack", help="evidence_pack.json (fundamental_engine/evidence_pack.py documents the format)")
+    ep.add_argument("--out", required=True, help="inputs.json to write")
+    ep.add_argument("--bundle", help="evidence_bundle.json to write (load it into the FactBook so the cited ids resolve)")
     im = subs.add_parser("import-av", help="Map saved Alpha Vantage statement JSON files into plain history rows")
     im.add_argument("income")
     im.add_argument("--balance")
@@ -423,6 +428,21 @@ def main():
             from .econ import econ_review
             result = econ_review(read_json(args.input), json_object_arg(args.options, "--options") if args.options else None)
             print(json.dumps(result,ensure_ascii=False,indent=2,allow_nan=False) if args.json else result["text"])
+        elif args.command == "pack-to-inputs":
+            from .evidence_pack import to_inputs, to_bundle
+            pack = read_json(args.pack)
+            inputs = to_inputs(pack)
+            Path(args.out).parent.mkdir(parents=True, exist_ok=True)
+            Path(args.out).write_text(json.dumps(inputs, ensure_ascii=False, indent=2, allow_nan=False), encoding="utf-8")
+            if args.bundle:
+                Path(args.bundle).parent.mkdir(parents=True, exist_ok=True)
+                Path(args.bundle).write_text(json.dumps(to_bundle(pack), ensure_ascii=False, indent=2, allow_nan=False), encoding="utf-8")
+            meta = inputs["evidence_pack"]
+            print(json.dumps({"inputs": args.out, "bundle": args.bundle, "pack_sha256": meta["pack_sha256"],
+                              "overrides": len(inputs.get("forecast", {}).get("overrides", [])),
+                              "company_path": sorted((inputs.get("company_path") or {}).get("scenarios", {})),
+                              "guidance_adjustments": meta["guidance_adjustments"], "notes": meta["notes"]},
+                             ensure_ascii=False, indent=2))
         elif args.command == "import-av":
             from .connectors import from_alpha_vantage
             value = from_alpha_vantage(read_json(args.income), read_json(args.balance) if args.balance else None,

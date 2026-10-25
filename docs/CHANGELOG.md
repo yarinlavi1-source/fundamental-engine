@@ -1,3 +1,28 @@
+## Unreleased — ticker runner, evidence pack, skeleton brain (25.10.2026)
+
+- Saved Workflow `ticker` (`.claude/workflows/ticker.js`, args `{ticker, as_of}`): one company on the owner's ticker in
+  seven phases — Identify; Gather (nine parallel lanes: statements, reports/release/transcript, guidance and its track
+  record, consensus, KPIs/segments/customers, named competitors, bottlenecks and potential, market and geopolitics, own
+  price and multiple history; connector order per session_capabilities, Interactive Brokers read-only); Understand (three
+  parallel parts); Position (potential vs named competitors, base = most likely path, bull = what must happen, bear =
+  what breaks, events with evidence and numeric falsifiers); Value (evidence pack -> inputs -> `deep` for that company);
+  Review (three adversarial lenses, one repair pass, otherwise a draft); Deliver (the Hebrew דובי/בסיסי/שורי table, short
+  explanations, sources as links, reasons file, forecast-ledger freeze). Outputs under runs/tickers/ (gitignored).
+- `evidence_pack.py`: the evidence pack format and `to_inputs` / `to_bundle`. The inputs carry forecast overrides with
+  `source_tier` (contract shared with the engine's tier work), `company_path`, `analyst_sheet.scenario_events` and
+  `key_risk`, card assessments, dated market inputs and an `evidence_pack` provenance block; the bundle registers the pack's
+  sources (`web:<id>`) and items in the FactBook so every cited id resolves. Strict: unknown keys, unknown or not yet
+  citable evidence, look-ahead dates, consensus as evidence of a fact, guidance from a non-issuer source, a tier without
+  matching evidence, an unnamed competitor or peer, a syndicated copy marked independent are refused, all listed at once.
+  The guidance track record (mean actual / guided midpoint) is always recorded and applied only where a guidance-tier
+  growth driver says so: (1 + g) x ratio - 1, before and after kept. CLI `pack-to-inputs <pack> --out --bundle`, MCP
+  `evidence_pack_to_inputs`; example `examples/evidence_pack_demo.json` (synthetic).
+- Brain: `master_process` rewritten as the ticker skeleton (the steps grouped into the seven phases, each with entry,
+  outputs and exit rules; the new Position step; the reasons-behind-every-price rule; base rates only as a warning row);
+  new packet `sources_registry` (kinds, quality order, dates, independence, syndicated copies, untrusted text), in the
+  research plan. CLAUDE.md "On a ticker". scripts/check_wheel.py asserts the packets and the converter ship.
+- No valuation arithmetic changed; the converter fetches and estimates nothing. Tests: test_evidence_pack.
+
 ## Unreleased — company-first levers: source tiers and visible gaps (Track A, 25.10.2026)
 
 - Forecast overrides take an optional `source_tier` (guidance, contracted, consensus, own_history, competitor, market,

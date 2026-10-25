@@ -1,0 +1,85 @@
+{
+  "pack_version": 1,
+  "ticker": "DEMO",
+  "as_of": "2026-10-25",
+  "notes": ["SYNTHETIC demonstration pack: invented company, tickers and numbers that show the format only; not evidence about any real issuer."],
+  "identity": {"name": "Demo Interconnect Inc. (synthetic)", "currency": "USD", "exchange": "NASDAQ", "security": "common stock",
+               "fiscal_year_end": "12-31", "type": "young grower", "evidence_ids": ["s_10k"]},
+  "sources": [
+    {"id": "s_10k", "kind": "sec_filing", "title": "DEMO 10-K FY2025 (synthetic)", "url": "https://example.invalid/demo-10k", "date": "2026-02-20", "independent": true, "retrieval": "primary_document"},
+    {"id": "s_10q", "kind": "sec_filing", "title": "DEMO 10-Q Q3 2026 (synthetic)", "url": "https://example.invalid/demo-10q", "date": "2026-10-20", "independent": true, "retrieval": "primary_document"},
+    {"id": "s_pr", "kind": "release", "title": "DEMO Q3 2026 results release (synthetic)", "url": "https://example.invalid/demo-pr", "date": "2026-10-20", "independent": true, "retrieval": "primary_document"},
+    {"id": "s_call", "kind": "transcript", "title": "DEMO Q3 2026 call transcript (synthetic)", "url": "connector:earnings_call_transcript", "date": "2026-10-20", "independent": true},
+    {"id": "s_av", "kind": "structured_data", "title": "Structured statements payload (synthetic)", "url": "connector:income_statement", "date": "2026-10-22", "independent": false},
+    {"id": "s_est", "kind": "consensus", "title": "Attributed analyst estimates, 14 analysts (synthetic)", "url": "connector:earnings_estimates", "date": "2026-10-22", "independent": true},
+    {"id": "s_px", "kind": "price", "title": "DEMO price history (synthetic)", "url": "connector:price_history", "date": "2026-10-22", "independent": true},
+    {"id": "s_fred", "kind": "macro", "title": "10-year Treasury yield (synthetic)", "url": "https://example.invalid/dgs10", "date": "2026-10-22", "independent": true},
+    {"id": "s_peer_a", "kind": "sec_filing", "title": "PEERA 10-Q Q3 2026 (synthetic)", "url": "https://example.invalid/peera-10q", "date": "2026-10-15", "independent": true},
+    {"id": "s_ind", "kind": "industry", "title": "Industry capacity survey 2026 (synthetic)", "url": "https://example.invalid/survey", "date": "2026-09-30", "independent": true},
+    {"id": "s_wire", "kind": "press", "title": "Wire story on DEMO results (synthetic)", "url": "https://example.invalid/wire", "date": "2026-10-21", "independent": true},
+    {"id": "s_wire_copy", "kind": "press", "title": "Portal copy of the wire story (synthetic)", "url": "https://example.invalid/portal", "date": "2026-10-21", "independent": false, "syndicated_from": "s_wire"}
+  ],
+  "facts": [
+    {"id": "f_rev_q3", "metric": "revenue", "period": "Q3 2026", "period_end": "2026-09-30", "value": 300000000, "unit": "USD", "source_ids": ["s_10q", "s_pr"]},
+    {"id": "f_gm_q3", "metric": "gross_margin", "period": "Q3 2026", "value": 0.72, "unit": "ratio", "source_ids": ["s_pr"]},
+    {"id": "f_rev_2025", "metric": "revenue", "period": "FY2025", "value": 900000000, "unit": "USD", "source_ids": ["s_10k", "s_av"]}
+  ],
+  "guidance": [
+    {"id": "g_q4", "metric": "revenue", "period": "Q4 2026", "low": 320000000, "high": 330000000, "unit": "USD", "issued": "2026-10-20", "source_id": "s_pr"},
+    {"id": "g_fy26", "metric": "revenue", "period": "FY2026", "low": 1150000000, "high": 1170000000, "unit": "USD", "issued": "2026-10-20", "source_id": "s_pr"}
+  ],
+  "guidance_track": [
+    {"period": "Q1 2026", "metric": "revenue", "guided_mid": 240000000, "actual": 252000000, "source_ids": ["s_10q"]},
+    {"period": "Q2 2026", "metric": "revenue", "guided_mid": 262000000, "actual": 275000000, "source_ids": ["s_10q"]},
+    {"period": "Q3 2026", "metric": "revenue", "guided_mid": 285000000, "actual": 300000000, "source_ids": ["s_10q"]}
+  ],
+  "consensus": [
+    {"id": "c_fy27_rev", "metric": "revenue", "period": "FY2027", "value": 1500000000, "n": 14, "low": 1300000000, "high": 1750000000, "source_id": "s_est"},
+    {"id": "c_fy27_eps", "metric": "eps_diluted", "period": "FY2027", "value": 2.1, "n": 12, "source_id": "s_est"}
+  ],
+  "kpis": [{"id": "k_customers", "name": "customers above $1m", "period": "Q3 2026", "value": 120, "unit": "count", "source_ids": ["s_call"]}],
+  "segments": [{"id": "seg_retimers", "name": "retimers", "period": "Q3 2026", "revenue": 210000000, "unit": "USD", "source_ids": ["s_10q"]}],
+  "customers": [{"id": "cu_top", "name": "largest customer (unnamed in the filing)", "share": 0.31, "period": "FY2025", "source_ids": ["s_10k"]}],
+  "competitors": [
+    {"ticker": "PEERA", "name": "Peer A (synthetic)", "why": "sells the same retimer class to the same hyperscale buyers (10-K competition section)", "metrics": {"revenue_growth": 0.25, "gross_margin": 0.61}, "source_ids": ["s_peer_a", "s_10k"]}
+  ],
+  "bottlenecks": [
+    {"id": "b_signal", "reading": "signal integrity at higher link speeds needs a retimer per link; supply is concentrated in two vendors", "evidence_ids": ["s_10k", "s_ind"]}
+  ],
+  "potential": {
+    "market_direction": {"reading": "links per accelerator rise with each generation", "evidence_ids": ["s_ind", "s_call"]},
+    "bottleneck_potential": {"reading": "a two-vendor supply for a part each link needs", "evidence_ids": ["s_10k", "s_ind"]},
+    "share_trajectory": {"reading": "share gained against PEERA over the last four quarters", "evidence_ids": ["seg_retimers", "s_peer_a"]},
+    "competitive_position": {"reading": "higher gross margin than PEERA (72% vs 61%)", "evidence_ids": ["f_gm_q3", "s_peer_a"]},
+    "threats": {"reading": "integration of the function into the accelerator itself", "hypothesis": true}
+  },
+  "drivers": {
+    "growth_anchor": {"bear": 0.18, "base": 0.29, "bull": 0.36, "source_tier": "guidance", "adjust_by_track_record": ["base"],
+                      "evidence_ids": ["g_fy26", "s_pr"], "reason": "FY2026 guided midpoint over FY2025 revenue; bear at the low end less the largest customer's slowdown, bull at the consensus high"},
+    "mature_margin": {"bear": 0.2, "base": 0.3, "bull": 0.38, "source_tier": "own_history", "evidence_ids": ["f_gm_q3", "s_10q"],
+                      "reason": "gross margin 72% less the opex ratio guided on the call, at scale"}
+  },
+  "scenario_events": {
+    "bear": [{"event_he": "הלקוח הגדול (31% מההכנסות) עובר לספק שני", "evidence_ids": ["cu_top"]},
+             {"event_he": "המאיץ משלב את הרכיב בתוכו", "hypothesis": true}],
+    "base": [{"event_he": "ההכנסות עומדות בתחזית ההנהלה המותאמת לרקורד שלה", "evidence_ids": ["g_fy26"]}],
+    "bull": [{"event_he": "מספר הקישורים לכל מאיץ מוכפל בדור הבא", "evidence_ids": ["s_ind", "s_call"]}]
+  },
+  "company_path": {
+    "metric": "eps", "multiple": "forward_pe",
+    "scenarios": {
+      "bear": {"multiple_path": [30, 24, 20, 18, 16, 15], "justification": "unproven", "reason_he": "צמיחה נחלשת: מכפיל של חברת רכיבים בוגרת", "source_tier": "own_history", "evidence_ids": ["s_px", "s_10k"]},
+      "base": {"multiple_path": [45, 40, 35, 30, 27, 25], "justification": "justified_high", "reason_he": "צמיחה של 25%+ עם תשואה על ההון גבוהה; המכפיל יורד עם הצמיחה", "source_tier": "own_history", "evidence_ids": ["s_px", "f_rev_q3"]},
+      "bull": {"multiple_path": [55, 50, 45, 40, 35, 32], "justification": "justified_high", "reason_he": "כמו PEERA בשלב הצמיחה המקביל", "source_tier": "competitor", "competitors": ["PEERA"], "evidence_ids": ["s_peer_a"]}
+    },
+    "own_history": {"low": 28, "median": 42, "high": 70, "years": "2024-2026", "evidence_ids": ["s_px"]},
+    "peers": [{"ticker": "PEERA", "forward_pe": 38, "growth": 0.25, "evidence_ids": ["s_peer_a"]}]
+  },
+  "key_risk": {"reading_he": "לקוח אחד הוא 31% מההכנסות", "evidence_ids": ["cu_top"]},
+  "falsifiers": [
+    {"id": "x_rev", "scenario": "base", "metric": "quarterly revenue", "threshold": 320000000, "direction": "below", "by": "2027-02-28", "evidence_ids": ["g_q4"]}
+  ],
+  "assessments": {"customer_concentration": {"assessment": "weak", "evidence_ids": ["cu_top"], "note": "31% from one customer"}},
+  "market": {"risk_free": {"value": 0.042, "as_of": "2026-10-22", "source_id": "s_fred"}},
+  "analyst": "ticker workflow (demo)"
+}

@@ -5,6 +5,13 @@ regenerate and the latest-state documents; finish every session by merging to ma
 connections in Claude. Reuse those capabilities; this repository is the RESEARCH
 BRAIN, executable math and local research memory, not a replacement provider stack.
 
+## On a ticker
+
+When the owner sends a ticker, run the saved Workflow name `ticker` with args `{ticker, as_of}` (`.claude/workflows/ticker.js`).
+The skeleton is the `master_process` packet: Identify, Gather, Understand, Position, Value, Review, Deliver, each with entry,
+outputs and exit rules; sources per `sources_registry`. Evidence goes into one evidence pack, converted by `pack-to-inputs`
+(MCP `evidence_pack_to_inputs`); outputs stay under runs/tickers/<TICKER>_<as_of>/ (gitignored).
+
 ## Work loop
 
 research_plan -> relevant research_packet -> targeted connector retrieval -> dossier

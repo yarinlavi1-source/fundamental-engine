@@ -83,8 +83,13 @@
     },
     {
       "id": "master_process",
-      "title": "Master research process: best-practice order of work",
+      "title": "Master process: the ticker skeleton (phases with entry, outputs and exit rules)",
       "file": "protocols/master_process.md"
+    },
+    {
+      "id": "sources_registry",
+      "title": "Sources registry: kinds, quality order, dates, independence, untrusted text",
+      "file": "protocols/sources_registry.md"
     },
     {
       "id": "company_type",

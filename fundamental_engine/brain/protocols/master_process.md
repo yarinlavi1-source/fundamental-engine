@@ -1,64 +1,154 @@
-# Master research process (best-practice synthesis)
+# Master process: the ticker skeleton
 
-A compact order of work drawn from widely used professional methods and from comparing a strong human analyst's
-write-ups with the engine (docs/ANALYST_COMPARISON_2026-10.md, 25.10.2026). Each step names its origin or tool so
-the method stays inspectable; the packets hold the detail. One company at a time: every number is the company's own,
-read from its own reports, not a rule applied to all companies alike.
+When the owner sends a ticker, walk this skeleton for THAT company, in order, until it is understood in depth and
+valued by what will most likely happen. The saved workflow `.claude/workflows/ticker.js` (Workflow name `ticker`, args
+`{ticker, as_of}`) runs it; by hand, follow the same phases. One company per ticker: every driver is built from that
+company's own evidence (its guidance adjusted by its own track record, contracted demand, attributed consensus, its own
+history) or from NAMED direct competitors with the reason each one is a competitor. Base rates and other companies'
+numbers are at most a warning row. A lever without company evidence stays a visible gap (wider range, lower
+confidence), never another company's number. Market prices of risk (risk-free, ERP, credit spread, country risk) stay.
 
-1. **Identity and data** — issuer, share class (ADR ratio, dual listing premium), currency, fiscal calendar,
-   cutoff. Pull 5 annual years + the latest quarters through the user's connectors (session_capabilities: AV/FMP
-   structured first); reconcile material numbers to the filing. Read the latest 10-K/10-Q (or 20-F/6-K), the
-   earnings release and the call transcript yourself: the numbers and what management said they mean.
-2. **Company type** — `classify_company` (Damodaran life cycle; Lynch categories). The type chooses the
-   questions, the metrics and the valuation lens (company_type): grower, compounder, cyclical, turnaround,
-   financial, regulated, platform, early stage.
-3. **The economic identity** — how the money is made, written as an identity with the company's own KPIs
-   (economic_models packet, `econ_review`): accounts x revenue per account (broker), gross bookings x take
-   rate (marketplace), customers x revenue per customer + NDR (software), bits x ASP (memory), GW x revenue per
-   GW (compute), subscribers x ARPU, earning assets x NIM (bank). Split growth into structural, cyclical, macro,
-   mix and reclassification; only the cyclical part may revert. Segment economics separately when margins differ.
-4. **Who funds the demand** — vendor financing, guarantees, take-or-pay, equity stakes in customers,
-   receivables and inventory against revenue, customer concentration and the funding chain behind the largest
-   customers (demand-quality overlay). Firm exposure and contingent ceilings are kept apart.
-5. **Sector position and bottlenecks** — what scarce thing the company supplies, who needs it, how long the
-   shortage lasts and who adds capacity (frontier_discovery / frontier_research). A bottleneck story needs paid
-   adoption and pricing in the company's own numbers, not partner logos.
-6. **Outside view before inside view** — start the forecast from base rates for firms of the same size and stage
-   (Kahneman; Mauboussin's Base Rate Book; McKinsey growth fade), then depart from them only with evidence.
-7. **Guidance and its track record** — the company's guidance, compared on the same basis with what it then
-   delivered (quarter_review guidance_track): a conservative guider's guidance is a floor, not a forecast; a
-   missed guide is evidence. Attributed consensus where available.
-8. **Moat and returns** — ROIC level, stability and incremental ROIC; which moat source is evidenced
-   (Morningstar); the moat as a repeatable process where it is one (new categories renewed, intensity vs growth);
-   returns fade toward the cost of capital unless a mechanism prevents it.
-9. **Earnings quality and forensics** — one-offs removed AND added back symmetrically after tax; recurring
-   "one-offs" stay; SBC is a cost and acquisition share awards are dilution; restricted cash and insurance
-   reserves are not liquidity; cumulative KPIs are not activity; Piotroski/Altman/Beneish screens.
-10. **Management, capital allocation and financing** — promises vs delivery, incentives, buybacks vs SBC,
-    acquisition returns, runway, maturities and who funds growth (management, funding).
-11. **Market and geopolitical context** — rates, implied ERP, credit spreads, volatility (market_context);
-    country risk by where the company sells and makes (Damodaran CRP); evidenced exposures (Taiwan supply, China
-    export controls, tariffs, sanctions, regulation) become bear mechanisms sized from the evidenced share.
-12. **Multiples, the company's own and the market's** — the company's own P/E, EV/EBITDA, P/FCF or P/B range
-    through a full cycle and where it sits now; what the market pays for businesses with the same growth and
-    margin today. A multiple is anchored in evidence, never just today's multiple carried forward; a record
-    cyclical quarter x 4 is peak earnings, not a run rate.
-13. **Valuation by type and the yearly path** — annual_valuation: today's value and every year through the fifth,
-    bear/base/bull, the model fitting the type (DCF with fade, normalized cyclical margins, residual income, NAV,
-    rNPV). The bear changes the business (growth, margin, funding), not only the multiple. Show the likely range
-    separately from the extremes, and the measured error band (render.hebrew_table).
-14. **Expectations** — reverse DCF: what today's price already assumes (Rappaport & Mauboussin); where and why
-    our view differs and what evidence will settle it.
-15. **Pre-mortem and counter-thesis** — assume the investment failed in three years and list why (Klein;
-    adversarial). Numeric falsifiers with thresholds, re-checked every quarter (quarter_review falsifiers).
-16. **Verdict and memory** — the owner's Hebrew table and short explanations (render.hebrew_table,
-    plain_language). Freeze the base case in the forecast ledger next to any analyst's dated target for the same
-    company, so accuracy is judged later on real prices; research_checkpoint with the 3–5 observations that would
-    change the view.
+Each phase has an entry rule (what must exist before it starts), the steps, the required outputs (files under
+`runs/tickers/<TICKER>_<as_of>/`, gitignored) and an exit rule (what must be true before moving on). A failed exit rule
+is written down as a gap and the work continues on the other branches; it is never papered over.
 
-Guardrails learned from the analyst comparison (do not copy these habits): a target that moves with the price;
-one EPS path x three multiples presented as bear/base/bull; adjusted EPS that hides SBC; insurance reserves counted
-as cash; a minor revenue line carrying the thesis; volatility confused with business risk.
+## Phase 1 — Identify
 
-Stop rule: finish when the next retrieval would not change the decision; record the remaining uncertainty rather
-than searching indefinitely.
+Entry: a ticker and an information cutoff (as_of). Nothing else is assumed.
+
+1. **Identity and data** — issuer, listed security and share class (ADR ratio, dual listing), exchange, currency,
+   fiscal calendar, CIK, the latest 10-K/10-Q (or 20-F/6-K), release and call dates. `pipeline-plan <T> <as_of>` lists
+   the structured connector calls and file names.
+2. **Company type** — `classify_company` (Damodaran life cycle; Lynch category): grower, compounder, cyclical,
+   turnaround, financial, regulated, platform, early stage. The type chooses the questions, the KPIs and the valuation
+   lens (company_type); it never chooses a number.
+
+Outputs: `identity.json` (identity, type with reasons, fiscal calendar, filing list), `companies/<T>/company.json`.
+Exit: issuer, security, currency, fiscal year end and as_of are resolved and sourced; an unresolved identity stops the
+run (wrong security = wrong everything).
+
+## Phase 2 — Gather (parallel; connector order per session_capabilities)
+
+Entry: Phase 1 exit met. Connector order: Alpha Vantage / FMP structured data first; Interactive Brokers for prices
+READ-ONLY (never orders, alerts or watchlists); SEC EDGAR and issuer IR for primary documents; WebSearch/WebFetch for
+the rest. A denied or empty call is recorded once with its fallback, never retried in a loop. Every item carries a
+source registered per sources_registry (kind, date, independence; syndicated copies are not independent).
+
+Gather lanes (each writes `gather/<lane>.json`, a fragment of the evidence pack): statements and raw payloads per
+pipeline-plan; reports, release and transcript (read them: numbers and what management said they mean); guidance and
+its track record (each guided period vs what was delivered, same basis); attributed consensus (with n, low, high);
+KPIs, segments and customer concentration; named competitors and their numbers (why each is a competitor); sector
+bottlenecks and potential; market and geopolitics; own price and multiple history.
+
+Outputs: the raw folder `companies/<T>/raw/` (verbatim payloads, MANIFEST) and one fragment per lane.
+Exit: the latest annual and quarterly numbers reconcile to the filing; guidance and its track record are recorded or
+marked missing; at least the direct competitors named in the 10-K are listed or the gap is said; every lane lists its
+gaps and stop reasons.
+
+## Phase 3 — Understand
+
+Entry: the Gather fragments.
+
+3. **The economic identity** — how the money is made, with the company's own KPIs (economic_models, `econ_review`):
+   customers x revenue per customer, units x ASP, bookings x take rate, earning assets x NIM. Split growth into
+   structural, cyclical, macro, mix and reclassification; only the cyclical part may revert.
+4. **Who funds the demand** — vendor financing, take-or-pay, customer concentration and the funding chain behind the
+   largest customers; firm exposure apart from contingent ceilings.
+5. **Sector position and bottlenecks** — what scarce thing the company supplies, who needs it, how long the shortage
+   lasts, who adds capacity. Paid adoption and pricing in the company's own numbers, not partner logos.
+6. **Base rates as a warning only** — the outside view (base_rates.outside_view) is shown next to the forecast as a
+   warning row when the company's path departs from it; it never sets, caps or fades a number.
+7. **Guidance and its track record** — the guided midpoint vs what was delivered (quarter_review guidance_track); the
+   ratio actual / guided midpoint is recorded in the pack and applied explicitly where the analyst says so. A
+   conservative guider's guidance is a floor; a missed guide is evidence.
+8. **Moat and returns** — ROIC level and incremental ROIC; which moat source is evidenced; returns fade toward the cost
+   of capital unless a mechanism the company shows prevents it.
+9. **Earnings quality and forensics** — one-offs removed and added back symmetrically; SBC is a cost; restricted cash
+   and reserves are not liquidity; Piotroski/Altman/Beneish/ROIC/Rule of 40 (`forensic_scores`); every flag goes to the
+   counter-thesis.
+10. **Management, capital allocation and financing** — promises vs delivery, incentives, buybacks vs SBC, acquisition
+    returns, runway, maturities and who funds growth.
+
+Outputs: `understand.json` (identity with numbers, growth split, demand funding, quality flags, moat evidence,
+management record), each claim with evidence ids.
+Exit: the identity reconciles to reported revenue within its stated residual; structural vs cyclical is decided with
+evidence or labelled unknown; every forensic flag is carried forward.
+
+## Phase 4 — Position (the forward judgement)
+
+Entry: Understand outputs.
+
+11. **Market and geopolitical context** — rates, implied ERP, credit spreads (market_context); country risk by where
+    the company sells and makes; evidenced exposures (export controls, tariffs, Taiwan supply, sanctions, regulation)
+    become bear mechanisms sized from the evidenced share.
+12. **Position: potential beyond the data** — what will happen and what could happen: market direction; bottleneck
+    potential (could it become one, for how long); share trajectory against NAMED competitors (who is taking share,
+    on which numbers); competitive position (stronger or weaker than each competitor, on what); threats (substitution,
+    in-sourcing, a new entrant, regulation). Each reading is evidenced with ids or labelled `hypothesis`. Potential
+    moves the forecast only through an evidenced lever (a driver with a source tier); a hypothesis moves nothing.
+13. **Scenarios from events** — base = the most likely path by the company's evidence (not a conservative case); bull =
+    what must happen (specific, dated, evidenced events); bear = what breaks (specific mechanisms: a customer loss sized
+    by concentration, a program loss, a cycle turn, a funding gap). Each scenario has events with evidence ids and
+    numeric falsifiers (metric, threshold, direction, date) re-checked every quarter.
+
+Outputs: `position.json` (the five potential readings, the three scenarios' events, drivers with source tiers, the
+forward multiple path per scenario with its justification, key risk, falsifiers).
+Exit: every driver that differs from the engine's rule names its tier and evidence; every competitor used is named with
+why; bull and bear are business changes (growth, margin, funding), not only a different multiple.
+
+## Phase 5 — Value
+
+Entry: Position outputs.
+
+14. **Multiples, the company's own and the market's** — the company's own forward P/E (or EV/EBITDA, P/FCF, P/B)
+    range through a cycle and where it sits now; named competitors at a comparable stage. A multiple is anchored in
+    evidence and labelled `justified_high`, `peak` or `unproven`; a record quarter x 4 is peak earnings, not a run rate.
+15. **Valuation by type and the yearly path** — write `evidence_pack.json`, convert it (`pack-to-inputs` or the MCP
+    tool `evidence_pack_to_inputs`: inputs.json with source-tier overrides, company_path, scenario events, key risk,
+    card assessments, market inputs; the evidence bundle registers the sources), run the engine for that one company
+    (`deep <run dir> --symbols <T>`). Today's value and every year through the fifth, bear/base/bull (annual_valuation);
+    the company price path = forward multiple x next-fiscal-year EPS per scenario; scenario reasons for every price.
+
+**Reasons behind every price.** No price stands without its reason. Owner example: price 200 today; base 300, bull
+350, bear 200 in five years. Why 200 in the bear — what breaks (which customer leaves, which margin falls, by how much,
+on what evidence). Why 350 in the bull — what must happen (which program ramps, which share is won from which named
+competitor, which margin is reached). Why 300 in the base — the most likely path and the evidence that makes it most
+likely. Each yearly price stores its drivers (revenue, margin, EPS/FCF, shares, the multiple and why that multiple),
+the events, the evidence ids and the source tier.
+
+Outputs: `evidence_pack.json`, `companies/<T>/inputs.json`, `companies/<T>/evidence_bundle.json`, `companies/<T>/out/`
+(casefile, table_he.md, scenario reasons).
+Exit: the engine ran without stage errors, or each error is recorded and the result shown as a draft; the values in
+the table are exactly the executed ones.
+
+## Phase 6 — Review (adversarial)
+
+Entry: the executed casefile.
+
+16. **Expectations and pre-mortem** — reverse DCF: what today's price already assumes (expectation_gap); assume the
+    investment failed in three years and list why (adversarial, redteam_audit). Check: every number traces to a
+    source; no default from another company (the gaps row lists what is still on an engine rule); guidance vs its
+    track record; a peak multiple is not paid as justified; the strongest counter-thesis is written.
+
+Outputs: `review.json` (findings with severity, fixes made, what stays open).
+Exit: no critical finding open; a critical finding makes the valuation UNVERIFIED and it is shown as a draft.
+
+## Phase 7 — Deliver
+
+Entry: Review exit (or the draft label).
+
+17. **Verdict and memory** — the owner's Hebrew table (render.hebrew_table): דובי / בסיסי / שורי, today and years 1-5,
+    a few short simple explanations, and the sources as links when the web was used. The full reasons file stays behind
+    the scenes. Freeze the base case in the forecast ledger (thesis_freeze / forecast_ledger) with its falsifiers, so
+    accuracy is judged later on real prices.
+
+Outputs: `deliver/table_he.md`, `deliver/reasons.json`, the ledger entry.
+Exit: the table matches the executed casefile number for number; future values are dated conditional values, not
+promised market prices.
+
+Guardrails (do not copy these habits): a target that moves with the price; one EPS path x three multiples presented as
+bear/base/bull; adjusted EPS that hides SBC; insurance reserves counted as cash; a minor revenue line carrying the
+thesis; volatility confused with business risk; a peer median used as if it were the company.
+
+Stop rule: finish a lane when the next retrieval would not change the decision; record the remaining uncertainty
+rather than searching indefinitely.
