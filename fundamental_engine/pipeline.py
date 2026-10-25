@@ -377,7 +377,12 @@ def valuate(fb, qa, fc, inputs=None):
 
 def run(fb, inputs=None):
     """Run every stage on one FactBook. inputs: {'card': ..., 'forecast': ..., 'reviewer': ..., 'decision': ..., 'analyst': name(s)?,
-    'analyst_sheet': the analyst's evidenced readings of the six questions (analyst_sheet.py)}.
+    'analyst_sheet': the analyst's evidenced readings of the six questions (analyst_sheet.py), 'market_context': country-risk
+    exposure overrides, evidenced geopolitical exposures and the market regime readings (market_context.py)}.
+
+    inputs.market_context (when present, even {}) runs the 'market_context' stage first: its country-risk add-on becomes
+    inputs.forecast.country_risk (an explicit forecast.country_risk wins), its exposures become named failure scenarios in the
+    risk stage, and cf['market_context'] carries the record and the regime line (context only). Absent -> nothing changes.
 
     The reviewer signs valuation_sha256 (the executed valuation) and inputs_sha256 = review.inputs_digest(val, inputs), which
     also covers inputs.decision/card/forecast as supplied (rv['binding'] shows the value to sign): an analyst override added
@@ -399,6 +404,14 @@ def run(fb, inputs=None):
             cf['errors'].append({'stage': name, 'error': f'{type(e).__name__}: {e}'})
             return None
 
+    mc = None
+    if 'market_context' in inputs:
+        from . import market_context
+        mc = stage('market_context', lambda: market_context.build(fb, inputs['market_context'], inputs))
+        fi = ((mc or {}).get('country_risk') or {}).get('forecast_input')
+        if fi and 'country_risk' not in (inputs.get('forecast') or {}):
+            inputs['forecast'] = {**(inputs.get('forecast') or {}), 'country_risk': fi}
+        cf['market_context'] = mc
     qa = stage('dataqa', lambda: dataqa.validate(fb, fb.get('capital_structure')))
     an = stage('analysis', lambda: analysis.analyze(fb, qa)) if qa else None
     card = stage('model_card', lambda: model_card.build(fb, an, qa, inputs.get('card'))) if an else None
@@ -407,7 +420,7 @@ def run(fb, inputs=None):
     val = stage('valuation', lambda: valuate(fb, qa, fc, inputs)) if fc else {'status': 'not_computed', 'reason': 'forecast unavailable'}
     if val is None:
         val = {'status': 'not_computed', 'reason': 'valuation failed: ' + cf['errors'][-1]['error']}
-    rk = stage('risk', lambda: risk.assess(fb, qa, an, card, fc, val)) if card else None
+    rk = stage('risk', lambda: risk.assess(fb, qa, an, card, fc, val, market=mc) if mc else risk.assess(fb, qa, an, card, fc, val)) if card else None
     rv = stage('review', lambda: review.audit(fb, qa, an, card, fc, val, rk, inputs.get('reviewer'), inputs_sha256=review.inputs_digest(val, signed),
                                               authors=review.input_authors(signed))) if rk else None
     parts = {'fb': fb, 'qa': qa, 'an': an, 'card': card, 'fc': fc, 'val': val, 'rk': rk, 'rv': rv}

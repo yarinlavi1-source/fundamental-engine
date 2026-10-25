@@ -159,11 +159,18 @@ def build(fb, an, card, qa, inputs, rates, reviews, warn, warnings, empty):
     adj = [{'factor': 'stage:' + stage, 'value': st_add, 'reason': f'business-risk add-on for the {stage} stage'},
            {'factor': 'balance_sheet_business', 'value': BANK_KE_ADDON,
             'reason': 'balance-sheet leverage and the credit / underwriting cycle (documented add-on, not a measured beta)'}]
+    cr = inputs.get('country_risk')            # forecast.COUNTRY_RISK_KEYS, validated by forecast.build; absent -> no row
+    if cr is not None:
+        ke = min(max(rf + erp + st_add + BANK_KE_ADDON + float(cr['value']), rf + .02), .20)
+        adj.append({'factor': 'country_risk', 'value': float(cr['value']),
+                    'reason': f"country risk premium above the US base, {cr.get('channel') or 'revenue'}-weighted: "
+                              f"{cr.get('detail') or 'exposure split'} ({cr['title']})"})
     # the operating forecast's component shape (forecast._ke_parts), without a relevering row: deposits and float are operating funding
     ke_parts = {'risk_free': rf, 'equity_risk_premium': erp, 'notes': [rf_note, erp_note],
                 **{'adjustment_' + a['factor'].replace(':', '_'): a['value'] for a in adj}, 'adjustments': adj, 'table_rate': ke,
                 'unlevered': ke, 'asset_unlevered': None, 'leverage': None,
-                'formula': 'Ke = risk-free + equity risk premium + stage add-on + balance-sheet add-on; no relevering'}
+                'formula': 'Ke = risk-free + equity risk premium + stage add-on + balance-sheet add-on' + (' + country risk' if cr else '')
+                           + '; no relevering'}
     above = sum(1 for _, x in roe_hist if x > ke)
     persistent = len(roe_hist) >= PERSISTENT['min_years'] and above >= PERSISTENT['share_above'] * len(roe_hist)
     kept = PERSISTENT['kept'] if persistent else EXCESS_KEPT
@@ -231,6 +238,12 @@ def build(fb, an, card, qa, inputs, rates, reviews, warn, warnings, empty):
         if src and 'case' in src:
             extra[src['case']['id']] = src['case']
     rate_ids = [x['fb'] if 'fb' in x else x['case']['id'] for x in (rf_src, erp_src) if x] or [RULES]
+    crp_ids = []
+    if cr is not None:
+        extra['input:country_risk'] = {'id': 'input:country_risk', 'title': cr['title'], 'url': cr['url'], 'kind': 'analyst_input',
+                                       'published_at': str(cr['as_of'])[:10], 'available_at': str(cr['as_of'])[:10],
+                                       'retrieval': 'provider_normalized'}
+        crp_ids = ['input:country_risk'] + list(cr['evidence_ids'])
     rows = []
 
     def add(aid, topic, kind, values, rationale, falsifier, source_ids):
@@ -272,7 +285,7 @@ def build(fb, an, card, qa, inputs, rates, reviews, warn, warnings, empty):
         rate_ids + [RULES])
     add('cost_of_equity', 'cost of equity', 'model', {'value': ke, 'components': ke_parts},
         'risk-free + equity risk premium + stage add-on + balance-sheet add-on; no relevering (deposits and float are operating funding)',
-        'A dated market-implied cost of equity for comparable banks or insurers differs by more than 1.5 points.', rate_ids + [RULES])
+        'A dated market-implied cost of equity for comparable banks or insurers differs by more than 1.5 points.', rate_ids + crp_ids + [RULES])
     add('regulatory_capital', 'regulatory capital', 'model', {'checked': False},
         'risk-weighted assets and capital ratios are not in companyfacts: the plan is not checked against capital requirements',
         'CET1 (or solvency) ratios fall below requirements plus buffers on this payout.', [RULES])

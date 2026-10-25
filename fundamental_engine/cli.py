@@ -139,6 +139,10 @@ def main():
     pr.add_argument("--inputs", help="JSON with analyst inputs (card, forecast, reviewer, decision)")
     pr.add_argument("--qualitative", help="JSON with dated sources and qualitative items to add to the FactBook")
     pr.add_argument("--out", required=True, help="Output folder (keep it outside Git for private or vendor data)")
+    pr.add_argument("--macro", help="saved FRED folder (scripts/collect_market_context.py, runs/macro/fred_<date>): its readings at "
+                                    "as_of become inputs.market_context.regime (context only: moves no value)")
+    pr.add_argument("--country-risk", action="store_true", help="switch the market_context stage on: a country-risk row in the "
+                    "cost of equity from the annual report's revenue / long-lived assets by geography (market_context.py)")
     sc = subs.add_parser("screen", help="Discovery scan of universe rows (JSON list or {rows: [...]}) into lenses and a shortlist")
     sc.add_argument("rows")
     sc.add_argument("--options", help="JSON options (themes, top_n, sector cap, anchors)")
@@ -173,6 +177,10 @@ def main():
     dp.add_argument("--index", help="calibration JSON (calibration.market_implied): its index_input becomes inputs.index for every company")
     dp.add_argument("--market", help="dated market inputs JSON {risk_free, equity_risk_premium} (each {value, as_of, title, url}): "
                                      "forecast inputs for every company that does not set its own; risk_free only for USD reporters")
+    dp.add_argument("--macro", help="saved FRED folder (scripts/collect_market_context.py): the regime readings at --as-of become "
+                                    "inputs.market_context.regime for every company (context only: moves no value)")
+    dp.add_argument("--country-risk", action="store_true", help="switch the market_context stage on for every company: a "
+                    "country-risk row from its own geography disclosures (a company's inputs.market_context overrides apply)")
     pf = subs.add_parser("portfolio", help="READ-ONLY analysis of saved Interactive Brokers payloads; prints to stdout, stores nothing")
     pf.add_argument("positions")
     pf.add_argument("--summary")
@@ -211,7 +219,14 @@ def main():
                 fb = factbook_from_run_dir(args.raw_dir, company, args.as_of)
             if args.qualitative:
                 add_qualitative_bundle(fb, read_json(args.qualitative))
-            cf = run(fb, read_json(args.inputs) if args.inputs else None)
+            inp = read_json(args.inputs) if args.inputs else None
+            if args.country_risk:
+                from .market_context import with_country_risk
+                inp = with_country_risk(inp)
+            if args.macro:
+                from .market_context import read_regime, with_regime
+                inp = with_regime(inp, read_regime(args.macro, fb['as_of']))
+            cf = run(fb, inp)
             out = Path(args.out); out.mkdir(parents=True, exist_ok=True)
             (out / "factbook.json").write_text(json.dumps(fb, indent=1, ensure_ascii=False), encoding="utf-8")
             (out / "casefile.json").write_text(json.dumps(cf, indent=1, ensure_ascii=False, default=str), encoding="utf-8")
@@ -303,6 +318,10 @@ def main():
             cfs, ran = [], []
             index_input = (read_json(args.index).get('index_input') if args.index else None)
             market = read_json(args.market) if args.market else None
+            regime = None
+            if args.macro:
+                from .market_context import read_regime, with_regime
+                regime = read_regime(args.macro, args.as_of)
             for s in syms:
                 folder = base / 'companies' / s
                 inp = read_json(folder / 'inputs.json') if (folder / 'inputs.json').exists() else {}
@@ -310,6 +329,11 @@ def main():
                     inp = {**inp, 'decision': {**(inp.get('decision') or {}), 'index': index_input}}
                 if market:
                     inp = handoff.with_market_inputs(inp, market, str(folder))
+                if args.country_risk:
+                    from .market_context import with_country_risk
+                    inp = with_country_risk(inp)
+                if regime:
+                    inp = with_regime(inp, regime)
                 fb, cf = handoff.run_company(str(folder), args.as_of, inputs=inp or None)
                 out = folder / 'out'; out.mkdir(parents=True, exist_ok=True)
                 (out / "factbook.json").write_text(json.dumps(fb, indent=1, ensure_ascii=False), encoding="utf-8")

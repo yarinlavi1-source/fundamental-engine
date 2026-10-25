@@ -1152,8 +1152,11 @@ def _model_ke(view, fc):
     comp = (((fc or {}).get('cost_of_equity') or {}).get('components')) or {}
     lev = comp.get('leverage') or {}
     ku = _num(comp.get('unlevered'))
-    return {'value': ke, 'unlevered': ku, 'leverage': (_num(lev.get('ke')) - ku) if _num(lev.get('ke')) is not None and ku is not None else None,
-            'd_to_e': _num(lev.get('d_to_e'))}
+    out = {'value': ke, 'unlevered': ku, 'leverage': (_num(lev.get('ke')) - ku) if _num(lev.get('ke')) is not None and ku is not None else None,
+           'd_to_e': _num(lev.get('d_to_e'))}
+    if _num(comp.get('adjustment_country_risk')) is not None:      # market_context: the forecast's own country-risk row
+        out['country_risk'] = _num(comp['adjustment_country_risk'])
+    return out
 
 
 def _required_return(A, index, card, g, rk, an=None, ke=None):
@@ -1206,6 +1209,13 @@ def _required_return(A, index, card, g, rk, an=None, ke=None):
     total = sum(c['value'] for c in comps)
     prem = min(total, PREMIUM['cap'])
     h = index['value'] + prem
+    crp = (ke or {}).get('country_risk')
+    if crp is not None:
+        # the index return is a US market return; the company's exposure carries country risk above the US base (the forecast's
+        # own row, market_context.country_risk): a rate difference, not a permanent-loss premium, so it sits outside the cap
+        add('country_risk', crp, 'country risk premium above the US base (exposure-weighted Damodaran CRP; the same row as the '
+                                 "forecast's cost of equity): the index it is added to is a US market return")
+        h += crp
     floor = {'value': (ke or {}).get('value'), 'binding': False, 'basis': "the engine's own cost of equity for this company (base scenario)"}
     if floor['value'] is not None and floor['value'] > h + 1e-12:
         lev = (ke or {}).get('leverage')

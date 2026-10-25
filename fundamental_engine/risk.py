@@ -37,6 +37,13 @@ the bear is flagged not_more_severe_than_bear. When that path runs out of cash t
 filled with equity at a depressed price, so the loss shows up as dilution instead of a withheld
 number. Severity thresholds are descriptive screens, never automatic rejections.
 
+Evidenced geopolitical / regulatory exposures (inputs.market_context.exposures, market_context.exposures) add one failure
+scenario each, 'exposure:<kind>' (kind 'exposure'): the shock (market_context.shock_row: the evidenced share of revenue lost,
+or the evidenced cost rate on the exposed share) is applied to the bear row (value_per_share, the mechanism's stress value)
+and to the base row (base_value_with_shock: what the event alone costs the base case), each re-run the same way; and one
+register entry 'geo.exposure.<kind>' in the counter-thesis (high when the base effect reaches the pricing materiality bar).
+The executed bear/base/bull are unchanged: an exposure is quantified, not silently priced. No exposure input, no change.
+
 error_size measures only the possible VALUATION error (scenario range, discount-rate sensitivity,
 terminal dependence, unverifiable red-team checks). Data limits, business understanding and unassessed
 dimensions are process gaps listed separately (error_size.process_gaps): they lower confidence, and
@@ -787,7 +794,74 @@ def _permanent(spec, kind, drop, price, bear_value=None):
         return {**out, 'status': 'not_computed', 'value_per_share': None, 'reason': f'{type(e).__name__}: {e}'}
 
 
-def failure_scenarios(card, fc, result, case, today, price):
+def exposure_variant(spec, x, row='bear'):
+    """Driver spec whose bear row is <row> (bear or base) with exposure x applied (market_context.shock_row) and the row's
+    executed funding plan removed (re-closed by fund_with_equity like every failure scenario); returns (spec, edits)."""
+    from .market_context import shock_row
+    s2 = deepcopy(spec)
+    count = len(s2['boundaries'])
+    stub = 1 if s2.get('stub_annual_revenue_rate') is not None else 0
+    r = deepcopy(scen(s2, row))
+    r['name'] = 'bear'
+    pre = _strip_funding(s2, r, count)
+    edits = shock_row(r, x, count, stub)
+    r['thesis'] = x['mechanism'] + f" Evidenced exposure: {x['share']:.1%} ({x['share_basis']}); {x['note']}"
+    s2['scenarios'] = [r] + [sc for sc in s2['scenarios'] if sc['name'] in ('base', 'bull')]
+    return s2, pre + ([f'the {row} row as the starting point'] if row != 'bear' else []) + edits
+
+
+def _run_variant(s2, price):
+    """Execute a variant spec; a funding-blocked bear is re-closed with equity at a depressed price. -> (value, dilution, sha, extra edits)
+    or (None, reason, None, [])."""
+    c2 = build_case(s2)
+    r2, dilution, more = value_company(c2), None, []
+    if scen(r2, 'bear')['status'] == 'funding_blocked':
+        det = {}
+        r3, raised, issue = fund_with_equity(c2, 'bear', price, det)
+        if r3 is None:
+            return None, 'funding gap not closed with equity at the depressed price within the search: loss could approach 100%', None, []
+        rows = scen(r3, 'bear')['forecast']
+        dilution = {'equity_raised': raised, 'issue_price': issue, 'issue_discount_to_quote': ISSUE_DISCOUNT, 'fee_rate': ISSUE_FEE,
+                    'new_shares': sum(r['new_financing_shares'] for r in rows), 'original_ownership_retained': rows[-1]['original_ownership'],
+                    'investments_liquidated': det['investments_liquidated'], 'payouts_paused': det['payouts_paused']}
+        if raised:
+            more.append(f'funding gaps closed with {raised:,.0f} of equity at {issue:.4g} per share ({ISSUE_DISCOUNT:.0%} below the quote, '
+                        f'{ISSUE_FEE:.0%} fees)')
+        r2 = r3
+    return num(r2['annual_values'][0]['bear']), dilution, r2['input_sha256'], more
+
+
+def _exposure(spec, x, price, bear_value, base_value):
+    """One evidenced exposure as a failure scenario: the shock on the bear row (value_per_share) and on the base row
+    (base_value_with_shock, base_effect = 1 - shocked base / base)."""
+    out = {'name': 'exposure:' + x['id'], 'kind': 'exposure', 'mechanism': x['mechanism'], 'exposure': {
+               k: x[k] for k in ('kind', 'share', 'share_basis', 'shock', 'cost_rate', 'evidence_ids', 'note')},
+           'label_he': x['label_he'], 'base_value': base_value,
+           'observable_signs': [f"Company or official disclosure that the exposed {x['share']:.0%} ({x['share_basis'].replace('_', ' ')}) "
+                                'is restricted, lost or repriced', 'Guidance cut naming the exposure',
+                                'New export rules, tariffs, sanctions or bans covering the exposed products or markets']}
+    if not spec:
+        return {**out, 'status': 'not_computed', 'value_per_share': None,
+                'reason': 'no driver spec (forecast.spec) to re-run; only driver-spec operating forecasts are re-executed'}
+    try:
+        s_bear, edits = exposure_variant(spec, x, 'bear')
+        v, dil, sha, more = _run_variant(s_bear, price)
+        if v is None:
+            return {**out, 'status': 'not_computed', 'value_per_share': None, 'edits': edits, 'reason': dil}
+        s_base, edits_base = exposure_variant(spec, x, 'base')
+        vb, dil_b, sha_b, more_b = _run_variant(s_base, price)
+        eff = (1 - vb / base_value) if vb is not None and base_value and base_value > 0 else None
+        return {**out, 'status': 'computed', 'value_per_share': v, 'loss_from_price': _loss(v, price), 'gap_vs_price': _gap(v, price),
+                'edits': edits + more, 'dilution': dil, 'input_sha256': sha,
+                'base_value_with_shock': vb, 'base_effect': eff, 'base_edits': edits_base + more_b, 'base_dilution': dil_b,
+                'not_more_severe_than_bear': None if v is None or bear_value is None else v >= bear_value,
+                'calculation': 'drivers.build_case + valuation.value_company with the bear row (and, separately, the base row) shocked '
+                               'by the evidenced share only; no probability'}
+    except (ValueError, KeyError, ZeroDivisionError, StopIteration) as e:
+        return {**out, 'status': 'not_computed', 'value_per_share': None, 'reason': f'{type(e).__name__}: {e}'}
+
+
+def failure_scenarios(card, fc, result, case, today, price, exposures=None):
     primary = ((card or {}).get('business_model') or {}).get('primary')
     kinds = [LOSS.get(primary, 'growth_stall')]
     early = ((card or {}).get('stage') or {}).get('value') == 'early' or ((card or {}).get('funding') or {}).get('value') == 'needs_external'
@@ -799,10 +873,12 @@ def failure_scenarios(card, fc, result, case, today, price):
     if not result:
         out = [{'name': 'bear', 'kind': 'bear', 'status': 'not_computed', 'mechanism': None, 'observable_signs': [], 'value_per_share': None,
                 'reason': 'no executed valuation'}]
-        return out + [{**_permanent(None, k, drop, None), 'reason': 'no executed valuation'} for k in kinds]
+        return (out + [{**_permanent(None, k, drop, None), 'reason': 'no executed valuation'} for k in kinds]
+                + [{**_exposure(None, x, None, None, None), 'reason': 'no executed valuation'} for x in exposures or []])
     spec = (fc or {}).get('spec') if case.get('method') == 'operating' else None
     bear = _bear(result, case, today, price)
-    return [bear] + [_permanent(spec, k, drop, price, bear['value_per_share']) for k in kinds]
+    return ([bear] + [_permanent(spec, k, drop, price, bear['value_per_share']) for k in kinds]
+            + [_exposure(spec, x, price, bear['value_per_share'], num(today.get('base'))) for x in exposures or []])
 
 
 # ---------------------------------------------------------------- size of error
@@ -869,8 +945,29 @@ def error_size(result, case, today, val, qa, card, reg, rt):
             'formula': 'value_range_rel = (bull - bear) / base at today; band = base value at cost of equity and terminal WACC -/+ 1pp'}
 
 
-def assess(fb, qa, an, card, fc, val):
-    """Risk register, failure scenarios, downside and size of error for one casefile (docs/MODULE_CONTRACTS.md)."""
+def _exposures(add, exposures, scenarios, material):
+    """One counter-thesis register entry per evidenced exposure, quantified by its failure scenario (not in the executed bear
+    path and not in the discount rate: pricing_status not_priced, with the computed effect in pricing_basis)."""
+    by = {x['name']: x for x in scenarios}
+    for x in exposures:
+        sc = by.get('exposure:' + x['id']) or {}
+        eff = sc.get('base_effect')
+        sev = 'high' if eff is not None and eff >= material else 'medium'
+        what = f"{x['share']:.0%} of {'revenue' if x['share_basis'] == 'share_of_revenue' else 'supply'}"
+        add('geo.exposure.' + x['id'], 'geopolitics',
+            f"{x['kind'].replace('_', ' ')}: {what} exposed ({x['note']})"
+            + (f"; if it happens the base value today is {eff:.0%} lower (failure scenario {sc['name']})" if eff is not None else
+               '; effect not computed'), sev, evidence=list(x['evidence_ids']) + ['risk.failure_scenarios.exposure:' + x['id']],
+            assessed=True, description_he=x['label_he'], values={'share': x['share'], 'share_basis': x['share_basis'], 'shock': x['shock'],
+                                                                 'cost_rate': x['cost_rate'], 'base_effect': eff},
+            pricing_basis=(f"quantified by failure scenario exposure:{x['id']} (base value {eff:.0%} lower if it happens; materiality bar "
+                           f"{material:.0%}); not in the executed bear path and not in the discount rate" if eff is not None else
+                           'failure scenario not computed; not in the executed bear path and not in the discount rate'))
+
+
+def assess(fb, qa, an, card, fc, val, market=None):
+    """Risk register, failure scenarios, downside and size of error for one casefile (docs/MODULE_CONTRACTS.md). market: the
+    market_context stage output (its validated exposures become failure scenarios and register entries)."""
     fb, qa, an, card, fc = fb or {}, qa or {}, an or {}, card or {}, fc or {}
     result, case, today, price = valuation_parts(val)
     levers = bear_levers(case, result)
@@ -887,11 +984,15 @@ def assess(fb, qa, an, card, fc, val):
     _red_flags(add, fb, card)
     _execution(add, an, card, result, case, val)
     _valuation(add, an, result, today, price, val)
-    scenarios = failure_scenarios(card, fc, result, case, today, price)
+    exposures = (market or {}).get('exposures') or []
+    scenarios = failure_scenarios(card, fc, result, case, today, price, exposures) if exposures else \
+        failure_scenarios(card, fc, result, case, today, price)
+    if exposures:
+        _exposures(add, exposures, scenarios, material)
     _gates(add, fb, qa, an, card, result, val, rt, liq, weak_cash, scenarios)
     reg.sort(key=lambda r: (CLASS_ORDER[r['class']], SEV_ORDER[r['severity']], r['id']))
     bear = num(today.get('bear'))
-    pl = [x for x in scenarios if x['kind'] == 'permanent_loss' and x.get('value_per_share') is not None]
+    pl = [x for x in scenarios if x['kind'] in ('permanent_loss', 'exposure') and x.get('value_per_share') is not None]
     worst = min(pl, key=lambda x: x['value_per_share']) if pl else None
     downside = {'price': price, 'bear_value': bear, 'loss_to_bear': _loss(bear, price), 'bear_vs_price': _gap(bear, price),
                 'permanent_loss_value': worst['value_per_share'] if worst else None,

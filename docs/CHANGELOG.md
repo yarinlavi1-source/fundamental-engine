@@ -1,3 +1,34 @@
+## Unreleased — market context: country risk, geopolitical exposures, market regime (25.10.2026)
+
+- New `market_context.py`, switched on by `inputs.market_context` (pipeline stage `market_context`; docs/MARKET_CONTEXT.md,
+  brain packet `market_context`). Without the key nothing runs: casefile hash, report, table and paragraph are
+  byte-identical (ADBE fixture; TSEM, PPG, UBER from runs/universe_2026-10-21).
+- Country risk (Damodaran): packaged dated table `brain/country_risk.json` (ctryprem page of January 5, 2026, retrieved
+  2026-10-25: 178 countries, 17 regional averages; US Aa1 CRP 0.23%, Taiwan 0.78%), weighted by revenue by geography from
+  the annual report or an evidenced override, and by long-lived assets / an evidenced operations split as a second channel:
+  add-on = max over the two channels of sum share_i x max(0, CRP_i - CRP_US) (the engine ERP is the US implied premium).
+  Its own `country_risk` row in the cost of equity (operating and residual-income routes), kept in the terminal rate
+  (structural), sourced `input:country_risk`, and in the decision's required return. Aggregates ('Rest of world', 'Non US',
+  'Americas') and unitemized shares carry no add-on and make it a labelled lower bound; overlapping region/country splits
+  use the complete non-overlapping subset with the largest add-on; no readable split -> no row and an open question.
+  `inputs.forecast.country_risk` {value, as_of, channel, title, url, detail, evidence_ids} is validated (0-20%, dated on or
+  before as_of, evidence ids). 60% US / 40% Taiwan -> +0.22%.
+- Exposures: `market_context.exposures` [{kind: taiwan_supply | china_export_controls | tariffs | sanctions | regulatory_ban |
+  conflict_disruption, share_of_revenue | share_of_supply, evidence_ids, note, shock?, cost_rate?}] -> one failure scenario
+  `exposure:<kind>` each (`risk.exposure_variant`: the evidenced share of revenue lost from the first full year, or the
+  evidenced cost rate on the exposed share; applied to the bear row and, separately, to the base row; re-run through
+  drivers + valuation like the permanent-loss scenarios) and one register entry `geo.exposure.<kind>` in the counter-thesis.
+  No default severity, no probability; the executed bear/base/bull are unchanged.
+- Market regime (context only): `scripts/collect_market_context.py` saves FRED DGS10, BAA10Y, VIXCLS, T10Y2Y with URL,
+  retrieval time and SHA-256 under runs/macro/ (gitignored); `read_regime` reads them at as_of; `classify_regime` bands are
+  historical percentiles (documented in the module) -> one Hebrew row in `render.hebrew_table` and a clause in the
+  paragraph when it fits. No value, rate, scenario or verdict reads it (tested). CLI: `--macro <folder>` on `pipeline` and
+  `deep` (regime only: never switches the country row on) and `--country-risk`.
+- Render: country-risk and exposure explanation lines under the Hebrew table, a `## Market context` report section; the
+  analyst sheet's geopolitics question carries the computed exposure effects.
+- Known open item: a near-zero equity under the survival / external-funding model (LITE on 2026-10-21 data) is not
+  monotonic in the cost of equity: its base rose 2.80 -> 3.21 with a 1.15% country row.
+
 ## Unreleased — calibration fixes (21.10.2026)
 
 - Terminal growth follows the convention of the ERP it is paired with (`forecast.TERMINAL_BEAR_GAP` comment): base = bull =
