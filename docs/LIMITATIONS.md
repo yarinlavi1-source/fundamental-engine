@@ -183,7 +183,7 @@ Companion to docs/EVIDENCE_STATUS.md, which separates what tests prove from what
     4.5% ERP in the walk-forward where the dated implied ERP was 4.2-6.1%) and model inconsistencies (terminal stage and
     funding add-ons; a cyclical industry word read as a margin peak or charged in the rates without evidence; platform
     routing; start-up losses in a scale-up's terminal ROIC). On
-    the 61-name A/B the year profile is now flat, but the level is not closed: The combined 0.13.0 A/B on the same 61 names is running; its numbers follow in the next commit. The diagnosis puts
+    the 61-name A/B the year profile is now flat, but the level is not closed: median value/price 0.673 (0.12.0: 0.719; 2025 formations 0.51 -> 0.66), and the value dated one and three years ahead sits a median 37% below the price then realized (log bias -0.46; 0.12.0: -0.37 / -0.35).The diagnosis puts
     the rest in growth fade and stage rates for high-growth names (PLTR, NVDA, AVGO, NOW stay far below price even at the
     engine-consistent rate) and in survivor-biased, bull-market prices; value/price still has no demonstrated ranking power.
     Reaching price would mean underwriting peak multiples, so it is not done. The deepest-discount names did not go on to

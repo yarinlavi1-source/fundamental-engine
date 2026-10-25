@@ -4,7 +4,7 @@ The owner found the engine's values far below market prices and below a human an
 large caps) confirmed values ~35-45% below the prices reached 1-5 years later, a gap that never closed, and value/price with
 about zero ranking power. Authorized fix, kept principled: inconsistencies and bugs only; no anchoring to the current price,
 no momentum premium, no constant tuned to the backtest. Each change below was A/B'd on the same 61 names (2016-2025) where
-it could move a number. Combined result: pending (combined 0.13.0 A/B on the same 61 names is running; its numbers follow in the next commit.)
+it could move a number. Combined result (`scripts/backtest_engine.py` on the 2026-10-21 universe, 0.13.0 at 88cda3f): with every 0.13.0 fix the median engine value / price is 0.673 (0.12.0: 0.719); the latest formations rose (2024 0.53 -> 0.63, 2025 0.51 -> 0.66) and the early ones fell under the dated ERP (2016 0.86 -> 0.67), so the year profile is flat (2022 aside, 1.12). The value dated one and three years ahead sits a median 37% below the price then realized (log bias -0.46 at both horizons; 0.12.0: -0.37 / -0.35), median absolute log error 0.56 / 0.64 (0.12.0: 0.50 / 0.57); the IRR path is unchanged (bias -0.09 / -0.22); value/price IC 0.024 (t 0.5): no ranking power. No errors on 497 valued rows.
 
 
 - Terminal growth follows the convention of the ERP it is paired with (`forecast.TERMINAL_BEAR_GAP` comment): base = bull =

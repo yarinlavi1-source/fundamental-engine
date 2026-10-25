@@ -176,11 +176,12 @@ universe):
 | 0.12.0 (ff36ede) | 0.86 | 0.77 | 0.77 | 0.92 | 0.64 | 0.53 | 0.51 | 0.719 |
 | terminal growth = rf only (ERP held at 4.5%) | 0.86 | 0.77 | 0.77 | 0.95 | 0.69 | 0.60 | 0.64 | 0.751 |
 | + dated implied ERP | 0.67 | 0.67 | 0.65 | 1.01 | 0.54 | 0.59 | 0.66 | 0.644 |
+| 0.13.0, all fixes (88cda3f) | 0.67 | 0.73 | 0.70 | 1.12 | 0.54 | 0.63 | 0.66 | 0.673 |
 
 With both conventions consistent, the year profile is flat (2022 aside): the drift is gone. What remains is a level, and
 the dated ERP made it lower, not higher (the engine now discounts at the premium the market was priced at, which was
 above 4.5% in most of these years). The owner's decision on 25.10.2026 keeps the dated ERP because it is the correct input;
-reverting it because the A/B looked worse would be tuning to the backtest. The combined 0.13.0 A/B on the same 61 names is running; its numbers follow in the next commit. The diagnosis puts the
+reverting it because the A/B looked worse would be tuning to the backtest. With every 0.13.0 fix the value dated one and three years ahead still sits a median 37% below the price then realized (log bias -0.46 at both horizons, against -0.37 / -0.35 on 0.12.0) and value/price still has no ranking power (IC 0.024, t 0.5). The diagnosis puts the
 remaining gap in growth fade and stage rates for the high-growth names (at the engine-consistent rate PLTR, NVDA, AVGO and
 NOW still sat at 0.1-0.4x price in 2025), which the other 0.13.0 fixes address only where an inconsistency was found.
 Sections 2-6 still describe that remaining level: it was not earned by later returns, it concentrates in growth names, and
