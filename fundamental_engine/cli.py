@@ -246,6 +246,14 @@ def main():
                                                   "price of a saved casefile.json (read, never revalued; not a forecast)")
     sr.add_argument("casefile")
     sr.add_argument("--json", action="store_true", help="Print the full JSON reasons instead of the Hebrew text")
+    ts = subs.add_parser("ticker-stage", help="Fast ticker procedure: print one stage's filled instructions "
+                                              "(brain/ticker/<stage>.md) for an agent to follow; 'list' shows the stages")
+    from .ticker_stages import STAGES as _TICKER_STAGES
+    ts.add_argument("stage", choices=[*_TICKER_STAGES, "list"])
+    ts.add_argument("--ticker")
+    ts.add_argument("--as-of")
+    ts.add_argument("--run", help="run folder (default <current directory>/runs/tickers/<TICKER>_<as_of>)")
+    ts.add_argument("--prompt", action="store_true", help="print the short prompt the main loop hands the agent instead")
     im = subs.add_parser("import-av", help="Map saved Alpha Vantage statement JSON files into plain history rows")
     im.add_argument("income")
     im.add_argument("--balance")
@@ -254,6 +262,16 @@ def main():
     im.add_argument("--as-of")
     args = parser.parse_args()
     try:
+        if args.command == "ticker-stage":
+            from . import ticker_stages
+            if args.stage == "list":
+                print(json.dumps(ticker_stages.index(), indent=1, ensure_ascii=False))
+                return
+            if not args.ticker or not args.as_of:
+                raise ValueError("ticker-stage needs --ticker and --as-of")
+            print(ticker_stages.prompt(args.stage, args.ticker, args.as_of) if args.prompt else
+                  ticker_stages.render(args.stage, args.ticker, args.as_of, run=args.run))
+            return
         if args.command == "pipeline-plan":
             from .pipeline import collection_plan
             print(json.dumps(collection_plan(args.ticker, args.as_of, args.cik), indent=2))

@@ -1,3 +1,44 @@
+## Unreleased — the fast ticker procedure: one ticker in about 20 minutes (25.10.2026)
+
+The owner's limit is 10-20 minutes for one ticker, without harming the result. Measured on NVDA with the saved Workflow
+`ticker`: about 75 minutes, almost all of it waiting, not checking. The Workflow runtime caps concurrent agents at
+min(16, CPUs - 2) = 2 on the 4-CPU box, so Identify alone took 9 minutes, the four gather lanes ran in two waves of about
+8 minutes, and Understand, Position, Value, the three review lenses (two waves) and Deliver ran one after another.
+
+- New default: the main loop orchestrates (CLAUDE.md "On a ticker"). In one turn it starts `scripts/ticker_prefetch.py`
+  (background Bash, seconds) and four background Agent-tool lanes on model sonnet (retrieval and extraction on fixed
+  checklists and schemas): gather_numbers, gather_documents, gather_field, gather_macro (~5-7 min); then ONE analyst agent
+  does Understand + Position + Value (~8-10 min); then the two reviewers run in parallel (~4-5 min), a critical finding goes
+  back to the analyst for one repair pass or the result is a draft; the main loop delivers the table and freezes the
+  ledger. Targets: ~20 min for a new ticker, ~12-15 min for a repeat within 30 days; these are design estimates from
+  the measured stage times, not yet measured end to end. The saved Workflow stays as the slower thorough fallback (one
+  agent per phase).
+- `scripts/ticker_prefetch.py <TICKER> <as_of> [--reuse auto|none|<run dir>]`: the deterministic part, no LLM, seconds. SEC
+  CIK (saved ticker map first), submissions cut at as_of, companyfacts, the latest 10-K / 10-Q / proxy into the raw layout
+  the engine reads (manifest rows with filed / report_date / accession, as collect_companies writes them), the other 10-Qs
+  since the 10-K and the exhibits 99 of the last 8 earnings 8-Ks under documents/, their plain text under reading/ (10-K
+  Items 1, 1A and 7 apart), the FRED regime series (the collect_market_context layout, for deep --macro) and market.json
+  (dated DGS10 and the newest saved implied ERP, for deep --market), the company file skeleton and identity.json from SEC,
+  the companyfacts facts of the last 6 fiscal years and 8 quarters (each citing the companyfacts records of its filing date,
+  so it is citable LAG_DAYS after that filing), the computed company type (classify_company) and forensic screens, and
+  gather/_prefetch.json (a pack fragment with the pf_ sources; it sorts first, so its ids win on a shared URL). Network
+  failures and a missing SEC_USER_AGENT are recorded as gaps, never fatal; a host that fails twice is skipped for the rest
+  of the run. --reuse auto copies an earlier run of the same ticker within 30 days (fragments, connector payloads except
+  the price snapshot, saved documents) and lists the filings dated after it, the only ones re-read; its judgement files are
+  kept under reuse/ for reference, never as the active position. On the saved NVDA payloads it rebuilt the identity agent's
+  company type (high_growth / stalwart) and 187 facts in 0.4 s.
+- Stage instruction files `fundamental_engine/brain/ticker/` (packaged; scripts/check_wheel.py asserts they ship and fill):
+  gather_numbers, gather_documents, gather_field, gather_macro, analyst, review_numbers, review_counter and deliver. Each
+  carries every rule the matching part of ticker.js carries (connector order per session_capabilities, IBKR strictly
+  READ-ONLY, untrusted documents, source registration fields, citability with LAG_DAYS, company-first, the stop rule, fragment
+  shapes and outputs) in a common block identical in every file, the lane's own keys (no two lanes write the same item;
+  only gather_numbers writes identity.json and company.json) and a budget sized for about 5-6 minutes. Placeholders
+  {TICKER}, {AS_OF}, {RUN}. CLI `python -m fundamental_engine ticker-stage <stage> --ticker T --as-of D [--run DIR]
+  [--prompt]` prints the filled instructions (or the short prompt the main loop hands the agent); `ticker-stage list` shows
+  the stages, models, budgets and outputs (module fundamental_engine.ticker_stages).
+- master_process names which step runs in which agent. No valuation rule, engine number or review gate changed: the same
+  pack-merge, pack-to-inputs, deep, review and ledger steps run, only in fewer waits.
+
 ## 0.14.0 — the ticker brain: one company, from its own evidence (25.10.2026)
 
 The owner sends a ticker; the saved Workflow `ticker` (`.claude/workflows/ticker.js`) walks the `master_process` skeleton

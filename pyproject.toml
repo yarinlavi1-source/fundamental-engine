@@ -16,4 +16,4 @@ fundamental = "fundamental_engine.cli:main"
 include = ["fundamental_engine*"]
 
 [tool.setuptools.package-data]
-fundamental_engine = ["brain/*.json", "brain/protocols/*.md", "brain/playbooks/*.md"]
+fundamental_engine = ["brain/*.json", "brain/protocols/*.md", "brain/playbooks/*.md", "brain/ticker/*.md"]

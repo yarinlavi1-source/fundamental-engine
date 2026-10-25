@@ -1,12 +1,29 @@
 # Master process: the ticker skeleton
 
 When the owner sends a ticker, walk this skeleton for THAT company, in order, until it is understood in depth and
-valued by what will most likely happen. The saved workflow `.claude/workflows/ticker.js` (Workflow name `ticker`, args
-`{ticker, as_of}`) runs it; by hand, follow the same phases. One company per ticker: every driver is built from that
+valued by what will most likely happen. The default is the fast procedure (CLAUDE.md "On a ticker", about 20 minutes for a
+new ticker): `scripts/ticker_prefetch.py` does the deterministic part in seconds, then the main loop runs four gather lanes
+in parallel, one analyst and two reviewers, each following its stage file (`python -m fundamental_engine ticker-stage
+<stage>`, fundamental_engine/brain/ticker/). The saved workflow `.claude/workflows/ticker.js` (Workflow name `ticker`, args
+`{ticker, as_of}`) runs the same phases more slowly and thoroughly (one agent per phase) and stays the fallback; by hand,
+follow the same phases. One company per ticker: every driver is built from that
 company's own evidence (its guidance adjusted by its own track record, contracted demand, attributed consensus, its own
 history) or from NAMED direct competitors with the reason each one is a competitor. Base rates and other companies'
 numbers are at most a warning row. A lever without company evidence stays a visible gap (wider range, lower
 confidence), never another company's number. Market prices of risk (risk-free, ERP, credit spread, country risk) stay.
+
+Who runs which step in the fast procedure (every stage file carries the rules of the phases it runs):
+
+| Runs it | Steps | Writes |
+|---|---|---|
+| `ticker_prefetch` (script, no LLM, seconds) | 1 (CIK, filings list, company.json skeleton, reporting currency), 2 (computed type and forensic screens), the SEC documents and companyfacts facts of Phase 2, the FRED risk-free and the saved ERP | `prefetch.json`, `identity.json`, `companies/<T>/raw/`, `documents/`, `reading/`, `gather/_prefetch.json`, `market.json`, `macro/fred/` |
+| `gather_numbers` agent | 1 (identity check: security, share class, exchange, quote currency; the stop rule), Phase 2 statements reconciled, price (IBKR READ-ONLY), own multiple history, attributed consensus, guidance track record | `gather/numbers.json`, identity and company files |
+| `gather_documents` agent | Phase 2 reports, release and transcript; current guidance; KPIs, segments, customers; risk factors | `gather/documents.json` |
+| `gather_field` agent | Phase 2 named competitors and their numbers; bottlenecks; share trajectory (inputs of 5 and 12) | `gather/field.json` |
+| `gather_macro` agent | Phase 2 market and geopolitics: rates check, geography, exposures, news (inputs of 11) | `gather/macro.json` |
+| `analyst` agent (one) | 3-15: Understand, Position, Value (pack-merge, pack-to-inputs, deep), and the one repair pass | `understand/`, `position.json`, `evidence_pack.json`, `companies/<T>/out/` |
+| `review_numbers` + `review_counter` agents (parallel) | 16: trace and company-first; counter-thesis, peak multiple, events | `review/numbers.json`, `review/counter.json` |
+| the main loop | 17: the owner's table, explanations, sources; ledger freeze | `deliver/` |
 
 Each phase has an entry rule (what must exist before it starts), the steps, the required outputs (files under
 `runs/tickers/<TICKER>_<as_of>/`, gitignored) and an exit rule (what must be true before moving on). A failed exit rule
