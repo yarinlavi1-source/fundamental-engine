@@ -16,9 +16,15 @@ named), growth_split (ln(1+g) = sum ln(1+g_i) + residual, every factor tagged) a
 scope, the split, the model's checks, falsifiers, open questions, input_sha256). WP4: model selection (select: the
 card type, the industry / SIC / profile text, the segment names and the KPI facts, two agreeing signals, KPI facts
 before labels, unclassified instead of a forced label, an analyst override only with a reason and evidence, the rule
-result shown beside it; select_case and select_factbook read those inputs point in time). Later work packages add the
-overlays, the quarter-review link and the Hebrew text. Nothing here is called by the pipeline, so every existing output
-stays byte-identical (no-input invariance).
+result shown beside it; select_case and select_factbook read those inputs point in time). WP5: the overlays, each on
+its own sourced case blocks and only when they are supplied: vendor_financing (the funding ledger as stock-to-flow shares
+of annualized revenue, the contingent ceiling kept apart, statement checks on matched windows only, the level),
+chain (own share via the funded chain x the upstream exposed share, the upstream review linked by sha256),
+acquisition_sbc (the ongoing ratio, the tranche schedule and its mismatch), bank_capital (quarter._bank at both ends of
+the target range, ROTE if all excess were returned, the price-implied ROTE, nco_basis), contract_coverage (lta_unproven)
+and segments (segment_unexplained, EBITDA - capex); review() runs them and merges their flags. Later work packages add
+process evidence, the quarter-review link and the Hebrew text. Nothing here is called by the pipeline, so every existing
+output stays byte-identical (no-input invariance).
 
 Boundaries: fetches nothing; the registry holds no company data; thresholds are uncalibrated screens frozen in
 docs/prereg_econ.md; a result of this layer is never a valuation, a moat rating or a trade instruction.
@@ -501,8 +507,9 @@ def kpi_table(fb, model_id, as_of=None):
 # currency, period ('quarter', 'year', ...), sources {id: {kind, available_at}}, lines {line: {value, growth, prior, ...}},
 # kpis [{id, value, growth, prior, kpi_basis, scope, currency_basis, window, source_ids}], segments [{name, revenue,
 # profit, profit_definition, operating_income | operating_margin, <KPI id>, source_ids}], and the optional blocks read
-# here: sensitivities, disclosure_changes, reclassification_evidence, cycle and market (memory_cycle only). Every other
-# block is listed under not_read: later work packages read it (funding links, bank capital, contracts, SBC tranches).
+# here: sensitivities, disclosure_changes, reclassification_evidence, cycle and market (memory_cycle only), funding (the
+# stated annual deposit benefit, read as the line deposit_funding_benefit). The overlay blocks are read by WP5 (see the
+# overlays section); every other block is listed under not_read.
 # A growth rate is read in its comparison window: `growth`/`prior` in the item's `window` ('y/y' unless it says 'q/q'),
 # `growth_qoq`/`prior_quarter` and `prior_year` always in theirs; 'TTM', 'quarter', 'year' in `window` or `period` are
 # measurement windows. Nothing is fetched; nothing is filled in.
@@ -530,8 +537,9 @@ SEGMENT_LINES = (('revenue', 'revenue', 'prior_revenue'), ('revenue', 'segment_r
 SEGMENT_MARGINS = {'operating_income': 'operating_margin', 'gross_profit': 'gross_margin', 'adjusted_ebitda': 'adjusted_ebitda_margin'}
 CASE_META = ('_schema', '_provenance', 'company', 'name', 'period_end', 'period', 'as_of', 'as_of_note', 'currency',
              'reconciled_to_filings', 'sources', 'model', 'model_hint')
-# the registry checks this version computes; every other declared check of a selected model is listed under
-# checks_not_run (overlays, process evidence and the quarter-review peak exception arrive with later work packages)
+# the registry checks the review computes itself; an overlay's checks (registry overlays.<id>.checks) count as run when
+# the overlay ran (WP5); every other declared check of a selected model is listed under checks_not_run with the reason
+# (an overlay whose inputs the case does not supply; process evidence and the quarter-review peak exception come later)
 CHECKS_RUN = ('per_unit_vs_units', 'take_rate_shift', 'thesis_on_minor_line', 'core_units_flat', 'disclosure_dropped',
               'cyclical_deceleration', 'expansion_led', 'cumulative_kpi_not_activity', 'rate_sensitivity_share',
               'margin_only_normalized', 'segment_reconciliation', 'basis_mismatch', 'scope_mismatch', 'capex_per_unit_lag')
@@ -557,8 +565,8 @@ REVIEW_BOUNDARY = ('a deterministic read of caller-supplied, sourced KPIs and li
                    'moat rating and not a trade instruction; thresholds are uncalibrated screens (docs/prereg_econ.md).')
 
 
-def _num(x, label, minimum=None):
-    return None if x is None else number(x, label, minimum)
+def _num(x, label, minimum=None, maximum=None):
+    return None if x is None else number(x, label, minimum, maximum)
 
 
 def _name(ref):
@@ -738,7 +746,8 @@ def _index(case, mids):
             {'kind': 'kpi', 'id': kid, 'scope': scope, 'basis': basis, 'unit': kpi(kid)['unit'], 'money': money,
              'currency': _currency_code(row.get('unit'), case['currency'], label) if money else None, 'currency_basis': cb,
              'measure': _measure(row, basis, case['period'], label), 'value': value, 'cmp': cmp, 'ref': ref, 'source_ids': ids,
-             'window': row.get('window') if row.get('window') in COMPARISONS else 'y/y'})
+             'window': row.get('window') if row.get('window') in COMPARISONS else 'y/y',
+             'measure_stated': row.get('period') is not None or row.get('window') in MONTHS})
     block = case.get('lines') or {}
     if not isinstance(block, dict):
         raise ValueError('lines: an object {line: {...}}')
@@ -833,6 +842,7 @@ def _index(case, mids):
                 field = 'margin' if it['margin'] is not None else 'share_of_revenue'
                 it['value'] = it[field] * rev['value']
                 it['derived_from'] = f'{it["ref"]}.{field} x {rev["ref"]}.value'
+    _funding_line(ix)
     ev = case.get('reclassification_evidence')
     if ev is not None:
         ix['read'].add('reclassification_evidence')
@@ -846,6 +856,43 @@ def _index(case, mids):
             ix['reclassified'][e['identity']] = {'status': 'evidenced' if issuer else 'unproven', 'evidence_ids': issuer or ids,
                                                  'reason': e['reason'], 'source_kinds': kinds}
     return ix
+
+
+# The `funding` block states the annual benefit of deposits against alternative funding (SOFI's post: 712m a year). It is
+# the registry line deposit_funding_benefit measured over a year, so the digital_bank product identity deposits x deposit
+# cost advantage is checked against it like any product against its line (WP5). Its deposits and spread are the KPI rows'
+# figures: read from kpis[], never a second time from this block.
+FUNDING_BENEFIT_KEYS = ('annual_benefit', 'post_annual_benefit')
+
+
+def _funding_line(ix):
+    case = ix['case']
+    f = case.get('funding')
+    if f is None:
+        return
+    if not isinstance(f, dict):
+        raise ValueError('funding: an object {annual_benefit, deposits?, spread_vs_alternative?, source_ids}')
+    ix['read'].add('funding')
+    ids = _source_ids(case, f, 'funding')
+    keys = [k for k in FUNDING_BENEFIT_KEYS if f.get(k) is not None]
+    if len(keys) > 1:
+        raise ValueError(f'funding: state the annual benefit once ({" or ".join(FUNDING_BENEFIT_KEYS)})')
+    for k, kid in (('deposits', 'deposits'), ('spread_vs_alternative', 'deposit_cost_advantage')):
+        if f.get(k) is not None:
+            ix['not_read'].append({'ref': f'funding.{k}', 'reason': f'the KPI row kpis[{kid}] carries this figure; supply it there'})
+    if not keys:
+        return
+    if ('deposit_funding_benefit', 'total') in ix['line']:
+        raise ValueError('funding: the annual benefit is stated twice (lines.deposit_funding_benefit and the funding block)')
+    if not _visible(case, ids):
+        _unavailable(ix, 'funding')
+        return
+    ref = f'funding.{keys[0]}'
+    ix['line'][('deposit_funding_benefit', 'total')] = [
+        {'kind': 'line', 'id': 'deposit_funding_benefit', 'scope': 'total', 'basis': 'flow', 'unit': ix['lines']['deposit_funding_benefit']['unit'],
+         'money': True, 'currency': case['currency'], 'currency_basis': 'reported', 'measure': 'year', 'value': number(f[keys[0]], ref),
+         'cmp': {}, 'ref': ref, 'source_ids': ids, 'window': 'y/y', 'role': None, 'margin': None, 'share_of_revenue': None,
+         'pass_through': None, 'prior_pass_through': None}]
 
 
 def _roles(ident):
@@ -901,6 +948,7 @@ def _operand(ix, mid, ref, scope):
             'money': head['money'], 'currency': head['currency'], 'currency_basis': head['currency_basis'],
             'measure': None if end is not None else (per or avg)['measure'], 'unit': head['unit'],
             'annual': ref in ANNUAL_RATE_KPIS or head['unit'].endswith('_year'),
+            'measure_stated': end is not None or (per or avg).get('measure_stated', True),
             'flow': end is None and (per or avg)['basis'] == 'flow', 'cumulative': any(it['basis'] == 'cumulative' for it in rows),
             'undeclared': [] if ok else [{'ref': it['ref'], 'basis': it['basis'], 'declared': list(declared)} for it in items]}
 
@@ -1056,7 +1104,10 @@ def _compute(ix, mid, ident, scope):
         return res, meta
     if money:
         meta.update(money=_is_money(t, roles, present), currency=money[0][1]['currency'], currency_basis=money[0][1]['currency_basis'])
-    measures = {r: op['measure'] for r, op in present.items() if not op['point'] and op['measure']}
+    # an annual rate whose averaging window is not stated is a rate per year at the period: it is put on the line's
+    # window (_variant), so it sets no window of its own; a stated averaging window (a TTM margin rate) must match
+    measures = {r: op['measure'] for r, op in present.items() if not op['point'] and op['measure']
+                and not (op['annual'] and not op.get('measure_stated', True))}
     if len(set(measures.values())) > 1:
         res.update(status='scope_mismatch', windows=dict(sorted(measures.items())),
                    reason='inputs measured over different windows (' + ', '.join(f'{r} {m}' for r, m in sorted(measures.items())) + ')')
@@ -1977,13 +2028,29 @@ def _questions(ix, identities):
     return sorted(out, key=lambda q: (q['model'] or '', q['about'], q['scope'] or '', q['question']))
 
 
-def review(case, model=None, prior=None):
+def _identity_rows(ix, mids):
+    """Every identity of the selected models at every scope its inputs are reported for, as the review shows them."""
+    identities = []
+    for mid in mids:
+        for ident in ix['spec'][mid]['model']['identities']:
+            rows = [_evaluate(ix, mid, ident, scope) for scope in _scopes(ix, mid, ident)]
+            read = any(r.get('value') is not None or r.get('changes') for r, _ in rows)
+            # a non-core identity read at a narrower scope needs no row saying it was not read at the total
+            identities += [r for r, meta in rows if _keep(r, meta)
+                           and not (read and not r['core'] and r['status'] in ('missing', 'scope_mismatch'))]
+    return identities
+
+
+def review(case, model=None, prior=None, *, upstream=None):
     """Read an econ case through its economic model(s): every identity at every scope its inputs are reported for
     (status, levels on the end and average bases, changes per comparison window, residual named), the growth split by
-    tag, the model's checks (flags, readings, measures), the falsifiers and the open questions. `model` is a model id or
+    tag, the model's checks (flags, readings, measures), the overlays whose inputs the case supplies (WP5: who funds the
+    demand, the supplier chain, acquisition SBC, bank capital, contract coverage, segments; `overlays`, their flags merged
+    into `flags` with the overlay named), the falsifiers and the open questions. `model` is a model id or
     {primary, secondary[]} (case['model'] when omitted); none or 'unclassified' is not assessed. `prior` is the review of
-    an earlier period of the same company (cyclical_deceleration compares the two). Pure and deterministic: the same case
-    gives the same output and input_sha256; nothing is fetched, filled in or carried over from the registry as data."""
+    an earlier period of the same company (cyclical_deceleration compares the two); `upstream` the econ review of the
+    funder up the supply chain (funded_customer_chain links it by its input_sha256). Pure and deterministic: the same
+    case gives the same output and input_sha256; nothing is fetched, filled in or carried over from the registry as data."""
     _check_case(case)
     mids, selection = _selection(model if model is not None else case.get('model'))
     if prior is not None:
@@ -1994,21 +2061,14 @@ def review(case, model=None, prior=None):
     out = {'company': case['company'], 'period_end': case['period_end'], 'as_of': case['as_of'], 'currency': case['currency'],
            'period': case['period'], 'economics_version': ECONOMICS_VERSION, 'registry_sha256': registry_sha256(), 'model': selection,
            'prior_review': {'period_end': prior['period_end'], 'input_sha256': prior['input_sha256']} if prior is not None else None}
-    empty = dict(models=[], kpis=[], lines=[], identities=[], growth_splits=[], flags=[], readings=[], measures=[], falsifiers=[],
-                 open_questions=[], checks_not_run=[], unavailable=[])
+    empty = dict(models=[], kpis=[], lines=[], identities=[], growth_splits=[], flags=[], readings=[], measures=[], overlays={},
+                 falsifiers=[], open_questions=[], checks_not_run=[], unavailable=[])
     if not mids:
         out.update(status='not_assessed', reason='no economic model selected (unclassified): no rows, no effect', **empty,
                    not_read=[{'ref': k, 'reason': 'not assessed'} for k in sorted(case) if k not in CASE_META])
         return _finish(out, case)
     ix = _index(case, mids)
-    identities = []
-    for mid in mids:
-        for ident in ix['spec'][mid]['model']['identities']:
-            rows = [_evaluate(ix, mid, ident, scope) for scope in _scopes(ix, mid, ident)]
-            read = any(r.get('value') is not None or r.get('changes') for r, _ in rows)
-            # a non-core identity read at a narrower scope needs no row saying it was not read at the total
-            identities += [r for r, meta in rows if _keep(r, meta)
-                           and not (read and not r['core'] and r['status'] in ('missing', 'scope_mismatch'))]
+    identities = _identity_rows(ix, mids)
     shown = {c['ref'] for r in identities for c in r.get('stated') or []}
     for (iid, scope), sts in sorted(ix['stated'].items()):      # a source's own identity figure is compared or named here
         product = any(i['id'] == iid and i['type'] == 'product' for m in mids for i in ix['spec'][m]['model']['identities'])
@@ -2029,6 +2089,11 @@ def review(case, model=None, prior=None):
                 splits.append(s)                                               # one was refused for its basis
     kpis, lines = _tables(ix)
     flags, readings, measures, fals, not_run = [], [], [], [], []
+    ran = _run_overlays(ix, mids, identities, upstream)
+    owner = _overlay_checks()
+    for res in ran.values():                      # the review shows each flag and question once, at the top level
+        flags += res.pop('flags')
+        ix['questions'] += res.pop('questions')
     drops = _disclosures(ix)
     for mid in mids:
         sp = ix['spec'][mid]
@@ -2055,14 +2120,15 @@ def review(case, model=None, prior=None):
                                  'identity': r['id'], 'label': r['label'],
                                  'rule': 'a cumulative KPI (products ever opened) is never read as activity'})
         fals += _falsifiers(ix, mid, identities, drops, flags)
-        not_run += [{'check': c, 'model': mid, 'reason': 'not computed by this version of the econ review'}
-                    for c in declared if c not in CHECKS_RUN]
+        not_run += [{'check': c, 'model': mid, 'reason': _not_run_reason(ix, c, owner, ran)}
+                    for c in declared if c not in CHECKS_RUN and owner.get(c) not in ran]
     _segment_reconciliation(ix, measures)
     out.update(status='assessed', check_window=CHECK_WINDOW,
                models=[_summary(ix, mid, identities, 'primary' if n == 0 else 'secondary') for n, mid in enumerate(mids)],
                kpis=kpis, lines=lines, identities=identities, growth_splits=splits,
-               flags=sorted(flags, key=lambda f: (SEVERITIES.index(f['severity']), f['key'], f['model'] or '', f['scope'] or '')),
-               readings=readings, measures=measures, falsifiers=fals, open_questions=_questions(ix, identities),
+               flags=sorted(flags, key=lambda f: (SEVERITIES.index(f['severity']), f['key'], f['model'] or '', f['scope'] or '',
+                                                  f.get('overlay') or '', f.get('segment') or '')),
+               readings=readings, measures=measures, overlays=ran, falsifiers=fals, open_questions=_questions(ix, identities),
                checks_not_run=not_run, unavailable=sorted(set(ix['unavailable'])),
                not_read=sorted(ix['not_read'], key=lambda x: x['ref']) +
                [{'ref': k, 'reason': 'block not read by this version of the econ review'} for k in sorted(case)
@@ -2458,3 +2524,1152 @@ def select_factbook(fb, card_type, override=None, *, as_of=None, segments=None):
     evidence = {i: {'kind': quals[i] if i in quals else (src.get(i) or {}).get('kind')} for i in M._valid_ids(view)}
     return select(card_type, profile_fields(fb.get('company')), kpi_fact_ids(fb, as_of), override, segments=segments,
                   evidence=evidence)
+
+
+# ---------------------------------------------------------------- WP5: overlays
+#
+# Six overlays read blocks of the econ case beside the identities, each point in time (a block or link none of whose
+# sources was available at as_of is listed under `unavailable` and not read) and each only when the case supplies its
+# inputs; in review() also only when it applies to a selected model (registry overlays.<id>.applies_to; '*' = every
+# model). Supplied but not applicable, its blocks are listed under not_read with the reason.
+#
+#   vendor_financing       funding_links [{id, kind, status, amount, amount_is_maximum?, direction?, label?, source_ids}]
+#                          (an empty list = the caller looked and found none), revenue_basis {value, period, annualize?,
+#                          source_ids} (else lines.revenue), exposed_share {value, horizon, kind, source_ids}, one flow
+#                          window (statements {period, operating_cash_flow, net_income, non_cash_gains, receivables_build,
+#                          related_party_revenue?, revenue?, source_ids} or the econ_fixture_v1 half_year block; else the
+#                          case lines on the case period), balance {receivables_start, receivables_end,
+#                          receivables_window_months, deferred_revenue_start + deferred_revenue_window_months or
+#                          deferred_revenue_start_of_year, deferred_revenue, a spendable-cash field, marketable_equities}
+#                          and receivables_windows [{label, months, receivables_start, receivables_end, revenue_growth,
+#                          source_ids}] (earlier matched windows, e.g. the prior fiscal year).
+#   funded_customer_chain  chain {upstream_ticker, upstream_review_sha256?, share_of_revenue_via_chain (a number, or
+#                          {value, kind?, source_ids}), source_ids} and the upstream econ review given by the caller.
+#   acquisition_sbc        acquisition_sbc {deal, stock_to_employees, vesting_years, schedule (per-year amounts) +
+#                          schedule_year | null, observed_tranche_in_period, period, source_ids} with lines.sbc and revenue.
+#   bank_capital           bank {quarter._bank's inputs: tangible_book_per_share (or tangible_common_equity and
+#                          diluted_shares), rote or net_income_annual, cost_of_equity, growth, capital_ratio,
+#                          target_ratio_range [low, high] or target_ratio, minimum_ratio, risk_weighted_assets,
+#                          price_to_tangible_book?; source_ids}, market {price, source_ids}, credit {loan_sales_disclosed,
+#                          nco_headline, nco_normalized: {value, kind, source_ids} | null, source_ids}.
+#   contract_coverage      contracts {share_of_next_year_volume, price_mechanism, deposits, tenor_years, customers?,
+#                          source_ids} (an object; a list of contracts is another block).
+#   segments               two or more segments (SEGMENTS_MIN), read by WP3 at their own scope.
+#
+# Every number an overlay prints is an input, a frozen rule beside the value it judges, or a derived field with its
+# derived_from. A ratio near its threshold (within rules.near_threshold) carries the threshold beside it. No default
+# haircut, probability, schedule, cost of equity or growth is ever supplied.
+
+OVERLAY_BOUNDARY = ('an overlay of the econ review: ratios and checks on caller-supplied, sourced figures; exposure is a '
+                    'stock-to-flow scale ratio, never a probability or revenue at risk; not a valuation and not a trade '
+                    'instruction; thresholds are uncalibrated screens (docs/prereg_econ.md)')
+LINK_KINDS = ('equity_stake', 'guarantee', 'take_or_pay', 'loan', 'lease_guarantee', 'prepayment')
+LINK_STATUSES = ('funded', 'committed', 'contingent')
+LINK_DIRECTIONS = ('company_funds_customer', 'company_buys_from_customer', 'customer_funds_company')
+# ledger groups: firm exposure = funded + committed + take-or-pay (a committed purchase from a customer is firm too);
+# a contingent link is a ceiling kept apart; a customer funding the company (a prepayment) is no vendor financing at all
+FIRM_GROUPS = ('funded', 'committed', 'take_or_pay')
+LEDGER_GROUPS = FIRM_GROUPS + ('contingent_ceiling', 'customer_funded')
+SCALE_LABEL = 'stock-to-flow scale ratio: amounts over annualized revenue, not revenue at risk'
+CEILING_LABEL = 'ceiling: the maximum if called in full; no probability; never summed into firm exposure or a screen'
+EXPOSED_KINDS = ('reported', 'analyst_estimate')
+VF_BLOCKS = ('funding_links', 'revenue_basis', 'exposed_share', 'statements', 'half_year', 'receivables_windows')
+VF_BALANCE_KEYS = ('receivables_start', 'receivables_end', 'deferred_revenue', 'deferred_revenue_start', 'deferred_revenue_start_of_year')
+FLOW_BLOCKS = (('statements', None), ('half_year', 'half'))       # (block, its window when the block does not state one)
+# flow fields: (name, accepted spellings: the registry's, then the econ_fixture_v1 one); two spellings at once are refused
+FLOW_FIELDS = (('operating_cash_flow', ('operating_cash_flow', 'cfo')), ('net_income', ('net_income',)),
+               ('non_cash_gains', ('non_cash_gains', 'non_cash_investment_gains')),
+               ('receivables_build', ('receivables_build', 'receivables_build_cash_flow_statement')),
+               ('related_party_revenue', ('related_party_revenue',)), ('revenue', ('revenue',)))
+SPENDABLE_CASH_KEYS = ('spendable_cash', 'cash_and_bonds', 'cash_and_securities')
+INVESTMENT_ASSET_KEYS = ('marketable_equities',)      # investment assets: shown beside spendable cash, never added to it
+GROWTH_WINDOW_MONTHS = {12: 'y/y', 3: 'q/q'}          # a balance window matched to the revenue line's growth window
+COVERAGE_ITEMS = ('share_of_next_year_volume', 'price_mechanism', 'deposits', 'tenor_years')
+COVERAGE_ASK = {'share_of_next_year_volume': 'the share of next-year volume covered', 'price_mechanism': 'the price floor or formula',
+                'deposits': 'the customer deposits', 'tenor_years': 'the tenor'}
+PRICE_MECHANISMS = ('floor', 'formula')
+# a material segment is explained by an identity of its model at its scope that reconciles (consistent, or partial with
+# the residual named) or computed a value from at least one operating KPI of the model reported there (Mobility's take
+# rate from its gross bookings); lines alone (R&D / revenue) explain nothing about how the segment earns
+SEGMENT_RECONCILED = ('consistent', 'partial')
+SBC_DILUTION = ('counted as real: the stock is a cost to current holders; the tranche is shown apart to read the ongoing '
+                'ratio, never added back')
+
+
+def _line_item(ix, lid, scope='total', measure=None):
+    """The first reported item of a line at a scope with a level (and on a measurement window, when given)."""
+    return next((it for it in ix['line'].get((lid, scope), []) if it['value'] is not None and it['currency_basis'] == 'reported'
+                 and (measure is None or it['measure'] == measure)), None)
+
+
+def _block(ix, key, label=None, kind=dict):
+    """A case block read point in time: (block, source_ids) when visible, (block, None) when none of its sources was
+    available at as_of (listed under unavailable), (None, None) when absent."""
+    case = ix['case']
+    b = case.get(key)
+    if b is None:
+        return None, None
+    if not isinstance(b, kind):
+        raise ValueError(f'{label or key}: {"an object" if kind is dict else "a list"}')
+    ix['read'].add(key)
+    ids = _source_ids(case, b, label or key)
+    if not _visible(case, ids):
+        _unavailable(ix, label or key)
+        return b, None
+    return b, ids
+
+
+def _near(value, threshold, rules):
+    """A value within rules.near_threshold of its threshold prints with the threshold beside it."""
+    if value is None or abs(value - threshold) > rules['near_threshold'] + 1e-12:
+        return None
+    return {'threshold': threshold, 'near_threshold': rules['near_threshold'], 'distance': value - threshold,
+            'display': f'{value:.3f} near_threshold ({threshold:.2f})', 'derived_from': 'value - threshold; within near_threshold'}
+
+
+def _q(qs, about, question, scope='total'):
+    qs.append({'model': None, 'about': about, 'scope': scope, 'question': question})
+
+
+def _oflag(ix, key, overlay_id, scope='total', **data):
+    return {**_flag(ix, key, None, scope, **data), 'overlay': overlay_id}
+
+
+def _kinds(case, ids):
+    return sorted({case['sources'][i]['kind'] for i in ids})
+
+
+# ------------------------------------------------ vendor financing
+
+def _links(ix, qs):
+    """The funding links point in time: one row per deal id (the same deal reported several times counts once, its
+    sources merged; different terms under one id are refused), each in its ledger group."""
+    case = ix['case']
+    raw = case.get('funding_links')
+    if raw is None:
+        return None, []
+    if not isinstance(raw, list):
+        raise ValueError('funding_links: a list of links (an empty list: none found)')
+    ix['read'].add('funding_links')
+    deals = {}
+    for i, l in enumerate(raw):
+        label = f'funding_links[{i}]'
+        if not isinstance(l, dict) or not isinstance(l.get('id'), str) or not l['id'].strip():
+            raise ValueError(f'{label}: needs an id (one deal keeps one id across the outlets that report it)')
+        ids = _source_ids(case, l, label)
+        if l.get('kind') not in LINK_KINDS:
+            raise ValueError(f'{label}.kind: one of {LINK_KINDS}')
+        if l.get('status') not in LINK_STATUSES:
+            raise ValueError(f'{label}.status: one of {LINK_STATUSES}')
+        if l.get('direction') is not None and l['direction'] not in LINK_DIRECTIONS:
+            raise ValueError(f'{label}.direction: one of {LINK_DIRECTIONS}')
+        mx = l.get('amount_is_maximum', False)
+        if not isinstance(mx, bool):
+            raise ValueError(f'{label}.amount_is_maximum: true or false')
+        terms = (l['kind'], l['status'], number(l.get('amount'), f'{label}.amount', 0), l.get('direction'), mx)
+        deals.setdefault(l['id'].strip(), []).append((terms, ids, l))
+    links, merged = [], []
+    for lid in sorted(deals):
+        entries = deals[lid]
+        if len({t for t, _, _ in entries}) > 1:
+            raise ValueError(f'funding_links: {lid} is stated {len(entries)} times with different terms; state one figure per deal')
+        (kind, status, amount, d, mx), _, first = entries[0]
+        ids = sorted({s for _, ids, _ in entries for s in ids})
+        if not _visible(case, ids):
+            _unavailable(ix, f'funding_links[{lid}]')
+            continue
+        group = ('customer_funded' if d == 'customer_funds_company' else 'contingent_ceiling' if status == 'contingent'
+                 else 'take_or_pay' if kind == 'take_or_pay' else status)
+        row = {'id': lid, 'kind': kind, 'status': status, 'direction': d, 'amount': amount, 'amount_is_maximum': mx, 'group': group,
+               'source_ids': ids}
+        if isinstance(first.get('label'), str):
+            row['label'] = first['label']
+        links.append(row)
+        if len(entries) > 1:
+            merged.append({'id': lid, 'source_ids': ids, 'rule': 'the same deal reported several times counts once'})
+    seen = {}
+    for l in links:                     # different ids with identical terms: maybe one deal twice; never merged silently
+        seen.setdefault((l['group'], l['kind'], l['direction'], l['amount']), []).append(l['id'])
+    for ids in seen.values():
+        if len(ids) > 1:
+            _q(qs, 'vendor_financing.funding_links', f'are {" and ".join(ids)} one deal reported twice? they count separately '
+                                                     'until the same id is given to both')
+    return links, merged
+
+
+def _annual_revenue(ix):
+    rb, ids = _block(ix, 'revenue_basis')
+    if rb is not None and ids is not None:
+        per = rb.get('period')
+        if per not in MONTHS:
+            raise ValueError(f'revenue_basis.period: one of {tuple(MONTHS)}')
+        k = 12 / MONTHS[per]
+        if rb.get('annualize') is not None and abs(number(rb['annualize'], 'revenue_basis.annualize', 0) - k) > 1e-9:
+            raise ValueError(f'revenue_basis.annualize: {rb["annualize"]} does not turn a {per} into a year (x{k:g})')
+        v = number(rb.get('value'), 'revenue_basis.value', 0)
+        return {'value': v * k, 'revenue': v, 'period': per, 'annualized_by': k, 'source_ids': ids,
+                'derived_from': f'revenue_basis.value x {k:g} (12 months / the {per})'}
+    rev = _line_item(ix, 'revenue')
+    if rev is None or rev['measure'] not in MONTHS:
+        return None
+    k = 12 / MONTHS[rev['measure']]
+    return {'value': rev['value'] * k, 'revenue': rev['value'], 'period': rev['measure'], 'annualized_by': k,
+            'source_ids': rev['source_ids'], 'derived_from': f'{rev["ref"]}.value x {k:g} (12 months / the {rev["measure"]})'}
+
+
+def _ledger(links, annual):
+    out = {}
+    for g in LEDGER_GROUPS + ('firm',):
+        ls = [l for l in links if (l['group'] in FIRM_GROUPS if g == 'firm' else l['group'] == g)]
+        if g == 'customer_funded' and not ls:
+            continue
+        amount = sum(l['amount'] for l in ls)
+        row = {'amount': amount, 'links': [l['id'] for l in ls],
+               'derived_from': (' + '.join(f'funding_links[{l["id"]}].amount' for l in ls) or 'no link in this group')}
+        if g == 'firm':
+            row['includes'] = list(FIRM_GROUPS)
+        if any(l['amount_is_maximum'] for l in ls):
+            row['includes_maximum'] = [l['id'] for l in ls if l['amount_is_maximum']]
+        if annual is not None and annual['value'] > 0:
+            row['share'] = amount / annual['value']
+            row['derived_from'] += '; share = amount / annualized revenue'
+        if g == 'contingent_ceiling':
+            row['label'] = CEILING_LABEL
+        elif g == 'customer_funded':
+            row['label'] = 'customers funding the company (prepayments): financing from customers, not vendor financing'
+        out[g] = row
+    return out
+
+
+def _flow(ix):
+    """The one window the cash-flow checks read: a statements / half_year block, else the case lines on the case period."""
+    case = ix['case']
+    present = [(k, w) for k, w in FLOW_BLOCKS if case.get(k) is not None]
+    if len(present) > 1:
+        raise ValueError('statements and half_year: state one flow window')
+    if present:
+        key, default = present[0]
+        b, ids = _block(ix, key)
+        per = b.get('period') if default is None else default
+        if per not in MONTHS:
+            raise ValueError(f'{key}.period: one of {tuple(MONTHS)}')
+        out = {'from': key, 'period': per, 'source_ids': ids, 'fields': {}}
+        if default is not None and isinstance(b.get('period'), str):
+            out['label'] = b['period']
+        elif isinstance(b.get('period_label'), str):
+            out['label'] = b['period_label']
+        if ids is None:
+            out['unavailable'] = True
+            return out
+        for name, keys in FLOW_FIELDS:
+            given = [k for k in keys if b.get(k) is not None]
+            if len(given) > 1:
+                raise ValueError(f'{key}: {" and ".join(given)} are one figure; state it once')
+            if given:
+                out['fields'][name] = (number(b[given[0]], f'{key}.{given[0]}'), f'{key}.{given[0]}')
+        return out
+    out = {'from': 'lines', 'period': ix['period'], 'fields': {}}
+    for name, lid in (('operating_cash_flow', 'operating_cash_flow'), ('net_income', 'net_income'),
+                      ('related_party_revenue', 'related_party_revenue'), ('revenue', 'revenue')):
+        it = _line_item(ix, lid, measure=ix['period'])
+        if it is not None:
+            out['fields'][name] = (it['value'], it['ref'])
+    return out
+
+
+def _cfo_check(flow, rules, qs):
+    f = flow['fields']
+    out = {'check': 'cfo_to_ni', 'kind': 'measure', 'window': flow['period'], 'cfo_to_ni_min': rules['cfo_to_ni_min']}
+    cfo, ni, gains = f.get('operating_cash_flow'), f.get('net_income'), f.get('non_cash_gains')
+    if cfo is None or ni is None:
+        out.update(status='not_computed', reason='needs operating cash flow and net income on one window')
+        _q(qs, 'vendor_financing.cfo_to_ni', 'supply operating cash flow and net income for the same window')
+        return out
+    out.update(operating_cash_flow=cfo[0], net_income=ni[0])
+    if ni[0] <= 0:
+        out.update(status='not_computed', reason=f'{ni[1]} is not positive: CFO / NI is not read')
+        return out
+    out['cfo_to_ni'] = {'value': cfo[0] / ni[0], 'derived_from': f'{cfo[1]} / {ni[1]}'}
+    if gains is None:
+        out.update(status='undetermined', reason='non-cash gains in net income not supplied (0 when there are none): CFO / '
+                                                 '(NI - non-cash gains), the ratio the level reads, is not computed')
+        _q(qs, 'vendor_financing.cfo_to_ni', 'supply the non-cash gains in net income (gains on equity stakes; 0 if none)')
+        return out
+    out['non_cash_gains'] = gains[0]
+    base = ni[0] - gains[0]
+    if base <= 0:
+        out.update(status='not_computed', reason='net income less non-cash gains is not positive: the ratio is not read')
+        return out
+    v = cfo[0] / base
+    out['ex_gains'] = {'value': v, 'derived_from': f'{cfo[1]} / ({ni[1]} - {gains[1]})'}
+    near = _near(v, rules['cfo_to_ni_min'], rules)
+    if near:
+        out['ex_gains']['near'] = near
+    out['status'] = 'fails' if v < rules['cfo_to_ni_min'] else 'passes'
+    return out
+
+
+def _revenue_growth(ix, months):
+    """The revenue line's growth over a window of `months` (12: y/y, 3: q/q on a quarter), or None: never re-scaled."""
+    w = GROWTH_WINDOW_MONTHS.get(months)
+    if w is None or (w == 'q/q' and ix['period'] != 'quarter'):
+        return None
+    rev = _line_item(ix, 'revenue', measure=ix['period'])
+    c = rev['cmp'].get(w) if rev else None
+    if not _any_growth(c):
+        return None
+    g, frm = _pick(c, 'stated')
+    return {'value': g, 'window': w, 'derived_from': f'{rev["ref"]} {w} ' + ('growth as stated' if frm == 'stated' else 'value / prior - 1')}
+
+
+def _receivables(ix, bal, qs):
+    rules, case = ix['rules'], ix['case']
+    windows = []
+    if bal is not None and (bal.get('receivables_start') is not None or bal.get('receivables_end') is not None):
+        s = number(bal.get('receivables_start'), 'balance.receivables_start', 0)
+        e = number(bal.get('receivables_end'), 'balance.receivables_end', 0)
+        m = number(bal.get('receivables_window_months'), 'balance.receivables_window_months', 1)
+        windows.append({'label': 'balance', 'months': m, 'receivables_start': s, 'receivables_end': e, 'ref': 'balance',
+                        'revenue_growth': _revenue_growth(ix, m)})
+    rw = case.get('receivables_windows')
+    if rw is not None:
+        if not isinstance(rw, list):
+            raise ValueError('receivables_windows: a list of matched windows')
+        ix['read'].add('receivables_windows')
+        for i, w in enumerate(rw):
+            label = f'receivables_windows[{i}]'
+            if not isinstance(w, dict):
+                raise ValueError(f'{label}: an object')
+            ids = _source_ids(case, w, label)
+            if not _visible(case, ids):
+                _unavailable(ix, label)
+                continue
+            m = number(w.get('months'), f'{label}.months', 1)
+            g = _num(w.get('revenue_growth'), f'{label}.revenue_growth')
+            windows.append({'label': w.get('label') or label, 'months': m, 'ref': label,
+                            'receivables_start': number(w.get('receivables_start'), f'{label}.receivables_start', 0),
+                            'receivables_end': number(w.get('receivables_end'), f'{label}.receivables_end', 0),
+                            'revenue_growth': None if g is None else {'value': g, 'derived_from': f'{label}.revenue_growth as stated'}})
+    out = {'check': 'receivables_vs_revenue', 'kind': 'measure', 'receivables_gap_pp': rules['receivables_gap_pp'],
+           'receivables_windows': rules['receivables_windows'], 'windows': []}
+    failing, matched = [], []
+    for w in windows:
+        row = {'label': w['label'], 'months': w['months'], 'receivables_start': w['receivables_start'], 'receivables_end': w['receivables_end']}
+        if w['receivables_start'] > 0:
+            row['receivables_growth'] = {'value': w['receivables_end'] / w['receivables_start'] - 1,
+                                         'derived_from': f'{w["ref"]}.receivables_end / receivables_start - 1'}
+        if w['revenue_growth'] is None or 'receivables_growth' not in row:
+            row.update(status='not_computed', reason=f'window_mismatch: no revenue growth over the same {w["months"]:g} months'
+                       if w['revenue_growth'] is None else 'receivables at the start of the window are zero')
+        else:
+            gap = row['receivables_growth']['value'] - w['revenue_growth']['value']
+            row['revenue_growth'] = w['revenue_growth']
+            row['gap'] = {'value': gap, 'derived_from': 'receivables growth - revenue growth over the same window'}
+            near = _near(gap, rules['receivables_gap_pp'], rules)
+            if near:
+                row['gap']['near'] = near
+            row['status'] = 'fails' if gap > rules['receivables_gap_pp'] else 'passes'
+            matched.append(w['label'])
+            if row['status'] == 'fails':
+                failing.append(w['label'])
+        out['windows'].append(row)
+    out.update(matched=matched, failing=failing)
+    need = rules['receivables_windows']
+    if len(failing) >= need:
+        out['status'] = 'fails'
+    elif len(matched) >= need:
+        out['status'] = 'passes'
+    else:
+        out['status'] = 'not_computed'
+        out['reason'] = ('window_mismatch: ' if any(r['status'] == 'not_computed' for r in out['windows']) else '') + \
+            f'{len(matched)} matched window(s); the check reads {need:g}'
+        if windows:
+            _q(qs, 'vendor_financing.receivables_vs_revenue', 'supply receivables and revenue growth over matched windows '
+                                                              f'(the same months; {need:g} windows, e.g. two fiscal years)')
+    return out
+
+
+def _build_share(flow, bal):
+    f = flow['fields']
+    out = {'check': 'receivables_build_share', 'kind': 'measure', 'window': flow['period']}
+    change = None
+    if bal is not None and bal.get('receivables_start') is not None and bal.get('receivables_end') is not None:
+        m = number(bal.get('receivables_window_months'), 'balance.receivables_window_months', 1)
+        change = {'value': number(bal['receivables_end'], 'balance.receivables_end') - number(bal['receivables_start'], 'balance.receivables_start'),
+                  'months': m, 'same_window': m == MONTHS[flow['period']],
+                  'derived_from': 'balance.receivables_end - balance.receivables_start'}
+    build, basis = f.get('receivables_build'), 'cash-flow statement'
+    if build is not None:
+        build = (build[0], f'{build[1]} as stated')
+    elif change is not None and change['same_window']:
+        build, basis = (change['value'], change['derived_from']), 'balance change'
+    ni = f.get('net_income')
+    if build is None or ni is None or ni[0] <= 0:
+        out.update(status='not_computed', reason='needs the receivables build and a positive net income on one window')
+    else:
+        out.update(status='computed', build={'value': build[0], 'basis': basis, 'derived_from': build[1]}, net_income=ni[0],
+                   share={'value': build[0] / ni[0], 'derived_from': f'build / {ni[1]}'})
+    if change is not None and basis != 'balance change':
+        out['balance_change'] = change           # the two receivables figures are kept, each labelled (design correction 4)
+    return out
+
+
+def _prepayments(ix, bal, qs, flags):
+    if bal is None or bal.get('deferred_revenue') is None:
+        return None
+    end = number(bal['deferred_revenue'], 'balance.deferred_revenue', 0)
+    if bal.get('deferred_revenue_start') is not None and bal.get('deferred_revenue_start_of_year') is not None:
+        raise ValueError('balance: deferred_revenue_start and deferred_revenue_start_of_year are one figure; state one')
+    out = {'check': 'customer_prepayment_build', 'kind': 'flag', 'deferred_revenue': end,
+           'reading': 'financing from customers: read with the funding ledger'}
+    if bal.get('deferred_revenue_start') is not None:
+        start, ref = number(bal['deferred_revenue_start'], 'balance.deferred_revenue_start', 0), 'balance.deferred_revenue_start'
+        months = number(bal.get('deferred_revenue_window_months'), 'balance.deferred_revenue_window_months', 1)
+        out['window_months'] = months
+    elif bal.get('deferred_revenue_start_of_year') is not None:
+        start, ref, months = number(bal['deferred_revenue_start_of_year'], 'balance.deferred_revenue_start_of_year', 0), \
+            'balance.deferred_revenue_start_of_year', None
+        out['window'] = 'year to date'
+    else:
+        out.update(status='not_computed', reason='needs deferred revenue at the start of a stated window')
+        return out
+    out['deferred_revenue_start'] = start
+    out['build'] = {'value': end - start, 'derived_from': f'balance.deferred_revenue - {ref}'}
+    if start > 0:
+        out['growth'] = {'value': end / start - 1, 'derived_from': f'balance.deferred_revenue / {ref} - 1'}
+    rg = _revenue_growth(ix, months) if months is not None else None
+    if rg is not None and 'growth' in out:
+        out['revenue_growth'] = rg
+        out['comparison'] = 'faster than revenue' if out['growth']['value'] > rg['value'] else 'not faster than revenue'
+    else:
+        out['comparison'] = 'not_computed: window_mismatch (no revenue growth over the same window)'
+    fires = out['build']['value'] > 0 and out['comparison'] != 'not faster than revenue'
+    out['status'] = 'flag' if fires else 'no_flag'
+    if fires:
+        flags.append(_oflag(ix, 'customer_prepayment_build', 'vendor_financing', build=out['build']['value'],
+                            growth=(out.get('growth') or {}).get('value'), comparison=out['comparison'],
+                            derived_from=out['build']['derived_from']))
+        if rg is None:
+            _q(qs, 'vendor_financing.customer_prepayment_build', 'supply revenue over the same window as the deferred-revenue '
+                                                                 'build (does it build faster than revenue?)')
+    return out
+
+
+def _related_party(flow):
+    f = flow['fields']
+    out = {'check': 'related_party_share', 'kind': 'measure', 'window': flow['period']}
+    rp, rev = f.get('related_party_revenue'), f.get('revenue')
+    if rp is None:
+        out.update(status='not_supplied', reason='related-party revenue not supplied')
+    elif rev is None or rev[0] <= 0:
+        out.update(status='not_computed', reason='needs revenue on the same window')
+    else:
+        out.update(status='computed', share={'value': rp[0] / rev[0], 'derived_from': f'{rp[1]} / {rev[1]}'})
+    return out
+
+
+def _exposed(ix):
+    es, ids = _block(ix, 'exposed_share')
+    if es is None or ids is None:
+        return None
+    if es.get('kind') not in EXPOSED_KINDS:
+        raise ValueError(f'exposed_share.kind: one of {EXPOSED_KINDS}')
+    kinds = _kinds(ix['case'], ids)
+    issuer = es['kind'] == 'reported' and all(k in EVIDENCE_KINDS for k in kinds)
+    return {'value': number(es.get('value'), 'exposed_share.value', 0, 1), 'horizon': es.get('horizon'), 'kind': es['kind'],
+            'source_ids': ids, 'source_kinds': kinds, 'attributed': not issuer, 'sets_level': False,
+            'label': ('attributed ' + es['kind'].replace('_', ' ') if not issuer else 'reported by the issuer')
+            + '; shown beside the ledger; never sets the level'}
+
+
+def _guarantee(ledger, bal, ix, qs):
+    c = ledger.get('contingent_ceiling')
+    if not c or not c['links']:
+        return None
+    out = {'check': 'guarantee_ceiling', 'kind': 'measure', 'contingent': c['amount'], 'links': c['links'],
+           'label': 'if called in full, against spendable cash; no probability; never summed into a screen'}
+    keys = [k for k in SPENDABLE_CASH_KEYS if bal is not None and bal.get(k) is not None]
+    if not keys:
+        out.update(status='not_computed', reason='spendable cash not supplied')
+        _q(qs, 'vendor_financing.guarantee_ceiling', 'supply spendable cash (cash and bonds, without investment assets or restricted cash)')
+        return out
+    if len(keys) > 1:
+        raise ValueError(f'balance: {" and ".join(keys)}: state spendable cash once')
+    cash = number(bal[keys[0]], f'balance.{keys[0]}', 0)
+    out.update(status='computed', spendable_cash=cash, spendable_cash_ref=f'balance.{keys[0]}')
+    if cash > 0:
+        out['multiple_of_spendable_cash'] = {'value': c['amount'] / cash, 'derived_from': f'contingent ceiling / balance.{keys[0]}'}
+    beside = {k: number(bal[k], f'balance.{k}', 0) for k in INVESTMENT_ASSET_KEYS if bal.get(k) is not None}
+    if beside:
+        out['investment_assets_beside'] = {**beside, 'note': 'investment assets, not spendable cash: shown beside, never added'}
+    return out
+
+
+def _funding_level(firm, statement, rules, failing, undetermined):
+    """high = firm exposure at or above rules.firm_exposure_high and a statement check fails; elevated = one of the two;
+    none = neither. A condition that cannot be decided is named; the value is the certain part, could_be the rest."""
+    out = {'check': 'funding_level', 'kind': 'reading', 'firm_exposure_high': rules['firm_exposure_high'],
+           'cfo_to_ni_min': rules['cfo_to_ni_min'], 'receivables_gap_pp': rules['receivables_gap_pp'],
+           'firm': firm, 'statement': statement, 'failing': failing, 'undetermined': undetermined,
+           'rule': 'high = firm exposure >= firm_exposure_high and a statement check fails (CFO / (NI - non-cash gains) < '
+                   'cfo_to_ni_min, or receivables outgrow revenue by more than receivables_gap_pp in receivables_windows '
+                   'matched windows); elevated = one of the two; an exposed share never sets it'}
+    if firm is None and statement is None:
+        out['value'] = 'not_assessed'
+        return out
+    certain = int(firm is True) + int(statement is True)
+    open_ = int(firm is None) + int(statement is None)
+    out['value'] = ('high', 'elevated', 'none')[2 - certain] if certain else 'none'
+    if open_:
+        out['could_be'] = ('none', 'elevated', 'high')[certain + open_]
+    return out
+
+
+def _vendor_financing(ix, mids, identities, upstream):
+    case, rules = ix['case'], ix['rules']
+    qs, flags = [], []
+    out = {'overlay': 'vendor_financing', 'label_he': overlay('vendor_financing')['label_he'], 'status': 'computed', 'label': SCALE_LABEL}
+    links, merged = _links(ix, qs)
+    bal, bal_ids = _block(ix, 'balance')
+    bal = bal if bal_ids is not None else None
+    annual = _annual_revenue(ix)
+    if links is None:
+        out['links'] = None
+        if annual is not None:
+            out['annualized_revenue'] = annual
+        out['ledger'] = {'status': 'not_supplied', 'reason': 'no funding_links block (an empty list states that none were found)'}
+        _q(qs, 'vendor_financing.funding_links', 'list the customer-financing links (equity stakes, guarantees, take-or-pay, '
+                                                 'loans) from the notes, or state that there are none (an empty list)')
+        firm = None
+    else:
+        out['links'] = links
+        if merged:
+            out['merged_reports'] = merged
+        out['annualized_revenue'] = annual
+        out['ledger'] = _ledger(links, annual)
+        share = out['ledger']['firm'].get('share')
+        if share is None:
+            firm = None
+            _q(qs, 'vendor_financing.revenue_basis', 'supply the revenue the ledger is scaled by (revenue_basis or lines.revenue)')
+        else:
+            firm = share >= rules['firm_exposure_high']
+            near = _near(share, rules['firm_exposure_high'], rules)
+            if near:
+                out['ledger']['firm']['near'] = near
+    flow = _flow(ix)
+    checks = {'window': {k: flow[k] for k in ('from', 'period', 'label', 'source_ids') if flow.get(k) is not None}}
+    if flow.get('unavailable'):
+        flow['fields'] = {}
+        checks['window']['unavailable'] = True
+    checks['cfo_to_ni'] = _cfo_check(flow, rules, qs)
+    checks['receivables_vs_revenue'] = _receivables(ix, bal, qs)
+    checks['receivables_build_share'] = _build_share(flow, bal)
+    pre = _prepayments(ix, bal, qs, flags)
+    if pre is not None:
+        checks['customer_prepayment_build'] = pre
+    checks['related_party_share'] = _related_party(flow)
+    out['statement_checks'] = checks
+    if links is not None:
+        g = _guarantee(out['ledger'], bal, ix, qs)
+        if g is not None:
+            out['guarantee_ceiling'] = g
+    es = _exposed(ix)
+    if es is not None:
+        out['exposed_share'] = es
+    gate = ('cfo_to_ni', 'receivables_vs_revenue')     # the statement checks the level reads
+    failing = [c for c in gate if checks[c]['status'] == 'fails']
+    undetermined = [c for c in gate if checks[c]['status'] not in ('fails', 'passes')]
+    statement = True if failing else (None if undetermined else False)
+    out['level'] = _funding_level(firm, statement, rules, failing,
+                                  (['firm_exposure'] if firm is None else []) + (undetermined if statement is None else []))
+    out['flags'], out['questions'] = flags, qs
+    return out
+
+
+# ------------------------------------------------ supplier chain
+
+def _chain(ix, mids, identities, upstream):
+    case = ix['case']
+    qs = []
+    out = {'overlay': 'funded_customer_chain', 'label_he': overlay('funded_customer_chain')['label_he'],
+           'boundary_note': 'the link is a citation by sha256, not evidence of a dependence; upstream numbers are never copied in as facts'}
+    ch, ids = _block(ix, 'chain')
+    if ch is None:
+        out.update(status='not_supplied')
+        out['flags'], out['questions'] = [], qs
+        return out
+    ticker = ch.get('upstream_ticker')
+    if not isinstance(ticker, str) or not ticker.strip():
+        raise ValueError('chain.upstream_ticker: the funder up the chain')
+    if ids is None:
+        out.update(status='unavailable', reason='no source of the chain block was available at as_of')
+        out['flags'], out['questions'] = [], qs
+        return out
+    own = ch.get('share_of_revenue_via_chain')
+    own_row = None
+    if own is not None:
+        oids = _source_ids(case, own, 'chain.share_of_revenue_via_chain') if isinstance(own, dict) else ids
+        v = number(own.get('value') if isinstance(own, dict) else own, 'chain.share_of_revenue_via_chain', 0, 1)
+        if _visible(case, oids):
+            own_row = {'value': v, 'source_ids': oids, 'source_kinds': _kinds(case, oids)}
+            if isinstance(own, dict) and own.get('kind'):
+                own_row['kind'] = own['kind']
+        else:
+            _unavailable(ix, 'chain.share_of_revenue_via_chain')
+    stated = ch.get('upstream_review_sha256')
+    up = {'ticker': ticker, 'review_sha256': stated, 'linked': False}
+    up_share = None
+    if upstream is not None:
+        if not isinstance(upstream, dict) or not upstream.get('input_sha256') or not isinstance(upstream.get('overlays'), dict):
+            raise ValueError('upstream: the econ review of the upstream company (econ.review output)')
+        if upstream.get('company') != ticker:
+            raise ValueError(f'upstream: a review of {upstream.get("company")!r}; the chain names {ticker!r}')
+        if stated is not None and stated != upstream['input_sha256']:
+            raise ValueError('upstream: not the review the case cites (chain.upstream_review_sha256 differs from its input_sha256)')
+        if F._d(upstream['as_of']) > F._d(case['as_of']):
+            up['reason'] = f'the upstream review is as of {upstream["as_of"]}, after this case: not linked (point in time)'
+        else:
+            sha = upstream['input_sha256']
+            up.update(linked=True, review_sha256=sha, as_of=upstream['as_of'], period_end=upstream['period_end'],
+                      linked_by='the sha256 the case cites' if stated else 'the review passed at run time (its input_sha256)')
+            vf = upstream['overlays'].get('vendor_financing') or {}
+            if vf.get('level'):
+                up['funding_level'] = vf['level'].get('value')
+            es = vf.get('exposed_share')
+            if es and es.get('value') is not None:
+                up_share = {'value': es['value'], 'kind': es.get('kind'), 'attributed': es.get('attributed'), 'horizon': es.get('horizon'),
+                            'source_ids': es.get('source_ids'),
+                            'derived_from': f'upstream review {sha[:12]}: overlays.vendor_financing.exposed_share.value (cited, not copied as a fact)'}
+                up['exposed_share'] = up_share
+    out['upstream'] = up
+    out['own_share'] = own_row
+    missing = []
+    if own_row is None:
+        missing.append(f'{case["company"]} revenue share via {ticker}')
+        _q(qs, 'funded_customer_chain', f'what share of {case["company"]} revenue flows through customers {ticker} funds?')
+    if up_share is None:
+        missing.append(f'{ticker} exposed share (' + ('not in its econ review' if up['linked'] else 'its econ review') + ')')
+        _q(qs, 'funded_customer_chain', f'run the {ticker} econ review with its exposed share and pass it as upstream')
+    if missing:
+        out.update(status='unquantified', missing=missing, exposure=None)
+    else:
+        out['status'] = 'computed'
+        out['exposure'] = {'check': 'chain_exposure', 'value': own_row['value'] * up_share['value'],
+                           'labelled_with': [f'{case["company"]} share via {ticker}: ' + ', '.join(f'{i} ({case["sources"][i]["kind"]})' for i in own_row['source_ids']),
+                                             f'{ticker} exposed share: {up_share["kind"]}, review {up["review_sha256"][:12]}'],
+                           'derived_from': 'own share of revenue via the chain x upstream exposed share'}
+    out['flags'], out['questions'] = [], qs
+    return out
+
+
+# ------------------------------------------------ acquisition SBC
+
+def _acquisition_sbc(ix, mids, identities, upstream):
+    rules = ix['rules']
+    qs, flags = [], []
+    out = {'overlay': 'acquisition_sbc', 'label_he': overlay('acquisition_sbc')['label_he'], 'dilution': SBC_DILUTION}
+    a, ids = _block(ix, 'acquisition_sbc')
+    if a is None or ids is None:
+        out['status'] = 'not_supplied' if a is None else 'unavailable'
+        out['flags'], out['questions'] = flags, qs
+        return out
+    per = a.get('period') or ix['period']
+    if per not in MONTHS:
+        raise ValueError(f'acquisition_sbc.period: one of {tuple(MONTHS)}')
+    deal = a.get('deal')
+    total = _num(a.get('stock_to_employees'), 'acquisition_sbc.stock_to_employees', 0)
+    years = _num(a.get('vesting_years'), 'acquisition_sbc.vesting_years', 0)
+    tranche = _num(a.get('observed_tranche_in_period'), 'acquisition_sbc.observed_tranche_in_period', 0)
+    out.update(status='computed', deal=deal, period=per, stock_to_employees=total, vesting_years=years, tranche_in_period=tranche,
+               source_ids=ids)
+    sbc, rev = _line_item(ix, 'sbc', measure=per), _line_item(ix, 'revenue', measure=per)
+    if sbc is None or rev is None or tranche is None or rev['value'] <= 0:
+        out['ratios'] = {'status': 'not_computed', 'reason': f'needs lines.sbc, lines.revenue and the tranche on the same {per}'}
+        _q(qs, 'acquisition_sbc', f'supply total SBC and revenue for the {per} the tranche was expensed in')
+    elif tranche > sbc['value']:
+        out['ratios'] = {'status': 'not_computed', 'reason': 'the tranche exceeds total SBC in the period'}
+    else:
+        out['ratios'] = {'status': 'computed',
+                         'headline': {'value': sbc['value'] / rev['value'], 'derived_from': f'{sbc["ref"]} / {rev["ref"]}'},
+                         'ongoing': {'value': (sbc['value'] - tranche) / rev['value'],
+                                     'derived_from': f'({sbc["ref"]} - acquisition_sbc.observed_tranche_in_period) / {rev["ref"]}'}}
+    sched = a.get('schedule')
+    per_year = None
+    if sched is None:
+        if total is not None and years:
+            per_year = {'value': total / years, 'derived_from': 'acquisition_sbc.stock_to_employees / vesting_years'}
+            out['schedule'] = {'basis': 'straight_line_assumed', 'per_year': per_year,
+                               'label': 'an assumption: the vesting schedule is not disclosed; straight line over the term'}
+            out['readings'] = [{'check': 'straight_line_assumed', 'kind': 'reading', 'per_year': per_year['value'],
+                                'derived_from': per_year['derived_from'],
+                                'rule': 'a schedule given only as a total and a number of years is straight-line, labelled an assumption'}]
+        else:
+            out['schedule'] = {'basis': 'missing', 'reason': 'neither a schedule nor a total and a term'}
+            _q(qs, 'acquisition_sbc', f'supply the {deal} stock consideration to employees and its vesting term or schedule')
+    else:
+        if not isinstance(sched, list) or not sched:
+            raise ValueError('acquisition_sbc.schedule: the evidenced amount for each vesting year, in order')
+        amounts = [number(x, f'acquisition_sbc.schedule[{i}]', 0) for i, x in enumerate(sched)]
+        y = a.get('schedule_year')
+        out['schedule'] = {'basis': 'evidenced', 'amounts': amounts}
+        if total is not None:
+            out['schedule']['sum'] = {'value': sum(amounts), 'derived_from': 'sum of acquisition_sbc.schedule'}
+            out['schedule']['sum_vs_total'] = {'value': sum(amounts) / total - 1 if total else None,
+                                               'derived_from': 'schedule sum / stock_to_employees - 1'}
+        if not isinstance(y, int) or isinstance(y, bool) or not 1 <= y <= len(amounts):
+            out['schedule']['reason'] = 'schedule_year (1-based, the vesting year the period falls in) not supplied'
+            _q(qs, 'acquisition_sbc', f'which vesting year of the {deal} schedule does the {per} fall in?')
+        else:
+            per_year = {'value': amounts[y - 1], 'derived_from': f'acquisition_sbc.schedule[{y - 1}] (vesting year {y})'}
+            out['schedule'].update(year=y, per_year=per_year)
+    if tranche is not None:
+        k = 12 / MONTHS[per]
+        obs = {'value': tranche * k, 'annualized_by': k, 'derived_from': f'acquisition_sbc.observed_tranche_in_period x {k:g}'}
+        out['observed_annualized'] = obs
+        if per_year is not None and per_year['value'] > 0:
+            diff = obs['value'] / per_year['value'] - 1
+            mismatch = abs(diff) > rules['tranche_mismatch']
+            out['vs_schedule'] = {'value': diff, 'tranche_mismatch': rules['tranche_mismatch'],
+                                  'status': 'mismatch' if mismatch else 'consistent', 'schedule_basis': out['schedule']['basis'],
+                                  'derived_from': 'observed annualized tranche / schedule per year - 1'}
+            if mismatch:
+                flags.append(_oflag(ix, 'tranche_schedule_mismatch', 'acquisition_sbc', deal=deal, observed_annualized=obs['value'],
+                                    schedule_per_year=per_year['value'], schedule_basis=out['schedule']['basis'], change=diff,
+                                    threshold=rules['tranche_mismatch'], derived_from='acquisition_sbc.vs_schedule'))
+                _q(qs, 'acquisition_sbc', f'the {deal} tranche expensed this {per} annualizes {abs(diff):.0%} '
+                                          f'{"below" if diff < 0 else "above"} the {out["schedule"]["basis"].replace("_", " ")} schedule: '
+                                          'what is the vesting schedule (front- or back-loaded, performance conditions)?')
+    out['tranche_ends_after_years'] = years
+    out['flags'], out['questions'] = flags, qs
+    return out
+
+
+# ------------------------------------------------ bank capital
+
+def _bank_capital(ix, mids, identities, upstream):
+    from . import quarter as Q                        # lazy: quarter_review will read econ (WP7)
+    case, rules = ix['case'], ix['rules']
+    qs, flags = [], []
+    out = {'overlay': 'bank_capital', 'label_he': overlay('bank_capital')['label_he'], 'reuses': 'quarter._bank (never duplicated)'}
+    b, ids = _block(ix, 'bank')
+    cr, cr_ids = _block(ix, 'credit')
+    if b is None and cr is None:
+        out['status'] = 'not_supplied'
+        out['flags'], out['questions'] = flags, qs
+        return out
+    out['status'] = 'computed'
+    if b is not None and ids is not None:
+        out.update(_capital(ix, Q, b, ids, qs, flags))
+    elif b is not None:
+        out['capital'] = {'status': 'unavailable'}
+    if cr is not None:
+        out['credit'] = _credit(ix, cr, cr_ids, qs, flags)
+    out['flags'], out['questions'] = flags, qs
+    return out
+
+
+def _capital(ix, Q, b, ids, qs, flags):
+    case, rules = ix['case'], ix['rules']
+    num = lambda k, lo=None, hi=None: None if b.get(k) is None else number(b[k], f'bank.{k}', lo, hi)
+    tbv, shares, tce_in = num('tangible_book_per_share', 1e-12), num('diluted_shares', 1e-12), num('tangible_common_equity', 1e-12)
+    res = {'source_ids': ids, 'source_kinds': _kinds(case, ids)}
+    if tbv is None and tce_in is not None and shares is not None:
+        tbv = tce_in / shares
+        res['tangible_book_per_share'] = {'value': tbv, 'derived_from': 'bank.tangible_common_equity / bank.diluted_shares'}
+    if tce_in is not None:
+        tce = {'value': tce_in, 'derived_from': 'bank.tangible_common_equity as stated'}
+    elif tbv is not None and shares is not None:
+        tce = {'value': tbv * shares, 'derived_from': 'bank.tangible_book_per_share x bank.diluted_shares'}
+    else:
+        tce = None
+    res['tangible_common_equity'] = tce
+    if tbv is None:
+        res['capital'] = {'status': 'missing', 'missing': ['tangible_book_per_share']}
+        _q(qs, 'bank_capital', 'supply tangible book per share (or tangible common equity and diluted shares)')
+        return res
+    rote, ni_in = num('rote', -1, 1), num('net_income_annual')
+    ni = None
+    if rote is not None:
+        res['rote'] = {'value': rote, 'from': 'bank.rote as stated'}
+        if tce is not None:
+            ni = {'value': rote * tce['value'], 'derived_from': 'bank.rote x tangible common equity'}
+    elif ni_in is not None and tce is not None:
+        ni = {'value': ni_in, 'derived_from': 'bank.net_income_annual as stated'}
+        rote = ni_in / tce['value']
+        res['rote'] = {'value': rote, 'derived_from': 'bank.net_income_annual / tangible common equity'}
+    res['net_income_annual'] = ni
+    rng = b.get('target_ratio_range')
+    if rng is not None:
+        if not isinstance(rng, list) or len(rng) != 2:
+            raise ValueError('bank.target_ratio_range: [low, high]')
+        lo, hi = (number(x, 'bank.target_ratio_range', 0, 1) for x in rng)
+        if lo > hi:
+            raise ValueError('bank.target_ratio_range: low above high')
+    elif b.get('target_ratio') is not None:
+        lo = hi = number(b['target_ratio'], 'bank.target_ratio', 0, 1)
+    else:
+        lo = hi = None
+    # the price basis of quarter._bank: a stated P/TBV is an input of the overlay (registry); the market price is read
+    # beside it; without either, _bank still gives the capital fields and its price fields are not read
+    mkt, mkt_ids = _block(ix, 'market')
+    price = number(mkt['price'], 'market.price', 1e-12) if mkt is not None and mkt_ids is not None and mkt.get('price') is not None else None
+    ptbv = num('price_to_tangible_book', 1e-12)
+    basis = ('stated', ptbv * tbv) if ptbv is not None else ('market', price) if price is not None else (None, None)
+    keep = ('cost_of_equity', 'growth', 'capital_ratio', 'risk_weighted_assets', 'minimum_ratio', 'fair_value_marks', 'equity')
+    qb = {'source_ids': ids, 'tangible_book_per_share': tbv, **{k: b[k] for k in keep if b.get(k) is not None}}
+    if rote is not None:
+        qb['rote'] = rote
+    quarter_flags = []
+    ends = []
+    for end, t in (('high', hi), ('low', lo)) if hi is not None else ((None, None),):
+        got = Q._bank({**qb, **({'target_ratio': t} if t is not None else {})}, basis[1] or tbv, quarter_flags if not ends else [])
+        ends.append((end, t, got))
+    _, _, head = ends[0]
+    if basis[0] is not None:
+        res['quarter_flags'] = [{'key': k, 'severity': s} for k, s, _ in quarter_flags]
+        res['quarter_flags_note'] = "quarter_review's own flags from quarter._bank: shown here, never merged into econ flags"
+    # excess capital at both ends of the target range (never the midpoint) and ROTE if all of it were returned
+    rows = []
+    for end, t, got in ends if hi is not None else ():
+        row = {'end': f'{end} target', 'target_ratio': t}
+        if 'excess_capital_vs_target' in got:
+            ex = got['excess_capital_vs_target']
+            row['excess'] = {'value': ex, 'derived_from': 'quarter._bank: (capital_ratio - target_ratio) x risk_weighted_assets'}
+            if ex <= 0:
+                row['rote_if_returned'] = {'status': 'not_computed', 'reason': 'at or below this end of the target range: nothing to return'}
+            elif ni is None or tce is None or tce['value'] - ex <= 0:
+                row['rote_if_returned'] = {'status': 'not_computed', 'reason': 'needs ROTE or annual net income and tangible common equity above the excess'}
+            else:
+                row['rote_if_returned'] = {'value': ni['value'] / (tce['value'] - ex),
+                                           'derived_from': 'annual net income / (tangible common equity - excess)'}
+        rows.append(row)
+    res['excess_capital'] = rows
+    if hi is None or not all('excess' in r for r in rows):
+        _q(qs, 'bank_capital', 'supply the capital ratio, the evidenced target range and risk-weighted assets')
+    else:
+        xs = [r['excess']['value'] for r in rows]
+        res['excess_capital_range'] = {'min': min(xs), 'max': max(xs), 'midpoint': 'never used',
+                                       'derived_from': 'the excess at both ends of the target range'}
+        bounds = [r['rote_if_returned']['value'] for r in rows if 'value' in r['rote_if_returned']]
+        if bounds:
+            res['rote_if_all_excess_returned'] = {'min': min(bounds), 'max': max(bounds),
+                                                  'label': 'upper bound: ignores the yield the excess earns',
+                                                  'derived_from': 'annual net income / (tangible common equity - excess) at each end'}
+    if 'headroom_to_minimum' in head:
+        res['headroom_to_minimum'] = {'value': head['headroom_to_minimum'], 'minimum_ratio': b.get('minimum_ratio'),
+                                      'derived_from': 'quarter._bank: capital_ratio - minimum_ratio'}
+    # the ROTE the price implies, from quarter._bank at the price basis (COE and growth are explicit inputs, never defaults)
+    if basis[0] is None:
+        res['price_implied_rote'] = {'status': 'not_computed', 'reason': 'no market price and no stated P/TBV'}
+    elif 'rote_implied_by_price' not in head:
+        res['price_implied_rote'] = {'status': 'not_computed', 'reason': 'needs bank.rote (or net income), cost_of_equity and growth, each stated'}
+        _q(qs, 'bank_capital', 'supply the cost of equity and the long-run growth as explicit inputs (no defaults)')
+    else:
+        pir = {'value': head['rote_implied_by_price'], 'price_to_tangible_book': ptbv if basis[0] == 'stated' else head['price_to_tangible_book'],
+               'ptbv_from': 'bank.price_to_tangible_book as stated' if basis[0] == 'stated' else 'market.price / tangible book per share',
+               'cost_of_equity': b.get('cost_of_equity'), 'growth': b.get('growth'),
+               'assumption_kinds': _kinds(case, ids), 'derived_from': 'quarter._bank: growth + P/TBV x (cost_of_equity - growth)'}
+        if basis[0] == 'stated' and price is not None:
+            at = Q._bank(qb, price, [])
+            pir['at_market_price'] = {'price': price, 'price_to_tangible_book': at['price_to_tangible_book'], 'value': at['rote_implied_by_price'],
+                                      'stated_vs_market_ptbv': ptbv / at['price_to_tangible_book'] - 1,
+                                      'derived_from': 'quarter._bank at market.price; stated / market P/TBV - 1'}
+        res['price_implied_rote'] = pir
+        if 'rote_if_all_excess_returned' in res:
+            bound = res['rote_if_all_excess_returned']
+            gaps = [pir['value'] - r['rote_if_returned']['value'] for r in rows if 'value' in r['rote_if_returned']]
+            lever = {'check': 'capital_lever_insufficient', 'insufficient': bound['max'] < pir['value'],
+                     'gap': {'min': min(gaps), 'max': max(gaps), 'derived_from': 'price-implied ROTE - ROTE if all excess returned, at each end'},
+                     'reading': 'the part of the price-implied ROTE that must come from earnings, not from returning capital'}
+            near = _near(bound['max'], pir['value'], rules)
+            if near:
+                lever['near'] = near
+            res['capital_lever'] = lever
+            if lever['insufficient']:
+                flags.append(_oflag(ix, 'capital_lever_insufficient', 'bank_capital', rote_bound_max=bound['max'],
+                                    price_implied_rote=pir['value'], gap_min=lever['gap']['min'], gap_max=lever['gap']['max'],
+                                    derived_from='bank_capital.capital_lever'))
+    return res
+
+
+def _credit(ix, cr, ids, qs, flags):
+    case = ix['case']
+    if ids is None:
+        return {'status': 'unavailable'}
+    sold = cr.get('loan_sales_disclosed')
+    if sold is not None and not isinstance(sold, bool):
+        raise ValueError('credit.loan_sales_disclosed: true or false')
+    head = _num(cr.get('nco_headline'), 'credit.nco_headline', 0)
+    norm = cr.get('nco_normalized')
+    out = {'loan_sales_disclosed': sold, 'nco_headline': head, 'source_ids': ids}
+    if norm is not None:
+        nids = _source_ids(case, norm, 'credit.nco_normalized') if isinstance(norm, dict) else ids
+        v = number(norm.get('value') if isinstance(norm, dict) else norm, 'credit.nco_normalized', 0)
+        if _visible(case, nids):
+            kind = norm.get('kind') if isinstance(norm, dict) else None
+            out.update(status='normalized', nco_used=v, nco_source_ids=nids,
+                       label='normalized' + (f' ({kind.replace("_", " ")})' if kind else '') + ': loans sold put back; used and labelled')
+            return out
+        _unavailable(ix, 'credit.nco_normalized')
+    if sold and head is not None:
+        out.update(status='headline_only', nco_used=None,
+                   reason='loan sales are disclosed and only the headline NCO is supplied: it excludes the losses on loans sold')
+        flags.append(_oflag(ix, 'nco_basis', 'bank_capital', nco_headline=head, loan_sales_disclosed=True))
+        _q(qs, 'bank_capital.nco_basis', 'supply the NCO rate with the loans sold put back (a normalized NCO, sourced)')
+    elif head is not None:
+        out.update(status='headline', nco_used=head, label='headline (no loan sales disclosed)')
+    else:
+        out.update(status='missing', nco_used=None)
+    return out
+
+
+# ------------------------------------------------ contract coverage
+
+def _contract_coverage(ix, mids, identities, upstream):
+    case = ix['case']
+    qs, flags = [], []
+    out = {'overlay': 'contract_coverage', 'label_he': overlay('contract_coverage')['label_he'],
+           'boundary_note': 'a tenor and a customer count alone prove nothing about price'}
+    c, ids = _block(ix, 'contracts')
+    if c is None or ids is None:
+        out['status'] = 'not_supplied' if c is None else 'unavailable'
+        out['flags'], out['questions'] = flags, qs
+        return out
+    items = {k: c.get(k) for k in COVERAGE_ITEMS}
+    share = _num(items['share_of_next_year_volume'], 'contracts.share_of_next_year_volume', 0, 1)
+    ten = items['tenor_years']
+    if ten is not None:
+        ten = [number(x, 'contracts.tenor_years', 0) for x in (ten if isinstance(ten, list) else [ten])]
+    missing = [k for k, ok in (('share_of_next_year_volume', share is not None and share > 0),
+                               ('price_mechanism', items['price_mechanism'] in PRICE_MECHANISMS),
+                               ('deposits', items['deposits'] is True), ('tenor_years', bool(ten) and all(t > 0 for t in ten)))
+               if not ok]
+    kinds = _kinds(case, ids)
+    issuer = any(k in EVIDENCE_KINDS for k in kinds)
+    out.update(items=items, missing=missing, source_ids=ids,
+               evidence={'issuer_document': issuer, 'source_kinds': kinds,
+                         'rule': 'cycle damping needs all four items from an issuer document (decision.py\'s rule for upgrade evidence)'})
+    if c.get('customers') is not None:
+        out['customers'] = c['customers']
+    if missing or not issuer:
+        out.update(status='lta_unproven', cycle_damping='none')
+        flags.append(_oflag(ix, 'lta_unproven', 'contract_coverage', missing=missing, issuer_document=issuer))
+        if missing:
+            _q(qs, 'contract_coverage', 'supply ' + ', '.join(COVERAGE_ASK[m] for m in missing) + ' of the long-term agreements')
+        if not issuer:
+            _q(qs, 'contract_coverage', 'cite the issuer document that states the contract terms')
+    else:
+        out.update(status='evidenced', cycle_damping='eligible (applied by the forecast, WP13; the bear never changes)')
+    out['flags'], out['questions'] = flags, qs
+    return out
+
+
+# ------------------------------------------------ segments
+
+def _segments(ix, mids, identities, upstream):
+    case, rules = ix['case'], ix['rules']
+    qs, flags = [], []
+    out = {'overlay': 'segments', 'label_he': overlay('segments')['label_he'], 'segment_material': rules['segment_material'],
+           'boundary_note': 'one consolidated margin is never applied to segments with very different margins'}
+    segs = [s for i, s in enumerate(case.get('segments') or []) if _visible(case, _source_ids(case, s, f'segments[{i}]'))]
+    if len(segs) < SEGMENTS_MIN:
+        out['status'] = 'not_supplied'
+        out['flags'], out['questions'] = flags, qs
+        return out
+    seg_line = lambda lid, scope: next((it for it in ix['line'].get((lid, scope), []) if it['ref'].startswith('segments[')
+                                        and it['value'] is not None), None)
+    scopes = [_scope(s['name'], 'segments') for s in segs]
+    revs = {sc: seg_line('revenue', sc) for sc in scopes}
+    rev_sum = sum(r['value'] for r in revs.values() if r) if all(revs.values()) else None
+    total = _line_item(ix, 'revenue', measure=ix['period'])
+    measure = next((lid for lid in ('operating_income', 'segment_profit') if all(seg_line(lid, sc) for sc in scopes)), None)
+    prof_sum = sum(seg_line(measure, sc)['value'] for sc in scopes) if measure else None
+    out.update(status='computed', profit_measure=measure)
+    rows = []
+    for s, sc in zip(segs, scopes):
+        named = s.get('model')
+        if named is not None and named not in registry()['models']:
+            raise ValueError(f'segments[{s["name"]}].model: {named!r} is not a model of the registry')
+        read_under = [named] if named in mids else ([] if named else list(mids))
+        row = {'name': s['name'], 'scope': sc, 'model': named, 'model_from': 'named by the segment' if named else 'the selected models',
+               'read_under': read_under}
+        if named and named not in mids:
+            row['note'] = f'{named} is not among the selected models: the segment is not read under it'
+        r = revs[sc]
+        if r is not None:
+            row['revenue'] = r['value']
+            if rev_sum:
+                row['share_of_revenue'] = {'value': r['value'] / rev_sum, 'of': 'the sum of the segments',
+                                           'derived_from': f'{r["ref"]} / sum of segment revenue'}
+            if total and total['value'] > 0:
+                row['share_of_reported_revenue'] = {'value': r['value'] / total['value'], 'derived_from': f'{r["ref"]} / {total["ref"]}'}
+        p = seg_line(measure, sc) if measure else None
+        if p is not None:
+            row['profit'] = {'value': p['value'], 'measure': measure, 'derived_from': p.get('derived_from') or f'{p["ref"]}.value'}
+            if prof_sum and prof_sum > 0:
+                row['share_of_profit'] = {'value': p['value'] / prof_sum,
+                                          'derived_from': f'{p["ref"]} / sum of segment {_name(measure).replace("segment ", "")}'}
+        if s.get('research_and_development') is not None and s.get('revenue'):
+            row['rnd_to_revenue'] = {'value': number(s['research_and_development'], 'segment R&D') / number(s['revenue'], 'segment revenue'),
+                                     'derived_from': f'segments[{s["name"]}].research_and_development / revenue'}
+        ebitda_key = next((k for k in ('ebitda', 'adjusted_ebitda') if s.get(k) is not None), None)
+        if ebitda_key and s.get('capex') is not None:
+            row['ebitda_minus_capex'] = {'check': 'ebitda_minus_capex', 'value': number(s[ebitda_key], ebitda_key) - number(s['capex'], 'capex'),
+                                         'ebitda_field': ebitda_key, 'basis': 'the issuer definitions of both',
+                                         'derived_from': f'segments[{s["name"]}].{ebitda_key} - capex'}
+        mine = [x for x in identities if x['scope'] == sc and x['model'] in read_under]
+        explaining = [x for x in mine if x['status'] in SEGMENT_RECONCILED or (
+            x['status'] == 'computed' and (x.get('value') is not None or x.get('changes'))
+            and _base_refs(ix['spec'][x['model']], ix['spec'][x['model']]['ids'][x['id']])[0])]
+        row['identities'] = [{'model': x['model'], 'id': x['id'], 'status': x['status'], 'core': x['core']} for x in mine]
+        row['explained_by'] = [f'{x["model"]}.{x["id"]} ({x["status"]})' for x in explaining]
+        row['explained'] = bool(explaining) if read_under else None
+        shares = [row[k]['value'] for k in ('share_of_revenue', 'share_of_profit') if k in row]
+        row['material'] = any(v >= rules['segment_material'] for v in shares)
+        not_disclosed = [k for k, v in s.items() if v is None]
+        if not_disclosed:
+            row['not_disclosed'] = not_disclosed
+        ident_missing = {x['id']: x['missing'] for x in mine if x['core'] and x.get('missing')}
+        if ident_missing:
+            row['identity_missing'] = ident_missing
+        unread = [m for m in read_under if not any(x['model'] == m for x in mine)]   # no row of the model here at all
+        if unread:
+            row['core_kpis_not_reported_here'] = {m: required_kpis(m) for m in unread}
+        if row['material'] and row['explained'] is False:
+            missing = list(dict.fromkeys(not_disclosed + [m for ms in ident_missing.values() for m in ms]
+                                         + [k for m in unread for k in required_kpis(m)]))
+            row['missing'] = missing
+            flags.append(_oflag(ix, 'segment_unexplained', 'segments', sc, segment=s['name'], model=named,
+                                share_of_revenue=(row.get('share_of_revenue') or {}).get('value'),
+                                share_of_profit=(row.get('share_of_profit') or {}).get('value'), threshold=rules['segment_material'],
+                                missing=missing, derived_from=f'overlays.segments.segments[{s["name"]}]'))
+            _q(qs, 'segments.segment_unexplained', f'how does {s["name"]} earn? supply ' + (', '.join(_name(m) for m in missing) or
+                                                   'the operating KPIs of its model') + f' ({s["name"]})', sc)
+        rows.append(row)
+    out['segments'] = rows
+    out['flags'], out['questions'] = flags, qs
+    return out
+
+
+# ------------------------------------------------ running the overlays
+
+OVERLAY_RUNNERS = {'vendor_financing': _vendor_financing, 'funded_customer_chain': _chain, 'acquisition_sbc': _acquisition_sbc,
+                   'segments': _segments, 'contract_coverage': _contract_coverage, 'bank_capital': _bank_capital}
+
+
+def _supplied(case, oid):
+    """The case blocks that supply an overlay's inputs ([] when it supplies none)."""
+    if oid == 'vendor_financing':
+        bal = case.get('balance')
+        return [k for k in VF_BLOCKS if case.get(k) is not None] + (
+            ['balance'] if isinstance(bal, dict) and any(bal.get(k) is not None for k in VF_BALANCE_KEYS) else [])
+    if oid == 'funded_customer_chain':
+        return ['chain'] if case.get('chain') is not None else []
+    if oid == 'acquisition_sbc':
+        return ['acquisition_sbc'] if case.get('acquisition_sbc') is not None else []
+    if oid == 'bank_capital':
+        return [k for k in ('bank', 'credit') if case.get(k) is not None]
+    if oid == 'contract_coverage':
+        return ['contracts'] if isinstance(case.get('contracts'), dict) else []
+    segs = case.get('segments') or []
+    return ['segments'] if isinstance(segs, list) and len(segs) >= SEGMENTS_MIN else []
+
+
+def _run_overlays(ix, mids, identities, upstream):
+    """{overlay id: result} in registry order for every overlay whose inputs the case supplies and that applies to a
+    selected model; supplied but not applicable, its blocks go to not_read with the reason."""
+    reg = registry()
+    case, out = ix['case'], {}
+    for oid in reg['overlays']:
+        blocks = _supplied(case, oid)
+        if not blocks:
+            continue
+        applies = reg['overlays'][oid]['applies_to']
+        if '*' not in applies and not set(applies) & set(mids):
+            for blk in blocks:
+                if blk not in ix['read']:
+                    ix['not_read'].append({'ref': blk, 'reason': f'input of the {oid} overlay, which applies to {", ".join(applies)}; '
+                                                                 'none of them is selected'})
+                    ix['read'].add(blk)
+            continue
+        out[oid] = OVERLAY_RUNNERS[oid](ix, mids, identities, upstream)
+    if upstream is not None and 'funded_customer_chain' not in out:
+        raise ValueError('upstream: given, but the case supplies no chain block for a model the chain overlay applies to')
+    return out
+
+
+def _overlay_checks():
+    return {c: oid for oid, o in registry()['overlays'].items() for c in o['checks']}
+
+
+def _not_run_reason(ix, check, owner, ran):
+    oid = owner.get(check)
+    if oid is None:
+        return 'not computed by this version of the econ review'
+    if _supplied(ix['case'], oid):
+        return f'overlay {oid}: supplied, but it applies to none of the selected models'
+    return f'overlay {oid}: its inputs are not supplied in the case'
+
+
+def _overlay_call(case, oid, model=None, upstream=None):
+    """One overlay on an econ case, as the review computes it (it runs even when no selected model declares it: the
+    caller asked for it). `model` selects the models segments are read under (case['model'] when omitted)."""
+    _check_case(case)
+    mids, selection = _selection(model if model is not None else case.get('model'))
+    ix = _index(case, mids)
+    res = OVERLAY_RUNNERS[oid](ix, mids, _identity_rows(ix, mids) if oid == 'segments' else [], upstream)
+    res['flags'] = sorted(res['flags'], key=lambda f: (SEVERITIES.index(f['severity']), f['key'], f['scope'] or '', f.get('segment') or ''))
+    res['questions'] = sorted(res['questions'], key=lambda q: (q['about'], q['scope'] or '', q['question']))
+    res.update(model=selection, unavailable=sorted(set(ix['unavailable'])), as_of=case['as_of'], company=case['company'],
+               economics_version=ECONOMICS_VERSION, registry_sha256=registry_sha256())
+    return _finish_overlay(res, case)
+
+
+def _finish_overlay(res, case):
+    res['input_sha256'] = F.digest(case)
+    res['engine_version'] = __version__
+    res['boundary'] = OVERLAY_BOUNDARY
+    return deepcopy(res)
+
+
+def vendor_financing(case):
+    """Who funds the demand: the funding ledger (funded, committed, take-or-pay and the contingent ceiling as stock-to-flow
+    shares of annualized revenue, never revenue at risk), the statement checks (CFO / NI and CFO / (NI - non-cash gains),
+    receivables against revenue on matched windows only, the receivables build, the customer-prepayment build, the
+    related-party share), the guarantee ceiling against spendable cash, the attributed exposed share and the level
+    (high / elevated / none; an exposed share never sets it)."""
+    return _overlay_call(case, 'vendor_financing')
+
+
+def chain(case, upstream=None):
+    """The supplier-chain exposure: own revenue share via the funded chain x the upstream exposed share, computed only
+    when both exist (otherwise unquantified, the missing numbers named). `upstream` is the funder's econ review, linked by
+    its input_sha256; its numbers are cited, never copied in as facts."""
+    return _overlay_call(case, 'funded_customer_chain', upstream=upstream)
+
+
+def acquisition_sbc(case):
+    """Acquisition SBC: the ongoing ratio (SBC - the period's tranche) / revenue beside the headline ratio, the tranche
+    schedule (evidenced, or straight_line_assumed from a total and a term), the observed tranche annualized against it
+    (tranche_schedule_mismatch beyond rules.tranche_mismatch, an open question), the dilution counted as real."""
+    return _overlay_call(case, 'acquisition_sbc')
+
+
+def bank_capital(case):
+    """Bank capital through quarter._bank: excess capital at both ends of the evidenced target range (never the midpoint),
+    ROTE if all of it were returned (an upper bound), the ROTE the price implies (stated P/TBV, else market price; COE and
+    growth explicit), capital_lever_insufficient, headroom to the minimum, and nco_basis when loans are sold."""
+    return _overlay_call(case, 'bank_capital')
+
+
+def contract_coverage(case):
+    """Long-term agreements: lta_unproven unless the share of next-year volume, a price floor or formula, deposits and a
+    tenor are all evidenced by an issuer document; no cycle damping otherwise."""
+    return _overlay_call(case, 'contract_coverage')
+
+
+def segments(case, model=None):
+    """Segment economics: each segment's share of revenue and profit, its identities under its own model (named by the
+    segment) or the selected models, EBITDA - capex and R&D / revenue where given, and segment_unexplained for a segment
+    with at least rules.segment_material of revenue or profit that no identity of its model explains."""
+    return _overlay_call(case, 'segments', model=model)

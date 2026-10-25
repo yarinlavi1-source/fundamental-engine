@@ -73,6 +73,11 @@ DERIVED_KEYS = {'annual_impact', 'annual_net_interest_income', 'annualized_by', 
                 'pass_through', 'per_unit_change', 'per_unit_log_share', 'pp', 'price', 'prior', 'prior_diff', 'prior_growth',
                 'prior_pass_through', 'product', 'residual_log', 'residual_pp', 'run_rate_eps', 'run_rate_pe', 'share',
                 'share_change', 'stated', 'stated_base', 'stated_prior', 'sum', 'units_growth', 'value'}
+# WP5 overlays (reviewed): ledger sums, near-threshold distances, ranges at both ends of a target range, the price-implied
+# ROTE and the capital-lever gap, segment shares and the SBC tranche figures a flag carries beside its derived_from
+DERIVED_KEYS |= {'amount', 'build', 'distance', 'gap_max', 'gap_min', 'max', 'min', 'observed_annualized', 'per_year',
+                 'price_implied_rote', 'price_to_tangible_book', 'rote_bound_max', 'schedule_per_year', 'share_of_profit',
+                 'share_of_revenue', 'stated_vs_market_ptbv'}
 
 
 def unsourced(out, case_):

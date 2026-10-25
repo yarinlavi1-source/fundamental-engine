@@ -371,6 +371,63 @@ def pro_forma_revenue(html):
     return out
 
 
+# Who funds the demand and how much the business spends to renew it, as tagged in the annual report (econ WP5; called by
+# the business map from WP9 only). Keys are the econ registry's line ids (brain/economics.json lines.<id>.xbrl):
+# (key, concept, 'instant' for a balance / 'duration' for a fiscal-year flow).
+DEMAND_TAGS = (('guarantee_maximum_exposure', 'us-gaap:GuaranteeObligationsMaximumExposure', 'instant'),
+               ('purchase_obligations', 'us-gaap:UnrecordedUnconditionalPurchaseObligationBalanceSheetAmount', 'instant'),
+               ('related_party_revenue', 'us-gaap:RevenueFromRelatedParties', 'duration'),
+               ('deferred_revenue', 'us-gaap:ContractWithCustomerLiability', 'instant'),
+               ('research_and_development', 'us-gaap:ResearchAndDevelopmentExpense', 'duration'),
+               ('advertising', 'us-gaap:AdvertisingExpense', 'duration'))
+
+
+def demand_tags(ix):
+    """The demand-side tags of one annual report's inline XBRL (parse_ixbrl output): the guarantee ceiling, unrecorded
+    purchase obligations, related-party revenue, contract liabilities (deferred revenue), R&D and advertising. Consolidated
+    contexts only (a dimensional breakdown is counted, not summed); flows on fiscal-year contexts. Each tag:
+    {concept, kind, latest {value, date, start?, unit}, by_date {date: value}, dimensional_facts, conflicts?}, or None when
+    the report does not tag it (listed under not_tagged: read the notes). Values as tagged: not adjusted, not forecast."""
+    tags, not_tagged = {}, []
+    for key, concept, kind in DEMAND_TAGS:
+        by, unit, start, dims, conflicts = {}, {}, {}, 0, []
+        for f in ix['facts']:
+            if f['concept'] != concept:
+                continue
+            c = ix['contexts'].get(f['context'])
+            if not c:
+                continue
+            if _clean_dims(c['dims']):
+                dims += 1
+                continue
+            if kind == 'instant':
+                when = c.get('instant')
+            else:
+                when = c['end'] if _annual(c) else None
+            if not when:
+                continue
+            if when in by and by[when] != f['value']:
+                conflicts.append({'date': when, 'values': sorted({by[when], f['value']})})
+                continue
+            by[when], unit[when] = f['value'], f.get('unit')
+            if kind == 'duration':
+                start[when] = c['start']
+        if not by:
+            not_tagged.append(key)
+            tags[key] = None
+            continue
+        last = max(by)
+        latest = {'value': by[last], 'date': last, 'unit': unit[last]}
+        if kind == 'duration':
+            latest['start'] = start[last]
+        tags[key] = {'concept': concept, 'kind': kind, 'latest': latest, 'by_date': dict(sorted(by.items())), 'dimensional_facts': dims}
+        if conflicts:
+            tags[key]['conflicts'] = conflicts
+    return {'demand_tags_version': 1, 'tags': tags, 'not_tagged': not_tagged,
+            'where_else': 'customer financing (equity stakes, lease guarantees, take-or-pay) is often untagged: notes and Item 7',
+            'meaning': 'facts as tagged in the annual report; a guarantee maximum is a ceiling, never summed into a screen'}
+
+
 def business_map(html, source=None, consolidated_revenue=None):
     """Business map from one annual report's inline XBRL. source: {'url','accession','form','filed','period'}."""
     ix = parse_ixbrl(html)

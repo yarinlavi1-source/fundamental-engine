@@ -292,7 +292,7 @@
    "kind": "flag",
    "severity": "info",
    "fixed": true,
-   "rule": "contract coverage lacks one of: share of next-year volume, price floor or formula, deposits, tenor; no cycle damping"
+   "rule": "contract coverage lacks one of: share of next-year volume, price floor or formula, deposits, tenor, or no issuer document states them; no cycle damping"
   },
   "customer_concentration": {
    "kind": "reading",
@@ -302,7 +302,7 @@
    "kind": "flag",
    "severity": "info",
    "fixed": false,
-   "rule": "deferred revenue builds faster than revenue: financing from customers, read with the funding ledger"
+   "rule": "deferred revenue builds (end above start): financing from customers, read with the funding ledger; when revenue growth exists over the same window the flag needs the build to grow faster than revenue, otherwise the comparison is not_computed: window_mismatch and the build is shown"
   },
   "ebitda_minus_capex": {
    "kind": "measure",
@@ -1990,7 +1990,9 @@
     "funding_links": "list of {id, kind: equity_stake|guarantee|take_or_pay|loan|lease_guarantee|prepayment, status: funded|committed|contingent, amount, amount_is_maximum?, direction: company_funds_customer|company_buys_from_customer|customer_funds_company, source_ids}; the same deal reported by several outlets counts once (de-duplicated by id and source)",
     "revenue_basis": "{value, period, annualize, source_ids}",
     "exposed_share": "{value, horizon, kind: reported|analyst_estimate, source_ids}; an analyst_estimate is attributed and never sets the level",
-    "statements": "{cfo, net_income, non_cash_gains, receivables_start, receivables_end, receivables_window_months, revenue_window_months, deferred_revenue_start, deferred_revenue_end, related_party_revenue, spendable_cash}"
+    "statements": "one flow window: statements {period, operating_cash_flow|cfo, net_income, non_cash_gains|non_cash_investment_gains, receivables_build|receivables_build_cash_flow_statement, related_party_revenue?, revenue?, source_ids} or the econ_fixture_v1 half_year block, else the case lines on the case period",
+    "balance": "{receivables_start, receivables_end, receivables_window_months, deferred_revenue_start + deferred_revenue_window_months | deferred_revenue_start_of_year, deferred_revenue, spendable_cash|cash_and_bonds|cash_and_securities, marketable_equities (beside, never added), source_ids}",
+    "receivables_windows": "earlier matched windows [{label, months, receivables_start, receivables_end, revenue_growth over the same months, source_ids}]"
    },
    "computes": [
     "each status as a share of annualized revenue: a stock-to-flow scale ratio, not revenue at risk",
@@ -2033,7 +2035,8 @@
    "inputs": {
     "upstream_ticker": "the funder up the chain",
     "upstream_review_sha256": "input_sha256 of the upstream econ review",
-    "share_of_revenue_via_chain": "own revenue share that flows through the funded chain, with source_ids"
+    "share_of_revenue_via_chain": "own revenue share that flows through the funded chain: a number, or {value, kind?, source_ids}",
+    "upstream": "the upstream econ review, passed by the caller (econ.chain(case, upstream) / econ.review(..., upstream=)); linked by its input_sha256"
    },
    "computes": [
     "chain_exposure = own share x upstream exposed share, only when both exist; otherwise unquantified with the missing numbers named",
@@ -2057,7 +2060,8 @@
     "deal": "name",
     "stock_to_employees": "total stock consideration to employees",
     "vesting_years": "term",
-    "schedule": "evidenced vesting schedule per year, or null",
+    "schedule": "evidenced vesting amounts per year, or null (then straight_line_assumed from the total and the term)",
+    "schedule_year": "1-based vesting year the period falls in (needed with a schedule)",
     "observed_tranche_in_period": "the tranche expensed in the period",
     "period": "quarter|year",
     "sbc": "total SBC in the period",
@@ -2143,7 +2147,7 @@
     "risk_weighted_assets": "RWA",
     "tangible_common_equity": "TCE, or tangible_book_per_share x diluted_shares",
     "net_income_or_rote": "annual NI or ROTE",
-    "price_to_tangible_book": "P/TBV",
+    "price_to_tangible_book": "P/TBV as stated (used when given; market.price / TBV is shown beside it), else market.price / TBV",
     "cost_of_equity": "explicit input",
     "growth": "explicit input",
     "loan_sales_disclosed": "true|false",
