@@ -845,7 +845,7 @@ def exposure_lines_he(cf):
         eff = _num((scen.get('exposure:' + x['id']) or {}).get('base_effect'))
         if eff is not None:
             move = f'נמוך בכ־{eff:.0%}' if eff >= .005 else ('גבוה בכ־' + f'{-eff:.0%}' if eff <= -.005 else 'כמעט לא משתנה')
-            out.append(f"{x['label_he']}: אם זה יקרה, השווי בתרחיש הסביר {move} (המודל הורץ מחדש עם הפגיעה הזו בלבד); "
+            out.append(f"{x['label_he']}: אם זה יקרה, השווי בתרחיש הבסיסי {move} (המודל הורץ מחדש עם הפגיעה הזו בלבד); "
                        'זה תרחיש, לא הסתברות.')
         else:
             out.append(f"{x['label_he']}: ההשפעה על השווי עוד לא חושבה (המודל לא הצליח להריץ את התרחיש מחדש; פירוט בדוח המלא).")
