@@ -13,9 +13,12 @@ WP1: registry access and validation, required KPIs, factor tags, falsifiers, rea
 point in time). WP3: the core math on an econ case: evaluate_identity (per unit, ratio, product, share; status
 computed / consistent / partial / inconsistent / basis_mismatch / scope_mismatch / missing / not_computed, the residual
 named), growth_split (ln(1+g) = sum ln(1+g_i) + residual, every factor tagged) and review (every identity at every
-scope, the split, the model's checks, falsifiers, open questions, input_sha256). Later work packages add model
-selection, overlays, the quarter-review link and the Hebrew text. Nothing here is called by the pipeline, so every
-existing output stays byte-identical (no-input invariance).
+scope, the split, the model's checks, falsifiers, open questions, input_sha256). WP4: model selection (select: the
+card type, the industry / SIC / profile text, the segment names and the KPI facts, two agreeing signals, KPI facts
+before labels, unclassified instead of a forced label, an analyst override only with a reason and evidence, the rule
+result shown beside it; select_case and select_factbook read those inputs point in time). Later work packages add the
+overlays, the quarter-review link and the Hebrew text. Nothing here is called by the pipeline, so every existing output
+stays byte-identical (no-input invariance).
 
 Boundaries: fetches nothing; the registry holds no company data; thresholds are uncalibrated screens frozen in
 docs/prereg_econ.md; a result of this layer is never a valuation, a moat rating or a trade instruction.
@@ -466,11 +469,7 @@ def kpi_table(fb, model_id, as_of=None):
     table and sha256."""
     m = model(model_id)
     version = registry()['economics_version']
-    if as_of is None:
-        as_of = fb['as_of']
-    if F._d(as_of) > F._d(fb['as_of']):
-        raise ValueError(f'kpi_table: as_of {as_of} is after the FactBook cutoff {fb["as_of"]}')
-    view = fb if as_of == fb['as_of'] else {**fb, 'as_of': as_of}
+    as_of, view = _cutoff(fb, as_of, 'kpi_table')
     ids = kpi_ids(model_id)
     kpis, unstated = {}, []
     for k in ids:
@@ -2076,3 +2075,386 @@ def _finish(out, case):
     out['engine_version'] = __version__
     out['boundary'] = REVIEW_BOUNDARY
     return deepcopy(out)
+
+
+# ---------------------------------------------------------------- WP4: model selection
+
+# select() reads three signals for every model of the registry (its `select` block): the card type (model_card's business
+# model type is one of select.card_types), text (a select.text keyword in the industry, sector, SIC description or profile
+# text, or in a segment name, matched as model_card matches labels: lower case, dashes as spaces, at a word start, so
+# plurals and compounds match: 'telecom' in 'telecommunications') and KPI facts (a select.kpi_any id among the KPI facts
+# available, facts.add_kpi rows or a case's sourced KPI rows).
+SELECT_SIGNALS = ('card', 'text', 'kpis')
+# Two of the three must agree before a model is selected; one signal never selects. One word ('memory' in a senior-living
+# operator's 'memory care'), one generic KPI id ('members' of a warehouse club, 'customers' of a utility) or one coarse
+# card type ('semiconductor' covers memory makers and GPU vendors; 'financials' brokers, banks and insurers) would force a
+# label. A rule of evidence, not a calibrated cut: every reason shows it, and an analyst override with evidence replaces it.
+MIN_SIGNALS = 2
+# Economics before labels: a model with a KPI fact outranks every model without one; label-only candidates (card type and
+# text) are then named as overridden and not read (the provider label 'Software - Application' does not make a company
+# that reports gross bookings a software vendor). Among equals: more signals, more KPI facts, more distinct keywords, then
+# the registry order; a tie on every count is named in the reasons.
+SEGMENTS_OVERLAY = 'segments'
+SEGMENTS_MIN = 2           # reported segments from which the segments overlay (it applies to every model) is listed
+OVERRIDE_KEYS = ('primary', 'secondary', 'overlays', 'reason', 'evidence_ids')
+# Evidence kinds an override may not cite: a consensus, a price or market feed and an assumption say nothing about how a
+# business earns (facts.KPI_REFUSED_KINDS plus an econ case's market_data / test_assumption and a FactBook qualitative
+# assumption). Every other kind is accepted and shown under override.evidence_kinds, so an analyst-post-only override
+# stays visible as one.
+OVERRIDE_REFUSED_KINDS = F.KPI_REFUSED_KINDS + ('market_data', 'assumption', 'test_assumption')
+SELECT_OUTCOMES = ('primary', 'secondary', 'overridden', 'one_signal')
+SELECTED, NOT_ASSESSED = 'selected', 'not_assessed'
+SELECT_BOUNDARY = ('which economic model(s) to read the business through, chosen by visible rules from the card type, the '
+                   'industry / SIC / profile text, the segment names and the KPI facts, or by an analyst override with evidence; '
+                   'a reading choice, not a fact about the company, a valuation or a rating; unclassified is not assessed and '
+                   'has no effect')
+
+
+def profile_fields(company):
+    """The text select() reads from a FactBook company record: industry, sector and the SEC SIC code with its description
+    ('SIC 6211 Security Brokers, Dealers & Flotation Companies'); only the fields that are present."""
+    company = company or {}
+    out = {}
+    for k in ('industry', 'sector'):
+        v = company.get(k)
+        if isinstance(v, str) and v.strip():
+            out[k] = v.strip()
+    sic = company.get('sic')
+    if isinstance(sic, int) and not isinstance(sic, bool):
+        out['sic'] = f"SIC {sic} {company.get('sic_description') or ''}".strip()
+    return out
+
+
+def _card_types(card_type, M):
+    if card_type is None:
+        return []
+    if isinstance(card_type, dict):                     # model_card's business_model block: {primary, secondary[]}
+        sec = card_type.get('secondary') or []
+        card_type = [card_type.get('primary')] + (list(sec) if isinstance(sec, (list, tuple)) else [sec])
+    types = [card_type] if isinstance(card_type, str) else card_type
+    if not isinstance(types, (list, tuple)) or not types or not all(isinstance(t, str) for t in types):
+        raise ValueError('card_type: a model_card business-model type, or a list of them (the primary first)')
+    bad = [t for t in types if t not in M.TYPES and t != M.UNCLASSIFIED]
+    if bad:
+        raise ValueError(f'card_type: {bad} not model_card types ({", ".join(M.TYPES)})')
+    return [t for t in dict.fromkeys(types) if t != M.UNCLASSIFIED]
+
+
+def _profile(profile_text):
+    if profile_text is None:
+        return {}
+    if isinstance(profile_text, str):
+        profile_text = {'profile': profile_text}
+    if not isinstance(profile_text, dict) or not all(isinstance(k, str) and k.strip() for k in profile_text):
+        raise ValueError('profile_text: text, or {field: text} (industry, sector, sic, description: econ.profile_fields)')
+    out = {}
+    for k in sorted(profile_text):
+        v = profile_text[k]
+        if v is None:
+            continue
+        if not isinstance(v, str):
+            raise ValueError(f'profile_text.{k}: text required')
+        if v.strip():
+            out[k.strip()] = v.strip()
+    return out
+
+
+def _segment_names(segments):
+    if segments is None:
+        return []
+    if not isinstance(segments, (list, tuple)):
+        raise ValueError('segments: a list of segment names (or segments with a name)')
+    names = []
+    for i, s in enumerate(segments):
+        n = s.get('name') if isinstance(s, dict) else s
+        if not isinstance(n, str) or not n.strip():
+            raise ValueError(f'segments[{i}]: a name required')
+        names.append(n.strip())
+    return sorted(set(names), key=lambda n: (n.lower(), n))
+
+
+def _kpi_facts(ids, reg):
+    if ids is None:
+        return []
+    if isinstance(ids, (str, dict)) or not hasattr(ids, '__iter__'):
+        raise ValueError('kpi_ids: a list of registry KPI ids (the KPI facts available)')
+    ids = list(ids)
+    known = {k for m in reg['models'].values() for k in m['kpis']}
+    bad = sorted({repr(k) for k in ids if not isinstance(k, str) or k not in known})
+    if bad:
+        raise ValueError(f'kpi_ids: {", ".join(bad)} not KPI ids of the registry (brain/economics.json); facts.add_kpi refuses them too')
+    return sorted(set(ids))
+
+
+def _evidence_ids(evidence):
+    """The ids an override may cite: a sources dict ({id: {kind, ...}}) or a list of ids; None when none were supplied."""
+    if evidence is None:
+        return None, {}
+    if isinstance(evidence, str) or not hasattr(evidence, '__iter__') or not all(isinstance(e, str) and e for e in evidence):
+        raise ValueError('evidence: the source / qualitative ids an override may cite (a sources dict or a list of ids)')
+    if isinstance(evidence, dict):
+        return set(evidence), {k: v.get('kind') for k, v in evidence.items() if isinstance(v, dict)}
+    return set(evidence), {}
+
+
+def _text_hits(keywords, fields, M):
+    """Every (field, text, keyword) where the keyword starts a word of the text (model_card's label rule)."""
+    out = []
+    for field, text in fields:
+        low = M.clean_text(text)
+        for k in keywords:
+            if re.search(r'(?<![a-z])' + re.escape(M.clean_text(k)), low):
+                out.append({'field': field, 'text': text, 'keyword': k})
+    return out
+
+
+def _signal_text(c, cards):
+    """The signals in the design's order: card type, then text, then KPI facts (the KPI facts rank first, _rank)."""
+    s, parts = c['signals'], []
+    if s['card']:
+        parts.append(f"card type '{s['card']}'" + ('' if s['card'] == cards[0] else ' (a secondary type of the card)'))
+    parts += [f"{t['field']} '{t['text']}' matches '{t['keyword']}'" for t in s['text']]
+    if s['kpis']:
+        parts.append('KPI facts ' + ', '.join(s['kpis']))
+    return '; '.join(parts)
+
+
+def _rank(c):
+    s = c['signals']
+    return (not s['kpis'], -c['count'], -len(s['kpis']), -len({t['keyword'] for t in s['text']}), c['order'])
+
+
+def _overlays_for(mids, segments, reg):
+    """The overlays the selected models declare (primary first), plus the segments overlay when segments are reported.
+    Listed for the reading plan; each computes only when its own inputs are supplied."""
+    out, why = [], []
+    for mid in mids:
+        for o in reg['models'][mid]['overlays']:
+            if o not in out:
+                out.append(o)
+                why.append(f'{o} (declared by {mid})')
+    seg = reg['overlays'].get(SEGMENTS_OVERLAY)
+    if mids and seg and '*' in seg['applies_to'] and len(segments) >= SEGMENTS_MIN and SEGMENTS_OVERLAY not in out:
+        out.append(SEGMENTS_OVERLAY)
+        why.append(f'{SEGMENTS_OVERLAY} ({len(segments)} segments reported; it applies to every model)')
+    return out, why
+
+
+def _overlay_reason(why):
+    return 'overlays: ' + '; '.join(why) + ': each computes only when its own inputs are supplied'
+
+
+def _rule(cards, profile, segments, kpis, reg, M):
+    fields = list(profile.items()) + [('segment', n) for n in segments]
+    allc = []
+    for n, (mid, m) in enumerate(reg['models'].items()):
+        sel = m['select']
+        card = next((t for t in cards if t in sel['card_types']), None)
+        sig = {'card': card, 'text': _text_hits(sel['text'], fields, M), 'kpis': [k for k in sel['kpi_any'] if k in kpis]}
+        count = sum(bool(sig[k]) for k in SELECT_SIGNALS)
+        if count:
+            allc.append({'model': mid, 'label_he': m['label_he'], 'signals': sig, 'count': count, 'order': n,
+                         'note': sel.get('note')})
+    cands = sorted((c for c in allc if c['count'] >= MIN_SIGNALS), key=_rank)
+    pool = [c for c in cands if c['signals']['kpis']] or cands
+    reasons = []
+    for c in pool:
+        c['outcome'] = 'primary' if c is pool[0] else 'secondary'
+        lead = f"{c['model']}: {_signal_text(c, cards)} -> {c['outcome']} ({c['count']} of {len(SELECT_SIGNALS)} signals agree; "
+        reasons.append(lead + ('KPI facts are the business\'s own economics and outrank labels)' if c['signals']['kpis'] else
+                               'labels only: no KPI fact of this model is available)')
+                       + (f" [registry: {c['note']}]" if c is pool[0] and c['note'] else ''))
+    if len(pool) > 1 and _rank(pool[0])[:-1] == _rank(pool[1])[:-1]:
+        reasons.append(f"tie: {pool[0]['model']} and {pool[1]['model']} have the same signals and counts; the registry order decides "
+                       'the primary and both are read; a KPI fact or an analyst override with evidence settles it')
+    for c in cands:
+        if c not in pool:
+            c['outcome'] = 'overridden'
+            reasons.append(f"{c['model']}: {_signal_text(c, cards)} -> overridden: labels only, while {pool[0]['model']} has KPI facts "
+                           f"({', '.join(pool[0]['signals']['kpis'])}); the business's KPI facts decide over a provider's label")
+    for c in sorted((c for c in allc if c['count'] < MIN_SIGNALS), key=_rank):
+        c['outcome'] = 'one_signal'
+        reasons.append(f"{c['model']}: {_signal_text(c, cards)} -> one signal only, not selected (two of card type, text and KPI "
+                       'facts must agree)')
+    mids = [c['model'] for c in pool]
+    overlays, why = _overlays_for(mids, segments, reg)
+    if mids:
+        if why:
+            reasons.append(_overlay_reason(why))
+    else:
+        reasons.append('no model has two agreeing signals (card type, text, KPI facts): unclassified, not assessed (no rows, no '
+                       'effect); a sector is never relabelled to force a model: supply the model\'s KPI facts or an analyst '
+                       'override with a reason and evidence ids')
+    candidates = [{k: c[k] for k in ('model', 'label_he', 'signals', 'count', 'outcome')}
+                  for c in sorted(allc, key=lambda c: (SELECT_OUTCOMES.index(c['outcome']), _rank(c)))]
+    rule = {'primary': mids[0] if mids else UNCLASSIFIED, 'secondary': mids[1:], 'overlays': overlays,
+            'status': SELECTED if mids else NOT_ASSESSED, 'reasons': reasons}
+    return rule, candidates
+
+
+def _override(ov, reg, segments, known, kinds):
+    if not isinstance(ov, dict):
+        raise ValueError('override: {primary, reason, evidence_ids[, secondary, overlays]}')
+    extra = sorted(set(ov) - set(OVERRIDE_KEYS))
+    if extra:
+        raise ValueError(f'override: unknown keys {extra} ({", ".join(OVERRIDE_KEYS)})')
+    p = ov.get('primary')
+    if not isinstance(p, str) or (p != UNCLASSIFIED and p not in reg['models']):
+        raise ValueError(f'override.primary: {p!r} is not a model ({", ".join(reg["models"])}) or {UNCLASSIFIED}')
+    if not isinstance(ov.get('reason'), str) or not ov['reason'].strip():
+        raise ValueError('override.reason: a written reason is required')
+    ev = ov.get('evidence_ids')
+    if not isinstance(ev, list) or not ev or not all(isinstance(e, str) and e for e in ev):
+        raise ValueError('override.evidence_ids: required (the source or qualitative ids that show the economics)')
+    if known is not None:
+        bad = [e for e in ev if e not in known]
+        if bad:
+            raise ValueError(f'override: unknown or not yet available evidence ids {bad}')
+    refused = [e for e in ev if kinds.get(e) in OVERRIDE_REFUSED_KINDS]
+    if refused:
+        raise ValueError(f'override.evidence_ids: {refused} are {sorted({kinds[e] for e in refused})}: a consensus, a market '
+                         'feed or an assumption does not show how the business earns; cite an issuer document or a sourced reading')
+    sec = ov.get('secondary') or []
+    if not isinstance(sec, list) or any(not isinstance(m, str) or m not in reg['models'] for m in sec):
+        raise ValueError('override.secondary: a list of model ids')
+    if p == UNCLASSIFIED and sec:
+        raise ValueError('override.secondary: an unclassified override selects no model')
+    mids = [] if p == UNCLASSIFIED else [m for m in dict.fromkeys([p] + sec)]
+    ovl = ov.get('overlays')
+    if ovl is None:
+        overlays, why = _overlays_for(mids, segments, reg)
+    else:
+        if not isinstance(ovl, list) or any(not isinstance(o, str) or o not in reg['overlays'] for o in ovl):
+            raise ValueError(f'override.overlays: a list of overlay ids ({", ".join(reg["overlays"])})')
+        for o in ovl:
+            applies = reg['overlays'][o]['applies_to']
+            if '*' not in applies and not set(applies) & set(mids):
+                raise ValueError(f'override.overlays: {o} applies to {applies}, none of them selected')
+        overlays, why = list(dict.fromkeys(ovl)), [f'{o} (set by the analyst)' for o in dict.fromkeys(ovl)]
+    out = {'primary': p, 'secondary': mids[1:], 'overlays': overlays, 'overlays_given': ovl is not None, 'reason': ov['reason'].strip(),
+           'evidence_ids': list(ev), 'evidence_checked': known is not None}
+    if kinds:
+        out['evidence_kinds'] = sorted({kinds.get(e) or 'unknown' for e in ev})
+    return out, why
+
+
+def select(card_type, profile_text, kpi_ids, override=None, *, segments=None, evidence=None):
+    """The economic model(s) to read a business through: {primary, secondary[], overlays[], status, source: rule|analyst,
+    reasons[], rule, override, candidates[], inputs, input_sha256}.
+
+    `card_type` is model_card's business-model type (or a list, the card's primary first); `profile_text` the industry,
+    sector, SIC description or a short profile (text, or {field: text}: profile_fields(fb['company'])); `kpi_ids` the
+    registry ids of the KPI facts available (facts.add_kpi rows visible at as_of; case_kpi_ids for an econ case);
+    `segments` the reported segment names. Rules, in the order the reasons show them: each model's signals are the card
+    type, the text and the KPI facts of its registry `select` block; two must agree (MIN_SIGNALS), a model with KPI facts
+    outranks label-only ones (economics before labels: those are named as overridden), and with none the answer is
+    unclassified (status not_assessed: no rows, no effect), never a forced label.
+
+    An analyst override wins: {primary (a model id or unclassified), reason, evidence_ids[, secondary, overlays]};
+    without a reason or evidence ids it is refused, and with `evidence` (the known source / qualitative ids, or a sources
+    dict {id: {kind}}) an id outside it, or one of a kind that cannot show the economics (OVERRIDE_REFUSED_KINDS), is
+    refused. The rule result is always shown beside it under `rule`. Pure and deterministic: the order of the KPI ids,
+    the segments, the profile fields or the evidence never changes the output, and input_sha256 covers every argument."""
+    from . import model_card as M                       # lazy: the card may import econ when it shows the selection
+    reg = registry()
+    cards, profile = _card_types(card_type, M), _profile(profile_text)
+    segs, kpis = _segment_names(segments), _kpi_facts(kpi_ids, reg)
+    known, kinds = _evidence_ids(evidence)
+    rule, candidates = _rule(cards, profile, segs, kpis, reg, M)
+    ov = None
+    if override is None:
+        out = {k: deepcopy(rule[k]) for k in ('primary', 'secondary', 'overlays', 'status', 'reasons')}
+        out['source'] = 'rule'
+    else:
+        ov, why = _override(override, reg, segs, known, kinds)
+        ov['agrees_with_rule'] = (ov['primary'], ov['secondary']) == (rule['primary'], rule['secondary'])
+        sel = ov['primary'] + (f" with {', '.join(ov['secondary'])}" if ov['secondary'] else '')
+        reasons = [f"analyst override: {sel} ({ov['reason']}; evidence {', '.join(ov['evidence_ids'])}"
+                   + ('' if ov['evidence_checked'] else '; ids not checked: no known evidence ids supplied') + ')',
+                   f"rule result shown beside under 'rule': {rule['primary']}"
+                   + (f" with {', '.join(rule['secondary'])}" if rule['secondary'] else '')
+                   + ('; the analyst agrees with it' if ov['agrees_with_rule'] else '; the analyst choice wins')]
+        if why:
+            reasons.append(_overlay_reason(why))
+        if ov['primary'] == UNCLASSIFIED:
+            reasons.append('the analyst declines every model: unclassified, not assessed (no rows, no effect)')
+        out = {'primary': ov['primary'], 'secondary': ov['secondary'], 'overlays': ov['overlays'],
+               'status': NOT_ASSESSED if ov['primary'] == UNCLASSIFIED else SELECTED, 'reasons': reasons, 'source': 'analyst'}
+    inputs = {'card_type': cards, 'profile': profile, 'segments': segs, 'kpi_ids': kpis}
+    ev = None if known is None else {e: kinds.get(e) for e in sorted(known)}
+    out.update(rule=rule, override=ov, candidates=candidates, inputs=inputs, min_signals=MIN_SIGNALS,
+               economics_version=ECONOMICS_VERSION, registry_sha256=registry_sha256(),
+               input_sha256=F.digest({**inputs, 'override': override, 'evidence': ev}), engine_version=__version__,
+               boundary=SELECT_BOUNDARY)
+    return deepcopy(out)
+
+
+def _fact_sources(case, ids):
+    """At least one source available at as_of that may carry a KPI fact (facts.KPI_REFUSED_KINDS never does)."""
+    return any(_visible(case, [i]) and case['sources'][i]['kind'] not in F.KPI_REFUSED_KINDS for i in ids)
+
+
+def case_kpi_ids(case):
+    """The registry KPI ids an econ case carries as facts at its as_of: KPI rows with a level or a growth rate, and the KPI
+    fields of its segments, each from a source available at as_of that is not a consensus or a market feed. A stated
+    identity figure (revenue per account) is not a KPI fact and is not listed."""
+    _check_case(case)
+    known = set(kpi_ids())
+    rows, segs = case.get('kpis') or [], case.get('segments') or []
+    if not isinstance(rows, list) or not isinstance(segs, list):
+        raise ValueError('econ case: kpis and segments are lists')
+    out = set()
+    for i, row in enumerate(rows):
+        label = f'kpis[{i}]'
+        if not isinstance(row, dict) or row.get('id') not in known or not _fact_sources(case, _source_ids(case, row, label)):
+            continue
+        value = _num(row.get('value'), f'{label}.value')
+        if value is not None or _cmp(row, label, value):
+            out.add(row['id'])
+    for i, s in enumerate(segs):
+        if isinstance(s, dict) and _fact_sources(case, _source_ids(case, s, f'segments[{i}]')):
+            out |= {k for k in s if k in known and s[k] is not None}
+    return sorted(out)
+
+
+def select_case(case, card_type=None, profile_text=None, override=None):
+    """select() on an econ case: its KPI facts (case_kpi_ids) and the names of its segments available at as_of; an
+    override may cite only the case's sources available at as_of."""
+    ids = case_kpi_ids(case)
+    segs = [s.get('name') for i, s in enumerate(case.get('segments') or [])
+            if isinstance(s, dict) and _visible(case, _source_ids(case, s, f'segments[{i}]'))]
+    visible = {sid: s for sid, s in case['sources'].items() if F._d(s['available_at']) <= F._d(case['as_of'])}
+    return select(card_type, profile_text, ids, override, segments=segs, evidence=visible)
+
+
+def _cutoff(fb, as_of, label):
+    """A FactBook view at `as_of` (fb['as_of'] by default); never later than the FactBook's own cutoff."""
+    if as_of is None:
+        as_of = fb['as_of']
+    if F._d(as_of) > F._d(fb['as_of']):
+        raise ValueError(f'{label}: as_of {as_of} is after the FactBook cutoff {fb["as_of"]}')
+    return as_of, (fb if as_of == fb['as_of'] else {**fb, 'as_of': as_of})
+
+
+def kpi_fact_ids(fb, as_of=None):
+    """The registry KPI ids the FactBook holds as facts usable at `as_of` (facts.candidates: published and about a
+    period ended by then; never later than the FactBook's cutoff), from a source that may carry a KPI (not a consensus
+    or a market feed): the KPI facts select() reads. Sorted; nothing is fetched or derived."""
+    view = _cutoff(fb, as_of, 'kpi_fact_ids')[1]
+    src = fb.get('sources') or {}
+    return [k for k in kpi_ids() if any((src.get(f['source_id']) or {}).get('kind') not in F.KPI_REFUSED_KINDS
+                                        for f in F.candidates(view, k))]
+
+
+def select_factbook(fb, card_type, override=None, *, as_of=None, segments=None):
+    """select() on a FactBook at `as_of`: the text of its company record (profile_fields: industry, sector, SIC with its
+    description), its KPI facts (kpi_fact_ids) and the reported segment names given; an override may cite only the
+    sources and qualitative items usable at as_of (model_card's evidence rule), each with its kind (a source's kind, a
+    qualitative item's reported / guidance / opinion / assumption)."""
+    from . import model_card as M
+    view = _cutoff(fb, as_of, 'select_factbook')[1]
+    quals = {q['id']: q.get('kind') for q in fb.get('qualitative') or [] if isinstance(q, dict) and q.get('id')}
+    src = fb.get('sources') or {}
+    evidence = {i: {'kind': quals[i] if i in quals else (src.get(i) or {}).get('kind')} for i in M._valid_ids(view)}
+    return select(card_type, profile_fields(fb.get('company')), kpi_fact_ids(fb, as_of), override, segments=segments,
+                  evidence=evidence)
