@@ -183,9 +183,24 @@ Companion to docs/EVIDENCE_STATUS.md, which separates what tests prove from what
     4.5% ERP in the walk-forward where the dated implied ERP was 4.2-6.1%) and model inconsistencies (terminal stage and
     funding add-ons; a cyclical industry word read as a margin peak or charged in the rates without evidence; platform
     routing; start-up losses in a scale-up's terminal ROIC). On
-    the 61-name A/B the year profile is now flat, but the level is not closed: median value/price 0.673 (0.12.0: 0.719; 2025 formations 0.51 -> 0.66), and the value dated one and three years ahead sits a median 37% below the price then realized (log bias -0.46; 0.12.0: -0.37 / -0.35).The diagnosis puts
+    the 61-name A/B the year profile is now flat, but the level is not closed: median value/price 0.673 (0.12.0: 0.719; 2025 formations 0.51 -> 0.66), and the value dated one and three years ahead sits a median 37% below the price then realized (log bias -0.46; 0.12.0: -0.37 / -0.35). The diagnosis puts
     the rest in growth fade and stage rates for high-growth names (PLTR, NVDA, AVGO, NOW stay far below price even at the
     engine-consistent rate) and in survivor-biased, bull-market prices; value/price still has no demonstrated ranking power.
     Reaching price would mean underwriting peak multiples, so it is not done. The deepest-discount names did not go on to
     underperform over 1-3 years in this sample, so "cheap by the engine" is not a reliable "it will fall" signal. The
     price-implied-growth row and the expected-price-path row make the gap legible; neither is a value or a target.
+44. **No price-path lane passed its preregistered test; the table's yearly price is the measured IRR-to-market blend.** The
+    first preregistered price-path lane (run rate faded with base rates, margin held, Gordon-justified multiple with today's premium
+    fading) under-predicted realized prices by -0.11 / -0.31 / -0.50 log at 1 / 3 / 5 years on 2016-2025 survivors and beat no
+    baseline on median absolute error, so it is not shown. The attribution puts the miss in the margin (held while survivors' margins rose) and in the
+    multiple's target (16.8x justified against a market that kept paying 23-25x). The only measured price path in this build is
+    the engine's base IRR (less the dividend yield) compounded from today's price: within +-25% of the realized price in 60% /
+    41% / 29% of rows at 1 / 3 / 5 years, 6% / 15% / 24% below it on median (`pricepath.MEASURED_BASELINES`; engine at ff36ede,
+    later engine changes unmeasured). The registered second version (`pricepath` spec_version 2, the market's own class
+    multiple as the target, the TTM margin held, a quartile band; `docs/prereg_price_path_v2.md`) also FAILED its single run
+    (`docs/PRICE_PATH_V2_RESULTS_2026-10-25.md`): bias -0.05 / -0.12 / -0.21 and MdALE 0.21 / 0.34 / 0.46, worse than the
+    engine-IRR path and a plain 7% drift; its band held the realized price in 79% / 77% of rows at 3 / 5 years only by being
+    4.4x / 7.0x wide. It is not shown either; its outputs carry that measured error.
+    Since 0.13.0 the table's "expected price" row is today's price grown at the base IRR moved halfway to the market return
+    (`decision.PRICE_PATH_PULL`), shown with the share of walk-forward rows within +-25% of the realized price
+    (`decision.PRICE_PATH_HIT`: 65% / 50% / 37% at 1 / 3 / 5 years): an estimate with its measured error, never a target.

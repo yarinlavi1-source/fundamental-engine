@@ -63,6 +63,32 @@ no momentum premium, no constant tuned to the backtest. Each change below was A/
 it could move a number. Combined result (`scripts/backtest_engine.py` on the 2026-10-21 universe, 0.13.0 at 88cda3f): with every 0.13.0 fix the median engine value / price is 0.673 (0.12.0: 0.719); the latest formations rose (2024 0.53 -> 0.63, 2025 0.51 -> 0.66) and the early ones fell under the dated ERP (2016 0.86 -> 0.67), so the year profile is flat (2022 aside, 1.12). The value dated one and three years ahead sits a median 37% below the price then realized (log bias -0.46 at both horizons; 0.12.0: -0.37 / -0.35), median absolute log error 0.56 / 0.64 (0.12.0: 0.50 / 0.57); the IRR path is unchanged (bias -0.09 / -0.22); value/price IC 0.024 (t 0.5): no ranking power. No errors on 497 valued rows.
 
 
+- Expected price path, spec_version 2: the single registered walk-forward (25.10.2026, commit 5b813ae) FAILED
+  (`docs/PRICE_PATH_V2_RESULTS_2026-10-25.md`). S2 bias fails at 3 / 5 years (base-path median log error -0.045 / -0.119 /
+  -0.215, half of v1's) and S1 accuracy fails (MdALE 0.206 / 0.337 / 0.455: better than v1 and the constant analyst-EPS path,
+  worse than the engine-IRR path and a 7% drift); S3 band (inside 79% / 77% at 3 / 5 years, but 4.4x / 7.0x wide) and S4
+  attribution pass. The market class multiple removed the multiple term (-0.22 -> -0.04 at 5 years); the held margin among
+  survivors is what is left. Not shown in the table (section 9: no rows). `pricepath.MEASURED_V2` / `MEASURED_VERDICT_V2` /
+  `TABLE_STATUS_V2` record it in every spec-2 output; `runs/backtest/pricepath_v2/{summary.json,REPORT.md}` kept in Git; the
+  run record and post-run notes are in section 10 of the preregistration. No constant changed, no re-run.
+- Expected price path, spec_version 2 implemented (`docs/prereg_price_path_v2.md`, registered before this code):
+  `pricepath.anchors(..., spec_version=2)` / `price_path(..., spec_version=2, cross_section=...)` -- run rate = mean of the
+  latest FY, latest quarter and 3-year CAGR; TTM margin held in the base for every company (floored at 1% as spec 1,
+  clarification 3), bear / bull margins at the
+  company's own 10-year low / high bounded at 0.5x / 1.5x today's; bear / bull growth fading to the size class p25 / p75 at
+  one half-life; the multiple target is the market's point-in-time trailing P/E by growth x margin bucket
+  (`cross_section_table`, CELL_MIN 20 with growth-row and whole-cross-section fallbacks) with today's log premium clipped
+  at +-ln 3 halving at the stage half-life; bear <= base <= bull by construction, asserted (`OrderingError`).
+  `evaluate_v2` adds the lane_v1 baseline, the ex-post attribution (S4), 30% band tails and the data-defect robustness.
+  `scripts/backtest_pricepath.py --spec 2 --v1-rows ...` runs two passes (anchors, then table and paths). Spec 1 is the
+  default and byte-identical (pinned hashes in `tests/test_pricepath_v2.py`). Pre-run clarifications: v2 section 10.
+- Expected price path lane (`fundamental_engine/pricepath.py`, `scripts/backtest_pricepath.py`, preregistered in
+  `docs/prereg_price_path.md`): the 2016-2025 walk-forward FAILED every registered criterion (base-path median log error
+  -0.11 / -0.31 / -0.50 at 1 / 3 / 5 years, the random walk's; `docs/PRICE_PATH_RESULTS_2026-10-21.md`). Not shown in the
+  valuation table. Post-run audit and error attribution in `docs/PRICE_PATH_2026-10.md` (the margin held at its anchor and the
+  Gordon-level multiple target are the two terms; a registered scenario-ordering defect is pinned by `Spec1AuditTests`);
+  `pricepath.MEASURED_BASELINES` and `irr_path_band_he()` record what the table shows instead; the read-only diagnostics are
+  `scripts/pricepath_v1_*.py`. Version 2 is registered, not run: `docs/prereg_price_path_v2.md`.
 - Terminal growth follows the convention of the ERP it is paired with (`forecast.TERMINAL_BEAR_GAP` comment): base = bull =
   risk-free, bear 0.5pp lower (never above base), replacing min(risk-free, 3%). Damodaran's implied ERP is solved with
   perpetual growth at the Treasury yield; pairing it with a 3% cap marked every company down whenever the risk-free rate
