@@ -172,8 +172,24 @@ def _roll_back(case, s, rows, terminal_per_share, convertibles=()):
                     'gap_vs_current_quote': values[d] / case['quote']['price'] - 1,
                     'discounted_price_component_today': values[d] / (1 + s['cost_of_equity']) ** elapsed,
                     'cumulative_dividend_per_share': paid,
-                    'annualized_endpoint_return': (wealth / case['quote']['price']) ** (1 / elapsed) - 1 if elapsed > 0 else None})
+                    'annualized_endpoint_return': _annualized(wealth / case['quote']['price'], elapsed)})
     return out, values
+
+
+def _annualized(ratio, elapsed):
+    """ratio ** (1 / elapsed) - 1, or None when it is not a real annual rate: no time elapsed, a negative endpoint wealth
+    (a fractional power of a negative number is complex), or a result beyond float range. A report date days after as_of (a
+    fiscal year ending the day after a July walk-forward formation: LITE, SYY, TPR, 1/365 of a year) raised the ratio to the
+    365th power, and at a low trial rate of the implied-return search (value several times the price) that overflowed and
+    stopped the whole valuation (OverflowError in 10 rows of the 2026-10-21 walk-forward). Only the figure that cannot be
+    represented is dropped: a finite rate is returned as computed (over a stub of days it is extreme and says little), and the
+    dated values, the IRR and everything else are unchanged."""
+    if elapsed <= 0 or ratio < 0:
+        return None
+    try:
+        return ratio ** (1 / elapsed) - 1
+    except OverflowError:
+        return None
 
 
 def _convertibles(op):

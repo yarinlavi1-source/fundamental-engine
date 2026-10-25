@@ -212,4 +212,28 @@ class RateShiftTests(unittest.TestCase):
   self.assertEqual(debt_weight(plain)[0],0.);self.assertAlmostEqual(discount_rate_band(plain)['value_lower_rate'],self.at(plain,-.01,0),places=6)
   self.assertEqual(debt_weight(fixture('bank'))[0],0.)
 
+class StubOverflowTests(unittest.TestCase):
+ """A report date one day after as_of (a fiscal year ending the day after a July walk-forward formation: LITE, SYY, TPR)
+ annualized the endpoint wealth to the 365th power; at the implied-return search's low trial rates that raised
+ OverflowError and stopped the valuation (10 rows of the 2026-10-21 walk-forward). Each OLD assertion raised on the old code."""
+ def stub(self,price):
+  c=fixture('bank');c=json.loads(json.dumps(c).replace(c['as_of'],'2026-12-30'));c['quote']['price']=price
+  self.assertEqual(c['report_dates'][:2],['2026-12-30','2026-12-31']);return c
+ def test_one_day_stub_does_not_stop_the_valuation(self):
+  from fundamental_engine.valuation_tools import implied_cost_of_equity
+  r=implied_cost_of_equity(self.stub(20),'base')                                       # OLD: OverflowError
+  self.assertEqual(r['status'],'solved');self.assertGreater(r['implied_cost_of_equity'],0)
+  t={x['date']:x for x in base(value_company(self.stub(1)))['timeline']}              # OLD: OverflowError
+  self.assertIsNone(t['2026-12-31']['annualized_endpoint_return'])                     # beyond float range: no figure
+  self.assertGreater(t['2026-12-31']['value_per_share'],1)                             # the dated value is kept
+  self.assertIsInstance(t['2030-12-31']['annualized_endpoint_return'],float)
+  # the dated values do not depend on the quote: only the unrepresentable figure is dropped
+  same={x['date']:x['value_per_share'] for x in base(value_company(self.stub(20)))['timeline']}
+  self.assertEqual(same,{d:x['value_per_share'] for d,x in t.items()})
+ def test_negative_wealth_has_no_real_annual_rate(self):
+  from fundamental_engine.valuation import _annualized
+  self.assertIsNone(_annualized(-.5,.5))                                               # OLD: a complex number
+  self.assertEqual(_annualized(0.,2.),-1.);self.assertAlmostEqual(_annualized(1.21,2.),.1)
+  self.assertIsNone(_annualized(12.8,1/365.25));self.assertIsNone(_annualized(2.,0.))
+
 if __name__=='__main__':unittest.main()
