@@ -51,7 +51,8 @@ year, ROTE).
    period, the prior quarter and the year-ago period. State each KPI's basis (balance, average,
    flow, cumulative, rate), its scope (segment or total, logged-in or total) and its currency
    basis (reported or constant currency). KPIs enter only with a source and `available_at`
-   (`facts.add_kpi`, work package 2); a KPI dated after the case date is invisible.
+   (`facts.add_kpi`); a KPI dated after the case date is invisible. A growth rate without its
+   level is not a KPI fact, and a consensus or market-feed figure is never one.
 4. Compute the identities. Same basis and scope on both sides or nothing is divided:
    `basis_mismatch` and `scope_mismatch` are answers, with the question that resolves them
    ("supply reported gross-bookings growth"). A residual is named, not filled; `partial` stays
@@ -66,11 +67,17 @@ year, ROTE).
    no verdict code and may lower confidence, never raise it. Moat, expansion and process
    evidence are for Claude to cite; they never set a dimension or a rating.
 
-Tool status (v0.13, work package 1): `econ.registry()`, `econ.reading_plan()`,
-`econ.required_kpis()`, `econ.falsifiers()` exist. `facts.add_kpi`, the `econ_review` tool,
-the quarter-review integration and the forecast overrides arrive with later work packages;
-until then compute the identities by hand from the registry and show the arithmetic as
-calculations in the dossier, each number with its source.
+Tool status (v0.13, work package 2): `econ.registry()`, `econ.reading_plan()`,
+`econ.required_kpis()`, `econ.falsifiers()`, `facts.add_kpi()` (a KPI named by registry id,
+with source, `available_at`, basis, scope and currency basis; the unit comes from the registry
+with the reporting currency in place of `currency`; an unknown id, a missing level, a
+consensus or market-feed source and a date before the period end are refused) and
+`econ.kpi_table(fb, model_id, as_of)` (the KPI facts usable at as_of, one row per period,
+scope, basis and unit, best source first with disagreeing values kept; it computes nothing)
+exist. `model_card` sees these facts as driver evidence with no further wiring. The
+`econ_review` tool, the quarter-review integration and the forecast overrides arrive with
+later work packages; until then compute the identities by hand from the table and the
+registry and show the arithmetic as calculations in the dossier, each number with its source.
 
 Hebrew note for the owner's table: מבני = נבנה לאורך זמן ולא נעלם בשנה רעה; מחזורי = עולה
 ויורד עם השוק והריבית.

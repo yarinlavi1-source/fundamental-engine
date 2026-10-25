@@ -8,10 +8,10 @@ deterministic: a JSON registry of economic models (brain/economics.json) validat
 needs, the identities that reconcile them to reported lines, the tag of every factor, the checks, the falsifiers and
 a reading plan that says which document carries which KPI.
 
-WP1 (this file today): registry access and validation, required KPIs, factor tags, falsifiers, reading plan. Later
-work packages add KPI intake (facts.add_kpi), identities and the growth split, model selection, overlays, the review
-and the Hebrew text. Nothing here is called by the pipeline, so every existing output stays byte-identical
-(no-input invariance).
+WP1: registry access and validation, required KPIs, factor tags, falsifiers, reading plan. WP2: KPI intake
+(facts.add_kpi stores a KPI named by registry id with its basis, scope and currency basis; kpi_table reads those facts
+point in time). Later work packages add identities and the growth split, model selection, overlays, the review and the
+Hebrew text. Nothing here is called by the pipeline, so every existing output stays byte-identical (no-input invariance).
 
 Boundaries: fetches nothing; the registry holds no company data; thresholds are uncalibrated screens frozen in
 docs/prereg_econ.md; a result of this layer is never a valuation, a moat rating or a trade instruction.
@@ -24,7 +24,8 @@ from . import facts as F
 
 REGISTRY_PATH = Path(__file__).parent / 'brain' / 'economics.json'
 ECONOMICS_VERSION = 1
-BASES = ('balance', 'average', 'flow', 'cumulative', 'rate')                     # KPI bases (quarter.KPI_BASES + rate)
+BASES = ('balance', 'average', 'flow', 'cumulative', 'rate')                     # KPI bases: quarter.KPI_BASES's balance/flow/
+#   cumulative, 'average' (a period mean: DARTs, average margin loans; quarter.py says 'active') and 'rate' (a ratio)
 TAGS = ('structural', 'cyclical', 'macro', 'mix', 'reclassification')           # growth-split tags of every factor
 IDENTITY_TYPES = ('per_unit', 'ratio', 'product', 'share')
 STATUSES = ('computed', 'consistent', 'partial', 'inconsistent', 'basis_mismatch', 'scope_mismatch', 'missing')
@@ -43,6 +44,8 @@ OVERLAY_KEYS = ('label_he', 'applies_to', 'inputs', 'computes', 'checks', 'rules
 IDENTITY_REFS = {'per_unit': ('line', 'unit_kpi'), 'ratio': ('num', 'den'), 'product': ('line', 'factors'), 'share': ('part', 'total')}
 UNCLASSIFIED = 'unclassified'
 BOUNDARY = 'a reading plan: which document carries which KPI; it fetches nothing and asserts nothing about the company'
+TABLE_BOUNDARY = ('the KPI facts usable at as_of, one row per period, scope and basis; it computes no identity and '
+                  'asserts nothing about the company')
 
 _CACHE = {}        # file sha256 -> validated registry (reloaded when the file changes)
 
@@ -413,3 +416,73 @@ def reading_plan(model_id, fb=None):
             'as_of': fb.get('as_of') if fb else None, 'steps': steps, 'have': have,
             'missing': kpi_step['missing'], 'required': required_kpis(model_id), 'falsifiers': falsifiers(model_id),
             'fetches': 'nothing', 'boundary': BOUNDARY}
+
+
+# ---------------------------------------------------------------- KPI table (point in time)
+
+def _tiebreak(view, f):
+    """facts.rank first, then every remaining field a row shows, so equal-rank facts never resolve by insertion order."""
+    return (F.rank(view, f), f['value'], f['source_id'], f.get('period_start') or '', bool(f.get('available_at_estimated')))
+
+
+def _row(view, fs, declared):
+    """One table row for the facts of a (period, period_end, scope, kpi_basis, currency_basis, unit) group: the best
+    candidate by _tiebreak, so the row does not depend on insertion order; `alternates` counts the facts it beat and
+    `alternate_values` (only when some beaten fact disagrees) lists their other values, so a disagreement between
+    sources stays visible."""
+    best = min(fs, key=lambda f: _tiebreak(view, f))
+    basis = best.get('kpi_basis')
+    others = sorted({f['value'] for f in fs if f['value'] != best['value']})
+    row = {'period': best['period'], 'period_end': best['period_end'], 'value': best['value'], 'unit': best['unit'],
+           'kpi_basis': basis, 'scope': best.get('scope'), 'currency_basis': best.get('currency_basis'),
+           'basis_declared': (basis in declared) if basis is not None else None,
+           'source_id': best['source_id'], 'source_kind': view['sources'][best['source_id']]['kind'],
+           'available_at': best['available_at'], 'available_at_estimated': bool(best.get('available_at_estimated')),
+           'alternates': len(fs) - 1}
+    if others:
+        row['alternate_values'] = others
+    if best.get('period_start'):
+        row['period_start'] = best['period_start']
+    return row
+
+
+def kpi_table(fb, model_id, as_of=None):
+    """The model's KPIs as the FactBook holds them at `as_of` (fb['as_of'] by default; never later than it, so the
+    FactBook's cutoff is never widened): for every KPI with a usable fact, one row per (period, period_end, scope,
+    kpi_basis, currency_basis, unit) group, best source first within the group (facts.rank), rows ascending by period
+    end; values in different units or on different bases are separate rows, never alternates of each other.
+    Rows carry the stated basis, scope and currency basis from facts.add_kpi and `basis_declared`, whether that basis
+    is one the model declares for the KPI (None when the fact was stored without a stated basis: such ids are listed
+    under `unstated` and are a question, not a basis). `have`, `missing` and `required_missing` follow kpi_ids /
+    required_kpis order. Nothing is computed, derived or fetched; the same facts in any insertion order give an identical
+    table and sha256."""
+    m = model(model_id)
+    version = registry()['economics_version']
+    if as_of is None:
+        as_of = fb['as_of']
+    if F._d(as_of) > F._d(fb['as_of']):
+        raise ValueError(f'kpi_table: as_of {as_of} is after the FactBook cutoff {fb["as_of"]}')
+    view = fb if as_of == fb['as_of'] else {**fb, 'as_of': as_of}
+    ids = kpi_ids(model_id)
+    kpis, unstated = {}, []
+    for k in ids:
+        spec = m['kpis'][k]
+        groups = {}
+        for f in F.candidates(view, k):
+            key = (f['period'], f['period_end'], f.get('scope'), f.get('kpi_basis'), f.get('currency_basis'), f['unit'])
+            groups.setdefault(key, []).append(f)
+        if not groups:
+            continue
+        rows = sorted((_row(view, fs, spec['basis']) for fs in groups.values()),
+                      key=lambda r: (r['period_end'], r['period'], r['scope'] or '', r['kpi_basis'] or '', r['currency_basis'] or '',
+                                     r['unit']))
+        if any(r['kpi_basis'] is None for r in rows):
+            unstated.append(k)
+        kpis[k] = {'unit': spec['unit'], 'bases': list(spec['basis']), 'tag': spec['tag'], 'core': bool(spec.get('core')),
+                   'period_ends': sorted({r['period_end'] for r in rows}), 'rows': rows}
+    out = {'model': model_id, 'label_he': m['label_he'], 'economics_version': version, 'as_of': as_of,
+           'currency': (fb.get('company') or {}).get('currency'), 'kpis': kpis, 'have': list(kpis),
+           'missing': [k for k in ids if k not in kpis], 'required_missing': [k for k in required_kpis(model_id) if k not in kpis],
+           'unstated': unstated, 'boundary': TABLE_BOUNDARY}
+    out['sha256'] = F.digest({'model': model_id, 'as_of': as_of, 'economics_version': version, 'kpis': kpis})
+    return out
