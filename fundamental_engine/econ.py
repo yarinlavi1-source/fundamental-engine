@@ -10,8 +10,12 @@ a reading plan that says which document carries which KPI.
 
 WP1: registry access and validation, required KPIs, factor tags, falsifiers, reading plan. WP2: KPI intake
 (facts.add_kpi stores a KPI named by registry id with its basis, scope and currency basis; kpi_table reads those facts
-point in time). Later work packages add identities and the growth split, model selection, overlays, the review and the
-Hebrew text. Nothing here is called by the pipeline, so every existing output stays byte-identical (no-input invariance).
+point in time). WP3: the core math on an econ case: evaluate_identity (per unit, ratio, product, share; status
+computed / consistent / partial / inconsistent / basis_mismatch / scope_mismatch / missing / not_computed, the residual
+named), growth_split (ln(1+g) = sum ln(1+g_i) + residual, every factor tagged) and review (every identity at every
+scope, the split, the model's checks, falsifiers, open questions, input_sha256). Later work packages add model
+selection, overlays, the quarter-review link and the Hebrew text. Nothing here is called by the pipeline, so every
+existing output stays byte-identical (no-input invariance).
 
 Boundaries: fetches nothing; the registry holds no company data; thresholds are uncalibrated screens frozen in
 docs/prereg_econ.md; a result of this layer is never a valuation, a moat rating or a trade instruction.
@@ -19,8 +23,12 @@ docs/prereg_econ.md; a result of this layer is never a valuation, a moat rating 
 from copy import deepcopy
 from hashlib import sha256
 import json
+from math import log
 from pathlib import Path
+import re
 from . import facts as F
+from . import __version__
+from .finance import number
 
 REGISTRY_PATH = Path(__file__).parent / 'brain' / 'economics.json'
 ECONOMICS_VERSION = 1
@@ -486,3 +494,1481 @@ def kpi_table(fb, model_id, as_of=None):
            'unstated': unstated, 'boundary': TABLE_BOUNDARY}
     out['sha256'] = F.digest({'model': model_id, 'as_of': as_of, 'economics_version': version, 'kpis': kpis})
     return out
+
+
+# ---------------------------------------------------------------- WP3: identities, growth split, review (pure arithmetic)
+#
+# The econ case (the econ_fixture_v1 shape of tests/fixtures/econ, without `expected`): company, period_end, as_of,
+# currency, period ('quarter', 'year', ...), sources {id: {kind, available_at}}, lines {line: {value, growth, prior, ...}},
+# kpis [{id, value, growth, prior, kpi_basis, scope, currency_basis, window, source_ids}], segments [{name, revenue,
+# profit, profit_definition, operating_income | operating_margin, <KPI id>, source_ids}], and the optional blocks read
+# here: sensitivities, disclosure_changes, reclassification_evidence, cycle and market (memory_cycle only). Every other
+# block is listed under not_read: later work packages read it (funding links, bank capital, contracts, SBC tranches).
+# A growth rate is read in its comparison window: `growth`/`prior` in the item's `window` ('y/y' unless it says 'q/q'),
+# `growth_qoq`/`prior_quarter` and `prior_year` always in theirs; 'TTM', 'quarter', 'year' in `window` or `period` are
+# measurement windows. Nothing is fetched; nothing is filled in.
+
+COMPARISONS = ('y/y', 'q/q')                     # the window a growth rate or a prior level compares against
+MONTHS = {'month': 1, 'quarter': 3, 'half': 6, 'year': 12, 'TTM': 12}   # measurement windows; TTM and year are both
+#   twelve months but are different windows (a trailing year is not the fiscal year), so they never match each other
+START = {'quarter': 'q/q', 'year': 'y/y'}        # the comparison whose prior level is the balance at the period start
+POINT_BASES = ('balance', 'cumulative')          # read at a date: an end value and, with the start, an average
+UNIT_CLASSES = ('count', 'bits', 'GW')           # registry unit classes that count units (core_units_flat, per_unit_vs_units)
+# KPIs stated as a rate per year (interest earned or paid over a year). The registry's unit class 'rate' also covers
+# fractions (utilization, churn, shares), so the annual ones are named here; a unit ending in '_year' is annual by name.
+# A product with an annual factor is put on the line's window (x months / 12); without a line it is a value per year.
+ANNUAL_RATE_KPIS = ('margin_rate', 'net_interest_margin', 'deposit_cost_advantage')
+IDENTITY_STATUSES = STATUSES + ('not_computed',)   # not_computed: refused by a status check (capex_per_unit_lag)
+# source kinds that evidence a business-model change (the reclassification tag): issuer documents only; an analyst
+# post, a consensus, a journal or an assumption never completes it (decision.py's rule for upgrade evidence)
+EVIDENCE_KINDS = ('issuer_release', 'issuer_filing', 'issuer_transcript', 'issuer_document', 'primary_document', 'filing_derived')
+DISCLOSURE_KINDS = ('reported', 'guidance')      # a disclosure change counts when the issuer reported or guided it
+# segment fields read as lines at the segment's scope: (field, registry line, field of the year-ago level)
+SEGMENT_LINES = (('revenue', 'revenue', 'prior_revenue'), ('revenue', 'segment_revenue', 'prior_revenue'),
+                 ('profit', 'segment_profit', 'prior_profit'), ('operating_income', 'operating_income', None),
+                 ('gross_profit', 'gross_profit', None), ('adjusted_ebitda', 'adjusted_ebitda', None),
+                 ('research_and_development', 'research_and_development', None), ('capex', 'capex', None), ('sbc', 'sbc', None))
+SEGMENT_MARGINS = {'operating_income': 'operating_margin', 'gross_profit': 'gross_margin', 'adjusted_ebitda': 'adjusted_ebitda_margin'}
+CASE_META = ('_schema', '_provenance', 'company', 'name', 'period_end', 'period', 'as_of', 'as_of_note', 'currency',
+             'reconciled_to_filings', 'sources', 'model', 'model_hint')
+# the registry checks this version computes; every other declared check of a selected model is listed under
+# checks_not_run (overlays, process evidence and the quarter-review peak exception arrive with later work packages)
+CHECKS_RUN = ('per_unit_vs_units', 'take_rate_shift', 'thesis_on_minor_line', 'core_units_flat', 'disclosure_dropped',
+              'cyclical_deceleration', 'expansion_led', 'cumulative_kpi_not_activity', 'rate_sensitivity_share',
+              'margin_only_normalized', 'segment_reconciliation', 'basis_mismatch', 'scope_mismatch', 'capex_per_unit_lag')
+CORE_ORDER = ('consistent', 'computed', 'partial', 'inconsistent', 'basis_mismatch', 'scope_mismatch', 'not_computed', 'missing')
+_BP = re.compile(r'([+-]?\d+(?:\.\d+)?)\s*bp\b')
+_QUARTER = re.compile(r'^(\d{4})-Q([1-4])$')
+REVIEW_BOUNDARY = ('a deterministic read of caller-supplied, sourced KPIs and lines through each economic model\'s identities: '
+                   'arithmetic, tags, residuals, flags and open questions. Not source verification, not a valuation, not a '
+                   'moat rating and not a trade instruction; thresholds are uncalibrated screens (docs/prereg_econ.md).')
+
+
+def _num(x, label, minimum=None):
+    return None if x is None else number(x, label, minimum)
+
+
+def _name(ref):
+    return ref.replace('_', ' ')
+
+
+def _scope(x, label):
+    if x is None:
+        return 'total'
+    if not isinstance(x, str) or not x.strip():
+        raise ValueError(f'{label}.scope: name what the figure covers (total, a segment, a geography)')
+    return x.strip().lower()
+
+
+def _source_ids(case, item, label):
+    ids = item.get('source_ids') if isinstance(item, dict) else None
+    if not isinstance(ids, list) or not ids or not all(isinstance(i, str) and i for i in ids):
+        raise ValueError(f'{label}: source_ids required')
+    unknown = sorted(set(ids) - set(case['sources']))
+    if unknown:
+        raise ValueError(f'{label}: unknown source ids {unknown}')
+    return list(ids)
+
+
+def _visible(case, ids):
+    """Point in time: an item is read when at least one of its sources was available at as_of."""
+    return any(F._d(case['sources'][i]['available_at']) <= F._d(case['as_of']) for i in ids)
+
+
+def _check_case(case):
+    if not isinstance(case, dict):
+        raise ValueError('econ case: not an object')
+    for k in ('company', 'period_end', 'as_of', 'currency', 'period'):
+        if not case.get(k):
+            raise ValueError(f'econ case: {k} required')
+    if F._d(case['period_end']) > F._d(case['as_of']):
+        raise ValueError('econ case: period_end after as_of')
+    if case['period'] not in MONTHS:
+        raise ValueError(f'econ case: period must be one of {tuple(MONTHS)}')
+    if not isinstance(case['currency'], str) or not F.MONETARY.match(case['currency']):
+        raise ValueError('econ case: currency must be an ISO code')
+    src = case.get('sources')
+    if not isinstance(src, dict) or not src:
+        raise ValueError('econ case: sources {id: {kind, available_at}} required')
+    for sid, s in src.items():
+        if not isinstance(s, dict) or not s.get('kind') or not s.get('available_at'):
+            raise ValueError(f'econ case: sources.{sid} needs kind and available_at')
+        F._d(s['available_at'])
+
+
+def _cmp(spec, label, value):
+    """{window: {stated, prior, levels}} for each comparison window the item states (see the case notes above)."""
+    w = spec.get('window')
+    if w is not None and w not in COMPARISONS and w not in MONTHS:
+        raise ValueError(f'{label}.window: {w!r} is neither a comparison {COMPARISONS} nor a measurement window {tuple(MONTHS)}')
+    home = w if w in COMPARISONS else 'y/y'
+    out = {}
+    for c in COMPARISONS:
+        g = spec.get('growth_qoq') if c == 'q/q' else None
+        if g is None and c == home:
+            g = spec.get('growth')
+        p = spec.get('prior_quarter') if c == 'q/q' else spec.get('prior_year')
+        if p is None and c == home:
+            p = spec.get('prior')
+        g, p = _num(g, f'{label}.growth ({c})'), _num(p, f'{label}.prior ({c})')
+        if g is not None and g <= -1:
+            raise ValueError(f'{label}.growth ({c}): {g} is not a growth rate a log can read; state the levels')
+        if g is None and p is None:
+            continue
+        lv = value / p - 1 if value is not None and p is not None and value > 0 and p > 0 else None
+        out[c] = {'stated': g, 'prior': p, 'levels': lv}
+    return out
+
+
+def _measure(spec, basis, period, label):
+    if basis in POINT_BASES:
+        return None
+    w = spec.get('window')
+    m = spec.get('period') or (w if w in MONTHS else None) or period
+    m = 'year' if m == 'annual' else m
+    if m not in MONTHS:
+        raise ValueError(f'{label}.period: {m!r} is not a measurement window {tuple(MONTHS)}')
+    return m
+
+
+def _currency_code(unit, default, label):
+    if unit is None:
+        return default
+    code = str(unit).split('/')[0].split('_per_')[0]
+    if not F.MONETARY.match(code):
+        raise ValueError(f'{label}.unit: {unit!r} must start with the ISO code of the currency it is stated in')
+    return code
+
+
+def _line_id(key, spec, lines):
+    """The registry line a case line names: `line`, its key, or '<scope>_<line>' (us_commercial_revenue); else None."""
+    if spec.get('line') is not None:
+        if spec['line'] not in lines:
+            raise ValueError(f'lines.{key}.line: {spec["line"]!r} is not a registry line')
+        return spec['line']
+    if key in lines:
+        return key
+    scope = spec.get('scope')
+    if isinstance(scope, str) and key.startswith(scope + '_') and key[len(scope) + 1:] in lines:
+        return key[len(scope) + 1:]
+    return None
+
+
+def _index(case, mids):
+    """The case's lines, KPIs and segments as items keyed by (id, scope), validated and point in time."""
+    reg = registry()
+    lines = reg['lines']
+    spec = {}
+    for mid in mids:
+        m = reg['models'][mid]
+        spec[mid] = {'kpis': m['kpis'], 'ids': {i['id']: i for i in m['identities']}, 'tags': factor_tags(mid), 'model': m}
+    kspec = {}
+    for mid in mids:
+        for kid, s in spec[mid]['kpis'].items():
+            kspec.setdefault(kid, {})[mid] = s
+    idents = {i for s in spec.values() for i in s['ids']}
+    ix = {'case': case, 'models': list(mids), 'spec': spec, 'lines': lines, 'rules': reg['rules'], 'checks': reg['checks'], 'period': case['period'],
+          'currency': case['currency'], 'line': {}, 'kpi': {}, 'stated': {}, 'not_read': [], 'unavailable': [],
+          'read': set(), 'cache': {}, 'busy': set(), 'reclassified': {}, 'questions': []}
+    rows = case.get('kpis') or []
+    if not isinstance(rows, list):
+        raise ValueError('kpis: a list of rows')
+    seen = set()
+    for i, row in enumerate(rows):
+        label = f'kpis[{i}]'
+        if not isinstance(row, dict) or not isinstance(row.get('id'), str) or not row['id']:
+            raise ValueError(f'{label}: needs an id')
+        ids = _source_ids(case, row, label)
+        ix['read'].add('kpis')
+        kid, scope, basis = row['id'], _scope(row.get('scope'), label), row.get('kpi_basis')
+        if basis not in BASES:
+            raise ValueError(f'{label}.kpi_basis: must be one of {BASES}')
+        money = kid in kspec and F.CURRENCY_TOKEN in kpi(kid)['unit']
+        cb = row.get('currency_basis', 'reported') if money else None
+        if money and cb not in F.CURRENCY_BASES:
+            raise ValueError(f'{label}.currency_basis: must be one of {F.CURRENCY_BASES}')
+        ref = f'kpis[{kid}|{scope}|{basis}' + ('|constant_currency' if cb == 'constant_currency' else '') + ']'
+        if ref in seen:
+            raise ValueError(f'{label}: a second {ref}; state one figure per KPI, scope, basis and currency basis')
+        seen.add(ref)
+        value = _num(row.get('value'), f'{label}.value')
+        cmp = _cmp(row, label, value)
+        if kid not in kspec:
+            if kid in idents and not _visible(case, ids):
+                ix['unavailable'].append(ref)
+            elif kid in idents:
+                ix['stated'].setdefault((kid, scope), []).append(
+                    {'ref': ref, 'kpi_basis': basis, 'value': value, 'prior': (cmp.get('y/y') or {}).get('prior'), 'source_ids': ids,
+                     'unit': row.get('unit')})
+            else:
+                ix['not_read'].append({'ref': ref, 'reason': 'not a KPI of the selected models (brain/economics.json)'})
+            continue
+        if not _visible(case, ids):
+            ix['unavailable'].append(ref)
+            continue
+        if value is None and not cmp:
+            ix['not_read'].append({'ref': ref, 'reason': 'neither a level nor a growth rate'})
+            continue
+        ix['kpi'].setdefault((kid, scope), []).append(
+            {'kind': 'kpi', 'id': kid, 'scope': scope, 'basis': basis, 'unit': kpi(kid)['unit'], 'money': money,
+             'currency': _currency_code(row.get('unit'), case['currency'], label) if money else None, 'currency_basis': cb,
+             'measure': _measure(row, basis, case['period'], label), 'value': value, 'cmp': cmp, 'ref': ref, 'source_ids': ids,
+             'window': row.get('window') if row.get('window') in COMPARISONS else 'y/y'})
+    block = case.get('lines') or {}
+    if not isinstance(block, dict):
+        raise ValueError('lines: an object {line: {...}}')
+    for key in sorted(block):
+        s, label = block[key], f'lines.{key}'
+        if not isinstance(s, dict):
+            raise ValueError(f'{label}: not an object')
+        ix['read'].add('lines')
+        lid = _line_id(key, s, lines)
+        if lid is None:
+            ix['not_read'].append({'ref': label, 'reason': 'not a reported line of the registry'})
+            continue
+        ids = _source_ids(case, s, label)
+        if not _visible(case, ids):
+            ix['unavailable'].append(label)
+            continue
+        cb = s.get('currency_basis', 'reported')
+        if cb not in F.CURRENCY_BASES:
+            raise ValueError(f'{label}.currency_basis: must be one of {F.CURRENCY_BASES}')
+        value, basis = _num(s.get('value'), f'{label}.value'), lines[lid]['basis']
+        it = {'kind': 'line', 'id': lid, 'scope': _scope(s.get('scope'), label), 'basis': basis, 'unit': lines[lid]['unit'],
+              'money': True, 'currency': case['currency'], 'currency_basis': cb, 'measure': _measure(s, basis, case['period'], label),
+              'value': value, 'cmp': _cmp(s, label, value), 'ref': label, 'source_ids': ids,
+              'window': s.get('window') if s.get('window') in COMPARISONS else 'y/y', 'role': s.get('role'),
+              'margin': _num(s.get('margin'), f'{label}.margin'), 'share_of_revenue': _num(s.get('share_of_revenue'), f'{label}.share_of_revenue', 0),
+              'pass_through': _num(s.get('pass_through'), f'{label}.pass_through', 0),
+              'prior_pass_through': _num(s.get('prior_pass_through'), f'{label}.prior_pass_through', 0)}
+        if it['value'] is None and not it['cmp'] and it['margin'] is None and it['share_of_revenue'] is None:
+            ix['not_read'].append({'ref': label, 'reason': 'neither a level nor a growth rate'})
+            continue
+        ix['line'].setdefault((lid, it['scope']), []).append(it)
+    segs = case.get('segments') or []
+    if not isinstance(segs, list):
+        raise ValueError('segments: a list')
+    names = set()
+    for i, s in enumerate(segs):
+        label = f'segments[{i}]'
+        if not isinstance(s, dict) or not isinstance(s.get('name'), str) or not s['name'].strip():
+            raise ValueError(f'{label}: needs a name')
+        scope = _scope(s['name'], label)
+        if scope in names:
+            raise ValueError(f'{label}: a second segment named {s["name"]!r}')
+        names.add(scope)
+        ids = _source_ids(case, s, label)
+        ix['read'].add('segments')
+        if not _visible(case, ids):
+            ix['unavailable'].append(f'segments[{s["name"]}]')
+            continue
+        for field, lid, prior_key in SEGMENT_LINES:
+            ref = f'segments[{s["name"]}].{field}'
+            value, derived = _num(s.get(field), ref), None
+            mk = SEGMENT_MARGINS.get(field)
+            if value is None and mk and s.get(mk) is not None and s.get('revenue') is not None:
+                value = number(s['revenue'], f'{label}.revenue') * number(s[mk], f'{label}.{mk}')
+                derived = f'segments[{s["name"]}].revenue x {mk}'
+                ref = f'segments[{s["name"]}].{mk}'
+            prior = s.get(prior_key) if prior_key else None
+            if value is None and prior is None:
+                continue
+            cmp = _cmp({'value': value, 'prior': prior, 'growth': s.get('growth') if field == 'revenue' else None}, ref, value)
+            ix['line'].setdefault((lid, scope), []).append(
+                {'kind': 'line', 'id': lid, 'scope': scope, 'basis': lines[lid]['basis'], 'unit': lines[lid]['unit'], 'money': True,
+                 'currency': case['currency'], 'currency_basis': 'reported', 'measure': case['period'], 'value': value, 'cmp': cmp,
+                 'ref': ref, 'source_ids': ids, 'window': 'y/y', 'role': None, 'margin': None, 'share_of_revenue': None,
+                 'pass_through': None, 'prior_pass_through': None, 'derived_from': derived,
+                 'profit_definition': s.get('profit_definition') if lid == 'segment_profit' else None})
+        for k in sorted(s):
+            if k not in kspec or s[k] is None:
+                continue
+            ref = f'segments[{s["name"]}].{k}'
+            declared = sorted({b for v in kspec[k].values() for b in v['basis']})
+            if len(declared) != 1:
+                ix['not_read'].append({'ref': ref, 'reason': f'basis not stated and the registry declares {declared}'})
+                continue
+            money = F.CURRENCY_TOKEN in kpi(k)['unit']
+            value = number(s[k], ref)
+            ix['kpi'].setdefault((k, scope), []).append(
+                {'kind': 'kpi', 'id': k, 'scope': scope, 'basis': declared[0], 'unit': kpi(k)['unit'], 'money': money,
+                 'currency': case['currency'] if money else None, 'currency_basis': 'reported' if money else None,
+                 'measure': _measure({}, declared[0], case['period'], ref), 'value': value, 'cmp': {}, 'ref': ref,
+                 'source_ids': ids, 'window': 'y/y', 'basis_from': 'the only basis the registry declares'})
+    for items in list(ix['kpi'].values()) + list(ix['line'].values()):     # content order: the input order never matters
+        items.sort(key=lambda it: (it['basis'], it['currency_basis'] not in (None, 'reported'), it['ref']))
+    for (lid, scope), items in ix['line'].items():          # a line stated as a margin or a share of revenue
+        for it in items:
+            if it['value'] is not None or (it['margin'] is None and it['share_of_revenue'] is None):
+                continue
+            rev = next((r for r in ix['line'].get(('revenue', scope), []) if r['value'] is not None), None)
+            if rev is not None:
+                field = 'margin' if it['margin'] is not None else 'share_of_revenue'
+                it['value'] = it[field] * rev['value']
+                it['derived_from'] = f'{it["ref"]}.{field} x {rev["ref"]}.value'
+    ev = case.get('reclassification_evidence')
+    if ev is not None:
+        ix['read'].add('reclassification_evidence')
+        for j, e in enumerate(ev if isinstance(ev, list) else [ev]):
+            label = f'reclassification_evidence[{j}]'
+            if not isinstance(e, dict) or not e.get('identity') or not e.get('reason'):
+                raise ValueError(f'{label}: needs identity, reason and evidence_ids')
+            ids = _source_ids(case, {'source_ids': e.get('evidence_ids')}, label)
+            kinds = sorted({case['sources'][s]['kind'] for s in ids})
+            issuer = [s for s in ids if case['sources'][s]['kind'] in EVIDENCE_KINDS and _visible(case, [s])]
+            ix['reclassified'][e['identity']] = {'status': 'evidenced' if issuer else 'unproven', 'evidence_ids': issuer or ids,
+                                                 'reason': e['reason'], 'source_kinds': kinds}
+    return ix
+
+
+def _roles(ident):
+    t = ident['type']
+    if t == 'per_unit':
+        return [('line', ident['line']), ('units', ident['unit_kpi'])]
+    if t == 'ratio':
+        return [('num', ident['num']), ('den', ident['den'])]
+    if t == 'share':
+        return [('part', ident['part']), ('total', ident['total'])]
+    return [('line', ident['line'])] + [('factor', f) for f in ident['factors']]
+
+
+def _elsewhere(ix, mid, ref, scope):
+    """Other scopes at which `ref` (a KPI or a line) exists: a scope_mismatch names them."""
+    pool = ix['kpi'] if ref in ix['spec'][mid]['kpis'] else ix['line']
+    return sorted({s for (k, s) in pool if k == ref and s != scope})
+
+
+def _operand(ix, mid, ref, scope):
+    """What an identity reads for `ref` at `scope`: a KPI's rows (end, average or period row), a reported line or another
+    identity of the same model; None when nothing is there, {'absent': status} when a nested identity computed nothing."""
+    sp = ix['spec'][mid]
+    if ref in sp['ids']:
+        res, meta = _evaluate(ix, mid, sp['ids'][ref], scope)
+        if res.get('value') is None and not res.get('changes'):
+            return {'id': ref, 'kind': 'identity', 'absent': res['status'], 'found_at': res.get('found_at') or [],
+                    'missing': res.get('missing') or []}
+        cmp = {}
+        for ch in res.get('changes') or []:
+            cmp.setdefault(ch['window'], {'stated': ch['value'] if ch['footing'] == 'stated' else None,
+                                          'levels': ch['value'] if ch['footing'] == 'levels' else None, 'prior': None})
+        row = {'value': res.get('value'), 'cmp': cmp, 'ref': f'identities[{ref}@{scope}]', 'basis': 'flow' if meta['measure'] else 'balance',
+               'measure': meta['measure'], 'derived_from': f'identities[{ref}@{scope}].value'}
+        return {'id': ref, 'kind': 'identity', 'point': False, 'rows': {'period': row}, 'money': meta['money'],
+                'currency': meta['currency'], 'currency_basis': meta['currency_basis'], 'measure': meta['measure'],
+                'unit': None, 'annual': False, 'undeclared': [], 'flow': False, 'cumulative': meta['cumulative']}
+    if ref in sp['kpis']:
+        items, declared = ix['kpi'].get((ref, scope), []), sp['kpis'][ref]['basis']
+    else:
+        items, declared = ix['line'].get((ref, scope), []), [ix['lines'][ref]['basis']]
+    if not items:
+        return None
+    ok = [it for it in items if it['basis'] in declared]
+    # the reported currency basis first, then a row measured over the case's own window (a quarter's bookings before a TTM)
+    rows = sorted(ok or items, key=lambda it: (it['currency_basis'] not in (None, 'reported'), it['measure'] not in (None, ix['period'])))
+    end = next((it for it in rows if it['basis'] in POINT_BASES), None)
+    avg = next((it for it in rows if it['basis'] == 'average'), None)
+    per = next((it for it in rows if it['basis'] in ('flow', 'rate')), None)
+    head = end or per or avg
+    return {'id': ref, 'kind': head['kind'], 'point': end is not None,
+            'rows': {'end': end, 'average': avg} if end is not None else {'period': per or avg},
+            'money': head['money'], 'currency': head['currency'], 'currency_basis': head['currency_basis'],
+            'measure': None if end is not None else (per or avg)['measure'], 'unit': head['unit'],
+            'annual': ref in ANNUAL_RATE_KPIS or head['unit'].endswith('_year'),
+            'flow': end is None and (per or avg)['basis'] == 'flow', 'cumulative': any(it['basis'] == 'cumulative' for it in rows),
+            'undeclared': [] if ok else [{'ref': it['ref'], 'basis': it['basis'], 'declared': list(declared)} for it in items]}
+
+
+def _level(op, variant, measure):
+    """(value, derived_from) of an operand in a variant ('end', 'average' or 'period'); (None, None) when it has none.
+    The average of a balance is the stated average row, else (start + end) / 2 with the start the balance at the
+    beginning of the measurement window (its prior quarter for a quarter, its prior year for a year)."""
+    if not op['point']:
+        r = op['rows']['period']
+        return (r['value'], r.get('derived_from') or f'{r["ref"]}.value') if r['value'] is not None else (None, None)
+    e = op['rows']['end']
+    if variant == 'end':
+        return (e['value'], e.get('derived_from') or f'{e["ref"]}.value') if e['value'] is not None else (None, None)
+    a = op['rows']['average']
+    if a is not None and a['value'] is not None:
+        return a['value'], f'{a["ref"]}.value'
+    c = e['cmp'].get(START.get(measure)) if measure else None
+    if e['value'] is None or not c:
+        return None, None
+    if c['prior'] is not None:
+        return (c['prior'] + e['value']) / 2, f'({e["ref"]} prior {START[measure]} + value) / 2'
+    if c['stated'] is not None:
+        return (e['value'] / (1 + c['stated']) + e['value']) / 2, f'({e["ref"]} value / (1 + growth {START[measure]}) + value) / 2'
+    return None, None
+
+
+def _growth_row(op, variant):
+    if not op['point']:
+        return op['rows']['period']
+    return op['rows']['average'] if variant == 'average' else op['rows']['end']
+
+
+def _any_growth(c):
+    return c is not None and (c['stated'] is not None or c['levels'] is not None)
+
+
+def _pick(c, footing):
+    """(growth, 'stated'|'levels') on a footing; the other source when the preferred one is absent."""
+    first, second = ('levels', 'stated') if footing == 'levels' else ('stated', 'levels')
+    return (c[first], first) if c[first] is not None else (c[second], second)
+
+
+def _footing(rows, window):
+    """One footing for an identity's inputs: every growth from its levels when every input has both levels (exact),
+    otherwise every growth as the source stated it (the same rounding on every input; levels only where no growth is
+    stated). The line a product is checked against is read on the same footing, from its other source when it lacks
+    that one (trips known only as levels; margin interest income only as a stated growth)."""
+    return 'levels' if rows and all(r['cmp'][window]['levels'] is not None for r in rows) else 'stated'
+
+
+def _growth_inputs(rows, window, footing):
+    out = []
+    for ref, r in rows:
+        g, frm = _pick(r['cmp'][window], footing)
+        out.append({'id': ref, 'growth': g, 'from': frm,
+                    'derived_from': f'{r["ref"]} {window} ' + ('growth as stated' if frm == 'stated' else 'value / prior - 1')})
+    return out
+
+
+def _evaluate(ix, mid, ident, scope):
+    key = (mid, ident['id'], scope)
+    if key in ix['cache']:
+        return ix['cache'][key]
+    if key in ix['busy']:
+        raise ValueError(f'economics.json: identity cycle at {mid}.{ident["id"]}')
+    ix['busy'].add(key)
+    try:
+        out = _compute(ix, mid, ident, scope)
+    finally:
+        ix['busy'].discard(key)
+    ix['cache'][key] = out
+    return out
+
+
+def _status_rank(s):
+    return {'inconsistent': 2, 'partial': 1, 'consistent': 0}[s]
+
+
+def _compute(ix, mid, ident, scope):
+    """One identity at one scope: (public result, meta for identities that read it)."""
+    rules, t = ix['rules'], ident['type']
+    roles = _roles(ident)
+    tag = ix['spec'][mid]['tags'].get(ident['id'])
+    res = {'model': mid, 'id': ident['id'], 'type': t, 'tag': tag, 'core': bool(ident.get('core')), 'scope': scope,
+           'inputs': {r: ref for r, ref in roles if r != 'factor'}}
+    if t == 'product':
+        res['inputs']['factors'] = list(ident['factors'])
+    meta = {'money': False, 'currency': None, 'currency_basis': None, 'measure': None, 'present': [], 'cumulative': False}
+    rc = ix['reclassified'].get(ident['id'])
+    if rc and rc['status'] == 'evidenced':
+        res['tag'], res['registry_tag'] = 'reclassification', tag
+    if ident.get('lagged'):
+        res.update(status='not_computed', check=ident.get('check'),
+                   reason='construction lag: one period of capex over the same period of capacity additions is refused')
+        return res, meta
+    at = {}
+    if t == 'share' and ident.get('part_scope'):          # logged-in DAU of total DAU: one KPI read at two scopes
+        tot = scope if ident.get('total_scope', 'total') == 'total' else ident['total_scope']
+        at = {'part': _part_scope(ident, scope), 'total': tot}
+        res['read_at'] = dict(at)
+        if ident['part'] == ident['total']:
+            roles = [(r, f'{ref}@{at[r]}') for r, ref in roles]
+    ops = {}
+    for r, ref in roles:
+        base = ref.split('@')[0]
+        ops[ref] = _operand(ix, mid, base, at.get(r, scope))
+    need = [ref for r, ref in roles if not (t == 'product' and r == 'line')]
+    meta['present'] = [r for r in need if ops[r] is not None and not ops[r].get('absent')]
+    absent = [r for r in need if ops[r] is None or ops[r].get('absent')]
+    if absent:
+        nested = {ops[r]['absent'] for r in absent if ops[r] is not None}
+        found = {r: (ops[r]['found_at'] if ops[r] is not None else _elsewhere(ix, mid, r.split('@')[0], scope)) for r in absent}
+        if 'basis_mismatch' in nested:
+            status = 'basis_mismatch'
+        elif all(found.values()) or 'scope_mismatch' in nested and all(found[r] or (ops[r] or {}).get('absent') == 'scope_mismatch' for r in absent):
+            status = 'scope_mismatch'
+        else:
+            status = 'missing'
+        res.update(status=status, missing=absent)
+        if status == 'scope_mismatch':
+            res['found_at'] = sorted({s for v in found.values() for s in v})
+            res['reason'] = 'inputs are reported for another scope: ' + '; '.join(f'{r} at {", ".join(found[r]) or "a nested scope"}' for r in absent)
+        return res, meta
+    present = {r: op for r, op in ops.items() if op is not None and not op.get('absent')}
+    meta['cumulative'] = any(op['cumulative'] for op in present.values())
+    defs = sorted({it['profit_definition'] for op in present.values() for it in op['rows'].values() if it and it.get('profit_definition')})
+    if defs:
+        res['profit_definition'] = defs[0] if len(defs) == 1 else defs
+    money = [(r, op) for r, op in present.items() if op['money']]
+    problems = [{'id': r, 'problem': 'kpi_basis', 'stated': u['basis'], 'declared': u['declared']}
+                for r, op in present.items() for u in op['undeclared']]
+    if len({(op['currency'], op['currency_basis']) for _, op in money}) > 1:
+        problems += [{'id': r, 'problem': 'currency' if op['currency'] != ix['currency'] else 'currency_basis',
+                      'stated': op['currency'] if op['currency'] != ix['currency'] else op['currency_basis']}
+                     for r, op in money if op['currency_basis'] != 'reported' or op['currency'] != ix['currency']]
+    if problems:
+        side = []
+        for r, op in present.items():
+            row = _growth_row(op, 'end')
+            for w in COMPARISONS:
+                c = row['cmp'].get(w) if row else None
+                if _any_growth(c):
+                    g, frm = _pick(c, 'stated')
+                    side.append({'id': r, 'currency_basis': op['currency_basis'], 'window': w, 'growth': g, 'from': frm,
+                                 'derived_from': f'{row["ref"]} {w} ' + ('growth as stated' if frm == 'stated' else 'value / prior - 1')})
+                    break
+        qs = [f'supply reported {_name(p["id"])} growth' if p['problem'] == 'currency_basis' else
+              f'supply {_name(p["id"])} in {ix["currency"]}' if p['problem'] == 'currency' else
+              f'supply {_name(p["id"])} on a {"/".join(p["declared"])} basis (stated {p["stated"]})' for p in problems]
+        res.update(status='basis_mismatch', problems=problems, side_by_side=side, questions=sorted(set(qs)),
+                   reason='inputs on different bases are never divided')
+        return res, meta
+    if money:
+        meta.update(money=_is_money(t, roles, present), currency=money[0][1]['currency'], currency_basis=money[0][1]['currency_basis'])
+    measures = {r: op['measure'] for r, op in present.items() if not op['point'] and op['measure']}
+    if len(set(measures.values())) > 1:
+        res.update(status='scope_mismatch', windows=dict(sorted(measures.items())),
+                   reason='inputs measured over different windows (' + ', '.join(f'{r} {m}' for r, m in sorted(measures.items())) + ')')
+        return res, meta
+    measure = next(iter(measures.values()), None) or ix['period']
+    meta['measure'] = measure if measures else None
+    names = ('average', 'end') if any(op['point'] for op in present.values()) else ('period',)
+    variants = {}
+    for v in names:
+        vals = {r: _level(op, v, measure) for r, op in present.items()}
+        out = _variant(ix, ident, t, roles, present, vals, measure)
+        if out is not None:
+            variants[v] = out
+    primary = next((v for v in names if v in variants), None)
+    res['variant'] = primary
+    res['value'] = variants[primary]['value'] if primary else None
+    if variants:
+        res['variants'] = variants
+    changes, why = _changes(ix, t, roles, present, [primary] + [v for v in names if v != primary] if primary else list(names), res)
+    res['changes'] = changes
+    if why:
+        res['change_reason'] = why
+    if meta['cumulative']:
+        res['label'] = 'cumulative, not active'
+    checks = []
+    if t == 'product':
+        lc = _line_check(ix, ident, roles, present, variants.get(primary) if primary else None, measure)
+        if lc:
+            res['line_check'] = lc
+            checks.append(lc['status'])
+            if lc['status'] == 'partial':
+                res['residual'] = lc['residual']
+        if changes and changes[0].get('check'):
+            checks.append(changes[0]['check']['status'])
+    stated = ix['stated'].get((ident['id'], scope))
+    if stated and t in ('per_unit', 'ratio', 'share'):
+        res['stated'] = _stated_check(rules, stated[0], variants, primary, changes, meta, ix['currency'])
+        if res['stated']['status'] != 'not_compared':
+            checks.append(res['stated']['status'])
+    if checks:
+        res['status'] = max(checks, key=_status_rank)
+    else:
+        res['status'] = 'computed' if res['value'] is not None or changes else 'missing'
+        if res['status'] == 'missing':
+            res['missing'] = [f'{r} level' for r in need]
+    res['derived_from'] = f'{ident["type"]} identity {mid}.{ident["id"]} over ' + ', '.join(f'{r}={ref}' for r, ref in roles)
+    return res, meta
+
+
+def _is_money(t, roles, present):
+    """Whether an identity's value carries a currency: per unit and product when an input does; a ratio when exactly one
+    side does (revenue / gross bookings cancels); a share never."""
+    if t == 'share':
+        return False
+    if t == 'ratio':
+        return sum(1 for _, ref in roles if present[ref]['money']) == 1
+    return any(op['money'] for op in present.values())
+
+
+def _annualizer(ident, op, measure):
+    """Per year for a flow operand of an annualized identity: 12 / months of its window (x4 for a quarter)."""
+    if not ident.get('annualize') or not op['flow']:
+        return 1
+    return 12 / MONTHS[op['measure'] or measure]
+
+
+def _variant(ix, ident, t, roles, present, vals, measure):
+    """The identity's level in one variant, or None when an input has no level in it."""
+    v = {r: x for r, (x, _) in vals.items()}
+    src = {r: d for r, (_, d) in vals.items()}
+    if t == 'product':
+        fs = ident['factors']
+        if any(v.get(f) is None for f in fs):
+            return None
+        prod, notes = 1.0, []
+        for f in fs:
+            prod *= v[f]
+        target = present.get(ident['line'])
+        window = (target['measure'] if target and target['measure'] else None) or ix['period']
+        if ident.get('months_per_period'):
+            prod *= MONTHS[window]
+            notes.append(f'x {MONTHS[window]} months of the {window}')
+        annual = [f for f in fs if present[f]['annual']]
+        if annual:
+            if target is not None and v.get(ident['line']) is not None:
+                prod *= MONTHS[window] / 12
+                notes.append(f'x {MONTHS[window]}/12: {", ".join(annual)} per year, the line per {window}')
+            else:
+                window = 'year'
+                notes.append(f'per year: {", ".join(annual)} per year and no line to put it on')
+        return {'value': prod, 'window': window, 'derived_from': ' x '.join(src[f] for f in fs) + ('; ' + '; '.join(notes) if notes else '')}
+    a, b = (r for _, r in roles)
+    if t == 'share':
+        if v.get(a) is not None and v.get(b) is not None and v[b] != 0:
+            return {'value': v[a] / v[b], 'derived_from': f'{src[a]} / {src[b]}'}
+        part = present[a]['rows'].get('period') or {}
+        if b == 'revenue' and part.get('share_of_revenue') is not None:
+            return {'value': part['share_of_revenue'], 'derived_from': f'{part["ref"]}.share_of_revenue as stated'}
+        return None
+    if v.get(a) is None or v.get(b) is None or v[b] == 0:
+        return None
+    ka, kb = _annualizer(ident, present[a], measure), _annualizer(ident, present[b], measure)
+    out = {'value': v[a] * ka / (v[b] * kb), 'derived_from': f'{src[a]}' + (f' x {ka:g}' if ka != 1 else '') + f' / ({src[b]}' + (f' x {kb:g}' if kb != 1 else '') + ')'}
+    if ka != 1 or kb != 1:
+        out['annualized_by'] = ka if ka != 1 else kb
+    return out
+
+
+def _changes(ix, t, roles, present, order, res):
+    """The identity's change on every comparison window its inputs share (y/y first), from the primary variant's rows
+    and else the end rows; ([], reason) when no window is shared."""
+    product = t == 'product'
+    need = [ref for r, ref in roles if not (product and r == 'line')]
+    for variant in order:
+        rows = {ref: _growth_row(present[ref], variant) for ref in need}
+        if any(r is None for r in rows.values()):
+            continue
+        windows = [w for w in COMPARISONS if all(_any_growth(r['cmp'].get(w)) for r in rows.values())]
+        if windows:
+            break
+    else:
+        have = {ref: sorted(w for w in COMPARISONS if _any_growth((_growth_row(op, order[0] if order else 'end') or {'cmp': {}})['cmp'].get(w)))
+                for ref, op in present.items() if ref in need}
+        if not any(have.values()):
+            return [], None
+        lacking = sorted(r for r, w in have.items() if not w)
+        if lacking:
+            return [], 'missing: no growth rate for ' + ', '.join(lacking)
+        return [], 'scope_mismatch: no comparison window shared by every input (' + '; '.join(f'{r} {"/".join(w)}' for r, w in sorted(have.items())) + ')'
+    out = []
+    for w in windows:
+        grp = [(ref, rows[ref]) for ref in need]
+        footing = _footing([r for _, r in grp], w)
+        ins = _growth_inputs(grp, w, footing)
+        g = {i['id']: i['growth'] for i in ins}
+        ch = {'window': w, 'variant': variant, 'footing': footing, 'inputs': ins}
+        if t == 'product':
+            f = 1.0
+            for i in ins:
+                f *= 1 + i['growth']
+            ch.update(value=f - 1, factor=f, derived_from='product of (1 + g) over ' + ', '.join(i['id'] for i in ins))
+            line = present.get(roles[0][1])
+            lr = _growth_row(line, variant) if line else None
+            if lr is not None and _any_growth(lr['cmp'].get(w)):
+                lg, lfrom = _pick(lr['cmp'][w], footing)            # the line on the factors' footing
+                tol = ix['rules']['growth_identity_pp']
+                ch['check'] = {'line': roles[0][1], 'line_growth': lg, 'line_factor': 1 + lg, 'line_from': lfrom, 'product': f,
+                               'residual_pp': (1 + lg) - f, 'residual_log': log(1 + lg) - sum(log(1 + i['growth']) for i in ins),
+                               'status': 'consistent' if abs((1 + lg) - f) <= tol else 'inconsistent', 'growth_identity_pp': tol,
+                               'derived_from': f'(1 + g_{roles[0][1]}) - product of factors; log residual ln(1 + g) - sum ln(1 + g_i)'}
+        else:
+            a, b = (ref for _, ref in roles)
+            factor = (1 + g[a]) / (1 + g[b])
+            ch.update(value=factor - 1, factor=factor, derived_from=f'(1 + g_{a}) / (1 + g_{b}) - 1')
+            lvl = (res.get('variants') or {}).get(variant)
+            if lvl is not None and t != 'share':
+                ch['prior'] = lvl['value'] / factor
+                ch['derived_from'] += '; prior = value / (1 + change)'
+            if t == 'share':
+                share = lvl['value'] if lvl is not None else None
+                ch['share_change'] = ch['value']
+                if share is not None and g[b] != 0:
+                    ch['incremental_share'] = share * (1 - 1 / (1 + g[a])) / (1 - 1 / (1 + g[b]))
+                    ch['derived_from'] += f'; incremental share = share x (1 - 1/(1 + g_{a})) / (1 - 1/(1 + g_{b})) = d{a} / d{b}'
+        out.append(ch)
+    return out, None
+
+
+def _line_check(ix, ident, roles, present, var, measure):
+    """A product's level against the reported line: consistent within rules.identity_tolerance, partial below
+    rules.partial_below (the residual named, an open question), inconsistent otherwise."""
+    line = present.get(roles[0][1])
+    if var is None or line is None:
+        return None
+    lv, src = _level(line, 'end', measure)
+    if lv is None or lv <= 0:
+        return None
+    rules = ix['rules']
+    explained = var['value'] / lv
+    status = ('consistent' if abs(explained - 1) <= rules['identity_tolerance'] else
+              'partial' if 0 <= explained < rules['partial_below'] else 'inconsistent')
+    out = {'line': roles[0][1], 'line_value': lv, 'computed': var['value'], 'explained': explained, 'diff': explained - 1,
+           'status': status, 'identity_tolerance': rules['identity_tolerance'], 'partial_below': rules['partial_below'],
+           'derived_from': f'computed / {src}'}
+    if status == 'partial':
+        fs = ' x '.join(_name(f) for f in ident['factors'])
+        out['residual'] = {'name': f'{_name(roles[0][1])} not in {fs}', 'value': lv - var['value'], 'share': 1 - explained,
+                           'status': 'open', 'question': f'what makes up the {_name(roles[0][1])} that {fs} does not explain?',
+                           'derived_from': f'{src} - computed'}
+    return out
+
+
+def _stated_check(rules, st, variants, primary, changes, meta, currency):
+    """A source's own figure for the identity (revenue per account as the post states it) against the computed one, on
+    the matching basis (end or average) and in the same currency; never compared across currencies."""
+    v = 'end' if st['kpi_basis'] in POINT_BASES and 'end' in variants else ('average' if st['kpi_basis'] == 'average' and 'average' in variants else primary)
+    out = {'ref': st['ref'], 'source_ids': st['source_ids'], 'variant': v, 'stated': st['value'], 'stated_prior': st['prior']}
+    code = str(st.get('unit') or currency).split('/')[0]
+    if meta['money'] and F.MONETARY.match(code) and code != meta['currency']:
+        out.update(status='not_compared', reason=f'stated in {code}, computed in {meta["currency"]}')
+        return out
+    diffs = []
+    if v and st['value'] is not None and st['value'] != 0:
+        out['computed'] = variants[v]['value']
+        out['diff'] = variants[v]['value'] / st['value'] - 1
+        diffs.append(out['diff'])
+    ch = next((c for c in changes if c['window'] == 'y/y' and c.get('prior') is not None and c['variant'] == v), None)
+    if ch and st['prior'] is not None and st['prior'] != 0:
+        out['computed_prior'] = ch['prior']
+        out['prior_diff'] = ch['prior'] / st['prior'] - 1
+        diffs.append(out['prior_diff'])
+    out['status'] = ('not_compared' if not diffs else
+                     'consistent' if all(abs(d) <= rules['identity_tolerance'] for d in diffs) else 'inconsistent')
+    out['identity_tolerance'] = rules['identity_tolerance']
+    out['derived_from'] = 'computed / stated - 1'
+    return out
+
+
+def _base_refs(sp, ident, seen=None):
+    """(KPI ids, line ids) an identity reaches, nested identities expanded."""
+    seen = set() if seen is None else seen
+    kp, ln = set(), set()
+    for ref in identity_refs(ident):
+        if ref in sp['ids']:
+            if ref not in seen:
+                seen.add(ref)
+                k, l = _base_refs(sp, sp['ids'][ref], seen)
+                kp |= k
+                ln |= l
+        elif ref in sp['kpis']:
+            kp.add(ref)
+        else:
+            ln.add(ref)
+    return kp, ln
+
+
+def _scopes(ix, mid, ident):
+    """Where an identity is read: the total, every scope a KPI it reaches is reported for (a segment, a geography, a
+    customer group) and, for an identity of lines only, every scope those lines exist at. A by-segment identity has no
+    total. A share across two named scopes (logged-in of total) is read once, at the part's scope."""
+    if ident.get('part_scope'):
+        pool = ix['kpi'] if ident['total'] in ix['spec'][mid]['kpis'] else ix['line']
+        found = {s for (k, s) in pool if k == ident['total'] and (ident['part'], _part_scope(ident, s)) in pool} | {'total'}
+        return sorted(found, key=lambda s: (s != 'total', s))
+    kp, ln = _base_refs(ix['spec'][mid], ident)
+    pool, ids = (ix['kpi'], kp) if kp else (ix['line'], ln)
+    found = {s for (k, s) in pool if k in ids} | {'total'}
+    if ident.get('by') == 'segment':
+        found.discard('total')
+    return sorted(found, key=lambda s: (s != 'total', s))
+
+
+def _part_scope(ident, scope):
+    """The part's scope of a share across two scopes of one KPI (logged-in of total): part_scope itself at the total,
+    '<scope>_<part_scope>' at a narrower scope (us_logged_in of us)."""
+    return ident['part_scope'] if scope == 'total' else f'{scope}_{ident["part_scope"]}'
+
+
+def _keep(res, meta):
+    """Rows shown: the total row of a core identity always, and any total row that computed something or names a
+    mismatch; at a narrower scope (a segment, a geography) a row that computed something, and a core identity's missing
+    or mismatched row only when one of its inputs is reported there (it says what else is missing)."""
+    if res['scope'] == 'total':
+        return res['core'] or res['status'] != 'missing'
+    if res['status'] not in ('missing', 'scope_mismatch'):
+        return True
+    return res['core'] and bool(meta['present'])
+
+
+def evaluate_identity(case, model_id, identity_id, scope='total'):
+    """One identity of a model on an econ case at one scope (registry lookup: identity(model_id, identity_id))."""
+    _check_case(case)
+    model(model_id)
+    ix = _index(case, [model_id])
+    return deepcopy(_evaluate(ix, model_id, identity(model_id, identity_id), _scope(scope, 'scope'))[0])
+
+
+def _split(ix, mid, scope):
+    """ln(1 + g) = sum ln(1 + g_i) + residual for the model's growth split at a scope, every factor with its tag; the
+    residual is always shown. A missing factor leaves the split incomplete: the known factors and the unassigned rest
+    (which includes the missing ones, named) are shown, never a filled-in factor."""
+    sp = ix['spec'][mid]
+    gs, rules = sp['model']['growth_split'], ix['rules']
+    out = {'model': mid, 'line': gs['line'], 'scope': scope}
+    line = _operand(ix, mid, gs['line'], scope)
+    if gs.get('mode') == 'additive':
+        out.update(mode='additive', part=gs['part'], status='missing', missing=[gs['part']],
+                   reason='an additive split reads each part as its own KPI row; none at this scope')
+        parts = sorted(s for (k, s) in ix['kpi'] if k == gs['part'])
+        if parts:
+            out.update(status='missing', reason='additive parts are read by category (process evidence, a later work package)', parts=parts)
+        return out
+    tags = sp['tags']
+    facs = []
+    for f in gs['factors']:
+        op = _operand(ix, mid, f, scope)
+        facs.append((f, op))
+    absent = [f for f, op in facs if op is None or op.get('absent')]
+    if line is None:
+        absent = [gs['line']] + absent
+    present = [(f, op) for f, op in facs if op is not None and not op.get('absent')]
+    nested = {op['absent'] for _, op in facs if op is not None and op.get('absent')}
+    money = [(r, op) for r, op in ([(gs['line'], line)] if line else []) + present if op['money']]
+    mismatch = 'basis_mismatch' in nested or len({(op['currency'], op['currency_basis']) for _, op in money}) > 1
+    rows = {f: _growth_row(op, 'end') for f, op in present}
+    lrow = _growth_row(line, 'end') if line else None
+    window = next((w for w in COMPARISONS if lrow is not None and _any_growth(lrow['cmp'].get(w))
+                   and all(r is not None and _any_growth(r['cmp'].get(w)) for r in rows.values())), None)
+    if window is None and lrow is not None:
+        window = next((w for w in COMPARISONS if _any_growth(lrow['cmp'].get(w))), None)
+    out['window'] = window
+    known = []
+    if window is not None and lrow is not None:
+        kpi_rows = [r for f, r in rows.items() if f in sp['kpis'] and r is not None and r['cmp'].get(window)]
+        footing = _footing(kpi_rows, window)
+        lg, lfrom = _pick(lrow['cmp'][window], footing)           # the line on the factors' footing
+        out['line_growth'] = {'growth': lg, 'factor': 1 + lg, 'log': log(1 + lg), 'from': lfrom,
+                              'derived_from': f'{lrow["ref"]} {window} ' + ('growth as stated' if lfrom == 'stated' else 'value / prior - 1')}
+        for f, op in present:
+            r = rows[f]
+            if r is None or not _any_growth(r['cmp'].get(window)):
+                continue
+            g, frm = _pick(r['cmp'][window], footing if f in sp['kpis'] else 'stated')
+            tag = 'reclassification' if (ix['reclassified'].get(f) or {}).get('status') == 'evidenced' else tags.get(f)
+            known.append({'id': f, 'kind': op['kind'], 'tag': tag, 'growth': g, 'factor': 1 + g, 'log': log(1 + g), 'from': frm,
+                          'share': log(1 + g) / log(1 + lg) if lg != 0 else None,
+                          'derived_from': f'{r["ref"]} {window} ' + ('growth as stated' if frm == 'stated' else 'value / prior - 1')
+                          + '; share = ln(1 + g_i) / ln(1 + g)'})
+    out['factors'] = known
+    lacking = absent + [f for f, _ in present if f not in {k['id'] for k in known}]
+    if mismatch:
+        out['status'] = 'basis_mismatch'
+    elif lacking:
+        other_window = {f for f, op in present if rows[f] is not None and any(_any_growth(rows[f]['cmp'].get(w)) for w in COMPARISONS)}
+        found = [f for f in lacking if f in other_window or (f in sp['kpis'] or f in ix['lines']) and _elsewhere(ix, mid, f, scope)
+                 or f in sp['ids'] and (_operand(ix, mid, f, scope) or {}).get('absent') == 'scope_mismatch']
+        out['status'] = 'scope_mismatch' if found and len(found) == len(lacking) else 'missing'
+        if other_window & set(lacking):
+            out['reason'] = 'no comparison window shared with the line: ' + ', '.join(sorted(other_window & set(lacking)))
+    elif window is None:
+        out['status'] = 'missing'
+    if lacking or mismatch:
+        out['missing'] = lacking
+    if 'line_growth' in out and known:
+        total = out['line_growth']['log']
+        known_log = sum(k['log'] for k in known)
+        by_tag = {}
+        for k in known:
+            by_tag[k['tag'] or 'untagged'] = by_tag.get(k['tag'] or 'untagged', 0.0) + k['log']
+        out['by_tag'] = [{'tag': k, 'log': v, 'share': v / total if total != 0 else None,
+                          'derived_from': f'sum of ln(1 + g_i) over the {k} factors; share = that / ln(1 + g)'} for k, v in sorted(by_tag.items())]
+        if 'status' not in out:
+            prod = 1.0
+            for k in known:
+                prod *= k['factor']
+            out['product'] = prod
+            out['residual'] = {'log': total - known_log, 'pp': out['line_growth']['factor'] - prod,
+                               'share': (total - known_log) / total if total != 0 else None,
+                               'derived_from': 'ln(1 + g) - sum ln(1 + g_i); (1 + g) - product of (1 + g_i)'}
+            out['status'] = 'consistent' if abs(out['residual']['pp']) <= rules['growth_identity_pp'] else 'inconsistent'
+            out['growth_identity_pp'] = rules['growth_identity_pp']
+        else:
+            out['unassigned'] = {'log': total - known_log, 'includes': lacking,
+                                 'derived_from': 'ln(1 + g) - sum ln(1 + g_i) of the factors read; it includes the factors not read'}
+    out['derived_from'] = f'growth split of {gs["line"]} over ' + ', '.join(gs['factors'])
+    return out
+
+
+def growth_split(case, model_id, scope='total'):
+    """The model's growth split on an econ case at one scope (see _split)."""
+    _check_case(case)
+    model(model_id)
+    return deepcopy(_split(_index(case, [model_id]), model_id, _scope(scope, 'scope')))
+
+
+# ---------------------------------------------------------------- WP3: review
+
+def _selection(sel):
+    """[model ids] and the selection shown in the review: a model id, or {primary, secondary[], source} (econ.select's
+    shape, WP4). None or 'unclassified' is not assessed: no rows, no effect."""
+    if sel is None:
+        return [], None
+    if isinstance(sel, str):
+        sel = {'primary': sel}
+    if not isinstance(sel, dict):
+        raise ValueError('model: a model id or {primary, secondary[]}')
+    p, sec = sel.get('primary'), sel.get('secondary') or []
+    source = sel.get('source', 'caller')
+    if p in (None, UNCLASSIFIED):
+        return [], {'primary': UNCLASSIFIED, 'secondary': [], 'source': source}
+    if not isinstance(sec, list):
+        raise ValueError('model.secondary: a list of model ids')
+    mids = []
+    for m in [p] + sec:
+        model(m)
+        if m not in mids:
+            mids.append(m)
+    return mids, {'primary': p, 'secondary': mids[1:], 'source': source}
+
+
+def _comparisons(it):
+    out = []
+    for w in COMPARISONS:
+        c = it['cmp'].get(w)
+        if not c:
+            continue
+        g, frm = _pick(c, 'stated') if _any_growth(c) else (None, None)
+        if c['prior'] is not None:
+            prior, pfrom = c['prior'], 'stated'
+        elif it['value'] is not None and c['stated'] is not None:
+            prior, pfrom = it['value'] / (1 + c['stated']), 'derived'
+        else:
+            prior, pfrom = None, None
+        row = {'window': w, 'growth': g, 'from': frm, 'prior': prior, 'prior_from': pfrom}
+        if c['stated'] is not None and c['levels'] is not None:
+            row['levels_growth'] = c['levels']
+        row['derived_from'] = (f'{it["ref"]} {w}: growth ' + ('as stated' if frm == 'stated' else 'value / prior - 1' if frm else 'none')
+                               + ('; prior = value / (1 + growth)' if pfrom == 'derived' else ''))
+        out.append(row)
+    return out
+
+
+def _tables(ix):
+    spec = ix['spec']
+    kpis = []
+    for (kid, scope) in sorted(ix['kpi']):
+        for it in ix['kpi'][(kid, scope)]:
+            row = {'id': kid, 'scope': scope, 'kpi_basis': it['basis'], 'currency_basis': it['currency_basis'], 'value': it['value'],
+                   'measure': it['measure'], 'tags': {m: spec[m]['kpis'][kid]['tag'] for m in ix['models'] if kid in spec[m]['kpis']},
+                   'core_in': [m for m in ix['models'] if spec[m]['kpis'].get(kid, {}).get('core')],
+                   'basis_declared': any(it['basis'] in spec[m]['kpis'][kid]['basis'] for m in ix['models'] if kid in spec[m]['kpis']),
+                   'comparisons': _comparisons(it), 'source_ids': it['source_ids'], 'ref': it['ref']}
+            if it.get('basis_from'):
+                row['basis_from'] = it['basis_from']
+            kpis.append(row)
+    lines = []
+    for (lid, scope) in sorted(ix['line']):
+        for it in ix['line'][(lid, scope)]:
+            row = {'id': lid, 'scope': scope, 'value': it['value'], 'measure': it['measure'], 'currency_basis': it['currency_basis'],
+                   'comparisons': _comparisons(it), 'source_ids': it['source_ids'], 'ref': it['ref']}
+            for k in ('role', 'profit_definition'):
+                if it.get(k):
+                    row[k] = it[k]
+            if it.get('derived_from'):
+                row['derived_from'] = it['derived_from']
+            if it['pass_through'] is not None:
+                row['pass_through'] = _pass_through(ix, it)
+            lines.append(row)
+    return kpis, lines
+
+
+def _pass_through(ix, it):
+    """Growth with pass-through fees removed on both sides (registry line note: stated and removed before growth is read)."""
+    w = it['window']
+    c = it['cmp'].get(w) or {}
+    prior = c.get('prior') if c.get('prior') is not None else (it['value'] / (1 + c['stated']) if it['value'] is not None and c.get('stated') is not None else None)
+    out = {'window': w, 'pass_through': it['pass_through'], 'prior_pass_through': it['prior_pass_through']}
+    if it['value'] is None or prior is None or it['prior_pass_through'] is None or prior - it['prior_pass_through'] <= 0:
+        out['status'] = 'not_computed'
+        out['reason'] = 'needs the level, the prior level and the prior period pass-through'
+        ix['questions'].append({'model': None, 'about': it['ref'], 'scope': it['scope'],
+                                'question': f'supply the prior period pass-through fees in {_name(it["id"])}'})
+        return out
+    out['growth_ex_pass_through'] = (it['value'] - it['pass_through']) / (prior - it['prior_pass_through']) - 1
+    out['derived_from'] = f'({it["ref"]}.value - pass_through) / (prior - prior_pass_through) - 1; prior ' + ('as stated' if c.get('prior') is not None else '= value / (1 + growth)')
+    return out
+
+
+def _flag(ix, key, model_id, scope, **data):
+    """One flag with the registry's severity (quarter.SEVERITY's levels); the numbers it carries come from the rows named
+    in derived_from."""
+    return {'key': key, 'severity': ix['checks'][key]['severity'], 'model': model_id, 'scope': scope, **data}
+
+
+def _home_growth(it):
+    """A KPI row's growth in the window its source compares (`window`), else the other one: (window, growth, from)."""
+    for w in (it['window'],) + tuple(c for c in COMPARISONS if c != it['window']):
+        c = it['cmp'].get(w)
+        if _any_growth(c):
+            g, frm = _pick(c, 'stated')
+            return w, g, frm
+    return None, None, None
+
+
+def _check_per_unit(ix, mid, rows, flags):
+    fall = ix['rules']['per_unit_fall']
+    sp = ix['spec'][mid]
+    for r in rows:
+        ch = (r.get('changes') or [None])[0]
+        if ch is None:
+            continue
+        if r['type'] == 'per_unit':
+            units = next(i for i in ch['inputs'] if i['id'] == r['inputs']['units'])
+            per, per_id = ch['value'], r['id']
+        elif r['type'] == 'product' and r['core'] and len(ch['inputs']) == 2 and ch['inputs'][0]['id'] in sp['kpis'] \
+                and sp['kpis'][ch['inputs'][0]['id']]['unit'] in UNIT_CLASSES:
+            units, per, per_id = ch['inputs'][0], ch['inputs'][1]['growth'], ch['inputs'][1]['id']
+        else:
+            continue
+        if units['growth'] > 0 and per < -fall:
+            flags.append(_flag(ix, 'per_unit_vs_units', mid, r['scope'], identity=r['id'], window=ch['window'], units=units['id'],
+                               units_growth=units['growth'], per_unit=per_id, per_unit_change=per, threshold=fall,
+                               derived_from=f'identities[{r["id"]}@{r["scope"]}].changes[{ch["window"]}]'))
+
+
+def _check_take_rate(ix, mid, rows, flags):
+    tol = ix['rules']['growth_identity_pp']
+    for r in rows:
+        ident = ix['spec'][mid]['ids'].get(r['id']) or {}
+        ch = (r.get('changes') or [None])[0]
+        if ident.get('check') != 'take_rate_shift' or ch is None or abs(ch['value']) <= tol:
+            continue
+        rc = ix['reclassified'].get(r['id'])
+        f = _flag(ix, 'take_rate_shift', mid, r['scope'], identity=r['id'], window=ch['window'], change=ch['value'], threshold=tol,
+                  reclassification=rc['status'] if rc else 'unproven',
+                  derived_from=f'identities[{r["id"]}@{r["scope"]}].changes[{ch["window"]}]; threshold rules.growth_identity_pp')
+        if rc and rc['status'] == 'evidenced':
+            f.update(tag='reclassification', evidence_ids=rc['evidence_ids'], read_on=r['inputs']['den'],
+                     note=f'falsifiers and margins are read on the {_name(r["inputs"]["den"])} basis')
+        else:
+            f['tag'] = None
+            ix['questions'].append({'model': mid, 'about': r['id'], 'scope': r['scope'],
+                                    'question': 'is the take-rate change pricing, mix or a reclassification of what is booked as '
+                                                'revenue? A reclassification needs an issuer document (evidence ids)'})
+        flags.append(f)
+
+
+def _check_thesis(ix, mid, flags):
+    floor = ix['rules']['minor_line_share']
+    sp = ix['spec'][mid]
+    for (lid, scope), items in sorted(ix['line'].items()):
+        if lid == 'revenue' or not any(it.get('role') == 'thesis_driver' for it in items):
+            continue
+        ident = next((i for i in sp['model']['identities'] if i['type'] == 'share' and i['part'] == lid and i['total'] == 'revenue'),
+                     {'id': f'{lid}_share_of_revenue', 'type': 'share', 'part': lid, 'total': 'revenue'})
+        res, _ = _evaluate(ix, mid, ident, scope)
+        if res.get('value') is None:
+            ix['questions'].append({'model': mid, 'about': 'thesis_on_minor_line', 'scope': scope,
+                                    'question': f'supply {_name(lid)} and revenue on the same window to size the thesis line'})
+            continue
+        if res['value'] < floor:
+            ch = (res.get('changes') or [{}])[0]
+            flags.append(_flag(ix, 'thesis_on_minor_line', mid, scope, line=lid, share=res['value'], window=ch.get('window'),
+                               incremental_share=ch.get('incremental_share'), threshold=floor,
+                               derived_from=f'identities[{ident["id"]}@{scope}]: share of revenue and of incremental revenue'))
+
+
+def _check_flat(ix, mid, flags):
+    flat = ix['rules']['flat_units_abs']
+    sp = ix['spec'][mid]
+    for kid, s in sp['kpis'].items():
+        if not s.get('core') or s['unit'] not in UNIT_CLASSES:
+            continue
+        for (k, scope), items in sorted(ix['kpi'].items()):
+            if k != kid:
+                continue
+            for it in items:
+                w, g, frm = _home_growth(it)
+                if g is None or abs(g) >= flat:
+                    continue
+                f = _flag(ix, 'core_units_flat', mid, scope, kpi=kid, kpi_basis=it['basis'], window=w, growth=g, threshold=flat,
+                          derived_from=f'{it["ref"]} {w} growth ' + ('as stated' if frm == 'stated' else 'value / prior - 1'))
+                other = next((c for c in COMPARISONS if c != w and _any_growth(it['cmp'].get(c))), None)
+                if other:
+                    f['other_window'], f['other_growth'] = other, _pick(it['cmp'][other], 'stated')[0]
+                flags.append(f)
+
+
+def _next_period(label):
+    m = _QUARTER.match(label)
+    if m:
+        y, q = int(m.group(1)), int(m.group(2))
+        return f'{y + (q == 4)}-Q{q % 4 + 1}'
+    m = re.match(r'^(FY)?(\d{4})$', label)
+    return f'{m.group(1) or ""}{int(m.group(2)) + 1}' if m else None
+
+
+def _disclosures(ix):
+    case = ix['case']
+    out = []
+    for i, d in enumerate(case.get('disclosure_changes') or []):
+        label = f'disclosure_changes[{i}]'
+        ids = _source_ids(case, d, label)
+        ix['read'].add('disclosure_changes')
+        if not d.get('kpi') or not d.get('last_period') or not d.get('kind'):
+            raise ValueError(f'{label}: needs kpi, last_period and kind')
+        if _visible(case, ids):
+            out.append({'kpi': d['kpi'], 'scope': _scope(d['scope'], label) if d.get('scope') is not None else None,
+                        'last_period': str(d['last_period']), 'kind': d['kind'], 'source_ids': ids})
+    return out
+
+
+def _falsifiers(ix, mid, identities, drops, flags):
+    out = []
+    for f in falsifiers(mid):
+        rows = []
+        if f['kind'] == 'kpi':
+            for (k, scope), items in sorted(ix['kpi'].items()):
+                for it in items if k == f['id'] else []:
+                    w, g, frm = _home_growth(it)
+                    rows.append({'id': f['id'], 'kind': 'kpi', 'tag': f['tag'], 'scope': scope, 'kpi_basis': it['basis'],
+                                 'value': it['value'], 'window': w, 'growth': g, 'status': 'tracked', 'source_ids': it['source_ids'],
+                                 'derived_from': f'{it["ref"]}' + (f' {w} growth ' + ('as stated' if frm == 'stated' else 'value / prior - 1') if w else '')})
+        else:
+            for r in identities:
+                if r['model'] == mid and r['id'] == f['id'] and (r.get('value') is not None or r.get('changes')):
+                    ch = (r.get('changes') or [{}])[0]
+                    rows.append({'id': f['id'], 'kind': 'identity', 'tag': r['tag'], 'scope': r['scope'], 'value': r.get('value'),
+                                 'window': ch.get('window'), 'change': ch.get('value'), 'status': 'tracked',
+                                 'derived_from': f'identities[{r["id"]}@{r["scope"]}]'})
+                    rc = ix['reclassified'].get(f['id'])
+                    if rc and rc['status'] == 'evidenced':
+                        rows[-1]['read_on'] = r['inputs'].get('den')
+        if not rows:
+            rows.append({'id': f['id'], 'kind': f['kind'], 'tag': f['tag'], 'scope': None, 'status': 'missing'})
+        for row in rows:
+            for d in drops:
+                if d['kpi'] == f['id'] and d['kind'] in DISCLOSURE_KINDS and (d['scope'] is None or d['scope'] == row['scope']):
+                    row.update(status='unobservable', last_period=d['last_period'], from_period=_next_period(d['last_period']),
+                               disclosure_source_ids=d['source_ids'])
+                    flags.append(_flag(ix, 'disclosure_dropped', mid, row['scope'], kpi=f['id'], last_period=d['last_period'],
+                                       from_period=row['from_period'], source_ids=d['source_ids']))
+                    ix['questions'].append({'model': mid, 'about': f['id'], 'scope': row['scope'],
+                                            'question': f'which reported figure replaces {_name(f["id"])} ({row["scope"]}) after {d["last_period"]}?'})
+        out += rows
+    return out
+
+
+def _deceleration(ix, mid, kpis, prior):
+    rules = ix['rules']
+    out = {'check': 'cyclical_deceleration', 'kind': 'reading', 'model': mid, 'value': None,
+           'cyclical_slowdown_pp': rules['cyclical_slowdown_pp'], 'structural_stable_pp': rules['structural_stable_pp']}
+    if prior is None:
+        out['reason'] = 'needs the prior review (review(case, model, prior=earlier_review))'
+        return out
+    yoy = lambda row: next((c['growth'] for c in row.get('comparisons') or [] if c['window'] == 'y/y' and c['growth'] is not None), None)
+    before = {(r['id'], r['kpi_basis'], r['scope']): yoy(r) for r in prior.get('kpis') or []}
+    tags = ix['spec'][mid]['kpis']
+    cyc, struc = [], []
+    for r in kpis:
+        k = (r['id'], r['kpi_basis'], r['scope'])
+        g0, g1 = before.get(k), yoy(r)
+        if r['id'] not in tags or g0 is None or g1 is None:
+            continue
+        row = {'id': r['id'], 'kpi_basis': r['kpi_basis'], 'scope': r['scope'], 'prior_growth': g0, 'growth': g1, 'change': g1 - g0,
+               'derived_from': f'y/y growth in this review minus y/y growth in the prior review ({prior["period_end"]})'}
+        {'cyclical': cyc, 'structural': struc}.get(tags[r['id']]['tag'], []).append(row)
+    out.update(cyclical=cyc, structural=struc, prior_period_end=prior['period_end'])
+    if cyc and struc:
+        out['value'] = all(c['change'] < -rules['cyclical_slowdown_pp'] for c in cyc) and \
+            all(abs(s['change']) <= rules['structural_stable_pp'] for s in struc)
+    else:
+        out['reason'] = 'needs at least one cyclical and one structural KPI with y/y growth in both reviews'
+    out['rule'] = 'every cyclical KPI slows by more than cyclical_slowdown_pp while every structural KPI stays within structural_stable_pp'
+    return out
+
+
+def _expansion(ix, mid, splits, readings):
+    sp = ix['spec'][mid]
+    per = next((i['id'] for i in sp['model']['identities'] if i['type'] == 'per_unit' and i.get('core')), None)
+    for s in splits:
+        if s['model'] != mid or per is None:
+            continue
+        fac = next((f for f in s.get('factors') or [] if f['id'] == per), None)
+        if fac is None or fac['share'] is None or s['status'] not in ('consistent',):
+            continue
+        rows = ix['kpi'].get(('net_revenue_retention', s['scope'])) or ix['kpi'].get(('net_revenue_retention', 'total')) or []
+        ndr = next((it for it in rows if it['value'] is not None), None)
+        r = {'check': 'expansion_led', 'kind': 'reading', 'model': mid, 'scope': s['scope'], 'window': s['window'], 'per_unit': per,
+             'per_unit_log_share': fac['share'], 'expansion_ndr_min': ix['rules']['expansion_ndr_min'],
+             'rule': 'the per-unit share of log growth above one half and NDR above expansion_ndr_min',
+             'derived_from': f'growth_splits[{mid}@{s["scope"]}] factor {per}'}
+        if ndr is None:
+            r['value'] = None
+            r['reason'] = 'net revenue retention not supplied'
+            ix['questions'].append({'model': mid, 'about': 'expansion_led', 'scope': s['scope'], 'question': 'supply net revenue retention'})
+        else:
+            c = ndr['cmp'].get('y/y') or {}
+            r.update(value=fac['share'] > 0.5 and ndr['value'] > ix['rules']['expansion_ndr_min'], ndr=ndr['value'], ndr_scope=ndr['scope'],
+                     ndr_ref=ndr['ref'])
+            if c.get('prior') is not None:
+                r['ndr_prior'], r['ndr_change'] = c['prior'], ndr['value'] - c['prior']
+        readings.append(r)
+
+
+def _rate_sensitivity(ix, mid, measures):
+    case = ix['case']
+    nii = next((it for it in ix['line'].get(('net_interest_income', 'total'), []) if it['value'] is not None), None)
+    rows = []
+    for i, s in enumerate(case.get('sensitivities') or []):
+        label = f'sensitivities[{i}]'
+        ids = _source_ids(case, s, label)
+        ix['read'].add('sensitivities')
+        if not _visible(case, ids):
+            continue
+        rows.append((str(s.get('driver') or ''), number(s.get('annual_impact'), f'{label}.annual_impact'), _num(s.get('base_annual'), f'{label}.base_annual'), ids, label))
+    for (k, scope), items in sorted(ix['kpi'].items()):
+        if k == 'rate_sensitivity_25bp':
+            rows += [(f'25bp ({scope})', it['value'], None, it['source_ids'], it['ref']) for it in items if it['value'] is not None]
+    for driver, impact, base, ids, ref in rows:
+        bp = _BP.search(driver)
+        m = {'check': 'rate_sensitivity_share', 'kind': 'measure', 'model': mid, 'driver': driver, 'annual_impact': impact,
+             'source_ids': ids, 'ref': ref}
+        if not bp or abs(float(bp.group(1))) != 25:
+            m.update(status='not_computed', reason='not a 25bp move; a sensitivity is never rescaled')
+        elif nii is None:
+            m.update(status='not_computed', reason='needs the net_interest_income line')
+        else:
+            k = 12 / MONTHS[nii['measure']]
+            m.update(status='computed', net_interest_income=nii['value'], annualized_by=k, annual_net_interest_income=nii['value'] * k,
+                     share=abs(impact) / (nii['value'] * k), derived_from=f'|annual_impact| / ({nii["ref"]}.value x {k:g})')
+            if base is not None:
+                m['stated_base'] = base
+        measures.append(m)
+
+
+def _margin_only(ix, mid, measures):
+    case = ix['case']
+    cyc, mkt = case.get('cycle'), case.get('market')
+    m = {'check': 'margin_only_normalized', 'kind': 'measure', 'model': mid, 'label': 'margin_only',
+         'note': 'a floor on the correction: revenue stays at the record run rate'}
+    if not isinstance(cyc, dict) or not isinstance(mkt, dict):
+        m.update(status='not_computed', reason='needs market {price, run_rate_eps} and cycle {cycle_margin, current_operating_margin}')
+        measures.append(m)
+        return
+    ix['read'] |= {'cycle', 'market'}
+    _source_ids(case, mkt, 'market')
+    _source_ids(case, cyc, 'cycle')
+    cm = cyc.get('cycle_margin')
+    cm_ids = _source_ids(case, cm, 'cycle.cycle_margin') if isinstance(cm, dict) else _source_ids(case, cyc, 'cycle')
+    cm_v = _num(cm.get('value') if isinstance(cm, dict) else cm, 'cycle.cycle_margin', 0)
+    price, eps = _num(mkt.get('price'), 'market.price', 0), _num(mkt.get('run_rate_eps'), 'market.run_rate_eps')
+    oi = next((it for it in ix['line'].get(('operating_income', 'total'), []) if it['value'] is not None), None)
+    rev = next((it for it in ix['line'].get(('revenue', 'total'), []) if it['value'] is not None), None)
+    line_margin = oi['value'] / rev['value'] if oi and rev and rev['value'] > 0 else None
+    stated = _num(cyc.get('current_operating_margin'), 'cycle.current_operating_margin')
+    current = stated if stated is not None else line_margin
+    if not price or not eps or eps <= 0 or not cm_v or not current or current <= 0:
+        m.update(status='not_computed', reason='needs a price, a positive run-rate EPS, an evidenced cycle margin and the current margin')
+        measures.append(m)
+        return
+    kind = cm.get('kind') if isinstance(cm, dict) else None
+    norm = eps * cm_v / current
+    m.update(status='computed', price=price, run_rate_eps=eps, run_rate_basis=mkt.get('run_rate_basis'), run_rate_pe=price / eps,
+             current_operating_margin=current, current_margin_from='stated' if stated is not None else 'lines',
+             cycle_margin=cm_v, cycle_margin_kind=kind, cycle_margin_source_ids=cm_ids,
+             attributed=kind not in (None, 'reported'), normalized_eps=norm, normalized_pe=price / norm,
+             derived_from='price / run_rate_eps; normalized EPS = run_rate_eps x cycle_margin / current_operating_margin')
+    if stated is not None and line_margin is not None:
+        m['at_line_margin'] = {'operating_margin': line_margin, 'normalized_pe': price / (eps * cm_v / line_margin),
+                               'derived_from': f'{oi["ref"]}.value / {rev["ref"]}.value; the same normalization at that margin'}
+    measures.append(m)
+
+
+def _segment_reconciliation(ix, measures):
+    segs = sorted({s for (lid, s), items in ix['line'].items() for it in items if it['ref'].startswith('segments[')})
+    if not segs:
+        return
+    rules = ix['rules']
+
+    def seg_value(lid, s):
+        return next((it for it in ix['line'].get((lid, s), []) if it['ref'].startswith('segments[') and it['value'] is not None), None)
+
+    def total(lid):
+        return next((it for it in ix['line'].get((lid, 'total'), []) if it['value'] is not None), None)
+
+    m = {'check': 'segment_reconciliation', 'kind': 'measure', 'segments': segs, 'identity_tolerance': rules['identity_tolerance'],
+         'partial_below': rules['partial_below']}
+    for lid, key in (('revenue', 'revenue'), ('operating_income', 'operating_income')):
+        parts = {s: seg_value(lid, s) for s in segs}
+        lacking = [s for s, it in parts.items() if it is None]
+        if lacking:
+            m[key] = {'status': 'missing', 'missing': lacking}
+            continue
+        sm = sum(it['value'] for it in parts.values())
+        row = {'sum': sm, 'derived_from': ' + '.join(it['ref'] for it in parts.values())}
+        tot = total(lid)
+        if tot is None or tot['value'] <= 0:
+            row['status'] = 'computed'
+        else:
+            e = sm / tot['value']
+            row.update(consolidated=tot['value'], diff=e - 1,
+                       status='consistent' if abs(e - 1) <= rules['identity_tolerance'] else
+                       'partial' if 0 <= e < rules['partial_below'] else 'inconsistent')
+            row['derived_from'] += f'; diff = sum / {tot["ref"]}.value - 1'
+            if row['status'] == 'partial':
+                row['residual'] = {'name': f'{_name(lid)} outside the reported segments', 'value': tot['value'] - sm, 'status': 'open',
+                                   'derived_from': f'{tot["ref"]}.value - sum'}
+        m[key] = row
+    prof = {s: seg_value('segment_profit', s) for s in segs}
+    if any(prof.values()):
+        defs = sorted({it.get('profit_definition') or 'unspecified' for it in prof.values() if it})
+        known = [it for it in prof.values() if it]
+        m['segment_profit'] = {'sum': sum(it['value'] for it in known), 'definitions': defs, 'missing': [s for s, it in prof.items() if it is None],
+                               'status': 'not_reconciled', 'derived_from': ' + '.join(it['ref'] for it in known),
+                               'reason': 'a segment profit measure reconciles to the consolidated lines only through unallocated '
+                                         'items (corporate costs, eliminations), which are not supplied'}
+    measures.append(m)
+
+
+def _summary(ix, mid, identities, role):
+    sp = ix['spec'][mid]
+    core = []
+    for i in sp['model']['identities']:
+        if not i.get('core'):
+            continue
+        rows = [r for r in identities if r['model'] == mid and r['id'] == i['id']]
+        best = min(rows, key=lambda r: (CORE_ORDER.index(r['status']), len(r.get('missing') or []), r['scope'] != 'total', r['scope'])) if rows else None
+        core.append({'id': i['id'], 'scope': best['scope'] if best else 'total', 'status': best['status'] if best else 'missing',
+                     'missing': (best or {}).get('missing') or []})
+    st = [c['status'] for c in core]
+    if 'inconsistent' in st:
+        status = 'inconsistent'
+    elif all(s == 'consistent' for s in st):
+        status = 'consistent'
+    elif all(s in ('consistent', 'computed') for s in st):
+        status = 'computed'
+    elif any(s in ('consistent', 'computed', 'partial') for s in st):
+        status = 'partial'
+    else:
+        status = next(s for s in ('basis_mismatch', 'scope_mismatch', 'not_computed', 'missing') if s in st)
+    residuals = [{'identity': r['id'], 'scope': r['scope'], **r['residual']} for r in identities
+                 if r['model'] == mid and r.get('residual')]
+    return {'model': mid, 'role': role, 'label_he': sp['model']['label_he'], 'price_cyclical': sp['model']['price_cyclical'],
+            'core_status': status, 'core': core, 'missing': sorted({x for c in core for x in c['missing']}), 'residuals': residuals}
+
+
+def _questions(ix, identities):
+    for r in identities:
+        if r['status'] == 'basis_mismatch':
+            for q in r.get('questions') or []:
+                ix['questions'].append({'model': r['model'], 'about': r['id'], 'scope': r['scope'], 'question': q})
+        elif r['status'] == 'scope_mismatch' and r['core'] and r.get('missing'):
+            ix['questions'].append({'model': r['model'], 'about': r['id'], 'scope': r['scope'],
+                                    'question': f'supply {", ".join(_name(x) for x in r["missing"])} for {r["scope"]} '
+                                                f'(reported at {", ".join(r.get("found_at") or []) or "another scope"})'})
+        elif r['status'] == 'missing' and r['core']:
+            ix['questions'].append({'model': r['model'], 'about': r['id'], 'scope': r['scope'],
+                                    'question': f'supply {", ".join(_name(x) for x in r.get("missing") or [])} ({r["scope"]})'})
+        if r.get('residual'):
+            ix['questions'].append({'model': r['model'], 'about': r['id'], 'scope': r['scope'], 'question': r['residual']['question']})
+    seen, out = set(), []
+    for q in ix['questions']:
+        k = (q['model'] or '', q['about'], q['scope'] or '', q['question'])
+        if k not in seen:
+            seen.add(k)
+            out.append(q)
+    return sorted(out, key=lambda q: (q['model'] or '', q['about'], q['scope'] or '', q['question']))
+
+
+def review(case, model=None, prior=None):
+    """Read an econ case through its economic model(s): every identity at every scope its inputs are reported for
+    (status, levels on the end and average bases, changes per comparison window, residual named), the growth split by
+    tag, the model's checks (flags, readings, measures), the falsifiers and the open questions. `model` is a model id or
+    {primary, secondary[]} (case['model'] when omitted); none or 'unclassified' is not assessed. `prior` is the review of
+    an earlier period of the same company (cyclical_deceleration compares the two). Pure and deterministic: the same case
+    gives the same output and input_sha256; nothing is fetched, filled in or carried over from the registry as data."""
+    _check_case(case)
+    mids, selection = _selection(model if model is not None else case.get('model'))
+    if prior is not None:
+        if not isinstance(prior, dict) or prior.get('company') != case['company'] or 'kpis' not in prior or not prior.get('input_sha256'):
+            raise ValueError('prior: an earlier econ review of the same company')
+        if F._d(prior['period_end']) >= F._d(case['period_end']):
+            raise ValueError('prior: its period_end must precede this case')
+    out = {'company': case['company'], 'period_end': case['period_end'], 'as_of': case['as_of'], 'currency': case['currency'],
+           'period': case['period'], 'economics_version': ECONOMICS_VERSION, 'registry_sha256': registry_sha256(), 'model': selection,
+           'prior_review': {'period_end': prior['period_end'], 'input_sha256': prior['input_sha256']} if prior is not None else None}
+    empty = dict(models=[], kpis=[], lines=[], identities=[], growth_splits=[], flags=[], readings=[], measures=[], falsifiers=[],
+                 open_questions=[], checks_not_run=[], unavailable=[])
+    if not mids:
+        out.update(status='not_assessed', reason='no economic model selected (unclassified): no rows, no effect', **empty,
+                   not_read=[{'ref': k, 'reason': 'not assessed'} for k in sorted(case) if k not in CASE_META])
+        return _finish(out, case)
+    ix = _index(case, mids)
+    identities = []
+    for mid in mids:
+        for ident in ix['spec'][mid]['model']['identities']:
+            rows = [_evaluate(ix, mid, ident, scope) for scope in _scopes(ix, mid, ident)]
+            read = any(r.get('value') is not None or r.get('changes') for r, _ in rows)
+            # a non-core identity read at a narrower scope needs no row saying it was not read at the total
+            identities += [r for r, meta in rows if _keep(r, meta)
+                           and not (read and not r['core'] and r['status'] in ('missing', 'scope_mismatch'))]
+    splits = []
+    for mid in mids:
+        sp = ix['spec'][mid]
+        gs = sp['model']['growth_split']
+        kp = {f for f in gs.get('factors') or [] if f in sp['kpis']}
+        for f in gs.get('factors') or []:
+            if f in sp['ids']:
+                kp |= _base_refs(sp, sp['ids'][f])[0]
+        for scope in sorted({s for (k, s) in ix['kpi'] if k in kp} | {'total'}, key=lambda s: (s != 'total', s)):
+            s = _split(ix, mid, scope)
+            if scope == 'total' or s.get('factors'):         # a narrower scope only when a factor's growth was read
+                splits.append(s)
+    kpis, lines = _tables(ix)
+    flags, readings, measures, fals, not_run = [], [], [], [], []
+    drops = _disclosures(ix)
+    for mid in mids:
+        sp = ix['spec'][mid]
+        declared = sp['model']['checks']
+        rows = [r for r in identities if r['model'] == mid]
+        if 'per_unit_vs_units' in declared:
+            _check_per_unit(ix, mid, rows, flags)
+        _check_take_rate(ix, mid, rows, flags)
+        if 'thesis_on_minor_line' in declared:
+            _check_thesis(ix, mid, flags)
+        if 'core_units_flat' in declared:
+            _check_flat(ix, mid, flags)
+        if 'cyclical_deceleration' in declared:
+            readings.append(_deceleration(ix, mid, kpis, prior))
+        if 'expansion_led' in declared:
+            _expansion(ix, mid, splits, readings)
+        if 'rate_sensitivity_share' in declared:
+            _rate_sensitivity(ix, mid, measures)
+        if 'margin_only_normalized' in declared:
+            _margin_only(ix, mid, measures)
+        for r in rows:
+            if r.get('label') == 'cumulative, not active':
+                readings.append({'check': 'cumulative_kpi_not_activity', 'kind': 'reading', 'model': mid, 'scope': r['scope'],
+                                 'identity': r['id'], 'label': r['label'],
+                                 'rule': 'a cumulative KPI (products ever opened) is never read as activity'})
+        fals += _falsifiers(ix, mid, identities, drops, flags)
+        not_run += [{'check': c, 'model': mid, 'reason': 'not computed by this version of the econ review'}
+                    for c in declared if c not in CHECKS_RUN]
+    _segment_reconciliation(ix, measures)
+    out.update(status='assessed',
+               models=[_summary(ix, mid, identities, 'primary' if n == 0 else 'secondary') for n, mid in enumerate(mids)],
+               kpis=kpis, lines=lines, identities=identities, growth_splits=splits,
+               flags=sorted(flags, key=lambda f: (SEVERITIES.index(f['severity']), f['key'], f['model'] or '', f['scope'] or '')),
+               readings=readings, measures=measures, falsifiers=fals, open_questions=_questions(ix, identities),
+               checks_not_run=not_run, unavailable=sorted(ix['unavailable']),
+               not_read=sorted(ix['not_read'], key=lambda x: x['ref']) +
+               [{'ref': k, 'reason': 'block not read by this version of the econ review'} for k in sorted(case)
+                if k not in CASE_META and k not in ix['read']])
+    return _finish(out, case)
+
+
+def _finish(out, case):
+    out['input_sha256'] = F.digest(case)
+    out['engine_version'] = __version__
+    out['boundary'] = REVIEW_BOUNDARY
+    return deepcopy(out)
