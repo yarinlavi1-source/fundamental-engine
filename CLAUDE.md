@@ -84,6 +84,15 @@ P(beat) is calibrated (says correctly how often the priced growth happens) but d
 a low P(beat) is a crash-risk flag, not a short signal; the uniform screen gives young winners and
 failures the same ~0, so young growth names need company drivers. scripts/gap_card.py = live card.
 
+## User preference: one company, on the owner's ticker, from its own data (25.10.2026)
+
+Value a company only when the owner sends its ticker; never value companies in advance or run universe
+sweeps/walk-forwards unless he asks. On a ticker, pull everything about that company at once (filings, release
+and call, guidance and its track record, attributed consensus, KPIs/segments/customers, direct competitors, sector
+bottlenecks, market and geopolitics, own price and multiple history) and build every driver from it. No default
+taken from other companies (direct competitors only, named); size-class base rates are a warning row, never the
+forecast; a lever without company data is a visible gap. Market prices of risk (risk-free, ERP) stay.
+
 ## User preference: valuation table (latest, 20.10.2026)
 
 Every valuation: ONE clear table in simple Hebrew words, a yearly bad/likely/good table through the fifth year, and a few
