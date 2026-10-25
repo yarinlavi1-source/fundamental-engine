@@ -236,7 +236,11 @@
    "kind": "flag",
    "severity": "medium",
    "fixed": false,
-   "rule": "implied total from top-N average, count and share differs from the supplied TTM by more than rules.top_n_tolerance"
+   "rule": "the revenue implied by the top-N total (stated, or N x the top-N average) over the top-N share differs from a supplied revenue on the same scope and window (ttm_revenue for TTM) by more than rules.top_n_tolerance; never compared across scopes or windows"
+  },
+  "top_n_expansion": {
+   "kind": "measure",
+   "rule": "top-N average growth (the set is re-ranked at each date: not same-customer growth), total (stated or N x average), revenue implied at the stated share, share trend (unknown without a prior share); compared only with revenue growth on the same scope and window, a split or line on another one is not_compared: scope_mismatch"
   },
   "thesis_on_minor_line": {
    "kind": "flag",
@@ -264,13 +268,13 @@
   },
   "process_evidence": {
    "kind": "reading",
-   "rule": "renewed / machine working|failing|unproven|unknown (WP6); evidence to cite, never a moat rating"
+   "rule": "renewed = a fall of at least rules.renewal_drawdown from a peak and a new high within rules.renewal_window_years (inclusive) on the stated years; machine working = at least one renewal, every known intensity flat (+-rules.intensity_flat_pp) or falling with R&D known, revenue CAGR >= rules.machine_growth_min; failing = an intensity rising >= rules.intensity_rising_pp while revenue growth slows; unproven otherwise; unknown when nothing could be read; a missing year is never interpolated; evidence to cite, never a moat rating"
   },
   "cash_conversion": {
    "kind": "flag",
    "severity": "medium",
    "fixed": true,
-   "rule": "FCF / net income well below one, with the FCF basis labelled"
+   "rule": "FCF / net income below rules.cfo_to_ni_min (no dedicated rule: the funding screen's CFO / NI threshold), net income positive, with the FCF basis labelled (cash block, else operating cash flow - capex from the lines)"
   },
   "peak_margin_run_rate": {
    "kind": "flag",
@@ -922,6 +926,7 @@
    "checks": [
     "per_unit_vs_units",
     "expansion_led",
+    "top_n_expansion",
     "top_n_inconsistent",
     "thesis_on_minor_line",
     "scope_mismatch"

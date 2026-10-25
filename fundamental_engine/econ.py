@@ -22,9 +22,13 @@ of annualized revenue, the contingent ceiling kept apart, statement checks on ma
 chain (own share via the funded chain x the upstream exposed share, the upstream review linked by sha256),
 acquisition_sbc (the ongoing ratio, the tranche schedule and its mismatch), bank_capital (quarter._bank at both ends of
 the target range, ROTE if all excess were returned, the price-implied ROTE, nco_basis), contract_coverage (lta_unproven)
-and segments (segment_unexplained, EBITDA - capex); review() runs them and merges their flags. Later work packages add
-process evidence, the quarter-review link and the Hebrew text. Nothing here is called by the pipeline, so every existing
-output stays byte-identical (no-input invariance).
+and segments (segment_unexplained, EBITDA - capex); review() runs them and merges their flags. WP6: process and
+expansion evidence, to cite and never a rating: process_evidence (category renewal, new categories, innovation
+intensity against growth, the machine reading working / failing / unproven / unknown with every condition shown;
+cash_conversion beside it) and expansion (customers x revenue per customer with NDR, the top-N figures compared only on
+their own scope and window: top_n_inconsistent, scope_mismatch); review() reads the case's categories, history, cash
+and ttm_revenue blocks for them. Later work packages add the quarter-review link and the Hebrew text. Nothing here is
+called by the pipeline, so every existing output stays byte-identical (no-input invariance).
 
 Boundaries: fetches nothing; the registry holds no company data; thresholds are uncalibrated screens frozen in
 docs/prereg_econ.md; a result of this layer is never a valuation, a moat rating or a trade instruction.
@@ -509,7 +513,8 @@ def kpi_table(fb, model_id, as_of=None):
 # profit, profit_definition, operating_income | operating_margin, <KPI id>, source_ids}], and the optional blocks read
 # here: sensitivities, disclosure_changes, reclassification_evidence, cycle and market (memory_cycle only), funding (the
 # stated annual deposit benefit, read as the line deposit_funding_benefit). The overlay blocks are read by WP5 (see the
-# overlays section); every other block is listed under not_read.
+# overlays section); categories, history, cash and ttm_revenue by WP6 (process and expansion evidence) for the models
+# that declare those checks; every other block is listed under not_read.
 # A growth rate is read in its comparison window: `growth`/`prior` in the item's `window` ('y/y' unless it says 'q/q'),
 # `growth_qoq`/`prior_quarter` and `prior_year` always in theirs; 'TTM', 'quarter', 'year' in `window` or `period` are
 # measurement windows. Nothing is fetched; nothing is filled in.
@@ -539,10 +544,13 @@ CASE_META = ('_schema', '_provenance', 'company', 'name', 'period_end', 'period'
              'reconciled_to_filings', 'sources', 'model', 'model_hint')
 # the registry checks the review computes itself; an overlay's checks (registry overlays.<id>.checks) count as run when
 # the overlay ran (WP5); every other declared check of a selected model is listed under checks_not_run with the reason
-# (an overlay whose inputs the case does not supply; process evidence and the quarter-review peak exception come later)
+# (an overlay whose inputs the case does not supply; the quarter-review peak exception comes later). The WP6 checks
+# (process_evidence, cash_conversion, top_n_expansion, top_n_inconsistent) name their own reason when their inputs are
+# missing.
 CHECKS_RUN = ('per_unit_vs_units', 'take_rate_shift', 'thesis_on_minor_line', 'core_units_flat', 'disclosure_dropped',
               'cyclical_deceleration', 'expansion_led', 'cumulative_kpi_not_activity', 'rate_sensitivity_share',
-              'margin_only_normalized', 'segment_reconciliation', 'basis_mismatch', 'scope_mismatch', 'capex_per_unit_lag')
+              'margin_only_normalized', 'segment_reconciliation', 'basis_mismatch', 'scope_mismatch', 'capex_per_unit_lag',
+              'process_evidence', 'cash_conversion', 'top_n_expansion', 'top_n_inconsistent')
 CORE_ORDER = ('consistent', 'computed', 'partial', 'inconsistent', 'basis_mismatch', 'scope_mismatch', 'not_computed', 'missing')
 # a core identity's summary row among the scopes that computed something: the worst check first (_core_row)
 SURFACE_ORDER = ('inconsistent', 'partial', 'consistent', 'computed')
@@ -742,12 +750,15 @@ def _index(case, mids):
         if value is None and not cmp:
             ix['not_read'].append({'ref': ref, 'reason': 'neither a level nor a growth rate'})
             continue
+        n = row.get('n')                       # the N of a top-N row (WP6); read by the top-N measure only
+        if n is not None and (isinstance(n, bool) or not isinstance(n, int) or n < 1):
+            raise ValueError(f'{label}.n: the number of customers a top-N figure covers, a positive integer')
         ix['kpi'].setdefault((kid, scope), []).append(
             {'kind': 'kpi', 'id': kid, 'scope': scope, 'basis': basis, 'unit': kpi(kid)['unit'], 'money': money,
              'currency': _currency_code(row.get('unit'), case['currency'], label) if money else None, 'currency_basis': cb,
              'measure': _measure(row, basis, case['period'], label), 'value': value, 'cmp': cmp, 'ref': ref, 'source_ids': ids,
              'window': row.get('window') if row.get('window') in COMPARISONS else 'y/y',
-             'measure_stated': row.get('period') is not None or row.get('window') in MONTHS})
+             'measure_stated': row.get('period') is not None or row.get('window') in MONTHS, 'n': n})
     block = case.get('lines') or {}
     if not isinstance(block, dict):
         raise ValueError('lines: an object {line: {...}}')
@@ -1792,39 +1803,52 @@ def _deceleration(ix, mid, kpis, prior):
 
 
 def _expansion(ix, mid, splits, readings):
-    sp = ix['spec'][mid]
-    per = next((i['id'] for i in sp['model']['identities'] if i['type'] == 'per_unit' and i.get('core')), None)
     for s in splits:
-        if s['model'] != mid or per is None:
-            continue
-        fac = next((f for f in s.get('factors') or [] if f['id'] == per), None)
-        if fac is None or fac['share'] is None or s['status'] not in ('consistent',):
+        if s['model'] != mid:
             continue
         rows = ix['kpi'].get(('net_revenue_retention', s['scope'])) or ix['kpi'].get(('net_revenue_retention', 'total')) or []
         ndr = next((it for it in rows if it['value'] is not None), None)
-        r = {'check': 'expansion_led', 'kind': 'reading', 'model': mid, 'scope': s['scope'], 'window': s['window'], 'per_unit': per,
-             'per_unit_log_share': fac['share'], 'expansion_ndr_min': ix['rules']['expansion_ndr_min'],
-             'rule': 'the per-unit share of log growth above one half (EXPANSION_LOG_SHARE) and NDR above expansion_ndr_min; NDR '
-                     'at the split\'s scope, else the total\'s NDR read beside it (a cross-scope reading, named in ndr_scope)',
-             'derived_from': f'growth_splits[{mid}@{s["scope"]}] factor {per}'}
-        if ndr is None:
-            r['value'] = None
-            r['reason'] = 'net revenue retention not supplied'
-            ix['questions'].append({'model': mid, 'about': 'expansion_led', 'scope': s['scope'], 'question': 'supply net revenue retention'})
-        else:
-            c = ndr['cmp'].get('y/y') or {}
-            r.update(value=fac['share'] > EXPANSION_LOG_SHARE and ndr['value'] > ix['rules']['expansion_ndr_min'], ndr=ndr['value'],
-                     ndr_scope=ndr['scope'], ndr_ref=ndr['ref'])
-            if c.get('prior') is not None:
-                r['ndr_prior'], r['ndr_change'] = c['prior'], ndr['value'] - c['prior']
-            if ndr['scope'] != s['scope']:
-                # the scope rule (identities, splits) forbids mixing scopes; this reading puts two figures side by side and
-                # computes nothing from them, so it is allowed but named, and the same-scope NDR is asked for
-                r['scope_note'] = (f'cross-scope: NDR is reported for {ndr["scope"]}, not for {s["scope"]}; the reading puts '
-                                   f'the {ndr["scope"]} NDR beside the {s["scope"]} per-unit share')
-                ix['questions'].append({'model': mid, 'about': 'expansion_led', 'scope': s['scope'],
-                                        'question': f'supply net revenue retention for {s["scope"]} (reported for {ndr["scope"]} only)'})
-        readings.append(r)
+        if ndr is not None:
+            ndr = {'value': ndr['value'], 'prior': (ndr['cmp'].get('y/y') or {}).get('prior'), 'scope': ndr['scope'], 'ref': ndr['ref']}
+        r, qs = _expansion_led(mid, s, ndr, ix['rules'])
+        if r is not None:
+            readings.append(r)
+            ix['questions'] += [{'model': mid, **q} for q in qs]
+
+
+def _expansion_led(mid, s, ndr, rules):
+    """expansion_led on one growth split of a model: (reading, questions), (None, []) when the split did not read the
+    model's core per-unit factor consistently. `ndr` is {value, prior, scope, ref} or None."""
+    per = next((i['id'] for i in model(mid)['identities'] if i['type'] == 'per_unit' and i.get('core')), None)
+    fac = next((f for f in s.get('factors') or [] if f['id'] == per), None) if per else None
+    if fac is None or fac['share'] is None or s['status'] not in ('consistent',):
+        return None, []
+    units = next((f for f in s['factors'] if f['id'] == identity(mid, per)['unit_kpi']), None)
+    r = {'check': 'expansion_led', 'kind': 'reading', 'model': mid, 'scope': s['scope'], 'window': s['window'], 'per_unit': per,
+         'per_unit_log_share': fac['share'], 'expansion_ndr_min': rules['expansion_ndr_min'],
+         'rule': 'the per-unit share of log growth above one half (EXPANSION_LOG_SHARE) and NDR above expansion_ndr_min; NDR '
+                 'at the split\'s scope, else the total\'s NDR read beside it (a cross-scope reading, named in ndr_scope)',
+         'derived_from': f'growth_splits[{mid}@{s["scope"]}] factor {per}', 'per_unit_growth': fac['growth']}
+    if units is not None:              # customers x revenue per customer: both growths shown beside the share (WP6)
+        r.update(units=units['id'], units_growth=units['growth'])
+    qs = []
+    if ndr is None:
+        r['value'] = None
+        r['reason'] = 'net revenue retention not supplied'
+        qs.append({'about': 'expansion_led', 'scope': s['scope'], 'question': 'supply net revenue retention'})
+    else:
+        r.update(value=fac['share'] > EXPANSION_LOG_SHARE and ndr['value'] > rules['expansion_ndr_min'], ndr=ndr['value'],
+                 ndr_scope=ndr['scope'], ndr_ref=ndr['ref'])
+        if ndr.get('prior') is not None:
+            r['ndr_prior'], r['ndr_change'] = ndr['prior'], ndr['value'] - ndr['prior']
+        if ndr['scope'] != s['scope']:
+            # the scope rule (identities, splits) forbids mixing scopes; this reading puts two figures side by side and
+            # computes nothing from them, so it is allowed but named, and the same-scope NDR is asked for
+            r['scope_note'] = (f'cross-scope: NDR is reported for {ndr["scope"]}, not for {s["scope"]}; the reading puts '
+                               f'the {ndr["scope"]} NDR beside the {s["scope"]} per-unit share')
+            qs.append({'about': 'expansion_led', 'scope': s['scope'],
+                       'question': f'supply net revenue retention for {s["scope"]} (reported for {ndr["scope"]} only)'})
+    return r, qs
 
 
 def _rate_sensitivity(ix, mid, measures):
@@ -2114,6 +2138,18 @@ def review(case, model=None, prior=None, *, upstream=None):
             _rate_sensitivity(ix, mid, measures)
         if 'margin_only_normalized' in declared:
             _margin_only(ix, mid, measures)
+        if 'process_evidence' in declared:                       # WP6: process and expansion evidence
+            readings.append(_process(ix, mid))
+        if 'cash_conversion' in declared:
+            m, fl, why = _cash_conversion(ix, mid)
+            measures += [m] if m else []
+            flags += fl
+            not_run += [{'check': 'cash_conversion', 'model': mid, 'reason': why}] if why else []
+        if {'top_n_expansion', 'top_n_inconsistent'} & set(declared):
+            ms, fl, why = _top_n(ix, mid, [s for s in splits if s['model'] == mid and s.get('factors')])
+            measures += ms
+            flags += fl
+            not_run += [{'check': c, 'model': mid, 'reason': r} for c, r in why if c in declared]
         for r in rows:
             if r.get('label') == 'cumulative, not active':
                 readings.append({'check': 'cumulative_kpi_not_activity', 'kind': 'reading', 'model': mid, 'scope': r['scope'],
@@ -3673,3 +3709,758 @@ def segments(case, model=None):
     segment) or the selected models, EBITDA - capex and R&D / revenue where given, and segment_unexplained for a segment
     with at least rules.segment_material of revenue or profit that no identity of its model explains."""
     return _overlay_call(case, 'segments', model=model)
+
+
+# ---------------------------------------------------------------- WP6: process and expansion evidence
+
+# Moat and expansion become evidence Claude can cite (design goal 4); neither ever becomes a rating. Nothing here sets
+# card.dimensions.moat or feeds forecast._moat_proxy: neither model_card nor forecast imports econ, and nothing in the
+# engine calls these functions (only facts.add_kpi reads the registry).
+#
+# process_evidence (consumer_innovator) reads the moat as a repeatable process from what the caller states with sources:
+#   categories    [{name, kind?, revenue {year: value}, growth? {year: g}, source_ids}]: revenue by product category
+#   history       {revenue | research_and_development | advertising: {year: value, source_ids}}: the `intensity` argument
+#   gross_margin  history.gross_margin {start, end, years?, source_ids} or {year: margin, source_ids}
+# Years are the source's labels ('2021', 'FY2021') read in calendar order. A year without a figure is listed
+# (missing_years) and never interpolated; a trend whose window start or end has no figure is `unknown`. A renewal is read
+# on the years stated, so a gap is named in a caveat (it could hold a higher peak or a lower trough). Rules (frozen in
+# docs/prereg_econ.md section 1):
+#   renewed  a fall of at least rules.renewal_drawdown from the running peak, then a new high above that peak at most
+#            rules.renewal_window_years after the peak year (inclusive: 2021 -> 2025 counts)
+#   machine  working  = at least one renewed category, every intensity with a known trend flat (within
+#                       +-rules.intensity_flat_pp) or falling, R&D's trend known, and revenue CAGR >= rules.machine_growth_min
+#            failing  = an intensity rising by at least rules.intensity_rising_pp while revenue growth slows (the latest
+#                       window's annual growth below the one before; two stated windows of equal length)
+#            unproven = otherwise; unknown = no condition could be read (no inputs). Each condition shows True/False/None.
+# Innovation intensity is R&D / revenue (the registry's rd_intensity); advertising / revenue is read beside it: a known
+# advertising trend counts in both rules, an unknown one is named and asked for but does not block the reading.
+#
+# cash_conversion: FCF / net income below rules.cfo_to_ni_min. The check has no dedicated frozen rule; it reads the
+# threshold of the funding screen's CFO / NI statement check (recorded for docs/prereg_econ.md's deviations log, WP8).
+# From `cash` {fcf_to_net_income | free_cash_flow and net_income, fcf_basis, period?, source_ids}, else the lines
+# (operating cash flow - capex) / net income on the case period. The FCF basis is always labelled; an unstated one is
+# named and asked for.
+#
+# Expansion (data_platform_software): customers x revenue per customer is the growth split (expansion_led adds NDR and
+# both growths); the top-N measure (top_n_expansion) reads the top_n_average_revenue / top_n_share / top_n_total_revenue
+# rows with their N and window: the average's growth (the set is re-ranked at each date, so it is not same-customer
+# growth), the total (stated, or N x the average), the revenue the share implies (total / share) and the share trend
+# (unknown without a prior share). It is compared only with revenue on the same scope and measurement window
+# (`ttm_revenue` {value, growth?, scope?, source_ids}, else the revenue line when it is on that window):
+# top_n_inconsistent beyond rules.top_n_tolerance. A revenue line or a growth split on another scope or window is listed
+# under not_compared as scope_mismatch and nothing is computed from it (PLTR: top-20 TTM over all customers against the
+# US commercial q/q split, design correction 5).
+INTENSITY_SERIES = ('research_and_development', 'advertising')
+HISTORY_SERIES = ('revenue',) + INTENSITY_SERIES
+MACHINE_STATES = ('working', 'failing', 'unproven', 'unknown')
+PROCESS_RULES = ('renewal_drawdown', 'renewal_window_years', 'intensity_flat_pp', 'intensity_rising_pp', 'machine_growth_min')
+SERIES_META = ('source_ids', 'note')
+GROSS_MARGIN_META = SERIES_META + ('start', 'end', 'years', 'start_year', 'end_year')
+CATEGORY_KEYS = ('name', 'kind', 'revenue', 'growth', 'missing_years', 'source_ids', 'note')
+CASH_KEYS = ('fcf_to_net_income', 'free_cash_flow', 'net_income', 'fcf_basis', 'period', 'cash_to_debt', 'source_ids', 'note')
+TOP_N_KPIS = ('top_n_average_revenue', 'top_n_share', 'top_n_total_revenue')
+TOP_N_FIELDS = ('n', 'scope', 'window', 'comparison', 'average', 'prior_average', 'average_growth', 'total', 'prior_total',
+                'share', 'prior_share', 'revenue', 'refs', 'source_ids', 'model')
+TTM = 'TTM'
+_YEAR = re.compile(r'^(FY)?(\d{4})$')
+TOP_N_NOTE = ('the top-N set is re-ranked at each date: the growth of its average is not same-customer expansion, and it is '
+              'compared only with revenue on the same scope and window')
+PROCESS_BOUNDARY = ('evidence for Claude to cite: arithmetic on stated category and intensity figures under frozen screens; '
+                    'never a moat rating; it never sets card.dimensions.moat and never feeds forecast._moat_proxy')
+EXPANSION_BOUNDARY = ('evidence for Claude to cite: customers x revenue per customer, NDR and the top-N figures, each on its own '
+                      'scope and window; never compared across scopes or windows; never a moat or quality rating')
+_EPS = 1e-12
+
+
+def _pp(x):
+    """A change in percentage points as text ('+11pp', '-0.06pp'): printed as a change, never as 'stable'."""
+    s = f'{round(100 * x, 2):+.2f}'.rstrip('0').rstrip('.')
+    return s + 'pp'
+
+
+def _fy(label, where):
+    m = _YEAR.match(str(label))
+    if not m:
+        raise ValueError(f'{where}: {label!r} is not a fiscal-year label (2021 or FY2021)')
+    return int(m.group(2))
+
+
+def _series(spec, where, minimum=None, meta=SERIES_META):
+    """A {year: value} series as ([(year, label, value)] in calendar order, [labels stated without a figure])."""
+    if not isinstance(spec, dict):
+        raise ValueError(f'{where}: an object {{year: value}}')
+    pts, empty, seen = [], [], {}
+    for k in spec:
+        if k in meta:
+            continue
+        y = _fy(k, where)
+        if y in seen:
+            raise ValueError(f'{where}: {k!r} and {seen[y]!r} are the same year')
+        seen[y] = k
+        if spec[k] is None:
+            empty.append((y, str(k)))
+        else:
+            pts.append((y, str(k), number(spec[k], f'{where}.{k}', minimum)))
+    return sorted(pts), [lab for _, lab in sorted(empty)]
+
+
+def _gaps(pts, empty=()):
+    """Years between the first and the last figure that have none (never filled), plus years stated without a figure."""
+    if not pts:
+        return sorted(empty)
+    have = {y for y, _, _ in pts}
+    fy = 'FY' if pts[0][1].startswith('FY') else ''
+    gaps = {f'{fy}{y}' for y in range(pts[0][0] + 1, pts[-1][0]) if y not in have}
+    return sorted(gaps | set(empty), key=lambda lab: _fy(lab, 'year'))
+
+
+def _episode(peak, trough, high, last, rules, where):
+    win = rules['renewal_window_years']
+    e = {'peak_year': peak[1], 'peak': peak[2], 'trough_year': trough[1], 'trough': trough[2], 'drawdown': trough[2] / peak[2] - 1}
+    if high is None:
+        still = last[0] - peak[0] < win
+        e.update(high_year=None, renewed=None if still else False,
+                 reason=f'no new high by {last[1]}; the window runs to {peak[0] + win}' if still
+                 else f'no new high within {win} years of the {peak[1]} peak',
+                 derived_from=f'{where}: trough / peak - 1')
+        return e
+    years = high[0] - peak[0]
+    e.update(high_year=high[1], high=high[2], recovery=high[2] / trough[2] - 1 if trough[2] > 0 else None,
+             new_high_over_prior_peak=high[2] / peak[2] - 1, years_to_new_high=years, renewed=years <= win,
+             derived_from=f'{where}: trough / peak - 1; high / trough - 1; high / peak - 1; high year - peak year')
+    if years > win:
+        e['reason'] = f'the new high came {years} years after the peak (window {win} years)'
+    return e
+
+
+def _renewals(pts, rules, where):
+    """Every fall of at least rules.renewal_drawdown from the running peak, with the new high that ended it (or none)."""
+    dd = rules['renewal_drawdown']
+
+    def fell(t, p):
+        return t is not None and p[2] > 0 and t[2] / p[2] - 1 <= -dd + _EPS
+    out, peak, trough = [], pts[0], None
+    for p in pts[1:]:
+        if p[2] > peak[2]:
+            if fell(trough, peak):
+                out.append(_episode(peak, trough, p, None, rules, where))
+            peak, trough = p, None
+        elif trough is None or p[2] < trough[2]:
+            trough = p
+    if fell(trough, peak):
+        out.append(_episode(peak, trough, None, pts[-1], rules, where))
+    return out
+
+
+def _category(c, rules, names):
+    if not isinstance(c, dict) or not isinstance(c.get('name'), str) or not c['name'].strip():
+        raise ValueError('categories[]: each category needs a name')
+    name = c['name'].strip()
+    if name.lower() in names:
+        raise ValueError(f'categories: a second category named {name!r}')
+    names.add(name.lower())
+    where = f'categories[{name}]'
+    unknown = sorted(set(c) - set(CATEGORY_KEYS))
+    if unknown:
+        raise ValueError(f'{where}: unknown fields {unknown}; a category states {CATEGORY_KEYS}')
+    if c.get('kind') is not None and not isinstance(c['kind'], str):
+        raise ValueError(f'{where}.kind: the source\'s label (mature, new), as text')
+    out = {'name': name, 'kind': c.get('kind')}
+    if c.get('revenue') is None:
+        out.update(renewed=None, reason='no revenue by year: growth rates alone cannot show a fall from a peak')
+    else:
+        pts, empty = _series(c['revenue'], f'{where}.revenue', 0)
+        out.update(years=[lab for _, lab, _ in pts], missing_years=_gaps(pts, empty))
+        if len(pts) < 2:
+            out.update(renewed=None, reason='needs revenue in two or more years')
+        else:
+            eps = _renewals(pts, rules, f'{where}.revenue')
+            out['episodes'] = eps
+            if any(e['renewed'] for e in eps):
+                out['renewed'] = True
+            elif any(e['renewed'] is None for e in eps):
+                out.update(renewed=None, reason='a fall without a new high yet; the window is still open')
+            else:
+                out.update(renewed=False, reason='no new high within the window after a fall' if eps else
+                           f'no fall of at least {rules["renewal_drawdown"]:.0%} from a peak on the stated years')
+            gaps = [y for y in out['missing_years'] if pts[0][0] < _fy(y, where) < pts[-1][0]]
+            if gaps:
+                out['caveat'] = (f'read on the stated years only: {", ".join(gaps)} {"has" if len(gaps) == 1 else "have"} no '
+                                 f'figure and could hold a higher peak or a lower trough')
+    if c.get('growth') is not None:
+        pts, _ = _series(c['growth'], f'{where}.growth', -1)
+        out['growth'] = {lab: g for _, lab, g in pts}
+    if isinstance(c.get('source_ids'), list):
+        out['source_ids'] = list(c['source_ids'])
+    return out
+
+
+def _slowdown(pts):
+    """Does revenue growth slow? The latest window's annual growth against the window before, both stated, equal length."""
+    if len(pts) < 3:
+        return {'value': None, 'reason': 'needs revenue in three or more years (two windows)'}
+    (y0, l0, v0), (y1, l1, v1), (y2, l2, v2) = pts[-3:]
+    if y1 - y0 != y2 - y1:
+        return {'value': None, 'reason': f'the last two windows differ in length ({l0}-{l1}, {l1}-{l2}); a year is never filled in'}
+    if v0 <= 0 or v1 <= 0:
+        return {'value': None, 'reason': 'a revenue level is not positive'}
+    g0, g1 = (v1 / v0) ** (1 / (y1 - y0)) - 1, (v2 / v1) ** (1 / (y2 - y1)) - 1
+    return {'value': g1 < g0, 'windows': [[l0, l1], [l1, l2]], 'earlier_growth': g0, 'latest_growth': g1,
+            'derived_from': f'history.revenue: annual growth {l0}-{l1} and {l1}-{l2}'}
+
+
+def _intensity(intensity, rules):
+    unknown = sorted(set(intensity) - set(HISTORY_SERIES))
+    if unknown:
+        raise ValueError(f'intensity: unknown series {unknown}; process evidence reads {HISTORY_SERIES}')
+    flat, rising = rules['intensity_flat_pp'], rules['intensity_rising_pp']
+    rev, rev_empty = _series(intensity['revenue'], 'history.revenue', 0) if intensity.get('revenue') is not None else ([], [])
+    out = {'window': None, 'revenue': None, 'series': [], 'incremental_revenue_per_incremental_rd': None}
+    if len(rev) >= 2 and rev[0][2] > 0:
+        a, b = rev[0], rev[-1]
+        span = b[0] - a[0]
+        out['window'] = [a[1], b[1]]
+        out['revenue'] = {'start_year': a[1], 'start': a[2], 'end_year': b[1], 'end': b[2], 'span_years': span,
+                          'cagr': (b[2] / a[2]) ** (1 / span) - 1, 'missing_years': _gaps(rev, rev_empty),
+                          'growth_trend': _slowdown(rev), 'derived_from': f'history.revenue: (end / start) ^ (1 / span_years) - 1'}
+    elif rev:
+        out['revenue'] = {'status': 'not_computed', 'reason': 'needs positive revenue in two or more years'}
+    by_year = {y: v for y, _, v in rev}
+    for sid in INTENSITY_SERIES:
+        if intensity.get(sid) is None:
+            continue
+        pts, empty = _series(intensity[sid], f'history.{sid}', 0)
+        row = {'id': sid, 'stated': [{'year': lab, 'value': v, 'revenue': by_year[y], 'intensity': v / by_year[y],
+                                      'derived_from': f'history.{sid}[{lab}] / history.revenue[{lab}]'}
+                                     for y, lab, v in pts if by_year.get(y)],
+               'missing_years': _gaps(pts, empty)}
+        no_rev = [lab for y, lab, _ in pts if not by_year.get(y)]
+        if no_rev:
+            row['no_revenue_for'] = no_rev
+        if out['window'] is None:
+            row.update(trend='unknown', reason='no revenue window (two or more years of revenue)')
+        else:
+            at = {s['year']: s for s in row['stated']}
+            missing = [lab for lab in out['window'] if lab not in at]
+            if missing:
+                row.update(trend='unknown', missing=missing, reason=f'no figure for {", ".join(missing)}: never interpolated')
+            else:
+                s0, s1 = at[out['window'][0]], at[out['window'][1]]
+                ch = s1['intensity'] - s0['intensity']
+                row.update(start=s0['intensity'], end=s1['intensity'], change=ch, display=_pp(ch),
+                           trend='flat' if abs(ch) <= flat + _EPS else 'falling' if ch < 0 else 'rising',
+                           rising_by_rule=ch >= rising - _EPS,
+                           cagr=(s1['value'] / s0['value']) ** (1 / out['revenue']['span_years']) - 1 if s0['value'] > 0 else None,
+                           derived_from=f'history.{sid} / history.revenue at {out["window"][0]} and {out["window"][1]}; '
+                                        f'change = end - start; cagr = (end value / start value) ^ (1 / span_years) - 1')
+                if sid == 'research_and_development':
+                    d_rd = s1['value'] - s0['value']
+                    out['incremental_revenue_per_incremental_rd'] = (
+                        {'value': (out['revenue']['end'] - out['revenue']['start']) / d_rd,
+                         'derived_from': f'(history.revenue[{out["window"][1]}] - [{out["window"][0]}]) / '
+                                         f'(history.research_and_development[{out["window"][1]}] - [{out["window"][0]}])'}
+                        if d_rd > 0 else {'value': None, 'reason': 'R&D did not rise over the window'})
+        out['series'].append(row)
+    return out
+
+
+def _gross_margin(gm):
+    if gm is None:
+        return None
+    if not isinstance(gm, dict):
+        raise ValueError('gross_margin: {start, end} or {year: margin}')
+    where = 'history.gross_margin'
+    if gm.get('start') is not None or gm.get('end') is not None:
+        start, end = number(gm.get('start'), f'{where}.start', -1, 1), number(gm.get('end'), f'{where}.end', -1, 1)
+        extra = [k for k in gm if k not in GROSS_MARGIN_META]
+        if extra:
+            raise ValueError(f'{where}: state {{start, end}} or {{year: margin}}, not both ({extra})')
+        out = {'start': start, 'end': end}
+        for k in ('start_year', 'end_year', 'years'):
+            if gm.get(k) is not None:
+                out[k] = str(gm[k])
+    else:
+        pts, _ = _series(gm, where, -1)
+        if len(pts) < 2:
+            return {'status': 'not_computed', 'reason': 'needs the gross margin at two dates'}
+        out = {'start_year': pts[0][1], 'start': pts[0][2], 'end_year': pts[-1][1], 'end': pts[-1][2]}
+    out.update(change=out['end'] - out['start'], display=_pp(out['end'] - out['start']),
+               derived_from=f'{where}: end - start, printed as a change in pp')
+    return out
+
+
+def _machine(cats, inten, rules):
+    """The process reading from its conditions; each condition True / False / None (could not be read)."""
+    ren = [c['renewed'] for c in cats]
+    renewal = True if True in ren else (False if ren and all(r is False for r in ren) else None)
+    series = inten['series']
+    known = [s for s in series if s['trend'] != 'unknown']
+    rd_known = any(s['id'] == 'research_and_development' for s in known)
+    if any(s['trend'] == 'rising' for s in known):
+        flat_or_falling = False
+    else:
+        flat_or_falling = True if rd_known else None
+    if any(s['rising_by_rule'] for s in known):
+        rising = True
+    else:
+        rising = False if rd_known and len(known) == len(series) else None
+    rev = inten['revenue'] or {}
+    cagr = rev.get('cagr')
+    growth_min = None if cagr is None else cagr >= rules['machine_growth_min'] - _EPS
+    slows = (rev.get('growth_trend') or {}).get('value')
+    cond = {'renewal': renewal, 'intensity_flat_or_falling': flat_or_falling, 'revenue_cagr_at_least_min': growth_min,
+            'intensity_rising_by_rule': rising, 'growth_slows': slows}
+    if all(v is None for v in cond.values()):
+        value = 'unknown'
+    elif renewal and flat_or_falling and growth_min:
+        value = 'working'
+    elif rising and slows:
+        value = 'failing'
+    else:
+        value = 'unproven'
+    why = {'renewal': 'no renewed category', 'intensity_flat_or_falling': 'innovation intensity not flat or falling',
+           'revenue_cagr_at_least_min': 'revenue CAGR below rules.machine_growth_min'}
+    reasons = []
+    if value in ('unproven', 'unknown'):
+        reasons = [why[k] if cond[k] is False else f'{_name(k)}: could not be read' for k in why if cond[k] is not True]
+    return value, cond, reasons
+
+
+def _process_questions(cats, inten, cond):
+    qs = []
+    if cond['renewal'] is None:
+        qs.append('supply revenue by fiscal year for each product category (five years when available; a missing year '
+                  'stays missing)')
+    if inten['window'] is None:
+        qs.append('supply revenue, R&D and advertising for the same fiscal years (two or more)')
+    for s in inten['series']:
+        if s['trend'] == 'unknown' and s.get('missing'):
+            qs.append(f'supply {_name(s["id"])} for {", ".join(s["missing"])} to read its intensity trend')
+    if inten['window'] is not None and not any(s['id'] == 'research_and_development' for s in inten['series']):
+        qs.append(f'supply R&D for {" and ".join(inten["window"])} (innovation intensity)')
+    return [{'about': 'process_evidence', 'scope': 'total', 'question': q} for q in qs]
+
+
+def _process_core(categories, intensity, gross_margin, rules):
+    if categories is not None and not isinstance(categories, list):
+        raise ValueError('categories: a list of categories')
+    if intensity is not None and not isinstance(intensity, dict):
+        raise ValueError('intensity: {revenue|research_and_development|advertising: {year: value}}')
+    names = set()
+    cats = [_category(c, rules, names) for c in categories or []]
+    inten = _intensity(intensity or {}, rules)
+    value, cond, reasons = _machine(cats, inten, rules)
+    out = {'check': 'process_evidence', 'kind': 'reading', 'machine': value, 'conditions': cond}
+    if reasons:
+        out['reasons'] = reasons
+    out.update(categories=cats, renewed_categories=[c['name'] for c in cats if c['renewed']],
+               new_categories=[c['name'] for c in cats if c['kind'] == 'new'], revenue=inten['revenue'],
+               intensity={'window': inten['window'], 'series': inten['series']},
+               incremental_revenue_per_incremental_rd=inten['incremental_revenue_per_incremental_rd'],
+               gross_margin=_gross_margin(gross_margin), rules={k: rules[k] for k in PROCESS_RULES},
+               rule=registry()['checks']['process_evidence']['rule'], boundary=PROCESS_BOUNDARY)
+    return out, _process_questions(cats, inten, cond)
+
+
+def process_evidence(categories, intensity, gross_margin=None):
+    """The moat read as a repeatable process, as evidence to cite (never a rating): each category's falls from a peak and
+    new highs (renewed within rules.renewal_window_years), innovation intensity (R&D and advertising over revenue in the
+    same year) and its trend over the revenue window, revenue and R&D CAGR, incremental revenue per incremental R&D, the
+    gross-margin change in pp, and the machine reading working / failing / unproven / unknown with every condition shown.
+    `categories` is [{name, kind?, revenue {year: value}, growth? {year: g}, source_ids?}], `intensity`
+    {revenue, research_and_development?, advertising?: {year: value}} (an econ case's `history`), `gross_margin`
+    {start, end, years?} or {year: margin}. A missing year is listed and never interpolated. Pure and deterministic."""
+    out, qs = _process_core(categories, intensity, gross_margin, rules())
+    out['questions'] = qs
+    out['input_sha256'] = F.digest({'categories': categories, 'intensity': intensity, 'gross_margin': gross_margin})
+    out['engine_version'] = __version__
+    return deepcopy(out)
+
+
+def _process(ix, mid):
+    """process_evidence on the case's categories and history blocks, point in time (a block none of whose sources was
+    available at as_of is listed under unavailable)."""
+    case = ix['case']
+    cats = []
+    raw = case.get('categories')
+    if raw is not None:
+        if not isinstance(raw, list):
+            raise ValueError('categories: a list of categories')
+        ix['read'].add('categories')
+        for i, c in enumerate(raw):
+            label = f'categories[{c.get("name") if isinstance(c, dict) and c.get("name") else i}]'
+            if _visible(case, _source_ids(case, c, label)):
+                cats.append(c)
+            else:
+                _unavailable(ix, label)
+    inten, gm = {}, None
+    hist = case.get('history')
+    if hist is not None:
+        if not isinstance(hist, dict):
+            raise ValueError('history: an object {series: {year: value, source_ids}}')
+        ix['read'].add('history')
+        for k in sorted(hist):
+            label = f'history.{k}'
+            if k not in HISTORY_SERIES and k != 'gross_margin':
+                if all(x['ref'] != label for x in ix['not_read']):
+                    ix['not_read'].append({'ref': label, 'reason': 'not a series process evidence reads '
+                                                                   f'({", ".join(HISTORY_SERIES)}, gross_margin)'})
+                continue
+            if not _visible(case, _source_ids(case, hist[k], label)):
+                _unavailable(ix, label)
+            elif k == 'gross_margin':
+                gm = hist[k]
+            else:
+                inten[k] = hist[k]
+    out, qs = _process_core(cats, inten, gm, ix['rules'])
+    ix['questions'] += [{'model': mid, **q} for q in qs]
+    return {**out, 'model': mid}
+
+
+def _cash_conversion(ix, mid):
+    """(measure or None, flags, the reason the check did not run or None)."""
+    rules = ix['rules']
+    thr = rules['cfo_to_ni_min']
+    case = ix['case']
+    m = {'check': 'cash_conversion', 'kind': 'measure', 'model': mid, 'scope': 'total', 'threshold': thr,
+         'threshold_rule': 'cfo_to_ni_min (no dedicated frozen rule; the funding screen\'s CFO / NI threshold)'}
+    if case.get('cash') is not None:
+        b, ids = _block(ix, 'cash')
+        if ids is None:
+            return None, [], 'cash: none of its sources was available at as_of'
+        for k in sorted(b):
+            if k not in CASH_KEYS:
+                raise ValueError(f'cash.{k}: unknown field; the block states {CASH_KEYS}')
+        if b.get('cash_to_debt') is not None and all(x['ref'] != 'cash.cash_to_debt' for x in ix['not_read']):
+            ix['not_read'].append({'ref': 'cash.cash_to_debt', 'reason': 'not read by cash_conversion (a balance-sheet ratio)'})
+        stated = b.get('fcf_to_net_income')
+        if stated is not None and (b.get('free_cash_flow') is not None or b.get('net_income') is not None):
+            raise ValueError('cash: state fcf_to_net_income, or free_cash_flow and net_income; not both')
+        if stated is not None:
+            m.update(value=number(stated, 'cash.fcf_to_net_income'), derived_from='cash.fcf_to_net_income as stated')
+        elif b.get('free_cash_flow') is not None and b.get('net_income') is not None:
+            fcf, ni = number(b['free_cash_flow'], 'cash.free_cash_flow'), number(b['net_income'], 'cash.net_income')
+            if ni <= 0:
+                return {**m, 'status': 'not_computed', 'reason': 'cash.net_income is not positive: FCF / NI is not read',
+                        'source_ids': ids}, [], None
+            m.update(free_cash_flow=fcf, net_income=ni, value=fcf / ni, derived_from='cash.free_cash_flow / cash.net_income')
+        else:
+            return None, [], 'cash: needs fcf_to_net_income, or free_cash_flow and net_income'
+        m.update(window=str(b['period']) if b.get('period') is not None else 'not stated', source_ids=ids)
+        basis = b.get('fcf_basis')
+    else:
+        per = ix['period']
+        got = {lid: _line_item(ix, lid, measure=per) for lid in ('operating_cash_flow', 'capex', 'net_income')}
+        if any(v is None for v in got.values()):
+            return None, [], ('needs a cash block (FCF / net income and its FCF basis) or the lines operating cash flow, capex '
+                              f'and net income on the case period ({per}); missing {", ".join(k for k, v in got.items() if v is None)}')
+        ocf, capex, ni = got['operating_cash_flow'], got['capex'], got['net_income']
+        ids = sorted({i for it in got.values() for i in it['source_ids']})
+        if ni['value'] <= 0:
+            return {**m, 'status': 'not_computed', 'reason': f'{ni["ref"]} is not positive: FCF / NI is not read',
+                    'source_ids': ids}, [], None
+        fcf = ocf['value'] - capex['value']
+        m.update(free_cash_flow=fcf, net_income=ni['value'], value=fcf / ni['value'], window=per, source_ids=ids,
+                 derived_from=f'({ocf["ref"]} - {capex["ref"]}) / {ni["ref"]}')
+        basis = 'operating cash flow - capex (case lines)'
+    if isinstance(basis, str) and basis.strip():
+        m['fcf_basis'] = basis.strip()
+    else:
+        m['fcf_basis'] = 'not stated'
+        ix['questions'].append({'model': mid, 'about': 'cash_conversion', 'scope': 'total',
+                                'question': 'state the FCF definition behind FCF / net income (operating cash flow - capex, '
+                                            'or the issuer definition)'})
+    near = _near(m['value'], thr, rules)
+    if near:
+        m['near'] = near
+    m['status'] = 'fails' if m['value'] < thr else 'passes'
+    flags = []
+    if m['status'] == 'fails':
+        f = _flag(ix, 'cash_conversion', mid, 'total', fcf_to_net_income=m['value'], threshold=thr, threshold_rule='cfo_to_ni_min',
+                  fcf_basis=m['fcf_basis'], window=m['window'], source_ids=m['source_ids'], derived_from=m['derived_from'])
+        if near:
+            f['near'] = near
+        flags.append(f)
+    return m, flags, None
+
+
+def _top_n_plain(t):
+    """A top-N input validated: {n, scope, window, average, prior_average, average_growth, total, prior_total, share,
+    prior_share, revenue {value, growth, scope, window, ref}, refs, source_ids}."""
+    if not isinstance(t, dict):
+        raise ValueError('top_n: an object')
+    extra = sorted(set(t) - set(TOP_N_FIELDS))
+    if extra:
+        raise ValueError(f'top_n: unknown fields {extra}; it states {TOP_N_FIELDS}')
+    n = t.get('n')
+    if n is not None and (isinstance(n, bool) or not isinstance(n, int) or n < 1):
+        raise ValueError('top_n.n: a positive integer')
+    w = t.get('window')
+    if w not in MONTHS:
+        raise ValueError(f'top_n.window: the measurement window of the top-N figures, one of {tuple(MONTHS)}')
+    out = {'n': n, 'scope': _scope(t.get('scope'), 'top_n'), 'window': w, 'comparison': t.get('comparison') or 'y/y',
+           'refs': dict(t.get('refs') or {}), 'source_ids': list(t.get('source_ids') or []), 'model': t.get('model')}
+    if out['comparison'] not in COMPARISONS:
+        raise ValueError(f'top_n.comparison: one of {COMPARISONS}')
+    for k in ('average', 'prior_average', 'total', 'prior_total'):
+        out[k] = _num(t.get(k), f'top_n.{k}', 0)
+    out['average_growth'] = _num(t.get('average_growth'), 'top_n.average_growth', -1)
+    for k in ('share', 'prior_share'):
+        out[k] = _num(t.get(k), f'top_n.{k}', 0, 1)
+        if out[k] == 0:
+            raise ValueError(f'top_n.{k}: a share above zero')
+    rv = t.get('revenue')
+    out['revenue'] = []
+    for i, x in enumerate([] if rv is None else rv if isinstance(rv, list) else [rv]):
+        if not isinstance(x, dict) or x.get('window') not in MONTHS:
+            raise ValueError(f'top_n.revenue: {{value, growth?, scope, window}} (or a list of them) with a window from {tuple(MONTHS)}')
+        out['revenue'].append({'value': _num(x.get('value'), 'top_n.revenue.value', 0), 'growth': _num(x.get('growth'), 'top_n.revenue.growth', -1),
+                               'scope': _scope(x.get('scope'), 'top_n.revenue'), 'window': x['window'],
+                               'ref': x.get('ref') or ('top_n.revenue' if not isinstance(rv, list) else f'top_n.revenue[{i}]')})
+    return out
+
+
+def _top_n_core(t, splits, rules):
+    """(top_n_expansion measure, flags, questions, top_n_inconsistent not-run reason or None) for one validated top-N input."""
+    tol = rules['top_n_tolerance']
+    ref = lambda k: t['refs'].get(k) or f'top_n.{k}'       # noqa: E731  (the case row a figure came from)
+    scope, w, n, mid = t['scope'], t['window'], t['n'], t['model']
+    out = {'check': 'top_n_expansion', 'kind': 'measure', 'model': mid, 'scope': scope, 'window': w, 'comparison': t['comparison'],
+           'n': n, 'note': TOP_N_NOTE}
+    qs, flags = [], []
+    avg, pavg, g = t['average'], t['prior_average'], t['average_growth']
+    if avg is not None or pavg is not None or g is not None:
+        a = {'value': avg, 'prior': pavg}
+        if g is not None:
+            a.update(growth=g, growth_from='stated')
+        elif avg is not None and pavg:
+            a.update(growth=avg / pavg - 1, growth_from='levels')
+        if g is not None and avg is not None and pavg:
+            a['levels_growth'] = avg / pavg - 1
+        a['derived_from'] = f'{ref("average")} {t["comparison"]}: growth ' + ('as stated' if g is not None else 'value / prior - 1')
+        out['average'] = a
+    total = {}
+    if t['total'] is not None:
+        total = {'value': t['total'], 'from': 'stated'}
+    elif n is not None and avg is not None:
+        total = {'value': n * avg, 'from': 'n x average'}
+    if t['prior_total'] is not None:
+        total.update(prior=t['prior_total'], prior_from='stated')
+    elif n is not None and pavg is not None:
+        total.update(prior=n * pavg, prior_from='n x prior average')
+    if total.get('value') is not None and total.get('prior'):
+        total['growth'] = total['value'] / total['prior'] - 1
+    elif total.get('value') is not None and g is not None and total['from'] == 'n x average':
+        total['growth'] = g                                       # the same N at both dates: the total grows as the average
+    if total.get('value') is not None:
+        total['derived_from'] = (f'{ref("total")} as stated' if total['from'] == 'stated' else f'n ({n}) x {ref("average")}') + \
+            ('; growth = value / prior - 1' if total.get('prior') else '; growth = the average\'s (same N)' if 'growth' in total else '')
+        out['total'] = total
+    else:
+        qs.append({'about': 'top_n_expansion', 'scope': scope, 'question': 'supply N with the top-N average revenue, or the top-N total revenue'})
+    sh, psh = t['share'], t['prior_share']
+    if sh is not None:
+        s = {'value': sh, 'prior': psh}
+        if psh is None:
+            s.update(trend='unknown', reason='prior share not supplied')
+            qs.append({'about': 'top_n_expansion', 'scope': scope,
+                       'question': f'supply the prior top-{n or "N"} share of revenue (same N and window) to read the share trend'})
+        else:
+            s.update(change=sh - psh, trend='rising' if sh > psh else 'falling' if sh < psh else 'unchanged',
+                     derived_from=f'{ref("share")}: value - prior')
+        out['share'] = s
+    implied = None
+    if total.get('value') is not None and sh:
+        implied = total['value'] / sh
+        out['implied_revenue'] = {'value': implied, 'window': w, 'scope': scope, 'derived_from': f'top-N total / {ref("share")}'}
+    not_compared, why = [], None
+    rv = next((x for x in t['revenue'] if x['scope'] == scope and x['window'] == w), None)     # the first on the same
+    for x in t['revenue']:                                                                    # scope and window
+        if x['scope'] != scope or x['window'] != w:
+            not_compared.append({'with': x['ref'], 'status': 'scope_mismatch', 'scope': x['scope'], 'window': x['window'],
+                                 'reason': f'the top-N figures are {w}, {scope}; {x["ref"]} is {x["window"]}, {x["scope"]}: '
+                                           'nothing is compared'})
+    if implied is None:
+        why = 'the top-N total and share are needed for the implied revenue'
+    elif rv is None or rv['value'] is None:
+        why = f'no revenue on the top-N scope and window ({scope}, {w}) is supplied'
+        out['revenue_check'] = {'status': 'not_computed', 'reason': why}
+        qs.append({'about': 'top_n_inconsistent', 'scope': scope,
+                   'question': f'supply {w} revenue ({scope}) to check the top-N figures (ttm_revenue for TTM)'})
+    else:
+        diff = rv['value'] / implied - 1
+        rc = {'status': 'inconsistent' if abs(diff) > tol + _EPS else 'consistent', 'supplied': rv['value'], 'implied': implied,
+              'diff': diff, 'top_n_tolerance': tol, 'derived_from': f'{rv["ref"]} / implied revenue - 1'}
+        near = _near(abs(diff), tol, rules)
+        if near:
+            rc['near'] = near
+        out['revenue_check'] = rc
+        if rc['status'] == 'inconsistent':
+            f = _flag({'checks': registry()['checks']}, 'top_n_inconsistent', mid, scope, window=w, n=n, implied_revenue=implied,
+                      supplied=rv['value'], diff=diff, threshold=tol, derived_from=f'{rv["ref"]} / (top-N total / {ref("share")}) - 1')
+            if near:
+                f['near'] = near
+            flags.append(f)
+            qs.append({'about': 'top_n_inconsistent', 'scope': scope,
+                       'question': 'do the top-N average, N and share use the same customer set and window as the revenue?'})
+    rg, rg_ref = (rv['growth'], rv['ref']) if rv is not None and rv['growth'] is not None else (None, None)
+    for s in splits:
+        same = s['scope'] == scope and s.get('measure') == w and s['window'] == t['comparison']
+        if not same:
+            not_compared.append({'with': f'growth_splits[{s["model"]}@{s["scope"]}]', 'status': 'scope_mismatch', 'scope': s['scope'],
+                                 'window': f'{s.get("measure") or "unstated"} {s["window"]}',
+                                 'reason': f'the top-N figures are {w} {t["comparison"]}, {scope}; the split is '
+                                           f'{s.get("measure") or "unstated"} {s["window"]}, {s["scope"]}: nothing is compared'})
+        elif rg is None and (s.get('line_growth') or {}).get('growth') is not None:
+            rg, rg_ref = s['line_growth']['growth'], f'growth_splits[{s["model"]}@{s["scope"]}].line_growth'
+    tg = total.get('growth')
+    if tg is not None and rg is not None:
+        out['vs_revenue_growth'] = {'top_n_growth': tg, 'revenue_growth': rg, 'gap_pp': tg - rg,
+                                    'reading': 'top_n_grew_faster' if tg > rg else 'top_n_grew_slower' if tg < rg else 'same',
+                                    'derived_from': f'top-N total growth - {rg_ref} growth, both {w} {t["comparison"]}, {scope}'}
+    elif tg is not None:
+        out['vs_revenue_growth'] = {'status': 'not_computed',
+                                    'reason': f'no revenue growth on the top-N scope and window ({scope}, {w} {t["comparison"]})'}
+    if not_compared:
+        out['not_compared'] = not_compared
+    if t['source_ids']:
+        out['source_ids'] = sorted(set(t['source_ids']))
+    out['top_n_tolerance'] = tol
+    return out, flags, qs, why
+
+
+def expansion(split=None, top_n=None, ndr=None):
+    """Software expansion as evidence to cite (never a rating): customers x revenue per customer from a growth split
+    (econ.growth_split; expansion_led with NDR, both growths shown), NDR and its change, and the top-N figures (average
+    growth, total, implied revenue at the stated share, share trend, top_n_inconsistent against revenue on the same
+    scope and window). `split` may carry `measure` (the measurement window of its line); a split or revenue on another
+    scope or window is listed under not_compared (scope_mismatch) and nothing is computed from it. `ndr` is {value,
+    prior?, scope?, window?, ref?}; `top_n` is {n, scope, window, average, prior_average?, average_growth?, total?,
+    prior_total?, share, prior_share?, revenue? {value, growth?, scope, window} or a list of them (the first on the
+    top-N scope and window is compared), refs?, source_ids?}. Pure and deterministic."""
+    r = rules()
+    out = {'check': 'expansion', 'expansion_led': None, 'ndr': None, 'top_n': None, 'flags': [], 'questions': [],
+           'checks_not_run': []}
+    if ndr is not None:
+        if not isinstance(ndr, dict):
+            raise ValueError('ndr: {value, prior?, scope?, window?}')
+        ndr = {'value': number(ndr.get('value'), 'ndr.value', 0), 'prior': _num(ndr.get('prior'), 'ndr.prior', 0),
+               'scope': _scope(ndr.get('scope'), 'ndr'), 'window': ndr.get('window'), 'ref': ndr.get('ref') or 'ndr'}
+        out['ndr'] = dict(ndr)
+        if ndr['prior'] is not None:
+            out['ndr'].update(change=ndr['value'] - ndr['prior'], derived_from=f'{ndr["ref"]}: value - prior')
+    mid = None
+    if split is not None:
+        if not isinstance(split, dict) or not split.get('model') or not split.get('scope') or 'factors' not in split:
+            raise ValueError('split: a growth split (econ.growth_split)')
+        mid = split['model']
+        rd, qs = _expansion_led(mid, split, ndr, r)
+        out['expansion_led'] = rd
+        if rd is None:
+            out['checks_not_run'].append({'check': 'expansion_led', 'reason': 'the split did not read units x revenue per unit consistently'})
+        out['questions'] += [{'model': mid, **q} for q in qs]
+    if top_n is not None:
+        t = _top_n_plain(top_n)
+        t['model'] = t['model'] or mid
+        m, fl, qs, why = _top_n_core(t, [split] if split is not None else [], r)
+        out['top_n'] = m
+        out['flags'] += fl
+        out['questions'] += [{'model': t['model'], **q} for q in qs]
+        if why:
+            out['checks_not_run'].append({'check': 'top_n_inconsistent', 'reason': why})
+    out['boundary'] = EXPANSION_BOUNDARY
+    out['input_sha256'] = F.digest({'split': split, 'top_n': top_n, 'ndr': ndr})
+    out['engine_version'] = __version__
+    return deepcopy(out)
+
+
+def _ttm_revenue(ix):
+    """The `ttm_revenue` block as a comparison revenue for the top-N figures (window TTM), or None."""
+    case = ix['case']
+    b = case.get('ttm_revenue')
+    if b is None:
+        return None
+    if not isinstance(b, dict):
+        raise ValueError('ttm_revenue: an object {value, growth?, scope?, source_ids}')
+    if b.get('window', TTM) != TTM:
+        raise ValueError('ttm_revenue.window: TTM (the block is trailing-twelve-month revenue)')
+    if b.get('value') is None and b.get('growth') is None:
+        ix['read'].add('ttm_revenue')
+        if all(x['ref'] != 'ttm_revenue' for x in ix['not_read']):
+            ix['not_read'].append({'ref': 'ttm_revenue', 'reason': 'neither a level nor a growth rate'})
+        return None
+    b, ids = _block(ix, 'ttm_revenue')
+    if ids is None:
+        return None
+    return {'value': _num(b.get('value'), 'ttm_revenue.value', 0), 'growth': _num(b.get('growth'), 'ttm_revenue.growth', -1),
+            'scope': _scope(b.get('scope'), 'ttm_revenue'), 'window': TTM, 'ref': 'ttm_revenue', 'source_ids': ids}
+
+
+def _top_n_input(ix, mid, scope, ttm):
+    """The top-N rows of one scope as a top_n input, or (None, reason) when they cannot be combined."""
+    spec = ix['spec'][mid]['kpis']
+    got = {}
+    for k in TOP_N_KPIS:
+        if k not in spec:
+            continue
+        rows = [it for it in ix['kpi'].get((k, scope), []) if it['value'] is not None]
+        for it in rows:
+            if it['basis'] not in spec[k]['basis']:
+                ix['not_read'].append({'ref': it['ref'], 'reason': f'top-N figure on {_a_basis([it["basis"]])}; the registry '
+                                                                   f'declares {_a_basis(spec[k]["basis"])}'})
+            elif it['n'] is None:
+                ix['not_read'].append({'ref': it['ref'], 'reason': 'the N the top-N figure covers is not stated'})
+                ix['questions'].append({'model': mid, 'about': 'top_n_expansion', 'scope': scope,
+                                        'question': f'state N for {it["ref"]}'})
+            elif k not in got:
+                got[k] = it
+    if not got:
+        return None, f'no top-N figure with its N at {scope}'
+    ns, ws, cs = ({it[f] for it in got.values()} for f in ('n', 'measure', 'window'))
+    if len(ns) > 1 or len(ws) > 1 or len(cs) > 1:
+        return None, ('the top-N figures differ in N, window or comparison (' +
+                      '; '.join(f'{it["ref"]}: N {it["n"]}, {it["measure"]} {it["window"]}' for it in got.values()) + '): scope_mismatch')
+    avg, sh, tot = (got.get(k) for k in TOP_N_KPIS)
+
+    def home(it):                      # a row's comparison in the window its source compares
+        return (it['cmp'].get(it['window']) or {}) if it else {}
+    rev = [ttm] if ttm is not None else []          # comparison revenues: the ttm_revenue block, then the revenue line at
+    it = _line_item(ix, 'revenue', scope)            # this scope; one on another scope or window is shown as a mismatch
+    if it is not None:
+        c = it['cmp'].get('y/y') or {}
+        rev.append({'value': it['value'], 'growth': _pick(c, 'stated')[0] if _any_growth(c) else None, 'scope': scope,
+                    'window': it['measure'], 'ref': it['ref']})
+    t = {'n': next(iter(ns)), 'scope': scope, 'window': next(iter(ws)), 'comparison': next(iter(cs)), 'model': mid,
+         'average': avg['value'] if avg else None, 'prior_average': home(avg).get('prior'),
+         'average_growth': home(avg).get('stated'), 'total': tot['value'] if tot else None, 'prior_total': home(tot).get('prior'),
+         'share': sh['value'] if sh else None, 'prior_share': home(sh).get('prior'),
+         'refs': {'average': avg['ref'] if avg else None, 'total': tot['ref'] if tot else None, 'share': sh['ref'] if sh else None},
+         'source_ids': sorted({i for it in got.values() for i in it['source_ids']})}
+    t['revenue'] = [{k: x[k] for k in ('value', 'growth', 'scope', 'window', 'ref')} for x in rev]
+    return t, None
+
+
+def _top_n(ix, mid, splits):
+    """(measures, flags, [(check, reason)] not run) for the top-N figures of a model at each scope they are reported for."""
+    scopes = sorted({s for (k, s) in ix['kpi'] if k in TOP_N_KPIS}, key=lambda s: (s != 'total', s))
+    if not scopes:
+        why = 'no top-N figures supplied (top_n_average_revenue, top_n_share, top_n_total_revenue with N)'
+        return [], [], [('top_n_expansion', why), ('top_n_inconsistent', why)]
+    ttm = _ttm_revenue(ix)
+    measures, flags, not_run = [], [], []
+    for scope in scopes:
+        t, why = _top_n_input(ix, mid, scope, ttm)
+        if t is None:
+            not_run += [('top_n_expansion', why), ('top_n_inconsistent', why)]
+            continue
+        ms = []
+        for s in splits:
+            it = _line_item(ix, s['line'], s['scope'])
+            ms.append({**s, 'measure': it['measure'] if it else None})
+        m, fl, qs, why = _top_n_core(_top_n_plain(t), ms, ix['rules'])
+        measures.append(m)
+        flags += fl
+        ix['questions'] += [{'model': mid, **q} for q in qs]
+        if why:
+            not_run.append(('top_n_inconsistent', why))
+    return measures, flags, not_run

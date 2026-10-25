@@ -78,6 +78,13 @@ DERIVED_KEYS = {'annual_impact', 'annual_net_interest_income', 'annualized_by', 
 DERIVED_KEYS |= {'amount', 'build', 'distance', 'gap_max', 'gap_min', 'max', 'min', 'observed_annualized', 'per_year',
                  'price_implied_rote', 'price_to_tangible_book', 'rote_bound_max', 'schedule_per_year', 'share_of_profit',
                  'share_of_revenue', 'stated_vs_market_ptbv'}
+# WP6 process and expansion evidence (reviewed): a category's fall, recovery and new high and the years between them,
+# intensities and their window ends, CAGRs and the window span, the two growth windows of the slowdown test, FCF and
+# FCF / NI from lines, the top-N implied revenue and its comparison with revenue growth, and the per-unit growth that
+# expansion_led shows beside the units' growth
+DERIVED_KEYS |= {'cagr', 'drawdown', 'earlier_growth', 'end', 'fcf_to_net_income', 'free_cash_flow', 'gap_pp', 'implied',
+                 'implied_revenue', 'intensity', 'latest_growth', 'new_high_over_prior_peak', 'per_unit_growth', 'recovery',
+                 'revenue_growth', 'span_years', 'start', 'top_n_growth', 'years_to_new_high'}
 
 
 def unsourced(out, case_):
