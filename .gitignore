@@ -18,6 +18,10 @@ runs/backtest/engine_v3/*
 runs/backtest/pricepath/*
 !runs/backtest/pricepath/summary.json
 !runs/backtest/pricepath/REPORT.md
+!runs/backtest/pricepath_v2/
+runs/backtest/pricepath_v2/*
+!runs/backtest/pricepath_v2/summary.json
+!runs/backtest/pricepath_v2/REPORT.md
 !runs/macro/
 runs/macro/*
 !runs/macro/market_2026-10-20.json

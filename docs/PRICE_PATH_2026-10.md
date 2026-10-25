@@ -1,9 +1,9 @@
 # Expected price path lane: results, audit and what the table shows (October 2026)
 
-Status: **spec_version 1 FAILED its preregistered walk-forward; it is not shown in the valuation table.** Version 2 is
-registered, implemented (`pricepath` spec_version 2, `--spec 2`; clarifications in its section 10) and NOT run
-(`docs/prereg_price_path_v2.md`). Sources: preregistration `docs/prereg_price_path.md` (commit a8dc43b,
-before any code), the single run (commit 86c8a34, 21.10.2026), `docs/PRICE_PATH_RESULTS_2026-10-21.md` (full results),
+Status: **spec_version 1 FAILED its preregistered walk-forward; it is not shown in the valuation table.** Version 2
+(`docs/prereg_price_path_v2.md`, `pricepath` spec_version 2) was run once on 25.10.2026 and FAILED as well (S2 at 3 / 5 years,
+S1; `docs/PRICE_PATH_V2_RESULTS_2026-10-25.md`); it is not shown either. Sections 6-7 below were written before that run.
+Sources: preregistration `docs/prereg_price_path.md` (commit a8dc43b, before any code), the single run (commit 86c8a34, 21.10.2026), `docs/PRICE_PATH_RESULTS_2026-10-21.md` (full results),
 `runs/backtest/pricepath/summary.json`, the post-run audit (prereg section 9, 21.10.2026) and the read-only diagnostics
 `scripts/pricepath_v1_*.py`. Nothing in the method, the constants or the sample rule changed after the results.
 
@@ -132,7 +132,7 @@ each anniversary through the fifth, and one band sentence filled from the v2 run
 שהתממש ב־A% / B% / C% מהמקרים ... והמחיר שהתממש היה בין 'רע' ל'טוב' ב־D% / E% מהמקרים אחרי 3 / 5 שנים"). PARTIAL: the same
 rows prefixed "טיוטה (נכשל במבחן: ...)". FAIL: as now.
 
-## 7. Version 2 (registered, not run): what changes and why
+## 7. Version 2 (registered before its run; run 25.10.2026: FAIL, see the status above): what changes and why
 
 Each change answers one term of section 3; nothing was tried on the data. Full text and success criteria:
 `docs/prereg_price_path_v2.md`.

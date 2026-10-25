@@ -1,4 +1,4 @@
-# Pre-registration: expected price path lane, version 2 (NOT YET RUN)
+# Pre-registration: expected price path lane, version 2 (run once 25.10.2026: FAIL, section 10)
 
 Drafted 21.10.2026 and finalized 25.10.2026, after version 1 (`docs/prereg_price_path.md`, spec_version 1) FAILED its
 preregistered walk-forward (`docs/PRICE_PATH_RESULTS_2026-10-21.md`, `docs/PRICE_PATH_2026-10.md`) and before any v2 code
@@ -283,3 +283,37 @@ v1 deviation 5; `--evaluate-only` on the last line only rebuilds summary.json an
     python scripts/backtest_pricepath.py $ARGS --spec 1 --out <v1 dir>
     python scripts/backtest_pricepath.py $ARGS --spec 2 --v1-rows <v1 dir>/rows.jsonl --out <v2 dir>
     python scripts/backtest_pricepath.py $ARGS --spec 2 --v1-rows <v1 dir>/rows.jsonl --out <v2 dir> --evaluate-only
+
+Run record, 25.10.2026 (after the clarifications above; nothing in sections 2-7 changed afterwards, no re-run):
+
+- The single registered run of section 6.1, at commit 5b813ae of branch price-path (clean worktree; started 07:57:55), with the
+  commands above, `--workers 2`. lane_v1: the unchanged spec-1 code re-run at 5b813ae; all 4,900 rows byte-identical to the
+  21.10.2026 run (every input and output hash of the 3,287 ok rows). v2: 4,900 pairs, 701 skipped, 4,199 rows, 3,364 ok, 835
+  excluded, 0 errors, 0 ordering assertions; `--evaluate-only` reproduced every output file with identical sha256. Engine rows:
+  the 2026-10-21 engine walk-forward (3,354 rows with base_irr).
+- Verdict **FAIL** (section 7: "S2 or S4 fails -> recorded in docs; not shown"). S1 fails (MdALE 0.206 / 0.337 / 0.455 at 1 / 3 / 5
+  years: below analyst_const and lane_v1 at 3 and 5 years, not below engine_irr 0.286 / 0.408, and more than 0.03 above drift_7's
+  0.173 / 0.278 / 0.363 at every horizon); S2 fails (median log error -0.045 / -0.119 / -0.215); S3 passes (inside the band 78.5% /
+  77.2%, below bear 5.8% / 4.7%, above bull 15.6% / 18.1%); S4 passes (3 years, n 1,639: e_rev -0.021, e_margin -0.094,
+  e_multiple -0.034). Results: docs/PRICE_PATH_V2_RESULTS_2026-10-25.md; numbers: runs/backtest/pricepath_v2/summary.json.
+- No bug was found (an independent recomputation of all 3,364 ok rows outside the module and a read-only audit of 5b813ae against
+  sections 2-7), so nothing was fixed and nothing re-run.
+- Consequence (section 9, FAIL): no rows in `render.hebrew_table`. `pricepath.MEASURED_V2` / `MEASURED_VERDICT_V2` /
+  `TABLE_STATUS_V2 = 'not_shown'` carry the measured error into every live spec-2 output's band statement. Any changed method is
+  a new spec_version with its own preregistration.
+
+Post-run notes, 25.10.2026 (disclosure only; no method, sample or criterion changed, nothing re-run):
+
+- Title: its status marker changed from "NOT YET RUN" to the run's outcome; the registration text above section 10 is otherwise
+  unchanged.
+- Section 3.4, who enters the table. The implementation takes every company whose v2 anchors are usable at that as_of, which also
+  needs a stage, rf / ERP, at least one growth leg and revenue > 0, slightly more than the text's NI_0 > 0, S_0, P_0. In this run
+  every excluded row failed NI_0 > 0 or S_0 (459 NI not positive, 141 NI missing, 137 no share count, 98 with two reasons, one of them always NI or the share count),
+  so the extra conditions removed no company: each formation's table holds every company with NI_0 > 0, a share count and a price
+  (3,364 rows over ten formations, 52 of them outside the [1, 500] P/E range).
+- Clarification 3 in practice: the base's 1% margin floor binds in 2% of ok rows (flag `margin_floored_base`; mostly
+  distributors), so for those rows "base: m_h = m_TTM" reads "m_h = max(m_TTM, 1%)". CHANGELOG and the module docstring now say so.
+- 6.8 / clarification 12: the M_0 < 1x rule catches 21 rows, 19 of section 2's 20 plus BKR 2019 and 2022; none is in the common
+  sample (no engine base_irr). The 20th named row, MKSI 2018, carries a revenue defect, not a share-count one: its raw P/E is
+  13.8x, so the registered rule keeps it, and it sits in the common sample (e +2.79 / +3.54 at 3 / 5 years). Reported, not
+  removed: section 2 keeps defect rows unless the shared data layer fixes them before the run.

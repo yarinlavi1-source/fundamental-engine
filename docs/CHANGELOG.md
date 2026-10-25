@@ -1,8 +1,17 @@
 ## Unreleased — calibration fixes (21.10.2026)
 
-- Expected price path, spec_version 2 implemented, NOT run (`docs/prereg_price_path_v2.md`, registered before this code):
+- Expected price path, spec_version 2: the single registered walk-forward (25.10.2026, commit 5b813ae) FAILED
+  (`docs/PRICE_PATH_V2_RESULTS_2026-10-25.md`). S2 bias fails at 3 / 5 years (base-path median log error -0.045 / -0.119 /
+  -0.215, half of v1's) and S1 accuracy fails (MdALE 0.206 / 0.337 / 0.455: better than v1 and the constant analyst-EPS path,
+  worse than the engine-IRR path and a 7% drift); S3 band (inside 79% / 77% at 3 / 5 years, but 4.4x / 7.0x wide) and S4
+  attribution pass. The market class multiple removed the multiple term (-0.22 -> -0.04 at 5 years); the held margin among
+  survivors is what is left. Not shown in the table (section 9: no rows). `pricepath.MEASURED_V2` / `MEASURED_VERDICT_V2` /
+  `TABLE_STATUS_V2` record it in every spec-2 output; `runs/backtest/pricepath_v2/{summary.json,REPORT.md}` kept in Git; the
+  run record and post-run notes are in section 10 of the preregistration. No constant changed, no re-run.
+- Expected price path, spec_version 2 implemented (`docs/prereg_price_path_v2.md`, registered before this code):
   `pricepath.anchors(..., spec_version=2)` / `price_path(..., spec_version=2, cross_section=...)` -- run rate = mean of the
-  latest FY, latest quarter and 3-year CAGR; TTM margin held in the base for every company, bear / bull margins at the
+  latest FY, latest quarter and 3-year CAGR; TTM margin held in the base for every company (floored at 1% as spec 1,
+  clarification 3), bear / bull margins at the
   company's own 10-year low / high bounded at 0.5x / 1.5x today's; bear / bull growth fading to the size class p25 / p75 at
   one half-life; the multiple target is the market's point-in-time trailing P/E by growth x margin bucket
   (`cross_section_table`, CELL_MIN 20 with growth-row and whole-cross-section fallbacks) with today's log premium clipped

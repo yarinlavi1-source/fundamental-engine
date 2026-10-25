@@ -28,12 +28,18 @@ price_path still runs for research with MEASURED in its band statement. A second
 
 Spec 2 (docs/prereg_price_path_v2.md, registered 25.10.2026 before its code; selected with spec_version=2, spec 1 above stays the
 default and unchanged as the lane_v1 baseline): run rate = mean of the latest FY, latest quarter and 3-year CAGR; the TTM margin
-held in the base for every company, the bear / bull margins at the company's own 10-year low / high bounded at half / 1.5x
+held in the base for every company (floored at 1% as in spec 1, section 10 clarification 3), the bear / bull margins at the company's own 10-year low / high bounded at half / 1.5x
 today's; bear / bull growth fading to the size class p25 / p75 at the same half-life; the multiple target is the market's own
 point-in-time trailing P/E by growth x margin bucket (p25 / median / p75 of the universe at the same as_of, CELL_MIN rows with a
 growth-row and whole-cross-section fallback), today's log premium over the class median (clipped at +-ln 3) halving at the stage
 half-life; bear <= base <= bull in growth, margin, multiple and price every year by construction, asserted (OrderingError).
 Section 10 of that document logs every pre-run clarification of this implementation.
+
+Outcome of spec 2 (25.10.2026, docs/PRICE_PATH_V2_RESULTS_2026-10-25.md; the single registered run, no bug, no re-run): FAIL.
+S2 bias fails at 3 and 5 years (base-path median log error -0.045 / -0.119 / -0.215 at 1 / 3 / 5) and S1 accuracy fails (MdALE
+0.206 / 0.337 / 0.455: better than analyst_const and spec 1, worse than the engine IRR path and the 7% drift); S3 band and S4
+attribution pass, the band only by being wide (median bull / bear 4.4x at 3 years, 7.0x at 5). Not shown (TABLE_STATUS_V2);
+price_path(..., spec_version=2) still runs for research with MEASURED_V2 in its band statement.
 """
 from datetime import date, timedelta
 from hashlib import sha256
@@ -862,12 +868,23 @@ L0_CLIP = math.log(3)                            # today's premium: one third to
 PE_FLOOR_V2, PE_CAP_V2 = 5., 120.                # floor as spec 1; cap ~3x the highest class median (39.6x, > 30% growers)
 LEVELS = ('cell', 'growth_row', 'cross_section')  # the 3.4 fallback ladder
 ORDER_KEYS = ('growth', 'margin', 'multiple', 'price')
-# Measured error of spec 2: EMPTY until its single preregistered walk-forward (section 6) is run and recorded. Until then the
-# path and the band are untested, the band statement says so and the lane is not shown (section 7 / 9).
-MEASURED_V2 = {}
-MEASURED_VERDICT_V2 = ('NOT RUN: spec_version 2 is registered (docs/prereg_price_path_v2.md) and implemented; its preregistered '
-                       'walk-forward has not been run, so nothing about its accuracy is known')
-TABLE_STATUS_V2 = 'not_shown'
+# Measured error of spec 2's base path on the common sample (docs/PRICE_PATH_V2_RESULTS_2026-10-25.md: the single preregistered
+# run of section 6, 25.10.2026, commit 5b813ae; 490 companies x formations 2016-2025, survivors, run-rate + base-rate variant,
+# no guidance). Written AFTER that run and shown with every live spec-2 path; it changes no price and is not in the hashed
+# output. Keys per horizon: n, bias_median, mdale, within25 (e = log(pred / actual)) and the band coverage within_band /
+# below_bear / above_bull. The section 6.4 baselines on this common sample equal MEASURED_BASELINES (same rows; lane_v1 =
+# MEASURED). The bands are wide: median bull / bear 2.8x / 4.4x / 7.0x at 1 / 3 / 5 years (spec 1: 1.9x / 2.5x / 2.8x).
+MEASURED_V2 = {1: {'n': 2600, 'bias_median': -.045, 'mdale': .206, 'within25': .533,
+                   'within_band': .848, 'below_bear': .057, 'above_bull': .095},
+               3: {'n': 2023, 'bias_median': -.119, 'mdale': .337, 'within25': .344,
+                   'within_band': .785, 'below_bear': .058, 'above_bull': .156},
+               5: {'n': 1435, 'bias_median': -.215, 'mdale': .455, 'within25': .280,
+                   'within_band': .772, 'below_bear': .047, 'above_bull': .181}}
+MEASURED_VERDICT_V2 = ('FAIL: S2 bias failed at 3 and 5 years and S1 accuracy failed (worse than the engine IRR path and the 7% '
+                       'drift); S3 band and S4 attribution passed, the band only by being wide (docs/prereg_price_path_v2.md '
+                       'section 7); the lane is recorded in docs and not shown in the valuation table')
+# section 7: PASS -> shown with the band sentence of section 9; PARTIAL -> a draft row labelled with what failed; FAIL -> not shown
+TABLE_STATUS_V2 = {'PASS': 'shown', 'PARTIAL': 'draft', 'FAIL': 'not_shown'}[MEASURED_VERDICT_V2.split(':')[0]]
 S3_TAIL_V2 = .30                                 # section 7 S3: neither tail above 30% (spec 1: 35%)
 S4_LIMIT = .10                                   # section 7 S4: |median e_rev|, |median e_margin|, |median e_multiple| at h = 3
 BASELINES_V2 = BASELINES + ('lane_v1',)

@@ -185,5 +185,8 @@ Companion to docs/EVIDENCE_STATUS.md, which separates what tests prove from what
     multiple's target (16.8x justified against a market that kept paying 23-25x). The only measured price path in this build is
     the engine's base IRR (less the dividend yield) compounded from today's price: within +-25% of the realized price in 60% /
     41% / 29% of rows at 1 / 3 / 5 years, 6% / 15% / 24% below it on median (`pricepath.MEASURED_BASELINES`; engine at ff36ede,
-    later engine changes unmeasured). A second version is registered and implemented (`pricepath` spec_version 2,
-    `docs/prereg_price_path_v2.md`) but unrun; nothing in it is a measured result and its outputs say so.
+    later engine changes unmeasured). The registered second version (`pricepath` spec_version 2, the market's own class
+    multiple as the target, the TTM margin held, a quartile band; `docs/prereg_price_path_v2.md`) also FAILED its single run
+    (`docs/PRICE_PATH_V2_RESULTS_2026-10-25.md`): bias -0.05 / -0.12 / -0.21 and MdALE 0.21 / 0.34 / 0.46, worse than the
+    engine-IRR path and a plain 7% drift; its band held the realized price in 79% / 77% of rows at 3 / 5 years only by being
+    4.4x / 7.0x wide. It is not shown either; its outputs carry that measured error.

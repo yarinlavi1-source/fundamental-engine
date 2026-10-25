@@ -512,13 +512,58 @@ class DiagnosticsTests(unittest.TestCase):
         self.assertEqual(out['margin_history']['bull_basis'], 'own_high')
         self.assertTrue(out['ordering_checked'])
         self.assertEqual(out['table_status'], 'not_shown')
-        self.assertTrue(out['verdict'].startswith('NOT RUN'))
-        for s in ('untested', 'never authorize a trade', 'not a measured confidence interval'):
-            self.assertIn(s, out['band_statement'])
+        self.assertTrue(out['verdict'].startswith('FAIL'))
+        for s in ('measured on the 2016-2025', 'never authorize a trade', 'not a measured confidence interval'):
+            self.assertIn(s, out['band_statement'].lower())
         self.assertEqual(PP.price_path(a, spec_version=2, cross_section=t)['output_sha256'], out['output_sha256'])   # deterministic
         t2 = spread_table(n=26)
         self.assertNotEqual(PP.price_path(a, spec_version=2, cross_section=t2)['input_sha256'], out['input_sha256'])   # the table is an input
         self.assertEqual(out['scenarios']['bear']['half_life'], out['scenarios']['bull']['half_life'])
+
+    def test_the_registered_run_is_recorded_and_not_shown(self):
+        """docs/PRICE_PATH_V2_RESULTS_2026-10-25.md: the single run of section 6.1 (25.10.2026) FAILED S2 at 3 / 5 years and S1;
+        S3 and S4 passed. Section 7: FAIL -> recorded in docs, not shown; the band statement carries the measured error."""
+        self.assertEqual(sorted(PP.MEASURED_V2), [1, 3, 5])
+        self.assertEqual({h: m['n'] for h, m in PP.MEASURED_V2.items()}, {h: m['n'] for h, m in PP.MEASURED.items()})  # same common sample
+        self.assertLessEqual(abs(PP.MEASURED_V2[1]['bias_median']), .10)                     # S2 held at 1 year only
+        for h in (3, 5):
+            m = PP.MEASURED_V2[h]
+            self.assertGreater(abs(m['bias_median']), .10)                                    # S2 failed: that is the record
+            self.assertLess(m['mdale'], PP.MEASURED[h]['mdale'])                              # better than spec 1 ...
+            self.assertGreater(m['mdale'], PP.MEASURED_BASELINES['engine_irr'][h]['mdale'])   # ... but not than the engine IRR path
+            self.assertGreaterEqual(m['within_band'], .50)                                    # S3 held (a wide band)
+            self.assertLessEqual(max(m['below_bear'], m['above_bull']), PP.S3_TAIL_V2)
+        for h, m in PP.MEASURED_V2.items():
+            self.assertGreater(m['mdale'], PP.MEASURED_BASELINES['drift_7'][h]['mdale'] + .03)   # S1's mechanical leg failed
+            self.assertAlmostEqual(m['within_band'] + m['below_bear'] + m['above_bull'], 1., delta=.002)
+        self.assertTrue(PP.MEASURED_VERDICT_V2.startswith('FAIL'))
+        self.assertEqual(PP.TABLE_STATUS_V2, 'not_shown')
+        out = PP.price_path(anch2(), spec_version=2, cross_section=spread_table())
+        self.assertEqual((out['table_status'], out['measured_error']), ('not_shown', PP.MEASURED_V2))
+        for s in ('FAIL', '2016-2025', 'within +-25% in 53%', 'median bias -0.12', 'median bias -0.21', 'never authorize a trade'):
+            self.assertIn(s, out['band_statement'])
+        self.assertNotIn('untested', out['band_statement'])
+        self.assertEqual(PP.price_path(anch2(), spec_version=2, cross_section=spread_table())['output_sha256'], out['output_sha256'])
+
+    def test_recorded_numbers_are_the_saved_run(self):
+        """MEASURED_V2 is read off the run's summary.json (kept in Git), rounded to 3 decimals, never typed independently."""
+        path = os.path.join(ROOT, 'runs', 'backtest', 'pricepath_v2', 'summary.json')
+        if not os.path.exists(path):
+            self.skipTest('runs/backtest/pricepath_v2/summary.json not present')
+        with open(path) as f:
+            s = json.load(f)
+        self.assertEqual((s['spec_version'], s['verdict']['verdict'], s['diagnostics']['ordering_assertions']), (2, 'FAIL', 0))
+        self.assertEqual((s['verdict']['S1_accuracy'], s['verdict']['S2_bias'], s['verdict']['S3_band'], s['verdict']['S4_attribution']),
+                         (False, False, True, True))
+        for h, m in PP.MEASURED_V2.items():
+            c = s['horizons'][str(h)]['common']
+            got = dict(c['metrics']['lane_base'], **c['band'])
+            self.assertEqual(m['n'], got['n'])
+            for k in ('bias_median', 'mdale', 'within25', 'within_band', 'below_bear', 'above_bull'):
+                self.assertAlmostEqual(m[k], got[k], delta=.0005, msg=(h, k))
+            for name, by_h in PP.MEASURED_BASELINES.items():                                # same common sample, same baselines
+                self.assertAlmostEqual(by_h[h]['mdale'], c['metrics'][name]['mdale'], delta=.0005, msg=(h, name))
+            self.assertAlmostEqual(PP.MEASURED[h]['mdale'], c['metrics']['lane_v1']['mdale'], delta=.0005)
 
 
 # ---------------------------------------------------------------- sections 6-7: evaluation
