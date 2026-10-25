@@ -15,9 +15,14 @@ the key nothing changes. Full method and limits: `docs/MARKET_CONTEXT.md`.
   Damodaran regions such as `Western Europe`, `EMEA`, `Asia`). Production concentrated in one place (a foundry's fabs, a
   single plant, a contract manufacturer) goes in `operations` the same way.
 - The add-on is Damodaran's: exposure-weighted country risk premiums, only the part above the US premium (the engine's ERP is
-  the US implied premium), the larger of the revenue and operations channels. `market_context: {}` is enough to use the
-  filing's own split; `country_risk: false` leaves the row out (exposures and the regime still run). It is structural, so the terminal rate keeps it,
-  and it reaches the required return. No split -> no add-on and an open question; never guess a split.
+  the US implied premium), the larger of the revenue and operations channels. The ERP and the index return already carry the
+  market's average exposure, so a second row nets it out (0.40pp x the mapped share, measured on the large-cap sweep): an
+  average multinational nets about zero, a domestic company ends below it. `market_context: {}` is enough to use the
+  filing's own split; `country_risk: false` leaves the rows out (exposures and the regime still run). They are structural,
+  so the terminal rate keeps them, and the net reaches the required return. No split -> no rows and an open question; never
+  guess a split.
+- Regional members read at regional averages ('EMEA' with Africa, 'Latin America' with Argentina and Venezuela) can
+  overstate the add-on; when regions dominate the filing's split, supply an evidenced country split.
 - The table (`brain/country_risk.json`) is dated; refresh it with `scripts/collect_market_context.py --country-risk` and
   `scripts/build_country_risk.py` after Damodaran's January/July updates, then rerun the tests.
 
@@ -34,8 +39,10 @@ Research each one like an analyst, from primary sources first:
   disclosed, say so and leave the exposure out or use a disclosed upper bound with that label; never pick a severity.
 - Then pass `exposures: [{kind, share_of_revenue | share_of_supply, evidence_ids, note, shock?, cost_rate?}]` with kind one
   of `taiwan_supply`, `china_export_controls`, `tariffs`, `sanctions`, `regulatory_ban`, `conflict_disruption`. Each becomes a
-  failure scenario (the exposed share lost, or the cost rate absorbed, on the bear row and on the base row) and a register
-  entry the paragraph can name as the main risk. The engine gives no probability; if you state odds, give their basis.
+  failure scenario (the exposed share lost, or the cost rate absorbed, on the bear row and on the base row; the effect is
+  measured against the same row re-run without the shock) and a register entry the paragraph can name as the main risk.
+  Exposures are bound by the review digest: one added after a review voids it. The engine gives no probability; if you
+  state odds, give their basis.
 - Separate the evidence: a rule in force, a proposed rule, a politician's statement and a news story are different kinds.
   Syndicated copies of one story are one source. A conflict scenario is a stress, not a forecast.
 - Mitigants belong in the note with evidence (licences granted, capacity elsewhere, inventory, customer alternatives); they

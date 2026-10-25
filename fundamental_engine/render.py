@@ -469,15 +469,18 @@ def hebrew_paragraph(casefile):
     the discount, the conditional five-year value with distributions, the key risk and the confidence. Future values
     are conditional estimates. A draft is labelled as a draft, never a conclusion. Above 140 words the confidence reason
     is cut to its first clause, then the secondary model-rate value is dropped; below 80 words one sentence on what the
-    result still lacks is added."""
-    text = _paragraph(casefile)
-    for kw in ({'short': True}, {'short': True, 'secondary': False}, {'short': True, 'secondary': False, 'compact': True},
-               {'short': True, 'secondary': False, 'compact': True, 'market': False}):
+    result still lacks is added. The market-regime clause (context only) is fitted last, on the finished analysis: it is
+    kept only where it fits, so it never pushes out (or stands in for) a sentence of the analysis itself."""
+    for kw in ({}, {'short': True}, {'short': True, 'secondary': False}, {'short': True, 'secondary': False, 'compact': True}):
+        text = _paragraph(casefile, market=False, **kw)
         if len(text.split()) <= MAX_WORDS:
             break
-        text = _paragraph(casefile, **kw)
     if len(text.split()) < MIN_WORDS:
-        text = _paragraph(casefile, pad=True)
+        kw = {'pad': True}
+        text = _paragraph(casefile, market=False, pad=True)
+    with_market = _paragraph(casefile, **kw)
+    if with_market != text and len(with_market.split()) <= MAX_WORDS:
+        text = with_market
     return text
 
 
@@ -734,11 +737,13 @@ def _expected(dc):
     rng = f" (range {_p(idx.get('low'), 2)}–{_p(idx.get('high'), 2)})" if _n(idx.get('low')) and _n(idx.get('high')) else ' (no range supplied)'
     mech = er.get('mechanical') or {}
     fl = er.get('model_cost_of_equity_floor') or {}
+    crp = next((c.get('value') for c in er.get('premium_components') or [] if c.get('component') == 'country_risk'), None)
     out += ['', f"- Index expected return: **{_p(idx.get('value'), 2)}**{rng} [{idx.get('provenance')}; origin {idx.get('origin', 'n/a')}: {idx.get('source')}] — {idx.get('basis')}",
             f"- Required return (hurdle): **{_p(er.get('hurdle'), 2)}** = index + premium {_p(er.get('risk_premium'), 2)} [model_assumption]; "
             f"{er.get('hurdle_basis', '')}" + (f" (mechanical {_p(mech.get('hurdle'), 2)}, premium {_p(mech.get('risk_premium'), 2)})" if mech else ''),
             f"- Floor: the model's own cost of equity {_p(fl.get('value'), 2)} — " + ('**binding** (index + permanent-loss premium '
-            f"{_p((idx.get('value') or 0) + (er.get('permanent_loss_premium') or 0), 2)} is lower)" if fl.get('binding') else 'not binding'), '']
+            + ('+ country-risk row ' if crp is not None else '')
+            + f"{_p((idx.get('value') or 0) + (er.get('permanent_loss_premium') or 0) + (crp or 0), 2)} is lower)" if fl.get('binding') else 'not binding'), '']
     comps = er.get('premium_components') or []
     if comps:
         out += ['Premium for the risk of permanent loss (valuation error is not in it; it widens the marginal band):', '']
@@ -1078,6 +1083,7 @@ def _limitations(cf, dc):
 
 def _market(cf):
     """Market context section (market_context.py): country-risk rows, exposure scenarios, the regime readings and open questions."""
+    from .market_context import share_text
     mc = cf.get('market_context') or {}
     cr = mc.get('country_risk') or {}
     out = ['## Market context', '']
@@ -1103,9 +1109,13 @@ def _market(cf):
         rows = []
         for x in mc['exposures']:
             s = scen.get('exposure:' + x['id']) or {}
-            rows.append([x['id'], f"{x['share']:.1%} {x['share_basis']}", x['shock'] + (f" @ {_p(x['cost_rate'])}" if x.get('cost_rate') else ''),
-                         _ps(s.get('value_per_share')), _ps(s.get('base_value_with_shock')), _p(s.get('base_effect'), 0), _ids(x['evidence_ids'])])
-        out += _table(['exposure', 'share', 'shock', 'bear with shock', 'base with shock', 'base effect', 'evidence'], rows)
+            rows.append([x['id'], f"{share_text(x['share'])} {x['share_basis']}", x['shock'] + (f" @ {_p(x['cost_rate'])}" if x.get('cost_rate') else ''),
+                         _ps(s.get('value_per_share')), _ps(s.get('base_value_with_shock')), _ps(s.get('base_value_control')),
+                         _p(s.get('base_effect'), 0), _ids(x['evidence_ids'])])
+        out += _table(['exposure', 'share', 'shock', 'bear with shock', 'base with shock', 'base, same path without the shock', 'base effect',
+                       'evidence'], rows)
+        out += ['', '- Effect = 1 - base with shock / the base row re-run the same way without the shock (its funding plan removed and gaps '
+                're-closed in both), so the re-run path is not counted as the event; the executed base is unchanged.']
     rg = mc.get('regime')
     if rg:
         out += ['', f"**Market regime (context only; no value reads it)**: {rg.get('line_he') or 'no readings'}", '']

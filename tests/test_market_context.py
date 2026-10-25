@@ -8,18 +8,24 @@ import sys
 import tempfile
 import unittest
 from copy import deepcopy
+from datetime import date
 from pathlib import Path
 
 sys.path.insert(0, os.path.dirname(__file__))
-from fundamental_engine import market_context as M, pipeline, forecast, risk  # noqa: E402
+from fundamental_engine import market_context as M, pipeline, forecast, risk, decision, calibration  # noqa: E402
 from fundamental_engine.render import hebrew_table, hebrew_paragraph, markdown  # noqa: E402
 from test_forecast_financials import bank  # noqa: E402
+from test_risk_review import live_spec  # noqa: E402
+from fundamental_engine.review import scen  # noqa: E402
+from fundamental_engine.drivers import build_case  # noqa: E402
+from fundamental_engine.valuation import value_company  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 ADBE = json.loads((ROOT / 'tests/fixtures/adbe_factbook_2026-10-19.json').read_text())
 EV = ['fmp:as_reported_income_annual']          # a real FactBook source id of the fixture (the split itself is synthetic)
 T = M.country_table()
 US, TW = T['countries']['United States']['crp'], T['countries']['Taiwan']['crp']
+NET = M.COUNTRY_RISK_MARKET_RATE      # the market's average add-on per unit of mapped exposure (netted out)
 
 
 def fb(geo=None, assets=None, as_of='2026-10-19', country='US'):
@@ -39,7 +45,13 @@ def regime(when='2026-10-22', **vals):
 
 class CountryRiskTests(unittest.TestCase):
     def test_packaged_table_is_dated_and_sourced(self):
-        self.assertEqual(T['as_of'], '2026-01-05')
+        # point in time: the page says 'Last updated January 5, 2026' but its contents carry the February 16 ratings update
+        # (xlsx note; Turkey 'updated February 2026'), so the table is available from 2026-02-16, not earlier
+        self.assertEqual(T['as_of'], '2026-02-16')
+        self.assertEqual(T['page_last_updated'], 'January 5, 2026')
+        self.assertIn('Feb 16', T['as_of_basis'])
+        self.assertEqual(M.country_risk(fb({'TW': 100.}, as_of='2026-02-15'), {})['status'], 'table_after_as_of')
+        self.assertEqual(M.country_risk(fb({'TW': 100.}, as_of='2026-02-16'), {})['status'], 'applied')
         self.assertTrue(T['url'].startswith('https://pages.stern.nyu.edu/~adamodar/'))
         self.assertAlmostEqual(US, .0023)                       # Aa1 since the May 2025 Moody's downgrade
         self.assertAlmostEqual(TW, .0078)
@@ -56,6 +68,25 @@ class CountryRiskTests(unittest.TestCase):
         self.assertEqual(cr['channel'], 'revenue')
         self.assertEqual(cr['forecast_input']['evidence_ids'], ['s1'])
         self.assertEqual(cr['forecast_input']['as_of'], T['as_of'])
+        self.assertEqual(cr['forecast_input']['mapped_share'], 1.)
+        self.assertAlmostEqual(cr['market_neutral']['net'], .0022 - NET, places=12)
+
+    def test_market_average_is_netted_by_the_mapped_share(self):
+        """The ERP and the index return already carry the market's average exposure: the net row is add-on - rate x mapped
+        share, so a domestic company ends below the average, an exposed one above it, and an unmapped share counts as average."""
+        self.assertAlmostEqual(NET, .004)
+        dom = M.country_risk(fb({'US': 100.}), {})
+        self.assertAlmostEqual(dom['add_on'], 0.)
+        self.assertAlmostEqual(dom['market_neutral']['net'], -NET, places=12)
+        part = M.country_risk(fb({'US': 50., 'TW': 20., 'Rest Of World': 30.}), {})            # 30% names no country
+        self.assertAlmostEqual(part['market_neutral']['mapped_share'], .7, places=12)
+        self.assertAlmostEqual(part['market_neutral']['net'], .2 * (TW - US) - .7 * NET, places=12)
+        self.assertIn('פרמיית השוק כבר כוללת', M.country_risk_he({'country_risk': part}))
+        self.assertIn('נטו שיעור ההיוון נמוך', M.country_risk_he({'country_risk': dom}))
+        # the measured rate (scripts/measure_country_risk_market.py) makes the value-weighted net zero on its own sweep
+        sweep = [(3e12, .0064, .94), (1e12, .0, 1.), (5e11, .0059, 1.)]
+        rate = sum(w * a for w, a, _ in sweep) / sum(w * m for w, _, m in sweep)
+        self.assertAlmostEqual(sum(w * (a - rate * m) for w, a, m in sweep), 0., places=3)
 
     def test_disclosed_members_iso_codes_aggregates_and_states(self):
         cr = M.country_risk(fb({'US': 60., 'TW': 30., 'Rest Of World': 10.}), {})
@@ -70,6 +101,16 @@ class CountryRiskTests(unittest.TestCase):
         self.assertAlmostEqual(dom['add_on'], .7 * (TW - US), places=12)
         reg = M.country_risk(fb({'US': 50., 'Europe Middle East And Africa': 50.}), {})
         self.assertAlmostEqual(reg['add_on'], .5 * (T['regions']['EMEA']['crp'] - US), places=12)
+        self.assertIn('אירופה, המזרח התיכון ואפריקה', M.country_risk_he({'country_risk': reg}))
+
+    def test_hebrew_names_and_small_shares(self):
+        self.assertFalse([k for k in list(T['countries']) + list(T['regions']) if k not in M.COUNTRY_HE])   # no English inside Hebrew
+        self.assertEqual(M._in_he('Argentina'), 'בארגנטינה')
+        self.assertEqual(M._in_he('Middle East'), 'במזרח התיכון')                       # the article drops after the prefix
+        self.assertEqual(M._in_he('Nowhere'), 'ב־Nowhere')                              # never glued to Latin letters
+        self.assertEqual([M.share_text(x) for x in (.25, .096, .05, .0042, .003, 1e-6)], ['25%', '9.6%', '5%', '0.42%', '0.3%', '0.0001%'])
+        x = M.exposures([{'kind': 'sanctions', 'share_of_revenue': .003, 'evidence_ids': ['s1'], 'note': 'x'}], {'s1'})[0]
+        self.assertIn('כ־0.3%', x['label_he'])                                           # an evidenced 0.3% never reads 0%
 
     def test_no_credit_below_the_us_base_and_overlap_refused(self):
         de = M.country_risk(fb({'DE': 100.}), {})                    # Germany Aaa: CRP 0 < US 0.23%
@@ -248,24 +289,72 @@ class PipelineTests(unittest.TestCase):
     def test_country_risk_row_in_the_cost_of_equity_and_the_terminal(self):
         a, b = self.plain['fc']['cost_of_equity']['components'], self.crp['fc']['cost_of_equity']['components']
         row = next(x for x in b['adjustments'] if x['factor'] == 'country_risk')
+        mn = next(x for x in b['adjustments'] if x['factor'] == 'country_risk_market_neutral')
         self.assertAlmostEqual(row['value'], .4 * (TW - US), places=12)
-        self.assertAlmostEqual(b['table_rate'] - a['table_rate'], row['value'], places=12)
-        self.assertIn('country_risk', b['terminal']['kept'])                          # structural: the perpetuity keeps it
-        self.assertAlmostEqual(b['terminal']['table_rate'] - a['terminal']['table_rate'], row['value'], places=12)
+        self.assertAlmostEqual(mn['value'], -NET * 1., places=12)                    # the whole 60/40 split is mapped
+        net = row['value'] + mn['value']
+        self.assertAlmostEqual(b['table_rate'] - a['table_rate'], net, places=12)
+        for k in ('country_risk', 'country_risk_market_neutral'):
+            self.assertIn(k, b['terminal']['kept'])                                   # structural: the perpetuity keeps both
+        self.assertAlmostEqual(b['terminal']['table_rate'] - a['terminal']['table_rate'], net, places=12)
         led = next(x for x in self.crp['fc']['assumptions'] if x['id'] == 'cost_of_equity')
         self.assertIn('country_risk +0.22%', led['rationale'])
         self.assertIn('input:country_risk', led['source_ids'])
-        self.assertLess(self.crp['val']['result']['annual_values'][0]['base'], self.plain['val']['result']['annual_values'][0]['base'])
+        # 40% in Taiwan (0.22%) is below the market's average exposure (0.40%): the value rises, the hurdle falls
+        self.assertGreater(self.crp['val']['result']['annual_values'][0]['base'], self.plain['val']['result']['annual_values'][0]['base'])
         comp = {c['component']: c['value'] for c in self.crp['dc']['expected_return']['premium_components']}
-        self.assertAlmostEqual(comp['country_risk'], row['value'])
-        self.assertAlmostEqual(self.crp['dc']['expected_return']['hurdle'] - self.plain['dc']['expected_return']['hurdle'], row['value'], places=9)
+        self.assertAlmostEqual(comp['country_risk'], net)
+        self.assertAlmostEqual(self.crp['dc']['expected_return']['hurdle'] - self.plain['dc']['expected_return']['hurdle'], net, places=9)
         self.assertIn('סיכון מדינה', hebrew_table(self.crp))
         self.assertIn('## Market context', markdown(self.crp))
+        s0, s1 = pipeline.summary(self.plain), pipeline.summary(self.crp)
+        self.assertNotIn('country_risk', s0)                                          # no row, no key (no-input invariance)
+        self.assertAlmostEqual(s1['country_risk']['net'], net, places=12)
+
+    def test_country_row_prices_risk_only_above_the_market_average(self):
+        comps = {'adjustment_country_risk': .0022, 'adjustment_country_risk_market_neutral': -.004, 'adjustment_stage_mature': 0.}
+        self.assertAlmostEqual(risk.component_value(comps, 'adjustment_country_risk'), -.0018)     # below average: no pricing claim
+        reg, add = risk._register({}, comps)
+        row = add('biz.geopolitics', 'business', 'x', 'medium', rate_words=risk.DIM_RATE_WORDS['geopolitics'])
+        self.assertNotIn('priced_via', row)
+        comps['adjustment_country_risk'] = .013
+        reg, add = risk._register({}, comps, effect=lambda a: {'add_on': a, 'value_effect': None})
+        row = add('biz.geopolitics', 'business', 'x', 'medium', rate_words=risk.DIM_RATE_WORDS['geopolitics'])
+        self.assertEqual(row['priced_via'], 'forecast.cost_of_equity.components.adjustment_country_risk')
+        self.assertAlmostEqual(row['priced_via_effect']['add_on'], .009)                         # the net, not the gross 1.3%
+
+    def test_band_keeps_its_shape_with_a_country_row(self):
+        """The marginal band's index rows carry the country row like the hurdle (review 25.10.2026: on PPG the hurdle moved
+        10.25% -> 11.55% while the index rows stayed at 9.25% / 11.25%, the high one below the hurdle itself)."""
+        idx = {'value': .07, 'low': .06, 'high': .08}
+        base = {'hurdle': .10, 'premium': .03, 'permanent_loss_premium': .03, 'floor': {'value': .08}}
+        with_cr = {**base, 'hurdle': .113, 'premium': .043, 'country_risk': .013}
+        off = lambda req: [round(r['hurdle'] - req['hurdle'], 12) for r in decision._hurdle_band(req, idx, 'low', None)['rows']]
+        self.assertEqual(off(base), off(with_cr))
+        self.assertEqual(off(with_cr)[2:], [-.01, .01])
+        er0, er1 = self.plain['dc']['expected_return'], self.crp['dc']['expected_return']
+        self.assertFalse(er0['model_cost_of_equity_floor']['binding'] or er1['model_cost_of_equity_floor']['binding'])
+        self.assertEqual([round(r['hurdle'] - er0['hurdle'], 9) for r in er0['band']['rows']],
+                         [round(r['hurdle'] - er1['hurdle'], 9) for r in er1['band']['rows']])
+
+    def test_calibration_reports_the_country_rows(self):
+        s0, s1 = pipeline.summary(self.plain), pipeline.summary(self.crp)
+        s0 = {**s0, 'symbol': 'A'}
+        s1 = {**s1, 'symbol': 'B'}
+        out = calibration.market_implied([s0, s1], {'A': 3e11, 'B': 1e11}, '2026-10-19')
+        self.assertEqual(out['country_risk']['n_with_row'], 1)
+        self.assertAlmostEqual(out['country_risk']['mean_gross'], .4 * (TW - US), places=12)
+        self.assertAlmostEqual(out['country_risk']['mean_net'], .4 * (TW - US) - NET, places=12)
+        self.assertNotIn('country_risk', calibration.market_implied([s0], {'A': 3e11}, '2026-10-19'))
 
     def test_country_risk_input_is_validated(self):
         p = self.plain
-        good = {'value': .002, 'as_of': '2026-01-05', 'channel': 'revenue', 'title': 't', 'url': 'u', 'detail': 'd', 'evidence_ids': EV}
-        for bad in ({**good, 'value': .5}, {**good, 'as_of': '2026-12-01'}, {**good, 'evidence_ids': []}, {**good, 'extra': 1}):
+        good = {'value': .002, 'mapped_share': 1., 'as_of': '2026-02-16', 'channel': 'revenue', 'title': 't', 'url': 'u', 'detail': 'd',
+                'evidence_ids': EV}
+        forecast.build(ADBE, p['an'], p['card'], p['qa'], {'country_risk': good})
+        no_share = {k: v for k, v in good.items() if k != 'mapped_share'}
+        for bad in ({**good, 'value': .5}, {**good, 'as_of': '2026-12-01'}, {**good, 'evidence_ids': []}, {**good, 'extra': 1}, no_share,
+                    {**good, 'mapped_share': 1.2}):
             with self.assertRaises(ValueError):
                 forecast.build(ADBE, p['an'], p['card'], p['qa'], {'country_risk': bad})
 
@@ -278,6 +367,38 @@ class PipelineTests(unittest.TestCase):
         self.assertNotEqual(hebrew_table(self.reg), hebrew_table(self.plain))
         self.assertTrue(hebrew_paragraph(self.reg))
 
+    def test_market_clause_never_pushes_out_the_analysis(self):
+        """Review 25.10.2026: on PPG with --macro the regime clause stayed and the draft sentence went. The clause (context
+        only) is fitted last: kept where it fits, dropped first otherwise."""
+        from unittest import mock
+        from fundamental_engine import render
+
+        def fake(n_full):
+            def _p(cf, short=False, secondary=True, pad=False, compact=False, market=True):
+                words = ['w'] * (n_full - 10 * short - 5 * (not secondary)) + (['p'] * 20 if pad else []) + (['m'] * 15 if market else [])
+                return ' '.join(words)
+            return _p
+        with mock.patch.object(render, '_paragraph', fake(130)):            # 130 words fit, 145 with the clause do not
+            self.assertEqual(hebrew_paragraph({}), ' '.join(['w'] * 130))   # the clause goes, nothing is shortened for it
+        with mock.patch.object(render, '_paragraph', fake(100)):            # 115 with the clause: it fits and stays
+            self.assertEqual(hebrew_paragraph({}).split().count('m'), 15)
+        with mock.patch.object(render, '_paragraph', fake(148)):            # over the limit alone: shortened, clause only if it fits
+            self.assertEqual(hebrew_paragraph({}), ' '.join(['w'] * 138))
+        with mock.patch.object(render, '_paragraph', fake(70)):             # short: the padding sentence is decided without the
+            out = hebrew_paragraph({}).split()                              # clause (TSEM: the clause had stood in for it)
+            self.assertEqual((out.count('p'), out.count('m')), (20, 15))
+        p0, p1 = hebrew_paragraph(self.plain), hebrew_paragraph(self.reg)
+        self.assertTrue(all(x in p1 for x in p0.split('. ')))                # every sentence of the analysis is still there
+        self.assertLessEqual(len(p1.split()), render.MAX_WORDS)
+
+    def test_review_digest_binds_the_exposures_not_the_regime(self):
+        from fundamental_engine import review
+        a, r, e = self.plain['rv']['binding'], self.reg['rv']['binding'], self.exp['rv']['binding']
+        self.assertEqual(a, r)                                               # regime readings: context only, a review stands
+        self.assertNotEqual(a['inputs_sha256'], e['inputs_sha256'])          # an exposure added after a review voids it
+        self.assertIn('inputs.market_context.exposures', e['covers'])
+        self.assertEqual(review.inputs_digest(self.plain['val'], {'market_context': {}}), review.inputs_digest(self.plain['val'], {}))
+
     def test_exposure_becomes_a_named_failure_scenario_and_counter_thesis(self):
         self.assertEqual(json.dumps(self.plain['val'], sort_keys=True, default=str), json.dumps(self.exp['val'], sort_keys=True, default=str))
         sc = next(s for s in self.exp['rk']['failure_scenarios'] if s['name'] == 'exposure:china_export_controls')
@@ -286,7 +407,7 @@ class PipelineTests(unittest.TestCase):
         self.assertAlmostEqual(sc['base_value'], base)
         self.assertLess(sc['base_value_with_shock'], base)
         self.assertLess(sc['value_per_share'], self.plain['val']['result']['annual_values'][0]['bear'])
-        self.assertTrue(any('25.0%' in e for e in sc['base_edits']))
+        self.assertTrue(any('(1 - 25%)' in e for e in sc['base_edits']))
         reg = next(r for r in self.exp['rk']['register'] if r['id'] == 'geo.exposure.china_export_controls')
         self.assertEqual(reg['pricing_status'], 'not_priced')
         self.assertIn('failure scenario exposure:china_export_controls', reg['pricing_basis'])
@@ -302,7 +423,32 @@ class PipelineTests(unittest.TestCase):
         self.assertIn('זה תרחיש, לא הסתברות', geo['reading_he'])
         self.assertIn(f"חשיפה: מגבלות יצוא לסין (כ־25% מההכנסות): אם זה יקרה, השווי בתרחיש הסביר נמוך בכ־{sc['base_effect']:.0%}",
                       hebrew_table(self.exp))
-        self.assertAlmostEqual(sc['base_effect'], 1 - sc['base_value_with_shock'] / base)
+        self.assertAlmostEqual(sc['base_effect'], 1 - sc['base_value_with_shock'] / sc['base_value_control'])
+        self.assertAlmostEqual(sc['base_value_control'], base, places=6)          # no funding plan to strip: the control is the base
+        self.assertAlmostEqual(sc['bear_effect'], 1 - sc['value_per_share'] / sc['bear_value_control'])
+
+    def test_effect_is_measured_against_the_same_path_without_the_shock(self):
+        """Review 25.10.2026: the variant strips the row's funding plan and re-closes the gaps at a depressed price, so the
+        executed base (which kept its plan) is not the comparison: a 0.0001% share moved LITE's base by -464%. A funded base row
+        with a tiny exposure must show an effect of about zero."""
+        spec = live_spec()
+        n = len(spec['boundaries'])
+        stub = spec['stub_annual_revenue_rate'] * (date(2026, 12, 31) - date(2026, 9, 27)).days / 365.25
+        scen(spec, 'base').update(financing_status='assumed', debt_draw=[0., 50e6] + [0.] * (n - 2), interest_rate=[.05] + [.06] * (n - 1),
+                                  equity_proceeds=[0., 0., 80e6] + [0.] * (n - 3),
+                                  sbc_share_settlement=[.099 * stub, .099 * 950e6 * 1.1] + [0.] * (n - 2))
+        today = value_company(build_case(spec))['annual_values'][0]
+        x = M.exposures([{'kind': 'sanctions', 'share_of_revenue': 1e-6, 'evidence_ids': ['s1'], 'note': 'tiny'}], {'s1'})[0]
+        sc = risk._exposure(spec, x, 50, today['bear'], today['base'])
+        self.assertEqual(sc['status'], 'computed', sc.get('reason'))
+        self.assertGreater(abs(1 - sc['base_value_with_shock'] / today['base']), 1e-3)   # the strip and re-close alone move the base
+        self.assertLess(abs(sc['base_effect']), 1e-5)                                     # the event alone: about zero
+        self.assertLess(abs(sc['bear_effect']), 1e-5)
+        self.assertIn("funding plan removed", ' '.join(sc['base_edits']))
+        big = M.exposures([{'kind': 'sanctions', 'share_of_revenue': .2, 'evidence_ids': ['s1'], 'note': 'big'}], {'s1'})[0]
+        sb = risk._exposure(spec, big, 50, today['bear'], today['base'])
+        self.assertEqual(sb['base_value_control'], sc['base_value_control'])
+        self.assertGreater(sb['base_effect'], .05)
 
     def test_bank_route_takes_the_same_country_risk_row(self):
         geo = {'shares': {'United States': .6, 'Taiwan': .4}, 'evidence_ids': ['syn'], 'note': 'synthetic split for the test'}
@@ -311,11 +457,12 @@ class PipelineTests(unittest.TestCase):
         ca, cb = a['fc']['cost_of_equity']['components'], b['fc']['cost_of_equity']['components']
         self.assertNotIn('adjustment_country_risk', ca)
         self.assertAlmostEqual(cb['adjustment_country_risk'], .4 * (TW - US), places=12)
-        self.assertAlmostEqual(cb['table_rate'] - ca['table_rate'], .4 * (TW - US), places=12)
         self.assertIn('country risk', cb['formula'])
         led = next(x for x in b['fc']['assumptions'] if x['id'] == 'cost_of_equity')
         self.assertIn('input:country_risk', led['source_ids'])
-        self.assertLess(pipeline.summary(b)['base_value'], pipeline.summary(a)['base_value'])
+        self.assertAlmostEqual(cb['adjustment_country_risk_market_neutral'], -NET, places=12)
+        self.assertAlmostEqual(cb['table_rate'] - ca['table_rate'], .4 * (TW - US) - NET, places=12)
+        self.assertGreater(pipeline.summary(b)['base_value'], pipeline.summary(a)['base_value'])     # below the market average
 
     def test_failed_market_context_is_recorded_not_applied(self):
         cf = pipeline.run(deepcopy(ADBE), {'market_context': {'exposures': [{'kind': 'tariffs', 'share_of_supply': .4,

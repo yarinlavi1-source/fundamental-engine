@@ -1,5 +1,30 @@
 ## Unreleased — market context: country risk, geopolitical exposures, market regime (25.10.2026)
 
+Repairs after review (25.10.2026):
+- Country risk net of the market's own exposure: the ERP (S&P 500 implied) and the index return (cap-weighted implied
+  return of the largest US companies) already carry the market's average country exposure, and `MARKET_NEUTRAL_ADJUSTMENT`
+  was measured without a country row. New row `country_risk_market_neutral` = -`market_context.COUNTRY_RISK_MARKET_RATE`
+  (0.40pp) x the mapped share, next to `country_risk`, in the operating and residual-income tables, kept in the terminal
+  rate; the decision adds the net. The rate is measured by `scripts/measure_country_risk_market.py` on the 2026-10-21
+  large-cap sweep (0.42pp listing-weighted, 0.49pp with the universe rows' values, 0.31pp without Alphabet; 125 of 490
+  companies, 26% of value; `runs/macro/country_risk_market_2026-10-21.json` kept in Git). `inputs.forecast.country_risk`
+  now requires `mapped_share`. `pipeline.summary` carries `country_risk` {gross, net} and `calibration.market_implied`
+  reports their value-weighted means, both only when present. A register entry priced via the country row reads the net
+  (`risk.component_value`, `decision._risk_pricing`). PPG: net +0.90% (gross 1.30%), base 147.5 (was 136.6).
+- Marginal band: the "index low/high + premium" rows carry the country row like the hurdle (`_hurdle_band`); on PPG they
+  had stayed at 9.25% / 11.25% while the hurdle moved to 11.55%.
+- Exposure effects are measured against a zero-shock control (`risk._effect`): the same row re-run through the same funding
+  strip and re-close without the shock (`base_value_control`, `bear_value_control`, `bear_effect`). Against the executed
+  base, a 0.0001% share had read as LITE +464% and COHR -0.5%; now about 0 (test with a funded base row).
+- Point in time: `brain/country_risk.json` is dated 2026-02-16 (the February 16 ratings update in its contents), with the
+  page's "Last updated January 5, 2026" kept as `page_last_updated` and `as_of_basis`; `build_country_risk.py` derives it.
+- The paragraph's market-regime clause is fitted last (kept only where it fits): it no longer displaces analysis sentences.
+- `review.inputs_digest` binds `market_context.geography / operations / exposures` when supplied (`review.MARKET_BOUND`,
+  listed in `binding.covers`); regime readings stay unbound. Absent -> the digest is unchanged.
+- Docs: regional averages ('EMEA', 'Latin America') and the largest-add-on split choice can overstate (row notes say so);
+  Hebrew names for every table country and region, a maqaf before a name without one; small shares keep their digits
+  (0.3%, not 0%).
+
 - New `market_context.py`, switched on by `inputs.market_context` (pipeline stage `market_context`; docs/MARKET_CONTEXT.md,
   brain packet `market_context`). Without the key nothing runs: casefile hash, report, table and paragraph are
   byte-identical (ADBE fixture; TSEM, PPG, UBER from runs/universe_2026-10-21).

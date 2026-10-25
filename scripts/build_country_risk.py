@@ -95,12 +95,33 @@ for r in rw[k + 2:]:
     if not r[0]:
         break
     regions[r[0]] = {'crp': round(r[1] - mature, 6), 'erp': round(r[1], 6), 'basis': 'GDP-weighted grouping (ERP - mature market premium)'}
+# point in time: the page's 'Last updated' date can be older than its contents (on the 2026 page: 'January 5, 2026', while the
+# xlsx says 'Updated Feb 16 for sovereign ratings' and the Turkey row 'updated February 2026'). as_of (= available_at, what the
+# look-ahead guard reads) is the latest dated update found: the page date, the xlsx 'Updated <Mon> <day>' (year of its date of
+# update), and a row note's 'updated <Month> <year>' read as that month's update in the xlsx (else the month's last day).
+page_date = datetime.strptime(updated, '%B %d, %Y').date()
+dates = [page_date]
+xm = re.search(r'Date of update:\s*(\d{4})-\d{2}-\d{2}.*?Updated ([A-Z][a-z]{2})[a-z]* (\d{1,2})', xlsx_note)
+if xm:
+    dates.append(datetime.strptime(f'{xm.group(2)} {xm.group(3)} {xm.group(1)}', '%b %d %Y').date())
+for n in notes.values():
+    m = re.search(r'updated ([A-Z][a-z]+) (\d{4})', n)
+    if m:
+        first = datetime.strptime(f'{m.group(1)} 1 {m.group(2)}', '%B %d %Y').date()
+        same = [d for d in dates[1:] if (d.year, d.month) == (first.year, first.month)]
+        nxt = first.replace(day=28) + __import__('datetime').timedelta(days=4)
+        dates.append(same[0] if same else nxt - __import__('datetime').timedelta(days=nxt.day))
+available = max(dates)
 data = {
     'title': 'Damodaran, Country Default Spreads and Risk Premiums (equity country risk premium = rating-based default spread x '
              'relative equity market volatility)',
     'url': 'https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/ctryprem.html',
     'xlsx_url': 'https://pages.stern.nyu.edu/~adamodar/pc/datasets/ctryprem.xlsx',
-    'as_of': datetime.strptime(updated, '%B %d, %Y').date().isoformat(), 'page_last_updated': updated, 'retrieved_at': retrieved,
+    'as_of': available.isoformat(), 'page_last_updated': updated,
+    'as_of_basis': (f'available_at = the latest dated update in the contents ({available.isoformat()}), not the page\'s "Last updated" '
+                    f'({page_date.isoformat()}): ' + '; '.join(x for x in (xlsx_note.strip() if xm else '',
+                                                                         ', '.join(f'{k} {v}' for k, v in notes.items())) if x)),
+    'retrieved_at': retrieved,
     'xlsx_date_note': xlsx_note,
     'mature_market_erp': mature, 'us_erp': us_erp, 'relative_equity_volatility': round(relvol, 6),
     'base_country': 'United States',

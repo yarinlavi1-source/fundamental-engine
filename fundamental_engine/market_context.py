@@ -15,7 +15,14 @@ owner wants the general market state beside every answer. Three parts, each with
                                                                            channel; adding both would count it twice)
    A country less risky than the US earns no credit (the add-ons only add; conservative). The add-on is its own row of the
    cost-of-equity table (forecast._cost_of_equity, factor 'country_risk'), kept in the terminal rate (structural, not in
-   TERMINAL_KE_DROPPED) and in the decision's required return (the index return it is compared with is a US market return).
+   TERMINAL_KE_DROPPED) and in the decision's required return.
+   Market-neutral netting: the ERP (the S&P 500's implied premium) and the decision's index return (the cap-weighted implied
+   return of the largest US companies) are prices of companies that already sell abroad, so both already carry the market's
+   average country exposure. A second row nets it out (factor 'country_risk_market_neutral' = -COUNTRY_RISK_MARKET_RATE x the
+   share of the channel mapped to a country or region): on the sweep it was measured on, the value-weighted net is zero (the
+   invariant of forecast.MARKET_NEUTRAL_ADJUSTMENT: the average company is discounted at risk-free + ERP); a domestic company
+   ends below it, a more exposed one above it, and an unmapped share counts as average (neither added nor netted). The
+   decision adds the same net to the index return.
    No exposure data -> no add-on and an open question; never a default exposure. An aggregate member ('Rest of world',
    'International', 'Non US', 'Americas') maps to no country: its share carries no add-on and is listed as an open question.
    A table dated after as_of is not used (point in time).
@@ -54,10 +61,22 @@ CHANNELS = ('revenue', 'operations')
 # 183 annual reports of the 2026-10-21 universe, about a quarter of those with a geography table). The engine then looks for
 # the subsets of members that add up to the total within PARTITION_TOLERANCE and in which no region or aggregate sits next to
 # a country or region it covers (REGION_COVERS: 'EMEA' with 'GB', 'Americas' with 'US'), and uses the one with the LARGEST
-# add-on: a member that names no country adds nothing, so every split's add-on is (about) a lower bound and the largest is the
-# tightest; ties -> the smaller unmapped share, the larger share named by country, fewer members, then by name (deterministic).
+# add-on: a member that names no country adds nothing, which pulls a split down, but a region member read at its regional
+# average ('EMEA' with Africa, 'Latin America' with Argentina and Venezuela: REGION_NOTES) can pull it up, so the largest is
+# not a lower bound and can overstate (PPG's 1.30% on 2026-10-21 comes mostly from such averages). The market-average netting
+# row is measured with this same rule, so the rule's average lean cancels in the net; a company-specific lean does not:
+# supply an evidenced country split when the regions dominate. Ties -> the smaller unmapped share, the larger share named by
+# country, fewer members, then by name (deterministic).
 # No such subset -> no add-on and an open question. Searched only up to PARTITION_MAX_MEMBERS members (2^n subsets).
 OVERLAP_TOLERANCE = .01
+# The market's own country exposure, per unit of mapped exposure: sum(w x add-on) / sum(w x mapped share) over the large-cap
+# sweep companies with a country-risk row, w = market value (scripts/measure_country_risk_market.py on
+# runs/universe_2026-10-21, queue large500, this table): 0.42pp with the listing feed's market values (125 of 490 companies
+# have a readable split, 26% of the sweep's value; 22 complete, 103 partial), 0.49pp with the universe rows' values (which
+# count Alphabet at 2.3x its listing value), 0.31pp without Alphabet (half of the weighted add-on). Rounded to 0.40pp. Measured
+# with this method, regional averages included, so a method-wide lean (e.g. 'EMEA' or 'Latin America' read at averages that
+# include Africa or Argentina) cancels in the net row instead of adding to every company. Re-measure after a table update.
+COUNTRY_RISK_MARKET_RATE = .004
 PARTITION_TOLERANCE = .015
 PARTITION_MAX_MEMBERS = 16
 
@@ -92,7 +111,13 @@ REGION_ALIASES = {
 REGION_NOTES = {'Asia': 'read as Damodaran\'s GDP-weighted Asia (Australia and New Zealand are a separate region; a sub-region keeps '
                         'the whole region\'s average)',
                 'Europe': 'read as Damodaran\'s GDP-weighted Europe (a sub-region keeps the whole region\'s average)',
-                'North America': 'read as Damodaran\'s GDP-weighted North America (US, Canada; below the US base: no add-on)'}
+                'North America': 'read as Damodaran\'s GDP-weighted North America (US, Canada; below the US base: no add-on)',
+                # regional averages lean high for a typical US company's sales mix: these two carry their riskiest members
+                'EMEA': "read as Damodaran's GDP-weighted Europe + Middle East + Africa (1.68%, Western Europe alone 1.04%): Africa "
+                        '(7.72%) and the Middle East (2.01%) are in it, so it can overstate a mainly European exposure',
+                'Latin America & Caribbean': "read as Damodaran's GDP-weighted Latin America & Caribbean (4.40%; Mexico 2.46%, "
+                                             'Brazil 3.24%): Argentina (9.71%) and Venezuela (26.66%) are in it, so it can overstate '
+                                             'an exposure concentrated in Mexico, Brazil or Chile'}
 # which of Damodaran's country 'region' labels each table region covers: a country listed next to a region that covers it
 # is an overlap (used for asset tables, whose shares are normalized and cannot reveal overlap by their sum)
 EUROPE_LABELS = {'Western Europe', 'Eastern Europe & Russia'}
@@ -164,17 +189,53 @@ HE = {'tight': 'צרים', 'normal': 'רגילים', 'wide': 'רחבים', 'stre
       'rich': 'נמוכה: השוק יקר ביחס להיסטוריה', 'near_history': 'קרובה לממוצע ההיסטורי', 'cheap': 'גבוהה: השוק זול ביחס להיסטוריה'}
 VOL_HE = {'calm': 'רגועה', 'normal': 'רגילה', 'elevated': 'מוגברת', 'high': 'גבוהה'}
 CURVE_HE = {'inverted': 'הפוך', 'flat': 'שטוח', 'normal': 'רגיל', 'steep': 'תלול'}
-COUNTRY_HE = {'United States': 'ארה״ב', 'Taiwan': 'טייוואן', 'China': 'סין', 'Hong Kong': 'הונג קונג', 'Israel': 'ישראל',
-              'Japan': 'יפן', 'Korea': 'קוריאה', 'India': 'הודו', 'Germany': 'גרמניה', 'France': 'צרפת', 'United Kingdom': 'בריטניה',
-              'Netherlands': 'הולנד', 'Ireland': 'אירלנד', 'Switzerland': 'שווייץ', 'Canada': 'קנדה', 'Mexico': 'מקסיקו',
-              'Brazil': 'ברזיל', 'Russia': 'רוסיה', 'Singapore': 'סינגפור', 'Malaysia': 'מלזיה', 'Vietnam': 'וייטנאם',
-              'Thailand': 'תאילנד', 'Philippines': 'הפיליפינים', 'Indonesia': 'אינדונזיה', 'Turkey': 'טורקיה', 'Italy': 'איטליה',
-              'Spain': 'ספרד', 'Australia': 'אוסטרליה', 'Saudi Arabia': 'ערב הסעודית', 'United Arab Emirates': 'איחוד האמירויות',
-              'South Africa': 'דרום אפריקה', 'Poland': 'פולין', 'Ukraine': 'אוקראינה',
-              'Europe': 'אירופה', 'Western Europe': 'מערב אירופה', 'Eastern Europe': 'מזרח אירופה', 'Asia': 'אסיה',
-              'EMEA': 'אירופה, המזרח התיכון ואפריקה', 'Middle East': 'המזרח התיכון', 'Africa': 'אפריקה',
-              'Africa & Mid East': 'המזרח התיכון ואפריקה', 'Latin America & Caribbean': 'אמריקה הלטינית',
-              'Central and South America': 'מרכז ודרום אמריקה', 'North America': 'צפון אמריקה', 'Emerging Markets': 'שווקים מתעוררים'}
+# Hebrew names of every table country and region (render and analyst sheet text); a name missing here is written in English
+# after a maqaf ('ב־Name'). HE_ARTICLE: names that start with the definite article, which a prefix replaces ('במזרח התיכון').
+COUNTRY_HE = {
+    'Abu Dhabi': 'אבו דאבי', 'Albania': 'אלבניה', 'Algeria': "אלג'יריה", 'Andorra (Principality of)': 'אנדורה', 'Angola': 'אנגולה',
+    'Argentina': 'ארגנטינה', 'Armenia': 'ארמניה', 'Aruba': 'ארובה', 'Australia': 'אוסטרליה', 'Austria': 'אוסטריה',
+    'Azerbaijan': "אזרבייג'ן", 'Bahamas': 'איי בהאמה', 'Bahrain': 'בחריין', 'Bangladesh': 'בנגלדש', 'Barbados': 'ברבדוס',
+    'Belarus': 'בלארוס', 'Belgium': 'בלגיה', 'Belize': 'בליז', 'Benin': 'בנין', 'Bermuda': 'ברמודה', 'Bolivia': 'בוליביה',
+    'Bosnia and Herzegovina': 'בוסניה והרצגובינה', 'Botswana': 'בוטסואנה', 'Brazil': 'ברזיל', 'Brunei': 'ברוניי', 'Bulgaria': 'בולגריה',
+    'Burkina Faso': 'בורקינה פאסו', 'Cambodia': 'קמבודיה', 'Cameroon': 'קמרון', 'Canada': 'קנדה', 'Cape Verde': 'כף ורדה',
+    'Cayman Islands': 'איי קיימן', 'Chile': "צ'ילה", 'China': 'סין', 'Colombia': 'קולומביה',
+    'Congo (Democratic Republic of)': 'הרפובליקה הדמוקרטית של קונגו', 'Congo (Republic of)': 'הרפובליקה של קונגו', 'Cook Islands': 'איי קוק',
+    'Costa Rica': 'קוסטה ריקה', 'Croatia': 'קרואטיה', 'Cuba': 'קובה', 'Curacao': 'קוראסאו', 'Cyprus': 'קפריסין', 'Czech Republic': "צ'כיה",
+    "Côte d'Ivoire": 'חוף השנהב', 'Denmark': 'דנמרק', 'Dominican Republic': 'הרפובליקה הדומיניקנית', 'Ecuador': 'אקוודור', 'Egypt': 'מצרים',
+    'El Salvador': 'אל סלוודור', 'Estonia': 'אסטוניה', 'Ethiopia': 'אתיופיה', 'Fiji': "פיג'י", 'Finland': 'פינלנד', 'France': 'צרפת',
+    'Gabon': 'גבון', 'Gambia': 'גמביה', 'Georgia': 'גאורגיה', 'Germany': 'גרמניה', 'Ghana': 'גאנה', 'Greece': 'יוון',
+    'Guatemala': 'גואטמלה', 'Guernsey (States of)': 'גרנזי', 'Guinea': 'גינאה', 'Guinea-Bissau': 'גינאה ביסאו', 'Guyana': 'גיאנה',
+    'Haiti': 'האיטי', 'Honduras': 'הונדורס', 'Hong Kong': 'הונג קונג', 'Hungary': 'הונגריה', 'Iceland': 'איסלנד', 'India': 'הודו',
+    'Indonesia': 'אינדונזיה', 'Iran': 'איראן', 'Iraq': 'עיראק', 'Ireland': 'אירלנד', 'Isle of Man': 'האי מאן', 'Israel': 'ישראל',
+    'Italy': 'איטליה', 'Jamaica': "ג'מייקה", 'Japan': 'יפן', 'Jersey (States of)': "ג'רזי", 'Jordan': 'ירדן', 'Kazakhstan': 'קזחסטן',
+    'Kenya': 'קניה', 'Korea': 'דרום קוריאה', 'Korea, D.P.R.': 'צפון קוריאה', 'Kuwait': 'כווית', 'Kyrgyzstan': 'קירגיזסטן',
+    'Laos': 'לאוס', 'Latvia': 'לטביה', 'Lebanon': 'לבנון', 'Liberia': 'ליבריה', 'Libya': 'לוב', 'Liechtenstein': 'ליכטנשטיין',
+    'Lithuania': 'ליטא', 'Luxembourg': 'לוקסמבורג', 'Macao': 'מקאו', 'Macedonia': 'מקדוניה הצפונית', 'Madagascar': 'מדגסקר',
+    'Malawi': 'מלאווי', 'Malaysia': 'מלזיה', 'Maldives': 'האיים המלדיביים', 'Mali': 'מאלי', 'Malta': 'מלטה', 'Mauritius': 'מאוריציוס',
+    'Mexico': 'מקסיקו', 'Moldova': 'מולדובה', 'Mongolia': 'מונגוליה', 'Montenegro': 'מונטנגרו', 'Montserrat': 'מונטסראט',
+    'Morocco': 'מרוקו', 'Mozambique': 'מוזמביק', 'Myanmar': 'מיאנמר', 'Namibia': 'נמיביה', 'Nepal': 'נפאל', 'Netherlands': 'הולנד',
+    'New Zealand': 'ניו זילנד', 'Nicaragua': 'ניקרגואה', 'Niger': "ניז'ר", 'Nigeria': 'ניגריה', 'Norway': 'נורווגיה', 'Oman': 'עומאן',
+    'Pakistan': 'פקיסטן', 'Panama': 'פנמה', 'Papua New Guinea': 'פפואה גינאה החדשה', 'Paraguay': 'פרגוואי', 'Peru': 'פרו',
+    'Philippines': 'הפיליפינים', 'Poland': 'פולין', 'Portugal': 'פורטוגל', 'Qatar': 'קטר', 'Ras Al Khaimah (Emirate of)': "ראס אל-ח'ימה",
+    'Romania': 'רומניה', 'Russia': 'רוסיה', 'Rwanda': 'רואנדה', 'Saudi Arabia': 'ערב הסעודית', 'Senegal': 'סנגל', 'Serbia': 'סרביה',
+    'Sharjah': "שארג'ה", 'Sierra Leone': 'סיירה לאון', 'Singapore': 'סינגפור', 'Slovakia': 'סלובקיה', 'Slovenia': 'סלובניה',
+    'Solomon Islands': 'איי שלמה', 'Somalia': 'סומליה', 'South Africa': 'דרום אפריקה', 'Spain': 'ספרד', 'Sri Lanka': 'סרי לנקה',
+    'St. Maarten': 'סינט מארטן', 'St. Vincent & the Grenadines': 'סנט וינסנט והגרנדינים', 'Sudan': 'סודן', 'Suriname': 'סורינאם',
+    'Swaziland': 'אסוואטיני', 'Sweden': 'שוודיה', 'Switzerland': 'שווייץ', 'Syria': 'סוריה', 'Taiwan': 'טייוואן',
+    'Tajikistan': "טג'יקיסטן", 'Tanzania': 'טנזניה', 'Thailand': 'תאילנד', 'Togo': 'טוגו', 'Trinidad and Tobago': 'טרינידד וטובגו',
+    'Tunisia': 'תוניסיה', 'Turkey': 'טורקיה', 'Turks and Caicos Islands': 'איי טרקס וקייקוס', 'Uganda': 'אוגנדה', 'Ukraine': 'אוקראינה',
+    'United Arab Emirates': 'איחוד האמירויות', 'United Kingdom': 'בריטניה', 'United States': 'ארה״ב', 'Uruguay': 'אורוגוואי',
+    'Uzbekistan': 'אוזבקיסטן', 'Venezuela': 'ונצואלה', 'Vietnam': 'וייטנאם', 'Yemen, Republic': 'תימן', 'Zambia': 'זמביה',
+    'Zimbabwe': 'זימבבואה',
+    # regions (brain/country_risk.json 'regions')
+    'Africa': 'אפריקה', 'Asia': 'אסיה', 'Australia & New Zealand': 'אוסטרליה וניו זילנד', 'Caribbean': 'האיים הקריביים',
+    'Central and South America': 'מרכז ודרום אמריקה', 'Eastern Europe': 'מזרח אירופה', 'Middle East': 'המזרח התיכון',
+    'North America': 'צפון אמריקה', 'Western Europe': 'מערב אירופה', 'Global': 'העולם כולו', 'Africa & Mid East': 'המזרח התיכון ואפריקה',
+    'Australia, NZ & Canada': 'אוסטרליה, ניו זילנד וקנדה', 'Latin America & Caribbean': 'אמריקה הלטינית והאיים הקריביים',
+    'Europe': 'אירופה', 'Emerging Markets': 'שווקים מתעוררים', 'Small Asia (No India, China & Japan)': 'אסיה בלי הודו, סין ויפן',
+    'EMEA': 'אירופה, המזרח התיכון ואפריקה'}
+HE_ARTICLE = frozenset({'Congo (Democratic Republic of)', 'Congo (Republic of)', 'Dominican Republic', 'Isle of Man', 'Maldives',
+                        'Philippines', 'Caribbean', 'Middle East', 'Africa & Mid East'})
 
 _TABLE = None
 
@@ -200,6 +261,17 @@ def _norm(name):
 
 def _known(fb):
     return set((fb or {}).get('sources') or {}) | {q.get('id') for q in (fb or {}).get('qualitative') or [] if q.get('id')}
+
+
+def share_text(s):
+    """A share as a percent with enough digits to stay visible: 25%, 3.5%, 0.42%, 0.0001% (an evidenced 0.3% never reads 0%)."""
+    p = float(s) * 100
+    if p >= 9.95 or p == 0:
+        return f'{p:.0f}%'
+    if p >= .995:
+        return f'{p:.1f}'.rstrip('0').rstrip('.') + '%'
+    d = max(2, 1 - math.floor(math.log10(p)))
+    return f'{p:.{d}f}'.rstrip('0').rstrip('.') + '%'
 
 
 def _evidence(ev, known, label):
@@ -307,7 +379,8 @@ def _disclosed_revenue(fb):
             return None, (f'the geography members of {year} add up to {sum(shares.values()):.0%} of revenue (overlapping categories) and '
                           'no subset adds up to the total: supply an evidenced split (inputs.market_context.geography)')
         note = (f'the members add up to {sum(shares.values()):.0%} of revenue (two overlapping splits on one axis); used the split '
-                f"{', '.join(part)} (a complete split without overlap; of those, the largest add-on, the tightest lower bound); not used: "
+                f"{', '.join(part)} (a complete split without overlap; of those, the largest add-on, which can overstate where regional "
+                'averages carry it); not used: '
                 + ', '.join(m for m in shares if m not in part))
         shares = {m: shares[m] for m in part}
     sid = bm.get('source_id')
@@ -388,12 +461,14 @@ def country_risk(fb, spec, known=None):
     known = _known(fb) if known is None else known
     base = t['countries'][t['base_country']]['crp']
     home = ((fb or {}).get('company') or {}).get('country')
-    table = {k: t[k] for k in ('title', 'url', 'xlsx_url', 'as_of', 'retrieved_at', 'mature_market_erp', 'us_erp',
-                               'relative_equity_volatility')}
+    table = {k: t[k] for k in ('title', 'url', 'xlsx_url', 'as_of', 'page_last_updated', 'as_of_basis', 'retrieved_at',
+                               'mature_market_erp', 'us_erp', 'relative_equity_volatility')}
     out = {'status': None, 'add_on': None, 'channel': None, 'revenue': None, 'operations': None, 'table': table,
            'base': {'country': t['base_country'], 'crp': base, 'note': t['base_note']}, 'open_questions': [], 'forecast_input': None,
            'formula': 'add-on(channel) = sum(share_i x max(0, CRP_i - CRP_US)); add-on = max(revenue, operations); '
-                      'only the part above the US base (the engine ERP is the US implied premium, which carries the US CRP)'}
+                      'only the part above the US base (the engine ERP is the US implied premium, which carries the US CRP); '
+                      'net row = add-on - COUNTRY_RISK_MARKET_RATE x mapped share (the market average already in the ERP and the '
+                      'index return)'}
     if str(fb['as_of'])[:10] < t['as_of']:
         out['status'] = 'table_after_as_of'
         out['open_questions'].append(f"the packaged country risk table is dated {t['as_of']}, after as_of {fb['as_of']}: "
@@ -444,8 +519,14 @@ def country_risk(fb, spec, known=None):
     top = sorted((r for r in out[ch]['rows'] if (r['contribution'] or 0) > 0), key=lambda r: -r['contribution'])
     detail = ('; '.join(f"{r['share']:.0%} {r['mapped_to']} (CRP {r['crp']:.2%}, {r['above_base']:+.2%} above the US)" for r in top[:4])
               or 'no exposure above the US base') + (f'; lower bound: {gap:.0%} of the channel is not mapped to a country' if gap > OVERLAP_TOLERANCE else '')
+    mapped = min(max(out[ch]['mapped_share'], 0.), 1.)
+    out['market_neutral'] = {'rate': COUNTRY_RISK_MARKET_RATE, 'mapped_share': mapped, 'value': -COUNTRY_RISK_MARKET_RATE * mapped,
+                             'net': out['add_on'] - COUNTRY_RISK_MARKET_RATE * mapped,
+                             'basis': "the market's average country add-on per unit of mapped exposure (COUNTRY_RISK_MARKET_RATE, measured "
+                                      'on the 2026-10-21 large-cap sweep) times the mapped share: already in the ERP and the index '
+                                      'return, so it is netted out (an unmapped share counts as average)'}
     out['forecast_input'] = {
-        'value': round(out['add_on'], 8), 'as_of': t['as_of'], 'channel': ch,
+        'value': round(out['add_on'], 8), 'mapped_share': round(mapped, 8), 'as_of': t['as_of'], 'channel': ch,
         'title': f"Damodaran country risk premiums ({t['as_of']}) x {ch} exposure ({out[ch]['source']})",
         'url': t['url'], 'detail': detail, 'evidence_ids': sorted(set(out[ch]['evidence_ids']))}
     return out
@@ -492,7 +573,7 @@ def exposures(items, known):
         what = 'ההכנסות' if given[0] == 'share_of_revenue' else 'האספקה'
         out.append({'id': xid, 'kind': kind, 'share': share, 'share_basis': given[0], 'shock': shock, 'cost_rate': rate,
                     'evidence_ids': ev, 'note': it['note'].strip(), 'mechanism': k['mechanism'],
-                    'label_he': f"{k['he']} (כ־{share:.0%} מ{what})"})
+                    'label_he': f"{k['he']} (כ־{share_text(share)} מ{what})"})
     return out
 
 
@@ -508,7 +589,7 @@ def shock_row(row, x, count, stub):
         g0 = (1 + g[0]) * (1 - s) - 1
         g[0] = max(g0, GROWTH_FLOOR)
         row['growth'] = g
-        edits.append(f"first full fiscal year revenue x (1 - {s:.1%}): the evidenced {s:.1%} of {what} exposed to {x['kind']} is lost and "
+        edits.append(f"first full fiscal year revenue x (1 - {share_text(s)}): the evidenced {share_text(s)} of {what} exposed to {x['kind']} is lost and "
                      'does not come back; later years keep the row\'s growth on the smaller base; costs flex with revenue (no operating '
                      'deleverage assumed: no default severity)')
         if g0 < GROWTH_FLOOR:
@@ -518,11 +599,11 @@ def shock_row(row, x, count, stub):
     ccr = expand('cash_cost_ratio', count)
     if x['share_basis'] == 'share_of_revenue':
         delta = [s * r] * count
-        edits.append(f'cash cost ratio + {s:.1%} x {r:.1%} = +{s * r:.2%} of revenue in every year: the exposed revenue bears the '
+        edits.append(f'cash cost ratio + {share_text(s)} x {share_text(r)} = +{share_text(s * r)} of revenue in every year: the exposed revenue bears the '
                      'evidenced cost rate and it is not passed on')
     else:
         delta = [c * s * r for c in ccr]
-        edits.append(f'cash cost ratio x (1 + {s:.1%} x {r:.1%}) in every year: the exposed {s:.1%} of cash costs rises by the evidenced '
+        edits.append(f'cash cost ratio x (1 + {share_text(s)} x {share_text(r)}) in every year: the exposed {share_text(s)} of cash costs rises by the evidenced '
                      'rate and it is not passed on')
     row['cash_cost_ratio'] = [min(c + d, 2.) for c, d in zip(ccr, delta)]
     t = row['terminal']
@@ -711,6 +792,15 @@ def _he_name(k):
     return COUNTRY_HE.get(k, k)
 
 
+def _in_he(k):
+    """'in <country or region>' in Hebrew: בצרפת, במזרח התיכון (the article drops after the prefix), ב־Name for a name without
+    a Hebrew form (a prefix is never glued to Latin letters)."""
+    h = COUNTRY_HE.get(k)
+    if h is None:
+        return 'ב־' + str(k)
+    return 'ב' + (h[1:] if k in HE_ARTICLE else h)
+
+
 def country_risk_he(mc):
     """One short Hebrew explanation of the country-risk row (or why there is none)."""
     cr = (mc or {}).get('country_risk') or {}
@@ -720,12 +810,24 @@ def country_risk_he(mc):
         where = 'מההכנסות' if cr['channel'] == 'revenue' else 'מהייצור והנכסים'
         gap = (f" {cr['uncovered_share']:.0%} {where} לא מפורטים לפי מדינה ולא נכללו (שאלה פתוחה), ולכן זה רף תחתון."
                if cr['status'] == 'partial' else '')
+        mn = cr.get('market_neutral') or {}
+        net = mn.get('net', cr['add_on'])
+        avg = ('פרמיית השוק כבר כוללת את החשיפה הממוצעת של החברות הגדולות בארה״ב לחו״ל (כ־'
+               f"{-mn.get('value', 0.) * 100:.2f}% לפי החלק המפורט)")
+        move = (f"נטו נוספו כ־{net * 100:.2f}% לשיעור ההיוון" if net >= .00005 else
+                f"נטו שיעור ההיוון נמוך בכ־{-net * 100:.2f}%" if net <= -.00005 else 'נטו שיעור ההיוון כמעט לא משתנה')
+        src = f"(שיטת דמודרן, טבלה מ־{_he_date(cr['table']['as_of'])})"
         if not top:
-            return (f"סיכון מדינה: בחלק המפורט של {('ההכנסות' if cr['channel'] == 'revenue' else 'הנכסים')} אין חשיפה למדינות מסוכנות "
-                    'יותר מארה״ב, ולכן לא נוספה פרמיה לשיעור ההיוון.' + gap)
-        lst = ', '.join(f"כ־{r['share']:.0%} {where} ב{_he_name(r['mapped_to'])} (פרמיה {r['crp'] * 100:.2f}%)" for r in top[:3])
-        return (f"סיכון מדינה: {lst}, לעומת {cr['base']['crp'] * 100:.2f}% בארה״ב; נוספו כ־{cr['add_on'] * 100:.2f}% לשיעור ההיוון "
-                f"(שיטת דמודרן, טבלה מ־{_he_date(cr['table']['as_of'])}).{gap}")
+            head = (f"סיכון מדינה: בחלק המפורט של {('ההכנסות' if cr['channel'] == 'revenue' else 'הנכסים')} אין חשיפה למדינות מסוכנות "
+                    'יותר מארה״ב')
+            if not mn.get('value'):
+                return head + ', ולכן לא נוספה פרמיה לשיעור ההיוון.' + gap
+            return f'{head}; {avg}, ולכן {move} {src}.{gap}'
+        lst = ', '.join(f"כ־{share_text(r['share'])} {where} {_in_he(r['mapped_to'])} (פרמיה {r['crp'] * 100:.2f}%)" for r in top[:3])
+        if not mn:
+            return f"סיכון מדינה: {lst}, לעומת {cr['base']['crp'] * 100:.2f}% בארה״ב; נוספו כ־{cr['add_on'] * 100:.2f}% לשיעור ההיוון {src}.{gap}"
+        return (f"סיכון מדינה: {lst}, לעומת {cr['base']['crp'] * 100:.2f}% בארה״ב: תוספת של כ־{cr['add_on'] * 100:.2f}% לפי החשיפה; "
+                f'{avg}, ולכן {move} {src}.{gap}')
     if cr.get('status') in ('no_exposure_data', 'table_after_as_of'):
         return 'סיכון מדינה לא חושב: אין פילוח הכנסות לפי מדינה שאפשר לקרוא (שאלה פתוחה, בלי ברירת מחדל).' \
             if cr['status'] == 'no_exposure_data' else 'סיכון מדינה לא חושב: טבלת הפרמיות מאוחרת לתאריך הניתוח.'

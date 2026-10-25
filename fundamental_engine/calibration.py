@@ -39,6 +39,17 @@ def market_implied(summaries, caps, as_of, assumption=.0875, clip=(-.10, .40), b
            # value-weighted net risk adjustment over risk-free + ERP: near zero when the add-ons are market-neutral (the ERP's
            # definition); forecast.MARKET_NEUTRAL_ADJUSTMENT is re-measured from it
            'mean_risk_adjustment': ra_m}
+    cr = [(s['country_risk'], c) for _, _, c, s in pts if isinstance(s.get('country_risk'), dict)]
+    if cr:
+        # market_context's country-risk rows: the ERP and this implied return already carry the market's average country
+        # exposure, so the net row (add-on - COUNTRY_RISK_MARKET_RATE x mapped share) should average near zero by value; the
+        # gross add-on's mean is what a row without the netting would have double counted
+        wc = sum(c for _, c in cr)
+        out['country_risk'] = {'n_with_row': len(cr), 'coverage_by_value': wc / w,
+                               'mean_gross': sum(x['gross'] * c for x, c in cr) / wc, 'mean_net': sum(x['net'] * c for x, c in cr) / wc,
+                               'meaning': 'value-weighted over the companies with a country-risk row: mean_net near zero keeps the '
+                                          'average company at risk-free + ERP; mean_gross is the market average already in the ERP '
+                                          'and in this implied return'}
     out['index_input'] = {'value': cw, 'low': cw - band, 'high': cw + band,
                           'basis': (f"engine-consistent market return: cap-weighted base-case implied return of {len(pts)} of the {len(summaries)} "
                                     f"largest US operating companies valued by the same engine on {as_of} ({w / total:.0%} of their value)"),

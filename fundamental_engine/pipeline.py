@@ -422,7 +422,8 @@ def run(fb, inputs=None):
         val = {'status': 'not_computed', 'reason': 'valuation failed: ' + cf['errors'][-1]['error']}
     rk = stage('risk', lambda: risk.assess(fb, qa, an, card, fc, val, market=mc) if mc else risk.assess(fb, qa, an, card, fc, val)) if card else None
     rv = stage('review', lambda: review.audit(fb, qa, an, card, fc, val, rk, inputs.get('reviewer'), inputs_sha256=review.inputs_digest(val, signed),
-                                              authors=review.input_authors(signed))) if rk else None
+                                              authors=review.input_authors(signed),
+                                              market_bound_keys=tuple(review.market_bound(signed)))) if rk else None
     parts = {'fb': fb, 'qa': qa, 'an': an, 'card': card, 'fc': fc, 'val': val, 'rk': rk, 'rv': rv}
     dc = stage('decision', lambda: decision.decide(parts, inputs.get('decision')))
     cf.update({'qa': qa, 'an': an, 'card': card, 'fc': fc, 'val': val, 'rk': rk, 'rv': rv, 'dc': dc})
@@ -505,9 +506,19 @@ def _risk_adjustment(cf):
     return sum(a.get('value') or 0 for a in rows) if isinstance(rows, list) else None
 
 
+def _country_risk(cf):
+    """The forecast's country-risk rows (market_context): {'gross', 'net'} or None when the casefile has none."""
+    comp = (((cf.get('fc') or {}).get('cost_of_equity') or {}).get('components') or {})
+    g = comp.get('adjustment_country_risk')
+    if not isinstance(g, (int, float)):
+        return None
+    return {'gross': g, 'net': g + (comp.get('adjustment_country_risk_market_neutral') or 0.)}
+
+
 def summary(cf):
     """Compact record used by the portfolio layer, monitoring and discovery comparisons. margin (marginal|clear|None), hurdle
-    and value_at_required_return come from the decision contract (decision_version 3); None when absent."""
+    and value_at_required_return come from the decision contract (decision_version 3); None when absent. country_risk
+    ({gross, net}) only when the forecast has the country-risk rows (calibration.market_implied reports their mean)."""
     dc, val = cf.get('dc') or {}, cf.get('val') or {}
     er = dc.get('expected_return') or {}
     today = ((val.get('result') or {}).get('annual_values') or [{}])[0]
@@ -524,4 +535,5 @@ def summary(cf):
             'risk_adjustment': _risk_adjustment(cf),
             'decision_version': dc.get('decision_version'), 'margin': v.get('margin'), 'hurdle': er.get('hurdle'),
             'value_at_required_return': v.get('value_at_required_return', er.get('value_at_required_return')),
-            'review_status': (cf.get('rv') or {}).get('status'), 'casefile_sha256': cf.get('casefile_sha256')}
+            'review_status': (cf.get('rv') or {}).get('status'), 'casefile_sha256': cf.get('casefile_sha256'),
+            **({'country_risk': _country_risk(cf)} if _country_risk(cf) else {})}

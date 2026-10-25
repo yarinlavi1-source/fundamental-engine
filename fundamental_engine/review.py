@@ -16,7 +16,8 @@ Three layers; none of them proves that a source is true:
    fabricated. It is ACCEPTED only when valid, independent and bound to this valuation (valuation_sha256
    equals the executed input_sha256; reviewed_at between the valuation cutoff and today) AND to the analyst's
    inputs (inputs_sha256 equals inputs_digest: the executed valuation plus inputs.decision, inputs.card and
-   inputs.forecast, so an analyst override added after the review voids it). A reviewer whose normalized name
+   inputs.forecast, and the analysis parts of inputs.market_context when supplied, so an analyst override or an
+   evidenced exposure added after the review voids it). A reviewer whose normalized name
    is an author-side signer (a case assumption 'reviewer', a forecast 'reviews' signer or the analyst named
    in the inputs) is a self-review, never independent. Its assumption
    sign-offs are applied by RE-RUNNING the underwriting audit on a copy of the executed case in which every
@@ -52,6 +53,12 @@ SBC_MIN_SHARE = .5      # modelled SBC share of revenue below half of history is
 HARD = {'dataqa_missing', 'data_blocked', 'risk_not_assessed', 'disqualifying_risk', 'redteam_not_usable',
         'consistency_failure', 'critical_finding_unresolved'}
 BOUND_INPUTS = ('decision', 'card', 'forecast')           # analyst inputs the reviewer's inputs_sha256 covers
+# inputs.market_context parts the digest covers when supplied: the exposure splits (geography, operations) and the evidenced
+# exposures, which change the failure scenarios, downside.permanent_loss_value and the register without touching the
+# valuation hash. The country_risk switch moves the cost of equity, so the valuation hash already covers it; the regime
+# readings are context only (no value reads them), so refreshing them does not void a review. Absent, {} or regime-only ->
+# the digest is unchanged.
+MARKET_BOUND = ('geography', 'operations', 'exposures')
 RELEASE_CLASSES = {'filing_document', 'filing_dataset'}   # decision._evidence_class values a red-flag release may cite
 RELEASE_DOCS = 'issuer_document, primary_document or document'
 
@@ -291,11 +298,22 @@ def _today(today):
 
 def inputs_digest(val, inputs=None):
     """The reviewer's inputs_sha256: the executed valuation (input_sha256) and the analyst's inputs.decision, inputs.card and
-    inputs.forecast (empty = none). The pipeline computes it; an override added after the review changes it."""
+    inputs.forecast (empty = none), plus inputs.market_context's MARKET_BOUND parts when any is supplied. The pipeline
+    computes it; an override or an exposure added after the review changes it."""
     result = valuation_parts(val or {})[0]
     inputs = inputs if isinstance(inputs, dict) else {}
-    return digest({'binding': 'review_inputs_v1', 'valuation_sha256': (result or {}).get('input_sha256'),
-                   **{k: inputs.get(k) or None for k in BOUND_INPUTS}})
+    d = {'binding': 'review_inputs_v1', 'valuation_sha256': (result or {}).get('input_sha256'),
+         **{k: inputs.get(k) or None for k in BOUND_INPUTS}}
+    mc = market_bound(inputs)
+    if mc:
+        d['market_context'] = mc
+    return digest(d)
+
+
+def market_bound(inputs):
+    """The inputs.market_context parts the review digest covers (MARKET_BOUND), {} when none is supplied."""
+    mc = (inputs or {}).get('market_context') if isinstance(inputs, dict) else None
+    return {k: mc[k] for k in MARKET_BOUND if k in mc} if isinstance(mc, dict) else {}
 
 
 def input_authors(inputs):
@@ -649,10 +667,11 @@ def _known_ids(fb, case, rk):
     return {i for i in ids if isinstance(i, str)}
 
 
-def audit(fb, qa, an, card, fc, val, rk, reviewer=None, today=None, inputs_sha256=None, authors=()):
+def audit(fb, qa, an, card, fc, val, rk, reviewer=None, today=None, inputs_sha256=None, authors=(), market_bound_keys=()):
     """Review gate. `today` is the clock for reviewed_at (date or ISO string; default date.today()). `inputs_sha256` is the
     pipeline's inputs_digest(val, inputs) the reviewer must sign (default: inputs_digest(val), i.e. no analyst inputs);
-    `authors` are author-side names from the inputs (input_authors), checked with every case/spec assumption reviewer."""
+    `authors` are author-side names from the inputs (input_authors), checked with every case/spec assumption reviewer;
+    `market_bound_keys` names the inputs.market_context parts the digest covers (listed in binding.covers)."""
     from .decision import _evidence_index
     result, case, _, _ = valuation_parts(val)
     rt = redteam_check(fb, qa, an, fc, val)
@@ -723,7 +742,8 @@ def audit(fb, qa, an, card, fc, val, rk, reviewer=None, today=None, inputs_sha25
                            'valuation_audit': va, 'redteam': rt, 'consistency': cons},
             'reviewer': deepcopy(reviewer) if reviewer is not None else None, 'reviewer_check': rc,
             'binding': {'valuation_sha256': (result or {}).get('input_sha256'), 'inputs_sha256': bind,
-                        'covers': ['valuation input_sha256'] + [f'inputs.{k}' for k in BOUND_INPUTS],
+                        'covers': ['valuation input_sha256'] + [f'inputs.{k}' for k in BOUND_INPUTS]
+                                  + [f'inputs.market_context.{k}' for k in market_bound_keys],
                         'supplied_by': 'pipeline' if inputs_sha256 else 'review default: no analyst inputs (inputs_digest(val))',
                         'meaning': 'a reviewer signs valuation_sha256 and inputs_sha256; any later change to the valuation or to these '
                                    'analyst inputs voids the review'},

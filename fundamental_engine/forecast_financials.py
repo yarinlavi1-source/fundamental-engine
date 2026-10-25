@@ -159,17 +159,18 @@ def build(fb, an, card, qa, inputs, rates, reviews, warn, warnings, empty):
     adj = [{'factor': 'stage:' + stage, 'value': st_add, 'reason': f'business-risk add-on for the {stage} stage'},
            {'factor': 'balance_sheet_business', 'value': BANK_KE_ADDON,
             'reason': 'balance-sheet leverage and the credit / underwriting cycle (documented add-on, not a measured beta)'}]
-    cr = inputs.get('country_risk')            # forecast.COUNTRY_RISK_KEYS, validated by forecast.build; absent -> no row
+    cr = inputs.get('country_risk')            # forecast.COUNTRY_RISK_KEYS, validated by forecast.build; absent -> no rows
     if cr is not None:
-        ke = min(max(rf + erp + st_add + BANK_KE_ADDON + float(cr['value']), rf + .02), .20)
-        adj.append({'factor': 'country_risk', 'value': float(cr['value']),
-                    'reason': f"country risk premium above the US base, {cr.get('channel') or 'revenue'}-weighted: "
-                              f"{cr.get('detail') or 'exposure split'} ({cr['title']})"})
+        from .forecast import country_risk_rows    # the gross add-on and the market-average netting, as in the operating table
+        rows_c = country_risk_rows(cr)
+        ke = min(max(rf + erp + st_add + BANK_KE_ADDON + sum(a['value'] for a in rows_c), rf + .02), .20)
+        adj += rows_c
     # the operating forecast's component shape (forecast._ke_parts), without a relevering row: deposits and float are operating funding
     ke_parts = {'risk_free': rf, 'equity_risk_premium': erp, 'notes': [rf_note, erp_note],
                 **{'adjustment_' + a['factor'].replace(':', '_'): a['value'] for a in adj}, 'adjustments': adj, 'table_rate': ke,
                 'unlevered': ke, 'asset_unlevered': None, 'leverage': None,
-                'formula': 'Ke = risk-free + equity risk premium + stage add-on + balance-sheet add-on' + (' + country risk' if cr else '')
+                'formula': 'Ke = risk-free + equity risk premium + stage add-on + balance-sheet add-on'
+                           + (' + country risk - its market average' if cr else '')
                            + '; no relevering'}
     above = sum(1 for _, x in roe_hist if x > ke)
     persistent = len(roe_hist) >= PERSISTENT['min_years'] and above >= PERSISTENT['share_above'] * len(roe_hist)

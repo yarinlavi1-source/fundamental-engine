@@ -195,12 +195,29 @@ DECLINE_FLOOR = -.05      # lowest perpetual growth for a structurally declining
 DEBT_INCOMPLETE_RATE = .25     # interest / debt above this (no investment-grade or bank rate) means debt lines are missing
 KNOWN_INPUTS = ('overrides', 'reviews', 'risk_free', 'equity_risk_premium', 'horizon_years', 'financing', 'nol', 'cyclical',
                 'operating_funding', 'nonrecurring', 'debt_like_claims', 'non_operating_assets', 'capital_events', 'country_risk')
-# inputs['country_risk'] = {value, as_of, channel, title, url, detail, evidence_ids}: the country risk premium above the US base
-# (market_context.country_risk: exposure-weighted Damodaran CRPs; the pipeline passes it from inputs.market_context). Its own row
-# 'country_risk' of the cost-of-equity table; structural, so the terminal rate keeps it (not in TERMINAL_KE_DROPPED). Absent ->
-# no row (never a default).
-COUNTRY_RISK_KEYS = ('value', 'as_of', 'channel', 'title', 'url', 'detail', 'evidence_ids')
+# inputs['country_risk'] = {value, mapped_share, as_of, channel, title, url, detail, evidence_ids}: the country risk premium
+# above the US base (market_context.country_risk: exposure-weighted Damodaran CRPs; the pipeline passes it from
+# inputs.market_context) and the share of its channel mapped to a country or region. Two rows of the cost-of-equity table:
+# 'country_risk' (value) and 'country_risk_market_neutral' (-market_context.COUNTRY_RISK_MARKET_RATE x mapped_share: the
+# market's own average country exposure, already in the ERP, netted out so the value-weighted average company stays at
+# risk-free + ERP, the invariant of MARKET_NEUTRAL_ADJUSTMENT, which was measured without a country row). Both structural, so
+# the terminal rate keeps them (not in TERMINAL_KE_DROPPED). Absent -> no rows (never a default).
+COUNTRY_RISK_KEYS = ('value', 'mapped_share', 'as_of', 'channel', 'title', 'url', 'detail', 'evidence_ids')
 COUNTRY_RISK_MAX = .20
+
+
+def country_risk_rows(country):
+    """The validated inputs['country_risk'] -> its two cost-of-equity rows (gross add-on, market-average netting)."""
+    from .market_context import COUNTRY_RISK_MARKET_RATE
+    m = float(country['mapped_share'])
+    return [{'factor': 'country_risk', 'value': float(country['value']),
+             'reason': f"country risk premium above the US base, {country.get('channel') or 'revenue'}-weighted: "
+                       f"{country.get('detail') or 'exposure split'} ({country['title']}); structural, kept in the terminal rate"},
+            {'factor': 'country_risk_market_neutral', 'value': -COUNTRY_RISK_MARKET_RATE * m,
+             'reason': f"the market's own average country exposure, already in the ERP and the index return: "
+                       f"{COUNTRY_RISK_MARKET_RATE:.2%} per unit of mapped exposure (value-weighted on the 2026-10-21 large-cap sweep) "
+                       f"x the {m:.0%} of the channel mapped to a country or region; netted out so the average company stays at "
+                       'risk-free + ERP (an unmapped share counts as average); kept in the terminal rate'}]
 # inputs['nonrecurring'] = [{kind, period_end, revenue, operating_income, reason, evidence_ids}]: a one-off inside reported
 # figures (the effect it had, removed from the history the paths start from: TTM, fiscal years, year to date). Only kinds
 # that do not recur by nature; restructuring, SBC or 'adjusted' costs are not one-offs (never erase recurring costs).
@@ -970,9 +987,7 @@ def _cost_of_equity(route, rf, erp, inputs_notes, external, regulated=False, cou
         if (route['dimensions'].get(d) or {}).get('assessment') == 'weak':
             adj.append({'factor': 'weak_' + d, 'value': .0025, 'reason': f'model card rates {d} weak'})
     if country is not None:
-        adj.append({'factor': 'country_risk', 'value': float(country['value']),
-                    'reason': f"country risk premium above the US base, {country.get('channel') or 'revenue'}-weighted: "
-                              f"{country.get('detail') or 'exposure split'} ({country['title']}); structural, kept in the terminal rate"})
+        adj += country_risk_rows(country)
     adj.append({'factor': 'market_neutral', 'value': MARKET_NEUTRAL_ADJUSTMENT,
                 'reason': "the market's value-weighted average add-on, removed so the average company is discounted at risk-free + ERP "
                           '(the definition of the ERP); measured on the 2026-10-20 large-cap sweep'})
@@ -1889,6 +1904,9 @@ def build(fb, an, card, qa, inputs=None):
             raise ValueError(f"country_risk: an object with {', '.join(COUNTRY_RISK_KEYS)}")
         if _num(cr.get('value')) is None or not 0 <= cr['value'] <= COUNTRY_RISK_MAX:
             raise ValueError(f'country_risk.value must be a fraction from 0 to {COUNTRY_RISK_MAX:.0%}')
+        if _num(cr.get('mapped_share')) is None or not 0 <= cr['mapped_share'] <= 1:
+            raise ValueError('country_risk.mapped_share (the share of the channel mapped to a country or region, the base of the '
+                             'market-average netting row) must be a fraction from 0 to 1')
         try:
             when = _d(cr.get('as_of'))
         except (TypeError, ValueError):

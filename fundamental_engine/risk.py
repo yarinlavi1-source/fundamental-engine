@@ -40,8 +40,10 @@ number. Severity thresholds are descriptive screens, never automatic rejections.
 Evidenced geopolitical / regulatory exposures (inputs.market_context.exposures, market_context.exposures) add one failure
 scenario each, 'exposure:<kind>' (kind 'exposure'): the shock (market_context.shock_row: the evidenced share of revenue lost,
 or the evidenced cost rate on the exposed share) is applied to the bear row (value_per_share, the mechanism's stress value)
-and to the base row (base_value_with_shock: what the event alone costs the base case), each re-run the same way; and one
-register entry 'geo.exposure.<kind>' in the counter-thesis (high when the base effect reaches the pricing materiality bar).
+and to the base row (base_value_with_shock), each re-run the same way (the row's funding plan removed and gaps re-closed);
+base_effect = 1 - shocked base / the base row re-run through that same path without the shock (base_value_control), so only
+the event is measured, not the strip and re-close (bear_effect likewise); and one register entry 'geo.exposure.<kind>' in
+the counter-thesis (high when the base effect reaches the pricing materiality bar).
 The executed bear/base/bull are unchanged: an exposure is quantified, not silently priced. No exposure input, no change.
 
 error_size measures only the possible VALUATION error (scenario range, discount-rate sensitivity,
@@ -304,6 +306,15 @@ def _pricing(cls, modeled, via, eff, material, unassessed):
     return 'not_priced', 'not in the bear path and no quantified adjustment'
 
 
+def component_value(components, key):
+    """A cost-of-equity row's value as a pricing claim: the country-risk row counts net of its market-average netting row
+    (market_context: the market's average exposure is already in the ERP, so only the excess prices the company's own risk)."""
+    v = num((components or {}).get(key))
+    if key == 'adjustment_country_risk' and v is not None:
+        v += num(components.get('adjustment_country_risk_market_neutral')) or 0.
+    return v
+
+
 def _register(levers, components, text='', linked_ids=(), effect=None, material=.15):
     reg = []
 
@@ -311,10 +322,11 @@ def _register(levers, components, text='', linked_ids=(), effect=None, material=
         modeled = bool(lever) and all(levers.get(x, {}).get('modeled') for x in lever)
         if modeled and link and rid not in linked_ids and not re.search(link, text):
             modeled, extra['bear_link'] = False, 'bear is worse on these levers but does not name this risk'
-        key = next((k for k, v in components.items() if (rate_words and any(w in k.lower() for w in rate_words) and (num(v) or 0) > 0)
+        key = next((k for k, v in components.items() if (rate_words and any(w in k.lower() for w in rate_words)
+                                                         and (component_value(components, k) or 0) > 0)
                     or (isinstance(v, dict) and rid in (v.get('covers') or []))), None)
         via = f'forecast.cost_of_equity.components.{key}' if key else None
-        eff = effect(num(components[key])) if key and effect and cls != 'disqualifying' and not modeled else None
+        eff = effect(component_value(components, key)) if key and effect and cls != 'disqualifying' and not modeled else None
         status, basis = _pricing(cls, modeled, via, eff, material, extra.get('status') == 'unassessed' or extra.get('assessed') is False)
         row = {'id': rid, 'category': category, 'description': description, 'evidence_ids': sorted(set(map(str, evidence))),
                'class': cls or ('accepted_priced' if status == 'priced' else 'pricing'), 'severity': severity,
@@ -624,7 +636,7 @@ def _expand(row, key, count, default=0.):
 EXTERNAL_ROWS = ('equity_proceeds', 'debt_draw', 'sbc_share_settlement')
 
 
-def _strip_funding(s2, bear, count):
+def _strip_funding(s2, bear, count, label='bear'):
     """Remove the bear's executed funding plan: assumed debt and equity and SBC settled in shares were sized for the bear's
     OWN cash flows (an SBC settlement above the variant's smaller SBC charge is invalid, and financing_status 'none' with
     cash financing is rejected). Investment liquidations stay (an internal source, never above the balance). The variant's
@@ -640,7 +652,7 @@ def _strip_funding(s2, bear, count):
     for k in EXTERNAL_ROWS:
         bear[k] = [0.] * count
     bear['financing_status'] = 'none'
-    return [f"the bear's own funding plan removed ({', '.join(had) or 'financing status'}): it was sized for the bear's cash flows; "
+    return [f"the {label}'s own funding plan removed ({', '.join(had) or 'financing status'}): it was sized for the {label}'s cash flows; "
             'gaps are re-closed by pausing distributions, remaining investments, then equity at a depressed price']
 
 
@@ -794,18 +806,21 @@ def _permanent(spec, kind, drop, price, bear_value=None):
         return {**out, 'status': 'not_computed', 'value_per_share': None, 'reason': f'{type(e).__name__}: {e}'}
 
 
-def exposure_variant(spec, x, row='bear'):
+def exposure_variant(spec, x, row='bear', shock=True):
     """Driver spec whose bear row is <row> (bear or base) with exposure x applied (market_context.shock_row) and the row's
-    executed funding plan removed (re-closed by fund_with_equity like every failure scenario); returns (spec, edits)."""
-    from .market_context import shock_row
+    executed funding plan removed (re-closed by fund_with_equity like every failure scenario); returns (spec, edits).
+    shock=False: the same row through the same strip, without the shock (the zero-shock control the effect is measured
+    against, so the strip and re-close are not counted as the event)."""
+    from .market_context import shock_row, share_text
     s2 = deepcopy(spec)
     count = len(s2['boundaries'])
     stub = 1 if s2.get('stub_annual_revenue_rate') is not None else 0
     r = deepcopy(scen(s2, row))
     r['name'] = 'bear'
-    pre = _strip_funding(s2, r, count)
-    edits = shock_row(r, x, count, stub)
-    r['thesis'] = x['mechanism'] + f" Evidenced exposure: {x['share']:.1%} ({x['share_basis']}); {x['note']}"
+    pre = _strip_funding(s2, r, count, row)
+    edits = shock_row(r, x, count, stub) if shock else ['no shock (zero-shock control)']
+    r['thesis'] = x['mechanism'] + f" Evidenced exposure: {share_text(x['share'])} ({x['share_basis']}); {x['note']}" if shock else \
+        f"Zero-shock control for exposure {x['id']}: the {row} row with its funding plan removed and re-closed the same way, no shock."
     s2['scenarios'] = [r] + [sc for sc in s2['scenarios'] if sc['name'] in ('base', 'bull')]
     return s2, pre + ([f'the {row} row as the starting point'] if row != 'bear' else []) + edits
 
@@ -831,13 +846,27 @@ def _run_variant(s2, price):
     return num(r2['annual_values'][0]['bear']), dilution, r2['input_sha256'], more
 
 
+def _effect(spec, x, row, price, shocked):
+    """1 - shocked / control for one row, the control being the same row re-run through the same strip and re-close path
+    without the shock (exposure_variant shock=False). Measuring against the executed row instead would count the removal of
+    its funding plan (sized for its own cash flows) and the re-close at a depressed price as the event: a 0.0001% share moved
+    a funded base by -464% (LITE) and +0.5% (COHR) that way (review 25.10.2026). -> (effect, control value, control record)."""
+    ctl, _ = exposure_variant(spec, x, row, shock=False)
+    vc, dil_c, sha_c, more_c = _run_variant(ctl, price)
+    rec = {'value': vc, 'input_sha256': sha_c, 'edits': more_c, 'dilution': dil_c} if vc is not None else {'value': None, 'reason': dil_c}
+    eff = (1 - shocked / vc) if shocked is not None and vc is not None and vc > 0 else None
+    return eff, vc, rec
+
+
 def _exposure(spec, x, price, bear_value, base_value):
-    """One evidenced exposure as a failure scenario: the shock on the bear row (value_per_share) and on the base row
-    (base_value_with_shock, base_effect = 1 - shocked base / base)."""
+    """One evidenced exposure as a failure scenario: the shock on the bear row (value_per_share, the stress value) and on the
+    base row (base_value_with_shock). The effects compare each shocked row with its zero-shock control (_effect):
+    base_effect = 1 - shocked base / base control (the event alone), bear_effect likewise; base_value is the executed base."""
+    from .market_context import share_text
     out = {'name': 'exposure:' + x['id'], 'kind': 'exposure', 'mechanism': x['mechanism'], 'exposure': {
                k: x[k] for k in ('kind', 'share', 'share_basis', 'shock', 'cost_rate', 'evidence_ids', 'note')},
            'label_he': x['label_he'], 'base_value': base_value,
-           'observable_signs': [f"Company or official disclosure that the exposed {x['share']:.0%} ({x['share_basis'].replace('_', ' ')}) "
+           'observable_signs': [f"Company or official disclosure that the exposed {share_text(x['share'])} ({x['share_basis'].replace('_', ' ')}) "
                                 'is restricted, lost or repriced', 'Guidance cut naming the exposure',
                                 'New export rules, tariffs, sanctions or bans covering the exposed products or markets']}
     if not spec:
@@ -850,13 +879,16 @@ def _exposure(spec, x, price, bear_value, base_value):
             return {**out, 'status': 'not_computed', 'value_per_share': None, 'edits': edits, 'reason': dil}
         s_base, edits_base = exposure_variant(spec, x, 'base')
         vb, dil_b, sha_b, more_b = _run_variant(s_base, price)
-        eff = (1 - vb / base_value) if vb is not None and base_value and base_value > 0 else None
+        eff, vc, ctl = _effect(spec, x, 'base', price, vb)
+        eff_bear, vc_bear, ctl_bear = _effect(spec, x, 'bear', price, v)
         return {**out, 'status': 'computed', 'value_per_share': v, 'loss_from_price': _loss(v, price), 'gap_vs_price': _gap(v, price),
                 'edits': edits + more, 'dilution': dil, 'input_sha256': sha,
-                'base_value_with_shock': vb, 'base_effect': eff, 'base_edits': edits_base + more_b, 'base_dilution': dil_b,
+                'base_value_with_shock': vb, 'base_value_control': vc, 'base_effect': eff, 'base_edits': edits_base + more_b,
+                'base_dilution': dil_b, 'base_control': ctl, 'bear_value_control': vc_bear, 'bear_effect': eff_bear, 'bear_control': ctl_bear,
                 'not_more_severe_than_bear': None if v is None or bear_value is None else v >= bear_value,
                 'calculation': 'drivers.build_case + valuation.value_company with the bear row (and, separately, the base row) shocked '
-                               'by the evidenced share only; no probability'}
+                               'by the evidenced share only, each funding plan removed and re-closed the same way; effect = 1 - shocked / '
+                               'the same row re-run through that path without the shock (zero-shock control); no probability'}
     except (ValueError, KeyError, ZeroDivisionError, StopIteration) as e:
         return {**out, 'status': 'not_computed', 'value_per_share': None, 'reason': f'{type(e).__name__}: {e}'}
 
@@ -948,12 +980,13 @@ def error_size(result, case, today, val, qa, card, reg, rt):
 def _exposures(add, exposures, scenarios, material):
     """One counter-thesis register entry per evidenced exposure, quantified by its failure scenario (not in the executed bear
     path and not in the discount rate: pricing_status not_priced, with the computed effect in pricing_basis)."""
+    from .market_context import share_text
     by = {x['name']: x for x in scenarios}
     for x in exposures:
         sc = by.get('exposure:' + x['id']) or {}
         eff = sc.get('base_effect')
         sev = 'high' if eff is not None and eff >= material else 'medium'
-        what = f"{x['share']:.0%} of {'revenue' if x['share_basis'] == 'share_of_revenue' else 'supply'}"
+        what = f"{share_text(x['share'])} of {'revenue' if x['share_basis'] == 'share_of_revenue' else 'supply'}"
         add('geo.exposure.' + x['id'], 'geopolitics',
             f"{x['kind'].replace('_', ' ')}: {what} exposed ({x['note']})"
             + (f"; if it happens the base value today is {eff:.0%} lower (failure scenario {sc['name']})" if eff is not None else
