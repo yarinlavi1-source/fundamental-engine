@@ -46,7 +46,9 @@ opinion and does not close the question.
 - Scenarios are not probabilities. If you state odds, give their basis; the engine never invents them.
 - Write what has to happen for each scenario price as events with evidence ids in `analyst_sheet.scenario_events`
   ({bear|base|bull: [{event_he, evidence_ids}]}); scenario_reasons shows them as the scenario's condition ('אם …'). An
-  event without ids the FactBook holds stays a hypothesis and is labelled one; events change no number.
+  event without ids the FactBook holds stays a hypothesis and is labelled one; events change no number. An event that
+  cannot be read (not a list, no event_he, an unknown scenario key) is listed in `scenario_events_rejected` and said in
+  the reasons; fix it rather than relying on the mechanical condition.
 
 ## 5. A bottleneck?
 

@@ -7,6 +7,7 @@ become a gap, never a number. Scenario events in these tests are TEST text, not 
 import contextlib
 import io
 import json
+import math
 import os
 import sys
 import tempfile
@@ -129,15 +130,18 @@ class ReasonsOnTheRealFixture(unittest.TestCase):
         row = next(x for x in base['rows'] if x['date'] == '2027-11-30')
         fy = next(p for p in self.res['base']['forecast'] if p['end'] == '2027-11-30')
         path = next(p for p in self.cf['fc']['paths']['base'] if p['end'] == '2027-11-30')
+        anchor = self.cf['fc']['anchors']['current_fiscal_year']
         self.assertEqual(row['drivers']['revenue'], fy['revenue'])
-        self.assertAlmostEqual(row['drivers']['revenue_growth'], path['growth'], places=6)
+        # executed growth over the current-year anchor (the first full year); the path's rate is kept as the assumption
+        self.assertAlmostEqual(row['drivers']['revenue_growth'], fy['revenue'] / anchor['revenue'] - 1, places=6)
+        self.assertEqual(row['driver_sources']['revenue_growth'], 'executed over fc.anchors.current_fiscal_year')
+        self.assertAlmostEqual(row['drivers']['revenue_growth_assumption'], path['growth'], places=6)
         self.assertAlmostEqual(row['drivers']['operating_margin_after_sbc'], fy['ebit'] / fy['revenue'], places=6)
         self.assertAlmostEqual(row['drivers']['eps'], eps_of(fy), places=4)
         self.assertAlmostEqual(row['drivers']['fcf_per_share'],
                                (fy['cfo'] - fy['maintenance_capex'] - fy['growth_capex']) / ((fy['shares_open'] + fy['shares']) / 2), places=4)
         self.assertEqual(row['drivers']['diluted_shares'], fy['shares'])
         today = base['rows'][0]
-        anchor = self.cf['fc']['anchors']['current_fiscal_year']
         self.assertEqual((today['drivers']['revenue'], today['driver_sources']['revenue']),
                          (anchor['revenue'], 'fc.anchors.current_fiscal_year'))       # current year: the model's full-year anchor
         self.assertIsNone(today['drivers']['eps'])                                    # a partial year has no EPS
@@ -235,7 +239,8 @@ class EvidenceAndHypotheses(unittest.TestCase):
         self.assertEqual(ev['bear'][1]['unknown_ids'], ['no-such-source'])
         self.assertTrue(ev['bull'][0]['hypothesis'])                                # no ids at all
         self.assertNotIn('tail', ev)
-        self.assertEqual(self.cf['analyst_sheet']['scenario_events_ignored'], ['tail'])
+        self.assertEqual([(x['scenario'], x['code']) for x in self.cf['analyst_sheet']['scenario_events_rejected']],
+                         [('tail', 'unknown_scenario')])
         r = by_name(self.cf['scenario_reasons'])
         self.assertEqual(r['bear']['condition']['kind'], 'analyst_events')
         self.assertIn('לקוחות גדולים עוברים', r['bear']['condition']['if_he'])
@@ -245,8 +250,13 @@ class EvidenceAndHypotheses(unittest.TestCase):
         self.assertIn('ובמודל:', r['bear']['condition']['if_he'])                    # the event is tied to the model's drivers
         md = SR.render_he(self.cf['scenario_reasons'])
         self.assertIn('**התנאי (אירועים מהאנליסט):**', md)
-        self.assertIn('השערה בלי ראיה מתועדת', md)
-        self.assertIn('- דובי = אם לקוחות גדולים עוברים', hebrew_table(self.cf))
+        self.assertIn('- אחד מ־2 האירועים בתנאי הוא השערה בלי ראיה מתועדת בתיק.', md)       # bear: 1 of 2
+        self.assertIn('- האירוע בתנאי הוא השערה בלי ראיה מתועדת בתיק.', md)                 # bull: its only event
+        self.assertIn('"tail" (צריך bear, base או bull)', md)                                  # the rejected key is said
+        table = hebrew_table(self.cf)
+        self.assertIn('- דובי = אם לקוחות גדולים עוברים', table)
+        self.assertIn('(השערה: אין ראיה מתועדת בתיק)', table)                                  # no raw ids for the owner
+        self.assertNotIn('no-such-source', table)
 
     def test_events_change_no_number(self):
         a, b = self.plain, self.cf
@@ -414,6 +424,321 @@ class CommandsAndTool(unittest.TestCase):
             self.assertIn('דובי', text, topic)
         self.assertIn('hypothes', packet('annual_valuation')['content'])
         self.assertNotIn('bad/good', packet('plain_language')['content'])
+
+
+def scale_up(as_of, price=95.):
+    """The SYNTHETIC scale-up platform of tests/test_pipeline (December fiscal year, FY2021-FY2025 reported by 20 January),
+    valued on any date after the last report: a valuation date just after the fiscal year end leaves a 0.9-1.0 year stub."""
+    from fundamental_engine import facts as F
+    rev, om, sbc = [17.5e9, 31.9e9, 37.3e9, 44.0e9, 52.0e9], [-.22, -.06, .03, .06, .11], [.09, .06, .05, .043, .035]
+    fb = F.new({'ticker': 'UBX', 'name': 'Synthetic travel platform', 'currency': 'USD', 'fiscal_year_end': '12-31',
+                'sector': 'Industrials', 'industry': 'Travel Services'}, as_of)
+    F.add_source(fb, 'syn:fs', 'synthetic', 'test-statements', 'filing_derived', as_of + 'T00:00:00Z', note='SYNTHETIC')
+    F.add_source(fb, 'syn:px', 'synthetic', 'test-price', 'market_feed', as_of + 'T00:00:00Z')
+    for i, (r, m, sb) in enumerate(zip(rev, om, sbc)):
+        end, avail = f'{2021 + i}-12-31', f'{2022 + i}-01-20'
+        oi = r * m
+        flows = {'revenue': r, 'gross_profit': r * .4, 'cost_of_revenue': r * .6, 'operating_income': oi, 'sbc': r * sb,
+                 'd_and_a': r * .015, 'capex': r * .005, 'cfo': oi + r * sb + r * .015, 'pretax_income': oi,
+                 'income_tax': max(oi, 0) * .21, 'net_income': oi - max(oi, 0) * .21, 'interest_expense': 5e8}
+        for k, v in flows.items():
+            F.add_fact(fb, k, 'FY' + end[:4], end, v, 'syn:fs', 'as_reported', avail, period_start=f'{2021 + i}-01-01')
+        c = 9e9 * r / rev[-1]
+        inst = {'cash': c, 'equity': r * .6 + c - 10e9, 'long_term_debt': 10e9, 'total_assets': r * .9 + c,
+                'total_liabilities': r * .3 + 10e9, 'receivables': r * .15, 'payables': r * .05, 'shares_outstanding': 2.1e9,
+                'current_assets': c + r * .2, 'current_liabilities': r * .25, 'ppe': r * .05}
+        for k, v in inst.items():
+            F.add_fact(fb, k, 'I@' + end, end, v, 'syn:fs', 'as_reported', avail)
+    F.set_price(fb, price, as_of, 'syn:px')
+    return fb
+
+
+MARKET = {'forecast': {'risk_free': {'value': .0515, 'as_of': '2025-12-01', 'title': 'test', 'retrieval': 'provider_normalized'},
+                       'equity_risk_premium': {'value': .042, 'as_of': '2025-12-01', 'title': 'test',
+                                               'retrieval': 'provider_normalized'}}}
+
+
+class CurrentFiscalYearJustAfterTheYearEnd(unittest.TestCase):
+    """Review fix: a valuation date 1-36 days after the fiscal year end leaves a 0.9-1.0 year stub; it is the current fiscal
+    year (anchor revenue, no EPS), never 'the next fiscal year' of the implied P/E, and raises no false growth gap."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.cf = json.loads(json.dumps(pipeline.run(scale_up('2026-01-25'), deepcopy(MARKET)), default=str))
+        cls.r = cls.cf['scenario_reasons']
+
+    def test_the_stub_is_the_current_fiscal_year_and_the_pe_uses_the_next_one(self):
+        stub = self.cf['fc']['anchors']['stub']
+        self.assertTrue(.9 <= stub['years'] < 1)                                         # the case the old rule misread
+        self.assertTrue(self.r['values_shown'])
+        anchor = self.cf['fc']['anchors']['current_fiscal_year']
+        for s in self.r['scenarios']:
+            today = s['rows'][0]
+            self.assertEqual(today['fiscal_year'], {'start': '2026-01-25', 'end': '2026-12-31', 'full_year': False})
+            self.assertEqual(today['drivers']['revenue'], anchor['revenue'])            # the model full year, not the stub
+            self.assertIsNone(today['drivers']['eps'])
+            pe = today['implied_pe']
+            self.assertEqual((pe['next_fiscal_year_start'], pe['next_fiscal_year_end']), ('2026-12-31', '2027-12-31'))
+            fy27 = next(p for p in next(x for x in self.cf['val']['result']['scenarios'] if x['name'] == s['name'])['forecast']
+                        if p['end'] == '2027-12-31')
+            self.assertAlmostEqual(pe['eps_next_fiscal_year'], eps_of(fy27), places=4)
+            if eps_of(fy27) > 0:
+                self.assertAlmostEqual(pe['value'], round(today['value'] / eps_of(fy27), 2), places=6)
+            self.assertNotIn('growth', [g['code'] for g in s['gaps']])                  # the current-year anchor is held
+        self.assertNotIn('היום (שנת הכספים', SR.render_he(self.r))
+
+    def test_a_first_period_that_starts_on_the_year_end_is_a_full_year(self):
+        rows = [{'start': '2025-12-31', 'end': '2026-12-31', 'revenue': 1.}, {'start': '2026-12-31', 'end': '2027-12-31', 'revenue': 1.}]
+        self.assertEqual([p['_full'] for p in SR._fiscal_years(rows, set(), '2025-12-31', None)], [True, True])
+        late = [{'start': '2026-01-05', 'end': '2026-12-31', 'revenue': 1.}, {'start': '2026-12-31', 'end': '2027-12-31', 'revenue': 1.}]
+        self.assertEqual([p['_full'] for p in SR._fiscal_years(late, set(), '2026-01-05', None)], [False, True])
+        self.assertEqual([p['_full'] for p in SR._fiscal_years(late, set(), '2026-01-05', '2026-01-05')], [True, True])
+
+
+class ResidualIncomeRoute(unittest.TestCase):
+    """Review fix: a bank (residual income) gets its own drivers: the ROE path, payout and book value per share, earnings =
+    model net income / shares; three different values never share one condition. The synthetic bank is demo data, so the
+    owner's table would hold it; value_display is opened here to read the route."""
+
+    @classmethod
+    def setUpClass(cls):
+        import test_forecast_financials as TF
+        from fundamental_engine import render
+        cls.cf = json.loads(json.dumps(pipeline.run(TF.bank()), default=str))
+        real = render.value_display
+        with mock.patch.object(render, 'value_display', lambda c: dict(real(c), show=True, reason_he=None)):
+            cls.r = SR.build(cls.cf)
+
+    def test_conditions_follow_the_roe_path_and_differ(self):
+        self.assertEqual(self.r['method'], 'residual_income')
+        conds = [s['condition']['if_he'] for s in self.r['scenarios']]
+        self.assertEqual(len(set(conds)), 3)
+        for s in self.r['scenarios']:
+            path = self.cf['fc']['paths'][s['name']]
+            self.assertIn(f"{path[0]['roe'] * 100:.1f}%", s['condition']['if_he'])
+            self.assertIn(f"{path[-1]['roe'] * 100:.1f}%", s['condition']['if_he'])
+            self.assertIn('התשואה על ההון העצמי', s['note_he'])
+            self.assertNotIn('condition_not_distinct', [g['code'] for g in s['gaps']])
+            self.assertNotIn('no_forecast_paths', [g['code'] for g in s['gaps']])
+        self.assertIn('תרד מכ־12.5%', by_name(self.r)['bear']['condition']['if_he'])          # the bear changes the business
+
+    def test_eps_is_net_income_per_share_and_the_merged_year_sums_its_parts(self):
+        for s in self.r['scenarios']:
+            raw = next(x for x in self.cf['val']['result']['scenarios'] if x['name'] == s['name'])['forecast']
+            row = next(x for x in s['rows'] if x['date'] == '2027-12-31')
+            fy = next(p for p in raw if p['end'] == '2027-12-31')
+            self.assertAlmostEqual(row['drivers']['eps'], fy['net_income'] / fy['shares'], places=4)
+            self.assertAlmostEqual(row['drivers']['book_value_per_share'], fy['book_equity'] / fy['shares'], places=4)
+            nxt = next(p for p in raw if p['end'] == '2028-12-31')
+            self.assertAlmostEqual(row['implied_pe']['value'], round(row['value'] / (nxt['net_income'] / nxt['shares']), 2), places=6)
+            five = s['rows'][-1]                                       # the fifth anniversary inside FY2031: two model periods
+            parts = [p for p in raw if p['start'] >= '2030-12-31' and p['end'] <= '2031-12-31']
+            self.assertEqual(len(parts), 2)
+            self.assertAlmostEqual(five['drivers']['eps'], sum(p['net_income'] for p in parts) / parts[-1]['shares'], places=4)
+        self.assertIn('אומדן רווח למניה = הרווח הנקי במודל', SR.render_he(self.r))
+
+    def test_a_route_that_is_not_read_says_so_and_identical_conditions_are_flagged(self):
+        cf = adbe_cf()
+        cf['val']['case']['method'] = 'nav'                                # TEST: a route this module does not break down
+        r = SR.build(cf)
+        for s in r['scenarios']:
+            self.assertEqual((s['condition']['kind'], s['condition']['if_he'], s['note_he']), ('route_not_read', None, None))
+            self.assertIn('route_drivers', [g['code'] for g in s['gaps']])
+        scen = [{'name': n, 'status': 'computed', 'gaps': [], 'condition': {'if_he': 'אם X.'}} for n in SR.SCENARIOS]
+        SR._distinct(scen, [{'date': 'd', 'bear': 1., 'base': 2., 'bull': 2.}])
+        self.assertEqual([[g['code'] for g in x['gaps']] for x in scen], [['condition_not_distinct']] * 3)
+        self.assertEqual({x['status'] for x in scen}, {'partial'})
+
+
+class ReviewWording(unittest.TestCase):
+    """Review fixes in the Hebrew: dated growth in the note, executed growth in the rows, losses named, future tense,
+    the earnings estimate labelled, the long-run rate, readable gaps and hypotheses, no -0.0."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.cf = adbe_cf()
+        cls.r = cls.cf['scenario_reasons']
+        cls.md = SR.render_he(cls.r)
+
+    def test_rows_show_executed_growth_and_the_terminal_rate_is_named(self):
+        base = by_name(self.r)['base']
+        raw = {p['end']: p for p in next(x for x in self.cf['val']['result']['scenarios'] if x['name'] == 'base')['forecast']}
+        row = next(x for x in base['rows'] if x['date'] == '2028-11-30')
+        executed = raw['2028-11-30']['revenue'] / raw['2027-11-30']['revenue'] - 1
+        self.assertAlmostEqual(row['drivers']['revenue_growth'], executed, places=6)
+        self.assertIn(f'(+{executed * 100:.1f}%)', row['then_he'])
+        tk = self.cf['fc']['cost_of_equity']['terminal_cost_of_equity']['base']
+        self.assertEqual(base['condition']['drivers']['terminal_cost_of_equity']['value'], round(tk, 6))
+        self.assertIn(f'בשנים המפורשות וכ־{tk * 100:.1f}% לטווח הארוך', base['condition']['if_he'])
+
+    def test_notes_name_the_year_and_the_end_date(self):
+        for cf in (self.cf, synthetic('attractive')):
+            for s in SR.build(cf)['scenarios']:
+                d = s['condition']['drivers']
+                self.assertNotIn('בשנה הראשונה', s['note_he'])
+                self.assertIn(f"בשנה שמסתיימת ב־{d['growth_first']['fiscal_year_end'][:7].replace('-', '/')}", s['note_he'])
+                self.assertIn(f"עד {d['growth_last']['fiscal_year_end'][:7].replace('-', '/')}", s['note_he'])
+
+    def test_losses_and_a_return_to_growth_read_as_such(self):
+        d = {'growth_first': {'value': -.05, 'fiscal_year_end': '2027-12-31'}, 'growth_last': {'value': .03, 'fiscal_year_end': '2035-12-31'},
+             'operating_margin_first': {'value': -.2, 'fiscal_year_end': '2026-12-31'},
+             'operating_margin_last': {'value': .1, 'fiscal_year_end': '2035-12-31'}, 'cost_of_equity': {'value': .1}}
+        c = SR._condition(d, [], 'USD', 1e9, 'operating', True)
+        for text in (c['if_he'], c['short_he']):
+            self.assertIn('ואחר כך יחזרו לצמוח', text)
+            self.assertNotIn('תאיץ', text)
+            self.assertIn('מהפסד תפעולי', text)
+            self.assertIn('לרווח תפעולי של כ־10.0%', text)
+            self.assertNotIn('כ־-', text)
+        d['operating_margin_last']['value'] = -.05
+        self.assertIn('וההפסד התפעולי יקטן מכ־20.0% מההכנסות לכ־5.0%', SR._condition(d, [], 'USD', 1e9, 'operating', True)['short_he'])
+        cf = deepcopy(self.cf)                                             # an executed operating loss in a row
+        bear = next(s for s in cf['val']['result']['scenarios'] if s['name'] == 'bear')
+        fy = next(p for p in bear['forecast'] if p['end'] == '2028-11-30')
+        fy['ebit'] = -abs(fy['ebit'])
+        row = next(x for x in by_name(SR.build(cf))['bear']['rows'] if x['date'] == '2028-11-30')
+        self.assertIn('הפסד תפעולי', row['then_he'])
+        self.assertNotIn('רווח תפעולי -', row['then_he'])
+
+    def test_future_tense_estimate_label_and_rounding(self):
+        self.assertIn('עד אז יחולקו כ־', self.md)
+        self.assertNotIn('עד אז חולקו', self.md)
+        self.assertIn('לא רווח GAAP', self.md)
+        for line in self.md.split('\n'):
+            if '(פי ' in line:
+                self.assertIn('על אומדן הרווח למניה של השנה הבאה', line)
+            self.assertNotIn(' רווח למניה כ־', line.replace('אומדן רווח למניה כ־', ''))
+        self.assertIn('as a whole number', self.r['rounding'])
+        self.assertEqual(str(SR._r(-1e-9, 4)), '0.0')
+        def zeros(x):
+            if isinstance(x, dict):
+                return [z for v in x.values() for z in zeros(v)]
+            if isinstance(x, list):
+                return [z for v in x for z in zeros(v)]
+            return [x] if isinstance(x, float) and x == 0 and math.copysign(1, x) < 0 else []
+        self.assertEqual(zeros(self.r), [])                                          # no negative zero in any number
+
+    def test_gaps_read_as_plain_nouns_and_hypotheses_agree_in_number(self):
+        md = SR.render_he(SR.build(synthetic('attractive')))
+        line = next(x for x in md.split('\n') if x.startswith('- חסר בתיק:'))
+        self.assertNotIn('אין בתיק', line)
+        self.assertIn('צמיחה לשנה שמסתיימת ב־2027/12', line)
+        self.assertIn('הכנסות של כל השנה הנוכחית (עד 2026/12)', line)
+        for he in SR.GAP_HE.values():
+            self.assertNotIn(';', he)                                     # ';' separates the items
+        ev = lambda h: {'event_he': 'x', 'hypothesis': h}
+        self.assertEqual(SR._hyp_he([ev(True)]), 'האירוע בתנאי הוא השערה בלי ראיה מתועדת בתיק.')
+        self.assertEqual(SR._hyp_he([ev(True), ev(False)]), 'אחד מ־2 האירועים בתנאי הוא השערה בלי ראיה מתועדת בתיק.')
+        self.assertEqual(SR._hyp_he([ev(True), ev(True)]), 'כל 2 האירועים בתנאי הם השערות בלי ראיה מתועדת בתיק.')
+        self.assertEqual(SR._hyp_he([ev(True), ev(True), ev(False)]), '2 מתוך 3 האירועים בתנאי הם השערות בלי ראיה מתועדת בתיק.')
+        cf = deepcopy(self.cf)
+        cf['analyst_sheet']['scenario_events'] = {'base': [{'event_he': 'TEST', 'evidence_ids': ['nope-1', 'nope-2'],
+                                                            'unknown_ids': ['nope-1', 'nope-2'], 'hypothesis': True}]}
+        self.assertIn('השערה: הראיות nope-1, nope-2 לא נמצאו בתיק', by_name(SR.build(cf))['base']['condition']['if_he'])
+
+
+class TableRowsAndUnfundedScenario(unittest.TestCase):
+    """Review fix: dated values only for the dates the owner's yearly table shows; with one scenario unvalued the table has
+    no yearly part, so the reasons list no dated price and say so, and the unvalued scenario gets no discount-rate clause."""
+
+    def test_one_scenario_without_values(self):
+        cf = adbe_cf()
+        cf.pop('scenario_reasons')
+        for row in cf['dc']['expected_return']['yearly_at_model_cost_of_equity']['rows']:
+            row['bear'] = None                                             # TEST: the shape of a funding-blocked bear
+        next(s for s in cf['val']['result']['scenarios'] if s['name'] == 'bear')['status'] = 'funding_blocked'
+        cf['fc']['funding']['bear']['status'] = 'unfunded'
+        r = SR.build(cf)
+        self.assertTrue(r['values_shown'])
+        self.assertFalse(r['yearly_table'])
+        self.assertEqual([len(s['rows']) for s in r['scenarios']], [0, 0, 0])
+        self.assertIn('no_yearly_table', [g['code'] for g in r['gaps']])
+        bear = by_name(r)['bear']
+        self.assertIn('ולכן לתרחיש הזה אין שווי', bear['condition']['if_he'])
+        self.assertNotIn('שיעור היוון', bear['condition']['if_he'])
+        self.assertIn('שיעור היוון', by_name(r)['base']['condition']['if_he'])
+        md = SR.render_he(r)
+        self.assertNotIn('כל מחיר בטבלה השנתית', md)
+        self.assertIn('בטבלת השווי אין טבלה שנתית', md)
+        self.assertNotIn('$', md)
+        self.assertNotIn('| מועד |', hebrew_table(dict(cf, scenario_reasons=r)))
+        from fundamental_engine.render import yearly_table_rows
+        ok = adbe_cf()
+        dates = [row['date'] for _, row in yearly_table_rows(ok['dc']['expected_return'])]
+        for s in ok['scenario_reasons']['scenarios']:
+            self.assertEqual([row['date'] for row in s['rows']], dates)
+
+
+class MalformedEventsAndInput(unittest.TestCase):
+    """Review fixes: evidence ids of any shape never crash the analyst sheet; a single id as text is one id; whatever cannot
+    be read is listed and said, never dropped silently; a malformed casefile is invalid input, not an operator failure."""
+
+    FB = {'sources': {'s1': {}}, 'qualitative': []}
+
+    def ev(self, raw):
+        from fundamental_engine import analyst_sheet as A
+        return A.scenario_events({'analyst_sheet': {'scenario_events': raw}}, self.FB)
+
+    def test_every_bad_shape_is_rejected_with_a_reason(self):
+        cases = {'bear_as_text': ({'bear': 'TEST'}, ('bear', None, 'not_list')),
+                 'event_as_text': ({'bull': ['TEST']}, ('bull', 0, 'event_not_object')),
+                 'wrong_field': ({'bear': [{'text_he': 'TEST', 'evidence_ids': ['s1']}]}, ('bear', 0, 'no_event_he')),
+                 'unknown_key': ({'Bear': [{'event_he': 'TEST', 'evidence_ids': ['s1']}]}, ('Bear', None, 'unknown_scenario')),
+                 'ids_int': ({'bear': [{'event_he': 'TEST', 'evidence_ids': 5}]}, ('bear', 0, 'bad_evidence_ids')),
+                 'ids_true': ({'bear': [{'event_he': 'TEST', 'evidence_ids': True}]}, ('bear', 0, 'bad_evidence_ids')),
+                 'not_object': (['TEST'], (None, None, 'not_object'))}
+        for name, (raw, want) in cases.items():
+            events, rejected = self.ev(raw)
+            self.assertEqual(events, {}, name)
+            self.assertEqual([(x['scenario'], x['index'], x['code']) for x in rejected], [want], name)
+
+    def test_a_single_id_as_text_is_one_id(self):
+        events, rejected = self.ev({'bear': [{'event_he': 'TEST', 'evidence_ids': 's1'}]})
+        self.assertEqual((events['bear'][0]['evidence_ids'], events['bear'][0]['hypothesis'], rejected), (['s1'], False, []))
+        events, rejected = self.ev({'bear': [{'event_he': 'TEST', 'evidence_ids': ['s1', 7]}]})
+        self.assertEqual(events['bear'][0]['evidence_ids'], ['s1'])
+        self.assertEqual([x['code'] for x in rejected], ['evidence_ids_items_dropped'])
+        from fundamental_engine.analyst_sheet import evidence_id_list
+        self.assertEqual(evidence_id_list('fmp:as_reported_income_annual'), (['fmp:as_reported_income_annual'], None))
+
+    def test_bad_events_leave_the_sheet_and_the_risk_row_and_are_said(self):
+        kr = {'reading_he': 'TEST risk reading', 'evidence_ids': ['fmp:as_reported_income_annual']}
+        cf = adbe_cf({'analyst_sheet': {'key_risk': kr, 'scenario_events': {'bear': [{'event_he': 'TEST', 'evidence_ids': 5}],
+                                                                             'Bull': [{'event_he': 'TEST', 'evidence_ids': []}]}}})
+        self.assertEqual(cf['stages']['analyst_sheet'], 'ok')
+        self.assertFalse([e for e in cf['errors'] if e['stage'] == 'analyst_sheet'])
+        self.assertEqual(cf['analyst_sheet']['key_risk']['reading_he'], 'TEST risk reading')
+        self.assertIn('TEST risk reading', hebrew_table(cf))
+        r = cf['scenario_reasons']
+        self.assertIn('events_rejected', [g['code'] for g in by_name(r)['bear']['gaps']])
+        self.assertIn('events_rejected', [g['code'] for g in r['gaps']])               # 'Bull' is not a scenario name
+        self.assertEqual(r['status'], 'partial')
+        md = SR.render_he(r)
+        self.assertIn('אירועים שהאנליסט סיפק לא נקראו', md)
+        self.assertIn('ל־evidence_ids של אירוע 1 יש סוג לא תקין', md)
+        self.assertIn('"Bull"', md)
+        plain = adbe_cf()
+        for k in ('val', 'dc', 'fc'):
+            self.assertEqual(json.dumps(cf[k], sort_keys=True), json.dumps(plain[k], sort_keys=True), k)
+
+    def test_text_id_from_the_pipeline_is_evidence_not_characters(self):
+        cf = adbe_cf({'analyst_sheet': {'scenario_events': {'bear': [{'event_he': 'TEST event',
+                                                                      'evidence_ids': 'fmp:as_reported_income_annual'}]}}})
+        e = by_name(cf['scenario_reasons'])['bear']['condition']['events'][0]
+        self.assertEqual((e['evidence_ids'], e['unknown_ids'], e['hypothesis']), (['fmp:as_reported_income_annual'], [], False))
+
+    def test_malformed_casefile_is_invalid_input(self):
+        from fundamental_engine.mcp import Server
+        for bad in ({'dc': 'x'}, {'val': {'result': {'scenarios': 'x'}}}, 5):
+            with self.assertRaises(ValueError):
+                SR.build(bad)
+        server = Server(':memory:')
+        server.handle({'jsonrpc': '2.0', 'id': 1, 'method': 'initialize', 'params': {}})
+        server.handle({'jsonrpc': '2.0', 'method': 'notifications/initialized'})
+        out = server.handle({'jsonrpc': '2.0', 'id': 2, 'method': 'tools/call',
+                             'params': {'name': 'scenario_reasons', 'arguments': {'casefile': {'dc': 'x'}}}})
+        self.assertTrue(out['result']['isError'])
+        self.assertIn('Invalid research input', out['result']['content'][0]['text'])
 
 
 if __name__ == '__main__':

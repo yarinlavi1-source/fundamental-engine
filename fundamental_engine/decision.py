@@ -1798,7 +1798,7 @@ def _verdict(A, g, er, view, index, rates, req, tol_shift=0.):
         if g['impaired']:
             if not any(x['id'] == 'gate.equity_impaired' for x in g['disqualifying']):
                 items.append('impaired equity: base value today is zero')
-            he = 'בתרחיש הבסיס ההתחייבויות עולות על שווי העסק, ולבעלי המניות נשאר ערך אופציה בלבד' if not other else he
+            he = 'בתרחיש הבסיסי ההתחייבויות עולות על שווי העסק, ולבעלי המניות נשאר ערך אופציה בלבד' if not other else he
         return out('avoid', 'impaired_equity' if g['impaired'] and not other else 'disqualifying_risk',
                    'Disqualifying: ' + '; '.join(items), he,
                    ['documented evidence that removes each disqualifying risk (re-run risk.assess)'], 'ראיות מתועדות שמבטלות את הסיכון הפוסל')
@@ -1864,7 +1864,7 @@ def _verdict(A, g, er, view, index, rates, req, tol_shift=0.):
     pfh_v = ((rates.pfh(hurdle) if rates is not None else None) or {}).get('value')
     price_change = ([f'price at or below {_g3(pfh_v)} (value at your required return {_pct(hurdle, 2)}; base IRR = required return)'] if pfh_v else []) + \
                    ['new evidence that raises the base case (see what_must_be_true)']
-    price_change_he = (f'מחיר של כ־{_fmt_price(pfh_v)} ומטה (מחיר הקנייה לתשואה הנדרשת)' if pfh_v else 'מחיר נמוך יותר או ראיות לתרחיש בסיס טוב יותר')
+    price_change_he = (f'מחיר של כ־{_fmt_price(pfh_v)} ומטה (מחיר הקנייה לתשואה הנדרשת)' if pfh_v else 'מחיר נמוך יותר או ראיות לתרחיש בסיסי טוב יותר')
     idx = index['value']
     fl = bool((req.get('floor') or {}).get('binding'))
     req_txt = (f'required return {_pct(hurdle, 2)} (index {_pct(idx, 2)} + {prem * 100:.2f}pp premium'
@@ -1873,7 +1873,7 @@ def _verdict(A, g, er, view, index, rates, req, tol_shift=0.):
                                                      for c in req.get('components') or []))
     if meets is None:
         return out('insufficient_evidence', 'price_undetermined', 'Price return could not be determined (IRR not solvable and no usable base value)',
-                   'אי אפשר היה לחשב את התשואה הצפויה במחיר הנוכחי', ['an executable base case with a solvable IRR'], 'תרחיש בסיס שאפשר לחשב')
+                   'אי אפשר היה לחשב את התשואה הצפויה במחיר הנוכחי', ['an executable base case with a solvable IRR'], 'תרחיש בסיסי שאפשר לחשב')
     if q in ('strong', 'adequate'):
         # margin of safety at the SAME required return as the price test (model-rate bear loss is secondary context)
         price = view.get('price')
@@ -1885,24 +1885,24 @@ def _verdict(A, g, er, view, index, rates, req, tol_shift=0.):
         if meets and (loss is None or loss <= tol):
             return out('attractive_at_price', 'price_test_passed',
                        f"{q} business; base IRR {irr_txt} >= {req_txt}; bear-case loss {_pct(loss, 0)} ({basis}) within the {tol:.0%} tolerance for {q} quality",
-                       f'עסק באיכות {LEVEL_HE[q]} שהתשואה השנתית המשתמעת ממנו בתרחיש הבסיס, {irr_he}, עוברת את {req_he}',
+                       f'עסק באיכות {LEVEL_HE[q]} שהתשואה השנתית המשתמעת ממנו בתרחיש הבסיסי, {irr_he}, עוברת את {req_he}',
                        [f'price above {_g3(pfh_v)} (base IRR would fall below the required return)' if pfh_v else 'a higher price',
                         'evidence that falsifies a base-case assumption (forecast falsifiers)', f'bear-case loss beyond {tol:.0%}'],
-                       f'מחיר גבוה מכ־{_fmt_price(pfh_v)} או ראיה שמפריכה את הנחות תרחיש הבסיס' if pfh_v else 'ראיה שמפריכה את הנחות תרחיש הבסיס',
+                       f'מחיר גבוה מכ־{_fmt_price(pfh_v)} או ראיה שמפריכה את הנחות התרחיש הבסיסי' if pfh_v else 'ראיה שמפריכה את הנחות התרחיש הבסיסי',
                        margin_of_safety=mos)
         if meets:
             safe = mos['bear_value'] / (1 - tol) if mos['bear_value'] else None
             return out('quality_but_expensive', 'bear_loss_beyond_tolerance',
                        f'{q} business and base IRR {irr_txt} clears the {req_txt}, but the bear-case loss {_pct(loss, 0)} ({basis}) '
                        f'exceeds the {tol:.0%} tolerance for {q} quality: not enough margin of safety',
-                       f'העסק באיכות {LEVEL_HE[q]} והתשואה בתרחיש הבסיס עוברת את התשואה הנדרשת, אבל בתרחיש הדובי השווי '
+                       f'העסק באיכות {LEVEL_HE[q]} והתשואה בתרחיש הבסיסי עוברת את התשואה הנדרשת, אבל בתרחיש הדובי השווי '
                        f'{"בתשואה הנדרשת " if bear_h is not None else ""}נמוך בכ־{_he_pct(loss)} מהמחיר, יותר ממרווח הביטחון המתאים',
                        ([f'price at or below {_g3(safe)} (bear loss {basis} within tolerance)'] if safe else []) + ['a better-supported bear case (forecast inputs)'],
                        f'מחיר של כ־{_fmt_price(safe)} ומטה' if safe else 'תרחיש דובי טוב יותר', margin_of_safety=mos)
         below_index = irr is not None and irr < idx
         return out('quality_but_expensive', 'below_hurdle',
                    f'{q} business, but base IRR {irr_txt} < {req_txt}' + (' and below the index assumption itself' if below_index else ''),
-                   f'העסק באיכות {LEVEL_HE[q]}, אבל במחיר הנוכחי התשואה השנתית המשתמעת בתרחיש הבסיס היא {irr_he}, מתחת ל{req_he[1:]}'
+                   f'העסק באיכות {LEVEL_HE[q]}, אבל במחיר הנוכחי התשואה השנתית המשתמעת בתרחיש הבסיסי היא {irr_he}, מתחת ל{req_he[1:]}'
                    + (' ואף מתחת למדד עצמו' if below_index else ''),
                    price_change, price_change_he, margin_of_safety=mos)
     if q == 'unknown' and meets:

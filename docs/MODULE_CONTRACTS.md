@@ -39,8 +39,9 @@ summary(cf) -> {"symbol","as_of","verdict","verdict_status","price_claim_withhel
 ```
 `inputs` = {"card"?: model_card inputs, "forecast"?: forecast inputs, "reviewer"?: review input, "decision"?: decision inputs,
 "analyst"?: name or list of names, "analyst_sheet"?: evidenced readings {question: {reading_he, evidence_ids}}, key_risk and
-scenario_events {bear|base|bull: [{event_he, evidence_ids}]} (analyst_sheet.py; not bound to the reviewer's signature, and
-they change no number)}. `scenario_reasons` is not a stage: it is built last from the finished casefile (a failure is
+scenario_events {bear|base|bull: [{event_he, evidence_ids}]} (analyst_sheet.py; evidence_ids a list or one id as text;
+what cannot be read is listed in analyst_sheet.scenario_events_rejected, never raised; not bound to the reviewer's
+signature, and they change no number)}. `scenario_reasons` is not a stage: it is built last from the finished casefile (a failure is
 recorded inside the key as status 'failed'), so no other key changes; the casefile hash covers it. `run` snapshots the inputs before any stage reads them and passes
 `review.inputs_digest(val, snapshot)` and `review.input_authors(snapshot)` to `review.audit`. The casefile's own
 `inputs_sha256` hashes every input including the reviewer; it is NOT the value a reviewer signs (see review). A stage that

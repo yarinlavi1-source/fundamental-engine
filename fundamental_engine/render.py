@@ -55,8 +55,8 @@ RISK_HE = {'competition': 'תחרות שתשחק מחירים או נתח שוק
            'rare_sustained_growth': 'התחזית נשענת על צמיחה מהירה ומתמשכת שמעט חברות משיגות',
            'above_own_history': 'התחזית מניחה צמיחה מהירה בהרבה מזו שהחברה השיגה בעבר',
            'base_rate': 'התחזית נשענת על צמיחה שמעט חברות משיגות',
-           'price_requires_revenue': 'המחיר דורש הכנסות גבוהות בהרבה מתרחיש הבסיס',
-           'capital_efficiency': 'המחיר דורש יעילות הון גבוהה בהרבה מתרחיש הבסיס'}
+           'price_requires_revenue': 'המחיר דורש הכנסות גבוהות בהרבה מהתרחיש הבסיסי',
+           'capital_efficiency': 'המחיר דורש יעילות הון גבוהה בהרבה מהתרחיש הבסיסי'}
 # risks that say "the price requires more than the base case": never the main risk next to a price at or below the value shown
 PRICE_REQUIRES = ('price_implies_growth', 'price_requires_revenue', 'wmbt')
 # Each risk-module gate has its own text: a gate is never described by its category (a red-team failure is not
@@ -293,11 +293,11 @@ def _five_he(dc, draft=False, compact=False):
     # the change from today assumes a re-rating: the price converges to that value (its annual rate can differ from the base IRR)
     conv = 'ובהנחה שהמחיר יתכנס לשווי ההוגן'
     if compact:                                            # the fair value's rate was just named: not repeated
-        return (f'{when}, בתרחיש הבסיס ובהתכנסות המחיר לשווי, השווי כ־{_ps(v)}{dist_he}, {move}'
+        return (f'{when}, בתרחיש הבסיסי ובהתכנסות המחיר לשווי, השווי כ־{_ps(v)}{dist_he}, {move}'
                 + ('.' if draft else '; זו הערכה מותנית, לא תחזית מחיר.'))
     if draft:
-        return f'בתרחיש הבסיס, {conv}, {when} השווי {at} כ־{_ps(v)}{dist_he}: {move}.'
-    return f'אם תרחיש הבסיס יתממש {conv}, {when} השווי {at} עשוי להיות כ־{_ps(v)}{dist_he}, {move}; זו הערכה מותנית, לא תחזית מחיר.'
+        return f'בתרחיש הבסיסי, {conv}, {when} השווי {at} כ־{_ps(v)}{dist_he}: {move}.'
+    return f'אם התרחיש הבסיסי יתממש {conv}, {when} השווי {at} עשוי להיות כ־{_ps(v)}{dist_he}, {move}; זו הערכה מותנית, לא תחזית מחיר.'
 
 
 def _marginal_he(v):
@@ -536,17 +536,23 @@ def value_display(casefile):
     return {'show': show, 'fair': fair, 'price': price, 'state': st, 'reason_he': reason}
 
 
+def yearly_table_rows(er):
+    """The dated rows the owner's yearly table shows, as [(index in the path, row)]: the dates where bear, base and bull
+    all have a value, and none unless there are at least three. One rule for hebrew_table and scenario_reasons."""
+    y = (er or {}).get('yearly_at_model_cost_of_equity') or {}
+    out = [(i, r) for i, r in enumerate(y.get('rows') or [])
+           if isinstance(r, dict) and all(_n(r.get(s)) for s in ('bear', 'base', 'bull'))]
+    return out if len(out) >= 3 else []
+
+
 def _yearly_rows(er, price, cur):
     """One row per date of the annual path (today, each fiscal year end, the fifth anniversary) of the executed valuation
     (each scenario at the engine's own cost of equity: the fair-value rate)."""
-    y = (er or {}).get('yearly_at_model_cost_of_equity') or {}
     out = []
-    for i, r in enumerate(y.get('rows') or []):
-        if not all(_n(r.get(s)) for s in ('bear', 'base', 'bull')):
-            continue
+    for i, r in yearly_table_rows(er):
         when = 'היום' if i == 0 else str(r['date'])[:7].replace('-', '/')
         out.append(f"| {when} | {_money(r['bear'], cur)} | {_money(r['base'], cur)} | {_money(r['bull'], cur)} |")
-    return out if len(out) >= 3 else []
+    return out
 
 
 def hebrew_paragraph(casefile):

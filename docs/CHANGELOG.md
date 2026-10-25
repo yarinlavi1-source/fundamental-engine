@@ -37,15 +37,37 @@ price has a reason: if something happens, then this price."
   inside the key, so no other casefile key changes; the casefile hash covers it). `pipeline` and `deep` write
   `out/scenarios_he.md`; `hebrew_table` adds one condition line per scenario under the yearly table ('דובי = אם …', no
   prices). CLI `scenario-reasons <casefile.json> [--json]`, MCP `scenario_reasons {casefile}` (docs/MCP.md).
-- Invariance, checked on the ADBE fixture pipeline, the synthetic scale-up platform and the FICTSAAS render fixtures
-  (before = 88cda3f): every casefile key other than `scenario_reasons` and `casefile_sha256` is identical; the table,
-  paragraph, report and plain_verdict output are identical after mapping the old scenario words to the new ones, except
-  the three condition lines. tests/test_scenario_reasons.py keeps the in-repo part of this (the same run with the builder
-  switched off differs only in that key).
+- Review fixes (same day). The current fiscal year: a valuation date shortly after the fiscal year end leaves a 0.9-1.0
+  year stub, which was read as a full year (stub revenue and EPS shown as the fiscal year, the implied P/E on the stub's
+  earnings, a false growth gap); the first period, starting on the valuation date, is now always the current fiscal
+  year (a full year only when it starts on the previous year end), so the P/E uses the next fiscal year. Banks
+  (residual income) get their own drivers: the ROE path, payout, book value per share, EPS = model net income / shares,
+  the merged fifth-anniversary year's net income summed; another route ('nav' and the specialist snapshots) says that its
+  drivers are not read, and two different values never share one condition text without a gap saying so. Rows show
+  executed revenue growth (the path rate is kept as `revenue_growth_assumption`); the condition names the long-run
+  discount rate when it differs from the explicit years' and drops the rate when the scenario has no value. Dated prices
+  follow the owner's table rows (`render.yearly_table_rows`, one rule for both): when the table has no yearly part, none
+  are listed and the text says so instead of pointing to it. Hebrew: the note names the year of the first growth rate and
+  dates the end point; a decline followed by growth reads 'ואחר כך יחזרו לצמוח'; a negative margin is an operating loss;
+  distributions in the future tense; 'אומדן רווח למניה' with one line saying it is not GAAP; gaps as plain nouns with
+  their fiscal year; hypotheses agree in number and the owner's note carries no raw evidence ids. Events: evidence_ids may
+  be a list or one id as text (`analyst_sheet.evidence_id_list`, shared); a malformed event never raises out of the
+  analyst sheet (it cost key_risk and the risk row before) and is listed in `analyst_sheet.scenario_events_rejected`
+  (replacing `scenario_events_ignored`) and said in the reasons. A malformed casefile is invalid input (ValueError) for the
+  CLI and the MCP tool. -0.0 is written 0.0; the rounding note states the whole-number P/E. The paragraph, decision texts,
+  analyst sheet and the HTML header now say 'התרחיש הבסיסי' where they said 'תרחיש הבסיס' (risk.py unchanged).
+- Invariance, checked against 88cda3f on the ADBE fixture pipeline, the synthetic scale-up platform and the synthetic bank:
+  no number, verdict code, valuation input or hash input changes. The casefile keys that differ are `scenario_reasons`,
+  `casefile_sha256` (which covers it) and, only by scenario-name strings, `analyst_sheet` (reading_he, to_close_he,
+  thesis_he) and `dc`'s verdict texts (reason_he, what_would_change_it_he: 'תרחיש הבסיס' -> 'התרחיש הבסיסי'); every
+  changed string equals the old one after mapping the old scenario words to the new ones. The table and paragraph are
+  identical after the same mapping, except the three condition lines. tests/test_scenario_reasons.py keeps the in-repo
+  part of this (the same run with the builder switched off differs only in that key).
 - Honest limits: the reasons explain the model's conditional values; they are not forecasts, probabilities or price
-  targets, and they do not make a draft a conclusion. EPS is the engine's operating-earnings proxy ((EBIT after SBC -
-  interest - cash taxes) / average model shares, investment income excluded); model shares carry no buybacks, so
-  per-share growth from cash returns shows in the distributions, not in EPS.
+  targets, and they do not make a draft a conclusion. EPS is the engine's estimate, not GAAP: on the operating route
+  (EBIT after SBC - interest - cash taxes) / average model shares, investment income excluded; model shares carry no
+  buybacks, so per-share growth from cash returns shows in the distributions, not in EPS; on the residual-income route
+  model net income / constant shares.
 
 ## Unreleased — calibration fixes (21.10.2026)
 

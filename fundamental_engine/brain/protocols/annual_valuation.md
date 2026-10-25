@@ -47,8 +47,11 @@ the scenes, scenario_reasons (MCP tool; CLI `scenario-reasons <casefile.json>`;
 casefile['scenario_reasons'] and out/scenarios_he.md from pipeline and deep) reads the
 executed casefile and gives, for each of דובי / בסיסי / שורי, the condition ('אם …')
 and, for today and every dated price of the yearly table, that fiscal year's revenue,
-growth, operating margin after SBC, EPS and FCF per share, shares, distributions and
-the implied P/E on next year's EPS. It copies the executed values; it never revalues.
+executed growth, operating margin after SBC, the model's EPS estimate (not GAAP) and FCF
+per share, shares, distributions and the implied P/E on next year's estimate (banks on
+the residual-income route: ROE, payout, book value and net income per share). It copies
+the executed values; it never revalues. Dated prices follow the table's own rows: when
+the table has no yearly part (a scenario without a value), no dated price is listed.
 The owner's table shows one short condition line per scenario; the rest stays behind.
 
 - The bear changes the business (growth, margin, funding, dilution), not only the
@@ -57,6 +60,8 @@ The owner's table shows one short condition line per scenario; the rest stays be
 - Events come only from the analyst, with evidence ids: inputs.analyst_sheet.
   scenario_events = {bear|base|bull: [{event_he, evidence_ids}]}. An event whose ids
   the FactBook does not hold (or that has none) is a hypothesis and is said to be one.
+  evidence_ids is a list (or one id as text); an event that cannot be read is listed
+  in analyst_sheet.scenario_events_rejected and said, never dropped silently.
 - Without events the condition is the model's own drivers in plain Hebrew (growth
   first -> last year and long run, margin start -> end, external funding and
   dilution, cost of equity); never invent a story to fill it.

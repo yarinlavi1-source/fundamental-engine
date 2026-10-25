@@ -331,7 +331,7 @@ def _valuation(case):
     path = [r for r in result['annual_values'][1:] if r.get('base') is not None]
     if path:
         end = path[-1]
-        explain += (f' אם תרחיש הבסיס מתממש, השווי ב-{end["date"][:4]} יהיה בערך {end["base"]:,.2f} {cur}'
+        explain += (f' אם התרחיש הבסיסי מתממש, השווי ב-{end["date"][:4]} יהיה בערך {end["base"]:,.2f} {cur}'
                     f' ({change_words(end["base"], quote)} של היום). זה שווי מותנה בתחזית, לא תחזית למחיר בבורסה.')
     return summary, result, {'bucket': bucket, 'light': light, 'headline': head, 'explain': explain,
                      'quote': quote, 'bear': bear, 'base': base, 'bull': bull, 'price_to_base_value': ratio}
@@ -586,7 +586,7 @@ def _bottom_line(business, price, stage):
     if good and cheap:
         return {'light': '🟢', 'call': 'מעניין מאוד', 'explain': 'עסק טוב שנראה זול ביחס לשווי שחישבנו. שווה להעמיק ולבדוק מה השוק יודע שאנחנו לא.'}
     if good and fair:
-        return {'light': '🟡', 'call': 'עסק טוב במחיר הוגן', 'explain': 'אין פה מציאה. התשואה תבוא רק אם העסק ימשיך לבצע כמו בתרחיש הבסיס.'}
+        return {'light': '🟡', 'call': 'עסק טוב במחיר הוגן', 'explain': 'אין פה מציאה. התשואה תבוא רק אם העסק ימשיך לבצע כמו בתרחיש הבסיסי.'}
     if good:
         return {'light': '🟠', 'call': 'עסק טוב אבל יקר', 'explain': 'המחיר כבר מגלם הצלחה גדולה. שווה לחכות למחיר נמוך יותר או להוכחה שהעסק עוקף את התרחיש הבסיסי.'}
     if ok and cheap:
@@ -645,7 +645,7 @@ def render_plain(r):
             base_row = next((x for x in mv['rows'] if x['scenario'] == 'base'), None)
             if base_row and bull_row:
                 lo, mid, hi = mv['exit_pe']
-                lines.append(f"**רגישות להנחות מכפיל — אינה שחזור של מודל אנליסט:** ב-{base_row['year']} אומדן רווח תפעולי לאחר מימון ומס למניה בתרחיש הבסיס בערך "
+                lines.append(f"**רגישות להנחות מכפיל — אינה שחזור של מודל אנליסט:** ב-{base_row['year']} אומדן רווח תפעולי לאחר מימון ומס למניה בתרחיש הבסיסי בערך "
                              f"{base_row['eps']:.2f} ובתרחיש השורי {bull_row['eps']:.2f}. אם השוק ישלם אז פי {hi} — המחיר יהיה בערך "
                              f"{base_row['price_in_year_at_pe'][hi]:,.0f}–{bull_row['price_in_year_at_pe'][hi]:,.0f} {cur}; אם רק פי {lo} — בערך "
                              f"{base_row['price_in_year_at_pe'][lo]:,.0f}–{bull_row['price_in_year_at_pe'][lo]:,.0f}. המכפיל הוא הנחה; האומדן אינו רווח GAAP או רווח מתואם מאומת לבעלי החברה.")

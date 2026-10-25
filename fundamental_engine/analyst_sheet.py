@@ -19,8 +19,11 @@ inputs['analyst_sheet'] (all optional): {'<question>': {'reading_he': text, 'evi
 inputs['analyst_sheet']['scenario_events'] (optional): {'bear'|'base'|'bull': [{'event_he': what has to happen, in plain
 Hebrew, 'evidence_ids': [...]}]}: the events behind each scenario price, shown by scenario_reasons as the scenario's
 condition ('אם …'). They are validated here against the FactBook (sources and qualitative ids): an event without evidence
-ids, or with an id the FactBook does not hold, is kept and marked a hypothesis. They change no number. The sheet carries
-'scenario_events' only when the input is supplied; keys other than bear/base/bull are listed in 'scenario_events_ignored'.
+ids, or with an id the FactBook does not hold, is kept and marked a hypothesis. They change no number. evidence_ids is a list
+of ids or one id as text (evidence_id_list, shared with scenario_reasons). The sheet carries 'scenario_events' only when the
+input is supplied; whatever cannot be read (an unknown scenario key, a scenario that is not a list, an event that is not an
+object or has no event_he, evidence_ids of another type) is listed in 'scenario_events_rejected' [{scenario, index, code,
+reason}] and never raises: a malformed optional input cannot cost the rest of the sheet.
 """
 from copy import deepcopy
 
@@ -88,27 +91,72 @@ def _analyst(inputs, key, fb):
     return dict(a, evidence_ids=ids, unknown_ids=[i for i in ids if i not in known], opinion=not ids)
 
 
+SCENARIO_KEYS = ('bear', 'base', 'bull')
+
+
+def evidence_id_list(v):
+    """evidence_ids as supplied -> (ids, problem). Missing -> []; one id as text -> [id]; a list keeps its non-blank text
+    items (problem names any other item, which is dropped); any other type -> (None, problem): rejected, never iterated."""
+    if v is None:
+        return [], None
+    if isinstance(v, str):
+        return ([v] if v.strip() else []), None
+    if isinstance(v, (list, tuple)):
+        ids = [i for i in v if isinstance(i, str) and i.strip()]
+        bad = [i for i in v if not isinstance(i, str)]
+        return ids, (f'{len(bad)} evidence id(s) that are not text were dropped' if bad else None)
+    return None, f'evidence_ids is {type(v).__name__}, not a list of ids or one id as text'
+
+
+def _event(e, known):
+    """One supplied event -> (row or None, (code, reason) or None)."""
+    if not isinstance(e, dict):
+        return None, ('event_not_object', 'the event is not an object {event_he, evidence_ids}')
+    text = e.get('event_he')
+    if not isinstance(text, str) or not text.strip():
+        return None, ('no_event_he', 'the event has no event_he text')
+    ids, problem = evidence_id_list(e.get('evidence_ids'))
+    if ids is None:
+        return None, ('bad_evidence_ids', problem)
+    unknown = [i for i in ids if i not in known]
+    row = {'event_he': text.strip(), 'evidence_ids': ids, 'unknown_ids': unknown, 'hypothesis': not ids or bool(unknown)}
+    return row, (('evidence_ids_items_dropped', problem) if problem else None)
+
+
 def scenario_events(inputs, fb):
     """inputs.analyst_sheet.scenario_events validated against the FactBook -> ({scenario: [{event_he, evidence_ids,
-    unknown_ids, hypothesis}]}, ignored keys), or (None, []) when not supplied."""
+    unknown_ids, hypothesis}]}, rejected [{scenario, index, code, reason}]), or (None, []) when not supplied. Never raises
+    on a malformed input: what cannot be read is listed, not dropped silently."""
     raw = ((inputs or {}).get('analyst_sheet') or {}).get('scenario_events')
     if raw is None:
         return None, []
     if not isinstance(raw, dict):
-        return {}, ['(not an object)']
+        return {}, [{'scenario': None, 'index': None, 'code': 'not_object',
+                     'reason': 'scenario_events is not an object {bear|base|bull: [events]}'}]
     known, out = _known(fb), {}
-    for s in ('bear', 'base', 'bull'):
+    rejected = [{'scenario': str(k), 'index': None, 'code': 'unknown_scenario', 'reason': 'not a scenario name (bear, base or bull)'}
+                for k in sorted(str(k) for k in raw if k not in SCENARIO_KEYS)]
+    for s in SCENARIO_KEYS:
+        items = raw.get(s)
+        if items is None:
+            continue
+        if not isinstance(items, list):
+            rejected.append({'scenario': s, 'index': None, 'code': 'not_list',
+                             'reason': 'the events of a scenario must be a list of {event_he, evidence_ids}'})
+            continue
         rows = []
-        for e in raw.get(s) or [] if isinstance(raw.get(s), list) else []:
-            if not isinstance(e, dict) or not str(e.get('event_he') or '').strip():
-                continue
-            ids = [str(i) for i in e.get('evidence_ids') or []]
-            unknown = [i for i in ids if i not in known]
-            rows.append({'event_he': str(e['event_he']).strip(), 'evidence_ids': ids, 'unknown_ids': unknown,
-                         'hypothesis': not ids or bool(unknown)})
+        for i, e in enumerate(items):
+            try:
+                row, why = _event(e, known)
+            except (TypeError, ValueError, AttributeError) as exc:
+                row, why = None, ('unreadable', f'the event could not be read ({type(exc).__name__})')
+            if why:
+                rejected.append({'scenario': s, 'index': i, 'code': why[0], 'reason': why[1]})
+            if row:
+                rows.append(row)
         if rows:
             out[s] = rows
-    return out, sorted(str(k) for k in raw if k not in ('bear', 'base', 'bull'))
+    return out, rejected
 
 
 def conditional_values(fb, an, card, qa, fc_inputs=None):
@@ -181,7 +229,7 @@ def build(fb, cf, inputs=None, conditional=None):
                    + (f'שווי הבסיס גבוה ב־{_p(gap)} מהמחיר. ' if gap > 0 else f'שווי הבסיס נמוך ב־{_p(-gap)} מהמחיר. '))
         if g.get('status') == 'solved' and _num(g.get('required')) is not None:
             reading += (f"כדי שהמחיר יהיה הוגן, המכירות צריכות לצמוח בממוצע {_p(g['required'], 1)} בשנה בחמש השנים הקרובות, "
-                        f"לעומת {_p(g.get('anchor'), 1)} בתרחיש הבסיס.")
+                        f"לעומת {_p(g.get('anchor'), 1)} בתרחיש הבסיסי.")
         elif g:
             reading += 'שום קצב צמיחה סביר לבדו לא מסביר את המחיר: השוק מניח גם רווחיות או משך צמיחה אחרים.'
         bq_level = ((dc.get('assessments') or {}).get('business_quality') or {}).get('level')
@@ -191,7 +239,7 @@ def build(fb, cf, inputs=None, conditional=None):
         elif gap >= .3:
             reading += (' פער כזה יכול להיות הזדמנות או מלכודת: צריך למצוא ממה השוק חושש ולבדוק בראיות אם זה זמני או מבני.')
         if 'no_consensus' in warn:
-            reading += ' אין כאן תחזיות אנליסטים, ולכן תרחיש הבסיס נשען על העבר בלבד ונוטה להיות שמרני לחברות בצמיחה.'
+            reading += ' אין כאן תחזיות אנליסטים, ולכן התרחיש הבסיסי נשען על העבר בלבד ונוטה להיות שמרני לחברות בצמיחה.'
         if card and ((card.get('dimensions') or {}).get('moat') or {}).get('source') != 'analyst':
             reading += ' המודל מניח שהיתרון התחרותי נשחק עם הזמן כל עוד לא הוכח אחרת (ראו שאלת צוואר הבקבוק).'
     qs['mispricing'] = {'status': 'numbers_only' if gap is not None else 'open', 'reading_he': reading,
@@ -347,11 +395,15 @@ def build(fb, cf, inputs=None, conditional=None):
            'key_risk': kr if kr and kr.get('reading_he') and not kr['opinion'] and not kr['unknown_ids'] else None,
            'meaning': 'an analyst reading of the casefile: numbers from the engine, judgement from evidence; open questions are '
                       'the research agenda; values are drafts until reviewed'}
-    events, ignored = scenario_events(inputs, fb)    # the analyst's events behind each scenario price (scenario_reasons)
+    try:                                             # the analyst's events behind each scenario price (scenario_reasons)
+        events, rejected = scenario_events(inputs, fb)
+    except (TypeError, ValueError, AttributeError, KeyError) as exc:     # an optional input never costs the rest of the sheet
+        events, rejected = {}, [{'scenario': None, 'index': None, 'code': 'unreadable',
+                                 'reason': f'scenario_events could not be read ({type(exc).__name__})'}]
     if events is not None:
         out['scenario_events'] = events
-        if ignored:
-            out['scenario_events_ignored'] = ignored
+        if rejected:
+            out['scenario_events_rejected'] = rejected
     return out
 
 
