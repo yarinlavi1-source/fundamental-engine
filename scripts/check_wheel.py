@@ -42,7 +42,10 @@ assert implied_cost_of_equity(dc)['status']=='solved'
 assert implied_growth_shift(spec)['status']=='solved'
 from fundamental_engine.quarter import quarter_review
 assert packet('quarter_review')['content']
-print(json.dumps({'quarter_review':'passed','drivers':'passed','plain_verdict':'passed','discovery':'passed','annual_valuation':'passed','version':__version__,'packaged_packets':len(records),'installed_review':'passed'}))
+from fundamental_engine.scenario_reasons import build as scenario_reasons
+assert scenario_reasons({})['status']=='not_available'
+assert 'scenario_reasons' in packet('annual_valuation')['content']
+print(json.dumps({'scenario_reasons':'passed','quarter_review':'passed','drivers':'passed','plain_verdict':'passed','discovery':'passed','annual_valuation':'passed','version':__version__,'packaged_packets':len(records),'installed_review':'passed'}))
 '''
     completed=subprocess.run([sys.executable,'-I','-c',code,temp,str(ROOT/'examples/research_dossier_demo.json'),str(ROOT/'examples/valuation/infrastructure.json'),str(ROOT/'examples/discovery_demo.json'),str(ROOT/'examples/plain_demo.json'),str(ROOT/'examples/real/avgo_plain_2025.json'),str(ROOT/'examples/valuation/software_drivers.json')],
                               cwd=temp,text=True,capture_output=True,timeout=20)

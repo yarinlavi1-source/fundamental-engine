@@ -36,7 +36,7 @@ an actual scheduler has been configured and verified.
 ## Required annual valuation presentation (v0.4)
 
 When asked for fair value, load annual_valuation and execute value_company. Preserve internally
-TODAY and each requested year-end through at least the fifth anniversary; columns: bear/base/bull, current
+TODAY and each requested year-end through at least the fifth anniversary; columns: bear/base/bull (דובי/בסיסי/שורי), current
 quote, base gap. Explain source-supported business drivers and the decisive
 assumptions. Future values belong to their stated dates, not to today's valuation.
 Never silently turn a synthetic example or a reverse-price sensitivity into the

@@ -382,7 +382,9 @@ def hebrew_table(casefile):
     the expected annual return at today's price against the named market return (engine-consistent, or the generic
     assumption said as such), the expected price path with its walk-forward accuracy band, the conditional five-year value,
     business quality, how rare the forecast growth is (base rates), what today's price assumes, the main risk (the analyst's
-    evidenced key_risk first), confidence and the call. A draft says so; a held valuation shows no value."""
+    evidenced key_risk first), confidence and the call. A draft says so; a held valuation shows no value. Under the yearly
+    bear/base/bull (דובי/בסיסי/שורי) table, one short line per scenario names its condition (scenario_reasons); the
+    per-date reasons stay behind the scenes (casefile['scenario_reasons'], out/scenarios_he.md)."""
     cf = casefile or {}
     dc = cf.get('dc') or {}
     v = dc.get('verdict') or {}
@@ -390,23 +392,21 @@ def hebrew_table(casefile):
     name = company.get('name') or company.get('ticker') or 'החברה'
     view, er = dc.get('valuation_view') or {}, dc.get('expected_return') or {}
     cur = (dc.get('price') or {}).get('currency') or company.get('currency') or ''
-    price = view.get('price')
-    st = _state(dc) if v else {'hold': True, 'state': 'שלב ההחלטה לא רץ'}
+    disp = value_display(cf)
+    price, fair, show = disp['price'], disp['fair'], disp['show']
     code, withheld = v.get('code'), bool(v.get('price_claim_withheld'))
     rows = [('מחיר היום', _money(price, cur) if _n(price) else 'לא ידוע')]
     fv = er.get('fair_value') or {}
-    fair = fv.get('value') if _n(fv.get('value')) else view.get('base')
     ke = fv.get('cost_of_equity') if _n(fv.get('cost_of_equity')) else view.get('model_cost_of_equity')
     req, pfh = er.get('hurdle'), er.get('value_at_required_return')
-    show = bool(v) and code in PRICE_VERDICTS and not st['hold'] and _n(fair) and fair > 0 and _n(price)
     notes = []
     if show:
         gap = price / fair - 1
-        rows.append(('שווי הוגן (תרחיש סביר)', _money(fair, cur)))
+        rows.append(('שווי הוגן (תרחיש בסיסי)', _money(fair, cur)))
         rows.append(('המחיר מול השווי', f"{'יקרה' if gap > 0 else 'זולה'} בכ־{abs(gap):.0%}" if abs(gap) >= .03 else 'בערך במחיר השווי'))
         lo, hi = (fv.get('bear'), fv.get('bull')) if _n(fv.get('bear')) and _n(fv.get('bull')) else (view.get('bear'), view.get('bull'))
         if _n(lo) and _n(hi):
-            rows.append(('תרחיש רע / תרחיש טוב', f'{_money(lo, cur)} / {_money(hi, cur)}'))
+            rows.append(('דובי / שורי', f'{_money(lo, cur)} / {_money(hi, cur)}'))
         buy = _n(req) and _n(pfh) and pfh > 0 and abs(pfh / fair - 1) >= .005
         if _n(req) and _n(pfh) and pfh > 0:
             d = price / pfh - 1
@@ -439,10 +439,10 @@ def hebrew_table(casefile):
             dist = f5.get('cumulative_distributions_base') or 0.
             rows.append((f"שווי משוער בעוד 5 שנים ({f5.get('date', '')[:4]})",
                          _money(f5['base_value'], cur) + (f' + כ־{_money(dist, cur)} חלוקות לבעלי המניות' if dist > .005 * price else '')))
-        notes.append('שווי הוגן = כמה המניה שווה היום אם התרחיש הסביר מתממש, בשיעור ההיוון שהמנוע דורש מהחברה הזו לפי הסיכון שלה'
+        notes.append('שווי הוגן = כמה המניה שווה היום אם התרחיש הבסיסי מתממש, בשיעור ההיוון שהמנוע דורש מהחברה הזו לפי הסיכון שלה'
                      + (f' (כ־{ke * 100:.1f}% בשנה).' if _n(ke) else '.'))
         if buy:
-            notes.append(f'מחיר קנייה מרבי = עד איזה מחיר התרחיש הסביר עוד נותן את התשואה שאתה דורש (כ־{req * 100:.1f}% בשנה: תשואת השוק '
+            notes.append(f'מחיר קנייה מרבי = עד איזה מחיר התרחיש הבסיסי עוד נותן את התשואה שאתה דורש (כ־{req * 100:.1f}% בשנה: תשואת השוק '
                          'ועוד תוספת על הסיכון של מניה בודדת); זו דרישה שלך, לא שווי החברה, ולפיה נקבעת השורה התחתונה.')
         edge = (irr - mkt) if _n(irr) and _n(mkt) and _n(ke) else None
         if edge is not None and gap > .03 and edge > .005:
@@ -451,7 +451,7 @@ def hebrew_table(casefile):
         elif edge is not None and gap < -.03 and edge < -.005:
             notes.append(f'למה "זולה" אבל מניבה פחות מהשוק: גם בשיעור ההיוון של החברה יש מרווח, אבל השוק מתומחר לתשואה גבוהה יותר '
                          f'(כ־{mkt * 100:.1f}%); ביחס למניות אחרות היא לא זולה.')
-        notes.append('תשואה צפויה = מה תרוויח בשנה, בממוצע, אם תקנה היום והתרחיש הסביר יתממש. ' + MARKET_NOTE_HE.get(kind, ''))
+        notes.append('תשואה צפויה = מה תרוויח בשנה, בממוצע, אם תקנה היום והתרחיש הבסיסי יתממש. ' + MARKET_NOTE_HE.get(kind, ''))
         if pp.get('status') == 'computed' and pp.get('rows'):
             hit = pp.get('hit_rate_within_band') or {}
             when = [f"בכ־{hit[k]:.0%}" + (' מהמקרים' if i == 0 else '') + (' אחרי שנה' if int(k) == 1 else f' אחרי {k} שנים')
@@ -465,7 +465,7 @@ def hebrew_table(casefile):
         notes.append('שווי בעוד 5 שנים הוא הערכה מותנית, לא תחזית למחיר המניה.')
     elif v:
         rows.append(('שווי הוגן', 'אין עדיין שווי אמין להצגה'))
-        notes.append('הסיבה: ' + (st['state'] if st.get('hold') else (v.get('reason_he') or 'הערכת השווי לא הושלמה')) + '.')
+        notes.append('הסיבה: ' + disp['reason_he'] + '.')
     q = ((dc.get('assessments') or {}).get('business_quality') or {})
     kind = lynch_type(cf)
     if kind:
@@ -480,8 +480,8 @@ def hebrew_table(casefile):
     if show and pig.get('status') == 'solved' and _n(pig.get('implied_real_cagr')):
         sh = pig.get('growth_shift')
         n = pig.get('horizon', 10)
-        diff = (f" (כ־{abs(sh) * 100:.0f} נק׳ אחוז {'יותר' if sh > 0 else 'פחות'} בשנה מהתרחיש הסביר)"
-                if _n(sh) and abs(sh) >= .005 else ' (בערך כמו התרחיש הסביר)')
+        diff = (f" (כ־{abs(sh) * 100:.0f} נק׳ אחוז {'יותר' if sh > 0 else 'פחות'} בשנה מהתרחיש הבסיסי)"
+                if _n(sh) and abs(sh) >= .005 else ' (בערך כמו התרחיש הבסיסי)')
         tail = (f"; רק כ־{pig['share_at_least']:.0%} מהחברות בגודל הזה הצליחו בכך בעבר" if _n(pig.get('share_at_least')) else '')
         rows.append(('מה המחיר של היום מניח', f"צמיחה של כ־{_hp(pig['implied_real_cagr'])} בשנה (מעבר לאינפלציה) ל־{n} שנים"
                                                f"{diff}{tail}"))
@@ -499,10 +499,41 @@ def hebrew_table(casefile):
            '| | |', '|---|---|'] + [f'| {k} | {str(x).replace("|", "/")} |' for k, x in rows]
     yearly = _yearly_rows(er, price, cur) if show else []
     if yearly:
-        out += ['', '**שווי למניה בכל שנה, לפי תרחיש**', '', '| מועד | תרחיש רע | תרחיש סביר | תרחיש טוב |', '|---|---|---|---|'] + yearly
+        out += ['', '**שווי למניה בכל שנה, לפי תרחיש**', '', '| מועד | דובי | בסיסי | שורי |', '|---|---|---|---|'] + yearly
         notes.append('הטבלה השנתית: כמה המניה תהיה שווה בכל מועד אם התרחיש יתממש (באותו שיעור היוון כמו השווי ההוגן); חלוקות '
                      'לבעלי המניות משולמות בנוסף.')
+        notes += _scenario_notes(cf)
     return '\n'.join(out + ([''] + [f'- {n}' for n in notes] if notes else []))
+
+
+def _scenario_notes(cf):
+    """At most one short line per scenario under the yearly table: its condition only ('דובי = אם …'); every dated
+    reason stays behind the scenes. Read from casefile['scenario_reasons'] (pipeline), built on the spot when absent."""
+    sr = cf.get('scenario_reasons')
+    if not isinstance(sr, dict) or 'scenarios' not in sr:
+        from .scenario_reasons import build
+        try:
+            sr = build(cf)
+        except (ValueError, KeyError, ZeroDivisionError, TypeError, AttributeError):
+            return []
+    return [s['note_he'] for s in sr.get('scenarios') or [] if isinstance(s, dict) and s.get('note_he')]
+
+
+def value_display(casefile):
+    """Whether the owner's table shows values: one rule for hebrew_table and scenario_reasons. A price verdict, no held
+    valuation (render._state: unreleased forensic or governance flag, demo inputs, a rejected assumption, a 'hold' material
+    issue), a positive fair value and a price; an unreviewed draft still shows its numbers, labelled. -> {'show', 'fair'
+    (headline fair value), 'price', 'state', 'reason_he' (why no value is shown; None when shown)}."""
+    dc = (casefile or {}).get('dc') or {}
+    v = dc.get('verdict') or {}
+    view, er = dc.get('valuation_view') or {}, dc.get('expected_return') or {}
+    fv = er.get('fair_value') or {}
+    fair = fv.get('value') if _n(fv.get('value')) else view.get('base')
+    price = view.get('price')
+    st = _state(dc) if v else {'hold': True, 'state': 'שלב ההחלטה לא רץ'}
+    show = bool(v) and v.get('code') in PRICE_VERDICTS and not st['hold'] and _n(fair) and fair > 0 and _n(price)
+    reason = None if show else (st['state'] if st.get('hold') else (v.get('reason_he') or 'הערכת השווי לא הושלמה'))
+    return {'show': show, 'fair': fair, 'price': price, 'state': st, 'reason_he': reason}
 
 
 def _yearly_rows(er, price, cur):
@@ -649,9 +680,9 @@ def _paragraph(casefile, short=False, secondary=True, pad=False, compact=False):
     if risk:
         parts.append(f'הסיכון המרכזי: {risk}.')
     elif show and _n(bear) and bear < price:
-        parts.append(f'הסיכון המרכזי: בתרחיש השמרני השווי היום כ־{_ps(bear)}, נמוך בכ־{1 - bear / price:.0%} מהמחיר.')
+        parts.append(f'הסיכון המרכזי: בתרחיש הדובי השווי היום כ־{_ps(bear)}, נמוך בכ־{1 - bear / price:.0%} מהמחיר.')
     elif show and _n(bear):
-        parts.append(f'הסיכון המרכזי: שהתחזית לא תתממש; גם התרחיש השמרני (כ־{_ps(bear)}) אינו נמוך מהמחיר, אבל הוא אינו המקרה הגרוע ביותר האפשרי.')
+        parts.append(f'הסיכון המרכזי: שהתחזית לא תתממש; גם התרחיש הדובי (כ־{_ps(bear)}) אינו נמוך מהמחיר, אבל הוא אינו המקרה הגרוע ביותר האפשרי.')
     else:
         parts.append('הסיכון המרכזי: שהצמיחה והרווחיות לא יתממשו כפי שהונח.')
     if withheld and code in PRICE_VERDICTS:

@@ -109,7 +109,7 @@ def render_he(plan, others=8):
     er = plan['expected_return']
     out = [f"מדד: {p(plan['index_weight'])} מהתיק; פוזיציות פעילות: {p(plan['active_weight'])}"
            + (' (זמני: המחקר עדיין טיוטה)' if plan['provisional'] else ''),
-           f"תשואה שנתית צפויה: מדד בלבד {p(er['index_only'])}; התיק המוצע דובי/בסיס/שורי {p(er['portfolio_bear'])} / "
+           f"תשואה שנתית צפויה: מדד בלבד {p(er['index_only'])}; התיק המוצע דובי/בסיסי/שורי {p(er['portfolio_bear'])} / "
            f"{p(er['portfolio_base'])} / {p(er['portfolio_bull'])}", '']
     shown = [t for t in plan['targets'] if t['target_weight'] or t['current_weight']]
     rest = [t for t in plan['targets'] if t not in shown and t['status'] not in ('excluded', 'no_return_estimate')][:others]

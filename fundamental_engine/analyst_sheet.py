@@ -15,6 +15,12 @@ not a verdict, and every value is a draft until a reviewer signs it.
 inputs['analyst_sheet'] (all optional): {'<question>': {'reading_he': text, 'evidence_ids': [...]}}; for geopolitics also
 'scenario_he' and 'value_impact' (fraction of the base value lost if the scenario happens); for bottleneck 'confirmed'
 (true / false) with evidence. Readings without evidence ids are kept but labelled as opinion.
+
+inputs['analyst_sheet']['scenario_events'] (optional): {'bear'|'base'|'bull': [{'event_he': what has to happen, in plain
+Hebrew, 'evidence_ids': [...]}]}: the events behind each scenario price, shown by scenario_reasons as the scenario's
+condition ('אם …'). They are validated here against the FactBook (sources and qualitative ids): an event without evidence
+ids, or with an id the FactBook does not hold, is kept and marked a hypothesis. They change no number. The sheet carries
+'scenario_events' only when the input is supplied; keys other than bear/base/bull are listed in 'scenario_events_ignored'.
 """
 from copy import deepcopy
 
@@ -69,13 +75,40 @@ def _evidence(fb, topics):
              'source_ids': q.get('source_ids')} for q in (fb.get('qualitative') or []) if q.get('topic') in topics]
 
 
+def _known(fb):
+    return set(fb.get('sources') or {}) | {q.get('id') for q in fb.get('qualitative') or []}
+
+
 def _analyst(inputs, key, fb):
     a = ((inputs or {}).get('analyst_sheet') or {}).get(key) or {}
     if not a:
         return None
-    known = set(fb.get('sources') or {}) | {q.get('id') for q in fb.get('qualitative') or []}
+    known = _known(fb)
     ids = list(a.get('evidence_ids') or [])
     return dict(a, evidence_ids=ids, unknown_ids=[i for i in ids if i not in known], opinion=not ids)
+
+
+def scenario_events(inputs, fb):
+    """inputs.analyst_sheet.scenario_events validated against the FactBook -> ({scenario: [{event_he, evidence_ids,
+    unknown_ids, hypothesis}]}, ignored keys), or (None, []) when not supplied."""
+    raw = ((inputs or {}).get('analyst_sheet') or {}).get('scenario_events')
+    if raw is None:
+        return None, []
+    if not isinstance(raw, dict):
+        return {}, ['(not an object)']
+    known, out = _known(fb), {}
+    for s in ('bear', 'base', 'bull'):
+        rows = []
+        for e in raw.get(s) or [] if isinstance(raw.get(s), list) else []:
+            if not isinstance(e, dict) or not str(e.get('event_he') or '').strip():
+                continue
+            ids = [str(i) for i in e.get('evidence_ids') or []]
+            unknown = [i for i in ids if i not in known]
+            rows.append({'event_he': str(e['event_he']).strip(), 'evidence_ids': ids, 'unknown_ids': unknown,
+                         'hypothesis': not ids or bool(unknown)})
+        if rows:
+            out[s] = rows
+    return out, sorted(str(k) for k in raw if k not in ('bear', 'base', 'bull'))
 
 
 def conditional_values(fb, an, card, qa, fc_inputs=None):
@@ -220,13 +253,13 @@ def build(fb, cf, inputs=None, conditional=None):
         st = 'open'
     else:
         ratio = up / down if down > 0 else None
-        reading = (f'בתרחיש הטוב {_p(up) if up >= 0 else "−" + _p(-up)} מהמחיר, בתרחיש הרע {"−" + _p(down) if down > 0 else "בלי הפסד"}'
+        reading = (f'בתרחיש השורי {_p(up) if up >= 0 else "−" + _p(-up)} מהמחיר, בתרחיש הדובי {"−" + _p(down) if down > 0 else "בלי הפסד"}'
                    + (f' (יחס {ratio:.1f} ל־1)' if ratio is not None and ratio >= .5 else '')
                    + (f'; בתרחיש הקיצון (הפסד קבוע) {"−" + _p(perm)}' if _num(perm) else '') + '. ')
         if up <= 0:
-            reading += 'גם התרחיש הטוב של המודל לא מגיע למחיר: אין אסימטריה לטובתנו לפי ההנחות הנוכחיות, אלא אם הראיות ישנו אותן.'
+            reading += 'גם התרחיש השורי של המודל לא מגיע למחיר: אין אסימטריה לטובתנו לפי ההנחות הנוכחיות, אלא אם הראיות ישנו אותן.'
         elif down == 0:
-            reading += 'גם התרחיש הרע לא מתחת למחיר: אסימטריה חיובית לפי המודל — לבדוק שהתרחיש הרע באמת רע מספיק.'
+            reading += 'גם התרחיש הדובי לא מתחת למחיר: אסימטריה חיובית לפי המודל — לבדוק שהתרחיש הדובי באמת רע מספיק.'
         elif ratio and ratio >= 2:
             reading += 'האסימטריה חיובית: הרווח האפשרי גדול בבירור מההפסד האפשרי.'
         else:
@@ -237,7 +270,7 @@ def build(fb, cf, inputs=None, conditional=None):
                        'numbers': {'gain_to_bull': up, 'loss_to_bear': down, 'loss_to_permanent': perm,
                                    'five_year': {k: (vv.get('five_year') or {}).get(k) for k in ('bear_value', 'base_value', 'bull_value')}},
                        'evidence': [], 'analyst': _analyst(inputs, 'asymmetry', fb),
-                       'to_close_he': 'לוודא שהתרחיש הרע כולל את הפחד המרכזי ושהתרחיש הטוב נשען על ראיות ולא על תקווה.'}
+                       'to_close_he': 'לוודא שהתרחיש הדובי כולל את הפחד המרכזי ושהתרחיש השורי נשען על ראיות ולא על תקווה.'}
 
     # 5. bottleneck
     moat = (card.get('dimensions') or {}).get('moat') or {}
@@ -310,10 +343,16 @@ def build(fb, cf, inputs=None, conditional=None):
     questions = [{'key': k, 'question_he': q, **qs[k], 'status_he': STATUS_HE[qs[k]['status']]} for k, q in QUESTIONS]
     open_ = [x['key'] for x in questions if x['status'] != 'evidenced']
     kr = _analyst(inputs, 'key_risk', fb)          # the analyst's main risk in plain words (shown in the valuation table)
-    return {'sheet_version': 1, 'questions': questions, 'thesis_he': _thesis(qs, dc, price, base, ccy), 'open': open_,
-            'key_risk': kr if kr and kr.get('reading_he') and not kr['opinion'] and not kr['unknown_ids'] else None,
-            'meaning': 'an analyst reading of the casefile: numbers from the engine, judgement from evidence; open questions are '
-                       'the research agenda; values are drafts until reviewed'}
+    out = {'sheet_version': 1, 'questions': questions, 'thesis_he': _thesis(qs, dc, price, base, ccy), 'open': open_,
+           'key_risk': kr if kr and kr.get('reading_he') and not kr['opinion'] and not kr['unknown_ids'] else None,
+           'meaning': 'an analyst reading of the casefile: numbers from the engine, judgement from evidence; open questions are '
+                      'the research agenda; values are drafts until reviewed'}
+    events, ignored = scenario_events(inputs, fb)    # the analyst's events behind each scenario price (scenario_reasons)
+    if events is not None:
+        out['scenario_events'] = events
+        if ignored:
+            out['scenario_events_ignored'] = ignored
+    return out
 
 
 def _thesis(qs, dc, price, base, ccy):
@@ -332,7 +371,7 @@ def _thesis(qs, dc, price, base, ccy):
         out.append('הזדמנות אפשרית, בתנאי שהסיבה שהשוק חושש ממנה זמנית ולא מבנית.')
     up, down = qs['asymmetry']['numbers']['gain_to_bull'], qs['asymmetry']['numbers']['loss_to_bear']
     if up is not None and down is not None:
-        out.append(f"תרחיש טוב {'+' if up >= 0 else '−'}{_p(abs(up))}, תרחיש רע −{_p(down)}.")
+        out.append(f"תרחיש שורי {'+' if up >= 0 else '−'}{_p(abs(up))}, תרחיש דובי −{_p(down)}.")
     cond = qs['bottleneck']['numbers'].get('value_if_moat_confirmed')
     if cond and base and cond.get('base') and cond['base'] > base * 1.15:
         out.append(f"התמונה תלויה בעיקר בשאלה אם יש לה יתרון שמחזיק לאורך שנים: אם כן, שווי הבסיס {cond['base']:,.2f} {ccy}.")

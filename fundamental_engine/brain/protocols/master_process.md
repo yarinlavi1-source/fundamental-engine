@@ -45,8 +45,11 @@ read from its own reports, not a rule applied to all companies alike.
     cyclical quarter x 4 is peak earnings, not a run rate.
 13. **Valuation by type and the yearly path** — annual_valuation: today's value and every year through the fifth,
     bear/base/bull, the model fitting the type (DCF with fade, normalized cyclical margins, residual income, NAV,
-    rNPV). The bear changes the business (growth, margin, funding), not only the multiple. Show the likely range
-    separately from the extremes, and the measured error band (render.hebrew_table).
+    rNPV). The bear changes the business (growth, margin, funding), not only the multiple. In the owner's words the
+    scenarios are דובי / בסיסי / שורי. Show the base range (טווח הבסיס: the base at the required return ±1pp)
+    separately from the extremes, and the measured error band (render.hebrew_table). Every scenario price carries its
+    condition behind the scenes (scenario_reasons, out/scenarios_he.md): what has to happen and that year's business;
+    events need evidence ids (analyst_sheet.scenario_events), else they are hypotheses.
 14. **Expectations** — reverse DCF: what today's price already assumes (Rappaport & Mauboussin); where and why
     our view differs and what evidence will settle it.
 15. **Pre-mortem and counter-thesis** — assume the investment failed in three years and list why (Klein;

@@ -383,9 +383,9 @@ def render_he(comp):
                     f"- איכות עסק {lv(L['business_quality'])}, איכות צמיחה {lv(L['growth_quality'])}, חוסן פיננסי "
                     f"{lv(L['financial_strength'])}, הקצאת הון {lv(L['management_capital_allocation'])}, אטרקטיביות מחיר "
                     f"{lv(L['price_attractiveness'])}, אי־ודאות נתונים {lv(L['data_uncertainty'])}",
-                    f"- מחיר {_v(r['price'])}; שווי היום דובי/בסיס/שורי {_v(bear)} / {_v(base)} / {_v(bull)}; "
+                    f"- מחיר {_v(r['price'])}; שווי היום דובי/בסיסי/שורי {_v(bear)} / {_v(base)} / {_v(bull)}; "
                     f"שווי בתשואה הנדרשת {_v(r['value_at_required_return'])}",
-                    f"- תשואה שנתית משתמעת דובי/בסיס/שורי {_p(r['irr']['bear'], 1)} / {_p(r['irr']['base'], 1)} / {_p(r['irr']['bull'], 1)}; "
+                    f"- תשואה שנתית משתמעת דובי/בסיסי/שורי {_p(r['irr']['bear'], 1)} / {_p(r['irr']['base'], 1)} / {_p(r['irr']['bull'], 1)}; "
                     f"נדרשת {_p(r['required_return'], 1)}; מדד {_p(r['index_expected_return'], 1)}",
                     f"- הפסד עד התרחיש הדובי {_p(r['loss_to_bear'])}; בתרחיש פגיעה קבועה {_p(r['loss_to_permanent'])}",
                     '- איך מרוויחה: ' + ('; '.join(f"{x['name']} {_p(x['share'])} מההכנסות, צמיחה {_p(x['cagr'])}/שנה"

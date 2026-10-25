@@ -377,7 +377,9 @@ def valuate(fb, qa, fc, inputs=None):
 
 def run(fb, inputs=None):
     """Run every stage on one FactBook. inputs: {'card': ..., 'forecast': ..., 'reviewer': ..., 'decision': ..., 'analyst': name(s)?,
-    'analyst_sheet': the analyst's evidenced readings of the six questions (analyst_sheet.py)}.
+    'analyst_sheet': the analyst's evidenced readings of the six questions and the optional scenario_events behind each
+    bear/base/bull price (analyst_sheet.py)}. casefile['scenario_reasons'] (scenario_reasons.build) reads the finished casefile:
+    the condition and the business of each dated scenario price, nothing revalued.
 
     The reviewer signs valuation_sha256 (the executed valuation) and inputs_sha256 = review.inputs_digest(val, inputs), which
     also covers inputs.decision/card/forecast as supplied (rv['binding'] shows the value to sign): an analyst override added
@@ -421,6 +423,13 @@ def run(fb, inputs=None):
     from . import analyst_sheet
     cond = stage('conditional_values', lambda: analyst_sheet.conditional_values(fb, an, card, qa, inputs.get('forecast'))) if fc else None
     cf['analyst_sheet'] = stage('analyst_sheet', lambda: analyst_sheet.build(fb, cf, inputs, cond))
+    # behind every scenario price, its condition and the business of that year (read from the casefile, nothing revalued);
+    # not a stage, so no other casefile key changes: a failure is recorded inside the key itself
+    from . import scenario_reasons
+    try:
+        cf['scenario_reasons'] = scenario_reasons.build(cf)
+    except (ValueError, KeyError, ZeroDivisionError, TypeError, AttributeError) as e:
+        cf['scenario_reasons'] = {'reasons_version': 1, 'status': 'failed', 'error': f'{type(e).__name__}: {e}', 'scenarios': []}
     json.dumps(cf, allow_nan=False, default=str)
     cf['casefile_sha256'] = F.digest(json.loads(json.dumps({k: v for k, v in cf.items() if k != 'casefile_sha256'}, default=str)))
     return cf

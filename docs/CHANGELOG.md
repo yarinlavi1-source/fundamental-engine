@@ -1,3 +1,52 @@
+## Unreleased — bull, base and bear in the owner's words, and a reason behind every scenario price (25.10.2026)
+
+The owner (25.10.2026): "Not 'likely' — what is 'likely'? I want bullish, base and bearish. And behind the scenes every
+price has a reason: if something happens, then this price."
+
+- Labels. Every owner-facing Hebrew word that names a valuation scenario is now bear = דובי, base = בסיסי, bull = שורי:
+  the yearly table header `| מועד | דובי | בסיסי | שורי |`, `שווי הוגן (תרחיש בסיסי)`, the range row `דובי / שורי` and
+  the table notes (render.py); the paragraph's risk sentence ('בתרחיש הדובי', was 'השמרני'); plain_verdict's headlines,
+  explanation, sensitivity text and yearly table (`| תאריך | דובי | בסיסי | שורי |`, the tail column 'הצלחה גדולה' kept);
+  the analyst sheet's asymmetry reading, closing note and thesis; decision's bear-tolerance reason, margin text and the
+  no-IRR clause; decision_summary's paragraph ('המרכזי' / 'השמרני' / 'האופטימי'); the run report column ('הפסד בתרחיש
+  הדובי'); the HTML valuation table (was 'שלילי / חיובי'); 'דובי/בסיסי/שורי' in handoff and allocation. Unchanged: every
+  bucket and verdict key, quality levels ('סביר' / 'סבירה' = adequate), 'חוב סביר', 'תשואה סבירה', 'מחיר סביר', risk.py's
+  'בתרחיש הבסיס' (already base), the generic 'טווח תרחישים'. Packets (plain_language, annual_valuation, master_process step
+  13, synthesis, analyst_sheet), docs/PLAIN_LANGUAGE.md and CLAUDE.md now prescribe these words; the 'likely range' of
+  master_process is the base range ('טווח הבסיס', the base at the required return ±1pp). Release notes below keep their
+  original wording.
+- `scenario_reasons.py` (new): `build(casefile)` reads the executed casefile and never recomputes or changes a value. For
+  each scenario: the condition (`if_he`: analyst events, else the model's own drivers in plain Hebrew: revenue growth in
+  the first forecast year -> the last explicit year and the long-run rate, operating margin after SBC start -> end,
+  external funding and dilution, cost of equity; never an invented story); for today and each dated row of the owner's
+  yearly table (`dc.expected_return.yearly_at_model_cost_of_equity`, else `val.result.annual_values` through the fifth
+  anniversary) the executed value, the drivers of the fiscal year that holds the date (revenue, growth, operating margin
+  after SBC, EPS and FCF per share on average model shares, diluted shares, cumulative distributions; an interim split at
+  the fifth anniversary merged back into its fiscal year), the implied P/E = value / EPS of the next full fiscal year
+  (null with the reason when it is missing or not positive) and `why_he` ('אם …, אז ב־2027/11: הכנסות …, רווח תפעולי …
+  → שווי …'); the assumption ids (scenario, period, terminal, underwriting scenario reviews, review status), the analyst's
+  validated overrides as context, and `gaps` for what the casefile does not hold (a synthetic casefile without forecast
+  paths gets gaps, not filled-in numbers). Status computed / partial / not_available; a valuation the owner's table does
+  not show (`render.value_display`, factored out of hebrew_table without a behaviour change) gets no values and says why.
+  Output is deterministic; rounding is stated in the output. `render_he` writes the short Hebrew sections.
+- Events: optional `inputs.analyst_sheet.scenario_events = {bear|base|bull: [{event_he, evidence_ids}]}`, validated by
+  `analyst_sheet.build` against the FactBook's sources and qualitative ids (like key_risk); an event without ids, or with an
+  id the FactBook does not hold, is kept and marked a hypothesis ('השערה: …'). The sheet carries the key only when the
+  input is supplied; it is not bound to the reviewer's signature and changes no number.
+- Wiring: `pipeline.run` stores `casefile['scenario_reasons']` after the analyst sheet (not a stage: a failure is recorded
+  inside the key, so no other casefile key changes; the casefile hash covers it). `pipeline` and `deep` write
+  `out/scenarios_he.md`; `hebrew_table` adds one condition line per scenario under the yearly table ('דובי = אם …', no
+  prices). CLI `scenario-reasons <casefile.json> [--json]`, MCP `scenario_reasons {casefile}` (docs/MCP.md).
+- Invariance, checked on the ADBE fixture pipeline, the synthetic scale-up platform and the FICTSAAS render fixtures
+  (before = 88cda3f): every casefile key other than `scenario_reasons` and `casefile_sha256` is identical; the table,
+  paragraph, report and plain_verdict output are identical after mapping the old scenario words to the new ones, except
+  the three condition lines. tests/test_scenario_reasons.py keeps the in-repo part of this (the same run with the builder
+  switched off differs only in that key).
+- Honest limits: the reasons explain the model's conditional values; they are not forecasts, probabilities or price
+  targets, and they do not make a draft a conclusion. EPS is the engine's operating-earnings proxy ((EBIT after SBC -
+  interest - cash taxes) / average model shares, investment income excluded); model shares carry no buybacks, so
+  per-share growth from cash returns shows in the distributions, not in EPS.
+
 ## Unreleased — calibration fixes (21.10.2026)
 
 - Terminal growth follows the convention of the ERP it is paired with (`forecast.TERMINAL_BEAR_GAP` comment): base = bull =

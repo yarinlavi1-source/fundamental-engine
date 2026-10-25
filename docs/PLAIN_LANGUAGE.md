@@ -35,7 +35,7 @@ and REITs are refused (capital/NAV metrics required).
 
 Quality = product margin, operating margin, free cash, earnings backing. Growth =
 revenue growth. Financial strength = debt/cash, runway, dilution. Price = today's
-quote versus executed values: at or below bear → "זול — גם בתרחיש הרע"; ≤80% of
+quote versus executed values: at or below bear → "זול — גם בתרחיש הדובי"; ≤80% of
 base → cheap; ≤110% → fair; ≤ bull → expensive; above bull → very expensive; a
 funding block is a warning, never a value. The bottom line crosses the business
 average (≥3.5 good, ≥2.5 average) with the price bucket.

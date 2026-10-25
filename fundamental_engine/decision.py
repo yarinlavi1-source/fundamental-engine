@@ -1387,7 +1387,7 @@ def _yearly_at_rate(view, rates, rate, res):
 
 def _yearly_model(view, res):
     """The executed valuation's own annual path (each scenario at its own cost of equity) through the fifth anniversary: the
-    yearly bad / likely / good table under the headline fair value. Read from the result, nothing revalued."""
+    yearly bear / base / bull (דובי / בסיסי / שורי) table under the headline fair value. Read from the result, nothing revalued."""
     five = view.get('five_year')
     if not five or not res:
         return None
@@ -1860,7 +1860,7 @@ def _verdict(A, g, er, view, index, rates, req, tol_shift=0.):
     else:
         meets = A['price_attractiveness']['level'] in ('strong', 'adequate') if A['price_attractiveness']['level'] in POINTS else None
         irr_txt = 'n/a (no cash-flow IRR; discount to base value used)'
-        irr_he = 'לא ניתנת לחישוב (נבחנה ההנחה מול השווי המרכזי)'
+        irr_he = 'לא ניתנת לחישוב (נבחנה ההנחה מול שווי התרחיש הבסיסי)'
     pfh_v = ((rates.pfh(hurdle) if rates is not None else None) or {}).get('value')
     price_change = ([f'price at or below {_g3(pfh_v)} (value at your required return {_pct(hurdle, 2)}; base IRR = required return)'] if pfh_v else []) + \
                    ['new evidence that raises the base case (see what_must_be_true)']
@@ -1895,10 +1895,10 @@ def _verdict(A, g, er, view, index, rates, req, tol_shift=0.):
             return out('quality_but_expensive', 'bear_loss_beyond_tolerance',
                        f'{q} business and base IRR {irr_txt} clears the {req_txt}, but the bear-case loss {_pct(loss, 0)} ({basis}) '
                        f'exceeds the {tol:.0%} tolerance for {q} quality: not enough margin of safety',
-                       f'העסק באיכות {LEVEL_HE[q]} והתשואה בתרחיש הבסיס עוברת את התשואה הנדרשת, אבל בתרחיש השמרני השווי '
+                       f'העסק באיכות {LEVEL_HE[q]} והתשואה בתרחיש הבסיס עוברת את התשואה הנדרשת, אבל בתרחיש הדובי השווי '
                        f'{"בתשואה הנדרשת " if bear_h is not None else ""}נמוך בכ־{_he_pct(loss)} מהמחיר, יותר ממרווח הביטחון המתאים',
                        ([f'price at or below {_g3(safe)} (bear loss {basis} within tolerance)'] if safe else []) + ['a better-supported bear case (forecast inputs)'],
-                       f'מחיר של כ־{_fmt_price(safe)} ומטה' if safe else 'תרחיש שמרני טוב יותר', margin_of_safety=mos)
+                       f'מחיר של כ־{_fmt_price(safe)} ומטה' if safe else 'תרחיש דובי טוב יותר', margin_of_safety=mos)
         below_index = irr is not None and irr < idx
         return out('quality_but_expensive', 'below_hurdle',
                    f'{q} business, but base IRR {irr_txt} < {req_txt}' + (' and below the index assumption itself' if below_index else ''),
@@ -1984,7 +1984,7 @@ def _margin_text(m):
         elif f['test'] == 'bear_loss_tolerance' and not any(x.startswith('the bear-case loss') for x in en):
             loss, tol = f.get('loss_to_bear'), f.get('tolerance')
             en.append(f"the bear-case loss {_pct(loss, 0)} is within {BEAR_TOLERANCE_STEP * 100:.0f}pp of the {_pct(tol, 0)} margin-of-safety tolerance")
-            he.append(f'ההפסד בתרחיש השמרני (כ־{_he_pct(loss)}) קרוב לסף מרווח הביטחון ({_he_pct(tol)})')
+            he.append(f'ההפסד בתרחיש הדובי (כ־{_he_pct(loss)}) קרוב לסף מרווח הביטחון ({_he_pct(tol)})')
         elif f['test'] == 'moat_proxy':
             en.append(f"without the computed moat proxy (base value today {_g3(f.get('value_today_with_proxy'))} -> "
                       f"{_g3(f.get('value_today_without_proxy'))} at the model cost of equity) the verdict changes to {f['code']}")

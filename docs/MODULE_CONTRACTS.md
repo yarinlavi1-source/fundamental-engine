@@ -32,13 +32,16 @@ valuate(fb, qa, fc, inputs=None) -> {"status","case","result","diagnostics": {di
         or {"status": "not_computed","reason"}
 run(fb, inputs=None) -> casefile {"casefile_version": 1,"engine_version","company","as_of","factbook_sha256","inputs_sha256",
         "errors": [{"stage","error"}],"stages": {stage: ok|failed},"collection_notes","qa","an","card","fc","val","rk","rv","dc",
-        "casefile_sha256"}
+        "business","segment_view","management","analyst_sheet","scenario_reasons","casefile_sha256"}
 summary(cf) -> {"symbol","as_of","verdict","verdict_status","price_claim_withheld","confidence","quality","risk_level","price",
         "bear_value","base_value","bull_value","base_irr","bear_irr","decision_version","margin": marginal|clear|None,"hurdle",
         "value_at_required_return","review_status","casefile_sha256"}
 ```
 `inputs` = {"card"?: model_card inputs, "forecast"?: forecast inputs, "reviewer"?: review input, "decision"?: decision inputs,
-"analyst"?: name or list of names}. `run` snapshots the inputs before any stage reads them and passes
+"analyst"?: name or list of names, "analyst_sheet"?: evidenced readings {question: {reading_he, evidence_ids}}, key_risk and
+scenario_events {bear|base|bull: [{event_he, evidence_ids}]} (analyst_sheet.py; not bound to the reviewer's signature, and
+they change no number)}. `scenario_reasons` is not a stage: it is built last from the finished casefile (a failure is
+recorded inside the key as status 'failed'), so no other key changes; the casefile hash covers it. `run` snapshots the inputs before any stage reads them and passes
 `review.inputs_digest(val, snapshot)` and `review.input_authors(snapshot)` to `review.audit`. The casefile's own
 `inputs_sha256` hashes every input including the reviewer; it is NOT the value a reviewer signs (see review). A stage that
 raises ValueError/KeyError/ZeroDivisionError/TypeError is recorded as failed and later stages degrade.
@@ -328,7 +331,23 @@ assessment|verdict|red_flags,"value","justification","evidence_ids"}]}. `price_f
 ## render
 
 `render.markdown(casefile) -> str` (full report) and `render.hebrew_paragraph(casefile) -> str` (one Hebrew paragraph, 80-140
-words, drafts labelled). The review section names red-team checks that pass by construction; it does not yet print
+words, drafts labelled). `render.hebrew_table(casefile) -> str` (the owner's table; the yearly table's columns are
+דובי / בסיסי / שורי and one condition line per scenario follows it). `render.value_display(casefile)` is the one rule for
+whether values are shown (the table and scenario_reasons use it).
+
+## scenario_reasons
+
+`scenario_reasons.build(casefile) -> {"reasons_version": 1,"status": computed|partial|not_available,"company","as_of",
+"currency","values_shown","draft","why_no_values_he","source": {"values","rate","model_cost_of_equity"},"scenarios": [{"name",
+"label_he","status","condition": {"kind": mechanical|analyst_events,"if_he","events": [{event_he, evidence_ids, unknown_ids,
+hypothesis, hypothesis_he}],"drivers"},"note_he","rows": [{"date","when_he","value","cumulative_distributions","fiscal_year",
+"drivers": {revenue, revenue_growth, operating_margin_after_sbc, eps, fcf_per_share, diluted_shares},"driver_sources",
+"implied_pe": {value, eps_next_fiscal_year, next_fiscal_year_start, next_fiscal_year_end, reason},"then_he","why_he"}],
+"assumption_ids": {scenario, periods, terminal, scenario_reviews, review_status},"analyst_overrides","gaps": [{code, detail}],
+"thesis","why_no_values_he"}],"gaps","definitions","rounding","meaning"}`. Reads only: values are copied from
+`dc.expected_return.yearly_at_model_cost_of_equity` (else `val.result.annual_values` through the fifth anniversary), drivers
+from `val.result.scenarios[].forecast` (interim splits merged into fiscal years) and `fc.paths/anchors/funding/cost_of_equity`.
+`scenario_reasons.render_he(reasons) -> str` is `out/scenarios_he.md`. The review section names red-team checks that pass by construction; it does not yet print
 `rv['binding']`.
 
 ## screen, portfolio, monitor, ledger

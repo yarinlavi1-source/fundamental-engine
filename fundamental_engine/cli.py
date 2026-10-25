@@ -218,6 +218,10 @@ def main():
     qr = subs.add_parser("quarter-review", help="Results-day review: one-offs, operating leverage, guidance, cycle, listing premium, bank checks")
     qr.add_argument("input")
     qr.add_argument("--json", action="store_true", help="Print the full JSON result instead of the Hebrew text")
+    sr = subs.add_parser("scenario-reasons", help="Behind the scenes: the condition and the business of each bear/base/bull "
+                                                  "price of a saved casefile.json (read, never revalued; not a forecast)")
+    sr.add_argument("casefile")
+    sr.add_argument("--json", action="store_true", help="Print the full JSON reasons instead of the Hebrew text")
     im = subs.add_parser("import-av", help="Map saved Alpha Vantage statement JSON files into plain history rows")
     im.add_argument("income")
     im.add_argument("--balance")
@@ -238,6 +242,7 @@ def main():
             company = None if args.factbook else json_object_arg(args.company, "--company")
             from .pipeline import factbook_from_run_dir, run, summary
             from .render import markdown, hebrew_paragraph, hebrew_table
+            from .scenario_reasons import render_he as scenario_reasons_he
             from .decision import price_implied_growth
             from .facts import add_qualitative_bundle
             if args.factbook:
@@ -256,6 +261,7 @@ def main():
             (out / "paragraph.txt").write_text(hebrew_paragraph(cf), encoding="utf-8")
             cf['price_implied_growth'] = price_implied_growth(cf)       # reverse-DCF for the table; not run inside the pipeline
             (out / "table_he.md").write_text(hebrew_table(cf), encoding="utf-8")
+            (out / "scenarios_he.md").write_text(scenario_reasons_he(cf.get('scenario_reasons')), encoding="utf-8")
             print(json.dumps({'summary': summary(cf), 'stages': cf['stages'], 'errors': cf['errors'], 'index': index_used, 'out': str(out)},
                              indent=2, ensure_ascii=False))
             return
@@ -328,6 +334,7 @@ def main():
         if args.command == "deep":
             from . import handoff
             from .render import markdown, hebrew_paragraph, hebrew_table
+            from .scenario_reasons import render_he as scenario_reasons_he
             from .decision import price_implied_growth
             from .pipeline import summary
             base = Path(args.folder)
@@ -356,6 +363,7 @@ def main():
                 (out / "paragraph.txt").write_text(hebrew_paragraph(cf), encoding="utf-8")
                 cf['price_implied_growth'] = price_implied_growth(cf)       # reverse-DCF for the table; not run inside the pipeline
                 (out / "table_he.md").write_text(hebrew_table(cf), encoding="utf-8")
+                (out / "scenarios_he.md").write_text(scenario_reasons_he(cf.get('scenario_reasons')), encoding="utf-8")
                 pack = handoff.reading_pack(str(folder))
                 if pack:
                     (out / 'reading').mkdir(exist_ok=True)
@@ -390,6 +398,10 @@ def main():
             from .quarter import quarter_review
             result = quarter_review(read_json(args.input))
             print(json.dumps(result,ensure_ascii=False,indent=2,allow_nan=False) if args.json else result["text"])
+        elif args.command == "scenario-reasons":
+            from .scenario_reasons import build, render_he
+            result = build(read_json(args.casefile))
+            print(json.dumps(result,ensure_ascii=False,indent=2,allow_nan=False) if args.json else render_he(result))
         elif args.command == "import-av":
             from .connectors import from_alpha_vantage
             value = from_alpha_vantage(read_json(args.income), read_json(args.balance) if args.balance else None,

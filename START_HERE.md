@@ -25,7 +25,8 @@ same connectors (SEC, Interactive Brokers, Alpha Vantage, FMP, LunarCrush, …).
   `scripts/calibrate.py`; the engine walk-forward `python scripts/backtest_engine.py runs/universe_<date>
   --name large500 --from 2016 --to 2025 --workers 4`; a single company end-to-end `python -m
   fundamental_engine deep <universe_folder> --as-of <date> --symbols <TICKER>` (writes `out/table_he.md` with
-  the plain-Hebrew table, including the "מה המחיר של היום מניח" reverse-DCF row).
+  the plain-Hebrew table, including the "מה המחיר של היום מניח" reverse-DCF row, and `out/scenarios_he.md` with the
+  condition behind every דובי / בסיסי / שורי price).
 - **Latest state (read these to catch up):** `docs/ENGINE_CONSERVATISM_2026-10-21.md` (why the engine looks
   conservative and the reframe shipped), `docs/LIMITATIONS.md` #43, and `docs/learning_log.json`
   (round `engine_conservatism_2026-10-21`); `docs/ANALYST_COMPARISON_2026-10.md` (human analyst vs engine,

@@ -428,7 +428,7 @@ class RenderTests(unittest.TestCase):
         att = self.cases['attractive']
         t = hebrew_table(att)
         er, base = att['dc']['expected_return'], att['dc']['valuation_view']['base']
-        self.assertIn(f'| שווי הוגן (תרחיש סביר) | {base:,.1f}', t)               # the executed value, not a recomputation
+        self.assertIn(f'| שווי הוגן (תרחיש בסיסי) | {base:,.1f}', t)               # the executed value, not a recomputation
         self.assertIn('הערכה מותנית, לא תחזית', t)
         # 25.10.2026: the yearly table is the executed valuation at the company's own cost of equity (the fair-value rate);
         # it was the path at the required return
@@ -436,7 +436,7 @@ class RenderTests(unittest.TestCase):
         self.assertGreaterEqual(len(yr['rows']), 3)
         self.assertEqual(yr['rows'][0]['base'], base)                                  # today's row is the fair value
         self.assertLessEqual(yr['rows'][-1]['date'], att['dc']['valuation_view']['five_year']['date'])
-        self.assertIn('| מועד | תרחיש רע | תרחיש סביר | תרחיש טוב |', t)
+        self.assertIn('| מועד | דובי | בסיסי | שורי |', t)                     # the owner's words (25.10.2026)
         self.assertIn('| היום |', t)
         from fundamental_engine.render import lynch_type
         for cf in self.cases.values():
@@ -447,7 +447,7 @@ class RenderTests(unittest.TestCase):
         draft = hebrew_table(self.cases['draft'])
         self.assertIn('טיוטה', draft)
         blocked = hebrew_table(self.cases['blocked'])
-        self.assertNotIn('| שווי הוגן (תרחיש סביר) |', blocked)                   # no value without a price verdict
+        self.assertNotIn('| שווי הוגן (תרחיש בסיסי) |', blocked)                   # no value without a price verdict
 
     def test_price_implied_growth_row_reframes_the_gap(self):
         from fundamental_engine.render import hebrew_table
