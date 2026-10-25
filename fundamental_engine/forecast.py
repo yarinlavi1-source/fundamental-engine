@@ -153,6 +153,17 @@ TERMINAL_KE_DROPPED = tuple('stage:' + s for s in TERMINAL_MATURE_STAGES) + ('ne
 # demonstrated excess over Ku (base 50%, bull 71%; never below the former Ku+2pp / Ku+4pp); the bear still tests a moat that
 # fails (Ku+1pp) and an analyst 'weak' moat keeps the full fade. Demonstrated = the lower of the latest and the 5-year average
 # ROIC, capped at 40% (a single strong year earns no persistence).
+# On a scale-up path the 5-year average is taken over the post-breakeven years only (_post_breakeven_roic): when the ROIC
+# window's own fiscal years show revenue up every year and operating margin from losses to the window high (history.history_shape
+# 'scale_up', the reading the model card already uses so start-up losses are not averaged into margins), the years up to the
+# window's last loss year are the ramp, not the business the terminal describes. The diagnosis profile (2026-10-21: ROIC -79%,
+# -28%, 18%, 42%, 124%) averaged 15.6% and faded to Ku+2.9pp against 124% latest. At least SCALE_UP_ROIC_MIN_YEARS such years are
+# needed (one profitable year is not a record: the 5-year average stays). Not incremental ROIC: on a window that starts in a loss
+# year it credits the removal of start-up losses as a return on new capital. Unchanged: the lower of latest and average, the 40%
+# cap, the bear (Ku+1pp), the weak-moat fade, the durability lift (it needs PERSISTENCE_MIN_YEARS of stable ROIC: a window with
+# a loss year varies by at least 50%, the floor end of the stability ramp) and the moat proxy's whole-window average (a stricter
+# test of a moat, not the base-rate share of a demonstrated excess). No constant tuned to the walk-forward.
+SCALE_UP_ROIC_MIN_YEARS = 2
 # The kept share is not flat across the quintiles: the Base Rate Book's own data and the McKinsey ROIC transition matrices
 # (Koller et al.) both show the firms whose realized ROIC is both HIGH and STABLE over a long record stay high far longer than
 # the average fader -- a wide-moat compounder keeps much more of its excess than a company with one good year. So the base/bull
@@ -420,21 +431,46 @@ def _franchise_durability(h, ku, route):
     if route['cyclical'] or route['cycle_path'] or route['business_model'] in CYCLICAL_LIFT_EXCLUDED_TYPES:
         return 0., {'durability': 0., 'basis': f"cyclical business ({route['business_model']}): the cycle's average return, no persistence premium"}
     ser = [x for x in (h.get('roic_series') or []) if x is not None]
-    shown = [x for x in (h.get('roic'), h.get('roic_avg')) if x is not None]
-    if len(ser) < PERSISTENCE_MIN_YEARS or not shown:
+    dem = _demonstrated_roic(h)
+    if len(ser) < PERSISTENCE_MIN_YEARS or dem is None:
         return 0., {'durability': 0., 'years': len(ser), 'basis': f'ROIC record under {PERSISTENCE_MIN_YEARS} years'}
     mean = sum(ser) / len(ser)
     if mean <= 0:
         return 0., {'durability': 0., 'years': len(ser), 'basis': 'average realized ROIC not positive'}
     cv = (sum((x - mean) ** 2 for x in ser) / len(ser)) ** .5 / mean
-    excess = _ramp(min(shown) - ku, *PERSISTENCE_EXCESS_RAMP)
+    excess = _ramp(dem - ku, *PERSISTENCE_EXCESS_RAMP)
     stability = _ramp(cv, *PERSISTENCE_STABILITY_RAMP)
     margin, m_basis = _margin_franchise(h)
     dur = round(min(excess, stability, margin), 4)
-    return dur, {'durability': dur, 'years': len(ser), 'roic_cv': round(cv, 3), 'demonstrated_excess': round(min(shown) - ku, 4),
+    return dur, {'durability': dur, 'years': len(ser), 'roic_cv': round(cv, 3), 'demonstrated_excess': round(dem - ku, 4),
                  'excess_weight': round(excess, 3), 'stability_weight': round(stability, 3), 'margin_weight': round(margin, 3),
-                 'basis': f'demonstrated ROIC {_pct(min(shown))} vs hurdle {_pct(ku)} (excess {excess:.2f}); ROIC variation {cv:.0%} '
+                 'basis': f'demonstrated ROIC {_pct(dem)} vs hurdle {_pct(ku)} (excess {excess:.2f}); ROIC variation {cv:.0%} '
                           f'over {len(ser)} years (stability {stability:.2f}); {m_basis} (margin {margin:.2f})'}
+
+
+def _demonstrated_roic(h):
+    """Demonstrated ROIC: the lower of the latest and the multi-year average -- on a scale-up path the post-breakeven average
+    (_history, _post_breakeven_roic) -- or None when neither is known. The 40% cap is applied where it is used."""
+    shown = [x for x in (h.get('roic'), h.get('roic_avg_demonstrated', h.get('roic_avg'))) if x is not None]
+    return min(shown) if shown else None
+
+
+def _post_breakeven_roic(h, window):
+    """ROIC of the post-breakeven years when the ROIC window's own fiscal years are a scale-up path, else None.
+    window: the forensics ROIC entries the 5-year average spans ({'fiscal_year', 'roic'}, oldest first). They are matched to the
+    history rows by fiscal-period label (no match, no reading: the exemption needs evidence); the shape is read over the
+    contiguous fiscal years from the window's first to its last (history.history_shape, as the card and the growth start do);
+    post-breakeven = the window years after its last loss year (operating margin below zero). At least SCALE_UP_ROIC_MIN_YEARS."""
+    at = {r.get('fiscal_period'): i for i, (_, r) in enumerate(h['rows']) if r.get('fiscal_period') is not None}
+    idx = [at.get(x.get('fiscal_year')) for x in window]
+    if len(window) <= SCALE_UP_ROIC_MIN_YEARS or None in idx or any(b <= a for a, b in zip(idx, idx[1:])):
+        return None
+    lo, hi = idx[0], idx[-1] + 1
+    if history_shape(h['revenue'][lo:hi], h['margins'][lo:hi]) != 'scale_up':
+        return None
+    last_loss = max(i for i in range(lo, hi) if h['margins'][i] is not None and h['margins'][i] < 0)
+    post = [_num(x['roic']) for x, i in zip(window, idx) if i > last_loss]
+    return post if len(post) >= SCALE_UP_ROIC_MIN_YEARS else None
 
 
 def _moat_proxy(card, h, fb, normalize):
@@ -844,11 +880,24 @@ def _history(fb, an, warn, nonrecurring=None):
                    if len(ic) >= 6 and ic[-1][1] - ic[-6][1] > 0 and ic[-1][2] > ic[-6][2] else None)
     h['roic'] = _metric(an, 'roic')
     h['inc_roic'] = _metric(an, 'incremental_roic_3y')
-    ser = [_num(x.get('roic')) for x in (((an.get('forensics') or {}).get('roic') or {}).get('series') or []) if isinstance(x, dict)]
-    ser = [x for x in ser if x is not None]
+    ent = [x for x in (((an.get('forensics') or {}).get('roic') or {}).get('series') or [])
+           if isinstance(x, dict) and _num(x.get('roic')) is not None]
+    ser = [_num(x['roic']) for x in ent]
     h['roic_series_all'] = ser[-10:]
     ser = ser[-5:]
     h['roic_series'], h['roic_avg'] = ser, (_mean(ser) if ser else None)
+    # the demonstrated average (terminal persistence rule, durability excess): on a scale-up path the post-breakeven years only
+    h['roic_avg_demonstrated'], h['roic_avg_basis'] = h['roic_avg'], (f'mean of the last {len(ser)} yearly ROIC values' if ser else None)
+    win = ent[-5:]
+    post = _post_breakeven_roic(h, win) if ser else None
+    if post:
+        h['roic_avg_demonstrated'] = _mean(post)
+        h['roic_avg_basis'] = (f"scale-up path ({win[0]['fiscal_year']}-{win[-1]['fiscal_year']}: revenue up every year, operating "
+                               'margin from losses to the window high): '
+                               f"mean of the {len(post)} post-breakeven years ({', '.join(_pct(x) for x in post)}) = "
+                               f"{_pct(h['roic_avg_demonstrated'])}, not the {len(ser)}-year mean {_pct(h['roic_avg'])} that averages "
+                               'the start-up losses')
+        warn('roic_average_post_breakeven', 'demonstrated ROIC average for the terminal persistence rule: ' + h['roic_avg_basis'], 'low')
     gt = facts.annual_table(fb, ['revenue', 'gross_profit', 'cost_of_revenue'])
     gms = []
     for e in sorted(gt)[-5:]:
@@ -1467,9 +1516,9 @@ def _params(route, h, cal, cons, rf, ku, ku_t, ov_ke, debt0, ov, warn):
         roic_s = min(max(h['roic'] or 0, w0 + .05), .40)
         strong = {'base': roic_s, 'bear': max(w0 + .02, .7 * roic_s), 'bull': min(.45, 1.2 * roic_s)}[s]
         other = {'base': w0 + .02, 'bear': w0 + .01, 'bull': w0 + .04}[s]
-        shown = [x for x in (h['roic'], h.get('roic_avg')) if x is not None]
-        if s in EXCESS_RETURN_PERSISTENCE and route['moat'] != 'weak' and shown and min(shown) > w0:
-            other = max(other, w0 + persist[s] * (min(min(shown), .40) - w0))
+        dem = _demonstrated_roic(h)       # lower of latest and average (post-breakeven average on a scale-up path)
+        if s in EXCESS_RETURN_PERSISTENCE and route['moat'] != 'weak' and dem is not None and dem > w0:
+            other = max(other, w0 + persist[s] * (min(dem, .40) - w0))
         wt = route['moat_weights'][s]
         roic = other + wt * (strong - other)        # the moat proxy weight blends the two rules (bear: unassessed rules)
         roic = ov(s, 'terminal_roic', roic)
@@ -2359,7 +2408,8 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
     add('moat_basis', 'competitive advantage behind margins and returns', 'model',
         {'moat': route['moat'], 'basis': route['moat_basis'], 'proxy_weight': w_mo, 'proxy': route['moat_proxy'],
          'margin_competed_away': haircut, 'terminal_roic_base': P['base']['roic'],
-         'roic_demonstrated': h['roic'], 'roic_average': h.get('roic_avg'), 'unlevered_cost_of_capital': P['base']['hurdle'],
+         'roic_demonstrated': h['roic'], 'roic_average': h.get('roic_avg'), 'roic_average_demonstrated': h.get('roic_avg_demonstrated'),
+         'roic_average_basis': h.get('roic_avg_basis'), 'unlevered_cost_of_capital': P['base']['hurdle'],
          'value_today_without_proxy': alt_moat},
         (f"Moat {route['moat']} ({route['moat_basis']}): " +
          ('current margin held and terminal ROIC max(demonstrated ROIC, Ku+5pp) capped at 40%.' if route['moat'] == 'strong' else
@@ -2372,7 +2422,8 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
            + ('weak moat: excess returns competed down to Ku+2pp' if route['moat'] == 'weak' else
               f"Ku {_pct(P['base']['hurdle'])} + {(P['base'].get('roic_persistence') or EXCESS_RETURN_PERSISTENCE['base']):.0%} of the "
               f"demonstrated excess, at least Ku+2pp: the base-rate share of excess returns left after ten years, lifted for a high, "
-              f"stable realized ROIC ({meta.get('roic_durability', {}).get('basis', 'floor')})") +
+              f"stable realized ROIC ({meta.get('roic_durability', {}).get('basis', 'floor')})"
+              + (f"; demonstrated average: {h['roic_avg_basis']}" if h.get('roic_avg_demonstrated') != h.get('roic_avg') else '')) +
            '). A quantified model haircut, not evidence: an evidenced analyst moat assessment replaces it.'))),
         f"Returns on capital stay above {_pct(P['base']['roic'] + .05)} and margins above {_pct(P['base']['mature_margin'] + .03)} for three years "
         '(haircut too harsh), or fall below the bear path (too generous).', _latest_src(fb, 'operating_income', 'gross_profit', 'equity') + [RULES])
@@ -2452,6 +2503,9 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
                  'bull': f"Ku + {(P['bull'].get('roic_persistence') or EXCESS_RETURN_PERSISTENCE['bull']):.0%} of the demonstrated excess return (at least Ku+4pp)"}[s])
         if s in EXCESS_RETURN_PERSISTENCE and route['moat'] != 'strong' and route['moat_weights'][s] == 0 and (meta.get('roic_durability') or {}).get('durability'):
             rule += f" (persistence lifted from the {EXCESS_RETURN_PERSISTENCE[s]:.0%} floor by a durable realized ROIC: {meta['roic_durability']['basis']})"
+        if s in EXCESS_RETURN_PERSISTENCE and route['moat'] not in ('strong', 'weak') and h.get('roic_avg_demonstrated') != h.get('roic_avg'):
+            rule += (f" (demonstrated average {_pct(h['roic_avg_demonstrated'])} over the post-breakeven years of a scale-up path, not "
+                     f"the {len(h['roic_series'])}-year mean {_pct(h['roic_avg'])})")
         if route['moat'] != 'strong' and route['moat_weights'][s] > 0:
             rule += f" blended toward the strong-moat rule at proxy weight {route['moat_weights'][s]:.2f}"
         if P[s].get('release_bounded'):

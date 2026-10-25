@@ -1767,6 +1767,122 @@ class EvidenceBasedRatesTests(unittest.TestCase):
             self.assertEqual(out['forecast']['equity_risk_premium']['value'], .042)
 
 
+def scale_up(margins=(-.25, -.08, .05, .11, .30), roic=(-.79, -.28, .18, .42, 1.24), rev=(1.54e9, 1.91e9, 2.23e9, 2.87e9, 4.48e9),
+             labels=True, moat='unknown'):
+    """SYNTHETIC scale-up (the 2026-10-21 diagnosis profile, rounded): revenue up every year, operating margin from losses to the
+    window high; the ROIC series is supplied as analysis.py forensics would label it (fiscal_year = the annual row's fiscal_period)."""
+    annual = {f'{2021 + i}-12-31': {'revenue': r, 'operating_income': r * m, 'sbc': r * .15, 'd_and_a': r * .02, 'capex': r * .02,
+                                    'cfo': r * (m + .17), 'pretax_income': r * m, 'income_tax': max(r * m, 0) * .15}
+              for i, (r, m) in enumerate(zip(rev, margins))}
+    inst = {'2025-12-31': {'cash': 6e9, 'shares_outstanding': 2.4e9, 'receivables': rev[-1] * .15, 'payables': rev[-1] * .05},
+            '2022-12-31': {'receivables': rev[1] * .15, 'payables': rev[1] * .05}}
+    fb = synth('2026-03-20', annual, inst, 40.0, kind='filing_derived')
+    an = make_an(fb, revenue_growth_last=rev[-1] / rev[-2] - 1, revenue_cagr_3y=(rev[-1] / rev[-4]) ** (1 / 3) - 1, growth_volatility=.1,
+                 roic=roic[-1], incremental_roic_3y=.05, sales_to_capital_incremental_3y=2.5)      # incremental ROIC .05: no moat proxy
+    if labels:
+        for e in an['annual']:
+            an['annual'][e]['fiscal_period'] = 'FY' + e[:4]
+    an['forensics'] = {'roic': {'series': [{'fiscal_year': f'FY{2021 + i}', 'roic': v} for i, v in enumerate(roic)]}}
+    card = {'business_model': {'primary': 'subscription_software'}, 'stage': {'value': 'growth'}, 'funding': {'value': 'self_funded'},
+            'valuation': {'method': 'fcff_annual_path', 'archetype': 'software'}, 'dimensions': {'moat': {'assessment': moat}}}
+    return fb, an, card, qa_for(2.4e9, 6e9, 0., '2025-12-31')
+
+
+class ScaleUpDemonstratedRoicTests(unittest.TestCase):
+    """2026-10-21 diagnosis (lever L7): the terminal persistence rule measured the demonstrated ROIC as min(latest, 5-year average),
+    and on a scale-up the average spans the start-up losses (-79%, -28%, 18%, 42%, 124% -> 15.6% -> base terminal Ku+2.9pp against
+    124% latest), while the model card already refuses to average start-up losses into margins on that path."""
+
+    def run_case(self, **kw):
+        fc = forecast.build(*scale_up(**kw))
+        self.assertEqual(fc['status'], 'built')
+        row = next(a for a in fc['assumptions'] if a['id'] == 'moat_basis')
+        self.assertEqual(row['values']['proxy_weight']['base'], 0.)
+        return fc, row, {s: scen(fc['spec'], s)['terminal'] for s in SCEN}
+
+    def test_scale_up_measures_the_demonstrated_average_after_breakeven(self):
+        fc, row, t = self.run_case()
+        v, k = row['values'], row['values']['unlevered_cost_of_capital']
+        post = (.18 + .42 + 1.24) / 3
+        shown = min(1.24, post, .40)                                                  # lower of latest and average, still capped at 40%
+        self.assertAlmostEqual(t['base']['roic'], k + .50 * (shown - k), places=6)    # was k + .5 x (15.4% - k): about Ku+3.5pp
+        self.assertAlmostEqual(t['bull']['roic'], k + .71 * (shown - k), places=6)
+        self.assertAlmostEqual(t['bear']['roic'], k + .01, places=6)                  # the bear still tests a moat that fails
+        self.assertAlmostEqual(v['roic_average'], sum((-.79, -.28, .18, .42, 1.24)) / 5)     # the whole-window mean is still shown
+        self.assertAlmostEqual(v['roic_average_demonstrated'], post)
+        self.assertIn('3 post-breakeven years', v['roic_average_basis'])
+        self.assertEqual(fc['anchors']['route']['moat'], 'unknown')
+        self.assertIn('roic_average_post_breakeven', {w['code'] for w in fc['warnings']})
+        self.assertIn('post-breakeven years of a scale-up path', next(a for a in fc['assumptions'] if a['id'] == 'terminal_base')['rationale'])
+        # a window holding a loss year is not a durable record: no persistence lift on top
+        self.assertEqual(fc['anchors']['route'].get('moat_proxy', {}).get('weight', 0.), 0.)
+
+    def test_latest_below_the_post_breakeven_average_still_decides(self):
+        # demonstrated = the lower of the two: a latest year below the post-breakeven average is what the business shows today
+        fc, row, t = self.run_case(margins=(-.25, -.08, .05, .11, .12), roic=(-.79, -.28, .50, .40, .30))
+        k = row['values']['unlevered_cost_of_capital']
+        self.assertAlmostEqual(t['base']['roic'], k + .50 * (.30 - k), places=6)     # was the 5-year mean 2.6%: Ku+2pp
+        self.assertAlmostEqual(row['values']['roic_average_demonstrated'], .40)
+
+    def test_one_profitable_year_keeps_the_five_year_average(self):
+        fc, row, t = self.run_case(margins=(-.25, -.15, -.08, -.02, .30), roic=(-.79, -.50, -.28, -.05, 1.24))
+        k = row['values']['unlevered_cost_of_capital']
+        self.assertEqual(row['values']['roic_average_demonstrated'], row['values']['roic_average'])
+        self.assertAlmostEqual(t['base']['roic'], k + .02, places=6)                  # negative 5-year mean: no excess demonstrated
+        self.assertNotIn('roic_average_post_breakeven', {w['code'] for w in fc['warnings']})
+
+    def test_a_history_that_is_not_a_scale_up_keeps_the_five_year_average(self):
+        for kw in ({'rev': (1.54e9, 1.91e9, 1.80e9, 2.87e9, 4.48e9)},              # revenue fell one year
+                   {'margins': (-.25, -.08, .30, .11, .20), 'roic': (-.79, -.28, 1.0, .42, .80)},   # latest margin below the window high
+                   {'labels': False}):                                              # fiscal years not matched: no evidence of the shape
+            fc, row, t = self.run_case(**kw)
+            v, k = row['values'], row['values']['unlevered_cost_of_capital']
+            self.assertEqual(v['roic_average_demonstrated'], v['roic_average'], kw)
+            shown = min(v['roic_demonstrated'], v['roic_average'])
+            self.assertAlmostEqual(t['base']['roic'], max(k + .02, k + .50 * (shown - k)), places=6, msg=kw)
+            self.assertNotIn('roic_average_post_breakeven', {w['code'] for w in fc['warnings']}, kw)
+
+    def test_weak_moat_keeps_the_full_fade_on_a_scale_up(self):
+        fc, row, t = self.run_case(moat='weak')
+        k = row['values']['unlevered_cost_of_capital']
+        self.assertAlmostEqual(t['base']['roic'], k + .02, places=6)
+        self.assertAlmostEqual(t['bull']['roic'], k + .04, places=6)
+        self.assertAlmostEqual(t['bear']['roic'], k + .01, places=6)
+
+    def test_scale_up_reading_aligns_with_the_analysis_labels_end_to_end(self):
+        # the real analysis.py output (forensics labels = annual fiscal_period) through the pipeline, not a hand-labelled fixture
+        from fundamental_engine import pipeline
+        rev, om = [1.54e9, 1.91e9, 2.23e9, 2.87e9, 4.48e9], [-.25, -.08, .05, .11, .30]
+        fb = facts.new({'ticker': 'HGX', 'name': 'Synthetic scale-up', 'currency': 'USD', 'fiscal_year_end': '12-31',
+                        'sector': 'Technology', 'industry': 'Application Software'}, '2026-03-20')
+        facts.add_source(fb, 'syn:fs', 'synthetic', 'test-statements', 'filing_derived', '2026-03-20T00:00:00Z', note='SYNTHETIC')
+        facts.add_source(fb, 'syn:px', 'synthetic', 'test-price', 'market_feed', '2026-03-20T00:00:00Z')
+        for i, (r, m) in enumerate(zip(rev, om)):
+            end, oi = f'{2021 + i}-12-31', r * m
+            for k, v in {'revenue': r, 'gross_profit': r * .8, 'cost_of_revenue': r * .2, 'operating_income': oi, 'sbc': r * .15,
+                         'd_and_a': r * .02, 'capex': r * .02, 'cfo': oi + r * .17, 'pretax_income': oi, 'income_tax': max(oi, 0) * .15,
+                         'net_income': oi - max(oi, 0) * .15}.items():
+                facts.add_fact(fb, k, 'FY' + end[:4], end, v, 'syn:fs', 'as_reported', f'{2022 + i}-02-20', period_start=f'{2021 + i}-01-01')
+            c = 6e9 * r / rev[-1]
+            for k, v in {'cash': c, 'equity': r * .25 + c, 'long_term_debt': 0., 'total_assets': r * .55 + c, 'total_liabilities': r * .3,
+                         'receivables': r * .15, 'payables': r * .05, 'shares_outstanding': 2.4e9, 'current_assets': c + r * .2,
+                         'current_liabilities': r * .25, 'ppe': r * .05}.items():
+                facts.add_fact(fb, k, 'I@' + end, end, v, 'syn:fs', 'as_reported', f'{2022 + i}-02-10')
+        facts.set_price(fb, 40.0, '2026-03-20', 'syn:px')
+        market = {'risk_free': {'value': .0515, 'as_of': '2026-03-19', 'title': 'test', 'retrieval': 'provider_normalized'},
+                  'equity_risk_premium': {'value': .042, 'as_of': '2026-03-01', 'title': 'test', 'retrieval': 'provider_normalized'}}
+        cf = pipeline.run(fb, {'forecast': market})
+        ser = [x for x in cf['an']['forensics']['roic']['series'] if x.get('roic') is not None]
+        self.assertEqual([x['fiscal_year'] for x in ser], [cf['an']['annual'][e]['fiscal_period'] for e in sorted(cf['an']['annual'])])
+        row = next(a for a in cf['fc']['assumptions'] if a['id'] == 'moat_basis')
+        v, k = row['values'], row['values']['unlevered_cost_of_capital']
+        self.assertLess(v['roic_average'], .20)                                       # the whole window averages the start-up losses
+        if v['proxy_weight']['base'] == 0:
+            shown = min(v['roic_demonstrated'], sum(x['roic'] for x in ser[2:]) / 3, .40)
+            self.assertGreater(scen(cf['fc']['spec'], 'base')['terminal']['roic'], k + .45 * (shown - k))
+        self.assertAlmostEqual(v['roic_average_demonstrated'], sum(x['roic'] for x in ser[2:]) / 3)
+
+
 class NonOperatingAssetTests(unittest.TestCase):
     """A stake carried far below its value (Microsoft's ~25% of OpenAI at book, 2026-10-20)."""
 
