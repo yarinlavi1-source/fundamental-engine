@@ -1,3 +1,21 @@
+## Unreleased — company-first levers: source tiers and visible gaps (Track A, 25.10.2026)
+
+- Forecast overrides take an optional `source_tier` (guidance, contracted, consensus, own_history, competitor, market,
+  analyst; absent = analyst); `competitor` needs `competitors`, the named direct competitors. Applied overrides and the
+  ledger carry the tier.
+- `fc['driver_sources']`: for every lever the DCF uses (growth anchor, growth half-life, mature margin, sales-to-capital,
+  terminal ROIC, SBC, cost-of-equity premium, cyclical treatment, horizon) and every scenario, the tier and evidence ids, or
+  the engine default with its DEFAULTS_MAP class (SIZE / CONST / TYPE / XSEC; None when the company's own numbers set it)
+  and the validation bound that binds. `fc['driver_gaps']` lists the levers still on SIZE/CONST/TYPE/XSEC defaults;
+  `dc['default_levers']` carries it and the Hebrew table shows one row "הנחות בלי נתון של החברה" (or "אין"). Gaps never
+  raise the confidence; the outside-view row stays a warning.
+- Company evidence wins: a company-tier override of base growth lifts the revenue-scale cap (SCALE_CAPS) on the trailing
+  anchor and the first year (`growth_scale_cap_not_applied`, a warning only) and drops the card's VERY_LARGE stage relabel
+  (`size_relabel_not_applied`); a company-tier base half-life, mature margin or sales-to-capital sets the bear and bull
+  defaults around the evidence instead of the stage or type table.
+- No-override invariance: without overrides (or with untiered ones) every spec and value is unchanged (spec hashes of the
+  ADBE, synthetic and pipeline fixtures pinned in tests/test_driver_sources.py).
+
 ## Unreleased — business-economics layer `econ`, phase A (25.10.2026)
 
 - `econ` reads each business through its own economic identity (docs/ECONOMICS.md; branch `econ-layer`, work packages
