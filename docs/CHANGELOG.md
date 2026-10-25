@@ -1,3 +1,74 @@
+## Unreleased — bull, base and bear in the owner's words, and a reason behind every scenario price (25.10.2026)
+
+The owner (25.10.2026): "Not 'likely' — what is 'likely'? I want bullish, base and bearish. And behind the scenes every
+price has a reason: if something happens, then this price."
+
+- Labels. Every owner-facing Hebrew word that names a valuation scenario is now bear = דובי, base = בסיסי, bull = שורי:
+  the yearly table header `| מועד | דובי | בסיסי | שורי |`, `שווי הוגן (תרחיש בסיסי)`, the range row `דובי / שורי` and
+  the table notes (render.py); the paragraph's risk sentence ('בתרחיש הדובי', was 'השמרני'); plain_verdict's headlines,
+  explanation, sensitivity text and yearly table (`| תאריך | דובי | בסיסי | שורי |`, the tail column 'הצלחה גדולה' kept);
+  the analyst sheet's asymmetry reading, closing note and thesis; decision's bear-tolerance reason, margin text and the
+  no-IRR clause; decision_summary's paragraph ('המרכזי' / 'השמרני' / 'האופטימי'); the run report column ('הפסד בתרחיש
+  הדובי'); the HTML valuation table (was 'שלילי / חיובי'); 'דובי/בסיסי/שורי' in handoff and allocation. Unchanged: every
+  bucket and verdict key, quality levels ('סביר' / 'סבירה' = adequate), 'חוב סביר', 'תשואה סבירה', 'מחיר סביר', risk.py's
+  'בתרחיש הבסיס' (already base), the generic 'טווח תרחישים'. Packets (plain_language, annual_valuation, master_process step
+  13, synthesis, analyst_sheet), docs/PLAIN_LANGUAGE.md and CLAUDE.md now prescribe these words; the 'likely range' of
+  master_process is the base range ('טווח הבסיס', the base at the required return ±1pp). Release notes below keep their
+  original wording.
+- `scenario_reasons.py` (new): `build(casefile)` reads the executed casefile and never recomputes or changes a value. For
+  each scenario: the condition (`if_he`: analyst events, else the model's own drivers in plain Hebrew: revenue growth in
+  the first forecast year -> the last explicit year and the long-run rate, operating margin after SBC start -> end,
+  external funding and dilution, cost of equity; never an invented story); for today and each dated row of the owner's
+  yearly table (`dc.expected_return.yearly_at_model_cost_of_equity`, else `val.result.annual_values` through the fifth
+  anniversary) the executed value, the drivers of the fiscal year that holds the date (revenue, growth, operating margin
+  after SBC, EPS and FCF per share on average model shares, diluted shares, cumulative distributions; an interim split at
+  the fifth anniversary merged back into its fiscal year), the implied P/E = value / EPS of the next full fiscal year
+  (null with the reason when it is missing or not positive) and `why_he` ('אם …, אז ב־2027/11: הכנסות …, רווח תפעולי …
+  → שווי …'); the assumption ids (scenario, period, terminal, underwriting scenario reviews, review status), the analyst's
+  validated overrides as context, and `gaps` for what the casefile does not hold (a synthetic casefile without forecast
+  paths gets gaps, not filled-in numbers). Status computed / partial / not_available; a valuation the owner's table does
+  not show (`render.value_display`, factored out of hebrew_table without a behaviour change) gets no values and says why.
+  Output is deterministic; rounding is stated in the output. `render_he` writes the short Hebrew sections.
+- Events: optional `inputs.analyst_sheet.scenario_events = {bear|base|bull: [{event_he, evidence_ids}]}`, validated by
+  `analyst_sheet.build` against the FactBook's sources and qualitative ids (like key_risk); an event without ids, or with an
+  id the FactBook does not hold, is kept and marked a hypothesis ('השערה: …'). The sheet carries the key only when the
+  input is supplied; it is not bound to the reviewer's signature and changes no number.
+- Wiring: `pipeline.run` stores `casefile['scenario_reasons']` after the analyst sheet (not a stage: a failure is recorded
+  inside the key, so no other casefile key changes; the casefile hash covers it). `pipeline` and `deep` write
+  `out/scenarios_he.md`; `hebrew_table` adds one condition line per scenario under the yearly table ('דובי = אם …', no
+  prices). CLI `scenario-reasons <casefile.json> [--json]`, MCP `scenario_reasons {casefile}` (docs/MCP.md).
+- Review fixes (same day). The current fiscal year: a valuation date shortly after the fiscal year end leaves a 0.9-1.0
+  year stub, which was read as a full year (stub revenue and EPS shown as the fiscal year, the implied P/E on the stub's
+  earnings, a false growth gap); the first period, starting on the valuation date, is now always the current fiscal
+  year (a full year only when it starts on the previous year end), so the P/E uses the next fiscal year. Banks
+  (residual income) get their own drivers: the ROE path, payout, book value per share, EPS = model net income / shares,
+  the merged fifth-anniversary year's net income summed; another route ('nav' and the specialist snapshots) says that its
+  drivers are not read, and two different values never share one condition text without a gap saying so. Rows show
+  executed revenue growth (the path rate is kept as `revenue_growth_assumption`); the condition names the long-run
+  discount rate when it differs from the explicit years' and drops the rate when the scenario has no value. Dated prices
+  follow the owner's table rows (`render.yearly_table_rows`, one rule for both): when the table has no yearly part, none
+  are listed and the text says so instead of pointing to it. Hebrew: the note names the year of the first growth rate and
+  dates the end point; a decline followed by growth reads 'ואחר כך יחזרו לצמוח'; a negative margin is an operating loss;
+  distributions in the future tense; 'אומדן רווח למניה' with one line saying it is not GAAP; gaps as plain nouns with
+  their fiscal year; hypotheses agree in number and the owner's note carries no raw evidence ids. Events: evidence_ids may
+  be a list or one id as text (`analyst_sheet.evidence_id_list`, shared); a malformed event never raises out of the
+  analyst sheet (it cost key_risk and the risk row before) and is listed in `analyst_sheet.scenario_events_rejected`
+  (replacing `scenario_events_ignored`) and said in the reasons. A malformed casefile is invalid input (ValueError) for the
+  CLI and the MCP tool. -0.0 is written 0.0; the rounding note states the whole-number P/E. The paragraph, decision texts,
+  analyst sheet and the HTML header now say 'התרחיש הבסיסי' where they said 'תרחיש הבסיס' (risk.py unchanged).
+- Invariance, checked against 88cda3f on the ADBE fixture pipeline, the synthetic scale-up platform and the synthetic bank:
+  no number, verdict code, valuation input or hash input changes. The casefile keys that differ are `scenario_reasons`,
+  `casefile_sha256` (which covers it) and, only by scenario-name strings, `analyst_sheet` (reading_he, to_close_he,
+  thesis_he) and `dc`'s verdict texts (reason_he, what_would_change_it_he: 'תרחיש הבסיס' -> 'התרחיש הבסיסי'); every
+  changed string equals the old one after mapping the old scenario words to the new ones. The table and paragraph are
+  identical after the same mapping, except the three condition lines. tests/test_scenario_reasons.py keeps the in-repo
+  part of this (the same run with the builder switched off differs only in that key).
+- Honest limits: the reasons explain the model's conditional values; they are not forecasts, probabilities or price
+  targets, and they do not make a draft a conclusion. EPS is the engine's estimate, not GAAP: on the operating route
+  (EBIT after SBC - interest - cash taxes) / average model shares, investment income excluded; model shares carry no
+  buybacks, so per-share growth from cash returns shows in the distributions, not in EPS; on the residual-income route
+  model net income / constant shares.
+
 ## Unreleased — ticker runner, evidence pack, skeleton brain (25.10.2026)
 
 - Saved Workflow `ticker` (`.claude/workflows/ticker.js`, args `{ticker, as_of}`): one company on the owner's ticker in

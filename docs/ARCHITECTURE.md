@@ -13,7 +13,8 @@ sources (connector payloads, filings)            facts.py      FactBook (one sch
   -> risks and failure scenarios                  risk.py       disqualifying / pricing / accepted risks with pricing_status, permanent-loss case, size of valuation error
   -> independent review                           review.py     mechanical audit (dataqa, valuation_audit, redteam) + signed reviewer bound to the valuation and the analyst inputs
   -> investment decision                          decision.py   separate assessments, one required return, marginal band, closed verdict set, governed overrides
-  -> report                                       render.py     markdown report + one Hebrew paragraph
+  -> report                                       render.py     markdown report + one Hebrew paragraph + the owner's table
+  -> scenario reasons (reads only)                scenario_reasons.py  the condition and the business behind every דובי / בסיסי / שורי price
 ```
 
 `pipeline.run` executes the stages in this order (analysis runs before the model card because the card reads it).

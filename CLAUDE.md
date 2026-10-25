@@ -102,10 +102,14 @@ forecast; a lever without company data is a visible gap. Market prices of risk (
 
 ## User preference: valuation table (latest, 20.10.2026)
 
-Every valuation: ONE clear table in simple Hebrew words, a yearly bad/likely/good table through the fifth year, and a few
-short simple explanations; all calculations and
-the business detail stay behind the scenes. Use `render.hebrew_table` (written as out/table_he.md by `deep` and
-`pipeline`) and supply an evidenced `analyst_sheet.key_risk` {reading_he, evidence_ids} so the risk row is specific.
+Every valuation: ONE clear table in simple Hebrew words, a yearly bear/base/bull table in the owner's words
+(דובי / בסיסי / שורי, 25.10.2026; never 'סביר') through the fifth year, and a few short simple explanations; all
+calculations and the business detail stay behind the scenes. Use `render.hebrew_table` (written as out/table_he.md by
+`deep` and `pipeline`) and supply an evidenced `analyst_sheet.key_risk` {reading_he, evidence_ids} so the risk row is
+specific. Every scenario price carries its condition behind the scenes (scenario_reasons: out/scenarios_he.md, CLI
+`scenario-reasons`, MCP `scenario_reasons`); the table shows one short condition line per scenario. Supply the events
+behind each scenario as `analyst_sheet.scenario_events` {bear|base|bull: [{event_he, evidence_ids}]}: without ids they are
+hypotheses. The reasons explain the model's conditional values; they are not forecasts.
 Add sources as links under the table when the web was used. The paragraph below is for non-valuation summaries.
 
 ## User preference: one concise investment paragraph (v0.9.1)

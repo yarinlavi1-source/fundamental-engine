@@ -151,3 +151,21 @@ Discovery needs no positive earnings/FCF or low multiple. Preserve early opportu
 
 Pass the returned `case` unchanged to `valuation_audit`, the dossier's
 `annual_valuation_input` and `plain_verdict.valuation_case`; the hashes must match.
+
+## Scenario reasons (25.10.2026)
+
+`scenario_reasons({casefile})`: behind the scenes of the owner's yearly bear/base/bull table (דובי / בסיסי / שורי).
+Input: a pipeline casefile (`run_pipeline` with `full: 1`, or a saved `casefile.json`). Returns `{reasons, text_he}`:
+for each scenario the condition that has to hold (`condition.if_he`; analyst events from
+`inputs.analyst_sheet.scenario_events` with evidence ids, an event without known ids marked a hypothesis; without
+events the model's own drivers in plain Hebrew), and for today and every dated price of the table the executed value
+(copied, never recomputed) with that fiscal year's revenue, growth, operating margin after SBC, EPS and FCF per share,
+shares, cumulative distributions, the implied P/E on next year's EPS (null with the reason when that EPS is missing or
+not positive) and `why_he`; the scenario's assumption ids and underwriting reviews; `gaps` for what the casefile does
+not hold. Dated prices follow the table's own rows (render.yearly_table_rows): when the table has no yearly part, none
+are listed. Banks (residual income) get ROE, payout, book value and net income per share; EPS is the model's estimate,
+not GAAP. Analyst events that could not be read are listed and said. A malformed casefile is invalid input. A valuation
+the owner's table does not show gets no values here either. Same output:
+`python -m fundamental_engine scenario-reasons casefile.json [--json]`; `pipeline` and `deep` store it as
+`casefile['scenario_reasons']` and write `out/scenarios_he.md`. Read-only; the reasons explain the model's conditional
+values and are not forecasts, probabilities or price targets.

@@ -379,7 +379,9 @@ def run(fb, inputs=None):
     """Run every stage on one FactBook. inputs: {'card': ..., 'forecast': ..., 'reviewer': ..., 'decision': ..., 'analyst': name(s)?,
     'analyst_sheet': the analyst's evidenced readings of the six questions (analyst_sheet.py), 'market_context': country-risk
     exposure overrides, evidenced geopolitical exposures and the market regime readings (market_context.py), 'company_path':
-    the evidenced forward multiple path per scenario (company_path.py; display only, outside the review digest)}.
+    the evidenced forward multiple path per scenario (company_path.py; display only, outside the review digest)}; analyst_sheet may carry the optional scenario_events behind
+    each bear/base/bull price. casefile['scenario_reasons'] (scenario_reasons.build) reads the finished casefile: the condition
+    and the business of each dated scenario price, nothing revalued.
 
     inputs.market_context (when present, even {}) runs the 'market_context' stage first: its country-risk add-on becomes
     inputs.forecast.country_risk (an explicit forecast.country_risk wins), its exposures become named failure scenarios in the
@@ -440,6 +442,13 @@ def run(fb, inputs=None):
         from . import company_path
         known = set(fb.get('sources') or {}) | {q['id'] for q in fb.get('qualitative') or []}
         cf['company_path'] = stage('company_path', lambda: company_path.build(inputs['company_path'], val, known))
+    # behind every scenario price, its condition and the business of that year (read from the casefile, nothing revalued);
+    # not a stage, so no other casefile key changes: a failure is recorded inside the key itself
+    from . import scenario_reasons
+    try:
+        cf['scenario_reasons'] = scenario_reasons.build(cf)
+    except (ValueError, KeyError, ZeroDivisionError, TypeError, AttributeError) as e:
+        cf['scenario_reasons'] = {'reasons_version': 1, 'status': 'failed', 'error': f'{type(e).__name__}: {e}', 'scenarios': []}
     json.dumps(cf, allow_nan=False, default=str)
     cf['casefile_sha256'] = F.digest(json.loads(json.dumps({k: v for k, v in cf.items() if k != 'casefile_sha256'}, default=str)))
     return cf

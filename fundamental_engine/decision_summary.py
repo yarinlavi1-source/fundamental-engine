@@ -101,11 +101,11 @@ def decision_summary(report, case):
         call = 'עדיין אין בסיס מספיק לקבוע אם המחיר כדאי להשקעה'
     else:
         call = {
-            'cheap': 'המחיר נראה מעניין להשקעה לפי התרחיש המרכזי',
-            'cheap_even_bear': 'המחיר נראה מעניין גם ביחס לתרחיש השמרני שנבדק',
+            'cheap': 'המחיר נראה מעניין להשקעה לפי התרחיש הבסיסי',
+            'cheap_even_bear': 'המחיר נראה מעניין גם ביחס לתרחיש הדובי שנבדק',
             'fair': 'המחיר קרוב לשווי שהוערך, בלי הנחה ברורה',
-            'expensive': 'במחיר הזה הייתי מחכה; נדרשת הצלחה מעבר לתרחיש המרכזי',
-            'very_expensive': 'במחיר הזה הייתי מחכה; אפילו התרחיש האופטימי שנבדק אינו מצדיק אותו',
+            'expensive': 'במחיר הזה הייתי מחכה; נדרשת הצלחה מעבר לתרחיש הבסיסי',
+            'very_expensive': 'במחיר הזה הייתי מחכה; אפילו התרחיש השורי שנבדק אינו מצדיק אותו',
         }[p['bucket']]
     parts.append(call + '.')
     if 'potential' in notes:
@@ -119,8 +119,8 @@ def decision_summary(report, case):
         values = [p.get(k) for k in ('bear', 'base', 'bull')]
         finite = [x for x in values if isinstance(x, (int, float)) and isfinite(x) and x >= 0]
         spread = f" (טווח התרחישים {min(finite):,.1f}–{max(finite):,.1f})" if len(finite) == 3 else ''
-        gap = (f'הנחה של כ־{discount:.0%} מול השווי המרכזי' if discount > 0
-               else f'מחיר גבוה בכ־{-discount:.0%} מהשווי המרכזי' if discount < 0 else 'ללא הנחה')
+        gap = (f'הנחה של כ־{discount:.0%} מול שווי התרחיש הבסיסי' if discount > 0
+               else f'מחיר גבוה בכ־{-discount:.0%} משווי התרחיש הבסיסי' if discount < 0 else 'ללא הנחה')
         parts.append(f"מול מחיר {quote:,.1f}, השווי המוערך היום הוא כ־{base:,.1f} {report['currency']}{spread}: {gap}.")
         start = date.fromisoformat(report['as_of'])
         try:
@@ -142,7 +142,7 @@ def decision_summary(report, case):
                 'conditional_base_value': row['base'], 'price_change_excluding_dividends': upside,
                 'annualized_price_change_excluding_dividends': (row['base'] / quote) ** (1 / years) - 1}
             direction = 'עלייה' if upside >= 0 else 'ירידה'
-            parts.append(f"אם התרחיש המרכזי יתממש, השווי ב־{d.isoformat()} עשוי להיות כ־{row['base']:,.1f}, {direction} של כ־{abs(upside):.0%} מול המחיר כעת, ללא דיבידנדים; זו אינה הבטחת מחיר.")
+            parts.append(f"אם התרחיש הבסיסי יתממש, השווי ב־{d.isoformat()} עשוי להיות כ־{row['base']:,.1f}, {direction} של כ־{abs(upside):.0%} מול המחיר כעת, ללא דיבידנדים; זו אינה הבטחת מחיר.")
         else:
             parts.append('עדיין אין הערכת שווי מבוססת לחמש שנים מלאות מהיום.')
     else:

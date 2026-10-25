@@ -312,7 +312,7 @@ def _valuation(case):
     bear, base, bull = today['bear'], today['base'], today['bull']
     ratio = quote / base if base > 0 else float('inf')
     if bear is not None and quote <= bear:
-        bucket, light, head = 'cheap_even_bear', '🟢', 'זול — גם בתרחיש הרע'
+        bucket, light, head = 'cheap_even_bear', '🟢', 'זול — גם בתרחיש הדובי'
     elif ratio <= .8:
         bucket, light, head = 'cheap', '🟢', 'זול ביחס לשווי'
     elif ratio <= 1.1:
@@ -320,18 +320,18 @@ def _valuation(case):
     elif bull is not None and quote <= bull:
         bucket, light, head = 'expensive', '🟠', 'יקר — המחיר כבר מניח הצלחה'
     else:
-        bucket, light, head = 'very_expensive', '🔴', 'יקר מאוד — גם לעומת התרחיש האופטימי'
+        bucket, light, head = 'very_expensive', '🔴', 'יקר מאוד — גם לעומת התרחיש השורי'
     cur = case['currency']
-    explain = (f'המחיר היום בערך {quote:,.2f} {cur}. לפי התרחיש הסביר (בסיס) המניה שווה היום בערך {base:,.2f} {cur}'
+    explain = (f'המחיר היום בערך {quote:,.2f} {cur}. לפי התרחיש הבסיסי המניה שווה היום בערך {base:,.2f} {cur}'
                + (f' — {price_vs_value_words(quote, base)}.' if base > 0 else '.'))
     if bear is not None:
-        explain += f' בתרחיש הרע השווי בערך {bear:,.2f} {cur}' + (f' ({change_words(bear, quote)}).' if bear > 0 else ' (כמעט כלום).')
+        explain += f' בתרחיש הדובי השווי בערך {bear:,.2f} {cur}' + (f' ({change_words(bear, quote)}).' if bear > 0 else ' (כמעט כלום).')
     if bull is not None:
-        explain += f' בתרחיש הטוב בערך {bull:,.2f} {cur} ({change_words(bull, quote)}).'
+        explain += f' בתרחיש השורי בערך {bull:,.2f} {cur} ({change_words(bull, quote)}).'
     path = [r for r in result['annual_values'][1:] if r.get('base') is not None]
     if path:
         end = path[-1]
-        explain += (f' אם תרחיש הבסיס מתממש, השווי ב-{end["date"][:4]} יהיה בערך {end["base"]:,.2f} {cur}'
+        explain += (f' אם התרחיש הבסיסי מתממש, השווי ב-{end["date"][:4]} יהיה בערך {end["base"]:,.2f} {cur}'
                     f' ({change_words(end["base"], quote)} של היום). זה שווי מותנה בתחזית, לא תחזית למחיר בבורסה.')
     return summary, result, {'bucket': bucket, 'light': light, 'headline': head, 'explain': explain,
                      'quote': quote, 'bear': bear, 'base': base, 'bull': bull, 'price_to_base_value': ratio}
@@ -579,14 +579,14 @@ def _bottom_line(business, price, stage):
     if b == 'blocked':
         return {'light': '🔴', 'call': 'זהירות — בעיית מימון', 'explain': 'גם אם העסק מעניין, בלי מימון ברור בעלי המניות של היום עלולים להידלל או להפסיד.'}
     if b == 'very_expensive':
-        return {'light': '🔴', 'call': 'יקר מאוד — המחיר מעל גם התרחיש האופטימי',
-                'explain': 'המחיר מעל התרחיש האופטימי שהוזן. זהו פער מהמודל, ולא תקרה למחיר או לכל תוצאה עסקית אפשרית. המחיר מגלם הצלחה גדולה עוד יותר ממה שהמודל מצליח להצדיק.'
+        return {'light': '🔴', 'call': 'יקר מאוד — המחיר מעל גם התרחיש השורי',
+                'explain': 'המחיר מעל התרחיש השורי שהוזן. זהו פער מהמודל, ולא תקרה למחיר או לכל תוצאה עסקית אפשרית. המחיר מגלם הצלחה גדולה עוד יותר ממה שהמודל מצליח להצדיק.'
                            + (' העסק עצמו חזק — הבעיה היא המחיר, לא החברה.' if good else '')}
     cheap, fair = b in {'cheap', 'cheap_even_bear'}, b == 'fair'
     if good and cheap:
         return {'light': '🟢', 'call': 'מעניין מאוד', 'explain': 'עסק טוב שנראה זול ביחס לשווי שחישבנו. שווה להעמיק ולבדוק מה השוק יודע שאנחנו לא.'}
     if good and fair:
-        return {'light': '🟡', 'call': 'עסק טוב במחיר הוגן', 'explain': 'אין פה מציאה. התשואה תבוא רק אם העסק ימשיך לבצע כמו בתרחיש הבסיס.'}
+        return {'light': '🟡', 'call': 'עסק טוב במחיר הוגן', 'explain': 'אין פה מציאה. התשואה תבוא רק אם העסק ימשיך לבצע כמו בתרחיש הבסיסי.'}
     if good:
         return {'light': '🟠', 'call': 'עסק טוב אבל יקר', 'explain': 'המחיר כבר מגלם הצלחה גדולה. שווה לחכות למחיר נמוך יותר או להוכחה שהעסק עוקף את התרחיש הבסיסי.'}
     if ok and cheap:
@@ -635,7 +635,7 @@ def render_plain(r):
             lines.append(f"**הימור: כמה אפשר להפסיד מול כמה אפשר להרוויח.** השווי הממוצע כשמשקללים את כל התרחישים לפי הסיכוי שלהם"
                          f"{' (כולל ההצלחה הגדולה)' if 'tail' in pay['probabilities'] else ''}: בערך {pay['expected_value']:,.2f} {cur} — "
                          f"{price_vs_value_words(p['quote'], pay['expected_value']) if p else ''}. "
-                         f"בתרחיש הרע: {change_words(p['bear'], p['quote']) if p and p['bear'] else '—'}; "
+                         f"בתרחיש הדובי: {change_words(p['bear'], p['quote']) if p and p['bear'] else '—'}; "
                          f"בתרחיש הגבוה ביותר שהוזן: {change_words(max(v for k, v in r['valuation']['annual_values'][0].items() if k in ('bear','base','bull','tail') and v is not None), p['quote']) if p else '—'}. "
                          f"משקל התרחישים שבהם השווי הנוכחי נמוך מהמחיר (אינו הסתברות להפסד עתידי): בערך {fraction_words(pay['probability_below_price'])}.")
             lines.append('')
@@ -645,15 +645,15 @@ def render_plain(r):
             base_row = next((x for x in mv['rows'] if x['scenario'] == 'base'), None)
             if base_row and bull_row:
                 lo, mid, hi = mv['exit_pe']
-                lines.append(f"**רגישות להנחות מכפיל — אינה שחזור של מודל אנליסט:** ב-{base_row['year']} אומדן רווח תפעולי לאחר מימון ומס למניה בתרחיש הבסיס בערך "
-                             f"{base_row['eps']:.2f} ובתרחיש הטוב {bull_row['eps']:.2f}. אם השוק ישלם אז פי {hi} — המחיר יהיה בערך "
+                lines.append(f"**רגישות להנחות מכפיל — אינה שחזור של מודל אנליסט:** ב-{base_row['year']} אומדן רווח תפעולי לאחר מימון ומס למניה בתרחיש הבסיסי בערך "
+                             f"{base_row['eps']:.2f} ובתרחיש השורי {bull_row['eps']:.2f}. אם השוק ישלם אז פי {hi} — המחיר יהיה בערך "
                              f"{base_row['price_in_year_at_pe'][hi]:,.0f}–{bull_row['price_in_year_at_pe'][hi]:,.0f} {cur}; אם רק פי {lo} — בערך "
                              f"{base_row['price_in_year_at_pe'][lo]:,.0f}–{bull_row['price_in_year_at_pe'][lo]:,.0f}. המכפיל הוא הנחה; האומדן אינו רווח GAAP או רווח מתואם מאומת לבעלי החברה.")
                 lines.append('')
         req = g['required']
         if req and req['ratio']:
             lines.append(f"**מה המחיר דורש:** כדי שהמחיר של היום ייתן תשואה סבירה, החברה צריכה להגיע בעוד כחמש שנים למכירות של בערך "
-                         f"{req['required_revenue_5y'] / 1e6:,.0f} מיליון {cur} — {multiple_words(req['ratio'])} ביחס לתרחיש הסביר.")
+                         f"{req['required_revenue_5y'] / 1e6:,.0f} מיליון {cur} — {multiple_words(req['ratio'])} ביחס לתרחיש הבסיסי.")
             lines.append('')
     if p:
         lines += [f"{p['light']} **{p['headline']}.** {p['explain']}", '']
@@ -665,7 +665,7 @@ def render_plain(r):
                 lines += ['- ' + i['message'] + ' [' + i['path'] + ']' for i in r['valuation']['underwriting_audit']['issues']]
                 lines.append('')
             has_tail = any(row.get('tail') is not None for row in rows)
-            lines += [f'| תאריך | רע | סביר (בסיס) | טוב |' + (' הצלחה גדולה |' if has_tail else '') + f' מחיר היום ({cur}) |',
+            lines += [f'| תאריך | דובי | בסיסי | שורי |' + (' הצלחה גדולה |' if has_tail else '') + f' מחיר היום ({cur}) |',
                       '|---|---|---|---|' + ('---|' if has_tail else '') + '---|']
             fmt = lambda v: '—' if v is None else f'{v:,.2f}'
             for row in rows:

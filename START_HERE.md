@@ -26,7 +26,8 @@ same connectors (SEC, Interactive Brokers, Alpha Vantage, FMP, LunarCrush, …).
   `scripts/calibrate.py`; the engine walk-forward `python scripts/backtest_engine.py runs/universe_<date>
   --name large500 --from 2016 --to 2025 --workers 4`; a single company end-to-end `python -m
   fundamental_engine deep <universe_folder> --as-of <date> --symbols <TICKER>` (writes `out/table_he.md` with
-  the plain-Hebrew table, including the "מה המחיר של היום מניח" reverse-DCF row).
+  the plain-Hebrew table, including the "מה המחיר של היום מניח" reverse-DCF row, and `out/scenarios_he.md` with the
+  condition behind every דובי / בסיסי / שורי price).
 - **Latest state (read these to catch up):** `docs/CHANGELOG.md` 0.13.0 (25.10.2026 calibration fixes: terminal
   growth = risk-free as the ERP assumes, dated implied ERP in the walk-forward, mature terminal cost of equity, cyclical
   charges on evidence, platform routing, post-breakeven ROIC on scale-ups, headline fair value at the company's cost of

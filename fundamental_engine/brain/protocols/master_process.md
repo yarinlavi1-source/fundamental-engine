@@ -107,7 +107,11 @@ Entry: Position outputs.
     tool `evidence_pack_to_inputs`: inputs.json with source-tier overrides, company_path, scenario events, key risk,
     card assessments, market inputs; the evidence bundle registers the sources), run the engine for that one company
     (`deep <run dir> --symbols <T>`). Today's value and every year through the fifth, bear/base/bull (annual_valuation);
-    the company price path = forward multiple x next-fiscal-year EPS per scenario; scenario reasons for every price.
+    the company price path = forward multiple x next-fiscal-year EPS per scenario (company_path); scenario reasons for
+    every price (scenario_reasons, `out/scenarios_he.md`, the `scenario-reasons` CLI / MCP tool): the condition and that
+    year's business; events need evidence ids (analyst_sheet.scenario_events), else they are hypotheses. The bear changes
+    the business (growth, margin, funding), not only the multiple. The base range (טווח הבסיס) is the base at the required
+    return +/-1pp, shown apart from the extremes.
 
 **Reasons behind every price.** No price stands without its reason. Owner example: price 200 today; base 300, bull
 350, bear 200 in five years. Why 200 in the bear — what breaks (which customer leaves, which margin falls, by how much,

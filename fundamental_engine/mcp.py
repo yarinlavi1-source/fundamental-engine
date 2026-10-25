@@ -87,6 +87,7 @@ TOOLS += [
  research_tool('identity_check','Before any per-share number: reporting currency (from SEC companyfacts units) and depositary-share ratio (listing market cap / price vs dei shares). Blocked companies need a manual FactBook in the reporting currency and the ADS ratio.',{'companyfacts':{'type':'object'},'listing':{'type':'object'},'company':{'type':'object'}},['companyfacts']),
  research_tool('compare_candidates','Cross-opportunity comparison of pipeline casefiles: business quality, growth quality, financial strength, capital allocation, price, expected return vs required return and index, loss to bear, data uncertainty and key risks, each kept separate; no composite score; drafts flagged.',{'casefiles':{'type':'array'},'cards':{'type':'object'}},['casefiles']),
  research_tool('screen_changes','Compare two discovery scans: entered, left, lens moves and the dimension changes behind them.',{'before':{'type':'object'},'after':{'type':'object'}},['before','after']),
+ research_tool('scenario_reasons','Behind the scenes of the owner\'s yearly bear/base/bull (דובי/בסיסי/שורי) table: for each scenario the condition that has to hold (analyst events with evidence ids, else hypotheses; without events the model\'s own drivers in plain Hebrew) and, for today and every dated price, the executed value with that year\'s revenue, growth, operating margin after SBC, EPS/FCF per share, shares, distributions and the implied P/E. Reads a pipeline casefile, never revalues; conditional values, not forecasts. Read annual_valuation.',{'casefile':{'type':'object'}},['casefile']),
  research_tool('thesis_record','Turn a pipeline casefile into a dated thesis: key assumptions with falsifiers, forecasts (bear/base/bull per fiscal year), material triggers and a review date. Pure; freeze it with thesis_freeze.',{'casefile':{'type':'object'}},['casefile']),
  research_tool('thesis_check','Compare a thesis with a newer FactBook (and optional price): what changed, whether it touches business quality, value, expected return or only the price, and alerts only for material deviations.',{'thesis':{'type':'object'},'factbook':{'type':'object'},'price':{'type':'number'}},['thesis','factbook']),
  research_tool('thesis_freeze','Write a thesis and its forecasts into the append-only ledger at the time they are made (idempotent per thesis; refused more than 7 days after the thesis was made). path = ledger file name (.jsonl) inside the server corpus directory.',{'path':LEDGER_NAME,'thesis':{'type':'object'}},['path','thesis'],False),
@@ -197,6 +198,10 @@ class Server:
         if name == 'screen_changes':
             from .screen import rank_changes
             return rank_changes(args['before'], args['after'])
+        if name == 'scenario_reasons':
+            from .scenario_reasons import build, render_he
+            result = build(args['casefile'])
+            return {'reasons': result, 'text_he': render_he(result)}
         if name == 'thesis_record':
             from .monitor import thesis_from_casefile
             return thesis_from_casefile(args['casefile'])

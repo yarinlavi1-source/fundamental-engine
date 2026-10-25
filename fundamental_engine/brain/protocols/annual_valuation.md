@@ -1,7 +1,8 @@
 # Annual fair-value underwriting: current date through 2030 and beyond
 
 Deliver a simple Hebrew table: date, bear, base, bull, fixed current quote,
-base gap versus quote. Include TODAY separately from 31 December of each year.
+base gap versus quote. The owner's words for the scenarios are bear = דובי, base =
+בסיסי, bull = שורי ('סביר', 'likely', is not a scenario name). Include TODAY separately from 31 December of each year.
 A future-date fair value is not present value and not a market-price prediction.
 The difference from today's price is not annualized return. Do not imply that the
 scenario interval is a statistically calibrated confidence interval.
@@ -38,6 +39,35 @@ scenario interval is a statistically calibrated confidence interval.
    when needed; repeated articles do not resolve a missing contractual fact.
 8. Save annual_valuation_input in the dossier, execute research_review, checkpoint,
    then report the actual annual_values. Never handwrite a target table.
+
+## Every scenario price carries its condition (25.10.2026)
+
+The owner: "every price has a reason: if something happens, then this price". Behind
+the scenes, scenario_reasons (MCP tool; CLI `scenario-reasons <casefile.json>`;
+casefile['scenario_reasons'] and out/scenarios_he.md from pipeline and deep) reads the
+executed casefile and gives, for each of דובי / בסיסי / שורי, the condition ('אם …')
+and, for today and every dated price of the yearly table, that fiscal year's revenue,
+executed growth, operating margin after SBC, the model's EPS estimate (not GAAP) and FCF
+per share, shares, distributions and the implied P/E on next year's estimate (banks on
+the residual-income route: ROE, payout, book value and net income per share). It copies
+the executed values; it never revalues. Dated prices follow the table's own rows: when
+the table has no yearly part (a scenario without a value), no dated price is listed.
+The owner's table shows one short condition line per scenario; the rest stays behind.
+
+- The bear changes the business (growth, margin, funding, dilution), not only the
+  discount rate or the multiple. A bear that differs from the base only in its
+  multiple is not a bear.
+- Events come only from the analyst, with evidence ids: inputs.analyst_sheet.
+  scenario_events = {bear|base|bull: [{event_he, evidence_ids}]}. An event whose ids
+  the FactBook does not hold (or that has none) is a hypothesis and is said to be one.
+  evidence_ids is a list (or one id as text); an event that cannot be read is listed
+  in analyst_sheet.scenario_events_rejected and said, never dropped silently.
+- Without events the condition is the model's own drivers in plain Hebrew (growth
+  first -> last year and long run, margin start -> end, external funding and
+  dilution, cost of equity); never invent a story to fill it.
+- Missing drivers are gaps, not numbers. A held valuation shows no scenario price.
+- The reasons explain the model's conditional values; they are not forecasts,
+  probabilities or price targets.
 
 ## Economic routing
 

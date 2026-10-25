@@ -59,13 +59,13 @@ class FairValueHeadlineTests(unittest.TestCase):
 
     def test_table_headline_is_the_fair_value_and_the_hurdle_value_is_the_buy_below_row(self):
         base, pfh = self.view['base'], self.er['value_at_required_return']
-        self.assertIn(f'{base:,.1f}$', _row(self.table, 'שווי הוגן (תרחיש סביר)'))
-        self.assertNotIn(f'{pfh:,.1f}', _row(self.table, 'שווי הוגן (תרחיש סביר)'))
+        self.assertIn(f'{base:,.1f}$', _row(self.table, 'שווי הוגן (תרחיש בסיסי)'))
+        self.assertNotIn(f'{pfh:,.1f}', _row(self.table, 'שווי הוגן (תרחיש בסיסי)'))
         self.assertIn(f'זולה בכ־{1 - 35 / base:.0%}', _row(self.table, 'המחיר מול השווי'))
         buy = _row(self.table, 'מחיר קנייה מרבי לתשואה שאתה דורש (10.5% בשנה)')
         self.assertIn(f'{pfh:,.1f}$', buy)
         self.assertIn(f'נמוך ממנו בכ־{1 - 35 / pfh:.0%}', buy)
-        self.assertIn(f"{self.view['bear']:,.1f}$ / {self.view['bull']:,.1f}$", _row(self.table, 'תרחיש רע / תרחיש טוב'))
+        self.assertIn(f"{self.view['bear']:,.1f}$ / {self.view['bull']:,.1f}$", _row(self.table, 'דובי / שורי'))
         self.assertIn('זו דרישה שלך, לא שווי החברה', self.table)
 
     def test_yearly_table_and_five_year_row_are_at_the_fair_value_rate(self):
