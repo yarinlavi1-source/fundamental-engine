@@ -378,7 +378,8 @@ def valuate(fb, qa, fc, inputs=None):
 def run(fb, inputs=None):
     """Run every stage on one FactBook. inputs: {'card': ..., 'forecast': ..., 'reviewer': ..., 'decision': ..., 'analyst': name(s)?,
     'analyst_sheet': the analyst's evidenced readings of the six questions (analyst_sheet.py), 'market_context': country-risk
-    exposure overrides, evidenced geopolitical exposures and the market regime readings (market_context.py)}.
+    exposure overrides, evidenced geopolitical exposures and the market regime readings (market_context.py), 'company_path':
+    the evidenced forward multiple path per scenario (company_path.py; display only, outside the review digest)}.
 
     inputs.market_context (when present, even {}) runs the 'market_context' stage first: its country-risk add-on becomes
     inputs.forecast.country_risk (an explicit forecast.country_risk wins), its exposures become named failure scenarios in the
@@ -435,6 +436,10 @@ def run(fb, inputs=None):
     from . import analyst_sheet
     cond = stage('conditional_values', lambda: analyst_sheet.conditional_values(fb, an, card, qa, inputs.get('forecast'))) if fc else None
     cf['analyst_sheet'] = stage('analyst_sheet', lambda: analyst_sheet.build(fb, cf, inputs, cond))
+    if 'company_path' in inputs:          # company_path.py: the yearly price per scenario (EPS x multiple); reads, never moves, a value
+        from . import company_path
+        known = set(fb.get('sources') or {}) | {q['id'] for q in fb.get('qualitative') or []}
+        cf['company_path'] = stage('company_path', lambda: company_path.build(inputs['company_path'], val, known))
     json.dumps(cf, allow_nan=False, default=str)
     cf['casefile_sha256'] = F.digest(json.loads(json.dumps({k: v for k, v in cf.items() if k != 'casefile_sha256'}, default=str)))
     return cf
