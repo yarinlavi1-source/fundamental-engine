@@ -421,7 +421,7 @@ class PipelineTests(unittest.TestCase):
         geo = next(q for q in self.exp['analyst_sheet']['questions'] if q['key'] == 'geopolitics')
         self.assertEqual(geo['status'], 'evidenced')
         self.assertIn('זה תרחיש, לא הסתברות', geo['reading_he'])
-        self.assertIn(f"חשיפה: מגבלות יצוא לסין (כ־25% מההכנסות): אם זה יקרה, השווי בתרחיש הסביר נמוך בכ־{sc['base_effect']:.0%}",
+        self.assertIn(f"חשיפה: מגבלות יצוא לסין (כ־25% מההכנסות): אם זה יקרה, השווי בתרחיש הבסיסי נמוך בכ־{sc['base_effect']:.0%}",
                       hebrew_table(self.exp))
         self.assertAlmostEqual(sc['base_effect'], 1 - sc['base_value_with_shock'] / sc['base_value_control'])
         self.assertAlmostEqual(sc['base_value_control'], base, places=6)          # no funding plan to strip: the control is the base
