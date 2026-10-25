@@ -65,17 +65,27 @@ class RequiredReturnTests(unittest.TestCase):
         self.assertEqual(user['expected_return']['index_expected_return']['origin'], 'user_input')
         self.assertAlmostEqual(user['expected_return']['index_expected_return']['value'], .07)
 
-    def test_owner_sees_the_value_at_the_required_return(self):
+    def test_owner_sees_the_fair_value_and_the_buy_below_price_for_the_required_return(self):
+        # 25.10.2026: the headline is the fair value at the company's own cost of equity (it was the value at the hurdle,
+        # 14-33% lower on the diagnosis profiles); the hurdle value is the buy-below price for the owner's required return
         p = parts(35)
         idx = {'value': .095, 'basis': 'index assumption above the model rate (test)', 'source': 'test input'}
         d = decide(p, {'index': idx})                                             # required return 10.5% > model 10%: two values
-        er = d['expected_return']
+        er, base = d['expected_return'], d['valuation_view']['base']
         pfh = er['price_for_hurdle']['value']
+        self.assertLess(pfh, base)
+        self.assertEqual((er['fair_value']['value'], er['buy_below_price']['value']), (base, pfh))
         text = hebrew_paragraph(casefile(p, d))
-        self.assertIn(f'השווי בתשואה הנדרשת שלך הוא כ־{_ps(pfh)}', text)
-        self.assertIn(f'הנחה של כ־{1 - 35 / pfh:.0%}', text)                     # discount against the value at the required return
-        self.assertIn('בשיעור ההיוון של המודל', text)                             # the model-rate value is secondary
+        self.assertIn(f'השווי ההוגן (בשיעור ההיוון של החברה, כ־10.0%', text)
+        self.assertIn(f'הוא כ־{_ps(base)} USD', text)
+        self.assertIn(f'הנחה של כ־{1 - 35 / base:.0%}', text)                    # discount against the fair value
+        self.assertIn(f'מחיר קנייה מרבי לתשואה שלך (כ־10.5%): כ־{_ps(pfh)}', text)     # compact form: this paragraph is long
+        self.assertLess(text.index('השווי ההוגן'), text.index('מחיר קנייה מרבי'))
+        from fundamental_engine.render import _value_he
+        self.assertIn(f'; מחיר הקנייה המרבי לתשואה הנדרשת שלך (כ־10.5% בשנה) הוא כ־{_ps(pfh)}, והמחיר נמוך ממנו בכ־{1 - 35 / pfh:.0%}.',
+                      _value_he(d, 'USD'))
         md = markdown(casefile(p, d))
+        self.assertIn("Fair value: base value at the company's own cost of equity", md)
         self.assertIn(f'Value at your required return (the price at which the base IRR equals the', md)
         self.assertEqual(pfh, er['value_at_required_return'])
         case = deepcopy(p['val']['case'])
@@ -256,9 +266,9 @@ class ReportConsistencyTests(unittest.TestCase):
     def test_hebrew_five_year_includes_distributions_and_the_total(self):
         self.assertIn('חלוקות (רכישות עצמיות/דיבידנד)', self.text)
         self.assertNotIn('לא כולל דיבידנדים', self.text)
-        f5 = self.d['expected_return']['five_year_at_required_return']
+        f5 = self.d['valuation_view']['five_year']                              # at the fair-value rate (the executed valuation)
         self.assertIn(f"סך הכול כ־{_ps(f5['base_value'] + f5['cumulative_distributions_base'])}", self.text)
-        self.assertIn(f"{f5['change_including_distributions']:.0%}", self.text)
+        self.assertIn(f"{f5['price_change_including_distributions']:.0%}", self.text)
         self.assertNotIn('לא כולל דיבידנדים', self.text)
 
     def test_no_unformatted_floats(self):
@@ -787,21 +797,23 @@ class ReportTextTests(unittest.TestCase):
         p = parts(35)
         d = decide(p)
         text = hebrew_paragraph(casefile(p, d))
-        ar = d['expected_return']['at_required_return']
-        self.assertIn(f'טווח תרחישים בתשואה זו {_ps(ar["bear"])}–{_ps(ar["bull"])}', text)
+        view = d['valuation_view']                                               # the fair value's range is of the same valuation
+        self.assertIn(f'טווח תרחישים {_ps(view["bear"])}–{_ps(view["bull"])}) הוא כ־{_ps(view["base"])}', text)
         bad = deepcopy(d)
         bad['expected_return'].update(value_at_required_return=None, price_for_hurdle={'value': None, 'status': 'invalid', 'reason': 'test'})
         text = hebrew_paragraph(casefile(p, bad))
-        self.assertIn('השווי בתשואה הנדרשת לא ניתן לחישוב', text)
-        self.assertIn('בשיעור ההיוון של המודל', text)
+        self.assertIn('מחיר הקנייה המרבי לתשואה הנדרשת שלך', text)
+        self.assertIn('לא ניתן לחישוב', text)
+        self.assertIn('השווי ההוגן (בשיעור ההיוון של החברה', text)
 
     def test_five_year_change_states_the_re_rating_assumption_and_its_rate(self):
         p = parts(35)
         d = decide(p)
         text = hebrew_paragraph(casefile(p, d))
-        f5 = d['expected_return']['five_year_at_required_return']
-        self.assertIn('יתכנס לשווי בתשואה הנדרשת', text)
-        self.assertIn(f"(כ־{f5['annualized_including_distributions']:.0%} לשנה)", text)
+        f5 = d['valuation_view']['five_year']                                    # at the fair-value rate
+        ann = ((f5['base_value'] + f5['cumulative_distributions_base']) / 35) ** (1 / f5['years']) - 1
+        self.assertIn('יתכנס לשווי ההוגן', text)
+        self.assertIn(f"(כ־{ann:.0%} לשנה)", text)
         self.assertIn('assumes a re-rating', markdown(casefile(p, d)))
 
     def test_main_risk_never_says_the_price_embeds_success_next_to_a_discount(self):
@@ -950,7 +962,7 @@ class MaterialIssueTests(unittest.TestCase):
             text = hebrew_paragraph(casefile(p, d))
             self.assertIn(he, text, issue)
             self.assertIn('unresolved forecast material issue ' + issue, markdown(casefile(p, d)))
-            self.assertEqual('השווי בתשואה הנדרשת' in text or 'שווי של כ־' in text, not hold, issue)   # no value when the number is not a valuation
+            self.assertEqual('השווי ההוגן' in text or 'שווי הוגן של כ־' in text, not hold, issue)   # no value when the number is not a valuation
             self.assertTrue(80 <= len(text.split()) <= 140, (issue, len(text.split())))
 
     def test_a_resolved_material_issue_does_not_hold_the_verdict(self):

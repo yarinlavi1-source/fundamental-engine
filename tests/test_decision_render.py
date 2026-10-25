@@ -427,14 +427,14 @@ class RenderTests(unittest.TestCase):
                 self.assertNotIn(w, t, name)
         att = self.cases['attractive']
         t = hebrew_table(att)
-        er = att['dc']['expected_return']
-        self.assertIn(f"{er['value_at_required_return']:,.1f}" if er['value_at_required_return'] < 100 else
-                      f"{er['value_at_required_return']:,.0f}", t)                 # the executed value, not a recomputation
-        self.assertIn('| שווי הוגן (תרחיש סביר) |', t)
+        er, base = att['dc']['expected_return'], att['dc']['valuation_view']['base']
+        self.assertIn(f'| שווי הוגן (תרחיש סביר) | {base:,.1f}', t)               # the executed value, not a recomputation
         self.assertIn('הערכה מותנית, לא תחזית', t)
-        yr = att['dc']['expected_return']['yearly_at_required_return']
+        # 25.10.2026: the yearly table is the executed valuation at the company's own cost of equity (the fair-value rate);
+        # it was the path at the required return
+        yr = att['dc']['expected_return']['yearly_at_model_cost_of_equity']
         self.assertGreaterEqual(len(yr['rows']), 3)
-        self.assertEqual(yr['rows'][0]['base'], er['value_at_required_return'])     # today's row is the value at the required return
+        self.assertEqual(yr['rows'][0]['base'], base)                                  # today's row is the fair value
         self.assertLessEqual(yr['rows'][-1]['date'], att['dc']['valuation_view']['five_year']['date'])
         self.assertIn('| מועד | תרחיש רע | תרחיש סביר | תרחיש טוב |', t)
         self.assertIn('| היום |', t)

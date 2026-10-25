@@ -17,6 +17,30 @@ def read_json(path):
     return json.loads(Path(path).read_text(encoding="utf-8"), parse_constant=reject)
 
 
+def index_input_for(arg, as_of, candidates):
+    """Decision index for a run: --index FILE takes that calibration's index_input; --index none applies none (the
+    generic risk-free + ERP assumption unless the inputs set an index); without --index, the newest calibration among
+    candidates dated on or before as_of and at most calibration.MAX_AGE_DAYS older (calibration.pick), else none.
+    Returns (index_input, used)."""
+    from .calibration import pick, MAX_AGE_DAYS
+    if arg and arg.strip().lower() == "none":
+        return None, "generic market assumption (--index none)"
+    if arg:
+        return read_json(arg).get("index_input"), arg
+    hit = pick(as_of, candidates)
+    if hit:
+        return hit["index_input"], f"{hit['path']} (as_of {hit['as_of']}, newest calibration on or before the run)"
+    return None, f"generic market assumption: no calibration file dated on or before {as_of} within {MAX_AGE_DAYS} days"
+
+
+def with_index(inp, index_input, explicit):
+    """inputs with decision.index set: an explicit --index replaces the inputs' own index; an automatic pick only fills it."""
+    inp = inp or {}
+    if not index_input or (not explicit and (inp.get("decision") or {}).get("index")):
+        return inp
+    return {**inp, "decision": {**(inp.get("decision") or {}), "index": index_input}}
+
+
 def json_object_arg(value, option):
     """A JSON object given inline (the argument starts with '{') or as a path to a JSON file."""
     def reject(constant):
@@ -138,6 +162,10 @@ def main():
     pr.add_argument("--as-of", help="Information cutoff (with raw_dir)")
     pr.add_argument("--inputs", help="JSON with analyst inputs (card, forecast, reviewer, decision)")
     pr.add_argument("--qualitative", help="JSON with dated sources and qualitative items to add to the FactBook")
+    pr.add_argument("--index", help="calibration JSON (calibration.market_implied) whose index_input becomes inputs.decision.index; "
+                                    "'none' applies no calibration (the generic risk-free + ERP assumption unless --inputs sets "
+                                    "decision.index); default: the newest runs/universe_*/calibration.json dated on or before the run, "
+                                    "within calibration.MAX_AGE_DAYS (calibration.pick), filling decision.index only when --inputs has none")
     pr.add_argument("--out", required=True, help="Output folder (keep it outside Git for private or vendor data)")
     sc = subs.add_parser("screen", help="Discovery scan of universe rows (JSON list or {rows: [...]}) into lenses and a shortlist")
     sc.add_argument("rows")
@@ -170,7 +198,10 @@ def main():
     dp.add_argument("--as-of", required=True)
     dp.add_argument("--symbols", nargs="+", help="run these company folders instead of the queue")
     dp.add_argument("--name", help="read companies/QUEUE_<name>.json and write comparison_<name>.json/_he.md (e.g. holdings)")
-    dp.add_argument("--index", help="calibration JSON (calibration.market_implied): its index_input becomes inputs.index for every company")
+    dp.add_argument("--index", help="calibration JSON (calibration.market_implied): its index_input becomes inputs.index for every company; "
+                                    "'none' applies no calibration; default: the newest calibration.json in the folder or a sibling "
+                                    "runs/universe_* folder dated on or before --as-of, within calibration.MAX_AGE_DAYS (calibration.pick), "
+                                    "for companies whose inputs.json sets no decision.index")
     dp.add_argument("--market", help="dated market inputs JSON {risk_free, equity_risk_premium} (each {value, as_of, title, url}): "
                                      "forecast inputs for every company that does not set its own; risk_free only for USD reporters")
     pf = subs.add_parser("portfolio", help="READ-ONLY analysis of saved Interactive Brokers payloads; prints to stdout, stores nothing")
@@ -211,7 +242,9 @@ def main():
                 fb = factbook_from_run_dir(args.raw_dir, company, args.as_of)
             if args.qualitative:
                 add_qualitative_bundle(fb, read_json(args.qualitative))
-            cf = run(fb, read_json(args.inputs) if args.inputs else None)
+            index_input, index_used = index_input_for(args.index, args.as_of or fb.get('as_of'),
+                                                      sorted(Path('runs').glob('universe_*/calibration.json')))
+            cf = run(fb, with_index(read_json(args.inputs) if args.inputs else None, index_input, bool(args.index)) or None)
             out = Path(args.out); out.mkdir(parents=True, exist_ok=True)
             (out / "factbook.json").write_text(json.dumps(fb, indent=1, ensure_ascii=False), encoding="utf-8")
             (out / "casefile.json").write_text(json.dumps(cf, indent=1, ensure_ascii=False, default=str), encoding="utf-8")
@@ -219,7 +252,8 @@ def main():
             (out / "paragraph.txt").write_text(hebrew_paragraph(cf), encoding="utf-8")
             cf['price_implied_growth'] = price_implied_growth(cf)       # reverse-DCF for the table; not run inside the pipeline
             (out / "table_he.md").write_text(hebrew_table(cf), encoding="utf-8")
-            print(json.dumps({'summary': summary(cf), 'stages': cf['stages'], 'errors': cf['errors'], 'out': str(out)}, indent=2, ensure_ascii=False))
+            print(json.dumps({'summary': summary(cf), 'stages': cf['stages'], 'errors': cf['errors'], 'index': index_used, 'out': str(out)},
+                             indent=2, ensure_ascii=False))
             return
         if args.command == "screen":
             from .screen import scan
@@ -301,13 +335,13 @@ def main():
             syms = args.symbols or [e['symbol'] for e in q['queue'] if e['symbol']]
             card_set = read_json(base / 'cards.json') if (base / 'cards.json').exists() else None
             cfs, ran = [], []
-            index_input = (read_json(args.index).get('index_input') if args.index else None)
+            index_input, index_used = index_input_for(args.index, args.as_of, [base / 'calibration.json']
+                                                      + sorted(base.parent.glob('universe_*/calibration.json')))
             market = read_json(args.market) if args.market else None
             for s in syms:
                 folder = base / 'companies' / s
                 inp = read_json(folder / 'inputs.json') if (folder / 'inputs.json').exists() else {}
-                if index_input:
-                    inp = {**inp, 'decision': {**(inp.get('decision') or {}), 'index': index_input}}
+                inp = with_index(inp, index_input, bool(args.index))
                 if market:
                     inp = handoff.with_market_inputs(inp, market, str(folder))
                 fb, cf = handoff.run_company(str(folder), args.as_of, inputs=inp or None)
@@ -331,7 +365,7 @@ def main():
             (base / 'companies' / f'comparison{suffix}.json').write_text(json.dumps(comp, indent=1, ensure_ascii=False, allow_nan=False),
                                                                       encoding='utf-8')
             (base / 'companies' / f'comparison{suffix}_he.md').write_text(handoff.render_he(comp), encoding='utf-8')
-            print(json.dumps({'ran': ran, 'blocked': comp['blocked'], 'empty_lanes': comp['empty_lanes'], 'drafts': comp['drafts']},
+            print(json.dumps({'ran': ran, 'blocked': comp['blocked'], 'empty_lanes': comp['empty_lanes'], 'drafts': comp['drafts'], 'index': index_used},
                              indent=2, ensure_ascii=False, default=str))
             return
         if args.command == "portfolio":

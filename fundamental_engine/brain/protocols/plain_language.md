@@ -2,9 +2,13 @@
 
 Yarin's latest instruction (2026-10-20) for every valuation: one clear table in plain Hebrew words and a few short,
 simple explanations; calculations and business detail stay behind the scenes (in the casefile). The pipeline writes it
-as `out/table_he.md` (`render.hebrew_table`): price, fair value and the gap, bad/good scenario, expected annual return
-against the market's, the conditional five-year value, business quality, how rare the forecast growth is, the main risk
-(the analyst's evidenced `analyst_sheet.key_risk` in plain words), confidence and the call. A draft says it is a draft.
+as `out/table_he.md` (`render.hebrew_table`): price, fair value (the base value at the company's own cost of equity) and
+the gap, bad/good scenario, the buy-below price for the owner's required return (where the call is made), expected annual
+return against the named market return (the engine-consistent one from a calibration file; otherwise the generic
+risk-free + ERP assumption, said so), the expected price path with its walk-forward accuracy band (an estimate, never a
+target), the conditional five-year value, business quality, how rare the forecast growth is, what today's price assumes,
+the main risk (the analyst's evidenced `analyst_sheet.key_risk` in plain words), confidence and the call. A draft says it
+is a draft.
 The paragraph below remains for portfolio and discovery summaries.
 
 Yarin's latest instruction (2026-09-28) supersedes older long-report presentation:

@@ -9,8 +9,19 @@ a shared model bias then cancels in the comparison (stock IRR - engine market IR
 The result is an input to decision.inputs.index ({value, basis, source, low, high}) and to allocation; the absolute
 assumption stays visible next to it. Coverage (the share of the sample's market value with a computed return) is reported:
 low coverage means the estimate leans on the companies the engine could value.
+
+pick() chooses the calibration file a single-company run uses by default (cli deep/pipeline when no --index is given):
+the newest computed one dated on or before the run (never a later one: no look-ahead) and at most MAX_AGE_DAYS older.
+Without one, the decision keeps the generic risk-free + ERP assumption and says so (decision.COMPARATORS).
 """
+import json
+from datetime import date
+from pathlib import Path
 from statistics import median
+
+# A sweep values each company on its latest 10-Q/10-K and the day's prices; one reporting quarter later most of its inputs
+# are a filing behind, so an older file is not used by default (pass it explicitly with --index to override).
+MAX_AGE_DAYS = 92
 
 
 def market_implied(summaries, caps, as_of, assumption=.0875, clip=(-.10, .40), band=.01):
@@ -49,3 +60,26 @@ def market_implied(summaries, caps, as_of, assumption=.0875, clip=(-.10, .40), b
                       f"the engine implies {cw:.1%} for the market vs the {assumption:.2%} assumption: comparing stocks with the assumption "
                       f"would {'reject' if cw < assumption else 'favour'} almost everything; compare with the engine-consistent value")
     return out
+
+
+def pick(as_of, paths, max_age_days=MAX_AGE_DAYS):
+    """Newest usable calibration among paths for a run dated as_of: status computed with an index_input, dated on or before
+    as_of and at most max_age_days older. Returns {path, as_of, age_days, index_input} or None. Unreadable files are skipped."""
+    try:
+        run = date.fromisoformat(str(as_of)[:10])
+    except ValueError:
+        return None
+    best = None
+    for path in paths:
+        try:
+            cal = json.loads(Path(path).read_text(encoding='utf-8'))
+            d = date.fromisoformat(str(cal.get('as_of'))[:10])
+        except (OSError, ValueError, AttributeError):
+            continue
+        ii = cal.get('index_input')
+        age = (run - d).days
+        if cal.get('status') != 'computed' or not isinstance(ii, dict) or not 0 <= age <= max_age_days:
+            continue
+        if best is None or d.isoformat() > best['as_of']:
+            best = {'path': str(path), 'as_of': d.isoformat(), 'age_days': age, 'index_input': ii}
+    return best

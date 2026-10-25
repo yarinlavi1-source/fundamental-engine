@@ -283,11 +283,18 @@ governance_red_flag, redteam_not_usable, consistency_failure, critical_finding_u
                  "evidence", "override"?, "mechanical_level"?, ...}},
  "mechanical_assessments": {name: level},
  "expected_return": {"price","base_irr","bear_irr","bull_irr","base_irr_bound","irr_status","decomposition","index_expected_return":
-                     {"value","low","high","provenance","origin","source","components","basis"},"hurdle","required_return",
+                     {"value","low","high","provenance","origin","comparator": engine_consistent|generic_assumption|user_assumption,
+                     "source","components","basis"},"hurdle","required_return",
                      "hurdle_rule","hurdle_basis","risk_premium","premium_components","premium_capped","permanent_loss_premium",
                      "model_cost_of_equity","model_cost_of_equity_floor": {"value","binding","basis"},"at_required_return":
                      {"base","bear","bull","loss_to_bear","rate","semantics"},"value_at_required_return",
-                     "base_value_at_model_cost_of_equity","price_for_hurdle","five_year_at_required_return","band": {"hurdle_low",
+                     "base_value_at_model_cost_of_equity","fair_value": {"value","bear","bull","cost_of_equity","change_from_price",
+                     "label","semantics"} (the headline: the executed base value at the model cost of equity),"buy_below_price":
+                     {"value","status","required_return","reason","change_from_price","label"} (= value_at_required_return),
+                     "expected_price_path": {"status","rate","base_irr","market_return","comparator","pull_to_market","from_price",
+                     "from_date","rows": [{"years","date","price"}],"band","hit_rate_within_band","formula","semantics"},
+                     "yearly_at_model_cost_of_equity": {"rate","model_cost_of_equity","rows","semantics"},
+                     "price_for_hurdle","five_year_at_required_return","band": {"hurdle_low",
                      "hurdle_high","step","error_level","error_widening","price_low","price_high","rows","bear_tolerance_step",
                      "moat_proxy"?,"rule"},"debt_weight","debt_weight_source","owner_aspiration","meets_owner_aspiration_14pct",
                      "semantics","mechanical"?},

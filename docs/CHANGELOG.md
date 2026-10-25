@@ -104,6 +104,24 @@
   before their margins rose; their Item 1 decides from the report's filing date), Amazon (retail-weighted: gross margin 50%,
   capex 18%, 5 marketplace terms). Cuts set on document words, not on valuations or prices; no constant tuned to the
   walk-forward.
+- Headline value, comparator and expected price path (presentation; no valuation number moves). (a) The table's and the
+  paragraph's "fair value" was the value at the hurdle, max(index + permanent-loss premium, Ke): 14-33% below the value at
+  the company's own cost of equity (diagnosis profiles before the calibration fixes: QG30 $46.3 vs $53.9, MKT $21.1 vs $31.3;
+  the ADBE test fixture today, generic index: $414 vs $591), a required-return choice shown as the company's worth. The headline is now the executed base value at the model
+  cost of equity (`expected_return.fair_value`), with the bear/bull range, the yearly bad/likely/good table
+  (`yearly_at_model_cost_of_equity`, read from the executed result) and the five-year row of the same valuation; the hurdle
+  value is its own row, "buy-below price for your required return X%" (`buy_below_price` = `value_at_required_return`),
+  where the verdict, the margin of safety and the marginal band are still measured. (b) The index record names its
+  comparator (`decision.COMPARATORS`): `engine_consistent` (a calibration sweep's `index_input`), `generic_assumption`
+  (risk-free + ERP, the default; the table says it is the generic assumption and that a calibration file corrects it) or
+  `user_assumption`. `deep` and `pipeline` (new `--index`) use the newest calibration file dated on or before the run and
+  at most `calibration.MAX_AGE_DAYS` = 92 days older (`calibration.pick`: never a later file), filling `decision.index`
+  only when the inputs set none; `--index none` applies none. (c) New row "expected price per share": today's price x
+  (1 + r)^h, h = 1..5, r = base IRR moved `PRICE_PATH_PULL` = halfway to the market return, because in the 2016-2025
+  walk-forward the IRR path was about as accurate as the best simple baseline (price x market drift) and the dated value was
+  not; stated beside it: even the best predictor landed within +-25% of the realized price only ~65% / 50% / 37% of the
+  time at 1 / 3 / 5 years (`PRICE_PATH_HIT`). An estimate, never a target; it changes no value, verdict or hurdle. The
+  "what today's price assumes" row is unchanged.
 
 ## 0.12.0 — results-day review from analyst comparison (21.10.2026)
 

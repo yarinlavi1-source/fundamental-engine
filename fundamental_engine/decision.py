@@ -25,11 +25,18 @@ confidence once. The owner's 14% aspiration is a separate comparison, never the 
 Price attractiveness is the base-case internal rate of return at today's price (cash flows held fixed)
 against that hurdle; the bear-case margin of safety is measured at the same required return. A change in
 the cost of equity moves the terminal WACC by the equity weight only (Harris-Pringle: WACC = (1 - w) Ke +
-w Kd (1 - t)), for the IRR and for every value at a required return. The value the owner sees for the
-decision is the price at which the base IRR equals the hurdle ("value at your required return"); the base
-value at the model's cost of equity is secondary. A price inside the marginal band (hurdle +/- 1pp widened
-by valuation error, the index range, and a bear loss within 5pp of its tolerance) keeps the verdict code
-but marks it 'marginal' and says on which side it flips.
+w Kd (1 - t)), for the IRR and for every value at a required return. The fair value the owner sees is the
+executed base value at the engine's own cost of equity for the company (expected_return.fair_value); the price
+at which the base IRR equals the hurdle ("value at your required return") is shown beside it as the buy-below
+price for the owner's required return (expected_return.buy_below_price), and the verdict is taken at that
+hurdle. Until 25.10.2026 the hurdle value was the headline, 14-33% below the value at the cost of equity on
+the diagnosis profiles: a required-return choice shown as the company's worth. The index record says which
+market return it is (comparator): the engine-consistent one of a calibration sweep when supplied (the CLI
+uses the latest calibration file dated on or before the run), else the generic risk-free + ERP assumption.
+The expected price path is today's price compounded at the base IRR pulled halfway to that market return
+(PRICE_PATH_PULL), with the walk-forward's accuracy band beside it. A price inside the marginal band (hurdle
++/- 1pp widened by valuation error, the index range, and a bear loss within 5pp of its tolerance) keeps the
+verdict code but marks it 'marginal' and says on which side it flips.
 
 The verdict comes from one precedence list (VERDICT_RULES). Every route has a gate id whose allowed
 analyst verdict overrides are listed in GATE_ALLOWED: disqualifying conditions (disqualifying risk,
@@ -102,9 +109,15 @@ VERDICT_RULES = [
     ('index_preferable', 'no quality edge (weak or unproven) and/or base IRR not above index + risk premium'),
 ]
 INDEX_RANGE = .01            # +-1pp around the market return: equity-premium uncertainty (implied-ERP studies centre ~4-5%)
+# Which market return the index is, stated wherever it is compared (render): 'engine_consistent' = a calibration sweep's
+# cap-weighted implied return of the largest companies valued by the same engine (calibration.market_implied: a shared model
+# bias cancels in stock IRR - market); 'generic_assumption' = risk-free + ERP, built differently from a stock's implied return
+# (on the 2026-10-20 sweep 9.3% against the engine-consistent 7.0%: comparing with it 'would reject almost everything');
+# 'user_assumption' = any other supplied index.
+COMPARATORS = ('engine_consistent', 'generic_assumption', 'user_assumption')
 INDEX_DEFAULT = {
     'value': RF_DEFAULT + ERP_DEFAULT, 'low': RF_DEFAULT + ERP_DEFAULT - INDEX_RANGE, 'high': RF_DEFAULT + ERP_DEFAULT + INDEX_RANGE,
-    'provenance': 'model_assumption', 'origin': 'engine_default',
+    'provenance': 'model_assumption', 'origin': 'engine_default', 'comparator': 'generic_assumption',
     'source': 'engine default: forecast.RF_DEFAULT + forecast.ERP_DEFAULT (no forecast cost-of-equity components, no index input)',
     'components': {'risk_free': RF_DEFAULT, 'equity_risk_premium': ERP_DEFAULT},
     'basis': ('Market return of the same framework that sets the model cost of equity: risk-free + equity risk premium. '
@@ -134,6 +147,20 @@ PREMIUM = {
 # floor, whose top-up row (model_cost_of_equity_floor = Ke - index - premium) is already net of this component. Subtracting the
 # Ke row here would under-charge cyclicality exactly when the index leg binds, the only case in which this component counts.
 OWNER_ASPIRATION = .14
+# Expected price path (owner request 25.10.2026): today's price x (1 + r)^h for h = 1..PRICE_PATH_YEARS, r = base IRR moved
+# PRICE_PATH_PULL of the way to the market return (the index above). Why: in the 2016-2025 walk-forward (491 of today's large
+# caps, one July formation a year, the engine_v3 rows) the dated engine value sat about 35-45% below the prices reached 1-5
+# years later and its gap to the price never closed, while price x (1 + base IRR)^h was about as accurate as the
+# best simple baseline, price x (1 + market return)^h (mean absolute log error 0.232 vs 0.233 at one year, 0.344 vs 0.344 at
+# three). Neither beat the other, so they are weighted equally: an even split stated as a prior, not fitted to the backtest.
+# PRICE_PATH_HIT: share of rows whose realized price landed within +-PRICE_PATH_BAND of even the best predictor's price at
+# 1/3/5 years (price x 1.07^h / 1.09^h on the same rows: 66/50/37% and 66/50/36%; the engine IRR path 58/44% at 1/3 years;
+# survivors only, so if anything flattering): the band stated with the path. A dated estimate of the price, never a target,
+# and it changes no value, verdict or hurdle.
+PRICE_PATH_PULL = .5
+PRICE_PATH_YEARS = 5
+PRICE_PATH_BAND = .25
+PRICE_PATH_HIT = {1: .65, 3: .50, 5: .37}
 # Marginal band: the hurdle is moved by BAND_STEP plus a widening by the size of possible valuation error, and the
 # index low/high (+ premium) are tested too. A verdict that changes anywhere inside the band is 'marginal'.
 BAND_STEP = .01
@@ -1096,7 +1123,8 @@ def _index(inputs, fc=None):
     """Index expected return: the user's assumption when supplied, else the market return of the forecast's own
     cost-of-equity components (risk-free + equity risk premium), else the same framework's engine defaults. A user index
     is never below the framework's risk-free rate (an index return is risk-free + an equity premium), gets the +-1pp
-    range when it supplies none, and is labelled a user assumption."""
+    range when it supplies none, and is labelled a user assumption. 'comparator' says which market return it is
+    (COMPARATORS): the default is the generic assumption, a calibration sweep's index_input the engine-consistent one."""
     idx = (inputs or {}).get('index')
     comp = (((fc or {}).get('cost_of_equity') or {}).get('components')) or {}
     rf, erp = _num(comp.get('risk_free')), _num(comp.get('equity_risk_premium'))
@@ -1105,7 +1133,7 @@ def _index(inputs, fc=None):
             return deepcopy(INDEX_DEFAULT)
         v = rf + erp
         return {'value': v, 'low': v - INDEX_RANGE, 'high': v + INDEX_RANGE, 'provenance': 'model_assumption',
-                'origin': 'forecast_cost_of_equity', 'components': {'risk_free': rf, 'equity_risk_premium': erp},
+                'origin': 'forecast_cost_of_equity', 'comparator': 'generic_assumption', 'components': {'risk_free': rf, 'equity_risk_premium': erp},
                 'source': 'forecast.cost_of_equity.components: risk-free + equity risk premium',
                 'basis': (f'Market return of the framework that sets the model cost of equity: risk-free {_pct(rf, 2)} + equity risk '
                           f'premium {_pct(erp, 2)}. The +-1pp range reflects equity-premium uncertainty. Supply inputs.index to replace it.')}
@@ -1130,6 +1158,9 @@ def _index(inputs, fc=None):
     if _num(idx.get('rate_shift')) is not None:          # calibration.market_implied: market cost of equity - market return
         out['rate_shift'] = number(idx['rate_shift'], 'index.rate_shift', -.05, .08)
         out['market_cost_of_equity'] = _num(idx.get('market_cost_of_equity'))
+    # a calibration sweep's index_input (calibration.market_implied names itself in source) is the engine-consistent market
+    out['comparator'] = ('engine_consistent' if 'rate_shift' in out or 'calibration.market_implied' in idx['source']
+                         else 'user_assumption')
     return out
 
 
@@ -1323,21 +1354,88 @@ def _five_at_rate(view, rates, rate):
                          '(a re-rating), so its annual rate can differ from the base IRR; a conditional estimate, not a predicted price'}
 
 
+def _yearly_rows(av, five, res):
+    """Scenario values on each date of the annual path through the fifth anniversary, with each scenario's cumulative
+    distributions (buybacks/dividends) paid by then."""
+    paid = {sc['name']: {t.get('date'): _num(t.get('cumulative_dividend_per_share')) for t in sc.get('timeline') or []}
+            for sc in (res or {}).get('scenarios') or [] if isinstance(sc, dict)}
+    return [{'date': r['date'], **{s: _num(r.get(s)) for s in SCENARIOS},
+             'distributions': {s: (paid.get(s) or {}).get(r['date']) for s in SCENARIOS}}
+            for r in av or [] if r.get('date') and r['date'] <= five['date']]
+
+
 def _yearly_at_rate(view, rates, rate, res):
     """Scenario values at the required return on each date of the annual path through the fifth anniversary, with each
     scenario's cumulative distributions (buybacks/dividends) paid by then: dated conditional values, not predicted prices."""
     five = view.get('five_year')
     if not five or rates is None or _num(rate) is None:
         return None
-    av = rates.values(rate) or []
-    paid = {sc['name']: {t.get('date'): _num(t.get('cumulative_dividend_per_share')) for t in sc.get('timeline') or []}
-            for sc in (res or {}).get('scenarios') or [] if isinstance(sc, dict)}
-    rows = [{'date': r['date'], **{s: _num(r.get(s)) for s in SCENARIOS},
-             'distributions': {s: (paid.get(s) or {}).get(r['date']) for s in SCENARIOS}}
-            for r in av if r.get('date') and r['date'] <= five['date']]
+    rows = _yearly_rows(rates.values(rate), five, res)
     return {'rate': rate, 'rows': rows,
             'semantics': 'value per share on each date at your required return, distributions paid by then shown apart; a dated '
                          'conditional value of each scenario, not a predicted market price'} if rows else None
+
+
+def _yearly_model(view, res):
+    """The executed valuation's own annual path (each scenario at its own cost of equity) through the fifth anniversary: the
+    yearly bad / likely / good table under the headline fair value. Read from the result, nothing revalued."""
+    five = view.get('five_year')
+    if not five or not res:
+        return None
+    rows = _yearly_rows(res.get('annual_values'), five, res)
+    return {'rate': 'model cost of equity', 'model_cost_of_equity': view.get('model_cost_of_equity'), 'rows': rows,
+            'semantics': "value per share on each date at the engine's own cost of equity for the company (the executed valuation), "
+                         'distributions paid by then shown apart; a dated conditional value of each scenario, not a predicted market '
+                         'price'} if rows else None
+
+
+def _fair_value(view):
+    """Headline fair value: the executed base value at the engine's own cost of equity for the company, with the scenario
+    range of the same valuation (each scenario at its own rate). The value at your required return is the buy-below price."""
+    v, p = view.get('base'), view.get('price')
+    if v is None:
+        return None
+    return {'value': v, 'bear': view.get('bear'), 'bull': view.get('bull'), 'cost_of_equity': view.get('model_cost_of_equity'),
+            'change_from_price': v / p - 1 if p else None,
+            'label': "fair value: base value at the engine's own cost of equity for the company (the executed valuation)",
+            'semantics': 'what the base case is worth today at the rate the engine requires of this company for its risk; the '
+                         'verdict is taken at your required return (buy_below_price), which is a choice of yours, not the '
+                         "company's worth"}
+
+
+def _anniversary(d, years):
+    try:
+        return d.replace(year=d.year + years)
+    except ValueError:                                     # 29 February
+        return d.replace(year=d.year + years, day=28)
+
+
+def _price_path(view, irr, index, as_of):
+    """Expected price path: today's price x (1 + r)^h, h = 1..PRICE_PATH_YEARS, r = base IRR moved PRICE_PATH_PULL of the way
+    to the market return (the index; its comparator says which one). A statistical estimate of the price with the walk-forward
+    accuracy band (PRICE_PATH_HIT), not a value, not a target; it changes nothing else."""
+    p, m = view.get('price'), _num((index or {}).get('value'))
+    if irr is None or not p or m is None:
+        return {'status': 'unavailable', 'reason': 'needs the base IRR at today\'s price and a market return'}
+    r = irr + PRICE_PATH_PULL * (m - irr)
+    if r <= -1:
+        return {'status': 'unavailable', 'reason': f'blended rate {_pct(r)} is not a growth rate'}
+    try:
+        d0 = date.fromisoformat(str(view.get('price_as_of') or as_of)[:10])
+    except ValueError:
+        d0 = None
+    return {'status': 'computed', 'rate': r, 'base_irr': irr, 'market_return': m, 'comparator': (index or {}).get('comparator'),
+            'pull_to_market': PRICE_PATH_PULL, 'from_price': p, 'from_date': d0.isoformat() if d0 else None,
+            'rows': [{'years': h, 'date': _anniversary(d0, h).isoformat() if d0 else None, 'price': p * (1 + r) ** h}
+                     for h in range(1, PRICE_PATH_YEARS + 1)],
+            'band': PRICE_PATH_BAND, 'hit_rate_within_band': dict(PRICE_PATH_HIT),
+            'formula': f'price x (1 + r)^h, r = base IRR + {PRICE_PATH_PULL} x (market return - base IRR)',
+            'semantics': (f"expected price on each anniversary: today's price compounded at the base IRR pulled "
+                          f"{PRICE_PATH_PULL:.0%} of the way to the market return; in the 2016-2025 walk-forward even the best simple "
+                          f"predictor landed within +-{PRICE_PATH_BAND:.0%} of the realized price only about "
+                          + ' / '.join(f'{x:.0%}' for x in PRICE_PATH_HIT.values()) + ' of the time at '
+                          + ' / '.join(map(str, PRICE_PATH_HIT)) + ' years. The rate is a total return (a dividend is paid beside '
+                          'the price). Not a promise, not a target, not a value; it changes no verdict')}
 
 
 def _forecast_view(an, res, view):
@@ -1368,9 +1466,10 @@ def _at_required(view, rates, h):
             'semantics': 'scenario values today with every cost of equity at your required return (terminal WACC moved by the equity weight)'}
 
 
-def _expected(irrs, view, index, req, rates, qcase, res, an, err_level, w=0., moat=None):
+def _expected(irrs, view, index, req, rates, qcase, res, an, err_level, w=0., moat=None, as_of=None):
     base_irr = irrs['base']['value']
     pfh = rates.pfh(req['hurdle']) if rates is not None and view.get('base') is not None else None
+    pv, price = (pfh or {}).get('value'), view.get('price')
     er = {'base_irr': base_irr, 'bear_irr': irrs['bear']['value'], 'bull_irr': irrs['bull']['value'],
           'base_irr_bound': irrs['base']['bound'], 'irr_status': {k: {kk: vv for kk, vv in v.items() if kk != 'value'} for k, v in irrs.items()},
           'price': view['price'],
@@ -1379,7 +1478,14 @@ def _expected(irrs, view, index, req, rates, qcase, res, an, err_level, w=0., mo
           'premium_components': req['components'], 'model_cost_of_equity_floor': req['floor'],
           'premium_capped': req['capped'], 'hurdle': req['hurdle'], 'required_return': req['hurdle'], 'hurdle_rule': req['rule'],
           'price_for_hurdle': pfh,
-          'value_at_required_return': (pfh or {}).get('value'),
+          'value_at_required_return': pv,
+          'fair_value': _fair_value(view),
+          'buy_below_price': None if pfh is None else
+          {'value': pv, 'status': pfh.get('status'), 'required_return': req['hurdle'], 'reason': pfh.get('reason'),
+           'change_from_price': (pv / price - 1) if pv is not None and price else None,
+           'label': 'buy-below price for your required return: the price at which the base IRR equals it (value_at_required_return)'},
+          'expected_price_path': _price_path(view, base_irr, index, as_of),
+          'yearly_at_model_cost_of_equity': _yearly_model(view, res) if view.get('base') is not None else None,
           'at_required_return': _at_required(view, rates, req['hurdle']),
           'debt_weight': w,
           'model_cost_of_equity': view.get('model_cost_of_equity'),
@@ -1391,9 +1497,11 @@ def _expected(irrs, view, index, req, rates, qcase, res, an, err_level, w=0., mo
           'meets_owner_aspiration_14pct': None if base_irr is None else base_irr >= OWNER_ASPIRATION,
           'semantics': ('IRR = cost of equity at which the scenario value equals today\'s price, cash flows held fixed, the terminal '
                         'WACC moving by the equity weight (1 - debt weight; with no net debt this is valuation_tools.implied_cost_of_equity); '
-                        'a conditional return, not a forecast. The value at your required return is the price at which the base IRR equals '
-                        'the required return; the bear-case margin of safety is measured at the same return; the base value at the model '
-                        'cost of equity is secondary. The 14% aspiration is a comparison only.')}
+                        'a conditional return, not a forecast. The fair value is the base value at the model cost of equity (the '
+                        'executed valuation); the value at your required return is the buy-below price, the price at which the base IRR '
+                        'equals the required return, where the verdict and the bear-case margin of safety are measured. The expected '
+                        'price path compounds today\'s price at the base IRR pulled halfway to the market return (an estimate with its '
+                        'walk-forward accuracy band, not a value). The 14% aspiration is a comparison only.')}
     return er
 
 
@@ -1747,7 +1855,7 @@ def _verdict(A, g, er, view, index, rates, req, tol_shift=0.):
     pfh_v = ((rates.pfh(hurdle) if rates is not None else None) or {}).get('value')
     price_change = ([f'price at or below {_g3(pfh_v)} (value at your required return {_pct(hurdle, 2)}; base IRR = required return)'] if pfh_v else []) + \
                    ['new evidence that raises the base case (see what_must_be_true)']
-    price_change_he = (f'מחיר של כ־{_fmt_price(pfh_v)} ומטה (השווי בתשואה הנדרשת)' if pfh_v else 'מחיר נמוך יותר או ראיות לתרחיש בסיס טוב יותר')
+    price_change_he = (f'מחיר של כ־{_fmt_price(pfh_v)} ומטה (מחיר הקנייה לתשואה הנדרשת)' if pfh_v else 'מחיר נמוך יותר או ראיות לתרחיש בסיס טוב יותר')
     idx = index['value']
     fl = bool((req.get('floor') or {}).get('binding'))
     req_txt = (f'required return {_pct(hurdle, 2)} (index {_pct(idx, 2)} + {prem * 100:.2f}pp premium'
@@ -2165,7 +2273,8 @@ def decide(parts, inputs=None):
     cyc_ev = _cyclical_evidence(card, fc)
     req = _required_return(A, index, card, g, rk, an, ke, cyc_ev)
     moat = _moat_test(fc, qcase, view, w, rates) if valued else None
-    er = _expected(irrs, view, index, req, rates, qcase, res, an, err_level, w, moat)
+    as_of = (fb or {}).get('as_of') or (case or {}).get('as_of')
+    er = _expected(irrs, view, index, req, rates, qcase, res, an, err_level, w, moat, as_of)
     er['debt_weight_source'] = w_src
     view['market_consistent'] = _market_consistent(index, ke, rates, er, view)
     A['price_attractiveness'] = price_attractiveness(er, view, wmbt, an)
@@ -2223,7 +2332,7 @@ def decide(parts, inputs=None):
         prem_A = {k: (eA[k] if (eA[k].get('override') or {}).get('direction') == 'downgrade' else A[k]) for k in ASSESSMENTS}
         r = _required_return(prem_A, index, card, g, rk, an, ke, cyc_ev)
         e = deepcopy(er) if r['hurdle'] == req['hurdle'] and r['components'] == req['components'] else \
-            _expected(irrs, view, index, r, rates, qcase, res, an, err_level, w, moat)
+            _expected(irrs, view, index, r, rates, qcase, res, an, err_level, w, moat, as_of)
         e['debt_weight_source'] = w_src
         if not eA['price_attractiveness'].get('override'):
             eA['price_attractiveness'] = price_attractiveness(e, view, wmbt, an)
@@ -2308,7 +2417,7 @@ def decide(parts, inputs=None):
     for k, a in eff_A.items():
         a['level_he'] = LEVEL_HE[a['level']]
     company = (fb or {}).get('company') or ({'ticker': case['ticker'], 'currency': case['currency']} if case else {})
-    out = {'decision_version': 3, 'as_of': (fb or {}).get('as_of') or (case or {}).get('as_of'),
+    out = {'decision_version': 3, 'as_of': as_of,
            'company': {k: company.get(k) for k in ('ticker', 'name', 'currency')},
            'price': {k: view.get(k) for k in ('price', 'currency', 'price_as_of', 'price_source', 'price_kind')},
            'assessments': eff_A, 'mechanical_assessments': {k: a['level'] for k, a in A.items()},
