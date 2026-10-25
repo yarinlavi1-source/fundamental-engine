@@ -1,4 +1,17 @@
-## Unreleased — company-first review fixes: ONE yearly table, a reason behind every price, the guided year kept apart (25.10.2026)
+## 0.14.0 — the ticker brain: one company, from its own evidence (25.10.2026)
+
+The owner sends a ticker; the saved Workflow `ticker` (`.claude/workflows/ticker.js`) walks the `master_process` skeleton
+(Identify, Gather, Understand, Position, Value, Review, Deliver) and builds every driver from that company: guidance
+adjusted by its track record, contracted demand and KPIs, attributed consensus, its own history and named direct
+competitors; size-class base rates are a warning row and every lever still on an engine rule is listed as a gap. The owner
+gets ONE Hebrew table with a yearly price for years 1-5 in דובי / בסיסי / שורי (next-fiscal-year EPS x an evidenced
+multiple labelled justified_high / peak / unproven), and every price keeps its reason behind the scenes (scenario_reasons:
+the condition, the events with evidence or marked hypotheses, the drivers and their tiers). Also in this release: the
+business-economics layer (econ, phase A), the market and geopolitical context (country risk, exposures, regime) and the
+two preregistered price-path lanes, both recorded as FAILED and not shown. No accuracy claim is made for the ticker brain:
+its forecasts are frozen in the forecast ledger and judged later on real prices. Sections below, newest first.
+
+### company-first review fixes: ONE yearly table, a reason behind every price, the guided year kept apart (25.10.2026)
 
 Twenty-nine findings of the company-first review, each verified on the synthetic demo (tests/fixtures/demo_company +
 examples/evidence_pack_demo.json) or the ADBE fixture before the fix. No value of a run without the new inputs changes
@@ -59,7 +72,7 @@ examples/evidence_pack_demo.json) or the ADBE fixture before the fix. No value o
 - Tests: test_company_first_fixes (end to end on the synthetic demo company), updated company_path, scenario_reasons,
   headline_value, decision_render, driver_sources, evidence_pack.
 
-## Unreleased — company price path per scenario: next-fiscal-year EPS x an evidenced multiple (company_path, 25.10.2026)
+### company price path per scenario: next-fiscal-year EPS x an evidenced multiple (company_path, 25.10.2026)
 
 - `company_path.py` (new): `inputs.company_path = {metric 'eps', multiple 'forward_pe', scenarios {bear|base|bull:
   {multiple_path [today, y1..y5], justification justified_high|peak|unproven, reason_he, source_tier, competitors,
@@ -72,7 +85,7 @@ examples/evidence_pack_demo.json) or the ADBE fixture before the fix. No value o
   no other value changes). Each priced row stores its reason (`reason_he`). Values are conditional estimates, not market
   prices.
 
-## Unreleased — bull, base and bear in the owner's words, and a reason behind every scenario price (25.10.2026)
+### bull, base and bear in the owner's words, and a reason behind every scenario price (25.10.2026)
 
 The owner (25.10.2026): "Not 'likely' — what is 'likely'? I want bullish, base and bearish. And behind the scenes every
 price has a reason: if something happens, then this price."
@@ -143,7 +156,7 @@ price has a reason: if something happens, then this price."
   buybacks, so per-share growth from cash returns shows in the distributions, not in EPS; on the residual-income route
   model net income / constant shares.
 
-## Unreleased — ticker runner, evidence pack, skeleton brain (25.10.2026)
+### ticker runner, evidence pack, skeleton brain (25.10.2026)
 
 - Saved Workflow `ticker` (`.claude/workflows/ticker.js`, args `{ticker, as_of}`): one company on the owner's ticker in
   seven phases — Identify; Gather (nine parallel lanes: statements, reports/release/transcript, guidance and its track
@@ -168,7 +181,7 @@ price has a reason: if something happens, then this price."
   research plan. CLAUDE.md "On a ticker". scripts/check_wheel.py asserts the packets and the converter ship.
 - No valuation arithmetic changed; the converter fetches and estimates nothing. Tests: test_evidence_pack.
 
-## Unreleased — company-first levers: source tiers and visible gaps (Track A, 25.10.2026)
+### company-first levers: source tiers and visible gaps (Track A, 25.10.2026)
 
 - Forecast overrides take an optional `source_tier` (guidance, contracted, consensus, own_history, competitor, market,
   analyst; absent = analyst); `competitor` needs `competitors`, the named direct competitors. Applied overrides and the
@@ -186,7 +199,7 @@ price has a reason: if something happens, then this price."
 - No-override invariance: without overrides (or with untiered ones) every spec and value is unchanged (spec hashes of the
   ADBE, synthetic and pipeline fixtures pinned in tests/test_driver_sources.py).
 
-## Unreleased — business-economics layer `econ`, phase A (25.10.2026)
+### business-economics layer `econ`, phase A (25.10.2026)
 
 - `econ` reads each business through its own economic identity (docs/ECONOMICS.md; branch `econ-layer`, work packages
   0-8 of the 21.10.2026 design). Registry `brain/economics.json` (10 models, 6 overlays, KPIs with unit, basis and tag,
@@ -212,7 +225,7 @@ price has a reason: if something happens, then this price."
   accuracy claim is made. Tests: test_econ_fixtures, test_econ_registry, test_econ_kpi, test_econ, test_econ_select,
   test_econ_overlays, test_econ_process, test_quarter_econ, test_econ_render.
 
-## Unreleased — market context: country risk, geopolitical exposures, market regime (25.10.2026)
+### market context: country risk, geopolitical exposures, market regime (25.10.2026)
 
 Repairs after review (25.10.2026):
 - Country risk net of the market's own exposure: the ERP (S&P 500 implied) and the index return (cap-weighted implied

@@ -28,7 +28,10 @@ same connectors (SEC, Interactive Brokers, Alpha Vantage, FMP, LunarCrush, …).
   fundamental_engine deep <universe_folder> --as-of <date> --symbols <TICKER>` (writes `out/table_he.md` with
   the plain-Hebrew table, including the "מה המחיר של היום מניח" reverse-DCF row, and `out/scenarios_he.md` with the
   condition behind every דובי / בסיסי / שורי price).
-- **Latest state (read these to catch up):** `docs/CHANGELOG.md` 0.13.0 (25.10.2026 calibration fixes: terminal
+- **Latest state (read these to catch up):** `docs/CHANGELOG.md` 0.14.0 (25.10.2026 ticker brain: on the owner's
+  ticker run Workflow `ticker`, args `{ticker, as_of}`; skeleton = packet `master_process`; sources = `sources_registry`;
+  evidence pack -> `pack-to-inputs`; source tiers and the gaps row; `company_path` yearly prices; `scenario_reasons` and
+  `out/scenarios_he.md`; econ layer `docs/ECONOMICS.md`; value only on the owner's ticker, never in advance) and 0.13.0 (calibration fixes: terminal
   growth = risk-free as the ERP assumes, dated implied ERP in the walk-forward, mature terminal cost of equity, cyclical
   charges on evidence, platform routing, post-breakeven ROIC on scale-ups, headline fair value at the company's cost of
   equity with a buy-below row, calibration only from the same engine version; the combined 61-name A/B is there) and the
