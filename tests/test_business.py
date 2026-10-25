@@ -97,6 +97,35 @@ class BusinessMapTests(unittest.TestCase):
         self.assertIn('new customers', sec['item7_mdna'])
 
 
+def item1(body):
+    """SYNTHETIC 10-K text: an Item 1 made of the given sentences and neutral filler, then Item 1A."""
+    filler = ' '.join(['The company describes its operations, its employees and its properties in this section.'] * 60)
+    return f'ITEM 1. BUSINESS\n{body} {filler}\nITEM 1A. RISK FACTORS\nRisks follow.'
+
+
+class BusinessTermsTests(unittest.TestCase):
+    """Item 1 vocabularies (B.BUSINESS_TERMS) on SYNTHETIC sentences. Each failed on the vocabulary before 2026-10-25."""
+
+    def test_truck_drivers_and_tariff_riders_are_not_ride_hailing(self):
+        # a bare 'driver(s)' made XPO's trucking business section a marketplace (43 terms per 10,000 words, cut 30)
+        truck = B.business_terms(item1('Our drivers haul freight. We recruit drivers, train drivers and retain drivers. '
+                                       'Fuel prices and driver pay are key cost drivers.'))
+        self.assertEqual(truck['per_10k_words']['marketplace'], 0)
+        utility = B.business_terms(item1('A fuel rider and a storm rider recover costs; tariff riders are approved by the commission.'))
+        self.assertEqual(utility['per_10k_words']['marketplace'], 0)
+        ride = B.business_terms(item1('Riders and drivers use our ridesharing network; drivers and couriers earn on our platform.'))
+        self.assertGreater(ride['per_10k_words']['marketplace'], 0)
+
+    def test_online_travel_and_advertising_audiences_have_their_own_vocabularies(self):
+        travel = B.business_terms(item1('Travelers book hotels and alternative accommodations from travel suppliers on our online '
+                                        'travel brands and metasearch sites.'))['per_10k_words']
+        self.assertGreater(travel['online_travel'], 0)
+        self.assertEqual(travel['marketplace'], 0)                  # Expedia had 1.8 marketplace terms: the old vocabulary missed it
+        ads = B.business_terms(item1('Advertisers reach our daily active users; ad impressions grew while DAUq rose.'))['per_10k_words']
+        self.assertGreater(ads['advertising'], 0)
+        self.assertEqual(B.business_terms(item1('We sell paint and coatings to contractors.'))['per_10k_words']['advertising'], 0)
+
+
 class ProFormaTests(unittest.TestCase):
     def test_pro_forma_revenue_per_acquisition(self):
         ax = 'us-gaap:BusinessAcquisitionAxis'

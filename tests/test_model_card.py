@@ -628,6 +628,117 @@ class OtherTypesTests(unittest.TestCase):
             self.assertEqual(ROUTES[a], M.METHOD_ROUTE[m])
 
 
+def with_sic(fb, sic, desc):
+    """The filer's SEC SIC code, as engine_backtest.company_row and handoff add it from the saved submissions."""
+    fb['company'].update({'sic': sic, 'sic_description': desc})
+    return fb
+
+
+def it_label_fb(gm, deferred):
+    """SYNTHETIC company under the 'data processing' label with the given gross margin and deferred revenue / revenue."""
+    rev = [1.2e11, 1.17e11, 1.35e11, 1.65e11]
+    return synth_fb({'sector': 'Technology', 'industry': 'Computer Software: Programming Data Processing'}, series_years(
+        4, revenue=rev, gross_profit=[r * gm for r in rev], operating_income=[r * .35 for r in rev], cfo=[r * .45 for r in rev],
+        capex=[r * .05 for r in rev], d_and_a=[r * .04 for r in rev], cash=[r * .3 for r in rev], equity=[r * .8 for r in rev],
+        long_term_debt=[r * .1 for r in rev], total_assets=[r * 1.6 for r in rev], total_liabilities=[r * .6 for r in rev],
+        shares_outstanding=[2.7e9] * 4, deferred_revenue_current=[None if deferred is None else r * deferred for r in rev]))
+
+
+class PlatformRoutingTests(unittest.TestCase):
+    """Two-sided platforms filed under catch-all SEC codes (SYNTHETIC FactBooks). In the 2016-2025 walk-forward only 13 of
+    3,685 valued rows were platform_marketplace: Visa, Mastercard and eBay were consumer brands through the listing sector, Airbnb
+    an industrial, Meta subscription software. Each assertion marked OLD failed on the code before 2026-10-25."""
+    REV = [2.8e10, 3.2e10, 3.6e10, 4.0e10]
+
+    def test_catch_all_sic_with_a_platform_signature_is_a_platform_without_the_annual_report(self):
+        # Visa-like economics under SIC 7389 'Business Services, NEC' and the Nasdaq sector 'Consumer Discretionary'; no annual
+        # report filed by as_of (every walk-forward year before the saved report)
+        net = with_sic(fee_network_fb('Consumer Discretionary', 'Business Services'), 7389, 'Services-Business Services, NEC')
+        bm = card(net)['business_model']
+        self.assertEqual((bm['primary'], bm['secondary']), ('platform_marketplace', ['consumer_brand']))             # OLD
+        self.assertEqual(bm['evidence'], 'text+financials')
+        self.assertIn('SEC SIC 7389', bm['reasons'][-1])
+        # the same economics without the filer's SIC code: the sector alone, as before
+        self.assertEqual(card(fee_network_fb('Consumer Discretionary', 'Business Services'))['business_model']['primary'], 'consumer_brand')
+        # a consultancy under the same code and labels keeps the label type, and the reason says what would decide
+        svc = with_sic(steady_fb('Consumer Discretionary', 'Business Services', self.REV, [.15] * 4, .32, .02), 7389, 'NEC')
+        bm = card(svc)['business_model']
+        self.assertEqual(bm['primary'], 'consumer_brand')
+        self.assertTrue(any('no platform signature' in r and 'Item 1' in r for r in bm['reasons']))                    # OLD
+
+    def test_loss_making_marketplace_needs_its_business_section(self):
+        # Uber-like: thin or negative margins do not show the platform signature; the label type stays, the Item 1 words decide
+        ride = with_sic(steady_fb('Consumer Discretionary', 'Business Services', self.REV, [-.2, -.1, -.03, .02], .40, .02),
+                        7389, 'Services-Business Services, NEC')
+        self.assertEqual(card(ride)['business_model']['primary'], 'consumer_brand')
+        ride['business_map'] = {'business_terms': {'per_10k_words': {'marketplace': 64., 'payment_network': 2.}}}   # SYNTHETIC
+        bm = card(ride)['business_model']
+        self.assertEqual((bm['primary'], bm['secondary']), ('platform_marketplace', ['consumer_brand']))
+        self.assertFalse(any('SEC SIC' in r for r in bm['reasons']))         # the company's own words decided, not the signature
+        # the business section outranks the signature: IT-services words under platform-like economics stay IT services
+        net = with_sic(fee_network_fb('Consumer Discretionary', 'Business Services'), 7389, 'NEC')
+        net['business_map'] = {'business_terms': {'per_10k_words': {'it_services': 120., 'marketplace': 5.}}}
+        self.assertEqual(card(net)['business_model']['primary'], 'it_services')
+
+    def test_catch_all_industry_label_but_not_a_specific_one(self):
+        # Airbnb: SIC 7340 and 'Diversified Commercial Services' ('commercial services' -> industrial)
+        rent = with_sic(steady_fb('Consumer Discretionary', 'Diversified Commercial Services', self.REV, [.07, .1, .15, .2], .82, .01),
+                        7340, 'Services-To Dwellings & Other Buildings')
+        bm = card(rent)['business_model']
+        self.assertEqual((bm['primary'], bm['secondary']), ('platform_marketplace', ['industrial']))                   # OLD
+        # a freight broker's specific label is kept whatever its net-revenue gross margin
+        broker = with_sic(steady_fb('Industrials', 'Integrated Freight & Logistics', self.REV, [.3] * 4, .9, .002), 4731,
+                          'Arrangement of Transportation of Freight & Cargo')
+        self.assertEqual(card(broker)['business_model']['primary'], 'industrial')
+        # outside the platform codes the signature never relabels: a high-gross-margin cosmetics brand stays a consumer brand
+        brand = with_sic(steady_fb('Consumer Discretionary', 'Package Goods/Cosmetics', self.REV, [.15] * 4, .75, .05), 2844,
+                         'Perfumes, Cosmetics & Other Toilet Preparations')
+        self.assertEqual(card(brand)['business_model']['primary'], 'consumer_brand')
+
+    def test_online_travel_business_section(self):
+        # Expedia-like: no platform signature (capex 9% of revenue) and 1.8 marketplace terms; its own words are online travel
+        ota = with_sic(steady_fb('Consumer Discretionary', 'Transportation Services', self.REV, [.06] * 4, .82, .09), 4700,
+                       'Transportation Services')
+        self.assertEqual(card(ota)['business_model']['primary'], 'consumer_brand')
+        ota['business_map'] = {'business_terms': {'per_10k_words': {'online_travel': 44., 'marketplace': 1.8}}}   # SYNTHETIC
+        bm = card(ota)['business_model']
+        self.assertEqual((bm['primary'], bm['secondary']), ('platform_marketplace', ['consumer_brand']))             # OLD
+        self.assertIn('online travel terms', bm['reasons'][-1])
+
+    def test_data_processing_label_reads_billing_not_only_gross_margin(self):
+        ads = card(it_label_fb(.81, .01))['business_model']              # Meta-like: billed as impressions are delivered
+        self.assertEqual((ads['primary'], ads['secondary']), ('platform_marketplace', ['it_services']))               # OLD
+        self.assertIn('deferred revenue 1.0%', ads['reasons'][1])
+        self.assertEqual(card(it_label_fb(.81, .40))['business_model']['primary'], 'subscription_software')   # customers prepay
+        self.assertEqual(card(it_label_fb(.81, None))['business_model']['primary'], 'subscription_software')  # not reported: as before
+        fb = it_label_fb(.81, None)
+        fb['business_map'] = {'business_terms': {'per_10k_words': {'advertising': 85., 'marketplace': 3.}}}   # SYNTHETIC
+        bm = card(fb)['business_model']
+        self.assertEqual(bm['primary'], 'platform_marketplace')                                                      # OLD
+        self.assertIn('advertising terms', bm['reasons'][1])
+        drivers = {d['for_type'] for d in card(fb)['driver_tree']}
+        self.assertIn('platform_marketplace', drivers)
+
+    def test_collector_reads_the_annual_report_for_platform_codes(self):
+        import importlib.util
+        import os
+        import sys
+        import tempfile
+        sys.path.insert(0, str(ROOT / 'scripts'))
+        spec = importlib.util.spec_from_file_location('collect_companies_test', ROOT / 'scripts' / 'collect_companies.py')
+        cc = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(cc)
+        with tempfile.TemporaryDirectory() as d:
+            def needs(sic, industry):
+                with open(os.path.join(d, 'sec__submissions.json'), 'w', encoding='utf-8') as f:
+                    json.dump({'sic': str(sic), 'filings': {'recent': {'form': ['10-K']}}}, f)
+                return cc._needs_annual(d, {'sector': 'Consumer Discretionary', 'industry': industry}, {'name': 'Common Stock'})
+            self.assertTrue(needs(7340, 'Diversified Commercial Services'))                                          # OLD (Airbnb)
+            self.assertFalse(needs(3674, 'Semiconductors'))
+        self.assertIsNone(M.intermediary_sic(7372))                      # computer services keep their own rule
+        self.assertEqual(M.intermediary_sic(4700)[:2], (4700, 4799))
+
+
 try:
     from fundamental_engine import analysis as _analysis, dataqa as _dataqa
 except ImportError:      # written in parallel; the integrator's run exercises this

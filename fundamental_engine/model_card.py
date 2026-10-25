@@ -521,11 +521,50 @@ SEMI_TERMS_DENSITY = 40
 # Item 1 vocabulary densities (business.BUSINESS_TERMS, per 10,000 words) that decide the type where only a sector or no
 # label matched, first match wins. Set on 34 annual reports (2025-2026): payment networks 85-87 vs at most 11 elsewhere;
 # marketplaces 35-218 vs at most 27; defense 216-372 vs at most 63; vehicles 56-209 (GD 48); IT and payroll services 77-185
-# vs at most 53 (Visa). Expedia (1.8 marketplace terms) and reports without a findable Item 1 stay on their label.
+# vs at most 53 (Visa). Reports without a findable Item 1 stay on their label.
+# Rechecked 2026-10-25 on the 153 Item 1 sections of the 2026-10-21 universe (vocabulary revised in business.BUSINESS_TERMS):
+# marketplaces 35-222 (Zillow, Booking, Coupang, Uber, MercadoLibre, DoorDash) vs at most 27 (Mastercard's 'merchants', decided
+# by its payment-network terms first); online travel 44-58 (Expedia, Booking) vs at most 7 (Southwest's 'travelers');
+# advertising-funded audiences 43-85 (Alphabet, Reddit, Pinterest) vs at most 10 (Amazon, Fox). Classification cuts set on the
+# documents' words, not on any valuation or price outcome.
 BUSINESS_TERM_RULES = (('payment_network', 40, 'platform_marketplace'), ('marketplace', 30, 'platform_marketplace'),
+                       ('online_travel', 20, 'platform_marketplace'), ('advertising', 25, 'platform_marketplace'),
                        ('defense', 150, 'industrial'), ('vehicles', 50, 'hardware_manufacturing'),
                        ('it_services', 70, 'it_services'))
 NON_LABEL_TYPES = ('financials', 'reit', 'pre_revenue_biotech', 'conglomerate')   # balance-sheet routes are never relabelled by words
+# Customers prepay a subscription: deferred revenue at or above this share of revenue is the subscription marker of the
+# financial signature (_business_model sig_types). Ad-funded and transaction-funded services bill as they deliver: under the
+# IT/data-processing labels Meta, Pinterest, Reddit and AppLovin carried 0-3% of revenue against 16-94% for Zoom, Verisign,
+# Zscaler, Verisk and Samsara (2016-2026 filings, 2026-10-21 universe).
+SUBSCRIPTION_DEFERRED = .15
+# SEC codes under which two-sided platforms file next to operators (the SIC system predates them): transportation services
+# (Booking and Expedia next to freight brokers), nonstore retailers (online marketplaces next to catalog and mail-order
+# retailers) and business services outside computer services (Visa, Mastercard, eBay, Uber, DoorDash, MercadoLibre and Zillow
+# under 7389 'Business Services, NEC', Airbnb under 7340, next to consultancies, processors, staffing and equipment lessors).
+# For these codes a type that comes only from a label -- the listing sector (Nasdaq files every 7389 filer under 'Consumer
+# Discretionary', Visa and Accenture included) or a catch-all such as 'Diversified Commercial Services' -- is a default: when
+# the annual report's business section did not decide (none filed by as_of, as in every walk-forward year before the saved
+# report, or no Item 1 rule met), the platform signature decides as for MIXED_RULES labels (platform_signature; the label type
+# kept as secondary). A loss-making or thin-margin marketplace (Uber, DoorDash) does not show the signature: it keeps the label
+# type, and the reason says the business section or a reasoned business_model override decides. Computer services (7370-7379)
+# have their own IT/data-processing rule.
+INTERMEDIARY_SIC = ((4700, 4799, 'transportation services: online travel agencies next to freight forwarders and brokers'),
+                    (5960, 5969, 'nonstore retailers: online marketplaces next to catalog and mail-order retailers'),
+                    (7300, 7369, 'business services: online platforms next to agencies, staffing firms and equipment lessors'),
+                    (7380, 7399, "business services 'not elsewhere classified': payment networks and marketplaces next to "
+                                 'consultancies and processors'))
+LABEL_DEFAULT_TYPES = ('consumer_brand', 'industrial')   # what a sector or catch-all services label yields under those codes
+# Listing labels that name a bucket, not an industry ('Diversified Commercial Services' covers Airbnb, equipment renters and
+# pest control; 'Miscellaneous', 'Other ...', the SEC's 'NEC'): under INTERMEDIARY_SIC they are a default like the sector. A
+# specific label ('Integrated Freight & Logistics' for C.H. Robinson) is kept.
+CATCH_ALL_LABEL = re.compile(r'(?<![a-z])(?:diversified|miscellaneous|misc|other|nec|not elsewhere|business services|'
+                             r'commercial services)(?![a-z])')
+
+
+def intermediary_sic(sic):
+    """The INTERMEDIARY_SIC entry (lo, hi, what) covering an SEC SIC code, or None."""
+    return next((r for r in INTERMEDIARY_SIC if isinstance(sic, int) and r[0] <= sic <= r[1]), None)
+
 
 # SEC codes whose label does not tell the economics (equipment for chip makers or for food plants): the annual report is
 # collected so its own words can decide (scripts/collect_companies.py --docs-when-needed)
@@ -617,6 +656,7 @@ def _business_model(fb, an, rows, end, sig, inputs):
     reasons, secondary = [], []
     rev = _row_val(rows.get(end), 'revenue') if end else None
     gm, dr, cx, inv = sv['gross_margin'], sv['deferred_revenue_pct_revenue'], sv['capex_pct_revenue'], sv['inventory_pct_revenue']
+    om_end = _div(_row_val(rows.get(end), 'operating_income'), rev) if end else None
     for t in text:
         reasons.append(f"{t['field']} '{t['text']}' matches '{t['keyword']}' -> {t['type']}"
                        + ('' if t is used else ' (not used: the industry label is more specific)'))
@@ -634,7 +674,6 @@ def _business_model(fb, an, rows, end, sig, inputs):
                            + ('lender-like' if lta is not None else 'unknown') + f") -> financials (conservative); {used['alt']} kept "
                            'as secondary; a reasoned business_model override can clear it when the balance sheet is fiduciary')
     elif used and used.get('alt'):
-        om_end = _div(_row_val(rows.get(end), 'operating_income'), rev) if end else None
         plat, rule = platform_signature(gm, cx, om_end)
         text_types = [used['alt'], used['type']] if plat else [used['type'], used['alt']]
         reasons.append(f"'{used['text']}' mixes {used['mixes']}: gross margin {_pct(gm)}, capex {_pct(cx)} of revenue, operating margin "
@@ -655,21 +694,31 @@ def _business_model(fb, an, rows, end, sig, inputs):
             reasons.append(f'biotech/pharma label but commercial revenue ({_money(rev, company.get("currency", ""))}, R&D '
                            f'{_pct(sv["rd_pct_revenue"])} of revenue): not pre-revenue -> healthcare_products (marketed drugs, '
                            'devices or tools: exclusivity, pipeline and reimbursement decide value)')
+    bt = (((fb.get('business_map') or {}).get('business_terms') or {}).get('per_10k_words')) or {}
     if text_types and text_types[0] == 'it_services':
         # 'computer programming, data processing' covers IT consultancies, software vendors and ad platforms alike: the
-        # gross margin decides (Alphabet and AppLovin are not consultancies)
-        om_end = _div(_row_val(rows.get(end), 'operating_income'), rev) if end else None
-        econ = ('subscription_software' if gm is not None and gm >= .65 else
+        # annual report's platform vocabulary decides when it is read, else the economics (Alphabet and AppLovin are not
+        # consultancies). A high gross margin is subscription software only when customers prepay (SUBSCRIPTION_DEFERRED; not
+        # reported keeps the software reading): Meta, Pinterest and Reddit bill advertisers as impressions are delivered and
+        # had been read as subscription software, with software drivers (paying seats, net revenue retention)
+        words = next((k for k, cut, t in BUSINESS_TERM_RULES if t == 'platform_marketplace' and bt.get(k, 0) >= cut), None)
+        high = gm is not None and gm >= .65
+        econ = ('platform_marketplace' if words or (high and dr is not None and dr < SUBSCRIPTION_DEFERRED) else
+                'subscription_software' if high else
                 'platform_marketplace' if gm is not None and gm >= .45 and om_end is not None and om_end >= .20 else None)
         if econ:
             text_types = [econ, 'it_services']
-            reasons.append(f"IT/data-processing label with gross margin {_pct(gm)} and operating margin {_pct(om_end)} -> {econ} "
-                           '(rule: gross margin >= 65% software; >= 45% with operating margin >= 20% platform); it_services kept as secondary')
-    bt = (((fb.get('business_map') or {}).get('business_terms') or {}).get('per_10k_words')) or {}
+            why = (f"annual report Item 1 with {bt[words]:.0f} {words.replace('_', ' ')} terms per 10,000 words" if words else
+                   f'gross margin {_pct(gm)}, deferred revenue {_pct(dr)} of revenue and operating margin {_pct(om_end)}')
+            reasons.append(f'IT/data-processing label, {why} -> {econ} (rule: platform vocabulary at its BUSINESS_TERM_RULES cut -> '
+                           f'platform; else gross margin >= 65% software when customers prepay (deferred revenue >= '
+                           f'{SUBSCRIPTION_DEFERRED:.0%} of revenue, or not reported) and platform when they do not; gross margin '
+                           '>= 45% with operating margin >= 20% platform); it_services kept as secondary')
     sector_only = not used or used['field'] != 'industry'
+    item1 = None
     if sector_only and bt and (not text_types or text_types[0] not in NON_LABEL_TYPES):
         # generic labels ('Business Services, NEC', a sector): the annual report's own business section decides
-        hit = next(((k, t) for k, cut, t in BUSINESS_TERM_RULES if bt.get(k, 0) >= cut), None)
+        hit = item1 = next(((k, t) for k, cut, t in BUSINESS_TERM_RULES if bt.get(k, 0) >= cut), None)
         if hit and (not text_types or hit[1] != text_types[0]):
             k, t = hit
             reasons.append(f"annual report Item 1: {bt[k]:.0f} {k.replace('_', ' ')} terms per 10,000 words (rule: >= "
@@ -677,6 +726,23 @@ def _business_model(fb, an, rows, end, sig, inputs):
                            + (f" ('{used['text']}')" if used else '') + f' -> {t}'
                            + (f'; {text_types[0]} kept as secondary' if text_types else ''))
             text_types = [t] + text_types
+    inter, plat_sig = intermediary_sic(company.get('sic')), False
+    generic = sector_only or bool(CATCH_ALL_LABEL.search(clean_text(used['text'])))
+    if (inter and generic and not item1 and not (used and used.get('alt'))
+            and (not text_types or text_types[0] in LABEL_DEFAULT_TYPES)):
+        # a platform's SEC code (INTERMEDIARY_SIC) with a type from a sector or catch-all label only: the platform signature decides
+        plat, rule = platform_signature(gm, cx, om_end)
+        lead = (f"SEC SIC {company['sic']} ({company.get('sic_description') or 'no description'}) covers {inter[2]}; "
+                + (f"the {text_types[0]} type from '{used['text']}' is a label default" if text_types else 'no label type')
+                + f': gross margin {_pct(gm)}, capex {_pct(cx)} of revenue, operating margin {_pct(om_end)}')
+        if plat:
+            reasons.append(f'{lead} -> platform_marketplace (platform signature: {rule})'
+                           + (f'; {text_types[0]} kept as secondary' if text_types else ''))
+            text_types, plat_sig = ['platform_marketplace'] + text_types, True
+        else:
+            reasons.append(f"{lead}: no platform signature ({rule}" + ('; undetermined' if plat is None else '') + ') -> '
+                           + (f'{text_types[0]} stays on the label' if text_types else 'no type from the signature')
+                           + "; the annual report's business section (Item 1) or a business_model override with a reason decides")
     terms = ((fb.get('business_map') or {}).get('industry_terms') or {}).get('per_100k_words') or {}
     if text_types and text_types[0] in ('industrial', 'hardware_manufacturing') and terms.get('semiconductor', 0) >= SEMI_TERMS_DENSITY:
         # a machinery or equipment label whose own annual report is about chips (ASML, Lam Research: SIC 3559 'Special Industry
@@ -685,8 +751,8 @@ def _business_model(fb, an, rows, end, sig, inputs):
         reasons.append(f"annual report: {terms['semiconductor']:.0f} mentions of semiconductor/wafer/lithography per 100,000 words "
                        f"(rule: >= {SEMI_TERMS_DENSITY}) under the '{used['text'] if used else ''}' label -> semiconductor (equipment for chip "
                        f'makers); {text_types[1] if len(text_types) > 1 else "the label"} kept as secondary')
-    sig_types = []
-    if gm is not None and dr is not None and cx is not None and gm >= .65 and dr >= .15 and cx <= .08 and (inv or 0) <= .05:
+    sig_types = ['platform_marketplace'] if plat_sig else []
+    if gm is not None and dr is not None and cx is not None and gm >= .65 and dr >= SUBSCRIPTION_DEFERRED and cx <= .08 and (inv or 0) <= .05:
         sig_types.append('subscription_software')
         reasons.append(f'financial signature {end}: gross margin {_pct(gm)}, deferred revenue {_pct(dr)} of revenue, '
                        f'capex {_pct(cx)} of revenue -> subscription economics (rule: gm >= 65%, deferred >= 15%, capex <= 8%)')

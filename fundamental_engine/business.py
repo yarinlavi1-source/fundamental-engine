@@ -325,11 +325,22 @@ def industry_terms(html=None, text=None):
 # are generic (SIC 7389 'Business Services, NEC' covers Visa, Uber, Accenture and DoorDash). Vocabularies and the cut-offs
 # in model_card.BUSINESS_TERM_RULES were set on 34 annual reports of 2025-2026 (payment networks, marketplaces, IT and payroll
 # services, consumer brands, media, autos, defense): a heuristic with the reason shown, not a validated classifier.
+# Revised 2026-10-25 on the 153 Item 1 sections of the 2026-10-21 universe: a bare 'driver(s)' read truck, car and growth
+# drivers as ride-hailing (XPO 43 and Rivian 32 marketplace terms per 10,000 words, both above the cut; XPO was typed a
+# marketplace), and a bare 'rider(s)' reads utility tariff riders (CenterPoint), so only driver/rider/courier pairs and
+# ride-sharing words count (Uber 75, DoorDash 222); online travel (Expedia had 1.8 marketplace terms: it says travelers, travel
+# suppliers, alternative accommodations) and advertising-funded audiences (advertisers, ad impressions, daily or monthly active
+# users) have their own vocabularies, read by model_card.BUSINESS_TERM_RULES.
 BUSINESS_TERMS = {
     'payment_network': re.compile(r'payments? network|payments? volume|cross-border|processed transactions|issuers?\b|acquirers?\b|'
                                   r'cardholders|account holders', re.I),
     'marketplace': re.compile(r'marketplaces?|two-sided|gross bookings|gross merchandise|\bGMV\b|take rate|hosts and guests|'
-                              r'buyers and sellers|drivers?\b|couriers|dashers|merchants|room nights|travel partners', re.I),
+                              r'buyers and sellers|drivers (?:and|or) (?:riders|couriers|delivery people)|riders (?:and|or) drivers|'
+                              r'ride-?shar\w*|ride-?hail\w*|couriers|dashers|merchants|room nights|travel partners', re.I),
+    'online_travel': re.compile(r'online travel|alternative accommodations?|vacation rentals?|travel (?:partners|suppliers|service '
+                                r'providers)|room nights|hosts and guests|travell?ers\b|metasearch', re.I),
+    'advertising': re.compile(r'advertisers|ad impressions|ad-supported|advertising-supported|daily active (?:users|people|uniques)|'
+                              r'monthly active (?:users|people|uniques)|\bDAUq?s?\b|\bMAUs?\b', re.I),
     'it_services': re.compile(r'consulting|outsourc|managed services|systems integration|digital transformation|'
                               r'professional services|clients?\b|engagements?', re.I),
     'defense': re.compile(r'defen[cs]e|department of defense|u\.s\. government|government customers|missiles?|aircraft|'

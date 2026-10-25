@@ -80,6 +80,30 @@
   word flag; not rate charges). `MARKET_NEUTRAL_ADJUSTMENT` was measured with the word-only rows included, so the market's
   average add-on is now slightly lower; calibration.market_implied reports the net adjustment on the next sweep. No constant
   tuned.
+- Platform routing (`model_card._business_model`, `business.BUSINESS_TERMS`). In the 2016-2025 walk-forward only 13 of 3,685
+  valued rows were `platform_marketplace` (mature margin 25%/40% against the consumer brand's 15%/25% and the industrial
+  12%/20%): Visa, Mastercard, eBay, MSCI and Corpay were consumer brands through Nasdaq's sector for every SIC 7389 filer
+  ('Consumer Discretionary'), Airbnb an industrial ('Diversified Commercial Services'), Meta, Pinterest and Reddit
+  subscription software, because the annual report that decides a generic label is (correctly) not used before it was filed.
+  Three evidence rules, no ticker named: (1) SEC codes under which platforms file next to operators (`INTERMEDIARY_SIC`:
+  4700-4799 transportation services, 5960-5969 nonstore retail, 7300-7369 and 7380-7399 business services) with a type from
+  the sector or a catch-all label (`CATCH_ALL_LABEL`: diversified, NEC, business/commercial services) take the existing
+  `platform_signature` (the MIXED_RULES rule: gross margin >= 70% and capex <= 8%; no cost-of-revenue line: capex <= 8% and
+  operating margin >= 20%) when the business section did not decide; the label type stays secondary and a failed signature
+  is stated with what would decide. A specific label (C.H. Robinson's 'Integrated Freight & Logistics') and codes outside the
+  list (a high-margin cosmetics brand) are never relabelled; financials, REIT, biotech and conglomerate routes untouched.
+  (2) IT/data-processing labels: gross margin >= 65% is subscription software only when customers prepay (deferred revenue
+  >= `SUBSCRIPTION_DEFERRED` 15% of revenue, the existing subscription-signature threshold, or not reported); billed as
+  delivered (Meta, Pinterest, Reddit, AppLovin: 0-3%) it is a platform; the report's platform vocabulary decides first.
+  (3) Item 1 vocabulary rechecked on 153 business sections: a bare 'driver(s)' (truck drivers, cost drivers) had typed XPO a
+  marketplace and Rivian a marketplace-then-infrastructure company, and a bare 'rider(s)' reads utility tariff riders, so only
+  driver/rider/courier pairs count; new `online_travel` (cut 20: Booking 58, Expedia 44 vs at most 7) and `advertising`
+  (cut 25: Alphabet 43, Reddit 57, Pinterest 85 vs at most 10) groups. The collector also reads the annual report for those
+  SEC codes (Airbnb had none saved). Census on the 2026-10-21 universe, annual dates 2016-2025: platform rows 13 -> 114 of
+  4,251; on 2026-10-21 11 -> 18. Unchanged and stated: Uber, DoorDash and MercadoLibre in the walk-forward (no signature
+  before their margins rose; their Item 1 decides from the report's filing date), Amazon (retail-weighted: gross margin 50%,
+  capex 18%, 5 marketplace terms). Cuts set on document words, not on valuations or prices; no constant tuned to the
+  walk-forward.
 
 ## 0.12.0 — results-day review from analyst comparison (21.10.2026)
 

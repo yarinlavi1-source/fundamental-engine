@@ -52,8 +52,9 @@ def _has_convertibles(raw):
 
 def _needs_annual(raw, company, listing):
     """The annual report is read for: a foreign private issuer or a non-USD reporter (depositary ratio, currency), a depositary
-    share, and a label that does not tell the economics (no industry or SIC rule matches, or model_card.AMBIGUOUS_SIC): the
-    company's own words decide the type."""
+    share, and a label that does not tell the economics (no industry or SIC rule matches, model_card.AMBIGUOUS_SIC, or an SEC
+    code under which platforms file next to operators, model_card.INTERMEDIARY_SIC: Airbnb's 'Diversified Commercial Services'):
+    the company's own words decide the type."""
     sub = os.path.join(raw, 'sec__submissions.json')
     d = {}
     if os.path.exists(sub):
@@ -66,7 +67,7 @@ def _needs_annual(raw, company, listing):
     ads = 'depositary' in ((listing or {}).get('name') or '').lower()
     # no industry or SIC rule matches (Visa, Uber, Accenture: 'Business Services, NEC'): the business section decides the type
     generic = not any(t['field'] == 'industry' for t in model_card._text_matches({**company, 'sic': sic}))
-    return foreign or ads or generic or sic in model_card.AMBIGUOUS_SIC
+    return foreign or ads or generic or sic in model_card.AMBIGUOUS_SIC or model_card.intermediary_sic(sic) is not None
 
 
 def fetch_fx(ccy, local=False):

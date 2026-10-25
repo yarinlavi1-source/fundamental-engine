@@ -143,8 +143,12 @@ Companion to docs/EVIDENCE_STATUS.md, which separates what tests prove from what
     5% long-run bound only by its fitted slope less two standard errors, within the revenue-scale base rate, from six or
     more years at today's scale; pandemic years or a reorganization inside the window distort the fit (Trip.com's window
     starts in 2021, so 2025 reads as 1.4x its trend). The semiconductor text rule (40 mentions per 100,000 words) is
-    calibrated on one document, the Item 1 vocabulary rules on 34 (in sample); Expedia's business section uses none of the
-    marketplace words and stays a consumer brand, and a report whose Item 1 cannot be found keeps its label.
+    calibrated on one document, the Item 1 vocabulary rules on 34 and rechecked on 153 (in sample; online travel and
+    advertising audiences added 2026-10-25, so Expedia is now read from its own words); a report whose Item 1 cannot be
+    found (eBay and Shopify head it 'Item 1:') keeps its label. Without an annual report filed by as_of (every walk-forward
+    year before the saved report) a platform under a catch-all SEC code is recognized only by its financial signature: a
+    loss-making or thin-margin marketplace (Uber, DoorDash, MercadoLibre, Expedia in most years) keeps the listing sector's
+    type until point-in-time annual reports are collected.
 38. **Analyst corrections are judgement, not measurement.** The round-1 inputs (Powell's 14% mature margin, MercadoLibre's
     operating funding and 3.5x sales-to-capital, BioCryst's one-offs and growth) are evidenced but chosen by the analyst;
     the learning report counts them, it does not show they were right. Only the forecast ledger, scored against reported
