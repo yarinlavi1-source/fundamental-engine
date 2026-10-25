@@ -39,15 +39,26 @@
   noise, the three histories the same function already exempts from the data-cycle test (an Uber-like 'travel' history,
   -22% .. +11% on revenue rising every year, was valued on its -2% start-up mean: 0.08x price, 0.49x with the engine's own
   `inputs.cyclical` structural treatment). Now the margin position is read off a cycle-shaped window only (those histories
-  get no position), and without a cycle in the data a 'peak' needs a window of positive margins (an industry word alone
-  does not make a loss year a cycle trough). The word stays a visible analyst question: card `cyclical.history`
-  (scale_up | loss_grower | pre_commercial | None), `cyclical.peak_question`, a reason and a valuation limitation;
-  `inputs.cyclical` (card: value + reason; forecast: treatment) settles it either way, and a confirmed cycle restores the
-  position. Downstream: the forecast's `cyclical_growth_start` (fade from the long-run CAGR instead of this year's growth)
-  is skipped for those histories (route `cycle_history`; the CAGR is the ramp from a small base, not a like-for-like cycle
-  average). Kept as they were: the data-cycle path (a history that shows a cycle, loss years included), the +0.5pp
-  cyclicality row of the cost of equity and the decision premium (industry-economics risk statements, not a peak reading),
-  and the screen's own peak check. No constant tuned.
+  get no position), and without a cycle in the data neither does a window with a loss year on normally growing revenue
+  (the data-cycle test's own demand-dip rule says no: start-up or investment losses, or a one-off charge, not a cycle
+  trough). A loss year on a demand dip is the usual trough and keeps the peak reading, and so does a loss year whose revenue
+  change is unknown (the window's first year). The word stays a visible analyst question: card `cyclical.history`
+  (scale_up | loss_grower | pre_commercial | None, read by `history.history_shape` over the card's window),
+  `cyclical.peak_question`, a reason and a valuation limitation; `inputs.cyclical` (card: value + reason; forecast:
+  treatment) settles it either way (the question is then cleared), and a confirmed cycle restores the position.
+  Downstream: the forecast's `cyclical_growth_start` (fade from the long-run CAGR instead of this year's growth) is skipped
+  only when the card reads such a history (route `cycle_history`, cleared once an analyst confirms a cycle) and the CAGR's
+  own fiscal years have that shape too (`history_shape` over the last 6, or 4 for a 3-year CAGR): that CAGR is the ramp
+  from a small base, not a like-for-like cycle average. Kept as they were: the data-cycle path (a history that shows a
+  cycle, loss years included), the +0.5pp cyclicality row of the cost of equity and the decision premium
+  (industry-economics risk statements, not a peak reading), and the screen's own peak check. No constant tuned.
+  Repair after review: the first version asked for a window of positive margins (min over the whole 7-15-year window) and
+  gated the growth start on the card's whole-window label. That extrapolated Micron's 18.5% peak at the 2016-07
+  walk-forward formation (2009 and 2012 memory troughs: base 0.59x -> 1.20x price, bear 0.01x -> 0.55x) and let Tesla's
+  2010-2011 pre-commercial years skip the cyclical growth start for its commercial 2018-2023 CAGR (2024: 0.32x -> 0.20x).
+  Both are back to the cycle reading. Known limits: a flagged scale-up has no cycle stress in its bear (the forecast's
+  cycle-peak bear cap needs the card's peak; its 'cycle average' would be a start-up mean), and the scale-up label cannot
+  tell a volume ramp from a price-driven commodity ramp (revenue up every year from a loss year); `inputs.cyclical` decides.
 
 ## 0.12.0 — results-day review from analyst comparison (21.10.2026)
 

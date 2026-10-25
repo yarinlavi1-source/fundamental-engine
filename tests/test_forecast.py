@@ -1313,18 +1313,50 @@ class CyclicalGrowthStartTests(unittest.TestCase):
         self.assertIn('long-run like-for-like growth 4.0%', g['rationale'])
 
     def test_non_cycle_history_in_a_flagged_industry_keeps_its_own_growth_start(self):
-        # the card reads the history as a scale-up (or a loss-making grower): the industry word is a flag, and the long-run CAGR
-        # is the ramp from a small base, not a like-for-like cycle average, so the fade starts from the company's own growth
-        for history in ('scale_up', 'loss_grower', 'pre_commercial'):
+        # the card reads the history as a scale-up, a loss-making grower or pre-commercial noise, and the CAGR's own fiscal years
+        # have that shape: the industry word is a flag, and the CAGR is the ramp from a small base, not a like-for-like cycle
+        # average, so the fade starts from the company's own growth
+        for history, om in (('scale_up', [-.10, .20, .55]), ('loss_grower', [-.30, -.20, -.05]), ('pre_commercial', [-1.5, -1.2, .55])):
             fb, an, card, qa = ytd_surge()
             an['metrics']['revenue_cagr_5y'] = {'value': .04, 'formula': 'test fixture', 'status': 'reported'}
+            for e, m in zip(sorted(an['annual']), om):
+                an['annual'][e]['operating_income'] = an['annual'][e]['revenue'] * m
             card['cyclical'] = {'value': True, 'normalize': False, 'basis': 'industry_flag', 'industry_flag': True, 'history': history}
             fc = forecast.build(fb, an, card, qa)
             self.assertEqual(fc['anchors']['route']['cycle_history'], history)
-            self.assertNotIn('cyclical_growth_start', {w['code'] for w in fc['warnings']})
+            self.assertNotIn('cyclical_growth_start', {w['code'] for w in fc['warnings']}, history)
             self.assertAlmostEqual(scen(fc['spec'], 'base')['growth'][0], .15)                 # the scale-capped own growth, not 4%
             self.assertIn('cyclical', json.dumps(fc['cost_of_equity']['components']['adjustments']))   # the industry add-on stays
 
+    def test_the_cagr_window_not_the_card_window_decides_the_exemption(self):
+        # SYNTHETIC Tesla-like history (the 2024 walk-forward formation): two pre-commercial years (losses larger than revenue) long
+        # before a commercial 5-year CAGR window. The card's pre_commercial label covers its whole window, but the CAGR's own years
+        # are a cycle-comparable growth rate, not a ramp from a small base: the cyclical growth start applies (Tesla 2024 had been cut
+        # from 0.32x to 0.20x price by the exemption: base growth[0] -5.5% instead of the scale-capped 15% CAGR)
+        def tesla_like():
+            fb, an, card, qa = ytd_surge()
+            an['metrics']['revenue_cagr_5y'] = {'value': .04, 'formula': 'test fixture', 'status': 'reported'}
+            for y, (r, m) in {2016: (.5e9, -1.5), 2017: (1e9, -1.2), 2018: (20e9, .05), 2019: (30e9, .08), 2020: (40e9, .1),
+                              2021: (45e9, .2), 2022: (50e9, .3)}.items():
+                an['annual'][f'{y}-12-31'] = {'revenue': r, 'operating_income': r * m}
+            card['cyclical'] = {'value': True, 'normalize': False, 'basis': 'industry_flag', 'industry_flag': True, 'history': 'pre_commercial'}
+            return fb, an, card, qa
+        fc = forecast.build(*tesla_like())
+        self.assertEqual(fc['anchors']['route']['cycle_history'], 'pre_commercial')
+        self.assertIn('cyclical_growth_start', {w['code'] for w in fc['warnings']})
+        self.assertLess(scen(fc['spec'], 'base')['growth'][0], .05)                         # from the 4% CAGR
+        # an analyst who confirms a cycle settles the card's reading, also where the history is too short for a cycle path (two
+        # fiscal years: the growth start rule decides the first year)
+        fb, an, card, qa = ytd_surge()
+        an['metrics']['revenue_cagr_5y'] = {'value': .04, 'formula': 'test fixture', 'status': 'reported'}
+        del an['annual'][min(an['annual'])]
+        for e, m in zip(sorted(an['annual']), (-.10, .55)):
+            an['annual'][e]['operating_income'] = an['annual'][e]['revenue'] * m
+        card['cyclical'] = {'value': True, 'normalize': True, 'basis': 'analyst', 'industry_flag': True, 'history': 'scale_up',
+                            'override': {'value': True, 'reason': 'bookings fell with the last downturn (TEST)', 'evidence_ids': []}}
+        fc = forecast.build(fb, an, card, qa)
+        self.assertIsNone(fc['anchors']['route']['cycle_history'])
+        self.assertIn('cyclical_growth_start', {w['code'] for w in fc['warnings']})
 
 if __name__ == '__main__':
     unittest.main()

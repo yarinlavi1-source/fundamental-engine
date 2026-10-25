@@ -118,8 +118,10 @@ dataqa and analysis TTM disagree). Debt scope follows dataqa: the tagged total o
            "evidence_needed","cross_check"},
  "cyclical": {"value": bool,"normalize": bool,"basis": data|industry_flag|industry_flag+peak|analyst|None,"industry_flag",
               "data_shows_cycle","computed","override","reasons","margin_volatility","position"?: peak|mid|trough,
-              "history": scale_up|loss_grower|pre_commercial|None (a history that is not cycle-shaped: no position, no flag peak),
-              "peak_question": str|None (a flagged industry at the window high that is not read as a cycle peak)},
+              "history": scale_up|loss_grower|pre_commercial|None (a history that is not cycle-shaped, history.history_shape
+                         over the card's window: no position and no flag peak unless an analyst confirms a cycle),
+              "peak_question": str|None (a flagged industry at a possible peak that is not read as a cycle peak: a non-cycle
+                               history, or a loss year on normally growing revenue; None once an analyst settles it)},
  "capital_intensity": {"value": low|medium|high|unknown,"reasons","data"},
  "funding": {"value": self_funded|needs_external|unknown,"reasons","data"},
  "playbooks": [...], "research_focus": {"profile_stage","key_metrics","traps","packets"},

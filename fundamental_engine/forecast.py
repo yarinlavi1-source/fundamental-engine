@@ -33,6 +33,7 @@ import re
 from . import base_rates, facts
 from .drivers import build_case, RATIO_KEYS, ABSOLUTE_KEYS, reinvest as _reinvest, capex_for_path as _capex_for_path, value_paused as _value_paused, RELEASE_FLOOR
 from .finance import number
+from .history import history_shape
 from .valuation import value_company, years, ROUTES, TERMINAL_GROWTH_MAX
 from .valuation_tools import implied_cost_of_equity
 
@@ -508,6 +509,9 @@ def _route(card, h, warn, fb=None, cyc_input=None):
         normalize = True
     elif peak and treatment == 'structural':
         normalize = False
+    # the card's reading of a history that is not cycle-shaped (a scale-up, a loss-making grower, pre-commercial noise) stands
+    # until an analyst confirms a cycle (card inputs.cyclical, or treatment 'cyclical' here)
+    confirmed = bool((cyc_card.get('override') or {}).get('value')) or (cyc_input or {}).get('treatment') == 'cyclical'
     if normalize and stage in ('early', 'growth'):
         warn('cyclical_stage_normalized', f'card stage {stage} for a cyclical business: growth measured into a cyclical peak is not a '
                                           'growth stage; the forecast uses mature-stage parameters around the cycle', 'medium')
@@ -535,7 +539,7 @@ def _route(card, h, warn, fb=None, cyc_input=None):
     weights = {s: (1. if moat == 'strong' else (proxy['weight'] if proxy and s != 'bear' else 0.)) for s in SCEN}
     return {'method': method, 'business_model': bm, 'stage': stage, 'type': typ, 'archetype': archetype, 'cyclical': cyclical, 'normalize': normalize,
             'cycle_path': normalize, 'cycle_peak': peak, 'cycle_treatment': treatment if peak else override, 'cycle_forced': forced,
-            'cycle_override': override, 'cycle_history': cyc_card.get('history'),
+            'cycle_override': override, 'cycle_history': None if confirmed else cyc_card.get('history'),
             'capital_intensity': (card.get('capital_intensity') or {}).get('value'),
             'funding': (card.get('funding') or {}).get('value'), 'moat': moat, 'moat_basis': basis, 'moat_proxy': proxy,
             'moat_weights': weights, 'dimensions': dims}
@@ -1354,12 +1358,17 @@ def _params(route, h, cal, cons, rf, ku, ku_t, ov_ke, debt0, ov, warn):
     else:
         # bought revenue is a level shift in the current year, not growth to repeat: the fade starts from organic growth. A
         # cyclical business's change this year is the cycle (prices and volumes), not a trend: it starts from its long-run
-        # like-for-like growth (Expand Energy 2026: +25% on gas prices had been faded as if it were demand). Not for a history
-        # the card reads as a scale-up, a loss-making grower or pre-commercial noise (cycle_history): the industry word is a flag
-        # there, and the long-run CAGR is the ramp from a small base, not a like-for-like cycle average
+        # like-for-like growth (Expand Energy 2026: +25% on gas prices had been faded as if it were demand). Not when the card
+        # reads the history as a scale-up, a loss-making grower or pre-commercial noise (cycle_history) AND the CAGR's own fiscal
+        # years have that shape (history_shape over them): the industry word is a flag there and that CAGR is the ramp from a small
+        # base, not a like-for-like cycle average. The card's label covers its whole window: Tesla's 2010-2011 pre-commercial years
+        # label all 15 years, while its 2018-2023 CAGR (the 2024 walk-forward formation) is commercial and keeps the rule
         g0 = h['acq']['organic'] if h.get('acq') else g_cur
-        lr = next((x for x in (h.get('cagr_5y_ex_acq'), h.get('cagr_5y'), h.get('cagr_3y')) if x is not None), None)
-        if route['cyclical'] and not route.get('cycle_history') and not h.get('acq') and not cg and lr is not None and abs(g0 - lr) > .02:
+        lr, n = next(((x, n) for x, n in ((h.get('cagr_5y_ex_acq'), 5), (h.get('cagr_5y'), 5), (h.get('cagr_3y'), 3)) if x is not None),
+                     (None, 0))
+        ramp = (bool(route.get('cycle_history')) and lr is not None
+                and history_shape(h['revenue'][-n - 1:], h['margins'][-n - 1:]) is not None)
+        if route['cyclical'] and not ramp and not h.get('acq') and not cg and lr is not None and abs(g0 - lr) > .02:
             warn('cyclical_growth_start', f"cyclical business: next-year growth fades from its long-run like-for-like growth {_pct(lr)} "
                                           f"(5-year CAGR without acquisition steps, else 3-year), not this year's {_pct(g0)} (the cycle, not a trend)", 'medium')
             g0 = h['cyclical_start'] = lr

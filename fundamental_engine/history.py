@@ -120,6 +120,27 @@ def organic_cagr(rows):
     return product ** (1 / len(steps)) - 1 if product > 0 else None
 
 
+def history_shape(revenues, margins):
+    """'pre_commercial' | 'loss_grower' | 'scale_up' | None: the reported histories whose margin swings are not a cycle, read
+    over exactly the fiscal years passed (model_card._cyclical: the card's window; forecast growth start: the CAGR's own years).
+    revenues: positive fiscal-year revenue, oldest first; margins: operating margin per year aligned with it (None if unknown).
+    - pre_commercial: losses larger than revenue in most years, or while revenue was under 20% of the window high (an occasional
+      one at established scale is a write-down: Chesapeake / Expand Energy impairments in 2009, 2015 and 2020 on $5-20bn of revenue)
+    - loss_grower: revenue up every year and the latest year a loss (investment timing, not a cycle)
+    - scale_up: revenue up every year and margins from losses to the window high, within 1 point (averaging it would value the
+      company on its start-up losses: Global-E 2026-10, -14% mean margin against +7% reported)"""
+    ms = [m for m in margins if m is not None]
+    huge = [r for r, m in zip(revenues, margins) if m is not None and m <= -1]
+    grew = len(revenues) >= 2 and all(b > a for a, b in zip(revenues, revenues[1:]))
+    if huge and (2 * len(huge) > len(ms) or any(r < .2 * max(revenues) for r in huge)):
+        return 'pre_commercial'
+    if grew and ms and ms[-1] < 0:
+        return 'loss_grower'
+    if grew and ms and min(ms) < 0 < ms[-1] and ms[-1] >= max(ms) - .01:
+        return 'scale_up'
+    return None
+
+
 def quarters(case):
     """Optional recent standalone quarters (oldest first) to catch inflections that
     annual history hides. Revenue required; operating_income/gross_profit optional."""

@@ -62,9 +62,10 @@ Never a growth terminal value. Classic value trap: low multiple on shrinking ear
 over a full cycle (Damodaran: average margins over 5–10 years applied to current
 revenue, or sector averages). A low P/E at peak margins is a trap; a high P/E at
 trough can be cheap. Balance sheet must survive the trough. An industry word is a
-flag, not a cycle: a scale-up from losses, a loss-making grower, or a window whose
-loss years the data do not show to be a trough is not normalized to its mean (the
-card keeps the question in `cyclical.peak_question`; settle it with `inputs.cyclical`).
+flag, not a cycle: a scale-up from losses, a loss-making grower, or a window with a
+loss year on normally growing revenue (start-up losses, not a trough) is not normalized
+to its mean (the card keeps the question in `cyclical.peak_question`; settle it with
+`inputs.cyclical`). A loss year on a demand dip is the usual trough: the peak is normalized.
 
 **Turnaround.** Survival first: liquidity, covenants, maturities. Then evidence of
 operational change (costs actually removed, customers returning), not promises.

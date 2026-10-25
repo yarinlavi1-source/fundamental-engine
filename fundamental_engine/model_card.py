@@ -29,7 +29,7 @@ from datetime import date
 from statistics import mean, pstdev
 import re
 from . import facts as F
-from .history import cagr, acquisition_years, organic_cagr, txt
+from .history import cagr, acquisition_years, organic_cagr, history_shape, txt
 from .valuation import ROUTES
 from . import profile
 
@@ -1015,7 +1015,8 @@ def _cyclical(fb, rows, primary, inputs):
     are not extrapolated), or when an analyst confirms a cycle; an analyst can reject one (inputs.cyclical, reason
     mandatory). A flag at mid or trough margins stays a flag (e.g. a booking platform with stable margins), and so does a
     flag on a history that is not cycle-shaped ('history': a scale-up from losses, a loss-making grower, pre-commercial
-    noise) or whose window includes losses the data do not show to be a cycle: the open question is kept (peak_question)."""
+    noise) or whose window includes a loss year on normally growing revenue (start-up losses or a one-off charge, not a cycle
+    trough): the open question is kept (peak_question) until an analyst settles it."""
     reasons = []
     company = fb.get('company') or {}
     t = text_type(company)
@@ -1060,16 +1061,10 @@ def _cyclical(fb, rows, primary, inputs):
             low = pairs[i][0] if ms[i] < ms[i - 1] else pairs[i + 1][0]
             (lows if weak(low) else one_offs).add(low)
     reversals = len(lows)
-    always_grew = len(revs) >= 2 and all(revs[i] > revs[i - 1] for i in range(1, len(revs)))
-    # losses larger than revenue are pre-commercial noise in most years or while revenue is still small; an occasional one at
-    # established scale is a write-down (Chesapeake / Expand Energy impairments in 2009, 2015 and 2020 on $5-20bn of revenue)
-    top = max(revs) if revs else 0
-    huge = [(m, _row_val(rows[e], 'revenue')) for e, m in pairs if m <= -1]
-    pre_commercial = bool(huge) and (2 * len(huge) > len(ms) or any(r < .2 * top for _, r in huge))
-    loss_grower = always_grew and bool(ms) and ms[-1] < 0
-    # revenue up every year and margins from losses to the window high: a scale-up path; averaging it would value the
-    # company on its start-up losses (Global-E 2026-10: -14% mean margin against +7% reported)
-    scale_up = always_grew and bool(ms) and min(ms) < 0 < ms[-1] and ms[-1] >= max(ms) - .01
+    # pre-commercial noise (losses larger than revenue), a loss-maker's investment timing, a scale-up from losses: histories whose
+    # margin swings are not a cycle (history_shape)
+    history = history_shape(revs, oms)
+    pre_commercial, loss_grower, scale_up = (history == x for x in ('pre_commercial', 'loss_grower', 'scale_up'))
     data_cyc = (((drop_recovered or boom_bust) and (vol or 0) >= .03) or reversals >= 2) and not pre_commercial and not loss_grower and not scale_up
     if data_cyc:
         reasons.append(f'reported history swings: operating-margin standard deviation {_pct(vol)}, {reversals} margin reversal(s) of '
@@ -1087,20 +1082,24 @@ def _cyclical(fb, rows, primary, inputs):
     # a cycle position is read off a cycle-shaped window only: the histories data_cyc exempts (pre-commercial noise, a loss-maker's
     # investment timing, a scale-up from losses) are not cycles, so an industry word cannot call their latest margin a 'peak' and
     # normalize it to the window mean (an Uber-like 'travel' history, -22% .. +11% on revenue rising every year, had been valued
-    # on its -2% start-up mean: 0.08x price). Without a cycle in the data a peak also needs a window of positive margins: an
-    # industry word alone does not make a loss year a cycle trough, so a mean that includes one is not a mid-cycle margin. The
-    # word stays a visible analyst question (peak_question); inputs.cyclical settles it either way.
-    history = 'pre_commercial' if pre_commercial else 'loss_grower' if loss_grower else 'scale_up' if scale_up else None
+    # on its -2% start-up mean: 0.08x price). Nor, without a cycle in the data, can a window with a loss year on normally growing
+    # revenue (weak() false: start-up or investment losses, or a one-off charge): that is not a cycle trough, so a mean that
+    # includes it is not a mid-cycle margin. A loss year on a demand dip is the usual trough and keeps the peak reading (Micron at
+    # the 2016-07 walk-forward formation: 2009 and 2012 memory troughs at -35% and -7.5% under an 18.5% peak), and so does a loss
+    # year whose revenue change is unknown (the window's first year): the exemption needs evidence. The word stays a visible
+    # analyst question (peak_question); inputs.cyclical settles it either way.
     raw, raw_rule = _margin_position(ms) if len(ms) >= 3 else (None, None)
-    profitable = bool(ms) and min(ms) > 0
-    position, pos_rule = (raw, raw_rule) if history is None and (raw != 'peak' or data_cyc or profitable) else (None, None)
+    startup = [(e, m) for e, m in pairs if m < 0 and e in gr and not weak(e)]
+    position, pos_rule = (raw, raw_rule) if history is None and (raw != 'peak' or data_cyc or not startup) else (None, None)
     flag_peak = flag and position == 'peak'
     question = None
     if flag and not data_cyc and raw == 'peak' and position is None:
-        question = (f'{raw_rule}: the window high in a cyclical industry, but '
+        question = (f'{raw_rule}: a possible peak in a cyclical industry, but '
                     + {'scale_up': 'the history is a scale-up path (revenue rose every year, margins from losses to the window high)',
-                       'pre_commercial': 'the window is pre-commercial (losses larger than revenue)'}.get(
-                        history, 'the window includes a loss year the reported history does not show to be a cycle trough')
+                       'pre_commercial': 'the window includes pre-commercial years (losses larger than revenue)'}.get(
+                        history, 'the window includes a loss year on normally growing revenue ('
+                        + ', '.join(f'{e[:4]}: margin {_pct(m)}, revenue {gr[e]:+.1%}' for e, m in startup)
+                        + '), start-up or investment losses or a one-off charge rather than a cycle trough')
                     + ', so its mean is not a mid-cycle margin: not read as a cycle peak and not normalized; cycle or structural is '
                       'an analyst question (inputs.cyclical with a reason and evidence)')
     value, normalize = flag or data_cyc, data_cyc or flag_peak
@@ -1116,9 +1115,10 @@ def _cyclical(fb, rows, primary, inputs):
         basis = 'analyst'
         if ov['value'] and not pre_commercial:
             position, pos_rule = raw, raw_rule      # the analyst's cycle: the window is read as one
+        question = None                             # settled by the analyst
         reasons.append(f"analyst {'confirms' if ov['value'] else 'rejects'} a cycle ({ov['reason']})")
     elif question:
-        reasons.append('industry flag at the window high, not a cycle peak: ' + question)
+        reasons.append('industry flag at a possible peak, not a cycle peak: ' + question)
     elif flag_peak and not data_cyc:
         reasons.append(f'cyclical industry at a possible peak ({pos_rule}): normalized to mid-cycle margins rather than extrapolating the '
                        'latest margin; an analyst can reject the cycle with a reason (inputs.cyclical)')
