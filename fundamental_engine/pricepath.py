@@ -82,6 +82,21 @@ MEASURED = {1: {'n': 2600, 'bias_median': -.113, 'mdale': .213, 'within25': .530
             5: {'n': 1435, 'bias_median': -.504, 'mdale': .588, 'within25': .176}}
 MEASURED_VERDICT = ('FAIL: S2 bias, S1 accuracy and S3 band all failed the preregistered criteria (docs/prereg_price_path.md 6.7); '
                     'the lane is recorded in docs and not shown in the valuation table')
+# The section 6.4 baselines on the same common sample (summary.json), kept next to MEASURED so a live output can state the
+# measured error of what IS shown in the table instead of this lane: the engine's base IRR at today's price
+# (render.hebrew_table's expected-return row; engine_irr = P_0 x (1 + base_irr - dividend yield)^h, price only). Record only:
+# nothing here enters a price or the hashed output. engine_irr was measured with the engine at commit ff36ede (v0.12.0, the
+# 2026-10-21 walk-forward rows); later engine changes (e.g. terminal growth = risk-free, 005f64b) are not in that measurement.
+MEASURED_BASELINES = {
+    'random_walk':   {1: {'bias_median': -.120, 'mdale': .195, 'within25': .563}, 3: {'bias_median': -.311, 'mdale': .362, 'within25': .313},
+                      5: {'bias_median': -.501, 'mdale': .557, 'within25': .200}},
+    'drift_7':       {1: {'bias_median': -.053, 'mdale': .173, 'within25': .609}, 3: {'bias_median': -.108, 'mdale': .278, 'within25': .427},
+                      5: {'bias_median': -.162, 'mdale': .363, 'within25': .319}},
+    'analyst_const': {1: {'bias_median': -.030, 'mdale': .190, 'within25': .573}, 3: {'bias_median': -.013, 'mdale': .374, 'within25': .315},
+                      5: {'bias_median': -.023, 'mdale': .577, 'within25': .210}},
+    'engine_irr':    {1: {'bias_median': -.065, 'mdale': .175, 'within25': .600}, 3: {'bias_median': -.163, 'mdale': .286, 'within25': .412},
+                      5: {'bias_median': -.270, 'mdale': .408, 'within25': .287}},
+}
 # section 6.7: PASS -> the lane may appear next to the DCF; PARTIAL -> a draft row labelled with what failed; FAIL -> not shown
 TABLE_STATUS = {'PASS': 'shown', 'PARTIAL': 'draft', 'FAIL': 'not_shown'}[MEASURED_VERDICT.split(':')[0]]
 RULES = 'engine:price_path_rules'
@@ -452,6 +467,20 @@ def band_statement():
             f'walk-forward of the run-rate + base-rate variant (survivors only; {MEASURED_VERDICT}): {parts}. Guided or consensus '
             'years are outside that measurement. Dated prices are conditional estimates, never predicted exchange prices, and '
             'never authorize a trade.')
+
+
+def irr_path_band_he():
+    """The one sentence recommended under the valuation table's expected-return row (docs/PRICE_PATH_2026-10.md, presentation;
+    not wired into render.hebrew_table in this build): the measured error of a price path compounding at the engine's base IRR
+    less the dividend yield, the only price path measured so far (engine ff36ede, see MEASURED_BASELINES). Plain Hebrew,
+    numbers from MEASURED_BASELINES['engine_irr'] (the median shortfall is 1 - exp(median log error)); it is a record of the
+    2016-2025 survivor test, not a forecast."""
+    m = MEASURED_BASELINES['engine_irr']
+    w = ' / '.join(f"{m[h]['within25']:.0%}" for h in (1, 3, 5))
+    b = ' / '.join(f"{(1 - math.exp(m[h]['bias_median'])) * 100:.0f}%" for h in (1, 3, 5))
+    return (f'במבחן על 2016–2025 (חברות גדולות ששרדו; מחיר בלבד, בלי דיבידנדים) מחיר שעולה כל שנה בקצב התשואה הצפויה פחות הדיבידנד '
+            f'היה בטווח של ±25% מהמחיר שהתממש ב־{w} מהמקרים אחרי 1 / 3 / 5 שנים, ובחציון נמוך ממנו בכ־{b}. '
+            'התשואה הצפויה היא הערכה מותנית, לא תחזית למחיר המניה.')
 
 
 def price_path(anch, inputs=None):

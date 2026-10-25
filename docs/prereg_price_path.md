@@ -285,3 +285,36 @@ Run record, 21.10.2026 (after the clarifications above, nothing in sections 2-6 
   and left in the sample, as the rule requires; they are reported in the results document for the data layer to fix.
 - Consequence (6.7): not shown in the valuation table. `pricepath.MEASURED` / `MEASURED_VERDICT` / `TABLE_STATUS` record the
   measured error in every live output. Any changed method is a new spec_version with its own preregistration.
+
+Post-run audit, 21.10.2026 (read-only, after the results; no method change, nothing re-run; full text in docs/PRICE_PATH_2026-10.md):
+
+- Registered design defect, sections 3.2 and 3.5: HL_bear = 0.8 HL and HL_bull = 1.3 HL also apply to a NEGATIVE excess growth and
+  to a NEGATIVE premium D_0, which then close FASTEST in the bear. Saved rows: D_0 < 0 in 740 of 3,287 (22.5%); the bear's multiple
+  at or above the base's in some year in 554 rows (16.9%), its justified multiple above the base's in 727 (22.1%), its growth above
+  the base's in 347 (10.6%), its price at or above the base's in 54 (1.6%); the bull's price at or below the base's in 12 (0.4%).
+  The engine's own forecast clamps the ordering (forecast.py: bear = min(x, base - .005)); the lane did not. Pinned by
+  tests/test_pricepath.py Spec1AuditTests; fixed only in spec_version 2 (docs/prereg_price_path_v2.md), by construction.
+- Section 3.3: the bear's margin spread is absolute (the after-tax stage spread), so for thin margins the bear is a near-wipeout: the
+  1% floor binds in 628 rows (19.1%), 593 of them with a normalized margin below 5%; bear year-5 net income / normalized NI_0 is 0.78
+  at the median and 0.36 at p10. Carried into v2 as a relative shock bounded by the company's own margin history.
+- Point in time, not stated in section 2 (low severity): the cyclical flag and the business type read today's listing industry /
+  sector and SIC (runs/universe_2026-10-21 company.json, sec__submissions.json) for every formation back to 2016; CPI_MAY is the
+  2026 vintage of the seasonally adjusted CPIAUCSL (revised for five years back; class edges only); The Base Rate Book (26 September
+  2016) was published after the 1 July 2016 formation (its data are 1950-2015); the GS10 June monthly average is published in early
+  July (a few days after as_of; identical in the engine walk-forward). Disclosed here and in v2 section 2. No high-severity
+  leakage was found: facts enter only through facts.usable, the 2026 listing market cap is rejected by as_of, the Damodaran 2026
+  regression never enters a price, and the engine baseline rows were complete before the lane ran.
+- Units: P_0 is in Yahoo-split units while S_0 is a cover count restated by filing-dated splits; where the two disagree, or a share
+  class differs (BRK-B), M_0 is off by the split factor: the 20 M_0 < 1x rows of the results document. Shared data layer, not the lane.
+- Ex-post attribution added as a diagnostic, not registered here (scripts/pricepath_v1_attribution.py, numbers in
+  docs/PRICE_PATH_2026-10.md): log(P_lane / P_actual) split exactly into revenue, margin, share-count and multiple terms, using the
+  lane's own ok rows at t + h as the realized fundamentals. That subsample needs NI > 0 at t + h (2,201 / 1,639 / 1,108 of the
+  2,600 / 2,023 / 1,435 common rows at 1 / 3 / 5 years); its lane bias -0.113 / -0.323 / -0.547 is close to the common sample's,
+  so the selection is mild. Medians: revenue +0.00 / -0.02 / -0.08, margin -0.06 / -0.17 / -0.24, shares -0.00 / -0.01 / -0.01,
+  multiple -0.07 / -0.10 / -0.22. The largest term is the margin (held at the anchor while the median survivor's TTM net margin
+  rose from about 11% to 12-13%), then the multiple (today's 26x faded toward 17x while the market's median trailing P/E stayed
+  23-25x). Independent recomputation of the headline table (scripts/pricepath_v1_recompute.py, no engine imports) matches
+  summary.json; scenario-ordering counts: scripts/pricepath_v1_ordering.py; point-in-time class multiples:
+  scripts/pricepath_v1_class_multiples.py.
+- Recorded in the module without touching any price: `pricepath.MEASURED_BASELINES` (the section 6.4 baselines' measured error) and
+  `pricepath.irr_path_band_he()` (the sentence recommended under the table's expected-return row, the path that IS shown).

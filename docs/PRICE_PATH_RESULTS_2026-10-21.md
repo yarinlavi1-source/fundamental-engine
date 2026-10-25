@@ -113,7 +113,7 @@ normalization did not help the cyclicals' level. By size class (3y): >$25bn and 
 $1.25-12bn -0.34 to -0.40; below $1.25bn -0.8 (small n). The larger the company, the smaller the miss: the base-rate fade is
 least wrong where the base rates are flattest.
 By formation year the lane's bias tracks the random walk's within a few points in every year (3y: 2016 -0.48 vs -0.45; 2018
--0.44 vs -0.46; 2020 -0.33 vs -0.34; 2022 -0.17 vs -0.36; 2023 -0.35 vs -0.31): the lane's five-year price is, on median,
+-0.44 vs -0.46; 2020 -0.33 vs -0.34; 2022 -0.17 vs -0.35; 2023 -0.35 vs -0.31): the lane's five-year price is, on median,
 today's price.
 
 ## Diagnostics (section 6.6)

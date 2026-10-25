@@ -363,6 +363,54 @@ class EvaluateTests(unittest.TestCase):
         self.assertEqual(PP.FORMATION_YEARS[5], (2016, 2021))
         self.assertEqual(PP.SPEC_VERSION, 1)
 
+    def test_baselines_measured_on_the_same_sample_and_the_irr_band_sentence(self):
+        self.assertEqual(sorted(PP.MEASURED_BASELINES), ['analyst_const', 'drift_7', 'engine_irr', 'random_walk'])
+        for name, by_h in PP.MEASURED_BASELINES.items():
+            self.assertEqual(sorted(by_h), [1, 3, 5])
+            for h in (1, 3, 5):
+                self.assertLess(by_h[h]['mdale'], PP.MEASURED[h]['mdale'] + 1e-9, (name, h))    # the lane beat no baseline on MdALE
+        self.assertEqual(PP.MEASURED_BASELINES['engine_irr'][1]['within25'], .600)
+        he = PP.irr_path_band_he()
+        for s in ('60% / 41% / 29%', '6% / 15% / 24%', '2016–2025', 'לא תחזית למחיר'):
+            self.assertIn(s, he)
+
+
+class Spec1AuditTests(unittest.TestCase):
+    """Post-run audit of 21.10.2026 (docs/prereg_price_path.md section 9; docs/PRICE_PATH_2026-10.md). These tests PIN the
+    registered spec-1 behaviour the audit found defective, so that a change of it fails here and has to come as spec_version 2
+    with its own preregistration (docs/prereg_price_path_v2.md), never as a silent edit of the failed run's method."""
+
+    def test_negative_premium_closes_faster_in_the_bear(self):
+        # price at 10x normalized earnings, justified ~26x: D_0 < 0. HL_bear = 0.8 HL closes the DISCOUNT fastest in the bear, so
+        # the bear carries less of it than the base in every year (the registered formula; 740 of 3,287 saved rows, 22.5%)
+        out = PP.price_path(ibkr_like(price=2.65 * 10))
+        self.assertLess(out['premium_today'], 0)
+        for h in range(5):
+            bear, mid, bull = (out['scenarios'][s]['years'][h] for s in PP.SCEN)
+            self.assertGreater(bear['premium_left'], mid['premium_left'])
+            self.assertGreater(mid['premium_left'], bull['premium_left'])
+            self.assertLess(bear['price'], mid['price'])          # the lower growth and margin still keep this bear's price below
+
+    def test_scenarios_can_invert_when_excess_growth_and_premium_are_negative(self):
+        # the audit's synthetic probe: mature, run rate -5%, price at 0.4x normalized earnings (a data-defect-like input). Saved
+        # rows: bear multiple >= base's in some year in 554 rows (16.9%), bear growth above the base's in 347 (10.6%), bear price
+        # at or above the base's in 54 (1.6%), bull price at or below the base's in 12 (0.4%). Spec 1 has no ordering clamp.
+        out = PP.price_path(ibkr_like(stage='mature', g_run=-.05, g_raw=-.05, price=2.65 * .4, roic=.12))
+        y = {s: out['scenarios'][s]['years'] for s in PP.SCEN}
+        self.assertGreater(y['bear'][4]['multiple'], y['base'][4]['multiple'])
+        self.assertGreater(y['bear'][4]['growth'], y['base'][4]['growth'])
+        self.assertLessEqual(y['bull'][2]['price'], y['base'][2]['price'])
+        self.assertFalse(any(f.startswith('scenario_order') for f in out['flags']))
+
+    def test_bear_margin_spread_is_absolute_and_floors_thin_margins(self):
+        # a 5.5-point after-tax spread on a 3% margin: the bear reaches the 1% floor in year 3 and its year-5 earnings are under
+        # 30% of the base's (margin_floored_bear fired in 628 of 3,287 saved rows, 19.1%, 593 of them with a margin below 5%)
+        out = PP.price_path(ibkr_like(m_ttm=.03, m_anchor=.03, net_income=.03 * 5.3e9, price=.03 * 5.3 * 30))
+        self.assertIn('margin_floored_bear', out['flags'])
+        bear = out['scenarios']['bear']['years']
+        self.assertEqual([y['margin'] for y in bear][2:], [PP.M_FLOOR] * 3)
+        self.assertLess(bear[4]['net_income'] / out['scenarios']['base']['years'][4]['net_income'], .3)
+
 
 if __name__ == '__main__':
     unittest.main()
