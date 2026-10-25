@@ -1,5 +1,12 @@
 ## Unreleased — calibration fixes (21.10.2026)
 
+- Expected price path lane (`fundamental_engine/pricepath.py`, `scripts/backtest_pricepath.py`, preregistered in
+  `docs/prereg_price_path.md`): the 2016-2025 walk-forward FAILED every registered criterion (base-path median log error
+  -0.11 / -0.31 / -0.50 at 1 / 3 / 5 years, the random walk's; `docs/PRICE_PATH_RESULTS_2026-10-21.md`). Not shown in the
+  valuation table. Post-run audit and error attribution in `docs/PRICE_PATH_2026-10.md` (the margin held at its anchor and the
+  Gordon-level multiple target are the two terms; a registered scenario-ordering defect is pinned by `Spec1AuditTests`);
+  `pricepath.MEASURED_BASELINES` and `irr_path_band_he()` record what the table shows instead; the read-only diagnostics are
+  `scripts/pricepath_v1_*.py`. Version 2 is registered, not run: `docs/prereg_price_path_v2.md`.
 - Terminal growth follows the convention of the ERP it is paired with (`forecast.TERMINAL_BEAR_GAP` comment): base = bull =
   risk-free, bear 0.5pp lower (never above base), replacing min(risk-free, 3%). Damodaran's implied ERP is solved with
   perpetual growth at the Treasury yield; pairing it with a 3% cap marked every company down whenever the risk-free rate

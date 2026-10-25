@@ -178,3 +178,12 @@ Companion to docs/EVIDENCE_STATUS.md, which separates what tests prove from what
     software cohort only ~0.29 -> ~0.35; reaching price would mean underwriting peak multiples. The engine's edge is in ranking
     and in refusing to overpay at tops, not in the level. The price-implied-growth table row makes the gap legible rather than
     closing it; it is a per-spec sensitivity, not a market forecast.
+44. **There is no measured expected price path; the table shows value and an implied return, not a price per year.** The
+    preregistered price-path lane (run rate faded with base rates, margin held, Gordon-justified multiple with today's premium
+    fading) under-predicted realized prices by -0.11 / -0.31 / -0.50 log at 1 / 3 / 5 years on 2016-2025 survivors and beat no
+    baseline on median absolute error, so it is not shown. The attribution puts the miss in the margin (held while survivors' margins rose) and in the
+    multiple's target (16.8x justified against a market that kept paying 23-25x). The only measured price path in this build is
+    the engine's base IRR (less the dividend yield) compounded from today's price: within +-25% of the realized price in 60% /
+    41% / 29% of rows at 1 / 3 / 5 years, 6% / 15% / 24% below it on median (`pricepath.MEASURED_BASELINES`; engine at ff36ede,
+    later engine changes unmeasured). A second version is registered and unrun (`docs/prereg_price_path_v2.md`); nothing in it
+    is a measured result.
