@@ -2468,6 +2468,9 @@ def decide(parts, inputs=None):
                                                                      for k, (a, b) in EVIDENCE_BY_TARGET.items()},
                                                        'downgrades': 'justification and known ids only (never blocked by evidence kind)'}},
            'business_reason_he': _business_he(eff_A),
+           # forecast levers still on a default that is not this company's evidence (forecast.driver_gaps: size, constant, type or
+           # cross-company rules): shown to the owner as gaps; they never raise the confidence. None when the forecast has no record
+           'default_levers': (fc or {}).get('driver_gaps') if (fc or {}).get('driver_sources') is not None else None,
            'semantics': ('Four questions assessed separately and never averaged. Values are conditional estimates, not predicted prices; '
                          'no win rate is claimed. A research opinion, not an order or suitability assessment.')}
     json.dumps(out, allow_nan=False)

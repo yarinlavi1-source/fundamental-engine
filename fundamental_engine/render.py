@@ -327,6 +327,7 @@ def _confidence_he(dc, skip_margin, short=False, skip_material=False):
 
 
 MAX_WORDS = 140
+GAPS_HE = 'הנחות בלי נתון של החברה'
 MIN_WORDS = 80
 # The market return each comparison uses, named (decision.COMPARATORS): the engine-consistent one cancels a shared model bias;
 # the generic assumption (risk-free + ERP) is built differently from a stock's implied return and is said to be that.
@@ -499,6 +500,9 @@ def hebrew_table(casefile):
         if crh:
             notes.append(crh)
         notes += ['חשיפה: ' + x for x in exposure_lines_he(cf)]
+    gaps = dc.get('default_levers') if 'default_levers' in dc else (cf.get('fc') or {}).get('driver_gaps')
+    if gaps is not None:      # levers still on a rule that is not this company's evidence (forecast.driver_gaps); a gap, not a basis
+        rows.append((GAPS_HE, ', '.join(g.get('label_he') or g.get('lever', '') for g in gaps) or 'אין'))
     rows.append(('רמת ביטחון', (dc.get('confidence') or {}).get('level_he', 'לא ידועה')))
     call = CALL_HE.get(code, 'אין עדיין מסקנה') if v else 'אין עדיין מסקנה'
     rows.append(('שורה תחתונה', call + (' (טיוטה שעוד לא נבדקה)' if withheld else '')))

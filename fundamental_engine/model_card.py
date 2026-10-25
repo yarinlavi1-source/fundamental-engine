@@ -981,7 +981,7 @@ def _stage(fb, an, rows, inputs, cur, cyc_text):
                            + (f' with revenue down {_pct(-g_last)}' if g_last is not None and g_last <= -.05 else '')
                            + ': profitability must be restored; never treated as an early-stage company')
         else:
-            value = _profitable_stage(g, rev, om_years[-2][1] if len(om_years) > 1 else None, usd, reasons, gtxt, om)
+            value = _profitable_stage(g, rev, om_years[-2][1] if len(om_years) > 1 else None, usd, reasons, gtxt, om, data)
             reasons.append(f'one loss year ({om_years[-1][0]}, operating margin {_pct(om)}) after {profitable_prior} profitable '
                            f'year(s) at {scale}: treated as {value} with a loss year, not as early-stage; '
                            'check whether the loss is one-off (charges, impairments) or a margin reset')
@@ -999,7 +999,7 @@ def _stage(fb, an, rows, inputs, cur, cyc_text):
             reasons.append(f'loss-making with slow or unknown growth ({gtxt}): ' + (
                 'still small, early' if value == 'early' else 'large, so profitability must be fixed rather than grown into'))
     else:
-        value = _profitable_stage(g, rev, om_years[-2][1] if len(om_years) > 1 else None, usd, reasons, gtxt, om)
+        value = _profitable_stage(g, rev, om_years[-2][1] if len(om_years) > 1 else None, usd, reasons, gtxt, om, data)
     if len(ends) < 3:
         confidence = 'low'
         reasons.append(f'only {len(ends)} fiscal year(s) of revenue: stage is provisional')
@@ -1017,7 +1017,7 @@ def _stage(fb, an, rows, inputs, cur, cyc_text):
     return _stage_out(value, reasons, data, inputs, confidence)
 
 
-def _profitable_stage(g, rev, om_prev, usd, reasons, gtxt, om):
+def _profitable_stage(g, rev, om_prev, usd, reasons, gtxt, om, data=None):
     if g is None:
         reasons.append('growth unknown (one fiscal year): treated as mature, provisional')
         return 'mature'
@@ -1027,6 +1027,8 @@ def _profitable_stage(g, rev, om_prev, usd, reasons, gtxt, om):
     if g >= .15:
         if usd and rev >= VERY_LARGE and om is not None and om >= .15:
             reasons.append(f'{gtxt}, but very large ({rev / 1e9:,.0f}bn) and highly profitable: growth on this base usually fades; maturing')
+            if data is not None:   # a size prior, not this company's evidence: the forecast drops it when growth is evidenced
+                data['size_relabel'] = {'prior': 'VERY_LARGE', 'threshold': VERY_LARGE, 'from': 'growth', 'to': 'maturing'}
             return 'maturing'
         reasons.append(f'{gtxt} with positive operating margin: growth')
         return 'growth'
