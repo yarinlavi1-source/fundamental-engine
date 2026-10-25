@@ -4,7 +4,9 @@ The numbers are the analyst posts' figures in tests/fixtures/econ (arithmetic fi
 design's (docs/prereg_econ.md, brain/economics.json). Each case is the fixture without its `expected` block, so the
 engine never sees the answers; where a test needs a value the post did not give, it is marked SYNTHETIC. Every
 behaviour test here fails without WP3 (no econ.review, evaluate_identity or growth_split); the no-input invariance guard
-(nothing in the engine calls the review) passes on the base by design.
+(nothing in the engine calls the review) passes on the base by design. RepairTests fail on the first WP3 commit (f6ce33f):
+point in time for market and cycle, every window's growth check, the core summary, degenerate lines, stated figures on
+their own basis, the cross-scope NDR and a split factor on an undeclared basis.
 """
 import json
 import random
@@ -190,7 +192,8 @@ class BrokerTests(unittest.TestCase):
         self.assertAlmostEqual(ch['prior'], (1.87e9 / 1.16) * 4 / (5.58e6 / 1.35), places=9)
         self.assertEqual(round(ch['prior'], 1), 1560.1)
         self.assertEqual(round(100 * ch['value'], 2), -14.07)
-        self.assertEqual((rpa['stated']['status'], rpa['stated']['stated'], rpa['stated']['stated_prior']), ('consistent', 1340.0, 1560.0))
+        st, = rpa['stated']
+        self.assertEqual((st['kpi_basis'], st['variant'], st['status'], st['stated'], st['stated_prior']), ('balance', 'end', 'consistent', 1340.0, 1560.0))
         self.assertEqual(rpa['status'], 'consistent')                        # computed agrees with the post's own figure
         epa, yld = row(r, 'broker', 'equity_per_account'), row(r, 'broker', 'revenue_yield_on_equity')
         self.assertEqual((epa['tag'], yld['tag']), ('mix', 'cyclical'))
@@ -458,7 +461,7 @@ class ContractTests(unittest.TestCase):
         yld = row(r, 'broker', 'revenue_yield_on_equity')                 # USD revenue over EUR equity: never divided
         self.assertEqual((yld['status'], yld['questions']), ('basis_mismatch', ['supply client equity in USD']))
         epa = row(r, 'broker', 'equity_per_account')                      # EUR per account is a figure, but not the post's USD one
-        self.assertEqual((epa['status'], epa['stated']['status']), ('computed', 'not_compared'))
+        self.assertEqual((epa['status'], [x['status'] for x in epa['stated']]), ('computed', ['not_compared']))
         self.assertEqual(r['growth_splits'][0]['status'], 'basis_mismatch')
         c = case('ibkr_2026q3')        # SYNTHETIC: a margin rate averaged over a trailing year against a quarter's interest
         next(k for k in c['kpis'] if k['id'] == 'margin_rate')['window'] = 'TTM'
@@ -491,6 +494,162 @@ class ContractTests(unittest.TestCase):
         callers = sorted(p.name for p in pkg.glob('*.py') if p.name != 'econ.py'
                          and any(s in p.read_text(encoding='utf-8') for s in ('econ.review', 'evaluate_identity', 'growth_split(')))
         self.assertEqual(callers, [])
+
+
+class RepairTests(unittest.TestCase):
+    """WP3 review findings: each test fails on f6ce33f."""
+
+    def test_market_and_cycle_are_read_point_in_time(self):
+        late = {'kind': 'market_data', 'available_at': '2099-01-01'}     # SYNTHETIC: a source published after as_of
+
+        def margin_only(c):
+            r = econ.review(c, 'memory_cycle')
+            m, = [x for x in r['measures'] if x['check'] == 'margin_only_normalized']
+            return m, r['unavailable']
+        c = case('skhy_2026q2')
+        c['sources']['late'] = late
+        c['market']['source_ids'] = ['late']                              # a price published after as_of is not used
+        m, un = margin_only(c)
+        self.assertEqual((m['status'], 'normalized_pe' in m, m['unavailable'], un), ('not_computed', False, ['market'], ['market']))
+        c = case('skhy_2026q2')
+        c['sources']['late'] = late
+        c['cycle']['cycle_margin']['source_ids'] = ['late']               # nor a cycle margin
+        m, un = margin_only(c)
+        self.assertEqual((m['status'], 'normalized_pe' in m, un), ('not_computed', False, ['cycle.cycle_margin']))
+        c = case('skhy_2026q2')        # the cycle block's stated margin is not read; the cycle margin has its own visible source
+        c['sources']['late'] = late
+        c['cycle']['source_ids'] = ['late']
+        m, un = margin_only(c)
+        self.assertEqual((m['status'], m['current_margin_from'], un, 'at_line_margin' in m), ('computed', 'lines', ['cycle'], False))
+        self.assertAlmostEqual(m['normalized_pe'], 132 / 17.5 * (41.3e9 / 54.1e9) / 0.29, places=9)
+        c = case('skhy_2026q2')
+        c['sources']['late'] = late
+        c['market']['source_ids'] = c['cycle']['source_ids'] = c['cycle']['cycle_margin']['source_ids'] = ['late']
+        m, un = margin_only(c)
+        self.assertEqual((m['status'], un), ('not_computed', ['cycle', 'cycle.cycle_margin', 'market']))
+        c = case('ibkr_2026q3')        # a sensitivity and a disclosure change dated after as_of are listed, not dropped silently
+        c['sources']['late'] = dict(late, kind='analyst_post')
+        c['sensitivities'][1]['source_ids'] = ['late']
+        r = econ.review(c, 'broker')
+        self.assertEqual([m['driver'] for m in r['measures'] if m['check'] == 'rate_sensitivity_share'], ['US policy rate -25bp'])
+        self.assertIn('sensitivities[1]', r['unavailable'])
+        c = case('rddt_2026q2')
+        c['sources']['late'] = dict(late, kind='analyst_post')
+        c['disclosure_changes'][0]['source_ids'] = ['late']
+        r = econ.review(c, 'ads_platform')
+        self.assertEqual(flags(r, 'disclosure_dropped'), [])
+        self.assertIn('disclosure_changes[0]', r['unavailable'])
+
+    def test_identity_status_folds_the_growth_check_of_every_window(self):
+        c = case('uber_2025q3')        # SYNTHETIC q/q growths: MAPCs +5%, frequency +2% (product 1.071); trips only q/q 2.0bn
+        k = {x['id']: x for x in c['kpis']}
+        k['mapcs']['growth_qoq'], k['frequency']['growth_qoq'] = 0.05, 0.02
+        k['trips'].pop('prior')
+        k['trips']['prior_quarter'] = 2.0e9                                # trips +75.6% q/q against the factors' +7.1%
+        t = econ.evaluate_identity(c, 'marketplace', 'trips_from_consumers')
+        yoy, qoq = t['changes']
+        self.assertEqual((yoy['window'], 'check' in yoy, qoq['window'], qoq['check']['status']), ('y/y', False, 'q/q', 'inconsistent'))
+        self.assertAlmostEqual(qoq['check']['residual_pp'], 3.512e9 / 2.0e9 - 1.05 * 1.02, places=12)
+        self.assertEqual(round(qoq['check']['residual_pp'], 3), 0.685)
+        self.assertEqual(t['status'], 'inconsistent')                     # the row never contradicts its own growth check
+        k['trips']['prior'] = 2.879e9                                      # the post's y/y trips back: a consistent y/y hides nothing
+        r = econ.review(c, 'marketplace')
+        t = row(r, 'marketplace', 'trips_from_consumers')
+        self.assertEqual([(ch['window'], ch['check']['status']) for ch in t['changes']], [('y/y', 'consistent'), ('q/q', 'inconsistent')])
+        self.assertEqual((t['status'], r['models'][0]['core_status']), ('inconsistent', 'inconsistent'))
+        self.assertEqual(r['check_window'], econ.CHECK_WINDOW)
+
+    def test_core_status_never_hides_an_inconsistent_scope(self):
+        c = case('ibkr_2026q3')        # SYNTHETIC: the post's own figure 2,000 (computed 1,340.5) and a Europe scope that computes
+        st = next(k for k in c['kpis'] if k['id'] == 'revenue_per_account')
+        st['value'] = 2000.0
+        c['kpis'].append({'id': 'accounts', 'value': 1.0e6, 'prior': 0.8e6, 'kpi_basis': 'balance', 'scope': 'europe',
+                          'source_ids': st['source_ids']})
+        c['lines']['europe_revenue'] = {'value': 3.0e8, 'prior': 2.5e8, 'scope': 'europe', 'period': 'quarter', 'source_ids': st['source_ids']}
+        r = econ.review(c, 'broker')
+        self.assertEqual((row(r, 'broker', 'revenue_per_account')['status'], row(r, 'broker', 'revenue_per_account', 'europe')['status']),
+                         ('inconsistent', 'computed'))
+        m = r['models'][0]
+        core, = [x for x in m['core'] if x['id'] == 'revenue_per_account']
+        self.assertEqual((m['core_status'], core['scope'], core['status']), ('inconsistent', 'total', 'inconsistent'))
+        self.assertEqual(core['scopes'], [{'scope': 'total', 'status': 'inconsistent'}, {'scope': 'europe', 'status': 'computed'}])
+        p = run('pltr_2026q2')['models'][0]          # a row that computed something still beats a total that computed nothing
+        self.assertEqual([(x['id'], x['scope'], x['status']) for x in p['core']],
+                         [('revenue_per_customer', 'us_commercial', 'computed'), ('revenue_identity', 'us_commercial', 'consistent')])
+        self.assertEqual(p['core_status'], 'computed')
+
+    def test_degenerate_lines_are_refused_never_divided(self):
+        for nii in (0.0, -1.0e9):          # SYNTHETIC net interest income of zero and below zero
+            c = case('ibkr_2026q3')
+            c['lines']['net_interest_income']['value'] = nii
+            ms = [m for m in econ.review(c, 'broker')['measures'] if m['check'] == 'rate_sensitivity_share']
+            self.assertEqual([(m['status'], 'share' in m) for m in ms], [('not_computed', False)] * 2, nii)
+            self.assertIn('is not positive', ms[0]['reason'])
+        for oi in (0.0, -5.0e9):           # SYNTHETIC operating income of zero and below zero beside the stated 76.3% margin
+            c = case('skhy_2026q2')
+            c['lines']['operating_income']['value'] = oi
+            m, = [x for x in econ.review(c, 'memory_cycle')['measures'] if x['check'] == 'margin_only_normalized']
+            self.assertEqual((m['status'], m['current_margin_from'], m['at_line_margin']['status']), ('computed', 'stated', 'not_computed'), oi)
+            self.assertNotIn('normalized_pe', m['at_line_margin'])
+            self.assertEqual(round(m['normalized_pe'], 2), 19.85)
+            c['cycle'].pop('current_operating_margin')                     # and with no stated margin nothing is normalized
+            m, = [x for x in econ.review(c, 'memory_cycle')['measures'] if x['check'] == 'margin_only_normalized']
+            self.assertEqual((m['status'], 'normalized_pe' in m), ('not_computed', False), oi)
+
+    def test_each_stated_figure_is_compared_on_its_own_basis(self):
+        c = case('ibkr_2026q3')
+        st = next(k for k in c['kpis'] if k['id'] == 'revenue_per_account')
+        avg = dict(st, kpi_basis='average', value=1500.0)                 # SYNTHETIC: a second figure on an average basis
+        a, b = deepcopy(c), deepcopy(c)
+        a['kpis'].append(avg)
+        b['kpis'].insert(0, avg)
+        ra = econ.evaluate_identity(a, 'broker', 'revenue_per_account')
+        self.assertEqual(ra, econ.evaluate_identity(b, 'broker', 'revenue_per_account'))      # the row order never matters
+        self.assertEqual([(x['kpi_basis'], x['variant'], x['status']) for x in ra['stated']],
+                         [('average', None, 'not_compared'), ('balance', 'end', 'consistent')])
+        self.assertIn('no average value', ra['stated'][0]['reason'])
+        self.assertEqual(ra['status'], 'consistent')                       # never compared with the end value
+        next(k for k in a['kpis'] if k['id'] == 'accounts')['prior_quarter'] = 5.2e6     # SYNTHETIC start-of-quarter accounts
+        r = econ.evaluate_identity(a, 'broker', 'revenue_per_account')
+        x = r['stated'][0]
+        self.assertEqual((x['kpi_basis'], x['variant'], x['status']), ('average', 'average', 'inconsistent'))
+        self.assertAlmostEqual(x['computed'], 1.87e9 * 4 / ((5.2e6 + 5.58e6) / 2), places=6)
+        self.assertEqual((r['stated'][1]['status'], r['status']), ('consistent', 'inconsistent'))
+        c['kpis'].append(dict(st, scope='europe', value=1200.0))          # SYNTHETIC: a figure where no row computes
+        nr = econ.review(c, 'broker')['not_read']
+        self.assertIn({'ref': 'kpis[revenue_per_account|europe|balance]',
+                       'reason': 'no row of this identity at europe computed a value to compare it with'}, nr)
+        for basis in ('rate', 'average'):  # SYNTHETIC Mobility take rate 30.6%: revenue and bookings are period rows, so a
+            u = case('uber_2025q3')        # rate or an average figure is compared with the period value 7.68 / 25.1
+            u['kpis'].append({'id': 'take_rate', 'value': 0.306, 'kpi_basis': basis, 'scope': 'mobility', 'source_ids': u['kpis'][0]['source_ids']})
+            x, = econ.evaluate_identity(u, 'marketplace', 'take_rate', 'mobility')['stated']
+            self.assertEqual((x['variant'], x['status']), ('period', 'consistent'), basis)
+            self.assertAlmostEqual(x['computed'], 7.68e9 / 25.1e9, places=12)
+
+    def test_expansion_led_names_a_cross_scope_ndr(self):
+        r = run('pltr_2026q2')
+        e, = [x for x in r['readings'] if x['check'] == 'expansion_led']
+        self.assertEqual((e['value'], e['scope'], e['ndr_scope']), (True, 'us_commercial', 'total'))
+        self.assertTrue(e['scope_note'].startswith('cross-scope'))
+        self.assertIn({'model': 'data_platform_software', 'about': 'expansion_led', 'scope': 'us_commercial',
+                       'question': 'supply net revenue retention for us_commercial (reported for total only)'}, r['open_questions'])
+        c = case('pltr_2026q2')        # SYNTHETIC: an NDR reported for US commercial itself is read at that scope
+        c['kpis'].append({'id': 'net_revenue_retention', 'value': 1.6, 'kpi_basis': 'rate', 'scope': 'us_commercial', 'window': 'TTM',
+                          'source_ids': c['kpis'][0]['source_ids']})
+        r = econ.review(c, 'data_platform_software')
+        e, = [x for x in r['readings'] if x['check'] == 'expansion_led']
+        self.assertEqual((e['ndr'], e['ndr_scope'], 'scope_note' in e), (1.6, 'us_commercial', False))
+        self.assertEqual([q for q in r['open_questions'] if q['about'] == 'expansion_led'], [])
+
+    def test_growth_split_reads_no_factor_on_an_undeclared_basis(self):
+        c = case('uber_2025q3')        # SYNTHETIC: frequency stated as a flow; the registry declares an average
+        next(k for k in c['kpis'] if k['id'] == 'frequency')['kpi_basis'] = 'flow'
+        s = econ.growth_split(c, 'marketplace')
+        self.assertEqual((s['status'], s['problems']),
+                         ('basis_mismatch', [{'id': 'frequency', 'problem': 'kpi_basis', 'stated': 'flow', 'declared': ['average']}]))
+        self.assertNotIn('frequency', [f['id'] for f in s['factors']])     # its growth is never read as the factor's
+        self.assertIn('frequency', s['missing'])
+        self.assertIn('supply frequency on an average basis (stated flow)', [q['question'] for q in econ.review(c, 'marketplace')['open_questions']])
 
 
 if __name__ == '__main__':

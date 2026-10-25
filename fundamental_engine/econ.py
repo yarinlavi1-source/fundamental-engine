@@ -537,6 +537,20 @@ CHECKS_RUN = ('per_unit_vs_units', 'take_rate_shift', 'thesis_on_minor_line', 'c
               'cyclical_deceleration', 'expansion_led', 'cumulative_kpi_not_activity', 'rate_sensitivity_share',
               'margin_only_normalized', 'segment_reconciliation', 'basis_mismatch', 'scope_mismatch', 'capex_per_unit_lag')
 CORE_ORDER = ('consistent', 'computed', 'partial', 'inconsistent', 'basis_mismatch', 'scope_mismatch', 'not_computed', 'missing')
+# a core identity's summary row among the scopes that computed something: the worst check first (_core_row)
+SURFACE_ORDER = ('inconsistent', 'partial', 'consistent', 'computed')
+# expansion_led's "per-unit share of log growth above one half" (the registry rule's words; not a rules.* number).
+# take_rate_shift reads rules.growth_identity_pp. Neither has a dedicated frozen rule: docs/prereg_econ.md is to record
+# both before the held-out run (WP8 notes).
+EXPANSION_LOG_SHARE = 0.5
+# Which comparison window a check reads. An identity's status folds the growth check of every window it computes (y/y
+# and q/q; the worst one wins). The flags and readings built on an identity's change (per_unit_vs_units, take_rate_shift,
+# identity falsifiers, thesis_on_minor_line's incremental share) read its first window: y/y when every input has it, else
+# q/q; a q/q move beside a y/y one is shown in the identity's changes but raises no second flag (seasonal quarters are
+# not read as a shift). A KPI's own checks (core_units_flat, KPI falsifiers) read the window its source compares
+# (`window`), the other one shown beside; the growth split reads the first window the line shares with its factors.
+CHECK_WINDOW = ('flags on an identity read its first comparison window (y/y when every input has it, else q/q); its '
+                'status folds the growth check of every window; KPI checks read the window the source compares')
 _BP = re.compile(r'([+-]?\d+(?:\.\d+)?)\s*bp\b')
 _QUARTER = re.compile(r'^(\d{4})-Q([1-4])$')
 REVIEW_BOUNDARY = ('a deterministic read of caller-supplied, sourced KPIs and lines through each economic model\'s identities: '
@@ -550,6 +564,12 @@ def _num(x, label, minimum=None):
 
 def _name(ref):
     return ref.replace('_', ' ')
+
+
+def _a_basis(bases):
+    """'a balance basis', 'an average basis', 'a balance/average basis'."""
+    b = '/'.join(bases)
+    return ('an ' if b[:1] in 'aeiou' else 'a ') + b + ' basis'
 
 
 def _scope(x, label):
@@ -573,6 +593,12 @@ def _source_ids(case, item, label):
 def _visible(case, ids):
     """Point in time: an item is read when at least one of its sources was available at as_of."""
     return any(F._d(case['sources'][i]['available_at']) <= F._d(case['as_of']) for i in ids)
+
+
+def _unavailable(ix, ref):
+    """List an item none of whose sources was available at as_of (once, however many models read it)."""
+    if ref not in ix['unavailable']:
+        ix['unavailable'].append(ref)
 
 
 def _check_case(case):
@@ -797,6 +823,8 @@ def _index(case, mids):
                  'source_ids': ids, 'window': 'y/y', 'basis_from': 'the only basis the registry declares'})
     for items in list(ix['kpi'].values()) + list(ix['line'].values()):     # content order: the input order never matters
         items.sort(key=lambda it: (it['basis'], it['currency_basis'] not in (None, 'reported'), it['ref']))
+    for items in ix['stated'].values():
+        items.sort(key=lambda st: (st['kpi_basis'], st['ref']))
     for (lid, scope), items in ix['line'].items():          # a line stated as a margin or a share of revenue
         for it in items:
             if it['value'] is not None or (it['margin'] is None and it['share_of_revenue'] is None):
@@ -1023,7 +1051,7 @@ def _compute(ix, mid, ident, scope):
                     break
         qs = [f'supply reported {_name(p["id"])} growth' if p['problem'] == 'currency_basis' else
               f'supply {_name(p["id"])} in {ix["currency"]}' if p['problem'] == 'currency' else
-              f'supply {_name(p["id"])} on a {"/".join(p["declared"])} basis (stated {p["stated"]})' for p in problems]
+              f'supply {_name(p["id"])} on {_a_basis(p["declared"])} (stated {p["stated"]})' for p in problems]
         res.update(status='basis_mismatch', problems=problems, side_by_side=side, questions=sorted(set(qs)),
                    reason='inputs on different bases are never divided')
         return res, meta
@@ -1062,13 +1090,13 @@ def _compute(ix, mid, ident, scope):
             checks.append(lc['status'])
             if lc['status'] == 'partial':
                 res['residual'] = lc['residual']
-        if changes and changes[0].get('check'):
-            checks.append(changes[0]['check']['status'])
+        for ch in changes:             # every comparison window's growth check (y/y and q/q): the worst one wins
+            if ch.get('check'):
+                checks.append(ch['check']['status'])
     stated = ix['stated'].get((ident['id'], scope))
-    if stated and t in ('per_unit', 'ratio', 'share'):
-        res['stated'] = _stated_check(rules, stated[0], variants, primary, changes, meta, ix['currency'])
-        if res['stated']['status'] != 'not_compared':
-            checks.append(res['stated']['status'])
+    if stated and t in ('per_unit', 'ratio', 'share'):       # each stated figure on its own basis, in content order
+        res['stated'] = [_stated_check(rules, st, names, variants, changes, meta, ix['currency']) for st in stated]
+        checks += [c['status'] for c in res['stated'] if c['status'] != 'not_compared']
     if checks:
         res['status'] = max(checks, key=_status_rank)
     else:
@@ -1222,17 +1250,35 @@ def _line_check(ix, ident, roles, present, var, measure):
     return out
 
 
-def _stated_check(rules, st, variants, primary, changes, meta, currency):
+def _stated_variant(basis, names, variants):
+    """The variant a stated figure is compared with, on its own basis: the end value for a balance or cumulative figure,
+    the average for an average one (the period value when every input is a period row: `names` is ('period',)), the
+    period value for a flow or rate figure. (wanted, None) when that variant was not computed: a figure is never
+    compared across bases."""
+    if basis in POINT_BASES:
+        want = 'end'
+    elif basis == 'average':
+        want = 'period' if names == ('period',) else 'average'
+    else:
+        want = 'period'
+    return want, (want if want in variants else None)
+
+
+def _stated_check(rules, st, names, variants, changes, meta, currency):
     """A source's own figure for the identity (revenue per account as the post states it) against the computed one, on
-    the matching basis (end or average) and in the same currency; never compared across currencies."""
-    v = 'end' if st['kpi_basis'] in POINT_BASES and 'end' in variants else ('average' if st['kpi_basis'] == 'average' and 'average' in variants else primary)
-    out = {'ref': st['ref'], 'source_ids': st['source_ids'], 'variant': v, 'stated': st['value'], 'stated_prior': st['prior']}
+    the matching basis (end, average or period) and in the same currency; never compared across bases or currencies."""
+    want, v = _stated_variant(st['kpi_basis'], names, variants)
+    out = {'ref': st['ref'], 'kpi_basis': st['kpi_basis'], 'source_ids': st['source_ids'], 'variant': v, 'stated': st['value'],
+           'stated_prior': st['prior']}
     code = str(st.get('unit') or currency).split('/')[0]
     if meta['money'] and F.MONETARY.match(code) and code != meta['currency']:
         out.update(status='not_compared', reason=f'stated in {code}, computed in {meta["currency"]}')
         return out
+    if v is None:
+        out.update(status='not_compared', reason=f'stated on {_a_basis([st["kpi_basis"]])}; no {want} value was computed to compare it with')
+        return out
     diffs = []
-    if v and st['value'] is not None and st['value'] != 0:
+    if st['value'] is not None and st['value'] != 0:
         out['computed'] = variants[v]['value']
         out['diff'] = variants[v]['value'] / st['value'] - 1
         diffs.append(out['diff'])
@@ -1333,8 +1379,14 @@ def _split(ix, mid, scope):
     present = [(f, op) for f, op in facs if op is not None and not op.get('absent')]
     nested = {op['absent'] for _, op in facs if op is not None and op.get('absent')}
     money = [(r, op) for r, op in ([(gs['line'], line)] if line else []) + present if op['money']]
-    mismatch = 'basis_mismatch' in nested or len({(op['currency'], op['currency_basis']) for _, op in money}) > 1
-    rows = {f: _growth_row(op, 'end') for f, op in present}
+    undeclared = [{'id': f, 'problem': 'kpi_basis', 'stated': u['basis'], 'declared': u['declared']} for f, op in present for u in op['undeclared']]
+    mismatch = 'basis_mismatch' in nested or bool(undeclared) or len({(op['currency'], op['currency_basis']) for _, op in money}) > 1
+    if undeclared:            # its growth is never read as the factor's: the split names it and asks for the declared basis
+        out['problems'] = undeclared
+        for u in undeclared:
+            ix['questions'].append({'model': mid, 'about': f'growth_split.{u["id"]}', 'scope': scope,
+                                    'question': f'supply {_name(u["id"])} on {_a_basis(u["declared"])} (stated {u["stated"]})'})
+    rows = {f: None if op['undeclared'] else _growth_row(op, 'end') for f, op in present}    # an undeclared basis is not read
     lrow = _growth_row(line, 'end') if line else None
     window = next((w for w in COMPARISONS if lrow is not None and _any_growth(lrow['cmp'].get(w))
                    and all(r is not None and _any_growth(r['cmp'].get(w)) for r in rows.values())), None)
@@ -1616,7 +1668,9 @@ def _disclosures(ix):
         ix['read'].add('disclosure_changes')
         if not d.get('kpi') or not d.get('last_period') or not d.get('kind'):
             raise ValueError(f'{label}: needs kpi, last_period and kind')
-        if _visible(case, ids):
+        if not _visible(case, ids):
+            _unavailable(ix, label)
+        else:
             out.append({'kpi': d['kpi'], 'scope': _scope(d['scope'], label) if d.get('scope') is not None else None,
                         'last_period': str(d['last_period']), 'kind': d['kind'], 'source_ids': ids})
     return out
@@ -1700,7 +1754,8 @@ def _expansion(ix, mid, splits, readings):
         ndr = next((it for it in rows if it['value'] is not None), None)
         r = {'check': 'expansion_led', 'kind': 'reading', 'model': mid, 'scope': s['scope'], 'window': s['window'], 'per_unit': per,
              'per_unit_log_share': fac['share'], 'expansion_ndr_min': ix['rules']['expansion_ndr_min'],
-             'rule': 'the per-unit share of log growth above one half and NDR above expansion_ndr_min',
+             'rule': 'the per-unit share of log growth above one half (EXPANSION_LOG_SHARE) and NDR above expansion_ndr_min; NDR '
+                     'at the split\'s scope, else the total\'s NDR read beside it (a cross-scope reading, named in ndr_scope)',
              'derived_from': f'growth_splits[{mid}@{s["scope"]}] factor {per}'}
         if ndr is None:
             r['value'] = None
@@ -1708,10 +1763,17 @@ def _expansion(ix, mid, splits, readings):
             ix['questions'].append({'model': mid, 'about': 'expansion_led', 'scope': s['scope'], 'question': 'supply net revenue retention'})
         else:
             c = ndr['cmp'].get('y/y') or {}
-            r.update(value=fac['share'] > 0.5 and ndr['value'] > ix['rules']['expansion_ndr_min'], ndr=ndr['value'], ndr_scope=ndr['scope'],
-                     ndr_ref=ndr['ref'])
+            r.update(value=fac['share'] > EXPANSION_LOG_SHARE and ndr['value'] > ix['rules']['expansion_ndr_min'], ndr=ndr['value'],
+                     ndr_scope=ndr['scope'], ndr_ref=ndr['ref'])
             if c.get('prior') is not None:
                 r['ndr_prior'], r['ndr_change'] = c['prior'], ndr['value'] - c['prior']
+            if ndr['scope'] != s['scope']:
+                # the scope rule (identities, splits) forbids mixing scopes; this reading puts two figures side by side and
+                # computes nothing from them, so it is allowed but named, and the same-scope NDR is asked for
+                r['scope_note'] = (f'cross-scope: NDR is reported for {ndr["scope"]}, not for {s["scope"]}; the reading puts '
+                                   f'the {ndr["scope"]} NDR beside the {s["scope"]} per-unit share')
+                ix['questions'].append({'model': mid, 'about': 'expansion_led', 'scope': s['scope'],
+                                        'question': f'supply net revenue retention for {s["scope"]} (reported for {ndr["scope"]} only)'})
         readings.append(r)
 
 
@@ -1724,6 +1786,7 @@ def _rate_sensitivity(ix, mid, measures):
         ids = _source_ids(case, s, label)
         ix['read'].add('sensitivities')
         if not _visible(case, ids):
+            _unavailable(ix, label)
             continue
         rows.append((str(s.get('driver') or ''), number(s.get('annual_impact'), f'{label}.annual_impact'), _num(s.get('base_annual'), f'{label}.base_annual'), ids, label))
     for (k, scope), items in sorted(ix['kpi'].items()):
@@ -1737,6 +1800,9 @@ def _rate_sensitivity(ix, mid, measures):
             m.update(status='not_computed', reason='not a 25bp move; a sensitivity is never rescaled')
         elif nii is None:
             m.update(status='not_computed', reason='needs the net_interest_income line')
+        elif nii['value'] <= 0:
+            m.update(status='not_computed', net_interest_income=nii['value'],
+                     reason=f'{nii["ref"]} is not positive: a share of it is not read')
         else:
             k = 12 / MONTHS[nii['measure']]
             m.update(status='computed', net_interest_income=nii['value'], annualized_by=k, annual_net_interest_income=nii['value'] * k,
@@ -1756,19 +1822,35 @@ def _margin_only(ix, mid, measures):
         measures.append(m)
         return
     ix['read'] |= {'cycle', 'market'}
-    _source_ids(case, mkt, 'market')
-    _source_ids(case, cyc, 'cycle')
+    # point in time, as every other block: a block none of whose sources was available at as_of is not read (listed under
+    # unavailable). cycle_margin with its own source_ids is its own item; a bare number is part of the cycle block.
+    mkt_seen = _visible(case, _source_ids(case, mkt, 'market'))
+    cyc_ids = _source_ids(case, cyc, 'cycle')
+    cyc_seen = _visible(case, cyc_ids)
     cm = cyc.get('cycle_margin')
-    cm_ids = _source_ids(case, cm, 'cycle.cycle_margin') if isinstance(cm, dict) else _source_ids(case, cyc, 'cycle')
+    cm_ids = _source_ids(case, cm, 'cycle.cycle_margin') if isinstance(cm, dict) else cyc_ids
+    cm_seen = _visible(case, cm_ids)
+    hidden = [ref for ref, seen in (('market', mkt_seen), ('cycle', cyc_seen)) if not seen]
+    if isinstance(cm, dict) and not cm_seen:
+        hidden.append('cycle.cycle_margin')
+    for ref in hidden:
+        _unavailable(ix, ref)
+    if hidden:
+        m['unavailable'] = hidden
+    if not mkt_seen or not cm_seen:
+        m.update(status='not_computed', reason='not available at as_of: ' + ', '.join(hidden))
+        measures.append(m)
+        return
     cm_v = _num(cm.get('value') if isinstance(cm, dict) else cm, 'cycle.cycle_margin', 0)
     price, eps = _num(mkt.get('price'), 'market.price', 0), _num(mkt.get('run_rate_eps'), 'market.run_rate_eps')
     oi = next((it for it in ix['line'].get(('operating_income', 'total'), []) if it['value'] is not None), None)
     rev = next((it for it in ix['line'].get(('revenue', 'total'), []) if it['value'] is not None), None)
     line_margin = oi['value'] / rev['value'] if oi and rev and rev['value'] > 0 else None
-    stated = _num(cyc.get('current_operating_margin'), 'cycle.current_operating_margin')
+    stated = _num(cyc.get('current_operating_margin'), 'cycle.current_operating_margin') if cyc_seen else None
     current = stated if stated is not None else line_margin
     if not price or not eps or eps <= 0 or not cm_v or not current or current <= 0:
-        m.update(status='not_computed', reason='needs a price, a positive run-rate EPS, an evidenced cycle margin and the current margin')
+        m.update(status='not_computed', reason='needs a price, a positive run-rate EPS, an evidenced cycle margin and a positive '
+                                               'current operating margin')
         measures.append(m)
         return
     kind = cm.get('kind') if isinstance(cm, dict) else None
@@ -1778,9 +1860,13 @@ def _margin_only(ix, mid, measures):
              cycle_margin=cm_v, cycle_margin_kind=kind, cycle_margin_source_ids=cm_ids,
              attributed=kind not in (None, 'reported'), normalized_eps=norm, normalized_pe=price / norm,
              derived_from='price / run_rate_eps; normalized EPS = run_rate_eps x cycle_margin / current_operating_margin')
-    if stated is not None and line_margin is not None:
+    if stated is not None and line_margin is not None and line_margin > 0:
         m['at_line_margin'] = {'operating_margin': line_margin, 'normalized_pe': price / (eps * cm_v / line_margin),
                                'derived_from': f'{oi["ref"]}.value / {rev["ref"]}.value; the same normalization at that margin'}
+    elif stated is not None and line_margin is not None:
+        m['at_line_margin'] = {'status': 'not_computed', 'operating_margin': line_margin,
+                               'reason': 'the operating margin of the lines is not positive: no normalization at that margin',
+                               'derived_from': f'{oi["ref"]}.value / {rev["ref"]}.value'}
     measures.append(m)
 
 
@@ -1830,6 +1916,17 @@ def _segment_reconciliation(ix, measures):
     measures.append(m)
 
 
+def _core_row(rows):
+    """The row that speaks for a core identity across its scopes. A row that computed something beats a missing or
+    mismatched one (a segment's figure says more than a total that was never reported); among the rows that computed
+    something the worst check surfaces (SURFACE_ORDER: an inconsistent or partial row at any scope is never hidden behind
+    a consistent one at another); ties go to the total, then the scope name."""
+    done = [r for r in rows if r['status'] in SURFACE_ORDER]
+    if done:
+        return min(done, key=lambda r: (SURFACE_ORDER.index(r['status']), r['scope'] != 'total', r['scope']))
+    return min(rows, key=lambda r: (CORE_ORDER.index(r['status']), len(r.get('missing') or []), r['scope'] != 'total', r['scope']))
+
+
 def _summary(ix, mid, identities, role):
     sp = ix['spec'][mid]
     core = []
@@ -1837,9 +1934,10 @@ def _summary(ix, mid, identities, role):
         if not i.get('core'):
             continue
         rows = [r for r in identities if r['model'] == mid and r['id'] == i['id']]
-        best = min(rows, key=lambda r: (CORE_ORDER.index(r['status']), len(r.get('missing') or []), r['scope'] != 'total', r['scope'])) if rows else None
+        best = _core_row(rows) if rows else None
         core.append({'id': i['id'], 'scope': best['scope'] if best else 'total', 'status': best['status'] if best else 'missing',
-                     'missing': (best or {}).get('missing') or []})
+                     'missing': (best or {}).get('missing') or [],
+                     'scopes': [{'scope': r['scope'], 'status': r['status']} for r in sorted(rows, key=lambda r: (r['scope'] != 'total', r['scope']))]})
     st = [c['status'] for c in core]
     if 'inconsistent' in st:
         status = 'inconsistent'
@@ -1912,6 +2010,12 @@ def review(case, model=None, prior=None):
             # a non-core identity read at a narrower scope needs no row saying it was not read at the total
             identities += [r for r, meta in rows if _keep(r, meta)
                            and not (read and not r['core'] and r['status'] in ('missing', 'scope_mismatch'))]
+    shown = {c['ref'] for r in identities for c in r.get('stated') or []}
+    for (iid, scope), sts in sorted(ix['stated'].items()):      # a source's own identity figure is compared or named here
+        product = any(i['id'] == iid and i['type'] == 'product' for m in mids for i in ix['spec'][m]['model']['identities'])
+        ix['not_read'] += [{'ref': st['ref'], 'reason': 'a product identity is checked against its reported line, not a stated figure'
+                            if product else f'no row of this identity at {scope} computed a value to compare it with'}
+                           for st in sts if st['ref'] not in shown]
     splits = []
     for mid in mids:
         sp = ix['spec'][mid]
@@ -1922,8 +2026,8 @@ def review(case, model=None, prior=None):
                 kp |= _base_refs(sp, sp['ids'][f])[0]
         for scope in sorted({s for (k, s) in ix['kpi'] if k in kp} | {'total'}, key=lambda s: (s != 'total', s)):
             s = _split(ix, mid, scope)
-            if scope == 'total' or s.get('factors'):         # a narrower scope only when a factor's growth was read
-                splits.append(s)
+            if scope == 'total' or s.get('factors') or s.get('problems'):   # a narrower scope when a factor was read or
+                splits.append(s)                                               # one was refused for its basis
     kpis, lines = _tables(ix)
     flags, readings, measures, fals, not_run = [], [], [], [], []
     drops = _disclosures(ix)
@@ -1955,12 +2059,12 @@ def review(case, model=None, prior=None):
         not_run += [{'check': c, 'model': mid, 'reason': 'not computed by this version of the econ review'}
                     for c in declared if c not in CHECKS_RUN]
     _segment_reconciliation(ix, measures)
-    out.update(status='assessed',
+    out.update(status='assessed', check_window=CHECK_WINDOW,
                models=[_summary(ix, mid, identities, 'primary' if n == 0 else 'secondary') for n, mid in enumerate(mids)],
                kpis=kpis, lines=lines, identities=identities, growth_splits=splits,
                flags=sorted(flags, key=lambda f: (SEVERITIES.index(f['severity']), f['key'], f['model'] or '', f['scope'] or '')),
                readings=readings, measures=measures, falsifiers=fals, open_questions=_questions(ix, identities),
-               checks_not_run=not_run, unavailable=sorted(ix['unavailable']),
+               checks_not_run=not_run, unavailable=sorted(set(ix['unavailable'])),
                not_read=sorted(ix['not_read'], key=lambda x: x['ref']) +
                [{'ref': k, 'reason': 'block not read by this version of the econ review'} for k in sorted(case)
                 if k not in CASE_META and k not in ix['read']])
