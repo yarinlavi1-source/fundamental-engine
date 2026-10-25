@@ -380,7 +380,8 @@ def hebrew_table(casefile):
     recomputed: price, fair value (the base value at the engine's own cost of equity for the company) and the gap, the
     bear-bull range of the same valuation, the buy-below price for the owner's required return (where the verdict is taken),
     the expected annual return at today's price against the named market return (engine-consistent, or the generic
-    assumption said as such), the expected price path with its walk-forward accuracy band, the conditional five-year value,
+    assumption said as such), the expected price path with its walk-forward accuracy band (replaced, when inputs.company_path is supplied, by the
+    company's own yearly price table: next-fiscal-year EPS x an evidenced multiple per scenario), the conditional five-year value,
     business quality, how rare the forecast growth is (base rates), what today's price assumes, the main risk (the analyst's
     evidenced key_risk first), confidence and the call. A draft says so; a held valuation shows no value."""
     cf = casefile or {}
@@ -430,6 +431,8 @@ def hebrew_table(casefile):
                                                         f"{'יותר' if d > 0 else 'פחות'} מהשוק בכ־{abs(d) * 100:.1f}% בשנה)"))
             rows.append(('תשואה שנתית צפויה במחיר של היום', f'כ־{irr * 100:.1f}% בשנה{vs}'))
         pp = er.get('expected_price_path') or {}
+        if (cf.get('company_path') or {}).get('status') == 'computed':
+            pp = {}                       # the company's own EPS x multiple path replaces the universe blend (company_path.py)
         if pp.get('status') == 'computed' and pp.get('rows'):
             cells = ' · '.join((str(r['date'])[:7].replace('-', '/') if r.get('date') else f"שנה {r['years']}") + f": {_money(r['price'], cur)}"
                                for r in pp['rows'])
@@ -506,6 +509,12 @@ def hebrew_table(casefile):
         notes.append('זו טיוטה: הניתוח עוד לא עבר בדיקה בלתי תלויה, ולכן זו לא מסקנה סופית.')
     out = [f"**{name} ({company.get('ticker', '')}) — הערכת שווי, {cf.get('as_of') or dc.get('as_of') or ''}**", '',
            '| | |', '|---|---|'] + [f'| {k} | {str(x).replace("|", "/")} |' for k, x in rows]
+    if show:
+        from .company_path import TITLE_HE as CP_TITLE, table_he as cp_table
+        cp_rows, cp_notes = cp_table(cf.get('company_path'), lambda x: _money(x, cur))
+        if cp_rows:
+            out += ['', f'**{CP_TITLE}**', '', '| שנה | דובי | בסיסי | שורי |', '|---|---|---|---|'] + cp_rows
+            notes += cp_notes
     yearly = _yearly_rows(er, price, cur) if show else []
     if yearly:
         out += ['', '**שווי למניה בכל שנה, לפי תרחיש**', '', '| מועד | תרחיש רע | תרחיש סביר | תרחיש טוב |', '|---|---|---|---|'] + yearly
