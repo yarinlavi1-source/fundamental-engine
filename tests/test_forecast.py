@@ -1326,7 +1326,8 @@ class CyclicalGrowthStartTests(unittest.TestCase):
             self.assertEqual(fc['anchors']['route']['cycle_history'], history)
             self.assertNotIn('cyclical_growth_start', {w['code'] for w in fc['warnings']}, history)
             self.assertAlmostEqual(scen(fc['spec'], 'base')['growth'][0], .15)                 # the scale-capped own growth, not 4%
-            self.assertIn('cyclical', json.dumps(fc['cost_of_equity']['components']['adjustments']))   # the industry add-on stays
+            # the cyclical add-on stays: a semiconductor is cyclical by type (evidenced), whatever the word or the history shape
+            self.assertIn('cyclical', json.dumps(fc['cost_of_equity']['components']['adjustments']))
 
     def test_the_cagr_window_not_the_card_window_decides_the_exemption(self):
         # SYNTHETIC Tesla-like history (the 2024 walk-forward formation): two pre-commercial years (losses larger than revenue) long

@@ -59,6 +59,27 @@
   Both are back to the cycle reading. Known limits: a flagged scale-up has no cycle stress in its bear (the forecast's
   cycle-peak bear cap needs the card's peak; its 'cycle average' would be a start-up mean), and the scale-up label cannot
   tell a volume ramp from a price-driven commodity ramp (revenue up every year from a loss year); `inputs.cyclical` decides.
+- Cyclicality is charged in the rates only when it is evidenced (`model_card.cyclical_evidence`). The +0.5pp `cyclical` row of
+  the cost of equity (`forecast.KE_FACTORS`) and the 1pp `cyclicality` component of the decision premium (`decision.PREMIUM`)
+  had been charged from an industry word alone (`CYCLICAL_WORDS`: machinery, construction, travel, hotel, ...): MKT
+  ('industrial machinery', no cycle in its reported history, not normalized) paid +0.5pp on Ke, about 9% of value at Ke, and
+  1pp on the hurdle (11.35% against a Ke of 8.85%). Evidence now means one of: the reported history shows a cycle (the card's
+  `data_shows_cycle`), an analyst confirmed one (card `inputs.cyclical` value true, forecast `inputs.cyclical` treatment
+  'cyclical', or a `method_override` to normalized_cycle_fcff), or the business type is cyclical by economics
+  (`CYCLICAL_TYPES`: semiconductor, commodity). An analyst who rejects a cycle settles it either way. A word-only flag, also a
+  word at a 'peak' margin of a history with no cycle (still valued around the cycle, with its unresolved material issue),
+  charges neither and stays a visible question: the card's `cyclical.industry_word`, forecast route and
+  `cost_of_equity.components.cyclical_evidence` {evidenced, basis, why, question}, the low-severity warning
+  `cyclical_unevidenced`, and the premium component's basis. Evidence only gates a charge: a business the card does not flag
+  is never charged; a card with no recorded basis (hand-written, older dossiers) keeps its stated value. Netting with the
+  decision layer, checked: nothing is counted twice, so nothing is netted. The hurdle is max(index + premium, Ke), two
+  alternatives, and the IRR and every value at the required return shift the explicit and terminal rates uniformly from Ke,
+  so the Ke's cyclical row cancels out of both and reaches the hurdle only through the Ke floor, whose top-up row is already
+  net of the premium component (subtracting it would under-charge exactly when the index leg binds). Unchanged: the 0.5pp and
+  1pp sizes, the cycle normalization paths, the durability-lift exclusion and the cyclical growth start (they still read the
+  word flag; not rate charges). `MARKET_NEUTRAL_ADJUSTMENT` was measured with the word-only rows included, so the market's
+  average add-on is now slightly lower; calibration.market_implied reports the net adjustment on the next sweep. No constant
+  tuned.
 
 ## 0.12.0 — results-day review from analyst comparison (21.10.2026)
 

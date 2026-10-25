@@ -62,6 +62,7 @@ from .facts import digest
 from .finance import number
 from .forecast import RF_DEFAULT, ERP_DEFAULT, STAGE
 from .history import cagr
+from .model_card import cyclical_evidence
 from .plain import MARGIN_BARS
 from .scores import COST_OF_CAPITAL_REFERENCE
 from .decision_summary import RED_FLAG_KEYS
@@ -114,12 +115,24 @@ PREMIUM = {
     'single_stock': .01,                                                      # one stock instead of a diversified index
     'balance_sheet': {'strong': 0., 'adequate': .005, 'weak': .015, 'unknown': .005},
     'funding_dependence': {'self_funded': 0., 'needs_external': .015, 'unknown': .005},
-    'cyclicality': .01,
+    'cyclicality': .01,                                                       # evidenced cyclicality only (CYCLICALITY note below)
     'unproven_economics': {s: STAGE[s]['ke'] for s in ('early', 'growth', 'turnaround')},   # loss-making: the forecast's stage add-on
     'quality_durability': {'strong': 0., 'adequate': .005, 'weak': .015, 'unknown': .01},
     'durability_flag': .005,                                                  # weak ROIC durability / competitive position under a strong-adequate grade
     'near_disqualifying_each': .01, 'near_disqualifying_max': .02,            # forensic or governance red flags one step from a gate
     'cap': .06}
+# CYCLICALITY: like the forecast's +0.5pp cyclical row of the cost of equity (forecast.KE_FACTORS), the 'cyclicality' component is
+# charged only when cyclicality is EVIDENCED (model_card.cyclical_evidence, read from the executed forecast's route when it ran,
+# so both use one reading): the reported history shows a cycle, an analyst confirmed one (inputs.cyclical), or the type is
+# cyclical by economics (semiconductor, commodity). An industry word alone (travel, machinery, construction, ...) had charged
+# 1pp here -- MKT ('industrial machinery', no cycle in its history): hurdle 11.35% against a Ke of 8.85% -- and now stays a
+# visible question (component value 0, its basis names the word and the input that settles it).
+# Netting with the cost-of-equity row, checked and documented: nothing is counted twice, so nothing is netted. The required
+# return is max(index + premium, model cost of equity) -- alternatives, never a sum -- and the IRR and every value at a required
+# return move the explicit Ke and the terminal rate by the same shift from the model Ke (_at_rate), so the Ke's structural
+# cyclical row cancels out of both (up to the table clamps and the terminal WACC floor): it reaches the hurdle only through the Ke
+# floor, whose top-up row (model_cost_of_equity_floor = Ke - index - premium) is already net of this component. Subtracting the
+# Ke row here would under-charge cyclicality exactly when the index leg binds, the only case in which this component counts.
 OWNER_ASPIRATION = .14
 # Marginal band: the hurdle is moved by BAND_STEP plus a widening by the size of possible valuation error, and the
 # index low/high (+ premium) are tested too. A verdict that changes anywhere inside the band is 'marginal'.
@@ -1156,11 +1169,20 @@ def _model_ke(view, fc):
             'd_to_e': _num(lev.get('d_to_e'))}
 
 
-def _required_return(A, index, card, g, rk, an=None, ke=None):
+def _cyclical_evidence(card, fc):
+    """The executed forecast's reading of the cycle evidence (anchors.route.cyclical_evidence: the card plus the analyst's
+    forecast treatment) when it ran, else the model card's own (model_card.cyclical_evidence): one rule for the cost-of-equity
+    row and the hurdle premium."""
+    ev = ((((fc or {}).get('anchors') or {}).get('route') or {}).get('cyclical_evidence'))
+    return ev if isinstance(ev, dict) and 'evidenced' in ev else cyclical_evidence(card)
+
+
+def _required_return(A, index, card, g, rk, an=None, ke=None, cyc_ev=None):
     """Required return = max(index expected return + premium for the risk of permanent loss in this business and balance
     sheet (component by component, PREMIUM, capped), the engine's own cost of equity for the company). Valuation error is not
     part of it (it widens the marginal band). The floor means the value at the required return is never above the model's
-    own base value: a levered equity is never discounted below the rate the engine itself requires of it."""
+    own base value: a levered equity is never discounted below the rate the engine itself requires of it. Cyclicality is
+    charged only when evidenced (cyc_ev, _cyclical_evidence; CYCLICALITY note at PREMIUM)."""
     comps = []
 
     def add(name, value, basis):
@@ -1183,8 +1205,11 @@ def _required_return(A, index, card, g, rk, an=None, ke=None):
                            + (' (priced financing path in the valuation)' if ext and not g['funding'] else ''),
          'self_funded': 'self-funded (model card)', 'unknown': 'funding status not established; treated as above average'}[fk])
     cyc = _card(card, 'cyclical', 'value')
-    add('cyclicality', PREMIUM['cyclicality'] if cyc is True else 0.,
-        'cyclical business: a downturn can force losses at the bottom of the cycle' if cyc is True else
+    ev = cyc_ev or cyclical_evidence(card)
+    charged = cyc is True and ev.get('evidenced') is True
+    add('cyclicality', PREMIUM['cyclicality'] if charged else 0.,
+        f"cyclical business, evidenced ({ev.get('basis')}: {ev.get('why')}); a downturn can force losses at the bottom of the cycle" if charged else
+        f"cyclicality not evidenced, no premium: {ev.get('question') or ev.get('why')}" if cyc is True else
         'not cyclical (model card)' if cyc is False else 'cyclicality not established (no premium added)')
     stage = _card(card, 'stage', 'value')
     opm, fm = _val(an, 'operating_margin'), _val(an, 'fcf_margin')
@@ -2137,7 +2162,8 @@ def decide(parts, inputs=None):
     g = _gates(parts, view, an, idx)
     err_level = ((rk or {}).get('error_size') or {}).get('level')
     wmbt = (val or {}).get('what_must_be_true')
-    req = _required_return(A, index, card, g, rk, an, ke)
+    cyc_ev = _cyclical_evidence(card, fc)
+    req = _required_return(A, index, card, g, rk, an, ke, cyc_ev)
     moat = _moat_test(fc, qcase, view, w, rates) if valued else None
     er = _expected(irrs, view, index, req, rates, qcase, res, an, err_level, w, moat)
     er['debt_weight_source'] = w_src
@@ -2195,7 +2221,7 @@ def decide(parts, inputs=None):
     def effective(eA):
         # only downgrades move the premium: an analyst upgrade never lowers the required return
         prem_A = {k: (eA[k] if (eA[k].get('override') or {}).get('direction') == 'downgrade' else A[k]) for k in ASSESSMENTS}
-        r = _required_return(prem_A, index, card, g, rk, an, ke)
+        r = _required_return(prem_A, index, card, g, rk, an, ke, cyc_ev)
         e = deepcopy(er) if r['hurdle'] == req['hurdle'] and r['components'] == req['components'] else \
             _expected(irrs, view, index, r, rates, qcase, res, an, err_level, w, moat)
         e['debt_weight_source'] = w_src

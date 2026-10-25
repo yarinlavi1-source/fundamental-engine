@@ -34,6 +34,7 @@ from . import base_rates, facts
 from .drivers import build_case, RATIO_KEYS, ABSOLUTE_KEYS, reinvest as _reinvest, capex_for_path as _capex_for_path, value_paused as _value_paused, RELEASE_FLOOR
 from .finance import number
 from .history import history_shape
+from .model_card import cyclical_evidence
 from .valuation import value_company, years, ROUTES, TERMINAL_GROWTH_MAX
 from .valuation_tools import implied_cost_of_equity
 
@@ -105,6 +106,14 @@ TYPE = {
 }
 DEFAULT_TYPE = ((1.0, 3.0), .15, .25, 'nonfinancial')
 NON_OPERATING_TYPES = {'financials': 'residual_income', 'reit': 'nav', 'pre_revenue_biotech': 'rnpv', 'conglomerate': 'sotp'}
+# 'cyclical' is charged only when cyclicality is EVIDENCED (model_card.cyclical_evidence): the reported history shows a cycle,
+# an analyst confirmed one (card inputs.cyclical value true, forecast inputs.cyclical treatment 'cyclical', a method override to
+# normalized_cycle_fcff) or the type is cyclical by economics (semiconductor, commodity). An industry word alone (travel,
+# machinery, construction, ...) had charged it -- MKT ('industrial machinery', no cycle in its history, not normalized) +0.5pp,
+# about 9% of value at Ke -- though the word measures nothing about the company's own cash flows; it now stays a visible
+# question (route cyclical_evidence, components.cyclical_evidence, warning cyclical_unevidenced) until inputs.cyclical settles
+# it. Evidence only gates the charge (a card that does not flag cyclicality is never charged). Not a calibration: the 0.5pp is
+# unchanged and no constant was tuned to the walk-forward.
 KE_FACTORS = (  # (condition, add-on, reason) evaluated on the card and the executed funding result
     ('cyclical', .005, 'cyclical revenue and margins'),
     ('capital_intensity_high', .005, 'high capital intensity (operating leverage on fixed assets)'),
@@ -537,7 +546,12 @@ def _route(card, h, warn, fb=None, cyc_input=None):
             basis = ('no analyst moat assessment; no computed proxy (' + ('; '.join(proxy['blocked']) if proxy['blocked'] else
                                                                            f"evidence too weak: {proxy['evidence']}") + ')')
     weights = {s: (1. if moat == 'strong' else (proxy['weight'] if proxy and s != 'bear' else 0.)) for s in SCEN}
+    # the rate charge needs evidence of a cycle (KE_FACTORS 'cyclical'); a word-only flag stays a visible question
+    evidence = cyclical_evidence(card, (cyc_input or {}).get('treatment'))
+    if cyclical and not evidence['evidenced'] and evidence['question']:
+        warn('cyclical_unevidenced', evidence['question'], 'low')
     return {'method': method, 'business_model': bm, 'stage': stage, 'type': typ, 'archetype': archetype, 'cyclical': cyclical, 'normalize': normalize,
+            'cyclical_evidence': evidence,
             'cycle_path': normalize, 'cycle_peak': peak, 'cycle_treatment': treatment if peak else override, 'cycle_forced': forced,
             'cycle_override': override, 'cycle_history': None if confirmed else cyc_card.get('history'),
             'capital_intensity': (card.get('capital_intensity') or {}).get('value'),
@@ -954,11 +968,12 @@ def _cost_of_equity(route, rf, erp, inputs_notes, external, regulated=False):
         adj.append({'factor': 'regulated_utility', 'value': -(1 - REGULATED_ASSET_RISK) * erp,
                     'reason': f'regulated utility: allowed returns and pass-through costs, asset risk about {REGULATED_ASSET_RISK:.0%} of the '
                               "market's (ERP x 0.5); the leverage it carries is priced by the relevering, not by this row"})
-    cond = {'cyclical': route['cyclical'], 'capital_intensity_high': route['capital_intensity'] == 'high',
+    ev = route.get('cyclical_evidence') or {'evidenced': route['cyclical'], 'why': None}
+    cond = {'cyclical': route['cyclical'] and ev['evidenced'], 'capital_intensity_high': route['capital_intensity'] == 'high',
             'needs_external_funding': bool(external)}
     for key, v, why in KE_FACTORS:
         if cond[key]:
-            adj.append({'factor': key, 'value': v, 'reason': why})
+            adj.append({'factor': key, 'value': v, 'reason': why + (f": {ev['why']}" if key == 'cyclical' and ev.get('why') else '')})
     for d in WEAK_DIMENSIONS:   # at most 4 x 0.25pp = 1pp
         if (route['dimensions'].get(d) or {}).get('assessment') == 'weak':
             adj.append({'factor': 'weak_' + d, 'value': .0025, 'reason': f'model card rates {d} weak'})
@@ -973,8 +988,10 @@ def _cost_of_equity(route, rf, erp, inputs_notes, external, regulated=False):
                 'dropped': dropped, 'kept': [a['factor'] for a in kept],
                 'reason': 'the forecast is mature by its terminal date (growth faded, mature margin): the perpetuity is discounted at '
                           'the mature table without the stage and one-off funding add-ons; structural rows stay, relevered at the same D/E'}
-    return table, {'risk_free': rf, 'equity_risk_premium': erp, 'adjustments': adj, 'notes': inputs_notes, 'terminal': terminal,
-                   'formula': 'table = risk-free + equity risk premium + business-risk adjustments (stage, regulated utility, cyclicality, '
+    # a flagged business shows why the cyclical row is or is not charged (a word-only flag: the open question, no row)
+    cyc_ev = {'cyclical_evidence': {k: ev.get(k) for k in ('evidenced', 'basis', 'why', 'question')}} if route['cyclical'] else {}
+    return table, {'risk_free': rf, 'equity_risk_premium': erp, 'adjustments': adj, 'notes': inputs_notes, 'terminal': terminal, **cyc_ev,
+                   'formula': 'table = risk-free + equity risk premium + business-risk adjustments (stage, regulated utility, evidenced cyclicality, '
                               'capital intensity, funding need of the executed base plan, weak card dimensions): a documented table, NOT price '
                               f'beta, read as the cost of equity at market-average leverage (D/E {MARKET_DE:.2f}). Ku = (table + Kd_e x '
                               f'{MARKET_DE:.2f}) / (1 + {MARKET_DE:.2f}) with Kd_e = risk-free + {DEBT_EXPECTED_PREMIUM:.0%} (expected, not promised, '
@@ -2851,8 +2868,9 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
                'tax': {'effective_3y': meta['tax_effective'], 'used': meta['tax_used']}, 'interest_rate_existing': meta['interest_existing'],
                'roic': h['roic'], 'payout_history_3y': h['payout_history'], 'net_debt_to_ebitda': h['nd_ebitda'], 'opening': open_bal,
                'reinvestment_identity': fixed['identity'],
-               'route': {k: route[k] for k in ('method', 'business_model', 'stage', 'archetype', 'cyclical', 'capital_intensity', 'funding', 'moat', 'moat_basis',
-                                               'moat_weights', 'cycle_path', 'cycle_peak', 'cycle_treatment', 'cycle_history')},
+               'route': {k: route[k] for k in ('method', 'business_model', 'stage', 'archetype', 'cyclical', 'cyclical_evidence', 'capital_intensity',
+                                               'funding', 'moat', 'moat_basis', 'moat_weights', 'cycle_path', 'cycle_peak', 'cycle_treatment',
+                                               'cycle_history')},
                'calendar': {k: cal[k] for k in ('boundaries', 'periods', 'interim', 'fifth_anniversary', 'report_dates', 'fiscal_year_end', 'report_rule')}}
     json.dumps(spec, allow_nan=False)
     return {'forecast_version': FORECAST_VERSION, 'status': 'built', 'reason': None, 'method': method, 'spec': spec,

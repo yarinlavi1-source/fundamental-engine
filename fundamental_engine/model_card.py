@@ -1126,6 +1126,7 @@ def _cyclical(fb, rows, primary, inputs):
         reasons.append('industry flag only: margins are not at a visible peak, so the valuation is not normalized to a historical mean '
                        'unless the reported history shows a cycle or an analyst confirms one (inputs.cyclical with a reason)')
     out = {'value': value, 'normalize': normalize, 'basis': basis, 'industry_flag': flag, 'data_shows_cycle': data_cyc,
+           'industry_word': word or None,
            'computed': flag or data_cyc, 'override': override, 'reasons': reasons, 'history': history, 'peak_question': question,
            'margin_volatility': _num(vol, 'population standard deviation of annual operating margins', ends[-1] if ends else None)}
     if (out['computed'] or value) and position:
@@ -1135,6 +1136,52 @@ def _cyclical(fb, rows, primary, inputs):
         if position != 'mid':
             reasons.append(f'{pos_rule}: possible cycle {position}; do not extrapolate it')
     return out
+
+
+def cyclical_evidence(card, treatment=None):
+    """Is the card's cyclicality EVIDENCED, so that a rate may charge for it (the forecast's KE_FACTORS 'cyclical' row of the cost
+    of equity, the decision's PREMIUM 'cyclicality' component)? {'evidenced', 'basis', 'why', 'question'}.
+    Evidence (first match): an analyst decision -- the forecast's inputs.cyclical treatment 'cyclical', the card's inputs.cyclical
+    (value true confirms, false rejects: settled either way), an analyst method override to normalized_cycle_fcff; the reported
+    history shows a cycle (_cyclical's data test: data_shows_cycle); the business type is cyclical by economics (CYCLICAL_TYPES:
+    semiconductor, commodity). An industry word alone (CYCLICAL_WORDS: travel, machinery, construction, hotel, ...), also with
+    the latest margin at a 'peak' of a history that shows no cycle, says nothing measured about this company's own cash-flow
+    risk: it charges no rate and stays a visible question (inputs.cyclical with a reason and evidence decides). The callers charge
+    only where they already flagged cyclicality (forecast route 'cyclical', card value true): evidence gates a charge, it never
+    adds one. A card with no recorded basis at all (written by hand, or before 25.10.2026) keeps its stated value, labelled 'card'."""
+    card = card or {}
+    cyc = card.get('cyclical') or {}
+    ov = cyc.get('override')
+    val = card.get('valuation') or {}
+    primary = (card.get('business_model') or {}).get('primary')
+    flagged = cyc.get('value') is True
+
+    def out(evidenced, basis, why, question=None):
+        return {'evidenced': bool(evidenced), 'basis': basis, 'why': why, 'question': question}
+    if treatment == 'cyclical':
+        return out(True, 'analyst', "analyst confirms a cycle (forecast inputs.cyclical treatment 'cyclical')")
+    if isinstance(ov, dict) and isinstance(ov.get('value'), bool):
+        return out(ov['value'], 'analyst', f"analyst {'confirms' if ov['value'] else 'rejects'} a cycle ({ov.get('reason')})")
+    if cyc.get('basis') == 'analyst':
+        return out(flagged, 'analyst', 'analyst decision on the model card')
+    if val.get('method') == 'normalized_cycle_fcff' and val.get('default_for_type') is False:
+        return out(True, 'analyst', f"analyst method override to normalized_cycle_fcff ({val.get('override_reason')})")
+    if cyc.get('data_shows_cycle') or cyc.get('basis') == 'data':
+        return out(True, 'data', 'the reported history shows a cycle (margin swings with a demand dip, or a revenue fall and recovery)')
+    if primary in CYCLICAL_TYPES:
+        return out(True, 'type', f'business type {primary} is cyclical by economics (CYCLICAL_TYPES)')
+    if not {'basis', 'industry_flag', 'data_shows_cycle'} & set(cyc):
+        return out(flagged, 'card' if flagged else None, 'cyclical per the model card (no basis recorded)' if flagged else 'not cyclical (model card)')
+    if flagged or cyc.get('industry_flag'):
+        word = cyc.get('industry_word')
+        q = ((f"industry word {word!r}" if word else 'the industry label') + ' flags a possible cycle'
+             + (' and the latest margin sits at a possible peak (valued around the cycle until an analyst decides)'
+                if cyc.get('basis') == 'industry_flag+peak' else '')
+             + ', but the reported history shows no cycle' + (f" (a {cyc['history'].replace('_', '-')} history)" if cyc.get('history') else '')
+             + ': cyclical or not is an analyst question (inputs.cyclical with a reason and evidence); no cyclicality charge in the cost '
+               'of equity or the required return until then' + (f". {cyc['peak_question']}" if cyc.get('peak_question') else ''))
+        return out(False, 'industry_word', 'industry word only: a flag, not evidence of a cycle', q)
+    return out(False, None, 'not cyclical (model card)')
 
 
 def _capital_intensity(rows, sig):
