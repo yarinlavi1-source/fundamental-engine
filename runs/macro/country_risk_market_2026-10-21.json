@@ -1,0 +1,4935 @@
+{
+ "as_of": "2026-10-21",
+ "universe": "universe_2026-10-21",
+ "queue": "large500",
+ "n_sweep": 490,
+ "status_counts": {
+  "no_exposure_data": 365,
+  "partial": 103,
+  "applied": 22
+ },
+ "n_with_row": 125,
+ "n_applied": 22,
+ "n_partial": 103,
+ "coverage_by_value": 0.25521444014671246,
+ "rate": 0.004202076243195677,
+ "rate_rows_json_weights": 0.0049144763577419325,
+ "rate_without_largest_contributor": 0.0030889327973528326,
+ "largest_contributor": {
+  "symbol": "GOOGL",
+  "share_of_weighted_add_on": 0.4884101524234727
+ },
+ "rate_applied_only": 0.0067933127984568424,
+ "value_weighted_add_on": 0.003311372428223978,
+ "value_weighted_mapped_share": 0.7880324479085798,
+ "equal_weighted_add_on": 0.003093900771516085,
+ "median_add_on": 0.002072415612921335,
+ "table": {
+  "title": "Damodaran, Country Default Spreads and Risk Premiums (equity country risk premium = rating-based default spread x relative equity market volatility)",
+  "url": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/datafile/ctryprem.html",
+  "as_of": "2026-02-16"
+ },
+ "formula": "rate = sum(w x add_on) / sum(w x mapped_share) over sweep companies with a country-risk row; w = listing market value; net row = -rate x mapped_share",
+ "rows": [
+  {
+   "symbol": "NVDA",
+   "status": "no_exposure_data",
+   "cap": 5231869000000.0,
+   "rows_cap": 5231869000000.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "AAPL",
+   "status": "no_exposure_data",
+   "cap": 5004928089200.0,
+   "rows_cap": 5004928089200.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "GOOGL",
+   "status": "partial",
+   "cap": 4209321400000.0,
+   "rows_cap": 9557745000000.0,
+   "channel": "revenue",
+   "add_on": 0.006351597017148417,
+   "mapped_share": 0.9409809450992463,
+   "annual_report": true
+  },
+  {
+   "symbol": "MSFT",
+   "status": "no_exposure_data",
+   "cap": 3961677030358.0,
+   "rows_cap": 3961677030358.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "AMZN",
+   "status": "partial",
+   "cap": 2830867996971.0,
+   "rows_cap": 2830867996971.0,
+   "channel": "revenue",
+   "add_on": 0.0006225825889494563,
+   "mapped_share": 0.8500998711160458,
+   "annual_report": true
+  },
+  {
+   "symbol": "META",
+   "status": "no_exposure_data",
+   "cap": 1797112791364.0,
+   "rows_cap": 1797112791364.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "AVGO",
+   "status": "no_exposure_data",
+   "cap": 1597208816530.0,
+   "rows_cap": 1597208816530.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "TSLA",
+   "status": "partial",
+   "cap": 1453670413836.0,
+   "rows_cap": 1453670413836.0,
+   "channel": "revenue",
+   "add_on": 0.0015031752559924916,
+   "mapped_share": 0.7233066531684014,
+   "annual_report": true
+  },
+  {
+   "symbol": "BRK-B",
+   "status": "no_exposure_data",
+   "cap": 1174265100987.0,
+   "rows_cap": null,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "LLY",
+   "status": "no_exposure_data",
+   "cap": 1167602822002.0,
+   "rows_cap": 1167602822002.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "MU",
+   "status": "no_exposure_data",
+   "cap": 1023824864539.0,
+   "rows_cap": 1023824864539.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "WMT",
+   "status": "no_exposure_data",
+   "cap": 941735678807.0,
+   "rows_cap": 941735678807.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "AMD",
+   "status": "no_exposure_data",
+   "cap": 878353196348.0,
+   "rows_cap": 878353196348.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "V",
+   "status": "partial",
+   "cap": 719919415257.0,
+   "rows_cap": 719919415257.0,
+   "channel": "revenue",
+   "add_on": 0.0,
+   "mapped_share": 0.390825,
+   "annual_report": true
+  },
+  {
+   "symbol": "JNJ",
+   "status": "no_exposure_data",
+   "cap": 611608164933.0,
+   "rows_cap": 611608164933.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "MA",
+   "status": "partial",
+   "cap": 539972527016.0,
+   "rows_cap": 539972527016.0,
+   "channel": "revenue",
+   "add_on": 0,
+   "mapped_share": 0.0,
+   "annual_report": true
+  },
+  {
+   "symbol": "ABBV",
+   "status": "no_exposure_data",
+   "cap": 499528714124.0,
+   "rows_cap": 499528714124.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "INTC",
+   "status": "no_exposure_data",
+   "cap": 486384947097.0,
+   "rows_cap": 486384947097.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "PLTR",
+   "status": "no_exposure_data",
+   "cap": 466358683142.0,
+   "rows_cap": 466358683142.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "CVX",
+   "status": "no_exposure_data",
+   "cap": 443303800747.0,
+   "rows_cap": 443303800747.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "COST",
+   "status": "no_exposure_data",
+   "cap": 441148560810.0,
+   "rows_cap": 441148560810.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "CSCO",
+   "status": "partial",
+   "cap": 419885501975.0,
+   "rows_cap": 419885501975.0,
+   "channel": "revenue",
+   "add_on": 0.0,
+   "mapped_share": 0.5432293722858271,
+   "annual_report": true
+  },
+  {
+   "symbol": "KO",
+   "status": "no_exposure_data",
+   "cap": 401944150281.0,
+   "rows_cap": 401944150281.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "ORCL",
+   "status": "partial",
+   "cap": 392852233899.0,
+   "rows_cap": 392852233899.0,
+   "channel": "revenue",
+   "add_on": 0.004724799827783304,
+   "mapped_share": 0.3396677405466395,
+   "annual_report": true
+  },
+  {
+   "symbol": "PG",
+   "status": "no_exposure_data",
+   "cap": 366539849231.0,
+   "rows_cap": 366539849231.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "UNH",
+   "status": "no_exposure_data",
+   "cap": 365213391347.0,
+   "rows_cap": 365213391347.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "MRK",
+   "status": "no_exposure_data",
+   "cap": 354359862366.0,
+   "rows_cap": 354359862366.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "LRCX",
+   "status": "applied",
+   "cap": 340637711336.0,
+   "rows_cap": 340637711336.0,
+   "channel": "revenue",
+   "add_on": 0.005886982407245997,
+   "mapped_share": 1.0,
+   "annual_report": true
+  },
+  {
+   "symbol": "CAT",
+   "status": "no_exposure_data",
+   "cap": 333627437687.0,
+   "rows_cap": 333627437687.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "AMAT",
+   "status": "no_exposure_data",
+   "cap": 327843039678.0,
+   "rows_cap": 327843039678.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "GE",
+   "status": "no_exposure_data",
+   "cap": 322972459047.0,
+   "rows_cap": 322972459047.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "PM",
+   "status": "no_exposure_data",
+   "cap": 313359231911.0,
+   "rows_cap": 313359231911.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "HD",
+   "status": "no_exposure_data",
+   "cap": 309164061305.0,
+   "rows_cap": 309164061305.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "NFLX",
+   "status": "no_exposure_data",
+   "cap": 290851186369.0,
+   "rows_cap": 290851186369.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "DELL",
+   "status": "no_exposure_data",
+   "cap": 289574558860.0,
+   "rows_cap": 289574558860.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "PANW",
+   "status": "partial",
+   "cap": 283805100000.0,
+   "rows_cap": 283805100000.0,
+   "channel": "revenue",
+   "add_on": 0.0045865786585365855,
+   "mapped_share": 0.9502613240418119,
+   "annual_report": true
+  },
+  {
+   "symbol": "RTX",
+   "status": "no_exposure_data",
+   "cap": 258917817044.0,
+   "rows_cap": 258917817044.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "TXN",
+   "status": "no_exposure_data",
+   "cap": 252193348489.0,
+   "rows_cap": 252193348489.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "TMO",
+   "status": "partial",
+   "cap": 251198911163.0,
+   "rows_cap": 251198911163.0,
+   "channel": "revenue",
+   "add_on": 0.004435667766406319,
+   "mapped_share": 0.9641799084298411,
+   "annual_report": true
+  },
+  {
+   "symbol": "ARM",
+   "status": "partial",
+   "cap": 242657800219.0,
+   "rows_cap": 242657800219.0,
+   "channel": "revenue",
+   "add_on": 0.003451808943089431,
+   "mapped_share": 0.9241869918699187,
+   "annual_report": true
+  },
+  {
+   "symbol": "GEV",
+   "status": "no_exposure_data",
+   "cap": 241948078324.0,
+   "rows_cap": 241948078324.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "CCZ",
+   "status": "no_exposure_data",
+   "cap": 232435695532.0,
+   "rows_cap": 310150836481.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "LIN",
+   "status": "no_exposure_data",
+   "cap": 232075853261.0,
+   "rows_cap": 232075853261.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "ANET",
+   "status": "no_exposure_data",
+   "cap": 230741049352.0,
+   "rows_cap": 230741049352.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "AMGN",
+   "status": "no_exposure_data",
+   "cap": 229736164205.0,
+   "rows_cap": 229736164205.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "IBM",
+   "status": "no_exposure_data",
+   "cap": 222711148452.0,
+   "rows_cap": 222711148452.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "SHOP",
+   "status": "no_exposure_data",
+   "cap": 221661433937.0,
+   "rows_cap": 221661433937.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "KLAC",
+   "status": "partial",
+   "cap": 217153080269.0,
+   "rows_cap": 217153080269.0,
+   "channel": "revenue",
+   "add_on": 0.005123274003871726,
+   "mapped_share": 0.9464859321523158,
+   "annual_report": true
+  },
+  {
+   "symbol": "MRVL",
+   "status": "partial",
+   "cap": 207904221000.0,
+   "rows_cap": 207904221000.0,
+   "channel": "revenue",
+   "add_on": 0.0035768030166207013,
+   "mapped_share": 0.7079418153418104,
+   "annual_report": true
+  },
+  {
+   "symbol": "CRM",
+   "status": "partial",
+   "cap": 199536350000.0,
+   "rows_cap": 199536350000.0,
+   "channel": "revenue",
+   "add_on": 0.003257202889825406,
+   "mapped_share": 0.3451414810355208,
+   "annual_report": true
+  },
+  {
+   "symbol": "APH",
+   "status": "no_exposure_data",
+   "cap": 197967823856.0,
+   "rows_cap": 197967823856.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "ADI",
+   "status": "no_exposure_data",
+   "cap": 191088391123.0,
+   "rows_cap": 191088391123.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "GILD",
+   "status": "no_exposure_data",
+   "cap": 189799935576.0,
+   "rows_cap": 189799935576.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "DIS",
+   "status": "no_exposure_data",
+   "cap": 189227617590.0,
+   "rows_cap": 189227617590.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "VZ",
+   "status": "no_exposure_data",
+   "cap": 183433325168.0,
+   "rows_cap": 183433325168.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "QCOM",
+   "status": "no_exposure_data",
+   "cap": 182247092311.0,
+   "rows_cap": 182247092311.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "PEP",
+   "status": "no_exposure_data",
+   "cap": 182021327658.0,
+   "rows_cap": 182021327658.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "ABT",
+   "status": "no_exposure_data",
+   "cap": 180063685782.0,
+   "rows_cap": 180063685782.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "COP",
+   "status": "no_exposure_data",
+   "cap": 174482255450.0,
+   "rows_cap": 174482255450.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "MCD",
+   "status": "no_exposure_data",
+   "cap": 171723370328.0,
+   "rows_cap": 171723370328.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "UNP",
+   "status": "no_exposure_data",
+   "cap": 170505608681.0,
+   "rows_cap": 170505608681.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "DE",
+   "status": "no_exposure_data",
+   "cap": 169055133324.0,
+   "rows_cap": 169055133324.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "SCCO",
+   "status": "no_exposure_data",
+   "cap": 168351451637.0,
+   "rows_cap": 168351451637.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "PFE",
+   "status": "no_exposure_data",
+   "cap": 167798390460.0,
+   "rows_cap": 167798390460.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "TMUS",
+   "status": "no_exposure_data",
+   "cap": 167433312073.0,
+   "rows_cap": 167433312073.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "T",
+   "status": "no_exposure_data",
+   "cap": 158975347080.0,
+   "rows_cap": 287896797284.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "ACN",
+   "status": "no_exposure_data",
+   "cap": 158440496321.0,
+   "rows_cap": 158440496321.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "DHR",
+   "status": "no_exposure_data",
+   "cap": 157771160099.0,
+   "rows_cap": 157771160099.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "ISRG",
+   "status": "no_exposure_data",
+   "cap": 153032980501.0,
+   "rows_cap": 153032980501.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "ETN",
+   "status": "no_exposure_data",
+   "cap": 152058600000.0,
+   "rows_cap": 152058600000.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "BA",
+   "status": "applied",
+   "cap": 151292629228.0,
+   "rows_cap": 151292629228.0,
+   "channel": "revenue",
+   "add_on": 0.0067967339235214565,
+   "mapped_share": 1.0,
+   "annual_report": true
+  },
+  {
+   "symbol": "NOW",
+   "status": "partial",
+   "cap": 150302240000.0,
+   "rows_cap": 150302240000.0,
+   "channel": "revenue",
+   "add_on": 0.003727390872119295,
+   "mapped_share": 0.8849224280765176,
+   "annual_report": true
+  },
+  {
+   "symbol": "UBER",
+   "status": "applied",
+   "cap": 142897506065.0,
+   "rows_cap": 142897506065.0,
+   "channel": "revenue",
+   "add_on": 0.008663304823423111,
+   "mapped_share": 1.0,
+   "annual_report": true
+  },
+  {
+   "symbol": "MNST",
+   "status": "no_exposure_data",
+   "cap": 137525571378.0,
+   "rows_cap": 137525571378.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "MPC",
+   "status": "no_exposure_data",
+   "cap": 133023881985.0,
+   "rows_cap": 133023881985.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "VRTX",
+   "status": "no_exposure_data",
+   "cap": 127224710802.0,
+   "rows_cap": 127224710802.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "LMT",
+   "status": "partial",
+   "cap": 126526414517.0,
+   "rows_cap": 126526414517.0,
+   "channel": "revenue",
+   "add_on": 0.0029387293199019293,
+   "mapped_share": 0.9752291866538748,
+   "annual_report": true
+  },
+  {
+   "symbol": "FTNT",
+   "status": "no_exposure_data",
+   "cap": 125831891490.0,
+   "rows_cap": 125831891490.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "NEM",
+   "status": "no_exposure_data",
+   "cap": 124346224901.0,
+   "rows_cap": 124346224901.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "MO",
+   "status": "no_exposure_data",
+   "cap": 123711327477.0,
+   "rows_cap": 123711327477.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "BKNG",
+   "status": "no_exposure_data",
+   "cap": 122174469300.0,
+   "rows_cap": 122174469300.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "PH",
+   "status": "applied",
+   "cap": 121857382118.0,
+   "rows_cap": 121857382118.0,
+   "channel": "revenue",
+   "add_on": 0.004853110609795805,
+   "mapped_share": 1.0,
+   "annual_report": true
+  },
+  {
+   "symbol": "BMY",
+   "status": "no_exposure_data",
+   "cap": 120172903212.0,
+   "rows_cap": 120172903212.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "MDT",
+   "status": "no_exposure_data",
+   "cap": 118665622055.0,
+   "rows_cap": 118665622055.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "CVS",
+   "status": "no_exposure_data",
+   "cap": 118534973799.0,
+   "rows_cap": 118534973799.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "MCK",
+   "status": "no_exposure_data",
+   "cap": 117806400486.0,
+   "rows_cap": 117806400486.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "PSX",
+   "status": "no_exposure_data",
+   "cap": 115935527144.0,
+   "rows_cap": 115935527144.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "GLW",
+   "status": "no_exposure_data",
+   "cap": 114340687057.0,
+   "rows_cap": 114340687057.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "SYK",
+   "status": "no_exposure_data",
+   "cap": 114281753325.0,
+   "rows_cap": 114281753325.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "ADP",
+   "status": "no_exposure_data",
+   "cap": 113736081822.0,
+   "rows_cap": 113736081822.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "SBUX",
+   "status": "no_exposure_data",
+   "cap": 111571800000.0,
+   "rows_cap": 111571800000.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "SNOW",
+   "status": "partial",
+   "cap": 111255480000.0,
+   "rows_cap": 111255480000.0,
+   "channel": "revenue",
+   "add_on": 0.0031022920870565117,
+   "mapped_share": 0.9732537480150284,
+   "annual_report": true
+  },
+  {
+   "symbol": "LOW",
+   "status": "no_exposure_data",
+   "cap": 109921703402.0,
+   "rows_cap": 109921703402.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "NET",
+   "status": "partial",
+   "cap": 105962201590.0,
+   "rows_cap": 105962201590.0,
+   "channel": "revenue",
+   "add_on": 0.005937138593972057,
+   "mapped_share": 0.923172582967125,
+   "annual_report": true
+  },
+  {
+   "symbol": "ABNB",
+   "status": "no_exposure_data",
+   "cap": 105062935764.0,
+   "rows_cap": 105062935764.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "SO",
+   "status": "no_exposure_data",
+   "cap": 102692901975.0,
+   "rows_cap": 214905945667.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "TT",
+   "status": "no_exposure_data",
+   "cap": 102319578232.0,
+   "rows_cap": 102319578232.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "MAR",
+   "status": "no_exposure_data",
+   "cap": 101881388722.0,
+   "rows_cap": 101881388722.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "FCX",
+   "status": "no_exposure_data",
+   "cap": 100162222229.0,
+   "rows_cap": 100162222229.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "HCA",
+   "status": "no_exposure_data",
+   "cap": 98482202320.0,
+   "rows_cap": 98482202320.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "ADBE",
+   "status": "no_exposure_data",
+   "cap": 96167428000.0,
+   "rows_cap": 96167428000.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "DDOG",
+   "status": "no_exposure_data",
+   "cap": 93488773249.0,
+   "rows_cap": 93488773249.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "ELV",
+   "status": "no_exposure_data",
+   "cap": 93303674637.0,
+   "rows_cap": 93303674637.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "MELI",
+   "status": "partial",
+   "cap": 93267920575.0,
+   "rows_cap": 93267920575.0,
+   "channel": "revenue",
+   "add_on": 0.0,
+   "mapped_share": 0.0017651334233205274,
+   "annual_report": true
+  },
+  {
+   "symbol": "CEG",
+   "status": "no_exposure_data",
+   "cap": 93250159079.0,
+   "rows_cap": 93250159079.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "GD",
+   "status": "no_exposure_data",
+   "cap": 92376343089.0,
+   "rows_cap": 92376343089.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "PWR",
+   "status": "no_exposure_data",
+   "cap": 91110208631.0,
+   "rows_cap": 91110208631.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "MRNA",
+   "status": "no_exposure_data",
+   "cap": 90582630855.0,
+   "rows_cap": 90582630855.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "WM",
+   "status": "no_exposure_data",
+   "cap": 90499514809.0,
+   "rows_cap": 90499514809.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "APP",
+   "status": "no_exposure_data",
+   "cap": 90061277120.0,
+   "rows_cap": 90061277120.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "JCI",
+   "status": "no_exposure_data",
+   "cap": 89783000683.0,
+   "rows_cap": 89783000683.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "CDNS",
+   "status": "no_exposure_data",
+   "cap": 89739562980.0,
+   "rows_cap": 89739562980.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "EMR",
+   "status": "no_exposure_data",
+   "cap": 89549212000.0,
+   "rows_cap": 89549212000.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "CSX",
+   "status": "no_exposure_data",
+   "cap": 88696499026.0,
+   "rows_cap": 88696499026.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "HWM",
+   "status": "partial",
+   "cap": 87748271822.0,
+   "rows_cap": 87748271822.0,
+   "channel": "revenue",
+   "add_on": 0.002517195831313621,
+   "mapped_share": 0.8757876878332526,
+   "annual_report": true
+  },
+  {
+   "symbol": "SNPS",
+   "status": "no_exposure_data",
+   "cap": 87114186539.0,
+   "rows_cap": 87114186539.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "INTU",
+   "status": "no_exposure_data",
+   "cap": 87017386320.0,
+   "rows_cap": 87017386320.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "WMB",
+   "status": "no_exposure_data",
+   "cap": 86086526679.0,
+   "rows_cap": 86086526679.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "CTAS",
+   "status": "no_exposure_data",
+   "cap": 84299042244.0,
+   "rows_cap": 84299042244.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "DASH",
+   "status": "partial",
+   "cap": 83856149748.0,
+   "rows_cap": 83856149748.0,
+   "channel": "revenue",
+   "add_on": 0.0,
+   "mapped_share": 0.8354596486112124,
+   "annual_report": true
+  },
+  {
+   "symbol": "MMM",
+   "status": "no_exposure_data",
+   "cap": 83552188778.0,
+   "rows_cap": 83552188778.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "UPS",
+   "status": "no_exposure_data",
+   "cap": 82917172982.0,
+   "rows_cap": 82917172982.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "EOG",
+   "status": "no_exposure_data",
+   "cap": 82692024596.0,
+   "rows_cap": 82692024596.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "MDLZ",
+   "status": "no_exposure_data",
+   "cap": 80841352330.0,
+   "rows_cap": 80841352330.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "REGN",
+   "status": "no_exposure_data",
+   "cap": 80514918816.0,
+   "rows_cap": 80514918816.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "SHW",
+   "status": "no_exposure_data",
+   "cap": 80501030453.0,
+   "rows_cap": 80501030453.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "ECL",
+   "status": "no_exposure_data",
+   "cap": 80157160742.0,
+   "rows_cap": 80157160742.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "EPD",
+   "status": "no_exposure_data",
+   "cap": 79468759819.0,
+   "rows_cap": 79468759819.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "VRT",
+   "status": "no_exposure_data",
+   "cap": 79338362692.0,
+   "rows_cap": 79338362692.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "CI",
+   "status": "no_exposure_data",
+   "cap": 78875785071.0,
+   "rows_cap": 78875785071.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "HLT",
+   "status": "no_exposure_data",
+   "cap": 77881461456.0,
+   "rows_cap": 77881461456.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "ITW",
+   "status": "no_exposure_data",
+   "cap": 76944416000.0,
+   "rows_cap": 76944416000.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "ROST",
+   "status": "no_exposure_data",
+   "cap": 76240679233.0,
+   "rows_cap": 76240679233.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "MSI",
+   "status": "no_exposure_data",
+   "cap": 75945099313.0,
+   "rows_cap": 75945099313.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "LITE",
+   "status": "applied",
+   "cap": 75592299161.0,
+   "rows_cap": 75592299161.0,
+   "channel": "revenue",
+   "add_on": 0.011475622627737226,
+   "mapped_share": 0.9956204379562044,
+   "annual_report": true
+  },
+  {
+   "symbol": "RCL",
+   "status": "no_exposure_data",
+   "cap": 75413464125.0,
+   "rows_cap": 75413464125.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "CL",
+   "status": "no_exposure_data",
+   "cap": 74447970500.0,
+   "rows_cap": 74447970500.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "KMI",
+   "status": "no_exposure_data",
+   "cap": 74352921752.0,
+   "rows_cap": 74352921752.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "HPE",
+   "status": "partial",
+   "cap": 74165457203.0,
+   "rows_cap": 74165457203.0,
+   "channel": "revenue",
+   "add_on": 0.0074360232680195934,
+   "mapped_share": 0.9286797294145089,
+   "annual_report": true
+  },
+  {
+   "symbol": "SLB",
+   "status": "no_exposure_data",
+   "cap": 72856591210.0,
+   "rows_cap": 72856591210.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "NSC",
+   "status": "no_exposure_data",
+   "cap": 72656316498.0,
+   "rows_cap": 72656316498.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "GM",
+   "status": "no_exposure_data",
+   "cap": 72609115018.0,
+   "rows_cap": 72609115018.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "NOC",
+   "status": "no_exposure_data",
+   "cap": 72544484227.0,
+   "rows_cap": 72544484227.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "ORLY",
+   "status": "no_exposure_data",
+   "cap": 72054137743.0,
+   "rows_cap": 72054137743.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "CMI",
+   "status": "no_exposure_data",
+   "cap": 71878758597.0,
+   "rows_cap": 71878758597.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "RSG",
+   "status": "no_exposure_data",
+   "cap": 70131958351.0,
+   "rows_cap": 70131958351.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "TGT",
+   "status": "no_exposure_data",
+   "cap": 69639146661.0,
+   "rows_cap": 69639146661.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "FDX",
+   "status": "no_exposure_data",
+   "cap": 69529040394.0,
+   "rows_cap": 69529040394.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "AEP",
+   "status": "no_exposure_data",
+   "cap": 67897237741.0,
+   "rows_cap": 67897237741.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "BE",
+   "status": "no_exposure_data",
+   "cap": 66627976212.0,
+   "rows_cap": 66627976212.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "HON",
+   "status": "no_exposure_data",
+   "cap": 66551063300.0,
+   "rows_cap": 66551063300.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "APD",
+   "status": "no_exposure_data",
+   "cap": 66505033535.0,
+   "rows_cap": 66505033535.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "BSX",
+   "status": "no_exposure_data",
+   "cap": 65287790146.0,
+   "rows_cap": 65287790146.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "COR",
+   "status": "no_exposure_data",
+   "cap": 64881236100.0,
+   "rows_cap": 64881236100.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "CVNA",
+   "status": "no_exposure_data",
+   "cap": 64608227937.0,
+   "rows_cap": 64608227937.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "URI",
+   "status": "no_exposure_data",
+   "cap": 63798551225.0,
+   "rows_cap": 63798551225.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "TDG",
+   "status": "partial",
+   "cap": 63150665986.0,
+   "rows_cap": 63150665986.0,
+   "channel": "revenue",
+   "add_on": 0.0,
+   "mapped_share": 0.6267693352961159,
+   "annual_report": true
+  },
+  {
+   "symbol": "TRGP",
+   "status": "no_exposure_data",
+   "cap": 62785402949.0,
+   "rows_cap": 62785402949.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "OXY",
+   "status": "partial",
+   "cap": 62697255909.0,
+   "rows_cap": 62697255909.0,
+   "channel": "revenue",
+   "add_on": 0,
+   "mapped_share": 0.0,
+   "annual_report": true
+  },
+  {
+   "symbol": "BRKRP",
+   "status": "partial",
+   "cap": 62560258743.0,
+   "rows_cap": 70996394070.0,
+   "channel": "revenue",
+   "add_on": 0.005201301556816529,
+   "mapped_share": 0.9215480867161356,
+   "annual_report": true
+  },
+  {
+   "symbol": "GWW",
+   "status": "no_exposure_data",
+   "cap": 62081867613.0,
+   "rows_cap": 62081867613.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "MPWR",
+   "status": "no_exposure_data",
+   "cap": 61608613380.0,
+   "rows_cap": 61608613380.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "TEL",
+   "status": "no_exposure_data",
+   "cap": 61472343701.0,
+   "rows_cap": 61472343701.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "LNG",
+   "status": "no_exposure_data",
+   "cap": 59192689683.0,
+   "rows_cap": 59192689683.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "NUE",
+   "status": "no_exposure_data",
+   "cap": 59153295003.0,
+   "rows_cap": 59153295003.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "MPLX",
+   "status": "no_exposure_data",
+   "cap": 58986273043.0,
+   "rows_cap": 58986273043.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "FAST",
+   "status": "no_exposure_data",
+   "cap": 58545326174.0,
+   "rows_cap": 58545326174.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "CAH",
+   "status": "no_exposure_data",
+   "cap": 58503468514.0,
+   "rows_cap": 58503468514.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "OKE",
+   "status": "no_exposure_data",
+   "cap": 58258764624.0,
+   "rows_cap": 58258764624.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "NXPI",
+   "status": "no_exposure_data",
+   "cap": 58045671213.0,
+   "rows_cap": 58045671213.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "NTRA",
+   "status": "partial",
+   "cap": 57574064381.0,
+   "rows_cap": 57574064381.0,
+   "channel": "revenue",
+   "add_on": 0.0,
+   "mapped_share": 0.9818534477712063,
+   "annual_report": true
+  },
+  {
+   "symbol": "MSTR",
+   "status": "partial",
+   "cap": 57397435046.0,
+   "rows_cap": 202583154073.0,
+   "channel": "revenue",
+   "add_on": 0.004958567886126902,
+   "mapped_share": 0.9112508984081151,
+   "annual_report": true
+  },
+  {
+   "symbol": "KEYS",
+   "status": "no_exposure_data",
+   "cap": 57178400056.0,
+   "rows_cap": 57178400056.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "PCAR",
+   "status": "partial",
+   "cap": 57068488204.0,
+   "rows_cap": 57068488204.0,
+   "channel": "revenue",
+   "add_on": 0.0019693822245190683,
+   "mapped_share": 0.786639385757678,
+   "annual_report": true
+  },
+  {
+   "symbol": "FANG",
+   "status": "no_exposure_data",
+   "cap": 56878546581.0,
+   "rows_cap": 56878546581.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "AME",
+   "status": "no_exposure_data",
+   "cap": 56677964742.0,
+   "rows_cap": 56677964742.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "DVN",
+   "status": "no_exposure_data",
+   "cap": 56012000000.0,
+   "rows_cap": 56012000000.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "CRH",
+   "status": "partial",
+   "cap": 55675653954.0,
+   "rows_cap": 55675653954.0,
+   "channel": "revenue",
+   "add_on": 0.0021412061046278737,
+   "mapped_share": 0.9072555878975619,
+   "annual_report": true
+  },
+  {
+   "symbol": "BKR",
+   "status": "no_exposure_data",
+   "cap": 55401139903.0,
+   "rows_cap": 55401139903.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "NKE",
+   "status": "partial",
+   "cap": 55268341527.0,
+   "rows_cap": 55268341527.0,
+   "channel": "revenue",
+   "add_on": 0.0,
+   "mapped_share": 0.438768912453123,
+   "annual_report": true
+  },
+  {
+   "symbol": "GRMN",
+   "status": "no_exposure_data",
+   "cap": 55186681702.0,
+   "rows_cap": 55186681702.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "D",
+   "status": "no_exposure_data",
+   "cap": 54715309287.0,
+   "rows_cap": 54715309287.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "TEAM",
+   "status": "no_exposure_data",
+   "cap": 54150627058.0,
+   "rows_cap": 54150627058.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "EBAY",
+   "status": "partial",
+   "cap": 53609150000.0,
+   "rows_cap": 53609150000.0,
+   "channel": "revenue",
+   "add_on": 0.001543054054054054,
+   "mapped_share": 0.8635135135135135,
+   "annual_report": true
+  },
+  {
+   "symbol": "SRE",
+   "status": "no_exposure_data",
+   "cap": 53449814446.0,
+   "rows_cap": 65460591695.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "TER",
+   "status": "partial",
+   "cap": 52457011848.0,
+   "rows_cap": 52457011848.0,
+   "channel": "revenue",
+   "add_on": 0.011074542766449407,
+   "mapped_share": 0.8666135427194278,
+   "annual_report": true
+  },
+  {
+   "symbol": "BDX",
+   "status": "no_exposure_data",
+   "cap": 51955058232.0,
+   "rows_cap": 51955058232.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "FIX",
+   "status": "no_exposure_data",
+   "cap": 51526961259.0,
+   "rows_cap": 51526961259.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "VEEV",
+   "status": "no_exposure_data",
+   "cap": 51292723680.0,
+   "rows_cap": 51292723680.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "AZO",
+   "status": "partial",
+   "cap": 50573990747.0,
+   "rows_cap": 50573990747.0,
+   "channel": "revenue",
+   "add_on": 0.0,
+   "mapped_share": 0.8802922605580937,
+   "annual_report": true
+  },
+  {
+   "symbol": "ADSK",
+   "status": "no_exposure_data",
+   "cap": 50306300000.0,
+   "rows_cap": 50306300000.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "EW",
+   "status": "no_exposure_data",
+   "cap": 50273608000.0,
+   "rows_cap": 50273608000.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "VST",
+   "status": "no_exposure_data",
+   "cap": 50244588692.0,
+   "rows_cap": 50244588692.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "HUM",
+   "status": "no_exposure_data",
+   "cap": 49830926214.0,
+   "rows_cap": 49830926214.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "ALAB",
+   "status": "partial",
+   "cap": 49717361104.0,
+   "rows_cap": 49717361104.0,
+   "channel": "revenue",
+   "add_on": 0.0036405276091610213,
+   "mapped_share": 0.9479381836309786,
+   "annual_report": true
+  },
+  {
+   "symbol": "DAL",
+   "status": "no_exposure_data",
+   "cap": 49100000919.0,
+   "rows_cap": 49100000919.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "CIEN",
+   "status": "partial",
+   "cap": 48810494305.0,
+   "rows_cap": 48810494305.0,
+   "channel": "revenue",
+   "add_on": 0.0033736698363164156,
+   "mapped_share": 0.24386168214031345,
+   "annual_report": true
+  },
+  {
+   "symbol": "ETR",
+   "status": "no_exposure_data",
+   "cap": 48436349492.0,
+   "rows_cap": 48436349492.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "WAB",
+   "status": "no_exposure_data",
+   "cap": 48433497416.0,
+   "rows_cap": 48433497416.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "PYPL",
+   "status": "no_exposure_data",
+   "cap": 48342093990.0,
+   "rows_cap": 48342093990.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "TEVA",
+   "status": "partial",
+   "cap": 48138381230.0,
+   "rows_cap": 48138381230.0,
+   "channel": "revenue",
+   "add_on": 0.0023552903001506547,
+   "mapped_share": 0.8243133619191101,
+   "annual_report": true
+  },
+  {
+   "symbol": "A",
+   "status": "no_exposure_data",
+   "cap": 47899712295.0,
+   "rows_cap": 47899712295.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "F",
+   "status": "partial",
+   "cap": 47705936938.0,
+   "rows_cap": 47705936938.0,
+   "channel": "revenue",
+   "add_on": 0.0006544874430625791,
+   "mapped_share": 0.8110505321279243,
+   "annual_report": true
+  },
+  {
+   "symbol": "ROK",
+   "status": "applied",
+   "cap": 47232454830.0,
+   "rows_cap": 47232454830.0,
+   "channel": "revenue",
+   "add_on": 0.00694194389834572,
+   "mapped_share": 1.0,
+   "annual_report": true
+  },
+  {
+   "symbol": "WDAY",
+   "status": "no_exposure_data",
+   "cap": 47043200000.0,
+   "rows_cap": 47043200000.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "KDP",
+   "status": "partial",
+   "cap": 46894065269.0,
+   "rows_cap": 46894065269.0,
+   "channel": "revenue",
+   "add_on": 0.0,
+   "mapped_share": 0.8734566042281515,
+   "annual_report": true
+  },
+  {
+   "symbol": "XYZ",
+   "status": "partial",
+   "cap": 46561612500.0,
+   "rows_cap": 46561612500.0,
+   "channel": "revenue",
+   "add_on": 0.0,
+   "mapped_share": 0.9170399975894534,
+   "annual_report": true
+  },
+  {
+   "symbol": "NBIS",
+   "status": "partial",
+   "cap": 46280632312.0,
+   "rows_cap": 46280632312.0,
+   "channel": "revenue",
+   "add_on": 0.001427425443563609,
+   "mapped_share": 0.9014722536806342,
+   "annual_report": true
+  },
+  {
+   "symbol": "MDLN",
+   "status": "no_exposure_data",
+   "cap": 46264556643.0,
+   "rows_cap": 46264556643.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "COHR",
+   "status": "partial",
+   "cap": 45692779581.0,
+   "rows_cap": 45692779581.0,
+   "channel": "revenue",
+   "add_on": 0.002072415612921335,
+   "mapped_share": 0.934455305365233,
+   "annual_report": true
+  },
+  {
+   "symbol": "CARR",
+   "status": "no_exposure_data",
+   "cap": 45510986397.0,
+   "rows_cap": 45510986397.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "FERG",
+   "status": "no_exposure_data",
+   "cap": 43789957020.0,
+   "rows_cap": 43789957020.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "IDXX",
+   "status": "no_exposure_data",
+   "cap": 43786544273.0,
+   "rows_cap": 43786544273.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "EXC",
+   "status": "no_exposure_data",
+   "cap": 43777890740.0,
+   "rows_cap": 43777890740.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "IQV",
+   "status": "no_exposure_data",
+   "cap": 43763848000.0,
+   "rows_cap": 43763848000.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "HEI",
+   "status": "no_exposure_data",
+   "cap": 43069039499.0,
+   "rows_cap": 43069039499.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "WAT",
+   "status": "no_exposure_data",
+   "cap": 42666207164.0,
+   "rows_cap": 42666207164.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "P",
+   "status": "partial",
+   "cap": 42349851330.0,
+   "rows_cap": 42349851330.0,
+   "channel": "revenue",
+   "add_on": 0.0,
+   "mapped_share": 0.6728505698988463,
+   "annual_report": true
+  },
+  {
+   "symbol": "WCN",
+   "status": "no_exposure_data",
+   "cap": 42288234889.0,
+   "rows_cap": 42288234889.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "MSCI",
+   "status": "partial",
+   "cap": 40965723000.0,
+   "rows_cap": 40965723000.0,
+   "channel": "revenue",
+   "add_on": 0.006041254740291705,
+   "mapped_share": 0.8412922293767442,
+   "annual_report": true
+  },
+  {
+   "symbol": "YUM",
+   "status": "no_exposure_data",
+   "cap": 40888769566.0,
+   "rows_cap": 40888769566.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "NTAP",
+   "status": "no_exposure_data",
+   "cap": 40731409067.0,
+   "rows_cap": 40731409067.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "STM",
+   "status": "partial",
+   "cap": 40708986891.0,
+   "rows_cap": 40708986891.0,
+   "channel": "revenue",
+   "add_on": 0.010994281101694914,
+   "mapped_share": 0.8393220338983051,
+   "annual_report": true
+  },
+  {
+   "symbol": "ED",
+   "status": "no_exposure_data",
+   "cap": 40566502754.0,
+   "rows_cap": 40566502754.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "MCHP",
+   "status": "no_exposure_data",
+   "cap": 40416136871.0,
+   "rows_cap": 75125252400.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "LYV",
+   "status": "partial",
+   "cap": 40246263288.0,
+   "rows_cap": 40246263288.0,
+   "channel": "revenue",
+   "add_on": 0.0018610843768002466,
+   "mapped_share": 0.23076061708620543,
+   "annual_report": true
+  },
+  {
+   "symbol": "SYY",
+   "status": "no_exposure_data",
+   "cap": 40136357627.0,
+   "rows_cap": 40136357627.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "BTSGU",
+   "status": "no_exposure_data",
+   "cap": 39885473701.0,
+   "rows_cap": 52012573032.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "ILMN",
+   "status": "partial",
+   "cap": 39661660000.0,
+   "rows_cap": 39661660000.0,
+   "channel": "revenue",
+   "add_on": 0.0027277365876122494,
+   "mapped_share": 0.3469951646327424,
+   "annual_report": true
+  },
+  {
+   "symbol": "TWLO",
+   "status": "no_exposure_data",
+   "cap": 39513368354.0,
+   "rows_cap": 39513368354.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "PAYX",
+   "status": "no_exposure_data",
+   "cap": 39424837385.0,
+   "rows_cap": 39424837385.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "ADM",
+   "status": "no_exposure_data",
+   "cap": 38802566027.0,
+   "rows_cap": 38802566027.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "EL",
+   "status": "partial",
+   "cap": 38326503140.0,
+   "rows_cap": 38326503140.0,
+   "channel": "revenue",
+   "add_on": 0.0017757990564157087,
+   "mapped_share": 0.5102664628878995,
+   "annual_report": true
+  },
+  {
+   "symbol": "TTWO",
+   "status": "partial",
+   "cap": 38316032380.0,
+   "rows_cap": 38316032380.0,
+   "channel": "revenue",
+   "add_on": 0.0,
+   "mapped_share": 0.5919716363199328,
+   "annual_report": true
+  },
+  {
+   "symbol": "ROP",
+   "status": "no_exposure_data",
+   "cap": 37928485179.0,
+   "rows_cap": 37928485179.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "DHI",
+   "status": "no_exposure_data",
+   "cap": 37846378438.0,
+   "rows_cap": 37846378438.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "CMG",
+   "status": "no_exposure_data",
+   "cap": 37772727300.0,
+   "rows_cap": 37772727300.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "KR",
+   "status": "no_exposure_data",
+   "cap": 37236617535.0,
+   "rows_cap": 37236617535.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "RBLX",
+   "status": "no_exposure_data",
+   "cap": 36254579006.0,
+   "rows_cap": 36254579006.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "KVUE",
+   "status": "applied",
+   "cap": 36244995322.0,
+   "rows_cap": 36244995322.0,
+   "channel": "revenue",
+   "add_on": 0.009667475601692673,
+   "mapped_share": 1.0,
+   "annual_report": true
+  },
+  {
+   "symbol": "UI",
+   "status": "no_exposure_data",
+   "cap": 35801326794.0,
+   "rows_cap": 35801326794.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "MLM",
+   "status": "no_exposure_data",
+   "cap": 35627349046.0,
+   "rows_cap": 35627349046.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "CCL",
+   "status": "partial",
+   "cap": 35564937912.0,
+   "rows_cap": 35564937912.0,
+   "channel": "revenue",
+   "add_on": 0.0006309443317556908,
+   "mapped_share": 0.7981744421906694,
+   "annual_report": true
+  },
+  {
+   "symbol": "ESLT",
+   "status": "partial",
+   "cap": 35322139346.0,
+   "rows_cap": 35322139346.0,
+   "channel": "revenue",
+   "add_on": 0.010596152400408787,
+   "mapped_share": 0.9696814071249348,
+   "annual_report": true
+  },
+  {
+   "symbol": "PCG",
+   "status": "no_exposure_data",
+   "cap": 35189850812.0,
+   "rows_cap": 35189850812.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "STLD",
+   "status": "no_exposure_data",
+   "cap": 35139747335.0,
+   "rows_cap": 35139747335.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "KMB",
+   "status": "no_exposure_data",
+   "cap": 35057156396.0,
+   "rows_cap": 35057156396.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "PEG",
+   "status": "no_exposure_data",
+   "cap": 35048896510.0,
+   "rows_cap": 35048896510.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "WEC",
+   "status": "no_exposure_data",
+   "cap": 34865883981.0,
+   "rows_cap": 34865883981.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "PPLC",
+   "status": "no_exposure_data",
+   "cap": 34669740825.0,
+   "rows_cap": 60489554320.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "RPRX",
+   "status": "no_exposure_data",
+   "cap": 34655322565.0,
+   "rows_cap": 34655322565.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "ZS",
+   "status": "no_exposure_data",
+   "cap": 34654014966.0,
+   "rows_cap": 34654014966.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "CLS",
+   "status": "no_exposure_data",
+   "cap": 34532172687.0,
+   "rows_cap": 34532172687.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "BIIB",
+   "status": "no_exposure_data",
+   "cap": 34497603453.0,
+   "rows_cap": 34497603453.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "EQT",
+   "status": "no_exposure_data",
+   "cap": 34040580720.0,
+   "rows_cap": 34040580720.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "QSR",
+   "status": "partial",
+   "cap": 33788191106.0,
+   "rows_cap": 33788191106.0,
+   "channel": "revenue",
+   "add_on": 0.0,
+   "mapped_share": 0.8907144371422514,
+   "annual_report": true
+  },
+  {
+   "symbol": "RMD",
+   "status": "no_exposure_data",
+   "cap": 33721071294.0,
+   "rows_cap": 33721071294.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "CRWV",
+   "status": "partial",
+   "cap": 33709917114.0,
+   "rows_cap": 33709917114.0,
+   "channel": "revenue",
+   "add_on": 0.0,
+   "mapped_share": 0.9356850516468525,
+   "annual_report": true
+  },
+  {
+   "symbol": "HSY",
+   "status": "partial",
+   "cap": 33554584719.0,
+   "rows_cap": 33554584719.0,
+   "channel": "revenue",
+   "add_on": 0.0,
+   "mapped_share": 0.876765137126327,
+   "annual_report": true
+  },
+  {
+   "symbol": "EXPE",
+   "status": "partial",
+   "cap": 33400741323.0,
+   "rows_cap": 33400741323.0,
+   "channel": "revenue",
+   "add_on": 0.0,
+   "mapped_share": 0.5911898459241159,
+   "annual_report": true
+  },
+  {
+   "symbol": "VMC",
+   "status": "no_exposure_data",
+   "cap": 33360046356.0,
+   "rows_cap": 33360046356.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "OKTA",
+   "status": "partial",
+   "cap": 33203738855.0,
+   "rows_cap": 33203738855.0,
+   "channel": "revenue",
+   "add_on": 0.0,
+   "mapped_share": 0.7951353203151764,
+   "annual_report": true
+  },
+  {
+   "symbol": "TKO",
+   "status": "applied",
+   "cap": 32978354793.0,
+   "rows_cap": 32978354793.0,
+   "channel": "revenue",
+   "add_on": 0.004111952520204741,
+   "mapped_share": 1.0,
+   "annual_report": true
+  },
+  {
+   "symbol": "ZTS",
+   "status": "partial",
+   "cap": 32888466483.0,
+   "rows_cap": 32888466483.0,
+   "channel": "revenue",
+   "add_on": 0.0028373824865321642,
+   "mapped_share": 0.8235977606422309,
+   "annual_report": true
+  },
+  {
+   "symbol": "MTD",
+   "status": "no_exposure_data",
+   "cap": 32574035063.0,
+   "rows_cap": 32574035063.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "CRDO",
+   "status": "partial",
+   "cap": 32479970950.0,
+   "rows_cap": 32479970950.0,
+   "channel": "revenue",
+   "add_on": 0.0020639005899112887,
+   "mapped_share": 0.9361973042042788,
+   "annual_report": true
+  },
+  {
+   "symbol": "DXCM",
+   "status": "partial",
+   "cap": 32445478575.0,
+   "rows_cap": 32445478575.0,
+   "channel": "revenue",
+   "add_on": 0.0,
+   "mapped_share": 0.7153367653367653,
+   "annual_report": true
+  },
+  {
+   "symbol": "FLEX",
+   "status": "no_exposure_data",
+   "cap": 32342567180.0,
+   "rows_cap": 32342567180.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "RKLB",
+   "status": "partial",
+   "cap": 32241740195.0,
+   "rows_cap": 32241740195.0,
+   "channel": "revenue",
+   "add_on": 0.0007416735488094862,
+   "mapped_share": 0.9325339523661554,
+   "annual_report": true
+  },
+  {
+   "symbol": "VG",
+   "status": "partial",
+   "cap": 32026189421.0,
+   "rows_cap": 32026189421.0,
+   "channel": "revenue",
+   "add_on": 0.0003379330379838768,
+   "mapped_share": 0.9767593870288329,
+   "annual_report": true
+  },
+  {
+   "symbol": "EME",
+   "status": "no_exposure_data",
+   "cap": 31617535938.0,
+   "rows_cap": 31617535938.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "GEHC",
+   "status": "no_exposure_data",
+   "cap": 31509632940.0,
+   "rows_cap": 31509632940.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "ALNY",
+   "status": "no_exposure_data",
+   "cap": 31216329138.0,
+   "rows_cap": 31216329138.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "AXON",
+   "status": "partial",
+   "cap": 31121241312.0,
+   "rows_cap": 31121241312.0,
+   "channel": "revenue",
+   "add_on": 0.0,
+   "mapped_share": 0.8292794192987607,
+   "annual_report": true
+  },
+  {
+   "symbol": "SUNB",
+   "status": "no_exposure_data",
+   "cap": 31056081544.0,
+   "rows_cap": 31056081544.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "UAL",
+   "status": "no_exposure_data",
+   "cap": 31030208603.0,
+   "rows_cap": 31030208603.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "CQP",
+   "status": "no_exposure_data",
+   "cap": 30800591706.0,
+   "rows_cap": 30800591706.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "IR",
+   "status": "no_exposure_data",
+   "cap": 30166955605.0,
+   "rows_cap": 30166955605.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "CTSH",
+   "status": "no_exposure_data",
+   "cap": 30085168719.0,
+   "rows_cap": 30085168719.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "RDDT",
+   "status": "partial",
+   "cap": 29848394561.0,
+   "rows_cap": 29848394561.0,
+   "channel": "revenue",
+   "add_on": 0.0,
+   "mapped_share": 0.8106920026551574,
+   "annual_report": true
+  },
+  {
+   "symbol": "JBL",
+   "status": "no_exposure_data",
+   "cap": 29556246323.0,
+   "rows_cap": 29556246323.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "DG",
+   "status": "no_exposure_data",
+   "cap": 29401599603.0,
+   "rows_cap": 29401599603.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "WSM",
+   "status": "no_exposure_data",
+   "cap": 29377659121.0,
+   "rows_cap": 29377659121.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "AEE",
+   "status": "no_exposure_data",
+   "cap": 28794466537.0,
+   "rows_cap": 28794466537.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "TDY",
+   "status": "no_exposure_data",
+   "cap": 28729391898.0,
+   "rows_cap": 28729391898.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "ZM",
+   "status": "no_exposure_data",
+   "cap": 28475172356.0,
+   "rows_cap": 28475172356.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "ON",
+   "status": "partial",
+   "cap": 28466976983.0,
+   "rows_cap": 28466976983.0,
+   "channel": "revenue",
+   "add_on": 0.0027354138172598994,
+   "mapped_share": 0.9114988157587484,
+   "annual_report": true
+  },
+  {
+   "symbol": "MDB",
+   "status": "partial",
+   "cap": 28089190543.0,
+   "rows_cap": 28089190543.0,
+   "channel": "revenue",
+   "add_on": 0.005482787080266758,
+   "mapped_share": 0.392207637236347,
+   "annual_report": true
+  },
+  {
+   "symbol": "ATO",
+   "status": "no_exposure_data",
+   "cap": 27839174221.0,
+   "rows_cap": 27839174221.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "VRSN",
+   "status": "no_exposure_data",
+   "cap": 27675144000.0,
+   "rows_cap": 27675144000.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "FOXA",
+   "status": "no_exposure_data",
+   "cap": 27522637308.0,
+   "rows_cap": 52118859679.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "FTI",
+   "status": "no_exposure_data",
+   "cap": 27396604146.0,
+   "rows_cap": 27396604146.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "HPQ",
+   "status": "no_exposure_data",
+   "cap": 27270158903.0,
+   "rows_cap": 27270158903.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "OTIS",
+   "status": "no_exposure_data",
+   "cap": 27042749843.0,
+   "rows_cap": 27042749843.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "WST",
+   "status": "no_exposure_data",
+   "cap": 27017958789.0,
+   "rows_cap": 27017958789.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "SN",
+   "status": "no_exposure_data",
+   "cap": 26616271035.0,
+   "rows_cap": 26616271035.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "AWK",
+   "status": "no_exposure_data",
+   "cap": 26544231061.0,
+   "rows_cap": 26544231061.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "CPAY",
+   "status": "applied",
+   "cap": 26431928173.0,
+   "rows_cap": 26431928173.0,
+   "channel": "operations",
+   "add_on": 0.006845170756998784,
+   "mapped_share": 1.0,
+   "annual_report": true
+  },
+  {
+   "symbol": "DOV",
+   "status": "no_exposure_data",
+   "cap": 26312475558.0,
+   "rows_cap": 26312475558.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "FE",
+   "status": "no_exposure_data",
+   "cap": 26183456923.0,
+   "rows_cap": 26183456923.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "CNP",
+   "status": "no_exposure_data",
+   "cap": 26058974593.0,
+   "rows_cap": 26058974593.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "DGX",
+   "status": "no_exposure_data",
+   "cap": 25927805998.0,
+   "rows_cap": 25927805998.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "LH",
+   "status": "no_exposure_data",
+   "cap": 25857113000.0,
+   "rows_cap": 25857113000.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "CPNG",
+   "status": "no_exposure_data",
+   "cap": 25776317807.0,
+   "rows_cap": 25776317807.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "ATI",
+   "status": "partial",
+   "cap": 25774330094.0,
+   "rows_cap": 25774330094.0,
+   "channel": "revenue",
+   "add_on": 0.001108239961634041,
+   "mapped_share": 0.8467541526790775,
+   "annual_report": true
+  },
+  {
+   "symbol": "CASY",
+   "status": "no_exposure_data",
+   "cap": 25640376653.0,
+   "rows_cap": 25640376653.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "EXPD",
+   "status": "no_exposure_data",
+   "cap": 25583454316.0,
+   "rows_cap": 25583454316.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "FFIV",
+   "status": "no_exposure_data",
+   "cap": 25527533646.0,
+   "rows_cap": 25527533646.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "FISV",
+   "status": "no_exposure_data",
+   "cap": 25359954924.0,
+   "rows_cap": 25359954924.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "ULTA",
+   "status": "no_exposure_data",
+   "cap": 25296174993.0,
+   "rows_cap": 25296174993.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "ECHO",
+   "status": "partial",
+   "cap": 25068325753.0,
+   "rows_cap": 25068325753.0,
+   "channel": "revenue",
+   "add_on": 0.0,
+   "mapped_share": 0.980823178210927,
+   "annual_report": true
+  },
+  {
+   "symbol": "ROIV",
+   "status": "no_exposure_data",
+   "cap": 25064608621.0,
+   "rows_cap": 25064608621.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "Q",
+   "status": "no_exposure_data",
+   "cap": 24906277044.0,
+   "rows_cap": 24906277044.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "CHD",
+   "status": "no_exposure_data",
+   "cap": 24690554680.0,
+   "rows_cap": 24690554680.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "VRSK",
+   "status": "no_exposure_data",
+   "cap": 24626819031.0,
+   "rows_cap": 24626819031.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "LVS",
+   "status": "no_exposure_data",
+   "cap": 24619122004.0,
+   "rows_cap": 24619122004.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "HUBB",
+   "status": "no_exposure_data",
+   "cap": 24562918909.0,
+   "rows_cap": 24562918909.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "VLTO",
+   "status": "partial",
+   "cap": 24493917272.0,
+   "rows_cap": 24493917272.0,
+   "channel": "revenue",
+   "add_on": 0.0018187652189714698,
+   "mapped_share": 0.7050699618389968,
+   "annual_report": true
+  },
+  {
+   "symbol": "DRI",
+   "status": "no_exposure_data",
+   "cap": 24466090758.0,
+   "rows_cap": 24466090758.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "ES",
+   "status": "no_exposure_data",
+   "cap": 24287988138.0,
+   "rows_cap": 24287988138.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "XYL",
+   "status": "partial",
+   "cap": 24172889646.0,
+   "rows_cap": 24172889646.0,
+   "channel": "revenue",
+   "add_on": 0.0033474508024349753,
+   "mapped_share": 0.915218594355285,
+   "annual_report": true
+  },
+  {
+   "symbol": "PPG",
+   "status": "applied",
+   "cap": 23908365000.0,
+   "rows_cap": 23908365000.0,
+   "channel": "revenue",
+   "add_on": 0.013024407622047244,
+   "mapped_share": 1.0,
+   "annual_report": true
+  },
+  {
+   "symbol": "TPL",
+   "status": "no_exposure_data",
+   "cap": 23769365509.0,
+   "rows_cap": 23769365509.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "IOT",
+   "status": "no_exposure_data",
+   "cap": 23599889923.0,
+   "rows_cap": 23599889923.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "SYM",
+   "status": "partial",
+   "cap": 23593314629.0,
+   "rows_cap": 23593314629.0,
+   "channel": "revenue",
+   "add_on": 0.0,
+   "mapped_share": 0.9787001952003674,
+   "annual_report": true
+  },
+  {
+   "symbol": "TPR",
+   "status": "no_exposure_data",
+   "cap": 23512622174.0,
+   "rows_cap": 23512622174.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "RBRK",
+   "status": "partial",
+   "cap": 23510395747.0,
+   "rows_cap": 23510395747.0,
+   "channel": "revenue",
+   "add_on": 0.003952663380162909,
+   "mapped_share": 0.276900541030899,
+   "annual_report": true
+  },
+  {
+   "symbol": "UTHR",
+   "status": "no_exposure_data",
+   "cap": 23296079360.0,
+   "rows_cap": 23296079360.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "IFF",
+   "status": "no_exposure_data",
+   "cap": 23208440634.0,
+   "rows_cap": 23208440634.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "ARXS",
+   "status": "no_exposure_data",
+   "cap": 23138379501.0,
+   "rows_cap": 23138379501.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "DLTR",
+   "status": "no_exposure_data",
+   "cap": 23106671322.0,
+   "rows_cap": 23106671322.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "ROKU",
+   "status": "no_exposure_data",
+   "cap": 23085086438.0,
+   "rows_cap": 23085086438.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "INCY",
+   "status": "no_exposure_data",
+   "cap": 22955519735.0,
+   "rows_cap": 22955519735.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "NVT",
+   "status": "no_exposure_data",
+   "cap": 22914228424.0,
+   "rows_cap": 22914228424.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "RL",
+   "status": "partial",
+   "cap": 22746711383.0,
+   "rows_cap": 22746711383.0,
+   "channel": "revenue",
+   "add_on": 0.005772835023722965,
+   "mapped_share": 0.5692772197917308,
+   "annual_report": true
+  },
+  {
+   "symbol": "TSEM",
+   "status": "applied",
+   "cap": 22640109300.0,
+   "rows_cap": 22640109300.0,
+   "channel": "operations",
+   "add_on": 0.008108195728666572,
+   "mapped_share": 1.0,
+   "annual_report": true
+  },
+  {
+   "symbol": "FWONK",
+   "status": "applied",
+   "cap": 22546214056.0,
+   "rows_cap": 43202086135.0,
+   "channel": "revenue",
+   "add_on": 0.005553993752788934,
+   "mapped_share": 0.9973226238286479,
+   "annual_report": true
+  },
+  {
+   "symbol": "GPN",
+   "status": "no_exposure_data",
+   "cap": 22384069610.0,
+   "rows_cap": 22384069610.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "AER",
+   "status": "no_exposure_data",
+   "cap": 22361473412.0,
+   "rows_cap": 22361473412.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "STZ",
+   "status": "no_exposure_data",
+   "cap": 22176845691.0,
+   "rows_cap": 22176845691.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "DINO",
+   "status": "no_exposure_data",
+   "cap": 22119866493.0,
+   "rows_cap": 22119866493.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "ENTG",
+   "status": "applied",
+   "cap": 22082656000.0,
+   "rows_cap": 22082656000.0,
+   "channel": "revenue",
+   "add_on": 0.005505408559094037,
+   "mapped_share": 1.0,
+   "annual_report": true
+  },
+  {
+   "symbol": "OMC",
+   "status": "applied",
+   "cap": 21794043618.0,
+   "rows_cap": 21794043618.0,
+   "channel": "revenue",
+   "add_on": 0.007102302896612416,
+   "mapped_share": 1.0,
+   "annual_report": true
+  },
+  {
+   "symbol": "DOW",
+   "status": "no_exposure_data",
+   "cap": 21728008587.0,
+   "rows_cap": 21728008587.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "USFD",
+   "status": "no_exposure_data",
+   "cap": 21715277975.0,
+   "rows_cap": 21715277975.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "XPO",
+   "status": "partial",
+   "cap": 21701976288.0,
+   "rows_cap": 21701976288.0,
+   "channel": "revenue",
+   "add_on": 0.001649932573249969,
+   "mapped_share": 0.8793674144906215,
+   "annual_report": true
+  },
+  {
+   "symbol": "STE",
+   "status": "partial",
+   "cap": 21642099417.0,
+   "rows_cap": 21642099417.0,
+   "channel": "revenue",
+   "add_on": 0.00010053235398170454,
+   "mapped_share": 0.7483785104196499,
+   "annual_report": true
+  },
+  {
+   "symbol": "EXE",
+   "status": "no_exposure_data",
+   "cap": 21511332074.0,
+   "rows_cap": 21511332074.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "THC",
+   "status": "no_exposure_data",
+   "cap": 21449456410.0,
+   "rows_cap": 21449456410.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "EIX",
+   "status": "no_exposure_data",
+   "cap": 21426442351.0,
+   "rows_cap": 21426442351.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "SW",
+   "status": "no_exposure_data",
+   "cap": 21421515563.0,
+   "rows_cap": 21421515563.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "RS",
+   "status": "no_exposure_data",
+   "cap": 21221846877.0,
+   "rows_cap": 21221846877.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "GH",
+   "status": "partial",
+   "cap": 21186891320.0,
+   "rows_cap": 21186891320.0,
+   "channel": "revenue",
+   "add_on": 0.0,
+   "mapped_share": 0.9401825419212013,
+   "annual_report": true
+  },
+  {
+   "symbol": "CMS",
+   "status": "no_exposure_data",
+   "cap": 21125691652.0,
+   "rows_cap": 38603889220.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "PKG",
+   "status": "no_exposure_data",
+   "cap": 21061055918.0,
+   "rows_cap": 21061055918.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "VTRS",
+   "status": "no_exposure_data",
+   "cap": 20973269177.0,
+   "rows_cap": 20973269177.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "PTC",
+   "status": "no_exposure_data",
+   "cap": 20948218749.0,
+   "rows_cap": 20948218749.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "NRG",
+   "status": "no_exposure_data",
+   "cap": 20890717801.0,
+   "rows_cap": 20890717801.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "INSM",
+   "status": "partial",
+   "cap": 20809573421.0,
+   "rows_cap": 20809573421.0,
+   "channel": "revenue",
+   "add_on": 0.0,
+   "mapped_share": 0.746924176688549,
+   "annual_report": true
+  },
+  {
+   "symbol": "PHM",
+   "status": "no_exposure_data",
+   "cap": 20788486686.0,
+   "rows_cap": 20788486686.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "AMRZ",
+   "status": "applied",
+   "cap": 20777705216.0,
+   "rows_cap": 20777705216.0,
+   "channel": "revenue",
+   "add_on": 0.0,
+   "mapped_share": 0.9975454930173508,
+   "annual_report": true
+  },
+  {
+   "symbol": "PR",
+   "status": "no_exposure_data",
+   "cap": 20771414319.0,
+   "rows_cap": 20771414319.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "LYB",
+   "status": "no_exposure_data",
+   "cap": 20580747922.0,
+   "rows_cap": 20580747922.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "AMCR",
+   "status": "applied",
+   "cap": 20320093076.0,
+   "rows_cap": 20320093076.0,
+   "channel": "revenue",
+   "add_on": 0.007129430996341359,
+   "mapped_share": 1.0,
+   "annual_report": true
+  },
+  {
+   "symbol": "MTSI",
+   "status": "partial",
+   "cap": 20298629750.0,
+   "rows_cap": 20298629750.0,
+   "channel": "revenue",
+   "add_on": 0.0033857593878778985,
+   "mapped_share": 0.836366305577209,
+   "annual_report": true
+  },
+  {
+   "symbol": "NI",
+   "status": "no_exposure_data",
+   "cap": 20117546195.0,
+   "rows_cap": 20117546195.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "RGLD",
+   "status": "no_exposure_data",
+   "cap": 19988148745.0,
+   "rows_cap": 19988148745.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "SSNC",
+   "status": "no_exposure_data",
+   "cap": 19856505762.0,
+   "rows_cap": 19856505762.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "SNX",
+   "status": "no_exposure_data",
+   "cap": 19830295909.0,
+   "rows_cap": 19830295909.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "BG",
+   "status": "no_exposure_data",
+   "cap": 19809402773.0,
+   "rows_cap": 19809402773.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "OVV",
+   "status": "no_exposure_data",
+   "cap": 19800308000.0,
+   "rows_cap": 19800308000.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "BR",
+   "status": "applied",
+   "cap": 19771053604.0,
+   "rows_cap": 19771053604.0,
+   "channel": "revenue",
+   "add_on": 0.00036309651187673873,
+   "mapped_share": 0.9914134389043441,
+   "annual_report": true
+  },
+  {
+   "symbol": "AQNB",
+   "status": "no_exposure_data",
+   "cap": 19657599901.0,
+   "rows_cap": 23629497950.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "WWD",
+   "status": "no_exposure_data",
+   "cap": 19443788526.0,
+   "rows_cap": 19443788526.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "BBY",
+   "status": "no_exposure_data",
+   "cap": 19112485119.0,
+   "rows_cap": 19112485119.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "CDW",
+   "status": "partial",
+   "cap": 19083284992.0,
+   "rows_cap": 19083284992.0,
+   "channel": "revenue",
+   "add_on": 0.0,
+   "mapped_share": 0.8750050169237561,
+   "annual_report": true
+  },
+  {
+   "symbol": "TSN",
+   "status": "no_exposure_data",
+   "cap": 18997281648.0,
+   "rows_cap": 18997281648.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "LUV",
+   "status": "applied",
+   "cap": 18981278199.0,
+   "rows_cap": 18981278199.0,
+   "channel": "revenue",
+   "add_on": 0.0011226181092541781,
+   "mapped_share": 0.9997505612372163,
+   "annual_report": true
+  },
+  {
+   "symbol": "SNA",
+   "status": "no_exposure_data",
+   "cap": 18873675734.0,
+   "rows_cap": 18873675734.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "EVRG",
+   "status": "no_exposure_data",
+   "cap": 18835032281.0,
+   "rows_cap": 18835032281.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "CRS",
+   "status": "no_exposure_data",
+   "cap": 18758412817.0,
+   "rows_cap": 18758412817.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "FIS",
+   "status": "partial",
+   "cap": 18555098894.0,
+   "rows_cap": 18555098894.0,
+   "channel": "revenue",
+   "add_on": 0.0,
+   "mapped_share": 0.7779338765570853,
+   "annual_report": true
+  },
+  {
+   "symbol": "FSLR",
+   "status": "no_exposure_data",
+   "cap": 18463309578.0,
+   "rows_cap": 18463309578.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "CW",
+   "status": "no_exposure_data",
+   "cap": 18360481457.0,
+   "rows_cap": 18360481457.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "WES",
+   "status": "no_exposure_data",
+   "cap": 18328424945.0,
+   "rows_cap": 18328424945.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "NTNX",
+   "status": "partial",
+   "cap": 18271604188.0,
+   "rows_cap": 18271604188.0,
+   "channel": "revenue",
+   "add_on": 0.00608690332796574,
+   "mapped_share": 0.9741055424042726,
+   "annual_report": true
+  },
+  {
+   "symbol": "TOST",
+   "status": "no_exposure_data",
+   "cap": 18178100000.0,
+   "rows_cap": 18178100000.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "ZBH",
+   "status": "no_exposure_data",
+   "cap": 18118173078.0,
+   "rows_cap": 18118173078.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "LEN",
+   "status": "no_exposure_data",
+   "cap": 18049491133.0,
+   "rows_cap": 18049491133.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "NDSN",
+   "status": "no_exposure_data",
+   "cap": 18039910660.0,
+   "rows_cap": 18039910660.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "GPC",
+   "status": "no_exposure_data",
+   "cap": 17946583296.0,
+   "rows_cap": 17946583296.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "CF",
+   "status": "no_exposure_data",
+   "cap": 17935081786.0,
+   "rows_cap": 17935081786.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "IP",
+   "status": "no_exposure_data",
+   "cap": 17872983956.0,
+   "rows_cap": 17872983956.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "RIVN",
+   "status": "no_exposure_data",
+   "cap": 17866600174.0,
+   "rows_cap": 17866600174.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "U",
+   "status": "partial",
+   "cap": 17858808901.0,
+   "rows_cap": 17858808901.0,
+   "channel": "revenue",
+   "add_on": 0.008338635596610815,
+   "mapped_share": 0.9744221603245591,
+   "annual_report": true
+  },
+  {
+   "symbol": "PAA",
+   "status": "no_exposure_data",
+   "cap": 17815553115.0,
+   "rows_cap": 17815553115.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "DT",
+   "status": "no_exposure_data",
+   "cap": 17785190957.0,
+   "rows_cap": 17785190957.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "NWS",
+   "status": "partial",
+   "cap": 17780673499.0,
+   "rows_cap": 34026480349.0,
+   "channel": "revenue",
+   "add_on": 0.0016347972972972971,
+   "mapped_share": 0.6865307930881701,
+   "annual_report": true
+  },
+  {
+   "symbol": "ZBRA",
+   "status": "no_exposure_data",
+   "cap": 17777926708.0,
+   "rows_cap": 17777926708.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "ITT",
+   "status": "applied",
+   "cap": 17737854000.0,
+   "rows_cap": 17737854000.0,
+   "channel": "revenue",
+   "add_on": 0.007292903795861369,
+   "mapped_share": 1.0,
+   "annual_report": true
+  },
+  {
+   "symbol": "DD",
+   "status": "no_exposure_data",
+   "cap": 17466458387.0,
+   "rows_cap": 17466458387.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "GIS",
+   "status": "no_exposure_data",
+   "cap": 17414760280.0,
+   "rows_cap": 17414760280.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "MGA",
+   "status": "no_exposure_data",
+   "cap": 17368677859.0,
+   "rows_cap": 17368677859.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "FTV",
+   "status": "applied",
+   "cap": 17359940149.0,
+   "rows_cap": 17359940149.0,
+   "channel": "revenue",
+   "add_on": 0.006879762905436271,
+   "mapped_share": 0.9999999999999999,
+   "annual_report": true
+  },
+  {
+   "symbol": "LNT",
+   "status": "no_exposure_data",
+   "cap": 17333182128.0,
+   "rows_cap": 17333182128.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "APG",
+   "status": "partial",
+   "cap": 17316663101.0,
+   "rows_cap": 17316663101.0,
+   "channel": "revenue",
+   "add_on": 0.0004804070281885981,
+   "mapped_share": 0.0873467323979269,
+   "annual_report": true
+  },
+  {
+   "symbol": "MEDP",
+   "status": "no_exposure_data",
+   "cap": 17295736137.0,
+   "rows_cap": 17295736137.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "IEX",
+   "status": "partial",
+   "cap": 17240134879.0,
+   "rows_cap": 17240134879.0,
+   "channel": "revenue",
+   "add_on": 0.004029313665943601,
+   "mapped_share": 0.9168474331164136,
+   "annual_report": true
+  },
+  {
+   "symbol": "TSCO",
+   "status": "no_exposure_data",
+   "cap": 17095326895.0,
+   "rows_cap": 17095326895.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "FICO",
+   "status": "partial",
+   "cap": 16869264769.0,
+   "rows_cap": 16869264769.0,
+   "channel": "revenue",
+   "add_on": 0.0017934200125673764,
+   "mapped_share": 0.12983476059951704,
+   "annual_report": true
+  },
+  {
+   "symbol": "RVTY",
+   "status": "no_exposure_data",
+   "cap": 16842851367.0,
+   "rows_cap": 16842851367.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "TLN",
+   "status": "no_exposure_data",
+   "cap": 16828446046.0,
+   "rows_cap": 16828446046.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "FTAI",
+   "status": "applied",
+   "cap": 16776176244.0,
+   "rows_cap": 19501036451.0,
+   "channel": "operations",
+   "add_on": 0.012238229793765666,
+   "mapped_share": 1.0,
+   "annual_report": true
+  },
+  {
+   "symbol": "CLH",
+   "status": "no_exposure_data",
+   "cap": 16712970589.0,
+   "rows_cap": 16712970589.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "WCC",
+   "status": "no_exposure_data",
+   "cap": 16665661411.0,
+   "rows_cap": 16665661411.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "BURL",
+   "status": "no_exposure_data",
+   "cap": 16504064334.0,
+   "rows_cap": 16504064334.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "FDXF",
+   "status": "no_exposure_data",
+   "cap": 16476898257.0,
+   "rows_cap": 16476898257.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "VNOM",
+   "status": "no_exposure_data",
+   "cap": 16354143478.0,
+   "rows_cap": 16354143478.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "WMG",
+   "status": "partial",
+   "cap": 16237327230.0,
+   "rows_cap": 16237327230.0,
+   "channel": "revenue",
+   "add_on": 0.0007027732220068585,
+   "mapped_share": 0.6330699269420008,
+   "annual_report": true
+  },
+  {
+   "symbol": "CHRW",
+   "status": "no_exposure_data",
+   "cap": 16224797173.0,
+   "rows_cap": 16224797173.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "H",
+   "status": "no_exposure_data",
+   "cap": 16197965292.0,
+   "rows_cap": 16197965292.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "RBC",
+   "status": "no_exposure_data",
+   "cap": 15949611039.0,
+   "rows_cap": 15949611039.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "LDOS",
+   "status": "no_exposure_data",
+   "cap": 15818292944.0,
+   "rows_cap": 15818292944.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "CDE",
+   "status": "no_exposure_data",
+   "cap": 15758243519.0,
+   "rows_cap": 15758243519.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "ROL",
+   "status": "no_exposure_data",
+   "cap": 15714208895.0,
+   "rows_cap": 15714208895.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "EXEL",
+   "status": "no_exposure_data",
+   "cap": 15530956455.0,
+   "rows_cap": 15530956455.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "NVR",
+   "status": "no_exposure_data",
+   "cap": 15530804080.0,
+   "rows_cap": 15530804080.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "LSCC",
+   "status": "no_exposure_data",
+   "cap": 15442951475.0,
+   "rows_cap": 15442951475.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "YUMC",
+   "status": "no_exposure_data",
+   "cap": 15414040701.0,
+   "rows_cap": 15414040701.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "LOGI",
+   "status": "no_exposure_data",
+   "cap": 15370551499.0,
+   "rows_cap": 15370551499.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "W",
+   "status": "no_exposure_data",
+   "cap": 15337684479.0,
+   "rows_cap": 15337684479.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "MTZ",
+   "status": "no_exposure_data",
+   "cap": 15331017623.0,
+   "rows_cap": 15331017623.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "SITM",
+   "status": "no_exposure_data",
+   "cap": 14907716097.0,
+   "rows_cap": 14907716097.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "JHX",
+   "status": "partial",
+   "cap": 14832349568.0,
+   "rows_cap": 14832349568.0,
+   "channel": "revenue",
+   "add_on": 0.0,
+   "mapped_share": 0.9187311303196989,
+   "annual_report": true
+  },
+  {
+   "symbol": "TYL",
+   "status": "no_exposure_data",
+   "cap": 14746504345.0,
+   "rows_cap": 14746504345.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "ULS",
+   "status": "partial",
+   "cap": 14740585611.0,
+   "rows_cap": 14740585611.0,
+   "channel": "revenue",
+   "add_on": 0.005861331804782181,
+   "mapped_share": 0.9633147723550606,
+   "annual_report": true
+  },
+  {
+   "symbol": "MKSI",
+   "status": "partial",
+   "cap": 14565498169.0,
+   "rows_cap": 14565498169.0,
+   "channel": "revenue",
+   "add_on": 0.0028483337573136608,
+   "mapped_share": 0.7367082167387433,
+   "annual_report": true
+  },
+  {
+   "symbol": "RBA",
+   "status": "partial",
+   "cap": 14488428304.0,
+   "rows_cap": 14488428304.0,
+   "channel": "revenue",
+   "add_on": 0.0005953838194610844,
+   "mapped_share": 0.9786960594244887,
+   "annual_report": true
+  },
+  {
+   "symbol": "SOLV",
+   "status": "no_exposure_data",
+   "cap": 14477528151.0,
+   "rows_cap": 14477528151.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "SGI",
+   "status": "no_exposure_data",
+   "cap": 14459021132.0,
+   "rows_cap": 14459021132.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "MAS",
+   "status": "no_exposure_data",
+   "cap": 14394682390.0,
+   "rows_cap": 14394682390.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "DOCU",
+   "status": "partial",
+   "cap": 14327941970.0,
+   "rows_cap": 14327941970.0,
+   "channel": "revenue",
+   "add_on": 0.0,
+   "mapped_share": 0.7064668426774343,
+   "annual_report": true
+  },
+  {
+   "symbol": "CRL",
+   "status": "no_exposure_data",
+   "cap": 14322616377.0,
+   "rows_cap": 14322616377.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "CHKP",
+   "status": "partial",
+   "cap": 14184841082.0,
+   "rows_cap": 14184841082.0,
+   "channel": "revenue",
+   "add_on": 0.00831667098407573,
+   "mapped_share": 0.5807220958391428,
+   "annual_report": true
+  },
+  {
+   "symbol": "GEN",
+   "status": "no_exposure_data",
+   "cap": 14150597436.0,
+   "rows_cap": 14821014912.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "LECO",
+   "status": "no_exposure_data",
+   "cap": 14127347157.0,
+   "rows_cap": 14127347157.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "GWRE",
+   "status": "partial",
+   "cap": 14056823173.0,
+   "rows_cap": 14056823173.0,
+   "channel": "revenue",
+   "add_on": 0.00321867046279458,
+   "mapped_share": 0.9858516175341255,
+   "annual_report": true
+  },
+  {
+   "symbol": "TRMB",
+   "status": "partial",
+   "cap": 13979131888.0,
+   "rows_cap": 13979131888.0,
+   "channel": "revenue",
+   "add_on": 0.00352729548685641,
+   "mapped_share": 0.9609455579405124,
+   "annual_report": true
+  },
+  {
+   "symbol": "COKE",
+   "status": "no_exposure_data",
+   "cap": 13973176596.0,
+   "rows_cap": 13973176596.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "NBIX",
+   "status": "no_exposure_data",
+   "cap": 13923904813.0,
+   "rows_cap": 13923904813.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "PAG",
+   "status": "no_exposure_data",
+   "cap": 13920529076.0,
+   "rows_cap": 13920529076.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "HALO",
+   "status": "no_exposure_data",
+   "cap": 13903505000.0,
+   "rows_cap": 13903505000.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "HAS",
+   "status": "partial",
+   "cap": 13891469555.0,
+   "rows_cap": 13891469555.0,
+   "channel": "revenue",
+   "add_on": 0.0,
+   "mapped_share": 0.5229504836094597,
+   "annual_report": true
+  },
+  {
+   "symbol": "CNH",
+   "status": "no_exposure_data",
+   "cap": 13887285249.0,
+   "rows_cap": 13887285249.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "SWK",
+   "status": "no_exposure_data",
+   "cap": 13771207493.0,
+   "rows_cap": 13771207493.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "CACI",
+   "status": "no_exposure_data",
+   "cap": 13623959559.0,
+   "rows_cap": 13623959559.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "JAZZ",
+   "status": "partial",
+   "cap": 13530145284.0,
+   "rows_cap": 13530145284.0,
+   "channel": "revenue",
+   "add_on": 0.0006446616260340154,
+   "mapped_share": 0.9777705709972804,
+   "annual_report": true
+  },
+  {
+   "symbol": "GDDY",
+   "status": "no_exposure_data",
+   "cap": 13513310017.0,
+   "rows_cap": 13513310017.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "WSE",
+   "status": "partial",
+   "cap": 13463061255.0,
+   "rows_cap": 13463061255.0,
+   "channel": "revenue",
+   "add_on": 0.006384095109843684,
+   "mapped_share": 0.8507076468103084,
+   "annual_report": true
+  },
+  {
+   "symbol": "MLI",
+   "status": "partial",
+   "cap": 13452252018.0,
+   "rows_cap": 13452252018.0,
+   "channel": "revenue",
+   "add_on": 0.0007755734708739664,
+   "mapped_share": 0.9553387816386892,
+   "annual_report": true
+  },
+  {
+   "symbol": "GME",
+   "status": "no_exposure_data",
+   "cap": 13339006176.0,
+   "rows_cap": 13339006176.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "AVY",
+   "status": "no_exposure_data",
+   "cap": 13305366210.0,
+   "rows_cap": 13305366210.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "BBIO",
+   "status": "no_exposure_data",
+   "cap": 13281418984.0,
+   "rows_cap": 13281418984.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "SMTC",
+   "status": "applied",
+   "cap": 13272770530.0,
+   "rows_cap": 13272770530.0,
+   "channel": "revenue",
+   "add_on": 0.009312228858782351,
+   "mapped_share": 1.0,
+   "annual_report": true
+  },
+  {
+   "symbol": "ALLE",
+   "status": "no_exposure_data",
+   "cap": 13218118016.0,
+   "rows_cap": 13218118016.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "MANH",
+   "status": "no_exposure_data",
+   "cap": 13143689838.0,
+   "rows_cap": 13143689838.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "CSL",
+   "status": "no_exposure_data",
+   "cap": 13124329533.0,
+   "rows_cap": 13124329533.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "IT",
+   "status": "partial",
+   "cap": 13117305295.0,
+   "rows_cap": 13117305295.0,
+   "channel": "revenue",
+   "add_on": 0.0037924512916743237,
+   "mapped_share": 0.8813504409420266,
+   "annual_report": true
+  },
+  {
+   "symbol": "TXT",
+   "status": "no_exposure_data",
+   "cap": 13105403075.0,
+   "rows_cap": 13105403075.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "GGG",
+   "status": "partial",
+   "cap": 13077771288.0,
+   "rows_cap": 13077771288.0,
+   "channel": "revenue",
+   "add_on": 0.0,
+   "mapped_share": 0.5230613018665798,
+   "annual_report": true
+  },
+  {
+   "symbol": "FN",
+   "status": "no_exposure_data",
+   "cap": 12996946824.0,
+   "rows_cap": 12996946824.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "BJ",
+   "status": "no_exposure_data",
+   "cap": 12961150546.0,
+   "rows_cap": 12961150546.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "STRL",
+   "status": "no_exposure_data",
+   "cap": 12953625603.0,
+   "rows_cap": 12953625603.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "BAX",
+   "status": "no_exposure_data",
+   "cap": 12919730015.0,
+   "rows_cap": 12919730015.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "ICLR",
+   "status": "partial",
+   "cap": 12874030026.0,
+   "rows_cap": 12874030026.0,
+   "channel": "revenue",
+   "add_on": 0.003677020442134247,
+   "mapped_share": 0.8846371619639961,
+   "annual_report": true
+  },
+  {
+   "symbol": "DKS",
+   "status": "no_exposure_data",
+   "cap": 12784970956.0,
+   "rows_cap": 12784970956.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  },
+  {
+   "symbol": "PEN",
+   "status": "no_exposure_data",
+   "cap": 12699543547.0,
+   "rows_cap": 12699543547.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "RPM",
+   "status": "partial",
+   "cap": 12687051481.0,
+   "rows_cap": 12687051481.0,
+   "channel": "revenue",
+   "add_on": 0.0,
+   "mapped_share": 0.7022058589759014,
+   "annual_report": true
+  },
+  {
+   "symbol": "PINS",
+   "status": "partial",
+   "cap": 12651433023.0,
+   "rows_cap": 12651433023.0,
+   "channel": "revenue",
+   "add_on": 0.0014883286974387738,
+   "mapped_share": 0.9076130918641412,
+   "annual_report": true
+  },
+  {
+   "symbol": "IONQ",
+   "status": "no_exposure_data",
+   "cap": 12586178329.0,
+   "rows_cap": 12586178329.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "CCK",
+   "status": "no_exposure_data",
+   "cap": 12495495109.0,
+   "rows_cap": 12495495109.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "DTM",
+   "status": "no_exposure_data",
+   "cap": 12494833454.0,
+   "rows_cap": 12494833454.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "BWXT",
+   "status": "partial",
+   "cap": 12445013543.0,
+   "rows_cap": 12445013543.0,
+   "channel": "revenue",
+   "add_on": 0.0,
+   "mapped_share": 0.9754591713108796,
+   "annual_report": true
+  },
+  {
+   "symbol": "CHTR",
+   "status": "no_exposure_data",
+   "cap": 12432803657.0,
+   "rows_cap": 14930592983.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "MKC",
+   "status": "no_exposure_data",
+   "cap": 12339297007.0,
+   "rows_cap": 12339297007.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "LII",
+   "status": "no_exposure_data",
+   "cap": 12295996952.0,
+   "rows_cap": 12295996952.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "PNW",
+   "status": "no_exposure_data",
+   "cap": 12261524164.0,
+   "rows_cap": 12261524164.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "EHC",
+   "status": "no_exposure_data",
+   "cap": 12007103367.0,
+   "rows_cap": 12007103367.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": false
+  },
+  {
+   "symbol": "LLYVK",
+   "status": "partial",
+   "cap": 9021127117.0,
+   "rows_cap": 17749677138.0,
+   "channel": "revenue",
+   "add_on": 0.0,
+   "mapped_share": 0.8795761760016337,
+   "annual_report": true
+  },
+  {
+   "symbol": "ZG",
+   "status": "no_exposure_data",
+   "cap": 7155521036.0,
+   "rows_cap": 14072674621.0,
+   "channel": null,
+   "add_on": null,
+   "mapped_share": null,
+   "annual_report": true
+  }
+ ]
+}

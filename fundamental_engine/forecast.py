@@ -214,7 +214,30 @@ CYCLE_FIT_MIN_YEARS = 6   # fewer years than about one full cycle (3-5 years) pl
 DECLINE_FLOOR = -.05      # lowest perpetual growth for a structurally declining business
 DEBT_INCOMPLETE_RATE = .25     # interest / debt above this (no investment-grade or bank rate) means debt lines are missing
 KNOWN_INPUTS = ('overrides', 'reviews', 'risk_free', 'equity_risk_premium', 'horizon_years', 'financing', 'nol', 'cyclical',
-                'operating_funding', 'nonrecurring', 'debt_like_claims', 'non_operating_assets', 'capital_events')
+                'operating_funding', 'nonrecurring', 'debt_like_claims', 'non_operating_assets', 'capital_events', 'country_risk')
+# inputs['country_risk'] = {value, mapped_share, as_of, channel, title, url, detail, evidence_ids}: the country risk premium
+# above the US base (market_context.country_risk: exposure-weighted Damodaran CRPs; the pipeline passes it from
+# inputs.market_context) and the share of its channel mapped to a country or region. Two rows of the cost-of-equity table:
+# 'country_risk' (value) and 'country_risk_market_neutral' (-market_context.COUNTRY_RISK_MARKET_RATE x mapped_share: the
+# market's own average country exposure, already in the ERP, netted out so the value-weighted average company stays at
+# risk-free + ERP, the invariant of MARKET_NEUTRAL_ADJUSTMENT, which was measured without a country row). Both structural, so
+# the terminal rate keeps them (not in TERMINAL_KE_DROPPED). Absent -> no rows (never a default).
+COUNTRY_RISK_KEYS = ('value', 'mapped_share', 'as_of', 'channel', 'title', 'url', 'detail', 'evidence_ids')
+COUNTRY_RISK_MAX = .20
+
+
+def country_risk_rows(country):
+    """The validated inputs['country_risk'] -> its two cost-of-equity rows (gross add-on, market-average netting)."""
+    from .market_context import COUNTRY_RISK_MARKET_RATE
+    m = float(country['mapped_share'])
+    return [{'factor': 'country_risk', 'value': float(country['value']),
+             'reason': f"country risk premium above the US base, {country.get('channel') or 'revenue'}-weighted: "
+                       f"{country.get('detail') or 'exposure split'} ({country['title']}); structural, kept in the terminal rate"},
+            {'factor': 'country_risk_market_neutral', 'value': -COUNTRY_RISK_MARKET_RATE * m,
+             'reason': f"the market's own average country exposure, already in the ERP and the index return: "
+                       f"{COUNTRY_RISK_MARKET_RATE:.2%} per unit of mapped exposure (value-weighted on the 2026-10-21 large-cap sweep) "
+                       f"x the {m:.0%} of the channel mapped to a country or region; netted out so the average company stays at "
+                       'risk-free + ERP (an unmapped share counts as average); kept in the terminal rate'}]
 # inputs['nonrecurring'] = [{kind, period_end, revenue, operating_income, reason, evidence_ids}]: a one-off inside reported
 # figures (the effect it had, removed from the history the paths start from: TTM, fiscal years, year to date). Only kinds
 # that do not recur by nature; restructuring, SBC or 'adjusted' costs are not one-offs (never erase recurring costs).
@@ -1008,9 +1031,10 @@ def _fade(start, terminal, half_life, n):
     return [terminal + (start - terminal) * .5 ** (t / half_life) for t in range(1, n + 1)]
 
 
-def _cost_of_equity(route, rf, erp, inputs_notes, external, regulated=False):
+def _cost_of_equity(route, rf, erp, inputs_notes, external, regulated=False, country=None):
     """Table cost of equity: what a company of this business risk costs at MARKET-AVERAGE leverage (the ERP is measured on
-    levered equities). _solve_capital unlevers it at MARKET_DE and relevers it at the company's own leverage."""
+    levered equities). _solve_capital unlevers it at MARKET_DE and relevers it at the company's own leverage. country: the
+    validated inputs['country_risk'] (its own row, kept in the terminal rate)."""
     st = STAGE[route['stage']]
     adj = [{'factor': 'stage:' + route['stage'], 'value': st['ke'], 'reason': f"business-risk add-on for the {route['stage']} stage"}]
     if regulated:
@@ -1026,6 +1050,8 @@ def _cost_of_equity(route, rf, erp, inputs_notes, external, regulated=False):
     for d in WEAK_DIMENSIONS:   # at most 4 x 0.25pp = 1pp
         if (route['dimensions'].get(d) or {}).get('assessment') == 'weak':
             adj.append({'factor': 'weak_' + d, 'value': .0025, 'reason': f'model card rates {d} weak'})
+    if country is not None:
+        adj += country_risk_rows(country)
     adj.append({'factor': 'market_neutral', 'value': MARKET_NEUTRAL_ADJUSTMENT,
                 'reason': "the market's value-weighted average add-on, removed so the average company is discounted at risk-free + ERP "
                           '(the definition of the ERP); measured on the 2026-10-20 large-cap sweep'})
@@ -1938,6 +1964,27 @@ def build(fb, an, card, qa, inputs=None):
         ev = of.get('evidence_ids')
         if not isinstance(ev, list) or not ev or any(e not in known for e in ev):
             raise ValueError('operating_funding: evidence_ids must be FactBook source or qualitative ids')
+    cr = inputs.get('country_risk')
+    if cr is not None:
+        if not isinstance(cr, dict) or sorted(set(cr) - set(COUNTRY_RISK_KEYS)):
+            raise ValueError(f"country_risk: an object with {', '.join(COUNTRY_RISK_KEYS)}")
+        if _num(cr.get('value')) is None or not 0 <= cr['value'] <= COUNTRY_RISK_MAX:
+            raise ValueError(f'country_risk.value must be a fraction from 0 to {COUNTRY_RISK_MAX:.0%}')
+        if _num(cr.get('mapped_share')) is None or not 0 <= cr['mapped_share'] <= 1:
+            raise ValueError('country_risk.mapped_share (the share of the channel mapped to a country or region, the base of the '
+                             'market-average netting row) must be a fraction from 0 to 1')
+        try:
+            when = _d(cr.get('as_of'))
+        except (TypeError, ValueError):
+            raise ValueError('country_risk.as_of must be the date of the country risk table') from None
+        if when > _d(fb['as_of']):
+            raise ValueError('country_risk: the country risk table is dated after as_of (look-ahead)')
+        if not all(isinstance(cr.get(k), str) and cr[k].strip() for k in ('title', 'url')):
+            raise ValueError('country_risk: title and url of the country risk table are required')
+        known = set(fb.get('sources', {})) | {q['id'] for q in fb.get('qualitative', [])}
+        ev = cr.get('evidence_ids')
+        if not isinstance(ev, list) or not ev or any(e not in known for e in ev):
+            raise ValueError('country_risk: evidence_ids (where the exposure split comes from) must be FactBook source or qualitative ids')
     clean = {k: v for k, v in inputs.items() if k in KNOWN_INPUTS}
     out = _build(fb, an, card, qa, clean, None)
     if out.get('status') == 'built' and out['_external'] != out['_external_assumed']:
@@ -2091,7 +2138,8 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
     st = STAGE[route['stage']]
     label = ' '.join(str(fb['company'].get(k) or '') for k in ('sector', 'industry')).lower()
     regulated = 'regulated' in label and any(w in label for w in REGULATED_WORDS)
-    ku, ke_parts = _cost_of_equity(route, rf, erp, [rf_note, erp_note], external_assumed, regulated)   # ku: the explicit table rate
+    ku, ke_parts = _cost_of_equity(route, rf, erp, [rf_note, erp_note], external_assumed, regulated,    # ku: the explicit table rate
+                                   inputs.get('country_risk'))
     ku_t = ke_parts['terminal']['table_rate']                                                           # the terminal's (mature) table rate
 
     # ---- overrides
@@ -2167,6 +2215,12 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
             extra[src['case']['id']] = src['case']
     rf_ids = [rf_src['fb'] if rf_src and 'fb' in rf_src else (rf_src['case']['id'] if rf_src else RULES)]
     erp_ids = [erp_src['fb'] if erp_src and 'fb' in erp_src else (erp_src['case']['id'] if erp_src else RULES)]
+    crp, crp_ids = inputs.get('country_risk'), []
+    if crp is not None:                       # the dated table (like the ERP: a provider dataset typed in as analyst input)
+        extra['input:country_risk'] = {'id': 'input:country_risk', 'title': crp['title'], 'url': crp['url'], 'kind': 'analyst_input',
+                                       'published_at': str(crp['as_of'])[:10], 'available_at': str(crp['as_of'])[:10],
+                                       'retrieval': 'provider_normalized'}
+        crp_ids = ['input:country_risk'] + list(crp['evidence_ids'])
     rows = []
 
     def add(aid, topic, kind, values, rationale, falsifier, source_ids, provenance=None):
@@ -2875,7 +2929,7 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
         f". External-funding add-on {'applied' if external_assumed else 'not applied'} from the executed base funding result (explicit years). "
         'Same Ke, and the same terminal rate, in all scenarios.',
         'Long-term risk-free rate moves by more than 1 point, the company changes its leverage materially, or the base plan '
-        'starts or stops needing external funding.', rf_ids + erp_ids + [RULES])
+        'starts or stops needing external funding.', rf_ids + erp_ids + crp_ids + [RULES])
     for s in SCEN:
         term_row(s)
     finalize()

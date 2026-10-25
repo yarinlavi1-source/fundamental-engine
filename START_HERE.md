@@ -34,7 +34,10 @@ same connectors (SEC, Interactive Brokers, Alpha Vantage, FMP, LunarCrush, …).
   dated addendum of `docs/ENGINE_CONSERVATISM_2026-10-21.md` (the drift was the rate conventions, not multiple
   expansion; a level gap remains), `docs/LIMITATIONS.md` #39 and #43, and `docs/learning_log.json`
   (round `engine_conservatism_2026-10-21`); `docs/ANALYST_COMPARISON_2026-10.md` (human analyst vs engine,
-  the results-day `quarter_review`, 0.12.0).
+  the results-day `quarter_review`, 0.12.0); `docs/MARKET_CONTEXT.md` (Damodaran country-risk row net of the market's
+  own average exposure, measured in `runs/macro/country_risk_market_2026-10-21.json`; evidenced
+  geopolitical exposures as failure scenarios, the FRED market-regime line: `python scripts/collect_market_context.py`,
+  then `deep ... --macro runs/macro/fred_<date> --country-risk`; packet `market_context`).
 - **Session rule (keeps the next session in sync):** work lands on `main`. Before a session ends, merge its
   branch into `main` and add its key documents to the "Latest state" line above. Two sessions on unmerged
   branches is how a new session ends up on an old engine (it happened on 21.10.2026).

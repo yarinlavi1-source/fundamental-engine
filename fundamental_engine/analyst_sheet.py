@@ -193,6 +193,20 @@ def build(fb, cf, inputs=None, conditional=None):
         parts.append('נכסים (מפעלים, ציוד) באזורים רגישים: ' + ', '.join(f'{k} {_p(v)}' for k, v in sorted(asset_exp.items(), key=lambda x: -x[1])))
     reading = ('; '.join(parts) + '.') if parts else 'הדוח לא מפרט הכנסות או נכסים לפי מדינה בצורה שאפשר לקרוא.'
     reading += ' החשיפה ללקוחות שונה מהחשיפה לייצור: מפעל באזור סכסוך יכול לעצור את כל העסק גם כשהלקוחות במקום אחר.'
+    mc = cf.get('market_context') or {}
+    mc_numbers, mc_evidenced = None, False
+    if mc:                                     # market_context.py: the country-risk row and the evidenced exposure scenarios
+        from .market_context import country_risk_he, exposure_lines_he
+        lines = [x for x in [country_risk_he(mc)] + exposure_lines_he(cf) if x]
+        if lines:
+            reading += ' ' + ' '.join(lines)
+        sc = {s.get('name'): s for s in rk.get('failure_scenarios') or []}
+        mc_numbers = {'country_risk_add_on': (mc.get('country_risk') or {}).get('add_on'),
+                      'exposures': [{'id': x['id'], 'share': x['share'], 'share_basis': x['share_basis'],
+                                     'base_value_with_shock': (sc.get('exposure:' + x['id']) or {}).get('base_value_with_shock'),
+                                     'base_effect': (sc.get('exposure:' + x['id']) or {}).get('base_effect'),
+                                     'evidence_ids': x['evidence_ids']} for x in mc.get('exposures') or []]}
+        mc_evidenced = any(e['base_effect'] is not None for e in mc_numbers['exposures'])
     scen_value = None
     if an_g:
         if an_g.get('reading_he'):
@@ -201,12 +215,13 @@ def build(fb, cf, inputs=None, conditional=None):
         if imp is not None and base:
             scen_value = base * (1 - imp)
             reading += f" תרחיש האנליסט: {an_g.get('scenario_he') or 'לא תואר'} — שווי בסיס בתרחיש {scen_value:,.2f} {ccy} ({_p(-imp)})."
-    status = 'evidenced' if an_g and not an_g['opinion'] and an_g.get('scenario_he') else ('numbers_only' if parts else 'open')
+    status = 'evidenced' if (an_g and not an_g['opinion'] and an_g.get('scenario_he')) or mc_evidenced else ('numbers_only' if parts else 'open')
     qs['geopolitics'] = {'status': status, 'reading_he': reading,
                          'numbers': {'revenue_by_region_year': last, 'revenue_shares': shares, 'sensitive_revenue': rev_exp,
                                      'assets_as_of': ab.get('as_of'), 'asset_shares': ab.get('shares'),
                                      'sensitive_assets': asset_exp, 'scenario_value': scen_value,
-                                     'register_status': reg and reg.get('status')},
+                                     'register_status': reg and reg.get('status'),
+                                     **({'market_context': mc_numbers} if mc_numbers is not None else {})},
                          'evidence': ev, 'analyst': an_g,
                          'to_close_he': 'לכתוב תרחיש מפורש (מה קורה, כמה הכנסות או ייצור נפגעים, לכמה זמן) ולתמחר אותו כאחוז מהשווי; '
                                         'לבדוק מגבלות יצוא, מכסים, תלות בספק יחיד ותוכניות פיזור ייצור.'}

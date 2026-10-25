@@ -1205,8 +1205,12 @@ def _model_ke(view, fc):
     comp = (((fc or {}).get('cost_of_equity') or {}).get('components')) or {}
     lev = comp.get('leverage') or {}
     ku = _num(comp.get('unlevered'))
-    return {'value': ke, 'unlevered': ku, 'leverage': (_num(lev.get('ke')) - ku) if _num(lev.get('ke')) is not None and ku is not None else None,
-            'd_to_e': _num(lev.get('d_to_e'))}
+    out = {'value': ke, 'unlevered': ku, 'leverage': (_num(lev.get('ke')) - ku) if _num(lev.get('ke')) is not None and ku is not None else None,
+           'd_to_e': _num(lev.get('d_to_e'))}
+    if _num(comp.get('adjustment_country_risk')) is not None:      # market_context: the forecast's own country-risk rows (net of
+        out['country_risk'] = _num(comp['adjustment_country_risk']) + (_num(comp.get('adjustment_country_risk_market_neutral')) or 0.)
+        out['country_risk_gross'] = _num(comp['adjustment_country_risk'])          # the market average already in the index)
+    return out
 
 
 def _cyclical_evidence(card, fc):
@@ -1271,6 +1275,16 @@ def _required_return(A, index, card, g, rk, an=None, ke=None, cyc_ev=None):
     total = sum(c['value'] for c in comps)
     prem = min(total, PREMIUM['cap'])
     h = index['value'] + prem
+    crp = (ke or {}).get('country_risk')
+    if crp is not None:
+        # the index return is the cap-weighted implied return of the largest US companies, which already carries their average
+        # country exposure; the company's exposure differs from it by the forecast's own net rows (market_context.country_risk:
+        # add-on - the market average x mapped share): a rate difference, not a permanent-loss premium, so outside the cap
+        g_ = (ke or {}).get('country_risk_gross')
+        add('country_risk', crp, 'country risk premium above the US base net of the market average already in the index return '
+                                 f"(exposure-weighted Damodaran CRP {_pct(g_, 2) if g_ is not None else 'n/a'} - market average "
+                                 f"{_pct((g_ or 0.) - crp, 2)}; the same rows as the forecast's cost of equity)")
+        h += crp
     floor = {'value': (ke or {}).get('value'), 'binding': False, 'basis': "the engine's own cost of equity for this company (base scenario)"}
     if floor['value'] is not None and floor['value'] > h + 1e-12:
         lev = (ke or {}).get('leverage')
@@ -1284,10 +1298,15 @@ def _required_return(A, index, card, g, rk, an=None, ke=None, cyc_ev=None):
                       'the required return is never below it, so the value at the required return never exceeds the model base value']))
         floor['binding'] = True
         h = floor['value']
-    return {'premium': round(h - index['value'], 10), 'permanent_loss_premium': round(prem, 10), 'hurdle': round(h, 10), 'components': comps,
-            'capped': total > PREMIUM['cap'], 'index': index['value'], 'floor': floor,
-            'rule': 'required return = max(index expected return + sum of permanent-loss premium components (cap '
-                    f"{PREMIUM['cap']:.0%}), the model's own cost of equity); valuation error widens the marginal band instead"}
+    out = {'premium': round(h - index['value'], 10), 'permanent_loss_premium': round(prem, 10), 'hurdle': round(h, 10), 'components': comps,
+           'capped': total > PREMIUM['cap'], 'index': index['value'], 'floor': floor,
+           'rule': 'required return = max(index expected return + sum of permanent-loss premium components (cap '
+                   f"{PREMIUM['cap']:.0%}), the model's own cost of equity); valuation error widens the marginal band instead"}
+    if crp is not None:
+        # the band's index rows (_hurdle_band) move with the hurdle: index low/high + the permanent-loss premium + this row
+        out['country_risk'] = crp
+        out['rule'] += '; plus the country-risk row (outside the cap)'
+    return out
 
 
 def price_for_hurdle(case, hurdle, w=0.):
@@ -1312,9 +1331,14 @@ def price_for_hurdle(case, hurdle, w=0.):
 def _hurdle_band(req, index, err_level, rates, moat=None):
     """The marginal band: required return -/+ (1pp + widening by valuation error size), and the index low/high plus the same
     permanent-loss premium (never below the model cost of equity, like the hurdle itself). The verdict is re-run at the
-    lowest and highest required return of the band. When the forecast applied a computed moat proxy, the value range also
-    spans the value at the required return without it, and the verdict is re-run without it."""
+    lowest and highest required return of the band (the index rows include the country-risk row when the hurdle has one). When
+    the forecast applied a computed moat proxy, the value range also spans the value at the required return without it, and
+    the verdict is re-run without it."""
     h, prem = req['hurdle'], req.get('permanent_loss_premium', req['premium'])
+    if req.get('country_risk') is not None:
+        # the hurdle adds the country-risk row to the index next to the premium (outside the cap): the index rows carry it too,
+        # so the band keeps its shape around the hurdle when the row is present
+        prem += req['country_risk']
     fl = (req.get('floor') or {}).get('value')
     widen = ERROR_WIDENING.get(err_level if err_level in ERROR_WIDENING else 'unknown')
     step = BAND_STEP + widen
@@ -1539,6 +1563,8 @@ def _risk_pricing(rk, fc, view, rates):
         elif r.get('priced_via'):
             key = str(r['priced_via']).rsplit('.', 1)[-1]
             add = _num(comps.get(key))
+            if key == 'adjustment_country_risk' and add is not None:     # net of its market-average row (risk.component_value)
+                add += _num(comps.get('adjustment_country_risk_market_neutral')) or 0.
             v0 = (rates.values(ke - add) or [{}])[0].get('base') if rates is not None and ke is not None and add else None
             eff = 1 - base / v0 if _num(v0) and base else None
             if eff is not None and eff >= material:

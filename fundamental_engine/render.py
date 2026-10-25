@@ -490,6 +490,15 @@ def hebrew_table(casefile):
     kr = (cf.get('analyst_sheet') or {}).get('key_risk') or {}
     risk = kr.get('reading_he') or _top_risk(cf, dc) or 'שהצמיחה והרווחיות לא יתממשו כפי שהונח'
     rows.append(('הסיכון המרכזי', str(risk).rstrip('.')))
+    if cf.get('market_context'):          # market_context.py: one market line and the country-risk / exposure explanations
+        from .market_context import country_risk_he, exposure_lines_he
+        rg = (cf['market_context'].get('regime') or {})
+        if rg.get('body_he'):              # context only: no value reads it (market_context.classify_regime)
+            rows.append(('מצב השוק' + (f" ב־{rg['date_he']}" if rg.get('date_he') else '') + ' (רקע)', rg['body_he'].rstrip('.')))
+        crh = country_risk_he(cf['market_context'])
+        if crh:
+            notes.append(crh)
+        notes += ['חשיפה: ' + x for x in exposure_lines_he(cf)]
     rows.append(('רמת ביטחון', (dc.get('confidence') or {}).get('level_he', 'לא ידועה')))
     call = CALL_HE.get(code, 'אין עדיין מסקנה') if v else 'אין עדיין מסקנה'
     rows.append(('שורה תחתונה', call + (' (טיוטה שעוד לא נבדקה)' if withheld else '')))
@@ -523,14 +532,19 @@ def hebrew_paragraph(casefile):
     equity and the discount, the buy-below price for the required return, the conditional five-year value with
     distributions, the key risk and the confidence. Future values are conditional estimates. A draft is labelled as a
     draft, never a conclusion. Above 140 words the confidence reason is cut to its first clause, then the scenario range is
-    dropped; below 80 words one sentence on what the result still lacks is added."""
-    text = _paragraph(casefile)
-    for kw in ({'short': True}, {'short': True, 'secondary': False}, {'short': True, 'secondary': False, 'compact': True}):
+    dropped; below 80 words one sentence on what the result still lacks is added. The market-regime clause (context only) is
+    fitted last, on the finished analysis: it is kept only where it fits, so it never pushes out (or stands in for) a
+    sentence of the analysis itself."""
+    for kw in ({}, {'short': True}, {'short': True, 'secondary': False}, {'short': True, 'secondary': False, 'compact': True}):
+        text = _paragraph(casefile, market=False, **kw)
         if len(text.split()) <= MAX_WORDS:
             break
-        text = _paragraph(casefile, **kw)
     if len(text.split()) < MIN_WORDS:
-        text = _paragraph(casefile, pad=True)
+        kw = {'pad': True}
+        text = _paragraph(casefile, market=False, pad=True)
+    with_market = _paragraph(casefile, **kw)
+    if with_market != text and len(with_market.split()) <= MAX_WORDS:
+        text = with_market
     return text
 
 
@@ -579,7 +593,7 @@ def _analyst_he(dc, v):
                                                  '; המסקנה המכנית זהה') + '.')
 
 
-def _paragraph(casefile, short=False, secondary=True, pad=False, compact=False):
+def _paragraph(casefile, short=False, secondary=True, pad=False, compact=False, market=True):
     cf = casefile or {}
     dc = cf.get('dc') or {}
     v = dc.get('verdict')
@@ -667,6 +681,9 @@ def _paragraph(casefile, short=False, secondary=True, pad=False, compact=False):
                 and abs(pfh / base - 1) >= .005)
         if not said:
             parts.append('מה ישנה את התמונה: ' + (w.replace(BUY_MARK_HE, '') if compact else w) + '.')
+    rg = ((cf.get('market_context') or {}).get('regime') or {})
+    if market and rg.get('short_he'):
+        parts.append(rg['short_he'])                       # context only (market_context.classify_regime): moves no value
     if pad:
         parts.append('כל עוד הניתוח לא הושלם ולא עבר בדיקה בלתי תלויה, זו טיוטה ולא המלצה, וכל מספר בה עלול להשתנות.' if withheld else
                      'גם הערכה זו מותנית בראיות שבידינו כעת, והיא עשויה להשתנות כשיתווספו נתונים חדשים על העסק ועל המחיר.')
@@ -793,12 +810,14 @@ def _expected(dc):
     rng = f" (range {_p(idx.get('low'), 2)}–{_p(idx.get('high'), 2)})" if _n(idx.get('low')) and _n(idx.get('high')) else ' (no range supplied)'
     mech = er.get('mechanical') or {}
     fl = er.get('model_cost_of_equity_floor') or {}
+    crp = next((c.get('value') for c in er.get('premium_components') or [] if c.get('component') == 'country_risk'), None)
     out += ['', f"- Index expected return: **{_p(idx.get('value'), 2)}**{rng} [{idx.get('provenance')}; origin {idx.get('origin', 'n/a')}; "
                 f"comparator {idx.get('comparator', 'n/a')}: {idx.get('source')}] — {idx.get('basis')}",
             f"- Required return (hurdle): **{_p(er.get('hurdle'), 2)}** = index + premium {_p(er.get('risk_premium'), 2)} [model_assumption]; "
             f"{er.get('hurdle_basis', '')}" + (f" (mechanical {_p(mech.get('hurdle'), 2)}, premium {_p(mech.get('risk_premium'), 2)})" if mech else ''),
             f"- Floor: the model's own cost of equity {_p(fl.get('value'), 2)} — " + ('**binding** (index + permanent-loss premium '
-            f"{_p((idx.get('value') or 0) + (er.get('permanent_loss_premium') or 0), 2)} is lower)" if fl.get('binding') else 'not binding'), '']
+            + ('+ country-risk row ' if crp is not None else '')
+            + f"{_p((idx.get('value') or 0) + (er.get('permanent_loss_premium') or 0) + (crp or 0), 2)} is lower)" if fl.get('binding') else 'not binding'), '']
     comps = er.get('premium_components') or []
     if comps:
         out += ['Premium for the risk of permanent loss (valuation error is not in it; it widens the marginal band):', '']
@@ -1146,6 +1165,52 @@ def _limitations(cf, dc):
     return ['## Limitations', ''] + [f'- {x}' for x in dict.fromkeys(lim) if x] + ['']
 
 
+def _market(cf):
+    """Market context section (market_context.py): country-risk rows, exposure scenarios, the regime readings and open questions."""
+    from .market_context import share_text
+    mc = cf.get('market_context') or {}
+    cr = mc.get('country_risk') or {}
+    out = ['## Market context', '']
+    t = cr.get('table') or {}
+    out.append(f"- Country risk: **{cr.get('status') or 'n/a'}**" + (f", add-on {_p(cr.get('add_on'), 2)} to the cost of equity ({cr.get('channel')} "
+               'channel; the larger of revenue and operations' + (f", a lower bound: {_p(cr.get('uncovered_share'), 0)} of the channel is not "
+                                                                   'mapped to a country' if cr.get('status') == 'partial' else '') + ')'
+               if cr.get('status') in ('applied', 'partial') else '') +
+               f" [model_assumption; {t.get('title', 'country risk table')}, {t.get('as_of', 'n/a')}, {t.get('url', '')}]")
+    out.append(f"- Formula: {cr.get('formula', 'n/a')}; US base CRP {_p((cr.get('base') or {}).get('crp'), 2)}")
+    for ch in ('revenue', 'operations'):
+        c = cr.get(ch)
+        if not c:
+            continue
+        out += ['', f"**{ch}** ({c['source']}, {c.get('as_of') or 'n/a'}; evidence {_ids(c.get('evidence_ids'))}): add-on {_p(c['add_on'], 2)}, "
+                f"unmapped {_p(c['unmapped_share'], 0)}, not itemized {_p(c['not_itemized_share'], 0)}", '']
+        out += _table(['member', 'share', 'mapped to', 'CRP', 'above US', 'contribution'],
+                      [[r['member'], _p(r['share']), (r['mapped_to'] or '-') + (f" ({r['note']})" if r.get('note') else ''), _p(r['crp'], 2),
+                        _p(r['above_base'], 2), _p(r['contribution'], 3)] for r in c['rows']])
+    scen = {x.get('name'): x for x in (cf.get('rk') or {}).get('failure_scenarios') or []}
+    if mc.get('exposures'):
+        out += ['', '**Evidenced exposures (failure scenarios; no probability)**', '']
+        rows = []
+        for x in mc['exposures']:
+            s = scen.get('exposure:' + x['id']) or {}
+            rows.append([x['id'], f"{share_text(x['share'])} {x['share_basis']}", x['shock'] + (f" @ {_p(x['cost_rate'])}" if x.get('cost_rate') else ''),
+                         _ps(s.get('value_per_share')), _ps(s.get('base_value_with_shock')), _ps(s.get('base_value_control')),
+                         _p(s.get('base_effect'), 0), _ids(x['evidence_ids'])])
+        out += _table(['exposure', 'share', 'shock', 'bear with shock', 'base with shock', 'base, same path without the shock', 'base effect',
+                       'evidence'], rows)
+        out += ['', '- Effect = 1 - base with shock / the base row re-run the same way without the shock (its funding plan removed and gaps '
+                're-closed in both), so the re-run path is not counted as the event; the executed base is unchanged.']
+    rg = mc.get('regime')
+    if rg:
+        out += ['', f"**Market regime (context only; no value reads it)**: {rg.get('line_he') or 'no readings'}", '']
+        out += _table(['series', 'value', 'date', 'source'], [[k, f"{r['value']:g}", r.get('date'), r.get('url') or '-']
+                                                            for k, r in (rg.get('readings') or {}).items()])
+        out += ['', f"- Levels: {_cell(rg.get('levels'))}; flags: {', '.join(rg.get('flags') or []) or 'none'}"]
+    if mc.get('open_questions'):
+        out += ['', '**Open questions**', ''] + [f'- {q}' for q in mc['open_questions']]
+    return out + ['']
+
+
 def markdown(casefile):
     """Complete readable report of one casefile; sections never silently disappear (an unavailable
     stage is stated). Paragraph first, so the short answer and its audit trail sit together."""
@@ -1157,6 +1222,7 @@ def markdown(casefile):
         from .analyst_sheet import render_he
         out += render_he(cf['analyst_sheet']).split('\n') + ['']
     out += _verdict_box(dc) + _assessments(dc) + _expected(dc) + _judgement(dc) + _business(cf) + _card(cf) + _financials(cf) + _dataqa(cf)
-    out += _forecast(cf) + _valuation(cf, dc) + _risks(cf, dc) + _review(cf) + _limitations(cf, dc)
+    out += _forecast(cf) + _valuation(cf, dc) + _risks(cf, dc) + (_market(cf) if cf.get('market_context') else []) + _review(cf)
+    out += _limitations(cf, dc)
     out += ['## Provenance legend', ''] + _table(['class', 'meaning'], PROVENANCE) + ['']
     return '\n'.join(out)

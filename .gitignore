@@ -17,6 +17,7 @@ runs/backtest/engine_v3/*
 !runs/macro/
 runs/macro/*
 !runs/macro/market_2026-10-20.json
+!runs/macro/country_risk_market_2026-10-21.json
 !runs/universe_2026-10-20/
 runs/universe_2026-10-20/*
 !runs/universe_2026-10-20/calibration.json

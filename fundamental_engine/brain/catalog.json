@@ -190,6 +190,11 @@
       "id": "quarter_review",
       "title": "Results-day review: normalize, compare with expectations, keep the thesis falsifiable",
       "file": "protocols/quarter_review.md"
+    },
+    {
+      "id": "market_context",
+      "title": "Market context: country risk (Damodaran CRP), evidenced geopolitical exposures, market regime line",
+      "file": "protocols/market_context.md"
     }
   ]
 }
