@@ -286,7 +286,7 @@
    "kind": "flag",
    "severity": "medium",
    "fixed": true,
-   "rule": "peak_margin_run_rate with leverage share -d(opex/revenue)/dOM >= rules.leverage_share_min, a model that is not price-cyclical, and gross profit and opex present; both readings shown"
+   "rule": "peak_margin_run_rate with leverage share -d(opex/revenue)/dOM >= rules.leverage_share_min, an evidenced model (econ.select's rule or an analyst override with evidence ids) that is not price-cyclical, and gross profit and opex present; both readings shown"
   },
   "margin_only_normalized": {
    "kind": "measure",
@@ -296,7 +296,7 @@
    "kind": "flag",
    "severity": "info",
    "fixed": true,
-   "rule": "contract coverage lacks one of: share of next-year volume, price floor or formula, deposits, tenor, or no issuer document states them; no cycle damping"
+   "rule": "contract coverage lacks one of: share of next-year volume, price floor or formula, deposits, tenor, or a source of the contracts block available at as_of is not an issuer document; no cycle damping"
   },
   "customer_concentration": {
    "kind": "reading",

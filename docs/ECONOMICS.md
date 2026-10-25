@@ -146,7 +146,10 @@ test_econ_render.py (WP8).
 - The design's `identity()` is `evaluate_identity()` (`identity()` is the registry lookup); selection needs two agreeing
   signals, so one word or one generic KPI never forces a model.
 - The peak exception is stricter: gross profit minus opex must reconcile to operating income in both periods, and
-  `case.economics` must name a model that is not price-cyclical.
+  `case.economics` must name a model that is not price-cyclical and is evidenced (econ.select's rule on the subset, or
+  an analyst override `{primary, reason, evidence_ids}`); a bare model id reads the identities but keeps the flag high.
+- `contract_coverage` reads its terms as issuer-stated only when every source of the block available at as_of is an
+  issuer document.
 - WP8: this document is docs/ECONOMICS.md (the design named docs/ECON_MODELS.md); `render_he` takes `names_he` for display
   labels; the price extension covers the digital bank only and refuses `translation` until WP10; the risk fallback skips
   `segment_unexplained`; the "not yet clear" row appears only for the largest segment when it names its own model (the

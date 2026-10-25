@@ -18,8 +18,9 @@ Business economics (econ layer, WP7): an optional case['economics'] is the econ 
 the company, period_end, as_of and currency it inherits from this case; period 'quarter'; sources merged with
 case['sources']; card_type, a model_card type, read here). Its review comes back as `economics`; its flags merge as
 econ.<key> beside quarter's own keys; its falsifiers feed `falsifiers` (a falsifier with econ {id, scope, field} reads its
-current value from the econ row; the other econ falsifiers are listed as tracked). Its model also decides the peak
-exception in _cycle (operating_leverage_or_peak). Without case['economics'] every output is byte-identical.
+current value from the econ row; the other econ falsifiers are listed as tracked). Its model, when evidenced (econ.select's
+rule or an analyst override with evidence ids), also decides the peak exception in _cycle (operating_leverage_or_peak).
+Without case['economics'] every output is byte-identical.
 
 Inputs are absolute currency units in one stated currency. Nothing is fetched.
 Output is research indication, not a trade instruction or a price forecast.
@@ -50,7 +51,13 @@ ECON_FALSIFIER_FIELDS = ('value', 'growth', 'change')
 # Filed Q2-26 checks: PLTR 0.809, RDDT 0.970 -> medium; SKHY (no gross profit or opex; memory_cycle) stays high.
 # Stricter than the design text (noted in the WP7 notes): the identity must reconcile in both periods (|operating income -
 # (gross profit - opex)| <= rules.identity_tolerance x |operating income|), else opex is not the operating cost base.
+# The model that clears the flag must be evidenced as econ.select chooses one (WP4): the rule's own selection on this
+# subset (two of card type, text and KPI facts agree, with economics.card_type) names the same models, or economics.model
+# is an analyst override {primary, secondary?, reason, evidence_ids} whose ids are sources available at as_of and not a
+# consensus, a market feed or an assumption (econ.select refuses those). A bare model id is a reading choice: it reads the
+# identities but never lowers a high flag (model_not_evidenced; close-out review of WP7, 25.10.2026).
 PEAK_TESTS = (('history_max', 'the history maximum'), ('median_plus_15pp', 'the history median + 15pp'))
+MODEL_OVERRIDE_KEYS = ('primary', 'secondary', 'reason', 'evidence_ids')
 # Hebrew text of each econ flag merged into quarter's flags (econ.<key>); the numbers stay in economics.flags
 ECON_FLAG_HE = {
     'per_unit_vs_units': 'מספר היחידות גדל, אבל ההכנסה ליחידה ירדה ביותר מ-5%: הצמיחה באה מכמות ולא ממחיר.',
@@ -325,8 +332,8 @@ def _peak_exception(cur, py, om, hist, median, econ):
             row['near_threshold'] = near
         tests.append(row)
     out = {'rule': 'operating_leverage_or_peak', 'peak_tests': tests, 'leverage_share_min': smin,
-           'model': econ['selection'], 'price_cyclical_models': econ['cyclical_models'], 'card_types': econ['card_types'],
-           'cyclical_card_types': econ['cyclical_card_types']}
+           'model': econ['selection'], 'model_evidence': econ['model_evidence'], 'price_cyclical_models': econ['cyclical_models'],
+           'card_types': econ['card_types'], 'cyclical_card_types': econ['cyclical_card_types']}
     reasons = []
     need = [f'{blk}.{k}' for blk, lines in (('current', cur), ('prior_year', py))
             for k in ('revenue', 'gross_profit', 'operating_expenses', 'operating_income') if lines.get(k) is None]
@@ -367,6 +374,8 @@ def _peak_exception(cur, py, om, hist, median, econ):
     if not econ['models']:
         reasons.append('model_not_known: case.economics names no economic model; the exception needs one that is not '
                        'price-cyclical')
+    elif not econ['cyclical_models'] and not econ['model_evidence']['evidenced']:     # a cyclical model keeps it high anyway
+        reasons.append('model_not_evidenced: ' + econ['model_evidence']['reason'])
     if econ['cyclical_models']:
         reasons.append('price_cyclical_model: ' + ', '.join(econ['cyclical_models']) + ' (registry price_cyclical): a record '
                        'margin is read as the cycle')
@@ -578,6 +587,39 @@ def _falsifiers(items, flags, econ_rows=None):
     return rows
 
 
+def _model_evidence(E, built, cards, mids):
+    """Is the model named in case.economics evidenced, so that it may lower the peak flag? (MODEL_OVERRIDE_KEYS above.)
+    An override (economics.model {primary, secondary?, reason, evidence_ids}, or a select() output carrying one) is
+    checked by econ.select_case: a missing reason, unknown or not yet available ids, or ids of a refused kind raise.
+    Otherwise econ.select_case's rule on this subset (economics.card_type and its KPI facts) must select the same models."""
+    if not mids:
+        return {'evidenced': False, 'basis': None, 'reason': 'no model named'}
+    m = built.get('model')
+    ov = m['override'] if isinstance(m, dict) and isinstance(m.get('override'), dict) else m
+    if isinstance(ov, dict) and (ov.get('evidence_ids') is not None or ov.get('reason') is not None):
+        sel = E.select_case(built, card_type=cards or None,
+                            override={k: ov[k] for k in MODEL_OVERRIDE_KEYS if ov.get(k) is not None})
+        o = sel['override']
+        out = {'basis': 'analyst_override', 'reason': o['reason'], 'evidence_ids': o['evidence_ids'],
+               'evidence_kinds': o.get('evidence_kinds'), 'agrees_with_rule': o['agrees_with_rule'],
+               'rule': {'primary': sel['rule']['primary'], 'secondary': sel['rule']['secondary']}, 'checked_by': 'econ.select_case'}
+        if [o['primary']] + o['secondary'] == mids:
+            return {**out, 'evidenced': True}
+        return {**out, 'evidenced': False, 'reason': f"the override selects {', '.join([o['primary']] + o['secondary'])}, "
+                                                     f"economics.model names {', '.join(mids)}"}
+    sel = E.select_case(built, card_type=cards or None)
+    rule = [sel['primary']] + sel['secondary'] if sel['status'] == E.SELECTED else []
+    out = {'rule': {'primary': sel['primary'], 'secondary': sel['secondary'], 'reasons': sel['reasons']},
+           'checked_by': 'econ.select_case'}
+    if rule and rule[0] == mids[0] and set(rule) == set(mids):
+        return {**out, 'evidenced': True, 'basis': 'rule'}
+    return {**out, 'evidenced': False, 'basis': None,
+            'reason': f"{', '.join(mids)} named without evidence; the rule on this subset (card type "
+                      f"{', '.join(cards) or 'not given'} and its KPI facts) selects {', '.join(rule) or 'no model (unclassified)'}: "
+                      'state economics.model as {primary, reason, evidence_ids} citing an issuer document, or give '
+                      'economics.card_type with the model\'s KPI facts'}
+
+
 def _economics(case):
     """case['economics'] -> the econ review of the subset and what the peak exception needs from it; None when absent."""
     sub = case.get('economics')
@@ -601,8 +643,9 @@ def _economics(case):
                                   for a in (sources[sid],) for k in ('kind', 'available_at')):
             raise ValueError(f'economics.sources.{sid}: kind or available_at differs from the quarter case sources')
     cards = E._card_types(sub.pop('card_type', None), M)
-    review = E.review({**sub, **{k: case[k] for k in ECON_INHERITED}, 'period': ECON_PERIOD,
-                       'sources': {**extra, **sources}})   # the quarter case's entry is kept for a shared id
+    built = {**sub, **{k: case[k] for k in ECON_INHERITED}, 'period': ECON_PERIOD,
+             'sources': {**extra, **sources}}              # the quarter case's entry is kept for a shared id
+    review = E.review(built)
     owned = [r for r in review['checks_not_run'] if r['check'] in QUARTER_OWNED_CHECKS]
     review['checks_not_run'] = [r for r in review['checks_not_run'] if r['check'] not in QUARTER_OWNED_CHECKS]
     review['checks_run_by_quarter'] = [{'check': r['check'], 'model': r['model'], 'where': 'cycle'} for r in owned]
@@ -613,6 +656,7 @@ def _economics(case):
         'card_type': cards, 'flags': 'merged into flags as econ.<key>; the numbers stay here',
         'falsifiers': 'fed to falsifiers: bound by econ {id, scope, field}, else tracked without a threshold'}
     return {'review': review, 'selection': sel, 'models': mids, 'card_types': cards,
+            'model_evidence': _model_evidence(E, built, cards, mids),
             'cyclical_models': [m for m in mids if E.model(m)['price_cyclical']],
             'cyclical_card_types': [t for t in cards if t in M.CYCLICAL_TYPES], 'rules': E.rules(),
             'exception_severity': E.registry()['checks']['operating_leverage_or_peak']['severity']}

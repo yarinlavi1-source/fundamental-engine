@@ -3505,11 +3505,17 @@ def _contract_coverage(ix, mids, identities, upstream):
                                ('price_mechanism', items['price_mechanism'] in PRICE_MECHANISMS),
                                ('deposits', items['deposits'] is True), ('tenor_years', bool(ten) and all(t > 0 for t in ten)))
                if not ok]
-    kinds = _kinds(case, ids)
-    issuer = any(k in EVIDENCE_KINDS for k in kinds)
+    # the block's sources are not tied to single items, so an analyst post cited beside a filing could carry any of the four:
+    # every source read at as_of must be an issuer document; a source published after as_of is not read (point in time)
+    seen = [i for i in ids if _visible(case, [i])]
+    kinds = _kinds(case, seen)
+    issuer = all(k in EVIDENCE_KINDS for k in kinds)
     out.update(items=items, missing=missing, source_ids=ids,
                evidence={'issuer_document': issuer, 'source_kinds': kinds,
-                         'rule': 'cycle damping needs all four items from an issuer document (decision.py\'s rule for upgrade evidence)'})
+                         'rule': 'cycle damping needs all four items from issuer documents: every source of the contracts block '
+                                 'available at as_of is one (decision.py\'s rule for upgrade evidence)'})
+    if len(seen) < len(ids):
+        out['evidence']['not_yet_available'] = [i for i in ids if i not in seen]
     if c.get('customers') is not None:
         out['customers'] = c['customers']
     if missing or not issuer:

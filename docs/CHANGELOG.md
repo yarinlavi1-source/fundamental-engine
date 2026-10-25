@@ -9,6 +9,10 @@
   of a forced label); overlays for who funds the demand, the supplier chain, acquisition SBC tranches, bank capital,
   contract coverage and segments; process and expansion evidence (never a moat rating); `quarter_review(case.economics)`
   with the identity-based peak exception (PLTR 0.809 and RDDT 0.970 drop to medium, SKHY stays high).
+- Close-out review of WP4-WP8: the peak exception lowers the flag only for an evidenced model (econ.select's rule on the
+  subset, or an analyst override with a reason and evidence ids available at as_of); a bare model id keeps it high
+  (`model_not_evidenced`). `contract_coverage` counts its terms as issuer-stated only when every source of the block
+  available at as_of is an issuer document (before, any cited issuer source, even one published after as_of, sufficed).
 - WP8: MCP tool `econ_review({case, options?})` and CLI `econ-review` (selection, review, Hebrew text, estimates vs
   price); `econ.render_he` returns the owner's rows word for word as the design's section 4 (row "איך העסק מרוויח", the
   digital-bank extension of "מה המחיר של היום מניח", a risk-row fallback, the note line; names in Hebrew only through

@@ -225,6 +225,28 @@ class ContractCoverageTests(unittest.TestCase):
         self.assertEqual((out['status'], out['flags']), ('evidenced', []))
         self.assertTrue(out['cycle_damping'].startswith('eligible'))
 
+    def test_an_analyst_post_beside_a_filing_or_a_later_filing_does_not_evidence_the_terms(self):
+        """Close-out fix: the block's sources are not tied to items, so a filing cited beside the analyst post does not
+        make the post's terms issuer-stated, and a filing published after as_of is not read (it gated damping before)."""
+        c = case('skhy_2026q2')         # SYNTHETIC: all four items
+        c['contracts'].update(share_of_next_year_volume=0.5, price_mechanism='floor')
+        c['sources']['skhy_filing'] = {'kind': 'issuer_filing', 'available_at': '2026-07-31'}
+        c['contracts']['source_ids'] = ['analyst_post_skhy_2026q2', 'skhy_filing']
+        out = econ.contract_coverage(c)
+        self.assertEqual((out['status'], out['cycle_damping'], out['evidence']['issuer_document']), ('lta_unproven', 'none', False))
+        self.assertEqual(out['evidence']['source_kinds'], ['analyst_post', 'issuer_filing'])
+        self.assertEqual(flag_keys(out), ['lta_unproven'])
+        c['sources']['skhy_filing']['available_at'] = '2026-11-30'          # published after the case's as_of (2026-10-21)
+        c['contracts']['source_ids'] = ['skhy_filing', 'analyst_post_skhy_2026q2']
+        out = econ.contract_coverage(c)
+        self.assertEqual((out['status'], out['evidence']['issuer_document'], out['evidence']['source_kinds'],
+                          out['evidence']['not_yet_available']), ('lta_unproven', False, ['analyst_post'], ['skhy_filing']))
+        c['sources']['skhy_8k'] = {'kind': 'issuer_release', 'available_at': '2026-07-25'}
+        c['contracts']['source_ids'] = ['skhy_8k', 'skhy_filing']           # the release read; the later filing is not
+        out = econ.contract_coverage(c)
+        self.assertEqual((out['status'], out['evidence']['source_kinds'], out['evidence']['not_yet_available']),
+                         ('evidenced', ['issuer_release'], ['skhy_filing']))
+
 
 class AcquisitionSbcTests(unittest.TestCase):
     """Design WP5 'SPCX SBC'."""

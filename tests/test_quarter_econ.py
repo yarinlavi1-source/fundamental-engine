@@ -41,6 +41,14 @@ def peak_flags(r):
 # the quarter examples carry source_ids only; the econ subset names its sources (kind, available_at): nothing is assumed
 SKHY_SRC = {'analyst_post_skhy_2026q2': {'kind': 'analyst_post', 'available_at': '2026-07-31'}}
 UBER_SRC = {'analyst_post_uber_2025q3': {'kind': 'analyst_post', 'available_at': '2025-11-04'}}
+# the model that may clear the peak flag is evidenced (close-out fix): an analyst override citing the filed release, as
+# econ.select takes one ({primary, reason, evidence_ids}); a bare model id reads the identities but keeps the flag high
+PLTR_MODEL = {'primary': 'data_platform_software', 'evidence_ids': ['pltr_8k_q2_2026_ex991'],
+              'reason': 'software and data platforms sold to commercial and government customers: customers x revenue per customer'}
+RDDT_MODEL = {'primary': 'ads_platform', 'evidence_ids': ['rddt_10q_q226'],
+              'reason': 'advertising revenue on daily active users: DAUq x ARPU (10-Q)'}
+SKHY_AS_SOFTWARE = {'primary': 'data_platform_software', 'evidence_ids': ['analyst_post_skhy_2026q2'],
+                    'reason': 'SYNTHETIC: the same numbers under a model that is not price-cyclical'}
 
 
 def with_econ(case, economics):
@@ -51,7 +59,7 @@ def with_econ(case, economics):
 
 class PeakExceptionTests(unittest.TestCase):
     def test_pltr_filed_leverage_share_0809_is_medium(self):
-        r = quarter_review(with_econ(filed('pltr_2026q2'), {'model': 'data_platform_software'}))
+        r = quarter_review(with_econ(filed('pltr_2026q2'), {'model': PLTR_MODEL}))
         self.assertEqual(peak_flags(r), [('operating_leverage_or_peak', 'medium')])
         pe = r['cycle']['peak_exception']
         d = pe['decomposition']
@@ -71,7 +79,7 @@ class PeakExceptionTests(unittest.TestCase):
         self.assertIn(he, r['next_quarter_watch'])                         # medium: watched, never silent
 
     def test_rddt_filed_leverage_share_0970_and_the_02pp_margin(self):
-        r = quarter_review(with_econ(filed('rddt_2026q2'), {'model': 'ads_platform'}))
+        r = quarter_review(with_econ(filed('rddt_2026q2'), {'model': RDDT_MODEL}))
         self.assertEqual(peak_flags(r), [('operating_leverage_or_peak', 'medium')])
         pe = r['cycle']['peak_exception']
         d = pe['decomposition']
@@ -106,7 +114,7 @@ class PeakExceptionTests(unittest.TestCase):
         self.assertEqual(peak_flags(r), [('peak_margin_run_rate', 'high')])
         self.assertEqual([x.split(':')[0] for x in pe['reasons']], ['price_cyclical_model'])
         # the same numbers under a model that is not price-cyclical: the model condition is what decides
-        r = quarter_review(with_econ(c, {'model': 'data_platform_software', 'sources': SKHY_SRC}))
+        r = quarter_review(with_econ(c, {'model': SKHY_AS_SOFTWARE, 'sources': SKHY_SRC}))
         self.assertEqual(peak_flags(r), [('operating_leverage_or_peak', 'medium')])
         with self.assertRaisesRegex(ValueError, 'sources'):                  # no source kind or date is assumed
             quarter_review(with_econ(c, {'model': 'memory_cycle'}))
@@ -115,7 +123,7 @@ class PeakExceptionTests(unittest.TestCase):
         pltr = filed('pltr_2026q2')
         cases = {
             'model_not_known': {},                                                              # unclassified: not assessed
-            'cyclical_card_type': {'model': 'data_platform_software', 'card_type': 'semiconductor'},
+            'cyclical_card_type': {'model': PLTR_MODEL, 'card_type': 'semiconductor'},
         }
         for reason, sub in cases.items():
             r = quarter_review(with_econ(pltr, sub))
@@ -125,7 +133,7 @@ class PeakExceptionTests(unittest.TestCase):
         # opex stated as total costs (cost of revenue included): the identity does not reconcile, the split is refused
         c = deepcopy(pltr)
         c['current']['operating_expenses'] = c['current']['revenue'] - c['current']['operating_income']
-        r = quarter_review(with_econ(c, {'model': 'data_platform_software'}))
+        r = quarter_review(with_econ(c, {'model': PLTR_MODEL}))
         pe = r['cycle']['peak_exception']
         self.assertEqual((peak_flags(r), pe['decomposition']['current']['reconciles']), ([('peak_margin_run_rate', 'high')], False))
         self.assertEqual([x.split(':')[0] for x in pe['reasons']], ['identity_not_reconciled'])
@@ -133,7 +141,7 @@ class PeakExceptionTests(unittest.TestCase):
         # a margin rise led by gross margin (price or mix): the share is below 2/3 and the flag stays high
         c = deepcopy(pltr)
         c['prior_year'].update(gross_profit=0.70 * 1003697000, operating_expenses=0.70 * 1003697000 - 269317000)
-        r = quarter_review(with_econ(c, {'model': 'data_platform_software'}))
+        r = quarter_review(with_econ(c, {'model': PLTR_MODEL}))
         pe = r['cycle']['peak_exception']
         self.assertLess(pe['leverage_share'], econ.rules()['leverage_share_min'])
         self.assertEqual([x.split(':')[0] for x in pe['reasons']], ['leverage_share_below_min'])
@@ -142,7 +150,7 @@ class PeakExceptionTests(unittest.TestCase):
         c = deepcopy(pltr)
         c['prior_year'].update(operating_income=0.5 * 1003697000, gross_profit=0.85 * 1003697000,
                                operating_expenses=0.35 * 1003697000)
-        pe = quarter_review(with_econ(c, {'model': 'data_platform_software'}))['cycle']['peak_exception']
+        pe = quarter_review(with_econ(c, {'model': PLTR_MODEL}))['cycle']['peak_exception']
         self.assertEqual([x.split(':')[0] for x in pe['reasons']], ['no_margin_expansion'])
 
     def test_no_economics_no_change(self):
@@ -164,6 +172,60 @@ class PeakExceptionTests(unittest.TestCase):
             self.assertEqual(a[k], b[k], k)
 
 
+class ModelEvidenceTests(unittest.TestCase):
+    """Close-out fix of WP7: only an evidenced model lowers the peak flag (econ.select's rule or an analyst override with a
+    reason and evidence ids available at as_of); a bare model id leaves it high. Fails on WP8 (a bare id cleared it)."""
+
+    def test_a_bare_model_id_keeps_the_flag_high_with_the_split_shown(self):
+        r = quarter_review(with_econ(filed('pltr_2026q2'), {'model': 'data_platform_software'}))
+        self.assertEqual(peak_flags(r), [('peak_margin_run_rate', 'high')])
+        pe = r['cycle']['peak_exception']
+        self.assertEqual([x.split(':')[0] for x in pe['reasons']], ['model_not_evidenced'])
+        self.assertEqual(round(pe['leverage_share'], 3), 0.809)                  # the numbers are still read and shown
+        self.assertEqual((pe['model_evidence']['evidenced'], pe['model_evidence']['rule']['primary']), (False, 'unclassified'))
+        self.assertIn('evidence_ids', pe['reasons'][0])                           # the reason says how to evidence it
+        self.assertEqual(r['economics']['model']['primary'], 'data_platform_software')   # the identities are still read
+
+    def test_an_override_with_issuer_evidence_clears_it_and_is_shown(self):
+        r = quarter_review(with_econ(filed('pltr_2026q2'), {'model': PLTR_MODEL}))
+        ev = r['cycle']['peak_exception']['model_evidence']
+        self.assertEqual((ev['evidenced'], ev['basis'], ev['evidence_ids'], ev['evidence_kinds'], ev['checked_by']),
+                         (True, 'analyst_override', ['pltr_8k_q2_2026_ex991'], ['issuer_release'], 'econ.select_case'))
+        self.assertEqual((ev['rule']['primary'], ev['agrees_with_rule']), ('unclassified', False))   # the rule shown beside it
+        sel = econ.select_case({**subset('pltr_2026q2', None), 'company': 'Palantir Technologies', 'period_end': '2026-06-30',
+                                'as_of': '2026-08-04', 'currency': 'USD', 'period': 'quarter'},
+                               'subscription_software', override=PLTR_MODEL)
+        r2 = quarter_review(with_econ(filed('pltr_2026q2'), {'model': sel}))   # a select() output carrying the override
+        self.assertEqual(peak_flags(r2), [('operating_leverage_or_peak', 'medium')])
+
+    def test_override_refusals_are_econ_selects(self):
+        pltr = filed('pltr_2026q2')
+        for ids, msg in ((['av_income_statement_pltr'], 'not yet available'),            # published 2026-10-21, after as_of
+                         (['nowhere'], 'unknown or not yet available')):
+            with self.assertRaisesRegex(ValueError, msg):
+                quarter_review(with_econ(pltr, {'model': {**PLTR_MODEL, 'evidence_ids': ids}}))
+        cons = {'cons': {'kind': 'consensus', 'available_at': '2026-08-01'}}
+        with self.assertRaisesRegex(ValueError, 'consensus'):
+            quarter_review(with_econ(pltr, {'model': {**PLTR_MODEL, 'evidence_ids': ['cons']}, 'sources': cons}))
+        with self.assertRaisesRegex(ValueError, 'evidence_ids'):
+            quarter_review(with_econ(pltr, {'model': {'primary': 'data_platform_software', 'reason': 'no ids'}}))
+
+    def test_the_rule_evidences_a_model_its_kpi_facts_and_card_type_select(self):
+        sub = subset('rddt_2026q2', 'ads_platform')
+        r = quarter_review(with_econ(filed('rddt_2026q2'), {**sub, 'card_type': 'platform_marketplace'}))
+        ev = r['cycle']['peak_exception']['model_evidence']
+        self.assertEqual((peak_flags(r), ev['evidenced'], ev['basis'], ev['rule']['primary']),
+                         ([('operating_leverage_or_peak', 'medium')], True, 'rule', 'ads_platform'))
+        r = quarter_review(with_econ(filed('rddt_2026q2'), sub))                     # KPI facts alone: one signal
+        self.assertEqual(peak_flags(r), [('peak_margin_run_rate', 'high')])
+        self.assertEqual([x.split(':')[0] for x in r['cycle']['peak_exception']['reasons']], ['model_not_evidenced'])
+        other = {**subset('rddt_2026q2', 'data_platform_software'), 'card_type': 'platform_marketplace'}
+        r = quarter_review(with_econ(filed('rddt_2026q2'), other))                   # the rule selects another model
+        ev = r['cycle']['peak_exception']['model_evidence']
+        self.assertEqual((peak_flags(r), ev['evidenced'], ev['rule']['primary']),
+                         ([('peak_margin_run_rate', 'high')], False, 'ads_platform'))
+
+
 class EconomicsBlockTests(unittest.TestCase):
     def test_skhy_margin_only_normalized_pe_1985_through_quarter_review(self):
         r = quarter_review(with_econ(example('skhy_2026q2'), subset('skhy_2026q2', 'memory_cycle')))
@@ -181,7 +243,7 @@ class EconomicsBlockTests(unittest.TestCase):
         self.assertIn(('econ.lta_unproven', 'info'), [(f['key'], f['severity']) for f in r['flags']])
 
     def test_rddt_flags_merge_as_econ_keys_and_falsifiers_feed(self):
-        c = with_econ(filed('rddt_2026q2'), subset('rddt_2026q2', 'ads_platform'))
+        c = with_econ(filed('rddt_2026q2'), {**subset('rddt_2026q2', 'ads_platform'), 'card_type': 'platform_marketplace'})
         c['falsifiers'] = [{'id': 'us_dau', 'metric': 'US DAUq q/q', 'direction': 'below', 'threshold': 0.0,
                             'econ': {'id': 'dau', 'scope': 'us', 'field': 'growth'}}]
         r = quarter_review(c)

@@ -196,8 +196,10 @@ of each held-out case is recorded next to its reading.
     `receivables_windows` 2 matched windows the receivables check is undecided. H2 negative controls therefore state
     `funding_links: []`, non-cash gains (0 when none) and two matched receivables windows. `customer_prepayment_build`
     also fires on a build when no revenue growth exists over the same window (reported as window_mismatch).
-    `contract_coverage` counts an item as evidenced only when an issuer document states it. `segment_unexplained`
-    reads a segment through the model it names, else through the selected models.
+    `contract_coverage` counts an item as evidenced only when an issuer document states it: the block's sources are
+    not tied to single items, so every source of the block available at as_of must be an issuer document (a later
+    source is not read; close-out fix of 25.10.2026, before any held-out run). `segment_unexplained` reads a segment
+    through the model it names, else through the selected models.
   - WP6. `cash_conversion` has no rule of its own and reads `cfo_to_ni_min` 0.80. The process `machine` reads R&D as the
     innovation intensity (advertising counts when its trend is known; an unknown advertising trend does not block);
     "growth slows" = the latest window's annual growth below the previous one, over two stated windows of equal length;
@@ -205,7 +207,10 @@ of each held-out case is recorded next to its reading.
     open (None), not a failure.
   - WP7. The peak exception is stricter than section 1: gross profit minus operating expenses must reconcile to operating
     income within `identity_tolerance` 0.02 in both periods, the operating margin must have risen, and `case.economics`
-    must name a model that is not price-cyclical (with no model the flag stays `high`).
+    must name a model that is not price-cyclical (with no model the flag stays `high`). That model must be evidenced
+    as `econ.select` chooses one: its rule on the subset (card type and KPI facts) selects the same models, or an
+    analyst override gives a reason and evidence ids available at as_of; a bare model id keeps the flag `high`
+    (`model_not_evidenced`; close-out fix of 25.10.2026, before any held-out run).
   - WP8 adds no screen: `render_he` and `price_vs_estimates` round and word figures the review already holds. The RDDT
     revisions in the WP8 test are still the design's figures; the AV snapshot dates and the second close remain to be
     pinned before that reading is called evidence.

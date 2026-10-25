@@ -251,7 +251,13 @@ class ContractTests(unittest.TestCase):
         callers = sorted(p.name for p in pkg.glob('*.py') if p.name != 'econ.py'
                          and any(s in p.read_text(encoding='utf-8') for s in ('econ.select', 'select_case(', 'select_factbook(',
                                                                                 'kpi_fact_ids(')))
-        self.assertEqual(callers, [])
+        # close-out of WP7: quarter_review checks the model that may lower the peak flag with select_case, only on a
+        # supplied case['economics'] (no input, no call: test_quarter_econ test_no_economics_no_change); nothing else does
+        self.assertEqual(callers, ['quarter.py'])
+        from fundamental_engine import quarter
+        src = Path(quarter.__file__).read_text(encoding='utf-8')
+        self.assertEqual(src.count('select_case('), 2)                    # both in quarter._model_evidence
+        self.assertLess(src.index('def _model_evidence'), src.index('select_case('))
 
 
 if __name__ == '__main__':

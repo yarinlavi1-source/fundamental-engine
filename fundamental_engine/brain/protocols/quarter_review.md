@@ -40,8 +40,12 @@ engine output (docs/ANALYST_COMPARISON_2026-10.md):
    the flag can become `operating_leverage_or_peak` (medium). That happens only when
    gross profit and opex reconcile to operating income, at least 2/3 of the y/y
    margin rise comes from opex falling as a share of revenue, and the model is not
-   price-cyclical (never memory_cycle, gpu_vendor or a cyclical card type). Both
-   readings are shown. The econ review comes back as `economics`, its flags as
+   price-cyclical (never memory_cycle, gpu_vendor or a cyclical card type) and is
+   evidenced: econ.select's rule on the subset (`economics.card_type` with the
+   model's KPI facts) selects it, or `economics.model` is an analyst override
+   `{primary, reason, evidence_ids}` citing sources available at as_of (not a
+   consensus, market feed or assumption). A bare model id keeps the flag high
+   (`model_not_evidenced`). Both readings are shown. The econ review comes back as `economics`, its flags as
    `econ.<key>`, and its falsifiers join `falsifiers` (bind a threshold with
    `econ {id, scope, field}`). Without `case.economics` nothing changes.
 9. Market checks. Show P/E on run rate and on attributed forward EPS. For a dual
