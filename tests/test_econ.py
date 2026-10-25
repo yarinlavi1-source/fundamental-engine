@@ -505,7 +505,9 @@ class ContractTests(unittest.TestCase):
         pkg = Path(fundamental_engine.__file__).parent
         callers = sorted(p.name for p in pkg.glob('*.py') if p.name != 'econ.py'
                          and any(s in p.read_text(encoding='utf-8') for s in ('econ.review', 'evaluate_identity', 'growth_split(')))
-        self.assertEqual(callers, [])
+        # WP7: quarter_review runs the review only on a supplied case['economics'] (no input, no call:
+        # tests/test_quarter_econ.py test_no_economics_no_change); nothing else in the engine calls it
+        self.assertEqual(callers, ['quarter.py'])
 
 
 class RepairTests(unittest.TestCase):

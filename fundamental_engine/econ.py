@@ -27,8 +27,10 @@ expansion evidence, to cite and never a rating: process_evidence (category renew
 intensity against growth, the machine reading working / failing / unproven / unknown with every condition shown;
 cash_conversion beside it) and expansion (customers x revenue per customer with NDR, the top-N figures compared only on
 their own scope and window: top_n_inconsistent, scope_mismatch); review() reads the case's categories, history, cash
-and ttm_revenue blocks for them. Later work packages add the quarter-review link and the Hebrew text. Nothing here is
-called by the pipeline, so every existing output stays byte-identical (no-input invariance).
+and ttm_revenue blocks for them. WP7: quarter_review takes this case's subset as case['economics'] (the review comes
+back as its `economics`, the flags merge as econ.<key>, the falsifiers feed its falsifiers, and the model decides the
+identity-based peak exception in quarter._cycle). A later work package adds the Hebrew text. Nothing here is called by
+the pipeline, so every existing output stays byte-identical (no-input invariance).
 
 Boundaries: fetches nothing; the registry holds no company data; thresholds are uncalibrated screens frozen in
 docs/prereg_econ.md; a result of this layer is never a valuation, a moat rating or a trade instruction.
@@ -544,13 +546,17 @@ CASE_META = ('_schema', '_provenance', 'company', 'name', 'period_end', 'period'
              'reconciled_to_filings', 'sources', 'model', 'model_hint')
 # the registry checks the review computes itself; an overlay's checks (registry overlays.<id>.checks) count as run when
 # the overlay ran (WP5); every other declared check of a selected model is listed under checks_not_run with the reason
-# (an overlay whose inputs the case does not supply; the quarter-review peak exception comes later). The WP6 checks
+# (an overlay whose inputs the case does not supply; a check quarter_review owns, QUARTER_CHECKS). The WP6 checks
 # (process_evidence, cash_conversion, top_n_expansion, top_n_inconsistent) name their own reason when their inputs are
 # missing.
 CHECKS_RUN = ('per_unit_vs_units', 'take_rate_shift', 'thesis_on_minor_line', 'core_units_flat', 'disclosure_dropped',
               'cyclical_deceleration', 'expansion_led', 'cumulative_kpi_not_activity', 'rate_sensitivity_share',
               'margin_only_normalized', 'segment_reconciliation', 'basis_mismatch', 'scope_mismatch', 'capex_per_unit_lag',
               'process_evidence', 'cash_conversion', 'top_n_expansion', 'top_n_inconsistent')
+# WP7: the checks quarter._cycle owns (the peak flag and its identity-based exception); quarter_review runs them with this
+# review's model when the econ case comes in as case['economics'] (its checks_run_by_quarter), never econ.review alone
+QUARTER_CHECKS = {c: 'owned by quarter_review (_cycle): run when this econ case is case.economics of a quarter_review'
+                  for c in ('peak_margin_run_rate', 'operating_leverage_or_peak')}
 CORE_ORDER = ('consistent', 'computed', 'partial', 'inconsistent', 'basis_mismatch', 'scope_mismatch', 'not_computed', 'missing')
 # a core identity's summary row among the scopes that computed something: the worst check first (_core_row)
 SURFACE_ORDER = ('inconsistent', 'partial', 'consistent', 'computed')
@@ -3640,6 +3646,8 @@ def _overlay_checks():
 
 def _not_run_reason(ix, check, owner, ran):
     oid = owner.get(check)
+    if check in QUARTER_CHECKS:
+        return QUARTER_CHECKS[check]
     if oid is None:
         return 'not computed by this version of the econ review'
     if _supplied(ix['case'], oid):

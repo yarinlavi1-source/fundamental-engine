@@ -14,6 +14,13 @@ Lessons taken from comparing human earnings-day write-ups with the engine:
 - banks: price / tangible book only means something against ROTE and cost of equity;
 - EPS x exit multiple is a dated sensitivity with an implied annual return, not value.
 
+Business economics (econ layer, WP7): an optional case['economics'] is the econ case subset (econ.review's case without
+the company, period_end, as_of and currency it inherits from this case; period 'quarter'; sources merged with
+case['sources']; card_type, a model_card type, read here). Its review comes back as `economics`; its flags merge as
+econ.<key> beside quarter's own keys; its falsifiers feed `falsifiers` (a falsifier with econ {id, scope, field} reads its
+current value from the econ row; the other econ falsifiers are listed as tracked). Its model also decides the peak
+exception in _cycle (operating_leverage_or_peak). Without case['economics'] every output is byte-identical.
+
 Inputs are absolute currency units in one stated currency. Nothing is fetched.
 Output is research indication, not a trade instruction or a price forecast.
 """
@@ -27,6 +34,39 @@ LINES = ('revenue', 'gross_profit', 'operating_income', 'adjusted_ebitda', 'net_
          'operating_expenses', 'operating_cash_flow', 'capex', 'diluted_shares', 'sbc', 'buybacks')
 KPI_BASES = {'active', 'flow', 'balance', 'cumulative'}
 SEVERITY = {'high': 0, 'medium': 1, 'info': 2}
+# case['economics'] (the econ case subset): the meta it inherits from this case, the period it reads, the checks of the
+# econ registry this module owns (run in _cycle, never by econ.review), and the fields a falsifier may read from an econ row
+ECON_INHERITED = ('company', 'period_end', 'as_of', 'currency')
+ECON_PERIOD = 'quarter'
+QUARTER_OWNED_CHECKS = ('peak_margin_run_rate', 'operating_leverage_or_peak')
+ECON_FALSIFIER_FIELDS = ('value', 'growth', 'change')
+# Peak exception (docs/prereg_econ.md section 1, frozen 21.10.2026). With gross profit and operating expenses that
+# reconcile to operating income, OM = GM - opex/revenue exactly, so y/y dOM = dGM - d(opex/revenue) and the leverage share
+# -d(opex/revenue) / dOM says how much of the margin rise came from costs growing slower than revenue rather than from
+# gross margin (price, mix). peak_margin_run_rate becomes operating_leverage_or_peak (registry severity, medium) only when
+# the share is >= rules.leverage_share_min (0.667, an uncalibrated screen), case.economics names a model that is not
+# price-cyclical (registry price_cyclical: memory_cycle, gpu_vendor) and no cyclical card type (model_card.CYCLICAL_TYPES):
+# operating leverage in a cyclical upswing is the peak mechanism itself, so the identity alone never clears a cyclical.
+# Filed Q2-26 checks: PLTR 0.809, RDDT 0.970 -> medium; SKHY (no gross profit or opex; memory_cycle) stays high.
+# Stricter than the design text (noted in the WP7 notes): the identity must reconcile in both periods (|operating income -
+# (gross profit - opex)| <= rules.identity_tolerance x |operating income|), else opex is not the operating cost base.
+PEAK_TESTS = (('history_max', 'the history maximum'), ('median_plus_15pp', 'the history median + 15pp'))
+# Hebrew text of each econ flag merged into quarter's flags (econ.<key>); the numbers stay in economics.flags
+ECON_FLAG_HE = {
+    'per_unit_vs_units': 'מספר היחידות גדל, אבל ההכנסה ליחידה ירדה ביותר מ-5%: הצמיחה באה מכמות ולא ממחיר.',
+    'take_rate_shift': 'החלק שהחברה שומרת מכל דולר של הזמנות זז ביותר מנקודת אחוז: לבדוק אם זה מחיר, תמהיל או שינוי בהגדרת ההכנסה.',
+    'thesis_on_minor_line': 'התזה נשענת על שורת הכנסה קטנה שמסבירה רק חלק קטן מהצמיחה.',
+    'core_units_flat': 'מספר המשתמשים או היחידות בליבת העסק כמעט לא זז: הצמיחה לא באה מעוד לקוחות.',
+    'disclosure_dropped': 'החברה מפסיקה לדווח מדד שהתזה נשענת עליו: אי אפשר יותר לעקוב אחרי תנאי ההפרכה שלו.',
+    'segment_unexplained': 'מגזר מהותי בלי הסבר כלכלי מאומת: עוד לא ברור איך הוא מרוויח.',
+    'cash_conversion': 'התזרים החופשי נמוך בהרבה מהרווח הנקי: לבדוק הון חוזר והשקעות.',
+    'top_n_inconsistent': 'נתוני הלקוחות הגדולים לא מתיישבים עם ההכנסות של אותה תקופה.',
+    'lta_unproven': 'לחוזים ארוכי הטווח חסרים פרטים (היקף, מנגנון מחיר, מקדמות, משך): הם עוד לא מקטינים את סיכון המחזור.',
+    'customer_prepayment_build': 'המקדמות מלקוחות גדלו: הלקוחות מממנים חלק מהפעילות.',
+    'nco_basis': 'החברה מוכרת הלוואות, אבל ניתן רק שיעור המחיקות הכותרתי: הפסדי האשראי בפועל יכולים להיות גבוהים יותר.',
+    'capital_lever_insufficient': 'גם החזרה של כל ההון העודף לא מביאה לתשואה על ההון שהמחיר מניח: השאר צריך לבוא מרווח גבוה יותר.',
+    'tranche_schedule_mismatch': 'הוצאת המניות מעסקת הרכישה ברבעון לא מתאימה ללוח ההבשלה המוצהר: לא ברור מתי היא תסתיים.',
+}
 
 
 def _num(value, label, minimum=None):
@@ -273,17 +313,98 @@ def _track(track, flags):
     return out
 
 
-def _cycle(cur, history_margins, flags):
+def _peak_exception(cur, py, om, hist, median, econ):
+    """The identity-based peak exception (see PEAK_TESTS above): both readings' numbers, the conditions and why it did not
+    apply. Only called when the peak fired and case.economics was supplied."""
+    rules = econ['rules']
+    tol, smin, near = rules['identity_tolerance'], rules['leverage_share_min'], rules['near_threshold']
+    tests = []
+    for (test, label), thr in zip(PEAK_TESTS, (hist[-1], median + .15)):
+        row = {'test': test, 'label': label, 'threshold': thr, 'fired': om > thr, 'above_threshold': om - thr}
+        if abs(om - thr) <= near:
+            row['near_threshold'] = near
+        tests.append(row)
+    out = {'rule': 'operating_leverage_or_peak', 'peak_tests': tests, 'leverage_share_min': smin,
+           'model': econ['selection'], 'price_cyclical_models': econ['cyclical_models'], 'card_types': econ['card_types'],
+           'cyclical_card_types': econ['cyclical_card_types']}
+    reasons = []
+    need = [f'{blk}.{k}' for blk, lines in (('current', cur), ('prior_year', py))
+            for k in ('revenue', 'gross_profit', 'operating_expenses', 'operating_income') if lines.get(k) is None]
+    if not need and py['revenue'] <= 0:
+        need.append('prior_year.revenue (positive)')
+    if need:
+        reasons.append('gross_profit_and_opex_missing: needs ' + ', '.join(need))
+    else:
+        per = {}
+        for blk, L in (('current', cur), ('prior_year', py)):
+            rev, oi = L['revenue'], L['operating_income']
+            residual = oi - (L['gross_profit'] - L['operating_expenses'])
+            per[blk] = {'gross_margin': L['gross_profit'] / rev, 'opex_ratio': L['operating_expenses'] / rev,
+                        'operating_margin': oi / rev, 'identity_residual': residual,
+                        'reconciles': abs(residual) <= tol * abs(oi)}
+        c, p = per['current'], per['prior_year']
+        d_om, d_gm, d_x = (c[k] - p[k] for k in ('operating_margin', 'gross_margin', 'opex_ratio'))
+        out['decomposition'] = {
+            **per, 'window': 'y/y (current vs prior_year)', 'delta_operating_margin': d_om, 'delta_gross_margin': d_gm,
+            'delta_opex_ratio': d_x, 'residual': d_om - (d_gm - d_x),
+            'identity': 'OM = GM - opex/revenue (gross profit - operating expenses = operating income)',
+            'reconcile_tolerance': f'|operating income - (gross profit - operating expenses)| <= rules.identity_tolerance ({tol}) '
+                                   'x |operating income|, in both periods'}
+        if not (c['reconciles'] and p['reconciles']):
+            bad = [blk for blk in per if not per[blk]['reconciles']]
+            reasons.append('identity_not_reconciled: gross profit - operating expenses differs from operating income in '
+                           + ', '.join(bad) + ': the supplied opex is not the operating cost base, so the split does not hold')
+        elif d_om <= 0:
+            reasons.append('no_margin_expansion: the operating margin did not rise year on year; there is no rise to attribute')
+        else:
+            share = -d_x / d_om
+            out.update(leverage_share=share, derived_from='-delta_opex_ratio / delta_operating_margin (current vs prior_year)')
+            if abs(share - smin) <= near:
+                out['leverage_share_near_threshold'] = near
+            if share < smin:
+                reasons.append(f'leverage_share_below_min: {share:.3f} < rules.leverage_share_min {smin}: the rise came mostly '
+                               'from gross margin (price or mix)')
+    if not econ['models']:
+        reasons.append('model_not_known: case.economics names no economic model; the exception needs one that is not '
+                       'price-cyclical')
+    if econ['cyclical_models']:
+        reasons.append('price_cyclical_model: ' + ', '.join(econ['cyclical_models']) + ' (registry price_cyclical): a record '
+                       'margin is read as the cycle')
+    if econ['cyclical_card_types']:
+        reasons.append('cyclical_card_type: ' + ', '.join(econ['cyclical_card_types']) + ' (model_card.CYCLICAL_TYPES)')
+    applies = not reasons
+    out.update(applies=applies, flag='operating_leverage_or_peak' if applies else 'peak_margin_run_rate',
+               severity=econ['exception_severity'] if applies else 'high', reasons=reasons)
+    return out
+
+
+def _exception_he(om, median, hist, exc):
+    d = exc['decomposition']
+    ref = (f'מעל השיא ההיסטורי של {hist[-1]:.1%}' if exc['peak_tests'][0]['fired']
+           else f'מעל החציון ההיסטורי ({median:.1%}) ועוד 15 נקודות ({median + .15:.1%})')
+    return (f"שולי רווח תפעולי של {om:.1%}, {ref}. אבל כ-{exc['leverage_share']:.0%} מהעלייה של "
+            f"{100 * d['delta_operating_margin']:.1f} נקודות אחוז בשנה באה מהוצאות שגדלו לאט מההכנסות (יחס ההוצאות להכנסות "
+            f"{100 * d['delta_opex_ratio']:+.1f} נקודות, שולי הרווח הגולמי {100 * d['delta_gross_margin']:+.1f}). שתי קריאות: "
+            'מינוף תפעולי שנשאר כל עוד ההכנסות ממשיכות לגדול, או רווח שיא שיתכווץ אם הצמיחה תיעצר; רבעון כפול 4 עדיין אינו רווח מנורמל.')
+
+
+def _cycle(cur, history_margins, flags, py=None, econ=None):
     om = _margin(cur.get('operating_income'), cur.get('revenue'))
     if om is None or not history_margins:
         return None
     hist = sorted(number(m, 'history_operating_margins', -10, 1) for m in history_margins)
     median = hist[len(hist) // 2]
     peak = om > max(hist) or om > median + .15
-    if peak:
+    exc = _peak_exception(cur, py or {}, om, hist, median, econ) if peak and econ is not None else None
+    if exc and exc['applies']:
+        flags.append((exc['flag'], exc['severity'], _exception_he(om, median, hist, exc)))
+    elif peak:
         flags.append(('peak_margin_run_rate', 'high',
                       f'שולי רווח תפעולי של {om:.0%} מול חציון היסטורי של {median:.0%}: רווח רבעוני כפול 4 הוא רווח שיא, לא רווח מנורמל לאורך מחזור.'))
-    return {'operating_margin': om, 'historical_median': median, 'historical_max': hist[-1], 'above_history': peak}
+    out = {'operating_margin': om, 'historical_median': median, 'historical_max': hist[-1], 'above_history': peak}
+    if exc is not None:
+        out['peak_exception'] = exc
+    return out
 
 
 def _market(m, cur, norm, cycle, flags):
@@ -389,22 +510,122 @@ def _sensitivities(items):
     return rows
 
 
-def _falsifiers(items, flags):
-    rows = []
+def _econ_value(ref, econ_rows, label):
+    """The current value of a falsifier bound to an econ falsifier row (econ {id, scope, field}) and the link shown with it.
+    No value (the KPI not supplied, the field not stated) gives None and the econ status; nothing is filled in."""
+    if econ_rows is None:
+        raise ValueError(f'{label}.econ: needs case.economics (the econ review the value is read from)')
+    if not isinstance(ref, dict) or not isinstance(ref.get('id'), str) or not ref['id'] or set(ref) - {'id', 'scope', 'field'}:
+        raise ValueError(f'{label}.econ: {{id, scope, field}} naming an econ falsifier row')
+    if ref.get('field') not in ECON_FALSIFIER_FIELDS:
+        raise ValueError(f'{label}.econ.field: one of {ECON_FALSIFIER_FIELDS} (the number the threshold applies to)')
+    scope = ref.get('scope', 'total')
+    hits = [r for r in econ_rows if r['id'] == ref['id'] and r['scope'] == scope]
+    link = {'id': ref['id'], 'scope': scope, 'field': ref['field']}
+    if not hits:
+        known = sorted({r['id'] for r in econ_rows})
+        if ref['id'] not in known:
+            raise ValueError(f"{label}.econ.id: {ref['id']!r} is not a falsifier of the selected economic model(s) {known}")
+        return None, {**link, 'status': 'missing'}
+    values = {r.get(ref['field']) for r in hits} - {None}
+    if len(values) > 1:
+        raise ValueError(f"{label}.econ: {ref['id']} ({scope}) has several {ref['field']} values {sorted(values)}; name one scope")
+    row = next((r for r in hits if r.get(ref['field']) is not None), hits[0])
+    link.update(status=row['status'], kind=row['kind'], tag=row.get('tag'), window=row.get('window'),
+                derived_from=row.get('derived_from'))
+    if row.get('from_period'):
+        link['unobservable_from'] = row['from_period']
+    return row.get(ref['field']), link
+
+
+def _falsifiers(items, flags, econ_rows=None):
+    rows, bound = [], set()
     for i, f in enumerate(items):
         if f.get('direction') not in {'below', 'above'}:
             raise ValueError(f'falsifiers[{i}].direction must be below or above')
-        cur, thr = number(f['current'], 'falsifier current'), number(f['threshold'], 'falsifier threshold')
+        link = None
+        if f.get('econ') is not None:
+            if f.get('current') is not None:
+                raise ValueError(f'falsifiers[{i}]: current and econ both given; the value comes from one place')
+            cur, link = _econ_value(f['econ'], econ_rows, f'falsifiers[{i}]')
+            bound.add((link['id'], link['scope']))
+            if cur is None:
+                rows.append({'id': f['id'], 'metric': f['metric'], 'current': None,
+                             'threshold': number(f['threshold'], 'falsifier threshold'), 'status': link['status'], 'econ': link})
+                continue
+            cur = number(cur, 'falsifier current')
+        else:
+            cur = number(f['current'], 'falsifier current')
+        thr = number(f['threshold'], 'falsifier threshold')
         broken = cur < thr if f['direction'] == 'below' else cur > thr
         prior = _num(f.get('prior'), 'falsifier prior')
         moving_toward = prior is not None and ((cur < prior) if f['direction'] == 'below' else (cur > prior))
         status = 'broken' if broken else ('weakening' if moving_toward else 'intact')
         rows.append({'id': f['id'], 'metric': f['metric'], 'current': cur, 'threshold': thr, 'status': status})
+        if link:
+            rows[-1]['econ'] = link
         if status == 'broken':
             flags.append(('thesis_falsifier_broken', 'high', f"תנאי ההפרכה '{f['metric']}' נחצה: התזה דורשת בחינה מחדש, לא הסבר."))
         elif status == 'weakening':
             flags.append(('thesis_falsifier_weakening', 'medium', f"'{f['metric']}' זז לכיוון סף ההפרכה."))
+    for r in econ_rows or []:          # the model's falsifiers no threshold is bound to: tracked every quarter, not judged
+        if (r['id'], r['scope']) in bound:
+            continue
+        rows.append({'id': f"econ.{r['id']}", 'metric': r['id'].replace('_', ' ') + (f" ({r['scope']})" if r['scope'] else ''),
+                     'current': r.get('value'), 'threshold': None, 'status': r['status'],
+                     'econ': {k: r[k] for k in ('id', 'scope', 'kind', 'tag', 'window', 'growth', 'change', 'from_period',
+                                                'derived_from') if r.get(k) is not None}})
     return rows
+
+
+def _economics(case):
+    """case['economics'] -> the econ review of the subset and what the peak exception needs from it; None when absent."""
+    sub = case.get('economics')
+    if sub is None:
+        return None
+    from . import econ as E, model_card as M          # lazily: econ imports this module (quarter._bank)
+    if not isinstance(sub, dict):
+        raise ValueError('economics: the econ case subset (an object; see econ.review)')
+    sub = dict(sub)
+    for k in ECON_INHERITED:
+        if k in sub and sub[k] != case[k]:
+            raise ValueError(f'economics.{k}: {sub[k]!r} differs from the quarter case ({case[k]!r}); the subset inherits it')
+    if sub.get('period', ECON_PERIOD) != ECON_PERIOD:
+        raise ValueError(f"economics.period: quarter_review reads one quarter ({ECON_PERIOD!r})")
+    sources = case.get('sources') or {}
+    extra = sub.get('sources') or {}
+    if not isinstance(sources, dict) or not isinstance(extra, dict):
+        raise ValueError('sources: {id: {kind, available_at}}')
+    for sid, s in extra.items():                       # one id, one source: its kind and date must agree (notes may differ)
+        if sid in sources and any((a.get(k) if isinstance(a, dict) else a) != (s.get(k) if isinstance(s, dict) else s)
+                                  for a in (sources[sid],) for k in ('kind', 'available_at')):
+            raise ValueError(f'economics.sources.{sid}: kind or available_at differs from the quarter case sources')
+    cards = E._card_types(sub.pop('card_type', None), M)
+    review = E.review({**sub, **{k: case[k] for k in ECON_INHERITED}, 'period': ECON_PERIOD,
+                       'sources': {**extra, **sources}})   # the quarter case's entry is kept for a shared id
+    owned = [r for r in review['checks_not_run'] if r['check'] in QUARTER_OWNED_CHECKS]
+    review['checks_not_run'] = [r for r in review['checks_not_run'] if r['check'] not in QUARTER_OWNED_CHECKS]
+    review['checks_run_by_quarter'] = [{'check': r['check'], 'model': r['model'], 'where': 'cycle'} for r in owned]
+    sel = review['model']
+    mids = [m for m in ([sel['primary']] + sel['secondary'] if sel else []) if m != E.UNCLASSIFIED]
+    review['quarter_link'] = {
+        'inherited': list(ECON_INHERITED) + ['period'], 'sources': 'case.sources merged with economics.sources',
+        'card_type': cards, 'flags': 'merged into flags as econ.<key>; the numbers stay here',
+        'falsifiers': 'fed to falsifiers: bound by econ {id, scope, field}, else tracked without a threshold'}
+    return {'review': review, 'selection': sel, 'models': mids, 'card_types': cards,
+            'cyclical_models': [m for m in mids if E.model(m)['price_cyclical']],
+            'cyclical_card_types': [t for t in cards if t in M.CYCLICAL_TYPES], 'rules': E.rules(),
+            'exception_severity': E.registry()['checks']['operating_leverage_or_peak']['severity']}
+
+
+def _econ_flags(review):
+    """The econ review's flags as quarter flags under econ.<key>: they never take one of quarter's own keys."""
+    out = []
+    for f in review['flags']:
+        where = f.get('segment') or (f['scope'] if f.get('scope') not in (None, 'total') else None)
+        he = ECON_FLAG_HE.get(f['key'], f"בדיקה כלכלית '{f['key']}': ראו economics.flags.")
+        out.append((f"econ.{f['key']}", f['severity'], f'{where}: {he}' if where else he))
+    return out
 
 
 def _currency(case):
@@ -455,6 +676,7 @@ def quarter_review(case):
     cur, py, pq = _lines(case.get('current'), 'current'), _lines(case.get('prior_year'), 'prior_year'), _lines(case.get('prior_quarter'), 'prior_quarter')
     if cur.get('revenue') is None:
         raise ValueError('current.revenue required')
+    econ = _economics(case)
     raw = []
     growth = {}
     for k in ('revenue', 'gross_profit', 'operating_income', 'adjusted_ebitda', 'operating_cash_flow'):
@@ -467,7 +689,7 @@ def quarter_review(case):
     if eg is not None and og is not None and eg - og > .15:
         raw.append(('adjusted_vs_reported_gap', 'medium',
                     f'EBITDA מתואם צמח {eg:.0%} מול רווח תפעולי מדווח {og:.0%}: לבדוק מה מוחרג (SBC, פחת, משפטי) ואם זה חוזר.'))
-    cycle = _cycle(cur, case.get('history_operating_margins'), raw)
+    cycle = _cycle(cur, case.get('history_operating_margins'), raw, py, econ)
     market = _market(case.get('market'), cur, norm, cycle, raw)
     result = {
         'company': case['company'], 'period_end': case['period_end'], 'as_of': case['as_of'], 'currency': case['currency'],
@@ -489,8 +711,10 @@ def quarter_review(case):
         'bank': _bank(case.get('bank'), market['price'], raw) if case.get('bank') and market else None,
         'multiple_scenarios': _scenarios(case['market'], market['price'], raw) if market else [],
         'sensitivities': _sensitivities(case.get('sensitivities') or []),
-        'falsifiers': _falsifiers(case.get('falsifiers') or [], raw),
+        'falsifiers': _falsifiers(case.get('falsifiers') or [], raw, econ['review']['falsifiers'] if econ else None),
     }
+    if econ:
+        result['economics'] = econ['review']
     if case.get('bank') and not market:
         raise ValueError('bank checks need market.price')
     for i, c in enumerate(case.get('concentration') or []):
@@ -500,6 +724,8 @@ def quarter_review(case):
             raw.append(('customer_concentration', 'medium', f"{c['group']} = {share:.0%} מההכנסות: כוח מיקוח של מעטים מול החברה."))
     if not (case.get('guidance') or []) or not any(g.get('consensus') is not None for g in case.get('guidance') or []):
         raw.append(('no_expectations_data', 'info', 'אין נתון ציפיות מתועד; אי אפשר לקבוע אם התגובה במניה מוצדקת או מוגזמת.'))
+    if econ:
+        raw += _econ_flags(econ['review'])
     result['flags'] = sorted(({'key': k, 'severity': s, 'he': he} for k, s, he in raw), key=lambda f: SEVERITY[f['severity']])
     result['next_quarter_watch'] = [f['he'] for f in result['flags'] if f['severity'] != 'info'][:5]
     result['text'] = _text(case, result)
