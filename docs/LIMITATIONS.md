@@ -185,5 +185,5 @@ Companion to docs/EVIDENCE_STATUS.md, which separates what tests prove from what
     multiple's target (16.8x justified against a market that kept paying 23-25x). The only measured price path in this build is
     the engine's base IRR (less the dividend yield) compounded from today's price: within +-25% of the realized price in 60% /
     41% / 29% of rows at 1 / 3 / 5 years, 6% / 15% / 24% below it on median (`pricepath.MEASURED_BASELINES`; engine at ff36ede,
-    later engine changes unmeasured). A second version is registered and unrun (`docs/prereg_price_path_v2.md`); nothing in it
-    is a measured result.
+    later engine changes unmeasured). A second version is registered and implemented (`pricepath` spec_version 2,
+    `docs/prereg_price_path_v2.md`) but unrun; nothing in it is a measured result and its outputs say so.

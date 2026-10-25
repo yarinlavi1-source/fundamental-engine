@@ -1,7 +1,8 @@
 # Expected price path lane: results, audit and what the table shows (October 2026)
 
 Status: **spec_version 1 FAILED its preregistered walk-forward; it is not shown in the valuation table.** Version 2 is
-registered and NOT run (`docs/prereg_price_path_v2.md`). Sources: preregistration `docs/prereg_price_path.md` (commit a8dc43b,
+registered, implemented (`pricepath` spec_version 2, `--spec 2`; clarifications in its section 10) and NOT run
+(`docs/prereg_price_path_v2.md`). Sources: preregistration `docs/prereg_price_path.md` (commit a8dc43b,
 before any code), the single run (commit 86c8a34, 21.10.2026), `docs/PRICE_PATH_RESULTS_2026-10-21.md` (full results),
 `runs/backtest/pricepath/summary.json`, the post-run audit (prereg section 9, 21.10.2026) and the read-only diagnostics
 `scripts/pricepath_v1_*.py`. Nothing in the method, the constants or the sample rule changed after the results.

@@ -33,7 +33,8 @@ same connectors (SEC, Interactive Brokers, Alpha Vantage, FMP, LunarCrush, …).
   expected-price-path lane, `docs/prereg_price_path.md`, FAILED its walk-forward: base-path bias -0.11/-0.31/-0.50
   at 1/3/5 years, the random walk's; not shown in the table; `pricepath.price_path` stays for research);
   `docs/PRICE_PATH_2026-10.md` (the audit, the error attribution: margin and multiple terms, what the table shows instead) and
-  `docs/prereg_price_path_v2.md` (the registered second version, NOT yet run: market class multiples, quantile band).
+  `docs/prereg_price_path_v2.md` (the registered second version: market class multiples, quantile band; implemented as
+  `pricepath` spec_version 2 / `scripts/backtest_pricepath.py --spec 2`, NOT yet run; run command in its section 10).
 - **Session rule (keeps the next session in sync):** work lands on `main`. Before a session ends, merge its
   branch into `main` and add its key documents to the "Latest state" line above. Two sessions on unmerged
   branches is how a new session ends up on an old engine (it happened on 21.10.2026).

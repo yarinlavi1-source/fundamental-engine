@@ -218,3 +218,68 @@ plain words. FAIL: no rows; the table keeps what it shows today (the expected-re
 the measured sentence `pricepath.irr_path_band_he()` under it).
 
 ## 10. Deviations log (dated; empty at registration)
+
+Pre-run clarifications, 25.10.2026, logged with the implementation (`fundamental_engine/pricepath.py` spec_version 2,
+`scripts/backtest_pricepath.py --spec 2`, `tests/test_pricepath_v2.py`) and before any v2 run. Sections 2-7 are unchanged; no v2
+path was computed on market data and no v2 metric exists. Each item is a reading the text left open, not a change of method:
+
+1. 3.2, T_bear / T_bull between the book's horizons. Bin frequencies exist only for n = 1, 3, 5 and 10 years: the p25 / p75 are
+   read from those bins (`pricepath.class_quantile`, the inverse of `base_rates.share_at_least`) and interpolated linearly
+   between them, flat after 10 years, which is the median's own rule (`class_median`); PI is added as for the median.
+2. 3.2, where the ordering bound sits. The bound is applied year by year inside the path: the bounded rate is the one that
+   compounds revenue, so the next year's size class is read from the scenario's final revenue path; the base path is built
+   first; the bull's base-rate ceiling bisects on the bounded path (the path that is output). Synthetic probes show why the
+   bound binds at all: a scenario that crosses a size-class edge fades toward the larger class' lower target (a $300m grower's
+   bull enters $325-700m in year 3 and falls below the base, still in $0-325m). Flags `growth_ordered_<s>` count it.
+3. 3.3, the margin floor. "M_FLOOR = 0.01 kept" is read as spec 1 applied it: to every scenario's path, so a base with
+   m_TTM < 1% is lifted to 1% (flag `margin_floored_base`; spec 1's `margin_path` floored its base the same way). Flooring the
+   bear but not the base would put the bear above a sub-1% base and break the registered order.
+4. 3.4, quantile estimator: linear interpolation between order statistics at (n - 1) q (numpy's default; the median at
+   q = 0.5). Bucket edges: the lower edge belongs to the bucket (growth 0% is in 0-5%, 5% in 5-10%; margin 20% in > 20%), as in
+   the v1 attribution and class-multiple scripts that produced the tables of sections 1 and 3.4.
+5. 3.4, the last rung of the ladder. The whole cross-section is used whatever its size (flag `cross_section_below_cell_min`
+   under 20 rows; a backtest formation holds hundreds); a formation without any usable row cannot be priced (error rows). The
+   year-h lookup reads the scenario's final year-h growth (after the ordering bound) and margin (after the floor).
+6. 3.5, the multiple order is applied before the [5, 120] clip (a clip is monotone, so the order survives). A binding order
+   clamp is flagged `multiple_ordered_<s>`, the clip `multiple_floored_<s>` / `multiple_capped_<s>`.
+7. 3.6, the Gordon diagnostic: spec 1's `justified_multiple` on the v2 base path (NI_0 as reported, R and ke as spec 1),
+   clipped to spec 1's [5, 60] as spec 1 reported it, divided by the base cell's median, today and for h = 1..5. Undefined
+   (ke <= g_T) -> None, flagged `gordon_diagnostic_undefined`; it never enters a price, so it does not stop the row. The
+   ordering assertion raises `pricepath.OrderingError` (an AssertionError, not an `assert` statement, so it cannot be disabled);
+   the runner records it as an error row and 6.7 counts those rows.
+8. 3.1: spec 1's exclusion "normalized (mid-cycle) net margin not positive" has no counterpart (the base margin is m_TTM,
+   positive whenever NI_0 is); the mid-cycle median is kept as `m_mid_diagnostic` (None under 3 fiscal years).
+9. Section 5 (live engine only; never in the backtest): a guided m_1 replaces the base's year-1 margin and bounds the bear's /
+   bull's year-1 margins (min / max), so the order holds by construction there too. The live table is the latest saved table
+   not after as_of (`pricepath.latest_cross_section`), named with its source and date in the output. Untested, like all of
+   section 5.
+10. 6.1, the runner. Pass 1 appends every company's anchors per formation to `anchors.jsonl` (resumable); pass 2 builds each
+    formation's table from all ok anchors in it, then the paths, and rewrites `rows.jsonl` and `tables.json` (sorted by
+    formation and symbol, deterministic). The table's source string names the universe and as_of without machine paths, so
+    the hashes do not depend on where the run is made. `--spec 2` requires `--v1-rows`. The spec-1 code of this commit
+    reproduced the 21.10.2026 run's rows byte for byte for AAPL, BRK-B, CAH, COP, MSFT and NUE (60 rows, 2016-2025, ok and
+    excluded), and `tests/test_pricepath_v2.py` pins the hashes of spec-1 outputs computed before any v2 code.
+11. 6.3 / 6.6, attribution. The realized side is the status-ok v2 row of the same symbol at formation year t + h (its TTM
+    revenue, net income, cover share count and traded price), with section 1's exact identity
+    (`scripts/pricepath_v1_attribution.py`) and the lane's rounded year-h output as there; lane_v1's terms on the same rows
+    (its own n reported). Rows formed in 2025 (1y), 2023 (3y) and 2021 (5y) have no row at t + h (no 2026 formation) and fall
+    out of the attributed subsample, as in section 1.
+12. 6.5 "by cross-section cell" is the formation cell, bucket(g_run) x bucket(m_TTM). 6.8 "data-defect rows" are the rows with
+    a raw M_0 below 1x (section 2's description of the 20 rows), listed by symbol and year in the report so the list can be
+    checked against the 20 named.
+13. Section 9 is not wired into `render.hebrew_table`: it applies only after a PASS or PARTIAL verdict. Until the run is
+    recorded `pricepath.MEASURED_V2` is empty, `TABLE_STATUS_V2 = 'not_shown'` and every v2 output's band statement says the
+    lane is untested.
+
+Before the run, a pass-1 smoke check read v2 anchors (inputs only; statuses and flag names printed) for AAPL, COP and CAH at two
+formations. No path, table, realized price or metric was computed.
+
+The registered run (section 6.1), for the session that makes it (engine rows as v1: the 2026-10-21 engine walk-forward rows of
+v1 deviation 5; `--evaluate-only` on the last line only rebuilds summary.json and REPORT.md):
+
+    ARGS="/home/user/fundamental-engine/runs/universe_2026-10-21 --name large500 --from 2016 --to 2025 --workers 2 \
+          --prices /home/user/fundamental-engine/runs/backtest/raw/prices \
+          --rates /home/user/fundamental-engine/runs/backtest/raw/macro/fred_GS10.csv --engine-rows <engine rows.jsonl>"
+    python scripts/backtest_pricepath.py $ARGS --spec 1 --out <v1 dir>
+    python scripts/backtest_pricepath.py $ARGS --spec 2 --v1-rows <v1 dir>/rows.jsonl --out <v2 dir>
+    python scripts/backtest_pricepath.py $ARGS --spec 2 --v1-rows <v1 dir>/rows.jsonl --out <v2 dir> --evaluate-only

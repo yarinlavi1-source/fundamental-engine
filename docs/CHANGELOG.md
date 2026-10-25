@@ -1,5 +1,15 @@
 ## Unreleased — calibration fixes (21.10.2026)
 
+- Expected price path, spec_version 2 implemented, NOT run (`docs/prereg_price_path_v2.md`, registered before this code):
+  `pricepath.anchors(..., spec_version=2)` / `price_path(..., spec_version=2, cross_section=...)` -- run rate = mean of the
+  latest FY, latest quarter and 3-year CAGR; TTM margin held in the base for every company, bear / bull margins at the
+  company's own 10-year low / high bounded at 0.5x / 1.5x today's; bear / bull growth fading to the size class p25 / p75 at
+  one half-life; the multiple target is the market's point-in-time trailing P/E by growth x margin bucket
+  (`cross_section_table`, CELL_MIN 20 with growth-row and whole-cross-section fallbacks) with today's log premium clipped
+  at +-ln 3 halving at the stage half-life; bear <= base <= bull by construction, asserted (`OrderingError`).
+  `evaluate_v2` adds the lane_v1 baseline, the ex-post attribution (S4), 30% band tails and the data-defect robustness.
+  `scripts/backtest_pricepath.py --spec 2 --v1-rows ...` runs two passes (anchors, then table and paths). Spec 1 is the
+  default and byte-identical (pinned hashes in `tests/test_pricepath_v2.py`). Pre-run clarifications: v2 section 10.
 - Expected price path lane (`fundamental_engine/pricepath.py`, `scripts/backtest_pricepath.py`, preregistered in
   `docs/prereg_price_path.md`): the 2016-2025 walk-forward FAILED every registered criterion (base-path median log error
   -0.11 / -0.31 / -0.50 at 1 / 3 / 5 years, the random walk's; `docs/PRICE_PATH_RESULTS_2026-10-21.md`). Not shown in the
