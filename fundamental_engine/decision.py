@@ -65,6 +65,7 @@ from datetime import date
 import json
 from math import isfinite, log, exp
 from statistics import mean
+from . import __version__ as ENGINE_VERSION
 from .facts import digest
 from .finance import number
 from .forecast import RF_DEFAULT, ERP_DEFAULT, STAGE
@@ -113,7 +114,7 @@ INDEX_RANGE = .01            # +-1pp around the market return: equity-premium un
 # cap-weighted implied return of the largest companies valued by the same engine (calibration.market_implied: a shared model
 # bias cancels in stock IRR - market); 'generic_assumption' = risk-free + ERP, built differently from a stock's implied return
 # (on the 2026-10-20 sweep 9.3% against the engine-consistent 7.0%: comparing with it 'would reject almost everything');
-# 'user_assumption' = any other supplied index.
+# 'user_assumption' = any other supplied index, a calibration that records another engine version included.
 COMPARATORS = ('engine_consistent', 'generic_assumption', 'user_assumption')
 INDEX_DEFAULT = {
     'value': RF_DEFAULT + ERP_DEFAULT, 'low': RF_DEFAULT + ERP_DEFAULT - INDEX_RANGE, 'high': RF_DEFAULT + ERP_DEFAULT + INDEX_RANGE,
@@ -1158,9 +1159,17 @@ def _index(inputs, fc=None):
     if _num(idx.get('rate_shift')) is not None:          # calibration.market_implied: market cost of equity - market return
         out['rate_shift'] = number(idx['rate_shift'], 'index.rate_shift', -.05, .08)
         out['market_cost_of_equity'] = _num(idx.get('market_cost_of_equity'))
-    # a calibration sweep's index_input (calibration.market_implied names itself in source) is the engine-consistent market
-    out['comparator'] = ('engine_consistent' if 'rate_shift' in out or 'calibration.market_implied' in idx['source']
-                         else 'user_assumption')
+    # a calibration sweep's index_input (calibration.market_implied names itself in source) is the engine-consistent market,
+    # unless it records another engine version: then the bias that would cancel is another engine's (calibration.pick)
+    ver = idx.get('engine_version')
+    out['comparator'] = ('user_assumption' if ver is not None and ver != ENGINE_VERSION else
+                         'engine_consistent' if 'rate_shift' in out or 'calibration.market_implied' in idx['source'] else
+                         'user_assumption')
+    if ver is not None:
+        out['engine_version'] = ver
+        if ver != ENGINE_VERSION:
+            out['basis'] += (f' [computed by engine {ver}, not this engine {ENGINE_VERSION}: a supplied assumption, not the '
+                             'engine-consistent market; rerun the calibration sweep]')
     return out
 
 

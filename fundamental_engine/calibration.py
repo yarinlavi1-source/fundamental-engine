@@ -11,13 +11,19 @@ assumption stays visible next to it. Coverage (the share of the sample's market 
 low coverage means the estimate leans on the companies the engine could value.
 
 pick() chooses the calibration file a single-company run uses by default (cli deep/pipeline when no --index is given):
-the newest computed one dated on or before the run (never a later one: no look-ahead) and at most MAX_AGE_DAYS older.
+the newest computed one dated on or before the run (never a later one: no look-ahead), at most MAX_AGE_DAYS older and
+computed by this engine version (ENGINE_VERSION, recorded in the file and its index_input). The bias that cancels in stock
+IRR - market IRR is the bias of one engine: a sweep of an earlier version (0.12.0's 2026-10-20 sweep, before the 0.13.0
+calibration fixes raised values and IRRs) is another engine's market, so it is not picked by default (pass it explicitly
+with --index to use it; decision._index then names it a supplied assumption, not the engine-consistent market).
 Without one, the decision keeps the generic risk-free + ERP assumption and says so (decision.COMPARATORS).
 """
 import json
 from datetime import date
 from pathlib import Path
 from statistics import median
+
+from . import __version__ as ENGINE_VERSION
 
 # A sweep values each company on its latest 10-Q/10-K and the day's prices; one reporting quarter later most of its inputs
 # are a filing behind, so an older file is not used by default (pass it explicitly with --index to override).
@@ -40,7 +46,8 @@ def market_implied(summaries, caps, as_of, assumption=.0875, clip=(-.10, .40), b
     ra_m = sum(a * c for a, c in ra) / sum(c for _, c in ra) if ra else None
     rs = sorted(r for _, r, _, _ in pts)
     q = lambda f: rs[min(len(rs) - 1, int(f * len(rs)))]
-    out = {'status': 'computed', 'as_of': as_of, 'n_sample': len(summaries), 'n_with_return': len(pts), 'coverage_by_value': w / total,
+    out = {'status': 'computed', 'as_of': as_of, 'engine_version': ENGINE_VERSION,
+           'n_sample': len(summaries), 'n_with_return': len(pts), 'coverage_by_value': w / total,
            'engine_market_return': cw, 'engine_market_bear': cw_bear, 'median': median(rs),
            'percentiles': {'p10': q(.1), 'p25': q(.25), 'p50': q(.5), 'p75': q(.75), 'p90': q(.9)},
            'share_above_assumption': sum(1 for r in rs if r > assumption) / len(rs), 'assumption': assumption,
@@ -53,7 +60,8 @@ def market_implied(summaries, caps, as_of, assumption=.0875, clip=(-.10, .40), b
     out['index_input'] = {'value': cw, 'low': cw - band, 'high': cw + band,
                           'basis': (f"engine-consistent market return: cap-weighted base-case implied return of {len(pts)} of the {len(summaries)} "
                                     f"largest US operating companies valued by the same engine on {as_of} ({w / total:.0%} of their value)"),
-                          'source': 'fundamental_engine.calibration.market_implied over the large-cap sweep casefiles'}
+                          'source': 'fundamental_engine.calibration.market_implied over the large-cap sweep casefiles',
+                          'engine_version': ENGINE_VERSION}
     if ke_m is not None and ke_m > cw:
         out['index_input'].update(rate_shift=ke_m - cw, market_cost_of_equity=ke_m)
     out['reading'] = ('the engine is on the same footing as the index assumption' if abs(cw - assumption) <= .01 else
@@ -62,9 +70,10 @@ def market_implied(summaries, caps, as_of, assumption=.0875, clip=(-.10, .40), b
     return out
 
 
-def pick(as_of, paths, max_age_days=MAX_AGE_DAYS):
+def pick(as_of, paths, max_age_days=MAX_AGE_DAYS, engine_version=ENGINE_VERSION):
     """Newest usable calibration among paths for a run dated as_of: status computed with an index_input, dated on or before
-    as_of and at most max_age_days older. Returns {path, as_of, age_days, index_input} or None. Unreadable files are skipped."""
+    as_of, at most max_age_days older and computed by engine_version (a file without a recorded version is another, older
+    engine's). Returns {path, as_of, age_days, engine_version, index_input} or None. Unreadable files are skipped."""
     try:
         run = date.fromisoformat(str(as_of)[:10])
     except ValueError:
@@ -78,8 +87,10 @@ def pick(as_of, paths, max_age_days=MAX_AGE_DAYS):
             continue
         ii = cal.get('index_input')
         age = (run - d).days
-        if cal.get('status') != 'computed' or not isinstance(ii, dict) or not 0 <= age <= max_age_days:
+        if (cal.get('status') != 'computed' or not isinstance(ii, dict) or not 0 <= age <= max_age_days
+                or cal.get('engine_version') != engine_version):
             continue
         if best is None or d.isoformat() > best['as_of']:
-            best = {'path': str(path), 'as_of': d.isoformat(), 'age_days': age, 'index_input': ii}
+            best = {'path': str(path), 'as_of': d.isoformat(), 'age_days': age, 'engine_version': engine_version,
+                    'index_input': {**ii, 'engine_version': engine_version}}
     return best

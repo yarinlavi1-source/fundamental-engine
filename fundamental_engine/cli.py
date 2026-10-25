@@ -20,17 +20,19 @@ def read_json(path):
 def index_input_for(arg, as_of, candidates):
     """Decision index for a run: --index FILE takes that calibration's index_input; --index none applies none (the
     generic risk-free + ERP assumption unless the inputs set an index); without --index, the newest calibration among
-    candidates dated on or before as_of and at most calibration.MAX_AGE_DAYS older (calibration.pick), else none.
-    Returns (index_input, used)."""
-    from .calibration import pick, MAX_AGE_DAYS
+    candidates dated on or before as_of, at most calibration.MAX_AGE_DAYS older and computed by this engine version
+    (calibration.pick), else none. Returns (index_input, used)."""
+    from .calibration import pick, MAX_AGE_DAYS, ENGINE_VERSION
     if arg and arg.strip().lower() == "none":
         return None, "generic market assumption (--index none)"
     if arg:
         return read_json(arg).get("index_input"), arg
     hit = pick(as_of, candidates)
     if hit:
-        return hit["index_input"], f"{hit['path']} (as_of {hit['as_of']}, newest calibration on or before the run)"
-    return None, f"generic market assumption: no calibration file dated on or before {as_of} within {MAX_AGE_DAYS} days"
+        return hit["index_input"], (f"{hit['path']} (as_of {hit['as_of']}, engine {hit['engine_version']}, newest calibration on "
+                                    "or before the run)")
+    return None, (f"generic market assumption: no calibration file of engine {ENGINE_VERSION} dated on or before {as_of} within "
+                  f"{MAX_AGE_DAYS} days (a sweep of another engine version is another engine's market: rerun scripts/calibrate.py)")
 
 
 def with_index(inp, index_input, explicit):
@@ -164,8 +166,9 @@ def main():
     pr.add_argument("--qualitative", help="JSON with dated sources and qualitative items to add to the FactBook")
     pr.add_argument("--index", help="calibration JSON (calibration.market_implied) whose index_input becomes inputs.decision.index; "
                                     "'none' applies no calibration (the generic risk-free + ERP assumption unless --inputs sets "
-                                    "decision.index); default: the newest runs/universe_*/calibration.json dated on or before the run, "
-                                    "within calibration.MAX_AGE_DAYS (calibration.pick), filling decision.index only when --inputs has none")
+                                    "decision.index); default: the newest runs/universe_*/calibration.json of this engine version dated on or "
+                                    "before the run, within calibration.MAX_AGE_DAYS (calibration.pick), filling decision.index only "
+                                    "when --inputs has none")
     pr.add_argument("--out", required=True, help="Output folder (keep it outside Git for private or vendor data)")
     sc = subs.add_parser("screen", help="Discovery scan of universe rows (JSON list or {rows: [...]}) into lenses and a shortlist")
     sc.add_argument("rows")
@@ -200,7 +203,8 @@ def main():
     dp.add_argument("--name", help="read companies/QUEUE_<name>.json and write comparison_<name>.json/_he.md (e.g. holdings)")
     dp.add_argument("--index", help="calibration JSON (calibration.market_implied): its index_input becomes inputs.index for every company; "
                                     "'none' applies no calibration; default: the newest calibration.json in the folder or a sibling "
-                                    "runs/universe_* folder dated on or before --as-of, within calibration.MAX_AGE_DAYS (calibration.pick), "
+                                    "runs/universe_* folder of this engine version dated on or before --as-of, within calibration.MAX_AGE_DAYS "
+                                    "(calibration.pick), "
                                     "for companies whose inputs.json sets no decision.index")
     dp.add_argument("--market", help="dated market inputs JSON {risk_free, equity_risk_premium} (each {value, as_of, title, url}): "
                                      "forecast inputs for every company that does not set its own; risk_free only for USD reporters")

@@ -715,8 +715,12 @@ def _business_model(fb, an, rows, end, sig, inputs):
                            f'{SUBSCRIPTION_DEFERRED:.0%} of revenue, or not reported) and platform when they do not; gross margin '
                            '>= 45% with operating margin >= 20% platform); it_services kept as secondary')
     sector_only = not used or used['field'] != 'industry'
+    inter, plat_sig = intermediary_sic(company.get('sic')), False
+    # a catch-all industry label under a platform's SEC code ('Diversified Commercial Services' for Airbnb) is as generic as a
+    # sector: its business section decides first, as for a sector label (the collector reads the report for these codes)
+    generic = sector_only or bool(inter and CATCH_ALL_LABEL.search(clean_text(used['text'])))
     item1 = None
-    if sector_only and bt and (not text_types or text_types[0] not in NON_LABEL_TYPES):
+    if generic and bt and (not text_types or text_types[0] not in NON_LABEL_TYPES):
         # generic labels ('Business Services, NEC', a sector): the annual report's own business section decides
         hit = item1 = next(((k, t) for k, cut, t in BUSINESS_TERM_RULES if bt.get(k, 0) >= cut), None)
         if hit and (not text_types or hit[1] != text_types[0]):
@@ -726,8 +730,6 @@ def _business_model(fb, an, rows, end, sig, inputs):
                            + (f" ('{used['text']}')" if used else '') + f' -> {t}'
                            + (f'; {text_types[0]} kept as secondary' if text_types else ''))
             text_types = [t] + text_types
-    inter, plat_sig = intermediary_sic(company.get('sic')), False
-    generic = sector_only or bool(CATCH_ALL_LABEL.search(clean_text(used['text'])))
     if (inter and generic and not item1 and not (used and used.get('alt'))
             and (not text_types or text_types[0] in LABEL_DEFAULT_TYPES)):
         # a platform's SEC code (INTERMEDIARY_SIC) with a type from a sector or catch-all label only: the platform signature decides

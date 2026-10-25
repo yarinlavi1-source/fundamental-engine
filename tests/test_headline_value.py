@@ -133,8 +133,10 @@ class ComparatorTests(unittest.TestCase):
     def test_calibration_pick_never_looks_ahead_and_skips_stale_files(self):
         with tempfile.TemporaryDirectory() as tmp:
             def cal(name, as_of, status='computed'):
+                # a sweep of this engine version (calibration.pick skips another version's: CalibrationEngineVersionTests)
                 f = Path(tmp) / name
-                f.write_text(json.dumps({'status': status, 'as_of': as_of, 'index_input': {**CALIBRATION, 'basis': as_of}}))
+                f.write_text(json.dumps({'status': status, 'as_of': as_of, 'engine_version': calibration.ENGINE_VERSION,
+                                         'index_input': {**CALIBRATION, 'basis': as_of}}))
                 return f
             files = [cal('a.json', '2026-07-01'), cal('b.json', '2026-10-20'), cal('c.json', '2026-11-30'),
                      cal('d.json', '2026-10-24', status='not_computed'), Path(tmp) / 'missing.json']
@@ -154,6 +156,47 @@ class ComparatorTests(unittest.TestCase):
             self.assertEqual(with_index(own, got, explicit=True)['decision']['index'], got)
             self.assertEqual(with_index({}, got, explicit=False)['decision']['index'], got)
             self.assertEqual(with_index(None, None, explicit=False), {})
+
+
+class CalibrationEngineVersionTests(unittest.TestCase):
+    """Integration review of eb58e73: the automatic pick used any sweep dated within 92 days, so after the 0.13.0 calibration
+    fixes (values and IRRs up) the default index of every deep/pipeline run became 0.12.0's 2026-10-20 sweep (7.0%), labelled
+    the engine-consistent market of 'the same engine'. The bias that cancels in stock IRR - market IRR is one engine's."""
+
+    def test_market_implied_records_its_engine_version(self):
+        out = calibration.market_implied([{'symbol': 'A', 'base_irr': .08, 'cost_of_equity': .09},
+                                          {'symbol': 'B', 'base_irr': .06, 'cost_of_equity': .09}], {'A': 3e11, 'B': 1e11}, '2026-10-25')
+        self.assertEqual(out['engine_version'], calibration.ENGINE_VERSION)                                        # OLD
+        self.assertEqual(out['index_input']['engine_version'], calibration.ENGINE_VERSION)                         # OLD
+
+    def test_pick_skips_a_sweep_of_another_engine_version(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            def cal(name, as_of, **ver):
+                f = Path(tmp) / name
+                f.write_text(json.dumps({'status': 'computed', 'as_of': as_of, **ver, 'index_input': {**CALIBRATION, 'basis': name}}))
+                return f
+            unversioned = cal('old.json', '2026-10-20')                               # as the saved 0.12.0 sweep
+            other = cal('other.json', '2026-10-22', engine_version='0.0.1')
+            self.assertIsNone(calibration.pick('2026-10-25', [unversioned, other]))                                  # OLD
+            got, used = index_input_for(None, '2026-10-25', [unversioned, other])
+            self.assertIsNone(got)                                                                                    # OLD
+            self.assertIn(f'engine {calibration.ENGINE_VERSION}', used)
+            same = cal('same.json', '2026-10-21', engine_version=calibration.ENGINE_VERSION)
+            hit = calibration.pick('2026-10-25', [unversioned, other, same])          # the newest of THIS engine, not the newest file
+            self.assertEqual((hit['index_input']['basis'], hit['engine_version']), ('same.json', calibration.ENGINE_VERSION))
+            self.assertEqual(hit['index_input']['engine_version'], calibration.ENGINE_VERSION)
+            # an explicit --index still applies the file the owner names
+            self.assertEqual(index_input_for(str(unversioned), '2026-10-25', [])[0]['basis'], 'old.json')
+
+    def test_index_of_another_engine_version_is_a_supplied_assumption(self):
+        p = parts(70)
+        idx = decide(p, {'index': {**CALIBRATION, 'engine_version': '0.0.1'}})['expected_return']['index_expected_return']
+        self.assertEqual(idx['comparator'], 'user_assumption')                                                       # OLD
+        self.assertIn('not this engine', idx['basis'])
+        same = decide(p, {'index': {**CALIBRATION, 'engine_version': calibration.ENGINE_VERSION}})
+        self.assertEqual(same['expected_return']['index_expected_return']['comparator'], 'engine_consistent')
+        self.assertEqual(decide(p, {'index': CALIBRATION})['expected_return']['index_expected_return']['comparator'],
+                         'engine_consistent')                                     # no version stated: as before (explicit input)
 
 
 class PricePathTests(unittest.TestCase):

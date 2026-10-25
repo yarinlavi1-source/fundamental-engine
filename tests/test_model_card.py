@@ -695,6 +695,24 @@ class PlatformRoutingTests(unittest.TestCase):
                          'Perfumes, Cosmetics & Other Toilet Preparations')
         self.assertEqual(card(brand)['business_model']['primary'], 'consumer_brand')
 
+    def test_catch_all_industry_label_lets_the_business_section_decide(self):
+        # integration review of 7d673b5: under a platform SEC code a catch-all industry label was relabelled by the signature
+        # only, and a failed signature said 'the business section (Item 1) decides' while the report the collector fetches
+        # for these codes was never read (Item 1 decided sector labels only). Airbnb-like words, no signature (gross margin 60%)
+        rent = with_sic(steady_fb('Consumer Discretionary', 'Diversified Commercial Services', self.REV, [.07, .1, .15, .2], .60, .01),
+                        7340, 'Services-To Dwellings & Other Buildings')
+        self.assertEqual(card(rent)['business_model']['primary'], 'industrial')                  # no report: the label stays
+        rent['business_map'] = {'business_terms': {'per_10k_words': {'online_travel': 58., 'marketplace': 12.}}}   # SYNTHETIC
+        bm = card(rent)['business_model']
+        self.assertEqual((bm['primary'], bm['secondary']), ('platform_marketplace', ['industrial']))                   # OLD
+        self.assertTrue(any('online travel terms' in r and 'Diversified Commercial Services' in r for r in bm['reasons']))
+        self.assertFalse(any('SEC SIC' in r for r in bm['reasons']))         # the company's own words decided, not the signature
+        # outside the platform codes a catch-all industry label is kept, words or not (unchanged)
+        other = with_sic(steady_fb('Consumer Discretionary', 'Diversified Commercial Services', self.REV, [.07, .1, .15, .2], .60, .01),
+                         8742, 'Services-Management Consulting Services')
+        other['business_map'] = {'business_terms': {'per_10k_words': {'online_travel': 58.}}}
+        self.assertEqual(card(other)['business_model']['primary'], 'industrial')
+
     def test_online_travel_business_section(self):
         # Expedia-like: no platform signature (capex 9% of revenue) and 1.8 marketplace terms; its own words are online travel
         ota = with_sic(steady_fb('Consumer Discretionary', 'Transportation Services', self.REV, [.06] * 4, .82, .09), 4700,
