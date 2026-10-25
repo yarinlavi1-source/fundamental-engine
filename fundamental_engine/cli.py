@@ -236,6 +236,12 @@ def main():
     ep.add_argument("pack", help="evidence_pack.json (fundamental_engine/evidence_pack.py documents the format)")
     ep.add_argument("--out", required=True, help="inputs.json to write")
     ep.add_argument("--bundle", help="evidence_bundle.json to write (load it into the FactBook so the cited ids resolve)")
+    pm = subs.add_parser("pack-merge", help="Ticker workflow Value step: merge <run>/gather/*.json, <run>/position.json and "
+                                            "<run>/identity.json into one evidence pack (sources deduplicated by URL; no judgement)")
+    pm.add_argument("folder", help="the run folder runs/tickers/<TICKER>_<as_of>")
+    pm.add_argument("--ticker", required=True)
+    pm.add_argument("--as-of", required=True)
+    pm.add_argument("--out", required=True, help="evidence_pack.json to write")
     sr = subs.add_parser("scenario-reasons", help="Behind the scenes: the condition and the business of each bear/base/bull "
                                                   "price of a saved casefile.json (read, never revalued; not a forecast)")
     sr.add_argument("casefile")
@@ -372,7 +378,8 @@ def main():
             card_set = read_json(base / 'cards.json') if (base / 'cards.json').exists() else None
             cfs, ran = [], []
             index_input, index_used = index_input_for(args.index, args.as_of, [base / 'calibration.json']
-                                                      + sorted(base.parent.glob('universe_*/calibration.json')))
+                                                      + sorted(base.parent.glob('universe_*/calibration.json'))
+                                                      + sorted(Path('runs').glob('universe_*/calibration.json')))
             market = read_json(args.market) if args.market else None
             regime = None
             if args.macro:
@@ -436,6 +443,18 @@ def main():
             from .econ import econ_review
             result = econ_review(read_json(args.input), json_object_arg(args.options, "--options") if args.options else None)
             print(json.dumps(result,ensure_ascii=False,indent=2,allow_nan=False) if args.json else result["text"])
+        elif args.command == "pack-merge":
+            from .evidence_pack import merge_fragments
+            base = Path(args.folder)
+            frags = [read_json(f) for f in sorted((base / 'gather').glob('*.json'))]
+            ident = read_json(base / 'identity.json') if (base / 'identity.json').exists() else {}
+            keep = ('name', 'currency', 'exchange', 'security', 'fiscal_year_end', 'cik', 'type', 'evidence_ids')
+            pos = read_json(base / 'position.json') if (base / 'position.json').exists() else {}
+            pack, rep = merge_fragments(args.ticker, args.as_of, {k: ident[k] for k in keep if ident.get(k) is not None},
+                                        frags, pos)
+            Path(args.out).parent.mkdir(parents=True, exist_ok=True)
+            Path(args.out).write_text(json.dumps(pack, ensure_ascii=False, indent=2, allow_nan=False), encoding="utf-8")
+            print(json.dumps({"pack": args.out, "fragments": len(frags), "position": bool(pos), **rep}, ensure_ascii=False, indent=2))
         elif args.command == "pack-to-inputs":
             from .evidence_pack import to_inputs, to_bundle
             pack = read_json(args.pack)

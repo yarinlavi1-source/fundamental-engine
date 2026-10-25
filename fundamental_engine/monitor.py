@@ -612,12 +612,23 @@ def thesis_from_casefile(cf, clock=None, options=None):
         trig.append({'id': 'price_outside_value_band', 'metric': 'price', 'op': 'outside', 'period_kind': 'market',
                      'threshold': 'bear..bull value per share interpolated at the price date', 'impact': ['expected_return'], 'severity': 'medium',
                      'why': 'Price left the bear..bull value band: expected return moved outside every scenario of the thesis.'})
+    # the evidence pack's dated numeric falsifiers (OWNER_ADDENDUM item 2): frozen as triggers, due on their date
+    for f in (cf.get('evidence_pack') or {}).get('falsifiers') or []:
+        trig.append({'id': f"falsifier:{f['id']}", 'metric': f"analyst:{f['metric']}", 'op': '<' if f['direction'] == 'below' else '>',
+                     'threshold': f['threshold'], 'period_kind': 'analyst_falsifier', 'by': f['by'], 'scenario': f['scenario'],
+                     'evidence_ids': list(f.get('evidence_ids') or []), 'impact': ['value'], 'severity': 'high',
+                     'why': f"Evidence-pack falsifier of the {f['scenario']} case: {f['metric']} {f['direction']} {f['threshold']:,} by "
+                            f"{f['by']} means that scenario no longer holds."})
     full = [r.get('end') for r in (sc.get('base') or {}).get('forecast') or [] if 'start' in r and _years(r['start'], r['end']) >= .9]
     assumptions = _assumptions(fc, case, ends_all, full, trig, o['assumption_tolerance'], current)
     rb = day(as_of) + timedelta(days=o['review_max_days'] if ends else o['review_max_days'] // 2)
     if ends:
         rb = min(rb, day(ends[0]) + timedelta(days=o['filing_lag_days']))
     events = ([f'annual report for the fiscal year ending {ends[0]} (expected by {day(ends[0]) + timedelta(days=o["filing_lag_days"])})'] if ends else [])
+    fals = sorted((t for t in trig if t['period_kind'] == 'analyst_falsifier'), key=lambda t: t['by'])
+    if fals:
+        rb = min(rb, day(fals[0]['by']))
+    events += [f"{t['metric'][8:]} {t['op']} {t['threshold']:,} by {t['by']} ({t['scenario']} falsifier)" for t in fals]
     events += ['any guidance change', 'any debt, convertible or equity issuance', 'price outside the bear..bull value band',
                'any assumption falsifier observed', f'scheduled review by {rb.isoformat()}']
     verdict = dc.get('verdict') or {}
@@ -868,7 +879,11 @@ def check(thesis, new_fb, new_an=None, price=None, options=None):
             out['impact']['expected_return'].append(pi['summary'] + ' Business inputs changed too: recompute the expected return after re-underwriting.')
         elif not pi['outside_band']:
             out['impact']['price_only'].append(pi['summary'] + ' No business change detected: no alert.')
-    reasons = [a['message'] for a in out['alerts']]
+    due = [t for t in trig if t.get('period_kind') == 'analyst_falsifier' and day(now) >= day(t['by'])]
+    for t in due:
+        out['not_checked'].append({'metric': t['metric'], 'period': t['by'], 'reason': 'evidence-pack falsifier due: compare the reported '
+                                   f"value with {t['op']} {t['threshold']:,} (a free-text metric no FactBook field maps)"})
+    reasons = [a['message'] for a in out['alerts']] + [f"falsifier {t['id']} due {t['by']}: check it" for t in due]
     if day(now) >= day(thesis['review_by']):
         reasons.append(f"scheduled review date {thesis['review_by']} reached")
     out['needs_rereview'] = bool(reasons)

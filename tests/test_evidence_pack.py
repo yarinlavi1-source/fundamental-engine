@@ -45,7 +45,7 @@ class ConversionTests(unittest.TestCase):
 
     def test_overrides_carry_the_source_tier_contract(self):
         ov = to_inputs(pack())['forecast']['overrides']
-        self.assertEqual({o['source_tier'] for o in ov}, {'guidance', 'own_history'})
+        self.assertEqual({o['source_tier'] for o in ov}, {'consensus', 'own_history'})
         self.assertTrue(all(o['path'] in ECON_LEVERS and o['scenario'] in ('bear', 'base', 'bull') for o in ov))
         self.assertTrue(all(set(o) <= {'path', 'scenario', 'value', 'reason', 'evidence_ids', 'source_tier', 'competitors'} for o in ov))
         self.assertEqual(set(TIERS), {'guidance', 'contracted', 'consensus', 'own_history', 'competitor', 'market', 'analyst'})
@@ -66,15 +66,24 @@ class ConversionTests(unittest.TestCase):
         tr = meta['guidance_track_record']
         self.assertEqual(tr['n'], 3)
         self.assertAlmostEqual(tr['ratio'], (252 / 240 + 275 / 262 + 300 / 285) / 3, places=5)
-        adj = meta['guidance_adjustments']
-        self.assertEqual([a['scenario'] for a in adj], ['base'])
-        self.assertAlmostEqual(adj[0]['after'], 1.29 * tr['ratio'] - 1, places=5)
-        ov = {o['scenario']: o['value'] for o in to_inputs(pack())['forecast']['overrides'] if o['path'] == 'growth_anchor'}
-        self.assertEqual(ov['bear'], .18)
-        self.assertAlmostEqual(ov['base'], 1.29 * tr['ratio'] - 1, places=5)
+        adj = meta['guidance_adjustments']                       # the demo: the year in progress, its unreported Q4 only
+        self.assertEqual([(a['lever'], a['scenario']) for a in adj], [('current_year_revenue', 'all')])
+        self.assertAlmostEqual(adj[0]['after'], 1.16e9 + (tr['ratio'] - 1) * 325e6, delta=1)
+        # a guidance-tier growth_anchor needs guidance for the year it sets (FY2027 here), checked against its range
         p = pack()
+        p['guidance'].append({'id': 'g_fy27', 'metric': 'revenue', 'period': 'FY2027', 'low': 1.45e9, 'high': 1.55e9, 'unit': 'USD',
+                              'issued': '2026-10-20', 'source_id': 's_pr'})
+        p['drivers']['growth_anchor'].update(bear=.24, base=.275, bull=.31, source_tier='guidance', adjust_by_track_record=['base'],
+                                             evidence_ids=['g_fy27', 's_pr'], reason='FY2027 guided range over FY2026')
+        i = to_inputs(p)
+        adj = [a for a in i['evidence_pack']['guidance_adjustments'] if a['lever'] == 'growth_anchor']
+        self.assertEqual([a['scenario'] for a in adj], ['base'])
+        self.assertIn('FY2027', adj[0]['rule'])
+        ov = {o['scenario']: o['value'] for o in i['forecast']['overrides'] if o['path'] == 'growth_anchor'}
+        self.assertEqual(ov['bear'], .24)
+        self.assertAlmostEqual(ov['base'], 1.275 * tr['ratio'] - 1, places=5)
         p['drivers']['growth_anchor']['adjust_by_track_record'] = True
-        self.assertEqual(len(to_inputs(p)['evidence_pack']['guidance_adjustments']), 3)
+        self.assertEqual(len([a for a in to_inputs(p)['evidence_pack']['guidance_adjustments'] if a['lever'] == 'growth_anchor']), 3)
         p['drivers']['growth_anchor'].pop('adjust_by_track_record')
         refused(self, p, 'states adjust_by_track_record')
         p = pack()

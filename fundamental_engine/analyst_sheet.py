@@ -92,6 +92,7 @@ def _analyst(inputs, key, fb):
 
 
 SCENARIO_KEYS = ('bear', 'base', 'bull')
+EVENT_KEYS = frozenset({'event_he', 'evidence_ids', 'hypothesis'})
 
 
 def evidence_id_list(v):
@@ -112,6 +113,9 @@ def _event(e, known):
     """One supplied event -> (row or None, (code, reason) or None)."""
     if not isinstance(e, dict):
         return None, ('event_not_object', 'the event is not an object {event_he, evidence_ids}')
+    extra = sorted(str(k) for k in set(e) - EVENT_KEYS)
+    if extra:
+        return None, ('unknown_keys', f'unknown keys {extra} (event_he, evidence_ids, hypothesis)')
     text = e.get('event_he')
     if not isinstance(text, str) or not text.strip():
         return None, ('no_event_he', 'the event has no event_he text')
@@ -408,6 +412,11 @@ def build(fb, cf, inputs=None, conditional=None):
     kr = _analyst(inputs, 'key_risk', fb)          # the analyst's main risk in plain words (shown in the valuation table)
     out = {'sheet_version': 1, 'questions': questions, 'thesis_he': _thesis(qs, dc, price, base, ccy), 'open': open_,
            'key_risk': kr if kr and kr.get('reading_he') and not kr['opinion'] and not kr['unknown_ids'] else None,
+           # a supplied key risk the FactBook cannot back is listed, never dropped silently (the table falls back to the engine's)
+           **({'key_risk_rejected': {'reading_he': kr.get('reading_he'), 'unknown_ids': kr['unknown_ids'],
+                                     'reason': 'evidence ids not in the FactBook (not citable at as_of, or unknown)' if kr['unknown_ids']
+                                     else 'no evidence ids: an opinion' if kr['opinion'] else 'no reading_he'}}
+              if kr and not (kr.get('reading_he') and not kr['opinion'] and not kr['unknown_ids']) else {}),
            'meaning': 'an analyst reading of the casefile: numbers from the engine, judgement from evidence; open questions are '
                       'the research agenda; values are drafts until reviewed'}
     try:                                             # the analyst's events behind each scenario price (scenario_reasons)

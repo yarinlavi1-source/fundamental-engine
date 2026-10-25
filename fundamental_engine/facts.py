@@ -15,6 +15,9 @@ import json
 import re
 
 LAG_DAYS = 2                       # a filing, or a dated bundle document, is usable two days after it is published (snapshot.PIT_LAG_DAYS)
+# market feeds quote a price or a rate AT their date: usable on that date (set_price accepts a quote dated as_of), not after the
+# two-day document lag; a bundle source of these kinds, or retrieved as 'market_feed', is registered when dated on or before as_of
+MARKET_FEED_KINDS = ('price', 'macro')
 # filing deadlines used when the filing date is unknown (flagged): 10-K 90 days (non-accelerated filer), 10-Q 45. A quarter
 # or balance sheet ending at a fiscal-year end is first filed with the annual report: annual lag. Foreign filers
 # (company['filer'] == 'foreign' or company['annual_form'] == '20-F'): 20-F 120 days; their interims have no 10-Q deadline
@@ -941,7 +944,8 @@ def add_qualitative_bundle(fb, bundle, provider='web'):
         bk = src.get('kind') or 'unspecified'
         p = str(src['published_at'])[:10] if src.get('published_at') else None
         pub[src['id']], kinds[src['id']] = p, SOURCE_KIND.get(bk, 'secondary')
-        if p and _d(_plus(p, LAG_DAYS)) > _d(as_of):
+        feed = bk in MARKET_FEED_KINDS or src.get('retrieval') == 'market_feed'
+        if p and _d(p if feed else _plus(p, LAG_DAYS)) > _d(as_of):
             continue                                    # not yet usable at as_of: not a citable source
         sid, kind = 'web:' + src['id'], kinds[src['id']]
         retrieval = src.get('retrieval') or 'search_excerpt'

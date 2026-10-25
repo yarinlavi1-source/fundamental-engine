@@ -145,12 +145,18 @@ class GapVisibilityTests(unittest.TestCase):
     def test_every_lever_has_a_recorded_source_in_order(self):
         fc = forecast.build(*industrial())
         order = [(r['lever'], r['scenario']) for r in fc['driver_sources']]
-        want = [(lv, s) for lv, _ in forecast.DRIVER_LEVERS for s in (('all',) if lv in ('cyclical', 'horizon') else SCEN)]
+        # financing terms only where a scenario uses them (assumed external money, or a debt without interest history)
+        want = [(lv, s) for lv, _ in forecast.DRIVER_LEVERS if lv != 'financing_terms'
+                for s in (('all',) if lv in ('cyclical', 'horizon') else SCEN)]
         self.assertEqual(order, want)
         for r in fc['driver_sources']:
             self.assertEqual(set(r), {'lever', 'scenario', 'tier', 'evidence_ids', 'default_class', 'binding_bound'})
             self.assertIn(r['tier'], forecast.SOURCE_TIERS + ('default',))
         gaps = {g['lever']: g for g in fc['driver_gaps']}
+        for lever in ('margin_convergence', 'minimum_cash_months'):           # stage-table constants that set yearly numbers
+            self.assertEqual(gaps[lever]['classes'], ['CONST'])
+        self.assertNotIn('tax_rate', gaps)                                    # its own effective tax
+        self.assertNotIn('working_capital', gaps)                             # its own working capital
         self.assertEqual(gaps['terminal_roic']['classes'], ['XSEC'])
         self.assertEqual(gaps['mature_margin']['classes'], ['TYPE'])
         self.assertEqual(gaps['horizon']['scenarios'], ['all'])
@@ -161,7 +167,8 @@ class GapVisibilityTests(unittest.TestCase):
         evid = [ov(p, v, t, 'all') for p, v, t in (
             ('growth_anchor', .1, 'guidance'), ('growth_half_life', 4., 'own_history'), ('mature_margin', .2, 'own_history'),
             ('sales_to_capital', 2., 'own_history'), ('terminal_roic', .2, 'competitor'), ('sbc_pct', .03, 'guidance'),
-            ('cost_of_equity', .095, 'market'))]
+            ('cost_of_equity', .095, 'market'), ('margin_convergence_years', 4, 'own_history'),
+            ('minimum_cash_months', 3, 'own_history'))]
         evid[4]['competitors'] = ['PEER1']
         fc = forecast.build(fb, an, card, qa, {'overrides': evid, 'horizon_years': 10})
         self.assertEqual(fc['status'], 'built')

@@ -65,7 +65,8 @@ class FairValueHeadlineTests(unittest.TestCase):
         buy = _row(self.table, 'מחיר קנייה מרבי לתשואה שאתה דורש (10.5% בשנה)')
         self.assertIn(f'{pfh:,.1f}$', buy)
         self.assertIn(f'נמוך ממנו בכ־{1 - 35 / pfh:.0%}', buy)
-        self.assertIn(f"{self.view['bear']:,.1f}$ / {self.view['bull']:,.1f}$", _row(self.table, 'דובי / שורי'))
+        self.assertNotIn('| דובי / שורי', self.table)                 # ONE table: today's range is the yearly table's first row
+        self.assertIn(f"{self.view['bear']:,.1f}$ / {self.view['bull']:,.1f}$", markdown(casefile(self.p, self.d)))
         self.assertIn('זו דרישה שלך, לא שווי החברה', self.table)
 
     def test_yearly_table_and_five_year_row_are_at_the_fair_value_rate(self):
@@ -76,7 +77,9 @@ class FairValueHeadlineTests(unittest.TestCase):
             self.assertEqual(r['base'], exec_rows[r['date']]['base'])    # read from the executed result, nothing revalued
         self.assertIn(f"| היום | {self.view['bear']:,.1f}$ | {self.view['base']:,.1f}$ | {self.view['bull']:,.1f}$ |", self.table)
         f5 = self.view['five_year']
-        self.assertIn(f"{f5['base_value']:,.1f}$", _row(self.table, 'שווי משוער בעוד 5 שנים'))
+        self.assertIn(f"{f5['base_value']:,.1f}$", _row(self.table, 'שנה 5 ('))       # the yearly table's year 5, not a second row
+        self.assertNotIn('שווי משוער בעוד 5 שנים', self.table)
+        self.assertIn('שווי משוער בעוד 5 שנים', markdown(casefile(self.p, self.d)))
 
     def test_paragraph_and_report_lead_with_the_fair_value(self):
         text = hebrew_paragraph(casefile(self.p, self.d))
@@ -113,7 +116,7 @@ class ComparatorTests(unittest.TestCase):
             self.assertEqual(d['expected_return']['index_expected_return']['comparator'], 'generic_assumption')
             t = hebrew_table(casefile(p, d))
             self.assertIn('הנחת שוק כללית: כ־', _row(t, 'תשואה שנתית צפויה במחיר של היום'))
-            self.assertIn('ריבית חסרת סיכון ועוד פרמיית סיכון למניות', t)
+            self.assertIn('ריבית חסרת סיכון ועוד פרמיית סיכון למניות', markdown(casefile(p, d)))   # behind the scenes
 
     def test_calibration_index_is_the_engine_consistent_market(self):
         p = parts(70)
@@ -221,8 +224,9 @@ class PricePathTests(unittest.TestCase):
         p = parts(35, fc=FC)
         d = decide(p)
         pp = d['expected_return']['expected_price_path']
-        t = hebrew_table(casefile(p, d))
-        row = _row(t, 'מחיר צפוי למניה')
+        self.assertNotIn('מחיר צפוי למניה', hebrew_table(casefile(p, d)))   # a universe blend: behind the scenes, never the table
+        t = markdown(casefile(p, d))
+        row = next(x for x in t.splitlines() if 'מחיר צפוי למניה לפי ממוצע השוק' in x)
         self.assertIn(f"כ־{pp['rate'] * 100:.1f}% בשנה", row)
         for r in pp['rows']:
             self.assertIn(f"{r['date'][:7].replace('-', '/')}: {r['price']:,.1f}$", row)
@@ -234,7 +238,7 @@ class PricePathTests(unittest.TestCase):
         self.assertIn('Expected price path', markdown(casefile(p, d)))
         # a JSON round trip (casefile on disk) keeps the band sentence
         cf = json.loads(json.dumps(casefile(p, d), default=str))
-        self.assertIn('בכ־37% אחרי 5 שנים', hebrew_table(cf))
+        self.assertIn('בכ־37% אחרי 5 שנים', markdown(cf))
 
     def test_path_follows_the_named_market_and_is_unavailable_without_an_irr(self):
         p = parts(70)

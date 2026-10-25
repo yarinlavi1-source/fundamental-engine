@@ -67,9 +67,9 @@ class OwnerWords(unittest.TestCase):
                     self.assertNotIn(w, text, (name, w))
         for name in ('attractive', 'adbe'):
             t = hebrew_table(cases[name])
-            self.assertIn('| מועד | דובי | בסיסי | שורי |', t)
+            self.assertEqual(t.count('| שנה | דובי | בסיסי | שורי |'), 1)        # ONE yearly table
             self.assertIn('| שווי הוגן (תרחיש בסיסי) |', t)
-            self.assertIn('| דובי / שורי |', t)
+            self.assertNotIn('| דובי / שורי |', t)                              # today's range: the yearly table's first row
             self.assertIn('אם התרחיש הבסיסי מתממש', t)
 
     def test_non_scenario_reasonable_is_untouched(self):
@@ -106,7 +106,8 @@ class ReasonsOnTheRealFixture(unittest.TestCase):
     def setUpClass(cls):
         cls.cf = adbe_cf()
         cls.r = cls.cf['scenario_reasons']
-        cls.yearly = cls.cf['dc']['expected_return']['yearly_at_model_cost_of_equity']['rows']
+        from fundamental_engine.render import yearly_table_rows               # the rows the owner's table shows
+        cls.yearly = [r for _, r in yearly_table_rows(cls.cf['dc']['expected_return'])]
         cls.res = {s['name']: s for s in cls.cf['val']['result']['scenarios']}
 
     def test_status_and_rows_are_the_owner_table(self):
@@ -309,7 +310,8 @@ class MissingAndHeld(unittest.TestCase):
         first_full = next(x for x in base['rows'] if x['fiscal_year']['full_year'])
         self.assertIsNone(first_full['drivers']['revenue_growth'])        # no previous full year to grow from
         self.assertEqual(base['condition']['drivers']['growth_first']['source'], 'executed forecast rows')
-        yr = cf['dc']['expected_return']['yearly_at_model_cost_of_equity']['rows']
+        from fundamental_engine.render import yearly_table_rows
+        yr = [y for _, y in yearly_table_rows(cf['dc']['expected_return'])]
         self.assertEqual([x['value'] for x in base['rows']], [y['base'] for y in yr])
         self.assertIn('חסר בתיק', SR.render_he(r))
         # without the yearly table: the dated values of the executed valuation, through the fifth anniversary
@@ -319,6 +321,7 @@ class MissingAndHeld(unittest.TestCase):
         self.assertIn('yearly_rows', [g['code'] for g in r2['gaps']])
         five = cf['dc']['valuation_view']['five_year']['date']
         av = [a for a in cf['val']['result']['annual_values'] if a['date'] <= five]
+        av = [a for _, a in yearly_table_rows({'yearly_at_model_cost_of_equity': {'rows': av}})]   # today and years 1-5
         self.assertEqual([x['value'] for x in by_name(r2)['bull']['rows']], [a['bull'] for a in av])
 
     def test_held_or_unavailable_valuation_shows_no_value(self):
@@ -406,7 +409,7 @@ class CommandsAndTool(unittest.TestCase):
             self.assertEqual(out.joinpath('scenarios_he.md').read_text(encoding='utf-8'), SR.render_he(cf['scenario_reasons']))
             saved = json.loads(out.joinpath('casefile.json').read_text(encoding='utf-8'))
             self.assertEqual(saved['scenario_reasons']['status'], 'computed')
-            self.assertIn('| מועד | דובי | בסיסי | שורי |', out.joinpath('table_he.md').read_text(encoding='utf-8'))
+            self.assertIn('| שנה | דובי | בסיסי | שורי |', out.joinpath('table_he.md').read_text(encoding='utf-8'))
 
     def test_mcp_tool(self):
         from fundamental_engine.mcp import Server, TOOLS
@@ -605,9 +608,9 @@ class ReviewWording(unittest.TestCase):
         self.assertNotIn('עד אז חולקו', self.md)
         self.assertIn('לא רווח GAAP', self.md)
         for line in self.md.split('\n'):
-            if '(פי ' in line:
-                self.assertIn('על אומדן הרווח למניה של השנה הבאה', line)
-            self.assertNotIn(' רווח למניה כ־', line.replace('אומדן רווח למניה כ־', ''))
+            if '(פי ' in line:                         # operating route: named apart from the yearly price table's EPS
+                self.assertIn('על הרווח התפעולי למניה של השנה הבאה', line)
+            self.assertNotIn(' רווח למניה כ־', line.replace('רווח תפעולי למניה כ־', ''))
         self.assertIn('as a whole number', self.r['rounding'])
         self.assertEqual(str(SR._r(-1e-9, 4)), '0.0')
         def zeros(x):
@@ -682,7 +685,9 @@ class MalformedEventsAndInput(unittest.TestCase):
     def test_every_bad_shape_is_rejected_with_a_reason(self):
         cases = {'bear_as_text': ({'bear': 'TEST'}, ('bear', None, 'not_list')),
                  'event_as_text': ({'bull': ['TEST']}, ('bull', 0, 'event_not_object')),
-                 'wrong_field': ({'bear': [{'text_he': 'TEST', 'evidence_ids': ['s1']}]}, ('bear', 0, 'no_event_he')),
+                 'wrong_field': ({'bear': [{'text_he': 'TEST', 'evidence_ids': ['s1']}]}, ('bear', 0, 'unknown_keys')),
+                 'no_text': ({'bear': [{'evidence_ids': ['s1']}]}, ('bear', 0, 'no_event_he')),
+                 'typo_ids': ({'bear': [{'event_he': 'TEST', 'evidence_id': ['s1']}]}, ('bear', 0, 'unknown_keys')),
                  'unknown_key': ({'Bear': [{'event_he': 'TEST', 'evidence_ids': ['s1']}]}, ('Bear', None, 'unknown_scenario')),
                  'ids_int': ({'bear': [{'event_he': 'TEST', 'evidence_ids': 5}]}, ('bear', 0, 'bad_evidence_ids')),
                  'ids_true': ({'bear': [{'event_he': 'TEST', 'evidence_ids': True}]}, ('bear', 0, 'bad_evidence_ids')),

@@ -1,3 +1,77 @@
+## Unreleased — company-first review fixes: ONE yearly table, a reason behind every price, the guided year kept apart (25.10.2026)
+
+Twenty-nine findings of the company-first review, each verified on the synthetic demo (tests/fixtures/demo_company +
+examples/evidence_pack_demo.json) or the ADBE fixture before the fix. No value of a run without the new inputs changes
+(ADBE fixture: today's bear/base/bull, verdict and warnings identical to 49ef7b8).
+
+- ONE table (render.py). `owner_table` splits the owner's table from what stays behind the scenes. The table holds ONE
+  yearly bear/base/bull table (`| שנה | דובי | בסיסי | שורי |`, rows 'שנה t (YYYY/MM)'): the company price path
+  ('מחיר המניה בכל שנה, לפי תרחיש', years 1-5 on the anniversaries of as_of; today's EPS x multiple stays in the casefile)
+  when it is computed, else the executed value per year (today, then for each year 1-5 the fiscal row nearest its
+  anniversary: a stub year-end weeks after as_of is no longer shown as a year). Moved to report.md ('Owner table: behind
+  the scenes'): the today range 'דובי / שורי', the five-year value row, the universe price path (PRICE_PATH_PULL, now
+  labelled 'לפי ממוצע השוק (לא מנתוני החברה)'), the market-assumption and 'מה המחיר מניח' notes, and the value table
+  when the price table is shown. One note says the fair value and buy-below price come from the cash-flow model and the
+  yearly prices are EPS x multiple. The scenario condition lines follow whichever yearly table is shown. With an evidence
+  pack and no computed company path, a row says why ('מחיר המניה לפי רווח × מכפיל | לא חושב: …') instead of a universe row.
+  About eight short notes. 'רק' only before a minority share; a negative implied growth reads 'ירידה של כ־X%'. The company
+  type is not 'מחזורית' after an evidenced structural treatment (or a ramp history the forecast does not normalize): the
+  type then carries '(בענף מחזורי)' (route.cycle_input).
+- Reasons behind every price. company_path rows store their events (analyst_sheet.scenario_events, hypotheses marked), the
+  EPS drivers with tier, value and evidence (fc.driver_sources and overrides) and the levers still on a rule;
+  `evidence_ids` is now every id behind the price (`multiple_evidence_ids` keeps the multiple's). scenario_reasons adds
+  `price_rows` per scenario and scenarios_he.md / the CLI print each company-path price with its EPS, revenue, margin,
+  shares, multiple, justification, tier, competitors and condition, the drivers and evidence once per scenario, then the
+  cash-flow model values under 'שווי במודל תזרים המזומנים'; the preamble names the price table. The model's EPS is labelled
+  'רווח תפעולי למניה' (it excludes investment income, unlike the price table's EPS). The paragraph's five-year clause reads
+  the company path's base year-5 price and annual change when it is computed (the same number as the table).
+- Evidence pack. Market feeds (kind price or macro, or retrieval market_feed) are citable on their date in the pack and
+  the bundle (facts.MARKET_FEED_KINDS); documents keep the two-day lag, and an item is citable only when all its sources
+  are (guidance: its issue date too). The fiscal year in progress is `drivers.current_year_revenue` (guidance tier, the FY
+  guidance item and the remainder item): the track-record ratio is applied to the unreported remainder only and reaches the
+  engine as `forecast.current_year_revenue`; `growth_anchor` / `growth` state `period` (the next fiscal year) and a
+  guidance- or consensus-tier value must sit inside the cited item's range for that year (or state `deviation`). Tiers:
+  consensus counts only for tier consensus; guidance needs a guidance item; competitor needs the named competitor's
+  source; a tier per scenario is allowed. forecast_options are checked like forecast.build (horizon 1-30, financing mode,
+  cyclical with ids mapped to `web:`); market rates need a value in range and an as_of not after the pack's. Refused
+  instead of dropped: a non-text note, a non-object identity (fiscal_year_end now required), a non-numeric consensus
+  low/high or n, a bottleneck without id; company_path is required. `merge_fragments` / CLI `pack-merge` merges the
+  ticker workflow's fragments (sources deduplicated by URL, ids renamed everywhere, duplicate item ids refused). The demo
+  pack: current_year_revenue from FY2026 guidance + the Q4 remainder; growth_anchor FY2027 from the consensus low/mean/high.
+- Engine. `forecast.current_year_revenue` input (fiscal year in progress, checked against the calendar). An `sbc_pct`
+  override with an evidenced after-SBC `mature_margin` (or terminal margin) moves cash costs by the SBC difference, so the
+  evidenced margin is the executed one (it was charged twice). The scenario-order rule (bear 0.5pp below base, bull above)
+  is reported as `binding_bound: scenario_order_0.5pp` with a warning when it overwrites an evidenced value. New gap levers:
+  margin convergence (new econ lever `margin_convergence_years`), minimum cash months, tax rate, working capital and
+  financing terms (when external money or a debt without interest history uses the rule). Analyst-tier overrides
+  (JUDGEMENT) and market-tier overrides of company levers (MARKET) stay visible gaps. A sales-to-capital default every
+  override replaced is no longer warned about. analyst_sheet: an event with unknown keys is rejected ('unknown_keys'), a
+  key risk the FactBook cannot back is listed in `key_risk_rejected`.
+- Pipeline and monitor. `casefile['evidence_pack']` keeps the pack's provenance (potential readings, competitors,
+  falsifiers, warnings; report.md 'Evidence pack'); `thesis_from_casefile` freezes each pack falsifier as a dated trigger
+  (review_by no later than its date) and `check` lists a due one as a re-review reason.
+- Ticker workflow. Four gather lanes with retrieval budgets (numbers incl. price and market; reports and guidance;
+  expectations; field), one Understand agent, the pack merged by `pack-merge`; AV statements and SEC companyfacts are the
+  primary structured sources (the FMP statements/analyst denials are skipped; pipeline-plan's folder field ignored);
+  results-day citability rules in COMMON; Position sets current_year_revenue, period, forecast_options; Value defines
+  `ran` as forecast and valuation stages ok and reports the engine's review_status; `verified` needs all three review
+  lenses; Deliver copies the engine table verbatim. `deep` also finds a same-version calibration in runs/universe_*.
+- Tests: test_company_first_fixes (end to end on the synthetic demo company), updated company_path, scenario_reasons,
+  headline_value, decision_render, driver_sources, evidence_pack.
+
+## Unreleased — company price path per scenario: next-fiscal-year EPS x an evidenced multiple (company_path, 25.10.2026)
+
+- `company_path.py` (new): `inputs.company_path = {metric 'eps', multiple 'forward_pe', scenarios {bear|base|bull:
+  {multiple_path [today, y1..y5], justification justified_high|peak|unproven, reason_he, source_tier, competitors,
+  evidence_ids}}, own_history {low, median, high, years}, peers [named competitors]}`. Price at year t = the scenario's
+  multiple x the EPS of fiscal year t+1 of the engine's own executed forecast (net income = EBIT after SBC - interest -
+  modelled taxes + investment income after tax - noncontrolling distributions, over time-weighted shares); a scenario
+  without inputs is absent, never defaulted; zero or negative EPS, a year beyond the forecast or a funding-blocked scenario
+  has no price, with the reason; a 'peak' multiple above the company's own-history median is flagged with its stated
+  reason. `pipeline.run` stores `casefile['company_path']` (stage 'company_path'; display only, outside the review digest;
+  no other value changes). Each priced row stores its reason (`reason_he`). Values are conditional estimates, not market
+  prices.
+
 ## Unreleased — bull, base and bear in the owner's words, and a reason behind every scenario price (25.10.2026)
 
 The owner (25.10.2026): "Not 'likely' — what is 'likely'? I want bullish, base and bearish. And behind the scenes every

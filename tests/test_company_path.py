@@ -71,7 +71,9 @@ class CompanyPathTests(unittest.TestCase):
                 self.assertIsNone(r['annual_return'])
             self.assertIn('רווח למניה', r['reason_he'])
             self.assertIn(CP['scenarios']['base']['reason_he'], r['reason_he'])
-            self.assertEqual(r['evidence_ids'], EV)
+            self.assertEqual(r['multiple_evidence_ids'], EV)
+            self.assertTrue(set(EV) <= set(r['evidence_ids']))                       # with the EPS drivers' evidence
+            self.assertTrue(r['eps_drivers'])
         # the fiscal year split by the fifth anniversary (2031-10-19) is summed back over both periods
         split = next(r for r in self.cp['scenarios']['base']['rows'] if r['fiscal_year_end'] == '2031-11-30')
         self.assertEqual(len(fy_rows('base', split['fiscal_year_end'], self.val)), 2)
@@ -90,7 +92,7 @@ class CompanyPathTests(unittest.TestCase):
         self.assertNotIn('bear', self.cp['scenarios'])
         self.assertEqual(self.cp['absent'], ['bear'])
         t = hebrew_table(self.cf)
-        self.assertIn('| היום | — |', t)
+        self.assertIn('| שנה 1 (2027/10) | — |', t)
         self.assertIn('תרחיש דובי: לא הוזן מכפיל מנומק', t)
 
     def test_peak_flag(self):
@@ -122,7 +124,8 @@ class CompanyPathTests(unittest.TestCase):
         self.assertIn('רווח למניה אפסי או שלילי', r['reason_he'])
         self.assertEqual(out['scenarios']['bear']['rows'][1]['status'], 'priced')
         lines, _ = C.table_he(out, lambda x: f'{x:,.0f}$')
-        self.assertIn('אין מחיר: רווח למניה אפסי או שלילי', lines[2])
+        self.assertEqual(len(lines), 5)                                                # years 1-5; today stays in the casefile
+        self.assertIn('אין מחיר: רווח למניה אפסי או שלילי', lines[1])
         bear['status'] = 'funding_blocked'
         self.assertEqual({r['why'] for r in C.build(cp, val, KNOWN)['scenarios']['bear']['rows']}, {'funding_blocked'})
         bear['status'] = 'conditional'
@@ -153,25 +156,35 @@ class CompanyPathTests(unittest.TestCase):
         bad(lambda c: c['peers'][0].pop('growth'), 'growth number')
         self.assertEqual(C.validate(deepcopy(CP))['scenarios']['base']['source_tier'], 'own_history')     # known=None skips ids
 
-    def test_render_replaces_the_universe_path_row(self):
+    def test_render_shows_one_yearly_table(self):
         plain, t = hebrew_table(self.plain), hebrew_table(self.cf)
-        self.assertNotIn(C.TITLE_HE, plain)
-        self.assertIn('| מחיר צפוי למניה (כ־', plain)
+        head = '| שנה | דובי | בסיסי | שורי |'
+        self.assertEqual(plain.count(head), 1)                                         # without company_path: the value table
+        self.assertIn('**שווי למניה בכל שנה, לפי תרחיש**', plain)
+        self.assertEqual(t.count(head), 1)                                             # with it: the company's price table only
         self.assertIn(f'**{C.TITLE_HE}**', t)
-        self.assertIn('| שנה | דובי | בסיסי | שורי |', t)
-        self.assertNotIn('| מחיר צפוי למניה (כ־', t)
-        self.assertNotIn('מחיר צפוי למניה = המחיר של היום', t)
-        self.assertIn('**שווי למניה בכל שנה, לפי תרחיש**', t)                         # the DCF value rows stay
-        base0 = self.cp['scenarios']['base']['rows'][0]['price']
-        self.assertIn(f'| היום | — | {base0:,.0f}$ |', t)
+        self.assertNotIn('**שווי למניה בכל שנה, לפי תרחיש**', t)
+        for x in (plain, t):
+            for gone in ('| מחיר צפוי למניה (כ־', '| דובי / שורי |', 'שווי משוער בעוד 5 שנים', '| מועד |'):
+                self.assertNotIn(gone, x)
+        self.assertNotIn('| היום |', t)                                                # today is the quote and the fair value
+        base1 = self.cp['scenarios']['base']['rows'][1]['price']
+        self.assertIn(f'| שנה 1 (2027/10) | — | {base1:,.0f}$ (', t)
         self.assertEqual(sum(1 for x in t.splitlines() if x.startswith('| שנה ') and '(' in x), 5)
+        self.assertIn('ממודל תזרים המזומנים', t)                                       # the two bases are named
 
     def test_invariance_of_every_existing_value(self):
         skip = {'company_path', 'stages', 'casefile_sha256', 'inputs_sha256'}
+
+        def no_prices(cf, k):                     # scenario_reasons also explains the company-path prices (price_rows)
+            v = deepcopy(cf.get(k))
+            if k == 'scenario_reasons':
+                for sc in v['scenarios']:
+                    sc.pop('price_rows')
+            return json.dumps(v, sort_keys=True, default=str)
         for k in set(self.plain) | set(self.cf):
             if k not in skip:
-                self.assertEqual(json.dumps(self.plain.get(k), sort_keys=True, default=str),
-                                 json.dumps(self.cf.get(k), sort_keys=True, default=str), k)
+                self.assertEqual(no_prices(self.plain, k), no_prices(self.cf, k), k)
         self.assertNotIn('company_path', self.plain)
         self.assertNotIn('company_path', self.plain['stages'])
         self.assertEqual(pipeline.run(deepcopy(ADBE), {})['casefile_sha256'], self.plain['casefile_sha256'])

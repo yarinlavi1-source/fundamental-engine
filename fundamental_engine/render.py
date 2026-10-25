@@ -22,6 +22,7 @@ result is always named as such. An unresolved forecast material issue is named (
 executed number is not a valuation of this business); a verdict that rests on a priced financing path says it is
 conditional on it.
 """
+from datetime import date
 
 PRICE_VERDICTS = ('attractive_at_price', 'quality_but_expensive', 'index_preferable')
 CALL_HE = {
@@ -268,11 +269,35 @@ def _value_he(dc, cur, secondary=True, compact=False):
     return ''
 
 
-def _five_he(dc, draft=False, compact=False):
+def _five_cp_he(cp, price, compact=False):
+    """The five-year clause from the company's own yearly price table (company_path: EPS x evidenced multiple), the same
+    numbers the owner's table shows; '' when its base year 5 has no price."""
+    sc = ((cp or {}).get('scenarios') or {})
+    rows = {s: (sc.get(s) or {}).get('rows') or [] for s in ('bear', 'base', 'bull')}
+    r5 = rows['base'][5] if len(rows['base']) > 5 else None
+    if not r5 or r5.get('status') != 'priced' or not _n(price) or price <= 0:
+        return ''
+    ch = r5['price'] / price - 1
+    ann = r5.get('annual_return')
+    move = f"{'עלייה' if ch >= 0 else 'ירידה'} של כ־{abs(ch):.0%} מהמחיר כעת" + (f' (כ־{ann:+.0%} לשנה)' if _n(ann) else '')
+    ends = [f"{lab} כ־{_ps(rows[s][5]['price'])}" for s, lab in (('bear', 'דובי'), ('bull', 'שורי'))
+            if len(rows[s]) > 5 and rows[s][5].get('status') == 'priced']
+    rng = '' if compact or not ends else ' (' + ', '.join(ends) + ')'
+    return (f"בעוד חמש שנים ({str(r5['date'])[:7].replace('-', '/')}), בתרחיש הבסיסי, מחיר מותנה (רווח למניה × מכפיל) של כ־"
+            f"{_ps(r5['price'])}{rng}, {move}; זו הערכה מותנית, לא תחזית מחיר.")
+
+
+def _five_he(dc, draft=False, compact=False, cp=None):
     """Five-year base value at the fair-value rate (the engine's own cost of equity, the executed valuation) plus
-    distributions (buybacks/dividends), with the total; the change from today assumes the price converges to that value."""
+    distributions (buybacks/dividends), with the total; the change from today assumes the price converges to that value.
+    When the company's own yearly price table is computed (cp: company_path), the clause reads its base year-5 price instead,
+    so the paragraph and the owner's table say the same number."""
     view = dc.get('valuation_view') or {}
     price = view.get('price')
+    if (cp or {}).get('status') == 'computed':
+        txt = _five_cp_he(cp, price, compact)
+        if txt:
+            return txt
     m, f = view.get('five_year'), None
     if m:
         f = {'date': m['date'], 'years': m['years'], 'base_value': m['base_value'],
@@ -364,29 +389,57 @@ def lynch_type(casefile):
         return 'צעירה, עדיין מפסידה' if _n(mg) and mg < 0 else None
     if route.get('stage') == 'turnaround':
         return 'בהתאוששות'
+    tag = ''
     if route.get('cyclical'):
-        return 'מחזורית'
+        # an evidenced analyst decision 'structural', or a history the card reads as a ramp (scale-up, loss-making grower) that the
+        # forecast does not normalize, is not shown as a cyclical company: the industry flag stays visible beside the type
+        structural = 'structural' in (route.get('cycle_treatment'), route.get('cycle_input'))
+        if not structural and (route.get('cycle_path') or not route.get('cycle_history')):
+            return 'מחזורית'
+        tag = ' (בענף מחזורי)'
     if _n(mg) and mg < 0:
-        return 'צעירה, עדיין מפסידה'
+        return 'צעירה, עדיין מפסידה' + tag
     if _n(g) and g >= .20:
-        return 'צומחת מהר'
+        return 'צומחת מהר' + tag
     if _n(g) and g >= .08:
-        return 'יציבה וצומחת'
-    return 'צומחת לאט' if _n(g) else None
+        return 'יציבה וצומחת' + tag
+    return ('צומחת לאט' + tag) if _n(g) else None
 
 
-def hebrew_table(casefile):
-    """The owner's valuation format (20.10.2026): one clear table in plain Hebrew words and a few short explanations; the
-    calculations and the business detail stay in the casefile. Every row is read from the executed casefile, nothing is
-    recomputed: price, fair value (the base value at the engine's own cost of equity for the company) and the gap, the
-    bear-bull range of the same valuation, the buy-below price for the owner's required return (where the verdict is taken),
-    the expected annual return at today's price against the named market return (engine-consistent, or the generic
-    assumption said as such), the expected price path with its walk-forward accuracy band (replaced, when inputs.company_path is supplied, by the
-    company's own yearly price table: next-fiscal-year EPS x an evidenced multiple per scenario), the conditional five-year value,
-    business quality, how rare the forecast growth is (base rates), what today's price assumes, the main risk (the analyst's
-    evidenced key_risk first), confidence and the call. A draft says so; a held valuation shows no value. Under the yearly
-    bear/base/bull (דובי/בסיסי/שורי) table, one short line per scenario names its condition (scenario_reasons); the
-    per-date reasons stay behind the scenes (casefile['scenario_reasons'], out/scenarios_he.md)."""
+YEARLY_HEAD_HE = '| שנה | דובי | בסיסי | שורי |'
+YEARLY_YEARS = 5
+VALUE_TITLE_HE = 'שווי למניה בכל שנה, לפי תרחיש'
+
+
+def _change_he(g):
+    """'צמיחה של כ־X%' for growth, 'ירידה של כ־X%' for a fall (never a double sign)."""
+    return f"{'צמיחה' if g >= 0 else 'ירידה'} של כ־{_hp(abs(g))}"
+
+
+def _share_he(sh):
+    """How many companies of this size managed it: 'only' (רק) only when it is a minority."""
+    return f"{'רק ' if sh < .5 else ''}כ־{sh:.0%} מהחברות בגודל הזה הצליחו בכך בעבר"
+
+
+def _cp_missing_he(cf):
+    """Why the company's own yearly price (company_path) is not in the table when an evidence pack was supplied; None otherwise."""
+    if not cf.get('evidence_pack') or (cf.get('company_path') or {}).get('status') == 'computed':
+        return None
+    cp = cf.get('company_path')
+    if (cf.get('stages') or {}).get('company_path') == 'failed':
+        err = next((e.get('error') for e in cf.get('errors') or [] if e.get('stage') == 'company_path'), '')
+        return 'לא חושב: החישוב נכשל' + (f" ({str(err).split(':', 1)[-1].strip()[:120]})" if err else '')
+    if isinstance(cp, dict) and cp.get('status') == 'not_available':
+        return 'לא חושב: אין הערכה שבוצעה שממנה אפשר לקרוא רווח למניה'
+    return 'לא חושב: לא הוזן מכפיל מנומק לכל תרחיש בחבילת הראיות'
+
+
+def owner_table(casefile):
+    """The owner's table split into what it shows and what stays behind the scenes (owner rule 20.10.2026: ONE clear table, ONE
+    yearly bear/base/bull table for years 1-5, a few short explanations). -> {'title', 'rows' [(label, text)], 'yearly' (None
+    or {'kind': 'company_path'|'value', 'title', 'rows'}), 'notes' (under the table), 'behind' (rows and notes moved to
+    report.md: the scenario range today, the market-return comparison, the universe price path, what the price assumes, the
+    five-year value and the yearly value table when the company's own price table is shown)}."""
     cf = casefile or {}
     dc = cf.get('dc') or {}
     v = dc.get('verdict') or {}
@@ -394,27 +447,28 @@ def hebrew_table(casefile):
     name = company.get('name') or company.get('ticker') or 'החברה'
     view, er = dc.get('valuation_view') or {}, dc.get('expected_return') or {}
     cur = (dc.get('price') or {}).get('currency') or company.get('currency') or ''
+    money = lambda x: _money(x, cur)
     disp = value_display(cf)
     price, fair, show = disp['price'], disp['fair'], disp['show']
     code, withheld = v.get('code'), bool(v.get('price_claim_withheld'))
-    rows = [('מחיר היום', _money(price, cur) if _n(price) else 'לא ידוע')]
+    rows = [('מחיר היום', money(price) if _n(price) else 'לא ידוע')]
     fv = er.get('fair_value') or {}
     ke = fv.get('cost_of_equity') if _n(fv.get('cost_of_equity')) else view.get('model_cost_of_equity')
     req, pfh = er.get('hurdle'), er.get('value_at_required_return')
-    notes = []
+    notes, behind, yearly = [], [], None
     if show:
         gap = price / fair - 1
-        rows.append(('שווי הוגן (תרחיש בסיסי)', _money(fair, cur)))
+        rows.append(('שווי הוגן (תרחיש בסיסי)', money(fair)))
         rows.append(('המחיר מול השווי', f"{'יקרה' if gap > 0 else 'זולה'} בכ־{abs(gap):.0%}" if abs(gap) >= .03 else 'בערך במחיר השווי'))
         lo, hi = (fv.get('bear'), fv.get('bull')) if _n(fv.get('bear')) and _n(fv.get('bull')) else (view.get('bear'), view.get('bull'))
         if _n(lo) and _n(hi):
-            rows.append(('דובי / שורי', f'{_money(lo, cur)} / {_money(hi, cur)}'))
+            behind.append(f'שווי היום לפי מודל תזרים המזומנים, דובי / שורי: {money(lo)} / {money(hi)}.')
         buy = _n(req) and _n(pfh) and pfh > 0 and abs(pfh / fair - 1) >= .005
         if _n(req) and _n(pfh) and pfh > 0:
             d = price / pfh - 1
             rel = ('בערך המחיר של היום' if abs(d) < .03 else f"המחיר של היום {'גבוה' if d > 0 else 'נמוך'} ממנו בכ־{abs(d):.0%}")
             rows.append((f'מחיר קנייה מרבי לתשואה שאתה דורש ({req * 100:.1f}% בשנה)',
-                         _money(pfh, cur) + (f' ({rel})' if buy else ' (זהה לשווי ההוגן)')))
+                         money(pfh) + (f' ({rel})' if buy else ' (זהה לשווי ההוגן)')))
         elif _n(req) and (er.get('price_for_hurdle') or {}).get('status') == 'invalid':
             rows.append((f'מחיר קנייה מרבי לתשואה שאתה דורש ({req * 100:.1f}% בשנה)', 'לא ניתן לחישוב בתשואה זו'))
         irr = er.get('base_irr')
@@ -431,45 +485,64 @@ def hebrew_table(casefile):
                 vs = (f' ({mk_he}: כ־{mkt * 100:.1f}%; ' + ('בערך כמו השוק)' if abs(d) < .005 else
                                                         f"{'יותר' if d > 0 else 'פחות'} מהשוק בכ־{abs(d) * 100:.1f}% בשנה)"))
             rows.append(('תשואה שנתית צפויה במחיר של היום', f'כ־{irr * 100:.1f}% בשנה{vs}'))
-        pp = er.get('expected_price_path') or {}
-        if (cf.get('company_path') or {}).get('status') == 'computed':
-            pp = {}                       # the company's own EPS x multiple path replaces the universe blend (company_path.py)
-        if pp.get('status') == 'computed' and pp.get('rows'):
-            cells = ' · '.join((str(r['date'])[:7].replace('-', '/') if r.get('date') else f"שנה {r['years']}") + f": {_money(r['price'], cur)}"
-                               for r in pp['rows'])
-            rows.append((f"מחיר צפוי למניה (כ־{pp['rate'] * 100:.1f}% בשנה)", cells))
-        f5 = view.get('five_year') or {}
-        if _n(f5.get('base_value')):
-            dist = f5.get('cumulative_distributions_base') or 0.
-            rows.append((f"שווי משוער בעוד 5 שנים ({f5.get('date', '')[:4]})",
-                         _money(f5['base_value'], cur) + (f' + כ־{_money(dist, cur)} חלוקות לבעלי המניות' if dist > .005 * price else '')))
         notes.append('שווי הוגן = כמה המניה שווה היום אם התרחיש הבסיסי מתממש, בשיעור ההיוון שהמנוע דורש מהחברה הזו לפי הסיכון שלה'
-                     + (f' (כ־{ke * 100:.1f}% בשנה).' if _n(ke) else '.'))
+                     + (f' (כ־{ke * 100:.1f}% בשנה)' if _n(ke) else '') + '.')
         if buy:
-            notes.append(f'מחיר קנייה מרבי = עד איזה מחיר התרחיש הבסיסי עוד נותן את התשואה שאתה דורש (כ־{req * 100:.1f}% בשנה: תשואת השוק '
-                         'ועוד תוספת על הסיכון של מניה בודדת); זו דרישה שלך, לא שווי החברה, ולפיה נקבעת השורה התחתונה.')
+            notes.append(f'מחיר קנייה מרבי = עד איזה מחיר התרחיש הבסיסי עוד נותן את התשואה שאתה דורש (כ־{req * 100:.1f}% בשנה); זו '
+                         'דרישה שלך, לא שווי החברה, ולפיה נקבעת השורה התחתונה.')
         edge = (irr - mkt) if _n(irr) and _n(mkt) and _n(ke) else None
         if edge is not None and gap > .03 and edge > .005:
-            notes.append(f'למה "יקרה" אבל מניבה יותר מהשוק: השווי ההוגן מחושב לפי תשואה של כ־{ke * 100:.1f}% בשנה, והשוק כולו מתומחר '
-                         f'היום לכ־{mkt * 100:.1f}% בלבד; ביחס למניות אחרות היא לא יקרה.')
+            behind.append(f'למה "יקרה" אבל מניבה יותר מהשוק: השווי ההוגן מחושב לפי תשואה של כ־{ke * 100:.1f}% בשנה, והשוק כולו מתומחר '
+                          f'היום לכ־{mkt * 100:.1f}% בלבד; ביחס למניות אחרות היא לא יקרה.')
         elif edge is not None and gap < -.03 and edge < -.005:
-            notes.append(f'למה "זולה" אבל מניבה פחות מהשוק: גם בשיעור ההיוון של החברה יש מרווח, אבל השוק מתומחר לתשואה גבוהה יותר '
-                         f'(כ־{mkt * 100:.1f}%); ביחס למניות אחרות היא לא זולה.')
-        notes.append('תשואה צפויה = מה תרוויח בשנה, בממוצע, אם תקנה היום והתרחיש הבסיסי יתממש. ' + MARKET_NOTE_HE.get(kind, ''))
+            behind.append(f'למה "זולה" אבל מניבה פחות מהשוק: גם בשיעור ההיוון של החברה יש מרווח, אבל השוק מתומחר לתשואה גבוהה יותר '
+                          f'(כ־{mkt * 100:.1f}%); ביחס למניות אחרות היא לא זולה.')
+        behind.append('תשואה צפויה = מה תרוויח בשנה, בממוצע, אם תקנה היום והתרחיש הבסיסי יתממש. ' + MARKET_NOTE_HE.get(kind, ''))
+        pp = er.get('expected_price_path') or {}
         if pp.get('status') == 'computed' and pp.get('rows'):
+            cells = ' · '.join((str(r['date'])[:7].replace('-', '/') if r.get('date') else f"שנה {r['years']}") + f": {money(r['price'])}"
+                               for r in pp['rows'])
             hit = pp.get('hit_rate_within_band') or {}
             when = [f"בכ־{hit[k]:.0%}" + (' מהמקרים' if i == 0 else '') + (' אחרי שנה' if int(k) == 1 else f' אחרי {k} שנים')
                     for i, k in enumerate(sorted(hit, key=int))]
             band = ', '.join(when[:-1]) + ' ו' + when[-1] if len(when) > 1 else ''.join(when)
             k = pp.get('pull_to_market', .5)
             mid = 'באמצע הדרך' if abs(k - .5) < 1e-9 else f'בכ־{k:.0%} מהדרך'
-            notes.append(f"מחיר צפוי למניה = המחיר של היום, שגדל כל שנה {mid} בין התשואה הצפויה במניה (כ־{pp['base_irr'] * 100:.1f}%) "
-                         f"לתשואת השוק (כ־{pp['market_return'] * 100:.1f}%). זו הערכה סטטיסטית, לא הבטחה ולא יעד: בבדיקה על 2016–2025 גם "
-                         f"השיטה הטובה ביותר פגעה בטווח של ±{pp.get('band', .25):.0%} מהמחיר בפועל רק {band}.")
-        notes.append('שווי בעוד 5 שנים הוא הערכה מותנית, לא תחזית למחיר המניה.')
+            behind.append(f"מחיר צפוי למניה לפי ממוצע השוק (לא מנתוני החברה; כ־{pp['rate'] * 100:.1f}% בשנה): {cells}. = המחיר של "
+                          f"היום, שגדל כל שנה {mid} בין התשואה הצפויה במניה (כ־{pp['base_irr'] * 100:.1f}%) לתשואת השוק "
+                          f"(כ־{pp['market_return'] * 100:.1f}%). הערכה סטטיסטית, לא הבטחה ולא יעד: בבדיקה על 2016–2025 גם השיטה "
+                          f"הטובה ביותר פגעה בטווח של ±{pp.get('band', .25):.0%} מהמחיר בפועל רק {band}.")
+        f5 = view.get('five_year') or {}
+        if _n(f5.get('base_value')):
+            dist = f5.get('cumulative_distributions_base') or 0.
+            behind.append(f"שווי משוער בעוד 5 שנים ({f5.get('date', '')[:4]}), בתרחיש הבסיסי לפי מודל תזרים המזומנים: "
+                          f"{money(f5['base_value'])}" + (f' + כ־{money(dist)} חלוקות לבעלי המניות' if dist > .005 * price else '')
+                          + '; הערכה מותנית, לא תחזית למחיר המניה.')
+        # ONE yearly table: the company's own price (EPS x evidenced multiple) when computed, else the model value per year
+        from .company_path import TITLE_HE as YEARLY_TITLE_HE, table_he as cp_table
+        cp_rows, cp_notes = cp_table(cf.get('company_path'), money)
+        value_rows = _yearly_rows(er, price, cur)
+        if cp_rows:
+            yearly = {'kind': 'company_path', 'title': YEARLY_TITLE_HE, 'rows': cp_rows}
+            notes += cp_notes
+            notes.append('השווי ההוגן ומחיר הקנייה למעלה מחושבים ממודל תזרים המזומנים; המחירים בטבלה השנתית = רווח למניה × מכפיל, '
+                         'ולכן הם לא חייבים להיות שווים להם.')
+            if value_rows:
+                behind.append({'title': VALUE_TITLE_HE + ' (מודל תזרים המזומנים)', 'rows': value_rows})
+        elif value_rows:
+            yearly = {'kind': 'value', 'title': VALUE_TITLE_HE, 'rows': value_rows}
+            dist = (view.get('five_year') or {}).get('cumulative_distributions_base') or 0.
+            notes.append('הטבלה השנתית: כמה המניה שווה בכל שנה אם התרחיש מתממש (באותו שיעור היוון כמו השווי ההוגן); הערכה מותנית, לא '
+                         'תחזית למחיר המניה' + (f'. בתרחיש הבסיסי יחולקו עד שנה 5 גם כ־{money(dist)} למניה לבעלי המניות, בנוסף'
+                                                if dist > .005 * price else '') + '.')
+        if yearly:
+            notes += _scenario_notes(cf)
     elif v:
         rows.append(('שווי הוגן', 'אין עדיין שווי אמין להצגה'))
         notes.append('הסיבה: ' + disp['reason_he'] + '.')
+    miss = _cp_missing_he(cf) if show else None
+    if miss:
+        rows.append(('מחיר המניה לפי רווח × מכפיל', miss))
     q = ((dc.get('assessments') or {}).get('business_quality') or {})
     kind = lynch_type(cf)
     if kind:
@@ -478,19 +551,18 @@ def hebrew_table(casefile):
         rows.append(('איכות העסק', q['level_he']))
     ov = _horizon((((cf.get('fc') or {}).get('anchors') or {}).get('outside_view') or {}).get('base'), 10)
     if show and ov:
-        rows.append(('כמה התחזית אופטימית', f"מניחה צמיחה של כ־{_hp(ov['real_cagr'])} בשנה (מעבר לאינפלציה) לעשר שנים; "
-                                             f"רק כ־{ov['share_at_least']:.0%} מהחברות בגודל הזה הצליחו בכך בעבר"))
+        rows.append(('כמה התחזית אופטימית', f"מניחה {_change_he(ov['real_cagr'])} בשנה (מעבר לאינפלציה) לעשר שנים; "
+                                             + _share_he(ov['share_at_least'])))
     pig = cf.get('price_implied_growth') or {}
     if show and pig.get('status') == 'solved' and _n(pig.get('implied_real_cagr')):
         sh = pig.get('growth_shift')
         n = pig.get('horizon', 10)
         diff = (f" (כ־{abs(sh) * 100:.0f} נק׳ אחוז {'יותר' if sh > 0 else 'פחות'} בשנה מהתרחיש הבסיסי)"
                 if _n(sh) and abs(sh) >= .005 else ' (בערך כמו התרחיש הבסיסי)')
-        tail = (f"; רק כ־{pig['share_at_least']:.0%} מהחברות בגודל הזה הצליחו בכך בעבר" if _n(pig.get('share_at_least')) else '')
-        rows.append(('מה המחיר של היום מניח', f"צמיחה של כ־{_hp(pig['implied_real_cagr'])} בשנה (מעבר לאינפלציה) ל־{n} שנים"
-                                               f"{diff}{tail}"))
-        notes.append('"מה המחיר מניח" = איזו צמיחה צריכה להתממש כדי שהמחיר של היום יהיה מוצדק באותו מודל (רגישות, לא תחזית שוק); '
-                     'כך רואים אם המחיר כבר מגלם צמיחה נדירה, או משאיר מרווח.')
+        tail = f'; {_share_he(pig["share_at_least"])}' if _n(pig.get('share_at_least')) else ''
+        rows.append(('מה המחיר של היום מניח', f"{_change_he(pig['implied_real_cagr'])} בשנה (מעבר לאינפלציה) ל־{n} שנים{diff}{tail}"))
+        behind.append('"מה המחיר מניח" = איזו צמיחה צריכה להתממש כדי שהמחיר של היום יהיה מוצדק באותו מודל (רגישות, לא תחזית שוק); '
+                      'כך רואים אם המחיר כבר מגלם צמיחה נדירה, או משאיר מרווח.')
     kr = (cf.get('analyst_sheet') or {}).get('key_risk') or {}
     risk = kr.get('reading_he') or _top_risk(cf, dc) or 'שהצמיחה והרווחיות לא יתממשו כפי שהונח'
     rows.append(('הסיכון המרכזי', str(risk).rstrip('.')))
@@ -511,21 +583,65 @@ def hebrew_table(casefile):
     rows.append(('שורה תחתונה', call + (' (טיוטה שעוד לא נבדקה)' if withheld else '')))
     if withheld:
         notes.append('זו טיוטה: הניתוח עוד לא עבר בדיקה בלתי תלויה, ולכן זו לא מסקנה סופית.')
-    out = [f"**{name} ({company.get('ticker', '')}) — הערכת שווי, {cf.get('as_of') or dc.get('as_of') or ''}**", '',
-           '| | |', '|---|---|'] + [f'| {k} | {str(x).replace("|", "/")} |' for k, x in rows]
-    if show:
-        from .company_path import TITLE_HE as CP_TITLE, table_he as cp_table
-        cp_rows, cp_notes = cp_table(cf.get('company_path'), lambda x: _money(x, cur))
-        if cp_rows:
-            out += ['', f'**{CP_TITLE}**', '', '| שנה | דובי | בסיסי | שורי |', '|---|---|---|---|'] + cp_rows
-            notes += cp_notes
-    yearly = _yearly_rows(er, price, cur) if show else []
-    if yearly:
-        out += ['', '**שווי למניה בכל שנה, לפי תרחיש**', '', '| מועד | דובי | בסיסי | שורי |', '|---|---|---|---|'] + yearly
-        notes.append('הטבלה השנתית: כמה המניה תהיה שווה בכל מועד אם התרחיש יתממש (באותו שיעור היוון כמו השווי ההוגן); חלוקות '
-                     'לבעלי המניות משולמות בנוסף.')
-        notes += _scenario_notes(cf)
+    return {'title': f"**{name} ({company.get('ticker', '')}) — הערכת שווי, {cf.get('as_of') or dc.get('as_of') or ''}**",
+            'rows': rows, 'yearly': yearly, 'notes': notes, 'behind': behind}
+
+
+def _yearly_md(t):
+    return ['', f"**{t['title']}**", '', YEARLY_HEAD_HE, '|---|---|---|---|'] + list(t['rows'])
+
+
+def hebrew_table(casefile):
+    """The owner's valuation format (20.10.2026, 25.10.2026): ONE clear table in plain Hebrew words, ONE yearly bear/base/bull
+    (דובי/בסיסי/שורי) table for years 1-5 and a few short explanations; the calculations, the business detail and every other
+    view stay behind the scenes (owner_table 'behind', written into report.md). Every row is read from the executed casefile,
+    nothing is recomputed: price, fair value (the base value at the engine's own cost of equity for the company) and the gap,
+    the buy-below price for the owner's required return (where the verdict is taken), the expected annual return at today's
+    price, business type and quality, how rare the forecast growth is (base rates, a warning row), what today's price assumes,
+    the main risk (the analyst's evidenced key_risk first), the levers still on a rule (gaps), confidence and the call. The
+    yearly table is the company's own price (inputs.company_path: next-fiscal-year EPS x an evidenced multiple per scenario)
+    when computed, else the executed value per year; under it one short condition line per scenario (scenario_reasons). A
+    draft says so; a held valuation shows no value."""
+    t = owner_table(casefile)
+    out = [t['title'], '', '| | |', '|---|---|'] + [f'| {k} | {str(x).replace("|", "/")} |' for k, x in t['rows']]
+    if t['yearly']:
+        out += _yearly_md(t['yearly'])
+    notes = t['notes']
     return '\n'.join(out + ([''] + [f'- {n}' for n in notes] if notes else []))
+
+
+def evidence_pack_md(casefile):
+    """report.md section: the ticker run's evidence pack (casefile['evidence_pack']): its warnings (single-source drivers, guidance
+    without a track record), the guidance adjustments, the forward-looking readings, the dated falsifiers; [] when absent."""
+    ep = (casefile or {}).get('evidence_pack')
+    if not isinstance(ep, dict):
+        return []
+    out = ['## Evidence pack (the ticker run)', '',
+           f"- Pack sha256 `{str(ep.get('pack_sha256') or '')[:16]}`; {ep.get('sources')} sources, "
+           f"{ep.get('independent_sources')} independent; competitors: "
+           + (', '.join(f"{c['ticker']} ({c['why']})" for c in ep.get('competitors') or []) or 'none named')]
+    out += [f'- Warning: {n}' for n in ep.get('notes') or []]
+    for a in ep.get('guidance_adjustments') or []:
+        out.append(f"- Guidance adjustment {a['lever']} ({a['scenario']}): {a['before']:,.6g} -> {a['after']:,.6g} ({a['rule']})")
+    for k, r in (ep.get('potential') or {}).items():
+        if isinstance(r, dict):
+            out.append(f"- Potential, {k}: {r.get('reading')} " + ('[hypothesis]' if r.get('hypothesis') else
+                                                                   f"[evidence {', '.join(r.get('evidence_ids') or [])}]"))
+    for f in ep.get('falsifiers') or []:
+        out.append(f"- Falsifier {f['id']} ({f['scenario']}): {f['metric']} {f['direction']} {f['threshold']:,} by {f['by']} "
+                   f"[evidence {', '.join(f.get('evidence_ids') or [])}]")
+    return out + ['']
+
+
+def owner_behind_md(casefile):
+    """report.md section: what the owner's table keeps behind the scenes (owner_table 'behind'); [] when nothing."""
+    b = owner_table(casefile)['behind']
+    if not b:
+        return []
+    out = ['## Owner table: behind the scenes (מאחורי הקלעים)', '']
+    for x in b:
+        out += (_yearly_md(x)[1:] + ['']) if isinstance(x, dict) else [f'- {x}']
+    return out + ['']
 
 
 def _scenario_notes(cf):
@@ -559,20 +675,37 @@ def value_display(casefile):
 
 
 def yearly_table_rows(er):
-    """The dated rows the owner's yearly table shows, as [(index in the path, row)]: the dates where bear, base and bull
-    all have a value, and none unless there are at least three. One rule for hebrew_table and scenario_reasons."""
+    """The dated rows the owner's yearly table shows, as [(year, row)]: today (year 0) and, for each year t = 1..5 in turn, the
+    later row (a date where bear, base and bull all have a value) nearest to the t-th anniversary of today, so a stub fiscal
+    year-end a few weeks after today is not shown as a year; none unless at least three rows are valued. One rule for
+    hebrew_table and scenario_reasons."""
     y = (er or {}).get('yearly_at_model_cost_of_equity') or {}
-    out = [(i, r) for i, r in enumerate(y.get('rows') or [])
-           if isinstance(r, dict) and all(_n(r.get(s)) for s in ('bear', 'base', 'bull'))]
-    return out if len(out) >= 3 else []
+    rows = [r for r in y.get('rows') or [] if isinstance(r, dict)]
+    ok = [(i, r) for i, r in enumerate(rows) if all(_n(r.get(s)) for s in ('bear', 'base', 'bull'))]
+    if len(ok) < 3:
+        return []
+    try:
+        d0 = date.fromisoformat(str(rows[0].get('date'))[:10])
+        when = {i: (date.fromisoformat(str(r.get('date'))[:10]) - d0).days / 365.25 for i, r in ok}
+    except ValueError:
+        return [(k, r) for k, (_, r) in enumerate(ok)]
+    out = [(0, r) for i, r in ok if i == 0]
+    last = 0
+    for t in range(1, YEARLY_YEARS + 1):
+        cand = [(abs(when[i] - t), i, r) for i, r in ok if i > last and when[i] >= .5]
+        if not cand:
+            break
+        _, last, r = min(cand, key=lambda c: (c[0], c[1]))
+        out.append((t, r))
+    return out
 
 
 def _yearly_rows(er, price, cur):
-    """One row per date of the annual path (today, each fiscal year end, the fifth anniversary) of the executed valuation
-    (each scenario at the engine's own cost of equity: the fair-value rate)."""
+    """One row per year (today, then years 1-5: 'שנה t (YYYY/MM)') of the executed valuation's annual path (each scenario at
+    the engine's own cost of equity: the fair-value rate)."""
     out = []
-    for i, r in yearly_table_rows(er):
-        when = 'היום' if i == 0 else str(r['date'])[:7].replace('-', '/')
+    for t, r in yearly_table_rows(er):
+        when = 'היום' if t == 0 else f"שנה {t} ({str(r['date'])[:7].replace('-', '/')})"
         out.append(f"| {when} | {_money(r['bear'], cur)} | {_money(r['base'], cur)} | {_money(r['bull'], cur)} |")
     return out
 
@@ -687,7 +820,7 @@ def _paragraph(casefile, short=False, secondary=True, pad=False, compact=False, 
                 parts.append(f'{label}{edge}: שווי הוגן של כ־{_ps(base)} {cur}{at}, והמחיר {_ps(price)} {rel} ממנו'
                              f'{_buy_he(er, base, price, adj, secondary, compact)}.')
                 parts.append(f'{cond}.' if cond else '')
-                parts.append(_five_he(dc, draft=True, compact=compact))
+                parts.append(_five_he(dc, draft=True, compact=compact, cp=cf.get('company_path')))
                 parts.append('' if compact else 'אלה מספרי טיוטה שטרם נבדקו, לא מסקנה.')   # the opening already says it is a draft
             else:
                 parts.append(f'{label}{edge}; אין עדיין שווי הוגן להצגה.')
@@ -708,7 +841,7 @@ def _paragraph(casefile, short=False, secondary=True, pad=False, compact=False, 
     show = code in PRICE_VERDICTS and not withheld and _n(price)
     if show:
         parts.append(_value_he(dc, cur, secondary, compact))
-        parts.append(_five_he(dc, compact=compact))
+        parts.append(_five_he(dc, compact=compact, cp=cf.get('company_path')))
     risk = _top_risk(cf, dc)
     if risk:
         parts.append(f'הסיכון המרכזי: {risk}.')
@@ -1271,6 +1404,7 @@ def markdown(casefile):
     if cf.get('analyst_sheet'):
         from .analyst_sheet import render_he
         out += render_he(cf['analyst_sheet']).split('\n') + ['']
+    out += owner_behind_md(cf) + evidence_pack_md(cf)
     out += _verdict_box(dc) + _assessments(dc) + _expected(dc) + _judgement(dc) + _business(cf) + _card(cf) + _financials(cf) + _dataqa(cf)
     out += _forecast(cf) + _valuation(cf, dc) + _risks(cf, dc) + (_market(cf) if cf.get('market_context') else []) + _review(cf)
     out += _limitations(cf, dc)

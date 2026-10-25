@@ -54,8 +54,10 @@
     "threats": {"reading": "integration of the function into the accelerator itself", "hypothesis": true}
   },
   "drivers": {
-    "growth_anchor": {"bear": 0.18, "base": 0.29, "bull": 0.36, "source_tier": "guidance", "adjust_by_track_record": ["base"],
-                      "evidence_ids": ["g_fy26", "s_pr"], "reason": "FY2026 guided midpoint over FY2025 revenue; bear at the low end less the largest customer's slowdown, bull at the consensus high"},
+    "current_year_revenue": {"source_tier": "guidance", "evidence_ids": ["g_fy26", "g_q4", "s_pr"], "remainder": "g_q4", "adjust_by_track_record": true,
+                             "reason": "FY2026 guided midpoint; the beat record of Q1-Q3 2026 (actual / guided midpoint) applied to the unreported Q4 only"},
+    "growth_anchor": {"period": "FY2027", "bear": 0.105, "base": 0.275, "bull": 0.487, "source_tier": "consensus",
+                      "evidence_ids": ["c_fy27_rev"], "reason": "FY2027 revenue consensus (14 analysts): low, mean and high over the FY2026 revenue the track-record-adjusted guidance gives"},
     "mature_margin": {"bear": 0.2, "base": 0.3, "bull": 0.38, "source_tier": "own_history", "evidence_ids": ["f_gm_q3", "s_10q"],
                       "reason": "gross margin 72% less the opex ratio guided on the call, at scale"}
   },

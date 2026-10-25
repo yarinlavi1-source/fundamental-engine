@@ -42,7 +42,7 @@ TIER_HE = {'guidance': 'הנחיית ההנהלה', 'contracted': 'ביקוש ח
 JUSTIFICATIONS = ('justified_high', 'peak', 'unproven')
 JUST_HE = {'justified_high': 'מכפיל גבוה מוצדק', 'peak': 'מכפיל של שיא', 'unproven': 'עוד לא הוכח'}
 YEARS = 5
-TITLE_HE = 'מחיר צפוי לפי שנה (רווח למניה × מכפיל)'
+TITLE_HE = 'מחיר המניה בכל שנה, לפי תרחיש'   # the owner's one yearly table (render.hebrew_table)
 TOP_KEYS = {'metric', 'multiple', 'scenarios', 'own_history', 'peers'}
 SCEN_KEYS = {'multiple_path', 'justification', 'reason_he', 'source_tier', 'competitors', 'evidence_ids'}
 HIST_KEYS = {'low', 'median', 'high', 'years', 'evidence_ids'}
@@ -175,8 +175,50 @@ def _big(v):
     return f'{v / 1e9:,.2f} מיליארד' if a >= 1e9 else (f'{v / 1e6:,.1f} מיליון' if a >= 1e6 else f'{v:,.0f}')
 
 
-def build(cp, val, known=None):
-    """casefile['company_path'] from the validated input and the executed valuation (pipeline.valuate output)."""
+EPS_LEVERS = ('growth_anchor', 'growth_half_life', 'mature_margin', 'sbc', 'sales_to_capital', 'tax_rate')
+
+
+def _eps_drivers(fc, s):
+    """The levers behind the scenario's EPS, read from the executed forecast: for each, its source tier, evidence ids, the
+    evidenced value when an override set it, and the rule class when it is still on one (a visible gap, never filled in)."""
+    fc = fc or {}
+    val = {}
+    for o in fc.get('overrides') or []:
+        if isinstance(o, dict) and o.get('scenario') in (s, 'all'):
+            val[o.get('path')] = o.get('value')
+    paths = {'growth_anchor': ('growth', 'growth_anchor'), 'growth_half_life': ('growth_half_life',),
+             'mature_margin': ('cash_cost_ratio', 'terminal.operating_margin', 'mature_margin'), 'sbc': ('sbc_pct',),
+             'sales_to_capital': ('growth_capex_pct', 'sales_to_capital'), 'tax_rate': ('tax_rate',)}
+    out = []
+    for r in fc.get('driver_sources') or []:
+        if not isinstance(r, dict) or r.get('scenario') not in (s, 'all') or r.get('lever') not in EPS_LEVERS:
+            continue
+        v = next((val[p] for p in paths.get(r['lever'], ()) if p in val), None)
+        out.append({'lever': r['lever'], 'value': v, 'source_tier': r.get('tier'), 'evidence_ids': list(r.get('evidence_ids') or []),
+                    'default_class': r.get('default_class')})
+    return out
+
+
+def _events(events, s):
+    """The analyst's events behind scenario s (analyst_sheet.scenario_events as validated): an event without known evidence is a
+    hypothesis and says so."""
+    out = []
+    for e in (events or {}).get(s) or []:
+        if isinstance(e, dict) and isinstance(e.get('event_he'), str) and e['event_he'].strip():
+            ids = [str(i) for i in e.get('evidence_ids') or [] if isinstance(i, str)]
+            hyp = bool(e.get('hypothesis')) if isinstance(e.get('hypothesis'), bool) else not ids
+            out.append({'event_he': e['event_he'].strip(), 'evidence_ids': ids, 'hypothesis': hyp})
+    return out
+
+
+def _events_he(events):
+    return '; '.join(e['event_he'].rstrip('.') + (' (השערה)' if e['hypothesis'] else '') for e in events)
+
+
+def build(cp, val, known=None, events=None, fc=None):
+    """casefile['company_path'] from the validated input and the executed valuation (pipeline.valuate output). events: the
+    analyst's validated scenario events (casefile analyst_sheet.scenario_events); fc: the executed forecast (its driver_sources
+    and overrides): each priced row stores them as its reason, with their evidence ids and source tiers."""
     spec = validate(cp, known)
     res, case = (val or {}).get('result') or {}, (val or {}).get('case') or {}
     if not res.get('scenarios') or res.get('method') not in ('operating', 'residual_income'):
@@ -202,6 +244,9 @@ def build(cp, val, known=None):
         fy = fiscal_years(ex.get('forecast') or [], interim, _num((case.get('opening') or {}).get('tax_loss_carryforward')))
         out['fiscal_years'][s] = fy
         blocked = ex.get('status') == 'funding_blocked'
+        ev_s, drv_s = _events(events, s), _eps_drivers(fc, s)
+        cond = _events_he(ev_s)
+        gaps = [d['lever'] for d in drv_s if d['default_class']]
         rows = []
         for t, m in enumerate(x['multiple_path']):
             f = fy[t + 1] if t + 1 < len(fy) else None
@@ -226,10 +271,14 @@ def build(cp, val, known=None):
                 r['reason_he'] = (f"{label}: רווח למניה {_fmt(f['eps'])} בשנת הכספים שמסתיימת ב־{f['fiscal_year_end']} ({drv}"
                                   f"{_fmt(f['weighted_shares'] / 1e6)} מיליון מניות) × מכפיל {m:.1f} ({JUST_HE[x['justification']]}; "
                                   f"מקור: {TIER_HE[x['source_tier']]}" + (f": {', '.join(x['competitors'])}" if x.get('competitors') else '')
-                                  + f") = {_fmt(r['price'])}. {x['reason_he']}")
+                                  + f") = {_fmt(r['price'])}. {x['reason_he'].rstrip('.')}."
+                                  + (f" התנאי: {cond}." if cond else ''))
                 if f['uses_tax_losses']:
                     r['note'] = 'modelled taxes use carried-forward losses this fiscal year; book EPS would carry a deferred tax charge'
-            r['evidence_ids'] = list(x['evidence_ids'])
+            r['events'], r['eps_drivers'], r['eps_driver_gaps'] = ev_s, drv_s, gaps
+            r['multiple_evidence_ids'] = list(x['evidence_ids'])
+            r['evidence_ids'] = list(dict.fromkeys(list(x['evidence_ids']) + [i for e in ev_s for i in e['evidence_ids']]
+                                                   + [i for d in drv_s for i in d['evidence_ids']]))
             rows.append(r)
         out['scenarios'][s] = {'label_he': LABEL_HE[s], **x, 'rows': rows}
         if x['justification'] == 'peak':
@@ -247,13 +296,25 @@ def build(cp, val, known=None):
     return out
 
 
+def tiers_he(cp):
+    """Where each scenario's multiple comes from, in a few words (the full reason stays behind the scenes)."""
+    sc = (cp or {}).get('scenarios') or {}
+    tiers = {sc[s]['source_tier'] for s in SCEN if s in sc}
+    if tiers == {'own_history'}:
+        return 'מההיסטוריה של המכפילים של החברה עצמה'
+    return 'מקור לכל מכפיל: ' + '; '.join(
+        f"{LABEL_HE[s]} — {TIER_HE[sc[s]['source_tier']]}" + (f" ({', '.join(sc[s]['competitors'])})" if sc[s].get('competitors') else '')
+        for s in SCEN if s in sc)
+
+
 def table_he(cp, money):
-    """Rows of the owner's yearly price table (שנה | דובי | בסיסי | שורי) and its notes; money(v) formats a price."""
+    """Rows of the owner's yearly price table (שנה | דובי | בסיסי | שורי) for years 1-5 and its notes; money(v) formats a price.
+    Today's EPS x multiple (year 0) stays in the casefile: the table's today is the quote and the fair value above it."""
     if (cp or {}).get('status') != 'computed':
         return [], []
     sc = cp['scenarios']
     lines = []
-    for t in range(YEARS + 1):
+    for t in range(1, YEARS + 1):
         cells = []
         when = None
         for s in SCEN:
@@ -268,10 +329,10 @@ def table_he(cp, money):
                 cells.append(f"{money(r['price'])} ({r['annual_return']:+.0%} בשנה)")
             else:
                 cells.append(money(r['price']))
-        head = 'היום' if t == 0 else f"שנה {t} ({when[:7].replace('-', '/')})"
-        lines.append(f"| {head} | {' | '.join(cells)} |")
-    notes = ['מחיר צפוי לפי שנה = הרווח למניה של שנת הכספים הבאה (תחזית המנוע לאותו תרחיש, אחרי הוצאות שכר במניות) × מכפיל רווח '
-             'שנומק לכל תרחיש מהנתונים של החברה; בסוגריים: שינוי מחיר שנתי מהמחיר של היום, בלי דיבידנדים. הערכה מותנית, לא הבטחה.']
+        lines.append(f"| שנה {t} ({when[:7].replace('-', '/')}) | {' | '.join(cells)} |")
+    notes = ['הטבלה השנתית: מחיר המניה בסוף כל שנה אם התרחיש מתממש = הרווח למניה של שנת הכספים הבאה (תחזית המנוע לאותו תרחיש, '
+             f'אחרי הוצאות שכר במניות) × מכפיל רווח מנומק ({tiers_he(cp)}; הנימוק לכל מחיר מאחורי הקלעים); בסוגריים: שינוי מחיר '
+             'שנתי מהמחיר של היום, בלי דיבידנדים. הערכה מותנית, לא הבטחה.']
     for s in cp.get('absent') or []:
         notes.append(f'תרחיש {LABEL_HE[s]}: לא הוזן מכפיל מנומק, ולכן אין לו מחיר (לא ממלאים ברירת מחדל).')
     notes += [f['text_he'] for f in cp.get('flags') or []]

@@ -438,10 +438,13 @@ def run(fb, inputs=None):
     from . import analyst_sheet
     cond = stage('conditional_values', lambda: analyst_sheet.conditional_values(fb, an, card, qa, inputs.get('forecast'))) if fc else None
     cf['analyst_sheet'] = stage('analyst_sheet', lambda: analyst_sheet.build(fb, cf, inputs, cond))
+    if 'evidence_pack' in inputs:         # a ticker run's provenance (evidence_pack.to_inputs): potential readings, falsifiers, notes
+        cf['evidence_pack'] = deepcopy(inputs['evidence_pack'])
     if 'company_path' in inputs:          # company_path.py: the yearly price per scenario (EPS x multiple); reads, never moves, a value
         from . import company_path
         known = set(fb.get('sources') or {}) | {q['id'] for q in fb.get('qualitative') or []}
-        cf['company_path'] = stage('company_path', lambda: company_path.build(inputs['company_path'], val, known))
+        events = (cf.get('analyst_sheet') or {}).get('scenario_events')
+        cf['company_path'] = stage('company_path', lambda: company_path.build(inputs['company_path'], val, known, events, fc))
     # behind every scenario price, its condition and the business of that year (read from the casefile, nothing revalued);
     # not a stage, so no other casefile key changes: a failure is recorded inside the key itself
     from . import scenario_reasons

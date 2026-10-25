@@ -214,7 +214,12 @@ CYCLE_FIT_MIN_YEARS = 6   # fewer years than about one full cycle (3-5 years) pl
 DECLINE_FLOOR = -.05      # lowest perpetual growth for a structurally declining business
 DEBT_INCOMPLETE_RATE = .25     # interest / debt above this (no investment-grade or bank rate) means debt lines are missing
 KNOWN_INPUTS = ('overrides', 'reviews', 'risk_free', 'equity_risk_premium', 'horizon_years', 'financing', 'nol', 'cyclical',
-                'operating_funding', 'nonrecurring', 'debt_like_claims', 'non_operating_assets', 'capital_events', 'country_risk')
+                'operating_funding', 'nonrecurring', 'debt_like_claims', 'non_operating_assets', 'capital_events', 'country_risk',
+                'current_year_revenue')
+# inputs['current_year_revenue'] = {value, fiscal_year_end, basis, evidence_ids, source_tier}: the current fiscal year's revenue
+# from the company's own evidence (evidence_pack: the guidance midpoint, the track-record ratio applied to the unreported
+# remainder only); it replaces the consensus / guidance / year-to-date anchor of _current_year for that fiscal year only.
+CURRENT_YEAR_KEYS = ('value', 'fiscal_year_end', 'basis', 'evidence_ids', 'source_tier')
 # inputs['country_risk'] = {value, mapped_share, as_of, channel, title, url, detail, evidence_ids}: the country risk premium
 # above the US base (market_context.country_risk: exposure-weighted Damodaran CRPs; the pipeline passes it from
 # inputs.market_context) and the share of its channel mapped to a country or region. Two rows of the cost-of-equity table:
@@ -281,7 +286,8 @@ PROXY_EVIDENCE_TOPICS = ('moat', 'substitutes', 'technology_ai')
 FINANCING_MODES = ('assumed', 'assumed_debt', 'none')   # 'assumed_debt' kept as the legacy name of the default
 WEAK_DIMENSIONS = ('customer_concentration', 'technology_ai', 'governance', 'competition')
 ECON_LEVERS = ('growth_anchor', 'growth_half_life', 'terminal_growth', 'mature_margin', 'sales_to_capital',
-               'terminal_roic', 'cost_of_equity', 'tax_rate', 'payout_fraction', 'minimum_cash_months')
+               'terminal_roic', 'cost_of_equity', 'tax_rate', 'payout_fraction', 'minimum_cash_months', 'margin_convergence_years')
+ECON_RANGES = {'margin_convergence_years': (1, 30), 'minimum_cash_months': (0, 60), 'growth_half_life': (.25, 50)}
 TERMINAL_KEYS = ('growth', 'wacc', 'roic', 'operating_margin', 'tax_rate', 'other_claims', 'net_runoff_obligation')
 # Where an override's number comes from (owner rule 25.10.2026, docs DEFAULTS_MAP tiers): T1 guidance adjusted by its track
 # record, T2 contracted/visible demand, T3 attributed consensus, T4 the company's own history, T5 named direct competitors
@@ -289,17 +295,25 @@ TERMINAL_KEYS = ('growth', 'wacc', 'roic', 'operating_margin', 'tax_rate', 'othe
 SOURCE_TIERS = ('guidance', 'contracted', 'consensus', 'own_history', 'competitor', 'market', 'analyst')
 # company evidence: an override from these tiers is never capped or relabelled by a size, type or cross-company prior
 COMPANY_TIERS = ('guidance', 'contracted', 'consensus', 'own_history', 'competitor')
-# DEFAULTS_MAP classes that are not this company's evidence: a lever still on one of them is a visible gap
-GAP_CLASSES = ('SIZE', 'CONST', 'TYPE', 'XSEC')
+# DEFAULTS_MAP classes that are not this company's evidence: a lever still on one of them is a visible gap. JUDGEMENT: an
+# analyst-tier override (a judgement without a company source tier); MARKET: a market-tier override of a company lever (a
+# market price is evidence for the rate of risk, never for the company's growth, margins or capital)
+GAP_CLASSES = ('SIZE', 'CONST', 'TYPE', 'XSEC', 'JUDGEMENT', 'MARKET')
+MARKET_LEVERS = ('cost_of_equity',)          # levers a market-tier source may set without leaving a gap
 # every forecast lever the DCF uses, and the override paths (econ lever or raw driver key) that set it, first match wins
 DRIVER_LEVERS = (('growth_anchor', ('growth', 'growth_anchor')), ('growth_half_life', ('growth', 'growth_half_life')),
                  ('mature_margin', ('cash_cost_ratio', 'terminal.operating_margin', 'mature_margin')),
                  ('sales_to_capital', ('growth_capex_pct', 'sales_to_capital')), ('terminal_roic', ('terminal.roic', 'terminal_roic')),
-                 ('sbc', ('sbc_pct',)), ('cost_of_equity', ('cost_of_equity',)), ('cyclical', ()), ('horizon', ()))
+                 ('sbc', ('sbc_pct',)), ('cost_of_equity', ('cost_of_equity',)),
+                 ('margin_convergence', ('margin_convergence_years',)), ('minimum_cash_months', ('minimum_cash_months', 'minimum_cash')),
+                 ('tax_rate', ('tax_rate', 'terminal.tax_rate')), ('working_capital', ('working_capital_ratio',)),
+                 ('financing_terms', ('interest_rate',)), ('cyclical', ()), ('horizon', ()))
 LEVER_HE = {'growth_anchor': 'צמיחת ההכנסות בשנים הקרובות', 'growth_half_life': 'קצב האטת הצמיחה',
             'mature_margin': 'שיעור הרווח התפעולי בבגרות', 'sales_to_capital': 'ההשקעה הנדרשת לכל דולר מכירות נוסף',
             'terminal_roic': 'התשואה על ההון לטווח הארוך', 'sbc': 'תגמול העובדים במניות',
-            'cost_of_equity': 'תוספת הסיכון בשיעור ההיוון', 'cyclical': 'הטיפול במחזוריות', 'horizon': 'אורך תקופת התחזית'}
+            'cost_of_equity': 'תוספת הסיכון בשיעור ההיוון', 'cyclical': 'הטיפול במחזוריות', 'horizon': 'אורך תקופת התחזית',
+            'margin_convergence': 'קצב ההגעה לרווחיות הבוגרת', 'minimum_cash_months': 'כרית המזומנים המינימלית',
+            'tax_rate': 'שיעור המס', 'working_capital': 'ההון החוזר', 'financing_terms': 'תנאי המימון (ריבית ועמלות גיוס)'}
 KIND_MAP = {'filing_derived': ('filing', 'provider_normalized'), 'vendor_normalized': ('provider_data', 'provider_normalized'),
             'market_feed': ('market_data', 'market_feed'), 'consensus': ('analyst_estimates', 'provider_normalized'),
             'document': ('document', None), 'synthetic': ('synthetic', None), 'secondary': ('secondary_source', 'search_excerpt')}
@@ -396,6 +410,8 @@ def _check_overrides(fb, overrides):
             raise ValueError(f'override {path}: value must be a finite number or a list of numbers')
         if isinstance(v, list) and path in ECON_LEVERS:
             raise ValueError(f'override {path}: economic levers take one number')
+        if path in ECON_RANGES and not ECON_RANGES[path][0] <= v <= ECON_RANGES[path][1]:
+            raise ValueError(f'override {path}: value must be between {ECON_RANGES[path][0]} and {ECON_RANGES[path][1]}')
         out.append({'id': f'override_{i + 1}', 'path': path, 'scenario': o.get('scenario', 'all'), 'value': deepcopy(v),
                     'reason': o['reason'], 'evidence_ids': list(ev), 'raw': raw and path not in ECON_LEVERS,
                     'source_tier': tier, 'competitors': [c.strip() for c in comp] if tier == 'competitor' else []})
@@ -654,6 +670,7 @@ def _route(card, h, warn, fb=None, cyc_input=None, evidenced_growth=None):
             'cyclical_evidence': evidence,
             'cycle_path': normalize, 'cycle_peak': peak, 'cycle_treatment': treatment if peak else override, 'cycle_forced': forced,
             'cycle_override': override, 'cycle_history': None if confirmed else cyc_card.get('history'),
+            'cycle_input': (cyc_input or {}).get('treatment'),
             'capital_intensity': (card.get('capital_intensity') or {}).get('value'),
             'funding': (card.get('funding') or {}).get('value'), 'moat': moat, 'moat_basis': basis, 'moat_proxy': proxy,
             'moat_weights': weights, 'dimensions': dims, 'size_relabel': size_relabel}
@@ -1359,7 +1376,16 @@ def _current_year(route, h, cal, cons):
     k, b1 = cal['fiscal_years_since_last_report'], cal['boundaries'][0]
     gd = h.get('guidance', {}).get(f'FY{b1[:4]}')
     ytd = h['ytd'] if h['ytd'] and k == 1 and _d(h['ytd']['end']) < _d(b1) else None
-    if b1 in cons:
+    cyr = h.get('current_year_input')
+    if cyr and abs((_d(cyr['fiscal_year_end']) - _d(b1)).days) > 20:
+        raise ValueError(f"current_year_revenue is for the fiscal year ending {cyr['fiscal_year_end']}, but the fiscal year in progress "
+                         f'at as_of ends {b1}')
+    ids = None
+    if cyr:
+        r, kind, ids = float(cyr['value']), {'guidance': 'guidance', 'consensus': 'analyst'}.get(cyr.get('source_tier'), 'input'), \
+            list(cyr['evidence_ids'])
+        basis = f"{cyr['basis']} (evidence {', '.join(ids)}; source tier {cyr.get('source_tier', 'analyst')})"
+    elif b1 in cons:
         r, kind = cons[b1]['value'], 'analyst'
         basis = f"consensus revenue for the fiscal year ending {b1} ({cons[b1]['source_id']}, {cons[b1].get('as_of')})"
     elif gd:
@@ -1390,7 +1416,7 @@ def _current_year(route, h, cal, cons):
                  f"({left:,.0f})")
     else:
         return None
-    out = {'r_fy': r, 'g_cur': (r / h['last_revenue']) ** (1 / k) - 1, 'basis': basis, 'kind': kind, 'ytd': ytd}
+    out = {'r_fy': r, 'g_cur': (r / h['last_revenue']) ** (1 / k) - 1, 'basis': basis, 'kind': kind, 'ytd': ytd, 'ids': ids}
     if ytd and r - ytd['value'] > 0 and years(ytd['end'], b1) > .02:
         out['stub_rate'] = (r - ytd['value']) / years(ytd['end'], b1)
         out['stub_basis'] = f"(current-year revenue - reported year to date) / years from {ytd['end']} to {b1}"
@@ -1404,8 +1430,10 @@ def _params(route, h, cal, cons, rf, ku, ku_t, ov_ke, debt0, ov, warn, ev=None):
     override (COMPANY_TIERS) or None: the bear and bull defaults of an evidenced base lever are set around that evidence, never
     around the stage or type table it replaced."""
     ev = ev or (lambda s, lever: None)
+    has = getattr(ov, 'overridden', lambda s, lever: False)     # is (scenario, econ lever) set by an override
     st = STAGE[route['stage']]
     s2c_range = route['type'][0]
+    order = {'bear': [], 'bull': []}
     cyc = route['cycle_path'] and h.get('cycle')
     if route['stage'] == 'decline':
         gT_base = _clamp(.5 * h['g_trailing'], DECLINE_FLOOR, 0.)
@@ -1550,8 +1578,19 @@ def _params(route, h, cal, cons, rf, ku, ku_t, ov_ke, debt0, ov, warn, ev=None):
         hb, hu = ov('bear', 'growth_half_life', .8 * hl0), ov('bull', 'growth_half_life', 1.3 * hl0)
         bear = [bear0] + _fade(bear0, gT['bear'], hb, n_full - 1)
         bull = [bull0] + _fade(bull0, gT['bull'], hu, n_full - 1)
+        # scenario order: bear at least 0.5pp below base and bull 0.5pp above in every year; where this rule moves a value it is
+        # recorded (driver_sources binding_bound) and an evidenced bear/bull value it overwrote is warned about, never silent
+        order = {'bear': [i for i, (x, y) in enumerate(zip(bear, base)) if x > y - .005 + 1e-12],
+                 'bull': [i for i, (x, y) in enumerate(zip(bull, base)) if x < y + .005 - 1e-12]}
         bear = [min(x, y - .005) for x, y in zip(bear, base)]
         bull = [max(x, y + .005) for x, y in zip(bull, base)]
+        for sn, idx in order.items():
+            lev = [x for x, hit in (('growth_anchor', 0 in idx), ('growth_half_life', any(i > 0 for i in idx))) if hit and has(sn, x)]
+            if lev:
+                warn('scenario_order_clamped', f"{sn}: the evidenced {', '.join(lev)} would put {sn} growth within 0.5pp of base (or past "
+                                               f"it) in forecast year(s) {', '.join(str(i + 1) for i in idx)}; held 0.5pp "
+                                               f"{'below' if sn == 'bear' else 'above'} base there (driver_sources binding_bound "
+                                               "scenario_order_0.5pp): re-check the scenario values", 'medium')
         paths = {'bear': bear, 'base': base, 'bull': bull}
     margins, m_why = _margin_targets(route, h, warn)
     m_final = {s: False for s in SCEN}
@@ -1562,28 +1601,34 @@ def _params(route, h, cal, cons, rf, ku, ku_t, ov_ke, debt0, ov, warn, ev=None):
             margins[s], m_final[s] = x, True
     (lo, hi) = s2c_range
     s2c_h = h['s2c']
+    s2c_rep = [x for x in SCEN if has(x, 'sales_to_capital')]
+
+    def s2c_warn(code, text, sev):       # a default every scenario's evidenced override replaced is not warned about
+        if len(s2c_rep) < len(SCEN):
+            warn(code, text + (f" (replaced by an evidenced override in {', '.join(s2c_rep)})" if s2c_rep else ''), sev)
     s2c_cls, s2c_bound = None, None       # DEFAULTS_MAP class of the default and the bound that binds (driver_sources)
     if (s2c_h is None or s2c_h <= 0) and h['capital_light']:
         s2c, s2c_cls, s2c_bound = hi, 'TYPE', 'type_sales_to_capital_range'
-        warn('sales_to_capital_capped', f'revenue grew while invested capital did not (capital-light history); type ceiling {hi:.2f} used so growth still costs capital', 'low')
+        s2c_warn('sales_to_capital_capped', f'revenue grew while invested capital did not (capital-light history); type ceiling {hi:.2f} used so growth still costs capital', 'low')
     elif s2c_h is None or s2c_h <= 0:
         s2c, s2c_cls = (lo + hi) / 2, 'TYPE'
-        warn('sales_to_capital_default', f'incremental sales-to-capital not meaningful in the history ({s2c_h}); type midpoint {s2c:.2f} used', 'medium')
+        s2c_warn('sales_to_capital_default', f'incremental sales-to-capital not meaningful in the history ({s2c_h}); type midpoint '
+                                             f'{s2c:.2f} used', 'medium')
     elif s2c_h > hi:
         s2c, s2c_cls, s2c_bound = hi, 'TYPE', 'type_sales_to_capital_range'
-        warn('sales_to_capital_capped', f'historical incremental sales-to-capital {s2c_h:.2f} above the type range; capped at {hi:.2f} so growth still costs capital', 'low')
+        s2c_warn('sales_to_capital_capped', f'historical incremental sales-to-capital {s2c_h:.2f} above the type range; capped at {hi:.2f} so growth still costs capital', 'low')
     elif s2c_h < lo and (h.get('s2c_5y') or 0) > s2c_h:
         # a 3-year plateau with capital still rising (Tesla 2023-25: 0.62) would charge every new dollar of revenue the
         # stagnation's capital; the 5-year ratio spans the build-out and its revenue
         s2c = min(max(h['s2c_5y'], .5 * lo), hi)
         s2c_cls, s2c_bound = ('TYPE', 'type_sales_to_capital_range') if s2c != h['s2c_5y'] else (None, None)
-        warn('sales_to_capital_long_window', f'3-year incremental sales-to-capital {s2c_h:.2f} is below the type range ({lo}-{hi}) '
+        s2c_warn('sales_to_capital_long_window', f'3-year incremental sales-to-capital {s2c_h:.2f} is below the type range ({lo}-{hi}) '
                                              f"while the 5-year ratio is {h['s2c_5y']:.2f}: the 3-year plateau is read as noise; "
                                              f'used {s2c:.2f}', 'medium')
     elif s2c_h < lo:
         s2c = max(s2c_h, .5 * lo)
         s2c_cls, s2c_bound = ('TYPE', 'type_sales_to_capital_range') if s2c != s2c_h else (None, None)
-        warn('sales_to_capital_low', f'historical incremental sales-to-capital {s2c_h:.2f} below the type range ({lo}-{hi}); the business is more capital-hungry than the type; used {s2c:.2f}', 'medium')
+        s2c_warn('sales_to_capital_low', f'historical incremental sales-to-capital {s2c_h:.2f} below the type range ({lo}-{hi}); the business is more capital-hungry than the type; used {s2c:.2f}', 'medium')
     else:
         s2c = s2c_h
     s2c_b = ev('base', 'sales_to_capital')
@@ -1629,12 +1674,15 @@ def _params(route, h, cal, cons, rf, ku, ku_t, ov_ke, debt0, ov, warn, ev=None):
                   's2c': s2c_s[s], 's2c_terminal': roic / max(mm * (1 - tx), 1e-6), 'ke': k_u, 'ke_terminal': k_t, 'tax': tx, 'wacc': w0,
                   'hurdle': w0,
                   'roic': roic, 'cycle_weights': weights.get(s), 'roic_persistence': persist.get(s),
-                  'conv': CYCLE_CONV[s] if cyc else (max(2, round(.75 * st['conv'])) if s == 'bear' else st['conv'])}
+                  'conv': ov(s, 'margin_convergence_years',
+                             CYCLE_CONV[s] if cyc else (max(2, round(.75 * st['conv'])) if s == 'bear' else st['conv']))}
     meta = {'r_fy': r_fy, 'g_cur': g_cur, 'cur_basis': cur_basis, 'cur_kind': cur_kind, 'ytd': cur['ytd'] if cur else None,
+            'cur_ids': (cur or {}).get('ids'), 'order_clamped': order,
             'stub_rate': stub_rate, 'stub_basis': stub_basis, 'consensus_growth': cg,
             'consensus_low': lows, 'consensus_high': highs, 'growth_kind': g_kind, 'spread': spread, 'half_life': hl,
             'margin_why': m_why, 's2c_history': s2c_h, 's2c_used': s2c, 's2c_range': s2c_range, 'tax_effective': tax_eff,
             'tax_used': tax, 'interest_existing': r0, 'g_terminal': gT, 'cycle': cyc_meta,
+            'debt_rate_kind': 'own_history' if r_raw is not None else ('CONST' if debt0 > 0 else None),
             'roic_durability': dur_meta, 'roic_persistence': persist,
             'growth_start_capped': bool(not cyc and start_capped), 's2c_class': s2c_cls, 's2c_bound': s2c_bound,
             'growth_clamped': {s: any(not -.5 <= x <= 2. for x in paths[s]) for s in SCEN}}
@@ -1915,7 +1963,7 @@ def _case_sources(fb, ids, extra):
     return out
 
 
-def _driver_sources(overrides, inputs, route, h, meta, P, cal, codes, srcs, ke_clamped):
+def _driver_sources(overrides, inputs, route, h, meta, P, cal, codes, srcs, ke_clamped, fund_info=None):
     """Where every forecast lever the DCF uses gets its number, per scenario (owner rule 25.10.2026: one company, its own
     evidence; DEFAULTS_MAP). A company-tier or other override: its source_tier and evidence ids. Otherwise the engine's default
     with its tier when it reads this company's data (consensus, guidance, own history; else 'default') and its DEFAULTS_MAP class
@@ -1928,6 +1976,10 @@ def _driver_sources(overrides, inputs, route, h, meta, P, cal, codes, srcs, ke_c
     rows = []
 
     def row(lever, s, tier, ids, cls, bound=None):
+        if cls is None and tier == 'analyst' and lever not in ('horizon', 'cyclical'):
+            cls = 'JUDGEMENT'             # a judgement without a company source tier stays a visible gap
+        elif cls is None and tier == 'market' and lever not in MARKET_LEVERS:
+            cls = 'MARKET'                # a market price is no evidence of this company's growth, margins or capital
         rows.append({'lever': lever, 'scenario': s, 'tier': tier, 'evidence_ids': list(ids), 'default_class': cls,
                      'binding_bound': bound})
 
@@ -1946,16 +1998,38 @@ def _driver_sources(overrides, inputs, route, h, meta, P, cal, codes, srcs, ke_c
     else:
         tier, ids = {'analyst': ('consensus', srcs['consensus']), 'guidance': ('guidance', gd.get('source_ids') or [])}.get(
             meta['cur_kind'], ('own_history', srcs['revenue']))
+        if meta.get('cur_ids'):                                       # inputs.current_year_revenue: its own evidence
+            ids = meta['cur_ids']
         g_base = (tier, ids, 'SIZE' if size else 'CONST')            # one year of the stage fade from the current year
     m_cls = h.get('margin_class') or {s: 'TYPE' for s in SCEN}
     s2c_def = ('default' if meta.get('s2c_class') else 'own_history', [] if meta.get('s2c_class') else srcs['revenue'],
                meta.get('s2c_class'))
+    tax_own = h.get('tax_effective') is not None
     defaults = {'growth_anchor': {'base': g_base},
                 'growth_half_life': {'base': ('default', [], 'CONST')},
                 'mature_margin': {s: ('default' if m_cls[s] else 'own_history', [] if m_cls[s] else srcs['margin'], m_cls[s]) for s in SCEN},
-                'sales_to_capital': {'base': s2c_def}}
+                'sales_to_capital': {'base': s2c_def},
+                # the stage table's margin convergence years and minimum cash months (STAGE), the effective tax (or 21%)
+                'margin_convergence': {'base': ('default', [], 'CONST')},
+                'minimum_cash_months': {'base': ('default', [], 'CONST')},
+                'tax_rate': {'base': ('own_history', srcs.get('tax') or [], None) if tax_own else ('default', [], 'CONST')},
+                'working_capital': {'base': ('own_history', srcs['revenue'], None) if h.get('wc_ratio') is not None
+                                    else ('default', [], 'CONST')}}
+    order = meta.get('order_clamped') or {}
+    ext = {s: ((fund_info or {}).get(s) or {}).get('status') == 'assumed_external_financing' for s in SCEN}
+    debt_default = meta.get('debt_rate_kind') == 'CONST'
     for lever, paths in DRIVER_LEVERS:
         if lever in ('cyclical', 'horizon'):
+            continue
+        if lever == 'financing_terms':
+            # assumed external money (EQUITY_FEE, DEBT_CAPACITY, the stage debt spread) or an existing debt with no interest
+            # history (risk-free + the stage spread): a rule, not this company's terms; no row when neither is used
+            for s in SCEN:
+                o = found(paths, s)
+                if o:
+                    row(lever, s, o['source_tier'], o['evidence_ids'], None)
+                elif ext[s] or debt_default:
+                    row(lever, s, 'default', [], 'CONST')
             continue
         base_o = found(paths, 'base')
         for s in SCEN:
@@ -1971,8 +2045,16 @@ def _driver_sources(overrides, inputs, route, h, meta, P, cal, codes, srcs, ke_c
                 bound = 'terminal_roic_release_100%'
             elif lever == 'cost_of_equity' and not o and ke_clamped:
                 bound = 'cost_of_equity_clamp'
+            elif lever == 'tax_rate' and not o and tax_own and meta.get('tax_used') != meta.get('tax_effective'):
+                bound = 'tax_rate_15_25%'
+            if s in order and ((lever == 'growth_anchor' and 0 in order[s]) or
+                               (lever == 'growth_half_life' and any(i > 0 for i in order[s]))):
+                bound = 'scenario_order_0.5pp'
             if o:
                 row(lever, s, o['source_tier'], o['evidence_ids'], None, bound)
+            elif lever in ('margin_convergence', 'minimum_cash_months', 'tax_rate', 'working_capital'):
+                t, ids, c = defaults[lever]['base']
+                row(lever, s, t, ids, c, bound)
             elif lever in ('growth_anchor', 'growth_half_life', 'sales_to_capital') and s != 'base':
                 # bear and bull: a stage spread or multiple around the base -- the overridden base where _params derives them
                 # from it (any growth anchor; a company-tier half-life or sales-to-capital), else around the base default
@@ -2043,6 +2125,22 @@ def build(fb, an, card, qa, inputs=None):
     if inputs.get('horizon_years') is not None and (isinstance(inputs['horizon_years'], bool) or not isinstance(inputs['horizon_years'], int)
                                                     or not 1 <= inputs['horizon_years'] <= 30):
         raise ValueError('horizon_years must be an integer from 1 to 30')
+    cyr = inputs.get('current_year_revenue')
+    if cyr is not None:
+        if not isinstance(cyr, dict) or sorted(set(cyr) - set(CURRENT_YEAR_KEYS)):
+            raise ValueError(f"current_year_revenue: an object with {', '.join(CURRENT_YEAR_KEYS)}")
+        if _num(cyr.get('value')) is None or cyr['value'] <= 0:
+            raise ValueError('current_year_revenue: value must be a positive number')
+        try:
+            _d(cyr.get('fiscal_year_end'))
+        except (TypeError, ValueError):
+            raise ValueError('current_year_revenue: fiscal_year_end must be a date') from None
+        if cyr.get('source_tier', 'analyst') not in SOURCE_TIERS or not isinstance(cyr.get('basis'), str) or not cyr['basis'].strip():
+            raise ValueError(f"current_year_revenue: source_tier one of {', '.join(SOURCE_TIERS)} and a written basis")
+        known = set(fb.get('sources', {})) | {q['id'] for q in fb.get('qualitative', [])}
+        ev = cyr.get('evidence_ids')
+        if not isinstance(ev, list) or not ev or any(e not in known for e in ev):
+            raise ValueError('current_year_revenue: evidence_ids must be FactBook source or qualitative ids')
     cy = inputs.get('cyclical')
     if cy is not None:
         if not isinstance(cy, dict) or sorted(set(cy) - {'treatment', 'reason', 'evidence_ids'}):
@@ -2231,6 +2329,7 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
     if h is None:
         return empty('insufficient_data', 'no fiscal year with positive revenue available at as_of', method)
     h['guidance'] = _revenue_guidance(fb)
+    h['current_year_input'] = inputs.get('current_year_revenue')
     h['g_anchor'] = h['g_trailing']
     route = _route(card, h, warn, fb, inputs.get('cyclical'), ev_growth)
     method = route['method']                  # an analyst's structural reading of a card-normalized cycle switches the method
@@ -2355,6 +2454,7 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
     def ev(s, lever):          # a company-tier override's value (COMPANY_TIERS), else None
         o = econ.get((s, lever))
         return float(o['value']) if o is not None and o['source_tier'] in COMPANY_TIERS else None
+    ov.overridden = lambda s, lever: (s, lever) in econ
 
     try:
         P, meta = _params(route, h, cal, cons, rf, ku, ku_t, ov_ke, open_bal['debt'], ov, warn, ev)
@@ -2871,6 +2971,15 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
                     raise ValueError(f"override {o['path']}: needs {need} values")
                 sc[o['path']] = [float(x) for x in v]
                 locked.setdefault(s, set()).add(o['path'])
+                raw_paths = {x['path'] for x in overrides if x['raw'] and x['scenario'] in (s, 'all')}
+                if o['path'] == 'sbc_pct' and 'cash_cost_ratio' not in raw_paths and (
+                        (s, 'mature_margin') in econ or 'terminal.operating_margin' in raw_paths):
+                    # the evidenced margin is AFTER SBC: a new SBC path changes how the costs split, not the margin, so the
+                    # cash costs give back what SBC takes (else the SBC difference was charged twice)
+                    ccr = [c + a - b for c, a, b in zip(sc['cash_cost_ratio'], orig, sc['sbc_pct'])]
+                    if any(c < 0 for c in ccr):
+                        raise ValueError(f'override sbc_pct ({s}): SBC above every other cost at the evidenced margin')
+                    sc['cash_cost_ratio'] = [_r(c) for c in ccr]
                 if o['path'] in ('cash_cost_ratio', 'sbc_pct', 'depreciation_pct', 'amortization', 'fixed_cash_costs') and 'terminal.operating_margin' not in [x['path'] for x in overrides]:
                     last_rev = paths[s]['rates'][-1]
                     sc['terminal']['operating_margin'] = _r(1 - sc['cash_cost_ratio'][-1] - sc['sbc_pct'][-1] - sc['depreciation_pct'][-1]
@@ -3178,12 +3287,13 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
                'reinvestment_identity': fixed['identity'],
                'route': {k: route[k] for k in ('method', 'business_model', 'stage', 'archetype', 'cyclical', 'cyclical_evidence', 'capital_intensity',
                                                'funding', 'moat', 'moat_basis', 'moat_weights', 'cycle_path', 'cycle_peak', 'cycle_treatment',
-                                               'cycle_history')} | ({'size_relabel': route['size_relabel']} if route['size_relabel'] else {}),
+                                               'cycle_history', 'cycle_input')} | ({'size_relabel': route['size_relabel']} if route['size_relabel'] else {}),
                'calendar': {k: cal[k] for k in ('boundaries', 'periods', 'interim', 'fifth_anniversary', 'report_dates', 'fiscal_year_end', 'report_rule')}}
     json.dumps(spec, allow_nan=False)
     sources = _driver_sources(overrides, inputs, route, h, meta, P, cal, {w['code'] for w in warnings},
                               {'revenue': rev_srcs, 'consensus': cons_srcs, 'margin': _latest_src(fb, 'operating_income', 'revenue'),
-                               'sbc': _latest_src(fb, 'sbc')}, ke_clamped)
+                               'sbc': _latest_src(fb, 'sbc'), 'tax': _latest_src(fb, 'income_tax', 'pretax_income')}, ke_clamped,
+                              fund['info'])
     return {'forecast_version': FORECAST_VERSION, 'status': 'built', 'reason': None, 'method': method, 'spec': spec,
             'driver_sources': sources, 'driver_gaps': driver_gaps(sources),
             'spec_sha256': _sha(spec), 'assumptions': rows, 'anchors': anchors, 'paths': path_out,

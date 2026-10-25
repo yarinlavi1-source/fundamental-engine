@@ -96,12 +96,17 @@ REJECT_HE = {'not_object': 'האירועים לא נמסרו כאובייקט ש
              'no_event_he': 'לאירוע {n} אין טקסט ב־event_he',
              'bad_evidence_ids': 'ל־evidence_ids של אירוע {n} יש סוג לא תקין (צריך רשימה או מזהה אחד כטקסט)',
              'evidence_ids_items_dropped': 'באירוע {n} הושמטו מזהי ראיות שאינם טקסט',
-             'unreadable': 'אירוע {n} לא נקרא'}
-EPS_BASIS_HE = {'operating': 'אומדן רווח למניה = רווח תפעולי אחרי תגמול במניות, ריבית ומס, חלקי מספר המניות במודל (בלי הכנסות '
-                             'מהשקעות ובלי רכישות עצמיות). זה לא רווח GAAP ולא הרווח המתואם שהחברה מפרסמת, ולכן המכפיל כאן '
+             'unreadable': 'אירוע {n} לא נקרא',
+             'unknown_keys': 'באירוע {n} יש מפתחות לא מוכרים (רק event_he, evidence_ids, hypothesis)'}
+EPS_BASIS_HE = {'operating': 'רווח תפעולי למניה = רווח תפעולי אחרי תגמול במניות, ריבית ומס, חלקי מספר המניות במודל (בלי הכנסות '
+                             'מהשקעות ובלי רכישות עצמיות). זה לא רווח GAAP, לא הרווח המתואם שהחברה מפרסמת ולא הרווח למניה של '
+                             'טבלת המחיר השנתית (שם נכללות גם הכנסות מהשקעות אחרי מס, על ממוצע מניות משוקלל), ולכן המכפיל כאן '
                              'לא בהכרח דומה למכפיל רווח שמצוטט בשוק.',
                 'residual_income': 'אומדן רווח למניה = הרווח הנקי במודל (התשואה על ההון כפול ההון העצמי) חלקי מספר המניות. זה '
                                    'לא רווח מדווח, ולכן המכפיל כאן לא בהכרח דומה למכפיל רווח שמצוטט בשוק.'}
+
+EPS_HE = {False: 'רווח תפעולי למניה', True: 'אומדן רווח למניה'}            # by route: operating / residual income
+EPS_NEXT_HE = {False: 'הרווח התפעולי למניה', True: 'אומדן הרווח למניה'}
 
 
 def _n(v):
@@ -790,7 +795,7 @@ def _row(cf, s, r, today, years, paths, cur, gaps, shares_at, book_at, method):
         if _n(m):
             parts.append(f'רווח תפעולי {_pct(m)}' if m >= 0 else f'הפסד תפעולי {_pct(-m)}')
     if _n(drv['eps']):
-        parts.append(f"אומדן רווח למניה כ־{_money(drv['eps'], cur)}")
+        parts.append(f"{EPS_HE[ri]} כ־{_money(drv['eps'], cur)}")
     if ri and _n(drv['book_value_per_share']):
         parts.append(f"הון עצמי למניה כ־{_money(drv['book_value_per_share'], cur)}")
     period = ('' if not fy else
@@ -800,11 +805,32 @@ def _row(cf, s, r, today, years, paths, cur, gaps, shares_at, book_at, method):
     if _n(value):
         text += (' → ' if text else '') + f'שווי כ־{_money(value, cur)}'
         if _n(pe['value']):
-            text += f" (פי {pe['value']:.0f} על אומדן הרווח למניה של השנה הבאה)"
+            text += f" (פי {pe['value']:.0f} על {EPS_NEXT_HE[ri]} של השנה הבאה)"
     if _n(dist) and _n(value) and dist > .005 * abs(value):
         text += f'; עד אז יחולקו כ־{_money(dist, cur)} למניה'
     return {'date': d, 'when_he': when + (f' ({period})' if period else ''), 'value': value, 'cumulative_distributions': dist,
             'fiscal_year': fy, 'drivers': drv, 'driver_sources': dict(sorted(src.items())), 'implied_pe': pe, 'then_he': text}
+
+
+PRICE_ROW_KEYS = ('year', 'date', 'price', 'annual_return', 'status', 'why', 'multiple', 'eps', 'revenue', 'operating_margin',
+                  'weighted_shares', 'fiscal_year_end', 'events', 'eps_drivers', 'eps_driver_gaps', 'evidence_ids',
+                  'multiple_evidence_ids', 'reason_he')
+
+
+def _price_rows(cf, s):
+    """The company's own yearly prices for scenario s (casefile company_path: next-fiscal-year EPS x an evidenced multiple),
+    years 1-5 as the owner's table shows them, each with its stored reason: the EPS drivers (revenue, margin, shares and the
+    levers with their source tiers and evidence), the multiple and why (justification, tier, named competitors), the events and
+    the evidence ids. None when the casefile has no computed company path."""
+    cp = cf.get('company_path') if isinstance(cf.get('company_path'), dict) else {}
+    if cp.get('status') != 'computed':
+        return None
+    x = (cp.get('scenarios') or {}).get(s)
+    if not isinstance(x, dict):
+        return []
+    return [{**{k: r.get(k) for k in PRICE_ROW_KEYS}, 'justification': x.get('justification'), 'source_tier': x.get('source_tier'),
+             'competitors': list(x.get('competitors') or []), 'multiple_reason_he': x.get('reason_he')}
+            for r in x.get('rows') or [] if isinstance(r, dict) and r.get('year')]
 
 
 def _scenario(cf, s, ctx):
@@ -812,10 +838,11 @@ def _scenario(cf, s, ctx):
     method = ctx['method']
     sc = {'name': s, 'label_he': LABEL_HE[s], 'status': 'not_available', 'condition': None, 'note_he': None, 'rows': [],
           'assumption_ids': _assumptions(cf, s), 'analyst_overrides': _overrides(cf, s), 'gaps': gaps,
-          'thesis': _scenario_spec(cf, s).get('thesis'), 'why_no_values_he': None}
+          'thesis': _scenario_spec(cf, s).get('thesis'), 'why_no_values_he': None, 'price_rows': None}
     if not ctx['shown']:
         sc['why_no_values_he'] = ctx['why_none']
         return sc
+    sc['price_rows'] = _price_rows(cf, s)
     events = _events(cf, s, gaps)
     raw = ctx['raw'][s]
     years = ctx['years'][s]
@@ -936,6 +963,37 @@ def _hyp_he(events):
     return f'{n} מתוך {m} האירועים בתנאי הם השערות בלי ראיה מתועדת בתיק.'
 
 
+LEVER_LABEL_HE = {'growth_anchor': 'צמיחת ההכנסות בשנים הקרובות', 'growth_half_life': 'קצב האטת הצמיחה',
+                  'mature_margin': 'הרווחיות התפעולית בבגרות', 'sbc': 'תגמול במניות', 'sales_to_capital': 'השקעה לכל דולר מכירות',
+                  'tax_rate': 'שיעור המס'}
+
+
+def _price_line(p, cur):
+    """One company-path price behind the scenes: the price as the owner's table shows it, then its whole stored reason."""
+    when = f"שנה {p['year']} ({str(p.get('date'))[:7].replace('-', '/')})"
+    if p.get('status') != 'priced' or not _n(p.get('price')):
+        return f"- {when}: {p.get('reason_he') or 'אין מחיר'}"
+    return f"- {when}: **{_money(p['price'], cur)}** — {p.get('reason_he')}"
+
+
+def _drivers_line(rows):
+    """The levers behind the scenario's EPS (the same on every row of the scenario) and every evidence id, once."""
+    from .company_path import TIER_HE
+    line, p = '', next((r for r in rows if r.get('eps_drivers')), rows[0] if rows else {})
+    drv = [d for d in p.get('eps_drivers') or [] if isinstance(d, dict)]
+    if drv:
+        line += '- מה קובע את הרווח למניה בכל השנים: ' + '; '.join(
+            LEVER_LABEL_HE.get(d['lever'], d['lever'])
+            + (f" {d['value']:.1%}" if _n(d.get('value')) and abs(d['value']) < 1.5 else '')
+            + f" ({TIER_HE.get(d.get('source_tier'), 'ברירת מחדל של המנוע')}"
+            + (f": {', '.join(d['evidence_ids'])}" if d.get('evidence_ids') else '')
+            + (', פער: כלל של המנוע ולא נתון של החברה' if d.get('default_class') else '') + ')' for d in drv) + '.'
+    ids = list(dict.fromkeys(i for r in rows for i in r.get('evidence_ids') or []))
+    if ids:
+        line += (' ' if line else '- ') + f"ראיות (מכפיל, אירועים ונתוני הרווח): {', '.join(ids)}."
+    return line
+
+
 def render_he(reasons):
     """out/scenarios_he.md: one short section per scenario (its condition and one line per dated price), plus what is
     missing; behind the scenes, under the owner's table."""
@@ -958,6 +1016,12 @@ def render_he(reasons):
         intro = 'כל מחיר כאן (הערכים המתוארכים של ההערכה; בתיק אין טבלה שנתית) הוא ' + meaning
     else:
         intro = 'כל מחיר בטבלה השנתית הוא ' + meaning
+    priced = any(s.get('price_rows') for s in r.get('scenarios') or [])
+    if priced:
+        intro = ('כל מחיר בטבלה השנתית "מחיר המניה בכל שנה" = הרווח למניה של שנת הכספים הבאה × מכפיל מנומק, אם התנאי של התרחיש '
+                 'מתקיים: מחיר מותנה, לא תחזית, לא הסתברות ולא יעד מחיר. מתחת לכל מחיר: הרווח למניה ומה שקובע אותו, המכפיל ולמה, '
+                 'מקור כל נתון ומזהי הראיות. אחריהם, בכל תרחיש, השווי במודל תזרים המזומנים (שממנו השווי ההוגן); הערכים נקראו '
+                 'מההערכה שבוצעה ולא חושבו מחדש.')
     out.append(intro + (' זו טיוטה שעוד לא נבדקה.' if r.get('draft') else ''))
     if any(_n((row.get('drivers') or {}).get('eps')) for s in r.get('scenarios') or [] for row in s.get('rows') or []):
         out.append(EPS_BASIS_HE.get(r.get('method'), EPS_BASIS_HE['operating']))
@@ -976,6 +1040,14 @@ def render_he(reasons):
             out.append(label + cond['if_he'])
         if s.get('why_no_values_he'):
             out.append(s['why_no_values_he'] + '.')
+        if s.get('price_rows'):
+            out += ['', '**מחיר המניה בכל שנה (רווח למניה × מכפיל):**']
+            out += [_price_line(p, r.get('currency')) for p in s['price_rows']]
+            dl = _drivers_line(s['price_rows'])
+            if dl:
+                out.append(dl)
+            if s.get('rows'):
+                out += ['', '**שווי במודל תזרים המזומנים:**']
         for row in s.get('rows') or []:
             out.append(f"- {row['when_he'].replace('ב־', '', 1)}: {row['then_he']}")
         hyp = _hyp_he(cond.get('events') or [])

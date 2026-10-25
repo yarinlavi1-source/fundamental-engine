@@ -60,7 +60,11 @@ Entry: the Gather fragments.
    warning row when the company's path departs from it; it never sets, caps or fades a number.
 7. **Guidance and its track record** — the guided midpoint vs what was delivered (quarter_review guidance_track); the
    ratio actual / guided midpoint is recorded in the pack and applied explicitly where the analyst says so. A
-   conservative guider's guidance is a floor; a missed guide is evidence.
+   conservative guider's guidance is a floor; a missed guide is evidence. The fiscal year in progress is
+   `drivers.current_year_revenue` (its guided midpoint; the ratio applied to the unreported remainder only, e.g. Q4);
+   `growth_anchor` is the growth of the NEXT fiscal year and states its `period`; a guidance- or consensus-tier value
+   sits inside the cited item's range for that year or states its deviation. Results day: a release or call dated less
+   than two days before as_of (facts.LAG_DAYS) is not citable yet; prices and macro feeds are citable on their date.
 8. **Moat and returns** — ROIC level and incremental ROIC; which moat source is evidenced; returns fade toward the cost
    of capital unless a mechanism the company shows prevents it.
 9. **Earnings quality and forensics** — one-offs removed and added back symmetrically; SBC is a cost; restricted cash
@@ -103,13 +107,14 @@ Entry: Position outputs.
 14. **Multiples, the company's own and the market's** — the company's own forward P/E (or EV/EBITDA, P/FCF, P/B)
     range through a cycle and where it sits now; named competitors at a comparable stage. A multiple is anchored in
     evidence and labelled `justified_high`, `peak` or `unproven`; a record quarter x 4 is peak earnings, not a run rate.
-15. **Valuation by type and the yearly path** — write `evidence_pack.json`, convert it (`pack-to-inputs` or the MCP
+15. **Valuation by type and the yearly path** — merge the fragments into `evidence_pack.json` (`pack-merge <run dir>`), convert it (`pack-to-inputs` or the MCP
     tool `evidence_pack_to_inputs`: inputs.json with source-tier overrides, company_path, scenario events, key risk,
     card assessments, market inputs; the evidence bundle registers the sources), run the engine for that one company
     (`deep <run dir> --symbols <T>`). Today's value and every year through the fifth, bear/base/bull (annual_valuation);
     the company price path = forward multiple x next-fiscal-year EPS per scenario (company_path); scenario reasons for
-    every price (scenario_reasons, `out/scenarios_he.md`, the `scenario-reasons` CLI / MCP tool): the condition and that
-    year's business; events need evidence ids (analyst_sheet.scenario_events), else they are hypotheses. The bear changes
+    every price (scenario_reasons, `out/scenarios_he.md`, the `scenario-reasons` CLI / MCP tool): each company-path price
+    with its EPS drivers, multiple, tier, events and evidence ids, then the cash-flow model values; the owner's table
+    shows ONE yearly table (the company price path when computed, else the model value per year); events need evidence ids (analyst_sheet.scenario_events), else they are hypotheses. The bear changes
     the business (growth, margin, funding), not only the multiple. The base range (טווח הבסיס) is the base at the required
     return +/-1pp, shown apart from the extremes.
 

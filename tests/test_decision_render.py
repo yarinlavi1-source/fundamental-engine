@@ -436,7 +436,8 @@ class RenderTests(unittest.TestCase):
         self.assertGreaterEqual(len(yr['rows']), 3)
         self.assertEqual(yr['rows'][0]['base'], base)                                  # today's row is the fair value
         self.assertLessEqual(yr['rows'][-1]['date'], att['dc']['valuation_view']['five_year']['date'])
-        self.assertIn('| מועד | דובי | בסיסי | שורי |', t)                     # the owner's words (25.10.2026)
+        self.assertIn('| שנה | דובי | בסיסי | שורי |', t)                      # the owner's words (25.10.2026); ONE yearly table
+        self.assertEqual(t.count('| שנה | דובי | בסיסי | שורי |'), 1)
         self.assertIn('| היום |', t)
         from fundamental_engine.render import lynch_type
         for cf in self.cases.values():
