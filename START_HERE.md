@@ -14,7 +14,8 @@ same connectors (SEC, Interactive Brokers, Alpha Vantage, FMP, LunarCrush, …).
 - **NOT in Git (regenerate on demand):** everything under `runs/` — ~4.4GB of generated data — except four
   small, public, costly-to-rebuild files kept at their real paths so the engine finds them:
   `runs/backtest/engine_v3/summary.json` and `rows.jsonl` (the walk-forward the conservatism diagnosis rests
-  on), `runs/universe_2026-10-20/calibration.json` (engine-consistent market return) and
+  on), `runs/universe_2026-10-20/calibration.json` (engine-consistent market return of engine 0.12.0: since 0.13.0
+  it is not picked by default, because it is another engine's market; rerun `scripts/calibrate.py` on a 0.13.0 sweep) and
   `runs/macro/market_2026-10-20.json` (risk-free + ERP). A new session can value companies consistently from
   these without re-fetching.
 - **Never in Git, re-supplied each session by the owner:** the read-only IBKR portfolio under
@@ -26,8 +27,12 @@ same connectors (SEC, Interactive Brokers, Alpha Vantage, FMP, LunarCrush, …).
   --name large500 --from 2016 --to 2025 --workers 4`; a single company end-to-end `python -m
   fundamental_engine deep <universe_folder> --as-of <date> --symbols <TICKER>` (writes `out/table_he.md` with
   the plain-Hebrew table, including the "מה המחיר של היום מניח" reverse-DCF row).
-- **Latest state (read these to catch up):** `docs/ENGINE_CONSERVATISM_2026-10-21.md` (why the engine looks
-  conservative and the reframe shipped), `docs/LIMITATIONS.md` #43, and `docs/learning_log.json`
+- **Latest state (read these to catch up):** `docs/CHANGELOG.md` 0.13.0 (25.10.2026 calibration fixes: terminal
+  growth = risk-free as the ERP assumes, dated implied ERP in the walk-forward, mature terminal cost of equity, cyclical
+  charges on evidence, platform routing, post-breakeven ROIC on scale-ups, headline fair value at the company's cost of
+  equity with a buy-below row, calibration only from the same engine version; the combined 61-name A/B is there) and the
+  dated addendum of `docs/ENGINE_CONSERVATISM_2026-10-21.md` (the drift was the rate conventions, not multiple
+  expansion; a level gap remains), `docs/LIMITATIONS.md` #39 and #43, and `docs/learning_log.json`
   (round `engine_conservatism_2026-10-21`); `docs/ANALYST_COMPARISON_2026-10.md` (human analyst vs engine,
   the results-day `quarter_review`, 0.12.0).
 - **Session rule (keeps the next session in sync):** work lands on `main`. Before a session ends, merge its
@@ -58,7 +63,10 @@ docs/BACKTEST_ENGINE_2026-10-20.md first: the engine's ranking has no demonstrat
 default, edges are shrunk by their measured reliability and nothing is an order.
 
 Always pass the calibration as the index (`inputs.decision.index` = calibration.json's `index_input`, or `--index` on the
-CLI): without it the answer compares the stock with an absolute hurdle and nearly every stock looks overpriced. Report the
+CLI): without it the answer compares the stock with an absolute hurdle and nearly every stock looks overpriced. Since 0.13.0
+`deep` and `pipeline` pick the newest calibration of the running engine version by themselves (`calibration.pick`, at most
+92 days old, never a later file); a sweep of another version is another engine's market and is not picked, so rerun the
+sweep and `scripts/calibrate.py` after a version change (the table names which market return it used). Report the
 expected return against the market's (edge_vs_market) and the market-consistent value beside the value at the engine's
 own cost of equity.
 

@@ -1,4 +1,4 @@
-# Limitations, by severity (v0.11.1, 20.10.2026)
+# Limitations, by severity (v0.13.0, 25.10.2026)
 
 What the engine cannot do yet, or does only partly. Each item says what it affects and what would fix it.
 Companion to docs/EVIDENCE_STATUS.md, which separates what tests prove from what they do not.
@@ -160,7 +160,11 @@ Companion to docs/EVIDENCE_STATUS.md, which separates what tests prove from what
     expected return against the market's (edge_vs_market). None of them is a price target, and the backtests still show no
     demonstrated edge for the ranking. The 20.10.2026 research review removed two causes it could justify (risk add-ons
     above the ERP's definition, a full fade of excess returns) and added dated rates; see
-    docs/VALUATION_RESEARCH_REVIEW_2026-10-20.md for what remains.
+    docs/VALUATION_RESEARCH_REVIEW_2026-10-20.md for what remains. The 2.3pp was measured on the 0.12.0 sweep of 2026-10-20;
+    0.13.0 removed its convention part (terminal growth at 3% against an ERP solved at the Treasury yield, about 1.4pp of
+    it), so the gap must be re-measured: until a 0.13.0 sweep is calibrated (`scripts/calibrate.py`) the default comparator
+    is the generic risk-free + ERP assumption, said as such in the table (`calibration.pick` takes only a sweep of the
+    running engine version).
 40. **The outside view is a 2016 study of large global companies.** Base Rate Book growth includes acquisitions, keeps only
     companies that survived each horizon, covers 1950-2015 (faster real GDP growth than projected now) and is restated with
     a dated CPI and breakeven inflation (refresh `base_rates.CPI_NOW` / `INFLATION`). Non-USD reporters get no outside view
@@ -174,11 +178,14 @@ Companion to docs/EVIDENCE_STATUS.md, which separates what tests prove from what
     and bull, so the bear does not test a fall in the stake's value (Microsoft's OpenAI stake at a 25% haircut to the last
     round); the haircut is the analyst's judgement and the book value already in the bridge is often not disclosed (then the
     whole line holding it is subtracted, understating the addition).
-43. **The engine's absolute values run far below market for growth names, by design, and no honest lever closes it.** The
-    491-company walk-forward values the median large cap near half its price by 2024-2025 (software ~0.33x, semis ~0.45x); the
-    deepest-discount names did not go on to underperform over 1-3 years in this survivor-biased, bull-market sample, so "cheap
-    by the engine" is not a reliable "it will fall" signal. The durability-scaled terminal persistence corrects a principled
-    inconsistency but moves value under 1% (A/B isolated). Slower growth fade (+1.5yr) or a 1pp lower discount rate each lift the
-    software cohort only ~0.29 -> ~0.35; reaching price would mean underwriting peak multiples. The engine's edge is in ranking
-    and in refusing to overpay at tops, not in the level. The price-implied-growth table row makes the gap legible rather than
-    closing it; it is a per-spec sensitivity, not a market forecast.
+43. **The engine's absolute values still run below market, most for growth names.** 0.13.0 (25.10.2026) corrected the
+    rate conventions behind the 2016-2025 drift (terminal growth at 3% against an ERP solved at the Treasury yield; a fixed
+    4.5% ERP in the walk-forward where the dated implied ERP was 4.2-6.1%) and model inconsistencies (terminal stage and
+    funding add-ons; a cyclical industry word read as a margin peak or charged in the rates without evidence; platform
+    routing; start-up losses in a scale-up's terminal ROIC). On
+    the 61-name A/B the year profile is now flat, but the level is not closed: The combined 0.13.0 A/B on the same 61 names is running; its numbers follow in the next commit. The diagnosis puts
+    the rest in growth fade and stage rates for high-growth names (PLTR, NVDA, AVGO, NOW stay far below price even at the
+    engine-consistent rate) and in survivor-biased, bull-market prices; value/price still has no demonstrated ranking power.
+    Reaching price would mean underwriting peak multiples, so it is not done. The deepest-discount names did not go on to
+    underperform over 1-3 years in this sample, so "cheap by the engine" is not a reliable "it will fall" signal. The
+    price-implied-growth row and the expected-price-path row make the gap legible; neither is a value or a target.

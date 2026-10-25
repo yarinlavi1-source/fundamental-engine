@@ -1,4 +1,11 @@
-## Unreleased — calibration fixes (21.10.2026)
+## 0.13.0 — calibration fixes (25.10.2026)
+
+The owner found the engine's values far below market prices and below a human analyst's; the 2016-2025 walk-forward (491
+large caps) confirmed values ~35-45% below the prices reached 1-5 years later, a gap that never closed, and value/price with
+about zero ranking power. Authorized fix, kept principled: inconsistencies and bugs only; no anchoring to the current price,
+no momentum premium, no constant tuned to the backtest. Each change below was A/B'd on the same 61 names (2016-2025) where
+it could move a number. Combined result: pending (combined 0.13.0 A/B on the same 61 names is running; its numbers follow in the next commit.)
+
 
 - Terminal growth follows the convention of the ERP it is paired with (`forecast.TERMINAL_BEAR_GAP` comment): base = bull =
   risk-free, bear 0.5pp lower (never above base), replacing min(risk-free, 3%). Damodaran's implied ERP is solved with
@@ -104,6 +111,16 @@
   before their margins rose; their Item 1 decides from the report's filing date), Amazon (retail-weighted: gross margin 50%,
   capex 18%, 5 marketplace terms). Cuts set on document words, not on valuations or prices; no constant tuned to the
   walk-forward.
+- Scale-up terminal ROIC (`forecast._post_breakeven_roic`, `_demonstrated_roic`). The terminal persistence rule (no moat
+  assessment: Ku + 50% base / 71% bull of the demonstrated excess) took demonstrated ROIC = min(latest, 5-year average); on a
+  scale-up the average spans the start-up losses (diagnosis profile ROIC -79%, -28%, 18%, 42%, 124%: average 15.6%, faded to
+  about Ku+3pp against 124% latest), while the model card already refuses to average start-up losses into margins on the same
+  path. When the ROIC window's own fiscal years read `history.history_shape` 'scale_up' (revenue up every year, operating
+  margin from losses to the window high; forensics labels matched to the annual rows, no match no reading), the average is
+  taken over the years after the window's last loss year, at least `SCALE_UP_ROIC_MIN_YEARS` = 2 (else the 5-year mean
+  stays). Unchanged: min(latest, average), the 40% cap, the bear (Ku+1pp), the weak-moat fade, the strong-moat rule, the
+  durability lift (a window with a loss year varies by at least 50%: stability 0) and the moat proxy. Shown in `moat_basis`
+  (`roic_average_demonstrated`, its basis), the terminal rows and the low warning `roic_average_post_breakeven`.
 - Headline value, comparator and expected price path (presentation; no valuation number moves). (a) The table's and the
   paragraph's "fair value" was the value at the hurdle, max(index + permanent-loss premium, Ke): 14-33% below the value at
   the company's own cost of equity (diagnosis profiles before the calibration fixes: QG30 $46.3 vs $53.9, MKT $21.1 vs $31.3;
@@ -122,6 +139,27 @@
   not; stated beside it: even the best predictor landed within +-25% of the realized price only ~65% / 50% / 37% of the
   time at 1 / 3 / 5 years (`PRICE_PATH_HIT`). An estimate, never a target; it changes no value, verdict or hurdle. The
   "what today's price assumes" row is unchanged.
+
+- Integration review of the platform, scale-up and headline changes (lean mode: they had not been reviewed one by one).
+  (a) The automatic calibration pick took any computed sweep dated within 92 days, so every default `deep`/`pipeline` run
+  would have compared stocks with 0.12.0's 2026-10-20 sweep (7.0%) labelled the engine-consistent market of "the same
+  engine", after these fixes moved values and IRRs. The bias that cancels in stock IRR - market IRR is one engine's:
+  `calibration.market_implied` records `engine_version` (file and `index_input`), `calibration.pick` takes only a sweep of
+  the running version (the saved 2026-10-20 file records none: it is not picked), the CLI says why nothing was picked, and
+  `decision._index` names an index that records another version a `user_assumption`. An explicit `--index FILE` still
+  applies the file. Until `scripts/calibrate.py` is rerun on 0.13.0 the default comparator is the generic risk-free + ERP
+  assumption, said as such. (b) Under a platform SEC code a catch-all industry label ('Diversified Commercial Services')
+  was relabelled by the platform signature only: the annual report the collector fetches for these codes was never read,
+  while a failed signature said the business section decides. Item 1 now decides such a label first, as for a sector label
+  (walk-forward rows have no report before it was filed, so the A/B cannot move). The scale-up ROIC change was found
+  correct (bear untouched, labels matched, no constant tuned); its missing changelog entry is above.
+- Walk-forward crash fixed: 10 rows of the fresh 2026-10-21 walk-forward (LITE 2018/2023/2024, SYY 2017/2019/2023/2024, TPR
+  2018/2023/2024) stopped with OverflowError. Their fiscal year ends the day after the July formation's as_of, so
+  `valuation._roll_back` annualized the endpoint wealth to the 365th power and, at the implied-return search's low trial
+  rates, overflowed. `valuation._annualized` returns None for a rate that is not a real number in float range (no time
+  elapsed, a negative endpoint wealth, which had been a complex number, or an overflow); every representable figure is
+  computed exactly as before and dated values, IRRs and verdicts are unchanged. The 10 rows now value.
+- Version 0.13.0 (`fundamental_engine.__version__`, pyproject, brain catalog). Tests: 1,212 (4 skipped).
 
 ## 0.12.0 — results-day review from analyst comparison (21.10.2026)
 

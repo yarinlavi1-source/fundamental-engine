@@ -30,7 +30,8 @@ Engine base value ÷ traded price, by formation year (median across the names va
 
 By 2024–2025 the engine valued the *median* large cap at about half its price and marked ~88% of them
 below price. That is the "מוגזם" Yarin saw. The drift tracks the market's multiple expansion: the engine
-anchors to normalized fundamentals and did not follow prices up.
+anchors to normalized fundamentals and did not follow prices up. *(Corrected 25.10.2026: the drift was mostly
+the engine's own rate conventions, not multiple expansion; see the addendum at the end.)*
 
 ## 2. The conservatism was not earned
 
@@ -148,3 +149,40 @@ a year above the realistic case, which only ~4% of comparable companies ever del
 judge the bet instead of distrusting the number. It is a sensitivity of this spec, not a market forecast, it
 is computed once per table (never inside the pipeline or the backtest — it costs many DCF evaluations), and it
 changes no value.
+
+## Addendum (25.10.2026): the drift came from the rate conventions, not from multiple expansion
+
+Section 1 blamed the 0.81 -> 0.49 drift on the market's multiple expansion. A re-diagnosis on the same saved rows
+(`runs/backtest/engine_v3/rows.jsonl`) and an A/B on 61 of the names (July 2016-2025) show it came mostly from two of
+the engine's own conventions. Both were fixed in 0.13.0 (`docs/CHANGELOG.md`, 0.13.0):
+
+1. **Terminal growth paired with the wrong ERP.** The engine grew the perpetuity at min(rf, 3%) but used Damodaran's
+   implied ERP, which he solves with perpetual growth equal to the Treasury yield. Re-solving his 1 Oct 2026 index model
+   (S&P 500 at 7651.54, 14.59% five-year growth, payout 1 - g/ROE) at g = 3% gives an implied return of 8.11% (ERP 2.82%)
+   instead of 9.52% (ERP 4.23%, which replicates his published 4.20%). That convention accounts for about 1.4pp of the
+   2.33pp by which the engine's cost of equity exceeded its own market IRR on the 2026-10-20 sweep. Across the 3,233 valued
+   v3 rows, median value/price is about 0.71 - 17 x max(rf - 3%, 0) (correlation -0.82): the marks fell when the 10-year
+   yield rose above the 3% cap (2022-2025), not when multiples rose. Fix: terminal growth = risk-free
+   (`forecast.TERMINAL_BEAR_GAP` comment).
+2. **A fixed 4.5% ERP in the walk-forward.** Damodaran's dated start-of-year implied ERP was 4.2-6.1% over 2016-2025
+   (above 4.5% in 2016-2021 and 2023; `engine_backtest.IMPLIED_ERP`), so the early years were flattered and the drift's
+   starting point was too high. Fix: the dated ERP at each formation, point in time.
+
+Median engine value / price on the 61 names (the same rows each time; `scripts/backtest_engine.py` on the 2026-10-21
+universe):
+
+| engine | 2016 | 2018 | 2020 | 2022 | 2023 | 2024 | 2025 | all years |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| 0.12.0 (ff36ede) | 0.86 | 0.77 | 0.77 | 0.92 | 0.64 | 0.53 | 0.51 | 0.719 |
+| terminal growth = rf only (ERP held at 4.5%) | 0.86 | 0.77 | 0.77 | 0.95 | 0.69 | 0.60 | 0.64 | 0.751 |
+| + dated implied ERP | 0.67 | 0.67 | 0.65 | 1.01 | 0.54 | 0.59 | 0.66 | 0.644 |
+
+With both conventions consistent, the year profile is flat (2022 aside): the drift is gone. What remains is a level, and
+the dated ERP made it lower, not higher (the engine now discounts at the premium the market was priced at, which was
+above 4.5% in most of these years). The owner's decision on 25.10.2026 keeps the dated ERP because it is the correct input;
+reverting it because the A/B looked worse would be tuning to the backtest. The combined 0.13.0 A/B on the same 61 names is running; its numbers follow in the next commit. The diagnosis puts the
+remaining gap in growth fade and stage rates for the high-growth names (at the engine-consistent rate PLTR, NVDA, AVGO and
+NOW still sat at 0.1-0.4x price in 2025), which the other 0.13.0 fixes address only where an inconsistency was found.
+Sections 2-6 still describe that remaining level: it was not earned by later returns, it concentrates in growth names, and
+no honest lever closes it without underwriting peak multiples. The numbers above are the fix workflow's measurements on
+25.10.2026 (scripts run outside Git); the rows and the code they test are in Git.

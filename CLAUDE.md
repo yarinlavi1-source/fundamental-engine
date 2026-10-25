@@ -123,6 +123,17 @@ liquidity, check KPI basis, compare guidance with prior and attributed consensus
 flag peak-cycle run rates and listing premiums, and track numeric falsifiers. It is
 not a valuation. See docs/ANALYST_COMPARISON_2026-10.md.
 
+## Calibration fixes (v0.13, 25.10.2026)
+
+Values were far below prices, and the gap never closed in the walk-forward. 0.13.0 fixed inconsistencies only (no
+anchoring to price, no momentum premium, nothing tuned to the backtest): terminal growth = risk-free, the convention of
+the ERP it is paired with; the walk-forward uses the dated implied ERP; the terminal cost of equity is the mature table;
+cyclical rate charges need evidence; platforms are routed on SEC code, billing and Item 1 words; a scale-up's terminal
+ROIC averages its post-breakeven years. The table's fair value is now the base value at the company's own cost of equity,
+with a separate buy-below row at the required return (where the verdict is taken); a calibration index is used only from
+the same engine version. Values are still below prices on average (docs/CHANGELOG.md 0.13.0 has the 61-name A/B): do not
+present the level as fixed or the ranking as an edge. See the addendum of docs/ENGINE_CONSERVATISM_2026-10-21.md.
+
 ## Session-specific numeric collection priority
 
 Read the `session_capabilities` packet alongside connector_contract in Yarin's
