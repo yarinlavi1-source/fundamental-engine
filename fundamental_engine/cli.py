@@ -183,6 +183,11 @@ def main():
     qr = subs.add_parser("quarter-review", help="Results-day review: one-offs, operating leverage, guidance, cycle, listing premium, bank checks")
     qr.add_argument("input")
     qr.add_argument("--json", action="store_true", help="Print the full JSON result instead of the Hebrew text")
+    er = subs.add_parser("econ-review", help="Business economics: identities, growth split, overlays and the Hebrew rows (not a valuation)")
+    er.add_argument("input", help="The econ case: lines, kpis, segments and overlay blocks, each with its sources")
+    er.add_argument("--options", help="JSON file, or inline JSON object starting with '{': model, or card_type / profile_text / "
+                                      "override; prior, upstream (earlier econ reviews); names_he; revisions and prices")
+    er.add_argument("--json", action="store_true", help="Print the full JSON result instead of the Hebrew text")
     im = subs.add_parser("import-av", help="Map saved Alpha Vantage statement JSON files into plain history rows")
     im.add_argument("income")
     im.add_argument("--balance")
@@ -351,6 +356,10 @@ def main():
         elif args.command == "quarter-review":
             from .quarter import quarter_review
             result = quarter_review(read_json(args.input))
+            print(json.dumps(result,ensure_ascii=False,indent=2,allow_nan=False) if args.json else result["text"])
+        elif args.command == "econ-review":
+            from .econ import econ_review
+            result = econ_review(read_json(args.input), json_object_arg(args.options, "--options") if args.options else None)
             print(json.dumps(result,ensure_ascii=False,indent=2,allow_nan=False) if args.json else result["text"])
         elif args.command == "import-av":
             from .connectors import from_alpha_vantage

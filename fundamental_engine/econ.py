@@ -29,8 +29,12 @@ cash_conversion beside it) and expansion (customers x revenue per customer with 
 their own scope and window: top_n_inconsistent, scope_mismatch); review() reads the case's categories, history, cash
 and ttm_revenue blocks for them. WP7: quarter_review takes this case's subset as case['economics'] (the review comes
 back as its `economics`, the flags merge as econ.<key>, the falsifiers feed its falsifiers, and the model decides the
-identity-based peak exception in quarter._cycle). A later work package adds the Hebrew text. Nothing here is called by
-the pipeline, so every existing output stays byte-identical (no-input invariance).
+identity-based peak exception in quarter._cycle). WP8: render_he (the review in the owner's Hebrew: the row "איך העסק
+מרוויח", the extension of "מה המחיר של היום מניח" for a digital bank, a fallback for the risk row and the note line; every
+figure one of the review, rounded for reading), price_vs_estimates (estimate change, price change and the implied
+forward-multiple change between two dates; what moved, not a signal) and econ_review, the standalone tool (MCP
+econ_review, CLI econ-review). Nothing here is called by the pipeline, so every existing output stays byte-identical
+(no-input invariance).
 
 Boundaries: fetches nothing; the registry holds no company data; thresholds are uncalibrated screens frozen in
 docs/prereg_econ.md; a result of this layer is never a valuation, a moat rating or a trade instruction.
@@ -38,7 +42,7 @@ docs/prereg_econ.md; a result of this layer is never a valuation, a moat rating 
 from copy import deepcopy
 from hashlib import sha256
 import json
-from math import log
+from math import floor, log, log10
 from pathlib import Path
 import re
 from . import facts as F
@@ -59,7 +63,7 @@ FROZEN_RULES = ('identity_tolerance', 'growth_identity_pp', 'partial_below', 'fi
                 'near_threshold', 'receivables_gap_pp', 'minor_line_share', 'flat_units_abs', 'segment_material',
                 'leverage_share_min', 'econ_view_min_pp')
 TOP_KEYS = ('economics_version', 'rules', 'bases', 'tags', 'statuses', 'identity_types', 'lines', 'checks',
-            'reading_common', 'models', 'overlays', 'new_keys')
+            'reading_common', 'models', 'overlays', 'new_keys', 'text_he')
 MODEL_KEYS = ('label_he', 'description', 'price_cyclical', 'select', 'kpis', 'identities', 'growth_split', 'checks',
               'falsifier_kpis', 'overlays', 'reading', 'questions')
 OVERLAY_KEYS = ('label_he', 'applies_to', 'inputs', 'computes', 'checks', 'rules_used', 'boundary')
@@ -257,6 +261,21 @@ def problems(reg):
     nk = reg['new_keys']
     if not _strs(nk) or nk != sorted(set(nk)) or any(k not in all_kpis for k in nk):
         out.append('new_keys: sorted unique KPI ids of this registry')
+    th = reg['text_he']          # WP8: render_he's vocabulary; every KPI and every factor it may name has a Hebrew word
+    if not isinstance(th, dict) or not isinstance(th.get('note'), str) or not th['note'] or not isinstance(th.get('words'), dict):
+        out.append('text_he: needs note and words')
+    else:
+        need = set(all_kpis)
+        for m in models.values():
+            if isinstance(m, dict):
+                need |= {f for f in (m.get('growth_split') or {}).get('factors') or [] if isinstance(f, str)}
+                need |= {i['id'] for i in m.get('identities') or [] if isinstance(i, dict) and i.get('type') == 'per_unit'}
+        bare = sorted(k for k in need if not isinstance(th['words'].get(k), str) or not th['words'][k])
+        if bare:
+            out.append(f'text_he.words: no Hebrew word for {bare}')
+        for mid in th.get('products') or {}:
+            if mid not in models:
+                out.append(f'text_he.products: {mid!r} is not a model')
     return out
 
 
@@ -4472,3 +4491,612 @@ def _top_n(ix, mid, splits):
         if why:
             not_run.append(('top_n_inconsistent', why))
     return measures, flags, not_run
+
+
+# ---------------------------------------------------------------- WP8: Hebrew text, estimates vs price, the tool
+
+# render_he turns an econ review into at most four short Hebrew texts for the owner's table (design section 4): the row
+# "איך העסק מרוויח", the extension of the row "מה המחיר של היום מניח", a fallback for the risk row and the note line.
+# Every number is a figure of the review, rounded for reading; nothing is computed here that the review did not compute,
+# and the calculations stay in the review. Wording is fixed per model (the templates below); the vocabulary (a Hebrew
+# noun for every KPI and factor, what a model's customers buy, the note) is the registry's text_he block. Names the review
+# carries in English (a segment, a scope, a category, an upstream ticker) are shown as given unless the caller supplies
+# a Hebrew label in names_he: labels for display only, outside the review and its input_sha256.
+# Rounding (the design's "two significant figures" with three exceptions, so that the section-4 texts read as written):
+# growth rates, changes and shares are whole percents; rates of return (ROTE) two significant figures, the two ends of a
+# range of them one decimal (10.5%–13%: rounded to two figures they would print 11%–13%); money keeps three
+# significant figures (1,340$, 710 מיליון$, 105 מיליארד$: two would print a stated 1,340 as 1,300); unit counts in
+# millions keep one decimal (5.6, 15.8 מיליון); ratios two significant figures (1.5). A per-year figure says בשנה.
+HE_FIELDS = ('how_it_earns', 'price_requires_units', 'risk_fallback', 'note')
+HE_MAX = 220            # the how_it_earns text fits one row of the owner's table (tested on every fixture)
+HE_LIST_MAX = 3         # items named in one Hebrew list; the rest are counted (ועוד 2)
+MINUS = '\u2212'       # the minus sign of the owner's table (U+2212, as in the design's section 4)
+ABOUT = 'כ־'            # "about": written before a derived, rounded figure where the template says so
+CURRENCY_SIGN = {'USD': '$', 'EUR': '€', 'GBP': '£', 'ILS': '₪', 'JPY': '¥'}
+CURRENCY_WORD = {'USD': 'דולר', 'EUR': 'אירו', 'GBP': 'ליש״ט', 'ILS': 'שקל', 'JPY': 'ין'}
+MONEY_SCALE_HE = ((1e9, 'מיליארד'), (1e6, 'מיליון'))
+COUNT_SCALE_HE = ((1e9, 'מיליארד'), (1e6, 'מיליון'), (1e3, 'אלף'))
+WINDOW_HE = {'y/y': 'בשנה', 'q/q': 'ברבעון'}
+PERIOD_HE = {'month': 'בחודש', 'quarter': 'ברבעון', 'half': 'במחצית', 'year': 'בשנה', 'TTM': 'ב־12 החודשים האחרונים'}
+# the funding-ledger groups the risk sentence names (firm exposure only; the contingent ceiling is its own clause)
+LEDGER_HE = {'committed': 'התחייבויות', 'take_or_pay': 'רכישת קיבולת מהלקוחות'}
+FUNDED_KIND_HE = {'equity_stake': 'השקעות', 'loan': 'הלוואות', 'prepayment': 'מקדמות', 'lease_guarantee': 'ערבויות',
+                  'guarantee': 'ערבויות', 'take_or_pay': 'רכישת קיבולת מהלקוחות'}
+# a flag the risk fallback skips: an explanation gap (how_it_earns or the open questions name it), not a business risk
+RISK_SKIPPED_FLAGS = ('segment_unexplained',)
+HE_LEVELS = ('high', 'elevated')            # vendor-financing levels the risk fallback reports
+HE_CHAIN = ('unquantified', 'computed')     # supplier-chain statuses the risk fallback reports
+PRICE_EXTENSION_MODELS = ('digital_bank',)  # phase A: translate_requirement's bank case, from the bank_capital overlay
+
+
+def _half_up(x):
+    return int(floor(round(x, 9) + 0.5))
+
+
+def _pc(x):
+    """|x| as a whole percent, without the sign: 0.0593 -> '6'."""
+    return str(_half_up(abs(x) * 100))
+
+
+def _spc(x):
+    """A signed whole percent: '+35%', '−14%' (U+2212); '0%' when it rounds to zero."""
+    n = _half_up(abs(x) * 100)
+    return '0%' if n == 0 else ('+' if x > 0 else MINUS) + f'{n}%'
+
+
+def _approx(x):
+    """'כ־' when the whole percent of x is a rounding (7.06% -> כ־7%), '' when it is exact (21% stays 21%)."""
+    return ABOUT if abs(abs(x) * 100 - _half_up(abs(x) * 100)) > 1e-6 else ''
+
+
+def _sig(x, n):
+    """x at n significant figures with thousands separators and no trailing zeros: 1340.5 -> '1,340', 0.085 x 100 -> '8.5'."""
+    if x == 0:
+        return '0'
+    e = floor(log10(abs(x)))
+    s = f'{round(x, n - 1 - e):,.{max(0, n - 1 - e)}f}'
+    return s.rstrip('0').rstrip('.') if '.' in s else s
+
+
+def _money(x, currency):
+    sign = CURRENCY_SIGN.get(currency)
+    suffix = sign if sign else f' {currency}'
+    for f, w in MONEY_SCALE_HE:
+        if abs(x) >= f:
+            return f'{_sig(x / f, 3)} {w}{suffix}'
+    return f'{_sig(x, 3)}{suffix}'
+
+
+def _count(x):
+    for f, w in COUNT_SCALE_HE:
+        if abs(x) >= f:
+            s = f'{round(x / f, 1):,.1f}'
+            return f'{s[:-2] if s.endswith(".0") else s} {w}'
+    return f'{_half_up(x):,}'
+
+
+def _hebrew(word):
+    return bool(word) and '\u05d0' <= word[0] <= '\u05ea'          # alef .. tav
+
+
+def _list_he(items):
+    """'א, ב וג' (the conjunction joined to a Hebrew word, ו־ before a Latin one); more than HE_LIST_MAX are counted."""
+    items = list(dict.fromkeys(items))
+    if len(items) > HE_LIST_MAX:
+        items = items[:HE_LIST_MAX] + [f'עוד {len(items) - HE_LIST_MAX}']
+    if len(items) <= 1:
+        return ''.join(items)
+    return ', '.join(items[:-1]) + ' ' + _and(items[-1])
+
+
+def _and(word):
+    return ('ו' if _hebrew(word) else 'ו־') + word
+
+
+def _in_he(word):
+    return ('ב' if _hebrew(word) else 'ב־') + word
+
+
+def _word(ref):
+    """The registry's Hebrew noun for a KPI, a factor or a segment item; its id in words when the registry has none."""
+    return registry()['text_he']['words'].get(ref) or _name(ref)
+
+
+def _names(names_he):
+    if names_he is None:
+        return {}
+    if not isinstance(names_he, dict) or not all(isinstance(k, str) and isinstance(v, str) and v.strip() for k, v in names_he.items()):
+        raise ValueError('names_he: {name as the review shows it (a segment, scope, category or ticker): Hebrew label}')
+    return {k: v.strip() for k, v in names_he.items()}
+
+
+def _label(names, *keys):
+    return next((names[k] for k in keys if k in names), None)
+
+
+def _scope_he(names, scope):
+    """The Hebrew label of a scope (names_he), else the scope as the review shows it; None for the total."""
+    return None if scope == 'total' else (_label(names, scope) or _name(scope))
+
+
+def _rows(rv, mid, iid, scope=None):
+    return [r for r in rv['identities'] if r['model'] == mid and r['id'] == iid and (scope is None or r['scope'] == scope)]
+
+
+def _kpi_level(rv, kid, scope='total'):
+    return next((k['value'] for k in rv['kpis'] if k['id'] == kid and k['scope'] == scope and k.get('value') is not None), None)
+
+
+def _kpi_growth(rv, kid, scope='total'):
+    """(growth, comparison window) of a KPI row in its first comparison window (y/y before q/q), or (None, None)."""
+    for k in rv['kpis']:
+        if k['id'] == kid and k['scope'] == scope:
+            for c in k['comparisons']:
+                if c.get('growth') is not None:
+                    return c['growth'], c['window']
+    return None, None
+
+
+def _split_of(rv, mid, scope='total'):
+    return next((s for s in rv['growth_splits'] if s['model'] == mid and s['scope'] == scope), None)
+
+
+def _factor(split, fid):
+    return next((f for f in (split or {}).get('factors') or [] if f['id'] == fid and f.get('growth') is not None), None)
+
+
+def _segment_name(rv, scope):
+    seg = (rv['overlays'].get('segments') or {}).get('segments') or []
+    return next((s['name'] for s in seg if s['scope'] == scope), scope)
+
+
+def _he_broker(rv, mid, names, currency):
+    """Accounts x revenue per account, the per-account change split into its mix and cyclical parts (IBKR, section 4)."""
+    s = _split_of(rv, mid)
+    if not s or s.get('status') != 'consistent':
+        return None
+    acc, mix, cyc = (_factor(s, f) for f in ('accounts', 'equity_per_account', 'revenue_yield_on_equity'))
+    level = _kpi_level(rv, 'accounts')
+    rpa = next((r for r in _rows(rv, mid, 'revenue_per_account', 'total') if r.get('value') is not None
+                and any(c['window'] == s['window'] for c in r.get('changes') or [])), None)
+    if not (acc and mix and cyc and level and rpa) or acc['tag'] != 'structural' or cyc['tag'] != 'cyclical':
+        return None
+    chg = next(c['value'] for c in rpa['changes'] if c['window'] == s['window'])
+    why = {('mix', -1): 'כי החשבונות החדשים קטנים יותר', ('mix', 1): 'כי ההון הממוצע לחשבון עלה',
+           ('mix', 0): 'כי ההון הממוצע לחשבון לא זז', ('cyclical', -1): 'כי הריבית והמסחר ירדו',
+           ('cyclical', 1): 'כי הריבית והמסחר עלו', ('cyclical', 0): 'כי הריבית והמסחר לא זזו'}
+    sign = lambda x: (x > 0) - (x < 0)
+    same = sign(mix['growth']) == sign(cyc['growth']) == sign(chg) != 0     # both parts move the way the total does
+    part = (lambda f, tag: f'{ABOUT}{_pc(f["growth"])}% {why[(tag, sign(f["growth"]))]}') if same else \
+        (lambda f, tag: f'{_spc(f["growth"])} {why[(tag, sign(f["growth"]))]}')
+    year = 'בשנה' if (rpa.get('variants') or {}).get(rpa.get('variant'), {}).get('annualized_by') or rv['period'] == 'year' \
+        else PERIOD_HE[rv['period']]
+    return (f'{_count(level)} {_word("accounts")} ({_spc(acc["growth"])} {WINDOW_HE[s["window"]]}, צמיחה מבנית) × '
+            f'{ABOUT}{_money(rpa["value"], currency)} הכנסה לחשבון {year} ({_spc(chg)}: {part(mix, "mix")}, '
+            f'{_and(part(cyc, "cyclical"))}, מחזורי)')
+
+
+def _he_marketplace(rv, mid, names, currency):
+    """More users x more trips per user, and what stays of every 100 of bookings in each segment (UBER, section 4)."""
+    parts = []
+    row = next((r for r in _rows(rv, mid, 'trips_from_consumers', 'total') if r['status'] in ('consistent', 'computed')
+                and r.get('changes')), None)
+    if row:
+        g = {i['id']: i['growth'] for i in row['changes'][0]['inputs']}
+        if g.get('mapcs') is not None and g.get('frequency') is not None:
+            more = lambda x: 'יותר' if x > 0 else 'פחות'
+            parts.append(f'{more(g["mapcs"])} משתמשים ({_spc(g["mapcs"])}) × {more(g["frequency"])} נסיעות לכל משתמש '
+                         f'({_spc(g["frequency"])})')
+    sign = CURRENCY_SIGN.get(currency) or f' {currency}'
+    for r in _rows(rv, mid, 'segment_profit_per_gross_bookings'):
+        if r['scope'] != 'total' and r.get('value') is not None and r['value'] > 0:
+            seg = _segment_name(rv, r['scope'])
+            parts.append(f'מכל 100{sign} של הזמנות {_in_he(_label(names, seg, r["scope"]) or seg)} נשארים '
+                         f'{ABOUT}{_half_up(r["value"] * 100)}{sign} רווח תפעולי')
+    return '; '.join(parts) or None
+
+
+def _he_software(rv, mid, names, currency):
+    """Customers and revenue per customer, existing customers buying more when the expansion reading holds (PLTR)."""
+    rd = next((x for x in rv['readings'] if x['check'] == 'expansion_led' and x.get('model') == mid
+               and x.get('units_growth') is not None and x.get('per_unit_growth') is not None), None)
+    if rd is not None:
+        scope, window, units, per_unit, led = rd['scope'], rd['window'], rd['units_growth'], rd['per_unit_growth'], rd.get('value')
+    else:
+        s = next((x for x in rv['growth_splits'] if x['model'] == mid and x.get('status') == 'consistent'
+                  and _factor(x, 'customers') and _factor(x, 'revenue_per_customer')), None)
+        if s is None:
+            return None
+        scope, window, led = s['scope'], s['window'], None
+        units, per_unit = _factor(s, 'customers')['growth'], _factor(s, 'revenue_per_customer')['growth']
+    where = _scope_he(names, scope)
+    who = 'מספר הלקוחות' + (f' {where}' if where else '')
+    return (('לקוחות קיימים קונים יותר: ' if led is True else '') +
+            f'{who} {_spc(units)} {WINDOW_HE.get(window, "")}, וההכנסה מכל לקוח {_spc(per_unit)}').replace('  ', ' ')
+
+
+def _he_consumer(rv, mid, names, currency):
+    """A mature category that fell and made a new high, and the R&D intensity beside it (SN, section 4)."""
+    rd = next((x for x in rv['readings'] if x['check'] == 'process_evidence' and x.get('model') == mid), None)
+    if rd is None:
+        return None
+    cat = next((c for c in rd.get('categories') or [] if c.get('renewed')), None)
+    if cat is None:
+        return None
+    ep = next(e for e in cat['episodes'] if e.get('renewed'))
+    noun = _label(names, cat['name']) or f'המכירות של {cat["name"]}'          # a plural noun: the verbs below are plural
+    text = (f'ממציאה מחדש קטגוריות ותיקות: {noun} ירדו {_in_he(ABOUT)}{_pc(ep["drawdown"])}% וחזרו לשיא חדש '
+            f'({_spc(ep["new_high_over_prior_peak"])})')
+    rnd = next((x for x in (rd.get('intensity') or {}).get('series') or [] if x['id'] == 'research_and_development'
+                and x.get('end') is not None), None)
+    if rnd is not None:
+        verb = {'flat': 'נשארה ' + ABOUT, 'falling': 'ירדה ל' + ABOUT, 'rising': 'עלתה ל' + ABOUT}.get(rnd.get('trend'), 'היא ' + ABOUT)
+        text += f', וההוצאה על פיתוח {verb}{_pc(rnd["end"])}% מהמכירות'
+    return text
+
+
+def _he_bank(rv, mid, names, currency):
+    """Members x products per member (a cumulative count is labelled) and the yearly deposit funding benefit (SOFI)."""
+    parts = []
+    members = _kpi_level(rv, 'members')
+    ppm = next((r for r in _rows(rv, mid, 'products_per_member', 'total') if r.get('value') is not None), None)
+    if members and ppm:
+        parts.append(f'{_count(members)} {_word("members")} × {_sig(ppm["value"], 2)} מוצרים ללקוח'
+                     + (' (ספירה מצטברת)' if ppm.get('label') == 'cumulative, not active' else ''))
+    dep = next((r for r in _rows(rv, mid, 'deposit_benefit_identity', 'total') if r.get('value')
+                and r['status'] in ('consistent', 'computed')), None)
+    if dep is not None:
+        window = ((dep.get('variants') or {}).get(dep.get('variant')) or {}).get('window') or rv['period']
+        parts.append(f'הפיקדונות {"זולים" if dep["value"] > 0 else "יקרים"} {_in_he(ABOUT)}{_money(abs(dep["value"]), currency)} '
+                     f'{PERIOD_HE[window]} ממימון אחר')
+    return '; '.join(parts) or None
+
+
+HE_TEMPLATES = {'broker': _he_broker, 'marketplace': _he_marketplace, 'data_platform_software': _he_software,
+                'consumer_innovator': _he_consumer, 'digital_bank': _he_bank}
+
+
+def _he_unexplained(rv, names):
+    """'Not yet clear how segment X earns' when the largest segment, read through a model of its own, is unexplained."""
+    seg = rv['overlays'].get('segments') or {}
+    rows = [s for s in seg.get('segments') or [] if (s.get('share_of_revenue') or {}).get('value') is not None]
+    if not rows:
+        return None
+    top = max(rows, key=lambda s: (s['share_of_revenue']['value'], s['name']))
+    flag = next((f for f in rv['flags'] if f['key'] == 'segment_unexplained' and f.get('segment') == top['name']
+                 and f.get('model')), None)
+    if flag is None:
+        return None
+    items = top.get('not_disclosed') or flag.get('missing') or []
+    return (f'עוד לא ברור איך מגזר {_label(names, top["name"], top["scope"]) or top["name"]} מרוויח '
+            f'({_pc(top["share_of_revenue"]["value"])}% מההכנסות)' + (f': חסרים {_list_he(_word(i) for i in items)}' if items else ''))
+
+
+MISMATCH_HE = {'basis_mismatch': 'הנתונים מדווחים על בסיסים שונים (למשל מטבע קבוע מול מדווח)',
+               'scope_mismatch': 'הנתונים מכסים היקפים או תקופות שונים'}
+
+
+def _he_generic(rv, names):
+    """Any model: the primary model's core identity as factor x factor, each with its change (the first comparison window
+    the review reads, y/y before q/q) and its tag, a missing factor marked; a partial identity says how much revenue it
+    leaves unexplained; with no factor known, or inputs on different bases or scopes, it says what is missing."""
+    summary = rv['models'][0]
+    mid = summary['model']
+    core = next(iter(summary['core']), None)
+    if core is None:
+        return None
+    row = next(iter(_rows(rv, mid, core['id'], core['scope'])), None)
+    missing = core.get('missing') or []
+    if core['status'] in MISMATCH_HE or row is None or row['type'] not in ('product', 'per_unit'):
+        why = MISMATCH_HE.get(core['status']) or (f'חסרים {_list_he(_word(m) for m in missing)}' if missing else None)
+        return f'עוד לא ברור איך העסק מרוויח: {why}' if why else None
+    tags, labels = factor_tags(mid), {t: x['label_he'] for t, x in registry()['tags'].items()}
+    factors = row['inputs']['factors'] if row['type'] == 'product' else [row['inputs']['units'], row['id']]
+    stated = {i['id']: (i['growth'], row['changes'][0]['window']) for i in (row['changes'][0]['inputs'] if row.get('changes') else [])}
+    parts, known = [], 0
+    for f in factors:
+        own = (row['changes'][0]['value'], row['changes'][0]['window']) if f == row['id'] and row.get('changes') else None
+        g, w = own or stated.get(f) or _kpi_growth(rv, f, row['scope'])
+        if f in missing:
+            bits = ['חסר']
+        else:
+            known += 1
+            bits = ([f'{_spc(g)} {WINDOW_HE.get(w, "")}'.strip()] if g is not None else []) + ([labels[tags[f]]] if f in tags else [])
+        parts.append(_word(f) + (f' ({", ".join(bits)})' if bits else ''))
+    if not known:
+        return f'עוד לא ברור איך העסק מרוויח: חסרים {_list_he(_word(m) for m in missing)}'
+    where = _scope_he(names, row['scope'])
+    text = (f'{where}: ' if where else '') + ' × '.join(parts)
+    res = next((r for r in summary.get('residuals') or [] if r.get('identity') == core['id'] and r.get('share') is not None), None)
+    if core['status'] == 'partial' and res is not None:
+        text += f'; {ABOUT}{_pc(res["share"])}% מההכנסות עוד לא מוסברים'
+    return text
+
+
+def _he_how(rv, names):
+    if not rv['models']:
+        return None
+    text = _he_unexplained(rv, names)
+    if text is None:
+        mid = rv['models'][0]['model']
+        fn = HE_TEMPLATES.get(mid)
+        text = (fn(rv, mid, names, rv['currency']) if fn else None) or _he_generic(rv, names)
+    return text
+
+
+def _he_price(rv):
+    """The extension of the price row in operating units. Phase A renders translate_requirement's one case whose inputs
+    the review already computes: a digital bank's price-implied ROTE against today's ROTE and the capital-lever bound
+    (overlays.bank_capital). The per-unit and GW cases need the price-implied growth and the base paths (WP10)."""
+    if not any(m['model'] in PRICE_EXTENSION_MODELS for m in rv['models']):
+        return None
+    bc = rv['overlays'].get('bank_capital') or {}
+    pir, rote = (bc.get('price_implied_rote') or {}).get('value'), (bc.get('rote') or {}).get('value')
+    if pir is None or rote is None:
+        return None
+    rate = lambda x: _sig(x * 100, 2)
+    text = f'במונחי הבנק: תשואה של {ABOUT}{rate(pir)}% על ההון המוחשי, מול {ABOUT}{rate(rote)}% היום.'
+    bound = bc.get('rote_if_all_excess_returned')
+    if bound and bound.get('min') is not None and bound.get('max') is not None:
+        end = lambda x: f'{round(x * 100, 1):.1f}'.removesuffix('.0')      # a range's ends at one decimal: two
+        lo, hi = end(bound['min']), end(bound['max'])                        # significant figures would round them together
+        rng = f'{lo}%' if lo == hi else f'{lo}%–{hi}%'
+        if (bc.get('capital_lever') or {}).get('insufficient'):
+            text += f' גם החזרה של כל ההון העודף מביאה רק ל{ABOUT}{rng}; השאר צריך לבוא מרווח גבוה יותר'
+        elif pir <= bound['min']:
+            text += f' החזרה של כל ההון העודף מביאה עד {ABOUT}{rng} (גבול עליון), יותר ממה שהמחיר מניח'
+        else:
+            text += f' החזרה של כל ההון העודף מביאה עד {ABOUT}{rng} (גבול עליון); רק הקצה העליון מגיע למה שהמחיר מניח'
+    return text
+
+
+def _he_funding(rv, names):
+    vf = rv['overlays'].get('vendor_financing') or {}
+    if (vf.get('level') or {}).get('value') not in HE_LEVELS:
+        return None
+    ledger = vf.get('ledger') or {}
+    links = {l['id']: l for l in vf.get('links') or []}
+    words = []
+    for g in ('funded', 'committed', 'take_or_pay'):
+        grp = ledger.get(g) or {}
+        if grp.get('amount'):
+            words += ([FUNDED_KIND_HE.get(links[i]['kind'], 'מימון') for i in grp.get('links') or [] if i in links]
+                      if g == 'funded' else [LEDGER_HE[g]])
+    parts = []
+    firm = ledger.get('firm') or {}
+    if words and firm.get('share') is not None:
+        text = f'החברה מממנת חלק מהקונים שלה: {_list_he(words)} בהיקף של {ABOUT}{_pc(firm["share"])}% מהמכירות השנתיות'
+        ceiling = ledger.get('contingent_ceiling') or {}
+        if ceiling.get('amount'):
+            n = len(ceiling.get('links') or [])
+            text += f', ועוד {"ערבויות" if n > 1 else "ערבות"} של עד {_money(ceiling["amount"], rv["currency"])}'
+        parts.append(text + '.')
+    sc = vf.get('statement_checks') or {}
+    cfo = sc.get('cfo_to_ni') or {}
+    v = (cfo.get('cfo_to_ni') or {}).get('value')
+    if v is not None and v < cfo.get('cfo_to_ni_min', rules()['cfo_to_ni_min']):
+        w = sc.get('window') or {}
+        label = str(w.get('label') or '')
+        when = {'H1': 'במחצית הראשונה', 'H2': 'במחצית השנייה'}.get(label[:2]) if w.get('period') == 'half' else None
+        parts.append(f'{when or PERIOD_HE.get(w.get("period"), "")} נכנס מזומן מהפעילות רק {ABOUT}{_pc(v)}% מהרווח'.strip())
+    return ' '.join(parts) or None
+
+
+def _he_chain(rv, names):
+    ch = rv['overlays'].get('funded_customer_chain') or {}
+    if ch.get('status') not in HE_CHAIN:
+        return None
+    ticker = ch['upstream']['ticker']
+    funder = _label(names, ticker) or ticker
+    product = registry()['text_he'].get('products', {}).get(rv['models'][0]['model'])
+    inner = f'{funder} מממנת לקוחות שקונים {product}' if product else f'{funder} מממנת חלק מהלקוחות'
+    text = f'חלק מהביקוש תלוי בשרשרת מימון ({inner}); '
+    if ch['status'] == 'unquantified':
+        return text + 'כמה מההכנסות תלוי בה עוד לא ידוע'
+    up, own = ch['upstream'].get('exposed_share') or {}, ch.get('own_share') or {}
+    reported = up.get('kind') == 'reported' and all(k in EVIDENCE_KINDS for k in own.get('source_kinds') or ['?'])
+    return text + f'{ABOUT}{_pc(ch["exposure"]["value"])}% מההכנסות תלויות בה' + ('' if reported else ' (הערכה, לא נתון מדווח)')
+
+
+def _he_risk(rv, names):
+    """The risk row's fallback (the analyst's evidenced key_risk always wins): who funds the demand, then the supplier
+    chain, then the first high econ flag that names a business risk (quarter.ECON_FLAG_HE, WP7's texts)."""
+    text = _he_funding(rv, names) or _he_chain(rv, names)
+    if text:
+        return text
+    from . import quarter as Q                        # lazy: quarter imports econ when a case carries economics
+    flag = next((f for f in rv['flags'] if f['severity'] == 'high' and f['key'] not in RISK_SKIPPED_FLAGS
+                 and f['key'] in Q.ECON_FLAG_HE), None)
+    if flag is None:
+        return None
+    where = _label(names, flag.get('segment') or '', flag.get('scope') or '') or flag.get('segment') or \
+        (flag['scope'] if flag.get('scope') not in (None, 'total') else None)
+    he = Q.ECON_FLAG_HE[flag['key']]
+    return f'{where}: {he}' if where else he
+
+
+def _check_review(review):
+    if not isinstance(review, dict) or review.get('economics_version') != ECONOMICS_VERSION or not review.get('input_sha256') \
+            or 'status' not in review:
+        raise ValueError('review: an econ review (econ.review output)')
+
+
+def render_he(review, translation=None, *, names_he=None):
+    """The econ review in the owner's Hebrew: {how_it_earns, price_requires_units, risk_fallback, note}, each a short text
+    or None when it does not apply (no review, or one not assessed, gives four Nones). how_it_earns is the row
+    "איך העסק מרוויח" (at most HE_MAX characters); price_requires_units is appended after the existing text of the row
+    "מה המחיר של היום מניח" when that row is shown; risk_fallback fills the risk row only when the analyst supplies no
+    evidenced key_risk; note is the registry's line explaining מבני and מחזורי, shown when a text uses them.
+    `translation` is the WP10 translate_requirement result (refused in phase A, see _he_price); `names_he` maps names the
+    review shows in English (segments, scopes, categories, tickers) to Hebrew labels. Pure: renders, computes nothing new."""
+    if translation is not None:
+        raise ValueError('translation: translate_requirement arrives in WP10 (phase B); phase A renders the price extension '
+                         'from the bank_capital overlay only')
+    out = dict.fromkeys(HE_FIELDS)
+    if review is None:
+        return out
+    _check_review(review)
+    names = _names(names_he)
+    if review['status'] != 'assessed':
+        return out
+    out['how_it_earns'] = _he_how(review, names)
+    out['price_requires_units'] = _he_price(review)
+    out['risk_fallback'] = _he_risk(review, names)
+    words = [registry()['tags'][t]['label_he'] for t in ('structural', 'cyclical')]
+    if any(w in (out[k] or '') for k in HE_FIELDS[:3] for w in words):
+        out['note'] = registry()['text_he']['note']
+    return out
+
+
+# ------------------------------------------------ estimates vs price
+
+# What moved between two dates: the estimate of one figure (growth.momentum's estimate_revisions rows: one metric, target
+# period, basis, currency and unit, each row sourced and dated no later than the case) and the price on the same two dates
+# (an IB or AV close). The implied forward multiple moves by (1 + price change) / (1 + estimate change) - 1. A reading of
+# what moved, not a signal: nothing here was backtested and no threshold sorts it.
+REVISION_KEYS = ('metric', 'basis', 'currency', 'unit')
+PVE_READINGS = ('multiple_moved_more', 'estimate_moved_more')
+PVE_BOUNDARY = 'what moved; not a signal; not backtested.'
+METRIC_HE = {'eps': ('לרווח', 'רווח צפוי'), 'net_income': ('לרווח', 'רווח צפוי'), 'revenue': ('להכנסות', 'הכנסות צפויות'),
+             'ebitda': ('ל־EBITDA', 'EBITDA צפוי'), 'fcf': ('לתזרים החופשי', 'תזרים חופשי צפוי')}
+
+
+def _revision_rows(revisions, as_of):
+    if not isinstance(revisions, list) or len(revisions) < 2:
+        raise ValueError('revisions: at least two dated estimates of one figure (growth.momentum estimate_revisions rows)')
+    rows = []
+    for i, r in enumerate(revisions):
+        label = f'revisions[{i}]'
+        if not isinstance(r, dict):
+            raise ValueError(f'{label}: an object')
+        if r.get('target_period') is not None and r.get('period_end') is not None and r['target_period'] != r['period_end']:
+            raise ValueError(f'{label}: target_period and period_end (growth.momentum\'s name) differ; name the target period once')
+        target = r.get('target_period') if r.get('target_period') is not None else r.get('period_end')
+        lacking = [k for k in REVISION_KEYS if not r.get(k)] + ([] if target else ['target_period'])
+        if lacking:
+            raise ValueError(f'{label}: {lacking} required (one metric, target period, basis, currency and unit)')
+        ids = r.get('source_ids')
+        if not isinstance(ids, list) or not ids or not all(isinstance(x, str) and x for x in ids):
+            raise ValueError(f'{label}: source_ids required')
+        d = F._d(r.get('as_of'))
+        if as_of is not None and d > F._d(as_of):
+            raise ValueError(f'{label}.as_of: {d.isoformat()} is after the case date {as_of}')
+        rows.append({'definition': tuple(r[k] for k in REVISION_KEYS[:1]) + (target,) + tuple(r[k] for k in REVISION_KEYS[1:]),
+                     'as_of': d.isoformat(), 'value': number(r.get('value'), f'{label}.value (a forward multiple needs a '
+                                                                              'positive estimate)', 1e-12),
+                     'source_ids': list(ids)})
+    if len({x['definition'] for x in rows}) != 1:
+        raise ValueError('revisions must share metric, target period, basis, currency and unit (growth.momentum\'s rule)')
+    rows.sort(key=lambda x: x['as_of'])
+    if len({x['as_of'] for x in rows}) != len(rows):
+        raise ValueError('revisions: two estimates on one date; keep one per date')
+    return rows
+
+
+def _price_on(prices, day, currency, as_of):
+    hits = []
+    for i, p in enumerate(prices):
+        label = f'prices[{i}]'
+        if not isinstance(p, dict):
+            raise ValueError(f'{label}: {{date, value, source_ids}}')
+        d = F._d(p.get('date'))
+        if as_of is not None and d > F._d(as_of):
+            raise ValueError(f'{label}.date: {d.isoformat()} is after the case date {as_of}')
+        if d.isoformat() != day:
+            continue
+        if p.get('currency') is not None and p['currency'] != currency:
+            raise ValueError(f'{label}.currency: {p["currency"]} differs from the estimates ({currency}); convert first')
+        ids = p.get('source_ids')
+        if not isinstance(ids, list) or not ids or not all(isinstance(x, str) and x for x in ids):
+            raise ValueError(f'{label}: source_ids required (an IB or AV close)')
+        hits.append({'value': number(p.get('value'), f'{label}.value', 1e-12), 'source_ids': list(ids)})
+    if not hits:
+        raise ValueError(f'prices: no price on {day} (the close on each of the two estimate dates, from IB or AV)')
+    if len({h['value'] for h in hits}) > 1:
+        raise ValueError(f'prices: several prices on {day}; keep one')
+    return hits[0]
+
+
+def _pve_text(metric, currency, e, p, m):
+    noun, per = METRIC_HE.get(metric, (f'ל־{metric}', f'{metric} צפוי'))
+    unit = CURRENCY_WORD.get(currency, currency)
+    zero = lambda x: _half_up(abs(x) * 100) == 0
+    est = 'כמעט לא זזו' if zero(e) else f'{"עלו" if e > 0 else "ירדו"} {_approx(e)}{_pc(e)}%'
+    price = 'המחיר כמעט לא זז' if zero(p) else f'המחיר {"עלה" if p > 0 else "ירד"} {_approx(p)}{_pc(p)}%'
+    joint = 'אבל' if not zero(e) and not zero(p) and (e > 0) != (p > 0) else ''
+    pays = (f'השוק משלם היום בערך אותו דבר על כל {unit} של {per}' if zero(m) else
+            f'השוק משלם היום {_approx(m)}{_pc(m)}% {"יותר" if m > 0 else "פחות"} על כל {unit} של {per}')
+    return f'התחזיות {noun} {est}, ' + (f'אבל {price}' if joint else _and(price)) + f': {pays}.'
+
+
+def price_vs_estimates(revisions, prices, *, as_of=None):
+    """Estimates against price between the first and the last revision: estimate change, price change, the implied
+    forward-multiple change (1 + p) / (1 + e) - 1 and the reading multiple_moved_more (the multiple moved more than the
+    estimate, in absolute terms) or estimate_moved_more, with a short Hebrew sentence. `revisions` are growth.momentum's
+    estimate_revisions rows {metric, target_period (or period_end), basis, currency, unit, value, as_of, source_ids}: one
+    figure, sourced, dated no later than `as_of`; `prices` [{date, value, source_ids, currency?}] must hold the close on
+    the first and the last revision date. Rows between them are counted, not read. Not a signal; not backtested."""
+    rows = _revision_rows(revisions, as_of)
+    if not isinstance(prices, list):
+        raise ValueError('prices: [{date, value, source_ids}] with the close on each of the two estimate dates')
+    a, b = rows[0], rows[-1]
+    metric, target, basis, currency, unit = a['definition']
+    pa, pb = (_price_on(prices, x['as_of'], currency, as_of) for x in (a, b))
+    e, p = b['value'] / a['value'] - 1, pb['value'] / pa['value'] - 1
+    m = (1 + p) / (1 + e) - 1
+    out = {'check': 'price_vs_estimates', 'metric': metric, 'target_period': target, 'basis': basis, 'currency': currency,
+           'unit': unit, 'as_of': as_of,
+           'from': {'date': a['as_of'], 'estimate': a['value'], 'price': pa['value'], 'estimate_source_ids': a['source_ids'],
+                    'price_source_ids': pa['source_ids']},
+           'to': {'date': b['as_of'], 'estimate': b['value'], 'price': pb['value'], 'estimate_source_ids': b['source_ids'],
+                  'price_source_ids': pb['source_ids']},
+           'revisions_between': len(rows) - 2,
+           'estimate_change': {'value': e, 'derived_from': 'to.estimate / from.estimate - 1'},
+           'price_change': {'value': p, 'derived_from': 'to.price / from.price - 1'},
+           'implied_forward_multiple_change': {'value': m, 'derived_from': '(1 + price change) / (1 + estimate change) - 1'},
+           'reading': PVE_READINGS[0] if abs(m) > abs(e) else PVE_READINGS[1],
+           'reading_rule': '|implied forward-multiple change| > |estimate change| -> multiple_moved_more',
+           'text_he': _pve_text(metric, currency, e, p, m), 'boundary': PVE_BOUNDARY,
+           'input_sha256': F.digest({'revisions': sorted(revisions, key=lambda x: str(x.get('as_of'))),     # the order of the
+                                     'prices': sorted(prices, key=lambda x: (str(x.get('date')), json.dumps(x, sort_keys=True))),
+                                     'as_of': as_of}), 'engine_version': __version__}      # rows never changes the hash
+    return deepcopy(out)
+
+
+# ------------------------------------------------ the standalone tool (MCP econ_review, CLI econ-review)
+
+TOOL_OPTIONS = ('model', 'card_type', 'profile_text', 'override', 'prior', 'upstream', 'names_he', 'revisions', 'prices')
+TOOL_BOUNDARY = ('the econ review of one case, its Hebrew text and, when given, estimates against price: arithmetic on '
+                 'caller-supplied, sourced figures; not source verification, not a valuation, not a trade instruction')
+
+
+def econ_review(case, options=None):
+    """The standalone econ tool. The model is options.model, else case.model, else select_case on options.card_type /
+    profile_text / override when one is given (economics before the provider label), else none: unclassified, not
+    assessed. Runs review (options.prior, options.upstream: earlier econ reviews), renders it in Hebrew (options.names_he)
+    and, with options.revisions and options.prices, reads estimates against price as of the case date. Returns
+    {selection, review, text_he, price_vs_estimates, text}; `text` joins the Hebrew lines for the CLI. Pure."""
+    o = {} if options is None else options
+    if not isinstance(o, dict) or set(o) - set(TOOL_OPTIONS):
+        raise ValueError(f'options: an object with keys from {TOOL_OPTIONS}')
+    _check_case(case)
+    model, selection = o.get('model', case.get('model')), None
+    if model is None and any(o.get(k) is not None for k in ('card_type', 'profile_text', 'override')):
+        selection = select_case(case, o.get('card_type'), o.get('profile_text'), o.get('override'))
+        model = selection
+    rv = review(case, model, o.get('prior'), upstream=o.get('upstream'))
+    he = render_he(rv, names_he=o.get('names_he'))
+    if (o.get('revisions') is None) != (o.get('prices') is None):
+        raise ValueError('options: revisions and prices come together (the estimate and the close on the same two dates)')
+    pve = price_vs_estimates(o['revisions'], o['prices'], as_of=case['as_of']) if o.get('revisions') is not None else None
+    lines = ([f'איך העסק מרוויח: {he["how_it_earns"]}'] if he['how_it_earns'] else []) + \
+        ([f'מה המחיר של היום מניח: {he["price_requires_units"]}'] if he['price_requires_units'] else []) + \
+        ([f'סיכון: {he["risk_fallback"]}'] if he['risk_fallback'] else []) + ([he['note']] if he['note'] else []) + \
+        ([pve['text_he']] if pve else [])
+    if rv['status'] != 'assessed':
+        lines.insert(0, 'לא נקרא דרך מודל כלכלי (unclassified): אין שורות ואין השפעה.')
+    lines.append(registry()['text_he']['boundary'])
+    out = {'company': case['company'], 'period_end': case['period_end'], 'as_of': case['as_of'], 'selection': selection,
+           'review': rv, 'text_he': he, 'price_vs_estimates': pve, 'text': '\n'.join(lines),
+           'input_sha256': F.digest({'case': case, 'options': o}), 'engine_version': __version__, 'boundary': TOOL_BOUNDARY}
+    return deepcopy(out)

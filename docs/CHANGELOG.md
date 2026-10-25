@@ -1,3 +1,25 @@
+## Unreleased — business-economics layer `econ`, phase A (25.10.2026)
+
+- `econ` reads each business through its own economic identity (docs/ECONOMICS.md; branch `econ-layer`, work packages
+  0-8 of the 21.10.2026 design). Registry `brain/economics.json` (10 models, 6 overlays, KPIs with unit, basis and tag,
+  identities, checks, falsifiers, reading plans, the Hebrew vocabulary) and packet `economic_models`; KPI intake
+  `facts.add_kpi` / `econ.kpi_table` (sourced, point in time); identities and the tagged growth split
+  (`evaluate_identity`, `growth_split`, `review`: structural / cyclical / macro / mix / reclassification with the residual
+  shown); model selection by economics (`select`: two agreeing signals, KPI facts before labels, `unclassified` instead
+  of a forced label); overlays for who funds the demand, the supplier chain, acquisition SBC tranches, bank capital,
+  contract coverage and segments; process and expansion evidence (never a moat rating); `quarter_review(case.economics)`
+  with the identity-based peak exception (PLTR 0.809 and RDDT 0.970 drop to medium, SKHY stays high).
+- WP8: MCP tool `econ_review({case, options?})` and CLI `econ-review` (selection, review, Hebrew text, estimates vs
+  price); `econ.render_he` returns the owner's rows word for word as the design's section 4 (row "איך העסק מרוויח", the
+  digital-bank extension of "מה המחיר של היום מניח", a risk-row fallback, the note line; names in Hebrew only through
+  the caller's `names_he`); `econ.price_vs_estimates` (estimate change, price change, implied forward-multiple change,
+  `multiple_moved_more`; "what moved; not a signal; not backtested."). The registry validates that every KPI and factor
+  has a Hebrew word. Prereg deviations from WP3-WP7 logged in docs/prereg_econ.md before any held-out run.
+- No-input invariance: the pipeline never calls the layer; with no KPI facts and no econ input every existing output is
+  byte-identical. Thresholds are uncalibrated screens; the preregistered held-out checks H1-H3 have not been run, so no
+  accuracy claim is made. Tests: test_econ_fixtures, test_econ_registry, test_econ_kpi, test_econ, test_econ_select,
+  test_econ_overlays, test_econ_process, test_quarter_econ, test_econ_render.
+
 ## Unreleased — calibration fixes (21.10.2026)
 
 - Terminal growth follows the convention of the ERP it is paired with (`forecast.TERMINAL_BEAR_GAP` comment): base = bull =

@@ -181,3 +181,31 @@ of each held-out case is recorded next to its reading.
   reverted): `cycle_history_min_years` 6. None of these values change after the run. `tests/test_econ_registry.py`
   compares the section-1 table and every one of these keys with the registry, so a rule added to the registry without
   a line here fails the suite.
+- 25.10.2026, WP3-WP8 (the code of work packages 3-8, before any held-out number was collected; recorded so that the
+  held-out run reads the rules as built, not as first written):
+  - WP3. `expansion_led` reads the per-unit share of log growth above one half (`econ.EXPANSION_LOG_SHARE` 0.5, the
+    registry rule's words; not a rules key) with NDR above `expansion_ndr_min` 1.10. `take_rate_shift` fires when the
+    take rate moves by more than the growth tolerance (`growth_identity_pp` 0.01); it has no rule of its own. An identity's
+    status folds the growth check of every comparison window (y/y and q/q, the worst one wins); flags on an identity read
+    its first window (y/y when every input has it). `cyclical_deceleration` is strict: every cyclical KPI slows by more
+    than 10pp and every structural KPI stays within +-3pp, on the same id, basis and scope.
+  - WP4. A model is selected only when two of card type, text and KPI facts agree (`econ.MIN_SIGNALS` 2): the design's
+    single-signal rule for memory text or bits/ASP KPIs is not used; one signal reads `one_signal`, none `unclassified`.
+  - WP5. The vendor-financing level is three-valued: without `funding_links` (absent, not an empty list) firm exposure is
+    undecided; without non-cash gains the CFO check is undetermined (no zero is invented); with fewer than
+    `receivables_windows` 2 matched windows the receivables check is undecided. H2 negative controls therefore state
+    `funding_links: []`, non-cash gains (0 when none) and two matched receivables windows. `customer_prepayment_build`
+    also fires on a build when no revenue growth exists over the same window (reported as window_mismatch).
+    `contract_coverage` counts an item as evidenced only when an issuer document states it. `segment_unexplained`
+    reads a segment through the model it names, else through the selected models.
+  - WP6. `cash_conversion` has no rule of its own and reads `cfo_to_ni_min` 0.80. The process `machine` reads R&D as the
+    innovation intensity (advertising counts when its trend is known; an unknown advertising trend does not block);
+    "growth slows" = the latest window's annual growth below the previous one, over two stated windows of equal length;
+    renewal is read on the stated years only (gaps are named, never filled), and an episode still inside its window is
+    open (None), not a failure.
+  - WP7. The peak exception is stricter than section 1: gross profit minus operating expenses must reconcile to operating
+    income within `identity_tolerance` 0.02 in both periods, the operating margin must have risen, and `case.economics`
+    must name a model that is not price-cyclical (with no model the flag stays `high`).
+  - WP8 adds no screen: `render_he` and `price_vs_estimates` round and word figures the review already holds. The RDDT
+    revisions in the WP8 test are still the design's figures; the AV snapshot dates and the second close remain to be
+    pinned before that reading is called evidence.

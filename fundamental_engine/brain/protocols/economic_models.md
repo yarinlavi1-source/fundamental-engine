@@ -67,17 +67,20 @@ year, ROTE).
    no verdict code and may lower confidence, never raise it. Moat, expansion and process
    evidence are for Claude to cite; they never set a dimension or a rating.
 
-Tool status (v0.13, work package 2): `econ.registry()`, `econ.reading_plan()`,
-`econ.required_kpis()`, `econ.falsifiers()`, `facts.add_kpi()` (a KPI named by registry id,
-with source, `available_at`, basis, scope and currency basis; the unit comes from the registry
-with the reporting currency in place of `currency`; an unknown id, a missing level, a
-consensus or market-feed source and a date before the period end are refused) and
-`econ.kpi_table(fb, model_id, as_of)` (the KPI facts usable at as_of, one row per period,
-scope, basis and unit, best source first with disagreeing values kept; it computes nothing)
-exist. `model_card` sees these facts as driver evidence with no further wiring. The
-`econ_review` tool, the quarter-review integration and the forecast overrides arrive with
-later work packages; until then compute the identities by hand from the table and the
-registry and show the arithmetic as calculations in the dossier, each number with its source.
+Tool status (v0.13 phase A, work packages 0-8): run `econ_review({case, options?})` (CLI
+`econ-review`) before `quarter_review` or a valuation. It picks the model (options.model, or
+`card_type` / `profile_text` / `override` through `econ.select_case`; none -> `unclassified`),
+runs `econ.review` (identities, growth split, checks, the overlays whose blocks the case
+supplies, falsifiers, open questions, `input_sha256`), renders the owner's Hebrew rows
+(`econ.render_he`: "איך העסק מרוויח", the bank extension of "מה המחיר של היום מניח", the
+risk-row fallback, the note line; `names_he` gives Hebrew labels for segment, scope, category
+and ticker names) and, with `revisions` and `prices`, reads estimates against price
+(`econ.price_vs_estimates`: what moved, not a signal). `quarter_review` takes the same case
+subset as `case.economics`. KPIs enter a FactBook through `facts.add_kpi` and are read with
+`econ.kpi_table`; `econ.reading_plan`, `econ.process_evidence` and `econ.expansion` exist on
+their own. The pipeline does not call the layer yet (phase B): carry its flags into the
+counter-thesis by hand, cite its numbers with the review's `input_sha256`, and keep the
+analyst's evidenced `key_risk` ahead of the econ fallback. See docs/ECONOMICS.md.
 
 Hebrew note for the owner's table: מבני = נבנה לאורך זמן ולא נעלם בשנה רעה; מחזורי = עולה
 ויורד עם השוק והריבית.
