@@ -42,9 +42,21 @@ assert implied_cost_of_equity(dc)['status']=='solved'
 assert implied_growth_shift(spec)['status']=='solved'
 from fundamental_engine.quarter import quarter_review
 assert packet('quarter_review')['content']
-print(json.dumps({'quarter_review':'passed','drivers':'passed','plain_verdict':'passed','discovery':'passed','annual_valuation':'passed','version':__version__,'packaged_packets':len(records),'installed_review':'passed'}))
+from fundamental_engine.econ import registry, reading_plan
+reg=registry()
+assert reg['economics_version']==1 and len(reg['models'])==10 and len(reg['overlays'])==6 and reg['rules']['_status']
+assert reading_plan('broker')['steps'][1]['missing'] and packet('economic_models')['content']
+from fundamental_engine.econ import econ_review
+ib=econ_review(json.loads(open(sys.argv[8],encoding='utf-8').read()),{'card_type':'financials'})
+assert ib['selection']['primary']=='broker' and ib['review']['status']=='assessed' and '1,340' in ib['text_he']['how_it_earns'] and ib['text_he']['note']
+pq=json.loads(open(sys.argv[9],encoding='utf-8').read())
+ov={'primary':'data_platform_software','reason':'customers x revenue per customer (8-K)','evidence_ids':['pltr_8k_q2_2026_ex991']}
+peak=lambda m:[f['severity'] for f in quarter_review({**pq,'economics':{'model':m}})['flags'] if f['key'] in ('peak_margin_run_rate','operating_leverage_or_peak')]
+assert peak(ov)==['medium'] and peak('data_platform_software')==['high']
+print(json.dumps({'quarter_review':'passed','econ_registry':'passed','econ_review':'passed','econ_peak_exception':'passed','drivers':'passed','plain_verdict':'passed','discovery':'passed','annual_valuation':'passed','version':__version__,'packaged_packets':len(records),'installed_review':'passed'}))
 '''
-    completed=subprocess.run([sys.executable,'-I','-c',code,temp,str(ROOT/'examples/research_dossier_demo.json'),str(ROOT/'examples/valuation/infrastructure.json'),str(ROOT/'examples/discovery_demo.json'),str(ROOT/'examples/plain_demo.json'),str(ROOT/'examples/real/avgo_plain_2025.json'),str(ROOT/'examples/valuation/software_drivers.json')],
+    completed=subprocess.run([sys.executable,'-I','-c',code,temp,str(ROOT/'examples/research_dossier_demo.json'),str(ROOT/'examples/valuation/infrastructure.json'),str(ROOT/'examples/discovery_demo.json'),str(ROOT/'examples/plain_demo.json'),str(ROOT/'examples/real/avgo_plain_2025.json'),str(ROOT/'examples/valuation/software_drivers.json'),
+                               str(ROOT/'tests/fixtures/econ/ibkr_2026q3.json'),str(ROOT/'tests/fixtures/econ/pltr_2026q2_filed.json')],
                               cwd=temp,text=True,capture_output=True,timeout=20)
     if completed.returncode:raise SystemExit(completed.stderr)
     print(completed.stdout.strip())

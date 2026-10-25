@@ -1,0 +1,30 @@
+{
+ "_provenance": "Filing numbers only, copied from the scratch method run pltr_2026q2_hist.json (2026-10-21): Q2-26 and Q2-25 lines from Palantir 8-K Ex.99.1 (SEC accession 0001321655-26-000039), Q1-26 lines from Alpha Vantage INCOME_STATEMENT, segment revenues from the same 8-K, guidance from the Q2-26 and Q1-26 releases. Every analyst-post, consensus, Trefis and market item of the scratch run is removed. history_operating_margins (FY2021-FY2025 annual operating margins) were carried in the scratch run without a stated source: reconcile to the 10-Ks before production use. quarter_review case shape; WP7 peak-exception fixture (OM 47.1% vs history max 31.6%; leverage share 0.809).",
+ "company": "Palantir Technologies",
+ "period_end": "2026-06-30",
+ "as_of": "2026-08-04",
+ "currency": "USD",
+ "source_ids": ["pltr_8k_q2_2026_ex991", "av_income_statement_pltr"],
+ "sources": {"pltr_8k_q2_2026_ex991": {"kind": "issuer_release", "available_at": "2026-08-04"},
+             "pltr_8k_q1_2026_ex991": {"kind": "issuer_release", "available_at": "2026-05-05", "note": "prior FY guidance; date approximate"},
+             "av_income_statement_pltr": {"kind": "data_provider", "available_at": "2026-10-21", "note": "Q1-26 lines as pulled in the scratch run"}},
+ "current": {"revenue": 1935464000, "gross_profit": 1638594000, "operating_income": 912004000, "adjusted_ebitda": 1202692000, "net_income": 1061890000,
+             "operating_expenses": 726590000, "operating_cash_flow": 1216167000, "capex": 14554000, "diluted_shares": 2568694000, "sbc": 265209000},
+ "prior_year": {"revenue": 1003697000, "gross_profit": 810763000, "operating_income": 269317000, "net_income": 326727000, "operating_expenses": 541446000,
+                "operating_cash_flow": 539251000, "capex": 7634000, "diluted_shares": 2562912000, "sbc": 159971000},
+ "prior_quarter": {"revenue": 1632583000, "gross_profit": 1416785000, "operating_income": 753998000, "net_income": 870527000},
+ "segments": [
+  {"name": "U.S. commercial", "revenue": 764000000, "prior_revenue": 306800000, "source_ids": ["pltr_8k_q2_2026_ex991"]},
+  {"name": "U.S. government", "revenue": 809000000, "prior_revenue": 425800000, "source_ids": ["pltr_8k_q2_2026_ex991"]},
+  {"name": "Rest of world (total minus U.S.)", "revenue": 362464000, "prior_revenue": 271097000, "source_ids": ["pltr_8k_q2_2026_ex991"]}
+ ],
+ "guidance": [
+  {"metric": "revenue FY2026", "period": "FY2026", "low": 8150000000, "high": 8158000000, "prior_low": 7650000000, "prior_high": 7662000000,
+   "comparable_actual": 4475446000, "source_ids": ["pltr_8k_q2_2026_ex991", "pltr_8k_q1_2026_ex991"]},
+  {"metric": "revenue Q3-2026", "period": "Q3-2026", "low": 2160000000, "high": 2164000000, "comparable_actual": 1181092000, "source_ids": ["pltr_8k_q2_2026_ex991"]},
+  {"metric": "adjusted free cash flow FY2026", "period": "FY2026", "low": 4500000000, "high": 4700000000, "prior_low": 4200000000, "prior_high": 4400000000,
+   "source_ids": ["pltr_8k_q2_2026_ex991"]}
+ ],
+ "balance": {"cash": 2030047000, "short_term_investments": 7170000000, "debt": 0, "source_ids": ["pltr_8k_q2_2026_ex991"]},
+ "history_operating_margins": [-0.2666, -0.0846, 0.0539, 0.1083, 0.3159]
+}

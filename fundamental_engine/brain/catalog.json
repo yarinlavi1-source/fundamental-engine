@@ -195,6 +195,11 @@
       "id": "market_context",
       "title": "Market context: country risk (Damodaran CRP), evidenced geopolitical exposures, market regime line",
       "file": "protocols/market_context.md"
+    },
+    {
+      "id": "economic_models",
+      "title": "Economic models: read each business through its own identity (registry brain/economics.json; load with evidence and business)",
+      "file": "protocols/economic_models.md"
     }
   ]
 }

@@ -1,0 +1,311 @@
+{
+ "_schema": "econ_fixture_v1",
+ "_provenance": "analyst post figures (analyst_post_nvda_2026q2, user-supplied 2026-10-21); not reconciled to filings; arithmetic fixture, not truth; pins the design rules, never the analyst conclusions. The post calls the quarter \"Q2 2026\"; it is NVIDIA's fiscal Q2 FY2027 and period_end follows the fiscal calendar (verify against the 10-Q). \"H1\" lines are the first two fiscal quarters. Receivables have two figures, each labelled: the balance-sheet rise 38.5 -> 63bn and the cash-flow-statement build 24.6bn (design correction 4). The 0.25 exposed share is the analyst's estimate and never sets the level. The 690bn next-year revenue is the analyst's figure, used only to test the GW arithmetic. The \"consensus ~45%\" is as quoted in the post, not independently attributed.",
+ "company": "NVDA",
+ "name": "NVIDIA",
+ "period_end": "2026-07-26",
+ "period": "quarter",
+ "fiscal_label": "Q2 FY2027",
+ "as_of": "2026-10-21",
+ "currency": "USD",
+ "reconciled_to_filings": false,
+ "sources": {
+  "analyst_post_nvda_2026q2": {
+   "kind": "analyst_post",
+   "available_at": "2026-10-21",
+   "note": "user-supplied third-party post; key figures only"
+  },
+  "test_assumption_requirement_690bn": {
+   "kind": "test_assumption",
+   "available_at": "2026-10-21",
+   "note": "the analyst's next-year revenue figure used only for the GW arithmetic (WP10)"
+  }
+ },
+ "model_hint": {
+  "primary": "gpu_vendor",
+  "card_type": "semiconductor",
+  "overlays": [
+   "vendor_financing"
+  ],
+  "price_cyclical": true
+ },
+ "lines": {
+  "revenue": {
+   "value": 96200000000.0,
+   "growth": 1.06,
+   "growth_qoq": 0.18,
+   "period": "quarter",
+   "source_ids": [
+    "analyst_post_nvda_2026q2"
+   ]
+  },
+  "data_center_revenue": {
+   "value": 89000000000.0,
+   "growth": 1.17,
+   "period": "quarter",
+   "groups": {
+    "hyperscalers": 48700000000.0,
+    "acie": 40300000000.0
+   },
+   "source_ids": [
+    "analyst_post_nvda_2026q2"
+   ]
+  },
+  "edge_revenue": {
+   "value": 7200000000.0,
+   "period": "quarter",
+   "source_ids": [
+    "analyst_post_nvda_2026q2"
+   ]
+  },
+  "operating_income": {
+   "value": 63700000000.0,
+   "margin": 0.66,
+   "period": "quarter",
+   "source_ids": [
+    "analyst_post_nvda_2026q2"
+   ]
+  },
+  "gross_margin_data_center": {
+   "value": 0.75,
+   "period": "quarter",
+   "source_ids": [
+    "analyst_post_nvda_2026q2"
+   ]
+  },
+  "eps_reported": {
+   "value": 2.46,
+   "includes_investment_gains": 7800000000.0,
+   "period": "quarter",
+   "source_ids": [
+    "analyst_post_nvda_2026q2"
+   ]
+  },
+  "eps_operating_ex_gains": {
+   "value": 2.19,
+   "kind": "analyst_estimate",
+   "derived_from_post": "63.7e9 x 0.83 / 24.15e9",
+   "period": "quarter",
+   "source_ids": [
+    "analyst_post_nvda_2026q2"
+   ]
+  },
+  "diluted_shares": {
+   "value": 24150000000.0,
+   "period": "quarter",
+   "source_ids": [
+    "analyst_post_nvda_2026q2"
+   ]
+  }
+ },
+ "half_year": {
+  "period": "H1 FY2027",
+  "net_income": 118000000000.0,
+  "operating_cash_flow": 74400000000.0,
+  "non_cash_investment_gains": 23700000000.0,
+  "receivables_build_cash_flow_statement": 24600000000.0,
+  "inventory_build": 10200000000.0,
+  "capex": 4400000000.0,
+  "source_ids": [
+   "analyst_post_nvda_2026q2"
+  ]
+ },
+ "balance": {
+  "receivables_start": 38500000000.0,
+  "receivables_end": 63000000000.0,
+  "receivables_window_months": 6,
+  "cash_and_bonds": 56600000000.0,
+  "marketable_equities": 42800000000.0,
+  "debt": 33400000000.0,
+  "buyback_shares_net": {
+   "bought": 94000000.0,
+   "issued": 32000000.0
+  },
+  "source_ids": [
+   "analyst_post_nvda_2026q2"
+  ],
+  "note": "marketable equities are investment assets, shown apart from spendable cash"
+ },
+ "funding_links": [
+  {
+   "id": "fl1",
+   "kind": "equity_stake",
+   "status": "funded",
+   "amount": 99000000000.0,
+   "direction": "company_funds_customer",
+   "note": "~50bn of it into frontier labs",
+   "source_ids": [
+    "analyst_post_nvda_2026q2"
+   ]
+  },
+  {
+   "id": "fl2",
+   "kind": "equity_stake",
+   "status": "committed",
+   "amount": 25000000000.0,
+   "direction": "company_funds_customer",
+   "source_ids": [
+    "analyst_post_nvda_2026q2"
+   ]
+  },
+  {
+   "id": "fl3",
+   "kind": "guarantee",
+   "status": "contingent",
+   "amount": 105000000000.0,
+   "amount_is_maximum": true,
+   "label": "OpenAI / SB Energy 4.25GW Ohio lease guarantee, up to",
+   "source_ids": [
+    "analyst_post_nvda_2026q2"
+   ]
+  },
+  {
+   "id": "fl4",
+   "kind": "take_or_pay",
+   "status": "committed",
+   "amount": 36000000000.0,
+   "direction": "company_buys_from_customer",
+   "label": "neocloud capacity",
+   "source_ids": [
+    "analyst_post_nvda_2026q2"
+   ]
+  }
+ ],
+ "revenue_basis": {
+  "value": 96200000000.0,
+  "period": "quarter",
+  "annualize": 4,
+  "source_ids": [
+   "analyst_post_nvda_2026q2"
+  ]
+ },
+ "exposed_share": {
+  "value": 0.25,
+  "horizon": "next fiscal year",
+  "kind": "analyst_estimate",
+  "label": "\"these customers ~1/4 of business next year\"",
+  "source_ids": [
+   "analyst_post_nvda_2026q2"
+  ]
+ },
+ "revenue_per_gw_by_generation": {
+  "hopper": 18000000000.0,
+  "blackwell": 25000000000.0,
+  "vera_rubin": {
+   "value": 40000000000.0,
+   "kind": "expected"
+  },
+  "source_ids": [
+   "analyst_post_nvda_2026q2"
+  ]
+ },
+ "guidance": [
+  {
+   "metric": "revenue next quarter",
+   "period": "Q3 FY2027",
+   "value": 108000000000.0,
+   "source_ids": [
+    "analyst_post_nvda_2026q2"
+   ]
+  },
+  {
+   "metric": "revenue growth FY2028",
+   "period": "FY2028",
+   "value": 0.7,
+   "consensus_as_quoted_in_post": 0.45,
+   "source_ids": [
+    "analyst_post_nvda_2026q2"
+   ]
+  },
+  {
+   "metric": "gross margin path",
+   "values": {
+    "current": 0.75,
+    "next": 0.74,
+    "trough_q4": [
+     0.71,
+     0.72
+    ],
+    "next_year": [
+     0.72,
+     0.73
+    ]
+   },
+   "reason": "memory costs",
+   "source_ids": [
+    "analyst_post_nvda_2026q2"
+   ]
+  }
+ ],
+ "requirement_test": {
+  "revenue": 690000000000.0,
+  "revenue_per_gw_range": [
+   25000000000.0,
+   40000000000.0
+  ],
+  "source_ids": [
+   "test_assumption_requirement_690bn"
+  ]
+ },
+ "market": {
+  "price": 220,
+  "price_as_of": "2026-10-21",
+  "label": "\"~220 after report\"",
+  "source_ids": [
+   "analyst_post_nvda_2026q2"
+  ]
+ },
+ "expected": {
+  "vendor_financing": {
+   "annualized_revenue": 384800000000.0,
+   "label": "stock-to-flow scale ratio, not revenue at risk",
+   "shares": {
+    "funded": 0.2573,
+    "committed": 0.065,
+    "take_or_pay": 0.0936,
+    "firm": 0.4158,
+    "contingent_ceiling": 0.2729
+   },
+   "shares_pct": {
+    "funded": 25.7,
+    "committed": 6.5,
+    "take_or_pay": 9.4,
+    "firm": 41.6,
+    "contingent_ceiling": 27.3
+   },
+   "firm_exposure": 160000000000.0,
+   "contingent_shown_separately": true,
+   "statement_checks": {
+    "cfo_to_ni": 0.6305,
+    "cfo_to_ni_ex_gains": 0.789,
+    "cfo_to_ni_ex_gains_near_threshold": {
+     "threshold": 0.8,
+     "within": 0.03
+    },
+    "receivables_growth_6m": 0.6364,
+    "receivables_vs_revenue": "not_computed: window_mismatch",
+    "receivables_build_to_ni": 0.2085,
+    "receivables_build_basis": "cash-flow statement 24.6bn; balance change 24.5bn shown beside it"
+   },
+   "level": "high",
+   "level_rule": "firm >= 0.25 and CFO/(NI - gains) < 0.80",
+   "exposed_share_display": "attributed analyst estimate; never sets the level",
+   "guarantee_row": "if called in full, against spendable cash, no probability",
+   "derived_from": "99/384.8; 25/384.8; 36/384.8; 160/384.8; 105/384.8; 74.4/118; 74.4/94.3; 63/38.5-1; 24.6/118"
+  },
+  "translate_requirement": {
+   "gw_range": [
+    17.25,
+    27.6
+   ],
+   "derived_from": "690e9 / 40e9 .. 690e9 / 25e9"
+  },
+  "funding_chain_break": {
+   "year1_growth": "min(bear, -0.25)",
+   "exposed_share_label": "attributed"
+  },
+  "render_he": {
+   "risk_fallback": "החברה מממנת חלק מהקונים שלה: השקעות, התחייבויות ורכישת קיבולת מהלקוחות בהיקף של כ־42% מהמכירות השנתיות, ועוד ערבות של עד 105 מיליארד$. במחצית הראשונה נכנס מזומן מהפעילות רק כ־63% מהרווח"
+  }
+ }
+}

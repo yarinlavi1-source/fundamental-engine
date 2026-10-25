@@ -357,3 +357,34 @@ price_only},"alerts","confirmations","price","not_checked"}`; `monitor.freeze(le
 "by_metric","by_thesis","recurring_errors","unresolved","not_scored","evaluated_at","limitations"}`.
 `ledger.Ledger(path, clock=None, max_recording_lag_days=7)`: append-only, hash-chained; refuses made_at more than the lag
 before the system recording time; late rows are excluded from coverage, returns and learning.
+
+## econ (business economics, phase A; not called by the pipeline)
+
+Registry and intake: `econ.registry()` (validated `brain/economics.json`, cached by file sha256), `econ.reading_plan(model_id,
+fb=None)`, `econ.required_kpis / factor_tags / falsifiers / checks(model_id)`, `facts.add_kpi(fb, kpi_id, period, period_end,
+value, source_id, available_at, *, kpi_basis, scope='total', currency_basis='reported', unit=None, period_start=None)`,
+`econ.kpi_table(fb, model_id, as_of=None)`.
+```
+econ.review(case, model=None, prior=None, *, upstream=None) -> {"company","period_end","as_of","currency","period",
+  "economics_version","registry_sha256","model": {"primary","secondary","source"},"prior_review","status": assessed|not_assessed,
+  "check_window","models": [{"model","role","label_he","price_cyclical","core_status","core","missing","residuals"}],
+  "kpis","lines","identities","growth_splits","flags","readings","measures","overlays": {overlay_id: {...}},"falsifiers",
+  "open_questions","checks_not_run","unavailable","not_read","input_sha256","engine_version","boundary"}
+econ.evaluate_identity(case, model_id, identity_id, scope='total'); econ.growth_split(case, model_id, scope='total')
+econ.select(card_type, profile_text, kpi_ids, override=None, *, segments=None, evidence=None) -> {"primary","secondary",
+  "overlays","status": selected|not_assessed,"source": rule|analyst,"reasons","rule","override","candidates","inputs",...}
+econ.select_case(case, card_type=None, profile_text=None, override=None); econ.select_factbook(fb, card_type, override=None, ...)
+econ.vendor_financing | chain(case, upstream=None) | acquisition_sbc | bank_capital | contract_coverage | segments(case, model=None)
+econ.process_evidence(categories, intensity, gross_margin=None); econ.expansion(split=None, top_n=None, ndr=None)
+econ.render_he(review, translation=None, *, names_he=None) -> {"how_it_earns","price_requires_units","risk_fallback","note"}
+  # each a Hebrew text or None; translation (WP10's translate_requirement) refused in phase A
+econ.price_vs_estimates(revisions, prices, *, as_of=None) -> {"check","metric","target_period","basis","currency","unit",
+  "as_of","from","to","revisions_between","estimate_change","price_change","implied_forward_multiple_change",
+  "reading": multiple_moved_more|estimate_moved_more,"reading_rule","text_he","boundary","input_sha256","engine_version"}
+econ.econ_review(case, options=None) -> {"company","period_end","as_of","selection","review","text_he",
+  "price_vs_estimates","text","input_sha256","engine_version","boundary"}
+  # options: model | card_type, profile_text, override; prior, upstream; names_he; revisions + prices
+```
+`quarter.quarter_review(case)` with `case['economics']` (the econ case subset; company, period_end, as_of and currency
+inherited, period quarter) adds `economics` (the review, `checks_run_by_quarter`, `quarter_link`), merges its flags as
+`econ.<key>` and feeds its falsifiers. Every function is pure and deterministic; nothing is fetched or filled in.

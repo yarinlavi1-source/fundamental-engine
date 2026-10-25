@@ -1,0 +1,271 @@
+{
+ "_schema": "econ_fixture_v1",
+ "_provenance": "analyst post figures (analyst_post_skhy_2026q2), the same post as examples/quarter/skhy_2026q2.json, converted by that author at 1,465 KRW/USD; not reconciled to filings; arithmetic fixture, not truth; pins the design rules, never the analyst conclusions. history_operating_margins are approximate annual figures for illustration (as in the quarter example). The 0.29 cycle margin is the post's revenue-weighted 2018-25 figure, an attributed estimate to be replaced by a filing-based one. cycle.current_operating_margin carries the post's rounded 76.3% because the design's normalized P/E of 19.85 uses it; the exact 41.3/54.1 gives 19.856 (both shown in expected). chain.variants.synthetic_share is a labelled TEST ASSUMPTION.",
+ "company": "SKHY",
+ "name": "SK hynix (ADR line)",
+ "period_end": "2026-06-30",
+ "period": "quarter",
+ "as_of": "2026-10-21",
+ "as_of_note": "analysis date: the NVDA upstream review (Q2 FY2027, reported late August 2026) exists only after the post date 2026-07-31",
+ "currency": "USD",
+ "reporting_currency": "KRW",
+ "fx": {
+  "rate": 1465,
+  "quote": "KRW per USD",
+  "as_of": "2026-07-31",
+  "source_ids": [
+   "analyst_post_skhy_2026q2"
+  ]
+ },
+ "reconciled_to_filings": false,
+ "sources": {
+  "analyst_post_skhy_2026q2": {
+   "kind": "analyst_post",
+   "available_at": "2026-07-31",
+   "note": "user-supplied third-party post"
+  },
+  "test_assumption_chain_share": {
+   "kind": "test_assumption",
+   "available_at": "2026-07-31",
+   "note": "synthetic 30% revenue share via NVDA for the chain arithmetic; not a reported figure"
+  },
+  "nvda_econ_2026q2_fixture": {
+   "kind": "upstream_review",
+   "available_at": "2026-10-21",
+   "note": "tests/fixtures/econ/nvda_2026q2.json; linked by review sha256 at run time, numbers never copied"
+  }
+ },
+ "model_hint": {
+  "primary": "memory_cycle",
+  "card_type": "semiconductor",
+  "profile_text": "DRAM and NAND memory",
+  "price_cyclical": true
+ },
+ "lines": {
+  "revenue": {
+   "value": 54100000000.0,
+   "prior": 15150000000.0,
+   "prior_quarter": 35830000000.0,
+   "growth": 2.57,
+   "period": "quarter",
+   "source_ids": [
+    "analyst_post_skhy_2026q2"
+   ]
+  },
+  "operating_income": {
+   "value": 41300000000.0,
+   "prior": 6300000000.0,
+   "period": "quarter",
+   "source_ids": [
+    "analyst_post_skhy_2026q2"
+   ]
+  },
+  "net_income": {
+   "value": 64100000000.0,
+   "period": "quarter",
+   "one_off_gains_pretax": 43200000000.0,
+   "source_ids": [
+    "analyst_post_skhy_2026q2"
+   ]
+  },
+  "operating_cash_flow": {
+   "value": 44900000000.0,
+   "period": "quarter",
+   "source_ids": [
+    "analyst_post_skhy_2026q2"
+   ]
+  },
+  "capex": {
+   "value": 7300000000.0,
+   "period": "quarter",
+   "source_ids": [
+    "analyst_post_skhy_2026q2"
+   ]
+  }
+ },
+ "kpis": [
+  {
+   "id": "asp",
+   "value": null,
+   "growth": 0.3,
+   "kpi_basis": "average",
+   "scope": "total",
+   "tag": "cyclical",
+   "note": "post: ASP +30% with mix timing; window as stated by the post",
+   "source_ids": [
+    "analyst_post_skhy_2026q2"
+   ]
+  },
+  {
+   "id": "bits",
+   "value": null,
+   "kpi_basis": "flow",
+   "scope": "total",
+   "tag": "structural",
+   "note": "not supplied: identity revenue = bits x ASP is missing",
+   "source_ids": [
+    "analyst_post_skhy_2026q2"
+   ]
+  },
+  {
+   "id": "mix_dram_share",
+   "value": 0.73,
+   "kpi_basis": "rate",
+   "scope": "total",
+   "source_ids": [
+    "analyst_post_skhy_2026q2"
+   ]
+  },
+  {
+   "id": "mix_nand_share",
+   "value": 0.27,
+   "kpi_basis": "rate",
+   "scope": "total",
+   "source_ids": [
+    "analyst_post_skhy_2026q2"
+   ]
+  },
+  {
+   "id": "hbm_market_share",
+   "value": 0.58,
+   "kpi_basis": "rate",
+   "scope": "hbm",
+   "tag": "structural",
+   "note": "\"~58%\"",
+   "source_ids": [
+    "analyst_post_skhy_2026q2"
+   ]
+  }
+ ],
+ "history_operating_margins": {
+  "values": [
+   0.52,
+   0.1,
+   0.16,
+   0.29,
+   0.16,
+   -0.24,
+   0.35,
+   0.42
+  ],
+  "years": "2018-2025 approximate, illustration only",
+  "source_ids": [
+   "analyst_post_skhy_2026q2"
+  ]
+ },
+ "cycle": {
+  "current_operating_margin": 0.763,
+  "current_operating_margin_exact": 0.7634,
+  "cycle_margin": {
+   "value": 0.29,
+   "kind": "analyst_estimate",
+   "label": "revenue-weighted 2018-25 per the post",
+   "source_ids": [
+    "analyst_post_skhy_2026q2"
+   ]
+  },
+  "largest_one_year_drops": [
+   {
+    "from": 0.515,
+    "to": 0.101,
+    "years": "2018->2019"
+   },
+   {
+    "from": 0.153,
+    "to": -0.236,
+    "years": "2022->2023"
+   }
+  ],
+  "source_ids": [
+   "analyst_post_skhy_2026q2"
+  ]
+ },
+ "contracts": {
+  "label": "long-term agreements",
+  "tenor_years": [
+   3,
+   5
+  ],
+  "customers": 10,
+  "deposits": true,
+  "price_mechanism": null,
+  "share_of_next_year_volume": null,
+  "source_ids": [
+   "analyst_post_skhy_2026q2"
+  ]
+ },
+ "chain": {
+  "upstream_ticker": "NVDA",
+  "upstream_fixture": "nvda_2026q2.json",
+  "upstream_review_sha256": null,
+  "share_of_revenue_via_chain": null,
+  "variants": {
+   "synthetic_share": {
+    "share_of_revenue_via_chain": 0.3,
+    "source_ids": [
+     "test_assumption_chain_share"
+    ]
+   }
+  },
+  "source_ids": [
+   "nvda_econ_2026q2_fixture"
+  ]
+ },
+ "market": {
+  "price": 132,
+  "price_as_of": "2026-07-31",
+  "run_rate_eps": 17.5,
+  "run_rate_basis": "peak_quarter_x4 (post)",
+  "source_ids": [
+   "analyst_post_skhy_2026q2"
+  ]
+ },
+ "expected": {
+  "identity": {
+   "status": "missing",
+   "missing_input": "bits"
+  },
+  "normalized_pe": {
+   "run_rate_pe": 7.543,
+   "margin_only_normalized_pe": 19.85,
+   "margin_only_normalized_pe_exact_margin": 19.856,
+   "label": "margin_only: a floor on the correction because revenue stays at the record run rate",
+   "derived_from": "132/17.5; x (0.763/0.29); x ((41.3/54.1)/0.29)"
+  },
+  "peak_flag": {
+   "key": "peak_margin_run_rate",
+   "severity": "high",
+   "reason": "no gross profit or opex supplied; and memory_cycle is price-cyclical, so the exception never applies"
+  },
+  "contract_coverage": {
+   "status": "lta_unproven",
+   "severity": "info",
+   "missing": [
+    "share_of_next_year_volume",
+    "price_mechanism"
+   ],
+   "cycle_damping": "none",
+   "base_reversion_years": 3
+  },
+  "chain": {
+   "base": {
+    "status": "unquantified",
+    "missing": [
+     "SKHY revenue share via NVDA"
+    ]
+   },
+   "synthetic_share": {
+    "exposed_share": 0.075,
+    "pct": 7.5,
+    "labelled_with": [
+     "test_assumption_chain_share",
+     "nvda_2026q2.json exposed_share (analyst_estimate)"
+    ],
+    "derived_from": "0.30 x 0.25"
+   }
+  },
+  "render_he": {
+   "risk_fallback": "חלק מהביקוש תלוי בשרשרת מימון (Nvidia מממנת לקוחות שקונים זיכרון); כמה מההכנסות תלוי בה עוד לא ידוע"
+  }
+ }
+}

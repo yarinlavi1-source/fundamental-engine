@@ -776,6 +776,82 @@ def add_qualitative(fb, qid, topic, statement, kind, source_ids, as_of):
                               'source_ids': list(source_ids), 'as_of': as_of})
 
 
+# ---------------------------------------------------------------- KPI intake (econ layer)
+
+CURRENCY_BASES = ('reported', 'constant_currency')   # how a KPI's currency amounts were stated by the issuer
+CURRENCY_TOKEN = 'currency'                           # registry unit classes carry it where the reporting currency goes
+# source kinds a KPI may not come from: a consensus row is an expectation (fb['estimates']) and a market feed carries
+# prices and rates; neither is a reported operating figure, so storing one as an as_reported KPI would launder it
+KPI_REFUSED_KINDS = ('consensus', 'market_feed')
+
+
+def _kpi_unit(fb, kpi_id, unit_class, unit):
+    """The row's unit for a KPI named by registry id: the registry's unit class ('count', 'rate', 'count_per_day', 'bits',
+    'GW', ...) itself, with the FactBook's reporting currency (company.currency, an ISO code) in place of the token
+    'currency' ('currency' -> USD, 'currency_per_user' -> USD_per_user). A stated `unit` is checked, never trusted over the
+    registry: for a currency-bearing class it may only name the ISO code the issuer reported the KPI in (a KPI stated
+    in another currency than the statements stays visible in its unit); for any other class it must equal the class."""
+    if CURRENCY_TOKEN not in unit_class:
+        if unit is not None and unit != unit_class:
+            raise ValueError(f'{kpi_id}: unit {unit!r} contradicts the registry unit {unit_class!r}')
+        return unit_class
+    code = unit if unit is not None else (fb.get('company') or {}).get('currency')
+    if not isinstance(code, str) or not MONETARY.match(code):
+        raise ValueError(f'{kpi_id}: a {unit_class!r} KPI needs an ISO currency code (company.currency, or unit=), got {code!r}')
+    return unit_class.replace(CURRENCY_TOKEN, code)
+
+
+def add_kpi(fb, kpi_id, period, period_end, value, source_id, available_at, *,
+            kpi_basis, scope='total', currency_basis='reported', unit=None, period_start=None):
+    """A point-in-time operating KPI (accounts, gross bookings, DAU, bits, GW, ...) named by its id in the economic-model
+    registry (brain/economics.json), stored as an as_reported fact with how it was measured.
+
+    Why: identities such as revenue = accounts x revenue per account are only arithmetic when both sides share a basis,
+    a scope and a window (brain/protocols/economic_models.md). So every KPI enters with its `kpi_basis` (balance at the
+    period end, average over the period, flow during it, cumulative since inception, rate), its `scope` ('total', or the
+    segment / geography / cohort it covers) and its `currency_basis` (reported or constant_currency); the window is the
+    fact's period label, period_end and optional period_start (a label ending in '@<date>' must name period_end). The id
+    must exist in the registry (a typo is refused, not stored under a new name), the unit comes from the registry and
+    never from the USD default of UNITS, the source may not be a consensus or market feed (KPI_REFUSED_KINDS), and the
+    row goes through add_fact, so candidates()/get()/series() apply the usual point-in-time rule: invisible before
+    `available_at`, which cannot precede the period end (a number known before its period ended is guidance, a
+    qualitative item). A basis the registry does not declare for the KPI is stored as stated (econ.kpi_table shows
+    basis_declared false; the identities answer basis_mismatch), never re-labelled. The registry is imported lazily:
+    nothing in the pipeline loads the econ layer unless a KPI is actually added. Returns the stored row."""
+    from . import econ                                  # econ imports facts; loaded here only, on use
+    spec = econ.kpi(kpi_id)                             # ValueError on an unknown id
+    if kpi_basis not in econ.BASES:
+        raise ValueError(f'{kpi_id}: kpi_basis must be one of {econ.BASES}, got {kpi_basis!r}')
+    if currency_basis not in CURRENCY_BASES:
+        raise ValueError(f'{kpi_id}: currency_basis must be one of {CURRENCY_BASES}, got {currency_basis!r}')
+    if not isinstance(scope, str) or not scope.strip():
+        raise ValueError(f'{kpi_id}: scope must name what the KPI covers (total, a segment, a geography, a cohort)')
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise ValueError(f'{kpi_id}: value must be the reported level as a number, got {value!r} (a growth rate without its '
+                         'level is not a KPI fact: keep it, sourced, in the case)')
+    if not isinstance(period, str) or not period:
+        raise ValueError(f'{kpi_id}: period label required (the window: Q@<end>, FY<year>, I@<date>, ...)')
+    if '@' in period and period.rsplit('@', 1)[1][:10] != str(period_end)[:10]:
+        raise ValueError(f'{kpi_id}: period {period!r} names another date than period_end {period_end}')
+    if period_start is not None and _d(period_start) > _d(period_end):
+        raise ValueError(f'{kpi_id}: period_start {period_start} is after period_end {period_end}')
+    src = fb['sources'].get(source_id)
+    if src is None:
+        raise ValueError(f'unknown source {source_id}')
+    if src['kind'] in KPI_REFUSED_KINDS:
+        raise ValueError(f'{kpi_id}: source {source_id} is {src["kind"]!r}; a KPI is a reported figure, not an estimate or a '
+                         'market feed (consensus belongs in fb["estimates"], an opinion in add_qualitative)')
+    if _d(available_at) < _d(period_end):
+        raise ValueError(f'{kpi_id}: available_at {available_at} precedes period_end {period_end}; a reported KPI is not '
+                         'known before its period ended (an outlook belongs in add_qualitative as guidance)')
+    row = add_fact(fb, kpi_id, period, period_end, value, source_id, 'as_reported', available_at,
+                   unit=_kpi_unit(fb, kpi_id, spec['unit'], unit), period_start=period_start)
+    row['kpi_basis'] = kpi_basis
+    row['scope'] = scope.strip()
+    row['currency_basis'] = currency_basis
+    return row
+
+
 BUNDLE_METRICS = {  # evidence-bundle metric names -> FactBook metrics (duration unless listed in BUNDLE_INSTANT)
     'revenue': 'revenue', 'operating_income_gaap': 'operating_income', 'operating_income': 'operating_income',
     'net_income_gaap': 'net_income', 'net_income': 'net_income', 'cfo': 'cfo', 'capex': 'capex', 'buybacks': 'buybacks',
@@ -1000,14 +1076,19 @@ def item_usable(fb, item, missing=False):
     return _d(when) <= _d(fb['as_of']) if when else missing
 
 
+def rank(fb, fact):
+    """Sort key of candidates(), best first: secondary sources last, then basis, filing-derived before other kinds, an
+    issuer's filing before its earlier release (the filing is the revised figure), earliest available."""
+    src = fb['sources'][fact['source_id']]
+    return (src['kind'] == 'secondary', BASIS_RANK[fact['basis']], src['kind'] != 'filing_derived',
+            src.get('dataset') in RELEASE_DATASETS, fact['available_at'])
+
+
 def candidates(fb, metric, period=None, period_end=None):
-    """Usable facts best first: secondary sources last, then basis, filing-derived before other kinds, an issuer's
-    filing before its earlier release (the filing is the revised figure), earliest available."""
+    """Usable facts best first (rank())."""
     out = [f for f in fb['facts'] if f['metric'] == metric and usable(fb, f)
            and (period is None or f['period'] == period) and (period_end is None or f['period_end'] == period_end)]
-    src = lambda f: fb['sources'][f['source_id']]
-    return sorted(out, key=lambda f: (src(f)['kind'] == 'secondary', BASIS_RANK[f['basis']], src(f)['kind'] != 'filing_derived',
-                                      src(f).get('dataset') in RELEASE_DATASETS, f['available_at']))
+    return sorted(out, key=lambda f: rank(fb, f))
 
 
 def get(fb, metric, period=None, period_end=None):

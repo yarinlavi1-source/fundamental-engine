@@ -204,3 +204,12 @@ Companion to docs/EVIDENCE_STATUS.md, which separates what tests prove from what
     Since 0.13.0 the table's "expected price" row is today's price grown at the base IRR moved halfway to the market return
     (`decision.PRICE_PATH_PULL`), shown with the share of walk-forward rows within +-25% of the realized price
     (`decision.PRICE_PATH_HIT`: 65% / 50% / 37% at 1 / 3 / 5 years): an estimate with its measured error, never a target.
+45. **The business-economics layer (`econ`) is phase A only and unvalidated out of sample.** Its identities are arithmetic,
+    but its tags, checks and thresholds were written with nine analyst posts in view; the preregistered held-out checks
+    (docs/prereg_econ.md H1-H3) have not been run, and the eleven fixtures are post figures not reconciled to filings. The
+    pipeline does not call it yet: its flags reach a valuation only when Claude carries them into the counter-thesis, and
+    the owner's table shows its rows only when supplied by hand (phase B wires both). The price requirement in operating
+    units exists for a digital bank only (brokers and GPU vendors need WP10). KPIs must be collected and their basis and
+    scope stated by Claude; a missing KPI becomes a question, so a sparse case reads mostly as "not yet clear". The Hebrew
+    rows name segments and categories in English unless `names_he` labels them. The estimates-versus-price reading
+    (RDDT example on the design's unpinned figures) is a description of what moved, with no predictive claim.

@@ -1,0 +1,193 @@
+{
+ "_schema": "econ_fixture_v1",
+ "_provenance": "analyst post figures (analyst_post_uber_2025q3); not reconciled to filings; arithmetic fixture, not truth; pins the design rules, never the analyst conclusions. Prior-year KPI levels are the post's; the issuer 8-K Ex.99.1 reads trips 2.868bn and MAPCs 161m a year earlier (see _reconciliation), kept apart so the design arithmetic (WP3 #1-#2) stays pinned to the post figures.",
+ "company": "UBER",
+ "name": "Uber Technologies",
+ "period_end": "2025-09-30",
+ "period": "quarter",
+ "as_of": "2025-11-04",
+ "currency": "USD",
+ "reconciled_to_filings": false,
+ "sources": {
+  "analyst_post_uber_2025q3": {
+   "kind": "analyst_post",
+   "available_at": "2025-11-04",
+   "note": "user-supplied third-party post on the Q3-25 report; the results date is used as availability"
+  },
+  "uber_8k_q3_2025_ex991": {
+   "kind": "issuer_release",
+   "available_at": "2025-11-04",
+   "note": "cross-reference only (scratch reconciliation uber_2025q3_filed.json)"
+  }
+ },
+ "model_hint": {
+  "primary": "marketplace",
+  "card_type": "subscription_software",
+  "provider_label": "Software - Application",
+  "select_reason": "gross_bookings KPI present overrides the provider label",
+  "note": "expected select() result for WP4; not an engine input"
+ },
+ "lines": {
+  "revenue": {
+   "value": 13460000000.0,
+   "growth": 0.2,
+   "period": "quarter",
+   "currency_basis": "reported",
+   "source_ids": [
+    "analyst_post_uber_2025q3"
+   ]
+  },
+  "operating_income": {
+   "value": 1100000000.0,
+   "growth": 0.05,
+   "period": "quarter",
+   "source_ids": [
+    "analyst_post_uber_2025q3"
+   ]
+  },
+  "adjusted_ebitda": {
+   "value": 2250000000.0,
+   "growth": 0.33,
+   "period": "quarter",
+   "source_ids": [
+    "analyst_post_uber_2025q3"
+   ]
+  },
+  "operating_expenses": {
+   "value": 4200000000.0,
+   "growth_ex_unusual": 0.125,
+   "unusual_item": 450000000.0,
+   "period": "quarter",
+   "source_ids": [
+    "analyst_post_uber_2025q3"
+   ]
+  }
+ },
+ "kpis": [
+  {
+   "id": "mapcs",
+   "label": "monthly active platform consumers",
+   "value": 189000000.0,
+   "prior": 161500000.0,
+   "growth": 0.17,
+   "kpi_basis": "average",
+   "scope": "total",
+   "tag": "structural",
+   "source_ids": [
+    "analyst_post_uber_2025q3"
+   ]
+  },
+  {
+   "id": "trips",
+   "value": 3512000000.0,
+   "prior": 2879000000.0,
+   "kpi_basis": "flow",
+   "scope": "total",
+   "tag": "structural",
+   "source_ids": [
+    "analyst_post_uber_2025q3"
+   ]
+  },
+  {
+   "id": "frequency",
+   "label": "trips per MAPC",
+   "value": null,
+   "growth": 0.04,
+   "kpi_basis": "average",
+   "scope": "total",
+   "tag": "structural",
+   "note": "the post gives the growth only",
+   "source_ids": [
+    "analyst_post_uber_2025q3"
+   ]
+  },
+  {
+   "id": "gross_bookings",
+   "value": null,
+   "growth": 0.21,
+   "kpi_basis": "flow",
+   "scope": "total",
+   "currency_basis": "constant_currency",
+   "note": "the post gives constant-currency growth only; the level is not supplied",
+   "source_ids": [
+    "analyst_post_uber_2025q3"
+   ]
+  }
+ ],
+ "segments": [
+  {
+   "name": "Mobility",
+   "revenue": 7680000000.0,
+   "prior_revenue": 6400000000.0,
+   "gross_bookings": 25100000000.0,
+   "profit": 2040000000.0,
+   "profit_definition": "segment adjusted EBITDA",
+   "source_ids": [
+    "analyst_post_uber_2025q3"
+   ]
+  },
+  {
+   "name": "Delivery",
+   "revenue": 4480000000.0,
+   "prior_revenue": 3473000000.0,
+   "gross_bookings": null,
+   "profit": 921000000.0,
+   "prior_profit": 626500000.0,
+   "profit_definition": "segment adjusted EBITDA",
+   "source_ids": [
+    "analyst_post_uber_2025q3"
+   ]
+  },
+  {
+   "name": "Freight",
+   "revenue": 1310000000.0,
+   "prior_revenue": 1310000000.0,
+   "gross_bookings": null,
+   "profit": -20000000.0,
+   "profit_definition": "segment adjusted EBITDA",
+   "source_ids": [
+    "analyst_post_uber_2025q3"
+   ]
+  }
+ ],
+ "balance": {
+  "cash": 8400000000.0,
+  "short_term_investments": 500000000.0,
+  "insurance_reserves": 12000000000.0,
+  "debt": 10600000000.0,
+  "source_ids": [
+   "analyst_post_uber_2025q3"
+  ],
+  "note": "insurance reserves are restricted (quarter_review keeps them outside spendable liquidity)"
+ },
+ "_reconciliation": {
+  "trips_prior": 2868000000.0,
+  "mapcs_prior": 161000000.0,
+  "revenue": 13467000000.0,
+  "operating_income": 1113000000.0,
+  "debt": 11846000000.0,
+  "note": "filed values differ from the post; not used in expected",
+  "source_ids": [
+   "uber_8k_q3_2025_ex991"
+  ]
+ },
+ "expected": {
+  "trips_identity": {
+   "identity": "trips = mapcs x frequency",
+   "units_factor": 1.2168,
+   "reported_factor": 1.21987,
+   "residual_pp": 0.31,
+   "status": "consistent",
+   "rule": "growth within 1pp (growth_identity_pp 0.01)",
+   "derived_from": "1.17*1.04 vs 3.512e9/2.879e9"
+  },
+  "mobility_ebitda_per_gb": {
+   "value": 0.08127,
+   "pct": 8.13,
+   "derived_from": "segments.Mobility.profit / gross_bookings"
+  },
+  "render_he": {
+   "how_it_earns": "יותר משתמשים (+17%) × יותר נסיעות לכל משתמש (+4%); מכל 100$ של הזמנות בתחבורה נשארים כ־8$ רווח תפעולי"
+  }
+ }
+}

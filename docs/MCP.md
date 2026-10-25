@@ -104,6 +104,11 @@ protocol/runtime tests, not an assertion about the user's live Claude session.
 - `quarter_review({case})`: one reported quarter/year: one-off normalization, operating
   leverage, liquidity, segments/KPIs, guidance vs expectations, cycle, listing premium,
   bank P/TBV vs ROTE, multiple sensitivities and falsifiers. Read quarter_review.
+- `econ_review({case, options?})`: business economics of one company: the economic model
+  (options.model, or card_type/profile_text/override through econ.select_case), identities,
+  growth split by tag, overlays, falsifiers, open questions, the owner's Hebrew rows
+  (render_he; names_he for Hebrew labels) and, with revisions and prices, estimates vs price.
+  Read economic_models; see docs/ECONOMICS.md. Not a valuation.
 - `expectations_momentum({case})`: acceleration, margin expansion, beats/raises,
   estimate revisions (growth_valuation).
 - `plain_verdict({case})`: plain_version=1 reported history (+ optional valuation_case,

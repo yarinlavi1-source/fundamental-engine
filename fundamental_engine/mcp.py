@@ -65,6 +65,7 @@ TOOLS += [
  research_tool('forensic_scores','Piotroski F, Altman Z (or Z-double-prime), Beneish M, ROIC/incremental ROIC and Rule of 40 from history rows; missing fields stay unavailable. Screens, not verdicts. Read forensic.',{'case':{'type':'object'}},['case']),
  research_tool('import_statements','Map Alpha Vantage INCOME_STATEMENT/BALANCE_SHEET/CASH_FLOW payloads (already retrieved by the client) into history rows. Fetches nothing.',{'income':{'type':'object'},'balance':{'type':'object'},'cash_flow':{'type':'object'},'years':{'type':'integer'},'as_of':{'type':'string'}},['income']),
  research_tool('quarter_review','Results-day review of one reported quarter/year: symmetric after-tax one-off normalization, opex vs revenue growth, FCF and spendable versus restricted liquidity, segment/KPI definitions, guidance vs prior and attributed consensus, guidance track, peak-cycle run-rate, dual-listing premium, bank P/TBV vs ROTE, EPS x multiple implied returns and thesis falsifiers. Read quarter_review first. Not a valuation or order.',{'case':{'type':'object'}},['case']),
+ research_tool('econ_review','Business economics of one company (econ layer): its economic model by economics, not the provider label (brain/economics.json), identities (accounts x revenue per account, bits x ASP, bookings x take rate...), growth split into structural / cyclical / macro / mix with the residual, overlays (who funds the demand, supplier chain, acquisition SBC, bank capital, contract coverage, segments), falsifiers, open questions, the Hebrew rows for the owner table and, with revisions and prices, estimates vs price. options: model or card_type/profile_text/override; prior, upstream (earlier econ reviews); names_he; revisions, prices. Read economic_models first; run before quarter_review or a valuation. Not a valuation or order.',{'case':{'type':'object'},'options':{'type':'object'}},['case']),
  research_tool('expectations_momentum','Is the business outrunning expectations? Acceleration, margin expansion, beats/raises and estimate revisions from recent_quarters, expectations_track and estimate_revisions. Read growth_valuation.',{'case':{'type':'object'}},['case']),
  research_tool('plain_verdict','Return one concise Hebrew investment paragraph by default: current value/discount, dated conditional five-year value, potential/risk notes. Execute valuation_case and full research_dossier review; retain detailed_text. response_style:detailed opts into the long report. decision_notes require reviewed observation IDs. Read plain_language first. Research indication, not an order.',{'case':{'type':'object'}},['case']),
  research_tool('research_plan','Start/resume research using the client existing connectors. Returns stages and relevant brain packet IDs. No data is fetched.',{'request':{'type':'object'}},['request']),
@@ -272,6 +273,9 @@ class Server:
         if name == 'quarter_review':
             from .quarter import quarter_review
             return quarter_review(args['case'])
+        if name == 'econ_review':
+            from .econ import econ_review
+            return econ_review(args['case'], args.get('options'))
         if name == 'expectations_momentum':
             from .growth import momentum
             return momentum(args['case'])
