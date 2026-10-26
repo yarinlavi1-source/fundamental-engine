@@ -91,7 +91,12 @@ Inputs: {RUN}/value.json (ran, stages, stage errors, the table and casefile path
 2. Guidance against its track record: a guidance tier cites a guidance item and sits inside its range for the period, or
    states its deviation; current_year_revenue applies the track-record ratio to the unreported remainder only; growth_anchor
    states period = the next fiscal year (understand/auto.json); the ratio actual / guided midpoint is recorded and read
-   honestly (a conservative guider's guidance is a floor, a missed guide is evidence).
+   honestly (a conservative guider's guidance is a floor, a missed guide is evidence). The fiscal year in progress
+   (fc.anchors.current_fiscal_year): its basis and kind; with a quarterly guide, its quarter_guide rule (sequential,
+   seasonal or flat) against the company's own quarters and commentary. Bought revenue (fc.anchors.stub
+   acquired_step_excluded) and a stub draw marked immaterial (fc.funding.<s>.stub_draw_immaterial: the cover is reported
+   free cash flow since the balance sheet) are read against the filing, not assumed; a dataqa resolution (qa.resolutions)
+   must be backed by the filing it cites.
 3. Multiples: a peak multiple is not paid as justified (compare company_path multiples with own_history and with the named
    competitors at a comparable stage).
 4. The table: out/table_he.md equals the executed casefile number for number; value.json ran is true only when

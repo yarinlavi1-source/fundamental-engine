@@ -137,7 +137,9 @@ Exact shapes (from evidence_pack.KEYS; the skeleton has them filled with this ru
   year in progress (auto.json revenue_guidance_for_year_in_progress), the remainder item, the release], "remainder": the
   guidance id of the part not yet reported (e.g. Q4), "adjust_by_track_record": true|false, "reason"}: the track-record
   ratio is applied to that remainder only. When the company gives no fiscal-year revenue guidance, do not set it: the engine
-  keeps its own rule and the gap is shown.
+  then takes the reported year to date + the company's dated guide for the NEXT unreported quarter (a guidance row 'Q2
+  FY2027' of gather_documents) + the quarters after it at the guided step (sequential, seasonal or flat: the rule is in
+  fc.anchors.current_fiscal_year.quarter_guide), and the gap is shown.
 - growth_anchor (and a growth list) is the growth of the NEXT fiscal year: "period" = auto.json next_fiscal_year.label; a
   guidance- or consensus-tier value sits inside the cited item's range for that year (else state "deviation"); a
   guidance-tier growth driver states adjust_by_track_record (true, false, or the scenarios to adjust).
@@ -145,8 +147,18 @@ Exact shapes (from evidence_pack.KEYS; the skeleton has them filled with this ru
   tier); competitor names the competitors (tickers of field.json) and cites a source of theirs; own_history cites issuer
   documents or structured data; analyst and market tiers on company levers stay visible gaps.
 - forecast_options {"cyclical": {"treatment": "structural|cyclical", "reason", "evidence_ids"}, "horizon_years": 1-30,
-  "financing": "assumed|assumed_debt|none"}: set cyclical whenever the industry is cyclical by name or the history shows a
-  cycle; the other two only when evidenced.
+  "financing": "assumed|assumed_debt|none", "acquired_revenue": {"value", "acquisition", "closed", "reason", "evidence_ids"}}:
+  set cyclical whenever the industry is cyclical by name or the history shows a cycle; horizon and financing only when
+  evidenced; acquired_revenue when an acquisition closed in the last or the current fiscal year: the revenue it brought into
+  the step into the year in progress at its pre-deal size (the acquisition note, pro forma revenue or the company's stated
+  contribution), so its paid-for revenue is not charged again as growth capex (the engine also reads the 10-Q pro forma
+  note itself: fc.anchors.stub.acquired_step_excluded).
+- dataqa_resolutions [{"field", "metric", "period_end", "resolution": "label_difference|use_source", "source_id", "reason",
+  "evidence_ids"}] ONLY when dataqa blocks on a cross-source conflict the filing explains (qa.fields.<field>.note names the
+  two sources; NVIDIA 2026-07-26: short-term investments 34.1B SEC vs 76.9B Alpha Vantage = debt 34.1B + equity 42.8B per
+  the 10-Q): label_difference names the source whose number measures something else, use_source the source the filing
+  confirms (period_end required). The evidence must be the filing (a sec_filing source or an item citing one); the engine
+  records it and the field stays limited; without it the block stays.
 - scenario_events {"bear": [...], "base": [...], "bull": [...]}: each event {"event_he", "evidence_ids"} or {"event_he",
   "hypothesis": true}, in plain Hebrew. base = the most likely path (guidance adjusted by its track record where that is the
   honest reading, contracted demand, consensus as a cross-check); bull = what must happen (specific, dated); bear = what

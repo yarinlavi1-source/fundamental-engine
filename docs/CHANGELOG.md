@@ -1,3 +1,58 @@
+## Unreleased — engine causes of the 26.10.2026 repair passes, track B (forecast, dataqa)
+
+Every ticker run of 26.10.2026 (NVDA, CRDO, APH) needed a repair pass for engine-shaped reasons. These fixes remove the
+causes without weakening a check; the walk-forward (no guidance rows, no analyst inputs) is unchanged, and the ADBE fixture,
+the demo company and a walk-forward row built from saved filings (engine_backtest.company_row) give identical values.
+- The fiscal year in progress with a quarterly guide (CRDO critical: one quarter at +115% year over year extrapolated to
+  2.87B while Q1 479M + the Q2 guide 530M pointed to about 2.25-2.45B). `forecast._current_year`: after an input, consensus and
+  fiscal-year guidance, a dated company guide for the NEXT unreported quarter of the year in progress (guidance period 'Q2
+  FY2027', or 'Q2 2026' for a calendar fiscal year) gives the year as the reported year to date + the guided midpoint + the
+  quarters after it: at the guided quarter's own sequential growth (the same quarters a year earlier rose every quarter),
+  at its year-over-year growth applied to those quarters a year earlier (they dipped: seasonal), or held flat (a guided
+  decline, an acquisition in the year, or no last quarter to measure the step). The rule, the step and the quarters are in
+  `anchors.current_fiscal_year.quarter_guide`; the basis names the guide; kind stays 'model' while quarters are modelled
+  ('guidance' when the guided quarter closes the year). CRDO-shaped: 2,244.3M instead of 2,866.9M; NVDA 2026-10-26: 407.1B
+  (H1 177.8B + the Q3 guide 108B + Q4 at +12.2%) instead of 422.9B; APH: 35.08B (flat after the guide: CommScope closed in
+  the year). Without a qualifying row (undated, issued after as_of, another quarter or year) nothing changes.
+- Bought revenue is not charged again as growth capex (APH critical: the CommScope revenue step, paid for by debt already in
+  the opening balance, was charged at sales-to-capital in the stub and created an assumed draw, +1pp cost of equity and a
+  funding-conditional verdict). `forecast._acquired_step`: the stub's growth reinvestment uses the current year's revenue
+  change less the bought revenue in it: inputs.acquired_revenue {value, fiscal_year_end, acquisition, closed, reason,
+  evidence_ids} (evidence pack forecast_options.acquired_revenue), else the ASC 805 pro forma reading (pro forma less reported
+  revenue for the same months a year earlier + the acquired pre-deal run rate for the months left), else the step above
+  organic growth (flagged); never more than the step above the organic growth of last year's revenue, never applied when the
+  deal closed after the balance sheet (warned high). Recorded in `anchors.stub.acquired_step_excluded`, the reinvestment
+  rationale, the reinvestment rule's stub_revenue_change and the warning `acquired_step_not_reinvested`.
+- A stub draw that reported free cash flow covers is not a funding condition. The minimum-cash default was checked: min(the
+  stage's months of cash costs, today's cash) is ALL of today's cash for APH (3 months of ~26B a year), so any stub shortfall
+  becomes a draw; the default stays (a documented judgement that changes values everywhere) and is now named
+  (`minimum_cash_is_all_cash`, low; an evidenced minimum_cash_months override replaces it). `forecast._stub_draw_immaterial`:
+  a bear/base/bull whose only external money is a debt draw in the stub, with no equity and no draw afterwards, no larger than
+  the free cash flow after distributions the company reported over the last twelve months x the years between the balance
+  sheet and as_of (cash the opening balance does not count), carries `funding[s].stub_draw_immaterial`: the draw stays in the
+  model, the rationale and a low warning say why, no material issue, no needs_external_funding add-on, and the decision
+  records `gates.funding_immaterial` and names it in the verdict reason instead of a funding gate; scenario_reasons drops
+  'external funding not yet secured'. Negative or unreported free cash flow, a draw above the cover, a draw past the stub or
+  any equity keeps the funding gate (tests: a negative-cash-flow and a multi-year-draw fixture and the loss-making grower).
+  APH (its saved FactBook and inputs without the repair's sales-to-capital and minimum-cash overrides, which reproduce the
+  original 222M base / 826M bear stub draws and the +1pp add-on): the base now funds itself (Ke 8.66%, no add-on) and the
+  bear's 1M stub draw is immaterial; with the acquired-step exclusion switched off, the 202M / 797M stub draws read
+  immaterial against 965M of cover (2,986M of free cash flow after distributions a year x 0.32 years since 2026-06-30).
+- An analyst resolution of a cross-source label conflict (NVDA: dataqa blocked the verdict on short-term investments 34.1B
+  SEC vs 76.9B Alpha Vantage, which per the 10-Q is debt 34.1B + equity 42.8B). Pipeline `inputs.dataqa_resolutions` [{field,
+  metric, period_end, resolution label_difference|use_source, source_id, reason, evidence_ids}] (evidence pack
+  `dataqa_resolutions`, core part key) -> `dataqa.validate(options.resolutions)`: applied only to the fact-level cross-source
+  comparison of the named field and metric, only with FILING evidence (a filing-derived source, a filing document or an item
+  citing one); label_difference records the named source as an explained definitional difference (the chosen value never
+  moves), use_source chooses the source the filing confirms at period_end. Recorded in `qa.resolutions` (applied | unused |
+  rejected with why), an `analyst_resolution` check, the field's `analyst_resolutions` and note; the field stays `limited`;
+  the review digest binds the resolutions. Without one, or with a rejected or unmatched one, the block stays.
+- Fixed: `inputs.current_year_revenue` with a tier other than guidance or consensus (own_history, analyst, ...) made the case
+  an invalid spec (assumption kind 'input'); it is now a 'model' row with its own tier in driver_sources.
+- Stage files: analyst.md (quarterly guide rule, acquired_revenue, dataqa_resolutions), repair.md, review_numbers.md;
+  docs/MODULE_CONTRACTS.md (dataqa options and output, forecast inputs and anchors, decision gates). Tests:
+  tests/test_repair_causes.py.
+
 ## Unreleased — the fast ticker procedure (25.10.2026)
 
 The owner's limit is 10-20 minutes for one ticker, without harming the result. Measured on NVDA with the saved Workflow

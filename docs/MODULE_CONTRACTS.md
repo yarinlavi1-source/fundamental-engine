@@ -80,7 +80,15 @@ convertible_terms, cross_source, debt_rollforward, debt_scope, dilutive_instrume
 issuer_revision, large_share_change, liquid_assets_nonnegative, liquid_assets_within_current_assets, lookahead_excluded,
 net_income_is_vs_cf, possible_split, post_period_review, quarters_sum_to_annual, research_conflict, secondary_spread,
 share_continuity, share_routes, shares_not_wavg, split_unresolved, staleness, ttm_matches_facts.
-`options` = {"tolerances": {metric: relative}, "max_age": {shares|balance_sheet|ttm|annual: days}}.
+`options` = {"tolerances": {metric: relative}, "max_age": {shares|balance_sheet|ttm|annual: days}, "resolutions": [{"field",
+"metric","period_end"?,"resolution": label_difference|use_source,"source_id","reason","evidence_ids"}]} (pipeline
+`inputs.dataqa_resolutions`). A resolution acts only on the fact-level cross-source comparison of the named field and metric
+(`dataqa.RESOLUTION_METRICS`): label_difference records the named source's value as an explained definitional difference
+(the chosen value does not move); use_source (period_end required) chooses the named source at that date. It needs FILING
+evidence (a filing-derived source, an issuer document of the filing dataset, or an item citing one, usable at as_of); a
+rejected or unmatched one changes nothing. Every one is recorded: `qa["resolutions"]` (status applied|unused|rejected, `why`,
+`applied` comparisons; the key exists only when resolutions were supplied), an `analyst_resolution` check, and on the field
+`analyst_resolutions` with a note; a field resting on an applied one is listed in `limited`. The review digest binds them.
 
 ## analysis.analyze(fb, qa=None, archetype=None, market_cap=None) -> an
 
@@ -199,7 +207,18 @@ has one (a date after as_of gives `invalid_spec`), else the first availability o
 `inputs` (KNOWN_INPUTS): {"overrides": [{"path","scenario": bear|base|bull|all,"value","reason","evidence_ids"}],
 "reviews": {assumption_id: {"status": reviewed|unreviewed,"reviewer"}}, "risk_free"|"equity_risk_premium": {"value","as_of",
 "source_id" | "title","url"?,"kind"?,"retrieval"?}, "horizon_years": 1..30, "financing": assumed|assumed_debt|none,
-"nol": opening tax-loss carryforward (number), "cyclical": {"treatment": structural|cyclical,"reason","evidence_ids"}}. A rate typed into the inputs (no
+"nol": opening tax-loss carryforward (number), "cyclical": {"treatment": structural|cyclical,"reason","evidence_ids"},
+"current_year_revenue": {"value","fiscal_year_end","basis","evidence_ids","source_tier"} (a tier other than guidance or
+consensus is a 'model' row with its own tier), "acquired_revenue": {"value","fiscal_year_end","acquisition","closed","reason",
+"evidence_ids"} (bought revenue in the step into the fiscal year in progress, kept out of the stub's growth reinvestment; not
+applied, warned high, when it closed after the balance sheet)}. The fiscal year in progress: an input, else consensus, else
+fiscal-year guidance, else the reported year to date + the company's dated guide for the NEXT unreported quarter + the
+quarters after it (sequential at the guided step, seasonal at its year-over-year growth on last year's quarters, or flat:
+`anchors.current_fiscal_year.quarter_guide` {rule, quarter, guided, sequential_growth, year_over_year_growth,
+remaining_quarters, ...}), else the year-to-date extrapolation. Bought revenue in the current year's step (the input, else
+the ASC 805 pro forma reading) is recorded in `anchors.stub.acquired_step_excluded` and `revenue_change_reinvested`. A stub-only
+debt draw no larger than the free cash flow after distributions reported since the balance sheet carries
+`funding[s].stub_draw_immaterial` (no material issue, no external-funding add-on, decision `gates.funding_immaterial`). A rate typed into the inputs (no
 FactBook source_id) becomes case kind `analyst_input` (any other stated kind kept in `stated_kind`; undated ->
 `published_at_estimated`); a kind in PRIMARY_CLAIMS (filing, earnings_release, issuer_release, regulator,
 official_statistics, facts.REPORTED_KINDS) or an unknown retrieval raises ValueError. Unknown top-level keys are ignored
@@ -315,14 +334,16 @@ governance_red_flag, redteam_not_usable, consistency_failure, critical_finding_u
              "register_pricing_basis","valuation_error"}],
  "gates": {"data_blocked","disqualifying","impaired","valuation_failed","no_valuation","understanding","evidence_gaps",
            "review_blocked","valuation_unverified","funding","funding_conditional","material_issues","red_flags","red_flags_released",
-           "withhold_price","withhold_price_released","reviewer_present","draft","draft_codes"},
+           "withhold_price","withhold_price_released","reviewer_present","draft","draft_codes",
+           "funding_immaterial"? (only when a bear/base stub draw is immaterial: [{"scenario","draw","period_end","cover","text","text_he"}])},
  "rules", "business_reason_he", "semantics"}
 ```
 Verdict codes: attractive_at_price, quality_but_expensive, promising_funding_conditional, interesting_not_yet_valuable,
 insufficient_evidence, index_preferable, avoid (precedence: decision.VERDICT_RULES). Required return = max(index return +
 permanent-loss premium, model cost of equity). IRR and every value at a required return move the terminal WACC by (1 - w) x
 the shift. Funding gates only a blocked plan or an unresolved `assumed_financing_<s>` issue; a reviewed priced financing path
-or SBC settled in shares is valued with `conditional_on`. Any unresolved forecast material issue (case, else spec
+or SBC settled in shares is valued with `conditional_on`; a stub-only debt draw the forecast marks `stub_draw_immaterial` is
+neither (named in `funding_immaterial` and in the verdict reason). Any unresolved forecast material issue (case, else spec
 underwriting) keeps the verdict a draft and is named (`withheld_reasons`, confidence); for possible_lender and leverage_at_cap
 the paragraph shows no value. With `fc['moat_proxy']` the band adds a no-proxy row and the margin test re-runs the verdict
 without the proxy. `reviewer_present` is true only for an accepted reviewer bound to the valuation and the inputs.
