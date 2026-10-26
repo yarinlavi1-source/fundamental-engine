@@ -112,7 +112,7 @@ KEYS = {
 }
 JUSTIFICATIONS = ('justified_high', 'peak', 'unproven')
 PATH_YEARS = 5
-PATH_ROIC_MAX = 5.                  # company_path.ROIC_MAX: a decimal (0.35 = 35%)
+PATH_ROIC_MAX = 1.5                 # company_path.ROIC_MAX: a decimal (0.35 = 35%); a typed percent above 1.5 is refused
 
 
 def _num(v):
@@ -699,7 +699,8 @@ def _company_path(p):
                 c.err(where, "multiple_from 'economics' computes multiple_path: remove multiple_path")
             if not (_num(x.get('roic')) and 0 < x['roic'] <= PATH_ROIC_MAX):
                 c.err(where, f"multiple_from 'economics' needs roic: the scenario's incremental ROIC as a decimal "
-                             f"(0 < roic <= {PATH_ROIC_MAX:g}; 0.35 = 35%), backed by its evidence_ids and source_tier")
+                             f"(0 < roic <= {PATH_ROIC_MAX:g}; 0.35 = 35%, so 4.5% is 0.045, never 4.5), backed by its "
+                             'evidence_ids and source_tier')
         elif mode != 'hand':
             c.err(where, "multiple_from must be 'economics' (preferred: the engine computes the path) or 'hand'")
         else:

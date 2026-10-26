@@ -12,7 +12,8 @@ Contract (inputs['company_path']):
      'peers': [{'ticker', 'forward_pe', 'growth', 'evidence_ids'}] (optional)}
 
 Economics mode (multiple_from 'economics', preferred): the analyst supplies only the scenario's incremental ROIC (a decimal,
-backed by the scenario's evidence_ids and source_tier) and the engine computes the multiple path from its OWN executed numbers
+0 < roic <= ROIC_MAX = 1.5, one above 1 flagged roic_above_100pct; backed by the scenario's evidence_ids and source_tier) and
+the engine computes the multiple path from its OWN executed numbers
 for that scenario: the fiscal-year EPS path below, the explicit cost of equity Ke, the terminal cost of equity Ke_T and the
 terminal growth g_T of the executed valuation case (so the path can never rest on another Ke or EPS path than the one the
 engine ran). With E_k the EPS of executed fiscal year k (k = 0 the one in progress; a partial year is annualized for its
@@ -62,7 +63,12 @@ TITLE_HE = 'מחיר המניה בכל שנה, לפי תרחיש'   # the owner'
 TOP_KEYS = {'metric', 'multiple', 'scenarios', 'own_history', 'peers'}
 SCEN_KEYS = {'multiple_path', 'multiple_from', 'roic', 'justification', 'reason_he', 'source_tier', 'competitors', 'evidence_ids'}
 MULTIPLE_FROM = ('economics', 'hand')
-ROIC_MAX = 5.                             # a decimal (0.35 = 35%); a percent typed as 35 is refused
+# roic is a decimal (0.35 = 35%). Above 1.5 (150%) the distributions are nearly all of earnings (1 - g/ROIC), so the bound
+# costs little and a percent typed as a number above it (35, 4.5) is refused. A ROIC above 1 (100%) reads as 100-150%: it is
+# flagged (roic_above_100pct) and recorded in the economics record for the reviewer. Below 1 a typed percent cannot be told
+# from a decimal by its size: the evidence, the refusal at or below g_T and the review read it.
+ROIC_MAX = 1.5
+ROIC_FLAG = 1.
 ECON_FORMULA = ('value_t = sum over the executed fiscal years k still ahead at anniversary t of D_k x (share of year k ahead) / '
                 '(1 + Ke)^(years to the midpoint of that part) + TV / (1 + Ke)^(years to the last executed fiscal year end); '
                 'D_k = E_k x (1 - g_(k+1) / ROIC) = E_k - (E_(k+1) - E_k) / ROIC (a partial year annualized for its growth; '
@@ -122,7 +128,8 @@ def validate(cp, known=None):
             roic = _num(x.get('roic'))
             if roic is None or not 0 < roic <= ROIC_MAX:
                 raise ValueError(f"company_path {s}: multiple_from 'economics' needs roic, the scenario's incremental ROIC as a "
-                                 f"decimal (0 < roic <= {ROIC_MAX:g}; 0.35 = 35%), backed by its evidence_ids and source_tier")
+                                 f"decimal (0 < roic <= {ROIC_MAX:g}; 0.35 = 35%, so 4.5% is 0.045, never 4.5), backed by its "
+                                 'evidence_ids and source_tier')
         else:
             if x.get('roic') is not None:
                 raise ValueError(f"company_path {s}: roic belongs to multiple_from 'economics' only")
@@ -312,6 +319,9 @@ def _economics_for(cs, fy, as_of, roic, s, res_sc):
     if roic <= gt:
         raise ValueError(f'company_path {s}: roic {roic:.4f} must exceed the executed terminal growth {gt:.4f}')
     rec = economics(fy, as_of, ke, ket, gt, roic)
+    if roic > ROIC_FLAG:
+        rec['roic_check'] = (f'roic {roic:g} is read as a decimal: {roic:.0%} incremental return on capital (1.0 = 100%); a percent '
+                             f'typed as a number ({roic:g}%) would be {roic / 100:.4f}. Check it against its evidence')
     eng = _num(term.get('roic', term.get('roe')))
     today = next((r.get('value_per_share') for r in (res_sc or {}).get('timeline') or [] if r.get('date') == as_of), None)
     rec.update(terminal_cost_of_equity_source=src, engine_terminal_roic=eng,
@@ -395,6 +405,11 @@ def build(cp, val, known=None, events=None, fc=None):
             rows.append(r)
         out['scenarios'][s] = {'label_he': LABEL_HE[s], **x, **({'multiple_path': mpath, 'economics': econ} if econ else {}),
                                'rows': rows}
+        if econ and econ.get('roic_check'):
+            out['flags'].append({'id': 'roic_above_100pct', 'scenario': s, 'severity': 'medium', 'roic': x['roic'],
+                                 'text': econ['roic_check'],
+                                 'text_he': f"תרחיש {LABEL_HE[s]}: תשואה על ההון {x['roic']:g} נקראת כשבר עשרוני, כלומר {x['roic']:.0%} "
+                                            f"(1.0 = 100%); אם הכוונה הייתה {x['roic']:g}% — יש לתקן ל־{x['roic'] / 100:.4f}."})
         if x['justification'] == 'peak':
             if hist is None:
                 out['flags'].append({'id': 'peak_unchecked', 'scenario': s, 'severity': 'medium',

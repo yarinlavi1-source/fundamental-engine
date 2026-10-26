@@ -306,6 +306,24 @@ class EconomicsModeTests(unittest.TestCase):
         up = C.build(hi, self.val, KNOWN)['scenarios']['base']['multiple_path']
         self.assertTrue(all(a > b for a, b in zip(up, before)))
 
+    def test_a_roic_above_100pct_is_flagged_for_the_reviewer(self):
+        """Between 1 and the bound a ROIC reads as 100-150%: it runs, and the flag and the economics record say how it was
+        read (a percent typed as a number would be 100 times lower)."""
+        self.assertEqual([f for f in self.cp['flags'] if f['id'] == 'roic_above_100pct'], [])     # 0.30 and 0.12: no flag
+        self.assertNotIn('roic_check', self.cp['scenarios']['base']['economics'])
+        hi = deepcopy(ECON)
+        hi['scenarios']['base']['roic'] = 1.2
+        out = C.build(hi, self.val, KNOWN)
+        f = [x for x in out['flags'] if x['id'] == 'roic_above_100pct']
+        self.assertEqual([(x['scenario'], x['severity'], x['roic']) for x in f], [('base', 'medium', 1.2)])
+        e = out['scenarios']['base']['economics']
+        self.assertIn('120%', e['roic_check'])
+        self.assertIn('0.0120', e['roic_check'])
+        self.assertEqual(e['status'], 'computed')
+        top = deepcopy(ECON)
+        top['scenarios']['base']['roic'] = 1.5
+        self.assertEqual(C.build(top, self.val, KNOWN)['scenarios']['base']['economics']['roic'], 1.5)
+
     def test_a_year_without_a_positive_value_has_no_price(self):
         val = deepcopy(self.val)
         bear = next(s for s in val['result']['scenarios'] if s['name'] == 'bear')
@@ -346,6 +364,8 @@ class EconomicsModeTests(unittest.TestCase):
         bad(lambda c: c['scenarios']['base'].update(multiple_path=[30, 28, 26, 24, 22, 20]), 'do not give one')
         bad(lambda c: c['scenarios']['base'].pop('roic'), 'needs roic')
         bad(lambda c: c['scenarios']['base'].update(roic=30), 'needs roic')                 # a percent typed as a number
+        bad(lambda c: c['scenarios']['base'].update(roic=4.5), r'4\.5% is 0\.045')        # 4.5 meant as 4.5%: not run as 450%
+        bad(lambda c: c['scenarios']['base'].update(roic=1.51), 'roic <= 1.5')
         bad(lambda c: c['scenarios']['base'].update(roic=0), 'needs roic')
         bad(lambda c: c['scenarios']['base'].update(roic=True), 'needs roic')
         bad(lambda c: c['scenarios']['base'].update(multiple_from='market'), "multiple_from must be")

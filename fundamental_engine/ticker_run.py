@@ -423,7 +423,7 @@ def skeleton(part, run=None):
                                           "path, cost of equity, terminal cost of equity and terminal growth with this "
                                           "scenario's roic; or remove multiple_from and roic and give \"multiple_path\": "
                                           "[today, y1, y2, y3, y4, y5] by hand",
-                         'roic': "the scenario's incremental ROIC as a decimal (0.30 = 30%), evidenced by the scenario's "
+                         'roic': "the scenario's incremental ROIC as a decimal (0.30 = 30%, 0.045 = 4.5%; at most 1.5), evidenced by the scenario's "
                                  'evidence_ids and source_tier (understand/auto.json: ROIC and incremental ROIC)',
                          'competitors': 'only with tier competitor: "competitors": [named tickers of field.json] in a scenario',
                          'peers': 'named competitors of field.json only (no other-company defaults); remove peers when none'},
@@ -546,7 +546,8 @@ def _compact_path(cf):
         if isinstance(e, dict):           # multiple_from economics: the rates and ROIC the engine computed the path with
             out.setdefault('economics', {})[s] = {k: e[k] for k in ('status', 'reason', 'roic', 'cost_of_equity',
                                                                      'terminal_cost_of_equity', 'terminal_growth',
-                                                                     'engine_terminal_roic', 'engine_value_today') if k in e}
+                                                                     'engine_terminal_roic', 'engine_value_today', 'roic_check')
+                                                    if k in e}
     return out
 
 

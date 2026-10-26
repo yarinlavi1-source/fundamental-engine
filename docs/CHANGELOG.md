@@ -19,7 +19,12 @@ in NVDA and CRDO), and a review-only hold (CRDO's unexplained forensic flag) lef
   0.1-0.6 turns (base 31.0/26.2/23.1/21.6/20.4/19.8 vs 31.1/26.4/23.2/21.7/20.5/19.9); on ADBE it matches the analysts'
   index-based formula within 0.02%.
 - evidence_pack company_path (contract 2 of the pack): per scenario either {multiple_from 'economics', roic} or a hand
-  multiple_path; a pack with both, a ROIC typed as a percent, or a roic on a hand path is refused. The analyst_path stage file
+  multiple_path; a pack with both, a roic outside 0 < roic <= 1.5, or a roic on a hand path is refused. The bound refuses a
+  percent typed as a number above 1.5 (35, 4.5); one between 1 and 1.5 reads as 100-150% and is flagged
+  (`roic_above_100pct` in company_path.flags, `roic_check` in the scenario's economics and value.json), and below 1 a typed
+  percent cannot be told from a decimal by its size (the evidence and review_numbers read it). On the CRDO casefile a bear
+  roic of 4.5 (meant as 4.5%) had run as 450% with the former bound of 5 (bear multiples 17.2-18.7 instead of 10.6-13.2 at
+  0.10); it is now refused. The analyst_path stage file
   and skeleton ask for the ROIC with its evidence (no multiple arithmetic, no restated Ke or EPS); review_numbers and
   review_counter check the ROIC and its evidence, not the arithmetic at another rate; value.json carries each scenario's
   economics rates.

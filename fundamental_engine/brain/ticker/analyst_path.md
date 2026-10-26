@@ -109,7 +109,7 @@ median <= high), "peers": [{"ticker", "forward_pe", "growth", "evidence_ids"}] (
 peers out when none has an evidenced forward P/E)}.
 The path is the forward P/E applied to next-fiscal-year GAAP EPS after SBC per scenario (the engine computes the EPS from
 the core part's drivers). Economics mode is the default: you supply each scenario's incremental ROIC (a decimal, 0.30 =
-30%) with its evidence and tier, and the ENGINE computes the multiple path from its own executed numbers for that scenario:
+30%, 0.045 = 4.5%, at most 1.5; one above 1.0 is flagged roic_above_100pct for the reviewer) with its evidence and tier, and the ENGINE computes the multiple path from its own executed numbers for that scenario:
 its EPS path, its cost of equity, its terminal cost of equity and its terminal growth (company_path.economics; the formula
 value_t = PV of D_k = E_k (1 - g_(k+1)/ROIC) over the executed fiscal years + E_N (1 - g_T/ROIC)/(Ke_T - g_T), multiple_t =
 value_t / EPS_(t+1)). Do not compute multiples yourself, do not restate the engine's Ke, EPS or growth (the core part and

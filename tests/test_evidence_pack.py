@@ -83,6 +83,13 @@ class ConversionTests(unittest.TestCase):
         q = copy.deepcopy(p)
         q['company_path']['scenarios']['base']['roic'] = 28                                # a percent, not a decimal
         refused(self, q, "needs roic")
+        for typed in (4.5, 1.6):                          # a small percent typed as a number (4.5 meant as 4.5%): refused too
+            q = copy.deepcopy(p)
+            q['company_path']['scenarios']['base']['roic'] = typed
+            refused(self, q, "4.5% is 0.045")
+        q = copy.deepcopy(p)
+        q['company_path']['scenarios']['base']['roic'] = 1.5                                # the bound itself is a decimal
+        self.assertEqual(to_inputs(q)['company_path']['scenarios']['base']['roic'], 1.5)
         q = copy.deepcopy(p)
         q['company_path']['scenarios']['base']['multiple_from'] = 'peers'
         refused(self, q, "multiple_from must be")
