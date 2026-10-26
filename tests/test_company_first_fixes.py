@@ -316,3 +316,21 @@ class ForecastLevers(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class CurrentYearGuidanceTierWithoutAFiscalYearRow(unittest.TestCase):
+    """CRDO 26.10.2026: inputs.forecast.current_year_revenue at source tier 'guidance' when the FactBook holds no guidance
+    row for that fiscal year (only a quarterly guide) stopped the forecast with a TypeError; its own evidence ids carry it."""
+
+    def test_forecast_runs_and_cites_the_inputs_own_evidence(self):
+        p = pack()
+        inputs, bundle = to_inputs(p), to_bundle(p)
+        cyr = inputs['forecast']['current_year_revenue']
+        self.assertEqual(cyr['source_tier'], 'guidance')
+        bundle['guidance'] = [g for g in bundle.get('guidance') or [] if 'FY' not in str(g.get('period', ''))]
+        with tempfile.TemporaryDirectory() as d:
+            shutil.copytree(FIXTURE, os.path.join(d, 'DEMO'))
+            fb, cf = handoff.run_company(os.path.join(d, 'DEMO'), p['as_of'], inputs=inputs, qualitative=bundle)
+        self.assertEqual(cf['stages']['forecast'], 'ok', cf.get('errors'))
+        row = next(a for a in cf['fc']['assumptions'] if a['id'] == 'revenue_current_fy')
+        self.assertTrue(set(cyr['evidence_ids']) & set(row['source_ids']), row['source_ids'])

@@ -2616,8 +2616,10 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
     gd = h.get('guidance', {}).get(f'FY{B[0][:4]}')
     cur_kind = meta['cur_kind']
     cur_srcs = list(rev_srcs)
-    if cur_kind == 'guidance':
+    if cur_kind == 'guidance' and gd:
         cur_srcs += [x for x in gd['source_ids'] if x not in cur_srcs]
+    if meta.get('cur_ids'):              # inputs.current_year_revenue cites its own evidence (a guidance tier may have no FY row)
+        cur_srcs += [x for x in meta['cur_ids'] if x not in cur_srcs]
     if meta['ytd']:
         cur_srcs += [x for x in meta['ytd']['source_ids'] if x not in cur_srcs]
     add('revenue_current_fy', 'current fiscal year revenue', cur_kind,
