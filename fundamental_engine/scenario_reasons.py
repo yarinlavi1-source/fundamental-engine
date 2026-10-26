@@ -29,8 +29,10 @@ yearly table:
 Nothing is revalued and no value changes: values are copied from the executed valuation, drivers are read from the
 executed forecast rows (val.result.scenarios[].forecast) and the forecast paths (fc.paths, fc.anchors, fc.funding,
 fc.cost_of_equity); the only arithmetic is per-share division, ratios and sums of executed flows. A valuation the owner's
-table does not show (render.value_display: a non-price verdict, demo inputs, an unreleased forensic or governance flag, a
-rejected assumption, a 'hold' material issue) gets no values here either: the reasons say why there is no value.
+table does not show (render.value_display: a non-price verdict, blocked data, a failed valuation, demo inputs, a governance
+flag, a rejected assumption, a 'hold' material issue) gets no values here either: the reasons say why there is no value. A
+price claim withheld only for review reasons (an unreleased forensic flag, an open material issue, an unreviewed draft)
+keeps its values under the same banner as the table ('טיוטה — לא אומתה' and the reasons: draft_reason_he).
 These reasons explain the model's conditional values; they are not forecasts, probabilities or price targets. The
 earnings per share here is the model's estimate, not reported or GAAP earnings.
 """
@@ -939,6 +941,7 @@ def build(casefile):
             'company': {'ticker': company.get('ticker'), 'name': company.get('name')},
             'as_of': cf.get('as_of') or dc.get('as_of'), 'currency': cur, 'method': method,
             'values_shown': shown, 'yearly_table': bool(shown and rows), 'draft': bool(v.get('price_claim_withheld')) if shown else None,
+            'draft_reason_he': disp.get('reason_he') if shown and disp.get('draft') else None,
             'why_no_values_he': why_none,
             'source': {'values': src if shown else None, 'rate': yr.get('rate') or 'model cost of equity',
                        'model_cost_of_equity': yr.get('model_cost_of_equity',
@@ -1002,6 +1005,10 @@ def render_he(reasons):
     title = c.get('name') or c.get('ticker') or 'החברה'
     out = [f"**{title}{' (' + c['ticker'] + ')' if c.get('ticker') and c.get('name') else ''} — מה צריך לקרות כדי שכל מחיר "
            f"יתממש, {r.get('as_of') or ''}**", '']
+    if r.get('values_shown') and r.get('draft_reason_he'):
+        from .render import DRAFT_BANNER_HE           # the owner's table carries the same banner (render.value_display 'draft')
+        out += [f"> **{DRAFT_BANNER_HE}.** הסיבה: {r['draft_reason_he']}. המחירים כאן הם החישוב של המנוע, לא מסקנה, ואין בהם "
+                'המלצה לקנות או למכור.', '']
     if r.get('status') == 'failed':
         return '\n'.join(out + ['לא ניתן היה להפיק את הסיבות לתרחישים: ' + str(r.get('error') or '') + '.', ''])
     if not r.get('values_shown'):

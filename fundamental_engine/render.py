@@ -449,7 +449,7 @@ def owner_table(casefile):
     cur = (dc.get('price') or {}).get('currency') or company.get('currency') or ''
     money = lambda x: _money(x, cur)
     disp = value_display(cf)
-    price, fair, show = disp['price'], disp['fair'], disp['show']
+    price, fair, show, draft = disp['price'], disp['fair'], disp['show'], disp['draft']
     code, withheld = v.get('code'), bool(v.get('price_claim_withheld'))
     rows = [('מחיר היום', money(price) if _n(price) else 'לא ידוע')]
     fv = er.get('fair_value') or {}
@@ -489,7 +489,8 @@ def owner_table(casefile):
                      + (f' (כ־{ke * 100:.1f}% בשנה)' if _n(ke) else '') + '.')
         if buy:
             notes.append(f'מחיר קנייה מרבי = עד איזה מחיר התרחיש הבסיסי עוד נותן את התשואה שאתה דורש (כ־{req * 100:.1f}% בשנה); זו '
-                         'דרישה שלך, לא שווי החברה, ולפיה נקבעת השורה התחתונה.')
+                         'דרישה שלך, לא שווי החברה' + ('; לפיה תיקבע השורה התחתונה אחרי האימות.' if draft else
+                                                      ', ולפיה נקבעת השורה התחתונה.'))
         edge = (irr - mkt) if _n(irr) and _n(mkt) and _n(ke) else None
         if edge is not None and gap > .03 and edge > .005:
             behind.append(f'למה "יקרה" אבל מניבה יותר מהשוק: השווי ההוגן מחושב לפי תשואה של כ־{ke * 100:.1f}% בשנה, והשוק כולו מתומחר '
@@ -579,12 +580,19 @@ def owner_table(casefile):
     if gaps is not None:      # levers still on a rule that is not this company's evidence (forecast.driver_gaps); a gap, not a basis
         rows.append((GAPS_HE, ', '.join(g.get('label_he') or g.get('lever', '') for g in gaps) or 'אין'))
     rows.append(('רמת ביטחון', (dc.get('confidence') or {}).get('level_he', 'לא ידועה')))
-    call = CALL_HE.get(code, 'אין עדיין מסקנה') if v else 'אין עדיין מסקנה'
-    rows.append(('שורה תחתונה', call + (' (טיוטה שעוד לא נבדקה)' if withheld else '')))
-    if withheld:
-        notes.append('זו טיוטה: הניתוח עוד לא עבר בדיקה בלתי תלויה, ולכן זו לא מסקנה סופית.')
+    banner = None
+    if draft:
+        # numbers shown, the price claim withheld for review reasons only: a banner with the reasons, no buy/sell call
+        rows.append(('שורה תחתונה', f'אין עדיין מסקנת קנייה או מכירה ({DRAFT_BANNER_HE})'))
+        banner = (f"**{DRAFT_BANNER_HE}.** הסיבה: {disp['reason_he']}. המספרים כאן הם החישוב של המנוע, לא מסקנה, ואין בהם "
+                  'המלצה לקנות או למכור.')
+    else:
+        call = CALL_HE.get(code, 'אין עדיין מסקנה') if v else 'אין עדיין מסקנה'
+        rows.append(('שורה תחתונה', call + (' (טיוטה שעוד לא נבדקה)' if withheld else '')))
+        if withheld:
+            notes.append('זו טיוטה: הניתוח עוד לא עבר בדיקה בלתי תלויה, ולכן זו לא מסקנה סופית.')
     return {'title': f"**{name} ({company.get('ticker', '')}) — הערכת שווי, {cf.get('as_of') or dc.get('as_of') or ''}**",
-            'rows': rows, 'yearly': yearly, 'notes': notes, 'behind': behind}
+            'banner': banner, 'rows': rows, 'yearly': yearly, 'notes': notes, 'behind': behind}
 
 
 def _yearly_md(t):
@@ -601,9 +609,12 @@ def hebrew_table(casefile):
     the main risk (the analyst's evidenced key_risk first), the levers still on a rule (gaps), confidence and the call. The
     yearly table is the company's own price (inputs.company_path: next-fiscal-year EPS x an evidenced multiple per scenario)
     when computed, else the executed value per year; under it one short condition line per scenario (scenario_reasons). A
-    draft says so; a held valuation shows no value."""
+    price claim withheld only for review reasons (value_display 'draft') shows its numbers under the banner 'טיוטה — לא
+    אומתה' with the reasons and no buy/sell bottom line; a valuation that is not usable (blocked data, a failed valuation,
+    demo inputs, a rejected assumption, governance evidence, a 'hold' material issue) shows no value."""
     t = owner_table(casefile)
-    out = [t['title'], '', '| | |', '|---|---|'] + [f'| {k} | {str(x).replace("|", "/")} |' for k, x in t['rows']]
+    out = [t['title'], ''] + ([f"> {t['banner']}", ''] if t.get('banner') else []) + \
+        ['| | |', '|---|---|'] + [f'| {k} | {str(x).replace("|", "/")} |' for k, x in t['rows']]
     if t['yearly']:
         out += _yearly_md(t['yearly'])
     notes = t['notes']
@@ -657,21 +668,50 @@ def _scenario_notes(cf):
     return [s['note_he'] for s in sr.get('scenarios') or [] if isinstance(s, dict) and s.get('note_he')]
 
 
+DRAFT_BANNER_HE = 'טיוטה — לא אומתה'
+# gates that make the executed number itself unusable: never shown, not even as a draft (decision._gates)
+INVALID_GATES = ('data_blocked', 'valuation_failed', 'no_valuation', 'valuation_unverified', 'review_blocked')
+
+
+def _draft_reasons_he(dc, st):
+    """Why a shown valuation is a draft that is not verified yet, in plain Hebrew (each reason once): an unreleased forensic
+    flag, an open (not 'hold') forecast material issue, and the review that has not run or not passed."""
+    gates = dc.get('gates') or {}
+    out = []
+    if st.get('forensic'):
+        out.append('בדיקות הדוחות הדליקו דגל אדום שעוד לא הוסבר')
+    if st.get('material'):
+        out.append(st['material'])
+    codes = gates.get('draft_codes') or []
+    if gates.get('draft') or codes:
+        out.append(next((DRAFT_STATE_HE[c] for c in codes if c in DRAFT_STATE_HE), 'הניתוח טרם עבר בדיקה בלתי תלויה'))
+    return list(dict.fromkeys(out)) or [st.get('state') or 'הניתוח טרם עבר בדיקה בלתי תלויה']
+
+
 def value_display(casefile):
-    """Whether the owner's table shows values: one rule for hebrew_table and scenario_reasons. A price verdict, no held
-    valuation (render._state: unreleased forensic or governance flag, demo inputs, a rejected assumption, a 'hold' material
-    issue), a positive fair value and a price; an unreviewed draft still shows its numbers, labelled. -> {'show', 'fair'
-    (headline fair value), 'price', 'state', 'reason_he' (why no value is shown; None when shown)}."""
+    """Whether the owner's table shows values: one rule for hebrew_table and scenario_reasons. A price verdict, a positive fair
+    value and a price, and no hold that makes the number unusable (render._state: governance flag, demo inputs, a rejected
+    assumption, a 'hold' material issue; decision gates: blocked data, a failed, missing or unverified valuation, a blocked
+    review). A price claim withheld only for review or verification reasons (an unreleased forensic flag, an open material
+    issue, an unreviewed draft) still shows its numbers as a draft ('draft': True, the banner DRAFT_BANNER_HE with the reasons,
+    no buy/sell bottom line). -> {'show', 'draft', 'fair' (headline fair value), 'price', 'state', 'reason_he' (why no value
+    is shown, or why the values shown are a draft; None for a final result), 'draft_reasons_he'}."""
     dc = (casefile or {}).get('dc') or {}
     v = dc.get('verdict') or {}
     view, er = dc.get('valuation_view') or {}, dc.get('expected_return') or {}
     fv = er.get('fair_value') or {}
     fair = fv.get('value') if _n(fv.get('value')) else view.get('base')
     price = view.get('price')
-    st = _state(dc) if v else {'hold': True, 'state': 'שלב ההחלטה לא רץ'}
-    show = bool(v) and v.get('code') in PRICE_VERDICTS and not st['hold'] and _n(fair) and fair > 0 and _n(price)
-    reason = None if show else (st['state'] if st.get('hold') else (v.get('reason_he') or 'הערכת השווי לא הושלמה'))
-    return {'show': show, 'fair': fair, 'price': price, 'state': st, 'reason_he': reason}
+    st = _state(dc) if v else {'hold': True, 'state': 'שלב ההחלטה לא רץ', 'invalid': True}
+    gates = dc.get('gates') or {}
+    invalid = st['invalid'] or any(gates.get(k) for k in INVALID_GATES)
+    show = bool(v) and v.get('code') in PRICE_VERDICTS and not invalid and _n(fair) and fair > 0 and _n(price)
+    draft = show and bool(v.get('price_claim_withheld'))
+    reasons = _draft_reasons_he(dc, st) if draft else []
+    reason = ('; '.join(reasons) if draft else None) if show else (
+        st['state'] if st.get('hold') else (v.get('reason_he') or 'הערכת השווי לא הושלמה'))
+    return {'show': show, 'draft': draft, 'fair': fair, 'price': price, 'state': st, 'reason_he': reason,
+            'draft_reasons_he': reasons}
 
 
 def yearly_table_rows(er):
@@ -761,8 +801,11 @@ def _state(dc):
     else:
         state = next((DRAFT_STATE_HE[c] for c in codes if c in DRAFT_STATE_HE), 'הניתוח טרם עבר בדיקה בלתי תלויה')
         change = next((DRAFT_CHANGE_HE[c] for c in codes if c in DRAFT_CHANGE_HE), 'השלמת בדיקה בלתי תלויה של הנתונים וההנחות')
-    hold = forensic or gov or demo or rejected or any(m.get('hold') for m in mat)
-    return {'state': state, 'change': change, 'hold': hold, 'material': material}
+    # a hold that makes the number itself unusable (governance evidence, demo inputs, a rejected assumption, a 'hold' material
+    # issue) versus the forensic flag, which waits for a filing explanation and a review: its numbers can be shown as a draft
+    invalid = gov or demo or rejected or any(m.get('hold') for m in mat)
+    hold = forensic or invalid
+    return {'state': state, 'change': change, 'hold': hold, 'material': material, 'forensic': forensic, 'invalid': invalid}
 
 
 def _analyst_he(dc, v):

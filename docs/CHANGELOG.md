@@ -1,3 +1,39 @@
+## Unreleased — engine-computed multiples and draft tables with numbers (26.10.2026)
+
+Every ticker run of 26.10.2026 (NVDA, CRDO, APH) needed a repair pass, partly for the same engine-shaped reasons: the path
+agent derived its multiples at another cost of equity and on another EPS path than the engine executed (a critical finding
+in NVDA and CRDO), and a review-only hold (CRDO's unexplained forensic flag) left the owner's table with no number at all.
+
+- company_path economics mode (`multiple_from: 'economics'`, the new default of analyst_path): a scenario gives its
+  incremental ROIC (`roic`, a decimal, backed by the scenario's evidence_ids and source_tier) instead of a hand
+  multiple_path, and the engine computes the path from ITS OWN executed numbers for that scenario: the fiscal-year EPS path,
+  the explicit cost of equity, the terminal cost of equity and the terminal growth of the valuation case, with the
+  analysts' formula (their path_calc): value_t = the PV of D_k = E_k (1 - g_(k+1)/ROIC) over the executed fiscal years
+  still ahead (each at the midpoint of its remaining part) + E_N (1 - g_T/ROIC)/(Ke_T - g_T), multiple_t = value_t /
+  EPS_(t+1); a partial fiscal year is annualized for its growth only. The scenario's `economics` record holds the formula,
+  Ke, Ke_T, g_T, the ROIC, the engine's own terminal ROIC (and the difference), the engine's value today, every fiscal
+  year's EPS, growth and distribution, the terminal value and value_t; the price of each row equals value_t. A year whose
+  value or next-year EPS is not positive has no price (`nonpositive_value`); a ROIC at or below g_T fails the stage. Hand
+  paths stay supported unchanged (and can sit next to computed ones); the justification labels and the peak check against
+  own_history apply to computed multiples too. On the CRDO casefile the engine reproduces the repaired hand path within
+  0.1-0.6 turns (base 31.0/26.2/23.1/21.6/20.4/19.8 vs 31.1/26.4/23.2/21.7/20.5/19.9); on ADBE it matches the analysts'
+  index-based formula within 0.02%.
+- evidence_pack company_path (contract 2 of the pack): per scenario either {multiple_from 'economics', roic} or a hand
+  multiple_path; a pack with both, a ROIC typed as a percent, or a roic on a hand path is refused. The analyst_path stage file
+  and skeleton ask for the ROIC with its evidence (no multiple arithmetic, no restated Ke or EPS); review_numbers and
+  review_counter check the ROIC and its evidence, not the arithmetic at another rate; value.json carries each scenario's
+  economics rates.
+- Draft table with numbers: when the price claim is withheld only for review or verification reasons (an unreleased
+  forensic flag, an open forecast material issue, an unreviewed draft), render.hebrew_table shows the value rows and the
+  yearly bear/base/bull table under the banner 'טיוטה — לא אומתה' with the reasons, and the bottom line says there is no
+  buy/sell conclusion yet; scenarios_he.md carries the same banner (scenario_reasons `draft_reason_he`). Blocked data, a
+  failed, missing or unverified valuation, a blocked review, demo inputs, a rejected assumption, governance evidence and a
+  'hold' material issue still show no number (render.value_display `draft`, INVALID_GATES). The paragraph is unchanged.
+- Invariance: on the ADBE fixture (plain and with the hand company_path) and the synthetic demo company every casefile leaf is
+  identical to 5517114 except the new `scenario_reasons.draft_reason_he` and the casefile hash; the paragraph and every
+  value are unchanged, the table changes only by the draft banner and bottom line. Tests: test_company_path
+  (EconomicsModeTests), test_evidence_pack, test_company_first_fixes (EconomicsPathEndToEnd), test_draft_numbers.
+
 ## Unreleased — the fast ticker procedure (25.10.2026)
 
 The owner's limit is 10-20 minutes for one ticker, without harming the result. Measured on NVDA with the saved Workflow
