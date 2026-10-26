@@ -19,13 +19,24 @@ looking for them (CLAUDE.md "On a ticker"; the lanes' instructions: python -m fu
 - gather/_prefetch.json: an evidence-pack fragment with the registered sources (pf_* ids: filings, releases, companyfacts by
   filing date, FRED, ERP), the companyfacts facts of the last fiscal years and quarters, and market {risk_free,
   equity_risk_premium}; pack-merge reads it with the lanes' fragments (it sorts first, so its source ids win on a URL).
-- identity.json (identity skeleton, the filings list, the computed type; lanes complete the security and the competitors)
-  and prefetch.json (what was saved, what remains for each lane, every gap, the reuse record).
+- prefetch/quarter_case.json and prefetch/econ_case.json: the latest quarter, the same quarter a year earlier and the
+  quarter before it from companyfacts, in the quarter-review and econ-review case shapes (numbers only; gather_documents
+  adds the one-offs, guidance, segments and KPIs from the documents and runs the reviews).
+- --peers A,B (and the competitors of a reused field.json): each named competitor's SEC companyfacts under
+  gather/raw_field/<PEER>/ and its last fiscal years in prefetch/peers.json (source pf_peer_<PEER>), for gather_field.
+- identity.json (identity skeleton, the filings list, the computed type; lanes complete the security; the competitors are
+  gather_field's field.json) and prefetch.json (what was saved, what remains for each lane, every gap, the reuse record).
+
+A rerun of the same ticker and as_of first moves the earlier attempt's judgement and engine output (prefetch.json, value
+and analyst files, position, evidence pack, understand/, review/, deliver/, companies/<T>/out, inputs.json) into
+attempts/<utc>/, so nothing of an earlier attempt can pass for this one; the gather fragments (the same evidence date) stay.
 
 --reuse auto: the newest earlier run folder of the SAME ticker dated within 30 days before as_of donates its gather
-fragments (and the connector payloads in its raw folder except the price snapshot); its position, pack and table are kept
-under reuse/ for reference. prefetch.json lists the filings dated after that run: only those are re-read, and the market
-data (price, consensus, rates, news) is always refreshed.
+fragments (without their market block: rates are always this run's) and the connector payloads in its raw folder except
+the price snapshot; its position, pack and table are kept under reuse/ for reference. An explicit --reuse folder obeys the
+same 30 days and must hold the same ticker. Nothing written or retrieved after as_of is copied (a historical rerun cannot
+take later work). prefetch.json lists the filings dated after that run (only those are re-read; null with the reason when
+SEC was not refreshed in this run), and the market data (price, consensus, rates, news) is always refreshed.
 
 Network failures and a missing SEC_USER_AGENT are recorded as gaps, never fatal; a host that fails twice in a row is not
 called again in this run. SEC asks for a User-Agent with a contact e-mail: it is read from the environment, never written.
@@ -75,23 +86,35 @@ EXHIBIT = re.compile(r'(?i)ex[-_]?99|exhibit[-_]?99|99[-_.]?[12]\b|pr\.htm|press
 # a reuse copies the earlier run's raw payloads except the price snapshot (always refreshed); the SEC files are refetched
 # (submissions and companyfacts always, a document when its accession changed) and the copy stays only when SEC fails
 REUSE_SKIP = re.compile(r'^(MANIFEST\.json$|ib__price-snapshot-)')
+# a rerun of the same ticker and as_of: the earlier attempt's judgement and engine output move to attempts/<utc>/ first
+ATTEMPT_ITEMS = ('prefetch.json', 'value.json', 'status.json', 'analyst.json', 'position.json', 'position', 'evidence_pack.json',
+                 'understand', 'review', 'deliver', 'companies/{T}/out', 'companies/{T}/inputs.json',
+                 'companies/{T}/evidence_bundle.json')
+MAX_PEERS = 6
 LANES = ('gather_numbers', 'gather_documents', 'gather_field', 'gather_macro')
 # which stage maintains a fragment copied by a reuse (edits it in place: updates or removes superseded items); reports and
 # expectations are the lanes of a run made by the saved Workflow ticker.js
 OWNERS = {'numbers.json': 'gather_numbers', 'documents.json': 'gather_documents', 'field.json': 'gather_field',
-          'macro.json': 'gather_macro', 'understand.json': 'analyst',
+          'macro.json': 'gather_macro', 'understand.json': 'analyst', 'understand_core.json': 'analyst',
+          'understand_field.json': 'analyst_field', 'understand_path.json': 'analyst_path', 'repair.json': 'repair (or the analyst)',
           'reports.json': 'gather_documents (its guidance_track rows: gather_numbers)',
           'expectations.json': 'gather_numbers (its kpis, segments and customers: gather_documents)'}
 # what is left for each lane after a full prefetch (the lanes' stage files say how)
 REMAINS = {
     'gather_numbers': ['identity check: share class, ADR ratio, exchange, quote currency, IBKR contract (search_contracts, READ-ONLY)',
                        'price: IBKR snapshot and month-end history (READ-ONLY), saved under the pipeline-plan names',
-                       'Alpha Vantage statements / estimates: one bounded probe each (FMP statements and analyst are ACCESS DENIED)',
+                       'Alpha Vantage INCOME_STATEMENT, BALANCE_SHEET, CASH_FLOW, EARNINGS_ESTIMATES: one call each (the AV '
+                       'quota, 25 requests a day on 2026-10-25, is shared with gather_documents; COMPANY_OVERVIEW is a premium '
+                       'endpoint, denied; FMP statements and analyst are ACCESS DENIED)',
                        'attributed consensus (n, low, high, provider, date)', 'own trailing and forward P/E history',
-                       'guidance track record from reading/release_*.txt', 'reconcile the pf_ facts to the 10-K / 10-Q'],
+                       'guidance track record from reading/release_*.txt and its ratio (ticker-check prints it)',
+                       'reconcile the pf_ facts to the 10-K / 10-Q'],
     'gather_documents': ['the latest call transcript (AV EARNINGS_CALL_TRANSCRIPT, else IR)',
-                         'segments, customers, KPIs, RPO / backlog, current guidance, one-offs and risk factors from reading/'],
-    'gather_field': ['the competitors the 10-K names (reading/10k_item1_business.txt) and their own numbers',
+                         'segments, customers, KPIs, RPO / backlog, current guidance, one-offs and risk factors from reading/',
+                         'quarter-review and econ-review on prefetch/quarter_case.json and econ_case.json completed from the '
+                         'documents (understand/)'],
+    'gather_field': ['the competitors the 10-K names (reading/10k_item1_business.txt) and their own numbers (prefetch/peers.json '
+                     'when the prefetch had --peers or a reused field.json)',
                      'sector bottlenecks, capacity and share trajectory against the named competitors'],
     'gather_macro': ['revenue and long-lived assets by country; export controls, tariffs, sanctions, regulation',
                      'news and 8-Ks since the latest periodic filing'],
@@ -152,11 +175,55 @@ def run_folder(root, ticker, as_of):
     return os.path.join(root, 'runs', 'tickers', f'{ticker}_{as_of}')
 
 
-# ---------------------------------------------------------------- reuse of an earlier run of the same ticker
+# ---------------------------------------------------------------- an earlier attempt of the same run, and reuse
+
+def _utc_day(ts):
+    """The UTC date of an ISO timestamp, or None."""
+    try:
+        return datetime.fromisoformat(str(ts).replace('Z', '+00:00')).astimezone(timezone.utc).date().isoformat()
+    except (TypeError, ValueError):
+        return None
+
+
+def _mtime_day(path):
+    return datetime.fromtimestamp(os.path.getmtime(path), timezone.utc).date().isoformat()
+
+
+def archive_attempt(run, ticker):
+    """A rerun of the same ticker and as_of: move the earlier attempt's prefetch record, judgement and engine output into
+    attempts/<utc>/ (nothing of it can pass for this attempt: deliver and ticker-status read only this attempt's files).
+    The gather fragments, raw payloads, documents and reading text stay: the same evidence date. -> record or None."""
+    items = [i.format(T=ticker) for i in ATTEMPT_ITEMS]
+    present = [i for i in items if os.path.exists(os.path.join(run, i))]
+    if not present:
+        return None
+    stamp = datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
+    dest = os.path.join(run, 'attempts', stamp)
+    for rel in present:
+        dst = os.path.join(dest, rel)
+        os.makedirs(os.path.dirname(dst), exist_ok=True)
+        shutil.move(os.path.join(run, rel), dst)
+    return {'folder': os.path.relpath(dest, run), 'moved': present,
+            'kept': 'gather/ fragments, companies/<T>/raw, documents/, reading/ (the same as_of: evidence, not judgement)'}
+
+
+def _identity_matches(folder, ticker, day):
+    """An earlier run folder's identity.json, when it has one, names the same ticker and the as_of of its folder name."""
+    ident = _load(os.path.join(folder, 'identity.json'))
+    if not isinstance(ident, dict):
+        return True, None
+    t, a = str(ident.get('ticker') or '').upper(), str(ident.get('as_of') or '')
+    if t and t != ticker:
+        return False, f'its identity.json names ticker {t}, not {ticker}'
+    if a and a != day:
+        return False, f'its identity.json is dated {a}, not {day} as its folder name says'
+    return True, None
+
 
 def find_reuse(root, ticker, as_of, spec):
     """-> (folder, its as_of) or (None, reason). auto: the newest runs/tickers/<T>_<date> dated before as_of within REUSE_DAYS
-    that holds gather fragments; an explicit folder must be the same ticker and dated before as_of (no look-ahead)."""
+    that holds gather fragments; an explicit folder must be the same ticker (folder name and identity.json), dated before
+    as_of (no look-ahead) and within the same REUSE_DAYS."""
     if spec in (None, '', 'none'):
         return None, 'reuse not requested'
     cut = date.fromisoformat(as_of)
@@ -169,6 +236,11 @@ def find_reuse(root, ticker, as_of, spec):
         d = date.fromisoformat(m.group(1))
         if d >= cut:
             return None, f'--reuse {spec}: dated {d}, not before as_of {as_of} (a later run cannot donate evidence)'
+        if (cut - d).days > REUSE_DAYS:
+            return None, f'--reuse {spec}: dated {d}, more than {REUSE_DAYS} days before as_of {as_of} (start fresh)'
+        ok, why = _identity_matches(path, ticker, d.isoformat())
+        if not ok:
+            return None, f'--reuse {spec}: {why}'
         return (path, d.isoformat()), None
     base = os.path.join(root, 'runs', 'tickers')
     best = None
@@ -177,7 +249,8 @@ def find_reuse(root, ticker, as_of, spec):
         if not m:
             continue
         d = date.fromisoformat(m.group(1))
-        if d < cut and (cut - d).days <= REUSE_DAYS and os.path.isdir(os.path.join(base, name, 'gather')):
+        if d < cut and (cut - d).days <= REUSE_DAYS and os.path.isdir(os.path.join(base, name, 'gather')) \
+                and _identity_matches(os.path.join(base, name), ticker, d.isoformat())[0]:
             if best is None or d > best[0]:
                 best = (d, os.path.join(base, name))
     if not best:
@@ -185,10 +258,13 @@ def find_reuse(root, ticker, as_of, spec):
     return (best[1], best[0].isoformat()), None
 
 
-def apply_reuse(prev, prev_as_of, run, ticker):
-    """Copy the earlier run's gather fragments (never over this run's own files) and its connector payloads; keep its
-    judgement files under reuse/ for reference only (the analyst redoes the judgement on the new evidence)."""
-    out = {'from': prev, 'from_as_of': prev_as_of, 'copied_fragments': [], 'copied_raw': [], 'reference': []}
+def apply_reuse(prev, prev_as_of, run, ticker, as_of):
+    """Copy the earlier run's gather fragments (never over this run's own files; never one written after as_of; without
+    their market block, kept under reuse/gather/: rates are always this run's) and its connector payloads (except the price
+    snapshot and any payload retrieved after as_of); keep its judgement files under reuse/ for reference only (the analyst
+    redoes the judgement on the new evidence)."""
+    out = {'from': prev, 'from_as_of': prev_as_of, 'copied_fragments': [], 'copied_raw': [], 'reference': [],
+           'market_removed': [], 'skipped_after_as_of': []}
     g_old, g_new = os.path.join(prev, 'gather'), os.path.join(run, 'gather')
     for name in sorted(os.listdir(g_old)) if os.path.isdir(g_old) else []:
         if name == '_prefetch.json':
@@ -196,8 +272,22 @@ def apply_reuse(prev, prev_as_of, run, ticker):
         src, dst = os.path.join(g_old, name), os.path.join(g_new, name)
         if os.path.exists(dst):
             continue
+        if _mtime_day(src) > as_of:
+            out['skipped_after_as_of'].append(f'gather/{name}')
+            continue
         os.makedirs(g_new, exist_ok=True)
-        (shutil.copytree if os.path.isdir(src) else shutil.copy2)(src, dst)
+        if os.path.isdir(src):
+            shutil.copytree(src, dst)
+        elif name.endswith('.json') and isinstance(_load(src), dict) and 'market' in _load(src):
+            frag = _load(src)
+            keep = os.path.join(run, 'reuse', 'gather', name)
+            os.makedirs(os.path.dirname(keep), exist_ok=True)
+            shutil.copy2(src, keep)
+            frag.pop('market')
+            _dump(dst, frag)
+            out['market_removed'].append(name)
+        else:
+            shutil.copy2(src, dst)
         out['copied_fragments'].append(name)
     out['owners'] = {n: OWNERS.get(n, 'the analyst decides') for n in out['copied_fragments'] if n.endswith('.json')}
     r_old, r_new = os.path.join(prev, 'companies', ticker, 'raw'), os.path.join(run, 'companies', ticker, 'raw')
@@ -207,6 +297,10 @@ def apply_reuse(prev, prev_as_of, run, ticker):
     for name in sorted(os.listdir(r_old)) if os.path.isdir(r_old) else []:
         src, dst = os.path.join(r_old, name), os.path.join(r_new, name)
         if REUSE_SKIP.match(name) or os.path.isdir(src) or os.path.exists(dst):
+            continue
+        got_day = _utc_day((old_man.get(name) or {}).get('retrieved_at_utc')) or _mtime_day(src)
+        if got_day > as_of:                 # an undated snapshot (estimates, price history) could carry later data
+            out['skipped_after_as_of'].append(f'raw/{name} (retrieved {got_day})')
             continue
         os.makedirs(r_new, exist_ok=True)
         shutil.copy2(src, dst)
@@ -218,8 +312,8 @@ def apply_reuse(prev, prev_as_of, run, ticker):
             shutil.copytree(src, dst)
             out['copied_' + folder] = True
     ref = os.path.join(run, 'reuse')
-    for rel in ('identity.json', 'position.json', 'evidence_pack.json', 'analyst.json', 'understand', 'review', 'deliver',
-                f'companies/{ticker}/inputs.json', f'companies/{ticker}/out/table_he.md',
+    for rel in ('identity.json', 'position.json', 'position', 'evidence_pack.json', 'analyst.json', 'value.json', 'understand',
+                'review', 'deliver', f'companies/{ticker}/inputs.json', f'companies/{ticker}/out/table_he.md',
                 f'companies/{ticker}/out/scenarios_he.md'):
         src = os.path.join(prev, rel)
         if not os.path.exists(src):
@@ -244,8 +338,9 @@ def _ticker_map(path):
     return {str(d.get('ticker', '')).upper(): d for d in (dict(zip(t['fields'], x)) for x in t.get('data', []))}
 
 
-def lookup_cik(net, root, ticker, run, gaps):
-    """CIK from the saved SEC ticker map (runs/universe_*/raw, newest first), else the live map. -> (cik, row, source)."""
+def _map_hit(root, run, ticker):
+    """The SEC ticker-map row of a ticker from the maps already on disk (this run's, then runs/universe_*/raw, newest
+    first) -> (row, path) or (None, None)."""
     variants = list(dict.fromkeys([ticker, ticker.replace('.', '-'), ticker.replace('-', '.'), ticker.replace('.', '')]))
     saved = sorted([os.path.join(root, 'runs', d, 'raw', 'sec__company_tickers_exchange.json')
                     for d in (os.listdir(os.path.join(root, 'runs')) if os.path.isdir(os.path.join(root, 'runs')) else [])
@@ -254,19 +349,35 @@ def lookup_cik(net, root, ticker, run, gaps):
         m = _ticker_map(path)
         hit = next((m[v] for v in variants if v in m), None)
         if hit:
-            return int(hit['cik']), hit, os.path.relpath(path, root)
-    if not net.ua:
-        return None, None, None
+            return hit, path
+    return None, None
+
+
+def _live_map(net, run):
+    """Fetch the SEC ticker map once into <run>/prefetch/ -> True when it is there."""
+    path = os.path.join(run, 'prefetch', 'sec__company_tickers_exchange.json')
+    if os.path.exists(path):
+        return True
     body = net.get(TICKERS)
     if body is None:
-        gaps.append('SEC ticker map not reachable: CIK not resolved (pass --cik, or the numbers lane resolves it)')
-        return None, None, None
-    path = os.path.join(run, 'prefetch', 'sec__company_tickers_exchange.json')
+        return False
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, 'wb') as f:
         f.write(body)
-    m = _ticker_map(path)
-    hit = next((m[v] for v in variants if v in m), None)
+    return True
+
+
+def lookup_cik(net, root, ticker, run, gaps):
+    """CIK from the saved SEC ticker map (runs/universe_*/raw, newest first), else the live map. -> (cik, row, source)."""
+    hit, path = _map_hit(root, run, ticker)
+    if hit:
+        return int(hit['cik']), hit, os.path.relpath(path, root)
+    if not net.ua:
+        return None, None, None
+    if not _live_map(net, run):
+        gaps.append('SEC ticker map not reachable: CIK not resolved (pass --cik, or the numbers lane resolves it)')
+        return None, None, None
+    hit, _ = _map_hit(root, run, ticker)
     if not hit:
         gaps.append(f'{ticker} is not in the SEC ticker map (not an SEC filer, or another ticker): identity for the numbers lane')
         return None, None, TICKERS
@@ -450,6 +561,152 @@ def company_type(case, gaps):
     return typ, forensic
 
 
+# ---------------------------------------------------------------- case skeletons and named competitors
+
+QLINES = {'revenue': 'revenue', 'gross_profit': 'gross_profit', 'operating_income': 'operating_income',
+          'net_income': 'net_income', 'cfo': 'operating_cash_flow', 'capex': 'capex', 'shares_diluted_wavg': 'diluted_shares',
+          'sbc': 'sbc', 'buybacks': 'buybacks'}
+PEER_METRICS = ('revenue', 'gross_profit', 'operating_income', 'net_income', 'rd')
+
+
+def quarter_skeletons(rows, case, company, as_of):
+    """The latest quarter in companyfacts, the same quarter a year earlier and the quarter before it, as a quarter-review case
+    (quarter.quarter_review) and an econ-review case (econ.econ_review) with the numbers only; gather_documents adds the
+    one-offs, guidance, segments and KPIs from the documents. -> (quarter case, econ case) or (None, None)."""
+    qs = sorted(p for (m, p) in rows if m == 'revenue' and p.startswith('Q@'))
+    if not qs:
+        return None, None
+    latest = qs[-1]
+    end = date.fromisoformat(rows[('revenue', latest)]['period_end'])
+
+    def find(lo, hi):
+        for p in reversed(qs[:-1]):
+            if lo <= (end - date.fromisoformat(rows[('revenue', p)]['period_end'])).days <= hi:
+                return p
+        return None
+    py, pq = find(350, 380), find(80, 100)
+
+    def block(p):
+        out = {}
+        for m, k in QLINES.items():
+            f = rows.get((m, p))
+            if f is None or not isinstance(f.get('value'), (int, float)):
+                continue
+            v = abs(f['value']) if k in ('capex', 'buybacks') else f['value']
+            if v < 0 and k in ('revenue', 'diluted_shares', 'sbc'):
+                continue
+            out[k] = v
+        return out
+    cur, pyb, pqb = block(latest), block(py) if py else {}, block(pq) if pq else {}
+    used = [p for p in (latest, py, pq) if p]
+    srcs = {}
+    for p in used:
+        f = rows[('revenue', p)]
+        srcs[f"pf_cf_{_filed(f).replace('-', '')}"] = {'kind': 'filing_derived', 'available_at': f['available_at'][:10],
+                                                     'note': 'SEC XBRL companyfacts of the filing (gather/_prefetch.json)'}
+    ids = list(srcs)
+    prov = ('scripts/ticker_prefetch.py: companyfacts lines (first-filed value per quarter) of the quarters ended '
+            + ', '.join(rows[('revenue', p)]['period_end'] for p in used) + '; numbers only')
+    todo = ['gather_documents: reconcile these lines to the release / 10-Q, add one_offs (symmetric, with tax), guidance '
+            '(with prior_low / prior_high), segments, kpis and balance from the documents, each with source_ids; then run '
+            'the review and save its result under understand/']
+    q = {'_provenance': prov, '_todo': todo, 'company': company.get('ticker'), 'period_end': end.isoformat(), 'as_of': as_of,
+         'currency': company.get('currency') or 'USD', 'source_ids': ids, 'sources': srcs, 'current': cur}
+    if pyb:
+        q['prior_year'] = pyb
+    if pqb:
+        q['prior_quarter'] = pqb
+    hist = [round(r['operating_income'] / r['revenue'], 4) for r in case.get('history') or []
+            if isinstance(r.get('revenue'), (int, float)) and r['revenue'] > 0 and isinstance(r.get('operating_income'), (int, float))
+            and -10 <= r['operating_income'] / r['revenue'] <= 1]
+    if hist:
+        q['history_operating_margins'] = hist
+    lines = {}
+    for k in ('revenue', 'gross_profit', 'operating_income'):
+        if k in cur:
+            ln = {'value': cur[k], 'period': 'quarter', 'source_ids': ids}
+            if k in pyb:
+                ln['prior_year'] = pyb[k]
+            if k in pqb:
+                ln['prior_quarter'] = pqb[k]
+            lines[k] = ln
+    e = {'_schema': 'econ_fixture_v1', '_provenance': prov,
+         '_todo': ['gather_documents: add the KPIs the economic model needs (kpis [{id, value, growth or prior_year, kpi_basis, '
+                   'scope, window, source_ids}]), segments and the model hint; formats: tests/fixtures/econ/*.json'],
+         'company': company.get('ticker'), 'name': company.get('name'), 'period_end': end.isoformat(), 'period': 'quarter',
+         'as_of': as_of, 'currency': company.get('currency') or 'USD', 'sources': srcs, 'lines': lines}
+    return q, e
+
+
+def _reused_competitors(run):
+    """The competitor tickers of a field.json in this run folder (copied by a reuse)."""
+    fr = _load(os.path.join(run, 'gather', 'field.json'), {}) or {}
+    out = []
+    for c in fr.get('competitors') or [] if isinstance(fr, dict) else []:
+        t = str((c or {}).get('ticker') or '').upper().strip() if isinstance(c, dict) else ''
+        if t and TICKER_RE.match(t):
+            out.append(t)
+    return out
+
+
+def fetch_peers(net, root, run, peers, as_of, gaps):
+    """Each named competitor's SEC companyfacts under gather/raw_field/<PEER>/ and its last fiscal years (the engine's own
+    reader, first-filed values available by as_of) -> (pack sources pf_peer_<PEER>, {PEER: summary}). gather_field still
+    says why each one competes, adds the competing segment and registers anything else it reads."""
+    sources, out = [], {}
+    for t in peers:
+        hit, _ = _map_hit(root, run, t)
+        if hit is None and _live_map(net, run):
+            hit, _ = _map_hit(root, run, t)
+        if hit is None:
+            gaps.append(f'named competitor {t}: not in the SEC ticker map (a foreign filer or another ticker): gather_field reads '
+                        'its own filings')
+            continue
+        cik = int(hit['cik'])
+        folder = os.path.join(run, 'gather', 'raw_field', t)
+        url = handoff.SEC_FACTS.format(cik=cik)
+        row, ok = _save(net, url, os.path.join(folder, 'sec__companyfacts.json'), {'accession': None}, True)
+        _manifest(os.path.join(folder, 'MANIFEST.json'), [row])
+        if not ok:
+            gaps.append(f'named competitor {t}: companyfacts not retrieved ({url})')
+            continue
+        try:
+            fb = pipeline.factbook_from_run_dir(folder, {'ticker': t, 'name': hit.get('name'), 'cik': str(cik),
+                                                         'currency': 'USD'}, as_of)
+        except Exception as e:      # an unreadable payload is a gap for gather_field, never fatal
+            gaps.append(f'named competitor {t}: companyfacts not readable by the engine ({str(e)[:120]})')
+            continue
+        rows = {}
+        for f in fb.get('facts') or []:
+            if (f.get('source_id') == 'sec:companyfacts' and f.get('available_at') and f['available_at'] <= as_of
+                    and f['period'].startswith('FY') and f['metric'] in PEER_METRICS):
+                rows.setdefault((f['metric'], f['period']), f)
+        fys = sorted({p for (m, p) in rows if m == 'revenue'}, key=lambda p: rows[('revenue', p)]['period_end'])[-3:]
+        if not fys:
+            gaps.append(f'named competitor {t}: no fiscal-year revenue in its companyfacts by {as_of} (IFRS or another '
+                        'taxonomy): gather_field reads its filings')
+            continue
+        years = [{'fiscal_year': p, 'period_end': rows[('revenue', p)]['period_end'],
+                  **{m: rows[(m, p)]['value'] for m in PEER_METRICS if (m, p) in rows}} for p in fys]
+        last = years[-1]
+        filed = _filed(rows[('revenue', fys[-1])])
+        sid = f"pf_peer_{re.sub(r'[^A-Za-z0-9]+', '_', t)}"
+        sources.append(_source(sid, 'structured_data', f"SEC XBRL companyfacts of {hit.get('name') or t} ({t}), a named "
+                               f"competitor: fiscal years through {fys[-1]}", url, filed,
+                               f"U.S. SEC (XBRL from {t}'s own filings)", independent=False, retrieval='provider_normalized'))
+        summary = {'name': hit.get('name'), 'cik': str(cik), 'source_id': sid, 'currency': fb.get('currency') or 'USD',
+                   'years': years, 'file': os.path.relpath(os.path.join(folder, 'sec__companyfacts.json'), run),
+                   'note': "the competitor's own filings via SEC XBRL, first-filed values; gather_field says why it competes, "
+                           'adds the competing segment and cites this source in competitors[].source_ids'}
+        if len(years) > 1 and years[-2].get('revenue'):
+            summary['revenue_growth_last'] = round(last['revenue'] / years[-2]['revenue'] - 1, 4)
+        for m in ('gross_profit', 'operating_income'):
+            if last.get(m) is not None and last.get('revenue'):
+                summary[f'{m}_margin_last'] = round(last[m] / last['revenue'], 4)
+        out[t] = summary
+    return sources, out
+
+
 # ---------------------------------------------------------------- rates
 
 def macro(net, root, run, as_of, gaps):
@@ -470,7 +727,7 @@ def macro(net, root, run, as_of, gaps):
             body = net.get(url, attempts=2, headers=FRED_HEADERS)
             if body is None or not (body.startswith(b'observation_date') or body.startswith(b'DATE')):
                 gaps.append(f'FRED {s} not retrieved: ' + ('the regime line misses it' if s != 'DGS10' else
-                                                          'risk-free for the macro lane (AV TREASURY_YIELD)'))
+                                                          'risk-free for the macro lane (FRED or U.S. Treasury via WebFetch)'))
                 continue
             with open(os.path.join(folder, f'{s}.csv'), 'wb') as f:
                 f.write(body)
@@ -530,9 +787,10 @@ def _save(net, url, path, rec, refresh, rows=None):
     body = net.get(url)
     row = {**rec, 'file': os.path.basename(path), 'url': url, 'provider': 'sec', 'retrieved_at_utc': _now(),
            'note': rec.get('note') or 'verbatim payload (scripts/ticker_prefetch.py)'}
-    if body is None:
-        if os.path.exists(path) and old.get('status') == 200:
-            return {**old, 'refresh_failed_utc': _now()}, True
+    if body is None:            # a copy already there (an earlier prefetch of this folder, or a reused run) stays usable
+        if os.path.exists(path) and (old.get('status') == 200 or not old.get('status')):
+            return {**(old or {'file': os.path.basename(path), 'url': url, 'provider': 'sec',
+                               'note': 'copied from a reused run; not refreshed'}), 'refresh_failed_utc': _now()}, True
         return {**row, 'status': 'failed'}, False
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, 'wb') as f:
@@ -547,26 +805,33 @@ def _read_text(path):
 
 # ---------------------------------------------------------------- the whole prefetch
 
-def prefetch(ticker, as_of, root=ROOT, reuse='auto', cik=None, releases=RELEASES, docs=True, refresh=False, ua=None):
+def prefetch(ticker, as_of, root=ROOT, reuse='auto', cik=None, releases=RELEASES, docs=True, refresh=False, ua=None,
+             peers=None):
     t0 = time.time()
     ticker = str(ticker).upper().strip()
     if not TICKER_RE.match(ticker):
         raise ValueError(f'ticker {ticker!r}: 1-12 characters A-Z 0-9 . -')
     as_of = date.fromisoformat(as_of).isoformat()
+    peers = [str(x).upper().strip() for x in (peers or []) if str(x).strip()]
+    bad = [x for x in peers if not TICKER_RE.match(x)]
+    if bad:
+        raise ValueError(f'--peers {bad}: tickers of 1-12 characters A-Z 0-9 . -')
     ua = os.environ.get('SEC_USER_AGENT', '') if ua is None else ua
     ua = ua if ('@' in ua and '\n' not in ua and '\r' not in ua) else ''
     run = run_folder(root, ticker, as_of)
+    started = _now()
+    previous = archive_attempt(run, ticker) if os.path.isdir(run) else None
     co, raw = os.path.join(run, 'companies', ticker), os.path.join(run, 'companies', ticker, 'raw')
     os.makedirs(raw, exist_ok=True)
     gaps, got, reading, sources = [], [], [], []
     net = Net(ua)
-    info = {'ticker': ticker, 'as_of': as_of, 'run': run, 'engine_version': __version__, 'started_at_utc': _now(),
-            'sec_user_agent': 'set' if ua else 'missing'}
+    info = {'ticker': ticker, 'as_of': as_of, 'run': run, 'engine_version': __version__, 'started_at_utc': started,
+            'sec_user_agent': 'set' if ua else 'missing', 'previous_attempt': previous}
 
     hit, why = find_reuse(root, ticker, as_of, reuse)
     reused, raw_rows = None, []
     if hit:
-        reused, raw_rows = apply_reuse(hit[0], hit[1], run, ticker)
+        reused, raw_rows = apply_reuse(hit[0], hit[1], run, ticker, as_of)
         prev_ident = _load(os.path.join(hit[0], 'identity.json'))
         if prev_ident and not os.path.exists(os.path.join(run, 'identity.json')):
             _dump(os.path.join(run, 'identity.json'), prev_ident)
@@ -584,8 +849,15 @@ def prefetch(ticker, as_of, root=ROOT, reuse='auto', cik=None, releases=RELEASES
         cik, rec_row, map_src = lookup_cik(net, root, ticker, run, gaps)
         if cik:
             got.append({'what': 'CIK from the SEC ticker map', 'source': map_src})
+        elif reused:                    # a CIK does not change: the earlier run's company file or identity has it
+            prev = (_load(os.path.join(co, 'company.json'), {}) or {}).get('cik') or \
+                (_load(os.path.join(run, 'identity.json'), {}) or {}).get('cik')
+            if str(prev or '').isdigit():
+                cik = int(prev)
+                got.append({'what': 'CIK from the reused run', 'source': reused['from']})
     cik = int(cik) if cik else None
     man_rows = list(raw_rows)
+    sec_fresh = False          # the submissions (the filings list) were retrieved in THIS run
     if cik and ua:
         for name, url in (('sec__submissions.json', handoff.SEC_SUBMISSIONS.format(cik=cik)),
                           ('sec__companyfacts.json', handoff.SEC_FACTS.format(cik=cik))):
@@ -593,16 +865,23 @@ def prefetch(ticker, as_of, root=ROOT, reuse='auto', cik=None, releases=RELEASES
             row, ok = _save(net, url, path, {'accession': None}, True, man_rows)
             man_rows.append(row)
             if ok and row.get('refresh_failed_utc'):
-                gaps.append(f"{url} not retrieved: {name} kept from the reused run (retrieved {row.get('retrieved_at_utc')})")
+                gaps.append(f"{url} not retrieved: {name} kept from an earlier retrieval ({row.get('retrieved_at_utc')}); "
+                            'filings after it are unknown')
             elif ok:
                 got.append({'what': name.split('__')[1].split('.')[0], 'file': os.path.relpath(path, run)})
+                sec_fresh = sec_fresh or name == 'sec__submissions.json'
             else:
                 gaps.append(f'{url} not retrieved: {name} missing (the numbers lane uses AV statements and the filings)')
         sub = _load(os.path.join(raw, 'sec__submissions.json'))
         facts_payload = os.path.exists(os.path.join(raw, 'sec__companyfacts.json'))
     elif cik:
-        sub = _load(os.path.join(raw, 'sec__submissions.json'))           # saved by an earlier prefetch of this folder
+        sub = _load(os.path.join(raw, 'sec__submissions.json'))           # saved by an earlier prefetch or a reused run
         facts_payload = os.path.exists(os.path.join(raw, 'sec__companyfacts.json'))
+    if sub and not sec_fresh:
+        old = next((r for r in man_rows if r.get('file') == 'sec__submissions.json'), {})
+        gaps.append('the filings list comes from an SEC submissions payload saved earlier (retrieved '
+                    f"{old.get('retrieved_at_utc') or 'at an unknown time'}), not refreshed in this run: filings after it are "
+                    'unknown (the lanes check SEC EDGAR or IR for them)')
 
     filings, chosen = [], {}
     if sub:
@@ -619,6 +898,10 @@ def prefetch(ticker, as_of, root=ROOT, reuse='auto', cik=None, releases=RELEASES
                     f"8-K since the annual report (items {r['items'] or 'n/a'})")
             filings.append({'form': r['form'], 'filed': r['filed'], 'report_date': r['report_date'], 'accession': r['accession'],
                             'items': r['items'], 'url': r['url'], 'index_url': r['index_url'], 'what': what})
+        if chosen['annual'] and chosen['annual']['form'] in ('20-F', '40-F'):
+            gaps.append(f"releases not prefetched (6-K): {chosen['annual']['form']} filer; its earnings releases are 6-K exhibits "
+                        '(identity.json filings, form 6-K, or the IR site): gather_documents and gather_numbers find and save '
+                        'them (reading/ has no release_*.txt)')
         if docs and ua:
             # the pipeline's contract files: latest annual report, latest quarterly report, proxy (inline XBRL)
             for d in handoff.filing_documents(sub_cut, cik):
@@ -741,7 +1024,14 @@ def prefetch(ticker, as_of, root=ROOT, reuse='auto', cik=None, releases=RELEASES
             if forensic:
                 _dump(os.path.join(run, 'prefetch', 'forensic.json'), forensic)
             got.append({'what': f'{len(facts)} companyfacts facts ({len(fy)} fiscal years, {len(qs)} quarters), the computed '
-                                'company type and the forensic screens', 'file': 'prefetch/history.json'})
+                                'company type and the forensic screens (ROIC and incremental ROIC among them)',
+                        'file': 'prefetch/history.json'})
+            qcase, ecase = quarter_skeletons(rows, case, company, as_of)
+            if qcase:
+                _dump(os.path.join(run, 'prefetch', 'quarter_case.json'), qcase)
+                _dump(os.path.join(run, 'prefetch', 'econ_case.json'), ecase)
+                got.append({'what': f"quarter-review and econ-review case skeletons for the quarter ended {qcase['period_end']} "
+                                    '(numbers only)', 'file': 'prefetch/quarter_case.json'})
     fred_folder, rf, erp, erp_file = macro(net, root, run, as_of, gaps)
     market, mkt_pack = {}, {}
     if rf:
@@ -759,7 +1049,15 @@ def prefetch(ticker, as_of, root=ROOT, reuse='auto', cik=None, releases=RELEASES
         _dump(os.path.join(run, 'market.json'), market)
         got.append({'what': 'dated market inputs (risk-free, ERP) for deep --market', 'file': 'market.json'})
 
-    srcs = {s['id']: s for s in sources + cf_sources}
+    peer_list = list(dict.fromkeys(peers + [t for t in _reused_competitors(run) if t not in peers])) if (peers or reused) else []
+    peer_list = [t for t in peer_list if t != ticker][:MAX_PEERS]
+    peer_sources, peer_rows = fetch_peers(net, root, run, peer_list, as_of, gaps) if peer_list and ua else ([], {})
+    if peer_list and not ua:
+        gaps.append(f"named competitors {', '.join(peer_list)}: companyfacts not fetched (SEC_USER_AGENT is not set)")
+    if peer_rows:
+        _dump(os.path.join(run, 'prefetch', 'peers.json'), peer_rows)
+        got.append({'what': f"companyfacts of the named competitors {', '.join(sorted(peer_rows))}", 'file': 'prefetch/peers.json'})
+    srcs = {s['id']: s for s in sources + cf_sources + peer_sources}
     notes = [f'prefetch {info["started_at_utc"]}: SEC documents saved verbatim and their text in reading/ (untrusted); a lane '
              'cites a pf_ source only after reading the passage it relies on']
     if reused:
@@ -778,16 +1076,19 @@ def prefetch(ticker, as_of, root=ROOT, reuse='auto', cik=None, releases=RELEASES
              'fiscal_year_end': company.get('fiscal_year_end'), 'sic': company.get('sic'),
              'sic_description': company.get('sic_description'), 'annual_form': company.get('annual_form'),
              'type': type_txt, 'evidence_ids': [annual_src] if annual_src else None}
-    # the prefetch owns these (a reused identity's evidence ids may name sources this run's pack does not hold)
-    owned = {'ticker', 'as_of', 'filings', 'computed_type', 'identity_check', 'prefetch', 'evidence_ids'}
-    ident.update({'filings': filings, 'computed_type': ({k: typ.get(k) for k in ('stage', 'lynch', 'reasons', 'flags')}
-                                                         if typ else None),
+    # the prefetch owns these, refreshed on every run: a reused or earlier identity's evidence ids may name sources this
+    # run's pack does not hold, and its stop / stop_reason / type / resolved belong to that run (gather_numbers re-checks)
+    owned = {'ticker', 'as_of', 'filings', 'computed_type', 'identity_check', 'prefetch', 'evidence_ids', 'stop',
+             'stop_reason', 'type', 'resolved'}
+    ident.update({'resolved': bool(cik), 'filings': filings,
+                  'computed_type': ({k: typ.get(k) for k in ('stage', 'lynch', 'reasons', 'flags')} if typ else None),
                   'identity_check': check, 'prefetch': {'by': 'scripts/ticker_prefetch.py', 'at_utc': _now(),
                                                         'to_complete_by_lanes': ['security and share class, quote currency, '
-                                                                                 'IBKR contract: gather_numbers',
-                                                                                 'named competitors: gather_field']}})
-    if not cik:
-        ident['resolved'] = False
+                                                                                 'IBKR contract: gather_numbers (it alone writes '
+                                                                                 'identity.json while the lanes run)',
+                                                                                 'named competitors: gather_field writes them '
+                                                                                 'in gather/field.json competitors[] (the '
+                                                                                 'canonical list), never here']}})
     ident = _merge_record(os.path.join(run, 'identity.json'), {k: v for k, v in ident.items() if v is not None}, owned)
 
     remains = {k: list(v) for k, v in REMAINS.items()}
@@ -797,13 +1098,25 @@ def prefetch(ticker, as_of, root=ROOT, reuse='auto', cik=None, releases=RELEASES
     if not facts:
         remains['gather_numbers'].insert(0, 'no companyfacts facts were prefetched: statements from AV or the filings')
     if not rf:
-        remains['gather_macro'].insert(0, 'risk-free not prefetched: AV TREASURY_YIELD (10year, daily) as market.risk_free')
+        remains['gather_macro'].insert(0, 'risk-free not prefetched: FRED DGS10 or the U.S. Treasury daily par yield curve '
+                                          'through WebFetch, as market.risk_free (no Alpha Vantage: its quota is the numbers '
+                                          'and documents lanes\')')
     if reused:
-        since = [f for f in filings if f['filed'] > reused['from_as_of']]
-        reused['new_filings_since'] = since
         reused['always_refresh'] = ['price (IBKR snapshot, READ-ONLY)', 'consensus', 'rates', f"news since {reused['from_as_of']}"]
-        reused['rule'] = ('keep what is still valid in the copied fragments; re-read only the filings in new_filings_since; '
-                          'refresh the market data; the analyst redoes the judgement (reuse/ is reference only)')
+        if sec_fresh:
+            reused['new_filings_since'] = [f for f in filings if f['filed'] > reused['from_as_of']]
+            reused['rule'] = ('keep what is still valid in the copied fragments; re-read only the filings in new_filings_since; '
+                              'refresh the market data; the analyst redoes the judgement (reuse/ is reference only)')
+        else:
+            reused['new_filings_since'] = None
+            reused['new_filings_unknown'] = ('unknown: SEC not refreshed in this run (no SEC_USER_AGENT, or SEC unreachable); '
+                                             f"the filings list may stop at the earlier run: check SEC EDGAR or IR for filings "
+                                             f"after {reused['from_as_of']}")
+            reused['rule'] = (f"keep what is still valid in the copied fragments; the filings after {reused['from_as_of']} are "
+                              'NOT known: check SEC EDGAR or the IR site for them and read the new ones; refresh the market '
+                              'data; the analyst redoes the judgement (reuse/ is reference only)')
+            for lane in ('gather_numbers', 'gather_documents'):
+                remains[lane].insert(0, f"filings after {reused['from_as_of']} unknown (SEC not refreshed): check SEC EDGAR / IR")
     info.update({'cik': cik, 'name': company.get('name'), 'currency': company.get('currency'),
                  'fiscal_year_end': company.get('fiscal_year_end'), 'got': got, 'filings': filings, 'reading': reading,
                  'macro': {'fred_folder': fred_folder, 'risk_free': rf, 'equity_risk_premium': erp, 'erp_file': erp_file,
@@ -826,13 +1139,17 @@ def main(argv=None):
     ap.add_argument('--no-docs', action='store_true', help='list the filings without saving the documents')
     ap.add_argument('--refresh', action='store_true', help='refetch files this run folder already saved')
     ap.add_argument('--root', default=ROOT, help='repository root (runs/tickers/ is under it)')
+    ap.add_argument('--peers', default='', help='named direct competitors, comma separated (e.g. AMD,AVGO): their SEC '
+                                               'companyfacts for gather_field (a reused field.json adds its competitors)')
     a = ap.parse_args(argv)
     info = prefetch(a.ticker, a.as_of, root=os.path.abspath(a.root), reuse=a.reuse, cik=a.cik, releases=a.releases,
-                    docs=not a.no_docs, refresh=a.refresh)
+                    docs=not a.no_docs, refresh=a.refresh, peers=[x for x in a.peers.split(',') if x.strip()])
+    since = (info['reuse'] or {}).get('new_filings_since') if info['reuse'] else None
     print(json.dumps({k: info[k] for k in ('run', 'cik', 'name', 'currency', 'fiscal_year_end', 'type', 'sources', 'facts',
                                            'seconds')}
                      | {'reading': [r['file'] for r in info['reading']], 'reuse': (info['reuse'] or {}).get('from'),
-                        'new_filings_since_reuse': [f"{f['form']} {f['filed']}" for f in (info['reuse'] or {}).get('new_filings_since', [])],
+                        'new_filings_since_reuse': (None if since is None else [f"{f['form']} {f['filed']}" for f in since]),
+                        'previous_attempt': (info['previous_attempt'] or {}).get('folder'),
                         'gaps': info['gaps']}, indent=1, ensure_ascii=False))
 
 

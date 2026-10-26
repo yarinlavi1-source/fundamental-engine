@@ -60,13 +60,18 @@ assert 'Position' in packet('master_process')['content'] and 'syndicated' in pac
 from fundamental_engine.scenario_reasons import build as scenario_reasons
 assert scenario_reasons({})['status']=='not_available'
 assert 'scenario_reasons' in packet('annual_valuation')['content']
-from fundamental_engine.ticker_stages import STAGES, render, source
+from fundamental_engine.ticker_stages import STAGES, render, source, prompt
+assert {'gather_numbers','gather_documents','gather_field','gather_macro','analyst','analyst_field','analyst_path','review_trace','review_numbers','review_counter','repair','deliver'}==set(STAGES), sorted(STAGES)
 for st in STAGES:
     t=render(st,'nvda','2026-10-25',run='/r/runs/tickers/NVDA_2026-10-25')
     assert 'NVDA' in t and '/r/runs/tickers/NVDA_2026-10-25' in t and not any(k in t for k in ('{TICKER}','{AS_OF}','{RUN}')), st
-    assert all(k in source(st) for k in ('strictly READ-ONLY','untrusted data','LAG_DAYS = 2','Company-first','Budget: about')), st
-assert 'ticker_prefetch' in packet('master_process')['content']
-print(json.dumps({'ticker_stages':len(STAGES),'scenario_reasons':'passed','evidence_pack':'passed','skeleton_packets':'passed','quarter_review':'passed','econ_registry':'passed','econ_review':'passed','econ_peak_exception':'passed','drivers':'passed','plain_verdict':'passed','discovery':'passed','annual_valuation':'passed','version':__version__,'packaged_packets':len(records),'installed_review':'passed'}))
+    assert all(k in source(st) for k in ('strictly READ-ONLY','untrusted data','LAG_DAYS = 2','Company-first','Budget: about','forecast_ledger.jsonl')), st
+    assert '--run /r/runs/tickers/NVDA_2026-10-25' in prompt(st,'NVDA','2026-10-25',root='/r',run='/r/runs/tickers/NVDA_2026-10-25',trigger='review' if st=='repair' else None), st
+from fundamental_engine.ticker_run import skeleton, PARTS
+for part in PARTS:
+    assert skeleton(part)['thesis_he'], part
+assert 'ticker_prefetch' in packet('master_process')['content'] and 'ticker-value' in packet('master_process')['content']
+print(json.dumps({'ticker_stages':len(STAGES),'ticker_run':'passed','scenario_reasons':'passed','evidence_pack':'passed','skeleton_packets':'passed','quarter_review':'passed','econ_registry':'passed','econ_review':'passed','econ_peak_exception':'passed','drivers':'passed','plain_verdict':'passed','discovery':'passed','annual_valuation':'passed','version':__version__,'packaged_packets':len(records),'installed_review':'passed'}))
 '''
     completed=subprocess.run([sys.executable,'-I','-c',code,temp,str(ROOT/'examples/research_dossier_demo.json'),str(ROOT/'examples/valuation/infrastructure.json'),str(ROOT/'examples/discovery_demo.json'),str(ROOT/'examples/plain_demo.json'),str(ROOT/'examples/real/avgo_plain_2025.json'),str(ROOT/'examples/valuation/software_drivers.json'),
                                str(ROOT/'tests/fixtures/econ/ibkr_2026q3.json'),str(ROOT/'tests/fixtures/econ/pltr_2026q2_filed.json'),str(ROOT/'examples/evidence_pack_demo.json')],

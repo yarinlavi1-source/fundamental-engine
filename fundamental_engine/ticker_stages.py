@@ -1,10 +1,16 @@
 """Fast ticker procedure: the stage instruction files (brain/ticker/<stage>.md) and their placeholders.
 
-The main loop (CLAUDE.md "On a ticker") runs scripts/ticker_prefetch.py, then hands each agent a short prompt: "follow the
-output of `python -m fundamental_engine ticker-stage <stage> --ticker T --as-of D`". Each file carries every rule the
-matching part of the saved Workflow `.claude/workflows/ticker.js` carries (that Workflow stays as the slower thorough
-fallback), with three placeholders: {TICKER}, {AS_OF} and {RUN} (the absolute run folder runs/tickers/<T>_<as_of>).
-Pure module: reads packaged text, fetches nothing.
+The main loop (CLAUDE.md "On a ticker") runs scripts/ticker_prefetch.py and the deterministic steps of ticker_run
+(ticker-prep, ticker-value, ticker-status), and hands each agent a short prompt (`prompt()`, `ticker-stage <stage> --prompt`):
+"cd <repo root> && python -m fundamental_engine ticker-stage <stage> --ticker T --as-of D --run <run folder>; follow its
+output exactly". Each file carries every rule the matching part of the saved Workflow `.claude/workflows/ticker.js` carries
+(that Workflow stays as the slower thorough fallback), with three placeholders: {TICKER}, {AS_OF} and {RUN} (the absolute
+run folder runs/tickers/<T>_<as_of>). Pure module: reads packaged text, fetches nothing.
+
+Minutes are design estimates from the measured NVDA stage times of the saved Workflow (25.10.2026: gather lanes 7.0-9.3 min
+at 22-36 tool calls; review lenses about 8 min at 28-50 calls; Understand 22 min and Position 22 min, about 25 of those 44
+minutes spent reading engine source for the JSON formats the stage files and skeletons now give); not yet measured end to
+end (`ticker-status` records each run's stage times).
 """
 from datetime import date
 from pathlib import Path
@@ -13,35 +19,57 @@ import re
 DIR = Path(__file__).parent / 'brain' / 'ticker'
 TICKER_RE = re.compile(r'^[A-Z0-9.\-]{1,12}$')
 PLACEHOLDERS = ('{TICKER}', '{AS_OF}', '{RUN}')
-# step: 1 = the four gather lanes in parallel (with the prefetch), 2 = the analyst, 3 = the two reviewers in parallel,
-# 4 = the main loop delivers. writes[0] is the stage's own output (relative to the run folder).
+# step: 1 = the four gather lanes in parallel (with the prefetch), 2 = the three analyst parts and review_trace in parallel
+# (after ticker-prep), 3 = the two reviewers in parallel (after ticker-value), 4 = the main loop delivers; repair runs at
+# most once after ticker-value (pack problems) and once after the reviewers (critical findings). writes[0] is the stage's
+# own output (relative to the run folder). model: the Agent tool model ('default' = the main loop's model).
 STAGES = {
-    'gather_numbers': {'file': 'gather_numbers.md', 'step': 1, 'agent': 'background agent, model sonnet', 'minutes': '5-6',
-                       'writes': ['gather/numbers.json', 'identity.json (identity check)', 'companies/<T>/raw/ (price, AV payloads)'],
+    'gather_numbers': {'file': 'gather_numbers.md', 'step': 1, 'model': 'sonnet', 'agent': 'background agent, model sonnet',
+                       'minutes': '7-9', 'writes': ['gather/numbers.json', 'identity.json (identity check)',
+                                                    'companies/<T>/raw/ (price, AV payloads)'],
                        'what': 'identity check, statements reconciled, IBKR price (READ-ONLY), own multiple history, '
-                               'attributed consensus, guidance track record'},
-    'gather_documents': {'file': 'gather_documents.md', 'step': 1, 'agent': 'background agent, model sonnet', 'minutes': '5-6',
-                         'writes': ['gather/documents.json'],
+                               'attributed consensus, guidance track record and its ratio'},
+    'gather_documents': {'file': 'gather_documents.md', 'step': 1, 'model': 'sonnet', 'agent': 'background agent, model sonnet',
+                         'minutes': '7-9', 'writes': ['gather/documents.json', 'understand/quarter_result.json',
+                                                      'understand/econ_result.json'],
                          'what': 'targeted reading of the 10-K / 10-Q / release / transcript: segments, customers, KPIs, '
-                                 'RPO and backlog, current guidance, one-offs, risk factors'},
-    'gather_field': {'file': 'gather_field.md', 'step': 1, 'agent': 'background agent, model sonnet', 'minutes': '5-6',
-                     'writes': ['gather/field.json'],
-                     'what': 'named direct competitors with their own numbers and why each competes, bottlenecks, share'},
-    'gather_macro': {'file': 'gather_macro.md', 'step': 1, 'agent': 'background agent, model sonnet', 'minutes': '4-5',
-                     'writes': ['gather/macro.json'],
+                                 'RPO and backlog, current guidance, one-offs, risk factors; quarter-review and econ-review'},
+    'gather_field': {'file': 'gather_field.md', 'step': 1, 'model': 'sonnet', 'agent': 'background agent, model sonnet',
+                     'minutes': '7-9', 'writes': ['gather/field.json'],
+                     'what': 'named direct competitors (the canonical list) with their own numbers and why each competes, '
+                             'bottlenecks, share'},
+    'gather_macro': {'file': 'gather_macro.md', 'step': 1, 'model': 'sonnet', 'agent': 'background agent, model sonnet',
+                     'minutes': '5-7', 'writes': ['gather/macro.json'],
                      'what': 'rates check, geography and country risk, export controls, regulation, news since the last filing'},
-    'analyst': {'file': 'analyst.md', 'step': 2, 'agent': 'one agent, default model', 'minutes': '8-10',
-                'writes': ['analyst.json', 'understand/business.json', 'position.json', 'evidence_pack.json',
-                           'companies/<T>/inputs.json', 'companies/<T>/out/'],
-                'what': 'understand + position + value: pack-merge, pack-to-inputs, deep for this one company; '
-                        'also the one repair pass after a critical review finding'},
-    'review_numbers': {'file': 'review_numbers.md', 'step': 3, 'agent': 'agent, default model (parallel with review_counter)',
-                       'minutes': '4-5', 'writes': ['review/numbers.json'],
-                       'what': 'every table number traced to its source, tiers, no other-company default, guidance vs track record'},
-    'review_counter': {'file': 'review_counter.md', 'step': 3, 'agent': 'agent, default model (parallel with review_numbers)',
-                       'minutes': '4-5', 'writes': ['review/counter.json'],
-                       'what': 'counter-thesis, peak vs justified multiple, what breaks, events and falsifiers'},
-    'deliver': {'file': 'deliver.md', 'step': 4, 'agent': 'the main loop itself', 'minutes': '1-2',
+    'analyst': {'file': 'analyst.md', 'step': 2, 'model': 'default', 'agent': 'background agent, default model', 'minutes': '8-12',
+                'part': 'core', 'writes': ['position/core.json', 'understand/business.json'],
+                'what': 'the coherent scenario core: understand (business.json), drivers incl. current_year_revenue, '
+                        'forecast_options, scenario events, key risk, falsifiers'},
+    'analyst_field': {'file': 'analyst_field.md', 'step': 2, 'model': 'default', 'agent': 'background agent, default model',
+                      'minutes': '5-7', 'part': 'field', 'writes': ['position/field.json'],
+                      'what': 'the five potential readings and the model-card assessments (moat, management, ...)'},
+    'analyst_path': {'file': 'analyst_path.md', 'step': 2, 'model': 'default', 'agent': 'background agent, default model',
+                     'minutes': '4-6', 'part': 'path', 'writes': ['position/path.json'],
+                     'what': 'company_path: the forward P/E path per scenario with its justification, own history, named peers'},
+    'review_trace': {'file': 'review_trace.md', 'step': 2, 'model': 'default', 'agent': 'background agent, default model '
+                     '(parallel with the analyst parts)', 'minutes': '5-7', 'writes': ['review/trace.json'],
+                     'what': 'every gathered number traced to its source, period, basis and date; no look-ahead; no consensus '
+                             'as a fact; syndication'},
+    'review_numbers': {'file': 'review_numbers.md', 'step': 3, 'model': 'default',
+                       'agent': 'background agent, default model (parallel with review_counter)', 'minutes': '5-7',
+                       'writes': ['review/numbers.json'],
+                       'what': 'company-first: tiers and evidence of every driver, guidance vs track record, multiples vs own '
+                               'history and named peers, the table equals the executed casefile'},
+    'review_counter': {'file': 'review_counter.md', 'step': 3, 'model': 'default',
+                       'agent': 'background agent, default model (parallel with review_numbers)', 'minutes': '5-7',
+                       'writes': ['review/counter.json'],
+                       'what': 'counter-thesis, coherence of the three parts, guardrails, peak vs justified multiple, what '
+                               'breaks, expectation gap and red team'},
+    'repair': {'file': 'repair.md', 'step': 3, 'model': 'default', 'agent': 'one new agent, default model (at most once per '
+               'trigger)', 'minutes': '4-8', 'writes': ['review/repair.json', 'value.json'],
+               'what': 'the one repair pass: the open problems of ticker-value, or the critical review findings; reruns '
+                       'ticker-value'},
+    'deliver': {'file': 'deliver.md', 'step': 4, 'model': 'main loop', 'agent': 'the main loop itself', 'minutes': '2-3',
                 'writes': ['deliver/table_he.md', 'deliver/reasons.json', 'runs/tickers/forecast_ledger.jsonl'],
                 'what': 'the owner message: one table, 3-5 short explanations, sources as links; ledger freeze'},
 }
@@ -83,14 +111,26 @@ def render(stage, ticker, as_of, run=None, root=None):
     return text
 
 
-def prompt(stage, ticker, as_of):
-    """The short prompt the main loop hands an agent for one stage."""
+TRIGGERS = ('value', 'review')
+
+
+def prompt(stage, ticker, as_of, root=None, run=None, trigger=None):
+    """The short prompt the main loop hands an agent for one stage: it names the repository root and the run folder
+    absolutely, so it works whatever the agent's working directory. The repair stage needs its trigger: value
+    (ticker-value did not run the engine) or review (critical review findings)."""
+    if stage not in STAGES:
+        raise ValueError(f'unknown stage {stage!r}; stages: {", ".join(STAGES)}')
+    if (stage == 'repair') != (trigger is not None) or (trigger is not None and trigger not in TRIGGERS):
+        raise ValueError('the repair stage, and only it, takes a trigger: value or review')
     t, d = _check(ticker, as_of)
-    return (f'You are the {stage} stage of the fast ticker procedure for {t} (as_of {d}). From the fundamental-engine repository '
-            f'root run `python -m fundamental_engine ticker-stage {stage} --ticker {t} --as-of {d}` and follow its output exactly; '
-            'reply only as it says.')
+    repo = (Path(root) if root else Path.cwd()).resolve()
+    folder = str(run) if run else run_folder(t, d, repo)
+    return (f'You are the {stage} stage of the fast ticker procedure for {t} (as_of {d})'
+            + (f', trigger {trigger}' if trigger else '') + f'. Run `cd {repo} && python -m '
+            f'fundamental_engine ticker-stage {stage} --ticker {t} --as-of {d} --run {folder}` and follow its output exactly; '
+            'work from that repository root with absolute paths; reply only as it says.')
 
 
 def index():
     """The stages in order, for `ticker-stage list`."""
-    return [{'stage': k, **{x: v[x] for x in ('step', 'agent', 'minutes', 'writes', 'what')}} for k, v in STAGES.items()]
+    return [{'stage': k, **{x: v[x] for x in ('step', 'model', 'agent', 'minutes', 'writes', 'what')}} for k, v in STAGES.items()]

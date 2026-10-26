@@ -29,8 +29,10 @@ same connectors (SEC, Interactive Brokers, Alpha Vantage, FMP, LunarCrush, …).
   the plain-Hebrew table, including the "מה המחיר של היום מניח" reverse-DCF row, and `out/scenarios_he.md` with the
   condition behind every דובי / בסיסי / שורי price).
 - **Latest state (read these to catch up):** `docs/CHANGELOG.md` Unreleased (25.10.2026 fast ticker procedure, the
-  default on a ticker: `scripts/ticker_prefetch.py` in seconds, four parallel sonnet gather lanes, one analyst, two
-  reviewers, ~20 minutes, each following `python -m fundamental_engine ticker-stage <stage>`; see CLAUDE.md "On a ticker")
+  default on a ticker: `scripts/ticker_prefetch.py` in seconds, four parallel sonnet gather lanes, three parallel analyst
+  parts with the trace reviewer, `ticker-value`, two reviewers, `ticker-status`; each agent follows `python -m
+  fundamental_engine ticker-stage <stage>`; a design estimate of 25-35 minutes for a new ticker, not yet measured; see
+  CLAUDE.md "On a ticker")
   and 0.14.0 (25.10.2026 ticker brain: the Workflow `ticker`, args `{ticker, as_of}`, now the thorough fallback; skeleton = packet `master_process`; sources = `sources_registry`;
   evidence pack -> `pack-to-inputs`; source tiers and the gaps row; `company_path` yearly prices; `scenario_reasons` and
   `out/scenarios_he.md`; econ layer `docs/ECONOMICS.md`; value only on the owner's ticker, never in advance) and 0.13.0 (calibration fixes: terminal

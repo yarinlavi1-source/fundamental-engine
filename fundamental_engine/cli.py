@@ -254,6 +254,29 @@ def main():
     ts.add_argument("--as-of")
     ts.add_argument("--run", help="run folder (default <current directory>/runs/tickers/<TICKER>_<as_of>)")
     ts.add_argument("--prompt", action="store_true", help="print the short prompt the main loop hands the agent instead")
+    ts.add_argument("--trigger", choices=["value", "review"], help="repair only: value (ticker-value did not run the engine) "
+                                                                   "or review (critical review findings)")
+    ts.add_argument("--skeleton", action="store_true", help="analyst, analyst_field, analyst_path: print the JSON skeleton of "
+                                                            "the stage's position part (every required key) instead")
+    tc = subs.add_parser("ticker-check", help="Fast ticker procedure: validate one gather fragment or position part in its run "
+                                              "(exit 1 with the problems listed; prints the guidance track record)")
+    tc.add_argument("run", help="the run folder runs/tickers/<TICKER>_<as_of>")
+    tc.add_argument("file", help="gather/<lane>.json or position/<core|field|path>.json")
+    tpp = subs.add_parser("ticker-prep", help="Fast ticker procedure, after the gather lanes: check every fragment, write "
+                                              "understand/auto.json, evidence_ids.json and the position part skeletons")
+    tpp.add_argument("run")
+    tv = subs.add_parser("ticker-value", help="Fast ticker procedure: merge the position parts, pack-merge, pack-to-inputs and "
+                                              "deep for this one company -> value.json (exit 1 when the engine did not run)")
+    tv.add_argument("run")
+    tv.add_argument("--no-deep", action="store_true", help="stop after pack-to-inputs (a check)")
+    tt = subs.add_parser("ticker-trace", help="Fast ticker procedure: the pack's and the table's numbers with their sources and "
+                                              "candidate matches in the saved text (a reviewer's aid, not proof)")
+    tt.add_argument("run")
+    tt.add_argument("--n", type=int, default=30, help="how many numbers to show (default 30)")
+    tst = subs.add_parser("ticker-status", help="Fast ticker procedure: verified or draft from this attempt's files and the "
+                                                "agents the main loop saw return; stage times")
+    tst.add_argument("run")
+    tst.add_argument("--returned", help="comma-separated stages whose agents returned (the main loop's own record)")
     im = subs.add_parser("import-av", help="Map saved Alpha Vantage statement JSON files into plain history rows")
     im.add_argument("income")
     im.add_argument("--balance")
@@ -269,8 +292,37 @@ def main():
                 return
             if not args.ticker or not args.as_of:
                 raise ValueError("ticker-stage needs --ticker and --as-of")
-            print(ticker_stages.prompt(args.stage, args.ticker, args.as_of) if args.prompt else
+            if args.skeleton:
+                from .ticker_run import skeleton
+                part = ticker_stages.STAGES[args.stage].get('part')
+                if not part:
+                    raise ValueError(f"--skeleton: {args.stage} writes no position part (analyst, analyst_field, analyst_path do)")
+                run = args.run or ticker_stages.run_folder(args.ticker, args.as_of)
+                print(json.dumps(skeleton(part, run if Path(run).is_dir() else None), ensure_ascii=False, indent=1))
+                return
+            print(ticker_stages.prompt(args.stage, args.ticker, args.as_of, run=args.run, trigger=args.trigger) if args.prompt else
                   ticker_stages.render(args.stage, args.ticker, args.as_of, run=args.run))
+            return
+        if args.command in ("ticker-check", "ticker-prep", "ticker-value", "ticker-trace", "ticker-status"):
+            from . import ticker_run
+            if args.command == "ticker-check":
+                res = ticker_run.check(args.run, args.file)
+                bad = not res["ok"]
+            elif args.command == "ticker-prep":
+                res = ticker_run.prep(args.run)
+                bad = False
+            elif args.command == "ticker-value":
+                res = ticker_run.value(args.run, deep=not args.no_deep)
+                bad = bool(res["problems"]) if args.no_deep else not res["ran"]
+            elif args.command == "ticker-trace":
+                res = ticker_run.trace(args.run, args.n)
+                bad = False
+            else:
+                res = ticker_run.status(args.run, args.returned.split(",") if args.returned is not None else None)
+                bad = False
+            print(json.dumps(res, ensure_ascii=False, indent=1, default=str))
+            if bad:
+                raise SystemExit(1)
             return
         if args.command == "pipeline-plan":
             from .pipeline import collection_plan

@@ -128,3 +128,17 @@ Observed while running ServiceNow; applies to that session's tools and network:
   blocked by that environment's egress proxy; WebSearch worked. This is a property
   of the cloud container, not evidence that Cowork is blocked. In Cowork, read the
   10-Q/earnings release directly and set sources[].retrieval=primary_document.
+
+## Addendum — 2026-10-25 NVDA ticker run (Claude Code cloud session, not Cowork)
+
+Observed in the saved raw payloads of that run (runs/tickers/NVDA_2026-10-25/companies/NVDA/raw/, gitignored):
+- Alpha Vantage COMPANY_OVERVIEW answered "This is a premium endpoint" (saved as av__company-overview__denied.json):
+  treat it as unavailable on this key; analyst targets come from an attributed web page, as an opinion.
+- Alpha Vantage INCOME_STATEMENT answered "our standard API rate limit is 25 requests per day" (av__income__denied.json).
+  The quota is one per key for the whole run: in the fast ticker procedure only gather_numbers (INCOME_STATEMENT,
+  BALANCE_SHEET, CASH_FLOW, EARNINGS_ESTIMATES) and gather_documents (EARNINGS_CALL_TRANSCRIPT) call Alpha Vantage, one
+  call each, spaced; the other stages use SEC companyfacts, FMP company / quote or the documents.
+- Reported by the review of the fast procedure (not re-probed here): that run's identify agent reached SEC EDGAR with curl
+  and a User-Agent header, and FRED answered through Python urllib. SEC_USER_AGENT was not set in that environment, so
+  scripts/ticker_prefetch.py saved no SEC documents there; it reads the contact from SEC_USER_AGENT only (an owner setting,
+  never invented).

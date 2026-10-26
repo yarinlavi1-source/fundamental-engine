@@ -1,43 +1,51 @@
-## Unreleased — the fast ticker procedure: one ticker in about 20 minutes (25.10.2026)
+## Unreleased — the fast ticker procedure (25.10.2026)
 
 The owner's limit is 10-20 minutes for one ticker, without harming the result. Measured on NVDA with the saved Workflow
-`ticker`: about 75 minutes, almost all of it waiting, not checking. The Workflow runtime caps concurrent agents at
-min(16, CPUs - 2) = 2 on the 4-CPU box, so Identify alone took 9 minutes, the four gather lanes ran in two waves of about
-8 minutes, and Understand, Position, Value, the three review lenses (two waves) and Deliver ran one after another.
+`ticker` (25.10.2026): it started at 22:30 UTC and was still in its repair pass at 00:17 UTC. The Workflow runtime caps
+concurrent agents at min(16, CPUs - 2) = 2 on the 4-CPU box: Identify alone took 9 minutes, the four gather lanes 7-9 minutes
+each in two waves, and Understand (22 min, 83 tool calls) and Position (22 min, 80 calls) ran one after another; about 25 of
+those 44 minutes went to reading engine source to learn the JSON formats.
 
-- New default: the main loop orchestrates (CLAUDE.md "On a ticker"). In one turn it starts `scripts/ticker_prefetch.py`
-  (background Bash, seconds) and four background Agent-tool lanes on model sonnet (retrieval and extraction on fixed
-  checklists and schemas): gather_numbers, gather_documents, gather_field, gather_macro (~5-7 min); then ONE analyst agent
-  does Understand + Position + Value (~8-10 min); then the two reviewers run in parallel (~4-5 min), a critical finding goes
-  back to the analyst for one repair pass or the result is a draft; the main loop delivers the table and freezes the
-  ledger. Targets: ~20 min for a new ticker, ~12-15 min for a repeat within 30 days; these are design estimates from
-  the measured stage times, not yet measured end to end. The saved Workflow stays as the slower thorough fallback (one
-  agent per phase).
-- `scripts/ticker_prefetch.py <TICKER> <as_of> [--reuse auto|none|<run dir>]`: the deterministic part, no LLM, seconds. SEC
-  CIK (saved ticker map first), submissions cut at as_of, companyfacts, the latest 10-K / 10-Q / proxy into the raw layout
-  the engine reads (manifest rows with filed / report_date / accession, as collect_companies writes them), the other 10-Qs
-  since the 10-K and the exhibits 99 of the last 8 earnings 8-Ks under documents/, their plain text under reading/ (10-K
-  Items 1, 1A and 7 apart), the FRED regime series (the collect_market_context layout, for deep --macro) and market.json
-  (dated DGS10 and the newest saved implied ERP, for deep --market), the company file skeleton and identity.json from SEC,
-  the companyfacts facts of the last 6 fiscal years and 8 quarters (each citing the companyfacts records of its filing date,
-  so it is citable LAG_DAYS after that filing), the computed company type (classify_company) and forensic screens, and
-  gather/_prefetch.json (a pack fragment with the pf_ sources; it sorts first, so its ids win on a shared URL). Network
-  failures and a missing SEC_USER_AGENT are recorded as gaps, never fatal; a host that fails twice is skipped for the rest
-  of the run. --reuse auto copies an earlier run of the same ticker within 30 days (fragments, connector payloads except
-  the price snapshot, saved documents) and lists the filings dated after it, the only ones re-read; its judgement files are
-  kept under reuse/ for reference, never as the active position. On the saved NVDA payloads it rebuilt the identity agent's
-  company type (high_growth / stalwart) and 187 facts in 0.4 s.
-- Stage instruction files `fundamental_engine/brain/ticker/` (packaged; scripts/check_wheel.py asserts they ship and fill):
-  gather_numbers, gather_documents, gather_field, gather_macro, analyst, review_numbers, review_counter and deliver. Each
-  carries every rule the matching part of ticker.js carries (connector order per session_capabilities, IBKR strictly
-  READ-ONLY, untrusted documents, source registration fields, citability with LAG_DAYS, company-first, the stop rule, fragment
-  shapes and outputs) in a common block identical in every file, the lane's own keys (no two lanes write the same item;
-  only gather_numbers writes identity.json and company.json) and a budget sized for about 5-6 minutes. Placeholders
-  {TICKER}, {AS_OF}, {RUN}. CLI `python -m fundamental_engine ticker-stage <stage> --ticker T --as-of D [--run DIR]
-  [--prompt]` prints the filled instructions (or the short prompt the main loop hands the agent); `ticker-stage list` shows
-  the stages, models, budgets and outputs (module fundamental_engine.ticker_stages).
-- master_process names which step runs in which agent. No valuation rule, engine number or review gate changed: the same
-  pack-merge, pack-to-inputs, deep, review and ledger steps run, only in fewer waits.
+- New default: the main loop orchestrates (CLAUDE.md "On a ticker"), each agent following its stage file. (1) In one turn
+  `scripts/ticker_prefetch.py` (background, seconds) and four background gather lanes on model sonnet: gather_numbers,
+  gather_documents (now also completing and running the quarter-review and econ-review cases), gather_field (the canonical
+  competitor list), gather_macro; each lane validates its fragment with `ticker-check` before replying. (2) `ticker-prep`
+  (deterministic: fragment checks, understand/auto.json with the fiscal years, track-record ratio, history ratios, ROIC and
+  forensic flags, evidence_ids.json, position skeletons), then in parallel the three analyst parts, which write disjoint
+  pack keys (`analyst` core: understand/business.json, drivers, forecast_options, events, key risk, falsifiers;
+  `analyst_field`: potential and assessments; `analyst_path`: company_path), and `review_trace`, which traces the gathered
+  numbers before the valuation instead of after it. (3) `ticker-value` (deterministic: the parts merged into position.json
+  with position/coherence.md, pack-merge, pack-to-inputs, deep for this one company, value.json); pack problems go to one
+  `repair` agent. (4) `review_numbers` and `review_counter` in parallel; a critical finding gets one `repair` pass or the
+  result is a draft. (5) `ticker-status` decides verified or draft from this attempt's files and the main loop's own list of
+  returned agents, and records the stage times; the main loop delivers and freezes the ledger.
+- Time, honestly: a design estimate from those measured stage times, NOT measured end to end: about 25-35 minutes for a new
+  ticker and 20-30 for a repeat within 30 days, plus 5-8 per repair pass. That is above the owner's 10-20 minutes; the stage
+  times of each run are recorded so the next cut is chosen on measurements. The saved Workflow stays as the thorough
+  fallback.
+- `scripts/ticker_prefetch.py <TICKER> <as_of> [--reuse auto|none|<run dir>] [--peers A,B]`: the deterministic part, no
+  LLM, seconds. SEC CIK (saved ticker map first), submissions cut at as_of, companyfacts, the latest 10-K / 10-Q / proxy in
+  the raw layout the engine reads, the other 10-Qs and the exhibits 99 of the last 8 earnings 8-Ks with their plain text under
+  reading/, the FRED regime series and market.json, the company and identity skeletons, the companyfacts facts of 6 fiscal
+  years and 8 quarters (each citable LAG_DAYS after its filing), the computed type and forensic screens, quarter-review and
+  econ-review case skeletons, the named competitors' companyfacts (--peers, or the competitors of a reused field.json) and
+  gather/_prefetch.json. A rerun of the same ticker and date first moves the earlier attempt's judgement and engine output to
+  attempts/<utc>/. --reuse auto (and an explicit folder, under the same 30 days and identity check) copies an earlier run's
+  fragments without their market block, never anything written or retrieved after as_of, and lists the filings dated after
+  it; when SEC was not refreshed that list is null with the reason, never an empty list. A 20-F / 40-F filer's 6-K releases
+  are a recorded gap. Network failures and a missing SEC_USER_AGENT (an owner setting, never invented) are gaps, never fatal.
+- `fundamental_engine/ticker_run.py` and the CLI commands `ticker-check`, `ticker-prep`, `ticker-value`, `ticker-trace`
+  (the numbers with their sources and candidate matches in the saved text, a reviewer's aid) and `ticker-status`;
+  `ticker-stage <stage> [--prompt | --skeleton]` (the prompt names the repo root and the run folder absolutely).
+- Stage files `fundamental_engine/brain/ticker/` (packaged; scripts/check_wheel.py asserts they ship and fill):
+  gather_numbers, gather_documents, gather_field, gather_macro, analyst, analyst_field, analyst_path, review_trace,
+  review_numbers, review_counter, repair, deliver. Identical common blocks carry the ticker.js rules (connector order per
+  session_capabilities, IBKR strictly READ-ONLY, untrusted documents, source registration, citability with LAG_DAYS,
+  company-first, the stop rule, the one Alpha Vantage quota, the ledger as the only write outside the run folder); the exact
+  fragment and position shapes are embedded; budgets are sized from the measured calls (numbers 28, documents 22, field 25,
+  macro 12, each reviewer 25); master_process's guardrails are a review_counter check and a line of the analyst's.
+- session_capabilities: the 2026-10-25 Alpha Vantage observations (COMPANY_OVERVIEW premium, 25 requests a day).
+  master_process names which step runs in which agent or script. No valuation rule, engine number or review gate changed.
 
 ## 0.14.0 — the ticker brain: one company, from its own evidence (25.10.2026)
 

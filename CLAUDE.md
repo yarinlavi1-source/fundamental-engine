@@ -5,39 +5,51 @@ regenerate and the latest-state documents; finish every session by merging to ma
 connections in Claude. Reuse those capabilities; this repository is the RESEARCH
 BRAIN, executable math and local research memory, not a replacement provider stack.
 
-## On a ticker (fast procedure: ~20 minutes; the owner's limit is 10-20 minutes for one ticker)
+## On a ticker (fast procedure; the owner's limit is 10-20 minutes for one ticker)
 
-When the owner sends a ticker T, the main loop orchestrates (as_of D = today). The skeleton is the `master_process` packet
-(Identify, Gather, Understand, Position, Value, Review, Deliver; its table says which agent runs which step); sources per
-`sources_registry`. Evidence goes into one evidence pack, converted by `pack-to-inputs` (MCP `evidence_pack_to_inputs`);
-outputs stay under runs/tickers/<T>_<D>/ (gitignored). The time is waiting, not checking: run the stages in parallel; each
-stage file (`python -m fundamental_engine ticker-stage <stage> --ticker T --as-of D`, brain/ticker/) carries its rules and
-budget, so the agent prompt stays short (`--prompt` prints it).
+When the owner sends a ticker T, the main loop orchestrates (as_of D = today; RUN = <repo>/runs/tickers/T_D, gitignored).
+The skeleton is the `master_process` packet (its table says which agent or script runs which step); sources per
+`sources_registry`; one evidence pack, converted by `pack-to-inputs`. Each agent follows its stage file
+(brain/ticker/<stage>.md); its prompt is the output of `python -m fundamental_engine ticker-stage <stage> --ticker T
+--as-of D --prompt` (it names the repo root and RUN absolutely). Start every agent with the Agent tool as
+`Agent(description="<stage> T", subagent_type="general-purpose", run_in_background=true, prompt=<that output>)`, adding
+`model="sonnet"` for the four gather lanes only (retrieval and extraction on fixed checklists and schemas); the others run
+on the default model. Keep your own list of the agents that returned (step 5 needs it). An agent not back about 5 minutes
+after its stage budget (`ticker-stage list`) is stopped with TaskStop: its saved file stands and the rest is a gap (a
+stopped reviewer makes the result a draft); tell the owner.
 
-1. Same turn, at once (lanes back in ~5-7 min): `python scripts/ticker_prefetch.py T D --reuse auto` as a background Bash
-   (seconds; SEC needs SEC_USER_AGENT in the environment, the owner's own contact; without it SEC is a recorded gap and the
-   lanes read the filings themselves), AND four background Agent-tool agents with model sonnet (retrieval and extraction
-   on fixed checklists and schemas): gather_numbers, gather_documents, gather_field, gather_macro. They wait for
-   prefetch.json if it is not written yet.
-2. When all four returned: ONE agent, default model, stage `analyst` (~8-10 min): understand + position + value,
-   pack-merge, pack-to-inputs, deep for this one company, fixing the pack until it passes. identity.json stop=true: stop and
-   tell the owner why.
-3. The two reviewers in parallel, default model (~4-5 min): `review_numbers` and `review_counter`. A critical finding goes
-   back to the analyst for ONE repair pass (analyst stage, section E, with the findings listed); still open = the result
-   is a draft (UNVERIFIED).
-4. The main loop delivers (stage `deliver`, ~1-2 min): reads out/table_he.md and out/scenarios_he.md, writes the owner
-   message (the one table verbatim, 3-5 short simple Hebrew explanations, sources as links) and, only when the engine ran,
-   freezes the base case in the forecast_ledger: `python -c "import json; from fundamental_engine.ledger import Ledger;
-   from fundamental_engine.monitor import thesis_from_casefile, freeze; cf=json.load(open('runs/tickers/<T>_<D>/companies/<T>/out/casefile.json'));
+0. One-time setup (ask the owner once; never invent a contact, never use his e-mail without his explicit consent): SEC asks
+   for `SEC_USER_AGENT="<app name> <contact e-mail>"` in the environment (e.g. `env` in .claude/settings.local.json or the
+   cloud environment's variables). Each run checks `[ -n "$SEC_USER_AGENT" ]`: when it is missing, tell the owner the run
+   will be slower (no SEC documents are prefetched: the lanes fetch them; gather_documents' budget rises to ~30 calls).
+1. Same turn: `python scripts/ticker_prefetch.py T D --reuse auto [--peers A,B]` as a background Bash (seconds; it first
+   moves an earlier attempt of the same T_D to RUN/attempts/) AND the four lanes gather_numbers, gather_documents,
+   gather_field, gather_macro (they wait up to ~90 s for this attempt's prefetch.json).
+2. When the four returned (or were stopped): `python -m fundamental_engine ticker-prep RUN` (seconds: fragment checks,
+   understand/auto.json, evidence_ids.json, skeletons), then in one turn the analyst parts `analyst` (core: drivers, events, key risk,
+   falsifiers), `analyst_field` (potential, assessments), `analyst_path` (company_path) and `review_trace` (traces the
+   gathered numbers). identity.json stop=true: stop and tell the owner why.
+3. When the three parts returned: `python -m fundamental_engine ticker-value RUN` (merges the parts into position.json,
+   pack-merge, pack-to-inputs, deep for this one company -> value.json). ran false: ONE `repair` agent (prompt:
+   `ticker-stage repair --ticker T --as-of D --prompt --trigger value`), which reruns ticker-value.
+4. The reviewers `review_numbers` and `review_counter` in parallel. A critical finding (in any of the three review files):
+   ONE `repair` agent (`--prompt --trigger review`); whatever stays open makes the result a draft (UNVERIFIED).
+5. Deliver (stage `deliver`, the main loop itself): `python -m fundamental_engine ticker-status RUN --returned <the stages
+   that returned>` decides verified or draft from this attempt's files and your list; copy out/table_he.md verbatim, add
+   3-5 short simple Hebrew explanations and the sources as links, the run time in one line (status times), and freeze the
+   base case only when the engine ran: `python -c "import json; from fundamental_engine.ledger import Ledger; from
+   fundamental_engine.monitor import thesis_from_casefile, freeze; cf=json.load(open('RUN/companies/T/out/casefile.json'));
    print(json.dumps(freeze(Ledger('runs/tickers/forecast_ledger.jsonl'), thesis_from_casefile(cf)), default=str))"`.
 
-Targets (a design estimate from the measured stage times, not yet measured end to end: time the first runs): ~20 min
-for a new ticker, ~12-15 min for a repeat within 30 days (`--reuse auto` copies the earlier run's fragments; the lanes
-re-read only the filings dated after it and refresh price, consensus, rates and news). Tell the owner when a stage runs
-past its budget instead of waiting silently. Thorough fallback: the saved Workflow `ticker` with args
-`{ticker, as_of}` (`.claude/workflows/ticker.js`, one agent per phase, ~60-90 min because the Workflow runs at most
-min(16, CPUs-2) agents at once): when the owner asks for the deepest pass, when background agents are not available, or
-to redo an UNVERIFIED fast run at depth.
+Time, honestly: a design estimate from the NVDA stage times of the saved Workflow (25.10.2026: gather lanes 7-9 min each,
+review lenses ~8 min, Understand and Position ~22 min each, about 25 of those 44 minutes spent reading engine source for
+formats the stage files and skeletons now give), NOT measured end to end: about 25-35 minutes for a new ticker (lanes ~8-10,
+analyst parts ~8-12, reviewers ~6-8, deliver ~2-3), about 20-30 for a repeat within 30 days (`--reuse auto`), plus ~5-8 per
+repair pass. That is above the owner's 10-20 minutes: say so when asked, report each run's real stage times
+(`ticker-status` times), and tell the owner when a stage runs past its budget instead of waiting silently. Thorough
+fallback: the saved Workflow `ticker` with args `{ticker, as_of}` (`.claude/workflows/ticker.js`, one agent per phase, at
+most min(16, CPUs-2) agents at once: on NVDA it ran from 22:30 UTC and was still in its repair pass at 00:17 UTC): when the
+owner asks for the deepest pass, when background agents are not available, or to redo an UNVERIFIED fast run at depth.
 
 ## Work loop
 
