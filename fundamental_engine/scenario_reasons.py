@@ -393,7 +393,8 @@ def _drivers(cf, s, years, raw, gaps, opening_shares, five_date):
     if isinstance(f, dict) and f.get('status'):
         d['funding'] = {'status': f.get('status'), 'equity_raised': f.get('equity_raised'), 'debt_assumed': f.get('debt_assumed'),
                         'new_financing_shares': f.get('new_financing_shares'), 'sbc_settlement_shares': f.get('sbc_settlement_shares'),
-                        'first_gap': f.get('first_gap'), 'source': 'fc.funding'}
+                        'first_gap': f.get('first_gap'), 'source': 'fc.funding',
+                        **({'stub_draw_immaterial': True} if f.get('stub_draw_immaterial') else {})}
     elif years:
         new = sum(p.get('new_financing_shares') or 0 for p in years if _n(p.get('new_financing_shares')))
         gap = next((p.get('end') for p in years if _n(p.get('funding_gap')) and p['funding_gap'] > 1e-6), None)
@@ -521,6 +522,8 @@ def _funding_he(d, cur, opening_shares, method):
            else '')
     if st == 'unfunded':
         return 'אבל חסר מימון והמודל אינו מניח מימון שלא הובטח, ולכן לתרחיש הזה אין שווי'
+    if st == 'assumed_external_financing' and f.get('stub_draw_immaterial'):
+        return 'בלי מימון חיצוני מהותי (משיכת חוב קטנה עד סוף השנה הנוכחית, מכוסה בתזרים החופשי שהחברה דיווחה מאז המאזן האחרון)'
     if st == 'assumed_external_financing':
         parts = []
         if _n(f.get('equity_raised')) and f['equity_raised'] > 0:
@@ -583,7 +586,7 @@ def _condition(d, events, cur, opening_shares, method, has_value):
     if f:
         body = (body + '; ' if body else '') + f
     st = (d.get('funding') or {}).get('status')
-    if method == 'operating' and st == 'assumed_external_financing':
+    if method == 'operating' and st == 'assumed_external_financing' and not (d.get('funding') or {}).get('stub_draw_immaterial'):
         short += ('; ' if short else '') + 'ובמימון חיצוני שעוד לא הובטח'
     elif (method == 'operating' and st == 'unfunded') or (method == 'residual_income' and (d.get('funding') or {}).get('first_capital_shortfall')):
         short += ('; ' if short else '') + ('אבל חסר מימון' if method == 'operating' else 'אבל חסר הון רגולטורי')
