@@ -26,7 +26,11 @@ The pack (pack_version 1; unknown keys are rejected at every level):
           drivers.current_year_revenue {source_tier guidance, evidence_ids, reason, adjust_by_track_record, remainder}: the
           fiscal year in progress (forecast inputs.current_year_revenue)
   scenario_events {bear|base|bull: [{event_he, evidence_ids | hypothesis: true}]}  (all three scenarios)
-  company_path   inputs.company_path (contract: next-fiscal-year EPS x forward P/E per scenario, today and years 1-5)
+  company_path   inputs.company_path (contract: next-fiscal-year EPS x forward P/E per scenario, today and years 1-5): per
+                 scenario either {multiple_from: 'economics', roic} (preferred: the analyst evidences the incremental ROIC and
+                 the engine computes the multiple path from its own executed EPS path, cost of equity, terminal cost of
+                 equity and terminal growth) or a hand multiple_path [today, y1..y5]; justification, reason_he, source_tier,
+                 evidence_ids either way
   key_risk {reading_he, evidence_ids}; falsifiers [{id, scenario, metric, threshold, direction below|above, by,
   evidence_ids}]; assessments {model_card dimension: {assessment, evidence_ids, note}}; market {risk_free,
   equity_risk_premium: {value, as_of, source_id}}; forecast_options {horizon_years, financing, cyclical}; analyst; notes
@@ -101,13 +105,14 @@ KEYS = {
                   ('id', 'scenario', 'metric', 'threshold', 'direction', 'by', 'evidence_ids')),
     'rate': ({'value', 'as_of', 'source_id'}, ('value', 'as_of', 'source_id')),
     'company_path': ({'metric', 'multiple', 'scenarios', 'own_history', 'peers'}, ('metric', 'multiple', 'scenarios')),
-    'path_scenario': ({'multiple_path', 'justification', 'reason_he', 'source_tier', 'competitors', 'evidence_ids'},
-                      ('multiple_path', 'justification', 'reason_he', 'source_tier', 'evidence_ids')),
+    'path_scenario': ({'multiple_path', 'multiple_from', 'roic', 'justification', 'reason_he', 'source_tier', 'competitors',
+                       'evidence_ids'}, ('justification', 'reason_he', 'source_tier', 'evidence_ids')),
     'own_history': ({'low', 'median', 'high', 'years', 'evidence_ids'}, ('low', 'median', 'high', 'years', 'evidence_ids')),
     'peer': ({'ticker', 'forward_pe', 'growth', 'evidence_ids'}, ('ticker', 'forward_pe', 'growth', 'evidence_ids')),
 }
 JUSTIFICATIONS = ('justified_high', 'peak', 'unproven')
 PATH_YEARS = 5
+PATH_ROIC_MAX = 5.                  # company_path.ROIC_MAX: a decimal (0.35 = 35%)
 
 
 def _num(v):
@@ -686,13 +691,29 @@ def _company_path(p):
         x, where = sc[s], f'company_path.{s}'
         if not c.obj(x, 'path_scenario', where):
             continue
-        m = x['multiple_path']
-        if not isinstance(m, list) or len(m) != PATH_YEARS + 1 or not all(_num(v) and v > 0 for v in m):
-            c.err(where, f'multiple_path needs {PATH_YEARS + 1} positive numbers (today and years 1-{PATH_YEARS})')
+        mode = x.get('multiple_from', 'hand')
+        m = x.get('multiple_path')
+        if mode == 'economics':
+            # the engine computes the path from its own executed EPS path, Ke, terminal Ke and terminal growth (company_path)
+            if m is not None:
+                c.err(where, "multiple_from 'economics' computes multiple_path: remove multiple_path")
+            if not (_num(x.get('roic')) and 0 < x['roic'] <= PATH_ROIC_MAX):
+                c.err(where, f"multiple_from 'economics' needs roic: the scenario's incremental ROIC as a decimal "
+                             f"(0 < roic <= {PATH_ROIC_MAX:g}; 0.35 = 35%), backed by its evidence_ids and source_tier")
+        elif mode != 'hand':
+            c.err(where, "multiple_from must be 'economics' (preferred: the engine computes the path) or 'hand'")
+        else:
+            if x.get('roic') is not None:
+                c.err(where, "roic belongs to multiple_from 'economics' only")
+            if not isinstance(m, list) or len(m) != PATH_YEARS + 1 or not all(_num(v) and v > 0 for v in m):
+                c.err(where, f'multiple_path needs {PATH_YEARS + 1} positive numbers (today and years 1-{PATH_YEARS}), '
+                             "or multiple_from 'economics' with roic")
         if x['justification'] not in JUSTIFICATIONS:
             c.err(where, f'justification must be one of {", ".join(JUSTIFICATIONS)}')
         p.tier(x['source_tier'], x['evidence_ids'], x.get('competitors'), where)
-        row = {k: deepcopy(x[k]) for k in ('multiple_path', 'justification', 'reason_he', 'source_tier')}
+        row = ({'multiple_from': 'economics', 'roic': x.get('roic')} if mode == 'economics'
+               else {'multiple_path': deepcopy(m)})
+        row.update({k: deepcopy(x[k]) for k in ('justification', 'reason_he', 'source_tier')})
         row['evidence_ids'] = p.ids(x['evidence_ids'], where)
         if x.get('competitors'):
             row['competitors'] = [str(t).upper() for t in x['competitors']]

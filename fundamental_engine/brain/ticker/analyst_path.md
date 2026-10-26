@@ -100,17 +100,30 @@ Reply with ONE JSON object and nothing else: {"part": "<part>", "file": "<path>"
 
 ## Steps
 Read gather/numbers.json (the note 'nm OWN MULTIPLE HISTORY', the price, consensus EPS), gather/field.json (the named
-competitors and their metrics), understand/auto.json (history, consensus, track record, competitors) and evidence_ids.json.
-company_path {"metric": "eps", "multiple": "forward_pe", "scenarios": {s: {"multiple_path": [today, y1, y2, y3, y4, y5]
-(six positive numbers), "justification": "justified_high|peak|unproven", "reason_he", "source_tier", "evidence_ids",
-"competitors" (tier competitor only)}} for bear, base and bull, "own_history": {"low", "median", "high", "years",
-"evidence_ids"} (all required; 0 < low <= median <= high), "peers": [{"ticker", "forward_pe", "growth", "evidence_ids"}]
-(named competitors of field.json only; leave peers out when none has an evidenced forward P/E)}.
+competitors and their metrics), understand/auto.json (history, ROIC and incremental ROIC, consensus, track record,
+competitors) and evidence_ids.json.
+company_path {"metric": "eps", "multiple": "forward_pe", "scenarios": {s: {"multiple_from": "economics", "roic": <decimal>,
+"justification": "justified_high|peak|unproven", "reason_he", "source_tier", "evidence_ids", "competitors" (tier competitor
+only)}} for bear, base and bull, "own_history": {"low", "median", "high", "years", "evidence_ids"} (all required; 0 < low <=
+median <= high), "peers": [{"ticker", "forward_pe", "growth", "evidence_ids"}] (named competitors of field.json only; leave
+peers out when none has an evidenced forward P/E)}.
 The path is the forward P/E applied to next-fiscal-year GAAP EPS after SBC per scenario (the engine computes the EPS from
-the core part's drivers). A multiple is anchored in evidence: the company's own range through a cycle and where it sits now
-(own_history), and named competitors at a comparable stage of growth and margin (peers, tier competitor). Label each path
-justified_high (a high multiple the growth and returns justify), peak (what the market pays at a peak; never paid as
-justified going forward) or unproven. A record quarter x 4 is peak earnings, not a run rate. The base multiple path follows
-the most likely growth path (a multiple that falls as growth slows, unless the evidence says otherwise); bull and bear
-multiples move with their business, not alone: one EPS path x three multiples is not a set of scenarios. No peer median,
-no sector table.
+the core part's drivers). Economics mode is the default: you supply each scenario's incremental ROIC (a decimal, 0.30 =
+30%) with its evidence and tier, and the ENGINE computes the multiple path from its own executed numbers for that scenario:
+its EPS path, its cost of equity, its terminal cost of equity and its terminal growth (company_path.economics; the formula
+value_t = PV of D_k = E_k (1 - g_(k+1)/ROIC) over the executed fiscal years + E_N (1 - g_T/ROIC)/(Ke_T - g_T), multiple_t =
+value_t / EPS_(t+1)). Do not compute multiples yourself, do not restate the engine's Ke, EPS or growth (the core part and
+the engine set them, and they change on any rerun); your judgement is the ROIC and its label. The ROIC is the return on the
+capital the scenario's growth needs, from {TICKER}'s own record (understand/auto.json: ROIC, incremental ROIC over 3 years,
+through a cycle; say whether goodwill is in or out) or a named competitor at a comparable stage (tier competitor); a peak
+year's return is a peak, not a run rate. bull and bear ROICs move with their business (the bear's what breaks, the bull's
+what must happen), not alone. reason_he says in plain Hebrew why this return on capital, and so this multiple.
+A hand path stays possible when the economics cannot carry the multiple (remove multiple_from and roic; give "multiple_path":
+[today, y1, y2, y3, y4, y5], six positive numbers), and then it is anchored in evidence: the company's own range through a
+cycle and where it sits now (own_history), and named competitors at a comparable stage of growth and margin (peers, tier
+competitor). Either way, label each path justified_high (a high multiple the growth and returns justify), peak (what the
+market pays at a peak; never paid as justified going forward) or unproven; the engine compares every multiple, computed or
+given, with own_history (a peak above the own median is flagged). A record quarter x 4 is peak earnings, not a run rate. The
+base multiple follows the most likely growth path (a multiple that falls as growth slows, unless the evidence says
+otherwise); bull and bear multiples move with their business, not alone: one EPS path x three multiples is not a set of
+scenarios. No peer median, no sector table.

@@ -419,13 +419,20 @@ def skeleton(part, run=None):
                 'gaps': []}
     return {**common,
             '_allowed': {'justification': list(EP.JUSTIFICATIONS), 'source_tier': list(EP.TIERS),
+                         'multiple_from': "economics (preferred): the engine computes multiple_path from its own executed EPS "
+                                          "path, cost of equity, terminal cost of equity and terminal growth with this "
+                                          "scenario's roic; or remove multiple_from and roic and give \"multiple_path\": "
+                                          "[today, y1, y2, y3, y4, y5] by hand",
+                         'roic': "the scenario's incremental ROIC as a decimal (0.30 = 30%), evidenced by the scenario's "
+                                 'evidence_ids and source_tier (understand/auto.json: ROIC and incremental ROIC)',
                          'competitors': 'only with tier competitor: "competitors": [named tickers of field.json] in a scenario',
                          'peers': 'named competitors of field.json only (no other-company defaults); remove peers when none'},
             'company_path': {
                 'metric': 'eps', 'multiple': 'forward_pe',
-                'scenarios': {s: {'multiple_path': ['<today>', '<y1>', '<y2>', '<y3>', '<y4>', '<y5>'],
+                'scenarios': {s: {'multiple_from': 'economics',
+                                  'roic': f'<{s}: incremental ROIC as a decimal, from the evidence>',
                                   'justification': f'<{"|".join(EP.JUSTIFICATIONS)}>',
-                                  'reason_he': '<why this multiple, in plain Hebrew>',
+                                  'reason_he': '<why this return on capital and so this multiple, in plain Hebrew>',
                                   'source_tier': f'<{tiers}>', 'evidence_ids': _ids_hint(2)}
                               for s in EP.SCENARIOS},
                 'own_history': {'low': '<number>', 'median': '<number>', 'high': '<number>', 'years': '<e.g. 2021-2026>',
@@ -487,7 +494,10 @@ def coherence_md(position):
             lines.append(f'- {part} ({PART_STAGE[part]}): {th if th else "(no thesis_he)"}')
         vals = [f'{k}={_lever_value(d, s)}' for k, d in drivers.items() if k != EP.CURRENT_YEAR and _lever_value(d, s) is not None]
         lines.append(f"- drivers: {', '.join(vals) if vals else '(none set: engine rules)'}")
-        if s in cp:
+        if s in cp and cp[s].get('multiple_from') == 'economics':
+            lines.append(f"- multiple path: computed by the engine from its own EPS path and rates at roic {cp[s].get('roic')} "
+                         f"({cp[s].get('justification')}, tier {cp[s].get('source_tier')})")
+        elif s in cp:
             lines.append(f"- multiple path: {cp[s].get('multiple_path')} ({cp[s].get('justification')}, tier {cp[s].get('source_tier')})")
         for e in (position.get('scenario_events') or {}).get(s) or []:
             if isinstance(e, dict):
@@ -532,6 +542,11 @@ def _compact_path(cf):
     out = {'status': cp.get('status')}
     for s, x in (cp.get('scenarios') or {}).items():
         out[s] = [{k: r.get(k) for k in ('year', 'date', 'price', 'multiple', 'eps', 'status')} for r in x.get('rows') or []]
+        e = x.get('economics')
+        if isinstance(e, dict):           # multiple_from economics: the rates and ROIC the engine computed the path with
+            out.setdefault('economics', {})[s] = {k: e[k] for k in ('status', 'reason', 'roic', 'cost_of_equity',
+                                                                     'terminal_cost_of_equity', 'terminal_growth',
+                                                                     'engine_terminal_roic', 'engine_value_today') if k in e}
     return out
 
 

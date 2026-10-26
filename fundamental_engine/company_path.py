@@ -3,12 +3,28 @@ from this company only.
 
 Contract (inputs['company_path']):
     {'metric': 'eps', 'multiple': 'forward_pe',
-     'scenarios': {'bear'|'base'|'bull': {'multiple_path': [m_today, m_y1, m_y2, m_y3, m_y4, m_y5],
+     'scenarios': {'bear'|'base'|'bull': {'multiple_path': [m_today, m_y1, m_y2, m_y3, m_y4, m_y5],     (by hand), or
+                                         'multiple_from': 'economics', 'roic': x,                  (computed by the engine)
                                          'justification': 'justified_high'|'peak'|'unproven', 'reason_he': str,
                                          'source_tier': one of TIERS, 'competitors': [ticker, ...] (tier competitor only),
                                          'evidence_ids': [...]}},
      'own_history': {'low', 'median', 'high', 'years', 'evidence_ids'} (optional),
      'peers': [{'ticker', 'forward_pe', 'growth', 'evidence_ids'}] (optional)}
+
+Economics mode (multiple_from 'economics', preferred): the analyst supplies only the scenario's incremental ROIC (a decimal,
+backed by the scenario's evidence_ids and source_tier) and the engine computes the multiple path from its OWN executed numbers
+for that scenario: the fiscal-year EPS path below, the explicit cost of equity Ke, the terminal cost of equity Ke_T and the
+terminal growth g_T of the executed valuation case (so the path can never rest on another Ke or EPS path than the one the
+engine ran). With E_k the EPS of executed fiscal year k (k = 0 the one in progress; a partial year is annualized for its
+growth only), N executed fiscal years and E_N = E_(N-1) x (1 + g_T):
+    D_k     = E_k x (1 - g_(k+1) / ROIC)  [= E_k - (E_(k+1) - E_k) / ROIC; g_N = g_T]      distributions of fiscal year k
+    TV      = E_N x (1 - g_T / ROIC) / (Ke_T - g_T)                    at the end of the last executed fiscal year
+    value_t = sum over the fiscal years still ahead at anniversary t of D_k x (the share of year k still ahead)
+              / (1 + Ke)^(years to the midpoint of that part) + TV / (1 + Ke)^(years to the last fiscal year end)
+    multiple_path[t] = value_t / E_(t+1)
+(the formula of the ticker analysts' path_calc). The formula, Ke, Ke_T, g_T, the ROIC, the engine's own terminal ROIC, the
+distributions and value_t are recorded in the scenario's 'economics'; the justification label is the analyst's, unchanged.
+A value or EPS that is not positive gives no multiple for that year (the row says why); a ROIC at or below g_T is refused.
 
 Price at the end of year t (t = 0 today, 1..5 the anniversaries of as_of) = multiple_path[t] x the EPS of fiscal year t+1
 of the engine's own executed forecast for that scenario, where fiscal year 0 is the one in progress at as_of. At each
@@ -44,11 +60,20 @@ JUST_HE = {'justified_high': 'מכפיל גבוה מוצדק', 'peak': 'מכפי
 YEARS = 5
 TITLE_HE = 'מחיר המניה בכל שנה, לפי תרחיש'   # the owner's one yearly table (render.hebrew_table)
 TOP_KEYS = {'metric', 'multiple', 'scenarios', 'own_history', 'peers'}
-SCEN_KEYS = {'multiple_path', 'justification', 'reason_he', 'source_tier', 'competitors', 'evidence_ids'}
+SCEN_KEYS = {'multiple_path', 'multiple_from', 'roic', 'justification', 'reason_he', 'source_tier', 'competitors', 'evidence_ids'}
+MULTIPLE_FROM = ('economics', 'hand')
+ROIC_MAX = 5.                             # a decimal (0.35 = 35%); a percent typed as 35 is refused
+ECON_FORMULA = ('value_t = sum over the executed fiscal years k still ahead at anniversary t of D_k x (share of year k ahead) / '
+                '(1 + Ke)^(years to the midpoint of that part) + TV / (1 + Ke)^(years to the last executed fiscal year end); '
+                'D_k = E_k x (1 - g_(k+1) / ROIC) = E_k - (E_(k+1) - E_k) / ROIC (a partial year annualized for its growth; '
+                'g_N = g_T); TV = E_N x (1 - g_T / ROIC) / (Ke_T - g_T), E_N = E_(N-1) x (1 + g_T); '
+                'multiple_t = value_t / E_(t+1); E = the executed fiscal-year EPS of the scenario')
 HIST_KEYS = {'low', 'median', 'high', 'years', 'evidence_ids'}
 PEER_KEYS = {'ticker', 'forward_pe', 'growth', 'evidence_ids'}
 WHY_HE = {'nonpositive_eps': 'אין מחיר: רווח למניה אפסי או שלילי', 'beyond_forecast': 'אין מחיר: השנה מעבר לתחזית',
-          'funding_blocked': 'אין מחיר: התרחיש תלוי במימון שאין', 'no_eps': 'אין מחיר: אין רווח למניה בתחזית'}
+          'funding_blocked': 'אין מחיר: התרחיש תלוי במימון שאין', 'no_eps': 'אין מחיר: אין רווח למניה בתחזית',
+          'nonpositive_value': 'אין מחיר: השווי לפי הכלכלה של התרחיש אינו חיובי',
+          'economics_unavailable': 'אין מחיר: אי אפשר לחשב מכפיל מהכלכלה של התרחיש'}
 
 
 def _num(v):
@@ -87,9 +112,22 @@ def validate(cp, known=None):
             continue
         x = sc[s]
         _keys(x, SCEN_KEYS, s)
+        mode = x.get('multiple_from', 'hand')
+        if mode not in MULTIPLE_FROM:
+            raise ValueError(f"company_path {s}: multiple_from must be 'economics' (the engine computes the path) or 'hand'")
         path = x.get('multiple_path')
-        if not isinstance(path, list) or len(path) != YEARS + 1 or any(_num(m) is None or m <= 0 for m in path):
-            raise ValueError(f'company_path {s}: multiple_path needs {YEARS + 1} positive numbers (today and years 1-{YEARS})')
+        if mode == 'economics':
+            if path is not None:
+                raise ValueError(f"company_path {s}: multiple_from 'economics' computes multiple_path; do not give one")
+            roic = _num(x.get('roic'))
+            if roic is None or not 0 < roic <= ROIC_MAX:
+                raise ValueError(f"company_path {s}: multiple_from 'economics' needs roic, the scenario's incremental ROIC as a "
+                                 f"decimal (0 < roic <= {ROIC_MAX:g}; 0.35 = 35%), backed by its evidence_ids and source_tier")
+        else:
+            if x.get('roic') is not None:
+                raise ValueError(f"company_path {s}: roic belongs to multiple_from 'economics' only")
+            if not isinstance(path, list) or len(path) != YEARS + 1 or any(_num(m) is None or m <= 0 for m in path):
+                raise ValueError(f'company_path {s}: multiple_path needs {YEARS + 1} positive numbers (today and years 1-{YEARS})')
         if x.get('justification') not in JUSTIFICATIONS:
             raise ValueError(f'company_path {s}: justification must be one of {", ".join(JUSTIFICATIONS)}')
         if not isinstance(x.get('reason_he'), str) or not x['reason_he'].strip():
@@ -103,7 +141,9 @@ def validate(cp, known=None):
                 raise ValueError(f'company_path {s}: tier competitor needs the named competitors (tickers)')
         elif comp is not None:
             raise ValueError(f'company_path {s}: competitors belong to tier competitor only')
-        out['scenarios'][s] = {'multiple_path': [float(m) for m in path], 'justification': x['justification'],
+        head = ({'multiple_from': 'economics', 'roic': float(x['roic'])} if mode == 'economics'
+                else {'multiple_path': [float(m) for m in path]})
+        out['scenarios'][s] = {**head, 'justification': x['justification'],
                                'reason_he': x['reason_he'].strip(), 'source_tier': tier,
                                **({'competitors': list(comp)} if tier == 'competitor' else {}),
                                'evidence_ids': _evidence(x.get('evidence_ids'), s, known)}
@@ -215,6 +255,70 @@ def _events_he(events):
     return '; '.join(e['event_he'].rstrip('.') + (' (השערה)' if e['hypothesis'] else '') for e in events)
 
 
+def economics(fy, as_of, ke, ket, gt, roic):
+    """The multiple path of one scenario from its own economics (module docstring, economics mode): fy = fiscal_years() of
+    the executed scenario, ke / ket / gt = its executed explicit cost of equity, terminal cost of equity and terminal growth,
+    roic = the analyst's incremental ROIC. -> the record stored in the scenario's 'economics' (multiple_path: None where a
+    year has no positive value or next-year EPS, or beyond the forecast)."""
+    rec = {'status': 'computed', 'formula': ECON_FORMULA, 'cost_of_equity': ke, 'terminal_cost_of_equity': ket,
+           'terminal_growth': gt, 'roic': roic, 'explicit_fiscal_years': len(fy),
+           'last_explicit_fiscal_year_end': fy[-1]['fiscal_year_end'] if fy else None}
+    eps = [f.get('eps') for f in fy]
+    why = ('the executed forecast has fewer than two fiscal years' if len(fy) < 2 else
+           'a fiscal year of the executed forecast has no EPS' if any(_num(e) is None for e in eps) else
+           'the terminal cost of equity is not above the terminal growth' if ket <= gt else None)
+    if why:
+        return {**rec, 'status': 'not_computed', 'reason': why, 'multiple_path': [None] * (YEARS + 1), 'values': []}
+    span = [f['years'] for f in fy]
+    ends = [years(as_of, f['fiscal_year_end']) for f in fy]
+    ann = [e / y if f['partial'] else e for e, y, f in zip(eps, span, fy)]           # a partial year annualized for growth
+    nxt = ann[1:] + [ann[-1] * (1 + gt)]
+    dist = [e - (y if f['partial'] else 1.) * (b - a) / roic for e, y, f, a, b in zip(eps, span, fy, ann, nxt)]
+    tv = nxt[-1] * (1 - gt / roic) / (ket - gt)
+    rows, path = [], []
+    for t in range(YEARS + 1):
+        at = years(as_of, _anniversary(as_of, t)) if t else 0.
+        v = 0.
+        for k in range(len(fy)):
+            if ends[k] <= at + 1e-9:
+                continue
+            ahead = min(span[k], ends[k] - at)
+            v += dist[k] * ahead / span[k] / (1 + ke) ** (ends[k] - at - ahead / 2)
+        v += tv / (1 + ke) ** (ends[-1] - at)
+        e1 = eps[t + 1] if t + 1 < len(fy) else None
+        m = v / e1 if e1 is not None and e1 > 0 and v > 0 else None
+        path.append(m)
+        rows.append({'year': t, 'date': as_of if t == 0 else _anniversary(as_of, t), 'value': v, 'next_fiscal_year_eps': e1,
+                     'multiple': m})
+    rec.update(multiple_path=path, values=rows, terminal={'eps': nxt[-1], 'value_at_last_fiscal_year_end': tv},
+               fiscal_years=[{'fiscal_year_end': f['fiscal_year_end'], 'years_ahead_at_end': d, 'eps': e,
+                              **({'eps_annualized': a} if f['partial'] else {}),
+                              'growth_next': (b / a - 1) if a > 0 else None, 'distribution': x}
+                             for f, d, e, a, b, x in zip(fy, ends, eps, ann, nxt, dist)])
+    return rec
+
+
+def _economics_for(cs, fy, as_of, roic, s, res_sc):
+    """economics() at the executed rates of scenario s of the valuation case (cs); records the engine's own terminal ROIC
+    and value today beside it (a reviewer compares them; nothing is changed)."""
+    term = cs.get('terminal') or {}
+    ke, gt = _num(cs.get('cost_of_equity')), _num(term.get('growth'))
+    if ke is None or gt is None:
+        raise ValueError(f'company_path {s}: the executed valuation case has no cost of equity or terminal growth for {s}')
+    ket = _num(term.get('cost_of_equity'))
+    src = 'terminal.cost_of_equity'
+    if ket is None:
+        ket, src = ke, 'cost_of_equity (the case has no separate terminal cost of equity)'
+    if roic <= gt:
+        raise ValueError(f'company_path {s}: roic {roic:.4f} must exceed the executed terminal growth {gt:.4f}')
+    rec = economics(fy, as_of, ke, ket, gt, roic)
+    eng = _num(term.get('roic', term.get('roe')))
+    today = next((r.get('value_per_share') for r in (res_sc or {}).get('timeline') or [] if r.get('date') == as_of), None)
+    rec.update(terminal_cost_of_equity_source=src, engine_terminal_roic=eng,
+               roic_minus_engine_terminal_roic=(roic - eng) if eng is not None else None, engine_value_today=today)
+    return rec
+
+
 def build(cp, val, known=None, events=None, fc=None):
     """casefile['company_path'] from the validated input and the executed valuation (pipeline.valuate output). events: the
     analyst's validated scenario events (casefile analyst_sheet.scenario_events); fc: the executed forecast (its driver_sources
@@ -227,6 +331,7 @@ def build(cp, val, known=None, events=None, fc=None):
     interim = set((case.get('generated_from') or {}).get('interim_boundaries') or ())
     as_of, quote = case['as_of'], _num((case.get('quote') or {}).get('price'))
     executed = {s['name']: s for s in res['scenarios']}
+    case_sc = {c.get('name'): c for c in case.get('scenarios') or [] if isinstance(c, dict)}
     out = {'status': 'computed', 'metric': 'eps', 'multiple': 'forward_pe', 'title_he': TITLE_HE, 'as_of': as_of,
            'currency': case.get('currency'), 'quote': quote, 'valuation_sha256': res.get('input_sha256'),
            'eps_basis': 'net income = EBIT after SBC - interest - modelled taxes + investment income after tax - noncontrolling '
@@ -247,8 +352,11 @@ def build(cp, val, known=None, events=None, fc=None):
         ev_s, drv_s = _events(events, s), _eps_drivers(fc, s)
         cond = _events_he(ev_s)
         gaps = [d['lever'] for d in drv_s if d['default_class']]
+        econ = (_economics_for(case_sc.get(s) or {}, fy, as_of, x['roic'], s, ex) if x.get('multiple_from') == 'economics'
+                else None)
+        mpath = econ['multiple_path'] if econ else x['multiple_path']
         rows = []
-        for t, m in enumerate(x['multiple_path']):
+        for t, m in enumerate(mpath):
             f = fy[t + 1] if t + 1 < len(fy) else None
             when = as_of if t == 0 else _anniversary(as_of, t)
             r = {'year': t, 'date': when, 'multiple': m, 'fiscal_year_end': f and f['fiscal_year_end'],
@@ -257,6 +365,8 @@ def build(cp, val, known=None, events=None, fc=None):
                  'annual_return': None, 'status': 'no_price'}
             why = ('funding_blocked' if blocked else 'beyond_forecast' if f is None else 'no_eps' if f['eps'] is None
                    else 'nonpositive_eps' if f['eps'] <= 0 else None)
+            if why is None and m is None:            # economics mode: no positive value for that year, or not computable
+                why = 'nonpositive_value' if econ['status'] == 'computed' else 'economics_unavailable'
             label = f"{LABEL_HE[s]}, {'היום' if t == 0 else f'שנה {t}'}"
             if why:
                 r['why'] = why
@@ -268,9 +378,12 @@ def build(cp, val, known=None, events=None, fc=None):
                 if t and quote and quote > 0:
                     r['annual_return'] = (r['price'] / quote) ** (1 / t) - 1
                 drv = (f"הכנסות {_big(f['revenue'])}, שולי רווח תפעולי {f['operating_margin']:.0%}, " if f['revenue'] else '')
+                how = (f"מחושב מהכלכלה של התרחיש: תשואה על ההון {econ['roic']:.1%}, היוון {econ['cost_of_equity']:.1%} ובטווח "
+                       f"הארוך {econ['terminal_cost_of_equity']:.1%} עם צמיחה {econ['terminal_growth']:.1%}; " if econ else '')
                 r['reason_he'] = (f"{label}: רווח למניה {_fmt(f['eps'])} בשנת הכספים שמסתיימת ב־{f['fiscal_year_end']} ({drv}"
-                                  f"{_fmt(f['weighted_shares'] / 1e6)} מיליון מניות) × מכפיל {m:.1f} ({JUST_HE[x['justification']]}; "
-                                  f"מקור: {TIER_HE[x['source_tier']]}" + (f": {', '.join(x['competitors'])}" if x.get('competitors') else '')
+                                  f"{_fmt(f['weighted_shares'] / 1e6)} מיליון מניות) × מכפיל {m:.1f} ({how}{JUST_HE[x['justification']]}; "
+                                  f"מקור{' התשואה על ההון' if econ else ''}: {TIER_HE[x['source_tier']]}"
+                                  + (f": {', '.join(x['competitors'])}" if x.get('competitors') else '')
                                   + f") = {_fmt(r['price'])}. {x['reason_he'].rstrip('.')}."
                                   + (f" התנאי: {cond}." if cond else ''))
                 if f['uses_tax_losses']:
@@ -280,13 +393,14 @@ def build(cp, val, known=None, events=None, fc=None):
             r['evidence_ids'] = list(dict.fromkeys(list(x['evidence_ids']) + [i for e in ev_s for i in e['evidence_ids']]
                                                    + [i for d in drv_s for i in d['evidence_ids']]))
             rows.append(r)
-        out['scenarios'][s] = {'label_he': LABEL_HE[s], **x, 'rows': rows}
+        out['scenarios'][s] = {'label_he': LABEL_HE[s], **x, **({'multiple_path': mpath, 'economics': econ} if econ else {}),
+                               'rows': rows}
         if x['justification'] == 'peak':
             if hist is None:
                 out['flags'].append({'id': 'peak_unchecked', 'scenario': s, 'severity': 'medium',
                                      'text_he': f'תרחיש {LABEL_HE[s]}: מכפיל של שיא בלי טווח מכפילים היסטורי של החברה לבדוק מולו.'})
             else:
-                over = [(t, m) for t, m in enumerate(x['multiple_path']) if m > hist['median'] + 1e-9]
+                over = [(t, m) for t, m in enumerate(mpath) if m is not None and m > hist['median'] + 1e-9]
                 if over:
                     out['flags'].append({'id': 'peak_above_own_median', 'scenario': s, 'severity': 'high', 'years': [t for t, _ in over],
                                          'max_multiple': max(m for _, m in over), 'own_median': hist['median'],
@@ -300,10 +414,12 @@ def tiers_he(cp):
     """Where each scenario's multiple comes from, in a few words (the full reason stays behind the scenes)."""
     sc = (cp or {}).get('scenarios') or {}
     tiers = {sc[s]['source_tier'] for s in SCEN if s in sc}
-    if tiers == {'own_history'}:
+    econ = [s for s in SCEN if s in sc and sc[s].get('multiple_from') == 'economics']
+    if tiers == {'own_history'} and not econ:
         return 'מההיסטוריה של המכפילים של החברה עצמה'
     return 'מקור לכל מכפיל: ' + '; '.join(
-        f"{LABEL_HE[s]} — {TIER_HE[sc[s]['source_tier']]}" + (f" ({', '.join(sc[s]['competitors'])})" if sc[s].get('competitors') else '')
+        f"{LABEL_HE[s]} — " + (f"מחושב מהתשואה על ההון ({TIER_HE[sc[s]['source_tier']]})" if s in econ else TIER_HE[sc[s]['source_tier']])
+        + (f" ({', '.join(sc[s]['competitors'])})" if sc[s].get('competitors') else '')
         for s in SCEN if s in sc)
 
 

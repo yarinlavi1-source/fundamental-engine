@@ -658,7 +658,11 @@ class TestStages(unittest.TestCase):
                              '--as-of', '2026-10-25', '--run', '/nonexistent/NVDA_2026-10-25', '--skeleton'], cwd=ROOT,
                             capture_output=True, text=True)
         self.assertEqual(sk.returncode, 0, sk.stderr)
-        self.assertIn('multiple_path', json.loads(sk.stdout)['company_path']['scenarios']['base'])
+        base = json.loads(sk.stdout)['company_path']['scenarios']['base']        # economics mode first: the engine computes the path
+        self.assertEqual(base['multiple_from'], 'economics')
+        self.assertIn('roic', base)
+        self.assertNotIn('multiple_path', base)
+        self.assertIn('multiple_path', json.loads(sk.stdout)['_allowed']['multiple_from'])        # the hand path stays supported
         no = subprocess.run([sys.executable, '-m', 'fundamental_engine', 'ticker-stage', 'gather_macro', '--ticker', 'NVDA',
                              '--as-of', '2026-10-25', '--skeleton'], cwd=ROOT, capture_output=True, text=True)
         self.assertNotEqual(no.returncode, 0)

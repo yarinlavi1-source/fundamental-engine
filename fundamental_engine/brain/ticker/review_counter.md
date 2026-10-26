@@ -100,7 +100,8 @@ Inputs: {RUN}/value.json, {RUN}/position.json, {RUN}/position/coherence.md and p
    finding.
 5. Peak vs justified multiple: compare company_path multiples with own_history and with the named competitors at a
    comparable stage; a record quarter x 4 is peak earnings, not a run rate; the labels justified_high | peak | unproven
-   match the evidence.
+   match the evidence. An economics-mode path (multiple_from 'economics') rests on the analyst's roic per scenario: test that
+   return on capital against the company's own record and the bear's mechanisms (company_path.scenarios.<s>.economics).
 6. What the price already assumes: expectation_gap (fundamental_engine.expectations.expectation_gap, MCP expectation_gap)
    from the casefile (decision and what_must_be_true: each lever alone), and redteam_audit (fundamental_engine.redteam.audit)
    where its inputs exist; a critical red-team failure is a critical finding.

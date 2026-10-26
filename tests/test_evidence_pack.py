@@ -61,6 +61,38 @@ class ConversionTests(unittest.TestCase):
         self.assertTrue(all(set(r) == {'event_he', 'evidence_ids'} for rows in ev.values() for r in rows))
         self.assertEqual(ev['bear'][1]['evidence_ids'], [])          # the labelled hypothesis keeps no evidence
 
+    def test_company_path_economics_mode(self):
+        # the analyst gives the ROIC (with evidence and tier); the engine computes the multiple path (company_path.economics)
+        p = pack()
+        base = p['company_path']['scenarios']['base']
+        hand = base.pop('multiple_path')
+        base.update(multiple_from='economics', roic=.28)
+        cp = to_inputs(p)['company_path']
+        self.assertEqual(cp['scenarios']['base']['multiple_from'], 'economics')
+        self.assertEqual(cp['scenarios']['base']['roic'], .28)
+        self.assertNotIn('multiple_path', cp['scenarios']['base'])
+        self.assertEqual(cp['scenarios']['base']['evidence_ids'], to_inputs(pack())['company_path']['scenarios']['base']['evidence_ids'])
+        self.assertEqual(len(cp['scenarios']['bull']['multiple_path']), 6)               # a hand path next to it stays
+        self.assertNotIn('multiple_from', to_inputs(pack())['company_path']['scenarios']['base'])   # hand packs: unchanged
+        q = copy.deepcopy(p)
+        q['company_path']['scenarios']['base']['multiple_path'] = hand
+        refused(self, q, 'remove multiple_path')
+        q = copy.deepcopy(p)
+        q['company_path']['scenarios']['base'].pop('roic')
+        refused(self, q, "needs roic")
+        q = copy.deepcopy(p)
+        q['company_path']['scenarios']['base']['roic'] = 28                                # a percent, not a decimal
+        refused(self, q, "needs roic")
+        q = copy.deepcopy(p)
+        q['company_path']['scenarios']['base']['multiple_from'] = 'peers'
+        refused(self, q, "multiple_from must be")
+        q = pack()
+        q['company_path']['scenarios']['base']['roic'] = .3
+        refused(self, q, 'roic belongs to')
+        q = pack()
+        q['company_path']['scenarios']['base'].pop('multiple_path')
+        refused(self, q, "multiple_path needs 6")
+
     def test_track_record_ratio_recorded_and_applied_only_where_the_pack_says(self):
         meta = to_inputs(pack())['evidence_pack']
         tr = meta['guidance_track_record']

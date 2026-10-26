@@ -93,7 +93,10 @@ Inputs: {RUN}/value.json (ran, stages, stage errors, the table and casefile path
    states period = the next fiscal year (understand/auto.json); the ratio actual / guided midpoint is recorded and read
    honestly (a conservative guider's guidance is a floor, a missed guide is evidence).
 3. Multiples: a peak multiple is not paid as justified (compare company_path multiples with own_history and with the named
-   competitors at a comparable stage).
+   competitors at a comparable stage). A scenario with multiple_from 'economics' is computed by the engine from its own
+   executed EPS path, cost of equity, terminal cost of equity and terminal growth (casefile company_path.scenarios.<s>.economics
+   records them with the formula, the roic, the engine's terminal ROIC and its value today): check the roic and its evidence,
+   not the arithmetic at another rate.
 4. The table: out/table_he.md equals the executed casefile number for number; value.json ran is true only when
    stages.forecast and stages.valuation (and company_path when the pack has one) are 'ok'; every failed stage is listed with
    its error. `ticker-trace` shows the price and the current-year revenue the engine used: check them against their sources.
