@@ -84,9 +84,10 @@ share_continuity, share_routes, shares_not_wavg, split_unresolved, staleness, tt
 "metric","period_end"?,"resolution": label_difference|use_source,"source_id","reason","evidence_ids"}]} (pipeline
 `inputs.dataqa_resolutions`). A resolution acts only on the fact-level cross-source comparison of the named field and metric
 (`dataqa.RESOLUTION_METRICS`): label_difference records the named source's value as an explained definitional difference
-(the chosen value does not move); use_source (period_end required) chooses the named source at that date. It needs FILING
-evidence (a filing-derived source, an issuer document of the filing dataset, or an item citing one, usable at as_of); a
-rejected or unmatched one changes nothing. Every one is recorded: `qa["resolutions"]` (status applied|unused|rejected, `why`,
+(the chosen value does not move); use_source (period_end required) chooses the named source at that date, only when that
+resolves a cross-source disagreement (one that resolves none, e.g. values within tolerance, is rerun without choosing: unused,
+the chosen value does not move). It needs FILING evidence (a filing-derived source, an issuer document of the filing dataset,
+or an item citing one, usable at as_of); a rejected or unmatched one changes nothing. Every one is recorded: `qa["resolutions"]` (status applied|unused|rejected, `why`,
 `applied` comparisons; the key exists only when resolutions were supplied), an `analyst_resolution` check, and on the field
 `analyst_resolutions` with a note; a field resting on an applied one is listed in `limited`. The review digest binds them.
 
@@ -211,7 +212,8 @@ has one (a date after as_of gives `invalid_spec`), else the first availability o
 "current_year_revenue": {"value","fiscal_year_end","basis","evidence_ids","source_tier"} (a tier other than guidance or
 consensus is a 'model' row with its own tier), "acquired_revenue": {"value","fiscal_year_end","acquisition","closed","reason",
 "evidence_ids"} (bought revenue in the step into the fiscal year in progress, kept out of the stub's growth reinvestment; not
-applied, warned high, when it closed after the balance sheet)}. The fiscal year in progress: an input, else consensus, else
+applied, warned high, when it closed after the balance sheet; capped at the step, and at the step above organic growth when
+the filings give that growth, warned medium `acquired_revenue_capped`)}. The fiscal year in progress: an input, else consensus, else
 fiscal-year guidance, else the reported year to date + the company's dated guide for the NEXT unreported quarter + the
 quarters after it (sequential at the guided step, seasonal at its year-over-year growth on last year's quarters, or flat:
 `anchors.current_fiscal_year.quarter_guide` {rule, quarter, guided, sequential_growth, year_over_year_growth,

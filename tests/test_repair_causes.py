@@ -2,9 +2,11 @@
 not market data):
 
   CRDO  the fiscal year in progress extrapolated from one quarter's year-over-year growth, although the company had guided the
-        next quarter (forecast._quarter_guide); the walk-forward, which holds no guidance rows, is unchanged
-  APH   bought revenue charged again as growth reinvestment in the stub (forecast._acquired_step), and a small stub draw against
-        large reported free cash flow read as a funding condition (forecast._stub_draw_immaterial); a cash-short plan still flags
+        next quarter (forecast._quarter_guide); this guide alone leaves the walk-forward, which holds no guidance rows, unchanged
+  APH   bought revenue charged again as growth reinvestment in the stub (forecast._acquired_step: it also reads the saved filings'
+        pro forma revenue, so it moves walk-forward values of acquirers; docs/CHANGELOG.md has the A/B), and a small stub draw
+        against large reported free cash flow read as a funding condition (forecast._stub_draw_immaterial); a cash-short plan
+        still flags
   NVDA  a cross-source label difference blocking the verdict, resolved only by an evidenced analyst input (dataqa resolutions)
 """
 import copy
@@ -226,6 +228,34 @@ class AcquiredStepTests(unittest.TestCase):
         self.assertNotIn('acquired_step_excluded', late['anchors']['stub'])
         self.assertEqual({w['code']: w['severity'] for w in late['warnings']}['acquired_revenue_after_statement'], 'high')
 
+    def test_an_oversized_input_is_capped_at_the_step_above_organic_growth(self):
+        """An analyst input above the step above the filings' organic growth would stop charging organic growth too (and with
+        it a stub draw and its funding gate): it is capped like the filings' reading and flagged for the reviewer."""
+        fb, an, card, qa = acquirer()
+        filings = forecast.build(fb, an, card, qa)['anchors']['stub']
+        cap = filings['acquired_step_excluded']['cap_above_organic']
+        ar = {'value': 100e9, 'fiscal_year_end': '2026-12-31', 'acquisition': 'TargetCo', 'closed': '2025-09-01',
+              'reason': 'the 10-K acquisition note', 'evidence_ids': ['syn:fs']}
+        fc = forecast.build(*acquirer(), {'acquired_revenue': ar})
+        stub = fc['anchors']['stub']
+        acq = stub['acquired_step_excluded']
+        self.assertEqual(acq['source'], 'input')
+        self.assertAlmostEqual(acq['amount'], cap, delta=1)
+        self.assertAlmostEqual(stub['revenue_change_reinvested'], 125e9 * (80 / 78 - 1), delta=1e3)    # organic step still charged
+        self.assertGreater(stub['revenue_change_reinvested'], 0)
+        self.assertIn('capped at', acq['basis'])
+        w = {x['code']: x for x in fc['warnings']}
+        self.assertEqual(w['acquired_revenue_capped']['severity'], 'medium')
+        self.assertIn('organic growth 2.6%', w['acquired_revenue_capped']['message'])
+        small = forecast.build(*acquirer(), {'acquired_revenue': {**ar, 'value': 20e9}})      # below the cap: taken as given
+        self.assertEqual(small['anchors']['stub']['acquired_step_excluded']['amount'], 20e9)
+        self.assertNotIn('acquired_revenue_capped', {x['code'] for x in small['warnings']})
+        whole = forecast.build(*industrial_like(), {'acquired_revenue': {**ar, 'value': 1e15}})  # no organic reading: the step
+        acq = whole['anchors']['stub']['acquired_step_excluded']
+        self.assertNotIn('cap_above_organic', acq)
+        self.assertEqual(whole['anchors']['stub']['revenue_change_reinvested'], 0.)
+        self.assertIn('whole revenue step', {x['code']: x for x in whole['warnings']}['acquired_revenue_capped']['message'])
+
     def test_no_acquisition_keeps_every_fixture_identical(self):
         for make in (grower, aph_shaped, quarterly):
             a = forecast.build(*make())
@@ -375,6 +405,24 @@ class DataResolutionTests(unittest.TestCase):
         self.assertEqual(q['resolutions'][0]['status'], 'applied')
         no_date = dataqa.validate(conflict_fb(), None, {'resolutions': [{k: v for k, v in res.items() if k != 'period_end'}]})
         self.assertEqual(no_date['resolutions'][0]['status'], 'rejected')
+
+    def test_use_source_without_a_disagreement_moves_nothing(self):
+        """Values within tolerance: the resolution resolves nothing, so it never reorders the candidates; the chosen value, its
+        source and the field status stay those of the run without it, and 'unused ... nothing changed' is true."""
+        res = {**LABEL, 'resolution': 'use_source', 'period_end': '2026-06-30', 'evidence_ids': ['web:q10'],
+               'reason': 'the 10-Q balance sheet line'}
+        fb = conflict_fb(av_sti=30.2e9)
+        q, base = dataqa.validate(fb, None, {'resolutions': [res]}), dataqa.validate(fb)
+        self.assertEqual(q['resolutions'][0]['status'], 'unused')
+        self.assertEqual(q['resolved']['short_term_investments'], base['resolved']['short_term_investments'])
+        f, f0 = q['fields']['cash_and_liquid_investments'], base['fields']['cash_and_liquid_investments']
+        self.assertEqual((f['value'], f['status'], f['sources']), (f0['value'], f0['status'], f0['sources']))
+        self.assertEqual(f['value'], 50e9)
+        self.assertTrue(any(c['code'] == 'analyst_resolution' and c['status'] == 'unused' and 'nothing changed' in c['message']
+                            for c in q['checks']))
+        both = dataqa.validate(conflict_fb(), None, {'resolutions': [res, {**res, 'metric': 'cash', 'reason': 'same cash'}]})
+        self.assertEqual([r['status'] for r in both['resolutions']], ['applied', 'unused'])     # the other one still applies
+        self.assertEqual(both['resolved']['short_term_investments']['value'], 70e9)
 
     def test_the_review_signs_the_resolution(self):
         val = {}

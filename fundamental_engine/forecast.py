@@ -1538,7 +1538,7 @@ def _acquired_step(h, cal, d_rev0, warn):
     assumed debt draw, the +1pp funding add-on and a funding-conditional verdict). Sources, first found:
       inputs.acquired_revenue  the analyst names the acquisition, its closing date and the bought revenue in the step, with
                                evidence; not applied (warned high) when it closed after the balance sheet (its price is not in
-                               the opening balance);
+                               the opening balance); capped like the readings below (warned medium: acquired_revenue_capped);
       h['acq'] pro forma       (ASC 805 note) bought revenue at its pre-deal size: pro forma less reported revenue for the same
                                months a year earlier + the acquired pre-deal run rate for the months left (closing in the fiscal
                                year in progress), or the last fiscal year's pro forma less reported (closing last year);
@@ -1559,11 +1559,28 @@ def _acquired_step(h, cal, d_rev0, warn):
                                                      'stays in the growth reinvestment (supply the payment as capital_events or debt_like_claims '
                                                      'first)', 'high')
             return None
-        amt = min(float(ai['value']), d_rev0)
-        return {'amount': amt, 'source': 'input', 'acquisition': ai['acquisition'], 'closed': ai['closed'],
-                'evidence_ids': list(ai['evidence_ids']),
-                'basis': (f"analyst input: {ai['acquisition']} (closed {ai['closed']}) brought {float(ai['value']):,.0f} of the current "
-                          f"year's revenue step{' (capped at the step)' if amt < float(ai['value']) else ''}; {ai['reason']}")}
+        val = float(ai['value'])
+        # the same bound as the filings' reading: never more than the step, nor than the step above the organic growth of last
+        # year's revenue when the filings give that growth (h['acq']); an input above it would also stop charging organic growth
+        cap = d_rev0 - h['last_revenue'] * a['organic'] if a else None
+        lim = max(0., min(d_rev0, cap)) if cap is not None else d_rev0
+        amt = min(val, lim)
+        if val > lim:
+            above = (f"the step above organic growth {_pct(a['organic'])} ({a['basis'].replace('_', ' ')}) on last year's revenue "
+                     f"({lim:,.0f} of the current year's {d_rev0:,.0f} step)" if cap is not None and cap < d_rev0 else
+                     f"the current year's whole revenue step {d_rev0:,.0f}")
+            warn('acquired_revenue_capped', f"acquired_revenue: {ai['acquisition']} {val:,.0f} is more than {above}: only {amt:,.0f} is "
+                                            "kept out of the stub's growth reinvestment, the rest is growth that costs capital. Check "
+                                            'the input against the acquisition note', 'medium')
+        if amt <= 0:
+            return None
+        out = {'amount': amt, 'source': 'input', 'acquisition': ai['acquisition'], 'closed': ai['closed'],
+               'evidence_ids': list(ai['evidence_ids']),
+               'basis': (f"analyst input: {ai['acquisition']} (closed {ai['closed']}) brought {val:,.0f} of the current year's revenue "
+                         f"step{f' (capped at {amt:,.0f})' if amt < val else ''}; {ai['reason']}")}
+        if cap is not None:
+            out['cap_above_organic'] = cap
+        return out
     if not a:
         return None
     cap = d_rev0 - h['last_revenue'] * a['organic']          # the step above the organic growth of last year's revenue

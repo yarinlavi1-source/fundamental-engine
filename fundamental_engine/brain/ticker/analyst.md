@@ -152,7 +152,8 @@ Exact shapes (from evidence_pack.KEYS; the skeleton has them filled with this ru
   evidenced; acquired_revenue when an acquisition closed in the last or the current fiscal year: the revenue it brought into
   the step into the year in progress at its pre-deal size (the acquisition note, pro forma revenue or the company's stated
   contribution), so its paid-for revenue is not charged again as growth capex (the engine also reads the 10-Q pro forma
-  note itself: fc.anchors.stub.acquired_step_excluded).
+  note itself: fc.anchors.stub.acquired_step_excluded; a value above the step over organic growth is capped and warned
+  acquired_revenue_capped).
 - dataqa_resolutions [{"field", "metric", "period_end", "resolution": "label_difference|use_source", "source_id", "reason",
   "evidence_ids"}] ONLY when dataqa blocks on a cross-source conflict the filing explains (qa.fields.<field>.note names the
   two sources; NVIDIA 2026-07-26: short-term investments 34.1B SEC vs 76.9B Alpha Vantage = debt 34.1B + equity 42.8B per

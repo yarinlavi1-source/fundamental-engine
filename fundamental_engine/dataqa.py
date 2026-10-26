@@ -161,7 +161,7 @@ def _split_factor(r):
 class _QA:
     """Run state: the FactBook, cached point-in-time candidates, the check log and identity results."""
 
-    def __init__(self, fb, options):
+    def __init__(self, fb, options, unsorted=frozenset()):
         o = options or {}
         self.fb, self.as_of = fb, fb['as_of']
         self.tol = {**TOL, **(o.get('tolerances') or {})}
@@ -169,6 +169,8 @@ class _QA:
         self.ccy = fb['company'].get('currency', 'USD')
         self.checks, self.ident, self.cross, self._c = [], [], {}, {}
         self.resolutions = _resolutions(fb, o.get('resolutions'))
+        # the positions of use_source resolutions that resolved no disagreement in validate's first pass: they never reorder
+        self.unsorted = frozenset(unsorted)
 
     def resolution(self, kind, metric, f, source_id):
         """The accepted resolution of this kind for metric and source at f's period, else None."""
@@ -188,9 +190,13 @@ class _QA:
     def cands(self, metric):
         if metric not in self._c:
             c = F.candidates(self.fb, metric)                    # look-ahead filter + best-first order
-            if any(r['resolution'] == 'use_source' and r['metric'] == metric and r['status'] != 'rejected' for r in self.resolutions):
-                # a use_source resolution puts the confirmed source first at its period (stable: the rest keeps its order)
-                c = sorted(c, key=lambda f: self.resolution('use_source', metric, f, f['source_id']) is None)
+            sorting = [r for i, r in enumerate(self.resolutions) if i not in self.unsorted and r['resolution'] == 'use_source'
+                       and r['metric'] == metric and r['status'] != 'rejected']
+            if sorting:
+                # a use_source resolution puts the confirmed source first at its period (stable: the rest keeps its order); one
+                # that resolved no disagreement (validate's first pass) changes nothing, so the chosen value never moves silently
+                c = sorted(c, key=lambda f: not any(r['source_id'] == f['source_id'] and abs(_days(r['period_end'], f['period_end'])) <= 7
+                                                    for r in sorting))
             self._c[metric] = c
         return self._c[metric]
 
@@ -1846,7 +1852,16 @@ def validate(fb, capital_structure=None, options=None):
     for convertibles and a cross-check for cash, debt and shares (or the source, when newer than the statements).
     options: {'tolerances': {metric: relative}, 'max_age': {'shares'|'balance_sheet'|'ttm'|'annual': days}, 'resolutions': [analyst
     resolutions of a cross-source disagreement (RESOLUTIONS; filing evidence required; recorded in out['resolutions'])]}."""
-    q = _QA(fb, options)
+    out = _validate(fb, capital_structure, options)
+    # a use_source resolution reorders the candidates; when it resolved no cross-source disagreement (unused: the values agree
+    # within tolerance, are explained by definition, or are copies of one filing) the reorder alone would still move the chosen
+    # value, its source and the field status, unrecorded. Such resolutions are rerun without the reorder: nothing changes.
+    idle = [i for i, r in enumerate(out.get('resolutions') or []) if r['resolution'] == 'use_source' and r['status'] == 'unused']
+    return _validate(fb, capital_structure, options, idle) if idle else out
+
+
+def _validate(fb, capital_structure, options, unsorted=()):
+    q = _QA(fb, options, unsorted)
     late = [f for f in fb['facts'] if not F.usable(fb, f)]
     est = sum(1 for f in fb['facts'] if F.usable(fb, f) and f.get('available_at_estimated'))
     q.add('lookahead_excluded', 'pass', 'minor', f'{len(late)} fact(s) published after {q.as_of} ignored; '

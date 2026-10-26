@@ -20,8 +20,9 @@ the demo company and a walk-forward row built from saved filings (engine_backtes
   change less the bought revenue in it: inputs.acquired_revenue {value, fiscal_year_end, acquisition, closed, reason,
   evidence_ids} (evidence pack forecast_options.acquired_revenue), else the ASC 805 pro forma reading (pro forma less reported
   revenue for the same months a year earlier + the acquired pre-deal run rate for the months left), else the step above
-  organic growth (flagged); never more than the step above the organic growth of last year's revenue, never applied when the
-  deal closed after the balance sheet (warned high). Recorded in `anchors.stub.acquired_step_excluded`, the reinvestment
+  organic growth (flagged); never more than the step above the organic growth of last year's revenue (an input above it, or
+  above the whole step, is capped and warned medium `acquired_revenue_capped`: the organic step keeps its reinvestment),
+  never applied when the deal closed after the balance sheet (warned high). Recorded in `anchors.stub.acquired_step_excluded`, the reinvestment
   rationale, the reinvestment rule's stub_revenue_change and the warning `acquired_step_not_reinvested`.
 - A stub draw that reported free cash flow covers is not a funding condition. The minimum-cash default was checked: min(the
   stage's months of cash costs, today's cash) is ALL of today's cash for APH (3 months of ~26B a year), so any stub shortfall
@@ -44,7 +45,8 @@ the demo company and a walk-forward row built from saved filings (engine_backtes
   `dataqa_resolutions`, core part key) -> `dataqa.validate(options.resolutions)`: applied only to the fact-level cross-source
   comparison of the named field and metric, only with FILING evidence (a filing-derived source, a filing document or an item
   citing one); label_difference records the named source as an explained definitional difference (the chosen value never
-  moves), use_source chooses the source the filing confirms at period_end. Recorded in `qa.resolutions` (applied | unused |
+  moves), use_source chooses the source the filing confirms at period_end, only when that resolves a disagreement (one that
+  resolves none, e.g. values within tolerance, is rerun without the choice: unused, the chosen value, source and status stay). Recorded in `qa.resolutions` (applied | unused |
   rejected with why), an `analyst_resolution` check, the field's `analyst_resolutions` and note; the field stays `limited`;
   the review digest binds the resolutions. Without one, or with a rejected or unmatched one, the block stays.
 - Fixed: `inputs.current_year_revenue` with a tier other than guidance or consensus (own_history, analyst, ...) made the case
