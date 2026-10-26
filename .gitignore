@@ -33,3 +33,6 @@ runs/universe_2026-10-20/*
 runs/private_portfolio_*/
 *.sqlite*
 .env
+
+# per-machine Claude Code settings (SEC_USER_AGENT contact; never committed)
+.claude/settings.local.json
