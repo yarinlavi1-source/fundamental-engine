@@ -1101,9 +1101,10 @@ def _business(cf):
                    f"base path {_p0(cc['consolidated_base_avg_growth'], 1)}/yr over {cc['years']} years: {cc['reading']}")
     sv = cf.get('segment_view') or {}
     if sv.get('status') == 'computed' and sv.get('base_value_segment_path') is not None:
+        cons = sv.get('base_value_consolidated')   # the consolidated base can be missing (no executed base value): say so
         out.append(f"- Second view: base value with the segment-built path {sv['base_value_segment_path']:,.2f} against "
-                   f"{sv['base_value_consolidated']:,.2f} on the consolidated path ({_p0(sv['difference'])}); quote {sv['quote']}. "
-                   'Which view holds is a research question, not a model choice.')
+                   + (f"{cons:,.2f} on the consolidated path ({_p0(sv['difference'])})" if _n(cons) else 'no consolidated base value')
+                   + f"; quote {sv['quote']}. Which view holds is a research question, not a model choice.")
     out += ['- Not in the XBRL (read the text): ' + '; '.join(f"{x['item']} ({x['where']})" for x in b.get('not_disclosed') or []), '']
     m = cf.get('management')
     if m:
