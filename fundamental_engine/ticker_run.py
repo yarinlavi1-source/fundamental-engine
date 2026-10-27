@@ -13,7 +13,7 @@
                                  started_at_utc) together with the main loop's own list of agents that returned; stage times
 
 The three analyst parts write disjoint pack keys (PARTS): `core` (the analyst: drivers, forecast_options, scenario_events,
-key_risk, falsifiers), `field` (potential, assessments) and `path` (company_path). Each part also carries thesis_he
+key_risk, falsifiers, and dataqa_resolutions when a data conflict is resolved from the filing), `field` (potential, assessments) and `path` (company_path). Each part also carries thesis_he
 {bear, base, bull}: one line per scenario of what that part assumes, shown side by side in position/coherence.md so the
 reviewers can see that the three parts tell one story per scenario. Nothing here judges, estimates or fills in a number:
 the evidence pack rules (evidence_pack.to_inputs) are the only gate, and the engine runs exactly as `deep` runs it.
@@ -28,7 +28,7 @@ from pathlib import Path
 
 from . import evidence_pack as EP
 
-PARTS = {'core': ('drivers', 'forecast_options', 'scenario_events', 'key_risk', 'falsifiers'),
+PARTS = {'core': ('drivers', 'forecast_options', 'scenario_events', 'key_risk', 'falsifiers', 'dataqa_resolutions'),
          'field': ('potential', 'assessments'),
          'path': ('company_path',)}
 PART_STAGE = {'core': 'analyst', 'field': 'analyst_field', 'path': 'analyst_path'}
@@ -379,7 +379,14 @@ def skeleton(part, run=None):
                              'source_tier': f'one of {tiers}, or one per scenario {{bear, base, bull}}',
                              'competitors': 'only with tier competitor: "competitors": [named tickers of field.json]',
                              'forecast_options': {'horizon_years': '1-30 (optional)',
-                                                  'financing': f'{"|".join(FINANCING_MODES)} (optional)'},
+                                                  'financing': f'{"|".join(FINANCING_MODES)} (optional)',
+                                                  'acquired_revenue': '{value, acquisition, closed, reason, evidence_ids} (optional): '
+                                                                      f'revenue an acquisition brought into the step into {cur_l}, at its '
+                                                                      'pre-deal size; kept out of the growth reinvestment (its price is in '
+                                                                      'the opening balance)'},
+                             'dataqa_resolutions': '[{field, metric, period_end, resolution label_difference|use_source, source_id, '
+                                                   'reason, evidence_ids}] (optional, only for a cross-source conflict dataqa blocks on: '
+                                                   'qa.fields.<field>.note names the sources; filing evidence required)',
                              'scenario_event': '{"event_he", "evidence_ids"} or {"event_he", "hypothesis": true}'},
                 'drivers': {
                     'current_year_revenue': {

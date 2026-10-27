@@ -1645,7 +1645,17 @@ def _funding(g, case, fc, issues):
         yrs = sorted({p['end'][:4] for p in s.get('periods', []) if p.get('financing_status') == 'assumed'
                       and (p.get('debt_draw') or p.get('equity_proceeds'))})
         f = info.get(nm) or {}
-        if mid in unresolved or (yrs and mid not in resolved):
+        imm = f.get('stub_draw_immaterial')
+        if imm and mid not in unresolved and not _num(f.get('equity_raised')):
+            # forecast._stub_draw_immaterial: a debt draw in the stub only, covered by the free cash flow the company reported since
+            # the balance sheet; recorded here (never silent) instead of a funding gate
+            g.setdefault('funding_immaterial', []).append({
+                'scenario': nm, 'draw': imm.get('draw'), 'period_end': imm.get('period_end'), 'cover': imm.get('cover'),
+                'text': f"{nm}: an assumed debt draw of {imm.get('draw') or 0:,.0f} in the stub to {imm.get('period_end')} is immaterial "
+                        f"(below the {imm.get('cover') or 0:,.0f} of free cash flow after distributions reported since the balance "
+                        "sheet); not a funding condition",
+                'text_he': 'משיכת חוב קטנה עד סוף השנה הנוכחית, מכוסה בתזרים החופשי שהחברה דיווחה מאז המאזן האחרון; לא תנאי מימון'})
+        elif mid in unresolved or (yrs and mid not in resolved):
             g['funding'].append(f'{nm}: assumed (not committed) financing' + (f" in {', '.join(yrs)}" if yrs else '')
                                 + f' not reviewed (material issue {mid} unresolved)')
         elif yrs:
@@ -1795,6 +1805,8 @@ def _verdict(A, g, er, view, index, rates, req, tol_shift=0.):
 
     def out(code, gate, reason, reason_he, change, change_he, **extra):
         cond = _conditional(g) if gate in PRICE_ROUTES else None
+        if g.get('funding_immaterial') and gate in PRICE_ROUTES:
+            reason += '; ' + '; '.join(x['text'] for x in g['funding_immaterial'])
         if cond:
             reason += '; ' + cond['text']
             change = list(change) + ['the financing or share issuance the valuation assumes does not happen at the modelled prices']

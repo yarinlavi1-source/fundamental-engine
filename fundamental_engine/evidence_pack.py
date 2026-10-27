@@ -33,7 +33,12 @@ The pack (pack_version 1; unknown keys are rejected at every level):
                  evidence_ids either way
   key_risk {reading_he, evidence_ids}; falsifiers [{id, scenario, metric, threshold, direction below|above, by,
   evidence_ids}]; assessments {model_card dimension: {assessment, evidence_ids, note}}; market {risk_free,
-  equity_risk_premium: {value, as_of, source_id}}; forecast_options {horizon_years, financing, cyclical}; analyst; notes
+  equity_risk_premium: {value, as_of, source_id}}; forecast_options {horizon_years, financing, cyclical, acquired_revenue
+  {value, acquisition, closed, reason, evidence_ids}: bought revenue in the step into the fiscal year in progress, kept out of
+  the stub's growth reinvestment}; analyst; notes
+  dataqa_resolutions [{field, metric, period_end, resolution label_difference|use_source, source_id, reason, evidence_ids}]: a
+  cross-source disagreement dataqa blocks on, resolved with FILING evidence (a pack source of kind sec_filing, or an item citing
+  one); source_id is the FactBook source the resolution names (an engine source such as av:balance, or a pack source)
 
 Rules enforced: every evidence id resolves to a pack source or item; consensus is never evidence of a fact (facts, KPIs,
 segments, customers and the guidance record may not cite a consensus source) and counts only for tier consensus;
@@ -71,11 +76,12 @@ POTENTIAL = ('market_direction', 'bottleneck_potential', 'share_trajectory', 'co
 TRACK_LEVERS = ('growth_anchor', 'growth')
 GROWTH_LEVERS = ('growth_anchor', 'growth')          # their first value is the growth of the fiscal year AFTER the one in progress
 CURRENT_YEAR = 'current_year_revenue'                 # the fiscal year in progress (forecast inputs.current_year_revenue)
-FORECAST_OPTIONS = ('horizon_years', 'financing', 'cyclical')
+FORECAST_OPTIONS = ('horizon_years', 'financing', 'cyclical', 'acquired_revenue')
 
 TOP = {'pack_version', 'ticker', 'as_of', 'identity', 'sources', 'facts', 'guidance', 'guidance_track', 'consensus',
        'kpis', 'segments', 'customers', 'competitors', 'bottlenecks', 'potential', 'drivers', 'scenario_events',
-       'company_path', 'key_risk', 'falsifiers', 'assessments', 'market', 'forecast_options', 'analyst', 'notes'}
+       'company_path', 'key_risk', 'falsifiers', 'assessments', 'market', 'forecast_options', 'analyst', 'notes',
+       'dataqa_resolutions'}
 REQUIRED = ('ticker', 'as_of', 'identity', 'sources', 'potential', 'scenario_events', 'company_path')
 KEYS = {
     'identity': ({'name', 'currency', 'exchange', 'security', 'fiscal_year_end', 'cik', 'type', 'evidence_ids'},
@@ -109,6 +115,10 @@ KEYS = {
                        'evidence_ids'}, ('justification', 'reason_he', 'source_tier', 'evidence_ids')),
     'own_history': ({'low', 'median', 'high', 'years', 'evidence_ids'}, ('low', 'median', 'high', 'years', 'evidence_ids')),
     'peer': ({'ticker', 'forward_pe', 'growth', 'evidence_ids'}, ('ticker', 'forward_pe', 'growth', 'evidence_ids')),
+    'dataqa_resolution': ({'field', 'metric', 'period_end', 'resolution', 'source_id', 'reason', 'evidence_ids'},
+                          ('field', 'metric', 'resolution', 'source_id', 'reason', 'evidence_ids')),
+    'acquired_revenue': ({'value', 'acquisition', 'closed', 'reason', 'evidence_ids'},
+                         ('value', 'acquisition', 'closed', 'reason', 'evidence_ids')),
 }
 JUSTIFICATIONS = ('justified_high', 'peak', 'unproven')
 PATH_YEARS = 5
@@ -794,6 +804,60 @@ def _forecast_options(p, opts):
         else:
             out['cyclical'] = {'treatment': cy['treatment'], 'reason': cy['reason'],
                                'evidence_ids': p.ids(cy.get('evidence_ids'), 'forecast_options.cyclical')}
+    if 'acquired_revenue' in opts:
+        a, where = opts['acquired_revenue'], 'forecast_options.acquired_revenue'
+        fy = p.fiscal_year(0)
+        if c.obj(a, 'acquired_revenue', where):
+            closed = _day(a['closed'])
+            if not (_num(a['value']) and a['value'] > 0):
+                c.err(where, 'value: the bought revenue in the step into the fiscal year in progress (a positive number)')
+            elif not closed or (p.as_of and closed > p.as_of):
+                c.err(where, 'closed: the closing date (YYYY-MM-DD, on or before as_of)')
+            elif not all(isinstance(a[k], str) and a[k].strip() for k in ('acquisition', 'reason')):
+                c.err(where, 'name the acquisition and give a written reason')
+            elif fy is None:
+                c.err(where, 'needs identity.fiscal_year_end')
+            elif not p.kinds(a['evidence_ids']) & ISSUER_KINDS:
+                c.err(where, 'cite the company\'s own documents (the acquisition note, the release or the call)')
+            else:
+                out['acquired_revenue'] = {'value': a['value'], 'fiscal_year_end': fy[1].isoformat(), 'acquisition': a['acquisition'],
+                                           'closed': a['closed'], 'reason': a['reason'], 'evidence_ids': p.ids(a['evidence_ids'], where)}
+    return out
+
+
+def _dataqa_resolutions(p):
+    """dataqa_resolutions -> pipeline inputs.dataqa_resolutions (dataqa.RESOLUTIONS): shape, a dated period, and FILING evidence
+    (a pack source of kind sec_filing, or an item citing one); source_id passes through as the FactBook id (a pack source becomes
+    web:<id>). dataqa checks the rest against the FactBook and records what it applied, ignored or rejected."""
+    from .dataqa import RESOLUTIONS, RESOLUTION_METRICS
+    c, out = p.c, []
+    for i, r in enumerate(c.lst(p.raw, 'dataqa_resolutions')):
+        where = f'dataqa_resolutions[{i}]'
+        if not c.obj(r, 'dataqa_resolution', where):
+            continue
+        ok = True
+        if r['resolution'] not in RESOLUTIONS:
+            c.err(where, f"resolution one of {', '.join(RESOLUTIONS)}")
+            ok = False
+        if r['field'] not in RESOLUTION_METRICS or r['metric'] not in RESOLUTION_METRICS.get(r['field'], ()):
+            c.err(where, 'field one of ' + ', '.join(RESOLUTION_METRICS) + ' and a metric of that field '
+                  + (f"({', '.join(RESOLUTION_METRICS[r['field']])})" if r['field'] in RESOLUTION_METRICS else ''))
+            ok = False
+        when = _day(r.get('period_end')) if r.get('period_end') is not None else None
+        if (r.get('period_end') is not None or r['resolution'] == 'use_source') and (not when or (p.as_of and when > p.as_of)):
+            c.err(where, 'period_end: the date of the disagreeing period (YYYY-MM-DD, on or before as_of; required for use_source)')
+            ok = False
+        if not isinstance(r['source_id'], str) or not isinstance(r['reason'], str) or not r['reason'].strip():
+            c.err(where, 'source_id (the FactBook source named) and a written reason')
+            ok = False
+        if 'sec_filing' not in p.kinds(r['evidence_ids']):
+            c.err(where, 'filing evidence required: cite the filing (a pack source of kind sec_filing, or an item citing one)')
+            ok = False
+        ev = p.ids(r['evidence_ids'], where)
+        if ok:
+            out.append({**{k: r[k] for k in ('field', 'metric', 'resolution', 'reason') if k in r},
+                        **({'period_end': r['period_end']} if r.get('period_end') is not None else {}),
+                        'source_id': 'web:' + r['source_id'] if r['source_id'] in p.sources else r['source_id'], 'evidence_ids': ev})
     return out
 
 
@@ -843,6 +907,9 @@ def to_inputs(pack):
     cp = _company_path(p)
     if cp:
         inputs['company_path'] = cp
+    dq = _dataqa_resolutions(p)
+    if dq:
+        inputs['dataqa_resolutions'] = dq
     sheet = {'scenario_events': _events(p)}
     kr = p.raw.get('key_risk')
     if kr is not None and c.obj(kr, 'key_risk', 'key_risk'):
@@ -981,7 +1048,7 @@ def to_bundle(pack):
 LIST_KEYS = ('sources', 'facts', 'guidance', 'guidance_track', 'consensus', 'kpis', 'segments', 'customers', 'competitors',
              'bottlenecks', 'notes')
 POSITION_KEYS = ('potential', 'scenario_events', 'drivers', 'company_path', 'key_risk', 'falsifiers', 'assessments',
-                 'forecast_options', 'analyst')
+                 'forecast_options', 'analyst', 'dataqa_resolutions')
 
 
 def _remap(x, ids):
