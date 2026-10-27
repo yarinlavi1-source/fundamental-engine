@@ -155,6 +155,12 @@ to fair value and a row with each scenario's year-5 price against today's (פו�
 (market return + this company's risk premium, where the verdict is taken) is labelled 'מחיר כניסה עם מרווח ביטחון' and is
 never called his requirement or target. His portfolio goal: strong, excellent companies and high-growth companies with real
 data, significant growth and large potential (bottlenecks, share gains), not slow, boring names.
+Owner profile (27.10.2026): adds money monthly as he can (modest income); horizon 5 years, aim maximum return; tolerates
+deep drawdowns when convinced of the company; wants calculated risk on very high-quality growth companies, not only
+cheap-on-today's-numbers names. For an unproven business line with evidenced progress (TSLA robotaxi/FSD/Optimus), do not
+stop at 'no revenue = no value': show what must happen, the evidenced milestones and what it would be worth if it does,
+as a separately sized bet, never mixed into the base value. New money goes first to the strongest cheap names and to
+the portfolio's gaps; speculative positions stay capped.
 
 ## User preference: one concise investment paragraph (v0.9.1)
 
