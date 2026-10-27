@@ -52,6 +52,9 @@ RANK = {'conflict': 0, 'missing': 1, 'stale': 2, 'single_source': 3, 'reported':
 FILING_KINDS = F.REPORTED_KINDS                  # filing_derived, issuer_document (legacy 'document')
 BS_TAGS = ('total_assets', 'total_liabilities', 'liabilities_and_equity', 'current_assets', 'equity')
 DEBT_PARTS = ('long_term_debt', 'long_term_debt_tagged', 'current_portion_ltd', 'short_term_borrowings')
+# a vendor total read as noncurrent debt + noncurrent operating leases confirms the noncurrent line only: the current debt it
+# cannot see must stay below this share of the resolved debt for the difference to count as definitional (GOOGL 2026-06: 2.0%)
+VENDOR_UNSEEN_CURRENT_MAX = .05
 BS_LINES = BS_TAGS + ('cash', 'cash_incl_restricted', 'short_term_investments', 'long_term_investments',
                       'deferred_revenue_current', 'deferred_revenue_noncurrent') + DEBT_PARTS
 HYPOTHESES = ('noncurrent+current', 'tagged_total', 'tagged_plus_current')
@@ -1566,8 +1569,18 @@ def _debt(q, cs, mcap):
             if vt:
                 r = _rel(value, vt['value'])
                 alt = {h: t for h, t in tot.items() if h != method and _rel(t, vt['value']) <= q.tol['debt']}
+                # GOOGL 2026-06-30: AV shortLongTermDebtTotal 112,756 = noncurrent debt 98,165 + noncurrent operating leases 14,591
+                # (its own scope: neither current portion), against 100,164 = 98,165 + current portion 1,999 in 10-Q Note 6. That
+                # vendor scope confirms the noncurrent line only, so it explains the gap only when the leases are what separate it
+                # from the noncurrent line and the current pieces it cannot see are small (else a misread current line would pass)
+                ncd = (parts['long_term_debt'] or (parts['long_term_debt_tagged'] if method == 'tagged_plus_current' else None) or {}).get('value')
+                nc_scope = bool(ln and ncd is not None and _rel(ncd + ln, vt['value']) <= q.tol['debt']
+                                and _rel(ncd, vt['value']) > q.tol['debt'] and 0 <= value - ncd <= VENDOR_UNSEEN_CURRENT_MAX * value)
                 why = ('vendor total includes operating lease liabilities' if leases and _rel(value + leases, vt['value']) <= q.tol['debt']
-                       else f'vendor applies the {next(iter(alt))} scope; roll-forward supports {method}' if alt else None)
+                       else f'vendor applies the {next(iter(alt))} scope; roll-forward supports {method}' if alt
+                       else f'vendor total = noncurrent debt + noncurrent operating lease liabilities (its scope leaves out both current '
+                            f'portions; the current debt {_fmt(value - ncd)} it does not confirm is within '
+                            f'{VENDOR_UNSEEN_CURRENT_MAX:.0%} of the debt)' if nc_scope else None)
                 ok = r <= q.tol['debt']
                 q.add('cross_source', 'pass' if ok or why else 'fail', 'minor' if ok or why else 'major',
                       f"debt {end}: resolved {_fmt(value)} vs {q.provider(vt)} total {_fmt(vt['value'])}" + (f' ({why})' if why and not ok else ''),

@@ -1,3 +1,19 @@
+## Unreleased — GOOGL run fixes (27.10.2026)
+
+- dataqa debt: a vendor total read as noncurrent debt + noncurrent operating lease liabilities is a definitional difference,
+  not a blocking conflict (GOOGL 2026-06-30: Alpha Vantage shortLongTermDebtTotal 112,756M = noncurrent debt 98,165M +
+  noncurrent operating leases 14,591M, against 10-Q Note 6's 100,164M with the 1,999M current portion; the conflict had
+  blocked the owner's table). That scope confirms the noncurrent line only, so the rule applies only when the leases are what
+  separate the vendor total from the noncurrent line and the current debt it cannot see is at most
+  `VENDOR_UNSEEN_CURRENT_MAX` = 5% of the resolved debt; a misread current portion or a large short-term borrowing still
+  conflicts (review of the first version: it had let both through). The walk-forward is unchanged (its FactBooks carry no
+  vendor totals). Tests: test_dataqa (the GOOGL shape, the misread current line, a large borrowing, a negligible lease).
+- Evidence pack `forecast_options.debt_like_claims` [{kind, amount, reason, evidence_ids}] passes through to
+  `inputs.forecast.debt_like_claims` (forecast.build already took them): GOOGL's 6.25% mandatory convertible preferred
+  ($19.25B liquidation preference) had no route into the capital structure. Checked like forecast.build (kind, positive
+  amount, reason) and citing issuer documents; a non-list evidence_ids is a pack error, not a TypeError (also for
+  acquired_revenue). analyst.md, repair.md, the core skeleton hint and MODULE_CONTRACTS list it.
+
 ## Unreleased — engine-computed multiples and draft tables with numbers (26.10.2026)
 
 Every ticker run of 26.10.2026 (NVDA, CRDO, APH) needed a repair pass, partly for the same engine-shaped reasons: the path

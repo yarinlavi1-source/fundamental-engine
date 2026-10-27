@@ -43,6 +43,23 @@ class ConversionTests(unittest.TestCase):
         self.assertIn('web:s_fred', fb['sources'])
         self.assertEqual({g['period'] for g in fb['guidance']}, {'Q4 2026', 'FY2026'})
 
+    def test_debt_like_claims_pass_through_to_the_forecast(self):
+        """GOOGL 2026-06: a mandatory convertible preferred had no route from the pack into the capital structure."""
+        p = pack()
+        row = {'kind': 'preferred_or_minority', 'amount': 19.25e9, 'reason': '6.25% mandatory convertible preferred, liquidation preference',
+               'evidence_ids': ['s_10q']}
+        p['forecast_options'] = {'debt_like_claims': [row]}
+        got = to_inputs(p)['forecast']['debt_like_claims']
+        self.assertEqual([(g['kind'], g['amount'], g['evidence_ids']) for g in got], [('preferred_or_minority', 19.25e9, ['web:s_10q'])])
+        for bad, frag in (({'kind': 'warrants'}, 'kind one of'), ({'amount': -1}, 'amount'), ({'evidence_ids': ['s_est']}, "company's own"),
+                          ({'extra': 1}, 'unknown keys'), ({'evidence_ids': 5}, 'non-empty list')):
+            q = pack()
+            q['forecast_options'] = {'debt_like_claims': [{**row, **bad}]}
+            refused(self, q, frag)
+        q = pack()
+        q['forecast_options'] = {'debt_like_claims': []}
+        refused(self, q, 'non-empty list')
+
     def test_overrides_carry_the_source_tier_contract(self):
         ov = to_inputs(pack())['forecast']['overrides']
         self.assertEqual({o['source_tier'] for o in ov}, {'consensus', 'own_history'})

@@ -328,6 +328,49 @@ class Conflicts(unittest.TestCase):
         self.assertIn('lease', qa['fields']['debt']['note'])
         self.assertAlmostEqual(qa['resolved']['net_cash']['value'], (CASH['2026-06-30'] + 100 - 500) * M)
 
+    def test_vendor_total_of_noncurrent_debt_and_noncurrent_leases_is_a_definition(self):
+        """GOOGL 2026-06-30: AV shortLongTermDebtTotal 112,756 = noncurrent debt 98,165 + noncurrent operating leases 14,591, against
+        the 10-Q's 100,164 (with the 1,999 current portion). It was a blocking 'conflict' (no roll-forward corroborated either)."""
+        fb = syn()
+        F.add_fact(fb, 'current_portion_ltd', 'I@2026-06-30', '2026-06-30', 10 * M, 'sec:cf', 'as_reported', '2026-08-07',
+                   concept='longtermdebtcurrent')                     # 2% of the debt, as GOOGL's 1,999 of 100,164
+        F.add_source(fb, 'av:bs', 'alpha_vantage', 'balance', 'vendor_normalized', '2026-10-19')
+        F.add_fact(fb, 'debt_total_vendor', 'I@2026-06-30', '2026-06-30', 560 * M, 'av:bs', 'normalized', '2026-08-14')   # 500 + 60
+        qa = dataqa.validate(fb)
+        d = qa['fields']['debt']
+        self.assertEqual(d['value'], 510 * M)
+        self.assertNotEqual(d['status'], 'conflict')
+        self.assertNotIn('debt', qa['blocking'])
+        self.assertIn('noncurrent operating lease', d['note'])
+        for f in fb['facts']:                      # a vendor total that matches no scope still conflicts when nothing corroborates
+            if f['metric'] == 'debt_total_vendor':
+                f['value'] = 700 * M
+        self.assertNotIn('noncurrent operating lease', dataqa.validate(fb)['fields']['debt'].get('note') or '')
+
+    def test_noncurrent_vendor_scope_never_covers_a_large_unseen_current_debt(self):
+        """Review of the rule above: the vendor's noncurrent scope confirms nothing about the current lines, so a misread current
+        portion (500M noncurrent + 5,000M 'current', vendor 560M = 500 + 60 of leases) or a large short-term borrowing stays a
+        blocking conflict, and so does a negligible lease that the noncurrent line alone already matches."""
+        for extra in ((('current_portion_ltd', 5000),), (('current_portion_ltd', 50), ('short_term_borrowings', 4000))):
+            fb = syn()
+            for metric, v in extra:
+                F.add_fact(fb, metric, 'I@2026-06-30', '2026-06-30', v * M, 'sec:cf', 'as_reported', '2026-08-07',
+                           concept={'current_portion_ltd': 'longtermdebtcurrent', 'short_term_borrowings': 'commercialpaper'}[metric])
+            F.add_source(fb, 'av:bs', 'alpha_vantage', 'balance', 'vendor_normalized', '2026-10-19')
+            F.add_fact(fb, 'debt_total_vendor', 'I@2026-06-30', '2026-06-30', 560 * M, 'av:bs', 'normalized', '2026-08-14')
+            d = dataqa.validate(fb)['fields']['debt']
+            self.assertEqual(d['status'], 'conflict', extra)
+            self.assertNotIn('noncurrent operating lease', d.get('note') or '')
+        fb = syn()
+        for f in fb['facts']:
+            if f['metric'] == 'operating_lease_noncurrent':
+                f['value'] = 1 * M
+        F.add_fact(fb, 'current_portion_ltd', 'I@2026-06-30', '2026-06-30', 20 * M, 'sec:cf', 'as_reported', '2026-08-07',
+                   concept='longtermdebtcurrent')
+        F.add_source(fb, 'av:bs', 'alpha_vantage', 'balance', 'vendor_normalized', '2026-10-19')
+        F.add_fact(fb, 'debt_total_vendor', 'I@2026-06-30', '2026-06-30', 501 * M, 'av:bs', 'normalized', '2026-08-14')
+        self.assertNotIn('noncurrent operating lease', dataqa.validate(fb)['fields']['debt'].get('note') or '')
+
     def test_double_counted_short_term_investments(self):
         fb = syn()
         for f in fb['facts']:

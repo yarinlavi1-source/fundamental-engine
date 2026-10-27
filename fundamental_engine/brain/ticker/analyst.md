@@ -153,7 +153,10 @@ Exact shapes (from evidence_pack.KEYS; the skeleton has them filled with this ru
   the step into the year in progress at its pre-deal size (the acquisition note, pro forma revenue or the company's stated
   contribution), so its paid-for revenue is not charged again as growth capex (the engine also reads the 10-Q pro forma
   note itself: fc.anchors.stub.acquired_step_excluded; a value above the step over organic growth is capped and warned
-  acquired_revenue_capped).
+  acquired_revenue_capped). "debt_like_claims": [{"kind", "amount", "reason", "evidence_ids"}]: a claim ahead of the common
+  shares that the debt lines miss (kind one of forecast.DEBT_LIKE_KINDS, e.g. preferred_or_minority for a preferred stock at
+  its liquidation preference, royalty_financing, litigation, pension_deficit, deferred_consideration, finance_leases), citing
+  the filing note that sets its terms; added to opening debt (a mandatory convertible: the claim OR the dilution, never both).
 - dataqa_resolutions [{"field", "metric", "period_end", "resolution": "label_difference|use_source", "source_id", "reason",
   "evidence_ids"}] ONLY when dataqa blocks on a cross-source conflict the filing explains (qa.fields.<field>.note names the
   two sources; NVIDIA 2026-07-26: short-term investments 34.1B SEC vs 76.9B Alpha Vantage = debt 34.1B + equity 42.8B per

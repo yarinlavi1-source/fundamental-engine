@@ -35,7 +35,9 @@ The pack (pack_version 1; unknown keys are rejected at every level):
   evidence_ids}]; assessments {model_card dimension: {assessment, evidence_ids, note}}; market {risk_free,
   equity_risk_premium: {value, as_of, source_id}}; forecast_options {horizon_years, financing, cyclical, acquired_revenue
   {value, acquisition, closed, reason, evidence_ids}: bought revenue in the step into the fiscal year in progress, kept out of
-  the stub's growth reinvestment}; analyst; notes
+  the stub's growth reinvestment, debt_like_claims [{kind, amount, reason, evidence_ids}]: claims ahead of the shares that the
+  debt lines miss (forecast.DEBT_LIKE_KINDS, e.g. a preferred stock at its liquidation preference), added to opening debt,
+  citing the company's own documents}; analyst; notes
   dataqa_resolutions [{field, metric, period_end, resolution label_difference|use_source, source_id, reason, evidence_ids}]: a
   cross-source disagreement dataqa blocks on, resolved with FILING evidence (a pack source of kind sec_filing, or an item citing
   one); source_id is the FactBook source the resolution names (an engine source such as av:balance, or a pack source)
@@ -76,7 +78,7 @@ POTENTIAL = ('market_direction', 'bottleneck_potential', 'share_trajectory', 'co
 TRACK_LEVERS = ('growth_anchor', 'growth')
 GROWTH_LEVERS = ('growth_anchor', 'growth')          # their first value is the growth of the fiscal year AFTER the one in progress
 CURRENT_YEAR = 'current_year_revenue'                 # the fiscal year in progress (forecast inputs.current_year_revenue)
-FORECAST_OPTIONS = ('horizon_years', 'financing', 'cyclical', 'acquired_revenue')
+FORECAST_OPTIONS = ('horizon_years', 'financing', 'cyclical', 'acquired_revenue', 'debt_like_claims')
 
 TOP = {'pack_version', 'ticker', 'as_of', 'identity', 'sources', 'facts', 'guidance', 'guidance_track', 'consensus',
        'kpis', 'segments', 'customers', 'competitors', 'bottlenecks', 'potential', 'drivers', 'scenario_events',
@@ -119,6 +121,7 @@ KEYS = {
                           ('field', 'metric', 'resolution', 'source_id', 'reason', 'evidence_ids')),
     'acquired_revenue': ({'value', 'acquisition', 'closed', 'reason', 'evidence_ids'},
                          ('value', 'acquisition', 'closed', 'reason', 'evidence_ids')),
+    'debt_like_claim': ({'kind', 'amount', 'reason', 'evidence_ids'}, ('kind', 'amount', 'reason', 'evidence_ids')),
 }
 JUSTIFICATIONS = ('justified_high', 'peak', 'unproven')
 PATH_YEARS = 5
@@ -817,11 +820,40 @@ def _forecast_options(p, opts):
                 c.err(where, 'name the acquisition and give a written reason')
             elif fy is None:
                 c.err(where, 'needs identity.fiscal_year_end')
+            elif not isinstance(a['evidence_ids'], list):
+                c.err(where, 'evidence_ids: a non-empty list of source or item ids')
             elif not p.kinds(a['evidence_ids']) & ISSUER_KINDS:
                 c.err(where, 'cite the company\'s own documents (the acquisition note, the release or the call)')
             else:
                 out['acquired_revenue'] = {'value': a['value'], 'fiscal_year_end': fy[1].isoformat(), 'acquisition': a['acquisition'],
                                            'closed': a['closed'], 'reason': a['reason'], 'evidence_ids': p.ids(a['evidence_ids'], where)}
+    if 'debt_like_claims' in opts:
+        # GOOGL 2026-06: the 6.25% mandatory convertible preferred ($19.25B liquidation preference) had no route into the
+        # capital structure from the pack; forecast.build already takes inputs.debt_like_claims
+        from .forecast import DEBT_LIKE_KINDS
+        rows, keep = opts['debt_like_claims'], []
+        if not isinstance(rows, list) or not rows:
+            c.err('forecast_options.debt_like_claims', 'a non-empty list of {kind, amount, reason, evidence_ids}')
+            rows = []
+        for i, d in enumerate(rows):
+            where = f'forecast_options.debt_like_claims[{i}]'
+            if not c.obj(d, 'debt_like_claim', where):
+                continue
+            if d['kind'] not in DEBT_LIKE_KINDS:
+                c.err(where, f'kind one of {", ".join(DEBT_LIKE_KINDS)}')
+            elif not (_num(d['amount']) and d['amount'] > 0):
+                c.err(where, 'amount: the claim ahead of the shares (a positive number, in the reporting currency)')
+            elif not isinstance(d['reason'], str) or not d['reason'].strip():
+                c.err(where, 'a written reason')
+            elif not isinstance(d['evidence_ids'], list):
+                c.err(where, 'evidence_ids: a non-empty list of source or item ids')
+            elif not p.kinds(d['evidence_ids']) & ISSUER_KINDS:
+                c.err(where, "cite the company's own documents (the filing note that sets the claim's terms)")
+            else:
+                keep.append({'kind': d['kind'], 'amount': d['amount'], 'reason': d['reason'],
+                             'evidence_ids': p.ids(d['evidence_ids'], where)})
+        if keep and len(keep) == len(rows):
+            out['debt_like_claims'] = keep
     return out
 
 

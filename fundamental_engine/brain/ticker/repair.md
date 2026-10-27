@@ -78,7 +78,8 @@ this same run was moved to attempts/; its gather fragments stayed: treat your ow
    recorded as a gap; new evidence only through {RUN}/gather/repair.json (the gather fragment shapes; at most about 4
    retrieval calls). A cross-source data conflict that the filing explains is resolved with position/core.json
    dataqa_resolutions (filing evidence, analyst.md), bought revenue in the current year's step with forecast_options
-   acquired_revenue; never edit a saved payload. A finding you cannot fix with evidence stays open. Validate every file you changed:
+   acquired_revenue, a claim ahead of the shares (a preferred stock, a royalty financing) with forecast_options
+   debt_like_claims; never edit a saved payload. A finding you cannot fix with evidence stays open. Validate every file you changed:
    `python -m fundamental_engine ticker-check {RUN} <file>`.
 3. Rerun the deterministic step: `python -m fundamental_engine ticker-value {RUN}` (merge the parts, pack-merge,
    pack-to-inputs, deep; it rewrites value.json). ran = value.json ran.

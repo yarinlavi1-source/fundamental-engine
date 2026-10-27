@@ -383,7 +383,11 @@ def skeleton(part, run=None):
                                                   'acquired_revenue': '{value, acquisition, closed, reason, evidence_ids} (optional): '
                                                                       f'revenue an acquisition brought into the step into {cur_l}, at its '
                                                                       'pre-deal size; kept out of the growth reinvestment (its price is in '
-                                                                      'the opening balance)'},
+                                                                      'the opening balance)',
+                                                  'debt_like_claims': '[{kind, amount, reason, evidence_ids}] (optional): claims ahead '
+                                                                      'of the shares the debt lines miss (a preferred stock at its '
+                                                                      'liquidation preference), citing the filing note; added to '
+                                                                      'opening debt'},
                              'dataqa_resolutions': '[{field, metric, period_end, resolution label_difference|use_source, source_id, '
                                                    'reason, evidence_ids}] (optional, only for a cross-source conflict dataqa blocks on: '
                                                    'qa.fields.<field>.note names the sources; filing evidence required)',

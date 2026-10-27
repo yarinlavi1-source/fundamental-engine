@@ -213,7 +213,9 @@ has one (a date after as_of gives `invalid_spec`), else the first availability o
 consensus is a 'model' row with its own tier), "acquired_revenue": {"value","fiscal_year_end","acquisition","closed","reason",
 "evidence_ids"} (bought revenue in the step into the fiscal year in progress, kept out of the stub's growth reinvestment; not
 applied, warned high, when it closed after the balance sheet; capped at the step, and at the step above organic growth when
-the filings give that growth, warned medium `acquired_revenue_capped`)}. The fiscal year in progress: an input, else consensus, else
+the filings give that growth, warned medium `acquired_revenue_capped`), "debt_like_claims": [{"kind" (DEBT_LIKE_KINDS),"amount",
+"reason","evidence_ids"}] (claims ahead of the shares the debt lines miss, added to opening debt; from an evidence pack as
+forecast_options.debt_like_claims, citing the company's own documents)}. The fiscal year in progress: an input, else consensus, else
 fiscal-year guidance, else the reported year to date + the company's dated guide for the NEXT unreported quarter + the
 quarters after it (sequential at the guided step, seasonal at its year-over-year growth on last year's quarters, or flat:
 `anchors.current_fiscal_year.quarter_guide` {rule, quarter, guided, sequential_growth, year_over_year_growth,
