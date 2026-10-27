@@ -28,7 +28,12 @@ same connectors (SEC, Interactive Brokers, Alpha Vantage, FMP, LunarCrush, …).
   fundamental_engine deep <universe_folder> --as-of <date> --symbols <TICKER>` (writes `out/table_he.md` with
   the plain-Hebrew table, including the "מה המחיר של היום מניח" reverse-DCF row, and `out/scenarios_he.md` with the
   condition behind every דובי / בסיסי / שורי price).
-- **Latest state (read these to catch up):** `docs/CHANGELOG.md` Unreleased (25.10.2026 fast ticker procedure, the
+- **Latest state (read these to catch up):** `docs/CHANGELOG.md` Unreleased (27.10.2026 GOOGL run fixes: bounded vendor
+  debt scope in dataqa, pack `forecast_options.debt_like_claims`; 26.10.2026 engine causes of the repair passes: economics-mode
+  company_path, draft tables with numbers, quarterly-guide current year, acquired step, stub draws, dataqa resolutions; measured
+  fast-ticker times: NVDA 36, CRDO 30, APH ~30 minutes, GOOGL 60 minutes with an added adversarial verify layer; open engine
+  items: investments valued below face, debt coupon after a debt jump, bear terminal-ROIC continuity, deferred tax on
+  unrealized gains) and (25.10.2026 fast ticker procedure, the
   default on a ticker: `scripts/ticker_prefetch.py` in seconds, four parallel sonnet gather lanes, three parallel analyst
   parts with the trace reviewer, `ticker-value`, two reviewers, `ticker-status`; each agent follows `python -m
   fundamental_engine ticker-stage <stage>`; a design estimate of 25-35 minutes for a new ticker, not yet measured; see
