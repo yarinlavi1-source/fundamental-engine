@@ -62,12 +62,13 @@ class FairValueHeadlineTests(unittest.TestCase):
         self.assertIn(f'{base:,.1f}$', _row(self.table, 'שווי הוגן (תרחיש בסיסי)'))
         self.assertNotIn(f'{pfh:,.1f}', _row(self.table, 'שווי הוגן (תרחיש בסיסי)'))
         self.assertIn(f'זולה בכ־{1 - 35 / base:.0%}', _row(self.table, 'המחיר מול השווי'))
-        buy = _row(self.table, 'מחיר קנייה מרבי לתשואה שאתה דורש (10.5% בשנה)')
+        buy = _row(self.table, 'מחיר כניסה עם מרווח ביטחון (תשואה של 10.5% בשנה)')
         self.assertIn(f'{pfh:,.1f}$', buy)
         self.assertIn(f'נמוך ממנו בכ־{1 - 35 / pfh:.0%}', buy)
         self.assertNotIn('| דובי / שורי', self.table)                 # ONE table: today's range is the yearly table's first row
         self.assertIn(f"{self.view['bear']:,.1f}$ / {self.view['bull']:,.1f}$", markdown(casefile(self.p, self.d)))
-        self.assertIn('זו דרישה שלך, לא שווי החברה', self.table)
+        self.assertIn('זה הרף של המנוע, לא יעד שהצבת ולא שווי החברה', self.table)
+        self.assertNotIn('שאתה דורש', self.table)                         # the owner set no required return (27.10.2026)
 
     def test_yearly_table_and_five_year_row_are_at_the_fair_value_rate(self):
         yr = self.er['yearly_at_model_cost_of_equity']

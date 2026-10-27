@@ -95,6 +95,18 @@ class CompanyPathTests(unittest.TestCase):
         self.assertIn('| שנה 1 (2027/10) | — |', t)
         self.assertIn('תרחיש דובי: לא הוזן מכפיל מנומק', t)
 
+    def test_upside_row_reads_the_yearly_tables_year_5(self):
+        """The owner's test is cheap with good upside (27.10.2026): each scenario's year-5 price against today's, the same
+        numbers as the table's last row; an absent scenario is left out, never defaulted; no row without the company table."""
+        t = hebrew_table(self.cf)
+        row = next(x for x in t.splitlines() if x.startswith('| פוטנציאל בעוד 5 שנים'))
+        q = self.cp['quote']
+        for s in ('base', 'bull'):
+            r = self.cp['scenarios'][s]['rows'][5]
+            self.assertIn(f"{C.LABEL_HE[s]} {r['price'] / q - 1:+.0%}", row)
+        self.assertNotIn('דובי', row)                                                  # bear absent in this fixture
+        self.assertNotIn('פוטנציאל בעוד 5 שנים', hebrew_table(self.plain))
+
     def test_peak_flag(self):
         f = next(x for x in self.cp['flags'] if x['id'] == 'peak_above_own_median')
         self.assertEqual((f['scenario'], f['own_median'], f['max_multiple'], f['years']), ('bull', 62., 70., [0, 1, 2, 3]))

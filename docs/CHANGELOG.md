@@ -1,5 +1,12 @@
 ## Unreleased — GOOGL run fixes (27.10.2026)
 
+- Owner table: the owner sets no required return, he wants cheap with good upside. The buy-below row ('מחיר קנייה מרבי לתשואה
+  שאתה דורש') is now 'מחיר כניסה עם מרווח ביטחון (תשואה של X% בשנה)', with the note that it is the engine's bar (market return
+  + this company's risk premium), not a target he set; the same wording in the paragraph (`render._buy_he`). A new row
+  'פוטנציאל בעוד 5 שנים (מול המחיר של היום)' gives each scenario's year-5 price in the company's own yearly table against today's
+  (GOOGL: בסיסי +57% · שורי +199% · דובי -36%). No value or verdict changes. Tests: test_company_path, test_headline_value,
+  test_decision_governance.
+
 - dataqa debt: a vendor total read as noncurrent debt + noncurrent operating lease liabilities is a definitional difference,
   not a blocking conflict (GOOGL 2026-06-30: Alpha Vantage shortLongTermDebtTotal 112,756M = noncurrent debt 98,165M +
   noncurrent operating leases 14,591M, against 10-Q Note 6's 100,164M with the 1,999M current portion; the conflict had

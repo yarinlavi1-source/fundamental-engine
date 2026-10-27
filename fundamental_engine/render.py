@@ -229,24 +229,41 @@ def _gap_he(price, value, ref):
     return (f'הנחה של כ־{d:.0%} מול {ref}' if d >= .005 else f'מחיר גבוה בכ־{-d:.0%} מ{ref}' if d <= -.005 else f'בערך {ref}')
 
 
+def _upside_he(cp, price):
+    """'בסיסי +57% · שורי +199% · דובי -36%': each scenario's year-5 price in the company's own yearly table (EPS x evidenced
+    multiple) against today's price, the same numbers as the table's last row; None when that table is not computed."""
+    if (cp or {}).get('status') != 'computed' or not _n(price) or price <= 0:
+        return None
+    from .company_path import LABEL_HE
+    cells = []
+    for s in ('base', 'bull', 'bear'):
+        rows = ((cp.get('scenarios') or {}).get(s) or {}).get('rows') or []
+        r = rows[5] if len(rows) > 5 else None
+        if r and r.get('status') == 'priced' and _n(r.get('price')):
+            cells.append(f"{LABEL_HE[s]} {r['price'] / price - 1:+.0%}")
+    return ' · '.join(cells) or None
+
+
 def _buy_he(er, base, price, adj='', secondary=True, compact=False):
     """Clause on the buy-below price: the price at which the base IRR equals the owner's required return (where the verdict
     is taken), with today's price against it; when the required return is the company's own rate it is the fair value itself
     and is said once (dropped with secondary=False: no new number). compact: the price only. When it cannot be computed the
     clause says so."""
     pfh, h, ke = er.get('value_at_required_return'), er.get('hurdle'), er.get('model_cost_of_equity')
-    req = f'לתשואה הנדרשת שלך{adj} (כ־{_hp(h, ke)} בשנה)' if _n(h) else f'לתשואה הנדרשת שלך{adj}'
+    # the hurdle is the engine's bar (market return + this company's risk premium), never a target the owner set (27.10.2026)
+    req = f'{adj} (תשואה של כ־{_hp(h, ke)} בשנה)' if _n(h) else adj
     if _n(pfh) and pfh > 0:
         if _n(base) and base > 0 and abs(pfh / base - 1) < .005:
-            return f'; זה גם מחיר הקנייה המרבי {req}' if secondary else ''
+            return f'; זה גם מחיר הכניסה עם מרווח ביטחון{req}' if secondary else ''
         if compact:
-            return f'; מחיר קנייה מרבי לתשואה שלך{adj} (כ־{_hp(h, ke)}): כ־{_ps(pfh)}' if _n(h) else f'; מחיר קנייה מרבי: כ־{_ps(pfh)}'
+            return (f'; מחיר כניסה עם מרווח ביטחון{adj} (כ־{_hp(h, ke)}): כ־{_ps(pfh)}' if _n(h)
+                    else f'; מחיר כניסה עם מרווח ביטחון: כ־{_ps(pfh)}')
         d = 1 - price / pfh if _n(price) else None
         rel = ('' if d is None else f', והמחיר נמוך ממנו בכ־{d:.0%}' if d >= .005 else f', והמחיר גבוה ממנו בכ־{-d:.0%}' if d <= -.005
                else ', בערך המחיר של היום')
-        return f'; מחיר הקנייה המרבי {req} הוא כ־{_ps(pfh)}{rel}'
+        return f'; מחיר הכניסה עם מרווח ביטחון{req} הוא כ־{_ps(pfh)}{rel}'
     if (er.get('price_for_hurdle') or {}).get('status') == 'invalid':
-        return f'; מחיר הקנייה המרבי {req} לא ניתן לחישוב (התחזית אינה תקפה בשיעור זה)'
+        return f'; מחיר הכניסה עם מרווח ביטחון{req} לא ניתן לחישוב (התחזית אינה תקפה בשיעור זה)'
     return ''
 
 
@@ -460,6 +477,9 @@ def owner_table(casefile):
         gap = price / fair - 1
         rows.append(('שווי הוגן (תרחיש בסיסי)', money(fair)))
         rows.append(('המחיר מול השווי', f"{'יקרה' if gap > 0 else 'זולה'} בכ־{abs(gap):.0%}" if abs(gap) >= .03 else 'בערך במחיר השווי'))
+        up = _upside_he(cf.get('company_path'), price)
+        if up:      # the owner's test is cheap with good upside (27.10.2026): what each scenario's year-5 price is against today's
+            rows.append(('פוטנציאל בעוד 5 שנים (מול המחיר של היום)', up))
         lo, hi = (fv.get('bear'), fv.get('bull')) if _n(fv.get('bear')) and _n(fv.get('bull')) else (view.get('bear'), view.get('bull'))
         if _n(lo) and _n(hi):
             behind.append(f'שווי היום לפי מודל תזרים המזומנים, דובי / שורי: {money(lo)} / {money(hi)}.')
@@ -467,10 +487,10 @@ def owner_table(casefile):
         if _n(req) and _n(pfh) and pfh > 0:
             d = price / pfh - 1
             rel = ('בערך המחיר של היום' if abs(d) < .03 else f"המחיר של היום {'גבוה' if d > 0 else 'נמוך'} ממנו בכ־{abs(d):.0%}")
-            rows.append((f'מחיר קנייה מרבי לתשואה שאתה דורש ({req * 100:.1f}% בשנה)',
+            rows.append((f'מחיר כניסה עם מרווח ביטחון (תשואה של {req * 100:.1f}% בשנה)',
                          money(pfh) + (f' ({rel})' if buy else ' (זהה לשווי ההוגן)')))
         elif _n(req) and (er.get('price_for_hurdle') or {}).get('status') == 'invalid':
-            rows.append((f'מחיר קנייה מרבי לתשואה שאתה דורש ({req * 100:.1f}% בשנה)', 'לא ניתן לחישוב בתשואה זו'))
+            rows.append((f'מחיר כניסה עם מרווח ביטחון (תשואה של {req * 100:.1f}% בשנה)', 'לא ניתן לחישוב בתשואה זו'))
         irr = er.get('base_irr')
         idx = er.get('index_expected_return') or {}
         mkt = (view.get('market_consistent') or {}).get('market_return')
@@ -488,9 +508,9 @@ def owner_table(casefile):
         notes.append('שווי הוגן = כמה המניה שווה היום אם התרחיש הבסיסי מתממש, בשיעור ההיוון שהמנוע דורש מהחברה הזו לפי הסיכון שלה'
                      + (f' (כ־{ke * 100:.1f}% בשנה)' if _n(ke) else '') + '.')
         if buy:
-            notes.append(f'מחיר קנייה מרבי = עד איזה מחיר התרחיש הבסיסי עוד נותן את התשואה שאתה דורש (כ־{req * 100:.1f}% בשנה); זו '
-                         'דרישה שלך, לא שווי החברה' + ('; לפיה תיקבע השורה התחתונה אחרי האימות.' if draft else
-                                                      ', ולפיה נקבעת השורה התחתונה.'))
+            notes.append(f'מחיר כניסה עם מרווח ביטחון = עד המחיר הזה התרחיש הבסיסי עוד מניב כ־{req * 100:.1f}% בשנה: תשואת השוק '
+                         'ועוד פיצוי על הסיכון של החברה הזו. זה הרף של המנוע, לא יעד שהצבת ולא שווי החברה'
+                         + ('; לפיו תיקבע השורה התחתונה אחרי האימות.' if draft else ', ולפיו נקבעת השורה התחתונה.'))
         edge = (irr - mkt) if _n(irr) and _n(mkt) and _n(ke) else None
         if edge is not None and gap > .03 and edge > .005:
             behind.append(f'למה "יקרה" אבל מניבה יותר מהשוק: השווי ההוגן מחושב לפי תשואה של כ־{ke * 100:.1f}% בשנה, והשוק כולו מתומחר '
