@@ -192,6 +192,18 @@ CYCLICAL_LIFT_EXCLUDED_TYPES = ('semiconductor', 'commodity')
 #   Ku = (table + Kd_e x MARKET_DE) / (1 + MARKET_DE);  Ke = max(table, Ku + (Ku - Kd_e) x D/E)
 #   WACC = E/V x Ke + D/V x (Kd_e - Kd_promised x tax)  (= Ku - D/V x Kd_promised x tax when Ke is not floored)
 # A company with less than market leverage keeps the table rate (conservative: it is not credited with a lower rate).
+# Financial assets at face (decision 27.10.2026, GOOGL fast-run review). Marketable investments, listed stakes at fair value,
+# evidenced stakes (inputs non_operating_assets) and cash above the minimum are worth face whenever they are held: the rows hold
+# them and add their after-tax risk-free income, and valuation._roll_back credits each period's holding back at face, which undoes
+# the discounting of that income at Ke (a debt-free company's value rises by exactly the holding per share). What they are worth
+# is face less the analyst's haircut on a stake. Since they sit outside the discounting, the leverage that sets Ke and the terminal
+# WACC is the operating cash flows': debt / (debt + equity value less these assets). The debt net of them had set the weight
+# instead, and with Ke held at the table below MARKET_DE a lower debt weight raises the WACC, so the assets added less than face
+# exactly when the company also had debt (Alphabet 2026-10-27, 186.6bn of marketable securities against 100.2bn of debt: 0.93 /
+# 0.74 / 0.48 x face in bear / base / bull; now 1.00), and holding cash or paying it out moved the value, against the payout rule
+# of valuation._roll_back. Repaying debt with them still moves the rate (the debt and its tax shield leave). When they exceed the
+# equity value (the operating business is worth less than its debt) the debt they cover is netted, the former rule. A consistency
+# fix: no constant changed or tuned.
 MARKET_DE = .25           # market-average debt / equity behind the ERP (US non-financials, order of magnitude; a model assumption)
 DEBT_EXPECTED_PREMIUM = .01   # expected (not promised) return on corporate debt over risk-free: about a BBB debt beta x ERP
 DEBT_RATE_RANGE = (.005, .06)  # interest / debt below 0.5% or above risk-free + 6pp is flagged as a data issue (it sets interest and the
@@ -1202,7 +1214,7 @@ def _ke_parts(parts, table, lev):
             'unlevered': table, 'asset_unlevered': lev['unlevered'], 'leverage': lev, 'terminal': term}
 
 
-def _solve_capital(spec, P, table, table_t, kd_e, kd_p, net_debt, ov_ke, cap_at_quote=True):
+def _solve_capital(spec, P, table, table_t, kd_e, kd_p, debt, fin, ov_ke, cap_at_quote=True):
     """One fixed point on the model's own values, never the quote:
     1. the debt weight from the base scenario's equity value today;
     2. the issue price of every new share (assumed equity raises and SBC settled in shares) = min(quote, the scenario's own value
@@ -1210,7 +1222,9 @@ def _solve_capital(spec, P, table, table_t, kd_e, kd_p, net_debt, ov_ke, cap_at_
        at a price it cannot support), and when the quote is below that value existing holders bear the extra dilution
        (cap_at_quote=False prices at the scenario's own value only: the 'value at a second issue price' disclosure).
     The explicit years are discounted at Ke from the table; the terminal WACC is built from the terminal Ke, the mature table
-    (table_t, TERMINAL_KE_DROPPED) unlevered and relevered the same way at the same D/E."""
+    (table_t, TERMINAL_KE_DROPPED) unlevered and relevered the same way at the same D/E. The leverage is the operating cash flows':
+    debt / (debt + equity value less fin), fin = the financial assets valued at face (valuation._roll_back carves them out of the
+    discounting), so what the company holds or pays out never moves the rate (note "Financial assets at face" above MARKET_DE)."""
     shares, quote, B = spec['opening']['shares'], spec['quote']['price'], spec['boundaries']
     ku = (table + kd_e * MARKET_DE) / (1 + MARKET_DE)
     ku_t = (table_t + kd_e * MARKET_DE) / (1 + MARKET_DE)
@@ -1235,7 +1249,7 @@ def _solve_capital(spec, P, table, table_t, kd_e, kd_p, net_debt, ov_ke, cap_at_
             sc['terminal']['debt_weight'] = float(w)    # a change in Ke moves this WACC by (1 - w) x the change (valuation_tools)
         return ke, ke_t, de
     w, e, it = 0., None, 0
-    status = 'no_net_debt' if net_debt <= 0 else 'converged'
+    status = 'no_debt' if debt <= 0 else 'converged'
     ke, ke_t, de = apply(0.)
     floor = quote * 1e-6
     hist = {}                                  # (scenario, period) -> recent plain iterates of p = V(p), for Aitken extrapolation
@@ -1265,13 +1279,19 @@ def _solve_capital(spec, P, table, table_t, kd_e, kd_p, net_debt, ov_ke, cap_at_
                         new = max(floor, min(quote, new) if cap_at_quote else new)
                         hist[(sc['name'], i)] = [new]
                 sc['equity_issue_price'][i], changed = _r(new, 9), True
-        if net_debt > 0:
+        if debt > 0:
             v = res['annual_values'][0]['base']
             if v is None or v <= 0:
                 status, w2 = 'equity_not_positive', W_MAX
             else:
                 e = v * shares
-                w2 = min(W_MAX, net_debt / (net_debt + e))
+                if e > fin:
+                    w2 = min(W_MAX, debt / (debt + e - fin))
+                else:
+                    # the financial assets exceed the equity value: the operating business is worth less than its debt and they
+                    # carry it, so the debt they cover is netted and what is left is weighed against the whole equity
+                    nd = max(0., debt - fin)
+                    w2 = min(W_MAX, nd / (nd + e))
                 status = 'capped' if w2 >= W_MAX - 1e-12 else 'converged'
             if abs(w2 - w) > 1e-9:
                 w, changed = w2, True
@@ -1284,10 +1304,11 @@ def _solve_capital(spec, P, table, table_t, kd_e, kd_p, net_debt, ov_ke, cap_at_
                            for i in issued[sc['name']]] for sc in spec['scenarios']}
     return {'ke': ke, 'unlevered': ku, 'table': table, 'ke_terminal': ke_t, 'unlevered_terminal': ku_t, 'table_terminal': table_t,
             'kd': kd_e, 'kd_expected': kd_e, 'kd_promised': kd_p, 'market_debt_to_equity': MARKET_DE,
-            'net_debt': net_debt, 'model_equity': e, 'debt_weight': w, 'd_to_e': de, 'iterations': it, 'status': status,
-            'issue_prices': prices,
-            'basis': 'net debt = debt - marketable investments - cash above the first-period minimum; equity = base value today x '
-                     'point-in-time shares (the model\'s own value, not the quote); new shares issued at min(quote, scenario value after the issue)'}
+            'debt': debt, 'financial_assets_at_face': fin, 'model_equity': e, 'operating_equity': None if e is None else e - fin,
+            'debt_weight': w, 'd_to_e': de, 'iterations': it, 'status': status, 'issue_prices': prices,
+            'basis': 'debt weight = debt / (debt + equity - financial assets at face: marketable investments, evidenced stakes and cash above '
+                     'the first-period minimum, valued at face outside the discounting); equity = base value today x point-in-time shares '
+                     '(the model\'s own value, not the quote); new shares issued at min(quote, scenario value after the issue)'}
 
 
 def _cycle_margin(h):
@@ -2430,6 +2451,7 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
              'haircut less book value already held: ' + '; '.join(
                  f"{it['kind']} {float(it['fair_value']):,.0f} x (1 - {float(it['haircut']):.0%}) - {float(it['book_value_in_bridge']):,.0f} "
                  f"({it['reason']})" for it in inputs['non_operating_assets']), 'medium')
+    inv_net = open_bal['sti'] + open_bal['lti']                          # the investments valued at face (note above MARKET_DE)
     op_fund = 0.
     if inputs.get('operating_funding') and open_bal['debt']:
         op_fund = min(float(inputs['operating_funding']['amount']), open_bal['debt'])
@@ -2501,7 +2523,7 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
         P, meta = _params(route, h, cal, cons, rf, ku, ku_t, ov_ke, open_bal['debt'], ov, warn, ev)
         for s in SCEN:
             P[s]['cash_months'] = ov(s, 'minimum_cash_months', st['months'])
-        inv_income = (open_bal['sti'] + open_bal['lti']) * rf
+        inv_income = inv_net * rf
         paths, fixed = _paths(P, meta, h, route, cal, open_bal, inv_income)
     except ValueError as e:
         return empty('method_not_supported_by_forecast', str(e), method)
@@ -2587,7 +2609,7 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
         f"(of which listed equity stakes at fair value {val('equity_securities_fv') or 0.:,.0f}; "
         + (f"plus {assets_added:,.0f} of evidenced private stakes at fair value less haircut and book value) " if assets_added else
            'private stakes at book value only) ') +
-        f"(kept as assets earning risk-free after tax; liquidated before any external financing is assumed), debt {open_bal['debt']:,.0f} "
+        f"(kept as assets earning risk-free after tax and valued at face; liquidated before any external financing is assumed), debt {open_bal['debt']:,.0f} "
         f"({debt_res.get('method', 'dataqa')}; operating leases treated in cash costs"
         + (f"; {op_fund:,.0f} of operating funding excluded, its cost is in operating costs" if op_fund else '')
         + (f"; includes {claims_added:,.0f} of debt-like claims from inputs" if claims_added else '') + "), deferred revenue "
@@ -2882,7 +2904,7 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
         'Refinancing at a rate more than 2 points above the assumption or a covenant breach.',
         _latest_src(fb, 'interest_expense') + h['coupon'].get('source_ids', []) + bal_srcs)
     add('investment_income', 'investment income', 'model', {'annual_after_tax': paths['base']['investment_income_after_tax'][0]},
-        f"Marketable investments {open_bal['sti'] + open_bal['lti']:,.0f} earn the risk-free rate {rf:.2%} after tax; principal counted once in the "
+        f"Marketable investments {inv_net:,.0f} earn the risk-free rate {rf:.2%} after tax; principal counted once in the "
         'terminal bridge, or spent first when cash falls short (income falls with the balance).',
         'Investments are liquidated for acquisitions or buybacks.', bal_srcs + rf_ids)
     ke_row = lambda: add('cost_of_equity', 'cost of equity and terminal WACC', 'model', {'cost_of_equity': {s: P[s]['ke'] for s in SCEN}},
@@ -2989,7 +3011,7 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
             'opening': {'as_of': as_of, 'assumption_ids': ['open_balance', 'shares_point', 'dilution', 'bridge'],
                         'unrestricted_cash': open_bal['cash'], 'debt': open_bal['debt'], 'shares': open_bal['shares'],
                         'deferred_revenue': open_bal['deferred_revenue'], 'tax_loss_carryforward': float(_num(inputs.get('nol')) or 0),
-                        'marketable_investments': open_bal['sti'] + open_bal['lti'],
+                        'marketable_investments': inv_net,
                         **({'convertibles': [{k: c[k] for k in ('id', 'claim', 'conversion_shares')} for c in converts]} if converts else {})},
             'report_dates': cal['report_dates'], 'boundaries': Pb, 'interim_boundaries': list(cal['interim']),
             'stub_annual_revenue_rate': _r(meta['stub_rate'], 2), 'last_full_year_revenue': _r(meta['r_fy'], 2), 'segment_name': 'Revenue',
@@ -3159,7 +3181,7 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
     finalize()
     # ---- funding: investments, SBC settled in shares, assumed debt within capacity, assumed equity; then the payout schedule
     allow = inputs.get('financing', 'assumed') != 'none'
-    inv0 = open_bal['sti'] + open_bal['lti']
+    inv0 = inv_net
     fund = _fund(spec, policy, allow, r_new, meta['interest_existing'], open_bal['debt'], locked, inv0)
     if 'error' in fund:
         return dict(empty('invalid_spec', fund['error'], method), spec=spec, assumptions=rows)
@@ -3212,14 +3234,16 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
 
     # ---- capital structure: debt weight and issue prices from the model's own values (fixed point), Ke relevered, terminal WACC
     excess0 = max(0., open_bal['cash'] - _scen(spec, 'base')['minimum_cash'][0])
-    # an evidenced private stake is an asset, not liquidity: it does not offset debt in the leverage that sets the cost of capital
-    net_debt = max(0., open_bal['debt'] - (inv0 - assets_added) - excess0)
+    # the financial assets valued at face outside the discounting (note above MARKET_DE): the leverage that sets the rates is
+    # the operating cash flows', the debt against the equity less these assets, never the debt net of them
+    fin0 = spec['opening']['marketable_investments'] + excess0
     kd_e, kd_p = rf + DEBT_EXPECTED_PREMIUM, meta['interest_existing']
-    lev = _solve_capital(spec, P, ku, ku_t, kd_e, kd_p, net_debt, ov_ke)
+    lev = _solve_capital(spec, P, ku, ku_t, kd_e, kd_p, open_bal['debt'], fin0, ov_ke)
     if lev['status'] in ('equity_not_positive', 'capped', 'not_converged'):
-        warn('leverage_' + lev['status'], f"debt weight {lev['debt_weight']:.0%} ({lev['status']}): the model's own equity value is too small "
-                                          'to carry the debt; the cost of equity is relevered at the cap, so the value is set by the cap '
-                                          'constant, not by a fixed point', 'high')
+        warn('leverage_' + lev['status'], f"debt weight {lev['debt_weight']:.0%} ({lev['status']}): the model's own equity value"
+                                          + (f" less the {fin0:,.0f} of financial assets valued at face beside it" if fin0 > 0 else '')
+                                          + ' is too small to carry the debt; the cost of equity is relevered at the cap, so the value of '
+                                          'the operating cash flows is set by the cap constant, not by a fixed point', 'high')
         material.append({'id': 'leverage_at_cap', 'status': 'resolved' if reviews.get('cost_of_equity', {}).get('status') == 'reviewed' else 'unresolved',
                          'description': f"leverage relevering at the {W_MAX:.0%} debt-weight cap ({lev['status']}): the equity value is a "
                                         'cap artefact, not a valuation, until the capital structure is reviewed', 'assumption_ids': ['cost_of_equity']})
@@ -3245,7 +3269,7 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
     second = None
     if dependent.get('base'):
         x = deepcopy(spec)
-        alt = _solve_capital(x, deepcopy(P), ku, ku_t, kd_e, kd_p, net_debt, ov_ke, cap_at_quote=False)
+        alt = _solve_capital(x, deepcopy(P), ku, ku_t, kd_e, kd_p, open_bal['debt'], fin0, ov_ke, cap_at_quote=False)
         r_alt, _ = _run(x)
         second = r_alt['annual_values'][0]['base'] if r_alt else None
         fund['info']['base']['value_if_issued_at_own_value'] = second
@@ -3261,16 +3285,17 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
         {'cost_of_equity': {s: P[s]['ke'] for s in SCEN}, 'table_rate': ku, 'unlevered': lev['unlevered'],
          'terminal_cost_of_equity': {s: P[s]['ke_terminal'] for s in SCEN}, 'terminal_table_rate': ku_t,
          'terminal_dropped': [a['factor'] for a in ke_parts['terminal']['dropped']],
-         'terminal_wacc': {s: P[s]['wacc'] for s in SCEN}, 'debt_weight': lev['debt_weight'], 'net_debt': net_debt,
-         'model_equity': lev['model_equity'], 'kd_expected': kd_e, 'kd_promised': kd_p, 'issue_prices': lev['issue_prices']},
+         'terminal_wacc': {s: P[s]['wacc'] for s in SCEN}, 'debt_weight': lev['debt_weight'], 'debt': open_bal['debt'],
+         'financial_assets_at_face': fin0, 'model_equity': lev['model_equity'], 'kd_expected': kd_e, 'kd_promised': kd_p, 'issue_prices': lev['issue_prices']},
         f"Ke {ke:.2%}: table rate {ku:.2%} (risk-free {rf:.2%} + ERP {erp:.2%} + business-risk add-ons " +
         (', '.join(f"{a['factor']} {a['value']:+.2%}" for a in ke_parts['adjustments'] if a['factor'] != 'leverage_relevered') or 'none') +
         f") is the cost of equity at market-average leverage (D/E {MARKET_DE:.2f}); unlevered Ku {lev['unlevered']:.2%} with the expected "
         f"return on debt {kd_e:.2%} (risk-free + {DEBT_EXPECTED_PREMIUM:.0%}; the coupon {kd_p:.2%} sets interest and the tax shield, never the "
         f"discount rate); Ke = max(table, Ku + (Ku - Kd_e) x D/E {lev['d_to_e']:.1%}) = {ke:.2%}" +
         (' (below-market leverage keeps the table rate: conservative, no credit for a lower rate)' if floored or lev['d_to_e'] == 0 else '') +
-        f". Net debt {net_debt:,.0f} (debt - investments - cash above the minimum) against the model's own base equity value "
-        f"{lev['model_equity'] or 0:,.0f} gives debt weight {lev['debt_weight']:.1%} ({lev['status']}, {lev['iterations']} iterations): a "
+        f". Debt {open_bal['debt']:,.0f} against the model's own base equity value {lev['model_equity'] or 0:,.0f} less the financial "
+        f"assets valued at face {fin0:,.0f} (investments, evidenced stakes, cash above the minimum: outside the discounting, so they set "
+        f"no rate) gives debt weight {lev['debt_weight']:.1%} ({lev['status']}, {lev['iterations']} iterations): a "
         "fixed point on the model's value, never the quote, so the discount rate does not move with the price" +
         ('' if not dependent else ' (per-share values of ' + ', '.join(dependent) + ' still depend on the quote: new shares are issued at '
          'the quote below their own value)') +

@@ -2022,6 +2022,53 @@ class NonOperatingAssetTests(unittest.TestCase):
         self.assertIn('non-operating stakes', chk['message'])
 
 
+def with_investments(maker, inv, debt=None):
+    fb, an, card, qa = maker(30.) if maker is levered else maker()
+    qa = deepcopy(qa)
+    qa['resolved']['short_term_investments'] = {'value': inv, 'as_of': '2025-12-31'}
+    if debt is not None:
+        qa['resolved']['debt']['value'] = debt
+    return forecast.build(fb, an, card, qa)
+
+
+class FinancialAssetsAtFaceTests(unittest.TestCase):
+    """Regression from the GOOGL 2026-10-27 review: the funding policy says investments are valued at face, and the roll-back does
+    credit them at face, but the debt NET of them had set the leverage; with Ke held at the table below market leverage a lower
+    debt weight raised the WACC, so with debt outstanding they added less than face (Alphabet's 186.6bn against 100.2bn of debt:
+    0.93 / 0.74 / 0.48 x face in bear / base / bull)."""
+
+    def test_investments_add_exactly_face_per_share_with_debt_outstanding(self):
+        for maker, inv in ((levered, 2e9), (industrial, 500e6)):        # above and below market leverage
+            fc0, fc1 = with_investments(maker, 0.), with_investments(maker, inv)
+            face = inv / fc1['spec']['opening']['shares']
+            for s in SCEN:
+                self.assertAlmostEqual(fc1['preview']['today'][s] - fc0['preview']['today'][s], face, delta=1e-6 * face, msg=(maker.__name__, s))
+            # holding them or paying them out does not move a rate
+            for s in SCEN:
+                self.assertAlmostEqual(fc1['cost_of_equity']['terminal_wacc'][s], fc0['cost_of_equity']['terminal_wacc'][s], places=12)
+                self.assertAlmostEqual(fc1['cost_of_equity'][s], fc0['cost_of_equity'][s], places=12)
+
+    def test_debt_is_weighed_against_the_equity_less_the_financial_assets(self):
+        fc = with_investments(levered, 2e9)
+        lev, op = fc['cost_of_equity']['components']['leverage'], fc['spec']['opening']
+        fin = op['marketable_investments'] + max(0., op['unrestricted_cash'] - scen(fc['spec'], 'base')['minimum_cash'][0])
+        self.assertAlmostEqual(lev['financial_assets_at_face'], fin)
+        self.assertAlmostEqual(lev['operating_equity'], lev['model_equity'] - fin)
+        self.assertAlmostEqual(lev['debt_weight'], op['debt'] / (op['debt'] + lev['model_equity'] - fin), places=9)
+        self.assertGreater(lev['debt_weight'], .3)                      # 800m of debt, net cash: still levered operating cash flows
+        row = next(a for a in fc['assumptions'] if a['id'] == 'cost_of_equity')
+        self.assertIn('financial assets valued at face', row['rationale'])
+        self.assertEqual(row['values']['financial_assets_at_face'], fin)
+        # repaying debt with them does move the rate: the debt and its tax shield leave
+        self.assertNotEqual(with_investments(levered, 1.2e9, 0.)['cost_of_equity']['terminal_wacc'], fc['cost_of_equity']['terminal_wacc'])
+
+    def test_financial_assets_above_the_equity_value_net_the_debt_they_cover(self):
+        # SYNTHETIC: 10bn of debt on an operating business worth less, 11bn of investments: they carry the debt (the former rule)
+        lev = with_investments(levered, 11e9, 10e9)['cost_of_equity']['components']['leverage']
+        self.assertLessEqual(lev['model_equity'], lev['financial_assets_at_face'])
+        self.assertEqual((lev['debt_weight'], lev['status']), (0., 'converged'))
+
+
 class CapitalEventTests(unittest.TestCase):
     """A share issue after the balance sheet (SK hynix's July 2026 US listing, two weeks after its June statement)."""
 
