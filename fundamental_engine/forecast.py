@@ -1543,8 +1543,9 @@ def _acquired_step(h, cal, d_rev0, warn):
                                months a year earlier + the acquired pre-deal run rate for the months left (closing in the fiscal
                                year in progress), or the last fiscal year's pro forma less reported (closing last year);
       h['acq'] otherwise       the step above organic growth of last year's revenue (an estimate: flagged).
-    Never more than the step above the organic growth of last year's revenue when that is known, never below zero; its growth
-    after the closing stays organic growth that costs capital. Only the stub uses the current year's change (year one grows
+    Never more than the step above the organic growth of last year's revenue when that is known, nor than the whole step (a
+    negative organic growth never turns the stub's reinvestment into a release of capital), never below zero; its growth after
+    the closing stays organic growth that costs capital. Only the stub uses the current year's change (year one grows
     from the current year). -> {'amount', 'basis', 'source', 'source_ids' | 'evidence_ids'} or None."""
     if d_rev0 <= 0 or cal['fiscal_years_since_last_report'] != 1:
         return None
@@ -1600,11 +1601,17 @@ def _acquired_step(h, cal, d_rev0, warn):
         bought = cap
         how = (f"the current year's step above organic growth {_pct(a['organic'])} on last year's revenue "
                f"({a['basis'].replace('_', ' ')}: an estimate)")
-    amt = max(0., min(bought, cap))
+    # never more than the whole step either: with a negative organic growth (often the pre-deal estimate) the step above it is
+    # larger than the step, and excluding that much would turn the stub's reinvestment into a release of capital
+    lim = min(cap, d_rev0)
+    amt = max(0., min(bought, lim))
     if amt <= 0:
         return None
+    note = ('' if bought <= lim else f', capped at the step above organic growth {cap:,.0f}' if cap <= d_rev0 else
+            f", capped at the whole step {d_rev0:,.0f} (organic growth {_pct(a['organic'])} is negative: bought revenue never turns "
+            "the stub's growth reinvestment into a release of capital)")
     return {'amount': amt, 'source': a['basis'], 'source_ids': list(a.get('source_ids') or []), 'cap_above_organic': cap,
-            'basis': how + (f', capped at the step above organic growth {cap:,.0f}' if bought > cap else '')}
+            'basis': how + note}
 
 
 def _params(route, h, cal, cons, rf, ku, ku_t, ov_ke, debt0, ov, warn, ev=None):

@@ -1,8 +1,14 @@
 ## Unreleased — engine causes of the 26.10.2026 repair passes, track B (forecast, dataqa)
 
 Every ticker run of 26.10.2026 (NVDA, CRDO, APH) needed a repair pass for engine-shaped reasons. These fixes remove the
-causes without weakening a check; the walk-forward (no guidance rows, no analyst inputs) is unchanged, and the ADBE fixture,
-the demo company and a walk-forward row built from saved filings (engine_backtest.company_row) give identical values.
+causes without weakening a check. The ADBE fixture and the demo company give identical values, and the quarterly guide leaves
+the walk-forward unchanged (it has no guidance rows). The acquired step and the stub-draw rule DO move the walk-forward: its
+saved filings carry the ASC 805 / pre-deal reading, and a covered stub draw no longer adds the +1pp funding charge. Measured
+on 3,168 walk-forward rows (formations 2016-2025, `engine_backtest.company_row` on 5517114 vs this track): the acquired step
+fired on 133 rows and the stub-draw rule on 55; 159 rows (106 symbols) moved, median base value change on the moved rows
++2.9%; median value/price over all 2,442 valued rows 0.736 -> 0.738; verdicts: promising_funding_conditional ->
+quality_but_expensive 30 and -> attractive_at_price 5, avoid -> index_preferable 8, insufficient_evidence -> avoid 1. That
+arm ran before the whole-step cap below, which only lowers the exclusion where pre-deal organic growth is negative.
 - The fiscal year in progress with a quarterly guide (CRDO critical: one quarter at +115% year over year extrapolated to
   2.87B while Q1 479M + the Q2 guide 530M pointed to about 2.25-2.45B). `forecast._current_year`: after an input, consensus and
   fiscal-year guidance, a dated company guide for the NEXT unreported quarter of the year in progress (guidance period 'Q2
@@ -22,7 +28,9 @@ the demo company and a walk-forward row built from saved filings (engine_backtes
   revenue for the same months a year earlier + the acquired pre-deal run rate for the months left), else the step above
   organic growth (flagged); never more than the step above the organic growth of last year's revenue (an input above it, or
   above the whole step, is capped and warned medium `acquired_revenue_capped`: the organic step keeps its reinvestment),
-  never applied when the deal closed after the balance sheet (warned high). Recorded in `anchors.stub.acquired_step_excluded`, the reinvestment
+  never more than the whole step (a negative pre-deal organic growth made the step above it larger than the step: ADI 2022
+  in the walk-forward turned the stub's revenue change to -248M, a release of capital), never applied when the deal closed
+  after the balance sheet (warned high). Recorded in `anchors.stub.acquired_step_excluded`, the reinvestment
   rationale, the reinvestment rule's stub_revenue_change and the warning `acquired_step_not_reinvested`.
 - A stub draw that reported free cash flow covers is not a funding condition. The minimum-cash default was checked: min(the
   stage's months of cash costs, today's cash) is ALL of today's cash for APH (3 months of ~26B a year), so any stub shortfall

@@ -256,6 +256,26 @@ class AcquiredStepTests(unittest.TestCase):
         self.assertEqual(whole['anchors']['stub']['revenue_change_reinvested'], 0.)
         self.assertIn('whole revenue step', {x['code']: x for x in whole['warnings']}['acquired_revenue_capped']['message'])
 
+    def test_a_negative_organic_growth_never_excludes_more_than_the_step(self):
+        """A pre-deal organic decline (an estimate) makes the step above organic growth larger than the step: the exclusion stops
+        at the whole step, so the stub reinvests nothing on it rather than releasing capital (ADI 2022 in the walk-forward: -3.4%
+        pre-deal growth had turned the stub's revenue change to -248M)."""
+        fb, an, card, qa = acquirer(pro_forma=False)
+        an['metrics']['revenue_growth_series']['value'][0]['growth'] = -.05
+        fc = forecast.build(fb, an, card, qa)
+        stub = fc['anchors']['stub']
+        acq = stub['acquired_step_excluded']
+        d_rev0 = cur(fc)['revenue'] - 125e9
+        self.assertEqual(acq['source'], 'pre_deal_growth')
+        self.assertGreater(acq['cap_above_organic'], d_rev0)
+        self.assertAlmostEqual(acq['amount'], d_rev0, delta=1)
+        self.assertAlmostEqual(stub['revenue_change_reinvested'], 0., delta=1)
+        self.assertIn('capped at the whole step', acq['basis'])
+        ar = {'value': 1e12, 'fiscal_year_end': '2026-12-31', 'acquisition': 'TargetCo', 'closed': '2025-09-01',
+              'reason': 'the 10-K acquisition note', 'evidence_ids': ['syn:fs']}
+        inp = forecast.build(fb, an, card, qa, {'acquired_revenue': ar})['anchors']['stub']
+        self.assertAlmostEqual(inp['revenue_change_reinvested'], 0., delta=1)                    # the input stops there too
+
     def test_no_acquisition_keeps_every_fixture_identical(self):
         for make in (grower, aph_shaped, quarterly):
             a = forecast.build(*make())
