@@ -1429,6 +1429,55 @@ class GrowthOverrideReinvestmentTests(unittest.TestCase):
         self.assertEqual(scen(fc['spec'], 'base')['growth_capex_pct'], [.01] * m)
 
 
+class TerminalOverrideContinuityTests(unittest.TestCase):
+    """Regression from the GOOGL 2026-10-27 review: a bear terminal.roic override (13% against the rule's 28%) was written into
+    the terminal after the explicit years had converged to the engine's own ROIC, so the last explicit year reinvested 15.6% of
+    NOPAT and the terminal 34.6% (reinvestment_jump, evidence_missing@bear.transition_exception)."""
+    EV = ['fmp:as_reported_income_annual']
+
+    def run_override(self, path, value, scenario='bear'):
+        fb, an, card, qa = adbe()
+        o = {'path': path, 'scenario': scenario, 'value': value, 'reason': 'test: returns on new capital near the hurdle', 'evidence_ids': self.EV}
+        fc = forecast.build(fb, an, card, qa, {'overrides': [o]})
+        case = build_case(fc['spec'])
+        return fc, case, value_company(case)
+
+    def test_overridden_terminal_roic_keeps_the_last_year_and_the_terminal_on_one_rule(self):
+        fc, case, res = self.run_override('terminal.roic', .13)
+        sc = scen(fc['spec'], 'bear')
+        t = sc['terminal']
+        self.assertEqual(t['roic'], .13)
+        tr = next(x for x in res['underwriting_audit']['terminal_transitions'] if x['scenario'] == 'bear')
+        self.assertFalse(tr['reinvestment_jump'], tr)
+        self.assertNotIn('bear.transition_exception', {i['path'] for i in res['underwriting_audit']['issues']})
+        self.assertLess(abs(last_reinvestment(case, res, 'bear') - t['growth'] / t['roic']), .03)
+        # the explicit years converge to the overridden rule: capital per unit of new revenue = 1 / (ROIC / NOPAT margin)
+        nopat_margin = t['operating_margin'] * (1 - t['tax_rate'])
+        self.assertAlmostEqual(sc['reinvestment_rule']['capital_per_revenue'][-1], nopat_margin / .13, places=4)
+        # executed exactly as the economic lever terminal_roic, and recorded under the path the analyst wrote
+        fc2, _, res2 = self.run_override('terminal_roic', .13)
+        self.assertEqual(fc['spec']['scenarios'], fc2['spec']['scenarios'])
+        self.assertEqual(res['annual_values'][0], res2['annual_values'][0])
+        rec = next(o for o in fc['overrides'] if o['scenario'] == 'bear')
+        self.assertEqual((rec['path'], rec['value'], round(rec['original'], 6)), ('terminal.roic', .13, .28))
+        self.assertEqual(next(r for r in fc['driver_sources'] if r['lever'] == 'terminal_roic' and r['scenario'] == 'bear')['tier'], 'analyst')
+        # the other scenarios keep the engine's rule and their own continuity
+        for s in ('base', 'bull'):
+            self.assertFalse(next(x for x in res['underwriting_audit']['terminal_transitions'] if x['scenario'] == s)['reinvestment_jump'])
+
+    def test_overridden_terminal_growth_is_the_growth_the_explicit_years_fade_to(self):
+        fc, case, res = self.run_override('terminal.growth', .02, 'all')
+        fc2, _, _ = self.run_override('terminal_growth', .02, 'all')
+        self.assertEqual(fc['spec']['scenarios'], fc2['spec']['scenarios'])
+        for s in SCEN:
+            self.assertEqual(scen(fc['spec'], s)['terminal']['growth'], .02)
+            self.assertLess(abs(fc['paths'][s][-1]['growth'] - .02), .03)
+            tr = next(x for x in res['underwriting_audit']['terminal_transitions'] if x['scenario'] == s)
+            self.assertFalse(tr['reinvestment_jump'] or tr['growth_cliff'], tr)
+        with self.assertRaisesRegex(ValueError, 'economic levers take one number'):
+            self.run_override('terminal.roic', [.13, .14])
+
+
 def secular_cyclical(years=9, wobble=(1., 1.06, .97, 1.04, .95, 1.05, 1.0, .98, .96), roic=None):
     """SYNTHETIC equipment maker in a cyclical industry: 15% trend growth with small cyclical wobbles, the latest year a little
     below trend, margins between 25% and 36% (test data only)."""

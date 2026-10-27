@@ -289,6 +289,12 @@ ECON_LEVERS = ('growth_anchor', 'growth_half_life', 'terminal_growth', 'mature_m
                'terminal_roic', 'cost_of_equity', 'tax_rate', 'payout_fraction', 'minimum_cash_months', 'margin_convergence_years')
 ECON_RANGES = {'margin_convergence_years': (1, 30), 'minimum_cash_months': (0, 60), 'growth_half_life': (.25, 50)}
 TERMINAL_KEYS = ('growth', 'wacc', 'roic', 'operating_margin', 'tax_rate', 'other_claims', 'net_runoff_obligation')
+# terminal keys with an economic lever of their own: _params and _paths converge the explicit years to the lever (capital per unit
+# of new revenue to g / ROIC, growth to terminal growth), so such an override is executed through the lever. Written straight
+# into the terminal after the paths, the explicit years had converged to the engine's own rule instead: GOOGL 2026-10-27, a bear
+# terminal.roic of 13% against the rule's 28% left the last explicit year reinvesting 15.6% of NOPAT and the terminal 34.6%
+# (valuation_audit reinvestment_jump: an underwriting gap the inputs could not close)
+TERMINAL_LEVERS = {'terminal.roic': 'terminal_roic', 'terminal.growth': 'terminal_growth'}
 # Where an override's number comes from (owner rule 25.10.2026, docs DEFAULTS_MAP tiers): T1 guidance adjusted by its track
 # record, T2 contracted/visible demand, T3 attributed consensus, T4 the company's own history, T5 named direct competitors
 # (the override names them), 'market' a market price of risk, 'analyst' a judgement without a tier (the legacy default).
@@ -408,12 +414,13 @@ def _check_overrides(fb, overrides):
         vals = v if isinstance(v, list) else [v]
         if not vals or any(_num(x) is None for x in vals):
             raise ValueError(f'override {path}: value must be a finite number or a list of numbers')
-        if isinstance(v, list) and path in ECON_LEVERS:
+        lever = TERMINAL_LEVERS.get(path, path)
+        if isinstance(v, list) and lever in ECON_LEVERS:
             raise ValueError(f'override {path}: economic levers take one number')
         if path in ECON_RANGES and not ECON_RANGES[path][0] <= v <= ECON_RANGES[path][1]:
             raise ValueError(f'override {path}: value must be between {ECON_RANGES[path][0]} and {ECON_RANGES[path][1]}')
-        out.append({'id': f'override_{i + 1}', 'path': path, 'scenario': o.get('scenario', 'all'), 'value': deepcopy(v),
-                    'reason': o['reason'], 'evidence_ids': list(ev), 'raw': raw and path not in ECON_LEVERS,
+        out.append({'id': f'override_{i + 1}', 'path': path, 'lever': lever, 'scenario': o.get('scenario', 'all'), 'value': deepcopy(v),
+                    'reason': o['reason'], 'evidence_ids': list(ev), 'raw': raw and lever not in ECON_LEVERS,
                     'source_tier': tier, 'competitors': [c.strip() for c in comp] if tier == 'competitor' else []})
     return out
 
@@ -2439,13 +2446,13 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
         if o['raw']:
             continue
         for s in (SCEN if o['scenario'] == 'all' else (o['scenario'],)):
-            econ[(s, o['path'])] = o
+            econ[(s, o['lever'])] = o
 
     def ov(s, lever, default):
         o = econ.get((s, lever))
         if o is None:
             return default
-        applied.append({'id': o['id'], 'path': lever, 'scenario': s, 'original': default, 'value': o['value'],
+        applied.append({'id': o['id'], 'path': o['path'], 'scenario': s, 'original': default, 'value': o['value'],
                         'reason': o['reason'], 'evidence_ids': o['evidence_ids'], 'source_tier': o['source_tier'],
                         **({'competitors': o['competitors']} if o['competitors'] else {})})
         return float(o['value'])
