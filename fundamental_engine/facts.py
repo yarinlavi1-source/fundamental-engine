@@ -83,6 +83,8 @@ INSTANT_TAGS = {
     # equity securities with a readily determinable fair value (stakes in listed companies): an asset at market value,
     # not spendable cash; private stakes without a readily determinable value are deliberately not read here
     'equity_securities_fv': ['equitysecuritiesfvni'],
+    # their cost, when the filing reports it: the unrealized gain whose deferred tax is netted from them (forecast._investment_tax)
+    'equity_securities_cost': ['equitysecuritiesfvnicost'],
     'restricted_cash': ['restrictedcashcurrent', 'restrictedcash'],
     'receivables': ['accountsreceivablenetcurrent'],
     'inventory': ['inventorynet'],

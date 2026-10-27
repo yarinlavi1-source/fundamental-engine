@@ -196,14 +196,14 @@ CYCLICAL_LIFT_EXCLUDED_TYPES = ('semiconductor', 'commodity')
 # evidenced stakes (inputs non_operating_assets) and cash above the minimum are worth face whenever they are held: the rows hold
 # them and add their after-tax risk-free income, and valuation._roll_back credits each period's holding back at face, which undoes
 # the discounting of that income at Ke (a debt-free company's value rises by exactly the holding per share). What they are worth
-# is face less the analyst's haircut on a stake. Since they sit outside the discounting, the leverage that sets Ke and the terminal
-# WACC is the operating cash flows': debt / (debt + equity value less these assets). The debt net of them had set the weight
-# instead, and with Ke held at the table below MARKET_DE a lower debt weight raises the WACC, so the assets added less than face
-# exactly when the company also had debt (Alphabet 2026-10-27, 186.6bn of marketable securities against 100.2bn of debt: 0.93 /
-# 0.74 / 0.48 x face in bear / base / bull; now 1.00), and holding cash or paying it out moved the value, against the payout rule
-# of valuation._roll_back. Repaying debt with them still moves the rate (the debt and its tax shield leave). When they exceed the
-# equity value (the operating business is worth less than its debt) the debt they cover is netted, the former rule. A consistency
-# fix: no constant changed or tuned.
+# is face less the deferred tax on their unrealized gains (_investment_tax) and the analyst's haircut on a stake. Since they sit
+# outside the discounting, the leverage that sets Ke and the terminal WACC is the operating cash flows': debt / (debt + equity
+# value less these assets). The debt net of them had set the weight instead, and with Ke held at the table below MARKET_DE a lower
+# debt weight raises the WACC, so the assets added less than face exactly when the company also had debt (Alphabet 2026-10-27,
+# 186.6bn of marketable securities against 100.2bn of debt: 0.93 / 0.74 / 0.48 x face in bear / base / bull; now 1.00), and
+# holding cash or paying it out moved the value, against the payout rule of valuation._roll_back. Repaying debt with them still
+# moves the rate (the debt and its tax shield leave). When they exceed the equity value (the operating business is worth less than
+# its debt) the debt they cover is netted, the former rule. A consistency fix: no constant changed or tuned.
 MARKET_DE = .25           # market-average debt / equity behind the ERP (US non-financials, order of magnitude; a model assumption)
 DEBT_EXPECTED_PREMIUM = .01   # expected (not promised) return on corporate debt over risk-free: about a BBB debt beta x ERP
 DEBT_RATE_RANGE = (.005, .06)  # interest / debt below 0.5% or above risk-free + 6pp is flagged as a data issue (it sets interest and the
@@ -275,8 +275,11 @@ def country_risk_rows(country):
 # balance sheet carries far below its value (equity method or at cost; Microsoft's ~25% of OpenAI at book while OpenAI's
 # March 2026 round priced it at $852bn). Added to opening investments at fair_value x (1 - haircut) less what the bridge
 # already holds for it (book_value_in_bridge; when the filing does not split it out, the whole line that contains it, which
-# understates the addition). The haircut is the analyst's: illiquidity, preference terms, tax on a sale. Investments enter the
-# value at face, so the addition moves the value one for one; the reviewer accepts it like a debt reclassification.
+# understates the addition). The haircut is the analyst's: illiquidity and preference terms. The tax on the unrealized gain is
+# its own deduction, deferred_tax (the filing's deferred tax liability for the stake, or (fair value - tax basis) x the rate, under
+# the item's evidence); not stated, the model tax rate is charged on the uplift the bridge adds (_investment_tax), a lower bound
+# when the carrying value already holds untaxed gains. Investments enter the value at face, so the addition less its tax moves the
+# value one for one; the reviewer accepts it like a debt reclassification.
 NON_OPERATING_KINDS = ('private_stake', 'equity_method_stake')
 # inputs['capital_events'] = [{kind, date, cash, shares, reason, evidence_ids}]: a share issue or buyback completed after the
 # balance-sheet date and by as_of (SK hynix's July 2026 US listing: 17.79m new shares for W39.9tn, two weeks after its June
@@ -734,6 +737,44 @@ def _coupon(fb, h, debt0, debt_val, debt_as_of):
     return {'rate': ie / avg, 'source_ids': [],
             'basis': f"fiscal-year interest expense {ie:,.0f} / that year's average debt {avg:,.0f}: {moved} and no quarter's interest "
                      'ends at that balance-sheet date'}
+
+
+def _investment_tax(fb, resolved, stakes, rate):
+    """The deferred tax on the unrealized gains of the investments the bridge counts at fair value, netted against them (the
+    opening reconciliation's investment_haircut) -> {'amount', 'rows', 'source_ids', 'rate'}. Listed stakes (dataqa
+    equity_securities_fv): (fair value - the cost the filing reports at the same date) x rate, no deduction for a loss; without a
+    reported cost the gain is unknown and nothing is deducted (the row says so). Each inputs non_operating_assets stake: its
+    stated deferred_tax, else rate x the uplift it adds above its book value (a lower bound when the carrying value already holds
+    untaxed gains). Debt securities are carried near par: their gains are not deducted. rate: the model's normalized tax rate."""
+    rows, ids = [], []
+    eq = resolved.get('equity_securities_fv') or {}
+    fv = _num(eq.get('value')) or 0.
+    if fv > 0:
+        cost = next((f for e, _, f in facts.series(fb, 'equity_securities_cost', 'instant')
+                     if eq.get('as_of') and abs((_d(e) - _d(eq['as_of'])).days) <= 7), None)
+        if cost is None:
+            rows.append({'kind': 'listed_stakes', 'fair_value': fv, 'cost': None, 'deferred_tax': 0., 'stated': False,
+                         'basis': f"listed stakes at fair value {fv:,.0f}: the filing reports no cost at {eq.get('as_of')}, so the gain is "
+                                  'unknown and its tax is not deducted'})
+        else:
+            gain = fv - cost['value']
+            ids += list(eq.get('source_ids') or []) + [cost['source_id']]
+            rows.append({'kind': 'listed_stakes', 'fair_value': fv, 'cost': cost['value'], 'deferred_tax': max(0., gain) * rate, 'stated': False,
+                         'basis': f"listed stakes: (fair value {fv:,.0f} - cost {cost['value']:,.0f}) x {rate:.1%}"
+                                  + (' (an unrealized loss: no tax)' if gain < 0 else '')})
+    for it in stakes or []:
+        fair, book = float(it['fair_value']) * (1 - float(it['haircut'])), float(it['book_value_in_bridge'])
+        ev = it['evidence_ids']
+        if 'deferred_tax' in it:
+            ids += [e for e in ev if e in fb['sources']] + [x for q in fb.get('qualitative', []) if q['id'] in ev for x in q['source_ids']]
+            rows.append({'kind': it['kind'], 'fair_value': fair, 'deferred_tax': float(it['deferred_tax']), 'stated': True,
+                         'basis': f"{it['kind']}: stated deferred tax {float(it['deferred_tax']):,.0f} (evidence {', '.join(ev)})"})
+        else:
+            t = max(0., fair - book) * rate
+            rows.append({'kind': it['kind'], 'fair_value': fair, 'deferred_tax': t, 'stated': False,
+                         'basis': f"{it['kind']}: {rate:.1%} x the uplift {max(0., fair - book):,.0f} above the book value in the bridge "
+                                  '(deferred_tax not stated)'})
+    return {'amount': sum(r['deferred_tax'] for r in rows), 'rows': rows, 'source_ids': sorted(set(ids)), 'rate': rate}
 
 
 def _ytd(fb, metric, last_end, upto=None):
@@ -2259,8 +2300,10 @@ def build(fb, an, card, qa, inputs=None):
         if not isinstance(na, list):
             raise ValueError('non_operating_assets: a list of items')
         for i, it in enumerate(na):
-            if not isinstance(it, dict) or sorted(set(it) - {'kind', 'fair_value', 'haircut', 'book_value_in_bridge', 'reason', 'evidence_ids'}):
-                raise ValueError(f'non_operating_assets {i}: kind, fair_value, haircut, book_value_in_bridge, reason, evidence_ids')
+            if not isinstance(it, dict) or sorted(set(it) - {'kind', 'fair_value', 'haircut', 'book_value_in_bridge', 'deferred_tax', 'reason',
+                                                             'evidence_ids'}):
+                raise ValueError(f'non_operating_assets {i}: kind, fair_value, haircut, book_value_in_bridge, deferred_tax (optional), reason, '
+                                 'evidence_ids')
             if it.get('kind') not in NON_OPERATING_KINDS:
                 raise ValueError(f"non_operating_assets {i}: kind must be one of {', '.join(NON_OPERATING_KINDS)}")
             if _num(it.get('fair_value')) is None or it['fair_value'] <= 0:
@@ -2269,6 +2312,9 @@ def build(fb, an, card, qa, inputs=None):
                 raise ValueError(f'non_operating_assets {i}: haircut must be at least 0 and below 1 (state it; 0 is a choice too)')
             if _num(it.get('book_value_in_bridge')) is None or it['book_value_in_bridge'] < 0:
                 raise ValueError(f'non_operating_assets {i}: book_value_in_bridge must be a number >= 0 (what the investments already hold)')
+            if 'deferred_tax' in it and (_num(it['deferred_tax']) is None or it['deferred_tax'] < 0):
+                raise ValueError(f'non_operating_assets {i}: deferred_tax must be a number >= 0 (the tax on the unrealized gain, from the '
+                                 'filing or (fair value - tax basis) x rate)')
             if not isinstance(it.get('reason'), str) or not it['reason'].strip():
                 raise ValueError(f'non_operating_assets {i}: a written reason is required')
             ev = it.get('evidence_ids')
@@ -2451,7 +2497,23 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
              'haircut less book value already held: ' + '; '.join(
                  f"{it['kind']} {float(it['fair_value']):,.0f} x (1 - {float(it['haircut']):.0%}) - {float(it['book_value_in_bridge']):,.0f} "
                  f"({it['reason']})" for it in inputs['non_operating_assets']), 'medium')
-    inv_net = open_bal['sti'] + open_bal['lti']                          # the investments valued at face (note above MARKET_DE)
+    # what the bridge counts at fair value carries the tax on its unrealized gains: netted against the investments
+    tax_n = _clamp(h['tax_effective'], .15, .25) if h['tax_effective'] is not None else .21     # the normalized rate of _params
+    inv_tax = _investment_tax(fb, res, inputs.get('non_operating_assets'), tax_n)
+    if inv_tax['amount'] > open_bal['sti'] + open_bal['lti']:
+        warn('investment_gain_tax_capped', f"deferred tax on investment gains {inv_tax['amount']:,.0f} above the investments "
+                                           f"{open_bal['sti'] + open_bal['lti']:,.0f}: held at the investments (check the stated amounts)", 'medium')
+        inv_tax['amount'] = open_bal['sti'] + open_bal['lti']
+    if inv_tax['amount'] > 0:
+        warn('investment_gain_tax', f"{inv_tax['amount']:,.0f} of deferred tax on unrealized investment gains netted against the "
+                                    'investments: ' + '; '.join(r['basis'] for r in inv_tax['rows'] if r['deferred_tax'] > 0), 'low')
+    for r in inv_tax['rows']:
+        if r['kind'] != 'listed_stakes' and not r['stated'] and r['deferred_tax'] > 0:
+            warn('stake_gain_tax_default', f"{r['basis']}: state the stake's deferred_tax from the filing (its deferred tax liability, "
+                                           'or (fair value - tax basis) x the rate) with evidence', 'medium')
+        elif r['kind'] == 'listed_stakes' and r['cost'] is None:
+            warn('listed_stake_gain_tax_unknown', r['basis'], 'low')
+    inv_net = open_bal['sti'] + open_bal['lti'] - inv_tax['amount']     # the investments valued at face (note above MARKET_DE)
     op_fund = 0.
     if inputs.get('operating_funding') and open_bal['debt']:
         op_fund = min(float(inputs['operating_funding']['amount']), open_bal['debt'])
@@ -2601,7 +2663,7 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
     stmt = min(_d(cash_res.get('as_of') or as_of), _d(debt_res.get('as_of') or as_of)).isoformat()
     add('open_balance', 'opening balance', 'reported',
         {'cash': open_bal['cash'], 'short_term_investments': open_bal['sti'], 'long_term_investments': open_bal['lti'],
-         'equity_securities_fv_included': val('equity_securities_fv') or 0.,
+         'equity_securities_fv_included': val('equity_securities_fv') or 0., 'deferred_tax_on_investment_gains': inv_tax['amount'],
          'debt': open_bal['debt'], 'deferred_revenue': open_bal['deferred_revenue'], 'statement_as_of': stmt,
          'operating_funding_excluded': op_fund, 'debt_like_claims_added': claims_added, 'non_operating_assets_added': assets_added,
          'capital_events_after_statement': bridge},
@@ -2609,13 +2671,15 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
         f"(of which listed equity stakes at fair value {val('equity_securities_fv') or 0.:,.0f}; "
         + (f"plus {assets_added:,.0f} of evidenced private stakes at fair value less haircut and book value) " if assets_added else
            'private stakes at book value only) ') +
+        (f"less {inv_tax['amount']:,.0f} of deferred tax on their unrealized gains ("
+         + '; '.join(r['basis'] for r in inv_tax['rows'] if r['deferred_tax'] > 0) + ') ' if inv_tax['amount'] > 0 else '') +
         f"(kept as assets earning risk-free after tax and valued at face; liquidated before any external financing is assumed), debt {open_bal['debt']:,.0f} "
         f"({debt_res.get('method', 'dataqa')}; operating leases treated in cash costs"
         + (f"; {op_fund:,.0f} of operating funding excluded, its cost is in operating costs" if op_fund else '')
         + (f"; includes {claims_added:,.0f} of debt-like claims from inputs" if claims_added else '') + "), deferred revenue "
         "{:,.0f} in its own ledger.".format(open_bal['deferred_revenue']),
         'A primary balance sheet at or after the statement date shows cash, investments or debt differing by more than 2% of market value.',
-        bal_srcs)
+        bal_srcs + inv_tax['source_ids'])
     add('shares_point', 'point-in-time shares', 'reported', {'shares': open_bal['shares'], 'as_of': sh_res.get('as_of'), 'basis': sh_res.get('basis')},
         f"Point-in-time common shares {open_bal['shares']:,.0f} at {sh_res.get('as_of')} (basis {sh_res.get('basis')}); weighted-average "
         'EPS shares are not used for ownership.', 'The latest filing cover count differs by more than 1%.', share_srcs)
@@ -3153,7 +3217,7 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
             'opening_reconciliation': {
                 'assumption_ids': ['open_balance', 'shares_point'], 'statement_as_of': stmt, 'share_basis': 'point_in_time_common_outstanding',
                 'cash_and_equivalents': open_bal['cash'], 'restricted_cash': val('restricted_cash') or 0., 'short_term_investments': open_bal['sti'],
-                'long_term_investments': open_bal['lti'], 'investment_haircut': 0, 'debt': open_bal['debt'],
+                'long_term_investments': open_bal['lti'], 'investment_haircut': inv_tax['amount'], 'debt': open_bal['debt'],
                 'common_shares_outstanding': open_bal['shares'], 'incremental_dilutive_shares': 0,
                 'dilution_review': {'assumption_ids': ['dilution']}, 'claims_review': {'assumption_ids': ['claims']},
                 'bridge_events': bridge, 'bridge_review': {'assumption_ids': ['bridge']},

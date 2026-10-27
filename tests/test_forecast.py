@@ -1989,19 +1989,20 @@ class NonOperatingAssetTests(unittest.TestCase):
 
     def test_fair_value_less_haircut_less_book_enters_at_face(self):
         base = forecast.build(self.fb, self.an, self.card, self.qa)
-        fc = forecast.build(self.fb, self.an, self.card, self.qa, {'non_operating_assets': [self.stake()]})
+        fc = forecast.build(self.fb, self.an, self.card, self.qa, {'non_operating_assets': [self.stake(deferred_tax=5e6)]})
         added = 100e6 * .75 - 20e6
-        self.assertAlmostEqual(fc['spec']['opening']['marketable_investments'] - base['spec']['opening']['marketable_investments'], added)
+        self.assertAlmostEqual(fc['spec']['opening']['marketable_investments'] - base['spec']['opening']['marketable_investments'], added - 5e6)
         ob = next(a for a in fc['assumptions'] if a['id'] == 'open_balance')['values']
         self.assertAlmostEqual(ob['non_operating_assets_added'], added)
+        self.assertAlmostEqual(ob['deferred_tax_on_investment_gains'], 5e6)
         self.assertIn('non_operating_assets_added', [w['code'] for w in fc['warnings']])
         rec = fc['spec']['underwriting']['opening_reconciliation']
         self.assertEqual(rec['investment_adjustments'], [{'kind': 'non_operating_assets_added', 'amount': added}])
+        self.assertEqual(rec['investment_haircut'], 5e6)
         shares = fc['spec']['opening']['shares']
-        # about one for one: the stake does not offset debt, but the higher equity value lowers the debt weight a little
-        self.assertAlmostEqual((fc['preview']['today']['base'] - base['preview']['today']['base']) * shares, added, delta=.03 * added)
-        self.assertLess(abs(fc['cost_of_equity']['components']['leverage']['d_to_e']
-                            - base['cost_of_equity']['components']['leverage']['d_to_e']), .005)
+        # one for one at face, less the tax on the gain: the stake sits outside the discounting and outside the leverage
+        self.assertAlmostEqual((fc['preview']['today']['base'] - base['preview']['today']['base']) * shares, added - 5e6, delta=1e-6 * added)
+        self.assertAlmostEqual(fc['cost_of_equity']['components']['leverage']['d_to_e'], base['cost_of_equity']['components']['leverage']['d_to_e'])
 
     def test_book_value_at_or_above_the_haircut_value_adds_nothing(self):
         fc = forecast.build(self.fb, self.an, self.card, self.qa, {'non_operating_assets': [self.stake(book_value_in_bridge=80e6)]})
@@ -2067,6 +2068,65 @@ class FinancialAssetsAtFaceTests(unittest.TestCase):
         lev = with_investments(levered, 11e9, 10e9)['cost_of_equity']['components']['leverage']
         self.assertLessEqual(lev['model_equity'], lev['financial_assets_at_face'])
         self.assertEqual((lev['debt_weight'], lev['status']), (0., 'converged'))
+
+
+class InvestmentGainTaxTests(unittest.TestCase):
+    """Regression from the GOOGL 2026-10-27 review: the deferred tax on the unrealized gains of investments counted at fair value
+    (about 22.8bn for Alphabet's stakes) was not deducted from them in the bridge."""
+
+    def setUp(self):
+        self.fb, self.an, self.card, self.qa = industrial()
+        ResearchRoundOneInputsTests.evid(None, self.fb)
+        self.base = forecast.build(self.fb, self.an, self.card, self.qa)
+
+    def stake(self, **kw):
+        return {'kind': 'private_stake', 'fair_value': 200e6, 'haircut': .1, 'book_value_in_bridge': 30e6,
+                'reason': 'last funding round x ownership', 'evidence_ids': ['i1'], **kw}
+
+    def delta(self, fc):
+        return (fc['spec']['opening']['marketable_investments'] - self.base['spec']['opening']['marketable_investments'],
+                (fc['preview']['today']['base'] - self.base['preview']['today']['base']) * fc['spec']['opening']['shares'])
+
+    def test_a_stated_deferred_tax_is_netted_with_its_evidence(self):
+        fc = forecast.build(self.fb, self.an, self.card, self.qa, {'non_operating_assets': [self.stake(deferred_tax=25e6)]})
+        added = 200e6 * .9 - 30e6
+        inv, value = self.delta(fc)
+        self.assertAlmostEqual(inv, added - 25e6)
+        self.assertAlmostEqual(value, added - 25e6, delta=1e-6 * added)     # at face, less the tax
+        rec = fc['spec']['underwriting']['opening_reconciliation']
+        self.assertEqual(rec['investment_haircut'], 25e6)
+        ob = next(a for a in fc['assumptions'] if a['id'] == 'open_balance')
+        self.assertEqual(ob['values']['deferred_tax_on_investment_gains'], 25e6)
+        self.assertIn('deferred tax on their unrealized gains', ob['rationale'])
+        self.assertIn('web:f', ob['source_ids'])                           # the stake's evidence (qualitative i1 -> its source)
+        codes = {w['code'] for w in fc['warnings']}
+        self.assertIn('investment_gain_tax', codes)
+        self.assertNotIn('stake_gain_tax_default', codes)
+        audit = value_company(build_case(fc['spec']))['underwriting_audit']
+        self.assertNotIn('opening_mismatch', {i['code'] for i in audit['issues']})       # sti + lti - investment_haircut = opening
+        with self.assertRaises(ValueError):
+            forecast.build(self.fb, self.an, self.card, self.qa, {'non_operating_assets': [self.stake(deferred_tax=-1.)]})
+
+    def test_an_unstated_tax_is_charged_at_the_model_rate_on_the_uplift_and_flagged(self):
+        fc = forecast.build(self.fb, self.an, self.card, self.qa, {'non_operating_assets': [self.stake()]})
+        added = 200e6 * .9 - 30e6
+        rate = fc['spec']['scenarios'][1]['tax_rate'][0]                  # the normalized model rate (21% here)
+        self.assertAlmostEqual(self.delta(fc)[0], added * (1 - rate))
+        self.assertIn('stake_gain_tax_default', {w['code'] for w in fc['warnings']})
+
+    def test_listed_stakes_are_taxed_on_the_gain_over_their_reported_cost(self):
+        qa = deepcopy(self.qa)
+        qa['resolved']['equity_securities_fv'] = {'value': 40e6, 'as_of': '2025-12-31', 'source_ids': ['syn:fs']}
+        no_cost = forecast.build(self.fb, self.an, self.card, qa)
+        self.assertEqual(no_cost['spec']['underwriting']['opening_reconciliation']['investment_haircut'], 0.)
+        self.assertIn('listed_stake_gain_tax_unknown', {w['code'] for w in no_cost['warnings']})
+        for cost, tax in ((25e6, (40e6 - 25e6) * .21), (55e6, 0.)):       # a gain, then a loss (no tax)
+            fb = deepcopy(self.fb)
+            facts.add_fact(fb, 'equity_securities_cost', 'I@2025-12-31', '2025-12-31', cost, 'syn:fs', 'as_reported', '2026-02-09')
+            fc = forecast.build(fb, self.an, self.card, qa)
+            self.assertAlmostEqual(fc['spec']['underwriting']['opening_reconciliation']['investment_haircut'], tax)
+            self.assertAlmostEqual(fc['spec']['opening']['marketable_investments'], 40e6 - tax)
+            self.assertNotIn('listed_stake_gain_tax_unknown', {w['code'] for w in fc['warnings']})
 
 
 class CapitalEventTests(unittest.TestCase):
