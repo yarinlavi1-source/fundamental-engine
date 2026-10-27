@@ -166,7 +166,7 @@ class ReasonsOnTheRealFixture(unittest.TestCase):
         self.assertEqual((merged['next_fiscal_year_start'], merged['next_fiscal_year_end']), ('2030-11-30', '2031-11-30'))
         today = by_name(self.r)['base']['rows'][0]['implied_pe']
         self.assertEqual(today['next_fiscal_year_end'], '2027-11-30')               # the stub to 2026-11-30 is skipped
-        self.assertAlmostEqual(today['value'], 591.4019627958602 / 21.0205, delta=.05)
+        self.assertAlmostEqual(today['value'], 596.7347544108802 / 21.0205, delta=.05)
         # earnings that turn negative: no P/E, the reason said, the value untouched
         cf = deepcopy(self.cf)
         bear = next(s for s in cf['val']['result']['scenarios'] if s['name'] == 'bear')

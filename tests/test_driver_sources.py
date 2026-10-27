@@ -197,12 +197,15 @@ class GapVisibilityTests(unittest.TestCase):
 
 
 class InvarianceTests(unittest.TestCase):
-    """No overrides: every value is what the engine produced before source tiers existed (spec hashes and values at 6a0db09)."""
-    BEFORE = {'adbe': ('669f1e617783d48ae82070cdfbc88d71af9a257fcb82de34fe1dd8ce954275fd', 636.0833778644535),
-              'industrial': ('6e2923c31848c5839ddcca476d2a5ed1f87668b80d7830f813d6fa9e4b7e5591', 47.299131175885144),
-              'grower': ('127f5c6145e55d2d81a6076a4d0fb0152a4b269d396f135a64f4ca5a3717e60e', 6.226562711983232),
-              'levered': ('f6b4ec51d17e8bfe09bb99910151c89aa7798bad269b860f9563b80089065d0e', 27.973151495868116),
-              'fast_grower': ('273c66ffdc203d62ca0102c936131e8cdf4d72b48cb4dc804cd9471a40ba8e63', 132.68099168372305)}
+    """No overrides: every value is what the engine produced before source tiers existed (spec hashes and values at 6a0db09),
+    re-pinned at 9c53ebd (27.10.2026), where debt is weighed against the equity less the financial assets valued at face: adbe
+    636.08 -> 643.44 (debt weight 0.8% -> 2.5%), industrial 47.30 -> 47.76, levered 27.97 -> 27.76 (cash above the minimum no
+    longer offsets its debt); grower and fast_grower carry no debt (values unchanged, the cost-of-equity row's text changed)."""
+    BEFORE = {'adbe': ('c1872d9dc142b6cfb8384c1a015bcdcfb809bd63282e2eb6d7252e584ae81e2d', 643.4363761952735),
+              'industrial': ('415cf5b0fde2fc655460c34274cc361fd338f7d7897edbff9fe156d673e055c6', 47.75843640214632),
+              'grower': ('fc6d9587ded78d69c8a282b0e1e6f64881c90471fb4b6ecc22f24bb2b0949c34', 6.226562711983232),
+              'levered': ('1adbbb14357b4f10f23675098a562e3f88feaa91c357c04f133f8c60e697b72b', 27.757945918278786),
+              'fast_grower': ('39f322fc2b8adbf4a1076a4decc8d3967f3309aa42e0d7d500aa805db9d94c02', 132.68099168372305)}
 
     def test_values_unchanged_without_overrides(self):
         for name, f in (('adbe', adbe), ('industrial', industrial), ('grower', grower), ('levered', lambda: levered(60.)),
@@ -214,7 +217,7 @@ class InvarianceTests(unittest.TestCase):
 
     def test_pipeline_values_unchanged_without_overrides(self):
         cf = pipeline.run(deepcopy(ADBE))
-        self.assertEqual(cf['fc']['spec_sha256'], '8b97e381ddd321a15ec05de1a90e87398c5342ecc1bdadaab28f4693ecf1951e')
+        self.assertEqual(cf['fc']['spec_sha256'], '7e6a65c755f3fe47a2e0e4b76f553455d09b59c83a8e70ae31ff9226c18dc853')
 
 
 if __name__ == '__main__':
