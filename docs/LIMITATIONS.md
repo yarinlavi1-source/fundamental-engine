@@ -177,7 +177,9 @@ Companion to docs/EVIDENCE_STATUS.md, which separates what tests prove from what
 42. **A private stake has one value in every scenario.** `non_operating_assets` enters the opening balance shared by bear, base
     and bull, so the bear does not test a fall in the stake's value (Microsoft's OpenAI stake at a 25% haircut to the last
     round); the haircut is the analyst's judgement and the book value already in the bridge is often not disclosed (then the
-    whole line holding it is subtracted, understating the addition).
+    whole line holding it is subtracted, understating the addition). Since 27.10.2026 the tax on the stake's unrealized gain is its
+    own deduction (`deferred_tax`); when it is not stated the model tax rate is charged on the uplift above the book value in the
+    bridge, which understates the tax when the carrying value already holds untaxed gains (measurement-alternative stakes).
 43. **The engine's absolute values still run below market, most for growth names.** 0.13.0 (25.10.2026) corrected the
     rate conventions behind the 2016-2025 drift (terminal growth at 3% against an ERP solved at the Treasury yield; a fixed
     4.5% ERP in the walk-forward where the dated implied ERP was 4.2-6.1%) and model inconsistencies (terminal stage and
@@ -213,3 +215,14 @@ Companion to docs/EVIDENCE_STATUS.md, which separates what tests prove from what
     scope stated by Claude; a missing KPI becomes a question, so a sparse case reads mostly as "not yet clear". The Hebrew
     rows name segments and categories in English unless `names_he` labels them. The estimates-versus-price reading
     (RDDT example on the design's unpinned figures) is a description of what moved, with no predictive claim.
+46. **Investments at face, their gain tax and the coupon after a debt move are first-order rules (27.10.2026).** Financial
+    assets are worth face whenever held (no corporate tax drag on their income, no liquidity discount on marketable
+    securities) and stay outside the leverage that sets the rates; a company whose operating business carries more debt than
+    60% of its value hits the debt-weight cap even when its investments cover the debt. The deferred tax on unrealized gains is
+    netted today at the model's normalized tax rate (operating, 15-25%; the statutory rate on capital gains can be higher) and
+    undiscounted, although it is due only on a sale; listed stakes are taxed only when the filing reports their cost at the
+    balance-sheet date (`EquitySecuritiesFvNiCost`; most filers do not), and gains on debt securities are ignored. After a
+    debt move the coupon reads one quarter's interest x 4 over the larger of that quarter's opening and closing debt
+    (seasonality, capitalized interest and one-off charges such as financing fees pass through, and a draw late in the
+    quarter is under-read); the move is measured against fiscal-year-end debt only, and a fiscal year without its own interest
+    figure keeps the former ratio.

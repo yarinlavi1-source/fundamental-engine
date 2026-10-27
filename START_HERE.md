@@ -28,7 +28,10 @@ same connectors (SEC, Interactive Brokers, Alpha Vantage, FMP, LunarCrush, …).
   fundamental_engine deep <universe_folder> --as-of <date> --symbols <TICKER>` (writes `out/table_he.md` with
   the plain-Hebrew table, including the "מה המחיר של היום מניח" reverse-DCF row, and `out/scenarios_he.md` with the
   condition behind every דובי / בסיסי / שורי price).
-- **Latest state (read these to catch up):** `docs/CHANGELOG.md` Unreleased (25.10.2026 fast ticker procedure, the
+- **Latest state (read these to catch up):** `docs/CHANGELOG.md` Unreleased (27.10.2026 valuation-bridge fixes from the GOOGL
+  fast run: investments at face and outside the leverage, the tax on their unrealized gains netted, the coupon after a debt move,
+  terminal ROIC / growth overrides through their levers; walk-forward A/B median value/price 0.672 -> 0.684; LIMITATIONS #46;
+  25.10.2026 fast ticker procedure, the
   default on a ticker: `scripts/ticker_prefetch.py` in seconds, four parallel sonnet gather lanes, three parallel analyst
   parts with the trace reviewer, `ticker-value`, two reviewers, `ticker-status`; each agent follows `python -m
   fundamental_engine ticker-stage <stage>`; a design estimate of 25-35 minutes for a new ticker, not yet measured; see

@@ -40,6 +40,9 @@ History.shares_diluted remains weighted-average diluted EPS shares only.
 The operating ledger accepts opening.marketable_investments. They remain assets,
 not cash available for capex, until an explicit period.investment_liquidation.
 Liquidation transfers assets once; no free cash creation or double terminal value.
+Investments are worth face less the deferred tax on their unrealized gains: the
+forecast nets that tax as investment_haircut (a stake's stated deferred_tax, listed
+stakes over their reported cost) and keeps them out of the leverage that sets the rates.
 Period investment_income_after_tax and noncontrolling_distributions are optional
 explicit cash flows; substantiate tax, ownership and availability. Remaining
 investments enter the terminal equity bridge. Other_claims must address preferred
@@ -57,7 +60,8 @@ Do not reuse generic prose to claim all four questions have been answered.
 The code flags >10 percentage-point growth transitions, >5-point margin changes,
 and a terminal year annualized from <0.9 years. Extend the explicit forecast and
 fade growth/margins when necessary. A discontinuous change requires a separately
-supported transition_exception. Zero final maintenance capex in capital-heavy
+supported transition_exception (a terminal.roic or terminal.growth override already
+runs through its lever, so the last explicit year reinvests on it). Zero final maintenance capex in capital-heavy
 businesses requires replacement_exception. Thresholds trigger review, not empirical
 laws. Reporting through 2030 does NOT require terminal maturity in 2030; forecast
 through 2035/2040 if justified and keep report_dates limited to the requested years.

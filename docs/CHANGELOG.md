@@ -1,3 +1,98 @@
+## Unreleased — valuation-bridge fixes from the GOOGL fast ticker run (27.10.2026)
+
+The completeness critic and the reviewers of the GOOGL fast ticker run of 27.10.2026 (runs/tickers/GOOGL_2026-10-27, not in Git)
+found four inconsistencies in the valuation bridge. Each was reproduced on the test fixtures and on Alphabet's own SEC facts
+(companyfacts to the June 2026 10-Q, as_of 2026-10-27, Nasdaq last sale $316.80, risk-free 4.99% = GS10 September 2026, ERP 4.23%),
+fixed with a regression test that fails on 5517114, and A/B'd on the walk-forward.
+
+Walk-forward A/B, how it was run (no claim beyond it). `engine_backtest.company_row`'s code (inlined to also record the coupon,
+the leverage, the investments and the warnings; it reproduced `company_row` on all 623 baseline rows) at every July formation
+2016-2025 of 70 names: 62 by rule (the engine_v3 symbols sorted, every 8th; the 0.13.0 A/B's 61 names were not saved, this sample
+of the same size replaces them) and 8 named large caps (GOOGL, META, MSFT, AAPL, AMZN, ORCL, NVDA, AVGO). Company folders rebuilt
+27.10.2026 from SEC companyfacts and submissions with the Nasdaq listing's sector and industry; the price at each formation is the
+traded price `runs/backtest/engine_v3/rows.jsonl` recorded; FRED GS10 and `engine_backtest.IMPLIED_ERP`. 623 rows, 536 valued in
+every stage, no errors. The baseline (5517114) median value/price is 0.672 (0.13.0's 61-name A/B: 0.673). Not measured: the value
+dated one and three years ahead against the realized price, and the IC, which need the monthly price histories
+(`scripts/collect_backtest.py`'s Yahoo payloads were not retrievable in this session). Stages are cumulative; median engine
+value / price on the same 536 rows:
+
+| engine | 2016 | 2017 | 2018 | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 | all | median base IRR |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| main (5517114) | 0.789 | 0.661 | 0.729 | 0.630 | 0.778 | 0.619 | 1.098 | 0.525 | 0.645 | 0.556 | 0.672 | 6.98% |
+| + terminal overrides, coupon after a debt move (dada7bb, 7acba46, cd8b1db) | 0.789 | 0.662 | 0.728 | 0.630 | 0.778 | 0.619 | 1.101 | 0.523 | 0.645 | 0.556 | 0.672 | 6.98% |
+| + leverage of the operating cash flows (9c53ebd) | 0.806 | 0.679 | 0.732 | 0.635 | 0.779 | 0.619 | 1.126 | 0.520 | 0.645 | 0.565 | 0.684 | 7.07% |
+| + tax on unrealized investment gains (b4a26ad) | 0.806 | 0.679 | 0.732 | 0.635 | 0.779 | 0.619 | 1.126 | 0.520 | 0.645 | 0.565 | 0.684 | 7.07% |
+
+All four together move 281 of the 536 rows (189 up, 92 down; median move 1.4%, mean of all rows +0.7%), one verdict
+(PTC 2020: index_preferable -> avoid, below) and no review status. The level stays far below price (LIMITATIONS #43): these are
+consistency fixes, not a calibration; no constant was tuned to the walk-forward.
+
+Alphabet on its SEC facts (no evidence pack; not the fast run's numbers), today's bear / base / bull per share:
+
+| engine | bear / base / bull | investments' value per $ of face (bear / base / bull) | coupon | debt weight | terminal WACC |
+|---|---|---|---:|---:|---:|
+| main (5517114) | 141.22 / 351.73 / 625.51 | 0.93 / 0.74 / 0.48 | 1.00% (floor) | 0% | 8.72% |
+| + coupon (7acba46) | 138.96 / 349.46 / 623.25 | 0.92 / 0.67 / 0.36 | 5.10% | 0% | 8.72% |
+| + leverage (9c53ebd) | 140.25 / 354.46 / 633.01 | 1.00 / 1.00 / 1.00 | 5.10% | 2.4% | 8.64% |
+| + gain tax (b4a26ad), with its 124.3bn of non-marketable stakes as a `non_operating_assets` input | 148.79 / 362.99 / 641.55 | 1.00 (less the tax) | 5.10% | 2.4% | 8.64% |
+
+- Terminal ROIC override broke continuity (`forecast.TERMINAL_LEVERS`; dada7bb). The cause was not depreciation: a raw
+  `terminal.roic` override was written into the spec's terminal after `_paths` had converged the explicit years' capital per unit
+  of new revenue to the engine's own ROIC, so a bear at 13% against the rule's 28% reinvested 15.6% of NOPAT in the last explicit
+  year and 34.6% in the terminal (`reinvestment_jump`, `evidence_missing@bear.transition_exception`, an underwriting gap the inputs
+  could not close). `terminal.roic` and `terminal.growth` now set the economic levers `terminal_roic` / `terminal_growth` before
+  the paths are built (identical spec to the lever), and the override keeps the path the analyst wrote. Reproduced on the ADBE
+  fixture (bear 13%: 13.1% vs 28.8% of NOPAT before, 28.2% vs 28.8% after). Walk-forward: no row passes overrides, so nothing can
+  move; checked identical (values, IRRs, verdicts) on the 77 rows of the 8 named large caps. Still open: there is no input route for a genuine
+  `transition_exception` (the scenario reviews are generated); after this fix the override no longer needs one.
+- The coupon on existing debt follows a debt that moved (`forecast._coupon`, `DEBT_MOVE` 25%; 7acba46, cd8b1db). The rate was the
+  last fiscal year's interest expense over today's debt (not TTM): Alphabet's FY2025 0.74bn over 100.2bn of debt hit the 1%
+  floor although the June quarter's 1.28bn annualized is 5.1%. When today's validated debt is more than 25% away from that year's
+  average debt, the latest quarter's interest (ending at the debt's balance-sheet date) is annualized over the larger of that
+  quarter's opening debt (same scope, `dataqa._debt_totals`) and its closing debt, else the year's interest is read over its own
+  average debt; the basis is stated in the `debt_interest` row and drives the incomplete-debt check. The first version divided
+  by the closing debt and also used an older year's interest standing in for a missing one; the A/B caught both (Graco 2022 read
+  28% after repaying half its debt in the quarter and raised a false `debt_incomplete`; United 2021 divided a 2018 figure by
+  2019-2020 debt and two scenarios became funding-blocked) and cd8b1db fixed them before the numbers above. Measured: 97 rows read
+  a moved coupon, 80 valued rows move (29 up, 51 down, median move 0.5%), median value/price unchanged. Large movers are real debt
+  events (XPO 2016 Con-way debt 3.9% -> 6.5%, +56%: its 60% debt-weight cap makes the bigger tax shield dominate; Baxter 2016 and
+  Fortive 2021 repayments, PTC's 2020 and 2023 financing quarters). PTC's March 2020 quarter reads 8.0% (risk-free 0.7%,
+  flagged `debt_rate_unusual`), value -24%, verdict index_preferable -> avoid: whatever one-off financing charge that quarter
+  carries passes through (LIMITATIONS #46). Alnylam 2022 is newly flagged `debt_incomplete`: its quarter's interest is a quarter
+  of the debt found, the pattern the check exists for. Three leverage fixed points stop converging (values within 0.3% for
+  Baxter 2017 and Disney 2020) and one starts to.
+- Investments were valued below face through the leverage, not through their holding (decision, forecast note "Financial assets
+  at face"; 9c53ebd). The critic read the rows: the opening investments are held, earn after-tax risk-free income and are
+  discounted at Ke. But `valuation._roll_back` credits each period's holding back at face (a debt-free company's value rises by
+  exactly the holding per share: 1.000 x face on a GOOGL-shaped synthetic), so the funding-policy rationale was right there. What
+  pushed them below face was the debt NET of them setting the leverage of Ke and the terminal WACC: with Ke held at the table
+  below market leverage, a lower debt weight raises the WACC, so with 100.2bn of debt Alphabet's 186.6bn added 0.93 / 0.74 / 0.48
+  x face (the corrected coupon widened it to 0.36 in the bull), and holding or paying out cash moved the value. Decision: value
+  them at face, less the tax on their gains (next item) and the analyst's haircut on a stake, and weigh the debt against the
+  equity less the financial assets valued at face (investments, evidenced stakes, cash above the minimum): the leverage of the
+  operating cash flows, which carry the gross interest. Now exactly 1.00 x face; repaying debt with them still moves the rate
+  (the debt and its tax shield leave); when the financial assets exceed the equity value, the debt they cover is netted (the
+  former rule). Measured: 244 rows move (172 up, 72 down, median move 1.6%), median value/price 0.672 -> 0.684, median base IRR
+  6.98% -> 7.07%, no verdict or review change. Rises are net-cash companies that also borrow (Nutanix +12% to +34%, Roblox 2023
+  +14%: their debt now has a weight); falls are levered companies whose cash had offset their debt (Occidental 2016 -15%,
+  Broadcom 2020 -13%). Six rows newly reach the 60% debt-weight cap (`leverage_capped`, high): Baxter 2016, Illumina 2025,
+  MACOM 2025, PTC 2020 and 2023, United 2024, companies the engine values at a fraction of their price, whose small modelled
+  operating value against gross debt the netting had hidden. Fixture pins re-set (ee90860): ADBE 636.08 -> 643.44, industrial
+  47.30 -> 47.76, levered 27.97 -> 27.76; the pipeline ADBE value 591.40 -> 596.73.
+- The deferred tax on unrealized investment gains is netted against the investments (`forecast._investment_tax`, the opening
+  reconciliation's `investment_haircut`; b4a26ad). What the bridge counts at fair value carried its gains untaxed (the critic: about
+  22.8bn for Alphabet's stakes). A `non_operating_assets` stake now states `deferred_tax` under its evidence (the filing's deferred
+  tax liability for it, or (fair value - tax basis) x the rate); not stated, the model tax rate is charged on the uplift it adds
+  above its book value, a lower bound, flagged `stake_gain_tax_default` (the haircut no longer stands for the tax). Listed stakes at
+  fair value are taxed on their gain over the cost the filing reports at the same date (new FactBook metric
+  `equity_securities_cost`, us-gaap `EquitySecuritiesFvNiCost`); without a reported cost nothing is deducted and
+  `listed_stake_gain_tax_unknown` (low) says so. With Alphabet's 124.3bn of non-marketable stakes added at carrying value the
+  default charges 19.9bn, about 1.6 a share; a stated `deferred_tax` replaces it. Measured: only Alphabet reports the cost in the sample (5 rows,
+  0.08-0.54bn); 2 rows move by 0.02%, the median does not; 35 rows get the low note.
+- Docs: `brain/protocols/valuation_integrity.md` (investments at face less the gain tax, outside the leverage; terminal
+  overrides run through their lever), LIMITATIONS #42 and new #46. Tests: TerminalOverrideContinuityTests, DebtCouponTests,
+  FinancialAssetsAtFaceTests, InvestmentGainTaxTests and the updated NonOperatingAssetTests in tests/test_forecast.py.
+
 ## Unreleased — the fast ticker procedure (25.10.2026)
 
 The owner's limit is 10-20 minutes for one ticker, without harming the result. Measured on NVDA with the saved Workflow
