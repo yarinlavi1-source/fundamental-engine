@@ -1650,6 +1650,22 @@ class DebtCouponTests(unittest.TestCase):
         # a repayment is a move too: half the debt left, the quarter's interest on it
         self.assertAlmostEqual(self.rate(forecast.build(*debt_jump(50e6, .5e6))), 4 * .5e6 / 50e6)
 
+    def test_a_quarter_is_read_over_the_larger_of_its_opening_and_closing_debt(self):
+        # Graco Q1 2022 shape: half the debt repaid inside the quarter, whose interest was paid on more than the closing debt
+        fb, an, card, qa = debt_jump(50e6, 1.5e6)
+        facts.add_fact(fb, 'long_term_debt', 'I@2026-03-31', '2026-03-31', 100e6, 'syn:fs', 'as_reported', '2026-05-05')
+        fc = forecast.build(fb, an, card, qa)
+        self.assertAlmostEqual(self.rate(fc), 4 * 1.5e6 / 100e6)            # 6%, not 4 x 1.5m / 50m = 12%
+        self.assertIn('the larger of 100,000,000 at 2026-03-31 and 50,000,000 at 2026-06-30', fc['anchors']['interest_basis'])
+
+    def test_an_older_interest_figure_standing_in_for_the_year_is_left_as_it_was(self):
+        fb, an, card, qa = debt_jump()
+        del an['annual']['2025-12-31']['interest_expense']                 # the last fiscal year reports none
+        fb['facts'] = [f for f in fb['facts'] if not (f['metric'] == 'interest_expense' and f['period'] == 'FY2025')]
+        fc = forecast.build(fb, an, card, qa)
+        self.assertAlmostEqual(self.rate(fc), 4e6 / 200e6)                  # FY2024's interest over today's debt, as before
+        self.assertIsNone(fc['anchors']['interest_basis'])
+
     def test_without_a_quarter_the_years_interest_is_read_over_its_own_average_debt(self):
         fc = forecast.build(*debt_jump(quarter_interest=None))
         self.assertAlmostEqual(self.rate(fc), 4e6 / 100e6)

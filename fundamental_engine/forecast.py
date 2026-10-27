@@ -228,9 +228,11 @@ DEBT_INCOMPLETE_RATE = .25     # interest / debt above this (no investment-grade
 # The rate on the existing debt comes from its own interest history: the last fiscal year's interest expense over today's debt.
 # When today's debt is more than DEBT_MOVE away from that year's average debt (a bond issue or a repayment during or after the
 # year), that interest was paid on another debt stack: the latest reported quarter's interest (the quarter ending at the debt's
-# balance-sheet date) is annualized instead, else the year's interest is read over its own average debt (_coupon). Alphabet
-# 2026-10-27: debt 48.5bn at FY2025 and 100.2bn at June 2026; FY2025 interest 0.74bn / 100.2bn = 0.7% was floored at 1%, while
-# the June quarter's 1.28bn annualized is 5.1%. A threshold for 'the debt moved', not a tuned constant.
+# balance-sheet date) is annualized over the larger of that quarter's opening and closing debt instead, else the year's interest
+# is read over its own average debt (_coupon). Only the last fiscal year's own interest is tested (an older figure standing in for
+# it is left as it was). Alphabet 2026-10-27: debt 48.5bn at FY2025 and 100.2bn at June 2026; FY2025 interest 0.74bn / 100.2bn =
+# 0.7% was floored at 1%, while the June quarter's 1.28bn annualized is 5.1% (of 100.2bn: the quarter opened at 79.5bn). A
+# threshold for 'the debt moved', not a tuned constant.
 DEBT_MOVE = .25
 KNOWN_INPUTS = ('overrides', 'reviews', 'risk_free', 'equity_risk_premium', 'horizon_years', 'financing', 'nol', 'cyclical',
                 'operating_funding', 'nonrecurring', 'debt_like_claims', 'non_operating_assets', 'capital_events', 'country_risk',
@@ -714,14 +716,18 @@ def _latest_src(fb, *metrics):
     return sorted(set(ids))
 
 
-def _coupon(fb, h, debt0, debt_val, debt_as_of):
+def _coupon(fb, h, debt0, debt_val, debt_as_of, debt_method=None):
     """The interest rate on the existing debt when the debt moved (DEBT_MOVE) -> {'rate', 'basis', 'source_ids'}, or {} to keep the
     last fiscal year's interest expense over today's debt. debt0: the opening debt the rate applies to (analyst claims included,
-    as in that ratio); debt_val, debt_as_of: the validated debt and its balance-sheet date, compared with the average of the debt
-    at the start and the end of the year the interest expense is from (analysis.annual)."""
+    as in that ratio); debt_val, debt_as_of, debt_method: the validated debt, its balance-sheet date and its scope (dataqa),
+    compared with the average of the debt at the start and the end of the year the interest expense is from (analysis.annual).
+    The quarter ending at that date is read over the larger of its opening debt under the same scope (dataqa._debt_totals at the
+    balance sheet 60-120 days earlier) and today's debt: when a draw or a repayment fell inside the quarter is not known, so the
+    rate is never inflated by interest read over debt the quarter did not carry throughout (Graco Q1 2022: 150m repaid to 75m)."""
     ie = h.get('interest_expense')
     yr = [x for x in (_num(r.get('debt')) for _, r in h['rows'][-2:]) if x is not None]
-    if not ie or not debt0 or debt0 <= 0 or not debt_val or not yr or sum(yr) <= 0:
+    own = _num(h['rows'][-1][1].get('interest_expense')) is not None     # the last fiscal year's own interest, not an older one
+    if not own or not ie or not debt0 or debt0 <= 0 or not debt_val or not yr or sum(yr) <= 0:
         return {}
     avg = sum(yr) / len(yr)
     if abs(debt_val / avg - 1) <= DEBT_MOVE:
@@ -731,9 +737,25 @@ def _coupon(fb, h, debt0, debt_val, debt_as_of):
          if debt_as_of and abs((_d(x[0]) - _d(debt_as_of)).days) <= 10 and _num(x[1]) is not None and x[1] > 0]
     if q:
         end, v, f = q[-1]
-        return {'rate': 4 * v / debt0, 'source_ids': [f['source_id']],
-                'basis': f"interest expense of the quarter ending {end} ({v:,.0f}) x 4 / debt {debt0:,.0f}: {moved}, so the fiscal year's "
-                         f"interest ({ie:,.0f}) was paid on another debt stack"}
+        start, when = None, None
+        if debt_method:
+            from . import dataqa as DQ
+            qa = DQ._QA(fb, None)
+            dates = sorted({x['period_end'] for m in DQ.DEBT_PARTS for x in qa.cands(m)
+                            if DQ._kind(x) == 'instant' and 60 <= (_d(end) - _d(x['period_end'])).days <= 120})
+            for d in reversed(dates):
+                tot, _ = DQ._debt_totals(qa, d)
+                if tot.get(debt_method) is not None:
+                    start, when = tot[debt_method], d
+                    break
+        held = debt0 - debt_val + (max(start, debt_val) if start is not None else debt_val)
+        if held <= 0:
+            return {}
+        return {'rate': 4 * v / held, 'source_ids': [f['source_id']],
+                'basis': f"interest expense of the quarter ending {end} ({v:,.0f}) x 4 / "
+                         + (f"debt {held:,.0f} (the larger of {start:,.0f} at {when} and {debt_val:,.0f} at {debt_as_of})"
+                            if start is not None else f"debt {held:,.0f}")
+                         + f": {moved}, so the fiscal year's interest ({ie:,.0f}) was paid on another debt stack"}
     return {'rate': ie / avg, 'source_ids': [],
             'basis': f"fiscal-year interest expense {ie:,.0f} / that year's average debt {avg:,.0f}: {moved} and no quarter's interest "
                      'ends at that balance-sheet date'}
@@ -2580,7 +2602,7 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
         return float(o['value']) if o is not None and o['source_tier'] in COMPANY_TIERS else None
     ov.overridden = lambda s, lever: (s, lever) in econ
 
-    h['coupon'] = _coupon(fb, h, open_bal['debt'], val('debt'), (res.get('debt') or {}).get('as_of'))
+    h['coupon'] = _coupon(fb, h, open_bal['debt'], val('debt'), (res.get('debt') or {}).get('as_of'), (res.get('debt') or {}).get('method'))
     try:
         P, meta = _params(route, h, cal, cons, rf, ku, ku_t, ov_ke, open_bal['debt'], ov, warn, ev)
         for s in SCEN:
