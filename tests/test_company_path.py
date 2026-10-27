@@ -95,6 +95,18 @@ class CompanyPathTests(unittest.TestCase):
         self.assertIn('| שנה 1 (2027/10) | — |', t)
         self.assertIn('תרחיש דובי: לא הוזן מכפיל מנומק', t)
 
+    def test_upside_row_reads_the_yearly_tables_year_5(self):
+        """The owner's test is cheap with good upside (27.10.2026): each scenario's year-5 price against today's, the same
+        numbers as the table's last row; an absent scenario is left out, never defaulted; no row without the company table."""
+        t = hebrew_table(self.cf)
+        row = next(x for x in t.splitlines() if x.startswith('| פוטנציאל בעוד 5 שנים'))
+        q = self.cp['quote']
+        for s in ('base', 'bull'):
+            r = self.cp['scenarios'][s]['rows'][5]
+            self.assertIn(f"{C.LABEL_HE[s]} {r['price'] / q - 1:+.0%}", row)
+        self.assertNotIn('דובי', row)                                                  # bear absent in this fixture
+        self.assertNotIn('פוטנציאל בעוד 5 שנים', hebrew_table(self.plain))
+
     def test_peak_flag(self):
         f = next(x for x in self.cp['flags'] if x['id'] == 'peak_above_own_median')
         self.assertEqual((f['scenario'], f['own_median'], f['max_multiple'], f['years']), ('bull', 62., 70., [0, 1, 2, 3]))
@@ -198,6 +210,220 @@ class CompanyPathTests(unittest.TestCase):
         self.assertIsNone(cf['company_path'])
         self.assertEqual(hebrew_table(cf), hebrew_table(self.plain))
         self.assertEqual(cf['dc'], self.plain['dc'])
+
+
+
+# economics mode: the analyst gives the scenario's incremental ROIC; the engine computes the multiple path from its own
+# executed EPS path, cost of equity, terminal cost of equity and terminal growth (base and bear), next to a hand path (bull)
+ECON = {'metric': 'eps', 'multiple': 'forward_pe',
+        'scenarios': {'base': {'multiple_from': 'economics', 'roic': .30, 'justification': 'justified_high', 'source_tier': 'own_history',
+                               'reason_he': 'תשואה של כ־30% על ההון שהצמיחה דורשת, כמו בשלוש השנים האחרונות.', 'evidence_ids': EV},
+                      'bear': {'multiple_from': 'economics', 'roic': .12, 'justification': 'unproven', 'source_tier': 'analyst',
+                               'reason_he': 'התחרות מורידה את התשואה על ההון החדש.', 'evidence_ids': EV},
+                      'bull': deepcopy(CP['scenarios']['bull'])},
+        'own_history': deepcopy(CP['own_history'])}
+
+
+def analysts_path_calc(fy, as_of, ke, ket, gt, roic):
+    """The ticker analysts' formula as their scratchpad path_calc.py wrote it (index-based: the fiscal year in progress
+    annualized, one year apart after it), on the executed fiscal-year EPS: an independent cross-check of the engine."""
+    end0 = years(as_of, fy[0]['fiscal_year_end'])
+    n = len(fy)
+    e = [fy[0]['eps'] / fy[0]['years']] + [f['eps'] for f in fy[1:]]
+    e.append(e[-1] * (1 + gt))
+    g = lambda k: e[k] / e[k - 1] - 1
+    d = [e[k] * (1 - g(k + 1) / roic) for k in range(n)]
+    tv = e[n] * (1 - gt / roic) / (ket - gt)
+    out = []
+    for t in range(6):
+        v = 0.
+        for k in range(n):
+            end = end0 + k
+            if end <= t:
+                continue
+            rem = min(1., end - t)
+            v += d[k] * rem / (1 + ke) ** (end - t - rem / 2)
+        v += tv / (1 + ke) ** (end0 + n - 1 - t)
+        out.append(v / e[t + 1])
+    return out
+
+
+class EconomicsModeTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.plain = pipeline.run(deepcopy(ADBE))
+        cls.cf = pipeline.run(deepcopy(ADBE), {'company_path': deepcopy(ECON)})
+        cls.cp = cls.cf['company_path']
+        cls.val = cls.cf['val']
+        cls.case = {s['name']: s for s in cls.val['case']['scenarios']}
+
+    def test_the_engine_computes_the_path_at_its_own_executed_rates_and_eps(self):
+        self.assertEqual(self.cf['stages']['company_path'], 'ok')
+        for s in ('base', 'bear'):
+            x = self.cp['scenarios'][s]
+            e, c = x['economics'], self.case[s]
+            self.assertEqual((x['multiple_from'], e['status'], e['roic']), ('economics', 'computed', ECON['scenarios'][s]['roic']))
+            # the executed rates, read from the valuation case, never typed by the analyst
+            self.assertEqual(e['cost_of_equity'], c['cost_of_equity'])
+            self.assertEqual(e['terminal_cost_of_equity'], c['terminal']['cost_of_equity'])
+            self.assertEqual(e['terminal_growth'], c['terminal']['growth'])
+            self.assertEqual(e['terminal_cost_of_equity_source'], 'terminal.cost_of_equity')
+            self.assertEqual(e['engine_terminal_roic'], c['terminal']['roic'])
+            self.assertAlmostEqual(e['roic_minus_engine_terminal_roic'], e['roic'] - c['terminal']['roic'], places=12)
+            self.assertIn('D_k = E_k x (1 - g_(k+1) / ROIC)', e['formula'])
+            fy = self.cp['fiscal_years'][s]
+            self.assertEqual(e['explicit_fiscal_years'], len(fy))
+            self.assertEqual(e['last_explicit_fiscal_year_end'], fy[-1]['fiscal_year_end'])
+            self.assertEqual(x['multiple_path'], e['multiple_path'])
+            for t, r in enumerate(x['rows']):
+                self.assertEqual(r['multiple'], e['multiple_path'][t])
+                self.assertEqual(r['eps'], fy[t + 1]['eps'])                     # the executed EPS of the next fiscal year
+                self.assertAlmostEqual(r['price'], e['values'][t]['value'], delta=1e-9 * abs(r['price']))   # price = value_t
+                self.assertIn('מחושב מהכלכלה של התרחיש', r['reason_he'])
+            # the documented formula, leaf by leaf
+            ke, ket, gt, roic = e['cost_of_equity'], e['terminal_cost_of_equity'], e['terminal_growth'], e['roic']
+            ann = [f['eps'] / f['years'] if f['partial'] else f['eps'] for f in fy]
+            nxt = ann[1:] + [ann[-1] * (1 + gt)]
+            for k, f in enumerate(fy):
+                w = f['years'] if f['partial'] else 1.
+                self.assertAlmostEqual(e['fiscal_years'][k]['distribution'], f['eps'] - w * (nxt[k] - ann[k]) / roic, places=10)
+            tv = nxt[-1] * (1 - gt / roic) / (ket - gt)
+            self.assertAlmostEqual(e['terminal']['value_at_last_fiscal_year_end'], tv, places=9)
+            v0 = sum(e['fiscal_years'][k]['distribution'] / (1 + ke) ** (years(self.val['case']['as_of'], f['fiscal_year_end']) - f['years'] / 2)
+                     for k, f in enumerate(fy)) + tv / (1 + ke) ** years(self.val['case']['as_of'], fy[-1]['fiscal_year_end'])
+            self.assertAlmostEqual(e['values'][0]['value'], v0, places=9)
+            # the analysts' own formula (path_calc.py) gives the same multiples within day-count rounding
+            ref = analysts_path_calc(fy, self.val['case']['as_of'], ke, ket, gt, roic)
+            for m, r in zip(e['multiple_path'], ref):
+                self.assertAlmostEqual(m / r, 1, delta=1e-3)
+        # the hand path next to it is kept as given, without an economics record
+        bull = self.cp['scenarios']['bull']
+        self.assertEqual(bull['multiple_path'], CP['scenarios']['bull']['multiple_path'])
+        self.assertNotIn('economics', bull)
+        self.assertNotIn('multiple_from', bull)
+
+    def test_the_path_follows_the_executed_rates(self):
+        """A path the engine computes cannot go stale: another executed Ke moves it (the CRDO/NVDA repair findings)."""
+        val = deepcopy(self.val)
+        for c in val['case']['scenarios']:
+            c['cost_of_equity'] += .01
+            c['terminal']['cost_of_equity'] += .01
+        moved = C.build(deepcopy(ECON), val, KNOWN)['scenarios']['base']
+        self.assertAlmostEqual(moved['economics']['cost_of_equity'], self.case['base']['cost_of_equity'] + .01, places=12)
+        before = self.cp['scenarios']['base']['multiple_path']
+        self.assertTrue(all(a < b for a, b in zip(moved['multiple_path'], before)))
+        # a higher ROIC needs less reinvestment for the same EPS path: a higher multiple
+        hi = deepcopy(ECON)
+        hi['scenarios']['base']['roic'] = .60
+        up = C.build(hi, self.val, KNOWN)['scenarios']['base']['multiple_path']
+        self.assertTrue(all(a > b for a, b in zip(up, before)))
+
+    def test_a_roic_above_100pct_is_flagged_for_the_reviewer(self):
+        """Between 1 and the bound a ROIC reads as 100-150%: it runs, and the flag and the economics record say how it was
+        read (a percent typed as a number would be 100 times lower)."""
+        self.assertEqual([f for f in self.cp['flags'] if f['id'] == 'roic_above_100pct'], [])     # 0.30 and 0.12: no flag
+        self.assertNotIn('roic_check', self.cp['scenarios']['base']['economics'])
+        hi = deepcopy(ECON)
+        hi['scenarios']['base']['roic'] = 1.2
+        out = C.build(hi, self.val, KNOWN)
+        f = [x for x in out['flags'] if x['id'] == 'roic_above_100pct']
+        self.assertEqual([(x['scenario'], x['severity'], x['roic']) for x in f], [('base', 'medium', 1.2)])
+        e = out['scenarios']['base']['economics']
+        self.assertIn('120%', e['roic_check'])
+        self.assertIn('0.0120', e['roic_check'])
+        self.assertEqual(e['status'], 'computed')
+        top = deepcopy(ECON)
+        top['scenarios']['base']['roic'] = 1.5
+        self.assertEqual(C.build(top, self.val, KNOWN)['scenarios']['base']['economics']['roic'], 1.5)
+
+    def test_a_year_without_a_positive_value_has_no_price(self):
+        val = deepcopy(self.val)
+        bear = next(s for s in val['result']['scenarios'] if s['name'] == 'bear')
+        for p in bear['forecast']:
+            if p['end'] > '2028-11-30':
+                p['ebit'] = -5 * abs(p['ebit'])
+        rows = C.build(deepcopy(ECON), val, KNOWN)['scenarios']['bear']['rows']
+        self.assertEqual((rows[0]['why'], rows[0]['price'], rows[0]['multiple']), ('nonpositive_value', None, None))
+        self.assertIn('השווי לפי הכלכלה של התרחיש אינו חיובי', rows[0]['reason_he'])
+        self.assertEqual(rows[2]['why'], 'nonpositive_eps')                      # fiscal 2029: a loss
+        lines, _ = C.table_he(C.build(deepcopy(ECON), val, KNOWN), lambda x: f'{x:,.0f}$')
+        self.assertIn('אין מחיר: רווח למניה אפסי או שלילי', lines[1])
+
+    def test_economics_record_without_eps_or_with_terminal_ke_at_growth(self):
+        fy = [{'fiscal_year_end': '2027-06-30', 'years': .5, 'partial': True, 'eps': 1.},
+              {'fiscal_year_end': '2028-06-30', 'years': 1., 'partial': False, 'eps': None}]
+        self.assertEqual(C.economics(fy, '2026-12-31', .1, .09, .04, .3)['status'], 'not_computed')
+        fy[1]['eps'] = 2.
+        r = C.economics(fy, '2026-12-31', .1, .04, .04, .3)
+        self.assertEqual((r['status'], r['multiple_path']), ('not_computed', [None] * 6))
+        self.assertIn('terminal cost of equity', r['reason'])
+
+    def test_peak_label_is_checked_on_computed_multiples(self):
+        cp = deepcopy(ECON)
+        cp['scenarios']['base']['justification'] = 'peak'
+        cp['own_history']['median'] = 5.
+        cp['own_history']['low'] = 4.
+        out = C.build(cp, self.val, KNOWN)
+        f = next(x for x in out['flags'] if x['id'] == 'peak_above_own_median' and x['scenario'] == 'base')
+        self.assertAlmostEqual(f['max_multiple'], max(m for m in out['scenarios']['base']['multiple_path'] if m), places=12)
+
+    def test_validation_of_economics_mode(self):
+        def bad(change, msg):
+            cp = deepcopy(ECON)
+            change(cp)
+            with self.assertRaisesRegex(ValueError, msg):
+                C.validate(cp, KNOWN)
+        bad(lambda c: c['scenarios']['base'].update(multiple_path=[30, 28, 26, 24, 22, 20]), 'do not give one')
+        bad(lambda c: c['scenarios']['base'].pop('roic'), 'needs roic')
+        bad(lambda c: c['scenarios']['base'].update(roic=30), 'needs roic')                 # a percent typed as a number
+        bad(lambda c: c['scenarios']['base'].update(roic=4.5), r'4\.5% is 0\.045')        # 4.5 meant as 4.5%: not run as 450%
+        bad(lambda c: c['scenarios']['base'].update(roic=1.51), 'roic <= 1.5')
+        bad(lambda c: c['scenarios']['base'].update(roic=0), 'needs roic')
+        bad(lambda c: c['scenarios']['base'].update(roic=True), 'needs roic')
+        bad(lambda c: c['scenarios']['base'].update(multiple_from='market'), "multiple_from must be")
+        bad(lambda c: c['scenarios']['bull'].update(roic=.3), 'roic belongs to')
+        bad(lambda c: c['scenarios']['base'].pop('evidence_ids'), 'evidence_ids required')
+        bad(lambda c: c['scenarios']['base'].pop('source_tier'), 'source_tier required')
+        bad(lambda c: c['scenarios']['base'].update(justification='cheap'), 'justification must be')
+        hand = deepcopy(CP)
+        hand['scenarios']['base']['multiple_from'] = 'hand'                                  # explicit hand mode: same output
+        self.assertEqual(C.validate(hand, KNOWN), C.validate(deepcopy(CP), KNOWN))
+        self.assertNotIn('multiple_from', C.validate(deepcopy(CP), KNOWN)['scenarios']['base'])
+        # a ROIC at or below the executed terminal growth would make the terminal payout negative: refused at build
+        low = deepcopy(ECON)
+        low['scenarios']['base']['roic'] = .04
+        with self.assertRaisesRegex(ValueError, 'must exceed the executed terminal growth'):
+            C.build(low, self.val, KNOWN)
+        cf = pipeline.run(deepcopy(ADBE), {'company_path': low})
+        self.assertEqual(cf['stages']['company_path'], 'failed')
+
+    def test_table_names_the_computed_multiples(self):
+        t = hebrew_table(self.cf)
+        self.assertIn('בסיסי — מחושב מהתשואה על ההון (ההיסטוריה של החברה)', t)
+        self.assertIn('שורי — מתחרים ישירים (CRDO, MRVL)', t)
+        base1 = self.cp['scenarios']['base']['rows'][1]['price']
+        self.assertIn(f'{base1:,.0f}$ (', t)
+
+    def test_ticker_run_reports_the_economics(self):
+        from fundamental_engine.ticker_run import _compact_path, coherence_md
+        out = _compact_path(self.cf)
+        self.assertEqual(set(out['economics']), {'base', 'bear'})
+        self.assertEqual(out['economics']['base']['cost_of_equity'], self.case['base']['cost_of_equity'])
+        self.assertEqual([r['multiple'] for r in out['base']], self.cp['scenarios']['base']['multiple_path'])
+        md = coherence_md({'company_path': ECON})
+        self.assertIn('computed by the engine from its own EPS path and rates at roic 0.3', md)
+        self.assertIn(str(CP['scenarios']['bull']['multiple_path']), md)
+
+    def test_invariance_of_every_existing_value(self):
+        for k in set(self.plain) | set(self.cf):
+            if k in ('company_path', 'stages', 'casefile_sha256', 'inputs_sha256', 'scenario_reasons'):
+                continue
+            self.assertEqual(json.dumps(self.plain.get(k), sort_keys=True, default=str),
+                             json.dumps(self.cf.get(k), sort_keys=True, default=str), k)
+        a, b = deepcopy(self.plain['scenario_reasons']), deepcopy(self.cf['scenario_reasons'])
+        for sc in a['scenarios'] + b['scenarios']:
+            sc.pop('price_rows')
+        self.assertEqual(json.dumps(a, sort_keys=True), json.dumps(b, sort_keys=True))
 
 
 if __name__ == '__main__':

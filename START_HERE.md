@@ -31,7 +31,11 @@ same connectors (SEC, Interactive Brokers, Alpha Vantage, FMP, LunarCrush, …).
 - **Latest state (read these to catch up):** `docs/CHANGELOG.md` Unreleased (27.10.2026 valuation-bridge fixes from the GOOGL
   fast run: investments at face and outside the leverage, the tax on their unrealized gains netted, the coupon after a debt move,
   terminal ROIC / growth overrides through their levers; walk-forward A/B median value/price 0.672 -> 0.684; LIMITATIONS #46;
-  25.10.2026 fast ticker procedure, the
+  27.10.2026 GOOGL run fixes: bounded vendor
+  debt scope in dataqa, pack `forecast_options.debt_like_claims`; 26.10.2026 engine causes of the repair passes: economics-mode
+  company_path, draft tables with numbers, quarterly-guide current year, acquired step, stub draws, dataqa resolutions; measured
+  fast-ticker times: NVDA 36, CRDO 30, APH ~30 minutes, GOOGL 60 minutes with an added adversarial verify layer) and (25.10.2026
+  fast ticker procedure, the
   default on a ticker: `scripts/ticker_prefetch.py` in seconds, four parallel sonnet gather lanes, three parallel analyst
   parts with the trace reviewer, `ticker-value`, two reviewers, `ticker-status`; each agent follows `python -m
   fundamental_engine ticker-stage <stage>`; a design estimate of 25-35 minutes for a new ticker, not yet measured; see

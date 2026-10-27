@@ -307,6 +307,8 @@ def inputs_digest(val, inputs=None):
     mc = market_bound(inputs)
     if mc:
         d['market_context'] = mc
+    if inputs.get('dataqa_resolutions') is not None:      # an analyst resolution of a data conflict is signed with the rest
+        d['dataqa_resolutions'] = inputs['dataqa_resolutions']
     return digest(d)
 
 

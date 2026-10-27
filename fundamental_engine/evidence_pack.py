@@ -26,10 +26,21 @@ The pack (pack_version 1; unknown keys are rejected at every level):
           drivers.current_year_revenue {source_tier guidance, evidence_ids, reason, adjust_by_track_record, remainder}: the
           fiscal year in progress (forecast inputs.current_year_revenue)
   scenario_events {bear|base|bull: [{event_he, evidence_ids | hypothesis: true}]}  (all three scenarios)
-  company_path   inputs.company_path (contract: next-fiscal-year EPS x forward P/E per scenario, today and years 1-5)
+  company_path   inputs.company_path (contract: next-fiscal-year EPS x forward P/E per scenario, today and years 1-5): per
+                 scenario either {multiple_from: 'economics', roic} (preferred: the analyst evidences the incremental ROIC and
+                 the engine computes the multiple path from its own executed EPS path, cost of equity, terminal cost of
+                 equity and terminal growth) or a hand multiple_path [today, y1..y5]; justification, reason_he, source_tier,
+                 evidence_ids either way
   key_risk {reading_he, evidence_ids}; falsifiers [{id, scenario, metric, threshold, direction below|above, by,
   evidence_ids}]; assessments {model_card dimension: {assessment, evidence_ids, note}}; market {risk_free,
-  equity_risk_premium: {value, as_of, source_id}}; forecast_options {horizon_years, financing, cyclical}; analyst; notes
+  equity_risk_premium: {value, as_of, source_id}}; forecast_options {horizon_years, financing, cyclical, acquired_revenue
+  {value, acquisition, closed, reason, evidence_ids}: bought revenue in the step into the fiscal year in progress, kept out of
+  the stub's growth reinvestment, debt_like_claims [{kind, amount, reason, evidence_ids}]: claims ahead of the shares that the
+  debt lines miss (forecast.DEBT_LIKE_KINDS, e.g. a preferred stock at its liquidation preference), added to opening debt,
+  citing the company's own documents}; analyst; notes
+  dataqa_resolutions [{field, metric, period_end, resolution label_difference|use_source, source_id, reason, evidence_ids}]: a
+  cross-source disagreement dataqa blocks on, resolved with FILING evidence (a pack source of kind sec_filing, or an item citing
+  one); source_id is the FactBook source the resolution names (an engine source such as av:balance, or a pack source)
 
 Rules enforced: every evidence id resolves to a pack source or item; consensus is never evidence of a fact (facts, KPIs,
 segments, customers and the guidance record may not cite a consensus source) and counts only for tier consensus;
@@ -67,11 +78,12 @@ POTENTIAL = ('market_direction', 'bottleneck_potential', 'share_trajectory', 'co
 TRACK_LEVERS = ('growth_anchor', 'growth')
 GROWTH_LEVERS = ('growth_anchor', 'growth')          # their first value is the growth of the fiscal year AFTER the one in progress
 CURRENT_YEAR = 'current_year_revenue'                 # the fiscal year in progress (forecast inputs.current_year_revenue)
-FORECAST_OPTIONS = ('horizon_years', 'financing', 'cyclical')
+FORECAST_OPTIONS = ('horizon_years', 'financing', 'cyclical', 'acquired_revenue', 'debt_like_claims')
 
 TOP = {'pack_version', 'ticker', 'as_of', 'identity', 'sources', 'facts', 'guidance', 'guidance_track', 'consensus',
        'kpis', 'segments', 'customers', 'competitors', 'bottlenecks', 'potential', 'drivers', 'scenario_events',
-       'company_path', 'key_risk', 'falsifiers', 'assessments', 'market', 'forecast_options', 'analyst', 'notes'}
+       'company_path', 'key_risk', 'falsifiers', 'assessments', 'market', 'forecast_options', 'analyst', 'notes',
+       'dataqa_resolutions'}
 REQUIRED = ('ticker', 'as_of', 'identity', 'sources', 'potential', 'scenario_events', 'company_path')
 KEYS = {
     'identity': ({'name', 'currency', 'exchange', 'security', 'fiscal_year_end', 'cik', 'type', 'evidence_ids'},
@@ -101,13 +113,19 @@ KEYS = {
                   ('id', 'scenario', 'metric', 'threshold', 'direction', 'by', 'evidence_ids')),
     'rate': ({'value', 'as_of', 'source_id'}, ('value', 'as_of', 'source_id')),
     'company_path': ({'metric', 'multiple', 'scenarios', 'own_history', 'peers'}, ('metric', 'multiple', 'scenarios')),
-    'path_scenario': ({'multiple_path', 'justification', 'reason_he', 'source_tier', 'competitors', 'evidence_ids'},
-                      ('multiple_path', 'justification', 'reason_he', 'source_tier', 'evidence_ids')),
+    'path_scenario': ({'multiple_path', 'multiple_from', 'roic', 'justification', 'reason_he', 'source_tier', 'competitors',
+                       'evidence_ids'}, ('justification', 'reason_he', 'source_tier', 'evidence_ids')),
     'own_history': ({'low', 'median', 'high', 'years', 'evidence_ids'}, ('low', 'median', 'high', 'years', 'evidence_ids')),
     'peer': ({'ticker', 'forward_pe', 'growth', 'evidence_ids'}, ('ticker', 'forward_pe', 'growth', 'evidence_ids')),
+    'dataqa_resolution': ({'field', 'metric', 'period_end', 'resolution', 'source_id', 'reason', 'evidence_ids'},
+                          ('field', 'metric', 'resolution', 'source_id', 'reason', 'evidence_ids')),
+    'acquired_revenue': ({'value', 'acquisition', 'closed', 'reason', 'evidence_ids'},
+                         ('value', 'acquisition', 'closed', 'reason', 'evidence_ids')),
+    'debt_like_claim': ({'kind', 'amount', 'reason', 'evidence_ids'}, ('kind', 'amount', 'reason', 'evidence_ids')),
 }
 JUSTIFICATIONS = ('justified_high', 'peak', 'unproven')
 PATH_YEARS = 5
+PATH_ROIC_MAX = 1.5                 # company_path.ROIC_MAX: a decimal (0.35 = 35%); a typed percent above 1.5 is refused
 
 
 def _num(v):
@@ -686,13 +704,30 @@ def _company_path(p):
         x, where = sc[s], f'company_path.{s}'
         if not c.obj(x, 'path_scenario', where):
             continue
-        m = x['multiple_path']
-        if not isinstance(m, list) or len(m) != PATH_YEARS + 1 or not all(_num(v) and v > 0 for v in m):
-            c.err(where, f'multiple_path needs {PATH_YEARS + 1} positive numbers (today and years 1-{PATH_YEARS})')
+        mode = x.get('multiple_from', 'hand')
+        m = x.get('multiple_path')
+        if mode == 'economics':
+            # the engine computes the path from its own executed EPS path, Ke, terminal Ke and terminal growth (company_path)
+            if m is not None:
+                c.err(where, "multiple_from 'economics' computes multiple_path: remove multiple_path")
+            if not (_num(x.get('roic')) and 0 < x['roic'] <= PATH_ROIC_MAX):
+                c.err(where, f"multiple_from 'economics' needs roic: the scenario's incremental ROIC as a decimal "
+                             f"(0 < roic <= {PATH_ROIC_MAX:g}; 0.35 = 35%, so 4.5% is 0.045, never 4.5), backed by its "
+                             'evidence_ids and source_tier')
+        elif mode != 'hand':
+            c.err(where, "multiple_from must be 'economics' (preferred: the engine computes the path) or 'hand'")
+        else:
+            if x.get('roic') is not None:
+                c.err(where, "roic belongs to multiple_from 'economics' only")
+            if not isinstance(m, list) or len(m) != PATH_YEARS + 1 or not all(_num(v) and v > 0 for v in m):
+                c.err(where, f'multiple_path needs {PATH_YEARS + 1} positive numbers (today and years 1-{PATH_YEARS}), '
+                             "or multiple_from 'economics' with roic")
         if x['justification'] not in JUSTIFICATIONS:
             c.err(where, f'justification must be one of {", ".join(JUSTIFICATIONS)}')
         p.tier(x['source_tier'], x['evidence_ids'], x.get('competitors'), where)
-        row = {k: deepcopy(x[k]) for k in ('multiple_path', 'justification', 'reason_he', 'source_tier')}
+        row = ({'multiple_from': 'economics', 'roic': x.get('roic')} if mode == 'economics'
+               else {'multiple_path': deepcopy(m)})
+        row.update({k: deepcopy(x[k]) for k in ('justification', 'reason_he', 'source_tier')})
         row['evidence_ids'] = p.ids(x['evidence_ids'], where)
         if x.get('competitors'):
             row['competitors'] = [str(t).upper() for t in x['competitors']]
@@ -772,6 +807,89 @@ def _forecast_options(p, opts):
         else:
             out['cyclical'] = {'treatment': cy['treatment'], 'reason': cy['reason'],
                                'evidence_ids': p.ids(cy.get('evidence_ids'), 'forecast_options.cyclical')}
+    if 'acquired_revenue' in opts:
+        a, where = opts['acquired_revenue'], 'forecast_options.acquired_revenue'
+        fy = p.fiscal_year(0)
+        if c.obj(a, 'acquired_revenue', where):
+            closed = _day(a['closed'])
+            if not (_num(a['value']) and a['value'] > 0):
+                c.err(where, 'value: the bought revenue in the step into the fiscal year in progress (a positive number)')
+            elif not closed or (p.as_of and closed > p.as_of):
+                c.err(where, 'closed: the closing date (YYYY-MM-DD, on or before as_of)')
+            elif not all(isinstance(a[k], str) and a[k].strip() for k in ('acquisition', 'reason')):
+                c.err(where, 'name the acquisition and give a written reason')
+            elif fy is None:
+                c.err(where, 'needs identity.fiscal_year_end')
+            elif not isinstance(a['evidence_ids'], list):
+                c.err(where, 'evidence_ids: a non-empty list of source or item ids')
+            elif not p.kinds(a['evidence_ids']) & ISSUER_KINDS:
+                c.err(where, 'cite the company\'s own documents (the acquisition note, the release or the call)')
+            else:
+                out['acquired_revenue'] = {'value': a['value'], 'fiscal_year_end': fy[1].isoformat(), 'acquisition': a['acquisition'],
+                                           'closed': a['closed'], 'reason': a['reason'], 'evidence_ids': p.ids(a['evidence_ids'], where)}
+    if 'debt_like_claims' in opts:
+        # GOOGL 2026-06: the 6.25% mandatory convertible preferred ($19.25B liquidation preference) had no route into the
+        # capital structure from the pack; forecast.build already takes inputs.debt_like_claims
+        from .forecast import DEBT_LIKE_KINDS
+        rows, keep = opts['debt_like_claims'], []
+        if not isinstance(rows, list) or not rows:
+            c.err('forecast_options.debt_like_claims', 'a non-empty list of {kind, amount, reason, evidence_ids}')
+            rows = []
+        for i, d in enumerate(rows):
+            where = f'forecast_options.debt_like_claims[{i}]'
+            if not c.obj(d, 'debt_like_claim', where):
+                continue
+            if d['kind'] not in DEBT_LIKE_KINDS:
+                c.err(where, f'kind one of {", ".join(DEBT_LIKE_KINDS)}')
+            elif not (_num(d['amount']) and d['amount'] > 0):
+                c.err(where, 'amount: the claim ahead of the shares (a positive number, in the reporting currency)')
+            elif not isinstance(d['reason'], str) or not d['reason'].strip():
+                c.err(where, 'a written reason')
+            elif not isinstance(d['evidence_ids'], list):
+                c.err(where, 'evidence_ids: a non-empty list of source or item ids')
+            elif not p.kinds(d['evidence_ids']) & ISSUER_KINDS:
+                c.err(where, "cite the company's own documents (the filing note that sets the claim's terms)")
+            else:
+                keep.append({'kind': d['kind'], 'amount': d['amount'], 'reason': d['reason'],
+                             'evidence_ids': p.ids(d['evidence_ids'], where)})
+        if keep and len(keep) == len(rows):
+            out['debt_like_claims'] = keep
+    return out
+
+
+def _dataqa_resolutions(p):
+    """dataqa_resolutions -> pipeline inputs.dataqa_resolutions (dataqa.RESOLUTIONS): shape, a dated period, and FILING evidence
+    (a pack source of kind sec_filing, or an item citing one); source_id passes through as the FactBook id (a pack source becomes
+    web:<id>). dataqa checks the rest against the FactBook and records what it applied, ignored or rejected."""
+    from .dataqa import RESOLUTIONS, RESOLUTION_METRICS
+    c, out = p.c, []
+    for i, r in enumerate(c.lst(p.raw, 'dataqa_resolutions')):
+        where = f'dataqa_resolutions[{i}]'
+        if not c.obj(r, 'dataqa_resolution', where):
+            continue
+        ok = True
+        if r['resolution'] not in RESOLUTIONS:
+            c.err(where, f"resolution one of {', '.join(RESOLUTIONS)}")
+            ok = False
+        if r['field'] not in RESOLUTION_METRICS or r['metric'] not in RESOLUTION_METRICS.get(r['field'], ()):
+            c.err(where, 'field one of ' + ', '.join(RESOLUTION_METRICS) + ' and a metric of that field '
+                  + (f"({', '.join(RESOLUTION_METRICS[r['field']])})" if r['field'] in RESOLUTION_METRICS else ''))
+            ok = False
+        when = _day(r.get('period_end')) if r.get('period_end') is not None else None
+        if (r.get('period_end') is not None or r['resolution'] == 'use_source') and (not when or (p.as_of and when > p.as_of)):
+            c.err(where, 'period_end: the date of the disagreeing period (YYYY-MM-DD, on or before as_of; required for use_source)')
+            ok = False
+        if not isinstance(r['source_id'], str) or not isinstance(r['reason'], str) or not r['reason'].strip():
+            c.err(where, 'source_id (the FactBook source named) and a written reason')
+            ok = False
+        if 'sec_filing' not in p.kinds(r['evidence_ids']):
+            c.err(where, 'filing evidence required: cite the filing (a pack source of kind sec_filing, or an item citing one)')
+            ok = False
+        ev = p.ids(r['evidence_ids'], where)
+        if ok:
+            out.append({**{k: r[k] for k in ('field', 'metric', 'resolution', 'reason') if k in r},
+                        **({'period_end': r['period_end']} if r.get('period_end') is not None else {}),
+                        'source_id': 'web:' + r['source_id'] if r['source_id'] in p.sources else r['source_id'], 'evidence_ids': ev})
     return out
 
 
@@ -821,6 +939,9 @@ def to_inputs(pack):
     cp = _company_path(p)
     if cp:
         inputs['company_path'] = cp
+    dq = _dataqa_resolutions(p)
+    if dq:
+        inputs['dataqa_resolutions'] = dq
     sheet = {'scenario_events': _events(p)}
     kr = p.raw.get('key_risk')
     if kr is not None and c.obj(kr, 'key_risk', 'key_risk'):
@@ -959,7 +1080,7 @@ def to_bundle(pack):
 LIST_KEYS = ('sources', 'facts', 'guidance', 'guidance_track', 'consensus', 'kpis', 'segments', 'customers', 'competitors',
              'bottlenecks', 'notes')
 POSITION_KEYS = ('potential', 'scenario_events', 'drivers', 'company_path', 'key_risk', 'falsifiers', 'assessments',
-                 'forecast_options', 'analyst')
+                 'forecast_options', 'analyst', 'dataqa_resolutions')
 
 
 def _remap(x, ids):

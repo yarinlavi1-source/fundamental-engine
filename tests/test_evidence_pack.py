@@ -43,6 +43,23 @@ class ConversionTests(unittest.TestCase):
         self.assertIn('web:s_fred', fb['sources'])
         self.assertEqual({g['period'] for g in fb['guidance']}, {'Q4 2026', 'FY2026'})
 
+    def test_debt_like_claims_pass_through_to_the_forecast(self):
+        """GOOGL 2026-06: a mandatory convertible preferred had no route from the pack into the capital structure."""
+        p = pack()
+        row = {'kind': 'preferred_or_minority', 'amount': 19.25e9, 'reason': '6.25% mandatory convertible preferred, liquidation preference',
+               'evidence_ids': ['s_10q']}
+        p['forecast_options'] = {'debt_like_claims': [row]}
+        got = to_inputs(p)['forecast']['debt_like_claims']
+        self.assertEqual([(g['kind'], g['amount'], g['evidence_ids']) for g in got], [('preferred_or_minority', 19.25e9, ['web:s_10q'])])
+        for bad, frag in (({'kind': 'warrants'}, 'kind one of'), ({'amount': -1}, 'amount'), ({'evidence_ids': ['s_est']}, "company's own"),
+                          ({'extra': 1}, 'unknown keys'), ({'evidence_ids': 5}, 'non-empty list')):
+            q = pack()
+            q['forecast_options'] = {'debt_like_claims': [{**row, **bad}]}
+            refused(self, q, frag)
+        q = pack()
+        q['forecast_options'] = {'debt_like_claims': []}
+        refused(self, q, 'non-empty list')
+
     def test_overrides_carry_the_source_tier_contract(self):
         ov = to_inputs(pack())['forecast']['overrides']
         self.assertEqual({o['source_tier'] for o in ov}, {'consensus', 'own_history'})
@@ -60,6 +77,45 @@ class ConversionTests(unittest.TestCase):
         self.assertEqual(set(ev), {'bear', 'base', 'bull'})
         self.assertTrue(all(set(r) == {'event_he', 'evidence_ids'} for rows in ev.values() for r in rows))
         self.assertEqual(ev['bear'][1]['evidence_ids'], [])          # the labelled hypothesis keeps no evidence
+
+    def test_company_path_economics_mode(self):
+        # the analyst gives the ROIC (with evidence and tier); the engine computes the multiple path (company_path.economics)
+        p = pack()
+        base = p['company_path']['scenarios']['base']
+        hand = base.pop('multiple_path')
+        base.update(multiple_from='economics', roic=.28)
+        cp = to_inputs(p)['company_path']
+        self.assertEqual(cp['scenarios']['base']['multiple_from'], 'economics')
+        self.assertEqual(cp['scenarios']['base']['roic'], .28)
+        self.assertNotIn('multiple_path', cp['scenarios']['base'])
+        self.assertEqual(cp['scenarios']['base']['evidence_ids'], to_inputs(pack())['company_path']['scenarios']['base']['evidence_ids'])
+        self.assertEqual(len(cp['scenarios']['bull']['multiple_path']), 6)               # a hand path next to it stays
+        self.assertNotIn('multiple_from', to_inputs(pack())['company_path']['scenarios']['base'])   # hand packs: unchanged
+        q = copy.deepcopy(p)
+        q['company_path']['scenarios']['base']['multiple_path'] = hand
+        refused(self, q, 'remove multiple_path')
+        q = copy.deepcopy(p)
+        q['company_path']['scenarios']['base'].pop('roic')
+        refused(self, q, "needs roic")
+        q = copy.deepcopy(p)
+        q['company_path']['scenarios']['base']['roic'] = 28                                # a percent, not a decimal
+        refused(self, q, "needs roic")
+        for typed in (4.5, 1.6):                          # a small percent typed as a number (4.5 meant as 4.5%): refused too
+            q = copy.deepcopy(p)
+            q['company_path']['scenarios']['base']['roic'] = typed
+            refused(self, q, "4.5% is 0.045")
+        q = copy.deepcopy(p)
+        q['company_path']['scenarios']['base']['roic'] = 1.5                                # the bound itself is a decimal
+        self.assertEqual(to_inputs(q)['company_path']['scenarios']['base']['roic'], 1.5)
+        q = copy.deepcopy(p)
+        q['company_path']['scenarios']['base']['multiple_from'] = 'peers'
+        refused(self, q, "multiple_from must be")
+        q = pack()
+        q['company_path']['scenarios']['base']['roic'] = .3
+        refused(self, q, 'roic belongs to')
+        q = pack()
+        q['company_path']['scenarios']['base'].pop('multiple_path')
+        refused(self, q, "multiple_path needs 6")
 
     def test_track_record_ratio_recorded_and_applied_only_where_the_pack_says(self):
         meta = to_inputs(pack())['evidence_pack']

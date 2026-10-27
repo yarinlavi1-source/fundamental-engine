@@ -79,10 +79,10 @@ class RequiredReturnTests(unittest.TestCase):
         self.assertIn(f'השווי ההוגן (בשיעור ההיוון של החברה, כ־10.0%', text)
         self.assertIn(f'הוא כ־{_ps(base)} USD', text)
         self.assertIn(f'הנחה של כ־{1 - 35 / base:.0%}', text)                    # discount against the fair value
-        self.assertIn(f'מחיר קנייה מרבי לתשואה שלך (כ־10.5%): כ־{_ps(pfh)}', text)     # compact form: this paragraph is long
-        self.assertLess(text.index('השווי ההוגן'), text.index('מחיר קנייה מרבי'))
+        self.assertIn(f'מחיר כניסה עם מרווח ביטחון (כ־10.5%): כ־{_ps(pfh)}', text)     # compact form: this paragraph is long
+        self.assertLess(text.index('השווי ההוגן'), text.index('מחיר כניסה עם מרווח ביטחון'))
         from fundamental_engine.render import _value_he
-        self.assertIn(f'; מחיר הקנייה המרבי לתשואה הנדרשת שלך (כ־10.5% בשנה) הוא כ־{_ps(pfh)}, והמחיר נמוך ממנו בכ־{1 - 35 / pfh:.0%}.',
+        self.assertIn(f'; מחיר הכניסה עם מרווח ביטחון (תשואה של כ־10.5% בשנה) הוא כ־{_ps(pfh)}, והמחיר נמוך ממנו בכ־{1 - 35 / pfh:.0%}.',
                       _value_he(d, 'USD'))
         md = markdown(casefile(p, d))
         self.assertIn("Fair value: base value at the company's own cost of equity", md)
@@ -802,7 +802,7 @@ class ReportTextTests(unittest.TestCase):
         bad = deepcopy(d)
         bad['expected_return'].update(value_at_required_return=None, price_for_hurdle={'value': None, 'status': 'invalid', 'reason': 'test'})
         text = hebrew_paragraph(casefile(p, bad))
-        self.assertIn('מחיר הקנייה המרבי לתשואה הנדרשת שלך', text)
+        self.assertIn('מחיר הכניסה עם מרווח ביטחון', text)
         self.assertIn('לא ניתן לחישוב', text)
         self.assertIn('השווי ההוגן (בשיעור ההיוון של החברה', text)
 

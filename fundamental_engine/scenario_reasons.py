@@ -29,8 +29,10 @@ yearly table:
 Nothing is revalued and no value changes: values are copied from the executed valuation, drivers are read from the
 executed forecast rows (val.result.scenarios[].forecast) and the forecast paths (fc.paths, fc.anchors, fc.funding,
 fc.cost_of_equity); the only arithmetic is per-share division, ratios and sums of executed flows. A valuation the owner's
-table does not show (render.value_display: a non-price verdict, demo inputs, an unreleased forensic or governance flag, a
-rejected assumption, a 'hold' material issue) gets no values here either: the reasons say why there is no value.
+table does not show (render.value_display: a non-price verdict, blocked data, a failed valuation, demo inputs, a governance
+flag, a rejected assumption, a 'hold' material issue) gets no values here either: the reasons say why there is no value. A
+price claim withheld only for review reasons (an unreleased forensic flag, an open material issue, an unreviewed draft)
+keeps its values under the same banner as the table ('טיוטה — לא אומתה' and the reasons: draft_reason_he).
 These reasons explain the model's conditional values; they are not forecasts, probabilities or price targets. The
 earnings per share here is the model's estimate, not reported or GAAP earnings.
 """
@@ -393,7 +395,8 @@ def _drivers(cf, s, years, raw, gaps, opening_shares, five_date):
     if isinstance(f, dict) and f.get('status'):
         d['funding'] = {'status': f.get('status'), 'equity_raised': f.get('equity_raised'), 'debt_assumed': f.get('debt_assumed'),
                         'new_financing_shares': f.get('new_financing_shares'), 'sbc_settlement_shares': f.get('sbc_settlement_shares'),
-                        'first_gap': f.get('first_gap'), 'source': 'fc.funding'}
+                        'first_gap': f.get('first_gap'), 'source': 'fc.funding',
+                        **({'stub_draw_immaterial': True} if f.get('stub_draw_immaterial') else {})}
     elif years:
         new = sum(p.get('new_financing_shares') or 0 for p in years if _n(p.get('new_financing_shares')))
         gap = next((p.get('end') for p in years if _n(p.get('funding_gap')) and p['funding_gap'] > 1e-6), None)
@@ -521,6 +524,8 @@ def _funding_he(d, cur, opening_shares, method):
            else '')
     if st == 'unfunded':
         return 'אבל חסר מימון והמודל אינו מניח מימון שלא הובטח, ולכן לתרחיש הזה אין שווי'
+    if st == 'assumed_external_financing' and f.get('stub_draw_immaterial'):
+        return 'בלי מימון חיצוני מהותי (משיכת חוב קטנה עד סוף השנה הנוכחית, מכוסה בתזרים החופשי שהחברה דיווחה מאז המאזן האחרון)'
     if st == 'assumed_external_financing':
         parts = []
         if _n(f.get('equity_raised')) and f['equity_raised'] > 0:
@@ -583,7 +588,7 @@ def _condition(d, events, cur, opening_shares, method, has_value):
     if f:
         body = (body + '; ' if body else '') + f
     st = (d.get('funding') or {}).get('status')
-    if method == 'operating' and st == 'assumed_external_financing':
+    if method == 'operating' and st == 'assumed_external_financing' and not (d.get('funding') or {}).get('stub_draw_immaterial'):
         short += ('; ' if short else '') + 'ובמימון חיצוני שעוד לא הובטח'
     elif (method == 'operating' and st == 'unfunded') or (method == 'residual_income' and (d.get('funding') or {}).get('first_capital_shortfall')):
         short += ('; ' if short else '') + ('אבל חסר מימון' if method == 'operating' else 'אבל חסר הון רגולטורי')
@@ -939,6 +944,7 @@ def build(casefile):
             'company': {'ticker': company.get('ticker'), 'name': company.get('name')},
             'as_of': cf.get('as_of') or dc.get('as_of'), 'currency': cur, 'method': method,
             'values_shown': shown, 'yearly_table': bool(shown and rows), 'draft': bool(v.get('price_claim_withheld')) if shown else None,
+            'draft_reason_he': disp.get('reason_he') if shown and disp.get('draft') else None,
             'why_no_values_he': why_none,
             'source': {'values': src if shown else None, 'rate': yr.get('rate') or 'model cost of equity',
                        'model_cost_of_equity': yr.get('model_cost_of_equity',
@@ -1002,6 +1008,10 @@ def render_he(reasons):
     title = c.get('name') or c.get('ticker') or 'החברה'
     out = [f"**{title}{' (' + c['ticker'] + ')' if c.get('ticker') and c.get('name') else ''} — מה צריך לקרות כדי שכל מחיר "
            f"יתממש, {r.get('as_of') or ''}**", '']
+    if r.get('values_shown') and r.get('draft_reason_he'):
+        from .render import DRAFT_BANNER_HE           # the owner's table carries the same banner (render.value_display 'draft')
+        out += [f"> **{DRAFT_BANNER_HE}.** הסיבה: {r['draft_reason_he']}. המחירים כאן הם החישוב של המנוע, לא מסקנה, ואין בהם "
+                'המלצה לקנות או למכור.', '']
     if r.get('status') == 'failed':
         return '\n'.join(out + ['לא ניתן היה להפיק את הסיבות לתרחישים: ' + str(r.get('error') or '') + '.', ''])
     if not r.get('values_shown'):

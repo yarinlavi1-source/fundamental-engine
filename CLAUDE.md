@@ -150,6 +150,11 @@ specific. Every scenario price carries its condition behind the scenes (scenario
 behind each scenario as `analyst_sheet.scenario_events` {bear|base|bull: [{event_he, evidence_ids}]}: without ids they are
 hypotheses. The reasons explain the model's conditional values; they are not forecasts.
 Add sources as links under the table when the web was used. The paragraph below is for non-valuation summaries.
+The owner sets NO required return (27.10.2026): he wants a stock that is cheap with good upside. The table shows the discount
+to fair value and a row with each scenario's year-5 price against today's (פוטנציאל בעוד 5 שנים); the engine's hurdle
+(market return + this company's risk premium, where the verdict is taken) is labelled 'מחיר כניסה עם מרווח ביטחון' and is
+never called his requirement or target. His portfolio goal: strong, excellent companies and high-growth companies with real
+data, significant growth and large potential (bottlenecks, share gains), not slow, boring names.
 
 ## User preference: one concise investment paragraph (v0.9.1)
 

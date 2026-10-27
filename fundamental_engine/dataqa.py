@@ -52,6 +52,9 @@ RANK = {'conflict': 0, 'missing': 1, 'stale': 2, 'single_source': 3, 'reported':
 FILING_KINDS = F.REPORTED_KINDS                  # filing_derived, issuer_document (legacy 'document')
 BS_TAGS = ('total_assets', 'total_liabilities', 'liabilities_and_equity', 'current_assets', 'equity')
 DEBT_PARTS = ('long_term_debt', 'long_term_debt_tagged', 'current_portion_ltd', 'short_term_borrowings')
+# a vendor total read as noncurrent debt + noncurrent operating leases confirms the noncurrent line only: the current debt it
+# cannot see must stay below this share of the resolved debt for the difference to count as definitional (GOOGL 2026-06: 2.0%)
+VENDOR_UNSEEN_CURRENT_MAX = .05
 BS_LINES = BS_TAGS + ('cash', 'cash_incl_restricted', 'short_term_investments', 'long_term_investments',
                       'deferred_revenue_current', 'deferred_revenue_noncurrent') + DEBT_PARTS
 HYPOTHESES = ('noncurrent+current', 'tagged_total', 'tagged_plus_current')
@@ -80,6 +83,26 @@ DEFINITIONS = {
                 'net_cash_incl_long_term_investments shown separately)',
     'deferred_revenue': 'contract liabilities, current + noncurrent (cash already collected for future service)',
 }
+
+
+# Analyst resolutions of a cross-source disagreement (options['resolutions'], pipeline inputs.dataqa_resolutions), applied only
+# to the fact-level comparison (_cross) of the field and metric named, recorded on the field, in the checks and in
+# out['resolutions'], and only with FILING evidence; the field stays 'limited' (it rests on a resolution). Without one, or when
+# one is rejected or matches nothing, the conflict and its block stay. NVIDIA 2026-07-26: short-term investments 34.1B (SEC)
+# against 76.9B (Alpha Vantage), which per the 10-Q is debt securities 34.1B + equity securities 42.8B: a label difference.
+#   label_difference  source_id is the source whose value measures something else (another definition or scope): its value is
+#                     recorded as an explained definitional difference, not a conflict; the chosen value is unchanged
+#   use_source        source_id is the source the filing confirms for that period (period_end required): it is chosen for
+#                     the metric at that date, and the values it disagrees with are recorded as explained by the resolution
+RESOLUTIONS = ('label_difference', 'use_source')
+RESOLUTION_KEYS = ('field', 'metric', 'period_end', 'resolution', 'source_id', 'reason', 'evidence_ids')
+RESOLUTION_METRICS = {
+    'shares_outstanding': ('shares_outstanding', 'shares_outstanding_cover', 'shares_outstanding_vendor'),
+    'cash_and_liquid_investments': ('cash', 'cash_incl_restricted', 'short_term_investments'),
+    'investments': ('long_term_investments',),
+    'debt': ('long_term_debt', 'long_term_debt_tagged', 'current_portion_ltd', 'short_term_borrowings', 'debt_total_vendor'),
+    'revenue_ttm': ('revenue',), 'operating_income_ttm': ('operating_income',), 'cfo_ttm': ('cfo',), 'capex_ttm': ('capex',),
+    'sbc_ttm': ('sbc',)}
 
 
 def _d(s):
@@ -141,13 +164,22 @@ def _split_factor(r):
 class _QA:
     """Run state: the FactBook, cached point-in-time candidates, the check log and identity results."""
 
-    def __init__(self, fb, options):
+    def __init__(self, fb, options, unsorted=frozenset()):
         o = options or {}
         self.fb, self.as_of = fb, fb['as_of']
         self.tol = {**TOL, **(o.get('tolerances') or {})}
         self.max_age = {**MAX_AGE, **(o.get('max_age') or {})}
         self.ccy = fb['company'].get('currency', 'USD')
         self.checks, self.ident, self.cross, self._c = [], [], {}, {}
+        self.resolutions = _resolutions(fb, o.get('resolutions'))
+        # the positions of use_source resolutions that resolved no disagreement in validate's first pass: they never reorder
+        self.unsorted = frozenset(unsorted)
+
+    def resolution(self, kind, metric, f, source_id):
+        """The accepted resolution of this kind for metric and source at f's period, else None."""
+        return next((r for r in self.resolutions if r['status'] != 'rejected' and r['resolution'] == kind and r['metric'] == metric
+                     and r['source_id'] == source_id and (not r.get('period_end') or abs(_days(r['period_end'], f['period_end'])) <= 7)),
+                    None)
 
     def add(self, code, status, severity, message, detail=None, period=None, fields=()):
         c = {'code': code, 'status': status, 'severity': severity, 'message': message, 'detail': detail or {}}
@@ -160,7 +192,15 @@ class _QA:
 
     def cands(self, metric):
         if metric not in self._c:
-            self._c[metric] = F.candidates(self.fb, metric)      # look-ahead filter + best-first order
+            c = F.candidates(self.fb, metric)                    # look-ahead filter + best-first order
+            sorting = [r for i, r in enumerate(self.resolutions) if i not in self.unsorted and r['resolution'] == 'use_source'
+                       and r['metric'] == metric and r['status'] != 'rejected']
+            if sorting:
+                # a use_source resolution puts the confirmed source first at its period (stable: the rest keeps its order); one
+                # that resolved no disagreement (validate's first pass) changes nothing, so the chosen value never moves silently
+                c = sorted(c, key=lambda f: not any(r['source_id'] == f['source_id'] and abs(_days(r['period_end'], f['period_end'])) <= 7
+                                                    for r in sorting))
+            self._c[metric] = c
         return self._c[metric]
 
     def near(self, metric, end, kind, days=7):
@@ -265,6 +305,87 @@ class _QA:
         return F.item_usable(self.fb, x, missing)
 
 
+def _filing_evidence(fb, eid):
+    """Is this evidence id a filing (a filing-derived source, or an issuer document of the filing dataset), or a dated item that
+    cites one, usable at as_of?"""
+    def filing(sid):
+        x = fb['sources'].get(sid) or {}
+        ok = x.get('kind') == 'filing_derived' or (x.get('kind') == 'issuer_document' and x.get('dataset') == 'filing')
+        return ok and not (x.get('published_at') and _d(x['published_at']) > _d(fb['as_of']))
+    if eid in fb['sources']:
+        return filing(eid)
+    item = next((x for x in fb.get('qualitative') or [] if x.get('id') == eid), None)
+    return bool(item) and F.item_usable(fb, item, False) and any(filing(sid) for sid in item.get('source_ids') or [])
+
+
+def _resolutions(fb, rows):
+    """options['resolutions'] -> checked rows with status 'pending' (applied later), or 'rejected' with why (recorded, never
+    applied: the conflict stays). A malformed list is an input error."""
+    if rows is None:
+        return []
+    if not isinstance(rows, list):
+        raise ValueError('dataqa resolutions: a list of {field, metric, period_end, resolution, source_id, reason, evidence_ids}')
+    out = []
+    for i, r in enumerate(rows):
+        if not isinstance(r, dict) or set(r) - set(RESOLUTION_KEYS):
+            raise ValueError(f'dataqa resolutions[{i}]: an object with {", ".join(RESOLUTION_KEYS)}')
+        x = {k: r.get(k) for k in RESOLUTION_KEYS if k in r}
+        x.update(evidence_ids=list(r.get('evidence_ids') or []) if isinstance(r.get('evidence_ids'), list) else [], status='pending',
+                 applied=[])
+        why = []
+        if r.get('resolution') not in RESOLUTIONS:
+            why.append(f"resolution must be one of {', '.join(RESOLUTIONS)}")
+        if r.get('field') not in RESOLUTION_METRICS:
+            why.append(f"field must be one of {', '.join(RESOLUTION_METRICS)}")
+        elif r.get('metric') not in RESOLUTION_METRICS[r['field']]:
+            why.append(f"metric of {r['field']} must be one of {', '.join(RESOLUTION_METRICS[r['field']])}")
+        if r.get('source_id') not in fb['sources']:
+            why.append(f"source_id {r.get('source_id')!r} is not a FactBook source")
+        elif (fb['sources'][r['source_id']].get('kind') == 'secondary') and r.get('resolution') == 'use_source':
+            why.append('a secondary source is never the value used')
+        if not isinstance(r.get('reason'), str) or not r['reason'].strip():
+            why.append('a written reason is required')
+        if r.get('period_end') is not None or r.get('resolution') == 'use_source':
+            try:
+                _d(r.get('period_end'))
+            except (TypeError, ValueError):
+                why.append('period_end must be the date of the disagreeing period (required for use_source)')
+        if not x['evidence_ids'] or not any(_filing_evidence(fb, e) for e in x['evidence_ids']):
+            why.append('filing evidence required: evidence_ids must include a filing (filing-derived source, a filing document, or '
+                       'an item citing one) usable at as_of')
+        if why:
+            x.update(status='rejected', why='; '.join(why))
+        out.append(x)
+    return out
+
+
+def _apply_resolutions(q, fields, limited):
+    """Record each resolution on its field and in the checks; a field resting on an applied one is limited, never silently ok."""
+    out = []
+    for r in q.resolutions:
+        if r['status'] == 'pending':
+            r['status'] = 'applied' if r['applied'] else 'unused'
+        label = f"{r.get('resolution')} {r.get('field')}.{r.get('metric')} {r.get('source_id')}"
+        if r['status'] == 'applied':
+            fld = fields.get(r['field'])
+            if fld is not None:
+                fld.setdefault('analyst_resolutions', []).append({k: r[k] for k in ('resolution', 'metric', 'source_id', 'reason',
+                                                                                     'evidence_ids', 'applied')})
+                fld['note'] = '; '.join(x for x in (fld.get('note'), f"rests on an analyst resolution ({label}): {r['reason']}") if x)
+                if not fld.get('blocking') and r['field'] not in limited:
+                    limited.append(r['field'])
+            q.add('analyst_resolution', 'applied', 'major', f"{label} applied to {len(r['applied'])} comparison(s): {r['reason']} "
+                  f"(filing evidence {', '.join(r['evidence_ids'])})", detail={k: r[k] for k in r if k != 'status'},
+                  fields=(r['field'],))
+        else:
+            q.add('analyst_resolution', r['status'], 'major',
+                  f"{label} {'rejected: ' + r['why'] if r['status'] == 'rejected' else 'matched no cross-source disagreement'}: "
+                  'nothing changed, the field keeps its status', detail={k: r[k] for k in r if k != 'status'},
+                  fields=(r['field'],) if isinstance(r.get('field'), str) else ())
+        out.append(r)
+    return out
+
+
 def _field(q, name, status, value, unit, as_of, facts=(), checks=(), notes=(), **extra):
     return {'field': name, 'status': status, 'value': value, 'unit': unit, 'as_of': as_of,
             'sources': sorted({f['source_id'] for f in facts}), 'facts': [_ref(f) for f in facts],
@@ -351,6 +472,13 @@ def _cross(q, metric, f):
             (out['same_family'] if copy else out['agree']).append(row)
             continue
         why = _explain(q, metric, f, b)
+        res = q.resolution('label_difference', metric, g, g['source_id']) or q.resolution('use_source', metric, f, f['source_id'])
+        if not why and res and not copy:
+            why = (f"analyst resolution ({res['resolution'].replace('_', ' ')}"
+                   + (f", use {res['source_id']}" if res['resolution'] == 'use_source' else '')
+                   + f"): {res['reason']} (filing evidence {', '.join(res['evidence_ids'])})")
+            res['applied'].append({'metric': metric, 'period': f['period'], 'chosen_source': f['source_id'], 'chosen_value': a,
+                                   'other_source': g['source_id'], 'other_value': b, 'rel_diff': round(r, 6)})
         if why:
             out['explained'].append({**row, 'definition': why})
         else:
@@ -1441,8 +1569,18 @@ def _debt(q, cs, mcap):
             if vt:
                 r = _rel(value, vt['value'])
                 alt = {h: t for h, t in tot.items() if h != method and _rel(t, vt['value']) <= q.tol['debt']}
+                # GOOGL 2026-06-30: AV shortLongTermDebtTotal 112,756 = noncurrent debt 98,165 + noncurrent operating leases 14,591
+                # (its own scope: neither current portion), against 100,164 = 98,165 + current portion 1,999 in 10-Q Note 6. That
+                # vendor scope confirms the noncurrent line only, so it explains the gap only when the leases are what separate it
+                # from the noncurrent line and the current pieces it cannot see are small (else a misread current line would pass)
+                ncd = (parts['long_term_debt'] or (parts['long_term_debt_tagged'] if method == 'tagged_plus_current' else None) or {}).get('value')
+                nc_scope = bool(ln and ncd is not None and _rel(ncd + ln, vt['value']) <= q.tol['debt']
+                                and _rel(ncd, vt['value']) > q.tol['debt'] and 0 <= value - ncd <= VENDOR_UNSEEN_CURRENT_MAX * value)
                 why = ('vendor total includes operating lease liabilities' if leases and _rel(value + leases, vt['value']) <= q.tol['debt']
-                       else f'vendor applies the {next(iter(alt))} scope; roll-forward supports {method}' if alt else None)
+                       else f'vendor applies the {next(iter(alt))} scope; roll-forward supports {method}' if alt
+                       else f'vendor total = noncurrent debt + noncurrent operating lease liabilities (its scope leaves out both current '
+                            f'portions; the current debt {_fmt(value - ncd)} it does not confirm is within '
+                            f'{VENDOR_UNSEEN_CURRENT_MAX:.0%} of the debt)' if nc_scope else None)
                 ok = r <= q.tol['debt']
                 q.add('cross_source', 'pass' if ok or why else 'fail', 'minor' if ok or why else 'major',
                       f"debt {end}: resolved {_fmt(value)} vs {q.provider(vt)} total {_fmt(vt['value'])}" + (f' ({why})' if why and not ok else ''),
@@ -1725,8 +1863,18 @@ def validate(fb, capital_structure=None, options=None):
 
     capital_structure: capital.py structure (defaults to fb['capital_structure']); its instruments are the source
     for convertibles and a cross-check for cash, debt and shares (or the source, when newer than the statements).
-    options: {'tolerances': {metric: relative}, 'max_age': {'shares'|'balance_sheet'|'ttm'|'annual': days}}."""
-    q = _QA(fb, options)
+    options: {'tolerances': {metric: relative}, 'max_age': {'shares'|'balance_sheet'|'ttm'|'annual': days}, 'resolutions': [analyst
+    resolutions of a cross-source disagreement (RESOLUTIONS; filing evidence required; recorded in out['resolutions'])]}."""
+    out = _validate(fb, capital_structure, options)
+    # a use_source resolution reorders the candidates; when it resolved no cross-source disagreement (unused: the values agree
+    # within tolerance, are explained by definition, or are copies of one filing) the reorder alone would still move the chosen
+    # value, its source and the field status, unrecorded. Such resolutions are rerun without the reorder: nothing changes.
+    idle = [i for i, r in enumerate(out.get('resolutions') or []) if r['resolution'] == 'use_source' and r['status'] == 'unused']
+    return _validate(fb, capital_structure, options, idle) if idle else out
+
+
+def _validate(fb, capital_structure, options, unsorted=()):
+    q = _QA(fb, options, unsorted)
     late = [f for f in fb['facts'] if not F.usable(fb, f)]
     est = sum(1 for f in fb['facts'] if F.usable(fb, f) and f.get('available_at_estimated'))
     q.add('lookahead_excluded', 'pass', 'minor', f'{len(late)} fact(s) published after {q.as_of} ignored; '
@@ -1776,6 +1924,7 @@ def validate(fb, capital_structure=None, options=None):
             blocking.append(name)
         elif fld['status'] in ('conflict', 'missing', 'stale', 'single_source') or fld.get('incomplete'):
             limited.append(name)
+    applied = _apply_resolutions(q, fields, limited) if q.resolutions else None
     return {'status': 'blocked' if blocking else 'limited' if limited else 'ok', 'as_of': q.as_of,
             'fields': fields, 'checks': q.checks, 'resolved': res, 'blocking': blocking, 'limited': limited,
-            'splits': splits, 'unresolved_splits': unresolved}
+            'splits': splits, 'unresolved_splits': unresolved, **({'resolutions': applied} if applied is not None else {})}

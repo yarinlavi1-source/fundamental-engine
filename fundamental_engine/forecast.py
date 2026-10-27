@@ -236,11 +236,15 @@ DEBT_INCOMPLETE_RATE = .25     # interest / debt above this (no investment-grade
 DEBT_MOVE = .25
 KNOWN_INPUTS = ('overrides', 'reviews', 'risk_free', 'equity_risk_premium', 'horizon_years', 'financing', 'nol', 'cyclical',
                 'operating_funding', 'nonrecurring', 'debt_like_claims', 'non_operating_assets', 'capital_events', 'country_risk',
-                'current_year_revenue')
+                'current_year_revenue', 'acquired_revenue')
 # inputs['current_year_revenue'] = {value, fiscal_year_end, basis, evidence_ids, source_tier}: the current fiscal year's revenue
 # from the company's own evidence (evidence_pack: the guidance midpoint, the track-record ratio applied to the unreported
 # remainder only); it replaces the consensus / guidance / year-to-date anchor of _current_year for that fiscal year only.
 CURRENT_YEAR_KEYS = ('value', 'fiscal_year_end', 'basis', 'evidence_ids', 'source_tier')
+# inputs['acquired_revenue'] = {value, fiscal_year_end, acquisition, closed, reason, evidence_ids}: revenue an acquisition brought
+# into the step from the last fiscal year to the one in progress (at its pre-deal size), with the acquisition named and its
+# closing date: _acquired_step keeps it out of the stub's growth reinvestment (its price is already in the opening balance).
+ACQUIRED_REVENUE_KEYS = ('value', 'fiscal_year_end', 'acquisition', 'closed', 'reason', 'evidence_ids')
 # inputs['country_risk'] = {value, mapped_share, as_of, channel, title, url, detail, evidence_ids}: the country risk premium
 # above the US base (market_context.country_risk: exposure-weighted Damodaran CRPs; the pipeline passes it from
 # inputs.market_context) and the share of its channel mapped to a country or region. Two rows of the cost-of-equity table:
@@ -1493,19 +1497,114 @@ def _revenue_guidance(fb):
     return out
 
 
+QUARTER_LABEL = re.compile(r'^(?:Q([1-4])FY(\d{4})|FY(\d{4})Q([1-4]))$')    # 'Q2 FY2027' / 'FY2027 Q2' (spaces removed)
+CALENDAR_QUARTER_LABEL = re.compile(r'^Q([1-4])(\d{4})$')                    # 'Q4 2026': read only for a calendar fiscal year
+QUARTER_DAYS = 91.3125      # one fiscal quarter (13 weeks of a 52/53-week year, or a calendar quarter)
+
+
+def _quarter_revenue_guidance(fb):
+    """Latest dated company revenue guidance per fiscal quarter, issued on or before as_of: {('FY2027', 2): {...}}. The label is
+    the company's own ('Q2 FY2027': the fiscal year named by its end, as _revenue_guidance reads 'FY2027'; 'Q4 2026' only when
+    the fiscal year is the calendar year); undated rows are not used (the guided quarter must be known at as_of)."""
+    out = {}
+    calendar = str(fb['company'].get('fiscal_year_end') or '') == '12-31'
+    for g in fb.get('guidance', []):
+        if g.get('metric') != 'revenue' or not g.get('issued_at') or _d(g['issued_at']) > _d(fb['as_of']):
+            continue
+        label = ''.join(str(g.get('period') or '').upper().split())
+        m, c = QUARTER_LABEL.match(label), CALENDAR_QUARTER_LABEL.match(label) if calendar else None
+        lo, hi = _num(g.get('low')), _num(g.get('high'))
+        if not (m or c) or lo is None or hi is None or hi < lo or lo <= 0:
+            continue
+        key = (f'FY{m.group(2) or m.group(3)}', int(m.group(1) or m.group(4))) if m else (f'FY{c.group(2)}', int(c.group(1)))
+        prev = out.get(key)
+        if prev is None or g['issued_at'] > prev['issued_at']:
+            out[key] = {'period': g['period'], 'value': (lo + hi) / 2, 'low': lo, 'high': hi, 'issued_at': g['issued_at'],
+                        'source_ids': list(g.get('source_ids', []))}
+    return out
+
+
+def _quarter_guide(h, b1, ytd):
+    """The fiscal year in progress from the reported year to date, the company's guided midpoint for the NEXT unreported quarter
+    of that year and the quarters left after it. The guided quarter is evidence; the quarters after it are a stated model:
+      sequential  at the guided quarter's own sequential growth (guide / last reported quarter - 1), when the same quarters a
+                  year earlier rose every quarter (no seasonal dip to misread) and the guide is not a decline;
+      seasonal    at the guided quarter's year-over-year growth applied to the same quarters a year earlier, when the year
+                  before fell in some quarter of that span (a seasonal pattern: compounding one quarter's step would misread it);
+      flat        held at the guided level when the guide is a sequential decline (one guided quarter is not a trend to
+                  compound), when an acquisition in the fiscal year in progress may sit in the guided step, or when the last
+                  reported quarter is not available to measure the step.
+    Replaces the year-to-date growth x the same months a year earlier (CRDO fiscal 2027: one quarter at +115% year over year
+    extrapolated to 2.87B while Q1 479M + the Q2 guide 530M + two quarters at the guided +10.6% give 2.24B). The walk-forward
+    holds no guidance rows, so it never reaches this. -> dict or None."""
+    rows = h.get('quarter_guidance') or {}
+    if not rows or not ytd:
+        return None
+    n_rep = round((_d(ytd['end']) - _d(h['last_end'])).days / QUARTER_DAYS)
+    g = rows.get((f'FY{b1[:4]}', n_rep + 1))
+    if g is None or not 1 <= n_rep <= 3:
+        return None
+    qs = h.get('revenue_quarters') or []
+    near = lambda when, tol=10: next((v for e, v in qs if abs((_d(e) - when).days) <= tol), None)
+    last_q = near(_d(ytd['end']), 7)
+    if last_q is None and n_rep == 1:
+        last_q = ytd['value']
+    last_end = _d(h['last_end'])
+    py = {j: near(last_end - timedelta(days=round((4 - j) * QUARTER_DAYS))) for j in range(1, 5)}   # the same quarters a year earlier
+    q, left = n_rep + 1, list(range(n_rep + 2, 5))
+    step = g['value'] / last_q - 1 if last_q else None
+    span = [py[j] for j in range(n_rep, 5)]
+    seasonal = all(x for x in span) and any(b < a for a, b in zip(span, span[1:]))
+    yoy = g['value'] / py[q] - 1 if py.get(q) else None
+    acq = (h.get('acq') or {}).get('timing') == 'current_fiscal_year'
+    if not left:
+        rule, rest, how = 'none', [], 'the guided quarter is the last of the fiscal year'
+    elif seasonal and yoy is not None:
+        rule, rest = 'seasonal', [py[j] * (1 + yoy) for j in left]
+        how = (f"at the same quarters a year earlier x (1 + the guided quarter's year-over-year growth {_pct(yoy)}): the year before fell "
+               'within this span of quarters (seasonal), so one sequential step is not compounded')
+    elif acq:
+        rule, rest = 'flat', [g['value']] * len(left)
+        how = ('held at the guided level: an acquisition in the fiscal year in progress may sit in the guided step, so it is not '
+               'compounded')
+    elif step is None:
+        rule, rest = 'flat', [g['value']] * len(left)
+        how = 'held at the guided level (the last reported quarter is not available to measure the guided step)'
+    elif step < 0:
+        rule, rest = 'flat', [g['value']] * len(left)
+        how = f'held at the guided level: the guide is a sequential decline ({_pct(step)}), not compounded'
+    else:
+        rule, rest = 'sequential', [g['value'] * (1 + step) ** (j - q) for j in left]
+        how = (f"at the guided quarter's own sequential growth {_pct(step)} (guide / the last reported quarter "
+               f"{last_q:,.0f}) compounded" + ('' if all(x for x in span) else '; the same quarters a year earlier are not all '
+                                                                               'reported, so seasonality is not checked'))
+    value = ytd['value'] + g['value'] + sum(rest)
+    basis = (f"reported year to date {ytd['value']:,.0f} ({ytd['basis']}) + the company's guided midpoint for {g['period']} "
+             f"{g['value']:,.0f} ({g['low']:,.0f}-{g['high']:,.0f}, issued {g['issued_at']}; management guidance, not a reported "
+             'fact)' + (f" + the remaining {len(left)} quarter(s) {', '.join(f'{x:,.0f}' for x in rest)} {how}" if left else f'; {how}'))
+    return {'value': value, 'rule': rule, 'quarter': g['period'], 'guided': {k: g[k] for k in ('value', 'low', 'high', 'issued_at')},
+            'quarters_reported': n_rep, 'last_reported_quarter': last_q, 'sequential_growth': step, 'year_over_year_growth': yoy,
+            'remaining_quarters': rest, 'prior_year_quarters': [py[j] for j in range(1, 5)], 'basis': basis,
+            'source_ids': list(g['source_ids'])}
+
+
 def _current_year(route, h, cal, cons):
-    """Current fiscal year revenue from the best dated evidence: consensus, company guidance, reported year to date plus the
-    remaining months at the run rate; None when only the trailing anchor is available."""
+    """Current fiscal year revenue from the best dated evidence: consensus, company guidance for the fiscal year, reported year
+    to date plus the company's guide for the next quarter (_quarter_guide), reported year to date plus the remaining months at
+    the run rate; None when only the trailing anchor is available."""
     k, b1 = cal['fiscal_years_since_last_report'], cal['boundaries'][0]
     gd = h.get('guidance', {}).get(f'FY{b1[:4]}')
     ytd = h['ytd'] if h['ytd'] and k == 1 and _d(h['ytd']['end']) < _d(b1) else None
+    qg = _quarter_guide(h, b1, ytd) if ytd and h.get('quarter_guidance') else None
     cyr = h.get('current_year_input')
     if cyr and abs((_d(cyr['fiscal_year_end']) - _d(b1)).days) > 20:
         raise ValueError(f"current_year_revenue is for the fiscal year ending {cyr['fiscal_year_end']}, but the fiscal year in progress "
                          f'at as_of ends {b1}')
-    ids = None
+    ids, used_qg = None, None
     if cyr:
-        r, kind, ids = float(cyr['value']), {'guidance': 'guidance', 'consensus': 'analyst'}.get(cyr.get('source_tier'), 'input'), \
+        # another tier (own history, contracted, analyst...) is an evidenced number the analyst chose: a 'model' row (value_company
+        # knows reported / guidance / analyst / model; the former 'input' kind made every such case an invalid spec)
+        r, kind, ids = float(cyr['value']), {'guidance': 'guidance', 'consensus': 'analyst'}.get(cyr.get('source_tier'), 'model'), \
             list(cyr['evidence_ids'])
         basis = f"{cyr['basis']} (evidence {', '.join(ids)}; source tier {cyr.get('source_tier', 'analyst')})"
     elif b1 in cons:
@@ -1515,6 +1614,10 @@ def _current_year(route, h, cal, cons):
         r, kind = gd['value'], 'guidance'
         basis = (f"company guidance midpoint for the fiscal year ending {b1} ({gd['low']:,.0f}-{gd['high']:,.0f}, issued "
                  f"{gd.get('issued_at')}; management guidance, not a reported fact)")
+    elif qg:
+        # reported + guided only when the guided quarter closes the year; a modelled remainder keeps the year a model
+        r, kind, ids, basis = qg['value'], 'guidance' if not qg['remaining_quarters'] else 'model', list(qg['source_ids']), qg['basis']
+        used_qg = qg
     elif ytd:
         rem = years(ytd['end'], b1)
         acq = h.get('acq')
@@ -1540,10 +1643,98 @@ def _current_year(route, h, cal, cons):
     else:
         return None
     out = {'r_fy': r, 'g_cur': (r / h['last_revenue']) ** (1 / k) - 1, 'basis': basis, 'kind': kind, 'ytd': ytd, 'ids': ids}
+    if cyr:
+        out['tier'] = cyr.get('source_tier', 'analyst')
+    if used_qg:
+        out['quarter_guide'] = {x: v for x, v in used_qg.items() if x not in ('basis', 'value')}
     if ytd and r - ytd['value'] > 0 and years(ytd['end'], b1) > .02:
         out['stub_rate'] = (r - ytd['value']) / years(ytd['end'], b1)
         out['stub_basis'] = f"(current-year revenue - reported year to date) / years from {ytd['end']} to {b1}"
     return out
+
+
+def _acquired_step(h, cal, d_rev0, warn):
+    """Bought revenue inside the current fiscal year's revenue step (the stub's growth reinvestment is the current year's
+    revenue change x capital per unit of revenue, pro rata): a level shift the acquisition already paid for -- its price is in
+    the opening cash and debt -- so charging it again at sales-to-capital counts it twice (Amphenol 2026: the CommScope CCS
+    revenue, bought for about 10.5B with debt already on the June balance sheet, was charged as growth capex and created an
+    assumed debt draw, the +1pp funding add-on and a funding-conditional verdict). Sources, first found:
+      inputs.acquired_revenue  the analyst names the acquisition, its closing date and the bought revenue in the step, with
+                               evidence; not applied (warned high) when it closed after the balance sheet (its price is not in
+                               the opening balance); capped like the readings below (warned medium: acquired_revenue_capped);
+      h['acq'] pro forma       (ASC 805 note) bought revenue at its pre-deal size: pro forma less reported revenue for the same
+                               months a year earlier + the acquired pre-deal run rate for the months left (closing in the fiscal
+                               year in progress), or the last fiscal year's pro forma less reported (closing last year);
+      h['acq'] otherwise       the step above organic growth of last year's revenue (an estimate: flagged).
+    Never more than the step above the organic growth of last year's revenue when that is known, nor than the whole step (a
+    negative organic growth never turns the stub's reinvestment into a release of capital), never below zero; its growth after
+    the closing stays organic growth that costs capital. Only the stub uses the current year's change (year one grows
+    from the current year). -> {'amount', 'basis', 'source', 'source_ids' | 'evidence_ids'} or None."""
+    if d_rev0 <= 0 or cal['fiscal_years_since_last_report'] != 1:
+        return None
+    b1, ai, a, ytd = cal['boundaries'][0], h.get('acquired_input'), h.get('acq'), h.get('ytd')
+    if ai:
+        if abs((_d(ai['fiscal_year_end']) - _d(b1)).days) > 20:
+            raise ValueError(f"acquired_revenue is for the fiscal year ending {ai['fiscal_year_end']}, but the fiscal year in progress at "
+                             f'as_of ends {b1}')
+        if h.get('statement_date') and _d(ai['closed']) > _d(h['statement_date']):
+            warn('acquired_revenue_after_statement', f"acquired_revenue: {ai['acquisition']} closed {ai['closed']}, after the balance sheet "
+                                                     f"({h['statement_date']}): its price is not in the opening cash and debt, so its revenue "
+                                                     'stays in the growth reinvestment (supply the payment as capital_events or debt_like_claims '
+                                                     'first)', 'high')
+            return None
+        val = float(ai['value'])
+        # the same bound as the filings' reading: never more than the step, nor than the step above the organic growth of last
+        # year's revenue when the filings give that growth (h['acq']); an input above it would also stop charging organic growth
+        cap = d_rev0 - h['last_revenue'] * a['organic'] if a else None
+        lim = max(0., min(d_rev0, cap)) if cap is not None else d_rev0
+        amt = min(val, lim)
+        if val > lim:
+            above = (f"the step above organic growth {_pct(a['organic'])} ({a['basis'].replace('_', ' ')}) on last year's revenue "
+                     f"({lim:,.0f} of the current year's {d_rev0:,.0f} step)" if cap is not None and cap < d_rev0 else
+                     f"the current year's whole revenue step {d_rev0:,.0f}")
+            warn('acquired_revenue_capped', f"acquired_revenue: {ai['acquisition']} {val:,.0f} is more than {above}: only {amt:,.0f} is "
+                                            "kept out of the stub's growth reinvestment, the rest is growth that costs capital. Check "
+                                            'the input against the acquisition note', 'medium')
+        if amt <= 0:
+            return None
+        out = {'amount': amt, 'source': 'input', 'acquisition': ai['acquisition'], 'closed': ai['closed'],
+               'evidence_ids': list(ai['evidence_ids']),
+               'basis': (f"analyst input: {ai['acquisition']} (closed {ai['closed']}) brought {val:,.0f} of the current year's revenue "
+                         f"step{f' (capped at {amt:,.0f})' if amt < val else ''}; {ai['reason']}")}
+        if cap is not None:
+            out['cap_above_organic'] = cap
+        return out
+    if not a:
+        return None
+    cap = d_rev0 - h['last_revenue'] * a['organic']          # the step above the organic growth of last year's revenue
+    if cap <= 0:
+        return None
+    rem = years(ytd['end'], b1) if ytd else 0.
+    if a['basis'] == 'pro_forma' and a['timing'] == 'current_fiscal_year' and a.get('acquired_rate') and ytd and ytd.get('prior'):
+        bought = a['pro_forma_prior'] - ytd['prior'] + a['acquired_rate'] * max(0., rem)
+        how = (f"pro forma less reported revenue for the same months a year earlier ({a['pro_forma_prior']:,.0f} - {ytd['prior']:,.0f}) "
+               f"+ the acquired business at its pre-deal pro forma run rate {a['acquired_rate']:,.0f}/yr for the {max(0., rem):.2f} "
+               'years left')
+    elif a['basis'] == 'pro_forma' and (a.get('pro_forma_last_fy') or 0) > h['last_revenue']:
+        bought = a['pro_forma_last_fy'] - h['last_revenue']
+        how = (f"pro forma less reported revenue of the last fiscal year ({a['pro_forma_last_fy']:,.0f} - {h['last_revenue']:,.0f}): "
+               'the months before the closing')
+    else:
+        bought = cap
+        how = (f"the current year's step above organic growth {_pct(a['organic'])} on last year's revenue "
+               f"({a['basis'].replace('_', ' ')}: an estimate)")
+    # never more than the whole step either: with a negative organic growth (often the pre-deal estimate) the step above it is
+    # larger than the step, and excluding that much would turn the stub's reinvestment into a release of capital
+    lim = min(cap, d_rev0)
+    amt = max(0., min(bought, lim))
+    if amt <= 0:
+        return None
+    note = ('' if bought <= lim else f', capped at the step above organic growth {cap:,.0f}' if cap <= d_rev0 else
+            f", capped at the whole step {d_rev0:,.0f} (organic growth {_pct(a['organic'])} is negative: bought revenue never turns "
+            "the stub's growth reinvestment into a release of capital)")
+    return {'amount': amt, 'source': a['basis'], 'source_ids': list(a.get('source_ids') or []), 'cap_above_organic': cap,
+            'basis': how + note}
 
 
 def _params(route, h, cal, cons, rf, ku, ku_t, ov_ke, debt0, ov, warn, ev=None):
@@ -1621,6 +1812,14 @@ def _params(route, h, cal, cons, rf, ku, ku_t, ov_ke, debt0, ov, warn, ev=None):
     else:
         stub_rate = r_fy * (1 + g_cur) ** (.5 - cal['stub_years'] / 2)
         stub_basis = 'current-year revenue x (1+g)^(0.5 - stub/2) (late-year run rate)'
+    d_rev0 = r_fy - r_fy / (1 + g_cur)                  # the current year's revenue change: the stub's reinvestment base
+    acq_step = _acquired_step(h, cal, d_rev0, warn)
+    if acq_step:
+        warn('acquired_step_not_reinvested', f"{acq_step['amount']:,.0f} of the current fiscal year's revenue step is bought revenue "
+                                             f"({acq_step['basis']}): a level shift already paid for (its price is in the opening cash and "
+                                             f"debt), so the stub's growth reinvestment is charged on the organic step "
+                                             f"{d_rev0 - acq_step['amount']:,.0f} only, not on {d_rev0:,.0f}",
+             'medium' if acq_step['source'] == 'pre_deal_growth' else 'low')
     # consensus growth for the first two full years
     cg, lows, highs = [], [], []
     prev = r_fy
@@ -1801,8 +2000,10 @@ def _params(route, h, cal, cons, rf, ku, ku_t, ov_ke, debt0, ov, warn, ev=None):
                   'conv': ov(s, 'margin_convergence_years',
                              CYCLE_CONV[s] if cyc else (max(2, round(.75 * st['conv'])) if s == 'bear' else st['conv']))}
     meta = {'r_fy': r_fy, 'g_cur': g_cur, 'cur_basis': cur_basis, 'cur_kind': cur_kind, 'ytd': cur['ytd'] if cur else None,
-            'cur_ids': (cur or {}).get('ids'), 'order_clamped': order,
+            'cur_ids': (cur or {}).get('ids'), 'cur_tier': (cur or {}).get('tier'), 'quarter_guide': (cur or {}).get('quarter_guide'),
+            'order_clamped': order,
             'stub_rate': stub_rate, 'stub_basis': stub_basis, 'consensus_growth': cg,
+            'stub_revenue_change': d_rev0 - (acq_step['amount'] if acq_step else 0.), 'acquired_step': acq_step,
             'consensus_low': lows, 'consensus_high': highs, 'growth_kind': g_kind, 'spread': spread, 'half_life': hl,
             'margin_why': m_why, 's2c_history': s2c_h, 's2c_used': s2c, 's2c_range': s2c_range, 'tax_effective': tax_eff,
             'tax_used': tax, 'interest_existing': r0, 'interest_basis': cp.get('basis'), 'g_terminal': gT, 'cycle': cyc_meta,
@@ -1861,8 +2062,7 @@ def _paths(P, meta, h, route, cal, open_bal, inv_income):
         capint = [1 / p['s2c'] + (1 / p['s2c_terminal'] - 1 / p['s2c']) * w for w in conv_w]
         fy_rate = [meta['r_fy']] + rates[1:]
         release = route['stage'] == 'decline' or p['g_terminal'] < 0
-        gc, mcx, need = _reinvest(fy_rate, rates, dur, capint, wc, dr, maint, release,
-                                  d_rev0=meta['r_fy'] - meta['r_fy'] / (1 + meta['g_cur']))
+        gc, mcx, need = _reinvest(fy_rate, rates, dur, capint, wc, dr, maint, release, d_rev0=meta['stub_revenue_change'])
         if release and p['g_terminal'] < 0 and n > 1:
             # the terminal never releases capital faster than the last explicit year can (capex is not negative): terminal ROIC
             # is raised until g / ROIC equals the last year's executed release per unit of NOPAT
@@ -2043,6 +2243,55 @@ def _fund(spec, policy, allow, r_new, r0, debt0, locked, inv0):
     return {'info': info, 'result': res}
 
 
+def _stub_cover(fb, stmt, as_of):
+    """Free cash flow after distributions the company REPORTED over the last twelve months (facts.ttm: quarters, annual plus
+    year to date, else its last fiscal year), and the part of it earned between the balance-sheet date and as_of: cash the
+    opening balance does not count (the 'bridge' assumption says so). None when operating cash flow or capex is not reported,
+    when the two do not cover the same twelve months, or when they end more than 400 days before as_of."""
+    t = {m: facts.ttm(fb, m) for m in ('cfo', 'capex', 'dividends_paid', 'buybacks')}
+    cfo, capex = t['cfo'], t['capex']
+    if not cfo or not capex or abs((_d(cfo['period_end']) - _d(capex['period_end'])).days) > 10 \
+            or (_d(as_of) - _d(cfo['period_end'])).days > 400:
+        return None
+    same = lambda x: x and abs((_d(x['period_end']) - _d(cfo['period_end'])).days) <= 10
+    dist = {m: abs(t[m]['value']) for m in ('dividends_paid', 'buybacks') if same(t[m])}
+    fcf = cfo['value'] - abs(capex['value'])
+    gap = max(0., years(stmt, as_of))
+    retained = fcf - sum(dist.values())
+    ids = sorted({f['source_id'] for x in t.values() if same(x) for f in (x.get('facts') or []) if isinstance(f, dict) and f.get('source_id')})
+    return {'free_cash_flow': fcf, 'distributions': sum(dist.values()), 'retained': retained, 'period_end': cfo['period_end'],
+            'method': cfo.get('method'), 'statement_as_of': stmt, 'years_since_statement': gap, 'cover': max(0., retained) * gap,
+            'distributions_not_reported': sorted(set(('dividends_paid', 'buybacks')) - set(dist)),
+            'source_ids': ids or _latest_src(fb, 'cfo', 'capex')}
+
+
+# A base or bear plan whose ONLY external money is a debt draw in the stub (as_of to the first fiscal year end), with no equity
+# and self-funding afterwards, is not a funding condition when the draw is no larger than the free cash flow after
+# distributions the company reported, earned over the days between the balance sheet and as_of (_stub_cover): cash the
+# opening balance does not count. Amphenol 2026: a 150M stub draw (minimum cash = all of today's cash) against 1.2B of
+# quarterly free cash flow had set the +1pp funding add-on and a 'funding-conditional' verdict. The draw stays in the model
+# (priced, financing_status assumed); the funding gate and the add-on say why it is immaterial. Anything else -- a draw past
+# the stub, any equity, negative or unreported free cash flow, a draw above the cover -- stays a funding gate.
+STUB_DRAW_RULE = ('only a debt draw, only in the stub, no equity, self-funded afterwards, and no larger than the free cash flow '
+                  'after distributions reported over the last twelve months x the years between the balance sheet and as_of')
+
+
+def _stub_draw_immaterial(f, first_end, cover):
+    if f.get('status') != 'assumed_external_financing' or f.get('equity_raised') or not cover or cover['cover'] <= 0:
+        return None
+    if not f.get('draws') or any(d['period_end'] != first_end for d in f['draws']) or f.get('equity'):
+        return None
+    draw = f.get('debt_assumed') or 0.
+    if draw <= 0 or draw > cover['cover']:
+        return None
+    return {'draw': draw, 'period_end': first_end, 'cover': cover['cover'], 'share_of_cover': draw / cover['cover'],
+            'free_cash_flow_ttm': cover['free_cash_flow'], 'distributions_ttm': cover['distributions'],
+            'retained_ttm': cover['retained'], 'ttm_end': cover['period_end'], 'statement_as_of': cover['statement_as_of'],
+            'years_since_statement': cover['years_since_statement'],
+            'distributions_not_reported': cover['distributions_not_reported'], 'source_ids': cover['source_ids'],
+            'rule': STUB_DRAW_RULE}
+
+
 # ---------------------------------------------------------------- ledger, sources, underwriting
 
 def _case_sources(fb, ids, extra):
@@ -2124,6 +2373,8 @@ def _driver_sources(overrides, inputs, route, h, meta, P, cal, codes, srcs, ke_c
             meta['cur_kind'], ('own_history', srcs['revenue']))
         if meta.get('cur_ids'):                                       # inputs.current_year_revenue: its own evidence
             ids = meta['cur_ids']
+        if meta.get('cur_tier') in SOURCE_TIERS:                      # ... and its own tier
+            tier = meta['cur_tier']
         g_base = (tier, ids, 'SIZE' if size else 'CONST')            # one year of the stage fade from the current year
     m_cls = h.get('margin_class') or {s: 'TYPE' for s in SCEN}
     s2c_def = ('default' if meta.get('s2c_class') else 'own_history', [] if meta.get('s2c_class') else srcs['revenue'],
@@ -2265,6 +2516,25 @@ def build(fb, an, card, qa, inputs=None):
         ev = cyr.get('evidence_ids')
         if not isinstance(ev, list) or not ev or any(e not in known for e in ev):
             raise ValueError('current_year_revenue: evidence_ids must be FactBook source or qualitative ids')
+    ar = inputs.get('acquired_revenue')
+    if ar is not None:
+        if not isinstance(ar, dict) or sorted(set(ar) - set(ACQUIRED_REVENUE_KEYS)):
+            raise ValueError(f"acquired_revenue: an object with {', '.join(ACQUIRED_REVENUE_KEYS)}")
+        if _num(ar.get('value')) is None or ar['value'] <= 0:
+            raise ValueError('acquired_revenue: value (the bought revenue in the current year\'s step) must be a positive number')
+        try:
+            _d(ar.get('fiscal_year_end'))
+            closed = _d(ar.get('closed'))
+        except (TypeError, ValueError):
+            raise ValueError('acquired_revenue: fiscal_year_end and closed must be dates') from None
+        if closed > _d(fb['as_of']):
+            raise ValueError('acquired_revenue: closed after as_of (look-ahead)')
+        if not all(isinstance(ar.get(k), str) and ar[k].strip() for k in ('acquisition', 'reason')):
+            raise ValueError('acquired_revenue: name the acquisition and give a written reason')
+        known = set(fb.get('sources', {})) | {q['id'] for q in fb.get('qualitative', [])}
+        ev = ar.get('evidence_ids')
+        if not isinstance(ev, list) or not ev or any(e not in known for e in ev):
+            raise ValueError('acquired_revenue: evidence_ids must be FactBook source or qualitative ids')
     cy = inputs.get('cyclical')
     if cy is not None:
         if not isinstance(cy, dict) or sorted(set(cy) - {'treatment', 'reason', 'evidence_ids'}):
@@ -2458,7 +2728,11 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
     if h is None:
         return empty('insufficient_data', 'no fiscal year with positive revenue available at as_of', method)
     h['guidance'] = _revenue_guidance(fb)
+    h['quarter_guidance'] = _quarter_revenue_guidance(fb)
+    if h['quarter_guidance']:                 # standalone quarters: the guided step and the same quarters a year earlier
+        h['revenue_quarters'] = [(e, v) for e, v, _ in facts.series(fb, 'revenue', 'quarter')]
     h['current_year_input'] = inputs.get('current_year_revenue')
+    h['acquired_input'] = inputs.get('acquired_revenue')
     h['g_anchor'] = h['g_trailing']
     route = _route(card, h, warn, fb, inputs.get('cyclical'), ev_growth)
     method = route['method']                  # an analyst's structural reading of a card-normalized cycle switches the method
@@ -2489,6 +2763,7 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
              + '; '.join(f"{it['kind']} {float(it['amount']):,.0f} ({it['reason']})" for it in inputs['debt_like_claims']), 'medium')
     bridge = []
     stmt_date = min(_d((res.get('cash') or {}).get('as_of') or as_of), _d((res.get('debt') or {}).get('as_of') or as_of))
+    h['statement_date'] = stmt_date.isoformat()
     sh_date = (res.get('shares_outstanding') or {}).get('as_of')
     for it in inputs.get('capital_events') or []:
         sign = 1. if it['kind'] == 'share_issue' else -1.
@@ -2950,9 +3225,13 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
         '(stub: the current year\'s need pro rata, no working-capital step; first year: change from the current fiscal year); growth '
         'capex is floored at zero where customer prepayments fund more than the need; a declining business releases capital through '
         f"maintenance capex below depreciation (never below {RELEASE_FLOOR:.0%} of the maintenance level). Acquisition spend 3y: "
-        f"{_pct(h['acq_pct'])} of revenue (the share of the D&A roll-off it replaces stays a cash cost: {fixed['acq_share']:.0%}).",
+        f"{_pct(h['acq_pct'])} of revenue (the share of the D&A roll-off it replaces stays a cash cost: {fixed['acq_share']:.0%})."
+        + (f" The stub's revenue change excludes {meta['acquired_step']['amount']:,.0f} of bought revenue ({meta['acquired_step']['basis']}): "
+           'the acquisition paid for it and its price is in the opening balance, so it is not charged again as growth reinvestment.'
+           if meta.get('acquired_step') else ''),
         'Net reinvestment per unit of new revenue over the next two years differs from the base by more than 50%.',
-        _latest_src(fb, 'revenue', 'capex', 'equity') + [RULES])
+        _latest_src(fb, 'revenue', 'capex', 'equity') + [RULES] + ((meta['acquired_step'].get('source_ids') or meta['acquired_step'].get('evidence_ids') or [])
+                                                                  if meta.get('acquired_step') else []))
     add('working_capital', 'working capital and deferred revenue', 'model',
         {'working_capital_ratio': fixed['wc'], 'deferred_revenue_ratio': fixed['dr'], 'prepaid_share': fixed['prepaid']},
         f"working_capital_ratio {fixed['wc']:.3f} = {h['wc_basis'] or 'default 5% (not computable)'}; deferred revenue kept at "
@@ -2981,6 +3260,14 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
         'investments, then SBC settled in shares, then assumed debt within capacity, then an assumed equity raise.',
         'The company accumulates cash for two years without distributing, or distributes while cash falls below the minimum.',
         _latest_src(fb, 'buybacks', 'cfo', 'cash') + [RULES])
+    if (open_bal['cash'] or 0) > 0 and mc0 >= open_bal['cash'] - 1 and not ov.overridden('base', 'minimum_cash_months'):
+        # the cap binds: the stage table's months of cash costs exceed today's cash, so all of it is the operating minimum and the
+        # plan has no headroom: any shortfall in the stub becomes a draw (_stub_draw_immaterial says when such a draw is immaterial)
+        warn('minimum_cash_is_all_cash', f"minimum operating cash = all of today's cash {open_bal['cash']:,.0f}: "
+                                         f"{P['base']['cash_months']:.0f} months of cash costs (the {route['stage']} stage default) exceed it, "
+                                         'so the plan has no cash headroom and any stub shortfall is an assumed draw; an evidenced '
+                                         'minimum_cash_months override (the cash the company holds against its cash costs) replaces '
+                                         'the default', 'low')
     r_new = rf + st['debt_spread']
     add('debt_interest', 'existing debt', 'model', {'interest_rate_existing': meta['interest_existing'], 'new_money_rate': r_new,
                                                     'interest_basis': meta['interest_basis']},
@@ -3086,7 +3373,7 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
         # the engine's own reinvestment rule, per fiscal year (index 0 = the stub), so a growth sensitivity can charge capital
         # for the growth it adds (what_must_be_true); informational for drivers.build_case, which ignores it
         sc['reinvestment_rule'] = {'capital_per_revenue': [_r(x) for x in idn['capital_per_revenue']], 'maintenance_capex_pct': _r(fixed['maint']),
-                                   'release': idn['release'], 'stub_revenue_change': _r(meta['r_fy'] - meta['r_fy'] / (1 + meta['g_cur']), 2),
+                                   'release': idn['release'], 'stub_revenue_change': _r(meta['stub_revenue_change'], 2),
                                    'rule': 'growth capex + change in working capital - change in deferred revenue = change in revenue x '
                                            'capital per unit of revenue (forecast._reinvest)'}
         scen.append(sc)
@@ -3272,12 +3559,36 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
     if 'error' in fund:
         return dict(empty('invalid_spec', fund['error'], method), spec=spec, assumptions=rows)
     frows = {r['name']: r['forecast'] for r in fund['result']['scenarios']}
+    if any(fund['info'][s]['status'] == 'assumed_external_financing' for s in SCEN):
+        cover = _stub_cover(fb, stmt, as_of)
+        for s in SCEN:
+            imm = _stub_draw_immaterial(fund['info'][s], spec['boundaries'][0], cover)
+            if imm:
+                fund['info'][s]['stub_draw_immaterial'] = imm
     for s in SCEN:
         f = fund['info'][s]
         internal = (f"investments liquidated {f['investments_liquidated']:,.0f}" if f['investments_liquidated'] else '') + \
                    ((', ' if f['investments_liquidated'] else '') + f"SBC settled in {f['sbc_settlement_shares']:,.0f} new shares "
                     f"({f['sbc_settled_in_shares']:,.0f} of the cash-equivalent charge)" if f['sbc_settled_in_shares'] else '')
-        if f['status'] == 'assumed_external_financing':
+        imm = f.get('stub_draw_immaterial')
+        if imm:
+            add(f'financing_{s}', f'{s} assumed financing', 'model', {s: {'debt': f['draws'], 'equity': f['equity'], 'investments': f['liquidation'],
+                                                                          'sbc_settled': f['settled'], 'stub_draw_immaterial': imm}},
+                f"Cash would fall below the minimum operating balance in the stub (to {imm['period_end']})" + (f" even after internal sources ({internal})" if internal else '') +
+                f": a debt draw of {imm['draw']:,.0f} is assumed there, no equity, and the plan funds itself afterwards. It is IMMATERIAL: "
+                f"the company reported free cash flow of {imm['free_cash_flow_ttm']:,.0f} over the twelve months to {imm['ttm_end']}, "
+                f"{imm['retained_ttm']:,.0f} after distributions of {imm['distributions_ttm']:,.0f}"
+                + (f" ({', '.join(imm['distributions_not_reported'])} not reported)" if imm['distributions_not_reported'] else '') +
+                f"; the {imm['years_since_statement']:.2f} years between the balance sheet ({imm['statement_as_of']}) and as_of, which the "
+                f"opening cash does not count, at that rate cover {imm['cover']:,.0f} ({imm['share_of_cover']:.0%} used). Not a funding "
+                f"condition and no external-funding add-on (rule: {STUB_DRAW_RULE}); the draw stays in the model at {r_new:.2%}.",
+                f"The company draws on its facilities or raises money before {imm['period_end']}, or its reported free cash flow after "
+                'distributions turns negative.', imm['source_ids'] + _latest_src(fb, 'cash') + [RULES])
+            _scen(spec, s)['period_assumption_ids'].append(f'financing_{s}')
+            warn('stub_draw_immaterial', f"{s}: {imm['draw']:,.0f} of debt assumed in the stub (to {imm['period_end']}) only, below the "
+                                         f"{imm['cover']:,.0f} of free cash flow after distributions reported since the balance sheet "
+                                         f"({imm['statement_as_of']}): not a funding condition", 'low')
+        elif f['status'] == 'assumed_external_financing':
             first = min([d['period_end'] for d in f['draws'] + f['equity']])
             own = frows[s][-1]['original_ownership']
             add(f'financing_{s}', f'{s} assumed financing', 'model', {s: {'debt': f['draws'], 'equity': f['equity'], 'investments': f['liquidation'],
@@ -3316,7 +3627,8 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
     if unknown_reviews:
         warn('unknown_review_ids', 'reviews supplied for ids not in this forecast: ' + ', '.join(unknown_reviews), 'low')
     finalize()
-    base_external = fund['info']['base']['status'] in ('assumed_external_financing', 'unfunded')
+    base_external = fund['info']['base']['status'] in ('assumed_external_financing', 'unfunded') \
+        and not fund['info']['base'].get('stub_draw_immaterial')
 
     # ---- capital structure: debt weight and issue prices from the model's own values (fixed point), Ke relevered, terminal WACC
     excess0 = max(0., open_bal['cash'] - _scen(spec, 'base')['minimum_cash'][0])
@@ -3429,8 +3741,11 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
                'ttm': h['ttm'], 'year_to_date': h['ytd'],
                'revenue_adjusted_for_one_offs': ({**dict(zip(h['ends'], h['revenue'])), 'ttm': h['ttm']['revenue']}
                                                  if inputs.get('nonrecurring') else None),
-               'current_fiscal_year': {'end': B[0], 'revenue': meta['r_fy'], 'growth': meta['g_cur'], 'basis': meta['cur_basis'], 'kind': cur_kind},
-               'stub': {'start': as_of, 'end': B[0], 'years': cal['stub_years'], 'annual_rate': meta['stub_rate'], 'basis': meta['stub_basis']},
+               'current_fiscal_year': {'end': B[0], 'revenue': meta['r_fy'], 'growth': meta['g_cur'], 'basis': meta['cur_basis'], 'kind': cur_kind,
+                                       **({'quarter_guide': meta['quarter_guide']} if meta.get('quarter_guide') else {})},
+               'stub': {'start': as_of, 'end': B[0], 'years': cal['stub_years'], 'annual_rate': meta['stub_rate'], 'basis': meta['stub_basis'],
+                        **({'revenue_change_reinvested': meta['stub_revenue_change'], 'acquired_step_excluded': meta['acquired_step']}
+                           if meta.get('acquired_step') else {})},
                'growth': {'last': h['g_last'], 'cagr_3y': h['cagr_3y'], 'cagr_5y': h['cagr_5y'], 'recent_annualized': h['g_recent'],
                           'trailing_anchor': h['g_trailing'], 'formula': h['g_trailing_formula'], 'volatility': h['growth_volatility'],
                           'scale_cap': h['g_scale_cap'], 'consensus': {b: e['value'] for b, e in sorted(cons.items())}, 'scenario_spread': meta['spread']},

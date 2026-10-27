@@ -13,7 +13,7 @@
                                  started_at_utc) together with the main loop's own list of agents that returned; stage times
 
 The three analyst parts write disjoint pack keys (PARTS): `core` (the analyst: drivers, forecast_options, scenario_events,
-key_risk, falsifiers), `field` (potential, assessments) and `path` (company_path). Each part also carries thesis_he
+key_risk, falsifiers, and dataqa_resolutions when a data conflict is resolved from the filing), `field` (potential, assessments) and `path` (company_path). Each part also carries thesis_he
 {bear, base, bull}: one line per scenario of what that part assumes, shown side by side in position/coherence.md so the
 reviewers can see that the three parts tell one story per scenario. Nothing here judges, estimates or fills in a number:
 the evidence pack rules (evidence_pack.to_inputs) are the only gate, and the engine runs exactly as `deep` runs it.
@@ -28,7 +28,7 @@ from pathlib import Path
 
 from . import evidence_pack as EP
 
-PARTS = {'core': ('drivers', 'forecast_options', 'scenario_events', 'key_risk', 'falsifiers'),
+PARTS = {'core': ('drivers', 'forecast_options', 'scenario_events', 'key_risk', 'falsifiers', 'dataqa_resolutions'),
          'field': ('potential', 'assessments'),
          'path': ('company_path',)}
 PART_STAGE = {'core': 'analyst', 'field': 'analyst_field', 'path': 'analyst_path'}
@@ -379,7 +379,18 @@ def skeleton(part, run=None):
                              'source_tier': f'one of {tiers}, or one per scenario {{bear, base, bull}}',
                              'competitors': 'only with tier competitor: "competitors": [named tickers of field.json]',
                              'forecast_options': {'horizon_years': '1-30 (optional)',
-                                                  'financing': f'{"|".join(FINANCING_MODES)} (optional)'},
+                                                  'financing': f'{"|".join(FINANCING_MODES)} (optional)',
+                                                  'acquired_revenue': '{value, acquisition, closed, reason, evidence_ids} (optional): '
+                                                                      f'revenue an acquisition brought into the step into {cur_l}, at its '
+                                                                      'pre-deal size; kept out of the growth reinvestment (its price is in '
+                                                                      'the opening balance)',
+                                                  'debt_like_claims': '[{kind, amount, reason, evidence_ids}] (optional): claims ahead '
+                                                                      'of the shares the debt lines miss (a preferred stock at its '
+                                                                      'liquidation preference), citing the filing note; added to '
+                                                                      'opening debt'},
+                             'dataqa_resolutions': '[{field, metric, period_end, resolution label_difference|use_source, source_id, '
+                                                   'reason, evidence_ids}] (optional, only for a cross-source conflict dataqa blocks on: '
+                                                   'qa.fields.<field>.note names the sources; filing evidence required)',
                              'scenario_event': '{"event_he", "evidence_ids"} or {"event_he", "hypothesis": true}'},
                 'drivers': {
                     'current_year_revenue': {
@@ -419,13 +430,20 @@ def skeleton(part, run=None):
                 'gaps': []}
     return {**common,
             '_allowed': {'justification': list(EP.JUSTIFICATIONS), 'source_tier': list(EP.TIERS),
+                         'multiple_from': "economics (preferred): the engine computes multiple_path from its own executed EPS "
+                                          "path, cost of equity, terminal cost of equity and terminal growth with this "
+                                          "scenario's roic; or remove multiple_from and roic and give \"multiple_path\": "
+                                          "[today, y1, y2, y3, y4, y5] by hand",
+                         'roic': "the scenario's incremental ROIC as a decimal (0.30 = 30%, 0.045 = 4.5%; at most 1.5), evidenced by the scenario's "
+                                 'evidence_ids and source_tier (understand/auto.json: ROIC and incremental ROIC)',
                          'competitors': 'only with tier competitor: "competitors": [named tickers of field.json] in a scenario',
                          'peers': 'named competitors of field.json only (no other-company defaults); remove peers when none'},
             'company_path': {
                 'metric': 'eps', 'multiple': 'forward_pe',
-                'scenarios': {s: {'multiple_path': ['<today>', '<y1>', '<y2>', '<y3>', '<y4>', '<y5>'],
+                'scenarios': {s: {'multiple_from': 'economics',
+                                  'roic': f'<{s}: incremental ROIC as a decimal, from the evidence>',
                                   'justification': f'<{"|".join(EP.JUSTIFICATIONS)}>',
-                                  'reason_he': '<why this multiple, in plain Hebrew>',
+                                  'reason_he': '<why this return on capital and so this multiple, in plain Hebrew>',
                                   'source_tier': f'<{tiers}>', 'evidence_ids': _ids_hint(2)}
                               for s in EP.SCENARIOS},
                 'own_history': {'low': '<number>', 'median': '<number>', 'high': '<number>', 'years': '<e.g. 2021-2026>',
@@ -487,7 +505,10 @@ def coherence_md(position):
             lines.append(f'- {part} ({PART_STAGE[part]}): {th if th else "(no thesis_he)"}')
         vals = [f'{k}={_lever_value(d, s)}' for k, d in drivers.items() if k != EP.CURRENT_YEAR and _lever_value(d, s) is not None]
         lines.append(f"- drivers: {', '.join(vals) if vals else '(none set: engine rules)'}")
-        if s in cp:
+        if s in cp and cp[s].get('multiple_from') == 'economics':
+            lines.append(f"- multiple path: computed by the engine from its own EPS path and rates at roic {cp[s].get('roic')} "
+                         f"({cp[s].get('justification')}, tier {cp[s].get('source_tier')})")
+        elif s in cp:
             lines.append(f"- multiple path: {cp[s].get('multiple_path')} ({cp[s].get('justification')}, tier {cp[s].get('source_tier')})")
         for e in (position.get('scenario_events') or {}).get(s) or []:
             if isinstance(e, dict):
@@ -532,6 +553,12 @@ def _compact_path(cf):
     out = {'status': cp.get('status')}
     for s, x in (cp.get('scenarios') or {}).items():
         out[s] = [{k: r.get(k) for k in ('year', 'date', 'price', 'multiple', 'eps', 'status')} for r in x.get('rows') or []]
+        e = x.get('economics')
+        if isinstance(e, dict):           # multiple_from economics: the rates and ROIC the engine computed the path with
+            out.setdefault('economics', {})[s] = {k: e[k] for k in ('status', 'reason', 'roic', 'cost_of_equity',
+                                                                     'terminal_cost_of_equity', 'terminal_growth',
+                                                                     'engine_terminal_roic', 'engine_value_today', 'roic_check')
+                                                    if k in e}
     return out
 
 

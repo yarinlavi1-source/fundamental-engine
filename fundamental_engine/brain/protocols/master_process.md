@@ -132,6 +132,8 @@ Entry: Position outputs.
 14. **Multiples, the company's own and the market's** — the company's own forward P/E (or EV/EBITDA, P/FCF, P/B)
     range through a cycle and where it sits now; named competitors at a comparable stage. A multiple is anchored in
     evidence and labelled `justified_high`, `peak` or `unproven`; a record quarter x 4 is peak earnings, not a run rate.
+    Preferred for company_path: `multiple_from: economics` with each scenario's evidenced incremental ROIC; the engine
+    computes the forward multiple from its own executed EPS path, cost of equity, terminal cost of equity and growth.
 15. **Valuation by type and the yearly path** — merge the fragments into `evidence_pack.json` (`pack-merge <run dir>`), convert it (`pack-to-inputs` or the MCP
     tool `evidence_pack_to_inputs`: inputs.json with source-tier overrides, company_path, scenario events, key risk,
     card assessments, market inputs; the evidence bundle registers the sources), run the engine for that one company

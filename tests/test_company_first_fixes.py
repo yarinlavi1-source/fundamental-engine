@@ -314,6 +314,45 @@ class ForecastLevers(unittest.TestCase):
                                                                  'evidence_ids': ['a']}])
 
 
+
+class EconomicsPathEndToEnd(unittest.TestCase):
+    """The demo company with every multiple path computed by the engine (company_path multiple_from 'economics'): the pack
+    gives each scenario's ROIC, the engine its own EPS path and rates; the yearly table, its reasons and the casefile agree,
+    and no other value moves."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.hand = run(pack())[1]
+        p = pack()
+        for s, roic in (('bear', .12), ('base', .25), ('bull', .40)):
+            x = p['company_path']['scenarios'][s]
+            x.pop('multiple_path')
+            x.update(multiple_from='economics', roic=roic)
+        cls.fb, cls.cf = run(p)
+
+    def test_engine_computed_path_end_to_end(self):
+        self.assertEqual({k: v for k, v in self.cf['stages'].items() if v != 'ok'}, {})
+        cp = self.cf['company_path']
+        case = {c['name']: c for c in self.cf['val']['case']['scenarios']}
+        for s in ('bear', 'base', 'bull'):
+            e = cp['scenarios'][s]['economics']
+            self.assertEqual(e['status'], 'computed')
+            self.assertEqual((e['cost_of_equity'], e['terminal_growth']), (case[s]['cost_of_equity'], case[s]['terminal']['growth']))
+            for t, r in enumerate(cp['scenarios'][s]['rows']):
+                if r['status'] == 'priced':
+                    self.assertAlmostEqual(r['price'], e['values'][t]['value'], delta=1e-9 * abs(r['price']))
+        t = hebrew_table(self.cf)
+        self.assertEqual(t.count(HEAD), 1)
+        base5 = cp['scenarios']['base']['rows'][5]
+        self.assertIn(f"{base5['price']:,.1f}$" if base5['price'] < 100 else f"{base5['price']:,.0f}$", t)
+        self.assertIn('מחושב מהתשואה על ההון', t)
+        reasons = render_he(self.cf['scenario_reasons'])
+        self.assertIn('מחושב מהכלכלה של התרחיש', reasons)
+        # every value outside the company path is the hand run's (the path is display only)
+        for k in ('fc', 'val', 'rk', 'dc', 'an', 'card', 'qa'):
+            self.assertEqual(json.dumps(self.cf[k], sort_keys=True, default=str), json.dumps(self.hand[k], sort_keys=True, default=str), k)
+
+
 if __name__ == '__main__':
     unittest.main()
 

@@ -415,7 +415,10 @@ def run(fb, inputs=None):
         if fi and 'country_risk' not in (inputs.get('forecast') or {}):
             inputs['forecast'] = {**(inputs.get('forecast') or {}), 'country_risk': fi}
         cf['market_context'] = mc
-    qa = stage('dataqa', lambda: dataqa.validate(fb, fb.get('capital_structure')))
+    # inputs.dataqa_resolutions: an analyst's resolution of a cross-source disagreement with filing evidence (dataqa.RESOLUTIONS),
+    # recorded in qa['resolutions'] and bound into the review digest; absent -> dataqa runs exactly as before
+    dq_opts = {'resolutions': inputs['dataqa_resolutions']} if inputs.get('dataqa_resolutions') is not None else None
+    qa = stage('dataqa', lambda: dataqa.validate(fb, fb.get('capital_structure'), dq_opts))
     an = stage('analysis', lambda: analysis.analyze(fb, qa)) if qa else None
     card = stage('model_card', lambda: model_card.build(fb, an, qa, inputs.get('card'))) if an else None
     qa = route_qa(qa, card)

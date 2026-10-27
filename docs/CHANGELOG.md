@@ -16,6 +16,10 @@ dated one and three years ahead against the realized price, and the IC, which ne
 (`scripts/collect_backtest.py`'s Yahoo payloads were not retrievable in this session). Stages are cumulative; median engine
 value / price on the same 536 rows:
 
+Measured on top of 5517114. The parallel GOOGL run fixes on main (the section below: bounded vendor debt scope in dataqa,
+the pack route for debt-like claims, the repair-cause fixes of 26.10.2026) are merged into this branch but are not in these
+numbers.
+
 | engine | 2016 | 2017 | 2018 | 2019 | 2020 | 2021 | 2022 | 2023 | 2024 | 2025 | all | median base IRR |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
 | main (5517114) | 0.789 | 0.661 | 0.729 | 0.630 | 0.778 | 0.619 | 1.098 | 0.525 | 0.645 | 0.556 | 0.672 | 6.98% |
@@ -92,6 +96,135 @@ Alphabet on its SEC facts (no evidence pack; not the fast run's numbers), today'
 - Docs: `brain/protocols/valuation_integrity.md` (investments at face less the gain tax, outside the leverage; terminal
   overrides run through their lever), LIMITATIONS #42 and new #46. Tests: TerminalOverrideContinuityTests, DebtCouponTests,
   FinancialAssetsAtFaceTests, InvestmentGainTaxTests and the updated NonOperatingAssetTests in tests/test_forecast.py.
+
+## Unreleased — GOOGL run fixes (27.10.2026)
+
+- Owner table: the owner sets no required return, he wants cheap with good upside. The buy-below row ('מחיר קנייה מרבי לתשואה
+  שאתה דורש') is now 'מחיר כניסה עם מרווח ביטחון (תשואה של X% בשנה)', with the note that it is the engine's bar (market return
+  + this company's risk premium), not a target he set; the same wording in the paragraph (`render._buy_he`). A new row
+  'פוטנציאל בעוד 5 שנים (מול המחיר של היום)' gives each scenario's year-5 price in the company's own yearly table against today's
+  (GOOGL: בסיסי +57% · שורי +199% · דובי -36%). No value or verdict changes. Tests: test_company_path, test_headline_value,
+  test_decision_governance.
+
+- dataqa debt: a vendor total read as noncurrent debt + noncurrent operating lease liabilities is a definitional difference,
+  not a blocking conflict (GOOGL 2026-06-30: Alpha Vantage shortLongTermDebtTotal 112,756M = noncurrent debt 98,165M +
+  noncurrent operating leases 14,591M, against 10-Q Note 6's 100,164M with the 1,999M current portion; the conflict had
+  blocked the owner's table). That scope confirms the noncurrent line only, so the rule applies only when the leases are what
+  separate the vendor total from the noncurrent line and the current debt it cannot see is at most
+  `VENDOR_UNSEEN_CURRENT_MAX` = 5% of the resolved debt; a misread current portion or a large short-term borrowing still
+  conflicts (review of the first version: it had let both through). The walk-forward is unchanged (its FactBooks carry no
+  vendor totals). Tests: test_dataqa (the GOOGL shape, the misread current line, a large borrowing, a negligible lease).
+- Evidence pack `forecast_options.debt_like_claims` [{kind, amount, reason, evidence_ids}] passes through to
+  `inputs.forecast.debt_like_claims` (forecast.build already took them): GOOGL's 6.25% mandatory convertible preferred
+  ($19.25B liquidation preference) had no route into the capital structure. Checked like forecast.build (kind, positive
+  amount, reason) and citing issuer documents; a non-list evidence_ids is a pack error, not a TypeError (also for
+  acquired_revenue). analyst.md, repair.md, the core skeleton hint and MODULE_CONTRACTS list it.
+
+## Unreleased — engine-computed multiples and draft tables with numbers (26.10.2026)
+
+Every ticker run of 26.10.2026 (NVDA, CRDO, APH) needed a repair pass, partly for the same engine-shaped reasons: the path
+agent derived its multiples at another cost of equity and on another EPS path than the engine executed (a critical finding
+in NVDA and CRDO), and a review-only hold (CRDO's unexplained forensic flag) left the owner's table with no number at all.
+
+- company_path economics mode (`multiple_from: 'economics'`, the new default of analyst_path): a scenario gives its
+  incremental ROIC (`roic`, a decimal, backed by the scenario's evidence_ids and source_tier) instead of a hand
+  multiple_path, and the engine computes the path from ITS OWN executed numbers for that scenario: the fiscal-year EPS path,
+  the explicit cost of equity, the terminal cost of equity and the terminal growth of the valuation case, with the
+  analysts' formula (their path_calc): value_t = the PV of D_k = E_k (1 - g_(k+1)/ROIC) over the executed fiscal years
+  still ahead (each at the midpoint of its remaining part) + E_N (1 - g_T/ROIC)/(Ke_T - g_T), multiple_t = value_t /
+  EPS_(t+1); a partial fiscal year is annualized for its growth only. The scenario's `economics` record holds the formula,
+  Ke, Ke_T, g_T, the ROIC, the engine's own terminal ROIC (and the difference), the engine's value today, every fiscal
+  year's EPS, growth and distribution, the terminal value and value_t; the price of each row equals value_t. A year whose
+  value or next-year EPS is not positive has no price (`nonpositive_value`); a ROIC at or below g_T fails the stage. Hand
+  paths stay supported unchanged (and can sit next to computed ones); the justification labels and the peak check against
+  own_history apply to computed multiples too. On the CRDO casefile the engine reproduces the repaired hand path within
+  0.1-0.6 turns (base 31.0/26.2/23.1/21.6/20.4/19.8 vs 31.1/26.4/23.2/21.7/20.5/19.9); on ADBE it matches the analysts'
+  index-based formula within 0.02%.
+- evidence_pack company_path (contract 2 of the pack): per scenario either {multiple_from 'economics', roic} or a hand
+  multiple_path; a pack with both, a roic outside 0 < roic <= 1.5, or a roic on a hand path is refused. The bound refuses a
+  percent typed as a number above 1.5 (35, 4.5); one between 1 and 1.5 reads as 100-150% and is flagged
+  (`roic_above_100pct` in company_path.flags, `roic_check` in the scenario's economics and value.json), and below 1 a typed
+  percent cannot be told from a decimal by its size (the evidence and review_numbers read it). On the CRDO casefile a bear
+  roic of 4.5 (meant as 4.5%) had run as 450% with the former bound of 5 (bear multiples 17.2-18.7 instead of 10.6-13.2 at
+  0.10); it is now refused. The analyst_path stage file
+  and skeleton ask for the ROIC with its evidence (no multiple arithmetic, no restated Ke or EPS); review_numbers and
+  review_counter check the ROIC and its evidence, not the arithmetic at another rate; value.json carries each scenario's
+  economics rates.
+- Draft table with numbers: when the price claim is withheld only for review or verification reasons (an unreleased
+  forensic flag, an open forecast material issue, an unreviewed draft), render.hebrew_table shows the value rows and the
+  yearly bear/base/bull table under the banner 'טיוטה — לא אומתה' with the reasons, and the bottom line says there is no
+  buy/sell conclusion yet; scenarios_he.md carries the same banner (scenario_reasons `draft_reason_he`). Blocked data, a
+  failed, missing or unverified valuation, a blocked review, demo inputs, a rejected assumption, governance evidence and a
+  'hold' material issue still show no number (render.value_display `draft`, INVALID_GATES). The paragraph is unchanged.
+- Invariance: on the ADBE fixture (plain and with the hand company_path) and the synthetic demo company every casefile leaf is
+  identical to 5517114 except the new `scenario_reasons.draft_reason_he` and the casefile hash; the paragraph and every
+  value are unchanged, the table changes only by the draft banner and bottom line. Tests: test_company_path
+  (EconomicsModeTests), test_evidence_pack, test_company_first_fixes (EconomicsPathEndToEnd), test_draft_numbers.
+
+## Unreleased — engine causes of the 26.10.2026 repair passes, track B (forecast, dataqa)
+
+Every ticker run of 26.10.2026 (NVDA, CRDO, APH) needed a repair pass for engine-shaped reasons. These fixes remove the
+causes without weakening a check. The ADBE fixture and the demo company give identical values, and the quarterly guide leaves
+the walk-forward unchanged (it has no guidance rows). The acquired step and the stub-draw rule DO move the walk-forward: its
+saved filings carry the ASC 805 / pre-deal reading, and a covered stub draw no longer adds the +1pp funding charge. Measured
+on 3,168 walk-forward rows (formations 2016-2025, `engine_backtest.company_row` on 5517114 vs this track): the acquired step
+fired on 133 rows and the stub-draw rule on 55; 159 rows (106 symbols) moved, median base value change on the moved rows
++2.9%; median value/price over all 2,442 valued rows 0.736 -> 0.738; verdicts: promising_funding_conditional ->
+quality_but_expensive 30 and -> attractive_at_price 5, avoid -> index_preferable 8, insufficient_evidence -> avoid 1. That
+arm ran before the whole-step cap below, which only lowers the exclusion where pre-deal organic growth is negative.
+- The fiscal year in progress with a quarterly guide (CRDO critical: one quarter at +115% year over year extrapolated to
+  2.87B while Q1 479M + the Q2 guide 530M pointed to about 2.25-2.45B). `forecast._current_year`: after an input, consensus and
+  fiscal-year guidance, a dated company guide for the NEXT unreported quarter of the year in progress (guidance period 'Q2
+  FY2027', or 'Q2 2026' for a calendar fiscal year) gives the year as the reported year to date + the guided midpoint + the
+  quarters after it: at the guided quarter's own sequential growth (the same quarters a year earlier rose every quarter),
+  at its year-over-year growth applied to those quarters a year earlier (they dipped: seasonal), or held flat (a guided
+  decline, an acquisition in the year, or no last quarter to measure the step). The rule, the step and the quarters are in
+  `anchors.current_fiscal_year.quarter_guide`; the basis names the guide; kind stays 'model' while quarters are modelled
+  ('guidance' when the guided quarter closes the year). CRDO-shaped: 2,244.3M instead of 2,866.9M; NVDA 2026-10-26: 407.1B
+  (H1 177.8B + the Q3 guide 108B + Q4 at +12.2%) instead of 422.9B; APH: 35.08B (flat after the guide: CommScope closed in
+  the year). Without a qualifying row (undated, issued after as_of, another quarter or year) nothing changes.
+- Bought revenue is not charged again as growth capex (APH critical: the CommScope revenue step, paid for by debt already in
+  the opening balance, was charged at sales-to-capital in the stub and created an assumed draw, +1pp cost of equity and a
+  funding-conditional verdict). `forecast._acquired_step`: the stub's growth reinvestment uses the current year's revenue
+  change less the bought revenue in it: inputs.acquired_revenue {value, fiscal_year_end, acquisition, closed, reason,
+  evidence_ids} (evidence pack forecast_options.acquired_revenue), else the ASC 805 pro forma reading (pro forma less reported
+  revenue for the same months a year earlier + the acquired pre-deal run rate for the months left), else the step above
+  organic growth (flagged); never more than the step above the organic growth of last year's revenue (an input above it, or
+  above the whole step, is capped and warned medium `acquired_revenue_capped`: the organic step keeps its reinvestment),
+  never more than the whole step (a negative pre-deal organic growth made the step above it larger than the step: ADI 2022
+  in the walk-forward turned the stub's revenue change to -248M, a release of capital), never applied when the deal closed
+  after the balance sheet (warned high). Recorded in `anchors.stub.acquired_step_excluded`, the reinvestment
+  rationale, the reinvestment rule's stub_revenue_change and the warning `acquired_step_not_reinvested`.
+- A stub draw that reported free cash flow covers is not a funding condition. The minimum-cash default was checked: min(the
+  stage's months of cash costs, today's cash) is ALL of today's cash for APH (3 months of ~26B a year), so any stub shortfall
+  becomes a draw; the default stays (a documented judgement that changes values everywhere) and is now named
+  (`minimum_cash_is_all_cash`, low; an evidenced minimum_cash_months override replaces it). `forecast._stub_draw_immaterial`:
+  a bear/base/bull whose only external money is a debt draw in the stub, with no equity and no draw afterwards, no larger than
+  the free cash flow after distributions the company reported over the last twelve months x the years between the balance
+  sheet and as_of (cash the opening balance does not count), carries `funding[s].stub_draw_immaterial`: the draw stays in the
+  model, the rationale and a low warning say why, no material issue, no needs_external_funding add-on, and the decision
+  records `gates.funding_immaterial` and names it in the verdict reason instead of a funding gate; scenario_reasons drops
+  'external funding not yet secured'. Negative or unreported free cash flow, a draw above the cover, a draw past the stub or
+  any equity keeps the funding gate (tests: a negative-cash-flow and a multi-year-draw fixture and the loss-making grower).
+  APH (its saved FactBook and inputs without the repair's sales-to-capital and minimum-cash overrides, which reproduce the
+  original 222M base / 826M bear stub draws and the +1pp add-on): the base now funds itself (Ke 8.66%, no add-on) and the
+  bear's 1M stub draw is immaterial; with the acquired-step exclusion switched off, the 202M / 797M stub draws read
+  immaterial against 965M of cover (2,986M of free cash flow after distributions a year x 0.32 years since 2026-06-30).
+- An analyst resolution of a cross-source label conflict (NVDA: dataqa blocked the verdict on short-term investments 34.1B
+  SEC vs 76.9B Alpha Vantage, which per the 10-Q is debt 34.1B + equity 42.8B). Pipeline `inputs.dataqa_resolutions` [{field,
+  metric, period_end, resolution label_difference|use_source, source_id, reason, evidence_ids}] (evidence pack
+  `dataqa_resolutions`, core part key) -> `dataqa.validate(options.resolutions)`: applied only to the fact-level cross-source
+  comparison of the named field and metric, only with FILING evidence (a filing-derived source, a filing document or an item
+  citing one); label_difference records the named source as an explained definitional difference (the chosen value never
+  moves), use_source chooses the source the filing confirms at period_end, only when that resolves a disagreement (one that
+  resolves none, e.g. values within tolerance, is rerun without the choice: unused, the chosen value, source and status stay). Recorded in `qa.resolutions` (applied | unused |
+  rejected with why), an `analyst_resolution` check, the field's `analyst_resolutions` and note; the field stays `limited`;
+  the review digest binds the resolutions. Without one, or with a rejected or unmatched one, the block stays.
+- Fixed: `inputs.current_year_revenue` with a tier other than guidance or consensus (own_history, analyst, ...) made the case
+  an invalid spec (assumption kind 'input'); it is now a 'model' row with its own tier in driver_sources.
+- Stage files: analyst.md (quarterly guide rule, acquired_revenue, dataqa_resolutions), repair.md, review_numbers.md;
+  docs/MODULE_CONTRACTS.md (dataqa options and output, forecast inputs and anchors, decision gates). Tests:
+  tests/test_repair_causes.py.
 
 ## Unreleased — the fast ticker procedure (25.10.2026)
 
