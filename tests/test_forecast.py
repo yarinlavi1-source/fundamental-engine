@@ -1620,6 +1620,50 @@ class IncompleteDebtTests(unittest.TestCase):
         self.assertNotIn('debt_incomplete', [w['code'] for w in forecast.build(fb, an, card, qa)['warnings']])
 
 
+def debt_jump(debt_now=200e6, quarter_interest=3e6):
+    """SYNTHETIC industrial (test data only): 100m of debt through FY2025 at 4m of interest a year, then a bond issue doubles it
+    by the June 2026 balance sheet; the June quarter's interest is quarter_interest (None: not reported)."""
+    fb, an, card, _ = industrial()
+    fb['as_of'] = '2026-08-20'
+    for e in an['annual']:
+        an['annual'][e]['debt'] = 100e6                             # analysis.annual: fiscal-year-end debt
+    if quarter_interest is not None:
+        facts.add_fact(fb, 'interest_expense', 'Q@2026-06-30', '2026-06-30', quarter_interest, 'syn:fs', 'as_reported', '2026-08-05')
+    facts.set_price(fb, 60.0, '2026-08-20', 'syn:px')
+    return fb, an, card, qa_for(50e6, 150e6, debt_now, '2026-06-30')
+
+
+class DebtCouponTests(unittest.TestCase):
+    """Regression from the GOOGL 2026-10-27 review: debt rose from 49bn to 100bn during the year, and the fiscal year's interest
+    over today's debt fell to the 1% floor although the latest quarter's interest annualized was about 5.1%."""
+
+    def rate(self, fc):
+        return fc['anchors']['interest_rate_existing']
+
+    def test_a_debt_jump_reads_the_latest_quarter_annualized(self):
+        fc = forecast.build(*debt_jump())
+        self.assertAlmostEqual(self.rate(fc), 4 * 3e6 / 200e6)                # 6%, not the year's 4m / 200m = 2%
+        row = next(a for a in fc['assumptions'] if a['id'] == 'debt_interest')
+        self.assertIn('quarter ending 2026-06-30', row['rationale'])
+        self.assertIn('another debt stack', row['values']['interest_basis'])
+        self.assertTrue(all(x == round(4 * 3e6 / 200e6, 6) for x in scen(fc['spec'], 'base')['interest_rate']))
+        # a repayment is a move too: half the debt left, the quarter's interest on it
+        self.assertAlmostEqual(self.rate(forecast.build(*debt_jump(50e6, .5e6))), 4 * .5e6 / 50e6)
+
+    def test_without_a_quarter_the_years_interest_is_read_over_its_own_average_debt(self):
+        fc = forecast.build(*debt_jump(quarter_interest=None))
+        self.assertAlmostEqual(self.rate(fc), 4e6 / 100e6)
+        self.assertIn("that year's average debt", fc['anchors']['interest_basis'])
+
+    def test_a_stable_debt_keeps_the_fiscal_years_interest_over_todays_debt(self):
+        for debt in (100e6, 120e6):                                  # within DEBT_MOVE of the year's average
+            fc = forecast.build(*debt_jump(debt))
+            self.assertAlmostEqual(self.rate(fc), 4e6 / debt)
+            self.assertIsNone(fc['anchors']['interest_basis'])
+        fb, an, card, qa = industrial()                              # no debt in the annual rows: the former ratio, unchanged
+        self.assertAlmostEqual(self.rate(forecast.build(fb, an, card, qa)), 4e6 / 100e6)
+
+
 class TerminalMatureRateTests(unittest.TestCase):
     """21.10.2026 (forecast.TERMINAL_KE_DROPPED): the forecast is mature by its terminal date, so the perpetuity is discounted at
     the mature table (no stage or one-off funding add-on) while the explicit years keep the full table. Each test failed on the

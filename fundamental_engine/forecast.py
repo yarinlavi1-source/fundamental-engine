@@ -213,6 +213,13 @@ CYCLE_CONV = {'bear': 2, 'base': 3, 'bull': 4}     # years for a cyclical to rev
 CYCLE_FIT_MIN_YEARS = 6   # fewer years than about one full cycle (3-5 years) plus a leg: the fitted slope is one up-leg, not a trend
 DECLINE_FLOOR = -.05      # lowest perpetual growth for a structurally declining business
 DEBT_INCOMPLETE_RATE = .25     # interest / debt above this (no investment-grade or bank rate) means debt lines are missing
+# The rate on the existing debt comes from its own interest history: the last fiscal year's interest expense over today's debt.
+# When today's debt is more than DEBT_MOVE away from that year's average debt (a bond issue or a repayment during or after the
+# year), that interest was paid on another debt stack: the latest reported quarter's interest (the quarter ending at the debt's
+# balance-sheet date) is annualized instead, else the year's interest is read over its own average debt (_coupon). Alphabet
+# 2026-10-27: debt 48.5bn at FY2025 and 100.2bn at June 2026; FY2025 interest 0.74bn / 100.2bn = 0.7% was floored at 1%, while
+# the June quarter's 1.28bn annualized is 5.1%. A threshold for 'the debt moved', not a tuned constant.
+DEBT_MOVE = .25
 KNOWN_INPUTS = ('overrides', 'reviews', 'risk_free', 'equity_risk_premium', 'horizon_years', 'financing', 'nol', 'cyclical',
                 'operating_funding', 'nonrecurring', 'debt_like_claims', 'non_operating_assets', 'capital_events', 'country_risk',
                 'current_year_revenue')
@@ -690,6 +697,31 @@ def _latest_src(fb, *metrics):
         if s:
             ids.append(s[-1][2]['source_id'])
     return sorted(set(ids))
+
+
+def _coupon(fb, h, debt0, debt_val, debt_as_of):
+    """The interest rate on the existing debt when the debt moved (DEBT_MOVE) -> {'rate', 'basis', 'source_ids'}, or {} to keep the
+    last fiscal year's interest expense over today's debt. debt0: the opening debt the rate applies to (analyst claims included,
+    as in that ratio); debt_val, debt_as_of: the validated debt and its balance-sheet date, compared with the average of the debt
+    at the start and the end of the year the interest expense is from (analysis.annual)."""
+    ie = h.get('interest_expense')
+    yr = [x for x in (_num(r.get('debt')) for _, r in h['rows'][-2:]) if x is not None]
+    if not ie or not debt0 or debt0 <= 0 or not debt_val or not yr or sum(yr) <= 0:
+        return {}
+    avg = sum(yr) / len(yr)
+    if abs(debt_val / avg - 1) <= DEBT_MOVE:
+        return {}
+    moved = f"debt {debt_val:,.0f} at {debt_as_of} against an average {avg:,.0f} in the fiscal year ending {h['last_end']}"
+    q = [x for x in facts.series(fb, 'interest_expense', 'quarter')
+         if debt_as_of and abs((_d(x[0]) - _d(debt_as_of)).days) <= 10 and _num(x[1]) is not None and x[1] > 0]
+    if q:
+        end, v, f = q[-1]
+        return {'rate': 4 * v / debt0, 'source_ids': [f['source_id']],
+                'basis': f"interest expense of the quarter ending {end} ({v:,.0f}) x 4 / debt {debt0:,.0f}: {moved}, so the fiscal year's "
+                         f"interest ({ie:,.0f}) was paid on another debt stack"}
+    return {'rate': ie / avg, 'source_ids': [],
+            'basis': f"fiscal-year interest expense {ie:,.0f} / that year's average debt {avg:,.0f}: {moved} and no quarter's interest "
+                     'ends at that balance-sheet date'}
 
 
 def _ytd(fb, metric, last_end, upto=None):
@@ -1646,7 +1678,8 @@ def _params(route, h, cal, cons, rf, ku, ku_t, ov_ke, debt0, ov, warn, ev=None):
     tax = _clamp(tax_eff, .15, .25) if tax_eff is not None else .21
     if tax_eff is not None and tax != tax_eff:
         warn('tax_normalized', f'effective tax {tax_eff:.1%} outside 15-25%; normalized to {tax:.1%} (override with evidence)', 'low')
-    r_raw = h['interest_expense'] / debt0 if h['interest_expense'] and debt0 > 0 else None
+    cp = h.get('coupon') or {}                  # the debt moved: the interest of the debt stack held today (_coupon)
+    r_raw = cp['rate'] if cp.get('rate') is not None else (h['interest_expense'] / debt0 if h['interest_expense'] and debt0 > 0 else None)
     r0 = _clamp(r_raw, .01, .15) if r_raw is not None else rf + st['debt_spread']
     if r_raw is not None and not DEBT_RATE_RANGE[0] <= r_raw <= rf + DEBT_RATE_RANGE[1]:
         warn('debt_rate_unusual', f'interest expense / debt {r_raw:.2%} is outside {DEBT_RATE_RANGE[0]:.1%}..risk-free + {DEBT_RATE_RANGE[1]:.0%}: '
@@ -1688,7 +1721,7 @@ def _params(route, h, cal, cons, rf, ku, ku_t, ov_ke, debt0, ov, warn, ev=None):
             'stub_rate': stub_rate, 'stub_basis': stub_basis, 'consensus_growth': cg,
             'consensus_low': lows, 'consensus_high': highs, 'growth_kind': g_kind, 'spread': spread, 'half_life': hl,
             'margin_why': m_why, 's2c_history': s2c_h, 's2c_used': s2c, 's2c_range': s2c_range, 'tax_effective': tax_eff,
-            'tax_used': tax, 'interest_existing': r0, 'g_terminal': gT, 'cycle': cyc_meta,
+            'tax_used': tax, 'interest_existing': r0, 'interest_basis': cp.get('basis'), 'g_terminal': gT, 'cycle': cyc_meta,
             'debt_rate_kind': 'own_history' if r_raw is not None else ('CONST' if debt0 > 0 else None),
             'roic_durability': dur_meta, 'roic_persistence': persist,
             'growth_start_capped': bool(not cyc and start_capped), 's2c_class': s2c_cls, 's2c_bound': s2c_bound,
@@ -2463,6 +2496,7 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
         return float(o['value']) if o is not None and o['source_tier'] in COMPANY_TIERS else None
     ov.overridden = lambda s, lever: (s, lever) in econ
 
+    h['coupon'] = _coupon(fb, h, open_bal['debt'], val('debt'), (res.get('debt') or {}).get('as_of'))
     try:
         P, meta = _params(route, h, cal, cons, rf, ku, ku_t, ov_ke, open_bal['debt'], ov, warn, ev)
         for s in SCEN:
@@ -2840,11 +2874,13 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
         'The company accumulates cash for two years without distributing, or distributes while cash falls below the minimum.',
         _latest_src(fb, 'buybacks', 'cfo', 'cash') + [RULES])
     r_new = rf + st['debt_spread']
-    add('debt_interest', 'existing debt', 'model', {'interest_rate_existing': meta['interest_existing'], 'new_money_rate': r_new},
+    add('debt_interest', 'existing debt', 'model', {'interest_rate_existing': meta['interest_existing'], 'new_money_rate': r_new,
+                                                    'interest_basis': meta['interest_basis']},
         f"Existing debt {open_bal['debt']:,.0f} held flat (maturities refinanced) at {meta['interest_existing']:.2%} "
-        f"({'interest expense / debt' if h['interest_expense'] and open_bal['debt'] else 'risk-free + stage spread'}); any assumed new money at "
-        f'{r_new:.2%} (risk-free + {st["debt_spread"]:.0%}), only up to {DEBT_CAPACITY:.0f}x EBITDA before SBC.',
-        'Refinancing at a rate more than 2 points above the assumption or a covenant breach.', _latest_src(fb, 'interest_expense') + bal_srcs)
+        f"({meta['interest_basis'] or ('interest expense / debt' if h['interest_expense'] and open_bal['debt'] else 'risk-free + stage spread')}); "
+        f'any assumed new money at {r_new:.2%} (risk-free + {st["debt_spread"]:.0%}), only up to {DEBT_CAPACITY:.0f}x EBITDA before SBC.',
+        'Refinancing at a rate more than 2 points above the assumption or a covenant breach.',
+        _latest_src(fb, 'interest_expense') + h['coupon'].get('source_ids', []) + bal_srcs)
     add('investment_income', 'investment income', 'model', {'annual_after_tax': paths['base']['investment_income_after_tax'][0]},
         f"Marketable investments {open_bal['sti'] + open_bal['lti']:,.0f} earn the risk-free rate {rf:.2%} after tax; principal counted once in the "
         'terminal bridge, or spent first when cash falls short (income falls with the balance).',
@@ -3045,6 +3081,8 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
     # interest expense far above any plausible rate on the debt found: debt lines are missing (T-Mobile 2026-10: long-term
     # debt under issuer tags, $6.1bn of short-term borrowings read against about $3.5bn of yearly interest, +74% 'upside')
     ie, d0 = h.get('interest_expense'), open_bal['debt'] or 0.
+    if h['coupon'].get('rate') is not None:                 # the debt moved: the interest of the stack held today (_coupon)
+        ie = h['coupon']['rate'] * d0
     if ie and ie > 0 and (ie / d0 if d0 > 0 else float('inf')) > DEBT_INCOMPLETE_RATE and ie > .005 * h['last_revenue']:
         warn('debt_incomplete', f"interest expense {ie:,.0f} is {('%.0f%%' % (100 * ie / d0)) if d0 > 0 else 'charged with no debt found'}"
                                 f"{' of the debt found ' + format(d0, ',.0f') if d0 > 0 else ''}: debt lines are probably missing "
@@ -3292,6 +3330,7 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
                                     'terminal': {s: P[s]['s2c_terminal'] for s in SCEN}},
                'working_capital_ratio': {'value': fixed['wc'], 'basis': h['wc_basis']}, 'deferred_revenue_ratio': fixed['dr'],
                'tax': {'effective_3y': meta['tax_effective'], 'used': meta['tax_used']}, 'interest_rate_existing': meta['interest_existing'],
+               'interest_basis': meta['interest_basis'],
                'roic': h['roic'], 'payout_history_3y': h['payout_history'], 'net_debt_to_ebitda': h['nd_ebitda'], 'opening': open_bal,
                'reinvestment_identity': fixed['identity'],
                'route': {k: route[k] for k in ('method', 'business_model', 'stage', 'archetype', 'cyclical', 'cyclical_evidence', 'capital_intensity',
