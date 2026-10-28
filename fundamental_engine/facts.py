@@ -14,7 +14,10 @@ from hashlib import sha256
 import json
 import re
 
-LAG_DAYS = 2                       # a filing, or a dated bundle document, is usable two days after it is published (snapshot.PIT_LAG_DAYS)
+# a filing, or a dated bundle document, is usable two days after it is published (snapshot.PIT_LAG_DAYS). The owner may ask
+# for a results-day valuation (27.10.2026): FE_LAG_DAYS=0 in the environment lets a release read in full on its own date back
+# drivers; the run says so (results-day mode). Backtests and the walk-forward never set it.
+LAG_DAYS = int(__import__('os').environ.get('FE_LAG_DAYS', '2'))
 # market feeds quote a price or a rate AT their date: usable on that date (set_price accepts a quote dated as_of), not after the
 # two-day document lag; a bundle source of these kinds, or retrieved as 'market_feed', is registered when dated on or before as_of
 MARKET_FEED_KINDS = ('price', 'macro')
