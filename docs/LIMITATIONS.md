@@ -43,7 +43,11 @@ Companion to docs/EVIDENCE_STATUS.md, which separates what tests prove from what
 
 8. **Leverage drift (deferred).** One cost of equity and terminal WACC are used for the whole path while leverage
    changes as debt is repaid or drawn; on the levered test case the value is about 1.3% below a period-consistent one.
-   Fix: a per-period cost of equity in the valuation contract.
+   Fix: a per-period cost of equity in the valuation contract. Related (29.10.2026): the explicit years keep one Ke,
+   floored at the table below market leverage, so a plan's assumed debt draws cost equity holders less than a dollar of
+   present value per dollar drawn (interest at the coupon, principal at the horizon, both discounted at Ke): debt-funded
+   plans (ORCL: 176bn of base draws) are still credited with cheap financing in the explicit years. The terminal no longer
+   is (forecast.TERMINAL_ASSET_RATE), and more opening debt never raises the value.
 9. **Split test without price history.** `pipeline.factbook_from_run_dir` does not fill `market.price_history`,
    `price_history_basis` or `price_history_bar_date`, so on pipeline FactBooks a split is decided only by a dated
    corporate action or fully restated weighted shares; otherwise the step stays unresolved and counts as dilution

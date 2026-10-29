@@ -197,12 +197,15 @@ class GapVisibilityTests(unittest.TestCase):
 
 
 class InvarianceTests(unittest.TestCase):
-    """No overrides: every value is what the engine produced before source tiers existed (spec hashes and values at 6a0db09)."""
-    BEFORE = {'adbe': ('669f1e617783d48ae82070cdfbc88d71af9a257fcb82de34fe1dd8ce954275fd', 636.0833778644535),
-              'industrial': ('6e2923c31848c5839ddcca476d2a5ed1f87668b80d7830f813d6fa9e4b7e5591', 47.299131175885144),
-              'grower': ('127f5c6145e55d2d81a6076a4d0fb0152a4b269d396f135a64f4ca5a3717e60e', 6.226562711983232),
-              'levered': ('f6b4ec51d17e8bfe09bb99910151c89aa7798bad269b860f9563b80089065d0e', 27.973151495868116),
-              'fast_grower': ('273c66ffdc203d62ca0102c936131e8cdf4d72b48cb4dc804cd9471a40ba8e63', 132.68099168372305)}
+    """No overrides: every value is what the engine produced before source tiers existed (spec hashes and values at 6a0db09),
+    re-pinned on 29.10.2026 for forecast.TERMINAL_ASSET_RATE (terminal debt earns its tax shield only; ADBE 636.08 -> 634.25,
+    industrial 47.30 -> 46.57, levered 27.97 -> 25.91, grower 6.23 -> 6.32: its plan's horizon debt now earns a shield;
+    fast_grower's value unchanged, its spec records the horizon debt weight)."""
+    BEFORE = {'adbe': ('90640c327db31e76b2fc572fe5b9519fd47e28a5af23128e23dc415fe2c36ddd', 634.2514481969719),
+              'industrial': ('e094aa4615cd7e9f4871c3055e1a7eb3b620613177145675f3b4e55795a4a7b8', 46.574198912758014),
+              'grower': ('9198fe0cb3b2b05d972d394a60cebc212ac816e340a950aac2e7d2639137c823', 6.3238892494952035),
+              'levered': ('252bfd7d92f831d9d08c8bcc0bf0d89eed4717444c97f9c7106888feb54b73bd', 25.913438233930606),
+              'fast_grower': ('ad4ca967e5cba08d175fcca588f4d6f297bd36ec33a5d65ce397903cc809371f', 132.68099168372305)}
 
     def test_values_unchanged_without_overrides(self):
         for name, f in (('adbe', adbe), ('industrial', industrial), ('grower', grower), ('levered', lambda: levered(60.)),
@@ -214,7 +217,7 @@ class InvarianceTests(unittest.TestCase):
 
     def test_pipeline_values_unchanged_without_overrides(self):
         cf = pipeline.run(deepcopy(ADBE))
-        self.assertEqual(cf['fc']['spec_sha256'], '8b97e381ddd321a15ec05de1a90e87398c5342ecc1bdadaab28f4693ecf1951e')
+        self.assertEqual(cf['fc']['spec_sha256'], '53eab6223f6ab21280f815213606bd6ef6205b8cc783a6f07a529df55c30090b')
 
 
 if __name__ == '__main__':

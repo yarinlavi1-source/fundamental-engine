@@ -104,8 +104,10 @@ INSTANT_TAGS = {
     'long_term_debt': ['longtermdebtnoncurrent'],
     # scope ambiguous: issuers tag the noncurrent face line or the total as LongTermDebt; dataqa resolves it
     # with the debt roll-forward (prior + issued - repaid) before any use
-    'long_term_debt_tagged': ['longtermdebt', 'longtermdebtandcapitalleaseobligations', 'longtermnotespayable', 'seniornotes',
-                              'seniorlongtermnotes'],
+    # LongTermNotesAndLoans: Oracle's 10-Q noncurrent 'Notes payable and other borrowings' line (its 10-K tags the same line
+    # LongTermNotesPayable; 117.7bn at 2026-08-31 was read as no debt): one value per date across these tags, never added twice
+    'long_term_debt_tagged': ['longtermdebt', 'longtermdebtandcapitalleaseobligations', 'longtermnotespayable', 'longtermnotesandloans',
+                              'seniornotes', 'seniorlongtermnotes'],
     # a noncurrent debt line under another tag (MercadoLibre: LongTermLoansPayable 4.1bn, current 6.5bn, LongTermDebt 10.6bn):
     # never added to debt, only a witness that settles the scope of the LongTermDebt tag in dataqa
     'debt_noncurrent_witness': ['longtermloanspayable', 'otherlongtermdebtnoncurrent', 'loanspayablenoncurrent'],

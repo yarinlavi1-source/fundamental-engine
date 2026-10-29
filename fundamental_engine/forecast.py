@@ -192,6 +192,19 @@ CYCLICAL_LIFT_EXCLUDED_TYPES = ('semiconductor', 'commodity')
 #   Ku = (table + Kd_e x MARKET_DE) / (1 + MARKET_DE);  Ke = max(table, Ku + (Ku - Kd_e) x D/E)
 #   WACC = E/V x Ke + D/V x (Kd_e - Kd_promised x tax)  (= Ku - D/V x Kd_promised x tax when Ke is not floored)
 # A company with less than market leverage keeps the table rate (conservative: it is not credited with a lower rate).
+# TERMINAL_ASSET_RATE (29.10.2026, ORCL): the terminal WACC used to be E/V x terminal Ke + D/V x (Kd_e - Kd_promised x tax) with
+# the terminal Ke floored at the mature table and D/V taken from TODAY's net debt. Below market leverage the floor keeps Ke flat,
+# so each point of debt weight swapped the table rate for the cheaper Kd_e and the WACC fell by D/V x (table - Kd_e + Kd_p x tax):
+# debt was credited as cheap capital in perpetuity, and today's weight was applied to a horizon firm several times larger. On the
+# ORCL run (2026-10-29) reading the 10-Q's 118bn of notes RAISED the base value (206 -> 214) and the bull (459 -> 490): debt
+# weight 0 -> 14% cut the terminal WACC from 9.19% to 8.67% with terminal growth 4.99%. Now the mature table (or an analyst
+# override) is the business's own rate whatever its financing, and the terminal debt earns its tax shield only, at the base
+# horizon's own debt weight (Harris-Pringle at a constant weight: EV = (FCFF + D x shield) / (rate - g)):
+#   terminal WACC = max(table_T - w_T x min(Kd_promised x tax, TERMINAL_SHIELD_MAX), g + 3 points),  w_T = D_T / EV_T (base)
+# Each dollar of terminal debt then adds at most shield / (rate - g) <= 1 of value while it is subtracted in full, so more
+# debt never raises the equity value (tests: DebtMonotonicityTests). The shield rate is capped at the 3-point floor spread so that
+# bound holds for any coupon (15% x 25% tax would otherwise exceed it). The explicit years keep Ke as above.
+TERMINAL_SHIELD_MAX = .03
 MARKET_DE = .25           # market-average debt / equity behind the ERP (US non-financials, order of magnitude; a model assumption)
 DEBT_EXPECTED_PREMIUM = .01   # expected (not promised) return on corporate debt over risk-free: about a BBB debt beta x ERP
 DEBT_RATE_RANGE = (.005, .06)  # interest / debt below 0.5% or above risk-free + 6pp is flagged as a data issue (it sets interest and the
@@ -1154,13 +1167,15 @@ def _ke_parts(parts, table, lev):
                     'reason': f"financial leverage above the market average: Ku + (Ku - Kd_e) x D/E with D/E {lev['d_to_e']:.1%} from the "
                               "model's own equity value"})
     flat = {'adjustment_' + a['factor'].replace(':', '_'): a['value'] for a in adj}   # numeric keys for risk.py's priced-via lookup
-    # the terminal's own rate: the mature table (parts['terminal']) unlevered at MARKET_DE and relevered at the same D/E
+    # the terminal's own rate: the mature table (parts['terminal']), the business's rate whatever its financing (TERMINAL_ASSET_RATE)
     term = dict(parts['terminal'], asset_unlevered=lev['unlevered_terminal'], cost_of_equity=lev['ke_terminal'],
                 leverage_relevered=max(0., lev['ke_terminal'] - parts['terminal']['table_rate']),
+                debt_weight=lev['terminal_debt_weight'], tax_shield_rate=lev['terminal_tax_shield_rate'],
                 formula='terminal table = risk-free + ERP + the structural rows only (dropped: ' +
                         (', '.join(f"{a['factor']} {a['value']:+.2%}" for a in parts['terminal']['dropped']) or 'none') +
-                        '); terminal Ke = max(terminal table, Ku_T + (Ku_T - Kd_e) x D/E) with the same D/E; terminal WACC = E/V x terminal '
-                        'Ke + D/V x (Kd_e - Kd_promised x tax), floored at terminal growth + 3 points')
+                        '): the business\'s own rate whatever its financing (not relevered); terminal WACC = terminal table - w_T x '
+                        f'min(Kd_promised x tax, {TERMINAL_SHIELD_MAX:.0%}) with w_T the base horizon\'s debt / enterprise value, floored at '
+                        'terminal growth + 3 points: debt earns its tax shield only, never a lower rate')
     # 'unlevered' stays the rate BEFORE the leverage row (consumers show Ke - unlevered as the leverage effect); the asset
     # (Harris-Pringle) rate behind the relevering is 'asset_unlevered'
     return {**{k: v for k, v in parts.items() if k != 'adjustments'}, **flat, 'adjustments': adj, 'table_rate': table,
@@ -1174,34 +1189,48 @@ def _solve_capital(spec, P, table, table_t, kd_e, kd_p, net_debt, ov_ke, cap_at_
        per share right after the issue): no new investor pays more than the scenario says a share is worth (a bear does not raise
        at a price it cannot support), and when the quote is below that value existing holders bear the extra dilution
        (cap_at_quote=False prices at the scenario's own value only: the 'value at a second issue price' disclosure).
-    The explicit years are discounted at Ke from the table; the terminal WACC is built from the terminal Ke, the mature table
-    (table_t, TERMINAL_KE_DROPPED) unlevered and relevered the same way at the same D/E."""
+    3. the base horizon's debt weight w_T, which sets the terminal debt's tax shield (TERMINAL_ASSET_RATE).
+    The explicit years are discounted at Ke from the table; the terminal WACC is the terminal Ke, the mature table (table_t,
+    TERMINAL_KE_DROPPED: the business's own rate whatever its financing, not relevered), less w_T x the tax shield rate."""
     shares, quote, B = spec['opening']['shares'], spec['quote']['price'], spec['boundaries']
     ku = (table + kd_e * MARKET_DE) / (1 + MARKET_DE)
-    ku_t = (table_t + kd_e * MARKET_DE) / (1 + MARKET_DE)
     issued = {sc['name']: [i for i in range(len(B)) if sc['equity_proceeds'][i] > 0 or sc['sbc_share_settlement'][i] > 0]
               for sc in spec['scenarios']}
     for sc in spec['scenarios']:
         p0 = sc.get('equity_issue_price', quote)
         sc['equity_issue_price'] = [float(x) for x in p0] if isinstance(p0, list) else [float(p0)] * len(B)
 
-    def apply(w):
+    def apply(w, wt):
         de = w / (1 - w)
         ke = max(table, ku + (ku - kd_e) * de)
-        ke_t = max(table_t, ku_t + (ku_t - kd_e) * de)      # the terminal: the mature table relevered at the same D/E
         for sc in spec['scenarios']:
             s = sc['name']
-            k_e, k_t = ov_ke.get(s, ke), ov_ke.get(s, ke_t)   # an analyst override is the rate of both
-            wacc = (1 - w) * k_t + w * (kd_e - kd_p * P[s]['tax'])
-            P[s].update(ke=k_e, ke_terminal=k_t, wacc=max(wacc, P[s]['g_terminal'] + .03))
+            # the terminal (TERMINAL_ASSET_RATE): the mature table (or an analyst override) is the business's own rate whatever its
+            # financing, never relevered; the terminal debt earns its tax shield only, at the base horizon's debt weight wt
+            k_e, k_t = ov_ke.get(s, ke), ov_ke.get(s, table_t)
+            shield = min(kd_p * P[s]['tax'], TERMINAL_SHIELD_MAX)
+            P[s].update(ke=k_e, ke_terminal=k_t, wacc=max(k_t - wt * shield, P[s]['g_terminal'] + .03))
             sc['cost_of_equity'] = _r(k_e)
             sc['terminal']['cost_of_equity'] = _r(k_t)
             sc['terminal']['wacc'] = _r(P[s]['wacc'])
             sc['terminal']['debt_weight'] = float(w)    # a change in Ke moves this WACC by (1 - w) x the change (valuation_tools)
-        return ke, ke_t, de
-    w, e, it = 0., None, 0
+        return ke, table_t, de
+
+    def horizon_weight(rs):
+        """Debt / enterprise value at the base horizon with the shield on that same debt (closed form: EV = (FCFF + D x shield) /
+        (rate - g), Harris-Pringle at a constant weight); 0 without debt or without a positive value. Gross debt, the debt that
+        pays the interest: cash and investments are added at face in the terminal bridge, so they do not also cut the shield
+        (a financial asset stays worth its face value)."""
+        t = rs.get('terminal') or {}
+        sb = _scen(spec, 'base')
+        u, g = ov_ke.get('base', table_t), sb['terminal']['growth']
+        n = max(0., t.get('debt', 0.))
+        shield = min(kd_p * P['base']['tax'], TERMINAL_SHIELD_MAX)
+        ev = (t.get('next_year_fcff', 0.) + n * shield) / (u - g) if u > g else 0.
+        return min(W_MAX, n / ev) if n > 0 and ev > 0 else 0.
+    w, wt, e, it = 0., 0., None, 0
     status = 'no_net_debt' if net_debt <= 0 else 'converged'
-    ke, ke_t, de = apply(0.)
+    ke, ke_t, de = apply(0., 0.)
     floor = quote * 1e-6
     hist = {}                                  # (scenario, period) -> recent plain iterates of p = V(p), for Aitken extrapolation
     for it in range(1, 151):
@@ -1240,16 +1269,22 @@ def _solve_capital(spec, P, table, table_t, kd_e, kd_p, net_debt, ov_ke, cap_at_
                 status = 'capped' if w2 >= W_MAX - 1e-12 else 'converged'
             if abs(w2 - w) > 1e-9:
                 w, changed = w2, True
-                ke, ke_t, de = apply(w)
+        rb = next((r for r in res['scenarios'] if r['name'] == 'base'), None)
+        wt2 = horizon_weight(rb) if rb and rb.get('status') != 'funding_blocked' else 0.
+        if abs(wt2 - wt) > 1e-9:
+            wt, changed = wt2, True
+        if changed:
+            ke, ke_t, de = apply(w, wt)
         if not changed:
             break
     else:
         status = 'not_converged'
     prices = {sc['name']: [{'period_end': B[i], 'price': sc['equity_issue_price'][i], 'quote_binding': sc['equity_issue_price'][i] >= quote * (1 - 1e-9)}
                            for i in issued[sc['name']]] for sc in spec['scenarios']}
-    return {'ke': ke, 'unlevered': ku, 'table': table, 'ke_terminal': ke_t, 'unlevered_terminal': ku_t, 'table_terminal': table_t,
+    return {'ke': ke, 'unlevered': ku, 'table': table, 'ke_terminal': ke_t, 'unlevered_terminal': table_t, 'table_terminal': table_t,
             'kd': kd_e, 'kd_expected': kd_e, 'kd_promised': kd_p, 'market_debt_to_equity': MARKET_DE,
             'net_debt': net_debt, 'model_equity': e, 'debt_weight': w, 'd_to_e': de, 'iterations': it, 'status': status,
+            'terminal_debt_weight': wt, 'terminal_tax_shield_rate': min(kd_p * P['base']['tax'], TERMINAL_SHIELD_MAX),
             'issue_prices': prices,
             'basis': 'net debt = debt - marketable investments - cash above the first-period minimum; equity = base value today x '
                      'point-in-time shares (the model\'s own value, not the quote); new shares issued at min(quote, scenario value after the issue)'}
@@ -3541,14 +3576,16 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
         "fixed point on the model's value, never the quote, so the discount rate does not move with the price" +
         ('' if not dependent else ' (per-share values of ' + ', '.join(dependent) + ' still depend on the quote: new shares are issued at '
          'the quote below their own value)') +
-        f". Terminal WACC {P['base']['wacc']:.2%} = E/V x terminal Ke {P['base']['ke_terminal']:.2%} + D/V x (Kd_e - Kd_promised x tax), "
-        'floored at terminal growth + 3 points; the terminal Ke is ' +
+        f". Terminal WACC {P['base']['wacc']:.2%} = the terminal rate less the debt's tax shield at the base horizon's debt weight "
+        f"{lev['terminal_debt_weight']:.1%} x {lev['terminal_tax_shield_rate']:.2%} (Kd_promised x tax, at most {TERMINAL_SHIELD_MAX:.0%}), "
+        'floored at terminal growth + 3 points: debt is credited with its tax shield only, never as cheaper capital, so more debt '
+        'never raises the value; the terminal Ke (not relevered) is ' +
         ('the analyst override (used for the explicit years and the terminal alike)' if ov_ke else
          f"the mature table {ku_t:.2%}" +
          (' (the table without ' + ', '.join(f"{a['factor']} {a['value']:+.2%}" for a in ke_parts['terminal']['dropped']) +
           ': the forecast is mature by its terminal date, so the perpetuity does not carry the risk of a phase the model has ended)'
           if ke_parts['terminal']['dropped'] else ' (no stage or funding add-on to drop: the same table as the explicit years)') +
-         f", relevered at the same D/E; the explicit years and the roll-back of the terminal value keep Ke {ke:.2%}") +
+         f"; the explicit years and the roll-back of the terminal value keep Ke {ke:.2%}") +
         f". External-funding add-on {'applied' if external_assumed else 'not applied'} from the executed base funding result (explicit years). "
         'Same Ke, and the same terminal rate, in all scenarios.',
         'Long-term risk-free rate moves by more than 1 point, the company changes its leverage materially, or the base plan '

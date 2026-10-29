@@ -1,3 +1,47 @@
+## Unreleased — ORCL debt fixes (29.10.2026)
+
+The ORCL deep run (as_of 2026-10-29) found two engine defects; its reviewers held the result as UNVERIFIED.
+
+- facts: `LongTermNotesAndLoans` is read as `long_term_debt_tagged` (dataqa resolves its scope with the roll-forward like the
+  other LongTermDebt-type tags). Oracle tags its noncurrent "Notes payable and other borrowings" line LongTermNotesPayable in the
+  10-K and LongTermNotesAndLoans in the 10-Q, so at 2026-08-31 only the current notes (7,625M) were read and the opening debt was
+  12.6bn (with the 4.95bn preferred) against 125.3bn on the 10-Q. Both tags sit in the same metric: one value per date (first
+  filed, tag order breaks ties), never added twice (at 2026-05-31 both carry 122,342M). From the run's companyfacts dataqa now
+  resolves 125,337M (tagged + current, conservative scope: both hypotheses pass the 05-31 -> 08-31 roll-forward). Test:
+  test_dataqa `test_oracle_notes_and_loans_tag_is_read_as_debt_once` (Oracle's own values).
+- forecast `TERMINAL_ASSET_RATE`: more opening debt could RAISE the equity value. Root cause: the terminal WACC was
+  E/V x terminal Ke + D/V x (Kd_e - Kd_promised x tax) with the terminal Ke floored at the mature table below market leverage
+  and D/V from TODAY's net debt. With Ke flat, each point of debt weight swapped the table rate for the cheaper Kd_e, so the
+  WACC fell by D/V x (table - Kd_e + Kd_p x tax): debt was credited as cheap capital in perpetuity (and today's weight was
+  applied to a horizon firm several times larger). ORCL: debt weight 0 -> 14% cut the terminal WACC from 9.19% to 8.67% at
+  terminal growth 4.99%, so reading the 10-Q notes moved base 206.22 -> 213.74 and bull 459.26 -> 489.85 while bear fell;
+  a sweep on the run (opening debt +20bn) still raised base 213.74 -> 214.66. Not the cause: the year-6 interest "drop" to
+  5.52bn is the 5-month interim period to 2031-10-29, not an annual figure; the interest rate (reported interest / debt) only
+  moved the result a little. Now the mature table (or an analyst Ke override) is the business's own terminal rate whatever its
+  financing, never relevered, and the terminal debt earns its tax shield only: terminal WACC = max(table_T - w_T x
+  min(Kd_promised x tax, `TERMINAL_SHIELD_MAX` 3%), g + 3 points), with w_T the base horizon's debt / EV solved in closed form
+  (EV = (FCFF + D x shield) / (rate - g), Harris-Pringle at a constant weight; gross debt, so cash and investments stay worth
+  face). A dollar of terminal debt then adds at most shield / (rate - g) <= 1 of value while it is subtracted in full. Same
+  rate in all scenarios; the explicit years keep Ke as before; `components.leverage` gains `terminal_debt_weight` and
+  `terminal_tax_shield_rate`; `components.terminal.asset_unlevered` is the mature table. Tests: test_forecast
+  `DebtMonotonicityTests` (industrial, levered, grower, ADBE debt sweeps; debt-like claims; an Oracle-shaped synthetic company
+  whose base rose 101.30 -> 103.69 and bull 195.08 -> 210.50 from 12.6bn to 125.3bn of debt before the fix): each failed on
+  the previous engine.
+- Measured effect. ORCL run rerun with both fixes (debt 130.3bn incl. preferred): bear 36.35 -> 32.39, base 213.74 -> 193.46,
+  bull 489.85 -> 445.45; a debt sweep on it is now monotone (+20bn: base 190.88, +60bn: 167.96, +120bn: 133.93). Fixtures:
+  ADBE base 636.08 -> 634.25, industrial 47.30 -> 46.57, levered 27.97 -> 25.91, grower 6.23 -> 6.32 (a net-cash company whose
+  plan borrows: its horizon debt now earns a shield it never had), fast_grower unchanged (InvarianceTests and the ADBE implied
+  P/E re-pinned). Walk-forward A/B (`engine_backtest.company_row`, 45 names x formations 2019/2023/2025, 113 rows valued by both,
+  sample chosen leverage-heavy: 38 indebted names + 7 low-debt controls): base value median -9.4% (mean -10.6%, 94 down, 16 up
+  at most +1.0%, 3 unchanged); indebted names median -11.9% (p25 -15.0%, p75 -5.8%), bear -9.9%, controls +0.1%; median value /
+  price 0.734 -> 0.680 (indebted 0.766 -> 0.680); base IRR median -0.4 points; no verdict changed, no errors. Largest falls are
+  the most indebted: T 2019 14.41 -> 6.52, T 2023 0.65 -> 0.00, SO 2025 9.24 -> 2.88 (already far below their prices), TDG 2019
+  -25%, ORCL 2025 -21%. This is a consistency fix, not a calibration: it LOWERS levered values on an engine whose values already
+  sit below prices on average. The alternative consistent choice (the unlevered Ku of the table at market leverage as every
+  company's terminal rate) would instead raise every low-debt company's terminal value; it was not taken because the engine
+  deliberately keeps the table rate for below-market leverage (no credit for a lower rate). Open: the explicit years still
+  discount a plan's assumed debt draws at one Ke (docs/LIMITATIONS.md item 8).
+
 ## Unreleased — GOOGL run fixes (27.10.2026)
 
 - Owner table: the owner sets no required return, he wants cheap with good upside. The buy-below row ('מחיר קנייה מרבי לתשואה

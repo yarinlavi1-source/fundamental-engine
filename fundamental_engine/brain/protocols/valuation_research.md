@@ -15,8 +15,12 @@ discounted with Ke. Funding/share issuance is explicit, so a financing gap is no
 subtracted for a second time from the resulting owner value.
 The terminal WACC is built from the mature table (the stage and one-off funding
 add-ons to the cost of equity apply to the explicit years only: the forecast is
-mature by its terminal date; structural rows stay), relevered at the same D/E;
-the explicit years and the roll-back of the terminal value keep the full Ke.
+mature by its terminal date; structural rows stay). It is the business's own
+rate whatever its financing (not relevered): the terminal debt earns its tax
+shield only, at the base horizon's debt weight (terminal WACC = mature table -
+w_T x min(coupon x tax, 3%), floored at g + 3 points), so more debt never raises
+the equity value; the explicit years and the roll-back of the terminal value
+keep the full Ke.
 
 ## Young firms and survival
 Aswath Damodaran, Valuing Young, Start-up and Growth Companies (May 2009), 67 pages:

@@ -526,7 +526,30 @@ class Debt(unittest.TestCase):
 
     def test_notes_payable_tag_is_read_as_debt(self):
         self.assertIn('longtermnotespayable', F.INSTANT_TAGS['long_term_debt_tagged'])
+        self.assertIn('longtermnotesandloans', F.INSTANT_TAGS['long_term_debt_tagged'])
         self.assertIn('notespayablecurrent', F.INSTANT_TAGS['current_portion_ltd'])
+
+    def test_oracle_notes_and_loans_tag_is_read_as_debt_once(self):
+        # Oracle (ORCL) values from its own filings: the 10-K tags the noncurrent 'Notes payable and other borrowings' line
+        # LongTermNotesPayable, the 10-Q tags the same line LongTermNotesAndLoans (122,342m at 2026-05-31 in both, 117,712m at
+        # 2026-08-31 in the 10-Q only); current notes NotesPayableCurrent. Without the tag the 2026-08-31 debt was the
+        # current 7,625m alone (the 2026-10-29 run's 12.6bn opening debt with the preferred), against 125,337m on the 10-Q
+        def row(v, end, filed, form, fp):
+            return {'end': end, 'val': v * M, 'filed': filed, 'form': form, 'fy': 2027 if end > '2026-06' else 2026, 'fp': fp}
+        k, q = ('2026-06-22', '10-K', 'FY'), ('2026-09-11', '10-Q', 'Q1')
+        payload = {'cik': 1341439, 'facts': {'us-gaap': {
+            'LongTermNotesPayable': {'units': {'USD': [row(122342, '2026-05-31', *k)]}},
+            'LongTermNotesAndLoans': {'units': {'USD': [row(122342, '2026-05-31', *q), row(117712, '2026-08-31', *q)]}},
+            'NotesPayableCurrent': {'units': {'USD': [row(7199, '2026-05-31', *k), row(7625, '2026-08-31', *q)]}},
+            'CashAndCashEquivalentsAtCarryingValue': {'units': {'USD': [row(36369, '2026-08-31', *q)]}}}}}
+        fb = F.new({'ticker': 'ORCL', 'currency': 'USD'}, '2026-10-29')
+        F.from_sec_companyfacts(fb, payload, '2026-10-29')
+        tagged = [(f['period_end'], f['value'], f['concept']) for f in fb['facts'] if f['metric'] == 'long_term_debt_tagged']
+        self.assertEqual(tagged, [('2026-05-31', 122342 * M, 'LongTermNotesPayable'),           # one fact per date: no double count
+                                  ('2026-08-31', 117712 * M, 'LongTermNotesAndLoans')])
+        d = dataqa.validate(fb)['resolved']['debt']
+        self.assertEqual((d['as_of'], d['method']), ('2026-08-31', 'tagged_plus_current'))
+        self.assertAlmostEqual(d['value'], (117712 + 7625) * M)
 
     def test_fair_value_only_debt_is_a_limited_proxy(self):
         fb = syn(quarters=False, debt=False)
