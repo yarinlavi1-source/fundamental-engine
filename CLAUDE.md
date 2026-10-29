@@ -161,6 +161,9 @@ cheap-on-today's-numbers names. For an unproven business line with evidenced pro
 stop at 'no revenue = no value': show what must happen, the evidenced milestones and what it would be worth if it does,
 as a separately sized bet, never mixed into the base value. New money goes first to the strongest cheap names and to
 the portfolio's gaps; speculative positions stay capped.
+His buy test (29.10.2026): not a bargain hunt. A great company at a fair price qualifies when its base case beats the index
+over 5 years (the table's expected annual return vs the market row) with a bull case well above it and a bear case he can
+live with; the entry price with a margin of safety is where to add more, not a condition to own it.
 
 ## User preference: one concise investment paragraph (v0.9.1)
 
