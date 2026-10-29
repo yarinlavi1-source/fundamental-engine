@@ -155,6 +155,10 @@ to fair value and a row with each scenario's year-5 price against today's (פו�
 (market return + this company's risk premium, where the verdict is taken) is labelled 'מחיר כניסה עם מרווח ביטחון' and is
 never called his requirement or target. His portfolio goal: strong, excellent companies and high-growth companies with real
 data, significant growth and large potential (bottlenecks, share gains), not slow, boring names.
+How to use the owner's words (29.10.2026, his instruction): his statements are goals and preferences, not hard filters,
+unless he says 'take this as a rule'. Judge with evidence (research on what works, what notable investors hold and buy,
+the engine's numbers), say plainly when you disagree and why, and never disqualify a strong idea only because it does not
+match a phrase he used. He uses the engine because he does not know the answer himself.
 Owner profile (27.10.2026): adds money monthly as he can (modest income); horizon 5 years, aim maximum return; tolerates
 deep drawdowns when convinced of the company; wants calculated risk on very high-quality growth companies, not only
 cheap-on-today's-numbers names. For an unproven business line with evidenced progress (TSLA robotaxi/FSD/Optimus), do not
