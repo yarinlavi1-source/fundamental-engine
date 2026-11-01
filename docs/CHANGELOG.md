@@ -1,3 +1,62 @@
+## Unreleased (0.14.1) — IRR on the return scale; one-off interest guard; non-deductible claims (01.11.2026)
+
+Re-review of 459ed13. MAJOR: with `terminal.debt_weight` 0 the IRR solve (`decision._solve_irr_levered`, and every value at a
+required return) moved the terminal rate 1:1 from the explicit-year Ke, which still carries the relevering premium (Ke - table
+from the model's own D/E). At a fixed price more debt then RAISED the base IRR while every value fell: ORCL-shaped synthetic at
+140, base IRR 9.77 / 10.15 / 10.90 / 13.53% at debt 60 / 125 / 160 / 200bn; in the A/B 25 of 113 rows (the reviewer counted
+20 of 109) had the IRR up while the value fell by more than 3% against the engine before the ORCL fixes (TDG 2023 base value
+180.1 -> 182.5 on 0.14.0 -> 459ed13 but IRR 5.40% -> 8.99%; IBM 2023 7.45% -> 10.09%; T 2019 6.61% -> 9.57%).
+
+- Return scale (`valuation_tools.rate_anchor`, forecast `RETURN_SCALE`). Each forecast scenario stores
+  `terminal.ke_leverage_premium` (Ke - table; 0 under an analyst Ke override). An absolute required return / IRR h now means
+  explicit Ke = h + premium and the terminal rate moved by h - (Ke - premium): the premium never leaks into the terminal, and
+  the rates at a given h do not depend on the financing, so the IRR can only fall when debt lowers the value. One convention
+  in `decision._at_rate` / `_solve_irr_levered` / `_solve_irr` bounds / `price_for_hurdle` / `_Rates` and
+  `valuation_tools.implied_cost_of_equity` (reported as anchor + shift, with `leverage_premium_excluded` and
+  `model_rate_return_scale`); `shifted_value` and `discount_rate_band` take relative shifts and stay centred on the model value.
+  The hurdle's model-Ke floor is on the same scale (Ke - premium; its basis says so), so at the floor the value at the required
+  return is the model's own base value and the premium is charged once, in the value; `_market_consistent` and the risk-pricing
+  add-on test shift from the same anchor. A hand-built case (no premium field) keeps Ke as its anchor. What the IRR now means:
+  the equity return the price implies on the business-risk scale; for a levered company it is below a textbook levered equity
+  IRR by about the relevering premium, which the value already charges. Harris-Pringle at the forecast's own weight (terminal
+  shift = E/V x dKe) was tried first and does not fix it (ORCL-shaped 9.69 / 9.82 / 10.14 / 10.85%: still rising).
+- Effect. ORCL-shaped at 140: 9.77 / 9.48 / 9.01 / 8.03% at 60 / 125 / 160 / 200bn. A/B (`engine_backtest.company_row`, the
+  same 45 names x 2019/2023/2025, 113 rows, no errors, no verdict changed in any comparison): rows with the IRR up while the
+  value fell by more than 3%: before both ORCL fixes -> now 1 (KO 2025: value -4.9%, IRR 5.66% -> 5.74%; the engine before
+  shifted a levered terminal WACC by (1 - w), so this is the convention change, not a debt effect), 0.14.0 -> now 1 (AMGN 2023,
+  value -3.0% from 0.14.1's coupon and shield, IRR +0.008 points), 459ed13 -> now 0. Base IRR against 459ed13: median -0.14 points, mean -0.82 (indebted names median
+  -0.26, mean -0.98; the 7 low-debt controls 0.00), largest falls MAR 2019 -5.95, T 2019 -4.96, SO 2023 -4.94, TMUS 2023
+  -4.94; at most +0.06 (BKNG, from the interest guard below). Against 0.14.0: median 0.00, mean -0.23 (min -2.70, max +0.84).
+  Against the engine before both fixes: median -0.43, mean -0.74 (indebted median -0.53). Named rows, before -> 0.14.0 ->
+  459ed13 -> now: TDG 2023 6.94 / 5.40 / 8.99 / 5.05%; IBM 2023 8.50 / 7.45 / 10.09 / 6.09%; T 2019 9.77 / 6.61 / 9.57 /
+  4.61%. Values are unchanged by this fix (fixture base values identical to 9 places; invariance hashes re-pinned for the new
+  spec field only). Tests: test_forecast `IrrDebtMonotonicityTests` (the ORCL-shaped sweep 0 -> 300bn at a fixed price, each
+  scenario non-increasing; the levered and levered_at_coupon fixtures; identities: the price equal to the base value has IRR =
+  Ke - premium, value at h -> IRR h round trip for the IRR and implied_cost_of_equity, explicit Ke at h = h + premium, the
+  terminal rate at h equal across debt levels, the band centred on the model value; no premium under a Ke override). The
+  existing `RequiredReturnConsistencyTests` (an override case, premium 0) still pass. Not exact for a levered case: a forecast
+  rerun with a Ke override drops the relevering (the override is the all-in rate for both the explicit years and the
+  terminal), so no rerun reproduces "explicit h + premium"; the round trip is tested instead.
+- Minor: one-off guard on the quarterly interest run rate (`forecast.INTEREST_RUN_RATE`). The latest quarter, annualized, is
+  used only when corroborated: within 15% of the fiscal-year interest x today's debt / the fiscal-year-end debt, or with the
+  quarter before running within 15% of it (then the two-quarter run rate); else the fiscal-year figure stays and the basis says
+  "treated as a one-off". Tests: `InterestRunRateTests` (flat debt with a 3x quarter keeps 4%; without a debt move one jumping
+  quarter is rejected, two in line give the two-quarter rate). A/B effect (19 of 113 rows move, all from the coupon): base
+  BKNG 2025 +3.0% (bear +14.7%), KO 2023 +2.3%, MDLZ 2023 +2.2%, BKNG 2023 +2.0%, CVS 2019 +1.5% (its quarters are not
+  consecutive in the data, so the Aetna debt step is no longer run-rated), PEP 2019 -1.2% (its 16-week Q4 is no longer
+  annualized), the rest within +-0.9%. Honest limit: a real coupon jump in a single quarter with no matching debt move (2023
+  floating rates, KO Q1 2023 304m -> 372m) is now read as a one-off until the next quarter confirms it.
+- Minor: debt-like claims of non-deductible kinds (`forecast.NONDEDUCTIBLE_CLAIM_KINDS` = preferred_or_minority,
+  pension_deficit) earned the interest tax shield. Their amount goes to `opening.nondeductible_debt`: `valuation.operating`
+  deducts interest only on the debt above it in each period and gives the terminal shield only on the horizon debt above it
+  (validated: at most the opening debt). Pension contributions are often deductible in practice; carrying no shield is a
+  conservative choice. Test: `NondeductibleClaimTests` (same coupon paid, higher cash taxes, smaller terminal shield and lower
+  value in every scenario than a deductible royalty_financing claim of the same size). No A/B effect (no claims in the
+  walk-forward).
+- Open: values at the leverage cap (W_MAX 60%) still wiggle by up to 6e-5 relative as debt grows (the reviewer's 'levered fine'
+  sweep; the equity-issue-price fixed point), unchanged by this fix; the universe-wide effect is unmeasured (the 45-name sample
+  is leverage-heavy).
+
 ## 0.14.1 — ORCL debt fixes and their review (29.10.2026)
 
 The ORCL deep run (as_of 2026-10-29) found two engine defects; its reviewers held the result as UNVERIFIED. The first fix

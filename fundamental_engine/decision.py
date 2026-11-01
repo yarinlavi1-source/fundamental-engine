@@ -77,7 +77,7 @@ from .plain import MARGIN_BARS
 from .scores import COST_OF_CAPITAL_REFERENCE
 from .decision_summary import RED_FLAG_KEYS
 from .valuation import value_company
-from .valuation_tools import implied_cost_of_equity, shifted_value
+from .valuation_tools import implied_cost_of_equity, shifted_value, rate_anchor
 
 ASSESSMENTS = ('business_quality', 'trajectory', 'price_attractiveness', 'risk_and_error',
                'growth_quality', 'financial_strength', 'management_capital_allocation', 'data_uncertainty')
@@ -812,6 +812,10 @@ def _view(fb, val):
         base_sc = next((s for s in res.get('scenarios', []) if s['name'] == 'base'), {})
         view['terminal_share'] = _num(base_sc.get('terminal_share_of_present_value'))
         view['model_cost_of_equity'] = _num((next((s for s in case['scenarios'] if s['name'] == 'base'), {}) or {}).get('cost_of_equity'))
+        if view['model_cost_of_equity'] is not None and any(s['name'] == 'base' for s in case['scenarios']):
+            # the same rate on the return scale of the IRR and the required return (valuation_tools.rate_anchor): Ke less the
+            # explicit years' relevering premium, which is charged in the value and never in a required-return shift
+            view['model_return_rate'], view['model_leverage_premium'] = rate_anchor(case, 'base')
         five = five_year_row(res['annual_values'], case['as_of'])
         if five and five.get('row') is None:
             view['five_year_unavailable'] = five['reason']
@@ -870,14 +874,17 @@ def _debt_weight(case, fc, base_value):
 
 
 def _at_rate(case, rate, w, names=None):
-    """Copy of the case with each named scenario's cost of equity set to `rate`; an operating case's terminal WACC moves by
-    (1 - w) times the change: 1:1 for a forecast case (w = 0, the terminal rate is the business's own rate), the equity weight
-    for a hand-built case whose terminal WACC is a levered WACC (Harris-Pringle)."""
+    """Copy of the case at required return `rate` on the return scale (valuation_tools.rate_anchor): each named scenario's
+    cost of equity and its operating terminal WACC move by the same shift, rate - anchor (anchor = Ke less the explicit years'
+    relevering premium, Ke itself for a hand-built case), the terminal by (1 - w) times it: 1:1 for a forecast case (w = 0, the
+    terminal rate is the business's own rate), the equity weight for a hand-built case whose terminal WACC is a levered WACC
+    (Harris-Pringle). The explicit Ke keeps its relevering premium (Ke = rate + premium); the terminal never takes it, so the
+    rates at a given required return do not depend on the financing."""
     c = deepcopy(case)
     for s in c['scenarios']:
         if names is None or s['name'] in names:
-            shift = rate - s['cost_of_equity']
-            s['cost_of_equity'] = rate
+            shift = rate - rate_anchor(c, s['name'])[0]
+            s['cost_of_equity'] += shift
             if c['method'] == 'operating':
                 s['terminal']['wacc'] += (1 - w) * shift
     return c
@@ -912,19 +919,21 @@ def _solve_irr(case, scenario):
     if r['status'] == 'not_bracketed' and lo_v is not None and q > lo_v:
         low = max(-.08, -s['cost_of_equity'] + .005, (s['terminal']['growth'] - s['terminal']['wacc'] + .0025) if case['method'] == 'operating'
                   else (s['terminal']['growth'] - s['cost_of_equity'] + .0025) if case['method'] == 'residual_income' else -1)
-        return {'value': None, 'status': 'below_search_range', 'bound': {'type': 'below', 'rate': s['cost_of_equity'] + low}}
+        return {'value': None, 'status': 'below_search_range', 'bound': {'type': 'below', 'rate': rate_anchor(case, scenario)[0] + low}}
     if r['status'] == 'not_bracketed' and hi_v is not None and q < hi_v:
-        return {'value': None, 'status': 'above_search_range', 'bound': {'type': 'above', 'rate': s['cost_of_equity'] + .30}}
+        return {'value': None, 'status': 'above_search_range', 'bound': {'type': 'above', 'rate': rate_anchor(case, scenario)[0] + .30}}
     return {'value': None, 'status': r['status'], 'bound': None, 'reason': r.get('limitation')}
 
 
 def _solve_irr_levered(case, scenario, w):
-    """Bisection on the cost of equity with the terminal WACC moved by (1 - w) x the shift (same search range as
-    implied_cost_of_equity: -8pp .. +30pp around the model rate, terminal WACC kept above terminal growth)."""
+    """Bisection on the shift of the cost of equity with the terminal WACC moved by (1 - w) x the shift (same search range as
+    implied_cost_of_equity: -8pp .. +30pp around the model rate, terminal WACC kept above terminal growth); the IRR is reported
+    on the return scale, anchor + shift (valuation_tools.rate_anchor)."""
     s = next((x for x in case['scenarios'] if x['name'] == scenario), None)
     if s is None:
         return {'value': None, 'status': 'not_computable', 'bound': None, 'reason': 'unknown scenario'}
     ke, q = s['cost_of_equity'], case['quote']['price']
+    anchor = rate_anchor(case, scenario)[0]
     low, high = max(-.08, -ke + .005), .30
     if case['method'] == 'operating':
         low = max(low, (s['terminal']['growth'] - s['terminal']['wacc'] + .0025) / (1 - w))
@@ -933,16 +942,16 @@ def _solve_irr_levered(case, scenario, w):
 
     def v(shift):
         try:
-            return _num(value_company(_at_rate(case, ke + shift, w, (scenario,)))['annual_values'][0][scenario])
+            return _num(value_company(_at_rate(case, anchor + shift, w, (scenario,)))['annual_values'][0][scenario])
         except (ValueError, KeyError, ZeroDivisionError):
             return None
     lo_v, hi_v = v(low), v(high)
     if lo_v is None or hi_v is None:
         return {'value': None, 'status': 'invalid_search_domain', 'bound': None, 'reason': 'the search range makes the case invalid or unfunded'}
     if q > lo_v:
-        return {'value': None, 'status': 'below_search_range', 'bound': {'type': 'below', 'rate': ke + low}}
+        return {'value': None, 'status': 'below_search_range', 'bound': {'type': 'below', 'rate': anchor + low}}
     if q < hi_v:
-        return {'value': None, 'status': 'above_search_range', 'bound': {'type': 'above', 'rate': ke + high}}
+        return {'value': None, 'status': 'above_search_range', 'bound': {'type': 'above', 'rate': anchor + high}}
     for _ in range(50):
         mid = (low + high) / 2
         m = v(mid)
@@ -952,7 +961,7 @@ def _solve_irr_levered(case, scenario, w):
             low = mid
         else:
             high = mid
-    return {'value': ke + (low + high) / 2, 'status': 'solved', 'bound': None}
+    return {'value': anchor + (low + high) / 2, 'status': 'solved', 'bound': None}
 
 
 class _Rates:
@@ -1193,10 +1202,12 @@ def _market_consistent(index, ke, rates, er, view):
     the same model. A reading for comparison with the index; the verdict keeps its own hurdle."""
     shift = (index or {}).get('rate_shift')
     ke = _num(view.get('model_cost_of_equity'))            # the discount rate of the executed base case
+    ke_r = _num(view.get('model_return_rate'))             # the same rate on the return scale of rates.pfh (rate_anchor)
+    ke_r = ke if ke_r is None else ke_r
     if shift is None or ke is None or rates is None or not view.get('price'):
         return None
     floor = ((index or {}).get('risk_free_floor') or 0.) + .01
-    rate = max(ke - shift, floor)
+    rate = max(ke_r - shift, floor)
     v = (rates.pfh(rate) or {}).get('value')
     irr = (er or {}).get('base_irr')
     return {'value': v, 'rate': rate, 'shift': shift, 'model_cost_of_equity': ke, 'market_return': index.get('value'),
@@ -1217,7 +1228,10 @@ def _model_ke(view, fc):
     lev = comp.get('leverage') or {}
     ku = _num(comp.get('unlevered'))
     out = {'value': ke, 'unlevered': ku, 'leverage': (_num(lev.get('ke')) - ku) if _num(lev.get('ke')) is not None and ku is not None else None,
-           'd_to_e': _num(lev.get('d_to_e'))}
+           'd_to_e': _num(lev.get('d_to_e')),
+           # on the return scale of the IRR (valuation_tools.rate_anchor): the relevering premium is charged in the value
+           'return_scale': _num(view.get('model_return_rate')) if _num(view.get('model_return_rate')) is not None else ke,
+           'leverage_in_value': _num(view.get('model_leverage_premium')) or 0.}
     if _num(comp.get('adjustment_country_risk')) is not None:      # market_context: the forecast's own country-risk rows (net of
         out['country_risk'] = _num(comp['adjustment_country_risk']) + (_num(comp.get('adjustment_country_risk_market_neutral')) or 0.)
         out['country_risk_gross'] = _num(comp['adjustment_country_risk'])          # the market average already in the index)
@@ -1296,13 +1310,20 @@ def _required_return(A, index, card, g, rk, an=None, ke=None, cyc_ev=None):
                                  f"(exposure-weighted Damodaran CRP {_pct(g_, 2) if g_ is not None else 'n/a'} - market average "
                                  f"{_pct((g_ or 0.) - crp, 2)}; the same rows as the forecast's cost of equity)")
         h += crp
-    floor = {'value': (ke or {}).get('value'), 'binding': False, 'basis': "the engine's own cost of equity for this company (base scenario)"}
+    # the floor is the model cost of equity on the return scale of the IRR (valuation_tools.rate_anchor): Ke less the explicit
+    # years' relevering premium, which the value already charges; at the floor the value at the required return is the model's
+    # own base value, so the leverage premium is never charged twice (in the value and again in the hurdle)
+    lv = (ke or {}).get('leverage_in_value') or 0.
+    floor = {'value': (ke or {}).get('return_scale', (ke or {}).get('value')), 'binding': False,
+             'basis': "the engine's own cost of equity for this company (base scenario), on the return scale of the IRR"
+                      + (f" (model Ke {_pct(ke['value'], 2)} less its relevering premium {lv * 100:.2f}pp, charged in the value)" if lv > 1e-12 else '')}
     if floor['value'] is not None and floor['value'] > h + 1e-12:
         lev = (ke or {}).get('leverage')
-        parts = [f"model cost of equity {_pct(floor['value'], 2)}"]
+        parts = [f"model cost of equity {_pct(floor['value'], 2)}" + (f" on the return scale (Ke {_pct(ke['value'], 2)}; its relevering "
+                 f"premium {lv * 100:.2f}pp is charged in the value)" if lv > 1e-12 else '')]
         if ke.get('unlevered') is not None:
             parts.append(f"unlevered {_pct(ke['unlevered'], 2)}")
-        if lev:
+        if lev and lv <= 1e-12:
             parts.append(f"financial leverage +{lev * 100:.2f}pp" + (f" (D/E {ke['d_to_e']:.0%})" if ke.get('d_to_e') is not None else ''))
         add('model_cost_of_equity_floor', floor['value'] - h,
             ' '.join(['index + permanent-loss premium is below the engine\'s own cost of equity for this company (' + ', '.join(parts) + '):',
@@ -1327,7 +1348,7 @@ def price_for_hurdle(case, hurdle, w=0.):
         return None
     base = next(s for s in case['scenarios'] if s['name'] == 'base')
     if w <= 1e-12:
-        v = shifted_value(case, 'base', hurdle - base['cost_of_equity'])
+        v = shifted_value(case, 'base', hurdle - rate_anchor(case, 'base')[0])
     else:
         try:
             v = _num(value_company(_at_rate(case, hurdle, w, ('base',)))['annual_values'][0]['base'])
@@ -1561,7 +1582,7 @@ def _risk_pricing(rk, fc, view, rates):
     base, bear = view.get('base'), view.get('bear')
     gap = 1 - bear / base if base and bear is not None and base > 0 else None
     material = max(.5 * gap, .10) if gap is not None and gap > 0 else .15
-    ke = view.get('model_cost_of_equity')
+    ke = view.get('model_return_rate', view.get('model_cost_of_equity'))   # on the return scale of rates (rate_anchor)
     out = []
     for r in (rk or {}).get('register') or []:
         if not isinstance(r, dict) or not r.get('id'):

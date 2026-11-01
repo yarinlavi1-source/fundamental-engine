@@ -21,8 +21,12 @@ leverage), one rate for all scenarios floored at g + 3 points; each scenario's
 horizon debt earns its tax shield only, as a terminal bridge item
 D_T x min(coupon x tax, 3%) / (rate - g), at most D_T, so more debt never
 raises any scenario's equity value. A required-return shift moves this rate
-1:1 with the cost of equity. The existing debt's coupon is interest over the
-reported debt, run-rated from the latest quarter when the debt moved; the
+1:1 with the cost of equity, measured from Ke less its relevering premium (the
+return scale): the IRR and the required return exclude the leverage premium,
+which the value charges in the explicit years, so more debt never raises the
+IRR at a fixed price. The existing debt's coupon is interest over the reported
+debt, run-rated from the latest quarter when the debt moved (a one-off quarter
+is ignored); preferred, minority and pension claims earn no tax shield; the
 explicit years and the roll-back of the terminal value keep the full Ke.
 
 ## Young firms and survival

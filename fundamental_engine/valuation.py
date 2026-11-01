@@ -208,6 +208,11 @@ def operating(case, s):
     investments = number(op.get('marketable_investments', 0), 'marketable_investments', 0)
     liq_tol = 1e-6 + 1e-9 * investments          # summed liquidations of the whole balance carry float rounding (Roblox, Boeing)
     deferred, nol = n(op, 'deferred_revenue', 0), n(op, 'tax_loss_carryforward', 0)
+    # claims inside debt whose cost is not tax-deductible (preferred, minority, forecast.NONDEDUCTIBLE_CLAIM_KINDS): a constant
+    # amount; interest on it earns no tax shield, and neither does that part of the horizon debt
+    nondeductible = number(op.get('nondeductible_debt', 0) or 0., 'nondeductible_debt', 0)
+    if nondeductible > debt + 1e-6:
+        raise ValueError('nondeductible_debt exceeds opening debt (the claim must be inside debt)')
     converts = _convertibles(op)
     if sum(c['claim'] for c in converts) > debt + 1e-6:
         raise ValueError('Convertible claims exceed opening debt (the claim must be inside debt)')
@@ -243,7 +248,8 @@ def operating(case, s):
         if repay > debt + draws + 1e-7: raise ValueError('Debt repayment exceeds balance')
         # Debt draw occurs at start, repayment at end. Explicit convention, conservative interest.
         interest = (debt + draws) * n(p, 'interest_rate', 0, 1) * duration
-        taxable = ebit - interest
+        deductible = interest * max(0., 1 - nondeductible / (debt + draws)) if nondeductible and debt + draws > 0 else interest
+        taxable = ebit - deductible
         used = min(nol, max(taxable, 0) * n(p, 'nol_usage_limit', 0, 1))
         taxes = max(taxable - used, 0) * n(p, 'tax_rate', 0, 1)
         nol = nol - used + max(-taxable, 0)
@@ -329,7 +335,8 @@ def operating(case, s):
     # firm (constant debt weight, Harris-Pringle) and is discounted at the terminal rate: debt x rate / (wacc - g), at most the
     # debt itself, so a dollar of horizon debt never adds more than the dollar it subtracts.
     shield_rate = number(t.get('debt_tax_shield_rate') or 0., 'debt_tax_shield_rate', 0, 1)
-    debt_shield = min(debt, debt * shield_rate / (wacc - g)) if debt > 0 and shield_rate > 0 else 0.
+    shielded = max(debt - nondeductible, 0.)
+    debt_shield = min(shielded, shielded * shield_rate / (wacc - g)) if shielded > 0 and shield_rate > 0 else 0.
     raw_equity = ev + nol_shield + debt_shield + excess_cash + investments - debt - n(t, 'other_claims', 0) - runoff
     terminal_price = max(0, raw_equity) / shares
     bridge = {'enterprise_value': ev, 'next_year_revenue': terminal_rev, 'next_year_nopat': nopat,

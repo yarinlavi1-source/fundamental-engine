@@ -172,7 +172,8 @@ LENDING_KEYS, NON_OPERATING_TYPES, MIXED_RULES.
 {"forecast_version": 1, "status": built|method_not_supported_by_forecast|insufficient_data|invalid_spec, "reason", "method",
  "spec": drivers.build_case spec (driver_version 1; scenarios bear/base/bull with reinvestment_rule, per-period
          equity_issue_price, terminal {growth, wacc, cost_of_equity (the terminal's own rate behind wacc), roic, operating_margin,
-         tax_rate, other_claims, net_runoff_obligation, debt_weight, ...}; interim_boundaries; opening {..., convertibles?};
+         tax_rate, other_claims, net_runoff_obligation, debt_weight, ke_leverage_premium, debt_tax_shield_rate, ...}; interim_boundaries;
+         opening {..., convertibles?, nondeductible_debt?};
          sources; assumptions; underwriting
          {material_issues, opening_reconciliation, consensus_review, scenario_reviews}),
  "spec_sha256", "assumptions": [{"id","topic","kind","provenance","values": {"bear","base","bull"},"rationale","falsifier",
@@ -197,8 +198,12 @@ what_must_be_true -> [{"lever","label","status": solved|not_reachable,"required"
 `terminal.wacc` is built from `terminal.cost_of_equity`, the mature table (the explicit table without the stage and one-off
 funding add-ons, `forecast.TERMINAL_KE_DROPPED`) relevered at the same D/E; the explicit years and the roll-back of the
 terminal value use the scenario's `cost_of_equity`.
-`terminal.debt_weight` is the unrounded weight of `cost_of_equity.components.leverage.debt_weight` (the relevering fixed point
-on the model's own base equity value, never the quote; capped at 60% with a warning). Funding status adds `share_settled`.
+`terminal.debt_weight` is 0 for a forecast case (its terminal rate is the business's own; the relevering fixed point stays in
+`cost_of_equity.components.leverage.debt_weight`, on the model's own base equity value, never the quote; capped at 60% with a
+warning). `terminal.ke_leverage_premium` = the explicit Ke's relevering premium (Ke - table; 0 under an analyst Ke override):
+a required return / IRR is on the return scale Ke - premium (`valuation_tools.rate_anchor`). `opening.nondeductible_debt` =
+debt-like claims of kinds `forecast.NONDEDUCTIBLE_CLAIM_KINDS` (preferred_or_minority, pension_deficit): `valuation.operating`
+deducts interest only on the debt above it and gives the terminal shield only on the horizon debt above it. Funding status adds `share_settled`.
 Case sources (`spec.sources`): {id, title, url, kind, published_at, available_at, retrieval?, published_at_estimated?}; kind
 from the FactBook kind (filing_derived -> filing, vendor_normalized -> provider_data, market_feed -> market_data, consensus ->
 analyst_estimates, secondary -> secondary_source, issuer_document -> its dataset: filing|issuer_release|earnings_release,
@@ -232,14 +237,18 @@ cyclical_peak_unconfirmed, moat_proxy, possible_lender, leverage_at_cap, convert
 
 ## valuation_tools (diagnostics used by pipeline, risk and decision)
 
+`rate_anchor(case, scenario='base') -> (anchor, premium)`: the return scale of every absolute required return / IRR: anchor =
+Ke - `terminal.ke_leverage_premium` (Ke for a hand-built case). A required return h sets explicit Ke = h + premium and moves
+the terminal WACC by (1 - w) x (h - anchor), so the rates at h do not depend on the financing.
 `debt_weight(case, scenario='base') -> (w, source)`: the scenario's `terminal.debt_weight` (capped at `W_CAP` 0.95), else
 opening net debt / (net debt + base value x opening shares), 0 without net debt or for a non-operating case.
 `shifted_value(case, scenario, shift, w=None)`, `discount_rate_band(case, scenario='base', shift=.01, w=None) ->
 {"scenario","shift","value_lower_rate","value","value_higher_rate","relative_width","quote_inside_band","debt_weight",
 "debt_weight_source","terminal_wacc_shift","meaning"}`, `implied_cost_of_equity(case, scenario='base', low, high, w=None) ->
-{"status": solved|not_bracketed|invalid_search_domain,"implied_cost_of_equity","model_cost_of_equity"?,"shift"?,
-"terminal_wacc_shift"?,"debt_weight","debt_weight_source","limitation",...}`: the cost of equity moves by the shift and an
-operating terminal WACC by (1 - w) x shift. `reverse_price`, `stress_test`, `forecast_score`, `asset_schedule` unchanged.
+{"status": solved|not_bracketed|invalid_search_domain,"implied_cost_of_equity" (anchor + shift),"model_cost_of_equity"?,
+"model_rate_return_scale"?,"shift"?,"terminal_wacc_shift"?,"debt_weight","debt_weight_source","leverage_premium_excluded",
+"limitation",...}`: the cost of equity moves by the shift and an operating terminal WACC by (1 - w) x shift; the band is
+centred on the model value. `reverse_price`, `stress_test`, `forecast_score`, `asset_schedule` unchanged.
 `valuation.sensitivity` (the report's sensitivity grid) still moves the terminal WACC 1:1 (docs/LIMITATIONS.md).
 
 ## risk.assess(fb, qa, an, card, fc, val) -> rk

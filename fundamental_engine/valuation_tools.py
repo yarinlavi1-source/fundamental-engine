@@ -179,6 +179,21 @@ def debt_weight(case, scenario='base'):
     return min(nd / (nd + v * sh), W_CAP), 'opening net debt / (net debt + base value x opening shares)'
 
 
+def rate_anchor(case, scenario='base'):
+    """(anchor, premium): the cost of equity on the RETURN SCALE of an IRR / required return (forecast RETURN_SCALE). A
+    forecast case discounts its explicit years at Ke = table + a relevering premium (terminal.ke_leverage_premium) and its
+    terminal at the business's own rate, so a required return h means explicit Ke = h + premium and terminal rate moved by
+    h - anchor, anchor = Ke - premium: the shift never carries the premium into the terminal, and the rates at a given h do not
+    depend on the financing (more debt then never raises the IRR at a fixed price while the value falls). Premium 0 (anchor = Ke)
+    for a hand-built case or under an analyst cost-of-equity override."""
+    s = next((x for x in case['scenarios'] if x['name'] == scenario), None)
+    if s is None: raise ValueError('Unknown scenario')
+    ke = float(s['cost_of_equity'])
+    p = (s.get('terminal') or {}).get('ke_leverage_premium')
+    p = min(max(float(p), 0.), max(ke, 0.)) if isinstance(p, (int, float)) and not isinstance(p, bool) else 0.
+    return ke - p, p
+
+
 def _weight(case, scenario, w):
     return debt_weight(case, scenario) if w is None else (min(max(number(w, 'debt weight', 0, 1), 0.), W_CAP), 'supplied')
 
@@ -229,6 +244,8 @@ def implied_cost_of_equity(case, scenario='base', low=-.08, high=.12, w=None):
     Holds every cash flow fixed. It says what return the price implies IF these cash
     flows occur; it is not the market's forecast and not a recommended hurdle rate.
     The convention equals decision._irr / price_for_hurdle for the same debt weight.
+    Reported on the return scale (rate_anchor): anchor + shift, i.e. without the explicit
+    years' relevering premium, which stays in the value (charged in the discounting).
     """
     if case['method'] not in {'operating', 'residual_income'}: raise ValueError('Implied rate requires a cash-flow model')
     s = next((x for x in case['scenarios'] if x['name'] == scenario), None)
@@ -236,6 +253,7 @@ def implied_cost_of_equity(case, scenario='base', low=-.08, high=.12, w=None):
     w, w_src = _weight(case, scenario, w)
     target = case['quote']['price']
     ke = s['cost_of_equity']
+    anchor, prem = rate_anchor(case, scenario)
     low = max(low, -ke + .005)
     if case['method'] == 'operating':
         # Terminal WACC must stay above terminal growth.
@@ -244,7 +262,7 @@ def implied_cost_of_equity(case, scenario='base', low=-.08, high=.12, w=None):
         low = max(low, s['terminal']['growth'] - ke + .0025)       # the terminal formula needs Ke above growth
     lo_v, hi_v = _shifted_value(case, scenario, low, w), _shifted_value(case, scenario, high, w)
     note = 'Cash flows held fixed; required return that equates scenario value and quote. Not a market forecast or hurdle recommendation.'
-    lev = {'debt_weight': w, 'debt_weight_source': w_src}
+    lev = {'debt_weight': w, 'debt_weight_source': w_src, 'leverage_premium_excluded': prem}
     if lo_v is None or hi_v is None:
         return {'status': 'invalid_search_domain', 'implied_cost_of_equity': None, 'limitation': note, **lev}
     if not hi_v <= target <= lo_v:
@@ -256,7 +274,8 @@ def implied_cost_of_equity(case, scenario='base', low=-.08, high=.12, w=None):
         if v > target: low = mid
         else: high = mid
     shift = (low + high) / 2
-    return {'status': 'solved', 'scenario': scenario, 'model_cost_of_equity': ke, 'implied_cost_of_equity': ke + shift,
+    return {'status': 'solved', 'scenario': scenario, 'model_cost_of_equity': ke, 'model_rate_return_scale': anchor,
+            'implied_cost_of_equity': anchor + shift,
             'shift': shift, 'terminal_wacc_shift': (1 - w) * shift if case['method'] == 'operating' else 0., 'limitation': note, **lev}
 
 

@@ -201,12 +201,13 @@ class InvarianceTests(unittest.TestCase):
     re-pinned on 29.10.2026 for forecast.TERMINAL_ASSET_RATE (terminal debt earns its tax shield only; ADBE 636.08 -> 634.25,
     industrial 47.30 -> 46.57, levered 27.97 -> 25.91, grower 6.23 -> 6.32: its plan's horizon debt now earns a shield;
     fast_grower's value unchanged, its spec records the horizon debt weight); re-pinned for 0.14.1 (the shield a per-scenario
-    bridge item at one rate, terminal.debt_weight 0, debt_tax_shield_rate in the spec): base values move by under 0.001%."""
-    BEFORE = {'adbe': ('c3cd463df21d95cee1663a8c0bdc39c3bd26b6dc537ef224dd29dbaea593c66f', 634.2504229009998),
-              'industrial': ('9f112218ab6ae2825f8adab0e77e6d4c4e24f76e0ede2714312b3c0ede9dd38b', 46.57400578264891),
-              'grower': ('f50481628c84d9f4d79a8a680f74392f6d6f30b21a2d7f4d7c84f0ab681473ee', 6.323941064003434),
-              'levered': ('541dca1e37436cc509b6f4b4dfae7b9fbd4603d58390bd99cc0954a8c675cee7', 25.91325417317471),
-              'fast_grower': ('35b09fde9675419f97f2721a6611de083ad7c27e1185bcd1e3e7ca1cd3785db7', 132.68099168372305)}
+    bridge item at one rate, terminal.debt_weight 0, debt_tax_shield_rate in the spec): base values move by under 0.001%; re-pinned for the return scale (terminal.ke_leverage_premium
+    in the spec): values unchanged."""
+    BEFORE = {'adbe': ('20d3ccbec7a3cc727c105636dd50130cc2a1249026c33e9e406726f9ca9bae5c', 634.2504229009998),
+              'industrial': ('29116ee00cfb98aa685b70a3bffcb4db0c08981241b8c80cb08ba62de3be422b', 46.57400578264891),
+              'grower': ('f8584908b5964bbcba7e046293380ccd4b337bb8682a96d43a2373efc5f483d2', 6.323941064003434),
+              'levered': ('d06b7127ce9db1967e30d5414311d6105dea0683386b17bf33086411e5cb6b67', 25.91325417317471),
+              'fast_grower': ('fb8b83930dea2517418206c17efb1d86071c0d8f4a605fdc536b780b9568a846', 132.68099168372305)}
 
     def test_values_unchanged_without_overrides(self):
         for name, f in (('adbe', adbe), ('industrial', industrial), ('grower', grower), ('levered', lambda: levered(60.)),
@@ -218,7 +219,7 @@ class InvarianceTests(unittest.TestCase):
 
     def test_pipeline_values_unchanged_without_overrides(self):
         cf = pipeline.run(deepcopy(ADBE))
-        self.assertEqual(cf['fc']['spec_sha256'], 'a98d6903ec054635c1f68d4407235fa71c6032c53be59ed6e999be4ebc4dda99')
+        self.assertEqual(cf['fc']['spec_sha256'], '3791b8329ea8ef01b983df685718f19f351b6fab70607a87b5d77db7feaac801')
 
 
 if __name__ == '__main__':

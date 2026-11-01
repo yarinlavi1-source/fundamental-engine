@@ -1750,6 +1750,115 @@ class RequiredReturnConsistencyTests(unittest.TestCase):
             self.assertAlmostEqual(value_company(rerun)['annual_values'][0]['base'], tools, delta=1e-6 * tools)
 
 
+class IrrDebtMonotonicityTests(unittest.TestCase):
+    """0.14.1 re-review (valuation_tools.rate_anchor, forecast RETURN_SCALE): with terminal.debt_weight 0 the IRR solve moved the
+    terminal rate 1:1 from the explicit-year Ke, which carries the relevering premium, so at a fixed price more debt RAISED the
+    base IRR while every value fell (ORCL-shaped at 140: 9.77 / 10.15 / 10.90 / 13.53% at debt 60 / 125 / 160 / 200bn; A/B: TDG
+    2023 5.40% -> 8.99% with the value 180 -> 182). Now a required return h means explicit Ke = h + premium and the terminal rate
+    moved by h - (Ke - premium): the rates at h do not depend on the financing, so the IRR can only fall when debt lowers value."""
+
+    G35 = {'overrides': [{'path': 'growth_anchor', 'scenario': 'base', 'value': .35, 'reason': 'test', 'evidence_ids': ['syn:fs']}]}
+
+    def solve(self, fc):
+        from fundamental_engine.decision import _irr, _debt_weight
+        case = build_case(fc['spec'])
+        w, _ = _debt_weight(case, fc, fc['preview']['today']['base'])
+        return case, {s: _irr(case, s, None, w) for s in SCEN}
+
+    def sweep(self, make, debts, inputs=None, tol=1e-6):
+        out = []
+        for d in debts:
+            fb, an, card, qa = make()
+            qa['resolved']['debt']['value'] = d
+            fc = forecast.build(fb, an, card, qa, deepcopy(inputs))
+            self.assertEqual(fc['status'], 'built')
+            case, irr = self.solve(fc)
+            out.append((d, fc['preview']['today'], irr))
+        for (d0, v0, i0), (d1, v1, i1) in zip(out, out[1:]):
+            for s in SCEN:
+                if i0[s]['value'] is not None and i1[s]['value'] is not None:
+                    self.assertLessEqual(i1[s]['value'], i0[s]['value'] + tol,
+                                         f"{s}: debt {d0:,.0f} -> {d1:,.0f} raised the IRR {i0[s]['value']:.5f} -> {i1[s]['value']:.5f} "
+                                         f"(value {v0[s]:.3f} -> {v1[s]:.3f})")
+        return out
+
+    def test_oracle_shaped_at_a_fixed_price(self):
+        out = self.sweep(lambda: orcl_shaped(0.), [0., 30e9, 60e9, 125e9, 160e9, 200e9, 300e9], self.G35)
+        base = [i['base']['value'] for _, _, i in out]
+        self.assertTrue(all(x is not None for x in base))
+        self.assertLess(base[-1], base[0] - .01)                        # 0.14.1 before this fix: 9.99% -> 13.45%
+
+    def test_levered_fixtures_at_a_fixed_price(self):
+        self.sweep(lambda: levered(30.), [0., 400e6, 800e6, 1600e6, 4000e6], tol=1e-5)
+        self.sweep(lambda: levered_at_coupon(10e6), [10e6, 100e6, 200e6, 400e6, 600e6, 1000e6])
+
+    def test_return_scale_identities(self):
+        from fundamental_engine import valuation_tools as vt
+        from fundamental_engine.decision import _irr, _quote_case, price_for_hurdle, _at_rate
+        fc = forecast.build(*orcl_shaped(160e9), deepcopy(self.G35))
+        case = build_case(fc['spec'])
+        b = scen(case, 'base')
+        prem = b['terminal']['ke_leverage_premium']
+        self.assertGreater(prem, .005)                                  # the relevering premium is material here
+        anchor, p = vt.rate_anchor(case, 'base')
+        self.assertAlmostEqual(p, prem)
+        self.assertAlmostEqual(anchor, fc['cost_of_equity']['components']['table_rate'], places=6)
+        v0 = fc['preview']['today']['base']
+        # the model's own value sits at the anchor: the price that equals the base value has IRR = Ke - premium
+        self.assertAlmostEqual(price_for_hurdle(case, anchor)['value'], v0, delta=1e-6 * v0)
+        self.assertAlmostEqual(_irr(_quote_case(case, v0), 'base')['value'], anchor, places=6)
+        # round trip: at the value at a required return h the IRR is h
+        for h in (.10, .13):
+            ph = price_for_hurdle(case, h)['value']
+            self.assertAlmostEqual(_irr(_quote_case(case, ph), 'base')['value'], h, places=6)
+            self.assertAlmostEqual(vt.implied_cost_of_equity(_quote_case(case, ph), 'base', high=.3)['implied_cost_of_equity'], h, places=6)
+            # explicit Ke keeps its premium; the terminal rate at h does not depend on the financing
+            c = scen(_at_rate(case, h, 0.), 'base')
+            self.assertAlmostEqual(c['cost_of_equity'], h + prem, places=9)
+            low = build_case(forecast.build(*orcl_shaped(30e9), deepcopy(self.G35))['spec'])
+            self.assertAlmostEqual(scen(_at_rate(low, h, 0.), 'base')['terminal']['wacc'], c['terminal']['wacc'], places=9)
+        # the discount-rate band is centred on the model value (relative shifts, both rates by the same step)
+        self.assertAlmostEqual(vt.discount_rate_band(case)['value'], v0, delta=1e-6 * v0)
+
+    def test_analyst_override_has_no_premium(self):
+        ov = deepcopy(self.G35)
+        ov['overrides'].append({'path': 'cost_of_equity', 'scenario': 'all', 'value': .11, 'reason': 'test', 'evidence_ids': ['syn:fs']})
+        fc = forecast.build(*orcl_shaped(160e9), ov)
+        for s in SCEN:
+            self.assertEqual(scen(fc['spec'], s)['terminal']['ke_leverage_premium'], 0.)
+
+
+class NondeductibleClaimTests(unittest.TestCase):
+    """0.14.1 re-review: debt-like claims of non-deductible kinds (preferred_or_minority, pension_deficit) earned the interest tax
+    shield of debt, in the explicit years and in the terminal bridge. Now their amount is opening.nondeductible_debt."""
+
+    def build(self, kind, amount=300e6):
+        fb, an, card, qa = levered_at_coupon(200e6, .06)
+        claims = [{'kind': kind, 'amount': amount, 'evidence_ids': ['syn:fs'], 'reason': 'test claim'}]
+        return forecast.build(fb, an, card, qa, {'debt_like_claims': claims})
+
+    def test_no_shield_for_preferred_or_pension(self):
+        ded = self.build('royalty_financing')
+        self.assertNotIn('nondeductible_debt', ded['spec']['opening'])
+        rd = value_company(build_case(ded['spec']))
+        for kind in forecast.NONDEDUCTIBLE_CLAIM_KINDS:
+            nd = self.build(kind)
+            self.assertEqual(nd['spec']['opening']['nondeductible_debt'], 300e6)
+            rn = value_company(build_case(nd['spec']))
+            for a, b in zip(rd['scenarios'], rn['scenarios']):
+                self.assertAlmostEqual(a['forecast'][0]['interest'], b['forecast'][0]['interest'], delta=1.)   # same coupon paid
+                self.assertGreater(b['forecast'][0]['cash_taxes'], a['forecast'][0]['cash_taxes'])            # without its shield
+                self.assertLess(b['terminal']['debt_tax_shield'], a['terminal']['debt_tax_shield'])
+            for s in SCEN:
+                self.assertLess(nd['preview']['today'][s], ded['preview']['today'][s])
+
+    def test_nondeductible_amount_must_sit_inside_debt(self):
+        case = build_case(self.build('pension_deficit')['spec'])
+        case['opening']['nondeductible_debt'] = case['opening']['debt'] * 2
+        with self.assertRaises(ValueError):
+            value_company(case)
+
+
 class InterestRunRateTests(unittest.TestCase):
     """0.14.1 (forecast.INTEREST_RUN_RATE): the coupon is interest over the reported debt that paid it, run-rated from the latest
     quarter when the debt moved materially; debt added from inputs carries that coupon. On 0.14.0 the rate was last fiscal year's
@@ -1786,6 +1895,35 @@ class InterestRunRateTests(unittest.TestCase):
         i0 = value_company(build_case(base['spec']))['scenarios'][1]['forecast'][0]['interest']
         i1 = value_company(build_case(more['spec']))['scenarios'][1]['forecast'][0]['interest']
         self.assertGreater(i1, 3.5 * i0)                             # the added 300m pays interest too
+
+    def test_one_off_quarter_is_not_run_rated(self):
+        # debt flat at 100m (fiscal year end and now) while the latest quarter carries 3m (a make-whole premium, say): the
+        # quarter is not corroborated by the debt and the fiscal-year coupon stays
+        fb, an, card, qa = industrial()
+        fb['as_of'] = '2026-05-20'
+        facts.add_fact(fb, 'interest_expense', 'Q@2025-12-31', '2025-12-31', 1e6, 'syn:fs', 'as_reported', '2026-02-20')
+        facts.add_fact(fb, 'interest_expense', 'Q@2026-03-31', '2026-03-31', 3e6, 'syn:fs', 'as_reported', '2026-05-01')
+        facts.set_price(fb, 60., '2026-05-20', 'syn:px')
+        fc = forecast.build(fb, an, card, qa_for(50e6, 150e6, 100e6, '2026-03-31'))
+        self.assertAlmostEqual(self.rate(fc), .04, places=6)
+        self.assertIn('one-off', fc['anchors']['debt_basis'] if 'debt_basis' in fc['anchors'] else
+                      next(a for a in fc['assumptions'] if a['id'] == 'debt_interest')['rationale'])
+
+    def test_without_a_debt_move_two_quarters_are_required(self):
+        from fundamental_engine.forecast import _interest_run_rate
+        fb, _, _, _ = industrial()
+        fb['as_of'] = '2026-09-01'
+        fb['facts'] = [f for f in fb['facts'] if f['metric'] != 'long_term_debt']
+        facts.add_fact(fb, 'interest_expense', 'Q@2025-12-31', '2025-12-31', 1e6, 'syn:fs', 'as_reported', '2026-02-20')
+        facts.add_fact(fb, 'interest_expense', 'Q@2026-03-31', '2026-03-31', 3e6, 'syn:fs', 'as_reported', '2026-05-01')
+        facts.add_fact(fb, 'interest_expense', 'Q@2025-09-30', '2025-09-30', 1e6, 'syn:fs', 'as_reported', '2025-11-01')
+        run, basis = _interest_run_rate(fb, 4e6, '2026-03-31', 100e6)
+        self.assertEqual(run, 4e6)                                   # a quarter that jumps from the one before: a one-off
+        self.assertIn('one-off', basis)
+        facts.add_fact(fb, 'interest_expense', 'Q@2026-06-30', '2026-06-30', 2.8e6, 'syn:fs', 'as_reported', '2026-08-01')
+        run, basis = _interest_run_rate(fb, 4e6, '2026-06-30', 100e6)
+        # two quarters in line with each other (the coupon moved): the two-quarter run rate
+        self.assertAlmostEqual(run, (2.8e6 * 365.25 / 91 + 3e6 * 365.25 / 90) / 2, places=0)
 
 
 class TerminalMatureRateTests(unittest.TestCase):

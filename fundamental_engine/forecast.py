@@ -209,6 +209,13 @@ CYCLICAL_LIFT_EXCLUDED_TYPES = ('semiconductor', 'commodity')
 # larger than its debt still rose with debt; 0.14.1 moved it into the bridge per scenario.) The shield rate is capped at the
 # 3-point floor spread so that bound holds for any coupon. Because the rate is the business's own, a required-return shift moves
 # it 1:1 with the cost of equity (scenario terminal.debt_weight = 0 for valuation_tools / decision).
+# RETURN_SCALE (01.11.2026, 0.14.1 re-review): the explicit years' Ke carries a relevering premium (Ke - table, from the model's
+# own D/E); moving the terminal rate 1:1 from that Ke let the premium leak into every required-return calculation: at a fixed
+# price more debt RAISED the base IRR while every value fell (ORCL-shaped at 140: 9.77 -> 13.53% from 60 to 200bn; A/B TDG 2023
+# 5.40% -> 8.99% with the value flat). Now an IRR / required return h is on the return scale Ke - premium (each scenario's
+# terminal.ke_leverage_premium; valuation_tools.rate_anchor): explicit Ke = h + premium, terminal moved by h - (Ke - premium),
+# so the rates at h never depend on the financing and the IRR falls whenever debt lowers the value. The hurdle's model-Ke floor
+# is on the same scale (decision._required_return): the premium is charged once, in the value.
 # Documented choice: the company's own terminal rate is the mature table whatever its leverage; a company with less than market
 # leverage earns no lower rate (no unlevered Ku below the table), as for the explicit years. The explicit years keep Ke as above.
 TERMINAL_SHIELD_MAX = .03
@@ -223,6 +230,12 @@ DEBT_RATE_RANGE = (.005, .06)  # interest / debt below 0.5% or above risk-free +
 # that paid it (claims added from inputs then carry that rate), and when the latest standalone quarter (ending within
 # INTEREST_QUARTER_DAYS of the debt's balance date, after the last fiscal year) annualizes more than INTEREST_RUN_RATE_GAP away
 # from the fiscal-year figure, the debt or its coupon moved materially and the quarter's run rate is used.
+# One-off guard (0.14.1 review): a single quarter can carry a one-off (a make-whole premium, a debt-extinguishment loss, a
+# catch-up), so the quarter is used only when corroborated: by the debt itself (the run rate within INTEREST_RUN_RATE_GAP of the
+# fiscal-year interest scaled by today's debt / the debt at the fiscal year end, when that debt is reported), or by the quarter
+# before it running within the gap of it (the debt or its coupon moved before the latest quarter; the two-quarter run rate is
+# used); a quarter that jumps away from the quarter before with no matching debt move is a one-off and the fiscal-year figure
+# stays.
 INTEREST_RUN_RATE_GAP = .15
 INTEREST_QUARTER_DAYS = 45
 REGULATED_ASSET_RISK = .5     # regulated utilities: asset risk about half the market's (allowed returns, pass-through costs): ERP x 0.5
@@ -299,6 +312,11 @@ NON_OPERATING_KINDS = ('private_stake', 'equity_method_stake')
 CAPITAL_EVENT_KINDS = ('share_issue', 'share_buyback')
 DEBT_LIKE_KINDS = ('royalty_financing', 'litigation', 'pension_deficit', 'deferred_consideration', 'preferred_or_minority',
                    'finance_leases')     # finance-lease payments are not in operating costs (amortisation and interest)
+# claims whose carrying cost earns no tax shield in the model (0.14.1 review): preferred dividends and minority distributions are
+# paid out of after-tax profit; a pension deficit's cost is carried here at the coupon and is given no shield (conservative).
+# Their amount goes to opening.nondeductible_debt: valuation.operating deducts only the deductible share of interest and gives
+# the terminal shield on the horizon debt above that amount.
+NONDEDUCTIBLE_CLAIM_KINDS = ('preferred_or_minority', 'pension_deficit')
 NONRECURRING_KINDS = ('acquired_iprd', 'impairment', 'gain_or_loss_on_sale', 'litigation_settlement', 'one_time_license_revenue',
                       'divestiture_in_revenue')
 # inputs['operating_funding'] = {amount, reason, evidence_ids}: borrowings that fund an operating asset (a lending book) and
@@ -1236,6 +1254,9 @@ def _solve_capital(spec, P, table, table_t, kd_e, kd_p, net_debt, ov_ke, cap_at_
             # the terminal rate holds no debt weight: a change in the cost of equity moves it 1:1 (valuation_tools.debt_weight,
             # decision._debt_weight read this 0; the forecast's own weight w stays in components.leverage.debt_weight)
             sc['terminal']['debt_weight'] = 0.
+            # RETURN_SCALE: the explicit years' relevering premium (Ke - table; 0 under an analyst override), which a required
+            # return / IRR never moves into the terminal (valuation_tools.rate_anchor)
+            sc['terminal']['ke_leverage_premium'] = 0. if s in ov_ke else _r(max(k_e - table, 0.))
         return ke, table_t, de
     w, e, it = 0., None, 0
     status = 'no_net_debt' if net_debt <= 0 else 'converged'
@@ -1653,11 +1674,23 @@ def _acquired_step(h, cal, d_rev0, warn):
             'basis': how + note}
 
 
-def _interest_run_rate(fb, annual, debt_as_of):
+def _fy_end_debt(fb, fy_end):
+    """Reported debt (long-term + current portion) at the fiscal year end, or None when the long-term line is not reported."""
+    def at(metric):
+        for e, v, _ in facts.series(fb, metric, 'instant'):
+            if abs((_d(e) - _d(fy_end)).days) <= 10:
+                return v
+        return None
+    ltd = at('long_term_debt')
+    return None if ltd is None else ltd + (at('current_portion_ltd') or 0.)
+
+
+def _interest_run_rate(fb, annual, debt_as_of, debt_now=None):
     """(annual interest to use, basis) for the existing debt's coupon (INTEREST_RUN_RATE): the latest standalone quarter
-    annualized when it ends after the last fiscal year, within INTEREST_QUARTER_DAYS of the debt's balance date, and differs
-    from the fiscal-year interest by more than INTEREST_RUN_RATE_GAP (the debt or its coupon moved materially); else the
-    fiscal-year interest."""
+    annualized when it ends after the last fiscal year, within INTEREST_QUARTER_DAYS of the debt's balance date, differs
+    from the fiscal-year interest by more than INTEREST_RUN_RATE_GAP (the debt or its coupon moved materially) and is
+    corroborated (one-off guard): within the gap of the fiscal-year interest x debt_now / the fiscal-year-end debt, or by the
+    quarter before running within the gap of it (the two-quarter run rate used); else the fiscal-year interest."""
     q = facts.series(fb, 'interest_expense', 'quarter')
     a = facts.series(fb, 'interest_expense', 'annual')
     if not q or not annual or not debt_as_of:
@@ -1670,7 +1703,18 @@ def _interest_run_rate(fb, annual, debt_as_of):
     run = abs(v) * 365.25 / days
     if run <= 0 or abs(run / annual - 1) <= INTEREST_RUN_RATE_GAP:
         return annual, 'fiscal_year'
-    return run, f'latest quarter {end} annualized ({abs(v):,.0f} x {365.25 / days:.2f}; fiscal year {annual:,.0f})'
+    txt = f'latest quarter {end} annualized ({abs(v):,.0f} x {365.25 / days:.2f}; fiscal year {annual:,.0f})'
+    d_fy = _fy_end_debt(fb, a[-1][0]) if a else None
+    if d_fy and d_fy > 0 and debt_now and debt_now > 0 and abs(run / (annual * debt_now / d_fy) - 1) <= INTEREST_RUN_RATE_GAP:
+        return run, txt + f', corroborated by the debt ({d_fy:,.0f} at the fiscal year end -> {debt_now:,.0f})'
+    prev = q[-2] if len(q) >= 2 else None
+    if prev is not None and 60 <= (_d(end) - _d(prev[0])).days <= 120 and len(q) >= 3 and 60 <= (_d(prev[0]) - _d(q[-3][0])).days <= 120:
+        run2 = abs(prev[1]) * 365.25 / (_d(prev[0]) - _d(q[-3][0])).days
+        if run2 > 0 and abs(run / run2 - 1) <= INTEREST_RUN_RATE_GAP:
+            use = (run + run2) / 2
+            return use, txt + f'; the quarter before ({prev[0]}, {run2:,.0f} a year) runs within {INTEREST_RUN_RATE_GAP:.0%} of it: the two-quarter run rate {use:,.0f} used'
+    why = (f'the debt move {d_fy:,.0f} -> {debt_now:,.0f} or the quarter before' if d_fy and debt_now else 'the quarter before')
+    return annual, f'fiscal_year (latest quarter {end} annualized {run:,.0f} not corroborated by {why}: treated as a one-off)'
 
 
 def _params(route, h, cal, cons, rf, ku, ku_t, ov_ke, debt0, ov, warn, ev=None):
@@ -2692,8 +2736,10 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
                 'debt': val('debt'), 'shares': val('shares_outstanding'), 'deferred_revenue': val('deferred_revenue') or 0.}
     # the coupon's basis (INTEREST_RUN_RATE): the reported debt that paid the reported interest, before claims added from inputs
     h['debt_reported'] = open_bal['debt']
-    h['interest_run_rate'], h['interest_basis'] = _interest_run_rate(fb, h.get('interest_expense'), (res.get('debt') or {}).get('as_of'))
+    h['interest_run_rate'], h['interest_basis'] = _interest_run_rate(fb, h.get('interest_expense'), (res.get('debt') or {}).get('as_of'),
+                                                                     open_bal['debt'])
     claims_added = sum(float(it['amount']) for it in inputs.get('debt_like_claims') or [])
+    nondeductible = sum(float(it['amount']) for it in inputs.get('debt_like_claims') or [] if it['kind'] in NONDEDUCTIBLE_CLAIM_KINDS)
     if claims_added:
         open_bal['debt'] = (open_bal['debt'] or 0.) + claims_added
         warn('debt_like_claims_added', f"{claims_added:,.0f} of debt-like claims added to opening debt: "
@@ -3300,6 +3346,7 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
                         'unrestricted_cash': open_bal['cash'], 'debt': open_bal['debt'], 'shares': open_bal['shares'],
                         'deferred_revenue': open_bal['deferred_revenue'], 'tax_loss_carryforward': float(_num(inputs.get('nol')) or 0),
                         'marketable_investments': open_bal['sti'] + open_bal['lti'],
+                        **({'nondeductible_debt': nondeductible} if nondeductible else {}),
                         **({'convertibles': [{k: c[k] for k in ('id', 'claim', 'conversion_shares')} for c in converts]} if converts else {})},
             'report_dates': cal['report_dates'], 'boundaries': Pb, 'interim_boundaries': list(cal['interim']),
             'stub_annual_revenue_rate': _r(meta['stub_rate'], 2), 'last_full_year_revenue': _r(meta['r_fy'], 2), 'segment_name': 'Revenue',
@@ -3850,9 +3897,13 @@ def what_must_be_true(spec, price):
     r = implied_cost_of_equity(case)
     ke = base['cost_of_equity']
     if r['status'] == 'solved':
+        # on the return scale (valuation_tools.rate_anchor): the relevering premium of the explicit Ke is charged in the value
+        prem = r.get('leverage_premium_excluded') or 0.
+        ke = r.get('model_rate_return_scale', ke)
         row('cost_of_equity', 'annual return implied by the price (base cash flows)', 'solved', r['implied_cost_of_equity'], ke,
             f"If the base-case cash flows happen, buying at {price:,.2f} returns about {r['implied_cost_of_equity']:.1%} a year "
-            f'(the model requires {ke:.1%}). Not a forecast of the market price.', 'ratio',
+            f'(the model requires {ke:.1%}' + (f'; its Ke also carries a {prem:.1%} leverage premium, charged in the value' if prem > 1e-9 else '')
+            + '). Not a forecast of the market price.', 'ratio',
             {'search_status': 'solved', 'limitation': r['limitation']})
     else:
         row('cost_of_equity', 'annual return implied by the price (base cash flows)', r['status'], None, ke,
