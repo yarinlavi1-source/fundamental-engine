@@ -28,7 +28,12 @@ same connectors (SEC, Interactive Brokers, Alpha Vantage, FMP, LunarCrush, …).
   fundamental_engine deep <universe_folder> --as-of <date> --symbols <TICKER>` (writes `out/table_he.md` with
   the plain-Hebrew table, including the "מה המחיר של היום מניח" reverse-DCF row, and `out/scenarios_he.md` with the
   condition behind every דובי / בסיסי / שורי price).
-- **Latest state (read these to catch up):** `docs/CHANGELOG.md` Unreleased (27.10.2026 GOOGL run fixes: bounded vendor
+- **Latest state (read these to catch up):** 01.11.2026: 0.14.1 merged (ORCL debt fixes over six reviewed rounds:
+  LongTermNotesAndLoans read, more debt never raises equity value or the IRR, verdict-scale base IRR as the table's return row,
+  separate convergence return with reinvested distributions; CHANGELOG Unreleased 0.14.1). Open engine bugs from the 01.11
+  portfolio batch (split applied x25, DCF vs company_path return on capital, no committed-equity or options input, no
+  build-phase route for NBIS/ASTS, dataqa same-family resolutions, APH keyword routing, interest run rate) are listed for the
+  next engine pass. `docs/CHANGELOG.md` Unreleased (27.10.2026 GOOGL run fixes: bounded vendor
   debt scope in dataqa, pack `forecast_options.debt_like_claims`; 26.10.2026 engine causes of the repair passes: economics-mode
   company_path, draft tables with numbers, quarterly-guide current year, acquired step, stub draws, dataqa resolutions; measured
   fast-ticker times: NVDA 36, CRDO 30, APH ~30 minutes, GOOGL 60 minutes with an added adversarial verify layer; open engine
