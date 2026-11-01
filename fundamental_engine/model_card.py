@@ -90,7 +90,7 @@ RUNWAY_YEARS = 3.0           # cash runway below this needs external funding
 # carry on their balance sheet); balance-sheet lenders and insurers are financials. Financial conglomerates are
 # financials (checked before the generic conglomerate rule). Labels that list fee firms and balance-sheet firms
 # together are BALANCE_MIXED_RULES: decided by the balance sheet, financials when it is lender-like or unknown.
-FEE_FINANCIAL = ('transaction & payment', 'payment processing', 'financial exchanges', 'exchanges & data', 'stock exchanges',
+FEE_FINANCIAL = ('transaction & payment', 'payment processing', 'payment network', 'card network', 'financial exchanges', 'exchanges & data', 'stock exchanges',
                  'financial data', 'insurance broker')
 TEXT_RULES = (
     (('financial conglomerate',), 'financials'),

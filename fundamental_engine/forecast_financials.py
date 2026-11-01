@@ -26,6 +26,7 @@ from statistics import median
 
 from . import facts
 
+PRE_BREAKEVEN_MIN_YEARS = 3  # consecutive profitable latest fiscal years after loss years: a scale-up past breakeven
 BANK_KE_ADDON = .005      # balance-sheet leverage and the credit / underwriting cycle (a documented add-on, not a measured beta)
 EXCESS_KEPT = {'base': .5, 'bull': .75}
 # persistence proxy (the operating moat proxy's counterpart): ROE above the cost of equity in at least 80% of seven or more
@@ -131,6 +132,21 @@ def build(fb, an, card, qa, inputs, rates, reviews, warn, warnings, empty):
         return empty('insufficient_data', 'dataqa did not resolve the point-in-time share count', method)
     if price.get('value') is None or price.get('currency', fb['company']['currency']) != fb['company']['currency']:
         return empty('insufficient_data', 'no quote in the company currency at as_of', method)
+    # a scale-up that turned profitable (the operating forecast's post-breakeven rule for a scale-up's terminal ROIC): when the
+    # latest PRE_BREAKEVEN_MIN_YEARS or more fiscal years are all profitable after loss years, the loss years are the build-out
+    # before scale, not a credit or underwriting downturn of the business as it now is: the median and lower quartile use the
+    # post-breakeven years only (warned; a later loss year keeps the full history)
+    run = 0
+    for _, x in reversed(roe_hist):
+        if x <= 0:
+            break
+        run += 1
+    if run >= PRE_BREAKEVEN_MIN_YEARS and run < len(roe_hist):
+        dropped = roe_hist[:-run]
+        roe_hist = roe_hist[-run:]
+        warn('pre_breakeven_roe_excluded', f"ROE of {len(dropped)} loss years before breakeven ({', '.join(e[:4] for e, _ in dropped)}) is left "
+             f'out of the median and lower quartile: the last {run} fiscal years are all profitable (a scale-up past breakeven, '
+             'not a credit cycle of the business as it is now)', 'medium')
     vals = sorted(x for _, x in roe_hist) or [r_ttm]
     r_med = median(vals)
     r_low = vals[len(vals) // 4] if len(vals) >= 4 else min(vals + [r_ttm])

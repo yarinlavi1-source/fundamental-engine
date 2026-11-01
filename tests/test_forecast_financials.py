@@ -67,6 +67,17 @@ class ResidualIncomeTests(unittest.TestCase):
         pays = [p['payout_fraction'] for p in fc['paths']['base']]
         self.assertTrue(all(p >= 1 - .09 / .40 for p in pays[1:]))
 
+    def test_loss_years_before_breakeven_leave_the_median(self):
+        # a SYNTHETIC scale-up bank: six loss years while building, then four profitable years (NU-shaped)
+        roe = (-.20, -.30, -.10, -.08, -.05, -.02, .15, .25, .28, .30)
+        fc = pipeline.run(bank(roe=roe, payout=0.))['fc']
+        self.assertIn('pre_breakeven_roe_excluded', {w['code'] for w in fc['warnings']})
+        self.assertGreater(fc['anchors']['roe']['median'], .15)          # the profitable years only (average-equity ROE)
+        self.assertGreater(fc['anchors']['roe']['lower_quartile'], 0)
+        # a later loss year keeps the full history (a credit cycle, not a build-out)
+        fc2 = pipeline.run(bank(roe=roe[:-1] + (-.05,), payout=0.))['fc']
+        self.assertNotIn('pre_breakeven_roe_excluded', {w['code'] for w in fc2['warnings']})
+
     def test_terminal_growth_is_the_risk_free_rate(self):
         # perpetual growth at the risk-free rate (the implied ERP's convention), not min(risk-free, 3%), while retained profit
         # funds it (ROE x retention above it); a risk-free rate above 6% is flagged
