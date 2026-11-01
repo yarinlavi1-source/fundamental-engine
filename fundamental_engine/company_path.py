@@ -350,7 +350,10 @@ def build(cp, val, known=None, events=None, fc=None):
     if not res.get('scenarios') or res.get('method') not in ('operating', 'residual_income'):
         return {'status': 'not_available', 'reason': 'no executed operating or residual-income valuation to read EPS from',
                 'title_he': TITLE_HE}
-    interim = set((case.get('generated_from') or {}).get('interim_boundaries') or ())
+    # the residual-income case carries no generated_from: its fifth-anniversary split comes from the forecast's calendar (an
+    # unsplit stub such as 2031-11-01..2031-12-31 read as a whole next fiscal year gave NU year-5 multiples of ~68x)
+    interim = set((case.get('generated_from') or {}).get('interim_boundaries')
+                  or (((fc or {}).get('anchors') or {}).get('calendar') or {}).get('interim') or ())
     options = (case.get('opening') or {}).get('options') or []
     as_of, quote = case['as_of'], _num((case.get('quote') or {}).get('price'))
     executed = {s['name']: s for s in res['scenarios']}

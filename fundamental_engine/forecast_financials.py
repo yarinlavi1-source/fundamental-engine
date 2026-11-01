@@ -17,6 +17,11 @@ point; the bull holds the better of today's and the median and keeps three quart
 three-year history (buybacks treated like dividends at a constant share count, valuation.residual_income's convention).
 Terminal growth is the lower of the engine's cap, the risk-free rate and the sustainable rate ROE x retention.
 
+Analyst input (inputs.bank_drivers, 0.14.3; BANK_* constants below): a scenario it sets takes the analyst's evidenced ROE path
+(start, year 5, terminal), start book growth (fading to terminal growth by year 10) and payout floor instead of the rules above;
+opening replaces the FactBook's book (and shares) with a later filed balance; regulatory_capital fills risk-weighted assets and
+the required ratio. Absent, the case is unchanged.
+
 Not modelled, stated as open items: regulatory capital (risk-weighted assets and CET1 are not in companyfacts), credit
 quality, reserve adequacy and interest-rate sensitivity; an analyst supplies them with evidence and a reviewer signs.
 """
@@ -37,6 +42,21 @@ BOOK_GROWTH_CAP = .08     # retained profit beyond what book growth of at most t
 BOOK_GROWTH_FLOOR = .03   # the five-year book growth used is at least this (the former terminal cap's number, kept as its own
                           # constant: terminal growth now follows the risk-free rate, forecast.TERMINAL_BEAR_GAP comment)
 ROE_FLOOR = .005          # the terminal formula needs a positive ROE; a lower result is raised and flagged
+# inputs['bank_drivers'] (0.14.3): the analyst's evidenced reading of THIS company's ROE, book growth and payout per scenario, with
+# an optional later reported opening balance and regulatory capital. A scenario it sets replaces the own-history rules above
+# for that scenario only; without it every line below is skipped and the case is byte-identical. Every value is bounded and
+# evidenced (FactBook source or qualitative ids); a terminal ROE above the cost of equity needs a terminal_reason; book growth
+# may exceed BOOK_GROWTH_CAP only as far as retained profit funds it (book_growth_start <= roe_start x (1 - payout)); the payout,
+# when given, is the floor of distributions (book growth above it is paid out, as in the rules); nothing is defaulted silently.
+BANK_SCENARIO_KEYS = ('roe_start', 'roe_year5', 'roe_terminal', 'book_growth_start', 'payout', 'terminal_reason', 'source_tier',
+                      'evidence_ids', 'reason')
+BANK_RANGES = {'roe_start': (-.3, .6), 'roe_year5': (-.3, .6), 'roe_terminal': (ROE_FLOOR, .4), 'book_growth_start': (-.1, .4),
+               'payout': (0., 1.)}
+BANK_TIERS = ('own_history', 'guidance', 'contracted')
+BANK_OPENING_KEYS = ('book_equity', 'shares', 'as_of', 'reason', 'evidence_ids')
+BANK_OPENING_BAND = (.5, 2.)    # a later reported book within this factor of the FactBook's last common book (a units guard)
+BANK_CAPITAL_KEYS = ('risk_weighted_assets', 'required_capital_ratio', 'as_of', 'reason', 'evidence_ids')
+BANK_CAPITAL_RATIO_MAX = .3
 RI_IRRELEVANT_FIELDS = ('debt', 'cfo_ttm', 'capex_ttm', 'revenue_ttm', 'operating_income_ttm', 'cash_and_liquid_investments',
                         'investments', 'sbc_ttm')
 
@@ -82,6 +102,70 @@ def _ttm_profit(fb):
         'net income less preferred dividends, trailing twelve months'
 
 
+def check_bank_drivers(fb, bd):
+    """Shape, bounds and evidence of inputs.bank_drivers (called by forecast.build); ValueError on anything it refuses. The rule
+    that needs the cost of equity (terminal ROE above it) is checked in build."""
+    from .forecast import _d, _filing_document_evidence, _num
+    known = set(fb.get('sources', {})) | {q['id'] for q in fb.get('qualitative', [])}
+    if not isinstance(bd, dict) or not bd or sorted(set(bd) - {'bear', 'base', 'bull', 'opening', 'regulatory_capital'}):
+        raise ValueError('bank_drivers: an object {bear|base|bull: {...}, opening: {...}, regulatory_capital: {...}}')
+
+    def evidence(x, where, filing=False):
+        if not isinstance(x.get('reason'), str) or not x['reason'].strip():
+            raise ValueError(f'{where}: a written reason is required')
+        ev = x.get('evidence_ids')
+        if not isinstance(ev, list) or not ev or any(e not in known for e in ev):
+            raise ValueError(f'{where}: evidence_ids must be FactBook source or qualitative ids')
+        if filing and not any(_filing_document_evidence(fb, e) for e in ev):
+            raise ValueError(f'{where}: cite the filing document (the 6-K / 10-Q / 20-F read for this number, or an item citing it)')
+        if filing:
+            try:
+                when = _d(x.get('as_of'))
+            except (TypeError, ValueError):
+                raise ValueError(f'{where}: as_of must be the date of the reported figure') from None
+            if when > _d(fb['as_of']):
+                raise ValueError(f'{where}: dated after as_of (look-ahead)')
+    for s in ('bear', 'base', 'bull'):
+        x = bd.get(s)
+        if x is None:
+            continue
+        where = f'bank_drivers.{s}'
+        if not isinstance(x, dict) or sorted(set(x) - set(BANK_SCENARIO_KEYS)):
+            raise ValueError(f"{where}: an object with {', '.join(BANK_SCENARIO_KEYS)}")
+        for k, (lo, hi) in BANK_RANGES.items():
+            if k == 'payout' and x.get(k) is None:
+                continue
+            if _num(x.get(k)) is None or not lo <= x[k] <= hi:
+                raise ValueError(f'{where}.{k} must be a decimal from {lo} to {hi}')
+        if x.get('source_tier') not in BANK_TIERS:
+            raise ValueError(f"{where}: source_tier one of {', '.join(BANK_TIERS)} (the company's own record, guidance or contracts)")
+        evidence(x, where)
+        if x['source_tier'] == 'guidance' and not any(q.get('id') in x['evidence_ids'] and q.get('kind') == 'guidance'
+                                                      for q in fb.get('qualitative') or []):
+            raise ValueError(f'{where}: tier guidance needs a guidance item among evidence_ids')
+        retained = x['roe_start'] * (1 - (x.get('payout') or 0.))
+        if x['book_growth_start'] > retained + 1e-9:
+            raise ValueError(f"{where}: book_growth_start {x['book_growth_start']:.1%} is above what retained profit funds "
+                             f"(roe_start x (1 - payout) = {retained:.1%}): lower the growth or the payout, or evidence a capital raise")
+    op = bd.get('opening')
+    if op is not None:
+        if not isinstance(op, dict) or sorted(set(op) - set(BANK_OPENING_KEYS)):
+            raise ValueError(f"bank_drivers.opening: an object with {', '.join(BANK_OPENING_KEYS)}")
+        if _num(op.get('book_equity')) is None or op['book_equity'] <= 0 or \
+                (op.get('shares') is not None and (_num(op['shares']) is None or op['shares'] <= 0)):
+            raise ValueError('bank_drivers.opening: book_equity (common, on the FactBook basis) and shares (if given) positive numbers')
+        evidence(op, 'bank_drivers.opening', filing=True)
+    rc = bd.get('regulatory_capital')
+    if rc is not None:
+        if not isinstance(rc, dict) or sorted(set(rc) - set(BANK_CAPITAL_KEYS)):
+            raise ValueError(f"bank_drivers.regulatory_capital: an object with {', '.join(BANK_CAPITAL_KEYS)}")
+        if _num(rc.get('risk_weighted_assets')) is None or rc['risk_weighted_assets'] <= 0 or \
+                _num(rc.get('required_capital_ratio')) is None or not 0 < rc['required_capital_ratio'] <= BANK_CAPITAL_RATIO_MAX:
+            raise ValueError('bank_drivers.regulatory_capital: risk_weighted_assets positive and required_capital_ratio (the CET1 '
+                             f'requirement with buffers) a decimal above 0 and at most {BANK_CAPITAL_RATIO_MAX}')
+        evidence(rc, 'bank_drivers.regulatory_capital', filing=True)
+
+
 def _path(r0, r5, rT, t):
     """ROE at t years: linear from r0 to r5 at year 5, then to rT at year 10, constant after."""
     if t <= 5:
@@ -103,6 +187,23 @@ def build(fb, an, card, qa, inputs, rates, reviews, warn, warnings, empty):
     if not ce or ce[-1][1] <= 0:
         return empty('insufficient_data', 'no positive common book equity at as_of: residual income needs book equity', method)
     stmt, book = ce[-1]
+    fb_stmt, fb_book = stmt, book
+    bd = inputs.get('bank_drivers') or {}      # validated by forecast.build (check_bank_drivers); absent -> nothing below changes
+    qual = {q['id']: q for q in fb.get('qualitative') or []}
+    src_of = lambda ids: [y for e in ids for y in ([e] if e in fb['sources'] else (qual.get(e) or {}).get('source_ids') or [])]
+    op = bd.get('opening')
+    if op is not None:
+        if facts._d(op['as_of']) <= facts._d(stmt):
+            warn('bank_opening_not_applied', f"bank_drivers.opening dated {op['as_of']} is not after the FactBook's last balance "
+                                             f'sheet {stmt}: the FactBook book equity is kept', 'medium')
+            op = None
+        elif not BANK_OPENING_BAND[0] <= op['book_equity'] / book <= BANK_OPENING_BAND[1]:
+            raise ValueError(f"bank_drivers.opening: book_equity {op['book_equity']:,.0f} is outside {BANK_OPENING_BAND[0]}-"
+                             f'{BANK_OPENING_BAND[1]}x the FactBook common book {book:,.0f} at {stmt} (check units and basis)')
+        else:
+            stmt, book = op['as_of'], float(op['book_equity'])
+            warn('bank_opening_applied', f'opening common book {book:,.0f} at {stmt} from the analyst\'s filing evidence (later than the '
+                                         f'FactBook balance {fb_book:,.0f} at {fb_stmt})', 'low')
     if (facts._d(as_of) - facts._d(stmt)).days > 150:
         warn('stale_balance_sheet', f'book equity dated {stmt} is more than 150 days before as_of', 'high')
     profit, p_basis = _profit_common(fb)
@@ -128,6 +229,8 @@ def build(fb, an, card, qa, inputs, rates, reviews, warn, warnings, empty):
     res = qa.get('resolved') or {}
     shares = (res.get('shares_outstanding') or {}).get('value')
     price = (fb.get('market') or {}).get('price') or {}
+    if op is not None and op.get('shares') is not None:
+        shares = float(op['shares'])
     if not shares:
         return empty('insufficient_data', 'dataqa did not resolve the point-in-time share count', method)
     if price.get('value') is None or price.get('currency', fb['company']['currency']) != fb['company']['currency']:
@@ -168,7 +271,18 @@ def build(fb, an, card, qa, inputs, rates, reviews, warn, warnings, empty):
         pay_basis = f'mean of {len(pays)} fiscal years of (dividends to common + buybacks) / profit to common, bounded 0-100%'
     else:
         payout, pay_basis = .5, 'no distribution history: 50% assumed'
-        warn('payout_unknown', 'no dividend or buyback history: payout set to 50% (model assumption)', 'medium')
+        if any(s not in bd for s in ('bear', 'base', 'bull')):
+            warn('payout_unknown', 'no dividend or buyback history: payout set to 50% (model assumption)', 'medium')
+    # the distribution floor per scenario: the analyst's evidenced payout, else the history, else (an analyst scenario without
+    # history) none: its book growth alone sets what is paid out (stated, never a silent default)
+    floor = {}
+    for s in ('bear', 'base', 'bull'):
+        x = bd.get(s)
+        floor[s] = float(x['payout']) if x and x.get('payout') is not None else 0. if x and not pays else payout
+    no_floor = [s for s in ('bear', 'base', 'bull') if bd.get(s) and bd[s].get('payout') is None and not pays]
+    if no_floor:
+        warn('bank_payout_from_growth', f'no distribution history and no bank_drivers payout in {no_floor}: distributions are what '
+                                        'the evidenced book growth leaves (payout = 1 - book growth / ROE)', 'medium')
     stage = (card.get('stage') or {}).get('value') or 'mature'
     st_add = (STAGE.get(stage) or STAGE['mature'])['ke']
     ke = min(max(rf + erp + st_add + BANK_KE_ADDON, rf + .02), .20)
@@ -196,10 +310,25 @@ def build(fb, an, card, qa, inputs, rates, reviews, warn, warnings, empty):
     targets = {'base': (r0, r_med, excess(r_med, kept['base'])),
                'bear': (min(r0, r_low), min(r_med, ke), min(r_med, ke) - .01),
                'bull': (max(r0, r_med), hi, excess(hi, kept['bull']))}
+    for s in ('bear', 'base', 'bull'):
+        x = bd.get(s)
+        if not x:
+            continue
+        if x['roe_terminal'] > ke + 1e-12 and not (isinstance(x.get('terminal_reason'), str) and x['terminal_reason'].strip()):
+            raise ValueError(f"bank_drivers.{s}: roe_terminal {x['roe_terminal']:.1%} is above the {ke:.1%} cost of equity forever: "
+                             'give terminal_reason (the evidenced moat that keeps the excess return)')
+        targets[s] = (float(x['roe_start']), float(x['roe_year5']), float(x['roe_terminal']))
     # book growth the business can use: its own five-year common-equity growth, bounded to [BOOK_GROWTH_FLOOR, BOOK_GROWTH_CAP]
-    old = _near(ce, (facts._d(stmt) - timedelta(days=round(5 * 365.25))).isoformat(), 60)
-    g_book = (book / old) ** (1 / 5) - 1 if old and old > 0 else BOOK_GROWTH_FLOOR
+    old = _near(ce, (facts._d(fb_stmt) - timedelta(days=round(5 * 365.25))).isoformat(), 60)
+    g_book = (fb_book / old) ** (1 / 5) - 1 if old and old > 0 else BOOK_GROWTH_FLOOR
+    g_own = g_book
     g_book = min(max(g_book, BOOK_GROWTH_FLOOR), BOOK_GROWTH_CAP)
+    g_text = (f'the engine floor {_pct(BOOK_GROWTH_FLOOR)} (no common equity five years before {fb_stmt})' if not (old and old > 0)
+              else f'its own five-year common-equity growth {_pct(g_book)}' if g_book == g_own else
+              f'the engine cap {_pct(BOOK_GROWTH_CAP)} (its own five-year common-equity growth {_pct(g_own)} is above it)'
+              if g_own > BOOK_GROWTH_CAP else
+              f'the engine floor {_pct(BOOK_GROWTH_FLOOR)} (its own five-year common-equity growth {_pct(g_own)} is below it)')
+    rc = bd.get('regulatory_capital')
     cal = _calendar(fb, {'last_end': sorted(profit)[-1] if profit else stmt}, 10)
     periods, prev = [], as_of
     for b in cal['periods']:
@@ -214,23 +343,28 @@ def build(fb, an, card, qa, inputs, rates, reviews, warn, warnings, empty):
         # perpetual growth at the risk-free rate, the implied ERP's own convention (forecast.TERMINAL_BEAR_GAP comment), within the
         # valuation contract's bound, never above what retained profit funds at the terminal ROE, the ROE itself less 0.1pp, nor
         # within half a point of the cost of equity
-        g = gs[s] = max(0., min(rf, TERMINAL_GROWTH_MAX, rT * (1 - payout), rT - .001, ke - .005))
-        rows = []
+        g = gs[s] = max(0., min(rf, TERMINAL_GROWTH_MAX, rT * (1 - floor[s]), rT - .001, ke - .005))
+        g0 = bd[s]['book_growth_start'] if bd.get(s) else g_book + {'bear': -.01, 'base': 0., 'bull': .01}[s]
+        rows, rwa = [], (float(rc['risk_weighted_assets']) if rc else 0.)
         for a, b in periods:
             mid = (years(as_of, a) + years(as_of, b)) / 2
             roe = _path(s0, s5, rT, mid)
-            gb = g + (g_book + {'bear': -.01, 'base': 0., 'bull': .01}[s] - g) * max(0., 1 - mid / 10)   # fades to terminal growth by year 10
-            pay = min(1., max(payout, 1 - max(gb, 0.) / roe)) if roe > 0 else payout
+            gb = g + (g0 - g) * max(0., 1 - mid / 10)   # fades to terminal growth by year 10
+            pay = min(1., max(floor[s], 1 - max(gb, 0.) / roe)) if roe > 0 else floor[s]
+            if rc:          # risk-weighted assets grow with the balance sheet (the scenario's book growth path)
+                rwa *= (1 + gb) ** (years(as_of, b) - years(as_of, a))
             rows.append({'start': a, 'end': b, 'assumption_ids': ['roe_' + s, 'payout', 'regulatory_capital'], 'roe': _r(roe),
                          'payout_fraction': _r(pay),
-                         # capital requirement not modelled (assumption regulatory_capital): zero, never a guessed ratio
-                         'risk_weighted_assets': 0., 'required_capital_ratio': 0.})
+                         # capital requirement: zero unless bank_drivers.regulatory_capital evidences it, never a guessed ratio
+                         'risk_weighted_assets': _r(rwa) if rc else 0.,
+                         'required_capital_ratio': float(rc['required_capital_ratio']) if rc else 0.})
         paths[s] = [{'end': r['end'], 'roe': r['roe'], 'payout_fraction': r['payout_fraction']} for r in rows]
         terms[s] = {'roe': _r(rT), 'growth': _r(g)}
         scen.append({'name': s, 'assumption_ids': ['roe_' + s, 'payout', 'cost_of_equity'], 'cost_of_equity': _r(ke),
-                     'thesis': {'base': 'ROE moves to its own ten-year median, then keeps half of its excess over the cost of equity',
-                                'bear': 'a credit or underwriting downturn at its own lower-quartile ROE, then no excess return',
-                                'bull': 'the better of today\'s and the median ROE holds, three quarters of the excess kept'}[s],
+                     'thesis': f"evidenced ROE, book growth and payout path ({bd[s]['source_tier']}, inputs.bank_drivers)" if bd.get(s)
+                     else {'base': 'ROE moves to its own ten-year median, then keeps half of its excess over the cost of equity',
+                           'bear': 'a credit or underwriting downturn at its own lower-quartile ROE, then no excess return',
+                           'bull': 'the better of today\'s and the median ROE holds, three quarters of the excess kept'}[s],
                      'periods': rows, 'terminal': {'assumption_ids': ['terminal'], 'growth': _r(g), 'roe': _r(rT)}})
     # flags read the growth actually used: the contract bound binding below the rate, or a high nominal perpetual growth
     capped = [s for s, g in gs.items() if rf > TERMINAL_GROWTH_MAX and g == TERMINAL_GROWTH_MAX]
@@ -248,6 +382,10 @@ def build(fb, an, card, qa, inputs, rates, reviews, warn, warnings, empty):
     ni_ids = sorted({f['source_id'] for m in ('net_income_common', 'net_income', 'preferred_dividends') for f in facts.candidates(fb, m)})
     pay_ids = sorted({f['source_id'] for m in ('dividends_paid', 'buybacks') for f in facts.candidates(fb, m)})
     sh_ids = [x for x in [(res.get('shares_outstanding') or {}).get('source_id')] if x]
+    if op is not None:
+        eq_ids = sorted(set(eq_ids) | set(src_of(op['evidence_ids'])))
+        if op.get('shares') is not None:
+            sh_ids = src_of(op['evidence_ids'])
     extra = {RULES: {'id': RULES, 'title': 'fundamental_engine.forecast_financials documented residual-income rules (ROE fade to the '
                      'own median, excess kept, payout history, cost-of-equity table)', 'url': 'engine://fundamental_engine/forecast_financials/rules',
                      'kind': 'model_rules', 'published_at': as_of, 'available_at': as_of}}
@@ -269,7 +407,8 @@ def build(fb, an, card, qa, inputs, rates, reviews, warn, warnings, empty):
                      'values': values, 'rationale': rationale, 'falsifier': falsifier, 'source_ids': ids})
     add('open_balance', 'opening book equity', 'reported', {'common_book_equity': book, 'statement_as_of': stmt},
         f'common book equity {book:,.0f} at {stmt} (stockholders\' equity less preferred stock); deposits, float and reserves are '
-        'operating funding inside it, not debt', 'A primary balance sheet at or after the statement date shows common equity more than 2% '
+        'operating funding inside it, not debt' + (f" (inputs.bank_drivers.opening, a later filing than the FactBook's {fb_stmt}: "
+                                                   f"{op['reason']})" if op is not None else ''), 'A primary balance sheet at or after the statement date shows common equity more than 2% '
         'different.', eq_ids)
     add('shares_point', 'point-in-time shares', 'reported', {'shares': shares, 'as_of': (res.get('shares_outstanding') or {}).get('as_of')},
         f'point-in-time common shares {shares:,.0f}; constant over the forecast (buybacks are treated like dividends)',
@@ -283,6 +422,17 @@ def build(fb, an, card, qa, inputs, rates, reviews, warn, warnings, empty):
         ni_ids + eq_ids)
     for s in ('bear', 'base', 'bull'):
         s0, s5, _ = targets[s]
+        x = bd.get(s)
+        if x:
+            add('roe_' + s, f'{s} ROE path', 'analyst', {'start': s0, 'year_5': s5, 'terminal': terms[s]['roe'],
+                                                       'book_growth_start': x['book_growth_start'], 'payout_floor': floor[s],
+                                                       'source_tier': x['source_tier']},
+                f"inputs.bank_drivers ({x['source_tier']}): ROE {_pct(s0)} to {_pct(s5)} by year 5, {_pct(terms[s]['roe'])} terminal "
+                f"(cost of equity {_pct(ke)}); book growth {_pct(x['book_growth_start'])} fading to terminal growth by year 10"
+                + (f"; payout at least {_pct(x['payout'])}" if x.get('payout') is not None else '') + f": {x['reason']}"
+                + (f"; terminal: {x['terminal_reason']}" if x.get('terminal_reason') else ''),
+                f'ROE over the next two fiscal years differs from the {s} path by more than 3 points.', src_of(x['evidence_ids']))
+            continue
         add('roe_' + s, f'{s} ROE path', 'model', {'start': s0, 'year_5': s5, 'terminal': terms[s]['roe']},
             {'base': f'from {_pct(s0)} to the own median {_pct(s5)} by year 5, then to {_pct(terms[s]["roe"])} ({kept["base"]:.0%} of the '
                      f'excess over the {_pct(ke)} cost of equity kept)',
@@ -290,11 +440,15 @@ def build(fb, an, card, qa, inputs, rates, reviews, warn, warnings, empty):
                      'terminal (no excess return)',
              'bull': f'{_pct(s0)} to {_pct(s5)} by year 5, {_pct(terms[s]["roe"])} terminal ({kept["bull"]:.0%} of the excess kept)'}[s],
             f'ROE over the next two fiscal years differs from the {s} path by more than 3 points.', ni_ids + eq_ids + [RULES])
-    add('payout', 'distributions', 'model', {'payout_fraction_history': payout, 'history': [_r(x) for x in pays], 'book_growth': g_book},
-        pay_basis + f'; book grows by retained profit (clean surplus), at most the growth the business can use: its own five-year '
-        f'common-equity growth {_pct(g_book)} (bounded {_pct(BOOK_GROWTH_FLOOR)}-{_pct(BOOK_GROWTH_CAP)}) fading to terminal growth, '
-        'so profit beyond that need is paid out (payout = max(history, 1 - book growth / ROE))',
-        'Distributions over the next two years differ from this share of profit by more than 20 points.', pay_ids + [RULES])
+    add('payout', 'distributions', 'model', {'payout_fraction_history': payout, 'history': [_r(x) for x in pays], 'book_growth': g_book,
+                                              **({'floor_by_scenario': floor} if bd else {})},
+        pay_basis + f'; book grows by retained profit (clean surplus), at most the growth the business can use: {g_text} '
+        f'(bounded {_pct(BOOK_GROWTH_FLOOR)}-{_pct(BOOK_GROWTH_CAP)}) fading to terminal growth, '
+        'so profit beyond that need is paid out (payout = max(history, 1 - book growth / ROE))'
+        + (f"; inputs.bank_drivers sets the start growth and the payout floor in {[s for s in ('bear', 'base', 'bull') if bd.get(s)]}"
+           if any(bd.get(s) for s in ('bear', 'base', 'bull')) else ''),
+        'Distributions over the next two years differ from this share of profit by more than 20 points.',
+        pay_ids + [y for s in ('bear', 'base', 'bull') if bd.get(s) for y in src_of(bd[s]['evidence_ids'])] + [RULES])
     add('terminal', 'terminal growth and ROE', 'model', terms, f'terminal growth = min(risk-free, {TERMINAL_GROWTH_MAX:.0%} (the valuation '
         'contract\'s bound), ROE x retention, ROE - 0.1pp, Ke - 0.5pp), at least 0 (perpetual growth at the risk-free rate: the '
         'convention of the implied equity risk premium); terminal value '
@@ -303,11 +457,29 @@ def build(fb, an, card, qa, inputs, rates, reviews, warn, warnings, empty):
     add('cost_of_equity', 'cost of equity', 'model', {'value': ke, 'components': ke_parts},
         'risk-free + equity risk premium + stage add-on + balance-sheet add-on; no relevering (deposits and float are operating funding)',
         'A dated market-implied cost of equity for comparable banks or insurers differs by more than 1.5 points.', rate_ids + crp_ids + [RULES])
-    add('regulatory_capital', 'regulatory capital', 'model', {'checked': False},
-        'risk-weighted assets and capital ratios are not in companyfacts: the plan is not checked against capital requirements',
-        'CET1 (or solvency) ratios fall below requirements plus buffers on this payout.', [RULES])
-    warn('regulatory_capital_not_checked', 'regulatory capital (risk-weighted assets, CET1 or solvency ratio) is not checked: an analyst '
-                                           'confirms the payout is permitted with evidence', 'medium')
+    if rc:
+        need = float(rc['risk_weighted_assets']) * float(rc['required_capital_ratio'])
+        add('regulatory_capital', 'regulatory capital', 'analyst',
+            {'checked': True, 'risk_weighted_assets': rc['risk_weighted_assets'], 'required_capital_ratio': rc['required_capital_ratio'],
+             'as_of': rc['as_of'], 'book_to_rwa': book / float(rc['risk_weighted_assets'])},
+            f"inputs.bank_drivers.regulatory_capital: risk-weighted assets {rc['risk_weighted_assets']:,.0f} at {rc['as_of']}, growing "
+            f"with each scenario's book growth path; common book must stay at or above {rc['required_capital_ratio']:.1%} of them "
+            f"(common book is a proxy: CET1 deducts goodwill and intangibles): {rc['reason']}",
+            'CET1 (or solvency) ratios fall below requirements plus buffers on this payout.', src_of(rc['evidence_ids']))
+        if book < need:
+            warn('capital_below_requirement', f'opening common book {book:,.0f} is below the required {need:,.0f} '
+                                              f"({rc['required_capital_ratio']:.1%} of risk-weighted assets)", 'high')
+    else:
+        add('regulatory_capital', 'regulatory capital', 'model', {'checked': False},
+            'risk-weighted assets and capital ratios are not in companyfacts: the plan is not checked against capital requirements',
+            'CET1 (or solvency) ratios fall below requirements plus buffers on this payout.', [RULES])
+        warn('regulatory_capital_not_checked', 'regulatory capital (risk-weighted assets, CET1 or solvency ratio) is not checked: an analyst '
+                                               'confirms the payout is permitted with evidence', 'medium')
+    applied = [s for s in ('bear', 'base', 'bull') if bd.get(s)]
+    if applied:
+        warn('bank_drivers_applied', 'inputs.bank_drivers replaced the own-history ROE / book-growth rules in ' + ', '.join(
+            f"{s} (ROE {_pct(bd[s]['roe_start'])} -> {_pct(bd[s]['roe_year5'])} -> {_pct(bd[s]['roe_terminal'])}, book growth "
+            f"{_pct(bd[s]['book_growth_start'])}, payout floor {_pct(floor[s])}, {bd[s]['source_tier']})" for s in applied), 'low')
     case_assumptions = []
     for r in rows:
         rv = reviews.get(r['id'], {})
@@ -332,7 +504,7 @@ def build(fb, an, card, qa, inputs, rates, reviews, warn, warnings, empty):
     except ValueError as e:
         return dict(empty('invalid_spec', str(e), method), spec=case, assumptions=rows)
     today = result['annual_values'][0]
-    if not today.get('bear', 0) <= today.get('base', 0) <= today.get('bull', 0):
+    if None not in [today.get(k, 0) for k in ('bear', 'base', 'bull')] and not today.get('bear', 0) <= today.get('base', 0) <= today.get('bull', 0):
         warn('scenario_values_cross', 'today: bear <= base <= bull does not hold; labels were not re-sorted', 'high')
     pb = {s: (r['terminal'] or {}).get('implied_price_to_book') for s, r in zip(('bear', 'base', 'bull'), result['scenarios'])}
     return {'forecast_version': FORECAST_VERSION, 'status': 'built', 'reason': None, 'method': method, 'spec': case,

@@ -41,7 +41,11 @@ The pack (pack_version 1; unknown keys are rejected at every level):
   reinvestment leaves the leased assets out), options [{kind vested_options|warrants, count, strike, reason, evidence_ids}]:
   VESTED options/warrants at their weighted strike from the filing's equity note, exercised by the treasury method at every
   value (forecast inputs.options), build_phase {start_margin, depreciation_pct, sbc_pct, source_tier, reason, evidence_ids}:
-  the evidenced start of a company still building capacity ahead of revenue (forecast inputs.build_phase)}; analyst; notes
+  the evidenced start of a company still building capacity ahead of revenue (forecast inputs.build_phase), bank_drivers
+  {bear|base|bull: {roe_start, roe_year5, roe_terminal, book_growth_start, payout, terminal_reason, source_tier, reason,
+  evidence_ids}, opening {book_equity, shares, as_of, reason, evidence_ids}, regulatory_capital {risk_weighted_assets,
+  required_capital_ratio, as_of, reason, evidence_ids}}: a bank's or insurer's evidenced ROE / book growth / payout path, a
+  later filed opening book and its capital requirement (forecast inputs.bank_drivers, residual-income route only)}; analyst; notes
   drivers.equity_proceeds / debt_draw at source_tier contracted (a signed forward sale, a drawn facility; per period) make the
   scenario's financing committed, and drivers.equity_issue_price (one number: the contracted price, applied where the equity
   falls; or one per period) issues those shares at the contracted price. company_path roic in multiple_from 'economics' also
@@ -87,7 +91,8 @@ POTENTIAL = ('market_direction', 'bottleneck_potential', 'share_trajectory', 'co
 TRACK_LEVERS = ('growth_anchor', 'growth')
 GROWTH_LEVERS = ('growth_anchor', 'growth')          # their first value is the growth of the fiscal year AFTER the one in progress
 CURRENT_YEAR = 'current_year_revenue'                 # the fiscal year in progress (forecast inputs.current_year_revenue)
-FORECAST_OPTIONS = ('horizon_years', 'financing', 'cyclical', 'acquired_revenue', 'debt_like_claims', 'options', 'build_phase')
+FORECAST_OPTIONS = ('horizon_years', 'financing', 'cyclical', 'acquired_revenue', 'debt_like_claims', 'options', 'build_phase',
+                    'bank_drivers')
 
 TOP = {'pack_version', 'ticker', 'as_of', 'identity', 'sources', 'facts', 'guidance', 'guidance_track', 'consensus',
        'kpis', 'segments', 'customers', 'competitors', 'bottlenecks', 'potential', 'drivers', 'scenario_events',
@@ -134,6 +139,12 @@ KEYS = {
     'option': ({'kind', 'count', 'strike', 'reason', 'evidence_ids'}, ('kind', 'count', 'strike', 'reason', 'evidence_ids')),
     'build_phase': ({'start_margin', 'depreciation_pct', 'sbc_pct', 'source_tier', 'reason', 'evidence_ids'},
                     ('source_tier', 'reason', 'evidence_ids')),
+    'bank_scenario': ({'roe_start', 'roe_year5', 'roe_terminal', 'book_growth_start', 'payout', 'terminal_reason', 'source_tier',
+                       'reason', 'evidence_ids'},
+                      ('roe_start', 'roe_year5', 'roe_terminal', 'book_growth_start', 'source_tier', 'reason', 'evidence_ids')),
+    'bank_opening': ({'book_equity', 'shares', 'as_of', 'reason', 'evidence_ids'}, ('book_equity', 'as_of', 'reason', 'evidence_ids')),
+    'bank_capital': ({'risk_weighted_assets', 'required_capital_ratio', 'as_of', 'reason', 'evidence_ids'},
+                     ('risk_weighted_assets', 'required_capital_ratio', 'as_of', 'reason', 'evidence_ids')),
 }
 JUSTIFICATIONS = ('justified_high', 'peak', 'unproven')
 PATH_YEARS = 5
@@ -955,7 +966,63 @@ def _forecast_options(p, opts):
                 p.tier(b['source_tier'], b['evidence_ids'], None, where)
                 out['build_phase'] = {**{k: b[k] for k in vals}, 'source_tier': b['source_tier'], 'reason': b['reason'],
                                       'evidence_ids': p.ids(b['evidence_ids'], where)}
+    if 'bank_drivers' in opts:
+        bd = _bank_drivers(p, opts['bank_drivers'])
+        if bd:
+            out['bank_drivers'] = bd
     return out
+
+
+def _bank_drivers(p, bd):
+    """forecast_options.bank_drivers checked against forecast_financials.check_bank_drivers' rules (bounds, tiers, retained profit
+    funding the book growth, filing evidence for a later opening book and the capital requirement); all or nothing. The rule that
+    needs the cost of equity (roe_terminal above it needs terminal_reason) is the engine's."""
+    from .forecast_financials import BANK_CAPITAL_RATIO_MAX, BANK_RANGES, BANK_TIERS
+    c, out, n = p.c, {}, 0
+    if not isinstance(bd, dict) or not bd or set(bd) - {'bear', 'base', 'bull', 'opening', 'regulatory_capital'}:
+        c.err('forecast_options.bank_drivers', 'an object {bear|base|bull: {...}, opening: {...}, regulatory_capital: {...}}')
+        return {}
+    for s in ('bear', 'base', 'bull'):
+        if s not in bd:
+            continue
+        x, where = bd[s], f'forecast_options.bank_drivers.{s}'
+        n += 1
+        if not c.obj(x, 'bank_scenario', where):
+            continue
+        bad = [k for k, (lo, hi) in BANK_RANGES.items() if (k != 'payout' or x.get(k) is not None)
+               and not (_num(x.get(k)) and lo <= x[k] <= hi)]
+        if bad:
+            c.err(where, ', '.join(f'{k} a decimal from {BANK_RANGES[k][0]} to {BANK_RANGES[k][1]}' for k in bad))
+        elif x['source_tier'] not in BANK_TIERS:
+            c.err(where, f"source_tier one of {', '.join(BANK_TIERS)}")
+        elif not isinstance(x['reason'], str) or not x['reason'].strip():
+            c.err(where, 'a written reason (how the evidence gives each value)')
+        elif x['book_growth_start'] > x['roe_start'] * (1 - (x.get('payout') or 0.)) + 1e-9:
+            c.err(where, 'book_growth_start above what retained profit funds (roe_start x (1 - payout))')
+        else:
+            p.tier(x['source_tier'], x['evidence_ids'], None, where)
+            out[s] = {**{k: x[k] for k in x if k != 'evidence_ids'}, 'evidence_ids': p.ids(x['evidence_ids'], where)}
+    for key, kind in (('opening', 'bank_opening'), ('regulatory_capital', 'bank_capital')):
+        if key not in bd:
+            continue
+        x, where = bd[key], f'forecast_options.bank_drivers.{key}'
+        n += 1
+        if not c.obj(x, kind, where):
+            continue
+        nums = ('book_equity',) if key == 'opening' else ('risk_weighted_assets',)
+        if any(not (_num(x[k]) and x[k] > 0) for k in nums) or (x.get('shares') is not None and not (_num(x['shares']) and x['shares'] > 0)):
+            c.err(where, f"{', '.join(nums)} (and shares, if given) positive numbers")
+        elif key == 'regulatory_capital' and not (_num(x['required_capital_ratio']) and 0 < x['required_capital_ratio'] <= BANK_CAPITAL_RATIO_MAX):
+            c.err(where, f'required_capital_ratio a decimal above 0 and at most {BANK_CAPITAL_RATIO_MAX}')
+        elif not _day(x['as_of']) or (p.as_of and _day(x['as_of']) > p.as_of):
+            c.err(where, 'as_of: the date of the reported figure, on or before the pack as_of')
+        elif not isinstance(x['reason'], str) or not x['reason'].strip():
+            c.err(where, 'a written reason')
+        elif 'sec_filing' not in p.kinds(x['evidence_ids']):
+            c.err(where, 'cite the filing document (a pack source of kind sec_filing, or an item citing one)')
+        else:
+            out[key] = {**{k: x[k] for k in x if k != 'evidence_ids'}, 'evidence_ids': p.ids(x['evidence_ids'], where)}
+    return out if len(out) == n else {}
 
 
 def _dataqa_resolutions(p):

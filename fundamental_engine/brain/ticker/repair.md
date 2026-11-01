@@ -81,6 +81,9 @@ this same run was moved to attempts/; its gather fragments stayed: treat your ow
    acquired_revenue, a claim ahead of the shares (a preferred stock, a royalty financing) with forecast_options
    debt_like_claims, vested in-the-money options with forecast_options options, contracted equity (a forward sale) with
    drivers.equity_proceeds at tier contracted (net proceeds) plus drivers.equity_issue_price (tier contracted only), a
+   bank / insurer whose residual-income base contradicts the filing (payout_unknown, book growth at the 8% cap, opening book
+   older than the latest quarterly filing) with forecast_options bank_drivers from cited documents (analyst.md: ROE path, book
+   growth funded by retained profit, payout, a later opening book and regulatory capital citing the filing document), a
    build-phase company the engine did not value (value.json failed_at 'not valued: ... cash-cost ratio outside driver bounds
    ... build-phase', i.e. period 0 or a company in the build-phase shape; a failure in a later period without 'build-phase' is
    the scenario's margin path: correct the mature margin / cycle override with evidence instead, build_phase is not applied

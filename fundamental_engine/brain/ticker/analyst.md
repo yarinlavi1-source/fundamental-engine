@@ -179,6 +179,17 @@ Exact shapes (from evidence_pack.KEYS; the skeleton has them filled with this ru
   period comes from the scenario's margin path (your mature margin / cycle overrides): fix those, build_phase never repairs it.
   Elsewhere it is ignored (warning build_phase_not_applied). depreciation_pct is both the
   start and the maintenance D&A load: it never raises the operating margin path (the mature margin stays yours / history's).
+- A bank, insurer or other residual-income company (identity / card method residual_income): the engine's own ROE fade, the 8%
+  book-growth cap and a 50% payout without distribution history do not describe a fast-growing bank. Supply
+  forecast_options.bank_drivers from the company's evidence: {"base": {"roe_start", "roe_year5", "roe_terminal",
+  "book_growth_start", "payout" (optional), "terminal_reason" (when roe_terminal is above the cost of equity), "source_tier"
+  own_history|guidance|contracted, "reason", "evidence_ids"}, and bear / bull the same where the evidence supports them}.
+  Normalize ROE for one-offs (an abnormal quarterly tax rate) and say so in reason; book_growth_start must be funded by
+  retained profit (<= roe_start x (1 - payout)); payout = dividends + buybacks over profit from the filing (a buyback program
+  alone is not a payout). "opening": {"book_equity", "shares", "as_of", "reason", "evidence_ids"} when a quarterly filing
+  (6-K / 10-Q) after the FactBook's last balance gives common equity attributable to the parent (cite the filing document,
+  sec_filing); "regulatory_capital": {"risk_weighted_assets", "required_capital_ratio" (the CET1 requirement with buffers),
+  "as_of", "reason", "evidence_ids"} from the capital disclosure. Nothing is defaulted: leave out what you cannot evidence.
 - Contracted financing (a forward sale, a drawn facility after the balance sheet): drivers.equity_proceeds (or debt_draw) per
   period at source_tier contracted, citing the agreement, as NET proceeds (the filing's amount after the underwriting spread:
   no second fee is charged); drivers.equity_issue_price = the contracted price at source_tier contracted only (one number: used

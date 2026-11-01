@@ -257,7 +257,9 @@ DECLINE_FLOOR = -.05      # lowest perpetual growth for a structurally declining
 DEBT_INCOMPLETE_RATE = .25     # interest / debt above this (no investment-grade or bank rate) means debt lines are missing
 KNOWN_INPUTS = ('overrides', 'reviews', 'risk_free', 'equity_risk_premium', 'horizon_years', 'financing', 'nol', 'cyclical',
                 'operating_funding', 'nonrecurring', 'debt_like_claims', 'non_operating_assets', 'capital_events', 'country_risk',
-                'current_year_revenue', 'acquired_revenue', 'options', 'capital_link', 'build_phase')
+                'current_year_revenue', 'acquired_revenue', 'options', 'capital_link', 'build_phase', 'bank_drivers')
+# inputs['bank_drivers'] (0.14.3): the residual-income route's evidenced ROE / book growth / payout per scenario, a later reported
+# opening book and regulatory capital (forecast_financials.BANK_* and check_bank_drivers); the operating route does not read it.
 # inputs['options'] = [{kind, count, strike, reason, evidence_ids}] (0.14.2): VESTED options or warrants outstanding at as_of (the
 # 10-Q equity note's exercisable count and its weighted-average strike; RDDT 2026-09: 5.6M vested at 39.29). Applied by the
 # treasury method at every valuation date and on the yearly prices (valuation._roll_back, company_path.option_diluted):
@@ -2854,6 +2856,9 @@ def build(fb, an, card, qa, inputs=None):
             raise ValueError('build_phase: cite the filing document (10-K / 10-Q / 20-F read for the income statement and the D&A '
                              'and stock-comp lines, or an item citing it) among evidence_ids; structured companyfacts alone, a '
                              'search excerpt, a press article or consensus is not enough')
+    if inputs.get('bank_drivers') is not None:
+        from .forecast_financials import check_bank_drivers
+        check_bank_drivers(fb, inputs['bank_drivers'])
     link = inputs.get('capital_link')
     if link is not None:
         if not isinstance(link, dict) or sorted(set(link) - set(SCEN)):
@@ -2932,6 +2937,9 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
         from .forecast_financials import build as build_residual_income
         return build_residual_income(fb, an, card, qa, inputs, (rf, erp, rf_src, erp_src, rf_note, erp_note), reviews, warn, warnings,
                                      empty)
+    if inputs.get('bank_drivers'):
+        warn('bank_drivers_not_applied', 'bank_drivers address the residual-income route (banks, insurers); this company is valued '
+                                         f'with {method}: nothing applied', 'medium')
     if method in NOT_BUILT or method not in BUILT:
         return empty('method_not_supported_by_forecast', f'valuation method {method!r} needs a dedicated model (residual income, '
                      'NAV, rNPV, SOTP) or no reliable valuation; the operating driver forecast does not apply', method)

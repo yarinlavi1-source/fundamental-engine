@@ -264,7 +264,24 @@ in the shape; a later failure says the scenario's margin path is impossible. The
 maintenance level (no D&A roll-off is added to the margin, so it never raises the operating margin path); warned
 `build_phase_start`. Without it, when the last fiscal year's D&A load makes
 the cash-cost ratio leave its bounds and the margin is on the TTM basis, the load of the same trailing twelve months is used,
-warned `da_load_ttm`; otherwise status method_not_supported_by_forecast names the build_phase input)}. Raw override path
+warned `da_load_ttm`; otherwise status method_not_supported_by_forecast names the build_phase input), "bank_drivers" (0.14.3,
+residual-income route only; `forecast_financials.check_bank_drivers`, ValueError on refusal): {"bear"|"base"|"bull": {"roe_start"
+-0.3..0.6, "roe_year5" -0.3..0.6, "roe_terminal" 0.005..0.4, "book_growth_start" -0.1..0.4, "payout"? 0..1, "terminal_reason"
+(required when roe_terminal is above the cost of equity), "source_tier" own_history|guidance|contracted (guidance needs a
+guidance item), "reason", "evidence_ids"}, "opening"?: {"book_equity" (common, the FactBook basis: equity less preferred and
+AOCI), "shares"?, "as_of", "reason", "evidence_ids" with the filing DOCUMENT}, "regulatory_capital"?: {"risk_weighted_assets",
+"required_capital_ratio" 0..0.3, "as_of", "reason", "evidence_ids" with the filing DOCUMENT}}. A scenario set replaces the
+own-history ROE path (start, year 5, terminal; linear as before), starts book growth at book_growth_start (fading to terminal
+growth by year 10; above BOOK_GROWTH_CAP allowed only while book_growth_start <= roe_start x (1 - payout), else refused) and
+uses payout as the distribution floor (payout = max(floor, 1 - book growth / ROE)); without payout it is the history, or with no
+history 0 (warned `bank_payout_from_growth`; `payout_unknown` only when a scenario still takes the 50% default). opening applies
+only when dated after the FactBook's last balance sheet and on or before as_of (else `bank_opening_not_applied`), within 0.5-2x
+that book (else refused), warned `bank_opening_applied`; its shares replace the point-in-time count. regulatory_capital fills
+risk_weighted_assets (growing with the scenario's book growth path) and required_capital_ratio in every period (the valuation's
+funding_blocked check), replaces `regulatory_capital_not_checked`, and warns `capital_below_requirement` (high) when the
+opening book is below the requirement. Applied scenarios are assumption rows of kind analyst and `bank_drivers_applied`;
+absent, the case is unchanged; on the operating route `bank_drivers_not_applied`. forecast_options.bank_drivers carries it
+from the evidence pack}. Raw override path
 `equity_issue_price` (0.14.2): a positive number or one per boundary, at source_tier contracted only and only with an
 equity_proceeds override at tier contracted in force for that scenario (else ValueError); it applies only to the periods whose
 contracted equity_proceeds are positive (every other period keeps the quote and the issue-price fixed point); contracted

@@ -60,6 +60,26 @@ class ConversionTests(unittest.TestCase):
         q['forecast_options'] = {'debt_like_claims': []}
         refused(self, q, 'non-empty list')
 
+    def test_bank_drivers_pass_through_to_the_forecast(self):
+        """NU 2026-11: the residual-income route had no evidenced ROE / book growth / payout input (forecast inputs.bank_drivers)."""
+        sc = {'roe_start': .28, 'roe_year5': .26, 'roe_terminal': .16, 'book_growth_start': .17, 'payout': .05,
+              'terminal_reason': 'deposit franchise', 'source_tier': 'own_history', 'reason': 'trailing ROE, H1 book growth',
+              'evidence_ids': ['s_10q']}
+        op = {'book_equity': 13.2e9, 'as_of': '2026-06-30', 'reason': 'Q2 parent equity', 'evidence_ids': ['s_10k']}
+        p = pack()
+        p['forecast_options'] = {'bank_drivers': {'base': sc, 'opening': op}}
+        got = to_inputs(p)['forecast']['bank_drivers']
+        self.assertEqual((got['base']['roe_start'], got['base']['evidence_ids'], got['opening']['evidence_ids']),
+                         (.28, ['web:s_10q'], ['web:s_10k']))
+        for bad, frag in (({'roe_start': .9}, 'roe_start a decimal'), ({'payout': .6}, 'retained profit'),
+                          ({'source_tier': 'analyst'}, 'source_tier one of'), ({'evidence_ids': ['s_est']}, 'consensus')):
+            q = pack()
+            q['forecast_options'] = {'bank_drivers': {'base': {**sc, **bad}}}
+            refused(self, q, frag)
+        q = pack()
+        q['forecast_options'] = {'bank_drivers': {'opening': {**op, 'evidence_ids': ['s_av']}}}
+        refused(self, q, 'filing document')
+
     def test_overrides_carry_the_source_tier_contract(self):
         ov = to_inputs(pack())['forecast']['overrides']
         self.assertEqual({o['source_tier'] for o in ov}, {'consensus', 'own_history'})

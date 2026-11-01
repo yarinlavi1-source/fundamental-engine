@@ -122,5 +122,116 @@ class ResidualIncomeTests(unittest.TestCase):
         self.assertEqual(cf['fc']['status'], 'built')
 
 
+def filed_bank(**kw):
+    """The synthetic bank plus a filing DOCUMENT source (a 6-K read for the later balance sheet and capital ratios)."""
+    fb = bank(**kw)
+    F.add_source(fb, 'doc:6k', 'synthetic', 'filing', 'issuer_document', '2026-09-30T00:00:00Z', url='https://example.org/6k',
+                 note='TEST DATA ONLY')
+    return fb
+
+
+SCEN_BD = {'roe_start': .28, 'roe_year5': .26, 'roe_terminal': .16, 'book_growth_start': .17, 'payout': 0.,
+           'terminal_reason': 'synthetic: deposit franchise keeps an excess return', 'source_tier': 'own_history',
+           'evidence_ids': ['syn'], 'reason': 'synthetic: trailing ROE and first-half book growth'}
+
+
+class BankDriversTests(unittest.TestCase):
+    """inputs.forecast.bank_drivers: the analyst's evidenced ROE / book growth / payout, later opening book, capital."""
+
+    def run_bd(self, bd, **kw):
+        return pipeline.run(filed_bank(**kw), {'forecast': {'bank_drivers': bd}})
+
+    def test_absent_leaves_the_rules(self):
+        fc = pipeline.run(filed_bank())['fc']
+        codes = {w['code'] for w in fc['warnings']}
+        self.assertIn('regulatory_capital_not_checked', codes)
+        self.assertFalse(codes & {'bank_drivers_applied', 'bank_opening_applied', 'bank_payout_from_growth'})
+        self.assertEqual({a['kind'] for a in fc['assumptions'] if a['id'].startswith('roe_')}, {'reported', 'model'})
+        self.assertNotIn('floor_by_scenario', next(a for a in fc['assumptions'] if a['id'] == 'payout')['values'])
+        self.assertTrue(all(p['risk_weighted_assets'] == 0. for sc in fc['spec']['scenarios'] for p in sc['periods']))
+
+    def test_applied_moves_roe_growth_and_value(self):
+        roe = (.13,) * 10
+        plain = pipeline.run(filed_bank(roe=roe, payout=0.))
+        cf = self.run_bd({'base': dict(SCEN_BD)}, roe=roe, payout=0.)
+        fc = cf['fc']
+        self.assertEqual(fc['status'], 'built', fc.get('reason'))
+        self.assertIn('bank_drivers_applied', {w['code'] for w in fc['warnings']})
+        base = fc['paths']['base']
+        self.assertGreater(base[0]['roe'], .27)
+        # book growth 17% (above the 8% cap, funded by retained profit) sets the payout: 1 - growth / ROE, not the 50% default
+        self.assertLess(base[0]['payout_fraction'], .5)
+        self.assertAlmostEqual(fc['spec']['scenarios'][1]['terminal']['roe'], .16)
+        row = next(a for a in fc['assumptions'] if a['id'] == 'roe_base')
+        self.assertEqual(row['kind'], 'analyst')
+        self.assertGreater(pipeline.summary(cf)['base_value'], pipeline.summary(plain)['base_value'])
+        self.assertEqual(fc['paths']['bear'], plain['fc']['paths']['bear'])      # an unset scenario keeps the rules
+
+    def test_no_payout_and_no_history_follows_growth_and_says_so(self):
+        fb = filed_bank()
+        fb['facts'] = [f for f in fb['facts'] if f['metric'] not in ('dividends_paid', 'buybacks')]
+        bd = {s: {k: v for k, v in SCEN_BD.items() if k != 'payout'} for s in ('bear', 'base', 'bull')}
+        fc = pipeline.run(fb, {'forecast': {'bank_drivers': bd}})['fc']
+        codes = {w['code'] for w in fc['warnings']}
+        self.assertIn('bank_payout_from_growth', codes)
+        self.assertNotIn('payout_unknown', codes)
+        self.assertEqual(next(a for a in fc['assumptions'] if a['id'] == 'payout')['values']['floor_by_scenario']['base'], 0.)
+
+    def test_later_opening_book_and_capital(self):
+        op = {'book_equity': 160e9, 'shares': 2.1e9, 'as_of': '2026-09-30', 'reason': 'synthetic Q3 balance sheet',
+              'evidence_ids': ['doc:6k']}
+        rc = {'risk_weighted_assets': 1000e9, 'required_capital_ratio': .105, 'as_of': '2026-09-30',
+              'reason': 'synthetic CET1 requirement with buffers', 'evidence_ids': ['doc:6k']}
+        fc = self.run_bd({'opening': op, 'regulatory_capital': rc})['fc']
+        self.assertEqual((fc['anchors']['book_equity'], fc['anchors']['statement_as_of'], fc['anchors']['shares']),
+                         (160e9, '2026-09-30', 2.1e9))
+        codes = {w['code'] for w in fc['warnings']}
+        self.assertIn('bank_opening_applied', codes)
+        self.assertNotIn('regulatory_capital_not_checked', codes)
+        p = fc['spec']['scenarios'][1]['periods']
+        self.assertEqual(p[0]['required_capital_ratio'], .105)
+        self.assertGreater(p[-1]['risk_weighted_assets'], p[0]['risk_weighted_assets'] > 1000e9 - 1)
+        # a requirement the opening book does not meet is flagged
+        hi = self.run_bd({'regulatory_capital': dict(rc, required_capital_ratio=.25)})['fc']
+        self.assertIn('capital_below_requirement', {w['code'] for w in hi['warnings']})
+        # an opening not after the FactBook's last balance sheet is not applied
+        old = self.run_bd({'opening': dict(op, as_of='2026-03-31')})['fc']
+        self.assertIn('bank_opening_not_applied', {w['code'] for w in old['warnings']})
+        self.assertEqual(old['anchors']['statement_as_of'], '2026-06-30')
+
+    def test_unevidenced_or_out_of_band_is_refused(self):
+        op = {'book_equity': 160e9, 'as_of': '2026-09-30', 'reason': 'r', 'evidence_ids': ['doc:6k']}
+        bad = {
+            'unknown evidence': {'base': dict(SCEN_BD, evidence_ids=['nowhere'])},
+            'no reason': {'base': dict(SCEN_BD, reason=' ')},
+            'roe out of range': {'base': dict(SCEN_BD, roe_start=.9)},
+            'tier': {'base': dict(SCEN_BD, source_tier='analyst')},
+            'growth not funded': {'base': dict(SCEN_BD, payout=.6)},
+            'terminal above Ke without a reason': {'base': {k: v for k, v in SCEN_BD.items() if k != 'terminal_reason'}},
+            'opening without a filing document': {'opening': dict(op, evidence_ids=['syn'])},
+            'opening after as_of': {'opening': dict(op, as_of='2026-12-31')},
+            'opening out of band': {'opening': dict(op, book_equity=1e9)},
+            'capital ratio': {'regulatory_capital': {'risk_weighted_assets': 1e12, 'required_capital_ratio': .5, 'as_of': '2026-09-30',
+                                                     'reason': 'r', 'evidence_ids': ['doc:6k']}},
+        }
+        for name, bd in bad.items():
+            with self.subTest(name):
+                cf = self.run_bd(bd)
+                self.assertIsNone(cf['fc'])
+                self.assertTrue(any(e['stage'] == 'forecast' and e['error'].startswith('ValueError: bank_drivers')
+                                    for e in cf['errors']), cf['errors'])
+
+    def test_company_path_sums_the_fifth_anniversary_split(self):
+        # the residual-income case has no generated_from: company_path reads the forecast calendar's interim boundary, so the
+        # stub after the fifth anniversary is not read as a whole next fiscal year
+        cp = {'metric': 'eps', 'multiple': 'forward_pe',
+              'scenarios': {'base': {'multiple_from': 'economics', 'roic': .2, 'justification': 'justified_high',
+                                     'source_tier': 'own_history', 'reason_he': 'בדיקה', 'evidence_ids': ['syn']}}}
+        cf = pipeline.run(filed_bank(), {'company_path': cp})
+        fy = cf['company_path']['fiscal_years']['base']
+        self.assertFalse(any(f['partial'] for f in fy[1:]))
+        self.assertTrue(all(f['fiscal_year_end'].endswith('12-31') for f in fy))
+
+
 if __name__ == '__main__':
     unittest.main()
