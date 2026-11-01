@@ -92,6 +92,20 @@ the chosen value does not move). It needs FILING evidence (a filing-derived sour
 or an item citing one, usable at as_of); a rejected or unmatched one changes nothing. Every one is recorded: `qa["resolutions"]` (status applied|unused|rejected, `why`,
 `applied` comparisons; the key exists only when resolutions were supplied), an `analyst_resolution` check, and on the field
 `analyst_resolutions` with a note; a field resting on an applied one is listed in `limited`. The review digest binds them.
+Inside one source family (two transcriptions of the same filing: companyfacts XBRL vs the filing read directly) a resolution
+applies only when its evidence cites the filing DOCUMENT itself (an issuer document of the filing dataset, or an item citing
+one; `dataqa._primary_filing_evidence`, 0.14.2; the document must carry retrieval primary_document, a search excerpt of it does
+not count); a filing-derived copy alone never settles a disagreement between copies. The cash rollforward allows, at each end,
+half the rounding unit of a balance reported as a whole multiple of 10^6..10^8 (`_rounding_unit`, capped at 0.1B: a whole
+number of billions is not evidence of rounding to the billion; ASTS's cash including restricted, tagged to 0.1B, against a flow
+to the dollar).
+Split evidence (0.14.2): dated split records with the same factor (within SPLIT_BAND) inside ONE count step are one corporate
+action (the issuer's XBRL tag, dated by its context up to ~90 days from the event, and a market feed's effective date): later
+ones are listed under the kept event's `same_event` and not multiplied in (`_same_split_once`); `_split_factor_of` counts them
+twice only where that product, and not the single factor, leaves the residual count ratio inside SPLIT_ISSUANCE_BAND (two real
+splits of one factor in one step). A dated split whose residual stays outside SPLIT_ISSUANCE_BAND is not decisive
+(corporate_action 'ambiguous', `corporate_action_note`): the price and per-share tests decide, else the step stays unresolved
+(ServiceNow's 5-for-1 had read as 25).
 
 ## analysis.analyze(fb, qa=None, archetype=None, market_cap=None) -> an
 
@@ -129,6 +143,8 @@ dataqa and analysis TTM disagree). Debt scope follows dataqa: the tagged total o
  "business_model": {"primary","secondary": [...],"reasons","override","computed": {"primary","secondary","evidence","text_financials"},
                     "evidence","text_matches","signature": {... "liabilities_to_assets","revenue_to_assets",...},
                     "flags": {"text_financials","possible_financial","pharma_text","lender_balance_sheet","financial_label","lender_shaped"}},
+ # an infrastructure KEYWORD (TEXT_RULES 'cable', 'wireless', ...) with capex below INFRA_CAPEX_MIN (6%) of revenue yields to
+ # the same label's next type or the filer's SIC_FALLBACK type (0.14.2, Amphenol's 'cable assemblies'); reason recorded
  "stage": {"value": early|growth|maturing|mature|decline|turnaround,"reasons","computed","override","confidence","data",
            "evidence_needed","cross_check"},
  "cyclical": {"value": bool,"normalize": bool,"basis": data|industry_flag|industry_flag+peak|analyst|None,"industry_flag",
@@ -226,7 +242,39 @@ consensus is a 'model' row with its own tier), "acquired_revenue": {"value","fis
 applied, warned high, when it closed after the balance sheet; capped at the step, and at the step above organic growth when
 the filings give that growth, warned medium `acquired_revenue_capped`), "debt_like_claims": [{"kind" (DEBT_LIKE_KINDS),"amount",
 "reason","evidence_ids"}] (claims ahead of the shares the debt lines miss, added to opening debt; from an evidence pack as
-forecast_options.debt_like_claims, citing the company's own documents)}. The fiscal year in progress: an input, else consensus, else
+forecast_options.debt_like_claims, citing the company's own documents; kind finance_leases without a sales_to_capital or
+growth_capex_pct override warns `finance_leases_reinvestment_basis` high), "options": [{"kind" vested_options|warrants,"count",
+"strike","reason","evidence_ids"}] (0.14.2: vested options at their weighted strike -> case `opening.options` [{id, count,
+strike}]; valuation._roll_back exercises them by the treasury method at each date's value per share, (v x shares + count x
+strike) / (shares + count) where v > strike, and company_path prices likewise on the year's weighted shares, recording
+`price_before_options`), "capital_link": {scenario: {"roic","source_tier","evidence_ids","reason","competitors"?}} (0.14.2:
+pipeline builds it from company_path scenarios in multiple_from 'economics'; for each linked scenario without an override of
+terminal_roic / terminal.roic a terminal_roic override at min(roic, 1.0) is added with the path's tier and evidence, and without
+an override of sales_to_capital / growth_capex_pct / maintenance_capex_pct the explicit sales-to-capital equals the terminal
+rule ROIC / (final EBIT margin x (1 - tax)) from the first year; driver_sources records the path's tier; a path roic above 1
+warns `capital_link_capped`), "build_phase": {"start_margin" -1..0.6,"depreciation_pct" 0..1,"sbc_pct" 0..1,"reason",
+"evidence_ids","source_tier" guidance|contracted|own_history} (0.14.2: the evidence must include the filing DOCUMENT, an
+issuer document of the filing dataset or an item citing one, `forecast._filing_document_evidence`: structured companyfacts alone
+is refused; tier guidance needs a guidance item among evidence_ids; applied to a company in the build-phase shape, TTM operating margin <= BUILD_PHASE_MARGIN_MAX -50% or capex >=
+BUILD_PHASE_CAPEX_MIN 100% of revenue, where tier own_history must lie within BUILD_PHASE_LOAD_BAND 10% of revenue of the
+engine's own measured load (TTM where measured, else the last fiscal year); to any other company only when today's own loads
+fail in period 0 (`PathImpossible.period == 0`, not a later margin path) and every value is within that band; elsewhere it is
+dropped, warned `build_phase_not_applied` high. The forecast error names build-phase only for a period-0 failure or a company
+in the shape; a later failure says the scenario's margin path is impossible. The paths start from the evidenced margin and SBC load; depreciation_pct is the D&A load from the first period AND the
+maintenance level (no D&A roll-off is added to the margin, so it never raises the operating margin path); warned
+`build_phase_start`. Without it, when the last fiscal year's D&A load makes
+the cash-cost ratio leave its bounds and the margin is on the TTM basis, the load of the same trailing twelve months is used,
+warned `da_load_ttm`; otherwise status method_not_supported_by_forecast names the build_phase input)}. Raw override path
+`equity_issue_price` (0.14.2): a positive number or one per boundary, at source_tier contracted only and only with an
+equity_proceeds override at tier contracted in force for that scenario (else ValueError); it applies only to the periods whose
+contracted equity_proceeds are positive (every other period keeps the quote and the issue-price fixed point); contracted
+equity_proceeds are net proceeds, so that scenario's equity_fee_rate is 0 (its equity is locked: no assumed raise is added).
+equity_proceeds / debt_draw overrides whose tiers are all 'contracted' make the scenario's financing_status 'committed', any
+other tier 'assumed' (never 'none' with money in it); a raw `growth` list shorter than the spec's periods (0.14.2) is one value
+per fiscal year from the next one (analyst.md), spread onto the periods of that year (a continuation part 0, as the engine's
+own path), and the fiscal years after the list fade from its last value to terminal growth at the scenario's half-life
+(`growth_list_faded`, low); a list longer than the fiscal years, or of another length for another raw path, is refused with
+the period count and ends; an assumed-financing revert keeps the analyst's own locked financing. The fiscal year in progress: an input, else consensus, else
 fiscal-year guidance, else the reported year to date + the company's dated guide for the NEXT unreported quarter + the
 quarters after it (sequential at the guided step, seasonal at its year-over-year growth on last year's quarters, or flat:
 `anchors.current_fiscal_year.quarter_guide` {rule, quarter, guided, sequential_growth, year_over_year_growth,
@@ -394,7 +442,29 @@ assessment|verdict|red_flags,"value","justification","evidence_ids"}]}. `price_f
 `render.markdown(casefile) -> str` (full report) and `render.hebrew_paragraph(casefile) -> str` (one Hebrew paragraph, 80-140
 words, drafts labelled). `render.hebrew_table(casefile) -> str` (the owner's table; the yearly table's columns are
 דובי / בסיסי / שורי and one condition line per scenario follows it). `render.value_display(casefile)` is the one rule for
-whether values are shown (the table and scenario_reasons use it).
+whether values are shown (the table and scenario_reasons use it). Under the company's yearly table its flags' `text_he` are
+notes (company_path 0.14.2: `capital_intensity_gap` when the path roic and the DCF's terminal ROIC differ by more than
+CAPITAL_GAP_TOL 2 points; `year1_carries_gap` when the base's year-0 EPS x multiple is more than YEAR0_GAP_NOTE 25% from the
+quote, so year 1's change is mostly that gap: its Hebrew note names only the quote, never a second 'worth today' number beside
+the fair value; `roic_at_or_below_growth` when an economics-mode roic is at or below the executed terminal growth: that scenario's
+rows are not priced (economics_unavailable), the others still are).
+
+## evidence_pack (pack -> FactBook bundle / pipeline inputs)
+
+Money in a scaled unit (0.14.2): facts, segments, KPIs and guidance whose `unit` names millions / billions / thousands
+('USD_millions', 'USD_mn', 'USD bn', 'USDm', 'USDbn', 'EUR thousands', 'EURk') are converted to the base unit when the pack is read (`evidence_pack._to_base_unit`; NBIS's revenue
+guidance 3,000-3,400 'USD_millions' had started the forecast at $3,200 of revenue). forecast_options.build_phase takes tier
+guidance / contracted / own_history only, with a sec_filing source among its evidence (directly or through an item); drivers.equity_issue_price tier contracted only.
+
+## ticker_run.value(run) -> value.json
+
+`{"ran","valued","failed_at","not_valued_he"?,...}`: `valued` (and `ran`, 0.14.2) need the forecast, valuation (and when inputs
+carry company_path, company_path) stages ok AND fc.status 'built', a computed valuation with a finite base value today (not
+funding_blocked) and a computed company_path; `not_valued_he` is one plain Hebrew line (ticker_run.NOT_VALUED_HE: build phase
+only for a build-phase forecast reason, forecast, funding, funding_scenario when only bear and/or bull are blocked (it names the
+scenario), leverage, no value, path, stage); a stage
+that ran without valuing gives `failed_at` 'not valued: forecast method_not_supported_by_forecast: ...'. `ticker_run.status`
+reports 'not valued: ...' as the draft reason and `valued` beside `engine_ran`.
 
 ## scenario_reasons
 

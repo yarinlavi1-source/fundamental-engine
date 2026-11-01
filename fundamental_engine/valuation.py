@@ -139,7 +139,7 @@ def segment_revenue(seg, duration):
     return units * price * utilization * duration
 
 
-def _roll_back(case, s, rows, terminal_per_share, convertibles=()):
+def _roll_back(case, s, rows, terminal_per_share, convertibles=(), options=()):
     """Ex-distribution value at each boundary; dividends are not counted twice.
 
     Financial assets (marketable investments and cash above the minimum operating balance) are riskless: discounting their
@@ -162,6 +162,11 @@ def _roll_back(case, s, rows, terminal_per_share, convertibles=()):
     if convertibles:
         claim, extra = sum(c['claim'] for c in convertibles), sum(c['conversion_shares'] for c in convertibles)
         values = {d: min(x, (x * shares_at[d] + claim) / (shares_at[d] + extra)) for d, x in values.items()}
+    for o in options:
+        # vested in-the-money options: the treasury method at each date's own value per share (its fixed point: exercise cash in,
+        # option shares out), applied only where that value is above the weighted strike
+        k, cnt = o['strike'], o['count']
+        values = {d: (x * shares_at[d] + cnt * k) / (shares_at[d] + cnt) if x > k else x for d, x in values.items()}
     out = []
     for d in case['report_dates']:
         elapsed = years(case['as_of'], d)
@@ -199,6 +204,16 @@ def _convertibles(op):
         text(c.get('id'), 'convertible id')
         out.append({'id': c['id'], 'claim': number(c['claim'], 'convertible claim', 0),
                     'conversion_shares': number(c['conversion_shares'], 'conversion shares', 1e-9)})
+    return out
+
+
+def _options(op):
+    """opening['options']: [{'id', 'count', 'strike'}]: vested options (or warrants) outstanding at as_of, by weighted strike."""
+    out = []
+    for o in op.get('options') or []:
+        text(o.get('id'), 'option id')
+        out.append({'id': o['id'], 'count': number(o['count'], 'option count', 1e-9),
+                    'strike': number(o['strike'], 'option strike', 0)})
     return out
 
 
@@ -355,7 +370,11 @@ def operating(case, s):
         issues.append('Terminal revenue annualized from a short period; seasonality review required')
     if deferred:
         issues.append('Terminal deferred revenue remains; verify renewal versus runoff treatment')
-    timeline, by_date = ([], {}) if blocked else _roll_back(case, s, rows, terminal_price, converts)
+    opts = _options(op)
+    timeline, by_date = ([], {}) if blocked else _roll_back(case, s, rows, terminal_price, converts, opts)
+    if opts:
+        issues.append('Vested options are exercised by the treasury method at every date where the value per share exceeds the '
+                      'weighted strike (exercise cash in, option shares out)')
     if converts:
         issues.append('Convertibles convert at a date when the per-share value exceeds claim / conversion shares (if-converted; '
                       'future coupons after a conversion are not added back: slightly conservative)')

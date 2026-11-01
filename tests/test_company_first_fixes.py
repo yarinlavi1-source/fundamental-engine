@@ -71,7 +71,7 @@ class EndToEnd(unittest.TestCase):
         rows = [x for x in t.splitlines() if x.startswith('| שנה ') and x != HEAD]
         self.assertEqual([r.split(' | ')[0] for r in rows], [f'| שנה {k} ({2026 + k}/10)' for k in range(1, 6)])
         # a few short explanations
-        self.assertLessEqual(sum(1 for x in t.splitlines() if x.startswith('- ')), 8)
+        self.assertLessEqual(sum(1 for x in t.splitlines() if x.startswith('- ')), 9)     # 8 + the year-1 gap note (0.14.2)
         # the other views stay behind the scenes
         md = markdown(self.cf)
         self.assertIn('שווי למניה בכל שנה, לפי תרחיש (מודל תזרים המזומנים)', md)
@@ -348,9 +348,14 @@ class EconomicsPathEndToEnd(unittest.TestCase):
         self.assertIn('מחושב מהתשואה על ההון', t)
         reasons = render_he(self.cf['scenario_reasons'])
         self.assertIn('מחושב מהכלכלה של התרחיש', reasons)
-        # every value outside the company path is the hand run's (the path is display only)
-        for k in ('fc', 'val', 'rk', 'dc', 'an', 'card', 'qa'):
+        # the data stages are the hand run's; since 0.14.2 the path's roic also sets the DCF's terminal ROIC (one capital
+        # intensity per scenario, forecast.capital_link), so the yearly table and the fair value tell one capital story
+        for k in ('an', 'card', 'qa'):
             self.assertEqual(json.dumps(self.cf[k], sort_keys=True, default=str), json.dumps(self.hand[k], sort_keys=True, default=str), k)
+        for s, roic in (('bear', .12), ('base', .25), ('bull', .40)):
+            self.assertAlmostEqual(case[s]['terminal']['roic'], roic, places=9)
+            self.assertAlmostEqual(cp['scenarios'][s]['economics']['roic_minus_engine_terminal_roic'], 0, places=9)
+        self.assertFalse([f for f in cp['flags'] if f['id'] == 'capital_intensity_gap'])
 
 
 if __name__ == '__main__':

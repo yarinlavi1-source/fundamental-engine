@@ -118,6 +118,11 @@ capital the scenario's growth needs, from {TICKER}'s own record (understand/auto
 through a cycle; say whether goodwill is in or out) or a named competitor at a comparable stage (tier competitor); a peak
 year's return is a peak, not a run rate. bull and bear ROICs move with their business (the bear's what breaks, the bull's
 what must happen), not alone. reason_he says in plain Hebrew why this return on capital, and so this multiple.
+Since 0.14.2 the same ROIC also sets that scenario's DCF terminal ROIC and its reinvestment (one capital intensity per
+scenario: the fair value and the yearly table tell one capital story), unless the core part sets terminal_roic or
+sales_to_capital with its own evidence; then company_path flags capital_intensity_gap above 2 points. A ROIC at or below
+terminal growth is refused. When the base's year-0 price is far from the quote, the table adds a note that year 1 carries
+that gap (year1_carries_gap).
 A hand path stays possible when the economics cannot carry the multiple (remove multiple_from and roic; give "multiple_path":
 [today, y1, y2, y3, y4, y5], six positive numbers), and then it is anchored in evidence: the company's own range through a
 cycle and where it sits now (own_history), and named competitors at a comparable stage of growth and margin (peers, tier

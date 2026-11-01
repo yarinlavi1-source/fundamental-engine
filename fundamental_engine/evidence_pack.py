@@ -37,7 +37,15 @@ The pack (pack_version 1; unknown keys are rejected at every level):
   {value, acquisition, closed, reason, evidence_ids}: bought revenue in the step into the fiscal year in progress, kept out of
   the stub's growth reinvestment, debt_like_claims [{kind, amount, reason, evidence_ids}]: claims ahead of the shares that the
   debt lines miss (forecast.DEBT_LIKE_KINDS, e.g. a preferred stock at its liquidation preference), added to opening debt,
-  citing the company's own documents}; analyst; notes
+  citing the company's own documents (kind finance_leases: set a lease-inclusive sales_to_capital too, or a note says the
+  reinvestment leaves the leased assets out), options [{kind vested_options|warrants, count, strike, reason, evidence_ids}]:
+  VESTED options/warrants at their weighted strike from the filing's equity note, exercised by the treasury method at every
+  value (forecast inputs.options), build_phase {start_margin, depreciation_pct, sbc_pct, source_tier, reason, evidence_ids}:
+  the evidenced start of a company still building capacity ahead of revenue (forecast inputs.build_phase)}; analyst; notes
+  drivers.equity_proceeds / debt_draw at source_tier contracted (a signed forward sale, a drawn facility; per period) make the
+  scenario's financing committed, and drivers.equity_issue_price (one number: the contracted price, applied where the equity
+  falls; or one per period) issues those shares at the contracted price. company_path roic in multiple_from 'economics' also
+  sets the DCF's terminal ROIC and reinvestment of that scenario unless drivers set terminal_roic or sales_to_capital there.
   dataqa_resolutions [{field, metric, period_end, resolution label_difference|use_source, source_id, reason, evidence_ids}]: a
   cross-source disagreement dataqa blocks on, resolved with FILING evidence (a pack source of kind sec_filing, or an item citing
   one); source_id is the FactBook source the resolution names (an engine source such as av:balance, or a pack source)
@@ -60,6 +68,7 @@ from copy import deepcopy
 from datetime import date, timedelta
 import json
 import math
+import re
 
 PACK_VERSION = 1
 SCENARIOS = ('bear', 'base', 'bull')
@@ -78,7 +87,7 @@ POTENTIAL = ('market_direction', 'bottleneck_potential', 'share_trajectory', 'co
 TRACK_LEVERS = ('growth_anchor', 'growth')
 GROWTH_LEVERS = ('growth_anchor', 'growth')          # their first value is the growth of the fiscal year AFTER the one in progress
 CURRENT_YEAR = 'current_year_revenue'                 # the fiscal year in progress (forecast inputs.current_year_revenue)
-FORECAST_OPTIONS = ('horizon_years', 'financing', 'cyclical', 'acquired_revenue', 'debt_like_claims')
+FORECAST_OPTIONS = ('horizon_years', 'financing', 'cyclical', 'acquired_revenue', 'debt_like_claims', 'options', 'build_phase')
 
 TOP = {'pack_version', 'ticker', 'as_of', 'identity', 'sources', 'facts', 'guidance', 'guidance_track', 'consensus',
        'kpis', 'segments', 'customers', 'competitors', 'bottlenecks', 'potential', 'drivers', 'scenario_events',
@@ -122,6 +131,9 @@ KEYS = {
     'acquired_revenue': ({'value', 'acquisition', 'closed', 'reason', 'evidence_ids'},
                          ('value', 'acquisition', 'closed', 'reason', 'evidence_ids')),
     'debt_like_claim': ({'kind', 'amount', 'reason', 'evidence_ids'}, ('kind', 'amount', 'reason', 'evidence_ids')),
+    'option': ({'kind', 'count', 'strike', 'reason', 'evidence_ids'}, ('kind', 'count', 'strike', 'reason', 'evidence_ids')),
+    'build_phase': ({'start_margin', 'depreciation_pct', 'sbc_pct', 'source_tier', 'reason', 'evidence_ids'},
+                    ('source_tier', 'reason', 'evidence_ids')),
 }
 JUSTIFICATIONS = ('justified_high', 'peak', 'unproven')
 PATH_YEARS = 5
@@ -297,6 +309,8 @@ class Pack:
                 where = f'{key}[{i}]'
                 if not c.obj(x, kind, where):
                     continue
+                if key in ('facts', 'segments', 'kpis'):
+                    _to_base_unit(x, ('value', 'revenue', 'operating_income'))
                 self._new_item(x['id'], key, x, where)
                 self.facts_ids(x['source_ids'], where)
                 val = x.get('value', x.get('revenue', x.get('share')))
@@ -313,6 +327,7 @@ class Pack:
             where = f'guidance[{i}]'
             if not c.obj(g, 'guidance', where):
                 continue
+            _to_base_unit(g, ('low', 'high'))
             self._new_item(g['id'], 'guidance', g, where)
             if not (_num(g['low']) and _num(g['high']) and g['low'] <= g['high']):
                 c.err(where, 'low and high must be numbers with low <= high')
@@ -478,6 +493,37 @@ def track_record(pack_obj):
             'rule': 'mean of actual / guided midpoint over the recorded periods; applied only where a driver says so'}
 
 
+# a scaled money unit ('USD_millions', 'USD bn', 'EUR thousands'): the multiplier to the currency's base unit, the FactBook's
+# (NBIS 2026-11: a guidance item 3,000-3,400 'USD_millions' was read as $3,200 of revenue, so the forecast started at $21 a year)
+# review round 2: also a suffix glued to a currency code ('USDm', 'USDbn', 'EURk', case-sensitive so 'item' is not millions) and
+# '_mn' ('USD_mn'); KPIs given in millions / thousands are scaled like facts and segments
+UNIT_SCALES = ((re.compile(r'(?i)(billions?|\bbn\b|_bn\b|\bb\b|_b\b)'), 1e9), (re.compile(r'(?<=\b[A-Z]{3})(bn|b)\b'), 1e9),
+               (re.compile(r'(?i)(millions?|\bmm\b|_mm\b|\bmn\b|_mn\b|_m\b|\bm\b)'), 1e6), (re.compile(r'(?<=\b[A-Z]{3})(mm|mn|m)\b'), 1e6),
+               (re.compile(r'(?i)(thousands?|\bk\b|_k\b|000s)'), 1e3), (re.compile(r'(?<=\b[A-Z]{3})k\b'), 1e3))
+
+
+def _unit_scale(unit):
+    """(multiplier, base unit) of a scaled money unit, else (1, unit)."""
+    if not isinstance(unit, str):
+        return 1., unit
+    for rx, m in UNIT_SCALES:
+        if rx.search(unit):
+            base = rx.sub('', unit).strip(' _-') or 'base'
+            return m, base
+    return 1., unit
+
+
+def _to_base_unit(x, keys):
+    """Scale an item's numbers given in millions / billions / thousands to the base unit in place (the unit becomes the base unit)."""
+    m, base = _unit_scale(x.get('unit'))
+    if m == 1:
+        return
+    for k in keys:
+        if _num(x.get(k)):
+            x[k] = x[k] * m
+    x['unit'] = base
+
+
 # ---------------------------------------------------------------- conversion
 
 def _mid(x):
@@ -595,7 +641,7 @@ def _range_check(p, d, s, tier, value, prev, where):
 
 
 def _overrides(p, track, cur=None):
-    from .forecast import ECON_LEVERS, TERMINAL_KEYS
+    from .forecast import ECON_LEVERS, TERMINAL_KEYS, RAW_EXTRA_PATHS
     from .drivers import RATIO_KEYS, ABSOLUTE_KEYS
     c, out, adjustments = p.c, [], []
     drivers = p.raw.get('drivers') or {}
@@ -609,7 +655,7 @@ def _overrides(p, track, cur=None):
             continue                                # _current_year
         if not c.obj(d, 'driver', where):
             continue
-        raw = lever == 'growth' or lever in RATIO_KEYS or lever in ABSOLUTE_KEYS or (
+        raw = lever == 'growth' or lever in RATIO_KEYS or lever in ABSOLUTE_KEYS or lever in RAW_EXTRA_PATHS or (
             lever.startswith('terminal.') and lever.split('.', 1)[1] in TERMINAL_KEYS)
         if lever not in ECON_LEVERS and not raw:
             c.err(where, f'unknown lever; use {", ".join(ECON_LEVERS)}, {CURRENT_YEAR}, a driver key or terminal.<key>')
@@ -642,6 +688,10 @@ def _overrides(p, track, cur=None):
                              f"progress ({cur_fy}); guidance for {cur_fy} sets drivers.{CURRENT_YEAR}, never the next year's growth")
         elif d.get('period') is not None:
             c.err(where, 'period applies to growth_anchor and growth only')
+        if lever == 'equity_issue_price' and any(t != 'contracted' for t in tiers.values()):
+            c.err(where, "tier contracted only (a signed forward sale's or a closed offering's price, from the filing), and only "
+                         'with drivers.equity_proceeds at tier contracted for the same periods')
+            continue
         guided = [s for s in scen if tiers[s] == 'guidance']
         adjust = d.get('adjust_by_track_record')
         if guided and lever in TRACK_LEVERS and not (
@@ -854,6 +904,57 @@ def _forecast_options(p, opts):
                              'evidence_ids': p.ids(d['evidence_ids'], where)})
         if keep and len(keep) == len(rows):
             out['debt_like_claims'] = keep
+    if 'options' in opts:
+        # RDDT 2026-09: 5.6M vested options at a weighted 39.29 had no route into the share count (forecast inputs.options)
+        from .forecast import OPTION_KINDS
+        rows, keep = opts['options'], []
+        if not isinstance(rows, list) or not rows:
+            c.err('forecast_options.options', 'a non-empty list of {kind, count, strike, reason, evidence_ids}')
+            rows = []
+        for i, d in enumerate(rows):
+            where = f'forecast_options.options[{i}]'
+            if not c.obj(d, 'option', where):
+                continue
+            if d['kind'] not in OPTION_KINDS:
+                c.err(where, f'kind one of {", ".join(OPTION_KINDS)} (vested only: unvested awards are charged through sbc_pct)')
+            elif not (_num(d['count']) and d['count'] > 0) or not _num(d['strike']) or d['strike'] < 0:
+                c.err(where, 'count (vested, exercisable) positive and strike (the weighted-average exercise price) at least 0')
+            elif not isinstance(d['reason'], str) or not d['reason'].strip():
+                c.err(where, 'a written reason')
+            elif not isinstance(d['evidence_ids'], list) or not p.kinds(d['evidence_ids']) & ISSUER_KINDS:
+                c.err(where, "cite the company's own filing (the equity note's exercisable options and their weighted strike)")
+            else:
+                keep.append({'kind': d['kind'], 'count': d['count'], 'strike': d['strike'], 'reason': d['reason'],
+                             'evidence_ids': p.ids(d['evidence_ids'], where)})
+        if keep and len(keep) == len(rows):
+            out['options'] = keep
+    if 'build_phase' in opts:
+        from .forecast import BUILD_PHASE_LOAD_WORDS, BUILD_PHASE_RANGES, BUILD_PHASE_TIERS
+        b, where = opts['build_phase'], 'forecast_options.build_phase'
+        if c.obj(b, 'build_phase', where):
+            vals = [k for k in BUILD_PHASE_RANGES if b.get(k) is not None]
+            bad = [k for k in vals if not (_num(b[k]) and BUILD_PHASE_RANGES[k][0] <= b[k] <= BUILD_PHASE_RANGES[k][1])]
+            if not vals or bad:
+                c.err(where, 'start_margin (-1 to 0.6), depreciation_pct and/or sbc_pct (0 to 1), fractions of revenue')
+            elif not isinstance(b['reason'], str) or not b['reason'].strip():
+                c.err(where, 'a written reason (how the evidence gives each value)')
+            elif not isinstance(b['evidence_ids'], list) or not b['evidence_ids']:
+                c.err(where, 'evidence_ids: a non-empty list of source or item ids')
+            elif b['source_tier'] not in BUILD_PHASE_TIERS:
+                c.err(where, f"source_tier one of {', '.join(BUILD_PHASE_TIERS)}: the company's own filed numbers, never a judgement")
+            elif 'sec_filing' not in p.kinds(b['evidence_ids']):
+                # the forecast needs the filing DOCUMENT (forecast._filing_document_evidence); say so here, not at the engine
+                c.err(where, 'cite the filing document (a pack source of kind sec_filing, or an item citing one): the income '
+                             'statement and the D&A and stock-comp lines')
+            elif b['source_tier'] == 'guidance' and not any(
+                    e in p.items and p.items[e][0] == 'guidance'
+                    and BUILD_PHASE_LOAD_WORDS.search(str(p.items[e][1].get('metric', ''))) for e in b['evidence_ids']):
+                c.err(where, 'tier guidance needs a guidance item on a margin or cost load (operating margin, D&A, stock comp, '
+                             'opex); a revenue / ARR guide does not give a margin')
+            else:
+                p.tier(b['source_tier'], b['evidence_ids'], None, where)
+                out['build_phase'] = {**{k: b[k] for k in vals}, 'source_tier': b['source_tier'], 'reason': b['reason'],
+                                      'evidence_ids': p.ids(b['evidence_ids'], where)}
     return out
 
 
@@ -1013,6 +1114,10 @@ def to_inputs(pack):
         ids = raw_ids.get((o['path'], o['scenario'])) or []
         if o['source_tier'] != 'analyst' and len(p.independent(ids, consensus=o['source_tier'] == 'consensus')) < 2:
             notes.append(f"driver {o['path']} ({o['scenario']}) rests on one independent source")
+    if any(d.get('kind') == 'finance_leases' for d in (fc.get('debt_like_claims') or [])) and not any(
+            o['path'] in ('sales_to_capital', 'growth_capex_pct') for o in overrides):
+        notes.append('finance leases are deducted as a debt-like claim but no lease-inclusive sales_to_capital (cash capex + '
+                     'finance-lease right-of-use additions) is set: the reinvestment leaves out the assets the leases bought')
     if track is None and any(o['source_tier'] == 'guidance' for o in overrides):
         notes.append('guidance used without a recorded track record (guidance_track): its reliability is unknown')
     p.done()

@@ -619,6 +619,29 @@ def _text_matches(company):
     return out
 
 
+# capex / revenue below which an infrastructure KEYWORD (TEXT_RULES 'cable', 'wireless', 'pipeline', ...) is not read as
+# capital-intensive infrastructure when the same label or the filer's SEC code names another type (_label_alternative). Real
+# networks run far above it (utilities 25-40%, towers and cable networks 15-25%, wireless carriers 11-20%, data centers more).
+INFRA_CAPEX_MIN = .06
+
+
+def _label_alternative(used, company):
+    """(type, why) for a label matched as capital_intensive_infrastructure: the next TEXT_RULES type its own text matches, else the
+    filer's SIC_FALLBACK type; None when neither names another type."""
+    low = clean_text(used['text'])
+    for kws, t in TEXT_RULES:
+        if t == 'capital_intensive_infrastructure':
+            continue
+        hit = _hit(kws, low)
+        if hit:
+            return t, f"the same label also says '{hit}'"
+    sic = (company or {}).get('sic')
+    t = next((t for lo, hi, t in SIC_FALLBACK if lo <= sic <= hi), None) if isinstance(sic, int) else None
+    if t and t != 'capital_intensive_infrastructure':
+        return t, f"SEC SIC {sic} ({(company or {}).get('sic_description') or ''})"
+    return None
+
+
 def text_type(company):
     """The text match that decides the type: the industry match, else the sector match (fallback), else None."""
     m = _text_matches(company or {})
@@ -679,6 +702,19 @@ def _business_model(fb, an, rows, end, sig, inputs):
         reasons.append(f"'{used['text']}' mixes {used['mixes']}: gross margin {_pct(gm)}, capex {_pct(cx)} of revenue, operating margin "
                        f"{_pct(om_end)} -> {text_types[0]} (rule: {rule}" + ('; undetermined, so the default type is used' if plat is None else '')
                        + f'); {text_types[1]} kept as secondary')
+    if used and used['type'] == 'capital_intensive_infrastructure' and not used.get('alt') and cx is not None and cx < INFRA_CAPEX_MIN:
+        # a keyword is not the economics (Amphenol 2026-11: 'cable assemblies' in a connector maker's label, capex 3.9% of revenue,
+        # gross margin 37%): an infrastructure keyword with a capital-light signature yields to the label's other type or the
+        # filer's SEC code; with neither, the label stays and the reason says so
+        alt = _label_alternative(used, company)
+        if alt:
+            text_types = [alt[0]] + [t for t in text_types[1:] if t != alt[0]]
+            reasons.append(f"'{used['keyword']}' reads as capital_intensive_infrastructure, but capex is {_pct(cx)} of revenue (rule: an "
+                           f"infrastructure keyword needs capex >= {INFRA_CAPEX_MIN:.0%}; utilities, telecom, cable networks and "
+                           f"pipelines run far above it) and gross margin {_pct(gm)} -> {alt[0]} ({alt[1]}): economics before a keyword")
+        else:
+            reasons.append(f"'{used['keyword']}' reads as capital_intensive_infrastructure while capex is only {_pct(cx)} of revenue: no "
+                           'other type in the label or the SEC code, so the label stays; a business_model override with a reason decides')
     text_financials = 'financials' in text_types
     fin_text = text_financials or any(t['type'] == 'financials' for t in text)   # any label (industry or sector) says financials
     if used and used['type'] == 'conglomerate' and any(t['field'] == 'sector' and t['type'] == 'financials' for t in text):
