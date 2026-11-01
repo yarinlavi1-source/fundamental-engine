@@ -550,7 +550,7 @@ def summary(cf):
             'risk_level': ((cf.get('rk') or {}).get('error_size') or {}).get('level'),
             'price': today.get('current_quote'), 'bear_value': today.get('bear'), 'base_value': today.get('base'),
             'bull_value': today.get('bull'), 'base_irr': er.get('base_irr'), 'bear_irr': er.get('bear_irr'),
-            'base_return_ke_scale': (er.get('ke_scale') or {}).get('base'),
+            'owner_return': ((er.get('owner_return') or {}).get('base') if (er.get('owner_return') or {}).get('status') == 'computed' else None),
             'cost_of_equity': (dc.get('valuation_view') or {}).get('model_cost_of_equity'),
             'market_consistent_value': ((dc.get('valuation_view') or {}).get('market_consistent') or {}).get('value'),
             'risk_adjustment': _risk_adjustment(cf),

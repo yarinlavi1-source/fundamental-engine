@@ -1,5 +1,37 @@
 ## Unreleased (0.14.1) — IRR on the return scale; one-off interest guard; non-deductible claims (01.11.2026)
 
+Review round 5 (of c6319a3). MAJOR: the round-4 owner-facing return (`expected_return.ke_scale`, IRR + relevering premium)
+RISES with debt at a fixed price: real ORCL run with +250bn of extra debt, fair value 55 vs price 142, showed 13.19% against a
+9.2% market. And the Hebrew paragraph (`_buy_he`, `_value_he`, the margin-flip text), the English verdict reason and the
+markdown report (aspiration line, owner-scale line, price path) still stated other scales than the table.
+
+- The owner-facing return is now `expected_return.owner_return` (`decision._owner_return`, SAME_SCALE rewritten to claim only
+  what the code does): ((V5 + D5) / price)^(1/years) - 1, the base case if the price converges to the base fair value path by
+  the five-year date (V5 the dated base value at the model Ke, D5 the base distributions paid by then): the number the
+  paragraph's five-year clause already stated. It equals the Ke-path return at price = fair value and is non-increasing in
+  debt at a fixed price. `render.hebrew_table` shows it against the plain market return over the same years, with one note
+  that it assumes that convergence (and, when it differs from Ke at the fair value, why). `ke_scale` is kept as an internal
+  diagnostic only; `pipeline.summary` / `analyst_sheet` carry `owner_return` instead of `base_return_ke_scale`.
+- Verdict maths unchanged (base_irr, hurdle, floor: premium-free, monotone). Every owner text that states a verdict-scale
+  number labels it: Hebrew 'בבדיקת המנוע' (the reason's implied return, the margin-flip threshold, the entry-price row
+  'רף של X% בשנה בבדיקת המנוע' and `_buy_he`), English 'verdict scale' (verdict reason, verdict box, report IRR table, price
+  path, judgement line). At the floor with a relevering premium the Hebrew required return says it is the model rate without
+  the debt premium (it was worded as the fair value's own rate). The expected price path is back on the verdict-scale IRR
+  (round 3; the walk-forward band was measured on it). `meets_owner_aspiration_14pct` reads owner_return.base when computed.
+  `forecast.what_must_be_true` words the implied cost of equity as a rate comparison, not a return.
+- Tests: IrrDebtMonotonicityTests.test_owner_facing_return_never_rises_with_debt (ORCL-shaped, debt 0..300bn, prices
+  142/140/95/82.68/55/30; equals the Ke-path return at the fair value); OwnerScaleReturnTests rewritten (Ke-path at the fair
+  value, owner_return vs verdict on the side of the price test, paragraph/table consistency: every one-decimal percent the
+  paragraph states outside a clause labelled 'בבדיקת המנוע' is in the table; the English reason names the verdict scale).
+- Real ORCL debt sweep (+0/20/60/120/250bn, price 141.8): owner return 17.7 / 17.4 / 14.8 / 10.6 / -5.1% (round 4 ke_scale
+  11.7 / 11.6 / 11.5 / 11.7 / 13.2%; base_irr, unchanged, 11.7 / 11.6 / 11.2 / 10.6 / 8.5%); verdicts unchanged.
+- A/B vs 7aca2f0 (45 names, 2019/2023/2025 formations, 113 valued rows of 39 names): verdicts, values and base IRR identical.
+  The owner-facing number moves a lot, and honestly so: owner_return - the base IRR shown before has median -7.3pp (p25 -14.3,
+  p75 -1.6, min -50.1 SO 2025, max +28.3 F 2025); median level 6.7% -> 0.0%; above the market 17 -> 19 of 110 (round 4: 29);
+  its side against the market matches the base IRR's in 108 of 110. The convergence return magnifies the engine's known
+  value-below-price level (docs ENGINE_CONSERVATISM): NVDA 2023 4.8% -> -32.3%, HLT 2023 4.4% -> -29.6%; it is a conditional
+  reading of the model's value, not a forecast, and the table's note says it assumes that convergence.
+
 Review round 4 (of 7aca2f0). MAJOR: the premium-free IRR no longer matched the fair value (discounted at Ke) or the value
 path for indebted names, and `render.hebrew_table` showed it to the owner as the expected return against the market: at a
 price equal to the fair value an indebted stock showed a return below Ke by the relevering premium, and leverage was charged

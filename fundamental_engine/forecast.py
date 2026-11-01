@@ -3901,9 +3901,9 @@ def what_must_be_true(spec, price):
         # value; the relevering premium is part of both numbers
         prem = r.get('leverage_premium') or 0.
         row('cost_of_equity', 'annual return implied by the price (base cash flows)', 'solved', r['implied_cost_of_equity'], ke,
-            f"If the base-case cash flows happen, buying at {price:,.2f} returns about {r['implied_cost_of_equity']:.1%} a year "
-            f'(the model requires {ke:.1%}' + (f', of which {prem:.1%} is the premium for its debt' if prem > 1e-9 else '')
-            + '). Not a forecast of the market price.', 'ratio',
+            f"If the base-case cash flows happen, the price {price:,.2f} implies a cost of equity of about {r['implied_cost_of_equity']:.1%} "
+            f'against the model\'s {ke:.1%}' + (f' (both include {prem:.1%} for its debt)' if prem > 1e-9 else '')
+            + ': a rate comparison, not the expected return (decision owner_return) and not a forecast of the market price.', 'ratio',
             {'search_status': 'solved', 'limitation': r['limitation']})
     else:
         row('cost_of_equity', 'annual return implied by the price (base cash flows)', r['status'], None, ke,

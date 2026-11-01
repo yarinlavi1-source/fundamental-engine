@@ -150,21 +150,24 @@ PREMIUM = {
 # floor, whose top-up row (model_cost_of_equity_floor = Ke - index - premium) is already net of this component. Subtracting the
 # Ke row here would under-charge cyclicality exactly when the index leg binds, the only case in which this component counts.
 OWNER_ASPIRATION = .14
-# SAME_SCALE (01.11.2026, 0.14.1 review round 4): two scales for one return. The verdict scale (base_irr, hurdle, the floor at
-# the model rate less its relevering premium; valuation_tools.rate_anchor) is premium-free so that at a fixed price more debt
-# never raises it (forecast RETURN_SCALE). The owner scale (expected_return.ke_scale) adds each scenario's relevering premium p back:
-# it is the return over the explicit years if the price keeps today's pricing, equals the model cost of equity Ke when the
-# price equals the fair value, and is what the owner reads next to the fair value discounted at Ke and the yearly value path.
-# Every bar it is compared with is moved to the same scale by the same p: the market return + p (the index for this
-# company's leverage) and the required return + p (floor = Ke), so each displayed margin equals the verdict-scale margin
-# (base_irr - market, base_irr - hurdle), never rises with debt at a fixed price, and nothing changes in any verdict.
-# Checked (ORCL-shaped fixture, debt 60 / 125 bn, price = the 125 bn fair value 82.68): no return level that equals Ke at the
-# fair value AND leaves a debt-free name's perpetuity IRR unchanged can also be non-increasing in debt at a fixed price
-# (debt 60 bn: 11.17% at 82.68, below Ke 11.42% at debt 125 bn): the level can rise with debt (by at most the premium), the
-# margins cannot. Leverage is charged once: p is a unit carried on both sides of every comparison (in the expected return
-# and in every bar), never a margin charge; the only leverage charge in a margin is the hurdle's balance_sheet component
-# (financial_strength: net debt / EBITDA, coverage, Altman), and only when index + premium binds above the floor (at the
-# floor, Ke, no permanent-loss component is charged at all).
+# SAME_SCALE (01.11.2026, 0.14.1 review round 5): what each return means and where it is shown. Nothing here changes a verdict.
+# - Verdict scale (base_irr, hurdle, the floor at the model rate less its relevering premium; valuation_tools.rate_anchor): the
+#   IRR at today's price with the cash flows held fixed and today's pricing kept, premium-free, so that at a fixed price more
+#   debt never raises it (forecast RETURN_SCALE). Every verdict, margin and buy-below price is taken on this scale only. Owner
+#   text that states one of these numbers labels it as the engine's test ('בבדיקת המנוע'; English 'verdict scale').
+# - Owner-facing return (expected_return.owner_return, _owner_return): the base case's annual return from today's price if the
+#   price converges to the base fair value path by the five-year date: ((V5 + D5) / price)^(1/years) - 1, V5 the base value at
+#   that date at the model cost of equity (the executed valuation), D5 the base distributions paid by then. It equals the
+#   Ke-path return ((V5 + D5) / V0)^(1/years) - 1 at a price equal to the fair value V0, and at a fixed price it is
+#   non-increasing in debt whenever V5 + D5 is (more debt lowers the dated base value; tested on a 0-300bn sweep). It is shown
+#   against the plain market return (annual, the same years), with one note that it assumes that convergence. The same formula
+#   at the buy-below price (at_buy_below_price, report.md only: a full re-rating from a low price can read 30%+) is above the
+#   return today exactly when the price is above the buy-below price, i.e. when the verdict-scale IRR is below the hurdle, so
+#   it never contradicts the verdict on the side of the price test. The table's entry-price row names the hurdle itself,
+#   labelled as the engine's test. The owner return does NOT reproduce the verdict-scale comparison with the index (a
+#   different assumption: convergence versus today's pricing kept), and the table says so.
+# - expected_return.ke_scale (round 4: IRR + the relevering premium, with the market and the required return + the same
+#   premium) is kept as an internal diagnostic only: its level rises with debt at a fixed price, so no owner text shows it.
 # Expected price path (owner request 25.10.2026): today's price x (1 + r)^h for h = 1..PRICE_PATH_YEARS, r = base IRR moved
 # PRICE_PATH_PULL of the way to the market return (the index above). Why: in the 2016-2025 walk-forward (491 of today's large
 # caps, one July formation a year, the engine_v3 rows) the dated engine value sat about 35-45% below the prices reached 1-5
@@ -1231,8 +1234,7 @@ def _market_consistent(index, ke, rates, er, view):
             'meaning': 'base value with the cost of equity moved down by the calibration gap (market cost of equity - market implied '
                        'return): above the price = cheaper than the market on the engine\'s own cash flows; not a price target. '
                        'Long-duration values move 20-40% per point of discount rate: edge_vs_market (base IRR - market implied '
-                       'return; on the owner scale ke_scale.base - (market + the relevering premium), SAME_SCALE) is the '
-                       'steadier comparison'}
+                       'return, both on the verdict scale, SAME_SCALE) is the steadier comparison'}
 
 
 def _model_ke(view, fc):
@@ -1327,18 +1329,18 @@ def _required_return(A, index, card, g, rk, an=None, ke=None, cyc_ev=None):
                                  f"{_pct((g_ or 0.) - crp, 2)}; the same rows as the forecast's cost of equity)")
         h += crp
     # the floor is the model cost of equity on the verdict scale of the IRR (valuation_tools.rate_anchor, SAME_SCALE): Ke less the
-    # explicit years' relevering premium; on the owner scale (expected_return.ke_scale, + the premium) it is Ke itself. At the floor the
+    # explicit years' relevering premium (Ke itself is the fair value's discount rate). At the floor the
     # value at the required return is the model's own base value and no permanent-loss component (balance_sheet included) is
     # charged: leverage is then priced once, by the premium inside Ke
     lv = (ke or {}).get('leverage_in_value') or 0.
     floor = {'value': (ke or {}).get('return_scale', (ke or {}).get('value')), 'binding': False,
              'basis': "the engine's own cost of equity for this company (base scenario), on the verdict scale of the IRR"
-                      + (f" (model Ke {_pct(ke['value'], 2)} less its relevering premium {lv * 100:.2f}pp; on the owner scale of "
-                         "expected_return.ke_scale, which carries the same premium, the floor is Ke itself)" if lv > 1e-12 else '')}
+                      + (f" (model Ke {_pct(ke['value'], 2)} less its relevering premium {lv * 100:.2f}pp, which the value "
+                         "discounted at Ke already charges; at the floor the buy-below price is the fair value itself)" if lv > 1e-12 else '')}
     if floor['value'] is not None and floor['value'] > h + 1e-12:
         lev = (ke or {}).get('leverage')
         parts = [f"model cost of equity {_pct(floor['value'], 2)}" + (f" on the verdict scale (Ke {_pct(ke['value'], 2)} less its "
-                 f"relevering premium {lv * 100:.2f}pp, which the expected return carries too)" if lv > 1e-12 else '')]
+                 f"relevering premium {lv * 100:.2f}pp, charged in the value)" if lv > 1e-12 else '')]
         if ke.get('unlevered') is not None:
             parts.append(f"unlevered {_pct(ke['unlevered'], 2)}")
         if lev and lv <= 1e-12:
@@ -1493,31 +1495,28 @@ def _anniversary(d, years):
         return d.replace(year=d.year + years, day=28)
 
 
-def _price_path(view, irr, index, as_of, lev=0.):
+def _price_path(view, irr, index, as_of):
     """Expected price path: today's price x (1 + r)^h, h = 1..PRICE_PATH_YEARS, r = base IRR moved PRICE_PATH_PULL of the way
     to the market return (the index; its comparator says which one). A statistical estimate of the price with the walk-forward
     accuracy band (PRICE_PATH_HIT), not a value, not a target; it changes nothing else."""
     p, m = view.get('price'), _num((index or {}).get('value'))
     if irr is None or not p or m is None:
         return {'status': 'unavailable', 'reason': 'needs the base IRR at today\'s price and a market return'}
-    # on the owner scale (SAME_SCALE): the IRR and the market both + the relevering premium, so the path compounds at the
-    # return the fair value and the value path assume (Ke at a price equal to the fair value)
-    lev = lev or 0.
-    r = irr + PRICE_PATH_PULL * (m - irr) + lev
+    # the verdict-scale IRR (premium-free, SAME_SCALE) as in the walk-forward that measured PRICE_PATH_HIT: never rises with debt
+    r = irr + PRICE_PATH_PULL * (m - irr)
     if r <= -1:
         return {'status': 'unavailable', 'reason': f'blended rate {_pct(r)} is not a growth rate'}
     try:
         d0 = date.fromisoformat(str(view.get('price_as_of') or as_of)[:10])
     except ValueError:
         d0 = None
-    return {'status': 'computed', 'rate': r, 'base_irr': irr, 'base_return_ke_scale': irr + lev, 'leverage_premium': lev, 'market_return': m,
+    return {'status': 'computed', 'rate': r, 'base_irr': irr, 'market_return': m,
             'comparator': (index or {}).get('comparator'),
             'pull_to_market': PRICE_PATH_PULL, 'from_price': p, 'from_date': d0.isoformat() if d0 else None,
             'rows': [{'years': h, 'date': _anniversary(d0, h).isoformat() if d0 else None, 'price': p * (1 + r) ** h}
                      for h in range(1, PRICE_PATH_YEARS + 1)],
             'band': PRICE_PATH_BAND, 'hit_rate_within_band': dict(PRICE_PATH_HIT),
-            'formula': f'price x (1 + r)^h, r = base IRR + {PRICE_PATH_PULL} x (market return - base IRR) + relevering premium '
-                       '(both on the owner scale, SAME_SCALE)',
+            'formula': f'price x (1 + r)^h, r = base IRR + {PRICE_PATH_PULL} x (market return - base IRR) (verdict-scale IRR)',
             'semantics': (f"expected price on each anniversary: today's price compounded at the base IRR pulled "
                           f"{PRICE_PATH_PULL:.0%} of the way to the market return; in the 2016-2025 walk-forward even the best simple "
                           f"predictor landed within +-{PRICE_PATH_BAND:.0%} of the realized price only about "
@@ -1565,9 +1564,40 @@ def _leverage_premiums(case):
     return out
 
 
+def _owner_return(view, index, buy_below=None):
+    """The owner-facing expected annual return at today's price (SAME_SCALE): the base case if the price converges to the base
+    fair value path by the five-year date, ((V5 + D5) / P)^(1/years) - 1; the same at the fair value (the Ke-path return) and at
+    the buy-below price; the market return beside it on the same annual basis. Presentation only: no verdict reads it."""
+    five, p, v0 = view.get('five_year'), _num(view.get('price')), _num(view.get('base'))
+    m = _num((index or {}).get('value'))
+    if not five or not p or p <= 0 or _num(five.get('base_value')) is None:
+        return {'status': 'unavailable', 'reason': view.get('five_year_unavailable') or 'needs a dated base value near the fifth '
+                'anniversary and a price', 'market_return': m}
+    tot = five['base_value'] + (five.get('cumulative_distributions_base') or 0.)
+    y = five['years']
+    if tot <= 0 or not y or y <= 0:
+        return {'status': 'unavailable', 'reason': 'the base value with distributions at the five-year date is not positive',
+                'market_return': m, 'date': five['date'], 'years': y}
+    ann = lambda x: (tot / x) ** (1 / y) - 1 if _num(x) is not None and x > 0 else None
+    base = ann(p)
+    return {'status': 'computed', 'base': base, 'at_fair_value': ann(v0), 'at_buy_below_price': ann(buy_below),
+            'market_return': m, 'base_minus_market': (base - m) if m is not None else None,
+            'date': five['date'], 'years': y, 'base_value_at_date': five['base_value'],
+            'cumulative_distributions_base': five.get('cumulative_distributions_base') or 0., 'total_value_with_distributions': tot,
+            'model_cost_of_equity': view.get('model_cost_of_equity'),
+            'formula': '((base value at the five-year date at the model cost of equity + base distributions paid by then) / price)^(1/years) - 1',
+            'assumes': 'the price converges to the base fair value path (the executed valuation at the model cost of equity) by that date',
+            'semantics': ("the owner-facing expected annual return at today's price: equals the Ke-path return (at_fair_value) when the "
+                          'price equals the fair value and never rises with debt at a fixed price; compared with the plain market '
+                          'return. A conditional estimate, not a forecast; the verdict is taken on the verdict-scale IRR (base_irr vs '
+                          'hurdle), and at_buy_below_price is this return at the buy-below price, so the two agree on the side of the '
+                          'price test')}
+
+
 def _expected_return(irrs, prem, index, req, view):
-    """The owner-scale return (SAME_SCALE): each scenario's IRR + its relevering premium, with the market and the required
-    return on the same scale (each + the base premium). The margins equal the verdict-scale margins."""
+    """INTERNAL diagnostic (ke_scale, round 4; never shown to the owner, SAME_SCALE): each scenario's IRR + its relevering
+    premium, with the market and the required return + the base premium. The margins equal the verdict-scale margins; the
+    level rises with debt at a fixed price, which is why the owner sees owner_return instead."""
     p = prem.get('base') or 0.
     m, h = _num((index or {}).get('value')), _num((req or {}).get('hurdle'))
     val = {s: (irrs[s]['value'] + prem[s]) if irrs[s]['value'] is not None else None for s in SCENARIOS}
@@ -1592,6 +1622,8 @@ def _expected(irrs, view, index, req, rates, qcase, res, an, err_level, w=0., mo
     prem = _leverage_premiums(qcase)
     pfh = rates.pfh(req['hurdle']) if rates is not None and view.get('base') is not None else None
     pv, price = (pfh or {}).get('value'), view.get('price')
+    orr = _owner_return(view, index, pv)
+    asp = orr.get('base') if orr.get('status') == 'computed' else base_irr
     er = {'base_irr': base_irr, 'bear_irr': irrs['bear']['value'], 'bull_irr': irrs['bull']['value'],
           'base_irr_bound': irrs['base']['bound'], 'irr_status': {k: {kk: vv for kk, vv in v.items() if kk != 'value'} for k, v in irrs.items()},
           'price': view['price'],
@@ -1607,7 +1639,8 @@ def _expected(irrs, view, index, req, rates, qcase, res, an, err_level, w=0., mo
            'change_from_price': (pv / price - 1) if pv is not None and price else None,
            'label': 'buy-below price for your required return: the price at which the base IRR equals it (value_at_required_return)'},
           'ke_scale': _expected_return(irrs, prem, index, req, view),
-          'expected_price_path': _price_path(view, base_irr, index, as_of, prem['base']),
+          'owner_return': orr,
+          'expected_price_path': _price_path(view, base_irr, index, as_of),
           'yearly_at_model_cost_of_equity': _yearly_model(view, res) if view.get('base') is not None else None,
           'at_required_return': _at_required(view, rates, req['hurdle']),
           'debt_weight': w,
@@ -1617,9 +1650,11 @@ def _expected(irrs, view, index, req, rates, qcase, res, an, err_level, w=0., mo
           'five_year_at_required_return': _five_at_rate(view, rates, req['hurdle']) if view.get('base') is not None else None,
           'yearly_at_required_return': _yearly_at_rate(view, rates, req['hurdle'], res) if view.get('base') is not None else None,
           'owner_aspiration': OWNER_ASPIRATION,
-          'meets_owner_aspiration_14pct': None if base_irr is None else base_irr >= OWNER_ASPIRATION,
-          'semantics': ('ke_scale is the owner-scale reading (SAME_SCALE: the IRR + the relevering premium, Ke at the fair value, '
-                        'compared only with the market and the required return + the same premium). '
+          'meets_owner_aspiration_14pct': None if asp is None else asp >= OWNER_ASPIRATION,
+          'owner_aspiration_basis': 'owner_return.base' if orr.get('status') == 'computed' else 'base_irr (verdict scale; no owner return)',
+          'semantics': ('owner_return is the owner-facing expected annual return (SAME_SCALE: the base case if the price converges '
+                        'to the base fair value path by the five-year date; the Ke-path return at the fair value; non-increasing in '
+                        'debt at a fixed price); ke_scale is an internal diagnostic, never shown. base_irr is the verdict scale. '
                         'IRR = cost of equity at which the scenario value equals today\'s price, cash flows held fixed, the terminal '
                         'WACC moving by (1 - w) x the change (w = the case\'s terminal debt weight, 0 for a forecast case: 1:1, the convention of valuation_tools.implied_cost_of_equity); '
                         'a conditional return, not a forecast. The fair value is the base value at the model cost of equity (the '
@@ -1862,9 +1897,14 @@ def _allowed(gate, code):
     return allowed
 
 
-def _he_req(h, idx, prem, near=None, floor=False, levered=False):
-    """Hebrew required return with components that visibly add up (one precision for all three numbers)."""
+def _he_req(h, idx, prem, near=None, floor=False, levered=False, ke=None):
+    """Hebrew required return with components that visibly add up (one precision for all three numbers). At the floor with a
+    relevering premium (ke above h) the text says the rate is the model's discount rate without the debt premium, so it never
+    reads as the fair value's own rate (SAME_SCALE)."""
     d0 = 1 if near is not None and abs(h - near) < .01 else 0
+    if floor and ke is not None and ke > h + 5e-4:
+        return (f'התשואה הנדרשת בבדיקת המנוע, כ־{h * 100:.{d0}f}% (שיעור ההיוון של המודל, כ־{ke * 100:.1f}%, בלי התוספת על החוב '
+                'שכבר נכללת בשווי)')
     if floor:
         return f'התשואה הנדרשת, כ־{h * 100:.{d0}f}% (שיעור ההיוון שהמודל עצמו דורש מהחברה' + (', כולל סיכון המינוף)' if levered else ')')
     d = next((k for k in range(d0, 3) if round(round(idx * 100, k) + round(prem * 100, k), k) == round(h * 100, k)), 2)
@@ -1981,8 +2021,8 @@ def _verdict(A, g, er, view, index, rates, req, tol_shift=0.):
                    'איכות העסק לא הוכחה והתוכנית תלויה במימון שלא הובטח', ['secured funding and evidence of business quality'],
                    'מימון מובטח וראיות לאיכות העסק')
     if irr is not None:
-        meets, irr_txt = irr >= hurdle, _pct(irr, 2)
-        irr_he = 'כ־' + _he_pct(irr, hurdle)
+        meets, irr_txt = irr >= hurdle, _pct(irr, 2) + ' (verdict scale)'
+        irr_he = 'כ־' + _he_pct(irr, hurdle) + ' בבדיקת המנוע'
     elif bound:
         meets = True if bound['type'] == 'above' and bound['rate'] >= hurdle else False if bound['type'] == 'below' and bound['rate'] <= hurdle else None
         irr_txt = f"{bound['type']} {_pct(bound['rate'])}"
@@ -2000,7 +2040,7 @@ def _verdict(A, g, er, view, index, rates, req, tol_shift=0.):
     req_txt = (f'required return {_pct(hurdle, 2)} (index {_pct(idx, 2)} + {prem * 100:.2f}pp premium'
                + (', floored at the model cost of equity' if fl else '') + ')')
     req_he = _he_req(hurdle, idx, prem, irr, fl, any(c['component'] == 'model_cost_of_equity_floor' and 'financial leverage' in c['basis']
-                                                     for c in req.get('components') or []))
+                                                     for c in req.get('components') or []), _num(view.get('model_cost_of_equity')))
     if meets is None:
         return out('insufficient_evidence', 'price_undetermined', 'Price return could not be determined (IRR not solvable and no usable base value)',
                    'אי אפשר היה לחשב את התשואה הצפויה במחיר הנוכחי', ['an executable base case with a solvable IRR'], 'תרחיש בסיסי שאפשר לחשב')
@@ -2109,8 +2149,8 @@ def _margin_text(m):
     for f in (m or {}).get('flips') or []:
         if f['test'] == 'required_return':
             th = f.get('threshold') or f['hurdle']
-            en.append(f"a required return {'below' if f['side'] == 'lower' else 'above'} about {_pct(th)} changes the verdict to {f['code']}")
-            he.append(f"בתשואה נדרשת {'נמוכה' if f['side'] == 'lower' else 'גבוהה'} מכ־{th * 100:.1f}% המסקנה משתנה")
+            en.append(f"a required return {'below' if f['side'] == 'lower' else 'above'} about {_pct(th)} (verdict scale) changes the verdict to {f['code']}")
+            he.append(f"בתשואה נדרשת {'נמוכה' if f['side'] == 'lower' else 'גבוהה'} מכ־{th * 100:.1f}% (בבדיקת המנוע) המסקנה משתנה")
         elif f['test'] == 'bear_loss_tolerance' and not any(x.startswith('the bear-case loss') for x in en):
             loss, tol = f.get('loss_to_bear'), f.get('tolerance')
             en.append(f"the bear-case loss {_pct(loss, 0)} is within {BEAR_TOLERANCE_STEP * 100:.0f}pp of the {_pct(tol, 0)} margin-of-safety tolerance")
@@ -2608,13 +2648,15 @@ def _judgement(g, A, er, view, pricing, rk):
     idx = er.get('index_expected_return')
     idx = idx.get('value') if isinstance(idx, dict) else idx
     base, hurdle = er.get('base_irr'), er.get('hurdle')
-    xr = er.get('ke_scale') or {}
+    orr = er.get('owner_return') or {}
     ret = {'bear_irr': er.get('bear_irr'), 'base_irr': base, 'bull_irr': er.get('bull_irr'), 'index_expected_return': idx,
-           'ke_scale': {k: xr.get(k) for k in ('bear', 'base', 'bull', 'market_return_same_scale', 'required_return_same_scale')},
+           'owner_return': orr.get('base'), 'owner_return_market': orr.get('market_return'),
            'required_return': hurdle, 'excess_over_index': base - idx if base is not None and idx is not None else None,
            'excess_over_required': base - hurdle if base is not None and hurdle is not None else None,
            'loss_to_bear': view.get('loss_to_bear'), 'meets_owner_aspiration_14pct': er.get('meets_owner_aspiration_14pct'),
-           'note': 'returns are conditional on each scenario; the 14% aspiration is reported, never a threshold'}
+           'note': 'returns are conditional on each scenario; *_irr, required_return and excess_* are on the verdict scale; '
+                   'owner_return is the owner-facing return (convergence to the base fair value path, SAME_SCALE); the 14% '
+                   'aspiration is reported, never a threshold'}
     risks = {'priced': [], 'to_price': [], 'open_questions': []}
     for p in pricing or []:
         r = reg.get(p.get('id')) or {}

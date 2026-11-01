@@ -80,14 +80,14 @@ class RequiredReturnTests(unittest.TestCase):
         self.assertIn(f'השווי ההוגן (בשיעור ההיוון של החברה, כ־10.0%', text)
         self.assertIn(f'הוא כ־{_ps(base)} USD', text)
         self.assertIn(f'הנחה של כ־{1 - 35 / base:.0%}', text)                    # discount against the fair value
-        self.assertIn(f'מחיר כניסה עם מרווח ביטחון (כ־10.5%): כ־{_ps(pfh)}', text)     # compact form: this paragraph is long
+        self.assertIn(f'מחיר כניסה עם מרווח ביטחון (כ־10.5% בבדיקת המנוע): כ־{_ps(pfh)}', text)     # compact form: this paragraph is long
         self.assertLess(text.index('השווי ההוגן'), text.index('מחיר כניסה עם מרווח ביטחון'))
         from fundamental_engine.render import _value_he
-        self.assertIn(f'; מחיר הכניסה עם מרווח ביטחון (תשואה של כ־10.5% בשנה) הוא כ־{_ps(pfh)}, והמחיר נמוך ממנו בכ־{1 - 35 / pfh:.0%}.',
+        self.assertIn(f'; מחיר הכניסה עם מרווח ביטחון (רף של כ־10.5% בשנה בבדיקת המנוע) הוא כ־{_ps(pfh)}, והמחיר נמוך ממנו בכ־{1 - 35 / pfh:.0%}.',
                       _value_he(d, 'USD'))
         md = markdown(casefile(p, d))
         self.assertIn("Fair value: base value at the company's own cost of equity", md)
-        self.assertIn(f'Value at your required return (the price at which the base IRR equals the', md)
+        self.assertIn(f'Value at your required return (the price at which the verdict-scale base IRR equals the', md)
         self.assertEqual(pfh, er['value_at_required_return'])
         case = deepcopy(p['val']['case'])
         case['quote']['price'] = pfh
@@ -510,36 +510,72 @@ def ke_scale_parts(price, prem=.03):
 
 
 class OwnerScaleReturnTests(unittest.TestCase):
-    """0.14.1 review round 4 (decision SAME_SCALE): the verdict IRR is premium-free (monotone in debt), so at a price equal to the
-    fair value an indebted stock showed an expected return below the fair value's own rate by the premium, against the market.
-    The owner-facing return now adds the premium back and every bar it meets carries the same premium."""
+    """0.14.1 review rounds 4-5 (decision SAME_SCALE). Round 4 showed the owner the IRR + the relevering premium, a level that
+    rises with debt at a fixed price (real ORCL + 250bn: fair value 55 vs price 142 showed 13.19% against a 9.2% market). Now the
+    owner-facing return is the base case if the price converges to the base fair value path (owner_return): the Ke-path return
+    at the fair value, non-increasing in debt; the verdict scale (base_irr, hurdle) is unchanged and labelled where stated."""
 
     @classmethod
     def setUpClass(cls):
         cls.base = value_company(valuation_of_spec(ke_scale_spec()))['annual_values'][0]['base']
 
-    def test_at_the_fair_value_the_owner_return_is_the_cost_of_equity(self):
+    def test_at_the_fair_value_the_owner_return_is_the_ke_path_return(self):
         p = ke_scale_parts(self.base)
         d = decide(p)
         er = d['expected_return']
-        ks = er['ke_scale']
-        self.assertAlmostEqual(er['base_irr'], .11, places=6)                  # verdict scale: Ke less the premium
-        self.assertAlmostEqual(ks['base'], .14, places=6)                      # owner scale: the fair value's own rate
-        self.assertAlmostEqual(ks['leverage_premium']['base'], .03)
-        m = er['index_expected_return']['value']
-        self.assertAlmostEqual(ks['market_return_same_scale'], m + .03)
-        self.assertAlmostEqual(ks['required_return_same_scale'], er['hurdle'] + .03)
-        self.assertAlmostEqual(ks['base_minus_market'], er['base_irr'] - m)    # the displayed margins are the verdict margins
-        self.assertAlmostEqual(ks['base_minus_required'], er['base_irr'] - er['hurdle'])
-        self.assertAlmostEqual(d['judgement']['return_vs_alternatives']['excess_over_index'], ks['base_minus_market'])
+        o = er['owner_return']
+        self.assertEqual(o['status'], 'computed')
+        self.assertAlmostEqual(er['base_irr'], .11, places=6)                  # verdict scale: Ke less the premium (unchanged)
+        f = d['valuation_view']['five_year']
+        kp = ((f['base_value'] + f['cumulative_distributions_base']) / self.base) ** (1 / f['years']) - 1
+        self.assertAlmostEqual(o['base'], kp, places=9)                        # the Ke-path return
+        self.assertAlmostEqual(o['at_fair_value'], kp, places=9)
+        self.assertAlmostEqual(o['base_minus_market'], o['base'] - er['index_expected_return']['value'])
+        self.assertAlmostEqual(d['judgement']['return_vs_alternatives']['owner_return'], o['base'])
         table = render.hebrew_table(casefile(p, d))
-        self.assertIn('כ־14.0% בשנה', table)                                   # not 11.0%
-        self.assertIn(f'ועוד 3.0% פיצוי על החוב של החברה = כ־{(m + .03) * 100:.1f}%', table)
-        # the implied rate of the tools is on the scale of the model cost of equity, the return scale beside it
+        self.assertIn(f"| תשואה שנתית צפויה במחיר של היום | כ־{o['base'] * 100:.1f}% בשנה", table)
+        self.assertNotIn('פיצוי על החוב של החברה', table)                     # no market + premium bar any more
+        self.assertNotIn('14.0% בשנה (', table.split('תשואה שנתית צפויה')[1][:30])
+        self.assertIn('המחיר יתכנס לשווי', table)                              # the one convergence note
+        # the internal diagnostic is kept, never shown
+        self.assertAlmostEqual(er['ke_scale']['base'], .14, places=6)
+        md = markdown(casefile(p, d))
+        self.assertIn('IRR (verdict scale)', md)
+        self.assertNotIn('Owner scale', md)
         r = implied_cost_of_equity(p['val']['case'], 'base', high=.3)
-        self.assertAlmostEqual(r['implied_cost_of_equity'], r['model_cost_of_equity'], places=6)
         self.assertAlmostEqual(r['implied_return_scale'], .11, places=6)
-        self.assertAlmostEqual(r['leverage_premium'], .03)
+
+    def test_owner_return_and_verdict_agree_on_the_side_of_the_price_test(self):
+        # owner_return.at_buy_below_price (report.md): 'today < entry' iff the price is above it iff the verdict IRR < the hurdle
+        for f in (.6, .8, .95, 1.0, 1.1, 1.4):
+            d = decide(ke_scale_parts(f * self.base))
+            er = d['expected_return']
+            o = er['owner_return']
+            if o.get('at_buy_below_price') is None:
+                continue
+            self.assertEqual(o['base'] < o['at_buy_below_price'] - 1e-12, er['base_irr'] < er['hurdle'] - 1e-9, f)
+
+    def test_paragraph_and_table_do_not_contradict(self):
+        # every one-decimal percent the paragraph states outside a clause labelled as the engine's test (בבדיקת המנוע) is a
+        # number the table shows; the paragraph's five-year annual rate is the table's expected return; the English reason
+        # names the verdict scale
+        for spec_parts, prices in ((ke_scale_parts, (.6, .8, 1.0, 1.3)), (lev_parts, (12., 20., 33.))):
+            for x in prices:
+                price = x * self.base if spec_parts is ke_scale_parts else x
+                p = spec_parts(price)
+                d = decide(p)
+                cf = casefile(p, d)
+                table, text = render.hebrew_table(cf), hebrew_paragraph(cf)
+                for clause in re.split(r'[;:]\s|\.\s', text):
+                    if 'בבדיקת המנוע' in clause:
+                        continue
+                    for num in re.findall(r'(\d+\.\d)%', clause):
+                        self.assertIn(f'{num}%', table, f'{spec_parts.__name__} {x}: {num}% in "{clause}" is not in the table')
+                o = d['expected_return']['owner_return']
+                if o.get('status') == 'computed' and d['verdict']['code'] in render.PRICE_VERDICTS and not d['verdict'].get('price_claim_withheld'):
+                    self.assertIn(f"{abs(o['base']) * 100:.1f}% לשנה", text)
+                if d['expected_return'].get('base_irr') is not None and 'IRR' in d['verdict']['reason']:
+                    self.assertIn('verdict scale', d['verdict']['reason'])
 
     def test_hurdle_floor_binds_at_the_base_rate(self):
         price = .8 * self.base
@@ -548,8 +584,8 @@ class OwnerScaleReturnTests(unittest.TestCase):
         er = d['expected_return']
         self.assertTrue(er['model_cost_of_equity_floor']['binding'])
         self.assertAlmostEqual(er['hurdle'], .11, places=9)                    # the base rate on the verdict scale
-        self.assertAlmostEqual(er['ke_scale']['required_return_same_scale'], .14, places=9)   # Ke on the owner scale
         self.assertAlmostEqual(er['value_at_required_return'], self.base, delta=1e-9 * self.base)   # entry price = base value
+        self.assertAlmostEqual(er['owner_return']['at_buy_below_price'], er['owner_return']['at_fair_value'], places=9)
         # the same hurdle reached without the floor (index + premium exactly at the base rate) gives the same verdict
         idx = {'value': .11 - er['permanent_loss_premium'], 'basis': 'index at the base rate less the premium (test)', 'source': 'test input'}
         d2 = decide(ke_scale_parts(price), {'index': idx})
@@ -559,7 +595,10 @@ class OwnerScaleReturnTests(unittest.TestCase):
         self.assertAlmostEqual(e2['value_at_required_return'], er['value_at_required_return'], delta=1e-9 * self.base)
         self.assertEqual(d2['verdict']['code'], d['verdict']['code'])
         self.assertEqual(d2['verdict'].get('margin'), d['verdict'].get('margin'))
-        self.assertAlmostEqual(er['base_irr'] - er['hurdle'], er['ke_scale']['base_minus_required'], places=12)   # one margin
+        # at the floor with a relevering premium the Hebrew required return never reads as the fair value's own rate
+        from fundamental_engine.decision import _he_req
+        self.assertIn('בלי התוספת על החוב', _he_req(.11, .05, .02, None, True, False, .14))
+        self.assertNotIn('בלי התוספת', _he_req(.14, .05, .02, None, True, False, .14))
 
 
 class PremiumAndQualityTests(unittest.TestCase):
@@ -881,7 +920,8 @@ class ReportTextTests(unittest.TestCase):
         f5 = d['valuation_view']['five_year']                                    # at the fair-value rate
         ann = ((f5['base_value'] + f5['cumulative_distributions_base']) / 35) ** (1 / f5['years']) - 1
         self.assertIn('יתכנס לשווי ההוגן', text)
-        self.assertIn(f"(כ־{ann:.0%} לשנה)", text)
+        self.assertIn(f"(כ־{ann * 100:.1f}% לשנה)", text)
+        self.assertAlmostEqual(d['expected_return']['owner_return']['base'], ann, places=12)    # the table's expected return
         self.assertIn('assumes a re-rating', markdown(casefile(p, d)))
 
     def test_main_risk_never_says_the_price_embeds_success_next_to_a_discount(self):

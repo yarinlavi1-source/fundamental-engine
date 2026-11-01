@@ -1856,6 +1856,42 @@ class IrrDebtMonotonicityTests(unittest.TestCase):
                 rise = b['leverage_premium']['base'] - a['leverage_premium']['base']
                 self.assertLessEqual(b['base'] - a['base'], rise + 1e-6, f'{price}: {d0:,.0f} -> {d1:,.0f}')
 
+    def test_owner_facing_return_never_rises_with_debt(self):
+        # decision SAME_SCALE (0.14.1 review round 5): the owner-facing return is the base case if the price converges to the base
+        # fair value path by the five-year date; at a fixed price it never rises with debt (0..300bn, several prices) and at a
+        # price equal to the fair value it is the Ke-path return ((V5 + D5) / V0)^(1/years) - 1, close to the model Ke
+        from fundamental_engine.decision import _view, _owner_return
+        debts = [0., 30e9, 60e9, 125e9, 160e9, 200e9, 250e9, 300e9]
+        views = []
+        for d in debts:
+            fb, an, card, qa = orcl_shaped(0.)
+            qa['resolved']['debt']['value'] = d
+            fc = forecast.build(fb, an, card, qa, deepcopy(self.G35))
+            case = build_case(fc['spec'])
+            res = value_company(case)
+            v = _view(fb, {'status': 'ok', 'case': case, 'result': res})
+            self.assertIn('five_year', v, f'debt {d:,.0f}')
+            views.append((d, v, scen(case, 'base')['cost_of_equity']))
+        index = {'value': .092}
+        for d, v, ke in views:                                          # at the fair value: the Ke-path return
+            at = _owner_return({**v, 'price': v['base']}, index, v['base'])
+            f = v['five_year']
+            kp = ((f['base_value'] + f['cumulative_distributions_base']) / v['base']) ** (1 / f['years']) - 1
+            self.assertAlmostEqual(at['base'], kp, places=12)
+            self.assertAlmostEqual(at['base'], at['at_fair_value'], places=12)
+            self.assertAlmostEqual(at['base'], at['at_buy_below_price'], places=12)
+            self.assertLess(abs(at['base'] - ke), .015, f'debt {d:,.0f}: Ke-path {at["base"]:.4f} vs Ke {ke:.4f}')
+        for price in (142., 140., 95., 82.68, 55., 30.):
+            rows = [_owner_return({**v, 'price': price}, index) for _, v, _ in views]
+            for (d0, a), (d1, b) in zip(zip(debts, rows), list(zip(debts, rows))[1:]):
+                if b['status'] != 'computed':                           # equity worthless by the date: nothing to show
+                    continue
+                self.assertEqual(a['status'], 'computed')
+                self.assertLessEqual(b['base'], a['base'] + 1e-9, f'{price}: debt {d0:,.0f} -> {d1:,.0f} raised the owner return')
+                self.assertLessEqual(b['base_minus_market'], a['base_minus_market'] + 1e-9)
+        # the round-4 level (IRR + premium) did rise with debt at a fixed price: it stays an internal diagnostic only
+        self.assertGreater(views[-1][2], views[0][2] + .03)
+
     def test_analyst_override_has_no_premium(self):
         ov = deepcopy(self.G35)
         ov['overrides'].append({'path': 'cost_of_equity', 'scenario': 'all', 'value': .11, 'reason': 'test', 'evidence_ids': ['syn:fs']})
