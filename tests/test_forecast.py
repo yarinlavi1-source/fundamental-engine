@@ -1215,10 +1215,11 @@ class SourceAndRateContractTests(unittest.TestCase):
         r = vt.implied_cost_of_equity(case)
         self.assertEqual(r['status'], 'solved')
         self.assertAlmostEqual(at(r['shift']), case['quote']['price'], places=4)
-        h = r['implied_cost_of_equity'] + .01                                              # the decision layer's price at a hurdle
-        c = deepcopy(case)
+        h = r['implied_return_scale'] + .01                                                # the decision layer's price at a hurdle
+        c = deepcopy(case)                                                                 # (a required return is on the return scale)
         c['quote']['price'] = price_for_hurdle(case, h, w)['value']
-        self.assertAlmostEqual(vt.implied_cost_of_equity(c)['implied_cost_of_equity'], h, places=6)
+        self.assertAlmostEqual(vt.implied_cost_of_equity(c)['implied_return_scale'], h, places=6)
+        self.assertAlmostEqual(vt.implied_cost_of_equity(c)['implied_cost_of_equity'], r['implied_cost_of_equity'] + .01, places=6)
 
 
 
@@ -1811,7 +1812,9 @@ class IrrDebtMonotonicityTests(unittest.TestCase):
         for h in (.10, .13):
             ph = price_for_hurdle(case, h)['value']
             self.assertAlmostEqual(_irr(_quote_case(case, ph), 'base')['value'], h, places=6)
-            self.assertAlmostEqual(vt.implied_cost_of_equity(_quote_case(case, ph), 'base', high=.3)['implied_cost_of_equity'], h, places=6)
+            ic = vt.implied_cost_of_equity(_quote_case(case, ph), 'base', high=.3)
+            self.assertAlmostEqual(ic['implied_return_scale'], h, places=6)
+            self.assertAlmostEqual(ic['implied_cost_of_equity'], h + prem, places=6)          # the scale of model_cost_of_equity
             # explicit Ke keeps its premium; the terminal rate at h does not depend on the financing
             c = scen(_at_rate(case, h, 0.), 'base')
             self.assertAlmostEqual(c['cost_of_equity'], h + prem, places=9)
@@ -1819,6 +1822,39 @@ class IrrDebtMonotonicityTests(unittest.TestCase):
             self.assertAlmostEqual(scen(_at_rate(low, h, 0.), 'base')['terminal']['wacc'], c['terminal']['wacc'], places=9)
         # the discount-rate band is centred on the model value (relative shifts, both rates by the same step)
         self.assertAlmostEqual(vt.discount_rate_band(case)['value'], v0, delta=1e-6 * v0)
+
+    def test_owner_scale_return_on_a_debt_sweep(self):
+        # decision SAME_SCALE (0.14.1 review round 4): the owner-facing return = the verdict IRR + the scenario's relevering
+        # premium: Ke at a price equal to the base value; at a fixed price its margin over the market / the required return (both
+        # + the same premium) never rises with debt, and the level rises by no more than the added premium
+        from fundamental_engine.decision import _quote_case, _leverage_premiums, _expected_return
+        debts = [0., 30e9, 60e9, 125e9, 160e9, 200e9]
+        built = []
+        for d in debts:
+            fb, an, card, qa = orcl_shaped(0.)
+            qa['resolved']['debt']['value'] = d
+            fc = forecast.build(fb, an, card, qa, deepcopy(self.G35))
+            built.append((d, fc, build_case(fc['spec'])))
+        index, req = {'value': .075}, {'hurdle': .12}
+
+        def owner(case, fc, price):
+            from fundamental_engine.decision import _irr, _debt_weight
+            q = _quote_case(case, price)
+            w, _ = _debt_weight(q, fc, fc['preview']['today']['base'])
+            irrs = {s: _irr(q, s, None, w) for s in SCEN}
+            return _expected_return(irrs, _leverage_premiums(q), index, req, {'model_cost_of_equity': scen(case, 'base')['cost_of_equity']})
+        for d, fc, case in built:                                       # at the fair value: the fair value's own rate
+            v0 = fc['preview']['today']['base']
+            x = owner(case, fc, v0)
+            self.assertAlmostEqual(x['base'], scen(case, 'base')['cost_of_equity'], places=6, msg=f'debt {d:,.0f}')
+        self.assertGreater(built[-1][2]['scenarios'][1]['terminal']['ke_leverage_premium'], .03)
+        for price in (140., 95., 82.68, 50.):
+            rows = [owner(case, fc, price) for _, fc, case in built]
+            for (d0, a), (d1, b) in zip(zip(debts, rows), list(zip(debts, rows))[1:]):
+                self.assertLessEqual(b['base_minus_market'], a['base_minus_market'] + 1e-6, f'{price}: {d0:,.0f} -> {d1:,.0f}')
+                self.assertLessEqual(b['base_minus_required'], a['base_minus_required'] + 1e-6, f'{price}: {d0:,.0f} -> {d1:,.0f}')
+                rise = b['leverage_premium']['base'] - a['leverage_premium']['base']
+                self.assertLessEqual(b['base'] - a['base'], rise + 1e-6, f'{price}: {d0:,.0f} -> {d1:,.0f}')
 
     def test_analyst_override_has_no_premium(self):
         ov = deepcopy(self.G35)

@@ -244,8 +244,12 @@ def implied_cost_of_equity(case, scenario='base', low=-.08, high=.12, w=None):
     Holds every cash flow fixed. It says what return the price implies IF these cash
     flows occur; it is not the market's forecast and not a recommended hurdle rate.
     The convention equals decision._irr / price_for_hurdle for the same debt weight.
-    Reported on the return scale (rate_anchor): anchor + shift, i.e. without the explicit
-    years' relevering premium, which stays in the value (charged in the discounting).
+    Two scales (rate_anchor, forecast RETURN_SCALE): implied_cost_of_equity is on the scale of
+    model_cost_of_equity (Ke + shift: equals it when the quote equals the scenario value; the
+    explicit years' relevering premium included), implied_return_scale = anchor + shift is the
+    premium-free rate the verdict compares with a required return (decision._irr). Only the
+    return scale is monotone in debt at a fixed quote; the cost-of-equity scale is the one to
+    read against model_cost_of_equity.
     """
     if case['method'] not in {'operating', 'residual_income'}: raise ValueError('Implied rate requires a cash-flow model')
     s = next((x for x in case['scenarios'] if x['name'] == scenario), None)
@@ -262,7 +266,7 @@ def implied_cost_of_equity(case, scenario='base', low=-.08, high=.12, w=None):
         low = max(low, s['terminal']['growth'] - ke + .0025)       # the terminal formula needs Ke above growth
     lo_v, hi_v = _shifted_value(case, scenario, low, w), _shifted_value(case, scenario, high, w)
     note = 'Cash flows held fixed; required return that equates scenario value and quote. Not a market forecast or hurdle recommendation.'
-    lev = {'debt_weight': w, 'debt_weight_source': w_src, 'leverage_premium_excluded': prem}
+    lev = {'debt_weight': w, 'debt_weight_source': w_src, 'leverage_premium': prem}
     if lo_v is None or hi_v is None:
         return {'status': 'invalid_search_domain', 'implied_cost_of_equity': None, 'limitation': note, **lev}
     if not hi_v <= target <= lo_v:
@@ -274,8 +278,10 @@ def implied_cost_of_equity(case, scenario='base', low=-.08, high=.12, w=None):
         if v > target: low = mid
         else: high = mid
     shift = (low + high) / 2
-    return {'status': 'solved', 'scenario': scenario, 'model_cost_of_equity': ke, 'model_rate_return_scale': anchor,
-            'implied_cost_of_equity': anchor + shift,
+    return {'status': 'solved', 'scenario': scenario, 'model_cost_of_equity': ke, 'implied_cost_of_equity': ke + shift,
+            'model_rate_return_scale': anchor, 'implied_return_scale': anchor + shift,
+            'scale': 'implied_cost_of_equity and model_cost_of_equity: cost-of-equity scale (premium included); '
+                     'implied_return_scale and model_rate_return_scale: return scale (Ke less leverage_premium), the verdict\'s',
             'shift': shift, 'terminal_wacc_shift': (1 - w) * shift if case['method'] == 'operating' else 0., 'limitation': note, **lev}
 
 

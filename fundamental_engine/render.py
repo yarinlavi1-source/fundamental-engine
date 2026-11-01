@@ -472,6 +472,13 @@ def owner_table(casefile):
     fv = er.get('fair_value') or {}
     ke = fv.get('cost_of_equity') if _n(fv.get('cost_of_equity')) else view.get('model_cost_of_equity')
     req, pfh = er.get('hurdle'), er.get('value_at_required_return')
+    # one scale for the owner (decision SAME_SCALE): the expected return, the market and the required return all carry the
+    # company's relevering premium, so at a price equal to the fair value the expected return is the fair value's own rate
+    ks = er.get('ke_scale') or {}
+    lev = (ks.get('leverage_premium') or {}).get('base') or 0.
+    lev = lev if lev >= .0005 else 0.
+    if _n(req):
+        req = req + lev
     notes, behind, yearly = [], [], None
     if show:
         gap = price / fair - 1
@@ -491,34 +498,42 @@ def owner_table(casefile):
                          money(pfh) + (f' ({rel})' if buy else ' (זהה לשווי ההוגן)')))
         elif _n(req) and (er.get('price_for_hurdle') or {}).get('status') == 'invalid':
             rows.append((f'מחיר כניסה עם מרווח ביטחון (תשואה של {req * 100:.1f}% בשנה)', 'לא ניתן לחישוב בתשואה זו'))
-        irr = er.get('base_irr')
+        irr = ks.get('base') if _n(ks.get('base')) else er.get('base_irr')
+        if _n(irr) and not _n(ks.get('base')):
+            irr = irr + lev
         idx = er.get('index_expected_return') or {}
         mkt = (view.get('market_consistent') or {}).get('market_return')
         if not _n(mkt):
             mkt = idx.get('value')
         kind = idx.get('comparator') or ('generic_assumption' if idx.get('origin') in ('engine_default', 'forecast_cost_of_equity') else None)
         mk_he = MARKET_HE.get(kind, 'השוק כולו')
+        mkt_s = (mkt + lev) if _n(mkt) else None        # the market on the same scale (+ the premium for this company's debt)
         if _n(irr):
             vs = ''
             if _n(mkt):
-                d = irr - mkt
-                vs = (f' ({mk_he}: כ־{mkt * 100:.1f}%; ' + ('בערך כמו השוק)' if abs(d) < .005 else
-                                                        f"{'יותר' if d > 0 else 'פחות'} מהשוק בכ־{abs(d) * 100:.1f}% בשנה)"))
+                d = irr - mkt_s
+                bar = (f'{mk_he}: כ־{mkt * 100:.1f}%' + (f', ועוד {lev * 100:.1f}% פיצוי על החוב של החברה = כ־{mkt_s * 100:.1f}%' if lev else ''))
+                vs = (f' ({bar}; ' + ('בערך כמו השוק)' if abs(d) < .005 else
+                                     f"{'יותר' if d > 0 else 'פחות'} מהשוק בכ־{abs(d) * 100:.1f}% בשנה)"))
             rows.append(('תשואה שנתית צפויה במחיר של היום', f'כ־{irr * 100:.1f}% בשנה{vs}'))
         notes.append('שווי הוגן = כמה המניה שווה היום אם התרחיש הבסיסי מתממש, בשיעור ההיוון שהמנוע דורש מהחברה הזו לפי הסיכון שלה'
                      + (f' (כ־{ke * 100:.1f}% בשנה)' if _n(ke) else '') + '.')
         if buy:
             notes.append(f'מחיר כניסה עם מרווח ביטחון = עד המחיר הזה התרחיש הבסיסי עוד מניב כ־{req * 100:.1f}% בשנה: תשואת השוק '
-                         'ועוד פיצוי על הסיכון של החברה הזו. זה הרף של המנוע, לא יעד שהצבת ולא שווי החברה'
+                         'ועוד פיצוי על הסיכון של החברה הזו' + (' ועל החוב שלה' if lev else '') + '. זה הרף של המנוע, לא יעד שהצבת ולא שווי החברה'
                          + ('; לפיו תיקבע השורה התחתונה אחרי האימות.' if draft else ', ולפיו נקבעת השורה התחתונה.'))
-        edge = (irr - mkt) if _n(irr) and _n(mkt) and _n(ke) else None
+        edge = (irr - mkt_s) if _n(irr) and _n(mkt) and _n(ke) else None
         if edge is not None and gap > .03 and edge > .005:
             behind.append(f'למה "יקרה" אבל מניבה יותר מהשוק: השווי ההוגן מחושב לפי תשואה של כ־{ke * 100:.1f}% בשנה, והשוק כולו מתומחר '
-                          f'היום לכ־{mkt * 100:.1f}% בלבד; ביחס למניות אחרות היא לא יקרה.')
+                          f'היום לכ־{mkt_s * 100:.1f}% בלבד' + (' (כולל אותה תוספת על החוב)' if lev else '') + '; ביחס למניות אחרות היא לא יקרה.')
         elif edge is not None and gap < -.03 and edge < -.005:
             behind.append(f'למה "זולה" אבל מניבה פחות מהשוק: גם בשיעור ההיוון של החברה יש מרווח, אבל השוק מתומחר לתשואה גבוהה יותר '
-                          f'(כ־{mkt * 100:.1f}%); ביחס למניות אחרות היא לא זולה.')
+                          f'(כ־{mkt_s * 100:.1f}%' + (', כולל אותה תוספת על החוב' if lev else '') + '); ביחס למניות אחרות היא לא זולה.')
         behind.append('תשואה צפויה = מה תרוויח בשנה, בממוצע, אם תקנה היום והתרחיש הבסיסי יתממש. ' + MARKET_NOTE_HE.get(kind, ''))
+        if lev:
+            behind.append(f'לחברה יש חוב, ולכן שיעור ההיוון שלה כולל תוספת של כ־{lev * 100:.1f}% בשנה: התשואה הצפויה כוללת אותה '
+                          '(במחיר השווי ההוגן היא שווה לשיעור ההיוון), ולכן גם השוק ומחיר הכניסה מוצגים עם אותה תוספת. כך החוב לא '
+                          'משפר את ההשוואה לשוק ולא נספר פעמיים.')
         pp = er.get('expected_price_path') or {}
         if pp.get('status') == 'computed' and pp.get('rows'):
             cells = ' · '.join((str(r['date'])[:7].replace('-', '/') if r.get('date') else f"שנה {r['years']}") + f": {money(r['price'])}"
@@ -530,8 +545,9 @@ def owner_table(casefile):
             k = pp.get('pull_to_market', .5)
             mid = 'באמצע הדרך' if abs(k - .5) < 1e-9 else f'בכ־{k:.0%} מהדרך'
             behind.append(f"מחיר צפוי למניה לפי ממוצע השוק (לא מנתוני החברה; כ־{pp['rate'] * 100:.1f}% בשנה): {cells}. = המחיר של "
-                          f"היום, שגדל כל שנה {mid} בין התשואה הצפויה במניה (כ־{pp['base_irr'] * 100:.1f}%) לתשואת השוק "
-                          f"(כ־{pp['market_return'] * 100:.1f}%). הערכה סטטיסטית, לא הבטחה ולא יעד: בבדיקה על 2016–2025 גם השיטה "
+                          f"היום, שגדל כל שנה {mid} בין התשואה הצפויה במניה (כ־{pp.get('base_return_ke_scale', pp['base_irr']) * 100:.1f}%) לתשואת השוק "
+                          f"(כ־{(pp['market_return'] + (pp.get('leverage_premium') or 0.)) * 100:.1f}%"
+                          + (', כולל התוספת על החוב' if (pp.get('leverage_premium') or 0.) >= .0005 else '') + f"). הערכה סטטיסטית, לא הבטחה ולא יעד: בבדיקה על 2016–2025 גם השיטה "
                           f"הטובה ביותר פגעה בטווח של ±{pp.get('band', .25):.0%} מהמחיר בפועל רק {band}.")
         f5 = view.get('five_year') or {}
         if _n(f5.get('base_value')):
@@ -1053,6 +1069,13 @@ def _expected(dc):
         b = (st.get(s) or {}).get('bound')
         return _p(er.get(f'{s}_irr')) if er.get(f'{s}_irr') is not None else f"{b['type']} {_p(b['rate'])}" if b else 'n/a'
     out += _table(['scenario', 'IRR', 'status'], [[s, irr(s), (st.get(s) or {}).get('status', 'n/a')] for s in ('bear', 'base', 'bull')])
+    ks = er.get('ke_scale') or {}
+    if ks and any(_n(ks.get(s)) for s in ('bear', 'base', 'bull')):
+        lp = ks.get('leverage_premium') or {}
+        out += ['', f"- Owner scale (decision SAME_SCALE; the table's expected return): bear/base/bull {_p(ks.get('bear'))} / {_p(ks.get('base'))} / "
+                    f"{_p(ks.get('bull'))} = IRR + relevering premium {_p(lp.get('bear'), 2)} / {_p(lp.get('base'), 2)} / {_p(lp.get('bull'), 2)}; "
+                    f"market on that scale {_p(ks.get('market_return_same_scale'), 2)}, required return {_p(ks.get('required_return_same_scale'), 2)}; "
+                    f"margins {_p(ks.get('base_minus_market'), 2)} vs market, {_p(ks.get('base_minus_required'), 2)} vs required (= the verdict-scale margins)"]
     rng = f" (range {_p(idx.get('low'), 2)}–{_p(idx.get('high'), 2)})" if _n(idx.get('low')) and _n(idx.get('high')) else ' (no range supplied)'
     mech = er.get('mechanical') or {}
     fl = er.get('model_cost_of_equity_floor') or {}

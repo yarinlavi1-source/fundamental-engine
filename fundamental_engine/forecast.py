@@ -3897,12 +3897,12 @@ def what_must_be_true(spec, price):
     r = implied_cost_of_equity(case)
     ke = base['cost_of_equity']
     if r['status'] == 'solved':
-        # on the return scale (valuation_tools.rate_anchor): the relevering premium of the explicit Ke is charged in the value
-        prem = r.get('leverage_premium_excluded') or 0.
-        ke = r.get('model_rate_return_scale', ke)
+        # the cost-of-equity scale (valuation_tools.implied_cost_of_equity): equals the model Ke at a price equal to the base
+        # value; the relevering premium is part of both numbers
+        prem = r.get('leverage_premium') or 0.
         row('cost_of_equity', 'annual return implied by the price (base cash flows)', 'solved', r['implied_cost_of_equity'], ke,
             f"If the base-case cash flows happen, buying at {price:,.2f} returns about {r['implied_cost_of_equity']:.1%} a year "
-            f'(the model requires {ke:.1%}' + (f'; its Ke also carries a {prem:.1%} leverage premium, charged in the value' if prem > 1e-9 else '')
+            f'(the model requires {ke:.1%}' + (f', of which {prem:.1%} is the premium for its debt' if prem > 1e-9 else '')
             + '). Not a forecast of the market price.', 'ratio',
             {'search_status': 'solved', 'limitation': r['limitation']})
     else:

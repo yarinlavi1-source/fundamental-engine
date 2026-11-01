@@ -15,6 +15,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from test_decision_render import SPEC, QA_OK, RK, RV_OK, RV_DRAFT, RV_REVIEWER, parts, an_saas, card_saas, casefile, fb_saas  # noqa: E402
+from fundamental_engine.drivers import build_case as valuation_of_spec                                                 # noqa: E402
 
 from fundamental_engine import facts as F, render                                                                     # noqa: E402
 from fundamental_engine.decision import decide, five_year_row, GATE_ALLOWED                                           # noqa: E402
@@ -492,6 +493,73 @@ class LeveredRequiredReturnTests(unittest.TestCase):
         self.assertAlmostEqual(low['value_at_required_return'], value_company(c)['annual_values'][0]['base'], places=6)
         at_value = decide(lev_parts(round(er['value_at_required_return'], 6)))
         self.assertAlmostEqual(at_value['expected_return']['base_irr'], er['hurdle'], places=4)   # the IRR uses the same convention
+
+
+def ke_scale_spec(prem=.03):
+    """levered_spec as a forecast builds it (forecast RETURN_SCALE): terminal.debt_weight 0 and an explicit-year relevering
+    premium, Ke 14% = return-scale anchor 11% + premium 3%."""
+    s = levered_spec()
+    for sc in s['scenarios']:
+        sc['terminal']['debt_weight'] = 0.
+        sc['terminal']['ke_leverage_premium'] = prem
+    return s
+
+
+def ke_scale_parts(price, prem=.03):
+    return parts(price, spec=ke_scale_spec(prem), fc=FC_LEV, an=an_saas(net_cash=-2e9, net_debt_to_ebitda=2.5, interest_coverage=5.))
+
+
+class OwnerScaleReturnTests(unittest.TestCase):
+    """0.14.1 review round 4 (decision SAME_SCALE): the verdict IRR is premium-free (monotone in debt), so at a price equal to the
+    fair value an indebted stock showed an expected return below the fair value's own rate by the premium, against the market.
+    The owner-facing return now adds the premium back and every bar it meets carries the same premium."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.base = value_company(valuation_of_spec(ke_scale_spec()))['annual_values'][0]['base']
+
+    def test_at_the_fair_value_the_owner_return_is_the_cost_of_equity(self):
+        p = ke_scale_parts(self.base)
+        d = decide(p)
+        er = d['expected_return']
+        ks = er['ke_scale']
+        self.assertAlmostEqual(er['base_irr'], .11, places=6)                  # verdict scale: Ke less the premium
+        self.assertAlmostEqual(ks['base'], .14, places=6)                      # owner scale: the fair value's own rate
+        self.assertAlmostEqual(ks['leverage_premium']['base'], .03)
+        m = er['index_expected_return']['value']
+        self.assertAlmostEqual(ks['market_return_same_scale'], m + .03)
+        self.assertAlmostEqual(ks['required_return_same_scale'], er['hurdle'] + .03)
+        self.assertAlmostEqual(ks['base_minus_market'], er['base_irr'] - m)    # the displayed margins are the verdict margins
+        self.assertAlmostEqual(ks['base_minus_required'], er['base_irr'] - er['hurdle'])
+        self.assertAlmostEqual(d['judgement']['return_vs_alternatives']['excess_over_index'], ks['base_minus_market'])
+        table = render.hebrew_table(casefile(p, d))
+        self.assertIn('כ־14.0% בשנה', table)                                   # not 11.0%
+        self.assertIn(f'ועוד 3.0% פיצוי על החוב של החברה = כ־{(m + .03) * 100:.1f}%', table)
+        # the implied rate of the tools is on the scale of the model cost of equity, the return scale beside it
+        r = implied_cost_of_equity(p['val']['case'], 'base', high=.3)
+        self.assertAlmostEqual(r['implied_cost_of_equity'], r['model_cost_of_equity'], places=6)
+        self.assertAlmostEqual(r['implied_return_scale'], .11, places=6)
+        self.assertAlmostEqual(r['leverage_premium'], .03)
+
+    def test_hurdle_floor_binds_at_the_base_rate(self):
+        price = .8 * self.base
+        low = {'value': .05, 'basis': 'index below the model rate (test)', 'source': 'test input'}
+        d = decide(ke_scale_parts(price), {'index': low})
+        er = d['expected_return']
+        self.assertTrue(er['model_cost_of_equity_floor']['binding'])
+        self.assertAlmostEqual(er['hurdle'], .11, places=9)                    # the base rate on the verdict scale
+        self.assertAlmostEqual(er['ke_scale']['required_return_same_scale'], .14, places=9)   # Ke on the owner scale
+        self.assertAlmostEqual(er['value_at_required_return'], self.base, delta=1e-9 * self.base)   # entry price = base value
+        # the same hurdle reached without the floor (index + premium exactly at the base rate) gives the same verdict
+        idx = {'value': .11 - er['permanent_loss_premium'], 'basis': 'index at the base rate less the premium (test)', 'source': 'test input'}
+        d2 = decide(ke_scale_parts(price), {'index': idx})
+        e2 = d2['expected_return']
+        self.assertFalse(e2['model_cost_of_equity_floor']['binding'])
+        self.assertAlmostEqual(e2['hurdle'], er['hurdle'], places=9)
+        self.assertAlmostEqual(e2['value_at_required_return'], er['value_at_required_return'], delta=1e-9 * self.base)
+        self.assertEqual(d2['verdict']['code'], d['verdict']['code'])
+        self.assertEqual(d2['verdict'].get('margin'), d['verdict'].get('margin'))
+        self.assertAlmostEqual(er['base_irr'] - er['hurdle'], er['ke_scale']['base_minus_required'], places=12)   # one margin
 
 
 class PremiumAndQualityTests(unittest.TestCase):

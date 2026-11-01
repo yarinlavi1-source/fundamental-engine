@@ -34,7 +34,8 @@ run(fb, inputs=None) -> casefile {"casefile_version": 1,"engine_version","compan
         "errors": [{"stage","error"}],"stages": {stage: ok|failed},"collection_notes","qa","an","card","fc","val","rk","rv","dc",
         "business","segment_view","management","analyst_sheet","scenario_reasons","casefile_sha256"}
 summary(cf) -> {"symbol","as_of","verdict","verdict_status","price_claim_withheld","confidence","quality","risk_level","price",
-        "bear_value","base_value","bull_value","base_irr","bear_irr","decision_version","margin": marginal|clear|None,"hurdle",
+        "bear_value","base_value","bull_value","base_irr","bear_irr","base_return_ke_scale" (owner scale, decision SAME_SCALE),
+        "decision_version","margin": marginal|clear|None,"hurdle",
         "value_at_required_return","review_status","casefile_sha256"}
 ```
 `inputs` = {"card"?: model_card inputs, "forecast"?: forecast inputs, "reviewer"?: review input, "decision"?: decision inputs,
@@ -201,7 +202,8 @@ terminal value use the scenario's `cost_of_equity`.
 `terminal.debt_weight` is 0 for a forecast case (its terminal rate is the business's own; the relevering fixed point stays in
 `cost_of_equity.components.leverage.debt_weight`, on the model's own base equity value, never the quote; capped at 60% with a
 warning). `terminal.ke_leverage_premium` = the explicit Ke's relevering premium (Ke - table; 0 under an analyst Ke override):
-a required return / IRR is on the return scale Ke - premium (`valuation_tools.rate_anchor`). `opening.nondeductible_debt` =
+a required return / IRR is on the return scale Ke - premium (`valuation_tools.rate_anchor`); the owner-facing return
+(`decision` expected_return.ke_scale, SAME_SCALE) adds the premium back and moves every bar it is compared with by the same premium. `opening.nondeductible_debt` =
 debt-like claims of kinds `forecast.NONDEDUCTIBLE_CLAIM_KINDS` (preferred_or_minority, pension_deficit): `valuation.operating`
 deducts interest only on the debt above it and gives the terminal shield only on the horizon debt above it. Funding status adds `share_settled`.
 Case sources (`spec.sources`): {id, title, url, kind, published_at, available_at, retrieval?, published_at_estimated?}; kind
@@ -245,10 +247,12 @@ opening net debt / (net debt + base value x opening shares), 0 without net debt 
 `shifted_value(case, scenario, shift, w=None)`, `discount_rate_band(case, scenario='base', shift=.01, w=None) ->
 {"scenario","shift","value_lower_rate","value","value_higher_rate","relative_width","quote_inside_band","debt_weight",
 "debt_weight_source","terminal_wacc_shift","meaning"}`, `implied_cost_of_equity(case, scenario='base', low, high, w=None) ->
-{"status": solved|not_bracketed|invalid_search_domain,"implied_cost_of_equity" (anchor + shift),"model_cost_of_equity"?,
-"model_rate_return_scale"?,"shift"?,"terminal_wacc_shift"?,"debt_weight","debt_weight_source","leverage_premium_excluded",
-"limitation",...}`: the cost of equity moves by the shift and an operating terminal WACC by (1 - w) x shift; the band is
-centred on the model value. `reverse_price`, `stress_test`, `forecast_score`, `asset_schedule` unchanged.
+{"status": solved|not_bracketed|invalid_search_domain,"implied_cost_of_equity" (Ke + shift: the scale of
+"model_cost_of_equity", equal to it when the quote equals the scenario value),"model_cost_of_equity"?,"implied_return_scale"?
+(anchor + shift: the premium-free verdict scale, monotone in debt; what decision._irr uses),"model_rate_return_scale"?,
+"scale"?,"shift"?,"terminal_wacc_shift"?,"debt_weight","debt_weight_source","leverage_premium","limitation",...}`: the cost of
+equity moves by the shift and an operating terminal WACC by (1 - w) x shift; the band is centred on the model value. The CLI
+`value-drivers --diagnostics` and the MCP `valuation_diagnostics` tool return this dict unchanged. `reverse_price`, `stress_test`, `forecast_score`, `asset_schedule` unchanged.
 `valuation.sensitivity` (the report's sensitivity grid) still moves the terminal WACC 1:1 (docs/LIMITATIONS.md).
 
 ## risk.assess(fb, qa, an, card, fc, val) -> rk
@@ -327,12 +331,19 @@ governance_red_flag, redteam_not_usable, consistency_failure, critical_finding_u
                      "base_value_at_model_cost_of_equity","fair_value": {"value","bear","bull","cost_of_equity","change_from_price",
                      "label","semantics"} (the headline: the executed base value at the model cost of equity),"buy_below_price":
                      {"value","status","required_return","reason","change_from_price","label"} (= value_at_required_return),
-                     "expected_price_path": {"status","rate","base_irr","market_return","comparator","pull_to_market","from_price",
+                     "expected_price_path": {"status","rate" (blend + the base relevering premium, owner scale),"base_irr",
+                     "base_return_ke_scale","leverage_premium","market_return","comparator","pull_to_market","from_price",
                      "from_date","rows": [{"years","date","price"}],"band","hit_rate_within_band","formula","semantics"},
                      "yearly_at_model_cost_of_equity": {"rate","model_cost_of_equity","rows","semantics"},
                      "price_for_hurdle","five_year_at_required_return","band": {"hurdle_low",
                      "hurdle_high","step","error_level","error_widening","price_low","price_high","rows","bear_tolerance_step",
                      "moat_proxy"?,"rule"},"debt_weight","debt_weight_source","owner_aspiration","meets_owner_aspiration_14pct",
+                     "ke_scale": {"bear","base","bull","base_bound","leverage_premium": {scenario: p},"model_cost_of_equity",
+                     "market_return","market_return_same_scale","required_return","required_return_same_scale",
+                     "base_minus_market","base_minus_required","scale","semantics"} (decision SAME_SCALE: the owner-facing return =
+                     each scenario's IRR + its relevering premium p (valuation_tools.rate_anchor); Ke at a price equal to the fair
+                     value; compared only with market + p and required return + p, so its margins equal the verdict margins
+                     base_irr - market / hurdle; render.hebrew_table shows it),
                      "semantics","mechanical"?},
  "verdict": {"code","label_he","gate","reason","reason_he","what_would_change_it","what_would_change_it_he","hurdle_used",
              "risk_premium_used","allowed_overrides","status": final|draft,"price_claim_withheld","withheld_reasons","confidence",

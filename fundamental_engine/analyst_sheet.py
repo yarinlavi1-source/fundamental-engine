@@ -248,6 +248,7 @@ def build(fb, cf, inputs=None, conditional=None):
             reading += ' המודל מניח שהיתרון התחרותי נשחק עם הזמן כל עוד לא הוכח אחרת (ראו שאלת צוואר הבקבוק).'
     qs['mispricing'] = {'status': 'numbers_only' if gap is not None else 'open', 'reading_he': reading,
                         'numbers': {'price': price, 'base': base, 'gap_to_base': gap, 'base_irr': er.get('base_irr'),
+                                    'base_return_ke_scale': (er.get('ke_scale') or {}).get('base'),
                                     'index_expected_return': (er.get('index_expected_return') or {}).get('value')
                                     if isinstance(er.get('index_expected_return'), dict) else er.get('index_expected_return'),
                                     'price_needs_growth': g.get('required'), 'base_growth': g.get('anchor')},

@@ -1,5 +1,52 @@
 ## Unreleased (0.14.1) — IRR on the return scale; one-off interest guard; non-deductible claims (01.11.2026)
 
+Review round 4 (of 7aca2f0). MAJOR: the premium-free IRR no longer matched the fair value (discounted at Ke) or the value
+path for indebted names, and `render.hebrew_table` showed it to the owner as the expected return against the market: at a
+price equal to the fair value an indebted stock showed a return below Ke by the relevering premium, and leverage was charged
+in the value, again on the IRR scale and again in the hurdle's balance_sheet component, biasing the buy test (base return vs
+the index) against indebted names.
+
+- Two scales (`decision` SAME_SCALE). The verdict keeps the premium-free solve (base_irr, hurdle, floor at Ke - premium:
+  monotone in debt, verdicts unchanged). The owner-facing return is `expected_return.ke_scale`: each scenario's IRR + its
+  relevering premium p (`valuation_tools.rate_anchor`), equal to Ke when the price equals the fair value. Every bar it is
+  compared with carries the same p: market + p (the index for this company's leverage), required return + p (floor = Ke), so
+  each displayed margin equals the verdict margin (base_irr - market / hurdle). `render.hebrew_table` shows the expected
+  return, the market and the entry-price return on that scale (with one line naming the debt premium when p >= 0.05pp);
+  `expected_price_path` compounds at the blend + p; `pipeline.summary` and `analyst_sheet` carry `base_return_ke_scale`; the
+  markdown report shows both scales. Unlevered names (p = 0) are unchanged.
+- Checked, not achievable: a return level that equals Ke at the fair value, leaves a debt-free name's perpetuity IRR unchanged
+  AND is non-increasing in debt at a fixed price. ORCL-shaped (growth anchor 35%), price = the 125bn fair value 82.68: debt
+  60bn gives 11.17% (premium 0) while debt 125bn must show its Ke 11.42%. So the level can rise with debt at a fixed price, by
+  at most the added premium (tested); the margins against the market and the required return cannot (tested), and those are
+  what the table compares. A five-year re-rating return (buy at the price, exit at the year-5 base value) satisfies both but
+  would change every name's number and compare a re-rating with the market's no-re-rating implied return; not adopted.
+- Leverage charged once: p is a unit carried on both sides of every comparison (in the return and in every bar), never a
+  margin charge; the only leverage charge in a margin is the hurdle's balance_sheet component, and only when index +
+  premium binds above the floor (at the floor, Ke, no permanent-loss component is charged). Documented at
+  `decision.SAME_SCALE` and the floor's basis text. A p-dependent credit on the balance_sheet component was rejected: it makes
+  the verdict margin rise with debt whenever p is below the component (ORCL-shaped at 140, debt 60 -> 125bn: base_irr -0.29pp against a credit of up to 0.67pp).
+- `valuation_tools.implied_cost_of_equity` (CLI `value-drivers --diagnostics`, MCP `valuation_diagnostics`): `implied_cost_of_equity`
+  is again on the scale of `model_cost_of_equity` (Ke + shift: equal at a quote equal to the value); `implied_return_scale`
+  (anchor + shift) is the verdict scale `decision._irr` reads; `leverage_premium_excluded` renamed `leverage_premium`;
+  `forecast.what_must_be_true` reports the Ke scale, naming the debt premium.
+- Numbers (ORCL-shaped, debt 60 / 125 / 160 / 200bn, Ke 10.75 / 11.42 / 12.64 / 16.25%, premium 0 / 0.67 / 1.89 / 5.50pp):
+  owner-facing return at price 140, before -> now: 9.77 / 9.48 / 9.01 / 8.03% -> 9.77 / 10.15 / 10.90 / 13.53%; margin over
+  market + p unchanged = base_irr - market (falls with debt). At each fair value, before -> now: 10.75% for all four -> Ke.
+  A/B (the same 45 names x 2019/2023/2025, 113 rows, no errors) against 7aca2f0: values, base_irr and verdicts identical
+  in every row (0 changes). Owner-facing return: 57 of 110 rows carry a premium (median 1.01pp, max 5.96pp: MAR 2019 4.41% ->
+  10.37% at Ke 14.99%; T 2019 4.61 -> 9.57%; SO 2023 6.63 -> 11.57%). In 12 rows (CHTR x3, SO x3, VZ 2025, T 2019, IBM 2023,
+  TMUS 2023, MAR 2019, TDG 2019) the raw owner return would beat the market while the verdict-scale return does not: the
+  reason the market is shown + the same premium.
+- Tests: test_decision_governance `OwnerScaleReturnTests` (an indebted case at the fair value: owner return = Ke 14%, verdict
+  IRR 11%, bars + 3%, margins = verdict margins, the Hebrew table shows 14.0% and the market + 3.0%, implied_cost_of_equity =
+  model Ke; the hurdle floor binding: hurdle = the base rate, required return on the owner scale = Ke, entry price = base value,
+  verdict and margin identical to the same hurdle reached without the floor); test_forecast
+  `IrrDebtMonotonicityTests.test_owner_scale_return_on_a_debt_sweep` (ORCL-shaped 0 -> 200bn: Ke at each fair value; at prices
+  140 / 95 / 82.68 / 50 both margins non-increasing, the level rising by no more than the premium); the return-scale identity
+  tests read `implied_return_scale`.
+
+### Round 3 (7aca2f0)
+
 Re-review of 459ed13. MAJOR: with `terminal.debt_weight` 0 the IRR solve (`decision._solve_irr_levered`, and every value at a
 required return) moved the terminal rate 1:1 from the explicit-year Ke, which still carries the relevering premium (Ke - table
 from the model's own D/E). At a fixed price more debt then RAISED the base IRR while every value fell: ORCL-shaped synthetic at
