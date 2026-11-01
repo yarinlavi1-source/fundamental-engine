@@ -590,20 +590,24 @@ class ValuationIntegrityTests(unittest.TestCase):
         w = lev['debt_weight']
         # the terminal (21.10.2026): the mature table (the maturing add-on dropped, TERMINAL_KE_DROPPED); since 29.10.2026
         # (TERMINAL_ASSET_RATE) it is the business's own rate whatever its financing, never relevered, and the terminal debt earns
-        # its tax shield only, at the base horizon's debt weight; floored at terminal growth + 3 points
+        # its tax shield only, a bridge item on each scenario's own horizon debt (0.14.1); the rate is floored at growth + 3 points
         t = comp['terminal']
         self.assertAlmostEqual(t['table_rate'], comp['table_rate'] - forecast.STAGE['maturing']['ke'])
         self.assertAlmostEqual(t['asset_unlevered'], t['table_rate'])
         self.assertAlmostEqual(t['cost_of_equity'], t['table_rate'])
         self.assertAlmostEqual(fc['cost_of_equity']['terminal_cost_of_equity']['base'], t['cost_of_equity'])
         self.assertLess(t['cost_of_equity'], fc['cost_of_equity']['base'])
-        wt, shield = lev['terminal_debt_weight'], lev['terminal_tax_shield_rate']
-        self.assertGreater(wt, 0.)
-        self.assertAlmostEqual(shield, min(lev['kd_promised'] * .21, forecast.TERMINAL_SHIELD_MAX))
-        self.assertEqual((t['debt_weight'], t['tax_shield_rate']), (wt, shield))
-        self.assertAlmostEqual(fc['cost_of_equity']['terminal_wacc']['base'],
-                               max(t['table_rate'] - wt * shield, scen(fc['spec'], 'base')['terminal']['growth'] + .03), places=6)
-        self.assertIn('adjustment_leverage_relevered', comp)
+        shield = lev['terminal_tax_shield_rate']
+        self.assertNotIn('terminal_debt_weight', lev)
+        self.assertNotIn('leverage_relevered', t)                      # 0.14.1: the terminal is never relevered
+        self.assertEqual(t['tax_shield_rate'], shield)
+        for s in SCEN:
+            self.assertAlmostEqual(shield[s], min(lev['kd_promised'] * .21, forecast.TERMINAL_SHIELD_MAX))
+            st = scen(fc['spec'], s)['terminal']
+            self.assertAlmostEqual(st['debt_tax_shield_rate'], shield[s], places=6)   # reported = applied, per scenario
+            self.assertEqual(st['debt_weight'], 0.)
+            self.assertAlmostEqual(fc['cost_of_equity']['terminal_wacc'][s], max(t['table_rate'], st['growth'] + .03), places=6)
+        self.assertIn('adjustment_leverage_relevered', comp)              # the explicit years' row stays
 
     def test_levered_terminal_wacc_formula_where_the_floor_does_not_bind(self):
         # at a 2% risk-free with terminal growth evidenced at 1% the g + 3pp floor sits below the blend, so E/V x terminal Ke +
@@ -616,16 +620,15 @@ class ValuationIntegrityTests(unittest.TestCase):
         lev = fc['cost_of_equity']['components']['leverage']
         ke_t = fc['cost_of_equity']['terminal_cost_of_equity']['base']
         self.assertLess(ke_t, fc['cost_of_equity']['base'])
-        # TERMINAL_ASSET_RATE (29.10.2026): the terminal rate less the tax shield at the base horizon's debt weight
-        # (D_T / EV_T with EV_T = (FCFF + D_T x shield) / (rate - g)), never the cheaper Kd_e swapped in for equity
+        # TERMINAL_ASSET_RATE (0.14.1): the terminal rate is the business's own (never the cheaper Kd_e swapped in for equity);
+        # the horizon debt's tax shield is a bridge item D_T x shield / (rate - g), at most D_T
         b = next(r for r in value_company(build_case(fc['spec']))['scenarios'] if r['name'] == 'base')['terminal']
         g, shield = scen(fc['spec'], 'base')['terminal']['growth'], min(lev['kd_promised'] * .21, forecast.TERMINAL_SHIELD_MAX)
-        wt = b['debt'] / ((b['next_year_fcff'] + b['debt'] * shield) / (ke_t - g))
-        self.assertAlmostEqual(lev['terminal_debt_weight'], wt, places=6)
-        self.assertAlmostEqual(b['enterprise_value'], (b['next_year_fcff'] + b['debt'] * shield) / (ke_t - g), delta=1e-4 * b['enterprise_value'])
-        blend = ke_t - wt * shield
-        self.assertGreater(blend, g + .03)
-        self.assertAlmostEqual(fc['cost_of_equity']['terminal_wacc']['base'], blend, places=6)
+        self.assertGreater(ke_t, g + .03)
+        self.assertAlmostEqual(fc['cost_of_equity']['terminal_wacc']['base'], ke_t, places=6)
+        self.assertAlmostEqual(b['enterprise_value'], b['next_year_fcff'] / (ke_t - g), delta=1e-6 * b['enterprise_value'])
+        self.assertGreater(b['debt'], 0.)
+        self.assertAlmostEqual(b['debt_tax_shield'], min(b['debt'], b['debt'] * shield / (ke_t - g)), delta=1e-4 * b['debt'])
         self.assertAlmostEqual(lev['kd_expected'], .02 + forecast.DEBT_EXPECTED_PREMIUM)
 
     def test_cyclical_at_peak_is_valued_around_the_cycle(self):
@@ -1185,21 +1188,25 @@ class SourceAndRateContractTests(unittest.TestCase):
         self.assertEqual(erps['kind'], 'analyst_input')
         self.assertTrue(erps['published_at_estimated'])                                     # undated: the FactBook date
 
-    def test_terminal_debt_weight_is_in_the_case_and_rate_diagnostics_use_the_equity_weight(self):
+    def test_terminal_rate_moves_one_for_one_and_rate_diagnostics_agree(self):
+        # 0.14.1 (TERMINAL_ASSET_RATE): the terminal rate is the business's own rate, the debt's shield a bridge item, so a change
+        # in the cost of equity moves it 1:1; the case stores terminal.debt_weight 0 and every diagnostic reads it (0.14.0 kept
+        # today's debt weight there and moved the rate by (1 - w) x the change while the forecast's rate moved 1:1)
         from fundamental_engine import valuation_tools as vt
-        from fundamental_engine.decision import price_for_hurdle
+        from fundamental_engine.decision import price_for_hurdle, _debt_weight
         fc = forecast.build(*levered(15.))
-        w = fc['cost_of_equity']['components']['leverage']['debt_weight']
-        self.assertGreater(w, .2)
+        self.assertGreater(fc['cost_of_equity']['components']['leverage']['debt_weight'], .2)
         case = build_case(fc['spec'])
+        w = 0.
         self.assertEqual({s['terminal']['debt_weight'] for s in case['scenarios']}, {w})
         self.assertEqual(vt.debt_weight(case)[0], w)
+        self.assertEqual(_debt_weight(case, fc, 10.)[0], w)
 
         def at(shift):
             c = deepcopy(case)
             b = scen(c, 'base')
             b['cost_of_equity'] += shift
-            b['terminal']['wacc'] += (1 - w) * shift                                       # Harris-Pringle, never 1:1
+            b['terminal']['wacc'] += shift                                                 # 1:1
             return value_company(c)['annual_values'][0]['base']
         band = vt.discount_rate_band(case)
         self.assertAlmostEqual(band['value_lower_rate'], at(-.01), places=6)
@@ -1642,10 +1649,143 @@ class DebtMonotonicityTests(unittest.TestCase):
         lev, t = fc['cost_of_equity']['components']['leverage'], fc['cost_of_equity']['components']['terminal']
         # the terminal rate is the business's, whatever its financing; the debt earns its tax shield only
         self.assertAlmostEqual(fc['cost_of_equity']['terminal_cost_of_equity']['base'], t['table_rate'])
-        self.assertAlmostEqual(fc['cost_of_equity']['terminal_wacc']['base'],
-                               max(t['table_rate'] - lev['terminal_debt_weight'] * lev['terminal_tax_shield_rate'],
-                                   scen(fc['spec'], 'base')['terminal']['growth'] + .03), places=6)
-        self.assertLessEqual(lev['terminal_tax_shield_rate'], forecast.TERMINAL_SHIELD_MAX)
+        for s in SCEN:
+            self.assertAlmostEqual(fc['cost_of_equity']['terminal_wacc'][s],
+                                   max(t['table_rate'], scen(fc['spec'], s)['terminal']['growth'] + .03), places=6)
+            self.assertLessEqual(lev['terminal_tax_shield_rate'][s], forecast.TERMINAL_SHIELD_MAX)
+
+
+def levered_at_coupon(debt, rate=.12, price=60.):
+    """SYNTHETIC levered industrial whose reported interest is debt x rate (test data only): the coupon stays constant while the
+    debt is swept (the 0.14.0 review's probe)."""
+    rev, ie = [400e6, 460e6, 520e6, 580e6], debt * rate
+    annual = {f'{y}-12-31': {'revenue': r, 'operating_income': r * .2, 'sbc': r * .02, 'd_and_a': r * .04, 'capex': r * .05,
+                             'cfo': r * .2, 'pretax_income': r * .2 - ie, 'income_tax': (r * .2 - ie) * .21,
+                             'interest_expense': ie, 'buybacks': 0.} for y, r in zip(range(2022, 2026), rev)}
+    inst = {'2025-12-31': {'cash': 150e6, 'shares_outstanding': 50e6, 'receivables': 80e6, 'payables': 30e6, 'long_term_debt': debt},
+            '2022-12-31': {'receivables': 56e6, 'payables': 21e6}}
+    fb = synth('2026-03-20', annual, inst, price, kind='filing_derived')
+    an = make_an(fb, revenue_growth_last=580 / 520 - 1, revenue_cagr_3y=(580 / 400) ** (1 / 3) - 1, growth_volatility=.01, roic=.12,
+                 sales_to_capital_incremental_3y=2.0)
+    card = {'business_model': {'primary': 'industrial'}, 'stage': {'value': 'maturing'}, 'funding': {'value': 'self_funded'},
+            'valuation': {'method': 'fcff_annual_path', 'archetype': 'industrial'}, 'dimensions': {'moat': {'assessment': 'adequate'}}}
+    return fb, an, card, qa_for(50e6, 150e6, debt, '2025-12-31')
+
+
+class PerScenarioShieldTests(unittest.TestCase):
+    """0.14.1 (forecast.TERMINAL_ASSET_RATE): each scenario's horizon debt earns its own shield in the bridge at ONE rate. On
+    0.14.0 the shield lowered the shared rate at the BASE horizon's debt weight, so a bull far larger than its debt rose with
+    debt (review probe: coupon 12%, bull growth anchor 0.7, debt 100m -> 400m: bull 384.98 -> 390.97)."""
+
+    def test_review_probe_bull_never_rises_with_debt(self):
+        for gb in (.5, .7):
+            ov = {'overrides': [{'path': 'growth_anchor', 'scenario': 'bull', 'value': gb, 'reason': 'probe', 'evidence_ids': ['syn:fs']}]}
+            prev = None
+            for d in (10e6, 100e6, 200e6, 300e6, 400e6, 600e6):
+                fc = forecast.build(*levered_at_coupon(d), ov)
+                self.assertEqual(fc['status'], 'built')
+                self.assertAlmostEqual(fc['cost_of_equity']['components']['leverage']['kd_promised'], .12, places=6)
+                t = fc['preview']['today']
+                if prev:
+                    for s in SCEN:
+                        self.assertLessEqual(t[s], prev[s] + 1e-9, f'bull anchor {gb}, debt {d:,.0f}: {s} {prev[s]:.4f} -> {t[s]:.4f}')
+                # one rate whatever the debt
+                self.assertEqual(len({round(v, 9) for v in fc['cost_of_equity']['terminal_wacc'].values()}), 1)
+                prev = t
+
+    def test_each_scenario_bridge_carries_its_own_shield_bounded_by_its_debt(self):
+        fc = forecast.build(*levered_at_coupon(600e6))
+        res = value_company(build_case(fc['spec']))
+        for r in res['scenarios']:
+            sc = scen(fc['spec'], r['name'])
+            b, k, g = r['terminal'], sc['terminal']['wacc'], sc['terminal']['growth']
+            self.assertAlmostEqual(b['debt_tax_shield_rate'], fc['cost_of_equity']['components']['leverage']['terminal_tax_shield_rate'][r['name']], places=6)
+            self.assertAlmostEqual(b['debt_tax_shield'], min(b['debt'], b['debt'] * b['debt_tax_shield_rate'] / (k - g)), delta=1e-6 * b['debt'])
+            self.assertLessEqual(b['debt_tax_shield'], b['debt'])
+
+    def test_shield_is_bounded_by_the_debt_for_any_rate(self):
+        # a hand-built case (or a tools shift close to growth) can make shield / (rate - g) exceed 1: the bridge caps it at D
+        fc = forecast.build(*levered_at_coupon(600e6))
+        case = build_case(fc['spec'])
+        b = scen(case, 'base')
+        b['terminal']['debt_tax_shield_rate'] = .2
+        r = next(x for x in value_company(case)['scenarios'] if x['name'] == 'base')['terminal']
+        self.assertAlmostEqual(r['debt_tax_shield'], r['debt'])
+
+
+class RequiredReturnConsistencyTests(unittest.TestCase):
+    """0.14.1 review finding: the tools (valuation_tools.shifted_value, decision._at_rate / price_for_hurdle) moved the terminal
+    WACC by (1 - w) x the change with w today's debt weight while the forecast's terminal rate moves 1:1 with the cost of equity,
+    so the value at a required return differed from a forecast rerun at that cost of equity (ORCL run: 70.49 against 67.02)."""
+
+    def test_tools_shift_equals_a_forecast_rerun_at_the_same_cost_of_equity(self):
+        from fundamental_engine import valuation_tools as vt
+        from fundamental_engine.decision import price_for_hurdle, _debt_weight
+
+        def ov(r, roic=None):
+            o = [{'path': 'growth_anchor', 'scenario': 'base', 'value': .35, 'reason': 'test', 'evidence_ids': ['syn:fs']},
+                 {'path': 'cost_of_equity', 'scenario': 'all', 'value': r, 'reason': 'test', 'evidence_ids': ['syn:fs']}]
+            # the terminal ROIC rule is measured against the rate: pinned, so the rerun changes the rate only
+            o += [{'path': 'terminal_roic', 'scenario': s, 'value': roic[s], 'reason': 'test', 'evidence_ids': ['syn:fs']} for s in roic or {}]
+            return {'overrides': o}
+        ke = .1069                                                    # ORCL-shaped: Ke 10.69%, required return 14.69%
+        first = forecast.build(*orcl_shaped(125.3e9), ov(ke))
+        roic = {s: scen(first['spec'], s)['terminal']['roic'] for s in SCEN}
+        fc = forecast.build(*orcl_shaped(125.3e9), ov(ke, roic))
+        case = build_case(fc['spec'])
+        self.assertGreater(fc['cost_of_equity']['components']['leverage']['debt_weight'], .05)
+        w, _ = _debt_weight(case, fc, fc['preview']['today']['base'])
+        self.assertEqual(w, 0.)
+        for h in (.1269, .1469):
+            tools = vt.shifted_value(case, 'base', h - ke)
+            self.assertAlmostEqual(price_for_hurdle(case, h, w)['value'], tools, places=9)
+            rerun = build_case(forecast.build(*orcl_shaped(125.3e9), ov(h, roic))['spec'])
+            for a, b in zip(case['scenarios'], rerun['scenarios']):
+                self.assertAlmostEqual(a['terminal']['wacc'] + (h - ke), b['terminal']['wacc'], places=9)   # 1:1, the same rate
+            # the rerun also re-solves the equity issue prices (a fixed point on its own values); the tools hold financing terms
+            # fixed, like any IRR: with the original terms the rerun's case is the tools' value exactly
+            for a, b in zip(case['scenarios'], rerun['scenarios']):
+                for pa, pb in zip(a['periods'], b['periods']):
+                    pb['equity_issue_price'] = pa['equity_issue_price']
+            self.assertAlmostEqual(value_company(rerun)['annual_values'][0]['base'], tools, delta=1e-6 * tools)
+
+
+class InterestRunRateTests(unittest.TestCase):
+    """0.14.1 (forecast.INTEREST_RUN_RATE): the coupon is interest over the reported debt that paid it, run-rated from the latest
+    quarter when the debt moved materially; debt added from inputs carries that coupon. On 0.14.0 the rate was last fiscal year's
+    interest over today's debt (ORCL 3.5%; a sweep adding debt cut it 3.53% -> 1.84%: the added debt carried no interest)."""
+
+    def rate(self, fc):
+        return next(a for a in fc['assumptions'] if a['id'] == 'debt_interest')['values']['interest_rate_existing']
+
+    def test_latest_quarter_after_a_debt_jump(self):
+        fb, an, card, qa = industrial()                              # FY2025 interest 4m on 100m
+        fb['as_of'] = '2026-05-20'
+        facts.add_fact(fb, 'interest_expense', 'Q@2025-12-31', '2025-12-31', 1e6, 'syn:fs', 'as_reported', '2026-02-20')
+        facts.add_fact(fb, 'interest_expense', 'Q@2026-03-31', '2026-03-31', 3e6, 'syn:fs', 'as_reported', '2026-05-01')
+        qa = qa_for(50e6, 150e6, 300e6, '2026-03-31')                # debt tripled in the quarter
+        facts.set_price(fb, 60., '2026-05-20', 'syn:px')
+        fc = forecast.build(fb, an, card, qa)
+        self.assertEqual(fc['status'], 'built')
+        self.assertAlmostEqual(self.rate(fc), 3e6 * 365.25 / 90 / 300e6, places=4)      # 4.06%, not 4m / 300m = 1.33%
+        self.assertIn('latest quarter', fc['anchors']['debt_basis'] if 'debt_basis' in fc['anchors'] else
+                      next(a for a in fc['assumptions'] if a['id'] == 'debt_interest')['rationale'])
+        # a quarter in line with the fiscal year (within INTEREST_RUN_RATE_GAP) keeps the fiscal-year figure
+        fb2, an2, card2, _ = industrial()
+        facts.add_fact(fb2, 'interest_expense', 'Q@2026-03-31', '2026-03-31', 1.05e6, 'syn:fs', 'as_reported', '2026-05-01')
+        fc2 = forecast.build(fb2, an2, card2, qa_for(50e6, 150e6, 100e6, '2026-03-31'))
+        self.assertAlmostEqual(self.rate(fc2), .04, places=6)
+
+    def test_debt_like_claims_carry_the_coupon(self):
+        fb, an, card, qa = industrial()
+        base = forecast.build(deepcopy(fb), an, card, deepcopy(qa))
+        claims = [{'kind': 'pension_deficit', 'amount': 300e6, 'evidence_ids': ['syn:fs'], 'reason': 'test claim'}]
+        more = forecast.build(deepcopy(fb), an, card, deepcopy(qa), {'debt_like_claims': claims})
+        self.assertAlmostEqual(self.rate(base), .04, places=6)
+        self.assertAlmostEqual(self.rate(more), .04, places=6)       # 4m / 100m reported, not 4m / 400m
+        i0 = value_company(build_case(base['spec']))['scenarios'][1]['forecast'][0]['interest']
+        i1 = value_company(build_case(more['spec']))['scenarios'][1]['forecast'][0]['interest']
+        self.assertGreater(i1, 3.5 * i0)                             # the added 300m pays interest too
 
 
 class TerminalMatureRateTests(unittest.TestCase):
@@ -1673,8 +1813,8 @@ class TerminalMatureRateTests(unittest.TestCase):
             g = scen(fc['spec'], s)['terminal']['growth']
             self.assertAlmostEqual(ke['terminal_cost_of_equity'][s], t['table_rate'])
             self.assertAlmostEqual(scen(fc['spec'], s)['terminal']['cost_of_equity'], t['table_rate'], places=6)
-            lev = comp['leverage']                         # the plan's horizon debt (assumed draws) earns its tax shield only
-            self.assertAlmostEqual(ke['terminal_wacc'][s], max(t['table_rate'] - lev['terminal_debt_weight'] * lev['terminal_tax_shield_rate'], g + .03))
+            # the plan's horizon debt (assumed draws) earns its tax shield only, in the bridge: the rate is the table's
+            self.assertAlmostEqual(ke['terminal_wacc'][s], max(t['table_rate'], g + .03))
             self.assertAlmostEqual(scen(fc['spec'], s)['terminal']['wacc'], ke['terminal_wacc'][s], places=6)
             self.assertLess(ke['terminal_wacc'][s], ke[s] - .02)
         # the same terminal rate in every scenario: the bear is never discounted below the mature table
@@ -1735,9 +1875,7 @@ class TerminalMatureRateTests(unittest.TestCase):
         for s in SCEN:
             self.assertEqual(ke[s], .12)
             self.assertEqual(ke['terminal_cost_of_equity'][s], .12)                   # its components are not the table's: used for both
-            lev = ke['components']['leverage']                                         # less the horizon debt's tax shield only
-            self.assertAlmostEqual(ke['terminal_wacc'][s], max(.12 - lev['terminal_debt_weight'] * lev['terminal_tax_shield_rate'],
-                                                               scen(fc['spec'], s)['terminal']['growth'] + .03))
+            self.assertAlmostEqual(ke['terminal_wacc'][s], max(.12, scen(fc['spec'], s)['terminal']['growth'] + .03))
         self.assertIn('analyst override', next(a for a in fc['assumptions'] if a['id'] == 'cost_of_equity')['rationale'])
         hurdle = next(a for a in fc['assumptions'] if a['id'] == 'moat_basis')['values']['unlevered_cost_of_capital']
         self.assertEqual(hurdle, .12)

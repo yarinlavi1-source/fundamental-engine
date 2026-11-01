@@ -324,10 +324,17 @@ def operating(case, s):
     runoff = n(t, 'net_runoff_obligation', 0)
     text(t['working_capital_rationale'], 'terminal working capital rationale')
     excess_cash = max(0, cash - rows[-1]['minimum_cash'])
-    raw_equity = ev + nol_shield + excess_cash + investments - debt - n(t, 'other_claims', 0) - runoff
+    # the terminal debt's tax shield (optional input debt_tax_shield_rate = promised coupon x tax): a separate bridge item on
+    # THIS scenario's own horizon debt, never a lower discount rate (forecast.TERMINAL_ASSET_RATE). The shield grows with the
+    # firm (constant debt weight, Harris-Pringle) and is discounted at the terminal rate: debt x rate / (wacc - g), at most the
+    # debt itself, so a dollar of horizon debt never adds more than the dollar it subtracts.
+    shield_rate = number(t.get('debt_tax_shield_rate') or 0., 'debt_tax_shield_rate', 0, 1)
+    debt_shield = min(debt, debt * shield_rate / (wacc - g)) if debt > 0 and shield_rate > 0 else 0.
+    raw_equity = ev + nol_shield + debt_shield + excess_cash + investments - debt - n(t, 'other_claims', 0) - runoff
     terminal_price = max(0, raw_equity) / shares
     bridge = {'enterprise_value': ev, 'next_year_revenue': terminal_rev, 'next_year_nopat': nopat,
               'next_year_fcff': terminal_fcff, 'reinvestment_rate': g / roic, 'nol_remaining': nol, 'nol_tax_shield': nol_shield,
+              'debt_tax_shield_rate': shield_rate, 'debt_tax_shield': debt_shield,
               'excess_cash': excess_cash, 'marketable_investments': investments, 'debt': debt, 'other_claims': t['other_claims'],
               'net_runoff_obligation': runoff, 'raw_equity_value': raw_equity,
               'shares': shares, 'value_per_share': terminal_price}

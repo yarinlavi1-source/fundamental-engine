@@ -16,11 +16,14 @@ subtracted for a second time from the resulting owner value.
 The terminal WACC is built from the mature table (the stage and one-off funding
 add-ons to the cost of equity apply to the explicit years only: the forecast is
 mature by its terminal date; structural rows stay). It is the business's own
-rate whatever its financing (not relevered): the terminal debt earns its tax
-shield only, at the base horizon's debt weight (terminal WACC = mature table -
-w_T x min(coupon x tax, 3%), floored at g + 3 points), so more debt never raises
-the equity value; the explicit years and the roll-back of the terminal value
-keep the full Ke.
+rate whatever its financing (not relevered, and no lower rate for low
+leverage), one rate for all scenarios floored at g + 3 points; each scenario's
+horizon debt earns its tax shield only, as a terminal bridge item
+D_T x min(coupon x tax, 3%) / (rate - g), at most D_T, so more debt never
+raises any scenario's equity value. A required-return shift moves this rate
+1:1 with the cost of equity. The existing debt's coupon is interest over the
+reported debt, run-rated from the latest quarter when the debt moved; the
+explicit years and the roll-back of the terminal value keep the full Ke.
 
 ## Young firms and survival
 Aswath Damodaran, Valuing Young, Start-up and Growth Companies (May 2009), 67 pages:

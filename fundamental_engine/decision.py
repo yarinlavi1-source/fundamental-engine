@@ -24,8 +24,10 @@ confidence once. The owner's 14% aspiration is a separate comparison, never the 
 
 Price attractiveness is the base-case internal rate of return at today's price (cash flows held fixed)
 against that hurdle; the bear-case margin of safety is measured at the same required return. A change in
-the cost of equity moves the terminal WACC by the equity weight only (Harris-Pringle: WACC = (1 - w) Ke +
-w Kd (1 - t)), for the IRR and for every value at a required return. The fair value the owner sees is the
+the cost of equity moves the terminal WACC by (1 - w) times the change, w the case's terminal debt weight, for the IRR
+and for every value at a required return: 1:1 for a forecast case (w = 0: its terminal rate is the business's own rate and
+the debt's tax shield is a bridge item, forecast.TERMINAL_ASSET_RATE), the equity weight for a hand-built case whose
+terminal WACC is levered (Harris-Pringle: WACC = (1 - w) Ke + w Kd (1 - t)). The fair value the owner sees is the
 executed base value at the engine's own cost of equity for the company (expected_return.fair_value); the price
 at which the base IRR equals the hurdle ("value at your required return") is shown beside it as the buy-below
 price for the owner's required return (expected_return.buy_below_price), and the verdict is taken at that
@@ -844,9 +846,17 @@ SCENARIOS = ('bear', 'base', 'bull')
 
 
 def _debt_weight(case, fc, base_value):
-    """Debt weight w of the forecast's own relevering (Harris-Pringle: Ke = Ku + (Ku - Kd) D/E, WACC = Ku - w Kd t, so a
-    change in the cost of equity moves the WACC by (1 - w) times that change). Fallback for a case without forecast
-    leverage: opening debt less cash and marketable investments against the base value of equity."""
+    """Debt weight w in the terminal rate's sensitivity to the cost of equity: a change in Ke moves the terminal WACC by
+    (1 - w) times that change. The case's own terminal.debt_weight comes first (valuation_tools.debt_weight reads the same
+    field, so the IRR, the values at a required return and the rate diagnostics share one convention): the forecast stores 0,
+    its terminal rate being the business's own rate that moves 1:1 with Ke (forecast.TERMINAL_ASSET_RATE: the debt earns its
+    tax shield as a bridge item, not through the rate). Fallbacks for a hand-built case: the forecast's own leverage weight,
+    then opening debt less cash and marketable investments against the base value of equity (Harris-Pringle: WACC =
+    (1 - w) Ke + w Kd (1 - t))."""
+    base = next((s for s in (case or {}).get('scenarios') or [] if s.get('name') == 'base'), None)
+    tw = _num(((base or {}).get('terminal') or {}).get('debt_weight')) if (case or {}).get('method') == 'operating' else None
+    if tw is not None:
+        return min(max(tw, 0.), .95), 'case scenarios[base].terminal.debt_weight'
     lev = (((((fc or {}).get('cost_of_equity') or {}).get('components')) or {}).get('leverage')) or {}
     w = _num(lev.get('debt_weight'))
     if w is not None:
@@ -861,7 +871,8 @@ def _debt_weight(case, fc, base_value):
 
 def _at_rate(case, rate, w, names=None):
     """Copy of the case with each named scenario's cost of equity set to `rate`; an operating case's terminal WACC moves by
-    the equity weight (1 - w) times the change (Harris-Pringle), never 1:1, so a levered terminal does not explode."""
+    (1 - w) times the change: 1:1 for a forecast case (w = 0, the terminal rate is the business's own rate), the equity weight
+    for a hand-built case whose terminal WACC is a levered WACC (Harris-Pringle)."""
     c = deepcopy(case)
     for s in c['scenarios']:
         if names is None or s['name'] in names:
@@ -908,7 +919,7 @@ def _solve_irr(case, scenario):
 
 
 def _solve_irr_levered(case, scenario, w):
-    """Bisection on the cost of equity with the terminal WACC moved by the equity weight (same search range as
+    """Bisection on the cost of equity with the terminal WACC moved by (1 - w) x the shift (same search range as
     implied_cost_of_equity: -8pp .. +30pp around the model rate, terminal WACC kept above terminal growth)."""
     s = next((x for x in case['scenarios'] if x['name'] == scenario), None)
     if s is None:
@@ -946,7 +957,7 @@ def _solve_irr_levered(case, scenario, w):
 
 class _Rates:
     """Scenario annual values with every scenario's cost of equity set to a given required return (terminal WACC moved by the
-    equity weight, the same convention as the IRR); cached per rate. The base value today at rate h is the price at which the
+    (1 - w) x the change, the same convention as the IRR); cached per rate. The base value today at rate h is the price at which the
     base IRR equals h ('value at your required return'); the bear value at h is the margin-of-safety value at that return."""
 
     def __init__(self, case, price, w=0.):
@@ -991,8 +1002,8 @@ class _Rates:
             return {'value': None, 'status': 'invalid', 'hurdle': rate,
                     'reason': 'this required return makes the terminal invalid (WACC <= growth) or the case unfunded'}
         out = {'value': v, 'status': 'solved', 'hurdle': rate, 'label': 'value at your required return', 'debt_weight': self.w,
-               'formula': 'base value with cost of equity = required return (terminal WACC moved by the equity weight 1 - w, '
-                          'Harris-Pringle); the base IRR at this price equals the required return'}
+               'formula': 'base value with cost of equity = required return (terminal WACC moved by (1 - w) x the change: 1:1 for a '
+                          'forecast case); the base IRR at this price equals the required return'}
         if self.price:
             out['change_from_price'] = v / self.price - 1
         return out
@@ -1311,7 +1322,7 @@ def _required_return(A, index, card, g, rk, an=None, ke=None, cyc_ev=None):
 
 def price_for_hurdle(case, hurdle, w=0.):
     """Price at which the base IRR equals the hurdle = the base value with cost of equity moved to the hurdle (terminal WACC
-    moved by the equity weight 1 - w; with no net debt this is the convention of implied_cost_of_equity). Exact, no search."""
+    moved by (1 - w) x the change; w = 0, a forecast case, is the convention of implied_cost_of_equity). Exact, no search."""
     if case is None or case.get('method') not in ('operating', 'residual_income') or hurdle is None:
         return None
     base = next(s for s in case['scenarios'] if s['name'] == 'base')
@@ -1325,7 +1336,7 @@ def price_for_hurdle(case, hurdle, w=0.):
     if v is None:
         return {'value': None, 'status': 'invalid', 'reason': 'hurdle makes the terminal invalid (WACC <= growth) or the case unfunded'}
     return {'value': v, 'status': 'solved', 'hurdle': hurdle,
-            'formula': 'base value at cost of equity = hurdle (terminal WACC moved by the equity weight); base IRR at this price equals the hurdle'}
+            'formula': 'base value at cost of equity = hurdle (terminal WACC moved by (1 - w) x the change, 1:1 for a forecast case); base IRR at this price equals the hurdle'}
 
 
 def _hurdle_band(req, index, err_level, rates, moat=None):
@@ -1496,7 +1507,7 @@ def _at_required(view, rates, h):
     vals = {s: rates.at(h, s) for s in SCENARIOS}
     p, bear = view.get('price'), vals['bear']
     return {'rate': h, **vals, 'loss_to_bear': max(0., 1 - bear / p) if bear is not None and p else None,
-            'semantics': 'scenario values today with every cost of equity at your required return (terminal WACC moved by the equity weight)'}
+            'semantics': 'scenario values today with every cost of equity at your required return (terminal WACC moved by (1 - w) x the change, 1:1 for a forecast case)'}
 
 
 def _expected(irrs, view, index, req, rates, qcase, res, an, err_level, w=0., moat=None, as_of=None):
@@ -1529,7 +1540,7 @@ def _expected(irrs, view, index, req, rates, qcase, res, an, err_level, w=0., mo
           'owner_aspiration': OWNER_ASPIRATION,
           'meets_owner_aspiration_14pct': None if base_irr is None else base_irr >= OWNER_ASPIRATION,
           'semantics': ('IRR = cost of equity at which the scenario value equals today\'s price, cash flows held fixed, the terminal '
-                        'WACC moving by the equity weight (1 - debt weight; with no net debt this is valuation_tools.implied_cost_of_equity); '
+                        'WACC moving by (1 - w) x the change (w = the case\'s terminal debt weight, 0 for a forecast case: 1:1, the convention of valuation_tools.implied_cost_of_equity); '
                         'a conditional return, not a forecast. The fair value is the base value at the model cost of equity (the '
                         'executed valuation); the value at your required return is the buy-below price, the price at which the base IRR '
                         'equals the required return, where the verdict and the bear-case margin of safety are measured. The expected '

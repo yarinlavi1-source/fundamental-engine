@@ -1,6 +1,9 @@
-## Unreleased — ORCL debt fixes (29.10.2026)
+## 0.14.1 — ORCL debt fixes and their review (29.10.2026)
 
-The ORCL deep run (as_of 2026-10-29) found two engine defects; its reviewers held the result as UNVERIFIED.
+The ORCL deep run (as_of 2026-10-29) found two engine defects; its reviewers held the result as UNVERIFIED. The first fix
+(commit 40a3d7f, described in the first three bullets as it was then) was reviewed; the review findings are fixed in 0.14.1
+(the "Review fixes" list below, which supersedes the terminal formula of the second bullet). Version 0.14.1 in pyproject,
+`__version__` and the brain catalog.
 
 - facts: `LongTermNotesAndLoans` is read as `long_term_debt_tagged` (dataqa resolves its scope with the roll-forward like the
   other LongTermDebt-type tags). Oracle tags its noncurrent "Notes payable and other borrowings" line LongTermNotesPayable in the
@@ -40,7 +43,60 @@ The ORCL deep run (as_of 2026-10-29) found two engine defects; its reviewers hel
   sit below prices on average. The alternative consistent choice (the unlevered Ku of the table at market leverage as every
   company's terminal rate) would instead raise every low-debt company's terminal value; it was not taken because the engine
   deliberately keeps the table rate for below-market leverage (no credit for a lower rate). Open: the explicit years still
-  discount a plan's assumed debt draws at one Ke (docs/LIMITATIONS.md item 8).
+  discount a plan's assumed debt draws at one Ke (docs/LIMITATIONS.md item 8). Correction (review): that A/B ran on the code
+  with BOTH fixes; the LongTermNotesAndLoans tag touches none of its 45 names except ORCL 2026 (not a walk-forward formation),
+  so the sample measures the terminal-rate fix only. The tag does move other companies' opening debt (dataqa resolved debt,
+  millions, before -> after): CPAY 2019 1,837 -> 2,708 and 2023 2,100 -> 6,798; NTRA 2019 50 -> 124 and 2023 80 -> 362; TEVA
+  2019 30,462 -> 28,108, 2023 21,761 -> 20,668, 2025 16,687 -> 16,628, 2026-10 16,650 -> 16,592; ORCL 2026-10 7,625 ->
+  125,337. The universe-wide effect of either fix is unmeasured.
+
+Review fixes (0.14.1):
+
+- One rate convention for every required-return calculation. 0.14.0 kept today's debt weight in the case
+  (`terminal.debt_weight`), so `valuation_tools.debt_weight` / `shifted_value` / `discount_rate_band` /
+  `implied_cost_of_equity` and `decision._debt_weight` / `_at_rate` / `price_for_hurdle` moved the terminal WACC by (1 - w) x
+  the change in Ke while the forecast's own terminal rate moves 1:1 with Ke (ORCL: value at the 14.69% hurdle 70.49).
+  Now the forecast stores `terminal.debt_weight` 0 (the terminal rate is the business's own rate; the debt's shield is a
+  bridge item) and `decision._debt_weight` reads the case's field first, so all of them shift the terminal rate 1:1; a
+  hand-built case with a levered WACC keeps the equity-weight convention. ORCL run: value at the hurdle 70.49 -> 67.41.
+  Test: `RequiredReturnConsistencyTests` (ORCL-shaped: the tools' value at 12.69% and 14.69% equals a forecast rerun at that
+  cost of equity with the terminal ROIC pinned and the rerun's re-solved equity issue prices set back to the original terms;
+  on 0.14.0 the terminal rates differed by 0.35 x the shift). Not the same thing as an analyst Ke override rerun: an override
+  replaces the terminal rate (the dropped stage and funding add-ons do not stay dropped), re-sets the terminal ROIC rules
+  measured against that rate and re-solves the issue prices, so on the ORCL run an all-scenario override of 14.69% gives base
+  57.23 while the value at the 14.69% hurdle is 67.41; the hurdle is a shift of the whole rate structure by convention
+  (decision.py, cyclicality note).
+- Per-scenario shield at one rate. 0.14.0 lowered the one shared terminal rate by the BASE horizon's debt weight, so a bull
+  far larger than its debt still rose with debt (review probe: coupon 12%, bull growth anchor 0.7, debt 100m -> 400m: bull
+  384.98 -> 390.97). Now the rate is max(terminal table or override, g + 3 points), the same for all scenarios whatever the
+  debt, and each scenario's own horizon debt earns its shield as an explicit bridge item in `valuation.operating`:
+  `terminal.debt_tax_shield` = min(D_T,s, D_T,s x `debt_tax_shield_rate` / (rate - g_s)), `debt_tax_shield_rate` =
+  min(Kd_promised x tax_s, 3%) in each scenario's terminal (optional input, 0 by default). Tests: `PerScenarioShieldTests`
+  (the probe at bull anchors 0.5 and 0.7, debt 10m -> 600m: bear, base and bull non-increasing; the bridge term per scenario;
+  bounded by D even at a 20% shield rate); `DebtMonotonicityTests` still pass. ORCL run sweep: bear 33.25 / 28.27 / 19.65 /
+  7.77, base 193.98 / 191.70 / 169.21 / 135.51, bull 443.13 / 440.32 / 409.55 / 344.26 at +0 / +20 / +60 / +120bn.
+- Coupon of the existing debt (`forecast.INTEREST_RUN_RATE`). 0.14.0 used last fiscal year's interest / today's debt incl.
+  claims from inputs: ORCL 3.53% after the debt jump, and adding debt in a sweep cut it (3.53% -> 1.84%) so the added debt
+  carried no interest. Now interest is divided by the REPORTED debt (claims added from inputs carry that rate), and the
+  latest standalone quarter, annualized, replaces the fiscal-year interest when it ends after the fiscal year within 45
+  days of the debt's balance date and differs from it by more than 15%. ORCL: 1,428m x 365.25/92 = 5.67bn over 125.3bn =
+  4.52%, constant across the sweep. Tests: `InterestRunRateTests` (a debt jump in the quarter; a quarter in line keeps the
+  fiscal year; debt_like_claims carry the coupon).
+- Reporting: `components.leverage.terminal_tax_shield_rate` is now a dict by scenario and equals each scenario's applied
+  `terminal.debt_tax_shield_rate`; `terminal_debt_weight` is gone; the misleading `components.terminal.leverage_relevered`
+  (always 0) is removed (`tax_shield_rate` by scenario takes its place). Docs: MODULE_CONTRACTS, valuation_research.
+- Documented choice kept: the company's own terminal rate is the mature table whatever its leverage; low leverage earns no
+  lower rate (no unlevered Ku below the table), as for the explicit years.
+- Invariance hashes re-pinned (fixture base values move by under 0.001%: the base shield in the bridge equals 0.14.0's
+  closed form at the base's own weight). A/B on the final code (`engine_backtest.company_row`, the same 45 names x
+  2019/2023/2025, 113 rows valued by both, no errors, no verdict changed): against the engine before both ORCL fixes, base
+  median -9.7% (mean -10.6%, p25 -14.5%, p75 -3.0%; 95 down, 16 up, max +4.2% TDG 2025 from the quarter run-rate coupon),
+  indebted names median -12.0%, controls +0.05%, bear median -6.8%; median value / price 0.734 -> 0.680; base IRR median
+  -0.06 points. Against 0.14.0: base median 0.0% (largest moves MAR 2019 -4.5%, IBM 2023 -3.3%, TDG 2025 +4.2%, T 2023
+  0.00 -> 0.10), bear median +0.9% (each scenario now earns the shield on its own horizon debt, not at the base horizon weight). Sample
+  chosen leverage-heavy, as before: a consistency fix, not a calibration; the universe-wide effect is unmeasured.
+  Rerun on the committed code (01.11.2026): identical to the row (113 rows, every value unchanged). Wheel check passes at
+  0.14.1.
 
 ## Unreleased — GOOGL run fixes (27.10.2026)
 

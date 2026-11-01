@@ -153,9 +153,10 @@ W_CAP = .95   # same clamp as decision._debt_weight
 
 
 def debt_weight(case, scenario='base'):
-    """(w, source): a change in the cost of equity moves the terminal WACC by (1 - w) times that change (Harris-Pringle:
-    WACC = (1 - w) Ke + w Kd (1 - t)), the convention of decision.py. The scenario's terminal.debt_weight (the forecast's own
-    relevering) when the case stores it; else opening net debt (debt - cash - marketable investments) / (net debt + base value
+    """(w, source): a change in the cost of equity moves the terminal WACC by (1 - w) times that change, the convention of
+    decision.py. The scenario's terminal.debt_weight when the case stores it: the forecast stores 0, its terminal rate being the
+    business's own rate that moves 1:1 with Ke while the debt's tax shield is a bridge item (forecast.TERMINAL_ASSET_RATE);
+    else, for a hand-built case whose terminal WACC is levered (Harris-Pringle: WACC = (1 - w) Ke + w Kd (1 - t)), opening net debt (debt - cash - marketable investments) / (net debt + base value
     x opening shares), like decision._debt_weight; 0 without net debt or for a non-operating case (no terminal WACC)."""
     if case['method'] != 'operating':
         return 0., 'no terminal WACC (not an operating case)'
@@ -200,7 +201,7 @@ shifted_value = _shifted_value   # public name; decision.price_for_hurdle uses i
 
 
 def discount_rate_band(case, scenario='base', shift=.01, w=None):
-    """Value today at cost of equity minus/plus one shift, the terminal WACC moved by the equity weight (1 - w) x shift.
+    """Value today at cost of equity minus/plus one shift, the terminal WACC moved by (1 - w) x shift (1:1 for a forecast case).
 
     Answers: does a modest, defensible change in required return flip the price
     conclusion? It is not a probability interval.
@@ -217,8 +218,8 @@ def discount_rate_band(case, scenario='base', shift=.01, w=None):
     return {'scenario': scenario, 'shift': shift, 'value_lower_rate': low_rate, 'value': central, 'value_higher_rate': high_rate,
             'relative_width': relative_width, 'quote_inside_band': flips, 'debt_weight': w, 'debt_weight_source': w_src,
             'terminal_wacc_shift': (1 - w) * shift if case['method'] == 'operating' else 0.,
-            'meaning': 'Values with the cost of equity moved by the shift and the terminal WACC by the equity weight (1 - debt weight) '
-                       'times the shift (Harris-Pringle; 1:1 without net debt). A quote inside the band means a one-step change in '
+            'meaning': 'Values with the cost of equity moved by the shift and the terminal WACC by (1 - debt weight) times the shift '
+                       '(1:1 for a forecast case and without net debt; the equity weight for a hand-built levered WACC). A quote inside the band means a one-step change in '
                        'required return changes the cheap/expensive call.'}
 
 
