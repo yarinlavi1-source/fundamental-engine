@@ -1,4 +1,60 @@
-## Unreleased (0.14.2) — engine bugs from the 01.11.2026 portfolio batch
+## 0.14.2 — engine bugs from the 01.11.2026 portfolio batch
+
+### Review round 1 (of 27b2bf6): NOT READY -> fixed
+
+The version is now 0.14.2 everywhere it is pinned (pyproject, `__version__`, brain/catalog.json): values move (META, PLTR), so
+casefiles and the forecast ledger of main and this release can be told apart.
+
+1. build_phase invented margin (blocking). `depreciation_pct` lowered the D&A target below today's load and the roll-off step
+   added the difference to the operating margin on any company (MSFT +24%, META +28% in the review probe). Now: the D&A load is
+   the path's START and its maintenance level (no roll-off is added, so it never raises the margin path); tiers guidance /
+   contracted / own_history only, with a filing among the evidence (`forecast._filing_evidence`); applied only to the
+   build-phase shape (TTM operating margin <= -50% or capex >= 100% of revenue) or where the paths fail without it, else dropped
+   with `build_phase_not_applied` (high). The ASTS shape (start -0.95, D&A 0.25, SBC 0.30) now passes the forecast. The error for a
+   path that still fails names the scenario, period and the three loads.
+2. equity_issue_price (blocking): tier contracted only, only with an equity_proceeds override at tier contracted in force for
+   that scenario, applied only to the periods whose contracted proceeds are positive; contracted proceeds are net, so the
+   scenario's equity_fee_rate is 0 (no second 3%). The pack refuses the price at any other tier. The review's META probe
+   (analyst tier, 3000) is refused at pack-to-inputs.
+3. Split root cause: same-factor records inside one count step are one event (`_same_split_once`, no day window); the product is
+   used only where it, not the single factor, leaves a residual inside SPLIT_ISSUANCE_BAND (`_split_factor_of`); a dated split
+   whose residual stays outside the band is no longer decisive. NOW with the issuer tag moved to 2025-10-15 / -10-02 / -11-01
+   gives factor 5.
+4. `ticker_run.valued()` is false for a funding_blocked valuation, a missing / non-finite base value, and a value set by the
+   leverage cap (`leverage_capped` / `_equity_not_positive` / `_not_converged`: "the value is set by the cap constant"); each with
+   one Hebrew line (`NOT_VALUED_HE`), also in ticker-status.
+5. Year-1 note: names only the quote, never a second 'worth today' number beside the fair value.
+6. Smaller: pipeline.run docstring/comment say the path ROIC reaches the DCF (capital_link); `_primary_filing_evidence` requires
+   retrieval primary_document; a cash rollforward allows half the rounding unit of a balance tagged to 10^6..10^9 (ASTS's
+   cash incl. restricted 3.5B -> 2.7B against a flow to the dollar: the ASTS cash field is no longer blocked after the
+   same-family resolution).
+7. Found while making NBIS / ASTS run: (a) a raw `growth` list shorter than the horizon (NBIS 3 values, ASTS 5; analyst.md
+   defines it as one value per fiscal year) is spread onto the fiscal years and the later years fade by the engine's half-life
+   rule (`growth_list_faded`); a list longer than the fiscal years is refused with the period count and ends; (b) the evidence
+   pack converts money given in millions / billions / thousands (NBIS's revenue guidance 3,000-3,400 'USD_millions' had
+   started the forecast at $3,200); (c) a company_path roic at or below terminal growth no longer fails the whole yearly table:
+   that scenario is not priced (flag `roic_at_or_below_growth`); (d) two `_num(...) is None` checks in the pack (always false)
+   are fixed.
+
+Re-run of ticker-value on copies of the 01.11 run folders (before = 27b2bf6 as the review reproduced it; after = this round;
+'+' rows add, on a copy, inputs the runs did not carry: META's contracted forward sale, RDDT's vested options, and for ASTS the
+review's build-phase shape as a PROBE, not an analyst reading):
+
+| ticker | fair value before / after | base IRR before / after | year-5 base before / after | after: valued? |
+|---|---|---|---|---|
+| NOW | 146.4 / 146.4 | 10.79% / 10.79% | 216.1 / 216.1 | valued |
+| MSFT | 467.8 / 467.8 | 9.86% / 9.86% | 692.3 / 692.3 | valued |
+| RDDT | 260.6 / 260.6 | 14.89% / 14.89% | 378.9 / 378.9 | valued (+options: 254.4, 14.75%, 369.3) |
+| META | 738.3 / 738.3 | 11.52% / 11.52% | 1125.9 / 1125.9 | valued (+forward sale: 735.2 -> 735.5, no second fee; the analyst-tier 3000 probe is refused) |
+| APH | 133.8 / 133.8 | 10.37% / 10.37% | 202.2 / 202.2 | valued |
+| PLTR | 113.6 / 113.6 | 8.64% / 8.64% | 168.1 / 168.1 | valued |
+| NBIS | not valued / not valued | - | - | funding_blocked (base 3.1 against 155.69 withheld): the run's own economics (mature margin 8-25%, sales-to-capital 0.25-0.45, path ROIC 1.6-8.9%) need unfunded capital; the forecast now builds (growth list faded, guidance units scaled) |
+| ASTS | not valued / not valued | - | - | build phase (TTM margin -660%): no build_phase input in the run; +probe: forecast builds, value set by the leverage cap (2.97B of convertibles not reconciled as converts), so not valued |
+
+A/B on the walk-forward helper (45 names x 2019/2023/2025, none of these inputs): 127 rows, 113 valued, every field identical
+to 27b2bf6 / main.
+
+## (original 27b2bf6 notes)
 
 Ten engine causes found while valuing the portfolio on 2026-11-01 (run folders runs/tickers/<T>_2026-11-01, their review and
 repair files). Company-first: every new input needs the company's own evidence ids; nothing is defaulted from another

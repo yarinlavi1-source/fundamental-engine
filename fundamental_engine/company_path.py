@@ -324,7 +324,12 @@ def _economics_for(cs, fy, as_of, roic, s, res_sc):
     if ket is None:
         ket, src = ke, 'cost_of_equity (the case has no separate terminal cost of equity)'
     if roic <= gt:
-        raise ValueError(f'company_path {s}: roic {roic:.4f} must exceed the executed terminal growth {gt:.4f}')
+        # growth at a return at or below its own growth rate has no finite value (each year's growth costs more than it adds,
+        # forever): this scenario's yearly prices are not computed (economics_unavailable, flagged roic_at_or_below_growth); the
+        # other scenarios and the fair value still stand (0.14.2: NBIS's bear 1.6% had stopped the whole yearly table)
+        return {'status': 'not_computed', 'formula': ECON_FORMULA, 'roic': roic, 'terminal_growth': gt, 'cost_of_equity': ke,
+                'terminal_cost_of_equity': ket, 'reason': f'roic {roic:.4f} is at or below the executed terminal growth {gt:.4f}: '
+                'no finite value', 'roic_below_growth': True, 'multiple_path': [None] * (YEARS + 1), 'values': []}
     rec = economics(fy, as_of, ke, ket, gt, roic)
     if roic > ROIC_FLAG:
         rec['roic_check'] = (f'roic {roic:g} is read as a decimal: {roic:.0%} incremental return on capital (1.0 = 100%); a percent '
@@ -373,6 +378,14 @@ def build(cp, val, known=None, events=None, fc=None):
         econ = (_economics_for(case_sc.get(s) or {}, fy, as_of, x['roic'], s, ex) if x.get('multiple_from') == 'economics'
                 else None)
         mpath = econ['multiple_path'] if econ else x['multiple_path']
+        if econ and econ.get('roic_below_growth'):
+            out['flags'].append({'id': 'roic_at_or_below_growth', 'scenario': s, 'severity': 'high', 'roic': x['roic'],
+                                 'terminal_growth': econ['terminal_growth'],
+                                 'text': f"{s}: the company_path roic {x['roic']:.1%} is at or below the executed terminal growth "
+                                         f"{econ['terminal_growth']:.1%}: growth at that return has no finite value, so this scenario's "
+                                         'yearly prices are not computed',
+                                 'text_he': f"תרחיש {LABEL_HE[s]}: התשואה על ההון ({x['roic']:.1%}) לא גבוהה מקצב הצמיחה לטווח ארוך "
+                                            f"({econ['terminal_growth']:.1%}), כך שכל צמיחה הורסת ערך; לכן אין מחירים שנתיים בתרחיש הזה."})
         rows = []
         for t, m in enumerate(mpath):
             f = fy[t + 1] if t + 1 < len(fy) else None
@@ -435,9 +448,11 @@ def build(cp, val, known=None, events=None, fc=None):
                                  'gap': y0 / quote - 1,
                                  'text': f'base: today\'s EPS x multiple {y0:.2f} is {y0 / quote - 1:+.0%} from the quote {quote:.2f}; '
                                          "year 1's change is mostly that gap closing, not one year of the business",
-                                 'text_he': f"שימו לב: לפי המודל המניה שווה כבר היום כ־{_fmt(y0)} בתרחיש הבסיסי, {abs(y0 / quote - 1):.0%} "
-                                            f"{'מעל' if y0 > quote else 'מתחת'} למחיר של היום ({_fmt(quote)}). השינוי בשנה 1 כולל את כל "
-                                            'הפער הזה, ולכן הוא לא מראה צמיחה של שנה אחת; משנה 2 השינוי השנתי משקף את העסק.'})
+                                 # one 'worth today' number in the table: the fair value row; this note names no second one
+                                 # (0.14.2 review: EPS x multiple today, 143 beside a fair value of 134, read as a second value)
+                                 'text_he': f"שימו לב: השינוי בשנה 1 כולל גם פער בין המחיר של היום ({_fmt(quote)}) לבין התמחור של "
+                                            f"המודל לרווח של היום ({'גבוה' if y0 > quote else 'נמוך'} ממנו ביותר מ־{YEAR0_GAP_NOTE:.0%}), "
+                                            'ולכן הוא לא מראה צמיחה של שנה אחת; משנה 2 השינוי השנתי משקף את העסק.'})
         if x['justification'] == 'peak':
             if hist is None:
                 out['flags'].append({'id': 'peak_unchecked', 'scenario': s, 'severity': 'medium',

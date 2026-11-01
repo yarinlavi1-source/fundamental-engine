@@ -31,11 +31,14 @@ same connectors (SEC, Interactive Brokers, Alpha Vantage, FMP, LunarCrush, …).
 - **Latest state (read these to catch up):** 01.11.2026: 0.14.1 merged (ORCL debt fixes over six reviewed rounds:
   LongTermNotesAndLoans read, more debt never raises equity value or the IRR, verdict-scale base IRR as the table's return row,
   separate convergence return with reinvested distributions; CHANGELOG Unreleased 0.14.1). The ten engine bugs of the 01.11
-  portfolio batch are fixed in CHANGELOG Unreleased 0.14.2 (branch eng-batch1101): split counted once, company_path ROIC
+  portfolio batch are fixed in CHANGELOG 0.14.2 (branch eng-batch1101): split counted once, company_path ROIC
   linked into the DCF (forecast.capital_link), committed equity (tier contracted + equity_issue_price), the year-1 gap note,
   the finance-lease reinvestment warning, vested options by the treasury method (forecast_options.options), honest 'not
   valued' + evidenced build_phase, same-family dataqa resolutions citing the filing, economics-before-keyword routing, and an
-  interest run-rate regression test. `docs/CHANGELOG.md` Unreleased (27.10.2026 GOOGL run fixes: bounded vendor
+  interest run-rate regression test; review round 1 of 27b2bf6 fixed (version 0.14.2: build_phase can no longer add margin
+  and applies only to the build-phase shape with filing evidence, equity_issue_price contracted only, split once per count
+  step, not valued when funding-blocked or leverage-capped with a Hebrew reason, short growth lists faded, pack units scaled;
+  CHANGELOG 0.14.2 'Review round 1'). `docs/CHANGELOG.md` Unreleased (27.10.2026 GOOGL run fixes: bounded vendor
   debt scope in dataqa, pack `forecast_options.debt_like_claims`; 26.10.2026 engine causes of the repair passes: economics-mode
   company_path, draft tables with numbers, quarterly-guide current year, acquired step, stub draws, dataqa resolutions; measured
   fast-ticker times: NVDA 36, CRDO 30, APH ~30 minutes, GOOGL 60 minutes with an added adversarial verify layer; open engine

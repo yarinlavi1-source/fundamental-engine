@@ -379,7 +379,9 @@ def run(fb, inputs=None):
     """Run every stage on one FactBook. inputs: {'card': ..., 'forecast': ..., 'reviewer': ..., 'decision': ..., 'analyst': name(s)?,
     'analyst_sheet': the analyst's evidenced readings of the six questions (analyst_sheet.py), 'market_context': country-risk
     exposure overrides, evidenced geopolitical exposures and the market regime readings (market_context.py), 'company_path':
-    the evidenced forward multiple path per scenario (company_path.py; display only, outside the review digest)}; analyst_sheet may carry the optional scenario_events behind
+    the evidenced forward multiple path per scenario (company_path.py; the yearly table itself is outside the review digest, but
+    since 0.14.2 an economics-mode scenario's ROIC also sets that scenario's DCF terminal ROIC and reinvestment through
+    forecast inputs.capital_link unless the analyst overrode those, so it can move the fair value)}; analyst_sheet may carry the optional scenario_events behind
     each bear/base/bull price. casefile['scenario_reasons'] (scenario_reasons.build) reads the finished casefile: the condition
     and the business of each dated scenario price, nothing revalued.
 
@@ -448,7 +450,8 @@ def run(fb, inputs=None):
     cf['analyst_sheet'] = stage('analyst_sheet', lambda: analyst_sheet.build(fb, cf, inputs, cond))
     if 'evidence_pack' in inputs:         # a ticker run's provenance (evidence_pack.to_inputs): potential readings, falsifiers, notes
         cf['evidence_pack'] = deepcopy(inputs['evidence_pack'])
-    if 'company_path' in inputs:          # company_path.py: the yearly price per scenario (EPS x multiple); reads, never moves, a value
+    if 'company_path' in inputs:          # company_path.py: the yearly price per scenario (EPS x multiple), read from the executed
+        # valuation; the path's ROIC already reached the DCF above (capital_link), this stage itself changes no value
         from . import company_path
         known = set(fb.get('sources') or {}) | {q['id'] for q in fb.get('qualitative') or []}
         events = (cf.get('analyst_sheet') or {}).get('scenario_events')

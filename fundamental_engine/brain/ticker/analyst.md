@@ -131,7 +131,9 @@ Exact shapes (from evidence_pack.KEYS; the skeleton has them filled with this ru
   own_history | competitor | market | analyst. Levers: the economic levers (growth_anchor, growth_half_life, terminal_growth,
   mature_margin, sales_to_capital, terminal_roic, cost_of_equity, tax_rate, payout_fraction, minimum_cash_months,
   margin_convergence_years: one number per scenario), a driver key (cash_cost_ratio, sbc_pct, working_capital_ratio, ...:
-  a number or a yearly list), terminal.<key>, or growth (a yearly list per scenario). A lever you cannot evidence is NOT set
+  a number or a yearly list), terminal.<key>, or growth (a yearly list per scenario: one value per fiscal year from the next
+  one, as many years as the evidence covers; the engine fades the years after the list from its last value to terminal growth
+  at the half-life rule and warns growth_list_faded). A lever you cannot evidence is NOT set
   (the engine keeps its rule and shows it as a gap).
 - drivers.current_year_revenue {"source_tier": "guidance", "evidence_ids": [the ONE revenue guidance item for the fiscal
   year in progress (auto.json revenue_guidance_for_year_in_progress), the remainder item, the release], "remainder": the
@@ -167,11 +169,17 @@ Exact shapes (from evidence_pack.KEYS; the skeleton has them filled with this ru
   method_not_supported_by_forecast 'cash-cost ratio outside driver bounds' (TTM margin far below -100%, D&A or SBC loads
   measured on a tiny revenue): the first forecast year's operating margin and the D&A / SBC loads the evidence supports (e.g.
   guided revenue and cost guidance, the depreciation schedule of the contracted capacity), each from a cited document; nothing
-  is defaulted, a value without evidence stays out and the company stays 'not valued'.
+  is defaulted, a value without evidence stays out and the company stays 'not valued'. source_tier guidance, contracted or
+  own_history only (never analyst), and evidence_ids must include the FILING (10-K / 10-Q / 20-F). The engine applies it only
+  to a company in the build-phase shape (TTM operating margin at or below -50%, or capex at least 100% of revenue) or whose
+  forecast cannot start without it; elsewhere it is ignored (warning build_phase_not_applied). depreciation_pct is both the
+  start and the maintenance D&A load: it never raises the operating margin path (the mature margin stays yours / history's).
 - Contracted financing (a forward sale, a drawn facility after the balance sheet): drivers.equity_proceeds (or debt_draw) per
-  period at source_tier contracted, citing the agreement; drivers.equity_issue_price = the contracted price (one number: used
-  where the equity falls). The scenario's financing is then committed, the shares issued at that price. Never for an ATM or
-  plan without an agreement (that stays a gap or the engine's assumed financing).
+  period at source_tier contracted, citing the agreement, as NET proceeds (the filing's amount after the underwriting spread:
+  no second fee is charged); drivers.equity_issue_price = the contracted price at source_tier contracted only (one number: used
+  only in the periods whose equity_proceeds are contracted; a price at any other tier, or without contracted proceeds, is
+  refused). The scenario's financing is then committed, the shares issued at that price. Never for an ATM or plan without an
+  agreement (that stays a gap or the engine's assumed financing, issued at the lower of the quote and the model's own value).
 - One capital intensity per scenario: company_path roic (analyst_path) also sets that scenario's DCF terminal ROIC and its
   reinvestment (sales_to_capital = ROIC / (final margin x (1 - tax))). Set drivers.terminal_roic or sales_to_capital only
   with their own evidence; then company_path flags capital_intensity_gap where the two differ by more than 2 points.

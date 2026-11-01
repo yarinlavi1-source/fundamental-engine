@@ -80,9 +80,12 @@ this same run was moved to attempts/; its gather fragments stayed: treat your ow
    dataqa_resolutions (filing evidence, analyst.md), bought revenue in the current year's step with forecast_options
    acquired_revenue, a claim ahead of the shares (a preferred stock, a royalty financing) with forecast_options
    debt_like_claims, vested in-the-money options with forecast_options options, contracted equity (a forward sale) with
-   drivers.equity_proceeds at tier contracted plus drivers.equity_issue_price, a build-phase company the engine did not value
-   (value.json failed_at 'not valued: ... cash-cost ratio outside driver bounds') with forecast_options build_phase from cited
-   documents only, a DCF/yearly-table capital mismatch (company_path flag capital_intensity_gap) by removing the unevidenced
+   drivers.equity_proceeds at tier contracted (net proceeds) plus drivers.equity_issue_price (tier contracted only), a
+   build-phase company the engine did not value (value.json failed_at 'not valued: ... cash-cost ratio outside driver bounds')
+   with forecast_options build_phase from cited documents only (tier guidance / contracted / own_history, the filing among the
+   evidence; if the filing does not give the loads, the company stays 'not valued' and value.json not_valued_he says why in
+   one Hebrew line: report that line, never invent loads), a company_path roic at or below terminal growth (flag
+   roic_at_or_below_growth: that scenario has no yearly prices) only with new evidence, a DCF/yearly-table capital mismatch (company_path flag capital_intensity_gap) by removing the unevidenced
    side (the path roic links into the DCF by itself); never edit a saved payload. A finding you cannot fix with evidence stays open. Validate every file you changed:
    `python -m fundamental_engine ticker-check {RUN} <file>`.
 3. Rerun the deterministic step: `python -m fundamental_engine ticker-value {RUN}` (merge the parts, pack-merge,

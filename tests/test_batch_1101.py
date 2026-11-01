@@ -54,10 +54,28 @@ class SplitOnceTests(unittest.TestCase):
         self.assertAlmostEqual(prod, .98, places=6)                          # -1%/yr, never -41%/yr
         self.assertEqual(steps[1]['factor'], 5.0)
 
+    def test_issuer_tag_dated_by_its_quarter_context_is_still_one_event(self):
+        # review of 27b2bf6: the issuer's tag moved to 2025-10-15 (a context up to ~90 days from the market date) brought x25 back
+        for when in ('2025-10-15', '2025-10-02', '2025-11-01'):
+            fb = self.split_fb([{'date': when, 'factor': 5.0, 'source_id': 'sec:cf'},
+                                {'date': '2025-12-18', 'factor': 5.0, 'source_id': 'ib:px'}])
+            sp = dataqa.validate(fb)['splits'][0]
+            self.assertEqual(sp['factor'], 5.0, when)
+            self.assertAlmostEqual(sp['residual_ratio'], 490 / 99 / 5, places=6)
+
+    def test_a_split_leaving_a_residual_outside_the_band_is_not_decisive(self):
+        fb = self.split_fb([{'date': '2025-12-05', 'factor': 2.0, 'source_id': 'sec:cf'}])   # 99M -> 490M is not a 2-for-1
+        sp = dataqa.validate(fb)['splits']
+        self.assertTrue(not sp or sp[0]['evidence']['tests'].get('corporate_action') != 'supports')
+
     def test_distinct_splits_and_unknown_factors(self):
         once = dataqa._same_split_once
         two = once([{'date': '2024-01-10', 'factor': 2.0}, {'date': '2024-09-10', 'factor': 2.0}])
-        self.assertEqual(len(two), 2)                                        # months apart: two splits
+        self.assertEqual(len(two), 1)                                        # one count step: one event, the other listed
+        self.assertEqual(two[0]['same_event'][0]['date'], '2024-09-10')
+        # ...counted twice only where the count ratio needs the product (two real 2-for-1 splits in one step)
+        self.assertEqual(dataqa._split_factor_of(two, 4.1), (4.0, True, True))
+        self.assertEqual(dataqa._split_factor_of(two, 2.05), (2.0, True, False))
         diff = once([{'date': '2024-01-10', 'factor': 2.0}, {'date': '2024-01-20', 'factor': 3.0}])
         self.assertEqual(len(diff), 2)                                       # different factors: not the same record
         item = once([{'date': '2025-12-01', 'factor': None, 'item': 'q1'}, {'date': '2025-12-18', 'factor': 5.0, 'source_id': 'ib'}])
@@ -117,7 +135,10 @@ class CapitalLinkTests(unittest.TestCase):
         cf = pipeline.run(deepcopy(ADBE), {'company_path': low})
         self.assertEqual(cf['stages']['forecast'], 'ok')
         self.assertIn('capital_link_below_growth', {w['code'] for w in cf['fc']['warnings']})
-        self.assertEqual(cf['stages']['company_path'], 'failed')             # the path refuses it itself
+        self.assertEqual(cf['stages']['company_path'], 'ok')                 # the path refuses that scenario only (0.14.2)
+        self.assertIn(('roic_at_or_below_growth', 'bear'), {(f['id'], f.get('scenario')) for f in cf['company_path']['flags']})
+        self.assertTrue(all(r['status'] == 'no_price' for r in cf['company_path']['scenarios']['bear']['rows']))
+        self.assertTrue(any(r['status'] == 'priced' for r in cf['company_path']['scenarios']['base']['rows']))
 
     def test_link_builder_skips_malformed_scenarios(self):
         known = set(ADBE['sources'])
@@ -140,7 +161,10 @@ class Year1NoteTests(unittest.TestCase):
         self.assertEqual(bool(flag), abs(y0 / q - 1) > C.YEAR0_GAP_NOTE)
         rows, notes = C.table_he(cp, lambda v: f'{v:,.0f}$')
         if flag:
-            self.assertTrue(any('השינוי בשנה 1 כולל את כל' in n for n in notes))
+            note = next(n for n in notes if 'השינוי בשנה 1 כולל' in n)
+            # review of 27b2bf6: the note showed today's EPS x multiple as a second 'worth today' number beside the fair value
+            self.assertNotIn(f'{y0:,.0f}', note)
+            self.assertNotIn('שווה כבר היום', note)
         near = deepcopy(cf)
         near['company_path']['quote'] = y0 * 1.1
         val = deepcopy(cf['val'])
@@ -182,6 +206,31 @@ class CommittedEquityTests(unittest.TestCase):
         fc2, _ = fc_with({'overrides': ov2})
         self.assertEqual(fc2['status'], 'built', fc2.get('reason'))
         self.assertEqual(scen(fc2['spec'], 'base')['financing_status'], 'assumed')
+        # contracted proceeds are the filing's NET proceeds: no second 3% fee; an assumed amount keeps the fee
+        self.assertEqual(sc['equity_fee_rate'], 0.)
+        self.assertEqual(scen(fc2['spec'], 'base')['equity_fee_rate'], forecast.EQUITY_FEE)
+
+    def test_issue_price_only_contracted_and_only_for_contracted_proceeds(self):
+        # review of 27b2bf6: META's price at tier analyst and 3000 (4.9x the quote) ran without a problem and raised the value
+        base_fc, _ = fc_with(None)
+        n = len(base_fc['spec']['boundaries'])
+        proceeds = [0.] * n
+        proceeds[1] = 60e6
+        eq = {'path': 'equity_proceeds', 'scenario': 'all', 'value': proceeds, 'reason': 'forward sale agreement',
+              'evidence_ids': ['syn:fs'], 'source_tier': 'contracted'}
+        px = {'path': 'equity_issue_price', 'scenario': 'all', 'value': 3000.0, 'reason': 'x', 'evidence_ids': ['syn:fs'],
+              'source_tier': 'analyst'}
+        with self.assertRaisesRegex(ValueError, 'only a contracted price'):
+            fc_with({'overrides': [eq, px]})
+        with self.assertRaisesRegex(ValueError, 'equity_proceeds overridden at source_tier contracted'):
+            fc_with({'overrides': [dict(eq, source_tier='analyst'), dict(px, source_tier='contracted')]})
+        with self.assertRaisesRegex(ValueError, 'equity_proceeds overridden at source_tier contracted'):
+            fc_with({'overrides': [dict(px, source_tier='contracted')]})            # a price with no proceeds at all
+        lst = [3000.0] * n                                                       # a list: only the contracted period takes it
+        fc, _ = fc_with({'overrides': [eq, dict(px, source_tier='contracted', value=lst)]})
+        sc = scen(fc['spec'], 'base')
+        self.assertEqual(sc['equity_issue_price'][1], 3000.0)
+        self.assertTrue(all(p == fc['spec']['quote']['price'] for i, p in enumerate(sc['equity_issue_price']) if i != 1))
 
     def test_bad_issue_price_refused(self):
         with self.assertRaisesRegex(ValueError, 'contracted issue price must be positive'):
@@ -288,6 +337,77 @@ class BuildPhaseTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 forecast.build(fb, an, card, qa, {'build_phase': {**bp, **bad}})
 
+    def test_build_phase_is_not_applied_to_a_normal_company(self):
+        # review of 27b2bf6: depreciation_pct 0.01 on MSFT/META added the D&A roll-off to the margin (+24% / +28% of value)
+        fb, an, card, qa = industrial()
+        ev = [next(k for k, v in fb['sources'].items() if v.get('kind') == 'filing_derived')]
+        plain = forecast.build(fb, an, card, qa, {})
+        bp = {'depreciation_pct': .01, 'sbc_pct': .01, 'start_margin': .5, 'source_tier': 'own_history', 'reason': 'probe',
+              'evidence_ids': ev}
+        fc = forecast.build(fb, an, card, qa, {'build_phase': bp})
+        self.assertEqual(fc['status'], 'built', fc.get('reason'))
+        self.assertIn('build_phase_not_applied', {w['code'] for w in fc['warnings']})
+        self.assertNotIn('build_phase_start', {w['code'] for w in fc['warnings']})
+        self.assertAlmostEqual(base_value(fc), base_value(plain), places=9)
+
+    def test_build_phase_needs_the_filing_and_a_company_tier(self):
+        fb, an, card, qa = builder()
+        fb['sources']['web:press'] = {'kind': 'secondary', 'provider': 'press', 'dataset': 'press', 'retrieval': 'search_excerpt'}
+        bp = {'start_margin': -.3, 'depreciation_pct': .3, 'sbc_pct': .08, 'reason': 'the 10-Q cost lines', 'evidence_ids': ['syn:fs'],
+              'source_tier': 'own_history'}
+        for bad in ({'source_tier': 'analyst'}, {'source_tier': 'consensus'}, {'evidence_ids': ['web:press']}):
+            with self.assertRaises(ValueError) as cm:
+                forecast.build(fb, an, card, qa, {'build_phase': {**bp, **bad}})
+            self.assertIn('build_phase', str(cm.exception))
+
+    def test_build_phase_da_load_never_adds_margin(self):
+        fb, an, card, qa = builder()
+        ov = [{'path': 'terminal_roic', 'scenario': 'all', 'value': .15, 'reason': 'contracted unit economics', 'evidence_ids': ['syn:fs'],
+               'source_tier': 'contracted'}]
+        out = {}
+        for d in (.05, .3):
+            bp = {'start_margin': -.3, 'depreciation_pct': d, 'sbc_pct': .08, 'reason': 'the 10-Q cost lines',
+                  'evidence_ids': ['syn:fs'], 'source_tier': 'own_history'}
+            fc = forecast.build(fb, an, card, qa, {'overrides': ov, 'build_phase': bp})
+            self.assertEqual(fc['status'], 'built', fc.get('reason'))
+            p = scen(fc['spec'], 'base')
+            self.assertAlmostEqual(min(p['depreciation_pct']), max(p['depreciation_pct']), places=6)   # start = maintenance level
+            out[d] = [round(1 - c - x - y, 9) for c, x, y in zip(p['cash_cost_ratio'], p['sbc_pct'], p['depreciation_pct'])]
+        self.assertEqual(out[.05], out[.3])                  # a lower D&A load never raises the operating margin path
+
+    def test_asts_shape_values_with_its_evidenced_start(self):
+        # SYNTHETIC, shaped like ASTS 2026-06: TTM operating margin about -660%, stock comp 128% and capex 19x revenue
+        from test_forecast import make_an, qa_for, synth
+        annual = {'2024-12-31': {'revenue': 4e6, 'operating_income': -250e6, 'sbc': 20e6, 'd_and_a': 20e6, 'capex': 100e6,
+                                 'cfo': -200e6, 'pretax_income': -250e6, 'income_tax': 0.},
+                  '2025-12-31': {'revenue': 20e6, 'operating_income': -330e6, 'sbc': 26e6, 'd_and_a': 14.4e6, 'capex': 380e6,
+                                 'cfo': -250e6, 'pretax_income': -330e6, 'income_tax': 0.}}
+        inst = {'2026-06-30': {'cash': 4e9, 'shares_outstanding': 300e6, 'receivables': 10e6, 'payables': 50e6}}
+        fb = synth('2026-10-30', annual, inst, 40.0, kind='filing_derived')
+        for end, start, r, oi, da in (('2025-09-30', '2025-07-01', 6e6, -90e6, 6e6), ('2025-12-31', '2025-10-01', 8e6, -95e6, 6e6),
+                                      ('2026-03-31', '2026-01-01', 14e6, -100e6, 8e6), ('2026-06-30', '2026-04-01', 32e6, -110e6, 15e6)):
+            for m, v in (('revenue', r), ('operating_income', oi), ('d_and_a', da)):
+                facts.add_fact(fb, m, 'Q@' + end, end, v, 'syn:fs', 'as_reported', end[:8] + '28', period_start=start)
+        an = make_an(fb, revenue_growth_last=4.0, growth_volatility=.5, sales_to_capital_incremental_3y=.3)
+        an['ttm'] = {'revenue': 60e6, 'operating_income': -396e6, 'period_end': '2026-06-30', 'method': 'quarters'}
+        card = {'business_model': {'primary': 'capital_intensive_infrastructure'}, 'stage': {'value': 'growth'},
+                'funding': {'value': 'needs_external'}, 'valuation': {'method': 'fcff_annual_path', 'archetype': 'infrastructure'},
+                'dimensions': {'moat': {'assessment': 'adequate'}}}
+        qa = qa_for(300e6, 4e9, 0., '2026-06-30')
+        ov = [{'path': 'mature_margin', 'scenario': s, 'value': v, 'reason': 'named competitor margin', 'evidence_ids': ['syn:fs'],
+               'source_tier': 'contracted'} for s, v in (('bear', .17), ('base', .27), ('bull', .274))]
+        none = forecast.build(fb, an, card, qa, {'overrides': ov})
+        self.assertEqual(none['status'], 'method_not_supported_by_forecast')
+        self.assertIn('inputs.build_phase', none['reason'])
+        bp = {'start_margin': -.95, 'depreciation_pct': .25, 'sbc_pct': .30, 'reason': 'guided revenue and the 10-Q cost lines',
+              'evidence_ids': ['syn:fs'], 'source_tier': 'guidance'}
+        fc = forecast.build(fb, an, card, qa, {'overrides': ov, 'build_phase': bp})
+        self.assertEqual(fc['status'], 'built', fc.get('reason'))
+        self.assertIn('build_phase_start', {w['code'] for w in fc['warnings']})
+        p = scen(fc['spec'], 'base')
+        self.assertAlmostEqual(p['depreciation_pct'][0], .25, places=6)
+        self.assertLessEqual(max(c['terminal']['operating_margin'] for c in fc['spec']['scenarios']), .274 + 1e-9)
+
     def test_value_json_says_not_valued(self):
         cf = {'stages': {'forecast': 'ok', 'valuation': 'ok', 'company_path': 'ok'},
               'fc': {'status': 'method_not_supported_by_forecast', 'reason': 'cash-cost ratio outside driver bounds'},
@@ -297,8 +417,31 @@ class BuildPhaseTests(unittest.TestCase):
         self.assertFalse(v['valued'])
         self.assertTrue(v['failed_at'].startswith('not valued: forecast method_not_supported_by_forecast'))
         self.assertIn('לא הוערך', v['not_valued_he'])
-        ok = {'stages': {'forecast': 'ok', 'valuation': 'ok'}, 'fc': {'status': 'built'}, 'val': {'status': 'unreviewed'}}
+        ok = {'stages': {'forecast': 'ok', 'valuation': 'ok'}, 'fc': {'status': 'built'},
+              'val': {'status': 'unreviewed', 'result': {'annual_values': [{'base': 12.5}]}}}
         self.assertEqual(ticker_run.valued(ok), {'valued': True, 'failed_at': None})
+        # review of 27b2bf6: a funding_blocked valuation (no base value) or one with no base value is not a valuation
+        blocked = deepcopy(ok)
+        blocked['val'] = {'status': 'funding_blocked', 'result': {'annual_values': [{'base': None}]}}
+        v = ticker_run.valued(blocked)
+        self.assertFalse(v['valued'])
+        self.assertIn('funding_blocked', v['failed_at'])
+        self.assertEqual(v['not_valued_he'], ticker_run.NOT_VALUED_HE['funding'])
+        self.assertNotIn('\n', v['not_valued_he'])
+        for bad in (None, float('nan'), True):
+            x = deepcopy(ok)
+            x['val']['result']['annual_values'][0]['base'] = bad
+            self.assertFalse(ticker_run.valued(x)['valued'], bad)
+        x = deepcopy(ok)
+        x['val']['status'] = 'funding_blocked'                               # blocked even with a number left in place
+        self.assertFalse(ticker_run.valued(x)['valued'])
+        capped = deepcopy(ok)
+        capped['fc']['warnings'] = [{'code': 'leverage_capped', 'severity': 'high', 'message': 'debt weight 60% (capped)'}]
+        v = ticker_run.valued(capped)
+        self.assertFalse(v['valued'])
+        self.assertEqual(v['not_valued_he'], ticker_run.NOT_VALUED_HE['leverage'])
+        bp = ticker_run.valued(cf, True)
+        self.assertEqual(bp['not_valued_he'], ticker_run.NOT_VALUED_HE['build_phase'])
         self.assertTrue(ticker_run.valued({'stages': {'forecast': 'failed'}})['failed_at'].startswith('engine stages'))
 
 
@@ -310,6 +453,7 @@ class SameFamilyResolutionTests(unittest.TestCase):
         fb['facts'] = [f for f in fb['facts'] if f['source_id'] != 'av:balance']
         facts.add_fact(fb, 'short_term_investments', 'I@2026-06-30', '2026-06-30', 0., 'web:q10', 'as_reported', '2026-08-26')
         facts.add_fact(fb, 'cash', 'I@2026-06-30', '2026-06-30', 20e9, 'web:q10', 'as_reported', '2026-08-26')
+        fb['sources']['web:q10']['retrieval'] = 'primary_document'          # the 10-Q read directly
         return fb
 
     RES = {'field': 'cash_and_liquid_investments', 'metric': 'short_term_investments', 'resolution': 'use_source',
@@ -323,6 +467,13 @@ class SameFamilyResolutionTests(unittest.TestCase):
         self.assertNotIn('cash_and_liquid_investments', q['blocking'])
         self.assertEqual(q['resolved']['short_term_investments']['value'], 0.)
         self.assertEqual(q['resolutions'][0]['status'], 'applied')
+
+    def test_a_search_excerpt_of_the_filing_does_not(self):
+        # review of 27b2bf6: 'read directly' means retrieval primary_document, not a search excerpt of the 10-Q
+        fb = self.fb()
+        fb['sources']['web:q10']['retrieval'] = 'search_excerpt'
+        q = dataqa.validate(fb, None, {'resolutions': [{**self.RES, 'evidence_ids': ['web:q10']}]})
+        self.assertIn('cash_and_liquid_investments', q['blocking'])
 
     def test_a_transcription_alone_does_not(self):
         fb = self.fb()

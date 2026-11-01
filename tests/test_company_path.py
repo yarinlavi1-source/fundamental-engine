@@ -391,13 +391,16 @@ class EconomicsModeTests(unittest.TestCase):
         hand['scenarios']['base']['multiple_from'] = 'hand'                                  # explicit hand mode: same output
         self.assertEqual(C.validate(hand, KNOWN), C.validate(deepcopy(CP), KNOWN))
         self.assertNotIn('multiple_from', C.validate(deepcopy(CP), KNOWN)['scenarios']['base'])
-        # a ROIC at or below the executed terminal growth would make the terminal payout negative: refused at build
+        # a ROIC at or below the executed terminal growth would make the terminal payout negative: that scenario is not priced
+        # (0.14.2: flagged, the other scenarios still priced; it no longer stops the whole yearly table)
         low = deepcopy(ECON)
         low['scenarios']['base']['roic'] = .04
-        with self.assertRaisesRegex(ValueError, 'must exceed the executed terminal growth'):
-            C.build(low, self.val, KNOWN)
+        out = C.build(low, self.val, KNOWN)
+        self.assertEqual(out['status'], 'computed')
+        self.assertIn(('roic_at_or_below_growth', 'base'), {(f['id'], f.get('scenario')) for f in out['flags']})
+        self.assertTrue(all(r['status'] == 'no_price' and r['why'] == 'economics_unavailable' for r in out['scenarios']['base']['rows']))
         cf = pipeline.run(deepcopy(ADBE), {'company_path': low})
-        self.assertEqual(cf['stages']['company_path'], 'failed')
+        self.assertEqual(cf['stages']['company_path'], 'ok')
 
     def test_table_names_the_computed_multiples(self):
         t = hebrew_table(self.cf)

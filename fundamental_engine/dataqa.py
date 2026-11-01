@@ -69,10 +69,10 @@ SPLIT_ALT_WINDOW_DAYS = 45        # ...counts as split evidence only when an iss
 PRICE_JUMP_TOL = .15              # an as-traded close-to-close move within 15% (log) of 1/factor marks the split bar
 PRICE_BAR_MAX_GAP = 40            # closes further apart than this cannot locate a split bar
 SPLIT_RESTATED_DAYS = 92          # a split this soon after a count filed after the split: that count is already restated
-# two records of a split with the same factor (within SPLIT_BAND) dated at most this far apart are ONE corporate action seen by
-# two sources (ServiceNow's 5-for-1: the issuer's XBRL tag dated 5 December 2025, the market feed's effective date 18 December);
-# multiplying them had made a factor of 25 and a -41%/yr share count
-SPLIT_SAME_EVENT_DAYS = 60
+# records of a split with the same factor (within SPLIT_BAND) inside ONE count step are ONE corporate action seen by several sources
+# (ServiceNow's 5-for-1: the issuer's XBRL tag dated 5 December 2025 or by its ~90-day context, the market feed's effective date 18
+# December); multiplying them had made a factor of 25 and a -41%/yr share count. Two real splits of the same factor inside one step
+# are counted twice only where that product, and not the single factor, leaves a residual inside SPLIT_ISSUANCE_BAND.
 CONVERT_TOPICS = {'convertible', 'convertibles', 'convertible_notes'}
 WARRANT_TOPICS = {'warrant', 'warrants', 'prefunded_warrant', 'pre_funded_warrant', 'prefunded_warrants'}
 DEFINITIONS = {
@@ -326,10 +326,11 @@ def _primary_filing_evidence(fb, eids):
     """Does the evidence cite the filing DOCUMENT itself (an issuer document of the filing dataset read at as_of, or an item citing
     one), not only a filing-derived transcription (XBRL companyfacts, a vendor's as-reported copy)? Inside one source family two
     transcriptions of the same filing disagree (ASTS 2026-06: companyfacts ShortTermInvestments 2.3B against the 10-Q's single
-    cash line that already holds those money-market funds); an analyst resolution that cites the document decides between them."""
+    cash line that already holds those money-market funds); an analyst resolution that cites the document decides between them.
+    Read directly means retrieval primary_document: a search excerpt of the filing is not the document."""
     def doc(sid):
         x = fb['sources'].get(sid) or {}
-        return (x.get('kind') == 'issuer_document' and x.get('dataset') == 'filing'
+        return (x.get('kind') == 'issuer_document' and x.get('dataset') == 'filing' and x.get('retrieval') == 'primary_document'
                 and not (x.get('published_at') and _d(x['published_at']) > _d(fb['as_of'])))
     for e in eids or []:
         if e in fb['sources']:
@@ -644,13 +645,16 @@ def _identities(q):
             elif rp is not None and rc is not None:
                 bp, bc, basis, lfl = bp + rp, bc + rc, 'cash + restricted_cash', True
         delta = bc - bp
-        ok = abs(delta - chg['value']) <= q.tol['cash'] * max(abs(bp), abs(bc))
+        # a balance tagged rounded (ASTS 2026: cash incl. restricted 3.5B -> 2.7B, tagged to 0.1B, against a flow to the dollar)
+        # carries up to half its rounding unit of error at each end: that much more is not a disagreement
+        rounding = (_rounding_unit(bp) + _rounding_unit(bc)) / 2
+        ok = abs(delta - chg['value']) <= q.tol['cash'] * max(abs(bp), abs(bc)) + rounding
         q.add('cash_rollforward', 'pass' if ok else 'fail', 'major' if lfl else 'minor',
               f'balance-sheet {basis} moved {_fmt(delta)}; cash-flow statement change {_fmt(chg["value"])}'
               + ('' if lfl else ' (statement change includes restricted cash, balance sheet basis may not)'),
               period=f'{pe}..{ce}', fields=('cash_and_liquid_investments',),
               detail={'prior': bp, 'current': bc, 'balance_change': delta, 'cash_flow_change': chg['value'], 'basis': basis,
-                      'like_for_like': lfl})
+                      'like_for_like': lfl, **({'rounding_allowance': rounding} if rounding else {})})
         for e in (pe, ce):
             _identity(q, 'cash', e, 'cash_rollforward', 'pass' if ok else 'fail', lfl)
     for end, ni in q.timeline('net_income', 'annual')[-5:]:
@@ -869,6 +873,21 @@ def _split_events(q, a, b):
     return _same_split_once(out)
 
 
+def _rounding_unit(v):
+    """The rounding unit of a reported figure that is a whole multiple of 10^6..10^9 (a value tagged to millions or tenths of a
+    billion), else 0: a figure reported to the dollar or the thousand carries no material rounding."""
+    try:
+        x = abs(float(v))
+    except (TypeError, ValueError):
+        return 0.
+    if not x or x != x:
+        return 0.
+    for u in (1e9, 1e8, 1e7, 1e6):
+        if abs(x / u - round(x / u)) < 1e-9:
+            return u
+    return 0.
+
+
 def _num(v):
     try:
         x = float(v)
@@ -878,14 +897,15 @@ def _num(v):
 
 
 def _same_split_once(events):
-    """One event per corporate action: a later record with the same factor (within SPLIT_BAND; an unknown factor matches any)
-    dated at most SPLIT_SAME_EVENT_DAYS after a kept one is the same split reported by another source; it is listed under the
-    kept event's 'same_event' and its factor is never multiplied in again."""
+    """One event per corporate action: within one count step (the events passed are already between the two counts), a later
+    record with the same factor (within SPLIT_BAND; an unknown factor matches any) as a kept one is the same split reported by
+    another source; it is listed under the kept event's 'same_event' and its factor is not multiplied in again
+    (_split_decision counts it only where the count ratio needs it: _split_factor_of)."""
     kept = []
     for e in sorted(events, key=lambda x: str(x.get('date'))):
         f = _num(e.get('factor'))
-        twin = next((k for k in kept if abs(_days(k['date'], e['date'])) <= SPLIT_SAME_EVENT_DAYS
-                     and (f is None or _num(k.get('factor')) is None or abs(f / _num(k['factor']) - 1) <= SPLIT_BAND)), None)
+        twin = next((k for k in kept if f is None or _num(k.get('factor')) is None or abs(f / _num(k['factor']) - 1) <= SPLIT_BAND),
+                    None)
         if twin is None:
             kept.append(dict(e))
             continue
@@ -893,6 +913,31 @@ def _same_split_once(events):
             twin['factor'] = e['factor']
         twin.setdefault('same_event', []).append({k: e[k] for k in ('date', 'factor', 'source_id', 'item') if k in e})
     return kept
+
+
+def _split_factor_of(events, r):
+    """(factor, residual_in_band, counted_twice) for the dated split events of one count step and its count ratio r. Each
+    corporate action counts once (same-factor records are one event); the product with the duplicate records multiplied in is
+    used only where it, and not the single count, leaves a residual r / k inside SPLIT_ISSUANCE_BAND (two real splits of the same
+    factor in one step). The direction (k or 1/k) follows the counts (a tagged 10 for a 1-for-10 reverse split)."""
+    def orient(k):
+        return 1 / k if k > 0 and r > 0 and abs(log(r * k)) < abs(log(r / k)) else k
+
+    def inband(k):
+        return r > 0 and SPLIT_ISSUANCE_BAND[0] <= r / k <= SPLIT_ISSUANCE_BAND[1]
+    once = 1.0
+    every = 1.0
+    for e in events:
+        f = _num(e.get('factor'))
+        if f:
+            once *= f
+            every *= f
+            for d in e.get('same_event') or []:
+                every *= _num(d.get('factor')) or 1.0
+    once, every = orient(once), orient(every)
+    if not inband(once) and every != once and inband(every):
+        return every, True, True
+    return once, inband(once), False
 
 
 def _split_decision(q, a, b, k):
@@ -915,13 +960,11 @@ def _split_decision(q, a, b, k):
     events = _split_events(q, a, b)
     if events:
         ev['split_events'] = events
-        fs = [float(e['factor']) for e in events if e.get('factor')]
+        fs = [float(e['factor']) for e in events if _num(e.get('factor'))]
         if fs:
-            k = 1.0
-            for f in fs:
-                k *= f
-            if k > 0 and r > 0 and abs(log(r * k)) < abs(log(r / k)):
-                k = 1 / k                 # a tagged ratio of 10 for a 1-for-10 reverse split: the counts tell the direction
+            k, in_band, twice = _split_factor_of(events, r)
+            if twice:
+                ev['same_factor_counted_twice'] = True       # two real splits of one factor: only their product fits the counts
             if not (k > 0 and r > 0 and abs(log(r / k)) < abs(log(r))):
                 # the split does not explain this step (both counts already restated, or neither): it belongs to another pair
                 ev['split_events_not_this_step'] = ev.pop('split_events')
@@ -929,6 +972,12 @@ def _split_decision(q, a, b, k):
                 if not k:
                     return None
         tests['corporate_action'] = 'supports' if 'split_events' in ev else 'untested'
+        if 'split_events' in ev and not SPLIT_ISSUANCE_BAND[0] <= r / k <= SPLIT_ISSUANCE_BAND[1]:
+            # the dated split leaves more of the count change unexplained than issuance or buybacks plausibly make in one step:
+            # not decisive alone (the price and per-share tests decide, else the step stays unresolved)
+            tests['corporate_action'] = 'ambiguous'
+            ev['corporate_action_note'] = (f'the dated split factor {k:g} leaves a residual count ratio {r / k:.2f} outside '
+                                           f'{SPLIT_ISSUANCE_BAND[0]}-{SPLIT_ISSUANCE_BAND[1]}')
     if not k:
         return None
     ev['candidate_factor'] = k

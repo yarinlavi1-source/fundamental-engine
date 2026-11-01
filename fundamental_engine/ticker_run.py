@@ -392,11 +392,15 @@ def skeleton(part, run=None):
                                                   'options': '[{kind vested_options|warrants, count, strike, reason, evidence_ids}] '
                                                              '(optional): VESTED options/warrants at their weighted strike from the '
                                                              'equity note; treasury method at every value',
-                                                  'build_phase': '{start_margin, depreciation_pct, sbc_pct, source_tier, reason, '
-                                                                 'evidence_ids} (optional, only when the forecast says the build-'
-                                                                 'phase loads are outside the driver bounds): cited values only'},
-                             'contracted financing': 'drivers.equity_proceeds (or debt_draw) per period at source_tier contracted + '
-                                                     'drivers.equity_issue_price (the contracted price): committed, not assumed',
+                                                  'build_phase': '{start_margin, depreciation_pct, sbc_pct, source_tier '
+                                                                 'guidance|contracted|own_history, reason, evidence_ids incl. the '
+                                                                 'filing} (optional, only when the forecast says the build-phase '
+                                                                 'loads are outside the driver bounds): cited values only'},
+                             'contracted financing': 'drivers.equity_proceeds (or debt_draw) per period at source_tier contracted '
+                                                     '(net proceeds) + drivers.equity_issue_price (the contracted price, tier '
+                                                     'contracted only): committed, not assumed',
+                             'growth list': 'one value per fiscal year from the next one; years after the list fade to terminal '
+                                            'growth by the engine rule',
                              'terminal_roic / sales_to_capital': 'set only with their own evidence: company_path roic already sets '
                                                                  'them for its scenario (one capital intensity per scenario)',
                              'dataqa_resolutions': '[{field, metric, period_end, resolution label_difference|use_source, source_id, '
@@ -576,23 +580,56 @@ def _compact_path(cf):
 def valued(cf, path_asked=False):
     """{'valued', 'failed_at', 'not_valued_he'?} for a casefile. A stage that ran without valuing is not a valuation (NBIS/ASTS
     2026-11: forecast 'ok' with status method_not_supported_by_forecast and no value had read ran=true): valued needs the forecast
-    and valuation stages ok, a built forecast, a computed value and, when a yearly table was asked for, a computed one."""
+    and valuation stages ok, a built forecast, a computed valuation with a finite base value today (a funding_blocked valuation
+    withholds it), and, when a yearly table was asked for, a computed one. not_valued_he: one plain Hebrew line saying why."""
     stages = cf.get('stages') or {}
     need = ['forecast', 'valuation'] + (['company_path'] if path_asked else [])
     fc, vl, cpth = cf.get('fc') or {}, cf.get('val') or {}, cf.get('company_path') or {}
     if not all(stages.get(k) == 'ok' for k in need):
-        return {'valued': False, 'failed_at': 'engine stages: ' + ', '.join(f'{k}={stages.get(k)}' for k in need if stages.get(k) != 'ok')}
-    why = []
+        return {'valued': False, 'failed_at': 'engine stages: ' + ', '.join(f'{k}={stages.get(k)}' for k in need if stages.get(k) != 'ok'),
+                'not_valued_he': NOT_VALUED_HE['stage']}
+    why, he = [], None
     if fc.get('status') != 'built':
         why.append(f"forecast {fc.get('status')}: {fc.get('reason')}")
+        r = str(fc.get('reason') or '')
+        he = NOT_VALUED_HE['build_phase' if 'build-phase' in r or 'cash-cost ratio' in r else 'forecast']
     if vl.get('status') in (None, 'not_computed'):
         why.append(f"valuation {vl.get('status')}: {vl.get('reason')}")
+    else:
+        today = (((vl.get('result') or {}).get('annual_values')) or [{}])[0]
+        base = today.get('base')
+        if vl.get('status') == 'funding_blocked' or not isinstance(base, (int, float)) or isinstance(base, bool) or base != base \
+                or base in (float('inf'), float('-inf')):
+            why.append(f"valuation {vl.get('status')}: no base value today"
+                       + (' (an unfunded cash requirement: values withheld)' if vl.get('status') == 'funding_blocked' else ''))
+            he = he or NOT_VALUED_HE['funding' if vl.get('status') == 'funding_blocked' else 'no_value']
+    lev = [w.get('code') for w in fc.get('warnings') or [] if isinstance(w, dict) and w.get('code') in LEVERAGE_NOT_A_VALUE]
+    if lev and not why:
+        # forecast._solve_capital: the model's own equity value cannot carry the debt, so the value is set by the cap constant,
+        # not by the business (ASTS 2026-11 with a build-phase start: 2.97B of unreconciled convertibles, base 1.5 against 40.9)
+        why.append(f"{lev[0]}: the cost of equity is set at the leverage cap, so the value is the cap's, not the business's")
+        he = NOT_VALUED_HE['leverage']
     if path_asked and cpth.get('status') != 'computed':
         why.append(f"company_path {cpth.get('status')}: {cpth.get('reason')}")
+        he = he or NOT_VALUED_HE['path']
     if not why:
         return {'valued': True, 'failed_at': None}
-    return {'valued': False, 'failed_at': 'not valued: ' + '; '.join(why),
-            'not_valued_he': 'לא הוערך: המנוע רץ אבל לא חישב שווי לחברה (' + '; '.join(why) + ')'}
+    return {'valued': False, 'failed_at': 'not valued: ' + '; '.join(why), 'not_valued_he': he or NOT_VALUED_HE['no_value']}
+
+
+# one plain Hebrew line per reason a company is not valued (value.json not_valued_he; the deliver step shows it instead of a table)
+NOT_VALUED_HE = {
+    'stage': 'לא הוערך: שלב במנוע נכשל, ולכן אין שווי לחברה בריצה הזו.',
+    'build_phase': 'לא הוערך: החברה עדיין בשלב בנייה (ההוצאות והפחת גבוהים מאוד ביחס להכנסות של היום), ואין בדוחות נתוני פתיחה '
+                   'שמהם אפשר לבנות תחזית אמינה.',
+    'forecast': 'לא הוערך: אי אפשר לבנות תחזית אמינה לחברה מהנתונים שיש היום.',
+    'funding': 'לא הוערך: לפי התחזית החברה צריכה כסף שאין לו מקור מוכח, ולכן כל שווי היה ניחוש.',
+    'no_value': 'לא הוערך: המנוע רץ אבל לא חישב שווי בסיסי לחברה.',
+    'path': 'לא הוערך: הטבלה השנתית לא חושבה, ולכן אין הערכה מלאה.',
+    'leverage': 'לא הוערך: החוב (כפי שנרשם) גדול מדי ביחס לשווי המניות במודל, ולכן השווי נקבע על ידי תקרה במודל ולא על ידי העסק.',
+}
+# forecast warnings that mean the value is a constant's, not a fixed point of the business (forecast._solve_capital statuses)
+LEVERAGE_NOT_A_VALUE = ('leverage_capped', 'leverage_equity_not_positive', 'leverage_not_converged')
 
 
 def value(run, deep=True, timeout=900):
@@ -864,6 +901,7 @@ def status(run, returned=None):
            'label': 'verified' if verified else 'UNVERIFIED draft (טיוטה — ההערכה לא אומתה)', 'reasons': reasons,
            'engine_ran': ran, 'engine_review_status': val.get('review_status') if ran else None,
            'valued': bool(fresh('value.json') and val.get('valued', val.get('ran'))),
+           **({'not_valued_he': val['not_valued_he']} if fresh('value.json') and val.get('not_valued_he') else {}),
            'reviews': reviews, 'critical': critical, 'open_critical': open_critical,
            'repair': {k: repair.get(k) for k in ('fixed', 'open', 'ran')} if repair else None,
            'returned': sorted(returned) if returned is not None else None, 'times': times,

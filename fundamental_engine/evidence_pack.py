@@ -68,6 +68,7 @@ from copy import deepcopy
 from datetime import date, timedelta
 import json
 import math
+import re
 
 PACK_VERSION = 1
 SCENARIOS = ('bear', 'base', 'bull')
@@ -308,6 +309,8 @@ class Pack:
                 where = f'{key}[{i}]'
                 if not c.obj(x, kind, where):
                     continue
+                if key in ('facts', 'segments'):
+                    _to_base_unit(x, ('value', 'revenue', 'operating_income'))
                 self._new_item(x['id'], key, x, where)
                 self.facts_ids(x['source_ids'], where)
                 val = x.get('value', x.get('revenue', x.get('share')))
@@ -324,6 +327,7 @@ class Pack:
             where = f'guidance[{i}]'
             if not c.obj(g, 'guidance', where):
                 continue
+            _to_base_unit(g, ('low', 'high'))
             self._new_item(g['id'], 'guidance', g, where)
             if not (_num(g['low']) and _num(g['high']) and g['low'] <= g['high']):
                 c.err(where, 'low and high must be numbers with low <= high')
@@ -487,6 +491,34 @@ def track_record(pack_obj):
     return {'metric': 'revenue', 'ratio': round(ratio, 6), 'n': len(per), 'beats': sum(p['ratio'] > 1 for p in per),
             'misses': sum(p['ratio'] < 1 for p in per), 'periods': per,
             'rule': 'mean of actual / guided midpoint over the recorded periods; applied only where a driver says so'}
+
+
+# a scaled money unit ('USD_millions', 'USD bn', 'EUR thousands'): the multiplier to the currency's base unit, the FactBook's
+# (NBIS 2026-11: a guidance item 3,000-3,400 'USD_millions' was read as $3,200 of revenue, so the forecast started at $21 a year)
+UNIT_SCALES = ((re.compile(r'(?i)(billions?|\bbn\b|_bn\b|\bb\b)'), 1e9), (re.compile(r'(?i)(millions?|\bmm\b|_mm\b|\bmn\b|_m\b|\bm\b)'), 1e6),
+               (re.compile(r'(?i)(thousands?|\bk\b|_k\b|000s)'), 1e3))
+
+
+def _unit_scale(unit):
+    """(multiplier, base unit) of a scaled money unit, else (1, unit)."""
+    if not isinstance(unit, str):
+        return 1., unit
+    for rx, m in UNIT_SCALES:
+        if rx.search(unit):
+            base = rx.sub('', unit).strip(' _-') or 'base'
+            return m, base
+    return 1., unit
+
+
+def _to_base_unit(x, keys):
+    """Scale an item's numbers given in millions / billions / thousands to the base unit in place (the unit becomes the base unit)."""
+    m, base = _unit_scale(x.get('unit'))
+    if m == 1:
+        return
+    for k in keys:
+        if _num(x.get(k)):
+            x[k] = x[k] * m
+    x['unit'] = base
 
 
 # ---------------------------------------------------------------- conversion
@@ -653,6 +685,10 @@ def _overrides(p, track, cur=None):
                              f"progress ({cur_fy}); guidance for {cur_fy} sets drivers.{CURRENT_YEAR}, never the next year's growth")
         elif d.get('period') is not None:
             c.err(where, 'period applies to growth_anchor and growth only')
+        if lever == 'equity_issue_price' and any(t != 'contracted' for t in tiers.values()):
+            c.err(where, "tier contracted only (a signed forward sale's or a closed offering's price, from the filing), and only "
+                         'with drivers.equity_proceeds at tier contracted for the same periods')
+            continue
         guided = [s for s in scen if tiers[s] == 'guidance']
         adjust = d.get('adjust_by_track_record')
         if guided and lever in TRACK_LEVERS and not (
@@ -878,7 +914,7 @@ def _forecast_options(p, opts):
                 continue
             if d['kind'] not in OPTION_KINDS:
                 c.err(where, f'kind one of {", ".join(OPTION_KINDS)} (vested only: unvested awards are charged through sbc_pct)')
-            elif not (_num(d['count']) and d['count'] > 0) or _num(d['strike']) is None or d['strike'] < 0:
+            elif not (_num(d['count']) and d['count'] > 0) or not _num(d['strike']) or d['strike'] < 0:
                 c.err(where, 'count (vested, exercisable) positive and strike (the weighted-average exercise price) at least 0')
             elif not isinstance(d['reason'], str) or not d['reason'].strip():
                 c.err(where, 'a written reason')
@@ -890,17 +926,19 @@ def _forecast_options(p, opts):
         if keep and len(keep) == len(rows):
             out['options'] = keep
     if 'build_phase' in opts:
-        from .forecast import BUILD_PHASE_RANGES
+        from .forecast import BUILD_PHASE_RANGES, BUILD_PHASE_TIERS
         b, where = opts['build_phase'], 'forecast_options.build_phase'
         if c.obj(b, 'build_phase', where):
             vals = [k for k in BUILD_PHASE_RANGES if b.get(k) is not None]
-            bad = [k for k in vals if not (_num(b[k]) is not None and BUILD_PHASE_RANGES[k][0] <= b[k] <= BUILD_PHASE_RANGES[k][1])]
+            bad = [k for k in vals if not (_num(b[k]) and BUILD_PHASE_RANGES[k][0] <= b[k] <= BUILD_PHASE_RANGES[k][1])]
             if not vals or bad:
                 c.err(where, 'start_margin (-1 to 0.6), depreciation_pct and/or sbc_pct (0 to 1), fractions of revenue')
             elif not isinstance(b['reason'], str) or not b['reason'].strip():
                 c.err(where, 'a written reason (how the evidence gives each value)')
             elif not isinstance(b['evidence_ids'], list) or not b['evidence_ids']:
                 c.err(where, 'evidence_ids: a non-empty list of source or item ids')
+            elif b['source_tier'] not in BUILD_PHASE_TIERS:
+                c.err(where, f"source_tier one of {', '.join(BUILD_PHASE_TIERS)}: the company's own filed numbers, never a judgement")
             else:
                 p.tier(b['source_tier'], b['evidence_ids'], None, where)
                 out['build_phase'] = {**{k: b[k] for k in vals}, 'source_tier': b['source_tier'], 'reason': b['reason'],
