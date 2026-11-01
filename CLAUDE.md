@@ -233,3 +233,8 @@ build_valuation_from_drivers; reuse the returned case everywhere (hashes must ma
 Set `sources[].retrieval` honestly (primary_document only when the filing was read).
 Report implied_cost_of_equity / discount_rate_band and, for specs, implied_growth_shift.
 Never raise the engine's confidence level; explain its reason. See docs/NOW_RUN_2026-09-28.md.
+
+## User preference: lean verification (01.11.2026)
+
+The owner pays for usage. Size checks to the change: a small fix gets the suite plus one focused review, not repeated
+multi-agent rounds; fix small review leftovers directly instead of launching another round; no heavy reruns unless asked.
