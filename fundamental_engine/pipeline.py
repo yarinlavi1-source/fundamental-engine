@@ -422,6 +422,11 @@ def run(fb, inputs=None):
     an = stage('analysis', lambda: analysis.analyze(fb, qa)) if qa else None
     card = stage('model_card', lambda: model_card.build(fb, an, qa, inputs.get('card'))) if an else None
     qa = route_qa(qa, card)
+    link = capital_link(inputs.get('company_path'), set(fb.get('sources') or {}) | {q['id'] for q in fb.get('qualitative') or []})
+    if link and 'capital_link' not in (inputs.get('forecast') or {}):
+        # one capital intensity per scenario (0.14.2): the analyst's evidenced company_path ROIC also sets the DCF's terminal ROIC
+        # and reinvestment, unless the analyst overrode those (forecast.CAPITAL_LINK_KEYS)
+        inputs['forecast'] = {**(inputs.get('forecast') or {}), 'capital_link': link}
     fc = stage('forecast', lambda: forecast.build(fb, an, card, qa, inputs.get('forecast'))) if card else None
     val = stage('valuation', lambda: valuate(fb, qa, fc, inputs)) if fc else {'status': 'not_computed', 'reason': 'forecast unavailable'}
     if val is None:
@@ -458,6 +463,26 @@ def run(fb, inputs=None):
     json.dumps(cf, allow_nan=False, default=str)
     cf['casefile_sha256'] = F.digest(json.loads(json.dumps({k: v for k, v in cf.items() if k != 'casefile_sha256'}, default=str)))
     return cf
+
+
+def capital_link(cp, known=()):
+    """inputs.company_path -> forecast inputs.capital_link: per scenario in multiple_from 'economics', its roic with the scenario's
+    source tier, evidence ids and reason; None when no scenario computes its multiple from ROIC. A scenario whose path input is
+    malformed (the company_path stage reports it) is not linked, so a bad path never stops the forecast."""
+    from .forecast import SOURCE_TIERS
+    out = {}
+    for s, x in ((cp or {}).get('scenarios') or {}).items() if isinstance(cp, dict) else ():
+        if not isinstance(x, dict) or x.get('multiple_from') != 'economics' or isinstance(x.get('roic'), bool) \
+                or not isinstance(x.get('roic'), (int, float)) or not 0 < x['roic'] <= 1.5 or s not in ('bear', 'base', 'bull'):
+            continue
+        ev = x.get('evidence_ids')
+        if not isinstance(ev, list) or not ev or any(e not in known for e in ev) or not isinstance(x.get('reason_he'), str) \
+                or x.get('source_tier') not in SOURCE_TIERS or (x['source_tier'] == 'competitor' and not x.get('competitors')):
+            continue
+        out[s] = {'roic': float(x['roic']), 'source_tier': x.get('source_tier', 'analyst'), 'evidence_ids': list(x['evidence_ids']),
+                  'reason': f"{x.get('justification', '')}: {x['reason_he']}".strip(': '),
+                  **({'competitors': list(x['competitors'])} if x.get('competitors') else {})}
+    return out or None
 
 
 def segment_view(fb, an, card, qa, fc, val, biz, inputs):

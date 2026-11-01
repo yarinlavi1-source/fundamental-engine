@@ -257,7 +257,36 @@ DECLINE_FLOOR = -.05      # lowest perpetual growth for a structurally declining
 DEBT_INCOMPLETE_RATE = .25     # interest / debt above this (no investment-grade or bank rate) means debt lines are missing
 KNOWN_INPUTS = ('overrides', 'reviews', 'risk_free', 'equity_risk_premium', 'horizon_years', 'financing', 'nol', 'cyclical',
                 'operating_funding', 'nonrecurring', 'debt_like_claims', 'non_operating_assets', 'capital_events', 'country_risk',
-                'current_year_revenue', 'acquired_revenue')
+                'current_year_revenue', 'acquired_revenue', 'options', 'capital_link', 'build_phase')
+# inputs['options'] = [{kind, count, strike, reason, evidence_ids}] (0.14.2): VESTED options or warrants outstanding at as_of (the
+# 10-Q equity note's exercisable count and its weighted-average strike; RDDT 2026-09: 5.6M vested at 39.29). Applied by the
+# treasury method at every valuation date and on the yearly prices (valuation._roll_back, company_path.option_diluted):
+# exercise cash in, option shares out, only where the value per share is above the strike. Unvested awards are charged
+# through sbc_pct (adding them as shares would charge them twice), so only the vested count belongs here.
+OPTION_KINDS = ('vested_options', 'warrants')
+OPTION_KEYS = ('kind', 'count', 'strike', 'reason', 'evidence_ids')
+# inputs['capital_link'] = {scenario: {roic, source_tier, evidence_ids, reason, competitors}} (0.14.2): one capital intensity per
+# scenario. pipeline builds it from inputs.company_path (multiple_from 'economics': the analyst's evidenced incremental ROIC), so
+# the DCF's terminal ROIC and its reinvestment (sales_to_capital = ROIC / (final EBIT margin x (1 - tax)), the terminal rule,
+# held from the first explicit year) tell the same capital story as the yearly price table. An analyst override of
+# terminal_roic / terminal.roic, sales_to_capital or growth_capex_pct for that scenario wins (company_path then flags the gap).
+# The valuation bounds a terminal ROIC at 100%: a higher path ROIC is linked at 1.0, warned.
+CAPITAL_LINK_KEYS = ('roic', 'source_tier', 'evidence_ids', 'reason', 'competitors')
+CAPITAL_LINK_ROIC_MAX = 1.
+CAPITAL_LINK_REASON = 'company_path roic of the'
+# inputs['build_phase'] = {start_margin, depreciation_pct, sbc_pct, reason, evidence_ids, source_tier} (0.14.2): a company still
+# building capacity ahead of its revenue (NBIS: capex ~5x revenue, D&A 79% of the last fiscal year's revenue; ASTS: TTM operating
+# margin -660%) cannot start from loads measured on today's small revenue: the paths start from the analyst's evidenced
+# start_margin (the first forecast year's operating margin, e.g. from guided revenue and cost guidance) and/or the D&A and SBC loads
+# (fractions of revenue) the evidence supports for the build-out, D&A converging to that load as maintenance capex. Every value
+# needs evidence; nothing is defaulted. Without it, a load that makes the path impossible first tries the D&A load of the same
+# trailing twelve months as the margin (forecast._paths), and otherwise the forecast says it cannot value the company.
+BUILD_PHASE_KEYS = ('start_margin', 'depreciation_pct', 'sbc_pct', 'reason', 'evidence_ids', 'source_tier')
+BUILD_PHASE_RANGES = {'start_margin': (-1., .6), 'depreciation_pct': (0., 1.), 'sbc_pct': (0., 1.)}
+# equity_issue_price (raw override path, 0.14.2): the contracted price of committed equity proceeds (a forward sale's forward
+# price) per period boundary; with equity_proceeds or debt_draw overridden at source_tier 'contracted' the scenario's financing is
+# committed, not assumed (valuation financing_status), and the shares are issued at this price instead of today's quote.
+RAW_EXTRA_PATHS = ('equity_issue_price',)
 # inputs['current_year_revenue'] = {value, fiscal_year_end, basis, evidence_ids, source_tier}: the current fiscal year's revenue
 # from the company's own evidence (evidence_pack: the guidance midpoint, the track-record ratio applied to the unreported
 # remainder only); it replaces the consensus / guidance / year-to-date anchor of _current_year for that fiscal year only.
@@ -451,7 +480,7 @@ def _check_overrides(fb, overrides):
             raise ValueError(f'override {path}: unknown evidence ids {bad}')
         if o.get('scenario', 'all') not in SCEN + ('all',):
             raise ValueError(f'override {path}: scenario must be bear, base, bull or all')
-        raw = path == 'growth' or path in RATIO_KEYS or path in ABSOLUTE_KEYS or (
+        raw = path == 'growth' or path in RATIO_KEYS or path in ABSOLUTE_KEYS or path in RAW_EXTRA_PATHS or (
             path.startswith('terminal.') and path.split('.', 1)[1] in TERMINAL_KEYS)
         if path not in ECON_LEVERS and not raw:
             raise ValueError(f'override {path}: unknown path; use {", ".join(ECON_LEVERS)}, a driver key or terminal.<key>')
@@ -461,6 +490,8 @@ def _check_overrides(fb, overrides):
             raise ValueError(f'override {path}: value must be a finite number or a list of numbers')
         if isinstance(v, list) and path in ECON_LEVERS:
             raise ValueError(f'override {path}: economic levers take one number')
+        if path in RAW_EXTRA_PATHS and any(x <= 0 for x in vals):
+            raise ValueError(f'override {path}: the contracted issue price must be positive')
         if path in ECON_RANGES and not ECON_RANGES[path][0] <= v <= ECON_RANGES[path][1]:
             raise ValueError(f'override {path}: value must be between {ECON_RANGES[path][0]} and {ECON_RANGES[path][1]}')
         out.append({'id': f'override_{i + 1}', 'path': path, 'scenario': o.get('scenario', 'all'), 'value': deepcopy(v),
@@ -1001,6 +1032,7 @@ def _history(fb, an, warn, nonrecurring=None, evidenced_growth=None):
         warn('sbc_missing', 'SBC not reported in the history; SBC set to 0% of revenue (check the cash-flow statement)', 'medium')
     da = g(last, 'd_and_a')
     h['da_pct'] = da / rev[-1] if da is not None else None
+    h['da_pct_ttm'] = _ttm_load(fb, 'd_and_a', ends[-1])
     cap = [abs(g(r, 'capex')) / r['revenue'] for _, r in rows[-3:] if g(r, 'capex') is not None]
     h['capex_pct'] = _mean(cap) if cap else _metric(an, 'capex_pct_revenue')
     if h['da_pct'] is None:
@@ -1217,7 +1249,7 @@ def _ke_parts(parts, table, lev):
             'unlevered': table, 'asset_unlevered': lev['unlevered'], 'leverage': lev, 'terminal': term}
 
 
-def _solve_capital(spec, P, table, table_t, kd_e, kd_p, net_debt, ov_ke, cap_at_quote=True):
+def _solve_capital(spec, P, table, table_t, kd_e, kd_p, net_debt, ov_ke, cap_at_quote=True, fixed=None):
     """One fixed point on the model's own values, never the quote:
     1. the debt weight from the base scenario's equity value today;
     2. the issue price of every new share (assumed equity raises and SBC settled in shares) = min(quote, the scenario's own value
@@ -1229,7 +1261,9 @@ def _solve_capital(spec, P, table, table_t, kd_e, kd_p, net_debt, ov_ke, cap_at_
     scenario's horizon debt earns its tax shield as a bridge item in valuation.operating (TERMINAL_ASSET_RATE)."""
     shares, quote, B = spec['opening']['shares'], spec['quote']['price'], spec['boundaries']
     ku = (table + kd_e * MARKET_DE) / (1 + MARKET_DE)
-    issued = {sc['name']: [i for i in range(len(B)) if sc['equity_proceeds'][i] > 0 or sc['sbc_share_settlement'][i] > 0]
+    fixed = fixed or {}                   # scenario -> periods whose issue price is contracted (an equity_issue_price override)
+    issued = {sc['name']: [i for i in range(len(B)) if (sc['equity_proceeds'][i] > 0 or sc['sbc_share_settlement'][i] > 0)
+                           and i not in fixed.get(sc['name'], ())]
               for sc in spec['scenarios']}
     for sc in spec['scenarios']:
         p0 = sc.get('equity_issue_price', quote)
@@ -1674,6 +1708,25 @@ def _acquired_step(h, cal, d_rev0, warn):
             'basis': how + note}
 
 
+def _ttm_load(fb, metric, fy_end):
+    """metric / revenue over the same trailing twelve months ending after the last fiscal year (fy_end), or None: the TTM of the
+    metric, and revenue summed over the same four standalone quarters (or its own TTM when it ends on the same date)."""
+    t = facts.ttm(fb, metric)
+    if not t or t.get('method') == 'latest_fiscal_year' or _d(t['period_end']) <= _d(fy_end) + timedelta(days=10) or not t['value']:
+        return None
+    r = facts.ttm(fb, 'revenue')
+    if r and abs((_d(r['period_end']) - _d(t['period_end'])).days) <= 10 and r.get('method') != 'latest_fiscal_year':
+        rev = r['value']
+    else:
+        q = [(e, v) for e, v, _ in facts.series(fb, 'revenue', 'quarter') if _d(e) <= _d(t['period_end']) + timedelta(days=10)]
+        last4 = q[-4:]
+        if len(last4) < 4 or abs((_d(last4[-1][0]) - _d(t['period_end'])).days) > 10 \
+                or not 250 <= (_d(last4[-1][0]) - _d(last4[0][0])).days <= 300:
+            return None
+        rev = sum(v for _, v in last4)
+    return abs(t['value']) / rev if rev and rev > 0 else None
+
+
 def _fy_end_debt(fb, fy_end):
     """Reported debt (long-term + current portion) at the fiscal year end, or None when the long-term line is not reported."""
     def at(metric):
@@ -1969,7 +2022,14 @@ def _params(route, h, cal, cons, rf, ku, ku_t, ov_ke, debt0, ov, warn, ev=None):
             other = max(other, w0 + persist[s] * (min(dem, .40) - w0))
         wt = route['moat_weights'][s]
         roic = other + wt * (strong - other)        # the moat proxy weight blends the two rules (bear: unassessed rules)
-        roic = ov(s, 'terminal_roic', roic)
+        if (s in getattr(ov, 'linked', ()) and has(s, 'terminal_roic')
+                and float(getattr(ov, 'value', lambda s_, l_: None)(s, 'terminal_roic')) <= gT[s]):
+            # a company_path roic at or below terminal growth (NBIS's bear 1.6%) cannot be a terminal return: the yearly table
+            # refuses it too; this scenario keeps the engine's rule and says so
+            warn('capital_link_below_growth', f'{s}: the company_path roic is at or below terminal growth {gT[s]:.1%}: not linked to '
+                                              'the DCF (the engine rule stays; the yearly table reports the roic itself)', 'high')
+        else:
+            roic = ov(s, 'terminal_roic', roic)
         if roic < gT[s]:
             raise ValueError(f'{s}: terminal ROIC below terminal growth')
         mm = ov(s, 'mature_margin', margins[s])
@@ -2009,9 +2069,14 @@ def _paths(P, meta, h, route, cal, open_bal, inv_income):
     st = STAGE[route['stage']]
     B = cal['boundaries']
     n = len(B)
+    bp = meta.get('build_phase') or {}
     m0 = h['m0'] if h['m0'] is not None else P['base']['mature_margin']
     sbc0, dep0, cap = h['sbc_pct'], h['da_pct'], h['capex_pct']
-    maint = min(cap, dep0)
+    if bp.get('start_margin') is not None:
+        m0 = float(bp['start_margin'])            # inputs.build_phase: the evidenced first-year margin of a company still building
+    if bp.get('sbc_pct') is not None:
+        sbc0 = float(bp['sbc_pct'])
+    maint = min(cap, float(bp['depreciation_pct'])) if bp.get('depreciation_pct') is not None else min(cap, dep0)
     wc = _clamp(h['wc_ratio'] if h['wc_ratio'] is not None else .05, -.3, .5)
     dr = _clamp(open_bal['deferred_revenue'] / meta['stub_rate'], 0, 1.5) if meta['stub_rate'] else 0.
     prepaid = min(1., 2 * dr) if dr > 0 else 0.
@@ -2040,8 +2105,20 @@ def _paths(P, meta, h, route, cal, open_bal, inv_income):
             margin = [m + (dep0 - d) * (1 - acq_share) for m, d in zip(margin, dep)]
         ccr = [1 - m - x - d for m, x, d in zip(margin, sbc, dep)]
         if any(c < 0 or c > 2 for c in ccr):
-            raise ValueError('cash-cost ratio outside driver bounds (operating losses above 100% of revenue or margins above 100%)')
+            ttm = h.get('da_pct_ttm')
+            if (ttm is not None and ttm < dep0 - 1e-9 and bp.get('depreciation_pct') is None and not h.get('_da_ttm_used')
+                    and str(h.get('m0_basis') or '').startswith('TTM')):
+                # build phase: revenue grew into capacity after the last fiscal year, so its D&A load (NBIS: 79%) overstates
+                # today's; the margin is measured on the trailing twelve months, and so is the load it is paired with
+                return _paths(P, meta, dict(h, da_pct=ttm, _da_ttm_used=True), route, cal, open_bal, inv_income)
+            raise ValueError('cash-cost ratio outside driver bounds (operating losses above 100% of revenue or margins above 100%)'
+                             + ('' if bp else ': a company still building capacity ahead of its revenue needs an evidenced '
+                                'build-phase start (inputs.build_phase: start_margin, depreciation_pct, sbc_pct)'))
         p['s2c_terminal'] = p['roic'] / max(margin[-1] * (1 - p['tax']), 1e-6)     # terminal rule on the final EBIT margin
+        if p.get('s2c_linked'):
+            # inputs.capital_link: the scenario's evidenced ROIC sets the reinvestment from the first explicit year, the same capital
+            # per unit of new revenue as the terminal and as the yearly price table (company_path economics)
+            p['s2c'] = p['s2c_terminal']
         capint = [1 / p['s2c'] + (1 / p['s2c_terminal'] - 1 / p['s2c']) * w for w in conv_w]
         fy_rate = [meta['r_fy']] + rates[1:]
         release = route['stage'] == 'decline' or p['g_terminal'] < 0
@@ -2070,7 +2147,8 @@ def _paths(P, meta, h, route, cal, open_bal, inv_income):
                   'debt_draw': [0.] * n, 'debt_repayment': [0.] * n, 'fixed_cash_costs': [0.] * n}
         ident[s] = {'net_reinvestment_target': need, 'capital_per_revenue': capint, 'release': release}
     return out, {'wc': wc, 'dr': dr, 'prepaid': prepaid, 'maint': maint, 'dep': dep0, 'dep_path': dep, 'm0': m0, 'sbc0': sbc0,
-                 'identity': ident, 'acq_share': acq_share, 'roll': roll}
+                 'identity': ident, 'acq_share': acq_share, 'roll': roll,
+                 'da_basis': 'ttm' if h.get('_da_ttm_used') else 'last_fiscal_year', 'build_phase': bool(bp)}
 
 
 # ---------------------------------------------------------------- execution helpers
@@ -2102,6 +2180,7 @@ def _fund(spec, policy, allow, r_new, r0, debt0, locked, inv0):
     info = {sc['name']: {'draws': [0.] * n, 'equity': [0.] * n, 'liquidation': [0.] * n, 'settled': [0.] * n, 'retained': []}
             for sc in spec['scenarios']}
     inc0 = {sc['name']: list(sc['investment_income_after_tax']) for sc in spec['scenarios']}
+    status0 = {sc['name']: sc.get('financing_status', 'none') for sc in spec['scenarios']}
     for sc in spec['scenarios']:
         if not lock(sc['name'], 'payout_fraction'):
             sc['payout_fraction'] = [0.] * n
@@ -2195,7 +2274,10 @@ def _fund(spec, policy, allow, r_new, r0, debt0, locked, inv0):
             I['reverted'] = (f'assumed external financing of {ext:,.0f} did not converge (a shortfall remains or the plan still needs new '
                              'money in its last explicit year, so the terminal value would assume a self-funding business the explicit '
                              'path never reaches); values are withheld instead of assuming free capital')
-            sc['debt_draw'], sc['equity_proceeds'], sc['financing_status'] = [0.] * n, [0.] * n, 'none'
+            for k in ('debt_draw', 'equity_proceeds'):
+                if not lock(nm, k):
+                    sc[k] = [0.] * n           # the analyst's own (locked) financing stays
+            sc['financing_status'] = status0[nm]
             if not lock(nm, 'interest_rate'):
                 sc['interest_rate'] = [_r(r0)] * n
             if not lock(nm, 'payout_fraction'):
@@ -2410,6 +2492,9 @@ def _driver_sources(overrides, inputs, route, h, meta, P, cal, codes, srcs, ke_c
                 bound = 'scenario_order_0.5pp'
             if o:
                 row(lever, s, o['source_tier'], o['evidence_ids'], None, bound)
+            elif lever == 'sales_to_capital' and s in (meta.get('s2c_link') or {}):
+                lk = meta['s2c_link'][s]           # set from the scenario's evidenced company_path roic (inputs.capital_link)
+                row(lever, s, lk['source_tier'], lk['evidence_ids'], None, bound)
             elif lever in ('margin_convergence', 'minimum_cash_months', 'tax_rate', 'working_capital'):
                 t, ids, c = defaults[lever]['base']
                 row(lever, s, t, ids, c, bound)
@@ -2646,7 +2731,71 @@ def build(fb, an, card, qa, inputs=None):
         ev = cr.get('evidence_ids')
         if not isinstance(ev, list) or not ev or any(e not in known for e in ev):
             raise ValueError('country_risk: evidence_ids (where the exposure split comes from) must be FactBook source or qualitative ids')
-    clean = {k: v for k, v in inputs.items() if k in KNOWN_INPUTS}
+    known = set(fb.get('sources', {})) | {q['id'] for q in fb.get('qualitative', [])}
+    opts = inputs.get('options')
+    if opts is not None:
+        if not isinstance(opts, list):
+            raise ValueError('options: a list of items')
+        for i, it in enumerate(opts):
+            if not isinstance(it, dict) or sorted(set(it) - set(OPTION_KEYS)):
+                raise ValueError(f"options {i}: {', '.join(OPTION_KEYS)}")
+            if it.get('kind') not in OPTION_KINDS:
+                raise ValueError(f"options {i}: kind must be one of {', '.join(OPTION_KINDS)} (vested only: unvested awards are in sbc_pct)")
+            if _num(it.get('count')) is None or it['count'] <= 0 or _num(it.get('strike')) is None or it['strike'] < 0:
+                raise ValueError(f'options {i}: count must be positive and strike (the weighted-average exercise price) at least 0')
+            if not isinstance(it.get('reason'), str) or not it['reason'].strip():
+                raise ValueError(f'options {i}: a written reason is required')
+            ev = it.get('evidence_ids')
+            if not isinstance(ev, list) or not ev or any(e not in known for e in ev):
+                raise ValueError(f'options {i}: evidence_ids must be FactBook source or qualitative ids')
+    bp = inputs.get('build_phase')
+    if bp is not None:
+        if not isinstance(bp, dict) or sorted(set(bp) - set(BUILD_PHASE_KEYS)):
+            raise ValueError(f"build_phase: an object with {', '.join(BUILD_PHASE_KEYS)}")
+        vals = [k for k in BUILD_PHASE_RANGES if bp.get(k) is not None]
+        if not vals:
+            raise ValueError('build_phase: give start_margin, depreciation_pct and/or sbc_pct')
+        for k in vals:
+            lo, hi = BUILD_PHASE_RANGES[k]
+            if _num(bp[k]) is None or not lo <= bp[k] <= hi:
+                raise ValueError(f'build_phase.{k} must be a number from {lo} to {hi} (a fraction of revenue)')
+        if bp.get('source_tier', 'analyst') not in SOURCE_TIERS or not isinstance(bp.get('reason'), str) or not bp['reason'].strip():
+            raise ValueError(f"build_phase: source_tier one of {', '.join(SOURCE_TIERS)} and a written reason")
+        ev = bp.get('evidence_ids')
+        if not isinstance(ev, list) or not ev or any(e not in known for e in ev):
+            raise ValueError('build_phase: evidence_ids must be FactBook source or qualitative ids')
+    link = inputs.get('capital_link')
+    if link is not None:
+        if not isinstance(link, dict) or sorted(set(link) - set(SCEN)):
+            raise ValueError('capital_link: an object {bear|base|bull: {roic, source_tier, evidence_ids, reason}}')
+        olist = list(inputs.get('overrides') or [])
+        set_by = lambda s, paths: any(isinstance(o, dict) and o.get('path') in paths and o.get('scenario', 'all') in (s, 'all')
+                                      for o in olist)
+        s2c_link = {}
+        for s, x in link.items():
+            if not isinstance(x, dict) or sorted(set(x) - set(CAPITAL_LINK_KEYS)):
+                raise ValueError(f"capital_link.{s}: an object with {', '.join(CAPITAL_LINK_KEYS)}")
+            if _num(x.get('roic')) is None or not 0 < x['roic'] <= 1.5:
+                raise ValueError(f'capital_link.{s}: roic a decimal above 0 and at most 1.5')
+            if x.get('source_tier') not in SOURCE_TIERS or not isinstance(x.get('reason'), str) or not x['reason'].strip():
+                raise ValueError(f"capital_link.{s}: source_tier one of {', '.join(SOURCE_TIERS)} and a written reason")
+            ev = x.get('evidence_ids')
+            if not isinstance(ev, list) or not ev or any(e not in known for e in ev):
+                raise ValueError(f'capital_link.{s}: evidence_ids must be FactBook source or qualitative ids')
+            why = f"{CAPITAL_LINK_REASON} {s} scenario (one capital intensity per scenario): {x['reason']}"
+            if not set_by(s, ('terminal_roic', 'terminal.roic')):
+                o = {'path': 'terminal_roic', 'scenario': s, 'value': min(float(x['roic']), CAPITAL_LINK_ROIC_MAX), 'reason': why
+                     + (f" [path roic {x['roic']:.2f} linked at the valuation's {CAPITAL_LINK_ROIC_MAX:.0%} bound]"
+                        if x['roic'] > CAPITAL_LINK_ROIC_MAX else ''),
+                     'evidence_ids': list(ev), 'source_tier': x['source_tier']}
+                if x['source_tier'] == 'competitor':
+                    o['competitors'] = list(x.get('competitors') or [])
+                olist.append(o)
+            if not set_by(s, ('sales_to_capital', 'growth_capex_pct', 'maintenance_capex_pct')):
+                s2c_link[s] = {'source_tier': x['source_tier'], 'evidence_ids': list(ev), 'roic': float(x['roic'])}
+        inputs['overrides'] = olist
+        inputs['_s2c_link'] = s2c_link
+    clean = {k: v for k, v in inputs.items() if k in KNOWN_INPUTS or k == '_s2c_link'}
     out = _build(fb, an, card, qa, clean, None)
     if out.get('status') == 'built' and out['_external'] != out['_external_assumed']:
         again = _build(fb, an, card, qa, clean, out['_external'])
@@ -2744,6 +2893,17 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
         open_bal['debt'] = (open_bal['debt'] or 0.) + claims_added
         warn('debt_like_claims_added', f"{claims_added:,.0f} of debt-like claims added to opening debt: "
              + '; '.join(f"{it['kind']} {float(it['amount']):,.0f} ({it['reason']})" for it in inputs['debt_like_claims']), 'medium')
+    fl = [it for it in inputs.get('debt_like_claims') or [] if it['kind'] == 'finance_leases']
+    bare = [x for x in SCEN if not any(o['path'] in ('sales_to_capital', 'growth_capex_pct') and o['scenario'] in (x, 'all')
+                                       for o in overrides)]
+    if fl and bare:
+        # one treatment of finance leases (MSFT 2026-11): deducted as a claim, their right-of-use additions are capital spending
+        # too; the history's sales-to-capital and capex (cash PP&E only) leave them out, so growth would be charged too little
+        warn('finance_leases_reinvestment_basis', f"finance leases ({sum(float(it['amount']) for it in fl):,.0f}) are deducted as a "
+             f"debt-like claim, but the reinvestment of {', '.join(bare)} is measured without finance-lease right-of-use additions "
+             '(cash capex and invested capital exclude them): set sales_to_capital (or growth_capex_pct) on the lease-inclusive basis '
+             '(cash capex + finance-lease ROU additions, from the lease note) with evidence, or the value counts the lease debt but '
+             'not the assets it bought', 'high')
     bridge = []
     stmt_date = min(_d((res.get('cash') or {}).get('as_of') or as_of), _d((res.get('debt') or {}).get('as_of') or as_of))
     h['statement_date'] = stmt_date.isoformat()
@@ -2842,15 +3002,35 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
         o = econ.get((s, lever))
         return float(o['value']) if o is not None and o['source_tier'] in COMPANY_TIERS else None
     ov.overridden = lambda s, lever: (s, lever) in econ
+    ov.value = lambda s, lever: econ[(s, lever)]['value']
+    # scenarios whose terminal ROIC comes from inputs.capital_link (the synthesized override, build), not from an analyst override
+    ov.linked = {s for s in SCEN if str((econ.get((s, 'terminal_roic')) or {}).get('reason', '')).startswith(CAPITAL_LINK_REASON)}
 
     try:
         P, meta = _params(route, h, cal, cons, rf, ku, ku_t, ov_ke, open_bal['debt'], ov, warn, ev)
+        # reinvestment follows the path roic only where the terminal ROIC is that roic (not an analyst's own, not refused)
+        meta['s2c_link'] = {s: x for s, x in (inputs.get('_s2c_link') or {}).items()
+                            if abs(P[s]['roic'] - min(x['roic'], CAPITAL_LINK_ROIC_MAX)) < 1e-9}
         for s in SCEN:
             P[s]['cash_months'] = ov(s, 'minimum_cash_months', st['months'])
+            P[s]['s2c_linked'] = s in meta['s2c_link']
+        meta['build_phase'] = inputs.get('build_phase')
+        if any(x['roic'] > CAPITAL_LINK_ROIC_MAX for x in (inputs.get('capital_link') or {}).values()):
+            warn('capital_link_capped', 'a company_path roic above 100% is linked to the DCF at the valuation\'s 100% terminal ROIC '
+                                        'bound: the yearly table keeps its own roic, so the two differ there (company_path flags it)', 'medium')
         inv_income = (open_bal['sti'] + open_bal['lti']) * rf
         paths, fixed = _paths(P, meta, h, route, cal, open_bal, inv_income)
     except ValueError as e:
         return empty('method_not_supported_by_forecast', str(e), method)
+    if fixed.get('da_basis') == 'ttm':
+        h['da_pct'] = fixed['dep']
+        warn('da_load_ttm', f"build phase: the last fiscal year's D&A load made the margin path impossible; today's load is measured "
+                            f"on the trailing twelve months like the margin ({fixed['dep']:.1%} of revenue)", 'medium')
+    bp = inputs.get('build_phase')
+    if bp:
+        warn('build_phase_start', 'build-phase start from the analyst\'s evidence (' + ', '.join(
+            f'{k} {bp[k]:.1%}' for k in BUILD_PHASE_RANGES if bp.get(k) is not None) + f"; {bp['reason']}): the paths start from these "
+            'instead of the loads measured on today\'s revenue', 'medium')
     # extend the horizon if any scenario ends far from its terminal growth (valuation_audit flags >10pp cliffs)
     gap_end = max(abs(paths[s]['growth'][-1] - P[s]['g_terminal']) for s in SCEN)
     if gap_end > .03 and n_full < 20 and not inputs.get('horizon_years'):
@@ -2963,14 +3143,26 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
                          'description': 'convertible notes are not reconciled to the opening debt, so their conversion is not modelled'})
         converts = []
     conv_sh = sum(c['conversion_shares'] for c in converts)
-    add('dilution', 'dilution', 'model', {'incremental_dilutive_shares': 0, 'convertibles': converts},
+    opt_in = inputs.get('options') or []
+    opt_ids = [e for it in opt_in for e in it['evidence_ids']]
+    opt_srcs = [e for e in opt_ids if e in fb['sources']] + [x for q in fb.get('qualitative', []) if q['id'] in opt_ids
+                                                              for x in q['source_ids']]
+    if opt_in:
+        warn('options_treasury', '; '.join(f"{it['kind']} {float(it['count']):,.0f} at a weighted strike {float(it['strike']):,.2f} "
+                                           f"({it['reason']})" for it in opt_in)
+             + ': exercised by the treasury method at every valuation date and yearly price where the value is above the strike', 'low')
+    add('dilution', 'dilution', 'model', {'incremental_dilutive_shares': 0, 'convertibles': converts,
+                                          **({'options': [{k: it[k] for k in ('kind', 'count', 'strike')} for it in opt_in]} if opt_in else {})},
         'No incremental shares added today: future equity awards are charged as a cash-equivalent cost (sbc_pct), so adding unvested '
         'awards would double count; shares are added only where a cash shortfall is closed by settling SBC in shares or by an '
         f"equity raise (see the funding rows). Convertibles/warrants status in dataqa: {conv_f.get('status', 'not reported')}" +
         (f"; {len(converts)} convertible(s) with {conv_sh:,.0f} conversion shares are held as debt and convert at every valuation date "
-         'where the scenario value per share exceeds claim / conversion shares (if-converted, valuation._roll_back).' if converts else '.'),
+         'where the scenario value per share exceeds claim / conversion shares (if-converted, valuation._roll_back).' if converts else '.')
+        + (' Vested options/warrants (inputs.options): ' + '; '.join(f"{float(it['count']):,.0f} at {float(it['strike']):,.2f}" for it in opt_in)
+           + ', exercised by the treasury method at every date where the value per share exceeds the strike (exercise cash in, '
+           'option shares out).' if opt_in else ''),
         'Filings disclose in-the-money convertibles, warrants or vested options above 1% of shares that are not modelled here.',
-        share_srcs + [RULES])
+        share_srcs + [RULES] + opt_srcs)
     add('claims', 'other claims', 'model', {'other_claims': 0, 'net_runoff_obligation': 0},
         'No preferred stock, minority interests or other senior claims are recorded in the FactBook; deferred revenue renews in '
         'a going concern (ledger, not a runoff claim).', 'A filing shows preferred stock, material minority interests or contingent consideration.',
@@ -3347,7 +3539,9 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
                         'deferred_revenue': open_bal['deferred_revenue'], 'tax_loss_carryforward': float(_num(inputs.get('nol')) or 0),
                         'marketable_investments': open_bal['sti'] + open_bal['lti'],
                         **({'nondeductible_debt': nondeductible} if nondeductible else {}),
-                        **({'convertibles': [{k: c[k] for k in ('id', 'claim', 'conversion_shares')} for c in converts]} if converts else {})},
+                        **({'convertibles': [{k: c[k] for k in ('id', 'claim', 'conversion_shares')} for c in converts]} if converts else {}),
+                        **({'options': [{'id': f"{o['kind']}_{i + 1}", 'count': float(o['count']), 'strike': float(o['strike'])}
+                                        for i, o in enumerate(inputs['options'])]} if inputs.get('options') else {})},
             'report_dates': cal['report_dates'], 'boundaries': Pb, 'interim_boundaries': list(cal['interim']),
             'stub_annual_revenue_rate': _r(meta['stub_rate'], 2), 'last_full_year_revenue': _r(meta['r_fy'], 2), 'segment_name': 'Revenue',
             'segment_driver': 'subscribers' if route['business_model'] == 'subscription_software' else 'units', 'scenarios': scen}
@@ -3357,11 +3551,30 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
         warn('nol_unknown', 'loss-making company: tax-loss carryforwards are not in the FactBook and are set to 0 (conservative)', 'medium')
     # raw driver overrides (after paths, before funding); lists are per period boundary (spec['boundaries'])
     locked = {}
+    financing_tier = {}                   # scenario -> tiers of the analyst's own financing (equity_proceeds / debt_draw overrides)
+    issue_price = {}                      # scenario -> a single contracted issue price (applied where equity is committed)
     for o in overrides:
         if not o['raw']:
             continue
         for s in (SCEN if o['scenario'] == 'all' else (o['scenario'],)):
             sc = _scen(spec, s)
+            if o['path'] in ('equity_proceeds', 'debt_draw'):
+                vals = o['value'] if isinstance(o['value'], list) else [o['value']]
+                if any(float(x) > 0 for x in vals):
+                    financing_tier.setdefault(s, set()).add(o['source_tier'])
+            if o['path'] == 'equity_issue_price':
+                orig = sc.get('equity_issue_price', spec['quote']['price'])
+                if isinstance(o['value'], list):
+                    if len(o['value']) != len(spec['boundaries']):
+                        raise ValueError(f"override equity_issue_price: needs {len(spec['boundaries'])} values")
+                    sc['equity_issue_price'] = [float(x) for x in o['value']]
+                else:
+                    issue_price[s] = float(o['value'])
+                locked.setdefault(s, set()).add('equity_issue_price')
+                applied.append({'id': o['id'], 'path': o['path'], 'scenario': s, 'original': orig, 'value': o['value'],
+                                'reason': o['reason'], 'evidence_ids': o['evidence_ids'], 'source_tier': o['source_tier'],
+                                **({'competitors': o['competitors']} if o['competitors'] else {})})
+                continue
             if o['path'].startswith('terminal.'):
                 key = o['path'].split('.', 1)[1]
                 orig, sc['terminal'][key] = sc['terminal'].get(key), float(o['value'])
@@ -3389,6 +3602,14 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
             applied.append({'id': o['id'], 'path': o['path'], 'scenario': s, 'original': orig, 'value': o['value'],
                             'reason': o['reason'], 'evidence_ids': o['evidence_ids'], 'source_tier': o['source_tier'],
                             **({'competitors': o['competitors']} if o['competitors'] else {})})
+    for s, px in issue_price.items():
+        # one contracted price: the periods whose equity the analyst set are issued at it, any other period at today's quote
+        sc = _scen(spec, s)
+        sc['equity_issue_price'] = [px if x > 0 else float(spec['quote']['price']) for x in sc['equity_proceeds']]
+    for s, tiers in financing_tier.items():
+        # the analyst's own financing: committed when every source of it is contracted (a signed forward sale, a drawn facility),
+        # else assumed; never 'none' with money in it (valuation.operating refuses that)
+        _scen(spec, s)['financing_status'] = 'committed' if tiers == {'contracted'} else 'assumed'
     # growth costs capital: an analyst growth path is charged the engine's own capital per unit of new revenue, unless the
     # analyst also set the capex paths (NVIDIA 2026-10-20: the override replaced growth but kept the reinvestment of the
     # original path, so changing the cap on the discarded path moved the value by about $20 a share)
@@ -3595,7 +3816,9 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
     # an evidenced private stake is an asset, not liquidity: it does not offset debt in the leverage that sets the cost of capital
     net_debt = max(0., open_bal['debt'] - (inv0 - assets_added) - excess0)
     kd_e, kd_p = rf + DEBT_EXPECTED_PREMIUM, meta['interest_existing']
-    lev = _solve_capital(spec, P, ku, ku_t, kd_e, kd_p, net_debt, ov_ke)
+    contracted = {s: {i for i, x in enumerate(_scen(spec, s)['equity_proceeds']) if x > 0} for s, keys in locked.items()
+                  if 'equity_issue_price' in keys}
+    lev = _solve_capital(spec, P, ku, ku_t, kd_e, kd_p, net_debt, ov_ke, fixed=contracted)
     if lev['status'] in ('equity_not_positive', 'capped', 'not_converged'):
         warn('leverage_' + lev['status'], f"debt weight {lev['debt_weight']:.0%} ({lev['status']}): the model's own equity value is too small "
                                           'to carry the debt; the cost of equity is relevered at the cap, so the value is set by the cap '
@@ -3625,7 +3848,7 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
     second = None
     if dependent.get('base'):
         x = deepcopy(spec)
-        alt = _solve_capital(x, deepcopy(P), ku, ku_t, kd_e, kd_p, net_debt, ov_ke, cap_at_quote=False)
+        alt = _solve_capital(x, deepcopy(P), ku, ku_t, kd_e, kd_p, net_debt, ov_ke, cap_at_quote=False, fixed=contracted)
         r_alt, _ = _run(x)
         second = r_alt['annual_values'][0]['base'] if r_alt else None
         fund['info']['base']['value_if_issued_at_own_value'] = second

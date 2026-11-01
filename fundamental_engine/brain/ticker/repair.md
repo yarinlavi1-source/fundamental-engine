@@ -79,7 +79,11 @@ this same run was moved to attempts/; its gather fragments stayed: treat your ow
    retrieval calls). A cross-source data conflict that the filing explains is resolved with position/core.json
    dataqa_resolutions (filing evidence, analyst.md), bought revenue in the current year's step with forecast_options
    acquired_revenue, a claim ahead of the shares (a preferred stock, a royalty financing) with forecast_options
-   debt_like_claims; never edit a saved payload. A finding you cannot fix with evidence stays open. Validate every file you changed:
+   debt_like_claims, vested in-the-money options with forecast_options options, contracted equity (a forward sale) with
+   drivers.equity_proceeds at tier contracted plus drivers.equity_issue_price, a build-phase company the engine did not value
+   (value.json failed_at 'not valued: ... cash-cost ratio outside driver bounds') with forecast_options build_phase from cited
+   documents only, a DCF/yearly-table capital mismatch (company_path flag capital_intensity_gap) by removing the unevidenced
+   side (the path roic links into the DCF by itself); never edit a saved payload. A finding you cannot fix with evidence stays open. Validate every file you changed:
    `python -m fundamental_engine ticker-check {RUN} <file>`.
 3. Rerun the deterministic step: `python -m fundamental_engine ticker-value {RUN}` (merge the parts, pack-merge,
    pack-to-inputs, deep; it rewrites value.json). ran = value.json ran.

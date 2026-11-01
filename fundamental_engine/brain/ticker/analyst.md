@@ -157,6 +157,24 @@ Exact shapes (from evidence_pack.KEYS; the skeleton has them filled with this ru
   shares that the debt lines miss (kind one of forecast.DEBT_LIKE_KINDS, e.g. preferred_or_minority for a preferred stock at
   its liquidation preference, royalty_financing, litigation, pension_deficit, deferred_consideration, finance_leases), citing
   the filing note that sets its terms; added to opening debt (a mandatory convertible: the claim OR the dilution, never both).
+  finance_leases as a claim means their right-of-use additions are capital spending too: set drivers.sales_to_capital on the
+  lease-inclusive basis (cash capex + finance-lease ROU additions from the lease note), else the engine warns
+  finance_leases_reinvestment_basis (high). "options": [{"kind": "vested_options|warrants", "count", "strike", "reason",
+  "evidence_ids"}]: VESTED (exercisable) options or warrants and their weighted-average strike from the 10-Q/10-K equity note;
+  the engine exercises them by the treasury method at every value and yearly price above the strike (unvested awards stay in
+  sbc_pct: never add them). "build_phase": {"start_margin", "depreciation_pct", "sbc_pct", "source_tier", "reason",
+  "evidence_ids"} ONLY for a company still building capacity ahead of its revenue whose forecast says
+  method_not_supported_by_forecast 'cash-cost ratio outside driver bounds' (TTM margin far below -100%, D&A or SBC loads
+  measured on a tiny revenue): the first forecast year's operating margin and the D&A / SBC loads the evidence supports (e.g.
+  guided revenue and cost guidance, the depreciation schedule of the contracted capacity), each from a cited document; nothing
+  is defaulted, a value without evidence stays out and the company stays 'not valued'.
+- Contracted financing (a forward sale, a drawn facility after the balance sheet): drivers.equity_proceeds (or debt_draw) per
+  period at source_tier contracted, citing the agreement; drivers.equity_issue_price = the contracted price (one number: used
+  where the equity falls). The scenario's financing is then committed, the shares issued at that price. Never for an ATM or
+  plan without an agreement (that stays a gap or the engine's assumed financing).
+- One capital intensity per scenario: company_path roic (analyst_path) also sets that scenario's DCF terminal ROIC and its
+  reinvestment (sales_to_capital = ROIC / (final margin x (1 - tax))). Set drivers.terminal_roic or sales_to_capital only
+  with their own evidence; then company_path flags capital_intensity_gap where the two differ by more than 2 points.
 - dataqa_resolutions [{"field", "metric", "period_end", "resolution": "label_difference|use_source", "source_id", "reason",
   "evidence_ids"}] ONLY when dataqa blocks on a cross-source conflict the filing explains (qa.fields.<field>.note names the
   two sources; NVIDIA 2026-07-26: short-term investments 34.1B SEC vs 76.9B Alpha Vantage = debt 34.1B + equity 42.8B per

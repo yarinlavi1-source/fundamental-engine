@@ -69,6 +69,13 @@ MULTIPLE_FROM = ('economics', 'hand')
 # from a decimal by its size: the evidence, the refusal at or below g_T and the review read it.
 ROIC_MAX = 1.5
 ROIC_FLAG = 1.
+# one capital intensity per scenario (0.14.2): the yearly table's ROIC and the DCF's terminal ROIC differing by more than this
+# (absolute) are two capital stories in one scenario: flagged (capital_intensity_gap). pipeline links them by default
+# (forecast inputs.capital_link), so a gap remains only where the analyst set the DCF's terminal ROIC separately or a bound binds.
+CAPITAL_GAP_TOL = .02
+# today's EPS x multiple (year 0, not shown) further than this from the quote: year 1's change is mostly that gap closing, not
+# one year of the business; the table says so in plain words (year1_carries_gap)
+YEAR0_GAP_NOTE = .25
 ECON_FORMULA = ('value_t = sum over the executed fiscal years k still ahead at anniversary t of D_k x (share of year k ahead) / '
                 '(1 + Ke)^(years to the midpoint of that part) + TV / (1 + Ke)^(years to the last executed fiscal year end); '
                 'D_k = E_k x (1 - g_(k+1) / ROIC) = E_k - (E_(k+1) - E_k) / ROIC (a partial year annualized for its growth; '
@@ -339,6 +346,7 @@ def build(cp, val, known=None, events=None, fc=None):
         return {'status': 'not_available', 'reason': 'no executed operating or residual-income valuation to read EPS from',
                 'title_he': TITLE_HE}
     interim = set((case.get('generated_from') or {}).get('interim_boundaries') or ())
+    options = (case.get('opening') or {}).get('options') or []
     as_of, quote = case['as_of'], _num((case.get('quote') or {}).get('price'))
     executed = {s['name']: s for s in res['scenarios']}
     case_sc = {c.get('name'): c for c in case.get('scenarios') or [] if isinstance(c, dict)}
@@ -385,6 +393,8 @@ def build(cp, val, known=None, events=None, fc=None):
             else:
                 r['price'] = m * f['eps']
                 r['status'] = 'priced'
+                if options and f.get('weighted_shares'):
+                    r['price_before_options'], r['price'] = r['price'], option_diluted(r['price'], f['weighted_shares'], options)
                 if t and quote and quote > 0:
                     r['annual_return'] = (r['price'] / quote) ** (1 / t) - 1
                 drv = (f"הכנסות {_big(f['revenue'])}, שולי רווח תפעולי {f['operating_margin']:.0%}, " if f['revenue'] else '')
@@ -410,6 +420,24 @@ def build(cp, val, known=None, events=None, fc=None):
                                  'text': econ['roic_check'],
                                  'text_he': f"תרחיש {LABEL_HE[s]}: תשואה על ההון {x['roic']:g} נקראת כשבר עשרוני, כלומר {x['roic']:.0%} "
                                             f"(1.0 = 100%); אם הכוונה הייתה {x['roic']:g}% — יש לתקן ל־{x['roic'] / 100:.4f}."})
+        eng = (econ or {}).get('engine_terminal_roic')
+        if econ and eng is not None and abs(x['roic'] - eng) > CAPITAL_GAP_TOL:
+            out['flags'].append({'id': 'capital_intensity_gap', 'scenario': s, 'severity': 'high', 'roic': x['roic'],
+                                 'engine_terminal_roic': eng,
+                                 'text': f"{s}: the yearly table's ROIC {x['roic']:.1%} and the DCF's terminal ROIC {eng:.1%} differ by "
+                                         f"more than {CAPITAL_GAP_TOL:.0%}: the fair value and the yearly prices assume different "
+                                         'capital needs for the same growth',
+                                 'text_he': f"תרחיש {LABEL_HE[s]}: התשואה על ההון בטבלה השנתית ({x['roic']:.0%}) שונה מזו של מודל תזרים "
+                                            f"המזומנים ({eng:.0%}), כלומר השווי ההוגן והמחירים השנתיים מניחים השקעה שונה לכל דולר צמיחה."})
+        y0 = rows[0]['price'] if rows and rows[0]['status'] == 'priced' else None
+        if s == 'base' and y0 and quote and abs(y0 / quote - 1) > YEAR0_GAP_NOTE:
+            out['flags'].append({'id': 'year1_carries_gap', 'scenario': s, 'severity': 'medium', 'year0_price': y0, 'quote': quote,
+                                 'gap': y0 / quote - 1,
+                                 'text': f'base: today\'s EPS x multiple {y0:.2f} is {y0 / quote - 1:+.0%} from the quote {quote:.2f}; '
+                                         "year 1's change is mostly that gap closing, not one year of the business",
+                                 'text_he': f"שימו לב: לפי המודל המניה שווה כבר היום כ־{_fmt(y0)} בתרחיש הבסיסי, {abs(y0 / quote - 1):.0%} "
+                                            f"{'מעל' if y0 > quote else 'מתחת'} למחיר של היום ({_fmt(quote)}). השינוי בשנה 1 כולל את כל "
+                                            'הפער הזה, ולכן הוא לא מראה צמיחה של שנה אחת; משנה 2 השינוי השנתי משקף את העסק.'})
         if x['justification'] == 'peak':
             if hist is None:
                 out['flags'].append({'id': 'peak_unchecked', 'scenario': s, 'severity': 'medium',
@@ -423,6 +451,17 @@ def build(cp, val, known=None, events=None, fc=None):
                                          'text_he': f"תרחיש {LABEL_HE[s]}: מכפיל של שיא עד {max(m for _, m in over):.1f}, מעל החציון של החברה "
                                                     f"עצמה ({hist['median']:.1f}, {hist['years']}); ההסבר שניתן: {x['reason_he'].rstrip('.')}."})
     return out
+
+
+def option_diluted(price, shares, options):
+    """Per-share price after vested in-the-money options exercised at their weighted strike (the treasury method at that price,
+    solved for its own fixed point: (price x shares + count x strike) / (shares + count) when the price is above the strike)."""
+    v = price
+    for o in options:
+        k, n = float(o['strike']), float(o['count'])
+        if v > k and n > 0:
+            v = (v * shares + n * k) / (shares + n)
+    return v
 
 
 def tiers_he(cp):

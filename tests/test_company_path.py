@@ -114,11 +114,12 @@ class CompanyPathTests(unittest.TestCase):
         self.assertIn(f['text_he'], hebrew_table(self.cf))
         cp = deepcopy(CP)
         cp['scenarios']['bull']['multiple_path'] = [60, 58, 56, 54, 52, 50]               # at or below the own median: no flag
-        self.assertEqual(C.build(cp, self.val, KNOWN)['flags'], [])
+        peak = lambda c: [x['id'] for x in C.build(c, self.val, KNOWN)['flags'] if x['id'] != 'year1_carries_gap']
+        self.assertEqual(peak(cp), [])
         del cp['own_history']
-        self.assertEqual([x['id'] for x in C.build(cp, self.val, KNOWN)['flags']], ['peak_unchecked'])
+        self.assertEqual(peak(cp), ['peak_unchecked'])
         cp['scenarios']['bull']['justification'] = 'unproven'
-        self.assertEqual(C.build(cp, self.val, KNOWN)['flags'], [])
+        self.assertEqual(peak(cp), [])
 
     def test_unpriced_rows_say_why(self):
         val = deepcopy(self.val)
@@ -251,8 +252,9 @@ def analysts_path_calc(fy, as_of, ke, ket, gt, roic):
 class EconomicsModeTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.plain = pipeline.run(deepcopy(ADBE))
-        cls.cf = pipeline.run(deepcopy(ADBE), {'company_path': deepcopy(ECON)})
+        cls.plain = pipeline.run(deepcopy(ADBE), {'forecast': {'capital_link': {}}})
+        # forecast.capital_link {} switches the 0.14.2 link off: the path then reads the engine's own DCF without moving it
+        cls.cf = pipeline.run(deepcopy(ADBE), {'company_path': deepcopy(ECON), 'forecast': {'capital_link': {}}})
         cls.cp = cls.cf['company_path']
         cls.val = cls.cf['val']
         cls.case = {s['name']: s for s in cls.val['case']['scenarios']}
@@ -415,6 +417,8 @@ class EconomicsModeTests(unittest.TestCase):
         self.assertIn(str(CP['scenarios']['bull']['multiple_path']), md)
 
     def test_invariance_of_every_existing_value(self):
+        """With the capital link switched off (forecast.capital_link {}) the path moves no value; with it (the default since
+        0.14.2) the DCF takes the path's roic: tests/test_batch_1101.py."""
         for k in set(self.plain) | set(self.cf):
             if k in ('company_path', 'stages', 'casefile_sha256', 'inputs_sha256', 'scenario_reasons'):
                 continue

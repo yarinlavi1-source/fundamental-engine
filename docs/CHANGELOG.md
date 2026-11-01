@@ -1,3 +1,81 @@
+## Unreleased (0.14.2) — engine bugs from the 01.11.2026 portfolio batch
+
+Ten engine causes found while valuing the portfolio on 2026-11-01 (run folders runs/tickers/<T>_2026-11-01, their review and
+repair files). Company-first: every new input needs the company's own evidence ids; nothing is defaulted from another
+company; nothing is tuned to the backtest. Tests: tests/test_batch_1101.py (synthetic fixtures shaped like each live case, plus
+the Adobe fixture through the pipeline).
+
+1. Split applied twice (NOW). Root cause: ServiceNow's 5-for-1 reached dataqa twice, the issuer's XBRL split tag (dated
+   2025-12-05) and the IBKR corporate action (effective 2025-12-18); `_split_decision` multiplied every dated event's factor
+   (5 x 5 = 25), so analysis.share_count_cagr_3y read -40.9%/yr and reached the card signals, the funding answer and the
+   red-team share path. Change: `dataqa._same_split_once` keeps one event per corporate action (same factor within SPLIT_BAND,
+   at most SPLIT_SAME_EVENT_DAYS = 60 apart; the twin is listed under `same_event`). On the NOW FactBook the factor is 5 and the
+   3-year share count change +1.07%/yr. The no-dataqa analysis route uses the same `_split_events`, so both paths are fixed.
+2. Two capital stories in one scenario (RDDT, MSFT, NOW, PLTR, APH). Root cause: company_path's evidenced ROIC priced the
+   yearly table while the DCF kept the engine's terminal-ROIC rule and the historical sales-to-capital. Change: pipeline builds
+   `forecast.capital_link` from company_path scenarios in multiple_from 'economics'; the forecast turns each into a terminal_roic
+   override (the path's tier and evidence; at most 1.0, the valuation's bound, warned `capital_link_capped`) and sets the explicit
+   sales-to-capital to the terminal rule ROIC / (final EBIT margin x (1 - tax)) from the first year; driver_sources records the
+   path's tier. An analyst override of terminal_roic / sales_to_capital / growth_capex_pct wins; a path roic at or below terminal
+   growth is not linked (warned `capital_link_below_growth`; the path refuses it itself). Any remaining gap above 2 points is the
+   company_path flag `capital_intensity_gap` (Hebrew note under the table). `forecast.capital_link: {}` switches the link off.
+3. No committed-equity input (META forward sale). Root cause: an equity_proceeds override left financing_status unset and
+   `_fund` defaulted it to 'none', so valuation refused 'Funding marked none but cash financing supplied'. Change:
+   equity_proceeds / debt_draw overrides whose tiers are all 'contracted' make the scenario 'committed' (any other tier
+   'assumed', never 'none' with money); new raw override path `equity_issue_price` (one number = the contracted price where
+   that equity falls, else the quote; or one per period), kept out of the issue-price fixed point; an assumed-financing revert
+   no longer wipes the analyst's locked financing. In the pack: drivers.equity_proceeds at tier contracted + drivers.equity_issue_price.
+4. Year 1 carried the whole gap from the quote to the model value. Change: company_path flag `year1_carries_gap` when the base's
+   year-0 EPS x multiple is more than 25% from the quote; its Hebrew note under the yearly table says year 1's change is mostly
+   that gap and year 2 on reflects the business.
+5. Finance leases (MSFT). Root cause: finance leases were deducted as a debt-like claim while the history's sales-to-capital
+   and capex (cash PP&E only) leave their right-of-use additions out. Change (documented and enforced by a warning): forecast
+   warns `finance_leases_reinvestment_basis` (high) for every scenario without a sales_to_capital / growth_capex_pct override
+   when a finance_leases claim is supplied; the pack adds a note; analyst.md asks for the lease-inclusive basis.
+6. No options input (RDDT, APH). Change: forecast input / pack forecast_options `options` [{kind vested_options|warrants, count,
+   strike, reason, evidence_ids (issuer filing)}] -> case opening.options; valuation._roll_back applies the treasury method at
+   every date's own value ((v x shares + count x strike) / (shares + count) where v > strike) and company_path prices likewise on
+   the year's weighted shares (`price_before_options` kept). Unvested awards stay in sbc_pct.
+7. Build-phase companies (NBIS, ASTS). Root cause: value.json read ran=true from stage 'ok' although fc.status was
+   method_not_supported_by_forecast; and the forecast paired a TTM margin with the last fiscal year's D&A load (NBIS 79%), held
+   forever as maintenance capex. Change: `ticker_run.valued` (value.json `valued`, ran = valued, failed_at 'not valued: ...',
+   not_valued_he; ticker-status 'not valued: ...'); when the fiscal-year load makes the cash-cost ratio leave its bounds and the
+   margin is on the TTM basis, the D&A load of the same trailing twelve months is used (warned `da_load_ttm`; only then, so no
+   valued company moves); an evidenced `build_phase` {start_margin, depreciation_pct, sbc_pct, source_tier, reason, evidence_ids}
+   starts the paths from those values (D&A converging to the evidenced load as maintenance capex); otherwise the reason names the
+   input. NBIS now passes the D&A bound but its own pack gives a 3-value growth list for a 16-period path (an input error the
+   repair stage fixes); ASTS (TTM margin -660%, SBC 128% of revenue) needs an evidenced build_phase: both stay 'not valued'.
+8. dataqa ignored same-family resolutions (ASTS). Root cause: `_cross` applied a resolution only across source families, and
+   companyfacts XBRL and the 10-Q read directly are one family. Change: inside a family a resolution applies when its evidence
+   cites the filing document itself (`_primary_filing_evidence`: an issuer document of the filing dataset, or an item citing
+   one); a filing-derived transcription alone never settles it. On ASTS short-term investments resolve to 0 (the 2.3B double count
+   is gone) and operating income uses the reported statement line; the cash field still fails its rollforward on rounded vendor
+   cash-including-restricted values (a data item for the run).
+9. Keyword routing (APH). Root cause: TEXT_RULES matched 'cable' (cable assemblies) to capital_intensive_infrastructure before the
+   hardware rule. Change: an infrastructure keyword with capex below INFRA_CAPEX_MIN (6%) of revenue yields to the same label's
+   next type or the SIC_FALLBACK type, reason recorded (APH: hardware_manufacturing, archetype industrial; its values do not move
+   because its own drivers override the type ranges).
+10. Interest on existing debt (APH 2.06%). Already fixed by 0.14.1's INTEREST_RUN_RATE (the APH run was made with 0.14.0): the
+   latest quarters annualized after a debt jump (APH: 4.76%). A regression test on APH's interest series is added.
+
+Re-run of ticker-value on copies of the 01.11 run folders (before = main 4fc0883, after = this change; the runs' own inputs;
+'+inputs' adds the new evidenced inputs the repairs could not express: META's forward sale, 24.92B at tier contracted with
+equity_issue_price 622.92 in FY2027; RDDT's 5,604,522 vested options at 39.29):
+
+| ticker | run | fair value (base) | base IRR | year-5 base (yearly table) | note |
+|---|---|---|---|---|---|
+| NOW | before / after | 146.4 / 146.4 | 10.79% / 10.79% | 216.1 / 216.1 | share_count_cagr_3y -40.9% -> +1.07%/yr (no value read it) |
+| MSFT | before / after | 467.8 / 467.8 | 9.86% / 9.86% | 692.3 / 692.3 | repair had already aligned ROIC and the lease basis |
+| RDDT | before / after / +options | 260.6 / 260.6 / 254.4 | 14.89% / 14.89% / 14.75% | 378.9 / 378.9 / 369.3 | options -2.4% |
+| META | before / after / +forward sale | 823.0 / 738.3 / 735.2 | 11.98% / 11.52% / 11.51% | 1125.9 / 1125.9 / 1114.4 | terminal ROIC linked to the path (base 20%); financing committed |
+| APH | before / after | 133.8 / 133.8 | 10.37% / 10.37% | 202.2 / 202.2 | routed hardware_manufacturing; analyst's own terminal ROIC kept, capital_intensity_gap flagged (base 25% vs 20%, bull 32% vs 24.5%); interest 4.76% on both |
+| PLTR | before / after | 80.8 / 113.6 | 7.97% / 8.64% | 168.1 / 168.1 | terminal ROIC and reinvestment linked to the path (bear 50%, base 100%, bull 150% -> 100% capped) |
+| NBIS | before / after | ran=true, no value / not valued | - | - | after: the D&A bound passes on the TTM load; the run's 3-value growth list for 16 periods is refused (input error) |
+| ASTS | before / after | ran=true, no value / not valued | - | - | dataqa cash 4.59B -> 2.29B (double count gone); needs an evidenced build_phase |
+
+A/B on the walk-forward helper (scratchpad tools/ab.py: 45 names x 2019/2023/2025, engine_backtest.company_row, which carries
+none of these inputs): 127 rows, 113 valued, every field of every row identical to main 4fc0883 (no unintended value change).
+
 ## Unreleased (0.14.1) — IRR on the return scale; one-off interest guard; non-deductible claims (01.11.2026)
 
 Review round 6 (of ef46436). The round-5 reviewer: the convergence return is monotone and consistent, but (blocking) the

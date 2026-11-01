@@ -69,6 +69,10 @@ SPLIT_ALT_WINDOW_DAYS = 45        # ...counts as split evidence only when an iss
 PRICE_JUMP_TOL = .15              # an as-traded close-to-close move within 15% (log) of 1/factor marks the split bar
 PRICE_BAR_MAX_GAP = 40            # closes further apart than this cannot locate a split bar
 SPLIT_RESTATED_DAYS = 92          # a split this soon after a count filed after the split: that count is already restated
+# two records of a split with the same factor (within SPLIT_BAND) dated at most this far apart are ONE corporate action seen by
+# two sources (ServiceNow's 5-for-1: the issuer's XBRL tag dated 5 December 2025, the market feed's effective date 18 December);
+# multiplying them had made a factor of 25 and a -41%/yr share count
+SPLIT_SAME_EVENT_DAYS = 60
 CONVERT_TOPICS = {'convertible', 'convertibles', 'convertible_notes'}
 WARRANT_TOPICS = {'warrant', 'warrants', 'prefunded_warrant', 'pre_funded_warrant', 'prefunded_warrants'}
 DEFINITIONS = {
@@ -318,6 +322,26 @@ def _filing_evidence(fb, eid):
     return bool(item) and F.item_usable(fb, item, False) and any(filing(sid) for sid in item.get('source_ids') or [])
 
 
+def _primary_filing_evidence(fb, eids):
+    """Does the evidence cite the filing DOCUMENT itself (an issuer document of the filing dataset read at as_of, or an item citing
+    one), not only a filing-derived transcription (XBRL companyfacts, a vendor's as-reported copy)? Inside one source family two
+    transcriptions of the same filing disagree (ASTS 2026-06: companyfacts ShortTermInvestments 2.3B against the 10-Q's single
+    cash line that already holds those money-market funds); an analyst resolution that cites the document decides between them."""
+    def doc(sid):
+        x = fb['sources'].get(sid) or {}
+        return (x.get('kind') == 'issuer_document' and x.get('dataset') == 'filing'
+                and not (x.get('published_at') and _d(x['published_at']) > _d(fb['as_of'])))
+    for e in eids or []:
+        if e in fb['sources']:
+            if doc(e):
+                return True
+            continue
+        item = next((x for x in fb.get('qualitative') or [] if x.get('id') == e), None)
+        if item and F.item_usable(fb, item, False) and any(doc(sid) for sid in item.get('source_ids') or []):
+            return True
+    return False
+
+
 def _resolutions(fb, rows):
     """options['resolutions'] -> checked rows with status 'pending' (applied later), or 'rejected' with why (recorded, never
     applied: the conflict stays). A malformed list is an input error."""
@@ -473,7 +497,9 @@ def _cross(q, metric, f):
             continue
         why = _explain(q, metric, f, b)
         res = q.resolution('label_difference', metric, g, g['source_id']) or q.resolution('use_source', metric, f, f['source_id'])
-        if not why and res and not copy:
+        if res and copy and not _primary_filing_evidence(q.fb, res['evidence_ids']):
+            res = None        # inside one family only the filing document itself, read directly, settles which copy is right
+        if not why and res:
             why = (f"analyst resolution ({res['resolution'].replace('_', ' ')}"
                    + (f", use {res['source_id']}" if res['resolution'] == 'use_source' else '')
                    + f"): {res['reason']} (filing evidence {', '.join(res['evidence_ids'])})")
@@ -840,7 +866,33 @@ def _split_events(q, a, b):
         if x.get('topic') in SPLIT_TOPICS and q.dated(x) and when and _days(a['as_of'], when) > -30 \
                 and (_days(when, b['as_of']) >= 0 or restated(when)):
             out.append({'date': when, 'factor': x.get('factor'), 'item': x['id']})
-    return out
+    return _same_split_once(out)
+
+
+def _num(v):
+    try:
+        x = float(v)
+    except (TypeError, ValueError):
+        return None
+    return x if x > 0 and x == x and x != float('inf') else None
+
+
+def _same_split_once(events):
+    """One event per corporate action: a later record with the same factor (within SPLIT_BAND; an unknown factor matches any)
+    dated at most SPLIT_SAME_EVENT_DAYS after a kept one is the same split reported by another source; it is listed under the
+    kept event's 'same_event' and its factor is never multiplied in again."""
+    kept = []
+    for e in sorted(events, key=lambda x: str(x.get('date'))):
+        f = _num(e.get('factor'))
+        twin = next((k for k in kept if abs(_days(k['date'], e['date'])) <= SPLIT_SAME_EVENT_DAYS
+                     and (f is None or _num(k.get('factor')) is None or abs(f / _num(k['factor']) - 1) <= SPLIT_BAND)), None)
+        if twin is None:
+            kept.append(dict(e))
+            continue
+        if _num(twin.get('factor')) is None and f is not None:
+            twin['factor'] = e['factor']
+        twin.setdefault('same_event', []).append({k: e[k] for k in ('date', 'factor', 'source_id', 'item') if k in e})
+    return kept
 
 
 def _split_decision(q, a, b, k):
