@@ -929,7 +929,7 @@ def _forecast_options(p, opts):
         if keep and len(keep) == len(rows):
             out['options'] = keep
     if 'build_phase' in opts:
-        from .forecast import BUILD_PHASE_RANGES, BUILD_PHASE_TIERS
+        from .forecast import BUILD_PHASE_LOAD_WORDS, BUILD_PHASE_RANGES, BUILD_PHASE_TIERS
         b, where = opts['build_phase'], 'forecast_options.build_phase'
         if c.obj(b, 'build_phase', where):
             vals = [k for k in BUILD_PHASE_RANGES if b.get(k) is not None]
@@ -946,6 +946,11 @@ def _forecast_options(p, opts):
                 # the forecast needs the filing DOCUMENT (forecast._filing_document_evidence); say so here, not at the engine
                 c.err(where, 'cite the filing document (a pack source of kind sec_filing, or an item citing one): the income '
                              'statement and the D&A and stock-comp lines')
+            elif b['source_tier'] == 'guidance' and not any(
+                    e in p.items and p.items[e][0] == 'guidance'
+                    and BUILD_PHASE_LOAD_WORDS.search(str(p.items[e][1].get('metric', ''))) for e in b['evidence_ids']):
+                c.err(where, 'tier guidance needs a guidance item on a margin or cost load (operating margin, D&A, stock comp, '
+                             'opex); a revenue / ARR guide does not give a margin')
             else:
                 p.tier(b['source_tier'], b['evidence_ids'], None, where)
                 out['build_phase'] = {**{k: b[k] for k in vals}, 'source_tier': b['source_tier'], 'reason': b['reason'],

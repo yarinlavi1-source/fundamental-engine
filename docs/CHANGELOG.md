@@ -1,5 +1,14 @@
 ## 0.14.2 — engine bugs from the 01.11.2026 portfolio batch
 
+### Review round 3 (of d605622): NOT READY -> fixed directly (lean verification)
+
+- In the build-phase shape, `build_phase` could start the paths from any values at tier contracted (a 10-K citation, which
+  every prefetched FactBook has) or tier guidance (any guidance item, e.g. an ARR guide): NBIS turned valued, ASTS built at
+  10.26. Now only tier guidance with a guidance item on a margin or cost load (`forecast.BUILD_PHASE_LOAD_WORDS`) may start away
+  from the measured loads; own_history and contracted stay within `BUILD_PHASE_LOAD_BAND` (warned `build_phase_not_applied`).
+  The pack route refuses tier guidance without such an item. Reviewer probes rerun: NBIS and ASTS unchanged without load
+  guidance. Tests: `ReviewRound3Tests`; suite 1711 OK.
+
 ### Review round 2 (of 1dbc22f): NOT READY -> fixed
 
 1. build_phase 'needed' route (blocking). Any forecast failure had counted as "needed", so on MSFT a `mature_margin` 0.95

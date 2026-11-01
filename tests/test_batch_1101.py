@@ -692,3 +692,29 @@ class PackInputsTests(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class ReviewRound3Tests(unittest.TestCase):
+    """Third review of 0.14.2: in the build-phase shape only the company's own guidance on a margin or cost load may start the
+    paths away from the measured loads; a 10-K citation at tier contracted, or a revenue / ARR guide, does not."""
+
+    def setUp(self):
+        self.fb, self.an, self.card, self.qa = builder()
+        self.ov = [{'path': 'mature_margin', 'scenario': s, 'value': v, 'reason': 'contracted unit economics',
+                    'evidence_ids': ['syn:fs'], 'source_tier': 'contracted'} for s, v in (('bear', .15), ('base', .25), ('bull', .3))]
+        self.far = {'start_margin': .6, 'depreciation_pct': 0., 'sbc_pct': 0., 'reason': 'x', 'evidence_ids': ['syn:10q']}
+
+    def test_contracted_with_only_the_filing_is_held_to_the_band(self):
+        fc = forecast.build(self.fb, self.an, self.card, self.qa,
+                            {'overrides': self.ov, 'build_phase': dict(self.far, source_tier='contracted')})
+        codes = {w['code'] for w in fc['warnings']}
+        self.assertIn('build_phase_not_applied', codes)
+        self.assertNotIn('build_phase_start', codes)
+
+    def test_a_revenue_guide_is_not_guidance_for_a_margin(self):
+        facts.add_qualitative(self.fb, 'syn:arr', 'guidance:arr', 'guided ARR of 7-9B (TEST DATA ONLY)', 'guidance',
+                              ['syn:10q'], self.fb['as_of'])
+        with self.assertRaises(ValueError) as cm:
+            forecast.build(self.fb, self.an, self.card, self.qa, {'overrides': self.ov, 'build_phase': dict(
+                self.far, source_tier='guidance', evidence_ids=['syn:10q', 'syn:arr'])})
+        self.assertIn('margin or cost load', str(cm.exception))

@@ -300,6 +300,11 @@ BUILD_PHASE_CAPEX_MIN = 1.
 # analyst's overrides made impossible: MSFT mature_margin 0.95 + D&A 0 + SBC 0 had built a base of 949 against 441), and then
 # only with every value within the band of its measured loads.
 BUILD_PHASE_LOAD_BAND = .10
+# review round 3 (0.14.2): a guidance item counts for build_phase only when it is about a margin or cost load (not revenue / ARR);
+# in the build-phase shape only tier guidance may start away from the measured loads: own_history AND contracted (a contract
+# fixes prices or volumes, not this company's cost loads) stay within BUILD_PHASE_LOAD_BAND of them.
+BUILD_PHASE_LOAD_WORDS = re.compile(r'margin|operating (income|loss|expense|cost)|ebit|opex|depreciation|amorti[sz]ation|d&a|'
+                                    r'stock[- ]based|stock comp|\bsbc\b|cost', re.I)
 # equity_issue_price (raw override path, 0.14.2): the contracted price of committed equity proceeds (a forward sale's forward
 # price) per period boundary; with equity_proceeds or debt_draw overridden at source_tier 'contracted' the scenario's financing is
 # committed, not assumed (valuation financing_status), and the shares are issued at this price instead of today's quote.
@@ -2840,9 +2845,11 @@ def build(fb, an, card, qa, inputs=None):
         if not isinstance(ev, list) or not ev or any(e not in known for e in ev):
             raise ValueError('build_phase: evidence_ids must be FactBook source or qualitative ids')
         if bp['source_tier'] == 'guidance' and not any(x.get('id') in ev and x.get('kind') == 'guidance'
+                                                       and BUILD_PHASE_LOAD_WORDS.search(f"{x.get('topic', '')} {x.get('statement', '')}")
                                                        for x in fb.get('qualitative') or []):
-            raise ValueError("build_phase: tier guidance needs a guidance item among evidence_ids (the company's own guided "
-                             'number for the start); a forward start without it is a judgement')
+            raise ValueError("build_phase: tier guidance needs a guidance item on a margin or cost load (operating margin, D&A, "
+                             'stock comp, opex) among evidence_ids; a revenue / ARR guide does not give a margin, and a forward '
+                             'start without it is a judgement')
         if not any(_filing_document_evidence(fb, e) for e in ev):
             raise ValueError('build_phase: cite the filing document (10-K / 10-Q / 20-F read for the income statement and the D&A '
                              'and stock-comp lines, or an item citing it) among evidence_ids; structured companyfacts alone, a '
@@ -3107,9 +3114,10 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
                 f" (more than {BUILD_PHASE_LOAD_BAND:.0%} of revenue from the engine's own measured load: " + ', '.join(
                     f"{k} {'/'.join(format(m, '.1%') for m in _build_phase_measured(h)[k]) or 'not measured'}" for k in off) + ')')
             if _build_shape(h):
-                if ibp['source_tier'] == 'own_history' and off:
-                    warn('build_phase_not_applied', 'inputs.build_phase is not applied: tier own_history is what the engine measures, '
-                         'and ' + band() + '; a forward start needs tier guidance or contracted', 'high')
+                if ibp['source_tier'] != 'guidance' and off:
+                    warn('build_phase_not_applied', f"inputs.build_phase is not applied: tier {ibp['source_tier']} stays near what "
+                         'the engine measures, and ' + band() + "; a forward start needs the company's own guidance on a margin or "
+                         'cost load (tier guidance)', 'high')
                 else:
                     meta['build_phase'], bp_why = ibp, 'shape'
             else:
