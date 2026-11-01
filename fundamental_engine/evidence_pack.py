@@ -309,7 +309,7 @@ class Pack:
                 where = f'{key}[{i}]'
                 if not c.obj(x, kind, where):
                     continue
-                if key in ('facts', 'segments'):
+                if key in ('facts', 'segments', 'kpis'):
                     _to_base_unit(x, ('value', 'revenue', 'operating_income'))
                 self._new_item(x['id'], key, x, where)
                 self.facts_ids(x['source_ids'], where)
@@ -495,8 +495,11 @@ def track_record(pack_obj):
 
 # a scaled money unit ('USD_millions', 'USD bn', 'EUR thousands'): the multiplier to the currency's base unit, the FactBook's
 # (NBIS 2026-11: a guidance item 3,000-3,400 'USD_millions' was read as $3,200 of revenue, so the forecast started at $21 a year)
-UNIT_SCALES = ((re.compile(r'(?i)(billions?|\bbn\b|_bn\b|\bb\b)'), 1e9), (re.compile(r'(?i)(millions?|\bmm\b|_mm\b|\bmn\b|_m\b|\bm\b)'), 1e6),
-               (re.compile(r'(?i)(thousands?|\bk\b|_k\b|000s)'), 1e3))
+# review round 2: also a suffix glued to a currency code ('USDm', 'USDbn', 'EURk', case-sensitive so 'item' is not millions) and
+# '_mn' ('USD_mn'); KPIs given in millions / thousands are scaled like facts and segments
+UNIT_SCALES = ((re.compile(r'(?i)(billions?|\bbn\b|_bn\b|\bb\b|_b\b)'), 1e9), (re.compile(r'(?<=\b[A-Z]{3})(bn|b)\b'), 1e9),
+               (re.compile(r'(?i)(millions?|\bmm\b|_mm\b|\bmn\b|_mn\b|_m\b|\bm\b)'), 1e6), (re.compile(r'(?<=\b[A-Z]{3})(mm|mn|m)\b'), 1e6),
+               (re.compile(r'(?i)(thousands?|\bk\b|_k\b|000s)'), 1e3), (re.compile(r'(?<=\b[A-Z]{3})k\b'), 1e3))
 
 
 def _unit_scale(unit):
@@ -939,6 +942,10 @@ def _forecast_options(p, opts):
                 c.err(where, 'evidence_ids: a non-empty list of source or item ids')
             elif b['source_tier'] not in BUILD_PHASE_TIERS:
                 c.err(where, f"source_tier one of {', '.join(BUILD_PHASE_TIERS)}: the company's own filed numbers, never a judgement")
+            elif 'sec_filing' not in p.kinds(b['evidence_ids']):
+                # the forecast needs the filing DOCUMENT (forecast._filing_document_evidence); say so here, not at the engine
+                c.err(where, 'cite the filing document (a pack source of kind sec_filing, or an item citing one): the income '
+                             'statement and the D&A and stock-comp lines')
             else:
                 p.tier(b['source_tier'], b['evidence_ids'], None, where)
                 out['build_phase'] = {**{k: b[k] for k in vals}, 'source_tier': b['source_tier'], 'reason': b['reason'],

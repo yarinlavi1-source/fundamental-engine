@@ -394,8 +394,9 @@ def skeleton(part, run=None):
                                                              'equity note; treasury method at every value',
                                                   'build_phase': '{start_margin, depreciation_pct, sbc_pct, source_tier '
                                                                  'guidance|contracted|own_history, reason, evidence_ids incl. the '
-                                                                 'filing} (optional, only when the forecast says the build-phase '
-                                                                 'loads are outside the driver bounds): cited values only'},
+                                                                 'filing document (sec_filing)} (optional, only when the forecast '
+                                                                 'error names build-phase; own_history within 10% of revenue of '
+                                                                 'the measured loads): cited values only'},
                              'contracted financing': 'drivers.equity_proceeds (or debt_draw) per period at source_tier contracted '
                                                      '(net proceeds) + drivers.equity_issue_price (the contracted price, tier '
                                                      'contracted only): committed, not assumed',
@@ -592,7 +593,9 @@ def valued(cf, path_asked=False):
     if fc.get('status') != 'built':
         why.append(f"forecast {fc.get('status')}: {fc.get('reason')}")
         r = str(fc.get('reason') or '')
-        he = NOT_VALUED_HE['build_phase' if 'build-phase' in r or 'cash-cost ratio' in r else 'forecast']
+        # the build-phase line only where the forecast says build-phase (today's loads fail, or the company is in that shape);
+        # a later margin path made impossible by a scenario's overrides is a forecast problem, not a build phase
+        he = NOT_VALUED_HE['build_phase' if 'build-phase' in r else 'forecast']
     if vl.get('status') in (None, 'not_computed'):
         why.append(f"valuation {vl.get('status')}: {vl.get('reason')}")
     else:
@@ -600,9 +603,21 @@ def valued(cf, path_asked=False):
         base = today.get('base')
         if vl.get('status') == 'funding_blocked' or not isinstance(base, (int, float)) or isinstance(base, bool) or base != base \
                 or base in (float('inf'), float('-inf')):
-            why.append(f"valuation {vl.get('status')}: no base value today"
-                       + (' (an unfunded cash requirement: values withheld)' if vl.get('status') == 'funding_blocked' else ''))
-            he = he or NOT_VALUED_HE['funding' if vl.get('status') == 'funding_blocked' else 'no_value']
+            blocked = [x.get('name') for x in (vl.get('result') or {}).get('scenarios') or []
+                       if isinstance(x, dict) and x.get('status') == 'funding_blocked']
+            fund_only = vl.get('status') == 'funding_blocked' and blocked and 'base' not in blocked
+            if fund_only:
+                why.append(f"valuation funding_blocked: an unfunded cash requirement in the {' and '.join(blocked)} scenario"
+                           + ('s' if len(blocked) > 1 else '') + ' (the base is funded): the full table is withheld')
+            else:
+                why.append(f"valuation {vl.get('status')}: no base value today"
+                           + (' (an unfunded cash requirement: values withheld)' if vl.get('status') == 'funding_blocked' else ''))
+            if fund_only:
+                # only bear (and/or bull) is blocked: name the scenario, never say the company as a whole needs unfunded money
+                he = he or NOT_VALUED_HE['funding_scenario'].format(
+                    scen=' וה'.join(SCEN_HE.get(b, str(b)) for b in blocked), many='ים' if len(blocked) > 1 else '')
+            else:
+                he = he or NOT_VALUED_HE['funding' if vl.get('status') == 'funding_blocked' else 'no_value']
     lev = [w.get('code') for w in fc.get('warnings') or [] if isinstance(w, dict) and w.get('code') in LEVERAGE_NOT_A_VALUE]
     if lev and not why:
         # forecast._solve_capital: the model's own equity value cannot carry the debt, so the value is set by the cap constant,
@@ -624,10 +639,13 @@ NOT_VALUED_HE = {
                    'שמהם אפשר לבנות תחזית אמינה.',
     'forecast': 'לא הוערך: אי אפשר לבנות תחזית אמינה לחברה מהנתונים שיש היום.',
     'funding': 'לא הוערך: לפי התחזית החברה צריכה כסף שאין לו מקור מוכח, ולכן כל שווי היה ניחוש.',
+    'funding_scenario': 'לא הוערך במלואו: בתרחיש{many} ה{scen} החברה צריכה כסף שאין לו מקור מוכח, ולכן הטבלה המלאה אינה '
+                        'מוצגת (התרחיש הבסיסי עצמו ממומן).',
     'no_value': 'לא הוערך: המנוע רץ אבל לא חישב שווי בסיסי לחברה.',
     'path': 'לא הוערך: הטבלה השנתית לא חושבה, ולכן אין הערכה מלאה.',
     'leverage': 'לא הוערך: החוב (כפי שנרשם) גדול מדי ביחס לשווי המניות במודל, ולכן השווי נקבע על ידי תקרה במודל ולא על ידי העסק.',
 }
+SCEN_HE = {'bear': 'דובי', 'base': 'בסיסי', 'bull': 'שורי'}
 # forecast warnings that mean the value is a constant's, not a fixed point of the business (forecast._solve_capital statuses)
 LEVERAGE_NOT_A_VALUE = ('leverage_capped', 'leverage_equity_not_positive', 'leverage_not_converged')
 

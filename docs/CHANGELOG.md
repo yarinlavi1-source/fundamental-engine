@@ -1,5 +1,31 @@
 ## 0.14.2 — engine bugs from the 01.11.2026 portfolio batch
 
+### Review round 2 (of 1dbc22f): NOT READY -> fixed
+
+1. build_phase 'needed' route (blocking). Any forecast failure had counted as "needed", so on MSFT a `mature_margin` 0.95
+   override (fails in bear period 4) plus build_phase D&A 0 / SBC 0 citing companyfacts built a base of 949 against 441. Now
+   `_paths` raises `PathImpossible` with the scenario and period; a company NOT in the build-phase shape takes build_phase only
+   when today's own loads fail in period 0, and only with every value within `BUILD_PHASE_LOAD_BAND` (10% of revenue) of the
+   engine's own measured load (TTM where measured, else the last fiscal year); otherwise `build_phase_not_applied` (high) and
+   the forecast stays not built. In the shape, tier own_history is held to the same band (what the engine measures); a
+   forward start away from it needs tier guidance or contracted. The error says "build-phase" only when period 0 fails or the
+   company is in the shape; a later margin-path failure says the scenario's margin path is impossible (check the mature margin
+   / cycle overrides), and `ticker_run.valued` shows the build-phase Hebrew line only for a build-phase reason.
+2. Cash roll-forward rounding allowance capped at a tenth of a billion (`dataqa._rounding_unit` 10^6..10^8): a balance that is a
+   whole number of billions (2.0B, 4.0B) had a 1B allowance, so a 1B error passed. ASTS (3.5B -> 2.7B) keeps 0.1B.
+3. A funding block in bear and/or bull only (the base funded) is named: failed_at says which scenario, and the Hebrew line
+   (`NOT_VALUED_HE['funding_scenario']`) says the bear (/bull) scenario needs unfunded money, never the company as a whole.
+   Coverage note, honest: `valued()` withholds 11 of the 113 valued walk-forward rows of the A/B helper (T 2019/2023/2025, SO
+   2023/2025, TMUS 2023, MAR 2019, HLT 2023/2025, MDLZ 2019, TDG 2023: 7 leverage-capped, 4 funding-blocked). Their values were
+   the leverage cap's or rested on unfunded cash, not the business's; it is a coverage gap for leveraged companies, and the
+   A/B helper (which compares raw values and does not call `valued()`) does not show it.
+4. build_phase evidence: the filing DOCUMENT (an issuer document of the filing dataset, or an item citing one;
+   `forecast._filing_document_evidence`); structured companyfacts alone is in every FactBook and no longer counts. Tier
+   guidance needs a guidance item among the evidence in the direct-inputs route too (as the pack already required). The pack
+   refuses a build_phase without a sec_filing source among its evidence at pack-to-inputs.
+5. Unit scaling: 'USD_mn', a suffix glued to a currency code ('USDm', 'USDbn', 'EURk'; case-sensitive so 'USD/item' is not
+   millions) and KPIs in millions / thousands are scaled to the base unit like facts, segments and guidance.
+
 ### Review round 1 (of 27b2bf6): NOT READY -> fixed
 
 The version is now 0.14.2 everywhere it is pinned (pyproject, `__version__`, brain/catalog.json): values move (META, PLTR), so
@@ -8,7 +34,7 @@ casefiles and the forecast ledger of main and this release can be told apart.
 1. build_phase invented margin (blocking). `depreciation_pct` lowered the D&A target below today's load and the roll-off step
    added the difference to the operating margin on any company (MSFT +24%, META +28% in the review probe). Now: the D&A load is
    the path's START and its maintenance level (no roll-off is added, so it never raises the margin path); tiers guidance /
-   contracted / own_history only, with a filing among the evidence (`forecast._filing_evidence`); applied only to the
+   contracted / own_history only, with a filing among the evidence (round 2: the filing document); applied only to the
    build-phase shape (TTM operating margin <= -50% or capex >= 100% of revenue) or where the paths fail without it, else dropped
    with `build_phase_not_applied` (high). The ASTS shape (start -0.95, D&A 0.25, SBC 0.30) now passes the forecast. The error for a
    path that still fails names the scenario, period and the three loads.

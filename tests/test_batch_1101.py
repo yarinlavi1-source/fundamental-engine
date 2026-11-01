@@ -279,6 +279,16 @@ class FinanceLeaseTests(unittest.TestCase):
         self.assertNotIn('finance_leases_reinvestment_basis', {x['code'] for x in fc2['warnings']})
 
 
+def add_10q(fb, sid='syn:10q'):
+    """A filing DOCUMENT read directly (issuer_document of the filing dataset): what build_phase must cite (review round 2)."""
+    facts.add_source(fb, sid, 'issuer', 'filing', 'issuer_document', fb['as_of'] + 'T00:00:00Z', note='TEST DATA ONLY')
+    fb['sources'][sid].update(published_at=fb['as_of'], retrieval='primary_document')
+    if not any(x.get('id') == 'syn:guide' for x in fb.get('qualitative') or []):
+        facts.add_qualitative(fb, 'syn:guide', 'guidance', 'guided revenue and cost lines (TEST DATA ONLY)', 'guidance', [sid],
+                              fb['as_of'])
+    return sid
+
+
 def builder():
     """SYNTHETIC build-phase company shaped like NBIS: revenue grew 4x after the last fiscal year, capex ~5x revenue, D&A 80% of
     the last fiscal year's revenue but ~34% of the trailing twelve months'."""
@@ -298,6 +308,7 @@ def builder():
     card = {'business_model': {'primary': 'capital_intensive_infrastructure'}, 'stage': {'value': 'growth'},
             'funding': {'value': 'needs_external'}, 'valuation': {'method': 'fcff_annual_path', 'archetype': 'infrastructure'},
             'dimensions': {'moat': {'assessment': 'adequate'}}}
+    add_10q(fb)
     return fb, an, card, qa_for(300e6, 8e9, 0., '2026-06-30')
 
 
@@ -325,7 +336,7 @@ class BuildPhaseTests(unittest.TestCase):
         ov = [{'path': 'mature_margin', 'scenario': s, 'value': v, 'reason': 'contracted unit economics', 'evidence_ids': ['syn:fs'],
                'source_tier': 'contracted'} for s, v in (('bear', .15), ('base', .25), ('bull', .3))]
         bp = {'start_margin': -.3, 'depreciation_pct': .3, 'sbc_pct': .08, 'reason': 'guided revenue and the depreciation schedule',
-              'evidence_ids': ['syn:fs'], 'source_tier': 'guidance'}
+              'evidence_ids': ['syn:10q', 'syn:guide'], 'source_tier': 'guidance'}
         fc = forecast.build(fb, an, card, qa, {'overrides': ov, 'build_phase': bp})
         self.assertEqual(fc['status'], 'built', fc.get('reason'))
         self.assertIn('build_phase_start', {w['code'] for w in fc['warnings']})
@@ -340,7 +351,7 @@ class BuildPhaseTests(unittest.TestCase):
     def test_build_phase_is_not_applied_to_a_normal_company(self):
         # review of 27b2bf6: depreciation_pct 0.01 on MSFT/META added the D&A roll-off to the margin (+24% / +28% of value)
         fb, an, card, qa = industrial()
-        ev = [next(k for k, v in fb['sources'].items() if v.get('kind') == 'filing_derived')]
+        ev = [add_10q(fb)]
         plain = forecast.build(fb, an, card, qa, {})
         bp = {'depreciation_pct': .01, 'sbc_pct': .01, 'start_margin': .5, 'source_tier': 'own_history', 'reason': 'probe',
               'evidence_ids': ev}
@@ -353,9 +364,11 @@ class BuildPhaseTests(unittest.TestCase):
     def test_build_phase_needs_the_filing_and_a_company_tier(self):
         fb, an, card, qa = builder()
         fb['sources']['web:press'] = {'kind': 'secondary', 'provider': 'press', 'dataset': 'press', 'retrieval': 'search_excerpt'}
-        bp = {'start_margin': -.3, 'depreciation_pct': .3, 'sbc_pct': .08, 'reason': 'the 10-Q cost lines', 'evidence_ids': ['syn:fs'],
+        bp = {'start_margin': -.3, 'depreciation_pct': .3, 'sbc_pct': .08, 'reason': 'the 10-Q cost lines', 'evidence_ids': ['syn:10q'],
               'source_tier': 'own_history'}
-        for bad in ({'source_tier': 'analyst'}, {'source_tier': 'consensus'}, {'evidence_ids': ['web:press']}):
+        # structured companyfacts alone ('syn:fs', filing_derived) is not the filing document (review round 2)
+        for bad in ({'source_tier': 'analyst'}, {'source_tier': 'consensus'}, {'evidence_ids': ['web:press']},
+                    {'evidence_ids': ['syn:fs']}):
             with self.assertRaises(ValueError) as cm:
                 forecast.build(fb, an, card, qa, {'build_phase': {**bp, **bad}})
             self.assertIn('build_phase', str(cm.exception))
@@ -366,8 +379,8 @@ class BuildPhaseTests(unittest.TestCase):
                'source_tier': 'contracted'}]
         out = {}
         for d in (.05, .3):
-            bp = {'start_margin': -.3, 'depreciation_pct': d, 'sbc_pct': .08, 'reason': 'the 10-Q cost lines',
-                  'evidence_ids': ['syn:fs'], 'source_tier': 'own_history'}
+            bp = {'start_margin': -.3, 'depreciation_pct': d, 'sbc_pct': .08, 'reason': 'guided cost lines in the 10-Q',
+                  'evidence_ids': ['syn:10q', 'syn:guide'], 'source_tier': 'guidance'}
             fc = forecast.build(fb, an, card, qa, {'overrides': ov, 'build_phase': bp})
             self.assertEqual(fc['status'], 'built', fc.get('reason'))
             p = scen(fc['spec'], 'base')
@@ -394,13 +407,14 @@ class BuildPhaseTests(unittest.TestCase):
                 'funding': {'value': 'needs_external'}, 'valuation': {'method': 'fcff_annual_path', 'archetype': 'infrastructure'},
                 'dimensions': {'moat': {'assessment': 'adequate'}}}
         qa = qa_for(300e6, 4e9, 0., '2026-06-30')
+        add_10q(fb)
         ov = [{'path': 'mature_margin', 'scenario': s, 'value': v, 'reason': 'named competitor margin', 'evidence_ids': ['syn:fs'],
                'source_tier': 'contracted'} for s, v in (('bear', .17), ('base', .27), ('bull', .274))]
         none = forecast.build(fb, an, card, qa, {'overrides': ov})
         self.assertEqual(none['status'], 'method_not_supported_by_forecast')
         self.assertIn('inputs.build_phase', none['reason'])
         bp = {'start_margin': -.95, 'depreciation_pct': .25, 'sbc_pct': .30, 'reason': 'guided revenue and the 10-Q cost lines',
-              'evidence_ids': ['syn:fs'], 'source_tier': 'guidance'}
+              'evidence_ids': ['syn:10q', 'syn:guide'], 'source_tier': 'guidance'}
         fc = forecast.build(fb, an, card, qa, {'overrides': ov, 'build_phase': bp})
         self.assertEqual(fc['status'], 'built', fc.get('reason'))
         self.assertIn('build_phase_start', {w['code'] for w in fc['warnings']})
@@ -440,9 +454,123 @@ class BuildPhaseTests(unittest.TestCase):
         v = ticker_run.valued(capped)
         self.assertFalse(v['valued'])
         self.assertEqual(v['not_valued_he'], ticker_run.NOT_VALUED_HE['leverage'])
-        bp = ticker_run.valued(cf, True)
+        # a plain cash-cost failure (a later margin path) is a forecast problem; the build-phase line needs the build-phase reason
+        self.assertEqual(ticker_run.valued(cf, True)['not_valued_he'], ticker_run.NOT_VALUED_HE['forecast'])
+        cfb = deepcopy(cf)
+        cfb['fc']['reason'] = ('cash-cost ratio outside driver bounds in base period 0: a company still building capacity ahead of its '
+                               'revenue needs an evidenced build-phase start')
+        bp = ticker_run.valued(cfb, True)
         self.assertEqual(bp['not_valued_he'], ticker_run.NOT_VALUED_HE['build_phase'])
         self.assertTrue(ticker_run.valued({'stages': {'forecast': 'failed'}})['failed_at'].startswith('engine stages'))
+
+
+class ReviewRound2Tests(unittest.TestCase):
+    """Second review of 0.14.2: build_phase 'needed' only for a period-0 failure on the engine's own loads and within a band of
+    them; the cash roll-forward rounding allowance; a scenario-only funding block named; unit spellings."""
+
+    def needed_fb(self, ttm_da=False):
+        """SYNTHETIC company NOT in the build-phase shape (TTM margin -5%, capex 0.6x revenue) whose last fiscal year's D&A load
+        (100% of revenue) makes period 0 impossible when no TTM D&A is measured."""
+        fb, an, card, qa = builder()
+        q_oi = {'Q@2025-09-30': -10e6, 'Q@2025-12-31': -12e6, 'Q@2026-03-31': -15e6, 'Q@2026-06-30': -16e6}
+        for f in fb['facts']:
+            if f['metric'] == 'capex':
+                f['value'] = 300e6 if f['period'] == 'FY2025' else 60e6
+            if f['metric'] == 'd_and_a' and f['period'] == 'FY2025':
+                f['value'] = 500e6
+            if f['metric'] == 'operating_income' and f['period'] in q_oi:
+                f['value'] = q_oi[f['period']]
+        an['ttm'] = dict(an['ttm'], operating_income=-53e6)
+        if not ttm_da:
+            fb['facts'] = [f for f in fb['facts'] if not (f['metric'] == 'd_and_a' and f['period'].startswith('Q@'))]
+        from test_forecast import make_an
+        ttm = an['ttm']
+        an = make_an(fb, revenue_growth_last=4.0, growth_volatility=.5, sales_to_capital_incremental_3y=.3)
+        an['ttm'] = ttm
+        return fb, an, card, qa
+
+    def ov(self):
+        return [{'path': 'mature_margin', 'scenario': s, 'value': v, 'reason': 'contracted unit economics', 'evidence_ids': ['syn:fs'],
+                 'source_tier': 'contracted'} for s, v in (('bear', .05), ('base', .1), ('bull', .15))]
+
+    def test_needed_route_only_for_a_period_zero_failure_within_the_band(self):
+        fb, an, card, qa = self.needed_fb()
+        none = forecast.build(fb, an, card, qa, {'overrides': self.ov()})
+        self.assertEqual(none['status'], 'method_not_supported_by_forecast')
+        self.assertIn('period 0', none['reason'])
+        self.assertIn('build-phase', none['reason'])
+        # within the band of the measured loads (D&A 100% -> 92%, SBC 15% -> 6%): applied
+        near = {'depreciation_pct': .92, 'sbc_pct': .06, 'reason': 'the 10-Q cost lines', 'evidence_ids': ['syn:10q'],
+                'source_tier': 'own_history'}
+        far = dict(near, depreciation_pct=.3)
+        fc = forecast.build(fb, an, card, qa, {'overrides': self.ov(), 'build_phase': near})
+        self.assertEqual(fc['status'], 'built', fc.get('reason'))
+        codes = {w['code'] for w in fc['warnings']}
+        self.assertIn('build_phase_start', codes)
+        self.assertNotIn('build_phase_not_applied', codes)
+        # far from the measured D&A load (30% against 100%): not applied, whatever the tier
+        for tier in ('own_history', 'guidance', 'contracted'):
+            fc2 = forecast.build(fb, an, card, qa, {'overrides': self.ov(), 'build_phase': dict(far, source_tier=tier, evidence_ids=['syn:10q', 'syn:guide'])})
+            self.assertEqual(fc2['status'], 'method_not_supported_by_forecast', tier)
+            self.assertIn('build_phase_not_applied', {w['code'] for w in fc2['warnings']})
+
+    def test_a_later_margin_failure_is_not_repaired_by_build_phase(self):
+        # review round 2 (MSFT probe): mature_margin 0.95 fails in a later period; D&A 0 and SBC 0 had built a base of 949 vs 441
+        fb, an, card, qa = industrial()
+        ev = add_10q(fb)
+        ov = [{'path': 'mature_margin', 'scenario': 'all', 'value': .95, 'reason': 'probe', 'evidence_ids': [ev],
+               'source_tier': 'own_history'}]
+        plain = forecast.build(fb, an, card, qa, {'overrides': ov})
+        self.assertEqual(plain['status'], 'method_not_supported_by_forecast')
+        self.assertNotIn('period 0', plain['reason'])
+        self.assertNotIn('build-phase', plain['reason'])                       # not a build-phase message
+        bp = {'depreciation_pct': 0., 'sbc_pct': 0., 'reason': 'probe', 'evidence_ids': [ev], 'source_tier': 'own_history'}
+        fc = forecast.build(fb, an, card, qa, {'overrides': ov, 'build_phase': bp})
+        self.assertEqual(fc['status'], 'method_not_supported_by_forecast')
+        self.assertIn('build_phase_not_applied', {w['code'] for w in fc['warnings']})
+        cf = {'stages': {'forecast': 'ok', 'valuation': 'ok'}, 'fc': fc, 'val': {'status': 'not_computed', 'reason': fc['reason']}}
+        self.assertEqual(ticker_run.valued(cf)['not_valued_he'], ticker_run.NOT_VALUED_HE['forecast'])
+
+    def test_own_history_far_from_the_measured_loads_is_not_applied_in_the_shape(self):
+        fb, an, card, qa = builder()
+        ov = [{'path': 'mature_margin', 'scenario': s, 'value': v, 'reason': 'contracted unit economics', 'evidence_ids': ['syn:fs'],
+               'source_tier': 'contracted'} for s, v in (('bear', .15), ('base', .25), ('bull', .3))]
+        bp = {'start_margin': .3, 'depreciation_pct': .3, 'sbc_pct': .08, 'reason': 'x', 'evidence_ids': ['syn:10q'],
+              'source_tier': 'own_history'}
+        fc = forecast.build(fb, an, card, qa, {'overrides': ov, 'build_phase': bp})
+        self.assertIn('build_phase_not_applied', {w['code'] for w in fc['warnings']})
+        self.assertNotIn('build_phase_start', {w['code'] for w in fc['warnings']})
+        g = forecast.build(fb, an, card, qa, {'overrides': ov, 'build_phase': dict(bp, source_tier='guidance', start_margin=-.3,
+                                                                                    evidence_ids=['syn:10q', 'syn:guide'])})
+        self.assertIn('build_phase_start', {w['code'] for w in g['warnings']})
+        # tier guidance without a guidance item is refused (a forward start without the company's guided number)
+        with self.assertRaises(ValueError) as cm:
+            forecast.build(fb, an, card, qa, {'overrides': ov, 'build_phase': dict(bp, source_tier='guidance')})
+        self.assertIn('guidance item', str(cm.exception))
+
+    def test_rounding_unit_capped_at_a_tenth_of_a_billion(self):
+        for v, u in ((2e9, 1e8), (4e9, 1e8), (3e9, 1e8), (2.7e9, 1e8), (3.5e9, 1e8), (12e6, 1e6), (1234567., 0.)):
+            self.assertEqual(dataqa._rounding_unit(v), u, v)
+
+    def test_a_scenario_only_funding_block_names_the_scenario(self):
+        cf = {'stages': {'forecast': 'ok', 'valuation': 'ok'}, 'fc': {'status': 'built'},
+              'val': {'status': 'funding_blocked', 'result': {'annual_values': [{'base': 50., 'bear': None}],
+                                                              'scenarios': [{'name': 'bear', 'status': 'funding_blocked'},
+                                                                            {'name': 'base', 'status': 'conditional'},
+                                                                            {'name': 'bull', 'status': 'conditional'}]}}}
+        v = ticker_run.valued(cf)
+        self.assertFalse(v['valued'])
+        self.assertIn('bear scenario', v['failed_at'])
+        self.assertIn('דובי', v['not_valued_he'])
+        self.assertNotEqual(v['not_valued_he'], ticker_run.NOT_VALUED_HE['funding'])
+        cf['val']['result']['scenarios'][1]['status'] = 'funding_blocked'
+        self.assertEqual(ticker_run.valued(cf)['not_valued_he'], ticker_run.NOT_VALUED_HE['funding'])
+
+    def test_unit_spellings(self):
+        from fundamental_engine.evidence_pack import _unit_scale
+        for u, m, b in (('USD_mn', 1e6, 'USD'), ('USDm', 1e6, 'USD'), ('USDbn', 1e9, 'USD'), ('EURk', 1e3, 'EUR'),
+                        ('USD_millions', 1e6, 'USD'), ('USD/item', 1., 'USD/item'), ('users', 1., 'users')):
+            self.assertEqual(_unit_scale(u), (m, b), u)
 
 
 class SameFamilyResolutionTests(unittest.TestCase):
@@ -554,7 +682,9 @@ class PackInputsTests(unittest.TestCase):
                           ({'options': [{'kind': 'warrants', 'count': 1, 'strike': 1, 'reason': 'x', 'evidence_ids': ['s_est']}]},
                            "company's own filing"),
                           ({'build_phase': {'start_margin': -5, 'source_tier': 'own_history', 'reason': 'x', 'evidence_ids': ['s_10q']}},
-                           'start_margin')):
+                           'start_margin'),
+                          ({'build_phase': {'start_margin': -.4, 'source_tier': 'own_history', 'reason': 'x', 'evidence_ids': ['s_est']}},
+                           'cite the filing document')):
             q = pack()
             q['forecast_options'] = opt
             refused(self, q, frag)

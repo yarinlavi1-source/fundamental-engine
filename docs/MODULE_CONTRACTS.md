@@ -96,8 +96,9 @@ Inside one source family (two transcriptions of the same filing: companyfacts XB
 applies only when its evidence cites the filing DOCUMENT itself (an issuer document of the filing dataset, or an item citing
 one; `dataqa._primary_filing_evidence`, 0.14.2; the document must carry retrieval primary_document, a search excerpt of it does
 not count); a filing-derived copy alone never settles a disagreement between copies. The cash rollforward allows, at each end,
-half the rounding unit of a balance reported as a whole multiple of 10^6..10^9 (`_rounding_unit`: ASTS's cash including
-restricted, tagged to 0.1B, against a flow to the dollar).
+half the rounding unit of a balance reported as a whole multiple of 10^6..10^8 (`_rounding_unit`, capped at 0.1B: a whole
+number of billions is not evidence of rounding to the billion; ASTS's cash including restricted, tagged to 0.1B, against a flow
+to the dollar).
 Split evidence (0.14.2): dated split records with the same factor (within SPLIT_BAND) inside ONE count step are one corporate
 action (the issuer's XBRL tag, dated by its context up to ~90 days from the event, and a market feed's effective date): later
 ones are listed under the kept event's `same_event` and not multiplied in (`_same_split_once`); `_split_factor_of` counts them
@@ -252,10 +253,14 @@ terminal_roic / terminal.roic a terminal_roic override at min(roic, 1.0) is adde
 an override of sales_to_capital / growth_capex_pct / maintenance_capex_pct the explicit sales-to-capital equals the terminal
 rule ROIC / (final EBIT margin x (1 - tax)) from the first year; driver_sources records the path's tier; a path roic above 1
 warns `capital_link_capped`), "build_phase": {"start_margin" -1..0.6,"depreciation_pct" 0..1,"sbc_pct" 0..1,"reason",
-"evidence_ids","source_tier" guidance|contracted|own_history} (0.14.2: the evidence must include a filing, `forecast._filing_evidence`;
-applied only to a company in the build-phase shape, TTM operating margin <= BUILD_PHASE_MARGIN_MAX -50% or capex >=
-BUILD_PHASE_CAPEX_MIN 100% of revenue, or whose paths fail without it; elsewhere it is dropped, warned `build_phase_not_applied`
-high. The paths start from the evidenced margin and SBC load; depreciation_pct is the D&A load from the first period AND the
+"evidence_ids","source_tier" guidance|contracted|own_history} (0.14.2: the evidence must include the filing DOCUMENT, an
+issuer document of the filing dataset or an item citing one, `forecast._filing_document_evidence`: structured companyfacts alone
+is refused; tier guidance needs a guidance item among evidence_ids; applied to a company in the build-phase shape, TTM operating margin <= BUILD_PHASE_MARGIN_MAX -50% or capex >=
+BUILD_PHASE_CAPEX_MIN 100% of revenue, where tier own_history must lie within BUILD_PHASE_LOAD_BAND 10% of revenue of the
+engine's own measured load (TTM where measured, else the last fiscal year); to any other company only when today's own loads
+fail in period 0 (`PathImpossible.period == 0`, not a later margin path) and every value is within that band; elsewhere it is
+dropped, warned `build_phase_not_applied` high. The forecast error names build-phase only for a period-0 failure or a company
+in the shape; a later failure says the scenario's margin path is impossible. The paths start from the evidenced margin and SBC load; depreciation_pct is the D&A load from the first period AND the
 maintenance level (no D&A roll-off is added to the margin, so it never raises the operating margin path); warned
 `build_phase_start`. Without it, when the last fiscal year's D&A load makes
 the cash-cost ratio leave its bounds and the margin is on the TTM basis, the load of the same trailing twelve months is used,
@@ -446,17 +451,18 @@ rows are not priced (economics_unavailable), the others still are).
 
 ## evidence_pack (pack -> FactBook bundle / pipeline inputs)
 
-Money in a scaled unit (0.14.2): facts, segments and guidance whose `unit` names millions / billions / thousands ('USD_millions',
-'USD bn', 'EUR thousands') are converted to the base unit when the pack is read (`evidence_pack._to_base_unit`; NBIS's revenue
+Money in a scaled unit (0.14.2): facts, segments, KPIs and guidance whose `unit` names millions / billions / thousands
+('USD_millions', 'USD_mn', 'USD bn', 'USDm', 'USDbn', 'EUR thousands', 'EURk') are converted to the base unit when the pack is read (`evidence_pack._to_base_unit`; NBIS's revenue
 guidance 3,000-3,400 'USD_millions' had started the forecast at $3,200 of revenue). forecast_options.build_phase takes tier
-guidance / contracted / own_history only; drivers.equity_issue_price tier contracted only.
+guidance / contracted / own_history only, with a sec_filing source among its evidence (directly or through an item); drivers.equity_issue_price tier contracted only.
 
 ## ticker_run.value(run) -> value.json
 
 `{"ran","valued","failed_at","not_valued_he"?,...}`: `valued` (and `ran`, 0.14.2) need the forecast, valuation (and when inputs
 carry company_path, company_path) stages ok AND fc.status 'built', a computed valuation with a finite base value today (not
-funding_blocked) and a computed company_path; `not_valued_he` is one plain Hebrew line (ticker_run.NOT_VALUED_HE: build phase,
-forecast, funding, no value, path, stage); a stage
+funding_blocked) and a computed company_path; `not_valued_he` is one plain Hebrew line (ticker_run.NOT_VALUED_HE: build phase
+only for a build-phase forecast reason, forecast, funding, funding_scenario when only bear and/or bull are blocked (it names the
+scenario), leverage, no value, path, stage); a stage
 that ran without valuing gives `failed_at` 'not valued: forecast method_not_supported_by_forecast: ...'. `ticker_run.status`
 reports 'not valued: ...' as the draft reason and `valued` beside `engine_ran`.
 

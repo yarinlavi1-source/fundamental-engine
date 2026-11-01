@@ -292,6 +292,14 @@ BUILD_PHASE_RANGES = {'start_margin': (-1., .6), 'depreciation_pct': (0., 1.), '
 BUILD_PHASE_TIERS = ('guidance', 'contracted', 'own_history')
 BUILD_PHASE_MARGIN_MAX = -.5
 BUILD_PHASE_CAPEX_MIN = 1.
+# review round 2 (0.14.2): (a) the evidence must include the filing DOCUMENT (an issuer document of the filing dataset) or an item
+# citing one: structured companyfacts alone is in every FactBook and says nothing about a forward start; (b) tier own_history is
+# what the engine itself measures, so each value must lie within BUILD_PHASE_LOAD_BAND (fraction of revenue) of the engine's own
+# measured load (TTM where measured, else the last fiscal year); a forward value away from it needs tier guidance or contracted;
+# (c) a company NOT in the build-phase shape takes it only when today's own loads fail in period 0 (not a later margin path the
+# analyst's overrides made impossible: MSFT mature_margin 0.95 + D&A 0 + SBC 0 had built a base of 949 against 441), and then
+# only with every value within the band of its measured loads.
+BUILD_PHASE_LOAD_BAND = .10
 # equity_issue_price (raw override path, 0.14.2): the contracted price of committed equity proceeds (a forward sale's forward
 # price) per period boundary; with equity_proceeds or debt_draw overridden at source_tier 'contracted' the scenario's financing is
 # committed, not assumed (valuation financing_status), and the shares are issued at this price instead of today's quote.
@@ -1717,17 +1725,17 @@ def _acquired_step(h, cal, d_rev0, warn):
             'basis': how + note}
 
 
-def _filing_evidence(fb, eid):
-    """A filing among the evidence: a filing-derived source, the filing document itself (an issuer document of the filing dataset),
-    or a qualitative item citing one; none published after as_of."""
-    def filing(sid):
+def _filing_document_evidence(fb, eid):
+    """The filing DOCUMENT among the evidence (an issuer document of the filing dataset, or a qualitative item citing one), none
+    published after as_of: structured filing-derived data (companyfacts) alone does not count."""
+    def doc(sid):
         x = (fb.get('sources') or {}).get(sid) or {}
-        ok = x.get('kind') == 'filing_derived' or (x.get('kind') == 'issuer_document' and x.get('dataset') == 'filing')
-        return ok and not (x.get('published_at') and str(x['published_at'])[:10] > str(fb.get('as_of'))[:10])
+        return (x.get('kind') == 'issuer_document' and x.get('dataset') == 'filing'
+                and not (x.get('published_at') and str(x['published_at'])[:10] > str(fb.get('as_of'))[:10]))
     if eid in (fb.get('sources') or {}):
-        return filing(eid)
+        return doc(eid)
     item = next((x for x in fb.get('qualitative') or [] if x.get('id') == eid), None)
-    return bool(item) and any(filing(sid) for sid in item.get('source_ids') or [])
+    return bool(item) and any(doc(sid) for sid in item.get('source_ids') or [])
 
 
 def _ttm_load(fb, metric, fy_end):
@@ -2079,6 +2087,35 @@ def _params(route, h, cal, cons, rf, ku, ku_t, ov_ke, debt0, ov, warn, ev=None):
     return out, meta
 
 
+class PathImpossible(ValueError):
+    """_paths: the cash-cost ratio leaves the driver bounds in a scenario's period (period 0 = today's loads)."""
+
+    def __init__(self, msg, scenario, period):
+        super().__init__(msg)
+        self.scenario, self.period = scenario, period
+
+
+def _build_shape(h):
+    """A company still building capacity ahead of its revenue: TTM operating margin at or below BUILD_PHASE_MARGIN_MAX, or capex at
+    least BUILD_PHASE_CAPEX_MIN x revenue."""
+    return (h.get('m0') is not None and h['m0'] <= BUILD_PHASE_MARGIN_MAX) or (h.get('capex_pct') or 0) >= BUILD_PHASE_CAPEX_MIN
+
+
+def _build_phase_measured(h):
+    """{key: [the engine's own measured loads]} the build_phase values are compared with (TTM where measured, else fiscal year)."""
+    da = [x for x in (h.get('da_pct_ttm'), h.get('da_pct')) if x is not None]
+    return {'start_margin': [h['m0']] if h.get('m0') is not None else [],
+            'depreciation_pct': da[:1] if h.get('da_pct_ttm') is not None else da,
+            'sbc_pct': [h['sbc_pct']] if h.get('sbc_pct') is not None else []}
+
+
+def _build_phase_off_band(bp, h):
+    """The build_phase values farther than BUILD_PHASE_LOAD_BAND from the engine's own measured load (or with none measured)."""
+    meas = _build_phase_measured(h)
+    return [k for k in BUILD_PHASE_RANGES if bp.get(k) is not None
+            and not any(abs(float(bp[k]) - m) <= BUILD_PHASE_LOAD_BAND + 1e-12 for m in meas[k])]
+
+
 def _paths(P, meta, h, route, cal, open_bal, inv_income):
     """Fiscal-year paths. Depreciation converges to maintenance capex and the capital needed per unit of new revenue converges
     to the terminal g / ROIC rule by the last explicit year, so the last explicit year and the terminal value describe the same
@@ -2138,13 +2175,19 @@ def _paths(P, meta, h, route, cal, open_bal, inv_income):
                 # today's; the margin is measured on the trailing twelve months, and so is the load it is paired with
                 return _paths(P, meta, dict(h, da_pct=ttm, _da_ttm_used=True), route, cal, open_bal, inv_income)
             bad = next(i for i, c in enumerate(ccr) if c < 0 or c > 2)
-            raise ValueError('cash-cost ratio outside driver bounds (operating losses above 100% of revenue or margins above 100%)'
-                             + (f" in {s} period {bad} (operating margin {margin[bad]:.0%}, stock comp {sbc[bad]:.0%}, D&A "
-                                f"{dep[bad]:.0%} of revenue)")
-                             + (': the evidenced build-phase start still gives an impossible path (check the loads against the '
-                                'margin path)' if bp else ': a company still building capacity ahead of its revenue needs an '
-                                'evidenced build-phase start from its filing (inputs.build_phase: start_margin, depreciation_pct, '
-                                'sbc_pct)'))
+            if bp:
+                hint = ': the evidenced build-phase start still gives an impossible path (check the loads against the margin path)'
+            elif bad == 0 or _build_shape(h):
+                # today's own loads cannot start the forecast, or the company is in the build-phase shape
+                hint = (': a company still building capacity ahead of its revenue needs an evidenced build-phase start from its '
+                        'filing (inputs.build_phase: start_margin, depreciation_pct, sbc_pct)')
+            else:
+                # today's loads start fine; the margin path the scenario asks for (a mature margin / cycle override) is impossible
+                hint = (': today\'s loads start the forecast; the scenario\'s margin path with these stock-comp and D&A loads is '
+                        'impossible (check the mature margin and cycle overrides against the company\'s cost structure)')
+            raise PathImpossible('cash-cost ratio outside driver bounds (operating losses above 100% of revenue or margins above '
+                                 f"100%) in {s} period {bad} (operating margin {margin[bad]:.0%}, stock comp {sbc[bad]:.0%}, D&A "
+                                 f"{dep[bad]:.0%} of revenue)" + hint, s, bad)
         p['s2c_terminal'] = p['roic'] / max(margin[-1] * (1 - p['tax']), 1e-6)     # terminal rule on the final EBIT margin
         if p.get('s2c_linked'):
             # inputs.capital_link: the scenario's evidenced ROIC sets the reinvestment from the first explicit year, the same capital
@@ -2796,9 +2839,14 @@ def build(fb, an, card, qa, inputs=None):
         ev = bp.get('evidence_ids')
         if not isinstance(ev, list) or not ev or any(e not in known for e in ev):
             raise ValueError('build_phase: evidence_ids must be FactBook source or qualitative ids')
-        if not any(_filing_evidence(fb, e) for e in ev):
-            raise ValueError('build_phase: cite the filing (10-K / 10-Q / 20-F: the income statement and the D&A and stock-comp '
-                             'lines) among evidence_ids; a search excerpt, a press article or consensus is not enough')
+        if bp['source_tier'] == 'guidance' and not any(x.get('id') in ev and x.get('kind') == 'guidance'
+                                                       for x in fb.get('qualitative') or []):
+            raise ValueError("build_phase: tier guidance needs a guidance item among evidence_ids (the company's own guided "
+                             'number for the start); a forward start without it is a judgement')
+        if not any(_filing_document_evidence(fb, e) for e in ev):
+            raise ValueError('build_phase: cite the filing document (10-K / 10-Q / 20-F read for the income statement and the D&A '
+                             'and stock-comp lines, or an item citing it) among evidence_ids; structured companyfacts alone, a '
+                             'search excerpt, a press article or consensus is not enough')
     link = inputs.get('capital_link')
     if link is not None:
         if not isinstance(link, dict) or sorted(set(link) - set(SCEN)):
@@ -3050,18 +3098,37 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
             P[s]['cash_months'] = ov(s, 'minimum_cash_months', st['months'])
             P[s]['s2c_linked'] = s in meta['s2c_link']
         meta['build_phase'], bp_why = None, None
-        if inputs.get('build_phase'):
-            if (h['m0'] is not None and h['m0'] <= BUILD_PHASE_MARGIN_MAX) or (h['capex_pct'] or 0) >= BUILD_PHASE_CAPEX_MIN:
-                meta['build_phase'], bp_why = inputs['build_phase'], 'shape'
-            else:
-                try:                              # applies only where today's loads cannot start the forecast
-                    _paths(deepcopy(P), meta, h, route, cal, open_bal, (open_bal['sti'] + open_bal['lti']) * rf)
-                except ValueError:
-                    meta['build_phase'], bp_why = inputs['build_phase'], 'needed'
+        ibp = inputs.get('build_phase')
+        if ibp:
+            shape = (f"TTM operating margin {'n/a' if h['m0'] is None else format(h['m0'], '.0%')} above "
+                     f"{BUILD_PHASE_MARGIN_MAX:.0%}, capex {h['capex_pct'] or 0:.0%} of revenue below {BUILD_PHASE_CAPEX_MIN:.0%}")
+            off = _build_phase_off_band(ibp, h)
+            band = lambda: ', '.join(f"{k} {float(ibp[k]):.1%}" for k in off) + (
+                f" (more than {BUILD_PHASE_LOAD_BAND:.0%} of revenue from the engine's own measured load: " + ', '.join(
+                    f"{k} {'/'.join(format(m, '.1%') for m in _build_phase_measured(h)[k]) or 'not measured'}" for k in off) + ')')
+            if _build_shape(h):
+                if ibp['source_tier'] == 'own_history' and off:
+                    warn('build_phase_not_applied', 'inputs.build_phase is not applied: tier own_history is what the engine measures, '
+                         'and ' + band() + '; a forward start needs tier guidance or contracted', 'high')
                 else:
-                    warn('build_phase_not_applied', 'inputs.build_phase is not applied: the company is not in the build-phase shape '
-                         f"(TTM operating margin {'n/a' if h['m0'] is None else format(h['m0'], '.0%')} above {BUILD_PHASE_MARGIN_MAX:.0%}, capex {h['capex_pct'] or 0:.0%} of "
-                         f'revenue below {BUILD_PHASE_CAPEX_MIN:.0%}) and its forecast starts from today\'s loads without it', 'high')
+                    meta['build_phase'], bp_why = ibp, 'shape'
+            else:
+                try:                              # applies only where today's loads cannot start the forecast (period 0)
+                    _paths(deepcopy(P), meta, h, route, cal, open_bal, (open_bal['sti'] + open_bal['lti']) * rf)
+                except PathImpossible as e:
+                    if e.period != 0:
+                        warn('build_phase_not_applied', f'inputs.build_phase is not applied: the company is not in the build-phase '
+                             f'shape ({shape}) and today\'s loads start the forecast; the path fails only later ({e.scenario} '
+                             f'period {e.period}), in the margin path the scenario asks for, which a build-phase start does not repair',
+                             'high')
+                    elif off:
+                        warn('build_phase_not_applied', f'inputs.build_phase is not applied: the company is not in the build-phase '
+                             f'shape ({shape}), so its start stays near its own measured loads, and ' + band(), 'high')
+                    else:
+                        meta['build_phase'], bp_why = ibp, 'needed'
+                else:
+                    warn('build_phase_not_applied', f'inputs.build_phase is not applied: the company is not in the build-phase shape '
+                         f"({shape}) and its forecast starts from today's loads without it", 'high')
         if any(x['roic'] > CAPITAL_LINK_ROIC_MAX for x in (inputs.get('capital_link') or {}).values()):
             warn('capital_link_capped', 'a company_path roic above 100% is linked to the DCF at the valuation\'s 100% terminal ROIC '
                                         'bound: the yearly table keeps its own roic, so the two differ there (company_path flags it)', 'medium')

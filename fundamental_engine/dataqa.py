@@ -874,15 +874,17 @@ def _split_events(q, a, b):
 
 
 def _rounding_unit(v):
-    """The rounding unit of a reported figure that is a whole multiple of 10^6..10^9 (a value tagged to millions or tenths of a
-    billion), else 0: a figure reported to the dollar or the thousand carries no material rounding."""
+    """The rounding unit of a reported figure that is a whole multiple of 10^6..10^8 (a value tagged to millions or tenths of a
+    billion), else 0: a figure reported to the dollar or the thousand carries no material rounding. Capped at 10^8 (review round 2,
+    0.14.2): a balance that happens to be a whole number of billions (2.0B, 4.0B) is not evidence of rounding to the billion, and a
+    1B allowance had let a 1B error in a cash balance pass the roll-forward."""
     try:
         x = abs(float(v))
     except (TypeError, ValueError):
         return 0.
     if not x or x != x:
         return 0.
-    for u in (1e9, 1e8, 1e7, 1e6):
+    for u in (1e8, 1e7, 1e6):
         if abs(x / u - round(x / u)) < 1e-9:
             return u
     return 0.

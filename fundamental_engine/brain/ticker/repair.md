@@ -81,9 +81,12 @@ this same run was moved to attempts/; its gather fragments stayed: treat your ow
    acquired_revenue, a claim ahead of the shares (a preferred stock, a royalty financing) with forecast_options
    debt_like_claims, vested in-the-money options with forecast_options options, contracted equity (a forward sale) with
    drivers.equity_proceeds at tier contracted (net proceeds) plus drivers.equity_issue_price (tier contracted only), a
-   build-phase company the engine did not value (value.json failed_at 'not valued: ... cash-cost ratio outside driver bounds')
-   with forecast_options build_phase from cited documents only (tier guidance / contracted / own_history, the filing among the
-   evidence; if the filing does not give the loads, the company stays 'not valued' and value.json not_valued_he says why in
+   build-phase company the engine did not value (value.json failed_at 'not valued: ... cash-cost ratio outside driver bounds
+   ... build-phase', i.e. period 0 or a company in the build-phase shape; a failure in a later period without 'build-phase' is
+   the scenario's margin path: correct the mature margin / cycle override with evidence instead, build_phase is not applied
+   there) with forecast_options build_phase from cited documents only (tier guidance / contracted / own_history, the filing
+   DOCUMENT, a sec_filing source, among the evidence; own_history within 10% of revenue of the measured loads; if the filing
+   does not give the loads, the company stays 'not valued' and value.json not_valued_he says why in
    one Hebrew line: report that line, never invent loads), a company_path roic at or below terminal growth (flag
    roic_at_or_below_growth: that scenario has no yearly prices) only with new evidence, a DCF/yearly-table capital mismatch (company_path flag capital_intensity_gap) by removing the unevidenced
    side (the path roic links into the DCF by itself); never edit a saved payload. A finding you cannot fix with evidence stays open. Validate every file you changed:

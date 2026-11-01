@@ -170,9 +170,14 @@ Exact shapes (from evidence_pack.KEYS; the skeleton has them filled with this ru
   measured on a tiny revenue): the first forecast year's operating margin and the D&A / SBC loads the evidence supports (e.g.
   guided revenue and cost guidance, the depreciation schedule of the contracted capacity), each from a cited document; nothing
   is defaulted, a value without evidence stays out and the company stays 'not valued'. source_tier guidance, contracted or
-  own_history only (never analyst), and evidence_ids must include the FILING (10-K / 10-Q / 20-F). The engine applies it only
-  to a company in the build-phase shape (TTM operating margin at or below -50%, or capex at least 100% of revenue) or whose
-  forecast cannot start without it; elsewhere it is ignored (warning build_phase_not_applied). depreciation_pct is both the
+  own_history only (never analyst), and evidence_ids must include the FILING DOCUMENT you read (a sources[] entry of kind
+  sec_filing, or an item citing one; the structured companyfacts numbers alone are refused). own_history means the loads the
+  engine itself measures: within 10% of revenue of them; a forward start away from today's loads needs tier guidance (a
+  guidance item) or contracted. The engine applies it to a company in the build-phase shape (TTM operating margin at or below
+  -50%, or capex at least 100% of revenue); to any other company only when today's own loads fail in the FIRST forecast period
+  (the error says 'period 0' and 'build-phase'), and then only within 10% of revenue of its measured loads. A failure in a later
+  period comes from the scenario's margin path (your mature margin / cycle overrides): fix those, build_phase never repairs it.
+  Elsewhere it is ignored (warning build_phase_not_applied). depreciation_pct is both the
   start and the maintenance D&A load: it never raises the operating margin path (the mature margin stays yours / history's).
 - Contracted financing (a forward sale, a drawn facility after the balance sheet): drivers.equity_proceeds (or debt_draw) per
   period at source_tier contracted, citing the agreement, as NET proceeds (the filing's amount after the underwriting spread:
