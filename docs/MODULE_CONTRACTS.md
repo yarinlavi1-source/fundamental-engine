@@ -34,7 +34,8 @@ run(fb, inputs=None) -> casefile {"casefile_version": 1,"engine_version","compan
         "errors": [{"stage","error"}],"stages": {stage: ok|failed},"collection_notes","qa","an","card","fc","val","rk","rv","dc",
         "business","segment_view","management","analyst_sheet","scenario_reasons","casefile_sha256"}
 summary(cf) -> {"symbol","as_of","verdict","verdict_status","price_claim_withheld","confidence","quality","risk_level","price",
-        "bear_value","base_value","bull_value","base_irr","bear_irr","owner_return" (owner-facing expected return, decision SAME_SCALE),
+        "bear_value","base_value","bull_value","base_irr" (also the owner-facing expected return, decision SAME_SCALE),"bear_irr",
+        "convergence_return" (report field: price converging to the base fair value path, distributions reinvested),
         "decision_version","margin": marginal|clear|None,"hurdle",
         "value_at_required_return","review_status","casefile_sha256"}
 ```
@@ -203,8 +204,10 @@ terminal value use the scenario's `cost_of_equity`.
 `cost_of_equity.components.leverage.debt_weight`, on the model's own base equity value, never the quote; capped at 60% with a
 warning). `terminal.ke_leverage_premium` = the explicit Ke's relevering premium (Ke - table; 0 under an analyst Ke override):
 a required return / IRR is on the return scale Ke - premium (`valuation_tools.rate_anchor`), the verdict scale; the
-owner-facing return (`decision` expected_return.owner_return, SAME_SCALE) is the base case converging to the base fair value
-path by the five-year date (non-increasing in debt at a fixed price); expected_return.ke_scale (IRR + premium) is internal only. `opening.nondeductible_debt` =
+owner-facing expected return is that verdict-scale base IRR (`decision` expected_return.owner_facing_return, SAME_SCALE; the
+debt premium is charged in the fair value, so it is not added); expected_return.convergence_return (the base case converging to
+the base fair value path by the five-year date, distributions reinvested at the market return) is a separate report field;
+expected_return.ke_scale (IRR + premium) is internal only. `opening.nondeductible_debt` =
 debt-like claims of kinds `forecast.NONDEDUCTIBLE_CLAIM_KINDS` (preferred_or_minority, pension_deficit): `valuation.operating`
 deducts interest only on the debt above it and gives the terminal shield only on the horizon debt above it. Funding status adds `share_settled`.
 Case sources (`spec.sources`): {id, title, url, kind, published_at, available_at, retrieval?, published_at_estimated?}; kind
@@ -338,15 +341,20 @@ governance_red_flag, redteam_not_usable, consistency_failure, critical_finding_u
                      "yearly_at_model_cost_of_equity": {"rate","model_cost_of_equity","rows","semantics"},
                      "price_for_hurdle","five_year_at_required_return","band": {"hurdle_low",
                      "hurdle_high","step","error_level","error_widening","price_low","price_high","rows","bear_tolerance_step",
-                     "moat_proxy"?,"rule"},"debt_weight","debt_weight_source","owner_aspiration","meets_owner_aspiration_14pct" (on owner_return.base when computed,
-                     else base_irr),"owner_aspiration_basis",
-                     "owner_return": {"status": computed|unavailable,"base","at_fair_value" (the Ke-path return),
-                     "at_buy_below_price","market_return","base_minus_market","date","years","base_value_at_date",
-                     "cumulative_distributions_base","total_value_with_distributions","model_cost_of_equity","formula","assumes",
-                     "semantics"|"reason"} (decision SAME_SCALE: the owner-facing expected annual return at today's price,
-                     ((V5 + D5) / price)^(1/years) - 1 if the price converges to the base fair value path by the five-year date;
-                     equals the Ke-path return at price = fair value, non-increasing in debt at a fixed price; render.hebrew_table
-                     shows it against the plain market return with one convergence note; no verdict reads it),
+                     "moat_proxy"?,"rule"},"debt_weight","debt_weight_source","owner_aspiration","meets_owner_aspiration_14pct" (on base_irr),
+                     "owner_aspiration_basis": "base_irr",
+                     "owner_facing_return": {"value" (= base_irr),"basis": "base_irr","leverage_premium_base","semantics"}
+                     (decision SAME_SCALE: the expected annual return at today's price the owner reads; render.hebrew_table adds
+                     one note when leverage_premium_base > 0: the debt risk is charged in the fair value, so it is not added),
+                     "convergence_return": {"status": computed|unavailable,"base","at_fair_value","at_buy_below_price",
+                     "market_return","base_minus_market","date","years","base_value_at_date","cumulative_distributions_base",
+                     "distributions_with_reinvestment","distributions" (how: reinvested at the market return | summed),
+                     "reinvestment_rate","total_value_with_distributions","model_cost_of_equity","formula","assumes",
+                     "semantics"|"reason"} (decision SAME_SCALE, a separate report field, NOT the expected return:
+                     ((V5 + sum_i D_i (1 + m)^(T - t_i)) / price)^(1/years) - 1, the price converging to the base fair value
+                     path by the five-year date, each base distribution reinvested at the market return m; non-increasing in debt
+                     at a fixed price on the tested sweeps; its level inherits the engine's calibration bias; shown in one
+                     labelled table note and the paragraph's five-year clause; no verdict reads it),
                      "ke_scale": {"bear","base","bull","base_bound","leverage_premium": {scenario: p},"model_cost_of_equity",
                      "market_return","market_return_same_scale","required_return","required_return_same_scale",
                      "base_minus_market","base_minus_required","scale","semantics"} (INTERNAL diagnostic, never shown to the owner:

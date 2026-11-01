@@ -62,8 +62,8 @@ class FairValueHeadlineTests(unittest.TestCase):
         self.assertIn(f'{base:,.1f}$', _row(self.table, 'שווי הוגן (תרחיש בסיסי)'))
         self.assertNotIn(f'{pfh:,.1f}', _row(self.table, 'שווי הוגן (תרחיש בסיסי)'))
         self.assertIn(f'זולה בכ־{1 - 35 / base:.0%}', _row(self.table, 'המחיר מול השווי'))
-        # the entry row names the verdict-scale hurdle, labelled as the engine's test (decision SAME_SCALE)
-        buy = _row(self.table, 'מחיר כניסה עם מרווח ביטחון (רף של 10.5% בשנה בבדיקת המנוע)')
+        # the entry row names the hurdle, on the scale of the expected return row (base IRR, decision SAME_SCALE)
+        buy = _row(self.table, 'מחיר כניסה עם מרווח ביטחון (תשואה של 10.5% בשנה)')
         self.assertIn(f'{pfh:,.1f}$', buy)
         self.assertIn(f'נמוך ממנו בכ־{1 - 35 / pfh:.0%}', buy)
         self.assertNotIn('| דובי / שורי', self.table)                 # ONE table: today's range is the yearly table's first row

@@ -1,5 +1,45 @@
 ## Unreleased (0.14.1) — IRR on the return scale; one-off interest guard; non-deductible claims (01.11.2026)
 
+Review round 6 (of ef46436). The round-5 reviewer: the convergence return is monotone and consistent, but (blocking) the
+distributions were not reinvested, so payers read 1-2pp low against a compounding market; and the owner-facing level dropped
+sharply (A/B median about 6.7% -> 0.0%) because the engine's values sit below prices on average (the known calibration bias,
+0.13.0), so nearly every table would have read 'below the market'. Lead decision, implemented here:
+
+- The owner-facing 'expected annual return at today's price' row is the verdict-scale base IRR again
+  (`expected_return.owner_facing_return` = base_irr: premium-free, non-increasing in debt at a fixed price, the number the
+  verdict compares with the hurdle, the level every earlier table showed). With a relevering premium the table adds ONE note:
+  the debt risk is already charged in the fair value (Ke includes the premium), so the return is shown without it. The entry
+  row is 'מחיר כניסה עם מרווח ביטחון (תשואה של X% בשנה)' on the same scale; when the floor binds with a premium (entry =
+  fair value) the same note says the entry rate is the company's Ke less the premium (round-5 non-blocking item).
+  `meets_owner_aspiration_14pct` reads base_irr again (`owner_aspiration_basis` 'base_irr').
+- The convergence return is a separate field, `expected_return.convergence_return` (`decision._convergence_return`; renamed
+  from owner_return), with each base distribution reinvested at the market return to the five-year date
+  (`valuation_view.five_year.distributions_base_dated`: the per-period amounts from the base timeline); without a market return
+  the distributions are summed and the record says so. It is shown in one labelled note under the table ('אם המחיר מתכנס
+  לשווי של המנוע ...: כ־X% בשנה'), in the paragraph's five-year clause (its total now 'סך הכול בהשקעה חוזרת') and in report.md
+  beside the verdict-scale IRR; `pipeline.summary` / `analyst_sheet` / the judgement carry `convergence_return`.
+- The 'בבדיקת המנוע' labels are removed (the reviewer's doubled wording): with the table on the verdict scale the numbers no
+  longer need a second-scale label. The English 'verdict scale' labels stay in report.md. report.md's five-year line at the
+  required return no longer says 'your required return' and names its discount rate (the hurdle, explicit years at it + the
+  relevering premium = the model Ke when the floor binds; the reviewer's render.py:1123 mislabel).
+  `forecast.what_must_be_true` points at the base IRR as the owner's return.
+- Tests: IrrDebtMonotonicityTests.test_convergence_return_never_rises_with_debt_and_reinvests_distributions (payers with D5 > 0
+  at every debt: industrial 0..500m, levered 0..4bn reaching a 3pp relevering premium, ADBE-shaped 0..80bn; plus ORCL-shaped
+  0..300bn; reinvestment checked against the dated sum, above the plain sum for payers, rising with the market return);
+  OwnerScaleReturnTests rewritten (table row = base_irr with the one debt note, no note without a premium, convergence note
+  and field, floor-with-premium entry note, paragraph numbers all in the table).
+- ORCL-shaped probe (debt 0/30/60/125/160/200/300bn): base IRR at 142: 9.95 / 9.80 / 9.74 / 9.45 / 8.98 / 8.01 / 7.93%;
+  convergence 4.4 / 2.7 / 2.1 / -0.3 / -3.7 / -12.7 / -14.6% (both non-increasing; same at 95 / 82.68 / 55).
+- Real ORCL debt sweep (+0/20/60/120/250bn, price 141.8): owner-facing row = base IRR 11.7 / 11.6 / 11.2 / 10.6 / 8.5% (round 5
+  showed 17.7 / 17.4 / 14.8 / 10.6 / -5.1%, round 4 11.7 / 11.6 / 11.5 / 11.7 / 13.2%); convergence return 17.7 / 17.4 / 14.8 /
+  10.6 / -5.1% (ORCL pays nothing in the base case, so reinvestment changes nothing); verdicts unchanged (funding-conditional
+  draft, no value shown in the table).
+- A/B vs 7aca2f0 (45 names x 2019/2023/2025, 113 valued rows): verdicts, values (bear/base/bull), base_irr, hurdle and
+  meets_owner_aspiration_14pct identical; the owner-facing row is base_irr again (median 6.7%; round 5 showed median -0.2%).
+  Convergence return median -0.2% (round 5, unreinvested) -> 0.7% (reinvested); reinvestment adds median +0.8pp (max +3.1pp)
+  on the 109 payers, nothing on the 4 non-payers. Below the index: convergence 92/113, base IRR 93/110 rows (historical
+  formations; the calibration bias, not a fixed level).
+
 Review round 5 (of c6319a3). MAJOR: the round-4 owner-facing return (`expected_return.ke_scale`, IRR + relevering premium)
 RISES with debt at a fixed price: real ORCL run with +250bn of extra debt, fair value 55 vs price 142, showed 13.19% against a
 9.2% market. And the Hebrew paragraph (`_buy_he`, `_value_he`, the margin-flip text), the English verdict reason and the

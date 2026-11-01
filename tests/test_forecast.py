@@ -1856,41 +1856,66 @@ class IrrDebtMonotonicityTests(unittest.TestCase):
                 rise = b['leverage_premium']['base'] - a['leverage_premium']['base']
                 self.assertLessEqual(b['base'] - a['base'], rise + 1e-6, f'{price}: {d0:,.0f} -> {d1:,.0f}')
 
-    def test_owner_facing_return_never_rises_with_debt(self):
-        # decision SAME_SCALE (0.14.1 review round 5): the owner-facing return is the base case if the price converges to the base
-        # fair value path by the five-year date; at a fixed price it never rises with debt (0..300bn, several prices) and at a
-        # price equal to the fair value it is the Ke-path return ((V5 + D5) / V0)^(1/years) - 1, close to the model Ke
-        from fundamental_engine.decision import _view, _owner_return
-        debts = [0., 30e9, 60e9, 125e9, 160e9, 200e9, 250e9, 300e9]
-        views = []
-        for d in debts:
-            fb, an, card, qa = orcl_shaped(0.)
-            qa['resolved']['debt']['value'] = d
-            fc = forecast.build(fb, an, card, qa, deepcopy(self.G35))
-            case = build_case(fc['spec'])
-            res = value_company(case)
-            v = _view(fb, {'status': 'ok', 'case': case, 'result': res})
-            self.assertIn('five_year', v, f'debt {d:,.0f}')
-            views.append((d, v, scen(case, 'base')['cost_of_equity']))
-        index = {'value': .092}
-        for d, v, ke in views:                                          # at the fair value: the Ke-path return
-            at = _owner_return({**v, 'price': v['base']}, index, v['base'])
-            f = v['five_year']
-            kp = ((f['base_value'] + f['cumulative_distributions_base']) / v['base']) ** (1 / f['years']) - 1
-            self.assertAlmostEqual(at['base'], kp, places=12)
-            self.assertAlmostEqual(at['base'], at['at_fair_value'], places=12)
-            self.assertAlmostEqual(at['base'], at['at_buy_below_price'], places=12)
-            self.assertLess(abs(at['base'] - ke), .015, f'debt {d:,.0f}: Ke-path {at["base"]:.4f} vs Ke {ke:.4f}')
-        for price in (142., 140., 95., 82.68, 55., 30.):
-            rows = [_owner_return({**v, 'price': price}, index) for _, v, _ in views]
-            for (d0, a), (d1, b) in zip(zip(debts, rows), list(zip(debts, rows))[1:]):
-                if b['status'] != 'computed':                           # equity worthless by the date: nothing to show
+    def test_convergence_return_never_rises_with_debt_and_reinvests_distributions(self):
+        # decision SAME_SCALE (0.14.1 review round 6): the convergence return (the price converging to the base fair value path
+        # by the five-year date, each base distribution reinvested at the market return) is a report field; at a fixed price it
+        # never rises with debt, on payers (D5 > 0: industrial, levered with a relevering premium, ADBE-shaped) and on the
+        # ORCL-shaped non-payer (0..300bn). The owner-facing return is base_irr (verdict scale; its debt test is above)
+        from fundamental_engine.decision import _view, _convergence_return
+        from datetime import date as _d
+
+        def views(make, debts, inputs=None):
+            out = []
+            for d in debts:
+                fb, an, card, qa = make()
+                qa['resolved']['debt']['value'] = d
+                fc = forecast.build(fb, an, card, qa, deepcopy(inputs))
+                case = build_case(fc['spec'])
+                v = _view(fb, {'status': 'ok', 'case': case, 'result': value_company(case)})
+                self.assertIn('five_year', v, f'debt {d:,.0f}')
+                out.append((d, v, scen(case, 'base')['terminal'].get('ke_leverage_premium') or 0.))
+            return out
+        m = .092
+        index = {'value': m}
+        sweeps = {'industrial': (views(industrial, [0., 50e6, 100e6, 200e6, 500e6]), (40., 60., 80.)),
+                  'levered': (views(lambda: levered(30.), [0., 400e6, 800e6, 1600e6, 4000e6]), (15., 30., 45.)),
+                  'adbe': (views(adbe, [0., 6e9, 20e9, 40e9, 80e9]), (150., 246.87, 400.)),
+                  'orcl': (views(lambda: orcl_shaped(0.), [0., 30e9, 60e9, 125e9, 160e9, 200e9, 250e9, 300e9], self.G35),
+                           (142., 95., 55., 30.))}
+        for name in ('industrial', 'levered', 'adbe'):                  # payers, D5 > 0 at every debt
+            self.assertTrue(all(v['five_year']['cumulative_distributions_base'] > 0 for _, v, _ in sweeps[name][0]), name)
+        self.assertGreater(max(p for _, _, p in sweeps['levered'][0]), .02)   # the sweep reaches a relevering premium
+        for name, (vs, prices) in sweeps.items():
+            for d, v, _ in vs:                                          # reinvestment at the market return, dated
+                f = v['five_year']
+                at = _convergence_return({**v, 'price': v['base']}, index, v['base'])
+                if at['status'] != 'computed':
                     continue
-                self.assertEqual(a['status'], 'computed')
-                self.assertLessEqual(b['base'], a['base'] + 1e-9, f'{price}: debt {d0:,.0f} -> {d1:,.0f} raised the owner return')
-                self.assertLessEqual(b['base_minus_market'], a['base_minus_market'] + 1e-9)
-        # the round-4 level (IRR + premium) did rise with debt at a fixed price: it stays an internal diagnostic only
-        self.assertGreater(views[-1][2], views[0][2] + .03)
+                d5 = _d.fromisoformat(f['date'])
+                fv = sum(r['amount'] * (1 + m) ** ((d5 - _d.fromisoformat(r['date'])).days / 365.25) for r in f['distributions_base_dated'])
+                self.assertAlmostEqual(sum(r['amount'] for r in f['distributions_base_dated']), f['cumulative_distributions_base'], places=6)
+                self.assertAlmostEqual(at['base'], ((f['base_value'] + fv) / v['base']) ** (1 / f['years']) - 1, places=12)
+                self.assertAlmostEqual(at['base'], at['at_fair_value'], places=12)
+                self.assertAlmostEqual(at['base'], at['at_buy_below_price'], places=12)
+                if f['cumulative_distributions_base'] > 0:
+                    plain = ((f['base_value'] + f['cumulative_distributions_base']) / v['base']) ** (1 / f['years']) - 1
+                    self.assertGreater(at['base'], plain, f'{name} debt {d:,.0f}: reinvestment must add to a payer')
+                    no_m = _convergence_return({**v, 'price': v['base']}, {})  # no market return: summed, and it says so
+                    self.assertIsNone(no_m['reinvestment_rate'])
+                    self.assertIn('not reinvested', no_m['distributions'])
+                    self.assertAlmostEqual(no_m['base'], plain, places=12)
+            for price in prices:
+                rows = [_convergence_return({**v, 'price': price}, index) for _, v, _ in vs]
+                for (d0, a), (d1, b) in zip(zip([x[0] for x in vs], rows), list(zip([x[0] for x in vs], rows))[1:]):
+                    if b['status'] != 'computed':                       # equity worthless by the date: nothing to show
+                        continue
+                    self.assertEqual(a['status'], 'computed')
+                    self.assertLessEqual(b['base'], a['base'] + 1e-9, f'{name} {price}: debt {d0:,.0f} -> {d1:,.0f} raised it')
+                    self.assertLessEqual(b['base_minus_market'], a['base_minus_market'] + 1e-9)
+        # a higher market return reinvests more: it raises a payer's convergence return
+        v = sweeps['adbe'][0][0][1]
+        self.assertGreater(_convergence_return({**v, 'price': 246.87}, {'value': .12})['base'],
+                           _convergence_return({**v, 'price': 246.87}, {'value': .05})['base'])
 
     def test_analyst_override_has_no_premium(self):
         ov = deepcopy(self.G35)
