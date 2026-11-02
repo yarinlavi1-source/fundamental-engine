@@ -55,7 +55,8 @@ BANK_RANGES = {'roe_start': (-.3, .6), 'roe_year5': (-.3, .6), 'roe_terminal': (
 BANK_TIERS = ('own_history', 'guidance', 'contracted')
 BANK_OPENING_KEYS = ('book_equity', 'shares', 'as_of', 'reason', 'evidence_ids')
 BANK_OPENING_BAND = (.5, 2.)    # a later reported book within this factor of the FactBook's last common book (a units guard)
-BANK_CAPITAL_KEYS = ('risk_weighted_assets', 'required_capital_ratio', 'as_of', 'reason', 'evidence_ids')
+BANK_CAPITAL_KEYS = ('risk_weighted_assets', 'required_capital_ratio', 'cet1_capital', 'rwa_growth_start', 'as_of', 'reason',
+                     'evidence_ids')
 BANK_CAPITAL_RATIO_MAX = .3
 RI_IRRELEVANT_FIELDS = ('debt', 'cfo_ttm', 'capex_ttm', 'revenue_ttm', 'operating_income_ttm', 'cash_and_liquid_investments',
                         'investments', 'sbc_ttm')
@@ -163,6 +164,10 @@ def check_bank_drivers(fb, bd):
                 _num(rc.get('required_capital_ratio')) is None or not 0 < rc['required_capital_ratio'] <= BANK_CAPITAL_RATIO_MAX:
             raise ValueError('bank_drivers.regulatory_capital: risk_weighted_assets positive and required_capital_ratio (the CET1 '
                              f'requirement with buffers) a decimal above 0 and at most {BANK_CAPITAL_RATIO_MAX}')
+        if rc.get('cet1_capital') is not None and (_num(rc['cet1_capital']) is None or rc['cet1_capital'] <= 0):
+            raise ValueError('bank_drivers.regulatory_capital.cet1_capital: the reported CET1 capital, a positive number')
+        if rc.get('rwa_growth_start') is not None and (_num(rc['rwa_growth_start']) is None or not -.2 <= rc['rwa_growth_start'] <= 1.):
+            raise ValueError('bank_drivers.regulatory_capital.rwa_growth_start: the evidenced risk-weighted-asset growth, -0.2 to 1')
         evidence(rc, 'bank_drivers.regulatory_capital', filing=True)
 
 
@@ -229,8 +234,20 @@ def build(fb, an, card, qa, inputs, rates, reviews, warn, warnings, empty):
     res = qa.get('resolved') or {}
     shares = (res.get('shares_outstanding') or {}).get('value')
     price = (fb.get('market') or {}).get('price') or {}
+    shares_basis = 'point-in-time common shares'
     if op is not None and op.get('shares') is not None:
-        shares = float(op['shares'])
+        shares, shares_basis = float(op['shares']), 'analyst opening shares (evidenced)'
+    elif shares:
+        # value per share on the diluted count: the latest diluted weighted-average share count (awards, options, convertibles that
+        # dilute) when it is above the point-in-time common count; an analyst count (bank_drivers.opening.shares) takes precedence
+        dil = [(e, v) for e, v, _ in facts.series(fb, 'shares_diluted_wavg', 'quarter') + facts.series(fb, 'shares_diluted_wavg')
+               if facts._d(e) <= facts._d(as_of) and v]
+        if dil:
+            d_end, d_val = max(dil)
+            if d_val > shares * 1.005:
+                warn('diluted_shares_used', f'value per share on the latest diluted weighted-average count {d_val:,.0f} ({d_end}) instead '
+                                            f'of the point-in-time common count {shares:,.0f} (+{d_val / shares - 1:.1%})', 'medium')
+                shares, shares_basis = float(d_val), f'diluted weighted-average shares ({d_end})'
     if not shares:
         return empty('insufficient_data', 'dataqa did not resolve the point-in-time share count', method)
     if price.get('value') is None or price.get('currency', fb['company']['currency']) != fb['company']['currency']:
@@ -346,18 +363,23 @@ def build(fb, an, card, qa, inputs, rates, reviews, warn, warnings, empty):
         g = gs[s] = max(0., min(rf, TERMINAL_GROWTH_MAX, rT * (1 - floor[s]), rT - .001, ke - .005))
         g0 = bd[s]['book_growth_start'] if bd.get(s) else g_book + {'bear': -.01, 'base': 0., 'bull': .01}[s]
         rows, rwa = [], (float(rc['risk_weighted_assets']) if rc else 0.)
+        # CET1 deducts goodwill, intangibles and other items from common book: the requirement on book adds that gap (held at its
+        # opening size), so the check is CET1 >= ratio x RWA, not book >= ratio x RWA; RWA grow at the evidenced rate when given
+        ded = max(0., float(book) - float(rc['cet1_capital'])) if rc and rc.get('cet1_capital') is not None else 0.
+        rg0 = rc.get('rwa_growth_start') if rc else None
         for a, b in periods:
             mid = (years(as_of, a) + years(as_of, b)) / 2
             roe = _path(s0, s5, rT, mid)
             gb = g + (g0 - g) * max(0., 1 - mid / 10)   # fades to terminal growth by year 10
             pay = min(1., max(floor[s], 1 - max(gb, 0.) / roe)) if roe > 0 else floor[s]
-            if rc:          # risk-weighted assets grow with the balance sheet (the scenario's book growth path)
-                rwa *= (1 + gb) ** (years(as_of, b) - years(as_of, a))
+            if rc:          # risk-weighted assets grow at the evidenced rate (fading like book growth), else with the book growth path
+                gr = g + (rg0 - g) * max(0., 1 - mid / 10) if rg0 is not None else gb
+                rwa *= (1 + gr) ** (years(as_of, b) - years(as_of, a))
             rows.append({'start': a, 'end': b, 'assumption_ids': ['roe_' + s, 'payout', 'regulatory_capital'], 'roe': _r(roe),
                          'payout_fraction': _r(pay),
                          # capital requirement: zero unless bank_drivers.regulatory_capital evidences it, never a guessed ratio
                          'risk_weighted_assets': _r(rwa) if rc else 0.,
-                         'required_capital_ratio': float(rc['required_capital_ratio']) if rc else 0.})
+                         'required_capital_ratio': _r(float(rc['required_capital_ratio']) + ded / rwa) if rc else 0.})
         paths[s] = [{'end': r['end'], 'roe': r['roe'], 'payout_fraction': r['payout_fraction']} for r in rows]
         terms[s] = {'roe': _r(rT), 'growth': _r(g)}
         scen.append({'name': s, 'assumption_ids': ['roe_' + s, 'payout', 'cost_of_equity'], 'cost_of_equity': _r(ke),
@@ -411,7 +433,7 @@ def build(fb, an, card, qa, inputs, rates, reviews, warn, warnings, empty):
                                                    f"{op['reason']})" if op is not None else ''), 'A primary balance sheet at or after the statement date shows common equity more than 2% '
         'different.', eq_ids)
     add('shares_point', 'point-in-time shares', 'reported', {'shares': shares, 'as_of': (res.get('shares_outstanding') or {}).get('as_of')},
-        f'point-in-time common shares {shares:,.0f}; constant over the forecast (buybacks are treated like dividends)',
+        f'{shares_basis} {shares:,.0f}; constant over the forecast (buybacks are treated like dividends)',
         'The share count at as_of differs by more than 1%.', sh_ids or eq_ids)
     add('roe_history', 'return on equity history', 'reported',
         {'ttm': r_ttm, 'median': r_med, 'lower_quartile': r_low, 'by_year': {e: _r(x) for e, x in roe_hist}},
@@ -458,16 +480,22 @@ def build(fb, an, card, qa, inputs, rates, reviews, warn, warnings, empty):
         'risk-free + equity risk premium + stage add-on + balance-sheet add-on; no relevering (deposits and float are operating funding)',
         'A dated market-implied cost of equity for comparable banks or insurers differs by more than 1.5 points.', rate_ids + crp_ids + [RULES])
     if rc:
-        need = float(rc['risk_weighted_assets']) * float(rc['required_capital_ratio'])
+        ded0 = max(0., float(book) - float(rc['cet1_capital'])) if rc.get('cet1_capital') is not None else 0.
+        need = float(rc['risk_weighted_assets']) * float(rc['required_capital_ratio']) + ded0
         add('regulatory_capital', 'regulatory capital', 'analyst',
             {'checked': True, 'risk_weighted_assets': rc['risk_weighted_assets'], 'required_capital_ratio': rc['required_capital_ratio'],
-             'as_of': rc['as_of'], 'book_to_rwa': book / float(rc['risk_weighted_assets'])},
+             'as_of': rc['as_of'], 'book_to_rwa': book / float(rc['risk_weighted_assets']),
+             'cet1_capital': rc.get('cet1_capital'), 'cet1_deductions': ded0, 'rwa_growth_start': rc.get('rwa_growth_start')},
             f"inputs.bank_drivers.regulatory_capital: risk-weighted assets {rc['risk_weighted_assets']:,.0f} at {rc['as_of']}, growing "
-            f"with each scenario's book growth path; common book must stay at or above {rc['required_capital_ratio']:.1%} of them "
-            f"(common book is a proxy: CET1 deducts goodwill and intangibles): {rc['reason']}",
+            + (f"from {rc['rwa_growth_start']:.1%} a year, fading like book growth; " if rc.get('rwa_growth_start') is not None
+               else "with each scenario's book growth path; ")
+            + (f"CET1 capital {rc['cet1_capital']:,.0f} (common book less {ded0:,.0f} of deductions held at that size) must stay at or "
+               f"above {rc['required_capital_ratio']:.1%} of them" if rc.get('cet1_capital') is not None else
+               f"common book must stay at or above {rc['required_capital_ratio']:.1%} of them (common book is a proxy: CET1 deducts "
+               'goodwill and intangibles; supply cet1_capital)') + f": {rc['reason']}",
             'CET1 (or solvency) ratios fall below requirements plus buffers on this payout.', src_of(rc['evidence_ids']))
         if book < need:
-            warn('capital_below_requirement', f'opening common book {book:,.0f} is below the required {need:,.0f} '
+            warn('capital_below_requirement', f'opening common book {book:,.0f} is below the required {need:,.0f} (incl. CET1 deductions) '
                                               f"({rc['required_capital_ratio']:.1%} of risk-weighted assets)", 'high')
     else:
         add('regulatory_capital', 'regulatory capital', 'model', {'checked': False},

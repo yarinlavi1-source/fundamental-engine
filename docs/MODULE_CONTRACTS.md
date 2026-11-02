@@ -270,7 +270,7 @@ residual-income route only; `forecast_financials.check_bank_drivers`, ValueError
 (required when roe_terminal is above the cost of equity), "source_tier" own_history|guidance|contracted (guidance needs a
 guidance item), "reason", "evidence_ids"}, "opening"?: {"book_equity" (common, the FactBook basis: equity less preferred and
 AOCI), "shares"?, "as_of", "reason", "evidence_ids" with the filing DOCUMENT}, "regulatory_capital"?: {"risk_weighted_assets",
-"required_capital_ratio" 0..0.3, "as_of", "reason", "evidence_ids" with the filing DOCUMENT}}. A scenario set replaces the
+"required_capital_ratio" 0..0.3, "cet1_capital"? (reported CET1; the book-to-CET1 gap is held as deductions so the check is CET1 >= ratio x RWA), "rwa_growth_start"? -0.2..1 (evidenced RWA growth, fading like book growth; else RWA follow book), "as_of", "reason", "evidence_ids" with the filing DOCUMENT}}. Without analyst opening shares, value per share uses the latest diluted weighted-average share count when it is above the point-in-time common count (warned `diluted_shares_used`). A scenario set replaces the
 own-history ROE path (start, year 5, terminal; linear as before), starts book growth at book_growth_start (fading to terminal
 growth by year 10; above BOOK_GROWTH_CAP allowed only while book_growth_start <= roe_start x (1 - payout), else refused) and
 uses payout as the distribution floor (payout = max(floor, 1 - book growth / ROE)); without payout it is the history, or with no

@@ -167,6 +167,28 @@ class BankDriversTests(unittest.TestCase):
         self.assertGreater(pipeline.summary(cf)['base_value'], pipeline.summary(plain)['base_value'])
         self.assertEqual(fc['paths']['bear'], plain['fc']['paths']['bear'])      # an unset scenario keeps the rules
 
+    def test_cet1_capital_and_rwa_growth_set_the_requirement(self):
+        op = {'book_equity': 160e9, 'shares': 2.1e9, 'as_of': '2026-09-30', 'reason': 'synthetic Q3', 'evidence_ids': ['doc:6k']}
+        rc = {'risk_weighted_assets': 1000e9, 'required_capital_ratio': .07, 'cet1_capital': 130e9, 'rwa_growth_start': .30,
+              'as_of': '2026-09-30', 'reason': 'synthetic CET1 after deductions', 'evidence_ids': ['doc:6k']}
+        fc = self.run_bd({'opening': op, 'regulatory_capital': rc})['fc']
+        p = fc['spec']['scenarios'][1]['periods']
+        # book must cover 7% of RWA plus the 30bn of CET1 deductions
+        self.assertAlmostEqual(p[0]['required_capital_ratio'], .07 + 30e9 / p[0]['risk_weighted_assets'], places=5)
+        plain = self.run_bd({'opening': op, 'regulatory_capital': {k: v for k, v in rc.items()
+                                                                    if k not in ('cet1_capital', 'rwa_growth_start')}})['fc']
+        self.assertGreater(p[3]['risk_weighted_assets'], plain['spec']['scenarios'][1]['periods'][3]['risk_weighted_assets'])
+        bad = self.run_bd({'regulatory_capital': dict(rc, rwa_growth_start=3.)})       # out of band: refused, nothing built
+        self.assertNotEqual((bad['fc'] or {}).get('status'), 'built')
+
+    def test_diluted_share_count_is_used_when_higher(self):
+        fb = filed_bank()
+        F.add_fact(fb, 'shares_diluted_wavg', 'Q@2026-06-30', '2026-06-30', 2.2e9, 'syn', 'as_reported', '2026-08-05',
+                   period_start='2026-04-01')
+        fc = pipeline.run(fb)['fc']
+        self.assertIn('diluted_shares_used', {w['code'] for w in fc['warnings']})
+        self.assertEqual(fc['anchors']['shares'], 2.2e9)
+
     def test_no_payout_and_no_history_follows_growth_and_says_so(self):
         fb = filed_bank()
         fb['facts'] = [f for f in fb['facts'] if f['metric'] not in ('dividends_paid', 'buybacks')]
