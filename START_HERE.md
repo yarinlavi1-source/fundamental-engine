@@ -71,6 +71,20 @@ same connectors (SEC, Interactive Brokers, Alpha Vantage, FMP, LunarCrush, …).
   branch into `main` and add its key documents to the "Latest state" line above. Two sessions on unmerged
   branches is how a new session ends up on an old engine (it happened on 21.10.2026).
 
+## Saved research and the portfolio quarterly check (02.11.2026)
+
+- **Tracked research store `research/` (in Git):** every full valuation is saved with `python -m fundamental_engine
+  research-save runs/tickers/<T>_<D>` into `research/companies/<T>/<D>/` (inputs, evidence pack, position parts, reviews,
+  Hebrew table and scenarios, casefile summary, frozen thesis) plus `research/forecast_ledger.jsonl` (the tracked copy of
+  the ledger). `python -m fundamental_engine research-latest <T>` prints the newest saved valuation or "none": the next
+  research on that company starts from it and updates only what happened since. Company research only, never positions.
+- **Quarterly check of the owner's holdings:** `python -m fundamental_engine holdings-update --positions
+  runs/portfolio_<D>/positions.json --as-of <D> --refresh` (positions saved from IBKR get_account_positions, READ-ONLY)
+  compares each holding's frozen thesis with the filings since its cutoff and writes `holdings_update.json` and
+  `holdings_update_he.md` (default `runs/portfolio_<D>/`): no new report / light update (the thesis stands) / full rerun
+  (fast ticker procedure) / new holding (fast ticker procedure) / data unavailable. Use it after earnings season or when
+  the owner asks how his holdings are doing; it does not revalue and gives no orders.
+
 ## The whole cycle (discover -> research -> calibrate -> propose), 20.10.2026
 
 Only when the owner asks to look for companies. Data comes from the collection scripts (SEC, with a contact e-mail in

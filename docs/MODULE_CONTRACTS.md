@@ -524,6 +524,19 @@ price_only},"alerts","confirmations","price","not_checked"}`; `monitor.freeze(le
 "by_metric","by_thesis","recurring_errors","unresolved","not_scored","evaluated_at","limitations"}`.
 `ledger.Ledger(path, clock=None, max_recording_lag_days=7)`: append-only, hash-chained; refuses made_at more than the lag
 before the system recording time; late rows are excluded from coverage, returns and learning.
+`holdings_watch.update(positions, ledger_path, as_of, factbook_for, price_for=None, casefile_for=None, root=None) ->
+{"as_of","rows": [{"ticker","weight","status": new_holding|data_unavailable|no_new_report|light_update|full_rerun_needed,
+"view": {"price","base_value_today","discount_to_base","expected_return": {"value","kind": implied_irr|proxy}},
+"detail": {"changes","falsifiers_tripped","confirmations","alerts","to_check"},"value_signal","conclusion","start_from",
+"line_he"}],"removed","skipped_non_stock","counts","full_rerun"}`: the latest frozen thesis per ticker (union of the ledgers by
+thesis_id) checked with `monitor.check` against a fresh FactBook; full_rerun_needed on a high-severity alert or a tripped
+assumption falsifier. `factbook_for(ticker, as_of, thesis)` is injected (CLI: `sec_factbook_for`, SEC companyfacts, the saved
+copy unless `--refresh`); `holdings_watch.render_he(res)` is the Hebrew table. No revaluation, no orders.
+`research_store.save(run, root='.', ledger_path=None)` copies a finished run's essentials (inputs, evidence pack, position
+parts, reviews, table_he/scenarios_he, casefile summary and the casefile when under 2 MB, the frozen thesis row) into
+`research/companies/<T>/<as_of>/`, updates `latest.json` and appends the thesis and its forecasts to
+`research/forecast_ledger.jsonl` (deduplicated by thesis_id / id; rows kept verbatim, the chain is verified on the source);
+`research_store.load(ticker, root='.')` -> the newest saved valuation or None. Company research only: no positions.
 
 ## econ (business economics, phase A; not called by the pipeline)
 

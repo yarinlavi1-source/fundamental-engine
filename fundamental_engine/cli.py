@@ -277,6 +277,21 @@ def main():
                                                 "agents the main loop saw return; stage times")
     tst.add_argument("run")
     tst.add_argument("--returned", help="comma-separated stages whose agents returned (the main loop's own record)")
+    hu = subs.add_parser("holdings-update", help="Light quarterly check of the owner's holdings against their frozen theses: "
+                                                 "no new report / light update / full rerun per holding (no revaluation, no orders)")
+    hu.add_argument("--positions", required=True, help="READ-ONLY positions copy {as_of, rows:[{t, shares, price, value, weight}]}")
+    hu.add_argument("--ledger", action="append", help="forecast ledger(s), union by thesis_id (default: "
+                                                       "runs/tickers/forecast_ledger.jsonl and research/forecast_ledger.jsonl)")
+    hu.add_argument("--as-of", required=True)
+    hu.add_argument("--refresh", action="store_true", help="refetch SEC companyfacts (SEC_USER_AGENT); default: the saved copy")
+    hu.add_argument("--cache", help="SEC companyfacts cache folder (default runs/sec_cache)")
+    hu.add_argument("--out", help="folder for holdings_update.json and holdings_update_he.md (default runs/portfolio_<as_of>)")
+    rs = subs.add_parser("research-save", help="Copy a finished ticker run into the tracked store research/companies/<T>/<as_of>/ "
+                                               "and its frozen thesis into research/forecast_ledger.jsonl")
+    rs.add_argument("run", help="runs/tickers/<TICKER>_<as_of>")
+    rs.add_argument("--ledger", help="ledger holding the frozen thesis (default runs/tickers/forecast_ledger.jsonl)")
+    rl = subs.add_parser("research-latest", help="The latest saved valuation of a ticker in research/ (summary and paths), or none")
+    rl.add_argument("ticker")
     im = subs.add_parser("import-av", help="Map saved Alpha Vantage statement JSON files into plain history rows")
     im.add_argument("income")
     im.add_argument("--balance")
@@ -323,6 +338,22 @@ def main():
             print(json.dumps(res, ensure_ascii=False, indent=1, default=str))
             if bad:
                 raise SystemExit(1)
+            return
+        if args.command == "holdings-update":
+            from . import holdings_watch as HW
+            ledgers = args.ledger or [p for p in ("runs/tickers/forecast_ledger.jsonl", "research/forecast_ledger.jsonl") if Path(p).exists()]
+            res = HW.update(read_json(args.positions), ledgers, args.as_of, HW.sec_factbook_for(".", args.refresh, cache_dir=args.cache),
+                            casefile_for=HW.run_casefile_for("."), root=".")
+            paths = HW.write(res, args.out or os.path.join("runs", f"portfolio_{args.as_of}"))
+            print(json.dumps({"counts": res["counts"], "full_rerun": res["full_rerun"], "removed": [r["ticker"] for r in res["removed"]],
+                              **paths}, ensure_ascii=False, indent=1))
+            return
+        if args.command in ("research-save", "research-latest"):
+            from . import research_store as RS
+            if args.command == "research-save":
+                print(json.dumps(RS.save(args.run, ".", args.ledger), ensure_ascii=False, indent=1, default=str))
+            else:
+                print(json.dumps(RS.load(args.ticker, ".") or "none", ensure_ascii=False, indent=1, default=str))
             return
         if args.command == "pipeline-plan":
             from .pipeline import collection_plan

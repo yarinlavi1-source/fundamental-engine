@@ -22,6 +22,10 @@ stopped reviewer makes the result a draft); tell the owner.
    for `SEC_USER_AGENT="<app name> <contact e-mail>"` in the environment (e.g. `env` in .claude/settings.local.json or the
    cloud environment's variables). Each run checks `[ -n "$SEC_USER_AGENT" ]`: when it is missing, tell the owner the run
    will be slower (no SEC documents are prefetched: the lanes fetch them; gather_documents' budget rises to ~30 calls).
+0b. Saved research first: `python -m fundamental_engine research-latest T` (`research-load` is the older journal command). When
+   a saved valuation exists (research/companies/T/<as_of>/), start from it: prefetch with `--reuse` and its position files
+   as the starting parts, and update only what changed since its as_of. After delivery: `python -m fundamental_engine
+   research-save RUN` and commit and push the research/ files (the owner authorized pushing to the session branch and main).
 1. Same turn: `python scripts/ticker_prefetch.py T D --reuse auto [--peers A,B]` as a background Bash (seconds; it first
    moves an earlier attempt of the same T_D to RUN/attempts/) AND the four lanes gather_numbers, gather_documents,
    gather_field, gather_macro (they wait up to ~90 s for this attempt's prefetch.json).
@@ -40,6 +44,14 @@ stopped reviewer makes the result a draft); tell the owner.
    base case only when the engine ran: `python -c "import json; from fundamental_engine.ledger import Ledger; from
    fundamental_engine.monitor import thesis_from_casefile, freeze; cf=json.load(open('RUN/companies/T/out/casefile.json'));
    print(json.dumps(freeze(Ledger('runs/tickers/forecast_ledger.jsonl'), thesis_from_casefile(cf)), default=str))"`.
+
+Portfolio check (owner's holdings only): read the positions via IBKR get_account_positions (READ-ONLY; never an order,
+alert or watchlist tool), save them as runs/portfolio_D/positions.json ({as_of, source, rows:[{t, shares, price, value, weight,
+avg_cost}]}), run `python -m fundamental_engine holdings-update --positions runs/portfolio_D/positions.json --as-of D --refresh`
+(SEC companyfacts; it reads the runs/ and the tracked research/ ledgers), run the fast ticker procedure above ONLY for the
+new_holding and full_rerun_needed rows (starting from the row's start_from folder when it has one), and deliver
+runs/portfolio_D/holdings_update_he.md verbatim. A stock added or removed in IBKR changes the rows; a thesis whose stock left
+the positions is listed as removed (monitoring stops). Light updates keep the frozen values: no revaluation, no orders.
 
 Time, honestly: a design estimate from the NVDA stage times of the saved Workflow (25.10.2026: gather lanes 7-9 min each,
 review lenses ~8 min, Understand and Position ~22 min each, about 25 of those 44 minutes spent reading engine source for
