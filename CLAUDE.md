@@ -250,3 +250,15 @@ Never raise the engine's confidence level; explain its reason. See docs/NOW_RUN_
 
 The owner pays for usage. Size checks to the change: a small fix gets the suite plus one focused review, not repeated
 multi-agent rounds; fix small review leftovers directly instead of launching another round; no heavy reruns unless asked.
+
+## User preference: Claude values the company itself, from everything available (02.11.2026)
+
+The owner's rule: every valuation starts from ALL available information (the full latest release and 10-Q/10-K, the call,
+segment tables, cash flow and financing statements, guidance and its track record, competitors), read before any number is
+set. Claude builds the valuation itself and owns the judgement: revenue from the business's own drivers per segment, margins
+from the segment trend, capex/depreciation, financing and dilution (equity issuance, converts, buybacks), then two methods
+(DCF and EPS x P/E) reconciled, three scenarios with the bear built from the real business risk, and a clear personal view
+(buy / hold / not, at what price, what would change it). The engine is a cross-check, not the answer. Do not copy another
+analyst's method or numbers; when comparing, reconcile line by line and say who is wrong where. When criticised, answer
+'right / partly / wrong' with the reason; do not fold. One consistent output: value today, 2031 price, annual return per
+scenario.
