@@ -71,13 +71,22 @@ same connectors (SEC, Interactive Brokers, Alpha Vantage, FMP, LunarCrush, …).
   branch into `main` and add its key documents to the "Latest state" line above. Two sessions on unmerged
   branches is how a new session ends up on an old engine (it happened on 21.10.2026).
 
+## Which company type goes to which model (02.11.2026, 0.14.3)
+
+`docs/ROUTING_HE.md` (Hebrew, for the owner): every company type, the valuation model it goes to and why, what the analyst
+must supply, and when the engine refuses or flags instead of giving a number. Read it before trusting a value on a bank,
+a REIT, a biotech, a conglomerate or a build-out company.
+
 ## Saved research and the portfolio quarterly check (02.11.2026)
 
 - **Tracked research store `research/` (in Git):** every full valuation is saved with `python -m fundamental_engine
   research-save runs/tickers/<T>_<D>` into `research/companies/<T>/<D>/` (inputs, evidence pack, position parts, reviews,
-  Hebrew table and scenarios, casefile summary, frozen thesis) plus `research/forecast_ledger.jsonl` (the tracked copy of
-  the ledger). `python -m fundamental_engine research-latest <T>` prints the newest saved valuation or "none": the next
-  research on that company starts from it and updates only what happened since. Company research only, never positions.
+  gather fragments, identity, Hebrew table and scenarios, casefile summary and a small casefile extract) plus
+  `research/forecast_ledger.jsonl` (the tracked copy of the ledger). `python -m fundamental_engine research-latest <T>`
+  prints the newest saved valuation (or an unsaved runs/ folder, labelled so, or "none"); start the next run from it with
+  `python scripts/ticker_prefetch.py <T> <D> --reuse <that folder>` and update only what happened since. For a company
+  valuation resume with research-latest; `research-load` is the older journal of research_checkpoint dossiers (non-ticker
+  work). Company research only, never positions.
 - **Quarterly check of the owner's holdings:** `python -m fundamental_engine holdings-update --positions
   runs/portfolio_<D>/positions.json --as-of <D> --refresh` (positions saved from IBKR get_account_positions, READ-ONLY)
   compares each holding's frozen thesis with the filings since its cutoff and writes `holdings_update.json` and
@@ -162,7 +171,8 @@ a visible draft, never a conclusion.
 5. Resolve issuer identity and research date. Retrieve evidence through existing
    client tools, fill a dossier and run `research_review`.
 6. Work on its next material question. Record attempts and stop unproductive loops.
-   Call `research_checkpoint`; resume with `research_load` in the next session.
+   Call `research_checkpoint`; resume with `research_load` in the next session (dossier work; a company valuation
+   resumes with `research-latest`, see 'Saved research' above).
 7. Deliver the Hebrew synthesis using the synthesis packet and actual calculator
    results. Do not claim that process readiness establishes investment superiority.
 

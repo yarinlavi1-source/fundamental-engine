@@ -35,8 +35,11 @@ PAYMENT_METRICS = {'capex', 'buybacks', 'dividends_paid', 'acquisitions', 'debt_
 # Canonical metric -> raw XBRL concept names (lower case; SEC camel case is lower-cased before lookup).
 # Order = priority. Only exact concepts are used; no component tags stand in for totals.
 DURATION_TAGS = {
-    'revenue': ['revenues', 'revenuefromcontractwithcustomerexcludingassessedtax',
-                'revenuefromcontractwithcustomerincludingassessedtax', 'salesrevenuenet', 'revenuesnetofinterestexpense'],
+    # RevenuesNetOfInterestExpense (a bank's or broker's total net revenue) ranks ahead of the ASC 606 tags: a bank holding company
+    # tags its fee revenue alone as RevenueFromContractWithCustomer... (SoFi FY2025: 0.62bn of 3.61bn total net revenue), and the
+    # tag order breaks ties within one filing (_bank_revenue covers banks that tag no total)
+    'revenue': ['revenues', 'revenuesnetofinterestexpense', 'revenuefromcontractwithcustomerexcludingassessedtax',
+                'revenuefromcontractwithcustomerincludingassessedtax', 'salesrevenuenet'],
     'cost_of_revenue': ['costofrevenue', 'costofgoodsandservicessold', 'costofgoodssold'],
     'gross_profit': ['grossprofit'],
     'rd': ['researchanddevelopmentexpense', 'researchanddevelopmentexpensesoftwareexcludingacquiredinprocesscost',
@@ -396,6 +399,49 @@ def _ebit_proxy(fb, sid):
     return n
 
 
+ASC606_TAGS = ('revenuefromcontractwithcustomerexcludingassessedtax', 'revenuefromcontractwithcustomerincludingassessedtax')
+BANK_REVENUE_PARTS = ('interestincomeexpensenet', 'noninterestincome')
+
+
+def _bank_revenue(fb, gaap, lower, sid, ccy='USD'):
+    """A bank that tags no total revenue: its ASC 606 tag (RevenueFromContractWithCustomer...) covers fee revenue only (interest
+    income is outside ASC 606), so where the issuer also tags net interest income (InterestIncomeExpenseNet) and noninterest
+    income (NoninterestIncome, a bank concept) for the same period and their sum is larger, the revenue fact becomes that sum,
+    basis 'derived' (the total net revenue a bank reports). Facts from a total tag (Revenues, RevenuesNetOfInterestExpense) are
+    never touched. -> number of facts replaced."""
+    from .pit import quarterly
+    tags = [lower.get(c) for c in BANK_REVENUE_PARTS]
+    if None in tags:
+        return 0
+    part = []
+    for tag in tags:
+        ann = {}
+        for r in gaap[tag].get('units', {}).get(ccy, []):
+            if r.get('start') and r.get('form') in ('10-K', '10-K/A', '20-F', '40-F') and 350 <= (_d(r['end']) - _d(r['start'])).days <= 380:
+                if r['end'] not in ann or r['filed'] < ann[r['end']]['filed']:
+                    ann[r['end']] = r
+        q = quarterly({'us-gaap': {tag: gaap[tag]}}, [tag], ccy)
+        part.append(({e: r['val'] for e, r in ann.items()}, {e: v for e, (v, _) in q.items()}))
+
+    def near(d, end):
+        return next((v for e, v in d.items() if abs((_d(e) - _d(end)).days) <= 15), None)
+    n = 0
+    for f in fb['facts']:
+        if f['metric'] != 'revenue' or f['source_id'] != sid or str(f.get('concept') or '').lower() not in ASC606_TAGS:
+            continue
+        k = 0 if f['period'].startswith('FY') else 1 if f['period'].startswith('Q@') else None
+        if k is None:
+            continue
+        nii, nonii = near(part[0][k], f['period_end']), near(part[1][k], f['period_end'])
+        if nii is None or nonii is None or nii + nonii <= f['value'] * 1.05:
+            continue
+        f.update(value=float(nii + nonii), basis='derived', derived_from=[f['concept'], 'us-gaap:' + tags[0], 'us-gaap:' + tags[1]],
+                 concept='derived: InterestIncomeExpenseNet + NoninterestIncome (bank total net revenue; the ASC 606 tag covers fee '
+                         'revenue only)')
+        n += 1
+    return n
+
+
 def _pro_forma(fb, gaap, sid, ccy='USD'):
     """Undimensioned BusinessAcquisitionsProFormaRevenue (one acquisition in the period) as 'revenue_pro_forma' with period
     PF@start..end, first filed per period; facts tagged per acquisition come from the filing's inline XBRL (pipeline)."""
@@ -489,6 +535,7 @@ def from_sec_companyfacts(fb, payload, retrieved_at, sid='sec:companyfacts', cur
         add_fact(fb, 'shares_outstanding_cover', 'I@' + end, end, v, sid, 'as_reported',
                  (_d(filed) + timedelta(days=LAG_DAYS)).isoformat(), unit='shares', concept='dei:entitycommonstocksharesoutstanding')
         n += 1
+    n += _bank_revenue(fb, gaap, lower, sid, ccy)
     n += _ebit_proxy(fb, sid)
     return n
 

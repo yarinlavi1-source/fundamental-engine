@@ -274,7 +274,8 @@ MATERIAL_HE = {'possible_lender': 'מאזן של גוף מלווה (פיקדונ
                'data_blocked': 'נתונים קריטיים חסרים או סותרים',
                'assumed_financing': 'התוכנית נשענת על מימון חיצוני מונח שעוד לא נבדק',
                'debt_incomplete': 'הוצאות הריבית גבוהות בהרבה ממה שהחוב שנקרא מהדוחות מסביר: חלק מהחוב כנראה חסר',
-               'cycle_treatment_override': 'האנליסט קבע שהשינוי מבני למרות מחזור שנראה בהיסטוריה; נדרש אישור בודק'}
+               'cycle_treatment_override': 'האנליסט קבע שהשינוי מבני למרות מחזור שנראה בהיסטוריה; נדרש אישור בודק',
+               'country_risk_unmeasured': 'רוב הפעילות מחוץ לארה"ב, אבל סיכון המדינה לא נמדד (אין פילוח הכנסות לפי מדינה), ולכן שיעור ההיוון לא כולל אותו'}
 MATERIAL_HOLD = {'possible_lender', 'leverage_at_cap', 'debt_incomplete'}     # debt missing: the per-share number is not a value
 FUNDING_SCENARIOS = ('bear', 'base')               # the plan the verdict rests on (base IRR, bear margin of safety)
 # risk register pricing_status (when risk.py supplies one): the decision keeps the more conservative of the register's
@@ -1294,13 +1295,20 @@ def _required_return(A, index, card, g, rk, an=None, ke=None, cyc_ev=None):
         why = ('leverage, interest coverage, Altman zone and cash runway (financial_strength without the funding signal)'
                if any(s['signal'] == 'leverage' for s in sig) else 'ROE versus cost of equity and capital ratios (balance-sheet lender)')
     add('balance_sheet', PREMIUM['balance_sheet'][bs], f'balance sheet {bs}: {why}' + ('; unknown is treated as above average' if bs == 'unknown' else ''))
-    fund = _card(card, 'funding', 'value')
+    # a balance-sheet lender (residual-income route): loan growth runs through operating cash flow, so FCF, its margin and the cash
+    # runway say nothing about funding or unit economics (SoFi 2026-11: 'FCF margin -643%' on a fee-only revenue line); its own
+    # capital (ROE, CET1) and an evidenced external raise decide instead (0.14.3)
+    lender = _card(card, 'business_model', 'primary') in BALANCE_SHEET_LENDERS
+    fund = None if lender else _card(card, 'funding', 'value')
     ext = any(c['kind'] == 'external' for c in g.get('funding_conditional') or [])
     fk = 'needs_external' if fund == 'needs_external' or g['funding'] or ext else 'self_funded' if fund == 'self_funded' else 'unknown'
     add('funding_dependence', PREMIUM['funding_dependence'][fk],
         {'needs_external': 'the plan depends on outside capital: current holders can be diluted or delayed'
                            + (' (priced financing path in the valuation)' if ext and not g['funding'] else ''),
-         'self_funded': 'self-funded (model card)', 'unknown': 'funding status not established; treated as above average'}[fk])
+         'self_funded': 'self-funded (model card)',
+         'unknown': ('balance-sheet lender: FCF and cash runway do not measure its funding (loans grow through operating cash flow); '
+                     'regulatory capital decides, not established here; treated as above average') if lender else
+                    'funding status not established; treated as above average'}[fk])
     cyc = _card(card, 'cyclical', 'value')
     ev = cyc_ev or cyclical_evidence(card)
     charged = cyc is True and ev.get('evidenced') is True
@@ -1310,11 +1318,13 @@ def _required_return(A, index, card, g, rk, an=None, ke=None, cyc_ev=None):
         'not cyclical (model card)' if cyc is False else 'cyclicality not established (no premium added)')
     stage = _card(card, 'stage', 'value')
     opm, fm = _val(an, 'operating_margin'), _val(an, 'fcf_margin')
-    losing = (opm is not None and opm < 0) or (fm is not None and fm < 0)
+    roe = _roe(an)[0] if lender else None
+    losing = (roe is not None and roe < 0) if lender else (opm is not None and opm < 0) or (fm is not None and fm < 0)
     if stage in PREMIUM['unproven_economics'] and losing:
         add('unproven_economics', PREMIUM['unproven_economics'][stage],
-            f'{stage}-stage business still loss-making (operating margin {_pct(opm)}, FCF margin {_pct(fm)}): unit economics not yet proven '
-            'at scale (the forecast\'s own stage add-on)')
+            (f'{stage}-stage lender still loss-making (ROE {_pct(roe)})' if lender else
+             f'{stage}-stage business still loss-making (operating margin {_pct(opm)}, FCF margin {_pct(fm)})')
+            + ': unit economics not yet proven at scale (the forecast\'s own stage add-on)')
     bq = A['business_quality']
     q = bq['level']
     add('quality_durability', PREMIUM['quality_durability'][q], f'business quality {q}' + (' (not demonstrated: treated as above average)' if q == 'unknown' else ''))
@@ -1645,6 +1655,22 @@ def _expected_return(irrs, prem, index, req, view):
                           '(by at most the premium). Leverage is charged once: the premium is on both sides of every comparison')}
 
 
+def _label_theoretical_distributions(er, qcase, fc, view):
+    """Residual-income route, company with no dividend or buyback history (forecast anchors.distribution_history false): the
+    valuation's distributions (payout from the growth rule) are the model's, not cash the holder has received, so the
+    owner-facing base IRR, which counts them, is labelled and a price-only figure is shown beside it: the base value's annual change
+    to the five-year date without distributions (a lower bound if the retained profit earns its cost of equity). The valuation and
+    base_irr are unchanged (0.14.3, SoFi)."""
+    if (qcase or {}).get('method') != 'residual_income' or (((fc or {}).get('anchors') or {}).get('distribution_history') is not False):
+        return
+    five = view.get('five_year') or {}
+    er['owner_facing_return']['theoretical_distributions'] = {
+        'applies': True, 'price_only_annual': five.get('annualized_price_change_excluding_dividends'), 'years': five.get('years'),
+        'basis': 'the company has no dividend or buyback history: base_irr counts the distributions the residual-income model pays '
+                 'out of profit not needed for book growth; price_only_annual is the base value\'s annual change from today\'s price '
+                 'to the five-year date without them (a lower bound when retained profit earns the cost of equity)'}
+
+
 def _expected(irrs, view, index, req, rates, qcase, res, an, err_level, w=0., moat=None, as_of=None):
     base_irr = irrs['base']['value']
     prem = _leverage_premiums(qcase)
@@ -1775,7 +1801,9 @@ def _issues(case, fc):
     mi = ((case or {}).get('underwriting') or {}).get('material_issues')
     if mi is None:
         mi = ((((fc or {}).get('spec') or {}).get('underwriting')) or {}).get('material_issues')
-    return [m for m in mi or [] if isinstance(m, dict)]
+    # the residual-income route has no underwriting block: its issues are on the forecast itself (forecast_financials)
+    mi = list(mi or []) + [m for m in (fc or {}).get('material_issues') or [] if m.get('id') not in {x.get('id') for x in mi or []}]
+    return [m for m in mi if isinstance(m, dict)]
 
 
 def _open_issues(issues):
@@ -2488,6 +2516,7 @@ def decide(parts, inputs=None):
     as_of = (fb or {}).get('as_of') or (case or {}).get('as_of')
     er = _expected(irrs, view, index, req, rates, qcase, res, an, err_level, w, moat, as_of)
     er['debt_weight_source'] = w_src
+    _label_theoretical_distributions(er, qcase, fc, view)
     view['market_consistent'] = _market_consistent(index, ke, rates, er, view)
     A['price_attractiveness'] = price_attractiveness(er, view, wmbt, an)
     A = {k: A[k] for k in ASSESSMENTS}
@@ -2546,6 +2575,7 @@ def decide(parts, inputs=None):
         e = deepcopy(er) if r['hurdle'] == req['hurdle'] and r['components'] == req['components'] else \
             _expected(irrs, view, index, r, rates, qcase, res, an, err_level, w, moat, as_of)
         e['debt_weight_source'] = w_src
+        _label_theoretical_distributions(e, qcase, fc, view)
         if not eA['price_attractiveness'].get('override'):
             eA['price_attractiveness'] = price_attractiveness(e, view, wmbt, an)
         v = _verdict(eA, g, e, view, index, rates, r)

@@ -534,7 +534,15 @@ def owner_table(casefile):
                 d = irr - mkt
                 vs = (f' ({mk_he}: כ־{mkt * 100:.1f}%; ' + ('בערך כמו השוק)' if abs(d) < .005 else
                                                         f"{'יותר' if d > 0 else 'פחות'} מהשוק בכ־{abs(d) * 100:.1f}% בשנה)"))
-            rows.append(('תשואה שנתית צפויה במחיר של היום', f'כ־{irr * 100:.1f}% בשנה{vs}'))
+            td = (er.get('owner_facing_return') or {}).get('theoretical_distributions') or {}
+            rows.append(('תשואה שנתית צפויה במחיר של היום', f'כ־{irr * 100:.1f}% בשנה{vs}'
+                         + (' (כולל חלוקות שהמודל מניח והחברה לא משלמת)' if td.get('applies') else '')))
+            if td.get('applies'):
+                po = td.get('price_only_annual')
+                notes.append('החברה לא מחלקת דיבידנד ולא קונה מניות; המודל מניח שהרווח שלא נדרש לצמיחת ההון מחולק לבעלי המניות, '
+                             'והתשואה הצפויה כוללת את החלוקות האלה'
+                             + (f'. בלעדיהן, השווי הבסיסי עד שנה 5 משתנה בכ־{po * 100:.1f}% בשנה מהמחיר של היום (רף תחתון אם הרווח '
+                                'שנשאר בחברה מניב לפחות את שיעור ההיוון).' if _n(po) else '.'))
         cv = convergence_he(er)
         if cv:
             notes.append(cv)

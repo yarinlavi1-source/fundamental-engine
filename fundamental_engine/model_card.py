@@ -537,6 +537,13 @@ NON_LABEL_TYPES = ('financials', 'reit', 'pre_revenue_biotech', 'conglomerate') 
 # IT/data-processing labels Meta, Pinterest, Reddit and AppLovin carried 0-3% of revenue against 16-94% for Zoom, Verisign,
 # Zscaler, Verisk and Samsara (2016-2026 filings, 2026-10-21 universe).
 SUBSCRIPTION_DEFERRED = .15
+# subscription_software from a label word needs a software signature (_business_model): gross margin at or above SOFTWARE_GM_MIN or
+# prepaid subscriptions (SUBSCRIPTION_DEFERRED), and inventory at most SOFTWARE_INVENTORY_MAX of revenue (software vendors hold
+# almost none: Microsoft about 1%, Oracle under 1%; Tesla 14%)
+SOFTWARE_GM_MIN = .60
+SOFTWARE_INVENTORY_MAX = .05
+# an infrastructure keyword with capex < INFRA_CAPEX_MIN and no other type anywhere: industrial when gross margin is below this
+INFRA_DEFAULT_GM = .50
 # SEC codes under which two-sided platforms file next to operators (the SIC system predates them): transportation services
 # (Booking and Expedia next to freight brokers), nonstore retailers (online marketplaces next to catalog and mail-order
 # retailers) and business services outside computer services (Visa, Mastercard, eBay, Uber, DoorDash, MercadoLibre and Zillow
@@ -581,7 +588,7 @@ SIC_TYPES = ((6000, 6199, 'financials'), (6200, 6221, 'financials'), (6300, 6399
 # transmission and industrial apparatus (Powell's switchgear, SIC 3613), sold to utilities, plants and data centers.
 SIC_FALLBACK = ((2833, 2836, 'healthcare_products'), (3826, 3826, 'healthcare_products'), (3840, 3851, 'healthcare_products'),
                 (8731, 8734, 'healthcare_services'), (7370, 7379, 'it_services'), (3570, 3579, 'hardware_manufacturing'),
-                (3660, 3699, 'hardware_manufacturing'), (3610, 3629, 'industrial'), (1000, 1499, 'commodity'), (2600, 2631, 'commodity'),
+                (3660, 3699, 'hardware_manufacturing'), (3710, 3719, 'hardware_manufacturing'), (3610, 3629, 'industrial'), (1000, 1499, 'commodity'), (2600, 2631, 'commodity'),
                 (2900, 2999, 'commodity'), (4600, 4619, 'capital_intensive_infrastructure'),
                 (4900, 4949, 'capital_intensive_infrastructure'))
 
@@ -591,7 +598,14 @@ def _text_matches(company):
     sic = company.get('sic')
     if isinstance(sic, int):
         t = next((t for lo, hi, t in SIC_TYPES if lo <= sic <= hi), None)
-        if t:
+        fee = (_hit(FEE_FINANCIAL, clean_text(company.get('industry'))) if any(lo <= sic <= hi for lo, hi in FEE_SIC) else None)
+        if t and fee:
+            # an exchange, data vendor or payment network filed under a broker/finance code (CME, ICE, Nasdaq under 6200): its own fee
+            # label decides, with the SIC kept as a financial label; the lender test (_business_model) still routes a fee label with a
+            # loan book to financials
+            out.append({'field': 'sic', 'text': f"SEC SIC {sic} ({company.get('sic_description') or ''})", 'keyword': f'SIC {sic}',
+                        'type': t, 'note': f"not used: the industry label names a fee business ('{fee}')"})
+        elif t:
             out.append({'field': 'industry', 'text': f"SEC SIC {sic} ({company.get('sic_description') or ''})", 'keyword': f'SIC {sic}',
                         'type': t})
             return out
@@ -619,26 +633,35 @@ def _text_matches(company):
     return out
 
 
+# SEC codes of finance services and broker-dealers/exchanges under which fee businesses also file (Nu and SoFi file under 6199 next to
+# card networks and processors; CME, ICE and Nasdaq under 6200): there a FEE_FINANCIAL industry label outranks the code (_text_matches)
+FEE_SIC = ((6199, 6199), (6200, 6221))
+
+
 # capex / revenue below which an infrastructure KEYWORD (TEXT_RULES 'cable', 'wireless', 'pipeline', ...) is not read as
 # capital-intensive infrastructure when the same label or the filer's SEC code names another type (_label_alternative). Real
 # networks run far above it (utilities 25-40%, towers and cable networks 15-25%, wireless carriers 11-20%, data centers more).
 INFRA_CAPEX_MIN = .06
 
 
-def _label_alternative(used, company):
-    """(type, why) for a label matched as capital_intensive_infrastructure: the next TEXT_RULES type its own text matches, else the
-    filer's SIC_FALLBACK type; None when neither names another type."""
+def _label_alternative(used, company, skip='capital_intensive_infrastructure', text=()):
+    """(type, why) for a label whose matched type (skip) the economics contradict: the next TEXT_RULES type its own text matches,
+    else the filer's SIC_FALLBACK type, else the sector label's type (text: the _text_matches list); None when none names another
+    type."""
     low = clean_text(used['text'])
     for kws, t in TEXT_RULES:
-        if t == 'capital_intensive_infrastructure':
+        if t == skip:
             continue
         hit = _hit(kws, low)
         if hit:
             return t, f"the same label also says '{hit}'"
     sic = (company or {}).get('sic')
     t = next((t for lo, hi, t in SIC_FALLBACK if lo <= sic <= hi), None) if isinstance(sic, int) else None
-    if t and t != 'capital_intensive_infrastructure':
+    if t and t != skip:
         return t, f"SEC SIC {sic} ({(company or {}).get('sic_description') or ''})"
+    sec = next((m for m in text if m['field'] == 'sector' and m is not used and m['type'] not in (skip,) + NON_LABEL_TYPES), None)
+    if sec:
+        return sec['type'], f"sector '{sec['text']}' ('{sec['keyword']}')"
     return None
 
 
@@ -686,11 +709,20 @@ def _business_model(fb, an, rows, end, sig, inputs):
     text_types = [used['type']] if used else []
     lta = sv['liabilities_to_assets']
     lender_sig = lta is not None and lta >= LENDER_LIABILITIES and not sv['has_cost_of_revenue']
+    # one lender test for every path (0.14.3): liabilities >= 85% of assets AND revenue <= 30% of assets AND capex < 10% of revenue
+    # (a loan book's assets are financial), or reported lending data; liabilities alone also catch fee platforms whose balance
+    # sheet carries settlement balances and buyback-thinned equity (Mastercard 85.7%, revenue 60% of assets)
+    rta, lending = sv['revenue_to_assets'], _evidence(fb, an, LENDING_KEYS)
+    shape = (lta is not None and lta >= LENDER_LIABILITIES and rta is not None and rta <= LENDER_TURNOVER
+             and (cx is None or cx < LENDER_CAPEX))
+    operating_base = lta is not None and lta >= LENDER_LIABILITIES and rta is not None and not shape and not lending
     if used and used.get('signature') == 'balance_sheet':
-        if lta is not None and lta < LENDER_LIABILITIES:
+        if lta is not None and (lta < LENDER_LIABILITIES or operating_base):
             text_types = [used['alt']]
-            reasons.append(f"'{used['text']}' lists {used['mixes']}: liabilities {_pct(lta)} of assets (not lender-like) -> "
-                           f"{used['alt']} (fee business); financials not kept")
+            reasons.append(f"'{used['text']}' lists {used['mixes']}: liabilities {_pct(lta)} of assets"
+                           + (f", but revenue {_pct(rta)} of assets and capex {_pct(cx)} of revenue with no lending data (an operating "
+                              'asset base, not a loan book)' if lta >= LENDER_LIABILITIES else ' (not lender-like)')
+                           + f" -> {used['alt']} (fee business); financials not kept")
         else:
             text_types = [used['type'], used['alt']]
             reasons.append(f"'{used['text']}' lists {used['mixes']}: liabilities {_pct(lta)} of assets ("
@@ -702,11 +734,48 @@ def _business_model(fb, an, rows, end, sig, inputs):
         reasons.append(f"'{used['text']}' mixes {used['mixes']}: gross margin {_pct(gm)}, capex {_pct(cx)} of revenue, operating margin "
                        f"{_pct(om_end)} -> {text_types[0]} (rule: {rule}" + ('; undetermined, so the default type is used' if plat is None else '')
                        + f'); {text_types[1]} kept as secondary')
+    if (used and used['field'] == 'sector' and used['type'] == 'financials' and lta is not None and not shape and not lending
+            and text_types == ['financials']):
+        # only the listing sector says 'Financials' ('Payments technology' / 'Financials'): the sector covers payment networks,
+        # exchanges and data vendors next to lenders. With a non-lender balance sheet the annual report's own business section
+        # decides (payment-network or marketplace vocabulary at its BUSINESS_TERM_RULES cut); without it financials stays
+        bt0 = (((fb.get('business_map') or {}).get('business_terms') or {}).get('per_10k_words')) or {}
+        words = next((k for k, cut, t in BUSINESS_TERM_RULES if t == 'platform_marketplace' and bt0.get(k, 0) >= cut), None)
+        if words:
+            text_types = ['platform_marketplace']
+            secondary.append('financials')
+            reasons.append(f"only the sector '{used['text']}' says financials; liabilities {_pct(lta)} of assets, revenue {_pct(rta)} of "
+                           f"assets, no lending data (not a loan book) and annual report Item 1 with {bt0[words]:.0f} "
+                           f"{words.replace('_', ' ')} terms per 10,000 words -> platform_marketplace (fee business); financials kept "
+                           'as secondary')
+        else:
+            reasons.append(f"only the sector '{used['text']}' says financials and the balance sheet is not a loan book (liabilities "
+                           f"{_pct(lta)}, revenue {_pct(rta)} of assets, no lending data), but no business-section vocabulary decides: "
+                           'financials kept (conservative); a structured industry label or a business_model override with '
+                           'fiduciary_balance_sheet and a reason decides')
+    if (used and used['type'] == 'subscription_software' and text_types[:1] == ['subscription_software'] and not used.get('alt')
+            and ((gm is not None and gm < SOFTWARE_GM_MIN and not (dr is not None and dr >= SUBSCRIPTION_DEFERRED))
+                 or (inv is not None and inv > SOFTWARE_INVENTORY_MAX))):
+        # a word in a descriptive label is not the economics (Tesla 2026-10: 'Automobile Manufacturers (with energy storage and a
+        # software, robotaxi ... business)', gross margin 17%, inventory 14% of revenue, no prepaid subscriptions): software from
+        # text needs a software signature, else the label's other type, the SEC code or the sector decides
+        alt = _label_alternative(used, company, 'subscription_software', text)
+        if alt:
+            text_types = [alt[0]] + [t for t in text_types[1:] if t != alt[0]]
+        reasons.append(f"'{used['keyword']}' reads as subscription_software, but gross margin is {_pct(gm)}, deferred revenue {_pct(dr)} "
+                       f"and inventory {_pct(inv)} of revenue (rule: software from a label needs gross margin >= {SOFTWARE_GM_MIN:.0%} or "
+                       f"deferred revenue >= {SUBSCRIPTION_DEFERRED:.0%}, and inventory <= {SOFTWARE_INVENTORY_MAX:.0%})"
+                       + (f' -> {alt[0]} ({alt[1]}): economics before a word' if alt else
+                          ': no other type in the label, the SEC code or the sector, so the label stays; a business_model override '
+                          'with a reason decides'))
     if used and used['type'] == 'capital_intensive_infrastructure' and not used.get('alt') and cx is not None and cx < INFRA_CAPEX_MIN:
         # a keyword is not the economics (Amphenol 2026-11: 'cable assemblies' in a connector maker's label, capex 3.9% of revenue,
-        # gross margin 37%): an infrastructure keyword with a capital-light signature yields to the label's other type or the
-        # filer's SEC code; with neither, the label stays and the reason says so
-        alt = _label_alternative(used, company)
+        # gross margin 37%): an infrastructure keyword with a capital-light signature yields to the label's other type, the
+        # filer's SEC code or the sector label; with none of them a manufacturer's gross margin (< 50%) reads as industrial, never
+        # infrastructure (Vertiv-type 'data center power and thermal infrastructure', capex 2%); else the label stays
+        alt = _label_alternative(used, company, text=text) or (
+            ('industrial', f'gross margin {_pct(gm)} < {INFRA_DEFAULT_GM:.0%}: an asset-light manufacturer')
+            if gm is not None and gm < INFRA_DEFAULT_GM else None)
         if alt:
             text_types = [alt[0]] + [t for t in text_types[1:] if t != alt[0]]
             reasons.append(f"'{used['keyword']}' reads as capital_intensive_infrastructure, but capex is {_pct(cx)} of revenue (rule: an "
@@ -714,7 +783,8 @@ def _business_model(fb, an, rows, end, sig, inputs):
                            f"pipelines run far above it) and gross margin {_pct(gm)} -> {alt[0]} ({alt[1]}): economics before a keyword")
         else:
             reasons.append(f"'{used['keyword']}' reads as capital_intensive_infrastructure while capex is only {_pct(cx)} of revenue: no "
-                           'other type in the label or the SEC code, so the label stays; a business_model override with a reason decides')
+                           'other type in the label, the SEC code or the sector and gross margin is not below '
+                           f'{INFRA_DEFAULT_GM:.0%}, so the label stays; a business_model override with a reason decides')
     text_financials = 'financials' in text_types
     fin_text = text_financials or any(t['type'] == 'financials' for t in text)   # any label (industry or sector) says financials
     if used and used['type'] == 'conglomerate' and any(t['field'] == 'sector' and t['type'] == 'financials' for t in text):
@@ -797,7 +867,7 @@ def _business_model(fb, an, rows, end, sig, inputs):
     if cx is not None and cx >= .25:
         sig_types.append('capital_intensive_infrastructure')
         reasons.append(f'financial signature {end}: capex {_pct(cx)} of revenue -> capital-intensive economics (rule: capex >= 25%)')
-    possible_financial = not text and lender_sig
+    possible_financial = not text and lender_sig and not (shape and lending)    # with lending data the lender test decides below
     if possible_financial:
         reasons.append(f"no sector text; liabilities are {_pct(sv['liabilities_to_assets'])} of assets with no cost of revenue: "
                        'looks like a balance-sheet lender or insurer; confirm before choosing any model')
@@ -814,13 +884,19 @@ def _business_model(fb, an, rows, end, sig, inputs):
         primary, evidence = sig_types[0], 'financials'
     elif primary in sig_types:
         evidence = 'text+financials'
-    rta, lending = sv['revenue_to_assets'], _evidence(fb, an, LENDING_KEYS)
-    shape = (lta is not None and lta >= LENDER_LIABILITIES and rta is not None and rta <= LENDER_TURNOVER
-             and (cx is None or cx < LENDER_CAPEX))
     fee_label = bool(used) and used['keyword'] in FEE_FINANCIAL
     operating_label = bool(text) and primary not in NON_OPERATING_TYPES
-    lender_shaped = operating_label and shape and (bool(lending) or (not sv['has_cost_of_revenue'] and not fee_label))
-    if lender_shaped:
+    # with no label at all (or none that matched) the lender test still runs, on lending data (0.14.3: a 'Digital personal finance
+    # platform' description with no SEC code had become capital_intensive_infrastructure on its capex signature)
+    lender_shaped = shape and ((operating_label and (bool(lending) or (not sv['has_cost_of_revenue'] and not fee_label)))
+                               or (not text and primary not in NON_OPERATING_TYPES and bool(lending)))
+    if lender_shaped and not text:
+        reasons.append(f"no matching label; liabilities {_pct(lta)} of assets, revenue {_pct(rta)} of assets, capex {_pct(cx)} of revenue "
+                       f"and lending data reported ({', '.join(sorted({e['key'] for e in lending}))}) -> financials (a loan book)")
+        if primary:
+            secondary.append(primary)
+        primary, evidence = 'financials', 'financials'
+    elif lender_shaped:
         reasons.append(f"balance sheet looks like a lender's under the '{used['text']}' label: liabilities {_pct(lta)} of assets, revenue "
                        f"{_pct(rta)} of assets, capex {_pct(cx)} of revenue, "
                        + (f"lending data reported ({', '.join(sorted({e['key'] for e in lending}))})" if lending else 'no cost-of-revenue line')
@@ -890,7 +966,10 @@ def _business_model(fb, an, rows, end, sig, inputs):
     return {'primary': primary, 'secondary': secondary, 'reasons': reasons, 'override': override, 'computed': computed,
             'evidence': evidence, 'text_matches': text, 'signature': {k: v for k, v in sig.items() if isinstance(v, dict)},
             'flags': {'text_financials': text_financials, 'possible_financial': possible_financial, 'pharma_text': pharma_text,
-                      'lender_balance_sheet': lender_sig, 'financial_label': fin_text, 'lender_shaped': lender_shaped}}
+                      'lender_balance_sheet': lender_sig, 'financial_label': fin_text, 'lender_shaped': lender_shaped,
+                      # liabilities >= 85% of assets but an operating asset base (revenue > 30% of assets or capex >= 10%) and no
+                      # lending data: the forecast's lender check reads this instead of liabilities alone
+                      'operating_asset_base': bool(operating_base and not lender_shaped)}}
 
 
 # ---------------------------------------------------------------- stage

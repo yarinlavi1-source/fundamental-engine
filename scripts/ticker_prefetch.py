@@ -228,6 +228,17 @@ def find_reuse(root, ticker, as_of, spec):
         return None, 'reuse not requested'
     cut = date.fromisoformat(as_of)
     pat = re.compile(re.escape(ticker) + r'_(\d{4}-\d{2}-\d{2})$')
+    if spec != 'auto' and is_research_save(spec, ticker):
+        # a tracked save (research_store.save: research/companies/<T>/<as_of>/): the folder IS the dated record, so its files are
+        # dated by the folder, not by their checkout time; older than REUSE_DAYS gives its judgement files for reference only
+        path = os.path.abspath(spec)
+        d = date.fromisoformat(os.path.basename(path.rstrip(os.sep)))
+        if d >= cut:
+            return None, f'--reuse {spec}: dated {d}, not before as_of {as_of} (a later save cannot donate evidence)'
+        ok, why = _identity_matches(path, ticker, d.isoformat())
+        if not ok:
+            return None, f'--reuse {spec}: {why}'
+        return (path, d.isoformat()), None
     if spec != 'auto':
         path = os.path.abspath(spec)
         m = pat.match(os.path.basename(path.rstrip(os.sep)))
@@ -254,8 +265,25 @@ def find_reuse(root, ticker, as_of, spec):
             if best is None or d > best[0]:
                 best = (d, os.path.join(base, name))
     if not best:
-        return None, f'no earlier run of {ticker} within {REUSE_DAYS} days before {as_of}'
+        # no runs/ folder (a fresh container): the newest tracked save within the same days (research-save)
+        store = os.path.join(root, 'research', 'companies', ticker)
+        for name in (os.listdir(store) if os.path.isdir(store) else []):
+            if not re.fullmatch(r'\d{4}-\d{2}-\d{2}', name):
+                continue
+            d = date.fromisoformat(name)
+            if d < cut and (cut - d).days <= REUSE_DAYS and os.path.isdir(os.path.join(store, name, 'gather')) \
+                    and _identity_matches(os.path.join(store, name), ticker, name)[0] and (best is None or d > best[0]):
+                best = (d, os.path.join(store, name))
+    if not best:
+        return None, f'no earlier run or saved research of {ticker} within {REUSE_DAYS} days before {as_of}'
     return (best[1], best[0].isoformat()), None
+
+
+def is_research_save(path, ticker):
+    """A tracked research save research/companies/<T>/<YYYY-MM-DD>/ of this ticker (research_store.save)."""
+    parts = os.path.normpath(os.path.abspath(path)).split(os.sep)
+    return (len(parts) >= 4 and parts[-3] == 'companies' and parts[-4] == 'research' and parts[-2].upper() == ticker
+            and bool(re.fullmatch(r'\d{4}-\d{2}-\d{2}', parts[-1])) and os.path.isdir(path))
 
 
 def apply_reuse(prev, prev_as_of, run, ticker, as_of):
@@ -265,14 +293,18 @@ def apply_reuse(prev, prev_as_of, run, ticker, as_of):
     redoes the judgement on the new evidence)."""
     out = {'from': prev, 'from_as_of': prev_as_of, 'copied_fragments': [], 'copied_raw': [], 'reference': [],
            'market_removed': [], 'skipped_after_as_of': []}
+    saved = is_research_save(prev, ticker)
+    stale = (date.fromisoformat(as_of) - date.fromisoformat(prev_as_of)).days > REUSE_DAYS
+    if saved:
+        out['research_save'] = True
     g_old, g_new = os.path.join(prev, 'gather'), os.path.join(run, 'gather')
-    for name in sorted(os.listdir(g_old)) if os.path.isdir(g_old) else []:
+    for name in sorted(os.listdir(g_old)) if os.path.isdir(g_old) and not stale else []:
         if name == '_prefetch.json':
             continue
         src, dst = os.path.join(g_old, name), os.path.join(g_new, name)
         if os.path.exists(dst):
             continue
-        if _mtime_day(src) > as_of:
+        if not saved and _mtime_day(src) > as_of:      # a tracked save is dated by its folder (checkout times say nothing)
             out['skipped_after_as_of'].append(f'gather/{name}')
             continue
         os.makedirs(g_new, exist_ok=True)
@@ -312,9 +344,12 @@ def apply_reuse(prev, prev_as_of, run, ticker, as_of):
             shutil.copytree(src, dst)
             out['copied_' + folder] = True
     ref = os.path.join(run, 'reuse')
+    if stale:
+        out['fragments_not_copied'] = (f'the save is dated {prev_as_of}, more than {REUSE_DAYS} days before {as_of}: its judgement '
+                                       'files are kept under reuse/ for reference only; the lanes gather afresh')
     for rel in ('identity.json', 'position.json', 'position', 'evidence_pack.json', 'analyst.json', 'value.json', 'understand',
                 'review', 'deliver', f'companies/{ticker}/inputs.json', f'companies/{ticker}/out/table_he.md',
-                f'companies/{ticker}/out/scenarios_he.md'):
+                f'companies/{ticker}/out/scenarios_he.md', 'inputs.json', 'table_he.md', 'scenarios_he.md'):
         src = os.path.join(prev, rel)
         if not os.path.exists(src):
             continue

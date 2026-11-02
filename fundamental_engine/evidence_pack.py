@@ -45,7 +45,11 @@ The pack (pack_version 1; unknown keys are rejected at every level):
   {bear|base|bull: {roe_start, roe_year5, roe_terminal, book_growth_start, payout, terminal_reason, source_tier, reason,
   evidence_ids}, opening {book_equity, shares, as_of, reason, evidence_ids}, regulatory_capital {risk_weighted_assets,
   required_capital_ratio, as_of, reason, evidence_ids}}: a bank's or insurer's evidenced ROE / book growth / payout path, a
-  later filed opening book and its capital requirement (forecast inputs.bank_drivers, residual-income route only)}; analyst; notes
+  later filed opening book and its capital requirement (forecast inputs.bank_drivers, residual-income route only),
+  classification_review {reviewer, reason, evidence_ids}: the forecast's lender check (possible_lender) resolved with the
+  filing (forecast inputs.reviews.classification), revenue_geography {shares {country|region|ISO: fraction}, basis, as_of,
+  reason, evidence_ids}: an evidenced revenue-by-country split from the company's own document (inputs.market_context.geography:
+  the country-risk row on either route)}; analyst; notes
   drivers.equity_proceeds / debt_draw at source_tier contracted (a signed forward sale, a drawn facility; per period) make the
   scenario's financing committed, and drivers.equity_issue_price (one number: the contracted price, applied where the equity
   falls; or one per period) issues those shares at the contracted price. company_path roic in multiple_from 'economics' also
@@ -92,7 +96,7 @@ TRACK_LEVERS = ('growth_anchor', 'growth')
 GROWTH_LEVERS = ('growth_anchor', 'growth')          # their first value is the growth of the fiscal year AFTER the one in progress
 CURRENT_YEAR = 'current_year_revenue'                 # the fiscal year in progress (forecast inputs.current_year_revenue)
 FORECAST_OPTIONS = ('horizon_years', 'financing', 'cyclical', 'acquired_revenue', 'debt_like_claims', 'options', 'build_phase',
-                    'bank_drivers')
+                    'bank_drivers', 'classification_review', 'revenue_geography')
 
 TOP = {'pack_version', 'ticker', 'as_of', 'identity', 'sources', 'facts', 'guidance', 'guidance_track', 'consensus',
        'kpis', 'segments', 'customers', 'competitors', 'bottlenecks', 'potential', 'drivers', 'scenario_events',
@@ -145,6 +149,8 @@ KEYS = {
     'bank_opening': ({'book_equity', 'shares', 'as_of', 'reason', 'evidence_ids'}, ('book_equity', 'as_of', 'reason', 'evidence_ids')),
     'bank_capital': ({'risk_weighted_assets', 'required_capital_ratio', 'as_of', 'reason', 'evidence_ids'},
                      ('risk_weighted_assets', 'required_capital_ratio', 'as_of', 'reason', 'evidence_ids')),
+    'classification_review': ({'reviewer', 'reason', 'evidence_ids'}, ('reviewer', 'reason', 'evidence_ids')),
+    'revenue_geography': ({'shares', 'basis', 'as_of', 'reason', 'evidence_ids'}, ('shares', 'basis', 'as_of', 'reason', 'evidence_ids')),
 }
 JUSTIFICATIONS = ('justified_high', 'peak', 'unproven')
 PATH_YEARS = 5
@@ -970,6 +976,38 @@ def _forecast_options(p, opts):
         bd = _bank_drivers(p, opts['bank_drivers'])
         if bd:
             out['bank_drivers'] = bd
+    if 'classification_review' in opts:
+        # the forecast's lender check (possible_lender) resolved with filing evidence: becomes inputs.forecast.reviews.classification,
+        # so a plain ticker-value rerun keeps it (0.14.3; it had lived in a side file a rerun dropped)
+        x, where = opts['classification_review'], 'forecast_options.classification_review'
+        if c.obj(x, 'classification_review', where):
+            if not all(isinstance(x[k], str) and x[k].strip() for k in ('reviewer', 'reason')):
+                c.err(where, 'a named reviewer and a written reason (what the liabilities are, from the balance sheet and its notes)')
+            elif 'sec_filing' not in p.kinds(x['evidence_ids']):
+                c.err(where, 'cite the filing document (a pack source of kind sec_filing, or an item citing one): the balance sheet and '
+                             'the notes that show the liabilities are not funding of a loan book')
+            else:
+                ev = p.ids(x['evidence_ids'], where)
+                out['reviews'] = {'classification': {'status': 'reviewed', 'reviewer': x['reviewer'], 'note': x['reason'], 'evidence': ev}}
+    if 'revenue_geography' in opts:
+        # an evidenced revenue-by-country split (a foreign filer's 20-F note, a segment note): becomes inputs.market_context.geography,
+        # so the country-risk row works where the engine cannot read the annual report's table (0.14.3)
+        x, where = opts['revenue_geography'], 'forecast_options.revenue_geography'
+        if c.obj(x, 'revenue_geography', where):
+            sh = x['shares']
+            if (not isinstance(sh, dict) or not sh or any(not isinstance(k, str) or not _num(v) or not 0 <= v <= 1 for k, v in sh.items())
+                    or sum(sh.values()) > 1 + 1e-6):
+                c.err(where, 'shares: {country, region or ISO code: fraction of revenue}, each 0 to 1, adding up to at most 1')
+            elif not all(isinstance(x[k], str) and x[k].strip() for k in ('basis', 'reason')):
+                c.err(where, "basis (what the split measures: revenue by customer location, by the selling entity's country, ...) and a "
+                             'written reason')
+            elif not _day(x['as_of']) or (p.as_of and _day(x['as_of']) > p.as_of):
+                c.err(where, 'as_of: the end of the period the split covers, on or before the pack as_of')
+            elif not p.kinds(x['evidence_ids']) & ISSUER_KINDS:
+                c.err(where, "cite the company's own document (a filing, release or IR page) that gives the split")
+            else:
+                out['_geography'] = {'shares': dict(sh), 'as_of': x['as_of'], 'note': f"{x['basis']}: {x['reason']}",
+                                     'evidence_ids': p.ids(x['evidence_ids'], where)}
     return out
 
 
@@ -1101,7 +1139,11 @@ def to_inputs(pack):
     if not isinstance(opts, dict) or set(opts) - set(FORECAST_OPTIONS):
         c.err('forecast_options', f'only {", ".join(FORECAST_OPTIONS)}')
     else:
-        fc.update(_forecast_options(p, opts))
+        fo = _forecast_options(p, opts)
+        geo = fo.pop('_geography', None)
+        if geo:
+            inputs['market_context'] = {'geography': geo}
+        fc.update(fo)
     if fc:
         inputs['forecast'] = fc
     cp = _company_path(p)

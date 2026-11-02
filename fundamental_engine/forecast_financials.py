@@ -535,11 +535,20 @@ def build(fb, an, card, qa, inputs, rates, reviews, warn, warnings, empty):
     if None not in [today.get(k, 0) for k in ('bear', 'base', 'bull')] and not today.get('bear', 0) <= today.get('base', 0) <= today.get('bull', 0):
         warn('scenario_values_cross', 'today: bear <= base <= bull does not hold; labels were not re-sorted', 'high')
     pb = {s: (r['terminal'] or {}).get('implied_price_to_book') for s, r in zip(('bear', 'base', 'bull'), result['scenarios'])}
+    from .forecast import country_unmeasured_issue
+    cu = country_unmeasured_issue(inputs, reviews)
+    if cu and cu['status'] != 'resolved':
+        warn('country_risk_unmeasured', cu['description'], 'high')
     return {'forecast_version': FORECAST_VERSION, 'status': 'built', 'reason': None, 'method': method, 'spec': case,
+            # the residual-income case has no underwriting block: its material issues ride on the forecast (decision._issues)
+            'material_issues': [cu] if cu else [],
             'spec_sha256': _sha(case), 'assumptions': rows,
             'anchors': {'book_equity': book, 'statement_as_of': stmt, 'shares': shares, 'roe': {'ttm': r_ttm, 'median': r_med,
                         'lower_quartile': r_low, 'history': dict(roe_hist), 'basis': p_basis}, 'payout': payout,
                         'price_to_book': float(price['value']) * shares / book, 'terminal_price_to_book': pb,
+                        # no dividends or buybacks in the history: the model's distributions are theoretical (decision labels the
+                        # owner-facing return, 0.14.3)
+                        'distribution_history': bool(pays),
                         'calendar': {k: cal[k] for k in ('boundaries', 'periods', 'interim', 'fifth_anniversary', 'report_dates')}},
             'paths': paths, 'cost_of_equity': {'bear': ke, 'base': ke, 'bull': ke, 'components': ke_parts},
             'funding': {}, 'overrides': [], 'warnings': warnings,

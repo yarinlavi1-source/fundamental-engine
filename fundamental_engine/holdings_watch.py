@@ -370,9 +370,10 @@ def sec_factbook_for(root='.', refresh=False, ua=None, cache_dir=None):
 
 def run_casefile_for(root='.'):
     """casefile_for(ticker, thesis): the casefile that made the thesis, from the tracked store
-    (research/companies/<T>/<as_of>/casefile.json) or the run (runs/tickers/<T>_<as_of>/companies/<T>/out/casefile.json)."""
+    (research/companies/<T>/<as_of>/casefile_core.json, the extract thesis_from_casefile reads) or the run (runs/tickers/<T>_<as_of>/companies/<T>/out/casefile.json)."""
     def find(ticker, thesis):
-        for p in (os.path.join(root, STORE, ticker, thesis['as_of'], 'casefile.json'),
+        for p in (os.path.join(root, STORE, ticker, thesis['as_of'], 'casefile_core.json'),
+                  os.path.join(root, STORE, ticker, thesis['as_of'], 'casefile.json'),      # saves before 0.14.3
                   os.path.join(root, 'runs', 'tickers', f"{ticker}_{thesis['as_of']}", 'companies', ticker, 'out', 'casefile.json')):
             if os.path.exists(p):
                 with open(p, encoding='utf-8') as f:

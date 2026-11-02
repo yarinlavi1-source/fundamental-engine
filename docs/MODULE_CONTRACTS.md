@@ -281,7 +281,12 @@ risk_weighted_assets (growing with the scenario's book growth path) and required
 funding_blocked check), replaces `regulatory_capital_not_checked`, and warns `capital_below_requirement` (high) when the
 opening book is below the requirement. Applied scenarios are assumption rows of kind analyst and `bank_drivers_applied`;
 absent, the case is unchanged; on the operating route `bank_drivers_not_applied`. forecast_options.bank_drivers carries it
-from the evidence pack}. Raw override path
+from the evidence pack}, "country_risk_unmeasured" (0.14.3, set by the pipeline for a foreign filer whose requested country
+row has no exposure data): {"reason"} -> material issue `country_risk_unmeasured` on both routes (residual income: on
+`fc.material_issues`), resolved by reviews.country_risk. Evidence-pack routes (0.14.3): forecast_options.classification_review
+{reviewer, reason, evidence_ids (filing)} -> reviews.classification; forecast_options.revenue_geography {shares, basis, as_of,
+reason, evidence_ids (issuer document)} -> inputs.market_context.geography. The operating route's lender check reads the
+card's `business_model.flags.operating_asset_base` (a low note `lender_check_operating_base` instead of `possible_lender`). Raw override path
 `equity_issue_price` (0.14.2): a positive number or one per boundary, at source_tier contracted only and only with an
 equity_proceeds override at tier contracted in force for that scenario (else ValueError); it applies only to the periods whose
 contracted equity_proceeds are positive (every other period keeps the quote and the issue-price fixed point); contracted
@@ -533,10 +538,18 @@ thesis_id) checked with `monitor.check` against a fresh FactBook; full_rerun_nee
 assumption falsifier. `factbook_for(ticker, as_of, thesis)` is injected (CLI: `sec_factbook_for`, SEC companyfacts, the saved
 copy unless `--refresh`); `holdings_watch.render_he(res)` is the Hebrew table. No revaluation, no orders.
 `research_store.save(run, root='.', ledger_path=None)` copies a finished run's essentials (inputs, evidence pack, position
-parts, reviews, table_he/scenarios_he, casefile summary and the casefile when under 2 MB, the frozen thesis row) into
+parts, reviews, table_he/scenarios_he, identity.json, understand/business.json, the four gather fragments, the casefile summary
+with assumption ids and values, and `casefile_core.json`: `research_store.casefile_core(cf)`, the extract
+`monitor.thesis_from_casefile` reads, same thesis_id and irr_basis as the full casefile, about 40-50 KB) into
 `research/companies/<T>/<as_of>/`, updates `latest.json` and appends the thesis and its forecasts to
-`research/forecast_ledger.jsonl` (deduplicated by thesis_id / id; rows kept verbatim, the chain is verified on the source);
-`research_store.load(ticker, root='.')` -> the newest saved valuation or None. Company research only: no positions.
+`research/forecast_ledger.jsonl` (deduplicated by thesis_id / id; rows kept verbatim, the chain is verified on the source; the
+thesis row is read from there by thesis_id). The full casefile is not kept (rebuild it from the saved inputs.json with the same
+engine version). `research_store.load(ticker, root='.')` -> the newest saved valuation, else the newest
+`runs/tickers/<T>_<date>` with a casefile labelled `saved: false` (`unsaved_run`), else None. A save is a reuse source:
+`scripts/ticker_prefetch.py T D --reuse research/companies/<T>/<as_of>` (and `--reuse auto` falls back to it when no runs/
+folder qualifies); within 30 days its fragments are copied (dated by the folder), older only its judgement files under
+reuse/. Company research only: no positions. `holdings-update --positions` rows: {t, shares, price, value, weight, avg_cost?,
+sec_type?}; t also as ticker/symbol, sec_type also as asset_class/secType (non-stock rows are skipped and counted).
 
 ## econ (business economics, phase A; not called by the pipeline)
 

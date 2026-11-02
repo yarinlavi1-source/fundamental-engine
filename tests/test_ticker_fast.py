@@ -406,6 +406,32 @@ class TestPrefetch(unittest.TestCase):
         st = ticker_run.status(run, ['review_trace', 'review_numbers', 'review_counter'])
         self.assertFalse(st['verified'])
 
+    def test_reuse_from_a_tracked_research_save(self):
+        # a fresh container: no runs/ folder, the save research-save made (0.14.3); its files are dated by the folder, not by
+        # their checkout time, and a save older than 30 days gives reference files only
+        root = self._mkroot()
+        day = '2026-10-10'
+        save = os.path.join(root, 'research', 'companies', 'TST', day)
+        _write(save, 'gather/numbers.json', {'sources': [], 'notes': ['saved']})
+        _write(save, 'identity.json', {'ticker': 'TST', 'as_of': day})
+        _write(save, 'position/core.json', {'drivers': {}})
+        _write(save, 'inputs.json', {'forecast': {}})
+        hit, why = tp.find_reuse(root, 'TST', AS_OF, 'auto')
+        self.assertEqual(hit, (save, day), why)
+        run = os.path.join(root, 'runs', 'tickers', f'TST_{AS_OF}')
+        out, _ = tp.apply_reuse(hit[0], hit[1], run, 'TST', AS_OF)
+        self.assertEqual(out['copied_fragments'], ['numbers.json'])
+        self.assertTrue(out['research_save'])
+        self.assertTrue(os.path.exists(os.path.join(run, 'reuse', 'inputs.json')))
+        old = os.path.join(root, 'research', 'companies', 'TST', '2026-09-01')
+        _write(old, 'gather/numbers.json', {'sources': []})
+        self.assertEqual(tp.find_reuse(root, 'TST', AS_OF, old)[0], (old, '2026-09-01'), 'explicit: accepted, reference only')
+        run2 = os.path.join(root, 'runs', 'tickers', 'TST_2026-10-26')
+        out2, _ = tp.apply_reuse(old, '2026-09-01', run2, 'TST', '2026-10-26')
+        self.assertEqual(out2['copied_fragments'], [])
+        self.assertIn('reference only', out2['fragments_not_copied'])
+        self.assertIsNone(tp.find_reuse(root, 'TST', '2026-10-05', save)[0], 'a later save never donates')
+
     def test_reuse_skips_old_later_and_other_runs(self):
         root = self._mkroot()
         for name in ('TST_2026-09-01', 'TST_2026-10-30', 'TSTX_2026-10-20'):
@@ -848,6 +874,17 @@ class TestTickerRun(unittest.TestCase):
         _write(self.run_dir, 'review/repair.json', {'trigger': 'review', 'fixed': [], 'open': ['c'], 'ran': True})
         self.assertFalse(ticker_run.status(self.run_dir, all3)['verified'])
         self.assertTrue(os.path.exists(os.path.join(self.run_dir, 'status.json')))
+        # 0.14.3 schema (MA 2026-11-01): the critical findings fixed, non-critical caveats left open -> verified, caveats shown apart
+        _write(self.run_dir, 'review/repair.json', {'trigger': 'review', 'fixed': ['c'], 'open_critical': [],
+                                                    'caveats': ['draft label', 'guidance reading'], 'ran': True})
+        st = ticker_run.status(self.run_dir, all3)
+        self.assertTrue(st['verified'], st['reasons'])
+        self.assertEqual(st['caveats'], ['draft label', 'guidance reading'])
+        _write(self.run_dir, 'review/repair.json', {'trigger': 'review', 'fixed': [], 'caveats': ['x'], 'ran': True,
+                                                    'open_critical': [{'finding': 'c', 'lens': 'counter', 'why': 'no filing'}]})
+        st = ticker_run.status(self.run_dir, all3)
+        self.assertFalse(st['verified'])
+        self.assertIn('1 critical finding(s) open', st['reasons'])
 
 
 if __name__ == '__main__':

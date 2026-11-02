@@ -3,7 +3,7 @@ from pathlib import Path
 import json
 import subprocess
 import sys
-import tempfile
+import tempfile, os
 import zipfile
 ROOT=Path(__file__).resolve().parents[1]
 wheels=sorted((ROOT/'runs/wheels').glob('fundamental_engine-*.whl'))
@@ -71,6 +71,14 @@ from fundamental_engine.ticker_run import skeleton, PARTS
 for part in PARTS:
     assert skeleton(part)['thesis_he'], part
 assert 'ticker_prefetch' in packet('master_process')['content'] and 'ticker-value' in packet('master_process')['content']
+from fundamental_engine import holdings_watch, research_store
+from fundamental_engine.ticker_run import status as ticker_status
+import tempfile, os
+assert holdings_watch.STATUSES and research_store.parse_run('/x/MA_2026-11-01')==('MA','2026-11-01')
+_run=os.path.join(tempfile.mkdtemp(),'runs','tickers','SYN_2026-11-01'); os.makedirs(_run)
+_st=ticker_status(_run,[])
+assert _st['verified'] is False and _st['reasons'], _st
+assert 'research-save' in source('deliver') and 'open_critical' in source('repair')
 print(json.dumps({'ticker_stages':len(STAGES),'ticker_run':'passed','scenario_reasons':'passed','evidence_pack':'passed','skeleton_packets':'passed','quarter_review':'passed','econ_registry':'passed','econ_review':'passed','econ_peak_exception':'passed','drivers':'passed','plain_verdict':'passed','discovery':'passed','annual_valuation':'passed','version':__version__,'packaged_packets':len(records),'installed_review':'passed'}))
 '''
     completed=subprocess.run([sys.executable,'-I','-c',code,temp,str(ROOT/'examples/research_dossier_demo.json'),str(ROOT/'examples/valuation/infrastructure.json'),str(ROOT/'examples/discovery_demo.json'),str(ROOT/'examples/plain_demo.json'),str(ROOT/'examples/real/avgo_plain_2025.json'),str(ROOT/'examples/valuation/software_drivers.json'),

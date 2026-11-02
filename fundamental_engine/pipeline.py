@@ -416,6 +416,15 @@ def run(fb, inputs=None):
         fi = ((mc or {}).get('country_risk') or {}).get('forecast_input')
         if fi and 'country_risk' not in (inputs.get('forecast') or {}):
             inputs['forecast'] = {**(inputs.get('forecast') or {}), 'country_risk': fi}
+        co = fb.get('company') or {}
+        foreign = (str(co.get('filer') or co.get('annual_form') or '').lower() in F.FOREIGN_FILERS
+                   or str(co.get('country') or 'US').upper() not in ('US', 'USA', 'UNITED STATES'))
+        if (((mc or {}).get('country_risk') or {}).get('status') == 'no_exposure_data' and foreign
+                and 'country_risk' not in (inputs.get('forecast') or {})):
+            # a foreign filer valued with no country premium is a draft, never a silent US rate (Nu 2026-11: 91% Brazil revenue,
+            # no split the engine could read): supply forecast_options.revenue_geography in the evidence pack
+            inputs['forecast'] = {**(inputs.get('forecast') or {}), 'country_risk_unmeasured': {
+                'reason': f"{co.get('annual_form') or 'foreign'} filer; " + '; '.join(mc['country_risk'].get('open_questions') or [])[:400]}}
         cf['market_context'] = mc
     # inputs.dataqa_resolutions: an analyst's resolution of a cross-source disagreement with filing evidence (dataqa.RESOLUTIONS),
     # recorded in qa['resolutions'] and bound into the review digest; absent -> dataqa runs exactly as before

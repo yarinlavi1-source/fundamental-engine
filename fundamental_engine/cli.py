@@ -279,7 +279,7 @@ def main():
     tst.add_argument("--returned", help="comma-separated stages whose agents returned (the main loop's own record)")
     hu = subs.add_parser("holdings-update", help="Light quarterly check of the owner's holdings against their frozen theses: "
                                                  "no new report / light update / full rerun per holding (no revaluation, no orders)")
-    hu.add_argument("--positions", required=True, help="READ-ONLY positions copy {as_of, rows:[{t, shares, price, value, weight}]}")
+    hu.add_argument("--positions", required=True, help="READ-ONLY positions copy {as_of, source, rows:[{t, shares, price, value, weight, avg_cost, sec_type?}]} (avg_cost optional and unused by the check; t also as ticker/symbol, sec_type also as asset_class/secType: non-stock rows are skipped)")
     hu.add_argument("--ledger", action="append", help="forecast ledger(s), union by thesis_id (default: "
                                                        "runs/tickers/forecast_ledger.jsonl and research/forecast_ledger.jsonl)")
     hu.add_argument("--as-of", required=True)

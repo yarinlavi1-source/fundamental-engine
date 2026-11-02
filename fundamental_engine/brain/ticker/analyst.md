@@ -215,7 +215,17 @@ Exact shapes (from evidence_pack.KEYS; the skeleton has them filled with this ru
   after {AS_OF}), "evidence_ids"}]: numeric, and they would really refute their scenario.
 - reasons_he {"bear", "base", "bull"}: why this price (what breaks / why most likely / what must happen), plain Hebrew.
 - engine_options {"country_risk": true|false, "reason"}: true when the company discloses revenue by country or region
-  (gather_macro's geography facts), so ticker-value runs deep --country-risk.
+  (gather_macro's geography facts), so ticker-value runs deep --country-risk. A foreign filer (20-F / 40-F) or a company with
+  most revenue outside the US: also put the split itself in forecast_options.revenue_geography {"shares": {"<country, region
+  or ISO code>": fraction}, "basis" (what it measures: revenue by customer location, by selling entity), "as_of" (end of the
+  period), "reason", "evidence_ids" (the company's own filing or release)}: the engine cannot read a 20-F note, and without a
+  split a foreign filer's result is a draft (material issue country_risk_unmeasured), never a silent US rate.
+- Build-phase companies: when the prefetch shows capex at least 100% of revenue or an operating margin at or below -50%,
+  supply forecast_options.build_phase from the filing (above) in this same pass; without it the engine returns 'not valued'
+  (cash-cost ratio outside driver bounds), as for ASTS and NBIS on 2026-11-01.
+- A lender check resolved with evidence (forecast warning possible_lender on an operating route, when you have read the balance
+  sheet and its notes): forecast_options.classification_review {"reviewer", "reason" (what the liabilities are), "evidence_ids"
+  (the filing document)} becomes the forecast's reviews.classification, so a rerun keeps it; never a side file.
 Bull and bear are business changes (growth, margin, funding), not only a different multiple: every driver that differs
 between scenarios says why. Guardrails (master_process): no target that moves with the price; no one EPS path x three
 multiples presented as bear/base/bull; no adjusted EPS that hides SBC; no insurance reserves counted as cash; no minor

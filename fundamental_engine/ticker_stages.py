@@ -30,7 +30,7 @@ STAGES = {
                        'what': 'identity check, statements reconciled, IBKR price (READ-ONLY), own multiple history, '
                                'attributed consensus, guidance track record and its ratio'},
     'gather_documents': {'file': 'gather_documents.md', 'step': 1, 'model': 'sonnet', 'agent': 'background agent, model sonnet',
-                         'minutes': '7-9', 'writes': ['gather/documents.json', 'understand/quarter_result.json',
+                         'minutes': '7-9 (12 without SEC prefetch)', 'writes': ['gather/documents.json', 'understand/quarter_result.json',
                                                       'understand/econ_result.json'],
                          'what': 'targeted reading of the 10-K / 10-Q / release / transcript: segments, customers, KPIs, '
                                  'RPO and backlog, current guidance, one-offs, risk factors; quarter-review and econ-review'},
@@ -66,12 +66,14 @@ STAGES = {
                        'what': 'counter-thesis, coherence of the three parts, guardrails, peak vs justified multiple, what '
                                'breaks, expectation gap and red team'},
     'repair': {'file': 'repair.md', 'step': 3, 'model': 'default', 'agent': 'one new agent, default model (at most once per '
-               'trigger)', 'minutes': '4-8', 'writes': ['review/repair.json', 'value.json'],
+               'trigger)', 'minutes': '4-8', 'writes': ['review/repair.json (trigger review) or review/repair_value.json (trigger value)',
+                                                    'gather/repair.json', 'value.json'],
                'what': 'the one repair pass: the open problems of ticker-value, or the critical review findings; reruns '
                        'ticker-value'},
     'deliver': {'file': 'deliver.md', 'step': 4, 'model': 'main loop', 'agent': 'the main loop itself', 'minutes': '2-3',
-                'writes': ['deliver/table_he.md', 'deliver/reasons.json', 'runs/tickers/forecast_ledger.jsonl'],
-                'what': 'the owner message: one table, 3-5 short explanations, sources as links; ledger freeze'},
+                'writes': ['deliver/table_he.md', 'deliver/reasons.json', 'runs/tickers/forecast_ledger.jsonl',
+                           'research/companies/<T>/<as_of>/ (research-save, after the message)'],
+                'what': 'the owner message: one table, 3-5 short explanations, sources as links; ledger freeze; research-save'},
 }
 
 

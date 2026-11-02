@@ -257,7 +257,24 @@ DECLINE_FLOOR = -.05      # lowest perpetual growth for a structurally declining
 DEBT_INCOMPLETE_RATE = .25     # interest / debt above this (no investment-grade or bank rate) means debt lines are missing
 KNOWN_INPUTS = ('overrides', 'reviews', 'risk_free', 'equity_risk_premium', 'horizon_years', 'financing', 'nol', 'cyclical',
                 'operating_funding', 'nonrecurring', 'debt_like_claims', 'non_operating_assets', 'capital_events', 'country_risk',
-                'current_year_revenue', 'acquired_revenue', 'options', 'capital_link', 'build_phase', 'bank_drivers')
+                'current_year_revenue', 'acquired_revenue', 'options', 'capital_link', 'build_phase', 'bank_drivers',
+                'country_risk_unmeasured')
+# inputs['country_risk_unmeasured'] = {reason} (0.14.3, set by the pipeline): a foreign filer whose country-risk row was requested
+# but has no exposure data (market_context status no_exposure_data). Both routes raise the material issue country_risk_unmeasured
+# (the result is a draft, not a silent US rate) until a reviewer resolves it (reviews.country_risk) or a split is supplied.
+COUNTRY_UNMEASURED_DESCRIPTION = ('country risk requested for a foreign filer but not measured (no revenue-by-country split): the cost '
+                                  'of equity carries no country premium')
+
+
+def country_unmeasured_issue(inputs, reviews):
+    """The material issue for inputs['country_risk_unmeasured'] (None when absent); used by the operating and residual-income routes."""
+    cu = inputs.get('country_risk_unmeasured')
+    if cu is None:
+        return None
+    if not isinstance(cu, dict) or set(cu) - {'reason'} or not isinstance(cu.get('reason'), str) or not cu['reason'].strip():
+        raise ValueError('country_risk_unmeasured: an object {reason}')
+    return {'id': 'country_risk_unmeasured', 'status': 'resolved' if (reviews.get('country_risk') or {}).get('status') == 'reviewed'
+            else 'unresolved', 'assumption_ids': ['cost_of_equity'], 'description': COUNTRY_UNMEASURED_DESCRIPTION + ': ' + cu['reason']}
 # inputs['bank_drivers'] (0.14.3): the residual-income route's evidenced ROE / book growth / payout per scenario, a later reported
 # opening book and regulatory capital (forecast_financials.BANK_* and check_bank_drivers); the operating route does not read it.
 # inputs['options'] = [{kind, count, strike, reason, evidence_ids}] (0.14.2): VESTED options or warrants outstanding at as_of (the
@@ -2977,7 +2994,7 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
     if price.get('unresolved'):
         return empty('insufficient_data', f"the quote is not per ordinary share ({price['unresolved']})", method)
     as_of = fb['as_of']
-    material = []
+    material = [m for m in [country_unmeasured_issue(inputs, reviews)] if m]
     open_bal = {'cash': val('cash'), 'sti': val('short_term_investments') or 0.,
                 'lti': (val('long_term_investments') or 0.) + (val('equity_securities_fv') or 0.),
                 'debt': val('debt'), 'shares': val('shares_outstanding'), 'deferred_revenue': val('deferred_revenue') or 0.}
@@ -3300,10 +3317,17 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
     ta_s, tl_s = facts.series(fb, 'total_assets', 'instant'), facts.series(fb, 'total_liabilities', 'instant')
     last_fy = (facts.annual_table(fb, ['revenue', 'cost_of_revenue', 'gross_profit']) or {None: {}})
     last_fy = last_fy[max(last_fy, key=lambda k: k or '')]
-    lender = None
+    lender, op_base = None, None
     if ta_s and tl_s and ta_s[-1][0] == tl_s[-1][0] and ta_s[-1][1] > 0 and tl_s[-1][1] / ta_s[-1][1] >= .85 \
             and last_fy.get('cost_of_revenue') is None and last_fy.get('gross_profit') is None:
         lender = {'liabilities_to_assets': tl_s[-1][1] / ta_s[-1][1], 'as_of': ta_s[-1][0]}
+        # the model card's one lender test (0.14.3): liabilities >= 85% of assets, but revenue above 30% of assets or capex >= 10%
+        # of revenue and no lending data is an operating asset base (Mastercard: revenue 60% of assets, capex 1.5%), not a loan
+        # book; the check then stays a low note instead of an unresolved material issue that withholds the value
+        if (((card.get('business_model') or {}).get('flags') or {}).get('operating_asset_base')
+                and (card.get('business_model') or {}).get('primary') != 'financials'):
+            op_base, lender = lender, None
+    if lender:
         add('classification', 'operating classification of a lender-shaped balance sheet', 'model', lender,
             f"Liabilities are {lender['liabilities_to_assets']:.0%} of assets at {lender['as_of']} and no cost of revenue is reported: the "
             'balance sheet looks like a lender\'s (deposits or wholesale funding), whatever the industry label. An operating FCFF forecast '
@@ -3841,6 +3865,10 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
                          'description': 'margins and returns rest on a computed moat proxy, not an analyst assessment', 'assumption_ids': ['moat_basis']})
     # a lender-shaped balance sheet (liabilities >= 85% of assets, no cost of revenue) is not an operating business whatever its label:
     # deposits and funding are operating liabilities, so an FCFF / EV bridge misprices it
+    if op_base:
+        warn('lender_check_operating_base', f"liabilities are {op_base['liabilities_to_assets']:.0%} of assets with no cost of revenue, but "
+                                            'the model card found an operating asset base (revenue above 30% of assets or capex at least 10% '
+                                            'of revenue, no lending data): not treated as a lender (model_card flags.operating_asset_base)', 'low')
     if lender:
         warn('possible_lender', f"liabilities are {lender['liabilities_to_assets']:.0%} of assets with no cost of revenue: a lender-shaped "
                                 'balance sheet, which an operating FCFF forecast misprices (deposits and funding are operating liabilities)', 'high')
@@ -3968,7 +3996,8 @@ def _build(fb, an, card, qa, inputs, external, no_proxy=False):
             warn('payout_paused', f"{s}: distributions paused before {', '.join(f['retained'])} to keep the minimum cash balance", 'low')
     if route['method'] == 'scenario_survival_fcff':
         warn('survival_model', 'scenario survival model: values depend on funding and on reaching profitability; lower confidence', 'high')
-    unknown_reviews = sorted(set(reviews) - {r['id'] for r in rows} - {f'{x}_{s}' for x in ('financing', 'internal_funding') for s in SCEN})
+    unknown_reviews = sorted(set(reviews) - {r['id'] for r in rows} - {f'{x}_{s}' for x in ('financing', 'internal_funding') for s in SCEN}
+                             - ({'classification'} if op_base else set()) - {'country_risk'})
     if unknown_reviews:
         warn('unknown_review_ids', 'reviews supplied for ids not in this forecast: ' + ', '.join(unknown_reviews), 'low')
     finalize()

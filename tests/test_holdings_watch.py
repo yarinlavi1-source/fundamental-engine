@@ -141,12 +141,23 @@ class ResearchStoreTests(unittest.TestCase):
         th = M.thesis_from_casefile(dict(casefile(ticker='SYN')), clock=Clock('2026-10-19T14:00:00+00:00'))
         lp = os.path.join(root, 'runs', 'tickers', 'forecast_ledger.jsonl')
         M.freeze(Ledger(lp, clock=Clock('2026-10-19T15:00:00+00:00')), th)
+        self.assertEqual(RS.load('SYN', root)['saved'], False)              # an unsaved run is named, labelled unsaved
         res = RS.save(run, root)
-        self.assertEqual(res['missing'], ['companies/SYN/out/paragraph.txt'])
+        self.assertEqual(sorted(res['missing']), sorted(['companies/SYN/out/paragraph.txt', 'identity.json', 'understand/business.json',
+                                                         'gather/documents.json', 'gather/field.json', 'gather/macro.json']))
+        dest = os.path.join(root, 'research', 'companies', 'SYN', '2026-10-19')
         for f in ('inputs.json', 'evidence_pack.json', 'table_he.md', 'scenarios_he.md', 'position/core.json',
-                  'review/numbers.json', 'casefile.json', 'casefile_summary.json', 'thesis.json'):
-            self.assertTrue(os.path.isfile(os.path.join(root, 'research', 'companies', 'SYN', '2026-10-19', f)), f)
-        self.assertFalse(os.path.exists(os.path.join(root, 'research', 'companies', 'SYN', '2026-10-19', 'gather')))
+                  'review/numbers.json', 'casefile_core.json', 'casefile_summary.json', 'gather/numbers.json'):
+            self.assertTrue(os.path.isfile(os.path.join(dest, f)), f)
+        for f in ('casefile.json', 'thesis.json'):                          # 0.14.3: the extract and the tracked ledger instead
+            self.assertFalse(os.path.exists(os.path.join(dest, f)), f)
+        with open(os.path.join(dest, 'casefile_core.json')) as f:
+            core = json.load(f)
+        with open(os.path.join(run, 'companies', 'SYN', 'out', 'casefile.json')) as f:
+            full = json.load(f)
+        a = M.thesis_from_casefile(core, clock=Clock('2026-10-19T14:00:00+00:00'))
+        b = M.thesis_from_casefile(full, clock=Clock('2026-10-19T14:00:00+00:00'))
+        self.assertEqual((a['thesis_id'], a.get('irr_basis')), (b['thesis_id'], b.get('irr_basis')))
         self.assertEqual(res['thesis_id'], th['thesis_id'])
         n = len(Ledger(os.path.join(root, RS.LEDGER)).lines())
         self.assertEqual(n, 1 + len(th['forecasts']))

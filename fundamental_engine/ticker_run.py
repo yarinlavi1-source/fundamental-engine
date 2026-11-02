@@ -898,8 +898,17 @@ def status(run, returned=None):
     if critical and repair is not None and critical_at is not None and _ts(run / 'review' / 'repair.json') < critical_at:
         reasons.append('review/repair.json is older than the critical findings: it cannot close them')
         repair = None
+    caveats = []
     if critical and repair is not None:
-        open_critical = [{'finding': x} for x in repair.get('open') or []]
+        if 'open_critical' in repair:
+            # repair.md schema (0.14.3): open_critical names the critical findings the pass could not close; caveats are the
+            # non-critical items it leaves open, reported apart and never blocking verified (MA 2026-11-01: both critical findings
+            # fixed, eight caveats had been counted as 'critical open')
+            open_critical = [x if isinstance(x, dict) else {'finding': x} for x in repair.get('open_critical') or []]
+            caveats = list(repair.get('caveats') or [])
+        else:
+            # older schema: 'open' does not say which items are critical findings, so every one counts (conservative)
+            open_critical = [{'finding': x} for x in repair.get('open') or []]
         if not repair.get('ran'):
             reasons.append('the repair pass did not rerun the engine to the end (repair.json ran false)')
     if open_critical:
@@ -920,8 +929,8 @@ def status(run, returned=None):
            'engine_ran': ran, 'engine_review_status': val.get('review_status') if ran else None,
            'valued': bool(fresh('value.json') and val.get('valued', val.get('ran'))),
            **({'not_valued_he': val['not_valued_he']} if fresh('value.json') and val.get('not_valued_he') else {}),
-           'reviews': reviews, 'critical': critical, 'open_critical': open_critical,
-           'repair': {k: repair.get(k) for k in ('fixed', 'open', 'ran')} if repair else None,
+           'reviews': reviews, 'critical': critical, 'open_critical': open_critical, 'caveats': caveats,
+           'repair': {k: repair.get(k) for k in ('fixed', 'open', 'open_critical', 'caveats', 'ran') if k in repair} if repair else None,
            'returned': sorted(returned) if returned is not None else None, 'times': times,
            'meaning': 'verified needs: the engine ran in this attempt, the three reviewers returned (files of this attempt AND '
                       'the main loop\'s record), no critical finding open after the one repair pass. The engine\'s own review '

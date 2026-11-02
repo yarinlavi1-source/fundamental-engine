@@ -31,7 +31,7 @@ Who runs which step in the fast procedure (every stage file carries the rules of
 | `ticker-value` (deterministic) | 15 (the parts merged into position.json, pack-merge, pack-to-inputs, deep for this one company) | `position.json`, `position/coherence.md`, `evidence_pack.json`, `companies/<T>/inputs.json`, `companies/<T>/out/`, `value.json` |
 | `review_numbers` + `review_counter` agents (parallel) | 16: company-first, guidance vs track record, multiples, the table; counter-thesis, coherence of the parts, guardrails, peak multiple, events | `review/numbers.json`, `review/counter.json` |
 | `repair` agent (at most once per trigger) | the problems of ticker-value, or the critical review findings; reruns ticker-value | `review/repair_value.json` or `review/repair.json` |
-| the main loop (`ticker-status`, then deliver) | 17: verified or draft from this attempt's files, the owner's table, explanations, sources; ledger freeze | `status.json`, `deliver/` |
+| the main loop (`ticker-status`, then deliver) | 17: verified or draft from this attempt's files, the owner's table, explanations, sources; ledger freeze; after the message `research-save RUN` | `status.json`, `deliver/`, `research/companies/T/` |
 
 Each phase has an entry rule (what must exist before it starts), the steps, the required outputs (files under
 `runs/tickers/<TICKER>_<as_of>/`, gitignored) and an exit rule (what must be true before moving on). A failed exit rule
@@ -178,7 +178,8 @@ Entry: Review exit (or the draft label).
     the scenes. Freeze the base case in the forecast ledger (thesis_freeze / forecast_ledger) with its falsifiers, so
     accuracy is judged later on real prices.
 
-Outputs: `deliver/table_he.md`, `deliver/reasons.json`, the ledger entry.
+Outputs: `deliver/table_he.md`, `deliver/reasons.json`, the ledger entry; after the owner message the main loop runs
+`research-save RUN` (the tracked research store the next session starts from).
 Exit: the table matches the executed casefile number for number; future values are dated conditional values, not
 promised market prices.
 

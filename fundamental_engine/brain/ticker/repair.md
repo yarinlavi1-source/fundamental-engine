@@ -84,6 +84,10 @@ this same run was moved to attempts/; its gather fragments stayed: treat your ow
    bank / insurer whose residual-income base contradicts the filing (payout_unknown, book growth at the 8% cap, opening book
    older than the latest quarterly filing) with forecast_options bank_drivers from cited documents (analyst.md: ROE path, book
    growth funded by retained profit, payout, a later opening book and regulatory capital citing the filing document), a
+   lender check (possible_lender) the filing resolves with forecast_options classification_review (reviewer, reason,
+   filing evidence: it becomes the forecast's reviews.classification; never a side file a rerun drops), a foreign filer's
+   missing country split (material issue country_risk_unmeasured) with forecast_options revenue_geography from the company's
+   own document, a
    build-phase company the engine did not value (value.json failed_at 'not valued: ... cash-cost ratio outside driver bounds
    ... build-phase', i.e. period 0 or a company in the build-phase shape; a failure in a later period without 'build-phase' is
    the scenario's margin path: correct the mature margin / cycle override with evidence instead, build_phase is not applied
@@ -97,7 +101,10 @@ this same run was moved to attempts/; its gather fragments stayed: treat your ow
 3. Rerun the deterministic step: `python -m fundamental_engine ticker-value {RUN}` (merge the parts, pack-merge,
    pack-to-inputs, deep; it rewrites value.json). ran = value.json ran.
 4. Write {RUN}/review/repair_value.json (trigger value) or {RUN}/review/repair.json (trigger review):
-   {"trigger": "value|review", "fixed": ["<finding or problem: what changed, in which file>"], "open": ["<what stays open
-   and why>"], "ran": <value.json ran>, "casefile": "<path>", "changed_files": [...]}, and reply with that JSON object and
-   nothing else. There is one repair pass per trigger: whatever stays open after a review repair makes the result a draft
-   (UNVERIFIED).
+   {"trigger": "value|review", "fixed": ["<finding or problem: what changed, in which file>"], "open_critical":
+   [{"finding": "<the start of a CRITICAL finding, quoted from its review file>", "lens": "<trace|numbers|counter>", "why":
+   "<why it stays open>"}], "caveats": ["<a non-critical item left open, and why>"], "ran": <value.json ran>, "casefile":
+   "<path>", "changed_files": [...]}, and reply with that JSON object and nothing else. List in open_critical every critical
+   finding you did not close (an empty list when all were fixed); everything else that stays open is a caveat. There is one
+   repair pass per trigger: an open critical finding after a review repair makes the result a draft (UNVERIFIED); caveats are
+   reported beside the result and do not make it a draft.

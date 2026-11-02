@@ -1,3 +1,61 @@
+## 0.14.3 — bank revenue, residual-income honesty, routing audit fixes (02.11.2026)
+
+Known bugs of the week and the real critical/major findings of the 02.11 routing and process audits. Owner-facing summary of
+the routing: `docs/ROUTING_HE.md` (linked from START_HERE).
+
+Engine:
+- (a) Bank revenue from SEC companyfacts: `RevenuesNetOfInterestExpense` now ranks ahead of the ASC 606 tags, and
+  `facts._bank_revenue` replaces an ASC 606 fee-only revenue fact with `InterestIncomeExpenseNet + NoninterestIncome` (basis
+  derived) when the issuer tags both and no total. SoFi FY2025: 0.62bn -> 3.61bn. Operating income for a bank stays the derived
+  pre-tax figure (`_ebit_proxy`), which is a bank's operating profit; margins are no longer read on that route (b).
+  Of the saved runs only SOFI tags these concepts.
+- (b) `decision._required_return` on a balance-sheet lender (card primary financials): `unproven_economics` is charged on a
+  negative ROE, never on operating/FCF margins; `funding_dependence` ignores the card's FCF runway (loan growth runs through
+  CFO) and is set only by an evidenced external raise, else 'unknown' with a lender reason. SoFi rerun: hurdle 15.18% -> 13.68%.
+  Business quality was already not margin-graded for financials (NOT_MARGIN_GRADED).
+- (c) Pack route `forecast_options.classification_review {reviewer, reason, evidence_ids}` (filing evidence required) ->
+  `inputs.forecast.reviews.classification`: a lender-check review survives a plain ticker-value rerun.
+- (d) Pack route `forecast_options.revenue_geography {shares, basis, as_of, reason, evidence_ids}` (the company's own document)
+  -> `inputs.market_context.geography`: the country-risk row works for foreign filers on both routes. A foreign filer (20-F /
+  40-F, or a non-US country) whose country row was requested but has no exposure data now gets the material issue
+  `country_risk_unmeasured` (pipeline -> `inputs.forecast.country_risk_unmeasured`; operating route in underwriting, residual
+  income on `fc.material_issues`, read by `decision._issues`): a draft, not a silent US rate. NU rerun: now a draft.
+- (e) Residual-income company with no dividend/buyback history (`fc.anchors.distribution_history` false):
+  `expected_return.owner_facing_return.theoretical_distributions` labels base_irr as counting the model's distributions and
+  gives `price_only_annual` (base value's annual change to year 5 without them); the Hebrew table says so on the return row.
+  The valuation and base_irr are unchanged.
+- Routing (`model_card`): subscription_software from a label word needs a software signature (gross margin >= 60% or deferred
+  revenue >= 15%, inventory <= 5%), else the label's other type / SIC / sector (TSLA -> hardware_manufacturing; SIC 3710-3719
+  added to SIC_FALLBACK). An infrastructure keyword with capex < 6% falls back to the sector type, else industrial when gross
+  margin < 50% (VRT-type). One lender test (liabilities >= 85% AND revenue <= 30% of assets AND capex < 10%, or lending data)
+  in BALANCE_MIXED labels ('Credit Services' MA -> platform), for a sector-only 'Financials' match (platform only when the
+  annual report's Item 1 vocabulary decides; else financials kept, conservative), and with no matching label at all (lending
+  data -> financials). SIC 6199 / 6200-6221 with a FEE_FINANCIAL industry label: the label decides. New card flag
+  `operating_asset_base`.
+- `forecast` lender check follows the card: with `operating_asset_base` it is a low note (`lender_check_operating_base`), not
+  the HIGH material issue `possible_lender` that withheld MA's value.
+
+Process:
+- `ticker-status`: repair.json schema `open_critical` [{finding, lens, why}] + `caveats` (repair.md step 4); caveats never
+  block verified. Old `open` lists still count in full (conservative). MA 2026-11-01 had been a draft on 8 caveats.
+- Research store: saves gather fragments, identity.json and understand/business.json; `casefile_core.json` (the extract
+  thesis_from_casefile reads, same thesis_id and irr_basis, about 40-50 KB) replaces the full casefile (1.4-1.7 MB) and
+  thesis.json (read from the tracked ledger); casefile_summary keeps assumption id/value only. `ticker_prefetch --reuse`
+  accepts `research/companies/<T>/<D>` (files dated by the folder; older than 30 days: reference files only) and `--reuse auto`
+  falls back to it. `research-latest` falls back to the newest runs/ folder with a casefile, labelled unsaved.
+- deliver.md step 5 and the master_process deliver row: `research-save RUN` after the owner message (the main loop's own step;
+  commit/push only as CLAUDE.md allows). analyst.md: build_phase required in the build-phase shape; revenue_geography for
+  foreign filers; classification_review instead of side files. ticker_stages: repair writes and gather_documents minutes.
+  check_wheel imports holdings_watch / research_store and runs ticker_run.status on an empty run. holdings-update help text.
+
+Verification: suite (`python -m unittest discover -s tests -q`), new `tests/test_fixes_0143.py`; ticker-value rerun on copies
+of six real runs with 80273de vs this version: MSFT, META, TSLA, SOFI table_he.md identical (TSLA's analyst overrides set its
+margin and reinvestment; SOFI's table shows no fair value either way), MA now shows its value (draft), NU now a draft
+(country_risk_unmeasured). Not changed (deferred): CLAUDE.md step 0b wording and the push authorization (owner's file);
+capex-signature averaging (MSFT/META flip on one year); archetype mapping of semiconductors; TWD risk-free and asset-location
+country risk; no engine value for REIT / biotech / conglomerate / hybrid routes; ledger copy naming; draft marker in
+holdings-update rows.
+
 ## 0.14.2 — engine bugs from the 01.11.2026 portfolio batch
 
 ### Review round 3 (of d605622): NOT READY -> fixed directly (lean verification)

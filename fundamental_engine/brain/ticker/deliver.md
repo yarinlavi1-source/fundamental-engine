@@ -4,7 +4,8 @@ Step 4 of the fast ticker procedure (CLAUDE.md "On a ticker"): the main loop its
 (master_process phase 7, step 17) once the reviewers returned (and the one repair pass, if any).
 Budget: about 6 tool calls and 3 minutes.
 Writes: {RUN}/deliver/table_he.md, {RUN}/deliver/reasons.json, the ledger entry in runs/tickers/forecast_ledger.jsonl (the
-one write outside {RUN}).
+one write outside {RUN} during the stage) and, after the owner message, the tracked research store (step 5; the main loop's
+own post-delivery step, an exception to the common rules below, which bind the agent stages).
 
 <!-- common rules: identical in every stage file (tests/test_ticker_fast.py checks it) -->
 ## Rules for every stage (carried over from the saved Workflow ticker.js; all of them apply)
@@ -96,3 +97,7 @@ unreviewed draft stays labelled a draft in the table whatever the review found.
    source links; the major review findings in one line when they matter; the run time in one line (ticker-status
    times.elapsed_minutes); calculations and business detail stay behind the scenes unless asked. Future values are dated
    conditional values, not predicted or promised market prices; potential is kept apart from price; no promised win rate.
+5. After the owner message (the main loop, not an agent): `python -m fundamental_engine research-save {RUN}` copies the run's
+   essentials into research/companies/{TICKER}/{AS_OF}/ and the frozen thesis rows into research/forecast_ledger.jsonl, so
+   the next session can start from them (`research-latest {TICKER}`). Commit or push those files only as CLAUDE.md allows;
+   this stage file never authorizes a commit or a push.
