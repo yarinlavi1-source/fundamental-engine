@@ -262,3 +262,6 @@ from the segment trend, capex/depreciation, financing and dilution (equity issua
 analyst's method or numbers; when comparing, reconcile line by line and say who is wrong where. When criticised, answer
 'right / partly / wrong' with the reason; do not fold. One consistent output: value today, 2031 price, annual return per
 scenario.
+Add judgement about the future (02.11.2026, owner): where the world and the industry are heading, whether the business can
+still evolve or only erode, and historical analogs (companies that faced the same threat or shift and what happened to them,
+with their numbers), ending in an explicit, labelled subjective probability per scenario (Claude's judgement, not engine odds).
