@@ -1,0 +1,139 @@
+{
+ "_note": "Position phase (saved Workflow ticker, master_process steps 11-13) for ORCL, as_of 2026-10-29. Built from gather/*.json, understand/business.json and understand/auto.json. The Investor Day 8-K of 2026-10-28 is not citable until 2026-10-30 and is not used. Consensus (S&P Global via StockAnalysis, FY2027 only) is a cross-check, never evidence.",
+ "thesis_he": {
+  "bear": "הלקוח הגדול (לפי דיווחים OpenAI, כמחצית מהצבר) מאט, הכנסות FY2028 רק כ-103 מיליארד, השוליים יורדים לכ-25% והחוב והדילול נשארים.",
+  "base": "אורקל עומדת בתחזית: 90 מיליארד ב-FY2027, 130 ב-FY2028 ו-225 ב-FY2030, ממומן בחוב ובמניות, שוליים תפעוליים כ-30%.",
+  "bull": "אורקל עוקפת את התחזית (כ-133 מיליארד ב-FY2028), השוליים עולים לכ-35% כמו AWS וגוגל קלאוד, והתשלומים מראש של הלקוחות עוצרים את הדילול."
+ },
+ "drivers": {
+  "current_year_revenue": {
+   "source_tier": "guidance",
+   "evidence_ids": ["rp_g_fy27_rev", "pf_rel_20260910_1", "rp_f_rev_q1fy27", "rp_g_q2fy27_rev"],
+   "adjust_by_track_record": false,
+   "reason": "FY2027 revenue guidance 'at least $90B' (raised from $85B in Mar-2026, held on 2026-09-10); Q1 FY27 reported $19.345B and Q2 guided +30-34% ($20.9-21.5B). The guide is a floor and the revenue track record is a small beat (ratio 1.008 over 6 periods), but no guidance item covers only the unreported Q2-Q4 remainder, so no adjustment; attributed consensus $90.4B (ex_c_rev_fy27) is a cross-check only."
+  },
+  "growth_anchor": {
+   "period": "FY2028",
+   "bear": 0.15,
+   "base": 0.4444,
+   "bull": 0.48,
+   "source_tier": {"bear": "contracted", "base": "guidance", "bull": "guidance"},
+   "evidence_ids": ["rp_g_fy28_rev_fam", "rp_g_fy28_oci", "rp_g_fy27_oci", "rp_fam2025", "pf_rel_20250909_1", "pf_rel_20260310_1", "rp_f_rpo_q1fy27", "rp_f_rpo_0_12m_share", "rp_f_rpo_13_36m_share", "rp_f_rpo_37_60m_share", "pf_10k_20260622", "un_digitimes_openai_20250911", "un_barchart_20260220"],
+   "adjust_by_track_record": false,
+   "deviation": "bull 0.48 (about $133B) sits about 3.5 points above the $130B FY2028 point target: management wrote it can 'comfortably meet and likely exceed our revenue growth rate forecast for FY27 and beyond' (pf_rel_20260310_1); bear 0.15 is the contracted path after the concentration loss below, not a guidance value.",
+   "reason": "Base: the FY2028 revenue target of $130B from the Oct-2025 analyst meeting (rp_fam2025; FY2027 has since been raised from $85B to $90B and FY2028 not lowered), backed by RPO of $664B of which about 12% converts in 12 months and 34% in months 13-36 (10-K split of $638B), and by the OCI path $32B -> $73B (FY2028). 130/90 - 1 = 44.4%. Not adjusted by the track-record ratio: that ratio was measured on one-quarter and one-year guides, while this is a multi-year target whose binding limit is capacity delivery (power, sites), where the company has over-run its capex guides. Bear: the reported ~$300B OpenAI contract (about half of RPO, press attribution; Oracle does not disclose it, and the 10-K warns some large OCI customers are highly leveraged) slows or is renegotiated: about $27B of the $73B FY2028 OCI target does not arrive, so revenue is about $103B (+15%)."
+  },
+  "growth_half_life": {
+   "base": 2.5,
+   "source_tier": "guidance",
+   "evidence_ids": ["rp_g_fy29_rev_fam", "rp_g_fy30_rev_fam", "rp_g_fy28_rev_fam", "rp_fam2025"],
+   "reason": "The company's own path after FY2028: $130B -> $185B (FY2029, +42%) -> $225B (FY2030, +22%), about 31.6% a year over the two years. With excess growth over the risk-free terminal growth halving every 2.5 years, the engine's fade from 44.4% gives about $224B in FY2030, the guided $225B. Bear and bull keep the engine's 0.8x / 1.3x spread around this evidenced base."
+  },
+  "mature_margin": {
+   "bear": 0.25,
+   "base": 0.30,
+   "bull": 0.35,
+   "source_tier": "own_history",
+   "evidence_ids": ["pf_operating_income_fy2021", "pf_revenue_fy2021", "pf_operating_income_fy2022", "pf_revenue_fy2022", "pf_operating_income_fy2025", "pf_revenue_fy2025", "pf_operating_income_fy2026", "pf_revenue_fy2026", "rp_f_opinc_q1fy27", "rp_f_rev_q1fy27", "rp_k_cs_margin_fy26", "rp_k_cs_margin_fy25", "pf_d_and_a_fy2026"],
+   "reason": "GAAP operating margin (after SBC) in Oracle's own history: 37.6% FY2021, 25.7% FY2022, 26.2% FY2023, 29.0% FY2024, 30.8% FY2025, 30.6% FY2026, 34.8% in Q1 FY2027. Base 30%: the FY2025-FY2026 level, because the business mix moves to OCI (about 38% of revenue already) whose depreciation (D&A doubled to $7.6B in FY2026) and leases are still entering service, and the cloud-and-software segment margin fell from 63% to 59%. Bear 25%: the FY2022 low, when $288B of 15-19 year leases run while capacity is under-used. Bull 35%: the Q1 FY2027 level held at scale (FY2021 37.6% is the ceiling of the record)."
+  },
+  "sales_to_capital": {
+   "bear": 0.35,
+   "base": 0.5,
+   "bull": 0.65,
+   "source_tier": "own_history",
+   "evidence_ids": ["pf_revenue_fy2026", "nm_long_lived_assets_total_fy2026", "nm_long_lived_assets_total_fy2025", "pf_revenue_fy2025", "rp_f_capex_fy26", "rp_f_capex_q1fy27", "rp_f_capex_fy25", "rp_k_prepaid_hw_fy26"],
+   "reason": "Revenue per dollar of long-lived operating assets: FY2026 $67.4B on $133.3B = 0.51 (FY2025 $57.4B on $60.1B = 0.95, before the build). The incremental FY2026 ratio ($10.0B more revenue on $73B more long-lived assets, 0.14) is distorted by the lag between capex and contracted revenue, so the base keeps today's average 0.5 for new OCI capacity; bear 0.35 = capacity built and leased but filled late or at lower prices; bull 0.65 = more of the build funded by customer-supplied GPUs and prepayments ($75B portion of large AI contracts, rp_k_prepaid_hw_fy26) instead of Oracle's own capital."
+  },
+  "terminal_roic": {
+   "bear": 0.09,
+   "base": 0.13,
+   "bull": 0.17,
+   "source_tier": "own_history",
+   "evidence_ids": ["pf_operating_income_fy2021", "pf_equity_fy2021", "pf_operating_income_fy2026", "pf_equity_fy2026", "nm_debt_current_fy2026", "nm_debt_noncurrent_fy2026", "pf_cash_fy2026", "nm_income_tax_fy2026", "nm_pretax_income_fy2026"],
+   "reason": "Oracle's ROIC (NOPAT / (equity + debt - cash), leases excluded) fell from 25.6% (FY2021) to 14.8% (FY2026), 12.8% on year-end capital; incremental FY2021-FY2026 only 3.4%, FY2025-FY2026 6.4%. Base 13% = today's level on a capital base that is now mostly OCI; bear 9% = about the cost of capital, the AI build earning no excess return; bull 17% = the FY2024-FY2025 level (16.6% FY2025) once the contracted capacity is full."
+  },
+  "sbc_pct": {
+   "all": 0.058,
+   "source_tier": "own_history",
+   "evidence_ids": ["rp_f_sbc_q1fy27", "rp_f_rev_q1fy27", "rp_f_sbc_fy26", "pf_revenue_fy2026", "pf_sbc_fy2025", "pf_revenue_fy2025"],
+   "reason": "Stock-based pay as a share of revenue: 8.1% FY2025, 7.1% FY2026, 5.8% in Q1 FY2027 ($1.127B on $19.345B): the dollar amount is flat while revenue grows, so the latest quarter's ratio is used; it is a real cost (non-GAAP excludes it)."
+  },
+  "interest_rate": {
+   "all": 0.046,
+   "source_tier": "own_history",
+   "evidence_ids": ["rp_f_int_q1fy27", "rp_f_notes_face_q1fy27", "nm_interest_expense_fy2026", "nm_debt_current_fy2026", "nm_debt_noncurrent_fy2026"],
+   "reason": "Q1 FY2027 interest expense $1.428B x 4 on $125.0B of note principal = 4.6% (FY2026: $4.6B on a rising balance); new notes in FY2026 ($46.1B) priced above the old book, so the latest quarter's rate is used."
+  }
+ },
+ "forecast_options": {
+  "cyclical": {
+   "treatment": "structural",
+   "reason": "Revenue grew every year FY2021-FY2026 (lowest +4.8% FY2022); growth is contracted multi-year capacity (RPO $664B, about 88% beyond 12 months) plus recurring support and subscriptions; Q1 FY2027 operating margin 34.8% is inside its own six-year range. The cycle-like risk is counterparty credit, funding and renewal pricing of AI-lab demand, carried as bear events and the key risk, not as a reverting cyclical price.",
+   "evidence_ids": ["pf_revenue_fy2021", "pf_revenue_fy2022", "pf_revenue_fy2026", "rp_f_rpo_q1fy27", "rp_f_rpo_0_12m_share", "pf_10q_20260911", "rp_f_opinc_q1fy27"]
+  },
+  "debt_like_claims": [
+   {
+    "kind": "preferred_or_minority",
+    "amount": 4954000000,
+    "reason": "6.50% Series D mandatory convertible preferred stock (carrying $4.954B): cumulative dividends ($81M in Q1 FY2027) until it converts on 2029-01-15 into 24.99M-31.24M common shares; carried as a claim ahead of the common at its carrying amount, not also as dilution.",
+    "evidence_ids": ["rp_f_pref_carry", "rp_f_pref_conv_shares_max", "rp_f_pref_div_q1fy27", "pf_10q_20260911"]
+   }
+  ]
+ },
+ "scenario_events": {
+  "base": [
+   {"event_he": "אורקל מגיעה לפחות ל-90 מיליארד דולר הכנסות ב-FY2027 (צמיחה של כ-34%), כפי שהנחתה; ברבעון השני היא צופה צמיחה של 30%-34%, ובשישה הדיווחים האחרונים היא עמדה או עקפה את תחזית ההכנסות.", "evidence_ids": ["rp_g_fy27_rev", "rp_g_q2fy27_revg", "pf_rel_20260910_1", "rp_f_rev_q1fy27", "pf_rel_20260610_1"]},
+   {"event_he": "צבר ההזמנות של 664 מיליארד דולר הופך להכנסות לפי לוח הזמנים: כ-12% בשנה הקרובה ועוד 34% בשנתיים שאחריה. הענן (OCI) עולה מ-32 מיליארד ב-FY2027 ל-73 מיליארד ב-FY2028, וסך ההכנסות ל-130 מיליארד ב-FY2028 ול-225 מיליארד ב-FY2030, כמו בתחזית החברה.", "evidence_ids": ["rp_f_rpo_q1fy27", "rp_f_rpo_0_12m_share", "rp_f_rpo_13_36m_share", "rp_g_fy27_oci", "rp_g_fy28_oci", "rp_g_fy28_rev_fam", "rp_g_fy30_rev_fam", "rp_fam2025"]},
+   {"event_he": "הבנייה נמשכת בהשקעות ענק: 28.5 מיליארד דולר ברבעון הראשון לבדו. התזרים החופשי נשאר שלילי ב-FY2027, ואת החסר מממנים חוב ומניות (כ-40 מיליארד בשנה, כולל 20 מיליארד מהנפקת מניות שכבר הגדילה את מספר המניות ב-5%).", "evidence_ids": ["rp_f_capex_q1fy27", "nm_fcf_q_2026_08_31", "nm_fcf_fy2026", "pf_rel_20260610_1", "nm_atm_equity_proceeds_q_2026_08_31", "rp_f_atm_shares_q1fy27", "nm_shares_outstanding_2026_09_07", "rp_f_shares_out_20260612"]},
+   {"event_he": "השוליים התפעוליים נשארים סביב 30%, כמו ב-FY2025-FY2026: הענן זול יותר להפעלה מהתוכנה הישנה, הפחת כבר הוכפל ל-7.6 מיליארד, ורישיונות התוכנה (מינוס 15%) והתמיכה (מינוס 1%) מתכווצים לאט.", "evidence_ids": ["pf_operating_income_fy2025", "pf_operating_income_fy2026", "pf_d_and_a_fy2026", "rp_f_lic_q1fy27", "rp_f_sup_q1fy27", "rp_k_cs_margin_fy26", "rp_k_cs_margin_fy25"]}
+  ],
+  "bull": [
+   {"event_he": "אורקל עוקפת את יעדי ההכנסות שלה, כפי שכתבה שהיא 'כנראה תעבור' אותם: כ-133 מיליארד דולר ב-FY2028 (מעל יעד 130) ויותר מ-225 מיליארד ב-FY2030.", "evidence_ids": ["pf_rel_20260310_1", "rp_g_fy28_rev_fam", "rp_g_fy30_rev_fam"]},
+   {"event_he": "הצבר ממשיך לגדול: ברבעון הראשון נחתמו עוד יותר מ-30 מיליארד דולר בחוזי AI, ובסיס הנתונים של אורקל שנמכר בתוך AWS, Azure וגוגל צמח פי 5 (404%) בשנה. הביקוש לענן עדיין גדול מההיצע.", "evidence_ids": ["rp_k_ai_bookings_q1fy27", "rp_k_multicloud_q4fy26", "rp_f_rpo_q1fy27", "pf_rel_20260910_1"]},
+   {"event_he": "כשהקיבולת מתמלאת, שולי הענן של אורקל מתקרבים לאלה של AWS (כ-39%) וגוגל קלאוד (כ-35%), והשוליים התפעוליים של כל החברה עולים לכ-35%, כמו ברבעון הראשון של FY2027.", "evidence_ids": ["fd_aws_q2_2026", "fd_gcloud_q2_2026", "rp_f_opinc_q1fy27", "pf_operating_income_fy2021"]},
+   {"event_he": "הלקוחות ממשיכים לממן חלק מהבנייה: חלק של 75 מיליארד דולר בחוזי AI גדולים שבהם הלקוח שילם מראש או סיפק את המעבדים, ועוד 11.4 מיליארד תשלומים מראש ברבעון הראשון; לכן לא צריך עוד הנפקות מניות אחרי FY2027.", "evidence_ids": ["rp_k_prepaid_hw_fy26", "rp_f_prepay_q1fy27", "pf_rel_20260910_1"]}
+  ],
+  "bear": [
+   {"event_he": "הלקוח הגדול מאט: לפי דיווחים בעיתונות, חוזה של כ-300 מיליארד דולר עם OpenAI הוא כמחצית מהצבר (אורקל לא מפרסמת זאת, ובדוח השנתי כתבה שחלק מלקוחות הענן הגדולים ממונפים מאוד). אם הוא נדחה או מצטמצם, כ-27 מיליארד מתוך יעד ענן של 73 מיליארד ב-FY2028 לא מגיעים, וההכנסות הן כ-103 מיליארד בלבד.", "evidence_ids": ["un_digitimes_openai_20250911", "un_barchart_20260220", "un_rpo_tracker_20260610", "pf_10k_20260622", "rp_g_fy28_oci", "rp_f_rpo_q1fy27"]},
+   {"event_he": "אי-התאמה בזמנים: אורקל חתמה על חוזי שכירות למרכזי נתונים בהיקף 288 מיליארד דולר ל-15 עד 19 שנה, בעוד חוזי הלקוחות הם לשנה עד חמש שנים. אם לקוחות לא מחדשים, העלויות נשארות והשוליים יורדים לכ-25%, כמו ב-FY2022.", "evidence_ids": ["rp_f_lease_uncommenced_q1fy27", "rp_f_lease_uncommenced_fy26", "pf_10k_20260622", "pf_operating_income_fy2022", "pf_revenue_fy2022"]},
+   {"event_he": "פער מימון: התזרים החופשי היה מינוס 23.7 מיליארד ב-FY2026, ההשקעות חרגו מהתחזית (55.7 מיליארד מול 50), והחוב עומד על 125 מיליארד. אם שוק ההון נסגר, אורקל מנפיקה עוד מניות במחיר נמוך ובעלי המניות מדוללים שוב.", "evidence_ids": ["nm_fcf_fy2026", "rp_f_capex_fy26", "pf_rel_20260310_1", "rp_f_notes_face_q1fy27", "nm_atm_equity_proceeds_q_2026_08_31", "rp_f_atm_shares_q1fy27"]},
+   {"event_he": "המתחרים מוסיפים קיבולת מהר יותר: AWS, גוגל ומיקרוסופט משקיעות פי 2 עד 4 מאורקל באותם שבבים וחשמל. המחסור במחשוב נגמר מוקדם, ומחירי הענן בחידוש החוזים יורדים.", "evidence_ids": ["fd_aws_q2_2026", "fd_gcloud_q2_2026", "fd_msft_q4fy26", "fd_cf_amzn", "fd_cf_googl", "fd_cf_msft", "rp_f_capex_fy26"]},
+   {"event_he": "התוכנה הישנה נשחקת: רישיונות ירדו 15% והתמיכה 1% ברבעון הראשון, ואפליקציות הענן (10%) צומחות לאט יותר מ-SAP (25% בענן ERP) ומ-Workday (12.8%).", "evidence_ids": ["rp_f_lic_q1fy27", "rp_f_sup_q1fy27", "rp_f_saas_q1fy27", "fd_sap_q2_2026", "fd_cf_wday"]}
+  ]
+ },
+ "key_risk": {
+  "reading_he": "אורקל בונה מרכזי נתונים בחוב ובמניות לפני שההכנסות מגיעות: חוב של 125 מיליארד דולר, חוזי שכירות של 288 מיליארד ל-15-19 שנה ותזרים חופשי שלילי (מינוס 23.7 מיליארד ב-FY2026), בזמן שחלק גדול מהצבר (לפי דיווחים כמחצית, מ-OpenAI) תלוי בלקוחות AI ממונפים עם חוזים קצרים של שנה עד חמש שנים. אם לקוח גדול לא משלם או לא מחדש, העלויות נשארות וההכנסות לא.",
+  "evidence_ids": ["rp_f_notes_face_q1fy27", "rp_f_lease_uncommenced_q1fy27", "nm_fcf_fy2026", "pf_10k_20260622", "rp_f_rpo_q1fy27", "un_barchart_20260220", "un_digitimes_openai_20250911"]
+ },
+ "falsifiers": [
+  {"id": "fx_rev_q2fy27", "scenario": "base", "metric": "ORCL total revenue, Q2 FY2027 (quarter ending 2026-11-30)", "threshold": 20800000000, "direction": "below", "by": "2026-12-20", "evidence_ids": ["rp_g_q2fy27_rev", "rp_g_q2fy27_revg", "rp_f_rev_q2fy26"]},
+  {"id": "fx_rpo_q3fy27", "scenario": "base", "metric": "ORCL remaining performance obligations at 2027-02-28", "threshold": 600000000000, "direction": "below", "by": "2027-03-25", "evidence_ids": ["rp_f_rpo_q1fy27", "rp_f_rpo_fy26"]},
+  {"id": "fx_rev_fy27", "scenario": "base", "metric": "ORCL total revenue, FY2027 (year ending 2027-05-31)", "threshold": 88000000000, "direction": "below", "by": "2027-06-30", "evidence_ids": ["rp_g_fy27_rev", "pf_rel_20260910_1"]},
+  {"id": "fx_oci_fy27", "scenario": "base", "metric": "ORCL cloud infrastructure (OCI) revenue, FY2027", "threshold": 30000000000, "direction": "below", "by": "2027-06-30", "evidence_ids": ["rp_g_fy27_oci", "rp_f_oci_q1fy27"]},
+  {"id": "fx_shares_fy27", "scenario": "base", "metric": "ORCL common shares outstanding at the FY2027 10-K cover date", "threshold": 3200000000, "direction": "above", "by": "2027-07-31", "evidence_ids": ["nm_shares_outstanding_2026_09_07", "rp_f_shares_out_20260612", "pf_rel_20260610_1"]},
+  {"id": "fx_rev_fy28_base", "scenario": "base", "metric": "ORCL total revenue, FY2028 (year ending 2028-05-31)", "threshold": 118000000000, "direction": "below", "by": "2028-06-30", "evidence_ids": ["rp_g_fy28_rev_fam"]},
+  {"id": "fx_bull_rev_fy27", "scenario": "bull", "metric": "ORCL total revenue, FY2027", "threshold": 91000000000, "direction": "below", "by": "2027-06-30", "evidence_ids": ["rp_g_fy27_rev", "pf_rel_20260310_1"]},
+  {"id": "fx_bull_rev_fy28", "scenario": "bull", "metric": "ORCL total revenue, FY2028", "threshold": 132000000000, "direction": "below", "by": "2028-06-30", "evidence_ids": ["rp_g_fy28_rev_fam", "pf_rel_20260310_1"]},
+  {"id": "fx_bear_rpo_fy27", "scenario": "bear", "metric": "ORCL remaining performance obligations at 2027-05-31", "threshold": 700000000000, "direction": "above", "by": "2027-06-30", "evidence_ids": ["rp_f_rpo_q1fy27", "rp_f_rpo_fy26"]},
+  {"id": "fx_bear_rev_q2fy28", "scenario": "bear", "metric": "ORCL total revenue, Q2 FY2028 (quarter ending 2027-11-30)", "threshold": 30000000000, "direction": "above", "by": "2027-12-20", "evidence_ids": ["rp_g_fy28_rev_fam", "rp_f_rev_q1fy27"]}
+ ],
+ "reasons_he": {
+  "bear": "מה נשבר: הלקוח הגדול (לפי דיווחים OpenAI, כמחצית מהצבר) מאט או מצמצם, ההכנסות ב-FY2028 רק כ-103 מיליארד במקום 130, חוזי השכירות הארוכים נשארים והשוליים יורדים לכ-25%, והחוב והנפקות המניות ממשיכים לדלל.",
+  "base": "למה זה הסביר ביותר: יש צבר חתום של 664 מיליארד דולר, ואורקל עמדה או עקפה את תחזית ההכנסות בכל ששת הדיווחים האחרונים, אז ההכנסות עולות ל-90 מיליארד השנה, 130 ב-FY2028 ו-225 ב-FY2030; אבל הבנייה ממומנת בחוב ובמניות, והשוליים נשארים סביב 30%.",
+  "bull": "מה חייב לקרות: אורקל עוקפת את יעדי ההכנסות (כ-133 מיליארד ב-FY2028), הענן מגיע לשוליים של AWS וגוגל קלאוד והשוליים הכוללים עולים לכ-35%, והלקוחות ממשיכים לממן חלק מהבנייה כך שאין עוד דילול."
+ },
+ "engine_options": {
+  "country_risk": true,
+  "reason": "Oracle discloses revenue by region (FY2026 Americas $44.5B, EMEA $15.3B, Asia Pacific $7.6B) and by country (US $39.8B, UK $2.8B, Germany $2.0B, Japan $1.9B)."
+ },
+ "gaps": [
+  "The 8-K of 2026-10-28 (Investor Day, items 7.01/9.01) is not citable until 2026-10-30: any updated FY2028-FY2030 targets are outside this run; rerun with as_of 2026-10-30 or later to use them.",
+  "current_year_revenue is not adjusted by the track record: no guidance item covers only the unreported Q2-Q4 remainder.",
+  "Customer concentration (the OpenAI contract and its share of RPO) rests on press attribution (un_*), not on an issuer disclosure; the bear sizes it at about $27B of FY2028 OCI revenue.",
+  "FY2027 capex $90-95B and net cash capex at most $70B exist only in a press summary of the call: not used as a driver; sales_to_capital rests on own history.",
+  "OCI unit economics (installed GW, utilization, price, OCI margin) are not disclosed: mature_margin and terminal_roic rest on the company-wide own history.",
+  "tax_rate, cost_of_equity, terminal_growth and margin_convergence_years stay on the engine rule: the FY2026 effective tax rate (12.6%) is distorted by one-time gains.",
+  "Lease liabilities ($34.6B) and uncommenced leases ($288B) are not added as debt-like claims: their cost runs through the operating margin; the duration mismatch is a bear event and the key risk."
+ ]
+}

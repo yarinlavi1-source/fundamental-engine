@@ -1,0 +1,4360 @@
+{
+ "pack_version": 1,
+ "ticker": "MA",
+ "as_of": "2026-11-01",
+ "identity": {
+  "name": "Mastercard Inc",
+  "currency": "USD",
+  "exchange": "NYSE",
+  "security": "Mastercard Inc Class A common stock (MA), US primary listing; single listing, no ADR; Class B not listed",
+  "fiscal_year_end": "12-31",
+  "cik": "1141391",
+  "type": "mature_growth / stalwart (computed by classify_company from SEC companyfacts; the analyst confirms or overrides with reasons)",
+  "evidence_ids": [
+   "pf_10k_20260211"
+  ]
+ },
+ "sources": [
+  {
+   "id": "pf_10k_20260211",
+   "kind": "sec_filing",
+   "title": "Mastercard Inc 10-K filed 2026-02-11 (period 2025-12-31)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000013/ma-20251231.htm",
+   "date": "2026-02-11",
+   "independent": true,
+   "publisher": "Mastercard Inc (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_10q_20261029",
+   "kind": "sec_filing",
+   "title": "Mastercard Inc 10-Q filed 2026-10-29 (period 2026-09-30)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000124/ma-20260930.htm",
+   "date": "2026-10-29",
+   "independent": true,
+   "publisher": "Mastercard Inc (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_proxy_20260427",
+   "kind": "sec_filing",
+   "title": "Mastercard Inc DEF 14A filed 2026-04-27 (period 2026-04-27)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000021/ma-20260427.htm",
+   "date": "2026-04-27",
+   "independent": true,
+   "publisher": "Mastercard Inc (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_10q_20260730",
+   "kind": "sec_filing",
+   "title": "Mastercard Inc 10-Q filed 2026-07-30 (period 2026-06-30)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000083/ma-20260630.htm",
+   "date": "2026-07-30",
+   "independent": true,
+   "publisher": "Mastercard Inc (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_10q_20260430",
+   "kind": "sec_filing",
+   "title": "Mastercard Inc 10-Q filed 2026-04-30 (period 2026-03-31)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000031/ma-20260331.htm",
+   "date": "2026-04-30",
+   "independent": true,
+   "publisher": "Mastercard Inc (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20261029_1",
+   "kind": "release",
+   "title": "Mastercard Inc earnings 8-K filed 2026-10-29, exhibit ma09302026-exx991xearnings.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000122/ma09302026-exx991xearnings.htm",
+   "date": "2026-10-29",
+   "independent": true,
+   "publisher": "Mastercard Inc",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20260730_1",
+   "kind": "release",
+   "title": "Mastercard Inc earnings 8-K filed 2026-07-30, exhibit ma06302026-exx991xearnings.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000081/ma06302026-exx991xearnings.htm",
+   "date": "2026-07-30",
+   "independent": true,
+   "publisher": "Mastercard Inc",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20260430_1",
+   "kind": "release",
+   "title": "Mastercard Inc earnings 8-K filed 2026-04-30, exhibit ma03312026-exx991xearnings.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000029/ma03312026-exx991xearnings.htm",
+   "date": "2026-04-30",
+   "independent": true,
+   "publisher": "Mastercard Inc",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20260129_1",
+   "kind": "release",
+   "title": "Mastercard Inc earnings 8-K filed 2026-01-29, exhibit ma12312025-exx991xearnings.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000003/ma12312025-exx991xearnings.htm",
+   "date": "2026-01-29",
+   "independent": true,
+   "publisher": "Mastercard Inc",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20251030_1",
+   "kind": "release",
+   "title": "Mastercard Inc earnings 8-K filed 2025-10-30, exhibit ma09302025-exx991xearnings.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139125000191/ma09302025-exx991xearnings.htm",
+   "date": "2025-10-30",
+   "independent": true,
+   "publisher": "Mastercard Inc",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20250731_1",
+   "kind": "release",
+   "title": "Mastercard Inc earnings 8-K filed 2025-07-31, exhibit ma06302025-exx991xearnings.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139125000170/ma06302025-exx991xearnings.htm",
+   "date": "2025-07-31",
+   "independent": true,
+   "publisher": "Mastercard Inc",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20250501_1",
+   "kind": "release",
+   "title": "Mastercard Inc earnings 8-K filed 2025-05-01, exhibit ma03312025-exx991xearnings.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139125000088/ma03312025-exx991xearnings.htm",
+   "date": "2025-05-01",
+   "independent": true,
+   "publisher": "Mastercard Inc",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20250130_1",
+   "kind": "release",
+   "title": "Mastercard Inc earnings 8-K filed 2025-01-30, exhibit ma12312024-exx991xearnings.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139125000003/ma12312024-exx991xearnings.htm",
+   "date": "2025-01-30",
+   "independent": true,
+   "publisher": "Mastercard Inc",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_fred_dgs10",
+   "kind": "macro",
+   "title": "Market yield on US Treasury securities at 10-year constant maturity, percent, daily (FRED DGS10)",
+   "url": "https://fred.stlouisfed.org/series/DGS10",
+   "date": "2026-10-29",
+   "independent": true,
+   "publisher": "Federal Reserve Bank of St. Louis (FRED), from the Federal Reserve H.15",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_erp_implied",
+   "kind": "macro",
+   "title": "Damodaran implied ERP for the S&P 500 on 1 October 2026 (trailing 12 months, adjusted payout), treasury 5.29%",
+   "url": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/home.htm",
+   "date": "2026-10-01",
+   "independent": true,
+   "publisher": "Aswath Damodaran (NYU Stern), as saved in runs/macro/market_2026-10-20.json",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20210212",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Mastercard Inc: facts of the filing(s) of 2021-02-12",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001141391.json#filed=2021-02-12",
+   "date": "2021-02-12",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20220211",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Mastercard Inc: facts of the filing(s) of 2022-02-11",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001141391.json#filed=2022-02-11",
+   "date": "2022-02-11",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20230214",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Mastercard Inc: facts of the filing(s) of 2023-02-14",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001141391.json#filed=2023-02-14",
+   "date": "2023-02-14",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20240213",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Mastercard Inc: facts of the filing(s) of 2024-02-13",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001141391.json#filed=2024-02-13",
+   "date": "2024-02-13",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20250212",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Mastercard Inc: facts of the filing(s) of 2025-02-12",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001141391.json#filed=2025-02-12",
+   "date": "2025-02-12",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20260211",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Mastercard Inc: facts of the filing(s) of 2026-02-11",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001141391.json#filed=2026-02-11",
+   "date": "2026-02-11",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20250501",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Mastercard Inc: facts of the filing(s) of 2025-05-01",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001141391.json#filed=2025-05-01",
+   "date": "2025-05-01",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20250731",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Mastercard Inc: facts of the filing(s) of 2025-07-31",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001141391.json#filed=2025-07-31",
+   "date": "2025-07-31",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20251030",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Mastercard Inc: facts of the filing(s) of 2025-10-30",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001141391.json#filed=2025-10-30",
+   "date": "2025-10-30",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20260430",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Mastercard Inc: facts of the filing(s) of 2026-04-30",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001141391.json#filed=2026-04-30",
+   "date": "2026-04-30",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20260730",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Mastercard Inc: facts of the filing(s) of 2026-07-30",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001141391.json#filed=2026-07-30",
+   "date": "2026-07-30",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20261029",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Mastercard Inc: facts of the filing(s) of 2026-10-29",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001141391.json#filed=2026-10-29",
+   "date": "2026-10-29",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_peer_V",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of VISA INC. (V), a named competitor: fiscal years through FY2025",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001403161.json",
+   "date": "2025-11-06",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from V's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_peer_AXP",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of AMERICAN EXPRESS CO (AXP), a named competitor: fiscal years through FY2025",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000004962.json",
+   "date": "2026-02-06",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from AXP's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_peer_PYPL",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of PayPal Holdings, Inc. (PYPL), a named competitor: fiscal years through FY2025",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001633917.json",
+   "date": "2026-02-03",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from PYPL's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "dc_call_20261029",
+   "kind": "transcript",
+   "title": "Mastercard (MA) Q3 2026 earnings call transcript (Motley Fool copy), call of 2026-10-29 (copy of the issuer call, issuer webcast at investor.mastercard.com)",
+   "url": "https://www.fool.com/earnings/call-transcripts/2026/10/29/mastercard-ma-q3-2026-earnings-call-transcript/",
+   "date": "2026-10-29",
+   "independent": false,
+   "publisher": "The Motley Fool",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_v_rel_fy26q4",
+   "kind": "release",
+   "title": "Visa Inc (V), a named competitor: Reports Fiscal Fourth Quarter and Full-Year 2026 Results (8-K ex 99.1)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1403161/000140316126000126/q42026earningsrelease.htm",
+   "date": "2026-10-27",
+   "independent": true,
+   "publisher": "Visa Inc",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_pypl_q3_26",
+   "kind": "press",
+   "title": "PayPal Holdings (PYPL), a named competitor: Q3 2026 results as summarized by web search of the 8-K release and call coverage",
+   "url": "https://www.sec.gov/Archives/edgar/data/0001633917/000163391726000086/pypl3q-26earningsrelease.htm",
+   "date": "2026-10-27",
+   "independent": true,
+   "publisher": "PayPal Holdings (release); search summary",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_axp_q3_26",
+   "kind": "press",
+   "title": "American Express (AXP), a named competitor: Q3 2026 results as summarized by web search of release and press coverage",
+   "url": "https://s26.q4cdn.com/747928648/files/doc_earnings/2026/q3/earnings-result/Q3-2026-Earnings-Press-Release.pdf",
+   "date": "2026-10-23",
+   "independent": true,
+   "publisher": "American Express (release); search summary",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_upi_sep26",
+   "kind": "industry",
+   "title": "UPI (India, real-time account-to-account rail, alternative to MA) monthly transactions Aug/Sep 2026, NPCI data via press (date approximate: early October 2026)",
+   "url": "https://startuptalky.com/upi-transactions-september-2026/",
+   "date": "2026-10-01",
+   "independent": false,
+   "publisher": "StartupTalky / NPCI",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_ccca_congress",
+   "kind": "press",
+   "title": "S.3623 Credit Card Competition Act of 2026 - actions (Congress.gov, via search excerpt)",
+   "url": "https://www.congress.gov/bill/119th-congress/senate-bill/3623/actions",
+   "date": "2026-01-13",
+   "independent": true,
+   "publisher": "Congress.gov",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_ccca_paymentsdive",
+   "kind": "press",
+   "title": "CCCA seeks new path to passage (Payments Dive)",
+   "url": "https://www.paymentsdive.com/news/ccca-seeks-new-path-to-passage/813789/",
+   "date": "2026-03-13",
+   "independent": true,
+   "publisher": "Payments Dive",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_psr_court",
+   "kind": "press",
+   "title": "Visa, Mastercard and Revolut lose UK High Court challenge to PSR cross-border card fee cap power (Bloomberg/FStech)",
+   "url": "https://www.fstech.co.uk/fst/Visa_Mastercard_Revolut_Lose_Challenge_To_PSRs_Cross_Border_Card_Fee_Cap.php",
+   "date": "2026-01-15",
+   "independent": true,
+   "publisher": "FStech",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_genius_rules",
+   "kind": "press",
+   "title": "GENIUS Act implementation: Treasury proposed rule 17 Aug 2026, Fed proposal Federal Register 29 Sep 2026, OCC draft 2 Mar 2026",
+   "url": "https://www.federalregister.gov/documents/2026/09/29/2026-19860/implementing-the-federal-reserve-boards-responsibilities-under-the-genius-act",
+   "date": "2026-09-29",
+   "independent": true,
+   "publisher": "Federal Register",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_ma_bvnk_platform",
+   "kind": "company_ir",
+   "title": "Mastercard and BVNK launch Global Money Platform (press release, Oct 2026)",
+   "url": "https://www.mastercard.com/us/en/news-and-trends/press/2026/october/mastercard-and-bvnk-launch-global-money-platform-to-power-a-mult.html",
+   "date": "2026-10-15",
+   "independent": true,
+   "publisher": "Mastercard",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_ma_stablecoin_security",
+   "kind": "company_ir",
+   "title": "Mastercard brings risk intelligence to stablecoin payments (press release)",
+   "url": "https://www.mastercard.com/us/en/news-and-trends/press/2026/october/Mastercard-brings-risk-intelligence-to-stablecoin-payments.html",
+   "date": "2026-10-19",
+   "independent": true,
+   "publisher": "Mastercard",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_price_ib",
+   "kind": "price",
+   "title": "Interactive Brokers price snapshot MA (last 638.02, prior close 635.70; frozen after close)",
+   "url": "connector:Interactive_Brokers.get_price_snapshot",
+   "date": "2026-10-30",
+   "independent": true,
+   "publisher": "Interactive Brokers",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_hist_ib",
+   "kind": "price",
+   "title": "Interactive Brokers monthly price history MA, 5 years, with corporate actions",
+   "url": "connector:Interactive_Brokers.get_price_history",
+   "date": "2026-10-30",
+   "independent": true,
+   "publisher": "Interactive Brokers",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "uf_doj_visa_debit",
+   "kind": "press",
+   "title": "Visa loses bid to toss US debit lawsuit (DOJ v. Visa, SDNY; motion to dismiss denied 2025-06-23)",
+   "url": "https://www.paymentsdive.com/news/visa-loses-bid-to-toss-us-debit-lawsuit-DOJ-antitrust-payments-cards/751607/",
+   "date": "2025-06-24",
+   "independent": true,
+   "publisher": "Payments Dive",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "uf_eu_wero",
+   "kind": "press",
+   "title": "How close is the EU to break free from Visa and Mastercard's grip (Wero / EPI, digital euro)",
+   "url": "https://www.euronews.com/2026/03/03/how-close-is-the-eu-to-break-free-from-visa-and-mastercards-grip",
+   "date": "2026-03-03",
+   "independent": true,
+   "publisher": "Euronews",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "uf_pix_ebanx",
+   "kind": "industry",
+   "title": "EBANX: Pix projected about 45% of Brazil e-commerce by end-2026; India card shares Visa 43%, RuPay 33%, Mastercard about 20% (press release via AAP/Cision)",
+   "url": "https://www.aap.com.au/aapreleases/cision20260211ae85574",
+   "date": "2026-02-11",
+   "independent": false,
+   "publisher": "EBANX via AAP/Cision",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  }
+ ],
+ "facts": [
+  {
+   "id": "pf_revenue_fy2020",
+   "metric": "revenue",
+   "period": "FY2020",
+   "value": 15301000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210212"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_fy2020",
+   "metric": "operating_income",
+   "period": "FY2020",
+   "value": 8081000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210212"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_net_income_fy2020",
+   "metric": "net_income",
+   "period": "FY2020",
+   "value": 6411000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210212"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_fy2020",
+   "metric": "cfo",
+   "period": "FY2020",
+   "value": 7224000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210212"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_fy2020",
+   "metric": "capex",
+   "period": "FY2020",
+   "value": 339000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210212"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_fy2020",
+   "metric": "sbc",
+   "period": "FY2020",
+   "value": 254000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210212"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_d_and_a_fy2020",
+   "metric": "d_and_a",
+   "period": "FY2020",
+   "value": 580000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210212"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_eps_diluted_fy2020",
+   "metric": "eps_diluted",
+   "period": "FY2020",
+   "value": 6.37,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_cf_20210212"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_shares_diluted_wavg_fy2020",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2020",
+   "value": 1006000000.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_cf_20210212"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_buybacks_fy2020",
+   "metric": "buybacks",
+   "period": "FY2020",
+   "value": 4473000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210212"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_dividends_paid_fy2020",
+   "metric": "dividends_paid",
+   "period": "FY2020",
+   "value": 1605000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210212"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cash_fy2020",
+   "metric": "cash",
+   "period": "FY2020",
+   "value": 10113000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210212"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_total_assets_fy2020",
+   "metric": "total_assets",
+   "period": "FY2020",
+   "value": 33584000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210212"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_equity_fy2020",
+   "metric": "equity",
+   "period": "FY2020",
+   "value": 6391000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210212"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_long_term_debt_fy2020",
+   "metric": "long_term_debt",
+   "period": "FY2020",
+   "value": 12023000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210212"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_goodwill_fy2020",
+   "metric": "goodwill",
+   "period": "FY2020",
+   "value": 4960000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210212"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_receivables_fy2020",
+   "metric": "receivables",
+   "period": "FY2020",
+   "value": 2646000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210212"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_fy2021",
+   "metric": "revenue",
+   "period": "FY2021",
+   "value": 18884000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220211"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_fy2021",
+   "metric": "operating_income",
+   "period": "FY2021",
+   "value": 10082000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220211"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_net_income_fy2021",
+   "metric": "net_income",
+   "period": "FY2021",
+   "value": 8687000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220211"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_fy2021",
+   "metric": "cfo",
+   "period": "FY2021",
+   "value": 9463000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220211"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_fy2021",
+   "metric": "capex",
+   "period": "FY2021",
+   "value": 407000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220211"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_fy2021",
+   "metric": "sbc",
+   "period": "FY2021",
+   "value": 273000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220211"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_d_and_a_fy2021",
+   "metric": "d_and_a",
+   "period": "FY2021",
+   "value": 726000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220211"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_eps_diluted_fy2021",
+   "metric": "eps_diluted",
+   "period": "FY2021",
+   "value": 8.76,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_cf_20220211"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_shares_diluted_wavg_fy2021",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2021",
+   "value": 992000000.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_cf_20220211"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_buybacks_fy2021",
+   "metric": "buybacks",
+   "period": "FY2021",
+   "value": 5904000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220211"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_dividends_paid_fy2021",
+   "metric": "dividends_paid",
+   "period": "FY2021",
+   "value": 1741000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220211"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cash_fy2021",
+   "metric": "cash",
+   "period": "FY2021",
+   "value": 7421000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220211"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_total_assets_fy2021",
+   "metric": "total_assets",
+   "period": "FY2021",
+   "value": 37669000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220211"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_equity_fy2021",
+   "metric": "equity",
+   "period": "FY2021",
+   "value": 7312000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220211"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_long_term_debt_fy2021",
+   "metric": "long_term_debt",
+   "period": "FY2021",
+   "value": 13109000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220211"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_goodwill_fy2021",
+   "metric": "goodwill",
+   "period": "FY2021",
+   "value": 7662000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220211"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_receivables_fy2021",
+   "metric": "receivables",
+   "period": "FY2021",
+   "value": 3006000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220211"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_fy2022",
+   "metric": "revenue",
+   "period": "FY2022",
+   "value": 22237000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230214"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_fy2022",
+   "metric": "operating_income",
+   "period": "FY2022",
+   "value": 12264000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230214"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_net_income_fy2022",
+   "metric": "net_income",
+   "period": "FY2022",
+   "value": 9930000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230214"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_fy2022",
+   "metric": "cfo",
+   "period": "FY2022",
+   "value": 11195000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230214"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_fy2022",
+   "metric": "capex",
+   "period": "FY2022",
+   "value": 442000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230214"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_fy2022",
+   "metric": "sbc",
+   "period": "FY2022",
+   "value": 295000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230214"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_d_and_a_fy2022",
+   "metric": "d_and_a",
+   "period": "FY2022",
+   "value": 750000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230214"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_eps_diluted_fy2022",
+   "metric": "eps_diluted",
+   "period": "FY2022",
+   "value": 10.22,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_cf_20230214"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_shares_diluted_wavg_fy2022",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2022",
+   "value": 971000000.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_cf_20230214"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_buybacks_fy2022",
+   "metric": "buybacks",
+   "period": "FY2022",
+   "value": 8753000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230214"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_dividends_paid_fy2022",
+   "metric": "dividends_paid",
+   "period": "FY2022",
+   "value": 1903000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230214"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cash_fy2022",
+   "metric": "cash",
+   "period": "FY2022",
+   "value": 7008000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230214"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_total_assets_fy2022",
+   "metric": "total_assets",
+   "period": "FY2022",
+   "value": 38724000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230214"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_equity_fy2022",
+   "metric": "equity",
+   "period": "FY2022",
+   "value": 6298000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230214"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_long_term_debt_fy2022",
+   "metric": "long_term_debt",
+   "period": "FY2022",
+   "value": 13749000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230214"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_goodwill_fy2022",
+   "metric": "goodwill",
+   "period": "FY2022",
+   "value": 7522000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230214"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_receivables_fy2022",
+   "metric": "receivables",
+   "period": "FY2022",
+   "value": 3425000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230214"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_fy2023",
+   "metric": "revenue",
+   "period": "FY2023",
+   "value": 25098000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240213"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_fy2023",
+   "metric": "operating_income",
+   "period": "FY2023",
+   "value": 14008000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240213"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_net_income_fy2023",
+   "metric": "net_income",
+   "period": "FY2023",
+   "value": 11195000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240213"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_fy2023",
+   "metric": "cfo",
+   "period": "FY2023",
+   "value": 11980000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240213"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_fy2023",
+   "metric": "capex",
+   "period": "FY2023",
+   "value": 371000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240213"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_fy2023",
+   "metric": "sbc",
+   "period": "FY2023",
+   "value": 460000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240213"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_d_and_a_fy2023",
+   "metric": "d_and_a",
+   "period": "FY2023",
+   "value": 799000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240213"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_eps_diluted_fy2023",
+   "metric": "eps_diluted",
+   "period": "FY2023",
+   "value": 11.83,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_cf_20240213"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_shares_diluted_wavg_fy2023",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2023",
+   "value": 946000000.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_cf_20240213"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_buybacks_fy2023",
+   "metric": "buybacks",
+   "period": "FY2023",
+   "value": 9032000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240213"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_dividends_paid_fy2023",
+   "metric": "dividends_paid",
+   "period": "FY2023",
+   "value": 2158000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240213"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cash_fy2023",
+   "metric": "cash",
+   "period": "FY2023",
+   "value": 8588000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240213"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_total_assets_fy2023",
+   "metric": "total_assets",
+   "period": "FY2023",
+   "value": 42448000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240213"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_equity_fy2023",
+   "metric": "equity",
+   "period": "FY2023",
+   "value": 6929000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240213"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_long_term_debt_fy2023",
+   "metric": "long_term_debt",
+   "period": "FY2023",
+   "value": 14344000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240213"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_goodwill_fy2023",
+   "metric": "goodwill",
+   "period": "FY2023",
+   "value": 7660000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240213"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_receivables_fy2023",
+   "metric": "receivables",
+   "period": "FY2023",
+   "value": 4060000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240213"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_fy2024",
+   "metric": "revenue",
+   "period": "FY2024",
+   "value": 28167000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250212"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_fy2024",
+   "metric": "operating_income",
+   "period": "FY2024",
+   "value": 15582000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250212"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_net_income_fy2024",
+   "metric": "net_income",
+   "period": "FY2024",
+   "value": 12874000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250212"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_fy2024",
+   "metric": "cfo",
+   "period": "FY2024",
+   "value": 14780000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250212"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_fy2024",
+   "metric": "capex",
+   "period": "FY2024",
+   "value": 474000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250212"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_fy2024",
+   "metric": "sbc",
+   "period": "FY2024",
+   "value": 526000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250212"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_d_and_a_fy2024",
+   "metric": "d_and_a",
+   "period": "FY2024",
+   "value": 897000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250212"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_eps_diluted_fy2024",
+   "metric": "eps_diluted",
+   "period": "FY2024",
+   "value": 13.89,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_cf_20250212"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_shares_diluted_wavg_fy2024",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2024",
+   "value": 927000000.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_cf_20250212"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_buybacks_fy2024",
+   "metric": "buybacks",
+   "period": "FY2024",
+   "value": 11035000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250212"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_dividends_paid_fy2024",
+   "metric": "dividends_paid",
+   "period": "FY2024",
+   "value": 2448000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250212"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cash_fy2024",
+   "metric": "cash",
+   "period": "FY2024",
+   "value": 8442000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250212"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_total_assets_fy2024",
+   "metric": "total_assets",
+   "period": "FY2024",
+   "value": 48081000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250212"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_equity_fy2024",
+   "metric": "equity",
+   "period": "FY2024",
+   "value": 6485000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250212"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_long_term_debt_fy2024",
+   "metric": "long_term_debt",
+   "period": "FY2024",
+   "value": 17476000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250212"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_goodwill_fy2024",
+   "metric": "goodwill",
+   "period": "FY2024",
+   "value": 9193000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250212"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_receivables_fy2024",
+   "metric": "receivables",
+   "period": "FY2024",
+   "value": 3773000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250212"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_fy2025",
+   "metric": "revenue",
+   "period": "FY2025",
+   "value": 32791000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_fy2025",
+   "metric": "operating_income",
+   "period": "FY2025",
+   "value": 18897000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_net_income_fy2025",
+   "metric": "net_income",
+   "period": "FY2025",
+   "value": 14968000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_fy2025",
+   "metric": "cfo",
+   "period": "FY2025",
+   "value": 17648000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_fy2025",
+   "metric": "capex",
+   "period": "FY2025",
+   "value": 489000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_fy2025",
+   "metric": "sbc",
+   "period": "FY2025",
+   "value": 597000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_d_and_a_fy2025",
+   "metric": "d_and_a",
+   "period": "FY2025",
+   "value": 1143000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_eps_diluted_fy2025",
+   "metric": "eps_diluted",
+   "period": "FY2025",
+   "value": 16.52,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_cf_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_shares_diluted_wavg_fy2025",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2025",
+   "value": 906000000.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_cf_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_buybacks_fy2025",
+   "metric": "buybacks",
+   "period": "FY2025",
+   "value": 11727000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_dividends_paid_fy2025",
+   "metric": "dividends_paid",
+   "period": "FY2025",
+   "value": 2756000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cash_fy2025",
+   "metric": "cash",
+   "period": "FY2025",
+   "value": 10566000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_total_assets_fy2025",
+   "metric": "total_assets",
+   "period": "FY2025",
+   "value": 54157000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_equity_fy2025",
+   "metric": "equity",
+   "period": "FY2025",
+   "value": 7737000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_long_term_debt_fy2025",
+   "metric": "long_term_debt",
+   "period": "FY2025",
+   "value": 18251000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_goodwill_fy2025",
+   "metric": "goodwill",
+   "period": "FY2025",
+   "value": 9560000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_receivables_fy2025",
+   "metric": "receivables",
+   "period": "FY2025",
+   "value": 4609000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_q_2024_12_31",
+   "metric": "revenue",
+   "period": "Q@2024-12-31",
+   "value": 7489000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250212"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_operating_income_q_2024_12_31",
+   "metric": "operating_income",
+   "period": "Q@2024-12-31",
+   "value": 3938000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250212"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_net_income_q_2024_12_31",
+   "metric": "net_income",
+   "period": "Q@2024-12-31",
+   "value": 3342000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250212"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_sbc_q_2024_12_31",
+   "metric": "sbc",
+   "period": "Q@2024-12-31",
+   "value": 108000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250212"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_cfo_q_2024_12_31",
+   "metric": "cfo",
+   "period": "Q@2024-12-31",
+   "value": 4834000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250212"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_capex_q_2024_12_31",
+   "metric": "capex",
+   "period": "Q@2024-12-31",
+   "value": 95000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250212"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_revenue_q_2025_03_31",
+   "metric": "revenue",
+   "period": "Q@2025-03-31",
+   "value": 7250000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250501"
+   ],
+   "period_end": "2025-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_q_2025_03_31",
+   "metric": "operating_income",
+   "period": "Q@2025-03-31",
+   "value": 4149000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250501"
+   ],
+   "period_end": "2025-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_net_income_q_2025_03_31",
+   "metric": "net_income",
+   "period": "Q@2025-03-31",
+   "value": 3280000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250501"
+   ],
+   "period_end": "2025-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_q_2025_03_31",
+   "metric": "sbc",
+   "period": "Q@2025-03-31",
+   "value": 129000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250501"
+   ],
+   "period_end": "2025-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_q_2025_03_31",
+   "metric": "cfo",
+   "period": "Q@2025-03-31",
+   "value": 2380000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250501"
+   ],
+   "period_end": "2025-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_q_2025_03_31",
+   "metric": "capex",
+   "period": "Q@2025-03-31",
+   "value": 159000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250501"
+   ],
+   "period_end": "2025-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_q_2025_06_30",
+   "metric": "revenue",
+   "period": "Q@2025-06-30",
+   "value": 8133000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250731"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_q_2025_06_30",
+   "metric": "operating_income",
+   "period": "Q@2025-06-30",
+   "value": 4777000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250731"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_net_income_q_2025_06_30",
+   "metric": "net_income",
+   "period": "Q@2025-06-30",
+   "value": 3701000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250731"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_q_2025_06_30",
+   "metric": "sbc",
+   "period": "Q@2025-06-30",
+   "value": 179000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250731"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_q_2025_06_30",
+   "metric": "cfo",
+   "period": "Q@2025-06-30",
+   "value": 4603000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250731"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_q_2025_06_30",
+   "metric": "capex",
+   "period": "Q@2025-06-30",
+   "value": 40000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250731"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_q_2025_09_30",
+   "metric": "revenue",
+   "period": "Q@2025-09-30",
+   "value": 8602000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20251030"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_q_2025_09_30",
+   "metric": "operating_income",
+   "period": "Q@2025-09-30",
+   "value": 5061000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20251030"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_net_income_q_2025_09_30",
+   "metric": "net_income",
+   "period": "Q@2025-09-30",
+   "value": 3927000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20251030"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_q_2025_09_30",
+   "metric": "sbc",
+   "period": "Q@2025-09-30",
+   "value": 177000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20251030"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_q_2025_09_30",
+   "metric": "cfo",
+   "period": "Q@2025-09-30",
+   "value": 5663000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20251030"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_q_2025_09_30",
+   "metric": "capex",
+   "period": "Q@2025-09-30",
+   "value": 178000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20251030"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_q_2025_12_31",
+   "metric": "revenue",
+   "period": "Q@2025-12-31",
+   "value": 8806000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_operating_income_q_2025_12_31",
+   "metric": "operating_income",
+   "period": "Q@2025-12-31",
+   "value": 4910000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_net_income_q_2025_12_31",
+   "metric": "net_income",
+   "period": "Q@2025-12-31",
+   "value": 4060000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_sbc_q_2025_12_31",
+   "metric": "sbc",
+   "period": "Q@2025-12-31",
+   "value": 112000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_cfo_q_2025_12_31",
+   "metric": "cfo",
+   "period": "Q@2025-12-31",
+   "value": 5002000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_capex_q_2025_12_31",
+   "metric": "capex",
+   "period": "Q@2025-12-31",
+   "value": 112000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_revenue_q_2026_03_31",
+   "metric": "revenue",
+   "period": "Q@2026-03-31",
+   "value": 8398000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260430"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_q_2026_03_31",
+   "metric": "operating_income",
+   "period": "Q@2026-03-31",
+   "value": 4907000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260430"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_net_income_q_2026_03_31",
+   "metric": "net_income",
+   "period": "Q@2026-03-31",
+   "value": 3882000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260430"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_q_2026_03_31",
+   "metric": "sbc",
+   "period": "Q@2026-03-31",
+   "value": 136000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260430"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_q_2026_03_31",
+   "metric": "cfo",
+   "period": "Q@2026-03-31",
+   "value": 2999000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260430"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_q_2026_03_31",
+   "metric": "capex",
+   "period": "Q@2026-03-31",
+   "value": 154000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260430"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_q_2026_06_30",
+   "metric": "revenue",
+   "period": "Q@2026-06-30",
+   "value": 9277000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260730"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_q_2026_06_30",
+   "metric": "operating_income",
+   "period": "Q@2026-06-30",
+   "value": 5587000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260730"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_net_income_q_2026_06_30",
+   "metric": "net_income",
+   "period": "Q@2026-06-30",
+   "value": 4388000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260730"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_q_2026_06_30",
+   "metric": "sbc",
+   "period": "Q@2026-06-30",
+   "value": 190000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260730"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_q_2026_06_30",
+   "metric": "cfo",
+   "period": "Q@2026-06-30",
+   "value": 3773000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260730"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_q_2026_06_30",
+   "metric": "capex",
+   "period": "Q@2026-06-30",
+   "value": 291000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260730"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_q_2026_09_30",
+   "metric": "revenue",
+   "period": "Q@2026-09-30",
+   "value": 9807000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_q_2026_09_30",
+   "metric": "operating_income",
+   "period": "Q@2026-09-30",
+   "value": 5862000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_net_income_q_2026_09_30",
+   "metric": "net_income",
+   "period": "Q@2026-09-30",
+   "value": 4628000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_q_2026_09_30",
+   "metric": "sbc",
+   "period": "Q@2026-09-30",
+   "value": 199000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_q_2026_09_30",
+   "metric": "cfo",
+   "period": "Q@2026-09-30",
+   "value": 5087000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_q_2026_09_30",
+   "metric": "capex",
+   "period": "Q@2026-09-30",
+   "value": 222000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_gdv_q3",
+   "metric": "gross dollar volume (Mastercard-branded, USD)",
+   "period": "Q3 2026",
+   "value": 2952,
+   "unit": "USD bn",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_gdv_g_q3",
+   "metric": "gross dollar volume growth, local currency",
+   "period": "Q3 2026",
+   "value": 0.07,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_gdv_ytd",
+   "metric": "gross dollar volume (Mastercard-branded, USD)",
+   "period": "9M 2026",
+   "value": 8523,
+   "unit": "USD bn",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_pv_g_q3",
+   "metric": "purchase volume growth, local currency",
+   "period": "Q3 2026",
+   "value": 0.089,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_xb_g_q3",
+   "metric": "cross-border volume growth, local currency",
+   "period": "Q3 2026",
+   "value": 0.11,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_xb_g_ytd",
+   "metric": "cross-border volume growth, local currency",
+   "period": "9M 2026",
+   "value": 0.12,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_swt_g_q3",
+   "metric": "switched transactions growth",
+   "period": "Q3 2026",
+   "value": 0.09,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_cards_q3",
+   "metric": "Mastercard-branded cards (operating performance table)",
+   "period": "2026-09-30",
+   "value": 3539,
+   "unit": "million",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_nr_pn_q3",
+   "metric": "net revenue, payment network",
+   "period": "Q3 2026",
+   "value": 5749,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_nr_vas_q3",
+   "metric": "net revenue, value-added services and solutions",
+   "period": "Q3 2026",
+   "value": 4058,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_nr_vas_g_q3",
+   "metric": "value-added services and solutions net revenue growth (as reported = currency-neutral)",
+   "period": "Q3 2026",
+   "value": 0.19,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1",
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_nr_pn_g_q3",
+   "metric": "payment network net revenue growth (as reported = currency-neutral)",
+   "period": "Q3 2026",
+   "value": 0.11,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1",
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_nr_g_q3",
+   "metric": "net revenue growth (as reported = currency-neutral)",
+   "period": "Q3 2026",
+   "value": 0.14,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_nr_g_ytd_cn",
+   "metric": "net revenue growth, currency-neutral",
+   "period": "9M 2026",
+   "value": 0.13,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_dom_assess_q3",
+   "metric": "domestic assessments",
+   "period": "Q3 2026",
+   "value": 3211,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_xb_assess_q3",
+   "metric": "cross-border assessments",
+   "period": "Q3 2026",
+   "value": 3841,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_tp_assess_q3",
+   "metric": "transaction processing assessments",
+   "period": "Q3 2026",
+   "value": 4781,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_oth_assess_q3",
+   "metric": "other network assessments",
+   "period": "Q3 2026",
+   "value": 285,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_rebates_q3",
+   "metric": "payment network rebates and incentives (netted in payment network revenue)",
+   "period": "Q3 2026",
+   "value": 6369,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_rebates_g_q3",
+   "metric": "rebates and incentives growth (as reported = currency-neutral)",
+   "period": "Q3 2026",
+   "value": 0.18,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1",
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_rebates_ytd",
+   "metric": "payment network rebates and incentives",
+   "period": "9M 2026",
+   "value": 18005,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_rebates_g_ytd",
+   "metric": "rebates and incentives growth, as reported",
+   "period": "9M 2026",
+   "value": 0.21,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1",
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_rebates_share_q3",
+   "metric": "rebates and incentives as share of gross payment network assessments (rebates / (network net revenue + rebates))",
+   "period": "Q3 2026",
+   "value": 0.526,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "derived"
+  },
+  {
+   "id": "dc_f_rebates_fy25",
+   "metric": "payment network rebates and incentives",
+   "period": "FY2025",
+   "value": 20522,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_rebates_share_fy25",
+   "metric": "rebates and incentives as share of gross payment network assessments (rebates / (network net revenue + rebates))",
+   "period": "FY2025",
+   "value": 0.513,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "dc_f_amort_incent_ytd",
+   "metric": "amortization of customer incentives (cash flow add-back)",
+   "period": "9M 2026",
+   "value": 2030,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_prepaid_chg_ytd",
+   "metric": "change in prepaid expenses (customer incentive prepayments, cash outflow)",
+   "period": "9M 2026",
+   "value": -4688,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_opm_gaap_q3",
+   "metric": "operating margin, GAAP",
+   "period": "Q3 2026",
+   "value": 0.598,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_opm_adj_q3",
+   "metric": "operating margin, adjusted (ex special items)",
+   "period": "Q3 2026",
+   "value": 0.605,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_opm_adj_ytd",
+   "metric": "operating margin, adjusted (ex special items)",
+   "period": "9M 2026",
+   "value": 0.608,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_opex_adj_g_q3",
+   "metric": "adjusted operating expense growth (1 ppt from acquisitions)",
+   "period": "Q3 2026",
+   "value": 0.12,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_eps_adj_q3",
+   "metric": "adjusted diluted EPS",
+   "period": "Q3 2026",
+   "value": 5.31,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_litprov_q3",
+   "metric": "provision for litigation (settlements with U.S. merchant class opt-outs)",
+   "period": "Q3 2026",
+   "value": 74,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_rel_20261029_1",
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_litprov_ytd",
+   "metric": "provision for litigation",
+   "period": "9M 2026",
+   "value": 156,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_rel_20261029_1",
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_litprov_ytd25",
+   "metric": "provision for litigation",
+   "period": "9M 2025",
+   "value": 330,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_accr_lit",
+   "metric": "accrued litigation (balance sheet)",
+   "period": "2026-09-30",
+   "value": 262,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_rel_20261029_1",
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_accr_lit_fy25",
+   "metric": "accrued litigation (balance sheet)",
+   "period": "2025-12-31",
+   "value": 800,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_restructuring_q1",
+   "metric": "restructuring charge (pre-tax, excluded from adjusted)",
+   "period": "Q1 2026",
+   "value": 202,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_bvnk",
+   "metric": "BVNK acquisition cash consideration (closed 2026-08-03); contingent consideration up to $300m",
+   "period": "Q3 2026",
+   "value": 1400,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_cash",
+   "metric": "cash and cash equivalents",
+   "period": "2026-09-30",
+   "value": 10147,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_restr_cash",
+   "metric": "restricted cash and restricted security deposits held for customers (not liquidity)",
+   "period": "2026-09-30",
+   "value": 2795,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "derived"
+  },
+  {
+   "id": "dc_f_debt_st",
+   "metric": "short-term debt",
+   "period": "2026-09-30",
+   "value": 1749,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_debt_lt",
+   "metric": "long-term debt",
+   "period": "2026-09-30",
+   "value": 22189,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_buyback_q3",
+   "metric": "share repurchases (5.3m shares)",
+   "period": "Q3 2026",
+   "value": 3000,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_buyback_remaining",
+   "metric": "remaining repurchase authorization at 2026-09-30",
+   "period": "2026-09-30",
+   "value": 5600,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_shares_out",
+   "metric": "shares outstanding, Class A (+7m Class B)",
+   "period": "2026-09-30",
+   "value": 866,
+   "unit": "million",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_top5_fy25",
+   "metric": "net revenue from five largest customers (no single customer above 10%)",
+   "period": "FY2025",
+   "value": 6900,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_nr_pn_fy25",
+   "metric": "net revenue, payment network",
+   "period": "FY2025",
+   "value": 19476,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_nr_vas_fy25",
+   "metric": "net revenue, value-added services and solutions",
+   "period": "FY2025",
+   "value": 13315,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_xb_assess_fy25",
+   "metric": "cross-border assessments",
+   "period": "FY2025",
+   "value": 12021,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_capex_ytd",
+   "metric": "purchases of property and equipment plus capitalized software",
+   "period": "9M 2026",
+   "value": 1141,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "derived"
+  },
+  {
+   "id": "mc_f_rev_americas_fy25",
+   "metric": "revenue_by_region:Americas (US, Canada, Latin America)",
+   "period": "FY2025",
+   "value": 14044,
+   "unit": "USD millions",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_f_rev_apemea_fy25",
+   "metric": "revenue_by_region:Asia Pacific, Europe, Middle East and Africa",
+   "period": "FY2025",
+   "value": 18747,
+   "unit": "USD millions",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_f_rev_us_share_fy25",
+   "metric": "revenue_by_region:United States share of net revenue",
+   "period": "FY2025",
+   "value": 29,
+   "unit": "percent",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_f_rev_americas_9m26",
+   "metric": "revenue_by_region:Americas (US, Canada, Latin America)",
+   "period": "9M2026",
+   "value": 11754,
+   "unit": "USD millions",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_f_rev_apemea_9m26",
+   "metric": "revenue_by_region:Asia Pacific, Europe, Middle East and Africa",
+   "period": "9M2026",
+   "value": 15728,
+   "unit": "USD millions",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_f_rev_americas_9m25",
+   "metric": "revenue_by_region:Americas (US, Canada, Latin America)",
+   "period": "9M2025",
+   "value": 10207,
+   "unit": "USD millions",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_f_rev_apemea_9m25",
+   "metric": "revenue_by_region:Asia Pacific, Europe, Middle East and Africa",
+   "period": "9M2025",
+   "value": 13778,
+   "unit": "USD millions",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_f_lla_us_fy25",
+   "metric": "long_lived_assets:United States (property, equipment and ROU assets, net)",
+   "period": "FY2025",
+   "value": 1168,
+   "unit": "USD millions",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_f_lla_other_fy25",
+   "metric": "long_lived_assets:Other countries (property, equipment and ROU assets, net)",
+   "period": "FY2025",
+   "value": 1135,
+   "unit": "USD millions",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q3_2026",
+   "metric": "eps_diluted",
+   "period": "Q3 2026",
+   "value": 5.28,
+   "unit": "USD/share",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_9m_2026",
+   "metric": "eps_diluted",
+   "period": "9M 2026",
+   "value": 14.59,
+   "unit": "USD/share",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_ttm_2026q3",
+   "metric": "eps_diluted",
+   "period": "TTM to 2026-09-30",
+   "value": 19.11,
+   "unit": "USD/share",
+   "source_ids": [
+    "pf_10q_20261029",
+    "pf_10k_20260211"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_cfo_9m_2026",
+   "metric": "operating_cash_flow",
+   "period": "9M 2026",
+   "value": 11859000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_sbc_9m_2026",
+   "metric": "share_based_compensation",
+   "period": "9M 2026",
+   "value": 525000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_capex_ppe_9m_2026",
+   "metric": "capex_ppe",
+   "period": "9M 2026",
+   "value": 667000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_capsw_9m_2026",
+   "metric": "capitalized_software",
+   "period": "9M 2026",
+   "value": 474000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_capsw_fy2025",
+   "metric": "capitalized_software",
+   "period": "FY2025",
+   "value": 726000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_sbc_fy2025",
+   "metric": "share_based_compensation",
+   "period": "FY2025",
+   "value": 597000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_debt_2026q3",
+   "metric": "total_debt",
+   "period": "2026-09-30",
+   "value": 23938000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_restricted_cash_2026q3",
+   "metric": "restricted_cash",
+   "period": "2026-09-30",
+   "value": 564000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_diluted_q3_2026",
+   "metric": "shares_diluted",
+   "period": "Q3 2026",
+   "value": 876000000.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  }
+ ],
+ "guidance": [
+  {
+   "id": "dc_g_nr_fy26",
+   "metric": "net revenue growth, currency-neutral, ex inorganic (management: 'high end of low double digits'; 10-13% reading of the words, 12-13% for high end)",
+   "period": "FY2026",
+   "low": 0.12,
+   "high": 0.13,
+   "unit": "ratio y/y",
+   "issued": "2026-10-29",
+   "source_id": "dc_call_20261029"
+  },
+  {
+   "id": "dc_g_nr_q4",
+   "metric": "net revenue growth, currency-neutral (management: 'high end of low double digits')",
+   "period": "Q4 2026",
+   "low": 0.12,
+   "high": 0.13,
+   "unit": "ratio y/y",
+   "issued": "2026-10-29",
+   "source_id": "dc_call_20261029"
+  },
+  {
+   "id": "dc_g_opex_fy26",
+   "metric": "operating expense growth, currency-neutral (management: 'low double digits', in line with previous)",
+   "period": "FY2026",
+   "low": 0.1,
+   "high": 0.13,
+   "unit": "ratio y/y",
+   "issued": "2026-10-29",
+   "source_id": "dc_call_20261029"
+  },
+  {
+   "id": "dc_g_opex_q4",
+   "metric": "operating expense growth (management: 'high end of low double digits'; 1 ppt drag from acquisitions)",
+   "period": "Q4 2026",
+   "low": 0.12,
+   "high": 0.13,
+   "unit": "ratio y/y",
+   "issued": "2026-10-29",
+   "source_id": "dc_call_20261029"
+  },
+  {
+   "id": "dc_g_tax_fy26",
+   "metric": "non-GAAP effective tax rate",
+   "period": "FY2026",
+   "low": 0.2,
+   "high": 0.21,
+   "unit": "ratio",
+   "issued": "2026-10-29",
+   "source_id": "dc_call_20261029"
+  },
+  {
+   "id": "dc_g_tax_q4",
+   "metric": "non-GAAP effective tax rate",
+   "period": "Q4 2026",
+   "low": 0.2,
+   "high": 0.21,
+   "unit": "ratio",
+   "issued": "2026-10-29",
+   "source_id": "dc_call_20261029"
+  },
+  {
+   "id": "dc_g_oie_q4",
+   "metric": "other income (expense), ex equity investment gains/losses (expense)",
+   "period": "Q4 2026",
+   "low": -115,
+   "high": -115,
+   "unit": "USD m",
+   "issued": "2026-10-29",
+   "source_id": "dc_call_20261029"
+  },
+  {
+   "id": "dc_g_fx_rev_fy26",
+   "metric": "FX impact on net revenue growth (tailwind)",
+   "period": "FY2026",
+   "low": 0.01,
+   "high": 0.01,
+   "unit": "ppt of growth",
+   "issued": "2026-10-29",
+   "source_id": "dc_call_20261029"
+  },
+  {
+   "id": "dc_g_fx_rev_q4",
+   "metric": "FX impact on net revenue growth (headwind)",
+   "period": "Q4 2026",
+   "low": -0.01,
+   "high": -0.01,
+   "unit": "ppt of growth",
+   "issued": "2026-10-29",
+   "source_id": "dc_call_20261029"
+  },
+  {
+   "id": "dc_g_fx_opex_fy26",
+   "metric": "FX impact on operating expense growth (headwind)",
+   "period": "FY2026",
+   "low": 0.005,
+   "high": 0.01,
+   "unit": "ppt of growth",
+   "issued": "2026-10-29",
+   "source_id": "dc_call_20261029"
+  },
+  {
+   "id": "dc_g_fx_opex_q4",
+   "metric": "FX impact on operating expense growth (tailwind, lowers expense growth)",
+   "period": "Q4 2026",
+   "low": -0.005,
+   "high": -0.005,
+   "unit": "ppt of growth",
+   "issued": "2026-10-29",
+   "source_id": "dc_call_20261029"
+  }
+ ],
+ "kpis": [
+  {
+   "id": "dc_k_gdv",
+   "name": "Gross dollar volume (USD bn)",
+   "period": "Q3 2026",
+   "value": 2952,
+   "unit": "USD bn",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ]
+  },
+  {
+   "id": "dc_k_gdv_g",
+   "name": "GDV growth, local currency",
+   "period": "Q3 2026",
+   "value": 0.07,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ]
+  },
+  {
+   "id": "dc_k_xb_g",
+   "name": "Cross-border volume growth, local currency",
+   "period": "Q3 2026",
+   "value": 0.11,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ]
+  },
+  {
+   "id": "dc_k_swt_g",
+   "name": "Switched transactions growth",
+   "period": "Q3 2026",
+   "value": 0.09,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ]
+  },
+  {
+   "id": "dc_k_purch_trans",
+   "name": "Purchase transactions (Mastercard-branded)",
+   "period": "Q3 2026",
+   "value": 59480,
+   "unit": "million",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ]
+  },
+  {
+   "id": "dc_k_cards",
+   "name": "Mastercard-branded cards",
+   "period": "2026-09-30",
+   "value": 3539,
+   "unit": "million",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ]
+  },
+  {
+   "id": "dc_k_us_gdv_g",
+   "name": "U.S. GDV growth (local = USD)",
+   "period": "Q3 2026",
+   "value": 0.059,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ]
+  },
+  {
+   "id": "dc_k_us_debit_gdv_g",
+   "name": "U.S. debit GDV growth",
+   "period": "Q3 2026",
+   "value": 0.014,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ]
+  },
+  {
+   "id": "dc_k_europe_gdv_g",
+   "name": "Europe GDV growth, local currency",
+   "period": "Q3 2026",
+   "value": 0.083,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ]
+  },
+  {
+   "id": "dc_k_latam_gdv_g",
+   "name": "Latin America GDV growth, local currency",
+   "period": "Q3 2026",
+   "value": 0.135,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ]
+  },
+  {
+   "id": "dc_k_apmea_gdv_g",
+   "name": "APMEA GDV growth, local currency",
+   "period": "Q3 2026",
+   "value": 0.058,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ]
+  },
+  {
+   "id": "dc_k_rebates_g",
+   "name": "Rebates and incentives growth",
+   "period": "Q3 2026",
+   "value": 0.18,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_10q_20261029"
+   ]
+  },
+  {
+   "id": "dc_k_xb_assess_g",
+   "name": "Cross-border assessments growth (as reported; currency-neutral 16%)",
+   "period": "Q3 2026",
+   "value": 0.16,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_10q_20261029"
+   ]
+  },
+  {
+   "id": "dc_k_tp_assess_g",
+   "name": "Transaction processing assessments growth",
+   "period": "Q3 2026",
+   "value": 0.14,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_10q_20261029"
+   ]
+  },
+  {
+   "id": "dc_k_dom_assess_g",
+   "name": "Domestic assessments growth (currency-neutral 13%)",
+   "period": "Q3 2026",
+   "value": 0.14,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_10q_20261029"
+   ]
+  }
+ ],
+ "segments": [
+  {
+   "id": "dc_s_pn_q3_26",
+   "name": "Payment network",
+   "period": "Q3 2026",
+   "revenue": 5749000000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261029"
+   ]
+  },
+  {
+   "id": "dc_s_vas_q3_26",
+   "name": "Value-added services and solutions",
+   "period": "Q3 2026",
+   "revenue": 4058000000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261029"
+   ]
+  },
+  {
+   "id": "dc_s_pn_q3_25",
+   "name": "Payment network",
+   "period": "Q3 2025",
+   "revenue": 5179000000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261029"
+   ]
+  },
+  {
+   "id": "dc_s_vas_q3_25",
+   "name": "Value-added services and solutions",
+   "period": "Q3 2025",
+   "revenue": 3423000000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261029"
+   ]
+  },
+  {
+   "id": "dc_s_pn_9m_26",
+   "name": "Payment network",
+   "period": "9M 2026",
+   "revenue": 16148000000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261029"
+   ]
+  },
+  {
+   "id": "dc_s_vas_9m_26",
+   "name": "Value-added services and solutions",
+   "period": "9M 2026",
+   "revenue": 11334000000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261029"
+   ]
+  },
+  {
+   "id": "dc_s_pn_fy25",
+   "name": "Payment network",
+   "period": "FY2025",
+   "revenue": 19476000000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ]
+  },
+  {
+   "id": "dc_s_vas_fy25",
+   "name": "Value-added services and solutions",
+   "period": "FY2025",
+   "revenue": 13315000000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ]
+  }
+ ],
+ "customers": [
+  {
+   "id": "dc_c_top5_fy25",
+   "name": "Five largest customers combined (none individually above 10%)",
+   "share": 0.21,
+   "period": "FY2025",
+   "source_ids": [
+    "pf_10k_20260211"
+   ]
+  }
+ ],
+ "competitors": [
+  {
+   "ticker": "V",
+   "name": "Visa Inc",
+   "why": "Named in MA 10-K Item 1 as the first general purpose payments network competitor; the same issuers, acquirers, merchants and cardholders, same four-party card network model, same cross-border and value-added services (fraud, authentication, data) markets. Larger by volume and revenue.",
+   "metrics": {
+    "fiscal_year_end": "09-30",
+    "revenue_FY2025_usd": 40000000000,
+    "revenue_growth_FY2025": 0.1134,
+    "operating_margin_FY2025_gaap": 0.5998,
+    "revenue_FY2026_usd": 45900000000,
+    "revenue_growth_FY2026": 0.15,
+    "operating_income_FY2026_usd": 28110000000,
+    "operating_margin_FY2026_gaap_derived": 0.612,
+    "fy2026_note_operating_margin": "derived 28,110 / 45,900 from the release (about 45.9B rounded); GAAP, includes litigation provisions of 1,764M",
+    "payments_volume_growth_FQ4_2026_constant_dollar": 0.09,
+    "cross_border_volume_growth_FQ4_2026": 0.14,
+    "cross_border_ex_intra_europe_FQ4_2026": 0.14,
+    "cross_border_volume_growth_FY2026": 0.13,
+    "processed_transactions_growth_FQ4_2026": 0.1,
+    "forward_PE": null,
+    "forward_PE_gap": "no forward P/E from a primary or structured source in this lane"
+   },
+   "source_ids": [
+    "pf_peer_V",
+    "fd_v_rel_fy26q4"
+   ]
+  },
+  {
+   "ticker": "AXP",
+   "name": "American Express Co",
+   "why": "Named in MA 10-K Item 1 as a general purpose payments network competitor; a closed-loop network and card issuer competing for the same premium consumer and commercial spend and for merchant acceptance. Revenue includes interest and card fees, so it is not a pure network.",
+   "metrics": {
+    "revenue_FY2025_usd": 41304000000,
+    "revenue_growth_FY2025": 0.0639,
+    "operating_margin_FY2025_pretax_proxy": 0.334,
+    "revenue_Q3_2026_usd": 20060000000,
+    "revenue_growth_Q3_2026": 0.089,
+    "billed_business_Q3_2026_usd": 454000000000,
+    "billed_business_growth_Q3_2026": 0.08,
+    "guidance_2026_revenue_growth": 0.1,
+    "forward_PE": null
+   },
+   "source_ids": [
+    "pf_peer_AXP",
+    "fd_axp_q3_26"
+   ]
+  },
+  {
+   "ticker": "PYPL",
+   "name": "PayPal Holdings",
+   "why": "Digital wallets and other fintechs (named category in MA 10-K Item 1): branded checkout, Venmo and Braintree compete for e-commerce and P2P payment flows, and route over cards, account-to-account rails or its own balances. It is also a customer of the card networks.",
+   "metrics": {
+    "revenue_FY2025_usd": 33172000000,
+    "revenue_growth_FY2025": 0.0432,
+    "operating_margin_FY2025": 0.1828,
+    "revenue_Q3_2026_usd": 8600000000,
+    "revenue_growth_Q3_2026": 0.02,
+    "transaction_margin_dollars_growth_Q3_2026": 0.02,
+    "forward_PE": null
+   },
+   "source_ids": [
+    "pf_peer_PYPL",
+    "fd_pypl_q3_26"
+   ]
+  },
+  {
+   "ticker": "UPI",
+   "name": "UPI (India, NPCI); alternative real-time account-based rail",
+   "why": "Government-backed digital public infrastructure named in MA 10-K Item 1 (UPI, Pix, FedNow); replaces card payments for domestic person-to-merchant and P2P flows in India. Not a listed company; no financials.",
+   "metrics": {
+    "transactions_Sep_2026_billion": 24.07,
+    "transactions_growth_yoy_Sep_2026": 0.23
+   },
+   "source_ids": [
+    "pf_10k_20260211",
+    "fd_upi_sep26"
+   ]
+  },
+  {
+   "ticker": "PIX",
+   "name": "Pix (Banco Central do Brasil); alternative real-time rail",
+   "why": "Government instant payment system named in MA 10-K Item 1; competes for Brazilian domestic P2P and P2M, where MA has a functional currency (Brazilian real). Not a listed company; no numbers saved by this lane.",
+   "metrics": {},
+   "source_ids": [
+    "pf_10k_20260211"
+   ]
+  },
+  {
+   "ticker": "FEDNOW",
+   "name": "FedNow (US Federal Reserve); alternative real-time rail",
+   "why": "US instant account-to-account rail named in MA 10-K Item 1; potential competitor for US P2P and bill pay, early scale. Not a listed company; no numbers saved by this lane.",
+   "metrics": {},
+   "source_ids": [
+    "pf_10k_20260211"
+   ]
+  },
+  {
+   "ticker": "STABLECOINS",
+   "name": "Stablecoin payment rails (GENIUS Act regulated); alternative",
+   "why": "Digital currencies named in MA 10-K Item 1 as both an opportunity and a competitor for cross-border and B2B payments; MA is embedding them (Mastercard Move, ~130 crypto co-brand card programs per 10-K). Not a company; no numbers saved.",
+   "metrics": {},
+   "source_ids": [
+    "pf_10k_20260211"
+   ]
+  }
+ ],
+ "bottlenecks": [
+  {
+   "id": "fd_bn1",
+   "reading": "What MA supplies: a global four-party authorization, clearing and settlement network with trust, fraud and tokenization on top; the scarce thing is accepted-everywhere trust and issuer and merchant coverage (network effects), not capacity. Capacity is not the constraint; the constraint on growth is volume of spend and pricing versus customer incentives. 2025 payment network net revenue 19,476M (+12%) after rebates and incentives of 20,522M (+16%): incentives grow faster than network revenue.",
+   "evidence_ids": [
+    "pf_10k_20260211"
+   ]
+  },
+  {
+   "id": "fd_bn2",
+   "reading": "Cross-border is the highest-yield flow in the network: 2025 cross-border assessments 12,021M (+18%, +17% currency-neutral) against domestic assessments 11,029M (+8%); Q3 2026 cross-border volume +11% local currency, gross dollar volume +7%, switched transactions +9%. Visa reports cross-border +14% in its FQ4 2026, so MA's cross-border growth was below Visa's in the latest quarter (different quarter windows: MA Jul-Sep 2026, Visa Jul-Sep 2026 volume).",
+   "evidence_ids": [
+    "pf_10k_20260211",
+    "pf_rel_20261029_1",
+    "fd_v_rel_fy26q4"
+   ]
+  },
+  {
+   "id": "fd_bn3",
+   "reading": "Value-added services and solutions is the second engine: 2025 net revenue 13,315M (+23%, +21% currency-neutral, of which 3 points from acquisitions) versus payment network +12%; drivers named in the 10-K are security, digital and authentication, consumer acquisition and engagement, pricing and insights. Competitors named are consultancies, cyber and fraud technology firms and loyalty providers.",
+   "evidence_ids": [
+    "pf_10k_20260211"
+   ]
+  },
+  {
+   "id": "fd_bn4",
+   "reading": "Real-time account-to-account rails are the structural threat to domestic card volume in markets where they are state-backed: UPI alone cleared 24.07 billion transactions in Sep 2026 (+23% year over year, NPCI via press). MA's 10-K says local debit brands and DPI mainly leave MA with cross-border there; how much domestic spend is displaced is not quantified in MA's own numbers.",
+   "evidence_ids": [
+    "pf_10k_20260211",
+    "fd_upi_sep26"
+   ]
+  },
+  {
+   "id": "fd_bn5",
+   "reading": "Pix, FedNow and stablecoin rail volumes: web search gave conflicting figures (Pix about 7 billion transactions a month; FedNow about 5.0 million in Q2 2026 versus other counts; stablecoin payments between about 0.4 and 1.8 trillion USD depending on definition). Not primary data; kept as a hypothesis that FedNow is still immaterial against card volume and that stablecoin definition drives the size.",
+   "hypothesis": true
+  }
+ ],
+ "notes": [
+  "prefetch 2026-11-01T22:14:56+00:00: SEC documents saved verbatim and their text in reading/ (untrusted); a lane cites a pf_ source only after reading the passage it relies on",
+  "dc CALL 2026-10-29 Q3 2026 call: CFO Ling Hai, CEO Michael Miebach; transcript read through a WebFetch summary of the Motley Fool copy (search_excerpt, not the full verbatim transcript); Alpha Vantage EARNINGS_CALL_TRANSCRIPT probe was rate-limited (25/day), not retried.",
+  "dc MGMT (call) full-year net revenue growth 'at the high end of the low double digits range' currency-neutral, excluding inorganic activity; Q2 call had already moved expectations higher in the range; Q4 same wording; ~1 ppt FX tailwind FY, ~1 ppt FX headwind Q4. Words are management's; the numeric 12-13% in guidance rows is my reading of the words.",
+  "dc MGMT (call) Q4: slight revenue headwind from timing of services projects and network deals pulled forward into Q3; 'similar offset' in VAS in Q4; rebates and incentives as % of gross assessments higher than Q3; no full-year rebates guidance given. Not addressed: litigation, capex, operating margin outlook; 2027 guidance comes with the next quarter's release.",
+  "dc MGMT (call) cross-border travel 'similar to the end of Q2'; agentic commerce expected to build with holiday shopping (CEO); BVNK impact on Q3 VAS 'minimal'; opex FY 'low double digits' unchanged, Q4 high end of low double digits with 1 ppt drag from acquisitions; non-GAAP tax 20-21%; Q4 other expense ~ $115m.",
+  "dc MGMT (release) CEO Miebach: Agentic Commerce, new Global Money Platform through BVNK (stablecoin infrastructure, acquired 2026-08-03 for $1.4bn cash plus up to $300m contingent).",
+  "dc Q3 RESULT (released 2026-10-29, citable from 2026-10-31): net revenue $9,807m +14% (reported and currency-neutral; payment network +11%, VAS +19%), GDV +7% local to $2.95tn, cross-border volume +11%, switched transactions +9%, GAAP operating margin 59.8% (+0.9 ppt), adjusted 60.5%, adjusted EPS $5.31 (+21%), GAAP EPS $5.28; adjusted opex +12% (1 ppt acquisitions).",
+  "dc REBATES Q3 rebates and incentives $6,369m +18% (9M $18,005m +21%), growing faster than payment network net revenue (+11%) and than GDV (+7%); the release cites new and renewed deals. Share of gross network assessments 52.6% in Q3 2026 vs 51.3% FY2025 (derived).",
+  "dc CASH conversion 9M 2026 operating cash flow $11,859m vs $12,646m (-6%) while net income +18%: prepaid expenses (customer incentive prepayments) outflow $4,688m vs $2,939m; amortization of customer incentives $2,030m vs $1,526m; accrued litigation payments $537m. Gap to be read by the analyst; capex+software $1,141m 9M.",
+  "dc LITIGATION provision for litigation Q3 $74m (settlements with opt-out merchants in U.S. interchange case) vs $83m, 9M $156m vs $330m; accrued litigation fell to $262m from $800m (cash settlements paid). Block and Intuit remain unsettled opt-outs seeking aggregate single damages above $5bn (summary judgment briefing continues through 2026); Rules Relief Class revised settlement preliminarily approved June 2026, final approval hearing November 2026; Damages Class release upheld Sept 2026 against April 2026 putative class action (appeal to Second Circuit); U.S. EMV liability shift class alleges >$1bn single damages against four networks (10-Q Note 14).",
+  "dc LITIGATION UK October 2026: two new proposed UK collective actions served: ~GBP 1.5bn (domestic and cross-border consumer transactions) and ~GBP 0.4bn (online cross-border); existing UK commercial card claim >GBP 1bn; Portugal ~EUR 0.4bn; Netherlands ~EUR 0.3bn; Australia ACCC debit agreements, liability hearing concluded June 2026; ATM operator opt-out settled Aug 2026 and ATM operators class dismissed Sept 2026 (10-Q Note 14). Claimed amounts are plaintiffs' claims, not accruals; the 10-Q accrual is $262m.",
+  "dc LITIGATION DOJ: Civil Investigative Demand received 2023 from DOJ Antitrust Division on U.S. debit program competition (Sherman Act 1 or 2); company cooperating (10-K, Legal Proceedings; the Q3 10-Q text prefetched contains no separate DOJ paragraph). European Commission request for information (2024) on network fees related to acquirers; cooperating.",
+  "dc ONEOFFS Q3 2026 special item: litigation provisions $74m pre-tax (adjusted net income effect +$49m); equity investments net pre-tax loss $5m (adjusted net income effect -$24m per release reconciliation, including tax effects); YTD special items: restructuring $202m (Q1 2026) and litigation $156m; adjusted tax rate 20.1% vs GAAP 19.4% in Q3.",
+  "dc RISK interchange and merchant acceptance-cost activity, surcharging limits and litigation could cut revenue or raise incentive costs (10-K Item 1A, Legal and Regulatory: interchange, surcharging, litigation liabilities).",
+  "dc RISK preferential or protective government actions favouring domestic payment networks, and regulation of privacy, data and AI (10-K Item 1A, Legal and Regulatory).",
+  "dc RISK competition and disintermediation: account-based and real-time payments, wallets, stablecoins, Visa and others; continued intense pricing pressure (10-K Item 1A, Business: Competition).",
+  "dc RISK customer concentration: five largest customers about 21% of FY2025 net revenue ($6.9bn); loss of a large customer or card program and consolidation; incentives rise with renewals (10-K Item 1A, Business: customers; Item 7 notes).",
+  "dc RISK global economy, cross-border travel and spending sensitivity, tariffs and trade policy, currency and FX controls (10-K Item 1A, Global events).",
+  "dc RISK settlement guarantor exposure and information security incidents, service disruptions (10-K Item 1A, Operational).",
+  "dc RISK acquisition integration and entry into new businesses, stablecoin and account-based payments (BVNK) (10-K Item 1A; 10-Q Note 2).",
+  "dc GAP full transcript Q&A not read verbatim (summary of Motley Fool copy only); no customer-level names or per-customer shares disclosed (only top-5 aggregate); no segment operating income (single reportable segment, cannot be split between payment network and VAS); remaining performance obligations, backlog and purchase commitments not extracted (not material to this model); Q2 numeric prior guidance not available as numbers (words only), so prior_low/prior_high left empty.",
+  "fd NAMED COMPETITORS (10-K Item 1, pf_10k_20260211): General Purpose Payments Networks: Visa, American Express, JCB, China UnionPay, Discover; Debit and Local Networks: ATM/POS debit networks, local domestic brands; Real-time Account-based: ACH and real-time providers; Digital Wallets and Fintechs: wallets, BNPL, mobile operators, B2B AP/AR providers (PayPal is the listed example in the run's competitor list, not named by MA); DPI/government: Pix, FedNow, UPI, CBDCs; Digital Currencies: stablecoins, crypto; Services and Solutions: information and consulting firms, cyber and fraud technology, loyalty providers, open finance.",
+  "fd SHARE MA net revenue 2025 32,791M (+16%) versus Visa fiscal 2025 40,000M (+11.3%, pf_peer_V) and Visa fiscal 2026 45.9B (+15%, fd_v_rel_fy26q4): MA's latest comparable quarter growth was 14% (Q3 2026, pf_rel_20261029_1) against Visa's 13% (FQ4 2026): MA and Visa are growing at about the same rate, so no clear share shift between the two from revenue; windows are the same calendar quarter (Jul-Sep 2026) but MA's revenue is net of larger incentives, so revenue is not a volume-share measure.",
+  "fd SHARE Operating margin: MA 2025 GAAP 57.6% (adjusted 59.2%, 10-K) and Q3 2026 59.8% (pf_rel_20261029_1); Visa fiscal 2025 59.98% and fiscal 2026 about 61.2% GAAP (derived), so Visa runs a higher margin on a larger base.",
+  "fd SHARE Volumes: MA Q3 2026 gross dollar volume +7% local currency, cross-border +11%; Visa FQ4 2026 payments volume +9% constant dollar, cross-border +14%. On these numbers Visa grew volume faster than MA in the same quarter (different measure definitions: GDV includes cash, Visa payments volume excludes cash), a hypothesis of modest Visa share gain, not a measured share.",
+  "fd SHARE AXP billed business Q3 2026 +8% (fd_axp_q3_26, search summary), AXP revenue +9%; PayPal revenue +2% and transaction margin dollars +2% (fd_pypl_q3_26): MA is growing faster than both on revenue; AXP and PayPal are not taking network share from MA on these numbers.",
+  "fd SHARE Alternative rails: UPI +23% year over year in transaction count (Sep 2026); no MA-own number measures the displacement, labelled hypothesis that domestic card volume growth in India is capped while cross-border and VAS carry MA's growth there.",
+  "fd FORWARD P/E of competitors was not retrieved from a structured source in this lane (FMP statements and analyst are ACCESS DENIED per the stage guidance; Alpha Vantage not used in this lane); competitor forward P/E is a gap.",
+  "fd V Visa fiscal 2026 net revenue is stated rounded (45.9B); the operating margin for fiscal 2026 is derived from 28,110M operating income in the release table and the rounded revenue.",
+  "fd AXP and PYPL Q3 2026 figures come from a web search summary of their releases (search_excerpt), not from documents read in full; use as indicative.",
+  "mc RATES risk_free 4.98% (FRED DGS10, 2026-10-29) and ERP 4.20% (Damodaran implied, 2026-10-01) kept from prefetch; no FRED gap; Damodaran 1 Nov 2026 update not checked (as_of day), so ERP is the newest saved one.",
+  "mc GEOGRAPHY No country other than the US exceeds 10% of net revenue; US about 29% of FY2025 net revenue (30% in 2024 and 2023) per 10-K note; five largest customers 21% (about $6.9B) of FY2025 revenue; no customer above 10%. Cross-border volume +11% local-currency in Q3 2026, gross dollar volume +7%, switched transactions +9% (Q3 2026 release). Long-lived assets: US $1,168M of $2,303M (51%).",
+  "mc EXPOSURE US interchange / Credit Card Competition Act (CCCA, S.3623, reintroduced 13 Jan 2026 by Marshall and Durbin): sits in Senate Banking Committee, no floor vote, not passed; sponsors failed to attach it to the GENIUS Act (2025) and the ROAD to Housing Act (Senate passed 5 Mar 2026 without it); Trump has publicly backed it and an October 2026 report says merchant lobbyists seek another vehicle (mc_ccca_congress, mc_ccca_paymentsdive; press, search excerpts). It would require issuers above $100B assets to enable a second, non-Visa/Mastercard network for routing. Sizing: US is about 29% of revenue; the share of US revenue exposed to credit routing is not disclosed: unsized, hypothesis.",
+  "mc EXPOSURE US merchant litigation (10-Q Note 14, filed 2026-10-29, pf_10q_20261029): accrued liability for US MDL cases $156M at 2026-09-30 (from $637M at 2025-12-31 after payments); Block and Intuit opt-out claims seek aggregate single damages above $5B, Mastercard says it cannot estimate potential liability; Rules Relief Class revised settlement preliminarily approved June 2026, final approval hearing November 2026; new April 2026 and September 2026 putative class actions on Damages Class and non-class merchants, district court ruled against the Damages Class plaintiffs in September 2026, appealed to the Second Circuit.",
+  "mc EXPOSURE UK / Europe interchange (10-Q Note 14): over GBP 0.5B (about $0.7B) of unresolved UK and Pan-European merchant damages claims; UK commercial-card collective action above GBP 1B (about $1.3B); two new UK collective actions served October 2026 for about GBP 1.5B ($2.0B) and GBP 0.4B ($0.5B); Portugal consumer claim about EUR 0.4B; Netherlands merchant claim about EUR 0.3B; European Commission information request (2024) on network fees to acquirers, ongoing. UK PSR: High Court rejected the Visa, Mastercard and Revolut challenge on 15 Jan 2026 and confirmed the PSR power to cap cross-border (UK-EEA card-not-present) interchange; level and start date not set per search results (interim cap dropped; PSR issued Specific Direction 23 on 30 Jul 2026, record-keeping and reporting of UK pricing decisions) (mc_psr_court, press, search excerpt). Revenue exposed to UK-EEA cross-border caps is not disclosed: unsized, hypothesis. Australia: ACCC debit-agreements case, liability hearing concluded June 2026, decision pending, fines possible.",
+  "mc EXPOSURE Russia: operations suspended since 2022; 10-K risk factor cites possible nationalization of the subsidiary and litigation; no revenue share disclosed as exposed.",
+  "mc EXPOSURE Stablecoins / GENIUS Act: law enacted 2025 (10-K Item 1 names it as the first major US crypto law and lists digital currencies as a competitive risk); rulemaking still open: OCC draft 2 Mar 2026 with final targeted for November 2026, Treasury proposal 17 Aug 2026, Federal Reserve proposal in the Federal Register 29 Sep 2026; statutory 18 Jul 2026 target missed (press, search excerpt, mc_genius_rules). Mastercard's own response is to join: BVNK (stablecoin infrastructure) acquired 3 Aug 2026 for $1.4B cash plus up to $300M contingent (10-Q, goodwill $1.3B), Global Money Platform with BVNK 15 Oct 2026, Stablecoin Security risk product 19 Oct 2026, about 130 crypto co-brand card programs and stablecoin flows in Mastercard Move (10-K). Effect on network revenue: no disclosed figure; disintermediation of card-based cross-border and remittance flows is a hypothesis, not sized.",
+  "mc EXPOSURE FX / travel: revenue is billed in many currencies; Q3 2026 net revenue +14% both reported and currency-neutral, so currency was neutral in the quarter; cross-border volume +11% local currency (the highest-yield line). USD strength, consumer spending and travel data not retrieved this lane (budget): gap.",
+  "mc NEWS 2026-10-29 Q3 2026 results: net revenue $9.8B (+14%), GDV $3.0T (+7% local currency), cross-border +11%, rebates and incentives +18% (release and 10-Q, filed 2026-10-29; citable from 2026-10-31).",
+  "mc NEWS 2026-08-03 BVNK acquisition closed, $1.4B cash plus up to $300M contingent (10-Q, pf_10q_20261029).",
+  "mc NEWS 2026-10-15 and 2026-10-19 Global Money Platform with BVNK, Stablecoin Security product (company press releases, search excerpts; lead only).",
+  "mc NEWS 2026-10 two new UK merchant collective actions served on Mastercard and Visa (GBP 1.5B and GBP 0.4B, 10-Q); 2026-09 US district court barred Damages Class plaintiffs' new claims, appeal filed (10-Q).",
+  "mc NEWS 2026-10 Trump again urged Congress to pass the CCCA per press report; no vote scheduled in what was retrieved (lead, not confirmed at the source).",
+  "nm IDENTITY Mastercard Inc (CIK 1141391), Class A common stock, NYSE, USD, FYE 12-31, 10-K/10-Q filer; IB contract id 38685693 (NYSE, MASTERCARD INC - A); other IB rows (MEXI, EBS, TSE CDR) are secondary listings; no ADR, no stop.",
+  "nm PRICE IB last 638.02 at 2026-10-30 23:47Z (feed status FROZEN = after close), prior close 635.70, +0.36%; 52w range 463.80-644.20 (a new 52w high at the last month bar: high 644.24); month of Oct 2026 closed 638.01 vs 551.47 end Sep (+15.7%), i.e. the price jumped around the 2026-10-29 results. IB has no split; quarterly dividend 0.87 USD (ex 2026-10-09, pay 2026-11-09), raised from 0.76 (about +14%).",
+  "nm AV RATE LIMIT 2026-11-01: INCOME_STATEMENT answered 'standard API rate limit is 25 requests per day'; probed once, BALANCE_SHEET, CASH_FLOW and EARNINGS_ESTIMATES not called, no retry. FMP statements/analyst denied on this plan (session_capabilities). Second statement source therefore missing: reconciliation is against the filings themselves.",
+  "nm RECONCILIATION FY2025 vs 10-K (reading/10k_full.txt): revenue 32,791, operating income 18,897, net income 14,968, diluted EPS 16.52, diluted shares 906, CFO 17,648: all equal the prefetch pf_ facts, no difference. SBC 597 (10-K) not in the prefetch: added as nm_sbc_fy2025. Capex: prefetch capex 489 = purchases of property and equipment only; capitalized software 726 is a separate investing line (total 1,215), so FCF defined as CFO minus capex(PP&E) is overstated by 726 versus CFO minus both lines.",
+  "nm RECONCILIATION Q3 2026 vs 10-Q filed 2026-10-29: revenue 9,807, operating income 5,862, net income 4,628 equal the prefetch quarter facts; diluted EPS 5.28 (Q3) and 14.59 (9M), diluted shares 876 (Q3) / 884 (9M); 9M CFO 11,859 vs 12,646 a year earlier (-6%, while 9M net income +18%: working-capital/settlement timing, check in the 10-Q liquidity section); 9M SBC 525; 9M capex PP&E 667 (vs 377) plus capitalized software 474 (vs 548). Q3 standalone CFO/capex not derived (needs the 1H 10-Q; gap).",
+  "nm ROIC CHECK prefetch roic_last 0.98 (average 0.87) uses invested capital = equity + debt - cash with FY2025 equity 7.7B: equity is depressed by buybacks (11.7B in 2025) and dividends, so ROIC near 100% reflects a tiny capital base, not a measured return on operating assets; restricted cash 564 (2026-09-30, 561 at year end) is outside cash 10,147; total debt rose to 23.9B at 2026-09-30 from 19.0B at year end (+4.9B) and cash fell to 10.1B from 10.6B, so invested capital is up sharply in 2026 and ROIC will decline mechanically; investments that are not cash, operating leases and settlement assets/obligations were not adjusted. Read as 'very high, capital-light', not as a precise figure.",
+  "nm OWN MULTIPLE HISTORY trailing GAAP diluted P/E (month-end price over trailing EPS interpolated between fiscal year EPS 6.37, 8.76, 10.22, 11.83, 13.89, 16.52 and TTM 19.11): low 27.5 (2026-05) median 35.6 high 43.5 (2022-01) now 33.4 (638.02 / 19.11; 38.6 on FY2025 EPS 16.52) years 2021-11 to 2026-10 sources nm_hist_ib, nm_price_ib, pf_eps_diluted_fy2020..fy2025, nm_eps_diluted_ttm_2026q3. Approximate (interpolated EPS, no quarterly EPS series). Today's multiple sits just under the 5-year median after a 16% month. Forward P/E: no usable post-results consensus (see CONSENSUS); on a pre-results web FY2027 EPS 22.51 it would be about 28, attributed and stale. Not a peak-earnings quarter x 4 case: net income rose each quarter, EPS Q3 5.28.",
+  "nm CONSENSUS none registered: AV EARNINGS_ESTIMATES not called (rate limit), FMP analyst denied. One WebSearch returned only pre-Q3 (before 2026-10-29) excerpts with disagreeing figures and no stated provider date: FY2026 EPS 19.52-19.61 (24 analysts, one page) and 20.55 (Chartmill, 47 analysts, 2026-10-18); FY2027 EPS 22.51 (Barchart) / 22.27 (Zacks); FY2026 revenue 37.0B (28 analysts); Q3 2026 EPS estimates 5.13 or 5.31 versus reported 5.28; Q2 2026 reported 5.04 vs 4.77 consensus. These are opinion/expectation excerpts, not citable rows; revenue and EPS consensus after the 2026-10-29 report remain a gap. Analyst price targets on those pages not used.",
+  "nm TRACK RECORD no guidance_track rows: the eight saved earnings releases (2025-01-30 to 2026-10-29) contain no outlook paragraph (grep for outlook/expect/low double digits found nothing); Mastercard gives its outlook on the earnings call (gather_documents' transcript). Reported revenue growth for context: Q2 2026 +14% (12% currency-neutral), Q3 2026 revenue 9,807 vs 8,602 (+14.0%). Guided midpoint vs actual not computable here; gap handed to gather_documents/analyst.",
+  "nm RESULTS DAY the Q3 2026 release (2026-10-29) and 10-Q are dated 2 days before as_of 2026-11-01 and are citable from 2026-10-31, so usable."
+ ],
+ "potential": {
+  "market_direction": {
+   "reading": "Card-network spend keeps growing at high single digits while cash and older rails shift to digital: Q3 2026 GDV $2.95tn +7% local currency, purchase volume +8.9%, switched transactions +9%, cross-border +11% (9M +12%), 3.54bn Mastercard-branded cards; Latin America GDV +13.5%, Europe +8.3%, US +5.9%. In markets with state-backed real-time rails the domestic direction is away from cards: UPI 24.07bn transactions in Sep 2026 (+23% y/y), Pix projected about 45% of Brazil e-commerce by end-2026 (EBANX, attributed projection). Net: the global pie grows, but the card share of domestic spend in India/Brazil (and possibly Europe) shrinks.",
+   "evidence_ids": [
+    "dc_f_gdv_g_q3",
+    "dc_f_pv_g_q3",
+    "dc_f_swt_g_q3",
+    "dc_f_xb_g_ytd",
+    "dc_f_cards_q3",
+    "dc_k_latam_gdv_g",
+    "dc_k_europe_gdv_g",
+    "dc_k_us_gdv_g",
+    "fd_upi_sep26",
+    "uf_pix_ebanx"
+   ]
+  },
+  "bottleneck_potential": {
+   "reading": "Mastercard is a toll-road bottleneck on acceptance and trust, not on capacity: a four-party network accepted almost everywhere, with 3.54bn cards, where the scarce asset is two-sided coverage (issuers and merchants) plus fraud, tokenization and authentication on top. That position has lasted decades and nobody 'adds capacity' to it except Visa (the co-bottleneck) and state rails that bypass it domestically. The toll is visible in the economics: adjusted operating margin 60.5% in Q3 2026 and ROIC about 98% (FY2025), incremental ROIC about 120%. The limit is not supply but price: the bottleneck rent is shared with issuers through rebates and incentives (52.6% of gross network assessments in Q3 2026 vs 51.3% in FY2025) and contested by regulators.",
+   "evidence_ids": [
+    "dc_f_cards_q3",
+    "dc_f_opm_adj_q3",
+    "pf_operating_income_fy2025",
+    "pf_revenue_fy2025",
+    "dc_f_rebates_share_q3",
+    "dc_f_rebates_share_fy25",
+    "pf_10k_20260211"
+   ]
+  },
+  "share_trajectory": {
+   "reading": "Against Visa (the named direct competitor) no clear share shift: same calendar quarter Jul-Sep 2026 net revenue MA +14% vs Visa +13%; but volume favoured Visa (Visa payments volume +9% constant dollar and cross-border +14% vs MA GDV +7% and cross-border +11%; definitions differ, GDV includes cash). MA's US debit GDV grew only 1.4% in Q3 2026 (Capital One debit migration to Discover) while US GDV overall +5.9%: a real, issuer-driven share loss in US debit. Against AXP (revenue +9%, billed business +8%) and PayPal (revenue +2%) MA is growing faster. In India MA holds about 20% of cards vs Visa 43% and RuPay 33% (EBANX, attributed). Net reading: stable share vs Visa on revenue, mild volume share loss in the latest quarter, gaining vs AXP and PayPal.",
+   "evidence_ids": [
+    "dc_f_nr_g_q3",
+    "fd_v_rel_fy26q4",
+    "dc_f_gdv_g_q3",
+    "dc_f_xb_g_q3",
+    "dc_k_us_debit_gdv_g",
+    "dc_k_us_gdv_g",
+    "fd_axp_q3_26",
+    "fd_pypl_q3_26",
+    "uf_pix_ebanx"
+   ]
+  },
+  "competitive_position": {
+   "reading": "Versus Visa: smaller (FY2025 net revenue $32.8bn vs Visa FY2025 $40.0bn and FY2026 $45.9bn) and slightly lower margin (MA FY2025 GAAP 57.6%, Q3 2026 59.8% vs Visa FY2026 about 61%), but faster value-added services (VAS +19% in Q3 2026, 41% of net revenue) and much smaller litigation charges this year (MA 9M 2026 provisions $156m vs Visa FY2026 $1,764m). Both show incentive inflation (MA rebates +18%, Visa client incentives +21%). Versus AXP and PayPal: structurally stronger (open network at about 60% margin vs AXP pre-tax about 33% and PayPal operating about 18%), and PayPal routes much of its volume over cards. Versus UPI/Pix: weaker on domestic price (near-zero-cost state rails), stronger on cross-border and fraud/VAS.",
+   "evidence_ids": [
+    "pf_revenue_fy2025",
+    "pf_peer_V",
+    "fd_v_rel_fy26q4",
+    "pf_operating_income_fy2025",
+    "dc_f_opm_gaap_q3",
+    "dc_f_nr_vas_g_q3",
+    "dc_f_litprov_ytd",
+    "dc_f_rebates_g_q3",
+    "pf_peer_AXP",
+    "pf_peer_PYPL",
+    "pf_10k_20260211"
+   ]
+  },
+  "threats": {
+   "reading": "(1) US routing mandate: Credit Card Competition Act S.3623 reintroduced 13 Jan 2026 with presidential support; failed to ride on the ROAD to Housing Act (March 2026), no floor vote as of 1 Nov 2026: live risk, not law. (2) Litigation as a recurring cost: Block and Intuit opt-outs seek over $5bn single damages (trebling possible), UK commercial-card action over GBP 1bn and two new UK actions (about GBP 1.5bn and GBP 0.4bn) served Oct 2026; provisions every quarter. (3) UK/EU: High Court (15 Jan 2026) upheld the PSR's power to cap UK-EEA cross-border card-not-present interchange; EU sovereignty push (Wero, digital euro) aims at Europe, MA's strongest region. (4) Substitution: UPI/Pix domestically; stablecoins under the GENIUS Act (rules still open: Treasury Aug 2026, Fed Sep 2026), to which MA responds by joining (BVNK, $1.4bn, closed 3 Aug 2026). (5) Issuer bargaining: rebates +18-21% vs payment network revenue +11%; Capital One debit moved to Discover. (6) DOJ v. Visa (debit) could open US debit to MA but also invites scrutiny of MA's incentive contracts (MA itself received a DOJ CID on debit in 2023).",
+   "evidence_ids": [
+    "mc_ccca_congress",
+    "mc_ccca_paymentsdive",
+    "pf_10q_20261029",
+    "mc_psr_court",
+    "uf_eu_wero",
+    "fd_upi_sep26",
+    "mc_genius_rules",
+    "dc_f_bvnk",
+    "dc_f_rebates_g_ytd",
+    "dc_k_us_debit_gdv_g",
+    "uf_doj_visa_debit",
+    "pf_10k_20260211"
+   ]
+  }
+ },
+ "scenario_events": {
+  "bear": [
+   {
+    "event_he": "חוק תחרות כרטיסי האשראי (CCCA) בארה\"ב עובר ומחייב בנקים גדולים לאפשר רשת שנייה בכרטיסי אשראי: חלק מהעסקאות עוברות לרשתות זולות והעמלה על הנפח יורדת.",
+    "evidence_ids": [
+     "mc_ccca_congress",
+     "mc_ccca_paymentsdive"
+    ]
+   },
+   {
+    "event_he": "ההנחות והתמריצים לבנקים ממשיכים לצמוח מהר מההכנסה (כבר 52.6% מההכנסה הגולמית של הרשת ברבעון 3, לעומת 51.3% ב-2025), והתשואה נטו על כל דולר נשחקת.",
+    "evidence_ids": [
+     "dc_f_rebates_share_q3",
+     "dc_f_rebates_share_fy25",
+     "dc_f_rebates_g_ytd",
+     "dc_call_20261029"
+    ]
+   },
+   {
+    "event_he": "הנסיעות לחו\"ל מאטות ובריטניה קובעת תקרה לעמלות חוצות גבולות מול אירופה: ההכנסה בעלת התשואה הגבוהה ביותר נחלשת (נפח חוצה גבולות כבר ירד ל-11%).",
+    "evidence_ids": [
+     "dc_f_xb_g_q3",
+     "mc_psr_court"
+    ]
+   },
+   {
+    "event_he": "תביעות סוחרים: Block ו-Intuit דורשות יותר מ-5 מיליארד דולר (לפני הכפלה), ובבריטניה הוגשו באוקטובר 2026 תביעות ייצוגיות חדשות; הסכום שהופרש הוא רק 262 מיליון דולר.",
+    "evidence_ids": [
+     "pf_10q_20261029",
+     "dc_f_accr_lit"
+    ]
+   },
+   {
+    "event_he": "מערכות תשלום מיידיות (UPI בהודו, Pix בברזיל) וסטייבלקוינס לוקחות נתח מהתשלומים המקומיים והחוצי-גבולות בשווקים הצומחים.",
+    "evidence_ids": [
+     "fd_upi_sep26",
+     "mc_genius_rules"
+    ]
+   }
+  ],
+  "base": [
+   {
+    "event_he": "2026 נסגרת בצמיחה של כ-12-13% בניטרול מטבע, לפי ההנחיה, ורבעון 4 מעט חלש יותר בגלל השוואה למחירים שעלו ופרויקטים שהוקדמו לרבעון 3.",
+    "evidence_ids": [
+     "dc_g_nr_fy26",
+     "dc_g_nr_q4",
+     "dc_call_20261029"
+    ]
+   },
+   {
+    "event_he": "השירותים הנלווים (אבטחה, נתונים, אימות) ממשיכים לצמוח מהר מהרשת (19% מול 11% ברבעון 3) ומגיעים לכמעט מחצית ההכנסה.",
+    "evidence_ids": [
+     "dc_f_nr_vas_g_q3",
+     "dc_f_nr_pn_g_q3",
+     "dc_s_vas_9m_26"
+    ]
+   },
+   {
+    "event_he": "החברה ממשיכה לקנות מניות בכ-12 מיליארד דולר בשנה ומספר המניות יורד בכ-3% בשנה, גם במחיר של חוב גבוה יותר.",
+    "evidence_ids": [
+     "pf_buybacks_fy2025",
+     "dc_f_buyback_q3",
+     "dc_f_buyback_remaining",
+     "dc_f_debt_lt"
+    ]
+   },
+   {
+    "event_he": "הוצאות משפטיות ממשיכות להופיע כל רבעון (156 מיליון דולר ב-9 חודשים) ולא נעלמות.",
+    "evidence_ids": [
+     "dc_f_litprov_ytd",
+     "dc_f_litprov_ytd25"
+    ]
+   },
+   {
+    "event_he": "הנחיית 2027 (סוף ינואר 2027) תהיה שוב צמיחה 'דו-ספרתית נמוכה'.",
+    "hypothesis": true
+   }
+  ],
+  "bull": [
+   {
+    "event_he": "פלטפורמת הכסף הגלובלית עם BVNK (סטייבלקוינס) ותשלומי סוכני AI הופכות למנוע הכנסה נוסף בשירותים הנלווים כבר ב-2027.",
+    "evidence_ids": [
+     "mc_ma_bvnk_platform",
+     "mc_ma_stablecoin_security",
+     "dc_f_bvnk"
+    ]
+   },
+   {
+    "event_he": "השירותים הנלווים שומרים על צמיחה של כ-19% והשוליים התפעוליים נשארים מעל 60%, כמו ב-2026.",
+    "evidence_ids": [
+     "dc_f_nr_vas_g_q3",
+     "dc_f_opm_adj_ytd"
+    ]
+   },
+   {
+    "event_he": "חוק הניתוב בארה\"ב לא מגיע להצבעה עד סוף 2027 והתביעה של משרד המשפטים נגד ויזה בתחום הדביט פותחת למסטרקארד נתח שוק.",
+    "hypothesis": true
+   },
+   {
+    "event_he": "הנחיית 2027 בינואר 2027 גבוהה מ'דו-ספרתית נמוכה' (מעל 13%).",
+    "hypothesis": true
+   }
+  ]
+ },
+ "drivers": {
+  "growth_anchor": {
+   "period": "FY2027",
+   "bear": 0.08,
+   "base": 0.115,
+   "bull": 0.14,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "dc_f_nr_pn_g_q3",
+    "dc_f_nr_vas_g_q3",
+    "dc_f_gdv_g_q3",
+    "dc_f_xb_g_q3",
+    "dc_f_rebates_share_q3",
+    "dc_f_nr_g_ytd_cn",
+    "pf_revenue_fy2025",
+    "pf_revenue_fy2024"
+   ],
+   "reason": "No FY2027 guidance (given with Q4 results, late Jan 2027) and no attributed post-results consensus, so FY2027 is built from Mastercard's own run rate as volume x yield + VAS. Base 11.5%: payment network (~58% of revenue) at ~9% = GDV +7% plus a little yield, net of rebates still rising faster than gross assessments, plus VAS (~42%) at ~15% organic, slowing from 19% as pricing and the Q3 services timing are lapped; below the 9M 2026 currency-neutral 13%. Bear 8%: GDV slows to ~5-6% (cross-border already down to +11%), rebate share keeps climbing and VAS slows to ~11%. Bull 14%: FY2026's pace holds (VAS ~19%, cross-border re-accelerates, rebate share stabilises)."
+  },
+  "growth": {
+   "period": "FY2027",
+   "bear": [
+    0.08,
+    0.07,
+    0.065
+   ],
+   "base": [
+    0.115,
+    0.11,
+    0.1
+   ],
+   "bull": [
+    0.14,
+    0.135,
+    0.125
+   ],
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "pf_revenue_fy2021",
+    "pf_revenue_fy2022",
+    "pf_revenue_fy2023",
+    "pf_revenue_fy2024",
+    "pf_revenue_fy2025",
+    "dc_f_nr_g_ytd_cn",
+    "dc_f_rebates_share_q3",
+    "dc_f_rebates_share_fy25"
+   ],
+   "reason": "FY2027-FY2029 from MA's own history: revenue growth 23%, 18%, 13%, 12%, 16% (2021-2025, 2021-2022 a post-COVID travel rebound) and 13% currency-neutral 9M 2026, with a slow fade because the volume line has decelerated (GDV +7%) and rebates take a growing share of gross assessments (51.3% -> 52.6%). Bear fades faster on regulation (routing mandate, cross-border caps) and rail substitution; bull keeps VAS-led growth near 13-14%. Years after the list fade by the engine rule."
+  },
+  "mature_margin": {
+   "bear": 0.53,
+   "base": 0.58,
+   "bull": 0.61,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "pf_operating_income_fy2025",
+    "pf_revenue_fy2025",
+    "pf_operating_income_fy2021",
+    "pf_revenue_fy2021",
+    "dc_f_opm_gaap_q3",
+    "dc_f_opm_adj_ytd",
+    "dc_f_litprov_ytd"
+   ],
+   "reason": "GAAP operating margin (litigation and restructuring kept as recurring costs): FY2021 53.4%, FY2025 57.6%, Q3 2026 59.8%, 9M 2026 adjusted 60.8%. Base 58%: FY2025's GAAP level, below the current ~60% that the quarter review flags as a peak run rate, because rebates rise faster than gross assessments and litigation provisions recur. Bear 53%: back to the 2020-2021 level if routing/fee regulation and incentive inflation squeeze the network yield. Bull 61%: today's best adjusted level holds as VAS scales."
+  },
+  "tax_rate": {
+   "all": 0.205,
+   "source_tier": "guidance",
+   "evidence_ids": [
+    "dc_g_tax_fy26",
+    "dc_g_tax_q4"
+   ],
+   "reason": "Non-GAAP effective tax rate guided 20-21% for FY2026 and Q4 2026; midpoint used as the steady rate (GAAP Q3 2026 19.4%)."
+  },
+  "sbc_pct": {
+   "all": 0.019,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "nm_sbc_9m_2026",
+    "nm_sbc_fy2025",
+    "pf_revenue_fy2025"
+   ],
+   "reason": "Share-based compensation 1.8% of revenue in FY2025 ($597m / $32,791m) and 1.9% in 9M 2026 ($525m / $27,482m); treated as a real cost."
+  }
+ },
+ "company_path": {
+  "metric": "eps",
+  "multiple": "forward_pe",
+  "scenarios": {
+   "bear": {
+    "multiple_from": "economics",
+    "roic": 0.3,
+    "justification": "justified_high",
+    "reason_he": "בתרחיש הדובי מה שנשבר הוא כוח התמחור: התמריצים לבנקים כבר עלו מ-51.3% ל-52.6% מההכנסה הגולמית של הרשת וגדלו 18%-21% בשנה מול צמיחה של כ-11% בהכנסות הרשת, והחברה מקדימה תשלומי תמריץ (2.7 מיליארד דולר נטו ב-9 חודשים). אם חוק ניתוב הכרטיסים בארה\"ב או רשתות כמו Pix ו-UPI מכריחים עוד תמריצים, כל דולר צמיחה עולה יותר ותשואת ההשקעה לצמיחה יורדת לכ-30%: עדיין עסק מצוין, אבל מכפיל נמוך יותר.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "dc_f_rebates_share_fy25",
+     "dc_f_rebates_share_q3",
+     "dc_f_rebates_g_ytd",
+     "dc_f_prepaid_chg_ytd",
+     "dc_f_amort_incent_ytd",
+     "mc_ccca_paymentsdive"
+    ]
+   },
+   "base": {
+    "multiple_from": "economics",
+    "roic": 0.5,
+    "justification": "justified_high",
+    "reason_he": "התשואה על ההון בספרים (כ-98%) מנופחת כי קניות חוזרות כיווצו את ההון העצמי, ולכן לא השתמשנו בה. במקום זה מדדנו מדוח 10-K כמה כסף החברה באמת משקיעה כדי לצמוח ב-2023-2025: תמריצים ששולמו מראש פחות הפחתתם (0.8, 1.4 ו-1.3 מיליארד דולר), השקעות ברכוש ובתוכנה מעל הפחת (0.3, 0.3 ו-0.1 מיליארד) ורכישות (2.5 מיליארד ב-2024). זה כ-17% מהרווח התפעולי אחרי מס, והרווח התפעולי אחרי מס עלה בכ-3.7 מיליארד דולר על השקעה של כ-5.6 מיליארד, כלומר תשואה של כ-67% על כל דולר שמושקע לצמיחה. ב-2026 ההשקעה גדלה (2.7 מיליארד נטו בתמריצים ב-9 חודשים ועוד BVNK ב-1.4 מיליארד), ולכן הבסיס לוקח 50%, מתחת למה שנמדד: תשואה כזו עדיין מצדיקה מכפיל גבוה שיורד בהדרגה ככל שהצמיחה מאטה.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "pf_operating_income_fy2022",
+     "pf_operating_income_fy2025",
+     "pf_equity_fy2025",
+     "pf_long_term_debt_fy2025",
+     "pf_cash_fy2025",
+     "pf_goodwill_fy2022",
+     "pf_goodwill_fy2025",
+     "pf_capex_fy2025",
+     "pf_d_and_a_fy2025",
+     "dc_f_prepaid_chg_ytd",
+     "dc_f_amort_incent_ytd",
+     "dc_f_bvnk",
+     "pf_10k_20260211"
+    ]
+   },
+   "bull": {
+    "multiple_from": "economics",
+    "roic": 0.7,
+    "justification": "justified_high",
+    "reason_he": "בתרחיש השורי שירותי הערך המוסף, שכבר 41% מההכנסות וגדלים 19%-23% בשנה, ממשיכים לצמוח על אותה תשתית בלי השקעה גדולה נוספת, ונטל התמריצים מתייצב. אז כל דולר צמיחה דורש פחות הון ותשואת ההשקעה לצמיחה עולה לכ-70% (עדיין מתחת ל-120% שמראה החישוב על ההון המכווץ בספרים), והמכפיל נשאר גבוה.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "dc_f_nr_vas_fy25",
+     "dc_f_nr_vas_g_q3",
+     "dc_s_vas_9m_26",
+     "pf_operating_income_fy2025",
+     "pf_operating_income_fy2022",
+     "dc_f_amort_incent_ytd"
+    ]
+   }
+  },
+  "own_history": {
+   "low": 27.5,
+   "median": 35.6,
+   "high": 43.5,
+   "years": "2021-2026",
+   "evidence_ids": [
+    "nm_hist_ib",
+    "nm_price_ib",
+    "nm_eps_diluted_ttm_2026q3",
+    "pf_eps_diluted_fy2025",
+    "pf_eps_diluted_fy2024",
+    "pf_eps_diluted_fy2023"
+   ]
+  }
+ },
+ "key_risk": {
+  "reading_he": "הסיכון המרכזי הוא שחיקת ה'אגרה' על הרשת: הנפח כבר מאט (GDV צמח 7% בלבד), ההנחות לבנקים צומחות מהר מההכנסה (52.6% מההכנסה הגולמית של הרשת) וגם צורכות מזומן מראש (4.7 מיליארד דולר ב-9 חודשים), ובמקביל חוק הניתוב בארה\"ב ותקרות העמלה בבריטניה עלולים להוריד את המחיר לכל עסקה. מחיר המניה בשיא מניח שהצמיחה הדו-ספרתית והשוליים של 60% יימשכו.",
+  "evidence_ids": [
+   "dc_f_gdv_g_q3",
+   "dc_f_rebates_share_q3",
+   "dc_f_rebates_share_fy25",
+   "dc_f_prepaid_chg_ytd",
+   "mc_ccca_congress",
+   "mc_psr_court",
+   "nm_price_ib"
+  ]
+ },
+ "falsifiers": [
+  {
+   "id": "fx_base_guide27",
+   "scenario": "base",
+   "metric": "FY2027 net revenue growth guidance, currency-neutral, low end of the guided range (Q4 2026 release)",
+   "threshold": 0.1,
+   "direction": "below",
+   "by": "2027-02-15",
+   "evidence_ids": [
+    "dc_g_nr_fy26"
+   ]
+  },
+  {
+   "id": "fx_base_rebates",
+   "scenario": "base",
+   "metric": "FY2026 rebates and incentives as share of gross payment network assessments (rebates / (payment network net revenue + rebates))",
+   "threshold": 0.54,
+   "direction": "above",
+   "by": "2027-02-28",
+   "evidence_ids": [
+    "dc_f_rebates_share_q3",
+    "dc_f_rebates_share_fy25"
+   ]
+  },
+  {
+   "id": "fx_bull_xborder",
+   "scenario": "bull",
+   "metric": "Q4 2026 cross-border volume growth, local currency",
+   "threshold": 0.1,
+   "direction": "below",
+   "by": "2027-02-15",
+   "evidence_ids": [
+    "dc_f_xb_g_q3",
+    "dc_f_xb_g_ytd"
+   ]
+  },
+  {
+   "id": "fx_bear_pn",
+   "scenario": "bear",
+   "metric": "Q2 2027 payment network net revenue growth, year over year",
+   "threshold": 0.1,
+   "direction": "above",
+   "by": "2027-08-15",
+   "evidence_ids": [
+    "dc_f_nr_pn_g_q3"
+   ]
+  },
+  {
+   "id": "fx_bear_rebates",
+   "scenario": "bear",
+   "metric": "FY2027 rebates and incentives as share of gross payment network assessments (rebates / (payment network net revenue + rebates))",
+   "threshold": 0.52,
+   "direction": "below",
+   "by": "2028-02-28",
+   "evidence_ids": [
+    "dc_f_rebates_share_q3",
+    "dc_f_rebates_share_fy25"
+   ]
+  }
+ ],
+ "assessments": {
+  "moat": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "pf_operating_income_fy2025",
+    "pf_revenue_fy2025",
+    "dc_f_opm_adj_ytd",
+    "dc_f_cards_q3",
+    "pf_10k_20260211",
+    "fd_v_rel_fy26q4"
+   ],
+   "note": "Network effect of two-sided acceptance (3.54bn cards) shared in a duopoly with Visa; evidenced by about 58-61% operating margins for six years and ROIC about 87-98% (forensic screen), incremental ROIC about 120%. The mechanism that stops returns fading is the two-sided network plus regulation-heavy entry; the rent is shared with issuers (rebates) and capped by regulators, not by new networks."
+  },
+  "switching_costs": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "dc_k_us_debit_gdv_g",
+    "dc_c_top5_fy25",
+    "dc_f_prepaid_chg_ytd",
+    "dc_f_rebates_g_ytd"
+   ],
+   "note": "Merchants cannot easily drop Mastercard (honor-all-cards, consumer demand), but issuers can and do switch networks at renewal: Capital One's debit migration to Discover cut US debit GDV growth to 1.4%. Keeping issuers costs rising up-front incentives (prepaid incentive outflow $4.7bn 9M 2026 vs $2.9bn)."
+  },
+  "pricing_power": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "dc_f_nr_g_q3",
+    "dc_f_gdv_g_q3",
+    "dc_k_xb_assess_g",
+    "dc_f_rebates_share_q3",
+    "dc_f_rebates_share_fy25",
+    "dc_call_20261029"
+   ],
+   "note": "Net revenue +14% on GDV +7% and cross-border assessments +16% on cross-border volume +11%: revenue per unit of volume keeps rising (pricing plus VAS); CFO cites lapping of pricing in Q4. Offset: incentives absorb a rising share of gross assessments (51.3% -> 52.6%), so part of the pricing is passed back to issuers."
+  },
+  "retention": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "dc_k_us_debit_gdv_g",
+    "pf_rel_20261029_1",
+    "dc_c_top5_fy25"
+   ],
+   "note": "No customer-level retention disclosed; the release cites new and renewed deals; the Capital One debit loss shows large issuers can leave. No retention rate available (gap)."
+  },
+  "customer_concentration": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "dc_c_top5_fy25",
+    "dc_f_top5_fy25"
+   ],
+   "note": "Five largest customers about 21% ($6.9bn) of FY2025 net revenue, none above 10%; issuer consolidation raises bargaining power at renewal."
+  },
+  "market_size": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "dc_f_gdv_q3",
+    "dc_f_gdv_ytd",
+    "dc_f_pv_g_q3",
+    "dc_f_nr_vas_fy25"
+   ],
+   "note": "About $8.5tn GDV in 9M 2026 still growing high single digits, plus a VAS business of $13.3bn (FY2025) growing about 20% in security, data, authentication and loyalty."
+  },
+  "competition": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "fd_v_rel_fy26q4",
+    "dc_f_nr_g_q3",
+    "dc_f_xb_g_q3",
+    "dc_f_rebates_g_q3",
+    "fd_axp_q3_26",
+    "fd_pypl_q3_26"
+   ],
+   "note": "Rational duopoly with Visa: similar revenue growth (+14% vs +13%) but Visa grew volume and cross-border faster in Jul-Sep 2026 and both pay accelerating incentives (MA +18%, Visa +21%). AXP and PayPal grow slower and are not taking network share on these numbers."
+  },
+  "substitutes": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "fd_upi_sep26",
+    "uf_pix_ebanx",
+    "dc_f_swt_g_q3",
+    "mc_genius_rules",
+    "dc_f_bvnk"
+   ],
+   "note": "UPI (+23% transactions) and Pix are taking domestic flows in India and Brazil, but MA's own switched transactions still grow 9% and no displacement is visible in its numbers; stablecoins are being co-opted (BVNK) rather than fought. Size of displacement is unmeasured (gap)."
+  },
+  "management": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "dc_g_nr_fy26",
+    "dc_f_nr_g_ytd_cn",
+    "pf_rel_20261029_1",
+    "dc_call_20261029",
+    "dc_f_restructuring_q1"
+   ],
+   "note": "FY2026 guidance (high end of low double digits currency-neutral ex acquisitions) is being met: 9M 2026 +13% currency-neutral; operating margin expanded to 60.5% adjusted. CFO change in 2026 (Ling Hai CFO, Mehra to Chief Business Officer) and a $202m restructuring in Q1 2026. No numeric guidance track record computed (track_record null): gap."
+  },
+  "capital_allocation": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "pf_buybacks_fy2025",
+    "pf_sbc_fy2025",
+    "pf_shares_diluted_wavg_fy2020",
+    "pf_shares_diluted_wavg_fy2025",
+    "nm_shares_diluted_q3_2026",
+    "pf_goodwill_fy2020",
+    "pf_goodwill_fy2025",
+    "dc_f_bvnk"
+   ],
+   "note": "Buybacks $11.7bn vs SBC $0.6bn in FY2025; diluted shares 1,006m (FY2020) -> 906m (FY2025) -> 876m (Q3 2026), about -2.7% a year net of SBC. Acquisitions doubled goodwill ($5.0bn -> $9.6bn, 2020-2025) and supply 3-4 points of VAS growth; their separate returns are not disclosed (gap). Debt rose to $23.9bn (from $18.3bn long-term at YE2025)."
+  },
+  "governance": {
+   "assessment": "unknown",
+   "evidence_ids": [
+    "pf_proxy_20260427"
+   ],
+   "note": "Proxy (DEF 14A, 2026-04-27) saved but not read for pay structure or board in this stage: gap."
+  },
+  "regulation": {
+   "assessment": "weak",
+   "evidence_ids": [
+    "mc_ccca_congress",
+    "mc_ccca_paymentsdive",
+    "mc_psr_court",
+    "pf_10q_20261029",
+    "dc_f_litprov_ytd",
+    "dc_f_accr_lit"
+   ],
+   "note": "The main risk to the moat: US routing mandate (CCCA) with presidential backing, UK cross-border interchange cap power upheld, EU sovereignty push, unresolved Block/Intuit (>$5bn) and UK actions (>GBP 2.9bn combined), litigation provisions every quarter. None has cut revenue yet; this is weak as an exposure, not as current results."
+  },
+  "technology_ai": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "pf_rel_20261029_1",
+    "mc_ma_bvnk_platform",
+    "mc_ma_stablecoin_security",
+    "dc_f_nr_vas_g_q3"
+   ],
+   "note": "Agentic commerce, tokenization, and the BVNK Global Money Platform position MA as the trust layer for new payment forms; VAS +19% is the monetized part. Agentic commerce and stablecoin revenue are not yet visible in numbers ('off a small base', BVNK impact on Q3 VAS 'minimal'): potential, not a driver."
+  },
+  "geopolitics": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "mc_f_rev_us_share_fy25",
+    "mc_f_rev_apemea_9m26",
+    "mc_f_rev_apemea_9m25",
+    "pf_10k_20260211",
+    "uf_eu_wero"
+   ],
+   "note": "Diversified: US about 29% of net revenue, APEMEA 9M 2026 $15.7bn (+14%). Exposed to protective policies favouring domestic networks (10-K risk factor, Russia exit 2022, India RuPay, EU Wero/digital euro) and to cross-border travel and FX shocks."
+  }
+ },
+ "forecast_options": {
+  "cyclical": {
+   "treatment": "structural",
+   "reason": "Revenue grew every year 2021-2025 with a 53-58% operating margin; the network toll and VAS recur. Cross-border travel is the cyclical piece (cross-border volume +11% in Q3 2026 vs +12% 9M), changing the growth rate, not the economics; scenarios carry it.",
+   "evidence_ids": [
+    "pf_revenue_fy2021",
+    "pf_revenue_fy2025",
+    "pf_operating_income_fy2025",
+    "dc_f_xb_g_q3",
+    "dc_f_xb_g_ytd"
+   ]
+  },
+  "debt_like_claims": [
+   {
+    "kind": "litigation",
+    "amount": 262000000,
+    "reason": "Accrued litigation on the balance sheet at 2026-09-30 (mostly US merchant opt-out settlements), a cash claim ahead of the shares not in the debt lines. Unaccrued claims (Block/Intuit >$5bn single damages, UK collective actions) are plaintiffs' claims, not liabilities: carried in the bear scenario and the key risk, not added here.",
+    "evidence_ids": [
+     "dc_f_accr_lit",
+     "pf_10q_20261029"
+    ]
+   }
+  ]
+ },
+ "market": {
+  "risk_free": {
+   "value": 0.0498,
+   "as_of": "2026-10-29",
+   "source_id": "pf_fred_dgs10"
+  },
+  "equity_risk_premium": {
+   "value": 0.042,
+   "as_of": "2026-10-01",
+   "source_id": "pf_erp_implied"
+  }
+ }
+}

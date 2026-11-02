@@ -1,0 +1,285 @@
+{
+ "ticker": "ORCL",
+ "as_of": "2026-10-29",
+ "stop": false,
+ "name": "ORACLE CORP",
+ "cik": "1341439",
+ "currency": "USD",
+ "exchange": "NYSE",
+ "fiscal_year_end": "05-31",
+ "sic": 7372,
+ "sic_description": "Services-Prepackaged Software",
+ "annual_form": "10-K",
+ "type": "mature_growth / stalwart (computed by classify_company from SEC companyfacts; the analyst confirms or overrides with reasons)",
+ "evidence_ids": [
+  "pf_10k_20260622"
+ ],
+ "resolved": true,
+ "filings": [
+  {
+   "form": "10-K",
+   "filed": "2026-06-22",
+   "report_date": "2026-05-31",
+   "accession": "0001193125-26-277521",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526277521/orcl-20260531.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526277521/",
+   "what": "annual report"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2026-09-11",
+   "report_date": "2026-08-31",
+   "accession": "0001193125-26-389274",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526389274/orcl-20260831.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526389274/",
+   "what": "quarterly report"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-09-10",
+   "report_date": "2026-09-10",
+   "accession": "0001193125-26-387905",
+   "items": "2.02,8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526387905/orcl-20260910.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526387905/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-06-10",
+   "report_date": "2026-06-10",
+   "accession": "0001193125-26-265848",
+   "items": "2.02,8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526265848/orcl-20260610.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526265848/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-03-10",
+   "report_date": "2026-03-10",
+   "accession": "0001193125-26-100148",
+   "items": "2.02,8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526100148/orcl-20260310.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526100148/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-12-10",
+   "report_date": "2025-12-10",
+   "accession": "0001193125-25-314207",
+   "items": "2.02,8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312525314207/orcl-20251210.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312525314207/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-09-09",
+   "report_date": "2025-09-09",
+   "accession": "0001193125-25-199175",
+   "items": "2.02,8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312525199175/orcl-20250909.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312525199175/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-06-11",
+   "report_date": "2025-06-11",
+   "accession": "0000950170-25-084831",
+   "items": "2.02,8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1341439/000095017025084831/orcl-20250611.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1341439/000095017025084831/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-03-10",
+   "report_date": "2025-03-10",
+   "accession": "0000950170-25-036295",
+   "items": "2.02,8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1341439/000095017025036295/orcl-20250310.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1341439/000095017025036295/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2024-12-09",
+   "report_date": "2024-12-09",
+   "accession": "0000950170-24-134537",
+   "items": "2.02,8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1341439/000095017024134537/orcl-20241209.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1341439/000095017024134537/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "DEF 14A",
+   "filed": "2026-09-25",
+   "report_date": "2026-11-18",
+   "accession": "0001193125-26-402816",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526402816/orcl-20260925.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526402816/",
+   "what": "proxy statement"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-10-28",
+   "report_date": "2026-10-28",
+   "accession": "0001193125-26-435853",
+   "items": "7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526435853/d75538d8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526435853/",
+   "what": "8-K since the annual report (items 7.01,9.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-09-14",
+   "report_date": "2026-09-12",
+   "accession": "0001193125-26-389753",
+   "items": "8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526389753/d20034d8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526389753/",
+   "what": "8-K since the annual report (items 8.01,9.01)"
+  }
+ ],
+ "computed_type": {
+  "stage": "mature_growth",
+  "lynch": "stalwart",
+  "reasons": [
+   "growth measured without years with a large acquisition: FY2023",
+   "revenue compounding 8–20% with established operations"
+  ],
+  "flags": [
+   {
+    "key": "acquisitions",
+    "he": "ב-FY2023 הייתה רכישה גדולה (המוניטין במאזן קפץ). חלק מהצמיחה נקנה ולא נבנה — לכן הסיווג מסתכל על הצמיחה בלי השנים האלה. צריך לבדוק שהרכישה מחזירה את המחיר ששולם."
+   }
+  ]
+ },
+ "identity_check": {
+  "reporting_currency": "USD",
+  "monetary_units": {
+   "USD": 553
+  },
+  "currency_basis": "facts of filing 0001193125-26-277521 (10-K, filed 2026-06-22)",
+  "depositary_shares": false,
+  "status": "ok",
+  "reasons": []
+ },
+ "prefetch": {
+  "by": "scripts/ticker_prefetch.py",
+  "at_utc": "2026-10-29T07:41:55+00:00",
+  "to_complete_by_lanes": [
+   "security and share class, quote currency, IBKR contract: gather_numbers (it alone writes identity.json while the lanes run)",
+   "named competitors: gather_field writes them in gather/field.json competitors[] (the canonical list), never here"
+  ]
+ },
+ "issuer": {
+  "value": "Oracle Corporation (ORACLE CORP), Delaware; HQ Austin, Texas",
+  "source": "SEC submissions JSON (raw/sec__submissions.json); 10-K FY2026 cover",
+  "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526277521/orcl-20260531.htm"
+ },
+ "security": {
+  "value": "Common Stock, par value $0.01, ticker ORCL, NYSE primary listing; single common class; not an ADR (no depositary ratio for the common)",
+  "source": "10-K FY2026 cover, Section 12(b) table (reading/10k_full.txt lines 42-60); IBKR search_contracts conid 272800 NYSE (raw/ibkr__search_contracts_ORCL.json)",
+  "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526277521/orcl-20260531.htm"
+ },
+ "other_listed_securities": [
+  {
+   "value": "Depositary Shares ORCL-PRD (NYSE), each 1/2,000th of a 6.50% Series D Mandatory Convertible Preferred share; 50,000 preferred shares (100,000,000 depositary shares) issued 2026-02-05, $100,000 liquidation preference each (= $5.0B), cumulative 6.50% dividend payable in cash or common stock; mandatory conversion into common (fundamental-change window to 2029-01-15). A dilution claim on the common: the capital bridge must carry it.",
+   "source": "10-K FY2026 cover and equity note; 10-Q Q1 FY27 balance sheet (0.05 million preferred shares outstanding at 2026-08-31) and dividend note ($1,625/preferred share declared Sept 2026)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526389274/orcl-20260831.htm"
+  },
+  {
+   "value": "Senior notes and other borrowings $125.0B principal at 2026-08-31 (fair value $105.7B); IBKR lists Oracle bonds (issuer e1392830)",
+   "source": "10-Q Q1 FY27 fair value note",
+   "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526389274/orcl-20260831.htm"
+  },
+  {
+   "value": "Secondary listings ORCL on MEXI (Mexico) and ORCLUSD on EBS (Swiss) are the same issuer; not used; an unrelated 'ORACLE COMMODITY HOLDING' trades as ORCL on TSX Venture (different company)",
+   "source": "IBKR search_contracts",
+   "url": "connector:mcp__Interactive_Brokers__search_contracts"
+  }
+ ],
+ "ibkr_contract": {
+  "conid": 272800,
+  "exchange": "NYSE",
+  "symbol": "ORCL",
+  "security_type": "STK",
+  "source": "connector:mcp__Interactive_Brokers__search_contracts (READ-ONLY)"
+ },
+ "quote_currency": {
+  "value": "USD",
+  "source": "NYSE listing; IBKR conid 272800 country US"
+ },
+ "reporting_currency": {
+  "value": "USD",
+  "source": "SEC companyfacts of 10-K filed 2026-06-22 (553 USD monetary units)"
+ },
+ "fiscal_calendar": {
+  "fiscal_year_end": "05-31",
+  "quarters": "Q1 Jun-Aug (ends Aug 31), Q2 Sep-Nov (Nov 30), Q3 Dec-Feb (Feb 28/29), Q4 Mar-May (May 31)",
+  "latest_annual": "FY2026 ended 2026-05-31 (10-K filed 2026-06-22)",
+  "latest_quarter": "Q1 FY2027 ended 2026-08-31 (10-Q filed 2026-09-11; release 2026-09-10)",
+  "next_report": "Q2 FY2027 (quarter ending 2026-11-30), expected mid-December 2026 by the company's pattern (Dec 9-10 in 2024/2025); date not confirmed here - gap",
+  "source": "10-K/10-Q cover pages; 8-K Item 2.02 dates in SEC submissions"
+ },
+ "shares_outstanding_point_in_time": {
+  "value": 3023736000,
+  "date": "2026-09-07",
+  "source": "10-Q Q1 FY27 cover",
+  "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526389274/orcl-20260831.htm"
+ },
+ "latest_earnings_call": {
+  "date": "2026-09-10",
+  "what": "Q1 FY2027 results call, 4:00 p.m. Central, webcast on oracle.com/investor",
+  "source": "8-K Item 2.02 exhibit 99.1 filed 2026-09-10",
+  "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526387905/orcl-ex99_1.htm",
+  "transcript": "not saved by prefetch - gather_documents lane"
+ },
+ "not_yet_citable": [
+  {
+   "form": "8-K",
+   "filed": "2026-10-28",
+   "items": "7.01,9.01",
+   "note": "Reg FD 8-K dated 2026-10-28: not citable until 2026-10-30 (LAG_DAYS=2); keep out of drivers/events/key risk; rerun with as_of>=2026-10-30 to use it"
+  }
+ ],
+ "named_competitors": {
+  "source": "10-K FY2026 Item 1 'Competition' (reading/10k_item1_business.txt line 201)",
+  "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526277521/orcl-20260531.htm",
+  "direct": [
+   "Adobe Systems Incorporated",
+   "Alphabet Inc.",
+   "Amazon.com, Inc.",
+   "Cisco Systems, Inc.",
+   "Intel Corporation",
+   "International Business Machines Corporation",
+   "Microsoft Corporation",
+   "Salesforce, Inc.",
+   "SAP SE",
+   "Hewlett-Packard Enterprise",
+   "Workday, Inc."
+  ],
+  "healthcare_it_after_cerner": [
+   "Allscripts Healthcare Solutions, Inc.",
+   "Arcadia Solutions",
+   "athenahealth, Inc.",
+   "Epic Systems Corporation",
+   "InterSystems Corporation"
+  ],
+  "note": "the 10-K names these without mapping them to segments; gather_field writes the canonical list with why each competes (e.g. AMZN/MSFT/GOOGL vs OCI infrastructure; SAP/WDAY/CRM vs cloud applications; IBM/HPE/Cisco/Intel vs hardware and on-prem)"
+ },
+ "type_analyst_note": {
+  "computed": "mature_growth / stalwart",
+  "reading": "Keep the computed type as the base lens but flag a hybrid: a mature software/license-support compounder plus a capital-intensive AI-infrastructure scale-up (OCI). FY2026 revenue 67.4B (+17.3%), GAAP operating margin 30.6% (FY2021 37.6%, down 7.0pp), OCF 32.0B vs capex 55.7B (FCF about -23.7B); FY2025 capex 21.2B vs OCF 20.8B; Q1 FY27 revenue +30%, IaaS +121%, RPO $664B. Questions this type adds: funding of the build-out (debt $125B, mandatory convertible, ATM program -> holder dilution), RPO conversion and counterparty concentration, return on incremental capital of OCI, cyclicality of AI capex demand. The type chooses questions/KPIs only, never a number.",
+  "source": "prefetch/history.json (SEC companyfacts FY2021-FY2026), prefetch/classify.json, release 2026-09-10",
+  "url": "https://www.sec.gov/Archives/edgar/data/1341439/000119312526387905/orcl-ex99_1.htm"
+ },
+ "stop_reason": null
+}

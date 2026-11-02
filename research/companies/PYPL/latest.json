@@ -1,0 +1,12 @@
+{
+ "ticker": "PYPL",
+ "as_of": "2026-10-26",
+ "folder": "research/companies/PYPL/2026-10-26",
+ "thesis_id": null,
+ "status": null,
+ "verdict": null,
+ "files": [
+  "gather/field.json",
+  "identity.json"
+ ]
+}

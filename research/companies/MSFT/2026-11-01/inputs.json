@@ -1,0 +1,1027 @@
+{
+ "forecast": {
+  "overrides": [
+   {
+    "path": "growth_anchor",
+    "scenario": "bear",
+    "value": 0.08,
+    "reason": "Own run rate: Q1 FY2027 revenue +18.8% y/y and the Q2 guide midpoint +18.8% (96.55B vs 81.27B). Azure (about 36% of revenue) grows 48% and is guided 49-50%; the rest grows mid-single digits (Windows OEM -22%). Base 17%: Azure decelerates on a larger base toward the mid-30s while ~30% of the 677B commercial RPO (about 203B) is recognized within 12 months, so contracted demand covers more than half of next year's revenue. Bull 23%: the GPU capacity that slipped into H2 FY2027 arrives and RPO (+73%) converts with Azure above 40%. Bear 8%: OpenAI (10.8% of revenue, partly funded by MSFT, and most of the backlog growth: commercial RPO +84% in FY2026 but +25% excluding OpenAI) flattens its spend and Azure falls to 15-20% growth while the consumer/PC lines keep shrinking. Consensus (dated 2026-11-01) is not citable until 2026-11-03 and is not used.",
+    "evidence_ids": [
+     "pf_revenue_q_2026_09_30",
+     "pf_revenue_q_2025_09_30",
+     "pf_revenue_q_2025_12_31",
+     "dc_g_rev_q2fy27",
+     "dc_kpi_azure_growth",
+     "dc_g_azure_q2fy27",
+     "dc_rpo_commercial_q1fy27",
+     "dc_rpo_commercial_growth_q1fy27",
+     "dc_rpo_12m_share_q1fy27",
+     "dc_openai_rev_q1fy27",
+     "dc_kpi_windows_oem_growth",
+     "rf_rpo_growth_total_q4fy26",
+     "rf_rpo_growth_ex_openai_q4fy26"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "growth_anchor",
+    "scenario": "base",
+    "value": 0.17,
+    "reason": "Own run rate: Q1 FY2027 revenue +18.8% y/y and the Q2 guide midpoint +18.8% (96.55B vs 81.27B). Azure (about 36% of revenue) grows 48% and is guided 49-50%; the rest grows mid-single digits (Windows OEM -22%). Base 17%: Azure decelerates on a larger base toward the mid-30s while ~30% of the 677B commercial RPO (about 203B) is recognized within 12 months, so contracted demand covers more than half of next year's revenue. Bull 23%: the GPU capacity that slipped into H2 FY2027 arrives and RPO (+73%) converts with Azure above 40%. Bear 8%: OpenAI (10.8% of revenue, partly funded by MSFT, and most of the backlog growth: commercial RPO +84% in FY2026 but +25% excluding OpenAI) flattens its spend and Azure falls to 15-20% growth while the consumer/PC lines keep shrinking. Consensus (dated 2026-11-01) is not citable until 2026-11-03 and is not used.",
+    "evidence_ids": [
+     "pf_revenue_q_2026_09_30",
+     "pf_revenue_q_2025_09_30",
+     "pf_revenue_q_2025_12_31",
+     "dc_g_rev_q2fy27",
+     "dc_kpi_azure_growth",
+     "dc_g_azure_q2fy27",
+     "dc_rpo_commercial_q1fy27",
+     "dc_rpo_commercial_growth_q1fy27",
+     "dc_rpo_12m_share_q1fy27",
+     "dc_openai_rev_q1fy27",
+     "dc_kpi_windows_oem_growth",
+     "rf_rpo_growth_total_q4fy26",
+     "rf_rpo_growth_ex_openai_q4fy26"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "growth_anchor",
+    "scenario": "bull",
+    "value": 0.23,
+    "reason": "Own run rate: Q1 FY2027 revenue +18.8% y/y and the Q2 guide midpoint +18.8% (96.55B vs 81.27B). Azure (about 36% of revenue) grows 48% and is guided 49-50%; the rest grows mid-single digits (Windows OEM -22%). Base 17%: Azure decelerates on a larger base toward the mid-30s while ~30% of the 677B commercial RPO (about 203B) is recognized within 12 months, so contracted demand covers more than half of next year's revenue. Bull 23%: the GPU capacity that slipped into H2 FY2027 arrives and RPO (+73%) converts with Azure above 40%. Bear 8%: OpenAI (10.8% of revenue, partly funded by MSFT, and most of the backlog growth: commercial RPO +84% in FY2026 but +25% excluding OpenAI) flattens its spend and Azure falls to 15-20% growth while the consumer/PC lines keep shrinking. Consensus (dated 2026-11-01) is not citable until 2026-11-03 and is not used.",
+    "evidence_ids": [
+     "pf_revenue_q_2026_09_30",
+     "pf_revenue_q_2025_09_30",
+     "pf_revenue_q_2025_12_31",
+     "dc_g_rev_q2fy27",
+     "dc_kpi_azure_growth",
+     "dc_g_azure_q2fy27",
+     "dc_rpo_commercial_q1fy27",
+     "dc_rpo_commercial_growth_q1fy27",
+     "dc_rpo_12m_share_q1fy27",
+     "dc_openai_rev_q1fy27",
+     "dc_kpi_windows_oem_growth",
+     "rf_rpo_growth_total_q4fy26",
+     "rf_rpo_growth_ex_openai_q4fy26"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "mature_margin",
+    "scenario": "bear",
+    "value": 0.38,
+    "reason": "Operating margin was 41.6%-46.8% in FY2021-FY2026 (median 44.6%), 49.8% in Q1 FY2027 (flag peak_margin_run_rate) and about 46.8% implied by the Q2 guide. Base 44%: the history median, because depreciation of mostly short-lived AI servers (D&A 34.3B in FY2026 vs 22.0B in FY2025, capex doubling) keeps eating the gross margin (-125 bp y/y). Bull 48%: Q1-level operating leverage (opex +6% vs revenue +19%) persists. Bear 38%: AI pricing falls while the depreciation and 364.6B of not-yet-commenced leases are fixed, taking the margin below the FY2021 low.",
+    "evidence_ids": [
+     "web:pf_cf_20210729",
+     "web:pf_cf_20230727",
+     "web:pf_cf_20260729",
+     "pf_operating_income_q_2026_09_30",
+     "pf_revenue_q_2026_09_30",
+     "pf_d_and_a_fy2026",
+     "pf_d_and_a_fy2025",
+     "dc_g_cogs_q2fy27",
+     "dc_g_opex_q2fy27",
+     "dc_g_rev_q2fy27"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "mature_margin",
+    "scenario": "base",
+    "value": 0.44,
+    "reason": "Operating margin was 41.6%-46.8% in FY2021-FY2026 (median 44.6%), 49.8% in Q1 FY2027 (flag peak_margin_run_rate) and about 46.8% implied by the Q2 guide. Base 44%: the history median, because depreciation of mostly short-lived AI servers (D&A 34.3B in FY2026 vs 22.0B in FY2025, capex doubling) keeps eating the gross margin (-125 bp y/y). Bull 48%: Q1-level operating leverage (opex +6% vs revenue +19%) persists. Bear 38%: AI pricing falls while the depreciation and 364.6B of not-yet-commenced leases are fixed, taking the margin below the FY2021 low.",
+    "evidence_ids": [
+     "web:pf_cf_20210729",
+     "web:pf_cf_20230727",
+     "web:pf_cf_20260729",
+     "pf_operating_income_q_2026_09_30",
+     "pf_revenue_q_2026_09_30",
+     "pf_d_and_a_fy2026",
+     "pf_d_and_a_fy2025",
+     "dc_g_cogs_q2fy27",
+     "dc_g_opex_q2fy27",
+     "dc_g_rev_q2fy27"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "mature_margin",
+    "scenario": "bull",
+    "value": 0.48,
+    "reason": "Operating margin was 41.6%-46.8% in FY2021-FY2026 (median 44.6%), 49.8% in Q1 FY2027 (flag peak_margin_run_rate) and about 46.8% implied by the Q2 guide. Base 44%: the history median, because depreciation of mostly short-lived AI servers (D&A 34.3B in FY2026 vs 22.0B in FY2025, capex doubling) keeps eating the gross margin (-125 bp y/y). Bull 48%: Q1-level operating leverage (opex +6% vs revenue +19%) persists. Bear 38%: AI pricing falls while the depreciation and 364.6B of not-yet-commenced leases are fixed, taking the margin below the FY2021 low.",
+    "evidence_ids": [
+     "web:pf_cf_20210729",
+     "web:pf_cf_20230727",
+     "web:pf_cf_20260729",
+     "pf_operating_income_q_2026_09_30",
+     "pf_revenue_q_2026_09_30",
+     "pf_d_and_a_fy2026",
+     "pf_d_and_a_fy2025",
+     "dc_g_cogs_q2fy27",
+     "dc_g_opex_q2fy27",
+     "dc_g_rev_q2fy27"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "sales_to_capital",
+    "scenario": "bear",
+    "value": 0.42,
+    "reason": "Lease-inclusive basis, consistent with the finance-lease liabilities deducted as debt: incremental revenue / (cash capex + finance-lease ROU additions from the 10-K/10-Q lease note - D&A). FY2024-FY2026: 119.9B / 210.2B = 0.57; FY2026 0.47 (50.1B / 106.3B), FY2025 0.58, FY2024 0.81. Base 0.55: near the three-year figure, slightly below it because capex keeps rising (Q1 FY2027 cash PP&E 39.4B plus 5.2B finance leases; CY2026 capex guided ~175B). Bear 0.42: below the FY2026 low of 0.47 (capex above 50B a quarter while growth slows). Bull 0.75: capex flattens as the fleet fills and conversion moves back toward FY2024 (0.81). Future datacenter leases shift to operating leases (outside capex, inside operating costs), and the 364.6B of leases not yet commenced are outside this capital base: their cost is carried in the margin lever, not here.",
+    "evidence_ids": [
+     "pf_revenue_fy2023",
+     "pf_revenue_fy2024",
+     "pf_revenue_fy2025",
+     "pf_revenue_fy2026",
+     "pf_capex_fy2024",
+     "pf_capex_fy2025",
+     "pf_capex_fy2026",
+     "pf_d_and_a_fy2024",
+     "pf_d_and_a_fy2025",
+     "pf_d_and_a_fy2026",
+     "rf_fin_lease_rou_fy2024",
+     "rf_fin_lease_rou_fy2025",
+     "rf_fin_lease_rou_fy2026",
+     "rf_fin_lease_rou_q1fy27",
+     "dc_capex_cash_q1fy27",
+     "rf_g_capex_cy26"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "sales_to_capital",
+    "scenario": "base",
+    "value": 0.55,
+    "reason": "Lease-inclusive basis, consistent with the finance-lease liabilities deducted as debt: incremental revenue / (cash capex + finance-lease ROU additions from the 10-K/10-Q lease note - D&A). FY2024-FY2026: 119.9B / 210.2B = 0.57; FY2026 0.47 (50.1B / 106.3B), FY2025 0.58, FY2024 0.81. Base 0.55: near the three-year figure, slightly below it because capex keeps rising (Q1 FY2027 cash PP&E 39.4B plus 5.2B finance leases; CY2026 capex guided ~175B). Bear 0.42: below the FY2026 low of 0.47 (capex above 50B a quarter while growth slows). Bull 0.75: capex flattens as the fleet fills and conversion moves back toward FY2024 (0.81). Future datacenter leases shift to operating leases (outside capex, inside operating costs), and the 364.6B of leases not yet commenced are outside this capital base: their cost is carried in the margin lever, not here.",
+    "evidence_ids": [
+     "pf_revenue_fy2023",
+     "pf_revenue_fy2024",
+     "pf_revenue_fy2025",
+     "pf_revenue_fy2026",
+     "pf_capex_fy2024",
+     "pf_capex_fy2025",
+     "pf_capex_fy2026",
+     "pf_d_and_a_fy2024",
+     "pf_d_and_a_fy2025",
+     "pf_d_and_a_fy2026",
+     "rf_fin_lease_rou_fy2024",
+     "rf_fin_lease_rou_fy2025",
+     "rf_fin_lease_rou_fy2026",
+     "rf_fin_lease_rou_q1fy27",
+     "dc_capex_cash_q1fy27",
+     "rf_g_capex_cy26"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "sales_to_capital",
+    "scenario": "bull",
+    "value": 0.75,
+    "reason": "Lease-inclusive basis, consistent with the finance-lease liabilities deducted as debt: incremental revenue / (cash capex + finance-lease ROU additions from the 10-K/10-Q lease note - D&A). FY2024-FY2026: 119.9B / 210.2B = 0.57; FY2026 0.47 (50.1B / 106.3B), FY2025 0.58, FY2024 0.81. Base 0.55: near the three-year figure, slightly below it because capex keeps rising (Q1 FY2027 cash PP&E 39.4B plus 5.2B finance leases; CY2026 capex guided ~175B). Bear 0.42: below the FY2026 low of 0.47 (capex above 50B a quarter while growth slows). Bull 0.75: capex flattens as the fleet fills and conversion moves back toward FY2024 (0.81). Future datacenter leases shift to operating leases (outside capex, inside operating costs), and the 364.6B of leases not yet commenced are outside this capital base: their cost is carried in the margin lever, not here.",
+    "evidence_ids": [
+     "pf_revenue_fy2023",
+     "pf_revenue_fy2024",
+     "pf_revenue_fy2025",
+     "pf_revenue_fy2026",
+     "pf_capex_fy2024",
+     "pf_capex_fy2025",
+     "pf_capex_fy2026",
+     "pf_d_and_a_fy2024",
+     "pf_d_and_a_fy2025",
+     "pf_d_and_a_fy2026",
+     "rf_fin_lease_rou_fy2024",
+     "rf_fin_lease_rou_fy2025",
+     "rf_fin_lease_rou_fy2026",
+     "rf_fin_lease_rou_q1fy27",
+     "dc_capex_cash_q1fy27",
+     "rf_g_capex_cy26"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "tax_rate",
+    "scenario": "all",
+    "value": 0.2,
+    "reason": "Management guides an effective tax rate of about 20% for Q1 and Q2 FY2027; held in every scenario.",
+    "evidence_ids": [
+     "dc_g_tax_q2fy27",
+     "dc_g_tax_q1fy27"
+    ],
+    "source_tier": "guidance"
+   },
+   {
+    "path": "sbc_pct",
+    "scenario": "all",
+    "value": 0.037,
+    "reason": "SBC 12.4B = 3.7% of FY2026 revenue (4.25% FY2025, 4.4% FY2024, falling as revenue outgrows grants); charged as a real cost at the latest level.",
+    "evidence_ids": [
+     "pf_sbc_fy2026",
+     "pf_revenue_fy2026",
+     "pf_sbc_fy2025",
+     "pf_sbc_fy2024"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "terminal_roic",
+    "scenario": "bear",
+    "value": 0.14,
+    "reason": "One return on capital for the DCF and the company path (position/path.json roic bear 0.14 / base 0.22 / bull 0.31). Lease-inclusive after-tax (20%) incremental ROIC from MSFT's own figures: FY2024-FY2026 53.4B / 210.2B = 0.25, FY2026 0.20, FY2025 0.24. Base 0.22: inside that record, below the three-year figure because the newest year is the lowest. Bull 0.31: the company's overall return on invested capital, reached if the new AI capacity earns like the existing business. Bear 0.14: a stress hypothesis below anything in the record (lowest year 0.20), for AI overcapacity and price competition; not evidenced, hence analyst tier.",
+    "evidence_ids": [
+     "pf_revenue_fy2023",
+     "pf_revenue_fy2024",
+     "pf_revenue_fy2025",
+     "pf_revenue_fy2026",
+     "pf_capex_fy2024",
+     "pf_capex_fy2025",
+     "pf_capex_fy2026",
+     "pf_d_and_a_fy2024",
+     "pf_d_and_a_fy2025",
+     "pf_d_and_a_fy2026",
+     "rf_fin_lease_rou_fy2024",
+     "rf_fin_lease_rou_fy2025",
+     "rf_fin_lease_rou_fy2026",
+     "rf_fin_lease_rou_q1fy27",
+     "dc_capex_cash_q1fy27",
+     "rf_g_capex_cy26",
+     "pf_operating_income_fy2023",
+     "pf_operating_income_fy2024",
+     "pf_operating_income_fy2025",
+     "pf_operating_income_fy2026",
+     "pf_equity_fy2026",
+     "pf_long_term_debt_fy2026",
+     "pf_cash_fy2026"
+    ],
+    "source_tier": "analyst"
+   },
+   {
+    "path": "terminal_roic",
+    "scenario": "base",
+    "value": 0.22,
+    "reason": "One return on capital for the DCF and the company path (position/path.json roic bear 0.14 / base 0.22 / bull 0.31). Lease-inclusive after-tax (20%) incremental ROIC from MSFT's own figures: FY2024-FY2026 53.4B / 210.2B = 0.25, FY2026 0.20, FY2025 0.24. Base 0.22: inside that record, below the three-year figure because the newest year is the lowest. Bull 0.31: the company's overall return on invested capital, reached if the new AI capacity earns like the existing business. Bear 0.14: a stress hypothesis below anything in the record (lowest year 0.20), for AI overcapacity and price competition; not evidenced, hence analyst tier.",
+    "evidence_ids": [
+     "pf_revenue_fy2023",
+     "pf_revenue_fy2024",
+     "pf_revenue_fy2025",
+     "pf_revenue_fy2026",
+     "pf_capex_fy2024",
+     "pf_capex_fy2025",
+     "pf_capex_fy2026",
+     "pf_d_and_a_fy2024",
+     "pf_d_and_a_fy2025",
+     "pf_d_and_a_fy2026",
+     "rf_fin_lease_rou_fy2024",
+     "rf_fin_lease_rou_fy2025",
+     "rf_fin_lease_rou_fy2026",
+     "rf_fin_lease_rou_q1fy27",
+     "dc_capex_cash_q1fy27",
+     "rf_g_capex_cy26",
+     "pf_operating_income_fy2023",
+     "pf_operating_income_fy2024",
+     "pf_operating_income_fy2025",
+     "pf_operating_income_fy2026",
+     "pf_equity_fy2026",
+     "pf_long_term_debt_fy2026",
+     "pf_cash_fy2026"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "terminal_roic",
+    "scenario": "bull",
+    "value": 0.31,
+    "reason": "One return on capital for the DCF and the company path (position/path.json roic bear 0.14 / base 0.22 / bull 0.31). Lease-inclusive after-tax (20%) incremental ROIC from MSFT's own figures: FY2024-FY2026 53.4B / 210.2B = 0.25, FY2026 0.20, FY2025 0.24. Base 0.22: inside that record, below the three-year figure because the newest year is the lowest. Bull 0.31: the company's overall return on invested capital, reached if the new AI capacity earns like the existing business. Bear 0.14: a stress hypothesis below anything in the record (lowest year 0.20), for AI overcapacity and price competition; not evidenced, hence analyst tier.",
+    "evidence_ids": [
+     "pf_revenue_fy2023",
+     "pf_revenue_fy2024",
+     "pf_revenue_fy2025",
+     "pf_revenue_fy2026",
+     "pf_capex_fy2024",
+     "pf_capex_fy2025",
+     "pf_capex_fy2026",
+     "pf_d_and_a_fy2024",
+     "pf_d_and_a_fy2025",
+     "pf_d_and_a_fy2026",
+     "rf_fin_lease_rou_fy2024",
+     "rf_fin_lease_rou_fy2025",
+     "rf_fin_lease_rou_fy2026",
+     "rf_fin_lease_rou_q1fy27",
+     "dc_capex_cash_q1fy27",
+     "rf_g_capex_cy26",
+     "pf_operating_income_fy2023",
+     "pf_operating_income_fy2024",
+     "pf_operating_income_fy2025",
+     "pf_operating_income_fy2026",
+     "pf_equity_fy2026",
+     "pf_long_term_debt_fy2026",
+     "pf_cash_fy2026"
+    ],
+    "source_tier": "own_history"
+   }
+  ],
+  "risk_free": {
+   "value": 0.0498,
+   "as_of": "2026-10-29",
+   "source_id": "web:pf_fred_dgs10",
+   "title": "Market yield on US Treasury securities at 10-year constant maturity, percent, daily (FRED DGS10)",
+   "url": "https://fred.stlouisfed.org/series/DGS10"
+  },
+  "equity_risk_premium": {
+   "value": 0.042,
+   "as_of": "2026-10-01",
+   "source_id": "web:pf_erp_implied",
+   "title": "Damodaran implied ERP for the S&P 500 on 1 October 2026 (trailing 12 months, adjusted payout), treasury 5.29%",
+   "url": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/home.htm"
+  },
+  "cyclical": {
+   "treatment": "structural",
+   "reason": "Revenue grew every year FY2021-FY2026 and operating margin stayed within 41.6%-46.8%; recurring cloud and subscription revenue backed by a 677B commercial RPO. The AI capacity build carries an overbuild risk (10-Q risk factor), handled in the bear, not an industry price cycle.",
+   "evidence_ids": [
+    "web:pf_cf_20210729",
+    "web:pf_cf_20260729",
+    "dc_rpo_commercial_q1fy27",
+    "web:pf_10q_20261028"
+   ]
+  },
+  "debt_like_claims": [
+   {
+    "kind": "finance_leases",
+    "amount": 70973000000,
+    "reason": "Total finance lease liabilities 70,973M at 2026-09-30 (other current liabilities 5,005M + other long-term liabilities 65,968M; 10-Q lease note). They are outside the 35.5B debt lines and their payments are amortisation and interest, not operating costs.",
+    "evidence_ids": [
+     "web:pf_10q_20261028"
+    ]
+   }
+  ]
+ },
+ "company_path": {
+  "metric": "eps",
+  "multiple": "forward_pe",
+  "scenarios": {
+   "bear": {
+    "multiple_from": "economics",
+    "roic": 0.14,
+    "justification": "unproven",
+    "reason_he": "בתרחיש הדובי ההון שמושקע ב-AI (השקעות הוניות של 116 מיליארד דולר בשנה האחרונה ויותר מ-50 מיליארד דולר ברבעון לפי ההנחיה, ועוד התחייבויות חכירה של 443 מיליארד דולר שאינן בחישוב ההון) לא מתמלא בלקוחות משלמים או תלוי מדי ב-OpenAI, ולכן התשואה על ההון הנוסף יורדת לכ-14%: עדיין מעל עלות ההון, אבל רחוק מ-31% של היום. תשואה נמוכה על הצמיחה פירושה שהצמיחה שווה פחות, ולכן המכפיל נמוך.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "pf_capex_fy2026",
+     "pf_cfo_fy2026",
+     "dc_g_capex_q2fy27",
+     "dc_leases_incl_interest_fy26",
+     "dc_kpi_openai_share_rev",
+     "pf_operating_income_fy2026",
+     "pf_equity_fy2026"
+    ]
+   },
+   "base": {
+    "multiple_from": "economics",
+    "roic": 0.22,
+    "justification": "justified_high",
+    "reason_he": "התשואה על ההון הנוסף של מיקרוסופט ב-3 השנים האחרונות הייתה כ-24% (רווח תפעולי עלה מ-88.5 ל-155.2 מיליארד דולר, וההון המושקע גדל מהר), והתשואה הכוללת ירדה מכ-38% בשנת 2022 ל-31% בשנת 2026 בגלל בניית חוות השרתים. ההנחה היא כ-22% על ההון החדש (ההון כולל מוניטין, החכירות לא כלולות ולכן נלקח מעט פחות): תשואה גבוהה בהרבה מעלות ההון שמצדיקה מכפיל גבוה, שיורד בהדרגה ככל שהצמיחה מאטה.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "pf_operating_income_fy2023",
+     "pf_operating_income_fy2026",
+     "pf_equity_fy2023",
+     "pf_equity_fy2026",
+     "pf_long_term_debt_fy2026",
+     "pf_cash_fy2026",
+     "pf_goodwill_fy2026",
+     "pf_capex_fy2026"
+    ]
+   },
+   "bull": {
+    "multiple_from": "economics",
+    "roic": 0.31,
+    "justification": "justified_high",
+    "reason_he": "בתרחיש השורי הקיבולת החדשה מתמלאת בביקוש משלם: Azure צמחה 48% ברבעון האחרון, ההנחיה לרבעון הבא היא 49%-50%, וענן מיקרוסופט צמח 30% ל-63.9 מיליארד דולר. אז ההון החדש מרוויח כמו העסק הקיים, כ-31% (התשואה של שנת 2026), ולא יותר כי זו כבר תשואה אחרי ירידה מ-38%. תשואה כזו על הצמיחה מצדיקה מכפיל גבוה שנשאר גבוה.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "dc_kpi_azure_growth",
+     "dc_g_azure_q2fy27",
+     "dc_kpi_cloud_rev",
+     "dc_kpi_cloud_growth",
+     "pf_operating_income_fy2026",
+     "pf_equity_fy2026",
+     "pf_long_term_debt_fy2026",
+     "pf_cash_fy2026"
+    ]
+   }
+  },
+  "own_history": {
+   "low": 20.8,
+   "median": 35.2,
+   "high": 37.9,
+   "years": "2022-2026",
+   "evidence_ids": [
+    "web:nm_ib_hist",
+    "pf_eps_diluted_fy2022",
+    "pf_eps_diluted_fy2023",
+    "pf_eps_diluted_fy2024",
+    "pf_eps_diluted_fy2025",
+    "pf_eps_diluted_fy2026"
+   ]
+  }
+ },
+ "analyst_sheet": {
+  "scenario_events": {
+   "bear": [
+    {
+     "event_he": "OpenAI, שמהווה כ-11% מההכנסות וממומנת בחלקה על ידי מיקרוסופט (12 מיליארד דולר כבר הועברו), מקצצת את ההוצאה על Azure או מתקשה לשלם (יתרת חוב של 7.2 מיליארד דולר).",
+     "evidence_ids": [
+      "dc_openai_rev_q1fy27",
+      "dc_openai_ar_q1fy27",
+      "dc_openai_funding_funded",
+      "web:pf_10q_20261028"
+     ]
+    },
+    {
+     "event_he": "צבר ההזמנות מתברר כתלוי ב-OpenAI: הצבר המסחרי צמח ב-84% בשנת 2026 אבל רק ב-25% בלי OpenAI, כך שקיצוץ של OpenAI פוגע בצמיחה העתידית הרבה יותר מחלקה של 11% בהכנסות של היום.",
+     "evidence_ids": [
+      "rf_rpo_growth_total_q4fy26",
+      "rf_rpo_growth_ex_openai_q4fy26",
+      "dc_rpo_commercial_q1fy27",
+      "dc_openai_rev_q1fy27"
+     ]
+    },
+    {
+     "event_he": "הביקוש ל-AI מתברר כנמוך מהקיבולת שנבנתה: 364.6 מיליארד דולר של חכירות מרכזי נתונים שעוד לא התחילו ו-169 מיליארד התחייבויות רכש לשנה הקרובה הופכים לעלות קבועה, והשוליים יורדים.",
+     "evidence_ids": [
+      "dc_leases_not_commenced_q1fy27",
+      "dc_purchase_commitments_1y_fy26",
+      "web:pf_10q_20261028"
+     ]
+    },
+    {
+     "event_he": "שוק המחשבים ממשיך להיחלש: Windows OEM ומכשירים ירדו 22% ברבעון, ותחום המכשירים והצרכנים מתכווץ.",
+     "evidence_ids": [
+      "dc_kpi_windows_oem_growth",
+      "dc_seg_dc_q1fy27",
+      "dc_seg_dc_q1fy26"
+     ]
+    },
+    {
+     "event_he": "מחירי שירותי AI יורדים בגלל תחרות של AWS, Google Cloud ו-Oracle על אותם לקוחות. (בתרחיש הזה התשואה על ההון החדש היא כ-14%, מתחת לכל שנה ברקורד של החברה, ומכפיל הרווח יורד מתחת לשפל של 5 השנים: זו הנחת לחץ, לא נתון.)",
+     "evidence_ids": []
+    }
+   ],
+   "base": [
+    {
+     "event_he": "ברבעון השני של FY2027 ההכנסות בטווח ההנחיה, 96.0-97.1 מיליארד דולר, ו-Azure צומח 49%-50%.",
+     "evidence_ids": [
+      "dc_g_rev_q2fy27",
+      "dc_g_azure_q2fy27",
+      "dc_g_rev_q1fy27",
+      "pf_revenue_q_2026_09_30"
+     ]
+    },
+    {
+     "event_he": "כ-30% מהצבר החוזי של 677 מיליארד דולר (כ-203 מיליארד) הופכים להכנסה בתוך 12 חודשים.",
+     "evidence_ids": [
+      "dc_rpo_commercial_q1fy27",
+      "dc_rpo_12m_share_q1fy27",
+      "dc_rpo_duration_q1fy27"
+     ]
+    },
+    {
+     "event_he": "ההשקעות נשארות מעל 50 מיליארד דולר לרבעון, והפחת העולה מוריד את שולי הרווח הגולמי בהדרגה.",
+     "evidence_ids": [
+      "dc_g_capex_q2fy27",
+      "dc_capex_incl_leases_q1fy27",
+      "pf_d_and_a_fy2026"
+     ]
+    }
+   ],
+   "bull": [
+    {
+     "event_he": "יכולת המחשוב של צד שלישי (GPU) שנדחתה למחצית השנייה של FY2027 מגיעה, והביקוש שעולה על ההיצע הופך להכנסות.",
+     "evidence_ids": [
+      "web:dc_call_fy27q1",
+      "web:pf_10q_20261028"
+     ]
+    },
+    {
+     "event_he": "הצבר החוזי המסחרי, שגדל 73% בשנה, ממשיך לגדול ו-Azure נשאר מעל 40% צמיחה גם ב-FY2028.",
+     "evidence_ids": [
+      "dc_rpo_commercial_growth_q1fy27",
+      "dc_kpi_azure_growth",
+      "dc_g_azure_q2fy27"
+     ]
+    },
+    {
+     "event_he": "Copilot וסוכני AI מתרחבים בבסיס לקוחות Microsoft 365 (מספר הלקוחות עם יותר מ-50 אלף רישיונות גדל פי 8), ומוסיפים הכנסה בשוליים גבוהים.",
+     "evidence_ids": [
+      "dc_kpi_copilot_large_seat_customers",
+      "dc_kpi_m365c_growth"
+     ]
+    }
+   ]
+  },
+  "key_risk": {
+   "reading_he": "מיקרוסופט משקיעה כ-45-50 מיליארד דולר ברבעון ומתחייבת ל-364.6 מיליארד דולר חכירות מרכזי נתונים נוספות, בעוד לקוח אחד, OpenAI, הוא כ-11% מההכנסות, מקבל ממנה מימון, ואחראי לרוב הגידול בצבר ההזמנות: הצבר המסחרי צמח ב-84% בשנה, אבל רק ב-25% בלי OpenAI. אם הביקוש של OpenAI או של שוק ה-AI נחלש, ההכנסות מאטות אבל עלויות הפחת והחכירות נשארות, והתזרים החופשי (כבר ירד ל-20% מההכנסות) נשחק.",
+   "evidence_ids": [
+    "dc_capex_incl_leases_q1fy27",
+    "dc_g_capex_q2fy27",
+    "dc_leases_not_commenced_q1fy27",
+    "dc_openai_rev_q1fy27",
+    "dc_openai_funding_funded",
+    "pf_cfo_q_2026_09_30",
+    "pf_capex_q_2026_09_30",
+    "rf_rpo_growth_total_q4fy26",
+    "rf_rpo_growth_ex_openai_q4fy26",
+    "rf_fin_lease_rou_q1fy27"
+   ]
+  },
+  "bottleneck": {
+   "reading_he": "MSFT is not a bottleneck supplier; it is a capacity holder that is itself constrained by power, land, permits and GPUs (10-K/10-Q risk factors). Its edge is the capacity it has locked in: $364.6bn of datacenter leases not yet commenced at 2026-09-30 (up from $329.1bn at 2026-06-30, commencing FY27-FY34), $194.1bn purchase commitments, capex including finance leases $45.2bn in Q1 FY2027 and guided above $50bn in Q2. The other hyperscalers (Amazon, Alphabet, Oracle) add capacity in parallel; how long the shortage lasts is not stated by any source here (gap).",
+   "evidence_ids": [
+    "web:pf_10q_20261028",
+    "web:pf_10k_20260729",
+    "dc_leases_not_commenced_q1fy27",
+    "dc_leases_not_commenced_fy26",
+    "dc_purchase_commitments_fy26",
+    "dc_capex_incl_leases_q1fy27",
+    "dc_g_capex_q2fy27"
+   ]
+  },
+  "future": {
+   "reading_he": "Demand for MSFT cloud and AI is rising faster than MSFT can supply it, on its own numbers: Azure revenue +48% y/y in Q1 FY2027 (guided +49% to +50% constant currency for Q2 FY2027), Microsoft Cloud $63.9bn +30%, commercial remaining performance obligation $677bn +73% with about 30% to be recognized in the next 12 months. The 10-Q itself warns AI demand is hard to forecast and over-building could leave assets underused. No regulator, industry study or buyer filing was retrieved, so the market size outside MSFT is not measured here.",
+   "evidence_ids": [
+    "dc_kpi_azure_growth",
+    "dc_kpi_cloud_rev",
+    "dc_rpo_commercial_q1fy27",
+    "dc_rpo_commercial_growth_q1fy27",
+    "dc_rpo_12m_share_q1fy27",
+    "dc_g_azure_q2fy27",
+    "web:pf_10q_20261028"
+   ]
+  }
+ },
+ "card": {
+  "assessments": {
+   "moat": {
+    "assessment": "strong",
+    "evidence_ids": [
+     "pf_operating_income_fy2026",
+     "pf_revenue_fy2026",
+     "web:fd_sec_googl",
+     "web:fd_sec_orcl",
+     "web:fd_sec_amzn",
+     "web:pf_10k_20260729"
+    ],
+    "note": "Sources evidenced: an installed enterprise base (Microsoft 365 seats +6% in FY2026 with rising revenue per user) and scale in cloud. Operating margin 46.8% in FY2026 vs whole-company 32.0% Alphabet, 30.6% Oracle, 11.2% Amazon; ROIC 31% last year (average 34%) against an 8% cost-of-capital reference. Segment margins of the competitors not retrieved."
+   },
+   "switching_costs": {
+    "assessment": "strong",
+    "evidence_ids": [
+     "dc_rpo_commercial_q1fy27",
+     "dc_rpo_duration_q1fy27",
+     "web:pf_10k_20260729"
+    ],
+    "note": "Commercial RPO $677bn with weighted duration 2.3 years: customers commit for years; Microsoft 365 seats still grew 6% in FY2026. No churn or net retention rate is disclosed."
+   },
+   "pricing_power": {
+    "assessment": "strong",
+    "evidence_ids": [
+     "dc_kpi_m365c_growth",
+     "web:pf_10k_20260729",
+     "web:pf_10q_20261028"
+    ],
+    "note": "Microsoft 365 commercial cloud +17% in Q1 FY2027, driven by higher revenue per user (upsell to Copilot, E5 and E7) on top of 6% seat growth in FY2026. The 10-Q warns AI pricing must recover its costs and that competition affects pricing."
+   },
+   "customer_concentration": {
+    "assessment": "weak",
+    "evidence_ids": [
+     "dc_cust_openai",
+     "dc_openai_rev_q1fy27",
+     "dc_openai_ar_q1fy27",
+     "dc_cust_none10"
+    ],
+    "note": "OpenAI is 10.8% of Q1 FY2027 revenue with a $7.2bn receivable and is also a 24% equity-method investee; no other customer above 10% in FY2024-FY2026. OpenAI's share of RPO is not disclosed (gap)."
+   },
+   "market_size": {
+    "assessment": "strong",
+    "evidence_ids": [
+     "dc_rpo_commercial_q1fy27",
+     "dc_kpi_azure_growth",
+     "dc_g_azure_q2fy27"
+    ],
+    "note": "MSFT's own contracted demand ($677bn commercial RPO, +73%) and Azure +48% accelerating to a guided +49-50%; no external market-size study retrieved."
+   },
+   "competition": {
+    "assessment": "adequate",
+    "evidence_ids": [
+     "web:fd_sec_amzn",
+     "web:fd_sec_googl",
+     "web:fd_sec_orcl",
+     "web:pf_10k_20260729",
+     "dc_kpi_windows_oem_growth"
+    ],
+    "note": "Intense competition in every market (10-K Item 1A); Amazon, Alphabet and Oracle are well-funded and adding AI capacity, and several AI model partners also compete. MSFT leads on margin but Windows OEM (-22%) and Xbox (-2%) are shrinking."
+   },
+   "substitutes": {
+    "assessment": "adequate",
+    "evidence_ids": [
+     "web:pf_10q_20261028"
+    ],
+    "note": "The 10-Q lists the shift of AI workloads to competing platforms, on-premises or local deployments as a risk; no measured loss yet (Azure +48%)."
+   },
+   "management": {
+    "assessment": "strong",
+    "evidence_ids": [
+     "dc_g_rev_q1fy27",
+     "web:pf_rel_20261028_1",
+     "dc_g_azure_q1fy27",
+     "dc_kpi_azure_growth"
+    ],
+    "note": "Q1 FY2027 delivered above the company's own guidance: revenue $92.3bn vs guided $89.85-90.95bn, Azure +48% vs guided about +45% constant currency. One quarter checked; the multi-quarter track-record ratio was not computed (auto.json track_record null)."
+   },
+   "capital_allocation": {
+    "assessment": "adequate",
+    "evidence_ids": [
+     "pf_buybacks_fy2026",
+     "pf_sbc_fy2026",
+     "pf_shares_diluted_wavg_fy2021",
+     "dc_wavg_diluted_q1fy27",
+     "pf_capex_fy2026",
+     "pf_cfo_fy2026",
+     "pf_goodwill_fy2023",
+     "pf_goodwill_fy2024"
+    ],
+    "note": "Buybacks $22.3bn exceed SBC $12.4bn in FY2026; diluted shares fell from 7,608m (FY2021) to 7,446m. But capex $115.9bn took 63% of $182.9bn operating cash flow in FY2026, FCF margin fell from 33% (FY2021) to 20%, and incremental ROIC (23.6%) is below the average (34%). The Activision purchase (goodwill +$51bn in FY2024) has no evidenced return yet: Xbox content -2%."
+   },
+   "regulation": {
+    "assessment": "adequate",
+    "evidence_ids": [
+     "web:pf_10q_20261028",
+     "web:mc_pymnts_antitrust_20260929"
+    ],
+    "note": "Scrutiny by EU, UK, US and China competition authorities; accrued legal liabilities $582m with about $400m reasonably possible beyond it; partial dismissal of a ChatGPT-user antitrust suit. Larger item: IRS transfer-pricing claim of $28.9bn plus penalties and interest (2004-2013), which MSFT says its allowances cover."
+   },
+   "technology_ai": {
+    "assessment": "strong",
+    "evidence_ids": [
+     "dc_kpi_azure_growth",
+     "dc_kpi_m365c_growth",
+     "dc_openai_stake",
+     "dc_kpi_copilot_large_seat_customers"
+    ],
+    "note": "Paid AI adoption is in the numbers: Azure +48% and Microsoft 365 revenue per user up on Copilot; 24% as-converted OpenAI stake. Dependence on third-party model partners who also compete is a stated risk."
+   },
+   "geopolitics": {
+    "assessment": "adequate",
+    "evidence_ids": [
+     "mc_rev_us_q1fy27",
+     "mc_rev_oth_q1fy27",
+     "web:pf_10k_20260729"
+    ],
+    "note": "US 53.6% of Q1 FY2027 revenue, no other country above 10%; AI export-control and tariff risks are named in the filings but not sized; Taiwan/China supply share not disclosed (gap)."
+   }
+  }
+ },
+ "evidence_pack": {
+  "pack_version": 1,
+  "pack_sha256": "f7ebbb5972393478471a781ee522106aa86a159be9c2f353a7293c879853b4b5",
+  "ticker": "MSFT",
+  "as_of": "2026-11-01",
+  "identity": {
+   "name": "MICROSOFT CORP",
+   "currency": "USD",
+   "exchange": "Nasdaq",
+   "security": "MSFT common stock (Microsoft Corp), single class, no ADR; IB primary listing NASDAQ/SMART, STK",
+   "fiscal_year_end": "06-30",
+   "cik": "789019",
+   "type": "mature_growth / stalwart (computed by classify_company from SEC companyfacts; the analyst confirms or overrides with reasons)",
+   "evidence_ids": [
+    "pf_10k_20260729"
+   ]
+  },
+  "sources": 40,
+  "independent_sources": 25,
+  "guidance_track_record": {
+   "metric": "revenue",
+   "ratio": 1.020785,
+   "n": 1,
+   "beats": 1,
+   "misses": 0,
+   "periods": [
+    {
+     "period": "Q1 FY2027",
+     "guided_mid": 90400000000,
+     "actual": 92279000000,
+     "ratio": 1.020785
+    }
+   ],
+   "rule": "mean of actual / guided midpoint over the recorded periods; applied only where a driver says so"
+  },
+  "guidance_adjustments": [],
+  "competitors": [
+   {
+    "ticker": "AMZN",
+    "name": "Amazon.com (AWS)",
+    "why": "Azure and Azure AI compete with hyperscaler cloud providers for the same enterprise cloud and AI workloads (10-K Item 1: 'Our AI offerings compete with AI products from hyperscalers'); the 10-K names no company, so this is the engine's attribution of the hyperscaler class. Whole-company numbers only; AWS segment not retrieved."
+   },
+   {
+    "ticker": "GOOGL",
+    "name": "Alphabet (Google Cloud, Workspace, Gemini, Search)",
+    "why": "Google Cloud competes with Azure/Azure AI as a hyperscaler; Workspace with Microsoft 365; Search advertising with Bing (10-K Item 1 names hyperscalers and search engines without naming companies). Whole-company numbers only; Google Cloud segment not retrieved."
+   },
+   {
+    "ticker": "ORCL",
+    "name": "Oracle (OCI, database, Fusion and NetSuite applications)",
+    "why": "OCI competes for AI infrastructure and database workloads; Oracle database competes with SQL Server/Azure data services and Fusion/NetSuite with Dynamics (10-K Item 1: database, BI, data warehousing and business-solution providers, unnamed). Whole-company numbers only."
+   }
+  ],
+  "consensus": [
+   {
+    "id": "nm_cons_rev_fy2027",
+    "metric": "revenue",
+    "period": "FY2027",
+    "value": 391583547050.0,
+    "n": 52,
+    "low": 380000000000.0,
+    "high": 402719127430.0,
+    "source_id": "nm_av_consensus"
+   },
+   {
+    "id": "nm_cons_rev_fy2028",
+    "metric": "revenue",
+    "period": "FY2028",
+    "value": 468553774650.0,
+    "n": 52,
+    "low": 433188000000.0,
+    "high": 501989984410.0,
+    "source_id": "nm_av_consensus"
+   },
+   {
+    "id": "nm_cons_eps_fy2027",
+    "metric": "eps_diluted",
+    "period": "FY2027",
+    "value": 19.7599,
+    "n": 34,
+    "low": 19.06,
+    "high": 20.7,
+    "source_id": "nm_av_consensus"
+   },
+   {
+    "id": "nm_cons_eps_fy2028",
+    "metric": "eps_diluted",
+    "period": "FY2028",
+    "value": 23.6897,
+    "n": 33,
+    "low": 22.03,
+    "high": 25.68,
+    "source_id": "nm_av_consensus"
+   },
+   {
+    "id": "nm_cons_rev_q2fy27",
+    "metric": "revenue",
+    "period": "Q2 FY2027",
+    "value": 95646497200.0,
+    "n": 37,
+    "low": 93527000000.0,
+    "high": 98410000000.0,
+    "source_id": "nm_av_consensus"
+   },
+   {
+    "id": "nm_cons_eps_q2fy27",
+    "metric": "eps_diluted",
+    "period": "Q2 FY2027",
+    "value": 4.8171,
+    "n": 25,
+    "low": 4.65,
+    "high": 4.97,
+    "source_id": "nm_av_consensus"
+   }
+  ],
+  "potential": {
+   "market_direction": {
+    "reading": "Demand for MSFT cloud and AI is rising faster than MSFT can supply it, on its own numbers: Azure revenue +48% y/y in Q1 FY2027 (guided +49% to +50% constant currency for Q2 FY2027), Microsoft Cloud $63.9bn +30%, commercial remaining performance obligation $677bn +73% with about 30% to be recognized in the next 12 months. The 10-Q itself warns AI demand is hard to forecast and over-building could leave assets underused. No regulator, industry study or buyer filing was retrieved, so the market size outside MSFT is not measured here.",
+    "evidence_ids": [
+     "dc_kpi_azure_growth",
+     "dc_kpi_cloud_rev",
+     "dc_rpo_commercial_q1fy27",
+     "dc_rpo_commercial_growth_q1fy27",
+     "dc_rpo_12m_share_q1fy27",
+     "dc_g_azure_q2fy27",
+     "web:pf_10q_20261028"
+    ],
+    "hypothesis": false
+   },
+   "bottleneck_potential": {
+    "reading": "MSFT is not a bottleneck supplier; it is a capacity holder that is itself constrained by power, land, permits and GPUs (10-K/10-Q risk factors). Its edge is the capacity it has locked in: $364.6bn of datacenter leases not yet commenced at 2026-09-30 (up from $329.1bn at 2026-06-30, commencing FY27-FY34), $194.1bn purchase commitments, capex including finance leases $45.2bn in Q1 FY2027 and guided above $50bn in Q2. The other hyperscalers (Amazon, Alphabet, Oracle) add capacity in parallel; how long the shortage lasts is not stated by any source here (gap).",
+    "evidence_ids": [
+     "web:pf_10q_20261028",
+     "web:pf_10k_20260729",
+     "dc_leases_not_commenced_q1fy27",
+     "dc_leases_not_commenced_fy26",
+     "dc_purchase_commitments_fy26",
+     "dc_capex_incl_leases_q1fy27",
+     "dc_g_capex_q2fy27"
+    ],
+    "hypothesis": false
+   },
+   "share_trajectory": {
+    "reading": "Azure at +48% grows far faster than the whole-company revenue of Amazon (+12.4% FY2025), Alphabet (+15.1% FY2025) and Oracle (+17.4% FY2026), which suggests MSFT is gaining cloud share, but AWS, Google Cloud and OCI segment revenue and any attributed share study were not retrieved, so no share conclusion is drawn.",
+    "evidence_ids": [],
+    "hypothesis": true
+   },
+   "competitive_position": {
+    "reading": "On the numbers retrieved MSFT is the most profitable of the named competitors: FY2026 operating margin 46.8% (155.2 of 331.8bn) and revenue growth 17.8%, against whole-company operating margins of 32.0% at Alphabet, 30.6% at Oracle and 11.2% at Amazon (whole companies, not the competing segments). Breadth is its advantage: Microsoft 365 (seats +6%, revenue per user up on Copilot and E5) plus Azure plus the 24% OpenAI stake. Weak spots: Windows OEM and Devices -22% and Xbox content -2% in Q1 FY2027.",
+    "evidence_ids": [
+     "pf_operating_income_fy2026",
+     "pf_revenue_fy2026",
+     "web:fd_sec_amzn",
+     "web:fd_sec_googl",
+     "web:fd_sec_orcl",
+     "web:pf_10k_20260729",
+     "dc_kpi_windows_oem_growth",
+     "dc_kpi_xbox_content_growth",
+     "dc_openai_stake"
+    ],
+    "hypothesis": false
+   },
+   "threats": {
+    "reading": "1) Counterparty: OpenAI is 10.8% of Q1 FY2027 revenue ($10.0bn), owes $7.2bn, and the amended agreement (April 2026, press) lets it use other clouds. 2) Over-build: capex rose from $20.6bn (FY2021) to $115.9bn (FY2026) with $364.6bn of leases still to start; if AI demand or pricing disappoints, those are fixed costs (10-Q risk factor). 3) Substitution: customers may shift AI workloads to competing platforms, on-premises or local models (10-Q). 4) Regulation: competition authorities in the EU, UK, US and China; legal accruals $582m are small, while the IRS seeks $28.9bn plus penalties and interest on transfer pricing for 2004-2013 (10-Q).",
+    "evidence_ids": [
+     "dc_openai_rev_q1fy27",
+     "dc_openai_ar_q1fy27",
+     "dc_kpi_openai_share_rev",
+     "web:mc_tc_openai_rev_20261028",
+     "pf_capex_fy2021",
+     "pf_capex_fy2026",
+     "dc_leases_not_commenced_q1fy27",
+     "web:pf_10q_20261028"
+    ],
+    "hypothesis": false
+   }
+  },
+  "bottlenecks": [
+   {
+    "id": "fd_bn_power_dc",
+    "reading": "Scarce input: datacenter power, land, permits and server capacity. MSFT states electricity generation, transmission and grid connection are capacity constrained in many regions, that its capacity build depends on land, zoning and permits, and that demand above available capacity limits its ability to serve customers. Others adding capacity are the other hyperscalers; how long the shortage lasts is not stated in the filing (gap).",
+    "evidence_ids": [
+     "web:pf_10q_20261028"
+    ],
+    "hypothesis": false
+   },
+   {
+    "id": "fd_bn_demand_backlog",
+    "reading": "Paid demand shown in MSFT own numbers: Azure revenue $33,165m vs $22,384m a year earlier (+48%), Microsoft Cloud $63.9bn (+30%), commercial remaining performance obligation $677bn (+73%).",
+    "evidence_ids": [
+     "web:pf_rel_20261028_1"
+    ],
+    "hypothesis": false
+   },
+   {
+    "id": "fd_bn_overbuild",
+    "reading": "The 10-Q warns demand for cloud and AI is hard to forecast and that overestimated demand or misaligned capacity may cause underutilization and asset impairment; operating costs and margins pressured by datacenter and device investment. Counter-risk to the shortage reading.",
+    "evidence_ids": [
+     "web:pf_10q_20261028"
+    ],
+    "hypothesis": false
+   },
+   {
+    "id": "fd_bn_ai_partner_dependence",
+    "reading": "Hypothesis: AI strategy depends on third-party model partners, many of whom also compete with MSFT (10-Q risk factor); the OpenAI dependency is not sized in this lane.",
+    "evidence_ids": [],
+    "hypothesis": true
+   }
+  ],
+  "falsifiers": [
+   {
+    "id": "fx_base_q2rev",
+    "scenario": "base",
+    "metric": "revenue Q2 FY2027 (USD)",
+    "threshold": 96000000000,
+    "direction": "below",
+    "by": "2027-02-15",
+    "evidence_ids": [
+     "dc_g_rev_q2fy27"
+    ]
+   },
+   {
+    "id": "fx_base_azure",
+    "scenario": "base",
+    "metric": "Azure revenue growth y/y Q2 FY2027",
+    "threshold": 0.4,
+    "direction": "below",
+    "by": "2027-02-15",
+    "evidence_ids": [
+     "dc_g_azure_q2fy27",
+     "dc_kpi_azure_growth"
+    ]
+   },
+   {
+    "id": "fx_bull_rpo",
+    "scenario": "bull",
+    "metric": "commercial remaining performance obligation Q3 FY2027 (USD)",
+    "threshold": 750000000000,
+    "direction": "below",
+    "by": "2027-05-15",
+    "evidence_ids": [
+     "dc_rpo_commercial_q1fy27"
+    ]
+   },
+   {
+    "id": "fx_bear_margin",
+    "scenario": "bear",
+    "metric": "operating margin FY2028",
+    "threshold": 0.44,
+    "direction": "above",
+    "by": "2028-08-15",
+    "evidence_ids": [
+     "pf_operating_income_fy2026",
+     "pf_revenue_fy2026",
+     "rf_g_opmargin_chg_fy27"
+    ]
+   },
+   {
+    "id": "fx_bear_openai",
+    "scenario": "bear",
+    "metric": "commercial RPO growth y/y excluding OpenAI (FY2027 Q4 call)",
+    "threshold": 0.25,
+    "direction": "above",
+    "by": "2027-08-15",
+    "evidence_ids": [
+     "rf_rpo_growth_ex_openai_q4fy26",
+     "rf_rpo_growth_total_q4fy26"
+    ]
+   },
+   {
+    "id": "fx_bear_azure",
+    "scenario": "bear",
+    "metric": "Azure revenue growth y/y Q4 FY2027",
+    "threshold": 0.35,
+    "direction": "above",
+    "by": "2027-08-15",
+    "evidence_ids": [
+     "dc_kpi_azure_growth",
+     "dc_g_azure_q2fy27"
+    ]
+   }
+  ],
+  "notes": [
+   "prefetch 2026-11-01T05:44:51+00:00: SEC documents saved verbatim and their text in reading/ (untrusted); a lane cites a pf_ source only after reading the passage it relies on",
+   "gather fragments reused from /home/user/fundamental-engine/runs/tickers/MSFT_2026-10-27 (as_of 2026-10-27)",
+   "dc CALL 2026-10-28 (Q1 FY2027, fiscal Q1 ends 2026-09-30). Alpha Vantage 2027Q1 returned an empty transcript (checked once); AV 2026Q4 = the July call. Q1 call figures come from a WebFetch summary of the Fool transcript page (secondary, search_excerpt), cross-checked to the release and 10-Q where possible; quote-level wording not verified.",
+   "dc MGMT (call, secondary) demand continues to exceed available supply; third-party GPU capacity deliveries slipped from Q1/Q2 into H2 FY27; capex to be above 50B in Q2 and rise in H2; calendar-year capex of about 170B stated by CNBC for calendar 2027 while other outlets say 2026: period UNVERIFIED, not entered as guidance. Company says it stays free cash flow positive in FY27 and may tap outside financing; Q1 free cash flow 18.6B (58.0B OCF less 39.4B cash capex per statements).",
+   "dc MGMT (release) segment structure changed in September 2026: Agents and Infra (apps/agents, multi-model system, Azure) and Devices and Consumer; prior periods recast for Q1 only in the 10-Q; FY2026 segment lines above are the old three-segment 10-K structure, not comparable.",
+   "dc MGMT (release) Q1 FY27 results exceeded expectations across revenue, operating income and EPS; Microsoft Cloud growth accelerated to 30%. Windows OEM revenue -27% on call (OEM only; release says OEM and Devices -22%) on weak PC demand and partner inventory drawdown.",
+   "dc FACT OpenAI: 10.0B of Q1 revenue (10.8%) from OpenAI arrangements incl. revenue share, 7.2B receivable, 24% as-converted stake, 13.0B total funding commitment of which 12.0B funded; Q1 OpenAI net gain 272M pretax / 207M after tax (non-GAAP excludes it; prior-year quarter was a 3.1B after-tax loss). OpenAI share of RPO not disclosed in the documents read.",
+   "dc FACT Commercial RPO 677B (+73% y/y; 678B in Q4 FY26, +84%): sequential change about -1B; weighted duration 2.3 years; about 30% recognized in the next 12 months, i.e. about 203B. RPO concentration by customer not disclosed.",
+   "dc FACT Lease and purchase obligations (10-K FY26 table): total 743.8B of which leases incl. imputed interest 443.5B, purchase commitments 194.1B (169.0B within 1 year; mostly datacenter, take-or-pay), construction 34.6B; datacenter leases not yet commenced 364.6B at 2026-09-30 (329.1B at 2026-06-30), commencing FY27-FY34. Debt at 2026-09-30: 35.5B (4.4B current); repaid 4.85B in Q1.",
+   "dc FACT Q1 FY27 cash capex 39.4B (up 103% y/y from 19.4B), D&A and other 11.7B (up 44%); about three quarters of capex on short-lived assets (CPUs/GPUs) per call; Q4 FY26 two thirds. Gross margin 67.8% (62,559/92,279) vs 69.0% prior year; operating margin 49.8% vs 48.9%.",
+   "dc FACT Share count: 7,427M outstanding, diluted weighted average 7,446M (7,466M a year ago); Q1 buybacks 4.4B and dividends 6.8B; 40.6B left of the 60B program at 2026-06-30.",
+   "dc RISK 1 (10-K Item 1A, competition) intense competition across all markets (cloud, AI, productivity, gaming, search) can cut volumes and prices.",
+   "dc RISK 2 (10-K Item 1A, cloud and AI strategy) demand for AI services is hard to forecast; overestimating demand or misaligned capacity investment, and uncertain AI cost structure, could hit returns; heavy reliance on third-party model partners (OpenAI).",
+   "dc RISK 3 (10-K Item 1A, infrastructure) datacenter expansion limited by electrical power, land, permitting, skilled labor and scarce suppliers of critical components (memory/GPU/CPU pricing, shortages); outages or capacity constraints.",
+   "dc RISK 4 (10-K Item 1A, investments) significant investments that may not achieve expected returns; capex 39-45B a quarter and 364.6B of leases not yet commenced create a fixed cost base if demand disappoints.",
+   "dc RISK 5 (10-K Item 1A, security and AI) cyberattacks, security vulnerabilities and AI misuse/quality issues could cause liability, reputational harm and lost revenue.",
+   "dc RISK 6 (10-K Item 1A, legal and regulatory) evolving AI, privacy, competition and antitrust regulation, litigation, government-contract uncertainty and tax audits (large foreign earnings share).",
+   "dc RISK 7 (10-K Item 1A, macro and distribution) adverse economic conditions; OEM/partner channel dependence (Windows OEM currently -22%); geopolitical and catastrophic events.",
+   "dc RISK 8 (counterparty, from 10-Q related-party note) OpenAI is both 10.8% of revenue, a 24% equity-method investee and a large share of backlog drivers: concentration and funding risk at one counterparty.",
+   "fd NAMED COMPETITORS (10-K Item 1): the 10-K names NO competitor companies, only classes: Office vs software and global application vendors, web/mobile and AI-first application companies; Windows vs alternative platforms and devices; Defender for Endpoint vs endpoint security providers; EMS vs identity and security vendors; LinkedIn vs online professional networks, job boards, recruiting and L&D providers; Dynamics vs cloud and on-premises business solution providers; Azure vs cloud service providers and open source, AI vs hyperscalers and other emerging competitors, many also partners; server products vs Unix/Linux vendors; Devices vs computer, tablet and hardware makers (many are partners); XBOX vs online gaming ecosystems and console platforms; Search vs search engines and web portals (pf_10k_20260729). The engine's attribution to AMZN, GOOGL, ORCL is its own, not the company's.",
+   "fd PEERS no prefetch/peers.json existed (prefetch had no --peers); competitor numbers are whole-company FY figures from each own SEC companyfacts (AMZN and GOOGL calendar 2025, ORCL fiscal year to May 2026), saved in gather/raw_field/. Periods differ from MSFT FY2026 (June). Competing-segment revenue (AWS, Google Cloud, OCI) NOT retrieved: not in companyfacts totals; gap.",
+   "fd MSFT SEGMENT Q1 FY2027 (Sep 2026) from release: Azure $33,165m vs $22,384m (+48%); Microsoft 365 cloud $27,778m vs $23,694m; Productivity and server licensing $8,407m vs $8,678m; Search and advertising $6,554m vs $5,942m; XBOX $5,379m vs $5,508m; Agents and Infra revenue $76.8bn +25%; Devices and Consumer $15.5bn -3%; Windows OEM and Devices -22% (pf_rel_20261028_1, release of 2026-10-28 is citable from 2026-10-30).",
+   "fd SHARE hypothesis: Azure at +48% grows faster than the consolidated revenue of AMZN (+12.4% FY2025), GOOGL (+15.1% FY2025) and ORCL (+17.4% FY2026), but those are whole-company figures, so no share conclusion about cloud can be drawn without AWS/Google Cloud/OCI segment revenue and without attributed share studies (not retrieved).",
+   "fd SHARE hypothesis: Search and advertising ex-TAC +12% against Alphabet whole-company growth of 15.1%: no search-share reading without Google Search segment numbers; labelled hypothesis, not evidence.",
+   "mc GEOGRAPHY No single country other than the United States exceeds 10% of revenue (10-Q Note segment/geography). US 53.6% of Q1 FY27 revenue (49,459 of 92,279), 51.5% of FY26 (170,794 of 331,839); US includes OEM and multinational billings. Long-lived assets 63.2% US (300,354 of 475,513) at 2026-06-30; only US and Other countries disclosed, no single foreign country over 10%. [pf_10k_20260729, pf_10q_20261028]",
+   "mc EXPOSURE OpenAI concentration: revenue from commercial arrangements with OpenAI incl. revenue-sharing $10.0B in Q1 FY27 = 10.8% of quarterly revenue (10.0/92.279); receivable from OpenAI $7.2B (6.0B at 2026-06-30); about 24% as-converted equity stake, funding commitments $13.0B of which $12.0B funded; equity-method (HLBV) results gain $272M in the quarter vs $4.1B loss a year earlier. Candidate bear mechanism: OpenAI funding/renewal shortfall sized at about 11% of revenue. [pf_10q_20261028]",
+   "mc EXPOSURE Trade and AI export controls: 10-K/10-Q risk factors cite US tariffs, shifting AI export-control policy, possible replacement of the rescinded AI Diffusion Rule, expanded export license conditions, sanctions (Ukraine, Middle East); no revenue share or supply share quantified by the company. Hypothesis, unsized. [pf_10k_20260729, pf_10q_20261028]",
+   "mc EXPOSURE Competition law: authorities in EU, UK, US and China scrutinise Microsoft; no new fine or order in the 10-Q. Accrued legal liabilities $582M at 2026-09-30, reasonably possible additional loss about $400M. LinkedIn Irish DPC GDPR fine appeal pending (decision Oct 2024, hearing Dec 2025, IDPC appealed standard-of-review ruling). Small versus earnings; sized by the accrual. [pf_10q_20261028]",
+   "mc EXPOSURE Supply of AI capacity: CFO said third-party AI chip/capacity delays push some capacity into H1 2027, capex Q1 FY27 $45.2B vs about $50.7B expected, outlook trimmed to $170B from $175B (year basis disagrees between secondary sources: verify in the call transcript). Press lead, not confirmed at source here. [mc_cnbc_capex_20261029]",
+   "mc EXPOSURE Single-region (Taiwan/China) supply: no share disclosed in the filings reviewed for MSFT's own supply; gap, not sized.",
+   "mc NEWS 2026-10-28 Q1 FY27 results (8-K 2.02, 10-Q): revenue $92.3B (+19%), Azure $33.2B (+48%) per press; guidance Azure +49-50% next quarter per press; stock +4% after hours (press, attributed). Results are more than 2 days before 2026-11-01 and so citable; details belong to the numbers/documents lanes. [pf_rel_20261028_1, mc_cnbc_capex_20261029]",
+   "mc NEWS 2026-10-28 8-K Item 8.01: segments recast, new Agents and Infra and Devices and Consumer segments from FY2027, prior amounts recast. Affects segment history comparability. [mc_8k_recast_20261028]",
+   "mc NEWS 2026-10-28 OpenAI revenue $10B in the quarter disclosed in the 10-Q; April 2026 amended agreement lets OpenAI use other clouds, revenue share through 2030 subject to a cap (press, secondary). [pf_10q_20261028, mc_tc_openai_rev_20261028]",
+   "mc NEWS 2026-10-31 FT via press: OpenAI trimmed near-term fundraising goal by $10B (about $20B at a $1.25T valuation); secondary, unconfirmed at source; relevant to the 24% stake and OpenAI commitments.",
+   "mc NEWS 2026-09-29 Federal judge dismissed part of a ChatGPT-subscriber antitrust class action naming the Microsoft-OpenAI relationship (partial dismissal; press lead). [mc_pymnts_antitrust_20260929]",
+   "mc NEWS 2026-10-21 DEF 14A filed, annual meeting 2026-12-08 [pf_proxy_20261021]. No export-rule, tariff or management-change event found for MSFT in searches since 2026-10-27.",
+   "mc RATES risk-free 4.98% (FRED DGS10, 2026-10-29) and implied ERP 4.2% (Damodaran 2026-10-01) kept from the prefetch; Damodaran's next monthly update (1 Nov) not available/not checked.",
+   "nm IDENTITY MSFT = Microsoft Corp common stock, CIK 789019, single class, no ADR/dual listing; IB primary listing NASDAQ conid 272093 USD (other MSFT rows are foreign listings, Swiss/Mexican, Canadian CDR, leveraged ETFs); reporting and quote currency USD; fiscal year ends 30 June; FY2026 = year ended 2026-06-30; latest quarter Q1 FY2027 ended 2026-09-30. Security resolved, no stop.",
+   "nm PRICE last 522.99 (IB, 2026-10-30 close session, prior close 530.14, -1.35%); 52w high 551.15, low 349.20 (IB misc statistics); 5y monthly history saved; cash dividend 0.91 per quarter (last ex-date 2026-08-20), no splits in the window.",
+   "nm RECONCILIATION FY2026 (10-K / companyfacts pf_ facts vs Alpha Vantage): revenue 331,839 / 331,839 USD m, operating income 155,237 / 155,237, net income 133,749 / 133,749, CFO 182,935 / 182,935, capex 115,948 / 115,948, SBC 12,405 / 12,405, diluted EPS 17.95, diluted shares 7,453m: no difference. Alpha Vantage balance sheet shares outstanding 7,453m on 2026-06-30 equals the diluted weighted average listed in pf_ facts (the AV field is not the point-in-time count: read cover page for that).",
+   "nm RECONCILIATION Q1 FY2027 (10-Q text vs pf_ facts vs AV): revenue 92,279 (10-Q) / 92,279 / 92,279 USD m; operating income 45,915 / 45,915 / 45,915; net income 36,629 / 36,629 / 36,629; CFO 58,000 / 58,000 / 58,000; capex 'additions to property and equipment' 39,367 / 39,367 / 39,367; SBC 3,134 / 3,134 / 3,134; diluted EPS 4.92 and diluted shares 7,446m per 10-Q: no difference. Non-GAAP adjusted EPS 4.89 excludes net OpenAI investment gains (+0.03 in Q1 FY27; -0.41 in Q1 FY26 so prior-year EPS 3.72 is depressed: GAAP EPS growth 32% vs adjusted 18%). Capex of 39.4bn is cash additions to PP&E only; finance leases are on top (AV capitalLeaseObligations 21.7bn at 2026-09-30 vs 16.5bn at 2026-06-30). Search-based secondary page quoted a different net income (33.6bn): the 10-Q 36,629 stands.",
+   "nm ROIC CHECK prefetch roic_last 31.1% (FY2026 NOPAT 125.1bn / invested capital 452.5bn): invested capital = equity 442,387 + long-term debt 31,067 - cash 20,935 = 452,519. Differences vs the balance sheet: (a) short-term investments 55.9bn and long-term investments 36.3bn (AV) are not netted as cash, so invested capital is overstated by up to ~56-92bn if treated as excess cash (ROIC would be ~35-39%); (b) current portion of debt (AV 9.2bn), finance leases (AV 16.5bn) and operating leases are not in debt, which pushes the other way (~+26bn plus operating leases); (c) equity 442bn includes the carrying value of the OpenAI investment and goodwill 119.7bn; (d) FY2026 capex 115.9bn vs CFO 182.9bn means invested capital is growing fast (incremental ROIC 23.6%) with most new assets not yet earning (construction in progress). ROIC fell 38.4% (FY22) to 31.1% (FY26) on rising AI datacenter capital. Net: the 31% is a fair middle estimate, direction of the checks offsets.",
+   "nm OWN MULTIPLE HISTORY trailing P/E (month-end close in June / that fiscal year GAAP diluted EPS after SBC): Jun-2022 26.6, Jun-2023 35.2, Jun-2024 37.9, Jun-2025 36.5, Jun-2026 20.8 (close 373.02 at the 2026 low zone vs EPS 17.95); low 20.8 median 35.2 high 37.9 now 27.3 (522.99 / TTM EPS 19.15) years 2022-2026; forward now 26.5x on FY2027 consensus EPS 19.76 and 22.1x on FY2028 EPS 23.69 (consensus, an expectation). Stepwise monthly range over Nov-2021 to Oct-2026 using the latest completed fiscal-year EPS (lagged, crude): low 24.1 median 34.8 high 46.2. FY2026 EPS 17.95 contains OpenAI net gains and FY2025 EPS 13.64 contains OpenAI losses, so EPS growth of 32% in FY2026 is flattered; not a run rate. Sources nm_ib_hist, pf_eps_diluted_fy2022..fy2026, pf_10q_20261028, nm_ib_price, nm_av_consensus.",
+   "nm CONSENSUS Alpha Vantage 2026-11-01 (post results): FY2027 revenue 391.6bn (n 52, 380.0-402.7bn), EPS 19.76 (n 34, 19.06-20.70); FY2028 revenue 468.6bn (n 52, 433.2-502.0bn), EPS 23.69 (n 33, 22.03-25.68); Q2 FY2027 revenue 95.6bn (n 37), EPS 4.82 (n 25). Revisions: FY2028 EPS average 22.59 ninety days ago to 23.69 now (+4.9%), FY2027 EPS 19.38 to 19.76 (+2.0%); trailing 30 days FY2027 5 up / 0 down, FY2028 4 up / 2 down. Operating income estimates are not in the AV payload. Implied consensus revenue growth FY2027 +18.0% on 331.8bn, FY2028 +19.7%. Dispersion is narrow for FY2027 (high/low 6%) and wider for FY2028 (16%). The source is dated 2026-11-01 (retrieval date, no provider publication date), so under the 2-day rule it is not citable until 2026-11-03.",
+   "nm TRACK RECORD gap: Microsoft's releases (reading/release_*.txt, 8 quarters) contain NO numeric outlook ('Microsoft will provide forward-looking guidance ... on its earnings conference call'), so guided midpoints exist only in call transcripts. The transcript lane (gather_documents) owns them; no guidance_track rows are written here because inventing guided midpoints from search excerpts would not be primary. Secondary web reports (CNBC via FourWeekMBA, not used as a fact) say the Q2 FY2027 guide is revenue 96.0-97.1bn with Azure +49-50% cc, above AV consensus 95.6bn; the Q1 FY2027 delivery of 92.3bn vs AV pre-results consensus 90.7bn (n 38) is a beat of about 1.7% (consensus, not guidance). Segment reporting changed to Agents and Infra / Devices and Consumer in FY2027, so old Intelligent Cloud guidance bridges are not like for like.",
+   "nm AV usage: INCOME_STATEMENT, BALANCE_SHEET, CASH_FLOW and EARNINGS_ESTIMATES called once each successfully after a per-second burst rate-limit (first parallel calls returned 'rate_limit', spaced calls worked; daily quota use for this run: 4 successful + 3 burst-limited). FMP statements/analyst skipped (denied on plan). COMPANY_OVERVIEW not called.",
+   "Repair (trigger review).",
+   "Finance-lease ROU additions read in the 10-K lease note (reading/10k_full.txt line ~7408: 24,608 / 20,511 / 11,633) and the 10-Q (5,192 Q1 FY2027).",
+   "Lease-inclusive sales_to_capital = incremental revenue / (cash capex + finance-lease ROU additions - D&A): FY2024-FY2026 119.9B / 210.2B = 0.57; FY2026 50.1B / 106.3B = 0.47; FY2025 36.6B / 63.1B = 0.58; FY2024 33.2B / 40.9B = 0.81.",
+   "Lease-inclusive after-tax (20%) incremental ROIC (operating income change x 0.8 / same capital): FY2024-FY2026 53.4B / 210.2B = 0.25; FY2026 0.20; FY2025 0.24.",
+   "FY2026 Q4 call (dc_call_fy26q4): commercial RPO +84% to 678B, +25% excluding OpenAI; all sequential RPO growth from customers outside frontier model companies; FY2027 operating margin down less than 1 point, FCF positive, tax ~20%, double-digit revenue and operating income growth; CY2026 capex ~175B after the shift of future datacenter leases from finance to operating leases (operating leases are outside capex).",
+   "The Q1 FY2027 capex track row compares the call-defined 45.2B (cash PP&E 39.4B plus finance leases, reconciliation to the 10-Q 39.367B + 5.192B = 44.6B unverified) with the >50B floor (guided_mid = floor).",
+   "driver mature_margin (bear) rests on one independent source",
+   "driver mature_margin (base) rests on one independent source",
+   "driver mature_margin (bull) rests on one independent source",
+   "driver tax_rate (all) rests on one independent source",
+   "driver sbc_pct (all) rests on one independent source"
+  ],
+  "meaning": "provenance of these inputs (evidence_pack.to_inputs); evidence ids web:<id> are pack sources registered by the evidence bundle, other ids are pack items"
+ }
+}

@@ -1,0 +1,15 @@
+{
+ "ticker": "NVDA",
+ "as_of": "2026-10-27",
+ "folder": "research/companies/NVDA/2026-10-27",
+ "thesis_id": null,
+ "status": null,
+ "verdict": null,
+ "files": [
+  "gather/documents.json",
+  "gather/field.json",
+  "gather/macro.json",
+  "gather/numbers.json",
+  "identity.json"
+ ]
+}

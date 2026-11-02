@@ -1,0 +1,453 @@
+{
+ "lane": "field",
+ "sources": [
+  {
+   "id": "fd_cf_avgo_20251218",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Broadcom Inc. (AVGO): facts of the 10-K filed 2025-12-18 (fiscal year ended 2025-11-02)",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001730168.json#filed=2025-12-18",
+   "date": "2025-12-18",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_cf_avgo_20260910",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Broadcom Inc. (AVGO): facts of the 10-Q filed 2026-09-10 (quarter ended 2026-08-02)",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001730168.json#filed=2026-09-10",
+   "date": "2026-09-10",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_cf_mrvl_20260311",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Marvell Technology, Inc. (MRVL): facts of the 10-K filed 2026-03-11 (fiscal year ended 2026-01-31)",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001835632.json#filed=2026-03-11",
+   "date": "2026-03-11",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_cf_mrvl_20260828",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Marvell Technology, Inc. (MRVL): facts of the 10-Q filed 2026-08-28 (quarter ended 2026-08-01)",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001835632.json#filed=2026-08-28",
+   "date": "2026-08-28",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_cf_alab_20260220",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Astera Labs, Inc. (ALAB): facts of the 10-K filed 2026-02-20 (fiscal year ended 2025-12-31)",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001736297.json#filed=2026-02-20",
+   "date": "2026-02-20",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_cf_alab_20260805",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Astera Labs, Inc. (ALAB): facts of the 10-Q filed 2026-08-05 (quarter ended 2026-06-30)",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001736297.json#filed=2026-08-05",
+   "date": "2026-08-05",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_rel_avgo_20260902",
+   "kind": "release",
+   "title": "Broadcom Inc. (AVGO) earnings 8-K filed 2026-09-02, exhibit 99.1: third quarter fiscal 2026 results",
+   "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000076/avgo-08022026x8kxex99.htm",
+   "date": "2026-09-02",
+   "independent": true,
+   "publisher": "Broadcom Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_rel_mrvl_20260827",
+   "kind": "release",
+   "title": "Marvell Technology, Inc. (MRVL) earnings 8-K filed 2026-08-27, exhibit 99.1: second quarter fiscal 2027 results",
+   "url": "https://www.sec.gov/Archives/edgar/data/1835632/000183563226000022/q227_8kx812026ex-991.htm",
+   "date": "2026-08-27",
+   "independent": true,
+   "publisher": "Marvell Technology, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_rel_alab_20260804",
+   "kind": "release",
+   "title": "Astera Labs, Inc. (ALAB) earnings 8-K filed 2026-08-04, exhibit 99.1: second quarter 2026 results",
+   "url": "https://www.sec.gov/Archives/edgar/data/1736297/000173629726000033/q226exhibit991.htm",
+   "date": "2026-08-04",
+   "independent": true,
+   "publisher": "Astera Labs, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_rel_aph_20260729",
+   "kind": "release",
+   "title": "Amphenol Corporation (APH) earnings 8-K filed 2026-07-29, exhibit 99.1: second quarter 2026 results",
+   "url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926087904/aph-20260729xex99d1.htm",
+   "date": "2026-07-29",
+   "independent": true,
+   "publisher": "Amphenol Corporation",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_ind_trendforce_20260806",
+   "kind": "industry",
+   "title": "TrendForce news: InP shortage emerges as AI optical interconnect bottleneck (search excerpt, page not opened; it relays statements attributed to Lumentum and Coherent management)",
+   "url": "https://trendforce.com/news/2026/08/06/news-inp-shortage-emerges-as-ai-optical-interconnect-bottleneck/",
+   "date": "2026-08-06",
+   "independent": true,
+   "publisher": "TrendForce",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_press_invezz_20260413",
+   "kind": "press",
+   "title": "Invezz: Credo jumps 11% as Jefferies backs copper tech in AI boom debate (search excerpt, page not opened: the fetch returned HTTP 403); reports a Jefferies analyst's AEC share and unit estimates",
+   "url": "https://invezz.com/en-ae/news/2026/04/13/credo-jumps-11percent-as-jefferies-backs-copper-tech-in-ai-boom-debate/",
+   "date": "2026-04-13",
+   "independent": true,
+   "publisher": "Invezz (reporting Jefferies)",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_rel_mxl_20261022",
+   "kind": "release",
+   "title": "MaxLinear, Inc. (MXL) earnings 8-K filed 2026-10-22, exhibit 99.1: third quarter 2026 results and fourth quarter 2026 outlook",
+   "url": "https://www.sec.gov/Archives/edgar/data/1288469/000128846926000060/a09302026exhibit991.htm",
+   "date": "2026-10-22",
+   "independent": true,
+   "publisher": "MaxLinear, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_10q_mxl_20261022",
+   "kind": "sec_filing",
+   "title": "MaxLinear, Inc. (MXL) 10-Q for the quarter ended 2026-09-30, filed 2026-10-22 (Note 12 revenue by market)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1288469/000128846926000061/mxl-20260930.htm",
+   "date": "2026-10-22",
+   "independent": true,
+   "publisher": "MaxLinear, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_8k_mrvl_20261023",
+   "kind": "sec_filing",
+   "title": "Marvell Technology, Inc. (MRVL) 8-K filed 2026-10-23, Item 1.01: Third Amended and Restated Revolving Credit Agreement ($3 billion)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1835632/000119312526430424/d147430d8k.htm",
+   "date": "2026-10-23",
+   "independent": true,
+   "publisher": "Marvell Technology, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_press_stocktwits_20261023",
+   "kind": "press",
+   "title": "Stocktwits: CRDO stock hits 6-month low after MaxLinear targets Credo-dominated cable market (reports MaxLinear CEO statements on its Q3 2026 call)",
+   "url": "https://stocktwits.com/news-articles/markets/equity/crdo-stock-hits-6-month-low-after-max-linear-targets-credo-dominated-cable-market/cZxyk1CRBxY",
+   "date": "2026-10-23",
+   "independent": true,
+   "publisher": "Stocktwits (reporting the MaxLinear call of 2026-10-22)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_ind_futurum_mrvl_20261009",
+   "kind": "industry",
+   "title": "Futurum Group: Marvell Investor Day 2026 targets $80B FY2031 revenue with custom silicon and optics (report of Marvell's Investor Day of 2026-10-06)",
+   "url": "https://futurumgroup.com/?p=96506",
+   "date": "2026-10-09",
+   "independent": true,
+   "publisher": "The Futurum Group (reporting Marvell management)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  }
+ ],
+ "competitors": [
+  {
+   "ticker": "AVGO",
+   "name": "Broadcom Inc.",
+   "why": "Named by CRDO's 10-K Item 1 and Item 1A as a principal competitor. Competes for the same hyperscaler, NeoCloud and OEM/ODM customers in Ethernet and PCIe SerDes, optical PAM4 DSPs and retimer / line-card PHY silicon and in scale-up and scale-out AI networking. Its AI semiconductor revenue also includes custom accelerators (XPUs), so it is not a like-for-like revenue for CRDO's lines.",
+   "metrics": {
+    "fiscal_year_end": "Sunday nearest 2025-10-31 (FY2025 ended 2025-11-02)",
+    "fy2025_revenue_usd": 63887000000,
+    "fy2024_revenue_usd": 51574000000,
+    "fy2025_revenue_growth": 0.239,
+    "fy2025_gross_margin_gaap": 0.678,
+    "fy2025_operating_margin_gaap": 0.399,
+    "latest_quarter": "Q3 FY2026, ended 2026-08-02",
+    "q3fy26_revenue_usd": 29591000000,
+    "q3fy25_revenue_usd": 15952000000,
+    "q3fy26_revenue_growth_yoy": 0.855,
+    "q3fy26_gross_margin_gaap": 0.691,
+    "q3fy26_operating_margin_gaap": 0.539,
+    "q3fy26_semiconductor_solutions_revenue_usd": 20839000000,
+    "q3fy25_semiconductor_solutions_revenue_usd": 9166000000,
+    "q3fy26_semiconductor_solutions_growth_yoy": 1.274,
+    "q3fy26_ai_semiconductor_revenue_usd": 16700000000,
+    "q3fy26_ai_semiconductor_growth_yoy": 2.21,
+    "q3fy26_ai_semiconductor_growth_qoq": 0.54,
+    "guidance_q4fy26_ai_semiconductor_revenue_usd": 21700000000,
+    "guidance_q4fy26_total_revenue_usd": 34800000000,
+    "forward_pe_and_growth": "gap: FMP quote denied; no dated attributed source retrieved"
+   },
+   "source_ids": [
+    "pf_10k_20260615",
+    "fd_cf_avgo_20251218",
+    "fd_cf_avgo_20260910",
+    "fd_rel_avgo_20260902"
+   ]
+  },
+  {
+   "ticker": "MRVL",
+   "name": "Marvell Technology, Inc.",
+   "why": "Named by CRDO's 10-K Item 1 and Item 1A as a principal competitor. Competes in optical PAM4 DSPs, Ethernet PHYs and retimers and, per Marvell's own Data Center end market, in data center interconnect and custom silicon for the same hyperscalers. Its data center end market is mostly accelerated-compute silicon and is not a like-for-like revenue for CRDO's lines.",
+   "metrics": {
+    "fiscal_year_end": "Saturday nearest 2026-01-31 (FY2026 ended 2026-01-31)",
+    "fy2026_revenue_usd": 8194600000,
+    "fy2025_revenue_usd": 5767300000,
+    "fy2026_revenue_growth": 0.421,
+    "fy2026_gross_margin_gaap": 0.51,
+    "fy2026_operating_margin_gaap": 0.161,
+    "latest_quarter": "Q2 FY2027, ended 2026-08-01",
+    "q2fy27_revenue_usd": 2739300000,
+    "q2fy26_revenue_usd": 2006100000,
+    "q2fy27_revenue_growth_yoy": 0.365,
+    "q2fy27_gross_margin_gaap": 0.531,
+    "q2fy27_gross_margin_nongaap": 0.589,
+    "q2fy27_operating_margin_gaap": 0.168,
+    "q2fy27_data_center_revenue_usd": 2171500000,
+    "q2fy26_data_center_revenue_usd": 1490500000,
+    "q2fy27_data_center_growth_yoy": 0.457,
+    "q2fy27_data_center_growth_qoq": 0.185,
+    "q2fy27_data_center_share_of_revenue": 0.79,
+    "guidance_q3fy27_revenue_usd": "3150000000 +/- 5%",
+    "forward_pe_and_growth": "gap: FMP quote denied; no dated attributed source retrieved",
+    "investor_day_2026_10_06_fy2031_revenue_target_usd": "70 to 90 billion (management target, reported by Futurum)",
+    "investor_day_fy2028_revenue_outlook_usd": "about 20 billion (raised from 18 billion; reported by Futurum)",
+    "investor_day_scaleup_optics": "virtually zero revenue today, multi-hundred-million-dollar revenue starting next year (management, reported by Futurum)",
+    "revolver_2026_10_22_usd": 3000000000
+   },
+   "source_ids": [
+    "pf_10k_20260615",
+    "fd_cf_mrvl_20260311",
+    "fd_cf_mrvl_20260828",
+    "fd_rel_mrvl_20260827",
+    "fd_ind_futurum_mrvl_20261009",
+    "fd_8k_mrvl_20261023"
+   ]
+  },
+  {
+   "ticker": "ALAB",
+   "name": "Astera Labs, Inc.",
+   "why": "Named by CRDO's 10-K Item 1 and Item 1A as a principal competitor. Competes in PCIe / Ethernet retimers and signal conditioning (Aries, Taurus), smart cable modules and scale-up fabric (Scorpio, UALink, PCIe) at the same AI-server and hyperscaler customers; its release also announces an expansion into optical interconnects. Single reporting segment: total revenue is the nearest like-for-like line for CRDO's IC and chiplet business.",
+   "metrics": {
+    "fiscal_year_end": "2025-12-31 (calendar year)",
+    "fy2025_revenue_usd": 852525000,
+    "fy2024_revenue_usd": 396290000,
+    "fy2025_revenue_growth": 1.151,
+    "fy2025_gross_margin_gaap": 0.757,
+    "fy2025_operating_margin_gaap": 0.203,
+    "latest_quarter": "Q2 2026, ended 2026-06-30",
+    "q2_2026_revenue_usd": 392400000,
+    "q2_2025_revenue_usd": 191925000,
+    "q2_2026_revenue_growth_yoy": 1.045,
+    "q2_2026_revenue_growth_qoq": 0.273,
+    "q2_2026_gross_margin_gaap": 0.733,
+    "q2_2026_operating_margin_gaap": 0.227,
+    "q2_2026_operating_margin_nongaap": 0.391,
+    "guidance_q3_2026_revenue_usd_low": 540000000,
+    "guidance_q3_2026_revenue_usd_high": 560000000,
+    "guidance_q3_2026_gross_margin": 0.72,
+    "forward_pe_and_growth": "gap: FMP quote denied; no dated attributed source retrieved"
+   },
+   "source_ids": [
+    "pf_10k_20260615",
+    "fd_cf_alab_20260220",
+    "fd_cf_alab_20260805",
+    "fd_rel_alab_20260804"
+   ]
+  },
+  {
+   "ticker": "APH",
+   "name": "Amphenol Corporation",
+   "why": "NOT named by CRDO. CRDO's 10-K names only 'various cable and optical transceiver suppliers' without naming them; Amphenol is added here as the largest listed high-speed copper and fibre cable and interconnect maker (its own release lists 'coaxial, high-speed, fiber optic and specialty cable' and an IT datacom end market). That its cable assemblies compete with CRDO's AEC at the same hyperscalers and ODMs is the lane's inference from product category, not a statement by either company; its release gives no AEC or DAC revenue.",
+   "metrics": {
+    "fiscal_year_end": "2025-12-31 (calendar year)",
+    "latest_quarter": "Q2 2026, ended 2026-06-30",
+    "q2_2026_sales_usd": "8.8 billion (release rounded)",
+    "q2_2026_sales_growth_yoy_usd": 0.55,
+    "q2_2026_sales_growth_yoy_organic": 0.3,
+    "q2_2026_orders_usd": "10.7 billion (release rounded)",
+    "q2_2026_book_to_bill": 1.23,
+    "q2_2026_adjusted_operating_margin": 0.298,
+    "q2_2026_adjusted_operating_margin_note": "includes an $80 million net benefit from IEEPA tariff recovery",
+    "guidance_q3_2026_sales_usd": "9.3 to 9.4 billion",
+    "it_datacom_note": "release says only 'exceptional organic growth in the IT datacom market'; no IT datacom dollar figure in the primary document",
+    "growth_acquired_note": "total growth includes the CommScope Connectivity and Cable Solutions acquisition closed in Q1 2026 (organic 30% against 55% reported)"
+   },
+   "source_ids": [
+    "pf_10k_20260615",
+    "fd_rel_aph_20260729"
+   ]
+  },
+  {
+   "ticker": "MXL",
+   "name": "MaxLinear, Inc.",
+   "why": "NOT named in CRDO's 10-K; added because it now competes for CRDO's largest line: on its Q3 2026 call (2026-10-22, relayed by Stocktwits 2026-10-23) its CEO said MaxLinear targets a 20-30% share of the 1.6T active electrical cable (AEC) market over the next couple of years, selling silicon to cable makers rather than complete cables, focused first on one or two large U.S. data centers; its own release names the Rushmore and Annapurna families of 1.6T-capable optical and electrical products and the Keystone PAM4 DSP in volume ramp, which competes with CRDO's optical PAM4 DSPs at the same hyperscalers.",
+   "metrics": {
+    "fiscal_year_end": "2025-12-31 (calendar year)",
+    "latest_quarter": "Q3 2026, ended 2026-09-30",
+    "q3_2026_revenue_usd": 218057000,
+    "q3_2025_revenue_usd": 126459000,
+    "q3_2026_revenue_growth_yoy": 0.72,
+    "q3_2026_revenue_growth_qoq": 0.29,
+    "q3_2026_gross_margin_gaap": 0.587,
+    "q3_2026_gross_margin_nongaap": 0.6,
+    "q3_2026_operating_margin_gaap": 0.139,
+    "q3_2026_operating_margin_nongaap": 0.295,
+    "q3_2026_infrastructure_revenue_usd": 124907000,
+    "q3_2025_infrastructure_revenue_usd": 40343000,
+    "q3_2026_infrastructure_growth_yoy": 2.1,
+    "q3_2026_infrastructure_share_of_revenue": 0.57,
+    "guidance_q4_2026_revenue_usd_low": 240000000,
+    "guidance_q4_2026_revenue_usd_high": 260000000,
+    "aec_revenue": "not disclosed (no AEC revenue yet stated)",
+    "ceo_target_1_6t_aec_share": "20-30% over the next couple of years (CEO on the call, reported by Stocktwits; a target, not a fact)",
+    "forward_pe_and_growth": "gap: FMP quote ACCESS DENIED; no dated attributed source"
+   },
+   "source_ids": [
+    "fd_rel_mxl_20261022",
+    "fd_10q_mxl_20261022",
+    "fd_press_stocktwits_20261023"
+   ]
+  }
+ ],
+ "bottlenecks": [
+  {
+   "id": "fd_bn_copper_reach",
+   "reading": "What CRDO supplies is reliable, low-power electrical connectivity over the shortest AI-rack distances (rack-scale scale-up and scale-out links of centimetres to a few metres), where the company says scale-up networks are 10x denser than scale-out and about 100x denser than front-end networks and are dominated by Ethernet and PCIe PHYs at layer 1. Paid adoption is visible in CRDO's own numbers: FY2026 revenue rose $898.3 million to $1.34 billion with over 99% of the increase from AEC shipments to hyperscalers, and the latest quarter was $479.0 million (+114.7% y/y). Management says 200G-per-lane electrical PAM4 is planned for mass deployment in 2027, so the shortage that matters is a reach / power / reliability gap at 100G and 200G per lane, not a supply gap in wafers. Management statements: read as the company's view.",
+   "evidence_ids": [
+    "pf_10k_20260615",
+    "nm_rel_20260901",
+    "pf_10q_20260902"
+   ]
+  },
+  {
+   "id": "fd_bn_crdo_assembly_capacity",
+   "reading": "CRDO's own constraint is assembly and test capacity at subcontractors, which it is paying to reserve: multiple manufacturing supply capacity reservation agreements (2 to 6 year terms) required refundable upfront deposits of $88.4 million at 2026-08-01 ($62.9 million current, $25.5 million non-current), a further agreement after the quarter commits another $102.4 million within fiscal 2027, and inventory rose $61.5 million in the quarter 'to support unfulfilled backlog and related new product ramps'. Deposits are refundable only through future purchases that meet volume requirements, so they tie CRDO's cash to the demand it expects.",
+   "evidence_ids": [
+    "pf_10q_20260902"
+   ]
+  },
+  {
+   "id": "fd_bn_inp_lasers",
+   "reading": "A separate scarce input sits in the optical alternative: indium phosphide (InP) lasers for 200G-per-lane 1.6T optical modules. TrendForce (search excerpt, 2026-08-06) relays that Lumentum's CEO says the InP supply gap is wider than DRAM or NAND, that Lumentum was undershipping demand by about 30% in February 2026 with EML capacity committed through 2027, and that analysts expect the imbalance to persist beyond 2027; these are second-hand management claims and the page itself was not opened. This constrains optics, not CRDO's copper, and CRDO's own ZF optical transceiver line would draw on the same laser supply (see the next hypothesis).",
+   "evidence_ids": [
+    "fd_ind_trendforce_20260806"
+   ]
+  },
+  {
+   "id": "fd_bn_inp_effect_on_crdo",
+   "reading": "Hypothesis: while InP lasers are short through 2027, copper (AEC) keeps its position for the shortest reaches by default, which supports CRDO's current AEC demand; the same shortage may cap how fast CRDO's ZF optical transceivers and optical DSPs can ship. No CRDO document read in this lane quantifies either effect.",
+   "hypothesis": true
+  },
+  {
+   "id": "fd_bn_capacity_adders",
+   "reading": "Capacity and share are being added by the named competitors in the same AI-network bandwidth pool, and all four guide sharply higher: Broadcom guides AI semiconductor revenue to $21.7 billion in Q4 FY2026 (from $16.7 billion); Marvell raised its outlook, cites strong demand in Connectivity and a Custom acceleration in the second half of FY2027; Astera guides Q3 2026 revenue to $540-560 million and says Scorpio fabric switches become its largest product family one quarter early, with optical interconnect and custom solutions as expansions; Amphenol guides Q3 2026 sales to $9.3-9.4 billion with record orders (book-to-bill 1.23). The shortage is therefore being shared, not held by CRDO alone.",
+   "evidence_ids": [
+    "fd_rel_avgo_20260902",
+    "fd_rel_mrvl_20260827",
+    "fd_rel_alab_20260804",
+    "fd_rel_aph_20260729"
+   ]
+  },
+  {
+   "id": "fd_bn_cpo_scaleup_substitution",
+   "reading": "Hypothesis: the main threat to the copper bottleneck is optics (co-packaged or linear / retimed pluggable) taking the scale-up links as electrical reach shrinks at 224G per lane and above. Search excerpts, not registered because their dates were not seen, give vendor timelines that run from scale-up CPO revenue in 2027 (Coherent) to volume in the second half of 2027 and first customer deployments in 2028 (Lumentum), and analyst views that NVIDIA keeps copper for scale-up into 2027-2028 (SemiAnalysis) and that scale-up CPO may slip past the second half of 2028 (Bernstein, via a secondary site). The timing is unsettled and the reading is unverified until the primary reports are read. Added 2026-10-28: secondary coverage (Tom's Hardware headline, relaying SemiAnalysis; date not seen, not registered) reports NVIDIA's Kyber rack for Rubin Ultra delayed to 2028 by PCB midplane problems, with copper the only near-term option at rack scale; Marvell management at its 2026-10-06 Investor Day said 100% of XPU-to-XPU links run on copper today, copper reach at 200G per lane is 2.5 metres, and scale-up optics are at virtually zero revenue with multi-hundred-million-dollar revenue starting next year (fd_ind_futurum_mrvl_20261009). Both point to copper holding scale-up into 2027-2028 and optics starting to take links from 2027; still unverified at the primary level.",
+   "hypothesis": true
+  },
+  {
+   "id": "fd_bn_aec_units_jefferies",
+   "reading": "An attributed analyst estimate (Jefferies, reported by Invezz 2026-04-13, search excerpt, page not opened) puts the AEC market at 8.6 million units in 2026 and 12.3 million in 2027 and calls CRDO 'the outright technology leader' with pressure from Astera and Marvell. This is a third-party expectation, not a reported fact.",
+   "evidence_ids": [
+    "fd_press_invezz_20260413"
+   ]
+  },
+  {
+   "id": "fd_bn_copper_today_mrvl",
+   "reading": "A named competitor's management confirms the copper position CRDO sells into: at Marvell's 2026-10-06 Investor Day (reported by Futurum 2026-10-09) management said 100% of XPU-to-XPU links run on copper today, that copper reach at 200G per lane is 2.5 metres, and that scale-up optics run at virtually zero revenue today with multi-hundred-million-dollar revenue starting next year. This is a competitor's view relayed by an industry analyst, not a CRDO number; it supports the reach-gap reading and dates the optical challenge to about 2027.",
+   "evidence_ids": [
+    "fd_ind_futurum_mrvl_20261009"
+   ]
+  },
+  {
+   "id": "fd_bn_aec_new_entrant",
+   "reading": "The AEC position is being contested at 1.6T: MaxLinear's CEO (Q3 2026 call of 2026-10-22, reported by Stocktwits 2026-10-23) put CRDO at an estimated 93-99% of the AEC market and set a target of 20-30% of the 1.6T AEC market over the next couple of years, supplying silicon to cable makers; MaxLinear's own release reports infrastructure revenue +210% y/y to $124.9M on its Keystone PAM4 DSP ramp and names its 1.6T-capable Rushmore and Annapurna families. CRDO's own call (2026-09-01) placed 1.6T AEC at some contribution in H2 FY2027 and a meaningful ramp in FY2028, so the entrant aims at the generation CRDO is about to ramp. CRDO fell about 10% intraday on 2026-10-23 on the report. The share figure is a competitor CEO's estimate and the target is an ambition, not a reported outcome.",
+   "evidence_ids": [
+    "fd_press_stocktwits_20261023",
+    "fd_rel_mxl_20261022",
+    "fd_10q_mxl_20261022"
+   ]
+  }
+ ],
+ "notes": [
+  "fd REUSE 2026-10-28: this fragment starts from runs/tickers/CRDO_2026-10-26/gather/field.json (raw payloads copied to gather/raw_field/); the AVGO, MRVL, ALAB, APH figures are unchanged because none of them filed new results between 2026-10-26 and 2026-10-28 (SEC submissions re-fetched 2026-10-28, saved as <T>_submissions_20261028.json). Source ids pf_rel_20260901_1 and pf_cf_20260902 of the earlier run were replaced with this run's nm_rel_20260901 (Q1 FY2027 release) and pf_10q_20260902 (10-Q). NEW: MaxLinear added as a competitor (Q3 2026 release and 10-Q of 2026-10-22, CEO's 1.6T AEC share target), Marvell Investor Day readings (Futurum 2026-10-09) and Marvell's 8-K of 2026-10-23 (a $3B revolver, no operating news).",
+  "fd NAMED COMPETITORS (10-K Item 1, filed 2026-06-15, source pf_10k_20260615): 'Our principal competitors with respect to our products include Broadcom Ltd. (Broadcom), Marvell Technology, Inc. (Marvell) and Astera Labs, Inc. (Astera), as well as various cable and optical transceiver suppliers.' The company states it believes it is the only company offering a complete suite of high-performance connectivity solutions and that competitors compete on some but not all of its solutions. The same sentence appears in Item 1A. Cable and optical-transceiver suppliers are not named; Amphenol (APH) is the lane's own addition, labelled as such in competitors[].why.",
+  "fd SHARE growth, latest quarter against the same quarter a year earlier, each from its own release or filing and not like-for-like segments: CRDO +114.7% ($479.0M against $223.1M, quarter to 2026-08-01, nm_rel_20260901); Astera +104.5% ($392.4M against $191.9M, quarter to 2026-06-30, fd_rel_alab_20260804, fd_cf_alab_20260805); Marvell data center +45.7% ($2,171.5M against $1,490.5M, quarter to 2026-08-01, fd_rel_mrvl_20260827); Broadcom AI semiconductors +221% ($16.7B, quarter to 2026-08-02, fd_rel_avgo_20260902) and semiconductor solutions +127% ($20,839M against $9,166M). CRDO and Astera are growing at the same rate on a single-segment, like-for-like basis; the scale of Broadcom and Marvell is in custom compute and is not the same line.",
+  "fd SHARE sequential growth, latest quarter against the previous quarter: CRDO +9.6% ($479.0M against $437.0M, pf_10q_20260902); Astera +27.3% ($392.4M against $308.4M, fd_cf_alab_20260805); Marvell data center +18.5% ($2,171.5M against $1,832.7M, fd_rel_mrvl_20260827); Broadcom AI semiconductors +54% (fd_rel_avgo_20260902). CRDO is the slowest of the four on this measure. HYPOTHESIS (share or customer-timing; not tested): customer concentration may explain it (the 10-Q reports two end customers at 43% and 28% of the quarter's revenue, to be confirmed by gather_documents).",
+  "fd SHARE guided next quarter against the latest quarter, from each issuer's own guidance: CRDO Q2 FY2027 $525-535M, midpoint $530M, +10.6% sequentially (nm_rel_20260901); Astera Q3 2026 $540-560M, midpoint $550M, +40.2% (fd_rel_alab_20260804); Marvell Q3 FY2027 $3.150B +/-5%, +15.0% on total revenue (fd_rel_mrvl_20260827); Broadcom Q4 FY2026 AI semiconductors $21.7B, +29.9%, total $34.8B, +17.6% (fd_rel_avgo_20260902). On these guided numbers Astera's next quarter ($550M) is above CRDO's next quarter ($530M) although the quarter-ends differ by about one month (Astera 2026-09-30, CRDO about 2026-10-31); in the quarter before, CRDO was 1.22x Astera ($479.0M against $392.4M) and a year earlier 1.16x. HYPOTHESIS: on guided growth the nearest like-for-like competitor is gaining on CRDO in the near term; guidance is conservative for both and the pattern has not been tested against their track records here.",
+  "fd SHARE profitability and gross margin, GAAP, latest quarter: CRDO gross margin 64.5% and operating margin 25.2% (pf_10q_20260902: gross profit $309.1M, operating income $120.7M on $479.0M); Astera 73.3% and 22.7%; Marvell 53.1% and 16.8%; Broadcom 69.1% and 53.9%. CRDO's gross margin sits between the silicon-only peers (Astera, Broadcom) and Marvell, consistent with a product mix that includes cable assembly; this is a reading from the margins, not a statement in the filings. Amphenol's adjusted operating margin is 29.8% (including an $80M tariff recovery).",
+  "fd SHARE attributed AEC share: Jefferies (reported by Invezz 2026-04-13, search excerpt, fd_press_invezz_20260413) expects CRDO to hold a 70% share of the AEC market by 2027 in a bull case. Other search hits repeat a share of about 80-88% attributed to JPMorgan in newsletter-style pieces that appear to share one origin; they are not registered as sources, are not independent evidence and are weaker than the Jefferies excerpt. No Dell'Oro or LightCounting figure was found. No competitor discloses AEC, retimer or smart-cable revenue separately, so AEC share on reported numbers cannot be computed: the share trajectory above is by total or end-market growth only.",
+  "fd COMPETING PRODUCT LINES (own releases): Astera's release names Aries (retimer, record quarter), Taurus (signal conditioning, new 3.2T smart retimers / redrivers for 224G Ethernet and UALink), Scorpio (fabric switch, becoming the largest family in Q3) and Leo (CXL); it says new design wins, an expansion into optical interconnects and custom solutions widen its opportunity in 2027 and beyond. Marvell's release states Data Center growth accelerating to 46% with strong Connectivity demand and an acceleration in Custom from the second half of FY2027; Marvell held an Investor Day on 2026-10-06 that this lane did not read. Marvell AEC / retimer ambitions (Zacks excerpt: AEC and retimer revenue in aggregate to more than double next year) are an undated secondary excerpt, not registered.",
+  "fd CRDO ROADMAP, unverified, for gather_documents to confirm from the transcript: a search excerpt (Zacks and Nasdaq pages, dates not seen) quotes management saying active LED cables (ALCs) reaching up to 30 metres will sample to lead customers in fiscal 2027 with initial revenue ramping in fiscal 2028, and that OmniConnect gearboxes ramp from 2028; and a Blue Heron 224G retimer for scale-up, with a scale-up market estimate of more than $40 billion by 2030 attributed to an analyst. None of this was read in a primary document by this lane.",
+  "fd SOURCES not usable: FMP quote and analyst endpoints are ACCESS DENIED on this plan (one probe, not retried), so no competitor forward P/E or price multiple was retrieved. An undated Zacks excerpt quotes forward P/Es of about 27.9x (Broadcom), 49.3x (Astera) and 22.2x (Marvell); it is not registered and not used as a driver. WebFetch of the Invezz and Nasdaq pages returned HTTP 403 and 503. Alpha Vantage was not called (the numbers and documents lanes' quota).",
+  "fd SHARE new entrant: MaxLinear infrastructure revenue $124.9M in the quarter to 2026-09-30 against $40.3M a year earlier (+210%), driven by its optical PAM4 DSP ramp (fd_rel_mxl_20261022, fd_10q_mxl_20261022); total revenue $218.1M (+72% y/y, +29% q/q), Q4 guide $240-260M. CRDO's latest quarter was $479.0M (+114.7% y/y, +9.6% q/q). MaxLinear has no disclosed AEC revenue; its CEO's 20-30% 1.6T AEC target and his 93-99% estimate of CRDO's current AEC share are statements reported by Stocktwits (fd_press_stocktwits_20261023), not reported facts. HYPOTHESIS: a silicon-only entrant selling to cable makers could compress CRDO's AEC pricing at 1.6T even before it takes material share.",
+  "fd UNREAD / NOT YET AVAILABLE: Astera Labs Q3 2026 results are scheduled for 2026-11-03 (company announcement of 2026-10-06, seen through a search excerpt), after as_of; Amphenol's Q3 2026 results were not found in its SEC submissions up to 2026-10-28 (only 8-Ks of 2026-09-04 and 2026-10-06); Marvell's Investor Day presentation itself (only the Futurum report was read); MaxLinear's call transcript (only the Stocktwits report). Broadcom's 8-K of 2026-10-27 (Item 2.03: residual value backstop of up to about $43 billion on AI racks leased to a customer) is dated within 2 days of as_of: not citable until 2026-10-29; it bears on Broadcom's balance sheet, not on CRDO's lines, and is not registered."
+ ],
+ "gaps": [
+  "Forward P/E and growth for the competitors: FMP quote ACCESS DENIED (one probe), Alpha Vantage reserved for other lanes; no dated attributed source retrieved.",
+  "No competitor discloses AEC, retimer, optical DSP or smart-cable revenue separately; share of CRDO's competing lines on reported numbers cannot be computed (end-market growth only, not like-for-like).",
+  "AEC market share and unit TAM rest on one search excerpt of a Jefferies note (Invezz 2026-04-13); the page itself (HTTP 403) and any Dell'Oro / LightCounting figure were not obtained.",
+  "InP laser shortage rests on a TrendForce excerpt relaying Lumentum and Coherent statements; the primary Lumentum and Coherent filings were not read.",
+  "CPO and scale-up substitution timelines (Coherent, Lumentum, SemiAnalysis, Bernstein, Gartner) come from undated search excerpts and are kept as a hypothesis; no primary source read.",
+  "Amphenol's overlap with CRDO's AEC is an inference from product category; Amphenol is not named in CRDO's 10-K and no AEC / DAC revenue is disclosed.",
+  "Competitor customers (shared customers by name) are not disclosed in the filings read; the overlap is stated only at the level of 'hyperscalers, NeoClouds, OEM / ODM'.",
+  "Marvell Investor Day primary deck not read (Futurum report only); no Marvell AEC / retimer revenue target obtained.",
+  "MaxLinear AEC claims rest on a press report of its call (Stocktwits 2026-10-23); call transcript not read; MaxLinear discloses no AEC revenue.",
+  "Astera Labs Q3 2026 results come on 2026-11-03, after as_of; Amphenol Q3 2026 results not found by 2026-10-28.",
+  "NVIDIA Kyber / Rubin Ultra slip to 2028 (SemiAnalysis via Tom's Hardware) has no date seen and is not registered; kept inside the CPO hypothesis."
+ ],
+ "stopped": [
+  "Competitor price multiples: FMP quote ACCESS DENIED again on 2026-10-28 (one probe, ALAB; not retried); Alpha Vantage is the numbers and documents lanes' quota.",
+  "Tom's Hardware page fetch returned only the headline: stopped, kept as an unregistered hypothesis input.",
+  "Further retrieval (Marvell deck, MaxLinear transcript, LightCounting / Dell'Oro AEC data, Lumentum / Coherent filings): stopped at the lane budget; none would change the competitor list, and AEC share data is not public in primary form.",
+  "WebFetch of the Invezz and Nasdaq pages: stopped after HTTP 403 and 503; the search excerpts were kept, labelled as excerpts."
+ ]
+}

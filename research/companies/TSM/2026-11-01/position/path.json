@@ -1,0 +1,79 @@
+{
+ "thesis_he": {
+  "bear": "ההשקעות הענקיות (60-64 מיליארד דולר בשנה) והמפעלים בחו\"ל מחזירים תשואה נמוכה בהרבה, כמו בשנת השפל 2023, ולכן מכפיל הרווח יורד.",
+  "base": "כל דולר חדש שמושקע בייצור שבבים מתקדמים ממשיך להחזיר בערך 35% בשנה, פחות מהשיא של היום בגלל המפעלים היקרים בחו\"ל, והמכפיל יורד בהדרגה כשהצמיחה מאטה.",
+  "bull": "2 ננומטר ובינה מלאכותית שומרים על תשואה של כ-50% על ההון החדש גם עם המפעלים בחו\"ל, קרוב לשיא של החברה, והמכפיל נשאר גבוה יותר זמן רב."
+ },
+ "company_path": {
+  "metric": "eps",
+  "multiple": "forward_pe",
+  "scenarios": {
+   "bear": {
+    "multiple_from": "economics",
+    "roic": 0.4,
+    "justification": "unproven",
+    "reason_he": "אם לקוחות הבינה המלאכותית עוצרים קניות כמו ב-2023 (אז התשואה על ההון ירדה לשפל של כ-45% והרווחיות התפעולית ל-42.6%), והמפעלים בחו\"ל מורידים עוד עד 4 נקודות רווחיות, ההון המושקע מחזיר כ-40% (45% כפול 38.6 חלקי 42.6), ולכן המכפיל נמוך יותר. ייקור הציוד לא מכומת.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "pf_cf_20240418",
+     "pf_gross_profit_fy2023",
+     "pf_capex_fy2023",
+     "dc_k_overseas_dilution",
+     "dc_g_capex_fy26",
+     "pf_operating_income_fy2023",
+     "pf_revenue_fy2023"
+    ]
+   },
+   "base": {
+    "multiple_from": "economics",
+    "roic": 0.35,
+    "justification": "justified_high",
+    "reason_he": "החברה מרוויחה היום כ-53% על ההון המושקע (ותשואה להון 45.5% ברבעון 3 של 2026), ובשלוש השנים האחרונות כ-61% על ההון החדש; ניקינו את השיא ואת פגיעת המפעלים בחו\"ל (כ-2-3 נקודות רווחיות) ולקחנו 35%, ולכן מכפיל גבוה מוצדק שיורד כשהצמיחה מאטה. מוניטין זניח, אינו משנה.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "pf_10k_20260416",
+     "nm_operating_income_fy2025",
+     "nm_equity_fy2025",
+     "nm_capex_fy2025",
+     "dc_k_roe_3q26",
+     "dc_k_overseas_dilution",
+     "dc_g_capex_fy26"
+    ]
+   },
+   "bull": {
+    "multiple_from": "economics",
+    "roic": 0.5,
+    "justification": "unproven",
+    "reason_he": "אם 2 ננומטר (כבר 8% מהכנסות הוופלים ברבעון 3) והביקוש לבינה מלאכותית שומרים על רווחיות גולמית של כ-66% גם עם המפעלים בחו\"ל, ההון החדש מחזיר כ-50%, קרוב לתשואה של השנים האחרונות; זה עוד לא הוכח על המפעלים החדשים.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "dc_k_n2_share",
+     "dc_g_gm_q4_26",
+     "dc_g_revgrowth_fy26",
+     "dc_k_gm_3q26",
+     "nm_operating_income_fy2025",
+     "nm_equity_fy2025"
+    ]
+   }
+  },
+  "own_history": {
+   "low": 11.6,
+   "median": 27.4,
+   "high": 29.4,
+   "years": "2021-2026",
+   "evidence_ids": [
+    "nm_ib_hist",
+    "pf_10k_20260416",
+    "dc_rel_q3_2026"
+   ]
+  }
+ },
+ "gaps": [
+  "own_history is a TRAILING P/E on the ADR at calendar year-end closes (gather_numbers note), not a forward P/E; FX rates for 2021-2024 in that note are approximate and unsourced; intra-year lows/highs are missing.",
+  "No named competitor has an evidenced forward P/E in field.json (INTC loss-making on GAAP; Samsung, SMIC, UMC, GFS not retrieved): peers left out.",
+  "No attributed consensus EPS (auto.json consensus empty): the forward EPS path is the engine's from the core drivers only.",
+  "Incremental ROIC 0.61 (3y) and ROIC 0.53 come from the engine's forensic screen on companyfacts (invested capital = equity + debt - cash; TSM's large cash pile lifts it); the ROIC of the overseas fabs (Arizona, Kumamoto, Dresden) is not disclosed separately, so the base haircut is a judgement anchored on the management's ~2-3 pt gross margin dilution.",
+  "Wafer price increases from 2027 (fd_b_pricing) are a press-reported bottleneck reading, not citable: they move no number in the bull.",
+  "Bear ROIC 0.40 = the FY2023 trough ROIC 0.453 (prefetch/forensic.json) x (42.6% - 4 pts guided overseas dilution) / 42.6%; tool-price inflation on 2026-2028 capex is not sized. The forensic invested capital uses the companyfacts debt line, which looks understated (bonds payable alone NT$992bn at 2025-12-31, 6-K nm_fs_20260814), so the record ROIC may be a few points lower than shown."
+ ]
+}

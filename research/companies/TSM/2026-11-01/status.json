@@ -1,0 +1,122 @@
+{
+ "ticker": "TSM",
+ "as_of": "2026-11-01",
+ "at_utc": "2026-11-01T15:00:22+00:00",
+ "verified": false,
+ "label": "UNVERIFIED draft (טיוטה — ההערכה לא אומתה)",
+ "reasons": [
+  "5 critical finding(s) open"
+ ],
+ "engine_ran": true,
+ "engine_review_status": "unreviewed_draft",
+ "valued": true,
+ "reviews": {
+  "review_trace": {
+   "file": "review/trace.json",
+   "this_attempt": true,
+   "returned": true
+  },
+  "review_numbers": {
+   "file": "review/numbers.json",
+   "this_attempt": true,
+   "returned": true
+  },
+  "review_counter": {
+   "file": "review/counter.json",
+   "this_attempt": true,
+   "returned": true
+  }
+ },
+ "critical": [
+  {
+   "severity": "critical",
+   "finding": "The fiscal year in progress is modelled, not taken from reported quarters plus guidance. casefile fc.anchors.current_fiscal_year = NT$4,770.9bn (kind 'model', 'last reported fiscal-year revenue grown at the trailing anchor 25.3%'), year_to_date null. TSMC has already reported Q1-Q3 2026 NT$1,134.1bn + 1,270.4bn + 1,494.2bn = NT$3,898.7bn (nm_revenue_q1_2026, nm_revenue_q2_2026, dc_f_rev_3q26), and the Q4 guide midpoint US$53.3bn at the guided 31.8 NT$/US$ is about NT$1,694.9bn (dc_g_rev_q4_26, dc_g_fx_q4_26): FY2026 is about NT$5,593.7bn, consistent with the ~44% US$ growth guide (dc_g_revgrowth_fy26). The engine's FY2026 is about 15% too low. position/core.json notes assume 'the engine takes Q1-Q3 reported + the Q4 2026 guide' but drivers.current_year_revenue was left unset, so it did not. Every growth_anchor override (bear +6%, base +27%, bull +38%) is then applied to the wrong base: base FY2027 NT$6,054.9bn is only +8% on the real FY2026 (below the Q4-guide run rate annualized, ~NT$6.78tn, which the override reason itself says gives +21% with flat quarters), bear FY2027 NT$5,053.7bn is -10%, and the 2-month stub annual rate is NT$5.24tn vs ~NT$6.78tn guided. Fair value, the five-year table, the buy-below price and 'expensive by about 6%' all depend on it; the base scenario condition in table_he.md ('growth of about 44% in US$ in 2026') contradicts the executed number.",
+   "where": "position/core.json drivers.current_year_revenue (missing; note at position.json line ~526); casefile fc.anchors.current_fiscal_year and fc.anchors.stub; companies/TSM/out/table_he.md (all value rows)",
+   "fix": "Set drivers.current_year_revenue = 5,593.7e9 TWD (tier guidance; basis: Q1-Q3 reported + Q4 guide midpoint at 31.8; optionally apply the track-record ratio 1.024 to the Q4 remainder only, ~NT$5,634bn, and say so), evidence_ids nm_revenue_q1_2026, nm_revenue_q2_2026, dc_f_rev_3q26, dc_g_rev_q4_26, dc_g_fx_q4_26, dc_g_revgrowth_fy26; keep the growth_anchor overrides as written (they were reasoned off ~US$176bn FY2026); rerun ticker-value and confirm fc.anchors.current_fiscal_year.kind is no longer 'model'.",
+   "lens": "numbers"
+  },
+  {
+   "severity": "critical",
+   "finding": "The model's FY2026 starting revenue is stale and about 15% too low, so every scenario price (fair value, the yearly table, what_must_be_true) rests on a wrong base. The revenue_current_fy assumption takes FY2025 revenue (NT$3,809bn, labelled 'ttm') x 1.253 = NT$4,771bn for FY2026. The run's own reported quarters say otherwise: Q1 1,134.1 + Q2 1,270.4 + Q3 1,494.2 = NT$3,898.7bn for 9M 2026 (nm_revenue_q1_2026, nm_revenue_q2_2026, nm_revenue_q3_2026). The real TTM is NT$4,944.8bn (with nm_revenue_q4_2025). FY2026 at the Q4 guide midpoint (US$53.3bn x 31.8 NT$, dc release/call) is about NT$5,590bn (+47%). The Nov-Dec stub carries NT$861bn, while two thirds of the Q4 guide is about NT$1,130bn. Result: the base's 'growth >25% in 2027' is only about +8% on the real FY2026 (model FY2027 NT$6,055bn vs ~5,590bn). Base FY2027 operating EPS of NT$99 is below the Q3 2026 run rate (EPS 29.43 x 4 = ~118, quarter_result). Base FY2028 EPS 118.6 equals today's run rate. The bear 'growth 6%' is really about -10% in 2027 and -8% in 2028 against the real base. The narratives in position/core.json and coherence.md describe a different business than the one priced.",
+   "where": "companies/TSM/out/casefile.json val.case assumptions id=revenue_current_fy (and rv.mechanical.redteam.derived_inputs.revenue_basis); val.result.scenarios[*].forecast[0..1]; companies/TSM/out/table_he.md, scenarios_he.md; position/core.json drivers growth_anchor/growth per scenario",
+   "fix": "Rebase revenue_current_fy on reported 9M 2026 plus the Q4 2026 guide midpoint at the guided NT$ rate (~NT$5.59tn; at minimum the real TTM of NT$4.94tn). Restate the 2027 growth drivers against that base: base +27% then means FY2027 ~NT$7.1tn, so the analyst must decide whether 27% on the higher base is still the most likely path, given management is 'prudent' on 2027. Restate bear 2027 as an explicit decline sized to the 2023 analogue (-4.5%) or sharper, and say why. Then rerun ticker-value. The current-year margin start needs the same check: the bear path starts at 50.8% after SBC against a reported 58.7% Q3 operating margin.",
+   "lens": "counter"
+  }
+ ],
+ "open_critical": [
+  {
+   "finding": "Q3 2026 consolidated balance sheet not filed in the run: opening balance is 2026-06-30, not 2026-09-30; current portion of bank loans and short-term loans not read."
+  },
+  {
+   "finding": "rf_g_rev_fy26 is a derived range (TSMC guides FY2026 only as ~44% US$ growth); the 1.024 track-record ratio is not applied (would add ~NT$40bn)."
+  },
+  {
+   "finding": "Not in this repair's scope, left as the reviewers wrote them: ADR vs Taiwan 2330 listing premium (~12%; against the local share the value gap is larger), the current-year margin start in the bear vs the reported 58.7% Q3 operating margin, the one-time excess-cash distribution in the year-1 prices, stale_ttm warning (TTM statements end 2025-12-31), all material inputs still unreviewed (valuation_audit requires_review). The table remains a draft (engine: cyclical-peak margin question open)."
+  },
+  {
+   "finding": "Taiwan disruption stays a visible unpriced risk (key risk row: 80% of assets in Taiwan); not in any scenario price."
+  },
+  {
+   "finding": "Bear tool-price inflation on 2026-2028 capex not sized; the forensic invested capital uses the understated companyfacts debt line, so the record ROIC may be a few points lower."
+  }
+ ],
+ "repair": {
+  "fixed": [
+   "CRITICAL (numbers + counter) FY2026 base: drivers.current_year_revenue set in position/core.json (tier guidance, adjust_by_track_record false) citing rf_g_rev_fy26 (gather/repair.json: FY2026 NT$5,561.9-5,625.5bn DERIVED from Q1-Q3 2026 reported NT$3,898.7bn + Q4 guide US$52.3-54.3bn at the guided 31.8 NT$/US$), the three quarter facts, dc_g_rev_q4_26, dc_g_fx_q4_26, dc_g_revgrowth_fy26. Casefile fc.anchors.current_fiscal_year now NT$5,593.7bn (+46.9%) from guidance, no longer the model's NT$4,770.9bn.",
+   "2027 growth restated against that base (position/core.json growth_anchor and growth): base +27% kept as the most likely path (FY2027 ~NT$7.10tn; only ~1-2% average sequential growth over the Q4 2026 guided level, no FY2027 guide, management 'prudent'); bull +38% kept; bear changed from +6%/-8% to an explicit FY2027 decline of -4.5% (the FY2023 size), sharper than 2023 against the exit run rate (average 2027 quarter ~21% below Q4 2026 vs ~14% in 2023) because HPC is 68% and the top two customers 36%; then flat 2028, +6%, +7%.",
+   "Opening balance (major, numbers + counter): now the 2026-06-30 consolidated balance from the 6-K nm_fs_20260814: cash NT$3,134.2bn (nm_cash_q2_2026 marked factbook in gather/numbers.json), current financial investments NT$383.6bn (rf_sti_q2_2026), debt NT$1,029.6bn = bonds payable non-current 815.0 + current portion 165.3 + long-term bank loans 49.2 (rf_debt_q2_2026). Replaces the 2025-12-31 balance whose debt (NT$176.8bn) missed ~NT$850bn of bonds.",
+   "Bear ROIC (major, counter): position/path.json company_path bear roic 0.20 -> 0.40, anchored to the FY2023 trough ROIC 0.453 scaled by the guided up-to-4-pt overseas dilution on the 2023 42.6% operating margin (0.453 x 38.6/42.6 = 0.41, rounded down for unsized tool inflation); reason_he and gap updated.",
+   "ticker-value rerun: ran true; base fair value 2,933 TWD vs 2,660 ADR-equivalent price (now 'cheap by ~9%', was 'expensive by ~6%'); 5-year: base +62%, bull +149%, bear -37%."
+  ],
+  "open": [
+   "Q3 2026 consolidated balance sheet not filed in the run: opening balance is 2026-06-30, not 2026-09-30; current portion of bank loans and short-term loans not read.",
+   "rf_g_rev_fy26 is a derived range (TSMC guides FY2026 only as ~44% US$ growth); the 1.024 track-record ratio is not applied (would add ~NT$40bn).",
+   "Not in this repair's scope, left as the reviewers wrote them: ADR vs Taiwan 2330 listing premium (~12%; against the local share the value gap is larger), the current-year margin start in the bear vs the reported 58.7% Q3 operating margin, the one-time excess-cash distribution in the year-1 prices, stale_ttm warning (TTM statements end 2025-12-31), all material inputs still unreviewed (valuation_audit requires_review). The table remains a draft (engine: cyclical-peak margin question open).",
+   "Taiwan disruption stays a visible unpriced risk (key risk row: 80% of assets in Taiwan); not in any scenario price.",
+   "Bear tool-price inflation on 2026-2028 capex not sized; the forensic invested capital uses the understated companyfacts debt line, so the record ROIC may be a few points lower."
+  ],
+  "ran": true
+ },
+ "returned": [
+  "analyst",
+  "analyst_field",
+  "analyst_path",
+  "gather_documents",
+  "gather_field",
+  "gather_macro",
+  "gather_numbers",
+  "repair",
+  "review_counter",
+  "review_numbers",
+  "review_trace"
+ ],
+ "times": {
+  "started_at_utc": "2026-11-01T14:41:37+00:00",
+  "prefetch_finished_at_utc": "2026-11-01T14:41:42+00:00",
+  "minutes_after_start": {
+   "gather/_prefetch.json": 0.1,
+   "gather/documents.json": 3.7,
+   "gather/field.json": 1.3,
+   "gather/macro.json": 2.5,
+   "gather/numbers.json": 17.8,
+   "gather/repair.json": 17.5,
+   "understand/auto.json": 6.7,
+   "understand/business.json": 8.6,
+   "understand/econ_case.json": 2.6,
+   "understand/econ_result.json": 2.6,
+   "understand/quarter_case.json": 2.4,
+   "understand/quarter_result.json": 2.4,
+   "prep.json": 6.7,
+   "position/core.json": 17.8,
+   "position/field.json": 8.1,
+   "position/path.json": 17.8,
+   "value.json": 18.0,
+   "review/trace.json": 9.5,
+   "review/numbers.json": 14.0,
+   "review/counter.json": 14.4,
+   "review/repair.json": 18.4
+  },
+  "elapsed_minutes": 18.4
+ },
+ "meaning": "verified needs: the engine ran in this attempt, the three reviewers returned (files of this attempt AND the main loop's record), no critical finding open after the one repair pass. The engine's own review status is reported beside it, never replaced by it."
+}

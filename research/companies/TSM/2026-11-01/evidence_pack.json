@@ -1,0 +1,4110 @@
+{
+ "pack_version": 1,
+ "ticker": "TSM",
+ "as_of": "2026-11-01",
+ "identity": {
+  "name": "TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+  "currency": "TWD",
+  "exchange": "NYSE",
+  "security": "TSM American Depositary Shares (1 ADS = 5 common shares), NYSE; home line TWSE 2330",
+  "fiscal_year_end": "12-31",
+  "cik": "1046179",
+  "type": "mature_growth / stalwart (computed by classify_company from SEC companyfacts; the analyst confirms or overrides with reasons)",
+  "evidence_ids": [
+   "pf_10k_20260416"
+  ]
+ },
+ "sources": [
+  {
+   "id": "pf_10k_20260416",
+   "kind": "sec_filing",
+   "title": "TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD 20-F filed 2026-04-16 (period 2025-12-31)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000162828026025362/tsm-20251231.htm",
+   "date": "2026-04-16",
+   "independent": true,
+   "publisher": "TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_fred_dgs10",
+   "kind": "macro",
+   "title": "Market yield on US Treasury securities at 10-year constant maturity, percent, daily (FRED DGS10)",
+   "url": "https://fred.stlouisfed.org/series/DGS10",
+   "date": "2026-10-29",
+   "independent": true,
+   "publisher": "Federal Reserve Bank of St. Louis (FRED), from the Federal Reserve H.15",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_erp_implied",
+   "kind": "macro",
+   "title": "Damodaran implied ERP for the S&P 500 on 1 October 2026 (trailing 12 months, adjusted payout), treasury 5.29%",
+   "url": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/home.htm",
+   "date": "2026-10-01",
+   "independent": true,
+   "publisher": "Aswath Damodaran (NYU Stern), as saved in runs/macro/market_2026-10-20.json",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20200415",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD: facts of the filing(s) of 2020-04-15",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001046179.json#filed=2020-04-15",
+   "date": "2020-04-15",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20210416",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD: facts of the filing(s) of 2021-04-16",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001046179.json#filed=2021-04-16",
+   "date": "2021-04-16",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20230420",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD: facts of the filing(s) of 2023-04-20",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001046179.json#filed=2023-04-20",
+   "date": "2023-04-20",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20220414",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD: facts of the filing(s) of 2022-04-14",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001046179.json#filed=2022-04-14",
+   "date": "2022-04-14",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20240418",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD: facts of the filing(s) of 2024-04-18",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001046179.json#filed=2024-04-18",
+   "date": "2024-04-18",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20250417",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD: facts of the filing(s) of 2025-04-17",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001046179.json#filed=2025-04-17",
+   "date": "2025-04-17",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_peer_INTC",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of INTEL CORP (INTC), a named competitor: fiscal years through FY2025",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000050863.json",
+   "date": "2026-01-23",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from INTC's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "dc_rel_q3_2026",
+   "kind": "release",
+   "title": "TSMC Reports Third Quarter EPS of NT$29.43 (6-K Ex-99.1, with Q4 2026 guidance)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000726/a3q26e_withguidancexfinal.htm",
+   "date": "2026-10-15",
+   "independent": true,
+   "publisher": "Taiwan Semiconductor Manufacturing Company (SEC EDGAR 6-K)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "dc_pres_q3_2026",
+   "kind": "release",
+   "title": "TSMC 2026 Third Quarter Earnings Conference presentation (6-K Ex-99.2)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000726/a3q26presentatione.htm",
+   "date": "2026-10-15",
+   "independent": true,
+   "publisher": "Taiwan Semiconductor Manufacturing Company (SEC EDGAR 6-K)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "dc_call_q3_2026",
+   "kind": "transcript",
+   "title": "TSMC (TSM) Q3 2026 Earnings Call Transcript (Motley Fool copy of the 2026-10-15 call)",
+   "url": "https://www.fool.com/earnings/call-transcripts/2026/10/15/tsmc-tsm-q3-2026-earnings-call-transcript/",
+   "date": "2026-10-15",
+   "independent": false,
+   "publisher": "The Motley Fool",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_trendforce_2q26",
+   "kind": "industry",
+   "title": "TrendForce 2Q26 global foundry ranking (TSMC, Samsung, SMIC, UMC), as reported by press",
+   "url": "https://www.trendforce.com/presscenter/news/20260909-13225.html",
+   "date": "2026-09-09",
+   "independent": true,
+   "publisher": "TrendForce",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_evertiq_2q26",
+   "kind": "press",
+   "title": "SMIC narrows gap with Samsung as global foundry revenue hits record $53.49 billion (TrendForce data)",
+   "url": "https://evertiq.com/design/2026-09-10-smic-narrows-gap-with-samsung-as-global-foundry-revenue-hits-record-5349-billion",
+   "date": "2026-09-10",
+   "independent": false,
+   "publisher": "Evertiq",
+   "retrieval": "search_excerpt",
+   "syndicated_from": "fd_trendforce_2q26"
+  },
+  {
+   "id": "fd_counterpoint_2q26",
+   "kind": "industry",
+   "title": "Counterpoint Research: Global pure foundry market share Q2 2026 (GlobalFoundries ~4%, TSMC ~73%)",
+   "url": "https://korea.counterpointresearch.com/global-pure-foundry-market-share-q2-2026/",
+   "date": "2026-09-30",
+   "independent": true,
+   "publisher": "Counterpoint Research",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_trendforce_cowos",
+   "kind": "industry",
+   "title": "TrendForce: TSMC CoWoS supply-demand gap seen narrowing from 20% to 10% by end-2026",
+   "url": "https://www.trendforce.com/news/2026/06/15/news-tsmc-cowos-supply-demand-gap-reportedly-seen-narrowing-from-20-to-10-by-end-2026-as-capacity-expands",
+   "date": "2026-06-15",
+   "independent": true,
+   "publisher": "TrendForce",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_intel_q2_2026",
+   "kind": "press",
+   "title": "Intel Q2 2026 earnings call (external foundry revenue $293M, 18A/18A-P/14A status), Intel Corp",
+   "url": "https://www.marketbeat.com/earnings/reports/2026-7-23-intel-co-stock/",
+   "date": "2026-07-23",
+   "independent": false,
+   "publisher": "MarketBeat (transcript of Intel call)",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_intel_18a_yield",
+   "kind": "industry",
+   "title": "TrendForce: Intel 18A yields improve 7-8% monthly, 2H26 customers expected",
+   "url": "https://www.trendforce.com/news/2026/05/19/news-intel-18a-yields-improve-7-8-monthly-with-2h26-customers-expected-reportedly-pushes-18a-cpus-amid-tight-supply/",
+   "date": "2026-05-19",
+   "independent": true,
+   "publisher": "TrendForce",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_6k_20261015",
+   "kind": "release",
+   "title": "TSMC 3Q26 earnings release (6-K Ex 99.1) and 4Q26 outlook",
+   "url": "https://www.sec.gov/Archives/edgar/data/0001046179/000104617926000726/a3q26e_withguidancexfinal.htm",
+   "date": "2026-10-15",
+   "independent": true,
+   "publisher": "TSMC",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_6k_20261022",
+   "kind": "sec_filing",
+   "title": "TSMC 6-K 2026-10-22: month-end shareholdings, appropriations (routine)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000728/tsm-monthend6kx20261022.htm",
+   "date": "2026-10-22",
+   "independent": true,
+   "publisher": "TSMC",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_press_anthropic",
+   "kind": "press",
+   "title": "Anthropic S-1 flags Taiwan/TSMC concentration (secondary report; lead, original filing not read)",
+   "url": "https://www.kucoin.com/news/flash/anthropic-warns-of-ai-chip-supply-risks-due-to-tsmc-s-taiwan-concentration",
+   "date": "2026-10-26",
+   "independent": true,
+   "publisher": "KuCoin News",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_press_tradingkey",
+   "kind": "press",
+   "title": "TSM opened down 3.67% on Oct 30 (market mover note)",
+   "url": "https://www.tradingkey.com/news/market-movers/262260899-market-movers-tsm-20261030",
+   "date": "2026-10-30",
+   "independent": true,
+   "publisher": "TradingKey",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_press_nanjing",
+   "kind": "press",
+   "title": "US grants TSMC annual export license for Nanjing fab (Reuters-based report)",
+   "url": "https://finance.yahoo.com/news/tsmc-secures-one-us-export-023117235.html",
+   "date": "2026-01-01",
+   "independent": false,
+   "publisher": "Yahoo Finance",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_press_232_taiwan",
+   "kind": "press",
+   "title": "US-Taiwan trade deal: tariff relief for chips from TSMC",
+   "url": "https://www.cnbc.com/2026/01/15/us-taiwan-chips-deal-china.html",
+   "date": "2026-01-15",
+   "independent": true,
+   "publisher": "CNBC",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_press_232_proc",
+   "kind": "press",
+   "title": "US Section 232 proclamation imposes 25% tariff on certain semiconductors",
+   "url": "https://taxnews.ey.com/news/2026-0209-us-section-232-proclamation-imposes-25-percent-tariff-on-certain-semiconductors",
+   "date": "2026-02-09",
+   "independent": true,
+   "publisher": "EY Tax News",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_rel_20260716",
+   "kind": "release",
+   "title": "TSMC Reports Second Quarter EPS of NT$27.25 (6-K exhibit 99.1)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000451/a2q26e_withguidancexfinal.htm",
+   "date": "2026-07-16",
+   "independent": true,
+   "publisher": "TSMC (SEC EDGAR 6-K)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_rel_20260416",
+   "kind": "release",
+   "title": "TSMC Reports First Quarter EPS of NT$22.08 (6-K exhibit 99.1)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000199/a1q26e_withguidancexfinal.htm",
+   "date": "2026-04-16",
+   "independent": true,
+   "publisher": "TSMC (SEC EDGAR 6-K)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_rel_20260115",
+   "kind": "release",
+   "title": "TSMC Reports Fourth Quarter EPS of NT$19.50 (6-K exhibit 99.1)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000008/a4q25e_withguidancexfinal.htm",
+   "date": "2026-01-15",
+   "independent": true,
+   "publisher": "TSMC (SEC EDGAR 6-K)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_rel_20251016",
+   "kind": "release",
+   "title": "TSMC Reports Third Quarter EPS of NT$17.44 (6-K exhibit 99.1)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617925000116/a3q25e_withguidancexfinal.htm",
+   "date": "2025-10-16",
+   "independent": true,
+   "publisher": "TSMC (SEC EDGAR 6-K)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_rel_20250717",
+   "kind": "release",
+   "title": "TSMC Reports Second Quarter EPS of NT$15.36 (6-K exhibit 99.1)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617925000082/a2q25e_withguidancexfinal.htm",
+   "date": "2025-07-17",
+   "independent": true,
+   "publisher": "TSMC (SEC EDGAR 6-K)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_rel_20250417",
+   "kind": "release",
+   "title": "TSMC Reports First Quarter EPS of NT$13.94 (6-K exhibit 99.1)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617925000035/a1q25e_withguidancexfinal.htm",
+   "date": "2025-04-17",
+   "independent": true,
+   "publisher": "TSMC (SEC EDGAR 6-K)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_rel_20250116",
+   "kind": "release",
+   "title": "TSMC Reports Fourth Quarter EPS of NT$14.45 (6-K exhibit 99.1)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617925000004/a4q24e_withguidancexfinal.htm",
+   "date": "2025-01-16",
+   "independent": true,
+   "publisher": "TSMC (SEC EDGAR 6-K)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_fs_20260814",
+   "kind": "sec_filing",
+   "title": "TSMC consolidated financial report for the quarter ended June 30, 2026 (6-K, TIFRS, NT$ thousands)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000541/a2026q2consolidatedreport-.htm",
+   "date": "2026-08-14",
+   "independent": true,
+   "publisher": "TSMC (SEC EDGAR 6-K)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_ib_price",
+   "kind": "price",
+   "title": "Interactive Brokers price snapshot, TSM ADR (NYSE, USD), contract 6223250",
+   "url": "connector:Interactive_Brokers.get_price_snapshot",
+   "date": "2026-10-30",
+   "independent": true,
+   "publisher": "Interactive Brokers",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_ib_hist",
+   "kind": "price",
+   "title": "Interactive Brokers monthly price history and cash dividends, TSM ADR, 2021-11 to 2026-10",
+   "url": "connector:Interactive_Brokers.get_price_history",
+   "date": "2026-10-30",
+   "independent": true,
+   "publisher": "Interactive Brokers",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  }
+ ],
+ "facts": [
+  {
+   "id": "pf_revenue_fy2019",
+   "metric": "revenue",
+   "period": "FY2019",
+   "value": 1069985400000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20200415"
+   ],
+   "period_end": "2019-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_gross_profit_fy2019",
+   "metric": "gross_profit",
+   "period": "FY2019",
+   "value": 492701900000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20200415"
+   ],
+   "period_end": "2019-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_fy2019",
+   "metric": "operating_income",
+   "period": "FY2019",
+   "value": 372701100000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20200415"
+   ],
+   "period_end": "2019-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_net_income_fy2019",
+   "metric": "net_income",
+   "period": "FY2019",
+   "value": 354027000000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20200415"
+   ],
+   "period_end": "2019-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_fy2019",
+   "metric": "cfo",
+   "period": "FY2019",
+   "value": 615138700000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20200415"
+   ],
+   "period_end": "2019-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_fy2019",
+   "metric": "capex",
+   "period": "FY2019",
+   "value": 460422200000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20200415"
+   ],
+   "period_end": "2019-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_fy2019",
+   "metric": "sbc",
+   "period": "FY2019",
+   "value": 2800000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20200415"
+   ],
+   "period_end": "2019-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_d_and_a_fy2019",
+   "metric": "d_and_a",
+   "period": "FY2019",
+   "value": 286884200000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20200415"
+   ],
+   "period_end": "2019-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_rd_fy2019",
+   "metric": "rd",
+   "period": "FY2019",
+   "value": 91418700000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20200415"
+   ],
+   "period_end": "2019-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_eps_diluted_fy2019",
+   "metric": "eps_diluted",
+   "period": "FY2019",
+   "value": 13.65,
+   "unit": "TWD/shares",
+   "source_ids": [
+    "pf_cf_20200415"
+   ],
+   "period_end": "2019-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_dividends_paid_fy2019",
+   "metric": "dividends_paid",
+   "period": "FY2019",
+   "value": 259303800000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20200415"
+   ],
+   "period_end": "2019-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cash_fy2019",
+   "metric": "cash",
+   "period": "FY2019",
+   "value": 455399300000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20200415"
+   ],
+   "period_end": "2019-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_short_term_investments_fy2019",
+   "metric": "short_term_investments",
+   "period": "FY2019",
+   "value": 299900000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20200415"
+   ],
+   "period_end": "2019-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_total_assets_fy2019",
+   "metric": "total_assets",
+   "period": "FY2019",
+   "value": 2264725000000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20200415"
+   ],
+   "period_end": "2019-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_equity_fy2019",
+   "metric": "equity",
+   "period": "FY2019",
+   "value": 1613705600000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20200415"
+   ],
+   "period_end": "2019-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_inventory_fy2019",
+   "metric": "inventory",
+   "period": "FY2019",
+   "value": 82981200000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20200415"
+   ],
+   "period_end": "2019-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_receivables_fy2019",
+   "metric": "receivables",
+   "period": "FY2019",
+   "value": 138908600000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20200415"
+   ],
+   "period_end": "2019-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_fy2020",
+   "metric": "revenue",
+   "period": "FY2020",
+   "value": 1339254800000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20210416"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_gross_profit_fy2020",
+   "metric": "gross_profit",
+   "period": "FY2020",
+   "value": 711130100000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20210416"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_fy2020",
+   "metric": "operating_income",
+   "period": "FY2020",
+   "value": 566783700000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20210416"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_net_income_fy2020",
+   "metric": "net_income",
+   "period": "FY2020",
+   "value": 511008000000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20210416"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_fy2020",
+   "metric": "cfo",
+   "period": "FY2020",
+   "value": 822666200000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20210416"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_fy2020",
+   "metric": "capex",
+   "period": "FY2020",
+   "value": 507238700000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20210416"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_fy2020",
+   "metric": "sbc",
+   "period": "FY2020",
+   "value": 6600000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20210416"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_d_and_a_fy2020",
+   "metric": "d_and_a",
+   "period": "FY2020",
+   "value": 331724600000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20210416"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_rd_fy2020",
+   "metric": "rd",
+   "period": "FY2020",
+   "value": 109486000000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20210416"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_eps_diluted_fy2020",
+   "metric": "eps_diluted",
+   "period": "FY2020",
+   "value": 19.7,
+   "unit": "TWD/shares",
+   "source_ids": [
+    "pf_cf_20210416"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_shares_diluted_wavg_fy2020",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2020",
+   "value": 25930300000.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_cf_20230420"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_dividends_paid_fy2020",
+   "metric": "dividends_paid",
+   "period": "FY2020",
+   "value": 259303800000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20210416"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cash_fy2020",
+   "metric": "cash",
+   "period": "FY2020",
+   "value": 660170600000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20210416"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_short_term_investments_fy2020",
+   "metric": "short_term_investments",
+   "period": "FY2020",
+   "value": 6598000000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20210416"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_total_assets_fy2020",
+   "metric": "total_assets",
+   "period": "FY2020",
+   "value": 2760600500000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20210416"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_equity_fy2020",
+   "metric": "equity",
+   "period": "FY2020",
+   "value": 1834811300000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20210416"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_long_term_debt_fy2020",
+   "metric": "long_term_debt",
+   "period": "FY2020",
+   "value": 1967600000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20210416"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_inventory_fy2020",
+   "metric": "inventory",
+   "period": "FY2020",
+   "value": 137353400000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20210416"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_receivables_fy2020",
+   "metric": "receivables",
+   "period": "FY2020",
+   "value": 145480300000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20210416"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_fy2021",
+   "metric": "revenue",
+   "period": "FY2021",
+   "value": 1587415000000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20220414"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_gross_profit_fy2021",
+   "metric": "gross_profit",
+   "period": "FY2021",
+   "value": 819537300000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20220414"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_fy2021",
+   "metric": "operating_income",
+   "period": "FY2021",
+   "value": 649980900000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20220414"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_net_income_fy2021",
+   "metric": "net_income",
+   "period": "FY2021",
+   "value": 592880600000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20220414"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_fy2021",
+   "metric": "cfo",
+   "period": "FY2021",
+   "value": 1112160700000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20220414"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_fy2021",
+   "metric": "capex",
+   "period": "FY2021",
+   "value": 839195700000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20220414"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_fy2021",
+   "metric": "sbc",
+   "period": "FY2021",
+   "value": 7800000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20220414"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_d_and_a_fy2021",
+   "metric": "d_and_a",
+   "period": "FY2021",
+   "value": 422394900000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20220414"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_rd_fy2021",
+   "metric": "rd",
+   "period": "FY2021",
+   "value": 124734800000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20220414"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_eps_diluted_fy2021",
+   "metric": "eps_diluted",
+   "period": "FY2021",
+   "value": 22.84,
+   "unit": "TWD/shares",
+   "source_ids": [
+    "pf_cf_20220414"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_shares_diluted_wavg_fy2021",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2021",
+   "value": 25930300000.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_cf_20230420"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_dividends_paid_fy2021",
+   "metric": "dividends_paid",
+   "period": "FY2021",
+   "value": 265786400000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20220414"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cash_fy2021",
+   "metric": "cash",
+   "period": "FY2021",
+   "value": 1064990200000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20220414"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_short_term_investments_fy2021",
+   "metric": "short_term_investments",
+   "period": "FY2021",
+   "value": 3773600000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20220414"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_total_assets_fy2021",
+   "metric": "total_assets",
+   "period": "FY2021",
+   "value": 3725302200000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20220414"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_equity_fy2021",
+   "metric": "equity",
+   "period": "FY2021",
+   "value": 2149259800000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20220414"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_long_term_debt_fy2021",
+   "metric": "long_term_debt",
+   "period": "FY2021",
+   "value": 3309100000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20220414"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_inventory_fy2021",
+   "metric": "inventory",
+   "period": "FY2021",
+   "value": 193102300000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20220414"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_receivables_fy2021",
+   "metric": "receivables",
+   "period": "FY2021",
+   "value": 197586100000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20220414"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_fy2022",
+   "metric": "revenue",
+   "period": "FY2022",
+   "value": 2263891300000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20230420"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_gross_profit_fy2022",
+   "metric": "gross_profit",
+   "period": "FY2022",
+   "value": 1348354800000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20230420"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_fy2022",
+   "metric": "operating_income",
+   "period": "FY2022",
+   "value": 1121278900000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20230420"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_net_income_fy2022",
+   "metric": "net_income",
+   "period": "FY2022",
+   "value": 993294700000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20230420"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_fy2022",
+   "metric": "cfo",
+   "period": "FY2022",
+   "value": 1610599200000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20230420"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_fy2022",
+   "metric": "capex",
+   "period": "FY2022",
+   "value": 1082672100000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20230420"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_fy2022",
+   "metric": "sbc",
+   "period": "FY2022",
+   "value": 302400000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20230420"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_d_and_a_fy2022",
+   "metric": "d_and_a",
+   "period": "FY2022",
+   "value": 437254300000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20230420"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_rd_fy2022",
+   "metric": "rd",
+   "period": "FY2022",
+   "value": 163262200000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20230420"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_eps_diluted_fy2022",
+   "metric": "eps_diluted",
+   "period": "FY2022",
+   "value": 38.29,
+   "unit": "TWD/shares",
+   "source_ids": [
+    "pf_cf_20230420"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_shares_diluted_wavg_fy2022",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2022",
+   "value": 25929400000.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_cf_20230420"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_dividends_paid_fy2022",
+   "metric": "dividends_paid",
+   "period": "FY2022",
+   "value": 285234200000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20230420"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cash_fy2022",
+   "metric": "cash",
+   "period": "FY2022",
+   "value": 1342814100000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20230420"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_short_term_investments_fy2022",
+   "metric": "short_term_investments",
+   "period": "FY2022",
+   "value": 94600200000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20230420"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_total_assets_fy2022",
+   "metric": "total_assets",
+   "period": "FY2022",
+   "value": 4964459100000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20230420"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_equity_fy2022",
+   "metric": "equity",
+   "period": "FY2022",
+   "value": 2903019700000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20230420"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_long_term_debt_fy2022",
+   "metric": "long_term_debt",
+   "period": "FY2022",
+   "value": 4760000000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20230420"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_inventory_fy2022",
+   "metric": "inventory",
+   "period": "FY2022",
+   "value": 221149100000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20230420"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_receivables_fy2022",
+   "metric": "receivables",
+   "period": "FY2022",
+   "value": 229755900000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20230420"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_fy2023",
+   "metric": "revenue",
+   "period": "FY2023",
+   "value": 2161735800000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20240418"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_gross_profit_fy2023",
+   "metric": "gross_profit",
+   "period": "FY2023",
+   "value": 1175110600000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20240418"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_fy2023",
+   "metric": "operating_income",
+   "period": "FY2023",
+   "value": 921465600000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20240418"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_net_income_fy2023",
+   "metric": "net_income",
+   "period": "FY2023",
+   "value": 851027700000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20240418"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_fy2023",
+   "metric": "cfo",
+   "period": "FY2023",
+   "value": 1241967300000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20240418"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_fy2023",
+   "metric": "capex",
+   "period": "FY2023",
+   "value": 949816800000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20240418"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_fy2023",
+   "metric": "sbc",
+   "period": "FY2023",
+   "value": 483000000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20240418"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_d_and_a_fy2023",
+   "metric": "d_and_a",
+   "period": "FY2023",
+   "value": 532190900000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20240418"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_rd_fy2023",
+   "metric": "rd",
+   "period": "FY2023",
+   "value": 182370200000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20240418"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_eps_diluted_fy2023",
+   "metric": "eps_diluted",
+   "period": "FY2023",
+   "value": 32.85,
+   "unit": "TWD/shares",
+   "source_ids": [
+    "pf_cf_20240418"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_shares_diluted_wavg_fy2023",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2023",
+   "value": 25929300000.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_cf_20240418"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_dividends_paid_fy2023",
+   "metric": "dividends_paid",
+   "period": "FY2023",
+   "value": 291721900000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20240418"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cash_fy2023",
+   "metric": "cash",
+   "period": "FY2023",
+   "value": 1465427800000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20240418"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_short_term_investments_fy2023",
+   "metric": "short_term_investments",
+   "period": "FY2023",
+   "value": 66761200000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20240418"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_total_assets_fy2023",
+   "metric": "total_assets",
+   "period": "FY2023",
+   "value": 5532196600000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20240418"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_equity_fy2023",
+   "metric": "equity",
+   "period": "FY2023",
+   "value": 3429522400000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20240418"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_long_term_debt_fy2023",
+   "metric": "long_term_debt",
+   "period": "FY2023",
+   "value": 4383000000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20240418"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_inventory_fy2023",
+   "metric": "inventory",
+   "period": "FY2023",
+   "value": 250997100000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20240418"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_receivables_fy2023",
+   "metric": "receivables",
+   "period": "FY2023",
+   "value": 201313900000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20240418"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_fy2024",
+   "metric": "revenue",
+   "period": "FY2024",
+   "value": 2894307700000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20250417"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_gross_profit_fy2024",
+   "metric": "gross_profit",
+   "period": "FY2024",
+   "value": 1624353600000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20250417"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_fy2024",
+   "metric": "operating_income",
+   "period": "FY2024",
+   "value": 1322053000000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20250417"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_net_income_fy2024",
+   "metric": "net_income",
+   "period": "FY2024",
+   "value": 1157523900000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20250417"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_fy2024",
+   "metric": "cfo",
+   "period": "FY2024",
+   "value": 1826177100000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20250417"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_fy2024",
+   "metric": "capex",
+   "period": "FY2024",
+   "value": 956006500000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20250417"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_fy2024",
+   "metric": "sbc",
+   "period": "FY2024",
+   "value": 1242700000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20250417"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_d_and_a_fy2024",
+   "metric": "d_and_a",
+   "period": "FY2024",
+   "value": 662796600000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20250417"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_rd_fy2024",
+   "metric": "rd",
+   "period": "FY2024",
+   "value": 204181800000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20250417"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_eps_diluted_fy2024",
+   "metric": "eps_diluted",
+   "period": "FY2024",
+   "value": 44.67,
+   "unit": "TWD/shares",
+   "source_ids": [
+    "pf_cf_20250417"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_shares_diluted_wavg_fy2024",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2024",
+   "value": 25929700000.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_cf_20250417"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_dividends_paid_fy2024",
+   "metric": "dividends_paid",
+   "period": "FY2024",
+   "value": 363055200000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20250417"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cash_fy2024",
+   "metric": "cash",
+   "period": "FY2024",
+   "value": 2127627000000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20250417"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_short_term_investments_fy2024",
+   "metric": "short_term_investments",
+   "period": "FY2024",
+   "value": 101971300000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20250417"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_total_assets_fy2024",
+   "metric": "total_assets",
+   "period": "FY2024",
+   "value": 6691764700000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20250417"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_equity_fy2024",
+   "metric": "equity",
+   "period": "FY2024",
+   "value": 4244266500000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20250417"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_long_term_debt_fy2024",
+   "metric": "long_term_debt",
+   "period": "FY2024",
+   "value": 31824400000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20250417"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_inventory_fy2024",
+   "metric": "inventory",
+   "period": "FY2024",
+   "value": 287868800000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20250417"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_receivables_fy2024",
+   "metric": "receivables",
+   "period": "FY2024",
+   "value": 270683200000.0,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_cf_20250417"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_rev_3q26",
+   "metric": "revenue",
+   "period": "Q3 2026",
+   "value": 1494243000000,
+   "unit": "TWD",
+   "source_ids": [
+    "dc_rel_q3_2026"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_rev_usd_3q26",
+   "metric": "revenue_usd",
+   "period": "Q3 2026",
+   "value": 46720000000,
+   "unit": "USD",
+   "source_ids": [
+    "dc_pres_q3_2026"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_gp_3q26",
+   "metric": "gross_profit",
+   "period": "Q3 2026",
+   "value": 992379000000,
+   "unit": "TWD",
+   "source_ids": [
+    "dc_rel_q3_2026"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_oi_3q26",
+   "metric": "operating_income",
+   "period": "Q3 2026",
+   "value": 876445000000,
+   "unit": "TWD",
+   "source_ids": [
+    "dc_rel_q3_2026"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_ni_3q26",
+   "metric": "net_income",
+   "period": "Q3 2026",
+   "value": 763064000000,
+   "unit": "TWD",
+   "source_ids": [
+    "dc_rel_q3_2026"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_eps_3q26",
+   "metric": "diluted_eps",
+   "period": "Q3 2026",
+   "value": 29.43,
+   "unit": "TWD",
+   "source_ids": [
+    "dc_rel_q3_2026"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_ocf_3q26",
+   "metric": "operating_cash_flow",
+   "period": "Q3 2026",
+   "value": 919770000000,
+   "unit": "TWD",
+   "source_ids": [
+    "dc_pres_q3_2026"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_capex_3q26",
+   "metric": "capex",
+   "period": "Q3 2026",
+   "value": 443210000000,
+   "unit": "TWD",
+   "source_ids": [
+    "dc_pres_q3_2026"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_fcf_3q26",
+   "metric": "free_cash_flow",
+   "period": "Q3 2026",
+   "value": 476560000000,
+   "unit": "TWD",
+   "source_ids": [
+    "dc_pres_q3_2026"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_cash_3q26",
+   "metric": "cash_and_marketable_securities",
+   "period": "Q3 2026",
+   "value": 4016980000000,
+   "unit": "TWD",
+   "source_ids": [
+    "dc_pres_q3_2026"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_ltdebt_3q26",
+   "metric": "long_term_interest_bearing_debt",
+   "period": "Q3 2026",
+   "value": 818380000000,
+   "unit": "TWD",
+   "source_ids": [
+    "dc_pres_q3_2026"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_equity_3q26",
+   "metric": "total_shareholders_equity",
+   "period": "Q3 2026",
+   "value": 7043230000000,
+   "unit": "TWD",
+   "source_ids": [
+    "dc_pres_q3_2026"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_shares_3q26",
+   "metric": "shares_outstanding_period_end",
+   "period": "Q3 2026",
+   "value": 25932000000,
+   "unit": "shares",
+   "source_ids": [
+    "dc_pres_q3_2026"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_rev_3q25",
+   "metric": "revenue",
+   "period": "Q3 2025",
+   "value": 989918000000,
+   "unit": "TWD",
+   "source_ids": [
+    "dc_rel_q3_2026"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_rev_2q26",
+   "metric": "revenue",
+   "period": "Q2 2026",
+   "value": 1270381000000,
+   "unit": "TWD",
+   "source_ids": [
+    "dc_rel_q3_2026"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_purch_oblig_fy25",
+   "metric": "capital_and_other_purchase_obligations_total",
+   "period": "FY2025",
+   "value": 1534575000000,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_purch_oblig_lt1y_fy25",
+   "metric": "capital_and_other_purchase_obligations_due_within_1y",
+   "period": "FY2025",
+   "value": 1220393000000,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_ltdebt_oblig_fy25",
+   "metric": "long_term_debt_contractual_total",
+   "period": "FY2025",
+   "value": 1229859000000,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_north_america_fy25",
+   "metric": "revenue_by_region:North America",
+   "period": "FY2025",
+   "value": 2875270,
+   "unit": "NT$ million",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_revpct_north_america_fy25",
+   "metric": "revenue_share_by_region:North America",
+   "period": "FY2025",
+   "value": 0.75,
+   "unit": "share of net revenue (customer HQ basis)",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_north_america_fy24",
+   "metric": "revenue_by_region:North America",
+   "period": "FY2024",
+   "value": 2031326,
+   "unit": "NT$ million",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_asia_pacific_fy25",
+   "metric": "revenue_by_region:Asia Pacific",
+   "period": "FY2025",
+   "value": 329269,
+   "unit": "NT$ million",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_revpct_asia_pacific_fy25",
+   "metric": "revenue_share_by_region:Asia Pacific",
+   "period": "FY2025",
+   "value": 0.09,
+   "unit": "share of net revenue (customer HQ basis)",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_asia_pacific_fy24",
+   "metric": "revenue_by_region:Asia Pacific",
+   "period": "FY2024",
+   "value": 284308,
+   "unit": "NT$ million",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_china_fy25",
+   "metric": "revenue_by_region:China",
+   "period": "FY2025",
+   "value": 327503,
+   "unit": "NT$ million",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_revpct_china_fy25",
+   "metric": "revenue_share_by_region:China",
+   "period": "FY2025",
+   "value": 0.09,
+   "unit": "share of net revenue (customer HQ basis)",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_china_fy24",
+   "metric": "revenue_by_region:China",
+   "period": "FY2024",
+   "value": 331673,
+   "unit": "NT$ million",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_japan_fy25",
+   "metric": "revenue_by_region:Japan",
+   "period": "FY2025",
+   "value": 150428,
+   "unit": "NT$ million",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_revpct_japan_fy25",
+   "metric": "revenue_share_by_region:Japan",
+   "period": "FY2025",
+   "value": 0.04,
+   "unit": "share of net revenue (customer HQ basis)",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_japan_fy24",
+   "metric": "revenue_by_region:Japan",
+   "period": "FY2024",
+   "value": 144240,
+   "unit": "NT$ million",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_emea_fy25",
+   "metric": "revenue_by_region:EMEA",
+   "period": "FY2025",
+   "value": 126584,
+   "unit": "NT$ million",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_revpct_emea_fy25",
+   "metric": "revenue_share_by_region:EMEA",
+   "period": "FY2025",
+   "value": 0.03,
+   "unit": "share of net revenue (customer HQ basis)",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_emea_fy24",
+   "metric": "revenue_by_region:EMEA",
+   "period": "FY2024",
+   "value": 102761,
+   "unit": "NT$ million",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_nca_taiwan_fy25",
+   "metric": "long_lived_assets:Taiwan",
+   "period": "FY2025",
+   "value": 3102343.0,
+   "unit": "NT$ million (noncurrent assets: PP&E, ROU, intangibles, other)",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_nca_taiwan_fy24",
+   "metric": "long_lived_assets:Taiwan",
+   "period": "FY2024",
+   "value": 2613112.2,
+   "unit": "NT$ million (noncurrent assets: PP&E, ROU, intangibles, other)",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_nca_united_states_fy25",
+   "metric": "long_lived_assets:United States",
+   "period": "FY2025",
+   "value": 540057.4,
+   "unit": "NT$ million (noncurrent assets: PP&E, ROU, intangibles, other)",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_nca_united_states_fy24",
+   "metric": "long_lived_assets:United States",
+   "period": "FY2024",
+   "value": 541836.3,
+   "unit": "NT$ million (noncurrent assets: PP&E, ROU, intangibles, other)",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_nca_japan_fy25",
+   "metric": "long_lived_assets:Japan",
+   "period": "FY2025",
+   "value": 117403.2,
+   "unit": "NT$ million (noncurrent assets: PP&E, ROU, intangibles, other)",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_nca_japan_fy24",
+   "metric": "long_lived_assets:Japan",
+   "period": "FY2024",
+   "value": 126600.6,
+   "unit": "NT$ million (noncurrent assets: PP&E, ROU, intangibles, other)",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_nca_china_fy25",
+   "metric": "long_lived_assets:China",
+   "period": "FY2025",
+   "value": 65019.9,
+   "unit": "NT$ million (noncurrent assets: PP&E, ROU, intangibles, other)",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_nca_china_fy24",
+   "metric": "long_lived_assets:China",
+   "period": "FY2024",
+   "value": 82405.8,
+   "unit": "NT$ million (noncurrent assets: PP&E, ROU, intangibles, other)",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_nca_emea_fy25",
+   "metric": "long_lived_assets:EMEA",
+   "period": "FY2025",
+   "value": 51515.1,
+   "unit": "NT$ million (noncurrent assets: PP&E, ROU, intangibles, other)",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_nca_emea_fy24",
+   "metric": "long_lived_assets:EMEA",
+   "period": "FY2024",
+   "value": 19150.1,
+   "unit": "NT$ million (noncurrent assets: PP&E, ROU, intangibles, other)",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_nca_total_fy25",
+   "metric": "long_lived_assets:total",
+   "period": "FY2025",
+   "value": 3876339.8,
+   "unit": "NT$ million",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_fy2025",
+   "metric": "revenue",
+   "period": "FY2025",
+   "value": 3809054300000,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_gross_profit_fy2025",
+   "metric": "gross_profit",
+   "period": "FY2025",
+   "value": 2281294000000,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_operating_income_fy2025",
+   "metric": "operating_income",
+   "period": "FY2025",
+   "value": 1936091700000,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_net_income_fy2025",
+   "metric": "net_income",
+   "period": "FY2025",
+   "value": 1697604000000,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_cfo_fy2025",
+   "metric": "cfo",
+   "period": "FY2025",
+   "value": 2274975600000,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_capex_fy2025",
+   "metric": "capex",
+   "period": "FY2025",
+   "value": 1272410500000,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_sbc_fy2025",
+   "metric": "sbc",
+   "period": "FY2025",
+   "value": 1246100000,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_d_and_a_fy2025",
+   "metric": "d_and_a",
+   "period": "FY2025",
+   "value": 688096400000,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_rd_fy2025",
+   "metric": "rd",
+   "period": "FY2025",
+   "value": 246427200000,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_fy2025",
+   "metric": "eps_diluted",
+   "period": "FY2025",
+   "value": 65.47,
+   "unit": "TWD/shares",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_diluted_wavg_fy2025",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2025",
+   "value": 25930600000,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_dividends_paid_fy2025",
+   "metric": "dividends_paid",
+   "period": "FY2025",
+   "value": 466779200000,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_cash_fy2025",
+   "metric": "cash",
+   "period": "FY2025",
+   "value": 2767856400000,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_equity_fy2025",
+   "metric": "equity",
+   "period": "FY2025",
+   "value": 5355038700000,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_total_assets_fy2025",
+   "metric": "total_assets",
+   "period": "FY2025",
+   "value": 7932842500000,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_q4_2025",
+   "metric": "revenue",
+   "period": "Q4 2025",
+   "value": 1046090000000,
+   "unit": "TWD",
+   "source_ids": [
+    "nm_rel_20260115"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_net_income_q4_2025",
+   "metric": "net_income",
+   "period": "Q4 2025",
+   "value": 505740000000,
+   "unit": "TWD",
+   "source_ids": [
+    "nm_rel_20260115"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q4_2025",
+   "metric": "eps_diluted",
+   "period": "Q4 2025",
+   "value": 19.5,
+   "unit": "TWD/shares",
+   "source_ids": [
+    "nm_rel_20260115"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_q1_2026",
+   "metric": "revenue",
+   "period": "Q1 2026",
+   "value": 1134100000000,
+   "unit": "TWD",
+   "source_ids": [
+    "nm_rel_20260416"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_net_income_q1_2026",
+   "metric": "net_income",
+   "period": "Q1 2026",
+   "value": 572480000000,
+   "unit": "TWD",
+   "source_ids": [
+    "nm_rel_20260416"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q1_2026",
+   "metric": "eps_diluted",
+   "period": "Q1 2026",
+   "value": 22.08,
+   "unit": "TWD/shares",
+   "source_ids": [
+    "nm_rel_20260416"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_q2_2026",
+   "metric": "revenue",
+   "period": "Q2 2026",
+   "value": 1270380250000,
+   "unit": "TWD",
+   "source_ids": [
+    "nm_fs_20260814",
+    "nm_rel_20260716"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_operating_income_q2_2026",
+   "metric": "operating_income",
+   "period": "Q2 2026",
+   "value": 766602651000,
+   "unit": "TWD",
+   "source_ids": [
+    "nm_fs_20260814"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_net_income_q2_2026",
+   "metric": "net_income",
+   "period": "Q2 2026",
+   "value": 706561938000,
+   "unit": "TWD",
+   "source_ids": [
+    "nm_fs_20260814",
+    "nm_rel_20260716"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q2_2026",
+   "metric": "eps_diluted",
+   "period": "Q2 2026",
+   "value": 27.25,
+   "unit": "TWD/shares",
+   "source_ids": [
+    "nm_fs_20260814",
+    "nm_rel_20260716"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_oneoff_gain_q2_2026",
+   "metric": "gain_on_disposal_equity_method_investment",
+   "period": "Q2 2026",
+   "value": 63202285000,
+   "unit": "TWD",
+   "source_ids": [
+    "nm_fs_20260814"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_q3_2026",
+   "metric": "revenue",
+   "period": "Q3 2026",
+   "value": 1494240000000,
+   "unit": "TWD",
+   "source_ids": [
+    "dc_rel_q3_2026"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_usd_q3_2026",
+   "metric": "revenue_usd",
+   "period": "Q3 2026",
+   "value": 46720000000,
+   "unit": "USD",
+   "source_ids": [
+    "dc_rel_q3_2026"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_net_income_q3_2026",
+   "metric": "net_income",
+   "period": "Q3 2026",
+   "value": 763060000000,
+   "unit": "TWD",
+   "source_ids": [
+    "dc_rel_q3_2026"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q3_2026",
+   "metric": "eps_diluted",
+   "period": "Q3 2026",
+   "value": 29.43,
+   "unit": "TWD/shares",
+   "source_ids": [
+    "dc_rel_q3_2026"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_adr_usd_q3_2026",
+   "metric": "eps_per_adr_usd",
+   "period": "Q3 2026",
+   "value": 4.6,
+   "unit": "USD",
+   "source_ids": [
+    "dc_rel_q3_2026"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_gross_margin_q3_2026",
+   "metric": "gross_margin",
+   "period": "Q3 2026",
+   "value": 0.664,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_rel_q3_2026"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_operating_margin_q3_2026",
+   "metric": "operating_margin",
+   "period": "Q3 2026",
+   "value": 0.587,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_rel_q3_2026"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_cfo_h1_2026",
+   "metric": "cfo",
+   "period": "H1 2026",
+   "value": 1482341242000,
+   "unit": "TWD",
+   "source_ids": [
+    "nm_fs_20260814"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_capex_h1_2026",
+   "metric": "capex",
+   "period": "H1 2026",
+   "value": 846764746000,
+   "unit": "TWD",
+   "source_ids": [
+    "nm_fs_20260814"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_sbc_h1_2026",
+   "metric": "sbc",
+   "period": "H1 2026",
+   "value": 237026000,
+   "unit": "TWD",
+   "source_ids": [
+    "nm_fs_20260814"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_cash_q2_2026",
+   "metric": "cash",
+   "period": "Q2 2026",
+   "value": 3134218213000,
+   "unit": "TWD",
+   "source_ids": [
+    "nm_fs_20260814"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported",
+   "factbook": true
+  },
+  {
+   "id": "nm_bonds_payable_q2_2026",
+   "metric": "bonds_payable_noncurrent",
+   "period": "Q2 2026",
+   "value": 815036716000,
+   "unit": "TWD",
+   "source_ids": [
+    "nm_fs_20260814"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_equity_q2_2026",
+   "metric": "equity",
+   "period": "Q2 2026",
+   "value": 6432518334000,
+   "unit": "TWD",
+   "source_ids": [
+    "nm_fs_20260814"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_price_adr",
+   "metric": "price_adr_usd",
+   "period": "2026-10-30",
+   "value": 408.79,
+   "unit": "USD",
+   "source_ids": [
+    "nm_ib_price"
+   ],
+   "period_end": "2026-10-30",
+   "basis": "reported"
+  },
+  {
+   "id": "rf_debt_q2_2026",
+   "metric": "debt",
+   "period": "Q2 2026",
+   "value": 1029590553000,
+   "unit": "TWD",
+   "source_ids": [
+    "nm_fs_20260814"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "derived",
+   "factbook": true
+  },
+  {
+   "id": "rf_sti_q2_2026",
+   "metric": "short_term_investments",
+   "period": "Q2 2026",
+   "value": 383568535000,
+   "unit": "TWD",
+   "source_ids": [
+    "nm_fs_20260814"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "derived",
+   "factbook": true
+  }
+ ],
+ "guidance": [
+  {
+   "id": "dc_g_rev_q4_26",
+   "metric": "revenue_usd",
+   "period": "Q4 2026",
+   "low": 52300000000,
+   "high": 54300000000,
+   "unit": "USD",
+   "issued": "2026-10-15",
+   "source_id": "dc_rel_q3_2026"
+  },
+  {
+   "id": "dc_g_gm_q4_26",
+   "metric": "gross_margin",
+   "period": "Q4 2026",
+   "low": 0.65,
+   "high": 0.67,
+   "unit": "ratio",
+   "issued": "2026-10-15",
+   "source_id": "dc_rel_q3_2026"
+  },
+  {
+   "id": "dc_g_om_q4_26",
+   "metric": "operating_margin",
+   "period": "Q4 2026",
+   "low": 0.565,
+   "high": 0.585,
+   "unit": "ratio",
+   "issued": "2026-10-15",
+   "source_id": "dc_rel_q3_2026"
+  },
+  {
+   "id": "dc_g_fx_q4_26",
+   "metric": "usd_twd_exchange_rate_assumption",
+   "period": "Q4 2026",
+   "low": 31.8,
+   "high": 31.8,
+   "unit": "TWD per USD",
+   "issued": "2026-10-15",
+   "source_id": "dc_rel_q3_2026"
+  },
+  {
+   "id": "dc_g_revgrowth_fy26",
+   "metric": "revenue_growth_usd_yoy",
+   "period": "FY2026",
+   "low": 0.44,
+   "high": 0.44,
+   "unit": "ratio (around 44%)",
+   "issued": "2026-10-15",
+   "source_id": "dc_pres_q3_2026"
+  },
+  {
+   "id": "dc_g_capex_fy26",
+   "metric": "capex_usd",
+   "period": "FY2026",
+   "low": 60000000000,
+   "high": 64000000000,
+   "unit": "USD",
+   "issued": "2026-10-15",
+   "source_id": "dc_call_q3_2026"
+  },
+  {
+   "id": "dc_g_rev_q3_26_prior",
+   "metric": "revenue_usd",
+   "period": "Q3 2026",
+   "low": 44600000000,
+   "high": 45800000000,
+   "unit": "USD",
+   "issued": "2026-07-16",
+   "source_id": "dc_pres_q3_2026"
+  },
+  {
+   "id": "dc_g_gm_q3_26_prior",
+   "metric": "gross_margin",
+   "period": "Q3 2026",
+   "low": 0.65,
+   "high": 0.67,
+   "unit": "ratio",
+   "issued": "2026-07-16",
+   "source_id": "dc_pres_q3_2026"
+  },
+  {
+   "id": "dc_g_om_q3_26_prior",
+   "metric": "operating_margin",
+   "period": "Q3 2026",
+   "low": 0.56,
+   "high": 0.58,
+   "unit": "ratio",
+   "issued": "2026-07-16",
+   "source_id": "dc_pres_q3_2026"
+  },
+  {
+   "id": "rf_g_rev_fy26",
+   "metric": "revenue",
+   "period": "FY2026",
+   "low": 5561860250000,
+   "high": 5625460250000,
+   "unit": "TWD",
+   "issued": "2026-10-15",
+   "source_id": "dc_rel_q3_2026"
+  }
+ ],
+ "guidance_track": [
+  {
+   "period": "Q1 2025",
+   "metric": "revenue",
+   "guided_mid": 25.4,
+   "actual": 25.53,
+   "source_ids": [
+    "nm_rel_20250116",
+    "nm_rel_20250417"
+   ]
+  },
+  {
+   "period": "Q2 2025",
+   "metric": "revenue",
+   "guided_mid": 28.8,
+   "actual": 30.07,
+   "source_ids": [
+    "nm_rel_20250417",
+    "nm_rel_20250717"
+   ]
+  },
+  {
+   "period": "Q3 2025",
+   "metric": "revenue",
+   "guided_mid": 32.4,
+   "actual": 33.1,
+   "source_ids": [
+    "nm_rel_20250717",
+    "nm_rel_20251016"
+   ]
+  },
+  {
+   "period": "Q4 2025",
+   "metric": "revenue",
+   "guided_mid": 32.8,
+   "actual": 33.73,
+   "source_ids": [
+    "nm_rel_20251016",
+    "nm_rel_20260115"
+   ]
+  },
+  {
+   "period": "Q1 2026",
+   "metric": "revenue",
+   "guided_mid": 35.2,
+   "actual": 35.9,
+   "source_ids": [
+    "nm_rel_20260115",
+    "nm_rel_20260416"
+   ]
+  },
+  {
+   "period": "Q2 2026",
+   "metric": "revenue",
+   "guided_mid": 39.6,
+   "actual": 40.2,
+   "source_ids": [
+    "nm_rel_20260416",
+    "nm_rel_20260716"
+   ]
+  },
+  {
+   "period": "Q3 2026",
+   "metric": "revenue",
+   "guided_mid": 45.2,
+   "actual": 46.72,
+   "source_ids": [
+    "nm_rel_20260716",
+    "dc_rel_q3_2026"
+   ]
+  },
+  {
+   "period": "Q1 2025",
+   "metric": "gross_margin_pct",
+   "guided_mid": 58.0,
+   "actual": 58.8,
+   "source_ids": [
+    "nm_rel_20250116",
+    "nm_rel_20250417"
+   ]
+  },
+  {
+   "period": "Q2 2025",
+   "metric": "gross_margin_pct",
+   "guided_mid": 58.0,
+   "actual": 58.6,
+   "source_ids": [
+    "nm_rel_20250417",
+    "nm_rel_20250717"
+   ]
+  },
+  {
+   "period": "Q3 2025",
+   "metric": "gross_margin_pct",
+   "guided_mid": 56.5,
+   "actual": 59.5,
+   "source_ids": [
+    "nm_rel_20250717",
+    "nm_rel_20251016"
+   ]
+  },
+  {
+   "period": "Q4 2025",
+   "metric": "gross_margin_pct",
+   "guided_mid": 60.0,
+   "actual": 62.3,
+   "source_ids": [
+    "nm_rel_20251016",
+    "nm_rel_20260115"
+   ]
+  },
+  {
+   "period": "Q1 2026",
+   "metric": "gross_margin_pct",
+   "guided_mid": 64.0,
+   "actual": 66.2,
+   "source_ids": [
+    "nm_rel_20260115",
+    "nm_rel_20260416"
+   ]
+  },
+  {
+   "period": "Q2 2026",
+   "metric": "gross_margin_pct",
+   "guided_mid": 66.5,
+   "actual": 67.7,
+   "source_ids": [
+    "nm_rel_20260416",
+    "nm_rel_20260716"
+   ]
+  },
+  {
+   "period": "Q3 2026",
+   "metric": "gross_margin_pct",
+   "guided_mid": 66.0,
+   "actual": 66.4,
+   "source_ids": [
+    "nm_rel_20260716",
+    "dc_rel_q3_2026"
+   ]
+  }
+ ],
+ "kpis": [
+  {
+   "id": "dc_k_n2_share",
+   "name": "2nm share of wafer revenue",
+   "period": "Q3 2026",
+   "value": 0.08,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_rel_q3_2026"
+   ]
+  },
+  {
+   "id": "dc_k_n3_share",
+   "name": "3nm share of wafer revenue",
+   "period": "Q3 2026",
+   "value": 0.33,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_rel_q3_2026"
+   ]
+  },
+  {
+   "id": "dc_k_n5_share",
+   "name": "5nm share of wafer revenue",
+   "period": "Q3 2026",
+   "value": 0.28,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_rel_q3_2026"
+   ]
+  },
+  {
+   "id": "dc_k_n7_share",
+   "name": "7nm share of wafer revenue",
+   "period": "Q3 2026",
+   "value": 0.1,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_rel_q3_2026"
+   ]
+  },
+  {
+   "id": "dc_k_adv_share",
+   "name": "advanced technologies (7nm and below) share of wafer revenue",
+   "period": "Q3 2026",
+   "value": 0.79,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_rel_q3_2026"
+   ]
+  },
+  {
+   "id": "dc_k_ship_3q26",
+   "name": "wafer shipments (12-inch equivalent)",
+   "period": "Q3 2026",
+   "value": 4476000,
+   "unit": "wafers",
+   "source_ids": [
+    "dc_pres_q3_2026"
+   ]
+  },
+  {
+   "id": "dc_k_ship_2q26",
+   "name": "wafer shipments (12-inch equivalent)",
+   "period": "Q2 2026",
+   "value": 4336000,
+   "unit": "wafers",
+   "source_ids": [
+    "dc_pres_q3_2026"
+   ]
+  },
+  {
+   "id": "dc_k_ship_3q25",
+   "name": "wafer shipments (12-inch equivalent)",
+   "period": "Q3 2025",
+   "value": 4085000,
+   "unit": "wafers",
+   "source_ids": [
+    "dc_pres_q3_2026"
+   ]
+  },
+  {
+   "id": "dc_k_fx_3q26",
+   "name": "average exchange rate USD/NTD",
+   "period": "Q3 2026",
+   "value": 31.98,
+   "unit": "TWD per USD",
+   "source_ids": [
+    "dc_pres_q3_2026"
+   ]
+  },
+  {
+   "id": "dc_k_roe_3q26",
+   "name": "ROE (annualized)",
+   "period": "Q3 2026",
+   "value": 0.455,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_pres_q3_2026"
+   ]
+  },
+  {
+   "id": "dc_k_gm_3q26",
+   "name": "gross margin",
+   "period": "Q3 2026",
+   "value": 0.664,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_rel_q3_2026"
+   ]
+  },
+  {
+   "id": "dc_k_om_3q26",
+   "name": "operating margin",
+   "period": "Q3 2026",
+   "value": 0.587,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_rel_q3_2026"
+   ]
+  },
+  {
+   "id": "dc_k_inv_days_3q26",
+   "name": "inventory turnover days",
+   "period": "Q3 2026",
+   "value": 82,
+   "unit": "days",
+   "source_ids": [
+    "dc_pres_q3_2026"
+   ]
+  },
+  {
+   "id": "dc_k_ar_days_3q26",
+   "name": "accounts receivable turnover days",
+   "period": "Q3 2026",
+   "value": 28,
+   "unit": "days",
+   "source_ids": [
+    "dc_pres_q3_2026"
+   ]
+  },
+  {
+   "id": "dc_k_top10_share_fy25",
+   "name": "ten largest customers share of net revenue",
+   "period": "FY2025",
+   "value": 0.78,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10k_20260416"
+   ]
+  },
+  {
+   "id": "dc_k_wafer_share_fy25",
+   "name": "wafer fabrication share of net revenue",
+   "period": "FY2025",
+   "value": 0.86,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10k_20260416"
+   ]
+  },
+  {
+   "id": "dc_k_overseas_dilution",
+   "name": "gross margin dilution from overseas fabs, now (management)",
+   "period": "Q4 2026",
+   "value": 0.02,
+   "unit": "ratio (about)",
+   "source_ids": [
+    "dc_call_q3_2026"
+   ]
+  }
+ ],
+ "segments": [
+  {
+   "id": "dc_s_hpc_fy25",
+   "name": "High Performance Computing",
+   "period": "FY2025",
+   "revenue": 2192931000000,
+   "operating_income": null,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_10k_20260416"
+   ]
+  },
+  {
+   "id": "dc_s_phone_fy25",
+   "name": "Smartphone",
+   "period": "FY2025",
+   "revenue": 1110816000000,
+   "operating_income": null,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_10k_20260416"
+   ]
+  },
+  {
+   "id": "dc_s_iot_fy25",
+   "name": "Internet of Things",
+   "period": "FY2025",
+   "revenue": 191047000000,
+   "operating_income": null,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_10k_20260416"
+   ]
+  },
+  {
+   "id": "dc_s_auto_fy25",
+   "name": "Automotive",
+   "period": "FY2025",
+   "revenue": 186667000000,
+   "operating_income": null,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_10k_20260416"
+   ]
+  },
+  {
+   "id": "dc_s_dce_fy25",
+   "name": "Digital Consumer Electronics",
+   "period": "FY2025",
+   "revenue": 47997000000,
+   "operating_income": null,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_10k_20260416"
+   ]
+  },
+  {
+   "id": "dc_s_other_fy25",
+   "name": "Others",
+   "period": "FY2025",
+   "revenue": 79596000000,
+   "operating_income": null,
+   "unit": "TWD",
+   "source_ids": [
+    "pf_10k_20260416"
+   ]
+  },
+  {
+   "id": "dc_s_hpc_3q26",
+   "name": "High Performance Computing (68% of revenue, derived from the rounded share; +22% q/q)",
+   "period": "Q3 2026",
+   "revenue": 1016089000000,
+   "operating_income": null,
+   "unit": "TWD",
+   "source_ids": [
+    "dc_call_q3_2026",
+    "dc_rel_q3_2026"
+   ]
+  },
+  {
+   "id": "dc_s_phone_3q26",
+   "name": "Smartphone (21%, derived from the rounded share; +10% q/q)",
+   "period": "Q3 2026",
+   "revenue": 313791000000,
+   "operating_income": null,
+   "unit": "TWD",
+   "source_ids": [
+    "dc_call_q3_2026",
+    "dc_rel_q3_2026"
+   ]
+  },
+  {
+   "id": "dc_s_iot_3q26",
+   "name": "Internet of Things (4%, derived from the rounded share; +5% q/q)",
+   "period": "Q3 2026",
+   "revenue": 59770000000,
+   "operating_income": null,
+   "unit": "TWD",
+   "source_ids": [
+    "dc_call_q3_2026",
+    "dc_rel_q3_2026"
+   ]
+  },
+  {
+   "id": "dc_s_auto_3q26",
+   "name": "Automotive (4%, derived from the rounded share; +23% q/q)",
+   "period": "Q3 2026",
+   "revenue": 59770000000,
+   "operating_income": null,
+   "unit": "TWD",
+   "source_ids": [
+    "dc_call_q3_2026",
+    "dc_rel_q3_2026"
+   ]
+  },
+  {
+   "id": "dc_s_dce_3q26",
+   "name": "Digital Consumer Electronics (1%, derived from the rounded share; -12% q/q)",
+   "period": "Q3 2026",
+   "revenue": 14942000000,
+   "operating_income": null,
+   "unit": "TWD",
+   "source_ids": [
+    "dc_call_q3_2026",
+    "dc_rel_q3_2026"
+   ]
+  }
+ ],
+ "customers": [
+  {
+   "id": "dc_c_a_fy25",
+   "name": "Customer A (unnamed)",
+   "share": 0.19,
+   "period": "FY2025",
+   "source_ids": [
+    "pf_10k_20260416"
+   ]
+  },
+  {
+   "id": "dc_c_b_fy25",
+   "name": "Customer B (unnamed)",
+   "share": 0.17,
+   "period": "FY2025",
+   "source_ids": [
+    "pf_10k_20260416"
+   ]
+  },
+  {
+   "id": "dc_c_a_fy24",
+   "name": "Customer A (unnamed)",
+   "share": 0.12,
+   "period": "FY2024",
+   "source_ids": [
+    "pf_10k_20260416"
+   ]
+  },
+  {
+   "id": "dc_c_b_fy24",
+   "name": "Customer B (unnamed)",
+   "share": 0.22,
+   "period": "FY2024",
+   "source_ids": [
+    "pf_10k_20260416"
+   ]
+  },
+  {
+   "id": "dc_c_top10_fy25",
+   "name": "Ten largest customers combined",
+   "share": 0.78,
+   "period": "FY2025",
+   "source_ids": [
+    "pf_10k_20260416"
+   ]
+  }
+ ],
+ "competitors": [
+  {
+   "ticker": "INTC",
+   "name": "Intel Corp (Intel Foundry)",
+   "why": "Leading-edge logic manufacturer building an external foundry (18A, 18A-P, 14A) aiming at the same AI/HPC and PC/mobile customers; per 20-F risk factors TSMC faces 'integrated device manufacturers' and government-subsidised rivals.",
+   "metrics": {
+    "revenue_growth_FY2025": -0.0047,
+    "gross_margin_FY2025": 0.3477,
+    "operating_margin_FY2025": -0.0419,
+    "external_foundry_revenue_2Q26_usd": 293000000,
+    "note": "FY numbers from pf_peer_INTC (first-filed SEC XBRL); external foundry revenue is Intel's own Q2 2026 call, read via search excerpt"
+   },
+   "source_ids": [
+    "pf_peer_INTC",
+    "fd_intel_q2_2026",
+    "fd_intel_18a_yield"
+   ]
+  },
+  {
+   "ticker": "SSNLF",
+   "name": "Samsung Electronics (Samsung Foundry)",
+   "why": "Only other maker of leading-edge (3nm GAA, 2nm) foundry wafers; competes for the same fabless AI/mobile customers.",
+   "metrics": {
+    "foundry_share_2Q26": 0.059,
+    "foundry_share_1Q26": 0.065,
+    "foundry_revenue_2Q26_usd_m": 3260,
+    "note": "TrendForce figures; Samsung's own filings are not on SEC (gap)"
+   },
+   "source_ids": [
+    "fd_trendforce_2q26",
+    "fd_evertiq_2q26"
+   ]
+  },
+  {
+   "ticker": "0981.HK",
+   "name": "SMIC",
+   "why": "China's largest foundry; competes in mature/mid nodes and domestic substitution; third in the 2Q26 ranking.",
+   "metrics": {
+    "foundry_share_2Q26": 0.054,
+    "foundry_share_1Q26": 0.051,
+    "revenue_2Q26_usd_m": 3006,
+    "qoq_growth_2Q26": 0.2,
+    "note": "TrendForce figures; own filings not read (gap)"
+   },
+   "source_ids": [
+    "fd_trendforce_2q26",
+    "fd_evertiq_2q26"
+   ]
+  },
+  {
+   "ticker": "UMC",
+   "name": "United Microelectronics Corp",
+   "why": "Taiwanese mature/specialty-node foundry competing with TSMC's specialty and mature technologies; also named as a CoWoS alternative.",
+   "metrics": {
+    "foundry_share_2Q26": 0.039,
+    "revenue_2Q26_usd_m": 2175,
+    "qoq_growth_2Q26": 0.127,
+    "note": "TrendForce figures; own filings not read (gap)"
+   },
+   "source_ids": [
+    "fd_trendforce_2q26",
+    "fd_evertiq_2q26"
+   ]
+  },
+  {
+   "ticker": "GFS",
+   "name": "GlobalFoundries",
+   "why": "Western specialty/mature-node foundry, positioned on supply-chain diversification, a stated competitive vector in TSMC's 20-F.",
+   "metrics": {
+    "pure_foundry_share_2Q26": 0.04,
+    "note": "Counterpoint pure-foundry basis, different method from TrendForce"
+   },
+   "source_ids": [
+    "fd_counterpoint_2q26"
+   ]
+  }
+ ],
+ "bottlenecks": [
+  {
+   "id": "fd_b_cowos",
+   "reading": "Advanced packaging (CoWoS) is the tightest AI bottleneck: a supply-demand gap of ~20% reportedly narrowing to ~10% by end-2026; TSMC reportedly plans to roughly double capacity by 2028 and seeks ~20% CoWoS price rises. Analyst/press estimates, not TSMC guidance.",
+   "evidence_ids": [
+    "fd_trendforce_cowos"
+   ]
+  },
+  {
+   "id": "fd_b_leading_edge",
+   "reading": "Leading-edge wafers are concentrated: TSMC held 72.5% of 2Q26 foundry revenue (Samsung 5.9%, SMIC 5.4%); 20-F says 3/5/7nm were 24%/36%/14% of 2025 wafer revenue (74% advanced). No rival has yet shown external volume at comparable nodes.",
+   "evidence_ids": [
+    "fd_trendforce_2q26",
+    "pf_10k_20260416"
+   ]
+  },
+  {
+   "id": "fd_b_pricing",
+   "reading": "Pricing power signal: wafer prices reportedly rising 3-6% from Jan 2027 with 2nm/3nm steepest (press report of TrendForce, unconfirmed by TSMC).",
+   "hypothesis": true
+  },
+  {
+   "id": "fd_b_intel",
+   "reading": "Share risk hypothesis: Intel 18A/14A could win some external AI/PC volume from 2H26-2028 (Tesla 14A reported; Apple reports are analyst claims). Intel external foundry revenue is only $293M in 2Q26 vs TSMC ~$40.2B.",
+   "hypothesis": true
+  }
+ ],
+ "notes": [
+  "prefetch 2026-11-01T14:41:37+00:00: SEC documents saved verbatim and their text in reading/ (untrusted); a lane cites a pf_ source only after reading the passage it relies on",
+  "dc CALL 2026-10-15 Q3 2026 earnings call (CFO Wendell Huang, Chairman/CEO C.C. Wei); transcript copy from Motley Fool (syndicated from the issuer call), AV transcript not used (AV daily limit exhausted today, per owner).",
+  "dc MGMT Q3: revenue US$46.7bn above the high end of guidance; gross margin down 1.3pts q/q to 66.4% 'primarily due to margin dilution from 2nm ramp' (dc_call_q3_2026).",
+  "dc MGMT Q4 guide: gross margin to fall about 0.4pt at midpoint to 66% on continued steep 2nm ramp plus overseas fab dilution, partly offset by cost improvement and across-node capacity optimization; revenue midpoint +14% q/q and +58% y/y in US dollars.",
+  "dc MGMT overseas fabs: gross margin dilution now 'closer to 2%'; management expects it to widen to 3-4% in the next few years as more U.S. fabs ramp.",
+  "dc MGMT CAPEX: 2026 capital budget US$60-64bn (the 20-F of 2026-04-16 said US$52-56bn; the range was raised earlier in 2026, date not found in the sources read, 'reiterated' on the Q3 call); capex 2026-2028 'significantly higher than the past three years'; Q3 capex US$13.8bn. Tool price inflation 'is real'.",
+  "dc MGMT DEMAND: 'demand is extremely robust ... gap between demand and supply still quite big'; AI accelerator CAGR previously guided to mid-to-high 50s% for 2024-2029, CEO: 'it probably will be higher' (a statement, not a new numeric guide). Agentic-AI CPUs and networking add silicon demand.",
+  "dc MGMT CAUTION: consumer and price-sensitive end markets are being challenged by rising component prices and macro uncertainty; management is 'being prudent' in planning for 2027.",
+  "dc MGMT CAPACITY: nearly 20 fabs in progress (13 leading-edge and advanced-packaging fabs in Taiwan, 5-6 overseas). N2 in high-volume production since Q4 2025; N2-family annual capacity to more than double in 2027; A14 risk production 2027, volume 2028. Three new N3 fabs added: Tainan fab volume 1H27, an additional Tainan fab 1H28, Arizona fab 2 volume 3Q27 (ahead of schedule), Japan fab 2 on 3nm in 2028. High NA EUV planned for 2030.",
+  "dc MGMT U.S.: evaluating Texas as another U.S. site and discussing capacity with a customer's 'Terafab' project; any fab 'has to be run by TSMC'; no solid conclusion yet. Long-term profitability: 'no ceiling ... but a dramatic increase will not happen overnight'.",
+  "dc MGMT dividend: committed to a sustainable and steadily increasing cash dividend per share; board approved NT$7.00 for Q2 2026 (ex-dividend 2026-12-10, payable 2027-01-07) per the presentation.",
+  "dc FACT Q3 2026 vs Q3 2025: revenue +50.9% (NT$), +41.2% (US$); gross margin 66.4% vs 59.5%; operating margin 58.7% vs 50.6%; net income +68.7%; non-operating items NT$34.6bn vs NT$95.8bn in Q2 (net income margin 51.1%). Platform mix Q3: HPC 68% (+22% q/q), smartphone 21% (+10%), IoT 4% (+5%), automotive 4% (+23%), DCE 1% (-12%).",
+  "dc FACT cash and marketable securities NT$4.02tn (US$126bn) against long-term interest-bearing debt NT$818bn (current portion of bonds/loans rose NT$46bn q/q and is NOT in this long-term line); investments and others +NT$167.6bn in the cash walk; the cash walk's ending balance (NT$3.62tn) is cash only, a different line from cash and marketable securities.",
+  "dc FACT FY2025 concentration (20-F note on major customers): Customer A 19% (12% in 2024), Customer B 17% (22% in 2024, 25% in 2023); ten largest customers 78% of net revenue in 2025 (76% in 2024, 70% in 2023) per Item 3; the 20-F note on credit risk gives 93% for the ten largest in receivables terms (not revenue). Customers are unnamed in the filing; naming them would be an inference.",
+  "dc FACT FY2025 contractual obligations (20-F Item 5): capital and other purchase obligations NT$1.53tn, of which NT$1.22tn due within one year; long-term debt NT$1.23tn contractual; no formal backlog or RPO is disclosed by TSMC.",
+  "dc FACT FY2025 platform revenue (20-F Item 4): HPC NT$2,192.9bn (58%), smartphone NT$1,110.8bn (29%), IoT NT$191.0bn (5%), automotive NT$186.7bn (5%), DCE NT$48.0bn (1%), others NT$79.6bn (2%); total NT$3,809.1bn; wafer fabrication about 86% of net revenue.",
+  "dc FACT segment profit: TSMC reports one operating segment; there is no operating income by platform (operating_income left null).",
+  "dc RISK Customer concentration: ten largest customers 78% of 2025 revenue, two largest 19% and 17% (20-F Item 3.D, risks relating to our business).",
+  "dc RISK Cyclicality and fixed costs: semiconductor and electronics are cyclical, most capacity is owned so a large share of cost is fixed and margins fall when utilization drops (20-F Item 3.D, cyclical industry risk factor).",
+  "dc RISK Geopolitics, tariffs and export controls: U.S. Section 232 25% tariff on certain semiconductor items from Dec 2025 with offsets unclear, IEEPA tariffs struck down Feb 2026 with a replacement Section 122 tariff, U.S. export controls (October Rules) on advanced chips to China (20-F Item 3.D, lines about 505-565 of the text).",
+  "dc RISK Technology leadership and AI concentration: must keep node leadership (N2, A14) and meet a faster AI customer cadence; losing the edge would erode share (20-F Item 3.D, technological leader risk factor).",
+  "dc RISK Capacity expansion and overseas execution: about 20 fabs under construction, capex US$60-64bn in 2026, overseas fab margin dilution 2% widening to 3-4%, tool price inflation, utilities/land constraints (20-F Item 3.D; Q3 2026 call).",
+  "dc RISK Demand/ASP of end markets: HPC/AI, smartphone, IoT, automotive and DCE demand can fall with component shortages, power supply constraints or macro; consumer end markets already weak per Q3 call (20-F Item 3.D; call).",
+  "dc RISK Currency: results and guidance depend on the USD/NTD rate (Q4 guide assumes 31.8; Q3 average 31.98; 29.91 in Q3 2025); a stronger NT dollar lowers NT$ margins (20-F Item 11; guidance footnote).",
+  "dc CASE quarter_review ran on understand/quarter_case.json (current Q3 2026 vs Q3 2025 and Q2 2026, no one-offs entered: none were disclosed in the release; the Q2-to-Q3 non-operating swing is not a disclosed one-off). Its lines come from the 6-K release and presentation, not from companyfacts (prefetch history had 0 quarters and no quarter_case skeleton was saved).",
+  "dc CASE econ_review ran on understand/econ_case.json and returned 'unclassified, not assessed': the registry has no foundry model and the card type 'semiconductor' matched only memory_cycle and gpu_vendor on one signal each. Left as a visible gap (no model was forced).",
+  "dc FILINGS reused the prefetched 20-F (pf_10k_20260416); the prefetch saved no 6-K releases (foreign filer), so the 2026-10-15 6-K exhibits were fetched here and their text is in reading/release_20261015__*.txt, raw html in documents/.",
+  "fd NAMED COMPETITORS (20-F Item 1/1A, pf_10k_20260416): the 20-F names no competitor companies; it says TSMC competes with 'other foundry service providers' and 'integrated device manufacturers', some with government subsidies (US/China/EU/Korea/Japan). Names in competitors[] are our identification, not TSMC's.",
+  "fd SHARE 2Q26 foundry revenue share (TrendForce): TSMC 72.5% (1Q26 72.3%), Samsung 5.9% (6.5%), SMIC 5.4% (5.1%), UMC 3.9%; top-10 revenue $53.49B, TSMC ~$40.2B +12.1% QoQ. Sources fd_trendforce_2q26, fd_evertiq_2q26. Counterpoint (pure foundry, different basis) shows TSMC ~73%, GlobalFoundries 4%: fd_counterpoint_2q26.",
+  "fd SHARE trajectory: TSMC edging up (+0.2pt QoQ), Samsung losing (-0.6pt), SMIC gaining (+0.3pt, domestic substitution, hypothesis on cause). Only two quarters of share data read; no multi-year series.",
+  "fd SHARE Intel: 2025 revenue -0.5%, operating margin -4.2% (pf_peer_INTC); external foundry revenue $293M in 2Q26 (fd_intel_q2_2026), i.e. under 1% of TSMC's quarter.",
+  "mc GEOGRAPHY revenue is classified by customer headquarters, not shipment or end-demand (20-F Item 4): North America 75% of FY2025 net revenue (NT$2,875,270m, +42% y/y), Asia Pacific 9%, China 9% (NT$327,503m, down from 11%), Japan 4%, EMEA 3%. Noncurrent assets FY2025: Taiwan NT$3,102,343m = 80.0% of NT$3,876,340m, US 13.9%, Japan 3.0%, China 1.7%, EMEA 1.3% (note 'Geographic information'). [pf_10k_20260416]",
+  "mc EXPOSURE Taiwan concentration: 20-F risk factor says the majority of principal production facilities and executive officers are in the R.O.C.; 80% of noncurrent assets are in Taiwan; fabs per Item 4: Taiwan (Central and Southern Science Parks), 2 in the US (Arizona, Washington State), 1 Shanghai, 1 Nanjing, 1 Japan (Kumamoto). Named perils: military conflict/outbreak of war, earthquakes (losses NT$3.0bn Q2 2024 and NT$5.3bn Q1 2025 net of insurance), typhoon, drought, electricity and water shortage. Size: the evidenced exposure is ~80% of long-lived assets; revenue exposure to a Taiwan production outage is effectively the Taiwan-fabbed share of wafers, which the filing does not disclose (gap, hypothesis-sized). [pf_10k_20260416]",
+  "mc EXPOSURE US export controls (China): Oct 2022/Oct 2023/Jan 2025 EAR rules; license may be needed for 16nm-and-below shipments to specified destinations. Nanjing fab (Fab 16) lost its VEU in Dec 2025 and now runs on an annual US export license, no assurance of renewal; the company says results have not been materially affected so far. China-HQ customers were 9% of FY2025 revenue (NT$327.5bn) and China noncurrent assets 1.7% (NT$65.0bn), which bounds the sized exposure; a Nanjing share of ~2.4% of 2024 revenue appears in one press lead only (unconfirmed). Chinese blocking statute (Jan 2021) is a counter-risk. [pf_10k_20260416; mc_press_nanjing]",
+  "mc EXPOSURE US tariffs: 20-F states IEEPA tariffs were declared unlawful by the Supreme Court in Feb 2026, replaced by a Section 122 tariff; USTR opened two Section 301 investigations (March 2026) including Taiwan; Section 232 on semiconductors concluded Dec 2025 with a 25% ad valorem tariff on certain advanced computing chips meeting performance thresholds unless imported for designated US use, with a signal of broader tariffs and an offset program; Jan 2026 US-Taiwan agreement caps reciprocal rate at 15% and grants preferential Section 232 treatment to Taiwanese producers investing in US capacity, details unclear after the court ruling. Exposed base: North America customers are 75% of revenue, but wafers are mostly imported by customers/ODMs, so the incidence on TSMC is mainly demand and price negotiation, not a direct duty (hypothesis; share not disclosed). Press lead: investment pledge of $250bn plus $250bn credit guarantees and a quota multiple of planned US capacity that is duty-free during construction (sources disagree on 1.5x vs 2.5x; check Commerce text). [pf_10k_20260416; mc_press_232_taiwan; mc_press_232_proc]",
+  "mc EXPOSURE Customer concentration with US export-policy overlap: FY2025 customers above 10%: Customer A 19% (NT$726,974m), Customer B 17% (NT$645,179m); in 2024 A 12% and B 22%. Any export rule or tariff on advanced AI chips that cuts these two customers' demand hits ~36% of revenue (reported). [pf_10k_20260416]",
+  "mc EXPOSURE Overseas expansion cost and funding: Arizona direct funding agreement with the US Dept of Commerce of up to US$6.6bn plus up to US$5bn government loans (Nov 2024); 2026 capex guidance raised to US$60-64bn (press, from the Oct 2026 call, from US$52-56bn); overseas fabs carry cost and tariff-offset implications for margin (hypothesis, not sized here). [pf_10k_20260416; mc_6k_20261015]",
+  "mc EXPOSURE Energy/water and carbon: Taiwan power and water supply constraints named in Item 4; Taiwan carbon fee payable from 2025 for fabs above the threshold. Not sized in the filing (gap). [pf_10k_20260416]",
+  "mc NEWS 2026-10-15 3Q26 results (6-K): revenue NT$1,494.24bn (+50.9% y/y, +17.6% q/q), US$46.72bn vs guidance US$44.6-45.8bn, gross margin 66.4%, operating margin 58.7%, EPS NT$29.43 (US$4.60 per ADR unit). 2nm 8% of wafer revenue, 3nm 33%, 5nm 28%, 7nm 10%; advanced nodes 79%. 4Q26 guidance: revenue US$52.3-54.3bn at 31.8 NT$/US$, gross margin 65-67%, operating margin 56.5-58.5%. Management expectation, not fact. [mc_6k_20261015]",
+  "mc NEWS 2026-10-15 press leads on the call: 2026 capex raised to US$60-64bn from US$52-56bn; US$40.64bn spent through September; capex 2026-2028 to be significantly higher than the prior three years; Arizona commitment reported as additional US$100bn on top of US$165bn (one source says ~US$265bn total; sources disagree). Unconfirmed at the transcript; gather_documents owns the call. [search leads: fool.com transcript, convergedigest.com]",
+  "mc NEWS 2026-10-22 6-K: routine month-end report (September shareholdings of directors/officers, appropriations, bonds); nothing material seen in the first page read. 2026-10-08 6-K: monthly revenue report (not read). 2026-10-27 SCHEDULE 13G filed on TSMC (holder not read). [mc_6k_20261022]",
+  "mc NEWS 2026-10-26 Anthropic registration statement with the SEC flags concentration of advanced chip manufacturing in Taiwan (military conflict, blockade, tariffs, coercion, natural disaster) as a supply risk, per a secondary report; original filing not read. This is a third-party risk statement, not a change in cross-strait conditions; no reported change in the cross-strait situation itself in October 2026 was found. [mc_press_anthropic]",
+  "mc NEWS 2026-10-30 TSM ADR opened down 3.67%, attributed by a market-mover note to AI-customer capex swings and valuation consolidation (commentary, low reliability). [mc_press_tradingkey]",
+  "mc NEWS 2026-01 BIS moved case review of certain advanced AI chip exports to China from presumption of denial to case-by-case (per an Arm filing cited in search); Applied Materials paid US$252m in Feb 2026 over alleged illegal tool exports to China (search lead only). Nothing found dated after early 2026 on a Phase 2 Section 232 broader semiconductor tariff after the 2026-04-14 report deadline: a gap, check Federal Register / USTR. [search leads]",
+  "mc MACRO rates kept from prefetch: 10-year Treasury 4.98% (FRED DGS10, 2026-10-29) and Damodaran implied ERP 4.20% (2026-10-01; a November 1 update was not checked). ERP note says treasury 5.29% at its date. No override written.",
+  "nm IDENTITY TSM = Taiwan Semiconductor Manufacturing Company Limited, CIK 1046179, NYSE ADS; one ADS = 5 common shares (20-F, section on employee plans: 'each ADS represents five (5) common shares'); IBKR contract 6223250 (NYSE, USD); home listing TWSE 2330 (IBKR 37928709). Reporting currency TWD (NT$), quote currency USD, FYE Dec 31, files 20-F and 6-K (quarterly financials and releases are 6-K). Common shares outstanding 25,932,524,521 at 2025-12-31 (20-F cover) = about 5.19 billion ADS equivalents. EPS per ADS = 5 x EPS per share (20-F FY2025 diluted NT$327.34 per ADS).",
+  "nm CURRENCY every nm_ fact is TWD in full units (not millions) unless its unit says USD; USD-per-ADR figures are the company's own translations at each quarter's rate, which differ from the 20-F convenience rate (FY2025 20-F: US$10.43 diluted per ADS at 31.37 NT$/US$, versus US$10.65 from summing the four quarterly release figures).",
+  "nm ACCOUNTING BASIS releases and quarterly 6-K reports are TIFRS (Taiwan-endorsed IFRS); the 20-F states IFRS Accounting Standards as issued by the IASB. All filings are IFRS, not US GAAP: SBC is tiny (NT$1.2bn in FY2025, 0.03% of revenue), so GAAP-vs-adjusted EPS does not diverge on SBC.",
+  "nm PRICE ADR last US$408.79 (IBKR snapshot, timestamp 2026-10-30 23:59 UTC, is_close false, so the Friday 2026-10-30 close or last print; 2026-11-01 is a Sunday). Month-end close Oct 2026 US$406.13. 5-year monthly history and dividends saved; no split in the window; ADR quarterly dividends US$0.94-1.10 (latest ex-date 2026-09-16, US$1.096).",
+  "nm AV NOT CALLED 2026-11-01: owner states the Alpha Vantage daily limit is already exhausted; INCOME_STATEMENT, BALANCE_SHEET, CASH_FLOW, EARNINGS_ESTIMATES not retried. FMP statements and analyst are ACCESS DENIED on this plan (session_capabilities), not called. Second source for statements is therefore the TWSE-style 6-K reports and releases (same issuer), not an independent provider: reconciliation is 20-F vs 6-K vs release.",
+  "nm RECONCILIATION FY2025 (20-F, NT$ million): revenue 3,809,054.3; gross profit 2,281,294.0 (59.9%); operating income 1,936,091.7; net income 1,695,124.9 total, 1,697,604.0 attributable to parent; CFO 2,274,975.6; PP&E purchases 1,272,410.5 (+ intangibles 10,146.9); SBC 1,246.1; depreciation 679,684.0 + amortization 8,412.4; diluted shares 25,930.6 million; diluted EPS NT$65.47. The prefetch pf_net_income_fy2024 (1,157,523.9) is TOTAL net income including non-controlling interests; parent net income FY2024 is 1,158,380.2 (difference 856.3 = NCI loss): nm_net_income_fy2025 uses the parent figure, so the two years are not on the same line (difference below 0.1%).",
+  "nm RECONCILIATION companyfacts (and so every pf_ fact) ends at FY2024: the FY2025 20-F has no XBRL companyfacts rows, and no 2026 quarter is in it. FY2025, Q4 2025 to Q3 2026 and H1 2026 facts are therefore entered here from the 20-F text, the releases and the Q2-2026 6-K report. The Q3-2026 consolidated report (6-K, usually mid-November) is not filed yet: Q3 operating income, CFO and capex are unknown; Q3 operating margin 58.7% is a release figure (derived operating income about NT$877bn, not entered).",
+  "nm RECONCILIATION latest quarter Q2 2026 (6-K, NT$ thousand): revenue 1,270,380,250; gross profit 860,310,695 (67.7%); operating income 766,602,651 (60.3%); net income to parent 706,561,938; diluted EPS 27.25; matches release (NT$1,270.38bn, NT$706.56bn, NT$27.25). H1 2026: revenue 2,404,483,690; operating income 1,425,568,793; CFO 1,482,341,242; PP&E purchases 846,764,746 (H1 2025: 628,052,531, +35%); SBC 237 (thousand); H1 diluted EPS 49.32. Diluted share count for 2026 not read (EPS-implied about 25.93 billion).",
+  "nm DIFFERENCE equity at 2025-12-31 differs by presentation: 20-F equity attributable to parent NT$5,355,038.7 million (total equity 5,396,219.2) versus the Q2-2026 6-K comparative column 5,419,595.994 million (total 5,460,795.3), i.e. 64.6bn higher; total assets agree within 0.2bn (7,932,842.5 vs 7,933,023.9). The 20-F has an extra appropriation to special capital reserve (87,284.5) and the 64.5bn gap matches a 20-F note figure of 64,502.7; cause not confirmed (looks like a dividend-declared or reserve presentation). The analyst should use the 20-F number for FY2025 and the 6-K number for the 2026 balance sheets, and not mix them in one ratio.",
+  "nm ONE-OFF Q2 2026 net income includes a NT$63.2bn pre-tax gain on disposal of investments accounted for using the equity method (nm_oneoff_gain_q2_2026; H1 other gains and losses NT$59.9bn net; the 6-K of 2026-05-15 'TSMC to sell 81% of Vanguard International' is the likely event, not read). That is about 9% of Q2 net income; about NT$2.4 per share before tax (tax effect not read), about US$0.38 per ADR. Q3 net income (763.06bn, +8.0% q/q) is therefore stronger than the headline q/q growth against a one-off-inflated Q2; Q2 operating income (60.3% margin) is clean of it because the gain is below operating income.",
+  "nm TRAILING EARNINGS last four reported quarters Q4 2025 to Q3 2026: EPS NT$19.50+22.08+27.25+29.43 = NT$98.26 per share (NT$491.3 per ADS); in US$ per ADR as released 3.14+3.49+4.31+4.60 = US$15.54; ex the Q2 one-off about US$15.2. Q3 2026 x 4 = NT$117.7 per share (US$18.4 per ADR) is a run rate with peak-cycle margins, not a base.",
+  "nm OWN MULTIPLE HISTORY trailing P/E on the ADR, calendar year-end close over GAAP-IFRS diluted EPS per ADS (5 x pf/20-F EPS translated to US$; FX rates for 2021-2024 are approximate averages from memory, not sourced: 27.9, 29.8, 31.2, 32.1; 2025 uses the 20-F rate 31.37): 2021 29.4, 2022 11.6, 2023 19.8, 2024 28.4, 2025 29.1, now 26.3 (US$408.79 over US$15.54 trailing four quarters). low 11.6 median 27.4 high 29.4 now 26.3 years 2021-2026. Year-end points only, so intra-year lows and highs are missing. Forward P/E cannot be computed from an attributed consensus (none found); on Q4 2026 guided revenue the engine, not this lane, projects EPS. sources nm_ib_hist, pf_10k_20260416, nm_rel_20261015.",
+  "nm PRICE vs OWN HISTORY the ADR rose from US$166 (Apr 2025 close) to US$408.79 (+146%) in 18 months while trailing EPS per ADR rose about 3.1x from the 2024 level; the multiple (26x trailing) is inside its 5-year range but the earnings base is at peak margins (gross 66.4%, operating 58.7%): that is the point of the guidance track below.",
+  "nm TRACK RECORD revenue (guidance_track rows hold US$ billions, metric revenue) ratio actual / guided midpoint 1.0050, 1.0441, 1.0216, 1.0284, 1.0199, 1.0152, 1.0336: mean about 1.024 over 7 periods, 7 beats, 0 misses; every quarter from Q1 2025 to Q3 2026 landed above the midpoint, and above the top of the range in Q2 2025 (30.07 vs 29.2), Q3 2025 (33.10 vs 33.0), Q4 2025 (33.73 vs 33.4), Q1 2026 (35.90 vs 35.8), Q2 2026 (40.20 vs 40.2, at the top) and Q3 2026 (46.72 vs 45.8). Q1 2025 was inside the range (25.53 vs 25.8 top). TSMC guides conservatively. Gross margin: actual above guided midpoint every period (by +0.4 to +3.0 points; mean about +1.5), also 7 of 7. Operating margin guidance (latest) 56.5-58.5% for Q4 2026 versus 58.7% delivered in Q3 against 56-58% guided. Guided exchange rate also matters: guidance is in US$ at an assumed NT$ rate (31.8 for Q4 2026 vs 32.0 for Q3), so NT$ revenue also moves with the rate.",
+  "nm GUIDANCE Q4 2026 (issued 2026-10-15, belongs to gather_documents for the guidance list): revenue US$52.3-54.3bn (mid 53.3, +14% q/q on Q3 46.72), gross margin 65-67%, operating margin 56.5-58.5%, at 31.8 NT$/US$. Applying the 7-period mean ratio would mean about US$54.6bn, a statistic not a forecast.",
+  "nm CONSENSUS NOT FOUND (attributed): one WebSearch (standard) and two page fetches (Benzinga 403, TickerLeague 404) gave no dated attributed annual table with n, low, high. Unattributed snippets seen in search results only, kept out of consensus rows: an aggregator stating Q4 2026 revenue consensus US$48.78bn before the Q3 report (guidance of 52.3-54.3 is above it); MarketBeat 2026-07-30 note quoting a consensus FY2026 EPS of $16.34 per ADR and Erste Group FY2026 $16.69 and FY2027 $21.25 per ADR (those are single-broker and pre-Q3, and trailing four-quarter EPS already stands at US$15.54, so they look stale); S&P Global Market Intelligence 2026-07-21 said FY2026 revenue forecasts rose 4.1% to US$171.6bn (consistent with H1 US$76.1bn + Q3 46.72 + Q4 guide 53.3 = US$176bn, so the Street was below the run rate). Target prices from those pages are opinions and are not recorded. Consensus rows are therefore empty: gap.",
+  "nm ROIC CHECK prefetch/forensic.json ROIC FY2024 52.9% (NOPAT 1,088.5bn / invested capital 2,148.5bn = equity + debt - cash only); it ignores NT$294bn of financial investments (FVOCI 192bn, amortized cost 102bn in current assets) and does not remove non-controlling interest (35bn); treating those as cash-like lifts FY2024 ROIC by about 5 points, so 53% is not overstated by this check. FY2025 is not in the prefetch series: from the 20-F, tax rate 17.0% (346.5/2,041.7), NOPAT = 1,936.1 x 0.83 = about NT$1,607bn, invested capital (total equity 5,396 + bonds payable non-current 856 + long-term loans 40 + leases 32 - cash 2,768, current portions of debt not read) about NT$3,556bn, ROIC about 45%; with financial investments of about NT$435bn also netted, about 51%. ROIC fell from 53% to about 45% because equity grew 27% on retained earnings and cash (a cash pile of NT$3.1tn at 2026-06-30), not because of weaker operating profit; incremental ROIC is the better read. Operating leases are inside the lease liabilities line.",
+  "nm CASH AND DEBT 2026-06-30 (6-K): cash and cash equivalents NT$3,134.2bn + FVOCI 193.2bn + amortized cost 190.4bn (current) = about NT$3.52tn of liquid assets; bonds payable non-current NT$815.0bn, long-term bank loans 49.2bn, lease liabilities 33.3bn (current portions and short-term loans not read). Net cash is positive by a wide margin. H1 2026 free cash flow before the large investment outflow: CFO 1,482.3bn - PP&E purchases 846.8bn = NT$635.6bn (FY2025: 2,275.0 - 1,272.4 = NT$1,002.6bn, 26% of revenue); government grants received for PP&E (NT$76bn in 2025) are reported in investing and not netted here. Dividends paid FY2025 NT$466.8bn; per-ADR dividend US$0.94 to 1.10 a quarter in 2026 (ex-dates Mar 17, Jun 11, Sep 16), paying a 0.8% yield on US$408.79.",
+  "nm CUSTOMERS AND LEVELS belong to gather_documents; one fact for the analyst from the 20-F: largest customer 25%, 22%, 19% of revenue in 2023, 2024, 2025 and second largest 11%, 12%, 17%; top ten customers about 70-78%. Mix of Q3 2026 wafer revenue: 2nm 8%, 3nm 33%, 5nm 28%, 7nm 10%, advanced (7nm and below) 79% (release 2026-10-15).",
+  "nm RESULTS DAY no source here is within 2 days of the as_of date (latest results 2026-10-15, 17 days earlier): all citable. Monthly revenue 6-Ks (e.g. 2026-10-08, September revenue; 2026-10-22 month-end) exist in identity.json filings but October 2026 revenue is not out until about 2026-11-10; not read by this lane.",
+  "rf_g_rev_fy26 is DERIVED from the company's own statements, not a guided FY2026 revenue level: reported Q1-Q3 2026 revenue NT$1,134.10bn + 1,270.38bn + 1,494.24bn = NT$3,898.72bn (nm_revenue_q1_2026, nm_revenue_q2_2026, nm_revenue_q3_2026 / dc_f_rev_3q26) + the Q4 2026 revenue guide US$52.3-54.3bn (dc_g_rev_q4_26) at the guided 31.8 NT$/US$ (dc_g_fx_q4_26) = NT$1,663.14-1,726.74bn; FY2026 NT$5,561.9-5,625.5bn, midpoint NT$5,593.7bn (= US$175.9bn at 31.8, consistent with the 'around 44%' US$ growth guide dc_g_revgrowth_fy26). The track-record ratio is not applied (the Q4 guide is in US$, so it cannot be the engine's revenue remainder item).",
+  "rf_debt_q2_2026 (2026-06-30 consolidated balance sheet, 6-K nm_fs_20260814, NT$ thousands): bonds payable non-current 815,036,716 + current portion of bonds 165,326,879 (= 980,363,595, matching the financing-liabilities reconciliation) + long-term bank loans non-current 49,226,958 = 1,029,590,553. Lease liabilities (36,882,401 incl. current) are not included (the engine treats operating leases in cash costs). The current portion of long-term bank loans and any short-term loans were not read: debt may be slightly understated. At 2025-12-31 bonds payable alone were 992,033,491, so the engine's earlier opening debt of NT$176.8bn was understated by about NT$850bn.",
+  "rf_sti_q2_2026 (same balance sheet, current assets): FVOCI 193,182,690 + financial assets at amortized cost 190,385,845 = 383,568,535 thousand. Cash and cash equivalents 3,134,218,213 thousand (nm_cash_q2_2026). Q3 2026 cash and marketable securities NT$4,017bn and long-term interest-bearing debt NT$818.4bn (dc_f_cash_3q26, dc_f_ltdebt_3q26) are from the presentation; the Q3 2026 consolidated balance sheet was not yet filed, so the 2026-06-30 statement is the latest full balance."
+ ],
+ "potential": {
+  "market_direction": {
+   "reading": "The market TSMC serves is growing fast and tilting to AI/HPC: HPC rose from 58% of FY2025 revenue (NT$2,192.9bn) to 68% in Q3 2026 (+22% q/q); FY2026 revenue growth is guided at about 44% in US$ and Q4 2026 at US$52.3-54.3bn (+58% y/y at midpoint). Management previously guided AI accelerator revenue CAGR of mid-to-high 50s% for 2024-2029 and said on the Q3 call it 'probably will be higher' (a statement, not a new numeric guide); it also flagged consumer/price-sensitive end markets as challenged and 'prudent' planning for 2027. Industry: top-10 foundry revenue hit a record US$53.49bn in 2Q26 (TrendForce).",
+   "evidence_ids": [
+    "dc_s_hpc_fy25",
+    "dc_s_hpc_3q26",
+    "dc_g_revgrowth_fy26",
+    "dc_g_rev_q4_26",
+    "dc_call_q3_2026",
+    "fd_trendforce_2q26"
+   ]
+  },
+  "bottleneck_potential": {
+   "reading": "TSMC is the bottleneck for leading-edge logic: 79% of Q3 2026 wafer revenue is 7nm and below (N2 8%, N3 33%, N5 28%), N2 in volume since Q4 2025 with N2-family capacity to more than double in 2027 and A14 volume in 2028; management says the demand-supply gap is 'still quite big'. Advanced packaging (CoWoS) is the tightest AI constraint: an estimated ~20% supply-demand gap narrowing to ~10% by end-2026 as TSMC adds capacity (TrendForce estimate, not TSMC guidance). Capacity is added mainly by TSMC itself (nearly 20 fabs in progress, 2026 capex US$60-64bn); no rival shows external leading-edge volume yet, so the position looks durable for at least the 2027-2028 node cycle; the narrowing CoWoS gap means the packaging tightness itself is temporary.",
+   "evidence_ids": [
+    "dc_k_adv_share",
+    "dc_k_n2_share",
+    "dc_k_n3_share",
+    "dc_call_q3_2026",
+    "dc_g_capex_fy26",
+    "fd_trendforce_cowos",
+    "fd_trendforce_2q26"
+   ]
+  },
+  "share_trajectory": {
+   "reading": "TSMC is holding or gaining share on numbers: 72.5% of 2Q26 foundry revenue vs 72.3% in 1Q26 (TrendForce); Samsung Foundry fell from 6.5% to 5.9%; SMIC rose from 5.1% to 5.4% (mature/domestic China nodes); UMC 3.9%; GlobalFoundries ~4% of pure foundry (Counterpoint, different basis). Intel's external foundry revenue was US$293M in 2Q26, under 1% of TSMC's ~US$40.2bn quarter. Only two quarters of share data were read, so the trend is short.",
+   "evidence_ids": [
+    "fd_trendforce_2q26",
+    "fd_evertiq_2q26",
+    "fd_counterpoint_2q26",
+    "fd_intel_q2_2026"
+   ]
+  },
+  "competitive_position": {
+   "reading": "Stronger than every named competitor. Vs Samsung Foundry (the only other 3nm/2nm GAA maker): 72.5% vs 5.9% share and falling for Samsung. Vs Intel Foundry: Intel FY2025 revenue -0.5%, gross margin 34.8%, operating margin -4.2% vs TSMC FY2025 gross margin ~59.9% and operating margin ~50.8%, Q3 2026 66.4%/58.7%; Intel 18A yields are improving (reported 7-8% monthly) but external revenue is tiny. Vs SMIC, UMC, GlobalFoundries: they compete in mature/specialty nodes, while 79% of TSMC's wafer revenue is 7nm and below. TSMC's ROIC ~53% (incremental ~61%) shows the economics behind the position.",
+   "evidence_ids": [
+    "fd_trendforce_2q26",
+    "pf_peer_INTC",
+    "fd_intel_q2_2026",
+    "fd_intel_18a_yield",
+    "nm_gross_profit_fy2025",
+    "nm_operating_income_fy2025",
+    "nm_revenue_fy2025",
+    "nm_gross_margin_q3_2026",
+    "nm_operating_margin_q3_2026",
+    "dc_k_adv_share"
+   ]
+  },
+  "threats": {
+   "reading": "(1) Customer concentration/in-sourcing of demand: two unnamed customers were 19% and 17% of FY2025 revenue and the ten largest 78% (up from 70% in 2023); an AI-capex pullback at them hits about a third of revenue. (2) Geopolitics: ~80% of noncurrent assets (NT$3.10tn of NT$3.88tn) are in Taiwan; US export controls (Nanjing fab on an annual license; China-HQ customers 9% of FY2025 revenue) and US Section 232 tariffs (25% on certain advanced chips, Taiwan deal caps reciprocal rate at 15%). (3) New entrant: Intel 18A/14A external foundry (hypothesis that it wins material volume; today US$293M a quarter). (4) Cost: overseas fab gross-margin dilution ~2% now, guided to widen to 3-4%. (5) Cyclicality: mostly fixed costs, margins fall when utilization drops (FY2023 revenue -4.5%).",
+   "evidence_ids": [
+    "dc_c_a_fy25",
+    "dc_c_b_fy25",
+    "dc_c_top10_fy25",
+    "mc_nca_taiwan_fy25",
+    "mc_nca_total_fy25",
+    "mc_revpct_china_fy25",
+    "mc_press_nanjing",
+    "mc_press_232_proc",
+    "mc_press_232_taiwan",
+    "fd_intel_q2_2026",
+    "dc_k_overseas_dilution",
+    "pf_10k_20260416",
+    "pf_revenue_fy2023"
+   ]
+  }
+ },
+ "scenario_events": {
+  "bear": [
+   {
+    "event_he": "הלקוחות הגדולים (שני הגדולים = 36% מההכנסות, עשרת הגדולים = 78%) מקצצים הזמנות לשבבי בינה מלאכותית ב-2027-2028 אחרי גל ההשקעות.",
+    "evidence_ids": [
+     "dc_c_a_fy25",
+     "dc_c_b_fy25",
+     "dc_c_top10_fy25",
+     "dc_s_hpc_3q26"
+    ]
+   },
+   {
+    "event_he": "מחזור ירידה בתעשייה כמו ב-2023 (הכנסות -4.5%), והפעם חד יותר כי מחשוב-על הוא 68% מההכנסות.",
+    "evidence_ids": [
+     "pf_revenue_fy2023",
+     "pf_10k_20260416",
+     "dc_s_hpc_3q26"
+    ]
+   },
+   {
+    "event_he": "הרווחיות נשחקת: המפעלים בארה\"ב וביפן מורידים 3-4 נקודות מהרווח הגולמי, ומחירי הציוד עולים.",
+    "evidence_ids": [
+     "dc_k_overseas_dilution",
+     "dc_call_q3_2026"
+    ]
+   },
+   {
+    "event_he": "מתיחות סביב טייוואן או מכסים אמריקאיים (סעיף 232) פוגעים בייצור או במחיר: 80% מהנכסים הקבועים בטייוואן.",
+    "evidence_ids": [
+     "mc_nca_taiwan_fy25",
+     "mc_nca_total_fy25",
+     "mc_press_232_proc",
+     "pf_10k_20260416"
+    ]
+   },
+   {
+    "event_he": "אינטל או סמסונג זוכות בלקוח גדול לייצור מתקדם ומקטינות את הנתח של TSMC.",
+    "hypothesis": true
+   }
+  ],
+  "base": [
+   {
+    "event_he": "רבעון רביעי 2026 בטווח ההנחיה (52.3-54.3 מיליארד דולר) או מעליו, כמו בשבעת הרבעונים האחרונים; צמיחה של כ-44% בדולר ב-2026.",
+    "evidence_ids": [
+     "dc_g_rev_q4_26",
+     "dc_g_revgrowth_fy26",
+     "dc_rel_q3_2026"
+    ]
+   },
+   {
+    "event_he": "כושר הייצור ב-2 ננומטר יותר מוכפל ב-2027 ושלושה מפעלי 3 ננומטר חדשים נכנסים (טאינאן 2027, אריזונה רבעון שלישי 2027).",
+    "evidence_ids": [
+     "dc_call_q3_2026",
+     "dc_k_n2_share"
+    ]
+   },
+   {
+    "event_he": "הנתח בשוק הייצור נשאר מעל 70% והביקוש עדיין גבוה מההיצע.",
+    "evidence_ids": [
+     "fd_trendforce_2q26",
+     "dc_call_q3_2026"
+    ]
+   },
+   {
+    "event_he": "ההשקעות עולות ל-60-64 מיליארד דולר ב-2026 ויותר ב-2027-2028, ממומנות מהתזרים בלי דילול.",
+    "evidence_ids": [
+     "dc_g_capex_fy26",
+     "nm_cfo_fy2025",
+     "dc_f_shares_3q26"
+    ]
+   }
+  ],
+  "bull": [
+   {
+    "event_he": "קצב ההכנסות מבינה מלאכותית עולה על התחזית של צמיחה שנתית של 55%-60% עד 2029, כפי שהמנכ\"ל רמז ('כנראה יותר').",
+    "evidence_ids": [
+     "dc_call_q3_2026"
+    ]
+   },
+   {
+    "event_he": "הרווח התפעולי נשאר סביב 57%, ברמת ההנחיה לרבעון הרביעי 2026.",
+    "evidence_ids": [
+     "dc_g_om_q4_26",
+     "dc_k_om_3q26"
+    ]
+   },
+   {
+    "event_he": "העלאות מחירי פרוסות של 3%-6% מינואר 2027 (במיוחד 2 ו-3 ננומטר) מחזיקות.",
+    "hypothesis": true
+   },
+   {
+    "event_he": "A14 נכנס לייצור המוני ב-2028 בזמן, והמתחרים (אינטל 18A/14A, סמסונג) לא סוגרים את הפער.",
+    "evidence_ids": [
+     "dc_call_q3_2026",
+     "fd_intel_q2_2026"
+    ]
+   }
+  ]
+ },
+ "drivers": {
+  "growth_anchor": {
+   "period": "FY2027",
+   "bear": -0.045,
+   "base": 0.27,
+   "bull": 0.38,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "dc_g_rev_q4_26",
+    "dc_rel_q3_2026",
+    "dc_call_q3_2026",
+    "nm_revenue_fy2025",
+    "pf_revenue_fy2023",
+    "dc_k_n2_share",
+    "rf_g_rev_fy26",
+    "pf_revenue_fy2022"
+   ],
+   "reason": "Growth of FY2027 over FY2026 = NT$5,593.7bn (drivers.current_year_revenue: 9M reported + Q4 guide). No FY2027 guidance or attributed consensus. The Q4 2026 guide annualized (NT$6,780bn, US$213bn) is already about 21% above FY2026, so flat quarters from Q4 give +21%. Base +27% (FY2027 about NT$7.10tn, US$223bn): only about 1-2% average sequential growth through 2027 as N2-family capacity more than doubles and management says demand still exceeds supply; management calls itself prudent on 2027 and gives no number, so this stays the most likely path but without a guide. Bull +38%: FY2026-like momentum (+44%) slightly faded. Bear -4.5%: an explicit down year sized to the FY2023 decline (-4.5% y/y). Against the exit run rate it is sharper than 2023: the average 2027 quarter falls about 21% below the Q4 2026 guided level (in 2023 the average quarter was about 14% below Q4 2022), because HPC is now 68% of revenue and the two largest customers 36%, so an AI-capex digestion hits a larger share at once."
+  },
+  "growth": {
+   "period": "FY2027",
+   "bear": [
+    -0.045,
+    0.0,
+    0.06,
+    0.07
+   ],
+   "base": [
+    0.27,
+    0.19,
+    0.15,
+    0.12
+   ],
+   "bull": [
+    0.38,
+    0.27,
+    0.2,
+    0.15
+   ],
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "dc_call_q3_2026",
+    "dc_g_capex_fy26",
+    "pf_revenue_fy2023",
+    "pf_revenue_fy2024",
+    "nm_revenue_fy2025",
+    "dc_g_rev_q4_26",
+    "rf_g_rev_fy26"
+   ],
+   "reason": "FY2027-FY2030 on the FY2026 base NT$5,593.7bn (9M reported + Q4 guide). Base fades from +27% toward the low teens as the AI accelerator CAGR management cited (mid-to-high 50s % 2024-2029 for that line) becomes a larger share and capex 2026-2028 'significantly higher' adds N3/N2/A14 capacity (A14 volume 2028). Bull keeps capacity-limited growth longer. Bear: the digestion down year in 2027 (-4.5%, the FY2023 size, sharper than 2023 against the exit run rate), then a flat 2028 while the new 2026-2028 capacity is underused (no AI-led rebound like 2024's), then a single-digit recovery."
+  },
+  "mature_margin": {
+   "bear": 0.44,
+   "base": 0.52,
+   "bull": 0.57,
+   "source_tier": {
+    "bear": "own_history",
+    "base": "own_history",
+    "bull": "guidance"
+   },
+   "evidence_ids": [
+    "dc_g_om_q4_26",
+    "dc_k_overseas_dilution",
+    "dc_call_q3_2026",
+    "nm_operating_income_fy2025",
+    "nm_revenue_fy2025",
+    "pf_operating_income_fy2023",
+    "pf_operating_income_fy2022"
+   ],
+   "reason": "Operating margin. Bear 44%: the FY2019-FY2024 average (43.7%) when utilization and pricing revert. Base 52%: FY2025's 50.8% plus the structural gain of a 72% share and N2 pricing, less the overseas dilution management says widens from ~2 to 3-4 points; below today's 58.7% peak. Bull 57%: the Q4 2026 guided range (56.5-58.5%) held."
+  },
+  "tax_rate": {
+   "all": 0.17,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "pf_10k_20260416",
+    "nm_net_income_fy2025"
+   ],
+   "reason": "FY2025 effective tax rate 17.0% (income tax NT$346.5bn over pre-tax NT$2,041.7bn, 20-F); same in every scenario: no evidence of a scenario-dependent rate."
+  },
+  "current_year_revenue": {
+   "source_tier": "guidance",
+   "evidence_ids": [
+    "rf_g_rev_fy26",
+    "nm_revenue_q1_2026",
+    "nm_revenue_q2_2026",
+    "nm_revenue_q3_2026",
+    "dc_g_rev_q4_26",
+    "dc_g_fx_q4_26",
+    "dc_g_revgrowth_fy26",
+    "dc_rel_q3_2026"
+   ],
+   "adjust_by_track_record": false,
+   "reason": "FY2026 = reported Q1-Q3 2026 (NT$3,898.7bn) + the Q4 2026 revenue guide midpoint US$53.3bn at the guided 31.8 NT$/US$ (NT$1,694.9bn) = NT$5,593.7bn (US$175.9bn, consistent with the 'around 44%' US$ growth guide). Track record (7/7 beats, ratio about 1.024) not applied: the Q4 guide is in US$, so it cannot be the remainder item; applying it to Q4 only would add about NT$40bn (+0.7%)."
+  }
+ },
+ "company_path": {
+  "metric": "eps",
+  "multiple": "forward_pe",
+  "scenarios": {
+   "bear": {
+    "multiple_from": "economics",
+    "roic": 0.4,
+    "justification": "unproven",
+    "reason_he": "אם לקוחות הבינה המלאכותית עוצרים קניות כמו ב-2023 (אז התשואה על ההון ירדה לשפל של כ-45% והרווחיות התפעולית ל-42.6%), והמפעלים בחו\"ל מורידים עוד עד 4 נקודות רווחיות, ההון המושקע מחזיר כ-40% (45% כפול 38.6 חלקי 42.6), ולכן המכפיל נמוך יותר. ייקור הציוד לא מכומת.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "pf_cf_20240418",
+     "pf_gross_profit_fy2023",
+     "pf_capex_fy2023",
+     "dc_k_overseas_dilution",
+     "dc_g_capex_fy26",
+     "pf_operating_income_fy2023",
+     "pf_revenue_fy2023"
+    ]
+   },
+   "base": {
+    "multiple_from": "economics",
+    "roic": 0.35,
+    "justification": "justified_high",
+    "reason_he": "החברה מרוויחה היום כ-53% על ההון המושקע (ותשואה להון 45.5% ברבעון 3 של 2026), ובשלוש השנים האחרונות כ-61% על ההון החדש; ניקינו את השיא ואת פגיעת המפעלים בחו\"ל (כ-2-3 נקודות רווחיות) ולקחנו 35%, ולכן מכפיל גבוה מוצדק שיורד כשהצמיחה מאטה. מוניטין זניח, אינו משנה.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "pf_10k_20260416",
+     "nm_operating_income_fy2025",
+     "nm_equity_fy2025",
+     "nm_capex_fy2025",
+     "dc_k_roe_3q26",
+     "dc_k_overseas_dilution",
+     "dc_g_capex_fy26"
+    ]
+   },
+   "bull": {
+    "multiple_from": "economics",
+    "roic": 0.5,
+    "justification": "unproven",
+    "reason_he": "אם 2 ננומטר (כבר 8% מהכנסות הוופלים ברבעון 3) והביקוש לבינה מלאכותית שומרים על רווחיות גולמית של כ-66% גם עם המפעלים בחו\"ל, ההון החדש מחזיר כ-50%, קרוב לתשואה של השנים האחרונות; זה עוד לא הוכח על המפעלים החדשים.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "dc_k_n2_share",
+     "dc_g_gm_q4_26",
+     "dc_g_revgrowth_fy26",
+     "dc_k_gm_3q26",
+     "nm_operating_income_fy2025",
+     "nm_equity_fy2025"
+    ]
+   }
+  },
+  "own_history": {
+   "low": 11.6,
+   "median": 27.4,
+   "high": 29.4,
+   "years": "2021-2026",
+   "evidence_ids": [
+    "nm_ib_hist",
+    "pf_10k_20260416",
+    "dc_rel_q3_2026"
+   ]
+  }
+ },
+ "key_risk": {
+  "reading_he": "הסיכון המרכזי: TSMC תלויה בגל השקעות הבינה המלאכותית של מעט לקוחות (עשרת הגדולים 78% מההכנסות, מחשוב-על 68%) בזמן שהרווחיות בשיא (58.7%) וההשקעות במפעלים חדשים עולות; האטה אצל הלקוחות האלה תפגע ברווח מהר, כי רוב העלויות קבועות. מעל זה עומד סיכון טייוואן (80% מהנכסים).",
+  "evidence_ids": [
+   "dc_c_top10_fy25",
+   "dc_s_hpc_3q26",
+   "dc_k_om_3q26",
+   "dc_g_capex_fy26",
+   "pf_10k_20260416",
+   "mc_nca_taiwan_fy25"
+  ]
+ },
+ "falsifiers": [
+  {
+   "id": "fx_q4_floor",
+   "scenario": "base",
+   "metric": "Q4 2026 revenue (US$)",
+   "threshold": 52300000000,
+   "direction": "below",
+   "by": "2027-01-20",
+   "evidence_ids": [
+    "dc_g_rev_q4_26"
+   ]
+  },
+  {
+   "id": "fx_fy27_base",
+   "scenario": "base",
+   "metric": "FY2027 revenue growth (NT$, y/y)",
+   "threshold": 0.15,
+   "direction": "below",
+   "by": "2028-01-25",
+   "evidence_ids": [
+    "dc_g_rev_q4_26",
+    "dc_call_q3_2026"
+   ]
+  },
+  {
+   "id": "fx_bull_margin",
+   "scenario": "bull",
+   "metric": "operating margin, FY2027",
+   "threshold": 0.54,
+   "direction": "below",
+   "by": "2028-01-25",
+   "evidence_ids": [
+    "dc_g_om_q4_26"
+   ]
+  },
+  {
+   "id": "fx_bull_growth",
+   "scenario": "bull",
+   "metric": "FY2027 revenue growth (NT$, y/y)",
+   "threshold": 0.3,
+   "direction": "below",
+   "by": "2028-01-25",
+   "evidence_ids": [
+    "dc_g_rev_q4_26",
+    "dc_call_q3_2026"
+   ]
+  },
+  {
+   "id": "fx_bear_growth",
+   "scenario": "bear",
+   "metric": "FY2027 revenue growth (NT$, y/y)",
+   "threshold": 0.2,
+   "direction": "above",
+   "by": "2028-01-25",
+   "evidence_ids": [
+    "dc_g_rev_q4_26"
+   ]
+  },
+  {
+   "id": "fx_bear_margin",
+   "scenario": "bear",
+   "metric": "operating margin, Q2 2027",
+   "threshold": 0.55,
+   "direction": "above",
+   "by": "2027-07-20",
+   "evidence_ids": [
+    "dc_g_om_q4_26",
+    "dc_k_om_3q26"
+   ]
+  }
+ ],
+ "assessments": {
+  "moat": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "fd_trendforce_2q26",
+    "fd_intel_q2_2026",
+    "pf_peer_INTC",
+    "dc_k_adv_share",
+    "nm_operating_income_fy2025",
+    "nm_equity_fy2025"
+   ],
+   "note": "Process-technology and scale moat: 72.5% foundry share vs Samsung 5.9% and Intel external foundry US$293M/quarter; 79% of wafer revenue at 7nm and below; ROIC ~53% with incremental ROIC ~61%, far above an ~8% cost of capital, sustained since 2019 (no fade toward the cost of capital in the data)."
+  },
+  "pricing_power": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "pf_gross_profit_fy2024",
+    "pf_revenue_fy2024",
+    "nm_gross_profit_fy2025",
+    "nm_revenue_fy2025",
+    "nm_gross_margin_q3_2026",
+    "dc_g_gm_q4_26"
+   ],
+   "note": "Gross margin rose from 46% (FY2019) and 56.1% (FY2024) to 59.9% (FY2025) and 66.4% (Q3 2026), guided 65-67% for Q4 2026 despite 2nm ramp and overseas dilution. Reported 2027 wafer price rises of 3-6% and CoWoS price rises are press/analyst claims (hypothesis, moves nothing)."
+  },
+  "customer_concentration": {
+   "assessment": "weak",
+   "evidence_ids": [
+    "dc_c_a_fy25",
+    "dc_c_b_fy25",
+    "dc_c_a_fy24",
+    "dc_c_b_fy24",
+    "dc_c_top10_fy25"
+   ],
+   "note": "High concentration: Customer A 19% (12% in 2024), Customer B 17% (22% in 2024); ten largest 78% of FY2025 revenue. Customers are unnamed in the filing."
+  },
+  "market_size": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "dc_g_revgrowth_fy26",
+    "dc_s_hpc_3q26",
+    "dc_call_q3_2026",
+    "fd_trendforce_2q26"
+   ],
+   "note": "FY2026 revenue guided ~+44% in US$; HPC 68% of revenue; management's AI accelerator CAGR guide of mid-to-high 50s% for 2024-2029 (management expectation); industry foundry revenue at a record US$53.49bn in 2Q26."
+  },
+  "competition": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "fd_trendforce_2q26",
+    "fd_counterpoint_2q26",
+    "pf_peer_INTC",
+    "fd_intel_q2_2026"
+   ],
+   "note": "TSMC's competitive standing is strong: Samsung losing share (6.5% to 5.9%), Intel loss-making with tiny external foundry revenue, SMIC/UMC/GlobalFoundries mostly in mature nodes. Intel 18A/14A is the one named challenger to watch."
+  },
+  "management": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "dc_g_rev_q3_26_prior",
+    "dc_f_rev_usd_3q26",
+    "nm_rel_20260716",
+    "nm_rel_20260416",
+    "nm_rel_20260115",
+    "nm_rel_20251016"
+   ],
+   "note": "Promises vs delivery: revenue beat the guided midpoint in 7 of 7 quarters from Q1 2025 to Q3 2026 (mean actual/guided midpoint 1.024); Q3 2026 US$46.72bn vs guidance US$44.6-45.8bn."
+  },
+  "capital_allocation": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "nm_capex_fy2025",
+    "nm_cfo_fy2025",
+    "nm_dividends_paid_fy2025",
+    "pf_dividends_paid_fy2024",
+    "nm_sbc_fy2025",
+    "dc_g_capex_fy26",
+    "dc_k_overseas_dilution"
+   ],
+   "note": "Heavy reinvestment at high returns (incremental ROIC ~61%): FY2025 capex NT$1.27tn funded from CFO NT$2.27tn; dividends rose to NT$466.8bn from NT$363.1bn; SBC negligible (NT$1.2bn) and the share count flat (~25.93bn). Watch: capex rising to US$60-64bn in 2026 and higher in 2027-2028, with lower-return overseas fabs (gross margin dilution 2% widening to 3-4%) partly driven by politics."
+  },
+  "regulation": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "pf_10k_20260416",
+    "mc_press_232_proc",
+    "mc_press_232_taiwan",
+    "mc_press_nanjing"
+   ],
+   "note": "Exposed to US export controls (Nanjing on an annual license, China-HQ customers 9% of revenue) and Section 232 tariffs, mitigated by the Jan 2026 US-Taiwan deal and US investment (Arizona); company says results not materially affected so far."
+  },
+  "technology_ai": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "dc_k_n2_share",
+    "dc_k_n3_share",
+    "dc_k_adv_share",
+    "dc_call_q3_2026",
+    "fd_intel_18a_yield"
+   ],
+   "note": "N2 in high-volume production since Q4 2025 and already 8% of wafer revenue in Q3 2026; A14 risk production 2027, volume 2028; Intel 18A still ramping yields; AI is the main growth driver (HPC 68%)."
+  },
+  "geopolitics": {
+   "assessment": "weak",
+   "evidence_ids": [
+    "mc_nca_taiwan_fy25",
+    "mc_nca_total_fy25",
+    "pf_10k_20260416",
+    "mc_press_anthropic"
+   ],
+   "note": "About 80% of noncurrent assets in Taiwan; the 20-F names military conflict, earthquakes, power and water shortages; a customer (Anthropic S-1, secondary report) flags Taiwan concentration as a supply risk. Not sizable as a probability; the revenue share at risk in a Taiwan outage is not disclosed."
+  }
+ },
+ "forecast_options": {
+  "cyclical": {
+   "treatment": "structural",
+   "reason": "The 20-F names the semiconductor cycle and FY2023 revenue fell 4.5%, but TSMC's share keeps rising (72.5% of 2Q26 foundry revenue), growth is driven by value per wafer (shipments +9.6% y/y vs revenue +51%) and node leadership; the cycle is carried as an explicit 2028 down year in the bear instead of normalizing today's revenue to a trend.",
+   "evidence_ids": [
+    "pf_10k_20260416",
+    "pf_revenue_fy2023",
+    "fd_trendforce_2q26",
+    "dc_k_ship_3q26",
+    "dc_k_ship_3q25"
+   ]
+  }
+ },
+ "market": {
+  "risk_free": {
+   "value": 0.0498,
+   "as_of": "2026-10-29",
+   "source_id": "pf_fred_dgs10"
+  },
+  "equity_risk_premium": {
+   "value": 0.042,
+   "as_of": "2026-10-01",
+   "source_id": "pf_erp_implied"
+  }
+ }
+}

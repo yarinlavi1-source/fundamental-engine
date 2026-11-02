@@ -1,0 +1,694 @@
+{
+ "lane": "numbers",
+ "sources": [
+  {
+   "id": "nm_ib_price",
+   "kind": "price",
+   "title": "Interactive Brokers price snapshot NU (NYSE, conid 531212348): last 11.65 (2026-10-30 23:56 UTC print), prior close 12.05, 52w range 11.205-18.98",
+   "url": "connector:Interactive_Brokers get_price_snapshot",
+   "date": "2026-10-30",
+   "independent": true,
+   "publisher": "Interactive Brokers (read-only)",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_ib_hist",
+   "kind": "price",
+   "title": "Interactive Brokers monthly price history NU, 2021-12 to 2026-10 (month-end closes), no corporate actions returned",
+   "url": "connector:Interactive_Brokers get_price_history",
+   "date": "2026-10-30",
+   "independent": true,
+   "publisher": "Interactive Brokers (read-only)",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_6k_q2_fs",
+   "kind": "sec_filing",
+   "title": "Nu Holdings Ltd. 6-K 2026-08-13: unaudited interim condensed consolidated financial statements for the quarter and six months ended 2026-06-30 (IFRS, USD thousands; KPMG review)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1691493/000129281426004225/nufs2q26_6k.htm",
+   "date": "2026-08-13",
+   "independent": true,
+   "publisher": "Nu Holdings Ltd. (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_6k_q2_pr",
+   "kind": "release",
+   "title": "Nu Holdings Ltd. Reports Second Quarter 2026 Financial Results (6-K 2026-08-13, managerial and IFRS results)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1691493/000129281426004222/nupr2q26_6k.htm",
+   "date": "2026-08-13",
+   "independent": true,
+   "publisher": "Nu Holdings Ltd. (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_6k_cto",
+   "kind": "sec_filing",
+   "title": "Nu Holdings Ltd. 6-K 2026-10-23: notice to the market, Chief Technology Officer Eric Young resigns (stays until 2026-11-12)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1691493/000129281426005000/nu20261023_6k.htm",
+   "date": "2026-10-23",
+   "independent": true,
+   "publisher": "Nu Holdings Ltd. (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_cons_sa",
+   "kind": "consensus",
+   "title": "StockAnalysis.com NU forecast page (analyst data credited to S&P Global; EPS non-GAAP per page), last updated 2026-10-27",
+   "url": "https://stockanalysis.com/stocks/nu/forecast/",
+   "date": "2026-10-27",
+   "independent": true,
+   "publisher": "StockAnalysis.com (S&P Global data)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  }
+ ],
+ "facts": [
+  {
+   "id": "nm_revenue_fy2025",
+   "metric": "revenue",
+   "period": "FY2025",
+   "value": 15774741000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_gross_profit_fy2025",
+   "metric": "gross_profit",
+   "period": "FY2025",
+   "value": 6625002000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_expected_credit_loss_fy2025",
+   "metric": "expected_credit_loss",
+   "period": "FY2025",
+   "value": 4204876000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_pretax_income_fy2025",
+   "metric": "pretax_income",
+   "period": "FY2025",
+   "value": 3868419000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_income_tax_fy2025",
+   "metric": "income_tax",
+   "period": "FY2025",
+   "value": 996747000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_net_income_fy2025",
+   "metric": "net_income",
+   "period": "FY2025",
+   "value": 2871672000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_net_income_parent_fy2025",
+   "metric": "net_income_parent",
+   "period": "FY2025",
+   "value": 2868892000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_fy2025",
+   "metric": "eps_diluted",
+   "period": "FY2025",
+   "value": 0.5846,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_diluted_wavg_fy2025",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2025",
+   "value": 4907352000,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_cfo_fy2025",
+   "metric": "cfo",
+   "period": "FY2025",
+   "value": 3500464000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_capex_fy2025",
+   "metric": "capex",
+   "period": "FY2025",
+   "value": 340769000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_sbc_fy2025",
+   "metric": "sbc",
+   "period": "FY2025",
+   "value": 271845000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_d_and_a_fy2025",
+   "metric": "d_and_a",
+   "period": "FY2025",
+   "value": 97968000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_equity_fy2025",
+   "metric": "equity",
+   "period": "FY2025",
+   "value": 11290948000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_total_assets_fy2025",
+   "metric": "total_assets",
+   "period": "FY2025",
+   "value": 74893877000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_cash_fy2025",
+   "metric": "cash",
+   "period": "FY2025",
+   "value": 15003643000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_deposits_fy2025",
+   "metric": "deposits",
+   "period": "FY2025",
+   "value": 41925101000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_2026q2",
+   "metric": "revenue",
+   "period": "2026Q2",
+   "value": 5513208000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_6k_q2_fs"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_gross_profit_2026q2",
+   "metric": "gross_profit",
+   "period": "2026Q2",
+   "value": 2346529000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_6k_q2_fs"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_expected_credit_loss_2026q2",
+   "metric": "expected_credit_loss",
+   "period": "2026Q2",
+   "value": 1482213000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_6k_q2_fs"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_pretax_income_2026q2",
+   "metric": "pretax_income",
+   "period": "2026Q2",
+   "value": 1236313000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_6k_q2_fs"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_income_tax_2026q2",
+   "metric": "income_tax",
+   "period": "2026Q2",
+   "value": 175224000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_6k_q2_fs"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_net_income_2026q2",
+   "metric": "net_income",
+   "period": "2026Q2",
+   "value": 1061089000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_6k_q2_fs"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_2026q2",
+   "metric": "eps_diluted",
+   "period": "2026Q2",
+   "value": 0.2162,
+   "unit": "USD/shares",
+   "source_ids": [
+    "nm_6k_q2_fs"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_diluted_wavg_2026q2",
+   "metric": "shares_diluted_wavg",
+   "period": "2026Q2",
+   "value": 4904837000,
+   "unit": "shares",
+   "source_ids": [
+    "nm_6k_q2_fs"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_2025q2",
+   "metric": "revenue",
+   "period": "2025Q2",
+   "value": 3668470000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_6k_q2_fs"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_net_income_2025q2",
+   "metric": "net_income",
+   "period": "2025Q2",
+   "value": 636987000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_6k_q2_fs"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_2025q2",
+   "metric": "eps_diluted",
+   "period": "2025Q2",
+   "value": 0.13,
+   "unit": "USD/shares",
+   "source_ids": [
+    "nm_6k_q2_fs"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_2026q1",
+   "metric": "revenue",
+   "period": "2026Q1",
+   "value": 4967967000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_6k_q2_fs"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_net_income_2026q1",
+   "metric": "net_income",
+   "period": "2026Q1",
+   "value": 871431000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_6k_q2_fs"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_revenue_2026h1",
+   "metric": "revenue",
+   "period": "2026H1",
+   "value": 10481175000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_6k_q2_fs"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_net_income_2026h1",
+   "metric": "net_income",
+   "period": "2026H1",
+   "value": 1932520000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_6k_q2_fs"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_2026h1",
+   "metric": "eps_diluted",
+   "period": "2026H1",
+   "value": 0.3936,
+   "unit": "USD/shares",
+   "source_ids": [
+    "nm_6k_q2_fs"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_cfo_2026h1",
+   "metric": "cfo",
+   "period": "2026H1",
+   "value": -1242048000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_6k_q2_fs"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_capex_2026h1",
+   "metric": "capex",
+   "period": "2026H1",
+   "value": 100474000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_6k_q2_fs"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_sbc_2026h1",
+   "metric": "sbc",
+   "period": "2026H1",
+   "value": 216826000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_6k_q2_fs"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_d_and_a_2026h1",
+   "metric": "d_and_a",
+   "period": "2026H1",
+   "value": 76734000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_6k_q2_fs"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_buybacks_2026h1",
+   "metric": "buybacks",
+   "period": "2026H1",
+   "value": 500393000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_6k_q2_fs"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_2025h1",
+   "metric": "revenue",
+   "period": "2025H1",
+   "value": 6916159000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_6k_q2_fs"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_net_income_2025h1",
+   "metric": "net_income",
+   "period": "2025H1",
+   "value": 1194195000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_6k_q2_fs"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_2025h1",
+   "metric": "eps_diluted",
+   "period": "2025H1",
+   "value": 0.2439,
+   "unit": "USD/shares",
+   "source_ids": [
+    "nm_6k_q2_fs"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_ttm_2026q2",
+   "metric": "eps_diluted",
+   "period": "TTM2026Q2",
+   "value": 0.7343,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_10k_20260408",
+    "nm_6k_q2_fs"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_equity_2026q2",
+   "metric": "equity",
+   "period": "2026Q2",
+   "value": 13249670000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_6k_q2_fs"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_total_assets_2026q2",
+   "metric": "total_assets",
+   "period": "2026Q2",
+   "value": 82753414000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_6k_q2_fs"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_cash_2026q2",
+   "metric": "cash",
+   "period": "2026Q2",
+   "value": 13551611000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_6k_q2_fs"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_deposits_2026q2",
+   "metric": "deposits",
+   "period": "2026Q2",
+   "value": 45328419000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_6k_q2_fs"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  }
+ ],
+ "consensus": [
+  {
+   "id": "nm_cons_revenue_fy2026",
+   "metric": "revenue",
+   "period": "FY2026",
+   "value": 22800000000,
+   "low": 22200000000,
+   "high": 24000000000,
+   "source_id": "nm_cons_sa"
+  },
+  {
+   "id": "nm_cons_revenue_fy2027",
+   "metric": "revenue",
+   "period": "FY2027",
+   "value": 28270000000,
+   "source_id": "nm_cons_sa"
+  },
+  {
+   "id": "nm_cons_eps_fy2026",
+   "metric": "eps_diluted",
+   "period": "FY2026",
+   "value": 0.89,
+   "low": 0.81,
+   "high": 0.95,
+   "source_id": "nm_cons_sa"
+  },
+  {
+   "id": "nm_cons_eps_fy2027",
+   "metric": "eps_diluted",
+   "period": "FY2027",
+   "value": 1.13,
+   "source_id": "nm_cons_sa"
+  }
+ ],
+ "guidance_track": [],
+ "notes": [
+  "nm IDENTITY NU = Nu Holdings Ltd. (Cayman, CIK 1691493), Class A ordinary shares listed directly on the NYSE (IB conid 531212348, USD); no ADS ratio. Class B (1,022.6M, founder-held, David Velez 88.3% of Class B, 74.4% of votes) unlisted; 4,860.6M shares outstanding on 2026-03-01 (20-F cover/Item 7). 20-F filer, IFRS, USD functional reporting currency of the group, FYE 12-31. Operations Brazil, Mexico, Colombia.",
+  "nm PRICE IB last 11.65 (print 2026-10-30 23:56 UTC, is_close false), prior close 12.05; October month bar close 11.61 (StockAnalysis also quotes 11.61 close on 2026-10-30). 52w high 18.98, low 11.205; 13w high 16.22, low 11.48. About -39% from the 52w high. Market cap about 4,860.6M x 11.65 = 56.6B USD (share count of 2026-03-01, before the 2026 H1 buyback of 500M USD).",
+  "nm LATEST PERIOD Q2 2026 (6-K 2026-08-13) is the latest reported quarter; Q3 2026 results expected 2026-11-12 (per web consensus excerpt, not an issuer source), after as_of: Q2 2026 stands as latest. FY2025 (20-F filed 2026-04-08) is the latest fiscal year.",
+  "nm AV DENIED INCOME_STATEMENT 2026-11-01: standard rate limit 25 requests per day reached; not retried; BALANCE_SHEET, CASH_FLOW and EARNINGS_ESTIMATES not called. FMP statements/analyst are denied on this plan (session_capabilities), not called. Second-source statement check therefore done only against the 20-F and the Q2 6-K interim statements (primary documents).",
+  "nm DATA GAP SEC companyfacts holds Nu only up to the FY2024 20-F (filed 2025-04-16): no FY2025 and no interim facts. Prefetch pf_ facts end at FY2024, and prefetch/forensic.json roic, altman, beneish are unavailable. FY2025, 2026Q2 and H1 2026 figures were read by me from the 20-F statements (F-7 to F-15) and the 6-K interim statements and entered as nm_ facts (USD thousands x 1000).",
+  "nm RECONCILIATION FY2024 pf_ facts vs the 20-F FY2025 comparative column: revenue 11,517,075k, net income 1,972,112k, CFO 2,399,044k, diluted EPS 0.4034, diluted shares 4,888,918k, D&A 77,128k, total assets 49,931,214k, pretax 2,795,198k all match exactly. Equity: pf_equity_fy2024 7,646,289k is equity attributable to the parent (total equity incl. NCI 7,647,076k): label difference only. Cash 9,185,742k matches.",
+  "nm RECONCILIATION DIFFERENCES pf_sbc_fy2024 = -372,669k is the XBRL tag ExpenseFromSharebasedPaymentTransactionsWithEmployees (negative sign, 2024 income-statement expense incl. related charges) whereas the cash-flow statement SBC add-back is 272,382k (FY2025 271,845k, 2023 212,551k): the pf sign and amount differ from the cash-flow definition. Use nm_sbc_fy2025 (cash-flow add-back); do not treat the pf FY2024 sign as a benefit. pf_operating_income_fy2024 = 5,630,057k and FY2023 3,576,003k match no IFRS line of Nu (gross profit 5,252,909k, pretax 2,795,198k, total operating expenses 2,457,711k): a bank has no IFRS operating income, so ignore pf operating_income for the valuation (use pretax income / net income). Nu changed its reported total revenue: IFRS total revenue = interest income net of gains/losses on financial instruments + fees; the managerial revenue (Q2 2026 5,875.7M vs IFRS 5,513.2M) adds float-income and other reclassifications of 362.4M.",
+  "nm RECONCILIATION FY2025 (20-F, USD k): revenue 15,774,741; gross profit 6,625,002; ECL 4,204,876; pretax 3,868,419; income tax 996,747 (effective 25.8%); net income 2,871,672 (parent 2,868,892); diluted EPS 0.5846; diluted shares 4,907,352k; CFO 3,500,464; capex = PP&E 7,215 + intangibles 333,554 = 340,769; SBC add-back 271,845; D&A 97,968; deposits 41,925,101; total equity 11,321,562 (parent 11,290,948). Cash flow adds back ECL of 4,701,058k (above the P&L ECL 4,204,876k: includes write-off/other items) and CFO is after the growth in credit card receivables (-12.4B) and loans (-10.3B) funded by deposits (+12.9B): for a bank CFO is a balance-sheet-growth number, not free cash flow.",
+  "nm RECONCILIATION Q2 2026 (6-K interim FS, USD k): revenue 5,513,208; gross profit 2,346,529; ECL 1,482,213; pretax 1,236,313; income tax 175,224 (effective 14.2%); net income 1,061,089 (parent 1,060,199); diluted EPS 0.2162; diluted shares 4,904,837k. H1 2026: revenue 10,481,175; net income 1,932,520; diluted EPS 0.3936; CFO -1,242,048 (credit growth: cards -8.1B, loans -6.6B, deposits +3.4B); capex 16,226 + 84,248 = 100,474; SBC 216,826; D&A 76,734; buyback 500,393. The press release's managerial P&L net income (1,061.1M) equals the IFRS net income; Q1 2026 net income derived = 871.4M matches the release (871.4). Managerial revenue/gross profit (5,875.7M / 2,441.1M) differ from IFRS (5,513.2M / 2,346.5M) by a stated reclassification bridge (revenue-based taxes 240.9M shown as a cost, funding cost, ECL 208.6M): consensus revenue is probably on the managerial basis.",
+  "nm ROIC CHECK prefetch roic is unavailable (needs operating income, debt, cash per year); invalid for a bank anyway: debt and deposits are operating funding, cash 13.6B is mostly regulatory and liquidity funding, so NOPAT/(equity+debt-cash) has no meaning. Use ROE instead (below). Goodwill 409.4M and intangibles 747.1M on 2026-06-30 are small against 13.25B equity (tangible equity about 12.09B).",
+  "nm ROE HISTORY net income attributable to parent / average parent equity (computed by me from year-end equity: FY2021 4,441M, FY2022 4,891M, FY2023 6,406M, FY2024 7,646M, FY2025 11,291M, 2026-06-30 13,250M): FY2022 about -7.8% (net loss -365M); FY2023 18.2% (1,031/5,649); FY2024 28.1% (1,972/7,026); FY2025 30.3% (2,869/9,469); H1 2026 annualised about 31.5% (1,932x2 on average equity 12,270M). The company reports annualised quarterly ROE of 33% in Q2 2026, 29% in Q1 2026 and 28% in Q2 2025 (managerial; own definition, release 2026-08-13). Equity grew mainly through retained earnings and FX translation (+667M in FY2025, +493M in H1 2026), not issuance; share premium fell by 500M with the 2026 buyback.",
+  "nm TAX Q2 2026 effective tax rate 14.2% (175.2M on pretax 1,236.3M) against 27.6% in Q2 2025 and 25.8% in FY2025; H1 2026 11.8% against 28.7% in H1 2025. Deferred tax assets rose from 2,511M to 3,649M and the cash flow shows deferred taxes of -991M in H1 2026: the 2026 earnings carry a large deferred-tax benefit (the release does not explain its source in the extract read; gather_documents should check note 30). At a 26% rate Q2 2026 net income would be about 915M (EPS about 0.187) instead of 1,061M: do not read the Q2 net income x4 (4.24B) as a run rate; Q2 is also the seasonal high for credit (release: Q2 early delinquencies improve seasonally; NPL 15-90 4.8% vs 5.0% Q1, NPL 90+ 6.9% vs 6.5%).",
+  "nm OWN MULTIPLE HISTORY trailing P/E low 15.8 median 39.9 high 71.1 now 15.9 years 2024-2026 sources nm_ib_hist, pf_10k_20260408, nm_6k_q2_fs. Method: IB month-end close / diluted GAAP EPS of the latest 20-F (FY2023 0.2121, FY2024 0.4034, FY2025 0.5846) from the April after year-end, and from August 2026 the trailing four quarters (0.5846 + 0.3936 - 0.2439 = 0.7343); 31 month-ends 2024-04 to 2026-10. The lagged EPS overstates the multiple while earnings grow, so the high and median are inflated. Year-end Dec checks: Dec 2023 close 8.33 / 0.2121 = 39.3; Dec 2024 10.36 / 0.4034 = 25.7; Dec 2025 16.74 / 0.5846 = 28.6; now 11.65 / 0.7343 = 15.9 (11.65 / FY2025 0.5846 = 19.9). Forward P/E on consensus (non-GAAP) EPS: 11.65 / 0.89 = 13.1 (2026), 11.65 / 1.13 = 10.3 (2027). Earlier years have no multiple (net losses FY2019-FY2022; FY2022 EPS negative). Earnings are not at a settled peak but contain the tax benefit above.",
+  "nm PRICE PATH month closes (IB, bar = month): 2021-12 9.38; 2022-06 3.74 (low 3.26 intramonth); 2023-12 8.33; 2024-12 10.36; 2025-11 17.39; 2026-01 17.75 (highest monthly close of the 5 years; 52w intraday high 18.98); 2026-04 14.48; 2026-05 13.13; 2026-07 14.33; 2026-08 14.55; 2026-09 12.66; 2026-10 11.61. The stock is about 39% below the 52w high while Q2 2026 net income grew 67% YoY (1,061M vs 637M, IFRS): the multiple compressed (see OWN MULTIPLE HISTORY).",
+  "nm CONSENSUS (attributed, an expectation, never a fact) StockAnalysis.com page last updated 2026-10-27 (analyst data credited to S&P Global; EPS stated non-GAAP; read with WebFetch on 2026-11-01): FY2026 EPS avg 0.89 (low 0.81, high 0.95), revenue avg 22.80B (low 22.2B, high 24.0B); FY2027 EPS avg 1.13, revenue avg 28.27B (high/low behind a paywall). Implied 2026 H2 EPS = 0.89 - 0.3936 = about 0.50 (Q2 was 0.2162). Revenue consensus is about 22.8B against IFRS FY2025 15.77B and Q2 2026 IFRS 5.51B (x4 = 22.1B): it is on the managerial basis (the page's own +226% growth figure is a page artefact, ignore). Other snippets from a web search (secondary, undated or older): Yahoo Finance 2026 EPS avg 0.85 from 16 analysts (range 0.75-0.93), 2026 revenue avg 22.8B (22.2B-24B), 2027 revenue 28.27B (26.22B-30.27B), 2027 EPS about 1.11; TipRanks 0.86 / 1.11; Seeking Alpha April 2026 snapshot 0.84 / 21.29B; Fintel 1.39 / 13B judged inconsistent. Dispersion of 2026 EPS is narrow (0.81-0.95, about +/-8%); revision direction not available (AV denied; one older April snapshot 0.84 vs 0.89 now suggests upward revisions, weak evidence). Q2 2026 EPS 0.22 against about 0.20 expected (secondary excerpt). Analyst price target (opinion, not evidence): average 18.8, low 12, high 23, median 19, 23 analysts, rating Buy (StockAnalysis, 2026-10-27).",
+  "nm TRACK RECORD no numeric guidance exists to track: the Q2 2026 release (nupr2q26_6k) and the 20-F carry no revenue, EPS, NII or margin outlook (grep for outlook/guidance/expected found none; only forward-looking-statement boilerplate). Nu gives qualitative direction only. guidance_track is empty and ticker-check will show no ratio. A softer test (consensus beat) is only a secondary-source remark: Q2 2026 EPS 0.22 vs about 0.20 expected. gather_documents should check the call transcript for any verbal target (for example efficiency ratio, risk-adjusted NIM, ROE aspirations, Mexico break-even) and record it as guidance with its source.",
+  "nm BANK STRUCTURE (for the analyst; reported facts from the Q2 2026 release and interim FS) 2026-06-30: customers 138.9M (Brazil about 118M, Mexico 15.8M, Colombia over 5M); total credit portfolio 39.4B (+37% YoY FXN; cards 26.0B, unsecured 10.3B, secured 3.1B); deposits 45.3B (IFRS 45,328M), cost of deposits 88% of interbank rate; Mexico loan-to-deposit 35%; ARPAC 17.1 USD/month; efficiency ratio 19.5% (Q1 17.6%, Q2 2025 21.3%); risk-adjusted NIM 12.4% (Q1 9.5%); NII 3.7B, NIM 22.9%; cost of credit 1.69B managerial (IFRS ECL 1,482M); NPL 15-90 4.8%, NPL 90+ 6.9%; total assets 82.75B, total equity 13.25B, leverage (assets/equity) 6.2x, payables to network 15.5B, borrowings 4.68B. Capital ratios (Basel/Brazilian BIS), liquidity coverage and regulatory capital of Nu Pagamentos/Nu Financeira are not in these documents (gap for gather_documents). Q2 2026 events: Nubank Mexico banking licence received 2026-07-09 and bank launched August 2026; Brazil moving to a full banking licence; Croma launched July 2026.",
+  "nm EVENTS after the latest report 2026-10-23 6-K: Chief Technology Officer Eric Young resigned (leaves 2026-11-12; David Velez interim oversight of Global Platforms; permanent search started; company says strategy unchanged). Results of 2026-11-12 (Q3 2026) fall after as_of 2026-11-01.",
+  "nm IB PRICE CAUTION the price_history arrays (time, open, close; 59 equal-length entries) were retyped by hand from the tool result into raw/ib__corporate-actions-NU__current.json; high, low and volume were omitted; the tool returned no split or corporate-action field. Re-pull the history if exact bars are needed."
+ ],
+ "gaps": [
+  "Alpha Vantage rate limited (25 per day): no second-source statements, no AV EARNINGS_ESTIMATES; FMP denied on plan",
+  "SEC companyfacts stops at FY2024 for Nu: FY2025 and 2026 interim facts entered by hand from the 20-F and the 6-K; forensic scores (Altman, Beneish, ROIC) not computable and not meaningful for a bank",
+  "no numeric company guidance (guidance_track empty, no track ratio)",
+  "consensus: only a secondary page (StockAnalysis, S&P Global data) with no per-year analyst count and no revision history; revenue basis is managerial, not IFRS",
+  "regulatory capital ratios, liquidity coverage, loan-loss coverage by stage and the source of the 2026 low tax rate not yet read (gather_documents: 20-F item 5, Q2 FS notes 7 and 30)",
+  "quarterly history before 2025 Q2 (EPS, NII, NPL) not saved; own multiple history uses fiscal-year EPS only",
+  "Q3 2026 results (expected 2026-11-12) are after as_of"
+ ],
+ "stopped": [
+  "Alpha Vantage BALANCE_SHEET, CASH_FLOW and EARNINGS_ESTIMATES: not called after the INCOME_STATEMENT probe returned the daily rate limit (no retry)"
+ ]
+}

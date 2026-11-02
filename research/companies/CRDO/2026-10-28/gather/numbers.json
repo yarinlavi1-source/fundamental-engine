@@ -1,0 +1,1178 @@
+{
+ "lane": "numbers",
+ "sources": [
+  {
+   "id": "nm_ib_price",
+   "kind": "price",
+   "title": "Interactive Brokers (read-only) snapshot CRDO Nasdaq conid 541265127: last 167.43 flagged is_close (close of 2026-10-27), pre-market bid 171.29 / ask 172.00 at 2026-10-28 ~07:34 UTC; 52-week range 86.49-308.67",
+   "url": "connector:mcp__Interactive_Brokers__get_price_snapshot",
+   "date": "2026-10-27",
+   "independent": true,
+   "publisher": "Interactive Brokers",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_ib_history",
+   "kind": "price",
+   "title": "Interactive Brokers (read-only) monthly price bars CRDO 2022-01 to 2026-10 (58 bars, October bar close 167.43; no corporate-action block returned)",
+   "url": "connector:mcp__Interactive_Brokers__get_price_history",
+   "date": "2026-10-27",
+   "independent": true,
+   "publisher": "Interactive Brokers",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_fred_dgs10",
+   "kind": "macro",
+   "title": "FRED DGS10 10-year US Treasury constant-maturity yield, daily: 5.00% on 2026-10-26 (latest observation published at retrieval 2026-10-28; 4.96% 2026-10-22, 5.13% 2026-10-21)",
+   "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS10",
+   "date": "2026-10-26",
+   "independent": true,
+   "publisher": "Federal Reserve Bank of St. Louis (FRED), data from the U.S. Treasury / Federal Reserve H.15",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_rel_20241202",
+   "kind": "release",
+   "title": "Credo 8-K Ex. 99.1 press release 2024-12-02: Q2 FY2025 results; Q3 FY2025 outlook",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828024049564/credoq22025ex-991.htm",
+   "date": "2024-12-02",
+   "independent": false,
+   "publisher": "Credo Technology Group Holding Ltd",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_rel_20250304",
+   "kind": "release",
+   "title": "Credo 8-K Ex. 99.1 press release 2025-03-04: Q3 FY2025 results; Q4 FY2025 outlook",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828025009813/credoq32025ex-991.htm",
+   "date": "2025-03-04",
+   "independent": false,
+   "publisher": "Credo Technology Group Holding Ltd",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_rel_20250602",
+   "kind": "release",
+   "title": "Credo 8-K Ex. 99.1 press release 2025-06-02: Q4 FY2025 results; Q1 FY2026 outlook",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828025028827/credoq42025ex-991.htm",
+   "date": "2025-06-02",
+   "independent": false,
+   "publisher": "Credo Technology Group Holding Ltd",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_rel_20250903",
+   "kind": "release",
+   "title": "Credo 8-K Ex. 99.1 press release 2025-09-03: Q1 FY2026 results; Q2 FY2026 outlook",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000180779425000018/credoq12026ex-991.htm",
+   "date": "2025-09-03",
+   "independent": false,
+   "publisher": "Credo Technology Group Holding Ltd",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_rel_20260209",
+   "kind": "release",
+   "title": "Credo 8-K Ex. 99.1 press release 2026-02-09: Preliminary Q3 FY2026 revenue (404-408M vs prior guide 335-345M)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026006370/feb20268-kex991.htm",
+   "date": "2026-02-09",
+   "independent": false,
+   "publisher": "Credo Technology Group Holding Ltd",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_rel_20260302",
+   "kind": "release",
+   "title": "Credo 8-K Ex. 99.1 press release 2026-03-02: Q3 FY2026 results; Q4 FY2026 outlook",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026013205/credoq32026ex-9911.htm",
+   "date": "2026-03-02",
+   "independent": false,
+   "publisher": "Credo Technology Group Holding Ltd",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_rel_20260601",
+   "kind": "release",
+   "title": "Credo 8-K Ex. 99.1 press release 2026-06-01: Q4 FY2026 results; Q1 FY2027 outlook",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026039474/credoq42026ex-991.htm",
+   "date": "2026-06-01",
+   "independent": false,
+   "publisher": "Credo Technology Group Holding Ltd",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_rel_20260901",
+   "kind": "release",
+   "title": "Credo 8-K Ex. 99.1 press release 2026-09-01: Q1 FY2027 results; Q2 FY2027 outlook (revenue 525-535M)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026059795/credoq12027ex-991.htm",
+   "date": "2026-09-01",
+   "independent": false,
+   "publisher": "Credo Technology Group Holding Ltd",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_av_statements",
+   "kind": "structured_data",
+   "title": "Alpha Vantage INCOME_STATEMENT, BALANCE_SHEET, CASH_FLOW for CRDO (normalized from SEC filings; trimmed copy retrieved 2026-10-26 and reused: AV rate-limited on 2026-10-28)",
+   "url": "connector:mcp__Alpha_Vantage_MCP_Server__INCOME_STATEMENT",
+   "date": "2026-10-26",
+   "independent": false,
+   "publisher": "Alpha Vantage",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_av_estimates",
+   "kind": "consensus",
+   "title": "Alpha Vantage EARNINGS_ESTIMATES for CRDO: aggregated sell-side estimates (mean, high, low, analyst count, revisions), retrieved 2026-10-26 and reused (AV rate-limited 2026-10-28); brokers not named",
+   "url": "connector:mcp__Alpha_Vantage_MCP_Server__EARNINGS_ESTIMATES",
+   "date": "2026-10-26",
+   "independent": true,
+   "publisher": "Alpha Vantage (aggregate of analyst estimates)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "id_sec_submissions_20261028",
+   "kind": "structured_data",
+   "title": "SEC EDGAR submissions JSON, CIK 0001807794 (Credo Technology Group Holding Ltd)",
+   "url": "https://data.sec.gov/submissions/CIK0001807794.json",
+   "date": "2026-10-28",
+   "independent": false,
+   "publisher": "U.S. SEC (filer metadata)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_10k_20260615",
+   "kind": "sec_filing",
+   "title": "Credo 10-K for fiscal year ended 2026-05-02 (statements, Note 3 concentrations, Note 15 segment and geographic information, Note 16 subsequent events, risk factors on Taiwan, tariffs and trade controls)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026043303/crdo-20260502.htm",
+   "date": "2026-06-15",
+   "independent": false,
+   "publisher": "Credo Technology Group Holding Ltd",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_10q_20260902",
+   "kind": "sec_filing",
+   "title": "Credo 10-Q for quarter ended 2026-08-01 (statements, cover share count, Note 3 concentrations, revenue by ship-to geography, Note 5 acquisitions)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026060111/crdo-20260801.htm",
+   "date": "2026-09-02",
+   "independent": false,
+   "publisher": "Credo Technology Group Holding Ltd",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "id_ib_contracts_20261028",
+   "kind": "price",
+   "title": "Interactive Brokers search_contracts 'CRDO' (read-only)",
+   "url": "connector:mcp__Interactive_Brokers__search_contracts",
+   "date": "2026-10-28",
+   "independent": true,
+   "publisher": "Interactive Brokers",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_history_companyfacts",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts annual rows FY2021-FY2026 (prefetch history.json of run CRDO_2026-10-26, reused)",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001807794.json",
+   "date": "2026-06-15",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  }
+ ],
+ "facts": [
+  {
+   "id": "nm_cash_q_2026_08_01",
+   "metric": "cash",
+   "period": "Q@2026-08-01",
+   "value": 466869000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_rel_20260901",
+    "pf_10q_20260902"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_short_term_investments_q_2026_08_01",
+   "metric": "short_term_investments",
+   "period": "Q@2026-08-01",
+   "value": 297389000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_rel_20260901",
+    "pf_10q_20260902"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_equity_q_2026_08_01",
+   "metric": "equity",
+   "period": "Q@2026-08-01",
+   "value": 2728490000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_rel_20260901",
+    "pf_10q_20260902"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_goodwill_q_2026_08_01",
+   "metric": "goodwill",
+   "period": "Q@2026-08-01",
+   "value": 986447000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_rel_20260901",
+    "pf_10q_20260902"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_intangible_assets_q_2026_08_01",
+   "metric": "intangible_assets",
+   "period": "Q@2026-08-01",
+   "value": 378817000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_rel_20260901",
+    "pf_10q_20260902"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_inventory_q_2026_08_01",
+   "metric": "inventory",
+   "period": "Q@2026-08-01",
+   "value": 313051000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_rel_20260901",
+    "pf_10q_20260902"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_receivables_q_2026_08_01",
+   "metric": "receivables",
+   "period": "Q@2026-08-01",
+   "value": 288798000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_rel_20260901",
+    "pf_10q_20260902"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_outstanding_cover_2026_08_25",
+   "metric": "shares_outstanding_cover",
+   "period": "I@2026-08-25",
+   "value": 187951918,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20260902"
+   ],
+   "period_end": "2026-08-25",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_diluted_wavg_q_2026_08_01",
+   "metric": "shares_diluted_wavg",
+   "period": "Q@2026-08-01",
+   "value": 194378000,
+   "unit": "shares",
+   "source_ids": [
+    "nm_rel_20260901",
+    "pf_10q_20260902"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q_2026_08_01",
+   "metric": "eps_diluted",
+   "period": "Q@2026-08-01",
+   "value": 0.67,
+   "unit": "USD/shares",
+   "source_ids": [
+    "nm_rel_20260901",
+    "pf_10q_20260902"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_non_gaap_q_2026_08_01",
+   "metric": "eps_diluted_non_gaap",
+   "period": "Q@2026-08-01",
+   "value": 1.2,
+   "unit": "USD/shares",
+   "source_ids": [
+    "nm_rel_20260901"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_operating_income_non_gaap_q_2026_08_01",
+   "metric": "operating_income_non_gaap",
+   "period": "Q@2026-08-01",
+   "value": 230641000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_rel_20260901"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_net_income_non_gaap_q_2026_08_01",
+   "metric": "net_income_non_gaap",
+   "period": "Q@2026-08-01",
+   "value": 236262000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_rel_20260901"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_diluted_wavg_q_2026_05_02",
+   "metric": "shares_diluted_wavg",
+   "period": "Q@2026-05-02",
+   "value": 192681000,
+   "unit": "shares",
+   "source_ids": [
+    "nm_rel_20260601"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q_2026_05_02",
+   "metric": "eps_diluted",
+   "period": "Q@2026-05-02",
+   "value": 0.88,
+   "unit": "USD/shares",
+   "source_ids": [
+    "nm_rel_20260601"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_non_gaap_q_2026_05_02",
+   "metric": "eps_diluted_non_gaap",
+   "period": "Q@2026-05-02",
+   "value": 1.16,
+   "unit": "USD/shares",
+   "source_ids": [
+    "nm_rel_20260901"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_operating_income_non_gaap_q_2026_05_02",
+   "metric": "operating_income_non_gaap",
+   "period": "Q@2026-05-02",
+   "value": 216722000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_rel_20260901"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_net_income_non_gaap_q_2026_05_02",
+   "metric": "net_income_non_gaap",
+   "period": "Q@2026-05-02",
+   "value": 226680000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_rel_20260901"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_diluted_wavg_q_2026_01_31",
+   "metric": "shares_diluted_wavg",
+   "period": "Q@2026-01-31",
+   "value": 192023000,
+   "unit": "shares",
+   "source_ids": [
+    "nm_rel_20260302"
+   ],
+   "period_end": "2026-01-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q_2026_01_31",
+   "metric": "eps_diluted",
+   "period": "Q@2026-01-31",
+   "value": 0.82,
+   "unit": "USD/shares",
+   "source_ids": [
+    "nm_rel_20260302"
+   ],
+   "period_end": "2026-01-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_diluted_wavg_q_2025_11_01",
+   "metric": "shares_diluted_wavg",
+   "period": "Q@2025-11-01",
+   "value": 187659000,
+   "unit": "shares",
+   "source_ids": [
+    "nm_rel_20260302"
+   ],
+   "period_end": "2025-11-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q_2025_11_01",
+   "metric": "eps_diluted",
+   "period": "Q@2025-11-01",
+   "value": 0.44,
+   "unit": "USD/shares",
+   "source_ids": [
+    "nm_rel_20260302"
+   ],
+   "period_end": "2025-11-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_diluted_wavg_q_2025_08_02",
+   "metric": "shares_diluted_wavg",
+   "period": "Q@2025-08-02",
+   "value": 184577000,
+   "unit": "shares",
+   "source_ids": [
+    "nm_rel_20250903"
+   ],
+   "period_end": "2025-08-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q_2025_08_02",
+   "metric": "eps_diluted",
+   "period": "Q@2025-08-02",
+   "value": 0.34,
+   "unit": "USD/shares",
+   "source_ids": [
+    "nm_rel_20250903"
+   ],
+   "period_end": "2025-08-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_non_gaap_q_2025_08_02",
+   "metric": "eps_diluted_non_gaap",
+   "period": "Q@2025-08-02",
+   "value": 0.52,
+   "unit": "USD/shares",
+   "source_ids": [
+    "nm_rel_20260901"
+   ],
+   "period_end": "2025-08-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_operating_income_non_gaap_q_2025_08_02",
+   "metric": "operating_income_non_gaap",
+   "period": "Q@2025-08-02",
+   "value": 96197000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_rel_20260901"
+   ],
+   "period_end": "2025-08-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_net_income_non_gaap_q_2025_08_02",
+   "metric": "net_income_non_gaap",
+   "period": "Q@2025-08-02",
+   "value": 98281000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_rel_20260901"
+   ],
+   "period_end": "2025-08-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q_2025_05_03",
+   "metric": "eps_diluted",
+   "period": "Q@2025-05-03",
+   "value": 0.2,
+   "unit": "USD/shares",
+   "source_ids": [
+    "nm_rel_20250602"
+   ],
+   "period_end": "2025-05-03",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q_2025_02_01",
+   "metric": "eps_diluted",
+   "period": "Q@2025-02-01",
+   "value": 0.16,
+   "unit": "USD/shares",
+   "source_ids": [
+    "nm_rel_20250304"
+   ],
+   "period_end": "2025-02-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q_2024_11_02",
+   "metric": "eps_diluted",
+   "period": "Q@2024-11-02",
+   "value": -0.03,
+   "unit": "USD/shares",
+   "source_ids": [
+    "nm_rel_20241202"
+   ],
+   "period_end": "2024-11-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q_2024_08_03",
+   "metric": "eps_diluted",
+   "period": "Q@2024-08-03",
+   "value": -0.06,
+   "unit": "USD/shares",
+   "source_ids": [
+    "nm_rel_20241202"
+   ],
+   "period_end": "2024-08-03",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_fy_2026_05_02",
+   "metric": "revenue",
+   "period": "FY2026",
+   "value": 1335116000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260615",
+    "pf_history_companyfacts"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_operating_income_fy_2026_05_02",
+   "metric": "operating_income",
+   "period": "FY2026",
+   "value": 445005000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260615",
+    "pf_history_companyfacts"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_net_income_fy_2026_05_02",
+   "metric": "net_income",
+   "period": "FY2026",
+   "value": 472279000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260615",
+    "pf_history_companyfacts"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_operating_cash_flow_fy_2026_05_02",
+   "metric": "operating_cash_flow",
+   "period": "FY2026",
+   "value": 464292000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260615",
+    "pf_history_companyfacts"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_capex_fy_2026_05_02",
+   "metric": "capex",
+   "period": "FY2026",
+   "value": 57296000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260615",
+    "pf_history_companyfacts"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_share_based_compensation_fy_2026_05_02",
+   "metric": "share_based_compensation",
+   "period": "FY2026",
+   "value": 182638000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260615",
+    "pf_history_companyfacts"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_diluted_wavg_fy_2026_05_02",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2026",
+   "value": 188232000,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10k_20260615",
+    "pf_history_companyfacts"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_fy_2026_05_02",
+   "metric": "eps_diluted",
+   "period": "FY2026",
+   "value": 2.51,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_10k_20260615",
+    "pf_history_companyfacts"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_q_2026_08_01",
+   "metric": "revenue",
+   "period": "Q@2026-08-01",
+   "value": 479003000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260902",
+    "pf_history_companyfacts"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_operating_income_q_2026_08_01",
+   "metric": "operating_income",
+   "period": "Q@2026-08-01",
+   "value": 120700000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260902",
+    "pf_history_companyfacts"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_net_income_q_2026_08_01",
+   "metric": "net_income",
+   "period": "Q@2026-08-01",
+   "value": 129425000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260902",
+    "pf_history_companyfacts"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_operating_cash_flow_q_2026_08_01",
+   "metric": "operating_cash_flow",
+   "period": "Q@2026-08-01",
+   "value": 90231000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260902",
+    "pf_history_companyfacts"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_capex_q_2026_08_01",
+   "metric": "capex",
+   "period": "Q@2026-08-01",
+   "value": 7282000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260902",
+    "pf_history_companyfacts"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_share_based_compensation_q_2026_08_01",
+   "metric": "share_based_compensation",
+   "period": "Q@2026-08-01",
+   "value": 87979000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260902",
+    "pf_history_companyfacts"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_free_cash_flow_fy_2026_05_02",
+   "metric": "free_cash_flow",
+   "period": "FY2026",
+   "value": 406996000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260615",
+    "pf_history_companyfacts"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_free_cash_flow_q_2026_08_01",
+   "metric": "free_cash_flow",
+   "period": "Q@2026-08-01",
+   "value": 82949000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260902",
+    "pf_history_companyfacts"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_revenue_ttm_q_2026_08_01",
+   "metric": "revenue_ttm",
+   "period": "Q@2026-08-01",
+   "value": 1591000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260615",
+    "pf_10q_20260902",
+    "pf_history_companyfacts"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_revenue_shipto_united_states_fy_2026_05_02",
+   "metric": "revenue_shipto_united_states",
+   "period": "FY2026",
+   "value": 768051000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260615"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_shipto_hong_kong_fy_2026_05_02",
+   "metric": "revenue_shipto_hong_kong",
+   "period": "FY2026",
+   "value": 378230000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260615"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_shipto_mainland_china_fy_2026_05_02",
+   "metric": "revenue_shipto_mainland_china",
+   "period": "FY2026",
+   "value": 80924000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260615"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_shipto_taiwan_fy_2026_05_02",
+   "metric": "revenue_shipto_taiwan",
+   "period": "FY2026",
+   "value": 22727000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260615"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_shipto_rest_of_world_fy_2026_05_02",
+   "metric": "revenue_shipto_rest_of_world",
+   "period": "FY2026",
+   "value": 85184000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260615"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_shipto_united_states_q_2026_08_01",
+   "metric": "revenue_shipto_united_states",
+   "period": "Q@2026-08-01",
+   "value": 255442000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260902"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_shipto_hong_kong_q_2026_08_01",
+   "metric": "revenue_shipto_hong_kong",
+   "period": "Q@2026-08-01",
+   "value": 91175000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260902"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_shipto_malaysia_q_2026_08_01",
+   "metric": "revenue_shipto_malaysia",
+   "period": "Q@2026-08-01",
+   "value": 74455000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260902"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_shipto_mainland_china_q_2026_08_01",
+   "metric": "revenue_shipto_mainland_china",
+   "period": "Q@2026-08-01",
+   "value": 1095000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260902"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_shipto_rest_of_world_q_2026_08_01",
+   "metric": "revenue_shipto_rest_of_world",
+   "period": "Q@2026-08-01",
+   "value": 56836000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260902"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_ppe_net_taiwan_fy_2026_05_02",
+   "metric": "ppe_net_taiwan",
+   "period": "FY2026",
+   "value": 68064000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260615"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_ppe_net_united_states_fy_2026_05_02",
+   "metric": "ppe_net_united_states",
+   "period": "FY2026",
+   "value": 14709000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260615"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_ppe_net_hong_kong_fy_2026_05_02",
+   "metric": "ppe_net_hong_kong",
+   "period": "FY2026",
+   "value": 657000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260615"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_ppe_net_rest_of_world_fy_2026_05_02",
+   "metric": "ppe_net_rest_of_world",
+   "period": "FY2026",
+   "value": 18175000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260615"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  }
+ ],
+ "guidance_track": [
+  {
+   "period": "Q@2025-02-01",
+   "metric": "revenue",
+   "guided_mid": 120000000,
+   "actual": 135002000,
+   "source_ids": [
+    "nm_rel_20241202",
+    "nm_rel_20250304"
+   ]
+  },
+  {
+   "period": "Q@2025-05-03",
+   "metric": "revenue",
+   "guided_mid": 160000000,
+   "actual": 170025000,
+   "source_ids": [
+    "nm_rel_20250304",
+    "nm_rel_20250602"
+   ]
+  },
+  {
+   "period": "Q@2025-08-02",
+   "metric": "revenue",
+   "guided_mid": 190000000,
+   "actual": 223074000,
+   "source_ids": [
+    "nm_rel_20250602",
+    "nm_rel_20250903"
+   ]
+  },
+  {
+   "period": "Q@2025-11-01",
+   "metric": "revenue",
+   "guided_mid": 235000000,
+   "actual": 268027000,
+   "source_ids": [
+    "nm_rel_20250903",
+    "pf_history_companyfacts"
+   ]
+  },
+  {
+   "period": "Q@2026-01-31",
+   "metric": "revenue",
+   "guided_mid": 340000000,
+   "actual": 407012000,
+   "source_ids": [
+    "nm_rel_20260209",
+    "nm_rel_20260302"
+   ]
+  },
+  {
+   "period": "Q@2026-05-02",
+   "metric": "revenue",
+   "guided_mid": 430000000,
+   "actual": 437003000,
+   "source_ids": [
+    "nm_rel_20260302",
+    "nm_rel_20260601"
+   ]
+  },
+  {
+   "period": "Q@2026-08-01",
+   "metric": "revenue",
+   "guided_mid": 470000000,
+   "actual": 479003000,
+   "source_ids": [
+    "nm_rel_20260601",
+    "nm_rel_20260901"
+   ]
+  }
+ ],
+ "consensus": [
+  {
+   "id": "nm_cons_revenue_fy2027",
+   "metric": "revenue",
+   "period": "FY2027",
+   "value": 2503060260,
+   "n": 19,
+   "low": 2470000000,
+   "high": 2583654460,
+   "source_id": "nm_av_estimates"
+  },
+  {
+   "id": "nm_cons_revenue_fy2028",
+   "metric": "revenue",
+   "period": "FY2028",
+   "value": 3879571640,
+   "n": 19,
+   "low": 3590000000,
+   "high": 4413900300,
+   "source_id": "nm_av_estimates"
+  },
+  {
+   "id": "nm_cons_eps_non_gaap_fy2027",
+   "metric": "eps_non_gaap",
+   "period": "FY2027",
+   "value": 6.3093,
+   "n": 20,
+   "low": 5.98,
+   "high": 6.6354,
+   "source_id": "nm_av_estimates"
+  },
+  {
+   "id": "nm_cons_eps_non_gaap_fy2028",
+   "metric": "eps_non_gaap",
+   "period": "FY2028",
+   "value": 9.7121,
+   "n": 20,
+   "low": 8.69,
+   "high": 11.309,
+   "source_id": "nm_av_estimates"
+  },
+  {
+   "id": "nm_cons_revenue_q_2026_10_31",
+   "metric": "revenue",
+   "period": "Q@2026-10-31",
+   "value": 531946580,
+   "n": 17,
+   "low": 529800000,
+   "high": 551000000,
+   "source_id": "nm_av_estimates"
+  },
+  {
+   "id": "nm_cons_eps_non_gaap_q_2026_10_31",
+   "metric": "eps_non_gaap",
+   "period": "Q@2026-10-31",
+   "value": 1.2835,
+   "n": 18,
+   "low": 1.22,
+   "high": 1.32,
+   "source_id": "nm_av_estimates"
+  },
+  {
+   "id": "nm_cons_revenue_q_2027_01_31",
+   "metric": "revenue",
+   "period": "Q@2027-01-31",
+   "value": 642987070,
+   "n": 16,
+   "low": 626500000,
+   "high": 698000000,
+   "source_id": "nm_av_estimates"
+  },
+  {
+   "id": "nm_cons_eps_non_gaap_q_2027_01_31",
+   "metric": "eps_non_gaap",
+   "period": "Q@2027-01-31",
+   "value": 1.6067,
+   "n": 17,
+   "low": 1.45,
+   "high": 1.8,
+   "source_id": "nm_av_estimates"
+  }
+ ],
+ "notes": [
+  "nm RERUN 2026-10-28: this attempt re-fetched SEC companyfacts (sha256 identical to 2026-10-26), the 10-K and the 10-Q verbatim, IB snapshot and monthly history, and FRED DGS10; no 10-K/10-Q/8-K since 2026-10-16 (identity.json), so every statement figure, reconciliation, guidance-track row and the ROIC check of the 2026-10-26 run still hold and were re-verified against the newly saved filing text (all 15 reconciliation figures found verbatim). What changed: price 149.05 (2026-10-26 intraday) -> 167.43 (close 2026-10-27, +12.3%); 10-year yield 4.96% (2026-10-22) -> 5.00% (2026-10-26); consensus rows unchanged (reused payload) but now citable (dated 2026-10-26, citable from 2026-10-28 = as_of).",
+  "nm AV STATUS 2026-10-28: INCOME_STATEMENT answered RATE LIMIT on the first call (the shared 25/day quota already spent before this lane started; saved raw/av__income__ratelimit.json); not retried, and BALANCE_SHEET, CASH_FLOW, EARNINGS_ESTIMATES and TREASURY_YIELD (also rate-limited, saved gather/raw_numbers/av__treasury-yield__ratelimit.json) were not called again. Fallback: the av__*.json payloads of run CRDO_2026-10-26 (retrieved 2026-10-26, trimmed copies, provenance in raw/MANIFEST.json) as the second source and consensus; FRED DGS10 for the risk-free. FMP statements/analyst not called (ACCESS DENIED on this plan).",
+  "nm PRICE IB (read-only): last 167.43 flagged is_close = the close of 2026-10-27 (the October monthly bar closes at the same 167.43); snapshot taken pre-market 2026-10-28 ~07:34 UTC with bid 171.29 / ask 172.00 (pre-market indication, not a trade; prior_close and change fields came back empty). 52-week range 86.49-308.67, 13-week 142.89-286.24: 45.8% below the 52-week high, 17% above the 13-week low. Market cap on cover shares 187,951,918 (2026-08-25) = 31.47B; on Q1 diluted weighted shares 194.38M = 32.55B. Net cash 764.3M (cash 466.9M + short-term investments 297.4M, no financial debt), so EV about 30.7B = 19.3x trailing-twelve-month revenue 1,591.0M (derived: sum of the last four quarters) and about 61x trailing GAAP operating income 505.0M.",
+  "nm OWN MULTIPLE HISTORY low 51.6 median 108.3 high 424.3 now 59.0 years 2025-06 to 2026-10 sources nm_ib_history, nm_ib_price, nm_rel_20250602, nm_rel_20250903, nm_rel_20260302, nm_rel_20260601, nm_rel_20260901, pf_history_companyfacts (SEC companyfacts, re-fetched 2026-10-28, identical sha256). Trailing P/E on GAAP diluted EPS after share-based compensation, 17 month-end closes, each against the trailing-twelve-month EPS known at that date (0.29 until 2025-08; 0.69 after Q1 FY2026; 1.16 after Q2; 1.82 after Q3; 2.51 FY2026; 2.84 after Q1 FY2027). GAAP EPS was negative until Q3 FY2025, so the window is short and its high (424) and the 2025 values are a tiny-earnings effect: the median is not a norm. Low 51.6 = 2026-03 close 93.87 (the 52-week low). Now 59.0 = 167.43 / 2.84.",
+  "nm OWN MULTIPLE HISTORY (price to sales, 2026-10-26 run, unchanged except now) low 6.7 (2023-04) median 23.4 high 57.7 (2025-10) now 20.5 on diluted weighted shares (19.8 on cover shares) years 2022-06 to 2026-10 sources nm_ib_history, pf_history_companyfacts (SEC companyfacts, re-fetched 2026-10-28, identical sha256). Forward P/E history is not available point-in-time (no dated forward EPS series). Today's forward multiples on attributed non-GAAP consensus (nm_av_estimates): 26.5x FY2027 (6.31) and 17.2x FY2028 (9.71) at 167.43; non-GAAP excludes share-based compensation of 88.0M in Q1 FY2027 alone (18% of revenue), so GAAP trailing 59x and non-GAAP forward 26.5x are not comparable. Peak-earnings warning: Q4 FY2026 GAAP EPS 0.88 fell to 0.67 in Q1 FY2027 on acquisition amortization and share-based compensation; four times the latest quarter is not a run rate.",
+  "nm MARKET risk_free 10-year Treasury 5.00% on 2026-10-26 (FRED DGS10, nm_fred_dgs10; the latest published observation at retrieval; 2026-10-27 not yet posted). No equity-risk-premium source in this lane (gather_macro / the engine's saved ERP).",
+  "nm GEOGRAPHY revenue by ship-to destination (10-K Note 15: 'based on destination of shipment ... may differ from the end customer's principal offices'): FY2026 United States 768.1M (57.5%), Hong Kong 378.2M (28.3%), mainland China 80.9M (6.1%), Taiwan 22.7M (1.7%), rest of world 85.2M (6.4%) of 1,335.1M; FY2025 US 65.1M (14.9%), Hong Kong 243.7M (55.8%), mainland China 80.1M (18.3%) of 436.8M. Q1 FY2027 (10-Q): United States 255.4M (53.3%), Hong Kong 91.2M (19.0%), Malaysia 74.5M (15.5%), mainland China 1.1M (0.2%), rest of world 56.8M (11.9%) of 479.0M; Q1 FY2026 mainland China was 51.8M (23.2%) of 223.1M. Ship-to is where contract manufacturers build, not where the hyperscaler sits. Long-lived assets (property and equipment, net, 2026-05-02): Taiwan 68.1M (67%), United States 14.7M, Hong Kong 0.7M, rest of world 18.2M of 101.6M.",
+  "nm EXPOSURES (evidenced, share exposed): (1) Taiwan supply: 100% of wafers from TSMC in FY2026 (10-K Item 1 'exclusively used TSMC'); assembly/test contractors principally in Taiwan; 67% of PP&E in Taiwan; the 10-K names PRC-Taiwan tension as a risk to 'a substantial amount of our revenue'. (2) China/Hong Kong: ship-to mainland China fell to 0.2% of Q1 FY2027 revenue (6.1% FY2026, 18.3% FY2025) and Hong Kong is 19.0% (Q1 FY2027) / 28.3% (FY2026); R&D and staff in mainland China and Hong Kong; PRC blocking rules (MOFCOM Order No. 1, State Council Order No. 835 of April 2026) could conflict with US export controls (10-K risk factors). (3) Export controls: the 10-K states the company sells into Asian markets where customers face US export restrictions and that it 'ha[s] in the past and may again in the future determine that certain exports may have been made in violation of Trade Controls laws' (remediation described, no amount stated): a compliance flag for the counter-thesis. (4) Tariffs: risk factor on US tariffs on semiconductor products and PRC trade tensions, no quantified cost. (5) Customer concentration (10-K Note 3 / 10-Q Note 3): Customer A 49% and Customer B 32% of FY2026 revenue (top 10 ~90%); Q1 FY2027 A 43%, B 28%; receivables A 57%, B 28% on 2026-08-01. Customers are unnamed (gather_documents owns names). (6) Tax: effective tax about 0.7% in FY2026 (Cayman parent); OECD Pillar Two named as a risk.",
+  "nm DILUTION FLAGS (for capital_bridge): 10-K Note 16: DustPhotonics contingent consideration of up to about 2.8 million shares and 31.6M cash on financial milestones; CEO Special PSUs granted 2026-05-28 in six tranches vesting on revenue and stock-price hurdles through 2026-06-30 to 2031 (share count in the proxy, gather_documents). Diluted weighted shares rose from 184.6M (Q1 FY2026) to 194.4M (Q1 FY2027), +5.3% in a year.",
+  "nm IDENTITY CRDO = Credo Technology Group Holding Ltd (CIK 1807794), Cayman Islands issuer filing 10-K/10-Q as a US domestic filer; single class of ordinary shares, par $0.00005, registered on The Nasdaq Stock Market (10-K cover, read); no ADR, no dual class, no dual listing. IB search_contracts: NASDAQ STK conid 541265127, USD, saved raw/ib__search-contracts-CRDO__current.json. Same-named IB rows are NOT this security: CRDON (Mexican line of the same company), CRDOF (CERRADO GOLD, a different issuer), CRDU and CRD (leveraged single-stock ETFs). Reporting and quote currency USD. Fiscal year: 52/53 weeks ending the Saturday closest to April 30; FY2026 ended 2026-05-02 (10-K cover), Q1 FY2027 ended 2026-08-01; vendors label them 2026-04-30 and 2026-07-31. Shares outstanding 187,951,918 on 2026-08-25 (10-Q cover). identity.json (security, exchange, quote_currency, ib_contract_id) and company.json (quote_currency, exchange, sector, industry) written; stop=false.",
+  "nm RECONCILIATION FY2026 (year ended 2026-05-02) to the 10-K statements (gather/raw_numbers/text/sec__annual_report.txt): revenue 1,335,116K, operating income 445,005K, net income 472,279K, operating cash flow 464,292K, capex (purchases of property and equipment) 57,296K, share-based compensation 182,638K, diluted shares 188,232K and diluted EPS 2.51 all equal the SEC companyfacts (pf_history_companyfacts (SEC companyfacts, re-fetched 2026-10-28, identical sha256)) and Alpha Vantage to the thousand. Free cash flow CFO minus capex = 407.0M derived (30.5% of revenue); the 10-K also shows 16.1M of purchases of property and equipment still unpaid (8.9M a year earlier), so accrual-basis capex is higher than the cash figure.",
+  "nm RECONCILIATION Q1 FY2027 (quarter ended 2026-08-01) to the 10-Q and the 2026-09-01 release: revenue 479,003K, operating income 120,700K, net income 129,425K, operating cash flow 90,231K, capex 7,282K, share-based compensation 87,979K, diluted shares 194,378K and diluted EPS 0.67 all equal the SEC companyfacts and Alpha Vantage. Free cash flow of the quarter 82.9M derived (17.3% of revenue; inventory build 61.5M per AV changeInInventory). Balance sheet: cash 466,869K plus short-term investments 297,389K = 764.3M (release headline 764.3M); no financial debt (only operating-lease liabilities of 20.7M non-current), no restricted cash disclosed, short-term investments are certificates of deposit and cash equivalents are money-market funds and CDs (10-Q fair-value table).",
+  "nm RECONCILIATION DIFFERENCES found: (1) FY2025 was recast in the FY2026 10-K: R&D 146,867K vs 145,994K in Alpha Vantage (the original FY2025 figure), so FY2025 operating income is 37,124K (10-K FY2026 and SEC companyfacts) vs 37,997K in AV; pre-tax income 54,870K and net income 52,183K are identical, so 873K moved from other income to R&D (other income 17,746K recast). The same 873K sits in Q4 FY2025 (pf_ 33,788K vs AV 34,661K). Use the recast figures. (2) AV dates fiscal quarters at month-ends (2026-07-31) while the 52/53-week quarter ended 2026-08-01: a label difference only. (3) AV 'commonStockSharesOutstanding' is the diluted weighted-average share count (188,232K FY2026, 194,378K Q1 FY2027), not a point-in-time count; the point-in-time count is the 10-Q cover 187,951,918 (2026-08-25). (4) AV 'shortLongTermDebtTotal' of the latest quarter (20,737K) is the non-current operating-lease liability, not borrowings. No other difference.",
+  "nm ROIC CHECK prefetch/forensic.json roic is 'unavailable' (it needs operating income, equity, debt and cash per year), so it was computed here from the filing figures (derived, not engine output). Invested capital = equity - cash - short-term investments (no financial debt; operating leases of 25.4M FY2026 / 26.2M Q1 FY2027 not added; adding them lowers ROIC by about 1-2 points). FY2026: invested capital 620.3M (equity 2,063.6M less cash and short-term investments 1,443.3M); NOPAT at a notional 21% tax = 445.0M x 0.79 = 351.6M, ROIC 56.7%; at the reported effective rate of 0.7% (tax 3.2M on 475.4M pre-tax) NOPAT 442.1M and ROIC 71.3%; if short-term investments are treated as operating (equity + leases - cash only, the Alpha Vantage balance-sheet view) invested capital is 924.1M and ROIC 38-48%. Incremental ROIC FY2025 to FY2026 (notional 21% tax): change in NOPAT 322.2M on change in invested capital 370.1M = 87%. After the DustPhotonics deal (Q1 FY2027): invested capital 1,964.2M (equity 2,728.5M less cash and short-term investments 764.3M); trailing-twelve-month operating income 505.0M (FY2026 445.0M - Q1 FY2026 60.7M + Q1 FY2027 120.7M), NOPAT at 21% 398.9M, ROIC 20.3% (25.5% at the effective rate; 38.8% on the average of FY2026 and Q1 FY2027 capital in the second case). Excluding goodwill (986.4M) and acquired intangibles (378.8M) invested capital is 599.0M and ROIC 66.6%. Reading: the high ROIC before the deal came from a business that needed little capital and a big cash pile that is excluded; the acquisition moved 1.25B into goodwill, intangibles and contingent consideration, so the return on the capital now deployed is far lower until DustPhotonics earns; the tax rate of about 0% flatters GAAP net income and the 21% case is the conservative one.",
+  "nm CONSENSUS Alpha Vantage EARNINGS_ESTIMATES, 2026-10-26 (an expectation, never evidence of a fact; brokers not named). Revenue: FY2027 (year to 2027-04) mean 2,503.1M, low 2,470.0M, high 2,583.7M, 19 analysts = +87.5% on FY2026's 1,335.1M; FY2028 mean 3,879.6M, low 3,590.0M, high 4,413.9M, 19 analysts = +55.0%. Next quarters: Q2 FY2027 (ends 2026-10-31) revenue 531.9M (529.8-551.0M, 17) against the company's own guide of 525-535M; Q3 FY2027 642.99M (626.5-698.0M, 16). Estimates are non-GAAP EPS (inferred: Q1 FY2027 consensus 1.1686 vs reported non-GAAP 1.20 / GAAP 0.67, and Q4 FY2026 1.0341 vs non-GAAP 1.16 / GAAP 0.88; AV does not label the basis): FY2027 6.3093 (5.98-6.6354, 20), FY2028 9.7121 (8.69-11.309, 20), Q2 FY2027 1.2835 (1.22-1.32, 18), Q3 FY2027 1.6067 (1.45-1.80, 17). No operating-income estimate was returned (gap).",
+  "nm CONSENSUS REVISIONS FY2027 EPS mean 6.1262 (90 days ago) -> 6.1512 (60) -> 6.3063 (30 and 7 days ago) -> 6.3093 now (+3.0% over 90 days; last 30 days 15 revisions up, 3 down); FY2028 EPS 9.0759 -> 9.1203 -> 9.6906 -> 9.7121 (+7.0%; 16 up, 1 down); Q2 FY2027 EPS 1.2496 -> 1.2552 -> 1.2829 -> 1.2835 (12 up, 3 down); Q3 FY2027 EPS slipped 1.6309 -> 1.6397 -> 1.6049 -> 1.6067 (8 up, 8 down in 30 days). Estimates were rising into the results and have flattened since; the share price fell about 24% in October while estimates held, so the market is discounting something the consensus is not (a flag for the field and counter-thesis lanes, not a finding).",
+  "nm CONSENSUS PATH CHECK Q1 FY2027 actual 479.0M + consensus Q2 531.9M + Q3 643.0M = 1,653.9M, so the FY2027 mean of 2,503.1M implies Q4 FY2027 of about 849M (+32% sequential after +11% and +21%); even the lowest FY2027 estimate (2,470M) needs Q4 of about 816M. The quarterly means come from fewer analysts (16-17) than the annual ones (19), so this is a consistency question for analyst_path, not an error in the data; the forecast must not copy FY2027 consensus without company evidence of the ramp (new products, DustPhotonics revenue, ZeroFlap optics, ALC, OmniConnect per the releases, read by gather_documents).",
+  "nm CONSENSUS TRACK against the company's own guide: the consensus revenue for the quarter was 471.7M (Q1 FY2027, 15 analysts) vs actual 479.0M (+1.5%), 433.3M (Q4 FY2026) vs 437.0M (+0.9%), 387.6M (Q3 FY2026) vs 407.0M (+5.0%); the quarterly mean followed the company's guide closely and the beats of the last two quarters are thin.",
+  "nm TRACK RECORD revenue, guided midpoint vs delivered, 7 guided quarters Q3 FY2025 to Q1 FY2027: Q3 FY25 120.0M -> 135.0M (1.125), Q4 FY25 160.0M -> 170.0M (1.063), Q1 FY26 190.0M -> 223.1M (1.174), Q2 FY26 235.0M -> 268.0M (1.141), Q3 FY26 340.0M (the 335-345M range recalled in the 2026-02-09 pre-announcement) -> 407.0M (1.197), Q4 FY26 430.0M -> 437.0M (1.016), Q1 FY27 470.0M -> 479.0M (1.019): ratio mean 1.105 over 7 periods, 7 beats, 0 misses (ticker-check prints the engine's figure). Credo guides conservatively and has beaten every guide, but the beat shrank from 6-20% (the first five quarters) to 1.6% and 1.9% in the last two, as the base grew past 400M and the guide moved close to the run rate; the 7.4% sequential growth in Q4 FY26 and 9.6% in Q1 FY27 followed a 2026-02-09 statement of mid-single-digit sequential growth. Caveats: the Dec 2025 release that guided Q3 FY26 and reported Q2 FY26 is not among the saved releases (Q2 FY26 actual from companyfacts pf_cf_20251202; Q3 FY26 guide from the pre-announcement text); the Q1 FY2027 revenue may include DustPhotonics (closed 2026-05-28) revenue, which the 10-Q calls not material and does not state (gap for gather_documents). The current outstanding guide, Q2 FY27 revenue 525-535M, belongs to gather_documents.",
+  "nm ACQUISITION FLAG (for the capital bridge and the counter-thesis; details belong to gather_documents) 10-Q note 5: DustPhotonics (silicon-photonics PIC maker) acquired 2026-05-28 for total purchase consideration 1,251.1M = cash 769.6M + ordinary shares issued 169.1M + replacement awards 2.5M + contingent consideration 310.0M (liability 10.0M, equity-classified 300.0M, an earn-out payable in cash and shares: possible further dilution); goodwill 895.8M and intangibles 361.7M, preliminary purchase allocation; Comira (2026-02-25, 35.1M cash) and Hyperlume (2025-09-29, 92.0M cash) before it. Cash plus short-term investments fell from 1,443.3M (FY2026) to 764.3M. Q1 FY2027 GAAP vs non-GAAP: GAAP net income 129.4M vs non-GAAP 236.3M (share-based compensation 88.0M, acquisition and integration costs 10.4M, amortization 11.6M); gross margin 64.5% GAAP / 68.0% non-GAAP against 68.2% / 68.3% a quarter earlier. Non-cancelable purchase obligations 222.2M.",
+  "nm CITABILITY as_of 2026-10-28: every filing and release cited here is far older than two days; the market feeds (nm_ib_price 2026-10-27, nm_ib_history, nm_fred_dgs10 2026-10-26) are citable on their dates; the consensus source nm_av_estimates is dated 2026-10-26 (its retrieval date, never redated) and is citable from 2026-10-28 = as_of. Next results (Q2 FY2027, quarter ending ~2026-10-31) expected early December 2026, after as_of.",
+  "nm SOURCES the identity stage's five sources (id_sec_submissions_20261028, pf_10k_20260615, pf_10q_20260902, id_ib_contracts_20261028, pf_history_companyfacts) are registered in this fragment so identity.json evidence_ids resolve; this lane cites the 10-K, 10-Q and companyfacts under those ids. market.risk_free is written here because the saved Workflow assigns it to the numbers lane (no prefetch in this run); if gather_macro also writes one, the later/fresher dated value should stand."
+ ],
+ "market": {
+  "risk_free": {
+   "value": 0.05,
+   "as_of": "2026-10-26",
+   "source_id": "nm_fred_dgs10"
+  }
+ },
+ "gaps": [
+  "forward P/E history is not available point-in-time (no dated forward EPS series); only today's forward multiples on non-GAAP consensus",
+  "no operating-income consensus, no GAAP EPS consensus, and the Alpha Vantage EPS basis is inferred (non-GAAP), not stated by the provider",
+  "the release of 2025-12 (Q2 FY2026 results and the original Q3 FY2026 guide) is not among the saved releases: Q3 FY2026 guided midpoint taken from the 2026-02-09 pre-announcement, Q2 FY2026 actual from companyfacts",
+  "Alpha Vantage payloads saved as trimmed copies (older periods and None-only fields dropped), not byte-for-byte",
+  "revenue contributed by DustPhotonics in Q1 FY2027 is not disclosed (10-Q: pro forma not material), so the Q1 beat cannot be split into organic and acquired",
+  "IB price-history returned no corporate-actions block (no split in the 2022-2026 monthly bars is visible: prices are continuous)",
+  "Alpha Vantage rate-limited on 2026-10-28 (first call): statements and consensus are the 2026-10-26 payloads reused, so any estimate revision of 2026-10-27/28 is not captured",
+  "10-year yield latest observation 2026-10-26 (FRED had not yet posted 2026-10-27)",
+  "price is the 2026-10-27 close; 2026-10-28 pre-market indicated ~171-172 (bid/ask), not a trade",
+  "DustPhotonics contingent-consideration share count (up to ~2.8M) and CEO Special PSU share count not quantified in this lane (proxy: gather_documents)"
+ ],
+ "stopped": [
+  "Alpha Vantage: rate limit on the first call of 2026-10-28; no retry (rule), reused 2026-10-26 payloads",
+  "FMP statements and analyst endpoints: not called (ACCESS DENIED on this plan per session_capabilities)",
+  "forward P/E history: no point-in-time forward EPS series exists in the connectors; stopped after one check (2026-10-26 run)"
+ ]
+}

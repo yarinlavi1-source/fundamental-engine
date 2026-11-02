@@ -1,0 +1,41 @@
+{
+"lane":"macro",
+"sources":[
+{"id":"mc_cnbc_capex_20261029","kind":"press","title":"AI buildout hits snag as Google and Microsoft put off raising capex forecasts","url":"https://www.cnbc.com/2026/10/29/microsoft-google-ai-capex-estimates.html","date":"2026-10-29","independent":true,"publisher":"CNBC","retrieval":"search_excerpt","syndicated_from":null},
+{"id":"mc_tc_openai_rev_20261028","kind":"press","title":"Microsoft recorded $10 billion in revenue from OpenAI","url":"https://techcrunch.com/2026/10/28/microsoft-recorded-10-billion-in-revenue-from-openai","date":"2026-10-28","independent":false,"publisher":"TechCrunch","retrieval":"search_excerpt","syndicated_from":"pf_10q_20261028"},
+{"id":"mc_pymnts_antitrust_20260929","kind":"press","title":"Microsoft Wins Partial Dismissal of ChatGPT Users' Antitrust Case","url":"https://www.pymnts.com/cpi-posts/microsoft-wins-partial-dismissal-of-chatgpt-users-antitrust-case/","date":"2026-09-29","independent":true,"publisher":"PYMNTS","retrieval":"search_excerpt","syndicated_from":null},
+{"id":"mc_8k_recast_20261028","kind":"sec_filing","title":"MICROSOFT CORP 8-K Item 8.01 filed 2026-10-28 (segment recast to Agents and Infra / Devices and Consumer)","url":"https://www.sec.gov/Archives/edgar/data/789019/000119312526436149/msft-20261028.htm","date":"2026-10-28","independent":true,"publisher":"MICROSOFT CORP (SEC EDGAR)","retrieval":"primary_document","syndicated_from":null}
+],
+"facts":[
+{"id":"mc_rev_us_fy26","metric":"revenue_by_region:United States","period":"FY2026","value":170794,"unit":"USD_millions","source_ids":["pf_10k_20260729"],"period_end":"2026-06-30","basis":"reported"},
+{"id":"mc_rev_oth_fy26","metric":"revenue_by_region:Other countries","period":"FY2026","value":161045,"unit":"USD_millions","source_ids":["pf_10k_20260729"],"period_end":"2026-06-30","basis":"reported"},
+{"id":"mc_rev_us_fy25","metric":"revenue_by_region:United States","period":"FY2025","value":144546,"unit":"USD_millions","source_ids":["pf_10k_20260729"],"period_end":"2025-06-30","basis":"reported"},
+{"id":"mc_rev_oth_fy25","metric":"revenue_by_region:Other countries","period":"FY2025","value":137178,"unit":"USD_millions","source_ids":["pf_10k_20260729"],"period_end":"2025-06-30","basis":"reported"},
+{"id":"mc_rev_us_q1fy27","metric":"revenue_by_region:United States","period":"Q1 FY2027","value":49459,"unit":"USD_millions","source_ids":["pf_10q_20261028"],"period_end":"2026-09-30","basis":"reported"},
+{"id":"mc_rev_oth_q1fy27","metric":"revenue_by_region:Other countries","period":"Q1 FY2027","value":42820,"unit":"USD_millions","source_ids":["pf_10q_20261028"],"period_end":"2026-09-30","basis":"reported"},
+{"id":"mc_rev_us_q1fy26","metric":"revenue_by_region:United States","period":"Q1 FY2026","value":40077,"unit":"USD_millions","source_ids":["pf_10q_20261028"],"period_end":"2025-09-30","basis":"reported"},
+{"id":"mc_rev_oth_q1fy26","metric":"revenue_by_region:Other countries","period":"Q1 FY2026","value":37596,"unit":"USD_millions","source_ids":["pf_10q_20261028"],"period_end":"2025-09-30","basis":"reported"},
+{"id":"mc_lla_us_fy26","metric":"long_lived_assets:United States","period":"FY2026","value":300354,"unit":"USD_millions","source_ids":["pf_10k_20260729"],"period_end":"2026-06-30","basis":"reported"},
+{"id":"mc_lla_oth_fy26","metric":"long_lived_assets:Other countries","period":"FY2026","value":175159,"unit":"USD_millions","source_ids":["pf_10k_20260729"],"period_end":"2026-06-30","basis":"reported"},
+{"id":"mc_lla_us_fy25","metric":"long_lived_assets:United States","period":"FY2025","value":230069,"unit":"USD_millions","source_ids":["pf_10k_20260729"],"period_end":"2025-06-30","basis":"reported"},
+{"id":"mc_lla_oth_fy25","metric":"long_lived_assets:Other countries","period":"FY2025","value":141833,"unit":"USD_millions","source_ids":["pf_10k_20260729"],"period_end":"2025-06-30","basis":"reported"},
+{"id":"mc_openai_rev_q1fy27","metric":"revenue_from_OpenAI_commercial_arrangements","period":"Q1 FY2027","value":10000,"unit":"USD_millions","source_ids":["pf_10q_20261028"],"period_end":"2026-09-30","basis":"reported"}
+],
+"notes":[
+"mc GEOGRAPHY No single country other than the United States exceeds 10% of revenue (10-Q Note segment/geography). US 53.6% of Q1 FY27 revenue (49,459 of 92,279), 51.5% of FY26 (170,794 of 331,839); US includes OEM and multinational billings. Long-lived assets 63.2% US (300,354 of 475,513) at 2026-06-30; only US and Other countries disclosed, no single foreign country over 10%. [pf_10k_20260729, pf_10q_20261028]",
+"mc EXPOSURE OpenAI concentration: revenue from commercial arrangements with OpenAI incl. revenue-sharing $10.0B in Q1 FY27 = 10.8% of quarterly revenue (10.0/92.279); receivable from OpenAI $7.2B (6.0B at 2026-06-30); about 24% as-converted equity stake, funding commitments $13.0B of which $12.0B funded; equity-method (HLBV) results gain $272M in the quarter vs $4.1B loss a year earlier. Candidate bear mechanism: OpenAI funding/renewal shortfall sized at about 11% of revenue. [pf_10q_20261028]",
+"mc EXPOSURE Trade and AI export controls: 10-K/10-Q risk factors cite US tariffs, shifting AI export-control policy, possible replacement of the rescinded AI Diffusion Rule, expanded export license conditions, sanctions (Ukraine, Middle East); no revenue share or supply share quantified by the company. Hypothesis, unsized. [pf_10k_20260729, pf_10q_20261028]",
+"mc EXPOSURE Competition law: authorities in EU, UK, US and China scrutinise Microsoft; no new fine or order in the 10-Q. Accrued legal liabilities $582M at 2026-09-30, reasonably possible additional loss about $400M. LinkedIn Irish DPC GDPR fine appeal pending (decision Oct 2024, hearing Dec 2025, IDPC appealed standard-of-review ruling). Small versus earnings; sized by the accrual. [pf_10q_20261028]",
+"mc EXPOSURE Supply of AI capacity: CFO said third-party AI chip/capacity delays push some capacity into H1 2027, capex Q1 FY27 $45.2B vs about $50.7B expected, outlook trimmed to $170B from $175B (year basis disagrees between secondary sources: verify in the call transcript). Press lead, not confirmed at source here. [mc_cnbc_capex_20261029]",
+"mc EXPOSURE Single-region (Taiwan/China) supply: no share disclosed in the filings reviewed for MSFT's own supply; gap, not sized.",
+"mc NEWS 2026-10-28 Q1 FY27 results (8-K 2.02, 10-Q): revenue $92.3B (+19%), Azure $33.2B (+48%) per press; guidance Azure +49-50% next quarter per press; stock +4% after hours (press, attributed). Results are more than 2 days before 2026-11-01 and so citable; details belong to the numbers/documents lanes. [pf_rel_20261028_1, mc_cnbc_capex_20261029]",
+"mc NEWS 2026-10-28 8-K Item 8.01: segments recast, new Agents and Infra and Devices and Consumer segments from FY2027, prior amounts recast. Affects segment history comparability. [mc_8k_recast_20261028]",
+"mc NEWS 2026-10-28 OpenAI revenue $10B in the quarter disclosed in the 10-Q; April 2026 amended agreement lets OpenAI use other clouds, revenue share through 2030 subject to a cap (press, secondary). [pf_10q_20261028, mc_tc_openai_rev_20261028]",
+"mc NEWS 2026-10-31 FT via press: OpenAI trimmed near-term fundraising goal by $10B (about $20B at a $1.25T valuation); secondary, unconfirmed at source; relevant to the 24% stake and OpenAI commitments.",
+"mc NEWS 2026-09-29 Federal judge dismissed part of a ChatGPT-subscriber antitrust class action naming the Microsoft-OpenAI relationship (partial dismissal; press lead). [mc_pymnts_antitrust_20260929]",
+"mc NEWS 2026-10-21 DEF 14A filed, annual meeting 2026-12-08 [pf_proxy_20261021]. No export-rule, tariff or management-change event found for MSFT in searches since 2026-10-27.",
+"mc RATES risk-free 4.98% (FRED DGS10, 2026-10-29) and implied ERP 4.2% (Damodaran 2026-10-01) kept from the prefetch; Damodaran's next monthly update (1 Nov) not available/not checked."
+],
+"gaps":["MSFT's own Taiwan/China supply share not disclosed in reviewed filings","no country split beyond US vs other countries","capex outlook period basis unresolved between press sources; Damodaran 1 Nov 2026 update not checked","press items are search excerpts, not read at source"],
+"stopped":["no Alpha Vantage calls (quota reserved); no BIS/Federal Register fetch after searches showed no MSFT-specific new rule"]
+}

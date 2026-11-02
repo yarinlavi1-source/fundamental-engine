@@ -1,0 +1,215 @@
+{
+ "thesis_he": {
+  "bear": "הביקוש ל-AI ארגוני מתקרר או שתקציב הממשל האמריקאי (כ-52% מההכנסות) נחתך, הצמיחה המסחרית בארה\"ב מאטה בחדות והמתחרים (Snowflake, Databricks וענקיות הענן) לוחצים על מחיר ועל נתח.",
+  "base": "פלנטיר ממשיכה לצבור נתח מול המתחרים שנקראו בשמם: חוזים חתומים (RDV של 13.1 מיליארד דולר, שימור דולרי 157%) תומכים בצמיחה גבוהה שהולכת ומאטה, והתחרות והתלות בממשל נשארות סיכון ולא שוברות את המגמה.",
+  "bull": "פלנטיר הופכת לשכבת הפריסה הסטנדרטית של AI בארגונים ובביטחון: לקוחות קיימים מגדילים הוצאה מהר, הממשל האמריקאי ונאט\"ו מרחיבים חוזים, והפער מול המתחרים גדל."
+ },
+ "potential": {
+  "market_direction": {
+   "reading": "Buyers are spending more, on PLTR's own paid numbers: U.S. commercial revenue $764M in Q2 2026 (+149% y/y), U.S. commercial TCV $2.132B (+153% y/y), total TCV $3.373B, total remaining deal value $13.1B (+83% y/y) and U.S. government revenue $809M (+90% y/y). Management says Department of War TTM revenue is under 25 bp of the Pentagon budget (a statement, not a market study). FY2026 revenue guide was raised from $7.656B to $8.154B midpoint (+82% y/y). No attributed third-party market-size study was retrieved: the size of the market is a gap; the direction is read from buyers' paid commitments only.",
+   "evidence_ids": [
+    "dc_k_usc_rev",
+    "dc_k_usc_tcv",
+    "dc_k_tcv",
+    "dc_k_total_rdv",
+    "dc_k_usg_rev",
+    "dc_call_20260803",
+    "dc_g_fy_rev",
+    "dc_g_fy_rev_prior",
+    "pf_rel_20260803_1"
+   ]
+  },
+  "bottleneck_potential": {
+   "reading": "PLTR supplies working production deployment of AI on a customer's own operational data inside hard institutions (10-K: high installation cost, failure risk and long sales cycles). Evidence it is scarce: deals of $10M+ closed rose to 73 in Q2 2026 and average revenue per top-20 customer rose to $124M TTM from $75M (+67%), with NDR 157%. The 10-K also says the main competitor is customers' own in-house development, so the scarcity can be built around. How long it lasts and who adds capacity (Databricks, hyperscaler AI platforms, integrators) is not evidenced: duration is a hypothesis, not a driver.",
+   "evidence_ids": [
+    "pf_10k_20260217",
+    "dc_k_deals10m",
+    "dc_k_top20",
+    "dc_k_top20_py",
+    "dc_k_ndr"
+   ]
+  },
+  "share_trajectory": {
+   "reading": "On reported revenue growth PLTR is gaining against all three named comparators: PLTR FY2025 +56.2% ($4.475B) vs Snowflake +29.2% (FY Jan-2026, $4.684B), C3.ai -35.7% (FY Apr-2026, $250M) and Booz Allen -6.4% (FY Mar-2026, $11.2B); in Q2 2026 PLTR grew 93% y/y ($1.935B). PLTR's revenue has now roughly matched Snowflake's annual base and is 18x C3.ai's. Fiscal years and segments are not like for like and no share of a defined market is computed.",
+   "evidence_ids": [
+    "pf_revenue_fy2025",
+    "pf_revenue_fy2024",
+    "pf_revenue_q_2026_06_30",
+    "pf_revenue_q_2025_06_30",
+    "fd_sec_snow",
+    "fd_sec_ai",
+    "fd_sec_bah"
+   ]
+  },
+  "competitive_position": {
+   "reading": "Stronger than each named competitor on growth and economics: GAAP operating margin 31.6% and gross margin 82.4% in FY2025 vs Snowflake operating margin -30.6% and gross margin 67.2%, C3.ai operating margin -199% and gross margin 30.9%, Booz Allen operating margin 9.2% with shrinking revenue. Adjusted gross margin 86% and segment contribution margins 71% government / 78% commercial in Q2 2026. Weaker on scale against Booz Allen in federal services (BAH $11.2B revenue) and unmeasured against private Databricks and hyperscaler platforms (gap).",
+   "evidence_ids": [
+    "pf_operating_income_fy2025",
+    "pf_gross_profit_fy2025",
+    "pf_revenue_fy2025",
+    "fd_sec_snow",
+    "fd_sec_ai",
+    "fd_sec_bah",
+    "dc_k_adj_gm",
+    "pf_10q_20260804"
+   ]
+  },
+  "threats": {
+   "reading": "Evidenced threats: (1) in-sourcing, which the 10-K calls the fundamental competition (customers' own development, consultants, open source); (2) U.S. government budget and contracting: government was 52% of H1 2026 revenue, U.S. customers 80%, most government contracts are terminable for convenience and options run at most a year ahead; (3) intense competition from large software firms, integrators and frontier AI labs, plus dependence on third-party cloud ($5.6B hosting commitment to 2036) and models; (4) regulatory and reputational scrutiny, including European data-sovereignty press and a Pentagon sole-source memo questioned in the press (press items unconfirmed at source, unsized). No new entrant is evidenced with numbers.",
+   "evidence_ids": [
+    "pf_10k_20260217",
+    "pf_10q_20260804",
+    "dc_s_gov_q2_26",
+    "mc_f_rev_us_h1",
+    "dc_f_cloud_commit",
+    "mc_s_eu_sov",
+    "mc_s_pentagon_memo"
+   ]
+  }
+ },
+ "assessments": {
+  "moat": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "dc_k_ndr",
+    "dc_k_top20",
+    "dc_k_top20_py",
+    "pf_gross_profit_fy2025",
+    "pf_operating_income_fy2025",
+    "fd_sec_snow",
+    "fd_sec_ai"
+   ],
+   "note": "Evidenced source: embedded deployment and expansion inside existing customers (NDR 157%, top-20 average $124M TTM, +67%), with 82% gross margin and 32% GAAP operating margin vs Snowflake (-31% op margin) and C3.ai (-199%). Duration is not proven: the 10-K says in-house builds are the main alternative."
+  },
+  "switching_costs": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "pf_10k_20260217",
+    "dc_k_ndr",
+    "dc_k_total_rdv",
+    "dc_f_rpo"
+   ],
+   "note": "10-K: high installation costs and deep integration in customer operations; customers keep expanding (NDR 157%); RDV $13.1B and RPO $4.9B lock in multi-year work. Caveat: most government contracts are terminable for convenience."
+  },
+  "pricing_power": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "dc_k_adj_gm",
+    "pf_gross_profit_fy2025",
+    "pf_revenue_fy2025"
+   ],
+   "note": "Gross margin rose from 80.6% (FY2023) to 82.4% (FY2025) and adjusted 86% in Q2 2026 while volume grew; no direct price-increase disclosure, so price versus volume is not separated."
+  },
+  "retention": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "dc_k_ndr",
+    "dc_k_usc_customers",
+    "dc_call_20260803"
+   ],
+   "note": "Net dollar retention 157% in Q2 2026 (+700 bp q/q); U.S. commercial customers 653 (+35% y/y). Logo churn is not disclosed."
+  },
+  "customer_concentration": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "mc_f_top3_share",
+    "pf_10q_20260804",
+    "dc_s_gov_q2_26",
+    "mc_f_rev_us_h1"
+   ],
+   "note": "No customer above 10%; top three 16% of H1 2026 revenue (17% a year earlier); but government is 52% and U.S. customers 80% of revenue, a concentration in one buyer country and its budget."
+  },
+  "competition": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "pf_revenue_fy2025",
+    "pf_revenue_fy2024",
+    "fd_sec_snow",
+    "fd_sec_ai",
+    "fd_sec_bah"
+   ],
+   "note": "PLTR +56% FY2025 vs Snowflake +29%, C3.ai -36%, Booz Allen -6%; strongest of the named set. Databricks and hyperscaler platforms are unmeasured (gap)."
+  },
+  "substitutes": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "pf_10k_20260217"
+   ],
+   "note": "10-K names customers' in-house development, consultants and open source as the fundamental competition, and frontier AI labs as competitors; the current growth shows PLTR winning, but the substitute is always available."
+  },
+  "management": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "dc_g_q2_rev_prior",
+    "pf_revenue_q_2026_06_30",
+    "dc_g_fy_rev_prior",
+    "dc_g_fy_rev",
+    "pf_rel_20260803_1"
+   ],
+   "note": "Delivery vs promises: revenue beat the guided midpoint in all 8 recorded periods (mean actual/guide 1.08; Q2 2026 $1.935B vs $1.799B midpoint) and the FY2026 guide was raised from $7.656B to $8.154B. CEO growth aspirations on the call are statements, not guidance."
+  },
+  "capital_allocation": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "pf_sbc_fy2025",
+    "pf_buybacks_fy2025",
+    "pf_shares_diluted_wavg_fy2023",
+    "pf_shares_diluted_wavg_fy2025",
+    "pf_operating_income_fy2025",
+    "pf_equity_fy2025",
+    "pf_cash_fy2025",
+    "pf_short_term_investments_fy2025",
+    "dc_f_debt"
+   ],
+   "note": "No debt and $7.2B cash plus short-term investments at FY2025; operating income $1.41B on equity $7.39B that is almost all cash, so operating invested capital is near zero (ROIC not meaningful, very high). Against that, SBC $684M (15% of FY2025 revenue) vs buybacks only $75M; diluted shares rose from 2.298B (FY2023) to 2.565B (FY2025), about 5.7% a year: dilution of current holders is real."
+  },
+  "governance": {
+   "assessment": "weak",
+   "evidence_ids": [
+    "pf_10k_20260217",
+    "pf_proxy_20260424"
+   ],
+   "note": "10-K risk factors: founders hold concentrated voting power through the multi-class structure, limiting outside holders' influence; SBC-driven dilution (diluted 2.569B vs basic 2.400B shares in Q2 2026)."
+  },
+  "regulation": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "pf_10q_20260804",
+    "mc_s_eu_sov",
+    "mc_s_ao_suit"
+   ],
+   "note": "Export controls and sanctions apply; AI-related regulatory and reputational scrutiny; European data-sovereignty concerns reported in press (unconfirmed at source, unsized, non-US is about 20% of revenue). No quantified regulatory loss."
+  },
+  "technology_ai": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "dc_k_usc_rev",
+    "dc_k_usc_tcv",
+    "dc_k_deals10m",
+    "dc_call_20260803"
+   ],
+   "note": "Paid AIP adoption in the company's own numbers (U.S. commercial +149% y/y, U.S. commercial TCV +153%, 73 deals of $10M+ in Q2 2026), not partner logos; depends on third-party models and cloud (10-K)."
+  },
+  "geopolitics": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "mc_f_rev_us_fy25",
+    "mc_f_rev_uk_fy25",
+    "mc_f_rev_row_fy25",
+    "pf_10q_20260804",
+    "mc_s_uk_mod"
+   ],
+   "note": "Western defense spending is a tailwind (UK MoD enterprise deal GBP 240.6M, press); no China revenue by choice; non-US revenue grew more slowly (rest of world 19% of Q2 2026 vs 27% a year earlier) and faces European sovereignty pushback (hypothesis, unsized)."
+  }
+ },
+ "gaps": [
+  "No attributed third-party market-size or share study: market_size is unknown and market_direction is read from PLTR's own paid commitments only.",
+  "Bottleneck duration and who adds capacity (Databricks, hyperscaler AI platforms, integrators) are unevidenced; Databricks (private) and hyperscaler AI platforms have no numbers in this run.",
+  "The 10-K names no competitor; SNOW, AI and BAH are the field lane's classification, fiscal years differ and segments are not like for like.",
+  "ROIC is not meaningful from the prefetch (operating invested capital near zero because equity is mostly cash); incremental ROIC not computed.",
+  "Logo churn and price-versus-volume split are not disclosed.",
+  "Q3 2026 results are expected 2026-11-02/03, after as_of 2026-11-01: not citable in this run.",
+  "Press items (Pentagon sole-source memo, EU sovereignty, NATO/TITAN awards) are search excerpts or aggregators, unconfirmed at source and unsized.",
+  "Outside view (warning only, sets no number): companies growing above 50% at PLTR's scale rarely sustain it for five years; most expensive high-growth names fade toward the cost of capital."
+ ]
+}

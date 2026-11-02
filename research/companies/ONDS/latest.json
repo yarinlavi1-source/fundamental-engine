@@ -1,0 +1,14 @@
+{
+ "ticker": "ONDS",
+ "as_of": "2026-10-29",
+ "folder": "research/companies/ONDS/2026-10-29",
+ "thesis_id": null,
+ "status": null,
+ "verdict": null,
+ "files": [
+  "gather/field.json",
+  "gather/numbers.json",
+  "identity.json",
+  "understand/business.json"
+ ]
+}

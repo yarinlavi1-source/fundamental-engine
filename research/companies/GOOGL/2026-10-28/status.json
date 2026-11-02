@@ -1,0 +1,80 @@
+{
+ "ticker": "GOOGL",
+ "as_of": "2026-10-28",
+ "at_utc": "2026-10-28T23:06:43+00:00",
+ "verified": false,
+ "label": "UNVERIFIED draft (טיוטה — ההערכה לא אומתה)",
+ "reasons": [
+  "the engine did not run in this attempt (value.json missing, older than this attempt, or ran false: None)",
+  "review_numbers: no findings file of this attempt (review/numbers.json)",
+  "review_counter: no findings file of this attempt (review/counter.json)"
+ ],
+ "engine_ran": false,
+ "engine_review_status": null,
+ "reviews": {
+  "review_trace": {
+   "file": "review/trace.json",
+   "this_attempt": true,
+   "returned": true
+  },
+  "review_numbers": {
+   "file": "review/numbers.json",
+   "this_attempt": false,
+   "returned": true
+  },
+  "review_counter": {
+   "file": "review/counter.json",
+   "this_attempt": false,
+   "returned": true
+  }
+ },
+ "critical": [],
+ "open_critical": [],
+ "repair": {
+  "fixed": [
+   "ct1: base sales_to_capital 0.52 -> 0.43 (2027 capex 249.9bn, +25% on the 200bn guide midpoint) and terminal ROIC base 0.31 -> 0.20, bull 0.34 -> 0.29 (position.json). Base value 367.41 -> 301.01 vs 291.96 (+3%, was +26%).",
+   "ct3: case re-opened on the 2026-09-30 balance (gather/repair.json factbook rows from pf_rel_20261028_1): debt 144.35bn incl. the 19.25bn preferred, 12.294bn shares, investments 343.99bn, cash 56.33bn; interest_rate 3.5% (position.json)."
+  ],
+  "open": [
+   "ct1: stresses capex+25%, cash costs+15% and prices-20% still funding_blocked from 2026-12-31 (base/bear). The engine's funding model cannot take the ATM or notes as committed funding.",
+   "ct3: the engine 'claims' and 'debt_interest' texts are stale boilerplate. The preferred is charged at 3.5%, not 6.25% (about 0.5bn a year). There is no capital_bridge package and no redteam_audit run. Current maturities at 9/30 wait on the 10-Q.",
+   "company_first cf2 (growth_anchor source tier labelled 'contracted' for Services and bull) and cf3 were not in this repair's list; they stay as the reviewer wrote them."
+  ],
+  "ran": true
+ },
+ "returned": [
+  "analyst",
+  "analyst_field",
+  "analyst_path",
+  "gather_documents",
+  "gather_field",
+  "gather_macro",
+  "gather_numbers",
+  "repair",
+  "review_counter",
+  "review_numbers",
+  "review_trace"
+ ],
+ "times": {
+  "started_at_utc": "2026-10-28T22:36:30+00:00",
+  "prefetch_finished_at_utc": "2026-10-28T22:36:36+00:00",
+  "minutes_after_start": {
+   "gather/_prefetch.json": 0.1,
+   "gather/expectations.json": 7.9,
+   "gather/field.json": 8.9,
+   "gather/numbers.json": 4.1,
+   "gather/repair.json": 29.1,
+   "gather/reports.json": 5.6,
+   "understand/business.json": 13.1,
+   "understand/econ_case_q3.json": 10.7,
+   "understand/econ_options_q3.json": 10.7,
+   "understand/econ_result_q3.json": 10.7,
+   "understand/quarter_case_q3.json": 10.3,
+   "understand/quarter_result_q3.json": 10.3,
+   "review/trace.json": 24.4,
+   "review/repair.json": 29.9
+  },
+  "elapsed_minutes": 29.9
+ },
+ "meaning": "verified needs: the engine ran in this attempt, the three reviewers returned (files of this attempt AND the main loop's record), no critical finding open after the one repair pass. The engine's own review status is reported beside it, never replaced by it."
+}

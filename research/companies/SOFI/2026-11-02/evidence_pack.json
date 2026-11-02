@@ -1,0 +1,4446 @@
+{
+ "pack_version": 1,
+ "ticker": "SOFI",
+ "as_of": "2026-11-02",
+ "identity": {
+  "name": "SoFi Technologies, Inc.",
+  "currency": "USD",
+  "exchange": "Nasdaq",
+  "security": "SoFi Technologies, Inc. common stock (single class; no ADR)",
+  "fiscal_year_end": "12-31",
+  "cik": "1818874",
+  "type": "high_growth / fast_grower (computed by classify_company from SEC companyfacts; the analyst confirms or overrides with reasons)",
+  "evidence_ids": [
+   "pf_10k_20260217"
+  ]
+ },
+ "sources": [
+  {
+   "id": "pf_10k_20260217",
+   "kind": "sec_filing",
+   "title": "SoFi Technologies, Inc. 10-K filed 2026-02-17 (period 2025-12-31)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887426000013/sofi-20251231.htm",
+   "date": "2026-02-17",
+   "independent": true,
+   "publisher": "SoFi Technologies, Inc. (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_10q_20260806",
+   "kind": "sec_filing",
+   "title": "SoFi Technologies, Inc. 10-Q filed 2026-08-06 (period 2026-06-30)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887426000054/sofi-20260630.htm",
+   "date": "2026-08-06",
+   "independent": true,
+   "publisher": "SoFi Technologies, Inc. (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_proxy_20260430",
+   "kind": "sec_filing",
+   "title": "SoFi Technologies, Inc. DEF 14A filed 2026-04-30 (period 2026-04-30)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887426000032/sofi-20260430.htm",
+   "date": "2026-04-30",
+   "independent": true,
+   "publisher": "SoFi Technologies, Inc. (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_10q_20260507",
+   "kind": "sec_filing",
+   "title": "SoFi Technologies, Inc. 10-Q filed 2026-05-07 (period 2026-03-31)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887426000037/sofi-20260331.htm",
+   "date": "2026-05-07",
+   "independent": true,
+   "publisher": "SoFi Technologies, Inc. (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20261027_1",
+   "kind": "release",
+   "title": "SoFi Technologies, Inc. earnings 8-K filed 2026-10-27, exhibit a2026q3earningsrelease.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887426000065/a2026q3earningsrelease.htm",
+   "date": "2026-10-27",
+   "independent": true,
+   "publisher": "SoFi Technologies, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20260729_1",
+   "kind": "release",
+   "title": "SoFi Technologies, Inc. earnings 8-K filed 2026-07-29, exhibit a2026q2earningsrelease.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887426000050/a2026q2earningsrelease.htm",
+   "date": "2026-07-29",
+   "independent": true,
+   "publisher": "SoFi Technologies, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20260429_1",
+   "kind": "release",
+   "title": "SoFi Technologies, Inc. earnings 8-K filed 2026-04-29, exhibit a2026q1earningsrelease.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887426000020/a2026q1earningsrelease.htm",
+   "date": "2026-04-29",
+   "independent": true,
+   "publisher": "SoFi Technologies, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20260130_1",
+   "kind": "release",
+   "title": "SoFi Technologies, Inc. earnings 8-K filed 2026-01-30, exhibit a2025q4earningsrelease.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887426000008/a2025q4earningsrelease.htm",
+   "date": "2026-01-30",
+   "independent": true,
+   "publisher": "SoFi Technologies, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20251028_1",
+   "kind": "release",
+   "title": "SoFi Technologies, Inc. earnings 8-K filed 2025-10-28, exhibit a2025q3earningsrelease.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887425000204/a2025q3earningsrelease.htm",
+   "date": "2025-10-28",
+   "independent": true,
+   "publisher": "SoFi Technologies, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20250729_1",
+   "kind": "release",
+   "title": "SoFi Technologies, Inc. earnings 8-K filed 2025-07-29, exhibit a2025q2earningsrelease.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887425000148/a2025q2earningsrelease.htm",
+   "date": "2025-07-29",
+   "independent": true,
+   "publisher": "SoFi Technologies, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20250429_1",
+   "kind": "release",
+   "title": "SoFi Technologies, Inc. earnings 8-K filed 2025-04-29, exhibit a2025q1earningsrelease.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887425000068/a2025q1earningsrelease.htm",
+   "date": "2025-04-29",
+   "independent": true,
+   "publisher": "SoFi Technologies, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20250127_1",
+   "kind": "release",
+   "title": "SoFi Technologies, Inc. earnings 8-K filed 2025-01-27, exhibit q42024earningsrelease.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887425000006/q42024earningsrelease.htm",
+   "date": "2025-01-27",
+   "independent": true,
+   "publisher": "SoFi Technologies, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_fred_dgs10",
+   "kind": "macro",
+   "title": "Market yield on US Treasury securities at 10-year constant maturity, percent, daily (FRED DGS10)",
+   "url": "https://fred.stlouisfed.org/series/DGS10",
+   "date": "2026-10-29",
+   "independent": true,
+   "publisher": "Federal Reserve Bank of St. Louis (FRED), from the Federal Reserve H.15",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_erp_implied",
+   "kind": "macro",
+   "title": "Damodaran implied ERP for the S&P 500 on 1 October 2026 (trailing 12 months, adjusted payout), treasury 5.29%",
+   "url": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/home.htm",
+   "date": "2026-10-01",
+   "independent": true,
+   "publisher": "Aswath Damodaran (NYU Stern), as saved in runs/macro/market_2026-10-20.json",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20220301",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of SoFi Technologies, Inc.: facts of the filing(s) of 2022-03-01",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001818874.json#filed=2022-03-01",
+   "date": "2022-03-01",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20210317",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of SoFi Technologies, Inc.: facts of the filing(s) of 2021-03-17",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001818874.json#filed=2021-03-17",
+   "date": "2021-03-17",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20210816",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of SoFi Technologies, Inc.: facts of the filing(s) of 2021-08-16",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001818874.json#filed=2021-08-16",
+   "date": "2021-08-16",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20230301",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of SoFi Technologies, Inc.: facts of the filing(s) of 2023-03-01",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001818874.json#filed=2023-03-01",
+   "date": "2023-03-01",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20240227",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of SoFi Technologies, Inc.: facts of the filing(s) of 2024-02-27",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001818874.json#filed=2024-02-27",
+   "date": "2024-02-27",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20250224",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of SoFi Technologies, Inc.: facts of the filing(s) of 2025-02-24",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001818874.json#filed=2025-02-24",
+   "date": "2025-02-24",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20260217",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of SoFi Technologies, Inc.: facts of the filing(s) of 2026-02-17",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001818874.json#filed=2026-02-17",
+   "date": "2026-02-17",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20241107",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of SoFi Technologies, Inc.: facts of the filing(s) of 2024-11-07",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001818874.json#filed=2024-11-07",
+   "date": "2024-11-07",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20250506",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of SoFi Technologies, Inc.: facts of the filing(s) of 2025-05-06",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001818874.json#filed=2025-05-06",
+   "date": "2025-05-06",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20250807",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of SoFi Technologies, Inc.: facts of the filing(s) of 2025-08-07",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001818874.json#filed=2025-08-07",
+   "date": "2025-08-07",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20251106",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of SoFi Technologies, Inc.: facts of the filing(s) of 2025-11-06",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001818874.json#filed=2025-11-06",
+   "date": "2025-11-06",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20260507",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of SoFi Technologies, Inc.: facts of the filing(s) of 2026-05-07",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001818874.json#filed=2026-05-07",
+   "date": "2026-05-07",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20260806",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of SoFi Technologies, Inc.: facts of the filing(s) of 2026-08-06",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001818874.json#filed=2026-08-06",
+   "date": "2026-08-06",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_peer_NU",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Nu Holdings Ltd. (NU), a named competitor: fiscal years through FY2024",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001691493.json",
+   "date": "2025-04-16",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from NU's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_peer_ALLY",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Ally Financial Inc. (ALLY), a named competitor: fiscal years through FY2025",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000040729.json",
+   "date": "2026-02-25",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from ALLY's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_peer_COF",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of CAPITAL ONE FINANCIAL CORP (COF), a named competitor: fiscal years through FY2025",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000927628.json",
+   "date": "2026-02-19",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from COF's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "dc_call_20261027",
+   "kind": "transcript",
+   "title": "SoFi Technologies Q3 2026 earnings call transcript (Alpha Vantage EARNINGS_CALL_TRANSCRIPT) (copy of the issuer's call, 2026-10-27)",
+   "url": "connector:Alpha_Vantage_MCP_Server__EARNINGS_CALL_TRANSCRIPT",
+   "date": "2026-10-27",
+   "independent": false,
+   "publisher": "Alpha Vantage",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_cf_LC",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of LendingClub (LC; XBRL entity name now 'Happen, Inc.', CIK 1409970): annual and quarterly revenue lines through the 10-Q filed 2026-10-29",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001409970.json",
+   "date": "2026-10-29",
+   "independent": true,
+   "publisher": "SEC EDGAR (LendingClub / Happen filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_cf_UPST",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Upstart Holdings (UPST, CIK 1647639): annual and quarterly revenue, operating income, net income through the 10-Q filed 2026-08-04",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001647639.json",
+   "date": "2026-08-04",
+   "independent": true,
+   "publisher": "SEC EDGAR (Upstart filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_cf_HOOD",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Robinhood Markets (HOOD, CIK 1783879): annual and quarterly revenue and net income through the 10-Q filed 2026-10-28",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001783879.json",
+   "date": "2026-10-28",
+   "independent": true,
+   "publisher": "SEC EDGAR (Robinhood filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_transunion_q2_2026",
+   "kind": "industry",
+   "title": "TransUnion Q2 2026 Credit Industry Insights Report: unsecured personal loan balances $281B (page read via fetch; no fintech share on the page)",
+   "url": "https://newsroom.transunion.com/Q2-2026-CIIR/",
+   "date": "2026-08-06",
+   "independent": true,
+   "publisher": "TransUnion",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_fomc_20261028",
+   "kind": "press",
+   "title": "Fed holds rates steady at 3.75%-4.00% (CNBC, Oct 28 2026); FOMC statement summaries",
+   "url": "https://www.cnbc.com/2026/10/28/fed-interest-rate-decision-october-2026.html",
+   "date": "2026-10-28",
+   "independent": true,
+   "publisher": "CNBC",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_bls_sep2026",
+   "kind": "macro",
+   "title": "BLS Employment Situation September 2026: unemployment 4.2%, payrolls +29,000",
+   "url": "https://www.bls.gov/news.release/empsit.nr0.htm",
+   "date": "2026-10-02",
+   "independent": true,
+   "publisher": "U.S. Bureau of Labor Statistics",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_nyfed_2026q2",
+   "kind": "macro",
+   "title": "NY Fed Quarterly Report on Household Debt and Credit 2026Q2",
+   "url": "https://www.newyorkfed.org/medialibrary/interactives/householdcredit/data/pdf/hhdc_2026q2.pdf",
+   "date": "2026-08-06",
+   "independent": true,
+   "publisher": "Federal Reserve Bank of New York",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_ed_rap_20261022",
+   "kind": "press",
+   "title": "Education Department's new plan for student loans may be a trap (Forbes, Oct 22 2026); RAP opened July 1 2026",
+   "url": "https://www.forbes.com/sites/adamminsky/2026/10/22/education-departments-new-plan-for-student-loans-may-be-a-trap/",
+   "date": "2026-10-22",
+   "independent": true,
+   "publisher": "Forbes",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_sofi_lpb_20260326",
+   "kind": "company_ir",
+   "title": "SoFi Expands Loan Platform Business with Multiple New Agreements Totaling Over $3.6 Billion",
+   "url": "https://investors.sofi.com/news/news-details/2026/SoFi-Expands-Loan-Platform-Business-with-Multiple-New-Agreements-Totaling-Over-3-6-Billion/default.aspx",
+   "date": "2026-03-26",
+   "independent": true,
+   "publisher": "SoFi Technologies IR",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_basel_20260320",
+   "kind": "press",
+   "title": "Basel III Endgame Evolution: Banking Agencies Propose Major Capital Overhaul (Again), Simpson Thacher, Mar 20 2026",
+   "url": "https://www.stblaw.com/about-us/publications/view/2026/03/20/basel-iii-endgame-evolution-banking-agencies-propose-major-capital-overhaul-again",
+   "date": "2026-03-20",
+   "independent": true,
+   "publisher": "Simpson Thacher & Bartlett",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_coindesk_20260507",
+   "kind": "press",
+   "title": "SoFi's crypto relaunch brought in $121.6 million in Q1. Almost all of it went to costs (CoinDesk)",
+   "url": "https://www.coindesk.com/business/2026/05/07/sofi-s-relaunched-crypto-business-generated-usd121-6-million-in-q1-transaction-revenue",
+   "date": "2026-05-07",
+   "independent": true,
+   "publisher": "CoinDesk",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_sofiusd_20260527",
+   "kind": "press",
+   "title": "SoFi brings bank-issued stablecoin to 15 million users in crypto push (CoinDesk)",
+   "url": "https://www.coindesk.com/business/2026/05/27/sofi-brings-bank-issued-stablecoin-to-15-million-users-in-crypto-push",
+   "date": "2026-05-27",
+   "independent": true,
+   "publisher": "CoinDesk",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_ib_price",
+   "kind": "price",
+   "title": "Interactive Brokers price snapshot SOFI (last 16.95) and monthly history",
+   "url": "connector:Interactive_Brokers.get_price_snapshot",
+   "date": "2026-11-02",
+   "independent": true,
+   "publisher": "Interactive Brokers",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_av_est",
+   "kind": "consensus",
+   "title": "Alpha Vantage EARNINGS_ESTIMATES SOFI (analyst counts, high/low, revisions)",
+   "url": "connector:Alpha_Vantage.EARNINGS_ESTIMATES",
+   "date": "2026-11-02",
+   "independent": true,
+   "publisher": "Alpha Vantage (provider-aggregated analyst estimates)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "uf_cof_q3_2026",
+   "kind": "release",
+   "title": "Capital One Financial Q3 2026 earnings release (8-K exhibit 99.1): NIM 8.41%, CET1 13.8% (as summarised in the deep lane notes)",
+   "url": "https://www.sec.gov/Archives/edgar/data/0000927628/000092762826000142/ex991q32026earningsrelease.htm",
+   "date": "2026-10-20",
+   "independent": true,
+   "publisher": "Capital One Financial Corp (SEC EDGAR)",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "uf_insider_noto_2026",
+   "kind": "press",
+   "title": "Insider trades aggregator: SoFi CEO Anthony Noto open-market purchases in 2026 (about 56k shares at $17.88 on 2026-03-02, 28,900 at about $17.32 on 2026-03-17), citing Form 4 filings; not verified line by line on EDGAR",
+   "url": "https://www.insidertrades.com/alerts/nasdaq-sofi-insider-buying-and-selling-2026-03-18",
+   "date": "2026-03-18",
+   "independent": true,
+   "publisher": "InsiderTrades.com",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  }
+ ],
+ "facts": [
+  {
+   "id": "pf_revenue_fy2020",
+   "metric": "revenue",
+   "period": "FY2020",
+   "value": 103331000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220301"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_fy2020",
+   "metric": "operating_income",
+   "period": "FY2020",
+   "value": -142915000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220301"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_net_income_fy2020",
+   "metric": "net_income",
+   "period": "FY2020",
+   "value": -224053000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220301"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_fy2020",
+   "metric": "cfo",
+   "period": "FY2020",
+   "value": -479336000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220301"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_fy2020",
+   "metric": "capex",
+   "period": "FY2020",
+   "value": 24549000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220301"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_fy2020",
+   "metric": "sbc",
+   "period": "FY2020",
+   "value": 99870000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220301"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_d_and_a_fy2020",
+   "metric": "d_and_a",
+   "period": "FY2020",
+   "value": 69832000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220301"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_rd_fy2020",
+   "metric": "rd",
+   "period": "FY2020",
+   "value": 201199000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220301"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_eps_diluted_fy2020",
+   "metric": "eps_diluted",
+   "period": "FY2020",
+   "value": -4.3,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_cf_20220301"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_shares_diluted_wavg_fy2020",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2020",
+   "value": 73851108.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_cf_20220301"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_buybacks_fy2020",
+   "metric": "buybacks",
+   "period": "FY2020",
+   "value": 40000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220301"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cash_fy2020",
+   "metric": "cash",
+   "period": "FY2020",
+   "value": 259714.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210317"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_total_assets_fy2020",
+   "metric": "total_assets",
+   "period": "FY2020",
+   "value": 806077995.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210317"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_equity_fy2020",
+   "metric": "equity",
+   "period": "FY2020",
+   "value": 5000008.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210317"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_goodwill_fy2020",
+   "metric": "goodwill",
+   "period": "FY2020",
+   "value": 899270000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210816"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_fy2021",
+   "metric": "revenue",
+   "period": "FY2021",
+   "value": 247718000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220301"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_fy2021",
+   "metric": "operating_income",
+   "period": "FY2021",
+   "value": -378401000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220301"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_net_income_fy2021",
+   "metric": "net_income",
+   "period": "FY2021",
+   "value": -483937000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220301"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_fy2021",
+   "metric": "cfo",
+   "period": "FY2021",
+   "value": -1350217000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220301"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_fy2021",
+   "metric": "capex",
+   "period": "FY2021",
+   "value": 52261000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220301"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_fy2021",
+   "metric": "sbc",
+   "period": "FY2021",
+   "value": 239011000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220301"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_d_and_a_fy2021",
+   "metric": "d_and_a",
+   "period": "FY2021",
+   "value": 101568000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220301"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_rd_fy2021",
+   "metric": "rd",
+   "period": "FY2021",
+   "value": 276087000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220301"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_eps_diluted_fy2021",
+   "metric": "eps_diluted",
+   "period": "FY2021",
+   "value": -1.0,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_cf_20220301"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_shares_diluted_wavg_fy2021",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2021",
+   "value": 526730261.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_cf_20220301"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_buybacks_fy2021",
+   "metric": "buybacks",
+   "period": "FY2021",
+   "value": 526000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220301"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cash_fy2021",
+   "metric": "cash",
+   "period": "FY2021",
+   "value": 494711000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220301"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_total_assets_fy2021",
+   "metric": "total_assets",
+   "period": "FY2021",
+   "value": 9176326000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220301"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_equity_fy2021",
+   "metric": "equity",
+   "period": "FY2021",
+   "value": 4377329000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220301"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_goodwill_fy2021",
+   "metric": "goodwill",
+   "period": "FY2021",
+   "value": 898527000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220301"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_fy2022",
+   "metric": "revenue",
+   "period": "FY2022",
+   "value": 377096000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230301"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_fy2022",
+   "metric": "operating_income",
+   "period": "FY2022",
+   "value": -129446000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230301"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_net_income_fy2022",
+   "metric": "net_income",
+   "period": "FY2022",
+   "value": -320407000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230301"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_fy2022",
+   "metric": "cfo",
+   "period": "FY2022",
+   "value": -7255858000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230301"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_fy2022",
+   "metric": "capex",
+   "period": "FY2022",
+   "value": 93201000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230301"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_fy2022",
+   "metric": "sbc",
+   "period": "FY2022",
+   "value": 305994000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230301"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_d_and_a_fy2022",
+   "metric": "d_and_a",
+   "period": "FY2022",
+   "value": 151360000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230301"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_rd_fy2022",
+   "metric": "rd",
+   "period": "FY2022",
+   "value": 405257000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230301"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_eps_diluted_fy2022",
+   "metric": "eps_diluted",
+   "period": "FY2022",
+   "value": -0.4,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_cf_20230301"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_shares_diluted_wavg_fy2022",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2022",
+   "value": 900886113.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_cf_20230301"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_buybacks_fy2022",
+   "metric": "buybacks",
+   "period": "FY2022",
+   "value": 0.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230301"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cash_fy2022",
+   "metric": "cash",
+   "period": "FY2022",
+   "value": 1421907000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230301"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_total_assets_fy2022",
+   "metric": "total_assets",
+   "period": "FY2022",
+   "value": 19007675000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230301"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_equity_fy2022",
+   "metric": "equity",
+   "period": "FY2022",
+   "value": 5208102000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230301"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_goodwill_fy2022",
+   "metric": "goodwill",
+   "period": "FY2022",
+   "value": 1622991000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230301"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_fy2023",
+   "metric": "revenue",
+   "period": "FY2023",
+   "value": 421454000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240227"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_fy2023",
+   "metric": "operating_income",
+   "period": "FY2023",
+   "value": 488169000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240227"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_net_income_fy2023",
+   "metric": "net_income",
+   "period": "FY2023",
+   "value": -300742000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240227"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_fy2023",
+   "metric": "cfo",
+   "period": "FY2023",
+   "value": -7227139000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240227"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_fy2023",
+   "metric": "capex",
+   "period": "FY2023",
+   "value": 111409000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240227"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_fy2023",
+   "metric": "sbc",
+   "period": "FY2023",
+   "value": 271216000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240227"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_d_and_a_fy2023",
+   "metric": "d_and_a",
+   "period": "FY2023",
+   "value": 201416000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240227"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_rd_fy2023",
+   "metric": "rd",
+   "period": "FY2023",
+   "value": 511419000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240227"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_eps_diluted_fy2023",
+   "metric": "eps_diluted",
+   "period": "FY2023",
+   "value": -0.36,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_cf_20240227"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_shares_diluted_wavg_fy2023",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2023",
+   "value": 945024160.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_cf_20240227"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_buybacks_fy2023",
+   "metric": "buybacks",
+   "period": "FY2023",
+   "value": 0.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240227"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cash_fy2023",
+   "metric": "cash",
+   "period": "FY2023",
+   "value": 3085020000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240227"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_total_assets_fy2023",
+   "metric": "total_assets",
+   "period": "FY2023",
+   "value": 30074858000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240227"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_equity_fy2023",
+   "metric": "equity",
+   "period": "FY2023",
+   "value": 5234612000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240227"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_goodwill_fy2023",
+   "metric": "goodwill",
+   "period": "FY2023",
+   "value": 1393505000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240227"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_fy2024",
+   "metric": "revenue",
+   "period": "FY2024",
+   "value": 503123000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250224"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_fy2024",
+   "metric": "operating_income",
+   "period": "FY2024",
+   "value": 233345000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250224"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_net_income_fy2024",
+   "metric": "net_income",
+   "period": "FY2024",
+   "value": 498665000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250224"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_fy2024",
+   "metric": "cfo",
+   "period": "FY2024",
+   "value": -1119807000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250224"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_fy2024",
+   "metric": "capex",
+   "period": "FY2024",
+   "value": 154265000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250224"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_fy2024",
+   "metric": "sbc",
+   "period": "FY2024",
+   "value": 246152000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250224"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_d_and_a_fy2024",
+   "metric": "d_and_a",
+   "period": "FY2024",
+   "value": 203498000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250224"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_rd_fy2024",
+   "metric": "rd",
+   "period": "FY2024",
+   "value": 551787000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250224"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_eps_diluted_fy2024",
+   "metric": "eps_diluted",
+   "period": "FY2024",
+   "value": 0.39,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_cf_20250224"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_shares_diluted_wavg_fy2024",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2024",
+   "value": 1101390000.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_cf_20250224"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cash_fy2024",
+   "metric": "cash",
+   "period": "FY2024",
+   "value": 2538293000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250224"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_total_assets_fy2024",
+   "metric": "total_assets",
+   "period": "FY2024",
+   "value": 36250951000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250224"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_equity_fy2024",
+   "metric": "equity",
+   "period": "FY2024",
+   "value": 6525134000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250224"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_goodwill_fy2024",
+   "metric": "goodwill",
+   "period": "FY2024",
+   "value": 1393505000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250224"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_fy2025",
+   "metric": "revenue",
+   "period": "FY2025",
+   "value": 619353000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260217"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_fy2025",
+   "metric": "operating_income",
+   "period": "FY2025",
+   "value": 525857000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260217"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_net_income_fy2025",
+   "metric": "net_income",
+   "period": "FY2025",
+   "value": 481320000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260217"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_fy2025",
+   "metric": "cfo",
+   "period": "FY2025",
+   "value": -3742458000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260217"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_fy2025",
+   "metric": "capex",
+   "period": "FY2025",
+   "value": 242444000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260217"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_fy2025",
+   "metric": "sbc",
+   "period": "FY2025",
+   "value": 262058000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260217"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_d_and_a_fy2025",
+   "metric": "d_and_a",
+   "period": "FY2025",
+   "value": 234151000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260217"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_rd_fy2025",
+   "metric": "rd",
+   "period": "FY2025",
+   "value": 648332000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260217"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_eps_diluted_fy2025",
+   "metric": "eps_diluted",
+   "period": "FY2025",
+   "value": 0.39,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_cf_20260217"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_shares_diluted_wavg_fy2025",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2025",
+   "value": 1251767000.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_cf_20260217"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cash_fy2025",
+   "metric": "cash",
+   "period": "FY2025",
+   "value": 4929452000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260217"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_total_assets_fy2025",
+   "metric": "total_assets",
+   "period": "FY2025",
+   "value": 50660478000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260217"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_equity_fy2025",
+   "metric": "equity",
+   "period": "FY2025",
+   "value": 10489495000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260217"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_goodwill_fy2025",
+   "metric": "goodwill",
+   "period": "FY2025",
+   "value": 1393505000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260217"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_q_2024_09_30",
+   "metric": "revenue",
+   "period": "Q@2024-09-30",
+   "value": 131225000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20241107"
+   ],
+   "period_end": "2024-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_q_2024_09_30",
+   "metric": "operating_income",
+   "period": "Q@2024-09-30",
+   "value": 63855000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20241107"
+   ],
+   "period_end": "2024-09-30",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_net_income_q_2024_09_30",
+   "metric": "net_income",
+   "period": "Q@2024-09-30",
+   "value": 60745000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20241107"
+   ],
+   "period_end": "2024-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_q_2024_09_30",
+   "metric": "sbc",
+   "period": "Q@2024-09-30",
+   "value": 63646000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20241107"
+   ],
+   "period_end": "2024-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_q_2024_09_30",
+   "metric": "cfo",
+   "period": "Q@2024-09-30",
+   "value": -1173581000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20241107"
+   ],
+   "period_end": "2024-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_q_2024_09_30",
+   "metric": "capex",
+   "period": "Q@2024-09-30",
+   "value": 43306000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20241107"
+   ],
+   "period_end": "2024-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_q_2024_12_31",
+   "metric": "revenue",
+   "period": "Q@2024-12-31",
+   "value": 135507000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250224"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_operating_income_q_2024_12_31",
+   "metric": "operating_income",
+   "period": "Q@2024-12-31",
+   "value": 59924000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250224"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_net_income_q_2024_12_31",
+   "metric": "net_income",
+   "period": "Q@2024-12-31",
+   "value": 332473000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250224"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_sbc_q_2024_12_31",
+   "metric": "sbc",
+   "period": "Q@2024-12-31",
+   "value": 66367000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250224"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_cfo_q_2024_12_31",
+   "metric": "cfo",
+   "period": "Q@2024-12-31",
+   "value": -200103000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250224"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_capex_q_2024_12_31",
+   "metric": "capex",
+   "period": "Q@2024-12-31",
+   "value": 42263000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250224"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_revenue_q_2025_03_31",
+   "metric": "revenue",
+   "period": "Q@2025-03-31",
+   "value": 140382000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250506"
+   ],
+   "period_end": "2025-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_q_2025_03_31",
+   "metric": "operating_income",
+   "period": "Q@2025-03-31",
+   "value": 79782000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250506"
+   ],
+   "period_end": "2025-03-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_net_income_q_2025_03_31",
+   "metric": "net_income",
+   "period": "Q@2025-03-31",
+   "value": 71116000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250506"
+   ],
+   "period_end": "2025-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_q_2025_03_31",
+   "metric": "sbc",
+   "period": "Q@2025-03-31",
+   "value": 63756000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250506"
+   ],
+   "period_end": "2025-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_q_2025_03_31",
+   "metric": "cfo",
+   "period": "Q@2025-03-31",
+   "value": 21502000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250506"
+   ],
+   "period_end": "2025-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_q_2025_03_31",
+   "metric": "capex",
+   "period": "Q@2025-03-31",
+   "value": 52604000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250506"
+   ],
+   "period_end": "2025-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_q_2025_06_30",
+   "metric": "revenue",
+   "period": "Q@2025-06-30",
+   "value": 151890000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250807"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_q_2025_06_30",
+   "metric": "operating_income",
+   "period": "Q@2025-06-30",
+   "value": 112192000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250807"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_net_income_q_2025_06_30",
+   "metric": "net_income",
+   "period": "Q@2025-06-30",
+   "value": 97263000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250807"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_q_2025_06_30",
+   "metric": "sbc",
+   "period": "Q@2025-06-30",
+   "value": 63256000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250807"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_q_2025_06_30",
+   "metric": "cfo",
+   "period": "Q@2025-06-30",
+   "value": -1466908000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250807"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_q_2025_06_30",
+   "metric": "capex",
+   "period": "Q@2025-06-30",
+   "value": 63465000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250807"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_q_2025_09_30",
+   "metric": "revenue",
+   "period": "Q@2025-09-30",
+   "value": 156791000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20251106"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_q_2025_09_30",
+   "metric": "operating_income",
+   "period": "Q@2025-09-30",
+   "value": 148551000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20251106"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_net_income_q_2025_09_30",
+   "metric": "net_income",
+   "period": "Q@2025-09-30",
+   "value": 139392000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20251106"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_q_2025_09_30",
+   "metric": "sbc",
+   "period": "Q@2025-09-30",
+   "value": 66469000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20251106"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_q_2025_09_30",
+   "metric": "cfo",
+   "period": "Q@2025-09-30",
+   "value": -1305874000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20251106"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_q_2025_09_30",
+   "metric": "capex",
+   "period": "Q@2025-09-30",
+   "value": 59978000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20251106"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_q_2025_12_31",
+   "metric": "revenue",
+   "period": "Q@2025-12-31",
+   "value": 170290000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260217"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_operating_income_q_2025_12_31",
+   "metric": "operating_income",
+   "period": "Q@2025-12-31",
+   "value": 185332000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260217"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_net_income_q_2025_12_31",
+   "metric": "net_income",
+   "period": "Q@2025-12-31",
+   "value": 173549000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260217"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_sbc_q_2025_12_31",
+   "metric": "sbc",
+   "period": "Q@2025-12-31",
+   "value": 68577000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260217"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_cfo_q_2025_12_31",
+   "metric": "cfo",
+   "period": "Q@2025-12-31",
+   "value": -991178000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260217"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_capex_q_2025_12_31",
+   "metric": "capex",
+   "period": "Q@2025-12-31",
+   "value": 66397000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260217"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_revenue_q_2026_03_31",
+   "metric": "revenue",
+   "period": "Q@2026-03-31",
+   "value": 129504000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260507"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_q_2026_03_31",
+   "metric": "operating_income",
+   "period": "Q@2026-03-31",
+   "value": 199552000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260507"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_net_income_q_2026_03_31",
+   "metric": "net_income",
+   "period": "Q@2026-03-31",
+   "value": 166731000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260507"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_q_2026_03_31",
+   "metric": "sbc",
+   "period": "Q@2026-03-31",
+   "value": 72012000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260507"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_q_2026_03_31",
+   "metric": "cfo",
+   "period": "Q@2026-03-31",
+   "value": -2314994000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260507"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_q_2026_03_31",
+   "metric": "capex",
+   "period": "Q@2026-03-31",
+   "value": 67551000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260507"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_q_2026_06_30",
+   "metric": "revenue",
+   "period": "Q@2026-06-30",
+   "value": 153577000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260806"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_q_2026_06_30",
+   "metric": "operating_income",
+   "period": "Q@2026-06-30",
+   "value": 204309000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260806"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_net_income_q_2026_06_30",
+   "metric": "net_income",
+   "period": "Q@2026-06-30",
+   "value": 156592000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260806"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_q_2026_06_30",
+   "metric": "sbc",
+   "period": "Q@2026-06-30",
+   "value": 76865000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260806"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_q_2026_06_30",
+   "metric": "cfo",
+   "period": "Q@2026-06-30",
+   "value": -3890444000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260806"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_q_2026_06_30",
+   "metric": "capex",
+   "period": "Q@2026-06-30",
+   "value": 96573000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260806"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f01_net_interest_margin",
+   "metric": "net_interest_margin",
+   "period": "Q3 2026",
+   "value": 0.0614,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f02_net_interest_income",
+   "metric": "net_interest_income",
+   "period": "Q3 2026",
+   "value": 929452000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f03_total_deposits",
+   "metric": "total_deposits",
+   "period": "Q3 2026",
+   "value": 51325022000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f04_loan_originations_total",
+   "metric": "loan_originations_total",
+   "period": "Q3 2026",
+   "value": 16932283000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f05_loan_originations_personal",
+   "metric": "loan_originations_personal",
+   "period": "Q3 2026",
+   "value": 12622140000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f06_loan_originations_student",
+   "metric": "loan_originations_student",
+   "period": "Q3 2026",
+   "value": 2922068000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f07_loan_originations_home",
+   "metric": "loan_originations_home",
+   "period": "Q3 2026",
+   "value": 1361024000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f08_loan_platform_business_originations",
+   "metric": "loan_platform_business_originations",
+   "period": "Q3 2026",
+   "value": 3800000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1",
+    "dc_call_20261027"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f09_loan_platform_business_revenue",
+   "metric": "loan_platform_business_revenue",
+   "period": "Q3 2026",
+   "value": 153400000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1",
+    "dc_call_20261027"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f10_loan_platform_fees",
+   "metric": "loan_platform_fees",
+   "period": "Q3 2026",
+   "value": 151164000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f11_loan_origination_fees",
+   "metric": "loan_origination_fees",
+   "period": "Q3 2026",
+   "value": 270851000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f12_fee_based_revenue",
+   "metric": "fee_based_revenue",
+   "period": "Q3 2026",
+   "value": 570626000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f13_provision_for_credit_losses",
+   "metric": "provision_for_credit_losses",
+   "period": "Q3 2026",
+   "value": 14738000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f14_net_charge_off_rate_personal",
+   "metric": "net_charge_off_rate_personal",
+   "period": "Q3 2026",
+   "value": 0.0226,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f15_net_charge_off_rate_personal_all_in_ex_delinquent_sales",
+   "metric": "net_charge_off_rate_personal_all_in_ex_delinquent_sales",
+   "period": "Q3 2026",
+   "value": 0.034,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261027_1",
+    "dc_call_20261027"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f16_net_charge_off_rate_student",
+   "metric": "net_charge_off_rate_student",
+   "period": "Q3 2026",
+   "value": 0.0063,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f17_net_charge_off_rate_total_loans",
+   "metric": "net_charge_off_rate_total_loans",
+   "period": "Q3 2026",
+   "value": 0.0162,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f18_net_charge_off_rate_credit_card",
+   "metric": "net_charge_off_rate_credit_card",
+   "period": "Q3 2026",
+   "value": 0.0777,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f19_cet1_ratio",
+   "metric": "cet1_ratio",
+   "period": "Q3 2026",
+   "value": 0.169,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f20_total_risk_based_capital_ratio",
+   "metric": "total_risk_based_capital_ratio",
+   "period": "Q3 2026",
+   "value": 0.17,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f21_risk_weighted_assets",
+   "metric": "risk_weighted_assets",
+   "period": "Q3 2026",
+   "value": 56236976000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f22_tangible_book_value",
+   "metric": "tangible_book_value",
+   "period": "Q3 2026",
+   "value": 9704959000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f23_tangible_book_value_per_share",
+   "metric": "tangible_book_value_per_share",
+   "period": "Q3 2026",
+   "value": 7.48,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f24_return_on_tangible_common_equity",
+   "metric": "return_on_tangible_common_equity",
+   "period": "Q3 2026",
+   "value": 0.1,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261027_1",
+    "dc_call_20261027"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f25_total_debt",
+   "metric": "total_debt",
+   "period": "Q3 2026",
+   "value": 3862925000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f26_fair_value_loans_total",
+   "metric": "fair_value_loans_total",
+   "period": "Q3 2026",
+   "value": 52483448000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f27_adjusted_net_revenue",
+   "metric": "adjusted_net_revenue",
+   "period": "Q3 2026",
+   "value": 1371124000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f28_adjusted_ebitda",
+   "metric": "adjusted_ebitda",
+   "period": "Q3 2026",
+   "value": 469818000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f29_adjusted_net_income",
+   "metric": "adjusted_net_income",
+   "period": "Q3 2026",
+   "value": 242986000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_f_rev_us_2025",
+   "metric": "revenue_by_region:United States",
+   "period": "FY2025",
+   "value": 3364662,
+   "unit": "USD thousands",
+   "source_ids": [
+    "pf_10k_20260217"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_f_rev_foreign_2025",
+   "metric": "revenue_by_region:All foreign countries",
+   "period": "FY2025",
+   "value": 248692,
+   "unit": "USD thousands",
+   "source_ids": [
+    "pf_10k_20260217"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_f_rev_us_2024",
+   "metric": "revenue_by_region:United States",
+   "period": "FY2024",
+   "value": 2576456,
+   "unit": "USD thousands",
+   "source_ids": [
+    "pf_10k_20260217"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_f_rev_foreign_2024",
+   "metric": "revenue_by_region:All foreign countries",
+   "period": "FY2024",
+   "value": 98403,
+   "unit": "USD thousands",
+   "source_ids": [
+    "pf_10k_20260217"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_f_assets_us_2025",
+   "metric": "total_assets_by_region:United States",
+   "period": "FY2025",
+   "value": 49378384,
+   "unit": "USD thousands",
+   "source_ids": [
+    "pf_10k_20260217"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_f_assets_foreign_2025",
+   "metric": "total_assets_by_region:All foreign countries",
+   "period": "FY2025",
+   "value": 1282094,
+   "unit": "USD thousands",
+   "source_ids": [
+    "pf_10k_20260217"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_total_net_revenue_fy2025",
+   "metric": "total_net_revenue",
+   "period": "FY2025",
+   "value": 3613354000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260130_1"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_adj_ebitda_fy2025",
+   "metric": "adjusted_ebitda",
+   "period": "FY2025",
+   "value": 1053898000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260130_1"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_total_net_revenue_q3_2026",
+   "metric": "total_net_revenue",
+   "period": "Q3 2026",
+   "value": 1385099000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_net_income_q3_2026",
+   "metric": "net_income",
+   "period": "Q3 2026",
+   "value": 240989000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q3_2026",
+   "metric": "eps_diluted",
+   "period": "Q3 2026",
+   "value": 0.18,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_adj_ebitda_q3_2026",
+   "metric": "adjusted_ebitda",
+   "period": "Q3 2026",
+   "value": 469818000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_diluted_wavg_q3_2026",
+   "metric": "shares_diluted_wavg",
+   "period": "Q3 2026",
+   "value": 1357811000,
+   "unit": "shares",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_outstanding_q3_2026",
+   "metric": "shares_outstanding_point_in_time",
+   "period": "Q3 2026",
+   "value": 1296617325,
+   "unit": "shares",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_equity_q3_2026",
+   "metric": "total_equity",
+   "period": "Q3 2026",
+   "value": 11295137000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_tangible_book_q3_2026",
+   "metric": "tangible_book_value",
+   "period": "Q3 2026",
+   "value": 9704959000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_tbvps_q3_2026",
+   "metric": "tangible_book_value_per_share",
+   "period": "Q3 2026",
+   "value": 7.48,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_goodwill_q3_2026",
+   "metric": "goodwill",
+   "period": "Q3 2026",
+   "value": 1425159000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_total_assets_q3_2026",
+   "metric": "total_assets",
+   "period": "Q3 2026",
+   "value": 67766776000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_deposits_q3_2026",
+   "metric": "total_deposits",
+   "period": "Q3 2026",
+   "value": 51325022000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_corp_debt_q3_2026",
+   "metric": "debt",
+   "period": "Q3 2026",
+   "value": 3862925000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_cet1_ratio_q3_2026",
+   "metric": "cet1_ratio",
+   "period": "Q3 2026",
+   "value": 0.169,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_nim_q3_2026",
+   "metric": "net_interest_margin",
+   "period": "Q3 2026",
+   "value": 0.0614,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_nii_q3_2026",
+   "metric": "net_interest_income",
+   "period": "Q3 2026",
+   "value": 929500000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_sbc_q3_2026",
+   "metric": "sbc",
+   "period": "Q3 2026",
+   "value": 70884000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_sbc_9m_2026",
+   "metric": "sbc",
+   "period": "9M 2026",
+   "value": 219761000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_roe_fy2025",
+   "metric": "roe_avg_equity",
+   "period": "FY2025",
+   "value": 0.0566,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20260130_1",
+    "pf_10k_20260217"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_roe_q3_2026_annualised",
+   "metric": "roe_avg_equity_annualised",
+   "period": "Q3 2026",
+   "value": 0.086,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_rote_q3_2026_annualised",
+   "metric": "rote_avg_tbv_annualised",
+   "period": "Q3 2026",
+   "value": 0.1005,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "derived"
+  }
+ ],
+ "guidance": [
+  {
+   "id": "dc_g_rev26",
+   "metric": "adjusted net revenue",
+   "period": "FY2026",
+   "low": 5040000000.0,
+   "high": 5040000000.0,
+   "unit": "USD",
+   "issued": "2026-10-27",
+   "source_id": "pf_rel_20261027_1"
+  },
+  {
+   "id": "dc_g_ebitda26",
+   "metric": "adjusted EBITDA",
+   "period": "FY2026",
+   "low": 1660000000.0,
+   "high": 1660000000.0,
+   "unit": "USD",
+   "issued": "2026-10-27",
+   "source_id": "pf_rel_20261027_1"
+  },
+  {
+   "id": "dc_g_ni26",
+   "metric": "adjusted net income",
+   "period": "FY2026",
+   "low": 840000000.0,
+   "high": 840000000.0,
+   "unit": "USD",
+   "issued": "2026-10-27",
+   "source_id": "pf_rel_20261027_1"
+  },
+  {
+   "id": "dc_g_eps26",
+   "metric": "adjusted EPS",
+   "period": "FY2026",
+   "low": 0.61,
+   "high": 0.61,
+   "unit": "USD",
+   "issued": "2026-10-27",
+   "source_id": "pf_rel_20261027_1"
+  },
+  {
+   "id": "dc_g_mem26",
+   "metric": "new members growth at least",
+   "period": "FY2026",
+   "low": 0.3,
+   "high": 0.3,
+   "unit": "ratio",
+   "issued": "2026-10-27",
+   "source_id": "pf_rel_20261027_1"
+  },
+  {
+   "id": "dc_g_rev26_jul",
+   "metric": "adjusted net revenue",
+   "period": "FY2026",
+   "low": 4750000000.0,
+   "high": 4850000000.0,
+   "unit": "USD",
+   "issued": "2026-07-29",
+   "source_id": "pf_rel_20260729_1"
+  },
+  {
+   "id": "dc_g_ebitda26_jul",
+   "metric": "adjusted EBITDA",
+   "period": "FY2026",
+   "low": 1600000000.0,
+   "high": 1600000000.0,
+   "unit": "USD",
+   "issued": "2026-07-29",
+   "source_id": "pf_rel_20260729_1"
+  },
+  {
+   "id": "dc_g_rev26_jan",
+   "metric": "adjusted net revenue",
+   "period": "FY2026",
+   "low": 4655000000.0,
+   "high": 4655000000.0,
+   "unit": "USD",
+   "issued": "2026-01-30",
+   "source_id": "pf_rel_20260130_1"
+  },
+  {
+   "id": "dc_g_ebitda26_jan",
+   "metric": "adjusted EBITDA",
+   "period": "FY2026",
+   "low": 1600000000.0,
+   "high": 1600000000.0,
+   "unit": "USD",
+   "issued": "2026-01-30",
+   "source_id": "pf_rel_20260130_1"
+  },
+  {
+   "id": "dc_g_ni26_jan",
+   "metric": "adjusted net income",
+   "period": "FY2026",
+   "low": 825000000.0,
+   "high": 825000000.0,
+   "unit": "USD",
+   "issued": "2026-01-30",
+   "source_id": "pf_rel_20260130_1"
+  },
+  {
+   "id": "dc_g_eps26_jan",
+   "metric": "adjusted EPS",
+   "period": "FY2026",
+   "low": 0.6,
+   "high": 0.6,
+   "unit": "USD",
+   "issued": "2026-01-30",
+   "source_id": "pf_rel_20260130_1"
+  },
+  {
+   "id": "dc_g_rev_q4",
+   "metric": "adjusted net revenue",
+   "period": "Q4 2026",
+   "low": 1375000000.0,
+   "high": 1375000000.0,
+   "unit": "USD",
+   "issued": "2026-10-27",
+   "source_id": "dc_call_20261027"
+  },
+  {
+   "id": "dc_g_ebitda_q4",
+   "metric": "adjusted EBITDA",
+   "period": "Q4 2026",
+   "low": 492000000.0,
+   "high": 492000000.0,
+   "unit": "USD",
+   "issued": "2026-10-27",
+   "source_id": "dc_call_20261027"
+  },
+  {
+   "id": "dc_g_ni_q4",
+   "metric": "adjusted net income",
+   "period": "Q4 2026",
+   "low": 276000000.0,
+   "high": 276000000.0,
+   "unit": "USD",
+   "issued": "2026-10-27",
+   "source_id": "dc_call_20261027"
+  },
+  {
+   "id": "dc_g_eps_q4",
+   "metric": "adjusted EPS",
+   "period": "Q4 2026",
+   "low": 0.19,
+   "high": 0.19,
+   "unit": "USD",
+   "issued": "2026-10-27",
+   "source_id": "dc_call_20261027"
+  },
+  {
+   "id": "dc_g_lend_q4",
+   "metric": "Lending revenue",
+   "period": "Q4 2026",
+   "low": 785000000.0,
+   "high": 785000000.0,
+   "unit": "USD",
+   "issued": "2026-10-27",
+   "source_id": "dc_call_20261027"
+  },
+  {
+   "id": "dc_g_fs_q4",
+   "metric": "Financial Services revenue",
+   "period": "Q4 2026",
+   "low": 550000000.0,
+   "high": 550000000.0,
+   "unit": "USD",
+   "issued": "2026-10-27",
+   "source_id": "dc_call_20261027"
+  },
+  {
+   "id": "dc_g_tech_q4",
+   "metric": "Technology Platform revenue",
+   "period": "Q4 2026",
+   "low": 90000000.0,
+   "high": 90000000.0,
+   "unit": "USD",
+   "issued": "2026-10-27",
+   "source_id": "dc_call_20261027"
+  },
+  {
+   "id": "dc_g_rev27",
+   "metric": "adjusted net revenue",
+   "period": "FY2027",
+   "low": 6400000000.0,
+   "high": 6400000000.0,
+   "unit": "USD",
+   "issued": "2026-10-27",
+   "source_id": "pf_rel_20261027_1"
+  },
+  {
+   "id": "dc_g_ebitda27",
+   "metric": "adjusted EBITDA",
+   "period": "FY2027",
+   "low": 2240000000.0,
+   "high": 2240000000.0,
+   "unit": "USD",
+   "issued": "2026-10-27",
+   "source_id": "pf_rel_20261027_1"
+  },
+  {
+   "id": "dc_g_ni27",
+   "metric": "adjusted net income",
+   "period": "FY2027",
+   "low": 1280000000.0,
+   "high": 1280000000.0,
+   "unit": "USD",
+   "issued": "2026-10-27",
+   "source_id": "pf_rel_20261027_1"
+  },
+  {
+   "id": "dc_g_eps27",
+   "metric": "adjusted EPS",
+   "period": "FY2027",
+   "low": 0.9,
+   "high": 0.9,
+   "unit": "USD",
+   "issued": "2026-10-27",
+   "source_id": "pf_rel_20261027_1"
+  },
+  {
+   "id": "dc_g_tax27",
+   "metric": "effective tax rate",
+   "period": "FY2027",
+   "low": 0.24,
+   "high": 0.24,
+   "unit": "ratio",
+   "issued": "2026-10-27",
+   "source_id": "dc_call_20261027"
+  },
+  {
+   "id": "dc_g_tax26",
+   "metric": "effective tax rate",
+   "period": "FY2026",
+   "low": 0.22,
+   "high": 0.22,
+   "unit": "ratio",
+   "issued": "2026-07-29",
+   "source_id": "pf_rel_20260729_1"
+  },
+  {
+   "id": "dc_g_cagr_rev",
+   "metric": "adjusted net revenue CAGR 2025-2028, at least",
+   "period": "FY2028",
+   "low": 0.3,
+   "high": 0.3,
+   "unit": "ratio",
+   "issued": "2026-01-30",
+   "source_id": "pf_rel_20260130_1"
+  },
+  {
+   "id": "dc_g_cagr_eps",
+   "metric": "adjusted EPS CAGR 2025-2028",
+   "period": "FY2028",
+   "low": 0.38,
+   "high": 0.42,
+   "unit": "ratio",
+   "issued": "2026-01-30",
+   "source_id": "pf_rel_20260130_1"
+  },
+  {
+   "id": "dc_g_nim",
+   "metric": "net interest margin floor, 'above 5% for the foreseeable future'",
+   "period": "FY2027",
+   "low": 0.05,
+   "high": 0.05,
+   "unit": "ratio",
+   "issued": "2026-10-27",
+   "source_id": "dc_call_20261027"
+  }
+ ],
+ "guidance_track": [
+  {
+   "period": "Q2 2025",
+   "metric": "adjusted_net_revenue",
+   "guided_mid": 795000000,
+   "actual": 858230000,
+   "source_ids": [
+    "pf_rel_20250429_1",
+    "pf_rel_20250729_1"
+   ]
+  },
+  {
+   "period": "Q2 2025",
+   "metric": "adjusted_ebitda",
+   "guided_mid": 205000000,
+   "actual": 249083000,
+   "source_ids": [
+    "pf_rel_20250429_1",
+    "pf_rel_20250729_1"
+   ]
+  },
+  {
+   "period": "FY2025",
+   "metric": "adjusted_net_revenue",
+   "guided_mid": 3237500000,
+   "actual": 3591411000,
+   "source_ids": [
+    "pf_rel_20250429_1",
+    "pf_rel_20260130_1"
+   ]
+  },
+  {
+   "period": "FY2025",
+   "metric": "adjusted_ebitda",
+   "guided_mid": 855000000,
+   "actual": 1053898000,
+   "source_ids": [
+    "pf_rel_20250429_1",
+    "pf_rel_20260130_1"
+   ]
+  },
+  {
+   "period": "Q1 2026",
+   "metric": "adjusted_net_revenue",
+   "guided_mid": 1040000000,
+   "actual": 1087232000,
+   "source_ids": [
+    "pf_rel_20260130_1",
+    "pf_rel_20260429_1"
+   ]
+  },
+  {
+   "period": "Q1 2026",
+   "metric": "adjusted_ebitda",
+   "guided_mid": 300000000,
+   "actual": 339901000,
+   "source_ids": [
+    "pf_rel_20260130_1",
+    "pf_rel_20260429_1"
+   ]
+  },
+  {
+   "period": "Q2 2026",
+   "metric": "adjusted_net_revenue",
+   "guided_mid": 1115700000,
+   "actual": 1205550000,
+   "source_ids": [
+    "pf_rel_20260429_1",
+    "pf_rel_20260729_1"
+   ]
+  }
+ ],
+ "consensus": [
+  {
+   "id": "nm_cons_rev_fy2026",
+   "metric": "revenue",
+   "period": "FY2026",
+   "value": 4875759640,
+   "n": 19,
+   "low": 4777200000,
+   "high": 5001890710,
+   "source_id": "nm_av_est"
+  },
+  {
+   "id": "nm_cons_eps_fy2026",
+   "metric": "eps_diluted",
+   "period": "FY2026",
+   "value": 0.5928,
+   "n": 8,
+   "low": 0.5576,
+   "high": 0.63,
+   "source_id": "nm_av_est"
+  },
+  {
+   "id": "nm_cons_rev_fy2027",
+   "metric": "revenue",
+   "period": "FY2027",
+   "value": 6095296980,
+   "n": 21,
+   "low": 5544698000,
+   "high": 8663021070,
+   "source_id": "nm_av_est"
+  },
+  {
+   "id": "nm_cons_eps_fy2027",
+   "metric": "eps_diluted",
+   "period": "FY2027",
+   "value": 0.8245,
+   "n": 8,
+   "low": 0.78,
+   "high": 0.88,
+   "source_id": "nm_av_est"
+  },
+  {
+   "id": "nm_cons_rev_q4_2026",
+   "metric": "revenue",
+   "period": "Q4 2026",
+   "value": 1316481020,
+   "n": 16,
+   "low": 1271100000,
+   "high": 1370000000,
+   "source_id": "nm_av_est"
+  },
+  {
+   "id": "nm_cons_eps_q4_2026",
+   "metric": "eps_diluted",
+   "period": "Q4 2026",
+   "value": 0.1913,
+   "n": 7,
+   "low": 0.18,
+   "high": 0.21,
+   "source_id": "nm_av_est"
+  }
+ ],
+ "kpis": [
+  {
+   "id": "dc_k_members",
+   "name": "Members",
+   "period": "Q3 2026",
+   "value": 17100000.0,
+   "unit": "count",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "dc_k_members_prior",
+   "name": "Members",
+   "period": "Q3 2025",
+   "value": 12600000.0,
+   "unit": "count",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "dc_k_products",
+   "name": "Total products (cumulative)",
+   "period": "Q3 2026",
+   "value": 26700000.0,
+   "unit": "count",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "dc_k_products_prior",
+   "name": "Total products (cumulative)",
+   "period": "Q3 2025",
+   "value": 18600000.0,
+   "unit": "count",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "dc_k_ppm",
+   "name": "Products per member",
+   "period": "Q3 2026",
+   "value": 1.56,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "dc_k_fs_products",
+   "name": "Financial Services products",
+   "period": "Q3 2026",
+   "value": 23241525.0,
+   "unit": "count",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "dc_k_lend_products",
+   "name": "Lending products",
+   "period": "Q3 2026",
+   "value": 3430054.0,
+   "unit": "count",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "dc_k_pl_products",
+   "name": "Personal loan products",
+   "period": "Q3 2026",
+   "value": 2598719.0,
+   "unit": "count",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "dc_k_sl_products",
+   "name": "Student loan products",
+   "period": "Q3 2026",
+   "value": 759726.0,
+   "unit": "count",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "dc_k_hl_products",
+   "name": "Home loan products",
+   "period": "Q3 2026",
+   "value": 71609.0,
+   "unit": "count",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "dc_k_money_products",
+   "name": "SoFi Money products",
+   "period": "Q3 2026",
+   "value": 8501822.0,
+   "unit": "count",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "dc_k_invest_products",
+   "name": "SoFi Invest products",
+   "period": "Q3 2026",
+   "value": 4180957.0,
+   "unit": "count",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "dc_k_card_products",
+   "name": "Credit card products",
+   "period": "Q3 2026",
+   "value": 656132.0,
+   "unit": "count",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "dc_k_fs_rev_per_product",
+   "name": "Financial Services annualized revenue per product",
+   "period": "Q3 2026",
+   "value": 90,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "dc_k_lend_rev_per_product",
+   "name": "Lending adjusted annualized revenue per product",
+   "period": "Q3 2026",
+   "value": 942,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "dc_k_tech_accounts",
+   "name": "Technology Platform total accounts",
+   "period": "Q3 2026",
+   "value": 140440864.0,
+   "unit": "count",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "dc_k_deposits",
+   "name": "Total deposits",
+   "period": "Q3 2026",
+   "value": 51325022000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "dc_k_nim",
+   "name": "Net interest margin",
+   "period": "Q3 2026",
+   "value": 0.0614,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "dc_k_nim_prior_q",
+   "name": "Net interest margin",
+   "period": "Q2 2026",
+   "value": 0.0598,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "dc_k_deposit_rate_vs_warehouse",
+   "name": "Deposit rate below warehouse funding rate",
+   "period": "Q3 2026",
+   "value": 0.0145,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "dc_k_rule_of_40",
+   "name": "Rule of 40 score",
+   "period": "Q3 2026",
+   "value": 79,
+   "unit": "points",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "dc_k_fee_share",
+   "name": "Fee-based revenue share of revenue",
+   "period": "Q3 2026",
+   "value": 0.42,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "dc_k_lpb_orig",
+   "name": "Loan Platform Business originations",
+   "period": "Q3 2026",
+   "value": 3800000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1",
+    "dc_call_20261027"
+   ]
+  },
+  {
+   "id": "dc_k_lpb_orig_q2",
+   "name": "Loan Platform Business originations",
+   "period": "Q2 2026",
+   "value": 3100000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "dc_call_20261027"
+   ]
+  },
+  {
+   "id": "dc_k_orig_pl",
+   "name": "Personal loan originations (incl. 3.6bn for third parties)",
+   "period": "Q3 2026",
+   "value": 12622140000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "dc_k_orig_sl",
+   "name": "Student loan originations",
+   "period": "Q3 2026",
+   "value": 2922068000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "dc_k_orig_hl",
+   "name": "Home loan originations",
+   "period": "Q3 2026",
+   "value": 1361024000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "dc_k_pl_nco",
+   "name": "Personal loan net charge-off rate (annualized)",
+   "period": "Q3 2026",
+   "value": 0.0226,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "dc_k_pl_nco_allin",
+   "name": "Personal loan all-in net charge-off ex delinquent sales",
+   "period": "Q3 2026",
+   "value": 0.034,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261027_1",
+    "dc_call_20261027"
+   ]
+  },
+  {
+   "id": "dc_k_sl_nco",
+   "name": "Student loan net charge-off rate",
+   "period": "Q3 2026",
+   "value": 0.0063,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "dc_k_pl_90d",
+   "name": "Personal loan on-balance-sheet 90-day delinquency",
+   "period": "Q3 2026",
+   "value": 0.0042,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_call_20261027"
+   ]
+  },
+  {
+   "id": "dc_k_cet1",
+   "name": "CET1 ratio",
+   "period": "Q3 2026",
+   "value": 0.169,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "dc_k_total_cap",
+   "name": "Total capital ratio",
+   "period": "Q3 2026",
+   "value": 0.17,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "dc_k_rote",
+   "name": "Return on tangible common equity (approx.)",
+   "period": "Q3 2026",
+   "value": 0.1,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261027_1",
+    "dc_call_20261027"
+   ]
+  },
+  {
+   "id": "dc_k_tbvps",
+   "name": "Tangible book value per share",
+   "period": "Q3 2026",
+   "value": 7.48,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "dc_k_tbvps_prior",
+   "name": "Tangible book value per share",
+   "period": "Q3 2025",
+   "value": 5.97,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "dc_k_pl_risk_adj_margin",
+   "name": "Core personal loan risk-adjusted margin",
+   "period": "Q3 2026",
+   "value": 0.076,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_call_20261027"
+   ]
+  }
+ ],
+ "segments": [
+  {
+   "id": "dc_s_lend_q3",
+   "name": "Lending (adjusted)",
+   "period": "Q3 2026",
+   "revenue": 807370000.0,
+   "operating_income": 454934000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "dc_s_fs_q3",
+   "name": "Financial Services",
+   "period": "Q3 2026",
+   "revenue": 525095000.0,
+   "operating_income": 261014000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "dc_s_tech_q3",
+   "name": "Technology Platform",
+   "period": "Q3 2026",
+   "revenue": 87368000.0,
+   "operating_income": 14203000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "dc_s_lend_q3p",
+   "name": "Lending (adjusted)",
+   "period": "Q3 2025",
+   "revenue": 481408000.0,
+   "operating_income": 261600000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "dc_s_fs_q3p",
+   "name": "Financial Services",
+   "period": "Q3 2025",
+   "revenue": 419623000.0,
+   "operating_income": 225557000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "dc_s_tech_q3p",
+   "name": "Technology Platform",
+   "period": "Q3 2025",
+   "revenue": 114578000.0,
+   "operating_income": 32371000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "dc_s_lend_fy25",
+   "name": "Lending (GAAP)",
+   "period": "FY2025",
+   "revenue": 1848949000.0,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260130_1"
+   ]
+  },
+  {
+   "id": "dc_s_fs_fy25",
+   "name": "Financial Services",
+   "period": "FY2025",
+   "revenue": 1542016000.0,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260130_1"
+   ]
+  },
+  {
+   "id": "dc_s_tech_fy25",
+   "name": "Technology Platform",
+   "period": "FY2025",
+   "revenue": 450211000.0,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260130_1"
+   ]
+  }
+ ],
+ "competitors": [
+  {
+   "ticker": "LC",
+   "name": "LendingClub (XBRL entity name Happen, Inc.)",
+   "why": "Direct digital personal-loan lender to prime consumers; also a bank (deposits fund loans) and sells loans to investors, the same model as SoFi's Lending segment. Competes for the same borrowers and for the same whole-loan buyers.",
+   "metrics": {
+    "fy2025_interest_income_usd": 961543000,
+    "fy2024_interest_income_usd": 907958000,
+    "fy2025_interest_income_growth": 0.059,
+    "fy2025_net_income_usd": 135677000,
+    "q3_2026_interest_income_usd": 278302000,
+    "q3_2025_interest_income_usd": 241801000,
+    "q3_2026_interest_income_growth_yoy": 0.151,
+    "q3_2026_noninterest_income_usd": 80089000,
+    "q3_2025_noninterest_income_usd": 107792000,
+    "q3_2026_noninterest_income_growth_yoy": -0.257,
+    "note": "gross interest income and noninterest income as reported in XBRL (not net revenue); SoFi Lending Q3 2026 net revenue 821.3M +66% yoy is a different, net basis"
+   },
+   "source_ids": [
+    "fd_cf_LC"
+   ]
+  },
+  {
+   "ticker": "UPST",
+   "name": "Upstart Holdings",
+   "why": "AI-underwriting personal-loan marketplace; sells the same prime and near-prime borrowers and bank/credit-union partners that SoFi's Loan Platform Business also serves.",
+   "metrics": {
+    "fy2025_revenue_usd": 1043857000,
+    "fy2024_revenue_usd": 636528000,
+    "fy2025_revenue_growth": 0.64,
+    "fy2025_operating_income_usd": 42631000,
+    "fy2025_net_income_usd": 53601000,
+    "q2_2026_revenue_usd": 364708000,
+    "q2_2025_revenue_usd": 257291000,
+    "q2_2026_revenue_growth_yoy": 0.418,
+    "q2_2026_net_income_usd": 16539000
+   },
+   "source_ids": [
+    "fd_cf_UPST"
+   ]
+  },
+  {
+   "ticker": "HOOD",
+   "name": "Robinhood Markets",
+   "why": "Competes with SoFi Invest and SoFi Crypto for the same young investors, and is moving into banking, cards and cash management (Gold card, sweep deposits) where SoFi Money competes.",
+   "metrics": {
+    "fy2025_revenue_usd": 4473000000,
+    "fy2024_revenue_usd": 2951000000,
+    "fy2025_revenue_growth": 0.516,
+    "fy2025_net_income_usd": 1883000000,
+    "q3_2026_revenue_usd": 1424000000,
+    "q3_2025_revenue_usd": 1274000000,
+    "q3_2026_revenue_growth_yoy": 0.118,
+    "q3_2026_net_income_usd": 468000000,
+    "q3_2025_net_income_usd": 556000000
+   },
+   "source_ids": [
+    "fd_cf_HOOD"
+   ]
+  },
+  {
+   "ticker": "ALLY",
+   "name": "Ally Financial",
+   "why": "Largest US digital-only deposit bank (savings, checking, CDs) and consumer lender; competes with SoFi Checking and Savings for deposits on APY and with SoFi Invest.",
+   "metrics": {
+    "fy2025_revenue_usd": 7914000000,
+    "fy2025_revenue_growth": -0.0326,
+    "fy2025_operating_income_margin": 0.1328,
+    "fy2025_net_income_usd": 852000000,
+    "note": "XBRL 'revenue' and 'operating income' for a bank are not comparable to SoFi's net revenue; growth sign is the usable reading"
+   },
+   "source_ids": [
+    "pf_peer_ALLY"
+   ]
+  },
+  {
+   "ticker": "COF",
+   "name": "Capital One Financial",
+   "why": "Names itself in rewards credit cards (SoFi Credit Card competes), personal loans and online savings (360 Savings); a large bank in personal loans and deposits.",
+   "metrics": {
+    "fy2025_revenue_usd": 53434000000,
+    "fy2025_revenue_growth": 0.3662,
+    "fy2025_net_income_usd": 2453000000,
+    "note": "revenue growth 2025 likely includes the effect of the Discover acquisition (hypothesis, not verified from the files); XBRL operating income not comparable"
+   },
+   "source_ids": [
+    "pf_peer_COF"
+   ]
+  },
+  {
+   "ticker": "NU",
+   "name": "Nu Holdings",
+   "why": "Closest digital-bank growth analogue (members, products per member, deposits funding lending) but operates in Brazil, Mexico and Colombia, so it is a comparison of model and growth, not a competitor for SoFi's US customers.",
+   "metrics": {
+    "fy2024_revenue_usd": 11517075000,
+    "fy2024_revenue_growth": 0.4344,
+    "fy2024_net_income_usd": 1972112000,
+    "note": "latest year in the prefetch is FY2024; no US overlap"
+   },
+   "source_ids": [
+    "pf_peer_NU"
+   ]
+  }
+ ],
+ "bottlenecks": [
+  {
+   "id": "fd_b1",
+   "reading": "Scarce input: low-cost funding. SoFi's deposits grew $5.8B in Q3 2026 to $51.3B and made up 90% of average liabilities; the average deposit rate was 145 bp below warehouse facilities, about $745M of annualised interest-expense savings. A bank charter lets SoFi fund personal loans (originations $12.6B, +69% yoy) on its own balance sheet, which non-bank lenders without a charter (Upstart as a marketplace) cannot; LendingClub has a charter too. The advantage lasts as long as deposit growth keeps pricing below market funding and SoFi pays a competitive APY (10-K risk factor).",
+   "evidence_ids": [
+    "pf_rel_20261027_1",
+    "pf_10k_20260217",
+    "fd_cf_UPST",
+    "fd_cf_LC"
+   ]
+  },
+  {
+   "id": "fd_b2",
+   "reading": "Demand side: US unsecured personal-loan balances reached a record $281B, +9.6% yoy, with originations +19.5% yoy (TransUnion Q2 2026). SoFi's personal-loan originations grew +69% yoy in Q3 2026, far faster than the market, which is share gain on the originations measure (balance-sheet vs platform split: $9.0B own balance sheet, $3.6B Loan Platform Business).",
+   "evidence_ids": [
+    "fd_transunion_q2_2026",
+    "pf_rel_20261027_1"
+   ]
+  },
+  {
+   "id": "fd_b3",
+   "reading": "Constraint on growth: capital and credit. Faster balance-sheet lending uses capital and rests on credit quality; TransUnion shows the share of personal-loan borrowers 60+ days past due rising (3.81% vs 3.37% a year earlier per a secondary summary of the report), and the 10-K names concentration in a small number of whole-loan and Loan Platform Business purchasers whose demand can fluctuate. SoFi's personal loan charge-off rate in Q3 2026 was 2.26% as reported in the release summary (includes asset-sale effects).",
+   "evidence_ids": [
+    "pf_10k_20260217",
+    "pf_rel_20261027_1",
+    "fd_transunion_q2_2026"
+   ]
+  },
+  {
+   "id": "fd_b4",
+   "reading": "Technology Platform is shrinking, not a bottleneck owner: segment net revenue fell 24% yoy to $87.4M in Q3 2026 and accounts fell 11% to 140M because a large client fully transitioned off the platform before 2025-12-31. Competitors in platform-as-a-service are only described generically in the 10-K (other technology platforms), no names, so the share reading is a gap.",
+   "evidence_ids": [
+    "pf_rel_20261027_1",
+    "pf_10k_20260217"
+   ]
+  },
+  {
+   "id": "fd_b5",
+   "reading": "Hypothesis: the limiting input for the Financial Services growth is cheap member acquisition and primary-account status (direct deposit) against Ally, Capital One, Chime, Robinhood and large banks. No attributed, comparable figure was found for competitors' deposit share, so this stays a hypothesis.",
+   "hypothesis": true
+  }
+ ],
+ "notes": [
+  "prefetch 2026-11-02T07:16:43+00:00: SEC documents saved verbatim and their text in reading/ (untrusted); a lane cites a pf_ source only after reading the passage it relies on",
+  "dc CALL 2026-10-27 Q3 2026 call via AV EARNINGS_CALL_TRANSCRIPT (one probe, saved gather/raw_documents/av_transcript_2026Q3.json and transcript.txt). Results of 2026-10-27 are citable from 2026-10-29; as_of 2026-11-02 so they are citable.",
+  "dc MGMT (statement) Original 2026 guidance assumed two rate cuts; instead one hike so far and two more expected in 2026; 2027 outlook assumes two more hikes and a 24% tax rate. Management claims equal confidence in a high-rate environment.",
+  "dc MGMT 2027 guidance is funded organically: equity capital 9.6bn supports about 71bn RWA at 13.5% (about 15bn above 56bn today) plus about 14bn from 2027 earnings plus SBC; no capital raise assumed. Total capital ratio fell 180bp in the quarter to 17.0% (CET1 16.9%) as capital is put into loans; target low-to-mid teens.",
+  "dc MGMT Targets: 100m products by end of 2030 (4x), five businesses over 1bn revenue, five over 500m, five over 100m; ROTE goal 20-30% (about 10% in Q3); NIM above 5% for the foreseeable future; fee-based revenue goal 50% of revenue (42% in Q3).",
+  "dc GUIDANCE HISTORY FY2026 adjusted net revenue: 4.655bn (2026-01-30) -> 4.655bn maintained (04-29) -> 4.75-4.85bn (07-29) -> 5.04bn (10-27), i.e. 385m above the original; EBITDA 1.6bn kept in Jan, Apr, Jul then 1.66bn; net income 825m then 840m; EPS 0.60 then 0.61. FY2025: revenue 3.200-3.275bn (01-27) -> 3.235-3.310bn (04-29) -> about 3.375bn (07-29) -> about 3.54bn (10-28); EBITDA 845-865m -> 875-895m -> about 960m -> about 1.035bn; members at least 2.8m -> 3.0m -> 3.5m. Four raises in a row in 2025; 2026 raised in two of three updates.",
+  "dc LOAN PLATFORM Q3 2026: 3.8bn originated for third parties (3.6bn personal loans; first SMB and home equity loans through the platform), 153.4m LPB revenue (151.2m from originations and referrals), up from 3.1bn and 143m in Q2. Management: monetization fluctuates with asset mix, supply and demand and partner timing. Total sold or transferred over 5.3bn in the quarter; home loans sold at 103.6%. Eighth SCLP securitization (460m, 83bp spread).",
+  "dc CREDIT Personal loan NCO 2.26% reported, about 3.4% all-in excluding late-stage delinquent loan sales (the basis to watch: reported rate flattered by delinquent loan sales); 7-8% max cumulative loss assumption, 2022Q4-2025Q4 vintages 4.71% cumulative with 33% UPB remaining versus 6.62% for 2017 vintage at same point. Student NCO 0.63%; credit card NCO 7.77%. Provision only 14.7m because most loans are at fair value (credit losses flow through fair value marks, not provision).",
+  "dc FAIR VALUE MARKS Q3: over 800m of negative fair value impact (benchmark +76bp) offset by about 734m hedge gains; personal loans marked 103.3% (down 140bp), student 101.9% (down 240bp), home 101.5%. 52.5bn of loans at fair value; rate hikes reduce marks, so earnings carry mark-to-market and hedge-effectiveness risk.",
+  "dc DEPOSITS 51.3bn (up 5.8bn in the quarter, up 37% y/y); deposits were 90% of average liabilities; deposit rate 145bp below warehouse rate, about 745m annualized interest saving. Interest expense on deposits 376m in Q3.",
+  "dc TECH PLATFORM Revenue 87.4m, down 24% y/y because a large client fully left before 2025-12-31 (customer name not disclosed here; excluding it revenue +18%); contribution margin 16% vs 28%; accounts 140m (down 11%); nine clients added year to date; management says 25% growth is the steady state. No 10% customer disclosure found in the documents read; customers list left empty.",
+  "dc FEE REVENUE Q3 fee-based revenue 570.6m (42% of revenue; Q2 39%): loan origination fees 270.9m (2.6x), loan platform fees 151.2m, interchange 49.7m (+77%), brokerage 18.0m, technology services 52.4m. Crypto net revenue 1.6m (gross 161.6m less cost 160.0m).",
+  "dc ACCOUNTING Product counts are cumulative (include repaid loans) and the product definition was widened in Q1-Q3 2026 (Invest now six sub-products incl. Composer, SoFi Plus, Smart Card, credit card with personal loan rollover; prior periods not recast); treat products growth as partly definitional. Adjusted net revenue excludes servicing-rights and residual-interest valuation changes (net -14.0m in Q3). Q3 10-Q not yet filed (call says next month), so Q3 numbers are from the release only; quarter_case.json is built on the release, not on companyfacts (the prefetch's companyfacts revenue line of 153.6m is a partial XBRL tag, not total revenue).",
+  "dc EQUITY Book value 11.3bn (8.71 per share), tangible book 9.7bn (7.48 per share, up 25% y/y); 1,296.6m shares outstanding, diluted weighted 1,357.8m; 2026 convertible notes settlement mentioned in the Q1 release. Debt 3.86bn (up from 1.82bn at 2025 year-end). Cash 2.81bn plus restricted 0.79bn, investment securities 4.99bn.",
+  "dc RISK (10-K Item 1A, 'Risks Related to Market and Interest Rates') Interest-rate sensitivity: fair value of 52bn of loans, NIM and demand react to rates and funding costs.",
+  "dc RISK (10-K Item 1A) Credit: 'If we do not make accurate credit and pricing decisions or effectively forecast our loss rates, our business and financial results will be harmed'; a personal loan book of about 32bn fair value is unsecured and consumer-cycle sensitive.",
+  "dc RISK (10-K Item 1A, 'Risks Related to Funding and Liquidity') Deposit-based funding and balance-sheet management, warehouse covenants, and capital needs to support growth; loan sale and securitization market access (Loan Platform Business depends on third-party buyers).",
+  "dc RISK (10-K Item 1A) Bank regulation: SoFi is a bank holding company; OCC/Fed/CFPB supervision, capital requirements, unsafe-or-unsound conduct and consumer-protection exposure.",
+  "dc RISK (10-K Item 1A) Member acquisition and competition: growth depends on retaining and attracting members and on brand and marketing spend (sales and marketing 444m in Q3, up 55% y/y).",
+  "dc RISK (10-K Item 1A) History of losses before Q4 2023: profitability is recent (12 profitable quarters) and valuation of new products (crypto, SoFiUSD, business banking) is unproven.",
+  "dc RISK Technology Platform client concentration and attrition: the large-client exit cut segment revenue 24% and margin to 16%.",
+  "fd NAMED COMPETITORS (10-K Item 1A, risk factors, pf_10k_20260217): SoFi names no company by name; it names classes: other personal loan, student loan refinancing, in-school and home loan lenders including banks and credit card issuers; banks with checking and savings; rewards credit cards (SoFi Credit Card); other brokerage firms incl. online and mobile platforms (SoFi Invest); fintech mortgage lenders; social media and commerce platforms with peer-to-peer and in-app payments; digital asset and global remittance providers; other technology platforms for Galileo and Technisys; content providers (Lantern); firms for SoFi At Work. The company-level names in competitors[] (LC, UPST, HOOD, ALLY, COF, NU) come from the owner's list and the prefetch peers, with the reason in each entry; Chime and Marcus/Goldman are private or no longer filing a comparable standalone segment and have no SEC companyfacts in this run.",
+  "fd SHARE lending: SoFi Lending segment net revenue Q3 2026 821.3M, +66% yoy (pf_rel_20261027_1). LendingClub Q3 2026 interest income 278.3M, +15.1% yoy and noninterest income 80.1M, -25.7% yoy (fd_cf_LC); Upstart Q2 2026 revenue 364.7M, +41.8% yoy (fd_cf_UPST). SoFi is growing lending revenue faster than both on reported lines (bases differ: SoFi net of funding costs; LC and UPST gross/total as per XBRL); US personal-loan originations grew +19.5% yoy (fd_transunion_q2_2026) and SoFi's personal-loan originations +69% (pf_rel_20261027_1), so SoFi is taking share of originations on these numbers.",
+  "fd SHARE investing/banking: SoFi Financial Services net revenue Q3 2026 525.1M, +25% yoy, products 23.2M +44% (pf_rel_20261027_1). Robinhood total revenue Q3 2026 1,424M, +11.8% yoy and net income 468M versus 556M a year earlier (fd_cf_HOOD): Robinhood is far larger in revenue and profitable, SoFi's Financial Services segment is growing faster in percent but from a smaller base. Ally FY2025 revenue -3.3% (pf_peer_ALLY): the incumbent digital bank is not growing, consistent with SoFi gaining deposits (+$5.8B in the quarter).",
+  "fd SHARE platform: SoFi Technology Platform revenue Q3 2026 87.4M, -24% yoy (pf_rel_20261027_1); no named platform competitor numbers (gap).",
+  "fd MARKET direction: TransUnion Q2 2026, record 281B unsecured personal loan balances +9.6% yoy; 26.9M consumers hold personal loans (fd_transunion_q2_2026, published 2026-08-06). A secondary-site figure that fintechs made 45.0% of new personal loans in Q1 2026 (39.8% a year earlier) was NOT confirmed on the TransUnion page and is not used as evidence.",
+  "fd COMPARABILITY: competitor revenue lines are XBRL tags (gross interest income for LC, total revenue for UPST/HOOD, bank revenue for ALLY/COF/NU) and are not the same basis as SoFi segment net revenue; use growth direction only, not margin levels. COF 2025 growth is likely acquisition-inflated (hypothesis).",
+  "fd COMPETITOR VALUATION: forward P/E and consensus growth for the competitors were not collected (no price/consensus connector call made in this lane; FMP statements and analyst are denied per session probes, Alpha Vantage quota reserved for numbers and documents lanes): gap.",
+  "mc GEOGRAPHY 10-K Note 20: revenue is attributed by legal-entity domicile. FY2025 US 3,364.7m of 3,613.4m (93.1%), all foreign 248.7m (6.9%, up from 3.7% in FY2024; Technology Platform in LATAM/Canada/Switzerland, Hong Kong investing); no single foreign country material; long-lived assets not significant and mostly US. Evidence pf_10k_20260217. No Taiwan/China/tariff/export-control supply exposure (a lender, no physical supply chain).",
+  "mc RATES FOMC 27-28 Oct 2026 held the target range 3.75%-4.00% (10-2, Cook and Hammack wanted a hike) after a quarter-point HIKE in September, the first in three years; CME FedWatch put a December hike near 83% per press. Chair Warsh, inflation focus. Evidence mc_fomc_20261028 (press excerpt, confirm vs federalreserve.gov). Direction is up, the opposite of a cut path: higher funding cost for the lender, but the Q3 release says average deposit rate was 145 bp below warehouse-facility cost (about 745m annualized interest saving), deposits 51.3bn (+5.8bn in Q3), 90% of average liabilities (pf_rel_20261027_1). 10y 4.98% on 2026-10-29 (pf_fred_dgs10).",
+  "mc CONSUMER CREDIT Labor: Sept 2026 unemployment 4.2% (range 4.1-4.3% since March), payrolls only +29,000 vs about 85-90k expected; a weak-hiring signal (mc_bls_sep2026). NY Fed 2026Q2: 4.7% of household debt in some stage of delinquency (one outlet says 4.8%), card early-delinquency transitions about 8.6%, student-loan 90+ day delinquency 10.6% (up from 10.3%); personal-loan delinquency not found in the excerpts, a gap (mc_nyfed_2026q2). SoFi own: personal-loan annualized charge-off 2.26% in Q3 (-34 bp y/y), about 3.4% excluding late-stage delinquent-loan sales, on-balance 90-day delinquency steady y/y (pf_rel_20261027_1).",
+  "mc STUDENT LOANS Federal Repayment Assistance Plan (RAP) opened 2026-07-01 as the only income-driven option for new loans; SAVE borrowers being pushed to RAP; involuntary collections on defaulted federal loans paused since Jan 2026, restart date unannounced (mc_ed_rap_20261022; secondary press, confirm at studentaid.gov). Effect on SoFi's student-loan refinance demand and on the 10.6% federal delinquency overhang not quantified: gap. SoFi student loan charge-off 63 bp in Q3 (pf_rel_20261027_1).",
+  "mc EXPOSURE Private-credit funding of the Loan Platform Business: Q3 2026 LPB originated 3.8bn for third parties (personal loans 3.6bn), LPB fee revenue 151.2m of 153.4m LPB contribution (pf_rel_20261027_1); 2026-03-26 agreements totalling over 3.6bn: a leading global bank over 1bn (closed), insurance/financial group 600m over 12+ months (closed), a top-five global asset manager up to 2bn over two years (terms agreed) (mc_sofi_lpb_20260326). Press names Blue Owl and Fortress as buyers (secondary, unconfirmed at source). Hypothesis (unsized): a private-credit pullback or yield demand repricing in a rising-rate, weak-hiring setting would cut LPB volume and push loans back onto SoFi's balance sheet; share of fee revenue exposed is LPB 151.2m of 570.6m total fee revenue (about 26%) in Q3.",
+  "mc EXPOSURE Bank capital: SoFi is a bank holding company (SoFi Bank N.A.). Agencies re-proposed Basel III endgame on 2026-03-19 (withdrawing the 2023 plan), comment period closed 2026-06-18; agencies estimate lower aggregate CET1 requirements for Category III/IV (about -5.2%) and a standardized approach for smaller banks; final rule not confirmed as of 2026-09-19, expected Q4 2026 with 2027 start per press. SoFi's category and CET1 headroom not checked here: gap (mc_basel_20260320, secondary). Net direction for a small BHC looks neutral to favorable; hypothesis until the SoFi regulatory capital table (release item 9) is read by another lane.",
+  "mc EXPOSURE Crypto regulation: SoFi returned to crypto in Q4 2025 (SoFi Crypto, 503k products at Q3 2026) under OCC guidance permitting national banks to offer crypto custody/services; Q3 2026 crypto transaction revenue 161.6m gross vs cost 160.0m, net 1.6m (9M: 417.5m gross, 3.7m net) so it adds almost no profit (pf_rel_20261027_1). SoFiUSD stablecoin opened to members 2026-05-27; SoFi says the GENIUS Act would require migrating SoFiUSD to a separately licensed or regulated entity (secondary: mc_coindesk_20260507, mc_sofiusd_20260527). Market-structure bill (CLARITY) status not found: gap. Exposure is small in earnings, so a bear mechanism only via reputation or compliance cost; hypothesis.",
+  "mc NEWS 2026-10-27 Q3 2026 results 8-K: record originations 16.9bn (personal loans 12.6bn, +69% y/y), total deposits 51.3bn, 17.1m members, 23.2m Financial Services products (pf_rel_20261027_1). Results of 2026-10-27 are citable from 2026-10-29, so a 2026-11-02 as_of is fine.",
+  "mc NEWS 2026-06-18 8-K item 5.07 (annual meeting vote results), no business content (identity.json filings). No other 8-K since the 10-Q of 2026-08-06 other than the 2026-10-27 earnings 8-K (SEC list as of the prefetch; not re-checked on EDGAR).",
+  "mc NEWS 2026-06 Smith v. SoFi Securities LLC and SoFi Technologies: complaint served June 2026 in N.D. Cal. (10-Q 2026-06-30 legal proceedings); content not read in this lane: gap for the legal reviewer (pf_10q_20260806).",
+  "nm IDENTITY SoFi Technologies, Inc., CIK 1818874, single class common stock (no ADR, no dual class), Nasdaq SOFI, IB contract id 494162724 (NASDAQ, USD); fiscal year ends 12-31; 10-K FY2025 filed 2026-02-17; SoFi is a bank holding company (SoFi Bank, N.A.), SIC 6199. Archetype in the prefetch history is 'nonfinancial': wrong for a bank holding company; the generic nonfinancial screens (Piotroski, ROIC, CFO) do not fit a lender and must be read with that in mind.",
+  "nm PRICE IB last 16.95 (bid 16.94 / ask 16.95) on 2026-11-02; 52-week range 13.86-32.73 (high_52w 32.73, low_52w 13.86); prior_close came back empty; no corporate actions returned in 5 years of monthly bars (note: shares outstanding rose via offerings, not splits).",
+  "nm OWN MULTIPLE HISTORY (trailing GAAP diluted EPS, only FY2024 0.39 and FY2025 0.39 were positive full years; 2024 includes tax benefit and convertible-note gains): low 31.4 median 39.5 high 67.1 now 31.4 years 2024-2026, approximate: end-2024 close 15.40/0.39=39.5x; end-2025 close 26.18/0.39=67.1x; now 16.95/TTM GAAP EPS 0.54 (Q4'25 0.13 + 9M'26 0.41)=31.4x. Forward: 16.95/0.61 (2026 guided adj EPS)=27.8x; 16.95/0.90 (2027 guided)=18.8x; 16.95/0.8245 (2027 consensus)=20.6x. Prior years had losses so no P/E exists; P/TBV now 16.95/7.48=2.27x, P/B 16.95/8.71=1.95x. Sources nm_ib_price pf_eps_diluted_fy2024 pf_eps_diluted_fy2025 pf_rel_20261027_1.",
+  "nm RECONCILIATION pf_revenue_fy2025 619,353k and pf_operating_income_fy2025 525,857k are NOT SoFi's total net revenue / operating income: total net revenue FY2025 per the Q4 release is 3,613,354k (adjusted 3,591,411k), so the companyfacts 'Revenues' tag picked up a partial line (noninterest/ other revenue tag). Analyst must use nm_total_net_revenue_fy2025, not pf_revenue_*. Net income FY2025 481,320k, SBC 262,058k, diluted EPS 0.39 and diluted shares 1,251.8M reconcile to the Q4 release (net income 481,320, EPS 0.39). pf_cfo_fy2025 -3,742M is dominated by originations of loans held for sale (CFO is not a free-cash-flow measure for a lender; ignore for valuation). Q3 2026 and 9M figures taken from the 10-27 release, not yet in a 10-Q (10-Q for Q3 not filed as of 2026-11-02 in the filings list); AV INCOME_STATEMENT / BALANCE_SHEET / CASH_FLOW were not called (single AV probe used for EARNINGS_ESTIMATES).",
+  "nm ROIC CHECK prefetch/forensic.json roic is unavailable (needs operating income, equity, debt and cash per year; a bank has no operating-income/invested-capital frame; deposits of 51.3B are funding, not debt). Use return on equity and return on tangible equity instead: FY2025 ROE 5.7% (net income 481.3M / avg equity 8.51B); Q3 2026 annualised ROE 8.6% (240.99M*4 / avg equity 11.19B); ROTE annualised about 10.0% (company states approx 10%). Equity history (pf): 2022 5.21B, 2023 5.23B, 2024 6.53B, 2025 10.49B, Q3 2026 11.30B; the growth is equity raises (Jul 2025 offering of 82.7M shares at 20.85 for 1.7B net; Dec 2025 offering plus 3.2M-share option in Jan 2026), not retained earnings alone.",
+  "nm BALANCE SHEET Q3 2026 equity 11.295B, tangible book 9.705B (7.48/share, +25% yoy from 5.97), book value 8.71/share, goodwill 1.425B and intangibles 0.208B; total assets 67.8B; deposits 51.3B; corporate debt 3.86B (includes convertibles and revolver); loans held for sale 34.0B, loans held for investment 18.5B at fair value + 1.2B at amortised cost; cash 2.81B plus restricted cash 0.79B (restricted is not liquidity); CET1 16.9% (required 7.0%), Tier 1 leverage 15.0%; allowance 61.1M on 1.2B amortised-cost loans. Loan metric: total loans 45.98B, delinquencies 618.6M (1.80% vs 2.11% a year ago). Most of the loan book is held for sale at fair value, so fair-value marks and the loan-sale market drive earnings quality.",
+  "nm DILUTION shares outstanding 1,296.6M (Sep 30 2026) vs 1,270.6M (Dec 31 2025) vs 1,204.6M (Sep 30 2025): +7.6% yoy, mostly from equity offerings. Diluted weighted average 1,357.8M in Q3 2026 vs basic-type outstanding 1,296.6M: GAAP diluted includes if-converted effect of convertible notes; the company's adjusted EPS removes about 26.4M shares (1,357.8M to 1,331.4M) where capped calls offset. Converts: $1.2B 2026 notes (2021 issue, partly repurchased in Dec 2023, now settled in cash up to principal plus shares for excess after the 2026-04-15 election) and $862.5M 2029 notes (conditional conversion feature met in Q2 2026 as the stock was at or above 130% of the conversion price in that test period); the 10-Q (pf_10q_20260806) notes 1639-1647. SBC is large: Q3 2026 70.9M, 9M 219.8M (70.9M is 5.1% of Q3 net revenue); FY2025 262.1M. Adjusted EBITDA and adjusted net income add back share-based expense. The 2026 guidance shows the same net income (840M) as adjusted net income; whether adjusted EPS excludes SBC is for the documents lane to check.",
+  "nm Q3 2026 RESULTS (release 2026-10-27, citable from 2026-10-29): total net revenue 1,385.1M (+44%), adjusted net revenue 1,371.1M (+44%), adjusted EBITDA 469.8M (+70%, 34% margin), GAAP net income 241.0M (+73%), EPS 0.18 (vs 0.11), NII 929.5M (+59%), NIM 6.14%, record originations 16.9B (of which 3.8B loan platform business), members 17.1M (+35%), products 26.7M (+44%), fee-based revenue 570.6M (42% of total), Rule of 40 score 79. Financial Services revenue 525.1M (+25%). Guidance raised: FY2026 adjusted net revenue approx 5.04B (+40%), adjusted EBITDA approx 1.66B, net income approx 840M, EPS approx 0.61 (previous 4.75-4.85B revenue, 1.6B EBITDA, 825M net income, 0.60 EPS); first FY2027 guide: adjusted net revenue approx 6.4B (+27%), adjusted EBITDA approx 2.24B, net income approx 1.28B, EPS approx 0.90. FY2027 guidance is management guidance, not evidence of fact. Consensus (AV, 2026-11-02) is stale vs the print: FY2026 revenue 4.876B (n19, 4.777-5.002B) vs guide 5.04B; FY2026 EPS 0.5928 (n8) vs guide 0.61; FY2027 revenue 6.095B (n21, high 8.663B looks like an outlier) vs guide 6.4B; FY2027 EPS 0.8245 (n8, 0.78-0.88) vs guide 0.90. AV revisions: FY2026 EPS avg 0.5917 ninety days ago to 0.5928 now; FY2027 0.8102 to 0.8245; Q4 2026 EPS revisions in the last 30 days 1 up / 5 down but this snapshot predates the Q3 print and probably the estimate rows are not refreshed (the 2026-09-30 quarter row still shows an estimate of 0.1682 versus actual 0.18, a beat of about 7%).",
+  "nm TRACK RECORD revenue ratio about 1.10 over 4 periods of adjusted net revenue (Q2 2025 858.2/795 = 1.08; FY2025 3,591.4/3,237.5 = 1.11 vs the first numeric range; Q1 2026 1,087.2/1,040 = 1.05; Q2 2026 1,205.6/1,115.7 = 1.08), 4 beats, 0 misses; EBITDA ratios 1.21 (Q2 2025), 1.23 (FY2025), 1.13 (Q1 2026): SoFi guides conservatively and has beaten every guided period in this window, then raised full-year guidance each quarter (FY2025 range 3.20-3.275B in Jan/Feb 2025 to 3.54B in Oct 2025 to actual 3.59B; FY2026 4.655B in Jan 2026 to 5.04B now). Caveat: the beats came in a favorable loan-sale and rate environment; the Jan 2026 FY2026 guide (4.655B) was beaten by about 8% already; ticker-check prints its own computed ratio. Q3 2026 itself: Q2 2026 release guided no explicit Q3 number so no row.",
+  "nm GUIDANCE NOTE Q2 2026 row: Q2 2026 guidance was 'approximately 30%' growth on Q2 2025 adjusted net revenue of 858.23M, giving 1,115.7M (derived midpoint). FY2025 first numeric range 3.200-3.275B appeared as 'prior guidance' in the Q1 2025 release; the Jan 2025 release itself gave only an incremental EBITDA margin target of about 30%, so the first numeric range is as quoted a few months after the January guide.",
+  "nm AV AV EARNINGS_ESTIMATES answered once (2026-11-02); INCOME_STATEMENT, BALANCE_SHEET and CASH_FLOW were not requested to stay within the one-probe limit and the filings/release give the same statement lines; the saved raw file av__earnings-estimates-SOFI__annual.json is an excerpt (4 rows of the payload), not the verbatim full payload.",
+  "uf Peer readings for competitive_position use Capital One's Q3 2026 release (NIM 8.41%, CET1 13.8%) as summarised by the deep lane; the release itself was not re-read in this stage (retrieval search_excerpt).",
+  "uf CEO open-market purchases are from an aggregator citing Form 4s; not verified on EDGAR (gap)."
+ ],
+ "potential": {
+  "market_direction": {
+   "reading": "Demand grows but the macro turned against lenders. US unsecured personal-loan balances reached a record $281B (+9.6% yoy) with originations +19.5% yoy (TransUnion Q2 2026). Rates went the wrong way for SoFi: a quarter-point Fed hike in September 2026 and a hold at 3.75-4.00% on 2026-10-28 with a further hike priced. Labour is softening (September unemployment 4.2%, payrolls +29k) and 4.7% of household debt is in some stage of delinquency (NY Fed 2026Q2). A tailwind on capital rules: the March 2026 Basel III re-proposal estimates lower CET1 requirements for smaller banks (final rule not yet confirmed).",
+   "evidence_ids": [
+    "fd_transunion_q2_2026",
+    "mc_fomc_20261028",
+    "mc_bls_sep2026",
+    "mc_nyfed_2026q2",
+    "mc_basel_20260320"
+   ]
+  },
+  "bottleneck_potential": {
+   "reading": "SoFi is not an industry bottleneck; it owns a cost advantage on the scarce input of the lending business, cheap stable funding. Deposits are $51.3B (+$5.8B in Q3 2026), 90% of average liabilities, priced 145 bp below warehouse lines (about $745M a year of interest saved). Marketplace lenders without a charter (Upstart) cannot fund on balance sheet; LendingClub, Ally and Capital One have the same charter-funding advantage, so it is a moat versus non-banks, not a bottleneck. It lasts while deposit growth keeps pricing below market funding; the shift to time deposits (higher cost) is the erosion signal to watch.",
+   "evidence_ids": [
+    "dc_k_deposits",
+    "dc_k_deposit_rate_vs_warehouse",
+    "pf_rel_20261027_1",
+    "fd_cf_UPST",
+    "fd_cf_LC"
+   ]
+  },
+  "share_trajectory": {
+   "reading": "SoFi is taking share in lending and deposits and losing it in the technology platform. Personal-loan originations $12.6B in Q3 2026 (+69% yoy) against market originations +19.5%; Lending segment adjusted revenue $807.4M vs $481.4M a year earlier, against LendingClub interest income +15.1% and Upstart revenue +41.8% (Q2 2026). Deposits +37% yoy while Ally's FY2025 revenue fell 3.3%. Financial Services revenue $525.1M (+25%) outgrows Robinhood's total revenue (+11.8% in Q3 2026) from a smaller base. Technology Platform revenue fell to $87.4M from $114.6M (-24%) after a large client left. Bases differ (SoFi net revenue vs competitors' XBRL lines): direction only.",
+   "evidence_ids": [
+    "dc_f05_loan_originations_personal",
+    "fd_transunion_q2_2026",
+    "dc_s_lend_q3",
+    "dc_s_lend_q3p",
+    "fd_cf_LC",
+    "fd_cf_UPST",
+    "pf_peer_ALLY",
+    "dc_s_fs_q3",
+    "dc_s_fs_q3p",
+    "fd_cf_HOOD",
+    "dc_s_tech_q3",
+    "dc_s_tech_q3p"
+   ]
+  },
+  "competitive_position": {
+   "reading": "Stronger than LendingClub and Upstart on scale and funding (a $51.3B deposit base; $16.9B quarterly originations). Against Capital One: lower NIM (6.14% vs 8.41%) but more capital (CET1 16.9% vs 13.8%). Weaker than all large peers on returns: ROTE about 10% in Q3 2026 against management's own 20-30% goal. Against Robinhood in investing and cash management SoFi is smaller and less profitable (Robinhood Q3 2026 net income $468M on $1,424M revenue; SoFi total net income $241M on $1,385M). The edge is breadth (17.1M members, 1.56 products per member) rather than a best-in-class single product.",
+   "evidence_ids": [
+    "dc_k_deposits",
+    "dc_f04_loan_originations_total",
+    "dc_k_nim",
+    "dc_k_cet1",
+    "uf_cof_q3_2026",
+    "dc_k_rote",
+    "fd_cf_HOOD",
+    "nm_net_income_q3_2026",
+    "nm_total_net_revenue_q3_2026",
+    "dc_k_members",
+    "dc_k_ppm",
+    "fd_cf_LC",
+    "fd_cf_UPST"
+   ]
+  },
+  "threats": {
+   "reading": "1) Rates: about $1.4B of fair-value premium on $52.5B of fair-value loans; Q3 2026 benchmark +76 bp caused more than $800M of negative marks, offset by about $734M of hedge gains (call), and further hikes repeat this. 2) Capital: CET1 fell to 16.9% (22.8% at end-2025) as risk-weighted assets grew to $56.2B; management targets low-to-mid teens and says 2027 needs no raise, but faster growth or losses would force slower growth or new equity. 3) Credit: unsecured book in a softening labour market; credit-card NCO 7.77%. 4) Loan Platform Business depends on a small number of third-party buyers (10-K). 5) Robinhood moving into banking and cards for the same young customers. 6) Technology Platform client attrition (-24% revenue). 7) Bank supervision (OCC/Fed/CFPB) and capital rules.",
+   "evidence_ids": [
+    "dc_call_20261027",
+    "dc_f26_fair_value_loans_total",
+    "dc_k_cet1",
+    "dc_f21_risk_weighted_assets",
+    "dc_f18_net_charge_off_rate_credit_card",
+    "mc_bls_sep2026",
+    "pf_10k_20260217",
+    "fd_cf_HOOD",
+    "dc_s_tech_q3",
+    "mc_fomc_20261028"
+   ]
+  }
+ },
+ "scenario_events": {
+  "bear": [
+   {
+    "event_he": "עליית ריבית או התרחבות מרווחי אשראי מוחקת חלק גדול מהפרמיה של כ-1.4 מיליארד דולר על שווי ההלוואות (תוספת של אחוז בריבית = כמיליארד דולר לפני גידור).",
+    "evidence_ids": [
+     "pf_10q_20260806",
+     "pf_rel_20261027_1"
+    ]
+   },
+   {
+    "event_he": "הפסדי האשראי בהלוואות האישיות חוזרים לכ-4.4% (במקום כ-3.4% היום), וההנחה של שיעור החדלות כבר עולה שלושה רבעונים ברצף.",
+    "evidence_ids": [
+     "dc_f15_net_charge_off_rate_personal_all_in_ex_delinquent_sales",
+     "pf_rel_20261027_1"
+    ]
+   },
+   {
+    "event_he": "יחס ההון (CET1) ממשיך לרדת כ-2 נקודות ברבעון; סופיי מאטה את הצמיחה או מגייסת הון שוב, כמו בגיוסים של 2025 ב-20.85 ו-27.50 דולר.",
+    "evidence_ids": [
+     "dc_f19_cet1_ratio",
+     "dc_f21_risk_weighted_assets",
+     "pf_10q_20260806"
+    ]
+   },
+   {
+    "event_he": "הכנסות פלטפורמת ההלוואות והפלטפורמה הטכנולוגית ממשיכות לרדת, וההוצאה על שיווק (כ-55%+) אוכלת את הצמיחה.",
+    "evidence_ids": [
+     "dc_f09_loan_platform_business_revenue",
+     "dc_s_tech_q3",
+     "dc_s_tech_q3p"
+    ]
+   }
+  ],
+  "base": [
+   {
+    "event_he": "סופיי מסיימת את 2026 סביב התחזית (הכנסות כ-5.04 מיליארד, רווח כ-840 מיליון) ומספקת ב-2027 הכנסות של כ-6.4 מיליארד ורווח של כ-1.28 מיליארד.",
+    "evidence_ids": [
+     "dc_g_rev26",
+     "dc_g_ni26",
+     "dc_g_rev27",
+     "dc_g_ni27"
+    ]
+   },
+   {
+    "event_he": "מספר החברים והמוצרים ממשיך לגדול (17.1 מיליון חברים, +36%) והפיקדונות הזולים ממשיכים לממן את ההלוואות.",
+    "evidence_ids": [
+     "dc_k_members",
+     "dc_k_deposits",
+     "dc_k_deposit_rate_vs_warehouse"
+    ]
+   },
+   {
+    "event_he": "התשואה על ההון עולה בהדרגה לכ-10.5%-11% ב-2028, בהתאם ליעד צמיחת הרווח למניה של 38%-42% בשנה.",
+    "evidence_ids": [
+     "dc_g_cagr_eps",
+     "dc_g_eps27"
+    ]
+   }
+  ],
+  "bull": [
+   {
+    "event_he": "סופיי שוב מכה ומעלה את התחזית: רווח 2027 מעל 1.28 מיליארד, כמו ההכאות של 13%-23% ב-EBITDA בשנים האחרונות.",
+    "evidence_ids": [
+     "dc_g_ni27",
+     "dc_g_ebitda27",
+     "dc_g_ebitda26_jan"
+    ]
+   },
+   {
+    "event_he": "הכנסות מעמלות (42% מההכנסות היום) גדלות מהר יותר מספר ההלוואות, כך שהרווח עולה בלי לצרוך הרבה הון.",
+    "evidence_ids": [
+     "dc_k_fee_share",
+     "dc_f12_fee_based_revenue"
+    ]
+   },
+   {
+    "event_he": "הרווח למניה צומח בקצב העליון של היעד (42% בשנה עד 2028) והתשואה על ההון מגיעה לכ-16% עד 2031.",
+    "hypothesis": true
+   }
+  ]
+ },
+ "drivers": {},
+ "company_path": {
+  "metric": "eps",
+  "multiple": "forward_pe",
+  "scenarios": {
+   "bear": {
+    "multiple_from": "economics",
+    "roic": 0.075,
+    "justification": "unproven",
+    "reason_he": "זה בנק, ולכן התשואה הנמדדת היא על ההון העצמי (כולל מוניטין), לא ROIC. ב-2025 היא הייתה 5.7%, וברבעון השלישי של 2026 כ-8.6% בקצב שנתי. בתרחיש הדובי היא נשארת סביב 7.5%: יחס ההון (CET1) יורד בכ-2 נקודות ברבעון, ולכן צריך למכור יותר הלוואות או לגייס הון. בנוסף, ריבית ומרווחי אשראי גבוהים שוחקים את פרמיית השווי ההוגן של ההלוואות. תשואה מתחת לעלות ההון פירושה שכל דולר שמושקע בצמיחה שווה פחות מדולר, ולכן המכפיל נמוך.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "nm_roe_fy2025",
+     "nm_roe_q3_2026_annualised",
+     "nm_equity_q3_2026",
+     "pf_rel_20261027_1"
+    ]
+   },
+   "base": {
+    "multiple_from": "economics",
+    "roic": 0.12,
+    "justification": "justified_high",
+    "reason_he": "התשואה על ההון עלתה מ-5.7% ב-2025 לכ-8.6% היום (על ההון המוחשי, בלי מוניטין, כ-10%). תחזית ההנהלה ל-2027, רווח של 1.28 מיליארד דולר על הון של כ-12-13 מיליארד, משתמעת לכ-10-11% על ההון הממוצע. ההון החדש שמושקע בצמיחה מרוויח יותר מהממוצע בזכות מינוף תפעולי. להנהלה יש רקורד של העלאת התחזית בכל רבעון ב-2025-2026. לכן 12% הם המסלול הסביר, מעט מעל עלות ההון: מכפיל מתון שיורד עם האטת הצמיחה.",
+    "source_tier": "guidance",
+    "evidence_ids": [
+     "dc_g_ni27",
+     "dc_g_eps27",
+     "dc_k_rote",
+     "nm_roe_q3_2026_annualised",
+     "nm_equity_q3_2026",
+     "pf_rel_20261027_1"
+    ]
+   },
+   "bull": {
+    "multiple_from": "economics",
+    "roic": 0.16,
+    "justification": "unproven",
+    "reason_he": "יעד ההנהלה הוא צמיחה של 38-42% בשנה ברווח למניה בשנים 2025-2028. אם זה קורה בלי גיוס הון נוסף, התשואה על ההון מגיעה לאמצע העשרות (כ-16%). לשם כך צריך יותר הכנסות מעמלות (פלטפורמת ההלוואות, מוצרים לכל לקוח) והוצאות שיווק שגדלות לאט יותר מההכנסות. Ally, מתחרה ישיר בפיקדונות, מרוויחה כבר היום 13.1% על ההון המוחשי. זה עדיין לא הוכח, ולכן המכפיל הגבוה מותנה.",
+    "source_tier": "guidance",
+    "evidence_ids": [
+     "dc_g_cagr_eps",
+     "dc_k_rote",
+     "dc_g_ni27",
+     "pf_rel_20260130_1"
+    ]
+   }
+  },
+  "own_history": {
+   "low": 31.4,
+   "median": 39.5,
+   "high": 67.1,
+   "years": "2024-2026",
+   "evidence_ids": [
+    "nm_ib_price",
+    "pf_eps_diluted_fy2024",
+    "pf_eps_diluted_fy2025",
+    "pf_rel_20261027_1"
+   ]
+  }
+ },
+ "key_risk": {
+  "reading_he": "הסיכון המרכזי הוא שהרווח וההון של סופיי תלויים בשווי ההוגן של ההלוואות: פרמיה של כ-1.4 מיליארד דולר (כ-14% מההון המוחשי) נשחקה ב-630 מיליון ברבעון אחד, ותוספת של אחוז לריבית מורידה כמיליארד דולר לפני גידור, בזמן שיחס ההון יורד כ-2 נקודות ברבעון.",
+  "evidence_ids": [
+   "pf_rel_20261027_1",
+   "pf_10q_20260806",
+   "dc_f19_cet1_ratio",
+   "dc_f22_tangible_book_value"
+  ]
+ },
+ "falsifiers": [
+  {
+   "id": "fx_ni27",
+   "scenario": "base",
+   "metric": "FY2027 net income (USD)",
+   "threshold": 1100000000,
+   "direction": "below",
+   "by": "2028-03-15",
+   "evidence_ids": [
+    "dc_g_ni27"
+   ]
+  },
+  {
+   "id": "fx_cet1",
+   "scenario": "base",
+   "metric": "CET1 ratio at a quarter end without a new equity raise",
+   "threshold": 0.13,
+   "direction": "below",
+   "by": "2027-12-31",
+   "evidence_ids": [
+    "dc_f19_cet1_ratio"
+   ]
+  },
+  {
+   "id": "fx_rote_bear",
+   "scenario": "bear",
+   "metric": "ROTE annualised, Q4 2027",
+   "threshold": 0.12,
+   "direction": "above",
+   "by": "2028-03-15",
+   "evidence_ids": [
+    "dc_f24_return_on_tangible_common_equity"
+   ]
+  },
+  {
+   "id": "fx_plnco_bear",
+   "scenario": "bear",
+   "metric": "Personal-loan all-in NCO ex delinquent sales, every quarter of 2027",
+   "threshold": 0.035,
+   "direction": "below",
+   "by": "2028-03-15",
+   "evidence_ids": [
+    "dc_f15_net_charge_off_rate_personal_all_in_ex_delinquent_sales"
+   ]
+  },
+  {
+   "id": "fx_rote_bull",
+   "scenario": "bull",
+   "metric": "ROTE annualised, Q4 2027",
+   "threshold": 0.11,
+   "direction": "below",
+   "by": "2028-03-15",
+   "evidence_ids": [
+    "dc_f24_return_on_tangible_common_equity"
+   ]
+  }
+ ],
+ "assessments": {
+  "moat": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "dc_k_deposit_rate_vs_warehouse",
+    "dc_k_deposits",
+    "pf_rel_20261027_1",
+    "fd_cf_UPST"
+   ],
+   "note": "Evidenced source: charter-based deposit funding 145 bp below warehouse (about $745M a year) versus non-bank Upstart; LendingClub, Ally and Capital One share it, so it is not unique. Brand and member scale are not separately evidenced."
+  },
+  "switching_costs": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "dc_k_ppm",
+    "dc_k_members",
+    "dc_k_products",
+    "dc_k_products_prior"
+   ],
+   "note": "Products per member 1.56 (1.47 a year earlier) and about half of new products from existing members show cross-sell; product counts are cumulative and the definition was widened in 2026, so part of the growth is definitional. Deposits are rate-sensitive (time deposits growing), which limits lock-in."
+  },
+  "pricing_power": {
+   "assessment": "weak",
+   "evidence_ids": [
+    "dc_k_fs_rev_per_product",
+    "pf_rel_20261027_1",
+    "pf_10k_20260217"
+   ],
+   "note": "Financial Services revenue per product $90 vs $104 a year earlier: product growth (+44%) outruns monetisation (+25%). Deposits require a competitive APY (10-K). Lending risk-adjusted margin (7.6% core personal loans) is healthy but set by credit and funding, not pricing power."
+  },
+  "customer_concentration": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "pf_10k_20260217",
+    "dc_s_tech_q3",
+    "dc_s_tech_q3p",
+    "dc_f08_loan_platform_business_originations"
+   ],
+   "note": "Consumers are diverse; concentration sits in the Loan Platform Business buyers (10-K: a small number of purchasers, $3.8B originated for them in Q3 2026) and in the Technology Platform, where one client's exit cut segment revenue 24%."
+  },
+  "market_size": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "fd_transunion_q2_2026",
+    "dc_f26_fair_value_loans_total"
+   ],
+   "note": "US unsecured personal loans $281B, 26.9M borrowers, growing; SoFi's balance-sheet loans at fair value $52.5B across personal, student and home leaves room, plus deposits and investing."
+  },
+  "competition": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "fd_transunion_q2_2026",
+    "dc_f05_loan_originations_personal",
+    "fd_cf_LC",
+    "fd_cf_UPST",
+    "fd_cf_HOOD",
+    "pf_peer_ALLY"
+   ],
+   "note": "Crowded field (LendingClub, Upstart, Robinhood, Ally, Capital One, large banks) but SoFi is growing faster than each on the available lines; the 10-K names only competitor classes."
+  },
+  "substitutes": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "pf_10k_20260217",
+    "fd_cf_HOOD"
+   ],
+   "note": "Credit cards substitute for personal loans and brokerages/neobanks for Money and Invest; no evidence of a substitute taking SoFi's volume yet."
+  },
+  "management": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "dc_g_rev26_jan",
+    "dc_g_rev26_jul",
+    "dc_g_rev26",
+    "dc_g_eps26_jan",
+    "dc_g_eps26",
+    "pf_rel_20251028_1",
+    "uf_insider_noto_2026"
+   ],
+   "note": "Revenue guidance raised every quarter in 2025 and 2026 (FY2026 $4.655B -> $5.04B) despite a rate hike instead of the two assumed cuts; caveat: EPS guidance only $0.60 -> $0.61 because the extra revenue is reinvested. CEO open-market purchases in 2026 (aggregator, not verified on EDGAR)."
+  },
+  "capital_allocation": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "nm_shares_outstanding_q3_2026",
+    "nm_sbc_9m_2026",
+    "dc_k_rote",
+    "dc_k_cet1",
+    "dc_k_tbvps",
+    "dc_k_tbvps_prior",
+    "pf_10q_20260806"
+   ],
+   "note": "Equity raised in 2025 at $20.85 and $27.50 (above today's ~$17), shares +18% since Dec-24; SBC $220M in 9M 2026 (about 2% a year dilution), no buybacks. ROIC unavailable in the forensic screen; ROTE about 10% sits near or below a high-beta bank's cost of equity, so growth is not yet clearly value-creating. Most of the TBV/share rise came from raises, not earnings."
+  },
+  "regulation": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "pf_10k_20260217",
+    "mc_basel_20260320",
+    "mc_ed_rap_20261022"
+   ],
+   "note": "Bank holding company under OCC/Fed/CFPB; Basel re-proposal would lower capital requirements (not final); federal student-loan changes (RAP) have an unclear effect on refinance demand."
+  },
+  "technology_ai": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "dc_s_tech_q3",
+    "dc_s_tech_q3p",
+    "dc_k_tech_accounts"
+   ],
+   "note": "Owns its stack (Galileo/Technisys), but the platform shrank to $87.4M revenue and 140M accounts (-11%), margin 16% vs 28%; no evidenced AI-driven advantage."
+  },
+  "geopolitics": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "mc_f_rev_us_2025",
+    "mc_f_rev_foreign_2025"
+   ],
+   "note": "Low exposure: 93.1% of FY2025 revenue in the US, no supply-chain or export-control exposure."
+  }
+ },
+ "forecast_options": {
+  "cyclical": {
+   "treatment": "structural",
+   "reason": "Growth is member, product and deposit share gain (members +36%, products +44%, deposits +37% y/y) and revenue guidance was raised through a year that brought a rate hike instead of the two cuts assumed; the consumer-credit cycle enters through the ROE path of the bear (fair-value marks and charge-offs), not as a revenue peak.",
+   "evidence_ids": [
+    "dc_k_members",
+    "dc_k_products",
+    "dc_k_deposits",
+    "dc_g_rev26",
+    "dc_g_rev26_jan"
+   ]
+  },
+  "bank_drivers": {
+   "base": {
+    "roe_start": 0.095,
+    "roe_year5": 0.125,
+    "roe_terminal": 0.115,
+    "book_growth_start": 0.095,
+    "payout": 0.0,
+    "terminal_reason": "A deposit franchise of 17.1m members funding loans at 1.45pp below warehouse funding, products per member rising (1.56) and a NIM guided above 5%: a modest edge of about 0.3pp over the cost of equity is kept, far below today's lending spreads.",
+    "source_tier": "guidance",
+    "reason": "Start 9.5%: Q3 2026 annualised ROE 8.6% (ROTE 10%), normalised upward for the $10.9m after-tax servicing-rights fair-value charge and toward the FY2027 guide (net income $1.28bn on an average book of about $12.4bn = about 10.3%, computed). Year 5 12.5%: the 2025-2028 EPS CAGR target of 38-42% and the EBITDA margin rising to 35% imply ROE of about 10.5-11% in 2028 (computed); continuing operating leverage (net income margin from about 17% in 2026 to 20% in 2027) takes it to about 12.5% by 2031. Book growth 9.5% = all profit retained (payout 0); the engine keeps shares constant at the point-in-time count, and SBC (about $290m a year) is a cost inside GAAP net income, so dilution from awards is charged. Past raises are in the opening share count.",
+    "evidence_ids": [
+     "dc_g_ni27",
+     "dc_g_eps27",
+     "dc_g_cagr_eps",
+     "dc_g_ebitda27",
+     "nm_roe_q3_2026_annualised",
+     "nm_rote_q3_2026_annualised",
+     "pf_rel_20261027_1",
+     "pf_10q_20260806"
+    ]
+   },
+   "bear": {
+    "roe_start": 0.06,
+    "roe_year5": 0.085,
+    "roe_terminal": 0.085,
+    "book_growth_start": 0.05,
+    "payout": 0.0,
+    "source_tier": "own_history",
+    "reason": "Start 6%: back to the FY2025 ROE of 5.7%. Mechanisms, sized from SoFi's own filings: (1) fair value - the remaining loan premium is about $1.4bn and a +100bp move cost $1,040.8m before hedges (June 2026 10-Q); losing about half of the premium after tax is about 5% of book; (2) credit - the personal-loan default assumption already rose 4.57% to 5.10%, and an all-in NCO back at the 4.4% of late 2025 on about $31bn of personal loans costs about $300m a year pre-tax; (3) funding/capital - CET1 fell 22.8% to 16.9% in three quarters with RWA +68%, so growth is cut to what retained profit funds (book growth 5%) or new equity is issued below today's price. ROE recovers only to 8.5%, below the cost of equity, also at the terminal.",
+    "evidence_ids": [
+     "nm_roe_fy2025",
+     "pf_10q_20260806",
+     "pf_rel_20261027_1",
+     "dc_f15_net_charge_off_rate_personal_all_in_ex_delinquent_sales",
+     "dc_f19_cet1_ratio",
+     "dc_f21_risk_weighted_assets",
+     "dc_f26_fair_value_loans_total"
+    ]
+   },
+   "bull": {
+    "roe_start": 0.1,
+    "roe_year5": 0.16,
+    "roe_terminal": 0.135,
+    "book_growth_start": 0.1,
+    "payout": 0.0,
+    "terminal_reason": "A national digital bank with a cheap deposit base (1.45pp below warehouse funding), 42% fee-based revenue that needs little capital and products per member rising: part of the excess return survives competition (Ally, Capital One, Nu) at about 2pp over the cost of equity.",
+    "source_tier": "guidance",
+    "reason": "Start 10%: the FY2027 guide (net income $1.28bn, about 10.3% on average book, computed) reached early, consistent with EBITDA beats of 13-23% against guidance. Year 5 16% (ROTE about 18%): the top of the 38-42% EPS CAGR target to 2028 sustained by fee revenue (42% of revenue) growing faster than the capital-consuming loan book, NIM held above the guided 5% floor and marketing growing slower than revenue. Book growth 10% = all profit retained.",
+    "evidence_ids": [
+     "dc_g_ni27",
+     "dc_g_cagr_eps",
+     "dc_g_ebitda27",
+     "dc_g_nim",
+     "dc_k_fee_share",
+     "dc_k_deposit_rate_vs_warehouse",
+     "pf_rel_20261027_1"
+    ]
+   },
+   "regulatory_capital": {
+    "risk_weighted_assets": 48682417000,
+    "required_capital_ratio": 0.07,
+    "as_of": "2026-06-30",
+    "reason": "SoFi Technologies risk-weighted assets $48.68bn at June 30, 2026 and the CET1 requirement of 7.0% including the 2.5% capital conservation buffer, from the 10-Q capital table. The Q3 release shows RWA already at $56.24bn (Sep 30, 2026; CET1 16.9%), so this filing figure understates the current requirement by about 15%.",
+    "evidence_ids": [
+     "pf_10q_20260806",
+     "dc_f21_risk_weighted_assets"
+    ]
+   }
+  }
+ },
+ "market": {
+  "risk_free": {
+   "value": 0.0498,
+   "as_of": "2026-10-29",
+   "source_id": "pf_fred_dgs10"
+  },
+  "equity_risk_premium": {
+   "value": 0.042,
+   "as_of": "2026-10-01",
+   "source_id": "pf_erp_implied"
+  }
+ }
+}

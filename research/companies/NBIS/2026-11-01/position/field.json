@@ -1,0 +1,194 @@
+{
+ "thesis_he": {
+  "bear": "הביקוש לענן AI ממשיך, אבל המחיר לשעת GPU יורד, ההייפרסקיילרים ו-CoreWeave לוקחים את החוזים הגדולים, והמימון היקר והדילול אוכלים את הצמיחה; לנביוס אין חפיר שמגן על התשואה.",
+  "base": "המחסור בכוח חשמל מחובר וב-GPU נמשך עד 2027, נביוס ממירה חלק גדול מהחשמל החוזי לקיבולת פעילה ומוכרת אותה בחוזים ארוכים עם תשלום מראש, וצומחת מהר יותר מ-CoreWeave מבסיס קטן, אבל נשארת תלויה בכמה לקוחות גדולים ובמימון חיצוני.",
+  "bull": "נביוס מחברת 800-1000 מגה-וואט עד סוף 2026 ותוכנית של יותר מגיגה-וואט ב-2027, ממלאת אותם בחוזים של 20-25 מיליון דולר למגה-וואט בשנה, והשכבה התוכנתית (Token Factory) מחזיקה מחיר גבוה גם כשהשוק עובר להסקה."
+ },
+ "potential": {
+  "market_direction": {
+   "reading": "Demand for contracted AI compute is rising on the buyers' own commitments, not logos: NBIS RPO was $37.5B at 2026-06-30 (36% due within 24 months) and management cites more than $40B of contracted backlog incl. investment-grade long-term deals; named competitor CoreWeave's RPO rose from $60.7B (2025-12-31) to $103.7B (2026-06-30). Management says it could sell all 2027 capacity on landmark-deal terms. Counter-signals at as_of: press reports a Gartner warning (14 Oct 2026) that more than 80% of neoclouds may not stay independent by 2030 and a neocloud credit sell-off (secondary press, the report itself not read).",
+   "evidence_ids": [
+    "dc_f_rpo",
+    "dc_k_backlog",
+    "fd_cw_sec_facts",
+    "dc_call_q2",
+    "mc_press_gartner"
+   ]
+  },
+  "bottleneck_potential": {
+   "reading": "NBIS is not itself a bottleneck: it buys the scarce inputs (powered, connected data-center capacity and NVIDIA GPUs from three suppliers that carried Q2 capex). Its edge is holding scarce capacity: about 170 MW active at end-2025, more than 2 GW contracted (Feb 2026), guidance of 800-1000 MW connected and 5 GW contracted by end-2026. The window lasts while connected power is short; capacity adders are CoreWeave, Crusoe, Lambda, the hyperscalers and state programmes (20-F). How long the shortage lasts is not independently evidenced.",
+   "evidence_ids": [
+    "pf_10k_20260430",
+    "dc_g_mw",
+    "dc_g_cpower",
+    "dc_6k_q2_ofr"
+   ]
+  },
+  "share_trajectory": {
+   "reading": "NBIS is gaining relative to named competitor CoreWeave in reported revenue, from a much smaller base: Nebius AI cloud revenue $574.9M in Q2 2026 vs $93.7M in Q2 2025 (about 6.1x), group $582.3M vs $105.1M (5.5x), against CoreWeave $2,575M vs $1,212M (2.1x); NBIS is about 22.6% of CoreWeave's quarterly revenue (derived). ARR rose from $1.9B (2026-03-31) to $3.0B (2026-06-30). No measured market-share figure and no numbers for Crusoe, Lambda or Oracle's AI cloud, so share against the full named set is a gap.",
+   "evidence_ids": [
+    "dc_s_ai_q2",
+    "dc_s_ai_q2p",
+    "nm_rel_q2_2026",
+    "fd_cw_sec_facts",
+    "dc_k_arr_q1",
+    "dc_k_arr"
+   ]
+  },
+  "competitive_position": {
+   "reading": "Against CoreWeave: smaller (RPO $37.5B vs $103.7B; quarterly revenue about a quarter) and less profitable on GAAP (Q2 2026 operating margin about -30% vs about -2%, derived), but its AI cloud segment shows a 50% adjusted EBITDA margin and customer prepayments fund about 55% of the associated capex on Q2 deals, with $8.0B cash at 2026-06-30. Pricing signal: first capacity auction cleared 15% above the highest Blackwell price charged before, and short-term capacity sells at $40-50M per MW-year vs $20-25M on long deals (management). Against hyperscalers (AWS, Google, Azure, Oracle): weaker on scale and cost of capital; differentiation is the full-stack software and inference layer (Token Factory, Inferize acquisition). Crusoe and Lambda: no numbers (private).",
+   "evidence_ids": [
+    "dc_f_rpo",
+    "fd_cw_sec_facts",
+    "dc_k_ebitda_m",
+    "dc_k_prepay_cov",
+    "dc_f_cash",
+    "dc_call_q2",
+    "dc_6k_inferize"
+   ]
+  },
+  "threats": {
+   "reading": "1) Pricing: the 20-F expects increasing competition to press prices; NBIS launched public spot pricing and auctions (Oct 2026), which also exposes it to spot-price declines. 2) In-sourcing/substitution: the largest buyers (Microsoft, Meta, with Microsoft TCV up to about $17.4B through 2031) build their own capacity; the 20-F flags AI models needing less compute. 3) Financing: capital-bound build-out (2026 capex guide $20-25B) funded by converts, ATM equity, prefunded warrants and a 364-day $3.5B Citi facility at SOFR+2.75%: a credit-market shut-off slows growth (neocloud sell-off Oct 2026, press). 4) Regulation: BIS export-control policy on advanced computing and a proposed IaaS KYC rule; rising US scrutiny of data-center power demand.",
+   "evidence_ids": [
+    "pf_10k_20260430",
+    "mc_press_spot",
+    "dc_g_capex",
+    "dc_6k_citi",
+    "mc_press_neocloud",
+    "mc_fr_bis_2026"
+   ]
+  }
+ },
+ "assessments": {
+  "moat": {
+   "assessment": "weak",
+   "evidence_ids": [
+    "pf_10k_20260430",
+    "fd_cw_sec_facts",
+    "pf_cf_20260430"
+   ],
+   "note": "No durable moat source evidenced against CoreWeave or the hyperscalers: the product (GPU capacity) is bought from the same suppliers; ROIC last -8.7% and incremental ROIC -45% (forensic screen). Current advantage is scarce powered capacity and contracts, which competitors are adding too; returns should fade toward the cost of capital unless the software layer proves pricing."
+  },
+  "switching_costs": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "pf_10k_20260430",
+    "dc_f_rpo",
+    "dc_call_q2"
+   ],
+   "note": "Multi-year take-or-pay contracts (Meta, Microsoft, Q2 landmark deals with 50-60% upfront payments) lock in revenue for their terms (RPO $37.5B, 64% beyond 24 months); but the 20-F says most other engagements are short-term, and customers carry termination rights on delivery delays."
+  },
+  "pricing_power": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "dc_call_q2",
+    "dc_k_yield",
+    "pf_10k_20260430"
+   ],
+   "note": "Auction cleared 15% above the prior Blackwell high and short-term capacity sells at $40-50M per MW-year vs $20-25M on long deals (management statements); the 20-F itself expects competition to press prices. Evidence is of a shortage price, not of durable power versus CoreWeave."
+  },
+  "customer_concentration": {
+   "assessment": "weak",
+   "evidence_ids": [
+    "dc_c_c_q2",
+    "dc_c_d_q2",
+    "dc_c_e_q2",
+    "pf_10k_20260430"
+   ],
+   "note": "Three unnamed customers were 24%, 21% and 14% of Q2 2026 revenue (59% together); Microsoft and Meta contracts are large relative to revenue; losing or delaying one tranche moves revenue materially."
+  },
+  "market_size": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "fd_cw_sec_facts",
+    "dc_k_backlog",
+    "dc_f_rpo"
+   ],
+   "note": "Contracted demand across NBIS ($37.5B RPO, more than $40B backlog per management) and CoreWeave ($103.7B RPO) is many times NBIS's current revenue; no attributed independent market-size study was read (gap)."
+  },
+  "competition": {
+   "assessment": "weak",
+   "evidence_ids": [
+    "pf_10k_20260430",
+    "fd_cw_sec_facts"
+   ],
+   "note": "Named rivals CoreWeave (about 4x NBIS revenue, 2.8x RPO), Crusoe, Lambda and AWS/Google/Azure/Oracle compete for the same AI-lab and hyperscaler contracts; Token Factory faces Fireworks AI and Together AI."
+  },
+  "substitutes": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "pf_10k_20260430"
+   ],
+   "note": "Main substitutes are hyperscaler in-house capacity and more compute-efficient models (20-F risk); not sized. Current hyperscaler contracts with NBIS show buyers still renting capacity."
+  },
+  "management": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "dc_call_q2",
+    "dc_k_arr_q1",
+    "dc_k_arr",
+    "pf_10k_20260430"
+   ],
+   "note": "Executed the 2024 divestiture of all Russian businesses and the pivot to AI cloud; ARR grew from $1.9B to $3.0B in one quarter and 2026 guidance was reaffirmed on 2026-08-12. Guidance track record not computed (gap); implied H2 2026 revenue of $2.0-2.4B vs H1 $0.98B is a steep ramp still to be proven (Q3 results 2026-11-12)."
+  },
+  "capital_allocation": {
+   "assessment": "weak",
+   "evidence_ids": [
+    "dc_6k_q2_fs",
+    "dc_f_atm",
+    "dc_6k_conv",
+    "dc_6k_citi",
+    "dc_k_prepay_cov",
+    "pf_cf_20260430"
+   ],
+   "note": "H1 2026 funding via $4.34B converts, $2.85B treasury share sales and $2.0B prefunded warrants to NVIDIA, 12.7M ATM shares in Q2, a further $4.5B convert offering (Aug) and a 364-day Citi facility: heavy current-holder dilution and refinancing risk; incremental ROIC -45%. Offset: customer prepayments cover about 55% of associated capex on Q2 deals."
+  },
+  "governance": {
+   "assessment": "unknown",
+   "evidence_ids": [
+    "dc_f_sh_a",
+    "dc_f_sh_b"
+   ],
+   "note": "Dual-class structure (238.4M Class A, 33.5M Class B at 2026-06-30); votes per Class B share and control holders not read in this part (gap)."
+  },
+  "regulation": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "mc_fr_bis_2026",
+    "pf_10k_20260430"
+   ],
+   "note": "Export controls on advanced computing and a proposed BIS IaaS KYC rule; US scrutiny of data-center power use and local site approvals (Vineland NJ hearing adjourned). Non-US customers about 36% of FY2025 revenue is an upper bound, not an evidenced loss."
+  },
+  "technology_ai": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "dc_k_ebitda_m",
+    "dc_call_q2",
+    "dc_6k_inferize"
+   ],
+   "note": "AI cloud segment adjusted EBITDA margin 50% in Q2 2026, Vera Rubin deployment expected late 2026/early 2027, inference stack built through Inferize and Eigen AI acquisitions; no evidence yet that the software layer earns a price premium over CoreWeave."
+  },
+  "geopolitics": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "mc_f_rev_us_2025",
+    "mc_f_rev_tot_2025",
+    "mc_f_lla_il_2025",
+    "mc_f_lla_tot_2025",
+    "pf_10k_20260430"
+   ],
+   "note": "Revenue 64% US-located (FY2025); Israel 4.3% of long-lived assets (US-Israel-Iran hostilities risk); Russian businesses fully divested in 2024 with no Russian customers or suppliers per the 20-F; GPU supply exposed to tariffs and export controls (unsized)."
+  }
+ },
+ "gaps": [
+  "Outside view (warning only, moves no number): very high revenue-growth expectations are rarely sustained across five years and capital-intensive neoclouds face a consolidation warning (Gartner, secondary press); no base rate was applied.",
+  "Crusoe and Lambda are private: no numbers; Oracle and AWS/Google/Azure AI-cloud revenue not collected, so share against the full named set is not measurable.",
+  "No attributed independent market-size or market-share study for GPU cloud read.",
+  "No NBIS price per GPU-hour, utilisation, retention or churn series.",
+  "Guidance track record not computed (auto.json track_record null): management delivery vs promise cannot be scored.",
+  "Class B voting rights and control holders not read.",
+  "Q3 2026 results are due 2026-11-12, after as_of: the H2 ramp (implied $2.0-2.4B revenue) is unverified at as_of.",
+  "Alpha Vantage nm_ facts are dated 2026-11-01 and not citable at as_of; issuer documents (nm_rel_q2_2026, dc_*) are cited instead.",
+  "Retention: no net revenue retention or churn disclosed; the top-customer mix changed sharply (Q2 2025 39%/15% vs Q2 2026 24%/21%/14%), so retention is not assessed."
+ ]
+}

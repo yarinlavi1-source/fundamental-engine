@@ -1,0 +1,314 @@
+{
+ "thesis_he": {
+  "bear": "ההשקעות בבינה מלאכותית מאטות ב-2027 ו-2028 עוברת שנת ירידה במחזור: הצמיחה נעצרת והרווחיות התפעולית יורדת לממוצע ההיסטורי (כ-44%).",
+  "base": "הצמיחה נמשכת מעל 25% ב-2027 בזכות 2 ננומטר והביקוש לבינה מלאכותית ואז מאטה בהדרגה; הרווחיות יורדת מעט מהשיא לכ-52% בגלל המפעלים בחו\"ל.",
+  "bull": "הביקוש לבינה מלאכותית ממשיך לעקוף את ההיצע: צמיחה של כ-38% ב-2027, העלאות מחירים, ורווחיות תפעולית נשארת סביב 57% כמו היום."
+ },
+ "drivers": {
+  "growth_anchor": {
+   "period": "FY2027",
+   "bear": -0.045,
+   "base": 0.27,
+   "bull": 0.38,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "dc_g_rev_q4_26",
+    "dc_rel_q3_2026",
+    "dc_call_q3_2026",
+    "nm_revenue_fy2025",
+    "pf_revenue_fy2023",
+    "dc_k_n2_share",
+    "rf_g_rev_fy26",
+    "pf_revenue_fy2022"
+   ],
+   "reason": "Growth of FY2027 over FY2026 = NT$5,593.7bn (drivers.current_year_revenue: 9M reported + Q4 guide). No FY2027 guidance or attributed consensus. The Q4 2026 guide annualized (NT$6,780bn, US$213bn) is already about 21% above FY2026, so flat quarters from Q4 give +21%. Base +27% (FY2027 about NT$7.10tn, US$223bn): only about 1-2% average sequential growth through 2027 as N2-family capacity more than doubles and management says demand still exceeds supply; management calls itself prudent on 2027 and gives no number, so this stays the most likely path but without a guide. Bull +38%: FY2026-like momentum (+44%) slightly faded. Bear -4.5%: an explicit down year sized to the FY2023 decline (-4.5% y/y). Against the exit run rate it is sharper than 2023: the average 2027 quarter falls about 21% below the Q4 2026 guided level (in 2023 the average quarter was about 14% below Q4 2022), because HPC is now 68% of revenue and the two largest customers 36%, so an AI-capex digestion hits a larger share at once."
+  },
+  "growth": {
+   "period": "FY2027",
+   "bear": [
+    -0.045,
+    0.0,
+    0.06,
+    0.07
+   ],
+   "base": [
+    0.27,
+    0.19,
+    0.15,
+    0.12
+   ],
+   "bull": [
+    0.38,
+    0.27,
+    0.2,
+    0.15
+   ],
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "dc_call_q3_2026",
+    "dc_g_capex_fy26",
+    "pf_revenue_fy2023",
+    "pf_revenue_fy2024",
+    "nm_revenue_fy2025",
+    "dc_g_rev_q4_26",
+    "rf_g_rev_fy26"
+   ],
+   "reason": "FY2027-FY2030 on the FY2026 base NT$5,593.7bn (9M reported + Q4 guide). Base fades from +27% toward the low teens as the AI accelerator CAGR management cited (mid-to-high 50s % 2024-2029 for that line) becomes a larger share and capex 2026-2028 'significantly higher' adds N3/N2/A14 capacity (A14 volume 2028). Bull keeps capacity-limited growth longer. Bear: the digestion down year in 2027 (-4.5%, the FY2023 size, sharper than 2023 against the exit run rate), then a flat 2028 while the new 2026-2028 capacity is underused (no AI-led rebound like 2024's), then a single-digit recovery."
+  },
+  "mature_margin": {
+   "bear": 0.44,
+   "base": 0.52,
+   "bull": 0.57,
+   "source_tier": {
+    "bear": "own_history",
+    "base": "own_history",
+    "bull": "guidance"
+   },
+   "evidence_ids": [
+    "dc_g_om_q4_26",
+    "dc_k_overseas_dilution",
+    "dc_call_q3_2026",
+    "nm_operating_income_fy2025",
+    "nm_revenue_fy2025",
+    "pf_operating_income_fy2023",
+    "pf_operating_income_fy2022"
+   ],
+   "reason": "Operating margin. Bear 44%: the FY2019-FY2024 average (43.7%) when utilization and pricing revert. Base 52%: FY2025's 50.8% plus the structural gain of a 72% share and N2 pricing, less the overseas dilution management says widens from ~2 to 3-4 points; below today's 58.7% peak. Bull 57%: the Q4 2026 guided range (56.5-58.5%) held."
+  },
+  "tax_rate": {
+   "all": 0.17,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "pf_10k_20260416",
+    "nm_net_income_fy2025"
+   ],
+   "reason": "FY2025 effective tax rate 17.0% (income tax NT$346.5bn over pre-tax NT$2,041.7bn, 20-F); same in every scenario: no evidence of a scenario-dependent rate."
+  },
+  "current_year_revenue": {
+   "source_tier": "guidance",
+   "evidence_ids": [
+    "rf_g_rev_fy26",
+    "nm_revenue_q1_2026",
+    "nm_revenue_q2_2026",
+    "nm_revenue_q3_2026",
+    "dc_g_rev_q4_26",
+    "dc_g_fx_q4_26",
+    "dc_g_revgrowth_fy26",
+    "dc_rel_q3_2026"
+   ],
+   "adjust_by_track_record": false,
+   "reason": "FY2026 = reported Q1-Q3 2026 (NT$3,898.7bn) + the Q4 2026 revenue guide midpoint US$53.3bn at the guided 31.8 NT$/US$ (NT$1,694.9bn) = NT$5,593.7bn (US$175.9bn, consistent with the 'around 44%' US$ growth guide). Track record (7/7 beats, ratio about 1.024) not applied: the Q4 guide is in US$, so it cannot be the remainder item; applying it to Q4 only would add about NT$40bn (+0.7%)."
+  }
+ },
+ "forecast_options": {
+  "cyclical": {
+   "treatment": "structural",
+   "reason": "The 20-F names the semiconductor cycle and FY2023 revenue fell 4.5%, but TSMC's share keeps rising (72.5% of 2Q26 foundry revenue), growth is driven by value per wafer (shipments +9.6% y/y vs revenue +51%) and node leadership; the cycle is carried as an explicit 2028 down year in the bear instead of normalizing today's revenue to a trend.",
+   "evidence_ids": [
+    "pf_10k_20260416",
+    "pf_revenue_fy2023",
+    "fd_trendforce_2q26",
+    "dc_k_ship_3q26",
+    "dc_k_ship_3q25"
+   ]
+  }
+ },
+ "scenario_events": {
+  "bear": [
+   {
+    "event_he": "הלקוחות הגדולים (שני הגדולים = 36% מההכנסות, עשרת הגדולים = 78%) מקצצים הזמנות לשבבי בינה מלאכותית ב-2027-2028 אחרי גל ההשקעות.",
+    "evidence_ids": [
+     "dc_c_a_fy25",
+     "dc_c_b_fy25",
+     "dc_c_top10_fy25",
+     "dc_s_hpc_3q26"
+    ]
+   },
+   {
+    "event_he": "מחזור ירידה בתעשייה כמו ב-2023 (הכנסות -4.5%), והפעם חד יותר כי מחשוב-על הוא 68% מההכנסות.",
+    "evidence_ids": [
+     "pf_revenue_fy2023",
+     "pf_10k_20260416",
+     "dc_s_hpc_3q26"
+    ]
+   },
+   {
+    "event_he": "הרווחיות נשחקת: המפעלים בארה\"ב וביפן מורידים 3-4 נקודות מהרווח הגולמי, ומחירי הציוד עולים.",
+    "evidence_ids": [
+     "dc_k_overseas_dilution",
+     "dc_call_q3_2026"
+    ]
+   },
+   {
+    "event_he": "מתיחות סביב טייוואן או מכסים אמריקאיים (סעיף 232) פוגעים בייצור או במחיר: 80% מהנכסים הקבועים בטייוואן.",
+    "evidence_ids": [
+     "mc_nca_taiwan_fy25",
+     "mc_nca_total_fy25",
+     "mc_press_232_proc",
+     "pf_10k_20260416"
+    ]
+   },
+   {
+    "event_he": "אינטל או סמסונג זוכות בלקוח גדול לייצור מתקדם ומקטינות את הנתח של TSMC.",
+    "hypothesis": true
+   }
+  ],
+  "base": [
+   {
+    "event_he": "רבעון רביעי 2026 בטווח ההנחיה (52.3-54.3 מיליארד דולר) או מעליו, כמו בשבעת הרבעונים האחרונים; צמיחה של כ-44% בדולר ב-2026.",
+    "evidence_ids": [
+     "dc_g_rev_q4_26",
+     "dc_g_revgrowth_fy26",
+     "nm_rel_20261015"
+    ]
+   },
+   {
+    "event_he": "כושר הייצור ב-2 ננומטר יותר מוכפל ב-2027 ושלושה מפעלי 3 ננומטר חדשים נכנסים (טאינאן 2027, אריזונה רבעון שלישי 2027).",
+    "evidence_ids": [
+     "dc_call_q3_2026",
+     "dc_k_n2_share"
+    ]
+   },
+   {
+    "event_he": "הנתח בשוק הייצור נשאר מעל 70% והביקוש עדיין גבוה מההיצע.",
+    "evidence_ids": [
+     "fd_trendforce_2q26",
+     "dc_call_q3_2026"
+    ]
+   },
+   {
+    "event_he": "ההשקעות עולות ל-60-64 מיליארד דולר ב-2026 ויותר ב-2027-2028, ממומנות מהתזרים בלי דילול.",
+    "evidence_ids": [
+     "dc_g_capex_fy26",
+     "nm_cfo_fy2025",
+     "dc_f_shares_3q26"
+    ]
+   }
+  ],
+  "bull": [
+   {
+    "event_he": "קצב ההכנסות מבינה מלאכותית עולה על התחזית של צמיחה שנתית של 55%-60% עד 2029, כפי שהמנכ\"ל רמז ('כנראה יותר').",
+    "evidence_ids": [
+     "dc_call_q3_2026"
+    ]
+   },
+   {
+    "event_he": "הרווח התפעולי נשאר סביב 57%, ברמת ההנחיה לרבעון הרביעי 2026.",
+    "evidence_ids": [
+     "dc_g_om_q4_26",
+     "dc_k_om_3q26"
+    ]
+   },
+   {
+    "event_he": "העלאות מחירי פרוסות של 3%-6% מינואר 2027 (במיוחד 2 ו-3 ננומטר) מחזיקות.",
+    "hypothesis": true
+   },
+   {
+    "event_he": "A14 נכנס לייצור המוני ב-2028 בזמן, והמתחרים (אינטל 18A/14A, סמסונג) לא סוגרים את הפער.",
+    "evidence_ids": [
+     "dc_call_q3_2026",
+     "fd_intel_q2_2026"
+    ]
+   }
+  ]
+ },
+ "key_risk": {
+  "reading_he": "הסיכון המרכזי: TSMC תלויה בגל השקעות הבינה המלאכותית של מעט לקוחות (עשרת הגדולים 78% מההכנסות, מחשוב-על 68%) בזמן שהרווחיות בשיא (58.7%) וההשקעות במפעלים חדשים עולות; האטה אצל הלקוחות האלה תפגע ברווח מהר, כי רוב העלויות קבועות. מעל זה עומד סיכון טייוואן (80% מהנכסים).",
+  "evidence_ids": [
+   "dc_c_top10_fy25",
+   "dc_s_hpc_3q26",
+   "dc_k_om_3q26",
+   "dc_g_capex_fy26",
+   "pf_10k_20260416",
+   "mc_nca_taiwan_fy25"
+  ]
+ },
+ "falsifiers": [
+  {
+   "id": "fx_q4_floor",
+   "scenario": "base",
+   "metric": "Q4 2026 revenue (US$)",
+   "threshold": 52300000000,
+   "direction": "below",
+   "by": "2027-01-20",
+   "evidence_ids": [
+    "dc_g_rev_q4_26"
+   ]
+  },
+  {
+   "id": "fx_fy27_base",
+   "scenario": "base",
+   "metric": "FY2027 revenue growth (NT$, y/y)",
+   "threshold": 0.15,
+   "direction": "below",
+   "by": "2028-01-25",
+   "evidence_ids": [
+    "dc_g_rev_q4_26",
+    "dc_call_q3_2026"
+   ]
+  },
+  {
+   "id": "fx_bull_margin",
+   "scenario": "bull",
+   "metric": "operating margin, FY2027",
+   "threshold": 0.54,
+   "direction": "below",
+   "by": "2028-01-25",
+   "evidence_ids": [
+    "dc_g_om_q4_26"
+   ]
+  },
+  {
+   "id": "fx_bull_growth",
+   "scenario": "bull",
+   "metric": "FY2027 revenue growth (NT$, y/y)",
+   "threshold": 0.3,
+   "direction": "below",
+   "by": "2028-01-25",
+   "evidence_ids": [
+    "dc_g_rev_q4_26",
+    "dc_call_q3_2026"
+   ]
+  },
+  {
+   "id": "fx_bear_growth",
+   "scenario": "bear",
+   "metric": "FY2027 revenue growth (NT$, y/y)",
+   "threshold": 0.2,
+   "direction": "above",
+   "by": "2028-01-25",
+   "evidence_ids": [
+    "dc_g_rev_q4_26"
+   ]
+  },
+  {
+   "id": "fx_bear_margin",
+   "scenario": "bear",
+   "metric": "operating margin, Q2 2027",
+   "threshold": 0.55,
+   "direction": "above",
+   "by": "2027-07-20",
+   "evidence_ids": [
+    "dc_g_om_q4_26",
+    "dc_k_om_3q26"
+   ]
+  }
+ ],
+ "reasons_he": {
+  "bear": "המחיר הדובי מניח שגל ההשקעות בבינה מלאכותית נשבר: צמיחה של 6% בלבד ב-2027, שנת ירידה ב-2028 ורווחיות שחוזרת לממוצע של 44%.",
+  "base": "הכי סביר לפי הנתונים: ההנחיה לרבעון הרביעי כבר נותנת 21% צמיחה ל-2027 גם בלי עלייה נוספת, והכושר ב-2 ננומטר מוכפל; הרווחיות יורדת מעט מהשיא בגלל המפעלים בחו\"ל.",
+  "bull": "צריך שהביקוש ימשיך לעלות על ההיצע עד 2029, שהעלאות המחירים יחזיקו ושהרווחיות תישאר ברמת ההנחיה של היום (כ-57%)."
+ },
+ "engine_options": {
+  "country_risk": true,
+  "reason": "The 20-F discloses revenue by region (customer HQ: North America 75%, China 9%, Asia Pacific 9%, Japan 4%, EMEA 3%) and noncurrent assets by country (Taiwan 80%)."
+ },
+ "gaps": [
+  "drivers.current_year_revenue now cites rf_g_rev_fy26, a FY2026 revenue range DERIVED from Q1-Q3 reported + the Q4 US$ guide at the guided 31.8 NT$/US$ (TSMC does not guide a FY2026 revenue level); the track-record ratio is not applied.",
+  "No FY2027 guidance and no attributed consensus: growth is own_history/run-rate based, without a consensus cross-check.",
+  "cost_of_equity, terminal_growth, sales_to_capital, terminal_roic, payout_fraction and growth_half_life left on the engine rule (market prices of risk; capital intensity via company_path).",
+  "Q2 2026 disposal gain (NT$63.2bn) tax effect not read: normalization affects reported EPS only, no driver.",
+  "Q3 2026 consolidated 6-K (operating income, CFO, capex, current debt) not yet filed; capex 2027-2028 not quantified beyond 'significantly higher'.",
+  "Taiwan production share of revenue not disclosed: the geopolitical exposure is sized on assets (80%), not revenue."
+ ]
+}

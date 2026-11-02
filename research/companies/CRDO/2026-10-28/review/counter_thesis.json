@@ -1,0 +1,65 @@
+{
+  "lens": "counter_thesis",
+  "findings": [
+    {
+      "severity": "critical",
+      "finding": "The bear row of the table (24.3 today, 21.7-24.3 in years 1-5, -85%) comes from drivers that make a TEMPORARY, evidenced event permanent, and no bear event sizes a permanent stall. The bear events are: the largest end customer halving orders 'for a few quarters, as in 2024' (FY2024 grew 5%, then the next years grew far faster, per pf_history_companyfacts), MaxLinear aiming at 20-30% of the 1.6T AEC generation (a partial share loss in a growing market), and optics taking 'part' of in-rack links from 2027-28 (fd_ind_futurum_mrvl_20261009, unsized). The drivers instead hold revenue at about 2.34-2.40B from FY2028 to FY2031 (growth -5.0%, -2.2%, -0.25%, +1.1%, +2.1%, then never above 4.5% for 20 years), margin after SBC 22% forever and terminal ROIC 10.5% (fc.driver_sources terminal_roic tier default XSEC, a cross-sectional base rate, not company data), while company_path labels the bear ROIC 0.10 'own_history' although the company's own ROIC series is -16.4%, -22.5%, 17.8%, 96.9% and the post-acquisition run rate the base itself uses is about 22%. One story per scenario fails (master_process check 2/3: each bear mechanism sized from evidence) and a table price depends on it.",
+      "where": "casefile.json fc.spec.scenarios[bear].growth / terminal (roic 0.105, growth 0.045, operating_margin 0.22) and reinvestment_rule.capital_per_revenue (0.625 -> 1.78); fc.driver_sources terminal_roic/bear tier default XSEC; company_path.scenarios.bear (roic 0.1, source_tier own_history, label peak); position/core.json drivers.bear and scenario_events.bear; position/path.json bear roic",
+      "fix": "Repair pass: choose one coherent bear and size it. Either (a) a digestion bear: FY2028 about -5% (top end customer 33% halving for ~2-3 quarters, sized from rp_cu_endD_q1fy27) followed by a recovery path sized from the FY2024->FY2025 precedent, with ROIC from the post-acquisition own figures (Q1 FY2027 operating income 120.7M on invested capital after DustPhotonics), or (b) a structural bear that states, with evidence ids, the share of Credo revenue displaced by scale-up optics and by MaxLinear/Astera by year and why revenue stays flat for five years while the AI interconnect market grows. Replace the XSEC terminal ROIC with a company-derived figure (or label it a visible default and say the bear rests on it), make company_path.bear source_tier match, rerun ticker-value and re-show the bear row."
+    },
+    {
+      "severity": "major",
+      "finding": "Counter-thesis (pre-mortem, written as of 2029-10: the investment failed). Credo was priced at 167.43 for the base case exactly (base value 161.7, price 3.5% above it; what_must_be_true: 28.9% average revenue growth for five years vs base 27.9%, which only about 4% of companies this size have achieved; 155x trailing FCF after SBC per share, expected_return.decomposition.current_multiple 154.7). What went wrong: (1) FY2027 was a pull-forward year: two contracting customers (43% and 28%, cancellable orders, RPO only 4.2M) built inventory for a 1.6T transition and digested in FY2028, as the top customer did in FY2024; (2) the 1.6T generation was split - MaxLinear won 20-30%, Astera Labs and Broadcom/Marvell bundled retimers/optics, and scale-up optics began replacing copper in-rack from 2027-28, so AEC pricing fell; (3) the optical step (>600M in H2 FY2027, guidance only, said on the call and taken from a third-party transcript copy, not separately reported) slipped on new products and InP laser shortage, and the DustPhotonics goodwill (896M) and 310M contingent consideration were partly written down; (4) Credo had committed 222M of purchases and 88M + 102.4M of capacity deposits without matching customer commitments, so the slowdown ended in an inventory write-down (inventory 313M at 2026-08-01, CFO 90M vs net income 129M in Q1) - the mechanism behind the unreleased Beneish flag; (5) SBC at 18% of revenue kept diluting with no buybacks; (6) the multiple compressed from ~59x trailing GAAP to the high-20s on lower EPS. What would have shown it early: Q2 FY2027 revenue at or below the 525M low end (2026-12); a Q3 FY2027 guide below ~600M or any cut of the 'more than 600M' optical outlook (2026-12); inventory above ~480M or CFO/NI below 0.6 in H1 FY2027; a new top-customer share falling sharply without a matching new 10% customer; MaxLinear/Astera announcing a hyperscaler 1.6T AEC qualification.",
+      "where": "casefile.json val.what_must_be_true; dc.valuation_view (base 161.69, price 167.43); dc.expected_return.decomposition; position/core.json key_risk, scenario_events, falsifiers",
+      "fix": "Show next to the result that the price already equals the base case (no margin of safety at the base, verdict quality_but_expensive, price for the engine hurdle 97.8) and that a one-point change in the five-year growth average flips cheap/expensive; keep the early-warning list above as the monitoring falsifiers."
+    },
+    {
+      "severity": "major",
+      "finding": "The base-vs-price conclusion rests on a default, not company data: after the evidenced FY2028 anchor (42%), the base growth path FY2029-FY2031 (33.0%, 26.3%, 21.1%, 17.2%) comes from the engine's default growth half-life (driver_sources growth_half_life tier default CONST, no evidence ids). The five-year average of 27.9% that makes the base equal the price is mostly this default fade, and what_must_be_true shows +1.0pp of growth closes the gap. The same default drives the bull (53%, 44%, 37%, 31%).",
+      "where": "casefile.json fc.driver_sources (growth_half_life, all scenarios, default CONST); fc.spec.scenarios[base].growth[1:5]; val.what_must_be_true[growth]",
+      "fix": "State the fade as an assumption without company data next to the result (it is in the table's gap row, but its decisiveness is not); if the analyst has company evidence for FY2029+ (design-win timing, 1.6T/3.2T roadmap, customer count), cite it, otherwise show the base value at a faster and a slower half-life."
+    },
+    {
+      "severity": "major",
+      "finding": "The forensic mechanism is narrated in the bear but not modelled, and the risk register says so: acc.beneish (M -0.50, high) is in_bear_case false, pricing_status not_priced, red_flags_released false. The bear text says inventory (313M) and receivables keep growing faster than revenue and the digestion ends in an inventory write-down and weak cash flow, with 222M purchase obligations and 88M + 102.4M capacity deposits at risk; yet the bear's working_capital_ratio is the same 0.2497 as base and bull, there is no write-down, fixed_cash_costs are 0 and no deposit loss or purchase-commitment charge appears. dil.sbc, dil.share_growth and exe.stress_funding_gap are likewise not_priced.",
+      "where": "casefile.json rk.register acc.beneish / dil.sbc / dil.share_growth / exe.stress_funding_gap (in_bear_case false); dc.risk_pricing; fc.spec.scenarios[bear].working_capital_ratio, fixed_cash_costs; position/core.json scenario_events.bear[3]",
+      "fix": "In the bear, add a sized one-off charge (part of inventory 313M plus the at-risk share of the 190M deposits / 222M purchase obligations, evidence nm_inventory_q_2026_08_01, rp_purch_q1fy27, rp_deposits_q1fy27, rp_deposits_new) and a working-capital ratio that rises in FY2027-FY2028 instead of staying at 25%; then mark acc.beneish in_bear_case with that basis. The Beneish flag stays unreleased (draft) until explained from the 10-Q receivables/inventory notes."
+    },
+    {
+      "severity": "major",
+      "finding": "FY2027 is identical in all three scenarios (remaining stub to 2027-04-29: revenue 1,382.0M, EBIT 359.3M in bear, base and bull), so the bear event 'FY2027 ends below the 85% floor (2.47B)' and the bull condition 'Q4 FY2027 above 850M, the year clearly beats the floor' are not in their drivers. The bear starts falling only in FY2028.",
+      "where": "casefile.json val.result.scenarios[*].forecast[0] (2026-10-28 -> 2027-04-29); fc.spec.stub_annual_revenue_rate / revenue_current_fy; position/core.json scenario_events.bear[1], scenario_events.bull",
+      "fix": "Give each scenario its own FY2027 remainder (bear below 2.47B, bull with Q4 above 850M) through the per-scenario current-year option, or reword the events to say FY2027 is the same in all scenarios and the split starts in FY2028."
+    },
+    {
+      "severity": "major",
+      "finding": "SBC path flatters every scenario and contradicts the bear: SBC was 18% of revenue in Q1 FY2027 (rp_sbc_q1fy27; 13.7% in FY2026), but sbc_pct starts at 14.8% and falls to 10.3% in all three scenarios (tier own_history CONST with one id). In the bear, revenue falls while SBC dollars are sticky, so SBC as a share of revenue should rise, not fall; the bear event itself says SBC keeps diluting. The share count is held flat at 188.0M in every scenario (no earn-out shares, no dilution), and the base pays 50% of excess cash as dividends (cumulative 14.65/share by 2031) although Credo pays none and buys back nothing.",
+      "where": "casefile.json fc.spec.scenarios[*].sbc_pct, payout_fraction; val.result.scenarios[*].forecast[*].shares; dc.valuation_view.five_year.cumulative_dividends_base; position/core.json scenario_events.bear[6]",
+      "fix": "Start sbc_pct from the evidenced 18% (or the FY2026 13.7% with a stated reason), keep it at or above that level in the bear, and cite evidence for any decline; state the distribution policy assumption (no dividend history) or set payout to 0 and hold the cash."
+    },
+    {
+      "severity": "major",
+      "finding": "Falsifiers do not test the bear early or tightly: the only bear falsifier is 'Q2 FY2028 revenue above 850M by 2027-12-15', but the bear path is about 590M a quarter in FY2028 (2.40B a year), so a quarter of 700M (19% above the bear) would not refute it, and nothing tests the bear before December 2027 although the bear's first mechanisms (optical step slipping, FY2027 below the floor, inventory build) are visible in the 2026-12 and 2027-03 reports.",
+      "where": "position/core.json falsifiers fx_bear_q2fy28",
+      "fix": "Set the bear falsifier near the bear path (e.g. Q2 FY2028 revenue above ~650M) and add near-dated bear tests: Q3 FY2027 guide at or above ~600M by 2026-12-15, FY2027 revenue above 2.47B by 2027-06-15, inventory below 400M by 2027-03-15."
+    },
+    {
+      "severity": "major",
+      "finding": "Red-team passed only 'by construction' and misses a known post-period cash event: cash_reconciles, debt_complete and shares_current are by_construction from the same dataqa capital structure, the opening balance was not read from the primary filing, dataqa is limited on convertibles and post_period_events, and the opening bridge has no events although the 102.4M capacity-deposit agreement signed after the 2026-08-01 balance sheet is known (rp_deposits_new), as is the DustPhotonics earn-out of up to ~3.21M shares carried only as a 310M claim.",
+      "where": "casefile.json rk.redteam (by_construction); rv.mechanical.redteam; fc.spec.underwriting.opening_reconciliation.bridge_events (empty); qa.status limited",
+      "fix": "Add the 102.4M deposit as a dated bridge event (cash out, an asset that is not spendable cash), confirm from the 10-Q that there are no convertibles and the earn-out settlement form (cash or shares, at what price), read cash and investments from the 10-Q balance sheet, then rerun redteam_audit with the reported figures rather than the derived ones."
+    },
+    {
+      "severity": "minor",
+      "finding": "The reported bear IRR of 6.5% (dc.expected_return.bear_irr) is an artefact of the solver lowering the terminal WACC toward the 4.5% terminal growth (spread about 0.5pp); it does not mean the bear loses little at today's price (bear value 24.3, loss 85%; 89% at the hurdle).",
+      "where": "casefile.json dc.expected_return.bear_irr / irr_status.bear",
+      "fix": "Do not quote the bear IRR in the deliverable; quote the bear value and loss_to_bear."
+    },
+    {
+      "severity": "minor",
+      "finding": "Geopolitical exposure (Hong Kong 19% and Malaysia 15.5% of Q1 shipments, all wafers from TSMC Taiwan) is in the bear events but no macro lane output exists (no gather/macro.json) and no bear driver carries it; expectation_gap (fundamental_engine.expectations) was not run as a separate module because no anchor driver/capital-structure case exists in the run - val.what_must_be_true was used as the price-implied check.",
+      "where": "runs/tickers/CRDO_2026-10-28/gather (macro.json absent); position/core.json scenario_events.bear[4]",
+      "fix": "Keep as a visible gap; on a rerun with gather_macro, size the export-control/tariff exposure by its share of revenue in the bear or move it to risks only."
+    }
+  ]
+}

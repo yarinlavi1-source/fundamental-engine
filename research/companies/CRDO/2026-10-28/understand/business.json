@@ -1,0 +1,298 @@
+{
+ "findings": [
+  {
+   "topic": "economic identity and growth split",
+   "finding": "Fabless high-speed connectivity for AI data centers (AECs, optical DSPs and PICs, retimers, ZeroFlap optics), one reportable segment, one revenue line: no units, ASP or product-line revenue, so the identity is customers x revenue per customer only (econ-review: no registered model, not assessed). Q1 FY2027 revenue 479.0M (+255.9M, +114.7% y/y): AEC unit volume at hyperscalers drove over 90% of the increase (>=230M), FY2026 +898.3M with over 99% from AEC. Split: structural volume (AEC adoption in AI clusters) carries the growth; acquired revenue is immaterial (10-Q: pro forma results not presented because the effect of the acquisitions, incl. DustPhotonics, was not material); mix, price and macro effects are not identifiable; residual (other products: optical DSP, retimers, IP) <10% of the increase. Ship-to geography moved (Mainland China 51.8M -> 1.1M, Malaysia 6.4M -> 74.5M, US 82.8M -> 255.4M): a shipment-destination shift, not an end-demand split (hypothesis: contract-manufacturing relocation). The cyclical share of the growth cannot be measured from company data.",
+   "evidence_ids": [
+    "rp_rev_q1fy27",
+    "rp_rev_q1fy26",
+    "rp_k_aec_share_inc_q1fy27",
+    "rp_k_aec_share_inc_fy26",
+    "rp_rev_fy26",
+    "rp_rev_fy25",
+    "rp_seg_q1fy27",
+    "pf_10q_20260902",
+    "ex_k_geo_mainland_china_q1fy26",
+    "ex_k_geo_mainland_china_q1fy27",
+    "ex_k_geo_malaysia_q1fy26",
+    "ex_k_geo_malaysia_q1fy27",
+    "ex_k_geo_united_states_q1fy26",
+    "ex_k_geo_united_states_q1fy27"
+   ]
+  },
+  {
+   "topic": "who funds the demand",
+   "finding": "A few hyperscalers buying on cancellable purchase orders through contract manufacturers: contracting parties A 43% and B 28% of Q1 FY2027 revenue (50% and 35% a year earlier); four end customers at or above 10% (33/28/13/10% = 84%); top 10 about 90% of FY2026. Diversification is real (largest end customer 63% in FY2025 -> 33%), but RPO is only 4.2M (31.9M at FY2026 year end): no contracted backlog or take-or-pay. The firm exposure sits with Credo: non-cancelable purchase obligations 222.2M (212.7M manufacturing and foundry), refundable capacity deposits 88.4M plus 102.4M more due in FY2027 under an agreement signed after the quarter. Exposure is one-sided (Credo committed, customers not). No vendor financing by Credo is disclosed; how the end customers fund their AI capex is not in this run's evidence.",
+   "evidence_ids": [
+    "rp_cu_A_q1fy27",
+    "rp_cu_B_q1fy27",
+    "rp_cu_A_q1fy26",
+    "rp_cu_B_q1fy26",
+    "ex_k_top4_end_q1fy27",
+    "rp_k_top10_fy26",
+    "ex_cu_ed_fy25",
+    "rp_cu_endD_q1fy27",
+    "rp_rpo_q1fy27",
+    "rp_rpo_fy26",
+    "rp_purch_q1fy27",
+    "rp_purch_mfg_q1fy27",
+    "rp_deposits_q1fy27",
+    "rp_deposits_new"
+   ]
+  },
+  {
+   "topic": "growth trajectory and the FY2027 shape",
+   "finding": "Sequential growth slowed from +51.9% (Q3 FY2026, 268.0M -> 407.0M) to +7.4% (Q4, 437.0M) and +9.6% (Q1 FY2027, 479.0M); Q2 guide 525-535M (+10.6% q/q). Management's FY2027 statement on the 2026-09-01 call (third-party transcript): revenue growth 'more than 85%' (floor about 2,470M, raised from 'more than 80%' in June), optical revenue 'more than $600M' with ZeroFlap optics, SiPho PICs and optical DSPs each >$100M, non-GAAP net margin 'in the vicinity of 50%'. Q1 actual plus the Q2 midpoint = 1,009M, so the floor needs H2 >= 1,461M (about 730M a quarter, +38% on the Q2 midpoint). Attributed consensus (AV, 2026-10-26, n=19) is 2,503.1M (+87.5%) with Q3 at 643.0M, which leaves an implied Q4 of about 849M: the year is back-end-loaded on an optical ramp of products that were immaterial before the DustPhotonics deal.",
+   "evidence_ids": [
+    "rp_rev_q2fy26",
+    "rp_rev_q3fy26",
+    "rp_rev_q4fy26",
+    "rp_rev_q1fy27",
+    "rp_g_rev_q2fy27",
+    "rp_g_rev_fy27_floor",
+    "rp_g_growth_fy27_floor",
+    "rp_g_optical_fy27_floor",
+    "rp_g_optical_fy27_apr",
+    "rp_g_ngnetmargin_fy27",
+    "rp_tr_20260901",
+    "nm_cons_revenue_fy2027",
+    "nm_cons_revenue_q_2026_10_31",
+    "nm_cons_revenue_q_2027_01_31"
+   ]
+  },
+  {
+   "topic": "guidance against its track record",
+   "finding": "Seven of seven quarterly revenue beats, always above the high end (actual / guided midpoint 1.125, 1.063, 1.174, 1.140, 1.197, 1.016, 1.019; mean 1.105), but the beat shrank to about 2% in the last two quarters: the quarterly guide is now close to the outcome, not a floor with 10% upside (consensus for Q2, 531.9M, sits only 0.4% above the midpoint). The annual statement was delivered: 'more than 200%' for FY2026 vs +205.7% actual. Non-GAAP gross margin beat by 2.6-3.6 points through Q4 FY2026, then landed on the raised midpoint (68.0%). Non-GAAP opex ran above the guided midpoint three quarters in a row (77.4 vs 70; 81.7 vs 78; 95.2 vs 88M). Applying the 1.105 mean ratio to the unreported remainder would overstate; the last two ratios (about 1.02) are the relevant evidence.",
+   "evidence_ids": [
+    "rp_g_rev_q3fy25",
+    "rp_g_rev_q4fy25",
+    "rp_g_rev_q1fy26",
+    "rp_g_rev_q2fy26",
+    "rp_g_rev_q3fy26",
+    "rp_g_rev_q4fy26",
+    "rp_g_rev_q1fy27",
+    "rp_rev_q3fy25",
+    "rp_rev_q4fy25",
+    "rp_rev_q1fy26",
+    "rp_rev_q2fy26",
+    "rp_rev_q3fy26",
+    "rp_rev_q4fy26",
+    "rp_rev_q1fy27",
+    "rp_rel_20260209",
+    "rp_rev_fy26",
+    "rp_rev_fy25",
+    "rp_k_nggm_q1fy27",
+    "rp_ngopex_q1fy27",
+    "nm_cons_revenue_q_2026_10_31"
+   ]
+  },
+  {
+   "topic": "earnings quality: SBC, one-offs and the non-GAAP definition",
+   "finding": "SBC is a real cost here: 182.6M in FY2026 (13.7% of revenue) and 88.0M in Q1 FY2027 (18.4%; +77% q/q, driven by new awards to executives and employees and DustPhotonics replacement RSUs). From Q1 FY2027 non-GAAP also excludes acquired-intangible amortization (about 11.6M a quarter) and acquisition costs. GAAP operating margin 25.2% vs non-GAAP 48.2%; the Q2 guide implies GAAP opex 201.5M vs non-GAAP 102.5M (about 99M of excluded cost, ~19% of revenue) and a GAAP operating margin of about 26%. The quarter review removes only the acquisition and integration costs (after tax 10.1M, normalized EPS 0.72 vs 0.67 reported) and keeps amortization as recurring. Management's 'about 50% net margin' is non-GAAP, before SBC; the margin used must be GAAP after SBC.",
+   "evidence_ids": [
+    "nm_share_based_compensation_fy_2026_05_02",
+    "rp_sbc_q1fy27",
+    "rp_sbc_q4fy26",
+    "rp_k_ngom_q1fy27",
+    "nm_operating_income_q_2026_08_01",
+    "rp_g_opex_q2fy27",
+    "rp_g_ngopex_q2fy27",
+    "rp_g_gm_q2fy27",
+    "rp_g_ngnetmargin_fy27",
+    "pf_10q_20260902"
+   ]
+  },
+  {
+   "topic": "cash conversion, working capital and liquidity",
+   "finding": "Q1 FY2027 operating cash flow 90.2M against net income 129.4M after a working-capital outflow (receivables +54.5M, inventory +61.5M 'to support unfulfilled backlog and related new product ramps', capacity deposits +25.3M); FCF 82.9M = 0.59x normalized net income. Receivable days rose from about 48.6 to 54.9 and inventory days from about 164 to 168 (own arithmetic on the reported balances and gross profit); customer A was 57% of receivables. FY2026 as a whole converted (CFO 464.3M vs NI 472.3M). Spendable liquidity 764.3M (cash 466.9M + short-term investments 297.4M), no debt; the 88.4M capacity deposits are tied to future purchases and are not liquidity. Inventory built against an order book with no contractual protection is a write-down risk in a digestion.",
+   "evidence_ids": [
+    "nm_operating_cash_flow_q_2026_08_01",
+    "nm_net_income_q_2026_08_01",
+    "nm_free_cash_flow_q_2026_08_01",
+    "nm_receivables_q_2026_08_01",
+    "nm_inventory_q_2026_08_01",
+    "rp_inv_q1fy27",
+    "nm_operating_cash_flow_fy_2026_05_02",
+    "nm_net_income_fy_2026_05_02",
+    "nm_cash_q_2026_08_01",
+    "nm_short_term_investments_q_2026_08_01",
+    "rp_deposits_q1fy27",
+    "pf_10q_20260902"
+   ]
+  },
+  {
+   "topic": "forensic screens",
+   "finding": "Run on the companyfacts history FY2021-FY2026 (understand/forensic.json, debt 0): Piotroski 6/8 (fails cash flow above net income and no new shares); Altman Z'' 16.3 (safe); Beneish M -0.50 is ABOVE the -1.78 screen, driven by sales growth (SGI 3.06) and asset quality (AQI 2.12: FY2026 goodwill 92.8M from the CoMira and Hyperlume deals plus non-current capacity deposits); receivables (DSRI 0.47), gross margin (GMI 0.95) and accruals (TATA +0.003) do not point to manipulation, and the growth-neutral M is -2.34 (unlikely). AQI will rise again in FY2027 with the DustPhotonics goodwill. The flag is carried, not released: the FY2027 signals that matter are the Q1 rise in receivable and inventory days, the SBC jump and the weak Q1 cash conversion. Rule of 40 is not applicable (not software).",
+   "evidence_ids": [
+    "pf_history_companyfacts",
+    "nm_revenue_fy_2026_05_02",
+    "nm_operating_cash_flow_fy_2026_05_02",
+    "nm_net_income_fy_2026_05_02",
+    "nm_receivables_q_2026_08_01",
+    "nm_inventory_q_2026_08_01"
+   ]
+  },
+  {
+   "topic": "returns: ROIC and incremental ROIC",
+   "finding": "After-tax ROIC (engine roic(), invested capital = equity - cash, short-term investments not deducted) 65.8% in FY2026 after 7.7% in FY2025 and losses before; incremental ROIC FY2023 -> FY2026 43.7%. On equity less cash and short-term investments (own arithmetic, pre-tax, tax rate under 1% in FY2026): about 72% in FY2026 (445.0M / 620.3M) but about 26% on the trailing four quarters after the DustPhotonics deal (GAAP operating income 504.9M / 1,964.2M at 2026-08-01). Goodwill 986.4M plus intangibles 378.8M = 50% of equity 2,728.5M. Short-run incremental return on the 1.34B of capital added since 2026-05-02 is negative (quarterly operating income 155.8M -> 120.7M, with SBC and amortization): the optical growth was bought (1,251.1M: cash 769.6M, shares 169.1M, contingent 310.0M of which 300.0M in equity) and must still be earned.",
+   "evidence_ids": [
+    "pf_history_companyfacts",
+    "nm_operating_income_fy_2026_05_02",
+    "nm_operating_income_q_2026_08_01",
+    "nm_equity_q_2026_08_01",
+    "nm_cash_q_2026_08_01",
+    "nm_short_term_investments_q_2026_08_01",
+    "nm_goodwill_q_2026_08_01",
+    "nm_intangible_assets_q_2026_08_01",
+    "rp_dust_total",
+    "rp_dust_cash",
+    "rp_dust_contingent",
+    "rp_dust_goodwill",
+    "rp_dust_intang"
+   ]
+  },
+  {
+   "topic": "moat: which source is evidenced, against which named competitor",
+   "finding": "Evidenced in Credo's own numbers: an early-mover product lead in AECs (over 99% of FY2026 growth, five hyperscalers per management) and pricing power while scaling (non-GAAP gross margin 63.8% -> 68.0% over seven quarters, guide 67-69%). Market share is only attributed: MaxLinear's CEO put Credo at 93-99% of AECs (Stocktwits relay, 2026-10-23) and Jefferies saw 70% by 2027 in a bull case (Invezz relay): press, not independent reported evidence. Switching costs and contracts are not evidenced (purchase orders, RPO 4.2M). Named competitors: Broadcom, Marvell and Astera Labs (10-K Item 1); Astera grew faster sequentially (+27.3% vs +9.6%) and guides its next quarter (550M midpoint) above Credo's (530M); MaxLinear (not named by Credo) targets 20-30% of 1.6T AECs, the generation Credo ramps meaningfully in FY2028. Gross margin (GAAP 64.5%) sits below Astera (73.3%) and Broadcom (69.1%), consistent with cable assembly in the mix. No mechanism is shown that stops returns fading toward the cost of capital: the 1.6T transition is the test.",
+   "evidence_ids": [
+    "rp_k_aec_share_inc_fy26",
+    "rp_k_hyperscalers",
+    "rp_k_nggm_q1fy27",
+    "rp_g_nggm_q2fy27",
+    "fd_press_stocktwits_20261023",
+    "fd_press_invezz_20260413",
+    "fd_rel_alab_20260804",
+    "fd_cf_alab_20260805",
+    "fd_rel_mxl_20261022",
+    "fd_10q_mxl_20261022",
+    "fd_bn_aec_new_entrant",
+    "fd_bn_aec_units_jefferies",
+    "pf_10k_20260615",
+    "rp_rpo_q1fy27"
+   ]
+  },
+  {
+   "topic": "management: promises vs delivery, incentives, dilution and financing",
+   "finding": "Delivery: every quarterly guide and the FY2026 annual statement met; opex overran the guide three quarters running (R&D investment). The FY2027 optical promise moved from >500M (2026-04-13 release, written) to >600M (calls of June and 2026-09-01), backed by a 1,251.1M acquisition whose pre-deal revenue was immaterial. Capital allocation: no buyback; FY2026 ATM raised 736.3M net for 4.82M shares; diluted shares +5.3% y/y (194.4M) and the Q2 guide is about 200M (+2.9% q/q) after the deal shares and awards; contingent consideration of 300M is payable in shares (earn-out up to about 3.21M shares). No debt. SBC rose with new executive awards. Holders bear continuing dilution; funding is not a constraint.",
+   "evidence_ids": [
+    "rp_rel_20260209",
+    "rp_rev_fy26",
+    "rp_ngopex_q1fy27",
+    "rp_g_optical_fy27_apr",
+    "rp_g_optical_fy27_floor",
+    "rp_dust_total",
+    "nm_shares_diluted_wavg_q_2026_08_01",
+    "nm_shares_diluted_wavg_q_2025_08_02",
+    "rp_g_shares_q2fy27",
+    "rp_shares_out_20260825",
+    "rp_rel_20260413",
+    "pf_10k_20260615",
+    "pf_10q_20260902"
+   ]
+  },
+  {
+   "topic": "company type and the outside view (warning row only)",
+   "finding": "Computed type high_growth / fast_grower confirmed: revenue 58.7M (FY2021) -> 1,335.1M (FY2026), operating margin -43% -> +33%. The type sets the questions (how long the growth lasts, whether the margin holds, return on the acquired capital), not a number. Outside view (Mauboussin base-rate book, class 700-1,250M in 2015 dollars): the consensus two-year path (FY2026 -> FY2028, 70.5% a year nominal) is beyond every recorded 3-year outcome of the class (share at least 0%, class median 6.8% real); even 35% a year for 5 years was reached by about 3%. This is a warning row beside the forecast, never a cap or a fade.",
+   "evidence_ids": [
+    "pf_history_companyfacts",
+    "nm_revenue_fy_2026_05_02",
+    "nm_cons_revenue_fy2028"
+   ]
+  },
+  {
+   "topic": "structural or cyclical economics",
+   "finding": "Treated as STRUCTURAL growth with explicit digestion risk, not as a normalized cycle: the margin history (losses at revenue below 200M through FY2024; historical median operating margin -12%) is a scale-up, not a completed cycle, so a mid-cycle margin built on those years would measure start-up costs, not a trough. The demand is cyclical in timing (AI capex; one customer digestion already: FY2024 revenue +4.8% after +73% in FY2023, operating margin -11.5% -> -19.2%) and is carried in the scenarios (base slowdown, bear digestion with inventory and deposit exposure), not by normalizing the margin.",
+   "evidence_ids": [
+    "pf_history_companyfacts",
+    "nm_operating_income_fy_2026_05_02",
+    "pf_10k_20260615",
+    "rp_purch_q1fy27",
+    "rp_deposits_q1fy27"
+   ]
+  }
+ ],
+ "flags": [
+  "customer concentration: contracting parties A 43% and B 28% of Q1 FY2027 revenue; four end customers 84%; customer A 57% of receivables",
+  "no contracted backlog (RPO 4.2M, down from 31.9M) against 222.2M non-cancelable purchase obligations and 88.4M (+102.4M due in FY2027) refundable capacity deposits: one-sided firm exposure",
+  "guide beat narrowed from +6-20% to about +2% in the last two quarters; Q2 consensus sits at the midpoint",
+  "FY2027 '>85%' and '>$600M optical' are call statements (third-party transcript copy), floors without an upper bound, not in the written release; the year needs H2 >= 1,461M (+38% on the Q2 midpoint), consensus implies Q4 about 849M: back-end-loaded",
+  "optical ramp is new: DustPhotonics revenue immaterial before the deal (pro forma not presented); ZeroFlap, PICs and DSPs must each exceed 100M in FY2027",
+  "weak cash conversion in Q1 FY2027: CFO 90.2M vs NI 129.4M; FCF 0.59x normalized net income",
+  "rising receivable days (about 48.6 -> 54.9) and inventory days (about 164 -> 168); inventory 313.1M built for 'unfulfilled backlog' without customer commitments",
+  "SBC 18.4% of Q1 FY2027 revenue (13.7% in FY2026); non-GAAP definition widened in Q1 FY2027 (amortization and acquisition costs excluded); about 99M a quarter separates GAAP from non-GAAP opex in the Q2 guide",
+  "non-GAAP opex above the guided midpoint three quarters in a row",
+  "Beneish M -0.50 above the -1.78 screen (SGI 3.06, AQI 2.12 from goodwill and deposits); growth-neutral -2.34; AQI rises again with DustPhotonics goodwill",
+  "Piotroski 6/8: fails cash flow above net income and no new shares",
+  "goodwill plus intangibles 1,365.3M = 50% of equity; post-deal pre-tax ROIC about 26% vs about 72% before; impairment risk if the optical ramp slips",
+  "peak-margin run rate (quarter review, high): GAAP operating margin 25% vs historical median -12%; four times the latest quarter is not a run rate",
+  "dilution: diluted shares +5.3% y/y, Q2 guide ~200M (+2.9% q/q), earn-out up to about 3.21M shares, no buyback",
+  "competition at 1.6T: MaxLinear targets 20-30% of 1.6T AECs; Astera growing faster sequentially and guiding a larger next quarter; Credo the slowest sequential grower of the four named peers last quarter",
+  "share estimates (93-99%, 70%) are press relays, not independent evidence",
+  "trade-policy exposure: about 19% of Q1 FY2027 revenue ships to Hong Kong and 16% to Malaysia; the Q2 guide assumes the current tariff regime",
+  "outside view: the consensus two-year growth path is beyond every recorded 3-year outcome of the size class (warning row only)"
+ ],
+ "economics": {
+  "treatment": "structural",
+  "reason": "The margin history is a scale-up (losses at revenue below 200M through FY2024), not a completed cycle; the one growth pause (FY2024 +4.8% after +73%) was a customer-order digestion that the scenarios carry explicitly (base slowdown, bear digestion with inventory, deposit and purchase-commitment exposure) instead of normalizing to a mid-cycle margin built on start-up loss years.",
+  "evidence_ids": [
+   "pf_history_companyfacts",
+   "nm_operating_income_fy_2026_05_02",
+   "pf_10k_20260615",
+   "rp_purch_q1fy27",
+   "rp_deposits_q1fy27"
+  ]
+ },
+ "type": {
+  "stage": "high_growth",
+  "lynch": "fast_grower",
+  "override_reason": "none: the computed type is confirmed; concentration, acquired-growth and dilution flags are added to its traps"
+ },
+ "computed": {
+  "guidance_track_revenue_ratios": [
+   1.125,
+   1.063,
+   1.174,
+   1.14,
+   1.197,
+   1.016,
+   1.019
+  ],
+  "guidance_track_mean": 1.105,
+  "guidance_track_last_two_mean": 1.018,
+  "fy2027_floor_revenue": 2469964600,
+  "h1_fy2027_actual_plus_guide_mid": 1009003000,
+  "h2_needed_for_floor": 1460961600,
+  "consensus_implied_q4_fy2027": 849123610,
+  "roic_after_tax_fy2026_engine": 0.658,
+  "incremental_roic_fy2023_fy2026_engine": 0.437,
+  "roic_pretax_fy2026_ex_sti": 0.717,
+  "roic_pretax_ttm_post_deal": 0.257,
+  "sbc_pct_revenue_fy2026": 0.137,
+  "sbc_pct_revenue_q1fy27": 0.184,
+  "fcf_to_normalized_ni_q1fy27": 0.595,
+  "outside_view": {
+   "reference_class": "$700-1,250m (2015 dollars)",
+   "consensus_2y_cagr_nominal": 0.705,
+   "share_at_least_3y": 0.0,
+   "class_median_real_3y": 0.068,
+   "share_at_least_5y_at_35pct": 0.029,
+   "role": "warning row only"
+  },
+  "files": [
+   "understand/forensic.json",
+   "understand/quarter_result.json",
+   "understand/econ_result.json"
+  ]
+ },
+ "gaps": [
+  "econ-review not assessed: no economic model for fabless interconnect in the registry and no units, ASP or product-line revenue (AEC vs optical vs ICs); the growth split rests on the MD&A 'over 90%/99% AEC' statements",
+  "the cyclical part of the growth cannot be measured from company data; how the largest end customers fund their AI capex is not in this run's evidence (no macro fragment)",
+  "DustPhotonics revenue, margin and earn-out milestones not disclosed; optical revenue today unknown",
+  "the 2026-09-01 FY2027 statements come from a third-party transcript copy (TradingKey), not an issuer document",
+  "DEF 14A (2026-08-25) not read: executive incentive metrics unknown; Forms 4/144 (insider sales) not analyzed",
+  "own DSO/DIO and ROIC variants are arithmetic on reported balances (not issuer KPIs); history.json reused from run CRDO_2026-10-26 (companyfacts sha256 identical)",
+  "AEC market share on reported numbers cannot be computed (no competitor discloses AEC revenue); only press-relayed estimates",
+  "Q2 FY2027 (quarter ending about 2026-10-31) not reported at as_of; the next report is expected in early December 2026",
+  "Broadcom 8-K of 2026-10-27 (AI rack residual value backstop) dated within 2 days of as_of: not citable until 2026-10-29"
+ ]
+}

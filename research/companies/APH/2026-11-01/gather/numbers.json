@@ -1,0 +1,850 @@
+{
+ "lane": "numbers",
+ "sources": [
+  {
+   "id": "nm_px_ib",
+   "kind": "price",
+   "title": "Interactive Brokers get_price_snapshot, contract 4493 (AMPHENOL CORP-CL A, NYSE): last 79.47 (session of Friday 2026-10-30/31, intraday flag is_close false), prior_close 82.08, 52-week range 58.94-89.92, split-adjusted",
+   "url": "connector:Interactive_Brokers.get_price_snapshot",
+   "date": "2026-10-31",
+   "independent": true,
+   "publisher": "Interactive Brokers (read-only market data)",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_ib_history",
+   "kind": "price",
+   "title": "Interactive Brokers get_price_history, contract 4493, ONE_MONTH bars 2021-11-03 to 2026-10-31 with corporate actions (splits and dividends), prices adjusted for the 2024-06 and 2026-09 two-for-one splits",
+   "url": "connector:Interactive_Brokers.get_price_history",
+   "date": "2026-10-31",
+   "independent": true,
+   "publisher": "Interactive Brokers (read-only market data)",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_av_statements",
+   "kind": "structured_data",
+   "title": "Alpha Vantage INCOME_STATEMENT, BALANCE_SHEET, CASH_FLOW for APH (annual and quarterly, to 2026-06-30), second source for the reconciliation",
+   "url": "connector:Alpha_Vantage_MCP_Server.INCOME_STATEMENT+BALANCE_SHEET+CASH_FLOW",
+   "date": "2026-10-26",
+   "independent": false,
+   "publisher": "Alpha Vantage (re-keys the issuer's filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_av_estimates",
+   "kind": "consensus",
+   "title": "Alpha Vantage EARNINGS_ESTIMATES for APH: analyst average, high, low and count for fiscal years 2026-2027 and quarters (post-split per-share basis from the Q3 2026 rows on; individual brokers not named), retrieved 2026-10-26; PRE-Q3-PRINT snapshot (retrieved 2026-10-26, the 2026-11-01 re-call was rate limited)",
+   "url": "connector:Alpha_Vantage_MCP_Server.EARNINGS_ESTIMATES",
+   "date": "2026-10-26",
+   "independent": true,
+   "publisher": "Alpha Vantage (aggregated sell-side estimates)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_8k_20260806",
+   "kind": "sec_filing",
+   "title": "Amphenol 8-K filed 2026-08-06 (Item 8.01): two-for-one stock split of Class A Common Stock as a stock dividend, record date 2026-08-17, distributed 2026-09-02",
+   "url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926091969/tm2622441d1_8k.htm",
+   "date": "2026-08-06",
+   "independent": true,
+   "publisher": "Amphenol Corporation (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_8k_20260904",
+   "kind": "sec_filing",
+   "title": "Amphenol 8-K filed 2026-09-04 (Item 8.01): the two-for-one split has been effected; Q3 2026 dividend becomes $0.125 per share (was $0.25), paid 2026-10-14",
+   "url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926105485/tm2624775d1_8k.htm",
+   "date": "2026-09-04",
+   "independent": true,
+   "publisher": "Amphenol Corporation (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_web_consensus_post_q3",
+   "kind": "press",
+   "title": "WebSearch excerpts (MarketBeat 2026-10-30 guidance item, Investing.com, TIKR) on Amphenol Q3 2026: FY2026 guidance vs consensus EPS 2.69 and revenue 35.7B; Q4 consensus 0.75 / 9.7B; FY2027 pre-print EPS 3.32-3.33 and revenue 42.6B; MarketBeat average target 111.79 (an opinion)",
+   "url": "https://www.marketbeat.com/instant-alerts/guidance-amphenol-nyse-aph-releases-fy-2026-earnings-guidance-2026-10-30/",
+   "date": "2026-10-30",
+   "independent": false,
+   "publisher": "MarketBeat / Investing.com / TIKR (via WebSearch excerpt)",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  }
+ ],
+ "facts": [
+  {
+   "id": "nm_split_ratio_2026",
+   "metric": "stock_split_ratio",
+   "period": "Q@2026-09-02",
+   "value": 2.0,
+   "unit": "ratio",
+   "source_ids": [
+    "nm_8k_20260904",
+    "nm_8k_20260806"
+   ],
+   "period_end": "2026-09-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_outstanding_cover_presplit",
+   "metric": "shares_outstanding",
+   "period": "Q@2026-07-28",
+   "value": 1232983457,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20260731"
+   ],
+   "period_end": "2026-07-28",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_outstanding_postsplit",
+   "metric": "shares_outstanding_postsplit",
+   "period": "Q@2026-07-28",
+   "value": 2465966914,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20260731",
+    "nm_8k_20260904"
+   ],
+   "period_end": "2026-07-28",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_eps_diluted_fy2025_postsplit",
+   "metric": "eps_diluted_postsplit",
+   "period": "FY2025",
+   "value": 1.67,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_cf_20260211",
+    "nm_8k_20260904"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_eps_diluted_fy2024_postsplit",
+   "metric": "eps_diluted_postsplit",
+   "period": "FY2024",
+   "value": 0.96,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_cf_20250207",
+    "nm_8k_20260904"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_eps_diluted_q_2026_06_30_presplit",
+   "metric": "eps_diluted",
+   "period": "Q@2026-06-30",
+   "value": 1.37,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_10q_20260731"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_adj_eps_q_2026_06_30_presplit",
+   "metric": "adjusted_eps_diluted_nongaap",
+   "period": "Q@2026-06-30",
+   "value": 1.35,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_rel_20260729_1"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_diluted_wavg_q_2026_06_30_presplit",
+   "metric": "shares_diluted_wavg",
+   "period": "Q@2026-06-30",
+   "value": 1289200000,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20260731"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_ttm_2026_06_30",
+   "metric": "revenue",
+   "period": "TTM@2026-06-30",
+   "value": 29011600000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20251024",
+    "pf_cf_20260211",
+    "pf_cf_20260501",
+    "pf_cf_20260731"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_operating_income_ttm_2026_06_30",
+   "metric": "operating_income",
+   "period": "TTM@2026-06-30",
+   "value": 7841400000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20251024",
+    "pf_cf_20260211",
+    "pf_cf_20260501",
+    "pf_cf_20260731"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_net_income_ttm_2026_06_30",
+   "metric": "net_income",
+   "period": "TTM@2026-06-30",
+   "value": 5143400000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20251024",
+    "pf_cf_20260211",
+    "pf_cf_20260501",
+    "pf_cf_20260731"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_cfo_ttm_2026_06_30",
+   "metric": "cfo",
+   "period": "TTM@2026-06-30",
+   "value": 5871700000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20251024",
+    "pf_cf_20260211",
+    "pf_cf_20260501",
+    "pf_cf_20260731"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_capex_ttm_2026_06_30",
+   "metric": "capex",
+   "period": "TTM@2026-06-30",
+   "value": 1158000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20251024",
+    "pf_cf_20260211",
+    "pf_cf_20260501",
+    "pf_cf_20260731"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_eps_diluted_ttm_2026_06_30_postsplit",
+   "metric": "eps_diluted_postsplit",
+   "period": "TTM@2026-06-30",
+   "value": 1.9948,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_cf_20251024",
+    "pf_cf_20260211",
+    "pf_cf_20260501",
+    "pf_cf_20260731",
+    "pf_10q_20260731",
+    "nm_8k_20260904"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_fcf_q_2026_06_30",
+   "metric": "free_cash_flow",
+   "period": "Q@2026-06-30",
+   "value": 1205500000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260729_1"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_cash_q_2026_06_30",
+   "metric": "cash",
+   "period": "Q@2026-06-30",
+   "value": 4729400000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260731"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_short_term_investments_q_2026_06_30",
+   "metric": "short_term_investments",
+   "period": "Q@2026-06-30",
+   "value": 689700000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260731"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_debt_current_q_2026_06_30",
+   "metric": "debt_current",
+   "period": "Q@2026-06-30",
+   "value": 1634300000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260731"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_debt_long_term_q_2026_06_30",
+   "metric": "debt_long_term",
+   "period": "Q@2026-06-30",
+   "value": 17177000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260731"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_net_debt_q_2026_06_30",
+   "metric": "net_debt",
+   "period": "Q@2026-06-30",
+   "value": 13392200000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260731"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_equity_q_2026_06_30",
+   "metric": "equity",
+   "period": "Q@2026-06-30",
+   "value": 15491600000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260731"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_price_last_2026_10_31",
+   "metric": "price",
+   "period": "2026-10-31",
+   "value": 79.47,
+   "unit": "USD/shares",
+   "source_ids": [
+    "nm_px_ib"
+   ],
+   "period_end": "2026-10-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q_2026_09_30",
+   "metric": "eps_diluted",
+   "period": "Q@2026-09-30",
+   "value": 0.79,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_rel_20261028_1",
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_adj_eps_q_2026_09_30",
+   "metric": "adjusted_eps_diluted_nongaap",
+   "period": "Q@2026-09-30",
+   "value": 0.8,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_diluted_wavg_q_2026_09_30",
+   "metric": "shares_diluted_wavg",
+   "period": "Q@2026-09-30",
+   "value": 2582900000,
+   "unit": "shares",
+   "source_ids": [
+    "pf_rel_20261028_1",
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_fcf_q_2026_09_30",
+   "metric": "free_cash_flow",
+   "period": "Q@2026-09-30",
+   "value": 1622700000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_cash_q_2026_09_30",
+   "metric": "cash",
+   "period": "Q@2026-09-30",
+   "value": 4173100000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1",
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_short_term_investments_q_2026_09_30",
+   "metric": "short_term_investments",
+   "period": "Q@2026-09-30",
+   "value": 1128300000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1",
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_debt_current_q_2026_09_30",
+   "metric": "debt_current",
+   "period": "Q@2026-09-30",
+   "value": 700700000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1",
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_debt_long_term_q_2026_09_30",
+   "metric": "debt_long_term",
+   "period": "Q@2026-09-30",
+   "value": 17170100000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1",
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_net_debt_q_2026_09_30",
+   "metric": "net_debt",
+   "period": "Q@2026-09-30",
+   "value": 12569400000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1",
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_total_equity_q_2026_09_30",
+   "metric": "total_equity_incl_nci",
+   "period": "Q@2026-09-30",
+   "value": 17262500000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1",
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_9m_2026_postsplit",
+   "metric": "eps_diluted_postsplit",
+   "period": "9M@2026-09-30",
+   "value": 1.84,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_ttm_2026_09_30_postsplit",
+   "metric": "eps_diluted_postsplit",
+   "period": "TTM@2026-09-30",
+   "value": 2.3,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_cf_20260211",
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_adj_eps_ttm_2026_09_30_postsplit",
+   "metric": "adjusted_eps_diluted_nongaap",
+   "period": "TTM@2026-09-30",
+   "value": 2.495,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_rel_20260128_1",
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_revenue_ttm_2026_09_30",
+   "metric": "revenue",
+   "period": "TTM@2026-09-30",
+   "value": 33046900000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260211",
+    "pf_cf_20260501",
+    "pf_cf_20260731",
+    "pf_cf_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_operating_income_ttm_2026_09_30",
+   "metric": "operating_income",
+   "period": "TTM@2026-09-30",
+   "value": 9159900000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260211",
+    "pf_cf_20260501",
+    "pf_cf_20260731",
+    "pf_cf_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_net_income_ttm_2026_09_30",
+   "metric": "net_income",
+   "period": "TTM@2026-09-30",
+   "value": 5932000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260211",
+    "pf_cf_20260501",
+    "pf_cf_20260731",
+    "pf_cf_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_cfo_ttm_2026_09_30",
+   "metric": "cfo",
+   "period": "TTM@2026-09-30",
+   "value": 6479400000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260211",
+    "pf_cf_20260501",
+    "pf_cf_20260731",
+    "pf_cf_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_capex_ttm_2026_09_30",
+   "metric": "capex",
+   "period": "TTM@2026-09-30",
+   "value": 1358000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260211",
+    "pf_cf_20260501",
+    "pf_cf_20260731",
+    "pf_cf_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "derived"
+  }
+ ],
+ "consensus": [
+  {
+   "id": "nm_cons_eps_fy2026",
+   "metric": "eps_diluted",
+   "period": "FY2026",
+   "value": 2.6893,
+   "n": 18,
+   "low": 2.61,
+   "high": 2.84,
+   "source_id": "nm_av_estimates"
+  },
+  {
+   "id": "nm_cons_eps_fy2027",
+   "metric": "eps_diluted",
+   "period": "FY2027",
+   "value": 3.3344,
+   "n": 19,
+   "low": 3.1,
+   "high": 3.69,
+   "source_id": "nm_av_estimates"
+  },
+  {
+   "id": "nm_cons_revenue_fy2026",
+   "metric": "revenue",
+   "period": "FY2026",
+   "value": 35660524910,
+   "n": 18,
+   "low": 34682100000,
+   "high": 36411656620,
+   "source_id": "nm_av_estimates"
+  },
+  {
+   "id": "nm_cons_revenue_fy2027",
+   "metric": "revenue",
+   "period": "FY2027",
+   "value": 42660910170,
+   "n": 17,
+   "low": 39467200000,
+   "high": 46764400000,
+   "source_id": "nm_av_estimates"
+  },
+  {
+   "id": "nm_cons_eps_q4_2026",
+   "metric": "eps_diluted",
+   "period": "Q@2026-12-31",
+   "value": 0.7553,
+   "n": 16,
+   "low": 0.69,
+   "high": 0.84,
+   "source_id": "nm_av_estimates"
+  },
+  {
+   "id": "nm_cons_revenue_q4_2026",
+   "metric": "revenue",
+   "period": "Q@2026-12-31",
+   "value": 9831971730,
+   "n": 14,
+   "low": 9055100000,
+   "high": 10280000000,
+   "source_id": "nm_av_estimates"
+  }
+ ],
+ "guidance_track": [
+  {
+   "period": "Q@2025-03-31",
+   "metric": "revenue",
+   "guided_mid": 4050000000,
+   "actual": 4811000000,
+   "source_ids": [
+    "pf_rel_20250122_1",
+    "pf_rel_20250423_1"
+   ]
+  },
+  {
+   "period": "Q@2025-06-30",
+   "metric": "revenue",
+   "guided_mid": 4950000000,
+   "actual": 5650300000,
+   "source_ids": [
+    "pf_rel_20250423_1",
+    "pf_rel_20250723_1"
+   ]
+  },
+  {
+   "period": "Q@2025-09-30",
+   "metric": "revenue",
+   "guided_mid": 5450000000,
+   "actual": 6194400000,
+   "source_ids": [
+    "pf_rel_20250723_1",
+    "pf_rel_20251022_1"
+   ]
+  },
+  {
+   "period": "Q@2025-12-31",
+   "metric": "revenue",
+   "guided_mid": 6050000000,
+   "actual": 6439000000,
+   "source_ids": [
+    "pf_rel_20251022_1",
+    "pf_rel_20260128_1"
+   ]
+  },
+  {
+   "period": "Q@2026-03-31",
+   "metric": "revenue",
+   "guided_mid": 6950000000,
+   "actual": 7620100000,
+   "source_ids": [
+    "pf_rel_20260128_1",
+    "pf_rel_20260429_1"
+   ]
+  },
+  {
+   "period": "Q@2026-06-30",
+   "metric": "revenue",
+   "guided_mid": 8150000000,
+   "actual": 8758100000,
+   "source_ids": [
+    "pf_rel_20260429_1",
+    "pf_rel_20260729_1"
+   ]
+  },
+  {
+   "period": "Q@2025-03-31",
+   "metric": "adjusted_eps",
+   "guided_mid": 0.5,
+   "actual": 0.63,
+   "source_ids": [
+    "pf_rel_20250122_1",
+    "pf_rel_20250423_1"
+   ]
+  },
+  {
+   "period": "Q@2025-06-30",
+   "metric": "adjusted_eps",
+   "guided_mid": 0.65,
+   "actual": 0.81,
+   "source_ids": [
+    "pf_rel_20250423_1",
+    "pf_rel_20250723_1"
+   ]
+  },
+  {
+   "period": "Q@2025-09-30",
+   "metric": "adjusted_eps",
+   "guided_mid": 0.78,
+   "actual": 0.93,
+   "source_ids": [
+    "pf_rel_20250723_1",
+    "pf_rel_20251022_1"
+   ]
+  },
+  {
+   "period": "Q@2025-12-31",
+   "metric": "adjusted_eps",
+   "guided_mid": 0.9,
+   "actual": 0.97,
+   "source_ids": [
+    "pf_rel_20251022_1",
+    "pf_rel_20260128_1"
+   ]
+  },
+  {
+   "period": "Q@2026-03-31",
+   "metric": "adjusted_eps",
+   "guided_mid": 0.92,
+   "actual": 1.06,
+   "source_ids": [
+    "pf_rel_20260128_1",
+    "pf_rel_20260429_1"
+   ]
+  },
+  {
+   "period": "Q@2026-06-30",
+   "metric": "adjusted_eps",
+   "guided_mid": 1.15,
+   "actual": 1.35,
+   "source_ids": [
+    "pf_rel_20260429_1",
+    "pf_rel_20260729_1"
+   ]
+  },
+  {
+   "period": "Q@2026-09-30",
+   "metric": "revenue",
+   "guided_mid": 9350000000,
+   "actual": 10229700000,
+   "source_ids": [
+    "pf_rel_20260729_1",
+    "pf_rel_20261028_1"
+   ]
+  },
+  {
+   "period": "Q@2026-09-30",
+   "metric": "adjusted_eps",
+   "guided_mid": 1.41,
+   "actual": 1.6,
+   "source_ids": [
+    "pf_rel_20260729_1",
+    "pf_rel_20261028_1"
+   ]
+  }
+ ],
+ "notes": [
+  "nm IDENTITY Amphenol Corporation, CIK 820313: a single listed class, Class A Common Stock $0.001 par, NYSE, symbol APH (10-K cover of 2026-02-11; the 3.125% Senior Notes due 2032, APH32, are also NYSE-listed). Not an ADR, no dual class in the 10-K; quote and reporting currency USD; fiscal year ends 12-31 on calendar quarters. IBKR search_contracts: contract id 4493 (NYSE, USD, 'AMPHENOL CORP-CL A'); the same company also appears as a Mexican (148485045), a Toronto (881153000) and a Swiss (897816181) line, not used; identity.json stop stays false.",
+  "nm SPLIT A two-for-one stock split of the Class A Common Stock (stock dividend) was approved 2026-08-06, record date 2026-08-17, distributed 2026-09-02 and 'has now been effected' (8-K of 2026-09-04); IBKR lists the split with ex date 2026-09-03. The price here (IBKR last 74.31) and the saved universe price 80.3 of 2026-10-21 are POST-split (the unadjusted June 2026 high was about 178; IBKR's history is adjusted for both the 2024-06 and 2026-09 splits). EVERY per-share and share-count figure in SEC filings up to the 10-Q of 2026-07-31 (the prefetch pf_eps_diluted_*, pf_shares_diluted_wavg_*, the 10-Q cover 1,232,983,457 shares, guided Adjusted Diluted EPS of $1.40-$1.42 for Q3 2026) is on the PRE-2026-split basis: divide by 2 (FY2025 GAAP diluted EPS 3.34 = 1.67 post-split; FY2024 1.92 = 0.96; Q3 2026 guide 0.70-0.71). FY2021-FY2023 prefetch EPS are further pre the 2024-06 split (divide by 4 to reach today's basis; FY2024 and FY2025 by 2). Alpha Vantage's per-share consensus from the Q3 2026 row on is post-split (FY2026E 2.69, FY2027E 3.33); its older rows (Q2 2026 estimate 1.19, Q1 2026 0.95) are pre-split. Dividends: $0.25 a quarter before the split, $0.125 after (annual rate $0.50 = 0.67% of 74.31). The next 10-Q (Q3 2026) will be the first filing on the post-split basis.",
+  "nm AV RATE LIMIT 2026-10-26: INCOME_STATEMENT answered; the first BALANCE_SHEET call returned a rate-limit error (message mentions the 1 request per second burst and the 25 a day free quota; saved as av__balance__ratelimit.json); after a pause of about 6 seconds ONE retry returned a preview with a data_url (the full payload was downloaded from it: av__balance.json), then CASH_FLOW and EARNINGS_ESTIMATES answered. Alpha Vantage calls used by this lane: 5 (income, balance twice, cash flow, estimates). No daily-quota exhaustion was seen at this point; gather_documents shares the same quota. FMP statements/analyst were not called (ACCESS DENIED on this plan per session_capabilities).",
+  "nm RECONCILIATION FY2025 (10-K filed 2026-02-11, read in reading/10k_full.txt): revenue 23,094.7 (MD&A and income statement) = pf_revenue_fy2025; operating income 5,868.6 = pf; net income attributable to Amphenol 4,270.3 (net income 4,305.3 less noncontrolling 35.0) = pf; GAAP diluted EPS 3.34 on 1,277.5 diluted shares (pre-2026-split) = pf; CFO 5,374.7 = pf; capex 996.6 = pf; SBC 135.4 = pf. Adjusted Diluted EPS 3.34 (FY2024 1.89). Alpha Vantage matches on revenue, operating income, net income, CFO, capex, SBC. Differences: AV FY2025 gross profit 8,595.5 vs 8,517.7 (SEC cost of sales); AV FY2024 operating income 3,284.3 vs 3,156.9 GAAP (AV is on an adjusted basis there, diff 127.4); AV share counts (commonStockSharesOutstanding 2,555.0M for FY2025, 2,578.8M for Q2 2026) are post-split weighted-average DILUTED shares, not period-end shares.",
+  "nm RECONCILIATION Q2 2026 (10-Q filed 2026-07-31 and the release of 2026-07-29): revenue 8,758.1, operating income 2,584.6 (29.5% GAAP margin, incl. an $80.0M net IEEPA tariff-recovery benefit), net income attributable 1,769.2, GAAP diluted EPS 1.37 on 1,289.2M diluted shares (pre-split), Adjusted Diluted EPS 1.35 (non-GAAP; Q2 includes excess tax benefit of SBC $0.06 and a discrete tax item of $39.0M), CFO 1,557.2 (six months 2,678.7 minus Q1 1,121.5), capex 355.5, SBC 45.4: all equal the pf_ facts; AV Q2 2026 equal as well. Q1 2026: AV net income 943.3 includes noncontrolling interests, SEC attributable 933.0 (diff 10.3 = NCI) while AV's Q2 value is attributable (AV mixes the basis between quarters). AV Q4 2025 operating income 1,770.1 vs 1,722.7 derived from the 10-K (diff 47.4; AV adjusted basis). Balance sheet 2026-06-30 (10-Q): cash 4,729.4, short-term investments 689.7, current debt 1,634.3, long-term debt 17,177.0 (AV total debt 18,811.3 matches), equity 15,491.6 (matches AV), redeemable NCI 9.0; the prefetch holds no 2026 balance-sheet items other than the 10-Q text.",
+  "nm RECONCILIATION H1 2026 one-offs that depress GAAP and are in the TTM GAAP net income used below: discrete tax items of $329.0M in H1 2026 (China tax determinations $130.0M + reassessment $160.0M in Q1, $39.0M foreign-tax reserves in Q2), acquisition-related expenses $272.4M pre-tax in H1 2026 (CommScope inventory step-up $132.0M, transaction and backlog amortization $140.4M). Q1 2026 GAAP net income 933.0 is therefore not a run rate (Adjusted H1 EPS 2.42 vs GAAP 2.10, pre-split); TTM GAAP EPS 1.99 post-split vs TTM Adjusted about 2.16 (0.93+0.97+1.07+1.35 = 4.32 pre-split, halved).",
+  "nm ROIC CHECK prefetch/forensic.json roic is 'unavailable' (the prefetch history carries no debt), so it was computed here from the 10-Q: invested capital = equity 15,491.6 + debt 18,811.3 + redeemable NCI 9.0 - cash 4,729.4 - short-term investments 689.7 = 28,892.8 at 2026-06-30, and 17,480.9 at 2025-12-31 (13,413.1 + 15,502.0 - 11,130.6 - 303.6; the year-end cash was held ahead of the CommScope purchase that closed in Q1 2026: acquisitions net of cash acquired were $10,684.0 in H1 2026). TTM NOPAT at a 25% tax rate = 7,841.4 x 0.75 = 5,881 on the average of the two = 25.4%; on the end-Q2 capital 20.4%; Q2 annualised (2,584.6 x 4 x 0.75 = 7,754) on end-Q2 capital 26.8% (26.0% excluding the $80M tariff recovery). Inputs not in the engine's formula: the 689.7 short-term investments are treated as cash-like; operating lease liabilities are NOT added to debt; no restricted cash line was found in the 10-Q; goodwill and intangibles are 22.8B of the 28.9B, so ROIC on tangible capital is far higher; the TTM figure understates because CommScope earned for only two of the four quarters while its full purchase price is in capital.",
+  "nm RAW FILES statements and consensus: companies/APH/raw/av__income.json, av__balance.json (downloaded from the AV data_url after the preview), av__cashflow.json, av__earnings-estimates__APH.json (a 6-row extract of the 40-row payload, transcribed, with a note field); IBKR: ib__search-contracts-APH__current.json (first 10 of 36 rows, transcribed, with a note field), ib__price-snapshot-APH__current.json, ib__corporate-actions-APH__current.json (the three IBKR files were transcribed by the lane from the tool output because the connector returned them inline, one typo found and fixed against the output; the numbers are the connector's, the bytes are not the connector's); AV rate limit message av__balance__ratelimit.json; the three 8-Ks read are in gather/raw_numbers/. All rows are in raw/MANIFEST.json.",
+  "nm UPDATE 2026-11-01 (reuse of the 2026-10-27 run): this lane re-read the Q3 2026 release (8-K 2026-10-28, citable from 2026-10-30) and the 10-Q (filed 2026-10-30, citable 2026-11-01), refreshed the IBKR price and history, and re-called AV EARNINGS_ESTIMATES (rate limited, see below). Identity, split handling, AV statements and the H1 reconciliation notes above are unchanged. NOTE: the guidance_track Q3 rows are on the pre-split basis for EPS (guide 1.40-1.42, mid 1.41) with actual 1.60 = 0.80 post-split x 2, so ratio EPS is consistent.",
+  "nm AV RATE LIMIT 2026-11-01: EARNINGS_ESTIMATES returned 'standard API rate limit is 25 requests per day' (saved av__earnings-estimates__APH__ratelimit.json, not retried). Fallback: one WebSearch for post-print consensus (source nm_web_consensus_post_q3): it found NO clean post-Q3 consensus for FY2027; the AV rows of 2026-10-26 stay as the pre-print consensus and are now stale for FY2026 and Q4 (company guidance above them).",
+  "nm RECONCILIATION Q3 2026 (release 2026-10-28 and 10-Q 2026-10-30, reading/release_2026-10-28__aph-ex99d1.txt): net sales 10,229.7 (+65% USD, +37% organic), operating income 3,020.8 (29.5% GAAP, 29.7% adjusted), net income attributable 2,034.3, GAAP diluted EPS 0.79 on 2,582.9M diluted shares (post-split; 2,034.3/2,582.9 = 0.788), Adjusted Diluted EPS 0.80 (GAAP less a $0.02 excess SBC tax benefit offset by $0.02 discrete tax item of $60.0M, plus rounding), CFO 2,078.5, capex 457.2, FCF 1,622.7 (disposal proceeds 1.4), SBC 47.0: all equal the pf_ facts (pf_*_q_2026_09_30). Orders 12.2B, book-to-bill 1.19. Balance sheet 2026-09-30: cash 4,173.1, short-term investments 1,128.3, current debt 700.7, long-term debt 17,170.1 (total debt 17,870.8), total equity 17,262.5 (incl. noncontrolling), redeemable NCI 9.0; net debt 12,569.4 (cash and ST investments 5,301.4). 9M 2026 GAAP EPS 1.84 vs 1.21; discrete tax items 389.0M and acquisition costs in the 9M one-offs; Q3 discrete tax item 60.0M (foreign tax settlements). AV statements stop at 2026-06-30 (not refreshed: quota), so the Q3 check is against the release/10-Q only.",
+  "nm ROIC CHECK Q3 2026: invested capital = total equity 17,262.5 + debt 17,870.8 + redeemable NCI 9.0 - cash 4,173.1 - short-term investments 1,128.3 = 29,841.0 (equity here includes NCI, as the release shows it; the earlier 'equity 15,491.6' for 2026-06-30 was parent-only, difference small). TTM NOPAT at 25% tax = 9,159.9 x 0.75 = 6,870 on the average of 2025-12-31 (17,480.9) and 2026-09-30 capital = 29.1%; on end-Q3 capital 23.0%; Q3 annualised (3,020.8 x 4 x 0.75 = 9,062) on end-Q3 capital 30.4%. Same caveats: ST investments treated as cash-like, operating leases not in debt, no restricted-cash line used, goodwill and intangibles are the bulk of capital (CommScope in capital for 3 of 4 TTM quarters only partly in earnings). Adjusted effective tax rate was raised to 27.0% by the company, so a 25% NOPAT tax is slightly generous (at 27%: TTM NOPAT 6,687, 28.3% on average capital).",
+  "nm PRICE IBKR contract 4493 snapshot retrieved 2026-11-01: last 79.47 (ts 2026-10-31 session, is_close false), prior_close 82.08, change -2.61 (-3.18%), 52-week high 89.92, low 58.94 (13-week 89.92 / 71.44; 26-week low 58.94). Month bars (split-adjusted): September close 84.30; October 2026 open 85.00, high 89.93, low 71.44, close 79.30 (month to 2026-10-31). The stock dipped to 71.44 around 2026-10-22/23, then moved up into the print (reported text: 'Soars 7% on record quarter' TIKR headline, 2026-10-28) and gave back some (82.08 to 79.47 on the last session). Market cap 79.47 x shares: cover shares of the 10-Q of 2026-10-30 not re-extracted here (use the 2026-07-28 post-split count 2,465.97M for about $196.0B, or Q3 diluted 2,582.9M for $205.3B); net debt 12,569.4M, so EV about $208-218B.",
+  "nm OWN MULTIPLE HISTORY (trailing GAAP diluted P/E = IBKR month-end close, split-adjusted, over a TTM GAAP EPS interpolated linearly between the fiscal-year EPS points FY2021 0.635, FY2022 0.765, FY2023 0.7775, FY2024 0.96, FY2025 1.67, TTM 2026-09 2.30 (FY2025 1.67 - 9M25 1.21 + 9M26 1.84), all on today's post-split basis; derived, approximate between the anchors) low 22.9 (2022-09) median 34.1 high 44.9 (2025-10) now 34.6 (79.47 / 2.30) years 2021-12 to 2026-10 (58 months) sources nm_ib_history, pf_eps_diluted_fy2021, pf_eps_diluted_fy2022, pf_eps_diluted_fy2023, pf_eps_diluted_fy2024, pf_eps_diluted_fy2025, nm_eps_diluted_ttm_2026_09_30_postsplit (the low, median and high carried unchanged from the 2026-10-27 computation: the history to 2026-06 did not change, only the last anchor moved from 1.995 to 2.30). Year-end trailing P/E: 2021 34.4, 2022 24.9, 2023 31.9, 2024 36.2, 2025 40.5. FORWARD P/E (year-end close over the NEXT fiscal year's actual GAAP diluted EPS, ex-post): 2021 28.6, 2022 24.5, 2023 25.8, 2024 20.8, 2025 25.1 (on 2.69): low 20.8 median 25.1 high 28.6; NOW on the company's own FY2026 Adjusted EPS guide 2.82-2.84 (issued 2026-10-28): 28.1x at 79.47; on the pre-print consensus FY2026E 2.6893 29.6x, FY2027E 3.3344 23.8x (stale, an expectation). On Adjusted TTM EPS 2.495 (0.485 Q4-25 + 2.01 for 9M-26) the trailing P/E is 31.9. PEAK WARNING: Q3 Adjusted EPS 0.80 x 4 = 3.20 and the Q4 guide 0.81-0.83 x 4 = 3.28 already sit above the pre-print FY2027E 3.33 less 2.5%; they include a full CommScope run rate (about $5.1B of 2026 sales, $0.18 accretion) and ride the AI-datacom order wave (book-to-bill 1.19 after 1.23): peak-cycle earnings power until proven otherwise; the 2022-09 low of 22.9x came in a year when revenue grew about 16% and fell the next year.",
+  "nm CONSENSUS (an expectation, never a fact) Alpha Vantage rows are the PRE-PRINT snapshot of 2026-10-26 (EPS basis adjusted, post-split; FY2026 2.6893 n 18 range 2.61-2.84; FY2027 3.3344 n 19 range 3.10-3.69; revenue FY2026 35.66B, FY2027 42.66B n 17 range 39.47-46.76B; Q4 2026 revenue 9.83B EPS 0.7553). Q3 2026 consensus was revenue 9.49B (n 15, 9.25-9.75B) and EPS 0.7309 (n 15): actual 10.23B and 0.80 beat by 7.8% and 9.5%, above even the high estimates (9.75B, 0.78). The 2026-10-28 guide FY2026 sales 36.9-37.1B and Adjusted EPS 2.82-2.84, Q4 sales 10.3-10.5B and EPS 0.81-0.83, is above the pre-print consensus (35.7B, 2.69; Q4 9.7B, 0.75) and the FY2026 EPS consensus high of 2.84 equals the top of the guide, so these consensus rows are stale low; revisions will follow (TIKR: Q4 guide annualised already near FY2027E 3.33). No post-print consensus, no operating-income consensus and no second provider could be obtained; MarketBeat average target 111.79 is an opinion (a note only), about 41% above 79.47. Revisions seen before the print: FY2026 EPS +10% in 90 days (2.4457 to 2.6893), FY2027 +14% (2.9205 to 3.3344).",
+  "nm TRACK RECORD revenue ratio 1.11 over 7 periods, 7 beats, 0 misses (guided midpoint vs delivered, same basis, nine saved releases; ticker-check prints the exact ratio): Amphenol guides conservatively and has beaten the revenue midpoint every quarter from Q1 2025 to Q3 2026 (Q3 2026: guide 9.3-9.4B, delivered 10.23B, +9.4% on the midpoint and above the top of the range); Adjusted EPS all 7 above the midpoint (Q3 2026 0.80 post-split vs mid 0.705, +13.5%). CAUTION: part of the beat is acquisitions (Andrew in Q1 2025, CommScope in Q1 2026 whose 2026 sales view rose again from 4.6B to 5.1B and accretion from 0.15 to 0.18) and guidance excludes unclosed deals (AdvancedPCB, Dexgreen, Humanetics Sensors are excluded from the new guide); Q3 organic growth was +37%; an organic-only track record cannot be built from the releases. Current guide (gather_documents owns it): Q4 sales 10.3-10.5B, Adjusted EPS 0.81-0.83; FY2026 36.9-37.1B and 2.82-2.84.",
+  "nm RESULTS DATE Q3 2026 results ARE out (release 2026-10-28, 10-Q 2026-10-30) and are citable as of 2026-11-01 (2-day rule: release from 2026-10-30, 10-Q from 2026-11-01). The earlier note that the print was pending is superseded.",
+  "nm RAW FILES refreshed 2026-11-01: ib__price-snapshot-APH__current.json and ib__corporate-actions-APH__current.json (IBKR output transcribed by the lane, volume omitted from the history), av__earnings-estimates__APH__ratelimit.json (AV rate-limit message); unchanged from the earlier run: av__income.json, av__balance.json, av__cashflow.json, av__earnings-estimates__APH.json (pre-print extract). All rows in raw/MANIFEST.json."
+ ],
+ "gaps": [
+  "no post-Q3 consensus: AV EARNINGS_ESTIMATES rate limited on 2026-11-01 and the web search found none for FY2027; AV rows (2026-10-26, n 14-19, EPS basis adjusted, unstated by AV) are pre-print and stale below the company's own guide; no operating-income consensus, no second provider",
+  "AV statements (income, balance, cash flow) stop at 2026-06-30; the Q3 2026 reconciliation is against the release and 10-Q only (quota)",
+  "market capitalisation uses an older post-split share count: the 10-Q cover count of 2026-10-30 was not extracted by this lane",
+  "own multiple history is interpolated between fiscal-year EPS anchors; forward P/E before 2025 uses realised next-year EPS, not the consensus of the time",
+  "organic-only guidance track record cannot be built from the releases (guidance mixes acquisitions; Q2 2026 included a $0.04 tariff recovery)",
+  "IBKR and AV-estimates raw files are lane transcriptions or extracts; the AV statements and 8-Ks are verbatim"
+ ],
+ "stopped": [
+  "FMP statements and analyst endpoints not called (ACCESS DENIED on this plan)",
+  "AV COMPANY_OVERVIEW not called (premium endpoint)",
+  "AV EARNINGS_ESTIMATES rate limited 2026-11-01: not retried; one WebSearch fallback only"
+ ]
+}

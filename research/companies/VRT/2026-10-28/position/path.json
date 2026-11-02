@@ -1,0 +1,88 @@
+{
+ "thesis_he": {
+  "bear": "ההון החדש מרוויח רק כ-15% בשנה, כמו הממוצע של 2020-2025 שכולל את שנות ההבראה, כי מחירים יורדים ורכישות יקרות מדללות את התשואה; המכפיל יורד בהתאם.",
+  "base": "ההון החדש מרוויח כ-30% בשנה, כמו בשנת 2025 (כולל מוניטין מרכישות), וזה מצדיק מכפיל גבוה שיורד ככל שהצמיחה מאטה.",
+  "bull": "ההון החדש מרוויח כ-43%, כמו התשואה על ההון הנוסף בין 2020 ל-2025, כי הצמיחה מגיעה ממפעלים קיימים ומקדמות לקוחות מממנות אותה."
+ },
+ "company_path": {
+  "metric": "eps",
+  "multiple": "forward_pe",
+  "scenarios": {
+   "bear": {
+    "multiple_from": "economics",
+    "roic": 0.15,
+    "justification": "unproven",
+    "reason_he": "בתרחיש הדובי ההון החדש מרוויח כ-15% בשנה: זה הממוצע של Vertiv בשנים 2020 עד 2025 (כ-14.4%), שכולל את שנות ההבראה שבהן הרווחיות הייתה 4%-5%. מה נשבר: המתחרים מוסיפים כושר ייצור, המחירים יורדים, והצמיחה נקנית ברכישות יקרות (UIG ב-1.45 מיליארד דולר ועד 1.15 מיליארד נוספים, PurgeRite ב-1.14 מיליארד) שהתשואה עליהן עוד לא הוכחה. תשואה כזו קרובה יותר למחיר ההון, ולכן המכפיל נמוך יותר.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "pf_operating_income_fy2020",
+     "pf_operating_income_fy2022",
+     "pf_equity_fy2022",
+     "pf_long_term_debt_fy2022",
+     "pf_cash_fy2022",
+     "pf_cf_20260213",
+     "rp_uig_upfront",
+     "rp_uig_earnout",
+     "rp_8k_uig_20260902"
+    ]
+   },
+   "base": {
+    "multiple_from": "economics",
+    "roic": 0.3,
+    "justification": "justified_high",
+    "reason_he": "בתרחיש הבסיסי ההון החדש מרוויח כ-30% בשנה, כמו התשואה על ההון של Vertiv ב-2025 (30.4%, כולל מוניטין מרכישות). התשואה על ההון הנוסף בשנים 2023-2025 הייתה גבוהה יותר (כ-68%), אבל היא מנופחת במקדמות של לקוחות ובשנות שיא, וההון שהולך לרכישות מוריד אותה. 30% זה הרבה מעל מחיר ההון, ולכן מכפיל גבוה מוצדק, והוא יורד עם האטת הצמיחה.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "pf_operating_income_fy2025",
+     "pf_equity_fy2025",
+     "pf_long_term_debt_fy2025",
+     "pf_cash_fy2025",
+     "pf_operating_income_fy2023",
+     "pf_equity_fy2023",
+     "pf_long_term_debt_fy2023",
+     "pf_cash_fy2023",
+     "pf_cf_20260213",
+     "nm_deferred_revenue_change_h1_2026"
+    ]
+   },
+   "bull": {
+    "multiple_from": "economics",
+    "roic": 0.43,
+    "justification": "unproven",
+    "reason_he": "בתרחיש השורי ההון החדש מרוויח כ-43% בשנה: זו התשואה על ההון שנוסף ל-Vertiv בין 2020 ל-2025 (הרווח התפעולי אחרי מס עלה הרבה יותר מההון). כדי שזה יקרה, הצמיחה צריכה להגיע ממפעלים קיימים שהוכפלו, המקדמות של הלקוחות צריכות להמשיך לממן את המלאי, והשוליים של 24-25% צריכים להישמר. זו תשואה של תקופת מחסור, לכן היא לא מוכחת לטווח ארוך.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "pf_operating_income_fy2020",
+     "pf_operating_income_fy2025",
+     "pf_equity_fy2020",
+     "pf_long_term_debt_fy2020",
+     "pf_cash_fy2020",
+     "pf_equity_fy2025",
+     "pf_long_term_debt_fy2025",
+     "pf_cash_fy2025",
+     "pf_cf_20260213",
+     "rp_g_adjopm_q3_26"
+    ]
+   }
+  },
+  "own_history": {
+   "low": 38.3,
+   "median": 69.5,
+   "high": 94.3,
+   "years": "2023-04 to 2026-09 (42 months): TRAILING P/E = month-end close (IBKR) / TTM GAAP diluted EPS, months with TTM EPS < 0.30 excluded. Not a forward P/E (no dated consensus series exists): a forward multiple on growing EPS sits well below the trailing one (today 48.2x trailing on TTM 4.42 vs 36.3x on the FY2026 GAAP guide midpoint 5.87). 2024 GAAP EPS is depressed by warrant fair-value losses, inflating 2024 multiples; the post-2025 trailing range is 49.6-84.1 (median about 70).",
+   "evidence_ids": [
+    "nm_ib_history_20261028",
+    "nm_ib_snapshot_20261028",
+    "nm_eps_ttm_q2_2026",
+    "pf_10k_20260213",
+    "pf_10q_20260729",
+    "pf_10q_20260422"
+   ]
+  }
+ },
+ "gaps": [
+  "Named competitors' forward P/E (ETN, SU.PA, LR.PA, 2308.TW, JCI) not retrieved (FMP ACCESS DENIED): peers left out.",
+  "No dated forward P/E history for VRT (no historical consensus series): own_history is the trailing GAAP P/E, which overstates a forward multiple.",
+  "ROIC includes goodwill and does not separate the return on the acquisitions (PurgeRite, UIG) from organic capital; customer advances (current deferred revenue 3.63bn) shrink invested capital and flatter the incremental ROIC."
+ ]
+}

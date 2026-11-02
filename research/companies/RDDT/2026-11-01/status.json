@@ -1,0 +1,115 @@
+{
+ "ticker": "RDDT",
+ "as_of": "2026-11-01",
+ "at_utc": "2026-11-01T06:03:53+00:00",
+ "verified": false,
+ "label": "UNVERIFIED draft (טיוטה — ההערכה לא אומתה)",
+ "reasons": [
+  "4 critical finding(s) open"
+ ],
+ "engine_ran": true,
+ "engine_review_status": "unreviewed_draft",
+ "reviews": {
+  "review_trace": {
+   "file": "review/trace.json",
+   "this_attempt": true,
+   "returned": true
+  },
+  "review_numbers": {
+   "file": "review/numbers.json",
+   "this_attempt": true,
+   "returned": true
+  },
+  "review_counter": {
+   "file": "review/counter.json",
+   "this_attempt": true,
+   "returned": true
+  }
+ },
+ "critical": [
+  {
+   "severity": "critical",
+   "finding": "Two stories in one base scenario: the DCF and the yearly price path assume different returns on capital. The DCF charges growth capex of $528M in FY2027 and $553M in FY2028 (sales-to-capital 1.19 from history, i.e. an incremental after-tax ROIC of roughly 0.34 x 0.78 x 1.19 = about 30-40%), while company_path.base prices the same EPS at roic 0.95 ('almost no capital needed', capex ~$7M a year). The result: base year-1 price 288 (43.1x FY2028 EPS) against the DCF's own base value of 230 at 2027-12-31, and a 5-year base +311% resting on the path, not on the DCF. Either the DCF's reinvestment is wrong (the business really needs ~no capex, only receivables) or the path's 95% is wrong; both cannot hold in the same scenario.",
+   "where": "companies/RDDT/out/casefile.json val.case.scenarios[base].periods[*].growth_capex and assumption 'reinvestment' vs company_path.scenarios.base.roic=0.95 (position/path.json base)",
+   "fix": "Repair: make one capital intensity per scenario. Either set the reinvestment / sales-to-capital override from the company's operating invested capital (equity less cash and securities, about $580M; capex 0.1-0.3% of revenue; receivables growth as the real need) so the DCF's implied incremental ROIC matches the path's roic, or lower the path's base roic to the DCF's implied level (about 0.3-0.4). Re-run ticker-value and re-render the table; until then the base yearly row is a draft.",
+   "lens": "counter"
+  },
+  {
+   "severity": "critical",
+   "finding": "The bear row shows a gain that the bear's own DCF contradicts. The table's 5-year potential row says bear +35% (path: 101 in year 1 rising to 124, at 21-22x forward EPS from roic 0.30), while the DCF bear values the share at 64.6 today and 74.4 at 2029-12-31, i.e. a loss of about 20-30%. The owner's buy test depends on 'a bear case he can live with', so a bear row of +35% would mislead him. In addition a 21x forward multiple in a bear of a shrinking audience is above where the stock trades today (13x FY2027 consensus EPS, 18.8x trailing on 2%-tax EPS) and near the own-history low of 18.7 set before the traffic shock; the bear is therefore more optimistic than the price.",
+   "where": "companies/RDDT/out/table_he.md row 'פוטנציאל בעוד 5 שנים' and yearly bear column; casefile company_path.scenarios.bear (multiple_path 21.1-22.4, roic 0.3) vs val.result.annual_values bear",
+   "fix": "Repair: align the bear path's capital return with the bear DCF (one roic, see the base finding), and test the bear multiple against today's 13x forward / 18.8x trailing rather than pre-shock history; the table's bear row must not show a gain while the same scenario's DCF shows a loss.",
+   "lens": "counter"
+  }
+ ],
+ "open_critical": [
+  {
+   "finding": "Vested in-the-money options are still not in the share count: the position inputs have no option instrument (FORECAST_OPTIONS has no capital_events/options key and no DEBT_LIKE_KINDS kind fits, so it cannot be done without relabeling). 10-Q note 11: 5,604,522 vested options at a weighted strike of 39.29 (9,611,808 outstanding at 41.73). Treasury method: about 3.2M net shares at the 92.2 quote (1.7% of 193.1M) and about 4.6M (2.4%) at the base value of about 261, so the per-share values are about 2% too high. Unvested options and the 3.56M unvested RSUs/PRSUs are charged through sbc_pct, so adding them as shares would double count. Recorded as a gap in position/core.json."
+  },
+  {
+   "finding": "Fair value went UP from 211 to 261 because the fix took the evidenced asset-light capital need (the DCF's old 1.19 sales-to-capital charged ~530M a year of growth capex that the filings do not show). The base path still holds a 95% return on capital through the terminal and multiples of 48.8x -> 32.4x forward, above the own-history median of 40.3x in the early years; the bull (89.5x -> 39.5x at roic 1.00) is still far above own history (numbers major finding, not fixed here)."
+  },
+  {
+   "finding": "The bear-only terminal growth of 2.5% sets aside the engine's convention (terminal growth = risk-free) for that one scenario, on evidence of a shrinking audience; a reviewer should accept or reject it."
+  },
+  {
+   "finding": "Bear roic 0.30 is a stress assumption (about three times the evidenced capital per dollar of sales), labelled unproven."
+  }
+ ],
+ "repair": {
+  "fixed": [
+   "counter critical 1 (two capital intensities in one scenario): position/core.json drivers now set terminal_roic = the company_path roic of each scenario (bear 0.30, base 0.95, bull 1.00) and sales_to_capital = roic / (mature margin x 0.78) (bear 1.54, base 3.58, bull 3.21), from operating invested capital (equity less cash and securities: 290M FY2024, 452M FY2025, 580M Q3 2026) on a normalized 22% tax (FY2025 0.93 on average capital, TTM 1.22), not the 2% TTM rate. The DCF and the yearly path now agree: base DCF 260.6 today / 372.0 at 2031-11 vs path 267.5 / 378.9; base growth capex fell from ~530-560M a year to ~40-55M. Bull path roic lowered 1.30 -> 1.00 (TTM 1.22 capped at the valuation's 100% roic limit, which rejected 1.22) in position/path.json.",
+   "counter critical 2 (bear path gain vs bear DCF loss): bear uses one roic 0.30 in both models, plus a bear-only terminal_growth 0.025 (shrinking audience: search referrals down >1M a week, US logged-out DAUq 28.5M -> 27.3M, warned low-double-digit Q4 DAUq fall; logged-out 59% of DAUq but under 20% of monetization). Multiple test: the bear's computed forward multiple fell from 21-22x to 15.3-15.8x, between today's ~13x forward and the own-history trailing low of 18.7x. Bear now shows a loss in both: path 72.4 in year 1 and 82.2 in year 5 (-11%), DCF 72.1 today and 87.1 at 2031-11 (was path +35% vs DCF 64.6).",
+   "falsifiers sharpened in position/core.json: fx_q1rev_bear threshold 860M -> 800M (Q1 2027 revenue above 800M = +21% y/y refutes the bear's +10% year, which implies about 730M); added fx_li_q4_base (Q4 2026 logged-in global DAUq below 53.5M), fx_arpu_us_base (Q3 2027 US ARPU below 15.20, i.e. under +10% y/y on 13.82) and fx_li_q1_bear (Q1 2027 logged-in DAUq above 55.0M).",
+   "ticker-value rerun: ran true, no errors; out/table_he.md re-rendered (fair value 261, 65% below; 5-year potential base +311%, bull +776%, bear -11%)."
+  ],
+  "open": [
+   "Vested in-the-money options are still not in the share count: the position inputs have no option instrument (FORECAST_OPTIONS has no capital_events/options key and no DEBT_LIKE_KINDS kind fits, so it cannot be done without relabeling). 10-Q note 11: 5,604,522 vested options at a weighted strike of 39.29 (9,611,808 outstanding at 41.73). Treasury method: about 3.2M net shares at the 92.2 quote (1.7% of 193.1M) and about 4.6M (2.4%) at the base value of about 261, so the per-share values are about 2% too high. Unvested options and the 3.56M unvested RSUs/PRSUs are charged through sbc_pct, so adding them as shares would double count. Recorded as a gap in position/core.json.",
+   "Fair value went UP from 211 to 261 because the fix took the evidenced asset-light capital need (the DCF's old 1.19 sales-to-capital charged ~530M a year of growth capex that the filings do not show). The base path still holds a 95% return on capital through the terminal and multiples of 48.8x -> 32.4x forward, above the own-history median of 40.3x in the early years; the bull (89.5x -> 39.5x at roic 1.00) is still far above own history (numbers major finding, not fixed here).",
+   "The bear-only terminal growth of 2.5% sets aside the engine's convention (terminal growth = risk-free) for that one scenario, on evidence of a shrinking audience; a reviewer should accept or reject it.",
+   "Bear roic 0.30 is a stress assumption (about three times the evidenced capital per dollar of sales), labelled unproven."
+  ],
+  "ran": true
+ },
+ "returned": [
+  "analyst",
+  "analyst_field",
+  "analyst_path",
+  "gather_documents",
+  "gather_field",
+  "gather_macro",
+  "gather_numbers",
+  "repair",
+  "review_counter",
+  "review_numbers",
+  "review_trace"
+ ],
+ "times": {
+  "started_at_utc": "2026-11-01T05:44:40+00:00",
+  "prefetch_finished_at_utc": "2026-11-01T05:44:44+00:00",
+  "minutes_after_start": {
+   "gather/_prefetch.json": 0.1,
+   "gather/documents.json": 3.3,
+   "gather/field.json": 2.0,
+   "gather/macro.json": 2.0,
+   "gather/numbers.json": 3.8,
+   "understand/auto.json": 4.1,
+   "understand/business.json": 6.1,
+   "understand/econ_case.json": 2.5,
+   "understand/econ_result.json": 2.5,
+   "understand/quarter_case.json": 2.2,
+   "understand/quarter_result.json": 2.2,
+   "prep.json": 4.1,
+   "position/core.json": 16.1,
+   "position/field.json": 6.5,
+   "position/path.json": 15.8,
+   "value.json": 16.2,
+   "review/trace.json": 7.0,
+   "review/numbers.json": 11.4,
+   "review/counter.json": 11.3,
+   "review/repair.json": 16.5
+  },
+  "elapsed_minutes": 16.5
+ },
+ "meaning": "verified needs: the engine ran in this attempt, the three reviewers returned (files of this attempt AND the main loop's record), no critical finding open after the one repair pass. The engine's own review status is reported beside it, never replaced by it."
+}

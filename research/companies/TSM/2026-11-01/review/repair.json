@@ -1,0 +1,26 @@
+{
+ "trigger": "review",
+ "fixed": [
+  "CRITICAL (numbers + counter) FY2026 base: drivers.current_year_revenue set in position/core.json (tier guidance, adjust_by_track_record false) citing rf_g_rev_fy26 (gather/repair.json: FY2026 NT$5,561.9-5,625.5bn DERIVED from Q1-Q3 2026 reported NT$3,898.7bn + Q4 guide US$52.3-54.3bn at the guided 31.8 NT$/US$), the three quarter facts, dc_g_rev_q4_26, dc_g_fx_q4_26, dc_g_revgrowth_fy26. Casefile fc.anchors.current_fiscal_year now NT$5,593.7bn (+46.9%) from guidance, no longer the model's NT$4,770.9bn.",
+  "2027 growth restated against that base (position/core.json growth_anchor and growth): base +27% kept as the most likely path (FY2027 ~NT$7.10tn; only ~1-2% average sequential growth over the Q4 2026 guided level, no FY2027 guide, management 'prudent'); bull +38% kept; bear changed from +6%/-8% to an explicit FY2027 decline of -4.5% (the FY2023 size), sharper than 2023 against the exit run rate (average 2027 quarter ~21% below Q4 2026 vs ~14% in 2023) because HPC is 68% and the top two customers 36%; then flat 2028, +6%, +7%.",
+  "Opening balance (major, numbers + counter): now the 2026-06-30 consolidated balance from the 6-K nm_fs_20260814: cash NT$3,134.2bn (nm_cash_q2_2026 marked factbook in gather/numbers.json), current financial investments NT$383.6bn (rf_sti_q2_2026), debt NT$1,029.6bn = bonds payable non-current 815.0 + current portion 165.3 + long-term bank loans 49.2 (rf_debt_q2_2026). Replaces the 2025-12-31 balance whose debt (NT$176.8bn) missed ~NT$850bn of bonds.",
+  "Bear ROIC (major, counter): position/path.json company_path bear roic 0.20 -> 0.40, anchored to the FY2023 trough ROIC 0.453 scaled by the guided up-to-4-pt overseas dilution on the 2023 42.6% operating margin (0.453 x 38.6/42.6 = 0.41, rounded down for unsized tool inflation); reason_he and gap updated.",
+  "ticker-value rerun: ran true; base fair value 2,933 TWD vs 2,660 ADR-equivalent price (now 'cheap by ~9%', was 'expensive by ~6%'); 5-year: base +62%, bull +149%, bear -37%."
+ ],
+ "open": [
+  "Q3 2026 consolidated balance sheet not filed in the run: opening balance is 2026-06-30, not 2026-09-30; current portion of bank loans and short-term loans not read.",
+  "rf_g_rev_fy26 is a derived range (TSMC guides FY2026 only as ~44% US$ growth); the 1.024 track-record ratio is not applied (would add ~NT$40bn).",
+  "Not in this repair's scope, left as the reviewers wrote them: ADR vs Taiwan 2330 listing premium (~12%; against the local share the value gap is larger), the current-year margin start in the bear vs the reported 58.7% Q3 operating margin, the one-time excess-cash distribution in the year-1 prices, stale_ttm warning (TTM statements end 2025-12-31), all material inputs still unreviewed (valuation_audit requires_review). The table remains a draft (engine: cyclical-peak margin question open).",
+  "Taiwan disruption stays a visible unpriced risk (key risk row: 80% of assets in Taiwan); not in any scenario price.",
+  "Bear tool-price inflation on 2026-2028 capex not sized; the forensic invested capital uses the understated companyfacts debt line, so the record ROIC may be a few points lower."
+ ],
+ "ran": true,
+ "casefile": "/home/user/fundamental-engine/runs/tickers/TSM_2026-11-01/companies/TSM/out/casefile.json",
+ "changed_files": [
+  "/home/user/fundamental-engine/runs/tickers/TSM_2026-11-01/gather/repair.json",
+  "/home/user/fundamental-engine/runs/tickers/TSM_2026-11-01/gather/numbers.json",
+  "/home/user/fundamental-engine/runs/tickers/TSM_2026-11-01/position/core.json",
+  "/home/user/fundamental-engine/runs/tickers/TSM_2026-11-01/position/path.json",
+  "/home/user/fundamental-engine/runs/tickers/TSM_2026-11-01/value.json"
+ ]
+}

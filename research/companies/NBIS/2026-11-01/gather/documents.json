@@ -1,0 +1,91 @@
+{
+ "lane": "documents",
+ "sources": [
+  {"id":"dc_6k_q2_ofr","kind":"release","title":"Nebius Group 6-K Ex.99.1 Operating and Financial Review, Q2 and H1 2026","url":"https://www.sec.gov/Archives/edgar/data/1513845/000110465926094844/nbis-20260812xex99d1.htm","date":"2026-08-12","independent":true,"publisher":"Nebius Group N.V. (SEC)","retrieval":"primary_document","syndicated_from":null},
+  {"id":"dc_6k_q2_fs","kind":"release","title":"Nebius Group 6-K Ex.99.2 unaudited condensed consolidated financial statements and notes, June 30, 2026","url":"https://www.sec.gov/Archives/edgar/data/1513845/000110465926094844/nbis-20260812xex99d2.htm","date":"2026-08-12","independent":true,"publisher":"Nebius Group N.V. (SEC)","retrieval":"primary_document","syndicated_from":null},
+  {"id":"dc_call_q2","kind":"transcript","title":"Nebius Group Q2 2026 earnings call transcript","url":"connector:Alpha_Vantage_MCP_Server__EARNINGS_CALL_TRANSCRIPT","date":"2026-08-12","independent":false,"publisher":"Alpha Vantage (transcript of the issuer's call)","retrieval":"provider_normalized","syndicated_from":null},
+  {"id":"dc_6k_conv","kind":"release","title":"Nebius announces proposed private offering of $4.50 billion convertible senior notes","url":"https://www.sec.gov/Archives/edgar/data/1513845/000110465926098590/tm2623513d1_ex99-1.htm","date":"2026-08-19","independent":true,"publisher":"Nebius Group N.V. (SEC)","retrieval":"primary_document","syndicated_from":null},
+  {"id":"dc_6k_inferize","kind":"release","title":"Nebius acquires Inferize","url":"https://www.sec.gov/Archives/edgar/data/1513845/000110465926112824/tm2626792d1_ex99-1.htm","date":"2026-10-01","independent":true,"publisher":"Nebius Group N.V. (SEC)","retrieval":"primary_document","syndicated_from":null},
+  {"id":"dc_6k_citi","kind":"release","title":"Nebius secures $3.5 billion financing facility with Citi","url":"https://www.sec.gov/Archives/edgar/data/1513845/000110465926117978/tm2628078d1_ex99-1.htm","date":"2026-10-22","independent":true,"publisher":"Nebius Group N.V. (SEC)","retrieval":"primary_document","syndicated_from":null}
+ ],
+ "facts": [
+  {"id":"dc_f_rpo","metric":"remaining_performance_obligations","period":"2026-06-30","value":37490.6,"unit":"USD_millions","source_ids":["dc_6k_q2_fs"],"period_end":"2026-06-30","basis":"reported"},
+  {"id":"dc_f_defrev","metric":"deferred_revenue_total","period":"2026-06-30","value":5975.2,"unit":"USD_millions","source_ids":["dc_6k_q2_fs"],"period_end":"2026-06-30","basis":"reported"},
+  {"id":"dc_f_cash","metric":"cash_and_cash_equivalents","period":"2026-06-30","value":8042.1,"unit":"USD_millions","source_ids":["dc_6k_q2_fs"],"period_end":"2026-06-30","basis":"reported"},
+  {"id":"dc_f_restricted","metric":"restricted_cash_current","period":"2026-06-30","value":830.3,"unit":"USD_millions","source_ids":["dc_6k_q2_fs"],"period_end":"2026-06-30","basis":"reported"},
+  {"id":"dc_f_debt","metric":"debt_noncurrent","period":"2026-06-30","value":8499.0,"unit":"USD_millions","source_ids":["dc_6k_q2_fs"],"period_end":"2026-06-30","basis":"reported"},
+  {"id":"dc_f_leases_nc","metric":"uncommenced_lease_payments_undiscounted","period":"2026-06-30","value":12054.1,"unit":"USD_millions","source_ids":["dc_6k_q2_fs"],"period_end":"2026-06-30","basis":"reported"},
+  {"id":"dc_f_commit","metric":"power_and_colocation_fixed_commitments_total","period":"2026-06-30","value":5324.1,"unit":"USD_millions","source_ids":["dc_6k_q2_fs"],"period_end":"2026-06-30","basis":"derived"},
+  {"id":"dc_f_capex_h1","metric":"purchases_of_ppe_and_intangibles","period":"H1 2026","value":8130.3,"unit":"USD_millions","source_ids":["dc_6k_q2_ofr"],"period_end":"2026-06-30","basis":"reported"},
+  {"id":"dc_f_ocf_h1","metric":"operating_cash_flow_h1","period":"H1 2026","value":4504.1,"unit":"USD_millions","source_ids":["dc_6k_q2_ofr"],"period_end":"2026-06-30","basis":"reported"},
+  {"id":"dc_f_arr","metric":"annualized_run_rate_revenue","period":"2026-06-30","value":3000,"unit":"USD_millions","source_ids":["dc_call_q2"],"period_end":"2026-06-30","basis":"reported"},
+  {"id":"dc_f_sh_a","metric":"class_a_shares_outstanding","period":"2026-06-30","value":238400165,"unit":"shares","source_ids":["dc_6k_q2_fs"],"period_end":"2026-06-30","basis":"reported"},
+  {"id":"dc_f_sh_b","metric":"class_b_shares_outstanding","period":"2026-06-30","value":33455053,"unit":"shares","source_ids":["dc_6k_q2_fs"],"period_end":"2026-06-30","basis":"reported"},
+  {"id":"dc_f_atm","metric":"atm_class_a_shares_issued_q2","period":"Q2 2026","value":12700000,"unit":"shares","source_ids":["dc_call_q2"],"period_end":"2026-06-30","basis":"reported"},
+  {"id":"dc_f_capex_q2","metric":"capex_q2","period":"Q2 2026","value":5700,"unit":"USD_millions","source_ids":["dc_call_q2"],"period_end":"2026-06-30","basis":"reported"}
+ ],
+ "guidance": [
+  {"id":"dc_g_arr","metric":"annualized run-rate revenue at year end","period":"FY2026","low":7000,"high":9000,"unit":"USD_millions","issued":"2026-08-12","source_id":"dc_call_q2"},
+  {"id":"dc_g_rev","metric":"revenue","period":"FY2026","low":3000,"high":3400,"unit":"USD_millions","issued":"2026-08-12","source_id":"dc_call_q2"},
+  {"id":"dc_g_margin","metric":"group adjusted EBITDA margin","period":"FY2026","low":0.40,"high":0.40,"unit":"ratio","issued":"2026-08-12","source_id":"dc_call_q2"},
+  {"id":"dc_g_capex","metric":"capital expenditures","period":"FY2026","low":20000,"high":25000,"unit":"USD_millions","issued":"2026-08-12","source_id":"dc_call_q2"},
+  {"id":"dc_g_mw","metric":"connected power at year end","period":"FY2026","low":800,"high":1000,"unit":"MW","issued":"2026-08-12","source_id":"dc_call_q2"},
+  {"id":"dc_g_cpower","metric":"contracted power target at year end","period":"FY2026","low":5000,"high":5000,"unit":"MW","issued":"2026-08-12","source_id":"dc_call_q2"}
+ ],
+ "kpis": [
+  {"id":"dc_k_arr","name":"annualized run-rate revenue","period":"2026-06-30","value":3000,"unit":"USD_millions","source_ids":["dc_call_q2"]},
+  {"id":"dc_k_arr_q1","name":"annualized run-rate revenue","period":"2026-03-31","value":1900,"unit":"USD_millions","source_ids":["dc_call_q2"]},
+  {"id":"dc_k_ebitda_m","name":"Nebius AI cloud adjusted EBITDA margin","period":"Q2 2026","value":0.50,"unit":"ratio","source_ids":["dc_call_q2","dc_6k_q2_ofr"]},
+  {"id":"dc_k_ebitda_g","name":"group adjusted EBITDA margin","period":"Q2 2026","value":0.41,"unit":"ratio","source_ids":["dc_call_q2"]},
+  {"id":"dc_k_prepay","name":"customer prepayments expected 2026","period":"FY2026","value":9000,"unit":"USD_millions","source_ids":["dc_call_q2"]},
+  {"id":"dc_k_prepay_cov","name":"prepayment share of associated capex on Q2 deals","period":"Q2 2026","value":0.55,"unit":"ratio","source_ids":["dc_call_q2"]},
+  {"id":"dc_k_yield","name":"annual contract value per MW on Q2 landmark deals (midpoint of 20-25M)","period":"Q2 2026","value":22.5,"unit":"USD_millions_per_MW_year","source_ids":["dc_call_q2"]},
+  {"id":"dc_k_backlog","name":"contracted backlog (management, incl. investment-grade long-term deals)","period":"2026-08-12","value":40000,"unit":"USD_millions","source_ids":["dc_call_q2"]},
+  {"id":"dc_k_nebius_ebitda","name":"Nebius AI cloud adjusted EBITDA","period":"Q2 2026","value":285.7,"unit":"USD_millions","source_ids":["dc_6k_q2_ofr"]}
+ ],
+ "segments": [
+  {"id":"dc_s_ai_q2","name":"Nebius AI cloud","period":"Q2 2026","revenue":574.9,"operating_income":null,"unit":"USD_millions","source_ids":["dc_6k_q2_ofr"]},
+  {"id":"dc_s_ai_q2p","name":"Nebius AI cloud","period":"Q2 2025","revenue":93.7,"operating_income":null,"unit":"USD_millions","source_ids":["dc_6k_q2_ofr"]},
+  {"id":"dc_s_av_q2","name":"Avride","period":"Q2 2026","revenue":1.0,"operating_income":null,"unit":"USD_millions","source_ids":["dc_6k_q2_ofr"]},
+  {"id":"dc_s_tt_q2","name":"TripleTen","period":"Q2 2026","revenue":10.0,"operating_income":null,"unit":"USD_millions","source_ids":["dc_6k_q2_ofr"]},
+  {"id":"dc_s_tt_q2p","name":"TripleTen","period":"Q2 2025","revenue":12.3,"operating_income":null,"unit":"USD_millions","source_ids":["dc_6k_q2_ofr"]}
+ ],
+ "customers": [
+  {"id":"dc_c_c_q2","name":"Customer C (unnamed)","share":0.24,"period":"Q2 2026","source_ids":["dc_6k_q2_fs"]},
+  {"id":"dc_c_d_q2","name":"Customer D (unnamed)","share":0.21,"period":"Q2 2026","source_ids":["dc_6k_q2_fs"]},
+  {"id":"dc_c_e_q2","name":"Customer E (unnamed)","share":0.14,"period":"Q2 2026","source_ids":["dc_6k_q2_fs"]},
+  {"id":"dc_c_c_h1","name":"Customer C (unnamed)","share":0.26,"period":"H1 2026","source_ids":["dc_6k_q2_fs"]},
+  {"id":"dc_c_d_h1","name":"Customer D (unnamed)","share":0.21,"period":"H1 2026","source_ids":["dc_6k_q2_fs"]},
+  {"id":"dc_c_a_q2p","name":"Customer A (unnamed)","share":0.39,"period":"Q2 2025","source_ids":["dc_6k_q2_fs"]},
+  {"id":"dc_c_b_q2p","name":"Customer B (unnamed)","share":0.15,"period":"Q2 2025","source_ids":["dc_6k_q2_fs"]}
+ ],
+ "notes": [
+  "dc CALL 2026-08-12 Q2 2026 call (AV transcript, one call used). Q3 2026 results not yet reported at as_of; none of the Q2 documents is within 2 days of 2026-11-01.",
+  "dc MGMT (call) Q2 landmark deals: four deals averaging over $1B each (Reflection, Cohere, a scaled US new lab, a large US quant firm), $20-25M per MW per year, upfront payments 50-60% of associated capex; management says it could sell all 2027 capacity on these terms but retains some for short-term deals at $40-50M per MW.",
+  "dc MGMT first capacity auction cleared 15% above the highest Blackwell price charged before; asset-light partnership model introduced; Vera Rubin deployment expected late 2026 or early 2027; formal 2027 guidance promised later in 2026; over 1 GW of new capacity planned in 2027; margin improvement from own data centers expected from H2 2027.",
+  "dc MGMT 2026 guidance reaffirmed on 2026-08-12 (ARR 7-9B, revenue 3.0-3.4B, adjusted EBITDA margin about 40%, capex 20-25B, 800-1000 MW connected power); new capacity deals come online late 2026 and have no material effect on 2026 revenue. Implied H2 revenue 2.0-2.4B against H1 0.98B.",
+  "dc FACT Q2 operating loss 175.9M includes 74.9M SBC and 41.0M post-combination compensation from the Eigen AI acquisition (non-recurring) and 36M acquisition and financing professional fees. Server useful life extended from 4 to 5 years from 2026 (lowers depreciation).",
+  "dc FACT Q2 net loss from continuing operations 190.4M; H1 net income 430.8M is driven by 780.6M ClickHouse revaluation gain (non-operating, one-off) and 182.8M interest expense on convertibles.",
+  "dc FACT Operating cash flow H1 4,504.1M is driven by 4,395.0M increase in deferred revenue (customer prepayments, partly refundable per note); free cash flow after 8,130.3M capex is about -3.6B in H1.",
+  "dc FACT Funding H1 2026: convertibles 4,337.5M gross, treasury share sales 2,846.7M, prefunded warrants to NVIDIA 2,000.0M. Q2 ATM 12.7M Class A shares at $224 average, 12.3M shares remain. July 2026 asset-backed facility $775M at SOFR+250bp.",
+  "dc FACT Subsequent financings in releases: proposed 4.50B convertible senior notes (2.75B due 2030, 1.75B due 2034) announced 2026-08-19 (pricing and closing not read here); 3.5B Citi financing facility 2026-10-22; Inferize acquisition 2026-10-01.",
+  "dc FACT Contracts (20-F): Microsoft agreement total contract value up to about 17.4B through 2031; Meta five-year order about 2.88B initial plus further orders with total contract value 12B and an unsold-capacity access order; Meta/Microsoft service credits and tranche termination rights on delivery delays.",
+  "dc FACT RPO 37,490.6M at 2026-06-30: 36% within 24 months to June 2028, 40% months 25-48, rest later; all Nebius AI cloud. Uncommenced leases 12,054.1M undiscounted, commencing 2026-2027, terms up to 12 years.",
+  "dc FACT Long-lived assets 14,984.2M at 2026-06-30 (US 9,043.2, Netherlands 4,832.5, Finland 340.9, Israel 289.1, other 478.5).",
+  "dc RISK 20-F Item 3.D: core business capital-intensive and not profitable, depends on raising equity or debt (dilution, financing terms).",
+  "dc RISK 20-F Item 3.D: limited experience delivering multi-year contracts (Meta, Microsoft) at scale: service credits, termination rights on delay, penalties, cost overruns.",
+  "dc RISK 20-F Item 3.D: customer concentration; three customers were 24%, 21% and 14% of Q2 2026 revenue, unnamed; Q2 2025 had two at 39% and 15%.",
+  "dc RISK 20-F Item 3.D: competition from CoreWeave, Crusoe, Lambda and from AWS, Google Cloud, Azure, Oracle; pricing pressure; AI models needing less compute could reduce demand.",
+  "dc RISK 20-F Item 3.D: supply chain and export controls, tariffs and sanctions on GPUs and hardware; three suppliers carried the Q2 2026 capex.",
+  "dc RISK call Q2: US site risk (Vineland NJ public hearing adjourned without a vote; power moved to Bloom fuel cells); data-center power availability and construction timing decide revenue timing.",
+  "dc RISK 20-F: Avride (autonomous vehicles) is capital-intensive and early stage, adjusted EBITDA loss 40.1M in Q2 2026; TripleTen revenue declining (-19% y/y in Q2)."
+ ],
+ "gaps": [
+  "Q2 shareholder letter / press release not found on SEC (only the OFR and financial statements 6-K exhibits); guidance and ARR taken from the AV transcript, not a release.",
+  "No prior-guidance (May 2026) figures read from an issuer document, so quarter-review guidance carries no prior range.",
+  "No prefetched quarter_case.json / econ_case.json (20-F filer, no quarterly companyfacts): cases built by hand from the Q2 6-K; Q1 2026 lines derived as H1 minus Q2.",
+  "Convertible notes of 2026-08-19 offering (final size, conversion terms) and the Citi facility terms not read beyond the release headlines.",
+  "Customer identities (C, D, E) not disclosed; Microsoft/Meta shares of revenue not stated."
+ ],
+ "stopped": ["no further search for a Q2 shareholder letter or the August 2026 notes pricing: the next retrieval would not change the quarter case"]
+}

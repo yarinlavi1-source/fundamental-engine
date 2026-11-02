@@ -1,0 +1,85 @@
+{
+ "ticker": "VRT",
+ "as_of": "2026-10-28",
+ "at_utc": "2026-10-28T08:49:50+00:00",
+ "verified": false,
+ "label": "UNVERIFIED draft (טיוטה — ההערכה לא אומתה)",
+ "reasons": [
+  "review_numbers: no findings file of this attempt (review/numbers.json)",
+  "review_counter: no findings file of this attempt (review/counter.json)"
+ ],
+ "engine_ran": true,
+ "engine_review_status": "unreviewed_draft",
+ "reviews": {
+  "review_trace": {
+   "file": "review/trace.json",
+   "this_attempt": true,
+   "returned": true
+  },
+  "review_numbers": {
+   "file": "review/numbers.json",
+   "this_attempt": false,
+   "returned": true
+  },
+  "review_counter": {
+   "file": "review/counter.json",
+   "this_attempt": false,
+   "returned": true
+  }
+ },
+ "critical": [],
+ "open_critical": [],
+ "repair": {
+  "fixed": [
+   "cf1 (company_first): terminal ROIC is now a company driver (own_history 16% / 23% / 30% from VRT's FY2023-25 ROIC) in position/core.json drivers.terminal_roic. The DCF base is 213.35$ and the company_path base at year 0 is 213.20$ (they were 163$ and 219.5$).",
+   "counter_thesis critical: base reinvestment is rebuilt from the company record (sales_to_capital base 3.5 = FY2023-25, cross-checked against the 2026 capex guide). That removes the UIG double count: base 2027 growth capex is 638m (was 1,355m) and FCFE is 1,504m (was 788m). The cash buffer now comes from VRT's own year-end cash (minimum_cash_months 2.0) instead of all of June's cash. DCF and path terminal ROIC are aligned, and the difference in their horizons is stated. One base value: 213$."
+  ],
+  "open": [
+   "growth_half_life (fade speed) is still the engine rule (2.5 years in base) with no company data: a visible gap in the table row 'הנחות בלי נתון של החברה'.",
+   "No ROIC or forward P/E for a named competitor (Eaton, Schneider) was retrieved, so the terminal ROIC fades to VRT's own FY2023-25 average and not to a competitor level (company_first cf3 stays open).",
+   "minimum_cash is still capped by the engine at today's cash (2.81bn) from 2028 on; the June cash still includes the 1.45bn UIG payment that is deducted as a claim (engine rule, not changed).",
+   "The UIG earnout (up to 1.15bn) and UIG's revenue and earnings remain gaps (cf4). Major and minor findings cf2, cf3, cf5 and cf6 were not in scope for this repair and stay as the reviewers wrote them.",
+   "The result is still a draft: rv.status is unreviewed_draft and confidence is low. After the repair the verdict is quality_but_expensive (base IRR 10.05% vs the engine hurdle of 10.80%), with fair value about equal to the price."
+  ],
+  "ran": true
+ },
+ "returned": [
+  "analyst",
+  "analyst_field",
+  "analyst_path",
+  "gather_documents",
+  "gather_field",
+  "gather_macro",
+  "gather_numbers",
+  "repair",
+  "review_counter",
+  "review_numbers",
+  "review_trace"
+ ],
+ "times": {
+  "started_at_utc": "2026-10-28T08:16:19+00:00",
+  "prefetch_finished_at_utc": "2026-10-28T08:16:29+00:00",
+  "minutes_after_start": {
+   "gather/_prefetch.json": 0.2,
+   "gather/expectations.json": 22.9,
+   "gather/field.json": 11.6,
+   "gather/numbers.json": 7.0,
+   "gather/reports.json": 5.8,
+   "gather/understand.json": 14.9,
+   "understand/auto.json": 17.2,
+   "understand/business.json": 16.4,
+   "understand/econ_result.json": 12.8,
+   "understand/quarter_case.json": 13.5,
+   "understand/quarter_result.json": 13.5,
+   "prep.json": 17.2,
+   "position/core.json": 32.2,
+   "position/field.json": 21.6,
+   "position/path.json": 21.9,
+   "value.json": 32.4,
+   "review/trace.json": 27.5,
+   "review/repair.json": 33.1
+  },
+  "elapsed_minutes": 33.1
+ },
+ "meaning": "verified needs: the engine ran in this attempt, the three reviewers returned (files of this attempt AND the main loop's record), no critical finding open after the one repair pass. The engine's own review status is reported beside it, never replaced by it."
+}

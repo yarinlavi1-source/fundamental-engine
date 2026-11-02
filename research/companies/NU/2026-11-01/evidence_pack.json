@@ -1,0 +1,3279 @@
+{
+ "pack_version": 1,
+ "ticker": "NU",
+ "as_of": "2026-11-01",
+ "identity": {
+  "name": "Nu Holdings Ltd.",
+  "currency": "USD",
+  "exchange": "NYSE",
+  "security": "Class A ordinary share of Nu Holdings Ltd. (Cayman), listed directly on the NYSE under NU (no ADS ratio); Class B (founder-held, 1,022.6M shares) is not listed; 3,838.0M Class A and 1,022.6M Class B outstanding on 2026-03-01",
+  "fiscal_year_end": "12-31",
+  "cik": "1691493",
+  "type": "high_growth / fast_grower (computed by classify_company from SEC companyfacts; the analyst confirms or overrides with reasons)",
+  "evidence_ids": [
+   "pf_10k_20260408"
+  ]
+ },
+ "sources": [
+  {
+   "id": "pf_10k_20260408",
+   "kind": "sec_filing",
+   "title": "Nu Holdings Ltd. 20-F filed 2026-04-08 (period 2025-12-31)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1691493/000129281426002166/nuform20f_2025.htm",
+   "date": "2026-04-08",
+   "independent": true,
+   "publisher": "Nu Holdings Ltd. (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_fred_dgs10",
+   "kind": "macro",
+   "title": "Market yield on US Treasury securities at 10-year constant maturity, percent, daily (FRED DGS10)",
+   "url": "https://fred.stlouisfed.org/series/DGS10",
+   "date": "2026-10-29",
+   "independent": true,
+   "publisher": "Federal Reserve Bank of St. Louis (FRED), from the Federal Reserve H.15",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_erp_implied",
+   "kind": "macro",
+   "title": "Damodaran implied ERP for the S&P 500 on 1 October 2026 (trailing 12 months, adjusted payout), treasury 5.29%",
+   "url": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/home.htm",
+   "date": "2026-10-01",
+   "independent": true,
+   "publisher": "Aswath Damodaran (NYU Stern), as saved in runs/macro/market_2026-10-20.json",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20220421",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Nu Holdings Ltd.: facts of the filing(s) of 2022-04-21",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001691493.json#filed=2022-04-21",
+   "date": "2022-04-21",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20230420",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Nu Holdings Ltd.: facts of the filing(s) of 2023-04-20",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001691493.json#filed=2023-04-20",
+   "date": "2023-04-20",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20240419",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Nu Holdings Ltd.: facts of the filing(s) of 2024-04-19",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001691493.json#filed=2024-04-19",
+   "date": "2024-04-19",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20250416",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Nu Holdings Ltd.: facts of the filing(s) of 2025-04-16",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001691493.json#filed=2025-04-16",
+   "date": "2025-04-16",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_peer_MELI",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of MERCADOLIBRE INC (MELI), a named competitor: fiscal years through FY2025",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001099590.json",
+   "date": "2026-02-25",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from MELI's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_peer_SOFI",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of SoFi Technologies, Inc. (SOFI), a named competitor: fiscal years through FY2025",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001818874.json",
+   "date": "2026-02-17",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from SOFI's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_peer_ITUB",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Itau Unibanco Holding S.A. (ITUB), a named competitor: fiscal years through FY2024",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001132597.json",
+   "date": "2025-04-28",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from ITUB's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "dc_rel_q2_2026",
+   "kind": "release",
+   "title": "Nu Holdings Ltd. Reports Second Quarter 2026 Financial Results (6-K)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1691493/000129281426004222/nupr2q26_6k.htm",
+   "date": "2026-08-13",
+   "independent": true,
+   "publisher": "Nu Holdings Ltd.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "dc_fs_q2_2026",
+   "kind": "sec_filing",
+   "title": "Nu Holdings Q2 2026 unaudited interim condensed consolidated financial statements, IFRS (6-K)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1691493/000129281426004225/nufs2q26_6k.htm",
+   "date": "2026-08-13",
+   "independent": true,
+   "publisher": "Nu Holdings Ltd.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "dc_call_q2_2026",
+   "kind": "transcript",
+   "title": "Nu (NU) Q2 2026 earnings call transcript (Motley Fool page; call held 2026-08-13; read as a model summary of the page, not verbatim)",
+   "url": "https://www.fool.com/earnings/call-transcripts/2026/08/20/nu-nu-q2-2026-earnings-call-transcript/",
+   "date": "2026-08-20",
+   "independent": false,
+   "publisher": "The Motley Fool",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "dc_6k_cto_20261023",
+   "kind": "sec_filing",
+   "title": "Nu Holdings 6-K notice to the market: CTO Eric Young resigns",
+   "url": "https://www.sec.gov/Archives/edgar/data/1691493/000129281426005000/nu20261023_6k.htm",
+   "date": "2026-10-23",
+   "independent": true,
+   "publisher": "Nu Holdings Ltd.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_inter_2q26",
+   "kind": "release",
+   "title": "Inter&Co (INTR) 2Q26 earnings release (6-K), a named competitor in Brazil",
+   "url": "https://www.sec.gov/Archives/edgar/data/1864163/000186416326000065/interco2q26earningsrelea.htm",
+   "date": "2026-08-05",
+   "independent": true,
+   "publisher": "Inter&Co, Inc. (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_itub_2q26",
+   "kind": "release",
+   "title": "Itau Unibanco (ITUB) 2Q26 results press release (6-K), a named competitor in Brazil",
+   "url": "https://www.sec.gov/Archives/edgar/data/0001132597/000113259726000215/eng_pressreleasex2t26.htm",
+   "date": "2026-08-05",
+   "independent": true,
+   "publisher": "Itau Unibanco Holding S.A. (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_meli_2q26",
+   "kind": "press",
+   "title": "Mercado Libre (MELI, Mercado Pago) Q2 2026 results as reported by Yahoo Finance (release of 2026-08-05), a named competitor",
+   "url": "https://finance.yahoo.com/markets/stocks/articles/mercado-libre-q2-2026-revenue-212400773.html",
+   "date": "2026-08-05",
+   "independent": false,
+   "publisher": "Yahoo Finance (syndicating the Mercado Libre release)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_banorte_2q26",
+   "kind": "press",
+   "title": "Grupo Financiero Banorte (Banorte) 2Q26 results, search excerpt (MarketScreener), a named competitor in Mexico",
+   "url": "https://www.marketscreener.com/news/grupo-financiero-banorte-s-a-b-de-c-v-reports-earnings-results-for-the-second-quarter-ended-june-ce7f51d9d88af52c",
+   "date": "2026-07-31",
+   "independent": false,
+   "publisher": "MarketScreener (syndicating Banorte's results report)",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_bbva_2q26",
+   "kind": "sec_filing",
+   "title": "BBVA (BBVA Mexico segment) 2Q26 quarterly report (6-K), search excerpt, a named competitor in Mexico",
+   "url": "https://www.sec.gov/Archives/edgar/data/0000842180/000162828026050804/quarterlyreport_2q26xsec.htm",
+   "date": "2026-07-30",
+   "independent": true,
+   "publisher": "Banco Bilbao Vizcaya Argentaria, S.A. (SEC EDGAR)",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_nu_mx_6k_20260710",
+   "kind": "sec_filing",
+   "title": "Nu Holdings 6-K of 2026-07-10: Nu Mexico operations authorization as a bank (search excerpt)",
+   "url": "https://www.sec.gov/Archives/edgar/data/0001691493/000129281426003723/nu20260710_6k.htm",
+   "date": "2026-07-10",
+   "independent": true,
+   "publisher": "Nu Holdings Ltd. (SEC EDGAR)",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_cnbc_election",
+   "kind": "press",
+   "title": "Brazilian stocks rocked as Lula wins presidential election, Bolsonaro reportedly refuses to concede",
+   "url": "https://www.cnbc.com/2026/10/26/brazil-lula-win-presidential-election-runoff-vote.html",
+   "date": "2026-10-26",
+   "independent": true,
+   "publisher": "CNBC",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_aljaz_real",
+   "kind": "press",
+   "title": "Brazil's real sinks after Lula's re-election victory",
+   "url": "https://www.aljazeera.com/economy/2026/10/26/brazils-real-sinks-after-lulas-re-election-victory",
+   "date": "2026-10-26",
+   "independent": true,
+   "publisher": "Al Jazeera",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_rt_default",
+   "kind": "press",
+   "title": "Brazil Household Defaults Hit Record 8.1% (BCB September data, published 29 Oct 2026)",
+   "url": "https://www.riotimesonline.com/brazil-household-loan-defaults-record-september",
+   "date": "2026-10-29",
+   "independent": false,
+   "publisher": "The Rio Times (reporting Banco Central do Brasil data)",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_bcb_selic",
+   "kind": "macro",
+   "title": "Copom Selic decisions 2026 (cut to 13.75% on 16 Sep 2026; next meeting 4 Nov)",
+   "url": "https://www.bcb.gov.br/en/publications/copomminutes",
+   "date": "2026-09-16",
+   "independent": true,
+   "publisher": "Banco Central do Brasil",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_rt_nubank_mx",
+   "kind": "press",
+   "title": "Nu officially launches as a licensed bank in Mexico (6 Aug 2026)",
+   "url": "https://baas.com/deals/nu-mexico-bank-operations-launch",
+   "date": "2026-08-06",
+   "independent": false,
+   "publisher": "BaaS.com",
+   "retrieval": "search_excerpt",
+   "syndicated_from": "fd_nu_mx_6k_20260710"
+  },
+  {
+   "id": "mc_bnam_fintech_tax",
+   "kind": "press",
+   "title": "Brazil extends exemptions for IoT, increases taxation on fintechs",
+   "url": "https://www.bnamericas.com/en/news/brazil-extends-exemptions-for-iot-and-increases-taxation-on-fintechs",
+   "date": "2025-12-31",
+   "independent": true,
+   "publisher": "BNamericas",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_rt_bcb_marketing",
+   "kind": "press",
+   "title": "Central bank resolutions limiting unsolicited credit marketing from 2027 (23 Oct 2026), as reported in secondary coverage",
+   "url": "https://www.riotimesonline.com/brazils-banking-establishment-pushes-back-as-nubank-redraws-retail-finance/",
+   "date": "2026-10-23",
+   "independent": false,
+   "publisher": "The Rio Times",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_ib_price",
+   "kind": "price",
+   "title": "Interactive Brokers price snapshot NU (NYSE, conid 531212348): last 11.65 (2026-10-30 23:56 UTC print), prior close 12.05, 52w range 11.205-18.98",
+   "url": "connector:Interactive_Brokers get_price_snapshot",
+   "date": "2026-10-30",
+   "independent": true,
+   "publisher": "Interactive Brokers (read-only)",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_ib_hist",
+   "kind": "price",
+   "title": "Interactive Brokers monthly price history NU, 2021-12 to 2026-10 (month-end closes), no corporate actions returned",
+   "url": "connector:Interactive_Brokers get_price_history",
+   "date": "2026-10-30",
+   "independent": true,
+   "publisher": "Interactive Brokers (read-only)",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_cons_sa",
+   "kind": "consensus",
+   "title": "StockAnalysis.com NU forecast page (analyst data credited to S&P Global; EPS non-GAAP per page), last updated 2026-10-27",
+   "url": "https://stockanalysis.com/stocks/nu/forecast/",
+   "date": "2026-10-27",
+   "independent": true,
+   "publisher": "StockAnalysis.com (S&P Global data)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "uf_6k_us_20260910",
+   "kind": "sec_filing",
+   "title": "Nu Holdings 6-K: US launch (partner Lead Bank, 3.50% APY deposits, 1.5% cashback card) and Nu Global multi-currency account (read by the deep lane)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1691493/000129281426004518/nu20260909_6k.htm",
+   "date": "2026-09-10",
+   "independent": true,
+   "publisher": "Nu Holdings Ltd. (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "uf_6k_monzo_20260930",
+   "kind": "sec_filing",
+   "title": "Nu Holdings 6-K: statement that it is not pursuing a transaction with Monzo (read by the deep lane)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1691493/000129281426004752/nu20260930_6k.htm",
+   "date": "2026-09-30",
+   "independent": true,
+   "publisher": "Nu Holdings Ltd. (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  }
+ ],
+ "facts": [
+  {
+   "id": "pf_revenue_fy2019",
+   "metric": "revenue",
+   "period": "FY2019",
+   "value": 612109000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2019-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_gross_profit_fy2019",
+   "metric": "gross_profit",
+   "period": "FY2019",
+   "value": 247918000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2019-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_fy2019",
+   "metric": "operating_income",
+   "period": "FY2019",
+   "value": -238996000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2019-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_net_income_fy2019",
+   "metric": "net_income",
+   "period": "FY2019",
+   "value": -92531000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2019-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_fy2019",
+   "metric": "cfo",
+   "period": "FY2019",
+   "value": 276137000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2019-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_fy2019",
+   "metric": "sbc",
+   "period": "FY2019",
+   "value": 18511000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2019-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_d_and_a_fy2019",
+   "metric": "d_and_a",
+   "period": "FY2019",
+   "value": 5073000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2019-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_eps_diluted_fy2019",
+   "metric": "eps_diluted",
+   "period": "FY2019",
+   "value": 1137931.0,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2019-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_shares_diluted_wavg_fy2019",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2019",
+   "value": 306210.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2019-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cash_fy2019",
+   "metric": "cash",
+   "period": "FY2019",
+   "value": 1246566000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2019-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_equity_fy2019",
+   "metric": "equity",
+   "period": "FY2019",
+   "value": 612251000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2019-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_fy2020",
+   "metric": "revenue",
+   "period": "FY2020",
+   "value": 737133000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_gross_profit_fy2020",
+   "metric": "gross_profit",
+   "period": "FY2020",
+   "value": 326909000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_fy2020",
+   "metric": "operating_income",
+   "period": "FY2020",
+   "value": -307102000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_net_income_fy2020",
+   "metric": "net_income",
+   "period": "FY2020",
+   "value": -171491000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_fy2020",
+   "metric": "cfo",
+   "period": "FY2020",
+   "value": 974520000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_fy2020",
+   "metric": "sbc",
+   "period": "FY2020",
+   "value": 56273000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_d_and_a_fy2020",
+   "metric": "d_and_a",
+   "period": "FY2020",
+   "value": 7428000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_eps_diluted_fy2020",
+   "metric": "eps_diluted",
+   "period": "FY2020",
+   "value": 1315578.0,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_shares_diluted_wavg_fy2020",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2020",
+   "value": 405394.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cash_fy2020",
+   "metric": "cash",
+   "period": "FY2020",
+   "value": 2343780000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_total_assets_fy2020",
+   "metric": "total_assets",
+   "period": "FY2020",
+   "value": 10154250000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_equity_fy2020",
+   "metric": "equity",
+   "period": "FY2020",
+   "value": 438111000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_goodwill_fy2020",
+   "metric": "goodwill",
+   "period": "FY2020",
+   "value": 831000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_receivables_fy2020",
+   "metric": "receivables",
+   "period": "FY2020",
+   "value": 1475417000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_fy2021",
+   "metric": "revenue",
+   "period": "FY2021",
+   "value": 1698023000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_gross_profit_fy2021",
+   "metric": "gross_profit",
+   "period": "FY2021",
+   "value": 732917000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_fy2021",
+   "metric": "operating_income",
+   "period": "FY2021",
+   "value": -537508000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_net_income_fy2021",
+   "metric": "net_income",
+   "period": "FY2021",
+   "value": -165334000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_fy2021",
+   "metric": "cfo",
+   "period": "FY2021",
+   "value": -2924318000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_fy2021",
+   "metric": "sbc",
+   "period": "FY2021",
+   "value": 225445000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_d_and_a_fy2021",
+   "metric": "d_and_a",
+   "period": "FY2021",
+   "value": 17339000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_eps_diluted_fy2021",
+   "metric": "eps_diluted",
+   "period": "FY2021",
+   "value": 1602126.0,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_shares_diluted_wavg_fy2021",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2021",
+   "value": 334436.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cash_fy2021",
+   "metric": "cash",
+   "period": "FY2021",
+   "value": 2705675000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_total_assets_fy2021",
+   "metric": "total_assets",
+   "period": "FY2021",
+   "value": 19858681000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_equity_fy2021",
+   "metric": "equity",
+   "period": "FY2021",
+   "value": 4441032000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_goodwill_fy2021",
+   "metric": "goodwill",
+   "period": "FY2021",
+   "value": 401872000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_receivables_fy2021",
+   "metric": "receivables",
+   "period": "FY2021",
+   "value": 2341492000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220421"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_fy2022",
+   "metric": "revenue",
+   "period": "FY2022",
+   "value": 4792231000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230420"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_gross_profit_fy2022",
+   "metric": "gross_profit",
+   "period": "FY2022",
+   "value": 1662990000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230420"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_fy2022",
+   "metric": "operating_income",
+   "period": "FY2022",
+   "value": 1239002000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230420"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_net_income_fy2022",
+   "metric": "net_income",
+   "period": "FY2022",
+   "value": -364634000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230420"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_fy2022",
+   "metric": "cfo",
+   "period": "FY2022",
+   "value": 755573000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230420"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_fy2022",
+   "metric": "sbc",
+   "period": "FY2022",
+   "value": 286450000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230420"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_d_and_a_fy2022",
+   "metric": "d_and_a",
+   "period": "FY2022",
+   "value": 35581000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230420"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_eps_diluted_fy2022",
+   "metric": "eps_diluted",
+   "period": "FY2022",
+   "value": -0.078,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_cf_20240419"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_shares_diluted_wavg_fy2022",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2022",
+   "value": 184362.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_cf_20230420"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cash_fy2022",
+   "metric": "cash",
+   "period": "FY2022",
+   "value": 4172316000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230420"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_total_assets_fy2022",
+   "metric": "total_assets",
+   "period": "FY2022",
+   "value": 29934872000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230420"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_equity_fy2022",
+   "metric": "equity",
+   "period": "FY2022",
+   "value": 4890783000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230420"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_goodwill_fy2022",
+   "metric": "goodwill",
+   "period": "FY2022",
+   "value": 397397000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230420"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_receivables_fy2022",
+   "metric": "receivables",
+   "period": "FY2022",
+   "value": 4236235000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230420"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_fy2023",
+   "metric": "revenue",
+   "period": "FY2023",
+   "value": 8028976000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240419"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_gross_profit_fy2023",
+   "metric": "gross_profit",
+   "period": "FY2023",
+   "value": 3490903000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240419"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_fy2023",
+   "metric": "operating_income",
+   "period": "FY2023",
+   "value": 3576003000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240419"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_net_income_fy2023",
+   "metric": "net_income",
+   "period": "FY2023",
+   "value": 1030530000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240419"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_fy2023",
+   "metric": "cfo",
+   "period": "FY2023",
+   "value": 1266189000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240419"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_fy2023",
+   "metric": "sbc",
+   "period": "FY2023",
+   "value": 255614000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240419"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_d_and_a_fy2023",
+   "metric": "d_and_a",
+   "period": "FY2023",
+   "value": 62895000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240419"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_eps_diluted_fy2023",
+   "metric": "eps_diluted",
+   "period": "FY2023",
+   "value": 0.2121,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_cf_20240419"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_shares_diluted_wavg_fy2023",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2023",
+   "value": 4857579000.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_cf_20240419"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cash_fy2023",
+   "metric": "cash",
+   "period": "FY2023",
+   "value": 5923440000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240419"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_total_assets_fy2023",
+   "metric": "total_assets",
+   "period": "FY2023",
+   "value": 43498449000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240419"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_equity_fy2023",
+   "metric": "equity",
+   "period": "FY2023",
+   "value": 6406385000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240419"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_goodwill_fy2023",
+   "metric": "goodwill",
+   "period": "FY2023",
+   "value": 397538000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240419"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_receivables_fy2023",
+   "metric": "receivables",
+   "period": "FY2023",
+   "value": 6296788000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240419"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_fy2024",
+   "metric": "revenue",
+   "period": "FY2024",
+   "value": 11517075000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250416"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_gross_profit_fy2024",
+   "metric": "gross_profit",
+   "period": "FY2024",
+   "value": 5252909000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250416"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_fy2024",
+   "metric": "operating_income",
+   "period": "FY2024",
+   "value": 5630057000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250416"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_net_income_fy2024",
+   "metric": "net_income",
+   "period": "FY2024",
+   "value": 1972112000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250416"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_fy2024",
+   "metric": "cfo",
+   "period": "FY2024",
+   "value": 2399044000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250416"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_fy2024",
+   "metric": "sbc",
+   "period": "FY2024",
+   "value": -372669000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250416"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_d_and_a_fy2024",
+   "metric": "d_and_a",
+   "period": "FY2024",
+   "value": 77128000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250416"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_eps_diluted_fy2024",
+   "metric": "eps_diluted",
+   "period": "FY2024",
+   "value": 0.4034,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_cf_20250416"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_shares_diluted_wavg_fy2024",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2024",
+   "value": 4888918000.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_cf_20250416"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cash_fy2024",
+   "metric": "cash",
+   "period": "FY2024",
+   "value": 9185742000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250416"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_total_assets_fy2024",
+   "metric": "total_assets",
+   "period": "FY2024",
+   "value": 49931214000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250416"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_equity_fy2024",
+   "metric": "equity",
+   "period": "FY2024",
+   "value": 7646289000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250416"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_goodwill_fy2024",
+   "metric": "goodwill",
+   "period": "FY2024",
+   "value": 414287000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250416"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_receivables_fy2024",
+   "metric": "receivables",
+   "period": "FY2024",
+   "value": 6100636000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250416"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_f_rev_br",
+   "metric": "revenue_by_region:Brazil",
+   "period": "FY2025",
+   "value": 11038.3,
+   "unit": "USD million",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_f_rev_mx",
+   "metric": "revenue_by_region:Mexico",
+   "period": "FY2025",
+   "value": 808.1,
+   "unit": "USD million",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_f_rev_ot",
+   "metric": "revenue_by_region:Other countries",
+   "period": "FY2025",
+   "value": 237.3,
+   "unit": "USD million",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_f_rev_br24",
+   "metric": "revenue_by_region:Brazil",
+   "period": "FY2024",
+   "value": 8409.9,
+   "unit": "USD million",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_f_rev_mx24",
+   "metric": "revenue_by_region:Mexico",
+   "period": "FY2024",
+   "value": 523.1,
+   "unit": "USD million",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_f_rev_ot24",
+   "metric": "revenue_by_region:Other countries",
+   "period": "FY2024",
+   "value": 118.1,
+   "unit": "USD million",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_f_lla_br",
+   "metric": "long_lived_assets:Brazil",
+   "period": "FY2025",
+   "value": 852.77,
+   "unit": "USD million",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_f_lla_mx",
+   "metric": "long_lived_assets:Mexico",
+   "period": "FY2025",
+   "value": 60.303,
+   "unit": "USD million",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_f_lla_ot",
+   "metric": "long_lived_assets:Other countries",
+   "period": "FY2025",
+   "value": 147.761,
+   "unit": "USD million",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_fy2025",
+   "metric": "revenue",
+   "period": "FY2025",
+   "value": 15774741000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_gross_profit_fy2025",
+   "metric": "gross_profit",
+   "period": "FY2025",
+   "value": 6625002000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_expected_credit_loss_fy2025",
+   "metric": "expected_credit_loss",
+   "period": "FY2025",
+   "value": 4204876000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_pretax_income_fy2025",
+   "metric": "pretax_income",
+   "period": "FY2025",
+   "value": 3868419000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_income_tax_fy2025",
+   "metric": "income_tax",
+   "period": "FY2025",
+   "value": 996747000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_net_income_fy2025",
+   "metric": "net_income",
+   "period": "FY2025",
+   "value": 2871672000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_net_income_parent_fy2025",
+   "metric": "net_income_parent",
+   "period": "FY2025",
+   "value": 2868892000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_fy2025",
+   "metric": "eps_diluted",
+   "period": "FY2025",
+   "value": 0.5846,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_diluted_wavg_fy2025",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2025",
+   "value": 4907352000,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_cfo_fy2025",
+   "metric": "cfo",
+   "period": "FY2025",
+   "value": 3500464000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_capex_fy2025",
+   "metric": "capex",
+   "period": "FY2025",
+   "value": 340769000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_sbc_fy2025",
+   "metric": "sbc",
+   "period": "FY2025",
+   "value": 271845000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_d_and_a_fy2025",
+   "metric": "d_and_a",
+   "period": "FY2025",
+   "value": 97968000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_equity_fy2025",
+   "metric": "equity",
+   "period": "FY2025",
+   "value": 11290948000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_total_assets_fy2025",
+   "metric": "total_assets",
+   "period": "FY2025",
+   "value": 74893877000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_cash_fy2025",
+   "metric": "cash",
+   "period": "FY2025",
+   "value": 15003643000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_deposits_fy2025",
+   "metric": "deposits",
+   "period": "FY2025",
+   "value": 41925101000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260408"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_2026q2",
+   "metric": "revenue",
+   "period": "2026Q2",
+   "value": 5513208000,
+   "unit": "USD",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_gross_profit_2026q2",
+   "metric": "gross_profit",
+   "period": "2026Q2",
+   "value": 2346529000,
+   "unit": "USD",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_expected_credit_loss_2026q2",
+   "metric": "expected_credit_loss",
+   "period": "2026Q2",
+   "value": 1482213000,
+   "unit": "USD",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_pretax_income_2026q2",
+   "metric": "pretax_income",
+   "period": "2026Q2",
+   "value": 1236313000,
+   "unit": "USD",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_income_tax_2026q2",
+   "metric": "income_tax",
+   "period": "2026Q2",
+   "value": 175224000,
+   "unit": "USD",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_net_income_2026q2",
+   "metric": "net_income",
+   "period": "2026Q2",
+   "value": 1061089000,
+   "unit": "USD",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_2026q2",
+   "metric": "eps_diluted",
+   "period": "2026Q2",
+   "value": 0.2162,
+   "unit": "USD/shares",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_diluted_wavg_2026q2",
+   "metric": "shares_diluted_wavg",
+   "period": "2026Q2",
+   "value": 4904837000,
+   "unit": "shares",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_2025q2",
+   "metric": "revenue",
+   "period": "2025Q2",
+   "value": 3668470000,
+   "unit": "USD",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_net_income_2025q2",
+   "metric": "net_income",
+   "period": "2025Q2",
+   "value": 636987000,
+   "unit": "USD",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_2025q2",
+   "metric": "eps_diluted",
+   "period": "2025Q2",
+   "value": 0.13,
+   "unit": "USD/shares",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_2026q1",
+   "metric": "revenue",
+   "period": "2026Q1",
+   "value": 4967967000,
+   "unit": "USD",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_net_income_2026q1",
+   "metric": "net_income",
+   "period": "2026Q1",
+   "value": 871431000,
+   "unit": "USD",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_revenue_2026h1",
+   "metric": "revenue",
+   "period": "2026H1",
+   "value": 10481175000,
+   "unit": "USD",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_net_income_2026h1",
+   "metric": "net_income",
+   "period": "2026H1",
+   "value": 1932520000,
+   "unit": "USD",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_2026h1",
+   "metric": "eps_diluted",
+   "period": "2026H1",
+   "value": 0.3936,
+   "unit": "USD/shares",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_cfo_2026h1",
+   "metric": "cfo",
+   "period": "2026H1",
+   "value": -1242048000,
+   "unit": "USD",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_capex_2026h1",
+   "metric": "capex",
+   "period": "2026H1",
+   "value": 100474000,
+   "unit": "USD",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_sbc_2026h1",
+   "metric": "sbc",
+   "period": "2026H1",
+   "value": 216826000,
+   "unit": "USD",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_d_and_a_2026h1",
+   "metric": "d_and_a",
+   "period": "2026H1",
+   "value": 76734000,
+   "unit": "USD",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_buybacks_2026h1",
+   "metric": "buybacks",
+   "period": "2026H1",
+   "value": 500393000,
+   "unit": "USD",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_2025h1",
+   "metric": "revenue",
+   "period": "2025H1",
+   "value": 6916159000,
+   "unit": "USD",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_net_income_2025h1",
+   "metric": "net_income",
+   "period": "2025H1",
+   "value": 1194195000,
+   "unit": "USD",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_2025h1",
+   "metric": "eps_diluted",
+   "period": "2025H1",
+   "value": 0.2439,
+   "unit": "USD/shares",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_ttm_2026q2",
+   "metric": "eps_diluted",
+   "period": "TTM2026Q2",
+   "value": 0.7343,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_10k_20260408",
+    "dc_fs_q2_2026"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_equity_2026q2",
+   "metric": "equity",
+   "period": "2026Q2",
+   "value": 13249670000,
+   "unit": "USD",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_total_assets_2026q2",
+   "metric": "total_assets",
+   "period": "2026Q2",
+   "value": 82753414000,
+   "unit": "USD",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_cash_2026q2",
+   "metric": "cash",
+   "period": "2026Q2",
+   "value": 13551611000,
+   "unit": "USD",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_deposits_2026q2",
+   "metric": "deposits",
+   "period": "2026Q2",
+   "value": 45328419000,
+   "unit": "USD",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  }
+ ],
+ "guidance": [
+  {
+   "id": "dc_g_eff_fy26",
+   "metric": "efficiency ratio",
+   "period": "FY2026",
+   "low": 0.2,
+   "high": 0.2,
+   "unit": "ratio",
+   "issued": "2026-08-13",
+   "source_id": "dc_call_q2_2026"
+  }
+ ],
+ "consensus": [
+  {
+   "id": "nm_cons_revenue_fy2026",
+   "metric": "revenue",
+   "period": "FY2026",
+   "value": 22800000000,
+   "low": 22200000000,
+   "high": 24000000000,
+   "source_id": "nm_cons_sa"
+  },
+  {
+   "id": "nm_cons_revenue_fy2027",
+   "metric": "revenue",
+   "period": "FY2027",
+   "value": 28270000000,
+   "source_id": "nm_cons_sa"
+  },
+  {
+   "id": "nm_cons_eps_fy2026",
+   "metric": "eps_diluted",
+   "period": "FY2026",
+   "value": 0.89,
+   "low": 0.81,
+   "high": 0.95,
+   "source_id": "nm_cons_sa"
+  },
+  {
+   "id": "nm_cons_eps_fy2027",
+   "metric": "eps_diluted",
+   "period": "FY2027",
+   "value": 1.13,
+   "source_id": "nm_cons_sa"
+  }
+ ],
+ "kpis": [
+  {
+   "id": "dc_k_customers_q226",
+   "name": "Customers, total",
+   "period": "Q2 2026",
+   "value": 138.9,
+   "unit": "millions",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_customers_q225",
+   "name": "Customers, total",
+   "period": "Q2 2025",
+   "value": 122.7,
+   "unit": "millions",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_customers_q126",
+   "name": "Customers, total",
+   "period": "Q1 2026",
+   "value": 135.2,
+   "unit": "millions",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_cust_brazil",
+   "name": "Customers Brazil (almost)",
+   "period": "Q2 2026",
+   "value": 118,
+   "unit": "millions",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_cust_mexico",
+   "name": "Customers Mexico",
+   "period": "Q2 2026",
+   "value": 15.8,
+   "unit": "millions",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_cust_colombia",
+   "name": "Customers Colombia (surpassed)",
+   "period": "Q2 2026",
+   "value": 5.0,
+   "unit": "millions",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_activity",
+   "name": "Monthly activity rate",
+   "period": "Q2 2026",
+   "value": 0.835,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_arpac_q226",
+   "name": "Monthly ARPAC",
+   "period": "Q2 2026",
+   "value": 17.1,
+   "unit": "USD per active customer per month",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_arpac_q225",
+   "name": "Monthly ARPAC",
+   "period": "Q2 2025",
+   "value": 12.5,
+   "unit": "USD per active customer per month",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_arpac_q126",
+   "name": "Monthly ARPAC",
+   "period": "Q1 2026",
+   "value": 15.9,
+   "unit": "USD per active customer per month",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_arpac_mexico",
+   "name": "Mexico ARPAC at 16.5% adult penetration (management comparison with Brazil 5.6)",
+   "period": "Q2 2026",
+   "value": 12.3,
+   "unit": "USD per month",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_cts",
+   "name": "Monthly cost to serve per active customer",
+   "period": "Q2 2026",
+   "value": 1.0,
+   "unit": "USD per active customer per month",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_purchase_vol",
+   "name": "Purchase volume",
+   "period": "Q2 2026",
+   "value": 43.4,
+   "unit": "USD billions",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_portfolio",
+   "name": "Total credit portfolio (cards 26.0, unsecured 10.3, secured 3.1)",
+   "period": "Q2 2026",
+   "value": 39.4,
+   "unit": "USD billions",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_portfolio_q225",
+   "name": "Total credit portfolio",
+   "period": "Q2 2025",
+   "value": 27.3,
+   "unit": "USD billions",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_deposits",
+   "name": "Total deposits (Brazil 36.4, Mexico 5.7, Colombia 3.3)",
+   "period": "Q2 2026",
+   "value": 45.3,
+   "unit": "USD billions",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_deposits_q225",
+   "name": "Total deposits",
+   "period": "Q2 2025",
+   "value": 36.6,
+   "unit": "USD billions",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_cod",
+   "name": "Consolidated cost of deposits, share of interbank rate (3 pp lower y/y)",
+   "period": "Q2 2026",
+   "value": 0.88,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_nim",
+   "name": "Net interest margin (managerial, +180 bps q/q)",
+   "period": "Q2 2026",
+   "value": 0.229,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_ranim",
+   "name": "Risk-adjusted NIM",
+   "period": "Q2 2026",
+   "value": 0.124,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_ranim_q126",
+   "name": "Risk-adjusted NIM",
+   "period": "Q1 2026",
+   "value": 0.095,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_coc",
+   "name": "Cost of credit (managerial)",
+   "period": "Q2 2026",
+   "value": 1.6908,
+   "unit": "USD billions",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_npl1590",
+   "name": "NPL 15-90",
+   "period": "Q2 2026",
+   "value": 0.048,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_npl90",
+   "name": "NPL 90+",
+   "period": "Q2 2026",
+   "value": 0.069,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_roe",
+   "name": "ROE",
+   "period": "Q2 2026",
+   "value": 0.33,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_eff",
+   "name": "Efficiency ratio",
+   "period": "Q2 2026",
+   "value": 0.195,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_eff_q126",
+   "name": "Efficiency ratio",
+   "period": "Q1 2026",
+   "value": 0.176,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_eff_q225",
+   "name": "Efficiency ratio",
+   "period": "Q2 2025",
+   "value": 0.213,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_mix_credit",
+   "name": "Credit share of gross profit (fees 25%, float 34%)",
+   "period": "Q2 2026",
+   "value": 0.41,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_allow",
+   "name": "Allowance for credit losses; 90+ NPL coverage 244% (call)",
+   "period": "Q2 2026",
+   "value": 6.6,
+   "unit": "USD billions",
+   "source_ids": [
+    "dc_call_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_ltd_mexico",
+   "name": "Mexico loan-to-deposit ratio",
+   "period": "Q2 2026",
+   "value": 0.35,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_buyback",
+   "name": "Share repurchases under the US$1.0bn program (40,659,600 Class A shares); 499.6m remains to 2027-06-03",
+   "period": "Q2 2026",
+   "value": 500.4,
+   "unit": "USD millions",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ]
+  }
+ ],
+ "segments": [
+  {
+   "id": "dc_s_br_q226",
+   "name": "Brazil (IFRS revenue by geography)",
+   "period": "Q2 2026",
+   "revenue": 3990286000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_s_br_q225",
+   "name": "Brazil (IFRS revenue by geography)",
+   "period": "Q2 2025",
+   "revenue": 2621626000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_s_mx_q226",
+   "name": "Mexico (IFRS revenue by geography)",
+   "period": "Q2 2026",
+   "revenue": 314603000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_s_mx_q225",
+   "name": "Mexico (IFRS revenue by geography)",
+   "period": "Q2 2025",
+   "revenue": 175693000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_s_ot_q226",
+   "name": "Other countries incl. Colombia (IFRS revenue by geography)",
+   "period": "Q2 2026",
+   "revenue": 76038000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_s_ot_q225",
+   "name": "Other countries incl. Colombia (IFRS revenue by geography)",
+   "period": "Q2 2025",
+   "revenue": 56201000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ]
+  }
+ ],
+ "competitors": [
+  {
+   "ticker": "ITUB",
+   "name": "Itau Unibanco",
+   "why": "Largest private incumbent bank in Brazil, NU's core market (about 118M NU customers there, 84% of FY2025 revenue); competes for the primary current account, credit cards, personal and payroll loans. Selected by the analyst; the 20-F names no Brazilian competitor.",
+   "metrics": {
+    "2Q26_recurring_net_income_BRL_bn": 12.407,
+    "2Q26_net_income_growth_yoy": 0.078,
+    "2Q26_ROE": 0.243,
+    "2Q26_credit_portfolio_BRL_bn": 1522,
+    "2Q26_credit_growth_yoy": 0.096,
+    "2Q26_NPL_90d": 0.019,
+    "2Q26_efficiency_ratio_Brazil": 0.355,
+    "FY2024_revenue_BRL_bn_as_tagged": 168.05,
+    "FY2024_revenue_growth": 0.0844,
+    "currency_note": "pf_peer_ITUB labels its XBRL values USD but their size (168 bn) is BRL; treat as BRL",
+    "forward_PE": "gap: no attributed source read"
+   },
+   "source_ids": [
+    "pf_peer_ITUB",
+    "fd_itub_2q26"
+   ]
+  },
+  {
+   "ticker": "INTR",
+   "name": "Inter&Co (Banco Inter)",
+   "why": "Brazilian digital bank with the same retail model (free account, card, Pix, credit, super-app) for the same mass and mass-affluent customers; the closest like-for-like listed digital rival in Brazil.",
+   "metrics": {
+    "2Q26_net_income_BRL_m": 421,
+    "2Q26_net_income_growth_yoy": 0.34,
+    "2Q26_net_revenues_BRL_m": 2637,
+    "2Q26_net_revenue_growth_yoy": 0.32,
+    "2Q26_ROE": 0.163,
+    "2Q26_clients_m": 45.3,
+    "2Q26_active_clients_m": 26.4,
+    "2Q26_activation_rate": 0.583,
+    "2Q26_loan_growth_yoy": 0.29,
+    "2Q26_efficiency_ratio": 0.421,
+    "2Q26_funding_BRL_bn": 77.2,
+    "2Q26_funding_growth_yoy": 0.24,
+    "forward_PE": "gap: no attributed source read"
+   },
+   "source_ids": [
+    "fd_inter_2q26"
+   ]
+  },
+  {
+   "ticker": "MELI",
+   "name": "MercadoLibre (Mercado Pago)",
+   "why": "Mercado Pago is a digital account, card and consumer/SME lender in Brazil and Mexico, two of NU's three markets, and is growing its credit book faster than NU.",
+   "metrics": {
+    "FY2025_revenue_USD_bn": 28.893,
+    "FY2025_revenue_growth": 0.3906,
+    "FY2025_gross_margin": 0.445,
+    "FY2025_operating_margin": 0.1108,
+    "2Q26_net_revenue_USD_bn": 10.2,
+    "2Q26_revenue_growth_yoy_usd": 0.5,
+    "2Q26_fintech_revenue_USD_bn": 4.4,
+    "2Q26_fintech_revenue_growth_yoy_usd": 0.49,
+    "2Q26_operating_margin": 0.067,
+    "2Q26_Mercado_Pago_MAU_m": 88,
+    "2Q26_MAU_growth_yoy": 0.3,
+    "2Q26_credit_portfolio_USD_bn": 16,
+    "2Q26_credit_portfolio_growth_yoy_usd": 0.75,
+    "2Q26_Mexico_fintech_MAU_growth": 0.45,
+    "2Q26_Brazil_fintech_MAU_growth": 0.38,
+    "note": "company is mostly e-commerce and logistics; only the fintech line competes with NU",
+    "forward_PE": "gap: no attributed source read"
+   },
+   "source_ids": [
+    "pf_peer_MELI",
+    "fd_meli_2q26"
+   ]
+  },
+  {
+   "ticker": "BBVA",
+   "name": "BBVA Mexico",
+   "why": "Largest bank in Mexico by profit, issuer of consumer credit cards and digital accounts against NU Mexico (15.8M customers); search excerpt only, group-level BBVA numbers not read in the filing.",
+   "metrics": {
+    "1H26_Mexico_net_attributable_profit_EUR_m": 1514,
+    "1H26_Mexico_profit_growth_constant_fx": 0.121,
+    "1H26_Mexico_loan_growth_yoy": 0.099,
+    "2026_Mexico_loan_growth_guidance": 0.1
+   },
+   "source_ids": [
+    "fd_bbva_2q26"
+   ]
+  },
+  {
+   "ticker": "GFNORTE",
+   "name": "Banorte",
+   "why": "Named in the 20-F as a Mexican card issuer NU surpassed in new credit cards; one of the five largest Mexican card issuers (top five hold about 85% of the card portfolio); search excerpt only.",
+   "metrics": {
+    "2Q26_bank_net_income_MXN_m": 12610,
+    "2Q26_bank_net_income_growth_yoy": 0.05,
+    "2Q26_NPL": 0.015
+   },
+   "source_ids": [
+    "fd_banorte_2q26"
+   ]
+  }
+ ],
+ "bottlenecks": [
+  {
+   "id": "fd_bn_concentration",
+   "reading": "What NU supplies is competition and low cost to serve in concentrated, high-fee banking. Banking concentration (HHI 2024-25) is 889 in Brazil, 993 in Mexico, 1,262 in Colombia against 328 in the US, 373 in Germany, 488 in France (NU's own table from BCB, CNBV, SFC, ECB data). NU claims cost to serve and G&A per active customer about 85% below Brazilian incumbents (internal analysis; incumbents have 1,685 to 3,955 branches). This gap does not close quickly because incumbents' branch and legacy-system costs are structural; the counter is that Itau already earns ROE 24.3% at 35.5% efficiency, so incumbents are not fragile.",
+   "evidence_ids": [
+    "pf_10k_20260408",
+    "fd_itub_2q26"
+   ]
+  },
+  {
+   "id": "fd_bn_mexico_credit",
+   "reading": "Mexico is an under-penetrated credit market: 63% of adults have a bank account, about 37% formal credit, 16% a bank credit card (INEGI ENIF 2024 / Dec 2025); top five issuers hold about 85% of card portfolio. NU reached 9.2M credit-card customers in 2025 (+35%), about half with no prior card, and over 5% of card purchase volume (Banxico). The scarce step was the bank license: CNBV gave Nu Mexico its operations authorization on 2026-07-09 (search excerpt of Nu's 6-K of 2026-07-10), which allows full deposit and credit products; Mexico was 6.8% of FY2025 revenue (US$808.1M), loan-to-deposit ratio only 35% in 2Q26. BBVA Mexico (loan growth about 10%) and Mercado Pago (Mexico fintech MAU +45%) add capacity at the same time.",
+   "evidence_ids": [
+    "pf_10k_20260408",
+    "fd_nu_mx_6k_20260710",
+    "dc_rel_q2_2026",
+    "fd_bbva_2q26"
+   ]
+  },
+  {
+   "id": "fd_bn_pix_rails",
+   "reading": "Brazil's public rails lower the barrier for every entrant: Pix reached US$6.3 trillion in 2025 (+29%, 179.7M users), NU originates close to 20% of Pix transfers (BACEN), Inter reports about 9% Pix share (2Q26 filing excerpt). Open Finance and salary portability make switching easier for NU's customers as well as incumbents'. Open rails mean the moat is cost, data and primary-bank engagement, not access.",
+   "evidence_ids": [
+    "pf_10k_20260408",
+    "fd_inter_2q26"
+   ]
+  },
+  {
+   "id": "fd_bn_credit_cycle",
+   "reading": "The scarce thing that limits growth is cheap, well-underwritten funding and credit quality, not demand: NU's 90+ day NPL was 6.9% in 2Q26 (up 35 to 40 bps in the quarter, book +37% FXN to US$39.4B) against Itau 1.9% and Banorte 1.5%, a different, much riskier book (low-income, unsecured). Mercado Pago grows its book +75% (credit cards +91%) and Inter +29%, so competitors are adding capacity in the same unsecured consumer segment.",
+   "evidence_ids": [
+    "dc_rel_q2_2026",
+    "fd_itub_2q26",
+    "fd_meli_2q26",
+    "fd_inter_2q26",
+    "fd_banorte_2q26"
+   ]
+  },
+  {
+   "id": "fd_bn_policy_hyp",
+   "reading": "Hypothesis: regulatory and fiscal policy in Brazil (taxes on financial institutions, interest or payroll-loan rate caps, Selic path) is the largest external swing for NU's margin; the 20-F payroll-loan note says INSS payroll loans are capped against Selic. A search headline of 2026-10-26 to 11-01 reports a 20% one-day NU share fall after a Brazilian election result; not read, cause and content unverified.",
+   "hypothesis": true
+  }
+ ],
+ "notes": [
+  "prefetch 2026-11-01T22:14:56+00:00: SEC documents saved verbatim and their text in reading/ (untrusted); a lane cites a pf_ source only after reading the passage it relies on",
+  "dc CALL 2026-08-13: Q2 2026 call (Vélez, CFO Rob Livingston); AV EARNINGS_CALL_TRANSCRIPT hit the 25/day rate limit on the single probe; transcript read via Motley Fool page as a summary (search_excerpt), not verbatim.",
+  "dc FORM Nu is a 20-F/6-K filer; the Q2 release (6-K) is the managerial view, the IFRS financial statements (6-K) are the audited-basis view. Managerial net income equals IFRS net income (1,061.1m) but revenue (5,875.7 vs 5,513.2m), funding cost, cost of credit (1,690.8 vs 1,482.2m) and taxes (revenue-based taxes 240.9m moved above gross profit; income taxes 569.2 managerial vs 175.2 IFRS) are reclassified: use one basis per ratio. Growth rates in the release are FX neutral; IFRS USD growth differs (revenue +50% y/y IFRS USD).",
+  "dc FACT IFRS Q2 2026 (USD m): total revenue 5,513.2 (Q2 25: 3,668.5); interest income and gains 4,760.6; fee and commission income 752.6; ECL 1,482.2 (1,012.2); gross profit 2,346.5 (1,548.0); G&A 599.8; income before tax 1,236.3; income taxes 175.2 (effective rate 14.2%; Q2 25: 27.6%); net income 1,061.1 (637.0); diluted EPS 0.2162 (0.1300); diluted weighted shares 4,904.8m.",
+  "dc FACT IFRS balance sheet 2026-06-30 (USD m): total assets 82,753; 'loans to customers' statement line 11,317 (excludes credit card receivables shown elsewhere; the 39.4bn managerial portfolio is the headline); deposits 45,328 (Dec 25: 41,925); borrowings and financing 4,682 (4,398); repurchase agreements 1,058; payables to network 15,542; cash and cash equivalents 13,552 (includes funds that back deposits: not spendable corporate liquidity); securities 3,777; compulsory deposits at central banks 9,149; total equity 13,252 (Dec 25: 11,322); total liabilities 69,502; lease liabilities 66.",
+  "dc FACT Six months to 2026-06-30: net income 1,932.5m (1,194.2m); ECL 3,200.2m (1,985.7m); interest received 5,976m; income tax paid 1,789m. Q1 2026 derived as six months minus Q2: revenue 4,968.0m, gross profit 1,864.9m, net income 871.4m.",
+  "dc FACT Geography: Brazil 91.1% of Q2 26 IFRS revenue interest-and-fee basis (3,990.3 of 4,380.9m), Mexico 7.2% (314.6m, +79% y/y), other 1.7%. No customer is 10% or more of revenue (note 34 segment information; one reportable segment, CODM is the CEO).",
+  "dc FACT Mexico bank: CNBV operations authorization notified 2026-07-09 (license obtained 2025-04-24); began operating as a multiple bank 2026-08-06. 15.8m customers in Q2, 16m in July. Mexico deposits 5.7bn, loan-to-deposit 35%, deposits declining modestly by design (deposit optimization).",
+  "dc FACT Brazil banking license: 2026-07-20 share purchase agreement to acquire 100% of Banco Porto Real de Investimentos S.A. to add a banking license (Joint Resolution No. 17 brand-name rule); subject to Central Bank of Brazil approval; price not disclosed in the notes; no additional capital or liquidity requirement claimed. Colombia: Nu Colombia Compania de Financiamiento (financing company, not a bank): 5m+ customers, deposits 3.3bn.",
+  "dc FACT Capital return: Board approved on 2026-06-03 a US$1.0bn buyback for 12 months from 2026-06-04; 40.66m Class A shares bought for US$500.4m in Q2 (avg about US$12.31), held in treasury, 499.6m remaining; no dividend.",
+  "dc FACT Subsequent: 2026-10-23 6-K: CTO Eric Young resigns (stays to 2026-11-12); CEO Vélez and CISO John Walton interim; search under way. Not a number; a management-depth item.",
+  "dc MGMT Release (2026-08-13): net income above US$1bn for the first time, ROE 33%, 'more than a billion dollars in quarterly net income'; Mexico bank launched, 'largest digital bank in the country with 16 million customers'; NuFormer foundation model in production on three portfolios (cards Brazil and Mexico, unsecured Brazil), SME and Colombia cards in test; AI agents handle over 60% of Brazil support conversations; Croma tier for Super Core launched July.",
+  "dc MGMT Release: efficiency ratio rose to 19.5% from 17.6% because real estate and marketing costs shifted from Q1 into Q2 plus international expansion; 15-90 NPL improved 16 bps to 4.8% mostly seasonality, 'partially offset by intentional expansions into higher-risk, higher-return segments'; 90+ NPL +35 bps to 6.9% on seasonal migration of Q1 early delinquencies; NIM +180 bps to 22.9% on portfolio growth, mix toward unsecured and the risk expansions announced last quarter; cost of credit -9% q/q.",
+  "dc MGMT Call (summary, secondary): efficiency ratio to average about 20% for 2026 and Q1's 17.6% not a run rate; risk-adjusted NIM expected 'in the same region' (CFO did not call 12% a floor); allowance 6.6bn, 90+ coverage 244%; Desenrola renegotiation program touched cost of credit by about 5% (1.8m customers); US entry spend capped at about 100 bps of efficiency ratio, US credit models 12 to 30 months; headcount about 10,400, US hiring from about 1% to 2%; underwriting assumes conditions worse than history; private payroll lending described as an asymmetric bet, scaled slowly. Not issuer numeric guidance: no revenue or earnings guidance is issued.",
+  "dc GUIDANCE Nu issues no numeric revenue, NIM, cost-of-risk or earnings guidance in the release; only the call statements above (efficiency ratio about 20% FY2026, risk-adjusted NIM same region). Track record from guidance therefore unavailable (gap).",
+  "dc RISK Credit risk management failure (20-F Item 3.D summary): unsecured and card lending in high-rate Brazil; 90+ NPL 6.9% and intentional expansion into higher-risk segments (release).",
+  "dc RISK International expansion (Mexico, Colombia, US plans) may not succeed or may carry added risk (20-F 3.D summary; release: efficiency ratio pressure from expansion).",
+  "dc RISK Regulation: extensive oversight as payment institution; pending Brazilian Congress, BCB and Ministry of Finance initiatives on payments and finance; tax law changes (20-F 3.D summary). Brazil banking license is being added via Banco Porto Real, pending BCB approval.",
+  "dc RISK Macro and rates: FX and interest-rate instability, Brazil government influence; Brazilian presidential elections October 2026 flagged in the 20-F as a volatility source (20-F 3.D summary). Q3 results (mid-November, not yet out at as_of) will show the election-period read.",
+  "dc RISK Technology: dependence on IT systems and third-party data centers and clouds; AI-use legal, reputational and cost risks (20-F 3.D summary); CTO resignation 2026-10-23.",
+  "dc RISK Brand and concentration of control: brand reliance; founder David Vélez holds 88.3% of Class B shares and about 74.4% of voting power (20-F 3.D summary, 2025 report).",
+  "dc RISK Income tax rate: IFRS effective rate 14.2% in Q2 26 vs 27.6% in Q2 25; part of the y/y net income growth (+67% IFRS) comes from the lower rate; managerial view puts income taxes at 569.2m (35%): check which the net income rests on.",
+  "dc GAP Q3 2026 results are not out at as_of 2026-11-01 (Nu reports mid-November); no 10-Q equivalent exists for a 20-F filer, so no quarterly 10-Q reading file; the 6-K IFRS statements serve instead. Cost-of-risk as a percentage and 90+ NPL by cohort, CET1/capital ratios and Brazil Selic exposure were not extracted.",
+  "fd NAMED COMPETITORS (20-F Item 4, pf_10k_20260408): the filing names no individual competitor in Brazil; it says NU faces 'large incumbent financial institutions, major technology companies, and smaller emerging fintech entrants'. In Mexico it names Banco Azteca, Banorte, Santander Mexico, HSBC and BanCoppel (credit card issuers NU surpassed in new cards) and Sofipos as fintech peers. The competitors list is therefore the analyst's selection by market: ITUB (Brazil incumbent), INTR (Brazil digital bank), MELI/Mercado Pago (Brazil and Mexico), BBVA Mexico and Banorte (Mexico). Bradesco, Banco do Brasil, PicPay, SoFi (US, prefetched peers.json, does not serve NU's customers, dropped) are not recorded: no own-filing numbers were read for them.",
+  "fd SHARE Brazil customers: NU 113M at FY2025 (62% of adults 18+; growth above the five largest incumbents combined, BCB per 20-F, pf_10k_20260408) to almost 118M at 2Q26 (fd_nu_2q26), about +4.4% in two quarters. Inter&Co 45.3M clients but 26.4M active (58.3%, fd_inter_2q26) against NU's 83.5% monthly activity rate (86% in Brazil, fd_nu_2q26): NU has about 2.6 times Inter's customers and a higher engagement. Mercado Pago 88M MAU across all countries (+30%, fd_meli_2q26); not comparable one-to-one with NU customers.",
+  "fd SHARE profitability: 2Q26 ROE NU 33% (fd_nu_2q26) vs Itau 24.3% (fd_itub_2q26) vs Inter 16.3% (fd_inter_2q26); net income growth yoy NU +49% vs Inter +34% vs Itau +7.8%; MELI operating margin 6.7% in 2Q26 (fd_meli_2q26). NU earns the highest return and grows fastest of the Brazil names, with the highest 90+ NPL (6.9% vs Itau 1.9%).",
+  "fd SHARE revenue by geography (pf_10k_20260408): NU Brazil revenue US$8,409.9M (2024) to US$11,038.3M (2025), +31%; Mexico US$523.1M to US$808.1M, +54%; other US$118.1M to US$237.3M. NU 2025 revenue pool share is about 5% of its serviceable market (retail revenue pool US$227.9B across the three countries, NU internal analysis). Against competing revenue over the same period: MELI revenue +39% (FY2025, whole company), ITUB revenue +8.4% (FY2024, BRL, last year in prefetch). Segment-level competing revenue for MELI Brazil/Mexico fintech or Inter Brazil is not read: gap.",
+  "fd SHARE Mexico: NU 15.8M customers at 2Q26 (about 15% of adults), over 5% purchase-volume share of cards (Banxico, 20-F), third-largest regulated institution by customers (CNBV). Competing digital growth: Mercado Pago Mexico fintech MAU +45% (fd_meli_2q26, hypothesis that it competes for the same customers); BBVA Mexico profit +12.1% constant FX, loans +9.9% (fd_bbva_2q26, search excerpt). Hypothesis: NU's Mexican growth comes mostly from first-time card users (about 50% had no card), not from taking share from BBVA or Banorte.",
+  "fd COMPETITOR TIMING: Q3 2026 results of Itau, Inter, MercadoLibre and Nu (due 2026-11-12) were not out at 2026-11-01; all competitor numbers are 2Q26 (reported 2026-08-05) or FY2025. Itau's 2Q26 EPS missed consensus per a search excerpt (not registered).",
+  "fd NOTE ITUB currency: prefetch/peers.json shows ITUB revenue 168,050,000,000 for FY2024 with currency USD, but that is BRL (net income 42.1bn is about R$42bn, in line with Itau's reported level); do not use it as USD.",
+  "mc GEOGRAPHY FY2025 revenue (20-F note 34b, non-current assets = ROU, PP&E, intangibles, goodwill): Brazil 91.3% (11,038.3 of 12,083.8), Mexico 6.7%, other (Colombia etc.) 2.0%; non-current assets Brazil 80.4%, Mexico 5.7%, other 13.9%. Mexico revenue grew 54% in 2025 (523.1 to 808.1). No customer is 10% of revenue [pf_10k_20260408].",
+  "mc EXPOSURE Brazil Selic and funding: Selic 15.00% at the 20-F date (peak 15% since 18 Jun 2025); cut to 14.25% (Jun 2026), 14.00% (Aug), 13.75% (16 Sep 2026); next Copom 4 Nov 2026; Focus survey of 13 Oct expects 13.25% by year-end (attributed expectation, not a fact). Nu's deposits are remunerated at SELIC-linked rates and payroll loans use SELIC as benchmark [pf_10k_20260408, mc_bcb_selic]. Sensitivity sizing from the 20-F market-risk table is left to the analyst (hypothesis until sized).",
+  "mc EXPOSURE Brazil tax: Complementary Law 224 (Dec 2025) raises CSLL for certain financial companies to 17.5% from Apr 2026 through Dec 2027 and 20% from Jan 2028 (non-financial 12% then 15%); IRPJ 25%; PIS/COFINS to be replaced by VAT from 2027 on a multi-year transition [pf_10k_20260408, mc_bnam_fintech_tax]. Applies to roughly 91% of revenue (Brazil share) so it is a sized bear mechanism on Brazil net margin; the exact share of Nu entities subject to 17.5%/20% vs lower rates is a gap. Nu announced (Jul 2026, secondary coverage) a bank licence purchase in Brazil (Banco Porto Real): bank status would put it under bank tax rules (hypothesis, unconfirmed at primary source). IOF: no 2026 IOF rise aimed at fintechs found; 2025 decrees widened IOF on credit/FX (not sized).",
+  "mc EXPOSURE Brazil credit quality: BCB household default on market-rate credit 8.09% in Sep 2026 vs 8.03% Aug and 6.89% Sep 2025, the highest of the series since Mar 2011 (published 29 Oct 2026, via secondary coverage) [mc_rt_default]. Same direction as Nu's consumer book (cards, personal and payroll loans); Nu's own NPL ratios are for gather_numbers/documents.",
+  "mc EXPOSURE Brazil politics, fiscal, FX: Lula won the 25 Oct 2026 runoff 51.8% to 48.2% over Flavio Bolsonaro; BRL fell about 10.5-12% intraday to around 5.60 per USD, then recovered to about 5.36; iShares MSCI Brazil ETF reported down ~25% premarket on 26 Oct; Bolsonaro reportedly challenged the result in court, outcome confirmed by the electoral court; analysts flag persistent primary deficits and rising public debt [mc_cnbc_election, mc_aljaz_real]. Reaction sizes differ between sources; a Nu share-price move is not confirmed at primary source here (gather_numbers owns price). FX translation: about 91% of revenue is in BRL, reporting is in USD, so BRL level maps directly into USD revenue and book value (hypothesis for sizing).",
+  "mc EXPOSURE Mexico: 6.7% of FY2025 revenue (growing). CNBV/SHCP final authorization 9-10 Jul 2026 and launch as a full bank on 6 Aug 2026 (from a Sofipo), enabling payroll accounts and broader credit; deposits now IPAB-insured; >15 million customers; plan to invest US$4.2 billion in Mexico through 2030 (company statements, via secondary coverage) [mc_6k_20260710, mc_rt_nubank_mx]. Mexico average CETES 28-day 8.11% in 2025, MXN average 19.2 per USD in 2025 vs 18.3 in 2024; USMCA is up for review in 2026 per risk factors [pf_10k_20260408]. Higher capital and liquidity requirements as a bank not sized (gap).",
+  "mc EXPOSURE Brazil regulation: central bank resolutions of 23 Oct 2026 restrict unsolicited credit marketing from 2027, a customer-acquisition and credit-limit-increase exposure (secondary coverage, not read at the BCB source, not sized) [mc_rt_bcb_marketing]. Tariffs: no company-specific exposure; the 20-F only names general US tariff and USMCA uncertainty. No export-control, Taiwan or sanctions exposure applies to a Latin American digital bank.",
+  "mc NEWS 2026-10-23 6-K: CTO Eric Young resigns (stays to 12 Nov 2026); founder-CEO David Velez oversees Global Platforms, CISO John Walton interim co-lead; permanent CTO search started; strategy said unchanged [mc_6k_20261023]. Citable from 2026-10-25.",
+  "mc NEWS 2026-10-25/26 Lula re-elected in runoff; BRL and Brazilian equities sold off sharply, partial recovery by 27 Oct (see EXPOSURE politics) [mc_cnbc_election, mc_aljaz_real].",
+  "mc NEWS 2026-10-29 BCB credit statistics for September: household default record 8.09% [mc_rt_default]. 6-Ks of 2026-09-30, 2026-09-10 and 2026-09-02 were not opened (headers have no items; likely routine notices): gap. Q3 2026 results not yet released at as_of; the Q2 results (2026-08-13, record net income US$1.1 billion per press) are the latest and are gather_documents' lane.",
+  "mc RATES market block: risk-free 4.98% (FRED DGS10, 2026-10-29) and ERP 4.20% (Damodaran implied, 2026-10-01) kept from the prefetch; Damodaran's 1 Nov update was not yet checkable as of the cutoff. Brazil country-risk row is built from the geography facts above. Foreign-currency level for BRL and MXN not retrieved from a market feed (AV not used by this lane): only the press levels around the election.",
+  "nm IDENTITY NU = Nu Holdings Ltd. (Cayman, CIK 1691493), Class A ordinary shares listed directly on the NYSE (IB conid 531212348, USD); no ADS ratio. Class B (1,022.6M, founder-held, David Velez 88.3% of Class B, 74.4% of votes) unlisted; 4,860.6M shares outstanding on 2026-03-01 (20-F cover/Item 7). 20-F filer, IFRS, USD functional reporting currency of the group, FYE 12-31. Operations Brazil, Mexico, Colombia.",
+  "nm PRICE IB last 11.65 (print 2026-10-30 23:56 UTC, is_close false), prior close 12.05; October month bar close 11.61 (StockAnalysis also quotes 11.61 close on 2026-10-30). 52w high 18.98, low 11.205; 13w high 16.22, low 11.48. About -39% from the 52w high. Market cap about 4,860.6M x 11.65 = 56.6B USD (share count of 2026-03-01, before the 2026 H1 buyback of 500M USD).",
+  "nm LATEST PERIOD Q2 2026 (6-K 2026-08-13) is the latest reported quarter; Q3 2026 results expected 2026-11-12 (per web consensus excerpt, not an issuer source), after as_of: Q2 2026 stands as latest. FY2025 (20-F filed 2026-04-08) is the latest fiscal year.",
+  "nm AV DENIED INCOME_STATEMENT 2026-11-01: standard rate limit 25 requests per day reached; not retried; BALANCE_SHEET, CASH_FLOW and EARNINGS_ESTIMATES not called. FMP statements/analyst are denied on this plan (session_capabilities), not called. Second-source statement check therefore done only against the 20-F and the Q2 6-K interim statements (primary documents).",
+  "nm DATA GAP SEC companyfacts holds Nu only up to the FY2024 20-F (filed 2025-04-16): no FY2025 and no interim facts. Prefetch pf_ facts end at FY2024, and prefetch/forensic.json roic, altman, beneish are unavailable. FY2025, 2026Q2 and H1 2026 figures were read by me from the 20-F statements (F-7 to F-15) and the 6-K interim statements and entered as nm_ facts (USD thousands x 1000).",
+  "nm RECONCILIATION FY2024 pf_ facts vs the 20-F FY2025 comparative column: revenue 11,517,075k, net income 1,972,112k, CFO 2,399,044k, diluted EPS 0.4034, diluted shares 4,888,918k, D&A 77,128k, total assets 49,931,214k, pretax 2,795,198k all match exactly. Equity: pf_equity_fy2024 7,646,289k is equity attributable to the parent (total equity incl. NCI 7,647,076k): label difference only. Cash 9,185,742k matches.",
+  "nm RECONCILIATION DIFFERENCES pf_sbc_fy2024 = -372,669k is the XBRL tag ExpenseFromSharebasedPaymentTransactionsWithEmployees (negative sign, 2024 income-statement expense incl. related charges) whereas the cash-flow statement SBC add-back is 272,382k (FY2025 271,845k, 2023 212,551k): the pf sign and amount differ from the cash-flow definition. Use nm_sbc_fy2025 (cash-flow add-back); do not treat the pf FY2024 sign as a benefit. pf_operating_income_fy2024 = 5,630,057k and FY2023 3,576,003k match no IFRS line of Nu (gross profit 5,252,909k, pretax 2,795,198k, total operating expenses 2,457,711k): a bank has no IFRS operating income, so ignore pf operating_income for the valuation (use pretax income / net income). Nu changed its reported total revenue: IFRS total revenue = interest income net of gains/losses on financial instruments + fees; the managerial revenue (Q2 2026 5,875.7M vs IFRS 5,513.2M) adds float-income and other reclassifications of 362.4M.",
+  "nm RECONCILIATION FY2025 (20-F, USD k): revenue 15,774,741; gross profit 6,625,002; ECL 4,204,876; pretax 3,868,419; income tax 996,747 (effective 25.8%); net income 2,871,672 (parent 2,868,892); diluted EPS 0.5846; diluted shares 4,907,352k; CFO 3,500,464; capex = PP&E 7,215 + intangibles 333,554 = 340,769; SBC add-back 271,845; D&A 97,968; deposits 41,925,101; total equity 11,321,562 (parent 11,290,948). Cash flow adds back ECL of 4,701,058k (above the P&L ECL 4,204,876k: includes write-off/other items) and CFO is after the growth in credit card receivables (-12.4B) and loans (-10.3B) funded by deposits (+12.9B): for a bank CFO is a balance-sheet-growth number, not free cash flow.",
+  "nm RECONCILIATION Q2 2026 (6-K interim FS, USD k): revenue 5,513,208; gross profit 2,346,529; ECL 1,482,213; pretax 1,236,313; income tax 175,224 (effective 14.2%); net income 1,061,089 (parent 1,060,199); diluted EPS 0.2162; diluted shares 4,904,837k. H1 2026: revenue 10,481,175; net income 1,932,520; diluted EPS 0.3936; CFO -1,242,048 (credit growth: cards -8.1B, loans -6.6B, deposits +3.4B); capex 16,226 + 84,248 = 100,474; SBC 216,826; D&A 76,734; buyback 500,393. The press release's managerial P&L net income (1,061.1M) equals the IFRS net income; Q1 2026 net income derived = 871.4M matches the release (871.4). Managerial revenue/gross profit (5,875.7M / 2,441.1M) differ from IFRS (5,513.2M / 2,346.5M) by a stated reclassification bridge (revenue-based taxes 240.9M shown as a cost, funding cost, ECL 208.6M): consensus revenue is probably on the managerial basis.",
+  "nm ROIC CHECK prefetch roic is unavailable (needs operating income, debt, cash per year); invalid for a bank anyway: debt and deposits are operating funding, cash 13.6B is mostly regulatory and liquidity funding, so NOPAT/(equity+debt-cash) has no meaning. Use ROE instead (below). Goodwill 409.4M and intangibles 747.1M on 2026-06-30 are small against 13.25B equity (tangible equity about 12.09B).",
+  "nm ROE HISTORY net income attributable to parent / average parent equity (computed by me from year-end equity: FY2021 4,441M, FY2022 4,891M, FY2023 6,406M, FY2024 7,646M, FY2025 11,291M, 2026-06-30 13,250M): FY2022 about -7.8% (net loss -365M); FY2023 18.2% (1,031/5,649); FY2024 28.1% (1,972/7,026); FY2025 30.3% (2,869/9,469); H1 2026 annualised about 31.5% (1,932x2 on average equity 12,270M). The company reports annualised quarterly ROE of 33% in Q2 2026, 29% in Q1 2026 and 28% in Q2 2025 (managerial; own definition, release 2026-08-13). Equity grew mainly through retained earnings and FX translation (+667M in FY2025, +493M in H1 2026), not issuance; share premium fell by 500M with the 2026 buyback.",
+  "nm TAX Q2 2026 effective tax rate 14.2% (175.2M on pretax 1,236.3M) against 27.6% in Q2 2025 and 25.8% in FY2025; H1 2026 11.8% against 28.7% in H1 2025. Deferred tax assets rose from 2,511M to 3,649M and the cash flow shows deferred taxes of -991M in H1 2026: the 2026 earnings carry a large deferred-tax benefit (the release does not explain its source in the extract read; gather_documents should check note 30). At a 26% rate Q2 2026 net income would be about 915M (EPS about 0.187) instead of 1,061M: do not read the Q2 net income x4 (4.24B) as a run rate; Q2 is also the seasonal high for credit (release: Q2 early delinquencies improve seasonally; NPL 15-90 4.8% vs 5.0% Q1, NPL 90+ 6.9% vs 6.5%).",
+  "nm OWN MULTIPLE HISTORY trailing P/E low 15.8 median 39.9 high 71.1 now 15.9 years 2024-2026 sources nm_ib_hist, pf_10k_20260408, nm_6k_q2_fs. Method: IB month-end close / diluted GAAP EPS of the latest 20-F (FY2023 0.2121, FY2024 0.4034, FY2025 0.5846) from the April after year-end, and from August 2026 the trailing four quarters (0.5846 + 0.3936 - 0.2439 = 0.7343); 31 month-ends 2024-04 to 2026-10. The lagged EPS overstates the multiple while earnings grow, so the high and median are inflated. Year-end Dec checks: Dec 2023 close 8.33 / 0.2121 = 39.3; Dec 2024 10.36 / 0.4034 = 25.7; Dec 2025 16.74 / 0.5846 = 28.6; now 11.65 / 0.7343 = 15.9 (11.65 / FY2025 0.5846 = 19.9). Forward P/E on consensus (non-GAAP) EPS: 11.65 / 0.89 = 13.1 (2026), 11.65 / 1.13 = 10.3 (2027). Earlier years have no multiple (net losses FY2019-FY2022; FY2022 EPS negative). Earnings are not at a settled peak but contain the tax benefit above.",
+  "nm PRICE PATH month closes (IB, bar = month): 2021-12 9.38; 2022-06 3.74 (low 3.26 intramonth); 2023-12 8.33; 2024-12 10.36; 2025-11 17.39; 2026-01 17.75 (highest monthly close of the 5 years; 52w intraday high 18.98); 2026-04 14.48; 2026-05 13.13; 2026-07 14.33; 2026-08 14.55; 2026-09 12.66; 2026-10 11.61. The stock is about 39% below the 52w high while Q2 2026 net income grew 67% YoY (1,061M vs 637M, IFRS): the multiple compressed (see OWN MULTIPLE HISTORY).",
+  "nm CONSENSUS (attributed, an expectation, never a fact) StockAnalysis.com page last updated 2026-10-27 (analyst data credited to S&P Global; EPS stated non-GAAP; read with WebFetch on 2026-11-01): FY2026 EPS avg 0.89 (low 0.81, high 0.95), revenue avg 22.80B (low 22.2B, high 24.0B); FY2027 EPS avg 1.13, revenue avg 28.27B (high/low behind a paywall). Implied 2026 H2 EPS = 0.89 - 0.3936 = about 0.50 (Q2 was 0.2162). Revenue consensus is about 22.8B against IFRS FY2025 15.77B and Q2 2026 IFRS 5.51B (x4 = 22.1B): it is on the managerial basis (the page's own +226% growth figure is a page artefact, ignore). Other snippets from a web search (secondary, undated or older): Yahoo Finance 2026 EPS avg 0.85 from 16 analysts (range 0.75-0.93), 2026 revenue avg 22.8B (22.2B-24B), 2027 revenue 28.27B (26.22B-30.27B), 2027 EPS about 1.11; TipRanks 0.86 / 1.11; Seeking Alpha April 2026 snapshot 0.84 / 21.29B; Fintel 1.39 / 13B judged inconsistent. Dispersion of 2026 EPS is narrow (0.81-0.95, about +/-8%); revision direction not available (AV denied; one older April snapshot 0.84 vs 0.89 now suggests upward revisions, weak evidence). Q2 2026 EPS 0.22 against about 0.20 expected (secondary excerpt). Analyst price target (opinion, not evidence): average 18.8, low 12, high 23, median 19, 23 analysts, rating Buy (StockAnalysis, 2026-10-27).",
+  "nm TRACK RECORD no numeric guidance exists to track: the Q2 2026 release (nupr2q26_6k) and the 20-F carry no revenue, EPS, NII or margin outlook (grep for outlook/guidance/expected found none; only forward-looking-statement boilerplate). Nu gives qualitative direction only. guidance_track is empty and ticker-check will show no ratio. A softer test (consensus beat) is only a secondary-source remark: Q2 2026 EPS 0.22 vs about 0.20 expected. gather_documents should check the call transcript for any verbal target (for example efficiency ratio, risk-adjusted NIM, ROE aspirations, Mexico break-even) and record it as guidance with its source.",
+  "nm BANK STRUCTURE (for the analyst; reported facts from the Q2 2026 release and interim FS) 2026-06-30: customers 138.9M (Brazil about 118M, Mexico 15.8M, Colombia over 5M); total credit portfolio 39.4B (+37% YoY FXN; cards 26.0B, unsecured 10.3B, secured 3.1B); deposits 45.3B (IFRS 45,328M), cost of deposits 88% of interbank rate; Mexico loan-to-deposit 35%; ARPAC 17.1 USD/month; efficiency ratio 19.5% (Q1 17.6%, Q2 2025 21.3%); risk-adjusted NIM 12.4% (Q1 9.5%); NII 3.7B, NIM 22.9%; cost of credit 1.69B managerial (IFRS ECL 1,482M); NPL 15-90 4.8%, NPL 90+ 6.9%; total assets 82.75B, total equity 13.25B, leverage (assets/equity) 6.2x, payables to network 15.5B, borrowings 4.68B. Capital ratios (Basel/Brazilian BIS), liquidity coverage and regulatory capital of Nu Pagamentos/Nu Financeira are not in these documents (gap for gather_documents). Q2 2026 events: Nubank Mexico banking licence received 2026-07-09 and bank launched August 2026; Brazil moving to a full banking licence; Croma launched July 2026.",
+  "nm EVENTS after the latest report 2026-10-23 6-K: Chief Technology Officer Eric Young resigned (leaves 2026-11-12; David Velez interim oversight of Global Platforms; permanent search started; company says strategy unchanged). Results of 2026-11-12 (Q3 2026) fall after as_of 2026-11-01.",
+  "nm IB PRICE CAUTION the price_history arrays (time, open, close; 59 equal-length entries) were retyped by hand from the tool result into raw/ib__corporate-actions-NU__current.json; high, low and volume were omitted; the tool returned no split or corporate-action field. Re-pull the history if exact bars are needed.",
+  "uf US: launched 2026-09-10 via partner Lead Bank (OCC preliminary conditional approval for a national charter, January 2026, per the 6-K); new cost centre, no revenue evidence yet; call: US spend capped at about 100 bps of efficiency ratio (dc_call_q2_2026).",
+  "uf M&A discipline: company denied pursuing Monzo after media reports (uf_6k_monzo_20260930)."
+ ],
+ "potential": {
+  "market_direction": {
+   "reading": "Large, concentrated, still-growing pool: NU puts the retail revenue pool of Brazil, Mexico and Colombia at US$227.9B with NU about 5% of it, and banking concentration (HHI 889 Brazil, 993 Mexico vs 328 US). Mexico is under-penetrated (about 37% of adults with formal credit, 16% with a bank card) and management's illustrative gross-profit-pool CAGR is about 15% for Mexico vs about 8% for Brazil (not guidance). Direction in Brazil is mixed near term: household default on market-rate credit hit a record 8.09% in September 2026 (6.89% a year earlier) and Selic is still 13.75%.",
+   "evidence_ids": [
+    "pf_10k_20260408",
+    "dc_rel_q2_2026",
+    "mc_rt_default",
+    "mc_bcb_selic"
+   ]
+  },
+  "bottleneck_potential": {
+   "reading": "NU is not a supply bottleneck: Pix and Open Finance are open public rails, so access is not scarce. What is scarce is cheap, well-underwritten funding and low cost to serve, where NU leads: deposits US$45.3B at 88% of the interbank rate (-3 pp y/y), cost to serve US$1.0 per active customer per month, efficiency 19.5%. Capacity is being added by rivals in the same unsecured consumer segment: Mercado Pago credit book +75% y/y (US$16B), Inter loans +29%.",
+   "evidence_ids": [
+    "dc_k_cod",
+    "dc_k_deposits",
+    "dc_k_cts",
+    "dc_k_eff",
+    "fd_meli_2q26",
+    "fd_inter_2q26",
+    "pf_10k_20260408"
+   ]
+  },
+  "share_trajectory": {
+   "reading": "NU is still taking share: customers 122.7M to 138.9M (+13% y/y), about 118M in Brazil (62% of adults at FY2025, customer growth above the five largest incumbents combined per BCB data in the 20-F); 2Q26 net income +49% vs Itau +7.8% and Inter +34%; Mexico revenue +54% in FY2025 (523.1 to 808.1M) and +79% y/y in 2Q26 (175.7 to 314.6M). The one named rival growing credit faster is Mercado Pago (book +75%, Mexico fintech MAU +45%).",
+   "evidence_ids": [
+    "dc_k_customers_q226",
+    "dc_k_customers_q225",
+    "dc_k_cust_brazil",
+    "pf_10k_20260408",
+    "fd_itub_2q26",
+    "fd_inter_2q26",
+    "fd_meli_2q26",
+    "mc_f_rev_mx",
+    "mc_f_rev_mx24",
+    "dc_s_mx_q226",
+    "dc_s_mx_q225"
+   ]
+  },
+  "competitive_position": {
+   "reading": "Stronger than Itau and Inter on returns, cost and engagement: ROE 33% vs Itau 24.3% vs Inter 16.3%; efficiency 19.5% vs Itau Brazil 35.5% vs Inter 42.1% (definitions differ); monthly activity 83.5% vs Inter 58.3% active clients. Weaker on credit quality: NPL 90+ 6.9% vs Itau 1.9% and Banorte 1.5%, a riskier low-income unsecured book. Against Mercado Pago NU is larger and more profitable but MELI grows its credit book faster and has the e-commerce data and distribution.",
+   "evidence_ids": [
+    "dc_k_roe",
+    "dc_k_eff",
+    "dc_k_activity",
+    "dc_k_npl90",
+    "fd_itub_2q26",
+    "fd_inter_2q26",
+    "fd_meli_2q26",
+    "fd_banorte_2q26"
+   ]
+  },
+  "threats": {
+   "reading": "Regulation and tax: CSLL for certain financial companies rises to 17.5% from April 2026 and 20% from 2028 (Brazil is about 91% of revenue); BCB resolutions of 23 Oct 2026 limit unsolicited credit marketing from 2027 (a customer-acquisition and limit-increase lever); INSS payroll loans are rate-capped. Country risk: the 25 Oct 2026 election moved BRL about 10% intraday. Competition: Mercado Pago (+75% book) and Inter in the same segment; Open Finance and salary portability lower switching. Credit: record household default in Brazil.",
+   "evidence_ids": [
+    "mc_bnam_fintech_tax",
+    "pf_10k_20260408",
+    "mc_rt_bcb_marketing",
+    "mc_cnbc_election",
+    "mc_aljaz_real",
+    "fd_meli_2q26",
+    "mc_rt_default",
+    "dc_s_br_q226"
+   ]
+  }
+ },
+ "scenario_events": {
+  "bear": [
+   {
+    "event_he": "פיגורי משקי הבית בברזיל בשיא של 8.09% (ספטמבר 2026) ופיגורי 90+ של נו עולים מעל 7.5%: הפרשות להפסדי אשראי צומחות מהר מהתיק והתשואה על ההון יורדת לכיוון 20%.",
+    "evidence_ids": [
+     "mc_rt_default",
+     "dc_k_npl90",
+     "nm_expected_credit_loss_2026q2",
+     "dc_rel_q2_2026"
+    ]
+   },
+   {
+    "event_he": "יחס ההון הליבה (CET1) ירד מ-13.0% ל-11.9% בחצי שנה: אם הירידה נמשכת, נו תאלץ להאט את צמיחת האשראי או לעצור את הרכישה העצמית.",
+    "evidence_ids": [
+     "dc_fs_q2_2026",
+     "dc_k_buyback"
+    ]
+   },
+   {
+    "event_he": "אחרי ניצחון לולה הריאל נחלש בכ-10% ביום אחד: כ-91% מההכנסות בברזיל, ולכן כל היחלשות מתמשכת של הריאל מקטינה את הרווח וההון בדולרים כמעט אחד לאחד.",
+    "evidence_ids": [
+     "mc_aljaz_real",
+     "mc_cnbc_election",
+     "dc_s_br_q226",
+     "mc_f_rev_br"
+    ]
+   },
+   {
+    "event_he": "המס על חברות האשראי (CSLL) עולה ל-20% מ-2028 והטבת המס של 2026 לא חוזרת: הרווח הנקי נמוך בכ-15% מהקצב של רבעון 2.",
+    "evidence_ids": [
+     "mc_bnam_fintech_tax",
+     "dc_fs_q2_2026",
+     "nm_income_tax_2026q2"
+    ]
+   },
+   {
+    "event_he": "הבנק המרכזי מגביל שיווק אשראי לא מבוקש מ-2027: גיוס לקוחות והגדלת מסגרות אשראי מואטים.",
+    "evidence_ids": [
+     "mc_rt_bcb_marketing"
+    ]
+   },
+   {
+    "event_he": "תחלופה בהנהלה (סמנכ\"ל כספים הוחלף, סמנכ\"ל טכנולוגיה התפטר) פוגעת בביצוע בדיוק כשמחזור האשראי מתהפך.",
+    "evidence_ids": [
+     "dc_6k_cto_20261023",
+     "dc_call_q2_2026"
+    ]
+   }
+  ],
+  "base": [
+   {
+    "event_he": "תיק האשראי ממשיך לגדול בקצב גבוה (39.4 מיליארד דולר, +44% בשנה) עם מרווח ריבית מותאם סיכון באזור 10-12%, כפי שההנהלה אמרה ('באותו אזור').",
+    "evidence_ids": [
+     "dc_k_portfolio",
+     "dc_k_portfolio_q225",
+     "dc_k_ranim",
+     "dc_k_ranim_q126",
+     "dc_call_q2_2026"
+    ]
+   },
+   {
+    "event_he": "שיעור המס חוזר לכ-26% (כמו 2025) ולכן הרווח השנתי נמוך מ-4 כפול רבעון 2; תשואה מנורמלת על ההון כ-26-28%.",
+    "evidence_ids": [
+     "nm_income_tax_fy2025",
+     "nm_pretax_income_fy2025",
+     "dc_fs_q2_2026"
+    ]
+   },
+   {
+    "event_he": "יחס היעילות נשאר סביב 20% ב-2026, כפי שההנהלה הנחתה, למרות ההשקעה במקסיקו ובארה\"ב.",
+    "evidence_ids": [
+     "dc_g_eff_fy26",
+     "dc_k_eff"
+    ]
+   },
+   {
+    "event_he": "הסליק יורד בהדרגה (13.75% בספטמבר 2026): עלות המימון יורדת, הכנסות הצף נשחקות, והביקוש לאשראי נתמך.",
+    "evidence_ids": [
+     "mc_bcb_selic",
+     "dc_k_cod",
+     "dc_k_mix_credit"
+    ]
+   },
+   {
+    "event_he": "השלמת תוכנית הרכישה העצמית של מיליארד דולר (נותרו 499.6 מיליון עד יוני 2027) מקזזת את הדילול מתגמול במניות.",
+    "evidence_ids": [
+     "dc_k_buyback",
+     "nm_sbc_2026h1",
+     "nm_buybacks_2026h1"
+    ]
+   }
+  ],
+  "bull": [
+   {
+    "event_he": "מקסיקו, בנק מלא מאוגוסט 2026, מכפילה את חלקה בהכנסות (7.2% היום, +79% בשנה) עם פיקדונות מבוטחים ומשכורות.",
+    "evidence_ids": [
+     "fd_nu_mx_6k_20260710",
+     "mc_rt_nubank_mx",
+     "dc_s_mx_q226",
+     "dc_s_mx_q225"
+    ]
+   },
+   {
+    "event_he": "הבנק המרכזי בברזיל מאשר את רכישת Banco Porto Real ונו מקבלת רישיון בנק מלא, בלי דרישת הון נוספת.",
+    "evidence_ids": [
+     "dc_fs_q2_2026"
+    ]
+   },
+   {
+    "event_he": "פיגורי 90+ יורדים מתחת ל-6.5% בזמן שהתיק ממשיך לגדול, והתשואה על ההון נשארת מעל 30% גם אחרי נרמול המס.",
+    "evidence_ids": [
+     "dc_k_npl90",
+     "dc_k_roe"
+    ]
+   },
+   {
+    "event_he": "ההשקה בארה\"ב ו-Nu Global הופכות לעסק עם הכנסות משמעותיות עד 2029.",
+    "hypothesis": true
+   }
+  ]
+ },
+ "drivers": {
+  "tax_rate": {
+   "bear": 0.28,
+   "base": 0.26,
+   "bull": 0.24,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "nm_income_tax_fy2025",
+    "nm_pretax_income_fy2025",
+    "dc_fs_q2_2026",
+    "nm_income_tax_2026q2",
+    "nm_pretax_income_2026q2",
+    "mc_bnam_fintech_tax"
+   ],
+   "reason": "Normalized, not annualized: FY2025 IFRS effective rate 25.8% (996.7m / 3,868.4m) is the base; Q2 2026 14.2% and H1 11.8% rest on a 671m Q2 deferred-tax benefit and other reconciliation items of unknown repeatability (dc_fs_q2_2026 note 30). Bear 28%: CSLL on credit companies rises to 20% from 2028 (Complementary Law 224/2025, statutory 42.5% in 2026). Bull 24%: part of the tax-exempt sovereign-bond interest, interest on capital and lower-taxed entities persists. The residual-income model takes no operating overrides (it reads trailing ROE from reported profit): this lever records the analyst's normalization for the reviewers; it does not move the engine's number."
+  }
+ },
+ "company_path": {
+  "metric": "eps",
+  "multiple": "forward_pe",
+  "scenarios": {
+   "bear": {
+    "multiple_from": "economics",
+    "roic": 0.17,
+    "justification": "unproven",
+    "reason_he": "Nu היא בנק, ולכן התשואה היא על ההון העצמי. בתרחיש הדובי מחזור האשראי בברזיל (פיגורי משקי בית בשיא 8.1%, NPL 90+ ב-6.9% ועלייה בשלב 2) והעלאת CSLL ל-17.5% ואחר כך 20% מחזירים את התשואה על ההון לרמת 2023 (18%) ומטה. התשואה הגבוהה עוד לא הוכחה לאורך מחזור אשראי מלא, ולכן המכפיל יורד.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "pf_net_income_fy2023",
+     "pf_equity_fy2022",
+     "pf_equity_fy2023",
+     "dc_k_npl90",
+     "mc_rt_default",
+     "mc_bnam_fintech_tax"
+    ]
+   },
+   "base": {
+    "multiple_from": "economics",
+    "roic": 0.26,
+    "justification": "justified_high",
+    "reason_he": "Nu היא בנק, ולכן התשואה נמדדת על ההון העצמי (ROE). היא הייתה 28% ב-2024 ו-30% ב-2025. במחצית הראשונה של 2026 היא כ-29% אחרי נרמול המס הנמוך של הרבעון השני (14.2% מול 25.8% ב-2025). מס CSLL גבוה יותר וההון שהצמיחה דורשת (CET1 ירד מ-13.0% ל-11.9%) מורידים אותה לכ-26%. זה עדיין הרבה מעל מחיר ההון, ולכן מכפיל גבוה מוצדק שיורד ככל שהצמיחה מאטה.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "pf_net_income_fy2024",
+     "pf_equity_fy2024",
+     "nm_net_income_fy2025",
+     "nm_equity_fy2025",
+     "nm_net_income_2026h1",
+     "nm_equity_2026q2",
+     "nm_income_tax_2026q2",
+     "nm_pretax_income_2026q2",
+     "nm_income_tax_fy2025",
+     "nm_pretax_income_fy2025",
+     "dc_k_roe"
+    ]
+   },
+   "bull": {
+    "multiple_from": "economics",
+    "roic": 0.32,
+    "justification": "unproven",
+    "reason_he": "בתרחיש השורי Nu שומרת על תשואה על ההון של כ-32% גם במס רגיל. זה דורש שהמרווח המותאם לסיכון יישאר קרוב לשיא של 12.4%, שעלות הפיקדונות תישאר נמוכה (88% מהריבית הבין-בנקאית) ושמקסיקו, שהפכה לבנק באוגוסט 2026, תעבור מאיזון לרווח. התשואה השולית על ההון ב-2023 עד 2025 הייתה כ-38%, אבל זה עוד לא הוכח לאורך מחזור.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "dc_k_roe",
+     "dc_k_ranim",
+     "dc_k_cod",
+     "nm_net_income_2026h1",
+     "nm_equity_2026q2",
+     "pf_net_income_fy2023",
+     "pf_equity_fy2023",
+     "mc_rt_nubank_mx"
+    ]
+   }
+  },
+  "own_history": {
+   "low": 10.3,
+   "median": 18.25,
+   "high": 20.6,
+   "years": "2023-2026",
+   "evidence_ids": [
+    "nm_ib_hist",
+    "nm_ib_price",
+    "pf_eps_diluted_fy2024",
+    "nm_eps_diluted_fy2025",
+    "nm_cons_eps_fy2026",
+    "nm_cons_eps_fy2027"
+   ]
+  }
+ },
+ "key_risk": {
+  "reading_he": "מחזור האשראי הצרכני בברזיל: נו הגדילה בכוונה את החשיפה ללווים מסוכנים יותר, פיגורי 90+ הגיעו ל-6.9% (הגבוה בשבעה רבעונים), ההפסדים הצפויים עלו 46% בשנה, ופיגורי משקי הבית בברזיל בשיא של 8.09%. במקביל יחס ההון הליבה ירד ל-11.9%. רבעון חלש באשראי יפגע ברווח ובצמיחה יחד.",
+  "evidence_ids": [
+   "dc_k_npl90",
+   "nm_expected_credit_loss_2026q2",
+   "dc_rel_q2_2026",
+   "mc_rt_default",
+   "dc_fs_q2_2026"
+  ]
+ },
+ "falsifiers": [
+  {
+   "id": "fx_npl90",
+   "scenario": "base",
+   "metric": "NPL 90+ ratio, quarterly (company KPI)",
+   "threshold": 0.075,
+   "direction": "above",
+   "by": "2027-08-31",
+   "evidence_ids": [
+    "dc_k_npl90"
+   ]
+  },
+  {
+   "id": "fx_cet1",
+   "scenario": "base",
+   "metric": "CET1 ratio of the Brazilian prudential conglomerate (6-K IFRS note)",
+   "threshold": 0.11,
+   "direction": "below",
+   "by": "2027-08-31",
+   "evidence_ids": [
+    "dc_fs_q2_2026"
+   ]
+  },
+  {
+   "id": "fx_roe_base",
+   "scenario": "base",
+   "metric": "quarterly ROE (company KPI)",
+   "threshold": 0.22,
+   "direction": "below",
+   "by": "2027-08-31",
+   "evidence_ids": [
+    "dc_k_roe"
+   ]
+  },
+  {
+   "id": "fx_tax",
+   "scenario": "base",
+   "metric": "FY2026 IFRS effective income tax rate (20-F)",
+   "threshold": 0.3,
+   "direction": "above",
+   "by": "2027-04-30",
+   "evidence_ids": [
+    "dc_fs_q2_2026",
+    "nm_income_tax_fy2025"
+   ]
+  },
+  {
+   "id": "fx_bull_growth",
+   "scenario": "bull",
+   "metric": "credit portfolio growth y/y at Q2 2027 (USD, company KPI)",
+   "threshold": 0.25,
+   "direction": "below",
+   "by": "2027-08-31",
+   "evidence_ids": [
+    "dc_k_portfolio",
+    "dc_k_portfolio_q225"
+   ]
+  },
+  {
+   "id": "fx_bear_roe",
+   "scenario": "bear",
+   "metric": "quarterly ROE (company KPI) in Q2 2027",
+   "threshold": 0.3,
+   "direction": "above",
+   "by": "2027-08-31",
+   "evidence_ids": [
+    "dc_k_roe"
+   ]
+  }
+ ],
+ "assessments": {
+  "moat": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "dc_k_roe",
+    "dc_k_eff",
+    "dc_k_cod",
+    "dc_k_cts",
+    "fd_itub_2q26",
+    "fd_inter_2q26"
+   ],
+   "note": "Cost and funding moat, evidenced against Itau (ROE 24.3%, Brazil efficiency 35.5%) and Inter (ROE 16.3%, efficiency 42.1%): NU earns ROE 33% at 19.5% efficiency with deposits at 88% of interbank and US$1.0 monthly cost to serve. ROIC is not computable for a bank (forensic roic unavailable); ROE ran 27-33% for seven quarters. Not access-based: Pix/Open Finance are open, and Mercado Pago is closing in on credit growth."
+  },
+  "switching_costs": {
+   "assessment": "weak",
+   "evidence_ids": [
+    "pf_10k_20260408"
+   ],
+   "note": "Pix, Open Finance and salary portability make switching easy in both directions; NU keeps customers through engagement and price, not lock-in."
+  },
+  "retention": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "dc_k_activity",
+    "dc_k_customers_q226",
+    "dc_k_customers_q225",
+    "dc_k_arpac_q226",
+    "dc_k_arpac_q225"
+   ],
+   "note": "Monthly activity 83.5% held while customers grew 13% y/y; ARPAC US$12.5 to 17.1 (+22% FXN), so cohorts deepen rather than churn. Inter: 58.3% active."
+  },
+  "pricing_power": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "dc_k_nim",
+    "dc_k_ranim",
+    "dc_rel_q2_2026",
+    "pf_10k_20260408"
+   ],
+   "note": "NIM rose to 22.9% and risk-adjusted NIM to 12.4%, but management ties it to mix toward unsecured and higher-risk segments, not to price increases; payroll loans are rate-capped and incumbents compete on price."
+  },
+  "customer_concentration": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "pf_10k_20260408",
+    "dc_s_br_q226"
+   ],
+   "note": "No customer is 10% of revenue (139M retail customers). Geographic concentration is the real concentration: Brazil 91% of revenue (see geopolitics)."
+  },
+  "market_size": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "pf_10k_20260408",
+    "dc_rel_q2_2026"
+   ],
+   "note": "NU puts its serviceable retail revenue pool at US$227.9B with about 5% share; Mexico under-penetrated, NU's Mexico gross-profit share under 1% of a US$43B pool (company analysis)."
+  },
+  "competition": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "fd_meli_2q26",
+    "fd_inter_2q26",
+    "fd_itub_2q26",
+    "fd_bbva_2q26"
+   ],
+   "note": "Intense: Mercado Pago book +75% in Brazil and Mexico, Inter +29%, Itau and BBVA Mexico profitable incumbents. NU still grows fastest in net income and customers among the Brazil names."
+  },
+  "substitutes": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "pf_10k_20260408",
+    "fd_inter_2q26"
+   ],
+   "note": "Open rails let any digital bank replicate the account and Pix (NU about 20% of Pix transfers, Inter about 9%); the substitute risk is other digital lenders, not a new technology."
+  },
+  "management": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "dc_rel_q2_2026",
+    "dc_call_q2_2026",
+    "dc_g_eff_fy26",
+    "dc_k_eff",
+    "dc_6k_cto_20261023"
+   ],
+   "note": "Delivery is good: first US$1bn+ quarter, efficiency guided to about 20% for FY2026 and 19.5% in 2Q26, Mexico bank launched. Depth is the concern: new CFO Rob Livingston (from July 2026; change sourced from press) and CTO resignation effective 2026-11-12 with the founder-CEO interim. No numeric guidance track record (gap)."
+  },
+  "capital_allocation": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "dc_k_buyback",
+    "nm_buybacks_2026h1",
+    "nm_sbc_2026h1",
+    "dc_fs_q2_2026",
+    "uf_6k_us_20260910",
+    "uf_6k_monzo_20260930"
+   ],
+   "note": "US$500.4M of buybacks in 1H26 (avg about US$12.31) vs SBC US$216.8M, so net shrink; no dividend. But Brazil prudential CET1 fell 13.0% to 11.9% in six months (RWA +14.7%), and the US launch is a new cost centre with no revenue yet; Monzo talks denied."
+  },
+  "governance": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "pf_10k_20260408",
+    "dc_rel_q2_2026",
+    "dc_fs_q2_2026"
+   ],
+   "note": "Founder David Velez holds about 74.4% of voting power through Class B shares; foreign private issuer (no Form 4). Managerial P&L since Q4'25 is reconciled to IFRS, but the 2Q26 IFRS tax rate of 14.2% (27.6% a year earlier) is not explained in what was read."
+  },
+  "regulation": {
+   "assessment": "weak",
+   "evidence_ids": [
+    "mc_bnam_fintech_tax",
+    "mc_rt_bcb_marketing",
+    "pf_10k_20260408",
+    "mc_rt_nubank_mx"
+   ],
+   "note": "Net headwind in Brazil: CSLL to 17.5% then 20% from 2028, credit-marketing limits from 2027, payroll-rate caps, Brazil bank licence (Banco Porto Real) pending BCB approval. Positive: Mexico full bank licence live since August 2026."
+  },
+  "technology_ai": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "dc_rel_q2_2026",
+    "dc_k_cts",
+    "dc_6k_cto_20261023"
+   ],
+   "note": "NuFormer model in production on three credit portfolios, AI agents handle over 60% of Brazil support conversations, cost to serve US$1.0/month. CTO departure is a key-person watch item."
+  },
+  "geopolitics": {
+   "assessment": "weak",
+   "evidence_ids": [
+    "dc_s_br_q226",
+    "mc_cnbc_election",
+    "mc_aljaz_real",
+    "mc_bcb_selic"
+   ],
+   "note": "About 91% of revenue in BRL, reported in USD; the 25 Oct 2026 election moved BRL about 10% intraday and Brazilian equities sharply; fiscal deficits flagged by analysts. Diversification (Mexico 7%) is small."
+  }
+ },
+ "forecast_options": {
+  "cyclical": {
+   "treatment": "structural",
+   "reason": "Revenue growth is customer and wallet-share gain (customers +13%, ARPAC +37%, portfolio +44% y/y), not a price or volume cycle; the consumer-credit cycle is carried in the bear as lower ROE and slower loan growth.",
+   "evidence_ids": [
+    "dc_k_customers_q226",
+    "dc_k_customers_q225",
+    "dc_k_arpac_q226",
+    "dc_k_arpac_q225",
+    "dc_k_portfolio",
+    "dc_k_portfolio_q225"
+   ]
+  },
+  "bank_drivers": {
+   "base": {
+    "roe_start": 0.27,
+    "roe_year5": 0.25,
+    "roe_terminal": 0.16,
+    "book_growth_start": 0.19,
+    "payout": 0.26,
+    "terminal_reason": "Terminal ROE 16% stays above the 11.2% cost of equity because Nu's own lowest post-breakeven ROE was about 18% (FY2023: net income 1,030.5m on average parent equity about 5.65bn) and its cost-to-serve / efficiency advantage is reported every quarter (efficiency ratio in the Q2 2026 release); the 16% sits two points below that own low to allow for the CSLL rise and competition, not a peer number.",
+    "source_tier": "own_history",
+    "reason": "ROE: tax-normalized own run rate. H1 2026 net income 1,932.5m was booked at an 11.8% tax rate (Q2 14.2% with a one-off deferred-tax benefit) against 25.8% in FY2025 (income tax 996.7m on pretax 3,868.4m); at the FY2025 rate H1 profit is about 1.63bn, about 3.25bn a year, about 26.5% on average H1 parent equity (11.29bn -> 13.25bn); FY2024 28.1% and FY2025 30.3% on average equity (reported). Start 27%, year 5 25% after CSLL rises to 20% from 2028 (about 1-2 points). Book growth: own common equity grew about 26%/yr 2021-25, 33%/yr 2023-25 and 13.8% in H1 2026 alone ex-AOCI (about 29% annualized); the start is held at 19% (below that history) because the Brazilian conglomerate's CET1 fell 13.0% -> 11.9% in six months as RWA grew 14.7% vs CET1 capital +5.4% (excess over the minimum 1.85bn): growth is limited by the capital the business retains, fading to terminal growth. Payout floor 26% = H1 2026 buybacks 500.4m / net income 1,932.5m (US$1.0bn program to June 2027, 499.6m left; no dividend).",
+    "evidence_ids": [
+     "dc_fs_q2_2026",
+     "nm_net_income_2026h1",
+     "nm_income_tax_2026q2",
+     "nm_pretax_income_2026q2",
+     "nm_income_tax_fy2025",
+     "nm_pretax_income_fy2025",
+     "nm_net_income_fy2025",
+     "nm_equity_fy2025",
+     "nm_equity_2026q2",
+     "pf_equity_fy2021",
+     "pf_equity_fy2022",
+     "pf_equity_fy2023",
+     "pf_equity_fy2024",
+     "pf_net_income_fy2023",
+     "pf_net_income_fy2024",
+     "nm_buybacks_2026h1",
+     "dc_k_buyback",
+     "dc_k_roe",
+     "dc_k_eff",
+     "mc_bnam_fintech_tax"
+    ]
+   },
+   "bear": {
+    "roe_start": 0.21,
+    "roe_year5": 0.15,
+    "roe_terminal": 0.115,
+    "book_growth_start": 0.13,
+    "payout": 0.26,
+    "terminal_reason": "Terminal ROE 11.5% is set at about the 11.2% cost of equity: in the bear the excess return is competed and taxed away (CSLL 20% from 2028, BCB limits on unsolicited credit marketing from 2027); the half point left is the reported cost-to-serve advantage only.",
+    "source_tier": "own_history",
+    "reason": "Bear mechanisms from review/counter.json, each sized from company evidence: (1) credit: Stage 2 rose 10.1% -> 11.9% of gross, NPL 90+ 6.9% (seven-quarter high) and Brazil household defaults at a record 8.1%; cost of risk normalizes up as loan growth slows and IFRS 9 front-loading stops masking losses, taking ROE from the tax-normalized 26-27% to 21% at the start and to 15% by year 5, below Nu's own FY2023 18% level; (2) tax: the 2026 deferred-tax benefit does not recur and CSLL rises to 20% from 2028 (about 1-2 points of ROE); (3) BRL: about 91% of revenue is Brazilian and the real fell about 10% intraday after the 2026-10-25 election, so USD book growth carries translation losses beside retained profit: start 13% (vs 19% base), within retention 21% x (1 - 26%) = 15.5%, fading; (4) capital: CET1 11.9% and falling forces slower RWA growth. Payout floor stays the evidenced 26% buyback share (H1 2026).",
+    "evidence_ids": [
+     "dc_fs_q2_2026",
+     "dc_rel_q2_2026",
+     "dc_k_npl90",
+     "dc_k_coc",
+     "dc_k_allow",
+     "mc_rt_default",
+     "mc_bnam_fintech_tax",
+     "mc_rt_bcb_marketing",
+     "mc_aljaz_real",
+     "mc_cnbc_election",
+     "dc_s_br_q226",
+     "pf_net_income_fy2023",
+     "pf_equity_fy2022",
+     "pf_equity_fy2023",
+     "nm_income_tax_2026q2",
+     "nm_buybacks_2026h1",
+     "dc_k_buyback"
+    ]
+   },
+   "bull": {
+    "roe_start": 0.3,
+    "roe_year5": 0.31,
+    "roe_terminal": 0.2,
+    "book_growth_start": 0.22,
+    "payout": 0.26,
+    "terminal_reason": "Terminal ROE 20% above the 11.2% cost of equity: in the bull Nu keeps its reported ROE (FY2025 30% on average equity, Q2 2026 33% reported) through scale in Brazil and the Mexico bank license (CNBV authorization 2026-07-09, 15.8m customers, loan-to-deposit 35% with room to lend), so the terminal is set at its own 2024-25 level less a third for tax and competition.",
+    "source_tier": "own_history",
+    "reason": "ROE: start 30% (reported FY2025 30.3% on average equity; H1 2026 about 31.5% reported, 26.5% tax-normalized, so the bull assumes the credit models keep cost of risk flat while ARPAC keeps rising +37% y/y), year 5 31% as Mexico (revenue +79% y/y in Q2 2026) matures. Book growth start 22% within retention 30% x (1 - 26%) = 22.2%, below the own 2023-25 26-33%/yr, capped by the CET1 room (11.9%, excess 1.85bn). Payout floor 26% = H1 2026 buyback share.",
+    "evidence_ids": [
+     "dc_fs_q2_2026",
+     "dc_rel_q2_2026",
+     "dc_k_roe",
+     "dc_k_arpac_q226",
+     "dc_k_arpac_q225",
+     "dc_k_cust_mexico",
+     "dc_k_ltd_mexico",
+     "dc_s_mx_q226",
+     "dc_s_mx_q225",
+     "nm_net_income_fy2025",
+     "nm_equity_fy2025",
+     "pf_equity_fy2024",
+     "nm_buybacks_2026h1"
+    ]
+   },
+   "opening": {
+    "book_equity": 13063221000,
+    "shares": 4819939641,
+    "as_of": "2026-06-30",
+    "reason": "Q2 2026 6-K IFRS statement of financial position at 2026-06-30: equity attributable to shareholders of the parent 13,249,670k, less other comprehensive income 186,449k (AOCI, mostly currency translation; it was -184,300k at 2025-12-31) = 13,063,221k common book on the FactBook basis (no preferred stock). Shares: 20-F count at 2026-03-01 (3,837,998,543 Class A + 1,022,600,698 Class B = 4,860,599,241) less the 40,659,600 Class A shares held in treasury at 2026-06-30 (none at 2025-12-31; repurchased under the US$1.0bn program) = 4,819,939,641. Share issuance from employee awards after 2026-03-01 is not in this count (small; the next cover count will tell), and any repurchase before 2026-03-01 would be counted twice (the 6-K does not date them).",
+    "evidence_ids": [
+     "dc_fs_q2_2026",
+     "nm_equity_2026q2",
+     "pf_10k_20260408",
+     "dc_k_buyback"
+    ]
+   },
+   "regulatory_capital": {
+    "risk_weighted_assets": 35710139000,
+    "required_capital_ratio": 0.105,
+    "as_of": "2026-06-30",
+    "reason": "Q2 2026 6-K capital note, Nu Prudential Conglomerate (Brazil): RWA 35,710,139k; minimum capital required 3,749,565k = 10.5% of RWA (the requirement with the conservation buffer, as the filing computes it); CET1 4,262,877k = 11.9% (13.0% at 2025-12-31), excess margin 1,848,040k. Nu Holdings itself has no regulatory capital requirement; CET1 sits in the regulated Brazilian (and Mexican, 14.9% vs 10.5%; Colombian, 15.3% vs 10.5%) entities, so the consolidated common book used here is only a PROXY: it is about three times the conglomerate's CET1, so the engine's check on it is loose and the real binding limit is the conglomerate's 11.9% CET1, which is why book growth starts below Nu's own history.",
+    "evidence_ids": [
+     "dc_fs_q2_2026"
+    ]
+   }
+  }
+ },
+ "market": {
+  "risk_free": {
+   "value": 0.0498,
+   "as_of": "2026-10-29",
+   "source_id": "pf_fred_dgs10"
+  },
+  "equity_risk_premium": {
+   "value": 0.042,
+   "as_of": "2026-10-01",
+   "source_id": "pf_erp_implied"
+  }
+ }
+}

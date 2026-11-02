@@ -1,0 +1,223 @@
+{
+ "ticker": "META",
+ "as_of": "2026-11-01",
+ "stop": false,
+ "name": "Meta Platforms, Inc.",
+ "cik": "1326801",
+ "currency": "USD",
+ "exchange": "Nasdaq",
+ "fiscal_year_end": "12-31",
+ "sic": 7370,
+ "sic_description": "Services-Computer Programming, Data Processing, Etc.",
+ "annual_form": "10-K",
+ "type": "mature_growth / stalwart (computed by classify_company from SEC companyfacts; the analyst confirms or overrides with reasons)",
+ "evidence_ids": [
+  "pf_10k_20260129"
+ ],
+ "resolved": true,
+ "filings": [
+  {
+   "form": "10-K",
+   "filed": "2026-01-29",
+   "report_date": "2025-12-31",
+   "accession": "0001628280-26-003942",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/meta-20251231.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003942/",
+   "what": "annual report"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2026-10-22",
+   "report_date": "2026-09-30",
+   "accession": "0001628280-26-066773",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/meta-20260930.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066773/",
+   "what": "quarterly report"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2026-07-30",
+   "report_date": "2026-06-30",
+   "accession": "0001628280-26-050705",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050705/meta-20260630.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050705/",
+   "what": "quarterly report"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2026-04-30",
+   "report_date": "2026-03-31",
+   "accession": "0001628280-26-028526",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026028526/meta-20260331.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026028526/",
+   "what": "quarterly report"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-10-21",
+   "report_date": "2026-10-19",
+   "accession": "0001628280-26-066700",
+   "items": "1.01,2.02,8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066700/meta-20261019.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066700/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-07-29",
+   "report_date": "2026-07-29",
+   "accession": "0001628280-26-050596",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050596/meta-20260729.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026050596/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-04-29",
+   "report_date": "2026-04-29",
+   "accession": "0001628280-26-028364",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026028364/meta-20260429.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026028364/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-01-28",
+   "report_date": "2026-01-28",
+   "accession": "0001628280-26-003832",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003832/meta-20260128.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026003832/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-10-29",
+   "report_date": "2025-10-29",
+   "accession": "0001628280-25-047114",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025047114/meta-20251029.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025047114/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-07-30",
+   "report_date": "2025-07-30",
+   "accession": "0001628280-25-036719",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025036719/meta-20250730.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828025036719/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-04-30",
+   "report_date": "2025-04-30",
+   "accession": "0001326801-25-000050",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000132680125000050/meta-20250430.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1326801/000132680125000050/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-01-29",
+   "report_date": "2025-01-29",
+   "accession": "0001326801-25-000014",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000132680125000014/meta-20250129.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1326801/000132680125000014/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "DEF 14A",
+   "filed": "2026-04-16",
+   "report_date": "2025-12-31",
+   "accession": "0001628280-26-025532",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026025532/meta-20260416.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026025532/",
+   "what": "proxy statement"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-10-29",
+   "report_date": "2026-10-26",
+   "accession": "0001193125-26-438017",
+   "items": "1.01,3.03,5.03,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526438017/d183592d8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526438017/",
+   "what": "8-K since the annual report (items 1.01,3.03,5.03,9.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-05-29",
+   "report_date": "2026-05-27",
+   "accession": "0001628280-26-039193",
+   "items": "5.07",
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026039193/meta-20260527.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026039193/",
+   "what": "8-K since the annual report (items 5.07)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-05-04",
+   "report_date": "2026-04-30",
+   "accession": "0001193125-26-204128",
+   "items": "8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526204128/d134616d8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526204128/",
+   "what": "8-K since the annual report (items 8.01,9.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-04-14",
+   "report_date": "2026-04-08",
+   "accession": "0001628280-26-025108",
+   "items": "5.02",
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026025108/meta-20260408.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026025108/",
+   "what": "8-K since the annual report (items 5.02)"
+  }
+ ],
+ "computed_type": {
+  "stage": "mature_growth",
+  "lynch": "stalwart",
+  "reasons": [
+   "revenue compounding 8–20% with established operations"
+  ],
+  "flags": []
+ },
+ "identity_check": {
+  "reporting_currency": "USD",
+  "monetary_units": {
+   "USD": 499
+  },
+  "currency_basis": "facts of filing 0001628280-26-003942 (10-K, filed 2026-01-29)",
+  "depositary_shares": false,
+  "status": "ok",
+  "reasons": []
+ },
+ "prefetch": {
+  "by": "scripts/ticker_prefetch.py",
+  "at_utc": "2026-11-01T05:44:51+00:00",
+  "to_complete_by_lanes": [
+   "security and share class, quote currency, IBKR contract: gather_numbers (it alone writes identity.json while the lanes run)",
+   "named competitors: gather_field writes them in gather/field.json competitors[] (the canonical list), never here"
+  ]
+ },
+ "security": "Class A common stock, $0.000006 par (Nasdaq: META); Class B (unlisted, high-vote) also outstanding; a listed non-voting Class C is approved for 2027-01-19 via a one-time 1:1 stock dividend (release 2026-10-21: the Class A price is then expected to reflect a two-for-one split; record and payment dates not yet set)",
+ "quote_currency": "USD",
+ "ib_contract_id": 107113386,
+ "ib_contract": "META PLATFORMS INC-CLASS A, NASDAQ (US), STK; other listings seen: MEXI (Mexico), TSE (CDR, Canada)",
+ "reporting_currency": "USD",
+ "fiscal_calendar": "calendar year, fiscal year ends 12-31; quarters end 03-31, 06-30, 09-30, 12-31",
+ "adr": false
+}

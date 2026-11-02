@@ -1,0 +1,89 @@
+{
+ "ticker": "NOW",
+ "as_of": "2026-11-01",
+ "at_utc": "2026-11-01T06:03:43+00:00",
+ "verified": true,
+ "label": "verified",
+ "reasons": [],
+ "engine_ran": true,
+ "engine_review_status": "unreviewed_draft",
+ "reviews": {
+  "review_trace": {
+   "file": "review/trace.json",
+   "this_attempt": true,
+   "returned": true
+  },
+  "review_numbers": {
+   "file": "review/numbers.json",
+   "this_attempt": true,
+   "returned": true
+  },
+  "review_counter": {
+   "file": "review/counter.json",
+   "this_attempt": true,
+   "returned": true
+  }
+ },
+ "critical": [],
+ "open_critical": [],
+ "repair": {
+  "fixed": [
+   "base ROIC above its evidence (numbers + counter major): position/path.json company_path.scenarios.base.roic 0.30 -> 0.22 (hand-computed ~20%, engine incremental 3y 26.2%, acquisitions dilute; reason_he and thesis_he rewritten). DCF aligned on the same return: position/core.json drivers.terminal_roic bear 0.15 / base 0.22 (bull left on engine rule, its 45% path return is unproven). drivers.sales_to_capital own_history bear 1.41 (3y) / base 1.95 / bull 1.95 (5y)",
+   "bear barely changes the business (counter major): position/core.json growth_anchor bear 0.155 -> 0.13 (organic step-down to ~16% minus ~2.3pp federal-channel stall: 12% of revenue x ~19% growth, open DOJ investigation; cites dc_fed_partner_rev_share_q3_2026 / ar_share / c_fed_partner_q3); mature_margin bear 0.20 -> 0.14 (best reported GAAP margin 13.7% FY2025, no evidenced SBC fade); new drivers.sbc_pct bear 0.15 (reported 14.7% FY2025, ~15.5% Q3 2026). thesis_he/reasons_he bear updated",
+   "guidance track not recorded / duplicated (numbers + trace major): gather/documents.json 7 USD rows kept, metric relabelled subscription_revenue -> revenue with a note (subscription ~97% of revenue, the only line guided); gather/numbers.json 6 USD-million duplicate rows removed. Engine now records track_record revenue ratio 1.0108, 7/7 beats",
+   "non-discriminating falsifiers (counter major): removed fx_base_subrev_fy26 and fx_bull_ai_acv; added fx_base_renewal (renewal rate < 97% FY2027), fx_base_sbc_fy27 (SBC/revenue > 16% FY2027), fx_bull_subgrowth_fy27 (subscription growth cc < 20% FY2027), fx_bear_gaap_opm_fy27 (GAAP op margin > 15% FY2027), all by 2028-02-15",
+   "base/bull growth_anchor includes acquired growth (numbers major): stated in growth_anchor.deviation and core.json gaps as a visible gap (organic cRPO and Armis/Moveworks contribution undisclosed)",
+   "ticker-value rerun: ran true. Base fair value 156.2 -> 147.8, bear value 49.6 -> 40.8, bull 271.5 -> 269.5; yearly year-5 bear 89.8 -> 57.7, base 238 -> 216, bull 435; base IRR 10.8%, bear IRR 7.4%"
+  ],
+  "open": [
+   "share_count_cagr_3y -40.9%: engine split bug (FY2024->FY2025 step divided by 25 instead of 5); not fixable from evidence. True change about +0.5-1%/yr net dilution. Does not reach the valuation (shares fixed at point-in-time 1,038M) but does reach the per_share/share_count card signals, the funding-question answer and redteam share_path_vs_history",
+   "prefetched pre-2025 shares/EPS facts are on the pre-split basis (trace major): saved payloads not edited; any per-share history from them needs x5 / /5",
+   "SBC fade in base and bull stays on the engine rule (unevidenced lever, counter major); only the bear holds ~15%. Weighted shares flat at 1,038M in all scenarios",
+   "yearly table starts at year 1, so the move from quote to model value shows as a one-year change; the table's bear row now -45% at year 5, but the DCF bear today (40.8, about -61%) and the bear at the required return are not on the table row (counter/numbers major, presentation)",
+   "stale single-aggregator consensus row (trace major, gather/numbers.json nm_cons_eps_fy2026 low/high = mean, basis unstated) not changed: outside the main loop's list; no post-Q3 attributed consensus remains a gap",
+   "the base scenario event still cites the FY2026 subscription guide; the base mature margin 0.26 still assumes SBC fade to ~10%"
+  ],
+  "ran": true
+ },
+ "returned": [
+  "analyst",
+  "analyst_field",
+  "analyst_path",
+  "gather_documents",
+  "gather_field",
+  "gather_macro",
+  "gather_numbers",
+  "repair",
+  "review_counter",
+  "review_numbers",
+  "review_trace"
+ ],
+ "times": {
+  "started_at_utc": "2026-11-01T05:44:35+00:00",
+  "prefetch_finished_at_utc": "2026-11-01T05:44:40+00:00",
+  "minutes_after_start": {
+   "gather/_prefetch.json": 0.1,
+   "gather/documents.json": 14.4,
+   "gather/field.json": 2.1,
+   "gather/macro.json": 2.1,
+   "gather/numbers.json": 14.4,
+   "understand/auto.json": 4.8,
+   "understand/business.json": 6.8,
+   "understand/econ_case.json": 4.5,
+   "understand/econ_result.json": 4.5,
+   "understand/quarter_case.json": 4.4,
+   "understand/quarter_result.json": 4.4,
+   "prep.json": 4.8,
+   "position/core.json": 14.4,
+   "position/field.json": 6.6,
+   "position/path.json": 14.4,
+   "value.json": 14.6,
+   "review/trace.json": 7.8,
+   "review/numbers.json": 12.1,
+   "review/counter.json": 11.0,
+   "review/repair.json": 15.1
+  },
+  "elapsed_minutes": 15.1
+ },
+ "meaning": "verified needs: the engine ran in this attempt, the three reviewers returned (files of this attempt AND the main loop's record), no critical finding open after the one repair pass. The engine's own review status is reported beside it, never replaced by it."
+}

@@ -1,0 +1,909 @@
+{
+ "forecast": {
+  "overrides": [
+   {
+    "path": "growth_anchor",
+    "scenario": "bear",
+    "value": 0.08,
+    "reason": "No FY2027 guidance (given with Q4 results, late Jan 2027) and no attributed post-results consensus, so FY2027 is built from Mastercard's own run rate as volume x yield + VAS. Base 11.5%: payment network (~58% of revenue) at ~9% = GDV +7% plus a little yield, net of rebates still rising faster than gross assessments, plus VAS (~42%) at ~15% organic, slowing from 19% as pricing and the Q3 services timing are lapped; below the 9M 2026 currency-neutral 13%. Bear 8%: GDV slows to ~5-6% (cross-border already down to +11%), rebate share keeps climbing and VAS slows to ~11%. Bull 14%: FY2026's pace holds (VAS ~19%, cross-border re-accelerates, rebate share stabilises).",
+    "evidence_ids": [
+     "dc_f_nr_pn_g_q3",
+     "dc_f_nr_vas_g_q3",
+     "dc_f_gdv_g_q3",
+     "dc_f_xb_g_q3",
+     "dc_f_rebates_share_q3",
+     "dc_f_nr_g_ytd_cn",
+     "pf_revenue_fy2025",
+     "pf_revenue_fy2024"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "growth_anchor",
+    "scenario": "base",
+    "value": 0.115,
+    "reason": "No FY2027 guidance (given with Q4 results, late Jan 2027) and no attributed post-results consensus, so FY2027 is built from Mastercard's own run rate as volume x yield + VAS. Base 11.5%: payment network (~58% of revenue) at ~9% = GDV +7% plus a little yield, net of rebates still rising faster than gross assessments, plus VAS (~42%) at ~15% organic, slowing from 19% as pricing and the Q3 services timing are lapped; below the 9M 2026 currency-neutral 13%. Bear 8%: GDV slows to ~5-6% (cross-border already down to +11%), rebate share keeps climbing and VAS slows to ~11%. Bull 14%: FY2026's pace holds (VAS ~19%, cross-border re-accelerates, rebate share stabilises).",
+    "evidence_ids": [
+     "dc_f_nr_pn_g_q3",
+     "dc_f_nr_vas_g_q3",
+     "dc_f_gdv_g_q3",
+     "dc_f_xb_g_q3",
+     "dc_f_rebates_share_q3",
+     "dc_f_nr_g_ytd_cn",
+     "pf_revenue_fy2025",
+     "pf_revenue_fy2024"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "growth_anchor",
+    "scenario": "bull",
+    "value": 0.14,
+    "reason": "No FY2027 guidance (given with Q4 results, late Jan 2027) and no attributed post-results consensus, so FY2027 is built from Mastercard's own run rate as volume x yield + VAS. Base 11.5%: payment network (~58% of revenue) at ~9% = GDV +7% plus a little yield, net of rebates still rising faster than gross assessments, plus VAS (~42%) at ~15% organic, slowing from 19% as pricing and the Q3 services timing are lapped; below the 9M 2026 currency-neutral 13%. Bear 8%: GDV slows to ~5-6% (cross-border already down to +11%), rebate share keeps climbing and VAS slows to ~11%. Bull 14%: FY2026's pace holds (VAS ~19%, cross-border re-accelerates, rebate share stabilises).",
+    "evidence_ids": [
+     "dc_f_nr_pn_g_q3",
+     "dc_f_nr_vas_g_q3",
+     "dc_f_gdv_g_q3",
+     "dc_f_xb_g_q3",
+     "dc_f_rebates_share_q3",
+     "dc_f_nr_g_ytd_cn",
+     "pf_revenue_fy2025",
+     "pf_revenue_fy2024"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "growth",
+    "scenario": "bear",
+    "value": [
+     0.08,
+     0.07,
+     0.065
+    ],
+    "reason": "FY2027-FY2029 from MA's own history: revenue growth 23%, 18%, 13%, 12%, 16% (2021-2025, 2021-2022 a post-COVID travel rebound) and 13% currency-neutral 9M 2026, with a slow fade because the volume line has decelerated (GDV +7%) and rebates take a growing share of gross assessments (51.3% -> 52.6%). Bear fades faster on regulation (routing mandate, cross-border caps) and rail substitution; bull keeps VAS-led growth near 13-14%. Years after the list fade by the engine rule.",
+    "evidence_ids": [
+     "pf_revenue_fy2021",
+     "pf_revenue_fy2022",
+     "pf_revenue_fy2023",
+     "pf_revenue_fy2024",
+     "pf_revenue_fy2025",
+     "dc_f_nr_g_ytd_cn",
+     "dc_f_rebates_share_q3",
+     "dc_f_rebates_share_fy25"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "growth",
+    "scenario": "base",
+    "value": [
+     0.115,
+     0.11,
+     0.1
+    ],
+    "reason": "FY2027-FY2029 from MA's own history: revenue growth 23%, 18%, 13%, 12%, 16% (2021-2025, 2021-2022 a post-COVID travel rebound) and 13% currency-neutral 9M 2026, with a slow fade because the volume line has decelerated (GDV +7%) and rebates take a growing share of gross assessments (51.3% -> 52.6%). Bear fades faster on regulation (routing mandate, cross-border caps) and rail substitution; bull keeps VAS-led growth near 13-14%. Years after the list fade by the engine rule.",
+    "evidence_ids": [
+     "pf_revenue_fy2021",
+     "pf_revenue_fy2022",
+     "pf_revenue_fy2023",
+     "pf_revenue_fy2024",
+     "pf_revenue_fy2025",
+     "dc_f_nr_g_ytd_cn",
+     "dc_f_rebates_share_q3",
+     "dc_f_rebates_share_fy25"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "growth",
+    "scenario": "bull",
+    "value": [
+     0.14,
+     0.135,
+     0.125
+    ],
+    "reason": "FY2027-FY2029 from MA's own history: revenue growth 23%, 18%, 13%, 12%, 16% (2021-2025, 2021-2022 a post-COVID travel rebound) and 13% currency-neutral 9M 2026, with a slow fade because the volume line has decelerated (GDV +7%) and rebates take a growing share of gross assessments (51.3% -> 52.6%). Bear fades faster on regulation (routing mandate, cross-border caps) and rail substitution; bull keeps VAS-led growth near 13-14%. Years after the list fade by the engine rule.",
+    "evidence_ids": [
+     "pf_revenue_fy2021",
+     "pf_revenue_fy2022",
+     "pf_revenue_fy2023",
+     "pf_revenue_fy2024",
+     "pf_revenue_fy2025",
+     "dc_f_nr_g_ytd_cn",
+     "dc_f_rebates_share_q3",
+     "dc_f_rebates_share_fy25"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "mature_margin",
+    "scenario": "bear",
+    "value": 0.53,
+    "reason": "GAAP operating margin (litigation and restructuring kept as recurring costs): FY2021 53.4%, FY2025 57.6%, Q3 2026 59.8%, 9M 2026 adjusted 60.8%. Base 58%: FY2025's GAAP level, below the current ~60% that the quarter review flags as a peak run rate, because rebates rise faster than gross assessments and litigation provisions recur. Bear 53%: back to the 2020-2021 level if routing/fee regulation and incentive inflation squeeze the network yield. Bull 61%: today's best adjusted level holds as VAS scales.",
+    "evidence_ids": [
+     "pf_operating_income_fy2025",
+     "pf_revenue_fy2025",
+     "pf_operating_income_fy2021",
+     "pf_revenue_fy2021",
+     "dc_f_opm_gaap_q3",
+     "dc_f_opm_adj_ytd",
+     "dc_f_litprov_ytd"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "mature_margin",
+    "scenario": "base",
+    "value": 0.58,
+    "reason": "GAAP operating margin (litigation and restructuring kept as recurring costs): FY2021 53.4%, FY2025 57.6%, Q3 2026 59.8%, 9M 2026 adjusted 60.8%. Base 58%: FY2025's GAAP level, below the current ~60% that the quarter review flags as a peak run rate, because rebates rise faster than gross assessments and litigation provisions recur. Bear 53%: back to the 2020-2021 level if routing/fee regulation and incentive inflation squeeze the network yield. Bull 61%: today's best adjusted level holds as VAS scales.",
+    "evidence_ids": [
+     "pf_operating_income_fy2025",
+     "pf_revenue_fy2025",
+     "pf_operating_income_fy2021",
+     "pf_revenue_fy2021",
+     "dc_f_opm_gaap_q3",
+     "dc_f_opm_adj_ytd",
+     "dc_f_litprov_ytd"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "mature_margin",
+    "scenario": "bull",
+    "value": 0.61,
+    "reason": "GAAP operating margin (litigation and restructuring kept as recurring costs): FY2021 53.4%, FY2025 57.6%, Q3 2026 59.8%, 9M 2026 adjusted 60.8%. Base 58%: FY2025's GAAP level, below the current ~60% that the quarter review flags as a peak run rate, because rebates rise faster than gross assessments and litigation provisions recur. Bear 53%: back to the 2020-2021 level if routing/fee regulation and incentive inflation squeeze the network yield. Bull 61%: today's best adjusted level holds as VAS scales.",
+    "evidence_ids": [
+     "pf_operating_income_fy2025",
+     "pf_revenue_fy2025",
+     "pf_operating_income_fy2021",
+     "pf_revenue_fy2021",
+     "dc_f_opm_gaap_q3",
+     "dc_f_opm_adj_ytd",
+     "dc_f_litprov_ytd"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "tax_rate",
+    "scenario": "all",
+    "value": 0.205,
+    "reason": "Non-GAAP effective tax rate guided 20-21% for FY2026 and Q4 2026; midpoint used as the steady rate (GAAP Q3 2026 19.4%).",
+    "evidence_ids": [
+     "dc_g_tax_fy26",
+     "dc_g_tax_q4"
+    ],
+    "source_tier": "guidance"
+   },
+   {
+    "path": "sbc_pct",
+    "scenario": "all",
+    "value": 0.019,
+    "reason": "Share-based compensation 1.8% of revenue in FY2025 ($597m / $32,791m) and 1.9% in 9M 2026 ($525m / $27,482m); treated as a real cost.",
+    "evidence_ids": [
+     "nm_sbc_9m_2026",
+     "nm_sbc_fy2025",
+     "pf_revenue_fy2025"
+    ],
+    "source_tier": "own_history"
+   }
+  ],
+  "risk_free": {
+   "value": 0.0498,
+   "as_of": "2026-10-29",
+   "source_id": "web:pf_fred_dgs10",
+   "title": "Market yield on US Treasury securities at 10-year constant maturity, percent, daily (FRED DGS10)",
+   "url": "https://fred.stlouisfed.org/series/DGS10"
+  },
+  "equity_risk_premium": {
+   "value": 0.042,
+   "as_of": "2026-10-01",
+   "source_id": "web:pf_erp_implied",
+   "title": "Damodaran implied ERP for the S&P 500 on 1 October 2026 (trailing 12 months, adjusted payout), treasury 5.29%",
+   "url": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/home.htm"
+  },
+  "cyclical": {
+   "treatment": "structural",
+   "reason": "Revenue grew every year 2021-2025 with a 53-58% operating margin; the network toll and VAS recur. Cross-border travel is the cyclical piece (cross-border volume +11% in Q3 2026 vs +12% 9M), changing the growth rate, not the economics; scenarios carry it.",
+   "evidence_ids": [
+    "pf_revenue_fy2021",
+    "pf_revenue_fy2025",
+    "pf_operating_income_fy2025",
+    "dc_f_xb_g_q3",
+    "dc_f_xb_g_ytd"
+   ]
+  },
+  "debt_like_claims": [
+   {
+    "kind": "litigation",
+    "amount": 262000000,
+    "reason": "Accrued litigation on the balance sheet at 2026-09-30 (mostly US merchant opt-out settlements), a cash claim ahead of the shares not in the debt lines. Unaccrued claims (Block/Intuit >$5bn single damages, UK collective actions) are plaintiffs' claims, not liabilities: carried in the bear scenario and the key risk, not added here.",
+    "evidence_ids": [
+     "dc_f_accr_lit",
+     "web:pf_10q_20261029"
+    ]
+   }
+  ],
+  "reviews": {
+   "classification": {
+    "status": "reviewed",
+    "reviewer": "review_numbers + review_counter (MA fast run, 2026-11-01), applied by the repair stage",
+    "note": "Operating fee platform, not a lender (10-Q 2026-09-30, pf_10q_20261029, reading/10q_2026-10-29.txt balance sheet and Note 8): client funds (settlement obligations 2,151 + restricted security deposits held for customers 2,231 = 4,382) are 8.5% of liabilities 51,409 and are matched by restricted assets (settlement assets 1,593, restricted deposits 2,231, restricted cash 564); debt 23,938 (1,749 short + 22,189 long) is corporate bonds, deducted in the bridge (24,200 with the 262 accrued litigation as a debt-like claim); accrued expenses 13,950 include accrued customer incentives 10,333 (operating); the 88% liabilities/assets ratio comes from treasury stock 95,201 against retained earnings 95,640 (equity 6,740); no loan book (investments 317, no cardholder receivables); revenue is fees, capex 1.5% of revenue. Operating FCFF with debt deducted is the right route; residual income is not. Restricted 2,795 stays out of spendable cash (opening cash 10,147).",
+    "evidence": [
+     "pf_10q_20261029"
+    ]
+   }
+  }
+ },
+ "company_path": {
+  "metric": "eps",
+  "multiple": "forward_pe",
+  "scenarios": {
+   "bear": {
+    "multiple_from": "economics",
+    "roic": 0.3,
+    "justification": "justified_high",
+    "reason_he": "בתרחיש הדובי מה שנשבר הוא כוח התמחור: התמריצים לבנקים כבר עלו מ-51.3% ל-52.6% מההכנסה הגולמית של הרשת וגדלו 18%-21% בשנה מול צמיחה של כ-11% בהכנסות הרשת, והחברה מקדימה תשלומי תמריץ (2.7 מיליארד דולר נטו ב-9 חודשים). אם חוק ניתוב הכרטיסים בארה\"ב או רשתות כמו Pix ו-UPI מכריחים עוד תמריצים, כל דולר צמיחה עולה יותר ותשואת ההשקעה לצמיחה יורדת לכ-30%: עדיין עסק מצוין, אבל מכפיל נמוך יותר.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "dc_f_rebates_share_fy25",
+     "dc_f_rebates_share_q3",
+     "dc_f_rebates_g_ytd",
+     "dc_f_prepaid_chg_ytd",
+     "dc_f_amort_incent_ytd",
+     "web:mc_ccca_paymentsdive"
+    ]
+   },
+   "base": {
+    "multiple_from": "economics",
+    "roic": 0.5,
+    "justification": "justified_high",
+    "reason_he": "התשואה על ההון בספרים (כ-98%) מנופחת כי קניות חוזרות כיווצו את ההון העצמי, ולכן לא השתמשנו בה. במקום זה מדדנו מדוח 10-K כמה כסף החברה באמת משקיעה כדי לצמוח ב-2023-2025: תמריצים ששולמו מראש פחות הפחתתם (0.8, 1.4 ו-1.3 מיליארד דולר), השקעות ברכוש ובתוכנה מעל הפחת (0.3, 0.3 ו-0.1 מיליארד) ורכישות (2.5 מיליארד ב-2024). זה כ-17% מהרווח התפעולי אחרי מס, והרווח התפעולי אחרי מס עלה בכ-3.7 מיליארד דולר על השקעה של כ-5.6 מיליארד, כלומר תשואה של כ-67% על כל דולר שמושקע לצמיחה. ב-2026 ההשקעה גדלה (2.7 מיליארד נטו בתמריצים ב-9 חודשים ועוד BVNK ב-1.4 מיליארד), ולכן הבסיס לוקח 50%, מתחת למה שנמדד: תשואה כזו עדיין מצדיקה מכפיל גבוה שיורד בהדרגה ככל שהצמיחה מאטה.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "pf_operating_income_fy2022",
+     "pf_operating_income_fy2025",
+     "pf_equity_fy2025",
+     "pf_long_term_debt_fy2025",
+     "pf_cash_fy2025",
+     "pf_goodwill_fy2022",
+     "pf_goodwill_fy2025",
+     "pf_capex_fy2025",
+     "pf_d_and_a_fy2025",
+     "dc_f_prepaid_chg_ytd",
+     "dc_f_amort_incent_ytd",
+     "dc_f_bvnk",
+     "web:pf_10k_20260211"
+    ]
+   },
+   "bull": {
+    "multiple_from": "economics",
+    "roic": 0.7,
+    "justification": "justified_high",
+    "reason_he": "בתרחיש השורי שירותי הערך המוסף, שכבר 41% מההכנסות וגדלים 19%-23% בשנה, ממשיכים לצמוח על אותה תשתית בלי השקעה גדולה נוספת, ונטל התמריצים מתייצב. אז כל דולר צמיחה דורש פחות הון ותשואת ההשקעה לצמיחה עולה לכ-70% (עדיין מתחת ל-120% שמראה החישוב על ההון המכווץ בספרים), והמכפיל נשאר גבוה.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "dc_f_nr_vas_fy25",
+     "dc_f_nr_vas_g_q3",
+     "dc_s_vas_9m_26",
+     "pf_operating_income_fy2025",
+     "pf_operating_income_fy2022",
+     "dc_f_amort_incent_ytd"
+    ]
+   }
+  },
+  "own_history": {
+   "low": 27.5,
+   "median": 35.6,
+   "high": 43.5,
+   "years": "2021-2026",
+   "evidence_ids": [
+    "web:nm_hist_ib",
+    "web:nm_price_ib",
+    "nm_eps_diluted_ttm_2026q3",
+    "pf_eps_diluted_fy2025",
+    "pf_eps_diluted_fy2024",
+    "pf_eps_diluted_fy2023"
+   ]
+  }
+ },
+ "analyst_sheet": {
+  "scenario_events": {
+   "bear": [
+    {
+     "event_he": "חוק תחרות כרטיסי האשראי (CCCA) בארה\"ב עובר ומחייב בנקים גדולים לאפשר רשת שנייה בכרטיסי אשראי: חלק מהעסקאות עוברות לרשתות זולות והעמלה על הנפח יורדת.",
+     "evidence_ids": [
+      "web:mc_ccca_congress",
+      "web:mc_ccca_paymentsdive"
+     ]
+    },
+    {
+     "event_he": "ההנחות והתמריצים לבנקים ממשיכים לצמוח מהר מההכנסה (כבר 52.6% מההכנסה הגולמית של הרשת ברבעון 3, לעומת 51.3% ב-2025), והתשואה נטו על כל דולר נשחקת.",
+     "evidence_ids": [
+      "dc_f_rebates_share_q3",
+      "dc_f_rebates_share_fy25",
+      "dc_f_rebates_g_ytd",
+      "web:dc_call_20261029"
+     ]
+    },
+    {
+     "event_he": "הנסיעות לחו\"ל מאטות ובריטניה קובעת תקרה לעמלות חוצות גבולות מול אירופה: ההכנסה בעלת התשואה הגבוהה ביותר נחלשת (נפח חוצה גבולות כבר ירד ל-11%).",
+     "evidence_ids": [
+      "dc_f_xb_g_q3",
+      "web:mc_psr_court"
+     ]
+    },
+    {
+     "event_he": "תביעות סוחרים: Block ו-Intuit דורשות יותר מ-5 מיליארד דולר (לפני הכפלה), ובבריטניה הוגשו באוקטובר 2026 תביעות ייצוגיות חדשות; הסכום שהופרש הוא רק 262 מיליון דולר.",
+     "evidence_ids": [
+      "web:pf_10q_20261029",
+      "dc_f_accr_lit"
+     ]
+    },
+    {
+     "event_he": "מערכות תשלום מיידיות (UPI בהודו, Pix בברזיל) וסטייבלקוינס לוקחות נתח מהתשלומים המקומיים והחוצי-גבולות בשווקים הצומחים.",
+     "evidence_ids": [
+      "web:fd_upi_sep26",
+      "web:mc_genius_rules"
+     ]
+    }
+   ],
+   "base": [
+    {
+     "event_he": "2026 נסגרת בצמיחה של כ-12-13% בניטרול מטבע, לפי ההנחיה, ורבעון 4 מעט חלש יותר בגלל השוואה למחירים שעלו ופרויקטים שהוקדמו לרבעון 3.",
+     "evidence_ids": [
+      "dc_g_nr_fy26",
+      "dc_g_nr_q4",
+      "web:dc_call_20261029"
+     ]
+    },
+    {
+     "event_he": "השירותים הנלווים (אבטחה, נתונים, אימות) ממשיכים לצמוח מהר מהרשת (19% מול 11% ברבעון 3) ומגיעים לכמעט מחצית ההכנסה.",
+     "evidence_ids": [
+      "dc_f_nr_vas_g_q3",
+      "dc_f_nr_pn_g_q3",
+      "dc_s_vas_9m_26"
+     ]
+    },
+    {
+     "event_he": "החברה ממשיכה לקנות מניות בכ-12 מיליארד דולר בשנה ומספר המניות יורד בכ-3% בשנה, גם במחיר של חוב גבוה יותר.",
+     "evidence_ids": [
+      "pf_buybacks_fy2025",
+      "dc_f_buyback_q3",
+      "dc_f_buyback_remaining",
+      "dc_f_debt_lt"
+     ]
+    },
+    {
+     "event_he": "הוצאות משפטיות ממשיכות להופיע כל רבעון (156 מיליון דולר ב-9 חודשים) ולא נעלמות.",
+     "evidence_ids": [
+      "dc_f_litprov_ytd",
+      "dc_f_litprov_ytd25"
+     ]
+    },
+    {
+     "event_he": "הנחיית 2027 (סוף ינואר 2027) תהיה שוב צמיחה 'דו-ספרתית נמוכה'.",
+     "evidence_ids": []
+    }
+   ],
+   "bull": [
+    {
+     "event_he": "פלטפורמת הכסף הגלובלית עם BVNK (סטייבלקוינס) ותשלומי סוכני AI הופכות למנוע הכנסה נוסף בשירותים הנלווים כבר ב-2027.",
+     "evidence_ids": [
+      "web:mc_ma_bvnk_platform",
+      "web:mc_ma_stablecoin_security",
+      "dc_f_bvnk"
+     ]
+    },
+    {
+     "event_he": "השירותים הנלווים שומרים על צמיחה של כ-19% והשוליים התפעוליים נשארים מעל 60%, כמו ב-2026.",
+     "evidence_ids": [
+      "dc_f_nr_vas_g_q3",
+      "dc_f_opm_adj_ytd"
+     ]
+    },
+    {
+     "event_he": "חוק הניתוב בארה\"ב לא מגיע להצבעה עד סוף 2027 והתביעה של משרד המשפטים נגד ויזה בתחום הדביט פותחת למסטרקארד נתח שוק.",
+     "evidence_ids": []
+    },
+    {
+     "event_he": "הנחיית 2027 בינואר 2027 גבוהה מ'דו-ספרתית נמוכה' (מעל 13%).",
+     "evidence_ids": []
+    }
+   ]
+  },
+  "key_risk": {
+   "reading_he": "הסיכון המרכזי הוא שחיקת ה'אגרה' על הרשת: הנפח כבר מאט (GDV צמח 7% בלבד), ההנחות לבנקים צומחות מהר מההכנסה (52.6% מההכנסה הגולמית של הרשת) וגם צורכות מזומן מראש (4.7 מיליארד דולר ב-9 חודשים), ובמקביל חוק הניתוב בארה\"ב ותקרות העמלה בבריטניה עלולים להוריד את המחיר לכל עסקה. מחיר המניה בשיא מניח שהצמיחה הדו-ספרתית והשוליים של 60% יימשכו.",
+   "evidence_ids": [
+    "dc_f_gdv_g_q3",
+    "dc_f_rebates_share_q3",
+    "dc_f_rebates_share_fy25",
+    "dc_f_prepaid_chg_ytd",
+    "web:mc_ccca_congress",
+    "web:mc_psr_court",
+    "web:nm_price_ib"
+   ]
+  },
+  "bottleneck": {
+   "reading_he": "Mastercard is a toll-road bottleneck on acceptance and trust, not on capacity: a four-party network accepted almost everywhere, with 3.54bn cards, where the scarce asset is two-sided coverage (issuers and merchants) plus fraud, tokenization and authentication on top. That position has lasted decades and nobody 'adds capacity' to it except Visa (the co-bottleneck) and state rails that bypass it domestically. The toll is visible in the economics: adjusted operating margin 60.5% in Q3 2026 and ROIC about 98% (FY2025), incremental ROIC about 120%. The limit is not supply but price: the bottleneck rent is shared with issuers through rebates and incentives (52.6% of gross network assessments in Q3 2026 vs 51.3% in FY2025) and contested by regulators.",
+   "evidence_ids": [
+    "dc_f_cards_q3",
+    "dc_f_opm_adj_q3",
+    "pf_operating_income_fy2025",
+    "pf_revenue_fy2025",
+    "dc_f_rebates_share_q3",
+    "dc_f_rebates_share_fy25",
+    "web:pf_10k_20260211"
+   ]
+  },
+  "future": {
+   "reading_he": "Card-network spend keeps growing at high single digits while cash and older rails shift to digital: Q3 2026 GDV $2.95tn +7% local currency, purchase volume +8.9%, switched transactions +9%, cross-border +11% (9M +12%), 3.54bn Mastercard-branded cards; Latin America GDV +13.5%, Europe +8.3%, US +5.9%. In markets with state-backed real-time rails the domestic direction is away from cards: UPI 24.07bn transactions in Sep 2026 (+23% y/y), Pix projected about 45% of Brazil e-commerce by end-2026 (EBANX, attributed projection). Net: the global pie grows, but the card share of domestic spend in India/Brazil (and possibly Europe) shrinks.",
+   "evidence_ids": [
+    "dc_f_gdv_g_q3",
+    "dc_f_pv_g_q3",
+    "dc_f_swt_g_q3",
+    "dc_f_xb_g_ytd",
+    "dc_f_cards_q3",
+    "dc_k_latam_gdv_g",
+    "dc_k_europe_gdv_g",
+    "dc_k_us_gdv_g",
+    "web:fd_upi_sep26",
+    "web:uf_pix_ebanx"
+   ]
+  }
+ },
+ "card": {
+  "assessments": {
+   "moat": {
+    "assessment": "strong",
+    "evidence_ids": [
+     "pf_operating_income_fy2025",
+     "pf_revenue_fy2025",
+     "dc_f_opm_adj_ytd",
+     "dc_f_cards_q3",
+     "web:pf_10k_20260211",
+     "web:fd_v_rel_fy26q4"
+    ],
+    "note": "Network effect of two-sided acceptance (3.54bn cards) shared in a duopoly with Visa; evidenced by about 58-61% operating margins for six years and ROIC about 87-98% (forensic screen), incremental ROIC about 120%. The mechanism that stops returns fading is the two-sided network plus regulation-heavy entry; the rent is shared with issuers (rebates) and capped by regulators, not by new networks."
+   },
+   "switching_costs": {
+    "assessment": "adequate",
+    "evidence_ids": [
+     "dc_k_us_debit_gdv_g",
+     "dc_c_top5_fy25",
+     "dc_f_prepaid_chg_ytd",
+     "dc_f_rebates_g_ytd"
+    ],
+    "note": "Merchants cannot easily drop Mastercard (honor-all-cards, consumer demand), but issuers can and do switch networks at renewal: Capital One's debit migration to Discover cut US debit GDV growth to 1.4%. Keeping issuers costs rising up-front incentives (prepaid incentive outflow $4.7bn 9M 2026 vs $2.9bn)."
+   },
+   "pricing_power": {
+    "assessment": "strong",
+    "evidence_ids": [
+     "dc_f_nr_g_q3",
+     "dc_f_gdv_g_q3",
+     "dc_k_xb_assess_g",
+     "dc_f_rebates_share_q3",
+     "dc_f_rebates_share_fy25",
+     "web:dc_call_20261029"
+    ],
+    "note": "Net revenue +14% on GDV +7% and cross-border assessments +16% on cross-border volume +11%: revenue per unit of volume keeps rising (pricing plus VAS); CFO cites lapping of pricing in Q4. Offset: incentives absorb a rising share of gross assessments (51.3% -> 52.6%), so part of the pricing is passed back to issuers."
+   },
+   "retention": {
+    "assessment": "adequate",
+    "evidence_ids": [
+     "dc_k_us_debit_gdv_g",
+     "web:pf_rel_20261029_1",
+     "dc_c_top5_fy25"
+    ],
+    "note": "No customer-level retention disclosed; the release cites new and renewed deals; the Capital One debit loss shows large issuers can leave. No retention rate available (gap)."
+   },
+   "customer_concentration": {
+    "assessment": "adequate",
+    "evidence_ids": [
+     "dc_c_top5_fy25",
+     "dc_f_top5_fy25"
+    ],
+    "note": "Five largest customers about 21% ($6.9bn) of FY2025 net revenue, none above 10%; issuer consolidation raises bargaining power at renewal."
+   },
+   "market_size": {
+    "assessment": "strong",
+    "evidence_ids": [
+     "dc_f_gdv_q3",
+     "dc_f_gdv_ytd",
+     "dc_f_pv_g_q3",
+     "dc_f_nr_vas_fy25"
+    ],
+    "note": "About $8.5tn GDV in 9M 2026 still growing high single digits, plus a VAS business of $13.3bn (FY2025) growing about 20% in security, data, authentication and loyalty."
+   },
+   "competition": {
+    "assessment": "adequate",
+    "evidence_ids": [
+     "web:fd_v_rel_fy26q4",
+     "dc_f_nr_g_q3",
+     "dc_f_xb_g_q3",
+     "dc_f_rebates_g_q3",
+     "web:fd_axp_q3_26",
+     "web:fd_pypl_q3_26"
+    ],
+    "note": "Rational duopoly with Visa: similar revenue growth (+14% vs +13%) but Visa grew volume and cross-border faster in Jul-Sep 2026 and both pay accelerating incentives (MA +18%, Visa +21%). AXP and PayPal grow slower and are not taking network share on these numbers."
+   },
+   "substitutes": {
+    "assessment": "adequate",
+    "evidence_ids": [
+     "web:fd_upi_sep26",
+     "web:uf_pix_ebanx",
+     "dc_f_swt_g_q3",
+     "web:mc_genius_rules",
+     "dc_f_bvnk"
+    ],
+    "note": "UPI (+23% transactions) and Pix are taking domestic flows in India and Brazil, but MA's own switched transactions still grow 9% and no displacement is visible in its numbers; stablecoins are being co-opted (BVNK) rather than fought. Size of displacement is unmeasured (gap)."
+   },
+   "management": {
+    "assessment": "adequate",
+    "evidence_ids": [
+     "dc_g_nr_fy26",
+     "dc_f_nr_g_ytd_cn",
+     "web:pf_rel_20261029_1",
+     "web:dc_call_20261029",
+     "dc_f_restructuring_q1"
+    ],
+    "note": "FY2026 guidance (high end of low double digits currency-neutral ex acquisitions) is being met: 9M 2026 +13% currency-neutral; operating margin expanded to 60.5% adjusted. CFO change in 2026 (Ling Hai CFO, Mehra to Chief Business Officer) and a $202m restructuring in Q1 2026. No numeric guidance track record computed (track_record null): gap."
+   },
+   "capital_allocation": {
+    "assessment": "strong",
+    "evidence_ids": [
+     "pf_buybacks_fy2025",
+     "pf_sbc_fy2025",
+     "pf_shares_diluted_wavg_fy2020",
+     "pf_shares_diluted_wavg_fy2025",
+     "nm_shares_diluted_q3_2026",
+     "pf_goodwill_fy2020",
+     "pf_goodwill_fy2025",
+     "dc_f_bvnk"
+    ],
+    "note": "Buybacks $11.7bn vs SBC $0.6bn in FY2025; diluted shares 1,006m (FY2020) -> 906m (FY2025) -> 876m (Q3 2026), about -2.7% a year net of SBC. Acquisitions doubled goodwill ($5.0bn -> $9.6bn, 2020-2025) and supply 3-4 points of VAS growth; their separate returns are not disclosed (gap). Debt rose to $23.9bn (from $18.3bn long-term at YE2025)."
+   },
+   "governance": {
+    "assessment": "unknown",
+    "evidence_ids": [
+     "web:pf_proxy_20260427"
+    ],
+    "note": "Proxy (DEF 14A, 2026-04-27) saved but not read for pay structure or board in this stage: gap."
+   },
+   "regulation": {
+    "assessment": "weak",
+    "evidence_ids": [
+     "web:mc_ccca_congress",
+     "web:mc_ccca_paymentsdive",
+     "web:mc_psr_court",
+     "web:pf_10q_20261029",
+     "dc_f_litprov_ytd",
+     "dc_f_accr_lit"
+    ],
+    "note": "The main risk to the moat: US routing mandate (CCCA) with presidential backing, UK cross-border interchange cap power upheld, EU sovereignty push, unresolved Block/Intuit (>$5bn) and UK actions (>GBP 2.9bn combined), litigation provisions every quarter. None has cut revenue yet; this is weak as an exposure, not as current results."
+   },
+   "technology_ai": {
+    "assessment": "adequate",
+    "evidence_ids": [
+     "web:pf_rel_20261029_1",
+     "web:mc_ma_bvnk_platform",
+     "web:mc_ma_stablecoin_security",
+     "dc_f_nr_vas_g_q3"
+    ],
+    "note": "Agentic commerce, tokenization, and the BVNK Global Money Platform position MA as the trust layer for new payment forms; VAS +19% is the monetized part. Agentic commerce and stablecoin revenue are not yet visible in numbers ('off a small base', BVNK impact on Q3 VAS 'minimal'): potential, not a driver."
+   },
+   "geopolitics": {
+    "assessment": "adequate",
+    "evidence_ids": [
+     "mc_f_rev_us_share_fy25",
+     "mc_f_rev_apemea_9m26",
+     "mc_f_rev_apemea_9m25",
+     "web:pf_10k_20260211",
+     "web:uf_eu_wero"
+    ],
+    "note": "Diversified: US about 29% of net revenue, APEMEA 9M 2026 $15.7bn (+14%). Exposed to protective policies favouring domestic networks (10-K risk factor, Russia exit 2022, India RuPay, EU Wero/digital euro) and to cross-border travel and FX shocks."
+   }
+  }
+ },
+ "evidence_pack": {
+  "pack_version": 1,
+  "pack_sha256": "ff5a5fd4e9739562f658d2a50d687d681cd0ad06837df7b94fd21c6a7bb9f614",
+  "ticker": "MA",
+  "as_of": "2026-11-01",
+  "identity": {
+   "name": "Mastercard Inc",
+   "currency": "USD",
+   "exchange": "NYSE",
+   "security": "Mastercard Inc Class A common stock (MA), US primary listing; single listing, no ADR; Class B not listed",
+   "fiscal_year_end": "12-31",
+   "cik": "1141391",
+   "type": "mature_growth / stalwart (computed by classify_company from SEC companyfacts; the analyst confirms or overrides with reasons)",
+   "evidence_ids": [
+    "pf_10k_20260211"
+   ]
+  },
+  "sources": 46,
+  "independent_sources": 28,
+  "guidance_track_record": null,
+  "guidance_adjustments": [],
+  "competitors": [
+   {
+    "ticker": "V",
+    "name": "Visa Inc",
+    "why": "Named in MA 10-K Item 1 as the first general purpose payments network competitor; the same issuers, acquirers, merchants and cardholders, same four-party card network model, same cross-border and value-added services (fraud, authentication, data) markets. Larger by volume and revenue."
+   },
+   {
+    "ticker": "AXP",
+    "name": "American Express Co",
+    "why": "Named in MA 10-K Item 1 as a general purpose payments network competitor; a closed-loop network and card issuer competing for the same premium consumer and commercial spend and for merchant acceptance. Revenue includes interest and card fees, so it is not a pure network."
+   },
+   {
+    "ticker": "PYPL",
+    "name": "PayPal Holdings",
+    "why": "Digital wallets and other fintechs (named category in MA 10-K Item 1): branded checkout, Venmo and Braintree compete for e-commerce and P2P payment flows, and route over cards, account-to-account rails or its own balances. It is also a customer of the card networks."
+   },
+   {
+    "ticker": "UPI",
+    "name": "UPI (India, NPCI); alternative real-time account-based rail",
+    "why": "Government-backed digital public infrastructure named in MA 10-K Item 1 (UPI, Pix, FedNow); replaces card payments for domestic person-to-merchant and P2P flows in India. Not a listed company; no financials."
+   },
+   {
+    "ticker": "PIX",
+    "name": "Pix (Banco Central do Brasil); alternative real-time rail",
+    "why": "Government instant payment system named in MA 10-K Item 1; competes for Brazilian domestic P2P and P2M, where MA has a functional currency (Brazilian real). Not a listed company; no numbers saved by this lane."
+   },
+   {
+    "ticker": "FEDNOW",
+    "name": "FedNow (US Federal Reserve); alternative real-time rail",
+    "why": "US instant account-to-account rail named in MA 10-K Item 1; potential competitor for US P2P and bill pay, early scale. Not a listed company; no numbers saved by this lane."
+   },
+   {
+    "ticker": "STABLECOINS",
+    "name": "Stablecoin payment rails (GENIUS Act regulated); alternative",
+    "why": "Digital currencies named in MA 10-K Item 1 as both an opportunity and a competitor for cross-border and B2B payments; MA is embedding them (Mastercard Move, ~130 crypto co-brand card programs per 10-K). Not a company; no numbers saved."
+   }
+  ],
+  "consensus": [],
+  "potential": {
+   "market_direction": {
+    "reading": "Card-network spend keeps growing at high single digits while cash and older rails shift to digital: Q3 2026 GDV $2.95tn +7% local currency, purchase volume +8.9%, switched transactions +9%, cross-border +11% (9M +12%), 3.54bn Mastercard-branded cards; Latin America GDV +13.5%, Europe +8.3%, US +5.9%. In markets with state-backed real-time rails the domestic direction is away from cards: UPI 24.07bn transactions in Sep 2026 (+23% y/y), Pix projected about 45% of Brazil e-commerce by end-2026 (EBANX, attributed projection). Net: the global pie grows, but the card share of domestic spend in India/Brazil (and possibly Europe) shrinks.",
+    "evidence_ids": [
+     "dc_f_gdv_g_q3",
+     "dc_f_pv_g_q3",
+     "dc_f_swt_g_q3",
+     "dc_f_xb_g_ytd",
+     "dc_f_cards_q3",
+     "dc_k_latam_gdv_g",
+     "dc_k_europe_gdv_g",
+     "dc_k_us_gdv_g",
+     "web:fd_upi_sep26",
+     "web:uf_pix_ebanx"
+    ],
+    "hypothesis": false
+   },
+   "bottleneck_potential": {
+    "reading": "Mastercard is a toll-road bottleneck on acceptance and trust, not on capacity: a four-party network accepted almost everywhere, with 3.54bn cards, where the scarce asset is two-sided coverage (issuers and merchants) plus fraud, tokenization and authentication on top. That position has lasted decades and nobody 'adds capacity' to it except Visa (the co-bottleneck) and state rails that bypass it domestically. The toll is visible in the economics: adjusted operating margin 60.5% in Q3 2026 and ROIC about 98% (FY2025), incremental ROIC about 120%. The limit is not supply but price: the bottleneck rent is shared with issuers through rebates and incentives (52.6% of gross network assessments in Q3 2026 vs 51.3% in FY2025) and contested by regulators.",
+    "evidence_ids": [
+     "dc_f_cards_q3",
+     "dc_f_opm_adj_q3",
+     "pf_operating_income_fy2025",
+     "pf_revenue_fy2025",
+     "dc_f_rebates_share_q3",
+     "dc_f_rebates_share_fy25",
+     "web:pf_10k_20260211"
+    ],
+    "hypothesis": false
+   },
+   "share_trajectory": {
+    "reading": "Against Visa (the named direct competitor) no clear share shift: same calendar quarter Jul-Sep 2026 net revenue MA +14% vs Visa +13%; but volume favoured Visa (Visa payments volume +9% constant dollar and cross-border +14% vs MA GDV +7% and cross-border +11%; definitions differ, GDV includes cash). MA's US debit GDV grew only 1.4% in Q3 2026 (Capital One debit migration to Discover) while US GDV overall +5.9%: a real, issuer-driven share loss in US debit. Against AXP (revenue +9%, billed business +8%) and PayPal (revenue +2%) MA is growing faster. In India MA holds about 20% of cards vs Visa 43% and RuPay 33% (EBANX, attributed). Net reading: stable share vs Visa on revenue, mild volume share loss in the latest quarter, gaining vs AXP and PayPal.",
+    "evidence_ids": [
+     "dc_f_nr_g_q3",
+     "web:fd_v_rel_fy26q4",
+     "dc_f_gdv_g_q3",
+     "dc_f_xb_g_q3",
+     "dc_k_us_debit_gdv_g",
+     "dc_k_us_gdv_g",
+     "web:fd_axp_q3_26",
+     "web:fd_pypl_q3_26",
+     "web:uf_pix_ebanx"
+    ],
+    "hypothesis": false
+   },
+   "competitive_position": {
+    "reading": "Versus Visa: smaller (FY2025 net revenue $32.8bn vs Visa FY2025 $40.0bn and FY2026 $45.9bn) and slightly lower margin (MA FY2025 GAAP 57.6%, Q3 2026 59.8% vs Visa FY2026 about 61%), but faster value-added services (VAS +19% in Q3 2026, 41% of net revenue) and much smaller litigation charges this year (MA 9M 2026 provisions $156m vs Visa FY2026 $1,764m). Both show incentive inflation (MA rebates +18%, Visa client incentives +21%). Versus AXP and PayPal: structurally stronger (open network at about 60% margin vs AXP pre-tax about 33% and PayPal operating about 18%), and PayPal routes much of its volume over cards. Versus UPI/Pix: weaker on domestic price (near-zero-cost state rails), stronger on cross-border and fraud/VAS.",
+    "evidence_ids": [
+     "pf_revenue_fy2025",
+     "web:pf_peer_V",
+     "web:fd_v_rel_fy26q4",
+     "pf_operating_income_fy2025",
+     "dc_f_opm_gaap_q3",
+     "dc_f_nr_vas_g_q3",
+     "dc_f_litprov_ytd",
+     "dc_f_rebates_g_q3",
+     "web:pf_peer_AXP",
+     "web:pf_peer_PYPL",
+     "web:pf_10k_20260211"
+    ],
+    "hypothesis": false
+   },
+   "threats": {
+    "reading": "(1) US routing mandate: Credit Card Competition Act S.3623 reintroduced 13 Jan 2026 with presidential support; failed to ride on the ROAD to Housing Act (March 2026), no floor vote as of 1 Nov 2026: live risk, not law. (2) Litigation as a recurring cost: Block and Intuit opt-outs seek over $5bn single damages (trebling possible), UK commercial-card action over GBP 1bn and two new UK actions (about GBP 1.5bn and GBP 0.4bn) served Oct 2026; provisions every quarter. (3) UK/EU: High Court (15 Jan 2026) upheld the PSR's power to cap UK-EEA cross-border card-not-present interchange; EU sovereignty push (Wero, digital euro) aims at Europe, MA's strongest region. (4) Substitution: UPI/Pix domestically; stablecoins under the GENIUS Act (rules still open: Treasury Aug 2026, Fed Sep 2026), to which MA responds by joining (BVNK, $1.4bn, closed 3 Aug 2026). (5) Issuer bargaining: rebates +18-21% vs payment network revenue +11%; Capital One debit moved to Discover. (6) DOJ v. Visa (debit) could open US debit to MA but also invites scrutiny of MA's incentive contracts (MA itself received a DOJ CID on debit in 2023).",
+    "evidence_ids": [
+     "web:mc_ccca_congress",
+     "web:mc_ccca_paymentsdive",
+     "web:pf_10q_20261029",
+     "web:mc_psr_court",
+     "web:uf_eu_wero",
+     "web:fd_upi_sep26",
+     "web:mc_genius_rules",
+     "dc_f_bvnk",
+     "dc_f_rebates_g_ytd",
+     "dc_k_us_debit_gdv_g",
+     "web:uf_doj_visa_debit",
+     "web:pf_10k_20260211"
+    ],
+    "hypothesis": false
+   }
+  },
+  "bottlenecks": [
+   {
+    "id": "fd_bn1",
+    "reading": "What MA supplies: a global four-party authorization, clearing and settlement network with trust, fraud and tokenization on top; the scarce thing is accepted-everywhere trust and issuer and merchant coverage (network effects), not capacity. Capacity is not the constraint; the constraint on growth is volume of spend and pricing versus customer incentives. 2025 payment network net revenue 19,476M (+12%) after rebates and incentives of 20,522M (+16%): incentives grow faster than network revenue.",
+    "evidence_ids": [
+     "web:pf_10k_20260211"
+    ],
+    "hypothesis": false
+   },
+   {
+    "id": "fd_bn2",
+    "reading": "Cross-border is the highest-yield flow in the network: 2025 cross-border assessments 12,021M (+18%, +17% currency-neutral) against domestic assessments 11,029M (+8%); Q3 2026 cross-border volume +11% local currency, gross dollar volume +7%, switched transactions +9%. Visa reports cross-border +14% in its FQ4 2026, so MA's cross-border growth was below Visa's in the latest quarter (different quarter windows: MA Jul-Sep 2026, Visa Jul-Sep 2026 volume).",
+    "evidence_ids": [
+     "web:pf_10k_20260211",
+     "web:pf_rel_20261029_1",
+     "web:fd_v_rel_fy26q4"
+    ],
+    "hypothesis": false
+   },
+   {
+    "id": "fd_bn3",
+    "reading": "Value-added services and solutions is the second engine: 2025 net revenue 13,315M (+23%, +21% currency-neutral, of which 3 points from acquisitions) versus payment network +12%; drivers named in the 10-K are security, digital and authentication, consumer acquisition and engagement, pricing and insights. Competitors named are consultancies, cyber and fraud technology firms and loyalty providers.",
+    "evidence_ids": [
+     "web:pf_10k_20260211"
+    ],
+    "hypothesis": false
+   },
+   {
+    "id": "fd_bn4",
+    "reading": "Real-time account-to-account rails are the structural threat to domestic card volume in markets where they are state-backed: UPI alone cleared 24.07 billion transactions in Sep 2026 (+23% year over year, NPCI via press). MA's 10-K says local debit brands and DPI mainly leave MA with cross-border there; how much domestic spend is displaced is not quantified in MA's own numbers.",
+    "evidence_ids": [
+     "web:pf_10k_20260211",
+     "web:fd_upi_sep26"
+    ],
+    "hypothesis": false
+   },
+   {
+    "id": "fd_bn5",
+    "reading": "Pix, FedNow and stablecoin rail volumes: web search gave conflicting figures (Pix about 7 billion transactions a month; FedNow about 5.0 million in Q2 2026 versus other counts; stablecoin payments between about 0.4 and 1.8 trillion USD depending on definition). Not primary data; kept as a hypothesis that FedNow is still immaterial against card volume and that stablecoin definition drives the size.",
+    "evidence_ids": [],
+    "hypothesis": true
+   }
+  ],
+  "falsifiers": [
+   {
+    "id": "fx_base_guide27",
+    "scenario": "base",
+    "metric": "FY2027 net revenue growth guidance, currency-neutral, low end of the guided range (Q4 2026 release)",
+    "threshold": 0.1,
+    "direction": "below",
+    "by": "2027-02-15",
+    "evidence_ids": [
+     "dc_g_nr_fy26"
+    ]
+   },
+   {
+    "id": "fx_base_rebates",
+    "scenario": "base",
+    "metric": "FY2026 rebates and incentives as share of gross payment network assessments (rebates / (payment network net revenue + rebates))",
+    "threshold": 0.54,
+    "direction": "above",
+    "by": "2027-02-28",
+    "evidence_ids": [
+     "dc_f_rebates_share_q3",
+     "dc_f_rebates_share_fy25"
+    ]
+   },
+   {
+    "id": "fx_bull_xborder",
+    "scenario": "bull",
+    "metric": "Q4 2026 cross-border volume growth, local currency",
+    "threshold": 0.1,
+    "direction": "below",
+    "by": "2027-02-15",
+    "evidence_ids": [
+     "dc_f_xb_g_q3",
+     "dc_f_xb_g_ytd"
+    ]
+   },
+   {
+    "id": "fx_bear_pn",
+    "scenario": "bear",
+    "metric": "Q2 2027 payment network net revenue growth, year over year",
+    "threshold": 0.1,
+    "direction": "above",
+    "by": "2027-08-15",
+    "evidence_ids": [
+     "dc_f_nr_pn_g_q3"
+    ]
+   },
+   {
+    "id": "fx_bear_rebates",
+    "scenario": "bear",
+    "metric": "FY2027 rebates and incentives as share of gross payment network assessments (rebates / (payment network net revenue + rebates))",
+    "threshold": 0.52,
+    "direction": "below",
+    "by": "2028-02-28",
+    "evidence_ids": [
+     "dc_f_rebates_share_q3",
+     "dc_f_rebates_share_fy25"
+    ]
+   }
+  ],
+  "notes": [
+   "prefetch 2026-11-01T22:14:56+00:00: SEC documents saved verbatim and their text in reading/ (untrusted); a lane cites a pf_ source only after reading the passage it relies on",
+   "dc CALL 2026-10-29 Q3 2026 call: CFO Ling Hai, CEO Michael Miebach; transcript read through a WebFetch summary of the Motley Fool copy (search_excerpt, not the full verbatim transcript); Alpha Vantage EARNINGS_CALL_TRANSCRIPT probe was rate-limited (25/day), not retried.",
+   "dc MGMT (call) full-year net revenue growth 'at the high end of the low double digits range' currency-neutral, excluding inorganic activity; Q2 call had already moved expectations higher in the range; Q4 same wording; ~1 ppt FX tailwind FY, ~1 ppt FX headwind Q4. Words are management's; the numeric 12-13% in guidance rows is my reading of the words.",
+   "dc MGMT (call) Q4: slight revenue headwind from timing of services projects and network deals pulled forward into Q3; 'similar offset' in VAS in Q4; rebates and incentives as % of gross assessments higher than Q3; no full-year rebates guidance given. Not addressed: litigation, capex, operating margin outlook; 2027 guidance comes with the next quarter's release.",
+   "dc MGMT (call) cross-border travel 'similar to the end of Q2'; agentic commerce expected to build with holiday shopping (CEO); BVNK impact on Q3 VAS 'minimal'; opex FY 'low double digits' unchanged, Q4 high end of low double digits with 1 ppt drag from acquisitions; non-GAAP tax 20-21%; Q4 other expense ~ $115m.",
+   "dc MGMT (release) CEO Miebach: Agentic Commerce, new Global Money Platform through BVNK (stablecoin infrastructure, acquired 2026-08-03 for $1.4bn cash plus up to $300m contingent).",
+   "dc Q3 RESULT (released 2026-10-29, citable from 2026-10-31): net revenue $9,807m +14% (reported and currency-neutral; payment network +11%, VAS +19%), GDV +7% local to $2.95tn, cross-border volume +11%, switched transactions +9%, GAAP operating margin 59.8% (+0.9 ppt), adjusted 60.5%, adjusted EPS $5.31 (+21%), GAAP EPS $5.28; adjusted opex +12% (1 ppt acquisitions).",
+   "dc REBATES Q3 rebates and incentives $6,369m +18% (9M $18,005m +21%), growing faster than payment network net revenue (+11%) and than GDV (+7%); the release cites new and renewed deals. Share of gross network assessments 52.6% in Q3 2026 vs 51.3% FY2025 (derived).",
+   "dc CASH conversion 9M 2026 operating cash flow $11,859m vs $12,646m (-6%) while net income +18%: prepaid expenses (customer incentive prepayments) outflow $4,688m vs $2,939m; amortization of customer incentives $2,030m vs $1,526m; accrued litigation payments $537m. Gap to be read by the analyst; capex+software $1,141m 9M.",
+   "dc LITIGATION provision for litigation Q3 $74m (settlements with opt-out merchants in U.S. interchange case) vs $83m, 9M $156m vs $330m; accrued litigation fell to $262m from $800m (cash settlements paid). Block and Intuit remain unsettled opt-outs seeking aggregate single damages above $5bn (summary judgment briefing continues through 2026); Rules Relief Class revised settlement preliminarily approved June 2026, final approval hearing November 2026; Damages Class release upheld Sept 2026 against April 2026 putative class action (appeal to Second Circuit); U.S. EMV liability shift class alleges >$1bn single damages against four networks (10-Q Note 14).",
+   "dc LITIGATION UK October 2026: two new proposed UK collective actions served: ~GBP 1.5bn (domestic and cross-border consumer transactions) and ~GBP 0.4bn (online cross-border); existing UK commercial card claim >GBP 1bn; Portugal ~EUR 0.4bn; Netherlands ~EUR 0.3bn; Australia ACCC debit agreements, liability hearing concluded June 2026; ATM operator opt-out settled Aug 2026 and ATM operators class dismissed Sept 2026 (10-Q Note 14). Claimed amounts are plaintiffs' claims, not accruals; the 10-Q accrual is $262m.",
+   "dc LITIGATION DOJ: Civil Investigative Demand received 2023 from DOJ Antitrust Division on U.S. debit program competition (Sherman Act 1 or 2); company cooperating (10-K, Legal Proceedings; the Q3 10-Q text prefetched contains no separate DOJ paragraph). European Commission request for information (2024) on network fees related to acquirers; cooperating.",
+   "dc ONEOFFS Q3 2026 special item: litigation provisions $74m pre-tax (adjusted net income effect +$49m); equity investments net pre-tax loss $5m (adjusted net income effect -$24m per release reconciliation, including tax effects); YTD special items: restructuring $202m (Q1 2026) and litigation $156m; adjusted tax rate 20.1% vs GAAP 19.4% in Q3.",
+   "dc RISK interchange and merchant acceptance-cost activity, surcharging limits and litigation could cut revenue or raise incentive costs (10-K Item 1A, Legal and Regulatory: interchange, surcharging, litigation liabilities).",
+   "dc RISK preferential or protective government actions favouring domestic payment networks, and regulation of privacy, data and AI (10-K Item 1A, Legal and Regulatory).",
+   "dc RISK competition and disintermediation: account-based and real-time payments, wallets, stablecoins, Visa and others; continued intense pricing pressure (10-K Item 1A, Business: Competition).",
+   "dc RISK customer concentration: five largest customers about 21% of FY2025 net revenue ($6.9bn); loss of a large customer or card program and consolidation; incentives rise with renewals (10-K Item 1A, Business: customers; Item 7 notes).",
+   "dc RISK global economy, cross-border travel and spending sensitivity, tariffs and trade policy, currency and FX controls (10-K Item 1A, Global events).",
+   "dc RISK settlement guarantor exposure and information security incidents, service disruptions (10-K Item 1A, Operational).",
+   "dc RISK acquisition integration and entry into new businesses, stablecoin and account-based payments (BVNK) (10-K Item 1A; 10-Q Note 2).",
+   "dc GAP full transcript Q&A not read verbatim (summary of Motley Fool copy only); no customer-level names or per-customer shares disclosed (only top-5 aggregate); no segment operating income (single reportable segment, cannot be split between payment network and VAS); remaining performance obligations, backlog and purchase commitments not extracted (not material to this model); Q2 numeric prior guidance not available as numbers (words only), so prior_low/prior_high left empty.",
+   "fd NAMED COMPETITORS (10-K Item 1, pf_10k_20260211): General Purpose Payments Networks: Visa, American Express, JCB, China UnionPay, Discover; Debit and Local Networks: ATM/POS debit networks, local domestic brands; Real-time Account-based: ACH and real-time providers; Digital Wallets and Fintechs: wallets, BNPL, mobile operators, B2B AP/AR providers (PayPal is the listed example in the run's competitor list, not named by MA); DPI/government: Pix, FedNow, UPI, CBDCs; Digital Currencies: stablecoins, crypto; Services and Solutions: information and consulting firms, cyber and fraud technology, loyalty providers, open finance.",
+   "fd SHARE MA net revenue 2025 32,791M (+16%) versus Visa fiscal 2025 40,000M (+11.3%, pf_peer_V) and Visa fiscal 2026 45.9B (+15%, fd_v_rel_fy26q4): MA's latest comparable quarter growth was 14% (Q3 2026, pf_rel_20261029_1) against Visa's 13% (FQ4 2026): MA and Visa are growing at about the same rate, so no clear share shift between the two from revenue; windows are the same calendar quarter (Jul-Sep 2026) but MA's revenue is net of larger incentives, so revenue is not a volume-share measure.",
+   "fd SHARE Operating margin: MA 2025 GAAP 57.6% (adjusted 59.2%, 10-K) and Q3 2026 59.8% (pf_rel_20261029_1); Visa fiscal 2025 59.98% and fiscal 2026 about 61.2% GAAP (derived), so Visa runs a higher margin on a larger base.",
+   "fd SHARE Volumes: MA Q3 2026 gross dollar volume +7% local currency, cross-border +11%; Visa FQ4 2026 payments volume +9% constant dollar, cross-border +14%. On these numbers Visa grew volume faster than MA in the same quarter (different measure definitions: GDV includes cash, Visa payments volume excludes cash), a hypothesis of modest Visa share gain, not a measured share.",
+   "fd SHARE AXP billed business Q3 2026 +8% (fd_axp_q3_26, search summary), AXP revenue +9%; PayPal revenue +2% and transaction margin dollars +2% (fd_pypl_q3_26): MA is growing faster than both on revenue; AXP and PayPal are not taking network share from MA on these numbers.",
+   "fd SHARE Alternative rails: UPI +23% year over year in transaction count (Sep 2026); no MA-own number measures the displacement, labelled hypothesis that domestic card volume growth in India is capped while cross-border and VAS carry MA's growth there.",
+   "fd FORWARD P/E of competitors was not retrieved from a structured source in this lane (FMP statements and analyst are ACCESS DENIED per the stage guidance; Alpha Vantage not used in this lane); competitor forward P/E is a gap.",
+   "fd V Visa fiscal 2026 net revenue is stated rounded (45.9B); the operating margin for fiscal 2026 is derived from 28,110M operating income in the release table and the rounded revenue.",
+   "fd AXP and PYPL Q3 2026 figures come from a web search summary of their releases (search_excerpt), not from documents read in full; use as indicative.",
+   "mc RATES risk_free 4.98% (FRED DGS10, 2026-10-29) and ERP 4.20% (Damodaran implied, 2026-10-01) kept from prefetch; no FRED gap; Damodaran 1 Nov 2026 update not checked (as_of day), so ERP is the newest saved one.",
+   "mc GEOGRAPHY No country other than the US exceeds 10% of net revenue; US about 29% of FY2025 net revenue (30% in 2024 and 2023) per 10-K note; five largest customers 21% (about $6.9B) of FY2025 revenue; no customer above 10%. Cross-border volume +11% local-currency in Q3 2026, gross dollar volume +7%, switched transactions +9% (Q3 2026 release). Long-lived assets: US $1,168M of $2,303M (51%).",
+   "mc EXPOSURE US interchange / Credit Card Competition Act (CCCA, S.3623, reintroduced 13 Jan 2026 by Marshall and Durbin): sits in Senate Banking Committee, no floor vote, not passed; sponsors failed to attach it to the GENIUS Act (2025) and the ROAD to Housing Act (Senate passed 5 Mar 2026 without it); Trump has publicly backed it and an October 2026 report says merchant lobbyists seek another vehicle (mc_ccca_congress, mc_ccca_paymentsdive; press, search excerpts). It would require issuers above $100B assets to enable a second, non-Visa/Mastercard network for routing. Sizing: US is about 29% of revenue; the share of US revenue exposed to credit routing is not disclosed: unsized, hypothesis.",
+   "mc EXPOSURE US merchant litigation (10-Q Note 14, filed 2026-10-29, pf_10q_20261029): accrued liability for US MDL cases $156M at 2026-09-30 (from $637M at 2025-12-31 after payments); Block and Intuit opt-out claims seek aggregate single damages above $5B, Mastercard says it cannot estimate potential liability; Rules Relief Class revised settlement preliminarily approved June 2026, final approval hearing November 2026; new April 2026 and September 2026 putative class actions on Damages Class and non-class merchants, district court ruled against the Damages Class plaintiffs in September 2026, appealed to the Second Circuit.",
+   "mc EXPOSURE UK / Europe interchange (10-Q Note 14): over GBP 0.5B (about $0.7B) of unresolved UK and Pan-European merchant damages claims; UK commercial-card collective action above GBP 1B (about $1.3B); two new UK collective actions served October 2026 for about GBP 1.5B ($2.0B) and GBP 0.4B ($0.5B); Portugal consumer claim about EUR 0.4B; Netherlands merchant claim about EUR 0.3B; European Commission information request (2024) on network fees to acquirers, ongoing. UK PSR: High Court rejected the Visa, Mastercard and Revolut challenge on 15 Jan 2026 and confirmed the PSR power to cap cross-border (UK-EEA card-not-present) interchange; level and start date not set per search results (interim cap dropped; PSR issued Specific Direction 23 on 30 Jul 2026, record-keeping and reporting of UK pricing decisions) (mc_psr_court, press, search excerpt). Revenue exposed to UK-EEA cross-border caps is not disclosed: unsized, hypothesis. Australia: ACCC debit-agreements case, liability hearing concluded June 2026, decision pending, fines possible.",
+   "mc EXPOSURE Russia: operations suspended since 2022; 10-K risk factor cites possible nationalization of the subsidiary and litigation; no revenue share disclosed as exposed.",
+   "mc EXPOSURE Stablecoins / GENIUS Act: law enacted 2025 (10-K Item 1 names it as the first major US crypto law and lists digital currencies as a competitive risk); rulemaking still open: OCC draft 2 Mar 2026 with final targeted for November 2026, Treasury proposal 17 Aug 2026, Federal Reserve proposal in the Federal Register 29 Sep 2026; statutory 18 Jul 2026 target missed (press, search excerpt, mc_genius_rules). Mastercard's own response is to join: BVNK (stablecoin infrastructure) acquired 3 Aug 2026 for $1.4B cash plus up to $300M contingent (10-Q, goodwill $1.3B), Global Money Platform with BVNK 15 Oct 2026, Stablecoin Security risk product 19 Oct 2026, about 130 crypto co-brand card programs and stablecoin flows in Mastercard Move (10-K). Effect on network revenue: no disclosed figure; disintermediation of card-based cross-border and remittance flows is a hypothesis, not sized.",
+   "mc EXPOSURE FX / travel: revenue is billed in many currencies; Q3 2026 net revenue +14% both reported and currency-neutral, so currency was neutral in the quarter; cross-border volume +11% local currency (the highest-yield line). USD strength, consumer spending and travel data not retrieved this lane (budget): gap.",
+   "mc NEWS 2026-10-29 Q3 2026 results: net revenue $9.8B (+14%), GDV $3.0T (+7% local currency), cross-border +11%, rebates and incentives +18% (release and 10-Q, filed 2026-10-29; citable from 2026-10-31).",
+   "mc NEWS 2026-08-03 BVNK acquisition closed, $1.4B cash plus up to $300M contingent (10-Q, pf_10q_20261029).",
+   "mc NEWS 2026-10-15 and 2026-10-19 Global Money Platform with BVNK, Stablecoin Security product (company press releases, search excerpts; lead only).",
+   "mc NEWS 2026-10 two new UK merchant collective actions served on Mastercard and Visa (GBP 1.5B and GBP 0.4B, 10-Q); 2026-09 US district court barred Damages Class plaintiffs' new claims, appeal filed (10-Q).",
+   "mc NEWS 2026-10 Trump again urged Congress to pass the CCCA per press report; no vote scheduled in what was retrieved (lead, not confirmed at the source).",
+   "nm IDENTITY Mastercard Inc (CIK 1141391), Class A common stock, NYSE, USD, FYE 12-31, 10-K/10-Q filer; IB contract id 38685693 (NYSE, MASTERCARD INC - A); other IB rows (MEXI, EBS, TSE CDR) are secondary listings; no ADR, no stop.",
+   "nm PRICE IB last 638.02 at 2026-10-30 23:47Z (feed status FROZEN = after close), prior close 635.70, +0.36%; 52w range 463.80-644.20 (a new 52w high at the last month bar: high 644.24); month of Oct 2026 closed 638.01 vs 551.47 end Sep (+15.7%), i.e. the price jumped around the 2026-10-29 results. IB has no split; quarterly dividend 0.87 USD (ex 2026-10-09, pay 2026-11-09), raised from 0.76 (about +14%).",
+   "nm AV RATE LIMIT 2026-11-01: INCOME_STATEMENT answered 'standard API rate limit is 25 requests per day'; probed once, BALANCE_SHEET, CASH_FLOW and EARNINGS_ESTIMATES not called, no retry. FMP statements/analyst denied on this plan (session_capabilities). Second statement source therefore missing: reconciliation is against the filings themselves.",
+   "nm RECONCILIATION FY2025 vs 10-K (reading/10k_full.txt): revenue 32,791, operating income 18,897, net income 14,968, diluted EPS 16.52, diluted shares 906, CFO 17,648: all equal the prefetch pf_ facts, no difference. SBC 597 (10-K) not in the prefetch: added as nm_sbc_fy2025. Capex: prefetch capex 489 = purchases of property and equipment only; capitalized software 726 is a separate investing line (total 1,215), so FCF defined as CFO minus capex(PP&E) is overstated by 726 versus CFO minus both lines.",
+   "nm RECONCILIATION Q3 2026 vs 10-Q filed 2026-10-29: revenue 9,807, operating income 5,862, net income 4,628 equal the prefetch quarter facts; diluted EPS 5.28 (Q3) and 14.59 (9M), diluted shares 876 (Q3) / 884 (9M); 9M CFO 11,859 vs 12,646 a year earlier (-6%, while 9M net income +18%: working-capital/settlement timing, check in the 10-Q liquidity section); 9M SBC 525; 9M capex PP&E 667 (vs 377) plus capitalized software 474 (vs 548). Q3 standalone CFO/capex not derived (needs the 1H 10-Q; gap).",
+   "nm ROIC CHECK prefetch roic_last 0.98 (average 0.87) uses invested capital = equity + debt - cash with FY2025 equity 7.7B: equity is depressed by buybacks (11.7B in 2025) and dividends, so ROIC near 100% reflects a tiny capital base, not a measured return on operating assets; restricted cash 564 (2026-09-30, 561 at year end) is outside cash 10,147; total debt rose to 23.9B at 2026-09-30 from 19.0B at year end (+4.9B) and cash fell to 10.1B from 10.6B, so invested capital is up sharply in 2026 and ROIC will decline mechanically; investments that are not cash, operating leases and settlement assets/obligations were not adjusted. Read as 'very high, capital-light', not as a precise figure.",
+   "nm OWN MULTIPLE HISTORY trailing GAAP diluted P/E (month-end price over trailing EPS interpolated between fiscal year EPS 6.37, 8.76, 10.22, 11.83, 13.89, 16.52 and TTM 19.11): low 27.5 (2026-05) median 35.6 high 43.5 (2022-01) now 33.4 (638.02 / 19.11; 38.6 on FY2025 EPS 16.52) years 2021-11 to 2026-10 sources nm_hist_ib, nm_price_ib, pf_eps_diluted_fy2020..fy2025, nm_eps_diluted_ttm_2026q3. Approximate (interpolated EPS, no quarterly EPS series). Today's multiple sits just under the 5-year median after a 16% month. Forward P/E: no usable post-results consensus (see CONSENSUS); on a pre-results web FY2027 EPS 22.51 it would be about 28, attributed and stale. Not a peak-earnings quarter x 4 case: net income rose each quarter, EPS Q3 5.28.",
+   "nm CONSENSUS none registered: AV EARNINGS_ESTIMATES not called (rate limit), FMP analyst denied. One WebSearch returned only pre-Q3 (before 2026-10-29) excerpts with disagreeing figures and no stated provider date: FY2026 EPS 19.52-19.61 (24 analysts, one page) and 20.55 (Chartmill, 47 analysts, 2026-10-18); FY2027 EPS 22.51 (Barchart) / 22.27 (Zacks); FY2026 revenue 37.0B (28 analysts); Q3 2026 EPS estimates 5.13 or 5.31 versus reported 5.28; Q2 2026 reported 5.04 vs 4.77 consensus. These are opinion/expectation excerpts, not citable rows; revenue and EPS consensus after the 2026-10-29 report remain a gap. Analyst price targets on those pages not used.",
+   "nm TRACK RECORD no guidance_track rows: the eight saved earnings releases (2025-01-30 to 2026-10-29) contain no outlook paragraph (grep for outlook/expect/low double digits found nothing); Mastercard gives its outlook on the earnings call (gather_documents' transcript). Reported revenue growth for context: Q2 2026 +14% (12% currency-neutral), Q3 2026 revenue 9,807 vs 8,602 (+14.0%). Guided midpoint vs actual not computable here; gap handed to gather_documents/analyst.",
+   "nm RESULTS DAY the Q3 2026 release (2026-10-29) and 10-Q are dated 2 days before as_of 2026-11-01 and are citable from 2026-10-31, so usable.",
+   "driver tax_rate (all) rests on one independent source",
+   "guidance used without a recorded track record (guidance_track): its reliability is unknown"
+  ],
+  "meaning": "provenance of these inputs (evidence_pack.to_inputs); evidence ids web:<id> are pack sources registered by the evidence bundle, other ids are pack items"
+ }
+}

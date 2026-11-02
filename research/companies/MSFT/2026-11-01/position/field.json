@@ -1,0 +1,193 @@
+{
+ "thesis_he": {
+  "bear": "הביקוש לענן ובינה מלאכותית מתקרר או ש-OpenAI (כ-11% מההכנסות) מעבירה עבודה לעננים אחרים, ומיקרוסופט נשארת עם השקעות וחוזי שכירות ענקיים שלא מנוצלים, והתשואה על ההון יורדת.",
+  "base": "הביקוש עולה על ההיצע: Azure ממשיך לצמוח מהר (ההנחיה 49%-50% לרבעון הבא), הצבר החוזי של 677 מיליארד דולר נכנס להכנסות, וההשקעות הכבדות מורידות את התשואה על ההון בהדרגה אך היא נשארת גבוהה מעלות ההון.",
+  "bull": "מיקרוסופט מוסיפה קיבולת חשמל ושבבים מהר יותר מהמתוכנן, Copilot ו-E5/E7 מעלים את ההכנסה למשתמש, והצבר הופך לצמיחה מהירה לאורך שנים בלי תלות גדולה ב-OpenAI."
+ },
+ "potential": {
+  "market_direction": {
+   "reading": "Demand for MSFT cloud and AI is rising faster than MSFT can supply it, on its own numbers: Azure revenue +48% y/y in Q1 FY2027 (guided +49% to +50% constant currency for Q2 FY2027), Microsoft Cloud $63.9bn +30%, commercial remaining performance obligation $677bn +73% with about 30% to be recognized in the next 12 months. The 10-Q itself warns AI demand is hard to forecast and over-building could leave assets underused. No regulator, industry study or buyer filing was retrieved, so the market size outside MSFT is not measured here.",
+   "evidence_ids": [
+    "dc_kpi_azure_growth",
+    "dc_kpi_cloud_rev",
+    "dc_rpo_commercial_q1fy27",
+    "dc_rpo_commercial_growth_q1fy27",
+    "dc_rpo_12m_share_q1fy27",
+    "dc_g_azure_q2fy27",
+    "pf_10q_20261028"
+   ]
+  },
+  "bottleneck_potential": {
+   "reading": "MSFT is not a bottleneck supplier; it is a capacity holder that is itself constrained by power, land, permits and GPUs (10-K/10-Q risk factors). Its edge is the capacity it has locked in: $364.6bn of datacenter leases not yet commenced at 2026-09-30 (up from $329.1bn at 2026-06-30, commencing FY27-FY34), $194.1bn purchase commitments, capex including finance leases $45.2bn in Q1 FY2027 and guided above $50bn in Q2. The other hyperscalers (Amazon, Alphabet, Oracle) add capacity in parallel; how long the shortage lasts is not stated by any source here (gap).",
+   "evidence_ids": [
+    "pf_10q_20261028",
+    "pf_10k_20260729",
+    "dc_leases_not_commenced_q1fy27",
+    "dc_leases_not_commenced_fy26",
+    "dc_purchase_commitments_fy26",
+    "dc_capex_incl_leases_q1fy27",
+    "dc_g_capex_q2fy27"
+   ]
+  },
+  "share_trajectory": {
+   "reading": "Azure at +48% grows far faster than the whole-company revenue of Amazon (+12.4% FY2025), Alphabet (+15.1% FY2025) and Oracle (+17.4% FY2026), which suggests MSFT is gaining cloud share, but AWS, Google Cloud and OCI segment revenue and any attributed share study were not retrieved, so no share conclusion is drawn.",
+   "hypothesis": true
+  },
+  "competitive_position": {
+   "reading": "On the numbers retrieved MSFT is the most profitable of the named competitors: FY2026 operating margin 46.8% (155.2 of 331.8bn) and revenue growth 17.8%, against whole-company operating margins of 32.0% at Alphabet, 30.6% at Oracle and 11.2% at Amazon (whole companies, not the competing segments). Breadth is its advantage: Microsoft 365 (seats +6%, revenue per user up on Copilot and E5) plus Azure plus the 24% OpenAI stake. Weak spots: Windows OEM and Devices -22% and Xbox content -2% in Q1 FY2027.",
+   "evidence_ids": [
+    "pf_operating_income_fy2026",
+    "pf_revenue_fy2026",
+    "fd_sec_amzn",
+    "fd_sec_googl",
+    "fd_sec_orcl",
+    "pf_10k_20260729",
+    "dc_kpi_windows_oem_growth",
+    "dc_kpi_xbox_content_growth",
+    "dc_openai_stake"
+   ]
+  },
+  "threats": {
+   "reading": "1) Counterparty: OpenAI is 10.8% of Q1 FY2027 revenue ($10.0bn), owes $7.2bn, and the amended agreement (April 2026, press) lets it use other clouds. 2) Over-build: capex rose from $20.6bn (FY2021) to $115.9bn (FY2026) with $364.6bn of leases still to start; if AI demand or pricing disappoints, those are fixed costs (10-Q risk factor). 3) Substitution: customers may shift AI workloads to competing platforms, on-premises or local models (10-Q). 4) Regulation: competition authorities in the EU, UK, US and China; legal accruals $582m are small, while the IRS seeks $28.9bn plus penalties and interest on transfer pricing for 2004-2013 (10-Q).",
+   "evidence_ids": [
+    "dc_openai_rev_q1fy27",
+    "dc_openai_ar_q1fy27",
+    "dc_kpi_openai_share_rev",
+    "mc_tc_openai_rev_20261028",
+    "pf_capex_fy2021",
+    "pf_capex_fy2026",
+    "dc_leases_not_commenced_q1fy27",
+    "pf_10q_20261028"
+   ]
+  }
+ },
+ "assessments": {
+  "moat": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "pf_operating_income_fy2026",
+    "pf_revenue_fy2026",
+    "fd_sec_googl",
+    "fd_sec_orcl",
+    "fd_sec_amzn",
+    "pf_10k_20260729"
+   ],
+   "note": "Sources evidenced: an installed enterprise base (Microsoft 365 seats +6% in FY2026 with rising revenue per user) and scale in cloud. Operating margin 46.8% in FY2026 vs whole-company 32.0% Alphabet, 30.6% Oracle, 11.2% Amazon; ROIC 31% last year (average 34%) against an 8% cost-of-capital reference. Segment margins of the competitors not retrieved."
+  },
+  "switching_costs": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "dc_rpo_commercial_q1fy27",
+    "dc_rpo_duration_q1fy27",
+    "pf_10k_20260729"
+   ],
+   "note": "Commercial RPO $677bn with weighted duration 2.3 years: customers commit for years; Microsoft 365 seats still grew 6% in FY2026. No churn or net retention rate is disclosed."
+  },
+  "pricing_power": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "dc_kpi_m365c_growth",
+    "pf_10k_20260729",
+    "pf_10q_20261028"
+   ],
+   "note": "Microsoft 365 commercial cloud +17% in Q1 FY2027, driven by higher revenue per user (upsell to Copilot, E5 and E7) on top of 6% seat growth in FY2026. The 10-Q warns AI pricing must recover its costs and that competition affects pricing."
+  },
+  "customer_concentration": {
+   "assessment": "weak",
+   "evidence_ids": [
+    "dc_cust_openai",
+    "dc_openai_rev_q1fy27",
+    "dc_openai_ar_q1fy27",
+    "dc_cust_none10"
+   ],
+   "note": "OpenAI is 10.8% of Q1 FY2027 revenue with a $7.2bn receivable and is also a 24% equity-method investee; no other customer above 10% in FY2024-FY2026. OpenAI's share of RPO is not disclosed (gap)."
+  },
+  "market_size": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "dc_rpo_commercial_q1fy27",
+    "dc_kpi_azure_growth",
+    "dc_g_azure_q2fy27"
+   ],
+   "note": "MSFT's own contracted demand ($677bn commercial RPO, +73%) and Azure +48% accelerating to a guided +49-50%; no external market-size study retrieved."
+  },
+  "competition": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "fd_sec_amzn",
+    "fd_sec_googl",
+    "fd_sec_orcl",
+    "pf_10k_20260729",
+    "dc_kpi_windows_oem_growth"
+   ],
+   "note": "Intense competition in every market (10-K Item 1A); Amazon, Alphabet and Oracle are well-funded and adding AI capacity, and several AI model partners also compete. MSFT leads on margin but Windows OEM (-22%) and Xbox (-2%) are shrinking."
+  },
+  "substitutes": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "pf_10q_20261028"
+   ],
+   "note": "The 10-Q lists the shift of AI workloads to competing platforms, on-premises or local deployments as a risk; no measured loss yet (Azure +48%)."
+  },
+  "management": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "dc_g_rev_q1fy27",
+    "pf_rel_20261028_1",
+    "dc_g_azure_q1fy27",
+    "dc_kpi_azure_growth"
+   ],
+   "note": "Q1 FY2027 delivered above the company's own guidance: revenue $92.3bn vs guided $89.85-90.95bn, Azure +48% vs guided about +45% constant currency. One quarter checked; the multi-quarter track-record ratio was not computed (auto.json track_record null)."
+  },
+  "capital_allocation": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "pf_buybacks_fy2026",
+    "pf_sbc_fy2026",
+    "pf_shares_diluted_wavg_fy2021",
+    "dc_wavg_diluted_q1fy27",
+    "pf_capex_fy2026",
+    "pf_cfo_fy2026",
+    "pf_goodwill_fy2023",
+    "pf_goodwill_fy2024"
+   ],
+   "note": "Buybacks $22.3bn exceed SBC $12.4bn in FY2026; diluted shares fell from 7,608m (FY2021) to 7,446m. But capex $115.9bn took 63% of $182.9bn operating cash flow in FY2026, FCF margin fell from 33% (FY2021) to 20%, and incremental ROIC (23.6%) is below the average (34%). The Activision purchase (goodwill +$51bn in FY2024) has no evidenced return yet: Xbox content -2%."
+  },
+  "regulation": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "pf_10q_20261028",
+    "mc_pymnts_antitrust_20260929"
+   ],
+   "note": "Scrutiny by EU, UK, US and China competition authorities; accrued legal liabilities $582m with about $400m reasonably possible beyond it; partial dismissal of a ChatGPT-user antitrust suit. Larger item: IRS transfer-pricing claim of $28.9bn plus penalties and interest (2004-2013), which MSFT says its allowances cover."
+  },
+  "technology_ai": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "dc_kpi_azure_growth",
+    "dc_kpi_m365c_growth",
+    "dc_openai_stake",
+    "dc_kpi_copilot_large_seat_customers"
+   ],
+   "note": "Paid AI adoption is in the numbers: Azure +48% and Microsoft 365 revenue per user up on Copilot; 24% as-converted OpenAI stake. Dependence on third-party model partners who also compete is a stated risk."
+  },
+  "geopolitics": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "mc_rev_us_q1fy27",
+    "mc_rev_oth_q1fy27",
+    "pf_10k_20260729"
+   ],
+   "note": "US 53.6% of Q1 FY2027 revenue, no other country above 10%; AI export-control and tariff risks are named in the filings but not sized; Taiwan/China supply share not disclosed (gap)."
+  }
+ },
+ "gaps": [
+  "competing segment revenue (AWS, Google Cloud, OCI) and any attributed cloud share study not retrieved: share_trajectory stays a hypothesis",
+  "duration of the datacenter power/GPU shortage and who adds how much capacity: no regulator, industry or attributed study retrieved",
+  "customer retention / net revenue retention not disclosed; OpenAI share of the $677bn RPO not disclosed",
+  "management track record measured on one quarter only (auto.json track_record null)",
+  "DEF 14A not read: governance unknown",
+  "Activision acquisition return not measurable from the segment data (segments recast in FY2027)",
+  "outside view (warning only, sets nothing): mega-cap returns on capital historically fade toward the cost of capital; MSFT's incremental ROIC 23.6% vs 34% average is the company-specific sign to watch"
+ ]
+}

@@ -1,0 +1,359 @@
+{
+ "lane": "field",
+ "sources": [
+  {
+   "id": "fd_cf_amzn",
+   "kind": "structured_data",
+   "title": "Amazon.com, Inc. (competitor AMZN) SEC XBRL companyfacts, through the 10-Q filed 2026-07-31",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001018724.json",
+   "date": "2026-07-31",
+   "independent": true,
+   "publisher": "SEC EDGAR (Amazon.com filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_cf_msft",
+   "kind": "structured_data",
+   "title": "Microsoft Corporation (competitor MSFT) SEC XBRL companyfacts, through the 10-K filed 2026-07-29",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000789019.json",
+   "date": "2026-07-29",
+   "independent": true,
+   "publisher": "SEC EDGAR (Microsoft filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_cf_googl",
+   "kind": "structured_data",
+   "title": "Alphabet Inc. (competitor GOOGL) SEC XBRL companyfacts, through the 10-Q filed 2026-07-23",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001652044.json",
+   "date": "2026-07-23",
+   "independent": true,
+   "publisher": "SEC EDGAR (Alphabet filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_cf_crm",
+   "kind": "structured_data",
+   "title": "Salesforce, Inc. (competitor CRM) SEC XBRL companyfacts, through the 10-Q filed 2026-08-27",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001108524.json",
+   "date": "2026-08-27",
+   "independent": true,
+   "publisher": "SEC EDGAR (Salesforce filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_cf_wday",
+   "kind": "structured_data",
+   "title": "Workday, Inc. (competitor WDAY) SEC XBRL companyfacts, through the 10-Q filed 2026-08-27",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001327811.json",
+   "date": "2026-08-27",
+   "independent": true,
+   "publisher": "SEC EDGAR (Workday filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_cf_sap",
+   "kind": "structured_data",
+   "title": "SAP SE (competitor SAP) SEC XBRL companyfacts (IFRS, EUR), through the 20-F filed 2026-02-26",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001000184.json",
+   "date": "2026-02-26",
+   "independent": true,
+   "publisher": "SEC EDGAR (SAP filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_aws_q2_2026",
+   "kind": "press",
+   "title": "Amazon.com (competitor AMZN) Q2 2026 results: AWS segment revenue, operating income, backlog, 2026 capex (secondary coverage of the 2026-07-30 release)",
+   "url": "https://www.levelheadedinvesting.com/p/amazon-com-inc-amzn-q2-2026-results-same-strategy-opposite-reaction",
+   "date": "2026-07-30",
+   "independent": false,
+   "publisher": "secondary coverage (Levelheaded Investing, TheStreet, Tom Tunguz)",
+   "retrieval": "search_excerpt",
+   "syndicated_from": "fd_amzn_rel_q2_2026"
+  },
+  {
+   "id": "fd_gcloud_q2_2026",
+   "kind": "press",
+   "title": "Alphabet (competitor GOOGL) Q2 2026 results: Google Cloud revenue, operating income, backlog, capex (secondary coverage of the 2026-07-22 release)",
+   "url": "https://aa.com.tr/en/economy/alphabet-revenue-jumps-24-as-cloud-growth-accelerates-on-ai-demand/4006554",
+   "date": "2026-07-22",
+   "independent": false,
+   "publisher": "Anadolu Agency / Motley Fool coverage",
+   "retrieval": "search_excerpt",
+   "syndicated_from": "fd_googl_rel_q2_2026"
+  },
+  {
+   "id": "fd_msft_q4fy26",
+   "kind": "press",
+   "title": "Microsoft (competitor MSFT) fiscal Q4 2026 results: Azure growth, Intelligent Cloud revenue, FY26 capex (secondary coverage of the 2026-07-29 release)",
+   "url": "https://qz.com/microsoft-earnings-azure-100-billion-cloud-073026",
+   "date": "2026-07-29",
+   "independent": false,
+   "publisher": "Quartz / Constellation Research coverage",
+   "retrieval": "search_excerpt",
+   "syndicated_from": "fd_msft_rel_q4fy26"
+  },
+  {
+   "id": "fd_sap_q2_2026",
+   "kind": "release",
+   "title": "SAP SE (competitor SAP) Quarterly Statement Q2 2026 (6-K exhibit 99.1)",
+   "url": "https://www.sec.gov/Archives/edgar/data/0001000184/000110465926087251/tm2621275d1_ex99-1.htm",
+   "date": "2026-07-23",
+   "independent": true,
+   "publisher": "SAP SE",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_synergy_q2_2026",
+   "kind": "industry",
+   "title": "Synergy Research Group: Q2 Cloud Market Passes $143 Billion; Highest Growth Rate in Eight Years",
+   "url": "https://www.srgresearch.com/articles/q2-cloud-market-passes-143-billion-highest-growth-rate-in-eight-years",
+   "date": "2026-07-30",
+   "independent": true,
+   "publisher": "Synergy Research Group",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_iea_energy_ai",
+   "kind": "industry",
+   "title": "IEA special report Energy and AI (executive summary): data centre electricity demand to ~945 TWh by 2030",
+   "url": "https://www.iea.org/reports/energy-and-ai/executive-summary",
+   "date": "2025-04-10",
+   "independent": true,
+   "publisher": "International Energy Agency",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_amzn_rel_q2_2026",
+   "kind": "release",
+   "title": "Amazon.com (competitor AMZN) Q2 2026 earnings release (original of the press coverage used; not read directly)",
+   "url": "https://ir.aboutamazon.com/quarterly-results/default.aspx",
+   "date": "2026-07-30",
+   "independent": true,
+   "publisher": "Amazon.com, Inc.",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_googl_rel_q2_2026",
+   "kind": "release",
+   "title": "Alphabet (competitor GOOGL) Q2 2026 earnings release (original of the press coverage used; not read directly)",
+   "url": "https://abc.xyz/investor/",
+   "date": "2026-07-22",
+   "independent": true,
+   "publisher": "Alphabet Inc.",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_msft_rel_q4fy26",
+   "kind": "release",
+   "title": "Microsoft (competitor MSFT) FY26 Q4 earnings release (original of the press coverage used; not read directly)",
+   "url": "https://www.microsoft.com/en-us/investor/earnings/fy-2026-q4/press-release-webcast",
+   "date": "2026-07-29",
+   "independent": true,
+   "publisher": "Microsoft Corporation",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  }
+ ],
+ "competitors": [
+  {
+   "ticker": "AMZN",
+   "name": "Amazon.com, Inc. (AWS)",
+   "why": "Named in ORCL 10-K Item 1 Competition; AWS sells cloud infrastructure (compute, GPU capacity, database services) to the same enterprise and AI-lab buyers as OCI, ORCL's fastest-growing line",
+   "metrics": {
+    "revenue_growth_fy2025": 0.1238,
+    "gross_margin_fy2025": 0.5029,
+    "operating_margin_fy2025": 0.1116,
+    "revenue_growth_q2_2026": 0.1962,
+    "operating_margin_q2_2026": 0.1369,
+    "capex_fy2025_usd_bn": 131.8,
+    "aws_revenue_q2_2026_usd_bn": 42.2,
+    "aws_revenue_growth_q2_2026": 0.37,
+    "aws_operating_margin_q2_2026": 0.3934,
+    "aws_backlog_jun2026_usd_bn": 496,
+    "iaas_market_share_q2_2026": 0.28
+   },
+   "source_ids": [
+    "fd_cf_amzn",
+    "fd_aws_q2_2026",
+    "fd_synergy_q2_2026"
+   ]
+  },
+  {
+   "ticker": "MSFT",
+   "name": "Microsoft Corporation (Azure, Dynamics)",
+   "why": "Named in ORCL 10-K Item 1 Competition; Azure competes with OCI for AI training/inference capacity and enterprise IaaS; Dynamics and SQL Server compete with Fusion/NetSuite and Oracle Database",
+   "metrics": {
+    "revenue_growth_fy2026_jun": 0.1779,
+    "gross_margin_fy2026_jun": 0.6794,
+    "operating_margin_fy2026_jun": 0.4678,
+    "capex_fy2026_jun_usd_bn": 115.9,
+    "azure_growth_q4_fy2026": 0.43,
+    "intelligent_cloud_revenue_q4_fy2026_usd_bn": 39.3,
+    "intelligent_cloud_growth_q4_fy2026": 0.32,
+    "iaas_market_share_q2_2026": 0.2
+   },
+   "source_ids": [
+    "fd_cf_msft",
+    "fd_msft_q4fy26",
+    "fd_synergy_q2_2026"
+   ]
+  },
+  {
+   "ticker": "GOOGL",
+   "name": "Alphabet Inc. (Google Cloud)",
+   "why": "Named in ORCL 10-K Item 1 Competition; Google Cloud (GCP) competes with OCI for AI and enterprise infrastructure workloads from the same buyers",
+   "metrics": {
+    "revenue_growth_fy2025": 0.1509,
+    "gross_margin_fy2025": 0.5965,
+    "operating_margin_fy2025": 0.3203,
+    "revenue_growth_q2_2026": 0.2423,
+    "operating_margin_q2_2026": 0.3403,
+    "capex_fy2025_usd_bn": 91.4,
+    "google_cloud_revenue_q2_2026_usd_bn": 24.8,
+    "google_cloud_growth_q2_2026": 0.82,
+    "google_cloud_operating_margin_q2_2026": 0.3548,
+    "google_cloud_backlog_jun2026_usd_bn": 514,
+    "iaas_market_share_q2_2026": 0.15
+   },
+   "source_ids": [
+    "fd_cf_googl",
+    "fd_gcloud_q2_2026",
+    "fd_synergy_q2_2026"
+   ]
+  },
+  {
+   "ticker": "SAP",
+   "name": "SAP SE",
+   "why": "Named in ORCL 10-K Item 1 Competition; SAP Cloud ERP (S/4HANA Cloud) competes with Oracle Fusion Cloud ERP and NetSuite for the same enterprise ERP buyers (ORCL SaaS line)",
+   "metrics": {
+    "revenue_growth_fy2025_eur": 0.0768,
+    "gross_margin_fy2025": 0.7286,
+    "operating_margin_fy2025_ifrs": 0.2613,
+    "cloud_revenue_growth_q2_2026": 0.22,
+    "cloud_erp_suite_growth_q2_2026": 0.25,
+    "current_cloud_backlog_q2_2026_eur_bn": 22.9,
+    "current_cloud_backlog_growth_q2_2026": 0.27
+   },
+   "source_ids": [
+    "fd_cf_sap",
+    "fd_sap_q2_2026"
+   ]
+  },
+  {
+   "ticker": "CRM",
+   "name": "Salesforce, Inc.",
+   "why": "Named in ORCL 10-K Item 1 Competition; competes with Oracle Fusion Cloud CX for CRM / customer-experience buyers (ORCL SaaS line)",
+   "metrics": {
+    "revenue_growth_fy2026_jan": 0.0958,
+    "gross_margin_fy2026_jan": 0.7768,
+    "operating_margin_fy2026_jan": 0.2006,
+    "revenue_growth_q_jul2026": 0.1083,
+    "operating_margin_q_jul2026": 0.2055
+   },
+   "source_ids": [
+    "fd_cf_crm"
+   ]
+  },
+  {
+   "ticker": "WDAY",
+   "name": "Workday, Inc.",
+   "why": "Named in ORCL 10-K Item 1 Competition; competes with Oracle Fusion Cloud HCM and Fusion ERP (finance) for the same enterprise buyers (ORCL SaaS line)",
+   "metrics": {
+    "revenue_growth_fy2026_jan": 0.1309,
+    "operating_margin_fy2026_jan": 0.0755,
+    "revenue_growth_q_jul2026": 0.1282,
+    "operating_margin_q_jul2026": 0.1182
+   },
+   "source_ids": [
+    "fd_cf_wday"
+   ]
+  }
+ ],
+ "bottlenecks": [
+  {
+   "id": "fd_b_ai_capacity",
+   "reading": "ORCL supplies scarce AI training/inference compute capacity (GPU clusters with power and data-center space). Management says AI cloud demand 'continues to grow faster than supply' (Q3 FY26 and Q1 FY27 releases); RPO reached $664B at 2026-08-31 (up $209B y/y; >$30B of AI contracts booked in Q1 FY27), of which ~13% is expected as revenue in 12 months, 37% in months 13-36 and 34% in months 37-60, so the contracted demand runs at least five years. Paid adoption in ORCL's own numbers: IaaS revenue $3.3B (Q1 FY26, +55%) -> $4.1B (Q2, +68%) -> $4.9B (Q3, +84%) -> $5.8B (Q4, +93%) -> $7.4B (Q1 FY27, +121%).",
+   "evidence_ids": [
+    "pf_rel_20260910_1",
+    "pf_rel_20260310_1",
+    "pf_rel_20260610_1",
+    "pf_rel_20251210_1",
+    "pf_rel_20250909_1",
+    "pf_10q_20260911"
+   ]
+  },
+  {
+   "id": "fd_b_power_sites",
+   "reading": "ORCL's own binding constraint is not demand but delivery: its 10-K risk factors name access to permitted build sites, reliable power, networking hardware, GPUs and memory, and third-party data-center developers' financing and construction as limits on the expansion plan; Q1 FY27 delivered 850MW of additional capacity and >300,000 GPUs. Globally the IEA projects data-centre electricity use roughly doubling from ~415 TWh (2024) to ~945 TWh (2030), with AI-optimised data-centre demand more than quadrupling and the US the largest share, so power is the scarce input for every provider through at least 2030.",
+   "evidence_ids": [
+    "pf_10k_20260622",
+    "pf_rel_20260910_1",
+    "fd_iea_energy_ai"
+   ]
+  },
+  {
+   "id": "fd_b_capacity_adders",
+   "reading": "Who adds capacity: the three hyperscalers ORCL names as competitors are spending far more than ORCL on the same scarce input: AWS ~$220B 2026 capex guidance (FY2025 $131.8B), Alphabet $195-205B 2026 guidance (FY2025 $91.4B), Microsoft FY2026 capex $115.9B; ORCL FY2026 capex $55.7B and Q1 FY27 $28.5B (with FY27 guided higher than FY26). AWS says the bulk of its 2027 capacity is already reserved; AWS backlog $496B and Google Cloud backlog $514B at June 2026 are of the same order as ORCL's $664B RPO (different definitions: ORCL RPO is company-wide).",
+   "evidence_ids": [
+    "fd_aws_q2_2026",
+    "fd_gcloud_q2_2026",
+    "fd_msft_q4fy26",
+    "fd_cf_amzn",
+    "fd_cf_googl",
+    "fd_cf_msft",
+    "pf_10k_20260622",
+    "pf_10q_20260911"
+   ]
+  },
+  {
+   "id": "fd_b_funding_structure",
+   "reading": "The bottleneck is financed partly by customers and shareholders: most Q3/Q4 FY26 RPO additions were AI contracts where the customer prepaid for GPUs or supplied them; Q1 FY27 brought $11.4B of customer prepayments with a significant financing component, a $20B ATM equity sale (141M shares) and, earlier, $5B mandatory convertible preferred; FCF was -$5B in Q1 FY27. The 10-K warns that data-center leases do not align in term and pricing with customer contracts, so a customer that fails to perform leaves ORCL with multi-year commitments.",
+   "evidence_ids": [
+    "pf_rel_20260610_1",
+    "pf_rel_20260310_1",
+    "pf_rel_20260910_1",
+    "pf_10q_20260911",
+    "pf_10k_20260622"
+   ]
+  },
+  {
+   "id": "fd_b_shortage_duration",
+   "reading": "How long the shortage lasts: hypothesis that AI compute stays supply-constrained through ORCL FY2028, resting on (a) all four providers reporting backlog far above 12-month revenue, (b) power additions needing multi-year permitting and build, and (c) the IEA path to 2030; the risk to it is that hyperscaler capex of >$500B a year combined closes the gap sooner and shifts pricing power to buyers.",
+   "hypothesis": true
+  }
+ ],
+ "notes": [
+  "fd NAMED COMPETITORS (10-K Item 1, pf_10k_20260622): Adobe, Alphabet, Amazon, Cisco, Intel, IBM, Microsoft, Salesforce, SAP, plus Hewlett-Packard Enterprise and Workday; healthcare IT after Cerner: Allscripts, Arcadia, athenahealth, Epic, InterSystems. The 10-K names them for the company as a whole, not per segment; the mapping used here (OCI vs AWS/Azure/Google Cloud; Fusion/NetSuite SaaS vs SAP/Workday/Salesforce) is this lane's reading of the product lines described in Item 1. Adobe, Cisco, Intel, IBM and HPE were not given numbers: they compete in smaller ORCL lines (hardware, marketing apps, services).",
+  "fd SHARE IaaS: ORCL IaaS $7.4B in Jun-Aug 2026 (+121% y/y, ~$29.6B annualised; pf_rel_20260910_1) vs AWS $42.2B Apr-Jun 2026 (+37%, $169B run rate; fd_aws_q2_2026), Google Cloud $24.8B (+82%, includes Workspace; fd_gcloud_q2_2026), Azure +43% (fd_msft_q4fy26). ORCL grows ~3x faster than AWS from a base ~1/6 its size, so ORCL is gaining IaaS share on these numbers; Synergy (fd_synergy_q2_2026) gives AWS 28% (down ~2 pts y/y), Microsoft 20% (flat), Google 15% (up ~2 pts) of a $143B quarter (+43% y/y) and places Oracle in an unquantified 'tier two' with CoreWeave, Nebius and others. Periods are offset by two months (ORCL fiscal quarter ends Aug 31).",
+  "fd SHARE SaaS: ORCL Cloud Apps (SaaS) $4.2B in Q1 FY27, +10% (pf_rel_20260910_1), vs SAP cloud revenue +22% and Cloud ERP Suite +25% in Q2 2026 (fd_sap_q2_2026), Workday total revenue +12.8% and Salesforce +10.8% in the quarter to July 2026 (fd_cf_wday, fd_cf_crm). On these numbers ORCL's applications line is not gaining share against SAP in cloud ERP and roughly holds pace with Salesforce and trails Workday; cloud applications fell from 58% to 47% of ORCL cloud revenue in FY2026 (pf_10k_20260622).",
+  "fd MARGIN CONTEXT: AWS segment operating margin ~39% and Google Cloud ~35.5% in Q2 2026 are the named competitors' own numbers for scaled AI/IaaS businesses; ORCL does not disclose an IaaS-only operating margin, so whether OCI reaches similar margins at scale is an open lever (gap), not a number this lane can fill from competitors.",
+  "fd BACKLOG DEFINITIONS: ORCL RPO $664B (2026-08-31, company-wide incl. support and SaaS; pf_10q_20260911) vs AWS backlog $496B and Google Cloud backlog $514B (June 2026, search excerpts). Not like-for-like; do not rank them as share."
+ ],
+ "gaps": [
+  "Forward P/E and growth of each competitor: FMP quote batch was ACCESS DENIED on this plan (recorded once, not retried); no Alpha Vantage per rules. The valuation stages need competitor forward multiples from another source or keep this a gap.",
+  "Competitor cloud-segment figures (AWS, Google Cloud, Azure, SAP cloud) are search excerpts of the companies' releases, not the primary documents read; the totals (revenue, margins, capex) are from SEC companyfacts.",
+  "No attributed share figure for Oracle in IaaS (Synergy lists it only as tier two); no attributed share for cloud ERP/HCM/CRM.",
+  "ORCL IaaS segment operating margin is not disclosed; competitor margins cannot substitute for it.",
+  "Competitors' calendar Q3 2026 results (late October 2026) are not citable before as_of + lag and were not used.",
+  "Healthcare IT competitors (Epic, InterSystems private; others) not quantified; ORCL Health is a small line.",
+  "Not-named AI-cloud rivals (CoreWeave, Nebius, Crusoe) that Synergy groups with Oracle were not added as competitors: no numbers gathered and the 10-K does not name them."
+ ],
+ "stopped": [
+  "FMP quote for competitor multiples: ACCESS DENIED, stopped after one probe.",
+  "Primary competitor releases (AWS, Google, Microsoft segment tables) not fetched: search excerpts agree across several outlets and the next retrieval would not change the bottleneck or share reading.",
+  "Adobe, Cisco, Intel, IBM, HPE numbers: they compete in minor ORCL lines; would not change the decision."
+ ]
+}

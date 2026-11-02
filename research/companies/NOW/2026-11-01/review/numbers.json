@@ -1,0 +1,47 @@
+{
+ "lens": "numbers",
+ "findings": [
+  {
+   "severity": "major",
+   "finding": "The engine's split adjustment uses the wrong factor. analysis.share_count_cagr_3y divides the FY2024->FY2025 step by 25 instead of 5 (excluded_split_pairs factor 25.0, applied true, 'restated for splits x25'). It reports a share count CAGR of -40.9%/yr and a net change after buybacks of -79%. The real change is (1,047.3 / (206.5 x 5))^(1/3) - 1 = about +0.5 to +1%/yr, a slight net dilution, with buybacks covering 58% of SBC. The wrong figure does NOT reach the valuation: shares are fixed at the point-in-time 1,038M from the 10-Q cover, incremental_dilutive_shares is 0 and dilution is not modelled. It does reach the quality and funding reading: the card signals per_share and share_count are rated 'strong (-40.9%)', the critical funding question answer says 'share count changed -40.9% a year', the moat proxy note repeats it, redteam share_path_vs_history compares against -40.9%, and report.md diluted_wavg_share_cagr_3y shows -41.0%. The table's quality row ('איכות העסק: סבירה') may therefore be rated one notch too high on these two signals.",
+   "where": "companies/NOW/out/casefile.json an.metrics.share_count_cagr_3y / diluted_wavg_share_cagr_3y (excluded_split_pairs[0].factor 25), card.funding.data.share_count_cagr_3y, card signals per_share and share_count, redteam check share_path_vs_history; out/report.md line ~402",
+   "fix": "Repair cannot edit engine code. In delivery, state next to the result that the share history is about +1%/yr net dilution (split-adjusted x5), not -41%, and that the quality signals per_share and share_count should read 'adequate'. Log an engine bug: the dataqa split resolution and the FactBook split rule both apply the 5-for-1 split, so the factor compounds to 25. Separately, the main loop's concern holds for the valuation: the pre-2025 EPS and share facts did not reach it. The own P/E history was split-adjusted by the numbers lane (Dec-2022 243 = 77.65/0.32), and the forecast uses 1,038M post-split shares."
+  },
+  {
+   "severity": "major",
+   "finding": "The year-1 jumps in the yearly table are not a path error. Each scenario's value today is already far from the 105.34 quote: DCF bear 49.6, base 156.2, bull 271.5; company_path year 0 is 52.1 / 149.2 / 277.0. Year 1 is about year 0 x (1 + Ke = 9.7%): bear 59.9, base 164.4, bull 304.1. The table starts at year 1, so the whole move from the quote to the model value appears as a one-year price change (bear -43%, base +56%, bull +189%), labelled per year. The bear's low level is mostly engine rules, not company data. (a) The bear multiple uses ROIC 15% on GAAP operating income after amortization of acquired intangibles (about 5% of revenue) and after SBC. The bear's EPS growth of 35%/yr in 2027-2029 comes from GAAP margin recovery (9.7% -> 20%), but the economics formula charges it as reinvestment, D = E - dE/ROIC. That gives negative distributions (-2.69/share in FY2027), i.e. implied capital raising that the flat share count does not model. (b) The DCF bear's terminal sales-to-capital is 0.54: capital per revenue rises from 0.64 to 1.85. The company's own history is 1.41 (3y) to 1.95 (5y), capex is about 3% of revenue, and terminal ROIC is set by engine rule near the cost of equity (driver_gaps sales_to_capital bear/bull CONST, terminal_roic XSEC). These gaps are listed in the table's gaps row but not tied to the bear number.",
+   "where": "companies/NOW/out/table_he.md yearly table rows; casefile company_path.scenarios.<s>.economics.values[0..1] and fiscal_years[].distribution; val.result.annual_values[0]; fc.anchors.sales_to_capital.terminal.bear 0.54; fc.driver_gaps",
+   "fix": "In delivery, say next to the yearly table that year 1 carries the full gap between today's price and each scenario's value today (bear about 50, base 156, bull 272), so it is not a one-year forecast. Say that the bear level rests on engine rules for terminal ROIC and sales-to-capital, not on NOW data. Optional repair: an evidenced own_history sales_to_capital override for bear/bull from the 1.41-1.95 history and capex about 3% of revenue (dc_g_fy_capex_pct, pf_capex_fy2025)."
+  },
+  {
+   "severity": "major",
+   "finding": "The base ROIC of 0.30 (multiple_from economics) is set above what its own cited evidence computes. The reason computes about 20% (after-tax operating income +1.16bn against capital +5.9bn, 2022-2025). It then says the acquisitions of about 11bn dilute returns, and still concludes 'therefore about 30% combined'. Dilution argues below 20%, not above. The engine's own incremental ROIC (3y) is 26.2%. The ROIC sets the base yearly multiples (71.7x today -> 29.0x in year 5 on GAAP EPS), so the base year-1 to year-5 prices (164 -> 238) depend on it. The DCF fair value 156 does not use it (it uses the engine's terminal ROIC of 27.3%).",
+   "where": "evidence_pack.json company_path.scenarios.base.roic (0.3) and reason_he; casefile company_path.scenarios.base.economics",
+   "fix": "Set the base ROIC to what the evidence supports (about 0.20-0.26, citing the 20% computation or the engine's 26.2% incremental ROIC), or give evidence for the uplift (e.g. a capital base excluding the 2023 tax-asset release and SBC-inflated equity, with numbers). Rerun ticker-value."
+  },
+  {
+   "severity": "major",
+   "finding": "The guidance track record did not reach the engine: evidence_pack guidance_track_record is null. track_record() keeps only rows with metric 'revenue', and every row is 'subscription_revenue' or 'subscription_revenues'. The 13 rows are also a duplicated track (7 in USD from documents, 6 in USD millions from numbers). The duplicate rows did not distort any number, because none was used: the fiscal year in progress (fc.anchors.current_fiscal_year 16.22bn, kind 'model') is year-to-date extrapolation, there is no drivers.current_year_revenue, and the growth_anchor tier is contracted/own_history, not guidance. The result is consistent with the guide: FY2026 subscription guide 15.78-15.79bn plus about 0.45bn professional services. But the beat record (7 of 7 beats, mean about 1.012) that the base scenario text relies on ('slightly above guidance as in all seven quarters') is not recorded by the engine.",
+   "where": "evidence_pack.json guidance_track (13 rows: subscription_revenue x7 USD, subscription_revenues x6 USD millions); casefile evidence_pack.guidance_track_record null",
+   "fix": "Keep the 7 USD rows from documents, delete the 6 USD-million rows from numbers, and relabel metric 'revenue' with a note that the track is subscription revenue (about 97% of revenue). Rerun so the track record (about 1.012, n=7) is recorded. Optionally add drivers.current_year_revenue (tier guidance, dc_g_fy_sub_rev plus services) instead of the model extrapolation."
+  },
+  {
+   "severity": "major",
+   "finding": "The base and bull growth_anchor (FY2027 19% / 22%) is built on cRPO growth of 21% cc. That rate includes acquired backlog: Armis closed 2026-04-20 and Moveworks 2025-12-15, so FY2027 still includes about four months of inorganic Armis contribution. The pack notes say no organic cRPO is disclosed, and the engine warns anchor_includes_acquired_revenue and acquired_growth (23.6% of revenue in acquisitions over 3y). The bear deviation states this, but the base reason treats 18.5% + 50 bp as organic-equivalent.",
+   "where": "evidence_pack.json drivers.growth_anchor (base 0.19, bull 0.22); fc.warnings anchor_includes_acquired_revenue",
+   "fix": "State next to the result that the base anchor includes acquired growth whose size is undisclosed (a visible gap). Optionally move base toward the organic step-down evidence, or add the acquired ARR if a source gives it."
+  },
+  {
+   "severity": "minor",
+   "finding": "The stub (Nov-Dec 2026) uses the TTM GAAP operating margin of 9.7%, while the Q4 2026 GAAP margin guide is 12% (dc_g_q4_opm_gaap). The effect is small (0.16 year).",
+   "where": "casefile company_path.fiscal_years.<s>[0].operating_margin 0.0968",
+   "fix": "Note only, or anchor the stub margin on the Q4 guide."
+  },
+  {
+   "severity": "minor",
+   "finding": "Table checks passed against the casefile: price 105.34 (IB snapshot, last print of 2026-10-30), fair value 156.24, discount 33%, year-5 changes -15% / +125% / +312%, yearly rows equal to company_path economics values, value.json ran true with all stages ok, point-in-time shares 1,038M (10-Q cover). The key-risk numbers check out against the 2026-10-28 release, which is citable from 2026-10-30: cRPO guide 18.5% cc, GAAP margin 9.5%, SBC 633/4,106 = 15.4%.",
+   "where": "companies/NOW/out/table_he.md; value.json",
+   "fix": "None."
+  }
+ ]
+}

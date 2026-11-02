@@ -1,0 +1,79 @@
+{
+  "trigger": "review",
+  "as_of": "2026-10-28",
+  "results_day": true,
+  "lag_days_env": "FE_LAG_DAYS=0",
+  "findings": [
+    {
+      "id": "ct1",
+      "fixed": true,
+      "changed": "position.json drivers.sales_to_capital.base 0.52 -> 0.43, so the base capex is now 249.9bn in FY2027 (maintenance 31.4 + growth 218.5), about +25% on the 200bn FY2026 midpoint, in line with 'increase significantly in 2027'. Before, it was 211.5bn. FY2028 capex is 249.5bn, FY2029 245.1bn. drivers['terminal.roic'] base 0.31 -> 0.20 and bull 0.34 -> 0.29, the incremental return on new capital, the same reading as company_path (company_first cf1). Effect: base fair value today 367.41 -> 301.01 against the 291.96 quote (cheap by about 3%, no longer 21%); bear 148.89 -> 139.21; bull 737.59 -> 666.84. The verdict is now quality_but_expensive (base IRR 9.81% < the 10.45% hurdle).",
+      "still_open": "The engine stresses capex +25%, cash costs +15% and prices -20% still return funding_blocked from 2026-12-31 in base and bear (bull from 2027-12-31). The engine's funding model ('assumed' financing: new money at risk-free + 3%, capped at 3x EBITDA) cannot enter the ATM (27.6bn left) or further notes as committed funding from the pack. That needs an engine route, not evidence, so this part stays open."
+    },
+    {
+      "id": "ct3",
+      "fixed": true,
+      "changed": "gather/repair.json now has factbook rows from the 2026-09-30 release balance sheet (pf_rel_20261028_1): cash 56.334bn, marketable securities 208.764bn, non-marketable 135.230bn, long-term debt 125.102bn, shares outstanding 12.294bn, deferred revenue 9.429bn, plus equity, assets and liabilities. The case now opens on 2026-09-30: debt 144.352bn (125.102bn + the 19.25bn preferred at liquidation preference), shares 12.294bn, investments 343.994bn, cash 56.334bn. The Q3 notes, the ATM and the Q3 marks are therefore in the opening balance. drivers.interest_rate all = 0.035 (own_history: Q3 interest 0.967bn annualised on average debt of about 112.6bn) replaces the 1% coupon: the forecast interest is now about 5.0bn a year (was about 1.2bn).",
+      "still_open": "(a) The engine's 'claims' assumption text still says 'No preferred stock ... recorded', and its 'debt_interest' text still says 1.00%. Both are fixed engine boilerplate; the numbers use the preferred as a 19.25bn claim and a 3.5% rate. (b) The preferred is charged at 3.5% inside debt, not 6.25%: preferred dividends are about 1.2bn a year vs about 0.67bn charged, so EPS is about 0.5bn a year (about 0.04 per share) too high. (c) The 2026-09-30 -> 2026-10-28 bridge has no events, and none are known. (d) Current maturities of debt at 9/30 are not split out in the release; this waits on the 10-Q. (e) No capital_bridge package and no redteam_audit run: debt_complete is satisfied by hand (opening debt = 9/30 long-term debt + preferred), not by the red-team module."
+    }
+  ],
+  "fixed": [
+    "ct1: base sales_to_capital 0.52 -> 0.43 (2027 capex 249.9bn, +25% on the 200bn guide midpoint) and terminal ROIC base 0.31 -> 0.20, bull 0.34 -> 0.29 (position.json). Base value 367.41 -> 301.01 vs 291.96 (+3%, was +26%).",
+    "ct3: case re-opened on the 2026-09-30 balance (gather/repair.json factbook rows from pf_rel_20261028_1): debt 144.35bn incl. the 19.25bn preferred, 12.294bn shares, investments 343.99bn, cash 56.33bn; interest_rate 3.5% (position.json)."
+  ],
+  "open": [
+    "ct1: stresses capex+25%, cash costs+15% and prices-20% still funding_blocked from 2026-12-31 (base/bear). The engine's funding model cannot take the ATM or notes as committed funding.",
+    "ct3: the engine 'claims' and 'debt_interest' texts are stale boilerplate. The preferred is charged at 3.5%, not 6.25% (about 0.5bn a year). There is no capital_bridge package and no redteam_audit run. Current maturities at 9/30 wait on the 10-Q.",
+    "company_first cf2 (growth_anchor source tier labelled 'contracted' for Services and bull) and cf3 were not in this repair's list; they stay as the reviewer wrote them."
+  ],
+  "ran": true,
+  "engine_index_line": "generic market assumption: no calibration file of engine 0.14.0 dated on or before 2026-10-28 within 92 days",
+  "review_status": "unreviewed_draft",
+  "verdict_status": "quality_but_expensive (base IRR 9.81% < required 10.45%); draft, UNVERIFIED",
+  "price": 291.96,
+  "value_today": {
+    "bear": 139.21,
+    "base": 301.01,
+    "bull": 666.84,
+    "base_gap_vs_quote": 0.031
+  },
+  "yearly_table": {
+    "year1_2027_10": {
+      "bear": 171,
+      "base": 345,
+      "bull": 716
+    },
+    "year2_2028_10": {
+      "bear": 175,
+      "base": 373,
+      "bull": 781
+    },
+    "year3_2029_10": {
+      "bear": 179,
+      "base": 401,
+      "bull": 850
+    },
+    "year4_2030_10": {
+      "bear": 189,
+      "base": 430,
+      "bull": 922
+    },
+    "year5_2031_10": {
+      "bear": 199,
+      "base": 460,
+      "bull": 995
+    }
+  },
+  "failed_stages": [],
+  "gaps_row": "קצב האטת הצמיחה, תגמול העובדים במניות, תוספת הסיכון בשיעור ההיוון, קצב ההגעה לרווחיות הבוגרת, כרית המזומנים המינימלית, אורך תקופת התחזית",
+  "casefile": "/home/user/fundamental-engine/runs/tickers/GOOGL_2026-10-28/companies/GOOGL/out/casefile.json",
+  "changed_files": [
+    "runs/tickers/GOOGL_2026-10-28/position.json",
+    "runs/tickers/GOOGL_2026-10-28/gather/repair.json",
+    "runs/tickers/GOOGL_2026-10-28/evidence_pack.json",
+    "runs/tickers/GOOGL_2026-10-28/companies/GOOGL/inputs.json",
+    "runs/tickers/GOOGL_2026-10-28/companies/GOOGL/evidence_bundle.json",
+    "runs/tickers/GOOGL_2026-10-28/companies/GOOGL/out/*"
+  ],
+  "notes": "Results-day run (FE_LAG_DAYS=0): the Q3 2026 release of 2026-10-28 was cited on its own date. deep ran with --country-risk (engine_options). All stages ok. Backups of the pre-repair files: /tmp/claude-0/-home-user/3d8b7c18-0191-53bf-8156-d4cdcae7ee35/scratchpad/position_before.json and repair_frag_before.json."
+}

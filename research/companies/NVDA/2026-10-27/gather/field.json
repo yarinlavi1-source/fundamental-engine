@@ -1,0 +1,712 @@
+{
+ "lane": "field",
+ "sources": [
+  {
+   "id": "fd_s_cf_amd",
+   "kind": "structured_data",
+   "title": "Advanced Micro Devices XBRL companyfacts (issuer-tagged 10-Q/10-K data; facts filed on or before 2026-10-23 only; latest period 2026-06-27, 10-Q accession 0000002488-26-000123)",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000002488.json",
+   "date": "2026-08-05",
+   "independent": true,
+   "publisher": "SEC EDGAR (XBRL submitted by Advanced Micro Devices)",
+   "retrieval": "provider_normalized"
+  },
+  {
+   "id": "fd_s_cf_amzn",
+   "kind": "structured_data",
+   "title": "Amazon XBRL companyfacts (issuer-tagged 10-Q/10-K data; facts filed on or before 2026-10-23 only; latest period 2026-06-30, 10-Q accession 0001018724-26-000026)",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001018724.json",
+   "date": "2026-07-31",
+   "independent": true,
+   "publisher": "SEC EDGAR (XBRL submitted by Amazon)",
+   "retrieval": "provider_normalized"
+  },
+  {
+   "id": "fd_s_cf_anet",
+   "kind": "structured_data",
+   "title": "Arista Networks XBRL companyfacts (issuer-tagged 10-Q/10-K data; facts filed on or before 2026-10-23 only; latest period 2026-06-30, 10-Q accession 0001596532-26-000175)",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001596532.json",
+   "date": "2026-08-05",
+   "independent": true,
+   "publisher": "SEC EDGAR (XBRL submitted by Arista Networks)",
+   "retrieval": "provider_normalized"
+  },
+  {
+   "id": "fd_s_cf_avgo",
+   "kind": "structured_data",
+   "title": "Broadcom XBRL companyfacts (issuer-tagged 10-Q/10-K data; facts filed on or before 2026-10-23 only; latest period 2026-08-02, 10-Q accession 0001730168-26-000080)",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001730168.json",
+   "date": "2026-09-10",
+   "independent": true,
+   "publisher": "SEC EDGAR (XBRL submitted by Broadcom)",
+   "retrieval": "provider_normalized"
+  },
+  {
+   "id": "fd_s_cf_csco",
+   "kind": "structured_data",
+   "title": "Cisco Systems XBRL companyfacts (issuer-tagged 10-Q/10-K data; facts filed on or before 2026-10-23 only; latest period 2026-07-25, 10-K accession 0000858877-26-000132)",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000858877.json",
+   "date": "2026-09-02",
+   "independent": true,
+   "publisher": "SEC EDGAR (XBRL submitted by Cisco Systems)",
+   "retrieval": "provider_normalized"
+  },
+  {
+   "id": "fd_s_cf_googl",
+   "kind": "structured_data",
+   "title": "Alphabet XBRL companyfacts (issuer-tagged 10-Q/10-K data; facts filed on or before 2026-10-23 only; latest period 2026-06-30, 10-Q accession 0001652044-26-000071)",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001652044.json",
+   "date": "2026-07-23",
+   "independent": true,
+   "publisher": "SEC EDGAR (XBRL submitted by Alphabet)",
+   "retrieval": "provider_normalized"
+  },
+  {
+   "id": "fd_s_cf_intc",
+   "kind": "structured_data",
+   "title": "Intel XBRL companyfacts (issuer-tagged 10-Q/10-K data; facts filed on or before 2026-10-23 only; latest period 2026-06-27, 10-Q accession 0000050863-26-000157)",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000050863.json",
+   "date": "2026-07-24",
+   "independent": true,
+   "publisher": "SEC EDGAR (XBRL submitted by Intel)",
+   "retrieval": "provider_normalized"
+  },
+  {
+   "id": "fd_s_cf_meta",
+   "kind": "structured_data",
+   "title": "Meta Platforms XBRL companyfacts (issuer-tagged 10-Q/10-K data; facts filed on or before 2026-10-23 only; latest period 2026-09-30, 10-Q accession 0001628280-26-066773)",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001326801.json",
+   "date": "2026-10-22",
+   "independent": true,
+   "publisher": "SEC EDGAR (XBRL submitted by Meta Platforms)",
+   "retrieval": "provider_normalized"
+  },
+  {
+   "id": "fd_s_cf_mrvl",
+   "kind": "structured_data",
+   "title": "Marvell Technology XBRL companyfacts (issuer-tagged 10-Q/10-K data; facts filed on or before 2026-10-23 only; latest period 2026-08-01, 10-Q accession 0001835632-26-000025)",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001835632.json",
+   "date": "2026-08-28",
+   "independent": true,
+   "publisher": "SEC EDGAR (XBRL submitted by Marvell Technology)",
+   "retrieval": "provider_normalized"
+  },
+  {
+   "id": "fd_s_cf_msft",
+   "kind": "structured_data",
+   "title": "Microsoft XBRL companyfacts (issuer-tagged 10-Q/10-K data; facts filed on or before 2026-10-23 only; latest period 2026-06-30, 10-K accession 0001193125-26-323660)",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000789019.json",
+   "date": "2026-07-29",
+   "independent": true,
+   "publisher": "SEC EDGAR (XBRL submitted by Microsoft)",
+   "retrieval": "provider_normalized"
+  },
+  {
+   "id": "fd_s_cf_orcl",
+   "kind": "structured_data",
+   "title": "Oracle XBRL companyfacts (issuer-tagged 10-Q/10-K data; facts filed on or before 2026-10-23 only; latest period 2026-08-31, 10-Q accession 0001193125-26-389274)",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001341439.json",
+   "date": "2026-09-11",
+   "independent": true,
+   "publisher": "SEC EDGAR (XBRL submitted by Oracle)",
+   "retrieval": "provider_normalized"
+  },
+  {
+   "id": "fd_s_cf_qcom",
+   "kind": "structured_data",
+   "title": "Qualcomm XBRL companyfacts (issuer-tagged 10-Q/10-K data; facts filed on or before 2026-10-23 only; latest period 2026-06-28, 10-Q accession 0000804328-26-000086)",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000804328.json",
+   "date": "2026-07-29",
+   "independent": true,
+   "publisher": "SEC EDGAR (XBRL submitted by Qualcomm)",
+   "retrieval": "provider_normalized"
+  },
+  {
+   "id": "fd_s_avgo_pr_q3fy26",
+   "kind": "release",
+   "title": "Broadcom Q3 FY2026 results press release (8-K ex. 99, quarter ended 2026-08-02)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000076/avgo-08022026x8kxex99.htm",
+   "date": "2026-09-02",
+   "independent": true,
+   "publisher": "Broadcom Inc. (SEC EDGAR)",
+   "retrieval": "primary_document"
+  },
+  {
+   "id": "fd_s_amd_pr_q2_2026",
+   "kind": "release",
+   "title": "AMD Q2 2026 results press release (8-K ex. 99.1, quarter ended 2026-06-27)",
+   "url": "https://www.sec.gov/Archives/edgar/data/2488/000000248826000121/q22026991.htm",
+   "date": "2026-08-04",
+   "independent": true,
+   "publisher": "Advanced Micro Devices (SEC EDGAR)",
+   "retrieval": "primary_document"
+  },
+  {
+   "id": "fd_s_mrvl_pr_q2fy27",
+   "kind": "release",
+   "title": "Marvell Q2 FY2027 results press release (8-K ex. 99.1, quarter ended 2026-08-01)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1835632/000183563226000022/q227_8kx812026ex-991.htm",
+   "date": "2026-08-27",
+   "independent": true,
+   "publisher": "Marvell Technology (SEC EDGAR)",
+   "retrieval": "primary_document"
+  },
+  {
+   "id": "fd_s_nvda_10k",
+   "kind": "sec_filing",
+   "title": "NVIDIA 10-K fiscal 2026 (competition section names the competitors)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+   "date": "2026-02-25",
+   "independent": true,
+   "publisher": "NVIDIA Corporation (SEC EDGAR)",
+   "retrieval": "primary_document"
+  },
+  {
+   "id": "fd_s_nvda_10q_q2fy27",
+   "kind": "sec_filing",
+   "title": "NVIDIA 10-Q Q2 FY2027 (quarter ended 2026-07-26)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+   "date": "2026-08-26",
+   "independent": true,
+   "publisher": "NVIDIA Corporation (SEC EDGAR)",
+   "retrieval": "primary_document"
+  },
+  {
+   "id": "fd_s_nvda_cfo_q2fy27",
+   "kind": "release",
+   "title": "NVIDIA CFO commentary on Q2 FY2027 results (8-K ex. 99.2)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/q2fy27cfocommentary.htm",
+   "date": "2026-08-26",
+   "independent": true,
+   "publisher": "NVIDIA Corporation (SEC EDGAR)",
+   "retrieval": "primary_document"
+  },
+  {
+   "id": "fd_s_delloro_2026_08",
+   "kind": "industry",
+   "title": "Dell'Oro Group: AI buildout maintains momentum as data center capex surpasses $3 trillion by 2030 (read through search excerpt, full report not read)",
+   "url": "https://delloro.com/news/ai-buildout-maintains-momentum-as-data-center-capex-surpasses-3-trillion-by-2030",
+   "date": "2026-08-18",
+   "independent": true,
+   "publisher": "Dell'Oro Group",
+   "retrieval": "search_excerpt"
+  },
+  {
+   "id": "fd_s_meta_pr_q3_2026",
+   "kind": "release",
+   "title": "Meta Platforms Q3 2026 results press release (8-K ex. 99.1, quarter ended 2026-09-30, filed 2026-10-21): capital expenditures and 2026 outlook of a top NVIDIA buyer",
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066700/meta-09302026xexhibit991.htm",
+   "date": "2026-10-21",
+   "independent": true,
+   "publisher": "Meta Platforms (SEC EDGAR)",
+   "retrieval": "primary_document"
+  },
+  {
+   "id": "fd_s_tsmc_q3_2026_crn",
+   "kind": "press",
+   "title": "CRN Asia: TSMC third quarter revenue tops guidance as CEO says AI demand still exceeds supply (reports the TSMC Q3 2026 results and call of 2026-10-15; the TSMC release and transcript themselves were not read)",
+   "url": "https://www.crnasia.com/news/2026/components-and-peripherals/tsmc-third-quarter-revenue-tops-guidance-as-ceo-says-ai-dema",
+   "date": "2026-10-15",
+   "independent": true,
+   "publisher": "CRN Asia",
+   "retrieval": "search_excerpt"
+  },
+  {
+   "id": "fd_s_sa_nvda",
+   "kind": "consensus",
+   "title": "Stock Analysis statistics page for NVIDIA: forward P/E 17.44, trailing P/E 26.68, price $210.96 at the 2026-10-23 close (page checked 2026-10-26; third-party figures derived from analyst consensus, the estimate vendor is not named on the page)",
+   "url": "https://stockanalysis.com/stocks/nvda/statistics/",
+   "date": "2026-10-23",
+   "independent": true,
+   "publisher": "Stock Analysis (third-party aggregator)",
+   "retrieval": "provider_normalized"
+  },
+  {
+   "id": "fd_s_sa_amd",
+   "kind": "consensus",
+   "title": "Stock Analysis statistics page for Advanced Micro Devices (AMD): forward P/E 46.49, 3-year analyst revenue growth 52.91% and EPS growth 76.22%, price $516.79 at the 2026-10-23 close (page checked 2026-10-26; third-party, analyst-consensus-derived)",
+   "url": "https://stockanalysis.com/stocks/amd/statistics/",
+   "date": "2026-10-23",
+   "independent": true,
+   "publisher": "Stock Analysis (third-party aggregator)",
+   "retrieval": "provider_normalized"
+  },
+  {
+   "id": "fd_s_sa_avgo",
+   "kind": "consensus",
+   "title": "Stock Analysis statistics page for Broadcom (AVGO): forward P/E 18.52, 3-year analyst revenue growth 62.20% and EPS growth 64.55%, price $321.68 at the 2026-10-23 close (page checked 2026-10-26; third-party, analyst-consensus-derived)",
+   "url": "https://stockanalysis.com/stocks/avgo/statistics/",
+   "date": "2026-10-23",
+   "independent": true,
+   "publisher": "Stock Analysis (third-party aggregator)",
+   "retrieval": "provider_normalized"
+  },
+  {
+   "id": "fd_s_sa_mrvl",
+   "kind": "consensus",
+   "title": "Stock Analysis statistics page for Marvell Technology (MRVL): forward P/E 40.44, 3-year analyst revenue growth 56.68% and EPS growth 64.45%, price $228.51 at the 2026-10-23 close (page checked 2026-10-26; third-party, analyst-consensus-derived)",
+   "url": "https://stockanalysis.com/stocks/mrvl/statistics/",
+   "date": "2026-10-23",
+   "independent": true,
+   "publisher": "Stock Analysis (third-party aggregator)",
+   "retrieval": "provider_normalized"
+  },
+  {
+   "id": "fd_s_sa_anet",
+   "kind": "consensus",
+   "title": "Stock Analysis statistics page for Arista Networks (ANET): forward P/E 37.06, 3-year analyst revenue growth 30.61% and EPS growth 29.68%, price $172.37 at the 2026-10-23 close (page checked 2026-10-26; third-party, analyst-consensus-derived)",
+   "url": "https://stockanalysis.com/stocks/anet/statistics/",
+   "date": "2026-10-23",
+   "independent": true,
+   "publisher": "Stock Analysis (third-party aggregator)",
+   "retrieval": "provider_normalized"
+  }
+ ],
+ "kpis": [
+  {
+   "id": "fd_k_rpo_gt1y_q2fy27",
+   "name": "Revenue from remaining performance obligations of contracts > 1 year (NVIDIA)",
+   "period": "Q2 FY2027",
+   "value": 3200000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "fd_s_nvda_10q_q2fy27"
+   ]
+  },
+  {
+   "id": "fd_k_rpo_next12m_share_q2fy27",
+   "name": "Share of > 1-year contract RPO recognised in the next 12 months (NVIDIA)",
+   "period": "Q2 FY2027",
+   "value": 0.39,
+   "unit": "ratio",
+   "source_ids": [
+    "fd_s_nvda_10q_q2fy27"
+   ]
+  }
+ ],
+ "competitors": [
+  {
+   "ticker": "AMD",
+   "name": "Advanced Micro Devices",
+   "why": "NVIDIA 10-K names AMD for GPUs/accelerators, SoC and networking; AMD Instinct MI400/Helios racks are sold to the same AI labs and clouds (AMD release names Meta, Microsoft, OpenAI, Oracle, Anthropic among Helios deployers)",
+   "metrics": {
+    "period_end": "2026-06-27",
+    "revenue_usd": 11536000000,
+    "revenue_growth_yoy": 0.5011,
+    "gross_margin_gaap": 0.5377,
+    "operating_margin_gaap": 0.1725,
+    "revenue_growth_ttm": 0.3954,
+    "data_center_segment_revenue_usd": 6700000000.0,
+    "data_center_segment_growth_yoy": 1.07,
+    "gross_margin_non_gaap": 0.54,
+    "guidance_next_quarter": {
+     "period": "Q3 2026",
+     "revenue_mid_usd": 13000000000.0,
+     "range_usd": 300000000.0,
+     "growth_yoy_mid": 0.41,
+     "gross_margin_non_gaap": 0.56,
+     "source_id": "fd_s_amd_pr_q2_2026"
+    },
+    "forward_pe": {
+     "value": 46.49,
+     "as_of": "2026-10-23",
+     "basis": "third-party consensus-derived forward P/E at the 2026-10-23 close (Stock Analysis page checked 2026-10-26; replaces the 58.48 of 2026-10-06 from the earlier attempt); attributed estimate, not a fact",
+     "source_id": "fd_s_sa_amd"
+    },
+    "analyst_growth_3y": {
+     "revenue": 0.5291,
+     "eps": 0.7622,
+     "as_of": "2026-10-23",
+     "basis": "third-party analyst consensus 3-year growth forecast (Stock Analysis); an expectation, not evidence",
+     "source_id": "fd_s_sa_amd"
+    },
+    "comparable_stage_note": "Q2 2025 base includes an $800M MI308 export-control inventory charge, which inflates the y/y margin and growth comparison",
+    "basis": "GAAP, quarter-on-year-ago-quarter, from the competitor XBRL (derived by this lane; script and _derived_quarters.json in raw_field)"
+   },
+   "source_ids": [
+    "fd_s_cf_amd",
+    "fd_s_amd_pr_q2_2026",
+    "pf_peer_AMD",
+    "fd_s_nvda_10k"
+   ]
+  },
+  {
+   "ticker": "AVGO",
+   "name": "Broadcom",
+   "why": "NVIDIA 10-K names Broadcom for SoC and networking; Broadcom designs custom AI accelerators (XPUs) for the hyperscalers that also buy NVIDIA, plus Ethernet AI networking that competes with Spectrum-X/InfiniBand",
+   "metrics": {
+    "period_end": "2026-08-02",
+    "revenue_usd": 29591000000,
+    "revenue_growth_yoy": 0.855,
+    "gross_margin_gaap": 0.6913,
+    "operating_margin_gaap": 0.5392,
+    "revenue_growth_ttm": 0.4869,
+    "ai_semiconductor_revenue_usd": 16700000000.0,
+    "ai_semiconductor_growth_yoy": 2.21,
+    "ai_semiconductor_growth_qoq": 0.54,
+    "guidance_next_quarter": {
+     "period": "Q4 FY2026 (ending 2026-11-01)",
+     "revenue_usd": 34800000000.0,
+     "ai_semiconductor_revenue_usd": 21700000000.0,
+     "ai_semiconductor_growth_yoy": 2.36,
+     "operating_margin_non_gaap": 0.66,
+     "source_id": "fd_s_avgo_pr_q3fy26"
+    },
+    "forward_pe": {
+     "value": 18.52,
+     "as_of": "2026-10-23",
+     "basis": "third-party consensus-derived forward P/E at the 2026-10-23 close (Stock Analysis page checked 2026-10-26); attributed estimate, not a fact",
+     "source_id": "fd_s_sa_avgo"
+    },
+    "analyst_growth_3y": {
+     "revenue": 0.622,
+     "eps": 0.6455,
+     "as_of": "2026-10-23",
+     "basis": "third-party analyst consensus 3-year growth forecast (Stock Analysis); an expectation, not evidence",
+     "source_id": "fd_s_sa_avgo"
+    },
+    "basis": "GAAP, quarter-on-year-ago-quarter, from the competitor XBRL (derived by this lane; script and _derived_quarters.json in raw_field)"
+   },
+   "source_ids": [
+    "fd_s_cf_avgo",
+    "fd_s_avgo_pr_q3fy26",
+    "pf_peer_AVGO",
+    "fd_s_nvda_10k"
+   ]
+  },
+  {
+   "ticker": "MRVL",
+   "name": "Marvell Technology",
+   "why": "NVIDIA 10-K names Marvell for networking; Marvell sells custom AI accelerators/XPU attach and electro-optical interconnect to the same cloud buyers (79% of revenue from data center)",
+   "metrics": {
+    "period_end": "2026-08-01",
+    "revenue_usd": 2739300000,
+    "revenue_growth_yoy": 0.3655,
+    "gross_margin_gaap": 0.5314,
+    "operating_margin_gaap": 0.1678,
+    "revenue_growth_ttm": 0.3062,
+    "data_center_revenue_usd": 2171500000.0,
+    "data_center_revenue_year_ago_usd": 1490500000.0,
+    "data_center_growth_yoy": 0.4569,
+    "guidance_next_quarter": {
+     "period": "Q3 FY2027 (ending 2026-10-31)",
+     "revenue_mid_usd": 3150000000.0,
+     "range_pct": 0.05,
+     "growth_yoy_mid": 0.4198,
+     "source_id": "fd_s_mrvl_pr_q2fy27"
+    },
+    "forward_pe": {
+     "value": 40.44,
+     "as_of": "2026-10-23",
+     "basis": "third-party consensus-derived forward P/E at the 2026-10-23 close (Stock Analysis page checked 2026-10-26); attributed estimate, not a fact",
+     "source_id": "fd_s_sa_mrvl"
+    },
+    "analyst_growth_3y": {
+     "revenue": 0.5668,
+     "eps": 0.6445,
+     "as_of": "2026-10-23",
+     "basis": "third-party analyst consensus 3-year growth forecast (Stock Analysis); an expectation, not evidence",
+     "source_id": "fd_s_sa_mrvl"
+    },
+    "basis": "GAAP, quarter-on-year-ago-quarter, from the competitor XBRL (derived by this lane; script and _derived_quarters.json in raw_field)"
+   },
+   "source_ids": [
+    "fd_s_cf_mrvl",
+    "fd_s_mrvl_pr_q2fy27",
+    "pf_peer_MRVL",
+    "fd_s_nvda_10k"
+   ]
+  },
+  {
+   "ticker": "INTC",
+   "name": "Intel",
+   "why": "NVIDIA 10-K names Intel for GPUs/accelerators, SoC and networking; Intel x86 server CPUs compete with NVIDIA Grace/Vera CPUs in the same racks (Intel AI accelerator revenue is not disclosed separately)",
+   "metrics": {
+    "period_end": "2026-06-27",
+    "revenue_usd": 16128000000,
+    "revenue_growth_yoy": 0.2542,
+    "gross_margin_gaap": 0.4036,
+    "operating_margin_gaap": 0.1114,
+    "revenue_growth_ttm": 0.0747,
+    "forward_pe": null,
+    "segment_gap": "DCAI / accelerator revenue not in companyfacts; Intel's Q3 2026 results are scheduled for 2026-10-29 (company announcement of 2026-10-06 seen in a search excerpt), after as_of, and SEC EDGAR shows no Intel filing since 2026-10-10",
+    "basis": "GAAP, quarter-on-year-ago-quarter, from the competitor XBRL (derived by this lane; script and _derived_quarters.json in raw_field)"
+   },
+   "source_ids": [
+    "fd_s_cf_intc",
+    "pf_peer_INTC",
+    "fd_s_nvda_10k"
+   ]
+  },
+  {
+   "ticker": "ANET",
+   "name": "Arista Networks",
+   "why": "NVIDIA 10-K names Arista for networking; Arista Ethernet switching competes with NVIDIA Spectrum-X and InfiniBand for AI cluster scale-out at the same cloud buyers",
+   "metrics": {
+    "period_end": "2026-06-30",
+    "revenue_usd": 3035700000,
+    "revenue_growth_yoy": 0.3769,
+    "gross_margin_gaap": 0.6293,
+    "operating_margin_gaap": 0.4539,
+    "revenue_growth_ttm": 0.3257,
+    "forward_pe": {
+     "value": 37.06,
+     "as_of": "2026-10-23",
+     "basis": "third-party consensus-derived forward P/E at the 2026-10-23 close (Stock Analysis page checked 2026-10-26); attributed estimate, not a fact",
+     "source_id": "fd_s_sa_anet"
+    },
+    "analyst_growth_3y": {
+     "revenue": 0.3061,
+     "eps": 0.2968,
+     "as_of": "2026-10-23",
+     "basis": "third-party analyst consensus 3-year growth forecast (Stock Analysis); an expectation, not evidence",
+     "source_id": "fd_s_sa_anet"
+    },
+    "basis": "GAAP, quarter-on-year-ago-quarter, from the competitor XBRL (derived by this lane; script and _derived_quarters.json in raw_field)"
+   },
+   "source_ids": [
+    "fd_s_cf_anet",
+    "pf_peer_ANET",
+    "fd_s_nvda_10k"
+   ]
+  },
+  {
+   "ticker": "CSCO",
+   "name": "Cisco Systems",
+   "why": "NVIDIA 10-K names Cisco for networking (data center Ethernet for AI clusters)",
+   "metrics": {
+    "period_end": "2026-07-25",
+    "revenue_usd": 17252000000,
+    "revenue_growth_yoy": 0.1758,
+    "gross_margin_gaap": 0.6413,
+    "operating_margin_gaap": 0.2472,
+    "note": "quarter derived as fiscal year minus nine-month YTD (10-K)",
+    "revenue_growth_ttm": 0.1177,
+    "forward_pe": null,
+    "basis": "GAAP, quarter-on-year-ago-quarter, from the competitor XBRL (derived by this lane; script and _derived_quarters.json in raw_field)"
+   },
+   "source_ids": [
+    "fd_s_cf_csco",
+    "pf_peer_CSCO",
+    "fd_s_nvda_10k"
+   ]
+  },
+  {
+   "ticker": "HUAWEI",
+   "name": "Huawei Technologies (private, China; no US filings)",
+   "why": "NVIDIA 10-K names Huawei in four of its five competitor groups (GPUs/custom accelerators, in-house cloud AI hardware, Arm CPUs, networking) and says the Chinese government has encouraged customers to buy from China-based competitors; it is the main substitute for NVIDIA in the China data center market that NVIDIA says it is effectively foreclosed from. The Ascend share reading is a hypothesis from a press relay (fd_b_china_substitution)",
+   "metrics": {
+    "gap": "private company with no SEC filings: no revenue, margin or accelerator unit numbers gathered in this budget; its own annual report was not read; no forward P/E (not listed)"
+   },
+   "source_ids": [
+    "fd_s_nvda_10k"
+   ]
+  },
+  {
+   "ticker": "QCOM",
+   "name": "Qualcomm",
+   "why": "NVIDIA 10-K names Qualcomm for SoC (edge/automotive and Arm compute); data center AI accelerator revenue not disclosed, so overlap with NVIDIA Data Center is small today",
+   "metrics": {
+    "period_end": "2026-06-28",
+    "revenue_usd": 9947000000,
+    "revenue_growth_yoy": -0.0403,
+    "gross_margin_gaap": 0.5305,
+    "operating_margin_gaap": 0.1635,
+    "revenue_growth_ttm": 0.0188,
+    "forward_pe": null,
+    "basis": "GAAP, quarter-on-year-ago-quarter, from the competitor XBRL (derived by this lane; script and _derived_quarters.json in raw_field)"
+   },
+   "source_ids": [
+    "fd_s_cf_qcom",
+    "fd_s_nvda_10k"
+   ]
+  },
+  {
+   "ticker": "GOOGL",
+   "name": "Alphabet",
+   "why": "NVIDIA 10-K names Alphabet as a cloud provider with in-house AI hardware (TPU, built with Broadcom): it is a top NVIDIA buyer and a substitute; its capex is the budget both compete for",
+   "metrics": {
+    "period_end": "2026-06-30",
+    "revenue_usd": 119796000000,
+    "revenue_growth_yoy": 0.2423,
+    "gross_margin_gaap": 0.6165,
+    "operating_margin_gaap": 0.3403,
+    "capex_latest_quarter_usd": 44924000000,
+    "capex_growth_yoy": 1.0014,
+    "capex_ttm_usd": 132402000000,
+    "capex_ttm_growth": 0.9767,
+    "in_house_chip_revenue": null,
+    "gap": "in-house accelerator volumes/spend not disclosed in filings",
+    "basis": "GAAP, quarter-on-year-ago-quarter, from the competitor XBRL (derived by this lane; script and _derived_quarters.json in raw_field)"
+   },
+   "source_ids": [
+    "fd_s_cf_googl",
+    "fd_s_nvda_10k"
+   ]
+  },
+  {
+   "ticker": "AMZN",
+   "name": "Amazon",
+   "why": "NVIDIA 10-K names Amazon for in-house AI hardware (Trainium/Inferentia) and Arm CPUs (Graviton); AWS is a buyer and a substitute",
+   "metrics": {
+    "period_end": "2026-06-30",
+    "revenue_usd": 200606000000,
+    "revenue_growth_yoy": 0.1962,
+    "gross_margin_gaap": 0.5226,
+    "operating_margin_gaap": 0.1369,
+    "capex_latest_quarter_usd": 54208000000,
+    "capex_growth_yoy": 0.6844,
+    "capex_ttm_usd": 173028000000,
+    "capex_ttm_growth": 0.6072,
+    "in_house_chip_revenue": null,
+    "gap": "in-house accelerator volumes/spend not disclosed in filings",
+    "basis": "GAAP, quarter-on-year-ago-quarter, from the competitor XBRL (derived by this lane; script and _derived_quarters.json in raw_field)"
+   },
+   "source_ids": [
+    "fd_s_cf_amzn",
+    "fd_s_nvda_10k"
+   ]
+  },
+  {
+   "ticker": "MSFT",
+   "name": "Microsoft",
+   "why": "NVIDIA 10-K names Microsoft for in-house AI hardware (Maia) and Arm CPUs (Cobalt); a buyer and a substitute",
+   "metrics": {
+    "period_end": "2026-06-30",
+    "revenue_usd": 90007000000,
+    "revenue_growth_yoy": 0.1775,
+    "gross_margin_gaap": 0.672,
+    "operating_margin_gaap": 0.4511,
+    "note": "quarter derived as fiscal year minus nine-month YTD (10-K)",
+    "capex_latest_quarter_usd": 35802000000,
+    "capex_growth_yoy": 1.0963,
+    "capex_ttm_usd": 115948000000,
+    "capex_ttm_growth": 0.7962,
+    "in_house_chip_revenue": null,
+    "gap": "in-house accelerator volumes/spend not disclosed in filings",
+    "basis": "GAAP, quarter-on-year-ago-quarter, from the competitor XBRL (derived by this lane; script and _derived_quarters.json in raw_field)"
+   },
+   "source_ids": [
+    "fd_s_cf_msft",
+    "fd_s_nvda_10k"
+   ]
+  }
+ ],
+ "bottlenecks": [
+  {
+   "id": "fd_b_scarce_supply",
+   "reading": "What NVIDIA supplies that is scarce: complete rack-scale AI systems (GPU + CPU + NVLink + networking + software). The Q2 FY2027 10-Q says Vera Rubin began production shipments in Q3 FY2027, that NVIDIA is \"currently experiencing certain supply constraints\" and has entered significant commitments to secure inventory and capacity \"for the next several years\". Data Center revenue was $89.0B in Q2 FY2027 vs $41.1B a year earlier (+117%).",
+   "evidence_ids": [
+    "fd_s_nvda_10q_q2fy27",
+    "fd_s_nvda_cfo_q2fy27"
+   ]
+  },
+  {
+   "id": "fd_b_who_pays",
+   "reading": "Who needs it and pays: the cloud/AI capex of the largest buyers keeps rising in their own filings: latest-quarter capex y/y MSFT +110% ($35.8B), GOOGL +100% ($44.9B), AMZN +68% ($54.2B), META +80% ($33.9B), ORCL +235% ($28.5B). NVIDIA Hyperscale revenue $48.7B (+102% y/y) and AI Clouds, Industrial & Enterprise $40.3B (+138% y/y): the non-hyperscale buyers grow faster. Capex quarters are not aligned (calendar Q2 for GOOGL/AMZN/MSFT, Q3 for META, Jun-Aug for ORCL); capex is the buyer budget, not NVIDIA revenue. New since the earlier attempt: Meta's Q3 2026 release (2026-10-21) reports quarterly capex including finance-lease principal of $34.91B, free cash flow of negative $2.12B, and narrows its 2026 capex outlook to $135-145B (from $130-145B); the capex of Alphabet, Microsoft and Amazon for the September quarter is not yet reported (late October, after as_of).",
+   "evidence_ids": [
+    "fd_s_cf_msft",
+    "fd_s_cf_googl",
+    "fd_s_cf_amzn",
+    "fd_s_cf_meta",
+    "fd_s_meta_pr_q3_2026",
+    "fd_s_cf_orcl",
+    "fd_s_nvda_cfo_q2fy27"
+   ]
+  },
+  {
+   "id": "fd_b_market_direction",
+   "reading": "Market direction (attributed study, search excerpt only): Dell'Oro (2026-08-18) projects worldwide data center capex above $3 trillion by 2030, with high-end AI accelerators the largest share and main growth driver; its 2030 outlook nearly doubled since its January 2026 forecast (higher hyperscale capex guidance, more power capacity, higher commodity/memory costs). Dell'Oro states growth depends on the sustainability of investment, power availability and supply chain. Part of the dollar growth is price (memory), not units.",
+   "evidence_ids": [
+    "fd_s_delloro_2026_08"
+   ]
+  },
+  {
+   "id": "fd_b_custom_silicon",
+   "reading": "Who adds competing capacity, custom silicon: Broadcom AI semiconductor revenue $16.7B in its quarter to 2026-08-02 (221% y/y, 54% q/q), guided to $21.7B next quarter (236% y/y); Marvell data center revenue $2.17B (+46% y/y) with custom acceleration expected in H2 FY2027. Custom accelerators grow faster than NVIDIA Data Center (+117%) from a base about one-fifth the size. Derived revenue-scale comparison (NOT an attributed market share; scopes differ: NVIDIA DC includes networking and systems, AMD DC includes server CPUs, Broadcom AI includes networking): NVIDIA DC / (NVIDIA DC + AMD DC + Broadcom AI) = 79% for the nearest quarters, against about 83% a year earlier (derived from the reported y/y rates; see the fd SHARE notes).",
+   "evidence_ids": [
+    "fd_s_avgo_pr_q3fy26",
+    "fd_s_mrvl_pr_q2fy27",
+    "fd_s_amd_pr_q2_2026",
+    "fd_s_nvda_cfo_q2fy27"
+   ]
+  },
+  {
+   "id": "fd_b_merchant_gpu",
+   "reading": "Merchant GPU rival: AMD Data Center segment $6.7B (+107% y/y, base depressed by the $800M MI308 charge in Q2 2025); AMD guides Q3 2026 revenue $13B +/- $300M (~41% y/y) and says Helios racks begin to ramp in H2 2026. AMD sells to the same labs/clouds; its share gain is a lever on NVIDIA pricing, not yet visible in NVIDIA gross margin (flat sequentially in Q2 FY2027 per the CFO commentary).",
+   "evidence_ids": [
+    "fd_s_amd_pr_q2_2026",
+    "fd_s_cf_amd",
+    "fd_s_nvda_cfo_q2fy27"
+   ]
+  },
+  {
+   "id": "fd_b_networking",
+   "reading": "AI networking competition: Arista revenue +38% y/y at a 45% GAAP operating margin and Cisco +18% y/y (latest quarters); NVIDIA no longer discloses networking revenue separately under its new market-platform framework, so its networking share cannot be measured from its own numbers (gap).",
+   "evidence_ids": [
+    "fd_s_cf_anet",
+    "fd_s_cf_csco",
+    "fd_s_nvda_cfo_q2fy27"
+   ]
+  },
+  {
+   "id": "fd_b_short_cycle_demand",
+   "reading": "How firm the demand is: revenue from remaining performance obligations of contracts longer than one year was only $3.2B at 2026-07-26 (39% due within 12 months) against $89.0B of quarterly Data Center revenue: the order book is not long-term contracted take-or-pay, and the CFO commentary mentions extended payment terms on large multi-quarter agreements with certain investment-grade customers. Demand can turn faster than the supply commitments NVIDIA has signed.",
+   "evidence_ids": [
+    "fd_s_nvda_10q_q2fy27",
+    "fd_s_nvda_cfo_q2fy27"
+   ]
+  },
+  {
+   "id": "fd_b_supply_commitments",
+   "reading": "How far NVIDIA has committed upstream (primary, 10-Q Note 10): supply and capacity commitments rose from $119 billion at the prior quarter to $279 billion at 2026-07-26 (of $366 billion total commitments; $92B falls in the rest of fiscal 2027, $87B in FY2028, $88B in FY2029), described as \"primarily memory and manufacturing facilities\" for long-term demand across current and future architectures; some agreements may be cancelable, rescheduled or adjustable before firm orders, with possible additional cost. NVIDIA also records $2.1B of excess-inventory purchase obligations as an accrued liability. The commitment is a fixed claim against a demand that is only short-cycle contracted (see fd_b_short_cycle_demand).",
+   "evidence_ids": [
+    "fd_s_nvda_10q_q2fy27"
+   ]
+  },
+  {
+   "id": "fd_b_foundry_demand",
+   "reading": "Upstream foundry reading (press report of the call, TSMC release and transcript not read): on 2026-10-15 TSMC's chairman and CEO said AI-related demand remained far above what TSMC can currently supply and that it is working to narrow the gap; TSMC reported September-quarter revenue of $46.72B (+41.2% y/y), HPC at 68% of revenue, guided the December quarter to $52.3-54.3B, expects about 44% full-year 2026 growth in USD, kept its 2026 capital budget at $60-64B, and said 2026-2028 capex will be significantly higher than the previous three years. No CoWoS capacity figure or end date was given in the report. This fits NVIDIA's own wording of current supply constraints, but it is one supplier's statement about all AI customers, not NVIDIA-specific.",
+   "evidence_ids": [
+    "fd_s_tsmc_q3_2026_crn",
+    "fd_s_nvda_10q_q2fy27"
+   ]
+  },
+  {
+   "id": "fd_b_packaging_memory",
+   "reading": "Upstream bottleneck and its duration (secondary relays, not registered: publication dates not established): TSMC CoWoS advanced packaging and HBM memory limit how many accelerators anyone can ship. Relayed estimates put NVIDIA at about 60% of TSMC CoWoS capacity for 2026 (Morgan Stanley via TipRanks), Broadcom ~15% and AMD ~11%; CoWoS capacity estimates for end-2027 range widely (about 112k to 200k wafers/month); memory makers reportedly allocated all 2027 DRAM/HBM capacity (DigiTimes via TweakTown), with meaningful new memory capacity seen around 2028. If true, the shortage protects NVIDIA allocation and pricing into 2027 but raises its memory cost.",
+   "hypothesis": true
+  },
+  {
+   "id": "fd_b_china_substitution",
+   "reading": "China (secondary relay, not registered): an IDC estimate relayed by press puts H1 2026 China data-center AI accelerator shares at NVIDIA 34% and Huawei 28% (NVIDIA units -44% y/y); Huawei Ascend 950PR in mass production since March 2026 and 960DT announced for Q1 2027. NVIDIA excludes China data center compute from its outlook (reports lane), so this is a lost-option reading, not a forecast driver.",
+   "hypothesis": true
+  }
+ ],
+ "notes": [
+  "LANE field (fd_): competitor numbers are each competitor's own GAAP XBRL (SEC companyfacts, facts filed on or before 2026-10-23 so every one is citable at 2026-10-25) plus three competitor earnings releases read in full (Broadcom, AMD, Marvell). Raw payloads verbatim in gather/raw_field/ with MANIFEST.json (sha256); quarters derived by script into raw_field/_derived_quarters.json (YTD minus prior YTD for Q4/cash-flow items). No sector averages, peer medians or base rates are used.",
+  "Connector probes: Alpha Vantage COMPANY_OVERVIEW(AMD) returned a premium/rate-limit error (key at its 25/day limit after the reports lane): recorded once, not retried. FMP quote batch-quote ACCESS DENIED (plan): recorded once, no sibling retries. Fallback: SEC EDGAR XBRL and releases; forward P/E from the Stock Analysis statistics pages (2026-10-23 close, fetched 2026-10-26: fd_s_sa_*; third-party, consensus-derived). AV and FMP were not probed again in this refresh (AV quota belongs to the numbers and documents lanes; the earlier FMP denial stands until a plan change is reported).",
+  "fd NAMED COMPETITORS (10-K Item 1, fd_s_nvda_10k; re-read 2026-10-26, unchanged since the earlier attempt): GPUs/custom chips/accelerators: AMD, Huawei, Intel. Large cloud companies with in-house AI hardware: Alibaba, Alphabet, Amazon, Baidu, Huawei, Microsoft. Arm-based CPUs: Amazon, Huawei, Microsoft. SoC for servers, automotive, edge and gaming: Ambarella, AMD, Broadcom, Intel, Qualcomm, Renesas, Samsung, and Tesla in-house. Networking (switches, adapters/DPUs, cables/optics): AMD, Arista, Broadcom, Cisco, HPE, Huawei, Intel, Lumentum, Marvell. competitors[] lists the ones that compete for the same Data Center buyers with the reason written down (AMD, AVGO, MRVL, INTC, ANET, CSCO, QCOM, GOOGL, AMZN, MSFT, HUAWEI); Alibaba, Baidu, Ambarella, Renesas, Samsung, Tesla, HPE and Lumentum are named by NVIDIA but overlap little with NVIDIA Data Center revenue or have no US filings (gaps).",
+  "fd SHARE (derived, scope-mismatched, NOT an attributed market share; revenue-scale comparison among the three named competitors that disclose AI/Data Center lines): NVIDIA Data Center revenue $89.0B in Q2 FY2027 (+117% y/y, so about $41.1B a year earlier, fd_s_nvda_cfo_q2fy27, pf_rel_20260826_1, pf_rel_20250827_1) against AMD Data Center segment $6.7B (+107% y/y, about $3.2B a year earlier, fd_s_amd_pr_q2_2026) and Broadcom AI semiconductors $16.7B (+221% y/y, about $5.2B a year earlier, fd_s_avgo_pr_q3fy26). NVIDIA share of the three: about 83.0% a year earlier, 79.2% now (-3.8 points); Broadcom 10.5% to 14.9% (+4.4 points); AMD 6.5% to 6.0% (-0.5 point). The three together grew about 127% y/y ($49.5B to $112.4B). Quarters are the nearest ones (NVIDIA to 2026-07-26, AMD to 2026-06-27, Broadcom to 2026-08-02); year-ago values are backed out of the reported growth rates, so they carry rounding of about +/-0.3 points. Broadcom AI includes networking and AMD Data Center includes server CPUs.",
+  "fd SHARE reading: on these numbers custom silicon (Broadcom, and in a smaller way Marvell) is taking relative share from NVIDIA, not the merchant GPU rival AMD; NVIDIA's absolute Data Center revenue still grew by about $48B y/y, so a share loss of about 4 points of this trio coincides with very fast growth for NVIDIA. Sequentially (nearest quarters) NVIDIA Data Center grew about 18% ($75.2B to $89.0B, pf_rel_20260520_1, pf_rel_20260826_1) against about 54% for Broadcom AI semiconductors (fd_s_avgo_pr_q3fy26), and Broadcom guides $21.7B next quarter (+30% q/q) while NVIDIA guides total revenue of $108B (+12% q/q, Data Center not guided separately, pf_rel_20260826_1). Marvell Data Center (+46% y/y) and Arista (+38% y/y) grow slower than NVIDIA Data Center (+117%) in the same quarters. Share of networking cannot be measured (NVIDIA no longer reports it).",
+  "fd SHARE hypothesis (not evidence): Alphabet TPU sales to outside customers (Anthropic, Meta reported in press relays of unestablished provenance) would show up inside Broadcom's AI revenue rather than at NVIDIA; consumption of NVIDIA's share by in-house chips cannot be read from filings (hyperscalers do not disclose chip spend).",
+  "fd REFRESH 2026-10-26 (reuse of the 2026-10-25 fragment): no new NVIDIA filing (identity/prefetch new_filings_since empty); SEC submissions of AMD, AVGO, MRVL, ANET, CSCO, INTC, QCOM, GOOGL, AMZN, MSFT, META, ORCL checked for filings since 2026-10-10: only Meta's Q3 2026 8-K of 2026-10-21 (read, fd_s_meta_pr_q3_2026) and a Marvell revolving credit agreement 8-K of 2026-10-22 (a $3B revolver, no competitive content, not registered) are relevant; Intel reports Q3 2026 on 2026-10-29 and Alphabet, Microsoft and Amazon report in the last days of October, all after as_of, so their September-quarter numbers cannot be used. Forward P/E for NVDA (17.44), AVGO (18.52), AMD (46.49), MRVL (40.44) and ANET (37.06) at the 2026-10-23 close replaces the earlier single relayed snapshot (AMD 58.48, NVDA 19.78 at 2026-10-06); NVDA's own 17.44 is only a comparison row here (own P/E history belongs to gather_numbers). Raw files of this refresh (SEC submissions JSON of the twelve companies, Meta 8-K index/main/ex. 99.1, Marvell 8-K) are in gather/raw_field/refresh/ (not in MANIFEST.json); the Stock Analysis and TSMC pages were read through WebFetch and not saved as files.",
+  "Broadcom call figures (XPU share of AI revenue ~73%, AI networking >2.5x y/y, FY2026 AI revenue ~$58B) came only through search summaries of the call, not the release: not used.",
+  "Anthropic/Google TPU capacity deals (up to 1M TPUs, >1 GW in 2026; multi-GW from 2027 with Broadcom) seen only in press relays without established dates: not registered; they are evidence leads that in-house TPUs now serve outside customers."
+ ],
+ "gaps": [
+  "Forward P/E and 3-year growth for INTC, CSCO, QCOM, Huawei: not retrieved (INTC, CSCO and QCOM are low-overlap or not at a comparable growth stage; Huawei is private). AMD, AVGO, MRVL, ANET now have a dated third-party forward P/E (2026-10-23 close) with the analyst 3-year growth forecast; next-year (not 3-year) growth and the estimate vendor/analyst count behind them are not shown on the pages, so they are attributed expectations of unknown n.",
+  "Attributed market share of AI accelerators (merchant + custom) from an industry tracker (e.g. TechInsights, IDC, Dell'Oro full report) not obtained; only a derived revenue-scale comparison.",
+  "NVIDIA networking revenue not disclosed under the new framework: networking share vs Arista/Broadcom/Cisco unmeasurable from company numbers.",
+  "CoWoS and HBM capacity/duration and the China share rest on secondary relays with unestablished dates: kept as hypotheses (fd_b_packaging_memory, fd_b_china_substitution). TSMC's Q3 2026 call is cited only through one press report (fd_s_tsmc_q3_2026_crn: demand above supply, no CoWoS figure); the TSMC release/transcript, SK hynix, Samsung and Micron Q3 2026 results were not read (search found no October 2026 SK hynix, Samsung or Micron results).",
+  "Huawei (listed without metrics: private, no US filings), Alibaba, Baidu, Samsung, Tesla, Ambarella, Renesas, HPE, Lumentum: no metrics gathered (the others overlap little with NVIDIA Data Center or are suppliers/partners). Intel (2026-10-29) and Alphabet/Microsoft/Amazon (last days of October) report Q3 2026 after as_of: their September-quarter numbers, and the Q3 capex of the three hyperscalers, are not available at this as_of.",
+  "Hyperscaler in-house chip spend (TPU, Trainium, Maia, MTIA) is not disclosed in their filings; only total capex.",
+  "No pricing/ASP disclosure by NVIDIA: pricing power is read only through gross margin (flat sequentially in Q2 FY2027) and the reports lane memory-cost guidance."
+ ],
+ "stopped": [
+  "AV/FMP: one probe each, both denied; no retry loop.",
+  "Further press on CoWoS/HBM/China: more relays of the same few estimates would not change the decision without a primary source.",
+  "Competitor 10-Q segment notes beyond the releases: the releases already give the AI/DC lines that matter; budget spent.",
+  "Further forward P/E pages (INTC, CSCO, QCOM) and HBM supplier results: would not change the decision for NVIDIA's largest segments; stopped after the five pages that matter (NVDA, AVGO, AMD, MRVL, ANET) and one TSMC call report."
+ ]
+}

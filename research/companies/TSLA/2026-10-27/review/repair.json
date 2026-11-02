@@ -1,0 +1,30 @@
+{
+ "trigger": "review",
+ "fixed": [
+  "numbers critical (verifier: confirmed, major) capex at about half the guide: position/core.json gets a guidance-tier driver maintenance_capex_pct (yearly list per scenario) that holds total capex (maintenance + growth at sales_to_capital) at about 4.94B in the 2026-10-27..12-31 stub (Q4 floor 20B - 13.014B nine-month = 6.99B, prorated 65/92) and 20B in FY2027 and FY2028 in every scenario, citing dc_g_capex_fy2026_oct_call, dc_g_capex_fy2026_oct_10q, dc_capex_9m_2026, dc_call_20261021, pf_10q_20261022; the extra buys Robotaxi/Optimus/compute/fab and is credited no revenue; engine rate (5.3% of revenue) from FY2029; no extra depreciation tax shield (conservative). Executed capex now 4.94/20.0/20.0B in all three paths. Values today: bear 17.82 -> 11.09, base 38.90 -> 34.41, bull 115.66 -> 112.25; buy-below 22.2 -> 17.9; verdict index_preferable unchanged (draft).",
+  "numbers critical, text side: scenario_events.base[3] rewritten (management guides ~20B for 2026 and rising; the model holds 20B a year in 2027-2028 with no revenue for it), so the base condition line now matches the executed path.",
+  "numbers major bear funding not executed: after the capex fix fc.funding.bear is self_funded, no debt or equity, about 21.1B of investments liquidated in 2026-2028, payout from 2029-12-31; scenario_events.bear[1] rewritten to exactly that (negative FCF in 2027-2028, gap funded from ~21B of the ~45B cash and investments, no credit-line draw); the 30B credit-line claim and its boilerplate citation removed.",
+  "counter major core/field base story conflict (verifier: minor): scenario_events.base[0] reworded as management's attributed, unquantified backlog claim with the reported Q3 numbers (days of supply 11, production 464k, deliveries -2%) and 'car sales flat to slightly up'; field.json thesis_he.base changed to the same wording; key_risk 'עסק הרכב שטוח' -> 'הכנסות הרכב לא צמחו'. growth_anchor base 0.09 kept (value barely depends on it; see open).",
+  "counter major falsifiers/counter-thesis (partly): fx_q4_rev threshold 24.9B -> 26.6B; fx_fy27_margin 3% -> 4% (base path itself is 4.76%, so not 5%); new bull falsifier fx_cybercab (no Cybercab customer deliveries by 2027-06-30); bull Optimus event no longer says it brings significant revenue (a condition, not counted in the number); core gaps reworded: Robotaxi/FSD/Optimus have no separate revenue line, the bull growth/margin and the base margin recovery assume their commercialization.",
+  "Reran ticker-value twice (ran true); table_he.md and scenarios_he.md regenerated from the corrected parts."
+ ],
+ "open": [
+  "Share count (numbers major + trace major + counter major): opening shares stay 3,952,757,946 (cover count incl. 423,743,904 unearned 2025 CEO award shares) while the award's expense stays inside SBC/margin, a double count. No position/pack input sets the opening share count (dataqa picks the point-in-time cover count) and lowering sbc_pct does not move value (the evidenced margin is after SBC); fixing it needs an engine input for unearned restricted stock. Effect: every per-share value about 12% too low (x 3,952.76/3,529.01 = 1.120: base ~34.4 -> ~38.5); verdict unchanged.",
+  "Counter major 'what the price assumes': no scenario or single engine lever reaches 405.83; the table has no row saying the price pays for Robotaxi/FSD/Optimus options no scenario values (render change, outside the position inputs).",
+  "Counter major path multiples below Tesla's own forward P/E history (low 28.6, median 103.1) with no line under the yearly table, and the multiple-source note reads like a historical multiple (render change).",
+  "Counter major bear margin 5% above TTM 3.3% / Q3 2.6% (bear does not break the margin); counter major terminal ROIC on engine rules (9.6/10.6/12.6%) vs path ROIC 6/12/20%; counter major '5.3% expected annual return' row is an r-close-to-g artifact; counter major evidenced flags (warranty +26% to 10.1B, RVG 4.42B, Piotroski) absent from bear and risks. Not changed in this pass.",
+  "growth_anchor base 0.09 vs the line arithmetic (~6.5-7.5% with car volume +2-3%): kept; verifier rates it minor with a value effect of a few percent.",
+  "Trace majors: consensus EPS rows are non-GAAP but labelled eps_diluted (no driver uses consensus; not citable until 2026-10-28/29), left as written; capex guidance stored as point values where the 10-Q says 'in excess of' (the new floor uses 20B as the minimum, not a midpoint).",
+  "Bear falsifiers for capex/funding (FY2027 capex vs 20B, any facility draw), energy gross margin ex-refunds, EU-wide FSD and customer-car robotaxi not added.",
+  "Musk's 'tens of billions in 2028' is not quantified, so FY2028 capex is held at the 20B floor; a higher 2028 spend would lower values further."
+ ],
+ "ran": true,
+ "casefile": "/home/user/fundamental-engine/runs/tickers/TSLA_2026-10-27/companies/TSLA/out/casefile.json",
+ "changed_files": [
+  "/home/user/fundamental-engine/runs/tickers/TSLA_2026-10-27/position/core.json",
+  "/home/user/fundamental-engine/runs/tickers/TSLA_2026-10-27/position/field.json",
+  "/home/user/fundamental-engine/runs/tickers/TSLA_2026-10-27/value.json",
+  "/home/user/fundamental-engine/runs/tickers/TSLA_2026-10-27/companies/TSLA/out/table_he.md",
+  "/home/user/fundamental-engine/runs/tickers/TSLA_2026-10-27/review/repair.json"
+ ]
+}

@@ -1,0 +1,185 @@
+{
+ "ticker": "MSFT",
+ "as_of": "2026-11-01",
+ "stop": false,
+ "name": "MICROSOFT CORP",
+ "cik": "789019",
+ "currency": "USD",
+ "exchange": "Nasdaq",
+ "fiscal_year_end": "06-30",
+ "sic": 7372,
+ "sic_description": "Services-Prepackaged Software",
+ "annual_form": "10-K",
+ "type": "mature_growth / stalwart (computed by classify_company from SEC companyfacts; the analyst confirms or overrides with reasons)",
+ "evidence_ids": [
+  "pf_10k_20260729"
+ ],
+ "resolved": true,
+ "filings": [
+  {
+   "form": "10-K",
+   "filed": "2026-07-29",
+   "report_date": "2026-06-30",
+   "accession": "0001193125-26-323660",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/msft-20260630.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323660/",
+   "what": "annual report"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2026-10-28",
+   "report_date": "2026-09-30",
+   "accession": "0001193125-26-436133",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/msft-20260930.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436133/",
+   "what": "quarterly report"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-10-28",
+   "report_date": "2026-10-28",
+   "accession": "0001193125-26-436122",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436122/msft-20261028.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436122/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-07-29",
+   "report_date": "2026-07-29",
+   "accession": "0001193125-26-323632",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323632/msft-20260729.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526323632/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-04-29",
+   "report_date": "2026-04-29",
+   "accession": "0001193125-26-191457",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191457/msft-20260429.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526191457/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-01-28",
+   "report_date": "2026-01-28",
+   "accession": "0001193125-26-027198",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027198/msft-20260128.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526027198/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-10-29",
+   "report_date": "2025-10-28",
+   "accession": "0001193125-25-256310",
+   "items": "2.02,7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312525256310/msft-20251028.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312525256310/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-07-30",
+   "report_date": "2025-07-30",
+   "accession": "0000950170-25-100226",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025100226/msft-20250730.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025100226/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-04-30",
+   "report_date": "2025-04-30",
+   "accession": "0000950170-25-061032",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025061032/msft-20250430.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025061032/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-01-29",
+   "report_date": "2025-01-29",
+   "accession": "0000950170-25-010484",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025010484/msft-20250129.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000095017025010484/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "DEF 14A",
+   "filed": "2026-10-21",
+   "report_date": "2026-12-08",
+   "accession": "0001193125-26-427849",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526427849/d61756ddef14a.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526427849/",
+   "what": "proxy statement"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-10-28",
+   "report_date": "2026-10-28",
+   "accession": "0001193125-26-436149",
+   "items": "8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436149/msft-20261028.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526436149/",
+   "what": "8-K since the annual report (items 8.01,9.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-09-02",
+   "report_date": "2026-09-02",
+   "accession": "0001193125-26-380280",
+   "items": "7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/d291965d8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/789019/000119312526380280/",
+   "what": "8-K since the annual report (items 7.01,9.01)"
+  }
+ ],
+ "computed_type": {
+  "stage": "mature_growth",
+  "lynch": "stalwart",
+  "reasons": [
+   "growth measured without years with a large acquisition: FY2024",
+   "revenue compounding 8\u201320% with established operations"
+  ],
+  "flags": [
+   {
+    "key": "acquisitions",
+    "he": "\u05d1-FY2024 \u05d4\u05d9\u05d9\u05ea\u05d4 \u05e8\u05db\u05d9\u05e9\u05d4 \u05d2\u05d3\u05d5\u05dc\u05d4 (\u05d4\u05de\u05d5\u05e0\u05d9\u05d8\u05d9\u05df \u05d1\u05de\u05d0\u05d6\u05df \u05e7\u05e4\u05e5). \u05d7\u05dc\u05e7 \u05de\u05d4\u05e6\u05de\u05d9\u05d7\u05d4 \u05e0\u05e7\u05e0\u05d4 \u05d5\u05dc\u05d0 \u05e0\u05d1\u05e0\u05d4 \u2014 \u05dc\u05db\u05df \u05d4\u05e1\u05d9\u05d5\u05d5\u05d2 \u05de\u05e1\u05ea\u05db\u05dc \u05e2\u05dc \u05d4\u05e6\u05de\u05d9\u05d7\u05d4 \u05d1\u05dc\u05d9 \u05d4\u05e9\u05e0\u05d9\u05dd \u05d4\u05d0\u05dc\u05d4. \u05e6\u05e8\u05d9\u05da \u05dc\u05d1\u05d3\u05d5\u05e7 \u05e9\u05d4\u05e8\u05db\u05d9\u05e9\u05d4 \u05de\u05d7\u05d6\u05d9\u05e8\u05d4 \u05d0\u05ea \u05d4\u05de\u05d7\u05d9\u05e8 \u05e9\u05e9\u05d5\u05dc\u05dd."
+   }
+  ]
+ },
+ "identity_check": {
+  "reporting_currency": "USD",
+  "monetary_units": {
+   "USD": 517
+  },
+  "currency_basis": "facts of filing 0001193125-26-323660 (10-K, filed 2026-07-29)",
+  "depositary_shares": false,
+  "status": "ok",
+  "reasons": []
+ },
+ "prefetch": {
+  "by": "scripts/ticker_prefetch.py",
+  "at_utc": "2026-11-01T05:44:55+00:00",
+  "to_complete_by_lanes": [
+   "security and share class, quote currency, IBKR contract: gather_numbers (it alone writes identity.json while the lanes run)",
+   "named competitors: gather_field writes them in gather/field.json competitors[] (the canonical list), never here"
+  ]
+ },
+ "security": "MSFT common stock (Microsoft Corp), single class, no ADR; IB primary listing NASDAQ/SMART, STK",
+ "quote_currency": "USD",
+ "ib_contract_id": 272093
+}

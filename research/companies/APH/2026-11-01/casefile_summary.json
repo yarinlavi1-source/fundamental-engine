@@ -1,0 +1,715 @@
+{
+ "company": {
+  "ticker": "APH",
+  "name": "AMPHENOL CORP /DE/",
+  "cik": "820313",
+  "currency": "USD",
+  "exchange": "NYSE",
+  "sic": 3678,
+  "sic_description": "Electronic Connectors",
+  "fiscal_year_end": "12-31",
+  "annual_form": "10-K",
+  "identity_source": "SEC submissions and companyfacts (scripts/ticker_prefetch.py); the numbers lane confirms",
+  "depositary_shares": false,
+  "quote_currency": "USD",
+  "sector": "Information Technology (electronic components)",
+  "industry": "Electronic connectors and interconnect: connectors, cable assemblies, sensors, antennas, fiber-optic and high-speed interconnect (SIC 3678)",
+  "ib_contract_id": 4493
+ },
+ "as_of": "2026-11-01",
+ "engine_version": "0.14.0",
+ "casefile_sha256": "630a9016396a13752ff521ccb632723c02ce7e4b774d7ca570d994ae63699589",
+ "factbook_sha256": "f94e6045f4b35e37c8c2023abac5b5c6ec28a9aa7ea03aed42659d47676df505",
+ "inputs_sha256": "01af9289812cf6d00a65ab4d60bf490e4a12a97803666803f72830a8f5ed6993",
+ "decision": {
+  "verdict": {
+   "code": "quality_but_expensive",
+   "label_he": "עסק איכותי, אבל יקר כרגע",
+   "gate": "bear_loss_beyond_tolerance",
+   "reason": "strong business and base IRR 10.45% clears the required return 10.09% (index 9.18% + 0.91pp premium), but the bear-case loss 62% (at your required return) exceeds the 40% tolerance for strong quality: not enough margin of safety",
+   "reason_he": "העסק באיכות חזקה והתשואה בתרחיש הבסיסי עוברת את התשואה הנדרשת, אבל בתרחיש הדובי השווי בתשואה הנדרשת נמוך בכ־62% מהמחיר, יותר ממרווח הביטחון המתאים",
+   "what_would_change_it": [
+    "price at or below 50.5 (bear loss at your required return within tolerance)",
+    "a better-supported bear case (forecast inputs)"
+   ],
+   "what_would_change_it_he": "מחיר של כ־50.5 ומטה",
+   "hurdle_used": 0.1008618605,
+   "risk_premium_used": 0.0090618605,
+   "allowed_overrides": [
+    "avoid",
+    "index_preferable",
+    "insufficient_evidence",
+    "quality_but_expensive"
+   ],
+   "margin_of_safety": {
+    "loss_to_bear": 0.6185766973743874,
+    "bear_value": 30.311709859657437,
+    "basis": "at your required return",
+    "tolerance": 0.4
+   },
+   "margin_detail": {
+    "status": "marginal",
+    "flips": [
+     {
+      "test": "required_return",
+      "side": "lower",
+      "hurdle": 0.0808618605,
+      "code": "attractive_at_price",
+      "threshold": 0.081389
+     }
+    ],
+    "verdict": "quality_but_expensive",
+    "hurdle_range": [
+     0.0808618605,
+     0.1208618605
+    ],
+    "value_range": [
+     56.52262602705185,
+     165.85855905776253
+    ],
+    "price_inside_value_range": true,
+    "rule": "required return -/+ (1pp + valuation-error widening {\"low\": 0.0, \"medium\": 0.005, \"high\": 0.01, \"unknown\": 0.005}), the index range + premium, the bear-loss tolerance -/+ 5pp and, when the forecast applied a computed moat proxy, the values without it; a verdict that changes inside the band is marginal",
+    "text": "a required return below about 8.1% changes the verdict to attractive_at_price",
+    "text_he": "בתשואה נדרשת נמוכה מכ־8.1% המסקנה משתנה"
+   },
+   "confidence": "low",
+   "status": "draft",
+   "price_claim_withheld": true,
+   "withheld_reasons": [
+    "review status unreviewed_draft: review_required: only review gaps remain; a valid, independent review bound to this valuation (valuation_sha256) and the analyst inputs (inputs_sha256) is required"
+   ],
+   "margin": "marginal",
+   "price_for_hurdle": {
+    "value": 86.94893196490939,
+    "status": "solved",
+    "hurdle": 0.1008618605,
+    "label": "value at your required return",
+    "debt_weight": 0.047268174182941484,
+    "formula": "base value with cost of equity = required return (terminal WACC moved by the equity weight 1 - w, Harris-Pringle); the base IRR at this price equals the required return",
+    "change_from_price": 0.09411012916709938
+   },
+   "value_at_required_return": 86.94893196490939
+  },
+  "confidence": {
+   "level": "low",
+   "level_he": "נמוכה",
+   "reasons": [
+    "marginal call: a required return below about 8.1% changes the verdict to attractive_at_price",
+    "not independently reviewed (draft)",
+    "data gaps: missing convertibles, post_period_events; conflicting operating_income_ttm; opening balance not read from the primary filing",
+    "large possible valuation error: bear-to-bull range 171% of base value; value moves 80% of base across +/-1pp of required return",
+    "business understanding partial: 8 open questions; high-relevance dimensions unassessed: regulation"
+   ],
+   "reasons_he": [
+    "ההכרעה גבולית: בתשואה נדרשת נמוכה מכ־8.1% המסקנה משתנה",
+    "הניתוח עוד לא עבר בדיקה בלתי תלויה",
+    "פערי נתונים: חסרים האג\"ח להמרה ואירועים אחרי תאריך הדוח; יש סתירה בנתונים על הרווח התפעולי בשנה האחרונה; המאזן לא נקרא מהדוח עצמו",
+    "טווח הטעות האפשרי בהערכת השווי גדול",
+    "חלק מההבנה העסקית עוד פתוח (8 שאלות); עוד לא נבדקו לעומק: רגולציה"
+   ],
+   "rule": "low if any hard reason (demo, blocked data, insufficient understanding, unverified valuation) or 3+ other reasons; medium with 1-2; high with none. Each cause counts once."
+  },
+  "expected_return": {
+   "base_irr": 0.10452581559671015,
+   "bear_irr": 0.06840961363898003,
+   "bull_irr": 0.13573239618555655,
+   "base_irr_bound": null,
+   "irr_status": {
+    "bear": {
+     "status": "solved",
+     "bound": null
+    },
+    "base": {
+     "status": "solved",
+     "bound": null
+    },
+    "bull": {
+     "status": "solved",
+     "bound": null
+    }
+   },
+   "price": 79.47,
+   "decomposition": {
+    "status": "computed",
+    "metric": "fcf_after_sbc_per_share",
+    "date": "2031-11-01",
+    "years": 4.999315537303217,
+    "scenario": "re-rating to the base value at the model cost of equity",
+    "model_cost_of_equity": 0.085862,
+    "anchor_end": "2026-09-30",
+    "anchor_span_years": 5.086926762491444,
+    "business_growth_over_anchor_span": 0.09851840394217115,
+    "anchor": {
+     "value": 2.006349115304687,
+     "basis": "reported TTM FCF after SBC (2026-09-30) / opening shares",
+     "provenance": "calculation from reported"
+    },
+    "end": {
+     "value": 3.2358653433851345,
+     "basis": "base model, twelve months to 2031-11-01",
+     "provenance": "model_assumption"
+    },
+    "current_multiple": 39.60925812651084,
+    "exit_multiple": 59.84488065735547,
+    "business_growth": 0.10032877711026988,
+    "multiple_change": 0.08605286882866614,
+    "cash_yield": 0.010914320099309593,
+    "total_annualized": 0.20805800372493066,
+    "semantics": "Re-rating scenario at the model's cost of equity, NOT the return at your required return and not the IRR. Base 5-year return split into business growth x multiple change x cash yield (log-additive, exact): (V_T + D_T) / P_0 = (F_T / F_0) * ((V_T / F_T) / (P_0 / F_0)) * ((V_T + D_T) / V_T), where F is per-share FCF after SBC (fallback: NOPAT per share), V_T the base value at the five-year date at the model cost of equity, D_T cumulative base distributions (buybacks or dividends), P_0 today's price. Each factor is annualised as factor^(1/T) - 1, so (1+g)(1+m)(1+c) = 1 + total. It assumes the stock trades at that base value at T (a re-rating to the model's value); base_irr instead holds the cash flows through the terminal value.",
+    "formula": "(V_T+D_T)/P_0 = (F_T/F_0) * ((V_T/F_T)/(P_0/F_0)) * ((V_T+D_T)/V_T); each factor annualised as x^(1/T)-1."
+   },
+   "index_expected_return": {
+    "value": 0.09179999999999999,
+    "low": 0.0818,
+    "high": 0.10179999999999999,
+    "provenance": "model_assumption",
+    "origin": "forecast_cost_of_equity",
+    "comparator": "generic_assumption",
+    "components": {
+     "risk_free": 0.0498,
+     "equity_risk_premium": 0.042
+    },
+    "source": "forecast.cost_of_equity.components: risk-free + equity risk premium",
+    "basis": "Market return of the framework that sets the model cost of equity: risk-free 4.98% + equity risk premium 4.20%. The +-1pp range reflects equity-premium uncertainty. Supply inputs.index to replace it."
+   },
+   "risk_premium": 0.0090618605,
+   "permanent_loss_premium": 0.01,
+   "premium_components": [
+    {
+     "component": "single_stock",
+     "value": 0.01,
+     "basis": "one stock instead of a diversified index: company-specific outcomes do not average out"
+    },
+    {
+     "component": "balance_sheet",
+     "value": 0.0,
+     "basis": "balance sheet strong: leverage, interest coverage, Altman zone and cash runway (financial_strength without the funding signal)"
+    },
+    {
+     "component": "funding_dependence",
+     "value": 0.0,
+     "basis": "self-funded (model card)"
+    },
+    {
+     "component": "cyclicality",
+     "value": 0.0,
+     "basis": "not cyclical (model card)"
+    },
+    {
+     "component": "quality_durability",
+     "value": 0.0,
+     "basis": "business quality strong"
+    },
+    {
+     "component": "country_risk",
+     "value": -0.000938,
+     "basis": "country risk premium above the US base net of the market average already in the index return (exposure-weighted Damodaran CRP 0.11% - market average 0.20%; the same rows as the forecast's cost of equity)"
+    }
+   ],
+   "model_cost_of_equity_floor": {
+    "value": 0.085862,
+    "binding": false,
+    "basis": "the engine's own cost of equity for this company (base scenario)"
+   },
+   "premium_capped": false,
+   "hurdle": 0.1008618605,
+   "required_return": 0.1008618605,
+   "hurdle_rule": "required return = max(index expected return + sum of permanent-loss premium components (cap 6%), the model's own cost of equity); valuation error widens the marginal band instead; plus the country-risk row (outside the cap)",
+   "price_for_hurdle": {
+    "value": 86.94893196490939,
+    "status": "solved",
+    "hurdle": 0.1008618605,
+    "label": "value at your required return",
+    "debt_weight": 0.047268174182941484,
+    "formula": "base value with cost of equity = required return (terminal WACC moved by the equity weight 1 - w, Harris-Pringle); the base IRR at this price equals the required return",
+    "change_from_price": 0.09411012916709938
+   },
+   "value_at_required_return": 86.94893196490939,
+   "fair_value": {
+    "value": 136.4979575666084,
+    "bear": 42.028011764965825,
+    "bull": 275.50993639067633,
+    "cost_of_equity": 0.085862,
+    "change_from_price": 0.7176035933888059,
+    "label": "fair value: base value at the engine's own cost of equity for the company (the executed valuation)",
+    "semantics": "what the base case is worth today at the rate the engine requires of this company for its risk; the verdict is taken at your required return (buy_below_price), which is a choice of yours, not the company's worth"
+   },
+   "buy_below_price": {
+    "value": 86.94893196490939,
+    "status": "solved",
+    "required_return": 0.1008618605,
+    "reason": null,
+    "change_from_price": 0.09411012916709938,
+    "label": "buy-below price for your required return: the price at which the base IRR equals it (value_at_required_return)"
+   },
+   "expected_price_path": {
+    "status": "computed",
+    "rate": 0.09816290779835507,
+    "base_irr": 0.10452581559671015,
+    "market_return": 0.09179999999999999,
+    "comparator": "generic_assumption",
+    "pull_to_market": 0.5,
+    "from_price": 79.47,
+    "from_date": "2026-10-30",
+    "rows": [
+     {
+      "years": 1,
+      "date": "2027-10-30",
+      "price": 87.27100628273527
+     },
+     {
+      "years": 2,
+      "date": "2028-10-30",
+      "price": 95.83778202593709
+     },
+     {
+      "years": 3,
+      "date": "2029-10-30",
+      "price": 105.24549738654798
+     },
+     {
+      "years": 4,
+      "date": "2030-10-30",
+      "price": 115.57670144269571
+     },
+     {
+      "years": 5,
+      "date": "2031-10-30",
+      "price": 126.92204653005305
+     }
+    ],
+    "band": 0.25,
+    "hit_rate_within_band": {
+     "1": 0.65,
+     "3": 0.5,
+     "5": 0.37
+    },
+    "formula": "price x (1 + r)^h, r = base IRR + 0.5 x (market return - base IRR)",
+    "semantics": "expected price on each anniversary: today's price compounded at the base IRR pulled 50% of the way to the market return; in the 2016-2025 walk-forward even the best simple predictor landed within +-25% of the realized price only about 65% / 50% / 37% of the time at 1 / 3 / 5 years. The rate is a total return (a dividend is paid beside the price). Not a promise, not a target, not a value; it changes no verdict"
+   },
+   "yearly_at_model_cost_of_equity": {
+    "rate": "model cost of equity",
+    "model_cost_of_equity": 0.085862,
+    "rows": [
+     {
+      "date": "2026-11-01",
+      "bear": 42.028011764965825,
+      "base": 136.4979575666084,
+      "bull": 275.50993639067633,
+      "distributions": {
+       "bear": 0.0,
+       "base": 0.0,
+       "bull": 0.0
+      }
+     },
+     {
+      "date": "2026-12-31",
+      "bear": 42.52395481920714,
+      "base": 138.2809264885888,
+      "bull": 279.1867564327561,
+      "distributions": {
+       "bear": 0.07309798623548025,
+       "base": 0.07309798623548025,
+       "bull": 0.07309798623548025
+      }
+     },
+     {
+      "date": "2027-12-31",
+      "bear": 43.10857325568347,
+      "base": 149.00322196068277,
+      "bull": 302.590143886267,
+      "distributions": {
+       "bear": 3.114917285754849,
+       "base": 1.1932629781597006,
+       "bull": 0.6020009187798832
+      }
+     },
+     {
+      "date": "2028-12-31",
+      "bear": 44.338872718459626,
+      "base": 160.1126483660368,
+      "bull": 327.37651353651097,
+      "distributions": {
+       "bear": 5.571708652276721,
+       "base": 2.8827049704487924,
+       "bull": 1.8299915452001105
+      }
+     },
+     {
+      "date": "2029-12-31",
+      "bear": 45.934095751415256,
+      "base": 171.5624654018919,
+      "bull": 353.35621934898387,
+      "distributions": {
+       "bear": 7.75864472421343,
+       "base": 5.148527134425346,
+       "bull": 3.91729480004308
+      }
+     },
+     {
+      "date": "2030-12-31",
+      "bear": 47.901863357212456,
+      "base": 183.39072877543956,
+      "bull": 380.5004783870821,
+      "distributions": {
+       "bear": 9.70990760161699,
+       "base": 8.018306177501609,
+       "bull": 7.069123816424083
+      }
+     },
+     {
+      "date": "2031-11-01",
+      "bear": 49.66464456072532,
+      "base": 193.64997529815594,
+      "bull": 404.13771500087995,
+      "distributions": {
+       "bear": 11.33978975295742,
+       "base": 10.799481984534212,
+       "bull": 10.507908324830236
+      }
+     }
+    ],
+    "semantics": "value per share on each date at the engine's own cost of equity for the company (the executed valuation), distributions paid by then shown apart; a dated conditional value of each scenario, not a predicted market price"
+   },
+   "at_required_return": {
+    "rate": 0.1008618605,
+    "bear": 30.311709859657437,
+    "base": 86.94893196490939,
+    "bull": 169.6813900045846,
+    "loss_to_bear": 0.6185766973743874,
+    "semantics": "scenario values today with every cost of equity at your required return (terminal WACC moved by the equity weight)"
+   },
+   "debt_weight": 0.047268174182941484,
+   "model_cost_of_equity": 0.085862,
+   "base_value_at_model_cost_of_equity": 136.4979575666084,
+   "band": {
+    "hurdle_low": 0.0808618605,
+    "hurdle_high": 0.1208618605,
+    "step": 0.02,
+    "error_level": "high",
+    "error_widening": 0.01,
+    "price_low": 56.52262602705185,
+    "price_high": 165.85855905776253,
+    "rows": [
+     {
+      "label": "required return - 2.0pp",
+      "hurdle": 0.0808618605,
+      "value_at_required_return": 165.85855905776253
+     },
+     {
+      "label": "required return + 2.0pp",
+      "hurdle": 0.1208618605,
+      "value_at_required_return": 56.52262602705185
+     },
+     {
+      "label": "index low + premium",
+      "hurdle": 0.0908618605,
+      "value_at_required_return": 115.32680846025963
+     },
+     {
+      "label": "index high + premium",
+      "hurdle": 0.1108618605,
+      "value_at_required_return": 68.91403209375547
+     }
+    ],
+    "bear_tolerance_step": 0.05,
+    "rule": "required return -/+ (1pp + valuation-error widening {\"low\": 0.0, \"medium\": 0.005, \"high\": 0.01, \"unknown\": 0.005}), the index range + premium, the bear-loss tolerance -/+ 5pp and, when the forecast applied a computed moat proxy, the values without it; a verdict that changes inside the band is marginal"
+   },
+   "five_year_at_required_return": {
+    "date": "2031-11-01",
+    "years": 4.999315537303217,
+    "status": "exact",
+    "rate": 0.1008618605,
+    "base_value": 127.84770698591007,
+    "cumulative_distributions_base": 10.799481984534212,
+    "total_value_with_distributions": 138.6471889704443,
+    "change_excluding_distributions": 0.608754334791872,
+    "change_including_distributions": 0.7446481561651477,
+    "annualized_including_distributions": 0.1177590366722554,
+    "assumes": "re-rating: the price converges to the value at your required return by that date",
+    "semantics": "base-case value at that date discounted at your required return, plus the base-case distributions (buybacks/dividends) paid by then; the change from today assumes the price converges to that value (a re-rating), so its annual rate can differ from the base IRR; a conditional estimate, not a predicted price"
+   },
+   "yearly_at_required_return": {
+    "rate": 0.1008618605,
+    "rows": [
+     {
+      "date": "2026-11-01",
+      "bear": 30.311709859657437,
+      "base": 86.94893196490939,
+      "bull": 169.6813900045846,
+      "distributions": {
+       "bear": 0.0,
+       "base": 0.0,
+       "bull": 0.0
+      }
+     },
+     {
+      "date": "2026-12-31",
+      "bear": 30.71629166538421,
+      "base": 88.25464638400632,
+      "bull": 172.30342809480516,
+      "distributions": {
+       "bear": 0.07309798623548025,
+       "base": 0.07309798623548025,
+       "bull": 0.07309798623548025
+      }
+     },
+     {
+      "date": "2027-12-31",
+      "bear": 30.741351113658272,
+      "base": 96.00061964707243,
+      "bull": 189.11189445589105,
+      "distributions": {
+       "bear": 3.114917285754849,
+       "base": 1.1932629781597006,
+       "bull": 0.6020009187798832
+      }
+     },
+     {
+      "date": "2028-12-31",
+      "bear": 31.36278264975532,
+      "base": 103.98574873307858,
+      "bull": 206.97007883044208,
+      "distributions": {
+       "bear": 5.571708652276721,
+       "base": 2.8827049704487924,
+       "bull": 1.8299915452001105
+      }
+     },
+     {
+      "date": "2029-12-31",
+      "bear": 32.30788480063989,
+      "base": 112.17159408197048,
+      "bull": 225.71417775988922,
+      "distributions": {
+       "bear": 7.75864472421343,
+       "base": 5.148527134425346,
+       "bull": 3.91729480004308
+      }
+     },
+     {
+      "date": "2030-12-31",
+      "bear": 33.58391647830055,
+      "base": 120.57852945649526,
+      "bull": 245.28295847382597,
+      "distributions": {
+       "bear": 9.70990760161699,
+       "base": 8.018306177501609,
+       "bull": 7.069123816424083
+      }
+     },
+     {
+      "date": "2031-11-01",
+      "bear": 34.73602903923217,
+      "base": 127.84770698591007,
+      "bull": 262.3135231579459,
+      "distributions": {
+       "bear": 11.33978975295742,
+       "base": 10.799481984534212,
+       "bull": 10.507908324830236
+      }
+     }
+    ],
+    "semantics": "value per share on each date at your required return, distributions paid by then shown apart; a dated conditional value of each scenario, not a predicted market price"
+   },
+   "owner_aspiration": 0.14,
+   "meets_owner_aspiration_14pct": false,
+   "semantics": "IRR = cost of equity at which the scenario value equals today's price, cash flows held fixed, the terminal WACC moving by the equity weight (1 - debt weight; with no net debt this is valuation_tools.implied_cost_of_equity); a conditional return, not a forecast. The fair value is the base value at the model cost of equity (the executed valuation); the value at your required return is the buy-below price, the price at which the base IRR equals the required return, where the verdict and the bear-case margin of safety are measured. The expected price path compounds today's price at the base IRR pulled halfway to the market return (an estimate with its walk-forward accuracy band, not a value). The 14% aspiration is a comparison only.",
+   "debt_weight_source": "forecast.cost_of_equity.components.leverage.debt_weight",
+   "hurdle_basis": "mechanical (no accepted override changed it; analyst upgrades never lower it)"
+  }
+ },
+ "valuation_status": "unreviewed",
+ "annual_values": [
+  {
+   "date": "2026-11-01",
+   "current_quote": 79.47,
+   "bear": 42.028011764965825,
+   "base": 136.4979575666084,
+   "base_gap_vs_quote": 0.7176035933888059,
+   "bull": 275.50993639067633
+  },
+  {
+   "date": "2026-12-31",
+   "current_quote": 79.47,
+   "bear": 42.52395481920714,
+   "base": 138.2809264885888,
+   "base_gap_vs_quote": 0.7400393417464299,
+   "bull": 279.1867564327561
+  },
+  {
+   "date": "2027-12-31",
+   "current_quote": 79.47,
+   "bear": 43.10857325568347,
+   "base": 149.00322196068277,
+   "base_gap_vs_quote": 0.8749618970766675,
+   "bull": 302.590143886267
+  },
+  {
+   "date": "2028-12-31",
+   "current_quote": 79.47,
+   "bear": 44.338872718459626,
+   "base": 160.1126483660368,
+   "base_gap_vs_quote": 1.0147558621622852,
+   "bull": 327.37651353651097
+  },
+  {
+   "date": "2029-12-31",
+   "current_quote": 79.47,
+   "bear": 45.934095751415256,
+   "base": 171.5624654018919,
+   "base_gap_vs_quote": 1.15883308672319,
+   "bull": 353.35621934898387
+  },
+  {
+   "date": "2030-12-31",
+   "current_quote": 79.47,
+   "bear": 47.901863357212456,
+   "base": 183.39072877543956,
+   "base_gap_vs_quote": 1.3076724396053803,
+   "bull": 380.5004783870821
+  },
+  {
+   "date": "2031-11-01",
+   "current_quote": 79.47,
+   "bear": 49.66464456072532,
+   "base": 193.64997529815594,
+   "base_gap_vs_quote": 1.436768281089165,
+   "bull": 404.13771500087995
+  },
+  {
+   "date": "2031-12-31",
+   "current_quote": 79.47,
+   "bear": 49.98779080485057,
+   "base": 195.59612831780015,
+   "base_gap_vs_quote": 1.4612574344759048,
+   "bull": 408.6876183352351
+  }
+ ],
+ "assumptions": [
+  {
+   "id": "open_balance"
+  },
+  {
+   "id": "shares_point"
+  },
+  {
+   "id": "dilution"
+  },
+  {
+   "id": "claims"
+  },
+  {
+   "id": "bridge"
+  },
+  {
+   "id": "revenue_current_fy"
+  },
+  {
+   "id": "growth_fade"
+  },
+  {
+   "id": "growth_bear"
+  },
+  {
+   "id": "growth_base"
+  },
+  {
+   "id": "growth_bull"
+  },
+  {
+   "id": "outside_view_growth"
+  },
+  {
+   "id": "margin_bear"
+  },
+  {
+   "id": "margin_base"
+  },
+  {
+   "id": "margin_bull"
+  },
+  {
+   "id": "moat_basis"
+  },
+  {
+   "id": "sbc_path"
+  },
+  {
+   "id": "da_capex"
+  },
+  {
+   "id": "reinvestment"
+  },
+  {
+   "id": "working_capital"
+  },
+  {
+   "id": "tax"
+  },
+  {
+   "id": "funding_policy"
+  },
+  {
+   "id": "debt_interest"
+  },
+  {
+   "id": "investment_income"
+  },
+  {
+   "id": "cost_of_equity"
+  },
+  {
+   "id": "terminal_bear"
+  },
+  {
+   "id": "terminal_base"
+  },
+  {
+   "id": "terminal_bull"
+  },
+  {
+   "id": "consensus"
+  },
+  {
+   "id": "override_1"
+  },
+  {
+   "id": "override_10"
+  },
+  {
+   "id": "override_11"
+  },
+  {
+   "id": "override_12"
+  },
+  {
+   "id": "override_13"
+  },
+  {
+   "id": "override_2"
+  },
+  {
+   "id": "override_3"
+  },
+  {
+   "id": "override_4"
+  },
+  {
+   "id": "override_5"
+  },
+  {
+   "id": "override_6"
+  },
+  {
+   "id": "override_7"
+  },
+  {
+   "id": "override_8"
+  },
+  {
+   "id": "override_9"
+  }
+ ],
+ "review_status": "unreviewed_draft"
+}

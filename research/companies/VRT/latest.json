@@ -1,0 +1,29 @@
+{
+ "ticker": "VRT",
+ "as_of": "2026-10-28",
+ "folder": "research/companies/VRT/2026-10-28",
+ "thesis_id": "VRT:2026-10-28:5023b7387b9b",
+ "status": "draft",
+ "verdict": "quality_but_expensive",
+ "files": [
+  "casefile_core.json",
+  "casefile_summary.json",
+  "evidence_pack.json",
+  "gather/field.json",
+  "gather/numbers.json",
+  "identity.json",
+  "inputs.json",
+  "paragraph.txt",
+  "position/core.json",
+  "position/field.json",
+  "position/path.json",
+  "review/company_first.json",
+  "review/counter_thesis.json",
+  "review/repair.json",
+  "review/trace.json",
+  "scenarios_he.md",
+  "status.json",
+  "table_he.md",
+  "understand/business.json"
+ ]
+}

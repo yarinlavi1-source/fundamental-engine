@@ -1,0 +1,281 @@
+{
+ "ticker": "APH",
+ "as_of": "2026-11-01",
+ "stop": false,
+ "name": "AMPHENOL CORP /DE/",
+ "cik": "820313",
+ "currency": "USD",
+ "exchange": "NYSE",
+ "fiscal_year_end": "12-31",
+ "sic": 3678,
+ "sic_description": "Electronic Connectors",
+ "annual_form": "10-K",
+ "type": "high_growth / stalwart (computed by classify_company from SEC companyfacts; the analyst confirms or overrides with reasons)",
+ "evidence_ids": [
+  "pf_10k_20260211"
+ ],
+ "resolved": true,
+ "filings": [
+  {
+   "form": "10-K",
+   "filed": "2026-02-11",
+   "report_date": "2025-12-31",
+   "accession": "0001104659-26-013549",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926013549/aph-20251231x10k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926013549/",
+   "what": "annual report"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2026-10-30",
+   "report_date": "2026-09-30",
+   "accession": "0001104659-26-120646",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926120646/aph-20260930x10q.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926120646/",
+   "what": "quarterly report"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2026-07-31",
+   "report_date": "2026-06-30",
+   "accession": "0001104659-26-089194",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926089194/aph-20260630x10q.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926089194/",
+   "what": "quarterly report"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2026-05-01",
+   "report_date": "2026-03-31",
+   "accession": "0001104659-26-054128",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926054128/aph-20260331x10q.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926054128/",
+   "what": "quarterly report"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-10-28",
+   "report_date": "2026-10-28",
+   "accession": "0001104659-26-119421",
+   "items": "2.02,8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926119421/aph-20261028x8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926119421/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-07-29",
+   "report_date": "2026-07-29",
+   "accession": "0001104659-26-087904",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926087904/aph-20260729x8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926087904/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-04-29",
+   "report_date": "2026-04-29",
+   "accession": "0001104659-26-050984",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926050984/aph-20260429x8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926050984/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-01-28",
+   "report_date": "2026-01-28",
+   "accession": "0001104659-26-007259",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926007259/aph-20260128x8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926007259/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-10-22",
+   "report_date": "2025-10-22",
+   "accession": "0001104659-25-101429",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/820313/000110465925101429/aph-20251022x8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/820313/000110465925101429/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-07-23",
+   "report_date": "2025-07-23",
+   "accession": "0001558370-25-009413",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/820313/000155837025009413/aph-20250723x8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/820313/000155837025009413/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-04-23",
+   "report_date": "2025-04-23",
+   "accession": "0001558370-25-005200",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/820313/000155837025005200/aph-20250423x8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/820313/000155837025005200/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-01-22",
+   "report_date": "2025-01-22",
+   "accession": "0001558370-25-000305",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/820313/000155837025000305/aph-20250122x8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/820313/000155837025000305/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "DEF 14A",
+   "filed": "2026-04-08",
+   "report_date": "2026-05-21",
+   "accession": "0001104659-26-040688",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926040688/tm261344-1_def14a.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926040688/",
+   "what": "proxy statement"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-10-06",
+   "report_date": "2026-10-01",
+   "accession": "0001104659-26-114035",
+   "items": "5.02",
+   "url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926114035/tm2627036d1_8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926114035/",
+   "what": "8-K since the annual report (items 5.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-09-04",
+   "report_date": "2026-09-02",
+   "accession": "0001104659-26-105485",
+   "items": "8.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926105485/tm2624775d1_8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926105485/",
+   "what": "8-K since the annual report (items 8.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-08-06",
+   "report_date": "2026-08-06",
+   "accession": "0001104659-26-091969",
+   "items": "8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926091969/tm2622441d1_8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926091969/",
+   "what": "8-K since the annual report (items 8.01,9.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-05-22",
+   "report_date": "2026-05-21",
+   "accession": "0001104659-26-065682",
+   "items": "5.07,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926065682/tm2615386d1_8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926065682/",
+   "what": "8-K since the annual report (items 5.07,9.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-05-12",
+   "report_date": "2026-05-12",
+   "accession": "0001104659-26-059404",
+   "items": "1.01,2.03,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926059404/tm2613386d5_8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926059404/",
+   "what": "8-K since the annual report (items 1.01,2.03,9.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-05-06",
+   "report_date": "2026-05-05",
+   "accession": "0001104659-26-055888",
+   "items": "1.01,8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926055888/tm2613386d4_8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926055888/",
+   "what": "8-K since the annual report (items 1.01,8.01,9.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-03-30",
+   "report_date": "2026-03-30",
+   "accession": "0001104659-26-036361",
+   "items": "1.01,2.03,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926036361/tm2610090d1_8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926036361/",
+   "what": "8-K since the annual report (items 1.01,2.03,9.01)"
+  },
+  {
+   "form": "8-K/A",
+   "filed": "2026-03-27",
+   "report_date": "2026-01-09",
+   "accession": "0001104659-26-036173",
+   "items": "7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926036173/aph-20260109x8ka.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926036173/",
+   "what": "8-K since the annual report (items 7.01,9.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-03-24",
+   "report_date": "2026-03-24",
+   "accession": "0001104659-26-033968",
+   "items": "1.01,8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926033968/tm267510d9_8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926033968/",
+   "what": "8-K since the annual report (items 1.01,8.01,9.01)"
+  }
+ ],
+ "computed_type": {
+  "stage": "high_growth",
+  "lynch": "stalwart",
+  "reasons": [
+   "growth measured without years with a large acquisition: FY2021, FY2025",
+   "revenue compounding 8–20% with established operations",
+   "annual history said mature_growth, but the latest quarter grew 65% year on year and is profitable"
+  ],
+  "flags": [
+   {
+    "key": "acquisitions",
+    "he": "ב-FY2021, FY2025 הייתה רכישה גדולה (המוניטין במאזן קפץ). חלק מהצמיחה נקנה ולא נבנה — לכן הסיווג מסתכל על הצמיחה בלי השנים האלה. צריך לבדוק שהרכישה מחזירה את המחיר ששולם."
+   },
+   {
+    "key": "inflection",
+    "he": "נקודת מפנה: השנים המלאות נראות חלשות, אבל ברבעונים האחרונים המכירות זינקו והחברה עברה לרווח. צריך לבדוק אם זה שינוי אמיתי ומתמשך או קפיצה זמנית."
+   }
+  ]
+ },
+ "identity_check": {
+  "reporting_currency": "USD",
+  "monetary_units": {
+   "USD": 468
+  },
+  "currency_basis": "facts of filing 0001104659-26-013549 (10-K, filed 2026-02-11)",
+  "depositary_shares": false,
+  "status": "ok",
+  "reasons": []
+ },
+ "prefetch": {
+  "by": "scripts/ticker_prefetch.py",
+  "at_utc": "2026-11-01T05:54:27+00:00",
+  "to_complete_by_lanes": [
+   "security and share class, quote currency, IBKR contract: gather_numbers (it alone writes identity.json while the lanes run)",
+   "named competitors: gather_field writes them in gather/field.json competitors[] (the canonical list), never here"
+  ]
+ },
+ "security": "Amphenol Corporation Class A Common Stock, $0.001 par value (one listed class; not an ADR); also NYSE-listed 3.125% Senior Notes due 2032 (APH32)",
+ "quote_currency": "USD",
+ "ib_contract_id": 4493,
+ "split_note": "two-for-one stock split distributed 2026-09-02 (8-K 2026-09-04): prices and consensus are post-split, SEC per-share data up to the 10-Q of 2026-07-31 are pre-split"
+}

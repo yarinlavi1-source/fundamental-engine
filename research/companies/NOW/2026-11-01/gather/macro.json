@@ -1,0 +1,42 @@
+{
+"lane":"macro",
+"sources":[
+{"id":"mc_tikr_armis","kind":"press","title":"ServiceNow Wants to Be No. 1 in Security. Here's What Its $7.75 Billion Armis Bet Must Show on October 28","url":"https://www.tikr.com/blog/servicenow-wants-to-be-no-1-in-security-heres-what-its-7-75-billion-armis-bet-must-show-on-october-28","date":"2026-10-20","independent":false,"publisher":"TIKR","retrieval":"search_excerpt","syndicated_from":null},
+{"id":"mc_yahoo_q1","kind":"press","title":"ServiceNow Q1 2026 earnings: stock drops 17% on margin fears","url":"https://finance.yahoo.com/markets/stocks/articles/servicenow-q1-2026-earnings-stock-173132844.html","date":"2026-04-23","independent":false,"publisher":"Yahoo Finance","retrieval":"search_excerpt","syndicated_from":null},
+{"id":"mc_invezz_jul","kind":"press","title":"ServiceNow stock plunges ahead of earnings: how AI will affect the company","url":"https://invezz.com/au/news/2026/07/22/servicenow-stock-plunges-ahead-of-earnings-how-ai-will-affect-the-company/","date":"2026-07-22","independent":false,"publisher":"Invezz","retrieval":"search_excerpt","syndicated_from":null},
+{"id":"mc_8k_20260515","kind":"sec_filing","title":"ServiceNow 8-K (Items 1.01, 2.03, 8.01) event 2026-05-12, senior notes","url":"https://www.sec.gov/Archives/edgar/data/1373715/000119312526226644/d60522d8k.htm","date":"2026-05-15","independent":true,"publisher":"SEC EDGAR","retrieval":"primary_document","syndicated_from":null}
+],
+"facts":[
+{"id":"mc_f01","metric":"revenue_by_region:North America","period":"FY2025","value":8348,"unit":"USD m","source_ids":["pf_10k_20260129"],"period_end":"2025-12-31","basis":"reported"},
+{"id":"mc_f02","metric":"revenue_by_region:EMEA","period":"FY2025","value":3402,"unit":"USD m","source_ids":["pf_10k_20260129"],"period_end":"2025-12-31","basis":"reported"},
+{"id":"mc_f03","metric":"revenue_by_region:Asia Pacific and other","period":"FY2025","value":1528,"unit":"USD m","source_ids":["pf_10k_20260129"],"period_end":"2025-12-31","basis":"reported"},
+{"id":"mc_f04","metric":"revenue_by_region:North America","period":"9M2026","value":7455,"unit":"USD m","source_ids":["pf_10q_20261028"],"period_end":"2026-09-30","basis":"reported"},
+{"id":"mc_f05","metric":"revenue_by_region:EMEA","period":"9M2026","value":3003,"unit":"USD m","source_ids":["pf_10q_20261028"],"period_end":"2026-09-30","basis":"reported"},
+{"id":"mc_f06","metric":"revenue_by_region:Asia Pacific and other","period":"9M2026","value":1405,"unit":"USD m","source_ids":["pf_10q_20261028"],"period_end":"2026-09-30","basis":"reported"},
+{"id":"mc_f07","metric":"revenue_by_region:North America","period":"9M2025","value":6102,"unit":"USD m","source_ids":["pf_10q_20261028"],"period_end":"2025-09-30","basis":"reported"},
+{"id":"mc_f08","metric":"revenue_by_region:EMEA","period":"9M2025","value":2489,"unit":"USD m","source_ids":["pf_10q_20261028"],"period_end":"2025-09-30","basis":"reported"},
+{"id":"mc_f09","metric":"revenue_by_region:Asia Pacific and other","period":"9M2025","value":1119,"unit":"USD m","source_ids":["pf_10q_20261028"],"period_end":"2025-09-30","basis":"reported"},
+{"id":"mc_f10","metric":"long_lived_assets:North America","period":"2026-09-30","value":1413,"unit":"USD m","source_ids":["pf_10q_20261028"],"period_end":"2026-09-30","basis":"reported"},
+{"id":"mc_f11","metric":"long_lived_assets:EMEA","period":"2026-09-30","value":476,"unit":"USD m","source_ids":["pf_10q_20261028"],"period_end":"2026-09-30","basis":"reported"},
+{"id":"mc_f12","metric":"long_lived_assets:Asia Pacific and other","period":"2026-09-30","value":256,"unit":"USD m","source_ids":["pf_10q_20261028"],"period_end":"2026-09-30","basis":"reported"},
+{"id":"mc_f13","metric":"revenue_by_region:United States share of North America","period":"9M2026","value":0.95,"unit":"ratio","source_ids":["pf_10q_20261028"],"period_end":"2026-09-30","basis":"reported"}
+],
+"notes":[
+"mc GEOGRAPHY (10-Q 2026-09-30, by user location, 9M2026): North America 62.8% of revenue (7,455 of 11,863; US = 95% of NA, so ~60% US), EMEA 25.3%, Asia Pacific and other 11.8%. Growth 9M26 vs 9M25: NA +22%, EMEA +21%, APAC +26%. Property and equipment net (2,145): NA 66%, EMEA 22%, APAC 12%; US = 84% of NA. Sources pf_10q_20261028, pf_10k_20260129. No China or Taiwan breakout is disclosed (APAC is one line); no hardware supply chain disclosed.",
+"mc EXPOSURE export controls/sanctions/FCPA: 10-K risk factor (pf_10k_20260129) names Russia/Belarus sanctions and possible wider restrictions; no revenue share disclosed, so any sizing is hypothesis (non-US revenue is ~40%: EMEA 25% + APAC 12%, an upper bound of what international disruption could touch).",
+"mc EXPOSURE tariffs: 10-K says ServiceNow pays customs tariffs in certain cases on imports for its operations (data center hardware); no amount disclosed, hypothesis only; a software subscription business, impact expected small but unsized.",
+"mc EXPOSURE US federal / DOJ: 10-Q 2026-09-30 note (pf_10q_20261028): internal investigation on hiring of the former US Army CIO as Head of Global Public Sector (2023); DOJ opened its own investigation and requested documents; company cannot predict timing or outcome. Federal business is concentrated in a small number of distributors/resellers (10-K risk factor); debarment risk listed; share of revenue from US federal not found in this lane (gap).",
+"mc EXPOSURE Middle East deal delays: press (mc_yahoo_q1, search excerpt, not primary) attributes part of the Q1 2026 stock drop to Middle East deal delays and Armis margin pressure; unsized, treat as lead until confirmed in call transcript (documents lane).",
+"mc EXPOSURE AI disruption of seat-based IT service workflows: press (mc_invezz_jul) cites investor worry that AI agents reduce employees handling ITSM tickets; opinion, hypothesis, not sized here.",
+"mc EXPOSURE data residency / local-partner rules and antitrust: generic risk factors in 10-K, no sizing. Moveworks antitrust review (DOJ second request, 2025 press) ended with closing on 2025-12-15 per 10-Q; no 2026 DOJ merger challenge found in search.",
+"mc NEWS 2025-12-15 to 2026-04-20: Moveworks acquisition closed 2025-12-15 (10-Q note), Veza closed 2026-03-02 for about $1.2bn, Armis closed 2026-04-20 for preliminary consideration of about $7.6bn in cash (press says $7.75bn headline); nine-month cash paid for business combinations $9,167m (10-Q cash flow). Five other acquisitions for $612m in 9M26.",
+"mc NEWS 2026-05-15: 8-K (mc_8k_20260515): $4.0bn of five series of senior unsecured notes issued May 2026 (net $3.9bn) to repay the $4.0bn term loan drawn for Armis; total senior notes now $5.5bn (incl. $1.5bn 1.40% 2030 notes), fair value $5.1bn at 2026-09-30 (10-Q).",
+"mc NEWS 2026-04-23: press (mc_yahoo_q1) reports stock fell about 17% after Q1 2026 results on margin fears from Armis despite beat; press only, approximate.",
+"mc NEWS 2026-02/05 8-Ks: 2026-02-11 (Item 5.02, officer/director change), 2026-02-17 (7.01), 2026-05-22 (5.02, 5.07 annual meeting results): not read in detail, no material event identified; gap.",
+"mc NEWS 2026-09-09: press (mc_tikr_armis) says CEO McDermott told Goldman conference ServiceNow is 8th largest security vendor with ambition to be #1; BNP estimate of security and risk ACV about $1.5bn is a third-party estimate, unconfirmed by company.",
+"mc NEWS 2026-10-28: Q3 2026 results, 10-Q and 8-K filed this day; within 2 days of as_of window was cleared for 10-Q (citable from 2026-10-30), but press coverage of the results was not found in search; no news or 8-K after 2026-10-28 found. Fred regime line is context only.",
+"mc RATES: risk-free 4.98% (FRED DGS10, 2026-10-29) and implied ERP 4.2% (Damodaran 2026-10-01) kept from prefetch; Damodaran's 2026-11-01 update not checked (retained saved value)."
+],
+"gaps":["US federal revenue share not disclosed in lane reading","8-Ks of 2026-02-11, 02-17 and 05-22 not read","no press found on Q3 2026 results (documents lane to cover)","Damodaran 1 Nov 2026 ERP update not checked","no China/Taiwan breakout disclosed; APAC is a single line"],
+"stopped":["did not search further press after two searches: next retrieval unlikely to change decisions"]
+}

@@ -1,0 +1,212 @@
+{
+ "company": {
+  "ticker": "ASTS",
+  "name": "AST SpaceMobile, Inc.",
+  "cik": "1780312",
+  "currency": "USD",
+  "exchange": "Nasdaq",
+  "sic": 4899,
+  "sic_description": "Communications Services, NEC",
+  "fiscal_year_end": "12-31",
+  "annual_form": "10-K",
+  "identity_source": "SEC submissions and companyfacts (scripts/ticker_prefetch.py); the numbers lane confirms",
+  "depositary_shares": false,
+  "quote_currency": "USD",
+  "sector": "Communication Services",
+  "industry": "Satellite telecommunications (space-based cellular broadband, direct-to-device)",
+  "security": "Class A common stock",
+  "ibkr_contract_id": 480745767
+ },
+ "as_of": "2026-11-01",
+ "engine_version": "0.14.0",
+ "casefile_sha256": "882cfbbafc784eed1ebcca294e16f790c52788d793c12a7d646aa1cf61df18bb",
+ "factbook_sha256": "3ee75721ae72d9a1f10aca467fb8571838749a94eeb4931391c40f68cb01a18a",
+ "inputs_sha256": "9303f2c68415d9449144b38086ab102f26cbe571daa3e6e52f34d2e6680f8e64",
+ "decision": {
+  "verdict": {
+   "code": "insufficient_evidence",
+   "label_he": "אין מספיק ראיות להחלטה",
+   "gate": "data_blocked",
+   "reason": "Insufficient evidence: risk register gate.blocked_data: Critical data blocked (cash_and_liquid_investments): no price conclusion on unreliable inputs.; critical field cash_and_liquid_investments: conflict",
+   "reason_he": "נתונים קריטיים חסרים או סותרים (המזומן וההשקעות הנזילות)",
+   "what_would_change_it": [
+    "resolve: risk register gate.blocked_data: Critical data blocked (cash_and_liquid_investments): no price conclusion on unreliable inputs.",
+    "resolve: critical field cash_and_liquid_investments: conflict"
+   ],
+   "what_would_change_it_he": "השלמת הנתונים החסרים או הסותרים והרצה מחדש",
+   "hurdle_used": 0.1475,
+   "risk_premium_used": 0.06,
+   "allowed_overrides": [
+    "avoid",
+    "insufficient_evidence"
+   ],
+   "margin_detail": null,
+   "confidence": "low",
+   "status": "final",
+   "price_claim_withheld": false,
+   "withheld_reasons": [],
+   "margin": null,
+   "price_for_hurdle": null,
+   "value_at_required_return": null
+  },
+  "confidence": {
+   "level": "low",
+   "level_he": "נמוכה",
+   "reasons": [
+    "critical data blocked: risk register gate.blocked_data: Critical data blocked (cash_and_liquid_investments): no price conclusion on unreliable inputs.; critical field cash_and_liquid_investments: conflict",
+    "no reliable valuation",
+    "large possible valuation error: no executed valuation: the size of error cannot be bounded; red-team checks unverifiable: revenue_basis, reinvestment, funding",
+    "business understanding partial: 9 open questions; high-relevance dimensions unassessed: regulation"
+   ],
+   "reasons_he": [
+    "נתונים קריטיים חסרים או סותרים",
+    "אין עדיין הערכת שווי אמינה",
+    "טווח הטעות האפשרי בהערכת השווי גדול",
+    "חלק מההבנה העסקית עוד פתוח (9 שאלות); עוד לא נבדקו לעומק: רגולציה"
+   ],
+   "rule": "low if any hard reason (demo, blocked data, insufficient understanding, unverified valuation) or 3+ other reasons; medium with 1-2; high with none. Each cause counts once."
+  },
+  "expected_return": {
+   "base_irr": null,
+   "bear_irr": null,
+   "bull_irr": null,
+   "base_irr_bound": null,
+   "irr_status": {
+    "bear": {
+     "status": "not_computable",
+     "bound": null,
+     "reason": "no executed base value"
+    },
+    "base": {
+     "status": "not_computable",
+     "bound": null,
+     "reason": "no executed base value"
+    },
+    "bull": {
+     "status": "not_computable",
+     "bound": null,
+     "reason": "no executed base value"
+    }
+   },
+   "price": 40.940000000000005,
+   "decomposition": {
+    "status": "unavailable",
+    "reason": "no executed valuation"
+   },
+   "index_expected_return": {
+    "value": 0.0875,
+    "low": 0.0775,
+    "high": 0.09749999999999999,
+    "provenance": "model_assumption",
+    "origin": "engine_default",
+    "comparator": "generic_assumption",
+    "source": "engine default: forecast.RF_DEFAULT + forecast.ERP_DEFAULT (no forecast cost-of-equity components, no index input)",
+    "components": {
+     "risk_free": 0.0425,
+     "equity_risk_premium": 0.045
+    },
+    "basis": "Market return of the same framework that sets the model cost of equity: risk-free + equity risk premium. The +-1pp range reflects equity-premium uncertainty. Not a forecast; supply inputs.index {value, basis, source, low?, high?} to replace it."
+   },
+   "risk_premium": 0.06,
+   "permanent_loss_premium": 0.06,
+   "premium_components": [
+    {
+     "component": "single_stock",
+     "value": 0.01,
+     "basis": "one stock instead of a diversified index: company-specific outcomes do not average out"
+    },
+    {
+     "component": "balance_sheet",
+     "value": 0.005,
+     "basis": "balance sheet adequate: leverage, interest coverage, Altman zone and cash runway (financial_strength without the funding signal)"
+    },
+    {
+     "component": "funding_dependence",
+     "value": 0.015,
+     "basis": "the plan depends on outside capital: current holders can be diluted or delayed"
+    },
+    {
+     "component": "cyclicality",
+     "value": 0.0,
+     "basis": "not cyclical (model card)"
+    },
+    {
+     "component": "unproven_economics",
+     "value": 0.03,
+     "basis": "early-stage business still loss-making (operating margin -405.7%, FCF margin -1602.2%): unit economics not yet proven at scale (the forecast's own stage add-on)"
+    },
+    {
+     "component": "quality_durability",
+     "value": 0.01,
+     "basis": "business quality unknown (not demonstrated: treated as above average)"
+    }
+   ],
+   "model_cost_of_equity_floor": {
+    "value": null,
+    "binding": false,
+    "basis": "the engine's own cost of equity for this company (base scenario)"
+   },
+   "premium_capped": true,
+   "hurdle": 0.1475,
+   "required_return": 0.1475,
+   "hurdle_rule": "required return = max(index expected return + sum of permanent-loss premium components (cap 6%), the model's own cost of equity); valuation error widens the marginal band instead",
+   "price_for_hurdle": null,
+   "value_at_required_return": null,
+   "fair_value": null,
+   "buy_below_price": null,
+   "expected_price_path": {
+    "status": "unavailable",
+    "reason": "needs the base IRR at today's price and a market return"
+   },
+   "yearly_at_model_cost_of_equity": null,
+   "at_required_return": null,
+   "debt_weight": 0.0,
+   "model_cost_of_equity": null,
+   "base_value_at_model_cost_of_equity": null,
+   "band": {
+    "hurdle_low": 0.1275,
+    "hurdle_high": 0.1675,
+    "step": 0.02,
+    "error_level": "high",
+    "error_widening": 0.01,
+    "price_low": null,
+    "price_high": null,
+    "rows": [
+     {
+      "label": "required return - 2.0pp",
+      "hurdle": 0.1275,
+      "value_at_required_return": null
+     },
+     {
+      "label": "required return + 2.0pp",
+      "hurdle": 0.1675,
+      "value_at_required_return": null
+     },
+     {
+      "label": "index low + premium",
+      "hurdle": 0.1375,
+      "value_at_required_return": null
+     },
+     {
+      "label": "index high + premium",
+      "hurdle": 0.1575,
+      "value_at_required_return": null
+     }
+    ],
+    "bear_tolerance_step": 0.05,
+    "rule": "required return -/+ (1pp + valuation-error widening {\"low\": 0.0, \"medium\": 0.005, \"high\": 0.01, \"unknown\": 0.005}), the index range + premium, the bear-loss tolerance -/+ 5pp and, when the forecast applied a computed moat proxy, the values without it; a verdict that changes inside the band is marginal"
+   },
+   "five_year_at_required_return": null,
+   "yearly_at_required_return": null,
+   "owner_aspiration": 0.14,
+   "meets_owner_aspiration_14pct": null,
+   "semantics": "IRR = cost of equity at which the scenario value equals today's price, cash flows held fixed, the terminal WACC moving by the equity weight (1 - debt weight; with no net debt this is valuation_tools.implied_cost_of_equity); a conditional return, not a forecast. The fair value is the base value at the model cost of equity (the executed valuation); the value at your required return is the buy-below price, the price at which the base IRR equals the required return, where the verdict and the bear-case margin of safety are measured. The expected price path compounds today's price at the base IRR pulled halfway to the market return (an estimate with its walk-forward accuracy band, not a value). The 14% aspiration is a comparison only.",
+   "debt_weight_source": null,
+   "hurdle_basis": "mechanical (no accepted override changed it; analyst upgrades never lower it)"
+  }
+ },
+ "valuation_status": "not_computed",
+ "annual_values": null,
+ "assumptions": [],
+ "review_status": "blocked"
+}

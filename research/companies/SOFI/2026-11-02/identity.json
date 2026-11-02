@@ -1,0 +1,179 @@
+{
+ "ticker": "SOFI",
+ "as_of": "2026-11-02",
+ "stop": false,
+ "name": "SoFi Technologies, Inc.",
+ "cik": "1818874",
+ "currency": "USD",
+ "exchange": "Nasdaq",
+ "fiscal_year_end": "12-31",
+ "sic": 6199,
+ "sic_description": "Finance Services",
+ "annual_form": "10-K",
+ "type": "high_growth / fast_grower (computed by classify_company from SEC companyfacts; the analyst confirms or overrides with reasons)",
+ "evidence_ids": [
+  "pf_10k_20260217"
+ ],
+ "resolved": true,
+ "filings": [
+  {
+   "form": "10-K",
+   "filed": "2026-02-17",
+   "report_date": "2025-12-31",
+   "accession": "0001818874-26-000013",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887426000013/sofi-20251231.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887426000013/",
+   "what": "annual report"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2026-08-06",
+   "report_date": "2026-06-30",
+   "accession": "0001818874-26-000054",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887426000054/sofi-20260630.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887426000054/",
+   "what": "quarterly report"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2026-05-07",
+   "report_date": "2026-03-31",
+   "accession": "0001818874-26-000037",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887426000037/sofi-20260331.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887426000037/",
+   "what": "quarterly report"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-10-27",
+   "report_date": "2026-10-27",
+   "accession": "0001818874-26-000065",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887426000065/sofi-20261027.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887426000065/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-07-29",
+   "report_date": "2026-07-29",
+   "accession": "0001818874-26-000050",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887426000050/sofi-20260729.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887426000050/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-04-29",
+   "report_date": "2026-04-29",
+   "accession": "0001818874-26-000020",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887426000020/sofi-20260429.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887426000020/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-01-30",
+   "report_date": "2026-01-30",
+   "accession": "0001818874-26-000008",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887426000008/sofi-20260130.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887426000008/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-10-28",
+   "report_date": "2025-10-28",
+   "accession": "0001818874-25-000204",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887425000204/sofi-20251028.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887425000204/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-07-29",
+   "report_date": "2025-07-29",
+   "accession": "0001818874-25-000148",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887425000148/sofi-20250729.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887425000148/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-04-29",
+   "report_date": "2025-04-29",
+   "accession": "0001818874-25-000068",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887425000068/sofi-20250429.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887425000068/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-01-27",
+   "report_date": "2025-01-27",
+   "accession": "0001818874-25-000006",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887425000006/sofi-20250127.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887425000006/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "DEF 14A",
+   "filed": "2026-04-30",
+   "report_date": "2026-04-30",
+   "accession": "0001818874-26-000032",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887426000032/sofi-20260430.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887426000032/",
+   "what": "proxy statement"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-06-18",
+   "report_date": "2026-06-17",
+   "accession": "0001818874-26-000043",
+   "items": "5.07",
+   "url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887426000043/sofi-20260617.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1818874/000181887426000043/",
+   "what": "8-K since the annual report (items 5.07)"
+  }
+ ],
+ "computed_type": {
+  "stage": "high_growth",
+  "lynch": "fast_grower",
+  "reasons": [
+   "revenue compounding at 20% or more"
+  ],
+  "flags": []
+ },
+ "identity_check": {
+  "reporting_currency": "USD",
+  "monetary_units": {
+   "USD": 655
+  },
+  "currency_basis": "facts of filing 0001818874-26-000013 (10-K, filed 2026-02-17)",
+  "depositary_shares": false,
+  "status": "ok",
+  "reasons": []
+ },
+ "prefetch": {
+  "by": "scripts/ticker_prefetch.py",
+  "at_utc": "2026-11-02T07:16:56+00:00",
+  "to_complete_by_lanes": [
+   "security and share class, quote currency, IBKR contract: gather_numbers (it alone writes identity.json while the lanes run)",
+   "named competitors: gather_field writes them in gather/field.json competitors[] (the canonical list), never here"
+  ]
+ },
+ "security": "SoFi Technologies, Inc. common stock (single class; no ADR)",
+ "quote_currency": "USD",
+ "ib_contract_id": 494162724
+}

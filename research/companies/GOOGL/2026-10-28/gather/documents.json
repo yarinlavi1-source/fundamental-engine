@@ -1,0 +1,1409 @@
+{
+ "lane": "documents",
+ "sources": [
+  {
+   "id": "dc_call_20260722",
+   "kind": "transcript",
+   "title": "Alphabet Q2 2026 earnings call transcript (Alpha Vantage EARNINGS_CALL_TRANSCRIPT, GOOGL 2026Q2; provider copy of the call webcast https://www.youtube.com/watch?v=LzExSq9DU9w)",
+   "url": "connector:Alpha_Vantage_MCP_Server__EARNINGS_CALL_TRANSCRIPT",
+   "date": "2026-07-22",
+   "independent": false,
+   "publisher": "Alphabet Inc. (call), transcript via Alpha Vantage",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  }
+ ],
+ "facts": [
+  {
+   "id": "dc_rpo_total_q2_2026",
+   "metric": "remaining_performance_obligations_total",
+   "period": "Q@2026-06-30",
+   "value": 519500000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_rpo_cloud_q2_2026",
+   "metric": "remaining_performance_obligations_google_cloud",
+   "period": "Q@2026-06-30",
+   "value": 513900000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_rpo_total_q1_2026",
+   "metric": "remaining_performance_obligations_total",
+   "period": "Q@2026-03-31",
+   "value": 467600000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260430"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_rpo_cloud_q1_2026",
+   "metric": "remaining_performance_obligations_google_cloud",
+   "period": "Q@2026-03-31",
+   "value": 462300000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260430"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_rpo_total_fy2025",
+   "metric": "remaining_performance_obligations_total",
+   "period": "FY2025",
+   "value": 242800000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260205"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_purchase_commitments_q2_2026",
+   "metric": "purchase_commitments_and_other_contractual_obligations_total",
+   "period": "Q@2026-06-30",
+   "value": 811000000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_purchase_commitments_short_q2_2026",
+   "metric": "purchase_commitments_and_other_contractual_obligations_short_term",
+   "period": "Q@2026-06-30",
+   "value": 200700000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_purchase_commitments_fy2025",
+   "metric": "purchase_commitments_and_other_contractual_obligations_total",
+   "period": "FY2025",
+   "value": 149100000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260205"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_purchase_commitments_short_fy2025",
+   "metric": "purchase_commitments_and_other_contractual_obligations_short_term",
+   "period": "FY2025",
+   "value": 113000000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260205"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fixed_supply_commitments_q2_2026",
+   "metric": "fixed_or_guaranteed_commitments_over_one_year_supply_energy_content",
+   "period": "Q@2026-06-30",
+   "value": 707000000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_leases_not_commenced_q2_2026",
+   "metric": "data_center_leases_signed_not_yet_commenced_future_payments",
+   "period": "Q@2026-06-30",
+   "value": 85200000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_lease_payments_operating_q2_2026",
+   "metric": "undiscounted_future_operating_lease_payments",
+   "period": "Q@2026-06-30",
+   "value": 21300000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_lease_payments_finance_q2_2026",
+   "metric": "undiscounted_future_finance_lease_payments",
+   "period": "Q@2026-06-30",
+   "value": 2900000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_backstop_guarantees_q2_2026",
+   "metric": "financial_guarantee_backstops_max_future_payments",
+   "period": "Q@2026-06-30",
+   "value": 7600000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_backstop_credit_derivatives_q2_2026",
+   "metric": "credit_derivative_backstops_max_future_payments",
+   "period": "Q@2026-06-30",
+   "value": 43800000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_backstop_agreed_unfinalized_q2_2026",
+   "metric": "future_backstops_agreed_subject_to_final_terms",
+   "period": "Q@2026-06-30",
+   "value": 24100000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_private_company_funding_commitment_q2_2026",
+   "metric": "future_capital_funding_commitment_private_company_milestone_contingent_equity_derivative",
+   "period": "Q@2026-06-30",
+   "value": 20000000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_ltd_carrying_q2_2026",
+   "metric": "long_term_debt_carrying_value",
+   "period": "Q@2026-06-30",
+   "value": 98165000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_ltd_face_q2_2026",
+   "metric": "long_term_debt_face_value",
+   "period": "Q@2026-06-30",
+   "value": 101085000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_ltd_face_fy2025",
+   "metric": "long_term_debt_face_value",
+   "period": "FY2025",
+   "value": 49085000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260723"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_cash_and_marketable_q2_2026",
+   "metric": "cash_cash_equivalents_and_marketable_securities",
+   "period": "Q@2026-06-30",
+   "value": 242474000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260722_1",
+    "pf_10q_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_marketable_equity_q2_2026",
+   "metric": "marketable_equity_securities_inside_current_marketable_securities",
+   "period": "Q@2026-06-30",
+   "value": 87063000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_spacex_short_restricted_q2_2026",
+   "metric": "spacex_shares_short_term_sale_restricted_inside_marketable_equity",
+   "period": "Q@2026-06-30",
+   "value": 80000000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_spacex_long_restricted_q2_2026",
+   "metric": "spacex_shares_long_term_sale_restricted_through_q3_2027_in_other_non_current_assets",
+   "period": "Q@2026-06-30",
+   "value": 14126000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_nonmarketable_securities_q2_2026",
+   "metric": "non_marketable_securities_total",
+   "period": "Q@2026-06-30",
+   "value": 131461000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260723",
+    "pf_rel_20260722_1"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_nonmarketable_measurement_alt_q2_2026",
+   "metric": "non_marketable_equity_measurement_alternative_carrying_value_primarily_one_private_company",
+   "period": "Q@2026-06-30",
+   "value": 124259000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_equity_gain_q2_2026",
+   "metric": "gain_on_equity_securities_oie",
+   "period": "Q@2026-06-30",
+   "value": 99031000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260723",
+    "pf_rel_20260722_1"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_equity_gain_tax_q2_2026",
+   "metric": "income_tax_provision_effect_of_equity_gain",
+   "period": "Q@2026-06-30",
+   "value": 21900000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260722_1"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_equity_gain_ni_q2_2026",
+   "metric": "net_income_effect_of_equity_gain",
+   "period": "Q@2026-06-30",
+   "value": 77100000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260722_1"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_common_raise_net_q2_2026",
+   "metric": "proceeds_common_stock_issuance_net_public_offering_plus_berkshire_private_placement",
+   "period": "Q@2026-06-30",
+   "value": 30499000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260722_1",
+    "pf_10q_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_pref_raise_net_q2_2026",
+   "metric": "proceeds_mandatory_convertible_preferred_net",
+   "period": "Q@2026-06-30",
+   "value": 19063000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260722_1",
+    "pf_10q_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_pref_liquidation_q2_2026",
+   "metric": "mandatory_convertible_preferred_liquidation_preference_19m_shares_x_1000",
+   "period": "Q@2026-06-30",
+   "value": 19000000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "derived"
+  },
+  {
+   "id": "dc_pref_capped_call_premium_q2_2026",
+   "metric": "capped_call_premium_paid",
+   "period": "Q@2026-06-30",
+   "value": 1000000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_atm_capacity_q2_2026",
+   "metric": "at_the_market_program_capacity_unsold",
+   "period": "Q@2026-06-30",
+   "value": 40000000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_buyback_remaining_q2_2026",
+   "metric": "share_repurchase_authorization_remaining",
+   "period": "Q@2026-06-30",
+   "value": 69500000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_shares_outstanding_q2_2026",
+   "metric": "shares_outstanding_class_a_b_c_point_in_time",
+   "period": "Q@2026-06-30",
+   "value": 12230000000,
+   "unit": "shares",
+   "source_ids": [
+    "pf_rel_20260722_1"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_diluted_shares_q2_2026",
+   "metric": "diluted_weighted_average_shares",
+   "period": "Q@2026-06-30",
+   "value": 12309000000,
+   "unit": "shares",
+   "source_ids": [
+    "pf_rel_20260722_1",
+    "pf_10q_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_tac_q2_2026",
+   "metric": "traffic_acquisition_costs",
+   "period": "Q@2026-06-30",
+   "value": 16179000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260722_1",
+    "pf_10q_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_tac_q2_2025",
+   "metric": "traffic_acquisition_costs",
+   "period": "Q@2025-06-30",
+   "value": 14705000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260722_1",
+    "pf_10q_20260723"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_capex_h1_2026",
+   "metric": "capex",
+   "period": "H1 2026",
+   "value": 80598000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260722_1",
+    "pf_10q_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fcf_ttm_q2_2026",
+   "metric": "free_cash_flow_ttm_company_definition",
+   "period": "TTM Q2 2026",
+   "value": 53273000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260722_1"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fcf_q2_2026",
+   "metric": "free_cash_flow_company_definition",
+   "period": "Q@2026-06-30",
+   "value": -5855000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260722_1"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_inventory_q2_2026",
+   "metric": "inventory",
+   "period": "Q@2026-06-30",
+   "value": 9991000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260722_1"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_inventory_fy2025",
+   "metric": "inventory",
+   "period": "FY2025",
+   "value": 2439000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260722_1"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_legal_pricerunner_q2_2026",
+   "metric": "pricerunner_klarna_damages_accrued_total_incl_interest_and_costs",
+   "period": "Q@2026-06-30",
+   "value": 2100000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_legal_pricerunner_opex_q2_2026",
+   "metric": "pricerunner_principal_damages_in_general_and_administrative",
+   "period": "Q@2026-06-30",
+   "value": 1500000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_legal_pricerunner_oie_q2_2026",
+   "metric": "pricerunner_interest_and_costs_in_other_income_expense",
+   "period": "Q@2026-06-30",
+   "value": 581000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_legal_ec_android_paid_jul2026",
+   "metric": "ec_android_fine_plus_interest_paid_in_july_2026_previously_accrued",
+   "period": "Q3 2026",
+   "value": 5200000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260723"
+   ],
+   "period_end": "2026-07-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_legal_accrued_short_q2_2026",
+   "metric": "short_term_accrued_legal_and_regulatory_fines_and_settlements",
+   "period": "Q@2026-06-30",
+   "value": 17400000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_acq_wiz_q1_2026",
+   "metric": "wiz_acquisition_price_closed_2026_03_11_in_google_cloud",
+   "period": "Q@2026-03-31",
+   "value": 29500000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260723"
+   ],
+   "period_end": "2026-03-11",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_acq_intersect_q1_2026",
+   "metric": "intersect_acquisition_price_closed_2026_03_10",
+   "period": "Q@2026-03-31",
+   "value": 5900000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260723"
+   ],
+   "period_end": "2026-03-10",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_waymo_comp_charge_q4_2025",
+   "metric": "waymo_employee_compensation_charge",
+   "period": "Q@2025-12-31",
+   "value": 2100000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260204_1"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_ec_adtech_fine_q3_2025",
+   "metric": "ec_adtech_fine_accrued_in_google_services_ga",
+   "period": "Q@2025-09-30",
+   "value": 3500000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20251029_1"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_etr_q2_2026",
+   "metric": "effective_tax_rate",
+   "period": "Q@2026-06-30",
+   "value": 0.191,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10q_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  }
+ ],
+ "guidance": [
+  {
+   "id": "dc_g_capex_fy2026_jul",
+   "metric": "capex",
+   "period": "FY2026",
+   "low": 195000000000,
+   "high": 205000000000,
+   "unit": "USD",
+   "issued": "2026-07-22",
+   "source_id": "dc_call_20260722"
+  },
+  {
+   "id": "dc_g_capex_fy2026_feb",
+   "metric": "capex",
+   "period": "FY2026",
+   "low": 175000000000,
+   "high": 185000000000,
+   "unit": "USD",
+   "issued": "2026-02-04",
+   "source_id": "pf_rel_20260204_1"
+  }
+ ],
+ "kpis": [
+  {
+   "id": "dc_kpi_cloud_backlog_q2_2026",
+   "name": "Google Cloud revenue backlog (RPO)",
+   "period": "Q@2026-06-30",
+   "value": 513900000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260723"
+   ]
+  },
+  {
+   "id": "dc_kpi_cloud_backlog_q1_2026",
+   "name": "Google Cloud revenue backlog (RPO)",
+   "period": "Q@2026-03-31",
+   "value": 462300000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260430"
+   ]
+  },
+  {
+   "id": "dc_kpi_backlog_24m_share",
+   "name": "Share of revenue backlog to be recognized within 24 months ('just over 50%')",
+   "period": "Q@2026-06-30",
+   "value": 0.5,
+   "unit": "ratio_lower_bound",
+   "source_ids": [
+    "pf_10q_20260723"
+   ]
+  },
+  {
+   "id": "dc_kpi_paid_clicks_q2_2026",
+   "name": "Google Search & other paid clicks change y/y",
+   "period": "Q@2026-06-30",
+   "value": 0.13,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10q_20260723"
+   ]
+  },
+  {
+   "id": "dc_kpi_cpc_q2_2026",
+   "name": "Google Search & other cost-per-click change y/y",
+   "period": "Q@2026-06-30",
+   "value": 0.03,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10q_20260723"
+   ]
+  },
+  {
+   "id": "dc_kpi_network_impressions_q2_2026",
+   "name": "Google Network impressions change y/y",
+   "period": "Q@2026-06-30",
+   "value": -0.12,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10q_20260723"
+   ]
+  },
+  {
+   "id": "dc_kpi_network_cpi_q2_2026",
+   "name": "Google Network cost-per-impression change y/y",
+   "period": "Q@2026-06-30",
+   "value": 0.13,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10q_20260723"
+   ]
+  },
+  {
+   "id": "dc_kpi_tac_rate_q2_2026",
+   "name": "TAC rate (TAC / Google advertising revenues), as stated: 19.8% vs 20.6% a year earlier",
+   "period": "Q@2026-06-30",
+   "value": 0.198,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10q_20260723"
+   ]
+  },
+  {
+   "id": "dc_kpi_cloud_op_margin_q2_2026",
+   "name": "Google Cloud operating margin (8,814 / 24,768)",
+   "period": "Q@2026-06-30",
+   "value": 0.356,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20260722_1",
+    "dc_call_20260722"
+   ]
+  },
+  {
+   "id": "dc_kpi_services_op_margin_q2_2026",
+   "name": "Google Services operating margin (39,544 / 94,540)",
+   "period": "Q@2026-06-30",
+   "value": 0.418,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20260722_1",
+    "dc_call_20260722"
+   ]
+  },
+  {
+   "id": "dc_kpi_gemini_app_mau_q2_2026",
+   "name": "Gemini App monthly active users",
+   "period": "Q@2026-06-30",
+   "value": 950000000,
+   "unit": "users",
+   "source_ids": [
+    "pf_rel_20260722_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_gemini_app_mau_q4_2025",
+   "name": "Gemini App monthly active users ('over 750 million')",
+   "period": "Q@2025-12-31",
+   "value": 750000000,
+   "unit": "users_lower_bound",
+   "source_ids": [
+    "pf_rel_20260204_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_ai_mode_mau_q2_2026",
+   "name": "AI Mode monthly active users ('surpassed 1 billion')",
+   "period": "Q@2026-06-30",
+   "value": 1000000000,
+   "unit": "users_lower_bound",
+   "source_ids": [
+    "dc_call_20260722"
+   ]
+  },
+  {
+   "id": "dc_kpi_api_tokens_q2_2026",
+   "name": "Gemini direct-API tokens processed per minute (release wording; transcript text says 'per month')",
+   "period": "Q@2026-06-30",
+   "value": 22000000000,
+   "unit": "tokens_per_minute",
+   "source_ids": [
+    "pf_rel_20260722_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_api_tokens_q1_2026",
+   "name": "Gemini direct-API tokens processed per minute",
+   "period": "Q@2026-03-31",
+   "value": 16000000000,
+   "unit": "tokens_per_minute",
+   "source_ids": [
+    "pf_rel_20260429_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_api_tokens_q4_2025",
+   "name": "Gemini direct-API tokens processed per minute ('over 10 billion')",
+   "period": "Q@2025-12-31",
+   "value": 10000000000,
+   "unit": "tokens_per_minute_lower_bound",
+   "source_ids": [
+    "pf_rel_20260204_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_paid_subs_q1_2026",
+   "name": "Paid subscriptions across Google consumer services",
+   "period": "Q@2026-03-31",
+   "value": 350000000,
+   "unit": "subscriptions",
+   "source_ids": [
+    "pf_rel_20260429_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_paid_subs_q4_2025",
+   "name": "Paid subscriptions across Google consumer services ('over 325 million')",
+   "period": "Q@2025-12-31",
+   "value": 325000000,
+   "unit": "subscriptions_lower_bound",
+   "source_ids": [
+    "pf_rel_20260204_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_employees_q2_2026",
+   "name": "Employees",
+   "period": "Q@2026-06-30",
+   "value": 198933,
+   "unit": "people",
+   "source_ids": [
+    "pf_rel_20260722_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_cloud_1t_token_customers",
+   "name": "Cloud customers that each processed more than 1 trillion tokens in the last year ('nearly 500')",
+   "period": "TTM Q2 2026",
+   "value": 500,
+   "unit": "customers_approx",
+   "source_ids": [
+    "dc_call_20260722"
+   ]
+  },
+  {
+   "id": "dc_kpi_cloud_100b_token_enterprises",
+   "name": "Enterprises that consumed over 100 billion tokens over 12 months ('more than 2,000')",
+   "period": "TTM Q2 2026",
+   "value": 2000,
+   "unit": "enterprises_lower_bound",
+   "source_ids": [
+    "dc_call_20260722"
+   ]
+  },
+  {
+   "id": "dc_kpi_cloud_commit_overage",
+   "name": "Existing Cloud customers exceeding their commitments by more than 50% (management, accelerated vs Q1)",
+   "period": "Q@2026-06-30",
+   "value": 0.5,
+   "unit": "ratio_lower_bound",
+   "source_ids": [
+    "dc_call_20260722"
+   ]
+  },
+  {
+   "id": "dc_kpi_cloud_marketplace_growth",
+   "name": "Google Cloud Marketplace transactions growth y/y ('over 7x')",
+   "period": "Q@2026-06-30",
+   "value": 7,
+   "unit": "multiple_of_prior_year",
+   "source_ids": [
+    "dc_call_20260722"
+   ]
+  },
+  {
+   "id": "dc_kpi_capex_servers_share",
+   "name": "Share of Q2 technical-infrastructure capex that was servers ('approximately 60%'; rest data centers and networking)",
+   "period": "Q@2026-06-30",
+   "value": 0.6,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_call_20260722"
+   ]
+  },
+  {
+   "id": "dc_kpi_waymo_rides_q1_2026",
+   "name": "Waymo fully autonomous rides per week ('surpass 500,000')",
+   "period": "Q@2026-03-31",
+   "value": 500000,
+   "unit": "rides_per_week_lower_bound",
+   "source_ids": [
+    "pf_rel_20260429_1"
+   ]
+  }
+ ],
+ "segments": [
+  {
+   "id": "dc_seg_services_q2_2026",
+   "name": "Google Services",
+   "period": "Q@2026-06-30",
+   "revenue": 94540000000,
+   "operating_income": 39544000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260722_1",
+    "pf_10q_20260723"
+   ]
+  },
+  {
+   "id": "dc_seg_cloud_q2_2026",
+   "name": "Google Cloud",
+   "period": "Q@2026-06-30",
+   "revenue": 24768000000,
+   "operating_income": 8814000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260722_1",
+    "pf_10q_20260723"
+   ]
+  },
+  {
+   "id": "dc_seg_otherbets_q2_2026",
+   "name": "Other Bets",
+   "period": "Q@2026-06-30",
+   "revenue": 382000000,
+   "operating_income": -1799000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260722_1",
+    "pf_10q_20260723"
+   ]
+  },
+  {
+   "id": "dc_seg_alphabetlevel_q2_2026",
+   "name": "Alphabet-level activities (shared AI R&D etc.; revenue column = unallocated hedging gains)",
+   "period": "Q@2026-06-30",
+   "revenue": 106000000,
+   "operating_income": -5789000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260722_1",
+    "pf_10q_20260723"
+   ]
+  },
+  {
+   "id": "dc_seg_services_q2_2025",
+   "name": "Google Services",
+   "period": "Q@2025-06-30",
+   "revenue": 82543000000,
+   "operating_income": 33063000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260722_1",
+    "pf_10q_20260723"
+   ]
+  },
+  {
+   "id": "dc_seg_cloud_q2_2025",
+   "name": "Google Cloud",
+   "period": "Q@2025-06-30",
+   "revenue": 13624000000,
+   "operating_income": 2826000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260722_1",
+    "pf_10q_20260723"
+   ]
+  },
+  {
+   "id": "dc_seg_otherbets_q2_2025",
+   "name": "Other Bets",
+   "period": "Q@2025-06-30",
+   "revenue": 373000000,
+   "operating_income": -1246000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260722_1",
+    "pf_10q_20260723"
+   ]
+  },
+  {
+   "id": "dc_seg_alphabetlevel_q2_2025",
+   "name": "Alphabet-level activities (revenue column = unallocated hedging gains/losses)",
+   "period": "Q@2025-06-30",
+   "revenue": -112000000,
+   "operating_income": -3372000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260722_1",
+    "pf_10q_20260723"
+   ]
+  },
+  {
+   "id": "dc_seg_services_q1_2026",
+   "name": "Google Services",
+   "period": "Q@2026-03-31",
+   "revenue": 89637000000,
+   "operating_income": 40589000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260429_1"
+   ]
+  },
+  {
+   "id": "dc_seg_cloud_q1_2026",
+   "name": "Google Cloud",
+   "period": "Q@2026-03-31",
+   "revenue": 20028000000,
+   "operating_income": 6598000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260429_1"
+   ]
+  },
+  {
+   "id": "dc_seg_otherbets_q1_2026",
+   "name": "Other Bets",
+   "period": "Q@2026-03-31",
+   "revenue": 411000000,
+   "operating_income": -2100000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260429_1"
+   ]
+  },
+  {
+   "id": "dc_seg_alphabetlevel_q1_2026",
+   "name": "Alphabet-level activities (revenue column = unallocated hedging gains/losses)",
+   "period": "Q@2026-03-31",
+   "revenue": -180000000,
+   "operating_income": -5391000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260429_1"
+   ]
+  },
+  {
+   "id": "dc_seg_services_q4_2025",
+   "name": "Google Services",
+   "period": "Q@2025-12-31",
+   "revenue": 95862000000,
+   "operating_income": 40132000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260204_1"
+   ]
+  },
+  {
+   "id": "dc_seg_cloud_q4_2025",
+   "name": "Google Cloud",
+   "period": "Q@2025-12-31",
+   "revenue": 17664000000,
+   "operating_income": 5313000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260204_1"
+   ]
+  },
+  {
+   "id": "dc_seg_otherbets_q4_2025",
+   "name": "Other Bets (operating loss includes the $2.1bn Waymo compensation charge)",
+   "period": "Q@2025-12-31",
+   "revenue": 370000000,
+   "operating_income": -3617000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260204_1"
+   ]
+  },
+  {
+   "id": "dc_seg_alphabetlevel_q4_2025",
+   "name": "Alphabet-level activities (revenue column = unallocated hedging gains/losses)",
+   "period": "Q@2025-12-31",
+   "revenue": -68000000,
+   "operating_income": -5894000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260204_1"
+   ]
+  },
+  {
+   "id": "dc_seg_services_q3_2025",
+   "name": "Google Services (operating income includes the $3.5bn EC adtech fine)",
+   "period": "Q@2025-09-30",
+   "revenue": 87052000000,
+   "operating_income": 33527000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20251029_1"
+   ]
+  },
+  {
+   "id": "dc_seg_cloud_q3_2025",
+   "name": "Google Cloud",
+   "period": "Q@2025-09-30",
+   "revenue": 15157000000,
+   "operating_income": 3594000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20251029_1"
+   ]
+  },
+  {
+   "id": "dc_seg_otherbets_q3_2025",
+   "name": "Other Bets",
+   "period": "Q@2025-09-30",
+   "revenue": 344000000,
+   "operating_income": -1426000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20251029_1"
+   ]
+  },
+  {
+   "id": "dc_seg_alphabetlevel_q3_2025",
+   "name": "Alphabet-level activities (revenue column = unallocated hedging gains/losses)",
+   "period": "Q@2025-09-30",
+   "revenue": -207000000,
+   "operating_income": -4467000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20251029_1"
+   ]
+  },
+  {
+   "id": "dc_seg_services_fy2025",
+   "name": "Google Services",
+   "period": "FY2025",
+   "revenue": 342721000000,
+   "operating_income": 139404000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260205"
+   ]
+  },
+  {
+   "id": "dc_seg_cloud_fy2025",
+   "name": "Google Cloud",
+   "period": "FY2025",
+   "revenue": 58705000000,
+   "operating_income": 13910000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260205"
+   ]
+  },
+  {
+   "id": "dc_seg_otherbets_fy2025",
+   "name": "Other Bets",
+   "period": "FY2025",
+   "revenue": 1537000000,
+   "operating_income": -7515000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260205"
+   ]
+  },
+  {
+   "id": "dc_seg_alphabetlevel_fy2025",
+   "name": "Alphabet-level activities (revenue column = unallocated hedging gains/losses)",
+   "period": "FY2025",
+   "revenue": -127000000,
+   "operating_income": -16760000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260205"
+   ]
+  },
+  {
+   "id": "dc_seg_search_q2_2026",
+   "name": "Google Search & other (revenue line)",
+   "period": "Q@2026-06-30",
+   "revenue": 63271000000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260722_1",
+    "pf_10q_20260723"
+   ]
+  },
+  {
+   "id": "dc_seg_youtube_ads_q2_2026",
+   "name": "YouTube ads (revenue line)",
+   "period": "Q@2026-06-30",
+   "revenue": 11055000000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260722_1",
+    "pf_10q_20260723"
+   ]
+  },
+  {
+   "id": "dc_seg_network_q2_2026",
+   "name": "Google Network (revenue line)",
+   "period": "Q@2026-06-30",
+   "revenue": 7303000000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260722_1",
+    "pf_10q_20260723"
+   ]
+  },
+  {
+   "id": "dc_seg_subs_q2_2026",
+   "name": "Google subscriptions, platforms, and devices (revenue line)",
+   "period": "Q@2026-06-30",
+   "revenue": 12911000000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260722_1",
+    "pf_10q_20260723"
+   ]
+  },
+  {
+   "id": "dc_seg_search_q2_2025",
+   "name": "Google Search & other (revenue line)",
+   "period": "Q@2025-06-30",
+   "revenue": 54190000000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260722_1",
+    "pf_10q_20260723"
+   ]
+  },
+  {
+   "id": "dc_seg_youtube_ads_q2_2025",
+   "name": "YouTube ads (revenue line)",
+   "period": "Q@2025-06-30",
+   "revenue": 9796000000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260722_1",
+    "pf_10q_20260723"
+   ]
+  },
+  {
+   "id": "dc_seg_network_q2_2025",
+   "name": "Google Network (revenue line)",
+   "period": "Q@2025-06-30",
+   "revenue": 7354000000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260722_1",
+    "pf_10q_20260723"
+   ]
+  },
+  {
+   "id": "dc_seg_subs_q2_2025",
+   "name": "Google subscriptions, platforms, and devices (revenue line)",
+   "period": "Q@2025-06-30",
+   "revenue": 11203000000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260722_1",
+    "pf_10q_20260723"
+   ]
+  },
+  {
+   "id": "dc_seg_search_q1_2026",
+   "name": "Google Search & other (revenue line)",
+   "period": "Q@2026-03-31",
+   "revenue": 60399000000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260429_1"
+   ]
+  },
+  {
+   "id": "dc_seg_youtube_ads_q1_2026",
+   "name": "YouTube ads (revenue line)",
+   "period": "Q@2026-03-31",
+   "revenue": 9883000000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260429_1"
+   ]
+  },
+  {
+   "id": "dc_seg_network_q1_2026",
+   "name": "Google Network (revenue line)",
+   "period": "Q@2026-03-31",
+   "revenue": 6971000000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260429_1"
+   ]
+  },
+  {
+   "id": "dc_seg_subs_q1_2026",
+   "name": "Google subscriptions, platforms, and devices (revenue line)",
+   "period": "Q@2026-03-31",
+   "revenue": 12384000000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260429_1"
+   ]
+  }
+ ],
+ "customers": [],
+ "notes": [
+  "dc CALL 2026-07-22: Q2 2026 earnings call (webcast 1:30 PM PT), speakers Pichai, Schindler, Ashkenazi; transcript from Alpha Vantage EARNINGS_CALL_TRANSCRIPT (one call, saved verbatim in gather/raw_documents/av_transcript_GOOGL_2026Q2.json). The transcript has transcription errors against the release: it says other income and expense 'was $9.8 billion' (release: $98.0 billion) and API tokens 'per month' (release: 'per minute'). The release figures are used.",
+  "dc FRESHNESS: the latest results in the documents are Q2 2026 (release 2026-07-22, 10-Q 2026-07-23). No Q3 2026 release exists in the prefetch (identity filings list ends at the 2026-07-22 8-K). A third-party calendar (unverified, no company confirmation found) puts the Q3 2026 report on 2026-10-28 after the close; anything dated after 2026-10-27 is out of scope and the Q3 numbers are not citable at this as_of. If Q3 is released, results of that date are not citable until 2 days after it; rerun with as_of two days after.",
+  "dc MGMT 2026-07-22 (Ashkenazi): full-year 2026 CapEx guidance raised to $195-205bn from $180-190bn, 'primarily due to an acceleration in the delivery of capacity to meet growing demand'; CapEx to 'increase significantly in 2027', details at a later date. The prior $180-190bn is stated only as 'previous estimate' in the Q2 call; its issue date (Q1 call, presumably 2026-04-29) is not in the saved documents (the Q1 release carries no capex range), so only the 2026-02-04 range of $175-185bn (Q4 2025 release) is entered as an earlier guidance row.",
+  "dc MGMT 2026-07-22: supply-constrained 'for multiple quarters in a row'; demand outpaces capacity. Q3 2026 plan: expand third-party capacity as a bridging strategy, which 'will create modest margin pressure in the near term' for Cloud; Wiz integration creates near-term headwinds; free cash flow 'will remain under pressure'; depreciation and data center operating costs (energy) keep rising; continued hiring in AI and Cloud; marketing for AI products.",
+  "dc MGMT 2026-07-22: Q3 FX is 'a slight headwind' to consolidated revenue (Q2 had a 1 point tailwind), mainly Search and YouTube ads; Search laps the acceleration that began in Q3 2025 (a tougher comparison). No numeric revenue, margin or tax guidance is given by the company in the release or call.",
+  "dc MGMT 2026-07-22: TPU system sales were delivered to customer data centers for the first time in Q2 2026 (revenue recognized in Google Cloud; inventory rose from $2.4bn at 2025-12-31 to $10.0bn). 'A relatively small portion' of revenue from existing TPU system agreements is recognized in 2026, ramping as 2026 ends; 'the vast majority' in 2027. These agreements are in the $514bn Cloud backlog ('multiple gigawatts', Q1 10-Q). Margin by product is not disclosed. Cloud revenue growth 'accelerated meaningfully even after excluding TPU system sales' (no number given).",
+  "dc MGMT 2026-07-22: capital structure. Sources of funding in order: cash from operations, then debt (about $16bn a year ago to about $100bn now), then equity 'to ensure a resilient balance sheet'. 'At this point, we're not planning to go back to the equity markets' except the ATM ($40bn, none sold at 2026-06-30) used for tax obligations on stock-based awards 'for some period of time'. Waymo: no change of structure planned ('Alphabet continues to provide long-term support and capital').",
+  "dc MGMT 2026-07-22 (Pichai): the company says it is the Gemini coding gap that needs improvement; Gemini 4 pretraining has started ('most ambitious yet'), a 'much larger base model'; Gemini 3.5 Pro in testing. Compute allocation order: frontier model development first, then serving Search/YouTube and Cloud (Vertex, Gemini Enterprise). Input-cost inflation is reflected in pricing 'to see returns'. These are management statements, not facts.",
+  "dc DEFINITION: free cash flow in the release = operating cash flow minus purchases of property and equipment (Q2 2026: 39,069 - 44,924 = -5,855; TTM 53,273). It excludes finance leases, the $85.2bn of signed leases not yet commenced, and the $22bn purchased non-marketable securities in H1 2026. Capex is purchases of property and equipment only.",
+  "dc CASH: 'cash, cash equivalents and marketable securities' of $242.5bn includes $87.1bn of marketable equity securities, of which $80.0bn is SpaceX shares under short-term sale restrictions (another $14.1bn of SpaceX shares sits in other non-current assets, restricted through Q3 2027). Equity-security gains are mark-to-market and not spendable liquidity until sold; cash and cash equivalents alone are $55.9bn and debt securities about $100.5bn.",
+  "dc ONE-OFFS Q2 2026: (1) gain on equity securities $99.0bn pre-tax, 'primarily unrealized gains from SpaceX and a private company' (company: raised the tax provision by $21.9bn, net income by $77.1bn, EPS by $6.26); it is non-operating and mark-to-market, not repeatable at this size (Q1 2026: $36.9bn of equity gains in OI&E, Q2 2025: $1.3bn). (2) PriceRunner (Klarna) damages $2.1bn accrued in Q2: $1.5bn in G&A (Google Services) and $581m interest and costs in OI&E; appealed. (3) EC Android fine and interest $5.2bn was already accrued and was paid in July 2026 (a Q3 cash outflow, no Q3 expense). The Q2 effective tax rate of 19.1% is distorted by deferred tax on unrealized gains.",
+  "dc DEFINITION CHANGES: from Q1 2026 revenue backlog (RPO) includes contracts with an original term of one year or less (so Q1 2026 vs Q4 2025 is not like-for-like: $467.6bn vs $242.8bn); Q2 2026 vs Q1 2026 is on the same basis (+$51.9bn total, +$51.6bn Cloud). Cloud revenue includes TPU system sales from Q2 2026 (product revenue) and Wiz from 2026-03-11. Wiz and Intersect (closed 2026-03-10) add acquired revenue and cost to 2026 comparisons; the acquired revenue is not disclosed separately in the documents read.",
+  "dc SHARES: shares outstanding rose from 12,088m (2025-12-31) to 12,230m (2026-06-30) after the June 2026 raise (29m Class A at $355.1982 + 29m Class C at $351.8018 public; 14m A + 14m C to an affiliate of Berkshire Hathaway, $10.0bn; net proceeds $30.5bn) and 19m shares of 6.25% mandatory convertible preferred (net $19.1bn, $1,000 liquidation preference, dividends $12.15 a share per quarter on each series, converts about 2029-05-15 into 2.2520-2.8160 Class A (Series A) or 2.2740-2.8420 Class C (Series B) per preferred share, i.e. about 21-27m Class A shares and 22-27m Class C shares (9.5m preferred shares per series), 43-54m in total, subject to adjustments; capped calls with a $1.0bn premium and caps of $532.67 (A) and $527.80 (C)). The diluted count already includes 16m if-converted preferred shares (Q2). No buybacks in H1 2026 ($69.5bn authorization left; $45.7bn repurchased in FY2025). Dividend $0.22 a share a quarter. SBC $7.96bn in Q2 2026.",
+  "dc DEBT: long-term debt face $101.1bn at 2026-06-30 (vs $49.1bn at 2025-12-31); 2026 issues: $20.0bn USD notes (weighted coupon 4.80%, 15 years), GBP 5.5bn (5.31%, 31 years), CHF 3.1bn, EUR 9.0bn (3.90%, 13 years), CAD 8.5bn (4.35%, 15 years), JPY 576.5bn (2.65%, 8 years). Interest expense rose from $261m (Q2 2025) to $1,278m (Q2 2026). Credit facilities $11.7bn ($1.3bn drawn), commercial paper program $25bn (none outstanding). Fair value of notes $94.9bn.",
+  "dc COMMITMENTS: purchase commitments and other contractual obligations $811.0bn at 2026-06-30 ($200.7bn short-term) vs $149.1bn at 2025-12-31 ($113.0bn short-term). Note 10: fixed or guaranteed commitments over one year $707.0bn, 'significant majority' long-term supply agreements for technical infrastructure and inventory components, mostly fulfilled through 2030; energy take-or-pay agreements 2 to 26 years (to 2054) with substantive termination fees. Beyond these: $85.2bn of data-center leases signed but not commenced (2026-2031), a $5.8bn short-term lease starting Q3 2026, backstops $7.6bn (guarantees) and $43.8bn (credit derivatives) plus $24.1bn more agreed subject to terms, and $20.0bn of milestone-contingent funding to a private company (equity derivative; was $10.0bn commitment plus $30.0bn contingent at 2026-03-31).",
+  "dc BACKLOG: revenue backlog $519.5bn at 2026-06-30, $513.9bn Google Cloud; 'just over 50%' to be recognized in the next 24 months (so about $260bn+ in 24 months, remainder later); it excludes cancellable contracts. Management: 'majority of the backlog is typical GCP contracts for a broad mix of customers'; TPU system sales are inside it; the split of AI-lab contracts vs other customers, and customer names and concentration inside the backlog, are not disclosed (gap).",
+  "dc CUSTOMERS: the 10-K states that no individual customer or group of affiliated customers represented more than 10% of revenues in 2023, 2024 or 2025 (10-K revenue note, saved text reading/10k_full.txt line 1625). No customer shares are therefore entered. Cloud backlog customer concentration is not disclosed; the call names examples (PepsiCo, Intel, HSBC, Bell Canada, Macy's, Signal Iduna, Booking Holdings, Morgan Stanley, Pfizer, Roche, Kakao, Deutsche Boerse, Blackstone for TPU data-center projects) without sizes.",
+  "dc RISK 1: advertising dependence: more than 70% of 2025 revenues from online advertising; advertisers and distribution partners can cancel; AI is reshaping ad formats (10-K Item 1A, first risk factor).",
+  "dc RISK 2: capital intensity and capacity: Alphabet expects to 'significantly expand' investment in technical infrastructure; depreciation and useful-life changes pressure operating margin; ability to scale is constrained by power, water and land; supply shortages, price increases and long-term commitments ($811bn, 10-Q Item 2) can leave unconsumed materials (10-K Item 1A 'manufacturing and supply chain risks'; 10-Q liquidity section).",
+  "dc RISK 3: antitrust and regulatory: US Search final judgment (December 2025; appeals by both sides, data-sharing and syndication remedies), US ad tech remedies decision pending with possible structural remedies (DOJ), EC adtech fine EUR 3.0bn (appealed), EC DMA findings, Epic/Play remedies, EC Android fine now final ($5.2bn paid July 2026), PriceRunner $2.1bn; $17.4bn of short-term legal and regulatory accruals (10-Q Note 10; 10-K Item 1A 'laws, regulations').",
+  "dc RISK 4: competition in AI and search: intense competition from large companies and start-ups; frontier model quality, coding gap acknowledged by management, risk that AI answers displace search queries or ad clicks (10-K Item 1A 'We face intense competition'; transcript Q&A).",
+  "dc RISK 5: revenue growth rate could decline and operating margin face downward pressure from higher investment in technical infrastructure, depreciation, TAC and new businesses (10-K Item 1A 'Our revenue growth rate could decline over time').",
+  "dc RISK 6: financing and balance sheet: access to debt and equity markets, leases and interest cost; debt up from about $16bn to about $100bn in a year, interest expense about 5 times higher y/y, equity and mandatory convertible issued June 2026, FCF negative in Q2 2026 (10-K Item 1A on capital markets; 10-Q Notes 6 and 11; call).",
+  "dc RISK 7: fair-value volatility of investments: the Q2 2026 net income includes $99.0bn of mainly unrealized equity gains (SpaceX, a private company); non-marketable carrying value rests on observable transactions and valuation models, and OI&E can swing sharply either way (10-K Item 1A 'fluctuations in the fair values of our investments'; 10-Q Note 3).",
+  "dc RISK 8: ownership and control: Class B shares carry 10 votes; Larry Page and Sergey Brin beneficially owned approximately 89.3% of 'our' [the rest of the sentence is cut by a page break in the saved 10-K text; read it as their share of the Class B stock/voting power, unverified] as of 2025-12-31 (Item 1A, 'concentration of our stock ownership'); Class C has no votes. Also: international revenue about 52% of 2025 consolidated revenue (FX, trade, tax); energy and supply-chain geopolitics.",
+  "dc GAP: not found or not disclosed in the documents read: (a) numeric company guidance for revenue, margin, tax rate or share count (none given; only capex range and qualitative statements); (b) Q2 2026 paid-subscription count (last disclosed 350m at Q1 2026); (c) YouTube subscriptions and Cloud revenue split between core GCP, AI infrastructure, Workspace and TPU sales; (d) backlog by customer or by contract type; (e) FY2025 revenue-line detail (Search, YouTube, Network, subscriptions) for the full year was not read, only the quarters; (f) the Q1 2026 call transcript (only the Q2 call was fetched, one AV call).",
+  "dc CHECK: the companyfacts first-filed value for repurchases in Q2 2025 (13,638m, prefetch quarter_case) differs from the cash flow statement line 'Repurchases of stock' (13,238m, release and 10-Q); the quarter case uses 13,238m. All other prefetch quarter lines (revenue, operating income, net income, operating cash flow, capex, SBC) reconcile to the release.",
+  "dc QUARTER REVIEW (understand/quarter_result.json, case understand/quarter_case.json): Q2 2026 revenue +24.2% y/y, operating income +30.4%, operating margin 34.0% (Q1 2026 36.1%, Q2 2025 32.4%). Reported net income $112.2bn (EPS $9.11) normalizes to $36.8bn (about $2.99 on 12,309m diluted shares) after removing the $77.1bn after-tax equity gain and adding back the PriceRunner charge ($1.2bn G&A and $0.47bn OI&E after tax at the reported 19.1% rate, deductibility unknown). Opex +26.7% reported, +20.9% ex the $1.5bn legal charge, below revenue growth; incremental operating margin 40.6%. Liquidity: spendable $162.5bn (cash 55.9 + marketable debt and unrestricted equity 106.6), $80.0bn of restricted SpaceX shares kept apart, debt $100.2bn, net cash $62.3bn. Guidance row: FY2026 capex midpoint $200bn, raised 8.1% vs the prior $185bn midpoint, 119% above FY2025 capex of $91.4bn. Engine flags: headline_distorted (high), peak_margin_run_rate (high; the history lines are annual margins, median 30.6%, max 32.1%, while Q1 2026 was already 36.1%, so Q2 34.0% is not a one-quarter spike), weak_cash_conversion (Q2 FCF -$5.9bn), profit_concentration (Google Services 82% of segment profit), Other Bets margin compression. No consensus data was supplied (gather_numbers owns it), so there is no vs-expectations read.",
+  "dc ECON REVIEW (understand/econ_result.json, case understand/econ_case.json): the engine rule alone, given Cloud/software words in the profile, picked data_platform_software as primary and ads_platform as secondary; that was replaced by a written analyst override (ads_platform primary, data_platform_software secondary, evidence: 10-K advertising more than 70% of 2025 revenue, 10-Q, Q2 release). Computed: SBC 6.6% of revenue and backlog (RPO) 4.3 times quarterly revenue (Cloud backlog 20.7 times Cloud's quarterly revenue). Open (not disclosed by Alphabet): daily active users and ARPU for Search/YouTube, Cloud customer counts and revenue per customer, net revenue retention. Flag segment_unexplained (high): Google Services is 79% of revenue and 85% of segment profit with no model KPIs disclosed. Gemini App MAU (950m) and AI Mode MAU (over 1bn) are not ads-platform dau/mau and were deliberately not entered as such."
+ ],
+ "gaps": [
+  "No numeric guidance for revenue, margins, tax rate or share count exists in the release or call; only the FY2026 capex range ($195-205bn, raised from $180-190bn) and qualitative Q3 and 2027 statements.",
+  "The $180-190bn capex range (between the Feb 2026 $175-185bn and the Jul 2026 $195-205bn) is known only as 'previous estimate' in the Q2 call: its issue date and source (Q1 call, 2026-04-29, presumably) were not fetched.",
+  "Q3 2026 results (expected on or about 2026-10-28 per an unverified third-party calendar) are after the as_of and are not in the evidence; the analyst treats Q2 2026 as the latest reported quarter.",
+  "Customer shares: none above 10% (10-K); Cloud backlog concentration and customer names are not disclosed; no customer rows entered.",
+  "Paid subscriptions after Q1 2026 (350m) and a core-GCP versus TPU versus AI-infrastructure split of Cloud revenue are not disclosed.",
+  "Only one transcript (Q2 2026) was fetched; the Q1 2026 call and its capex statement were not read."
+ ],
+ "stopped": [
+  "Stopped reading further documents once segments, backlog, commitments, capital raise, guidance, risks and the call were covered; the tool-call budget (about 22) was exceeded by a few calls while reading the 10-Q notes and quarter.py/econ.py formats, with no refetch of prefetch material.",
+  "A WebSearch for the Q3 2026 results date returned no company confirmation; not pursued further."
+ ]
+}

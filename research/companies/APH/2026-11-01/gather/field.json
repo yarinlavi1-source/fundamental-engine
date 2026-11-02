@@ -1,0 +1,536 @@
+{
+ "lane": "field",
+ "sources": [
+  {
+   "id": "fd_tel_8k_20260722",
+   "kind": "release",
+   "title": "TE Connectivity (TEL) fiscal Q3 2026 earnings release, 8-K exhibit tel-20260722xex99d1.htm (quarter ended 2026-06-26)",
+   "url": "https://www.sec.gov/Archives/edgar/data/0001385157/000110465926085589/tel-20260722xex99d1.htm",
+   "date": "2026-07-22",
+   "independent": true,
+   "publisher": "TE Connectivity plc",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_tel_cf",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of TE CONNECTIVITY PLC (TEL): fiscal years to 2025-09-26 and quarters to 2026-06-26",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001385157.json",
+   "date": "2026-07-24",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_crdo_cf",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Credo Technology Group Holding Ltd (CRDO): fiscal years to 2026-05-02 and quarters to 2026-08-01",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001807794.json",
+   "date": "2026-09-02",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_crdo_8k_20260901",
+   "kind": "release",
+   "title": "Credo Technology Group (CRDO) Q1 fiscal 2027 earnings release, 8-K exhibit 99.1 (quarter ended 2026-08-01)",
+   "url": "https://www.sec.gov/Archives/edgar/data/0001807794/000162828026059795/credoq12027ex-991.htm",
+   "date": "2026-09-01",
+   "independent": true,
+   "publisher": "Credo Technology Group Holding Ltd",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_glw_cf",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of CORNING INC (GLW): fiscal years to 2025-12-31 and quarters to 2026-06-30",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000024741.json",
+   "date": "2026-07-29",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_glw_8k_20260728",
+   "kind": "release",
+   "title": "Corning (GLW) Q2 2026 earnings release, 8-K exhibit glw-20260728xex99xq22026.htm (quarter ended 2026-06-30)",
+   "url": "https://www.sec.gov/Archives/edgar/data/0000024741/000002474126000253/glw-20260728xex99xq22026.htm",
+   "date": "2026-07-28",
+   "independent": true,
+   "publisher": "Corning Incorporated",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_avgo_cf",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Broadcom Inc. (AVGO): fiscal years to 2025-11-02 and quarters to 2026-08-02",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001730168.json",
+   "date": "2026-09-10",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_avgo_8k_20260903",
+   "kind": "release",
+   "title": "Broadcom (AVGO) Q3 fiscal 2026 earnings release, 8-K exhibit avgo-08022026x8kxex99.htm (quarter ended 2026-08-02; date per press coverage of 2026-09-03, filing date not read)",
+   "url": "https://www.sec.gov/Archives/edgar/data/0001730168/000173016826000076/avgo-08022026x8kxex99.htm",
+   "date": "2026-09-03",
+   "independent": true,
+   "publisher": "Broadcom Inc.",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_aph_call_20260729",
+   "kind": "transcript",
+   "title": "Amphenol Q2 2026 earnings call transcript (call of 2026-07-29), as hosted by Earnings Whispers; read through a fetch-tool summary, not the full text",
+   "url": "https://earningswhispers.com/transcript/APH/Q22026",
+   "date": "2026-07-29",
+   "independent": true,
+   "publisher": "Earnings Whispers (host of the APH call transcript)",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_semianalysis_20260225",
+   "kind": "industry",
+   "title": "SemiAnalysis: Vera Rubin - Extreme Co-Design: An Evolution from Grace Blackwell Oberon (paid article; first 100,000 of 134,671 characters read via a fetch-tool summary)",
+   "url": "https://newsletter.semianalysis.com/p/vera-rubin-extreme-co-design-an-evolution",
+   "date": "2026-02-25",
+   "independent": true,
+   "publisher": "SemiAnalysis",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_edgewater_20260529",
+   "kind": "industry",
+   "title": "Passive Components Blog: May 2026 Interconnect, Passives and Electromechanical Components Market Insights (summary of Edgewater Research channel checks and sell-side takeaways)",
+   "url": "https://passive-components.eu/may-2026-interconnect-passives-and-electromechanical-components-market-insights/",
+   "date": "2026-05-29",
+   "independent": false,
+   "publisher": "Passive Components Blog, summarizing Edgewater Research (original Edgewater note not retrieved, so not marked independent)",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_credo_aph_settle_20250814",
+   "kind": "press",
+   "title": "Credo and Amphenol Reach Settlement in Active Electrical Cable Patent Infringement Disputes (Business Wire)",
+   "url": "https://www.businesswire.com/news/home/20250814901331/en/Credo-and-Amphenol-Reach-Settlement-in-Active-Electrical-Cable-Patent-Infringement-Disputes",
+   "date": "2025-08-14",
+   "independent": true,
+   "publisher": "Business Wire (joint Credo / Amphenol release)",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_itc_337_1446_20260430",
+   "kind": "industry",
+   "title": "U.S. International Trade Commission notice, Investigation 337-1446 (Credo AEC patent complaint; Molex and TE joint motions to terminate filed 2026-03-26)",
+   "url": "https://www.usitc.gov/sites/default/files/secretary/fed_reg_notices/337/337_1446_notice04302026sgl.pdf",
+   "date": "2026-04-30",
+   "independent": true,
+   "publisher": "U.S. International Trade Commission",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_tel_8k_20261028",
+   "kind": "release",
+   "title": "TE Connectivity (TEL) fiscal Q4 and full-year 2026 earnings release, 8-K exhibit 99.1 tel-ex99d1.htm (quarter ended 2026-09-25), read from the SEC document",
+   "url": "https://www.sec.gov/Archives/edgar/data/1385157/000110465926119326/tel-ex99d1.htm",
+   "date": "2026-10-28",
+   "independent": true,
+   "publisher": "TE Connectivity plc",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_glw_8k_20261027",
+   "kind": "release",
+   "title": "Corning (GLW) Q3 2026 earnings release, 8-K exhibit glw-20261027xex99xq32026.htm (quarter ended 2026-09-30), read from the SEC document",
+   "url": "https://www.sec.gov/Archives/edgar/data/24741/000002474126000273/glw-20261027xex99xq32026.htm",
+   "date": "2026-10-27",
+   "independent": true,
+   "publisher": "Corning Incorporated",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  }
+ ],
+ "competitors": [
+  {
+   "ticker": "TEL",
+   "name": "TE Connectivity",
+   "why": "Named in the APH 10-K Item 1 Competition paragraph. Sells the same hyperscale / AI-rack high-speed and power connectivity (its Digital Data Networks business) and competes with APH in harsh-environment, industrial and sensor markets. Closest like-for-like public rival to APH in connectors.",
+   "metrics": {
+    "fiscal_year_end": "last Friday of September",
+    "latest_quarter": "fiscal Q4 2026, ended 2026-09-25 (release 2026-10-28; fiscal Q3 2026 figures kept in revenue_usd_m)",
+    "revenue_usd_m": {
+     "fq3_2026": 5160,
+     "fq3_2025": 4534,
+     "growth_yoy_reported": 0.138,
+     "growth_yoy_organic_per_release": 0.122
+    },
+    "fy2025_revenue_usd_m": {
+     "fy2025": 17262,
+     "fy2024": 15845,
+     "growth": 0.089
+    },
+    "gross_margin": {
+     "fq3_2026": 0.3556,
+     "fq3_2025": 0.3529,
+     "fy2025": 0.3522,
+     "basis": "derived from XBRL GrossProfit / Revenue"
+    },
+    "gaap_operating_margin": {
+     "fq3_2026": 0.1901,
+     "fy2025": 0.186,
+     "basis": "derived from XBRL OperatingIncomeLoss / Revenue"
+    },
+    "adjusted_operating_margin_fq3_2026_per_release": 0.219,
+    "competing_segment": {
+     "industrial_solutions_sales_usd_m_fq3_2026": 2580,
+     "fq3_2025": 2116,
+     "growth_reported": 0.219,
+     "growth_organic": 0.21
+    },
+    "data_center_facing_line": {
+     "digital_data_networks_sales_usd_m_fq3_2026": 207,
+     "growth_yoy": 0.342,
+     "nine_month_growth": 0.488,
+     "note": "TE reports data-center connectivity inside Industrial Solutions as Digital Data Networks (DDN); management also cites AI power / energy infrastructure demand outside DDN"
+    },
+    "orders": {
+     "fq3_2026_usd_bn": 5.7,
+     "growth_yoy": 0.27,
+     "note": "record, double-digit order growth in all businesses (issuer release)"
+    },
+    "guidance": {
+     "fq1_2027_sales_usd_bn": 5.35,
+     "growth": 0.15,
+     "fy2027": "organic growth similar to fiscal 2026 (about 12%)",
+     "bolt_ons": "USD 1.6bn committed for Industrial bolt-ons broadening optics and power filtering"
+    },
+    "share": "no attributed share source found",
+    "forward_pe_and_growth": "not retrieved (gap)",
+    "fq4_2026": {
+     "revenue_usd_m": 5312,
+     "fq4_2025": 4749,
+     "growth_reported": 0.12,
+     "growth_organic": 0.13,
+     "orders_usd_bn": 6.1,
+     "orders_growth_yoy": 0.29,
+     "gaap_operating_margin": 0.206,
+     "adjusted_operating_margin": 0.221,
+     "industrial_solutions_sales_usd_m": 2799,
+     "industrial_solutions_fq4_2025": 2336,
+     "industrial_solutions_growth_reported": 0.198,
+     "digital_data_networks_sales_usd_m": 242,
+     "digital_data_networks_growth_reported": 0.342,
+     "note": "revenue and segment values from the release segment table; DDN row read as reported sales and reported growth (columns of the sales table)"
+    },
+    "fy2026": {
+     "revenue_usd_m": 19885,
+     "fy2025": 17262,
+     "growth_reported": 0.15,
+     "growth_organic": 0.12,
+     "orders_usd_bn": 22.2,
+     "gaap_operating_margin": 0.201,
+     "adjusted_operating_margin": 0.22,
+     "industrial_solutions_usd_m": 9903,
+     "industrial_solutions_fy2025": 7874,
+     "industrial_solutions_growth": 0.26,
+     "digital_data_networks_fy2026_usd_m": 975,
+     "digital_data_networks_growth": 0.442
+    }
+   },
+   "source_ids": [
+    "fd_tel_8k_20260722",
+    "fd_tel_cf",
+    "fd_tel_8k_20261028"
+   ]
+  },
+  {
+   "ticker": "MOLEX",
+   "name": "Molex (Koch Industries, private)",
+   "why": "Named in the APH 10-K Item 1 Competition paragraph. Direct rival in high-speed connectors and copper cable assemblies for hyperscale servers; was named with TE and Volex in Credo's 2025 AEC patent complaint at the ITC, then filed a joint motion to terminate on settlement on 2026-03-26. Private: no filed numbers.",
+   "metrics": {
+    "status": "private subsidiary of Koch Industries; no SEC filings, revenue, margin or share figure available",
+    "itc_337_1446": "joint motion with Credo to terminate the investigation as to Molex on settlement filed 2026-03-26 (the notice does not say whether it was granted)"
+   },
+   "source_ids": [
+    "fd_itc_337_1446_20260430"
+   ]
+  },
+  {
+   "ticker": "CRDO",
+   "name": "Credo Technology Group",
+   "why": "Not named in the APH 10-K. Competes with APH's passive high-speed copper cable assemblies in AI racks through active electrical cables (AEC) sold to the same hyperscalers; sued APH, Molex, TE and Volex over AEC patents in 2025 and settled with APH on 2025-08-14 under a license, so APH can also sell AEC. Also sells optical DSPs / transceivers, so its revenue is wider than copper cable.",
+   "metrics": {
+    "fiscal_year_end": "Saturday nearest 30 April",
+    "latest_quarter": "fiscal Q1 2027, ended 2026-08-01",
+    "revenue_usd_m": {
+     "fq1_2027": 479.0,
+     "fq1_2026": 223.1,
+     "growth_yoy": 1.147,
+     "growth_qoq": 0.096
+    },
+    "fy2026_revenue_usd_m": {
+     "fy2026_to_2026_05_02": 1335.1,
+     "fy2025": 436.8,
+     "growth": 2.057
+    },
+    "gross_margin": {
+     "fy2026": 0.6804,
+     "fq1_2027_gaap": 0.645,
+     "fq1_2027_non_gaap": 0.68
+    },
+    "operating_margin": {
+     "fy2026_gaap": 0.3333,
+     "fq1_2027_gaap": 0.252,
+     "fq1_2027_non_gaap": 0.482
+    },
+    "guidance_fq2_2027_revenue_usd_m": {
+     "low": 525,
+     "high": 535
+    },
+    "aec_share": "about 88% is repeated in several undated blog posts and attributed to JPMorgan; the original was not retrieved, so it is not used as evidence",
+    "ip": "license and settlement with Amphenol 2025-08-14; ITC investigation terminated as to Amphenol 2025-09-24; Molex and TE joint motions to terminate filed 2026-03-26",
+    "forward_pe_and_growth": "not retrieved (gap)"
+   },
+   "source_ids": [
+    "fd_crdo_cf",
+    "fd_crdo_8k_20260901",
+    "fd_credo_aph_settle_20250814"
+   ]
+  },
+  {
+   "ticker": "GLW",
+   "name": "Corning",
+   "why": "Named in the APH 10-K Item 1 Competition paragraph. Competes with APH's fiber optic interconnect (IT datacom and communications networks), which APH enlarged with CommScope on 2026-01-09; Corning's Nvidia partnership targets the same AI-factory fiber and connectivity budgets.",
+   "metrics": {
+    "latest_quarter": "Q3 2026, ended 2026-09-30 (release 2026-10-27; Q2 2026 figures kept in revenue_usd_m)",
+    "revenue_usd_m": {
+     "q2_2026": 4505,
+     "q2_2025": 3862,
+     "growth_yoy_gaap": 0.1665,
+     "core_sales_usd_bn_per_release": 4.74,
+     "core_growth_yoy": 0.17
+    },
+    "fy2025_revenue_usd_m": {
+     "fy2025": 15629,
+     "fy2024": 13118,
+     "growth": 0.1914
+    },
+    "gross_margin": {
+     "q2_2026": 0.3614,
+     "fy2025": 0.3597,
+     "basis": "derived from XBRL"
+    },
+    "gaap_operating_margin": {
+     "q2_2026": 0.1549,
+     "fy2025": 0.1458,
+     "basis": "derived from XBRL"
+    },
+    "competing_segment": {
+     "optical_communications_sales_usd_m_q2_2026": 2072,
+     "growth_yoy": 0.32,
+     "enterprise_networks_growth_yoy": 0.65,
+     "ai_data_center_sales": "nearly doubled in the quarter (CFO, per call coverage)"
+    },
+    "nvidia_partnership": "long-term partnership: Corning to expand U.S. optical connectivity manufacturing capacity 10x and U.S. fiber capacity by more than 50%",
+    "guidance_q3_2026_core_sales_usd_bn": {
+     "low": 4.9,
+     "high": 5.0
+    },
+    "forward_pe_and_growth": "not retrieved (gap)",
+    "q3_2026": {
+     "core_sales_usd_bn": 5.08,
+     "core_growth_yoy": 0.19,
+     "gaap_sales_usd_bn": 4.86,
+     "core_gross_margin": 0.405,
+     "core_operating_margin": 0.227,
+     "gaap_operating_margin": 0.188,
+     "optical_communications_sales_usd_m": 2379,
+     "optical_q2_2026": 2072,
+     "optical_q3_2025": 1652,
+     "optical_growth_yoy": 0.44,
+     "optical_net_income_usd_m": 532,
+     "enterprise_networks_growth": 0.84,
+     "gen_ai_sales_growth": ">100%",
+     "guidance_q4_core_sales_usd_bn": {
+      "low": 5.2,
+      "high": 5.3
+     },
+     "long_term_agreements": "four multibillion-dollar agreements in Q3 incl. Verizon and AT&T",
+     "springboard": "plan to double annualized sales run rate from USD 20bn to USD 40bn by end of 2030 (management target)"
+    }
+   },
+   "source_ids": [
+    "fd_glw_cf",
+    "fd_glw_8k_20260728",
+    "fd_glw_8k_20261027"
+   ]
+  },
+  {
+   "ticker": "AVGO",
+   "name": "Broadcom (adjacent: substitution and architecture risk, not a connector rival)",
+   "why": "Not named in the APH 10-K and does not make connectors or cable assemblies. Sells custom AI accelerators, Ethernet switch and retimer / DSP silicon and optics chips to the same hyperscalers; its silicon and optical roadmap (scale-up Ethernet, co-packaged optics) decides how much copper cable and connector content a rack needs. Listed so later stages treat it as a substitution threat, not as a share competitor.",
+   "metrics": {
+    "fiscal_year_end": "Sunday nearest 31 October",
+    "latest_quarter": "fiscal Q3 2026, ended 2026-08-02",
+    "revenue_usd_m": {
+     "fq3_2026": 29591,
+     "fq3_2025": 15952,
+     "growth_yoy": 0.855
+    },
+    "fy2025_revenue_usd_m": {
+     "fy2025": 63887,
+     "fy2024": 51574,
+     "growth": 0.2387
+    },
+    "gross_margin": {
+     "fq3_2026": 0.6913,
+     "fy2025": 0.6777,
+     "basis": "derived from XBRL"
+    },
+    "gaap_operating_margin": {
+     "fq3_2026": 0.5392,
+     "fy2025": 0.3989,
+     "basis": "derived from XBRL"
+    },
+    "ai_semiconductor_revenue": {
+     "fq3_2026_usd_bn": 16.7,
+     "growth_yoy": 2.21,
+     "fq4_2026_guide_usd_bn": 21.7,
+     "note": "from press coverage of the release, not read in the filing"
+    },
+    "copper_vs_optics_statements": "not retrieved (gap)"
+   },
+   "source_ids": [
+    "fd_avgo_cf",
+    "fd_avgo_8k_20260903"
+   ]
+  }
+ ],
+ "bottlenecks": [
+  {
+   "id": "fd_b1",
+   "reading": "Scale-up interconnect inside the AI rack is still copper. SemiAnalysis: Blackwell NVL72 uses approximately five thousand copper cables on the NVLink backplane; Rubin (NVLink 6) doubles bandwidth with bi-directional signalling over the same number of copper cables, and its scale-up network stays on copper, with optics expected only later for larger world sizes. The cable count per rack therefore does not rise from Blackwell to Rubin, so rack content growth has to come from bandwidth-driven price / spec content and other parts. Amphenol is named as exclusive supplier of the DensiLink OverPass cable set in GB200/GB300 compute trays and its PaladinHD2 board-to-board connectors are named for VR NVL72 compute trays; SemiAnalysis reads cableless compute trays as a positive for Amphenol because the signals still need board-to-board connectors. The NVLink spine supplier split (Amphenol, Luxshare, Molex, TE, Volex) was not visible in the part read.",
+   "evidence_ids": [
+    "fd_semianalysis_20260225"
+   ]
+  },
+  {
+   "id": "fd_b2",
+   "reading": "Demand is running ahead of APH's output today, and APH is the one adding the capacity: Q2 2026 orders were a record $10,732M (book-to-bill 1.23, every end market above 1, organic orders +63%); IT datacom was 43% of Q2 sales (about $3.77B), +89% in dollars and +63% organically, with virtually all of its 22% sequential growth from AI-related products; management expects IT datacom up in the mid-teens sequentially in Q3. Capex ran at the high end of 3-4% of sales and is guided modestly higher in the second half. How long the shortage lasts is not stated by the issuer; the Q3 2026 sales guide is $9.3-9.4B (+50% to +52%). Update after the Q3 2026 release (2026-10-28, citable from 2026-10-30): sales $10,229.7M (+65%, +37% organic), orders $12.2B, book-to-bill 1.19:1, Q4 guide $10.3-10.5B (~+60%); the 10-Q says growth was driven by outsized organic IT datacom growth, with AI-related strength in Communications Solutions (+51% organic) and Interconnect and Sensor Systems; communications networks declined organically. Demand still exceeds sales but book-to-bill eased from 1.23 to 1.19.",
+   "evidence_ids": [
+    "pf_rel_20260729_1",
+    "fd_aph_call_20260729",
+    "pf_rel_20261028_1",
+    "pf_10q_20261030"
+   ]
+  },
+  {
+   "id": "fd_b3",
+   "reading": "Connector pricing has turned up in the channel: an Edgewater Research channel summary says Nvidia accepted some higher connector / backplane pricing on next-generation AI racks, connector pricing in the channel is trending higher with further increases expected in June / July, TE is seen benefiting from pricing and content expansion on hyperscale AI programs, and passive component lead times are stretching (capacitors up to 52 weeks, tantalum effectively on allocation). Channel opinion, not audited; it is a margin tailwind to test, not a driver. APH's own Q2 2026 adjusted operating margin included $80M of net tariff recoveries.",
+   "evidence_ids": [
+    "fd_edgewater_20260529",
+    "pf_rel_20260729_1"
+   ]
+  },
+  {
+   "id": "fd_b4",
+   "reading": "How long copper stays the scale-up medium: unnamed channel comments in the Edgewater summary see no optics replacing copper for intra-rack scale-up before 2029 at the earliest and active copper adoption accelerating first; the AI customer mindset is quoted as 'copper when possible, optics when necessary'. Supply-chain sources in the same note flag an elevated risk that Nvidia's Kyber rack slips to 2H28 on midplane / connector challenges. Reach is the structural limit (copper effective reach below about 10 m at high speed, per a secondary site summarising Nomura).",
+   "evidence_ids": [
+    "fd_edgewater_20260529"
+   ]
+  },
+  {
+   "id": "fd_b5",
+   "reading": "Hypothesis: Nvidia's Kyber generation, with a PCB midplane instead of cable cartridges, removes the cable-cartridge content that Amphenol supplies in Oberon racks, so APH's share of rack content would fall unless its midplane / board-to-board connector and power content offset it. Analyst commentary to that effect appeared in search results but the underlying reports were not read, and the Kyber timing is uncertain (possible slip to 2028).",
+   "hypothesis": true
+  },
+  {
+   "id": "fd_b6",
+   "reading": "Fiber is the second scarce thing, and capacity is being added by named rivals: Corning's Optical Communications sales grew 32% to $2,072M in Q2 2026 (Enterprise Networks +65%, AI data-center sales nearly doubled), and Corning with Nvidia plans to expand U.S. optical connectivity manufacturing capacity 10x and U.S. fiber capacity by more than 50%. APH bought CommScope's connectivity and cable business on 2026-01-09: it contributed $2,100.9M of sales through 2026-06-30, is expected to add $4.6B of sales and $0.30 of accretion in 2026 (raised from $4.1B and $0.15), IT datacom is expected to be a bit under half of CommScope's 2026 sales (about a third in 2025), and CommScope's IT datacom business 'essentially doubled' year on year. Update: CommScope's contribution through 2026-09-30 was $3,683.3M of sales (10-Q) and APH raised its 2026 CommScope outlook again to $5.1B sales and $0.18 accretion (release 2026-10-28). Corning's Optical Communications grew 44% to $2,379M in Q3 2026 (Enterprise Networks +84%, Gen AI sales more than doubled; Corning release 2026-10-27), and Corning signed four multibillion-dollar long-term agreements (Verizon, AT&T among them).",
+   "evidence_ids": [
+    "fd_glw_8k_20260728",
+    "pf_10q_20260731",
+    "fd_aph_call_20260729",
+    "pf_rel_20261028_1",
+    "pf_10q_20261030",
+    "fd_glw_8k_20261027"
+   ]
+  },
+  {
+   "id": "fd_b7",
+   "reading": "Hypothesis: APH (through CommScope) gains hyperscale fiber share because customers want a second source next to Corning after the Nvidia / Corning announcement; this rests on one unnamed channel comment ('Amphenol/CCS is likely among the beneficiaries') in the Edgewater summary and no APH number yet supports it.",
+   "hypothesis": true
+  },
+  {
+   "id": "fd_b8",
+   "reading": "Active electrical cables (AEC) are a fast-growing slice of AI copper that APH can now address: Credo's revenue grew 114.7% to $479.0M in its fiscal Q1 2027 and 205.7% to $1,335.1M in fiscal 2026, and Credo settled its patent dispute with Amphenol under a license on 2025-08-14 (Molex and TE moved to terminate their ITC cases on settlement on 2026-03-26). Edgewater's channel checks: Amazon issued a roughly 2M Trn3-related AEC RFQ, Nvidia is exploring AEC for a front-end networking reference design, xAI AEC demand looks paused after February orders pending VR72 deployments, and 1.6T AEC interest is broadening with Meta and xAI projected as major customers. APH's own AEC revenue is not disclosed.",
+   "evidence_ids": [
+    "fd_crdo_8k_20260901",
+    "fd_crdo_cf",
+    "fd_credo_aph_settle_20250814",
+    "fd_itc_337_1446_20260430",
+    "fd_edgewater_20260529"
+   ]
+  },
+  {
+   "id": "fd_b9",
+   "reading": "A second named rival confirms the AI interconnect shortage on its own numbers: TE Connectivity's fiscal Q4 2026 orders were $6.1B (+29%), full-year orders $22.2B (+27%) and Industrial Solutions grew 26% in fiscal 2026; TE guides fiscal Q1 2027 sales of about $5.35B (+15%) and FY27 organic growth similar to FY26. APH's Q3 2026 book-to-bill was 1.19 and Q4 guide ~+60% in dollars. Demand for scarce data and power connectivity is broad across the named rivals, not APH-specific.",
+   "evidence_ids": [
+    "fd_tel_8k_20261028",
+    "pf_rel_20261028_1"
+   ]
+  }
+ ],
+ "notes": [
+  "fd NAMED COMPETITORS (10-K Item 1, pf_10k_20260211): Aptiv, Belden, Corning, Foxconn Interconnect Technology, Glenair, HUBER+SUHNER, ICT Luxshare, Jonhon, Molex, Rosenberger, Sensata, TE Connectivity and Yazaki, among others, plus many smaller niche competitors; APH competes on technology innovation, product quality and performance, price, customer service and delivery time, and no single customer was 10% or more of net sales in 2025, 2024 and 2023. Credo and Broadcom are NOT named by APH. competitors[] keeps TEL, MOLEX (private), GLW as 10-K-named rivals for the AI-datacom lines, CRDO (active cable, not 10-K-named) and AVGO (adjacent substitution, not a share rival); Belden, Luxshare, Jonhon, FIT, Rosenberger, HUBER+SUHNER, Glenair, Aptiv, Sensata and Yazaki are named but not analysed here (Luxshare, Jonhon and FIT file outside SEC; the others compete mainly outside AI datacom).",
+  "fd SHARE APH vs TEL: APH IT datacom in Q2 2026 is about $3.77B (43% of $8,758.1M net sales; the 43% is from the call transcript summary, derived dollars), +89% in dollars and +63% organically. TE's data-center-facing Digital Data Networks line was $207M in fiscal Q3 2026 (quarter to 2026-06-26), +34.2% (nine months +48.8%); TE Industrial Solutions grew 21% organically and TE total 12.2%. On these numbers APH's IT datacom is about 18 times TE's DDN and grew about 1.8 times as fast organically. Hypothesis (labelled): APH is gaining share against TE in AI data-center interconnect. Limits: TE also books AI power / energy outside DDN, APH's IT datacom includes servers, storage, networking and acquired fiber, and the dollar growth includes CommScope while the +63% is organic.",
+  "fd SHARE APH vs CRDO: Credo grew 114.7% year on year to $479.0M (fiscal Q1 2027) against APH IT datacom +63% organic, so Credo is growing faster from a base about one eighth of APH's IT datacom. AEC adds to rather than replaces passive copper in the same racks, and APH has held an AEC license since 2025-08-14, so this is hypothesis only: Credo gains share of the active in-rack / top-of-rack cable slice while APH's AEC revenue is unknown. Credo's own AEC share claim (~88%, JPMorgan via syndicated posts) is unverified and not used.",
+  "fd SHARE APH vs GLW (fiber): Corning Optical Communications +32% to $2,072M, Enterprise Networks +65%, AI data-center sales nearly doubled; APH says CommScope's IT datacom business essentially doubled year on year. Both roughly doubling points to APH holding, not clearly gaining, fiber share (hypothesis; Corning's AI data-center dollars and CommScope's IT datacom dollars are not disclosed).",
+  "fd SHARE APH overall: Communications Solutions net sales $5,383.6M in Q2 2026 vs $2,909.8M (+85% in dollars, +42% organic), operating margin 33.6% vs 30.6%, 62% of net sales (pf_rel_20260729_1, pf_10q_20260731); APH consolidated organic growth was +30% in Q2 2026 against TE +12.2% total and Corning core +17%. TE's gross margin is about 35.6% and Corning's 36.1% against Credo about 65-68% (a chip-plus-cable model); APH's own gross margin is gather_numbers' to state.",
+  "fd SHARE VERDICT: no attributed share study (Dell'Oro, 650 Group, LightCounting, SemiAnalysis BoM) could be read, so every share reading above is a numbers-based hypothesis, not a measured share. The direction on the numbers is APH ahead of TE, behind Credo in growth rate only on a small base, level with Corning in fiber; Molex, Luxshare, Volex and FIT cannot be quantified. A SemiAnalysis VR NVL72 bill-of-materials model (paid) would name the NVLink spine supplier split.",
+  "fd BROADCOM ROLE: Broadcom's fiscal Q3 2026 revenue was $29,591M (+85.5%) with AI semiconductor revenue of $16.7B (+221%) and a fiscal Q4 guide of about $34.8B including $21.7B AI semiconductors (press coverage of the release). It sets the silicon (custom XPUs, Ethernet switches, retimers / DSPs) that decides copper versus optics per rack; it takes no connector share from APH directly. Its statements on scale-up Ethernet, copper and co-packaged optics were not retrieved (gap).",
+  "fd POTENTIAL (hypothesis, for the analyst): the bottleneck APH supplies is rack-level high-speed copper (backplane, board-to-board, cable assemblies) plus power and fiber interconnect for AI clusters; the shortage is demand-led (orders 1.23x sales) and is being met by APH's own capex; the copper window is attributed to run to about 2029 inside the rack (channel view), with Kyber midplane design the main named threat to cable-cartridge content and optics the long-run substitute beyond the rack.",
+  "fd CITABILITY: every source registered here is dated 2026-09-10 or earlier, so none falls inside the 2-day window before 2026-10-26; APH's latest report found is the 2026-07-29 Q2 release and the 10-Q of 2026-07-31. Competitor figures are the latest found (TE fiscal Q3 to 2026-06-26, Credo fiscal Q1 to 2026-08-01, Corning Q2 to 2026-06-30, Broadcom fiscal Q3 to 2026-08-02); later competitor results, if already out, were not checked.",
+  "fd PROVENANCE: SEC XBRL companyfacts were read directly (TE, Credo, Corning, Broadcom revenue, gross profit and operating income, saved under gather/raw_field/). The earnings-release items (TE DDN $207M and segment sales, Corning Optical Communications $2,072M, Credo guidance and non-GAAP margins, Broadcom AI semiconductor $16.7B), the APH transcript figures (IT datacom 43%, +89%, +63%, orders $10,732M, CommScope $4.6B) and the SemiAnalysis, Edgewater and ITC items came through a fetch tool that summarises the page, so retrieval is search_excerpt, not primary_document; the headline totals tie to XBRL (TE $5,160M and $4,534M, Credo $479.0M and GAAP operating income $120.7M, Corning $4,505M, Broadcom $29,591M). The APH IT datacom 43% should be checked against the transcript or 10-Q text by gather_documents.",
+  "fd REFRESH 2026-11-01 (reuse of 2026-10-27 field): read the new APH 8-K release of 2026-10-28 and 10-Q of 2026-10-30 (both citable from 2026-10-30), plus TEL fiscal Q4 (release 2026-10-28) and GLW Q3 (release 2026-10-27) directly from SEC; TEL and GLW competitor metrics now carry the newer quarter next to the older ones; CRDO (fiscal Q1 2027, 2026-09-01) and AVGO (fiscal Q3 2026, 2026-09-03; fiscal Q4 results due after about 2026-12-03) unchanged; MOLEX private.",
+  "fd SHARE UPDATE Q3 2026: APH Communications Solutions net sales $6,583.0M vs $3,309.5M (+99%, +51% organic; 10-Q), about 64% of sales; consolidated +65%, +37% organic. TE Industrial Solutions $2,799M vs $2,336M (+19.8%) and TE data-networks line (DDN) $242M, +34.2%; Corning Optical Communications +44% to $2,379M. APH organic growth (+37% total, +51% Communications Solutions) is above TE (+13% organic total), Corning core (+19%); fiber: CommScope contributed $3,683.3M through 9M against Corning Optical $2,379M in the quarter alone, both growing fast (hypothesis: APH holding or gaining, dollars of AI fiber not disclosed). Still numbers-based hypothesis, not a measured share.",
+  "fd CITABILITY UPDATE: the APH release (2026-10-28) and 10-Q (2026-10-30) are inside or at the edge of the 2-day window before 2026-11-01 and are citable from 2026-10-30; the TEL (2026-10-28) and GLW (2026-10-27) releases likewise. The APH Q3 call transcript (2026-10-28) was not read here (the AV transcript is gather_documents'); IT datacom dollars for Q3 are not in the filings, so the IT datacom-vs-TE-DDN ratio above uses Q2 values."
+ ],
+ "gaps": [
+  "No attributed market-share source for APH versus TE, Molex, Luxshare, Volex, Credo (no Dell'Oro, 650 Group, LightCounting or readable SemiAnalysis BoM); share is numbers-based hypothesis only.",
+  "Molex is private (no numbers); Luxshare, Jonhon and Foxconn Interconnect (named in the 10-K) file outside SEC and were not retrieved.",
+  "Competitors' forward P/E and growth were not retrieved (FMP analyst is access-denied; the quote calls were left out of this lane's budget); the analyst needs them for company_path peers.",
+  "NVLink spine supplier split on GB200/GB300 and Vera Rubin NVL72 not visible (SemiAnalysis article paywalled, 34,671 characters unread); an unverified secondary claim that Amphenol is the main GB200 copper supplier was not used.",
+  "Kyber content effect on Amphenol rests on unread analyst commentary (hypothesis fd_b5); Kyber timing (2028) only from a headline and the Edgewater supply-chain comment.",
+  "Broadcom's statements on scale-up Ethernet, copper versus optics and co-packaged optics not retrieved.",
+  "APH's own AEC and fiber (CommScope) revenue and the dollar split of IT datacom by product (copper, power, fiber) are not disclosed in the documents read.",
+  "Hyperscaler capex totals appeared only in press snippets with conflicting dates (about $725B for 2026 in April coverage) and were not registered; demand evidence relies on APH's orders and the competitors' filings.",
+  "Credo AEC share (about 88%, JPMorgan via syndicated undated posts) unverified; Credo Q4 FY26 call transcript (404) and TTI June 2026 note (403) could not be read.",
+  "APH Q3 2026 IT datacom share of sales and dollars not in the release or 10-Q (call only); fd SHARE ratios against TE DDN still use Q2 for APH IT datacom."
+ ],
+ "stopped": [
+  "Benzinga Credo Q4 FY26 transcript returned 404: Credo's own AEC competition statements not retrieved; the Credo SEC release gave numbers only.",
+  "TTI MarketEYE June 2026 note returned 403: the 'copper when possible, optics when necessary' timing was taken from the Edgewater summary instead.",
+  "Tom's Hardware Kyber-delay page came back as a headline only: the Kyber timing is not evidenced beyond the Edgewater comment.",
+  "Search for hyperscaler capex stopped after one search: figures conflicted in date and base.",
+  "FMP quote / forward P/E retrieval for the competitors stopped at the tool-call budget (about 25 calls).",
+  "FMP quote / forward P/E retrieval for the competitors not repeated in this refresh (same denial and budget as the 2026-10-26 pass); no hyperscaler capex or attributed share study retrieval repeated."
+ ]
+}

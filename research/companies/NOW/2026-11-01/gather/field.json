@@ -1,0 +1,167 @@
+{
+ "lane": "field",
+ "sources": [
+  {
+   "id": "fd_sec_crm",
+   "kind": "structured_data",
+   "title": "Salesforce (CRM) SEC companyfacts, 10-K FY ended 2026-01-31",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001108524.json",
+   "date": "2026-03-02",
+   "independent": true,
+   "publisher": "SEC EDGAR",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_sec_msft",
+   "kind": "structured_data",
+   "title": "Microsoft (MSFT) SEC companyfacts, 10-K FY ended 2026-06-30",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000789019.json",
+   "date": "2026-07-29",
+   "independent": true,
+   "publisher": "SEC EDGAR",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_sec_wday",
+   "kind": "structured_data",
+   "title": "Workday (WDAY) SEC companyfacts, 10-K FY ended 2026-01-31",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001327811.json",
+   "date": "2026-03-06",
+   "independent": true,
+   "publisher": "SEC EDGAR",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_sec_orcl",
+   "kind": "structured_data",
+   "title": "Oracle (ORCL) SEC companyfacts, 10-K FY ended 2026-05-31",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001341439.json",
+   "date": "2026-06-22",
+   "independent": true,
+   "publisher": "SEC EDGAR",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  }
+ ],
+ "competitors": [
+  {
+   "ticker": "CRM",
+   "name": "Salesforce",
+   "why": "Named in NOW 10-K Item 1. Competes for the same enterprise buyers in CRM/customer-service workflows (NOW's CRM and Industry products: case management, quote-to-order) and in AI agents on the enterprise workflow layer.",
+   "metrics": {
+    "fiscal_year": "FY ended 2026-01-31",
+    "revenue_usd": 41525000000.0,
+    "revenue_prior_usd": 37895000000.0,
+    "revenue_growth": 0.0958,
+    "operating_margin": 0.2006,
+    "operating_cash_flow_margin": 0.3611,
+    "gross_margin": 0.7768
+   },
+   "source_ids": [
+    "pf_10k_20260129",
+    "fd_sec_crm"
+   ]
+  },
+  {
+   "ticker": "MSFT",
+   "name": "Microsoft",
+   "why": "Named in NOW 10-K Item 1. Dynamics 365, Power Platform and Copilot compete for workflow automation, ITSM-adjacent and customer-service budgets and for the enterprise AI-agent layer; also a distribution partner.",
+   "metrics": {
+    "fiscal_year": "FY ended 2026-06-30 (whole company)",
+    "revenue_usd": 331839000000.0,
+    "revenue_prior_usd": 281724000000.0,
+    "revenue_growth": 0.1779,
+    "operating_margin": 0.4678,
+    "operating_cash_flow_margin": 0.5513,
+    "gross_margin": 0.6794
+   },
+   "source_ids": [
+    "pf_10k_20260129",
+    "fd_sec_msft"
+   ]
+  },
+  {
+   "ticker": "WDAY",
+   "name": "Workday",
+   "why": "Named in NOW 10-K Item 1. Competes for HR service delivery and employee-workflow budgets (NOW's HR Service Delivery / employee workflow products) and as an enterprise system-of-record vendor adding AI agents.",
+   "metrics": {
+    "fiscal_year": "FY ended 2026-01-31",
+    "revenue_usd": 9552000000.0,
+    "revenue_prior_usd": 8446000000.0,
+    "revenue_growth": 0.1309,
+    "operating_margin": 0.0755,
+    "operating_cash_flow_margin": 0.3077
+   },
+   "source_ids": [
+    "pf_10k_20260129",
+    "fd_sec_wday"
+   ]
+  },
+  {
+   "ticker": "ORCL",
+   "name": "Oracle",
+   "why": "Named in NOW 10-K Item 1. Fusion/NetSuite application suites compete for enterprise back-office workflow and ERP-adjacent budgets; system-of-record operator.",
+   "metrics": {
+    "fiscal_year": "FY ended 2026-05-31 (whole company, includes cloud infrastructure)",
+    "revenue_usd": 67357000000.0,
+    "revenue_prior_usd": 57399000000.0,
+    "revenue_growth": 0.1735,
+    "operating_margin": 0.3059,
+    "operating_cash_flow_margin": 0.4747
+   },
+   "source_ids": [
+    "pf_10k_20260129",
+    "fd_sec_orcl"
+   ]
+  }
+ ],
+ "bottlenecks": [
+  {
+   "id": "fd_b1",
+   "reading": "NOW states in its 10-K Item 1 that enterprises need a layer that unifies disparate systems, enforces business logic and governance and executes workflows, and that AI has intensified rather than removed that need; the scarce thing NOW claims to supply is governed workflow execution across silos. This is management's own positioning, not independent evidence.",
+   "evidence_ids": [
+    "pf_10k_20260129"
+   ]
+  },
+  {
+   "id": "fd_b2",
+   "reading": "Paid AI adoption in NOW's own numbers: management raised its 2026 AI annual contract value target to $1.7bn (up 70% from the start of the year) and RPO is 29.7bn (+22%), cRPO 13.65bn (+20.5%) at Q3 2026. AI ACV is a management-defined target, to be checked by the documents lane against the call.",
+   "evidence_ids": [
+    "pf_rel_20261028_1"
+   ]
+  },
+  {
+   "id": "fd_b3",
+   "reading": "Capacity and duration of the shortage not evidenced by an independent source (no Gartner/IDC/regulator data retrieved): how long enterprises lack governed AI-workflow platforms, and who adds capacity (system-of-record vendors Salesforce, Microsoft, Workday, Oracle, SAP embedding agents; in-house builds; point-solution startups), is a hypothesis.",
+   "hypothesis": true
+  },
+  {
+   "id": "fd_b4",
+   "reading": "Risk to the bottleneck: the 10-K warns that systems-of-record operators may build mechanisms that prevent NOW's solutions from accessing their data, and that competitors may incorporate AI faster; low barriers to entry per Item 1 mean the moat is workflow depth and installed base, not scarcity of technology.",
+   "evidence_ids": [
+    "pf_10k_20260129"
+   ]
+  }
+ ],
+ "notes": [
+  "fd NAMED COMPETITORS (10-K Item 1, source pf_10k_20260129): enterprise application software vendors, cloud and on-premises, such as Microsoft, Oracle, SAP, Salesforce and Workday; new technologies and entrants (point and platform solutions, particularly AI); custom-developed in-house solutions; technology consulting firms; systems integrators; software resellers. Market described as fragmented with low barriers to entry. SAP (foreign private issuer, files 20-F) is named but not recorded with numbers here: gap.",
+  "fd NOW OWN (pf_cf_20260129): FY2025 revenue 13,278m (+20.9% vs 10,984m), gross margin 77.5%, operating margin 13.7% (GAAP, companyfacts).",
+  "fd SHARE revenue growth, latest fiscal year, each company's own filings: NOW +20.9% (FY2025, pf_cf_20260129) vs CRM +9.6% (FY Jan-2026, fd_sec_crm), WDAY +13.1% (FY Jan-2026, fd_sec_wday), MSFT +17.8% (FY Jun-2026, whole company, fd_sec_msft), ORCL +17.4% (FY May-2026, whole company, fd_sec_orcl). NOW grew faster than each named competitor's whole-company growth; segment-level share cannot be computed because the competing segments (Salesforce Service Cloud, Dynamics, Workday HCM service, etc.) were not retrieved: hypothesis that NOW is gaining share in workflow/IT/CRM-service against CRM and WDAY, not proven.",
+  "fd SHARE NOW latest quarter Q3 2026 (release 2026-10-28, pf_rel_20261028_1): total revenue 4,106m +20.5% y/y, subscription 3,988m +21%, cRPO 13.65bn +20.5%, RPO 29.7bn +22%; management AI ACV target raised to 1.7bn for 2026 (management guidance, not a fact). Competitors' same-period quarterly numbers not retrieved (gap).",
+  "fd MARGIN CONTEXT GAAP operating margin: NOW 13.7% (FY2025) vs CRM 20.1%, WDAY 7.5%, MSFT 46.8%, ORCL 30.6%: NOW is below Salesforce and Microsoft on GAAP margin, above Workday; GAAP margins carry different stock-comp and amortization loads, no peer median used.",
+  "fd FORWARD P/E of competitors not retrieved in this lane (no FMP/AV by rule, no peer price data): gap; the valuation stages must not use a peer multiple as a driver."
+ ],
+ "gaps": [
+  "SAP named by the 10-K but files 20-F (no companyfacts us-gaap): no numbers recorded",
+  "competing-segment revenue and growth for each competitor (Service Cloud, Dynamics, Workday HCM service) not retrieved: share is whole-company growth comparison only",
+  "competitor forward P/E and quarterly numbers not retrieved (no peer price/consensus data by lane rules)",
+  "no independent market-size or share source (Gartner/IDC/regulator) retrieved: market direction and bottleneck duration are hypotheses",
+  "prefetch had no peers.json; gross profit not tagged in WDAY and ORCL companyfacts so gross margin omitted for them"
+ ],
+ "stopped": [
+  "no web search branch for third-party market-size studies: next retrieval unlikely to change the decision within the 25-call budget; left as gap"
+ ]
+}

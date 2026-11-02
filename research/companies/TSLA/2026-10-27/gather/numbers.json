@@ -1,0 +1,250 @@
+{
+ "lane": "numbers",
+ "sources": [
+  {
+   "id": "nm_av_statements",
+   "kind": "structured_data",
+   "title": "Alpha Vantage INCOME_STATEMENT, BALANCE_SHEET and CASH_FLOW for TSLA (annual and quarterly, normalized to SEC taxonomies), second source for the reconciliation",
+   "url": "connector:mcp__Alpha_Vantage_MCP_Server__INCOME_STATEMENT",
+   "date": "2026-10-27",
+   "independent": false,
+   "publisher": "Alpha Vantage",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_ib_price",
+   "kind": "price",
+   "title": "Interactive Brokers snapshot TSLA (Nasdaq, conid 76792991): last 405.83 USD at 2026-10-27T16:13:50Z",
+   "url": "connector:mcp__Interactive_Brokers__get_price_snapshot",
+   "date": "2026-10-27",
+   "independent": true,
+   "publisher": "Interactive Brokers",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_ib_history",
+   "kind": "price",
+   "title": "Interactive Brokers monthly price history TSLA, five years to 2026-10-27, split-adjusted, with corporate actions (3-for-1 split 2022-08-25)",
+   "url": "connector:mcp__Interactive_Brokers__get_price_history",
+   "date": "2026-10-27",
+   "independent": true,
+   "publisher": "Interactive Brokers",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_cons_stockanalysis",
+   "kind": "consensus",
+   "title": "StockAnalysis.com, Tesla (TSLA) analyst forecast page, S&P Global Market Intelligence consensus, page last updated Oct 27, 2026",
+   "url": "https://stockanalysis.com/stocks/tsla/forecast/",
+   "date": "2026-10-27",
+   "independent": false,
+   "publisher": "StockAnalysis.com (data: S&P Global Market Intelligence)",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_cons_marketbeat",
+   "kind": "consensus",
+   "title": "MarketBeat, Tesla (TSLA) stock forecast and price targets page, metadata dateModified 2026-10-26 (price targets and ratings only, no EPS or revenue estimates)",
+   "url": "https://www.marketbeat.com/stocks/NASDAQ/TSLA/forecast/",
+   "date": "2026-10-26",
+   "independent": true,
+   "publisher": "MarketBeat",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  }
+ ],
+ "facts": [
+  {
+   "id": "nm_eps_diluted_q_2025_03_31",
+   "metric": "eps_diluted",
+   "period": "Q@2025-03-31",
+   "value": 0.12,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_10q_20260423"
+   ],
+   "period_end": "2025-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q_2025_06_30",
+   "metric": "eps_diluted",
+   "period": "Q@2025-06-30",
+   "value": 0.33,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_10q_20260723"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q_2025_09_30",
+   "metric": "eps_diluted",
+   "period": "Q@2025-09-30",
+   "value": 0.39,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q_2025_12_31",
+   "metric": "eps_diluted",
+   "period": "Q@2025-12-31",
+   "value": 0.24,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_10k_20260129",
+    "pf_10q_20261022"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_eps_diluted_q_2026_03_31",
+   "metric": "eps_diluted",
+   "period": "Q@2026-03-31",
+   "value": 0.13,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_10q_20260423"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q_2026_06_30",
+   "metric": "eps_diluted",
+   "period": "Q@2026-06-30",
+   "value": 0.32,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_10q_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q_2026_09_30",
+   "metric": "eps_diluted",
+   "period": "Q@2026-09-30",
+   "value": 0.22,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_diluted_wavg_q_2026_09_30",
+   "metric": "shares_diluted_wavg",
+   "period": "Q@2026-09-30",
+   "value": 3541000000,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_basic_wavg_q_2026_09_30",
+   "metric": "shares_basic_wavg",
+   "period": "Q@2026-09-30",
+   "value": 3240000000,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_outstanding_cover_2026_10_15",
+   "metric": "shares_outstanding",
+   "period": "Q@2026-09-30",
+   "value": 3952757946,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-10-15",
+   "basis": "reported"
+  }
+ ],
+ "guidance_track": [],
+ "consensus": [
+  {
+   "id": "nm_cons_revenue_fy2026",
+   "metric": "revenue",
+   "period": "FY2026",
+   "value": 107790000000,
+   "low": 99600000000,
+   "high": 119400000000,
+   "source_id": "nm_cons_stockanalysis"
+  },
+  {
+   "id": "nm_cons_eps_fy2026",
+   "metric": "eps_diluted",
+   "period": "FY2026",
+   "value": 1.76,
+   "low": 1.34,
+   "high": 2.28,
+   "source_id": "nm_cons_stockanalysis"
+  },
+  {
+   "id": "nm_cons_revenue_fy2027",
+   "metric": "revenue",
+   "period": "FY2027",
+   "value": 122320000000,
+   "source_id": "nm_cons_stockanalysis"
+  },
+  {
+   "id": "nm_cons_eps_fy2027",
+   "metric": "eps_diluted",
+   "period": "FY2027",
+   "value": 2.18,
+   "source_id": "nm_cons_stockanalysis"
+  }
+ ],
+ "notes": [
+  "nm IDENTITY confirmed: Tesla, Inc. (CIK 1318605), common stock TSLA, single class, Nasdaq Global Select Market (10-K cover), USD reporting and quote currency, calendar fiscal year (Dec 31), no ADR or dual class. IBKR search_contracts (read-only): NASDAQ STK conid 76792991 is the US primary listing; other exact-symbol TSLA rows are a Canadian CDR (TSE), Mexican, Swiss and UK ETP listings and leveraged or income ETFs, none is this security. Saved as raw/ib__search-contracts-TSLA__current.json. identity.json and company.json updated (security, exchange, quote_currency, ib_contract_id, sector, industry).",
+  "nm RECONCILIATION FY2025 (10-K, pf_10k_20260129): revenue 94,827M, income from operations 4,355M, net income attributable to common 3,794M, CFO 14,747M, capex (purchases of property and equipment excluding finance leases, net of sales) 8,527M, SBC 2,825M, diluted EPS 1.08, diluted weighted shares 3,528M, R&D 6,411M, SG&A 5,834M all agree with the pf_ facts and with Alpha Vantage (nm_av_statements: totalRevenue, operatingIncome, netIncome 3,794M, operatingCashflow, capitalExpenditures, stockBasedCompensation). No difference except those listed in the DIFFERENCES note.",
+  "nm RECONCILIATION latest quarter Q3 2026 (10-Q filed 2026-10-22, pf_10q_20261022): revenue 28,046M, gross profit 5,494M, income from operations 718M, net income attributable to common 787M (net income 804M less 17M noncontrolling), diluted EPS 0.22, diluted shares 3,541M, SBC 1,165M agree with the pf_ facts and Alpha Vantage. Nine-month CFO 14,897M (pf Q1+Q2+Q3 3,937+4,697+6,263; 10-Q 14.90B), nine-month capex 13,014M (pf 2,493+5,789+4,732; 10-Q 13,014M), nine-month SBC 3,346M (pf 1,030+1,151+1,165; 10-Q 3,346M): all tie to the filing. Q3 free cash flow 1,531M (CFO 6,263M less capex 4,732M); trailing four quarters CFO 18,710M, capex 15,407M, free cash flow 3,303M (all from pf_ facts).",
+  "nm RECONCILIATION DIFFERENCES to resolve downstream with filing evidence (dataqa_resolutions): (1) D&A FY2025: pf_d_and_a_fy2025 = 5,030M but the 10-K cash-flow line 'Depreciation, amortization and impairment' = 6,148M (Alpha Vantage 6,148M); the pf tag is narrower (depreciation excluding impairment and some amortization), so use the filing figure for EBITDA or maintenance-capex work. (2) Alpha Vantage quarterly netIncome is inconsistent across quarters: Q1 2026 491M (that is net income including noncontrolling interests; attributable to common 477M per pf), Q2 1,114M and Q3 787M (attributable). Use pf / 10-Q attributable figures. (3) Alpha Vantage commonStockSharesOutstanding (3,528M FY2025, 3,541M Q3 2026) is the diluted WEIGHTED average, not point-in-time shares outstanding. (4) Alpha Vantage shortLongTermDebtTotal 16,445M at 2026-09-30 does not tie to the 10-Q: debt note total debt 9,284M (current 1,311M + non-current 7,956M, these two match Alpha Vantage currentLongTermDebt and longTermDebt), plus finance leases = 9,523M on the balance sheet (current 1,387M + non-current 8,136M); use the 10-Q. (5) Alpha Vantage totalLiabilities 67,682M = 10-Q total liabilities 67,628M + 54M redeemable noncontrolling interests.",
+  "nm SHARES (point in time, for ownership and dilution): 10-Q cover 3,952,757,946 shares outstanding at 2026-10-15; balance sheet 3,953M issued and outstanding at 2026-09-30 versus 3,751M at 2025-12-31. This count includes restricted stock awards that are NOT in the EPS share counts until earned (10-Q: 'Restricted stock awards will be excluded from the computation of diluted weighted average shares until the shares have been deemed to be earned'): weighted basic 3,240M and diluted 3,541M in Q3 2026 (stock-based awards add 301M; 17M anti-dilutive excluded). The 2025 CEO Performance Award (SBC 275M in Q3, 802M for nine months; 9.74B unrecognized for milestones judged probable, 105.82B to 120.37B for milestones not probable) is the main reason; per-share value must be taken on a share count that reflects it. Use point-in-time shares for ownership, weighted shares only for EPS.",
+  "nm BALANCE SHEET 2026-09-30 (10-Q): cash and cash equivalents 17,853M, short-term investments 27,594M (of which 231M restricted for the insurance business), together 45,447M fair value; restricted cash outside these (489M current, 664M non-current) and digital assets 962M (11,509 Bitcoin at cost 386M) are kept apart from spendable cash. Debt and finance leases 9,523M; total assets 157,517M; total liabilities 67,628M; stockholders' equity 89,289M; noncontrolling interests 546M plus redeemable 54M. Unused committed credit 30,000M in the debt note (5,000M at 2025-12-31).",
+  "nm ROIC CHECK: prefetch/forensic.json roic is 'unavailable' (it needs operating income, equity, debt and cash per year), so no prefetch ROIC to check; recomputed by hand. Invested capital at 2026-09-30 = equity 89,289 + noncontrolling 546 + redeemable 54 + debt and finance leases 9,523 - cash and short-term investments 45,447 = 53,965M; at 2025-12-31 = 82,137 + 670 + 58 + 8,376 - 44,059 = 47,182M. Digital assets (962M), restricted cash and operating lease liabilities are left out of both. Trailing operating income 3,466M (Q4'25 1,409 + Q1 941 + Q2 398 + Q3 718) at an assumed 21% tax = NOPAT about 2,738M, ROIC about 5.1% on the net-of-cash base (about 2.8% if the 45.4B of cash and investments is not netted). FY2025 NOPAT about 3,440M on 47,182M = 7.3%. Incremental: invested capital +6,783M while NOPAT -702M, so incremental ROIC is negative (about -10%) on this window; the investment is front-loaded (nine-month capex 13.0B versus 6.1B a year earlier; construction in progress sits in PP&E 50,591M versus 40,643M, other non-current assets 12,599M versus 5,045M). The 21% tax rate is my assumption (10-Q effective rate 16% in Q3 and 20% for nine months).",
+  "nm PRICE: IBKR snapshot read-only, last 405.83 USD at 2026-10-27T16:13:50Z (bid 405.79 x 40, ask 405.90 x 40), change +14.21 (+3.63%) so the prior close is 391.62 (the prior_close field came back empty; 391.62 also equals the close of the October bar through 2026-10-26). 52-week high 498.83, low 297.38, open 52 weeks ago 439.98; 13-week high 397.27 (today trades above it). Market value about 1.60T USD on 3,953M shares outstanding (restricted awards included) or 1.44T on 3,541M diluted weighted shares. Trailing revenue 103,570M, so about 15.5x or 13.9x sales on those two counts. Saved as raw/ib__price-snapshot-TSLA__current.json (snapshot) and raw/ib__corporate-actions-TSLA__current.json (62 monthly bars, one split: 3-for-1 on 2022-08-25, prices already split-adjusted).",
+  "nm OWN MULTIPLE HISTORY low 34.0 median 98.4 high 416.4 now 446.0 years 2021-2026 sources nm_ib_history nm_eps_diluted_q_2025_03_31 nm_eps_diluted_q_2026_09_30 pf_eps_diluted_fy2025. Trailing P/E on GAAP diluted EPS after SBC, 20 quarter-end points (month-end price over the sum of the last four quarterly EPS; Q4 derived as fiscal year minus nine months; the EPS history is read from the saved SEC companyfacts, latest-filed value per period, split-adjusted): low 34.0 (2022-12), median 98.4, high 416.4 (2025-12), now 446.0 (405.83 over trailing EPS 0.91 = 0.24 + 0.13 + 0.32 + 0.22). Year-end trailing: 2021 137.1, 2022 34.0, 2023 57.7, 2024 198.0, 2025 416.4. Forward P/E on the EPS REALISED over the next four quarters (a hindsight proxy, NOT the consensus of the time, which is not available), 16 points 2021-12 to 2025-09: low 28.6, median 103.1, high 488.7. Caution: trailing EPS 2023 to 2024 (4.30 for FY2023) is lifted by a one-time tax benefit (FY2023 income tax was a 5.0B benefit with pre-tax income 9.97B and net income 15.0B in history.json; the 10-K tax reconciliation shows a valuation-allowance change of 5,962M), so the low multiples of 2022 to 2024 rest on earnings that were inflated or at a cyclical peak; current EPS (0.91 trailing) is depressed by heavy R&D (Q3 2.76B, 10% of revenue versus 6%) and a 3.35B nine-month SBC charge, so a trailing P/E near 446 is not a normal-earnings multiple either.",
+  "nm OWN MULTIPLE forward on street EPS (opinion, S&P Global consensus via StockAnalysis, basis NOT GAAP: nine-month GAAP diluted EPS is 0.67 so the FY2026 street 1.76 would need 1.09 in Q4; the street basis is evidently adjusted): 405.83 / 1.76 = 230.6 on FY2026 and 405.83 / 2.18 = 186.2 on FY2027. Not comparable with the GAAP history above.",
+  "nm CONSENSUS (an expectation, attributed): StockAnalysis.com page 'last updated Oct 27, 2026', data S&P Global Market Intelligence and TipRanks, 43 analysts counted for the price target (the page gives no analyst count per estimate, so n is omitted). FY2026 revenue average 107.79B (low 99.6B, high 119.4B, growth +13.67%), EPS average 1.76 (low 1.34, high 2.28); FY2027 revenue 122.32B (+13.49%), EPS 2.18 (+23.78%); FY2028 and later are behind the page's paywall (gap). Revenue check: nine-month revenue is 78,669M, so FY2026 107.79B implies Q4 about 29.1B (+16.9% on Q4 2025 24,901M) and trailing revenue growth of 8.3% so far; the consensus assumes a Q4 acceleration. Operating income consensus: not available (gap). Revisions history: not available (Alpha Vantage EARNINGS_ESTIMATES rate limited). TIMING: the page is dated 2026-10-27 = as_of, so under facts.LAG_DAYS = 2 these rows are not citable as evidence until 2026-10-29; they are context for the analyst, who should cite them only after a rerun with as_of 2026-10-29. A first web search returned older third-party pages (TickFlow, Simply Wall St, dated before Q3, FY2026 revenue 102.6B to 102.9B, EPS 1.93) that are stale and not used.",
+  "nm TARGETS (opinions, not facts): StockAnalysis 43 analysts, rating Buy, average target 410.68, median 430, low 128.11, high 600. MarketBeat (dateModified 2026-10-26) 49 analysts, rating Moderate Buy (score 2.51; 4 sell, 17 hold, 27 buy, 1 strong buy), consensus target 411.04, high 600, low 25.28. Both averages sit within about 1.3% of the 405.83 price. The two pages are partly the same analyst population, so they are not independent confirmation of each other.",
+  "nm AV RATELIMIT EARNINGS_ESTIMATES 2026-10-27: 'Thank you for using Alpha Vantage! Please consider spreading out your free API requests more sparingly (1 request per second)... free API key rate limit (25 requests per day)' (saved as raw/av__earnings-estimates__ratelimit.json); not retried, fallback = one WebSearch and two page fetches for an attributed consensus (StockAnalysis worked, MarketBeat has no estimates, TickFlow returned HTTP 429). INCOME_STATEMENT, BALANCE_SHEET and CASH_FLOW worked (the balance sheet came back as a preview, the full payload was downloaded from the data_url the tool returned, no extra Alpha Vantage request); COMPANY_OVERVIEW and FMP statements and analyst endpoints were not called.",
+  "nm TRACK RECORD revenue: no ratio is possible. None of the eight saved earnings releases (2026-01-02 to 2026-10-21, the Q4 2025 to Q3 2026 updates and the delivery reports) gives a numeric revenue, EPS, margin or delivery guide; each Outlook section is qualitative (volume, cash, profit, product). The only numeric guide is capital expenditure as a floor, not a range: FY2026 capex 'in excess of $20 billion' (10-K, filed 2026-01-29), raised to 'in excess of $25 billion' (10-Q filed 2026-04-23 and 2026-07-23) and CUT back to 'in excess of $20 billion' (10-Q filed 2026-10-22, still 'driven by our SI initiatives'); nine-month capex is 13.0B, so the floor implies Q4 capex of at least 7.0B against 4.7B in Q3 (hand it to gather_documents for guidance items). FY2025: the FY2024 10-K (filed 2025-01-30) is not among the saved documents, so the prior-year capex guide versus the 8,527M delivered could not be checked (gap). guidance_track is therefore empty; the engine applies no track-record adjustment.",
+  "nm CITABILITY at as_of 2026-10-27: the Q3 2026 results (8-K and update deck 2026-10-21, 10-Q 2026-10-22) became citable on 2026-10-23 and 2026-10-24, so they are usable; the consensus and aggregator pages dated 2026-10-27 are not citable until 2026-10-29; the IBKR price is a market feed citable on its own date.",
+  "nm SEGMENT TREND for the analysts (from the 10-Q income statement, reported): Q3 2026 revenue by line, automotive sales 20,094M (-1.3% year on year), regulatory credits 113M (417M), leasing 353M, energy generation and storage 2,881M (3,415M, -15.6%), services and other 4,605M (3,475M, +32.5%); total revenue 28,046M, flat (-0.2%) year on year; gross margin 19.6% versus 18.0%; income from operations 718M (2.6% margin) versus 1,624M; R&D 2,761M (+69%); SG&A 2,015M (+29%). Nine-month revenue +12.5% (78,669M versus 69,926M) but operating income 2,057M versus 2,946M. Deliveries Q3 2026 over 486,000 and storage deployments 13.7 GWh (8-K 2026-10-02). The business detail belongs to gather_documents; this note only ties the statement lines."
+ ],
+ "gaps": [
+  "Alpha Vantage EARNINGS_ESTIMATES rate limited, not retried: no analyst count per estimate, no operating income or EBIT consensus, no revision history, no FY2028 and later consensus (paywalled on the substitute page)",
+  "consensus page dated 2026-10-27 is not citable as evidence until 2026-10-29 (facts.LAG_DAYS); street EPS basis (non-GAAP) differs from GAAP diluted EPS after SBC, so no GAAP forward P/E from consensus",
+  "no numeric financial guidance exists in the saved releases, so the guidance track record is empty; the prior-year capex guide (FY2024 10-K, filed 2025-01-30) is not saved and was not fetched",
+  "forward P/E history uses realised next-four-quarter GAAP EPS, not the consensus of the time (not available)",
+  "prefetch ROIC unavailable; hand ROIC uses an assumed 21% tax rate",
+  "D&A fact pf_d_and_a_fy2025 (5,030M) differs from the 10-K cash-flow line (6,148M); Alpha Vantage debt total 16,445M and quarterly netIncome basis disagree with the filings (see the DIFFERENCES note)",
+  "TickFlow consensus page returned HTTP 429; the first web search returned only pre-Q3 pages"
+ ],
+ "stopped": [
+  "Alpha Vantage EARNINGS_ESTIMATES: rate limit message (1 request per second, 25 requests a day), not retried per the stage rule",
+  "TickFlow forecast page fetch: HTTP 429, not retried",
+  "FY2024 10-K prior-year capex guide and Q4 2025 earnings call: not fetched (outside the numbers budget; documents lane owns transcripts)"
+ ]
+}

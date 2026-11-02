@@ -1,0 +1,35 @@
+{
+ "findings": [
+  {"topic": "economic identity", "finding": "Software platforms (Gotham, Foundry, Apollo, AIP) sold to government (51% of Q2 2026 revenue, 990M) and commercial (945M) customers; revenue = customers x revenue per customer, with U.S. commercial customers 653 (+35% y/y) and top-20 average TTM revenue 124M (+67% from 75M): growth is mostly deeper spend per existing customer (NDR 157%) plus new logos.", "evidence_ids": ["dc_s_gov_q2_26", "dc_s_com_q2_26", "dc_k_usc_customers", "dc_k_top20", "dc_k_top20_py", "dc_k_ndr"]},
+  {"topic": "growth split", "finding": "Q2 2026 revenue +93% y/y; U.S. commercial +149% and U.S. government +90% drive it, rest of world only +34%. No acquisitions in the history; growth is organic and structural (AIP adoption, wider government programmes), not a price or cycle effect. Residual (mix of one government cloud-hosting customer) is small and named by management.", "evidence_ids": ["pf_revenue_q_2026_06_30", "pf_revenue_q_2025_06_30", "dc_k_usc_rev", "dc_k_usg_rev", "mc_f_rev_row_q2", "mc_f_rev_row_q2_25", "pf_10q_20260804"]},
+  {"topic": "who funds demand", "finding": "No customer above 10% of revenue; top three customers 16% of H1 2026 revenue. Government budgets fund about half; most government contracts are terminable for convenience and options are not committed, so RPO (4.9B, 43% within 12 months) understates and total remaining deal value (13.1B, assumes all options) overstates firm demand. No vendor financing or take-or-pay on the customer side.", "evidence_ids": ["mc_f_top3_share", "dc_f_rpo", "dc_f_rpo_12m", "dc_k_total_rdv", "pf_10q_20260804"]},
+  {"topic": "economics treatment", "finding": "Structural: revenue grew every year FY2020-FY2025 (17%-56%) with no down year, margins rose steadily from -107% to +32% operating; nothing in the history shows a cycle.", "evidence_ids": ["pf_revenue_fy2020", "pf_revenue_fy2023", "pf_revenue_fy2025", "pf_operating_income_fy2025"]},
+  {"topic": "company type", "finding": "Confirmed high_growth / fast_grower: revenue compounding above 20% (TTM +79%, latest quarter +93%) and operating margin already 47%; the questions are how long growth lasts and whether margins hold, not survival.", "evidence_ids": ["pf_revenue_q_2026_06_30", "pf_operating_income_q_2026_06_30"]},
+  {"topic": "guidance track record", "finding": "Conservative guider: revenue beat the guided midpoint in all 8 recorded periods, ratio 1.082 (quarterly-only about 1.067, the FY2025 initial guide row 1.19 inflates the mean); FY2026 guide raised from 7.656B to 8.154B (+82% y/y). The guide is a floor, so the track-record ratio is applied to the unreported remainder.", "evidence_ids": ["dc_g_fy_rev", "dc_g_fy_rev_prior", "dc_g_q3_rev", "pf_rel_20260803_1"]},
+  {"topic": "earnings quality", "finding": "Q2 2026 net income 1,062M includes about 71M after-tax unrealized securities gains (SpaceX holding); normalized about 991M. GAAP tax only 1.4% of pretax (SBC deductions, NOLs) while adjusted EPS uses 23%: GAAP earnings overstate a steady-state after-tax profit. SBC 265M (13.7% of revenue) is a real cost; adjusted operating income (1,194M) excludes it.", "evidence_ids": ["dc_f_other_inc", "pf_net_income_q_2026_06_30", "dc_f_sbc_q2", "dc_f_adj_opinc", "pf_10q_20260804"]},
+  {"topic": "peak-margin run rate", "finding": "GAAP operating margin 47% in Q2 2026 vs 32% FY2025 and a historical median of 5%: a record quarter x 4 is not a normalized run rate; management flagged a significant seasonal expense ramp in Q3. The FY2026 guide implies about 60% adjusted operating margin, about 46% after SBC.", "evidence_ids": ["pf_operating_income_q_2026_06_30", "pf_operating_income_fy2025", "dc_g_fy_adjoi", "dc_g_fy_rev", "dc_call_20260803"]},
+  {"topic": "forensic screens", "finding": "Piotroski 7/8 (strong), Altman Z'' 10.5 (safe), no debt, 9.4B cash and short-term Treasuries; Beneish and ROIC not computed by the prefetch (gap). Invested operating capital is tiny (capex under 1% of revenue), so ROIC is very high and not a constraint.", "evidence_ids": ["pf_cash_fy2025", "pf_short_term_investments_fy2025", "dc_f_debt", "pf_capex_fy2025"]},
+  {"topic": "dilution and capital return", "finding": "Diluted shares 2.569B vs basic 2.400B; diluted count +0.2% y/y, so SBC dilution is now largely offset; buybacks are small (75M in FY2025). SBC fell from 24% of revenue (FY2024) to 15% (FY2025) and 13.7% (Q2 2026).", "evidence_ids": ["dc_f_dil_shares", "pf_buybacks_fy2025", "pf_sbc_fy2024", "pf_sbc_fy2025", "pf_revenue_fy2024"]},
+  {"topic": "commitments", "finding": "March 2026 cloud-hosting amendment commits at least 5.6B over ten years to 2036 (annual minimums 268M-979M): an operating cost floor if growth stalls. No debt; 500M revolver undrawn.", "evidence_ids": ["dc_f_cloud_commit", "dc_f_debt", "pf_10q_20260804"]}
+ ],
+ "flags": [
+  "peak_margin_run_rate: Q2 2026 GAAP operating margin 47% vs historical median 5%; not a run rate",
+  "unrealized securities gains (SpaceX) of about 71M after tax in Q2 2026 net income",
+  "GAAP tax rate about 1.4% vs 23% long-term rate used in adjusted EPS",
+  "SBC 13.7% of revenue, excluded from adjusted operating income and adjusted FCF",
+  "government 51% of revenue, contracts terminable for convenience; RDV and TCV assume options exercised",
+  "U.S. 81% of revenue: dependence on U.S. federal budgets and U.S. enterprise AI spending",
+  "5.6B cloud commitment through 2036 is a fixed cost if growth stalls",
+  "valuation: about 157x trailing GAAP EPS at 184.56; the multiple sits at the low end of its own (very high) history",
+  "Beneish and ROIC screens not computed (gap)"
+ ],
+ "economics": {"treatment": "structural", "reason": "Revenue rose every year FY2020-FY2025 with no down year and margins rose steadily; demand is software adoption funded by government programmes and enterprise AI budgets, not a price cycle.", "evidence_ids": ["pf_revenue_fy2020", "pf_revenue_fy2025", "pf_operating_income_fy2025", "dc_k_ndr"]},
+ "type": {"stage": "high_growth", "lynch": "fast_grower", "override_reason": null},
+ "gaps": [
+  "Q3 2026 results (due 2026-11-02/03) are after as_of and not citable",
+  "consensus (AV, retrieved 2026-11-01) not citable until 2026-11-03: cross-check only, never a driver",
+  "Beneish and ROIC / incremental ROIC not computed",
+  "no named-customer revenue shares; segment operating income not disclosed (contribution only)",
+  "no FY2027 company guidance"
+ ]
+}

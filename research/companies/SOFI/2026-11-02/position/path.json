@@ -1,0 +1,50 @@
+{
+ "thesis_he": {
+  "bear": "התשואה על ההון נתקעת סביב 7.5% (קרוב לרמה של היום ומתחת לעלות ההון), כי ההון נשחק מצמיחת המאזן, ריביות ומרווחי אשראי מורידים את שווי ההלוואות, ולכן המכפיל נמוך.",
+  "base": "התשואה על ההון עולה בהדרגה לכ-12%, בערך לפי תחזית ההנהלה ל-2027 (רווח 1.28 מיליארד, 0.90 דולר למניה), מעט מעל עלות ההון, ולכן מכפיל רווח מתון שיורד ככל שהצמיחה מאטה.",
+  "bull": "התשואה על ההון מגיעה לאמצע העשרות (כ-16%), כפי שמשתמע מיעד צמיחת הרווח למניה של 38-42% בשנה עד 2028, ולכן מכפיל גבוה יותר שמוצדק רק אם זה יקרה."
+ },
+ "company_path": {
+  "metric": "eps",
+  "multiple": "forward_pe",
+  "scenarios": {
+   "bear": {
+    "multiple_from": "economics",
+    "roic": 0.075,
+    "justification": "unproven",
+    "reason_he": "זה בנק, ולכן התשואה הנמדדת היא על ההון העצמי (כולל מוניטין), לא ROIC. ב-2025 היא הייתה 5.7%, וברבעון השלישי של 2026 כ-8.6% בקצב שנתי. בתרחיש הדובי היא נשארת סביב 7.5%: יחס ההון (CET1) יורד בכ-2 נקודות ברבעון, ולכן צריך למכור יותר הלוואות או לגייס הון. בנוסף, ריבית ומרווחי אשראי גבוהים שוחקים את פרמיית השווי ההוגן של ההלוואות. תשואה מתחת לעלות ההון פירושה שכל דולר שמושקע בצמיחה שווה פחות מדולר, ולכן המכפיל נמוך.",
+    "source_tier": "own_history",
+    "evidence_ids": ["nm_roe_fy2025", "nm_roe_q3_2026_annualised", "nm_equity_q3_2026", "pf_rel_20261027_1"]
+   },
+   "base": {
+    "multiple_from": "economics",
+    "roic": 0.12,
+    "justification": "justified_high",
+    "reason_he": "התשואה על ההון עלתה מ-5.7% ב-2025 לכ-8.6% היום (על ההון המוחשי, בלי מוניטין, כ-10%). תחזית ההנהלה ל-2027, רווח של 1.28 מיליארד דולר על הון של כ-12-13 מיליארד, משתמעת לכ-10-11% על ההון הממוצע. ההון החדש שמושקע בצמיחה מרוויח יותר מהממוצע בזכות מינוף תפעולי. להנהלה יש רקורד של העלאת התחזית בכל רבעון ב-2025-2026. לכן 12% הם המסלול הסביר, מעט מעל עלות ההון: מכפיל מתון שיורד עם האטת הצמיחה.",
+    "source_tier": "guidance",
+    "evidence_ids": ["dc_g_ni27", "dc_g_eps27", "dc_k_rote", "nm_roe_q3_2026_annualised", "nm_equity_q3_2026", "pf_rel_20261027_1"]
+   },
+   "bull": {
+    "multiple_from": "economics",
+    "roic": 0.16,
+    "justification": "unproven",
+    "reason_he": "יעד ההנהלה הוא צמיחה של 38-42% בשנה ברווח למניה בשנים 2025-2028. אם זה קורה בלי גיוס הון נוסף, התשואה על ההון מגיעה לאמצע העשרות (כ-16%). לשם כך צריך יותר הכנסות מעמלות (פלטפורמת ההלוואות, מוצרים לכל לקוח) והוצאות שיווק שגדלות לאט יותר מההכנסות. Ally, מתחרה ישיר בפיקדונות, מרוויחה כבר היום 13.1% על ההון המוחשי. זה עדיין לא הוכח, ולכן המכפיל הגבוה מותנה.",
+    "source_tier": "guidance",
+    "evidence_ids": ["dc_g_cagr_eps", "dc_k_rote", "dc_g_ni27", "pf_rel_20260130_1"]
+   }
+  },
+  "own_history": {
+   "low": 31.4,
+   "median": 39.5,
+   "high": 67.1,
+   "years": "2024-2026",
+   "evidence_ids": ["nm_ib_price", "pf_eps_diluted_fy2024", "pf_eps_diluted_fy2025", "pf_rel_20261027_1"]
+  }
+ },
+ "gaps": [
+  "No named competitor has an evidenced forward P/E in field.json or evidence_ids, so peers is left out. Ally's 13.1% core ROTCE (Q3'26 8-K, deep_notes) is cited only in words in the bull reason.",
+  "The own P/E history is trailing GAAP over 2024-2026 only (two positive full years, 0.39 EPS each, and 2024 includes a tax benefit and convert gains). It is inflated by low earnings, so it is a weak anchor; the forward P/E today is ~18.8x the 2027 guide and ~20.6x 2027 consensus (numbers.json note).",
+  "The return measure is ROE on book equity with goodwill and intangibles in, consistent with GAAP EPS. ROTE (~10%) runs about 1.5 points above ROE (~8.6%).",
+  "The fair-value premium in book (~$1.4bn, 14% of TBV) and the Q3'26 hedge P&L (10-Q not yet filed) can move equity and so ROE. This is not modeled in this part."
+ ]
+}

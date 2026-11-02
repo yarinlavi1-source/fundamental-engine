@@ -1,0 +1,53 @@
+{
+ "trigger": "review",
+ "findings": [
+  {
+   "id": "cf1",
+   "lens": "company_first",
+   "fixed": true,
+   "what_changed": "position/core.json drivers.terminal_roic added as a company driver (tier own_history, 18 pf_ evidence ids): bear 0.16 (FY2023 ROIC 15.8%), base 0.23 (FY2023-25 average 22.6%: 15.8% / 25.0% / 27.0% on year-end equity + long-term debt - cash, NOPAT at the 24.7% normalized tax), bull 0.30 (FY2025 on average capital, the path's 30%). It replaces the engine moat rule (12.1% base). The reason says why it differs from company_path: the path ROIC is the next five years' incremental return; the terminal ROIC is the level after Eaton, Schneider, Legrand and Delta add capacity. No named-competitor ROIC was retrieved, so none is used (still a gap). Result: DCF base 213.35$ today vs company_path base year 0 213.20$ (was 163$ vs 219.5$); bear 65.6$ vs 69.3$; bull 405.5$ vs 408.8$. Terminal reinvestment base 21.7% (was 41.3%); terminal share of PV base 65.6%. 'Long-term ROIC' no longer appears in the table's 'assumptions without company data' row. growth_half_life is still the engine rule (shown in the gaps row as 'קצב האטת הצמיחה')."
+  },
+  {
+   "id": "counter_thesis critical (two opposite base answers; reinvestment and cash buffer without company evidence)",
+   "lens": "counter_thesis",
+   "fixed": true,
+   "what_changed": "position/core.json: (a) drivers.sales_to_capital rebuilt from the company record: base 3.5 (FY2023-25: revenue +3.37bn on invested capital +0.95bn, PurgeRite included), bear 2.2 (FY2024->25), bull 4.0 (anchored on the FY2026 capex guide 550-570m, about 4% of revenue, with working capital funded by customer advances). The old base 2.2 counted acquisitions already in the opening balance, and UIG was also deducted as a 1.45bn claim (a double count). Cross-checked against capex of 1.9-2.2% of revenue in FY2023-25. Base FY2027 growth capex 638m (was 1,355m); maintenance 358m unchanged (engine rule = 3-year average capex of 2%); FCFE 1,504m (was 788m), 8.5% of revenue (was 4.5%). (b) drivers.minimum_cash_months added (own_history): base 2.0 (the FY2023-25 average of year-end cash / monthly costs, 1.6 / 2.2 / 2.5), bear 2.5, bull 1.5. It replaces 4 months capped at all of June's 2.81bn cash. First-period minimum is now 2,073m; by 2028 it reaches the engine cap of today's cash, 2,811m. (c) The terminal ROIC is aligned as in cf1. One base value now: DCF 213$ = path 213$ = price 213$ ('בערך במחיר השווי'). The buy-below row is now 174$ (was 132$)."
+  }
+ ],
+ "fixed": [
+  "cf1 (company_first): terminal ROIC is now a company driver (own_history 16% / 23% / 30% from VRT's FY2023-25 ROIC) in position/core.json drivers.terminal_roic. The DCF base is 213.35$ and the company_path base at year 0 is 213.20$ (they were 163$ and 219.5$).",
+  "counter_thesis critical: base reinvestment is rebuilt from the company record (sales_to_capital base 3.5 = FY2023-25, cross-checked against the 2026 capex guide). That removes the UIG double count: base 2027 growth capex is 638m (was 1,355m) and FCFE is 1,504m (was 788m). The cash buffer now comes from VRT's own year-end cash (minimum_cash_months 2.0) instead of all of June's cash. DCF and path terminal ROIC are aligned, and the difference in their horizons is stated. One base value: 213$."
+ ],
+ "open": [
+  "growth_half_life (fade speed) is still the engine rule (2.5 years in base) with no company data: a visible gap in the table row 'הנחות בלי נתון של החברה'.",
+  "No ROIC or forward P/E for a named competitor (Eaton, Schneider) was retrieved, so the terminal ROIC fades to VRT's own FY2023-25 average and not to a competitor level (company_first cf3 stays open).",
+  "minimum_cash is still capped by the engine at today's cash (2.81bn) from 2028 on; the June cash still includes the 1.45bn UIG payment that is deducted as a claim (engine rule, not changed).",
+  "The UIG earnout (up to 1.15bn) and UIG's revenue and earnings remain gaps (cf4). Major and minor findings cf2, cf3, cf5 and cf6 were not in scope for this repair and stay as the reviewers wrote them.",
+  "The result is still a draft: rv.status is unreviewed_draft and confidence is low. After the repair the verdict is quality_but_expensive (base IRR 10.05% vs the engine hurdle of 10.80%), with fair value about equal to the price."
+ ],
+ "ran": true,
+ "casefile": "/home/user/fundamental-engine/runs/tickers/VRT_2026-10-28/companies/VRT/out/casefile.json",
+ "stages_failed": [],
+ "review_status": "unreviewed_draft",
+ "verdict_status": "quality_but_expensive (below_hurdle): base IRR 10.05% < 10.80%; draft, confidence low",
+ "price": 213.0,
+ "fair_value_base": 213.35,
+ "buy_below": 174,
+ "yearly_table_executed": {
+  "year1_2027_10": {"bear": 69.4, "base": 233, "bull": 448},
+  "year2_2028_10": {"bear": 70.3, "base": 253, "bull": 490},
+  "year3_2029_10": {"bear": 71.2, "base": 274, "bull": 534},
+  "year4_2030_10": {"bear": 74.6, "base": 295, "bull": 580},
+  "year5_2031_10": {"bear": 78.8, "base": 318, "bull": 628}
+ },
+ "gaps_row": "קצב האטת הצמיחה, תוספת הסיכון בשיעור ההיוון, קצב ההגעה לרווחיות הבוגרת, אורך תקופת התחזית",
+ "changed_files": [
+  "/home/user/fundamental-engine/runs/tickers/VRT_2026-10-28/position/core.json (backup: position/core.before_repair.json)",
+  "/home/user/fundamental-engine/runs/tickers/VRT_2026-10-28/position.json (merged by ticker-value)",
+  "/home/user/fundamental-engine/runs/tickers/VRT_2026-10-28/evidence_pack.json",
+  "/home/user/fundamental-engine/runs/tickers/VRT_2026-10-28/companies/VRT/inputs.json",
+  "/home/user/fundamental-engine/runs/tickers/VRT_2026-10-28/companies/VRT/out/casefile.json",
+  "/home/user/fundamental-engine/runs/tickers/VRT_2026-10-28/companies/VRT/out/table_he.md",
+  "/home/user/fundamental-engine/runs/tickers/VRT_2026-10-28/value.json"
+ ]
+}

@@ -1,0 +1,85 @@
+{
+ "lens": "company_first",
+ "ticker": "VRT",
+ "as_of": "2026-10-28",
+ "casefile_sha256": "f18377077b4104cda8a7322e99543f5facc4e8908623e75ad72393fc418069de",
+ "verdict": "critical finding open: headline fair value rests on an engine-rule terminal ROIC that contradicts the company-evidenced ROIC used in the same run",
+ "findings": [
+  {
+   "id": "cf1",
+   "severity": "critical",
+   "where": "casefile.val.case.scenarios[*].terminal.roic vs position.company_path.scenarios[*].roic; table rows 'שווי הוגן' and 'המחיר מול השווי'",
+   "finding": "The headline (fair value 163$, 'expensive by ~31%') comes from the DCF whose terminal ROIC is left on the engine rule (bear 9.45%, base 12.1%, bull 13.6%; terminal share of present value 48% / 68% / 75%). The same run's analyst set the company's own return on new capital from VRT's filings at 15% / 30% / 43% (own_history) for the yearly path, and that path values the base case today at 219.5$ (34.2x FY2027 EPS 6.42), i.e. about the 213$ price. The verdict sign therefore depends on a lever without company data while company evidence for that lever exists in the casefile and is used one table below. The gaps row discloses 'long-term ROIC' as an engine assumption, but the headline is still shown as if it were a company-derived conclusion.",
+   "fix": "Either set the DCF terminal ROIC (and growth_half_life) as company drivers with tier and evidence (e.g. a fade from the evidenced 30% toward a named-competitor level, naming the competitor and why), or argue with company evidence why VRT's returns fall to ~12% by 2041 and use the same reasoning in company_path. Rerun ticker-value and show the 163$ vs 219.5$ reconciliation; until then the fair value / discount rows stay a draft."
+  },
+  {
+   "id": "cf2",
+   "severity": "major",
+   "where": "position.drivers.growth_anchor.source_tier (base, bull = 'contracted')",
+   "finding": "FY2027 growth is labelled 'contracted' but no FY2027 contracted demand is evidenced: the 15.0bn backlog is dated 2025-12-31 and ships within 12-18 months, so most of it is FY2026 revenue (guided 14.0bn). The base 26% is an extrapolation of a Q4 2026 run rate derived from guidance (14.0 - 5.92 - 3.75), and orders/backlog after 2025-12-31 are no longer disclosed. The bull 34% ('orders keep the FY2025 pace') is a hypothesis. The Hebrew table renders this tier as 'ביקוש חוזי', overstating the evidence.",
+   "fix": "Relabel base as guidance (derived exit run rate) and bull as analyst/hypothesis; state in the reason how much of the 15.0bn backlog is already inside FY2026 revenue and that FY2027 coverage is unknown."
+  },
+  {
+   "id": "cf3",
+   "severity": "major",
+   "where": "position.company_path (bull/base/bear multiples) and own_history; gaps 'Named competitors' forward P/E not retrieved'",
+   "finding": "The peak-multiple test against named competitors was not done: ETN, SU.PA, LR.PA, 2308.TW and JCI multiples are absent (FMP ACCESS DENIED, no web fallback), and own_history is a trailing GAAP P/E only. The bull pays 60.0x FY2027 EPS today and 49.1x a year out, far above today's implied forward multiple (213/6.42 = 33x base FY2027; 36.3x the FY2026 GAAP guide) and justified only by an incremental ROIC of 43% from the 2020-25 turnaround period. The bear pays 14.2-16x on a 15% ROIC averaged over turnaround years with 4-5% margins and a different capital structure, giving -67% in year 1, with no check against own-history lows (38.3x trailing) or named mature competitors.",
+   "fix": "Retrieve dated forward P/E (and ROIC) for at least Eaton and Schneider (named direct competitors in the 10-K, same data-center power/thermal market) through WebSearch/WebFetch with attribution; compare each scenario's multiple_path at year 0-1; mark the bull 'peak' if it exceeds VRT's own and competitors' range; explain why the bear ROIC uses pre-turnaround years."
+  },
+  {
+   "id": "cf4",
+   "severity": "major",
+   "where": "position.forecast_options.debt_like_claims (UIG 1.45bn) vs drivers.growth_anchor and sales_to_capital",
+   "finding": "Asymmetric treatment of the UIG acquisition: the 1.45bn upfront cash is deducted as a claim and charged in sales_to_capital, but UIG's revenue and earnings are excluded from FY2027 growth ('undisclosed, a gap'), while the up-to-1.15bn earnout is excluded from claims. The base pays for UIG without its earnings and ignores a contingent cash outflow; the net effect on value per share is unknown in sign.",
+   "fix": "Read the UIG 8-K 1.01 (2026-09-02, citable) and any exhibit/press release for UIG revenue/EBITDA or deal multiple; include its contribution or exclude the price consistently; carry the earnout as a probability-free range in the bear claims or as an explicit gap row in the table."
+  },
+  {
+   "id": "cf5",
+   "severity": "minor",
+   "where": "position.drivers.mature_margin bull (tier 'guidance')",
+   "finding": "The bull mature GAAP margin of 23% is tiered 'guidance' but the guidance is an adjusted (non-GAAP) margin for Q3/FY2026, not a through-cycle or GAAP target; holding it 'through the cycle' is a hypothesis.",
+   "fix": "Tier as analyst/hypothesis anchored on guidance, and state the evidenced size of acquired-intangible amortization that would have to fade."
+  },
+  {
+   "id": "cf6",
+   "severity": "minor",
+   "where": "position.drivers.growth_anchor bear (tier 'own_history', 6%)",
+   "finding": "No year in VRT's FY2020-25 history supports 6% growth after a capex pause; revenue rose every year since FY2020. The 6% is a scenario hypothesis (customer pause), not own history.",
+   "fix": "Relabel as analyst hypothesis, or anchor it on an evidenced own episode (e.g. FY2019-20 growth) and cite it."
+  },
+  {
+   "id": "cf7",
+   "severity": "minor",
+   "where": "position.drivers.current_year_revenue and growth_anchor (guidance track record)",
+   "finding": "The FY2026 revenue was read against the guidance track record (ratio near 1.00 after the Q2 miss), but the implied Q4 2026 (4.33bn) that sets the base FY2027 run rate uses the Q3 guide midpoint without the same track-record reading (Q2 2026 came in at 0.977 of its guided midpoint).",
+   "fix": "Apply the quarterly guidance hit rate to the implied Q4 run rate, or show the run rate at 0.977 as a sensitivity in the base reason."
+  },
+  {
+   "id": "cf8",
+   "severity": "minor",
+   "where": "companies/VRT/raw/ib__price-snapshot-VRT__current.json; table 'מחיר היום'",
+   "finding": "The 213.00 quote is a non-close pre-market print at 08:13 UTC on the results day (is_close false, prior-close empty), so the discount row compares a thin pre-market print with fundamentals; the 52-week range (147.8-379.8) shows how large the move can be.",
+   "fix": "Use the 2026-10-27 official close as the quote (IBKR get_price_history) and note the pre-market print separately, or rerun at as_of 2026-10-30 when Q3 is citable."
+  },
+  {
+   "id": "cf9",
+   "severity": "minor",
+   "where": "table_he.md 'סוג החברה' vs identity.json type",
+   "finding": "The table labels VRT 'צומחת מהר' (fast grower) while identity classifies it mature_growth / stalwart (borderline fast grower); the company type drives which questions and multiples apply.",
+   "fix": "Make the table and identity agree, or state in the table why the classification changed."
+  },
+  {
+   "id": "cf10",
+   "severity": "minor",
+   "where": "pack-to-inputs warnings: mature_margin and sbc_pct each on one independent source; consensus single-broker rows",
+   "finding": "Two levers rest on a single independent source and consensus is single-broker (RBC, KeyCorp) only; the base-rate row (6% of the size class) is correctly shown as a warning only, and the engine-rule gaps row is shown in the table.",
+   "fix": "Add the 10-Q (independent of the 10-K) as a second source for margin history and SBC; keep consensus as cross-check only."
+  }
+ ],
+ "checks_passed": [
+  "No driver uses another company's number, a sector table or a peer median; competitors are named (Eaton, Schneider, Legrand, Delta) in reasons.",
+  "Base rate (Mauboussin size-class) appears only as a warning row, not as a driver.",
+  "The table shows the row of levers left on engine rules.",
+  "Consensus dated 2026-10-27 kept out of drivers (cross-check only); Q3 release of 2026-10-28 kept out as not citable."
+ ]
+}

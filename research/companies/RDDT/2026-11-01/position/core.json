@@ -1,0 +1,349 @@
+{
+ "thesis_he": {
+  "bear": "ירידת התנועה מגוגל מתפשטת, המעבר לחובת התחברות מקטין את הקהל, צמיחת ההכנסות יורדת לכ-10% ב-2027 והרווחיות נשחקת לכ-25%.",
+  "base": "ההכנסה ממשתמש ממשיכה לעלות למרות קהל אמריקאי שלא גדל; הצמיחה מאטה מכ-40% ברבעון הרביעי לכ-25% ב-2027 והרווח התפעולי מתייצב סביב 34% אחרי תגמול במניות.",
+  "bull": "ירידת התנועה נעצרת, משתמשים מחוברים ובינלאומיים ממשיכים לגדול, הצמיחה ב-2027 נשארת סביב 36% והרווח התפעולי מגיע לכ-40%."
+ },
+ "drivers": {
+  "growth_anchor": {
+   "period": "FY2027",
+   "bear": 0.1,
+   "base": 0.25,
+   "bull": 0.36,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "dc_g_rev_q4",
+    "pf_rel_20261029_1",
+    "dc_call_20261029",
+    "dc_dauq_us",
+    "dc_dauq_us_py",
+    "dc_arpu_us",
+    "dc_arpu_us_py",
+    "dc_lo_g",
+    "pf_10q_20261030"
+   ],
+   "reason": "No 2027 guidance exists. Base 25%: the Q4 2026 guide midpoint $1,015M is +40% y/y and already includes the warned DAUq drop; Q1-Q2 2027 compare with +69% and +61% quarters, and US growth is all ARPU (+53%) on a US audience down 2%, so growth fades through 2027. Bull 36%: the guided exit rate holds most of the year because logged-in users (over 80% of monetization) keep growing and international DAUq (+24%) and ARPU (+32%) continue. Bear 10%: the low-double-digit DAUq fall persists and spreads, the logged-in-only tests cut reach, and ARPU gains slow to single digits."
+  },
+  "mature_margin": {
+   "bear": 0.25,
+   "base": 0.34,
+   "bull": 0.4,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "pf_rel_20261029_1",
+    "dc_g_ebitda_q4",
+    "dc_adj_ebitda_q3",
+    "dc_incr_ebitda_margin",
+    "dc_sbc_taxes_q3",
+    "pf_10q_20261030"
+   ],
+   "reason": "EBIT after SBC. Q3 2026 GAAP operating margin was 29.2% after 14.7% SBC; the Q4 guide (adjusted EBITDA about 49% of revenue) less SBC of about 14-15% and negligible D&A implies about 34% GAAP, the base. Bull 40%: incremental adjusted EBITDA margin 53.6% and incremental operating margin 40% keep lifting the margin with scale. Bear 25%: below Q3's 29%, because a shrinking audience removes the operating leverage while SBC (rising in dollars) and the fixed $1.46B cloud commitments stay."
+  },
+  "tax_rate": {
+   "all": 0.22,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "pf_10q_20261030",
+    "dc_tax_q3",
+    "pf_10k_20260206"
+   ],
+   "reason": "The 2% Q3 rate reflects a full valuation allowance on US deferred tax assets that the 10-Q says may be released within 12 months; the recurring rate normalizes to the US federal 21% plus state taxes (80% of revenue is US). The release itself is a one-time gain kept out of recurring earnings."
+  },
+  "terminal_roic": {
+   "bear": 0.3,
+   "base": 0.95,
+   "bull": 1.0,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "pf_equity_fy2024",
+    "pf_cash_fy2024",
+    "pf_short_term_investments_fy2024",
+    "pf_equity_fy2025",
+    "pf_cash_fy2025",
+    "pf_short_term_investments_fy2025",
+    "pf_receivables_fy2025",
+    "nm_cash_marketable_q_2026_09_30",
+    "pf_10q_20261030",
+    "pf_operating_income_fy2025",
+    "pf_operating_income_q_2026_09_30",
+    "pf_capex_fy2025"
+   ],
+   "reason": "One capital intensity per scenario, from Reddit's operating invested capital (equity less cash and securities; the cash pile is not operating capital): FY2024 290M on revenue 1,300M, FY2025 452M on 2,203M, Q3 2026 580M (incl. 31M leases) on TTM 3,089M; incremental sales-to-capital 5.6 (2024-25) and 9.2 (2025-TTM); receivables are 23.6% of TTM revenue (receivables-only bound about 4.2); capex 0.2-0.3% of revenue. Return on that capital at a normalized 22% tax (not the 2% valuation-allowance rate): FY2025 345M NOPAT on average capital 371M = 0.93; TTM 708M on 580M = 1.22. terminal_roic = the company_path roic of the same scenario (bear 0.30, base 0.95, bull 1.00) and sales_to_capital = that roic / (mature margin x (1 - 22%)), so the DCF reinvestment and the yearly price path rest on the same return. Base 0.95 sits between FY2025 and TTM; bull 1.00: the TTM 1.22 capped at the valuation's 100% limit; bear 0.30 assumes the logged-in transition, product spend and M&A (a stated capital priority) need about three times the evidenced capital per dollar of sales (unproven, a stress)."
+  },
+  "sales_to_capital": {
+   "bear": 1.54,
+   "base": 3.58,
+   "bull": 3.21,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "pf_equity_fy2024",
+    "pf_cash_fy2024",
+    "pf_short_term_investments_fy2024",
+    "pf_equity_fy2025",
+    "pf_cash_fy2025",
+    "pf_short_term_investments_fy2025",
+    "pf_receivables_fy2025",
+    "nm_cash_marketable_q_2026_09_30",
+    "pf_10q_20261030",
+    "pf_operating_income_fy2025",
+    "pf_operating_income_q_2026_09_30",
+    "pf_capex_fy2025"
+   ],
+   "reason": "One capital intensity per scenario, from Reddit's operating invested capital (equity less cash and securities; the cash pile is not operating capital): FY2024 290M on revenue 1,300M, FY2025 452M on 2,203M, Q3 2026 580M (incl. 31M leases) on TTM 3,089M; incremental sales-to-capital 5.6 (2024-25) and 9.2 (2025-TTM); receivables are 23.6% of TTM revenue (receivables-only bound about 4.2); capex 0.2-0.3% of revenue. Return on that capital at a normalized 22% tax (not the 2% valuation-allowance rate): FY2025 345M NOPAT on average capital 371M = 0.93; TTM 708M on 580M = 1.22. terminal_roic = the company_path roic of the same scenario (bear 0.30, base 0.95, bull 1.00) and sales_to_capital = that roic / (mature margin x (1 - 22%)), so the DCF reinvestment and the yearly price path rest on the same return. Base 0.95 sits between FY2025 and TTM; bull 1.00: the TTM 1.22 capped at the valuation's 100% limit; bear 0.30 assumes the logged-in transition, product spend and M&A (a stated capital priority) need about three times the evidenced capital per dollar of sales (unproven, a stress)."
+  },
+  "terminal_growth": {
+   "bear": 0.025,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "dc_search_referral_drop",
+    "dc_lo_us",
+    "dc_lo_us_py",
+    "dc_lo_g",
+    "dc_dauq_g",
+    "dc_call_20261029",
+    "pf_rel_20261029_2"
+   ],
+   "reason": "Bear only (base and bull stay on the engine rule). The bear is a shrinking audience: search referrals down more than 1M a week in October, US logged-out DAUq down y/y (28.5M to 27.3M), management's warned low-double-digit Q4 fall from 130M total DAUq; logged-out users are 59% of DAUq but under 20% of monetization. A business whose audience shrinks does not grow with nominal GDP forever: after 2041 the bear grows at about inflation (2.5%, no real growth). Multiple test: at the engine's 4.5% the bear's computed forward multiple was 21-22x, above today's ~13x forward (consensus FY2027 EPS) and above the own-history trailing low of 18.7x; this lever brings it inside that range."
+  }
+ },
+ "forecast_options": {
+  "cyclical": {
+   "treatment": "structural",
+   "reason": "Four years of history are a scale-up (revenue $667M in 2022 to $2,203M in 2025, operating margin -26% to +20%) with no completed ad cycle; the ads_platform model is not price-cyclical. Ad-budget sensitivity and the search-traffic shock are carried as bear mechanisms, not a cycle-average margin.",
+   "evidence_ids": [
+    "pf_cf_20250213",
+    "pf_cf_20260206",
+    "pf_10k_20260206"
+   ]
+  },
+  "financing": "none"
+ },
+ "scenario_events": {
+  "bear": [
+   {
+    "event_he": "ירידת ההפניות מחיפוש בגוגל נמשכת (יותר ממיליון הפניות פחות בשבוע באוקטובר) והמשתמשים היומיים יורדים בשיעור דו-ספרתי, כפי שההנהלה הזהירה.",
+    "evidence_ids": [
+     "dc_call_20261029",
+     "dc_search_referral_drop",
+     "pf_10q_20261030"
+    ]
+   },
+   {
+    "event_he": "המעבר לחוויה עם חובת התחברות, שנבדק מהרבעון הרביעי בשווקים מחוץ לארה\"ב, מקטין את מספר המשתמשים ואת החשיפה לפרסומות.",
+    "evidence_ids": [
+     "pf_10q_20261030",
+     "mc_tc_20261029"
+    ]
+   },
+   {
+    "event_he": "המשתמשים הלא-מחוברים, 59% מהקהל היומי, נשחקים גם בארה\"ב (כבר ירידה של 4% בשנה) והעלייה בהכנסה למשתמש לא מפצה.",
+    "evidence_ids": [
+     "dc_lo_g",
+     "dc_lo_us",
+     "dc_lo_us_py"
+    ]
+   },
+   {
+    "event_he": "תגמול במניות עולה (15% מההכנסות ברבעון השלישי) וההתחייבויות לענן (1.46 מיליארד דולר עד 2029) נשארות כשהצמיחה נעצרת, ולכן הרווחיות יורדת.",
+    "evidence_ids": [
+     "dc_sbc_taxes_q3",
+     "dc_aws_commit",
+     "dc_gcp_commit"
+    ]
+   },
+   {
+    "event_he": "מפרסמים מקצצים תקציבים בהאטה כלכלית; 94% מההכנסות הן פרסום.",
+    "hypothesis": true
+   }
+  ],
+  "base": [
+   {
+    "event_he": "ההכנסות ברבעון הרביעי של 2026 בטווח התחזית, 1.0-1.03 מיליארד דולר (כ-40% צמיחה), ו-EBITDA מתואם של 480-510 מיליון.",
+    "evidence_ids": [
+     "dc_g_rev_q4",
+     "dc_g_ebitda_q4",
+     "pf_rel_20261029_1"
+    ]
+   },
+   {
+    "event_he": "ההכנסה למשתמש בארה\"ב ממשיכה לעלות (53% ברבעון השלישי) גם כשהקהל האמריקאי לא גדל, והקהל הבינלאומי ממשיך לגדול (24%).",
+    "evidence_ids": [
+     "dc_arpu_us",
+     "dc_arpu_us_py",
+     "dc_dauq_us",
+     "dc_dauq_intl",
+     "dc_dauq_intl_py"
+    ]
+   },
+   {
+    "event_he": "המשתמשים המחוברים ובאפליקציה, שמביאים מעל 80% מההכנסות, ממשיכים לגדול לאט, ולכן ירידת הקהל הלא-מחובר פוגעת פחות בהכנסות.",
+    "evidence_ids": [
+     "dc_call_20261029",
+     "dc_li_g",
+     "dc_li_g_py"
+    ]
+   },
+   {
+    "event_he": "החברה ממשיכה לקנות מניות בחזרה (340 מיליון דולר בתשעה חודשים, נותרו כ-660 מיליון) כך שמספר המניות נשאר יציב.",
+    "evidence_ids": [
+     "dc_buyback_9m_usd",
+     "dc_buyback_remaining",
+     "dc_fdso_q3"
+    ]
+   }
+  ],
+  "bull": [
+   {
+    "event_he": "הירידה בקהל היומי נעצרת עד אמצע 2027 והקהל הבינלאומי ממשיך לצמוח מעל 20% בשנה.",
+    "evidence_ids": [
+     "dc_dauq_intl",
+     "dc_dauq_intl_py",
+     "dc_call_20261029"
+    ]
+   },
+   {
+    "event_he": "הכנסות הרישוי מחברות בינה מלאכותית (כיום כ-5% מההכנסות) גדלות, כי חובת ההתחברות מגינה על התוכן מגריפה ומחזקת את המיקוח מול OpenAI וגוגל.",
+    "evidence_ids": [
+     "dc_seg_oth_q3",
+     "mc_tc_20261029",
+     "fd_press_licensing"
+    ]
+   },
+   {
+    "event_he": "המינוף התפעולי נמשך: כל דולר הכנסה נוסף מביא כ-54 סנט EBITDA מתואם, והרווח התפעולי מגיע לכ-40%.",
+    "evidence_ids": [
+     "dc_incr_ebitda_margin",
+     "pf_rel_20261029_1"
+    ]
+   },
+   {
+    "event_he": "הפיד החדש 'בשבילך' מגדיל את זמן השהייה ואת העומס הפרסומי אצל המשתמשים המחוברים.",
+    "hypothesis": true
+   }
+  ]
+ },
+ "key_risk": {
+  "reading_he": "רדיט תלויה בתנועה מגוגל: 59% מהמשתמשים היומיים אינם מחוברים ורובם מגיעים מחיפוש, ההפניות ירדו ביותר ממיליון בשבוע באוקטובר, וההנהלה הזהירה מירידה דו-ספרתית בקהל ברבעון הרביעי. אם הקהל ממשיך לרדת, העלייה בהכנסה למשתמש לבדה לא תחזיק צמיחה גבוהה.",
+  "evidence_ids": [
+   "dc_call_20261029",
+   "dc_search_referral_drop",
+   "dc_lo_g",
+   "pf_10q_20261030"
+  ]
+ },
+ "falsifiers": [
+  {
+   "id": "fx_q4rev_base",
+   "scenario": "base",
+   "metric": "Q4 2026 revenue, USD",
+   "threshold": 1000000000,
+   "direction": "below",
+   "by": "2027-02-20",
+   "evidence_ids": [
+    "dc_g_rev_q4"
+   ]
+  },
+  {
+   "id": "fx_q4ebitda_base",
+   "scenario": "base",
+   "metric": "Q4 2026 adjusted EBITDA, USD",
+   "threshold": 480000000,
+   "direction": "below",
+   "by": "2027-02-20",
+   "evidence_ids": [
+    "dc_g_ebitda_q4"
+   ]
+  },
+  {
+   "id": "fx_q1rev_bear",
+   "scenario": "bear",
+   "metric": "Q1 2027 revenue, USD (above = bear refuted: the bear's FY2027 +10% implies about 730M at 2026's Q1 share of 19.6%; 800M = +21% y/y on Q1 2026's 663.4M)",
+   "threshold": 800000000,
+   "direction": "above",
+   "by": "2027-05-15",
+   "evidence_ids": [
+    "pf_rel_20260430_1"
+   ]
+  },
+  {
+   "id": "fx_q1rev_bull",
+   "scenario": "bull",
+   "metric": "Q1 2027 revenue, USD (below = bull's 36% year refuted)",
+   "threshold": 880000000,
+   "direction": "below",
+   "by": "2027-05-15",
+   "evidence_ids": [
+    "pf_rel_20260430_1"
+   ]
+  },
+  {
+   "id": "fx_dau_bull",
+   "scenario": "bull",
+   "metric": "Q4 2026 global DAUq, millions (below = traffic decline not contained)",
+   "threshold": 117,
+   "direction": "below",
+   "by": "2027-02-20",
+   "evidence_ids": [
+    "dc_dauq_g",
+    "dc_call_20261029"
+   ]
+  },
+  {
+   "id": "fx_li_q4_base",
+   "scenario": "base",
+   "metric": "Q4 2026 logged-in DAUq global, millions (below Q3's 53.5 = logged-in users, over 80% of monetization, no longer growing q/q: base refuted)",
+   "threshold": 53.5,
+   "direction": "below",
+   "by": "2027-02-20",
+   "evidence_ids": [
+    "dc_li_g",
+    "dc_li_g_py",
+    "pf_rel_20261029_2"
+   ]
+  },
+  {
+   "id": "fx_arpu_us_base",
+   "scenario": "base",
+   "metric": "Q3 2027 US ARPU, USD per quarter (below 15.20 = less than +10% y/y on Q3 2026's 13.82; base's 25% FY2027 on a flat US audience needs ARPU growth)",
+   "threshold": 15.2,
+   "direction": "below",
+   "by": "2027-11-15",
+   "evidence_ids": [
+    "dc_arpu_us",
+    "dc_arpu_us_py",
+    "dc_li_us",
+    "dc_li_us_py"
+   ]
+  },
+  {
+   "id": "fx_li_q1_bear",
+   "scenario": "bear",
+   "metric": "Q1 2027 logged-in DAUq global, millions (above 55.0 = logged-in growth holds at least +4% y/y through the logged-in-only tests: bear's reach loss refuted)",
+   "threshold": 55.0,
+   "direction": "above",
+   "by": "2027-05-15",
+   "evidence_ids": [
+    "dc_li_g",
+    "dc_li_g_py",
+    "pf_rel_20261029_2"
+   ]
+  }
+ ],
+ "reasons_he": {
+  "bear": "המחיר הדובי מניח שהבעיה בתנועה מגוגל אינה זמנית: הקהל קטן, המעבר לחובת התחברות מקטין עוד את החשיפה, הצמיחה יורדת לכ-10% והרווחיות נשחקת כי עלויות הענן והתגמול במניות נשארות.",
+  "base": "המחיר הבסיסי הוא הדרך הסבירה ביותר לפי נתוני החברה: תחזית הרבעון הרביעי (כ-40% צמיחה) כבר כוללת את ירידת הקהל, ההכנסה למשתמש ממשיכה לעלות, והצמיחה מאטה בהדרגה לכ-25% ב-2027 עם רווח תפעולי של כ-34%.",
+  "bull": "המחיר השורי דורש שירידת התנועה תיעצר עד אמצע 2027, שהקהל המחובר והבינלאומי ימשיכו לגדול ושהרישוי לחברות בינה מלאכותית יתרחב; אז הצמיחה נשארת מעל 30% והרווחיות מתקרבת ל-40%."
+ },
+ "engine_options": {
+  "country_risk": true,
+  "reason": "The 10-Q discloses revenue by customer billing address (US 79.7%, rest of world 20.3% of 9M 2026)."
+ },
+ "gaps": [
+  "drivers.current_year_revenue not set: no FY2026 revenue guidance exists; the engine takes 9M 2026 reported ($2,363M) plus the Q4 guide ($1,000-1,030M). The 8-quarter beat ratio 1.099 should not be applied: the Q3 beat shrank to 1.035 and the Q4 guide was set after the traffic warning",
+  "sbc_pct left on the engine's TTM reading (about 12.5%); Q3 alone was 14.7% and rising in dollars",
+  "consensus (AV FY2027 revenue $4,477M, +32%) not citable until 2026-11-03 and apparently unrevised for the 2026-10-29 print: cross-check only, not a driver",
+  "licensing contract values and renewal dates with OpenAI and Google are undisclosed: the bull licensing event rests on press and the 5% revenue line",
+  "growth_half_life, terminal_growth, cost_of_equity left on the engine rule: no company evidence beyond history (sales_to_capital and terminal_roic now set from operating invested capital, repair 2026-11-01)",
+  "Vested in-the-money options are not in the share count: the position inputs have no option instrument (forecast_options has no capital_events/options key and no debt_like_claims kind fits). 10-Q note 11: 5,604,522 vested options at a weighted strike of 39.29 (9,611,808 outstanding at 41.73). Treasury method: about 3.2M net shares at the 92.2 quote (1.7% of 193.1M), about 4.6M (2.4%) at the base value of about 211 -> per-share values overstate by about 2%. Unvested options (62.3M unrecognized cost) and the 3.56M unvested RSUs/PRSUs are charged through sbc_pct; adding them as shares would double count."
+ ]
+}

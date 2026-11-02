@@ -1,0 +1,529 @@
+{
+ "thesis_he": {
+  "bear": "הצמיחה בפרסום נחלשת לכ-13% ב-2027 כי מספר הצפיות במודעות כמעט מפסיק לגדול, ההשקעות נשארות כ-140-145 מיליארד דולר בשנה בלי הכנסות חדשות מבינה מלאכותית, והפחת, הוצאות המשפט ואירופה מורידים את הרווחיות לכ-26% ב-2029.",
+  "base": "הפרסום ממשיך לצמוח בכ-20% ב-2027 בזכות מודלים טובים יותר שמעלים את המחיר לכל מודעה, הרווחיות (בלי חיובי המשפט שכבר נרשמו כהתחייבות) נשארת סביב 36-37%, וההשקעות נשארות כ-145 מיליארד דולר בשנה ב-2027-2028 לפי ההתחייבויות שהחברה כבר חתמה.",
+  "bull": "מוצרי הבינה המלאכותית (העוזר Muse, הודעות עסקיות ומנויים) מתחילים להכניס כסף כבר ב-2027, הצמיחה נשארת כ-26% והרווחיות חוזרת לשיא של כ-42% שנראה ב-2024."
+ },
+ "drivers": {
+  "growth_anchor": {
+   "period": "FY2027",
+   "bear": 0.13,
+   "base": 0.2,
+   "bull": 0.26,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "pf_rel_20261021_1",
+    "pf_10q_20261022",
+    "dc_g_revenue_q4_2026",
+    "dc_kpi_impressions_growth_q3_2026",
+    "dc_kpi_impressions_growth_q2_2026",
+    "dc_kpi_impressions_growth_q1_2026",
+    "dc_kpi_price_per_ad_growth_q3_2026",
+    "dc_av_call_20261021",
+    "pf_revenue_fy2022",
+    "pf_revenue_fy2024",
+    "pf_revenue_fy2025"
+   ],
+   "reason": "No FY2027 guidance exists (outlook only at the Q4 call), so growth rests on META's own trajectory: Q3 2026 +26% and the Q4 guide 73-76B (+22% to +27%, a conservative guider that beat 7 of 7 quarters), with management saying it will sustain strong revenue growth through 2027. Base 20%: a step down from about 27% in 2026 because impressions growth has decelerated from +19% to +10% in three quarters and the price-per-ad gains (+14%) must carry more; it sits just below the attributed FY2027 consensus (311.5B, about +21%, a cross-check, not evidence). Bull 26%: the 2026 pace holds because new AI revenue (Muse commerce fees and subscriptions, business messaging, partnership ads over a 15B run rate growing +97%) adds on top of ranking gains, as management says can begin in 2027. Bear 13%: impressions stall near zero and pricing gains halve, plus a macro ad slowdown and EU less-personalized ads (Europe 22% of Q3 revenue) - between the 2023 rebound (+16%) and a 2022-style stall."
+  },
+  "mature_margin": {
+   "bear": 0.29,
+   "base": 0.37,
+   "bull": 0.42,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "pf_operating_income_fy2022",
+    "pf_revenue_fy2022",
+    "pf_operating_income_fy2024",
+    "pf_revenue_fy2024",
+    "pf_operating_income_fy2025",
+    "pf_revenue_fy2025",
+    "dc_g_total_expenses_fy2026",
+    "dc_legal_charge_ag_q3_2026",
+    "dc_g_reality_labs_loss_fy2027",
+    "nm_operating_income_ex_legal_q_2026_09_30"
+   ],
+   "reason": "Operating margin after SBC (SBC is inside META's GAAP costs). Own history: 24.8% (2022 trough), 34.7% (2023), 42.2% (2024 peak), 41.4% (2025); FY2026 implied about 31% reported and about 35% ex the 9.89B AG charge (expense guide 175-179B on about 256B revenue). Base 37%: partial recovery as the Reality Labs loss narrows to about 15B in 2027 (about +1.5 points) and capex growth slows, but depreciation of a 250B+ asset base and AI token costs keep it below the 2024-25 level. Bull 42%: back to the 2024 peak as AI products monetize the installed compute. Bear 30%: depreciation, cloud capacity and recurring legal costs keep expense growth above revenue (Q3 2026 ex-charge 35%, FoA margin down 22 points y/y). Repair: bear 29% at maturity (was 30%) to match the bear cash-cost path (the explicit years go to 26% in 2029, toward the 2022 trough); the yearly margin path is now set by cash_cost_ratio, starting ex the 12.29B legal charges."
+  },
+  "sales_to_capital": {
+   "bear": 0.55,
+   "base": 0.7,
+   "bull": 0.85,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "pf_equity_fy2021",
+    "pf_cash_fy2021",
+    "pf_short_term_investments_fy2021",
+    "pf_revenue_fy2021",
+    "pf_equity_fy2024",
+    "pf_long_term_debt_fy2024",
+    "pf_cash_fy2024",
+    "pf_short_term_investments_fy2024",
+    "pf_revenue_fy2024",
+    "nm_equity_q_2026_09_30",
+    "nm_long_term_debt_q_2026_09_30",
+    "nm_cash_q_2026_09_30",
+    "nm_short_term_investments_q_2026_09_30",
+    "dc_g_capex_fy2026"
+   ],
+   "reason": "Incremental revenue per dollar of invested capital (equity + debt - cash and securities), from META's own balance sheets: 2021-2024 invested capital +57B for revenue +47B (about 0.82); end-2024 to Q3 2026 invested capital +140B for TTM revenue +77B (about 0.55) during the AI capex ramp (2026 capex guide 135-145B). Base 0.70: between the two as capex growth slows and the new capacity is absorbed; bull 0.85: the 2021-2024 efficiency returns; bear 0.55: the current ramp ratio persists (AI spend keeps rising faster than revenue)."
+  },
+  "tax_rate": {
+   "all": 0.16,
+   "source_tier": "guidance",
+   "evidence_ids": [
+    "dc_g_tax_rate_q4_2026",
+    "pf_rel_20261021_1",
+    "pf_10q_20261022"
+   ],
+   "reason": "The Q4 2026 guide is 15-17% (midpoint 16%); Q3 2026 was 17% ex the nondeductible part of the legal charge. Reported rates are distorted by discrete items (87% Q3 2025, 2% 9M 2026), so the guided normal rate is used in every scenario; tax volatility (20.8B unrecognized tax benefits) is a risk, not a scenario lever."
+  },
+  "growth_capex_pct": {
+   "bear": [
+    0.638,
+    0.408,
+    0.345,
+    0.252,
+    0.14,
+    0.0874,
+    0.0874,
+    0.0751,
+    0.0661,
+    0.0588,
+    0.0528,
+    0.0475,
+    0.0432,
+    0.0391
+   ],
+   "base": [
+    0.638,
+    0.379,
+    0.313,
+    0.24,
+    0.157,
+    0.1022,
+    0.1022,
+    0.0863,
+    0.0743,
+    0.0646,
+    0.0568,
+    0.0503,
+    0.0451,
+    0.0406
+   ],
+   "bull": [
+    0.638,
+    0.403,
+    0.326,
+    0.25,
+    0.167,
+    0.1205,
+    0.1205,
+    0.1034,
+    0.0898,
+    0.0785,
+    0.0691,
+    0.0611,
+    0.0548,
+    0.0494
+   ],
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "dc_g_capex_fy2026",
+    "dc_capex_incl_finance_leases_9m_2026",
+    "dc_capex_incl_finance_leases_q3_2026",
+    "dc_commitments_due_2026",
+    "dc_commitments_due_2027",
+    "dc_noncancelable_commitments_q3_2026",
+    "pf_10q_20261022"
+   ],
+   "reason": "Repair (review critical): the engine's reinvestment rule cut FY2027 capex to 84-104B, 25-40% below the FY2026 guide of 135-145B, with no evidence. Growth capex is set per period (share of revenue, maintenance capex stays at the engine's 9.26%) so TOTAL capex is: stub Nov-Dec 2026 about 36B in every scenario (FY2026 guide midpoint 140B less 9M 85.82B = about 54B for Q4, two thirds of it); FY2027 bear 145B, base 145B, bull 160B; FY2028 bear 140B, base 145B, bull 165B; FY2029 bear 120B, base 135B, bull 160B; FY2030 a step toward the engine's path (bear 14%, base 15.7%, bull 16.7% growth capex); from 2031 the engine's own rule. Basis: non-cancelable commitments due in 2027 are 121.41B against 45.85B due in the rest of 2026, when Q4 2026 capex is about 54B (ratio about 1.18), so committed 2027 spending alone points to about 140-145B; there is no FY2027 capex guide (given at the Q4 call), so the 2027-2029 path beyond the commitments is an analyst reading of that schedule. Bear keeps capex at or above the 2026 level while revenue slows (the bear event: spending keeps rising without new AI revenue); bull spends more to serve AI demand."
+  },
+  "cash_cost_ratio": {
+   "bear": [
+    0.4259,
+    0.4915,
+    0.537,
+    0.5526,
+    0.5482,
+    0.5438,
+    0.5438,
+    0.5393,
+    0.5393,
+    0.5393,
+    0.5393,
+    0.5393,
+    0.5393,
+    0.5393
+   ],
+   "base": [
+    0.4159,
+    0.4415,
+    0.444,
+    0.4456,
+    0.4482,
+    0.4538,
+    0.4538,
+    0.4593,
+    0.4593,
+    0.4593,
+    0.4593,
+    0.4593,
+    0.4593,
+    0.4593
+   ],
+   "bull": [
+    0.4159,
+    0.4315,
+    0.422,
+    0.4126,
+    0.4082,
+    0.4038,
+    0.4038,
+    0.4093,
+    0.4093,
+    0.4093,
+    0.4093,
+    0.4093,
+    0.4093,
+    0.4093
+   ],
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "dc_legal_charge_ag_q3_2026",
+    "dc_legal_charges_q2_2026",
+    "nm_operating_income_ex_legal_q_2026_09_30",
+    "pf_rel_20261021_1",
+    "pf_10q_20261022",
+    "dc_g_total_expenses_fy2026",
+    "dc_g_reality_labs_loss_fy2027",
+    "pf_operating_income_fy2022",
+    "pf_revenue_fy2022",
+    "pf_d_and_a_fy2024",
+    "pf_d_and_a_fy2025",
+    "dc_g_capex_fy2026"
+   ],
+   "reason": "Repair (review): the engine started the margin from the TTM GAAP operating margin 32.9%, which includes the 9.89B Q3 2026 attorneys-general charge and the 2.4B Q2 2026 legal charges; the same accruals sit in the 19.881B litigation claim, so they were counted twice. Cash cost ratios are set so that the operating margin after SBC and D&A (1 - cash costs - SBC - D&A, with the engine's SBC and D&A ratios) starts from the ex-legal level (TTM 37.9% ex the 12.29B; Q3 2026 ex-charge about 35%): base stub 38% (Q4 seasonally strongest), FY2027 36% (includes about 0.5 point of recurring legal costs; Reality Labs loss narrowing to about 15B), rising to 37% by 2030 (the evidenced mature_margin); bull 38%, 37%, then up to 42% (2024 peak) by 2031. Bear mechanisms sized: stub 37%, FY2027 31%, FY2028 27%, FY2029 26% (toward the 2022 trough 24.8%), then 27-28% and 29% from 2032: depreciation of 140B+ a year of capex (D&A about 9.3% of revenue in the engine against a build that would lift it toward 14-16% of bear revenue by 2028, about -5 to -6 points), recurring legal costs at the 2026 pace (2.4B + 9.89B charges, 5.3B contingent AG amount, youth trials; about -1 point) and less-personalized ads in the EU (Europe 22% of Q3 revenue). The D&A ramp is carried inside the cash cost ratio (the margin after D&A is what is set), not as a separate depreciation path: a visible simplification."
+  }
+ },
+ "forecast_options": {
+  "cyclical": {
+   "treatment": "structural",
+   "reason": "Revenue grew in five of six years 2020-2025; the only decline (2022, -1.1%) came from iOS signal loss plus an ad recession and was followed by +16%, +22%, +22% and about +27% in 2026. Advertising has macro beta (sized in the bear) but no commodity-style cycle to normalize.",
+   "evidence_ids": [
+    "pf_revenue_fy2021",
+    "pf_revenue_fy2022",
+    "pf_revenue_fy2023",
+    "pf_revenue_fy2024",
+    "pf_revenue_fy2025",
+    "dc_g_revenue_q4_2026"
+   ]
+  },
+  "horizon_years": 12,
+  "debt_like_claims": [
+   {
+    "kind": "preferred_or_minority",
+    "amount": 41625000,
+    "reason": "6.50% Series A mandatory convertible preferred (12.5M preferred shares), issued 2026-10-29 after the Q3 balance sheet, liquidation preference 12.5B, converts about 2029-08-15 into 17.0-20.0M Class A shares. Repair (review): the 12.458B net proceeds (dc_eq_pref_net_oct2026, 8-K dc_8k_20261029) were received after the 2026-09-30 balance the engine opens from, and this engine version's pack has no input for a post-balance-sheet cash event (capital_events is not a pack option), so the claim is carried NET of its cash: 12.5B liquidation preference - 12.458375B net proceeds = 41.625M. Claim and cash enter together (net), never the claim alone. The 6.5% dividend (about 812.5M a year) above the yield on the cash is not separately charged (small, conservative to omit is not claimed); conversion shares are not also counted.",
+    "evidence_ids": [
+     "dc_424b5_pref_20261028",
+     "dc_8k_20261029",
+     "dc_eq_pref_gross_oct2026",
+     "dc_eq_pref_net_oct2026",
+     "dc_eq_pref_rate_oct2026",
+     "dc_fwp_pricing_20261026",
+     "nm_pref_liquidation_2026_10_29"
+    ]
+   },
+   {
+    "kind": "litigation",
+    "amount": 19881000000,
+    "reason": "Legal-related accruals at 2026-09-30 (11.577B current + 8.304B non-current, 10-Q), led by the August 2026 attorneys-general agreement (payments up to 18.59B, about 12.7B in annual installments over 10 years). These were charged to earnings already, so the forecast cash flows never pay them; they are a cash claim ahead of the shares that the debt lines miss. The 5.3B contingent AG amount not accrued and the pending youth trials are not added (contingent: bear and key risk).",
+    "evidence_ids": [
+     "pf_10q_20261022",
+     "dc_legal_accruals_current_q3_2026",
+     "dc_legal_accruals_noncurrent_q3_2026",
+     "dc_ag_agreement_total_payments",
+     "dc_ag_agreement_installments"
+    ]
+   }
+  ]
+ },
+ "scenario_events": {
+  "bear": [
+   {
+    "event_he": "צמיחת מספר הצפיות במודעות, שירדה מ-19% ל-10% בשלושה רבעונים, נעצרת כמעט לגמרי, והעלאות המחיר למודעה לא מספיקות כדי להחזיק צמיחה של 20%.",
+    "evidence_ids": [
+     "dc_kpi_impressions_growth_q1_2026",
+     "dc_kpi_impressions_growth_q2_2026",
+     "dc_kpi_impressions_growth_q3_2026",
+     "dc_kpi_price_per_ad_growth_q3_2026"
+    ]
+   },
+   {
+    "event_he": "ההוצאה להשקעות (135-145 מיליארד דולר ב-2026, תזרים חופשי שלילי ברבעון השלישי) ממשיכה לעלות ב-2027 בלי הכנסות חדשות מבינה מלאכותית, והתשואה על ההון החדש נשארת נמוכה (כ-15%).",
+    "evidence_ids": [
+     "dc_g_capex_fy2026",
+     "dc_fcf_q3_2026",
+     "dc_commitments_due_2027",
+     "dc_noncancelable_commitments_q3_2026"
+    ]
+   },
+   {
+    "event_he": "בעלי המניות ממשיכים לממן: מעבר להנפקה של כ-37.5 מיליארד דולר באוקטובר 2026, החברה מפעילה את תוכנית מכירת המניות לשוק (כ-60 מיליארד דולר) דרך מניות Class C החדשות.",
+    "evidence_ids": [
+     "dc_fwp_launch_20261026",
+     "nm_atm_planned_2026_10_26",
+     "mc_8k_20261021"
+    ]
+   },
+   {
+    "event_he": "תביעות הנוער מתרחבות: הסכום המותנה של 5.3 מיליארד בהסכם התובעים הכלליים משולם, ומשפטי מחוזות בתי הספר מפברואר 2027 מוסיפים חיובים, כמו החיובים של 2.4 ו-9.89 מיליארד ב-2026.",
+    "evidence_ids": [
+     "dc_ag_agreement_contingent_unaccrued",
+     "dc_legal_charges_q2_2026",
+     "dc_legal_charge_ag_q3_2026",
+     "pf_10q_20261022"
+    ]
+   },
+   {
+    "event_he": "באירופה (כ-22% מההכנסות ברבעון השלישי) הרגולטור מחייב מודעות פחות מותאמות אישית, והחברה עצמה כותבת שזה עלול לפגוע משמעותית בהכנסות האירופיות.",
+    "evidence_ids": [
+     "mc_rev_eur_q3_2026",
+     "pf_10q_20261022"
+    ]
+   }
+  ],
+  "base": [
+   {
+    "event_he": "הרבעון הרביעי של 2026 מגיע לפחות לאמצע התחזית (74.5 מיליארד דולר, צמיחה של כ-24%), כמו ב-7 מתוך 7 הרבעונים האחרונים שבהם החברה עקפה את התחזית.",
+    "evidence_ids": [
+     "dc_g_revenue_q4_2026",
+     "pf_rel_20261021_1",
+     "pf_rel_20260729_1"
+    ]
+   },
+   {
+    "event_he": "ב-2027 ההכנסות צומחות בכ-20%: מודלי הדירוג והפרסום ממשיכים להעלות את המחיר למודעה ואת ההמרות, ומודעות שותפות (קצב של מעל 15 מיליארד בשנה) ממשיכות לגדול.",
+    "evidence_ids": [
+     "dc_av_call_20261021",
+     "dc_kpi_partnership_ads_runrate_q3_2026",
+     "dc_kpi_price_per_ad_growth_q3_2026"
+    ]
+   },
+   {
+    "event_he": "ההפסד של Reality Labs מצטמצם לכ-15 מיליארד דולר ב-2027 (מ-18-19 מיליארד ב-2026), והרווחיות התפעולית עולה חלקית.",
+    "evidence_ids": [
+     "dc_g_reality_labs_loss_fy2027",
+     "dc_g_reality_labs_loss_fy2026"
+    ]
+   },
+   {
+    "event_he": "עסקת המכירה העתידית של 40 מיליון מניות (כ-24.9 מיליארד דולר, עד נובמבר 2027) היא אירוע חוזי שאינו בחישוב: גרסת המנוע לא יודעת לסמן הון חוזי כמחויב, ולכן לא המזומן ולא המניות נכנסו (ההשמטה מגדילה את הערך הבסיסי בכ-4 דולר למניה). המניה המועדפת (12.5 מיליארד) מחושבת כהתחייבות קודמת למניות, בקיזוז 12.46 מיליארד הכסף שהתקבל, ולא כ-17-20 מיליון מניות חדשות.",
+    "evidence_ids": [
+     "dc_424b5_fwd_20261028",
+     "dc_424b5_pref_20261028",
+     "dc_8k_20261029"
+    ]
+   }
+  ],
+  "bull": [
+   {
+    "event_he": "העוזר האישי Muse (מעל 10 מיליון משתמשים בארה\"ב וקנדה בשישה שבועות, כרבע משתמשים בו מדי יום) מושק גלובלית ומתחיל להכניס כסף ב-2027 מעמלות קנייה ומנויים, כפי שההנהלה אומרת שאפשרי.",
+    "evidence_ids": [
+     "dc_kpi_muse_setups_us_canada",
+     "dc_av_call_20261021"
+    ]
+   },
+   {
+    "event_he": "עלות ההפעלה של מודלי הבינה המלאכותית יורדת פי 10 ויותר בשנה הקרובה כפי שהמנכ\"ל צופה, כך שההשקעות מתחילות להחזיר רווח והרווחיות חוזרת לכ-42% כמו ב-2024.",
+    "evidence_ids": [
+     "dc_av_call_20261021",
+     "pf_operating_income_fy2024",
+     "pf_revenue_fy2024"
+    ]
+   },
+   {
+    "event_he": "הכנסות אחרות (הודעות בתשלום בוואטסאפ ומנויים, מעל 15 מיליון מנויי Meta One) ממשיכות לצמוח בקצב של כ-59% בשנה ומוסיפות מקור הכנסה שאינו פרסום.",
+    "evidence_ids": [
+     "dc_foa_other_revenue_q3_2026",
+     "dc_foa_other_revenue_q3_2025",
+     "dc_kpi_meta_one_subscriptions_q3_2026"
+    ]
+   },
+   {
+    "event_he": "לא נדרשת תוכנית מכירת המניות לשוק של כ-60 מיליארד, כי התזרים מכסה את ההשקעות.",
+    "hypothesis": true
+   }
+  ]
+ },
+ "key_risk": {
+  "reading_he": "ההשקעה בבינה מלאכותית גדולה מהתזרים: 135-145 מיליארד דולר ב-2026, תזרים חופשי שלילי ברבעון השלישי, התחייבויות של 454 מיליארד שאי אפשר לבטל, והחברה כבר מגייסת כסף מבעלי המניות (כ-37.5 מיליארד באוקטובר ותוכנית של עוד כ-60 מיליארד). אם ההכנסות החדשות מבינה מלאכותית יתעכבו, הרווחיות תישאר נמוכה והמניות ימשיכו להתדלל.",
+  "evidence_ids": [
+   "dc_g_capex_fy2026",
+   "dc_fcf_q3_2026",
+   "dc_noncancelable_commitments_q3_2026",
+   "dc_fwp_launch_20261026",
+   "nm_atm_planned_2026_10_26",
+   "dc_424b5_pref_20261028",
+   "dc_424b5_fwd_20261028"
+  ]
+ },
+ "falsifiers": [
+  {
+   "id": "fx_q4_rev_floor",
+   "scenario": "base",
+   "metric": "revenue Q4 FY2026 (USD)",
+   "threshold": 73000000000,
+   "direction": "below",
+   "by": "2027-02-15",
+   "evidence_ids": [
+    "dc_g_revenue_q4_2026"
+   ]
+  },
+  {
+   "id": "fx_fy27_rev_base",
+   "scenario": "base",
+   "metric": "revenue FY2027 (USD)",
+   "threshold": 290000000000,
+   "direction": "below",
+   "by": "2028-02-15",
+   "evidence_ids": [
+    "dc_g_revenue_q4_2026",
+    "pf_revenue_fy2025"
+   ]
+  },
+  {
+   "id": "fx_fy27_rev_bull",
+   "scenario": "bull",
+   "metric": "revenue FY2027 (USD)",
+   "threshold": 310000000000,
+   "direction": "below",
+   "by": "2028-02-15",
+   "evidence_ids": [
+    "dc_g_revenue_q4_2026",
+    "dc_av_call_20261021"
+   ]
+  },
+  {
+   "id": "fx_fy27_rev_bear",
+   "scenario": "bear",
+   "metric": "revenue FY2027 (USD)",
+   "threshold": 305000000000,
+   "direction": "above",
+   "by": "2028-02-15",
+   "evidence_ids": [
+    "dc_g_revenue_q4_2026",
+    "dc_kpi_impressions_growth_q3_2026"
+   ]
+  },
+  {
+   "id": "fx_impr_bear",
+   "scenario": "bear",
+   "metric": "ad impressions growth y/y, Q2 FY2027",
+   "threshold": 0.1,
+   "direction": "above",
+   "by": "2027-08-15",
+   "evidence_ids": [
+    "dc_kpi_impressions_growth_q3_2026"
+   ]
+  },
+  {
+   "id": "fx_rl_loss_base",
+   "scenario": "base",
+   "metric": "Reality Labs operating loss FY2027 (USD)",
+   "threshold": 17000000000,
+   "direction": "above",
+   "by": "2028-02-15",
+   "evidence_ids": [
+    "dc_g_reality_labs_loss_fy2027"
+   ]
+  },
+  {
+   "id": "fx_capex27_base",
+   "scenario": "base",
+   "metric": "capital expenditures incl. finance-lease principal FY2027 (USD)",
+   "threshold": 170000000000,
+   "direction": "above",
+   "by": "2028-02-15",
+   "evidence_ids": [
+    "dc_g_capex_fy2026",
+    "dc_commitments_due_2027"
+   ]
+  },
+  {
+   "id": "fx_capex27_bear",
+   "scenario": "bear",
+   "metric": "capital expenditures incl. finance-lease principal FY2027 (USD)",
+   "threshold": 120000000000,
+   "direction": "below",
+   "by": "2028-02-15",
+   "evidence_ids": [
+    "dc_g_capex_fy2026",
+    "dc_commitments_due_2027"
+   ]
+  },
+  {
+   "id": "fx_margin27_bull",
+   "scenario": "bull",
+   "metric": "GAAP operating margin FY2027",
+   "threshold": 0.36,
+   "direction": "below",
+   "by": "2028-02-15",
+   "evidence_ids": [
+    "pf_operating_income_fy2024",
+    "pf_revenue_fy2024",
+    "nm_operating_income_ex_legal_q_2026_09_30"
+   ]
+  },
+  {
+   "id": "fx_margin27_bear",
+   "scenario": "bear",
+   "metric": "GAAP operating margin FY2027",
+   "threshold": 0.35,
+   "direction": "above",
+   "by": "2028-02-15",
+   "evidence_ids": [
+    "nm_operating_income_ex_legal_q_2026_09_30",
+    "pf_operating_income_fy2022",
+    "pf_revenue_fy2022"
+   ]
+  },
+  {
+   "id": "fx_atm_bull",
+   "scenario": "bull",
+   "metric": "Class A/C shares sold under the at-the-market program by 2027-11-15 (shares)",
+   "threshold": 0,
+   "direction": "above",
+   "by": "2027-11-15",
+   "evidence_ids": [
+    "nm_atm_planned_2026_10_26",
+    "dc_fwp_launch_20261026"
+   ]
+  }
+ ],
+ "reasons_he": {
+  "bear": "המחיר הזה מניח שהצמיחה נחלשת לכ-13%, שההשקעות נשארות כ-140-145 מיליארד דולר בשנה גם בלי הכנסות חדשות, ושהפחת הגדל, הוצאות משפט חוזרות ואירופה מורידים את הרווחיות לכ-26-27% (קרוב לשפל של 2022); תוכנית מכירת המניות לשוק לא נכללה.",
+  "base": "זה המסלול הסביר לפי הנתונים של החברה: התחזית לרבעון הרביעי והמגמה של 26% צמיחה, האטה הדרגתית לכ-20% ב-2027, רווחיות של 36-37% בלי חיובי המשפט החד-פעמיים, והשקעות של כ-145 מיליארד דולר בשנה ב-2027-2028. עסקת המכירה העתידית של 40 מיליון מניות לא נכללה בחישוב.",
+  "bull": "כדי להגיע למחיר הזה צריך שמוצרי הבינה המלאכותית יתחילו להכניס כסף ב-2027, שהצמיחה תישאר כ-26% ושהרווחיות תחזור לשיא של 2024 (כ-42%)."
+ },
+ "engine_options": {
+  "country_risk": true,
+  "reason": "META discloses revenue by region (US and Canada, Europe, Asia-Pacific, Rest of World) and the United States in its filings."
+ },
+ "gaps": [
+  "current_year_revenue not set: no FY2026 revenue guidance; the engine takes 9M 2026 actual plus the Q4 guide (73-76B) adjusted by the track record",
+  "growth_anchor on own_history, not consensus: the consensus tier cannot be range-checked without a FY2026 revenue guidance item; FY2027 consensus 311.5B (about +21%) is a cross-check only",
+  "horizon_years fixed at 12 (the engine's own rule for a 15-25% growth anchor) so the FY2027 forward-settlement entry lines up with the periods; not a company fact",
+  "repair (trigger value): the contracted forward sale (40,000,000 Class A shares, initial forward price 622.91875, about 24.92B net, settlement on or before 2027-11-19; dc_424b5_fwd_20261028, dc_8k_20261029) is NOT in the engine run: this engine version's forecast has no input to mark an equity_proceeds override as committed (valuation.py raised 'Funding marked none but cash financing supplied'), so the equity_proceeds driver was removed and both its cash (about 24.92B) and its about 40M new shares (about 1.6% of 2.556B) are left out together; issued at about the forward price (about 623) while the repaired base value is about 875, the omission OVERSTATES the base value by roughly (875-623) x 40M / 2,596M, about 4 USD a share (about 0.5%; bear about 475 is below the issue price, so the bear is understated by about 2 USD); immaterial to the verdict but not zero; the underwriters' 6M option shares were never included",
+  "planned ATM of about 60B not modelled (no agreement, size or timing): a disclosed dilution risk",
+  "data-center ventures residual value guarantees (41.5B) and leases not yet commenced (355.7B) not added as claims: contingent / future operating costs; carried in the bear",
+  "preferred dividends (about 812.5M a year) are covered by carrying the preferred at its liquidation preference; the conversion into 17.0-20.0M shares is not also counted",
+  "growth_half_life, terminal_growth, cost_of_equity, sbc_pct and depreciation ratios left on the engine rule; capex (growth_capex_pct) and the margin path (cash_cost_ratio) set from company evidence in the review repair",
+  "FY2027-2029 capex beyond the 121.41B of 2027 commitments is an analyst reading of the commitment schedule: META gives the 2027 capex outlook only at the Q4 2026 call",
+  "D&A ramp not modelled as its own path (engine depreciation stays 9.26% of revenue); its drag is inside the margin path set by cash_cost_ratio, so the tax shield of the higher D&A is understated (conservative)",
+  "litigation accrual (19.881B) is subtracted at face value, undiscounted (about 12.7B is paid in installments over 10 years): conservative",
+  "non-marketable equity investments 32.624B (10-Q 2026-09-30) are left out of the opening investments (illiquid, partly the Louisiana data-center venture stake): about 12.8 USD a share at book, conservative",
+  "preferred carried net of its 12.458B proceeds (41.6M claim) because the pack has no post-balance-sheet cash input; its 6.5% dividend above the yield on that cash is not charged"
+ ]
+}

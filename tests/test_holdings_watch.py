@@ -170,6 +170,17 @@ class ResearchStoreTests(unittest.TestCase):
         theses = HW.latest_theses([os.path.join(root, RS.LEDGER)])
         self.assertEqual(theses['SYN']['thesis_id'], th['thesis_id'])
 
+    def test_save_scrubs_contact_addresses(self):
+        root = tempfile.mkdtemp()
+        run = self.make_run(root)
+        with open(os.path.join(run, 'gather', 'numbers.json'), 'w') as f:
+            f.write('{"note": "fallback User-Agent app someone@example.com"}')
+        RS.save(run, root)
+        with open(os.path.join(root, 'research', 'companies', 'SYN', '2026-10-19', 'gather', 'numbers.json')) as f:
+            text = f.read()
+        self.assertNotIn('@example.com', text)
+        self.assertIn('<contact>', text)
+
     def test_older_save_keeps_latest_and_no_thesis_is_a_note(self):
         root = tempfile.mkdtemp()
         RS.save(self.make_run(root, d='2026-10-20'), root)

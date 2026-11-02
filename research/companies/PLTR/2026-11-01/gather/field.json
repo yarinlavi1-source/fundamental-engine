@@ -1,0 +1,32 @@
+{
+ "lane": "field",
+ "sources": [
+  {"id":"fd_sec_snow","kind":"structured_data","title":"Snowflake Inc. SEC companyfacts (10-K FY ended 2026-01-31, filed 2026-03-20)","url":"https://data.sec.gov/api/xbrl/companyfacts/CIK0001640147.json","date":"2026-03-20","independent":true,"publisher":"Snowflake Inc. (SEC EDGAR XBRL)","retrieval":"primary_document","syndicated_from":null},
+  {"id":"fd_sec_ai","kind":"structured_data","title":"C3.ai, Inc. SEC companyfacts (10-K FY ended 2026-04-30, filed 2026-06-24)","url":"https://data.sec.gov/api/xbrl/companyfacts/CIK0001577526.json","date":"2026-06-24","independent":true,"publisher":"C3.ai, Inc. (SEC EDGAR XBRL)","retrieval":"primary_document","syndicated_from":null},
+  {"id":"fd_sec_bah","kind":"structured_data","title":"Booz Allen Hamilton Holding Corporation SEC companyfacts (10-K FY ended 2026-03-31, filed 2026-05-22)","url":"https://data.sec.gov/api/xbrl/companyfacts/CIK0001443646.json","date":"2026-05-22","independent":true,"publisher":"Booz Allen Hamilton (SEC EDGAR XBRL)","retrieval":"primary_document","syndicated_from":null}
+ ],
+ "competitors": [
+  {"ticker":"SNOW","name":"Snowflake Inc.","why":"Enterprise data and AI platform sold to the same large commercial buyers as Foundry/AIP (data layer plus AI apps); competes for the commercial data-platform budget. PLTR 10-K names no company, only 'large enterprise software companies'; this is my classification.","metrics":{"fy_end":"2026-01-31","revenue_usd":4683946000,"revenue_growth":0.2916,"gross_margin":0.6717,"operating_margin":-0.3064,"revenue_prior_usd":3626396000},"source_ids":["fd_sec_snow"]},
+  {"ticker":"AI","name":"C3.ai, Inc.","why":"Enterprise AI application software vendor selling AI apps to large commercial and government/defense buyers, same buyer set as AIP; small-scale comparator.","metrics":{"fy_end":"2026-04-30","revenue_usd":250268000,"revenue_growth":-0.3568,"gross_margin":0.3092,"operating_margin":-1.9919,"revenue_prior_usd":389056000},"source_ids":["fd_sec_ai"]},
+  {"ticker":"BAH","name":"Booz Allen Hamilton Holding Corporation","why":"Government contractor and system integrator (the 10-K names 'government contractors and system integrators' as competitors) selling analytics/AI mission software and services to the same federal agencies as Gotham/Apollo.","metrics":{"fy_end":"2026-03-31","revenue_usd":11217000000,"revenue_growth":-0.0636,"operating_margin":0.0921,"revenue_prior_usd":11980000000},"source_ids":["fd_sec_bah"]}
+ ],
+ "bottlenecks": [
+  {"id":"fd_bn_1","reading":"What PLTR supplies is the ability to deploy AI on a customer's own operational data inside hard-to-execute institutions (AIP bootcamps, embedded engineers); the scarce part is working production deployment, which the 10-K says high installation costs, failure risk and long sales cycles make hard for smaller vendors. Evidence of paid adoption: U.S. commercial revenue +149% y/y to $764M and U.S. commercial remaining deal value $6.238B (+124% y/y) in Q2 2026 (company release).","evidence_ids":["pf_10k_20260217","pf_rel_20260803_1"]},
+  {"id":"fd_bn_2","reading":"U.S. government is the second pillar: revenue from U.S. government customers was $1.9B in FY2025 vs $1.2B in 2024 and $809M in Q2 2026 (+90% y/y); the 10-K says PLTR intends to capture a greater share of federal software spend.","evidence_ids":["pf_10k_20260217","pf_rel_20260803_1"]},
+  {"id":"fd_bn_3","reading":"Duration of the shortage and who adds capacity (Databricks, hyperscaler AI platforms, integrators) is not evidenced from sources retrieved in this lane; treat as an open question.","hypothesis":true}
+ ],
+ "notes": [
+  "fd NAMED COMPETITORS (10-K Item 1): the 10-K names NO company. It says PLTR competes 'fundamentally' with customers' internal software development (custom solutions, consultants, IT services, open source), and that competitors include 'large enterprise software companies, government contractors, and system integrators' plus emerging and established entrants (source pf_10k_20260217). The tickers in competitors[] are my own mapping of those categories (SNOW and AI for enterprise software/AI; BAH for government contractor/integrator), each with the reason written down.",
+  "fd PLTR OWN COMPARISON BASE: FY2025 revenue $4,475M (+56.2% vs $2,866M), gross margin 82.4%, operating margin 31.6% (companyfacts history, pf_cf_20260217).",
+  "fd SHARE: PLTR FY2025 revenue growth +56% against SNOW +29% (FY Jan-2026), C3.ai -36% (FY Apr-2026) and BAH -6% (FY Mar-2026): on reported revenue growth PLTR is gaining relative to all three named comparators (sources pf_cf_20260217, fd_sec_snow, fd_sec_ai, fd_sec_bah). Fiscal year ends differ; segments are not like for like, so absolute share of a defined market is not computed.",
+  "fd SHARE HYPOTHESIS: Databricks (private), Microsoft/hyperscaler AI platforms and Anduril/Lockheed-type defense primes are likely further competitors but no source was retrieved for their numbers; hypothesis, not in competitors[].",
+  "fd REUSE: prior run PLTR_2026-10-27 has no field.json fragment copied and no peers.json; competitor numbers were fetched fresh from SEC companyfacts (raw in gather/raw_field/). No new PLTR filings since 2026-10-27 per prefetch."
+ ],
+ "gaps": [
+  "The 10-K names no competitors, so the list is an analyst classification, not company-named.",
+  "No forward P/E, consensus growth or segment-level competing revenue for competitors (SEC annual data only; no FMP/AV used per lane rules).",
+  "No attributed third-party market-size or share study retrieved; sector bottleneck duration and capacity additions are unevidenced.",
+  "Databricks and hyperscaler platforms are not covered (private or not a separable segment)."
+ ],
+ "stopped": ["Market-size web research not performed: next retrieval would not change decision given budget; recorded as gap."]
+}

@@ -1,0 +1,542 @@
+{
+ "lane": "numbers",
+ "sources": [
+  {
+   "id": "nm_ib_contract",
+   "kind": "price",
+   "title": "IBKR search_contracts ASTS (READ-ONLY): NASDAQ STK conid 480745767, USD",
+   "url": "connector:mcp__Interactive_Brokers__search_contracts",
+   "date": "2026-10-29",
+   "independent": true,
+   "publisher": "Interactive Brokers",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_ib_snapshot",
+   "kind": "price",
+   "title": "IBKR price snapshot ASTS: last 40.94 at 2026-10-30T23:58:51Z (after hours, REALTIME, not a close); prior snapshot 2026-10-29 pre-market 41.12, prior close 42.30; Oct-2026 monthly bar close 40.97; 52w range 36.72-133.86",
+   "url": "connector:mcp__Interactive_Brokers__get_price_snapshot",
+   "date": "2026-10-30",
+   "independent": true,
+   "publisher": "Interactive Brokers",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_ib_history",
+   "kind": "price",
+   "title": "IBKR monthly OHLCV ASTS 2021-11 to 2026-10 (5y), refreshed 2026-11-01; corporate actions requested (none returned)",
+   "url": "connector:mcp__Interactive_Brokers__get_price_history",
+   "date": "2026-10-31",
+   "independent": true,
+   "publisher": "Interactive Brokers",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_cons_stockanalysis",
+   "kind": "consensus",
+   "title": "StockAnalysis ASTS forecast (S&P Global estimates): FY2026 revenue and EPS, price targets; last updated 2026-10-26 (re-read 2026-11-01, unchanged) (aggregates S&P Global estimates)",
+   "url": "https://stockanalysis.com/stocks/asts/forecast/",
+   "date": "2026-10-26",
+   "independent": false,
+   "publisher": "StockAnalysis.com",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_cons_yahoo",
+   "kind": "consensus",
+   "title": "Yahoo Finance ASTS analysis page: revenue and EPS estimates FY2026/FY2027, EPS trend and revisions (read 2026-10-29) (aggregated estimates, provider of record not shown)",
+   "url": "https://finance.yahoo.com/quote/ASTS/analysis/",
+   "date": "2026-10-29",
+   "independent": false,
+   "publisher": "Yahoo Finance",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  }
+ ],
+ "facts": [
+  {
+   "id": "nm_operating_income_fy2025",
+   "metric": "operating_income",
+   "period": "FY2025",
+   "value": -287713000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260302"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_operating_income_fy2024",
+   "metric": "operating_income",
+   "period": "FY2024",
+   "value": -242762000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260302"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_operating_income_q_2026_06_30",
+   "metric": "operating_income",
+   "period": "Q@2026-06-30",
+   "value": -297577000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_revenue_fy2024_recast",
+   "metric": "revenue_as_presented_fy2025_10k",
+   "period": "FY2024",
+   "value": 4418000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260302"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_net_loss_before_nci_fy2025",
+   "metric": "net_loss_before_noncontrolling_interest",
+   "period": "FY2025",
+   "value": -461011000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260302"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_net_loss_before_nci_q_2026_06_30",
+   "metric": "net_loss_before_noncontrolling_interest",
+   "period": "Q@2026-06-30",
+   "value": -299919000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_fy2025",
+   "metric": "eps_diluted",
+   "period": "FY2025",
+   "value": -1.34,
+   "unit": "USD/share",
+   "source_ids": [
+    "pf_10k_20260302"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q_2026_06_30",
+   "metric": "eps_diluted",
+   "period": "Q@2026-06-30",
+   "value": -0.77,
+   "unit": "USD/share",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_h1_2026",
+   "metric": "eps_diluted_six_months",
+   "period": "H1 2026",
+   "value": -1.43,
+   "unit": "USD/share",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_diluted_wavg_q_2026_06_30",
+   "metric": "shares_diluted_wavg",
+   "period": "Q@2026-06-30",
+   "value": 299061662,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_class_a_shares_2026_06_30",
+   "metric": "shares_class_a_outstanding",
+   "period": "2026-06-30",
+   "value": 299731073,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_class_b_shares_2026_06_30",
+   "metric": "shares_class_b_outstanding",
+   "period": "2026-06-30",
+   "value": 11215111,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_class_c_shares_2026_06_30",
+   "metric": "shares_class_c_outstanding",
+   "period": "2026-06-30",
+   "value": 78163078,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_cash_q_2026_06_30",
+   "metric": "cash",
+   "period": "Q@2026-06-30",
+   "value": 2288253000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_restricted_cash_current_q_2026_06_30",
+   "metric": "restricted_cash_current",
+   "period": "Q@2026-06-30",
+   "value": 6181000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_restricted_cash_noncurrent_q_2026_06_30",
+   "metric": "restricted_cash_noncurrent",
+   "period": "Q@2026-06-30",
+   "value": 428400000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_long_term_debt_q_2026_06_30",
+   "metric": "long_term_debt",
+   "period": "Q@2026-06-30",
+   "value": 2963422000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_current_debt_q_2026_06_30",
+   "metric": "current_portion_long_term_debt",
+   "period": "Q@2026-06-30",
+   "value": 8494000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_contract_liab_noncurrent_q_2026_06_30",
+   "metric": "contract_liabilities_noncurrent",
+   "period": "Q@2026-06-30",
+   "value": 252093000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_ppe_net_q_2026_06_30",
+   "metric": "ppe_net",
+   "period": "Q@2026-06-30",
+   "value": 2069336000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_total_assets_q_2026_06_30",
+   "metric": "total_assets",
+   "period": "Q@2026-06-30",
+   "value": 5854885000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_total_liabilities_q_2026_06_30",
+   "metric": "total_liabilities",
+   "period": "Q@2026-06-30",
+   "value": 3457307000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_loss_involuntary_conversion_q_2026_06_30",
+   "metric": "loss_on_involuntary_conversion_bb7",
+   "period": "Q@2026-06-30",
+   "value": 125911000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_induced_conversion_expense_h1_2026",
+   "metric": "induced_conversion_expense_convertible_notes",
+   "period": "H1 2026",
+   "value": 88654000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_cfo_h1_2026",
+   "metric": "cfo_six_months",
+   "period": "H1 2026",
+   "value": -145212000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_capex_h1_2026",
+   "metric": "capex_six_months",
+   "period": "H1 2026",
+   "value": 859215000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_sbc_h1_2026",
+   "metric": "sbc_six_months",
+   "period": "H1 2026",
+   "value": 118820000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_h2_2025",
+   "metric": "revenue_second_half",
+   "period": "H2 2025",
+   "value": 69044000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260302",
+    "pf_cf_20251110"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_revenue_ttm_q_2026_06_30",
+   "metric": "revenue_ttm",
+   "period": "TTM@2026-06-30",
+   "value": 115299000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810",
+    "pf_cf_20260302",
+    "pf_cf_20251110"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "derived"
+  }
+ ],
+ "consensus": [
+  {
+   "id": "nm_cons_rev_fy2026_sa",
+   "metric": "revenue",
+   "period": "FY2026",
+   "value": 167200000,
+   "n": 12,
+   "low": 151000000,
+   "high": 186000000,
+   "source_id": "nm_cons_stockanalysis"
+  },
+  {
+   "id": "nm_cons_eps_fy2026_sa",
+   "metric": "eps_diluted",
+   "period": "FY2026",
+   "value": -2.03,
+   "n": 12,
+   "low": -2.49,
+   "high": -1.42,
+   "source_id": "nm_cons_stockanalysis"
+  },
+  {
+   "id": "nm_cons_rev_fy2026_yh",
+   "metric": "revenue",
+   "period": "FY2026",
+   "value": 167240000,
+   "n": 12,
+   "low": 150980000,
+   "high": 186000000,
+   "source_id": "nm_cons_yahoo"
+  },
+  {
+   "id": "nm_cons_rev_fy2027_yh",
+   "metric": "revenue",
+   "period": "FY2027",
+   "value": 609100000,
+   "n": 12,
+   "low": 345060000,
+   "high": 911000000,
+   "source_id": "nm_cons_yahoo"
+  },
+  {
+   "id": "nm_cons_eps_fy2026_yh",
+   "metric": "eps_diluted",
+   "period": "FY2026",
+   "value": -2.29,
+   "n": 8,
+   "low": -2.49,
+   "high": -2.04,
+   "source_id": "nm_cons_yahoo"
+  },
+  {
+   "id": "nm_cons_eps_fy2027_yh",
+   "metric": "eps_diluted",
+   "period": "FY2027",
+   "value": -1.28,
+   "n": 9,
+   "low": -1.99,
+   "high": 0.65,
+   "source_id": "nm_cons_yahoo"
+  },
+  {
+   "id": "nm_cons_rev_q3_2026_yh",
+   "metric": "revenue",
+   "period": "Q3 2026",
+   "value": 46000000,
+   "n": 8,
+   "low": 40000000,
+   "high": 50000000,
+   "source_id": "nm_cons_yahoo"
+  },
+  {
+   "id": "nm_cons_rev_q4_2026_yh",
+   "metric": "revenue",
+   "period": "Q4 2026",
+   "value": 71150000,
+   "n": 8,
+   "low": 59800000,
+   "high": 89080000,
+   "source_id": "nm_cons_yahoo"
+  }
+ ],
+ "guidance_track": [
+  {
+   "period": "H2 2025",
+   "metric": "revenue",
+   "guided_mid": 62500000,
+   "actual": 69044000,
+   "source_ids": [
+    "pf_rel_20250811_1",
+    "pf_rel_20260302_1",
+    "pf_cf_20260302",
+    "pf_cf_20251110"
+   ]
+  }
+ ],
+ "notes": [
+  "nm AV RATELIMIT INCOME_STATEMENT 2026-10-29: 'standard API rate limit is 25 requests per day' (saved raw/av__income__ratelimit.json); not retried; BALANCE_SHEET, CASH_FLOW and EARNINGS_ESTIMATES not called (same daily quota). Second source for statements = the 10-K/10-Q text in reading/ (read directly) plus SEC companyfacts.",
+  "nm RECONCILIATION FY2025 (10-K pf_10k_20260302, statement of operations): revenue 70,918k = pf_revenue_fy2025 OK; net loss attributable to common -341,940k = pf_net_income_fy2025 OK (consolidated net loss before NCI -461,011k, NCI -119,071k: Up-C, see nm_net_loss_before_nci_fy2025); CFO -71,517k = pf_cfo_fy2025 OK; capex (purchase of PP&E) 1,064,741k = pf_capex_fy2025 OK; SBC 47,490k = pf_sbc_fy2025 OK; diluted wavg shares 255,982,592 = pf_shares_diluted_wavg_fy2025 OK (basic = diluted, losses); EPS -1.34.",
+  "nm RECONCILIATION DIFFERENCE operating income: the filing has no separate subtotal; revenue minus total operating expenses gives FY2025 -287,713k (70,918 - 358,631), consistent with pre-tax loss -457,113k less other expense -169,400k. pf_operating_income_fy2025 = -425,313k is WRONG (does not tie to any statement line); same for pf_operating_income_fy2024 -506,302k vs filing -242,762k (4,418 - 247,180) and pf_operating_income_q_2026_06_30 -275,206k vs filing -297,577k (31,520 - 329,097). Use nm_operating_income_* ; prefetch/forensic.json ROIC (NOPAT from the wrong operating income) is overstated in loss.",
+  "nm RECONCILIATION Q2 2026 (10-Q pf_10q_20260810): revenue 31,520k = pf OK (products 24,428k implied, services 7,092k); net loss attributable to common -230,909k = pf OK; SBC Q2 63,467k = pf (6M 118,820k - Q1 55,353k) OK; CFO Q2 -97,154k = 6M -145,212k - Q1 -48,058k OK; capex Q2 597,616k = 6M 859,215k - Q1 261,599k OK; diluted wavg shares Q2 299,061,662 (basic = diluted). Q2 operating expenses include a one-off 125,911k loss on involuntary conversion (BB7 satellite write-off net of insurance recoveries); H1 2026 also 88,654k induced conversion expense on convertible note repurchases (other expense). Excluding the BB7 write-off Q2 operating loss is -171,666k.",
+  "nm RECONCILIATION FY2024 revenue: FY2025 10-K presents FY2024 total revenues 4,418k; companyfacts 'Revenues' FY2024 (filed 2025-03-03) 4,400k (pf_revenue_fy2024): 18k rounding/presentation difference, immaterial. companyfacts RevenueFromContractWithCustomer FY2024 13,825k is a different tag (not used).",
+  "nm BALANCE SHEET CHECK pf_short_term_investments_fy2025 = 2,000,000k does not appear as a line in the 10-K/10-Q balance sheets (cash and cash equivalents 2,335,683k at 2025-12-31; no short-term investments line): treat as a mis-mapped tag, do NOT add to cash. Restricted cash 2026-06-30: current 6,181k, non-current 428,400k (not spendable liquidity). Contract liabilities (MNO/government prepayments) 2026-06-30: current 14,840k, non-current 252,093k.",
+  "nm ROIC CHECK: forensic.json roic_last -26.6% uses NOPAT from pf operating income -425.3M; with the filing's -287.7M (x0.79 = -227.3M) and the same invested capital 2,264.2M (equity 2,392.3M incl. NCI + LT debt 2,207.6M - cash 2,335.7M) ROIC FY2025 is about -10.0%. Invested capital should exclude nothing for restricted cash (443.4M non-current at 2025-12-31 is not cash and was not subtracted; correct). ROIC is not meaningful for a pre-service constellation build (PP&E under construction; satellites not yet in commercial service).",
+  "nm SHARE COUNT 2026-06-30 (10-Q cover/balance sheet): Class A 299,731,073; Class B 11,215,111; Class C 78,163,078 (B and C are voting-only; economic interest via AST LLC units exchangeable 1:1 into Class A). Economic share base ~389.1M before convertibles, warrants and awards (capital_bridge needed). Market cap at 41.12: Class A only ~12.3B USD; all economic units ~16.0B USD.",
+  "nm OWN MULTIPLE HISTORY P/E not meaningful: GAAP diluted EPS negative every year FY2021-FY2025 (FY2025 -1.34, H1 2026 -1.43) and consensus EPS negative for FY2026 and FY2027 (trailing and forward P/E undefined). Substitute, price-to-sales on all economic units: now ~139x TTM revenue 115.3M (16.0B / 115.3M); at 2025-12 month-end ~384x FY2025 revenue (72.63 x 374.84M units = 27.2B / 70.9M); earlier years revenue ~0 (not meaningful). years 2025-2026 sources nm_ib_history nm_ib_snapshot nm_revenue_ttm_q_2026_06_30 pf_revenue_fy2025.",
+  "nm CONSENSUS (expectation, not fact): FY2026 revenue 167.2M (n 12, 151.0-186.0M; StockAnalysis/S&P Global updated 2026-10-23; Yahoo identical), inside company guidance 150-200M. FY2027 revenue 609.1M (n 12, 345.1-911.0M, Yahoo read 2026-10-29: very wide dispersion). EPS FY2026 -2.03 (SA, n 12) vs -2.29 (Yahoo, n 8); FY2027 -1.28 (n 9, -1.99 to +0.65). Revisions: FY2027 EPS cut from -0.69 (90 days ago) to -1.28; FY2026 from -1.39 to -2.29 (after Q2 BB7 write-off and Q2 miss). Quarterly revenue: Q3 2026 46.0M, Q4 2026 71.15M.",
+  "nm OPINION price targets (StockAnalysis, S&P Global poll, 2026-10-23): average 74.68, median 78, low 42.5, high 108, n 13, rating Hold. Opinion only, never a fact or a driver.",
+  "nm TRACK RECORD revenue: only one guided period with a numeric range: H2 2025 guided 50.0-75.0M (release 2025-08-11, reiterated 2025-11-10), delivered 69.0M (Q3 14.7M + Q4 54.3M): ratio 1.10 vs midpoint, 1 beat, 0 misses, n=1 (too few to call a pattern). FY2026 guidance 150-200M (first stated by 2026-03-02/05-11 releases, reiterated 2026-08-10) is outstanding; H1 2026 delivered 46.3M (23-31% of the range) with consensus needing ~117M in H2. Q1 2026 revenue 14.7M was far below then-consensus (press).",
+  "nm PRICE refreshed 2026-11-01: last 40.94 USD at 2026-10-30T23:58:51Z (IBKR REALTIME, not a close; 2026-10-30 was the last session before as_of); Oct-2026 monthly bar close 40.97, month low 36.72, high 64.75 (Sept close 58.86: -30% in October). 52-week high 133.86. Month-end closes: 2021-12 7.94, 2022-12 4.82, 2023-12 6.03, 2024-12 21.10, 2025-12 72.63, 2026-05 113.41 (peak), 2026-09 58.86. No splits or corporate actions in 5 years (nm_ib_snapshot, nm_ib_history).",
+  "nm AV RATELIMIT 2026-11-01: INCOME_STATEMENT again 'standard API rate limit is 25 requests per day' (raw/av__income__ratelimit__2026-11-01.json), not retried; BALANCE_SHEET, CASH_FLOW, EARNINGS_ESTIMATES not called. Second source for statements = 10-K/10-Q text.",
+  "nm CASH RECONCILIATION (defect of 2026-10-29 run): 10-Q balance sheet 2026-06-30 has ONE cash line, 'Cash and cash equivalents' 2,288,253k (money-market funds included), plus restricted cash 6,181k current and 428,400k non-current; NO marketable securities or short-term investments line (10-K 2025-12-31: cash 2,335,683k, restricted 877k + 443,400k). Spendable liquidity = 2,288.3M; restricted 434.6M is separate (total cash+restricted 2.7B per 10-Q liquidity text). Do not add short-term investments (pf_short_term_investments_fy2025 2,000,000k is a mis-mapped tag) nor restricted cash to cash.",
+  "nm OPERATING INCOME RECONCILIATION (defect of 2026-10-29 run): FY2025 10-K statement of operations: total revenues 70,918k - total operating expenses 358,631k = -287,713k (nm_operating_income_fy2025); FY2024 4,418k - 247,180k = -242,762k; Q2 2026 31,520k - 329,097k = -297,577k (includes 125,911k loss on involuntary conversion). Prefetch pf_operating_income_* values (-425,313k FY2025) do not tie to any line: use nm_ facts.",
+  "nm CONSENSUS re-check 2026-11-01: StockAnalysis page (S&P Global) last updated 2026-10-26, FY2026 revenue avg 167.2M (n 12, 151.0-186.0M), EPS -2.03 (n 12, -2.49 to -1.42; page says non-GAAP adjusted basis), targets avg 74.68 median 78 low 42.5 high 108 (n 13): unchanged. Yahoo (read 2026-10-29, now citable under LAG_DAYS 2) supplies FY2027: revenue 609.1M, EPS -1.28; basis (GAAP vs adjusted) not shown.",
+  "nm Q3 2026 results not released as of 2026-11-01 (no new Item 2.02 8-K after 2026-08-10 in prefetch filings; reuse.new_filings_since empty); prior-year Q3 release was 2025-11-10, so expected about 2026-11-10: no results-day lag issue."
+ ],
+ "gaps": [
+  "Alpha Vantage statements and EARNINGS_ESTIMATES: daily rate limit hit on the first call; second structured source missing (10-K/10-Q text used instead)",
+  "P/E history not meaningful (losses); P/S only for 2025-2026",
+  "guidance track record n=1 (H2 2025); earlier numeric guidance releases not saved",
+  "revenue by country, long-lived assets by country and exposures: left to gather_macro/market (market block is not this lane's key)",
+  "FY2027 consensus from one aggregator page only (Yahoo, basis unshown); FY2028 not found (paywalled)"
+ ],
+ "stopped": [
+  "Alpha Vantage: rate limited, not retried (rule)",
+  "FMP statements/analyst: ACCESS DENIED per session_capabilities, not called",
+  "Benzinga consensus page: HTTP 403, not retried",
+  "Alpha Vantage re-tried once on 2026-11-01 (new day, one probe): still rate limited, not retried"
+ ]
+}

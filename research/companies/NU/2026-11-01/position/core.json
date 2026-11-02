@@ -1,0 +1,110 @@
+{
+  "thesis_he": {
+    "bear": "מחזור האשראי בברזיל מחמיר (פיגורים שיא), עלות הסיכון עולה, ההון הרגולטורי נשחק והריאל נחלש: התשואה על ההון יורדת לכיוון 20% והצמיחה נבלמת.",
+    "base": "תיק האשראי ממשיך לגדול מהר בזכות לקוחות והעמקת שימוש, אבל עם מס מנורמל של כ-26% התשואה על ההון היא כ-26-28% ולא 33%, ודוחקת בהדרגה לכיוון הממוצע.",
+    "bull": "האשראי מתייצב, מקסיקו כבנק מלא ורישיון הבנק בברזיל מוסיפים צמיחה, ונו שומרת תשואה על ההון מעל 30% לאורך שנים."
+  },
+  "drivers": {
+    "tax_rate": {
+      "bear": 0.28,
+      "base": 0.26,
+      "bull": 0.24,
+      "source_tier": "own_history",
+      "evidence_ids": ["nm_income_tax_fy2025", "nm_pretax_income_fy2025", "dc_fs_q2_2026", "nm_income_tax_2026q2", "nm_pretax_income_2026q2", "mc_bnam_fintech_tax"],
+      "reason": "Normalized, not annualized: FY2025 IFRS effective rate 25.8% (996.7m / 3,868.4m) is the base; Q2 2026 14.2% and H1 11.8% rest on a 671m Q2 deferred-tax benefit and other reconciliation items of unknown repeatability (dc_fs_q2_2026 note 30). Bear 28%: CSLL on credit companies rises to 20% from 2028 (Complementary Law 224/2025, statutory 42.5% in 2026). Bull 24%: part of the tax-exempt sovereign-bond interest, interest on capital and lower-taxed entities persists. The residual-income model takes no operating overrides (it reads trailing ROE from reported profit): this lever records the analyst's normalization for the reviewers; it does not move the engine's number."
+    }
+  },
+  "forecast_options": {
+    "cyclical": {
+      "treatment": "structural",
+      "reason": "Revenue growth is customer and wallet-share gain (customers +13%, ARPAC +37%, portfolio +44% y/y), not a price or volume cycle; the consumer-credit cycle is carried in the bear as lower ROE and slower loan growth.",
+      "evidence_ids": ["dc_k_customers_q226", "dc_k_customers_q225", "dc_k_arpac_q226", "dc_k_arpac_q225", "dc_k_portfolio", "dc_k_portfolio_q225"]
+    },
+    "bank_drivers": {
+      "base": {
+        "roe_start": 0.27, "roe_year5": 0.25, "roe_terminal": 0.16, "book_growth_start": 0.19, "payout": 0.26,
+        "terminal_reason": "Terminal ROE 16% stays above the 11.2% cost of equity because Nu's own lowest post-breakeven ROE was about 18% (FY2023: net income 1,030.5m on average parent equity about 5.65bn) and its cost-to-serve / efficiency advantage is reported every quarter (efficiency ratio in the Q2 2026 release); the 16% sits two points below that own low to allow for the CSLL rise and competition, not a peer number.",
+        "source_tier": "own_history",
+        "reason": "ROE: tax-normalized own run rate. H1 2026 net income 1,932.5m was booked at an 11.8% tax rate (Q2 14.2% with a one-off deferred-tax benefit) against 25.8% in FY2025 (income tax 996.7m on pretax 3,868.4m); at the FY2025 rate H1 profit is about 1.63bn, about 3.25bn a year, about 26.5% on average H1 parent equity (11.29bn -> 13.25bn); FY2024 28.1% and FY2025 30.3% on average equity (reported). Start 27%, year 5 25% after CSLL rises to 20% from 2028 (about 1-2 points). Book growth: own common equity grew about 26%/yr 2021-25, 33%/yr 2023-25 and 13.8% in H1 2026 alone ex-AOCI (about 29% annualized); the start is held at 19% (below that history) because the Brazilian conglomerate's CET1 fell 13.0% -> 11.9% in six months as RWA grew 14.7% vs CET1 capital +5.4% (excess over the minimum 1.85bn): growth is limited by the capital the business retains, fading to terminal growth. Payout floor 26% = H1 2026 buybacks 500.4m / net income 1,932.5m (US$1.0bn program to June 2027, 499.6m left; no dividend).",
+        "evidence_ids": ["dc_fs_q2_2026", "nm_net_income_2026h1", "nm_income_tax_2026q2", "nm_pretax_income_2026q2", "nm_income_tax_fy2025", "nm_pretax_income_fy2025", "nm_net_income_fy2025", "nm_equity_fy2025", "nm_equity_2026q2", "pf_equity_fy2021", "pf_equity_fy2022", "pf_equity_fy2023", "pf_equity_fy2024", "pf_net_income_fy2023", "pf_net_income_fy2024", "nm_buybacks_2026h1", "dc_k_buyback", "dc_k_roe", "dc_k_eff", "mc_bnam_fintech_tax"]
+      },
+      "bear": {
+        "roe_start": 0.21, "roe_year5": 0.15, "roe_terminal": 0.115, "book_growth_start": 0.13, "payout": 0.26,
+        "terminal_reason": "Terminal ROE 11.5% is set at about the 11.2% cost of equity: in the bear the excess return is competed and taxed away (CSLL 20% from 2028, BCB limits on unsolicited credit marketing from 2027); the half point left is the reported cost-to-serve advantage only.",
+        "source_tier": "own_history",
+        "reason": "Bear mechanisms from review/counter.json, each sized from company evidence: (1) credit: Stage 2 rose 10.1% -> 11.9% of gross, NPL 90+ 6.9% (seven-quarter high) and Brazil household defaults at a record 8.1%; cost of risk normalizes up as loan growth slows and IFRS 9 front-loading stops masking losses, taking ROE from the tax-normalized 26-27% to 21% at the start and to 15% by year 5, below Nu's own FY2023 18% level; (2) tax: the 2026 deferred-tax benefit does not recur and CSLL rises to 20% from 2028 (about 1-2 points of ROE); (3) BRL: about 91% of revenue is Brazilian and the real fell about 10% intraday after the 2026-10-25 election, so USD book growth carries translation losses beside retained profit: start 13% (vs 19% base), within retention 21% x (1 - 26%) = 15.5%, fading; (4) capital: CET1 11.9% and falling forces slower RWA growth. Payout floor stays the evidenced 26% buyback share (H1 2026).",
+        "evidence_ids": ["dc_fs_q2_2026", "dc_rel_q2_2026", "dc_k_npl90", "dc_k_coc", "dc_k_allow", "mc_rt_default", "mc_bnam_fintech_tax", "mc_rt_bcb_marketing", "mc_aljaz_real", "mc_cnbc_election", "dc_s_br_q226", "pf_net_income_fy2023", "pf_equity_fy2022", "pf_equity_fy2023", "nm_income_tax_2026q2", "nm_buybacks_2026h1", "dc_k_buyback"]
+      },
+      "bull": {
+        "roe_start": 0.30, "roe_year5": 0.31, "roe_terminal": 0.20, "book_growth_start": 0.22, "payout": 0.26,
+        "terminal_reason": "Terminal ROE 20% above the 11.2% cost of equity: in the bull Nu keeps its reported ROE (FY2025 30% on average equity, Q2 2026 33% reported) through scale in Brazil and the Mexico bank license (CNBV authorization 2026-07-09, 15.8m customers, loan-to-deposit 35% with room to lend), so the terminal is set at its own 2024-25 level less a third for tax and competition.",
+        "source_tier": "own_history",
+        "reason": "ROE: start 30% (reported FY2025 30.3% on average equity; H1 2026 about 31.5% reported, 26.5% tax-normalized, so the bull assumes the credit models keep cost of risk flat while ARPAC keeps rising +37% y/y), year 5 31% as Mexico (revenue +79% y/y in Q2 2026) matures. Book growth start 22% within retention 30% x (1 - 26%) = 22.2%, below the own 2023-25 26-33%/yr, capped by the CET1 room (11.9%, excess 1.85bn). Payout floor 26% = H1 2026 buyback share.",
+        "evidence_ids": ["dc_fs_q2_2026", "dc_rel_q2_2026", "dc_k_roe", "dc_k_arpac_q226", "dc_k_arpac_q225", "dc_k_cust_mexico", "dc_k_ltd_mexico", "dc_s_mx_q226", "dc_s_mx_q225", "nm_net_income_fy2025", "nm_equity_fy2025", "pf_equity_fy2024", "nm_buybacks_2026h1"]
+      },
+      "opening": {
+        "book_equity": 13063221000, "shares": 4819939641, "as_of": "2026-06-30",
+        "reason": "Q2 2026 6-K IFRS statement of financial position at 2026-06-30: equity attributable to shareholders of the parent 13,249,670k, less other comprehensive income 186,449k (AOCI, mostly currency translation; it was -184,300k at 2025-12-31) = 13,063,221k common book on the FactBook basis (no preferred stock). Shares: 20-F count at 2026-03-01 (3,837,998,543 Class A + 1,022,600,698 Class B = 4,860,599,241) less the 40,659,600 Class A shares held in treasury at 2026-06-30 (none at 2025-12-31; repurchased under the US$1.0bn program) = 4,819,939,641. Share issuance from employee awards after 2026-03-01 is not in this count (small; the next cover count will tell), and any repurchase before 2026-03-01 would be counted twice (the 6-K does not date them).",
+        "evidence_ids": ["dc_fs_q2_2026", "nm_equity_2026q2", "pf_10k_20260408", "dc_k_buyback"]
+      },
+      "regulatory_capital": {
+        "risk_weighted_assets": 35710139000, "required_capital_ratio": 0.105, "as_of": "2026-06-30",
+        "reason": "Q2 2026 6-K capital note, Nu Prudential Conglomerate (Brazil): RWA 35,710,139k; minimum capital required 3,749,565k = 10.5% of RWA (the requirement with the conservation buffer, as the filing computes it); CET1 4,262,877k = 11.9% (13.0% at 2025-12-31), excess margin 1,848,040k. Nu Holdings itself has no regulatory capital requirement; CET1 sits in the regulated Brazilian (and Mexican, 14.9% vs 10.5%; Colombian, 15.3% vs 10.5%) entities, so the consolidated common book used here is only a PROXY: it is about three times the conglomerate's CET1, so the engine's check on it is loose and the real binding limit is the conglomerate's 11.9% CET1, which is why book growth starts below Nu's own history.",
+        "evidence_ids": ["dc_fs_q2_2026"]
+      }
+    }
+  },
+  "scenario_events": {
+    "bear": [
+      {"event_he": "פיגורי משקי הבית בברזיל בשיא של 8.09% (ספטמבר 2026) ופיגורי 90+ של נו עולים מעל 7.5%: הפרשות להפסדי אשראי צומחות מהר מהתיק והתשואה על ההון יורדת לכיוון 20%.", "evidence_ids": ["mc_rt_default", "dc_k_npl90", "nm_expected_credit_loss_2026q2", "dc_rel_q2_2026"]},
+      {"event_he": "יחס ההון הליבה (CET1) ירד מ-13.0% ל-11.9% בחצי שנה: אם הירידה נמשכת, נו תאלץ להאט את צמיחת האשראי או לעצור את הרכישה העצמית.", "evidence_ids": ["dc_fs_q2_2026", "dc_k_buyback"]},
+      {"event_he": "אחרי ניצחון לולה הריאל נחלש בכ-10% ביום אחד: כ-91% מההכנסות בברזיל, ולכן כל היחלשות מתמשכת של הריאל מקטינה את הרווח וההון בדולרים כמעט אחד לאחד.", "evidence_ids": ["mc_aljaz_real", "mc_cnbc_election", "dc_s_br_q226", "mc_f_rev_br"]},
+      {"event_he": "המס על חברות האשראי (CSLL) עולה ל-20% מ-2028 והטבת המס של 2026 לא חוזרת: הרווח הנקי נמוך בכ-15% מהקצב של רבעון 2.", "evidence_ids": ["mc_bnam_fintech_tax", "dc_fs_q2_2026", "nm_income_tax_2026q2"]},
+      {"event_he": "הבנק המרכזי מגביל שיווק אשראי לא מבוקש מ-2027: גיוס לקוחות והגדלת מסגרות אשראי מואטים.", "evidence_ids": ["mc_rt_bcb_marketing"]},
+      {"event_he": "תחלופה בהנהלה (סמנכ\"ל כספים הוחלף, סמנכ\"ל טכנולוגיה התפטר) פוגעת בביצוע בדיוק כשמחזור האשראי מתהפך.", "evidence_ids": ["dc_6k_cto_20261023", "dc_call_q2_2026"]}
+    ],
+    "base": [
+      {"event_he": "תיק האשראי ממשיך לגדול בקצב גבוה (39.4 מיליארד דולר, +44% בשנה) עם מרווח ריבית מותאם סיכון באזור 10-12%, כפי שההנהלה אמרה ('באותו אזור').", "evidence_ids": ["dc_k_portfolio", "dc_k_portfolio_q225", "dc_k_ranim", "dc_k_ranim_q126", "dc_call_q2_2026"]},
+      {"event_he": "שיעור המס חוזר לכ-26% (כמו 2025) ולכן הרווח השנתי נמוך מ-4 כפול רבעון 2; תשואה מנורמלת על ההון כ-26-28%.", "evidence_ids": ["nm_income_tax_fy2025", "nm_pretax_income_fy2025", "dc_fs_q2_2026"]},
+      {"event_he": "יחס היעילות נשאר סביב 20% ב-2026, כפי שההנהלה הנחתה, למרות ההשקעה במקסיקו ובארה\"ב.", "evidence_ids": ["dc_g_eff_fy26", "dc_k_eff"]},
+      {"event_he": "הסליק יורד בהדרגה (13.75% בספטמבר 2026): עלות המימון יורדת, הכנסות הצף נשחקות, והביקוש לאשראי נתמך.", "evidence_ids": ["mc_bcb_selic", "dc_k_cod", "dc_k_mix_credit"]},
+      {"event_he": "השלמת תוכנית הרכישה העצמית של מיליארד דולר (נותרו 499.6 מיליון עד יוני 2027) מקזזת את הדילול מתגמול במניות.", "evidence_ids": ["dc_k_buyback", "nm_sbc_2026h1", "nm_buybacks_2026h1"]}
+    ],
+    "bull": [
+      {"event_he": "מקסיקו, בנק מלא מאוגוסט 2026, מכפילה את חלקה בהכנסות (7.2% היום, +79% בשנה) עם פיקדונות מבוטחים ומשכורות.", "evidence_ids": ["fd_nu_mx_6k_20260710", "mc_rt_nubank_mx", "dc_s_mx_q226", "dc_s_mx_q225"]},
+      {"event_he": "הבנק המרכזי בברזיל מאשר את רכישת Banco Porto Real ונו מקבלת רישיון בנק מלא, בלי דרישת הון נוספת.", "evidence_ids": ["dc_fs_q2_2026"]},
+      {"event_he": "פיגורי 90+ יורדים מתחת ל-6.5% בזמן שהתיק ממשיך לגדול, והתשואה על ההון נשארת מעל 30% גם אחרי נרמול המס.", "evidence_ids": ["dc_k_npl90", "dc_k_roe"]},
+      {"event_he": "ההשקה בארה\"ב ו-Nu Global הופכות לעסק עם הכנסות משמעותיות עד 2029.", "hypothesis": true}
+    ]
+  },
+  "key_risk": {
+    "reading_he": "מחזור האשראי הצרכני בברזיל: נו הגדילה בכוונה את החשיפה ללווים מסוכנים יותר, פיגורי 90+ הגיעו ל-6.9% (הגבוה בשבעה רבעונים), ההפסדים הצפויים עלו 46% בשנה, ופיגורי משקי הבית בברזיל בשיא של 8.09%. במקביל יחס ההון הליבה ירד ל-11.9%. רבעון חלש באשראי יפגע ברווח ובצמיחה יחד.",
+    "evidence_ids": ["dc_k_npl90", "nm_expected_credit_loss_2026q2", "dc_rel_q2_2026", "mc_rt_default", "dc_fs_q2_2026"]
+  },
+  "falsifiers": [
+    {"id": "fx_npl90", "scenario": "base", "metric": "NPL 90+ ratio, quarterly (company KPI)", "threshold": 0.075, "direction": "above", "by": "2027-08-31", "evidence_ids": ["dc_k_npl90"]},
+    {"id": "fx_cet1", "scenario": "base", "metric": "CET1 ratio of the Brazilian prudential conglomerate (6-K IFRS note)", "threshold": 0.11, "direction": "below", "by": "2027-08-31", "evidence_ids": ["dc_fs_q2_2026"]},
+    {"id": "fx_roe_base", "scenario": "base", "metric": "quarterly ROE (company KPI)", "threshold": 0.22, "direction": "below", "by": "2027-08-31", "evidence_ids": ["dc_k_roe"]},
+    {"id": "fx_tax", "scenario": "base", "metric": "FY2026 IFRS effective income tax rate (20-F)", "threshold": 0.3, "direction": "above", "by": "2027-04-30", "evidence_ids": ["dc_fs_q2_2026", "nm_income_tax_fy2025"]},
+    {"id": "fx_bull_growth", "scenario": "bull", "metric": "credit portfolio growth y/y at Q2 2027 (USD, company KPI)", "threshold": 0.25, "direction": "below", "by": "2027-08-31", "evidence_ids": ["dc_k_portfolio", "dc_k_portfolio_q225"]},
+    {"id": "fx_bear_roe", "scenario": "bear", "metric": "quarterly ROE (company KPI) in Q2 2027", "threshold": 0.3, "direction": "above", "by": "2027-08-31", "evidence_ids": ["dc_k_roe"]}
+  ],
+  "reasons_he": {
+    "bear": "מה נשבר: פיגורים שיא בברזיל ותיק שהוסט ללווים מסוכנים מעלים את ההפסדים, ההון הרגולטורי מגביל את הצמיחה, המס עולה והריאל נחלש: התשואה על ההון יורדת קרוב לעלות ההון.",
+    "base": "למה הכי סביר: הצמיחה בלקוחות ובאשראי נמשכת והמימון מפיקדונות זול, אבל הרווח של רבעון 2 נעזר במס נמוך חד-פעמי ולכן התשואה המנורמלת כ-26-28% ודוחקת בהדרגה.",
+    "bull": "מה צריך לקרות: האשראי מתייצב, מקסיקו ורישיון הבנק בברזיל מוסיפים צמיחה, והתשואה על ההון נשארת מעל 30% לאורך שנים בלי לחץ על ההון."
+  },
+  "engine_options": {
+    "country_risk": true,
+    "reason": "Nu discloses revenue by country: Brazil 91.3% of FY2025 and 91.1% of Q2 2026 IFRS revenue, Mexico 6.7-7.2% (20-F note 34b, Q2 6-K segment note)."
+  },
+  "gaps": [
+    "The engine values Nu with the residual-income model (financials route): it takes no operating overrides, so loan growth, NIM, cost of risk, efficiency and the tax normalization cannot move its number; tax_rate is set only to record the normalization (expect warning overrides_not_applied). Reviewers: the engine's trailing ROE uses reported profit with the 14.2% Q2 tax rate, so its start ROE is overstated by about 3-5 points.",
+    "The engine's 'own median ROE' and lower quartile include the FY2021-FY2022 loss years of the pre-scale phase: the base fade target and the bear start may sit far below Nu's normalized 26-28%; read the engine's ROE path against this before trusting the base.",
+    "Regulatory capital (CET1 11.9%, RWA +14.7% in H1) is not modelled by the engine (stated open item): the payout path may be higher than capital allows.",
+    "growth_anchor, mature_margin and other operating levers not set: not used by the residual-income model and there is no revenue guidance (only consensus FY2027 revenue 28.27bn, an expectation).",
+    "Q3 2026 results (2026-11-12) and Investor Day (2026-12-08) are after as_of: the post-election credit and FX read is unknown.",
+    "BRL/USD level and post-election Selic path (Copom 4 Nov 2026) not from a market feed.",
+    "deep_notes points not registered in the gather files (Stage 2 share 10.1% -> 11.9%, coverage 17.4%, BofA/JPM targets, short interest, Itau CET1) are used only where the same fact is in a registered source (dc_fs_q2_2026 holds the staging and capital notes); analyst targets and sentiment are not used."
+  ]
+}

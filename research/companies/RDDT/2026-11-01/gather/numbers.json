@@ -1,0 +1,395 @@
+{
+ "lane": "numbers",
+ "sources": [
+  {
+   "id": "nm_ib_price",
+   "kind": "price",
+   "title": "Interactive Brokers market-data snapshot RDDT (NYSE, contract 692025016), last 92.20, prior close 129.60",
+   "url": "connector:Interactive_Brokers.get_price_snapshot",
+   "date": "2026-10-30",
+   "independent": true,
+   "publisher": "Interactive Brokers",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_ib_history",
+   "kind": "price",
+   "title": "Interactive Brokers monthly price history RDDT 2024-03 to 2026-10",
+   "url": "connector:Interactive_Brokers.get_price_history",
+   "date": "2026-10-30",
+   "independent": true,
+   "publisher": "Interactive Brokers",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_av_statements",
+   "kind": "structured_data",
+   "title": "Alpha Vantage INCOME_STATEMENT, BALANCE_SHEET, CASH_FLOW for RDDT (normalized from SEC)",
+   "url": "connector:Alpha_Vantage.INCOME_STATEMENT",
+   "date": "2026-10-30",
+   "independent": false,
+   "publisher": "Alpha Vantage",
+   "retrieval": "provider_normalized",
+   "syndicated_from": "pf_10q_20261030"
+  },
+  {
+   "id": "nm_av_estimates",
+   "kind": "consensus",
+   "title": "Alpha Vantage EARNINGS_ESTIMATES for RDDT (analyst consensus: n, high, low, revisions)",
+   "url": "connector:Alpha_Vantage.EARNINGS_ESTIMATES",
+   "date": "2026-11-01",
+   "independent": true,
+   "publisher": "Alpha Vantage",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_rel_20241029",
+   "kind": "release",
+   "title": "Reddit Q3 2024 earnings release (8-K 2024-10-29), guidance for Q4 2024",
+   "url": "https://www.sec.gov/Archives/edgar/data/1713445/000171344524000099/earningspressreleaseq324.htm",
+   "date": "2024-10-29",
+   "independent": true,
+   "publisher": "Reddit, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  }
+ ],
+ "facts": [
+  {
+   "id": "nm_adj_ebitda_q_2026_09_30",
+   "metric": "adjusted_ebitda",
+   "period": "Q@2026-09-30",
+   "value": 402265000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_adj_ebitda_9m_2026",
+   "metric": "adjusted_ebitda",
+   "period": "9M@2026-09-30",
+   "value": 1011045000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q_2026_09_30",
+   "metric": "eps_diluted",
+   "period": "Q@2026-09-30",
+   "value": 1.4,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_diluted_wavg_q_2026_09_30",
+   "metric": "shares_diluted_wavg",
+   "period": "Q@2026-09-30",
+   "value": 201860245.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_cash_marketable_q_2026_09_30",
+   "metric": "cash_and_marketable_securities",
+   "period": "Q@2026-09-30",
+   "value": 3033432000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_buyback_9m_2026",
+   "metric": "share_repurchases",
+   "period": "9M@2026-09-30",
+   "value": 339959000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_ttm_net_income_2026_09_30",
+   "metric": "net_income_ttm",
+   "period": "TTM@2026-09-30",
+   "value": 991696000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260206",
+    "pf_cf_20260501",
+    "pf_cf_20260731",
+    "pf_cf_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "derived"
+  }
+ ],
+ "consensus": [
+  {
+   "id": "nm_cons_rev_fy2026",
+   "metric": "revenue",
+   "period": "FY2026",
+   "value": 3391270800.0,
+   "n": 31,
+   "low": 3273000000.0,
+   "high": 3520807190.0,
+   "source_id": "nm_av_estimates"
+  },
+  {
+   "id": "nm_cons_rev_fy2027",
+   "metric": "revenue",
+   "period": "FY2027",
+   "value": 4477065900.0,
+   "n": 33,
+   "low": 3881000000.0,
+   "high": 4866000000.0,
+   "source_id": "nm_av_estimates"
+  },
+  {
+   "id": "nm_cons_eps_fy2026",
+   "metric": "eps_diluted",
+   "period": "FY2026",
+   "value": 5.3945,
+   "n": 29,
+   "low": 4.76,
+   "high": 6.2468,
+   "source_id": "nm_av_estimates"
+  },
+  {
+   "id": "nm_cons_eps_fy2027",
+   "metric": "eps_diluted",
+   "period": "FY2027",
+   "value": 7.1074,
+   "n": 29,
+   "low": 4.35,
+   "high": 8.59,
+   "source_id": "nm_av_estimates"
+  },
+  {
+   "id": "nm_cons_rev_q4_2026",
+   "metric": "revenue",
+   "period": "Q4 2026",
+   "value": 1045313590.0,
+   "n": 26,
+   "low": 947000000.0,
+   "high": 1129000000.0,
+   "source_id": "nm_av_estimates"
+  },
+  {
+   "id": "nm_cons_eps_q4_2026",
+   "metric": "eps_diluted",
+   "period": "Q4 2026",
+   "value": 1.8295,
+   "n": 23,
+   "low": 1.38,
+   "high": 2.11,
+   "source_id": "nm_av_estimates"
+  }
+ ],
+ "guidance_track": [
+  {
+   "period": "Q4 2024",
+   "metric": "revenue",
+   "guided_mid": 392500000.0,
+   "actual": 427707000.0,
+   "source_ids": [
+    "nm_rel_20241029",
+    "pf_rel_20250212_1"
+   ]
+  },
+  {
+   "period": "Q1 2025",
+   "metric": "revenue",
+   "guided_mid": 365000000.0,
+   "actual": 392361000.0,
+   "source_ids": [
+    "pf_rel_20250212_1",
+    "pf_rel_20250501_1"
+   ]
+  },
+  {
+   "period": "Q2 2025",
+   "metric": "revenue",
+   "guided_mid": 420000000.0,
+   "actual": 499627000.0,
+   "source_ids": [
+    "pf_rel_20250501_1",
+    "pf_rel_20250731_1"
+   ]
+  },
+  {
+   "period": "Q3 2025",
+   "metric": "revenue",
+   "guided_mid": 540000000.0,
+   "actual": 584911000.0,
+   "source_ids": [
+    "pf_rel_20250731_1",
+    "pf_rel_20251030_1"
+   ]
+  },
+  {
+   "period": "Q4 2025",
+   "metric": "revenue",
+   "guided_mid": 660000000.0,
+   "actual": 725607000.0,
+   "source_ids": [
+    "pf_rel_20251030_1",
+    "pf_rel_20260205_1"
+   ]
+  },
+  {
+   "period": "Q1 2026",
+   "metric": "revenue",
+   "guided_mid": 600000000.0,
+   "actual": 663411000.0,
+   "source_ids": [
+    "pf_rel_20260205_1",
+    "pf_rel_20260430_1"
+   ]
+  },
+  {
+   "period": "Q2 2026",
+   "metric": "revenue",
+   "guided_mid": 720000000.0,
+   "actual": 804905000.0,
+   "source_ids": [
+    "pf_rel_20260430_1",
+    "pf_rel_20260730_1"
+   ]
+  },
+  {
+   "period": "Q3 2026",
+   "metric": "revenue",
+   "guided_mid": 865000000.0,
+   "actual": 894957000.0,
+   "source_ids": [
+    "pf_rel_20260730_1",
+    "pf_rel_20261029_1"
+   ]
+  },
+  {
+   "period": "Q4 2024",
+   "metric": "adjusted_ebitda",
+   "guided_mid": 117500000.0,
+   "actual": 154330000.0,
+   "source_ids": [
+    "nm_rel_20241029",
+    "pf_rel_20250212_1"
+   ]
+  },
+  {
+   "period": "Q1 2025",
+   "metric": "adjusted_ebitda",
+   "guided_mid": 85000000.0,
+   "actual": 115271000.0,
+   "source_ids": [
+    "pf_rel_20250212_1",
+    "pf_rel_20250501_1"
+   ]
+  },
+  {
+   "period": "Q2 2025",
+   "metric": "adjusted_ebitda",
+   "guided_mid": 120000000.0,
+   "actual": 166749000.0,
+   "source_ids": [
+    "pf_rel_20250501_1",
+    "pf_rel_20250731_1"
+   ]
+  },
+  {
+   "period": "Q3 2025",
+   "metric": "adjusted_ebitda",
+   "guided_mid": 190000000.0,
+   "actual": 236007000.0,
+   "source_ids": [
+    "pf_rel_20250731_1",
+    "pf_rel_20251030_1"
+   ]
+  },
+  {
+   "period": "Q4 2025",
+   "metric": "adjusted_ebitda",
+   "guided_mid": 280000000.0,
+   "actual": 327046000.0,
+   "source_ids": [
+    "pf_rel_20251030_1",
+    "pf_rel_20260205_1"
+   ]
+  },
+  {
+   "period": "Q1 2026",
+   "metric": "adjusted_ebitda",
+   "guided_mid": 215000000.0,
+   "actual": 265970000.0,
+   "source_ids": [
+    "pf_rel_20260205_1",
+    "pf_rel_20260430_1"
+   ]
+  },
+  {
+   "period": "Q2 2026",
+   "metric": "adjusted_ebitda",
+   "guided_mid": 290000000.0,
+   "actual": 342810000.0,
+   "source_ids": [
+    "pf_rel_20260430_1",
+    "pf_rel_20260730_1"
+   ]
+  },
+  {
+   "period": "Q3 2026",
+   "metric": "adjusted_ebitda",
+   "guided_mid": 390000000.0,
+   "actual": 402265000.0,
+   "source_ids": [
+    "pf_rel_20260730_1",
+    "pf_rel_20261029_1"
+   ]
+  }
+ ],
+ "notes": [
+  "nm IDENTITY RDDT = Reddit, Inc. Class A common stock, NYSE, USD, FYE 12-31, CIK 1713445, IB contract 692025016 (SMART/NYSE; a TSE row for RDDT also exists, CAD-type listing, not used). Class B (10 votes, unlisted) 46.2M shares vs Class A 146.9M on 2026-10-28 (10-Q cover); EPS and diluted shares are for A+B combined. No ADR. Sources pf_10q_20261030, pf_10k_20260206.",
+  "nm PRICE last 92.20 at close of Fri 2026-10-30 (ts 23:59 UTC), prior close 129.60, -28.86% on the reaction to the 2026-10-29 results (Q4 revenue guide 1,000-1,030 vs AV consensus 1,045 for Q4, adjusted EBITDA guide 480-510); 52-week high 263.32, low 89.28 (13-week low too). Nov 1 2026 is a Sunday: no later price exists. Source nm_ib_price.",
+  "nm MARKET CAP basis about 146.9M A + 46.2M B = 193.1M shares x 92.20 = ~17.8B basic; diluted weighted 201.9M gives ~18.6B. Cash 1,357.6M plus marketable securities 1,675.8M = 3,033.4M (pf_10q_20261030), lease debt ~31.4M, no financial debt: net cash ~3.0B, about 16% of market cap.",
+  "nm RECONCILIATION FY2025 (10-K vs AV vs companyfacts pf_): revenue 2,202.506M, operating income 441.984M, net income 529.721M, CFO 690.875M, capex 6.706M, SBC 343.180M, diluted EPS 2.62 and diluted shares 202,107,978 all agree exactly, no difference. Note: AV annual 'commonStockSharesOutstanding' 202,107,978 is the diluted weighted figure, not point-in-time shares (10-K cover 2026-02-04: 139,649,508 A + 51,386,276 B = 191.0M).",
+  "nm RECONCILIATION Q3 2026 (10-Q filed 2026-10-30 vs AV vs pf_): revenue 894.957M, income from operations 261.586M, net income 283.264M, diluted EPS 1.40, diluted shares 201,860,245, CFO 363.797M (10-Q text 363.8M), capex 1.229M, SBC 131.306M all agree. 9M check: CFO 312.253+261.876+363.797 = 937.926M = 10-Q 937.9M; SBC 68.336+100.952+131.306 = 300.594M = 10-Q 300.594M; FCF 9M 934.5M per 10-Q. No differences. AV quarterly cash flow rows carry reportedCurrency None for the newest quarter only (cosmetic).",
+  "nm QUALITY OF EARNINGS Q3 2026 net income 283.3M includes other income 27.5M (interest on 3.0B cash and securities) and tax of only 5.8M (2.0% rate: US losses/valuation allowance; FY2025 tax was a net benefit of 1.0M after the valuation-allowance release). Operating income 261.6M (29% margin, GAAP after 131.3M SBC = 14.7% of revenue; SBC rose from 85.2M in Q4 2025). Repurchases 340.0M in 9M 2026 (Q2 234.6M, Q3 100.4M) vs none in 2025: dilution from SBC is partly offset; basic shares 192.6M vs 188.0M a year earlier. A tax rate will normalize upward: do not capitalize 2% tax.",
+  "nm ROIC CHECK prefetch/forensic.json roic is unavailable (inputs missing). Own check from 10-Q: TTM GAAP operating income (231.828+182.912+231.716+261.586) = 908.0M; invested capital: equity 3,581.7M + lease debt 31.4M - cash and marketable securities 3,033.4M = 579.7M operating capital, so NOPAT (21% tax, 717M) / operating capital = ~124% (essentially an asset-light business whose capital is its cash pile). On total capital incl. the 3.0B of cash and securities (3,613M) ROIC is ~20%. Goodwill 42.2M, intangibles 10.1M, receivables 730.1M (up 40% year on year vs revenue up 53%: no sign of stretched collections). Restricted cash is not material per the balance sheet. Operating leases are inside the 31.4M. Sources pf_10q_20261030, nm_av_statements.",
+  "nm AV DENIED none; EARNINGS_ESTIMATES rate limited once (1 request/second burst) on 2026-11-01 and succeeded on the next call; INCOME_STATEMENT, CASH_FLOW, BALANCE_SHEET answered. FMP statements and analyst were not called (ACCESS DENIED on this plan per session_capabilities). Raw AV files are key-field extracts (values verbatim), not the full payloads, see MANIFEST note.",
+  "nm CONSENSUS (attributed to Alpha Vantage EARNINGS_ESTIMATES, pulled 2026-11-01; an expectation, not a fact): FY2026 revenue 3,391M (n 31, 3,273-3,521M), EPS 5.39 (n 29, 4.76-6.25); FY2027 revenue 4,477M (n 33, 3,881-4,866M, +32% over FY2026), EPS 7.11 (n 29, 4.35-8.59); Q4 2026 revenue 1,045M (n 26, 947-1,129M), EPS 1.83 (n 23). FY2026 EPS average was 4.98 90 days ago and 5.38 30 days ago, so revisions were up (2 up, 0 down in 30 days). CAUTION: the feed still shows the Q3 2026 revenue estimate as 874.9M (actual 895.0M) and FY2026 totals that equal 9M actual + pre-print Q4, so the rows seem not yet revised for the 2026-10-29 print and 'revisions' lag it; expect Q4 revenue estimates to fall toward the 1,000-1,030M guide. EPS basis not stated by AV (GAAP Q3 actual 1.40 vs estimate 1.33). Consensus FY2027 EPS 7.11 implies P/E 13.0 at 92.20; FY2026 5.39 implies 17.1.",
+  "nm OWN MULTIPLE HISTORY low 18.7 median 53.5 high 214.7 now 18.8 years 2025-2026 (trailing P/E on month-end closes with TTM GAAP diluted EPS after SBC, TTM net income / 202M diluted shares; history is short: IPO 2024-03, TTM EPS first positive 2025-Q2, so 2025 values 120-215x are on tiny earnings; since 2026-02 low 18.7 median 40.3 high 55.6). Forward P/E now 17.1 on FY2026 consensus EPS 5.39 and 13.0 on FY2027 7.11 (consensus history not available: forward range cannot be built, a gap). Peak-earnings caution: Q3 2026 EPS 1.40 x 4 = 5.60 is not a run rate to capitalize without the tax normalization (2% tax) and the quarter-on-quarter margin expansion (operating margin 29% vs 10% a year earlier on 53% growth). Sources nm_ib_history, pf_net_income_q_2025_03_31 ... pf_net_income_q_2026_09_30, nm_av_estimates.",
+  "nm TRACK RECORD revenue: actual/guided-midpoint ratios Q4'24 1.090, Q1'25 1.075, Q2'25 1.190, Q3'25 1.083, Q4'25 1.099, Q1'26 1.106, Q2'26 1.118, Q3'26 1.035 (8 of 8 guided quarters beat the top of the range; mean about 1.10). Adjusted EBITDA beat the guide midpoint every quarter as well (ratios 1.31, 1.36, 1.39, 1.24, 1.17, 1.24, 1.18, 1.03). The company guides conservatively, but the beat margin on revenue fell to 3.5% in Q3 2026, the smallest in 8 quarters, and the Q4 2026 guide midpoint 1,015M sits below the AV consensus 1,045M: the first time the guide midpoint is under the street. Applying the historical ~1.03-1.10 beat to 1,015M gives ~1,045-1,115M, so the guide itself is not a bearish signal for Q4 revenue; the market reacted to the gap and to deceleration (growth 53% in Q3 vs 61% Q2, 69% Q1). Sources pf_rel_* releases and nm_rel_20241029.",
+  "nm RESULTS DAY the 2026-10-29 release (pf_rel_20261029_1/2) is dated within 2 days of as_of 2026-11-01: citable from 2026-10-31 (ok); the 10-Q filed 2026-10-30 is citable from 2026-11-01 (ok); the AV consensus of 2026-11-01 only from 2026-11-03: consensus rows are expectations, not drivers.",
+  "nm GAP no multi-year forward P/E history (no consensus archive); no price-target page (AV has none; opinions omitted); IB corporate actions: none returned (no splits since the 2024 IPO)."
+ ],
+ "gaps": [
+  "forward P/E history (no archived consensus)",
+  "AV consensus appears not yet revised for the 2026-10-29 print",
+  "raw AV files are key-field extracts, not full payloads",
+  "prefetch forensic roic unavailable, replaced by own check in notes"
+ ],
+ "stopped": []
+}

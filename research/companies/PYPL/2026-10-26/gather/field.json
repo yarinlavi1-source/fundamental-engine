@@ -1,0 +1,17 @@
+{
+  "lane": "field",
+  "sources": [],
+  "competitors": [
+    {"ticker": "AAPL", "name": "Apple Inc. (Apple Pay)", "why": "10-K Item 1 names the category 'digital wallets and mobile payments solutions ... tokenized and contactless payment cards' as competition; Apple Pay is the wallet competing for the same consumer checkout moment and the same e-commerce / in-store merchants as PayPal branded checkout (company names no firm; the match is the analyst's, to be evidenced below).", "metrics": {}, "source_ids": ["pf_10k_20260203"]},
+    {"ticker": "XYZ", "name": "Block, Inc. (Cash App, Square)", "why": "10-K Item 1 names 'P2P payments and money remittance services' and 'card readers and other devices ... at point of sale' as competition; Cash App competes with Venmo for the same US P2P / debit-wallet consumer and Square with PayPal's merchant products (category named by PYPL, firm matched by the analyst).", "metrics": {}, "source_ids": ["pf_10k_20260203"]},
+    {"ticker": "AFRM", "name": "Affirm Holdings, Inc.", "why": "10-K Item 1 names 'credit, installment or other buy now, pay later methods' as competition; Affirm competes with PayPal Pay Later at the same checkout for the same merchants and consumers (category named by PYPL, firm matched by the analyst).", "metrics": {}, "source_ids": ["pf_10k_20260203"]},
+    {"ticker": "ADYEN.AS", "name": "Adyen N.V.", "why": "10-K Item 1 names 'payment card processors' and 'providers offering ... broader platform solutions' as competition; Adyen competes with Braintree (PayPal's unbranded processing / PSP offering) for large enterprise merchants (category named by PYPL, firm matched by the analyst).", "metrics": {}, "source_ids": ["pf_10k_20260203"]},
+    {"ticker": "SHOP", "name": "Shopify Inc. (Shop Pay, Shopify Payments)", "why": "10-K Item 1 names 'tools that simplify and personalize shopping experiences for consumers and merchants' and wallets as competition; Shop Pay is the accelerated-checkout wallet inside the merchant platform where PayPal branded checkout is also offered (category named by PYPL, firm matched by the analyst).", "metrics": {}, "source_ids": ["pf_10k_20260203"]}
+  ],
+  "bottlenecks": [],
+  "notes": [
+    "fd NAMED COMPETITORS (10-K Item 1, source pf_10k_20260203): the 10-K names NO competing company, only categories: banks and financial institutions (credit and debit cards, bank transfers, credit, installments), payment networks / proprietary retail networks, payment card processors and 'card on file' services, digital wallets and mobile payments (tokenized and contactless cards, NFC, QR), buy now pay later, real-time payment systems, P2P and money remittance, card readers / POS devices, value-added payment services (payouts, adaptive payment optimization, FX, risk), virtual currencies / stablecoins / DLT, shopping personalization tools, and cash and checks. Item 1A adds that some competitors are larger and that PYPL 'rel[ies] in part on third parties, including some of our competitors' for access to technologies. The firm-level competitors below are therefore the analyst's matching of those named categories to PYPL's three businesses (branded checkout, Venmo, Braintree) and are labelled as such in each 'why'."
+  ],
+  "gaps": ["competitor metrics not yet filled (in progress)"],
+  "stopped": []
+}

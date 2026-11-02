@@ -1,0 +1,133 @@
+{
+ "ticker": "MA",
+ "as_of": "2026-11-01",
+ "at_utc": "2026-11-01T22:46:03+00:00",
+ "verified": false,
+ "label": "UNVERIFIED draft (טיוטה — ההערכה לא אומתה)",
+ "reasons": [
+  "8 critical finding(s) open"
+ ],
+ "engine_ran": true,
+ "engine_review_status": "unreviewed_draft",
+ "valued": true,
+ "reviews": {
+  "review_trace": {
+   "file": "review/trace.json",
+   "this_attempt": true,
+   "returned": true
+  },
+  "review_numbers": {
+   "file": "review/numbers.json",
+   "this_attempt": true,
+   "returned": true
+  },
+  "review_counter": {
+   "file": "review/counter.json",
+   "this_attempt": true,
+   "returned": true
+  }
+ },
+ "critical": [
+  {
+   "severity": "critical",
+   "finding": "The table shows no fair value ('אין עדיין שווי אמין להצגה') and scenarios_he.md shows no prices. The cause is the unresolved forecast material issue possible_lender: liabilities are 51,409 of 58,149 total assets (88.4%) at 2026-09-30, with no cost-of-revenue line. The 10-Q balance sheet (pf_10q_20261029, reading/10q_2026-10-29.txt lines 262-318 and Note 8 lines 789-800) resolves the issue in favour of the operating classification, but not for the reason assumed. (1) Client funds are small: settlement obligations 2,151 plus restricted security deposits held for customers 2,231 make 4,382, which is 8.5% of liabilities. Matching assets: settlement assets 1,593, restricted deposits 2,231 and restricted cash 564. (2) Most of the liabilities are ordinary corporate items. Debt is 23,938 (short-term 1,749 plus long-term 22,189), 46.6% of liabilities: bonds that fund buybacks, not deposits. Accrued expenses are 13,950, of which customer incentives are 10,333. Other liabilities are 4,683 and accounts payable 1,083. (3) The ratio is high because buybacks shrank equity: treasury stock is 95,201 against retained earnings of 95,640, leaving total equity of 6,740. (4) There is no loan book: assets hold no loans or receivables from cardholders. Investments are 317. Settlement exposure is guaranteed but 'short-term and generally limited to a few days' (line 1069). Revenue is fees (net revenue 9,807 in Q3), interest expense is 653 for 9M, and the casefile card itself notes capex at 1.5% of revenue. MA is an operating fee platform, and FCFF with debt deducted is the right route; residual income is not.",
+   "where": "companies/MA/inputs.json forecast.reviews (no 'classification' entry); casefile fc.spec.underwriting.material_issues[0] possible_lender (unresolved), dc.verdict.withheld_reasons[1], out/table_he.md fair-value row, out/scenarios_he.md",
+   "fix": "Repair: add inputs forecast.reviews.classification = {status: 'reviewed', reviewer: '<named reviewer, e.g. review_numbers 2026-11-01>', note: 'operating fee platform, not a lender: client funds (settlement obligations 2,151 + restricted security deposits 2,231) are 8.5% of liabilities and are matched by restricted assets; debt 23,938 is corporate bonds deducted in the bridge; accrued customer incentives 10,333; the 88% ratio comes from 95.2bn of treasury stock; no loan book', evidence: pf_10q_20261029} (the format _check_reviews accepts) and rerun ticker-value. Keep the restricted 2,795 out of cash, as it is now (opening cash 10,147).",
+   "lens": "numbers"
+  },
+  {
+   "severity": "critical",
+   "finding": "The price claim is withheld and the table shows no fair value because the forecast material issue 'possible_lender' (liabilities 88% of assets, no cost-of-revenue line) is unresolved. The evidence says MA is NOT a lender: the 10-Q at 2026-09-30 (reading/10q_2026-10-29.txt, balance sheet) shows no loan book; liabilities of $51.4bn are accrued expenses $13.95bn (largely accrued customer/merchant incentives, an operating liability), debt $23.9bn (ST $1.749bn + LT $22.189bn), settlement obligations $2.151bn matched by settlement assets $1.593bn, restricted security deposits held for customers $2.231bn matched one-for-one by the same asset line, accrued litigation $0.262bn; equity is small ($6.74bn) because of cumulative buybacks, not deposit funding. Revenue/assets 0.61 and capex 1.5% of revenue (prefetch/classify.json) confirm an operating asset base. The bridge already uses unrestricted cash $10.147bn and excludes restricted cash ($0.564bn) and customer deposits ($2.231bn), which is correct.",
+   "where": "companies/MA/out/casefile.json val.case.underwriting.material_issues[id=possible_lender] and assumption id 'classification' (review_status unreviewed); fc warning code possible_lender; dc withheld_reasons; table_he.md 'שווי הוגן: אין עדיין שווי אמין להצגה'",
+   "fix": "Repair: confirm the operating classification with evidence (cite pf_ 10-Q 2026-10-29 balance sheet: settlement and customer-deposit lines are pass-through and offset; no loans or deposits funding a spread; equity reduced by treasury stock) and mark the 'classification' assumption reviewed so possible_lender resolves; keep the operating FCFF route (residual income would be wrong for a payment network). Then rerun ticker-value so the table can show values.",
+   "lens": "counter"
+  }
+ ],
+ "open_critical": [
+  {
+   "finding": "Result stays a DRAFT: the casefile verdict is withheld for review status unreviewed_draft (no independent review bound to valuation_sha256/inputs_sha256; forecast reviews signers are author notes by engine rule)."
+  },
+  {
+   "finding": "The classification review lives outside the evidence pack: a plain `ticker-value` rerun would drop it and bring possible_lender back; rerun with the same wrapper or re-add forecast.reviews from review/classification_review.json."
+  },
+  {
+   "finding": "Guidance: 12-13% FY2026 revenue and opex ranges are the lane's reading of 'high end of low double digits' / 'low double digits', not management numbers; no guidance track record (guidance_track empty)."
+  },
+  {
+   "finding": "dc_call_20261029 (Motley Fool copy) keeps syndicated_from null: the issuer call is not a pack source, and ticker-check rejects a free-text original; quotes were verified verbatim by review_trace."
+  },
+  {
+   "finding": "Multiples: base year-0 33.7x forward is above the forward-equivalent own median (~31-32x); bull 40.2x near the trailing peak; no evidenced Visa forward P/E."
+  },
+  {
+   "finding": "Terminal spread: base value relies on terminal growth 4.98% vs cost of equity ~8.2-8.7%; reviewer's approximate expectation gap at 4% terminal growth gives ~561$ (below price); capital_structure package and redteam_audit not run in this pass."
+  },
+  {
+   "finding": "Yearly prices hold shares flat (buybacks treated as distributions): year-5 prices exclude dividends and buybacks; label in delivery."
+  },
+  {
+   "finding": "Bear mechanisms (CCCA, UK cap, litigation) are not sized from evidence; Q4 2026 current-year revenue extrapolated at 14.6% vs guided 12-13% (immaterial); PYPL/AXP figures context only; ERP/risk-free dates not paired."
+  }
+ ],
+ "repair": {
+  "fixed": [
+   "possible_lender (critical, numbers + counter): forecast.reviews.classification = {status reviewed, reviewer 'review_numbers + review_counter (MA fast run, 2026-11-01), applied by the repair stage', note: operating fee platform, not a lender (client funds 4,382 = 8.5% of liabilities matched by restricted assets; debt 23,938 corporate bonds deducted in the bridge; accrued customer incentives 10,333; 88% ratio from treasury stock 95,201; no loan book), evidence pf_10q_20261029}. Saved in review/classification_review.json and merged into companies/MA/inputs.json forecast.reviews at ticker-value time (the evidence pack has no key that carries forecast reviews, so ticker-value was run through ticker_run.value with EP.to_inputs wrapped to add it; no engine source edited). Casefile: material issue possible_lender now 'resolved'; table_he.md shows fair value 726$ (12% below) and the yearly table.",
+   "ROIC basis (major, numbers): reinvestment measured over FY2023-25 from the saved 10-K cash flow (pf_10k_20260211): reinvestment 1,105 / 4,203 / 1,362 $m, 16.7% of NOPAT; incremental after-tax return (15,231-11,501)/(4,203+1,362) = 0.67. Scenario ROICs kept (bull 0.70 ~ measured, base 0.50 below it because 9M'26 net prepaid incentives 2.66bn already exceed FY2025's 1.29bn, bear 0.30 hypothesis). position/path.json: base reason_he rewritten on the 3-year measure, pf_10k_20260211 added to base evidence, ROIC gap replaced by the measured arithmetic and its caveats.",
+   "Bear falsifier on the mechanism (minor, counter): position/core.json falsifiers + fx_bear_rebates (FY2027 rebates / gross payment network below 0.52 by 2028-02-28).",
+   "Opening debt 24,200 vs 23,938 (minor, numbers/counter): no change needed: 24,200 = 23,938 10-Q debt + 262 accrued litigation entered as a debt-like claim (forecast_options.debt_like_claims); stated in the classification note."
+  ],
+  "open": [
+   "Result stays a DRAFT: the casefile verdict is withheld for review status unreviewed_draft (no independent review bound to valuation_sha256/inputs_sha256; forecast reviews signers are author notes by engine rule).",
+   "The classification review lives outside the evidence pack: a plain `ticker-value` rerun would drop it and bring possible_lender back; rerun with the same wrapper or re-add forecast.reviews from review/classification_review.json.",
+   "Guidance: 12-13% FY2026 revenue and opex ranges are the lane's reading of 'high end of low double digits' / 'low double digits', not management numbers; no guidance track record (guidance_track empty).",
+   "dc_call_20261029 (Motley Fool copy) keeps syndicated_from null: the issuer call is not a pack source, and ticker-check rejects a free-text original; quotes were verified verbatim by review_trace.",
+   "Multiples: base year-0 33.7x forward is above the forward-equivalent own median (~31-32x); bull 40.2x near the trailing peak; no evidenced Visa forward P/E.",
+   "Terminal spread: base value relies on terminal growth 4.98% vs cost of equity ~8.2-8.7%; reviewer's approximate expectation gap at 4% terminal growth gives ~561$ (below price); capital_structure package and redteam_audit not run in this pass.",
+   "Yearly prices hold shares flat (buybacks treated as distributions): year-5 prices exclude dividends and buybacks; label in delivery.",
+   "Bear mechanisms (CCCA, UK cap, litigation) are not sized from evidence; Q4 2026 current-year revenue extrapolated at 14.6% vs guided 12-13% (immaterial); PYPL/AXP figures context only; ERP/risk-free dates not paired."
+  ],
+  "ran": true
+ },
+ "returned": [
+  "analyst",
+  "analyst_field",
+  "analyst_path",
+  "gather_documents",
+  "gather_field",
+  "gather_macro",
+  "gather_numbers",
+  "repair",
+  "review_counter",
+  "review_numbers",
+  "review_trace"
+ ],
+ "times": {
+  "started_at_utc": "2026-11-01T22:14:56+00:00",
+  "prefetch_finished_at_utc": "2026-11-01T22:15:09+00:00",
+  "minutes_after_start": {
+   "gather/_prefetch.json": 0.2,
+   "gather/documents.json": 16.5,
+   "gather/field.json": 2.5,
+   "gather/macro.json": 2.0,
+   "gather/numbers.json": 2.6,
+   "gather/understand_field.json": 6.7,
+   "understand/auto.json": 4.1,
+   "understand/business.json": 7.6,
+   "understand/econ_case.json": 4.0,
+   "understand/econ_result.json": 4.0,
+   "understand/quarter_case.json": 3.9,
+   "understand/quarter_result.json": 3.9,
+   "prep.json": 4.1,
+   "position/core.json": 16.3,
+   "position/field.json": 7.9,
+   "position/path.json": 16.1,
+   "value.json": 16.6,
+   "review/trace.json": 8.4,
+   "review/numbers.json": 13.3,
+   "review/counter.json": 14.6,
+   "review/repair.json": 17.0
+  },
+  "elapsed_minutes": 17.0
+ },
+ "meaning": "verified needs: the engine ran in this attempt, the three reviewers returned (files of this attempt AND the main loop's record), no critical finding open after the one repair pass. The engine's own review status is reported beside it, never replaced by it."
+}

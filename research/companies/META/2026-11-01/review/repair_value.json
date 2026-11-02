@@ -1,0 +1,17 @@
+{
+  "trigger": "value",
+  "fixed": [
+    "valuation stage 'ValueError: Funding marked none but cash financing supplied': this engine version has no input to declare a locked equity_proceeds override as committed (forecast._fund only sets financing_status 'assumed' for engine-added money and otherwise defaults it to 'none'; forecast_options.financing only takes assumed|assumed_debt|none), so the contracted forward-sale equity_proceeds driver (24.92B in FY2027) was removed from position/core.json drivers and recorded in core.json gaps; no financing was invented and the engine and rules were not changed; ticker-value reran: ran true, every stage ok"
+  ],
+  "open": [
+    "The contracted forward sale (40,000,000 Class A shares at an initial forward price of 622.91875, about 24.92B net, settlement on or before 2027-11-19) is left out of the run, cash and shares together. Because the base value (about 875) is above the issue price, leaving it out overstates the base by about 4 USD a share (about 0.5%); the bear (about 475) is understated by about 2 USD. Immaterial to the verdict but not zero. A later engine version needs a way to mark contracted equity proceeds as committed",
+    "The base thesis_he still says the October 2026 offering adds about 40M shares: true as an event, but the shares are not in the modelled share count (see gaps)"
+  ],
+  "ran": true,
+  "casefile": "/home/user/fundamental-engine/runs/tickers/META_2026-11-01/companies/META/out/casefile.json",
+  "changed_files": [
+    "/home/user/fundamental-engine/runs/tickers/META_2026-11-01/position/core.json",
+    "/home/user/fundamental-engine/runs/tickers/META_2026-11-01/value.json",
+    "/home/user/fundamental-engine/runs/tickers/META_2026-11-01/review/repair_value.json"
+  ]
+}

@@ -1,0 +1,23 @@
+{"trigger": "review",
+ "fixed": [
+  "critical (numbers) finance leases: registered finance-lease ROU additions as facts (rf_fin_lease_rou_fy2024 11,633M / fy2025 20,511M / fy2026 24,608M from pf_10k_20260729, read at reading/10k_full.txt ~7408; rf_fin_lease_rou_q1fy27 5,192M from pf_10q_20261028) in gather/repair.json; reset drivers.sales_to_capital in position/core.json on the lease-inclusive basis (3-year 0.57, FY2026 0.47, FY2025 0.58, FY2024 0.81): bear 0.42 (below the FY2026 low) / base 0.55 / bull 0.75, so the reinvestment basis matches the finance-lease debt deduction",
+  "critical (counter) terminal ROIC: added drivers.terminal_roic bear 0.14 / base 0.22 / bull 0.31, equal to position/path.json roic, base/bull own_history (lease-inclusive after-tax incremental ROIC 0.25 three-year, 0.20 FY2026, 0.24 FY2025), bear analyst tier (stress hypothesis below the record, shown as a gap); casefile now shows engine_terminal_roic = path roic in every scenario (0.14/0.22/0.31)",
+  "major (counter) OpenAI backlog: registered rf_rpo_growth_total_q4fy26 0.84 and rf_rpo_growth_ex_openai_q4fy26 0.25 (dc_call_fy26q4); added to key_risk reading and evidence, growth_anchor bear reason, and a new evidenced bear scenario event",
+  "major (counter) falsifiers: fx_bear_margin -> FY2028 operating margin above 0.44 by 2028-08-15; fx_bull_rpo threshold -> 750B by 2027-05-15; fx_bear_openai -> RPO growth ex-OpenAI above 0.25 by 2027-08-15; new fx_bear_azure (Azure growth above 0.35 Q4 FY2027 by 2027-08-15)",
+  "major (numbers/trace) guidance track: gather/repair.json guidance_track rows for Q1 FY2027 revenue (mid 90.40B vs 92.279B, ratio 1.021), cost of revenue, opex and the capex floor (45.2B call-defined vs >50B); guidance rows FY2027 operating margin change (-0.01 to 0, 'down less than 1 point', verified in the transcript), FY2027 tax 0.20, CY2026 capex ~175B (July call)",
+  "major (numbers/counter) bear 14% ROIC: labelled in the bear hypothesis event as a stress assumption below every year of the record with a multiple below the 5-year low",
+  "rerun ticker-value: ran true; base fair value moves from 546$ to 473$ (price 523$, now about 11% expensive instead of 4% cheap); base path value year 0 489$"
+ ],
+ "open": [
+  "dc_capex_incl_leases_q1fy27 / q4fy26 in gather/documents.json still carry the call-defined metric name; the reconciliation to the 10-Q (39.367B cash PP&E + 5.192B finance leases = 44.6B vs 45.2B on the call) is noted in gather/repair.json but the documents fragment was not relabelled (major, not critical)",
+  "CY2026 capex guide: only the July ~175B statement was read; the Q1 FY2027 call restatement (~170B per review_trace) was not re-read",
+  "terminal_roic bear 0.14 remains an unevidenced stress hypothesis (analyst tier, visible gap in the table)"
+ ],
+ "ran": true,
+ "casefile": "/home/user/fundamental-engine/runs/tickers/MSFT_2026-11-01/companies/MSFT/out/casefile.json",
+ "changed_files": [
+  "/home/user/fundamental-engine/runs/tickers/MSFT_2026-11-01/gather/repair.json",
+  "/home/user/fundamental-engine/runs/tickers/MSFT_2026-11-01/position/core.json",
+  "/home/user/fundamental-engine/runs/tickers/MSFT_2026-11-01/value.json",
+  "/home/user/fundamental-engine/runs/tickers/MSFT_2026-11-01/review/repair.json"
+ ]}

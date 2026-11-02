@@ -1,0 +1,1534 @@
+{
+ "lane": "documents",
+ "sources": [
+  {
+   "id": "dc_av_call_20261021",
+   "kind": "transcript",
+   "title": "Meta Platforms Q3 2026 earnings call transcript (Alpha Vantage EARNINGS_CALL_TRANSCRIPT, symbol META, quarter 2026Q3)",
+   "url": "connector:mcp__Alpha_Vantage_MCP_Server__EARNINGS_CALL_TRANSCRIPT",
+   "date": "2026-10-21",
+   "independent": false,
+   "publisher": "Alpha Vantage (provider copy of the issuer's call)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "dc_s3asr_20261026",
+   "kind": "sec_filing",
+   "title": "Form S-3ASR automatic shelf registration (No. 333-299631), filed 2026-10-26",
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526431009/d127909ds3asr.htm",
+   "date": "2026-10-26",
+   "independent": false,
+   "publisher": "Meta Platforms, Inc. (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "dc_fwp_launch_20261026",
+   "kind": "sec_filing",
+   "title": "Issuer free writing prospectus: launch of depositary shares and forward-sale common offering and financing plan (incl. ~60B ATM plan)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526431036/d116268dfwp.htm",
+   "date": "2026-10-26",
+   "independent": false,
+   "publisher": "Meta Platforms, Inc. (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "dc_fwp_pricing_20261026",
+   "kind": "sec_filing",
+   "title": "FWP pricing term sheet, concurrent Class A common (forward) and 6.50% Series A mandatory convertible preferred offerings",
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526432549/d382225dfwp.htm",
+   "date": "2026-10-27",
+   "independent": false,
+   "publisher": "Meta Platforms, Inc. (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "dc_424b5_fwd_20261028",
+   "kind": "sec_filing",
+   "title": "424B5 final prospectus supplement, 40,000,000 Class A shares via forward sale agreements",
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526436410/d94886d424b5.htm",
+   "date": "2026-10-28",
+   "independent": false,
+   "publisher": "Meta Platforms, Inc. (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "dc_424b5_pref_20261028",
+   "kind": "sec_filing",
+   "title": "424B5 final prospectus supplement, 250,000,000 Series A depositary shares (6.50% mandatory convertible preferred)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526436405/d133631d424b5.htm",
+   "date": "2026-10-28",
+   "independent": false,
+   "publisher": "Meta Platforms, Inc. (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "dc_8k_20261029",
+   "kind": "sec_filing",
+   "title": "8-K (items 1.01, 3.03, 5.03, 9.01) filed 2026-10-29: underwriting and forward sale agreements, certificates of designations",
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526438017/d183592d8k.htm",
+   "date": "2026-10-29",
+   "independent": false,
+   "publisher": "Meta Platforms, Inc. (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  }
+ ],
+ "facts": [
+  {
+   "id": "dc_advertising_revenue_q3_2026",
+   "metric": "advertising_revenue",
+   "period": "Q@2026-09-30",
+   "value": 63061000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261021_1",
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_advertising_revenue_q3_2025",
+   "metric": "advertising_revenue",
+   "period": "Q@2025-09-30",
+   "value": 50082000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261021_1",
+    "pf_10q_20261022"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_advertising_revenue_q2_2026",
+   "metric": "advertising_revenue",
+   "period": "Q@2026-06-30",
+   "value": 59363000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260729_1"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_advertising_revenue_q1_2026",
+   "metric": "advertising_revenue",
+   "period": "Q@2026-03-31",
+   "value": 55024000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260429_1"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_advertising_revenue_q4_2025",
+   "metric": "advertising_revenue",
+   "period": "Q@2025-12-31",
+   "value": 58137000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260128_1"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_advertising_revenue_fy2025",
+   "metric": "advertising_revenue",
+   "period": "FY2025",
+   "value": 196175000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260128_1"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_advertising_revenue_fy2024",
+   "metric": "advertising_revenue",
+   "period": "FY2024",
+   "value": 160633000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260128_1"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_foa_other_revenue_q3_2026",
+   "metric": "foa_other_revenue",
+   "period": "Q@2026-09-30",
+   "value": 1097000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261021_1",
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_foa_other_revenue_q3_2025",
+   "metric": "foa_other_revenue",
+   "period": "Q@2025-09-30",
+   "value": 690000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261021_1",
+    "pf_10q_20261022"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_cost_of_revenue_q3_2026",
+   "metric": "cost_of_revenue",
+   "period": "Q@2026-09-30",
+   "value": 13369000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261021_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_cost_of_revenue_q3_2025",
+   "metric": "cost_of_revenue",
+   "period": "Q@2025-09-30",
+   "value": 9206000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261021_1"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_total_costs_expenses_q3_2026",
+   "metric": "total_costs_and_expenses",
+   "period": "Q@2026-09-30",
+   "value": 51613000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261021_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_total_costs_expenses_9m_2026",
+   "metric": "total_costs_and_expenses",
+   "period": "9M@2026-09-30",
+   "value": 127077000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261021_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_total_costs_expenses_fy2025",
+   "metric": "total_costs_and_expenses",
+   "period": "FY2025",
+   "value": 117690000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260128_1"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "dc_capex_incl_finance_leases_q3_2026",
+   "metric": "capex_incl_finance_leases",
+   "period": "Q@2026-09-30",
+   "value": 34910000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261021_1",
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_capex_incl_finance_leases_9m_2026",
+   "metric": "capex_incl_finance_leases",
+   "period": "9M@2026-09-30",
+   "value": 85820000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_capex_incl_finance_leases_fy2025",
+   "metric": "capex_incl_finance_leases",
+   "period": "FY2025",
+   "value": 72220000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260128_1"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fcf_q3_2026",
+   "metric": "free_cash_flow_company_definition",
+   "period": "Q@2026-09-30",
+   "value": -2120000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261021_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fcf_9m_2026",
+   "metric": "free_cash_flow_company_definition",
+   "period": "9M@2026-09-30",
+   "value": 11049000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261021_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_cash_equivalents_q3_2026",
+   "metric": "cash_and_cash_equivalents",
+   "period": "Q@2026-09-30",
+   "value": 11222000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261021_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_marketable_securities_q3_2026",
+   "metric": "marketable_securities",
+   "period": "Q@2026-09-30",
+   "value": 71227000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261021_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_restricted_cash_total_q3_2026",
+   "metric": "restricted_cash_and_equivalents",
+   "period": "Q@2026-09-30",
+   "value": 13132000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261021_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "derived"
+  },
+  {
+   "id": "dc_escrow_restricted_mmf_q3_2026",
+   "metric": "escrow_money_market_funds_reclassified_restricted",
+   "period": "Q@2026-09-30",
+   "value": 10800000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_long_term_debt_face_q3_2026",
+   "metric": "senior_notes_face_value",
+   "period": "Q@2026-09-30",
+   "value": 84000000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_long_term_debt_noncurrent_q3_2026",
+   "metric": "long_term_debt_noncurrent",
+   "period": "Q@2026-09-30",
+   "value": 80922000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261021_1",
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_long_term_debt_current_q3_2026",
+   "metric": "long_term_debt_current",
+   "period": "Q@2026-09-30",
+   "value": 2747000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_notes_fair_value_q3_2026",
+   "metric": "senior_notes_fair_value",
+   "period": "Q@2026-09-30",
+   "value": 73310000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_notes_interest_expense_q3_2026",
+   "metric": "notes_interest_expense_net_of_capitalized",
+   "period": "Q@2026-09-30",
+   "value": 882000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_notes_interest_expense_q3_2025",
+   "metric": "notes_interest_expense_net_of_capitalized",
+   "period": "Q@2025-09-30",
+   "value": 205000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_noncancelable_commitments_q3_2026",
+   "metric": "noncancelable_contractual_commitments",
+   "period": "Q@2026-09-30",
+   "value": 454520000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_commitments_due_2026",
+   "metric": "noncancelable_commitments_due_2026_remainder",
+   "period": "FY2026",
+   "value": 45850000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_commitments_due_2027",
+   "metric": "noncancelable_commitments_due_2027",
+   "period": "FY2027",
+   "value": 121410000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2027-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_contingent_cloud_purchase_q3_2026",
+   "metric": "contingent_cloud_capacity_purchase_obligation_5y",
+   "period": "Q@2026-09-30",
+   "value": 14720000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_leases_not_commenced_q3_2026",
+   "metric": "leases_not_yet_commenced",
+   "period": "Q@2026-09-30",
+   "value": 355730000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_dc_ventures_max_exposure_q3_2026",
+   "metric": "data_center_ventures_max_exposure_to_loss",
+   "period": "Q@2026-09-30",
+   "value": 68404000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_dc_ventures_rvg_q3_2026",
+   "metric": "data_center_ventures_residual_value_guarantees_max",
+   "period": "Q@2026-09-30",
+   "value": 41493000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_dc_ventures_lease_commit_q3_2026",
+   "metric": "data_center_ventures_lease_commitments",
+   "period": "Q@2026-09-30",
+   "value": 18476000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_legal_charge_ag_q3_2026",
+   "metric": "legal_charge_state_attorneys_general_agreement",
+   "period": "Q@2026-09-30",
+   "value": 9890000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261021_1",
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_ag_agreement_total_payments",
+   "metric": "ag_agreement_total_payments_up_to",
+   "period": "Q@2026-09-30",
+   "value": 18590000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261021_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_ag_agreement_installments",
+   "metric": "ag_agreement_payable_annual_installments_10y",
+   "period": "Q@2026-09-30",
+   "value": 12700000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_ag_agreement_contingent_unaccrued",
+   "metric": "ag_agreement_contingent_amount_not_accrued",
+   "period": "Q@2026-09-30",
+   "value": 5300000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_legal_accruals_current_q3_2026",
+   "metric": "legal_related_accruals_current",
+   "period": "Q@2026-09-30",
+   "value": 11577000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_legal_accruals_noncurrent_q3_2026",
+   "metric": "legal_related_accruals_noncurrent",
+   "period": "Q@2026-09-30",
+   "value": 8304000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_legal_charges_q2_2026",
+   "metric": "legal_proceedings_charges",
+   "period": "Q@2026-06-30",
+   "value": 2400000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260729_1"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_severance_9m_2026",
+   "metric": "severance_may_2026_headcount_reduction",
+   "period": "9M@2026-09-30",
+   "value": 1180000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_tax_camt_benefit_q1_2026",
+   "metric": "discrete_income_tax_benefit_camt_relief",
+   "period": "Q@2026-03-31",
+   "value": 8030000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_tax_obbba_charge_q3_2025",
+   "metric": "discrete_income_tax_charge_obbba_enactment",
+   "period": "Q@2025-09-30",
+   "value": 15930000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_unrecognized_tax_benefits_q3_2026",
+   "metric": "gross_unrecognized_tax_benefits",
+   "period": "Q@2026-09-30",
+   "value": 20820000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_shares_class_a_oct2026",
+   "metric": "class_a_shares_outstanding",
+   "period": "Q@2026-09-30",
+   "value": 2214472367,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-10-16",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_shares_class_b_oct2026",
+   "metric": "class_b_shares_outstanding",
+   "period": "Q@2026-09-30",
+   "value": 341768886,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-10-16",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_buyback_remaining_authorization_q3_2026",
+   "metric": "share_repurchase_remaining_authorization",
+   "period": "Q@2026-09-30",
+   "value": 25030000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_net_share_settlement_taxes_q3_2026",
+   "metric": "taxes_paid_net_share_settlement_of_equity_awards",
+   "period": "Q@2026-09-30",
+   "value": 4064000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261021_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_dividends_paid_q3_2026",
+   "metric": "dividends_and_equivalents_paid",
+   "period": "Q@2026-09-30",
+   "value": 1361000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261021_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_dividend_per_share_q3_2026",
+   "metric": "dividend_per_share_quarterly",
+   "period": "Q@2026-09-30",
+   "value": 0.525,
+   "unit": "USD_per_share",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_headcount_reduction_may_2026",
+   "metric": "headcount_reduction_may_2026",
+   "period": "Q@2026-06-30",
+   "value": 8000,
+   "unit": "count",
+   "source_ids": [
+    "pf_10q_20261022",
+    "pf_rel_20260729_1"
+   ],
+   "period_end": "2026-05-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_ppe_net_q3_2026",
+   "metric": "property_and_equipment_net",
+   "period": "Q@2026-09-30",
+   "value": 253222000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261021_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_nonmarketable_equity_inv_q3_2026",
+   "metric": "non_marketable_equity_investments",
+   "period": "Q@2026-09-30",
+   "value": 32624000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261021_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_eq_fwd_shares_oct2026",
+   "metric": "forward_sale_class_a_shares",
+   "period": "2026-10-26",
+   "value": 40000000,
+   "unit": "shares",
+   "source_ids": [
+    "dc_424b5_fwd_20261028",
+    "dc_fwp_pricing_20261026"
+   ],
+   "period_end": "2026-10-26",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_eq_fwd_option_shares_oct2026",
+   "metric": "forward_sale_class_a_option_shares",
+   "period": "2026-10-26",
+   "value": 6000000,
+   "unit": "shares",
+   "source_ids": [
+    "dc_424b5_fwd_20261028",
+    "dc_fwp_pricing_20261026"
+   ],
+   "period_end": "2026-10-26",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_eq_public_price_oct2026",
+   "metric": "class_a_public_offering_price",
+   "period": "2026-10-26",
+   "value": 625.0,
+   "unit": "USD per share",
+   "source_ids": [
+    "dc_424b5_fwd_20261028",
+    "dc_fwp_pricing_20261026"
+   ],
+   "period_end": "2026-10-26",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_eq_fwd_price_oct2026",
+   "metric": "forward_sale_initial_price",
+   "period": "2026-10-26",
+   "value": 622.91875,
+   "unit": "USD per share",
+   "source_ids": [
+    "dc_424b5_fwd_20261028",
+    "dc_fwp_pricing_20261026"
+   ],
+   "period_end": "2026-10-26",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_eq_fwd_gross_oct2026",
+   "metric": "common_offering_gross_size",
+   "period": "2026-10-26",
+   "value": 25000000000,
+   "unit": "USD",
+   "source_ids": [
+    "dc_424b5_fwd_20261028",
+    "dc_fwp_pricing_20261026"
+   ],
+   "period_end": "2026-10-26",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_eq_fwd_net_oct2026",
+   "metric": "forward_sale_expected_net_proceeds_at_settlement",
+   "period": "2026-10-26",
+   "value": 24916750000,
+   "unit": "USD",
+   "source_ids": [
+    "dc_424b5_fwd_20261028",
+    "dc_fwp_pricing_20261026"
+   ],
+   "period_end": "2026-10-26",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_eq_pref_gross_oct2026",
+   "metric": "mandatory_convertible_preferred_gross_size",
+   "period": "2026-10-26",
+   "value": 12500000000,
+   "unit": "USD",
+   "source_ids": [
+    "dc_424b5_pref_20261028",
+    "dc_fwp_pricing_20261026"
+   ],
+   "period_end": "2026-10-26",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_eq_pref_net_oct2026",
+   "metric": "mandatory_convertible_preferred_net_proceeds",
+   "period": "2026-10-26",
+   "value": 12458375000,
+   "unit": "USD",
+   "source_ids": [
+    "dc_424b5_pref_20261028",
+    "dc_fwp_pricing_20261026"
+   ],
+   "period_end": "2026-10-26",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_eq_pref_rate_oct2026",
+   "metric": "mandatory_convertible_preferred_dividend_rate",
+   "period": "2026-10-26",
+   "value": 0.065,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_424b5_pref_20261028",
+    "dc_fwp_pricing_20261026"
+   ],
+   "period_end": "2026-10-26",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_eq_pref_annual_div_oct2026",
+   "metric": "mandatory_convertible_preferred_annual_dividend_on_12.5B",
+   "period": "2026-10-26",
+   "value": 812500000,
+   "unit": "USD per year",
+   "source_ids": [
+    "dc_424b5_pref_20261028",
+    "dc_fwp_pricing_20261026"
+   ],
+   "period_end": "2026-10-26",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_eq_pref_max_rate_oct2026",
+   "metric": "mandatory_convertible_max_conversion_rate_per_preferred_share",
+   "period": "2026-10-26",
+   "value": 1.6,
+   "unit": "shares",
+   "source_ids": [
+    "dc_424b5_pref_20261028",
+    "dc_fwp_pricing_20261026"
+   ],
+   "period_end": "2026-10-26",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_eq_pref_min_rate_oct2026",
+   "metric": "mandatory_convertible_min_conversion_rate_per_preferred_share",
+   "period": "2026-10-26",
+   "value": 1.362,
+   "unit": "shares",
+   "source_ids": [
+    "dc_424b5_pref_20261028",
+    "dc_fwp_pricing_20261026"
+   ],
+   "period_end": "2026-10-26",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_eq_pref_shares_oct2026",
+   "metric": "mandatory_convertible_preferred_shares_issued",
+   "period": "2026-10-26",
+   "value": 12500000,
+   "unit": "preferred shares",
+   "source_ids": [
+    "dc_424b5_pref_20261028",
+    "dc_fwp_pricing_20261026"
+   ],
+   "period_end": "2026-10-26",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_eq_pref_initial_price_oct2026",
+   "metric": "mandatory_convertible_initial_price",
+   "period": "2026-10-26",
+   "value": 625.0,
+   "unit": "USD per share",
+   "source_ids": [
+    "dc_424b5_pref_20261028",
+    "dc_fwp_pricing_20261026"
+   ],
+   "period_end": "2026-10-26",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_eq_pref_threshold_oct2026",
+   "metric": "mandatory_convertible_threshold_appreciation_price",
+   "period": "2026-10-26",
+   "value": 734.2144,
+   "unit": "USD per share",
+   "source_ids": [
+    "dc_424b5_pref_20261028",
+    "dc_fwp_pricing_20261026"
+   ],
+   "period_end": "2026-10-26",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_eq_class_a_sep30",
+   "metric": "class_a_shares_outstanding_prospectus_base",
+   "period": "2026-09-30",
+   "value": 2214455318,
+   "unit": "shares",
+   "source_ids": [
+    "dc_424b5_fwd_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_eq_debt_sep30",
+   "metric": "total_consolidated_indebtedness_per_prospectus",
+   "period": "2026-09-30",
+   "value": 83700000000,
+   "unit": "USD",
+   "source_ids": [
+    "dc_424b5_pref_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_eq_last_sale_oct26",
+   "metric": "class_a_nasdaq_last_sale_price",
+   "period": "2026-10-26",
+   "value": 630.56,
+   "unit": "USD per share",
+   "source_ids": [
+    "dc_fwp_pricing_20261026"
+   ],
+   "period_end": "2026-10-26",
+   "basis": "reported"
+  }
+ ],
+ "guidance": [
+  {
+   "id": "dc_g_revenue_q4_2026",
+   "metric": "revenue",
+   "period": "Q4 FY2026",
+   "low": 73000000000,
+   "high": 76000000000,
+   "unit": "USD",
+   "issued": "2026-10-21",
+   "source_id": "pf_rel_20261021_1"
+  },
+  {
+   "id": "dc_g_total_expenses_fy2026",
+   "metric": "total_expenses",
+   "period": "FY2026",
+   "low": 175000000000,
+   "high": 179000000000,
+   "unit": "USD",
+   "issued": "2026-10-21",
+   "source_id": "pf_rel_20261021_1"
+  },
+  {
+   "id": "dc_g_capex_fy2026",
+   "metric": "capex_incl_finance_leases",
+   "period": "FY2026",
+   "low": 135000000000,
+   "high": 145000000000,
+   "unit": "USD",
+   "issued": "2026-10-21",
+   "source_id": "pf_rel_20261021_1"
+  },
+  {
+   "id": "dc_g_reality_labs_loss_fy2026",
+   "metric": "reality_labs_operating_loss",
+   "period": "FY2026",
+   "low": 18000000000,
+   "high": 19000000000,
+   "unit": "USD",
+   "issued": "2026-10-21",
+   "source_id": "pf_rel_20261021_1"
+  },
+  {
+   "id": "dc_g_tax_rate_q4_2026",
+   "metric": "effective_tax_rate",
+   "period": "Q4 FY2026",
+   "low": 0.15,
+   "high": 0.17,
+   "unit": "ratio",
+   "issued": "2026-10-21",
+   "source_id": "pf_rel_20261021_1"
+  },
+  {
+   "id": "dc_g_reality_labs_loss_fy2027",
+   "metric": "reality_labs_operating_loss",
+   "period": "FY2027",
+   "low": 15000000000,
+   "high": 15000000000,
+   "unit": "USD",
+   "issued": "2026-10-21",
+   "source_id": "pf_rel_20261021_1"
+  }
+ ],
+ "kpis": [
+  {
+   "id": "dc_kpi_dap_sep2026",
+   "name": "Family daily active people, average for the last month of the quarter (people)",
+   "period": "Q@2026-09-30",
+   "value": 3640000000,
+   "unit": "people",
+   "source_ids": [
+    "pf_rel_20261021_1",
+    "pf_10q_20261022"
+   ]
+  },
+  {
+   "id": "dc_kpi_dap_sep2025",
+   "name": "Family daily active people, average for the last month of the quarter (people)",
+   "period": "Q@2025-09-30",
+   "value": 3540000000,
+   "unit": "people",
+   "source_ids": [
+    "pf_10q_20261022"
+   ]
+  },
+  {
+   "id": "dc_kpi_dap_jun2026",
+   "name": "Family daily active people, average for the last month of the quarter (people)",
+   "period": "Q@2026-06-30",
+   "value": 3600000000,
+   "unit": "people",
+   "source_ids": [
+    "pf_rel_20260729_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_dap_mar2026",
+   "name": "Family daily active people, average for the last month of the quarter (people)",
+   "period": "Q@2026-03-31",
+   "value": 3560000000,
+   "unit": "people",
+   "source_ids": [
+    "pf_rel_20260429_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_dap_dec2025",
+   "name": "Family daily active people, average for the last month of the quarter (people)",
+   "period": "Q@2025-12-31",
+   "value": 3580000000,
+   "unit": "people",
+   "source_ids": [
+    "pf_rel_20260128_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_arpp_q3_2026",
+   "name": "ARPP, Family of Apps revenue per average person (USD per quarter)",
+   "period": "Q@2026-09-30",
+   "value": 17.72,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ]
+  },
+  {
+   "id": "dc_kpi_arpp_q3_2025",
+   "name": "ARPP, Family of Apps revenue per average person (USD per quarter)",
+   "period": "Q@2025-09-30",
+   "value": 14.46,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ]
+  },
+  {
+   "id": "dc_kpi_arpp_q2_2026",
+   "name": "ARPP, Family of Apps revenue per average person (USD per quarter)",
+   "period": "Q@2026-06-30",
+   "value": 16.86,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ]
+  },
+  {
+   "id": "dc_kpi_arpp_q1_2026",
+   "name": "ARPP, Family of Apps revenue per average person (USD per quarter)",
+   "period": "Q@2026-03-31",
+   "value": 15.66,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ]
+  },
+  {
+   "id": "dc_kpi_arpp_q4_2025",
+   "name": "ARPP, Family of Apps revenue per average person (USD per quarter)",
+   "period": "Q@2025-12-31",
+   "value": 16.56,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ]
+  },
+  {
+   "id": "dc_kpi_impressions_growth_q3_2026",
+   "name": "Ad impressions growth y/y",
+   "period": "Q@2026-09-30",
+   "value": 0.1,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261021_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_impressions_growth_q2_2026",
+   "name": "Ad impressions growth y/y",
+   "period": "Q@2026-06-30",
+   "value": 0.14,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20260729_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_impressions_growth_q1_2026",
+   "name": "Ad impressions growth y/y",
+   "period": "Q@2026-03-31",
+   "value": 0.19,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20260429_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_impressions_growth_q4_2025",
+   "name": "Ad impressions growth y/y",
+   "period": "Q@2025-12-31",
+   "value": 0.18,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20260128_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_price_per_ad_growth_q3_2026",
+   "name": "Average price per ad growth y/y",
+   "period": "Q@2026-09-30",
+   "value": 0.14,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261021_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_price_per_ad_growth_q2_2026",
+   "name": "Average price per ad growth y/y",
+   "period": "Q@2026-06-30",
+   "value": 0.12,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20260729_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_price_per_ad_growth_q1_2026",
+   "name": "Average price per ad growth y/y",
+   "period": "Q@2026-03-31",
+   "value": 0.12,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20260429_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_price_per_ad_growth_q4_2025",
+   "name": "Average price per ad growth y/y",
+   "period": "Q@2025-12-31",
+   "value": 0.06,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20260128_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_headcount_q3_2026",
+   "name": "Headcount (employees)",
+   "period": "Q@2026-09-30",
+   "value": 66775,
+   "unit": "count",
+   "source_ids": [
+    "pf_rel_20261021_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_headcount_q2_2026",
+   "name": "Headcount (employees)",
+   "period": "Q@2026-06-30",
+   "value": 75472,
+   "unit": "count",
+   "source_ids": [
+    "pf_rel_20260729_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_headcount_q4_2025",
+   "name": "Headcount (employees)",
+   "period": "Q@2025-12-31",
+   "value": 78865,
+   "unit": "count",
+   "source_ids": [
+    "pf_rel_20260128_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_partnership_ads_runrate_q3_2026",
+   "name": "Partnership ads annual revenue run rate (more than; management statement on the call)",
+   "period": "Q@2026-09-30",
+   "value": 15000000000,
+   "unit": "USD",
+   "source_ids": [
+    "dc_av_call_20261021"
+   ]
+  },
+  {
+   "id": "dc_kpi_meta_one_subscriptions_q3_2026",
+   "name": "Meta One subscriptions and trials to date (more than; management statement on the call)",
+   "period": "Q@2026-09-30",
+   "value": 15000000,
+   "unit": "count",
+   "source_ids": [
+    "dc_av_call_20261021"
+   ]
+  },
+  {
+   "id": "dc_kpi_muse_setups_us_canada",
+   "name": "People in US and Canada who set up a Muse personal agent in about six weeks (more than; management statement on the call)",
+   "period": "Q@2026-09-30",
+   "value": 10000000,
+   "unit": "count",
+   "source_ids": [
+    "dc_av_call_20261021"
+   ]
+  },
+  {
+   "id": "dc_kpi_genai_ad_tools_advertisers_q3_2026",
+   "name": "Advertisers using at least one generative AI creative tool in the quarter (nearly; management statement on the call)",
+   "period": "Q@2026-09-30",
+   "value": 10000000,
+   "unit": "count",
+   "source_ids": [
+    "dc_av_call_20261021"
+   ]
+  }
+ ],
+ "segments": [
+  {
+   "id": "dc_seg_foa_q3_2026",
+   "name": "Family of Apps",
+   "period": "Q@2026-09-30",
+   "revenue": 64158000000,
+   "operating_income": 17117000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261021_1",
+    "pf_10q_20261022"
+   ]
+  },
+  {
+   "id": "dc_seg_rl_q3_2026",
+   "name": "Reality Labs",
+   "period": "Q@2026-09-30",
+   "revenue": 443000000,
+   "operating_income": -4129000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261021_1",
+    "pf_10q_20261022"
+   ]
+  },
+  {
+   "id": "dc_seg_foa_q3_2025",
+   "name": "Family of Apps",
+   "period": "Q@2025-09-30",
+   "revenue": 50772000000,
+   "operating_income": 24967000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261021_1",
+    "pf_10q_20261022"
+   ]
+  },
+  {
+   "id": "dc_seg_rl_q3_2025",
+   "name": "Reality Labs",
+   "period": "Q@2025-09-30",
+   "revenue": 470000000,
+   "operating_income": -4432000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261021_1",
+    "pf_10q_20261022"
+   ]
+  },
+  {
+   "id": "dc_seg_foa_q2_2026",
+   "name": "Family of Apps",
+   "period": "Q@2026-06-30",
+   "revenue": 60370000000,
+   "operating_income": 23394000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260729_1"
+   ]
+  },
+  {
+   "id": "dc_seg_rl_q2_2026",
+   "name": "Reality Labs",
+   "period": "Q@2026-06-30",
+   "revenue": 431000000,
+   "operating_income": -4619000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260729_1"
+   ]
+  },
+  {
+   "id": "dc_seg_foa_q1_2026",
+   "name": "Family of Apps",
+   "period": "Q@2026-03-31",
+   "revenue": 55909000000,
+   "operating_income": 26900000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260429_1"
+   ]
+  },
+  {
+   "id": "dc_seg_rl_q1_2026",
+   "name": "Reality Labs",
+   "period": "Q@2026-03-31",
+   "revenue": 402000000,
+   "operating_income": -4028000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260429_1"
+   ]
+  },
+  {
+   "id": "dc_seg_foa_q4_2025",
+   "name": "Family of Apps",
+   "period": "Q@2025-12-31",
+   "revenue": 58938000000,
+   "operating_income": 30766000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260128_1"
+   ]
+  },
+  {
+   "id": "dc_seg_rl_q4_2025",
+   "name": "Reality Labs",
+   "period": "Q@2025-12-31",
+   "revenue": 955000000,
+   "operating_income": -6021000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260128_1"
+   ]
+  },
+  {
+   "id": "dc_seg_foa_fy2025",
+   "name": "Family of Apps",
+   "period": "FY2025",
+   "revenue": 198759000000,
+   "operating_income": 102469000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260128_1"
+   ]
+  },
+  {
+   "id": "dc_seg_rl_fy2025",
+   "name": "Reality Labs",
+   "period": "FY2025",
+   "revenue": 2207000000,
+   "operating_income": -19193000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260128_1"
+   ]
+  },
+  {
+   "id": "dc_seg_foa_fy2024",
+   "name": "Family of Apps",
+   "period": "FY2024",
+   "revenue": 162355000000,
+   "operating_income": 87109000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260128_1"
+   ]
+  },
+  {
+   "id": "dc_seg_rl_fy2024",
+   "name": "Reality Labs",
+   "period": "FY2024",
+   "revenue": 2146000000,
+   "operating_income": -17729000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260128_1"
+   ]
+  }
+ ],
+ "customers": [],
+ "notes": [
+  "dc CALL 2026-10-21: Q3 2026 earnings call (CEO Zuckerberg, CFO Li); transcript from Alpha Vantage EARNINGS_CALL_TRANSCRIPT 2026Q3, one call, saved to gather/raw_documents/av_EARNINGS_CALL_TRANSCRIPT_META_2026Q3.json (text in transcript_META_2026Q3.txt). A provider copy of the issuer call, so not independent. Release (2026-10-21) and 10-Q (2026-10-22) are citable at as_of 2026-10-27 (LAG_DAYS 2).",
+  "dc CITABILITY the results of 2026-10-21 are 6 days old, so release, call and 10-Q can back drivers, events and the key risk; the Class C stock dividend record and payment dates are not yet set.",
+  "dc RESULT Q3 2026 revenue 64.601B +26% (+26% constant currency), advertising 63.061B +26%, FoA other revenue 1.097B +59% (WhatsApp paid messaging, subscriptions), Reality Labs 443M -6%. Impressions +10%, price per ad +14%, DAP 3.64B +3%, ARPP 17.72 +23% (pf_rel_20261021_1, pf_10q_20261022, call).",
+  "dc RESULT costs and expenses 51.613B +68% include a 9.89B charge for the August 2026 agreement with 52 attorneys general (G&A line). Operating income 12.988B (20% margin) vs 20.535B; ex-charge 22.88B (company arithmetic), +11% y/y per the CFO. Diluted EPS 3.83; ex-charge 7.40 (company arithmetic). Tax rate 24% (above outlook) because of the nondeductible part of legal expense; 17% ex-charge.",
+  "dc ONEOFF prior-year comparatives: Q3 2025 net income 2.709B carried a 15.93B discrete tax charge on enactment of the One Big Beautiful Bill Act (effective tax rate 87%); Q1 2026 had an 8.03B discrete tax benefit from CAMT transitional relief (Treasury Notice 2026-7); 9M 2026 tax rate 2%. Reported net income and EPS growth (+264%) is therefore not a clean comparison.",
+  "dc ONEOFF legal charges recur as a category: 2.4B charges in Q2 2026 (pf_rel_20260729_1), 9.89B in Q3 2026, legal-related accruals 11.577B current and 8.304B non-current at 2026-09-30, 5.3B contingent AG amount not accrued, 1.18B severance in 9M 2026 (May 2026 reduction of about 8,000 employees). Operating income ex the AG charge is not a run rate that excludes legal costs.",
+  "dc AGREEMENT the AG settlement: payments up to about 18.59B, of which about 12.7B payable in annual installments over 10 years and about 5.3B contingent amounts not accrued; includes about 500M for the privacy matters (pf_rel_20261021_1, pf_10q_20261022 Notes 8 and 10, liquidity section).",
+  "dc COMMIT contractual commitments: 454.52B non-cancelable (mostly third-party cloud capacity, servers and network, energy service agreements, Reality Labs hardware), 45.85B due remainder of 2026 and 121.41B due 2027; plus leases not yet commenced 355.73B (start remainder of 2026 through 2036, terms 1 to 30 years); contingent cloud purchase up to 14.72B over five years (pf_10q_20261022 Note 10). No fixed RPO or backlog exists (advertising; deferred revenue 1.19B).",
+  "dc COMMIT data center ventures (Louisiana and Texas, unconsolidated): maximum exposure to loss 68.404B = equity carrying value 4.732B + lease commitments 18.476B + future funding 3.703B + residual value guarantees 41.493B (31 Dec 2025: 45.952B). Leases commence 2028 (Texas) and 2029 (Louisiana). A claim ahead of the shares the debt lines miss; the analyst decides whether to treat the RVG as debt-like (pf_10q_20261022 Note 5).",
+  "dc LIQUIDITY cash and marketable securities 82.45B (cash 11.222B + securities 71.227B) as of 2026-09-30; restricted cash and equivalents 13.132B (597M current + 12.535B non-current; 10.80B is escrow for multi-year infrastructure purchase agreements, released 2028-2030) is not spendable liquidity. Debt face 84.0B (carrying 83.669B incl 2.747B current; fair value 73.31B); May 2026 issue of 25.0B senior notes at 4.55-6.45%; principal due 2.75B 2027, 1.5B 2028, 1.0B 2029, 5.0B 2030, 73.75B thereafter. No financial covenants. Notes interest expense net of capitalized 882M in Q3 2026 vs 205M.",
+  "dc CASHFLOW Q3 2026 operating cash flow 32.786B, purchases of property and equipment 33.942B plus finance lease principal 0.964B (capex incl finance leases 34.91B), company-defined free cash flow -2.12B; 9M free cash flow 11.049B vs 29.508B. No repurchases in 9M 2026 (25.03B authorization remains); dividends 0.525 per share quarterly (1.361B). Taxes paid on net share settlement 4.064B in Q3.",
+  "dc SHARES Class A 2,214,472,367 and Class B 341,768,886 outstanding at 2026-10-16 (total 2.556B); diluted weighted average 2,573M in Q3 2026 (2,572M a year earlier). New Class C non-voting stock: charter effective 2027-01-19, one-time stock dividend of one Class C per Class A or B share (economically a two-for-one split; per-share history to be restated retroactively); stated purposes: capital raising, employee compensation, acquisitions. CFO on the call: no specific financing plans to announce (pf_rel_20261021_1, pf_10q_20261022 Note 14, call).",
+  "dc GUIDE FY2026 total expenses 175-179B raised from 165-169B (July) only to include the 9.89B charge; capex 135-145B narrowed from 130-145B (it was 115-135B in January, 125-145B in April); Reality Labs loss 18-19B (FY2025 loss 19.193B); Q4 2026 tax rate 15-17%; FY2026 operating income expected above 2025 excluding the Q3 legal charge (qualitative, FY2025 operating income 83.276B); RL loss around 15B in 2027. No full-year 2027 revenue or expense outlook (the Q4 call, usually February, gives 2027 guidance).",
+  "dc GUIDE derived, not guided: 9M 2026 revenue 181.712B plus the Q4 guide 73-76B implies FY2026 revenue 254.7-257.7B (+26.7% to +28.2% on FY2025 200.966B); FY2026 expenses 175-179B less 9M 127.077B implies Q4 expenses 47.9-51.9B and Q4 operating income of roughly 21-28B; the Q4 revenue guide midpoint 74.5B is +24% on Q4 2025 59.893B with about 1 point of currency headwind.",
+  "dc GUIDE track: Q3 2026 revenue guided 61-64B (2026-07-29) and delivered 64.601B, above the top of the range; Q2 guided 58-61B delivered 60.801B; Q1 guided 53.5-56.5B delivered 56.311B (all from the releases; ticker-check prints the ratio for the pack track).",
+  "dc MGMT (statements, not facts) 2027: revenue growth 'to sustain strong overall revenue growth throughout 2027' because of AI gains in the core business and new AI products; 'continue investing aggressively'; capacity plans still being developed with the 2027 budget and expense and capex outlook only at the Q4 call; CEO/CFO on the call: new AI businesses 'can begin contributing incremental revenue in 2027'.",
+  "dc MGMT Muse (personal agent, frontier model Muse Wonder): more than 10M set up in US and Canada in about six weeks, about 25% use it on a given day, more than 25% of users engage in shopping with average purchase over 200 USD; not launched globally mostly because of compute intensity; monetization to start sooner than the usual playbook: free tier, commerce fee paid by businesses, subscriptions for advanced models, business subscriptions, a model API and Muse Code. CEO: serving cost efficiency expected to improve more than 10x in the next year; Muse profitable only once revenue lines are at scale; the CFO gave no per-user cost.",
+  "dc MGMT core ads: CFO attributes engagement and monetization gains to ranking and recommendation models (Instagram Reels time spent +4% from Q3 launches, Facebook generative retrieval, Andromeda +1.4% conversions, JEM +1.7% off-site and +9.6% app conversions), partnership ads over 15B run rate and +97% y/y, nearly 10M advertisers on generative creative tools, Meta One subscriptions and trials above 15M; price per ad growth partly offset by growth of lower-monetizing surfaces and regions.",
+  "dc MGMT Reality Labs: loss to narrow to about 15B in 2027 as VR device launches are paced and investment moves to AI; glasses sales growing fast, hardware priced for software and subscription revenue; CEO: operating loss 'trending toward profitability from there' (no date).",
+  "dc MGMT cost and headcount: headcount 66,775 (-15% y/y; -12% from Q2 after the May 2026 reduction); Q3 expense growth driven by legal costs, infrastructure (third-party cloud, depreciation, data center operating costs) and third-party AI token costs.",
+  "dc KPI revenue growth by user geography in Q3 2026 (10-Q MD&A): US and Canada +33%, Europe +18%, Asia-Pacific +16%, Rest of World +34%; revenue by customer address is in the 10-Q Note 2 (gather_macro owns geography). ARPP quarter series in the 10-Q chart text is nine values Q3 2024 to Q3 2026; only the last (17.72, +23%) is stated in words, the earlier positions are inferred from order and the 23% growth check (17.72 / 14.46).",
+  "dc KPI identity: ARPP is Family of Apps revenue divided by the average of beginning and end DAP; 17.72 x average of June and September 2026 DAP (3.60B, 3.64B) is about 64.1B, matching FoA revenue 64.158B. DAP carries an estimate margin of about 3% and counts people not accounts; slight Q1 2026 decline from Iran internet disruptions and a WhatsApp restriction in Russia.",
+  "dc CUSTOMERS no customer represented 10% or more of revenue or accounts receivable in 2025, 2024 and 2023 (10-K notes); millions of advertisers, no long-term advertising commitments (Item 1A), so the customers list is empty by design.",
+  "dc RISK 1 advertising dependence: substantially all revenue is advertising on Facebook and Instagram; marketers have no long-term commitments and can cut spend quickly (10-Q Item 1A, 'We generate substantially all of our revenue from advertising').",
+  "dc RISK 2 youth-related litigation: AG agreement of up to 18.59B, 5.3B contingent not accrued; first school district bellwether settled May 2026, next trial February 2027; mass arbitration demands from over 200,000 claimants; damages sought have at times been above one trillion dollars; further youth trials scheduled in the coming months (10-Q Note 10, CFO outlook).",
+  "dc RISK 3 EU regulation: DMA decision on 'subscription for no ads' (200M euro fine, April 2025, appealed), less personalized ads changes that 'could result in a significant impact to our European business and revenue'; DSA preliminary findings (October 2025); Marketplace Article 102 fine of about 798M euro under appeal; Europe was 14.0B of Q3 revenue by customer address, 22% (10-Q Notes 2 and 10).",
+  "dc RISK 4 AI and infrastructure spend: 2026 capex 135-145B, Q3 free cash flow negative, 454.52B non-cancelable commitments and 355.73B leases not yet commenced, investments in AI and Reality Labs reduce cash flow, margin and profitability and may not pay back (10-Q Item 1A, 'We incur significant expenses' and 'We may not be successful in our artificial intelligence initiatives', Note 10).",
+  "dc RISK 5 technical infrastructure and supply: a substantial portion of infrastructure is provided by third parties (cloud capacity), disruptions or component price increases hit capacity and cost; capex guide was raised in April on higher component pricing; consumer hardware has design, manufacturing and inventory risk (10-Q Item 1A; pf_rel_20260429_1).",
+  "dc RISK 6 competition and platform dependence: the business is highly competitive for users' time and advertisers' budgets, and ad targeting and measurement rely on data signals and mobile operating systems and networks Meta does not control; government restrictions on access in countries (10-Q Item 1A).",
+  "dc RISK 7 tax: effective rate volatile (87% in Q3 2025, 2% in 9M 2026, 24% in Q3 2026); gross unrecognized tax benefits 20.82B; transfer-pricing Tax Court matter; CAMT limits some deductions in 2026; changes in tax law (10-Q Note 12 and Item 1A).",
+  "dc RISK 8 control and capital structure: Class B (ten votes) gives the CEO majority voting control, controlled company status; the Class C non-voting stock widens funding tools (equity raise, acquisitions, compensation) and is a dilution channel for current holders (10-Q Item 1A, Note 14, release).",
+  "dc SOURCES the 10-K (2026-01-29) was read for customer concentration only; RPO or backlog: none disclosed for an advertising model; purchase commitments are from the 10-Q (more recent than the 10-K). The 10-Q chart values for DAP, ad impressions and price per ad by region are images and are not in the saved text.",
+  "dc EQUITY RAISE (new since the 2026-10-27 run; sources dc_s3asr_20261026, dc_fwp_launch_20261026, dc_fwp_pricing_20261026, dc_424b5_*_20261028, dc_8k_20261029; all citable, last dated 2026-10-29): on 2026-10-26 Meta filed an automatic shelf (S-3ASR, Reg. 333-299631) and priced two concurrent offerings, trade date 2026-10-27, settlement 2026-10-29: (1) 40,000,000 Class A shares at 625.00 (25.0B gross; last sale 630.56 on 10-26) sold by forward sellers, NOT issued now, no cash at closing; (2) 250,000,000 Series A depositary shares at 50.00 = 12.5B (12.5M preferred shares, 1,000 liquidation preference), closed 2026-10-29, net about 12.458B before about 4M expenses. The launch FWP first sized the common at 22.5B; the pricing term sheet increased it to 25.0B (46M shares / 28.7B net if the 6M-share option is fully exercised); the preferred has a 37.5M-depositary-share (1.875B) over-allotment option, 30 days from 10-26. No filing in the saved list says whether either option was exercised: unknown.",
+  "dc EQUITY FORWARD TERMS: two forward purchasers (Morgan Stanley Capital Services, Goldman Sachs) each hold a forward on part of the 40M shares; settlement date or dates at Meta's discretion on or before 2027-11-19; initial forward price 622.91875 (625.00 less 2.08125 discount, 83.25M), adjusted daily by a floating rate (overnight bank funding rate less a spread) and reduced on specified dates by amounts tied to expected dividends; expected net proceeds about 24.9B at settlement (about 28.7B with the option), general corporate purposes; shares are treated as potential dilution under the treasury stock method until settlement. Once Class C stock exists (charter effective 2027-01-19) the forwards split into Class A and Class C transactions and Meta may settle in Class C only, with a price reduction tied to the A/C trading gap. Forward purchasers may accelerate settlement on stock-borrow failure, a dividend above a set amount, ownership thresholds, extraordinary events or defaults.",
+  "dc EQUITY PREFERRED TERMS: 6.50% cumulative Series A mandatory convertible preferred (depositary shares METAM, Nasdaq), dividends 6.50% of 1,000 = 65.00 per preferred share per year (0.8125 per depositary share; about 812.5M a year on 12.5B), payable quarterly (Feb 15, May 15, Aug 15, Nov 15) from 2027-02-15 to 2029-08-15 in cash, Class A shares or a mix at the board's choice (first payment about 19.1389 per preferred share). Mandatory conversion about 2029-08-15 into 1.3620 to 1.6000 Class A shares per preferred share (0.0681 to 0.0800 per depositary share): initial price 625.00, threshold appreciation price 734.2144 (+17.5%), floor price 218.75; at a 20-day average price above 734.21 holders get 1.3620 shares (about 17.0M shares in all), below 625 they get 1.6000 (about 20.0M shares); conversion into Class C possible after Class C exists. While preferred is outstanding with unpaid dividends no common dividend or buyback is allowed (limited exceptions; binding buyback contracts in place before issue are carved out). Liquidation: greater of 1,000 plus accrued dividends or as-converted value, senior to common. Derived from the terms: 12.5B x (1.3620 to 1.6000)/1,000 = 17.0M to 20.0M Class A shares; 40M forward shares against 2,214.455M Class A (2,556M total with Class B at 2026-10-16) is about 1.6% of total shares; both together up to 60M shares about 2.3% (company arithmetic not given; derived here).",
+  "dc EQUITY FINANCING PLAN (dc_fwp_launch_20261026, issuer statement, not a fact until it happens): the launch release calls these offerings part of a financing plan: about 35B of underwritten equity now (22.5B common + 12.5B preferred at launch; common later raised to 25.0B, about 37.5B total) plus a PLANNED at-the-market program of about 60B once the Class C stock begins trading; no ATM agreement exists, and timing, size and terms are undetermined. Management says it funds the 135-145B 2026 capex through 'a balanced mix of operating cash flow, investment-grade debt, strategic partnerships, and equity capital'; cites 97B operating cash flow in 9M 2026, about 82B cash and securities at Q3 end, Aa3/AA- ratings, total consolidated indebtedness 83.7B at 2026-09-30 (prospectus). Use of proceeds: general corporate purposes only. Together the identified equity is about 37.5B now (12.5B received 10-29, about 24.9B after forward settlement) and up to about 60B more through the ATM: the analyst must carry this funding and current-holder dilution into the forecast (CLAUDE.md rule) and test the share count, not use the 2.573B diluted figure unchanged.",
+  "dc EQUITY CITABILITY the 8-K of 2026-10-29 is citable from 2026-10-31, the 424B5s of 2026-10-28 from 2026-10-30, the FWPs and S-3ASR earlier: all citable at as_of 2026-11-01. The S-3ASR is a pay-as-you-go automatic shelf with no stated maximum amount (registration fee deferred), so it does not itself cap further issuance. Raw copies are in gather/raw_documents/ (sec_8k_20261029.*, final_436410_fwd.*, final_436405_pref.*, d382225dfwp.*, d116268dfwp.*, d127909ds3asr.*; prelim_* names were overwritten by same-name files from other accessions and are not kept).",
+  "dc RISK 9 dilution and funding (new): equity raise of about 37.5B (preferred 12.5B closed, common 25.0B forward) plus a planned about 60B ATM, a 6.50% preferred that blocks common dividends and buybacks while unpaid, and the Class C charter effective 2027-01-19; these respond to negative Q3 free cash flow and 135-145B capex (dc_fwp_launch_20261026, dc_424b5_*)."
+ ],
+ "gaps": [
+  "No company-reported Reality Labs unit KPIs (glasses units, Quest units) in the documents; AI glasses growth is only described in words on the call.",
+  "Per-user Muse compute cost, Muse revenue and the monetization timetable are not given by management (CFO: no specific numbers).",
+  "DAP, impressions and price per ad by region are charts in the 10-Q and did not survive in the saved text; only worldwide figures and revenue growth by user geography are available.",
+  "FY2027 revenue, expense and capex outlook not given until the Q4 2026 call; no explicit FY2026 revenue guide (derived from 9M actual plus the Q4 guide).",
+  "Q3 2026 10-Q segment line for AG charge allocation: the charge sits in Family of Apps costs (G&A), the exact segment attribution is not broken out beyond the 10-Q segment table.",
+  "Whether the underwriters' options (6M Class A shares, 37.5M depositary shares) were exercised is not in the filings saved (no 8-K or 424B after 2026-10-29); the preferred closing amount quoted is the base 12.5B.",
+  "ATM program (about 60B) is only an intention in the launch FWP: no agreement, size or timing; not yet a fact.",
+  "The Q3 10-Q (filed 2026-10-22) predates the raise: its share count (2.556B at 2026-10-16) and balance sheet (cash 82.45B) do not include the 12.5B preferred proceeds; the equity raise is a subsequent event not in the quarter-review case balance."
+ ],
+ "stopped": []
+}

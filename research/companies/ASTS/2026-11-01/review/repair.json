@@ -1,0 +1,20 @@
+{
+  "trigger": "review",
+  "fixed": [
+    "Evidence registered (already present in this attempt; re-checked with ticker-check, ok): gather/repair.json holds the filing values as factbook facts: short_term_investments = 0 at 2026-06-30, 2026-03-31 and 2025-12-31 (pf_10q_20260810, pf_10q_20260511, pf_10k_20260302: the balance sheet has one line, cash and cash equivalents, and the ~2.3B of money-market funds sits inside it); reported operating income FY2025 -287,713k, FY2024 -242,762k and Q2 2026 -297,577k (statement of operations, replacing the pretax+interest EBIT proxy). position/core.json dataqa_resolutions (use_source, citing the filings) cover both metrics. Spendable cash is 2,288.3M; restricted cash of 434.6M stays excluded.",
+    "ticker-value rerun (ran=true, no problems), so value.json and the casefile reflect these inputs."
+  ],
+  "open": [
+    "CRITICAL, still open: dataqa cash_and_liquid_investments is still in conflict (4,588.3M). All five use_source resolutions come back 'unused'. dataqa._cross does not apply an analyst resolution to a disagreement inside one source family. The filing facts (web:pf_10q_*, issuer documents) and the sec:companyfacts tag (ShortTermInvestments 2.3B, raw companyfacts) both count as copies of one filing, so the disagreement stays unresolved and the rank keeps the companyfacts tag. The pack offers no capital_structure or cash-override key, and saved payloads may not be edited. So the double count cannot be removed through evidence in this engine version. This needs an engine change, which is outside the repair stage.",
+    "CRITICAL, still open: operating income. The reported FY2025, FY2024 and Q2 2026 values are in the FactBook, but operating_income_ttm stays in conflict for the same same-family reason. The Q3 2025 (-157.8M), Q4 2025 (-79.3M) and Q1 2026 (-226.7M) companyfacts quarters are still EBIT proxies, and no reported quarterly figure was gathered for them (no retrieval budget was left in this pass).",
+    "CRITICAL, still open: no valuation executed. fc.status = method_not_supported_by_forecast. In forecast.py, scenario_survival_fcff starts from m0 = TTM operating margin, about -6.6x (-761M on 115M of revenue), so the cash-cost ratio is above 2. That stays true even with the reported operating income and with the 125.9M BB7 one-off removed (about -5.5x). The engine has no pre-revenue or build-phase route, and the pack has no key to start the margin from guided FY2026 revenue. Per the counter-review, the bounds were not loosened by inventing margins. Result: a visible draft with no fair value and no bear/base/bull prices.",
+    "Financing and dilution are not modelled explicitly: forecast_options.financing = 'assumed'. The 1.15B 2034 1.625% convertible notes, issued about 2026-07-20 after the 2026-06-30 balance sheet, and the ATM program have no allowed pack key (capital_events cover share issues only). Their conversion prices of 72-149 USD and the runway effect stay a gap (position/core.json gaps). This matters little while no valuation executes.",
+    "The result stays UNVERIFIED (draft)."
+  ],
+  "ran": true,
+  "casefile": "/home/user/fundamental-engine/runs/tickers/ASTS_2026-11-01/companies/ASTS/out/casefile.json",
+  "changed_files": [
+    "/home/user/fundamental-engine/runs/tickers/ASTS_2026-11-01/review/repair.json",
+    "/home/user/fundamental-engine/runs/tickers/ASTS_2026-11-01/value.json"
+  ]
+}

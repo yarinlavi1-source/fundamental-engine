@@ -1,0 +1,31 @@
+{
+ "ticker": "TSLA",
+ "as_of": "2026-10-27",
+ "folder": "research/companies/TSLA/2026-10-27",
+ "thesis_id": "TSLA:2026-10-27:b99677bbbc72",
+ "status": "draft",
+ "verdict": "index_preferable",
+ "files": [
+  "casefile_core.json",
+  "casefile_summary.json",
+  "evidence_pack.json",
+  "gather/documents.json",
+  "gather/field.json",
+  "gather/macro.json",
+  "gather/numbers.json",
+  "identity.json",
+  "inputs.json",
+  "paragraph.txt",
+  "position/core.json",
+  "position/field.json",
+  "position/path.json",
+  "review/counter.json",
+  "review/numbers.json",
+  "review/repair.json",
+  "review/trace.json",
+  "scenarios_he.md",
+  "status.json",
+  "table_he.md",
+  "understand/business.json"
+ ]
+}

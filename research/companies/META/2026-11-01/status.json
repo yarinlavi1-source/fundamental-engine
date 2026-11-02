@@ -1,0 +1,120 @@
+{
+ "ticker": "META",
+ "as_of": "2026-11-01",
+ "at_utc": "2026-11-01T06:04:04+00:00",
+ "verified": false,
+ "label": "UNVERIFIED draft (טיוטה — ההערכה לא אומתה)",
+ "reasons": [
+  "6 critical finding(s) open"
+ ],
+ "engine_ran": true,
+ "engine_review_status": "unreviewed_draft",
+ "reviews": {
+  "review_trace": {
+   "file": "review/trace.json",
+   "this_attempt": true,
+   "returned": true
+  },
+  "review_numbers": {
+   "file": "review/numbers.json",
+   "this_attempt": true,
+   "returned": true
+  },
+  "review_counter": {
+   "file": "review/counter.json",
+   "this_attempt": true,
+   "returned": true
+  }
+ },
+ "critical": [
+  {
+   "severity": "critical",
+   "finding": "The key risk and the bear story are not in the numbers: in all three scenarios the engine's FY2027 capex (maintenance + growth capex) drops to about 84B (bear 26.8+57.1), 97.5B (base 28.5+69.0) and 104B (bull 29.9+74.3), a 25-40% cut from the guided 135-145B of 2026 (9M 2026 purchases of property and equipment 83.06B, 10-Q 2026-10-22). Nothing in the evidence supports a cut: the 2027 capex outlook comes only at the Q4 call, non-cancelable commitments due 2027 are 121.41B and 355.73B of leases not yet commenced start through 2036. The bear event explicitly says capex keeps rising in 2027 while the bear drivers cut it the most (sales_to_capital 0.55 on smaller revenue growth). The model's what_must_be_true confirms the blind spot: the capital_efficiency lever is not_reachable (value stays 861-1,063 across 0-6x growth investment), so the decisive risk the table names cannot move the fair value of 875.",
+   "where": "companies/META/out/casefile.json val.case.scenarios[bear|base|bull].periods[2027-12-31] maintenance_capex/growth_capex; position/core.json drivers sales_to_capital per scenario; casefile val.what_must_be_true lever capital_efficiency; position/core.json bear event on capex",
+   "fix": "Repair: set FY2027 (and FY2028) capex per scenario from company evidence (at least the 2026 level 135-145B in bear, a reasoned path in base, citing dc_g_capex_fy2026 and the 10-Q commitment schedule) via a capex/reinvestment override or lower near-year sales_to_capital, rerun ticker-value, and check that the fair value responds; if the engine lever cannot carry it, state the 2027 capex assumption next to the table as a visible gap.",
+   "lens": "counter"
+  }
+ ],
+ "open_critical": [
+  {
+   "finding": "Forward sale (40M shares, about 24.92B, settlement by 2027-11-19) and the planned ATM (about 60B) are still not modelled: this engine version cannot mark contracted equity as committed and the ATM has no agreement, size or timing; the bear does not carry ATM dilution (about 5-7% at bear prices)"
+  },
+  {
+   "finding": "FY2027-2029 capex beyond the 121.41B of 2027 commitments is an analyst reading of the commitment schedule; META gives the 2027 capex outlook only at the Q4 2026 call"
+  },
+  {
+   "finding": "D&A ramp not modelled as its own depreciation path (engine D&A stays 9.26% of revenue); its drag is inside the margin path, so the higher D&A tax shield is understated (conservative)"
+  },
+  {
+   "finding": "Preferred netted instead of cash added: its 6.5% dividend (about 812.5M a year) above the yield on the cash is not charged"
+  },
+  {
+   "finding": "Not touched (not critical): the reviewers' minor findings on price basis (after-hours 614 vs 614.99 close), trailing P/E one-offs, dc_ provenance flags, the non-marketable investments 32.6B left out, the undiscounted litigation claim, the China/AI-supply-chain exposures and the Beneish gap; the counter-thesis early signs are only partly carried as falsifiers (no impressions-growth-below-5% or FCF falsifier added)"
+  },
+  {
+   "finding": "Result stays a draft until the review of this repair: verdict_status draft, review_status unreviewed_draft"
+  }
+ ],
+ "repair": {
+  "fixed": [
+   "counter critical (capex cut 25-40% below the 2026 guide): position/core.json drivers.growth_capex_pct set per scenario and period from company evidence (FY2026 guide 135-145B, 9M 85.82B, commitments due 2027 121.41B vs 45.85B due in the rest of 2026); executed total capex now stub Nov-Dec 2026 35.5B in every scenario, FY2027 bear 144.8B / base 144.9B / bull 159.9B, FY2028 140.3 / 145.4 / 165.2B, FY2029 119.8 / 135.1 / 160.0B, then a step back to the engine rule from 2031; the value responds (base 875 -> 830, bear about 475 -> 387)",
+   "numbers major (litigation counted in the margin and as a claim): position/core.json drivers.cash_cost_ratio sets the margin after SBC and D&A to start ex the 9.89B AG and 2.4B Q2 legal charges (base stub 38%, FY2027 36%, 37% by 2030; bull 38% -> 42% by 2031); the 19.881B litigation claim is kept",
+   "counter/numbers (preferred claim without its cash): the pack has no post-balance-sheet cash input (capital_events is not a forecast_option), so the preferred is carried net of its 12.458B net proceeds (dc_eq_pref_net_oct2026, dc_8k_20261029): claim 12.5B - 12.458B = 41.6M in position/core.json forecast_options.debt_like_claims[0]; claim and cash now net, as the reviewer allowed",
+   "counter major (bear only a multiple): bear margin mechanisms sized in cash_cost_ratio (FY2027 31%, FY2028 27%, FY2029 26% toward the 2022 trough 24.8%, 29% from 2032; D&A of 140B+/yr capex, recurring legal costs, EU less-personalized ads) and mature_margin bear 0.30 -> 0.29; bear now differs in EPS as well as multiple (year-1 bear 294 USD)",
+   "counter major (bull roic 0.30 justified_high): position/path.json company_path bull relabelled 'unproven', with the reason that incremental ROIC is about 15%",
+   "numbers major (base condition line contradicts the model): base event 4, thesis_he and reasons_he reworded: the forward sale (40M shares, about 24.9B) is a contracted event NOT in the computed value (engine cannot mark contracted equity as committed, about +4 USD a share of overstatement), the preferred is a claim net of its proceeds, not 17-20M shares; table_he.md regenerated",
+   "counter minor (falsifiers): added fx_capex27_base (capex FY2027 above 170B), fx_capex27_bear (below 120B), fx_margin27_bull (GAAP margin FY2027 below 36%), fx_margin27_bear (above 35%), fx_atm_bull (any ATM shares sold by 2027-11-15)"
+  ],
+  "open": [
+   "Forward sale (40M shares, about 24.92B, settlement by 2027-11-19) and the planned ATM (about 60B) are still not modelled: this engine version cannot mark contracted equity as committed and the ATM has no agreement, size or timing; the bear does not carry ATM dilution (about 5-7% at bear prices)",
+   "FY2027-2029 capex beyond the 121.41B of 2027 commitments is an analyst reading of the commitment schedule; META gives the 2027 capex outlook only at the Q4 2026 call",
+   "D&A ramp not modelled as its own depreciation path (engine D&A stays 9.26% of revenue); its drag is inside the margin path, so the higher D&A tax shield is understated (conservative)",
+   "Preferred netted instead of cash added: its 6.5% dividend (about 812.5M a year) above the yield on the cash is not charged",
+   "Not touched (not critical): the reviewers' minor findings on price basis (after-hours 614 vs 614.99 close), trailing P/E one-offs, dc_ provenance flags, the non-marketable investments 32.6B left out, the undiscounted litigation claim, the China/AI-supply-chain exposures and the Beneish gap; the counter-thesis early signs are only partly carried as falsifiers (no impressions-growth-below-5% or FCF falsifier added)",
+   "Result stays a draft until the review of this repair: verdict_status draft, review_status unreviewed_draft"
+  ],
+  "ran": true
+ },
+ "returned": [
+  "analyst",
+  "analyst_field",
+  "analyst_path",
+  "gather_documents",
+  "gather_field",
+  "gather_macro",
+  "gather_numbers",
+  "repair",
+  "review_counter",
+  "review_numbers",
+  "review_trace"
+ ],
+ "times": {
+  "started_at_utc": "2026-11-01T05:44:45+00:00",
+  "prefetch_finished_at_utc": "2026-11-01T05:44:51+00:00",
+  "minutes_after_start": {
+   "gather/_prefetch.json": 0.1,
+   "gather/documents.json": 2.6,
+   "gather/field.json": 2.6,
+   "gather/macro.json": 1.8,
+   "gather/numbers.json": 3.6,
+   "understand/auto.json": 4.0,
+   "understand/business.json": 7.4,
+   "understand/econ_case.json": 1.9,
+   "understand/econ_result.json": 2.1,
+   "understand/quarter_case.json": 1.9,
+   "understand/quarter_result.json": 2.0,
+   "prep.json": 4.0,
+   "position/core.json": 17.9,
+   "position/field.json": 6.4,
+   "position/path.json": 17.9,
+   "value.json": 18.1,
+   "review/trace.json": 7.7,
+   "review/numbers.json": 13.5,
+   "review/counter.json": 14.0,
+   "review/repair_value.json": 11.2,
+   "review/repair.json": 18.5
+  },
+  "elapsed_minutes": 18.5
+ },
+ "meaning": "verified needs: the engine ran in this attempt, the three reviewers returned (files of this attempt AND the main loop's record), no critical finding open after the one repair pass. The engine's own review status is reported beside it, never replaced by it."
+}

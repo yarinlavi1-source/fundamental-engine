@@ -1,0 +1,90 @@
+{
+ "thesis_he": {
+  "bear": "ההובלה הטכנולוגית נשמרת, אבל קיצוץ בהשקעות ה-AI של שני הלקוחות הגדולים (36% מההכנסות), מכסים/הגבלות יצוא או אירוע בטייוואן (80% מהנכסים) פוגעים בביקוש ובמרווחים.",
+  "base": "TSMC נשארת צוואר הבקבוק של שבבי ה-AI המתקדמים עם כ-72% משוק הפאונדרי, ממשיכה לגדול מהר עם הביקוש ל-AI ומחזיקה מרווח גולמי סביב 65%, למרות שחיקה של 2-4 נקודות מהמפעלים בחו\"ל.",
+  "bull": "ביקוש ה-AI גדל אפילו מהר מקצב של 50%+ בשנה שההנהלה ציפתה לו, קיבולת N2/A14 והאריזה המתקדמת נמכרת במלואה במחירים עולים, ואינטל וסמסונג לא מצליחות לקחת נתח."
+ },
+ "potential": {
+  "market_direction": {
+   "reading": "The market TSMC serves is growing fast and tilting to AI/HPC: HPC rose from 58% of FY2025 revenue (NT$2,192.9bn) to 68% in Q3 2026 (+22% q/q); FY2026 revenue growth is guided at about 44% in US$ and Q4 2026 at US$52.3-54.3bn (+58% y/y at midpoint). Management previously guided AI accelerator revenue CAGR of mid-to-high 50s% for 2024-2029 and said on the Q3 call it 'probably will be higher' (a statement, not a new numeric guide); it also flagged consumer/price-sensitive end markets as challenged and 'prudent' planning for 2027. Industry: top-10 foundry revenue hit a record US$53.49bn in 2Q26 (TrendForce).",
+   "evidence_ids": ["dc_s_hpc_fy25", "dc_s_hpc_3q26", "dc_g_revgrowth_fy26", "dc_g_rev_q4_26", "dc_call_q3_2026", "fd_trendforce_2q26"]
+  },
+  "bottleneck_potential": {
+   "reading": "TSMC is the bottleneck for leading-edge logic: 79% of Q3 2026 wafer revenue is 7nm and below (N2 8%, N3 33%, N5 28%), N2 in volume since Q4 2025 with N2-family capacity to more than double in 2027 and A14 volume in 2028; management says the demand-supply gap is 'still quite big'. Advanced packaging (CoWoS) is the tightest AI constraint: an estimated ~20% supply-demand gap narrowing to ~10% by end-2026 as TSMC adds capacity (TrendForce estimate, not TSMC guidance). Capacity is added mainly by TSMC itself (nearly 20 fabs in progress, 2026 capex US$60-64bn); no rival shows external leading-edge volume yet, so the position looks durable for at least the 2027-2028 node cycle; the narrowing CoWoS gap means the packaging tightness itself is temporary.",
+   "evidence_ids": ["dc_k_adv_share", "dc_k_n2_share", "dc_k_n3_share", "dc_call_q3_2026", "dc_g_capex_fy26", "fd_trendforce_cowos", "fd_trendforce_2q26"]
+  },
+  "share_trajectory": {
+   "reading": "TSMC is holding or gaining share on numbers: 72.5% of 2Q26 foundry revenue vs 72.3% in 1Q26 (TrendForce); Samsung Foundry fell from 6.5% to 5.9%; SMIC rose from 5.1% to 5.4% (mature/domestic China nodes); UMC 3.9%; GlobalFoundries ~4% of pure foundry (Counterpoint, different basis). Intel's external foundry revenue was US$293M in 2Q26, under 1% of TSMC's ~US$40.2bn quarter. Only two quarters of share data were read, so the trend is short.",
+   "evidence_ids": ["fd_trendforce_2q26", "fd_evertiq_2q26", "fd_counterpoint_2q26", "fd_intel_q2_2026"]
+  },
+  "competitive_position": {
+   "reading": "Stronger than every named competitor. Vs Samsung Foundry (the only other 3nm/2nm GAA maker): 72.5% vs 5.9% share and falling for Samsung. Vs Intel Foundry: Intel FY2025 revenue -0.5%, gross margin 34.8%, operating margin -4.2% vs TSMC FY2025 gross margin ~59.9% and operating margin ~50.8%, Q3 2026 66.4%/58.7%; Intel 18A yields are improving (reported 7-8% monthly) but external revenue is tiny. Vs SMIC, UMC, GlobalFoundries: they compete in mature/specialty nodes, while 79% of TSMC's wafer revenue is 7nm and below. TSMC's ROIC ~53% (incremental ~61%) shows the economics behind the position.",
+   "evidence_ids": ["fd_trendforce_2q26", "pf_peer_INTC", "fd_intel_q2_2026", "fd_intel_18a_yield", "nm_gross_profit_fy2025", "nm_operating_income_fy2025", "nm_revenue_fy2025", "nm_gross_margin_q3_2026", "nm_operating_margin_q3_2026", "dc_k_adv_share"]
+  },
+  "threats": {
+   "reading": "(1) Customer concentration/in-sourcing of demand: two unnamed customers were 19% and 17% of FY2025 revenue and the ten largest 78% (up from 70% in 2023); an AI-capex pullback at them hits about a third of revenue. (2) Geopolitics: ~80% of noncurrent assets (NT$3.10tn of NT$3.88tn) are in Taiwan; US export controls (Nanjing fab on an annual license; China-HQ customers 9% of FY2025 revenue) and US Section 232 tariffs (25% on certain advanced chips, Taiwan deal caps reciprocal rate at 15%). (3) New entrant: Intel 18A/14A external foundry (hypothesis that it wins material volume; today US$293M a quarter). (4) Cost: overseas fab gross-margin dilution ~2% now, guided to widen to 3-4%. (5) Cyclicality: mostly fixed costs, margins fall when utilization drops (FY2023 revenue -4.5%).",
+   "evidence_ids": ["dc_c_a_fy25", "dc_c_b_fy25", "dc_c_top10_fy25", "mc_nca_taiwan_fy25", "mc_nca_total_fy25", "mc_revpct_china_fy25", "mc_press_nanjing", "mc_press_232_proc", "mc_press_232_taiwan", "fd_intel_q2_2026", "dc_k_overseas_dilution", "pf_10k_20260416", "pf_revenue_fy2023"]
+  }
+ },
+ "assessments": {
+  "moat": {
+   "assessment": "strong",
+   "evidence_ids": ["fd_trendforce_2q26", "fd_intel_q2_2026", "pf_peer_INTC", "dc_k_adv_share", "nm_operating_income_fy2025", "nm_equity_fy2025"],
+   "note": "Process-technology and scale moat: 72.5% foundry share vs Samsung 5.9% and Intel external foundry US$293M/quarter; 79% of wafer revenue at 7nm and below; ROIC ~53% with incremental ROIC ~61%, far above an ~8% cost of capital, sustained since 2019 (no fade toward the cost of capital in the data)."
+  },
+  "pricing_power": {
+   "assessment": "strong",
+   "evidence_ids": ["pf_gross_profit_fy2024", "pf_revenue_fy2024", "nm_gross_profit_fy2025", "nm_revenue_fy2025", "nm_gross_margin_q3_2026", "dc_g_gm_q4_26"],
+   "note": "Gross margin rose from 46% (FY2019) and 56.1% (FY2024) to 59.9% (FY2025) and 66.4% (Q3 2026), guided 65-67% for Q4 2026 despite 2nm ramp and overseas dilution. Reported 2027 wafer price rises of 3-6% and CoWoS price rises are press/analyst claims (hypothesis, moves nothing)."
+  },
+  "customer_concentration": {
+   "assessment": "weak",
+   "evidence_ids": ["dc_c_a_fy25", "dc_c_b_fy25", "dc_c_a_fy24", "dc_c_b_fy24", "dc_c_top10_fy25"],
+   "note": "High concentration: Customer A 19% (12% in 2024), Customer B 17% (22% in 2024); ten largest 78% of FY2025 revenue. Customers are unnamed in the filing."
+  },
+  "market_size": {
+   "assessment": "strong",
+   "evidence_ids": ["dc_g_revgrowth_fy26", "dc_s_hpc_3q26", "dc_call_q3_2026", "fd_trendforce_2q26"],
+   "note": "FY2026 revenue guided ~+44% in US$; HPC 68% of revenue; management's AI accelerator CAGR guide of mid-to-high 50s% for 2024-2029 (management expectation); industry foundry revenue at a record US$53.49bn in 2Q26."
+  },
+  "competition": {
+   "assessment": "strong",
+   "evidence_ids": ["fd_trendforce_2q26", "fd_counterpoint_2q26", "pf_peer_INTC", "fd_intel_q2_2026"],
+   "note": "TSMC's competitive standing is strong: Samsung losing share (6.5% to 5.9%), Intel loss-making with tiny external foundry revenue, SMIC/UMC/GlobalFoundries mostly in mature nodes. Intel 18A/14A is the one named challenger to watch."
+  },
+  "management": {
+   "assessment": "strong",
+   "evidence_ids": ["dc_g_rev_q3_26_prior", "dc_f_rev_usd_3q26", "nm_rel_20260716", "nm_rel_20260416", "nm_rel_20260115", "nm_rel_20251016"],
+   "note": "Promises vs delivery: revenue beat the guided midpoint in 7 of 7 quarters from Q1 2025 to Q3 2026 (mean actual/guided midpoint 1.024); Q3 2026 US$46.72bn vs guidance US$44.6-45.8bn."
+  },
+  "capital_allocation": {
+   "assessment": "strong",
+   "evidence_ids": ["nm_capex_fy2025", "nm_cfo_fy2025", "nm_dividends_paid_fy2025", "pf_dividends_paid_fy2024", "nm_sbc_fy2025", "dc_g_capex_fy26", "dc_k_overseas_dilution"],
+   "note": "Heavy reinvestment at high returns (incremental ROIC ~61%): FY2025 capex NT$1.27tn funded from CFO NT$2.27tn; dividends rose to NT$466.8bn from NT$363.1bn; SBC negligible (NT$1.2bn) and the share count flat (~25.93bn). Watch: capex rising to US$60-64bn in 2026 and higher in 2027-2028, with lower-return overseas fabs (gross margin dilution 2% widening to 3-4%) partly driven by politics."
+  },
+  "regulation": {
+   "assessment": "adequate",
+   "evidence_ids": ["pf_10k_20260416", "mc_press_232_proc", "mc_press_232_taiwan", "mc_press_nanjing"],
+   "note": "Exposed to US export controls (Nanjing on an annual license, China-HQ customers 9% of revenue) and Section 232 tariffs, mitigated by the Jan 2026 US-Taiwan deal and US investment (Arizona); company says results not materially affected so far."
+  },
+  "technology_ai": {
+   "assessment": "strong",
+   "evidence_ids": ["dc_k_n2_share", "dc_k_n3_share", "dc_k_adv_share", "dc_call_q3_2026", "fd_intel_18a_yield"],
+   "note": "N2 in high-volume production since Q4 2025 and already 8% of wafer revenue in Q3 2026; A14 risk production 2027, volume 2028; Intel 18A still ramping yields; AI is the main growth driver (HPC 68%)."
+  },
+  "geopolitics": {
+   "assessment": "weak",
+   "evidence_ids": ["mc_nca_taiwan_fy25", "mc_nca_total_fy25", "pf_10k_20260416", "mc_press_anthropic"],
+   "note": "About 80% of noncurrent assets in Taiwan; the 20-F names military conflict, earthquakes, power and water shortages; a customer (Anthropic S-1, secondary report) flags Taiwan concentration as a supply risk. Not sizable as a probability; the revenue share at risk in a Taiwan outage is not disclosed."
+  }
+ },
+ "gaps": [
+  "Share trend rests on two quarters of TrendForce data (1Q26, 2Q26) read as search excerpts; no multi-year series; Samsung, SMIC, UMC, GFS own filings not read.",
+  "CoWoS capacity, advanced-packaging revenue and 2027 wafer price rises are analyst/press estimates (TrendForce); no TSMC figure: pricing beyond the gross-margin trend is a hypothesis.",
+  "Switching costs and retention not assessed: customers are unnamed and no contract terms or backlog are disclosed.",
+  "Substitutes (in-house fabs, chiplets on other foundries) not evidenced beyond Intel's tiny external foundry revenue.",
+  "Governance not read (proxy/board).",
+  "Revenue at risk from a Taiwan disruption is not disclosed; geopolitics is a qualitative weak, not a sized number.",
+  "Outside view (warning only, sets no number): very large companies growing 40%+ rarely sustain it for five years; returns tend to fade toward the cost of capital, though TSMC's ROIC has shown no fade since 2019."
+ ]
+}

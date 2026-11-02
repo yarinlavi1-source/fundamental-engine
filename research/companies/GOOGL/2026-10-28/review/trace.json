@@ -1,0 +1,60 @@
+{
+  "lens": "trace",
+  "findings": [
+    {
+      "severity": "major",
+      "finding": "The opening balance is the 2026-06-30 statement (inputs/casefile fc.spec.opening + underwriting.opening_reconciliation statement_as_of 2026-06-30: cash 55,911m, debt 100.16bn + 19.25bn preferred = 119.41bn, common shares 12,230m, investments 186,563m + 131,461m), although the 2026-09-30 balance sheet in the Q3 release (pf_rel_20261028_1, citable on its own date in this results-day run) is already in the pack (nm_long_term_debt_q_2026_09_30 = 125,102m, nm_short_term_investments_q_2026_09_30 = 208,764m, nm_non_marketable_securities_q_2026_09_30 = 135,230m; release: cash 56,334m, 12,294m shares). bridge_events is empty, so the Q3 ATM issuance (12m Class A + 24m Class C shares, 12.4bn net) and the 28.7bn of Q3 notes are neither in the opening nor bridged. Point-in-time shares are understated by about 64m (0.5%); debt by about 25bn, offset by about 26bn more investments.",
+      "where": "companies/GOOGL/inputs.json and out/casefile.json fc.spec.opening / fc.spec.underwriting.opening_reconciliation (statement_as_of 2026-06-30, bridge_events [])",
+      "fix": "Re-base the opening on the 2026-09-30 release balance sheet (cash 56,334; marketable 208,764; non-marketable 135,230; long-term debt 125,102; common shares 12,294m; preferred 19.25bn liquidation preference as the debt-like claim), statement_as_of 2026-09-30, and rerun ticker-value; state in notes that ATM sales after 2026-09-30 are unknown until the 10-Q."
+    },
+    {
+      "severity": "major",
+      "finding": "Q3 numbers from the call that carry the base growth driver and the key risk exist only in an AI-assisted third-party copy (Investing.com, retrieval search_excerpt), not an issuer document, and two of them are not even in the saved excerpt: the excerpt (gather/raw_expectations/q3_2026_call_excerpt_investing_com.md) contains 561bn backlog and 'just over 55%' within 24 months, but it has no 924bn purchase-commitment figure and no 5.2bn EC payment. rp_purch_commit_q3_26 (924bn) is quoted in the key risk shown in the table and in the bear condition and sales_to_capital reason, but it traces only to a statement in gather/reports.json. rp_cloud_backlog_q3_26 / ex_kpi_cloud_backlog_q3_2026 (561bn) and rp_kpi_backlog_24m (0.55) carry the base growth_anchor (tier 'contracted', FY2027 +21%), and they are unconfirmed by any issuer document.",
+      "where": "evidence_pack.json facts rp_purch_commit_q3_26, rp_ec_fine_cash_q3_26, rp_cloud_backlog_q3_26; kpis ex_kpi_cloud_backlog_q3_2026, ex_kpi_backlog_24m_share_q3_2026, rp_kpi_backlog_24m; drivers.growth_anchor, drivers.sales_to_capital; key_risk; source ex_call_q3_2026",
+      "fix": "Do not show 924bn in the key risk or bear line until it is in a saved payload: either save the call passage verbatim that states it or replace it with the last filed figure (811.0bn at 2026-06-30, pf_10q_20260723) labelled as Q2. Keep 561bn/55% marked as 'CFO on the call, unconfirmed copy' next to the result. When the Q3 10-Q is filed, confirm both against its RPO and commitments notes and rerun."
+    },
+    {
+      "severity": "major",
+      "finding": "Guidance provenance is wrong after the pack-merge collapse of rp_call_* into dc_call_20260722. In the saved Q2 2026 AV transcript (gather/raw_documents/av_transcript_GOOGL_2026Q2.json) only the FY2026 180-190bn -> 195-205bn update is present. These rows cite it but are not in it: rp_g_capex_fy26_feb (175-185bn, said on the Q4 2025 call), rp_g_capex_fy25_oct (91-93bn), rp_g_capex_fy25_feb (75bn: it is in raw_reports/av_transcript_GOOGL_2024Q4.json), rp_g_capex_q1_25 (16-18bn), the guidance_track rows (75bn and 92bn guided vs 91,447m actual) and facts rp_cloud_backlog_q4_25 (240bn) and rp_cloud_backlog_q3_25 (155bn). There is also dc_g_capex_fy2026_feb (175-185bn), which cites the Q4 2025 release pf_rel_20260204_1, and that release contains no capex guidance. The guidance_track FY2025 row cites pf_rel_20251029_1, which has no 91-93bn guide. No raw payload of the Q4 2025 or Q3 2025 calls is saved, so 240bn, 155bn and 91-93bn trace to nothing local. The management assessment ('first guides are raised during the year') rests on these rows.",
+      "where": "evidence_pack.json guidance rp_g_capex_fy26_feb, rp_g_capex_fy25_oct, rp_g_capex_fy25_feb, rp_g_capex_q1_25, dc_g_capex_fy2026_feb; guidance_track (all 4 rows); facts rp_cloud_backlog_q4_25, rp_cloud_backlog_q3_25; sources dc_call_20260722 / collapsed rp_call_20260429, rp_call_20260204, rp_call_20251029, rp_call_20250204",
+      "fix": "Restore separate call sources with their own dates (rp_call_20250204 -> raw_reports/av_transcript_GOOGL_2024Q4.json; rp_call_20260429 -> raw_reports/av_transcript_GOOGL_2026Q1.json; rp_call_20260204 and rp_call_20251029 with a distinguishing URL fragment such as '#quarter=2025Q4'/'#quarter=2025Q3' so pack-merge does not dedupe them). Re-point each guidance and backlog row to the call that said it, and point dc_g_capex_fy2026_feb to the Q4 2025 call instead of the release. Mark 240bn, 155bn and 91-93bn as untraced until their transcripts are saved."
+    },
+    {
+      "severity": "major",
+      "finding": "The base case has two different returns on capital. drivers.terminal.roic base = 0.31 drives the DCF fair value of 367$. company_path.scenarios.base.roic = 0.20 drives the annual-table multiple. Both are labelled own_history, and the terminal.roic reason claims 'one story per scenario with company_path'. Its own cited history says incremental ROIC was about 21.8% in FY2023-25 and 13-15% on the 2026 additions. So the 0.31 terminal value is the average return on all capital, applied to the new capital.",
+      "where": "evidence_pack.json drivers['terminal.roic'] (base 0.31, bull 0.34) vs inputs.json company_path.scenarios.base.roic 0.20 / bull 0.29",
+      "fix": "Make one base return on capital and use it in both places (or write explicitly why the terminal return on all capital differs from the return on new capital in the multiple), and rerun ticker-value; the reviewer of numbers should check the fair value sensitivity to terminal.roic 0.20 vs 0.31."
+    },
+    {
+      "severity": "major",
+      "finding": "Non-marketable securities are added to the value per share at full carrying value with investment_haircut 0. The opening long_term_investments of 131,461m (2026-06-30; 135,230m at 2026-09-30) is about 10.7$ a share, roughly 3% of the 367$ fair value. These are private-company stakes carried at observable-transaction marks: 2026 year-to-date unrealized gains are about 126.8bn, and Q3 alone had an 8.7bn loss. Their basis is not cash-like, and the pack holds no note that tests liquidity or mark quality.",
+      "where": "out/casefile.json fc.spec.underwriting.opening_reconciliation (long_term_investments 131,461,000,000; investment_haircut 0); fc.spec.opening.marketable_investments 318,024,000,000",
+      "fix": "Show the non-marketable stakes as a separate line (not spendable cash) with a stated haircut or a range, and source the basis from the 10-Q equity-securities note (measurement alternative / observable price changes); rerun."
+    },
+    {
+      "severity": "minor",
+      "finding": "Syndicated or third-party copies do not name their original. ex_call_q3_2026 (an Investing.com copy of Alphabet's own call), dc_call_20260722 (the Alpha Vantage transcript of the Q2 call) and mc_reuters_adtech_20260917 (thestar.com.my reprint of Reuters) are all independent=false but syndicated_from=null. ticker-trace therefore reports syndicated = {} and nothing ties these copies to their originals.",
+      "where": "evidence_pack.json sources ex_call_q3_2026, dc_call_20260722, mc_reuters_adtech_20260917",
+      "fix": "Set syndicated_from to the original (issuer Q3 2026 earnings webcast 2026-10-28; issuer Q2 2026 webcast 2026-07-22; Reuters 2026-09-17)."
+    },
+    {
+      "severity": "minor",
+      "finding": "There are duplicate facts with different values. rp_cloud_backlog_q1_26 = 462.0bn (cited to dc_call_20260722) and dc_kpi_cloud_backlog_q1_2026 = 462.3bn (pf_10q_20260430) are the same Q1 2026 metric. rp_kpi_tokens_q1 (16bn/min) cites the Q2 transcript, which says 'per month', while dc_kpi_api_tokens_q1_2026 correctly cites the Q1 release ('more than 16 billion tokens per minute').",
+      "where": "evidence_pack.json facts rp_cloud_backlog_q1_26; kpis rp_kpi_tokens_q1",
+      "fix": "Drop the rp_ duplicates or re-point them to the 10-Q / Q1 release values."
+    },
+    {
+      "severity": "minor",
+      "finding": "The equity risk premium and the risk-free rate are from different dates. The Damodaran implied ERP (pf_erp_implied, 4.2%) is dated 2026-10-01 and was computed against a 5.29% treasury, while the risk-free rate is DGS10 at 4.99% on 2026-10-27. No raw ERP payload is saved; the source URL is the Damodaran home page.",
+      "where": "market.json / inputs.json forecast.equity_risk_premium, source pf_erp_implied",
+      "fix": "Note the date and treasury mismatch next to the cost of equity, and save the ERP page or spreadsheet row that was read."
+    },
+    {
+      "severity": "minor",
+      "finding": "The backstop amounts quoted in the bear condition (43.8bn credit derivatives, 7.6bn guarantees, 24.1bn agreed, 20.0bn private-company funding) are as of 2026-06-30 (pf_10q_20260723), and the 10-Q says some energy backstops run 'through September 2026'. The bear text presents them as current.",
+      "where": "out/scenarios_he.md / table_he.md bear line; evidence_pack notes 'dc COMMITMENTS'",
+      "fix": "Date them 'as of 30.6.2026' in the bear line until the Q3 10-Q updates them."
+    }
+  ],
+  "checked_ok": "Sampled and matched against the saved documents and payloads: Q3 2026 revenue 127,577m (+25%), Services 96,302m (+10.6%), Search 63,350m (+12.0%), Cloud 30,709m (+103%), Cloud margin 36.2% vs 23.7%, Services margin 40.7%, operating income 40,576m (31.8%), FCF -9,065m (OCF 42,290 less capex 51,355), TTM FCF 19,747m, depreciation +49% (8,369 vs 5,611), long-term debt 46,547 -> 125,102m, ATM 12.4bn net and 27.6bn remaining, shares 12,088 -> 12,294m (+1.7%), inventory 13,308m, Network 5.8% of revenue, 9M revenue 357,269m, TTM operating income 156,976m, Q1/Q2 2026 Services growth 16%/14.5% and Search 19%, API tokens 7bn -> 10bn -> 16bn -> 22bn -> ~32bn per minute (releases), Q2 2026 RPO 519.5bn / Cloud 513.9bn, commitments 811.0bn/200.7bn/707.0bn, backstops 7.6bn/43.8bn (10-Q text), FY2025 capex 91,447m, Meta Q3 advertising 63,061m, AV consensus FY2026 revenue 500.14bn / FY2027 626.8bn, FMP FY2030 rows, own year-end P/E history 2021-2025, and the price 291.96 (IB snapshot, 22:38 UTC after hours, prior close 320.58; regular close 324.89 in the daily history). No source is dated after 2026-10-28. Consensus is used only as a cross-check, never as a fact."
+}

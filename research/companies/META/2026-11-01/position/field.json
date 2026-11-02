@@ -1,0 +1,110 @@
+{
+ "thesis_he": {
+  "bear": "יתרון הפרסום נשחק: רגולציה באירופה ותביעות הנוער פוגעות בהכנסות, מחיר המודעה מפסיק לעלות, וההשקעה הענקית ב-AI לא מחזירה את עצמה ומחייבת עוד הנפקות מניות.",
+  "base": "מטא ממשיכה לקחת נתח מגוגל ואמזון בפרסום בזכות מודלי AI שמעלים את מחיר המודעה, הצמיחה מאטה בהדרגה ממעל 20%, וההשקעות ממומנות בחלקן בהנפקת מניות שמדללת מעט את המחזיקים.",
+  "bull": "לצד המשך לקיחת נתח בפרסום, עסקי ה-AI החדשים (Muse, מנויים, API) מתחילים להכניס כסף אמיתי ב-2027 וההשקעה בתשתית מתגלה כיתרון שקשה להעתיק."
+ },
+ "potential": {
+  "market_direction": {
+   "reading": "Digital advertising keeps growing and concentrating in the largest sellers: EMarketer (attributed forecast, search excerpt) puts META at about 243.5 billion USD of worldwide net ad revenue in 2026 (+24.1%, 26.8% of digital ad spend) and META, Google and Amazon together at 62.3% of digital ad spend in 2026 against 59.9% in 2025. META's own Q3 2026 revenue grew 26% with every region growing (US and Canada +33%, Europe +21%, Asia-Pacific +19%, Rest of World +30% by customer address). Growth now comes from yield, not users: family daily active people grew 3% to 3.64 billion while ad impressions grew 10% and price per ad 14%.",
+   "evidence_ids": ["fd_emarketer_2026", "pf_rel_20261021_1", "mc_rev_usc_q3_2026", "mc_rev_usc_q3_2025", "mc_rev_eur_q3_2026", "mc_rev_eur_q3_2025", "dc_kpi_dap_sep2026", "dc_kpi_dap_sep2025", "dc_kpi_impressions_growth_q3_2026", "dc_kpi_price_per_ad_growth_q3_2026"]
+  },
+  "bottleneck_potential": {
+   "reading": "META is a bottleneck on one thing it already owns: AI-ranked attention of 3.64 billion daily people, sold as measurable ad yield (ARPP 17.72 USD in Q3 2026 against 14.46 a year earlier, +23%). It is not a bottleneck on compute: it is a buyer of it, guiding 2026 capex of 135-145 billion USD with Q3 free cash flow of -2.12 billion, 454.5 billion of non-cancelable commitments and 355.7 billion of leases not yet commenced; Alphabet and Amazon add the same capacity on their own balance sheets (Alphabet Q3 free cash flow -9.1 billion, Amazon TTM -42.4 billion) and Amazon lists new AWS agreements with Meta. How long the attention position lasts depends on platform gatekeepers it does not control (Apple iOS/Safari data rules, Google Android/Chrome), which the 10-K treats as structural.",
+   "evidence_ids": ["dc_kpi_dap_sep2026", "dc_kpi_arpp_q3_2026", "dc_kpi_arpp_q3_2025", "dc_g_capex_fy2026", "dc_fcf_q3_2026", "dc_noncancelable_commitments_q3_2026", "dc_leases_not_commenced_q3_2026", "fd_rel_googl_20261028", "fd_rel_amzn_20261029", "pf_10k_20260129"]
+  },
+  "share_trajectory": {
+   "reading": "META is taking share from every named advertising competitor on same-quarter numbers: Q3 2026 advertising +25.9% (63.06 vs 50.08 billion USD) against Google advertising +10.6% (82.01 vs 74.18; YouTube ads +9.2%), Amazon advertising services +10.9% (19.64 vs 17.70, partly Prime Day timing) and Pinterest revenue +12%. META advertising as a share of Google advertising rose from 67.5% in Q3 2025 to 76.9% in Q3 2026 (61.9% Q1 2025, 71.2% Q1 2026), and META took about 57% of the 22.9 billion USD added by these four sellers in the year. Engagement share against TikTok and YouTube cannot be measured (TikTok private, YouTube usage undisclosed); the 10-K says TikTok has reduced some users' engagement. In hardware META is flat (Reality Labs 9M 2026 revenue 1.276 billion against 1.252) while Apple's wearables line is about 7.9 billion a quarter.",
+   "evidence_ids": ["pf_rel_20261021_1", "pf_10q_20261022", "fd_rel_googl_20261028", "fd_rel_googl_20260429", "fd_rel_amzn_20261029", "fd_rel_pins_20261029", "pf_10k_20260129", "fd_rel_aapl_20260730", "dc_seg_rl_q3_2026", "dc_seg_rl_q3_2025"]
+  },
+  "competitive_position": {
+   "reading": "Stronger than Google and Amazon in advertising growth (26% against about 11% each in Q3 2026) and far stronger than Snap and Pinterest in scale and profitability (Snap Q2 2026 operating margin negative, DAU 493 million with North America -7%; Pinterest Q3 revenue +12% and decelerating, US and Canada MAU +4%); META's FY2025 operating margin was 41.4% against Alphabet's 32.0%. Weaker than Google and Amazon in paid AI monetization outside ads: Google Cloud grew 103% to 30.7 billion USD in Q3 2026 with 11.1 billion operating income and AWS 39% to 46.0 billion, while META reports no cloud or model revenue line (Family of Apps other revenue, which holds WhatsApp paid messaging and subscriptions, was 1.1 billion, +59%). Weaker than Apple in consumer hardware and dependent on Apple and Google for distribution and ad signals.",
+   "evidence_ids": ["pf_rel_20261021_1", "fd_rel_googl_20261028", "fd_rel_amzn_20261029", "fd_rel_snap_20260803", "fd_rel_pins_20261029", "fd_rel_aapl_20260730", "pf_cf_20260129", "dc_foa_other_revenue_q3_2026", "pf_10k_20260129"]
+  },
+  "threats": {
+   "reading": "Regulation and litigation are the evidenced threats: the August 2026 agreement with 52 attorneys general costs up to about 18.59 billion USD (9.89 billion charged in Q3 2026, about 5.3 billion contingent and unaccrued) plus under-18 product changes in the US, which the 10-Q warns can cause disproportionate engagement losses if YouTube and TikTok do not adopt the same measures; the EU DMA 'subscription for no ads' decision may force changes with 'a significant impact to our European business and revenue' (Europe 21.7% of Q3 revenue); the FTC appeal seeks Instagram and WhatsApp divestiture; the EU imposed free WhatsApp Business API access for AI providers in June 2026. Substitution: TikTok (named) for user time, and AI assistants of Google and others for discovery (hypothesis, no META figure). China: meaningful revenue from China-based resellers can be cut by governments (share undisclosed) and China already ordered the Manus unwind. Funding: about 37.5 billion USD of equity raised in October 2026 and a planned 60 billion ATM dilute holders if capex does not pay back.",
+   "evidence_ids": ["pf_10q_20261022", "dc_ag_agreement_total_payments", "dc_ag_agreement_contingent_unaccrued", "dc_legal_charge_ag_q3_2026", "mc_rev_eur_q3_2026", "pf_10k_20260129", "dc_fwp_launch_20261026", "mc_8k_20261029", "nm_atm_planned_2026_10_26"]
+  }
+ },
+ "assessments": {
+  "moat": {
+   "assessment": "strong",
+   "evidence_ids": ["dc_kpi_dap_sep2026", "pf_rel_20261021_1", "fd_rel_googl_20261028", "fd_rel_amzn_20261029", "pf_cf_20260129"],
+   "note": "Moat source evidenced: network scale (3.64 billion daily people) plus AI ranking that turns it into ad yield; META grew advertising 26% against Google about 11% and Amazon about 11% in Q3 2026. ROIC 28.7% last, 31.4% average (auto.json forensic), well above the 8% reference; incremental ROIC fell to 14.9% as capex rises, so the excess return is fading toward the cost of capital at the margin."
+  },
+  "pricing_power": {
+   "assessment": "strong",
+   "evidence_ids": ["dc_kpi_price_per_ad_growth_q3_2026", "dc_kpi_price_per_ad_growth_q2_2026", "dc_kpi_price_per_ad_growth_q1_2026", "dc_kpi_price_per_ad_growth_q4_2025", "dc_kpi_arpp_q3_2026", "dc_kpi_arpp_q3_2025"],
+   "note": "Price per ad +6%, +12%, +12%, +14% in the last four quarters while impressions also grew (+18% to +10%); ARPP +23% y/y. Prices are auction-set, so this is advertiser demand for META's conversion results, not list-price increases."
+  },
+  "switching_costs": {
+   "assessment": "adequate",
+   "evidence_ids": ["pf_10k_20260129", "pf_10q_20261022"],
+   "note": "Advertisers have no long-term commitments and can cut spend quickly (Item 1A); users can substitute (TikTok named). What holds both is network size and conversion performance, not contractual lock-in."
+  },
+  "retention": {
+   "assessment": "adequate",
+   "evidence_ids": ["dc_kpi_dap_sep2026", "dc_kpi_dap_sep2025", "dc_kpi_dap_mar2026", "dc_kpi_dap_dec2025", "pf_10k_20260129"],
+   "note": "Family DAP rose from 3.54 to 3.64 billion in a year (+3%) with a small Q1 2026 dip (Iran disruptions, Russia WhatsApp restriction); the 10-K says TikTok reduced some users' engagement and younger users substitute other products. Advertiser retention is not disclosed."
+  },
+  "customer_concentration": {
+   "assessment": "strong",
+   "evidence_ids": ["pf_10k_20260129", "mc_rev_apac_q3_2026"],
+   "note": "No customer at 10% or more of revenue in 2023-2025, millions of advertisers. One undisclosed cluster: China-based resellers generate 'meaningful revenue' (inside Asia-Pacific, 26.3% of Q3 revenue); its size is a gap."
+  },
+  "market_size": {
+   "assessment": "adequate",
+   "evidence_ids": ["fd_emarketer_2026", "dc_advertising_revenue_fy2025", "dc_kpi_dap_sep2026"],
+   "note": "META already holds about 27% of worldwide digital ad spend (EMarketer, attributed forecast) and reaches most internet users; further growth must come from yield, new surfaces (WhatsApp, Threads, partnership ads 15 billion run rate) and new AI products, not from new users."
+  },
+  "competition": {
+   "assessment": "strong",
+   "evidence_ids": ["pf_rel_20261021_1", "fd_rel_googl_20261028", "fd_rel_amzn_20261029", "fd_rel_pins_20261029", "fd_rel_snap_20260803"],
+   "note": "META took about 57% of the incremental ad dollars among META, Google, Amazon and Pinterest in Q3 2026 and its advertising rose from 67.5% to 76.9% of Google's; Snap and Pinterest are sub-scale. TikTok is unmeasured (private)."
+  },
+  "substitutes": {
+   "assessment": "adequate",
+   "evidence_ids": ["pf_10k_20260129", "pf_10q_20261022"],
+   "note": "Short video (TikTok, YouTube) is a named substitute for user time; AI assistants as a substitute for feed-based discovery and ads are a hypothesis with no META figure. Current ad growth shows no substitution in the numbers yet."
+  },
+  "management": {
+   "assessment": "adequate",
+   "evidence_ids": ["pf_rel_20261021_1", "pf_rel_20260729_1", "pf_rel_20260429_1", "dc_g_capex_fy2026", "dc_seg_rl_fy2025", "dc_g_reality_labs_loss_fy2026"],
+   "note": "Revenue delivery is excellent: 7 of 7 quarters above the guided midpoint (mean ratio 1.041, auto.json track_record); costs cut (headcount -15% y/y). Against that, the capex guide rose from 115-135 to 135-145 billion USD during 2026 and Reality Labs loses 18-19 billion a year on about 2.2 billion of flat revenue, with profitability undated."
+  },
+  "capital_allocation": {
+   "assessment": "adequate",
+   "evidence_ids": ["pf_buybacks_fy2025", "pf_sbc_fy2025", "pf_shares_diluted_wavg_fy2020", "pf_shares_diluted_wavg_fy2025", "dc_fcf_q3_2026", "dc_fwp_launch_20261026", "mc_8k_20261029", "nm_atm_planned_2026_10_26"],
+   "note": "Through 2025 buybacks beat SBC (diluted shares 2,888 million in 2020 to 2,574 million in 2025; FY2025 buybacks 26.2 billion USD against SBC 20.4 billion). In 2026 the direction reversed: no buybacks in 9M 2026, Q3 free cash flow -2.12 billion, about 37.5 billion of equity raised in October (25.0 billion forward at 625 USD, 12.5 billion 6.50% mandatory convertible preferred) plus a planned 60 billion ATM. Incremental ROIC 14.9% is still above the cost of capital, but falling; the payback of the AI capex is unproven."
+  },
+  "governance": {
+   "assessment": "weak",
+   "evidence_ids": ["pf_proxy_20260416", "pf_10q_20261022", "mc_8k_20261021"],
+   "note": "Controlled company: Class B (ten votes) gives the CEO majority voting control; new non-voting Class C (effective 2027-01-19) is expected to be used for equity offerings, compensation and acquisitions, widening the dilution channel without diluting control (Founder Alignment Agreement of 2026-10-20)."
+  },
+  "regulation": {
+   "assessment": "weak",
+   "evidence_ids": ["pf_10q_20261022", "dc_ag_agreement_total_payments", "dc_legal_charge_ag_q3_2026", "dc_legal_charges_q2_2026", "dc_legal_accruals_noncurrent_q3_2026", "mc_rev_eur_q3_2026"],
+   "note": "Recurring legal costs (2.4 billion USD Q2, 9.89 billion Q3 2026; non-current legal accruals 8.3 billion), youth trials continuing in 2027, EU DMA/DSA and WhatsApp API actions against 21.7% European revenue, FTC divestiture appeal pending, AI copyright trials from May 2027."
+  },
+  "technology_ai": {
+   "assessment": "strong",
+   "evidence_ids": ["dc_kpi_price_per_ad_growth_q3_2026", "dc_kpi_arpp_q3_2026", "dc_kpi_partnership_ads_runrate_q3_2026", "dc_kpi_genai_ad_tools_advertisers_q3_2026", "dc_av_call_20261021", "fd_rel_googl_20261028"],
+   "note": "AI in the core ads business is evidenced in META's own numbers (price per ad +14%, ARPP +23%, ad growth well above Google's). AI outside ads (Muse, Muse Wonder, 10 million setups per management, subscriptions, API) has no paid revenue yet, while Google Cloud already earns 30.7 billion a quarter on AI: that part is a hypothesis and moves no number."
+  },
+  "geopolitics": {
+   "assessment": "adequate",
+   "evidence_ids": ["pf_10k_20260129", "pf_10q_20261022", "mc_rev_apac_q3_2026", "mc_lla_us_fy2025", "mc_rev_eur_q3_2026"],
+   "note": "Revenue is global (Asia-Pacific 26.3%, Europe 21.7% of Q3 2026) with an undisclosed China-reseller share that governments can cut; China ordered the Manus unwind (completed August 2026). Assets are 88% in the US; chip and server supply countries are not disclosed."
+  }
+ },
+ "gaps": [
+  "Outside-view warning only (moves no number): sustaining 20%+ revenue growth from a 200+ billion USD revenue base is rare across large companies; auto.json carries no computed base_rates.outside_view row for META.",
+  "China-based reseller revenue share undisclosed (only the Asia-Pacific 26.3% bound); any China cut is unsized.",
+  "Engagement share against TikTok (private) and YouTube (usage undisclosed) cannot be measured; Snap and Apple Q3-period numbers not yet on SEC by 2026-10-30 (comparison stays on the June quarter).",
+  "Paid adoption of META AI products outside ads (Muse, Meta One, model API) is a management statement only; no revenue line exists, so the bull AI business is a hypothesis.",
+  "Revenue at risk from EU less-personalized-ads remedies, WhatsApp API remedies, US minors' product changes and an FTC-ordered divestiture is not disclosed: unsized.",
+  "EMarketer market-share figures are an attributed forecast read as a search excerpt (original not read); scope of the Google figure differs by outlet.",
+  "Advertiser retention and cohort data are not disclosed."
+ ]
+}

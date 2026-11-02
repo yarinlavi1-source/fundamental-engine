@@ -1,0 +1,438 @@
+{
+ "lane": "numbers",
+ "sources": [
+  {
+   "id": "nm_av_income",
+   "kind": "structured_data",
+   "title": "Alpha Vantage INCOME_STATEMENT NBIS (annual and quarterly)",
+   "url": "connector:Alpha_Vantage_MCP_Server__INCOME_STATEMENT",
+   "date": "2026-11-01",
+   "independent": true,
+   "publisher": "Alpha Vantage",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_av_balance",
+   "kind": "structured_data",
+   "title": "Alpha Vantage BALANCE_SHEET NBIS (annual and quarterly)",
+   "url": "connector:Alpha_Vantage_MCP_Server__BALANCE_SHEET",
+   "date": "2026-11-01",
+   "independent": true,
+   "publisher": "Alpha Vantage",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_av_cashflow",
+   "kind": "structured_data",
+   "title": "Alpha Vantage CASH_FLOW NBIS (annual and quarterly)",
+   "url": "connector:Alpha_Vantage_MCP_Server__CASH_FLOW",
+   "date": "2026-11-01",
+   "independent": true,
+   "publisher": "Alpha Vantage",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_av_estimates",
+   "kind": "consensus",
+   "title": "Alpha Vantage EARNINGS_ESTIMATES NBIS: analyst consensus (revenue, EPS) retrieved 2026-11-01",
+   "url": "connector:Alpha_Vantage_MCP_Server__EARNINGS_ESTIMATES",
+   "date": "2026-11-01",
+   "independent": true,
+   "publisher": "Alpha Vantage (aggregated analyst estimates)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_ib_price",
+   "kind": "price",
+   "title": "Interactive Brokers price snapshot NBIS (last 155.69, Nasdaq), read-only",
+   "url": "connector:Interactive_Brokers__get_price_snapshot",
+   "date": "2026-10-30",
+   "independent": true,
+   "publisher": "Interactive Brokers",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_ib_history",
+   "kind": "price",
+   "title": "Interactive Brokers monthly price history NBIS",
+   "url": "connector:Interactive_Brokers__get_price_history",
+   "date": "2026-10-31",
+   "independent": true,
+   "publisher": "Interactive Brokers",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_rel_q4_2025",
+   "kind": "release",
+   "title": "Nebius Q4 2025 results press release (6-K Ex. 99.1) and shareholder letter (Ex. 99.2)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1513845/000110465926013946/tm266173d1_ex99-1.htm",
+   "date": "2026-02-12",
+   "independent": true,
+   "publisher": "Nebius Group N.V. (SEC EDGAR)",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_rel_q1_2026",
+   "kind": "release",
+   "title": "Nebius Q1 2026 results press release (6-K Ex. 99.1) and shareholder letter (Ex. 99.2)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1513845/000110465926059872/tm2614392d1_ex99-1.htm",
+   "date": "2026-05-13",
+   "independent": true,
+   "publisher": "Nebius Group N.V. (SEC EDGAR)",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_rel_q2_2026",
+   "kind": "release",
+   "title": "Nebius Q2 2026 results press release (6-K Ex. 99.1) and shareholder letter (Ex. 99.2)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1513845/000110465926094568/tm2622968d1_ex99-1.htm",
+   "date": "2026-08-12",
+   "independent": true,
+   "publisher": "Nebius Group N.V. (SEC EDGAR)",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  }
+ ],
+ "facts": [
+  {
+   "id": "nm_revenue_fy2026q2",
+   "metric": "revenue",
+   "period": "FY2026Q2",
+   "value": 582300000.0,
+   "unit": "USD",
+   "source_ids": [
+    "nm_av_income",
+    "nm_rel_q2_2026"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_fy2026q1",
+   "metric": "revenue",
+   "period": "FY2026Q1",
+   "value": 399000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "nm_av_income",
+    "nm_rel_q1_2026"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_fy2025q4",
+   "metric": "revenue",
+   "period": "FY2025Q4",
+   "value": 227700000.0,
+   "unit": "USD",
+   "source_ids": [
+    "nm_av_income",
+    "nm_rel_q4_2025"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_fy2025q3",
+   "metric": "revenue",
+   "period": "FY2025Q3",
+   "value": 146100000.0,
+   "unit": "USD",
+   "source_ids": [
+    "nm_av_income"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_fy2025q2",
+   "metric": "revenue",
+   "period": "FY2025Q2",
+   "value": 105100000.0,
+   "unit": "USD",
+   "source_ids": [
+    "nm_av_income"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_operating_income_fy2026q2",
+   "metric": "operating_income",
+   "period": "FY2026Q2",
+   "value": -175900000.0,
+   "unit": "USD",
+   "source_ids": [
+    "nm_av_income"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_operating_income_fy2026q1",
+   "metric": "operating_income",
+   "period": "FY2026Q1",
+   "value": -128000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "nm_av_income"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_net_income_fy2026q2",
+   "metric": "net_income",
+   "period": "FY2026Q2",
+   "value": -190400000.0,
+   "unit": "USD",
+   "source_ids": [
+    "nm_av_income",
+    "nm_rel_q2_2026"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_net_income_fy2026q1",
+   "metric": "net_income",
+   "period": "FY2026Q1",
+   "value": 621200000.0,
+   "unit": "USD",
+   "source_ids": [
+    "nm_av_income"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_cfo_fy2026q2",
+   "metric": "cfo",
+   "period": "FY2026Q2",
+   "value": 2246100000.0,
+   "unit": "USD",
+   "source_ids": [
+    "nm_av_cashflow"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_cfo_fy2026q1",
+   "metric": "cfo",
+   "period": "FY2026Q1",
+   "value": 2258000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "nm_av_cashflow"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_capex_fy2026q2",
+   "metric": "capex",
+   "period": "FY2026Q2",
+   "value": 5657400000.0,
+   "unit": "USD",
+   "source_ids": [
+    "nm_av_cashflow",
+    "nm_rel_q2_2026"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_capex_fy2026q1",
+   "metric": "capex",
+   "period": "FY2026Q1",
+   "value": 2472900000.0,
+   "unit": "USD",
+   "source_ids": [
+    "nm_av_cashflow",
+    "nm_rel_q1_2026"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_sbc_fy2026q2",
+   "metric": "sbc",
+   "period": "FY2026Q2",
+   "value": 102500000.0,
+   "unit": "USD",
+   "source_ids": [
+    "nm_av_cashflow"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_cash_fy2026q2",
+   "metric": "cash",
+   "period": "FY2026Q2",
+   "value": 8042100000.0,
+   "unit": "USD",
+   "source_ids": [
+    "nm_av_balance"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_total_debt_fy2026q2",
+   "metric": "long_term_debt",
+   "period": "FY2026Q2",
+   "value": 10056100000.0,
+   "unit": "USD",
+   "source_ids": [
+    "nm_av_balance"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_equity_fy2026q2",
+   "metric": "equity",
+   "period": "FY2026Q2",
+   "value": 10339500000.0,
+   "unit": "USD",
+   "source_ids": [
+    "nm_av_balance"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_outstanding_fy2026q2",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2026Q2",
+   "value": 280381615,
+   "unit": "shares",
+   "source_ids": [
+    "nm_av_balance"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_adj_ebitda_fy2026q2",
+   "metric": "adj_ebitda",
+   "period": "FY2026Q2",
+   "value": 236200000.0,
+   "unit": "USD",
+   "source_ids": [
+    "nm_rel_q2_2026"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  }
+ ],
+ "consensus": [
+  {
+   "id": "nm_c_rev_fy2026",
+   "metric": "revenue",
+   "period": "FY2026",
+   "value": 3345216430,
+   "n": 21,
+   "low": 3000000000,
+   "high": 3585274000,
+   "source_id": "nm_av_estimates"
+  },
+  {
+   "id": "nm_c_rev_fy2027",
+   "metric": "revenue",
+   "period": "FY2027",
+   "value": 12242176220,
+   "n": 22,
+   "low": 8809100000,
+   "high": 17986500000,
+   "source_id": "nm_av_estimates"
+  },
+  {
+   "id": "nm_c_eps_fy2026",
+   "metric": "eps_diluted",
+   "period": "FY2026",
+   "value": -2.1132,
+   "n": 9,
+   "low": -6.41,
+   "high": 0.49,
+   "source_id": "nm_av_estimates"
+  },
+  {
+   "id": "nm_c_eps_fy2027",
+   "metric": "eps_diluted",
+   "period": "FY2027",
+   "value": -6.1573,
+   "n": 10,
+   "low": -15.31,
+   "high": 5.27,
+   "source_id": "nm_av_estimates"
+  },
+  {
+   "id": "nm_c_rev_fy2026q3",
+   "metric": "revenue",
+   "period": "FY2026Q3",
+   "value": 905738460,
+   "n": 17,
+   "low": 876600000,
+   "high": 942600000,
+   "source_id": "nm_av_estimates"
+  },
+  {
+   "id": "nm_c_rev_fy2026q4",
+   "metric": "revenue",
+   "period": "FY2026Q4",
+   "value": 1461859290,
+   "n": 17,
+   "low": 1087600000,
+   "high": 1714479000,
+   "source_id": "nm_av_estimates"
+  }
+ ],
+ "guidance_track": [
+  {
+   "period": "FY2025 year-end ARR",
+   "metric": "arr",
+   "guided_mid": 1000000000.0,
+   "actual": 1250000000.0,
+   "source_ids": [
+    "nm_rel_q4_2025"
+   ]
+  }
+ ],
+ "notes": [
+  "nm IDENTITY Nebius Group N.V. (Netherlands), 20-F filer, Class A ordinary shares listed on Nasdaq as NBIS (USD quote, USD reporting, FY end 31 Dec); IBKR contract id 88819736 (NASDAQ, STK); no ADR (direct share). Class B shares exist (10-K EPS note: two-class, equal economics). Cover/20-F filed 2026-04-30 for FY2025.",
+  "nm RECONCILIATION FY2025 20-F text vs prefetch pf_ facts: revenue 529.8 matches; capex 4,066.0 matches; SBC 83.2 matches; diluted shares 247,679,946 matches. DIFFERENCES: CFO 20-F MD&A text says 401.9M vs companyfacts/AV 384.8M (17.1M, probable continuing vs total or restricted cash classification, not resolved); FY2024 revenue 20-F recast 91.5M (discontinued ops: Avride etc. recast) vs companyfacts/AV 117.5M; FY2024 SBC 54.5M (20-F) vs 56.6M (pf); FY2025 operating loss pf -611.7M vs AV -596.2M (15.5M apart, not resolved); FY2025 net income 82.5M (pf) vs 101.7M (AV; AV includes discontinued ops).",
+  "nm RECONCILIATION latest quarter (Q2 2026, 6-K release): revenue 582.3M, net loss from continuing ops -190.4M, adj EBITDA 236.2M, capex 5,657.4M all match AV quarterly; Q2 2026 balance sheet and CFO come from AV only (no 10-Q for a 20-F filer; the interim 6-K was read via release exhibit only), so quarterly CFO 2,246.1M (Q2) and 2,258.0M (Q1) are unreconciled and driven by customer prepayments (guidance: over 9B prepayments in 2026).",
+  "nm ROIC CHECK prefetch roic_last -8.7% (FY2025 NOPAT -434M on invested capital 5.0B) uses year-end 2025; since then equity rose 4.6B to 10.3B and debt 5.0B to 10.1B (Q2 2026) while cash is 8.0B: invested capital is now far larger, much of it construction in progress (capex 8.1B in H1 2026) not yet earning; ROIC on today's capital is not meaningful yet. Cash 8.04B includes customer prepayments (liability) and AV lists 1.62B long-term investments not in cash; restricted cash unknown. Operating leases/capital leases 1.51B counted in AV total debt 10.06B.",
+  "nm PRICE IBKR last 155.69 (2026-10-30 close), prior close 171.99 (-9.5% on the day); 52-week range 73.52-299.86; 13-week high 280.83, low 149.48. Monthly closes: 2025-10 130.82, 2025-11 94.87, 2025-12 83.70, 2026-03 103.76, 2026-06 276.17, 2026-09 235.88, 2026-10-01 154.14 (month-open series). No corporate actions returned. Market cap about 43.7B on 280.4M shares (2026-06-30), EV about 45.7B.",
+  "nm OWN MULTIPLE HISTORY not meaningful: GAAP diluted EPS FY2024 -2.28, FY2025 +0.33 (only from non-operating gains: operating loss -611.7M), FY2026 consensus EPS -2.11 and FY2027 -6.16, so trailing and forward P/E have no low/median/high; listed since Oct 2024 (history 2024-08 onward only). Price/sales instead: price 155.69 x 280.4M shares / TTM revenue 1,355.1M (Q3'25 146.1 + Q4'25 227.7 + Q1'26 399.0 + Q2'26 582.3) = about 32x; on FY2025 revenue 529.8M about 82x; on consensus FY2026 revenue 3.35B about 13x, FY2027 12.2B about 3.6x. Sources nm_ib_price, nm_av_income, nm_av_estimates.",
+  "nm CONSENSUS Alpha Vantage aggregated analysts, retrieved 2026-11-01: FY2026 revenue avg 3.345B (n 21, 3.00-3.585B), FY2027 12.24B (n 22, 8.81-17.99B: very wide), EPS FY2026 -2.11 (n 9, -6.41 to +0.49), FY2027 -6.16 (n 10, -15.31 to +5.27); EPS revisions down: FY2027 avg moved -4.87 (90d ago) to -5.65 (30d) to -6.16 (now); FY2026 EPS -2.14 (90d) to -2.52 (30d) to -2.11 (now). Q3 2026 (quarter ended 2026-09-30, not reported yet): revenue 905.7M (n 17, 876.6-942.6M), EPS -1.24 (n 5); Q4 2026 revenue 1.462B (n 17, 1.09-1.71B). Consensus is an expectation, not a fact; the Q3 2026 release is still ahead.",
+  "nm AV rate limit: CASH_FLOW and EARNINGS_ESTIMATES first calls hit the per-second burst limit on 2026-11-01 (spacing, not the daily quota); each was repeated once with return_full_data=true and succeeded. INCOME_STATEMENT and BALANCE_SHEET OK. FMP statements and analyst endpoints not called (denied on this plan per session_capabilities).",
+  "nm TRACK RECORD revenue ratio not computable: the releases carry no quantitative revenue guidance and the shareholder letters give ARR/revenue targets only. ARR is the guided metric: year-end 2025 ARR 1.25B against guided 0.9-1.1B (ratio 1.25 vs mid 1.0B, 1 beat, 0 misses, n 1). Earlier guidance releases (Q3 2025 letter and before) not retrieved within budget: n is only 1. Management also raised YE2026 contracted power from more than 2.5 GW to more than 3 GW (Feb), more than 4 GW (May), 5 GW (Aug); the 2026 revenue 3.0-3.4B and ARR 7-9B and about 40% adj EBITDA margin guidance (May letter) are reaffirmed in Aug: these belong to gather_documents. So far the company raises rather than misses, but the sample is one ARR guide.",
+  "nm GUIDANCE PRESENT (for gather_documents, from letters read here) May 2026 letter: 2026 revenue 3.0-3.4B, YE ARR 7-9B, about 40% adj EBITDA margin, 800MW-1GW connected power at YE, contracted power more than 4 GW; Aug 2026 letter: reaffirms all full-year guidance, YE2026 contracted power 5 GW, over 9B customer prepayments in 2026, over 1 GW per year deployed from 2027; ARR 1.92B at end of March 2026, 3.0B at end of June 2026 (up 598% y/y). Capex Q1 2.47B, Q2 5.66B (H1 8.13B); no capex guidance in the letters read.",
+  "nm ONE-OFFS FY2025 SG&A includes a one-time 43.6M equipment loss during transportation (20-F); Q1 2026 net income 621.2M and Q2 2025 584.4M are far above operating results (non-operating gains, likely equity-stake revaluations such as ClickHouse/Toloka; not verified here), so net income of those quarters is not a run rate. 20-F flags a material weakness: IT general controls and revenue-recognition process documentation for TripleTen (about 10% of FY2025 revenue).",
+  "nm CITABILITY the Q2 2026 results (2026-08-12) are older than 2 days and citable; the next results (Q3 2026) have not been published as of 2026-11-01. The 2026-10-22 and 2026-10-01 6-Ks were not read (not earnings releases per the list; contents unknown)."
+ ],
+ "gaps": [
+  "quarterly CFO, capex, balance sheet from AV only (20-F filer has no 10-Q; release tables read only through a summarizing fetch)",
+  "guidance track record has n=1 (ARR year-end 2025); earlier guides not retrieved",
+  "own P/E history not meaningful (losses); no 3-5 year price history before 2024-08 (listing history)",
+  "FY2025 CFO and operating loss differ slightly between 20-F text and companyfacts/AV, unresolved",
+  "6-Ks of 2026-10-22 and 2026-10-01 not read"
+ ],
+ "stopped": [
+  "FMP statements/analyst not called (access denied on this plan)",
+  "Alpha Vantage COMPANY_OVERVIEW not called (premium)"
+ ]
+}

@@ -1,0 +1,27 @@
+{
+  "trigger": "review",
+  "fixed": [
+    "numbers + counter critical 'stale opening': position/core.json forecast_options.bank_drivers.opening = common book 13,063,221k at 2026-06-30 (Q2 2026 6-K parent equity 13,249,670k less AOCI 186,449k, no preferred; dc_fs_q2_2026) and shares 4,819,939,641 (20-F count 2026-03-01 4,860,599,241 less 40,659,600 treasury shares bought in H1 2026). Engine: bank_opening_applied; stale_balance_sheet warning gone.",
+    "numbers critical 'book growth at the 8% cap' + counter critical 'base contradicts its story / 75% payout': bank_drivers per scenario with tax-normalized own-history ROE and retention-funded book growth. Base ROE 27% -> 25% (yr5, CSLL 20% from 2028) -> 16% terminal (reason: own FY2023 low ~18%, cost-to-serve advantage), book growth start 19% (own 2023-25 ~33%/yr, H1 2026 +13.8% ex-AOCI, held lower by CET1 headroom), payout floor 26% = H1 2026 buybacks 500.4m / NI 1,932.5m (no dividend). Bear ROE 21% -> 15% -> 11.5% (about Ke 11.2%), book growth 13%: credit cost (Stage 2 11.9%, NPL90 6.9%, Brazil household defaults 8.1%), CSLL 20% from 2028, non-recurring 2026 tax benefit, BRL translation (91% Brazil revenue, real -10% intraday after election), CET1 squeeze. Bull ROE 30% -> 31% -> 20%, book growth 22%. Engine: bank_drivers_applied; payout_unknown warning gone.",
+    "numbers critical 'regulatory capital not modelled': bank_drivers.regulatory_capital = RWA 35,710,139k and required ratio 10.5% at 2026-06-30 (Nu Prudential Conglomerate, minimum capital required 3,749,565k = 10.5% of RWA; CET1 11.9%, excess 1,848,040k; dc_fs_q2_2026). The reason states that consolidated common book is only a proxy for CET1, which sits in the regulated Brazilian/Mexican/Colombian entities (book is ~3x the conglomerate CET1, so the engine's check is loose). Engine: regulatory_capital_not_checked warning gone, no capital_below_requirement.",
+    "ticker-value rerun: ran true. Today bear 3.92 / base 8.35 / bull 12.53 vs quote 11.65 (before: 2.42 / 7.14 / 8.73). Year 5 (2031-11-01): bear 5.18 / base 11.74 / bull ~18.0. Expected annual return (dc.expected_return): base IRR 9.5%, bear 7.1%, bull 11.6% vs index 9.2%."
+  ],
+  "open": [
+    "Country risk not in the cost of equity: the engine reads geography only from the FactBook business_map (10-K table) or inputs.market_context.geography, and the evidence pack has no route for either (pack TOP keys / FORECAST_OPTIONS carry no market_context); relabelling gather_macro's revenue_by_region facts cannot reach it without an engine change. Missing premium, computed by hand from the packaged Damodaran table: Brazil 91.3% x (3.24% - 0.23% US) + Mexico 6.7% x (2.46% - 0.23%) = about +2.9 points gross, about +2.5 points net of the market-neutral row (0.4% x mapped share): Ke about 13.7% instead of 11.2%. All values above are therefore overstated by that omission; the table says 'סיכון מדינה לא חושב'.",
+    "Red-team verdict unable_to_verify (critical_unverifiable: revenue_basis, reinvestment): the table still withholds a fair value ('אין עדיין שווי אמין להצגה'); the result stays a draft (UNVERIFIED).",
+    "short_roe_history (high): only 3 profitable fiscal years (2023-25); the ROE paths do not span a full Brazilian credit cycle.",
+    "Opening shares: employee-award issuance after 2026-03-01 not counted, and any repurchase before 2026-03-01 would be double-counted (the 6-K does not date the buybacks); next cover count / Q3 6-K (2026-11-12) resolves it.",
+    "Q3 2026 results (2026-11-12) are after as_of: NPL, Stage 2, CET1 and tax-rate falsifiers untested."
+  ],
+  "ran": true,
+  "casefile": "/home/user/fundamental-engine/runs/tickers/NU_2026-11-01/companies/NU/out/casefile.json",
+  "changed_files": [
+    "/home/user/fundamental-engine/runs/tickers/NU_2026-11-01/position/core.json",
+    "/home/user/fundamental-engine/runs/tickers/NU_2026-11-01/position.json",
+    "/home/user/fundamental-engine/runs/tickers/NU_2026-11-01/evidence_pack.json",
+    "/home/user/fundamental-engine/runs/tickers/NU_2026-11-01/companies/NU/inputs.json",
+    "/home/user/fundamental-engine/runs/tickers/NU_2026-11-01/companies/NU/out/casefile.json",
+    "/home/user/fundamental-engine/runs/tickers/NU_2026-11-01/value.json",
+    "/home/user/fundamental-engine/runs/tickers/NU_2026-11-01/review/repair.json"
+  ]
+}

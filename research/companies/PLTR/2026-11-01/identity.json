@@ -1,0 +1,179 @@
+{
+ "ticker": "PLTR",
+ "as_of": "2026-11-01",
+ "stop": false,
+ "name": "Palantir Technologies Inc.",
+ "cik": "1321655",
+ "currency": "USD",
+ "exchange": "Nasdaq",
+ "fiscal_year_end": "12-31",
+ "sic": 7372,
+ "sic_description": "Services-Prepackaged Software",
+ "annual_form": "10-K",
+ "type": "high_growth / fast_grower (computed by classify_company from SEC companyfacts; the analyst confirms or overrides with reasons)",
+ "evidence_ids": [
+  "pf_10k_20260217"
+ ],
+ "resolved": true,
+ "filings": [
+  {
+   "form": "10-K",
+   "filed": "2026-02-17",
+   "report_date": "2025-12-31",
+   "accession": "0001321655-26-000011",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1321655/000132165526000011/pltr-20251231.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1321655/000132165526000011/",
+   "what": "annual report"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2026-08-04",
+   "report_date": "2026-06-30",
+   "accession": "0001321655-26-000041",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1321655/000132165526000041/pltr-20260630.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1321655/000132165526000041/",
+   "what": "quarterly report"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2026-05-05",
+   "report_date": "2026-03-31",
+   "accession": "0001321655-26-000028",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1321655/000132165526000028/pltr-20260331.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1321655/000132165526000028/",
+   "what": "quarterly report"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-08-03",
+   "report_date": "2026-08-03",
+   "accession": "0001321655-26-000039",
+   "items": "2.02,7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1321655/000132165526000039/pltr-20260803.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1321655/000132165526000039/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-05-04",
+   "report_date": "2026-05-04",
+   "accession": "0001321655-26-000026",
+   "items": "2.02,7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1321655/000132165526000026/pltr-20260504.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1321655/000132165526000026/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-02-02",
+   "report_date": "2026-02-02",
+   "accession": "0001321655-26-000004",
+   "items": "2.02,7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1321655/000132165526000004/pltr-20260202.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1321655/000132165526000004/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-11-03",
+   "report_date": "2025-11-03",
+   "accession": "0001321655-25-000130",
+   "items": "2.02,7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1321655/000132165525000130/pltr-20251103.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1321655/000132165525000130/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-08-04",
+   "report_date": "2025-08-04",
+   "accession": "0001321655-25-000105",
+   "items": "2.02,7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1321655/000132165525000105/pltr-20250804.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1321655/000132165525000105/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-05-05",
+   "report_date": "2025-05-05",
+   "accession": "0001321655-25-000063",
+   "items": "2.02,7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1321655/000132165525000063/pltr-20250505.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1321655/000132165525000063/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-02-03",
+   "report_date": "2025-02-03",
+   "accession": "0001321655-25-000007",
+   "items": "2.02,7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1321655/000132165525000007/pltr-20250203.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1321655/000132165525000007/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2024-11-04",
+   "report_date": "2024-11-04",
+   "accession": "0001321655-24-000207",
+   "items": "2.02,7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1321655/000132165524000207/pltr-20241104.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1321655/000132165524000207/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "DEF 14A",
+   "filed": "2026-04-24",
+   "report_date": "2026-06-03",
+   "accession": "0001321655-26-000019",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1321655/000132165526000019/pltr-20260423.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1321655/000132165526000019/",
+   "what": "proxy statement"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-06-09",
+   "report_date": "2026-06-03",
+   "accession": "0001321655-26-000033",
+   "items": "5.07",
+   "url": "https://www.sec.gov/Archives/edgar/data/1321655/000132165526000033/pltr-20260603.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1321655/000132165526000033/",
+   "what": "8-K since the annual report (items 5.07)"
+  }
+ ],
+ "computed_type": {
+  "stage": "high_growth",
+  "lynch": "fast_grower",
+  "reasons": [
+   "revenue compounding at 20% or more"
+  ],
+  "flags": []
+ },
+ "identity_check": {
+  "reporting_currency": "USD",
+  "monetary_units": {
+   "USD": 400
+  },
+  "currency_basis": "facts of filing 0001321655-26-000011 (10-K, filed 2026-02-17)",
+  "depositary_shares": false,
+  "status": "ok",
+  "reasons": []
+ },
+ "prefetch": {
+  "by": "scripts/ticker_prefetch.py",
+  "at_utc": "2026-11-01T05:54:15+00:00",
+  "to_complete_by_lanes": [
+   "security and share class, quote currency, IBKR contract: gather_numbers (it alone writes identity.json while the lanes run)",
+   "named competitors: gather_field writes them in gather/field.json competitors[] (the canonical list), never here"
+  ]
+ },
+ "security": "Class A common stock (PLTR); Class B (10 votes) and Class F also exist, unlisted; no ADR",
+ "quote_currency": "USD",
+ "ib_contract_id": 444857009
+}

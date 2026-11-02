@@ -1,0 +1,211 @@
+{
+ "thesis_he": {
+  "bear": "בניית מרכזי נתוני הבינה המלאכותית מאטה ב-2027-2028 אחרי גל הזמנות שיא, הדור הבא של אנבידיה (Kyber) עובר למעגל מודפס במקום כבלים, ספק שני (FIT) נכנס, והנתח והתמחור של אמפנול נשחקים; סין והמכסים מוסיפים לחץ.",
+  "base": "הנחושת נשארת בתוך מסד השרתים לפחות עד 2028-2029, אמפנול ממשיכה לצמוח מהר יותר מ-TE ומקורנינג על חשבון ההזמנות שכבר נכנסו, אבל קצב הצמיחה יורד מהשיא של 2026 כשהשוק מתמלא בקיבולת.",
+  "bull": "ההזמנות ממשיכות מעל המכירות לאורך 2027, אמפנול שומרת על אספקה בלעדית ברכיבי מסד מרכזיים גם בדור Rubin ובדור שאחריו, הסיבים של CommScope וכבלים אקטיביים מוסיפים שכבת צמיחה, והמרווח הגולמי ממשיך לעלות."
+ },
+ "potential": {
+  "market_direction": {
+   "reading": "The AI data-center build is still accelerating on the buyers' and suppliers' own numbers: APH Q3 2026 orders $12.2B, book-to-bill 1.19 (after 1.23 in Q2 and 1.24 in Q1), sales +65% (+37% organic) and a Q4 guide of $10.3-10.5B (about +60%); Communications Solutions (IT datacom) +51% organic. Named rivals confirm the demand on their own filings: TE fiscal 2026 orders $22.2B (+27%), Q4 orders $6.1B (+29%); Corning Optical Communications +44% to $2,379M in Q3 2026; Credo revenue +114.7% to $479.0M; Broadcom AI semiconductor revenue $16.7B (+221%) with a $21.7B guide. Direction is up through the guided Q4 2026; beyond that there is no backlog (contracts under one year) and the book-to-bill is easing from 1.24 to 1.19.",
+   "evidence_ids": [
+    "pf_rel_20261028_1",
+    "pf_10q_20261030",
+    "dc_kpi_orders_q3_2026",
+    "dc_kpi_b2b_q3_2026",
+    "dc_kpi_b2b_q2_2026",
+    "dc_kpi_b2b_q1_2026",
+    "dc_guid_q4_rev",
+    "fd_tel_8k_20261028",
+    "fd_glw_8k_20261027",
+    "fd_crdo_8k_20260901",
+    "fd_avgo_8k_20260903"
+   ]
+  },
+  "bottleneck_potential": {
+   "reading": "APH supplies a current bottleneck: high-speed copper inside the AI rack. SemiAnalysis names Amphenol the exclusive supplier of the DensiLink OverPass cable set in GB200/GB300 compute trays and names its PaladinHD2 board-to-board connectors for Vera Rubin NVL72 compute trays; Rubin keeps scale-up on copper with about the same cable count as Blackwell, so content growth comes from bandwidth/spec rather than more cables. Channel views (Edgewater, opinion) see no optics replacing intra-rack copper before about 2028-2029 and connector pricing still trending up. Duration: roughly through 2028, possibly 2029. Capacity is being added by APH itself (capex 4.5% of sales in Q3 2026, China long-lived assets +70% in 2025 for AI products), by TE (about 30% of the GB300 cable backplane per Edgewater) and by FIT (HD Paladin ramp projected 2027 at 10-15% of compute racks); management says it sees no significant bottleneck in its own supply, so the scarcity is demand-led, not a supply constraint APH cannot meet.",
+   "evidence_ids": [
+    "fd_semianalysis_20260225",
+    "fd_edgewater_20260529",
+    "uf_edgewater_20260422",
+    "dc_kpi_capex_pct_q3_2026",
+    "mc_lla_cn_fy2025",
+    "mc_lla_cn_fy2024",
+    "dc_call_20260729"
+   ]
+  },
+  "share_trajectory": {
+   "reading": "On numbers (no attributed share study), APH is gaining against TE: APH organic growth +37% total and +51% in Communications Solutions in Q3 2026 against TE about +13% organic, TE's data-networks line $242M (+34%) against APH IT datacom of about $3.77B in Q2 (+63% organic). In the GB300 cable backplane, TE exited Q1 2026 at a 'lower-than-expected 30%' share (Edgewater channel opinion), which leaves the larger part to others including APH. In fiber APH (CommScope, $3,683.3M of sales since 2026-01-09, IT datacom 'essentially doubled') and Corning (Optical +44%) both grow fast: holding, not clearly gaining. Credo grows faster (+115%) from a base about one eighth of APH IT datacom in active electrical cables, a slice APH can address under its 2025 license. Molex, Luxshare and FIT cannot be quantified.",
+   "evidence_ids": [
+    "pf_rel_20261028_1",
+    "pf_10q_20261030",
+    "dc_kpi_comm_org_q3_2026",
+    "dc_kpi_org_growth_q3_2026",
+    "fd_tel_8k_20261028",
+    "fd_glw_8k_20261027",
+    "fd_crdo_8k_20260901",
+    "uf_edgewater_20260422",
+    "dc_fact_commscope_sales_since_close_20260930",
+    "fd_credo_aph_settle_20250814"
+   ]
+  },
+  "competitive_position": {
+   "reading": "Stronger than TE on growth and margin: APH gross margin 39.3% in Q3 2026 (4,016.2 / 10,229.7) and adjusted operating margin 29.7%, against TE gross margin about 35.6%; APH's gross margin rose from 31.0% (FY2020) to 36.9% (FY2025) through mix and scale. Level with Corning in fiber (both roughly doubling AI-related fiber; dollars undisclosed). Different model from Credo (chip-plus-cable, gross margin about 65-68%) whose AEC competes for the same rack slots; APH holds a license since 2025-08-14. Versus Molex (private) and FIT: unknown on numbers; FIT is expected to take only 10-15% of compute racks from 2027. APH's edge per its 10-K is breadth, speed and 150 decentralised operations; no single customer is 10% of sales.",
+   "evidence_ids": [
+    "pf_gross_profit_q_2026_09_30",
+    "pf_revenue_q_2026_09_30",
+    "dc_fact_adj_opm_q3_2026",
+    "pf_gross_profit_fy2020",
+    "pf_gross_profit_fy2025",
+    "pf_peer_TEL",
+    "pf_peer_CRDO",
+    "fd_credo_aph_settle_20250814",
+    "uf_edgewater_20260422",
+    "pf_10k_20260211",
+    "dc_call_20260729"
+   ]
+  },
+  "threats": {
+   "reading": "(1) Architecture: Nvidia's Kyber rack moves to a PCB midplane, which could remove cable-cartridge content APH supplies in Oberon racks; channel sources say the midplane is 'not ready for MP' and see a slip from 2H27 to 2H28, so the threat is dated 2028 and APH is developing HD Paladin 3 connectors. (2) Substitution by optics: phased into 2028-2029 per the channel, with some optical scale-up programs targeting 2028+. (3) Active copper: Credo's AEC grows +115%; APH can sell AEC under license but its AEC revenue is undisclosed. (4) Second sourcing: FIT HD Paladin ramp 2027. (5) Geopolitics: China 14.1% of Q3 2026 sales and 37% of long-lived assets, US-China truce extended only to 2027-01-10, China tax claims of $390M booked since Q4 2025. In-sourcing by hyperscalers: no evidence either way.",
+   "evidence_ids": [
+    "uf_edgewater_20260422",
+    "fd_edgewater_20260529",
+    "fd_semianalysis_20260225",
+    "fd_crdo_8k_20260901",
+    "fd_credo_aph_settle_20250814",
+    "mc_rev_cn_q20260930",
+    "mc_rev_total_q20260930",
+    "mc_lla_cn_fy2025",
+    "mc_ree_truce",
+    "dc_fact_china_tax_charge_q4_2025",
+    "dc_fact_china_tax_accrual_h1_2026"
+   ]
+  }
+ },
+ "assessments": {
+  "moat": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "fd_semianalysis_20260225",
+    "uf_edgewater_20260422",
+    "pf_gross_profit_q_2026_09_30",
+    "pf_revenue_q_2026_09_30",
+    "pf_peer_TEL",
+    "pf_10k_20260211"
+   ],
+   "note": "Evidenced source: engineering co-design and qualified supply in AI racks (exclusive DensiLink in GB200/GB300, PaladinHD2 named for VR NVL72) plus breadth; gross margin 39.3% vs TE about 35.6%. Not strong: TE holds about 30% of the GB300 backplane, FIT enters in 2027 and every rack generation is re-competed."
+  },
+  "pricing_power": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "pf_gross_profit_fy2020",
+    "pf_gross_profit_fy2025",
+    "pf_gross_profit_q_2026_09_30",
+    "fd_edgewater_20260529",
+    "dc_call_20260729"
+   ],
+   "note": "Gross margin 31.0% (FY2020) to 36.9% (FY2025) to 39.3% (Q3 2026); channel says Nvidia accepted higher connector pricing. Management attributes CommScope margin gains to execution, not pricing, so mix and scale explain part of it."
+  },
+  "customer_concentration": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "pf_10k_20260211",
+    "dc_kpi_mkt_itdc_share_q2_2026",
+    "dc_cust_distributors_q3_2026"
+   ],
+   "note": "No customer is 10% of sales, but IT datacom was 43% of Q2 2026 sales and virtually all its growth is AI-related: an indirect concentration on a few hyperscalers and Nvidia platforms."
+  },
+  "market_size": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "dc_kpi_orders_q3_2026",
+    "dc_kpi_b2b_q3_2026",
+    "fd_tel_8k_20261028",
+    "fd_glw_8k_20261027",
+    "fd_avgo_8k_20260903"
+   ],
+   "note": "Demand across named rivals and the silicon supplier is rising fast (APH orders $12.2B a quarter, TE orders +27%, Corning Optical +44%, Broadcom AI semis +221%); the size beyond 2027 is not evidenced (no backlog)."
+  },
+  "competition": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "pf_10k_20260211",
+    "dc_kpi_org_growth_q3_2026",
+    "fd_tel_8k_20261028",
+    "uf_edgewater_20260422"
+   ],
+   "note": "Many large rivals named in the 10-K (TE, Molex, Luxshare, FIT, Corning); APH grows organically about three times TE's rate, but FIT and TE are qualified second sources in AI racks."
+  },
+  "substitutes": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "fd_edgewater_20260529",
+    "uf_edgewater_20260422",
+    "fd_semianalysis_20260225",
+    "fd_crdo_8k_20260901"
+   ],
+   "note": "Copper stays in the rack through about 2028-2029 per the channel; optics, the Kyber PCB midplane and active cables are dated threats from 2028; APH's CommScope fiber and AEC license partly hedge them."
+  },
+  "management": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "dc_guid_q3_rev",
+    "pf_rel_20261028_1",
+    "dc_guid_commscope_sales_fy26_prior",
+    "dc_guid_commscope_sales_fy26",
+    "dc_guid_commscope_sales_fy26_oct"
+   ],
+   "note": "Seven of seven quarterly revenue guides beaten (mean actual 1.11x the midpoint); CommScope 2026 sales outlook raised 4.1 to 4.6 to 5.1bn. Beats against a conservative guide in an upcycle; not proof of forecasting accuracy in a downturn."
+  },
+  "capital_allocation": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "dc_fact_commscope_price",
+    "dc_fact_commscope_ni_since_close_20260930",
+    "dc_guid_commscope_eps_fy26_oct",
+    "pf_operating_income_q_2026_09_30",
+    "dc_fact_equity_20260930",
+    "dc_fact_total_debt_20260930",
+    "dc_fact_cash_20260930",
+    "dc_fact_sti_20260930",
+    "dc_fact_etr_adj_q3_2026",
+    "dc_fact_buyback_q3_2026",
+    "pf_sbc_q_2026_09_30",
+    "dc_fact_diluted_shares_q3_2026",
+    "dc_fact_diluted_shares_q3_2025"
+   ],
+   "note": "Derived ROIC on Q3 2026 annualized: 3,020.8 x 4 x (1-0.27) = about 8.8bn NOPAT over about 29.7bn invested capital (equity 17.1 + debt 17.9 - cash and investments 5.3) = about 30%, a peak-quarter figure including 17.7bn goodwill. CommScope (10.5bn cash) earned 471.4m before interest and deal costs in under nine months, about 6% pre-financing on the price, improving with each raised outlook. Buybacks 245m vs SBC 47m in Q3, yet diluted shares +0.7% y/y (options). New 4bn buyback and 20% dividend raise from a 12.6bn net-debt position."
+  },
+  "technology_ai": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "fd_semianalysis_20260225",
+    "dc_call_20260729",
+    "dc_kpi_comm_org_q3_2026"
+   ],
+   "note": "Named in the bill of materials of current and next Nvidia racks; IT datacom growth virtually all AI-related; Communications Solutions +51% organic in Q3 2026."
+  },
+  "geopolitics": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "mc_rev_cn_q20260930",
+    "mc_rev_total_q20260930",
+    "mc_lla_cn_fy2025",
+    "mc_ree_truce",
+    "dc_fact_china_tax_accrual_h1_2026",
+    "mc_dla_ieepa"
+   ],
+   "note": "Production spread over about 40 countries, but China holds 37% of long-lived assets (+70% in 2025 for AI products) and 14% of sales; the US-China truce runs to 2027-01-10; China tax claims; tariff exposure (IEEPA refunds a one-off benefit)."
+  }
+ },
+ "gaps": [
+  "Outside view (warning only, sets nothing): connector and electronic-component makers have historically seen orders and margins fall after book-to-bill peaks (APH revenue fell 0.5% in 2023 after +16% in 2022); APH's own history shows this, a sector base rate was not used.",
+  "No attributed market-share study (Dell'Oro, 650 Group, LightCounting, SemiAnalysis BoM) read: share readings are numbers-based, with Edgewater channel opinion for TE's 30% GB300 backplane share and FIT's 10-15%.",
+  "APH Q3 2026 call transcript not read: Q3 IT datacom share and AI commentary for Q4 missing; IT datacom vs TE uses Q2 values.",
+  "APH AEC revenue, CommScope IT datacom dollars and AI-related sales dollars are not disclosed.",
+  "Kyber timing and its content effect on APH rest on channel summaries (Edgewater) and an unread SemiAnalysis section; the content-loss mechanism stays a hypothesis.",
+  "Molex (private), Luxshare, Jonhon and FIT (non-SEC filers) not quantified; Broadcom statements on copper vs optics and co-packaged optics not retrieved.",
+  "ROIC is derived by this part from one peak quarter (no forensic ROIC computed by prefetch); incremental ROIC not computed.",
+  "Governance (proxy) not assessed in this part; retention not evidenced.",
+  "Switching costs not assessed: no evidence on requalification costs or cross-generation win rates (contracts under one year)."
+ ]
+}

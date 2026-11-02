@@ -1,0 +1,398 @@
+{
+ "lane": "macro",
+ "sources": [
+  {
+   "id": "mc_8k_20261021",
+   "kind": "sec_filing",
+   "title": "Meta Platforms, Inc. 8-K filed 2026-10-21 (Items 1.01, 2.02, 8.01, 9.01): Restated Charter with non-voting Class C stock, one-for-one Class C stock dividend, Founder Alignment Agreement dated 2026-10-20",
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000162828026066700/meta-20261019.htm",
+   "date": "2026-10-21",
+   "independent": true,
+   "publisher": "Meta Platforms, Inc. (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_fwp_20261026",
+   "kind": "sec_filing",
+   "title": "Meta Platforms, Inc. Issuer Free Writing Prospectus filed 2026-10-26: launch of offering of Series A Mandatory Convertible Preferred depositary shares and Class A common stock with forward sale agreements; financing plan incl. planned ~$60bn ATM",
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526431036/d116268dfwp.htm",
+   "date": "2026-10-26",
+   "independent": true,
+   "publisher": "Meta Platforms, Inc. (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_fwp_20261027",
+   "kind": "sec_filing",
+   "title": "Meta Platforms, Inc. pricing term sheet (FWP) filed 2026-10-27, dated 2026-10-26: 40,000,000 Class A shares at $625.00 via forward sale; 250,000,000 depositary shares of 6.50% Series A Mandatory Convertible Preferred at $50.00",
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526432549/d382225dfwp.htm",
+   "date": "2026-10-27",
+   "independent": true,
+   "publisher": "Meta Platforms, Inc. (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_fred_regime",
+   "kind": "macro",
+   "title": "FRED regime series saved by the prefetch: Baa corporate spread to 10-year (BAA10Y), 10-year minus 2-year (T10Y2Y), VIX close (VIXCLS); context only",
+   "url": "https://fred.stlouisfed.org/series/T10Y2Y",
+   "date": "2026-10-26",
+   "independent": true,
+   "publisher": "Federal Reserve Bank of St. Louis (FRED)",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_press_manus_20260613",
+   "kind": "press",
+   "title": "TechCrunch: Meta reportedly moves to unwind $2B Manus deal after Beijing's demand (lead only; read as a search excerpt)",
+   "url": "https://techcrunch.com/2026/06/13/meta-reportedly-moves-to-unwind-2b-manus-deal-after-beijings-demand/",
+   "date": "2026-06-13",
+   "independent": true,
+   "publisher": "TechCrunch",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_8k_20261029",
+   "kind": "sec_filing",
+   "title": "Meta Platforms, Inc. 8-K filed 2026-10-29 (Items 1.01, 3.03, 5.03, 9.01; report date 2026-10-26): underwriting agreements, forward sale agreements, Series A Mandatory Convertible Preferred certificates of designations, deposit agreement",
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526438017/d183592d8k.htm",
+   "date": "2026-10-29",
+   "independent": true,
+   "publisher": "Meta Platforms, Inc. (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_press_nbc_youth_202610",
+   "kind": "press",
+   "title": "NBC News: Meta settles claims with second plaintiff in social media addiction case, Los Angeles (lead only; search excerpt; terms confidential)",
+   "url": "https://www.nbcnews.com/tech/tech-news/meta-settles-plaintiff-social-media-addiction-lawsuit-los-angeles-rcna606609",
+   "date": "2026-10-29",
+   "independent": true,
+   "publisher": "NBC News",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_press_cnbc_offering_20261026",
+   "kind": "press",
+   "title": "CNBC: Meta launches plan for $95 billion stock offering to fund AI expansion (lead only; confirmed at the source in the FWP)",
+   "url": "https://www.cnbc.com/2026/10/26/meta-stock-offering-ai.html",
+   "date": "2026-10-26",
+   "independent": true,
+   "publisher": "CNBC",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  }
+ ],
+ "facts": [
+  {
+   "id": "mc_rev_usc_fy2025",
+   "metric": "revenue_by_region:United States and Canada",
+   "period": "FY2025",
+   "value": 78866000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_eur_fy2025",
+   "metric": "revenue_by_region:Europe",
+   "period": "FY2025",
+   "value": 46569000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_apac_fy2025",
+   "metric": "revenue_by_region:Asia-Pacific",
+   "period": "FY2025",
+   "value": 53817000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_row_fy2025",
+   "metric": "revenue_by_region:Rest of World",
+   "period": "FY2025",
+   "value": 21714000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_us_fy2025",
+   "metric": "revenue_by_region:United States",
+   "period": "FY2025",
+   "value": 74780000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_usc_fy2024",
+   "metric": "revenue_by_region:United States and Canada",
+   "period": "FY2024",
+   "value": 63207000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260129"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_eur_fy2024",
+   "metric": "revenue_by_region:Europe",
+   "period": "FY2024",
+   "value": 38361000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260129"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_apac_fy2024",
+   "metric": "revenue_by_region:Asia-Pacific",
+   "period": "FY2024",
+   "value": 45009000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260129"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_row_fy2024",
+   "metric": "revenue_by_region:Rest of World",
+   "period": "FY2024",
+   "value": 17924000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260129"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_us_fy2024",
+   "metric": "revenue_by_region:United States",
+   "period": "FY2024",
+   "value": 59730000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260129"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_usc_q3_2026",
+   "metric": "revenue_by_region:United States and Canada",
+   "period": "Q@2026-09-30",
+   "value": 26217000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_eur_q3_2026",
+   "metric": "revenue_by_region:Europe",
+   "period": "Q@2026-09-30",
+   "value": 14023000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_apac_q3_2026",
+   "metric": "revenue_by_region:Asia-Pacific",
+   "period": "Q@2026-09-30",
+   "value": 16993000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_row_q3_2026",
+   "metric": "revenue_by_region:Rest of World",
+   "period": "Q@2026-09-30",
+   "value": 7368000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_usc_q3_2025",
+   "metric": "revenue_by_region:United States and Canada",
+   "period": "Q@2025-09-30",
+   "value": 19708000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_eur_q3_2025",
+   "metric": "revenue_by_region:Europe",
+   "period": "Q@2025-09-30",
+   "value": 11566000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_apac_q3_2025",
+   "metric": "revenue_by_region:Asia-Pacific",
+   "period": "Q@2025-09-30",
+   "value": 14304000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_row_q3_2025",
+   "metric": "revenue_by_region:Rest of World",
+   "period": "Q@2025-09-30",
+   "value": 5664000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_lla_us_fy2025",
+   "metric": "long_lived_assets:United States",
+   "period": "FY2025",
+   "value": 173390000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_lla_row_fy2025",
+   "metric": "long_lived_assets:Rest of the world",
+   "period": "FY2025",
+   "value": 23414000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_lla_us_fy2024",
+   "metric": "long_lived_assets:United States",
+   "period": "FY2024",
+   "value": 117478000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260129"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_lla_row_fy2024",
+   "metric": "long_lived_assets:Rest of the world",
+   "period": "FY2024",
+   "value": 18790000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260129"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  }
+ ],
+ "notes": [
+  "mc RATES (refreshed 2026-11-01) prefetch values kept, market key not overridden: risk-free 4.98% (FRED DGS10, 2026-10-29; 10-28 was 5.05%, 10-27 4.99%) and implied ERP 4.2% (Damodaran, 1 October 2026, rechecked on his page 2026-11-01: no November update posted; computed against a 5.29% treasury, DGS10 is now about 4.98%; prior month 4.14%) [pf_fred_dgs10, pf_erp_implied]. Regime line, context only, moves no value: Baa spread to 10-year 1.49 pts (10-29), 10y-2y 0.38 pts (10-30), VIX 17.20 (10-29) [mc_fred_regime].",
+  "mc GEOGRAPHY revenue by customer address, Q3 2026 (US$64.60bn): United States and Canada 40.6% (26,217m, +33% YoY), Europe 21.7% (14,023m, +21%, includes Russia and Turkey), Asia-Pacific 26.3% (16,993m, +19%), Rest of World 11.4% (7,368m, +30%; Africa, Latin America, Middle East) [mc_rev_usc_q3_2026, mc_rev_eur_q3_2026, mc_rev_apac_q3_2026, mc_rev_row_q3_2026, mc_rev_usc_q3_2025, mc_rev_eur_q3_2025, mc_rev_apac_q3_2025, mc_rev_row_q3_2025]. FY2025 (US$200.97bn): 39.2% / 23.2% / 26.8% / 10.8%; the United States alone 74.78bn = 37.2% (FY2024 59.73bn = 36.3%); the 10-K states 37%, 36%, 37% of revenue in 2025, 2024, 2023 came from marketers and developers based in the US, and that the majority of non-US revenue in 2025 came from customers in western Europe, China, Singapore and Brazil [mc_rev_usc_fy2025, mc_rev_us_fy2025, mc_rev_us_fy2024, pf_10k_20260129]. The 10-K and 10-Q give no country split other than the US (no China, India, Brazil, Russia or Turkey line). Revenue by USER location (a different allocation) is in charts the text extract lost: gap.",
+  "mc GEOGRAPHY long-lived assets (property and equipment net plus operating lease right-of-use): United States 173.39bn = 88.1% of 196.80bn at 2025-12-31 (86.2% at 2024-12-31: 117.48bn of 136.27bn); rest of the world 23.41bn; no other single country above 10% [mc_lla_us_fy2025, mc_lla_row_fy2025, mc_lla_us_fy2024, mc_lla_row_fy2024, pf_10k_20260129]. The 10-Q does not repeat the split (gap); property and equipment, net was 253.22bn at 2026-09-30 versus 176.40bn at 2025-12-31 [pf_10q_20261022]. The geographic split of the buildout is therefore US-dominated at the year-end, an issuer statement of 23 US states with data centers appears only in the 2026-10-26 FWP (not citable until 2026-10-28).",
+  "mc EXPOSURE china_advertisers: the 10-K and 10-Q risk factors say Meta generates 'meaningful revenue from a small number of resellers serving advertisers based in China' and that the Chinese, US or other government could cut it (trade dispute, tariffs, content issues in Hong Kong); Facebook and other products are restricted in China [pf_10k_20260129, pf_10q_20261022]. The share is NOT disclosed. Evidenced bound only: Asia-Pacific customers (which contain China, Singapore and the rest of the region) are 26.3% of Q3 2026 revenue and 26.8% of FY2025 revenue, so China-based advertisers are some part of that, not all [mc_rev_apac_q3_2026, mc_rev_apac_fy2025]. Hypothesis, unconfirmed by the issuer (press lead, 2025 analyst estimates seen as search excerpts, no registered source): China-based advertisers about 11% of Family of Apps revenue in 2024 and Temu plus Shein 2-4% of advertising revenue; Sensor Tower data show Temu cut Instagram spend 10% Jan-May 2026. Candidate bear mechanism, to be sized by the analyst only from an evidenced share; until then a hypothesis.",
+  "mc EXPOSURE eu_dma_gdpr_dsa: Europe is 21.7% of Q3 2026 revenue (23.2% FY2025) [mc_rev_eur_q3_2026, mc_rev_eur_fy2025]. The 10-Q says the European Commission's DMA decision (April 2025, EUR 200m fine) found the 'subscription for no ads' model non-compliant; Meta launched less-personalized ads (LPA) in November 2024 and modified them; Meta appealed on 2025-07-04, 'further modifications to our model may be imposed during the appeal process, which could result in a materially worse user experience for European users and a significant impact to our European business and revenue'. The Irish DPC is still assessing the model under GDPR; the EUR 1.2bn DPC fine of May 2023 on EEA-US data transfers is under appeal and stayed by the Irish High Court. DSA: formal proceedings since 2024-04-30 and 2024-05-16; preliminary findings 2025-10-24 (notice and action, appeals, researcher data access), 2026-04-29 and 2026-07-10 (under-13 users present, addictive design); Meta may respond and appeal a final decision [pf_10q_20261022]. No revenue-at-risk figure is disclosed: the size of the revenue exposed to a worse LPA outcome is an open lever (hypothesis, bounded above by Europe's 21.7% share). A March 2026 civil-society letter urged periodic penalty payments under the DMA; no Commission penalty decision after March 2026 was found in reliable sources (gap).",
+  "mc EXPOSURE eu_competition_media_whatsapp: EU Marketplace tying decision 2024-11-18, fine about EUR 798m, appealed 2025-01-28; Spanish AMI judgment 2025-11-19 awarding about EUR 542m for unfair competition (appealed); UTECA trial in Spain took place 2026-10-21 with judgment expected in H1 2027; similar media claims in France and Italy with trials late 2027 and 2028; UK CAT class claim Lovdahl-Gormsen trial from October 2028. EU antitrust investigation (opened December 2025) into excluding general-purpose AI providers from the WhatsApp Business API: in June 2026 the Commission imposed an interim measure requiring free API access for such providers, which Meta intends to appeal; similar investigations in Africa, Brazil and Turkey [pf_10q_20261022]. Revenue share of WhatsApp business messaging is not disclosed (it sits in Family of Apps other revenue): unsized, hypothesis.",
+  "mc EXPOSURE us_youth_litigation: August 2026 agreement with 52 attorneys general (all except Florida, New Mexico and the US Virgin Islands) for payments of up to about US$18.59bn: about US$12.7bn (roughly 70%) payable in annual installments over 10 years, US$75m to a committee of settling states, and about US$5.3bn (30%) contingent on peers (YouTube, TikTok) adopting teen protections and each peer with annual profits above US$10bn being obligated to pay the same amount; the contingent part is NOT accrued, plus product changes for under-18 users of Facebook and Instagram in the US; about US$500m of the total settles privacy claims with 49 states [pf_10q_20261022]. Q3 2026 costs include a US$9.89bn charge [mc_8k_20261021 exhibit 99.1, pf_rel_20261021_1]; non-current legal accruals were US$8.30bn at 2026-09-30 versus US$0.45bn at 2025-12-31 [pf_10q_20261022]. Open: New Mexico (jury civil penalty US$375m on 2026-03-24; 2026-08-06 judgment of public nuisance with about US$567m abatement and injunctive relief, stayed after Meta's 2026-09-08 motions); first Los Angeles bellwether verdict US$6m (70% Meta) under appeal; next two user bellwethers in a consolidated trial scheduled to begin 2026-10-28, then 2027-03-16 and 2027-08-06; next school-district bellwether February 2027 (the first settled in May 2026); Florida and US Virgin Islands cases; over 200,000 mass arbitration demands; plaintiffs' stated ranges 'at times more than a trillion dollars'. US revenue is 37% of the total, so product changes for US minors bear on the US share; no teen-revenue share is disclosed (gap).",
+  "mc EXPOSURE ftc_antitrust_and_consent_order: FTC v. Meta (Instagram and WhatsApp acquisitions; remedy sought was divestiture): trial April-May 2025, judgment for Meta on 2025-11-18, FTC notice of appeal 2026-01-20, pending. Separate FTC attempt to modify the 2020 consent order (proposed ban on commercial use of minors' data, board changes, limits on launching products): D.C. Circuit remand July 2025, supplemental briefing finished May 2026, district court hearing set for 2026-11-12, status report due by 2026-12-07 [pf_10q_20261022]. Instagram and WhatsApp revenue are not disclosed separately (gap): the divestiture scenario cannot be sized from the filings, hypothesis.",
+  "mc EXPOSURE ai_copyright_and_ai_regulation: Kadrey and follow-on suits allege copyrighted works were used to train models; fair-use summary judgment was granted for Meta against the named plaintiffs on 2025-06-25, remaining claims on distribution proceed, summary judgment hearing 2027-02-25, trial from 2027-05-24 for several newer cases; the 10-Q notes US statutory damages are per work. AI is also named as subject to export-control, products-liability and EU AI Act review [pf_10q_20261022]. Unsized: no damages estimate is given, hypothesis.",
+  "mc EXPOSURE tariffs_trade_export_controls: Reality Labs revenue is US$1,276m of US$181,712m in the nine months of 2026 = 0.70%, so consumer-hardware tariff risk is small in revenue terms; the 10-K says hardware manufacturing depends on a small number of third parties 'often with significant operations in a single region such as Asia' and higher tariffs raise consumer prices [pf_10q_20261022, pf_10k_20260129]. Advertiser demand is exposed to tariffs and trade policy 'by the United States, China, and other governments' (risk factor); no company figure. Server, network and chip supply: the 10-K and 10-Q name no supplier, no country of manufacture and never mention Taiwan; export controls appear only as an AI legal risk and in the compliance list. Non-cancelable purchase commitments are US$454.52bn (US$45.85bn due 2026, US$121.41bn due 2027) and US$355.73bn of leases have not yet commenced; US$10.80bn of cash is escrowed against multi-year infrastructure purchase agreements until 2028-2030 [pf_10q_20261022]. No BIS, Federal Register, USTR or MOFCOM notice naming Meta was found in this lane's checks: supplier concentration is a visible gap for gather_field/the analyst, not a sized exposure.",
+  "mc EXPOSURE china_regulatory_manus: the 10-Q risk factors state Meta 'completed our divestiture of Manus in August 2026 following an order from China's National Development and Reform Commission ordering us to unwind the transaction' (also cites the 2023 Giphy divestiture order by the UK CMA) [pf_10q_20261022]. The filings give no price or loss amount; a press lead (search excerpt) puts the purchase at about US$2bn, with data sharing halted by mid-June 2026 [mc_press_manus_20260613]: hypothesis, unconfirmed by the issuer. Read as evidence that a Chinese authority can act directly on Meta's China-linked assets, relevant to the China reseller revenue above.",
+  "mc EXPOSURE funding_and_dilution: 10-Q Note 14 and risk factors: Restated Charter creates non-voting Class C stock effective 2027-01-19, one-for-one Class C dividend, and 'we expect to use shares of the Class C common stock to conduct equity offerings from time to time'; Class C 'may trade at a discount', so more shares may be needed, 'dilutive to all stockholders'; recapitalizations of this kind have drawn stockholder litigation [pf_10q_20261022, mc_8k_20261021]. Funding need: capex including finance leases guided US$135-145bn for 2026, nine-month purchases of property and equipment US$83.06bn, cash and marketable securities US$82.45bn after US$24.91bn of notes issued in May 2026; third-quarter free cash flow was negative US$2.12bn [pf_10q_20261022, pf_rel_20261021_1]. Equity raising of 2026-10-26/27 is in the NEWS notes below (citable since 2026-10-28/29) [mc_fwp_20261026, mc_fwp_20261027, mc_8k_20261029].",
+  "mc NEWS 2026-10-21 (8-K Items 1.01, 2.02, 8.01, 9.01, read at the source) [mc_8k_20261021]: board approved on 2026-10-19 and holders consented on 2026-10-20 to a Restated Charter creating non-voting Class C common stock (par US$0.000006), effective 2027-01-19; one-time dividend of one Class C share per Class A or Class B share, payable no later than the fifth business day after effectiveness. Founder Alignment Agreement with Mark Zuckerberg dated 2026-10-20: 20% of the Class C shares issued to his holder group freely saleable, 80% 'Stapled' (each sale must be matched within two business days by selling or converting one Class A or Class B share, or applying Stapling Credits); 2.5% of the dividend shares are released from the staple each calendar quarter while he remains a full-time executive, all released after 32 qualifying quarters; eight-year California residency commitment; additional one-for-one Class C dividends on each doubling (2x, 4x, 8x) of the 2026-09-10 Class A price of US$580.60 per share, subject to a 10% compound annual return test; Meta to use best efforts to repurchase Class C in equal number to Class A repurchases. Item 2.02 furnishes the third-quarter release; Item 8.01 announces a Schedule 14C information statement (PRE 14C filed the same day).",
+  "mc NEWS 2026-10-21 results (release, citable from 2026-10-23; documents lane owns the guidance rows) [pf_rel_20261021_1]: revenue US$64.60bn +26% (constant currency also +26%), operating margin 20% after a US$9.89bn youth-litigation charge (22.88bn operating income and EPS 7.40 without it), diluted EPS 3.83, DAP 3.64bn +3%, headcount 66,775 (-15% YoY); fourth-quarter revenue guided to US$73-76bn with about 1% FX headwind; 2026 total expenses US$175-179bn; Reality Labs 2026 loss US$18-19bn and about US$15bn in 2027; fourth-quarter tax rate 15-17%. Foreign exchange cost US$113m of third-quarter revenue and added US$2.32bn over nine months [pf_10q_20261022].",
+  "mc NEWS 2026-10-22: 10-Q filed (period 2026-09-30); the legal, regulatory and recapitalization text above is taken from it [pf_10q_20261022]. No other 8-K was filed between the 10-Q and 2026-10-27 (SEC submissions list refreshed in this run; only Forms 144, Form 4 and the 2026-10-26/27 offering documents follow); earlier 2026 8-Ks are results (2.02) and routine items (5.02 on 2026-01-16 and 2026-04-14, 8.01 on 2026-05-04, 5.07 on 2026-05-29).",
+  "mc NEWS 2026-10-26 and 2026-10-27, NOW CITABLE (FWP 2026-10-26 from 2026-10-28, pricing FWP 2026-10-27 from 2026-10-29; as_of 2026-11-01) [mc_fwp_20261026, mc_fwp_20261027, read at the source]: Meta launched concurrent offerings with a stated financing plan of about US$35bn of underwritten equity plus a future at-the-market program of about US$60bn to start when Class C begins trading (no agreement signed, timing and size undetermined). Priced 2026-10-26: 40,000,000 Class A shares (upsized to US$25.0bn, 46,000,000 with the underwriters' option) at US$625.00 against a last Nasdaq sale of US$630.56 on 2026-10-26, sold through forward sale agreements with Morgan Stanley and Goldman Sachs (initial forward price US$622.91875, adjusted daily and reduced for dividends; Meta expects about US$24.9bn net on settlement on or before 2027-11-19, about US$28.7bn with the option; no proceeds at pricing) and 250,000,000 depositary shares (each 1/20 of a 6.50% Series A Mandatory Convertible Preferred share, US$1,000 preference, 12,500,000 preferred shares, about US$12.5bn) at US$50.00, settling 2026-10-29, mandatory conversion about 2029-08-15 into a variable number of Class A (later Class C) shares, with a 37,500,000 depositary-share option. The release also quotes Aa3/AA- ratings, US$97bn of operating cash flow in nine months, 'nearly double' infrastructure capacity in 2026 and four superclusters above one gigawatt: issuer statements, not verified. Funding plus Class C is a current-holder dilution item for the analyst: share count, forward settlement timing and conversion price are all open. Cornerstone investors NVIDIA, AMD and Broadcom indicated non-binding interest in up to US$5.0bn of the Class A offering [mc_fwp_20261026]. Mandatory convertible: initial price equals the US$625.00 offer price, minimum conversion rate price US$734.2144 (17.5% premium) [mc_fwp_20261027]. Press leads (search excerpts, not evidence) call the whole plan about US$95bn and report heavy oversubscription [mc_press_cnbc_offering_20261026].",
+  "mc NEWS leads from web searches (no reliable press coverage found; not evidence): no reporting on the 2026-10-22 share price reaction or analyst target changes was found, search results were 2025 articles or aggregator pages with thin sourcing; a headline-only item gives EPS 3.83 against an expected 6.67 (a consensus claim, and the charge-distorted figure; gather_numbers owns consensus). Dated watch list from the filings: 2026-10-28 youth bellwether trial; 2026-11-12 FTC consent-order hearing; 2026-12-07 status report; 2027-01-19 Class C effective; February 2027 school-district trial; 2027-02-25 AI-copyright summary judgment; H1 2027 UTECA judgment; 2027-03-16 and 2027-08-06 personal-injury bellwethers; 2027-05-24 copyright trial; October 2028 UK CAT trial.",
+  "mc NEWS 2026-10-29 (8-K filed 2026-10-29, Items 1.01, 3.03, 5.03, 9.01, read at the source) [mc_8k_20261029]: confirms the signed underwriting agreements of 2026-10-26: 250,000,000 depositary shares of the 6.50% Series A Mandatory Convertible Preferred (1/20 of a US$1,000-preference share each), closed 2026-10-29, underwriters' 30-day option for 37,500,000 more; the certificate of designations was filed in Delaware on 2026-10-28 and is restated on 2027-01-19 with the Restated Charter; 40,000,000 Class A shares sold through forward sale agreements with Morgan Stanley and Goldman Sachs (30-day option for 6,000,000 more, additional forwards then), initial forward price US$622.91875, settled at Meta's discretion on or before 2027-11-19 (shares issued then at the adjusted forward price; Meta may settle in Class C once it exists, with a possible price reduction tied to the Class A/Class C trading gap); Meta receives no proceeds until settlement. Dilution timing: the preferred converts about 2029-08-15 into a variable number of shares, the forward shares arrive by 2027-11-19: the share-count path is an analyst lever.",
+  "mc NEWS 2026-10-29 youth litigation (press lead, search excerpts, terms confidential; not confirmed at the source) [mc_press_nbc_youth_202610]: Meta settled with a second teen plaintiff (K.D.B.) in the Los Angeles social media addiction trial after jury selection began, days after a first settlement (S.J.); TikTok and YouTube had already resolved the two plaintiffs' claims, leaving Snap as the only defendant facing trial (opening statements reported around 2026-11-04). This replaces the 2026-10-28 Meta bellwether trial date in the watch list above: the 10-Q's own schedule is the primary source, the settlement amounts are unknown.",
+  "mc NEWS 2026-10-30/31 and 2026-11-01: search for EU, export-control or regulatory events since 2026-10-27 returned only offering coverage (and an undated TipRanks item on the DMA ad model, not used); no new Meta 8-K after 2026-10-29 in the EDGAR list used by this run; Forms 144 and Form 4 not read. Press-reported share price about US$616 (one aggregator, not a market feed; gather_numbers owns the IBKR price)."
+ ],
+ "gaps": [
+  "China-based advertiser (reseller) revenue share is not disclosed: only the Asia-Pacific customer share (26.3% Q3 2026, 26.8% FY2025) bounds it; any China-specific size is a hypothesis",
+  "no revenue by country other than the United States (no China, India, Brazil, Russia or Turkey line); the country-risk row can only use region weights",
+  "long-lived assets by region exist only at fiscal year-end (2025-12-31); the 2026-09-30 split is not disclosed",
+  "chip, server, memory and foundry supplier concentration, country of manufacture and export-control exposure are not disclosed in the 10-K or 10-Q (Taiwan is never mentioned); no government notice naming Meta found",
+  "revenue at risk from a worse EU less-personalized-ads outcome, from WhatsApp Business API remedies, from US minors' product changes and from an Instagram or WhatsApp divestiture is not disclosed: all hypotheses",
+  "EU DMA status after March 2026 and press coverage of the 2026-10-22 market reaction not found in reliable sources",
+  "Forms 144 and Form 4 insider filings of the last weeks were listed but not read (outside this lane's budget)",
+  "terms and amounts of the second teen settlement in the Los Angeles trial are confidential; the stated 2026-10-28 bellwether date is superseded by settlements (press lead only)"
+ ],
+ "stopped": [
+  "web searches for the 2026-10-22 stock reaction and analyst changes: only 2025 articles returned, the next search would not change the decision",
+  "web search for a DMA penalty decision after March 2026: nothing reliable; the 10-Q wording is the latest primary source",
+  "press detail on the Manus unwinding: the 10-Q confirms completion in August 2026, the price and mechanics stay a hypothesis",
+  "Damodaran page refresh: the saved 2026-10-01 implied ERP is the latest monthly update on or before 2026-10-27, kept",
+  "Damodaran refresh rechecked on 2026-11-01: no November update, saved 2026-10-01 ERP kept; one-call EU/regulatory search found nothing new"
+ ]
+}

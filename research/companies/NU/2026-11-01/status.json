@@ -1,0 +1,142 @@
+{
+ "ticker": "NU",
+ "as_of": "2026-11-01",
+ "at_utc": "2026-11-01T22:46:14+00:00",
+ "verified": false,
+ "label": "UNVERIFIED draft (טיוטה — ההערכה לא אומתה)",
+ "reasons": [
+  "5 critical finding(s) open"
+ ],
+ "engine_ran": true,
+ "engine_review_status": "blocked",
+ "valued": true,
+ "reviews": {
+  "review_trace": {
+   "file": "review/trace.json",
+   "this_attempt": true,
+   "returned": true
+  },
+  "review_numbers": {
+   "file": "review/numbers.json",
+   "this_attempt": true,
+   "returned": true
+  },
+  "review_counter": {
+   "file": "review/counter.json",
+   "this_attempt": true,
+   "returned": true
+  }
+ },
+ "critical": [
+  {
+   "severity": "critical",
+   "finding": "Opening book equity is stale: the residual-income case opens at common equity 11,290,948k dated 2025-12-31 (engine warning stale_balance_sheet, high), although the Q2 2026 IFRS statements in the pack give equity attributable to the parent 13,249,670k at 2026-06-30 (nm_equity_2026q2, dc_fs_q2_2026), +17.3%. The assumption's own falsifier (a later primary balance sheet more than 2% different) is triggered. Every scenario value and yearly path scales from this book: base FY2027 net income 3.32bn (EPS 0.684) is about flat on the tax-normalized 2026 run rate (H1 2026 NI 1,932.5m at an 11.8% tax rate, about 3.25bn a year at the FY2025 25.8% rate) and below the reported H1 run rate (3.87bn). Base 7.14 / bear 2.42 / bull 8.73 against a quote of 11.65 therefore understate the starting point. The table currently withholds a fair value, but value.json ran=true would let deliver freeze this base case in the ledger.",
+   "where": "companies/NU/out/casefile.json val.case.opening.book_equity and fc.assumptions open_balance (statement_as_of 2025-12-31); fc.warnings stale_balance_sheet; evidence nm_equity_2026q2 / dc_fs_q2_2026",
+   "fix": "Repair: open the case at the 2026-06-30 parent equity 13,249,670k (dc_fs_q2_2026) with the H1 2026 profit and buyback rolled in (the engine reads only companyfacts, which has no 6-K quarters: supply it through the pack/inputs as a reported opening balance), and rerun ticker-value. If the engine cannot take a 6-K balance sheet, keep the result a draft, say the book is six months stale next to the result, and do not freeze the base case.",
+   "lens": "numbers"
+  },
+  {
+   "severity": "critical",
+   "finding": "Book growth is pinned at the engine's generic BOOK_GROWTH_CAP of 8%/yr, and the payout rationale calls this 'its own five-year common-equity growth 8.0%'. That is false: Nu's own common equity grew 4,441m (2021) -> 11,291m (2025), about 26%/yr; 6,406m (2023) -> 11,291m (2025), about 33%/yr; and +17% in H1 2026 alone (to 13,250m), mostly retained earnings plus BRL translation, not issuance. The cap (forecast_financials.py BOOK_GROWTH_CAP) is a rule, not company data. Through payout = max(0.5, 1 - g/ROE) it forces base payouts of 73-77% (bull similar) for ten years, so base EPS grows only about 6-7%/yr (0.684 -> 0.830 by 2030) against reported NI growth of +46% in FY2025 and +62% y/y in H1 2026 (about +36% tax-normalized). Retained profit at a 26-29% ROE against an 11.2% cost of equity is the main value driver of a bank in residual income, so this rule largely sets the result. The binding company constraint is regulatory capital, not an 8% cap (see the CET1 finding).",
+   "where": "companies/NU/out/casefile.json fc.assumptions payout (rationale) and fc.paths base/bull payout_fraction; val.case.scenarios[*].periods[*].payout_fraction; factbook equity I@2021..2025; nm_equity_2026q2",
+   "fix": "Repair/analyst: replace the capped book-growth path with a company-evidenced retention path: book growth from own history (2023-2025 and H1 2026), fading, and limited by the CET1 headroom (RWA growth vs CET1 capital, 1.85bn excess over the minimum) plus the 1.0bn buyback actually authorised. If the engine accepts no such override, show '8% book growth is an engine cap, not Nu's data' next to the result as a visible gap and keep it a draft. The rationale text must stop calling 8% the company's own growth.",
+   "lens": "numbers"
+  },
+  {
+   "severity": "critical",
+   "finding": "Counter-thesis (pre-mortem, written from 2029-11): NU failed because the 2025-26 ROE of ~30% was a peak built on three things that all reversed together. (1) Credit: management deliberately moved into 'higher-risk, higher-return segments' (dc_rel_q2_2026), secured lending growth stalled (~+3% QoQ in Q2'26 vs +133% y/y in Q3'25), Stage 2 rose 10.1% -> 11.9% of gross and NPL 90+ hit 6.9% (7-quarter high) while Brazil household defaults hit a record 8.09% (mc_rt_default); IFRS 9 front-loading on a 44%-growing book hid the true loss rate until growth slowed, then cost of risk jumped and ROE fell to the 2023 level (~17%) or below. (2) Capital: CET1 fell 13.0% -> 11.9% in six months (RWA +14.7% vs CET1 +5.4%, dc_fs_q2_2026) while US$1bn was spent on buybacks; capital forced a slowdown in loan growth exactly when growth was the thesis. (3) Brazil macro/policy: Lula's re-election (2026-10-25) weakened BRL ~10% intraday, 91% of revenue is Brazilian, CSLL rises to 20% from 2028 and BCB limits unsolicited credit marketing from 2027; meanwhile the 14.2% Q2'26 tax rate (671m deferred-tax benefit) normalized, cutting reported EPS ~15%. Add management turnover (CFO replaced July 2026, CTO resigned effective 2026-11-12) and a new US cost centre with no revenue. Early signals: Q3'26 (2026-11-12) NPL 90+ >= 7.0% and NPL 15-90 not falling seasonally; Stage 2 share > 12%; CET1 < 11.5% or buyback paused; IFRS effective tax back >= 25%; ECL growth > portfolio growth for a second quarter; BRL/USD not recovering by the 2026-12-08 Investor Day; risk-adjusted NIM back below 10%.",
+   "where": "position/core.json scenario_events.bear; gather/deep_notes.md A4, A5, A9; companies/NU/out/casefile.json rk.register",
+   "fix": "Carry this as the counter-thesis in the delivery; the engine bear must express these mechanisms (see the findings below) rather than a generic lower-quartile ROE fade.",
+   "lens": "counter"
+  },
+  {
+   "severity": "critical",
+   "finding": "The base case contradicts its own story. Core/field/path base say the credit book keeps growing fast (+44% y/y, dc_k_portfolio) at a normalized ROE of 26-28%, but the residual-income engine assumes payout 73-77% every year (assumption 'payout': 'no distribution history: 50% assumed ... book growth bounded 3.0%-8.0%'), i.e. book equity growth capped at 8%. Actual parent equity grew 11.29bn -> 13.25bn in H1'26 alone (~+17% in six months) and Nu pays no dividend. Result: base EPS path FY2027 0.684, +6-7% a year thereafter (company_path.scenarios.base.economics.fiscal_years), BELOW the FY2026 run-rate (H1'26 diluted EPS 0.3936; FY2025 0.5846). A base in which EPS falls from 2026 to 2027 while the book grows 40% is not the most likely path; the base value 7.14 (-39% vs 11.65) rests on this cap. The same 75% payout is also incompatible with the CET1 constraint argued in the bear (a bank growing RWA ~30%/yr must retain, not distribute).",
+   "where": "companies/NU/out/casefile.json val.case.scenarios[base].periods[].payout_fraction and assumptions id=payout; company_path.scenarios.base.economics.fiscal_years; position/core.json thesis_he.base",
+   "fix": "Supply a company-driven bank spec: payout = actual buyback plan (US$1bn/12 months, ~1/3 of earnings) and book/RWA growth from the evidenced portfolio trajectory (fading from ~40% with CET1 held >= ~11.5%), so EPS growth in base follows the base story; or state explicitly that base assumes growth stops and change the base narrative. Rerun ticker-value.",
+   "lens": "counter"
+  },
+  {
+   "severity": "critical",
+   "finding": "Opening balance is stale and its own falsifier has already tripped: open_balance uses common book equity 11,290,948k at 2025-12-31, while the Q2'26 IFRS statements (dc_fs_q2_2026, cited elsewhere in the pack) show total equity 13,252m at 2026-06-30 (+17%, falsifier threshold 2%). shares_point 4,855.7m is the 2025-12-31 cover count (305 days old) and ignores 40.66m shares bought back in Q2'26. dataqa marks shares, debt, revenue_ttm and cash 'stale' or 'conflict' (cash_rollforward fails). Every scenario value starts from the wrong book.",
+   "where": "companies/NU/out/casefile.json val.case.opening (book_equity, shares), assumptions open_balance / shares_point; qa.fields.shares_outstanding, cash_and_liquid_investments",
+   "fix": "Set opening book equity and point-in-time shares from the 2026-06-30 6-K (dc_fs_q2_2026; shares net of the Q2 buyback, or the latest count in a 6-K) with retrieval primary_document, then rerun ticker-value.",
+   "lens": "counter"
+  }
+ ],
+ "open_critical": [
+  {
+   "finding": "Country risk not in the cost of equity: the engine reads geography only from the FactBook business_map (10-K table) or inputs.market_context.geography, and the evidence pack has no route for either (pack TOP keys / FORECAST_OPTIONS carry no market_context); relabelling gather_macro's revenue_by_region facts cannot reach it without an engine change. Missing premium, computed by hand from the packaged Damodaran table: Brazil 91.3% x (3.24% - 0.23% US) + Mexico 6.7% x (2.46% - 0.23%) = about +2.9 points gross, about +2.5 points net of the market-neutral row (0.4% x mapped share): Ke about 13.7% instead of 11.2%. All values above are therefore overstated by that omission; the table says 'סיכון מדינה לא חושב'."
+  },
+  {
+   "finding": "Red-team verdict unable_to_verify (critical_unverifiable: revenue_basis, reinvestment): the table still withholds a fair value ('אין עדיין שווי אמין להצגה'); the result stays a draft (UNVERIFIED)."
+  },
+  {
+   "finding": "short_roe_history (high): only 3 profitable fiscal years (2023-25); the ROE paths do not span a full Brazilian credit cycle."
+  },
+  {
+   "finding": "Opening shares: employee-award issuance after 2026-03-01 not counted, and any repurchase before 2026-03-01 would be double-counted (the 6-K does not date the buybacks); next cover count / Q3 6-K (2026-11-12) resolves it."
+  },
+  {
+   "finding": "Q3 2026 results (2026-11-12) are after as_of: NPL, Stage 2, CET1 and tax-rate falsifiers untested."
+  }
+ ],
+ "repair": {
+  "fixed": [
+   "numbers + counter critical 'stale opening': position/core.json forecast_options.bank_drivers.opening = common book 13,063,221k at 2026-06-30 (Q2 2026 6-K parent equity 13,249,670k less AOCI 186,449k, no preferred; dc_fs_q2_2026) and shares 4,819,939,641 (20-F count 2026-03-01 4,860,599,241 less 40,659,600 treasury shares bought in H1 2026). Engine: bank_opening_applied; stale_balance_sheet warning gone.",
+   "numbers critical 'book growth at the 8% cap' + counter critical 'base contradicts its story / 75% payout': bank_drivers per scenario with tax-normalized own-history ROE and retention-funded book growth. Base ROE 27% -> 25% (yr5, CSLL 20% from 2028) -> 16% terminal (reason: own FY2023 low ~18%, cost-to-serve advantage), book growth start 19% (own 2023-25 ~33%/yr, H1 2026 +13.8% ex-AOCI, held lower by CET1 headroom), payout floor 26% = H1 2026 buybacks 500.4m / NI 1,932.5m (no dividend). Bear ROE 21% -> 15% -> 11.5% (about Ke 11.2%), book growth 13%: credit cost (Stage 2 11.9%, NPL90 6.9%, Brazil household defaults 8.1%), CSLL 20% from 2028, non-recurring 2026 tax benefit, BRL translation (91% Brazil revenue, real -10% intraday after election), CET1 squeeze. Bull ROE 30% -> 31% -> 20%, book growth 22%. Engine: bank_drivers_applied; payout_unknown warning gone.",
+   "numbers critical 'regulatory capital not modelled': bank_drivers.regulatory_capital = RWA 35,710,139k and required ratio 10.5% at 2026-06-30 (Nu Prudential Conglomerate, minimum capital required 3,749,565k = 10.5% of RWA; CET1 11.9%, excess 1,848,040k; dc_fs_q2_2026). The reason states that consolidated common book is only a proxy for CET1, which sits in the regulated Brazilian/Mexican/Colombian entities (book is ~3x the conglomerate CET1, so the engine's check is loose). Engine: regulatory_capital_not_checked warning gone, no capital_below_requirement.",
+   "ticker-value rerun: ran true. Today bear 3.92 / base 8.35 / bull 12.53 vs quote 11.65 (before: 2.42 / 7.14 / 8.73). Year 5 (2031-11-01): bear 5.18 / base 11.74 / bull ~18.0. Expected annual return (dc.expected_return): base IRR 9.5%, bear 7.1%, bull 11.6% vs index 9.2%."
+  ],
+  "open": [
+   "Country risk not in the cost of equity: the engine reads geography only from the FactBook business_map (10-K table) or inputs.market_context.geography, and the evidence pack has no route for either (pack TOP keys / FORECAST_OPTIONS carry no market_context); relabelling gather_macro's revenue_by_region facts cannot reach it without an engine change. Missing premium, computed by hand from the packaged Damodaran table: Brazil 91.3% x (3.24% - 0.23% US) + Mexico 6.7% x (2.46% - 0.23%) = about +2.9 points gross, about +2.5 points net of the market-neutral row (0.4% x mapped share): Ke about 13.7% instead of 11.2%. All values above are therefore overstated by that omission; the table says 'סיכון מדינה לא חושב'.",
+   "Red-team verdict unable_to_verify (critical_unverifiable: revenue_basis, reinvestment): the table still withholds a fair value ('אין עדיין שווי אמין להצגה'); the result stays a draft (UNVERIFIED).",
+   "short_roe_history (high): only 3 profitable fiscal years (2023-25); the ROE paths do not span a full Brazilian credit cycle.",
+   "Opening shares: employee-award issuance after 2026-03-01 not counted, and any repurchase before 2026-03-01 would be double-counted (the 6-K does not date the buybacks); next cover count / Q3 6-K (2026-11-12) resolves it.",
+   "Q3 2026 results (2026-11-12) are after as_of: NPL, Stage 2, CET1 and tax-rate falsifiers untested."
+  ],
+  "ran": true
+ },
+ "returned": [
+  "analyst",
+  "analyst_field",
+  "analyst_path",
+  "gather_documents",
+  "gather_field",
+  "gather_macro",
+  "gather_numbers",
+  "repair",
+  "review_counter",
+  "review_numbers",
+  "review_trace"
+ ],
+ "times": {
+  "started_at_utc": "2026-11-01T22:14:56+00:00",
+  "prefetch_finished_at_utc": "2026-11-01T22:15:02+00:00",
+  "minutes_after_start": {
+   "gather/_prefetch.json": 0.1,
+   "gather/documents.json": 3.5,
+   "gather/field.json": 3.5,
+   "gather/macro.json": 2.2,
+   "gather/numbers.json": 5.3,
+   "gather/understand_field.json": 7.9,
+   "understand/auto.json": 5.5,
+   "understand/business.json": 8.9,
+   "understand/econ_case.json": 2.7,
+   "understand/econ_result.json": 2.7,
+   "understand/quarter_case.json": 2.6,
+   "understand/quarter_result.json": 2.6,
+   "prep.json": 5.5,
+   "position/core.json": 30.1,
+   "position/field.json": 8.6,
+   "position/path.json": 8.2,
+   "value.json": 30.1,
+   "review/trace.json": 9.7,
+   "review/numbers.json": 14.3,
+   "review/counter.json": 13.5,
+   "review/repair.json": 30.7
+  },
+  "elapsed_minutes": 30.7
+ },
+ "meaning": "verified needs: the engine ran in this attempt, the three reviewers returned (files of this attempt AND the main loop's record), no critical finding open after the one repair pass. The engine's own review status is reported beside it, never replaced by it."
+}

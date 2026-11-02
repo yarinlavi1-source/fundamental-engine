@@ -1,0 +1,199 @@
+{
+ "ticker": "RDDT",
+ "as_of": "2026-11-01",
+ "stop": false,
+ "name": "Reddit, Inc.",
+ "cik": "1713445",
+ "currency": "USD",
+ "exchange": "NYSE",
+ "fiscal_year_end": "12-31",
+ "sic": 7374,
+ "sic_description": "Services-Computer Processing & Data Preparation",
+ "annual_form": "10-K",
+ "type": "high_growth / fast_grower (computed by classify_company from SEC companyfacts; the analyst confirms or overrides with reasons)",
+ "evidence_ids": [
+  "pf_10k_20260206"
+ ],
+ "resolved": true,
+ "filings": [
+  {
+   "form": "10-K",
+   "filed": "2026-02-06",
+   "report_date": "2025-12-31",
+   "accession": "0001713445-26-000022",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1713445/000171344526000022/rddt-20251231.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1713445/000171344526000022/",
+   "what": "annual report"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2026-10-30",
+   "report_date": "2026-09-30",
+   "accession": "0001713445-26-000116",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1713445/000171344526000116/rddt-20260930.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1713445/000171344526000116/",
+   "what": "quarterly report"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2026-07-31",
+   "report_date": "2026-06-30",
+   "accession": "0001713445-26-000100",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1713445/000171344526000100/rddt-20260630.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1713445/000171344526000100/",
+   "what": "quarterly report"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2026-05-01",
+   "report_date": "2026-03-31",
+   "accession": "0001713445-26-000069",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1713445/000171344526000069/rddt-20260331.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1713445/000171344526000069/",
+   "what": "quarterly report"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-10-29",
+   "report_date": "2026-10-29",
+   "accession": "0001713445-26-000114",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1713445/000171344526000114/rddt-20261029.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1713445/000171344526000114/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-07-30",
+   "report_date": "2026-07-30",
+   "accession": "0001713445-26-000098",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1713445/000171344526000098/rddt-20260730.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1713445/000171344526000098/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-04-30",
+   "report_date": "2026-04-30",
+   "accession": "0001713445-26-000067",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1713445/000171344526000067/rddt-20260430.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1713445/000171344526000067/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-02-05",
+   "report_date": "2026-02-05",
+   "accession": "0001713445-26-000020",
+   "items": "2.02,8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1713445/000171344526000020/rddt-20260205.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1713445/000171344526000020/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-10-30",
+   "report_date": "2025-10-30",
+   "accession": "0001713445-25-000225",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1713445/000171344525000225/rddt-20251030.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1713445/000171344525000225/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-07-31",
+   "report_date": "2025-07-31",
+   "accession": "0001713445-25-000194",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1713445/000171344525000194/rddt-20250731.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1713445/000171344525000194/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-05-01",
+   "report_date": "2025-05-01",
+   "accession": "0001713445-25-000100",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1713445/000171344525000100/rddt-20250501.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1713445/000171344525000100/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-02-12",
+   "report_date": "2025-02-12",
+   "accession": "0001713445-25-000016",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1713445/000171344525000016/rddt-20250212.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1713445/000171344525000016/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "DEF 14A",
+   "filed": "2026-04-23",
+   "report_date": "2026-06-08",
+   "accession": "0001713445-26-000060",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1713445/000171344526000060/rddt-20260423.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1713445/000171344526000060/",
+   "what": "proxy statement"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-08-12",
+   "report_date": "2026-08-12",
+   "accession": "0001713445-26-000107",
+   "items": "5.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1713445/000171344526000107/rddt-20260812.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1713445/000171344526000107/",
+   "what": "8-K since the annual report (items 5.02,9.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-06-10",
+   "report_date": "2026-06-08",
+   "accession": "0001713445-26-000088",
+   "items": "5.07,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1713445/000171344526000088/rddt-20260608.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1713445/000171344526000088/",
+   "what": "8-K since the annual report (items 5.07,9.01)"
+  }
+ ],
+ "computed_type": {
+  "stage": "high_growth",
+  "lynch": "fast_grower",
+  "reasons": [
+   "revenue compounding at 20% or more"
+  ],
+  "flags": []
+ },
+ "identity_check": {
+  "reporting_currency": "USD",
+  "monetary_units": {
+   "USD": 360
+  },
+  "currency_basis": "facts of filing 0001713445-26-000022 (10-K, filed 2026-02-06)",
+  "depositary_shares": false,
+  "status": "ok",
+  "reasons": []
+ },
+ "prefetch": {
+  "by": "scripts/ticker_prefetch.py",
+  "at_utc": "2026-11-01T05:44:44+00:00",
+  "to_complete_by_lanes": [
+   "security and share class, quote currency, IBKR contract: gather_numbers (it alone writes identity.json while the lanes run)",
+   "named competitors: gather_field writes them in gather/field.json competitors[] (the canonical list), never here"
+  ]
+ },
+ "security": "Reddit, Inc. Class A common stock (Class B, 10 votes, unlisted, held by insiders; price is Class A; shares outstanding 2026-10-28: 146,942,127 A + 46,151,604 B)",
+ "quote_currency": "USD",
+ "ib_contract_id": 692025016
+}

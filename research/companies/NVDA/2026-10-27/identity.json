@@ -1,0 +1,1385 @@
+{
+ "ticker": "NVDA",
+ "as_of": "2026-10-27",
+ "stop": false,
+ "name": "NVIDIA Corporation",
+ "cik": "0001045810",
+ "currency": "USD",
+ "exchange": "NASDAQ (The Nasdaq Global Select Market)",
+ "fiscal_year_end": "01-31",
+ "sic": 3674,
+ "sic_description": "Semiconductors & Related Devices",
+ "annual_form": "10-K",
+ "type": "high_growth / stalwart (computed by classify_company from SEC companyfacts; the analyst confirms or overrides with reasons)",
+ "evidence_ids": [
+  "pf_10k_20260225"
+ ],
+ "resolved": true,
+ "filings": [
+  {
+   "form": "10-K",
+   "filed": "2026-02-25",
+   "report_date": "2026-01-25",
+   "accession": "0001045810-26-000021",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/",
+   "what": "annual report"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2026-08-26",
+   "report_date": "2026-07-26",
+   "accession": "0001045810-26-000075",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/",
+   "what": "quarterly report"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2026-05-20",
+   "report_date": "2026-04-26",
+   "accession": "0001045810-26-000052",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/",
+   "what": "quarterly report"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-08-26",
+   "report_date": "2026-08-26",
+   "accession": "0001045810-26-000073",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/nvda-20260826.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-05-20",
+   "report_date": "2026-05-20",
+   "accession": "0001045810-26-000051",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000051/nvda-20260520.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000051/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-02-25",
+   "report_date": "2026-02-25",
+   "accession": "0001045810-26-000019",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000019/nvda-20260225.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000019/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-11-19",
+   "report_date": "2025-11-19",
+   "accession": "0001045810-25-000228",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000228/nvda-20251119.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000228/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-08-27",
+   "report_date": "2025-08-27",
+   "accession": "0001045810-25-000207",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000207/nvda-20250827.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000207/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-05-28",
+   "report_date": "2025-05-28",
+   "accession": "0001045810-25-000115",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000115/nvda-20250528.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000115/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-02-26",
+   "report_date": "2025-02-26",
+   "accession": "0001045810-25-000021",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000021/nvda-20250226.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000021/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2024-11-20",
+   "report_date": "2024-11-20",
+   "accession": "0001045810-24-000315",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581024000315/nvda-20241120.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581024000315/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "DEF 14A",
+   "filed": "2026-05-12",
+   "report_date": "2026-06-24",
+   "accession": "0001045810-26-000036",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000036/nvda-20260512.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000036/",
+   "what": "proxy statement"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-09-03",
+   "report_date": "2026-09-02",
+   "accession": "0001045810-26-000078",
+   "items": "8.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000078/nvda-20260902.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000078/",
+   "what": "8-K since the annual report (items 8.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-08-17",
+   "report_date": "2026-08-17",
+   "accession": "0001045810-26-000069",
+   "items": "1.01,2.03,7.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000069/nvda-20260817.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000069/",
+   "what": "8-K since the annual report (items 1.01,2.03,7.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-07-02",
+   "report_date": "2026-06-28",
+   "accession": "0001045810-26-000060",
+   "items": "5.02",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000060/nvda-20260628.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000060/",
+   "what": "8-K since the annual report (items 5.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-06-30",
+   "report_date": "2026-06-24",
+   "accession": "0001045810-26-000056",
+   "items": "5.07",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000056/nvda-20260624.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000056/",
+   "what": "8-K since the annual report (items 5.07)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-06-18",
+   "report_date": "2026-06-15",
+   "accession": "0001193125-26-275783",
+   "items": "8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000119312526275783/d48176d8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000119312526275783/",
+   "what": "8-K since the annual report (items 8.01,9.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-05-08",
+   "report_date": "2026-05-07",
+   "accession": "0001045810-26-000028",
+   "items": "5.02",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000028/nvda-20260507.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000028/",
+   "what": "8-K since the annual report (items 5.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-04-27",
+   "report_date": "2026-04-24",
+   "accession": "0001045810-26-000026",
+   "items": "5.02",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000026/nvda-20260424.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000026/",
+   "what": "8-K since the annual report (items 5.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-03-06",
+   "report_date": "2026-03-02",
+   "accession": "0001045810-26-000024",
+   "items": "5.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000024/nvda-20260302.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000024/",
+   "what": "8-K since the annual report (items 5.02,9.01)"
+  }
+ ],
+ "computed_type": {
+  "stage": "high_growth",
+  "lynch": "stalwart",
+  "reasons": [
+   "growth measured without years with a large acquisition: FY2026",
+   "fast growth, but a very large, highly profitable dividend payer: judged as a mature compounder",
+   "annual history said mature_growth, but the latest quarter grew 106% year on year and is profitable"
+  ],
+  "flags": [
+   {
+    "key": "acquisitions",
+    "he": "ב-FY2026 הייתה רכישה גדולה (המוניטין במאזן קפץ). חלק מהצמיחה נקנה ולא נבנה — לכן הסיווג מסתכל על הצמיחה בלי השנים האלה. צריך לבדוק שהרכישה מחזירה את המחיר ששולם."
+   },
+   {
+    "key": "inflection",
+    "he": "נקודת מפנה: השנים המלאות נראות חלשות, אבל ברבעונים האחרונים המכירות זינקו והחברה עברה לרווח. צריך לבדוק אם זה שינוי אמיתי ומתמשך או קפיצה זמנית."
+   }
+  ]
+ },
+ "identity_check": {
+  "reporting_currency": "USD",
+  "monetary_units": {
+   "USD": 459
+  },
+  "currency_basis": "facts of filing 0001045810-26-000021 (10-K, filed 2026-02-25)",
+  "depositary_shares": false,
+  "status": "ok",
+  "reasons": []
+ },
+ "prefetch": {
+  "by": "scripts/ticker_prefetch.py",
+  "at_utc": "2026-10-27T16:12:46+00:00",
+  "to_complete_by_lanes": [
+   "security and share class, quote currency, IBKR contract: gather_numbers (it alone writes identity.json while the lanes run)",
+   "named competitors: gather_field writes them in gather/field.json competitors[] (the canonical list), never here"
+  ]
+ },
+ "quote_currency": "USD",
+ "security": "Common Stock, $0.001 par value per share, ticker NVDA; single class; ISIN US67066G1040, CUSIP 67066G104; not an ADR",
+ "type_reasons": [
+  "Damodaran stage high_growth (computed): revenue CAGR FY2021-FY2026 67.2%; FY2026 growth 65.5%; latest quarter (Q2 FY2027) +105.9% y/y at a 66.2% operating margin; trailing-4-quarter growth 83.4% (SEC companyfacts). Annual rules alone said mature_growth (large, profitable dividend payer); the quarter-momentum rule moved it to high_growth: here an ACCELERATION on an already huge base, not a turnaround.",
+  "Lynch fast_grower (analyst override of the computed 'stalwart'): the computed stalwart comes only from the large_mature rule (revenue >= $20B, operating margin >= 15%, any dividend). The dividend is nominal (0.974B paid FY2026 vs 102.7B operating cash flow); growth of 65-106% is far above a stalwart. Both the computed and the override results are kept (identify/classify.json, identify/classify_override.json).",
+  "Cyclical watch (flag, not a type): in FY2023 revenue was flat (+0.2%) while operating margin fell from 37.3% to 15.7%; semiconductor demand has turned before in NVDA's own history. The classifier's cyclical rule did not fire (no annual revenue drop > 10%). Whether the AI data-center demand is structural or cyclical is the central question for Understand (business lane decides forecast_options.cyclical with evidence).",
+  "Acquisition flag FY2026: goodwill rose from 5.188B to 20.832B (> 10% of prior total assets); the classifier measured growth without that year. The transaction behind it is NOT identified in this phase (gap); revenue growth looks organic but must be confirmed from the 10-K business-combination note.",
+  "Operating margin 60.4% FY2026 (from 27.2% FY2021); operating cash flow 47.6% of revenue; capex light (6.04B FY2026); buybacks 40.1B FY2026.",
+  "What the type decides (classify packets: company_type, expectations, business, adversarial): duration of high growth, incremental margins, ROIC and incremental ROIC, reinvestment, competition attracted by ~60% operating margins, organic vs acquired growth; valuation fit: driver DCF with explicit growth fade and terminal ROIC plus reverse DCF. The type chooses questions and KPIs, never a number."
+ ],
+ "identity_sources": {
+  "name": [
+   "id_sec_submissions",
+   "id_fmp_profile"
+  ],
+  "cik": [
+   "id_sec_submissions"
+  ],
+  "security_and_exchange": [
+   "id_sec_10k_fy2026",
+   "id_sec_10q_q2fy27",
+   "id_fmp_profile",
+   "id_ib_search"
+  ],
+  "currency": [
+   "id_sec_companyfacts",
+   "id_fmp_profile"
+  ],
+  "fiscal_calendar": [
+   "id_sec_10q_q2fy27",
+   "id_sec_submissions",
+   "id_sec_10k_fy2026"
+  ],
+  "segments": [
+   "id_sec_10q_q2fy27",
+   "id_sec_10k_fy2026"
+  ],
+  "sic": [
+   "id_sec_submissions"
+  ]
+ },
+ "issuer": {
+  "legal_name": "NVIDIA CORP (EDGAR) / NVIDIA Corporation",
+  "state_of_incorporation": "DE",
+  "ein": "943177549",
+  "filer_category": "Large accelerated filer",
+  "entity_type": "operating",
+  "sic": "3674",
+  "sic_description": "Semiconductors & Related Devices",
+  "former_names": [
+   "NVIDIA CORP/CA"
+  ],
+  "hq": "Santa Clara, California",
+  "source_ids": [
+   "id_sec_submissions"
+  ]
+ },
+ "listing": {
+  "primary": {
+   "exchange": "NASDAQ",
+   "ib_contract_id": 4815747,
+   "symbol": "NVDA",
+   "currency": "USD",
+   "source_ids": [
+    "id_ib_search"
+   ]
+  },
+  "secondary_lines": [
+   {
+    "venue": "MEXI",
+    "country": "MX",
+    "symbol": "NVDA",
+    "description": "NVIDIA CORP",
+    "ib_contract_id": 84223567
+   },
+   {
+    "venue": "EBS",
+    "country": "CH",
+    "symbol": "NVDA",
+    "description": "NVIDIA CORP",
+    "ib_contract_id": 837454790
+   },
+   {
+    "venue": "TSE",
+    "country": "CA",
+    "symbol": "NVDA",
+    "description": "NVIDIA CORP-CDR",
+    "ib_contract_id": 541229759
+   },
+   {
+    "venue": "EBS",
+    "country": "CH",
+    "symbol": "NVDAUSD",
+    "description": "NVIDIA CORP",
+    "ib_contract_id": 835397161
+   }
+  ],
+  "reading": "One security: NVIDIA common stock, primary listing Nasdaq in USD. The Mexican (MEXI) and Swiss (EBS) lines are foreign cross-trading lines of the same share; the Toronto line is a CDR (Canadian Depositary Receipt, sponsored by a bank, not an NVIDIA share class). Leveraged/income ETFs in the search are other securities and are ignored. No ADR ratio, no dual primary listing.",
+  "adr_ratio": null,
+  "source_ids": [
+   "id_ib_search",
+   "id_fmp_profile"
+  ]
+ },
+ "reporting": {
+  "reporting_currency": "USD",
+  "quote_currency": "USD",
+  "filer": "domestic (10-K / 10-Q / 8-K)",
+  "auditor": null,
+  "segments": [
+   "Compute & Networking",
+   "Graphics"
+  ],
+  "source_ids": [
+   "id_sec_10q_q2fy27",
+   "id_sec_companyfacts"
+  ]
+ },
+ "fiscal_calendar": {
+  "rule": "fiscal year ends on the last Sunday in January (52/53-week)",
+  "quote": "\"Fiscal year 2027 is a 53-week year, and fiscal year 2026 was a 52-week year, both ending on the last Sunday in January.\" (10-Q Q2 FY2027, Note 1)",
+  "fiscal_year_end_nominal": "01-31",
+  "sec_fiscalYearEnd_field": "0131",
+  "last_reported_fiscal_year": {
+   "label": "FY2026",
+   "end": "2026-01-25",
+   "weeks": 52
+  },
+  "in_progress": {
+   "label": "FY2027",
+   "start": "2026-01-26",
+   "end": "2027-01-31",
+   "weeks": 53,
+   "quarters": [
+    {
+     "q": "Q1 FY2027",
+     "end": "2026-04-26",
+     "reported": "2026-05-20"
+    },
+    {
+     "q": "Q2 FY2027",
+     "end": "2026-07-26",
+     "reported": "2026-08-26"
+    },
+    {
+     "q": "Q3 FY2027",
+     "end": "2026-10-25",
+     "reported": null,
+     "note": "ends on as_of; results not yet published at as_of"
+    },
+    {
+     "q": "Q4 FY2027",
+     "end": "2027-01-31",
+     "reported": null,
+     "note": "14-week quarter if the extra week falls in Q4 (assumption to verify; the 10-Q states only that FY2027 has 53 weeks)"
+    }
+   ]
+  },
+  "engine_note": "fiscal_year_end is given as 01-31 (nominal; SEC record fiscalYearEnd 0131) so the engine dates FY2027 at 2027-01-31 exactly; later year ends (2028-01-30, 2029-01-28, ...) differ from 01-31 by a few days, which forecast._calendar accepts as nominal.",
+  "source_ids": [
+   "id_sec_10q_q2fy27",
+   "id_sec_submissions"
+  ]
+ },
+ "shares_outstanding_cover": [
+  {
+   "value": "24.1 billion",
+   "as_of": "2026-08-21",
+   "source_ids": [
+    "id_sec_10q_q2fy27"
+   ]
+  },
+  {
+   "value": "24.3 billion",
+   "as_of": "2026-02-20",
+   "source_ids": [
+    "id_sec_10k_fy2026"
+   ]
+  }
+ ],
+ "latest_filings": [
+  {
+   "form": "8-K",
+   "date": "2026-09-03",
+   "period": "2026-09-02",
+   "accession": "0001045810-26-000078",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000078/nvda-20260902.htm",
+   "items": "8.01",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000078/",
+   "source_ids": [
+    "id_sec_submissions"
+   ],
+   "note": "Item 8.01 other events: content not read in this phase"
+  },
+  {
+   "form": "10-Q",
+   "date": "2026-08-26",
+   "period": "2026-07-26",
+   "accession": "0001045810-26-000075",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+   "items": null,
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/",
+   "source_ids": [
+    "id_sec_submissions"
+   ],
+   "covers": "Q2 FY2027"
+  },
+  {
+   "form": "8-K",
+   "date": "2026-08-26",
+   "period": "2026-08-26",
+   "accession": "0001045810-26-000073",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/nvda-20260826.htm",
+   "items": "2.02,9.01",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/",
+   "source_ids": [
+    "id_sec_submissions",
+    "id_ws_q2call"
+   ],
+   "what": "earnings release (Item 2.02, exhibit 99.1)",
+   "covers": "Q2 FY2027",
+   "exhibit_99_1_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/q2fy27pr.htm"
+  },
+  {
+   "form": "8-K",
+   "date": "2026-08-17",
+   "period": "2026-08-17",
+   "accession": "0001045810-26-000069",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000069/nvda-20260817.htm",
+   "items": "1.01,2.03,7.01",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000069/",
+   "source_ids": [
+    "id_sec_submissions"
+   ],
+   "note": "Items 1.01 (material definitive agreement) + 2.03 (direct financial obligation) + 7.01: content NOT read in this phase; a new obligation for the capital_bridge / numbers lane to read"
+  },
+  {
+   "form": "8-K",
+   "date": "2026-07-02",
+   "period": "2026-06-28",
+   "accession": "0001045810-26-000060",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000060/nvda-20260628.htm",
+   "items": "5.02",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000060/",
+   "source_ids": [
+    "id_sec_submissions"
+   ]
+  },
+  {
+   "form": "8-K",
+   "date": "2026-06-30",
+   "period": "2026-06-24",
+   "accession": "0001045810-26-000056",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000056/nvda-20260624.htm",
+   "items": "5.07",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000056/",
+   "source_ids": [
+    "id_sec_submissions"
+   ]
+  },
+  {
+   "form": "8-K",
+   "date": "2026-06-18",
+   "period": "2026-06-15",
+   "accession": "0001193125-26-275783",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000119312526275783/d48176d8k.htm",
+   "items": "8.01,9.01",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000119312526275783/",
+   "source_ids": [
+    "id_sec_submissions"
+   ],
+   "note": "Item 8.01 other events: content not read in this phase"
+  },
+  {
+   "form": "10-Q",
+   "date": "2026-05-20",
+   "period": "2026-04-26",
+   "accession": "0001045810-26-000052",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm",
+   "items": null,
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/",
+   "source_ids": [
+    "id_sec_submissions"
+   ],
+   "covers": "Q1 FY2027"
+  },
+  {
+   "form": "8-K",
+   "date": "2026-05-20",
+   "period": "2026-05-20",
+   "accession": "0001045810-26-000051",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000051/nvda-20260520.htm",
+   "items": "2.02,9.01",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000051/",
+   "source_ids": [
+    "id_sec_submissions"
+   ],
+   "what": "earnings release (Item 2.02, exhibit 99.1)",
+   "covers": "Q1 FY2027"
+  },
+  {
+   "form": "DEF 14A",
+   "date": "2026-05-12",
+   "period": "2026-06-24",
+   "accession": "0001045810-26-000036",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000036/nvda-20260512.htm",
+   "items": null,
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000036/",
+   "source_ids": [
+    "id_sec_submissions"
+   ]
+  },
+  {
+   "form": "8-K",
+   "date": "2026-05-08",
+   "period": "2026-05-07",
+   "accession": "0001045810-26-000028",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000028/nvda-20260507.htm",
+   "items": "5.02",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000028/",
+   "source_ids": [
+    "id_sec_submissions"
+   ]
+  },
+  {
+   "form": "8-K",
+   "date": "2026-04-27",
+   "period": "2026-04-24",
+   "accession": "0001045810-26-000026",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000026/nvda-20260424.htm",
+   "items": "5.02",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000026/",
+   "source_ids": [
+    "id_sec_submissions"
+   ]
+  },
+  {
+   "form": "8-K",
+   "date": "2026-03-06",
+   "period": "2026-03-02",
+   "accession": "0001045810-26-000024",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000024/nvda-20260302.htm",
+   "items": "5.02,9.01",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000024/",
+   "source_ids": [
+    "id_sec_submissions"
+   ]
+  },
+  {
+   "form": "10-K",
+   "date": "2026-02-25",
+   "period": "2026-01-25",
+   "accession": "0001045810-26-000021",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+   "items": null,
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/",
+   "source_ids": [
+    "id_sec_submissions"
+   ],
+   "covers": "FY2026"
+  },
+  {
+   "form": "8-K",
+   "date": "2026-02-25",
+   "period": "2026-02-25",
+   "accession": "0001045810-26-000019",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000019/nvda-20260225.htm",
+   "items": "2.02,9.01",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000019/",
+   "source_ids": [
+    "id_sec_submissions"
+   ],
+   "what": "earnings release (Item 2.02, exhibit 99.1)",
+   "covers": "Q4 FY2026"
+  },
+  {
+   "form": "8-K",
+   "date": "2026-01-23",
+   "period": "2026-01-20",
+   "accession": "0001045810-26-000003",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000003/nvda-20260120.htm",
+   "items": "5.02",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000003/",
+   "source_ids": [
+    "id_sec_submissions"
+   ]
+  },
+  {
+   "form": "10-Q",
+   "date": "2025-11-19",
+   "period": "2025-10-26",
+   "accession": "0001045810-25-000230",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000230/nvda-20251026.htm",
+   "items": null,
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000230/",
+   "source_ids": [
+    "id_sec_submissions"
+   ],
+   "covers": "Q3 FY2026"
+  },
+  {
+   "form": "8-K",
+   "date": "2025-11-19",
+   "period": "2025-11-19",
+   "accession": "0001045810-25-000228",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000228/nvda-20251119.htm",
+   "items": "2.02,9.01",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000228/",
+   "source_ids": [
+    "id_sec_submissions"
+   ],
+   "what": "earnings release (Item 2.02, exhibit 99.1)",
+   "covers": "Q3 FY2026"
+  },
+  {
+   "form": "10-Q",
+   "date": "2025-08-27",
+   "period": "2025-07-27",
+   "accession": "0001045810-25-000209",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000209/nvda-20250727.htm",
+   "items": null,
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000209/",
+   "source_ids": [
+    "id_sec_submissions"
+   ],
+   "covers": "Q2 FY2026"
+  },
+  {
+   "form": "8-K",
+   "date": "2025-08-27",
+   "period": "2025-08-27",
+   "accession": "0001045810-25-000207",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000207/nvda-20250827.htm",
+   "items": "2.02,9.01",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000207/",
+   "source_ids": [
+    "id_sec_submissions"
+   ],
+   "what": "earnings release (Item 2.02, exhibit 99.1)",
+   "covers": "Q2 FY2026"
+  },
+  {
+   "form": "8-K",
+   "date": "2025-08-05",
+   "period": "2025-07-31",
+   "accession": "0001045810-25-000197",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000197/nvda-20250731.htm",
+   "items": "5.02",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000197/",
+   "source_ids": [
+    "id_sec_submissions"
+   ]
+  },
+  {
+   "form": "8-K",
+   "date": "2025-07-01",
+   "period": "2025-06-25",
+   "accession": "0001045810-25-000179",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000179/nvda-20250625.htm",
+   "items": "5.07",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000179/",
+   "source_ids": [
+    "id_sec_submissions"
+   ]
+  },
+  {
+   "form": "10-Q",
+   "date": "2025-05-28",
+   "period": "2025-04-27",
+   "accession": "0001045810-25-000116",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000116/nvda-20250427.htm",
+   "items": null,
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000116/",
+   "source_ids": [
+    "id_sec_submissions"
+   ],
+   "covers": "Q1 FY2026"
+  },
+  {
+   "form": "8-K",
+   "date": "2025-05-28",
+   "period": "2025-05-28",
+   "accession": "0001045810-25-000115",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000115/nvda-20250528.htm",
+   "items": "2.02,9.01",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000115/",
+   "source_ids": [
+    "id_sec_submissions"
+   ],
+   "what": "earnings release (Item 2.02, exhibit 99.1)",
+   "covers": "Q1 FY2026"
+  },
+  {
+   "form": "DEF 14A",
+   "date": "2025-05-13",
+   "period": "2025-06-25",
+   "accession": "0001045810-25-000095",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000095/nvda-20250512.htm",
+   "items": null,
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000095/",
+   "source_ids": [
+    "id_sec_submissions"
+   ]
+  },
+  {
+   "form": "8-K",
+   "date": "2025-04-15",
+   "period": "2025-04-09",
+   "accession": "0001045810-25-000082",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000082/nvda-20250409.htm",
+   "items": "8.01",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000082/",
+   "source_ids": [
+    "id_sec_submissions"
+   ]
+  },
+  {
+   "form": "8-K",
+   "date": "2025-03-07",
+   "period": "2025-03-03",
+   "accession": "0001045810-25-000039",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000039/nvda-20250303.htm",
+   "items": "5.02",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000039/",
+   "source_ids": [
+    "id_sec_submissions"
+   ]
+  },
+  {
+   "form": "10-K",
+   "date": "2025-02-26",
+   "period": "2025-01-26",
+   "accession": "0001045810-25-000023",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000023/nvda-20250126.htm",
+   "items": null,
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000023/",
+   "source_ids": [
+    "id_sec_submissions"
+   ],
+   "covers": "FY2025"
+  },
+  {
+   "form": "8-K",
+   "date": "2025-02-26",
+   "period": "2025-02-26",
+   "accession": "0001045810-25-000021",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000021/nvda-20250226.htm",
+   "items": "2.02,9.01",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000021/",
+   "source_ids": [
+    "id_sec_submissions"
+   ],
+   "what": "earnings release (Item 2.02, exhibit 99.1)",
+   "covers": "Q4 FY2025"
+  }
+ ],
+ "latest_10k": {
+  "date": "2026-02-25",
+  "period": "2026-01-25",
+  "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm"
+ },
+ "quarterlies_since_10k": [
+  {
+   "date": "2026-08-26",
+   "period": "2026-07-26",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm"
+  },
+  {
+   "date": "2026-05-20",
+   "period": "2026-04-26",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000052/nvda-20260426.htm"
+  }
+ ],
+ "earnings_releases_8k": [
+  {
+   "date": "2026-08-26",
+   "covers": "Q2 FY2027",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/nvda-20260826.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/"
+  },
+  {
+   "date": "2026-05-20",
+   "covers": "Q1 FY2027",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000051/nvda-20260520.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000051/"
+  },
+  {
+   "date": "2026-02-25",
+   "covers": "Q4 FY2026",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000019/nvda-20260225.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000019/"
+  },
+  {
+   "date": "2025-11-19",
+   "covers": "Q3 FY2026",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000228/nvda-20251119.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000228/"
+  },
+  {
+   "date": "2025-08-27",
+   "covers": "Q2 FY2026",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000207/nvda-20250827.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000207/"
+  },
+  {
+   "date": "2025-05-28",
+   "covers": "Q1 FY2026",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000115/nvda-20250528.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000115/"
+  },
+  {
+   "date": "2025-02-26",
+   "covers": "Q4 FY2025",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000021/nvda-20250226.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581025000021/"
+  }
+ ],
+ "latest_earnings_call": {
+  "date": "2026-08-26",
+  "quarter": "Q2 FY2027",
+  "time": "2 p.m. PT",
+  "citable_from": "2026-08-28",
+  "source_ids": [
+   "id_ws_q2call"
+  ],
+  "note": "date from the 8-K Item 2.02 filing date (SEC record) and the company's call notice seen in search results; transcript not retrieved in this phase"
+ },
+ "next_results": {
+  "quarter": "Q3 FY2027 (ended 2026-10-25)",
+  "date": null,
+  "gap": "Q3 FY2027 results date not verified at as_of; nothing about Q3 FY2027 is citable in this run"
+ },
+ "company_type": {
+  "computed": {
+   "stage": "high_growth",
+   "lynch": "stalwart"
+  },
+  "used": {
+   "stage": "high_growth",
+   "lynch": "fast_grower"
+  },
+  "override": {
+   "lynch": "fast_grower",
+   "reason": "Lynch categories are defined by growth: revenue grew 65% in FY2026, 84% trailing four quarters and 106% in Q2 FY2027 (SEC companyfacts), far above a stalwart (~10-12%). The computed stalwart comes only from the large_mature rule (revenue >= $20B, margin >= 15%, any dividend); the dividend is nominal ($974M paid FY2026 vs $102.7B operating cash flow, <1%). Stage high_growth is kept as computed."
+  },
+  "flags": [
+   "acquisitions",
+   "inflection",
+   "cyclical_watch"
+  ],
+  "packets": [
+   "company_type",
+   "expectations",
+   "business",
+   "adversarial"
+  ],
+  "key_metrics": [
+   "revenue growth vs base rates",
+   "incremental margins",
+   "ROIC and incremental ROIC",
+   "reinvestment rate",
+   "Rule of 40 for software"
+  ],
+  "valuation_fit": "Driver DCF with explicit growth fade to maturity and terminal ROIC; reverse DCF to see how long the price needs high growth.",
+  "traps": [
+   "paying for growth that must last a decade",
+   "ignoring competition as margins attract entrants",
+   "confusing acquired growth with organic growth"
+  ],
+  "what_decides_value_he": [
+   "כמה זמן הצמיחה המהירה יכולה להימשך (רוב החברות מאטות)",
+   "האם הרווחיות עולה ככל שהיא גדלה",
+   "האם כל דולר שהיא משקיעה מחזיר יותר מעלות ההון"
+  ],
+  "lynch_note_he": "השאלה המרכזית: כמה זמן עוד אפשר לצמוח ככה ובאיזה מחיר משלמים על זה.",
+  "evidence": {
+   "quarter_momentum": {
+    "latest_quarter_end": "2026-07-26",
+    "latest_quarter_yoy": 1.0585114348672526,
+    "latest_quarter_operating_margin": 0.6623710000935347,
+    "ttm_growth": 0.8337529809100703
+   },
+   "revenue_cagr": 0.6719241211603657,
+   "growth_used_for_type": 0.6725675679020933,
+   "acquisition_years": [
+    "FY2026"
+   ],
+   "large_mature_profile": true,
+   "revenue_growth_last_year": 0.6547353579009478,
+   "organic_growth_last_year": 0.6547353579009478,
+   "operating_margin_last": 0.6038168363141272,
+   "operating_margin_change": 0.3320327283681002,
+   "operating_margin_volatility": 0.17478252233237643,
+   "years_of_history": 6
+  },
+  "inflection_flag_note": "the engine's inflection text (\"full years look weak\") does not fit NVDA: the full years are strong; the flag fired on acceleration (Q2 FY2027 +106% vs FY2026 +65%). Its question still applies: is the acceleration durable?",
+  "history_file": "identify/history.json",
+  "outputs": [
+   "identify/classify.json",
+   "identify/classify_override.json"
+  ],
+  "annual_rows": [
+   {
+    "fiscal_year": "FY2021",
+    "period_end": "2021-01-31",
+    "revenue": 16675000000,
+    "revenue_growth": null,
+    "gross_margin": 0.6234,
+    "operating_margin": 0.2718,
+    "cfo_margin": 0.3491,
+    "fcf": null,
+    "dividends_paid": 395000000,
+    "buybacks": 0,
+    "goodwill": 4193000000,
+    "source_ids": [
+     "id_sec_companyfacts"
+    ]
+   },
+   {
+    "fiscal_year": "FY2022",
+    "period_end": "2022-01-30",
+    "revenue": 26914000000,
+    "revenue_growth": 0.614,
+    "gross_margin": 0.6493,
+    "operating_margin": 0.3731,
+    "cfo_margin": 0.3384,
+    "fcf": 8132000000,
+    "dividends_paid": 399000000,
+    "buybacks": 0,
+    "goodwill": 4349000000,
+    "source_ids": [
+     "id_sec_companyfacts"
+    ]
+   },
+   {
+    "fiscal_year": "FY2023",
+    "period_end": "2023-01-29",
+    "revenue": 26974000000,
+    "revenue_growth": 0.0022,
+    "gross_margin": 0.5693,
+    "operating_margin": 0.1566,
+    "cfo_margin": 0.2091,
+    "fcf": 3808000000,
+    "dividends_paid": 398000000,
+    "buybacks": 10039000000,
+    "goodwill": 4372000000,
+    "source_ids": [
+     "id_sec_companyfacts"
+    ]
+   },
+   {
+    "fiscal_year": "FY2024",
+    "period_end": "2024-01-28",
+    "revenue": 60922000000,
+    "revenue_growth": 1.2585,
+    "gross_margin": 0.7272,
+    "operating_margin": 0.5412,
+    "cfo_margin": 0.4611,
+    "fcf": 27021000000,
+    "dividends_paid": 395000000,
+    "buybacks": 9533000000,
+    "goodwill": 4430000000,
+    "source_ids": [
+     "id_sec_companyfacts"
+    ]
+   },
+   {
+    "fiscal_year": "FY2025",
+    "period_end": "2025-01-26",
+    "revenue": 130497000000,
+    "revenue_growth": 1.142,
+    "gross_margin": 0.7499,
+    "operating_margin": 0.6242,
+    "cfo_margin": 0.4911,
+    "fcf": 60853000000,
+    "dividends_paid": 834000000,
+    "buybacks": 33706000000,
+    "goodwill": 5188000000,
+    "source_ids": [
+     "id_sec_companyfacts"
+    ]
+   },
+   {
+    "fiscal_year": "FY2026",
+    "period_end": "2026-01-25",
+    "revenue": 215938000000,
+    "revenue_growth": 0.6547,
+    "gross_margin": 0.7107,
+    "operating_margin": 0.6038,
+    "cfo_margin": 0.4757,
+    "fcf": 96676000000,
+    "dividends_paid": 974000000,
+    "buybacks": 40086000000,
+    "goodwill": 20832000000,
+    "source_ids": [
+     "id_sec_companyfacts"
+    ]
+   }
+  ],
+  "quarter_rows": [
+   {
+    "quarter": "Q3FY2025",
+    "period_end": "2024-10-27",
+    "revenue": 35082000000,
+    "operating_margin": 0.6234,
+    "yoy": null,
+    "derived": null,
+    "available_at": "2024-11-20",
+    "source_ids": [
+     "id_sec_companyfacts"
+    ]
+   },
+   {
+    "quarter": "Q4FY2025",
+    "period_end": "2025-01-26",
+    "revenue": 39331000000,
+    "operating_margin": 0.611,
+    "yoy": null,
+    "derived": "fiscal year (10-K) minus Q1-Q3 (10-Q)",
+    "available_at": "2025-02-26",
+    "source_ids": [
+     "id_sec_companyfacts"
+    ]
+   },
+   {
+    "quarter": "Q1FY2026",
+    "period_end": "2025-04-27",
+    "revenue": 44062000000,
+    "operating_margin": 0.4911,
+    "yoy": null,
+    "derived": null,
+    "available_at": "2025-05-28",
+    "source_ids": [
+     "id_sec_companyfacts"
+    ]
+   },
+   {
+    "quarter": "Q2FY2026",
+    "period_end": "2025-07-27",
+    "revenue": 46743000000,
+    "operating_margin": 0.6084,
+    "yoy": null,
+    "derived": null,
+    "available_at": "2025-08-27",
+    "source_ids": [
+     "id_sec_companyfacts"
+    ]
+   },
+   {
+    "quarter": "Q3FY2026",
+    "period_end": "2025-10-26",
+    "revenue": 57006000000,
+    "operating_margin": 0.6317,
+    "yoy": 0.6249,
+    "derived": null,
+    "available_at": "2025-11-19",
+    "source_ids": [
+     "id_sec_companyfacts"
+    ]
+   },
+   {
+    "quarter": "Q4FY2026",
+    "period_end": "2026-01-25",
+    "revenue": 68127000000,
+    "operating_margin": 0.6502,
+    "yoy": 0.7321,
+    "derived": "fiscal year (10-K) minus Q1-Q3 (10-Q)",
+    "available_at": "2026-02-25",
+    "source_ids": [
+     "id_sec_companyfacts"
+    ]
+   },
+   {
+    "quarter": "Q1FY2027",
+    "period_end": "2026-04-26",
+    "revenue": 81615000000,
+    "operating_margin": 0.656,
+    "yoy": 0.8523,
+    "derived": null,
+    "available_at": "2026-05-20",
+    "source_ids": [
+     "id_sec_companyfacts"
+    ]
+   },
+   {
+    "quarter": "Q2FY2027",
+    "period_end": "2026-07-26",
+    "revenue": 96221000000,
+    "operating_margin": 0.6624,
+    "yoy": 1.0585,
+    "derived": null,
+    "available_at": "2026-08-26",
+    "source_ids": [
+     "id_sec_companyfacts"
+    ]
+   }
+  ]
+ },
+ "competitors_named_in_10k": {
+  "source_ids": [
+   "id_sec_10k_fy2026"
+  ],
+  "section": "Item 1. Business - Competition (\"Our current competitors include:\")",
+  "categories": [
+   {
+    "category": "suppliers and licensors of hardware and software for discrete and integrated GPUs, custom chips and other accelerated computing solutions, including solutions offered for AI",
+    "named": [
+     "Advanced Micro Devices, Inc. (AMD)",
+     "Huawei Technologies Co. Ltd. (Huawei)",
+     "Intel Corporation (Intel)"
+    ]
+   },
+   {
+    "category": "large cloud services companies with internal teams designing hardware and software that incorporate accelerated or AI computing functionality as part of their internal solutions or platforms",
+    "named": [
+     "Alibaba Group",
+     "Alphabet Inc.",
+     "Amazon, Inc. (Amazon)",
+     "Baidu, Inc.",
+     "Huawei",
+     "Microsoft Corporation (Microsoft)"
+    ]
+   },
+   {
+    "category": "suppliers of Arm-based CPUs and companies that incorporate hardware and software for CPUs as part of their internal solutions or platforms",
+    "named": [
+     "Amazon",
+     "Huawei",
+     "Microsoft"
+    ]
+   },
+   {
+    "category": "suppliers of hardware and software for SoC products used in servers or embedded into automobiles, autonomous machines, and gaming devices; or companies with internal teams designing SoC products for their own products and services",
+    "named": [
+     "Ambarella, Inc.",
+     "AMD",
+     "Broadcom",
+     "Intel",
+     "Qualcomm Incorporated",
+     "Renesas Electronics Corporation",
+     "Samsung",
+     "Tesla, Inc. (internal SoC team)"
+    ]
+   },
+   {
+    "category": "networking products consisting of switches, network adapters (including DPUs), and cable solutions (including optical modules)",
+    "named": [
+     "AMD",
+     "Arista Networks",
+     "Broadcom",
+     "Cisco Systems, Inc.",
+     "Hewlett Packard Enterprise Company",
+     "Huawei",
+     "Intel",
+     "Lumentum Holdings Inc.",
+     "Marvell Technology, Inc."
+    ],
+    "also": "internal teams of system vendors and large cloud services companies"
+   }
+  ],
+  "listed_tickers": {
+   "AMD": "AMD",
+   "Intel": "INTC",
+   "Huawei": "private (no listed equity)",
+   "Alibaba Group": "BABA",
+   "Alphabet Inc.": "GOOGL",
+   "Amazon": "AMZN",
+   "Baidu": "BIDU",
+   "Microsoft": "MSFT",
+   "Ambarella": "AMBA",
+   "Broadcom": "AVGO",
+   "Qualcomm": "QCOM",
+   "Renesas": "6723.T",
+   "Samsung": "005930.KS",
+   "Tesla": "TSLA",
+   "Arista Networks": "ANET",
+   "Cisco": "CSCO",
+   "Hewlett Packard Enterprise": "HPE",
+   "Lumentum": "LITE",
+   "Marvell": "MRVL"
+  },
+  "note": "Names exactly as the 10-K lists them (quoted via WebFetch, two consistent reads). Tickers are the listing mapping for later lanes (public knowledge, not from the 10-K). Which of these are DIRECT competitors for the economics that matter (data-center accelerators: AMD, in-house accelerators of Alphabet/Amazon/Microsoft, Broadcom/Marvell as custom-ASIC suppliers, Huawei in China; networking: Broadcom, Arista, Cisco) is for the field lane to evidence with numbers."
+ },
+ "named_competitors": [
+  "AMD",
+  "Huawei",
+  "Intel",
+  "Alibaba Group",
+  "Alphabet",
+  "Amazon",
+  "Baidu",
+  "Microsoft",
+  "Ambarella",
+  "Broadcom",
+  "Qualcomm",
+  "Renesas",
+  "Samsung",
+  "Tesla",
+  "Arista Networks",
+  "Cisco",
+  "Hewlett Packard Enterprise",
+  "Lumentum",
+  "Marvell"
+ ],
+ "sources": [
+  {
+   "id": "id_sec_submissions",
+   "kind": "structured_data",
+   "title": "SEC EDGAR submissions record, CIK 0001045810 (NVIDIA CORP)",
+   "url": "https://data.sec.gov/submissions/CIK0001045810.json",
+   "date": "2026-10-13",
+   "independent": false,
+   "publisher": "U.S. SEC (EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "id_sec_companyfacts",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts, CIK 0001045810",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001045810.json",
+   "date": "2026-08-26",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's 10-K/10-Q)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "id_sec_10k_fy2026",
+   "kind": "sec_filing",
+   "title": "NVIDIA Form 10-K for fiscal year ended 2026-01-25",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/nvda-20260125.htm",
+   "date": "2026-02-25",
+   "independent": true,
+   "publisher": "NVIDIA Corporation (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "id_sec_10q_q2fy27",
+   "kind": "sec_filing",
+   "title": "NVIDIA Form 10-Q for the quarter ended 2026-07-26 (Q2 FY2027)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000075/nvda-20260726.htm",
+   "date": "2026-08-26",
+   "independent": true,
+   "publisher": "NVIDIA Corporation (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "id_fmp_profile",
+   "kind": "structured_data",
+   "title": "FMP company profile-symbol NVDA",
+   "url": "connector:mcp__FMP__company",
+   "date": "2026-10-25",
+   "independent": true,
+   "publisher": "Financial Modeling Prep",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "id_ib_search",
+   "kind": "price",
+   "title": "Interactive Brokers search_contracts NVDA",
+   "url": "connector:mcp__Interactive_Brokers__search_contracts",
+   "date": "2026-10-25",
+   "independent": true,
+   "publisher": "Interactive Brokers",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "id_ws_q2call",
+   "kind": "release",
+   "title": "NVIDIA Q2 FY2027 results release (8-K exhibit 99.1) and conference-call notice (call 2026-08-26, 2 p.m. PT)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000073/q2fy27pr.htm",
+   "date": "2026-08-26",
+   "independent": true,
+   "publisher": "NVIDIA Corporation",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  }
+ ],
+ "denied_or_failed": [
+  {
+   "capability": "Alpha Vantage COMPANY_OVERVIEW",
+   "result": "refused: \"This is a premium endpoint\" (error type rate_limit)",
+   "when": "2026-10-25",
+   "file": "av__company-overview__denied.json",
+   "fallback": "FMP profile-symbol (working) + SEC submissions; not retried",
+   "note": "contradicts the 2026-09-27 session_capabilities probe (reported working on AXTI): plan/tier may have changed; AV statements endpoints remain untested here"
+  }
+ ],
+ "flags_for_later_phases": [
+  "Q1 FY2027 net income 58.3B exceeded operating income 53.5B: large non-operating income (cause not read here; investment gains is a hypothesis): normalize symmetrically in Understand.",
+  "FY2026 goodwill jump (~+$15.6B): identify the acquisition, price paid and what it adds (10-K business-combination note).",
+  "8-K 2026-08-17 (Items 1.01/2.03/7.01): a new material agreement creating a direct financial obligation; read it for capital_bridge.",
+  "Weighted diluted shares in companyfacts mix pre- and post-split bases (10-for-1 split, 2024) for FY2020-FY2022 values: use split-adjusted figures from the latest 10-K only.",
+  "Q3 FY2027 ended on as_of (2026-10-25): its results are after as_of and not citable; the latest citable quarter is Q2 FY2027 (filed 2026-08-26)."
+ ],
+ "gaps": [
+  "Alpha Vantage COMPANY_OVERVIEW refused as premium on this session (recorded once, not retried); AV statements untested.",
+  "SEC www.sec.gov archive refused a generic User-Agent (403); primary documents were read through WebFetch (first 100k characters of the 10-K; selected parts of the 10-Q). Saving sec__annual_report.htm verbatim is left to the numbers lane, which needs SEC_USER_AGENT set (it is not set in this environment).",
+  "Exact verbatim 10-K fiscal-year sentence not retrieved (10-Q Note 1 used instead).",
+  "Next results date (Q3 FY2027) not verified.",
+  "Auditor not recorded in this phase.",
+  "Process note: the two data.sec.gov requests (submissions, companyfacts, 22:31Z) were sent with a User-Agent that contained the owner's contact e-mail (SEC fair-access asks for a contact); no later request used it. Set SEC_USER_AGENT in the environment for future runs so the contact is the owner's explicit choice."
+ ],
+ "source_notes": {
+  "id_sec_submissions": "the regulator's own filing index; date = latest filing date in the record",
+  "id_sec_companyfacts": "re-keys the filings (not independent of them); date = latest 10-Q filing whose facts it carries",
+  "id_sec_10k_fy2026": "read via WebFetch (first 100k of 280k characters: cover page, Item 1 incl. Competition); the rest not read in this phase",
+  "id_sec_10q_q2fy27": "read via WebFetch: cover page, Note 1 fiscal year, income statement lines, Note 13 segments",
+  "id_fmp_profile": "retrieved 2026-10-25 (a Sunday); the payload carries no quote timestamp: price/market cap are a vendor snapshot, not the dated quote (numbers lane: IB)",
+  "id_ib_search": "contract resolution only (read-only); no price retrieved in this phase",
+  "id_ws_q2call": "seen only as a WebSearch result excerpt (also investor.nvidia.com call notice of 2026-07-29); not opened in this phase"
+ },
+ "ib_contract_id": 4815747,
+ "numbers_lane_refresh": {
+  "at_utc": "2026-10-26T08:06:00+00:00",
+  "reading": "Identity re-confirmed by gather_numbers on 2026-10-26 (reused from the 2026-10-25 run): one security, NVIDIA common stock, single class, Nasdaq Global Select, USD; IB conid 4815747 (primary NASDAQ line) answered a REALTIME NVDA snapshot (210.77 USD); 10-K cover: fiscal year ended 2026-01-25, 24.3 billion shares on 2026-02-20; 10-Q cover 24.1 billion on 2026-08-21.",
+  "alpha_vantage_statements": "INCOME_STATEMENT, BALANCE_SHEET, CASH_FLOW and EARNINGS_ESTIMATES answered on 2026-10-26 (the 2026-10-25 limit had reset); COMPANY_OVERVIEW still not called (premium).",
+  "source_files": [
+   "companies/NVDA/raw/ib__search-contracts-NVDA__current.json",
+   "companies/NVDA/raw/ib__price-snapshot-NVDA__current.json",
+   "companies/NVDA/raw/av__income.json"
+  ]
+ }
+}

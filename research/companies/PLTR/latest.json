@@ -1,0 +1,30 @@
+{
+ "ticker": "PLTR",
+ "as_of": "2026-11-01",
+ "folder": "research/companies/PLTR/2026-11-01",
+ "thesis_id": "PLTR:2026-11-01:59c4600189d9",
+ "status": "verified",
+ "verdict": "quality_but_expensive",
+ "files": [
+  "casefile_core.json",
+  "casefile_summary.json",
+  "evidence_pack.json",
+  "gather/documents.json",
+  "gather/field.json",
+  "gather/macro.json",
+  "gather/numbers.json",
+  "identity.json",
+  "inputs.json",
+  "paragraph.txt",
+  "position/core.json",
+  "position/field.json",
+  "position/path.json",
+  "review/counter.json",
+  "review/numbers.json",
+  "review/trace.json",
+  "scenarios_he.md",
+  "status.json",
+  "table_he.md",
+  "understand/business.json"
+ ]
+}

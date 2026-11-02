@@ -1,0 +1,412 @@
+{
+ "lane": "numbers",
+ "sources": [
+  {
+   "id": "nm_ib_snapshot_20261028",
+   "kind": "price",
+   "title": "Interactive Brokers price snapshot VRT (conid 402783527, NYSE, USD): last 213.00 at 2026-10-28T08:13:57Z (pre-market, results day), 52w high 379.84 / low 147.76",
+   "url": "connector:mcp__Interactive_Brokers__get_price_snapshot",
+   "date": "2026-10-28",
+   "independent": true,
+   "publisher": "Interactive Brokers",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_ib_history_20261028",
+   "kind": "price",
+   "title": "Interactive Brokers monthly price history VRT 2021-11 to 2026-10 with corporate actions (cash dividends only, no splits)",
+   "url": "connector:mcp__Interactive_Brokers__get_price_history",
+   "date": "2026-10-28",
+   "independent": true,
+   "publisher": "Interactive Brokers",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_cons_keycorp_20260730",
+   "kind": "consensus",
+   "title": "KeyCorp (KeyBanc) estimates for Vertiv as reported by MarketBeat 2026-07-30: FY2027 EPS 8.95, FY2028 EPS 11.35, price target 325 (single broker; search excerpt)",
+   "url": "https://www.marketbeat.com/instant-alerts/vertiv-nysevrt-given-new-32500-price-target-at-keycorp-2026-07-30/",
+   "date": "2026-07-30",
+   "independent": true,
+   "publisher": "MarketBeat",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_cons_rbc_20260423",
+   "kind": "consensus",
+   "title": "RBC Capital estimates for Vertiv as reported by Placera/MT Newswires 2026-04-23: FY2026 EPS 6.40, FY2027 EPS 8.60 (single broker; search excerpt)",
+   "url": "https://www.placera.se/telegram/vertiv-holdings-a-vertiv-s-long-term-growth-story-continues-with-q1-earnings-beat-guidance-raise-rbc-says-20260423",
+   "date": "2026-04-23",
+   "independent": true,
+   "publisher": "Placera (MT Newswires)",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  }
+ ],
+ "facts": [
+  {
+   "id": "nm_eps_diluted_q2_2026",
+   "metric": "eps_diluted",
+   "period": "Q2 2026",
+   "value": 1.27,
+   "unit": "USD/share",
+   "source_ids": [
+    "pf_10q_20260729"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q1_2026",
+   "metric": "eps_diluted",
+   "period": "Q1 2026",
+   "value": 0.99,
+   "unit": "USD/share",
+   "source_ids": [
+    "pf_10q_20260422"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_diluted_wavg_q2_2026",
+   "metric": "shares_diluted_wavg",
+   "period": "Q2 2026",
+   "value": 392746991,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20260729"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_diluted_wavg_q1_2026",
+   "metric": "shares_diluted_wavg",
+   "period": "Q1 2026",
+   "value": 392128170,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20260422"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_ttm_q2_2026",
+   "metric": "eps_diluted_ttm",
+   "period": "TTM to Q2 2026",
+   "value": 4.42,
+   "unit": "USD/share",
+   "source_ids": [
+    "pf_10q_20260729",
+    "pf_10q_20260422",
+    "pf_10k_20260213"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_adj_eps_q2_2026",
+   "metric": "eps_adjusted_diluted",
+   "period": "Q2 2026",
+   "value": 1.52,
+   "unit": "USD/share",
+   "source_ids": [
+    "pf_rel_20260729_1"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_adj_eps_q1_2026",
+   "metric": "eps_adjusted_diluted",
+   "period": "Q1 2026",
+   "value": 1.17,
+   "unit": "USD/share",
+   "source_ids": [
+    "pf_rel_20260422_1"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_adj_eps_q4_2025",
+   "metric": "eps_adjusted_diluted",
+   "period": "Q4 2025",
+   "value": 1.36,
+   "unit": "USD/share",
+   "source_ids": [
+    "pf_rel_20260211_1"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_adj_op_q2_2026",
+   "metric": "operating_income_adjusted",
+   "period": "Q2 2026",
+   "value": 738000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260729_1"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_adj_op_q1_2026",
+   "metric": "operating_income_adjusted",
+   "period": "Q1 2026",
+   "value": 550900000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260422_1"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_cash_q2_2026",
+   "metric": "cash",
+   "period": "Q2 2026",
+   "value": 2810600000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260729"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_st_investments_q2_2026",
+   "metric": "short_term_investments",
+   "period": "Q2 2026",
+   "value": 300000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260729"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_restricted_cash_q2_2026",
+   "metric": "restricted_cash",
+   "period": "Q2 2026",
+   "value": 65000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260729"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_long_term_debt_q2_2026",
+   "metric": "long_term_debt",
+   "period": "Q2 2026",
+   "value": 2939800000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260729"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_deferred_revenue_q2_2026",
+   "metric": "deferred_revenue",
+   "period": "Q2 2026",
+   "value": 3633700000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260729"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_deferred_revenue_change_h1_2026",
+   "metric": "deferred_revenue_change_cfo",
+   "period": "H1 2026",
+   "value": 1822700000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260729"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_cfo_h1_2026",
+   "metric": "cfo",
+   "period": "H1 2026",
+   "value": 1866600000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260729"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_acquisitions_h1_2026",
+   "metric": "acquisitions_cash",
+   "period": "H1 2026",
+   "value": 278100000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260729"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_rev_us_fy2025",
+   "metric": "revenue_united_states",
+   "period": "FY2025",
+   "value": 6013600000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260213"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_rev_europe_fy2025",
+   "metric": "revenue_europe",
+   "period": "FY2025",
+   "value": 1474600000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260213"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_rev_apac_fy2025",
+   "metric": "revenue_asia_pacific",
+   "period": "FY2025",
+   "value": 2020300000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260213"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_rev_latam_canada_fy2025",
+   "metric": "revenue_latin_america_canada",
+   "period": "FY2025",
+   "value": 436900000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260213"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_rev_mea_fy2025",
+   "metric": "revenue_middle_east_africa",
+   "period": "FY2025",
+   "value": 284500000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260213"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_price_last_20261028",
+   "metric": "price_last",
+   "period": "2026-10-28",
+   "value": 213.0,
+   "unit": "USD/share",
+   "source_ids": [
+    "nm_ib_snapshot_20261028"
+   ],
+   "period_end": "2026-10-28",
+   "basis": "reported"
+  }
+ ],
+ "consensus": [
+  {
+   "id": "nm_cons_keycorp_fy2027_eps",
+   "metric": "eps_adjusted_diluted",
+   "period": "FY2027",
+   "value": 8.95,
+   "n": 1,
+   "low": 8.95,
+   "high": 8.95,
+   "source_id": "nm_cons_keycorp_20260730"
+  },
+  {
+   "id": "nm_cons_keycorp_fy2028_eps",
+   "metric": "eps_adjusted_diluted",
+   "period": "FY2028",
+   "value": 11.35,
+   "n": 1,
+   "low": 11.35,
+   "high": 11.35,
+   "source_id": "nm_cons_keycorp_20260730"
+  },
+  {
+   "id": "nm_cons_rbc_fy2026_eps",
+   "metric": "eps_adjusted_diluted",
+   "period": "FY2026",
+   "value": 6.4,
+   "n": 1,
+   "low": 6.4,
+   "high": 6.4,
+   "source_id": "nm_cons_rbc_20260423"
+  },
+  {
+   "id": "nm_cons_rbc_fy2027_eps",
+   "metric": "eps_adjusted_diluted",
+   "period": "FY2027",
+   "value": 8.6,
+   "n": 1,
+   "low": 8.6,
+   "high": 8.6,
+   "source_id": "nm_cons_rbc_20260423"
+  }
+ ],
+ "guidance_track": [],
+ "notes": [
+  "nm AV RATE LIMIT INCOME_STATEMENT 2026-10-28: 'standard API rate limit is 25 requests per day' on the lane's first AV call (saved raw/av__income__ratelimit.json, key redacted). BALANCE_SHEET, CASH_FLOW and EARNINGS_ESTIMATES were not called (same quota, never retried); fallback: SEC companyfacts (prefetch pf_ facts) and the 10-K / 10-Q text for statements, WebSearch excerpts for consensus. gather_documents should expect AV EARNINGS_CALL_TRANSCRIPT to be rate limited as well.",
+  "nm RECONCILIATION FY2025 (10-K income statement, reading/10k_full.txt l.1368-1394, cash flow l.1488-1492): revenue 10,229.9, operating profit 1,829.7, net income 1,332.8, diluted EPS 3.41, diluted wavg shares 390,652,824, CFO 2,113.8, capex 220.0 (MD&A l.860), SBC 45.9: all equal to the pf_ companyfacts facts. No differences.",
+  "nm RECONCILIATION Q2 2026 (10-Q filed 2026-07-29, l.142-170 and l.255-297): revenue 3,274.3, operating profit 637.9, net income 497.8, diluted EPS 1.27, diluted wavg shares 392,746,991 equal the pf_ facts. CFO 1,099.8, capex 173.3 and SBC 13.8 in pf_ are quarter values DERIVED from six-month figures (CFO 1,866.6 - Q1 766.8; capex 285.9 - 112.6; SBC 30.8 - 17.0): arithmetic checks.",
+  "nm CFO QUALITY: H1 2026 CFO 1,866.6 includes +1,822.7 from deferred revenue (customer advances; deferred revenue 3,633.7 at 2026-06-30 vs 1,814.7 at 2025-12-31) and -1,048.0 inventories. Without the deferred-revenue inflow H1 CFO would have been ~44. Q2 2026 CFO (1,099.8) is therefore not a run rate of earnings conversion: advance payments reverse as projects ship. Treat FY2026 FCF as boosted by prepayments.",
+  "nm GAAP vs ADJUSTED: adjusted EPS excludes amortization of intangibles (Q2 2026 73.7 pre-tax), restructuring, contingent consideration (H1 2026 62.0 fair-value change) and M&A costs; FY2026 guidance: GAAP diluted EPS 5.82-5.92 vs adjusted 6.65-6.75 (release 2026-07-29). SBC is small (FY2025 45.9 = 0.45% of revenue) and is NOT added back in adjusted EPS, so GAAP EPS is after SBC.",
+  "nm ROIC CHECK: prefetch/forensic.json roic FY2025 0.304 uses invested capital = equity 3,941.3 + long-term debt 2,892.1 - cash 1,728.4 = 5,105.0 (matches the 10-K). Differences: short-term investments 99.5 (Treasury bills, held-to-maturity) are not subtracted (would raise ROIC slightly); restricted cash (61.4 at FY2025 in other current assets) is correctly not in cash; operating lease liabilities are not added as debt; goodwill 2,033.7 and intangibles from acquisitions are inside equity. NOPAT 1,400.0 uses GAAP operating profit after amortization. FY2024 ROIC (0.215) is not distorted by the warrant liability loss (449.2), which sits below operating profit. At 2026-06-30 cash is 2,810.6 plus 300.0 short-term investments against long-term debt 2,939.8: net debt about -170.8 (net cash) before the UIG and King Environmental acquisitions that closed 2026-10-26/27 (cash effect not yet filed: gap).",
+  "nm OWN MULTIPLE HISTORY trailing P/E (month-end close / TTM GAAP diluted EPS, TTM switched in the month the quarter was reported, months with TTM EPS < 0.30 excluded): low 38.3 median 69.5 high 94.3 now 48.2 (213.00 / TTM 4.42 to Q2 2026) years 2023-04 to 2026-09 (42 months) sources nm_ib_history_20261028, nm_ib_snapshot_20261028, pf_10k_20260213, pf_10q_20260729, pf_10q_20260422. Caveat: 2024 GAAP EPS is depressed by warrant fair-value losses (449.2 in FY2024), inflating 2024 multiples; the post-2025 range (no warrant effect) is 49.6-84.1, median ~70. Forward P/E history: GAP (no dated historical consensus series available). Forward on today's guidance: 213 / adjusted FY2026 mid 6.70 = 31.8x; on GAAP FY2026 guide mid 5.87 = 36.3x.",
+  "nm PRICE: last 213.00 at 2026-10-28T08:13:57Z, pre-market on the Q3 2026 results day (is_close false, prior_close not returned); September 2026 month-end close 241.31; 52-week range 147.76-379.84; 13-week low 187.26. The price may already reflect the 2026-10-28 Q3 release, which is not citable until 2026-10-30.",
+  "nm TRACK RECORD revenue: 8 of 9 guided periods beaten (Q4 2024 through Q1 2026 plus FY2024/FY2025), one miss: Q2 2026 revenue 3,274.3 vs guided midpoint 3,350 (-2.3%; company cited supply-chain congestion and multi-phase project timing). Adjusted EPS beaten 7 of 7 quarters (ratios 1.05-1.28). Pattern: conservative guidance on earnings; revenue beats narrowed through 2025-26 (Q4 2025 +1.1%, Q1 2026 +1.9%, Q2 2026 miss) as the base scaled. FY2025 initial revenue guide 9,200 mid vs actual 10,229.9 (+11%). The guidance_track rows live in gather/reports.json (the reports lane wrote them first); this lane re-derived the same periods independently from reading/release_*.txt and they agree (revenue Q4 2024..Q2 2026, adjusted EPS Q4 2024..Q2 2026). ticker-check over both: revenue ratio 1.046 mean, 8 beats, 1 miss (Q2 2026, 0.977). Extra reading: FY2025 INITIAL revenue guide (2025-02-12) 9,125-9,275 mid 9,200 vs actual 10,229.9 = 1.112; the reports lane uses the last guide before year end (10,200, ratio 1.003). Adjusted EPS cross-check: Q1 2026 actual 1.17 vs guided mid 0.98; Q2 2026 1.52 vs 1.40; Q4 2025 1.36 vs 1.26; Q2 2026 adjusted operating profit 738 vs guided mid 710.",
+  "nm CONSENSUS: AV EARNINGS_ESTIMATES not reachable (quota). Aggregate consensus (no analyst count, no low/high, so not entered as consensus rows; vendor unnamed):  FY2026 adjusted EPS 6.38 before the 2026-07-29 raise (MarketBeat; guidance now 6.65-6.75 so consensus has likely moved up, unknown by how much); Q3 2026 adjusted EPS 1.79 and revenue ~$3.7B (MarketBeat 2026-07-29), Benzinga page (undated, garbled) 1.82 / $3.77B. Single-broker opinions, not consensus: RBC 2026-04-23 FY2027 EPS 8.60; KeyCorp 2026-07-30 FY2027 EPS 8.95, FY2028 11.35, price target 325. No analyst count, dispersion or revision history obtained. Q2 2026 revenue missed the ~3.38B consensus (MarketBeat 2026-07-27). Excerpts saved in gather/raw_numbers/web_consensus_search_excerpts.json. Consensus rows in this fragment are single-broker attributed estimates (n=1): RBC FY2026 6.40 / FY2027 8.60 (2026-04-23, before two guidance raises) and KeyCorp FY2027 8.95 / FY2028 11.35 (2026-07-30). KeyCorp price target 325 is an opinion, not a value input.",
+  "nm MARKET: market.risk_free is already in the prefetch fragment (0.05, FRED DGS10 as of 2026-10-26, pf_fred_dgs10) and the stage file assigns market to prefetch / gather_macro, so this fragment holds no market block (avoids a duplicate at merge).",
+  "nm GEOGRAPHY FY2025 sales by destination (10-K segment note l.2483-2490): United States 6,013.6 (58.8%), Asia Pacific 2,020.3 (19.7%), Europe 1,474.6 (14.4%), Latin America and Canada 436.9 (4.3%), Middle East/Africa 284.5 (2.8%). US share rose from 51.0% in FY2024. Long-lived assets by country and the exposures (tariffs, China, export controls) are left to gather_macro.",
+  "nm RESULTS DAY: Q3 2026 release and call dated 2026-10-28 are not citable until 2026-10-30; nothing from them is used here. Acquisitions closed 2026-10-26 (King Environmental) and 2026-10-27 (UIG) are after the last balance sheet: their price and funding are not in these facts."
+ ],
+ "gaps": [
+  "Alpha Vantage INCOME_STATEMENT/BALANCE_SHEET/CASH_FLOW: daily quota exhausted (rate limit); statements rest on SEC companyfacts and the filings only (no second structured source)",
+  "Attributed consensus with analyst count, low/high and revisions: not obtained (AV EARNINGS_ESTIMATES unreachable; only search excerpts, FY2027+ consensus revenue and EPS missing)",
+  "Forward P/E history: no dated historical consensus series",
+  "Cash and debt effect of the UIG and King Environmental acquisitions closed 2026-10-26/27",
+  "Q3 2026 results (2026-10-28) not citable until 2026-10-30",
+  "prior_close not returned by the IB snapshot",
+  "guidance_track left to gather/reports.json to avoid duplicate rows (cross-checked, agrees)"
+ ],
+ "stopped": [
+  "Alpha Vantage after the first rate-limit response (no retries, per the connector rule)",
+  "Consensus search after two WebSearch calls and one failed WebFetch (HTTP 429 at tickflow, empty barchart page): further pages would not add attributed n/low/high"
+ ]
+}

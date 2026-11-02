@@ -1,0 +1,28 @@
+{
+ "ticker": "ORCL",
+ "as_of": "2026-10-29",
+ "folder": "research/companies/ORCL/2026-10-29",
+ "thesis_id": "ORCL:2026-10-29:b2264b01826b",
+ "status": null,
+ "verdict": "promising_funding_conditional",
+ "files": [
+  "casefile_core.json",
+  "casefile_summary.json",
+  "evidence_pack.json",
+  "gather/field.json",
+  "gather/numbers.json",
+  "identity.json",
+  "inputs.json",
+  "paragraph.txt",
+  "position/core.json",
+  "position/field.json",
+  "position/path.json",
+  "review/company_first.json",
+  "review/counter_thesis.json",
+  "review/repair.json",
+  "review/trace.json",
+  "scenarios_he.md",
+  "table_he.md",
+  "understand/business.json"
+ ]
+}

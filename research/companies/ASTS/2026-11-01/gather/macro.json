@@ -1,0 +1,28 @@
+{
+"lane":"macro",
+"sources":[
+{"id":"mc_8k_20261020","kind":"sec_filing","title":"ASTS 8-K filed 2026-10-20 (Item 5.02, CFO/CLO Andrew Johnson employment agreement)","url":"https://www.sec.gov/Archives/edgar/data/1780312/000149315226047766/form8-k.htm","date":"2026-10-20","independent":true,"publisher":"SEC EDGAR","retrieval":"primary_document","syndicated_from":null},
+{"id":"mc_8k_20260928","kind":"sec_filing","title":"ASTS 8-K filed 2026-09-28 (Item 5.02, Senior Management Change of Control Severance Policy)","url":"https://www.sec.gov/Archives/edgar/data/1780312/000149315226044647/form8-k.htm","date":"2026-09-28","independent":true,"publisher":"SEC EDGAR","retrieval":"primary_document","syndicated_from":null},
+{"id":"mc_press_20260720","kind":"press","title":"AST SpaceMobile service launch delayed (developingtelecoms.com, search excerpt, unconfirmed at source)","url":"https://developingtelecoms.com/telecom-technology/satellite-communications-networks/20554-ast-spacemobile-service-launch-delayed.html.md","date":"2026-07-20","independent":false,"publisher":"Developing Telecoms","retrieval":"search_excerpt","syndicated_from":null}
+],
+"facts":[
+{"id":"mc_f_israel_assets","metric":"israel_share_of_total_assets","period":"2026-06-30","value":0.01,"unit":"ratio","source_ids":["pf_10q_20260810"],"period_end":"2026-06-30","basis":"reported"},
+{"id":"mc_f_israel_opex","metric":"israel_share_of_total_operating_expenses","period":"6M 2026","value":0.05,"unit":"ratio","source_ids":["pf_10q_20260810"],"period_end":"2026-06-30","basis":"reported"}
+],
+"notes":[
+"mc RATES 10y UST 4.98% (FRED DGS10, 2026-10-29, pf_fred_dgs10); ERP 4.2% implied (Damodaran 2026-10-01, pf_erp_implied) kept from prefetch; no newer monthly update verified (not refetched).",
+"mc GEOGRAPHY revenue by region is not disclosed: one operating segment; 10-K/10-Q give no revenue or long-lived assets by country. Revenue is products (gateway equipment/software to MNOs) and services mainly from U.S. government (directly or via primes) [pf_10k_20260302, pf_10q_20260810]. Gap.",
+"mc EXPOSURE Israel operations: ~1% of consolidated total assets and ~5% of operating expenses in 6M 2026; 10-Q says not materially impacted by Middle East conflict [pf_10q_20260810, mc_f_israel_assets, mc_f_israel_opex]. Sized, small.",
+"mc EXPOSURE Tariffs: 10-Q says tariffs on supply chain products from several jurisdictions had no material impact to date; future increase could raise capital costs of satellites. Unsized (hypothesis) [pf_10q_20260810].",
+"mc EXPOSURE Spectrum/FCC: service depends on FCC authorizations (FCC authorization for 248-satellite network incl. low-band IMT frequencies) and on Ligado spectrum usage rights, whose $550M SpectrumCo Sound Point delayed-draw facility is conditioned on FCC approvals and Ligado bankruptcy events, availability until 2026-10-05 with 180-day extension option for 1% fee; no drawdown as of 10-Q [pf_10q_20260810]. Status after 10-Q not confirmed (gap; the extension election is not in the filings list).",
+"mc EXPOSURE International ops/suppliers: engineering centers in India, Scotland, Spain, Israel; about 418 of 1,126 employees outside U.S.; international suppliers; launch dependence on third-party vehicles (10-K risk factors) [pf_10k_20260302]. Launch-vehicle share not sized here (gap for gather_field).",
+"mc EXPOSURE Export controls/ITAR: not found in the 10-K risk-factor grep as a sized item; unsized hypothesis only.",
+"mc NEWS 2026-10-20 8-K Item 5.02: new 3-year employment agreement with CFO/CLO Andrew Johnson (base >= $250k, RSUs eligible); routine, not a departure [mc_8k_20261020].",
+"mc NEWS 2026-09-28 8-K Item 5.02: Senior Management Change of Control Severance Policy adopted 2026-09-25 [mc_8k_20260928].",
+"mc NEWS no 8-K since 2026-08-10 other than the two Item 5.02 filings; 8-Ks of 2026-07-20 (Items 1.01, 2.03, 3.02, 8.01) predate the 10-Q and belong to gather_documents/numbers.",
+"mc NEWS 2026-07-20 press lead (search excerpt, not confirmed at source): commercial D2D service launch reported moved to early 2027 from late 2026, and a BlueBird satellite lost on a Blue Origin launch in April 2026; company said revenue approaching $1B in 2027. Confirm against the 10-Q/call before use; treat as lead only [mc_press_20260720].",
+"mc NEWS searches for October 2026 events returned nothing dated October; no export-rule, lawsuit or guidance-change item found. Q3 2026 results are not yet out as of 2026-11-01 (not checked at issuer IR)."
+],
+"gaps":["revenue and long-lived assets by region not disclosed (single segment)","status of Sound Point facility extension / FCC and Ligado approvals after 2026-08-10 unconfirmed","no October 2026 press found; web search returned stale or low-quality items","ERP not refreshed against a possible Damodaran 2026-11-01 update"],
+"stopped":["geography fact extraction: no regional disclosure to extract","further news searches: results stale, next retrieval unlikely to change decision"]
+}

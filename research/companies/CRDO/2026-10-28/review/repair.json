@@ -1,0 +1,110 @@
+{
+ "stage": "repair",
+ "ticker": "CRDO",
+ "as_of": "2026-10-28",
+ "trigger": "review",
+ "findings": [
+  {
+   "lens": "company_first",
+   "severity": "critical",
+   "fixed": true,
+   "finding": "Bear path turned a temporary digestion into a 20-year stall; the bear condition line did not describe the number shown.",
+   "change": "Option 1 (digestion bear). Added pack driver 'growth' (bear only, tier analyst, period FY2028): FY2028 -5% (Credo's own FY2024, rp_cu_endD_q1fy27, pf_history_companyfacts), then recovery from FY2029 at 4.5% + 0.75 x (base growth - 5%) every year, 0.75 = midpoint of MaxLinear's stated 20-30% 1.6T AEC target (fd_rel_mxl_20261022, fd_press_stocktwits_20261023; optics fd_ind_futurum_mrvl_20261009 folded in, unsized). Bear growth FY2028-FY2032: -5.0%, 25.5%, 20.4%, 16.6%, 13.7%; revenue 2.40B, 3.01B, 3.63B, 4.23B (FY2028-FY2031) instead of 2.34-2.40B flat. Bear scenario event 1 now says the digestion is temporary and orders recover from 2029 more slowly than base; event 3 states the 25% cut. The table's bear condition line now describes the modelled path.",
+   "result": {
+    "bear_today_before": 24.3,
+    "bear_today_after": 48.98,
+    "bear_years_1_5_before": "21.7-24.3",
+    "bear_years_1_5_after": [
+     42.9,
+     49.9,
+     56.7,
+     62.9,
+     69.0
+    ],
+    "bear_year5_vs_price_before": "-85%",
+    "bear_year5_vs_price_after": "-59%"
+   }
+  },
+  {
+   "lens": "counter_thesis",
+   "severity": "critical",
+   "fixed": true,
+   "finding": "Bear drivers made a temporary evidenced event permanent; terminal ROIC 10.5% was the XSEC default; company_path bear ROIC 0.10 was labelled own_history without a Credo derivation.",
+   "change": "Option (a). Same digestion-plus-recovery growth path. Added pack driver terminal_roic bear = 0.15, tier own_history, from Credo's own post-acquisition capital: equity 2,728.5M - cash 466.9M - short-term investments 297.4M = 1,964.2M invested (2026-08-01); TTM revenue 1,591M x bear margin 22% = 350.0M = 17.8% pre-tax, 15.1% after 15% tax (nm_revenue_ttm_q_2026_08_01, nm_equity_q_2026_08_01, nm_cash_q_2026_08_01, nm_short_term_investments_q_2026_08_01). driver_sources terminal_roic bear is now own_history (was default XSEC). company_path.scenarios.bear roic 0.10 -> 0.15 with the same derivation in reason_he and matching evidence ids. Bear capital_per_revenue now 0.625 -> 1.246667 (was 0.625 -> 1.78). Bear forward P/E today 19.1 (was 9.5)."
+  }
+ ],
+ "still_open": [
+  "The bear operating margin after SBC stays 22% over the whole horizon (kept: it is the evidenced competitive-pricing event, about 3 points under Q1 FY2027's 25.2%).",
+  "Bear sales_to_capital stays the engine TYPE default (gap row).",
+  "The 0.75 recovery factor is an analyst judgement sized from a competitor's stated target, not a Credo number.",
+  "Not in this repair's scope and still open from the reviews: FY2027 identical across scenarios; SBC path start 14.8% vs 18% and falling in the bear; Beneish / inventory write-down not modelled; 50% payout with no dividend history; bull ROIC pre/after-tax basis; no competitor forward multiples; FY2027 current-year tier rests on a third-party transcript; base post-FY2028 growth on the default half-life."
+ ],
+ "files_changed": [
+  "evidence_pack.json (drivers.growth, drivers.terminal_roic, scenario_events.bear[0] and [2], company_path.scenarios.bear) edited directly; pack-merge NOT rerun, so the value-stage fixes (identity evidence ids, 22-value cash_cost_ratio) stay",
+  "position.json, position/core.json, position/path.json: same changes mirrored plus the 22-value cash_cost_ratio (identity.json evidence ids would still revert on a pack-merge rerun)",
+  "companies/CRDO/inputs.json and evidence_bundle.json (pack-to-inputs passed first time)",
+  "companies/CRDO/out/* (deep)"
+ ],
+ "backups": "review/repair_backup/",
+ "run": {
+  "ran": true,
+  "stages": {
+   "dataqa": "ok",
+   "analysis": "ok",
+   "model_card": "ok",
+   "forecast": "ok",
+   "valuation": "ok",
+   "risk": "ok",
+   "review": "ok",
+   "decision": "ok",
+   "business": "ok",
+   "segment_view": "ok",
+   "conditional_values": "ok",
+   "analyst_sheet": "ok",
+   "company_path": "ok"
+  },
+  "review_status": "unreviewed_draft",
+  "verdict_status": "draft",
+  "price": 167.43,
+  "values_today": {
+   "bear": 48.98,
+   "base": 161.69,
+   "bull": 574.39
+  },
+  "value_at_required_return": 97.79,
+  "cost_of_equity": 0.11,
+  "hurdle": 0.135,
+  "table_years_1_5": {
+   "bear": [
+    42.9,
+    49.9,
+    56.7,
+    62.9,
+    69.0
+   ],
+   "base": [
+    153,
+    173,
+    194,
+    214,
+    234
+   ],
+   "bull": [
+    638,
+    712,
+    791,
+    875,
+    963
+   ]
+  },
+  "year5_vs_price": {
+   "bear": "-59%",
+   "base": "+40%",
+   "bull": "+475%"
+  },
+  "failed_stages": [],
+  "index": "generic market assumption: no calibration file of engine 0.14.0 dated on or before 2026-10-28 within 92 days",
+  "gaps_row": "צמיחת ההכנסות בשנים הקרובות, קצב האטת הצמיחה, ההשקעה הנדרשת לכל דולר מכירות נוסף, התשואה על ההון לטווח הארוך, תגמול העובדים במניות, תוספת הסיכון בשיעור ההיוון, קצב ההגעה לרווחיות הבוגרת, כרית המזומנים המינימלית, אורך תקופת התחזית",
+  "draft_reason": "Beneish red flag not explained or released; analysis not independently reviewed (unreviewed_draft)"
+ }
+}

@@ -1,0 +1,4292 @@
+{
+ "pack_version": 1,
+ "ticker": "CRDO",
+ "as_of": "2026-10-28",
+ "identity": {
+  "name": "Credo Technology Group Holding Ltd",
+  "currency": "USD",
+  "exchange": "Nasdaq (Global Select)",
+  "security": "Ordinary shares, par value $0.00005 (single class; Cayman Islands issuer filing 10-K/10-Q as a US domestic filer; no ADR, no dual class)",
+  "fiscal_year_end": "04-29",
+  "cik": "1807794",
+  "type": {
+   "stage": "high_growth",
+   "stage_he": "צמיחה מהירה",
+   "lynch": "fast_grower",
+   "lynch_he": "צומחת מהר",
+   "method": "python -m fundamental_engine classify on SEC companyfacts history (FY2021-FY2026) reused from run CRDO_2026-10-26 (same filings; no annual or quarterly filing since)",
+   "reasons": [
+    "revenue FY2021 $58.7M -> FY2026 $1,335.1M (CAGR ~87%); FY2026 +206% y/y, Q1 FY2027 +115% y/y",
+    "operating margin turned from -19% (FY2024) to +33% (FY2026): a scale-up past breakeven, not mature",
+    "operating cash flow turned positive in FY2024 and reached $464M in FY2026",
+    "flag: FY2026 includes a large acquisition (goodwill jump) — the type is measured on growth excluding that year (65%), still well above 20%"
+   ],
+   "kpis_it_selects": [
+    "revenue growth and its duration (customer concentration at hyperscalers)",
+    "incremental and gross margins",
+    "ROIC and incremental ROIC",
+    "reinvestment rate",
+    "share-based dilution"
+   ],
+   "valuation_lens": "driver DCF with explicit growth fade to maturity and terminal ROIC; reverse DCF for how long the price needs high growth",
+   "history_rows": [
+    {
+     "fiscal_year": "FY2021",
+     "period_end": "2021-04-30",
+     "revenue": 58697000.0,
+     "operating_income": -25234000.0,
+     "operating_cash_flow": -42361000.0,
+     "capex": 6056000.0,
+     "source_ids": [
+      "pf_cf_20220608"
+     ]
+    },
+    {
+     "fiscal_year": "FY2022",
+     "period_end": "2022-04-30",
+     "revenue": 106477000.0,
+     "operating_income": -21968000.0,
+     "operating_cash_flow": -30832000.0,
+     "capex": 17580000.0,
+     "source_ids": [
+      "pf_cf_20220608"
+     ]
+    },
+    {
+     "fiscal_year": "FY2023",
+     "period_end": "2023-04-29",
+     "revenue": 184194000.0,
+     "operating_income": -21235000.0,
+     "operating_cash_flow": -24615000.0,
+     "capex": 21713000.0,
+     "source_ids": [
+      "pf_cf_20230623"
+     ]
+    },
+    {
+     "fiscal_year": "FY2024",
+     "period_end": "2024-04-27",
+     "revenue": 192970000.0,
+     "operating_income": -37058000.0,
+     "operating_cash_flow": 32737000.0,
+     "capex": 15652000.0,
+     "source_ids": [
+      "pf_cf_20240624"
+     ]
+    },
+    {
+     "fiscal_year": "FY2025",
+     "period_end": "2025-05-03",
+     "revenue": 436775000.0,
+     "operating_income": 37124000.0,
+     "operating_cash_flow": 65083000.0,
+     "capex": 36061000.0,
+     "source_ids": [
+      "pf_cf_20250702"
+     ]
+    },
+    {
+     "fiscal_year": "FY2026",
+     "period_end": "2026-05-02",
+     "revenue": 1335116000.0,
+     "operating_income": 445005000.0,
+     "operating_cash_flow": 464292000.0,
+     "capex": 57296000.0,
+     "source_ids": [
+      "pf_cf_20260615"
+     ]
+    }
+   ],
+   "source": "pf_history_companyfacts"
+  },
+  "evidence_ids": [
+   "ex_10k_20260615",
+   "ex_10q_20260902"
+  ]
+ },
+ "sources": [
+  {
+   "id": "ex_10k_20260615",
+   "kind": "sec_filing",
+   "title": "Credo 10-K FY2026 (ended 2026-05-02): Note 3 concentrations, MD&A end-customer table, top-10 customer share, revenue by ship-to geography, RPO",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026043303/crdo-20260502.htm",
+   "date": "2026-06-15",
+   "independent": false,
+   "publisher": "Credo Technology Group Holding Ltd (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "ex_10q_20260902",
+   "kind": "sec_filing",
+   "title": "Credo 10-Q Q1 FY2027 (ended 2026-08-01): Note 3 concentrations, Note 4 revenue by ship-to geography, MD&A end-customer table, RPO",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026060111/crdo-20260801.htm",
+   "date": "2026-09-02",
+   "independent": false,
+   "publisher": "Credo Technology Group Holding Ltd (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "ex_rel_20260901",
+   "kind": "release",
+   "title": "Credo 8-K Ex. 99.1 2026-09-01: Q1 FY2027 results and Q2 FY2027 outlook",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026059795/credoq12027ex-991.htm",
+   "date": "2026-09-01",
+   "independent": false,
+   "publisher": "Credo Technology Group Holding Ltd (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "ex_av_estimates",
+   "kind": "consensus",
+   "title": "Alpha Vantage EARNINGS_ESTIMATES for CRDO (mean/high/low, analyst counts, 7/30/60/90-day revisions), retrieved 2026-10-26 and reused (AV rate-limited on 2026-10-28); brokers not named",
+   "url": "connector:mcp__Alpha_Vantage_MCP_Server__EARNINGS_ESTIMATES",
+   "date": "2026-10-26",
+   "independent": true,
+   "publisher": "Alpha Vantage (aggregate of sell-side estimates)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "ex_tr_20260901",
+   "kind": "transcript",
+   "title": "Credo Q1 FY2027 earnings call (2026-09-01), third-party full transcript copy (TradingKey; auto-transcription errors) - copy of the issuer call (webcast at investors.credosemi.com), quotes via WebFetch extract saved in gather/raw_expectations",
+   "url": "https://www.tradingkey.com/news/transcripts/262145054-tradingkey",
+   "date": "2026-09-01",
+   "independent": false,
+   "publisher": "TradingKey (copy of the issuer's call)",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_cf_avgo_20251218",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Broadcom Inc. (AVGO): facts of the 10-K filed 2025-12-18 (fiscal year ended 2025-11-02)",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001730168.json#filed=2025-12-18",
+   "date": "2025-12-18",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_cf_avgo_20260910",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Broadcom Inc. (AVGO): facts of the 10-Q filed 2026-09-10 (quarter ended 2026-08-02)",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001730168.json#filed=2026-09-10",
+   "date": "2026-09-10",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_cf_mrvl_20260311",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Marvell Technology, Inc. (MRVL): facts of the 10-K filed 2026-03-11 (fiscal year ended 2026-01-31)",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001835632.json#filed=2026-03-11",
+   "date": "2026-03-11",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_cf_mrvl_20260828",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Marvell Technology, Inc. (MRVL): facts of the 10-Q filed 2026-08-28 (quarter ended 2026-08-01)",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001835632.json#filed=2026-08-28",
+   "date": "2026-08-28",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_cf_alab_20260220",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Astera Labs, Inc. (ALAB): facts of the 10-K filed 2026-02-20 (fiscal year ended 2025-12-31)",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001736297.json#filed=2026-02-20",
+   "date": "2026-02-20",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_cf_alab_20260805",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Astera Labs, Inc. (ALAB): facts of the 10-Q filed 2026-08-05 (quarter ended 2026-06-30)",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001736297.json#filed=2026-08-05",
+   "date": "2026-08-05",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_rel_avgo_20260902",
+   "kind": "release",
+   "title": "Broadcom Inc. (AVGO) earnings 8-K filed 2026-09-02, exhibit 99.1: third quarter fiscal 2026 results",
+   "url": "https://www.sec.gov/Archives/edgar/data/1730168/000173016826000076/avgo-08022026x8kxex99.htm",
+   "date": "2026-09-02",
+   "independent": true,
+   "publisher": "Broadcom Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_rel_mrvl_20260827",
+   "kind": "release",
+   "title": "Marvell Technology, Inc. (MRVL) earnings 8-K filed 2026-08-27, exhibit 99.1: second quarter fiscal 2027 results",
+   "url": "https://www.sec.gov/Archives/edgar/data/1835632/000183563226000022/q227_8kx812026ex-991.htm",
+   "date": "2026-08-27",
+   "independent": true,
+   "publisher": "Marvell Technology, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_rel_alab_20260804",
+   "kind": "release",
+   "title": "Astera Labs, Inc. (ALAB) earnings 8-K filed 2026-08-04, exhibit 99.1: second quarter 2026 results",
+   "url": "https://www.sec.gov/Archives/edgar/data/1736297/000173629726000033/q226exhibit991.htm",
+   "date": "2026-08-04",
+   "independent": true,
+   "publisher": "Astera Labs, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_rel_aph_20260729",
+   "kind": "release",
+   "title": "Amphenol Corporation (APH) earnings 8-K filed 2026-07-29, exhibit 99.1: second quarter 2026 results",
+   "url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926087904/aph-20260729xex99d1.htm",
+   "date": "2026-07-29",
+   "independent": true,
+   "publisher": "Amphenol Corporation",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_ind_trendforce_20260806",
+   "kind": "industry",
+   "title": "TrendForce news: InP shortage emerges as AI optical interconnect bottleneck (search excerpt, page not opened; it relays statements attributed to Lumentum and Coherent management)",
+   "url": "https://trendforce.com/news/2026/08/06/news-inp-shortage-emerges-as-ai-optical-interconnect-bottleneck/",
+   "date": "2026-08-06",
+   "independent": true,
+   "publisher": "TrendForce",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_press_invezz_20260413",
+   "kind": "press",
+   "title": "Invezz: Credo jumps 11% as Jefferies backs copper tech in AI boom debate (search excerpt, page not opened: the fetch returned HTTP 403); reports a Jefferies analyst's AEC share and unit estimates",
+   "url": "https://invezz.com/en-ae/news/2026/04/13/credo-jumps-11percent-as-jefferies-backs-copper-tech-in-ai-boom-debate/",
+   "date": "2026-04-13",
+   "independent": true,
+   "publisher": "Invezz (reporting Jefferies)",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_rel_mxl_20261022",
+   "kind": "release",
+   "title": "MaxLinear, Inc. (MXL) earnings 8-K filed 2026-10-22, exhibit 99.1: third quarter 2026 results and fourth quarter 2026 outlook",
+   "url": "https://www.sec.gov/Archives/edgar/data/1288469/000128846926000060/a09302026exhibit991.htm",
+   "date": "2026-10-22",
+   "independent": true,
+   "publisher": "MaxLinear, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_10q_mxl_20261022",
+   "kind": "sec_filing",
+   "title": "MaxLinear, Inc. (MXL) 10-Q for the quarter ended 2026-09-30, filed 2026-10-22 (Note 12 revenue by market)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1288469/000128846926000061/mxl-20260930.htm",
+   "date": "2026-10-22",
+   "independent": true,
+   "publisher": "MaxLinear, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_8k_mrvl_20261023",
+   "kind": "sec_filing",
+   "title": "Marvell Technology, Inc. (MRVL) 8-K filed 2026-10-23, Item 1.01: Third Amended and Restated Revolving Credit Agreement ($3 billion)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1835632/000119312526430424/d147430d8k.htm",
+   "date": "2026-10-23",
+   "independent": true,
+   "publisher": "Marvell Technology, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_press_stocktwits_20261023",
+   "kind": "press",
+   "title": "Stocktwits: CRDO stock hits 6-month low after MaxLinear targets Credo-dominated cable market (reports MaxLinear CEO statements on its Q3 2026 call)",
+   "url": "https://stocktwits.com/news-articles/markets/equity/crdo-stock-hits-6-month-low-after-max-linear-targets-credo-dominated-cable-market/cZxyk1CRBxY",
+   "date": "2026-10-23",
+   "independent": true,
+   "publisher": "Stocktwits (reporting the MaxLinear call of 2026-10-22)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_ind_futurum_mrvl_20261009",
+   "kind": "industry",
+   "title": "Futurum Group: Marvell Investor Day 2026 targets $80B FY2031 revenue with custom silicon and optics (report of Marvell's Investor Day of 2026-10-06)",
+   "url": "https://futurumgroup.com/?p=96506",
+   "date": "2026-10-09",
+   "independent": true,
+   "publisher": "The Futurum Group (reporting Marvell management)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_ib_price",
+   "kind": "price",
+   "title": "Interactive Brokers (read-only) snapshot CRDO Nasdaq conid 541265127: last 167.43 flagged is_close (close of 2026-10-27), pre-market bid 171.29 / ask 172.00 at 2026-10-28 ~07:34 UTC; 52-week range 86.49-308.67",
+   "url": "connector:mcp__Interactive_Brokers__get_price_snapshot",
+   "date": "2026-10-27",
+   "independent": true,
+   "publisher": "Interactive Brokers",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_ib_history",
+   "kind": "price",
+   "title": "Interactive Brokers (read-only) monthly price bars CRDO 2022-01 to 2026-10 (58 bars, October bar close 167.43; no corporate-action block returned)",
+   "url": "connector:mcp__Interactive_Brokers__get_price_history",
+   "date": "2026-10-27",
+   "independent": true,
+   "publisher": "Interactive Brokers",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_fred_dgs10",
+   "kind": "macro",
+   "title": "FRED DGS10 10-year US Treasury constant-maturity yield, daily: 5.00% on 2026-10-26 (latest observation published at retrieval 2026-10-28; 4.96% 2026-10-22, 5.13% 2026-10-21)",
+   "url": "https://fred.stlouisfed.org/graph/fredgraph.csv?id=DGS10",
+   "date": "2026-10-26",
+   "independent": true,
+   "publisher": "Federal Reserve Bank of St. Louis (FRED), data from the U.S. Treasury / Federal Reserve H.15",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_rel_20241202",
+   "kind": "release",
+   "title": "Credo 8-K Ex. 99.1 press release 2024-12-02: Q2 FY2025 results; Q3 FY2025 outlook",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828024049564/credoq22025ex-991.htm",
+   "date": "2024-12-02",
+   "independent": false,
+   "publisher": "Credo Technology Group Holding Ltd",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_rel_20250304",
+   "kind": "release",
+   "title": "Credo 8-K Ex. 99.1 press release 2025-03-04: Q3 FY2025 results; Q4 FY2025 outlook",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828025009813/credoq32025ex-991.htm",
+   "date": "2025-03-04",
+   "independent": false,
+   "publisher": "Credo Technology Group Holding Ltd",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_rel_20250602",
+   "kind": "release",
+   "title": "Credo 8-K Ex. 99.1 press release 2025-06-02: Q4 FY2025 results; Q1 FY2026 outlook",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828025028827/credoq42025ex-991.htm",
+   "date": "2025-06-02",
+   "independent": false,
+   "publisher": "Credo Technology Group Holding Ltd",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_rel_20250903",
+   "kind": "release",
+   "title": "Credo 8-K Ex. 99.1 press release 2025-09-03: Q1 FY2026 results; Q2 FY2026 outlook",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000180779425000018/credoq12026ex-991.htm",
+   "date": "2025-09-03",
+   "independent": false,
+   "publisher": "Credo Technology Group Holding Ltd",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_rel_20260209",
+   "kind": "release",
+   "title": "Credo 8-K Ex. 99.1 press release 2026-02-09: Preliminary Q3 FY2026 revenue (404-408M vs prior guide 335-345M)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026006370/feb20268-kex991.htm",
+   "date": "2026-02-09",
+   "independent": false,
+   "publisher": "Credo Technology Group Holding Ltd",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_rel_20260302",
+   "kind": "release",
+   "title": "Credo 8-K Ex. 99.1 press release 2026-03-02: Q3 FY2026 results; Q4 FY2026 outlook",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026013205/credoq32026ex-9911.htm",
+   "date": "2026-03-02",
+   "independent": false,
+   "publisher": "Credo Technology Group Holding Ltd",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_rel_20260601",
+   "kind": "release",
+   "title": "Credo 8-K Ex. 99.1 press release 2026-06-01: Q4 FY2026 results; Q1 FY2027 outlook",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026039474/credoq42026ex-991.htm",
+   "date": "2026-06-01",
+   "independent": false,
+   "publisher": "Credo Technology Group Holding Ltd",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_av_statements",
+   "kind": "structured_data",
+   "title": "Alpha Vantage INCOME_STATEMENT, BALANCE_SHEET, CASH_FLOW for CRDO (normalized from SEC filings; trimmed copy retrieved 2026-10-26 and reused: AV rate-limited on 2026-10-28)",
+   "url": "connector:mcp__Alpha_Vantage_MCP_Server__INCOME_STATEMENT",
+   "date": "2026-10-26",
+   "independent": false,
+   "publisher": "Alpha Vantage",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "id_sec_submissions_20261028",
+   "kind": "structured_data",
+   "title": "SEC EDGAR submissions JSON, CIK 0001807794 (Credo Technology Group Holding Ltd)",
+   "url": "https://data.sec.gov/submissions/CIK0001807794.json",
+   "date": "2026-10-28",
+   "independent": false,
+   "publisher": "U.S. SEC (filer metadata)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "id_ib_contracts_20261028",
+   "kind": "price",
+   "title": "Interactive Brokers search_contracts 'CRDO' (read-only)",
+   "url": "connector:mcp__Interactive_Brokers__search_contracts",
+   "date": "2026-10-28",
+   "independent": true,
+   "publisher": "Interactive Brokers",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_history_companyfacts",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts annual rows FY2021-FY2026 (prefetch history.json of run CRDO_2026-10-26, reused)",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001807794.json",
+   "date": "2026-06-15",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "rp_rel_20260413",
+   "kind": "release",
+   "title": "Credo Agrees to Acquire DustPhotonics (8-K Ex. 99.1, 2026-04-13)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026024892/april20268-kex991.htm",
+   "date": "2026-04-13",
+   "independent": true,
+   "publisher": "Credo Technology Group Holding Ltd (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "rp_rel_20251201",
+   "kind": "release",
+   "title": "Credo Q2 FY2026 results release (8-K Ex. 99.1, 2025-12-01)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828025054428/credoq22026ex-991.htm",
+   "date": "2025-12-01",
+   "independent": true,
+   "publisher": "Credo Technology Group Holding Ltd (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  }
+ ],
+ "facts": [
+  {
+   "id": "nm_cash_q_2026_08_01",
+   "metric": "cash",
+   "period": "Q@2026-08-01",
+   "value": 466869000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_rel_20260901",
+    "ex_10q_20260902"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_short_term_investments_q_2026_08_01",
+   "metric": "short_term_investments",
+   "period": "Q@2026-08-01",
+   "value": 297389000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_rel_20260901",
+    "ex_10q_20260902"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_equity_q_2026_08_01",
+   "metric": "equity",
+   "period": "Q@2026-08-01",
+   "value": 2728490000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_rel_20260901",
+    "ex_10q_20260902"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_goodwill_q_2026_08_01",
+   "metric": "goodwill",
+   "period": "Q@2026-08-01",
+   "value": 986447000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_rel_20260901",
+    "ex_10q_20260902"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_intangible_assets_q_2026_08_01",
+   "metric": "intangible_assets",
+   "period": "Q@2026-08-01",
+   "value": 378817000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_rel_20260901",
+    "ex_10q_20260902"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_inventory_q_2026_08_01",
+   "metric": "inventory",
+   "period": "Q@2026-08-01",
+   "value": 313051000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_rel_20260901",
+    "ex_10q_20260902"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_receivables_q_2026_08_01",
+   "metric": "receivables",
+   "period": "Q@2026-08-01",
+   "value": 288798000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_rel_20260901",
+    "ex_10q_20260902"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_outstanding_cover_2026_08_25",
+   "metric": "shares_outstanding_cover",
+   "period": "I@2026-08-25",
+   "value": 187951918,
+   "unit": "shares",
+   "source_ids": [
+    "ex_10q_20260902"
+   ],
+   "period_end": "2026-08-25",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_diluted_wavg_q_2026_08_01",
+   "metric": "shares_diluted_wavg",
+   "period": "Q@2026-08-01",
+   "value": 194378000,
+   "unit": "shares",
+   "source_ids": [
+    "ex_rel_20260901",
+    "ex_10q_20260902"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q_2026_08_01",
+   "metric": "eps_diluted",
+   "period": "Q@2026-08-01",
+   "value": 0.67,
+   "unit": "USD/shares",
+   "source_ids": [
+    "ex_rel_20260901",
+    "ex_10q_20260902"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_non_gaap_q_2026_08_01",
+   "metric": "eps_diluted_non_gaap",
+   "period": "Q@2026-08-01",
+   "value": 1.2,
+   "unit": "USD/shares",
+   "source_ids": [
+    "ex_rel_20260901"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_operating_income_non_gaap_q_2026_08_01",
+   "metric": "operating_income_non_gaap",
+   "period": "Q@2026-08-01",
+   "value": 230641000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_rel_20260901"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_net_income_non_gaap_q_2026_08_01",
+   "metric": "net_income_non_gaap",
+   "period": "Q@2026-08-01",
+   "value": 236262000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_rel_20260901"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_diluted_wavg_q_2026_05_02",
+   "metric": "shares_diluted_wavg",
+   "period": "Q@2026-05-02",
+   "value": 192681000,
+   "unit": "shares",
+   "source_ids": [
+    "nm_rel_20260601"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q_2026_05_02",
+   "metric": "eps_diluted",
+   "period": "Q@2026-05-02",
+   "value": 0.88,
+   "unit": "USD/shares",
+   "source_ids": [
+    "nm_rel_20260601"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_non_gaap_q_2026_05_02",
+   "metric": "eps_diluted_non_gaap",
+   "period": "Q@2026-05-02",
+   "value": 1.16,
+   "unit": "USD/shares",
+   "source_ids": [
+    "ex_rel_20260901"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_operating_income_non_gaap_q_2026_05_02",
+   "metric": "operating_income_non_gaap",
+   "period": "Q@2026-05-02",
+   "value": 216722000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_rel_20260901"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_net_income_non_gaap_q_2026_05_02",
+   "metric": "net_income_non_gaap",
+   "period": "Q@2026-05-02",
+   "value": 226680000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_rel_20260901"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_diluted_wavg_q_2026_01_31",
+   "metric": "shares_diluted_wavg",
+   "period": "Q@2026-01-31",
+   "value": 192023000,
+   "unit": "shares",
+   "source_ids": [
+    "nm_rel_20260302"
+   ],
+   "period_end": "2026-01-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q_2026_01_31",
+   "metric": "eps_diluted",
+   "period": "Q@2026-01-31",
+   "value": 0.82,
+   "unit": "USD/shares",
+   "source_ids": [
+    "nm_rel_20260302"
+   ],
+   "period_end": "2026-01-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_diluted_wavg_q_2025_11_01",
+   "metric": "shares_diluted_wavg",
+   "period": "Q@2025-11-01",
+   "value": 187659000,
+   "unit": "shares",
+   "source_ids": [
+    "nm_rel_20260302"
+   ],
+   "period_end": "2025-11-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q_2025_11_01",
+   "metric": "eps_diluted",
+   "period": "Q@2025-11-01",
+   "value": 0.44,
+   "unit": "USD/shares",
+   "source_ids": [
+    "nm_rel_20260302"
+   ],
+   "period_end": "2025-11-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_diluted_wavg_q_2025_08_02",
+   "metric": "shares_diluted_wavg",
+   "period": "Q@2025-08-02",
+   "value": 184577000,
+   "unit": "shares",
+   "source_ids": [
+    "nm_rel_20250903"
+   ],
+   "period_end": "2025-08-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q_2025_08_02",
+   "metric": "eps_diluted",
+   "period": "Q@2025-08-02",
+   "value": 0.34,
+   "unit": "USD/shares",
+   "source_ids": [
+    "nm_rel_20250903"
+   ],
+   "period_end": "2025-08-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_non_gaap_q_2025_08_02",
+   "metric": "eps_diluted_non_gaap",
+   "period": "Q@2025-08-02",
+   "value": 0.52,
+   "unit": "USD/shares",
+   "source_ids": [
+    "ex_rel_20260901"
+   ],
+   "period_end": "2025-08-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_operating_income_non_gaap_q_2025_08_02",
+   "metric": "operating_income_non_gaap",
+   "period": "Q@2025-08-02",
+   "value": 96197000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_rel_20260901"
+   ],
+   "period_end": "2025-08-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_net_income_non_gaap_q_2025_08_02",
+   "metric": "net_income_non_gaap",
+   "period": "Q@2025-08-02",
+   "value": 98281000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_rel_20260901"
+   ],
+   "period_end": "2025-08-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q_2025_05_03",
+   "metric": "eps_diluted",
+   "period": "Q@2025-05-03",
+   "value": 0.2,
+   "unit": "USD/shares",
+   "source_ids": [
+    "nm_rel_20250602"
+   ],
+   "period_end": "2025-05-03",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q_2025_02_01",
+   "metric": "eps_diluted",
+   "period": "Q@2025-02-01",
+   "value": 0.16,
+   "unit": "USD/shares",
+   "source_ids": [
+    "nm_rel_20250304"
+   ],
+   "period_end": "2025-02-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q_2024_11_02",
+   "metric": "eps_diluted",
+   "period": "Q@2024-11-02",
+   "value": -0.03,
+   "unit": "USD/shares",
+   "source_ids": [
+    "nm_rel_20241202"
+   ],
+   "period_end": "2024-11-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q_2024_08_03",
+   "metric": "eps_diluted",
+   "period": "Q@2024-08-03",
+   "value": -0.06,
+   "unit": "USD/shares",
+   "source_ids": [
+    "nm_rel_20241202"
+   ],
+   "period_end": "2024-08-03",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_fy_2026_05_02",
+   "metric": "revenue",
+   "period": "FY2026",
+   "value": 1335116000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10k_20260615",
+    "pf_history_companyfacts"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_operating_income_fy_2026_05_02",
+   "metric": "operating_income",
+   "period": "FY2026",
+   "value": 445005000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10k_20260615",
+    "pf_history_companyfacts"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_net_income_fy_2026_05_02",
+   "metric": "net_income",
+   "period": "FY2026",
+   "value": 472279000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10k_20260615",
+    "pf_history_companyfacts"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_operating_cash_flow_fy_2026_05_02",
+   "metric": "operating_cash_flow",
+   "period": "FY2026",
+   "value": 464292000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10k_20260615",
+    "pf_history_companyfacts"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_capex_fy_2026_05_02",
+   "metric": "capex",
+   "period": "FY2026",
+   "value": 57296000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10k_20260615",
+    "pf_history_companyfacts"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_share_based_compensation_fy_2026_05_02",
+   "metric": "share_based_compensation",
+   "period": "FY2026",
+   "value": 182638000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10k_20260615",
+    "pf_history_companyfacts"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_diluted_wavg_fy_2026_05_02",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2026",
+   "value": 188232000,
+   "unit": "shares",
+   "source_ids": [
+    "ex_10k_20260615",
+    "pf_history_companyfacts"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_fy_2026_05_02",
+   "metric": "eps_diluted",
+   "period": "FY2026",
+   "value": 2.51,
+   "unit": "USD/shares",
+   "source_ids": [
+    "ex_10k_20260615",
+    "pf_history_companyfacts"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_q_2026_08_01",
+   "metric": "revenue",
+   "period": "Q@2026-08-01",
+   "value": 479003000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902",
+    "pf_history_companyfacts"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_operating_income_q_2026_08_01",
+   "metric": "operating_income",
+   "period": "Q@2026-08-01",
+   "value": 120700000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902",
+    "pf_history_companyfacts"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_net_income_q_2026_08_01",
+   "metric": "net_income",
+   "period": "Q@2026-08-01",
+   "value": 129425000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902",
+    "pf_history_companyfacts"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_operating_cash_flow_q_2026_08_01",
+   "metric": "operating_cash_flow",
+   "period": "Q@2026-08-01",
+   "value": 90231000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902",
+    "pf_history_companyfacts"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_capex_q_2026_08_01",
+   "metric": "capex",
+   "period": "Q@2026-08-01",
+   "value": 7282000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902",
+    "pf_history_companyfacts"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_share_based_compensation_q_2026_08_01",
+   "metric": "share_based_compensation",
+   "period": "Q@2026-08-01",
+   "value": 87979000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902",
+    "pf_history_companyfacts"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_free_cash_flow_fy_2026_05_02",
+   "metric": "free_cash_flow",
+   "period": "FY2026",
+   "value": 406996000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10k_20260615",
+    "pf_history_companyfacts"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_free_cash_flow_q_2026_08_01",
+   "metric": "free_cash_flow",
+   "period": "Q@2026-08-01",
+   "value": 82949000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902",
+    "pf_history_companyfacts"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_revenue_ttm_q_2026_08_01",
+   "metric": "revenue_ttm",
+   "period": "Q@2026-08-01",
+   "value": 1591000000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10k_20260615",
+    "ex_10q_20260902",
+    "pf_history_companyfacts"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_revenue_shipto_united_states_fy_2026_05_02",
+   "metric": "revenue_shipto_united_states",
+   "period": "FY2026",
+   "value": 768051000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10k_20260615"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_shipto_hong_kong_fy_2026_05_02",
+   "metric": "revenue_shipto_hong_kong",
+   "period": "FY2026",
+   "value": 378230000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10k_20260615"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_shipto_mainland_china_fy_2026_05_02",
+   "metric": "revenue_shipto_mainland_china",
+   "period": "FY2026",
+   "value": 80924000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10k_20260615"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_shipto_taiwan_fy_2026_05_02",
+   "metric": "revenue_shipto_taiwan",
+   "period": "FY2026",
+   "value": 22727000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10k_20260615"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_shipto_rest_of_world_fy_2026_05_02",
+   "metric": "revenue_shipto_rest_of_world",
+   "period": "FY2026",
+   "value": 85184000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10k_20260615"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_shipto_united_states_q_2026_08_01",
+   "metric": "revenue_shipto_united_states",
+   "period": "Q@2026-08-01",
+   "value": 255442000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_shipto_hong_kong_q_2026_08_01",
+   "metric": "revenue_shipto_hong_kong",
+   "period": "Q@2026-08-01",
+   "value": 91175000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_shipto_malaysia_q_2026_08_01",
+   "metric": "revenue_shipto_malaysia",
+   "period": "Q@2026-08-01",
+   "value": 74455000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_shipto_mainland_china_q_2026_08_01",
+   "metric": "revenue_shipto_mainland_china",
+   "period": "Q@2026-08-01",
+   "value": 1095000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_shipto_rest_of_world_q_2026_08_01",
+   "metric": "revenue_shipto_rest_of_world",
+   "period": "Q@2026-08-01",
+   "value": 56836000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902"
+   ],
+   "period_end": "2026-08-01",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_ppe_net_taiwan_fy_2026_05_02",
+   "metric": "ppe_net_taiwan",
+   "period": "FY2026",
+   "value": 68064000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10k_20260615"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_ppe_net_united_states_fy_2026_05_02",
+   "metric": "ppe_net_united_states",
+   "period": "FY2026",
+   "value": 14709000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10k_20260615"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_ppe_net_hong_kong_fy_2026_05_02",
+   "metric": "ppe_net_hong_kong",
+   "period": "FY2026",
+   "value": 657000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10k_20260615"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_ppe_net_rest_of_world_fy_2026_05_02",
+   "metric": "ppe_net_rest_of_world",
+   "period": "FY2026",
+   "value": 18175000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10k_20260615"
+   ],
+   "period_end": "2026-05-02",
+   "basis": "reported"
+  },
+  {
+   "id": "rp_rev_q1fy27",
+   "metric": "revenue",
+   "period": "Q1 FY2027",
+   "period_end": "2026-08-01",
+   "value": 479003000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_rel_20260901",
+    "ex_10q_20260902"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "rp_rev_q4fy26",
+   "metric": "revenue",
+   "period": "Q4 FY2026",
+   "period_end": "2026-05-02",
+   "value": 437003000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_rel_20260601"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "rp_rev_q3fy26",
+   "metric": "revenue",
+   "period": "Q3 FY2026",
+   "period_end": "2026-01-31",
+   "value": 407012000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_rel_20260302"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "rp_rev_q2fy26",
+   "metric": "revenue",
+   "period": "Q2 FY2026",
+   "period_end": "2025-11-01",
+   "value": 268027000,
+   "unit": "USD",
+   "source_ids": [
+    "rp_rel_20251201"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "rp_rev_q1fy26",
+   "metric": "revenue",
+   "period": "Q1 FY2026",
+   "period_end": "2025-08-02",
+   "value": 223074000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_rel_20250903"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "rp_rev_q4fy25",
+   "metric": "revenue",
+   "period": "Q4 FY2025",
+   "period_end": "2025-05-03",
+   "value": 170025000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_rel_20250602"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "rp_rev_q3fy25",
+   "metric": "revenue",
+   "period": "Q3 FY2025",
+   "period_end": "2025-02-01",
+   "value": 135002000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_rel_20250304"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "rp_rev_fy26",
+   "metric": "revenue",
+   "period": "FY2026",
+   "period_end": "2026-05-02",
+   "value": 1335116000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10k_20260615"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "rp_rev_fy25",
+   "metric": "revenue",
+   "period": "FY2025",
+   "period_end": "2025-05-03",
+   "value": 436775000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10k_20260615"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "rp_sbc_q1fy27",
+   "metric": "share_based_compensation",
+   "period": "Q1 FY2027",
+   "period_end": "2026-08-01",
+   "value": 87979000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_rel_20260901"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "rp_sbc_q4fy26",
+   "metric": "share_based_compensation",
+   "period": "Q4 FY2026",
+   "period_end": "2026-05-02",
+   "value": 49698000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_rel_20260601"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "rp_ni_q1fy27",
+   "metric": "net_income_gaap",
+   "period": "Q1 FY2027",
+   "period_end": "2026-08-01",
+   "value": 129400000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_rel_20260901"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "rp_ngni_q1fy27",
+   "metric": "non_gaap_net_income",
+   "period": "Q1 FY2027",
+   "period_end": "2026-08-01",
+   "value": 236300000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_rel_20260901"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "rp_ngopex_q1fy27",
+   "metric": "non_gaap_operating_expenses",
+   "period": "Q1 FY2027",
+   "period_end": "2026-08-01",
+   "value": 95200000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_rel_20260901"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "rp_opex_q1fy27",
+   "metric": "gaap_operating_expenses",
+   "period": "Q1 FY2027",
+   "period_end": "2026-08-01",
+   "value": 188400000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_rel_20260901"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "rp_cash_q1fy27",
+   "metric": "cash_and_short_term_investments",
+   "period": "Q1 FY2027",
+   "period_end": "2026-08-01",
+   "value": 764300000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_rel_20260901"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "rp_cfo_q1fy27",
+   "metric": "operating_cash_flow",
+   "period": "Q1 FY2027",
+   "period_end": "2026-08-01",
+   "value": 90200000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_tr_20260901",
+    "ex_10q_20260902"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "rp_capex_q1fy27",
+   "metric": "capital_expenditure",
+   "period": "Q1 FY2027",
+   "period_end": "2026-08-01",
+   "value": 7300000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_tr_20260901",
+    "ex_10q_20260902"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "rp_inv_q1fy27",
+   "metric": "inventory",
+   "period": "Q1 FY2027",
+   "period_end": "2026-08-01",
+   "value": 313100000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_tr_20260901",
+    "ex_10q_20260902"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "rp_rpo_q1fy27",
+   "metric": "remaining_performance_obligations",
+   "period": "Q1 FY2027",
+   "period_end": "2026-08-01",
+   "value": 4200000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "rp_rpo_fy26",
+   "metric": "remaining_performance_obligations",
+   "period": "FY2026",
+   "period_end": "2026-05-02",
+   "value": 31900000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10k_20260615"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "rp_purch_q1fy27",
+   "metric": "noncancelable_purchase_obligations_total",
+   "period": "Q1 FY2027",
+   "period_end": "2026-08-01",
+   "value": 222212000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "rp_purch_mfg_q1fy27",
+   "metric": "noncancelable_purchase_commitments_manufacturing_and_foundry",
+   "period": "Q1 FY2027",
+   "period_end": "2026-08-01",
+   "value": 212717000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "rp_purch_fy26",
+   "metric": "noncancelable_purchase_obligations_total",
+   "period": "FY2026",
+   "period_end": "2026-05-02",
+   "value": 359954000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10k_20260615"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "rp_deposits_q1fy27",
+   "metric": "refundable_capacity_reservation_deposits",
+   "period": "Q1 FY2027",
+   "period_end": "2026-08-01",
+   "value": 88400000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "rp_deposits_fy26",
+   "metric": "refundable_capacity_reservation_deposits",
+   "period": "FY2026",
+   "period_end": "2026-05-02",
+   "value": 71000000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10k_20260615"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "rp_deposits_new",
+   "metric": "additional_refundable_capacity_deposits_to_pay_in_fy2027_after_quarter_end",
+   "period": "FY2027",
+   "value": 102400000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "rp_shares_out_20260825",
+   "metric": "ordinary_shares_outstanding",
+   "period": "2026-08-25",
+   "period_end": "2026-08-25",
+   "value": 187951918,
+   "unit": "shares",
+   "source_ids": [
+    "ex_10q_20260902"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "rp_dust_total",
+   "metric": "dustphotonics_total_purchase_consideration",
+   "period": "Q1 FY2027",
+   "period_end": "2026-08-01",
+   "value": 1251111000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "rp_dust_cash",
+   "metric": "dustphotonics_cash_consideration",
+   "period": "Q1 FY2027",
+   "period_end": "2026-08-01",
+   "value": 769587000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "rp_dust_contingent",
+   "metric": "dustphotonics_contingent_consideration_fair_value",
+   "period": "Q1 FY2027",
+   "period_end": "2026-08-01",
+   "value": 310000000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "rp_dust_goodwill",
+   "metric": "dustphotonics_goodwill_preliminary",
+   "period": "Q1 FY2027",
+   "period_end": "2026-08-01",
+   "value": 895839000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "rp_dust_intang",
+   "metric": "dustphotonics_intangible_assets_preliminary",
+   "period": "Q1 FY2027",
+   "period_end": "2026-08-01",
+   "value": 361700000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "rp_geo_us_q1fy27",
+   "metric": "revenue_us_destination",
+   "period": "Q1 FY2027",
+   "period_end": "2026-08-01",
+   "value": 255442000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "rp_geo_hk_q1fy27",
+   "metric": "revenue_hong_kong_destination",
+   "period": "Q1 FY2027",
+   "period_end": "2026-08-01",
+   "value": 91175000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "rp_geo_cn_q1fy27",
+   "metric": "revenue_mainland_china_destination",
+   "period": "Q1 FY2027",
+   "period_end": "2026-08-01",
+   "value": 1095000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "rp_geo_cn_q1fy26",
+   "metric": "revenue_mainland_china_destination",
+   "period": "Q1 FY2026",
+   "period_end": "2025-08-02",
+   "value": 51781000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902"
+   ],
+   "basis": "reported"
+  }
+ ],
+ "guidance": [
+  {
+   "id": "ex_g_rev_q2fy27",
+   "metric": "revenue",
+   "period": "Q@2026-10-31",
+   "low": 525000000,
+   "high": 535000000,
+   "unit": "USD",
+   "issued": "2026-09-01",
+   "source_id": "ex_rel_20260901"
+  },
+  {
+   "id": "ex_g_nggm_q2fy27",
+   "metric": "gross_margin_non_gaap",
+   "period": "Q@2026-10-31",
+   "low": 0.67,
+   "high": 0.69,
+   "unit": "ratio",
+   "issued": "2026-09-01",
+   "source_id": "ex_rel_20260901"
+  },
+  {
+   "id": "ex_g_gm_q2fy27",
+   "metric": "gross_margin_gaap",
+   "period": "Q@2026-10-31",
+   "low": 0.629,
+   "high": 0.649,
+   "unit": "ratio",
+   "issued": "2026-09-01",
+   "source_id": "ex_rel_20260901"
+  },
+  {
+   "id": "ex_g_ngopex_q2fy27",
+   "metric": "operating_expenses_non_gaap",
+   "period": "Q@2026-10-31",
+   "low": 100000000,
+   "high": 105000000,
+   "unit": "USD",
+   "issued": "2026-09-01",
+   "source_id": "ex_rel_20260901"
+  },
+  {
+   "id": "ex_g_opex_q2fy27",
+   "metric": "operating_expenses_gaap",
+   "period": "Q@2026-10-31",
+   "low": 199000000,
+   "high": 204000000,
+   "unit": "USD",
+   "issued": "2026-09-01",
+   "source_id": "ex_rel_20260901"
+  },
+  {
+   "id": "rp_g_rev_q2fy27",
+   "metric": "revenue",
+   "period": "Q2 FY2027",
+   "low": 525000000,
+   "high": 535000000,
+   "unit": "USD",
+   "issued": "2026-09-01",
+   "source_id": "ex_rel_20260901"
+  },
+  {
+   "id": "rp_g_nggm_q2fy27",
+   "metric": "non-GAAP gross margin",
+   "period": "Q2 FY2027",
+   "low": 0.67,
+   "high": 0.69,
+   "unit": "ratio",
+   "issued": "2026-09-01",
+   "source_id": "ex_rel_20260901"
+  },
+  {
+   "id": "rp_g_gm_q2fy27",
+   "metric": "GAAP gross margin",
+   "period": "Q2 FY2027",
+   "low": 0.629,
+   "high": 0.649,
+   "unit": "ratio",
+   "issued": "2026-09-01",
+   "source_id": "ex_rel_20260901"
+  },
+  {
+   "id": "rp_g_ngopex_q2fy27",
+   "metric": "non-GAAP operating expenses",
+   "period": "Q2 FY2027",
+   "low": 100000000,
+   "high": 105000000,
+   "unit": "USD",
+   "issued": "2026-09-01",
+   "source_id": "ex_rel_20260901"
+  },
+  {
+   "id": "rp_g_opex_q2fy27",
+   "metric": "GAAP operating expenses",
+   "period": "Q2 FY2027",
+   "low": 199000000,
+   "high": 204000000,
+   "unit": "USD",
+   "issued": "2026-09-01",
+   "source_id": "ex_rel_20260901"
+  },
+  {
+   "id": "rp_g_shares_q2fy27",
+   "metric": "diluted weighted-average shares (approximately)",
+   "period": "Q2 FY2027",
+   "low": 200000000,
+   "high": 200000000,
+   "unit": "shares",
+   "issued": "2026-09-01",
+   "source_id": "ex_tr_20260901"
+  },
+  {
+   "id": "rp_g_rev_fy27_floor",
+   "metric": "revenue",
+   "period": "FY2027",
+   "low": 2469964600,
+   "high": 2469964600,
+   "unit": "USD",
+   "issued": "2026-09-01",
+   "source_id": "ex_tr_20260901"
+  },
+  {
+   "id": "rp_g_growth_fy27_floor",
+   "metric": "revenue growth y/y FLOOR ('more than 85%'; not a midpoint)",
+   "period": "FY2027",
+   "low": 0.85,
+   "high": 0.85,
+   "unit": "ratio",
+   "issued": "2026-09-01",
+   "source_id": "ex_tr_20260901"
+  },
+  {
+   "id": "rp_g_optical_fy27_floor",
+   "metric": "optical revenue FLOOR ('more than $600 million': ZeroFlap optics, SiPho PICs and optical DSPs each more than $100M; not a midpoint)",
+   "period": "FY2027",
+   "low": 600000000,
+   "high": 600000000,
+   "unit": "USD",
+   "issued": "2026-09-01",
+   "source_id": "ex_tr_20260901"
+  },
+  {
+   "id": "rp_g_optical_fy27_apr",
+   "metric": "optical revenue FLOOR ('greater than $500 million' with DustPhotonics; earlier statement, since raised; not a midpoint)",
+   "period": "FY2027",
+   "low": 500000000,
+   "high": 500000000,
+   "unit": "USD",
+   "issued": "2026-04-13",
+   "source_id": "rp_rel_20260413"
+  },
+  {
+   "id": "rp_g_ngopex_growth_fy27",
+   "metric": "non-GAAP operating expenses growth y/y (approximately)",
+   "period": "FY2027",
+   "low": 0.55,
+   "high": 0.55,
+   "unit": "ratio",
+   "issued": "2026-09-01",
+   "source_id": "ex_tr_20260901"
+  },
+  {
+   "id": "rp_g_ngnetmargin_fy27",
+   "metric": "non-GAAP net margin (in the vicinity of)",
+   "period": "FY2027",
+   "low": 0.5,
+   "high": 0.5,
+   "unit": "ratio",
+   "issued": "2026-09-01",
+   "source_id": "ex_tr_20260901"
+  },
+  {
+   "id": "rp_g_rev_q1fy27",
+   "metric": "revenue",
+   "period": "Q1 FY2027",
+   "low": 465000000,
+   "high": 475000000,
+   "unit": "USD",
+   "issued": "2026-06-01",
+   "source_id": "nm_rel_20260601"
+  },
+  {
+   "id": "rp_g_rev_q4fy26",
+   "metric": "revenue",
+   "period": "Q4 FY2026",
+   "low": 425000000,
+   "high": 435000000,
+   "unit": "USD",
+   "issued": "2026-03-02",
+   "source_id": "nm_rel_20260302"
+  },
+  {
+   "id": "rp_g_rev_q3fy26_upd",
+   "metric": "revenue (preliminary update before the report)",
+   "period": "Q3 FY2026",
+   "low": 404000000,
+   "high": 408000000,
+   "unit": "USD",
+   "issued": "2026-02-09",
+   "source_id": "nm_rel_20260209"
+  },
+  {
+   "id": "rp_g_rev_q3fy26",
+   "metric": "revenue",
+   "period": "Q3 FY2026",
+   "low": 335000000,
+   "high": 345000000,
+   "unit": "USD",
+   "issued": "2025-12-01",
+   "source_id": "rp_rel_20251201"
+  },
+  {
+   "id": "rp_g_rev_q2fy26",
+   "metric": "revenue",
+   "period": "Q2 FY2026",
+   "low": 230000000,
+   "high": 240000000,
+   "unit": "USD",
+   "issued": "2025-09-03",
+   "source_id": "nm_rel_20250903"
+  },
+  {
+   "id": "rp_g_rev_q1fy26",
+   "metric": "revenue",
+   "period": "Q1 FY2026",
+   "low": 185000000,
+   "high": 195000000,
+   "unit": "USD",
+   "issued": "2025-06-02",
+   "source_id": "nm_rel_20250602"
+  },
+  {
+   "id": "rp_g_rev_q4fy25",
+   "metric": "revenue",
+   "period": "Q4 FY2025",
+   "low": 155000000,
+   "high": 165000000,
+   "unit": "USD",
+   "issued": "2025-03-04",
+   "source_id": "nm_rel_20250304"
+  },
+  {
+   "id": "rp_g_rev_q3fy25",
+   "metric": "revenue",
+   "period": "Q3 FY2025",
+   "low": 115000000,
+   "high": 125000000,
+   "unit": "USD",
+   "issued": "2024-12-02",
+   "source_id": "nm_rel_20241202"
+  }
+ ],
+ "guidance_track": [
+  {
+   "period": "Q@2025-02-01",
+   "metric": "revenue",
+   "guided_mid": 120000000,
+   "actual": 135002000,
+   "source_ids": [
+    "nm_rel_20241202",
+    "nm_rel_20250304"
+   ]
+  },
+  {
+   "period": "Q@2025-05-03",
+   "metric": "revenue",
+   "guided_mid": 160000000,
+   "actual": 170025000,
+   "source_ids": [
+    "nm_rel_20250304",
+    "nm_rel_20250602"
+   ]
+  },
+  {
+   "period": "Q@2025-08-02",
+   "metric": "revenue",
+   "guided_mid": 190000000,
+   "actual": 223074000,
+   "source_ids": [
+    "nm_rel_20250602",
+    "nm_rel_20250903"
+   ]
+  },
+  {
+   "period": "Q@2025-11-01",
+   "metric": "revenue",
+   "guided_mid": 235000000,
+   "actual": 268027000,
+   "source_ids": [
+    "nm_rel_20250903",
+    "pf_history_companyfacts"
+   ]
+  },
+  {
+   "period": "Q@2026-01-31",
+   "metric": "revenue",
+   "guided_mid": 340000000,
+   "actual": 407012000,
+   "source_ids": [
+    "nm_rel_20260209",
+    "nm_rel_20260302"
+   ]
+  },
+  {
+   "period": "Q@2026-05-02",
+   "metric": "revenue",
+   "guided_mid": 430000000,
+   "actual": 437003000,
+   "source_ids": [
+    "nm_rel_20260302",
+    "nm_rel_20260601"
+   ]
+  },
+  {
+   "period": "Q@2026-08-01",
+   "metric": "revenue",
+   "guided_mid": 470000000,
+   "actual": 479003000,
+   "source_ids": [
+    "nm_rel_20260601",
+    "ex_rel_20260901"
+   ]
+  },
+  {
+   "period": "Q3 FY2025",
+   "metric": "revenue",
+   "guided_mid": 120000000,
+   "actual": 135002000,
+   "source_ids": [
+    "nm_rel_20241202",
+    "nm_rel_20250304"
+   ]
+  },
+  {
+   "period": "Q4 FY2025",
+   "metric": "revenue",
+   "guided_mid": 160000000,
+   "actual": 170025000,
+   "source_ids": [
+    "nm_rel_20250304",
+    "nm_rel_20250602"
+   ]
+  },
+  {
+   "period": "Q1 FY2026",
+   "metric": "revenue",
+   "guided_mid": 190000000,
+   "actual": 223074000,
+   "source_ids": [
+    "nm_rel_20250602",
+    "nm_rel_20250903"
+   ]
+  },
+  {
+   "period": "Q2 FY2026",
+   "metric": "revenue",
+   "guided_mid": 235000000,
+   "actual": 268027000,
+   "source_ids": [
+    "nm_rel_20250903",
+    "rp_rel_20251201"
+   ]
+  },
+  {
+   "period": "Q3 FY2026",
+   "metric": "revenue",
+   "guided_mid": 340000000,
+   "actual": 407012000,
+   "source_ids": [
+    "rp_rel_20251201",
+    "nm_rel_20260302"
+   ]
+  },
+  {
+   "period": "Q4 FY2026",
+   "metric": "revenue",
+   "guided_mid": 430000000,
+   "actual": 437003000,
+   "source_ids": [
+    "nm_rel_20260302",
+    "nm_rel_20260601"
+   ]
+  },
+  {
+   "period": "Q1 FY2027",
+   "metric": "revenue",
+   "guided_mid": 470000000,
+   "actual": 479003000,
+   "source_ids": [
+    "nm_rel_20260601",
+    "ex_rel_20260901"
+   ]
+  },
+  {
+   "period": "Q3 FY2025",
+   "metric": "non-GAAP gross margin",
+   "guided_mid": 0.62,
+   "actual": 0.638,
+   "source_ids": [
+    "nm_rel_20241202",
+    "nm_rel_20250304"
+   ]
+  },
+  {
+   "period": "Q4 FY2025",
+   "metric": "non-GAAP gross margin",
+   "guided_mid": 0.64,
+   "actual": 0.674,
+   "source_ids": [
+    "nm_rel_20250304",
+    "nm_rel_20250602"
+   ]
+  },
+  {
+   "period": "Q1 FY2026",
+   "metric": "non-GAAP gross margin",
+   "guided_mid": 0.65,
+   "actual": 0.676,
+   "source_ids": [
+    "nm_rel_20250602",
+    "nm_rel_20250903"
+   ]
+  },
+  {
+   "period": "Q2 FY2026",
+   "metric": "non-GAAP gross margin",
+   "guided_mid": 0.65,
+   "actual": 0.677,
+   "source_ids": [
+    "nm_rel_20250903",
+    "rp_rel_20251201"
+   ]
+  },
+  {
+   "period": "Q3 FY2026",
+   "metric": "non-GAAP gross margin",
+   "guided_mid": 0.65,
+   "actual": 0.686,
+   "source_ids": [
+    "rp_rel_20251201",
+    "nm_rel_20260302"
+   ]
+  },
+  {
+   "period": "Q4 FY2026",
+   "metric": "non-GAAP gross margin",
+   "guided_mid": 0.65,
+   "actual": 0.683,
+   "source_ids": [
+    "nm_rel_20260302",
+    "nm_rel_20260601"
+   ]
+  },
+  {
+   "period": "Q1 FY2027",
+   "metric": "non-GAAP gross margin",
+   "guided_mid": 0.68,
+   "actual": 0.68,
+   "source_ids": [
+    "nm_rel_20260601",
+    "ex_rel_20260901"
+   ]
+  },
+  {
+   "period": "Q3 FY2025",
+   "metric": "non-GAAP operating expenses",
+   "guided_mid": 43000000,
+   "actual": 43800000,
+   "source_ids": [
+    "nm_rel_20241202",
+    "nm_rel_20250304"
+   ]
+  },
+  {
+   "period": "Q4 FY2025",
+   "metric": "non-GAAP operating expenses",
+   "guided_mid": 51000000,
+   "actual": 52000000,
+   "source_ids": [
+    "nm_rel_20250304",
+    "nm_rel_20250602"
+   ]
+  },
+  {
+   "period": "Q1 FY2026",
+   "metric": "non-GAAP operating expenses",
+   "guided_mid": 55000000,
+   "actual": 54500000,
+   "source_ids": [
+    "nm_rel_20250602",
+    "nm_rel_20250903"
+   ]
+  },
+  {
+   "period": "Q2 FY2026",
+   "metric": "non-GAAP operating expenses",
+   "guided_mid": 57000000,
+   "actual": 57300000,
+   "source_ids": [
+    "nm_rel_20250903",
+    "rp_rel_20251201"
+   ]
+  },
+  {
+   "period": "Q3 FY2026",
+   "metric": "non-GAAP operating expenses",
+   "guided_mid": 70000000,
+   "actual": 77400000,
+   "source_ids": [
+    "rp_rel_20251201",
+    "nm_rel_20260302"
+   ]
+  },
+  {
+   "period": "Q4 FY2026",
+   "metric": "non-GAAP operating expenses",
+   "guided_mid": 78000000,
+   "actual": 81700000,
+   "source_ids": [
+    "nm_rel_20260302",
+    "nm_rel_20260601"
+   ]
+  },
+  {
+   "period": "Q1 FY2027",
+   "metric": "non-GAAP operating expenses",
+   "guided_mid": 88000000,
+   "actual": 95200000,
+   "source_ids": [
+    "nm_rel_20260601",
+    "ex_rel_20260901"
+   ]
+  }
+ ],
+ "consensus": [
+  {
+   "id": "ex_cons_rev_2026_08_01",
+   "metric": "revenue",
+   "period": "Q@2026-08-01",
+   "value": 471711450,
+   "n": 15,
+   "low": 469855000,
+   "high": 490000000,
+   "source_id": "ex_av_estimates"
+  },
+  {
+   "id": "ex_cons_eps_ng_2026_08_01",
+   "metric": "eps_non_gaap",
+   "period": "Q@2026-08-01",
+   "value": 1.1686,
+   "n": 16,
+   "low": 1.07,
+   "high": 1.226,
+   "source_id": "ex_av_estimates"
+  },
+  {
+   "id": "ex_cons_rev_2026_05_02",
+   "metric": "revenue",
+   "period": "Q@2026-05-02",
+   "value": 433297910,
+   "n": 14,
+   "low": 430000000,
+   "high": 451000000,
+   "source_id": "ex_av_estimates"
+  },
+  {
+   "id": "ex_cons_eps_ng_2026_05_02",
+   "metric": "eps_non_gaap",
+   "period": "Q@2026-05-02",
+   "value": 1.0341,
+   "n": 15,
+   "low": 1.01,
+   "high": 1.08,
+   "source_id": "ex_av_estimates"
+  },
+  {
+   "id": "ex_cons_rev_2026_01_31",
+   "metric": "revenue",
+   "period": "Q@2026-01-31",
+   "value": 387624370,
+   "n": 13,
+   "low": 340000000,
+   "high": 407844000,
+   "source_id": "ex_av_estimates"
+  },
+  {
+   "id": "ex_cons_eps_ng_2026_01_31",
+   "metric": "eps_non_gaap",
+   "period": "Q@2026-01-31",
+   "value": 0.9407,
+   "n": 13,
+   "low": 0.75,
+   "high": 1.03,
+   "source_id": "ex_av_estimates"
+  },
+  {
+   "id": "ex_cons_rev_2025_11_01",
+   "metric": "revenue",
+   "period": "Q@2025-11-01",
+   "value": 234992020,
+   "n": 11,
+   "low": 232500000,
+   "high": 236000000,
+   "source_id": "ex_av_estimates"
+  },
+  {
+   "id": "ex_cons_eps_ng_2025_11_01",
+   "metric": "eps_non_gaap",
+   "period": "Q@2025-11-01",
+   "value": 0.4953,
+   "n": 13,
+   "low": 0.47,
+   "high": 0.54,
+   "source_id": "ex_av_estimates"
+  },
+  {
+   "id": "nm_cons_revenue_fy2027",
+   "metric": "revenue",
+   "period": "FY2027",
+   "value": 2503060260,
+   "n": 19,
+   "low": 2470000000,
+   "high": 2583654460,
+   "source_id": "ex_av_estimates"
+  },
+  {
+   "id": "nm_cons_revenue_fy2028",
+   "metric": "revenue",
+   "period": "FY2028",
+   "value": 3879571640,
+   "n": 19,
+   "low": 3590000000,
+   "high": 4413900300,
+   "source_id": "ex_av_estimates"
+  },
+  {
+   "id": "nm_cons_eps_non_gaap_fy2027",
+   "metric": "eps_non_gaap",
+   "period": "FY2027",
+   "value": 6.3093,
+   "n": 20,
+   "low": 5.98,
+   "high": 6.6354,
+   "source_id": "ex_av_estimates"
+  },
+  {
+   "id": "nm_cons_eps_non_gaap_fy2028",
+   "metric": "eps_non_gaap",
+   "period": "FY2028",
+   "value": 9.7121,
+   "n": 20,
+   "low": 8.69,
+   "high": 11.309,
+   "source_id": "ex_av_estimates"
+  },
+  {
+   "id": "nm_cons_revenue_q_2026_10_31",
+   "metric": "revenue",
+   "period": "Q@2026-10-31",
+   "value": 531946580,
+   "n": 17,
+   "low": 529800000,
+   "high": 551000000,
+   "source_id": "ex_av_estimates"
+  },
+  {
+   "id": "nm_cons_eps_non_gaap_q_2026_10_31",
+   "metric": "eps_non_gaap",
+   "period": "Q@2026-10-31",
+   "value": 1.2835,
+   "n": 18,
+   "low": 1.22,
+   "high": 1.32,
+   "source_id": "ex_av_estimates"
+  },
+  {
+   "id": "nm_cons_revenue_q_2027_01_31",
+   "metric": "revenue",
+   "period": "Q@2027-01-31",
+   "value": 642987070,
+   "n": 16,
+   "low": 626500000,
+   "high": 698000000,
+   "source_id": "ex_av_estimates"
+  },
+  {
+   "id": "nm_cons_eps_non_gaap_q_2027_01_31",
+   "metric": "eps_non_gaap",
+   "period": "Q@2027-01-31",
+   "value": 1.6067,
+   "n": 17,
+   "low": 1.45,
+   "high": 1.8,
+   "source_id": "ex_av_estimates"
+  }
+ ],
+ "kpis": [
+  {
+   "id": "ex_k_n10_end_q1fy27",
+   "name": "end customers each at or above 10% of revenue (MD&A end-customer table)",
+   "period": "Q@2026-08-01",
+   "value": 4,
+   "unit": "count",
+   "source_ids": [
+    "ex_10q_20260902"
+   ]
+  },
+  {
+   "id": "ex_k_n10_end_fy26",
+   "name": "end customers each at or above 10% of revenue (MD&A end-customer table)",
+   "period": "FY2026",
+   "value": 3,
+   "unit": "count",
+   "source_ids": [
+    "ex_10k_20260615"
+   ]
+  },
+  {
+   "id": "ex_k_top10_fy26",
+   "name": "top 10 customers share of revenue (approximately)",
+   "period": "FY2026",
+   "value": 0.9,
+   "unit": "ratio",
+   "source_ids": [
+    "ex_10k_20260615"
+   ]
+  },
+  {
+   "id": "ex_k_top4_end_q1fy27",
+   "name": "combined share of the four 10%+ end customers (33+28+13+10)",
+   "period": "Q@2026-08-01",
+   "value": 0.84,
+   "unit": "ratio",
+   "source_ids": [
+    "ex_10q_20260902"
+   ]
+  },
+  {
+   "id": "ex_k_na_share_fy26",
+   "name": "revenue share from customers in North America (MD&A)",
+   "period": "FY2026",
+   "value": 0.58,
+   "unit": "ratio",
+   "source_ids": [
+    "ex_10k_20260615"
+   ]
+  },
+  {
+   "id": "ex_k_na_share_fy25",
+   "name": "revenue share from customers in North America (MD&A)",
+   "period": "FY2025",
+   "value": 0.15,
+   "unit": "ratio",
+   "source_ids": [
+    "ex_10k_20260615"
+   ]
+  },
+  {
+   "id": "ex_k_rpo_q1fy27",
+   "name": "remaining performance obligations (contracted, next 12 months); not a measure of PO backlog",
+   "period": "Q@2026-08-01",
+   "value": 4200000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902"
+   ]
+  },
+  {
+   "id": "ex_k_rpo_fy26",
+   "name": "remaining performance obligations (contracted, next fiscal year)",
+   "period": "FY2026",
+   "value": 31900000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10k_20260615"
+   ]
+  },
+  {
+   "id": "ex_k_hyper_rel_q1fy27",
+   "name": "hyperscalers with deep relationships (CEO on the call; relationships, not confirmed volume)",
+   "period": "Q@2026-08-01",
+   "value": 5,
+   "unit": "count",
+   "source_ids": [
+    "ex_tr_20260901"
+   ]
+  },
+  {
+   "id": "ex_k_n10_end_q4fy26",
+   "name": "end customers each at or above 10% of revenue (CFO on the call)",
+   "period": "Q@2026-05-02",
+   "value": 4,
+   "unit": "count",
+   "source_ids": [
+    "ex_tr_20260901"
+   ]
+  },
+  {
+   "id": "ex_k_rev_qoq_q1fy27",
+   "name": "revenue growth quarter over quarter",
+   "period": "Q@2026-08-01",
+   "value": 0.096,
+   "unit": "ratio",
+   "source_ids": [
+    "ex_rel_20260901"
+   ]
+  },
+  {
+   "id": "ex_k_rev_yoy_q1fy27",
+   "name": "revenue growth year over year",
+   "period": "Q@2026-08-01",
+   "value": 1.147,
+   "unit": "ratio",
+   "source_ids": [
+    "ex_rel_20260901"
+   ]
+  },
+  {
+   "id": "ex_k_nggm_q1fy27",
+   "name": "non-GAAP gross margin",
+   "period": "Q@2026-08-01",
+   "value": 0.68,
+   "unit": "ratio",
+   "source_ids": [
+    "ex_rel_20260901"
+   ]
+  },
+  {
+   "id": "ex_k_ngopex_q1fy27",
+   "name": "non-GAAP operating expenses",
+   "period": "Q@2026-08-01",
+   "value": 95200000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_rel_20260901"
+   ]
+  },
+  {
+   "id": "ex_k_geo_united_states_q1fy27",
+   "name": "revenue by ship-to geography: United States",
+   "period": "Q@2026-08-01",
+   "value": 255442000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902"
+   ]
+  },
+  {
+   "id": "ex_k_geo_united_states_q1fy26",
+   "name": "revenue by ship-to geography: United States",
+   "period": "Q@2025-08-02",
+   "value": 82828000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902"
+   ]
+  },
+  {
+   "id": "ex_k_geo_hong_kong_q1fy27",
+   "name": "revenue by ship-to geography: Hong Kong",
+   "period": "Q@2026-08-01",
+   "value": 91175000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902"
+   ]
+  },
+  {
+   "id": "ex_k_geo_hong_kong_q1fy26",
+   "name": "revenue by ship-to geography: Hong Kong",
+   "period": "Q@2025-08-02",
+   "value": 74885000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902"
+   ]
+  },
+  {
+   "id": "ex_k_geo_malaysia_q1fy27",
+   "name": "revenue by ship-to geography: Malaysia",
+   "period": "Q@2026-08-01",
+   "value": 74455000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902"
+   ]
+  },
+  {
+   "id": "ex_k_geo_malaysia_q1fy26",
+   "name": "revenue by ship-to geography: Malaysia",
+   "period": "Q@2025-08-02",
+   "value": 6383000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902"
+   ]
+  },
+  {
+   "id": "ex_k_geo_mainland_china_q1fy27",
+   "name": "revenue by ship-to geography: Mainland China",
+   "period": "Q@2026-08-01",
+   "value": 1095000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902"
+   ]
+  },
+  {
+   "id": "ex_k_geo_mainland_china_q1fy26",
+   "name": "revenue by ship-to geography: Mainland China",
+   "period": "Q@2025-08-02",
+   "value": 51781000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902"
+   ]
+  },
+  {
+   "id": "ex_k_geo_rest_of_world_q1fy27",
+   "name": "revenue by ship-to geography: Rest of World",
+   "period": "Q@2026-08-01",
+   "value": 56836000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902"
+   ]
+  },
+  {
+   "id": "ex_k_geo_rest_of_world_q1fy26",
+   "name": "revenue by ship-to geography: Rest of World",
+   "period": "Q@2025-08-02",
+   "value": 7197000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902"
+   ]
+  },
+  {
+   "id": "ex_k_geo_united_states_fy26",
+   "name": "revenue by ship-to geography: United States",
+   "period": "FY2026",
+   "value": 768051000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10k_20260615"
+   ]
+  },
+  {
+   "id": "ex_k_geo_hong_kong_fy26",
+   "name": "revenue by ship-to geography: Hong Kong",
+   "period": "FY2026",
+   "value": 378230000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10k_20260615"
+   ]
+  },
+  {
+   "id": "ex_k_geo_mainland_china_fy26",
+   "name": "revenue by ship-to geography: Mainland China",
+   "period": "FY2026",
+   "value": 80924000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10k_20260615"
+   ]
+  },
+  {
+   "id": "ex_k_geo_taiwan_fy26",
+   "name": "revenue by ship-to geography: Taiwan",
+   "period": "FY2026",
+   "value": 22727000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10k_20260615"
+   ]
+  },
+  {
+   "id": "ex_k_geo_rest_of_world_fy26",
+   "name": "revenue by ship-to geography: Rest of World",
+   "period": "FY2026",
+   "value": 85184000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10k_20260615"
+   ]
+  },
+  {
+   "id": "rp_k_nggm_q1fy27",
+   "name": "non-GAAP gross margin",
+   "period": "Q1 FY2027",
+   "value": 0.68,
+   "unit": "ratio",
+   "source_ids": [
+    "ex_rel_20260901"
+   ]
+  },
+  {
+   "id": "rp_k_gm_q1fy27",
+   "name": "GAAP gross margin",
+   "period": "Q1 FY2027",
+   "value": 0.645,
+   "unit": "ratio",
+   "source_ids": [
+    "ex_rel_20260901"
+   ]
+  },
+  {
+   "id": "rp_k_ngom_q1fy27",
+   "name": "non-GAAP operating margin",
+   "period": "Q1 FY2027",
+   "value": 0.482,
+   "unit": "ratio",
+   "source_ids": [
+    "ex_tr_20260901"
+   ]
+  },
+  {
+   "id": "rp_k_aec_share_inc_q1fy27",
+   "name": "AEC unit volume share of the y/y revenue increase (lower bound, 'over 90%')",
+   "period": "Q1 FY2027",
+   "value": 0.9,
+   "unit": "ratio",
+   "source_ids": [
+    "ex_10q_20260902"
+   ]
+  },
+  {
+   "id": "rp_k_aec_share_inc_fy26",
+   "name": "AEC ramp share of the y/y revenue increase (lower bound, 'over 99%')",
+   "period": "FY2026",
+   "value": 0.99,
+   "unit": "ratio",
+   "source_ids": [
+    "ex_10k_20260615"
+   ]
+  },
+  {
+   "id": "rp_k_top10_fy26",
+   "name": "top 10 customers share of revenue (approximately)",
+   "period": "FY2026",
+   "value": 0.9,
+   "unit": "ratio",
+   "source_ids": [
+    "ex_10k_20260615"
+   ]
+  },
+  {
+   "id": "rp_k_n10_q1fy27",
+   "name": "end customers at or above 10% of revenue (count)",
+   "period": "Q1 FY2027",
+   "value": 4,
+   "unit": "count",
+   "source_ids": [
+    "ex_10q_20260902",
+    "ex_tr_20260901"
+   ]
+  },
+  {
+   "id": "rp_k_hyperscalers",
+   "name": "hyperscalers with deep AEC relationships (count, management statement)",
+   "period": "Q1 FY2027",
+   "value": 5,
+   "unit": "count",
+   "source_ids": [
+    "ex_tr_20260901"
+   ]
+  },
+  {
+   "id": "rp_k_pic_designwins",
+   "name": "next-generation SiPho PIC design wins with major players, ramp FY2028 (maybe late FY2027) (count, management statement)",
+   "period": "Q1 FY2027",
+   "value": 2,
+   "unit": "count",
+   "source_ids": [
+    "ex_tr_20260901"
+   ]
+  },
+  {
+   "id": "rp_k_employees_fy26",
+   "name": "full-time equivalent employees (616 engineers)",
+   "period": "FY2026",
+   "value": 807,
+   "unit": "count",
+   "source_ids": [
+    "ex_10k_20260615"
+   ]
+  }
+ ],
+ "segments": [
+  {
+   "id": "ex_seg_q1fy27",
+   "name": "Total company (single reportable segment; no product-line or product/IP revenue split disclosed)",
+   "period": "Q@2026-08-01",
+   "revenue": 479003000,
+   "operating_income": 120700000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902"
+   ]
+  },
+  {
+   "id": "ex_seg_q1fy26",
+   "name": "Total company (single reportable segment)",
+   "period": "Q@2025-08-02",
+   "revenue": 223074000,
+   "operating_income": 60742000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902"
+   ]
+  },
+  {
+   "id": "ex_seg_fy26",
+   "name": "Total company (single reportable segment)",
+   "period": "FY2026",
+   "revenue": 1335116000,
+   "operating_income": 445005000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10k_20260615"
+   ]
+  },
+  {
+   "id": "ex_seg_fy25",
+   "name": "Total company (single reportable segment)",
+   "period": "FY2025",
+   "revenue": 436775000,
+   "operating_income": 37124000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10k_20260615"
+   ]
+  },
+  {
+   "id": "rp_seg_fy26",
+   "name": "Total company (single reportable segment)",
+   "period": "FY2026",
+   "revenue": 1335116000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10k_20260615"
+   ]
+  },
+  {
+   "id": "rp_seg_q1fy27",
+   "name": "Total company (single reportable segment)",
+   "period": "Q1 FY2027",
+   "revenue": 479003000,
+   "unit": "USD",
+   "source_ids": [
+    "ex_10q_20260902",
+    "ex_rel_20260901"
+   ]
+  }
+ ],
+ "customers": [
+  {
+   "id": "ex_cu_a_q1fy27",
+   "name": "Customer A (contracting party, Note 3; letters differ from the end-customer table)",
+   "share": 0.43,
+   "period": "Q@2026-08-01",
+   "source_ids": [
+    "ex_10q_20260902"
+   ]
+  },
+  {
+   "id": "ex_cu_b_q1fy27",
+   "name": "Customer B (contracting party, Note 3)",
+   "share": 0.28,
+   "period": "Q@2026-08-01",
+   "source_ids": [
+    "ex_10q_20260902"
+   ]
+  },
+  {
+   "id": "ex_cu_a_q1fy26",
+   "name": "Customer A (contracting party, Note 3)",
+   "share": 0.5,
+   "period": "Q@2025-08-02",
+   "source_ids": [
+    "ex_10q_20260902"
+   ]
+  },
+  {
+   "id": "ex_cu_b_q1fy26",
+   "name": "Customer B (contracting party, Note 3)",
+   "share": 0.35,
+   "period": "Q@2025-08-02",
+   "source_ids": [
+    "ex_10q_20260902"
+   ]
+  },
+  {
+   "id": "ex_cu_ed_q1fy27",
+   "name": "End customer 'Customer D' (MD&A end-customer table; largest)",
+   "share": 0.33,
+   "period": "Q@2026-08-01",
+   "source_ids": [
+    "ex_10q_20260902"
+   ]
+  },
+  {
+   "id": "ex_cu_ec_q1fy27",
+   "name": "End customer 'Customer C' (MD&A end-customer table)",
+   "share": 0.28,
+   "period": "Q@2026-08-01",
+   "source_ids": [
+    "ex_10q_20260902"
+   ]
+  },
+  {
+   "id": "ex_cu_ee_q1fy27",
+   "name": "End customer 'Customer E' (MD&A end-customer table)",
+   "share": 0.13,
+   "period": "Q@2026-08-01",
+   "source_ids": [
+    "ex_10q_20260902"
+   ]
+  },
+  {
+   "id": "ex_cu_ef_q1fy27",
+   "name": "End customer 'Customer F' (MD&A end-customer table)",
+   "share": 0.1,
+   "period": "Q@2026-08-01",
+   "source_ids": [
+    "ex_10q_20260902"
+   ]
+  },
+  {
+   "id": "ex_cu_ec_q1fy26",
+   "name": "End customer 'Customer C' (MD&A end-customer table)",
+   "share": 0.35,
+   "period": "Q@2025-08-02",
+   "source_ids": [
+    "ex_10q_20260902"
+   ]
+  },
+  {
+   "id": "ex_cu_ed_q1fy26",
+   "name": "End customer 'Customer D' (MD&A end-customer table)",
+   "share": 0.33,
+   "period": "Q@2025-08-02",
+   "source_ids": [
+    "ex_10q_20260902"
+   ]
+  },
+  {
+   "id": "ex_cu_ee_q1fy26",
+   "name": "End customer 'Customer E' (MD&A end-customer table)",
+   "share": 0.2,
+   "period": "Q@2025-08-02",
+   "source_ids": [
+    "ex_10q_20260902"
+   ]
+  },
+  {
+   "id": "ex_cu_ed_fy26",
+   "name": "End customer 'Customer D' (MD&A end-customer table)",
+   "share": 0.33,
+   "period": "FY2026",
+   "source_ids": [
+    "ex_10k_20260615"
+   ]
+  },
+  {
+   "id": "ex_cu_eb_fy26",
+   "name": "End customer 'Customer B' (MD&A end-customer table)",
+   "share": 0.32,
+   "period": "FY2026",
+   "source_ids": [
+    "ex_10k_20260615"
+   ]
+  },
+  {
+   "id": "ex_cu_ee_fy26",
+   "name": "End customer 'Customer E' (MD&A end-customer table)",
+   "share": 0.19,
+   "period": "FY2026",
+   "source_ids": [
+    "ex_10k_20260615"
+   ]
+  },
+  {
+   "id": "ex_cu_ed_fy25",
+   "name": "End customer 'Customer D' (MD&A end-customer table)",
+   "share": 0.63,
+   "period": "FY2025",
+   "source_ids": [
+    "ex_10k_20260615"
+   ]
+  },
+  {
+   "id": "ex_cu_a_fy26",
+   "name": "Customer A (contracting party, Note 3)",
+   "share": 0.49,
+   "period": "FY2026",
+   "source_ids": [
+    "ex_10k_20260615"
+   ]
+  },
+  {
+   "id": "ex_cu_b_fy26",
+   "name": "Customer B (contracting party, Note 3)",
+   "share": 0.32,
+   "period": "FY2026",
+   "source_ids": [
+    "ex_10k_20260615"
+   ]
+  },
+  {
+   "id": "ex_cu_a_fy25",
+   "name": "Customer A (contracting party, Note 3)",
+   "share": 0.67,
+   "period": "FY2025",
+   "source_ids": [
+    "ex_10k_20260615"
+   ]
+  },
+  {
+   "id": "rp_cu_A_q1fy27",
+   "name": "Customer A (contracting party, unnamed)",
+   "share": 0.43,
+   "period": "Q1 FY2027",
+   "source_ids": [
+    "ex_10q_20260902"
+   ]
+  },
+  {
+   "id": "rp_cu_B_q1fy27",
+   "name": "Customer B (contracting party, unnamed)",
+   "share": 0.28,
+   "period": "Q1 FY2027",
+   "source_ids": [
+    "ex_10q_20260902"
+   ]
+  },
+  {
+   "id": "rp_cu_A_q1fy26",
+   "name": "Customer A (contracting party, unnamed)",
+   "share": 0.5,
+   "period": "Q1 FY2026",
+   "source_ids": [
+    "ex_10q_20260902"
+   ]
+  },
+  {
+   "id": "rp_cu_B_q1fy26",
+   "name": "Customer B (contracting party, unnamed)",
+   "share": 0.35,
+   "period": "Q1 FY2026",
+   "source_ids": [
+    "ex_10q_20260902"
+   ]
+  },
+  {
+   "id": "rp_cu_endD_q1fy27",
+   "name": "End customer D (unnamed; MD&A end-customer table)",
+   "share": 0.33,
+   "period": "Q1 FY2027",
+   "source_ids": [
+    "ex_10q_20260902"
+   ]
+  },
+  {
+   "id": "rp_cu_endC_q1fy27",
+   "name": "End customer C (unnamed; MD&A end-customer table)",
+   "share": 0.28,
+   "period": "Q1 FY2027",
+   "source_ids": [
+    "ex_10q_20260902"
+   ]
+  },
+  {
+   "id": "rp_cu_endE_q1fy27",
+   "name": "End customer E (unnamed; MD&A end-customer table)",
+   "share": 0.13,
+   "period": "Q1 FY2027",
+   "source_ids": [
+    "ex_10q_20260902"
+   ]
+  },
+  {
+   "id": "rp_cu_endF_q1fy27",
+   "name": "End customer F (unnamed; MD&A end-customer table; new 10% customer this quarter)",
+   "share": 0.1,
+   "period": "Q1 FY2027",
+   "source_ids": [
+    "ex_10q_20260902",
+    "ex_tr_20260901"
+   ]
+  },
+  {
+   "id": "rp_cu_endD_fy26",
+   "name": "End customer D (unnamed; 10-K MD&A end-customer table)",
+   "share": 0.33,
+   "period": "FY2026",
+   "source_ids": [
+    "ex_10k_20260615"
+   ]
+  },
+  {
+   "id": "rp_cu_endB_fy26",
+   "name": "End customer B (unnamed; 10-K MD&A end-customer table)",
+   "share": 0.32,
+   "period": "FY2026",
+   "source_ids": [
+    "ex_10k_20260615"
+   ]
+  },
+  {
+   "id": "rp_cu_endE_fy26",
+   "name": "End customer E (unnamed; 10-K MD&A end-customer table)",
+   "share": 0.19,
+   "period": "FY2026",
+   "source_ids": [
+    "ex_10k_20260615"
+   ]
+  },
+  {
+   "id": "rp_cu_endD_fy25",
+   "name": "End customer D (unnamed; 10-K MD&A end-customer table)",
+   "share": 0.63,
+   "period": "FY2025",
+   "source_ids": [
+    "ex_10k_20260615"
+   ]
+  }
+ ],
+ "competitors": [
+  {
+   "ticker": "AVGO",
+   "name": "Broadcom Inc.",
+   "why": "Named by CRDO's 10-K Item 1 and Item 1A as a principal competitor. Competes for the same hyperscaler, NeoCloud and OEM/ODM customers in Ethernet and PCIe SerDes, optical PAM4 DSPs and retimer / line-card PHY silicon and in scale-up and scale-out AI networking. Its AI semiconductor revenue also includes custom accelerators (XPUs), so it is not a like-for-like revenue for CRDO's lines.",
+   "metrics": {
+    "fiscal_year_end": "Sunday nearest 2025-10-31 (FY2025 ended 2025-11-02)",
+    "fy2025_revenue_usd": 63887000000,
+    "fy2024_revenue_usd": 51574000000,
+    "fy2025_revenue_growth": 0.239,
+    "fy2025_gross_margin_gaap": 0.678,
+    "fy2025_operating_margin_gaap": 0.399,
+    "latest_quarter": "Q3 FY2026, ended 2026-08-02",
+    "q3fy26_revenue_usd": 29591000000,
+    "q3fy25_revenue_usd": 15952000000,
+    "q3fy26_revenue_growth_yoy": 0.855,
+    "q3fy26_gross_margin_gaap": 0.691,
+    "q3fy26_operating_margin_gaap": 0.539,
+    "q3fy26_semiconductor_solutions_revenue_usd": 20839000000,
+    "q3fy25_semiconductor_solutions_revenue_usd": 9166000000,
+    "q3fy26_semiconductor_solutions_growth_yoy": 1.274,
+    "q3fy26_ai_semiconductor_revenue_usd": 16700000000,
+    "q3fy26_ai_semiconductor_growth_yoy": 2.21,
+    "q3fy26_ai_semiconductor_growth_qoq": 0.54,
+    "guidance_q4fy26_ai_semiconductor_revenue_usd": 21700000000,
+    "guidance_q4fy26_total_revenue_usd": 34800000000,
+    "forward_pe_and_growth": "gap: FMP quote denied; no dated attributed source retrieved"
+   },
+   "source_ids": [
+    "ex_10k_20260615",
+    "fd_cf_avgo_20251218",
+    "fd_cf_avgo_20260910",
+    "fd_rel_avgo_20260902"
+   ]
+  },
+  {
+   "ticker": "MRVL",
+   "name": "Marvell Technology, Inc.",
+   "why": "Named by CRDO's 10-K Item 1 and Item 1A as a principal competitor. Competes in optical PAM4 DSPs, Ethernet PHYs and retimers and, per Marvell's own Data Center end market, in data center interconnect and custom silicon for the same hyperscalers. Its data center end market is mostly accelerated-compute silicon and is not a like-for-like revenue for CRDO's lines.",
+   "metrics": {
+    "fiscal_year_end": "Saturday nearest 2026-01-31 (FY2026 ended 2026-01-31)",
+    "fy2026_revenue_usd": 8194600000,
+    "fy2025_revenue_usd": 5767300000,
+    "fy2026_revenue_growth": 0.421,
+    "fy2026_gross_margin_gaap": 0.51,
+    "fy2026_operating_margin_gaap": 0.161,
+    "latest_quarter": "Q2 FY2027, ended 2026-08-01",
+    "q2fy27_revenue_usd": 2739300000,
+    "q2fy26_revenue_usd": 2006100000,
+    "q2fy27_revenue_growth_yoy": 0.365,
+    "q2fy27_gross_margin_gaap": 0.531,
+    "q2fy27_gross_margin_nongaap": 0.589,
+    "q2fy27_operating_margin_gaap": 0.168,
+    "q2fy27_data_center_revenue_usd": 2171500000,
+    "q2fy26_data_center_revenue_usd": 1490500000,
+    "q2fy27_data_center_growth_yoy": 0.457,
+    "q2fy27_data_center_growth_qoq": 0.185,
+    "q2fy27_data_center_share_of_revenue": 0.79,
+    "guidance_q3fy27_revenue_usd": "3150000000 +/- 5%",
+    "forward_pe_and_growth": "gap: FMP quote denied; no dated attributed source retrieved",
+    "investor_day_2026_10_06_fy2031_revenue_target_usd": "70 to 90 billion (management target, reported by Futurum)",
+    "investor_day_fy2028_revenue_outlook_usd": "about 20 billion (raised from 18 billion; reported by Futurum)",
+    "investor_day_scaleup_optics": "virtually zero revenue today, multi-hundred-million-dollar revenue starting next year (management, reported by Futurum)",
+    "revolver_2026_10_22_usd": 3000000000
+   },
+   "source_ids": [
+    "ex_10k_20260615",
+    "fd_cf_mrvl_20260311",
+    "fd_cf_mrvl_20260828",
+    "fd_rel_mrvl_20260827",
+    "fd_ind_futurum_mrvl_20261009",
+    "fd_8k_mrvl_20261023"
+   ]
+  },
+  {
+   "ticker": "ALAB",
+   "name": "Astera Labs, Inc.",
+   "why": "Named by CRDO's 10-K Item 1 and Item 1A as a principal competitor. Competes in PCIe / Ethernet retimers and signal conditioning (Aries, Taurus), smart cable modules and scale-up fabric (Scorpio, UALink, PCIe) at the same AI-server and hyperscaler customers; its release also announces an expansion into optical interconnects. Single reporting segment: total revenue is the nearest like-for-like line for CRDO's IC and chiplet business.",
+   "metrics": {
+    "fiscal_year_end": "2025-12-31 (calendar year)",
+    "fy2025_revenue_usd": 852525000,
+    "fy2024_revenue_usd": 396290000,
+    "fy2025_revenue_growth": 1.151,
+    "fy2025_gross_margin_gaap": 0.757,
+    "fy2025_operating_margin_gaap": 0.203,
+    "latest_quarter": "Q2 2026, ended 2026-06-30",
+    "q2_2026_revenue_usd": 392400000,
+    "q2_2025_revenue_usd": 191925000,
+    "q2_2026_revenue_growth_yoy": 1.045,
+    "q2_2026_revenue_growth_qoq": 0.273,
+    "q2_2026_gross_margin_gaap": 0.733,
+    "q2_2026_operating_margin_gaap": 0.227,
+    "q2_2026_operating_margin_nongaap": 0.391,
+    "guidance_q3_2026_revenue_usd_low": 540000000,
+    "guidance_q3_2026_revenue_usd_high": 560000000,
+    "guidance_q3_2026_gross_margin": 0.72,
+    "forward_pe_and_growth": "gap: FMP quote denied; no dated attributed source retrieved"
+   },
+   "source_ids": [
+    "ex_10k_20260615",
+    "fd_cf_alab_20260220",
+    "fd_cf_alab_20260805",
+    "fd_rel_alab_20260804"
+   ]
+  },
+  {
+   "ticker": "APH",
+   "name": "Amphenol Corporation",
+   "why": "NOT named by CRDO. CRDO's 10-K names only 'various cable and optical transceiver suppliers' without naming them; Amphenol is added here as the largest listed high-speed copper and fibre cable and interconnect maker (its own release lists 'coaxial, high-speed, fiber optic and specialty cable' and an IT datacom end market). That its cable assemblies compete with CRDO's AEC at the same hyperscalers and ODMs is the lane's inference from product category, not a statement by either company; its release gives no AEC or DAC revenue.",
+   "metrics": {
+    "fiscal_year_end": "2025-12-31 (calendar year)",
+    "latest_quarter": "Q2 2026, ended 2026-06-30",
+    "q2_2026_sales_usd": "8.8 billion (release rounded)",
+    "q2_2026_sales_growth_yoy_usd": 0.55,
+    "q2_2026_sales_growth_yoy_organic": 0.3,
+    "q2_2026_orders_usd": "10.7 billion (release rounded)",
+    "q2_2026_book_to_bill": 1.23,
+    "q2_2026_adjusted_operating_margin": 0.298,
+    "q2_2026_adjusted_operating_margin_note": "includes an $80 million net benefit from IEEPA tariff recovery",
+    "guidance_q3_2026_sales_usd": "9.3 to 9.4 billion",
+    "it_datacom_note": "release says only 'exceptional organic growth in the IT datacom market'; no IT datacom dollar figure in the primary document",
+    "growth_acquired_note": "total growth includes the CommScope Connectivity and Cable Solutions acquisition closed in Q1 2026 (organic 30% against 55% reported)"
+   },
+   "source_ids": [
+    "ex_10k_20260615",
+    "fd_rel_aph_20260729"
+   ]
+  },
+  {
+   "ticker": "MXL",
+   "name": "MaxLinear, Inc.",
+   "why": "NOT named in CRDO's 10-K; added because it now competes for CRDO's largest line: on its Q3 2026 call (2026-10-22, relayed by Stocktwits 2026-10-23) its CEO said MaxLinear targets a 20-30% share of the 1.6T active electrical cable (AEC) market over the next couple of years, selling silicon to cable makers rather than complete cables, focused first on one or two large U.S. data centers; its own release names the Rushmore and Annapurna families of 1.6T-capable optical and electrical products and the Keystone PAM4 DSP in volume ramp, which competes with CRDO's optical PAM4 DSPs at the same hyperscalers.",
+   "metrics": {
+    "fiscal_year_end": "2025-12-31 (calendar year)",
+    "latest_quarter": "Q3 2026, ended 2026-09-30",
+    "q3_2026_revenue_usd": 218057000,
+    "q3_2025_revenue_usd": 126459000,
+    "q3_2026_revenue_growth_yoy": 0.72,
+    "q3_2026_revenue_growth_qoq": 0.29,
+    "q3_2026_gross_margin_gaap": 0.587,
+    "q3_2026_gross_margin_nongaap": 0.6,
+    "q3_2026_operating_margin_gaap": 0.139,
+    "q3_2026_operating_margin_nongaap": 0.295,
+    "q3_2026_infrastructure_revenue_usd": 124907000,
+    "q3_2025_infrastructure_revenue_usd": 40343000,
+    "q3_2026_infrastructure_growth_yoy": 2.1,
+    "q3_2026_infrastructure_share_of_revenue": 0.57,
+    "guidance_q4_2026_revenue_usd_low": 240000000,
+    "guidance_q4_2026_revenue_usd_high": 260000000,
+    "aec_revenue": "not disclosed (no AEC revenue yet stated)",
+    "ceo_target_1_6t_aec_share": "20-30% over the next couple of years (CEO on the call, reported by Stocktwits; a target, not a fact)",
+    "forward_pe_and_growth": "gap: FMP quote ACCESS DENIED; no dated attributed source"
+   },
+   "source_ids": [
+    "fd_rel_mxl_20261022",
+    "fd_10q_mxl_20261022",
+    "fd_press_stocktwits_20261023"
+   ]
+  }
+ ],
+ "bottlenecks": [
+  {
+   "id": "fd_bn_copper_reach",
+   "reading": "What CRDO supplies is reliable, low-power electrical connectivity over the shortest AI-rack distances (rack-scale scale-up and scale-out links of centimetres to a few metres), where the company says scale-up networks are 10x denser than scale-out and about 100x denser than front-end networks and are dominated by Ethernet and PCIe PHYs at layer 1. Paid adoption is visible in CRDO's own numbers: FY2026 revenue rose $898.3 million to $1.34 billion with over 99% of the increase from AEC shipments to hyperscalers, and the latest quarter was $479.0 million (+114.7% y/y). Management says 200G-per-lane electrical PAM4 is planned for mass deployment in 2027, so the shortage that matters is a reach / power / reliability gap at 100G and 200G per lane, not a supply gap in wafers. Management statements: read as the company's view.",
+   "evidence_ids": [
+    "ex_10k_20260615",
+    "ex_rel_20260901",
+    "ex_10q_20260902"
+   ]
+  },
+  {
+   "id": "fd_bn_crdo_assembly_capacity",
+   "reading": "CRDO's own constraint is assembly and test capacity at subcontractors, which it is paying to reserve: multiple manufacturing supply capacity reservation agreements (2 to 6 year terms) required refundable upfront deposits of $88.4 million at 2026-08-01 ($62.9 million current, $25.5 million non-current), a further agreement after the quarter commits another $102.4 million within fiscal 2027, and inventory rose $61.5 million in the quarter 'to support unfulfilled backlog and related new product ramps'. Deposits are refundable only through future purchases that meet volume requirements, so they tie CRDO's cash to the demand it expects.",
+   "evidence_ids": [
+    "ex_10q_20260902"
+   ]
+  },
+  {
+   "id": "fd_bn_inp_lasers",
+   "reading": "A separate scarce input sits in the optical alternative: indium phosphide (InP) lasers for 200G-per-lane 1.6T optical modules. TrendForce (search excerpt, 2026-08-06) relays that Lumentum's CEO says the InP supply gap is wider than DRAM or NAND, that Lumentum was undershipping demand by about 30% in February 2026 with EML capacity committed through 2027, and that analysts expect the imbalance to persist beyond 2027; these are second-hand management claims and the page itself was not opened. This constrains optics, not CRDO's copper, and CRDO's own ZF optical transceiver line would draw on the same laser supply (see the next hypothesis).",
+   "evidence_ids": [
+    "fd_ind_trendforce_20260806"
+   ]
+  },
+  {
+   "id": "fd_bn_inp_effect_on_crdo",
+   "reading": "Hypothesis: while InP lasers are short through 2027, copper (AEC) keeps its position for the shortest reaches by default, which supports CRDO's current AEC demand; the same shortage may cap how fast CRDO's ZF optical transceivers and optical DSPs can ship. No CRDO document read in this lane quantifies either effect.",
+   "hypothesis": true
+  },
+  {
+   "id": "fd_bn_capacity_adders",
+   "reading": "Capacity and share are being added by the named competitors in the same AI-network bandwidth pool, and all four guide sharply higher: Broadcom guides AI semiconductor revenue to $21.7 billion in Q4 FY2026 (from $16.7 billion); Marvell raised its outlook, cites strong demand in Connectivity and a Custom acceleration in the second half of FY2027; Astera guides Q3 2026 revenue to $540-560 million and says Scorpio fabric switches become its largest product family one quarter early, with optical interconnect and custom solutions as expansions; Amphenol guides Q3 2026 sales to $9.3-9.4 billion with record orders (book-to-bill 1.23). The shortage is therefore being shared, not held by CRDO alone.",
+   "evidence_ids": [
+    "fd_rel_avgo_20260902",
+    "fd_rel_mrvl_20260827",
+    "fd_rel_alab_20260804",
+    "fd_rel_aph_20260729"
+   ]
+  },
+  {
+   "id": "fd_bn_cpo_scaleup_substitution",
+   "reading": "Hypothesis: the main threat to the copper bottleneck is optics (co-packaged or linear / retimed pluggable) taking the scale-up links as electrical reach shrinks at 224G per lane and above. Search excerpts, not registered because their dates were not seen, give vendor timelines that run from scale-up CPO revenue in 2027 (Coherent) to volume in the second half of 2027 and first customer deployments in 2028 (Lumentum), and analyst views that NVIDIA keeps copper for scale-up into 2027-2028 (SemiAnalysis) and that scale-up CPO may slip past the second half of 2028 (Bernstein, via a secondary site). The timing is unsettled and the reading is unverified until the primary reports are read. Added 2026-10-28: secondary coverage (Tom's Hardware headline, relaying SemiAnalysis; date not seen, not registered) reports NVIDIA's Kyber rack for Rubin Ultra delayed to 2028 by PCB midplane problems, with copper the only near-term option at rack scale; Marvell management at its 2026-10-06 Investor Day said 100% of XPU-to-XPU links run on copper today, copper reach at 200G per lane is 2.5 metres, and scale-up optics are at virtually zero revenue with multi-hundred-million-dollar revenue starting next year (fd_ind_futurum_mrvl_20261009). Both point to copper holding scale-up into 2027-2028 and optics starting to take links from 2027; still unverified at the primary level.",
+   "hypothesis": true
+  },
+  {
+   "id": "fd_bn_aec_units_jefferies",
+   "reading": "An attributed analyst estimate (Jefferies, reported by Invezz 2026-04-13, search excerpt, page not opened) puts the AEC market at 8.6 million units in 2026 and 12.3 million in 2027 and calls CRDO 'the outright technology leader' with pressure from Astera and Marvell. This is a third-party expectation, not a reported fact.",
+   "evidence_ids": [
+    "fd_press_invezz_20260413"
+   ]
+  },
+  {
+   "id": "fd_bn_copper_today_mrvl",
+   "reading": "A named competitor's management confirms the copper position CRDO sells into: at Marvell's 2026-10-06 Investor Day (reported by Futurum 2026-10-09) management said 100% of XPU-to-XPU links run on copper today, that copper reach at 200G per lane is 2.5 metres, and that scale-up optics run at virtually zero revenue today with multi-hundred-million-dollar revenue starting next year. This is a competitor's view relayed by an industry analyst, not a CRDO number; it supports the reach-gap reading and dates the optical challenge to about 2027.",
+   "evidence_ids": [
+    "fd_ind_futurum_mrvl_20261009"
+   ]
+  },
+  {
+   "id": "fd_bn_aec_new_entrant",
+   "reading": "The AEC position is being contested at 1.6T: MaxLinear's CEO (Q3 2026 call of 2026-10-22, reported by Stocktwits 2026-10-23) put CRDO at an estimated 93-99% of the AEC market and set a target of 20-30% of the 1.6T AEC market over the next couple of years, supplying silicon to cable makers; MaxLinear's own release reports infrastructure revenue +210% y/y to $124.9M on its Keystone PAM4 DSP ramp and names its 1.6T-capable Rushmore and Annapurna families. CRDO's own call (2026-09-01) placed 1.6T AEC at some contribution in H2 FY2027 and a meaningful ramp in FY2028, so the entrant aims at the generation CRDO is about to ramp. CRDO fell about 10% intraday on 2026-10-23 on the report. The share figure is a competitor CEO's estimate and the target is an ambition, not a reported outcome.",
+   "evidence_ids": [
+    "fd_press_stocktwits_20261023",
+    "fd_rel_mxl_20261022",
+    "fd_10q_mxl_20261022"
+   ]
+  }
+ ],
+ "notes": [
+  "ex CONSENSUS (expectation, never evidence): the annual and forward-quarter rows from the same Alpha Vantage payload are already in the numbers lane (nm_cons_revenue_fy2027 2,503.1M n19 range 2,470.0-2,583.7M; nm_cons_revenue_fy2028 3,879.6M n19 range 3,590.0-4,413.9M; nm_cons_eps_non_gaap_fy2027 6.31 n20 5.98-6.64; nm_cons_eps_non_gaap_fy2028 9.71 n20 8.69-11.31; Q@2026-10-31 rev 531.9M / EPS 1.28; Q@2027-01-31 rev 643.0M / EPS 1.61). They are NOT duplicated here (the merge concatenates lists; a second copy would double-count). This lane adds the four reported quarters' last consensus snapshot (ex_cons_*) for the beat-versus-consensus record.",
+  "ex DISPERSION: FY2027 revenue range is tight (low/mean 0.987, high/mean 1.032, n=19); FY2028 is wider (0.925 / 1.138); FY2028 non-GAAP EPS 0.895 / 1.164. Implied consensus growth: FY2027 2,503.1M / FY2026 1,335.1M = +87.5%; FY2028 / FY2027 = +55.0%.",
+  "ex REVISIONS (AV, as of 2026-10-26): FY2027 non-GAAP EPS mean 6.1262 (90 days ago) -> 6.1512 (60d) -> 6.3063 (30d) -> 6.3093 now, +3.0% over 90 days; 15 up / 3 down revisions in 30 days. FY2028 9.0759 -> 9.1203 -> 9.6906 -> 9.7121, +7.0% over 90 days; 16 up / 1 down in 30 days. Q@2026-10-31 EPS 1.2496 -> 1.2835 (+2.7%); 12 up / 3 down. Q@2027-01-31 EPS 1.6309 (90d) -> 1.6067 now (-1.5%; 8 up / 8 down in 30 days). Revision history for revenue is not in the payload.",
+  "ex BEAT VS CONSENSUS (reported revenue / last AV consensus mean, quarters as fiscal quarter ends; the AV snapshot for a past quarter may not be the pre-report freeze): Q@2025-11-01 268.0M / 235.0M = 1.141; Q@2026-01-31 407.0M / 387.6M = 1.050; Q@2026-05-02 437.0M / 433.3M = 1.009; Q@2026-08-01 479.0M / 471.7M = 1.015. Non-GAAP EPS Q@2026-08-01 1.20 reported (release) vs 1.1686 consensus = 1.027. The beat margin has narrowed from ~14% to ~1-2% over four quarters. Earnings Whispers (search snippet only, page undated, not registered as a source) put Q1 FY2027 consensus at EPS 1.09 / revenue 470.73M: providers differ.",
+  "ex CONSENSUS vs COMPANY: Q2 FY2027 consensus revenue 531.9M (n17, 529.8-551.0M) sits at the guided 525-535M midpoint +0.4%, i.e. analysts expect at most a small beat; the 10-26 ratio of quarterly beats (1.009-1.015 on the last two) is consistent with that. FY2027 consensus 2,503.1M = +87.5%, just above management's 'more than 85%' floor (transcript) = >2,470.0M.",
+  "ex MANAGEMENT FY2027 OUTLOOK (call 2026-09-01, third-party transcript copy ex_tr_20260901; not in the 8-K release, so not entered as a guidance range because no high end was given): revenue growth 'more than 85%' for FY2027 (floor ~2,470M on FY2026 1,335.1M); optical revenue 'more than $600 million' in FY2027; non-GAAP opex up ~55% y/y; non-GAAP gross margin broadly consistent with FY2026; non-GAAP net margin 'in the vicinity of 50%'; 3-4 customers above 10% of revenue in coming quarters. AECs remain the largest business; optical DSP and retimers at record revenue in Q1. The transcript copy has auto-transcription errors; confirm against the issuer replay before using as a guidance-tier driver.",
+  "ex CUSTOMER LETTERS: Note 3 reports contracting parties (contract manufacturers that place orders); the MD&A table reports end customers. Letters are not consistent between the two tables or across filings (e.g. FY2026 end customer B 32% vs Q1 FY2027 end customer C 28%), so a letter cannot be tracked as one company across periods with certainty. End-customer concentration: largest 33% (Q1 FY2027) vs 63% (FY2025): diversification is real; four end customers = 84% of Q1 FY2027 revenue.",
+  "ex GEOGRAPHY (ship-to, not end customer HQ): US share 53.3% of Q1 FY2027 (255.4M of 479.0M) vs 37.1% in Q1 FY2026; Mainland China fell from 51.8M (23.2%) to 1.1M (0.2%); Malaysia rose from 6.4M to 74.5M. FY2026: US 57.5%, Hong Kong 28.3%, Mainland China 6.1%, Taiwan 1.7%, RoW 6.4%.",
+  "ex BACKLOG: no order backlog figure is disclosed; RPO (contracted, unsatisfied) fell from 31.9M (FY2026 year end) to 4.2M (2026-08-01) and is mostly IP/NRE-type, not a measure of product demand. Product sales are on purchase orders, cancellable within limited notice (10-K).",
+  "ex CITABILITY at as_of 2026-10-28: all sources here are citable (latest dated 2026-10-26 consensus = as_of - 2). Next results: Q2 FY2027 (quarter ends 2026-10-31), expected early December 2026 - after as_of.",
+  "fd REUSE 2026-10-28: this fragment starts from runs/tickers/CRDO_2026-10-26/gather/field.json (raw payloads copied to gather/raw_field/); the AVGO, MRVL, ALAB, APH figures are unchanged because none of them filed new results between 2026-10-26 and 2026-10-28 (SEC submissions re-fetched 2026-10-28, saved as <T>_submissions_20261028.json). Source ids pf_rel_20260901_1 and pf_cf_20260902 of the earlier run were replaced with this run's nm_rel_20260901 (Q1 FY2027 release) and pf_10q_20260902 (10-Q). NEW: MaxLinear added as a competitor (Q3 2026 release and 10-Q of 2026-10-22, CEO's 1.6T AEC share target), Marvell Investor Day readings (Futurum 2026-10-09) and Marvell's 8-K of 2026-10-23 (a $3B revolver, no operating news).",
+  "fd NAMED COMPETITORS (10-K Item 1, filed 2026-06-15, source pf_10k_20260615): 'Our principal competitors with respect to our products include Broadcom Ltd. (Broadcom), Marvell Technology, Inc. (Marvell) and Astera Labs, Inc. (Astera), as well as various cable and optical transceiver suppliers.' The company states it believes it is the only company offering a complete suite of high-performance connectivity solutions and that competitors compete on some but not all of its solutions. The same sentence appears in Item 1A. Cable and optical-transceiver suppliers are not named; Amphenol (APH) is the lane's own addition, labelled as such in competitors[].why.",
+  "fd SHARE growth, latest quarter against the same quarter a year earlier, each from its own release or filing and not like-for-like segments: CRDO +114.7% ($479.0M against $223.1M, quarter to 2026-08-01, nm_rel_20260901); Astera +104.5% ($392.4M against $191.9M, quarter to 2026-06-30, fd_rel_alab_20260804, fd_cf_alab_20260805); Marvell data center +45.7% ($2,171.5M against $1,490.5M, quarter to 2026-08-01, fd_rel_mrvl_20260827); Broadcom AI semiconductors +221% ($16.7B, quarter to 2026-08-02, fd_rel_avgo_20260902) and semiconductor solutions +127% ($20,839M against $9,166M). CRDO and Astera are growing at the same rate on a single-segment, like-for-like basis; the scale of Broadcom and Marvell is in custom compute and is not the same line.",
+  "fd SHARE sequential growth, latest quarter against the previous quarter: CRDO +9.6% ($479.0M against $437.0M, pf_10q_20260902); Astera +27.3% ($392.4M against $308.4M, fd_cf_alab_20260805); Marvell data center +18.5% ($2,171.5M against $1,832.7M, fd_rel_mrvl_20260827); Broadcom AI semiconductors +54% (fd_rel_avgo_20260902). CRDO is the slowest of the four on this measure. HYPOTHESIS (share or customer-timing; not tested): customer concentration may explain it (the 10-Q reports two end customers at 43% and 28% of the quarter's revenue, to be confirmed by gather_documents).",
+  "fd SHARE guided next quarter against the latest quarter, from each issuer's own guidance: CRDO Q2 FY2027 $525-535M, midpoint $530M, +10.6% sequentially (nm_rel_20260901); Astera Q3 2026 $540-560M, midpoint $550M, +40.2% (fd_rel_alab_20260804); Marvell Q3 FY2027 $3.150B +/-5%, +15.0% on total revenue (fd_rel_mrvl_20260827); Broadcom Q4 FY2026 AI semiconductors $21.7B, +29.9%, total $34.8B, +17.6% (fd_rel_avgo_20260902). On these guided numbers Astera's next quarter ($550M) is above CRDO's next quarter ($530M) although the quarter-ends differ by about one month (Astera 2026-09-30, CRDO about 2026-10-31); in the quarter before, CRDO was 1.22x Astera ($479.0M against $392.4M) and a year earlier 1.16x. HYPOTHESIS: on guided growth the nearest like-for-like competitor is gaining on CRDO in the near term; guidance is conservative for both and the pattern has not been tested against their track records here.",
+  "fd SHARE profitability and gross margin, GAAP, latest quarter: CRDO gross margin 64.5% and operating margin 25.2% (pf_10q_20260902: gross profit $309.1M, operating income $120.7M on $479.0M); Astera 73.3% and 22.7%; Marvell 53.1% and 16.8%; Broadcom 69.1% and 53.9%. CRDO's gross margin sits between the silicon-only peers (Astera, Broadcom) and Marvell, consistent with a product mix that includes cable assembly; this is a reading from the margins, not a statement in the filings. Amphenol's adjusted operating margin is 29.8% (including an $80M tariff recovery).",
+  "fd SHARE attributed AEC share: Jefferies (reported by Invezz 2026-04-13, search excerpt, fd_press_invezz_20260413) expects CRDO to hold a 70% share of the AEC market by 2027 in a bull case. Other search hits repeat a share of about 80-88% attributed to JPMorgan in newsletter-style pieces that appear to share one origin; they are not registered as sources, are not independent evidence and are weaker than the Jefferies excerpt. No Dell'Oro or LightCounting figure was found. No competitor discloses AEC, retimer or smart-cable revenue separately, so AEC share on reported numbers cannot be computed: the share trajectory above is by total or end-market growth only.",
+  "fd COMPETING PRODUCT LINES (own releases): Astera's release names Aries (retimer, record quarter), Taurus (signal conditioning, new 3.2T smart retimers / redrivers for 224G Ethernet and UALink), Scorpio (fabric switch, becoming the largest family in Q3) and Leo (CXL); it says new design wins, an expansion into optical interconnects and custom solutions widen its opportunity in 2027 and beyond. Marvell's release states Data Center growth accelerating to 46% with strong Connectivity demand and an acceleration in Custom from the second half of FY2027; Marvell held an Investor Day on 2026-10-06 that this lane did not read. Marvell AEC / retimer ambitions (Zacks excerpt: AEC and retimer revenue in aggregate to more than double next year) are an undated secondary excerpt, not registered.",
+  "fd CRDO ROADMAP, unverified, for gather_documents to confirm from the transcript: a search excerpt (Zacks and Nasdaq pages, dates not seen) quotes management saying active LED cables (ALCs) reaching up to 30 metres will sample to lead customers in fiscal 2027 with initial revenue ramping in fiscal 2028, and that OmniConnect gearboxes ramp from 2028; and a Blue Heron 224G retimer for scale-up, with a scale-up market estimate of more than $40 billion by 2030 attributed to an analyst. None of this was read in a primary document by this lane.",
+  "fd SOURCES not usable: FMP quote and analyst endpoints are ACCESS DENIED on this plan (one probe, not retried), so no competitor forward P/E or price multiple was retrieved. An undated Zacks excerpt quotes forward P/Es of about 27.9x (Broadcom), 49.3x (Astera) and 22.2x (Marvell); it is not registered and not used as a driver. WebFetch of the Invezz and Nasdaq pages returned HTTP 403 and 503. Alpha Vantage was not called (the numbers and documents lanes' quota).",
+  "fd SHARE new entrant: MaxLinear infrastructure revenue $124.9M in the quarter to 2026-09-30 against $40.3M a year earlier (+210%), driven by its optical PAM4 DSP ramp (fd_rel_mxl_20261022, fd_10q_mxl_20261022); total revenue $218.1M (+72% y/y, +29% q/q), Q4 guide $240-260M. CRDO's latest quarter was $479.0M (+114.7% y/y, +9.6% q/q). MaxLinear has no disclosed AEC revenue; its CEO's 20-30% 1.6T AEC target and his 93-99% estimate of CRDO's current AEC share are statements reported by Stocktwits (fd_press_stocktwits_20261023), not reported facts. HYPOTHESIS: a silicon-only entrant selling to cable makers could compress CRDO's AEC pricing at 1.6T even before it takes material share.",
+  "fd UNREAD / NOT YET AVAILABLE: Astera Labs Q3 2026 results are scheduled for 2026-11-03 (company announcement of 2026-10-06, seen through a search excerpt), after as_of; Amphenol's Q3 2026 results were not found in its SEC submissions up to 2026-10-28 (only 8-Ks of 2026-09-04 and 2026-10-06); Marvell's Investor Day presentation itself (only the Futurum report was read); MaxLinear's call transcript (only the Stocktwits report). Broadcom's 8-K of 2026-10-27 (Item 2.03: residual value backstop of up to about $43 billion on AI racks leased to a customer) is dated within 2 days of as_of: not citable until 2026-10-29; it bears on Broadcom's balance sheet, not on CRDO's lines, and is not registered.",
+  "nm RERUN 2026-10-28: this attempt re-fetched SEC companyfacts (sha256 identical to 2026-10-26), the 10-K and the 10-Q verbatim, IB snapshot and monthly history, and FRED DGS10; no 10-K/10-Q/8-K since 2026-10-16 (identity.json), so every statement figure, reconciliation, guidance-track row and the ROIC check of the 2026-10-26 run still hold and were re-verified against the newly saved filing text (all 15 reconciliation figures found verbatim). What changed: price 149.05 (2026-10-26 intraday) -> 167.43 (close 2026-10-27, +12.3%); 10-year yield 4.96% (2026-10-22) -> 5.00% (2026-10-26); consensus rows unchanged (reused payload) but now citable (dated 2026-10-26, citable from 2026-10-28 = as_of).",
+  "nm AV STATUS 2026-10-28: INCOME_STATEMENT answered RATE LIMIT on the first call (the shared 25/day quota already spent before this lane started; saved raw/av__income__ratelimit.json); not retried, and BALANCE_SHEET, CASH_FLOW, EARNINGS_ESTIMATES and TREASURY_YIELD (also rate-limited, saved gather/raw_numbers/av__treasury-yield__ratelimit.json) were not called again. Fallback: the av__*.json payloads of run CRDO_2026-10-26 (retrieved 2026-10-26, trimmed copies, provenance in raw/MANIFEST.json) as the second source and consensus; FRED DGS10 for the risk-free. FMP statements/analyst not called (ACCESS DENIED on this plan).",
+  "nm PRICE IB (read-only): last 167.43 flagged is_close = the close of 2026-10-27 (the October monthly bar closes at the same 167.43); snapshot taken pre-market 2026-10-28 ~07:34 UTC with bid 171.29 / ask 172.00 (pre-market indication, not a trade; prior_close and change fields came back empty). 52-week range 86.49-308.67, 13-week 142.89-286.24: 45.8% below the 52-week high, 17% above the 13-week low. Market cap on cover shares 187,951,918 (2026-08-25) = 31.47B; on Q1 diluted weighted shares 194.38M = 32.55B. Net cash 764.3M (cash 466.9M + short-term investments 297.4M, no financial debt), so EV about 30.7B = 19.3x trailing-twelve-month revenue 1,591.0M (derived: sum of the last four quarters) and about 61x trailing GAAP operating income 505.0M.",
+  "nm OWN MULTIPLE HISTORY low 51.6 median 108.3 high 424.3 now 59.0 years 2025-06 to 2026-10 sources nm_ib_history, nm_ib_price, nm_rel_20250602, nm_rel_20250903, nm_rel_20260302, nm_rel_20260601, nm_rel_20260901, pf_history_companyfacts (SEC companyfacts, re-fetched 2026-10-28, identical sha256). Trailing P/E on GAAP diluted EPS after share-based compensation, 17 month-end closes, each against the trailing-twelve-month EPS known at that date (0.29 until 2025-08; 0.69 after Q1 FY2026; 1.16 after Q2; 1.82 after Q3; 2.51 FY2026; 2.84 after Q1 FY2027). GAAP EPS was negative until Q3 FY2025, so the window is short and its high (424) and the 2025 values are a tiny-earnings effect: the median is not a norm. Low 51.6 = 2026-03 close 93.87 (the 52-week low). Now 59.0 = 167.43 / 2.84.",
+  "nm OWN MULTIPLE HISTORY (price to sales, 2026-10-26 run, unchanged except now) low 6.7 (2023-04) median 23.4 high 57.7 (2025-10) now 20.5 on diluted weighted shares (19.8 on cover shares) years 2022-06 to 2026-10 sources nm_ib_history, pf_history_companyfacts (SEC companyfacts, re-fetched 2026-10-28, identical sha256). Forward P/E history is not available point-in-time (no dated forward EPS series). Today's forward multiples on attributed non-GAAP consensus (nm_av_estimates): 26.5x FY2027 (6.31) and 17.2x FY2028 (9.71) at 167.43; non-GAAP excludes share-based compensation of 88.0M in Q1 FY2027 alone (18% of revenue), so GAAP trailing 59x and non-GAAP forward 26.5x are not comparable. Peak-earnings warning: Q4 FY2026 GAAP EPS 0.88 fell to 0.67 in Q1 FY2027 on acquisition amortization and share-based compensation; four times the latest quarter is not a run rate.",
+  "nm MARKET risk_free 10-year Treasury 5.00% on 2026-10-26 (FRED DGS10, nm_fred_dgs10; the latest published observation at retrieval; 2026-10-27 not yet posted). No equity-risk-premium source in this lane (gather_macro / the engine's saved ERP).",
+  "nm GEOGRAPHY revenue by ship-to destination (10-K Note 15: 'based on destination of shipment ... may differ from the end customer's principal offices'): FY2026 United States 768.1M (57.5%), Hong Kong 378.2M (28.3%), mainland China 80.9M (6.1%), Taiwan 22.7M (1.7%), rest of world 85.2M (6.4%) of 1,335.1M; FY2025 US 65.1M (14.9%), Hong Kong 243.7M (55.8%), mainland China 80.1M (18.3%) of 436.8M. Q1 FY2027 (10-Q): United States 255.4M (53.3%), Hong Kong 91.2M (19.0%), Malaysia 74.5M (15.5%), mainland China 1.1M (0.2%), rest of world 56.8M (11.9%) of 479.0M; Q1 FY2026 mainland China was 51.8M (23.2%) of 223.1M. Ship-to is where contract manufacturers build, not where the hyperscaler sits. Long-lived assets (property and equipment, net, 2026-05-02): Taiwan 68.1M (67%), United States 14.7M, Hong Kong 0.7M, rest of world 18.2M of 101.6M.",
+  "nm EXPOSURES (evidenced, share exposed): (1) Taiwan supply: 100% of wafers from TSMC in FY2026 (10-K Item 1 'exclusively used TSMC'); assembly/test contractors principally in Taiwan; 67% of PP&E in Taiwan; the 10-K names PRC-Taiwan tension as a risk to 'a substantial amount of our revenue'. (2) China/Hong Kong: ship-to mainland China fell to 0.2% of Q1 FY2027 revenue (6.1% FY2026, 18.3% FY2025) and Hong Kong is 19.0% (Q1 FY2027) / 28.3% (FY2026); R&D and staff in mainland China and Hong Kong; PRC blocking rules (MOFCOM Order No. 1, State Council Order No. 835 of April 2026) could conflict with US export controls (10-K risk factors). (3) Export controls: the 10-K states the company sells into Asian markets where customers face US export restrictions and that it 'ha[s] in the past and may again in the future determine that certain exports may have been made in violation of Trade Controls laws' (remediation described, no amount stated): a compliance flag for the counter-thesis. (4) Tariffs: risk factor on US tariffs on semiconductor products and PRC trade tensions, no quantified cost. (5) Customer concentration (10-K Note 3 / 10-Q Note 3): Customer A 49% and Customer B 32% of FY2026 revenue (top 10 ~90%); Q1 FY2027 A 43%, B 28%; receivables A 57%, B 28% on 2026-08-01. Customers are unnamed (gather_documents owns names). (6) Tax: effective tax about 0.7% in FY2026 (Cayman parent); OECD Pillar Two named as a risk.",
+  "nm DILUTION FLAGS (for capital_bridge): 10-K Note 16: DustPhotonics contingent consideration of up to about 2.8 million shares and 31.6M cash on financial milestones; CEO Special PSUs granted 2026-05-28 in six tranches vesting on revenue and stock-price hurdles through 2026-06-30 to 2031 (share count in the proxy, gather_documents). Diluted weighted shares rose from 184.6M (Q1 FY2026) to 194.4M (Q1 FY2027), +5.3% in a year.",
+  "nm IDENTITY CRDO = Credo Technology Group Holding Ltd (CIK 1807794), Cayman Islands issuer filing 10-K/10-Q as a US domestic filer; single class of ordinary shares, par $0.00005, registered on The Nasdaq Stock Market (10-K cover, read); no ADR, no dual class, no dual listing. IB search_contracts: NASDAQ STK conid 541265127, USD, saved raw/ib__search-contracts-CRDO__current.json. Same-named IB rows are NOT this security: CRDON (Mexican line of the same company), CRDOF (CERRADO GOLD, a different issuer), CRDU and CRD (leveraged single-stock ETFs). Reporting and quote currency USD. Fiscal year: 52/53 weeks ending the Saturday closest to April 30; FY2026 ended 2026-05-02 (10-K cover), Q1 FY2027 ended 2026-08-01; vendors label them 2026-04-30 and 2026-07-31. Shares outstanding 187,951,918 on 2026-08-25 (10-Q cover). identity.json (security, exchange, quote_currency, ib_contract_id) and company.json (quote_currency, exchange, sector, industry) written; stop=false.",
+  "nm RECONCILIATION FY2026 (year ended 2026-05-02) to the 10-K statements (gather/raw_numbers/text/sec__annual_report.txt): revenue 1,335,116K, operating income 445,005K, net income 472,279K, operating cash flow 464,292K, capex (purchases of property and equipment) 57,296K, share-based compensation 182,638K, diluted shares 188,232K and diluted EPS 2.51 all equal the SEC companyfacts (pf_history_companyfacts (SEC companyfacts, re-fetched 2026-10-28, identical sha256)) and Alpha Vantage to the thousand. Free cash flow CFO minus capex = 407.0M derived (30.5% of revenue); the 10-K also shows 16.1M of purchases of property and equipment still unpaid (8.9M a year earlier), so accrual-basis capex is higher than the cash figure.",
+  "nm RECONCILIATION Q1 FY2027 (quarter ended 2026-08-01) to the 10-Q and the 2026-09-01 release: revenue 479,003K, operating income 120,700K, net income 129,425K, operating cash flow 90,231K, capex 7,282K, share-based compensation 87,979K, diluted shares 194,378K and diluted EPS 0.67 all equal the SEC companyfacts and Alpha Vantage. Free cash flow of the quarter 82.9M derived (17.3% of revenue; inventory build 61.5M per AV changeInInventory). Balance sheet: cash 466,869K plus short-term investments 297,389K = 764.3M (release headline 764.3M); no financial debt (only operating-lease liabilities of 20.7M non-current), no restricted cash disclosed, short-term investments are certificates of deposit and cash equivalents are money-market funds and CDs (10-Q fair-value table).",
+  "nm RECONCILIATION DIFFERENCES found: (1) FY2025 was recast in the FY2026 10-K: R&D 146,867K vs 145,994K in Alpha Vantage (the original FY2025 figure), so FY2025 operating income is 37,124K (10-K FY2026 and SEC companyfacts) vs 37,997K in AV; pre-tax income 54,870K and net income 52,183K are identical, so 873K moved from other income to R&D (other income 17,746K recast). The same 873K sits in Q4 FY2025 (pf_ 33,788K vs AV 34,661K). Use the recast figures. (2) AV dates fiscal quarters at month-ends (2026-07-31) while the 52/53-week quarter ended 2026-08-01: a label difference only. (3) AV 'commonStockSharesOutstanding' is the diluted weighted-average share count (188,232K FY2026, 194,378K Q1 FY2027), not a point-in-time count; the point-in-time count is the 10-Q cover 187,951,918 (2026-08-25). (4) AV 'shortLongTermDebtTotal' of the latest quarter (20,737K) is the non-current operating-lease liability, not borrowings. No other difference.",
+  "nm ROIC CHECK prefetch/forensic.json roic is 'unavailable' (it needs operating income, equity, debt and cash per year), so it was computed here from the filing figures (derived, not engine output). Invested capital = equity - cash - short-term investments (no financial debt; operating leases of 25.4M FY2026 / 26.2M Q1 FY2027 not added; adding them lowers ROIC by about 1-2 points). FY2026: invested capital 620.3M (equity 2,063.6M less cash and short-term investments 1,443.3M); NOPAT at a notional 21% tax = 445.0M x 0.79 = 351.6M, ROIC 56.7%; at the reported effective rate of 0.7% (tax 3.2M on 475.4M pre-tax) NOPAT 442.1M and ROIC 71.3%; if short-term investments are treated as operating (equity + leases - cash only, the Alpha Vantage balance-sheet view) invested capital is 924.1M and ROIC 38-48%. Incremental ROIC FY2025 to FY2026 (notional 21% tax): change in NOPAT 322.2M on change in invested capital 370.1M = 87%. After the DustPhotonics deal (Q1 FY2027): invested capital 1,964.2M (equity 2,728.5M less cash and short-term investments 764.3M); trailing-twelve-month operating income 505.0M (FY2026 445.0M - Q1 FY2026 60.7M + Q1 FY2027 120.7M), NOPAT at 21% 398.9M, ROIC 20.3% (25.5% at the effective rate; 38.8% on the average of FY2026 and Q1 FY2027 capital in the second case). Excluding goodwill (986.4M) and acquired intangibles (378.8M) invested capital is 599.0M and ROIC 66.6%. Reading: the high ROIC before the deal came from a business that needed little capital and a big cash pile that is excluded; the acquisition moved 1.25B into goodwill, intangibles and contingent consideration, so the return on the capital now deployed is far lower until DustPhotonics earns; the tax rate of about 0% flatters GAAP net income and the 21% case is the conservative one.",
+  "nm CONSENSUS Alpha Vantage EARNINGS_ESTIMATES, 2026-10-26 (an expectation, never evidence of a fact; brokers not named). Revenue: FY2027 (year to 2027-04) mean 2,503.1M, low 2,470.0M, high 2,583.7M, 19 analysts = +87.5% on FY2026's 1,335.1M; FY2028 mean 3,879.6M, low 3,590.0M, high 4,413.9M, 19 analysts = +55.0%. Next quarters: Q2 FY2027 (ends 2026-10-31) revenue 531.9M (529.8-551.0M, 17) against the company's own guide of 525-535M; Q3 FY2027 642.99M (626.5-698.0M, 16). Estimates are non-GAAP EPS (inferred: Q1 FY2027 consensus 1.1686 vs reported non-GAAP 1.20 / GAAP 0.67, and Q4 FY2026 1.0341 vs non-GAAP 1.16 / GAAP 0.88; AV does not label the basis): FY2027 6.3093 (5.98-6.6354, 20), FY2028 9.7121 (8.69-11.309, 20), Q2 FY2027 1.2835 (1.22-1.32, 18), Q3 FY2027 1.6067 (1.45-1.80, 17). No operating-income estimate was returned (gap).",
+  "nm CONSENSUS REVISIONS FY2027 EPS mean 6.1262 (90 days ago) -> 6.1512 (60) -> 6.3063 (30 and 7 days ago) -> 6.3093 now (+3.0% over 90 days; last 30 days 15 revisions up, 3 down); FY2028 EPS 9.0759 -> 9.1203 -> 9.6906 -> 9.7121 (+7.0%; 16 up, 1 down); Q2 FY2027 EPS 1.2496 -> 1.2552 -> 1.2829 -> 1.2835 (12 up, 3 down); Q3 FY2027 EPS slipped 1.6309 -> 1.6397 -> 1.6049 -> 1.6067 (8 up, 8 down in 30 days). Estimates were rising into the results and have flattened since; the share price fell about 24% in October while estimates held, so the market is discounting something the consensus is not (a flag for the field and counter-thesis lanes, not a finding).",
+  "nm CONSENSUS PATH CHECK Q1 FY2027 actual 479.0M + consensus Q2 531.9M + Q3 643.0M = 1,653.9M, so the FY2027 mean of 2,503.1M implies Q4 FY2027 of about 849M (+32% sequential after +11% and +21%); even the lowest FY2027 estimate (2,470M) needs Q4 of about 816M. The quarterly means come from fewer analysts (16-17) than the annual ones (19), so this is a consistency question for analyst_path, not an error in the data; the forecast must not copy FY2027 consensus without company evidence of the ramp (new products, DustPhotonics revenue, ZeroFlap optics, ALC, OmniConnect per the releases, read by gather_documents).",
+  "nm CONSENSUS TRACK against the company's own guide: the consensus revenue for the quarter was 471.7M (Q1 FY2027, 15 analysts) vs actual 479.0M (+1.5%), 433.3M (Q4 FY2026) vs 437.0M (+0.9%), 387.6M (Q3 FY2026) vs 407.0M (+5.0%); the quarterly mean followed the company's guide closely and the beats of the last two quarters are thin.",
+  "nm TRACK RECORD revenue, guided midpoint vs delivered, 7 guided quarters Q3 FY2025 to Q1 FY2027: Q3 FY25 120.0M -> 135.0M (1.125), Q4 FY25 160.0M -> 170.0M (1.063), Q1 FY26 190.0M -> 223.1M (1.174), Q2 FY26 235.0M -> 268.0M (1.141), Q3 FY26 340.0M (the 335-345M range recalled in the 2026-02-09 pre-announcement) -> 407.0M (1.197), Q4 FY26 430.0M -> 437.0M (1.016), Q1 FY27 470.0M -> 479.0M (1.019): ratio mean 1.105 over 7 periods, 7 beats, 0 misses (ticker-check prints the engine's figure). Credo guides conservatively and has beaten every guide, but the beat shrank from 6-20% (the first five quarters) to 1.6% and 1.9% in the last two, as the base grew past 400M and the guide moved close to the run rate; the 7.4% sequential growth in Q4 FY26 and 9.6% in Q1 FY27 followed a 2026-02-09 statement of mid-single-digit sequential growth. Caveats: the Dec 2025 release that guided Q3 FY26 and reported Q2 FY26 is not among the saved releases (Q2 FY26 actual from companyfacts pf_cf_20251202; Q3 FY26 guide from the pre-announcement text); the Q1 FY2027 revenue may include DustPhotonics (closed 2026-05-28) revenue, which the 10-Q calls not material and does not state (gap for gather_documents). The current outstanding guide, Q2 FY27 revenue 525-535M, belongs to gather_documents.",
+  "nm ACQUISITION FLAG (for the capital bridge and the counter-thesis; details belong to gather_documents) 10-Q note 5: DustPhotonics (silicon-photonics PIC maker) acquired 2026-05-28 for total purchase consideration 1,251.1M = cash 769.6M + ordinary shares issued 169.1M + replacement awards 2.5M + contingent consideration 310.0M (liability 10.0M, equity-classified 300.0M, an earn-out payable in cash and shares: possible further dilution); goodwill 895.8M and intangibles 361.7M, preliminary purchase allocation; Comira (2026-02-25, 35.1M cash) and Hyperlume (2025-09-29, 92.0M cash) before it. Cash plus short-term investments fell from 1,443.3M (FY2026) to 764.3M. Q1 FY2027 GAAP vs non-GAAP: GAAP net income 129.4M vs non-GAAP 236.3M (share-based compensation 88.0M, acquisition and integration costs 10.4M, amortization 11.6M); gross margin 64.5% GAAP / 68.0% non-GAAP against 68.2% / 68.3% a quarter earlier. Non-cancelable purchase obligations 222.2M.",
+  "nm CITABILITY as_of 2026-10-28: every filing and release cited here is far older than two days; the market feeds (nm_ib_price 2026-10-27, nm_ib_history, nm_fred_dgs10 2026-10-26) are citable on their dates; the consensus source nm_av_estimates is dated 2026-10-26 (its retrieval date, never redated) and is citable from 2026-10-28 = as_of. Next results (Q2 FY2027, quarter ending ~2026-10-31) expected early December 2026, after as_of.",
+  "nm SOURCES the identity stage's five sources (id_sec_submissions_20261028, pf_10k_20260615, pf_10q_20260902, id_ib_contracts_20261028, pf_history_companyfacts) are registered in this fragment so identity.json evidence_ids resolve; this lane cites the 10-K, 10-Q and companyfacts under those ids. market.risk_free is written here because the saved Workflow assigns it to the numbers lane (no prefetch in this run); if gather_macro also writes one, the later/fresher dated value should stand.",
+  "rp REUSE: primary documents (10-K, 10-Q of 2026-09-02, releases 2024-12-02 to 2026-09-01, April 2026 DustPhotonics 8-K) copied verbatim from runs/tickers/CRDO_2026-10-26 (downloaded from SEC on 2026-10-26) to gather/raw_reports/; SEC submissions in this run show no new 10-K/10-Q/8-K 2.02 after 2026-09-02 (only Forms 4/144 and the 8-K 5.07 of 2026-10-16), so no document changed.",
+  "rp CALL 2026-09-01 (NEW vs the 2026-10-26 run, which could not reach it): the Q1 FY2027 call transcript was found (TradingKey copy) and saved verbatim (gather/raw_reports/tradingkey_262145054.html and .txt). CFO Dan Fleming: 'we continue to expect an inflection in the second half driven by more than $600 million in optical revenue with ZeroFlap optics, silicon photonics PICs and optical DSPs, each contributing more than $100 million, resulting in more than 85% year-over-year total revenue growth for the full year. We expect non-GAAP gross margin in fiscal year '27 to be broadly consistent with fiscal year '26 levels. We expect non-GAAP operating expenses to increase approximately 55% year-over-year ... we expect our non-GAAP net margin to be in the vicinity of 50%.' Q2: revenue $525-535M, non-GAAP GM 67-69%, non-GAAP opex $100-105M, diluted shares ~200M, 'based on the current tariff regime, which remains fluid'.",
+  "rp GUIDANCE FY2027 is a FLOOR: rp_g_rev_fy27_floor = 1.85 x FY2026 revenue 1,335,116,000 = 2,469,964,600 (derived from the 'more than 85%' statement; low = high = the floor because the schema needs both; it is NOT a midpoint and the company gave no upper bound). Revision history: the 2026-10-26 run recorded 'more than 80%' growth and opex growth 'approximately 50%' from the 2026-06-01 call (an Alpha Vantage provider copy not saved, so not registered here); on 2026-09-01 the floor rose to >85% and opex growth to ~55%; optical floor >$500M (2026-04-13 release, saved) -> >$600M (June call, reiterated 2026-09-01). The FY2026 equivalent: 2026-02-09 release said 'more than 200% year-over-year growth' for FY2026; actual +205.7% (rp_rev_fy26 / rp_rev_fy25).",
+  "rp GUIDANCE arithmetic (derived): H1 FY2027 = Q1 actual 479.0M + Q2 guide midpoint 530M = ~1,009M; the >85% floor implies H2 >= ~1,461M (about 730M a quarter, +38% on the Q2 midpoint). An analyst on the call computed 'about $500 million of incremental growth in the second half'. Q2 midpoint 530M = +10.6% q/q, +97.7% y/y on Q2 FY2026 268.0M.",
+  "rp TRACK RECORD (revenue, actual / guided midpoint): Q3 FY25 1.125, Q4 FY25 1.063, Q1 FY26 1.174, Q2 FY26 1.140, Q3 FY26 1.197 (pre-announced on 2026-02-09 at 404-408M, above the 335-345M guide), Q4 FY26 1.016, Q1 FY27 1.019. Seven of seven beats, always above the high end, but the beat narrowed from 6-20% to about 2% over the last two quarters. Non-GAAP gross margin beat the midpoint by 2.6-3.6 points through Q4 FY26, then landed exactly on the midpoint (68.0%) in Q1 FY27 once the guide was raised to 67-69%. Non-GAAP opex ran above the guide midpoint in each of the last three quarters (Q1 FY27 95.2M vs 86-90M range, 'above the high end ... due to our strong R&D investment').",
+  "rp MGMT 2026-09-01 (call): AEC is the largest business with five hyperscalers; neocloud participation increasing; 1.6T AEC some contribution in H2 FY2027, meaningful ramp FY2028; first SiPho PIC revenue after DustPhotonics; two major next-generation PIC design wins ramping in FY2028, possibly late FY2027 (these wins do not include Credo's DSP); ZeroFlap Optics in production shipments; ALC (microLED) initial revenue targeted FY2028; OmniConnect revenue expected to begin FY2028 ('thousands of dollars of content per GPU' per the summary; the CEO called FY2028-30 'tens of billions of dollars of opportunity' of addressable market). Management statements, not reported facts.",
+  "rp MGMT customers (call): largest end customer about one third of revenue, then 28%, 13% and 10%; 'our fourth 10% customer, right at 10%, was different from our 10%'s 4 customer last quarter'; 'we continue to expect that 3 to 4 customers will be greater than 10% of revenue in the coming quarters and fiscal year'. 10-Q Note 3 (contracting parties): A 43% (50% a year earlier), B 28% (35%); receivables A 57%, B 28% at 2026-08-01. The 10-K: top 10 customers about 90% of FY2026 revenue; end customer D fell from 63% (FY2025) to 33% (FY2026). Customer letters differ between Note 3 and the MD&A end-customer table and between filings; names are not disclosed.",
+  "rp FACT revenue drivers: AEC unit volume at hyperscale customers drove over 90% of the Q1 FY2027 y/y increase (10-Q MD&A) and over 99% of the FY2026 increase (10-K MD&A). Optical revenue is not separately reported; the >$600M optical figure is guidance. Product versus IP revenue was split in the releases through Q2 FY2026 (product 261.3M of 268.0M) and is no longer shown from Q3 FY2026 (definition/presentation change).",
+  "rp FACT geography (destination of shipment, 10-Q Note 4): Q1 FY2027 US 255.4M (53%), Hong Kong 91.2M, Malaysia 74.5M, Mainland China 1.1M (51.8M a year earlier), rest of world 56.8M.",
+  "rp FACT backlog and commitments: RPO only 4.2M (2026-08-01) and 31.9M (2026-05-02): sales are on purchase orders, no contracted backlog to underwrite the guide; the 10-Q mentions inventory built 'to support unfulfilled backlog and related new product ramps' without a figure. Against that: non-cancelable purchase obligations 222.2M (212.7M manufacturing and foundry, all in the rest of FY2027), refundable capacity deposits 88.4M plus 102.4M more to pay in FY2027 under a new agreement signed after the quarter; the 10-K stated purchase commitments of at least 188.6M for FY2027-FY2028 under the capacity reservation agreement.",
+  "rp FACT working capital and cash (Q1 FY2027): operating cash flow 90.2M (down 92.0M q/q) after receivables +54.5M, inventory +61.5M, deposits +25.3M; capex 7.3M; FCF 82.9M; inventory 313.1M (+62.2M q/q); cash and short-term investments 764.3M (from 1,443M) after the DustPhotonics cash outlay; no debt.",
+  "rp FACT one-offs and definition change: from Q1 FY2027 non-GAAP also excludes amortization of acquired intangibles and acquisition and integration costs (SBC already excluded): non-GAAP GM 68.0% vs GAAP 64.5%; SBC 88.0M in Q1 FY2027 vs 49.7M in Q4 FY2026 (+77% q/q; includes DustPhotonics replacement awards and new grants; split not read). Q2 GAAP GM guide 62.9-64.9% vs non-GAAP 67-69%. GAAP opex Q1 188.4M vs non-GAAP 95.2M.",
+  "rp FACT DustPhotonics (closed 2026-05-28, 10-Q Note 5): total consideration 1,251.1M = cash 769.6M + shares + replacement awards + contingent consideration 310.0M (fair value; earn-out of up to ~3.21M shares per the 8-K of 2026-04-13); goodwill 895.8M and intangibles 361.7M, preliminary allocation. The April release said the deal is expected to be accretive to non-GAAP EPS in FY2027.",
+  "rp FACT shares: 187,951,918 ordinary shares outstanding at 2026-08-25; Q2 FY2027 diluted weighted-average share guide ~200M (call).",
+  "rp RISK (10-K Item 1A headings, read): dependence on a limited number of customers; no long-term purchase commitments from customers; reliance on a limited number of third parties (TSMC wafers, few assembly subcontractors); intense competition (Broadcom, Marvell, Astera Labs named in Item 1); trade policy and export controls (Q2 guide explicitly assumes the current tariff regime); acquisition integration and goodwill.",
+  "rp CITABILITY: every source here is dated 2026-09-02 or earlier, so all are citable at as_of 2026-10-28. Q2 FY2027 (quarter ending about 2026-10-31) is not yet reported; Credo's Q2 report is normally in early December, after as_of."
+ ],
+ "potential": {
+  "market_direction": {
+   "reading": "Up, steeply, on reported numbers. Credo's revenue rose from 436.8M (FY2025) to 1,335.1M (FY2026, +206%) and was 479.0M in Q1 FY2027 (+114.7% y/y); AEC unit volume at hyperscalers made over 99% of the FY2026 increase and over 90% of the Q1 increase. The 10-K says 200G-per-lane electrical PAM4 is planned for mass deployment in 2027, so each lane-speed step shortens passive copper reach and widens the need for active links. The named competitors' own releases show the same pool growing: Broadcom AI semiconductors 16.7B in its quarter to 2026-08-02 (+221% y/y, guided 21.7B next quarter), Astera Labs +104.5% y/y with 540-560M guided, Marvell data center +45.7% y/y, MaxLinear infrastructure +210% y/y, Amphenol book-to-bill 1.23. Management expects FY2027 revenue growth above 85% with optical above 600M (call statements, a floor, not fact). Gap: the hyperscalers' own capex filings were not read.",
+   "evidence_ids": [
+    "ex_10k_20260615",
+    "ex_10q_20260902",
+    "ex_rel_20260901",
+    "rp_rev_fy25",
+    "rp_rev_fy26",
+    "rp_k_aec_share_inc_fy26",
+    "rp_k_aec_share_inc_q1fy27",
+    "fd_rel_avgo_20260902",
+    "fd_rel_alab_20260804",
+    "fd_rel_mrvl_20260827",
+    "fd_rel_mxl_20261022",
+    "fd_rel_aph_20260729",
+    "rp_g_growth_fy27_floor",
+    "rp_g_optical_fy27_floor"
+   ]
+  },
+  "bottleneck_potential": {
+   "reading": "A real but shared and time-limited bottleneck: reliable, low-power electrical links over the shortest AI-rack reaches. Paid adoption is in Credo's own numbers: AEC was over 99% of FY2026's 898.3M increase, five hyperscalers per management, and non-GAAP gross margin held at 68.0% (guide 67-69%) while revenue more than doubled, so the scarcity is being paid for, not discounted away. It is not a sole-source chokepoint: the 10-K names Broadcom, Marvell and Astera Labs plus cable suppliers, and Credo's own constraint is subcontractor capacity it is paying to reserve (88.4M refundable deposits at 2026-08-01, 102.4M more payable in FY2027). How long: a named competitor's management (Marvell Investor Day, relayed by Futurum) said 100% of XPU-to-XPU links run on copper today, copper reach at 200G per lane is 2.5 metres, and scale-up optics go from virtually zero revenue to multi-hundred-million revenue starting next year; so copper's place is evidenced for the 2026-2027 generation and contested from about 2027-2028. An attributed Jefferies estimate (press excerpt) puts AEC at 8.6M units in 2026 and 12.3M in 2027: an expectation. The InP laser shortage (TrendForce excerpt) constrains the optical alternative through 2027; how much that helps copper is a hypothesis.",
+   "evidence_ids": [
+    "ex_10k_20260615",
+    "rp_k_aec_share_inc_fy26",
+    "rp_k_hyperscalers",
+    "rp_k_nggm_q1fy27",
+    "rp_g_nggm_q2fy27",
+    "rp_deposits_q1fy27",
+    "rp_deposits_new",
+    "fd_ind_futurum_mrvl_20261009",
+    "fd_press_invezz_20260413",
+    "fd_ind_trendforce_20260806"
+   ]
+  },
+  "share_trajectory": {
+   "reading": "Taking share is NOT evidenced on reported numbers, and the latest quarter points the other way. Over 12 months Credo grew +114.7% against Astera Labs +104.5% (the nearest like-for-like, single segment), Marvell data center +45.7% and Broadcom AI semiconductors +221% (includes custom XPUs, not like-for-like). Sequentially Credo grew +9.6% against Astera +27.3%, Marvell data center +18.5%, Broadcom AI +54% and MaxLinear +29%; on each issuer's own guidance Credo's next quarter is +10.6% (525-535M) against Astera about +40% (540-560M), so Credo's revenue relative to Astera falls from 1.22x (479.0M vs 392.4M) to about 0.96x on guided midpoints (quarter-ends differ by about a month). No competitor discloses AEC, retimer or DSP revenue, so AEC share cannot be computed: MaxLinear's CEO put Credo at 93-99% of AECs and targets 20-30% of 1.6T AECs for MaxLinear (press relay of its call), the generation Credo ramps in FY2028; Jefferies saw 70% by 2027 in a bull case (press excerpt). Inside its own base Credo is broadening: the largest end customer fell from 63% (FY2025) to 33% (Q1 FY2027) and four end customers are at or above 10%.",
+   "evidence_ids": [
+    "rp_rev_q1fy27",
+    "rp_rev_q1fy26",
+    "ex_k_rev_qoq_q1fy27",
+    "rp_g_rev_q2fy27",
+    "fd_rel_alab_20260804",
+    "fd_cf_alab_20260805",
+    "fd_rel_mrvl_20260827",
+    "fd_rel_avgo_20260902",
+    "fd_rel_mxl_20261022",
+    "fd_press_stocktwits_20261023",
+    "fd_press_invezz_20260413",
+    "ex_cu_ed_fy25",
+    "rp_cu_endD_q1fy27",
+    "rp_k_n10_q1fy27"
+   ]
+  },
+  "competitive_position": {
+   "reading": "Against Astera Labs (retimers, smart cable modules, scale-up fabric): Credo is larger in the last reported quarter (479.0M vs 392.4M) and slightly more profitable on GAAP operating margin (25.2% vs 22.7%), but has a lower GAAP gross margin (64.5% vs 73.3%, consistent with cable assembly in the mix), grows slower now and lacks a scale-up switch line (Scorpio). Against Broadcom: far smaller (Broadcom quarter 29.6B, GAAP operating margin 53.9%). Against Marvell: higher GAAP operating margin (25.2% vs 16.8%) on a far smaller base (Marvell data center 2.17B a quarter); Marvell targets multi-hundred-million scale-up optics revenue from next year. Against MaxLinear (not named by Credo): Credo is larger and more profitable (MaxLinear quarter 218.1M, GAAP operating margin 13.9%) but MaxLinear sells 1.6T AEC silicon to cable makers and aims at 20-30% of that market. Against cable makers such as Amphenol (not named by Credo; the overlap is an inference): Credo owns the SerDes/DSP inside the cable. Credo's evidenced strengths are delivery (7 of 7 quarters above the guided range, the beat narrowing to about 2%) and breadth (five hyperscalers, four 10% end customers).",
+   "evidence_ids": [
+    "rp_rev_q1fy27",
+    "rp_k_gm_q1fy27",
+    "nm_operating_income_q_2026_08_01",
+    "fd_rel_alab_20260804",
+    "fd_cf_alab_20260805",
+    "fd_rel_avgo_20260902",
+    "fd_cf_avgo_20260910",
+    "fd_rel_mrvl_20260827",
+    "fd_ind_futurum_mrvl_20261009",
+    "fd_rel_mxl_20261022",
+    "fd_10q_mxl_20261022",
+    "fd_press_stocktwits_20261023",
+    "fd_rel_aph_20260729",
+    "ex_10k_20260615",
+    "rp_k_hyperscalers",
+    "rp_k_n10_q1fy27"
+   ]
+  },
+  "threats": {
+   "reading": "1) Substitution by optics in scale-up links from about 2027-2028 (Marvell management, relayed); Credo hedges by moving into optics itself (FY2027 optical above 600M per the call; DustPhotonics bought for 1,251.1M with 895.8M goodwill), which may partly cannibalise its AECs. 2) A new AEC entrant at 1.6T (MaxLinear, 20-30% target) and Astera Labs growing faster and expanding into optical interconnect; design wins are re-run each lane-speed generation. 3) Customer concentration and no committed demand: contracting parties 43% and 28% of Q1 FY2027 revenue, top 10 about 90% of FY2026, RPO only 4.2M against 222.2M of non-cancelable purchase obligations. 4) Supply and geopolitics: all wafers from TSMC in Taiwan, most PP&E in Taiwan, about 19% of Q1 shipments to Hong Kong and 15.5% to Malaysia. 5) In-sourcing by hyperscalers (own cables or SerDes integrated into switches and accelerators) is a 10-K risk theme without an evidenced case: hypothesis.",
+   "evidence_ids": [
+    "fd_ind_futurum_mrvl_20261009",
+    "rp_g_optical_fy27_floor",
+    "rp_dust_total",
+    "rp_dust_goodwill",
+    "fd_press_stocktwits_20261023",
+    "fd_rel_mxl_20261022",
+    "fd_rel_alab_20260804",
+    "rp_cu_A_q1fy27",
+    "rp_cu_B_q1fy27",
+    "rp_k_top10_fy26",
+    "rp_rpo_q1fy27",
+    "rp_purch_q1fy27",
+    "ex_10k_20260615",
+    "nm_ppe_net_taiwan_fy_2026_05_02",
+    "rp_geo_hk_q1fy27",
+    "ex_k_geo_malaysia_q1fy27"
+   ]
+  }
+ },
+ "scenario_events": {
+  "bear": [
+   {
+    "event_he": "הלקוח הסופי הגדול (33% מההכנסות ברבעון הראשון) מקטין את ההזמנות בערך בחצי לכמה רבעונים, כמו שקרה בשנת 2024 (צמיחה של 5% בלבד אחרי 73%). שני לקוחות חוזיים הם 71% מההכנסות (43% ו-28%), וההזמנות ניתנות לביטול: הצבר החוזי הוא 4.2 מיליון דולר בלבד. ההכנסות בשנת 2028 יורדות בכ-5%. זה עיכול זמני: מ-2029 ההזמנות חוזרות כמו אחרי 2024 (אז הצמיחה הייתה 126%), אבל לאט יותר מהבסיס (כ-26% ב-2029), כי חלק מדור ה-1.6T הולך למתחרים.",
+    "evidence_ids": [
+     "rp_cu_endD_q1fy27",
+     "rp_cu_A_q1fy27",
+     "rp_cu_B_q1fy27",
+     "rp_rpo_q1fy27",
+     "pf_history_companyfacts"
+    ]
+   },
+   {
+    "event_he": "קפיצת האופטיקה במחצית השנייה מתעכבת (מוצרים חדשים, מחסור בלייזרי InP), ושנת 2027 נגמרת מתחת לרצפה של 85% (2.47 מיליארד דולר). אז המוניטין מרכישת DustPhotonics (896 מיליון דולר) והתמורה המותנית (310 מיליון) עלולים להימחק בחלקם.",
+    "evidence_ids": [
+     "rp_g_optical_fy27_floor",
+     "rp_g_rev_fy27_floor",
+     "rp_dust_goodwill",
+     "rp_dust_intang",
+     "rp_dust_contingent",
+     "fd_ind_trendforce_20260806"
+    ]
+   },
+   {
+    "event_he": "MaxLinear מכוונת ל-20%-30% משוק כבלי ה-1.6T, הדור שבו Credo אמורה לגדול בשנים 2028-2030, ו-Astera Labs צומחת מהר יותר (27% ברבעון מול 9.6%). בתרחיש הדובי Credo מאבדת כרבע מהצמיחה שמעל הקצב ארוך הטווח (אמצע היעד של MaxLinear), והתחרות לוחצת על המחירים: הרווח התפעולי אחרי תגמול במניות נשאר סביב 22% במקום לעלות.",
+    "evidence_ids": [
+     "fd_press_stocktwits_20261023",
+     "fd_rel_mxl_20261022",
+     "fd_rel_alab_20260804",
+     "fd_cf_alab_20260805",
+     "ex_k_rev_qoq_q1fy27"
+    ]
+   },
+   {
+    "event_he": "המלאי (313 מיליון דולר) והחייבים ממשיכים לגדול מהר יותר מההכנסות, והתזרים מהפעילות נשאר נמוך מהרווח (90 מול 129 מיליון ברבעון הראשון). Credo התחייבה ל-222 מיליון דולר רכש ולפיקדונות קיבולת של 88 ועוד 102 מיליון, בלי התחייבות מקבילה של הלקוחות. בעיכול זה נגמר במחיקת מלאי ובתזרים חלש. זה המנגנון שמאחורי דגל החשבונאות (Beneish): הדגל נובע בעיקר מצמיחה של 206% ומהרכישות (בלי השפעת הצמיחה הציון תקין), אבל הוא לא משוחרר.",
+    "evidence_ids": [
+     "nm_inventory_q_2026_08_01",
+     "nm_receivables_q_2026_08_01",
+     "nm_operating_cash_flow_q_2026_08_01",
+     "nm_net_income_q_2026_08_01",
+     "rp_purch_q1fy27",
+     "rp_deposits_q1fy27",
+     "rp_deposits_new",
+     "pf_history_companyfacts"
+    ]
+   },
+   {
+    "event_he": "כ-19% מהמשלוחים ברבעון הראשון יצאו להונג קונג וכ-15.5% למלזיה (מקום המשלוח, לא מקום הלקוח), וכל הפרוסות מגיעות מ-TSMC בטייוואן. מכסים, הגבלות יצוא או מתיחות סביב טייוואן פוגעים במשלוחים.",
+    "evidence_ids": [
+     "rp_geo_hk_q1fy27",
+     "ex_k_geo_malaysia_q1fy27",
+     "ex_10k_20260615",
+     "nm_ppe_net_taiwan_fy_2026_05_02"
+    ]
+   },
+   {
+    "event_he": "אופטיקה מתחילה לקחת חלק מהחיבורים הקצרים בתוך הארון מ-2027-2028: הנהלת Marvell אמרה שהכנסות של מאות מיליונים מאופטיקה לחיבורי scale-up מתחילות בשנה הבאה.",
+    "evidence_ids": [
+     "fd_ind_futurum_mrvl_20261009"
+    ]
+   },
+   {
+    "event_he": "התגמול במניות (18% מההכנסות ברבעון הראשון) וכמיליוני מניות של התמורה המותנית ממשיכים לדלל: מספר המניות המדוללות עלה ב-5.3% בשנה, ואין קניות חוזרות.",
+    "evidence_ids": [
+     "rp_sbc_q1fy27",
+     "nm_shares_diluted_wavg_q_2026_08_01",
+     "nm_shares_diluted_wavg_q_2025_08_02",
+     "rp_dust_contingent",
+     "rp_g_shares_q2fy27"
+    ]
+   }
+  ],
+  "base": [
+   {
+    "event_he": "ההכנסות ברבעון השני של שנת הכספים 2027 (נגמר בסוף אוקטובר 2026) מגיעות לכ-530-540 מיליון דולר: התחזית עם עקיפה קטנה של כ-2%, כמו בשני הרבעונים האחרונים.",
+    "evidence_ids": [
+     "rp_g_rev_q2fy27",
+     "rp_g_rev_q1fy27",
+     "rp_rev_q1fy27",
+     "rp_g_rev_q4fy26",
+     "rp_rev_q4fy26"
+    ]
+   },
+   {
+    "event_he": "במחצית השנייה של 2027 נכנסות הכנסות אופטיקה של יותר מ-600 מיליון דולר (ZeroFlap, שבבי סיליקון פוטוניקה ו-DSP, כל אחד מעל 100 מיליון). כך השנה נגמרת מעט מעל הרצפה של צמיחה של 85%, בכ-2.53 מיליארד דולר. אלה דברי סמנכ\"ל הכספים בשיחה של ספטמבר 2026 (עותק של צד שלישי), לא בהודעה הכתובה, והחברה לא מדווחת הכנסות אופטיקה בנפרד.",
+    "evidence_ids": [
+     "rp_g_optical_fy27_floor",
+     "rp_g_rev_fy27_floor",
+     "ex_tr_20260901",
+     "rp_g_optical_fy27_apr",
+     "rp_rel_20260413"
+    ]
+   },
+   {
+    "event_he": "בשנת הכספים 2028 הצמיחה מאטה לכ-42%: רוב הצמיחה היא ההמשך של רמת סוף 2027, ועוד צמיחה קטנה מכבלי 1.6T, משני זכיות תכנון בסיליקון פוטוניקה ומהכנסות ראשונות ממוצרים חדשים. מנגד, הלקוחות הגדולים מעכלים חלק ממה שקנו, ו-MaxLinear ו-Astera Labs לוקחות חלק מהשוק.",
+    "evidence_ids": [
+     "ex_tr_20260901",
+     "rp_k_pic_designwins",
+     "rp_deposits_new",
+     "fd_press_stocktwits_20261023",
+     "fd_rel_alab_20260804",
+     "rp_rev_q1fy27"
+    ]
+   },
+   {
+    "event_he": "הרווח התפעולי אחרי תגמול במניות עולה מכ-26% היום (25.2% ברבעון הראשון) לכ-31% מההכנסות, פחות מ-33% בשנת 2026, כי התגמול במניות עלה ל-18% מההכנסות והפחתת הנכסים מהרכישות נמשכת.",
+    "evidence_ids": [
+     "nm_operating_income_q_2026_08_01",
+     "nm_revenue_q_2026_08_01",
+     "rp_sbc_q1fy27",
+     "nm_operating_income_fy_2026_05_02",
+     "nm_revenue_fy_2026_05_02",
+     "rp_g_gm_q2fy27",
+     "rp_g_opex_q2fy27"
+    ]
+   },
+   {
+    "event_he": "בסיס הלקוחות ממשיך להתרחב: ארבעה לקוחות סופיים מעל 10% מההכנסות (הגדול ירד מ-63% בשנת 2025 ל-33%), וההנהלה צופה 3-4 לקוחות כאלה גם בהמשך.",
+    "evidence_ids": [
+     "rp_k_n10_q1fy27",
+     "ex_k_top4_end_q1fy27",
+     "ex_cu_ed_fy25",
+     "rp_cu_endD_q1fy27",
+     "ex_tr_20260901"
+    ]
+   }
+  ],
+  "bull": [
+   {
+    "event_he": "הרבעון הרביעי של שנת הכספים 2027 (נגמר באפריל 2027) עובר 850 מיליון דולר, והשנה עוברת בבירור את הרצפה של צמיחה של 85%.",
+    "evidence_ids": [
+     "rp_g_rev_fy27_floor",
+     "rp_g_optical_fy27_floor",
+     "rp_g_rev_q2fy27",
+     "rp_rev_q1fy27"
+    ]
+   },
+   {
+    "event_he": "Credo משלמת עוד 102 מיליון דולר פיקדונות כדי לשריין קיבולת ייצור, והביקוש מצדיק את זה: הקצב של 9-10% ברבעון נמשך לאורך כל שנת הכספים 2028, וההכנסות צומחות בכ-65%.",
+    "evidence_ids": [
+     "rp_deposits_new",
+     "rp_deposits_q1fy27",
+     "rp_purch_q1fy27",
+     "ex_k_rev_qoq_q1fy27",
+     "rp_g_rev_q2fy27"
+    ]
+   },
+   {
+    "event_he": "בשנת הכספים 2028 כבלי ה-1.6T גדלים בהיקף משמעותי, שתי זכיות התכנון בסיליקון פוטוניקה נכנסות לייצור, ומוצרי ALC ו-OmniConnect מתחילים להכניס, כמו שההנהלה אמרה בשיחה.",
+    "evidence_ids": [
+     "ex_tr_20260901",
+     "rp_k_pic_designwins"
+    ]
+   },
+   {
+    "event_he": "Credo שומרת על רוב השוק בכבלי 1.6T למרות הכניסה של MaxLinear (היום מנכ\"ל MaxLinear מעריך את חלקה ב-93%-99%).",
+    "hypothesis": true
+   },
+   {
+    "event_he": "הרווח התפעולי אחרי תגמול במניות חוזר לכ-36%, כמו ברבעון הטוב ביותר של החברה (הרבעון הרביעי של שנת 2026), כי ההוצאות גדלות לאט יותר מההכנסות.",
+    "evidence_ids": [
+     "nm_rel_20260601",
+     "nm_operating_income_fy_2026_05_02",
+     "nm_revenue_fy_2026_05_02",
+     "rp_k_ngom_q1fy27"
+    ]
+   }
+  ]
+ },
+ "drivers": {
+  "current_year_revenue": {
+   "source_tier": "guidance",
+   "evidence_ids": [
+    "rp_g_rev_fy27_floor",
+    "rp_g_rev_q2fy27",
+    "ex_rel_20260901",
+    "ex_tr_20260901"
+   ],
+   "remainder": "rp_g_rev_q2fy27",
+   "adjust_by_track_record": true,
+   "reason": "FY2027 (ends 2027-04-29): the CFO's 'more than 85%' growth statement on the 2026-09-01 call (ex_tr_20260901, a third-party transcript copy saved verbatim; not restated in the written release ex_rel_20260901) = a FLOOR of 2,470.0M (rp_g_rev_fy27_floor, 1.85 x FY2026 1,335.1M), raised from 'more than 80%' in June. A floor is not a midpoint: Credo has beaten every one of 7 quarterly guides (ratio mean 1.105) and delivered its FY2026 annual statement ('more than 200%' vs +205.7%). The engine adds (1.105 - 1) x the Q2 guide midpoint 530M = about +55.7M, so about 2,525.6M (+89%). This adjustment stands for the 'more than' above the floor, not for an expected 10% Q2 beat: the last two beats were only +1.6% and +1.9%. Cross-check only: attributed consensus FY2027 2,503.1M (range 2,470.0-2,583.7M, 19 analysts). Arithmetic: Q1 479.0M + Q2 530M = 1,009M, so the year needs a second half of about 1,517M (about 640M in Q3 and 877M in Q4): it carries the optical inflection management described (>600M optical), which fx_q3rev, fx_optical and fx_fy27rev test. It replaces the engine's year-to-date extrapolation (about 2.87B in the 2026-10-26 run)."
+  },
+  "growth_anchor": {
+   "period": "FY2028",
+   "bear": -0.05,
+   "base": 0.42,
+   "bull": 0.65,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "rp_rev_q3fy26",
+    "rp_rev_q4fy26",
+    "rp_rev_q1fy27",
+    "rp_g_rev_q2fy27",
+    "rp_g_rev_fy27_floor",
+    "ex_k_rev_qoq_q1fy27",
+    "rp_k_pic_designwins",
+    "rp_deposits_new",
+    "rp_purch_q1fy27",
+    "rp_cu_endD_q1fy27",
+    "rp_cu_A_q1fy27",
+    "rp_rpo_q1fy27",
+    "pf_history_companyfacts",
+    "ex_tr_20260901"
+   ],
+   "reason": "Growth of FY2028 (ends 2028-04-29) on the FY2027 of drivers.current_year_revenue (about 2.53B with a fourth quarter near 850-880M). The FY2027 exit rate alone carries about +35-39% into FY2028 at zero further sequential growth. Base +42% (about 3.59B): the exit carries over and quarterly revenue grows only about 2-3% a quarter through FY2028, because the sequential pace already fell from +51.9% to +7.4%/+9.6% (rp_rev_q3fy26 -> rp_rev_q4fy26 -> rp_rev_q1fy27), the guide beat shrank to about 2%, 71% of revenue sits with two contracting parties on cancellable orders (RPO 4.2M) and MaxLinear now targets 1.6T AECs; offset by what management placed in FY2028 on the 2026-09-01 call: a meaningful 1.6T AEC ramp, two next-generation SiPho PIC design wins ramping (rp_k_pic_designwins), first ALC and OmniConnect revenue, and the extra 102.4M of capacity deposits Credo is paying in FY2027 (rp_deposits_new). Bear -5% (about 2.40B): the largest end customer (33% of Q1 FY2027) cuts about half its purchases for several quarters, as in Credo's own FY2024 (+4.8% after +73%, pf_history_companyfacts), partly offset by optical and newer customers. Bull +65% (about 4.17B): the Q1 FY2027 / Q2-guide sequential pace of about +9.6-10.6% a quarter continues through FY2028 from a Q4 above 850M, with the new products adding. Cross-check only (consensus, not evidence for this tier): FY2028 mean 3,879.6M (3,590.0-4,413.9M), about +54% on 2.53B; the base sits at the low end of that range and the bull above the mean. Growth is a business change in each scenario (customer orders, optical ramp, 1.6T share), not a different multiple."
+  },
+  "mature_margin": {
+   "bear": 0.22,
+   "base": 0.31,
+   "bull": 0.36,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "nm_operating_income_fy_2026_05_02",
+    "nm_revenue_fy_2026_05_02",
+    "nm_rel_20260601",
+    "nm_operating_income_q_2026_08_01",
+    "nm_revenue_q_2026_08_01",
+    "rp_sbc_q1fy27",
+    "nm_share_based_compensation_fy_2026_05_02",
+    "rp_g_gm_q2fy27",
+    "rp_g_opex_q2fy27",
+    "rp_k_ngom_q1fy27",
+    "ex_tr_20260901"
+   ],
+   "reason": "GAAP operating margin AFTER share-based compensation, from Credo's own record: 33.3% in FY2026 (445.0M / 1,335.1M, SBC 13.7% of revenue), the best quarter 35.7% (Q4 FY2026, 155.8M / 437.0M, nm_rel_20260601), 25.2% in Q1 FY2027 (120.7M / 479.0M) after SBC jumped to 18.4% of revenue and acquired-intangible amortization of about 11.6M a quarter began, and about 26% implied by the Q2 guide (GAAP gross margin 63.9% mid, GAAP opex 201.5M mid on 530M). Non-GAAP operating margin is 48.2% and the CFO expects FY2027 non-GAAP gross margin 'broadly consistent' with FY2026. Base 31%: SBC falls back toward the FY2026 share as revenue grows faster than awards and the fixed amortization shrinks as a share, but stays two points below FY2026 for the amortization and some price pressure at 1.6T (MaxLinear, Astera). Bear 22%: about today's level less a few points of gross margin under competitive pricing and an opex base built for growth during a digestion. Bull 36%: the best quarter (Q4 FY2026) held at scale. The yearly path from today's 26% is drivers.cash_cost_ratio."
+  },
+  "cash_cost_ratio": {
+   "bear": [
+    0.566254,
+    0.633644,
+    0.631034,
+    0.628424,
+    0.635814,
+    0.643204,
+    0.643204,
+    0.650595,
+    0.650595,
+    0.650595,
+    0.650595,
+    0.650595,
+    0.650595,
+    0.650595,
+    0.650595,
+    0.650595,
+    0.650595,
+    0.650595,
+    0.650595,
+    0.650595,
+    0.650595,
+    0.650595
+   ],
+   "base": [
+    0.566254,
+    0.553644,
+    0.541034,
+    0.538424,
+    0.545814,
+    0.553204,
+    0.553204,
+    0.560595,
+    0.560595,
+    0.560595,
+    0.560595,
+    0.560595,
+    0.560595,
+    0.560595,
+    0.560595,
+    0.560595,
+    0.560595,
+    0.560595,
+    0.560595,
+    0.560595,
+    0.560595,
+    0.560595
+   ],
+   "bull": [
+    0.566254,
+    0.523644,
+    0.501034,
+    0.488424,
+    0.495814,
+    0.503204,
+    0.503204,
+    0.510595,
+    0.510595,
+    0.510595,
+    0.510595,
+    0.510595,
+    0.510595,
+    0.510595,
+    0.510595,
+    0.510595,
+    0.510595,
+    0.510595,
+    0.510595,
+    0.510595,
+    0.510595,
+    0.510595
+   ],
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "nm_operating_income_q_2026_08_01",
+    "nm_revenue_q_2026_08_01",
+    "rp_g_gm_q2fy27",
+    "rp_g_opex_q2fy27",
+    "ex_rel_20260901",
+    "nm_rel_20260601",
+    "nm_operating_income_fy_2026_05_02",
+    "nm_revenue_fy_2026_05_02",
+    "pf_history_companyfacts"
+   ],
+   "reason": "Sets the yearly GAAP operating margin after SBC (margin = 1 - cash_cost_ratio - sbc_pct - depreciation_pct, using the engine's own sbc_pct path 14.8% fading to 10.3% and depreciation 2.6% of the 2026-10-26 run on the same, unchanged filings), instead of the engine's trailing-twelve-month start of about 31.7%, which contains the best-ever Q4 FY2026 (35.7%) before DustPhotonics. Start (rest of FY2027) 26% in every scenario: Q1 FY2027 actual 25.2% and about 25.9% on the Q2 guide. Bear: the FY2028 digestion year falls to 20% (Credo's own FY2024 digestion cut its operating margin by about 7.7 points, pf_history_companyfacts), then 21% and 22% from FY2030. Base: 28% in FY2028, 30% in FY2029, 31% from FY2030. Bull: 31%, 34%, then 36% from FY2030 (the best quarter, nm_rel_20260601). 22 values per scenario on the engine's period boundaries (FY2027 to FY2031, the five-year interim 2031-10-28, FY2032 to FY2047; the value stage extended the analyst's 17 values by holding the FY2042 value flat for FY2043-FY2047, as the margin is flat from FY2030); if the engine's sbc_pct path differs, the margin moves by the difference and the review should check fc.paths."
+  },
+  "terminal.other_claims": {
+   "all": 310000000,
+   "source_tier": "contracted",
+   "evidence_ids": [
+    "rp_dust_contingent",
+    "ex_10q_20260902"
+   ],
+   "reason": "DustPhotonics contingent consideration (10-Q of 2026-09-02, business-combination note): an earn-out payable in cash and Credo ordinary shares on future financial milestones, recorded at a fair value of 310.0M (10.0M liability, 300.0M equity-classified). Deducted as a claim ahead of today's holders at that filing fair value, standing for the probability-weighted earn-out shares (up to about 2.8-3.2M shares, about 1.5-1.7% of 187.95M; count from the 10-K note and the 2026-04-13 8-K as relayed by the lanes) plus the cash part; the pack has no input for contingent shares, so they are not also added to the share count (claim OR dilution, never both)."
+  },
+  "growth": {
+   "bear": [
+    -0.05,
+    0.2553,
+    0.2044,
+    0.1658,
+    0.1365,
+    0.0,
+    0.1144,
+    0.0976,
+    0.0848,
+    0.0752,
+    0.0679,
+    0.0623,
+    0.0581,
+    0.055,
+    0.0525,
+    0.0507,
+    0.0493,
+    0.0483,
+    0.0475,
+    0.0469,
+    0.0464
+   ],
+   "period": "FY2028",
+   "source_tier": "analyst",
+   "evidence_ids": [
+    "rp_cu_endD_q1fy27",
+    "rp_cu_A_q1fy27",
+    "rp_rpo_q1fy27",
+    "pf_history_companyfacts",
+    "fd_rel_mxl_20261022",
+    "fd_press_stocktwits_20261023",
+    "fd_ind_futurum_mrvl_20261009",
+    "rp_k_pic_designwins"
+   ],
+   "reason": "Bear revenue path, a TEMPORARY digestion and a partial share loss, not a permanent stall (repair of the 2026-10-28 review: the engine fade carried the -5% digestion year into flat revenue for five years). FY2028 -5%: the largest end customer (33% of Q1 FY2027, rp_cu_endD_q1fy27) halves purchases for several quarters, as in Credo's own FY2024 (+4.8% after +73%, pf_history_companyfacts). FY2029 on: orders recover as they did after FY2024 (FY2025 +126%, pf_history_companyfacts), but the bear keeps only 75% of the base's growth above the terminal rate, every year: the 25% cut is the midpoint of MaxLinear's stated 20-30% target share of the 1.6T AEC generation (fd_rel_mxl_20261022, fd_press_stocktwits_20261023), the generation Credo's FY2028-FY2030 growth rests on; optics taking part of in-rack links from 2027-28 (fd_ind_futurum_mrvl_20261009) is unsized and is folded into the same cut. Formula: bear growth = 4.5% + 0.75 x (base growth - 5%) from FY2029 (4.5% and 5% are the bear and base terminal growth). Resulting FY2029-FY2032 growth 25.5%, 20.4%, 16.6%, 13.7%: well below the FY2025 recovery precedent. The 0.75 factor is an analyst judgement sized from MaxLinear's target, not a Credo number; the -5% FY2028 is Credo's own FY2024 record."
+  },
+  "terminal_roic": {
+   "bear": 0.15,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "nm_revenue_ttm_q_2026_08_01",
+    "nm_equity_q_2026_08_01",
+    "nm_cash_q_2026_08_01",
+    "nm_short_term_investments_q_2026_08_01",
+    "nm_operating_income_q_2026_08_01"
+   ],
+   "reason": "Bear terminal ROIC from Credo's own post-acquisition balance sheet at the bear margin, replacing the engine's cross-sectional default (XSEC 10.5%): invested capital after DustPhotonics = equity 2,728.5M - cash 466.9M - short-term investments 297.4M = 1,964.2M (2026-08-01); the trailing-twelve-month revenue 1,591M at the bear operating margin after SBC of 22% (drivers.mature_margin) = 350.0M pre-tax = 17.8% pre-tax, 15.1% after the 15% tax rate the engine uses -> 15%. The base uses the same capital with the actual trailing operating income (about 22% after tax)."
+  }
+ },
+ "company_path": {
+  "metric": "eps",
+  "multiple": "forward_pe",
+  "scenarios": {
+   "bear": {
+    "multiple_from": "economics",
+    "roic": 0.15,
+    "justification": "peak",
+    "reason_he": "בתרחיש הדובי הרווח של היום הוא שיא לפני עיכול: הלקוח הגדול מקטין הזמנות לכמה רבעונים (כמו ב-2024) ו-MaxLinear לוקחת חלק מדור ה-1.6T, ולכן שיעור הרווח אחרי תגמול במניות נשאר כ-22% (היום 25.2%). התשואה על ההון נמדדת על ההון של Credo אחרי רכישת DustPhotonics (כ-1.96 מיליארד דולר: הון עצמי פחות מזומן והשקעות): הכנסות של 12 החודשים האחרונים (1,591 מיליון דולר) כפול 22% הן כ-350 מיליון רווח תפעולי, כ-17.8% לפני מס וכ-15% אחרי מס. זה מעל מחיר ההון, אבל נמוך מהבסיס (כ-22%), ולכן המכפיל נמוך יותר.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "nm_revenue_ttm_q_2026_08_01",
+     "nm_equity_q_2026_08_01",
+     "nm_cash_q_2026_08_01",
+     "nm_short_term_investments_q_2026_08_01",
+     "nm_operating_income_q_2026_08_01",
+     "nm_revenue_q_2026_08_01",
+     "rp_dust_total"
+    ]
+   },
+   "base": {
+    "multiple_from": "economics",
+    "roic": 0.22,
+    "justification": "unproven",
+    "reason_he": "התשואה על ההון לפני מס ב-12 החודשים שאחרי רכישת DustPhotonics היא כ-26% (רווח תפעולי 504.9 מיליון דולר על הון מושקע של כ-1.96 מיליארד), וכ-22% אחרי מס בשיעור של כ-15%. זה מעל מחיר ההון, אבל ההון שנוסף ברכישה עוד לא הוכיח רווח, והצמיחה אחרי 2028 היא הנחה בלי תחזית של החברה או של אנליסטים, ולכן המכפיל לא מוכח.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "nm_operating_income_q_2026_08_01",
+     "nm_equity_q_2026_08_01",
+     "nm_cash_q_2026_08_01",
+     "nm_short_term_investments_q_2026_08_01",
+     "nm_goodwill_q_2026_08_01",
+     "nm_intangible_assets_q_2026_08_01",
+     "pf_history_companyfacts"
+    ]
+   },
+   "bull": {
+    "multiple_from": "economics",
+    "roic": 0.4,
+    "justification": "unproven",
+    "reason_he": "לפני הרכישה התשואה על ההון לפני מס הייתה כ-72% (שנת 2026: רווח תפעולי 445 מיליון דולר על הון מושקע של 620 מיליון). בתרחיש השורי האופטיקה מכניסה מעל 600 מיליון דולר והתשואה חוזרת לכ-40%, באמצע בין 26% אחרי הרכישה ל-72% לפניה. ההכנסות מאופטיקה עדיין לא דווחו בנפרד, ולכן המכפיל לא מוכח.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "nm_operating_income_fy_2026_05_02",
+     "nm_equity_q_2026_08_01",
+     "nm_cash_q_2026_08_01",
+     "nm_short_term_investments_q_2026_08_01",
+     "pf_history_companyfacts",
+     "rp_g_optical_fy27_floor"
+    ]
+   }
+  },
+  "own_history": {
+   "low": 51.6,
+   "median": 108.3,
+   "high": 424.3,
+   "years": "2025-06 to 2026-10 (TRAILING GAAP diluted P/E at 17 month-end closes; no point-in-time forward P/E history exists; the median and high are a tiny-earnings effect, not a norm; now 59.0 at 167.43)",
+   "evidence_ids": [
+    "nm_ib_history",
+    "nm_ib_price",
+    "nm_rel_20250602",
+    "nm_rel_20250903",
+    "nm_rel_20260302",
+    "nm_rel_20260601",
+    "ex_rel_20260901",
+    "pf_history_companyfacts"
+   ]
+  }
+ },
+ "key_risk": {
+  "reading_he": "כ-71% מההכנסות מגיעות משני לקוחות חוזיים (43% ו-28%), וההזמנות ניתנות לביטול: הצבר החוזי הוא 4.2 מיליון דולר בלבד. מנגד, Credo עצמה התחייבה ל-222 מיליון דולר רכש מספקים ולפיקדונות קיבולת של 88 ועוד 102 מיליון. אם לקוח גדול מעכל, כמו בשנת 2024, הצמיחה נעצרת, ונשארים מלאי של 313 מיליון דולר ומוניטין ונכסים מרכישות של כ-1.37 מיליארד דולר.",
+  "evidence_ids": [
+   "rp_cu_A_q1fy27",
+   "rp_cu_B_q1fy27",
+   "rp_rpo_q1fy27",
+   "rp_purch_q1fy27",
+   "rp_deposits_q1fy27",
+   "rp_deposits_new",
+   "pf_history_companyfacts",
+   "nm_goodwill_q_2026_08_01",
+   "nm_intangible_assets_q_2026_08_01",
+   "nm_inventory_q_2026_08_01"
+  ]
+ },
+ "falsifiers": [
+  {
+   "id": "fx_q2rev",
+   "scenario": "base",
+   "metric": "revenue Q2 FY2027 (quarter ending about 2026-10-31), USD: below the low end of the company's own guide",
+   "threshold": 525000000,
+   "direction": "below",
+   "by": "2026-12-15",
+   "evidence_ids": [
+    "rp_g_rev_q2fy27"
+   ]
+  },
+  {
+   "id": "fx_q3rev",
+   "scenario": "base",
+   "metric": "revenue Q3 FY2027 (quarter ending about 2027-01-30), USD: the second-half optical step the base needs (about 640M)",
+   "threshold": 600000000,
+   "direction": "below",
+   "by": "2027-03-15",
+   "evidence_ids": [
+    "rp_g_rev_fy27_floor",
+    "rp_g_rev_q2fy27",
+    "rp_rev_q1fy27"
+   ]
+  },
+  {
+   "id": "fx_fy27rev",
+   "scenario": "base",
+   "metric": "revenue FY2027 (fiscal year ending about 2027-05-01), USD: below management's 'more than 85%' floor",
+   "threshold": 2469964600,
+   "direction": "below",
+   "by": "2027-06-15",
+   "evidence_ids": [
+    "rp_g_rev_fy27_floor",
+    "rp_rev_fy26"
+   ]
+  },
+  {
+   "id": "fx_optical",
+   "scenario": "base",
+   "metric": "FY2027 optical revenue outlook stated by Credo in the Q2 FY2027 release or call, USD (a cut below 'more than 600M' means the second-half step is not confirmed)",
+   "threshold": 600000000,
+   "direction": "below",
+   "by": "2026-12-15",
+   "evidence_ids": [
+    "rp_g_optical_fy27_floor",
+    "rp_g_optical_fy27_apr"
+   ]
+  },
+  {
+   "id": "fx_gaap_om",
+   "scenario": "base",
+   "metric": "GAAP operating margin Q2 FY2027 (after SBC), ratio; the guide implies about 0.26",
+   "threshold": 0.22,
+   "direction": "below",
+   "by": "2026-12-15",
+   "evidence_ids": [
+    "rp_g_gm_q2fy27",
+    "rp_g_opex_q2fy27",
+    "nm_operating_income_q_2026_08_01"
+   ]
+  },
+  {
+   "id": "fx_cash_conv",
+   "scenario": "base",
+   "metric": "operating cash flow / GAAP net income, first half FY2027 (Q1 was 0.70), ratio",
+   "threshold": 0.6,
+   "direction": "below",
+   "by": "2026-12-15",
+   "evidence_ids": [
+    "nm_operating_cash_flow_q_2026_08_01",
+    "nm_net_income_q_2026_08_01"
+   ]
+  },
+  {
+   "id": "fx_inventory",
+   "scenario": "base",
+   "metric": "inventory at the end of Q3 FY2027, USD (313.1M at 2026-08-01): a build far beyond the revenue step means orders are not following",
+   "threshold": 480000000,
+   "direction": "above",
+   "by": "2027-03-15",
+   "evidence_ids": [
+    "nm_inventory_q_2026_08_01",
+    "rp_inv_q1fy27"
+   ]
+  },
+  {
+   "id": "fx_bull_q4",
+   "scenario": "bull",
+   "metric": "revenue Q4 FY2027 (quarter ending about 2027-05-01), USD",
+   "threshold": 850000000,
+   "direction": "below",
+   "by": "2027-06-15",
+   "evidence_ids": [
+    "rp_g_rev_fy27_floor",
+    "rp_g_optical_fy27_floor",
+    "rp_deposits_new"
+   ]
+  },
+  {
+   "id": "fx_bull_q2fy28",
+   "scenario": "bull",
+   "metric": "revenue Q2 FY2028 (quarter ending about 2027-10-30), USD: the +9-10% a quarter path needs about 1,000M",
+   "threshold": 950000000,
+   "direction": "below",
+   "by": "2027-12-15",
+   "evidence_ids": [
+    "ex_k_rev_qoq_q1fy27",
+    "rp_g_rev_q2fy27",
+    "rp_deposits_new"
+   ]
+  },
+  {
+   "id": "fx_bear_q2fy28",
+   "scenario": "bear",
+   "metric": "revenue Q2 FY2028 (quarter ending about 2027-10-30), USD: no digestion visible",
+   "threshold": 850000000,
+   "direction": "above",
+   "by": "2027-12-15",
+   "evidence_ids": [
+    "rp_cu_endD_q1fy27",
+    "pf_history_companyfacts",
+    "rp_rev_q1fy27"
+   ]
+  }
+ ],
+ "assessments": {
+  "moat": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "rp_k_aec_share_inc_fy26",
+    "rp_k_hyperscalers",
+    "rp_k_nggm_q1fy27",
+    "fd_rel_alab_20260804",
+    "fd_press_stocktwits_20261023"
+   ],
+   "note": "Evidenced source: SerDes/DSP know-how plus system reliability qualified at five hyperscalers, paid for at a steady ~68% non-GAAP gross margin. Not strong: Broadcom, Marvell and Astera Labs are named on every line, Astera is growing faster now, MaxLinear targets 1.6T AECs, and every lane-speed generation is a new design-win contest."
+  },
+  "switching_costs": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "ex_10k_20260615",
+    "rp_rpo_q1fy27"
+   ],
+   "note": "Qualification at a hyperscaler takes months (10-K), which protects a won generation; but sales are on cancellable purchase orders (RPO 4.2M) and the lock-in resets at each speed transition."
+  },
+  "pricing_power": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "rp_k_nggm_q1fy27",
+    "rp_g_nggm_q2fy27",
+    "ex_tr_20260901",
+    "rp_k_gm_q1fy27",
+    "fd_rel_alab_20260804"
+   ],
+   "note": "Non-GAAP gross margin 68.0% and guided 67-69%, FY2027 'broadly consistent' with FY2026, while volume more than doubled: no visible price erosion yet. GAAP gross margin 64.5% is below Astera Labs (73.3%); no ASP is disclosed and a 1.6T entrant (MaxLinear) can press prices."
+  },
+  "retention": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "ex_cu_a_fy25",
+    "ex_cu_a_fy26",
+    "ex_cu_a_q1fy27",
+    "rp_k_n10_q1fy27"
+   ],
+   "note": "The largest contracting customer's share fell (67% FY2025, 49% FY2026, 43% Q1 FY2027) while revenue tripled, so its dollars grew; no customer loss is disclosed. No contractual retention measure exists."
+  },
+  "customer_concentration": {
+   "assessment": "weak",
+   "evidence_ids": [
+    "rp_cu_A_q1fy27",
+    "rp_cu_B_q1fy27",
+    "rp_k_top10_fy26",
+    "ex_k_top4_end_q1fy27",
+    "ex_cu_ed_fy25"
+   ],
+   "note": "Two contracting parties 43% and 28% of Q1 FY2027 revenue, four end customers 84%, top 10 about 90% of FY2026; improving (largest end customer 63% in FY2025, 33% now)."
+  },
+  "market_size": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "fd_rel_avgo_20260902",
+    "fd_rel_alab_20260804",
+    "fd_rel_mrvl_20260827",
+    "rp_rev_fy26",
+    "ex_10k_20260615"
+   ],
+   "note": "The AI-connectivity pool is large and growing on the named competitors' and Credo's own reported numbers; the size of the AEC market itself rests only on an attributed Jefferies estimate (press excerpt)."
+  },
+  "competition": {
+   "assessment": "weak",
+   "evidence_ids": [
+    "ex_10k_20260615",
+    "fd_rel_alab_20260804",
+    "fd_rel_mrvl_20260827",
+    "fd_rel_avgo_20260902",
+    "fd_press_stocktwits_20261023",
+    "rp_g_rev_q2fy27"
+   ],
+   "note": "Read as how favourable the field is for Credo: three named principal competitors, two far larger, Astera Labs guiding above Credo's next quarter (540-560M vs 525-535M) with about +40% sequential growth against +10.6%, and MaxLinear entering 1.6T AECs."
+  },
+  "substitutes": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "fd_ind_futurum_mrvl_20261009",
+    "rp_g_optical_fy27_floor",
+    "ex_10k_20260615"
+   ],
+   "note": "Copper holds XPU-to-XPU links today; scale-up optics revenue starts from about 2027 (Marvell management, relayed). Credo is building its own optical line (above 600M in FY2027 per the call), so substitution is partly hedged inside the company; the copper window beyond 2028 is not evidenced."
+  },
+  "management": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "rp_g_rev_q3fy25",
+    "rp_g_rev_q1fy26",
+    "rp_g_rev_q3fy26",
+    "rp_g_rev_q4fy26",
+    "rp_g_rev_q1fy27",
+    "rp_rev_fy26",
+    "rp_ngopex_q1fy27"
+   ],
+   "note": "Revenue above the guided range in 7 of 7 quarters (mean 1.105x) and the FY2026 annual statement delivered (+205.7% vs 'more than 200%'); the beat narrowed to about 2%, opex ran above guide three quarters running, and the FY2027 floor needs a second-half optical inflection not yet in reported revenue."
+  },
+  "capital_allocation": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "nm_operating_income_fy_2026_05_02",
+    "nm_equity_q_2026_08_01",
+    "nm_cash_q_2026_08_01",
+    "nm_short_term_investments_q_2026_08_01",
+    "nm_goodwill_q_2026_08_01",
+    "nm_intangible_assets_q_2026_08_01",
+    "rp_dust_total",
+    "rp_sbc_q1fy27",
+    "nm_shares_diluted_wavg_q_2026_08_01",
+    "nm_shares_diluted_wavg_q_2025_08_02"
+   ],
+   "note": "Pre-tax return on equity less cash and short-term investments about 72% in FY2026, about 26% on the trailing year after DustPhotonics (1,251.1M, no disclosed revenue yet) tripled invested capital: still above the cost of capital, but the acquisition's return is unproven. No buybacks; SBC 18.4% of Q1 revenue; diluted shares +5.3% in a year."
+  },
+  "geopolitics": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "rp_geo_hk_q1fy27",
+    "ex_k_geo_malaysia_q1fy27",
+    "rp_geo_cn_q1fy27",
+    "rp_geo_cn_q1fy26",
+    "ex_10k_20260615",
+    "nm_ppe_net_taiwan_fy_2026_05_02"
+   ],
+   "note": "Mainland China shipments fell from 51.8M (Q1 FY2026) to 1.1M; Hong Kong 19% and Malaysia 15.5% of Q1 FY2027 shipments are manufacturing locations, not end demand; wafers come only from TSMC in Taiwan (10-K)."
+  }
+ },
+ "forecast_options": {
+  "cyclical": {
+   "treatment": "structural",
+   "reason": "The industry is cyclical by name (semiconductors), but Credo's margin history is a scale-up (operating losses at revenue below 200M through FY2024), not a completed cycle: a mid-cycle margin built on those start-up years would measure scale, not a trough. The demand cycle is carried explicitly instead: the base slows to about +42% in FY2028 from +89%, and the bear is a top-customer digestion sized from Credo's own FY2024 (+4.8% after +73%) with inventory, purchase-commitment and deposit exposure.",
+   "evidence_ids": [
+    "pf_history_companyfacts",
+    "nm_operating_income_fy_2026_05_02",
+    "ex_10k_20260615",
+    "rp_purch_q1fy27",
+    "rp_deposits_q1fy27"
+   ]
+  }
+ },
+ "market": {
+  "risk_free": {
+   "value": 0.05,
+   "as_of": "2026-10-26",
+   "source_id": "nm_fred_dgs10"
+  }
+ }
+}

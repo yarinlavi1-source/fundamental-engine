@@ -1,0 +1,53 @@
+{
+ "lens": "counter",
+ "findings": [
+  {
+   "severity": "critical",
+   "finding": "The model's FY2026 starting revenue is stale and about 15% too low, so every scenario price (fair value, the yearly table, what_must_be_true) rests on a wrong base. The revenue_current_fy assumption takes FY2025 revenue (NT$3,809bn, labelled 'ttm') x 1.253 = NT$4,771bn for FY2026. The run's own reported quarters say otherwise: Q1 1,134.1 + Q2 1,270.4 + Q3 1,494.2 = NT$3,898.7bn for 9M 2026 (nm_revenue_q1_2026, nm_revenue_q2_2026, nm_revenue_q3_2026). The real TTM is NT$4,944.8bn (with nm_revenue_q4_2025). FY2026 at the Q4 guide midpoint (US$53.3bn x 31.8 NT$, dc release/call) is about NT$5,590bn (+47%). The Nov-Dec stub carries NT$861bn, while two thirds of the Q4 guide is about NT$1,130bn. Result: the base's 'growth >25% in 2027' is only about +8% on the real FY2026 (model FY2027 NT$6,055bn vs ~5,590bn). Base FY2027 operating EPS of NT$99 is below the Q3 2026 run rate (EPS 29.43 x 4 = ~118, quarter_result). Base FY2028 EPS 118.6 equals today's run rate. The bear 'growth 6%' is really about -10% in 2027 and -8% in 2028 against the real base. The narratives in position/core.json and coherence.md describe a different business than the one priced.",
+   "where": "companies/TSM/out/casefile.json val.case assumptions id=revenue_current_fy (and rv.mechanical.redteam.derived_inputs.revenue_basis); val.result.scenarios[*].forecast[0..1]; companies/TSM/out/table_he.md, scenarios_he.md; position/core.json drivers growth_anchor/growth per scenario",
+   "fix": "Rebase revenue_current_fy on reported 9M 2026 plus the Q4 2026 guide midpoint at the guided NT$ rate (~NT$5.59tn; at minimum the real TTM of NT$4.94tn). Restate the 2027 growth drivers against that base: base +27% then means FY2027 ~NT$7.1tn, so the analyst must decide whether 27% on the higher base is still the most likely path, given management is 'prudent' on 2027. Restate bear 2027 as an explicit decline sized to the 2023 analogue (-4.5%) or sharper, and say why. Then rerun ticker-value. The current-year margin start needs the same check: the bear path starts at 50.8% after SBC against a reported 58.7% Q3 operating margin."
+  },
+  {
+   "severity": "major",
+   "finding": "Counter-thesis (pre-mortem: by late 2029 the stock has lost ~50%). AI accelerator buyers (the two largest customers = 36% of revenue, HPC = 68%) digest the 2024-2026 build-out in 2027-28. That happens just as TSMC's US$60-64bn 2026 capex, 'significantly higher' in 2027-28 at inflated tool prices, lands ~20 fabs of new capacity. Utilization falls, and the record 58.7% operating margin (vs 35-51% in FY2019-25) reverts toward the 40s. Overseas-fab dilution widens to 3-4 pts as guided. The multiple compresses from ~25x forward toward the 2022 trough (own_history low 11.6). EPS and multiple fall together. Early signs: (1) HPC revenue q/q turning negative or the 2027 revenue guide in January 2027 below +20% in US$; (2) gross margin below 63% in any 2027 quarter beyond the guided 2nm/overseas dilution; (3) inventory days or contract-liability (prepayment) balances falling at the top customers; (4) capex guide raised again while revenue guidance is not; (5) hyperscaler capex guides for 2027 flat or down.",
+   "where": "position/core.json (bear story and events); understand/business.json flags (margin at cyclical peak, customer concentration, capex step-up)",
+   "fix": "Carry this counter-thesis next to the result. Add falsifiers (2) and (4) to the bear as numeric dated tests, e.g. 'gross margin, any quarter of 2027, below 0.63 by 2028-01-20' and 'FY2027 capex guide above US$70bn with FY2027 revenue guide below +20% (US$), by 2027-01-20'."
+  },
+  {
+   "severity": "major",
+   "finding": "Taiwan and tariff exposure is evidenced but not priced. The risk register marks biz.geopolitics as severity high, in_bear_case false, pricing_status not_priced ('bear is worse on these levers but does not name this risk'). 80% of noncurrent assets are in Taiwan. China-HQ customers are ~9% of revenue under US export rules, and Section 232 tariffs are open. The bear event names the risk, but no driver or value sizes it: no outage scenario, no China-revenue loss, no tariff margin hit. The country-risk premium nets to -0.22% on the discount rate, using revenue geography (Taiwan only 7.9% of revenue). That measures where customers are, not where the production is.",
+   "where": "companies/TSM/out/casefile.json rk.register id=biz.geopolitics; table_he.md country-risk note; position/field.json bear reading",
+   "fix": "Say next to the result that the bear does not price a Taiwan disruption. Either size a separate, explicitly labelled tail (e.g. the value if Taiwan output stops for N quarters, and the value with China-HQ revenue removed, 8.6% per the country table), or keep it as a visible unpriced risk in the table's risk row. Do not let the revenue-weighted country premium imply the asset-location risk is covered."
+  },
+  {
+   "severity": "major",
+   "finding": "Bear sizing is not tied to its own mechanisms. The events cite the 2023 downturn (-4.5% revenue, operating margin 49.5% -> 42.6%) and 'sharper because HPC is 68%', with no size for the sharper part. The path takes ROIC 20%, below every year of the company's own record (forensic ROIC series 0.42-0.73, FY2020-25; the 2023 trough year was 0.45). So the bear multiple (13.3x at year 0, ~15x later) stacks a harsher-than-history return on top of the earnings fall. Year 1 shows -61% against today. The table's bear (-52% at year 5) may be more a stacked stress than an evidenced bear.",
+   "where": "position/path.json company_path.scenarios.bear (roic 0.2, justification unproven); prefetch/forensic.json roic.series; position/core.json bear events",
+   "fix": "Anchor bear ROIC to the record (the FY2023 trough ~0.45, minus the guided 3-4 pt overseas dilution and tool inflation, sized), or give the evidence for 0.20. Size the HPC share at risk (e.g. the two largest customers' 36% cut by X%, from the 2023 analogue) and make the bear revenue path match it after the critical rebase."
+  },
+  {
+   "severity": "major",
+   "finding": "The price-implied gap is small and depends on the stale base. what_must_be_true says the price needs 18.3% average 5-year growth vs base 16.7%, or a 55.0% mature margin vs 52%. That is a 1.6-pt growth gap and the table's 'expensive by ~6%'. With FY2026 understated by ~15%, the sign of the gap may flip (the price may need less than the base). The 'expensive by 6%' and the 'buy below 2,363 TWD' line are not reliable until the rebase. The red-team audit passed_with_limitations with cash, debt and shares only 'by_construction' (dataqa_resolved), not reconciled to a reported figure. The valuation audit is requires_review with every material input unreviewed.",
+   "where": "companies/TSM/out/casefile.json val.what_must_be_true; rk.redteam (by_construction: cash_reconciles, debt_complete, shares_current); rv.mechanical.valuation_audit",
+   "fix": "After the rebase, rerun expectation_gap and redteam_audit. Supply reported cash and short-term investments, debt principal and point-in-time shares from the Q3 2026 statements (the quarter_result spendable liquidity is NT$4,017bn and debt NT$818bn, while the model opens with debt NT$177bn) so the red-team checks are real reconciliations, not by construction."
+  },
+  {
+   "severity": "major",
+   "finding": "Capital-structure inputs look inconsistent with the latest quarter. The model opens with debt NT$176.8bn and cash NT$2,768bn plus financial assets NT$2,350bn. quarter_result (Q3 2026) shows total debt NT$818bn and spendable liquidity NT$4,017bn. The stub period then pays a NT$2,300bn 'dividend' (excess cash released), so the yearly prices from year 1 exclude ~NT$89 a share of value. The '5-year potential' row compares price only.",
+   "where": "val.result.scenarios[*].forecast[0] (cash_open, financial_assets_open, dividends, debt); understand/quarter_result.json liquidity",
+   "fix": "Reconcile debt and liquidity to the Q3 2026 balance sheet (review_numbers lane). State in the table note that the year-1..5 prices are after a one-time excess-cash distribution of ~NT$89 a share, or show total return including it."
+  },
+  {
+   "severity": "minor",
+   "finding": "Falsifiers are numeric and dated, but their thresholds are written against reported NT$ growth while the model's own growth is measured from the stale FY2026 base. Example: base falsifier 'FY2027 revenue growth below 0.15', while the model's base FY2027 is only ~+8% over the real FY2026, so the model's own base would trip its falsifier. Bear falsifier 'operating margin Q2 2027 above 0.55' is fine. The bull event 'wafer price rises of 3-6% from January 2027' is a hypothesis (press, not citable) and correctly moves no number.",
+   "where": "position/core.json falsifiers (base, bear, bull); position/path.json gaps",
+   "fix": "After the rebase, check each falsifier against the restated model path so a scenario does not contradict its own refutation test."
+  },
+  {
+   "severity": "minor",
+   "finding": "own_history multiples are TRAILING P/E at year-end ADR closes (median 27.4, high 29.4), while the path multiples are FORWARD (base 25.4x at year 0). A forward 25.4x on EPS growing ~20-27% is about a 30x+ trailing equivalent, at or above the own-history high, yet it is labelled justified_high. No named competitor forward multiple is available (Samsung, SMIC, UMC, GFS not retrieved).",
+   "where": "position/path.json company_path.own_history and scenarios.base.justification",
+   "fix": "Convert own_history to forward (or the path to trailing) before comparing. If the base year-0 multiple is above the own-history high on a like-for-like basis, label it peak, or justify it from the economics with the rebased EPS."
+  }
+ ]
+}

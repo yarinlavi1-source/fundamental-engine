@@ -1,0 +1,2005 @@
+{
+ "lane": "documents",
+ "sources": [
+  {
+   "id": "dc_call_20260729",
+   "kind": "transcript",
+   "title": "Amphenol Q2 2026 earnings conference call transcript, Alpha Vantage copy of the company's own call (held 2026-07-29, 1:00 PM EDT; R. Adam Norwitt CEO, Craig A. Lampo CFO; original: Amphenol call and webcast, investors.amphenol.com)",
+   "url": "connector:mcp__Alpha_Vantage_MCP_Server__EARNINGS_CALL_TRANSCRIPT(symbol=APH, quarter=2026Q2)",
+   "date": "2026-07-29",
+   "independent": false,
+   "publisher": "Alpha Vantage (transcript of the company's own call)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  }
+ ],
+ "facts": [
+  {
+   "id": "dc_fact_total_debt_20260630",
+   "metric": "total_debt",
+   "period": "I@2026-06-30",
+   "value": 18811300000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260731"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_total_debt_20251231",
+   "metric": "total_debt",
+   "period": "I@2025-12-31",
+   "value": 15502000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260731"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_net_debt_20260630",
+   "metric": "net_debt",
+   "period": "I@2026-06-30",
+   "value": 13400000000,
+   "unit": "USD",
+   "source_ids": [
+    "dc_call_20260729"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_liquidity_20260630",
+   "metric": "total_liquidity_cash_plus_credit_availability",
+   "period": "I@2026-06-30",
+   "value": 8400000000,
+   "unit": "USD",
+   "source_ids": [
+    "dc_call_20260729"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_net_leverage_20260630",
+   "metric": "net_leverage_ratio",
+   "period": "I@2026-06-30",
+   "value": 1.3,
+   "unit": "x",
+   "source_ids": [
+    "dc_call_20260729"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_purchase_commit_2026",
+   "metric": "purchase_commitments_due_2026",
+   "period": "I@2025-12-31",
+   "value": 2006900000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_purchase_commit_2027_28",
+   "metric": "purchase_commitments_due_2027_2028",
+   "period": "I@2025-12-31",
+   "value": 72100000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_purchase_commit_after_2028",
+   "metric": "purchase_commitments_due_after_2028",
+   "period": "I@2025-12-31",
+   "value": 4200000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_shares_out_20260728",
+   "metric": "shares_outstanding_class_a",
+   "period": "I@2026-07-28",
+   "value": 2465966914,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20260731"
+   ],
+   "period_end": "2026-07-28",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_buyback_remaining_20260729",
+   "metric": "buyback_authorization_remaining",
+   "period": "I@2026-07-29",
+   "value": 411100000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260731"
+   ],
+   "period_end": "2026-07-29",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_buyback_avg_price_q2_2026",
+   "metric": "buyback_average_price",
+   "period": "Q@2026-06-30",
+   "value": 70.5,
+   "unit": "USD/shares",
+   "source_ids": [
+    "dc_call_20260729"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_dividend_ps_q2_2026",
+   "metric": "dividend_declared_per_share",
+   "period": "Q@2026-06-30",
+   "value": 0.125,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_10q_20260731"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_commscope_price",
+   "metric": "commscope_purchase_price_cash",
+   "period": "I@2026-01-09",
+   "value": 10500000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2026-01-09",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_commscope_sales_ytd",
+   "metric": "commscope_net_sales_since_close",
+   "period": "YTD@2026-06-30",
+   "value": 2100900000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260731"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_commscope_ni_ytd",
+   "metric": "commscope_net_income_since_close_before_interest_and_deal_costs",
+   "period": "YTD@2026-06-30",
+   "value": 190200000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260731"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_commscope_intangibles",
+   "metric": "commscope_acquired_intangible_assets_preliminary",
+   "period": "I@2026-06-30",
+   "value": 3289000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260731"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_proforma_sales_q2_2025",
+   "metric": "pro_forma_net_sales_with_commscope",
+   "period": "Q@2025-06-30",
+   "value": 6525700000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260731"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_proforma_sales_q2_2026",
+   "metric": "pro_forma_net_sales_with_commscope",
+   "period": "Q@2026-06-30",
+   "value": 8758100000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260731"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_ieepa_benefit_q2_2026",
+   "metric": "ieepa_tariff_recovery_net_benefit_in_operating_income",
+   "period": "Q@2026-06-30",
+   "value": 80000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260729_1",
+    "pf_10q_20260731"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_backlog_amort_q2_2026",
+   "metric": "acquired_backlog_amortization",
+   "period": "Q@2026-06-30",
+   "value": 23500000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260729_1"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_inventory_stepup_q1_2026",
+   "metric": "inventory_step_up_amortization_in_cost_of_sales",
+   "period": "Q@2026-03-31",
+   "value": 132000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260429_1",
+    "pf_rel_20260729_1"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_interest_expense_q2_2026",
+   "metric": "interest_expense",
+   "period": "Q@2026-06-30",
+   "value": 213700000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260729_1"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_interest_expense_q2_2025",
+   "metric": "interest_expense",
+   "period": "Q@2025-06-30",
+   "value": 80900000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260729_1"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_etr_gaap_q2_2026",
+   "metric": "effective_tax_rate_gaap",
+   "period": "Q@2026-06-30",
+   "value": 0.253,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20260729_1"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_etr_adjusted_q2_2026",
+   "metric": "effective_tax_rate_adjusted",
+   "period": "Q@2026-06-30",
+   "value": 0.27,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20260729_1"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_etr_adjusted_q2_2025",
+   "metric": "effective_tax_rate_adjusted",
+   "period": "Q@2025-06-30",
+   "value": 0.245,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20260729_1"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_china_tax_charge_q4_2025",
+   "metric": "china_tax_inquiry_charge",
+   "period": "Q@2025-12-31",
+   "value": 100000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_china_tax_accrual_h1_2026",
+   "metric": "china_tax_accruals_130_unfavorable_determination_plus_160_reassessed_prior_years",
+   "period": "YTD@2026-06-30",
+   "value": 290000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260729_1",
+    "pf_10q_20260731"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_discrete_tax_q2_2026",
+   "metric": "discrete_tax_items_foreign_tax_matters_reserve",
+   "period": "Q@2026-06-30",
+   "value": 39000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260729_1"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_excess_tax_benefit_sbc_q2_2026",
+   "metric": "excess_tax_benefit_stock_compensation",
+   "period": "Q@2026-06-30",
+   "value": 80500000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260729_1"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_excess_tax_benefit_sbc_q2_2025",
+   "metric": "excess_tax_benefit_stock_compensation",
+   "period": "Q@2025-06-30",
+   "value": 85300000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260729_1"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_adj_eps_q2_2026",
+   "metric": "adjusted_diluted_eps",
+   "period": "Q@2026-06-30",
+   "value": 0.675,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_rel_20260729_1"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_adj_eps_q1_2026",
+   "metric": "adjusted_diluted_eps",
+   "period": "Q@2026-03-31",
+   "value": 0.53,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_rel_20260429_1"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_adj_eps_q4_2025",
+   "metric": "adjusted_diluted_eps",
+   "period": "Q@2025-12-31",
+   "value": 0.485,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_rel_20260128_1"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_adj_eps_q3_2025",
+   "metric": "adjusted_diluted_eps",
+   "period": "Q@2025-09-30",
+   "value": 0.46,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_adj_eps_q2_2025",
+   "metric": "adjusted_diluted_eps",
+   "period": "Q@2025-06-30",
+   "value": 0.405,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_rel_20260729_1",
+    "pf_rel_20250723_1"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_adj_opinc_q2_2026",
+   "metric": "adjusted_operating_income",
+   "period": "Q@2026-06-30",
+   "value": 2608100000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260729_1"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_adj_opm_q2_2026",
+   "metric": "adjusted_operating_margin",
+   "period": "Q@2026-06-30",
+   "value": 0.298,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20260729_1"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_adj_opm_q1_2026",
+   "metric": "adjusted_operating_margin",
+   "period": "Q@2026-03-31",
+   "value": 0.273,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20260429_1"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_adj_opm_q4_2025",
+   "metric": "adjusted_operating_margin",
+   "period": "Q@2025-12-31",
+   "value": 0.275,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20260128_1"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_adj_opm_q3_2025",
+   "metric": "adjusted_operating_margin",
+   "period": "Q@2025-09-30",
+   "value": 0.275,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20251022_1"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_adj_opm_q2_2025",
+   "metric": "adjusted_operating_margin",
+   "period": "Q@2025-06-30",
+   "value": 0.256,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20260729_1",
+    "pf_rel_20250723_1"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_fcf_q2_2026",
+   "metric": "free_cash_flow",
+   "period": "Q@2026-06-30",
+   "value": 1205500000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260729_1"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_fcf_q2_2025",
+   "metric": "free_cash_flow",
+   "period": "Q@2025-06-30",
+   "value": 1121300000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260729_1"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_fcf_q1_2026",
+   "metric": "free_cash_flow",
+   "period": "Q@2026-03-31",
+   "value": 831000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260429_1"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_total_debt_20260930",
+   "metric": "total_debt",
+   "period": "I@2026-09-30",
+   "value": 17870800000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_cash_20260930",
+   "metric": "cash_and_equivalents",
+   "period": "I@2026-09-30",
+   "value": 4173100000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_sti_20260930",
+   "metric": "short_term_investments",
+   "period": "I@2026-09-30",
+   "value": 1128300000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_net_debt_20260930",
+   "metric": "net_debt",
+   "period": "I@2026-09-30",
+   "value": 12569400000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1",
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "derived"
+  },
+  {
+   "id": "dc_fact_goodwill_20260930",
+   "metric": "goodwill",
+   "period": "I@2026-09-30",
+   "value": 17695600000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_intangibles_20260930",
+   "metric": "other_intangible_assets_net",
+   "period": "I@2026-09-30",
+   "value": 5344000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_equity_20260930",
+   "metric": "stockholders_equity_attributable",
+   "period": "I@2026-09-30",
+   "value": 17123600000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_shares_out_20261027",
+   "metric": "shares_outstanding_class_a_post_split",
+   "period": "I@2026-10-27",
+   "value": 2469261188,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-10-27",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_diluted_shares_q3_2026",
+   "metric": "weighted_diluted_shares_post_split",
+   "period": "Q@2026-09-30",
+   "value": 2582900000,
+   "unit": "shares",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_diluted_shares_q3_2025",
+   "metric": "weighted_diluted_shares_post_split",
+   "period": "Q@2025-09-30",
+   "value": 2565500000,
+   "unit": "shares",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_buyback_q3_2026",
+   "metric": "share_repurchases",
+   "period": "Q@2026-09-30",
+   "value": 245000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_buyback_shares_q3_2026",
+   "metric": "share_repurchases_shares_post_split",
+   "period": "Q@2026-09-30",
+   "value": 3000000,
+   "unit": "shares",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_dividends_paid_q3_2026",
+   "metric": "dividends_paid",
+   "period": "Q@2026-09-30",
+   "value": 308000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_dividend_ps_new",
+   "metric": "dividend_declared_per_share_from_2027-01",
+   "period": "I@2026-10-27",
+   "value": 0.15,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-10-27",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_acq_cash_q3_2026",
+   "metric": "acquisitions_net_of_cash",
+   "period": "Q@2026-09-30",
+   "value": 371800000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_acq_cash_9m_2026",
+   "metric": "acquisitions_net_of_cash",
+   "period": "YTD@2026-09-30",
+   "value": 11055800000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_interest_expense_q3_2026",
+   "metric": "interest_expense",
+   "period": "Q@2026-09-30",
+   "value": 212300000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_interest_expense_q3_2025",
+   "metric": "interest_expense",
+   "period": "Q@2025-09-30",
+   "value": 80700000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_etr_gaap_q3_2026",
+   "metric": "effective_tax_rate_gaap",
+   "period": "Q@2026-09-30",
+   "value": 0.274,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_etr_adj_q3_2026",
+   "metric": "effective_tax_rate_adjusted",
+   "period": "Q@2026-09-30",
+   "value": 0.27,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_adj_eps_q3_2026",
+   "metric": "adjusted_diluted_eps",
+   "period": "Q@2026-09-30",
+   "value": 0.8,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_adj_opinc_q3_2026",
+   "metric": "adjusted_operating_income",
+   "period": "Q@2026-09-30",
+   "value": 3036300000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_adj_opm_q3_2026",
+   "metric": "adjusted_operating_margin",
+   "period": "Q@2026-09-30",
+   "value": 0.297,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_fcf_q3_2026",
+   "metric": "free_cash_flow",
+   "period": "Q@2026-09-30",
+   "value": 1622700000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "derived"
+  },
+  {
+   "id": "dc_fact_ocf_9m_2026",
+   "metric": "operating_cash_flow",
+   "period": "YTD@2026-09-30",
+   "value": 4757200000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_capex_9m_2026",
+   "metric": "capital_expenditures",
+   "period": "YTD@2026-09-30",
+   "value": 1104300000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_working_capital_change_q3_2026",
+   "metric": "net_change_working_capital_cash_flow",
+   "period": "Q@2026-09-30",
+   "value": -415900000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_ar_20260930",
+   "metric": "accounts_receivable_net",
+   "period": "I@2026-09-30",
+   "value": 7782000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_inventory_20260930",
+   "metric": "inventories",
+   "period": "I@2026-09-30",
+   "value": 5264500000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_ieepa_9m_2026",
+   "metric": "ieepa_tariff_recovery_net_benefit_in_operating_income",
+   "period": "YTD@2026-09-30",
+   "value": 95000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_ieepa_q3_2026",
+   "metric": "ieepa_tariff_recovery_net_benefit_in_operating_income",
+   "period": "Q@2026-09-30",
+   "value": 15000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_excess_tax_benefit_q3_2026",
+   "metric": "excess_tax_benefit_stock_compensation",
+   "period": "Q@2026-09-30",
+   "value": 52200000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_discrete_tax_q3_2026",
+   "metric": "discrete_tax_items",
+   "period": "Q@2026-09-30",
+   "value": 60000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_acq_expenses_q3_2026",
+   "metric": "acquisition_related_expenses",
+   "period": "Q@2026-09-30",
+   "value": 15500000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_commscope_sales_since_close_20260930",
+   "metric": "commscope_net_sales_since_close",
+   "period": "YTD@2026-09-30",
+   "value": 3683300000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_commscope_ni_since_close_20260930",
+   "metric": "commscope_net_income_since_close_before_interest_and_deal_costs",
+   "period": "YTD@2026-09-30",
+   "value": 471400000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fact_distributors_q3_2026",
+   "metric": "sales_to_distributors_and_resellers",
+   "period": "Q@2026-09-30",
+   "value": 2824200000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1",
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "derived"
+  },
+  {
+   "id": "dc_fact_distributors_q3_2025",
+   "metric": "sales_to_distributors_and_resellers",
+   "period": "Q@2025-09-30",
+   "value": 1123300000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1",
+    "pf_10q_20261030"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "derived"
+  },
+  {
+   "id": "dc_fact_pending_acq_purchase_price",
+   "metric": "announced_acquisitions_combined_price_incl_empire",
+   "period": "I@2026-10-28",
+   "value": 1600000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-10-28",
+   "basis": "reported"
+  }
+ ],
+ "guidance": [
+  {
+   "id": "dc_guid_q3_rev",
+   "metric": "revenue",
+   "period": "Q3 FY2026",
+   "low": 9300000000,
+   "high": 9400000000,
+   "unit": "USD",
+   "issued": "2026-07-29",
+   "source_id": "pf_rel_20260729_1"
+  },
+  {
+   "id": "dc_guid_q3_adj_eps",
+   "metric": "adjusted_diluted_eps",
+   "period": "Q3 FY2026",
+   "low": 0.7,
+   "high": 0.71,
+   "unit": "USD/shares",
+   "issued": "2026-07-29",
+   "source_id": "pf_rel_20260729_1"
+  },
+  {
+   "id": "dc_guid_commscope_sales_fy26",
+   "metric": "commscope_full_year_sales",
+   "period": "FY2026",
+   "low": 4600000000,
+   "high": 4600000000,
+   "unit": "USD",
+   "issued": "2026-07-29",
+   "source_id": "pf_rel_20260729_1"
+  },
+  {
+   "id": "dc_guid_commscope_sales_fy26_prior",
+   "metric": "commscope_full_year_sales",
+   "period": "FY2026",
+   "low": 4100000000,
+   "high": 4100000000,
+   "unit": "USD",
+   "issued": "2026-01-28",
+   "source_id": "pf_rel_20260128_1"
+  },
+  {
+   "id": "dc_guid_commscope_eps_fy26",
+   "metric": "commscope_adjusted_eps_accretion",
+   "period": "FY2026",
+   "low": 0.15,
+   "high": 0.15,
+   "unit": "USD/shares",
+   "issued": "2026-07-29",
+   "source_id": "pf_rel_20260729_1"
+  },
+  {
+   "id": "dc_guid_commscope_eps_fy26_prior",
+   "metric": "commscope_adjusted_eps_accretion",
+   "period": "FY2026",
+   "low": 0.075,
+   "high": 0.075,
+   "unit": "USD/shares",
+   "issued": "2026-01-28",
+   "source_id": "pf_rel_20260128_1"
+  },
+  {
+   "id": "dc_guid_capex_pct",
+   "metric": "capex_pct_of_sales",
+   "period": "FY2026",
+   "low": 0.03,
+   "high": 0.04,
+   "unit": "ratio",
+   "issued": "2026-07-29",
+   "source_id": "dc_call_20260729"
+  },
+  {
+   "id": "dc_guid_q4_rev",
+   "metric": "revenue",
+   "period": "Q4 FY2026",
+   "low": 10300000000.0,
+   "high": 10500000000.0,
+   "unit": "USD",
+   "issued": "2026-10-28",
+   "source_id": "pf_rel_20261028_1"
+  },
+  {
+   "id": "dc_guid_q4_adj_eps",
+   "metric": "adjusted_diluted_eps",
+   "period": "Q4 FY2026",
+   "low": 0.81,
+   "high": 0.83,
+   "unit": "USD/shares",
+   "issued": "2026-10-28",
+   "source_id": "pf_rel_20261028_1"
+  },
+  {
+   "id": "dc_guid_fy26_rev",
+   "metric": "revenue",
+   "period": "FY2026",
+   "low": 36900000000.0,
+   "high": 37100000000.0,
+   "unit": "USD",
+   "issued": "2026-10-28",
+   "source_id": "pf_rel_20261028_1"
+  },
+  {
+   "id": "dc_guid_fy26_adj_eps",
+   "metric": "adjusted_diluted_eps",
+   "period": "FY2026",
+   "low": 2.82,
+   "high": 2.84,
+   "unit": "USD/shares",
+   "issued": "2026-10-28",
+   "source_id": "pf_rel_20261028_1"
+  },
+  {
+   "id": "dc_guid_commscope_sales_fy26_oct",
+   "metric": "commscope_full_year_sales",
+   "period": "FY2026",
+   "low": 5100000000.0,
+   "high": 5100000000.0,
+   "unit": "USD",
+   "issued": "2026-10-28",
+   "source_id": "pf_rel_20261028_1"
+  },
+  {
+   "id": "dc_guid_commscope_eps_fy26_oct",
+   "metric": "commscope_adjusted_eps_accretion",
+   "period": "FY2026",
+   "low": 0.18,
+   "high": 0.18,
+   "unit": "USD/shares",
+   "issued": "2026-10-28",
+   "source_id": "pf_rel_20261028_1"
+  }
+ ],
+ "kpis": [
+  {
+   "id": "dc_kpi_orders_q2_2026",
+   "name": "orders",
+   "period": "Q@2026-06-30",
+   "value": 10700000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260729_1",
+    "dc_call_20260729"
+   ]
+  },
+  {
+   "id": "dc_kpi_orders_q1_2026",
+   "name": "orders",
+   "period": "Q@2026-03-31",
+   "value": 9400000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260429_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_b2b_q2_2026",
+   "name": "book_to_bill",
+   "period": "Q@2026-06-30",
+   "value": 1.23,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20260729_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_b2b_q1_2026",
+   "name": "book_to_bill",
+   "period": "Q@2026-03-31",
+   "value": 1.24,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20260429_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_orders_yoy_q2_2026",
+   "name": "orders_growth_yoy",
+   "period": "Q@2026-06-30",
+   "value": 0.94,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_call_20260729"
+   ]
+  },
+  {
+   "id": "dc_kpi_orders_organic_yoy_q2_2026",
+   "name": "orders_organic_growth_yoy",
+   "period": "Q@2026-06-30",
+   "value": 0.63,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_call_20260729"
+   ]
+  },
+  {
+   "id": "dc_kpi_orders_qoq_q2_2026",
+   "name": "orders_growth_qoq",
+   "period": "Q@2026-06-30",
+   "value": 0.14,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_call_20260729"
+   ]
+  },
+  {
+   "id": "dc_kpi_org_growth_q2_2026",
+   "name": "organic_sales_growth_yoy",
+   "period": "Q@2026-06-30",
+   "value": 0.3,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20260729_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_org_growth_q1_2026",
+   "name": "organic_sales_growth_yoy",
+   "period": "Q@2026-03-31",
+   "value": 0.33,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20260429_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_org_growth_q4_2025",
+   "name": "organic_sales_growth_yoy",
+   "period": "Q@2025-12-31",
+   "value": 0.37,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20260128_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_org_growth_q3_2025",
+   "name": "organic_sales_growth_yoy",
+   "period": "Q@2025-09-30",
+   "value": 0.41,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20251022_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_org_growth_q2_2025",
+   "name": "organic_sales_growth_yoy",
+   "period": "Q@2025-06-30",
+   "value": 0.41,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20250723_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_org_growth_fy2025",
+   "name": "organic_sales_growth_yoy",
+   "period": "FY2025",
+   "value": 0.38,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10k_20260211"
+   ]
+  },
+  {
+   "id": "dc_kpi_acq_impact_q2_2026",
+   "name": "acquisition_contribution_to_sales_growth",
+   "period": "Q@2026-06-30",
+   "value": 0.24,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20260729_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_sales_qoq_organic_q2_2026",
+   "name": "organic_sales_growth_qoq",
+   "period": "Q@2026-06-30",
+   "value": 0.13,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_call_20260729"
+   ]
+  },
+  {
+   "id": "dc_kpi_capex_pct_q2_2026",
+   "name": "capex_pct_of_sales",
+   "period": "Q@2026-06-30",
+   "value": 0.0406,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20260729_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_commscope_sales_q2_2026",
+   "name": "commscope_quarterly_sales_approx_a_bit_over_1.2bn",
+   "period": "Q@2026-06-30",
+   "value": 1200000000,
+   "unit": "USD",
+   "source_ids": [
+    "dc_call_20260729"
+   ]
+  },
+  {
+   "id": "dc_kpi_mkt_itdc_share_q2_2026",
+   "name": "end_market_share_it_datacom",
+   "period": "Q@2026-06-30",
+   "value": 0.43,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_call_20260729"
+   ]
+  },
+  {
+   "id": "dc_kpi_mkt_ind_share_q2_2026",
+   "name": "end_market_share_industrial",
+   "period": "Q@2026-06-30",
+   "value": 0.2,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_call_20260729"
+   ]
+  },
+  {
+   "id": "dc_kpi_mkt_net_share_q2_2026",
+   "name": "end_market_share_communications_networks",
+   "period": "Q@2026-06-30",
+   "value": 0.11,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_call_20260729"
+   ]
+  },
+  {
+   "id": "dc_kpi_mkt_auto_share_q2_2026",
+   "name": "end_market_share_automotive",
+   "period": "Q@2026-06-30",
+   "value": 0.1,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_call_20260729"
+   ]
+  },
+  {
+   "id": "dc_kpi_mkt_def_share_q2_2026",
+   "name": "end_market_share_defense",
+   "period": "Q@2026-06-30",
+   "value": 0.08,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_call_20260729"
+   ]
+  },
+  {
+   "id": "dc_kpi_mkt_air_share_q2_2026",
+   "name": "end_market_share_commercial_aerospace",
+   "period": "Q@2026-06-30",
+   "value": 0.04,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_call_20260729"
+   ]
+  },
+  {
+   "id": "dc_kpi_mkt_mob_share_q2_2026",
+   "name": "end_market_share_mobile_devices",
+   "period": "Q@2026-06-30",
+   "value": 0.04,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_call_20260729"
+   ]
+  },
+  {
+   "id": "dc_kpi_mkt_itdc_org_q2_2026",
+   "name": "end_market_organic_growth_yoy_it_datacom",
+   "period": "Q@2026-06-30",
+   "value": 0.63,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_call_20260729"
+   ]
+  },
+  {
+   "id": "dc_kpi_mkt_ind_org_q2_2026",
+   "name": "end_market_organic_growth_yoy_industrial",
+   "period": "Q@2026-06-30",
+   "value": 0.18,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_call_20260729"
+   ]
+  },
+  {
+   "id": "dc_kpi_mkt_net_org_q2_2026",
+   "name": "end_market_organic_growth_yoy_communications_networks",
+   "period": "Q@2026-06-30",
+   "value": -0.06,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_call_20260729"
+   ]
+  },
+  {
+   "id": "dc_kpi_mkt_auto_org_q2_2026",
+   "name": "end_market_organic_growth_yoy_automotive",
+   "period": "Q@2026-06-30",
+   "value": 0.06,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_call_20260729"
+   ]
+  },
+  {
+   "id": "dc_kpi_mkt_def_org_q2_2026",
+   "name": "end_market_organic_growth_yoy_defense",
+   "period": "Q@2026-06-30",
+   "value": 0.24,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_call_20260729"
+   ]
+  },
+  {
+   "id": "dc_kpi_mkt_air_org_q2_2026",
+   "name": "end_market_organic_growth_yoy_commercial_aerospace",
+   "period": "Q@2026-06-30",
+   "value": 0.21,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_call_20260729"
+   ]
+  },
+  {
+   "id": "dc_kpi_mkt_mob_org_q2_2026",
+   "name": "end_market_organic_growth_yoy_mobile_devices",
+   "period": "Q@2026-06-30",
+   "value": 0.14,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_call_20260729"
+   ]
+  },
+  {
+   "id": "dc_kpi_mkt_itdc_share_fy2025",
+   "name": "end_market_share_it_datacom",
+   "period": "FY2025",
+   "value": 0.36,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10k_20260211"
+   ]
+  },
+  {
+   "id": "dc_kpi_mkt_ind_share_fy2025",
+   "name": "end_market_share_industrial",
+   "period": "FY2025",
+   "value": 0.19,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10k_20260211"
+   ]
+  },
+  {
+   "id": "dc_kpi_mkt_auto_share_fy2025",
+   "name": "end_market_share_automotive",
+   "period": "FY2025",
+   "value": 0.15,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10k_20260211"
+   ]
+  },
+  {
+   "id": "dc_kpi_mkt_net_share_fy2025",
+   "name": "end_market_share_communications_networks",
+   "period": "FY2025",
+   "value": 0.1,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10k_20260211"
+   ]
+  },
+  {
+   "id": "dc_kpi_mkt_def_share_fy2025",
+   "name": "end_market_share_defense",
+   "period": "FY2025",
+   "value": 0.09,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10k_20260211"
+   ]
+  },
+  {
+   "id": "dc_kpi_mkt_mob_share_fy2025",
+   "name": "end_market_share_mobile_devices",
+   "period": "FY2025",
+   "value": 0.06,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10k_20260211"
+   ]
+  },
+  {
+   "id": "dc_kpi_mkt_air_share_fy2025",
+   "name": "end_market_share_commercial_aerospace",
+   "period": "FY2025",
+   "value": 0.05,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10k_20260211"
+   ]
+  },
+  {
+   "id": "dc_kpi_orders_q3_2026",
+   "name": "orders",
+   "period": "Q@2026-09-30",
+   "value": 12200000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_b2b_q3_2026",
+   "name": "book_to_bill",
+   "period": "Q@2026-09-30",
+   "value": 1.19,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_org_growth_q3_2026",
+   "name": "organic_sales_growth_yoy",
+   "period": "Q@2026-09-30",
+   "value": 0.37,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_acq_impact_q3_2026",
+   "name": "acquisition_contribution_to_sales_growth",
+   "period": "Q@2026-09-30",
+   "value": 0.28,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_sales_growth_usd_q3_2026",
+   "name": "net_sales_growth_usd_yoy",
+   "period": "Q@2026-09-30",
+   "value": 0.65,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_capex_pct_q3_2026",
+   "name": "capex_pct_of_sales",
+   "period": "Q@2026-09-30",
+   "value": 0.0447,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_comm_org_q3_2026",
+   "name": "organic_growth_yoy_communications_solutions",
+   "period": "Q@2026-09-30",
+   "value": 0.51,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_harsh_org_q3_2026",
+   "name": "organic_growth_yoy_harsh_environment",
+   "period": "Q@2026-09-30",
+   "value": 0.29,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_ics_org_q3_2026",
+   "name": "organic_growth_yoy_interconnect_sensor",
+   "period": "Q@2026-09-30",
+   "value": 0.11,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_dso_q3_2026",
+   "name": "receivables_to_annualized_sales_days",
+   "period": "I@2026-09-30",
+   "value": 70.0,
+   "unit": "days",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_dio_q3_2026",
+   "name": "inventory_to_cost_of_sales_days",
+   "period": "I@2026-09-30",
+   "value": 77.9,
+   "unit": "days",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ]
+  }
+ ],
+ "segments": [
+  {
+   "id": "dc_seg_comm_fy2024",
+   "name": "Communications Solutions",
+   "period": "FY2024",
+   "revenue": 6323800000,
+   "operating_income": 1569600000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ]
+  },
+  {
+   "id": "dc_seg_harsh_fy2024",
+   "name": "Harsh Environment Solutions",
+   "period": "FY2024",
+   "revenue": 4417400000,
+   "operating_income": 1093200000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ]
+  },
+  {
+   "id": "dc_seg_ics_fy2024",
+   "name": "Interconnect and Sensor Systems",
+   "period": "FY2024",
+   "revenue": 4481500000,
+   "operating_income": 825900000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ]
+  },
+  {
+   "id": "dc_seg_comm_fy2025",
+   "name": "Communications Solutions",
+   "period": "FY2025",
+   "revenue": 12056000000,
+   "operating_income": 3746600000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ]
+  },
+  {
+   "id": "dc_seg_harsh_fy2025",
+   "name": "Harsh Environment Solutions",
+   "period": "FY2025",
+   "revenue": 5881700000,
+   "operating_income": 1541400000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ]
+  },
+  {
+   "id": "dc_seg_ics_fy2025",
+   "name": "Interconnect and Sensor Systems",
+   "period": "FY2025",
+   "revenue": 5157000000,
+   "operating_income": 1005100000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ]
+  },
+  {
+   "id": "dc_seg_comm_q1_2025",
+   "name": "Communications Solutions",
+   "period": "Q@2025-03-31",
+   "revenue": 2413700000,
+   "operating_income": 660800000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260429_1"
+   ]
+  },
+  {
+   "id": "dc_seg_harsh_q1_2025",
+   "name": "Harsh Environment Solutions",
+   "period": "Q@2025-03-31",
+   "revenue": 1268200000,
+   "operating_income": 311200000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260429_1"
+   ]
+  },
+  {
+   "id": "dc_seg_ics_q1_2025",
+   "name": "Interconnect and Sensor Systems",
+   "period": "Q@2025-03-31",
+   "revenue": 1129100000,
+   "operating_income": 204500000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260429_1"
+   ]
+  },
+  {
+   "id": "dc_seg_comm_q2_2025",
+   "name": "Communications Solutions",
+   "period": "Q@2025-06-30",
+   "revenue": 2909800000,
+   "operating_income": 890700000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260729_1"
+   ]
+  },
+  {
+   "id": "dc_seg_harsh_q2_2025",
+   "name": "Harsh Environment Solutions",
+   "period": "Q@2025-06-30",
+   "revenue": 1445200000,
+   "operating_income": 363700000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260729_1"
+   ]
+  },
+  {
+   "id": "dc_seg_ics_q2_2025",
+   "name": "Interconnect and Sensor Systems",
+   "period": "Q@2025-06-30",
+   "revenue": 1295300000,
+   "operating_income": 252300000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260729_1"
+   ]
+  },
+  {
+   "id": "dc_seg_comm_q1_2026",
+   "name": "Communications Solutions",
+   "period": "Q@2026-03-31",
+   "revenue": 4534700000,
+   "operating_income": 1389400000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260429_1"
+   ]
+  },
+  {
+   "id": "dc_seg_harsh_q1_2026",
+   "name": "Harsh Environment Solutions",
+   "period": "Q@2026-03-31",
+   "revenue": 1693100000,
+   "operating_income": 473300000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260429_1"
+   ]
+  },
+  {
+   "id": "dc_seg_ics_q1_2026",
+   "name": "Interconnect and Sensor Systems",
+   "period": "Q@2026-03-31",
+   "revenue": 1392300000,
+   "operating_income": 281700000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260429_1"
+   ]
+  },
+  {
+   "id": "dc_seg_comm_q2_2026",
+   "name": "Communications Solutions",
+   "period": "Q@2026-06-30",
+   "revenue": 5383600000,
+   "operating_income": 1808300000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260729_1"
+   ]
+  },
+  {
+   "id": "dc_seg_harsh_q2_2026",
+   "name": "Harsh Environment Solutions",
+   "period": "Q@2026-06-30",
+   "revenue": 1856800000,
+   "operating_income": 559300000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260729_1"
+   ]
+  },
+  {
+   "id": "dc_seg_ics_q2_2026",
+   "name": "Interconnect and Sensor Systems",
+   "period": "Q@2026-06-30",
+   "revenue": 1517700000,
+   "operating_income": 318900000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260729_1"
+   ]
+  },
+  {
+   "id": "dc_seg_comm_q3_2026",
+   "name": "Communications Solutions",
+   "period": "Q@2026-09-30",
+   "revenue": 6583000000.0,
+   "operating_income": 2180400000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ]
+  },
+  {
+   "id": "dc_seg_harsh_q3_2026",
+   "name": "Harsh Environment Solutions",
+   "period": "Q@2026-09-30",
+   "revenue": 2042100000.0,
+   "operating_income": 615000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ]
+  },
+  {
+   "id": "dc_seg_ics_q3_2026",
+   "name": "Interconnect and Sensor Systems",
+   "period": "Q@2026-09-30",
+   "revenue": 1604600000.0,
+   "operating_income": 320700000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ]
+  },
+  {
+   "id": "dc_seg_comm_q3_2025",
+   "name": "Communications Solutions",
+   "period": "Q@2025-09-30",
+   "revenue": 3309500000.0,
+   "operating_income": 1081300000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ]
+  },
+  {
+   "id": "dc_seg_harsh_q3_2025",
+   "name": "Harsh Environment Solutions",
+   "period": "Q@2025-09-30",
+   "revenue": 1515800000.0,
+   "operating_income": 410900000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ]
+  },
+  {
+   "id": "dc_seg_ics_q3_2025",
+   "name": "Interconnect and Sensor Systems",
+   "period": "Q@2025-09-30",
+   "revenue": 1369100000.0,
+   "operating_income": 274400000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ]
+  }
+ ],
+ "customers": [
+  {
+   "id": "dc_cust_distributors_fy2025",
+   "name": "Distributors and resellers (sales channel, not one customer)",
+   "share": 0.19,
+   "period": "FY2025",
+   "source_ids": [
+    "pf_10k_20260211"
+   ]
+  },
+  {
+   "id": "dc_cust_distributors_q2_2026",
+   "name": "Distributors and resellers (sales channel, not one customer; 2,516.1 of 8,758.1)",
+   "share": 0.2873,
+   "period": "Q@2026-06-30",
+   "source_ids": [
+    "pf_10q_20260731"
+   ]
+  },
+  {
+   "id": "dc_cust_distributors_q3_2026",
+   "name": "Distributors and resellers (sales channel, not one customer; 2,824.2 of 10,229.7)",
+   "share": 0.2761,
+   "period": "Q@2026-09-30",
+   "source_ids": [
+    "pf_rel_20261028_1",
+    "pf_10q_20261030"
+   ]
+  }
+ ],
+ "notes": [
+  "dc CALL 2026-07-29 Q2 2026 earnings call (1:00 PM EDT), transcript via Alpha Vantage EARNINGS_CALL_TRANSCRIPT 2026Q2 (source dc_call_20260729, a syndicated copy of the company's own call); one AV call used. Full text read: CFO prepared remarks, CEO market-by-market outlook, 12 analyst questions (Jefferies, JPMorgan, Evercore, Baird, Truist, TD Cowen, Citi, BofA, Barclays, BNP Paribas, Goldman, UBS, Seaport). The raw AV payload was returned to the lane in-context and was not saved to disk (the connector gives no file); the passages relied on are quoted in the notes below.",
+  "dc GAP investors.amphenol.com/news-releases returned HTTP 404 (one try, not retried); the SEC 8-K exhibit 99.1 is the primary release. No call webcast page read.",
+  "dc MGMT Q3 2026 outlook (release 2026-07-29, constant FX, no additional tariff recoveries): sales 9.3-9.4bn (+50% to +52% y/y), adjusted diluted EPS 1.40-1.42 (+51% to +53%). Q2 2026 beat the guide issued 2026-04-29 (sales 8.1-8.2bn; adjusted EPS 1.14-1.16): actual 8.758bn and 1.35. Q1 2026 beat the guide issued 2026-01-28 (sales 6.90-7.00bn incl. about 900m CommScope; adjusted EPS 0.91-0.93): actual 7.620bn and 1.06. These guide-versus-actual pairs are for gather_numbers' guidance_track, not entered there by this lane.",
+  "dc MGMT CEO on Q3 sequential end-market outlook vs Q2 (call): IT datacom up 'in the mid teens'; defense up 'in the low double digit range'; commercial air 'up modestly'; industrial 'roughly at the same elevated levels'; automotive 'remain at these second quarter levels' (summer seasonality typical); communications networks to 'decline in the mid teens'; mobile devices up 'roughly in the 20% range'. Management statements, not facts.",
+  "dc MGMT IT datacom 43% of Q2 sales (36% in FY2025 per 10-K Item 1): +89% USD, +63% organic y/y, +22% q/q 'virtually all of this growth was driven by sales of AI-related products'; CEO: AI is growing faster than 63% organic. An analyst question (Evercore) framed an '$10.5 billion to $11 billion AI revenue run rate'; that figure is the analyst's, the CEO did not state or confirm it, so it is not entered as a KPI.",
+  "dc MGMT CommScope (closed 2026-01-09, about 10.5bn cash, in Communications Solutions): full-year 2026 expected sales raised 4.1bn to 4.6bn and EPS accretion 0.15 to 0.30 (release); Q2 sales 'a bit over $1.2 billion'; operating margin 'essentially over 20%' including acquisition amortization; improvement 'not pricing to any meaningful extent', from factory execution, vendors and SG&A; IT datacom 'just a bit less than half' of CommScope 2026 sales vs about one third in 2025; CommScope's AI/IT datacom sales 'essentially double' y/y, all optics; fiber supply secured. Organic orders +63% y/y excluding CommScope effect (CEO).",
+  "dc MGMT Margins (CFO): Q2 GAAP operating margin 29.5%, adjusted 29.8% including the 80m IEEPA tariff net benefit; CEO: excluding it 'nearly 29%'; sequential adjusted margin +250 bp (27.3% to 29.8%); drivers operating leverage plus CommScope profit-improvement actions. Tariff recoveries 'expected to be immaterial going forward' and not in the Q3 guide. TRANSCRIPT ERROR: the AV text says year-over-year adjusted margin rose '24 basis points'; the release shows 29.8% vs 25.6% (+4.2 pp), so the release is used and the transcript line ignored.",
+  "dc MGMT Capex (CFO, answering BofA): Q2 near the high end of the usual 3% to 4% of sales range (355.5m is 4.06% of 8,758.1m), expected at the higher end and 'modestly higher' in the second half but 'not materially outside our normal range'; CommScope's capex intensity similar or slightly lower. Cash: operating cash flow 1.6bn (88% of net income), free cash flow 1.2bn (68%); inventory, DSO and payable days 'within our normal trend ranges'. EBITDA Q2 about 3bn; net leverage 1.3x; net debt 13.4bn; liquidity 8.4bn (cash and short-term investments 5.4bn plus credit availability).",
+  "dc MGMT Bottlenecks (CEO answering BNP Paribas and Citi): 'we do not see any significant bottleneck' limiting delivery of the quarter or the guide; 150 operations each run by a general manager; sourcing decentralised; CommScope 'managed to secure what they need, including fiber'. A management view, not independently checked (gather_field owns sector bottlenecks).",
+  "dc MGMT Architecture (CEO answering Truist): not tied to one architecture; makes cables, PCBs, PCB assemblies and cable assemblies, so a backplane-to-PCB shift is 'more content' either way. Power interconnect (higher voltage, liquid cooling, sensors in connectors) positioned as a leading line; active power electronics 'modest', no material exposure (UBS).",
+  "dc MGMT Orders: Q2 record 10.7bn, +94% y/y, +14% q/q, book-to-bill 1.23 with 'every end market having a positive book-to-bill'; Q1 orders 9.4bn, book-to-bill 1.24 (release 2026-04-29). Orders are 'generally' delivered within one year (10-Q Note 14); no RPO or backlog total is disclosed.",
+  "dc RPO Not disclosed: 10-Q Note 14 says contracts generally last one year or less, 'a substantial portion' of remaining performance obligations is fulfilled within three months and nearly all within one year, so no aggregate RPO is given; less than 5% of net sales is recognised over time. The company's own backlog proxy is orders and book-to-bill (KPIs above). Purchase commitments at 2025-12-31 (10-K Note 14 and contractual obligations table): 2,006.9m due 2026, 72.1m 2027-2028 combined, 4.2m beyond 2028 (open purchase orders for goods and services, mainly raw materials and components).",
+  "dc CUSTOMERS 10-K Item 1 and Note 13: 'No single customer accounted for 10% or more of the Company's net sales' in 2025, 2024 or 2023; thousands of OEMs, EMS companies, ODMs and service providers; distributors 19% of 2025 sales (18% in 2024). Q2 2026 sales channel (10-Q Note 14): end customers and contract manufacturers 6,242.0m, distributors and resellers 2,516.1m (28.7%; 1,069.8m or 18.9% a year earlier), the rise mostly CommScope's distribution channel (Communications Solutions distributors 1,895.6m vs 637.5m). No named customer share exists, so the customers rows are the channel only.",
+  "dc DEBT Total debt 18,811.3m at 2026-06-30 (current 1,634.3m, long-term 17,177.0m) vs 15,502.0m at 2025-12-31; cash 4,729.4m plus short-term investments 689.7m; goodwill 17,554.7m and other intangibles 5,288.9m (10,575.4m and 2,241.4m at year-end 2025). Funding of CommScope: two Delayed Draw Term Loans of 1,534.1m each (about 3.07bn, drawn 2026-01-09), the November 2025 senior notes and cash; EUR 600m 3.375% notes due 2029 and EUR 500m 3.875% due 2034 issued 2026-05-12; 3.0bn revolver matures March 2029. Interest expense 213.7m in Q2 2026 vs 80.9m. Pre-CommScope contractual obligations (10-K): debt 15,601.9m, interest on senior notes 6,283.1m, operating leases 649.3m.",
+  "dc SHARES Class A shares outstanding 1,232,983,457 at 2026-07-28; Q2 weighted diluted shares 1,289.2m (1,272.2m a year earlier, +1.3%), basic 1,230.4m; Q2 buybacks 1.5m shares for 208.0m (avg about 141) and 0.5m shares for 74.0m from 2026-07-01 to 2026-07-28; 411.1m left under the 2.0bn programme that ends 2027-04-28; quarterly dividend 0.25 per share since Q4 2025 (from 0.165), 307.3m paid in Q2; option exercise proceeds 104.7m in Q2 (280.6m a year earlier); SBC 45.4m.",
+  "dc ONEOFFS Q2 2026 items for the quarter case: (1) IEEPA tariff recovery, net benefit of 80.0m inside GAAP and adjusted operating income, 0.04 per share (after-tax amount not disclosed; 0.04 x 1,289.2m diluted shares = about 51.6m used, rounding means roughly +-6m); (2) acquired-backlog amortization 23.5m pretax, 18.0m after tax (non-cash, CommScope); (3) excess tax benefit on stock compensation 80.5m (0.06 per share) lowers GAAP tax, the company strips it from adjusted EPS, but it recurs every quarter (85.3m in Q2 2025) so the case keeps it as recurring; (4) discrete tax reserves for foreign tax matters 39.0m (0.03). H1 2026 only: China tax 130.0m accrual after unfavourable determinations plus 160.0m reassessment of prior-year rate assumptions (booked in Q1), inventory step-up amortization 132.0m (Q1, 101.1m after tax) and 116.9m Q1 acquisition-related expenses. Adjusted effective tax rate raised to 27.0% on 'a continued shift in income to higher-tax jurisdictions'.",
+  "dc RISK 1 Global operations, tariffs and export controls: non-US sales about 65% of 2025 net sales, China about 16%; about 79% of long-lived assets outside the US and about 37% in China; US tariff changes through 2025 raised costs; export-control licences (10-K Item 1A, 'Risks Related to our Global Operations' and 'Legal and Regulatory Matters').",
+  "dc RISK 2 End-market cycle and AI concentration: IT datacom grew from 36% of 2025 sales to 43% of Q2 2026 sales and 'virtually all' of its sequential growth is AI-related, so the result leans on AI data-centre spending; end markets are cyclical and can reverse quickly (10-K Item 1A, 'Risks Related to our End Markets'; call 2026-07-29).",
+  "dc RISK 3 Competition in every product area from large diversified rivals with comparable resources, on technology, quality, price, service and delivery (10-K Item 1A, 'The Company encounters competition in all areas of our business'). Architecture shifts (copper vs fiber, backplane vs PCB) are discussed on the call; no customer-specific design-win data is disclosed.",
+  "dc RISK 4 Acquisition integration and goodwill: five acquisitions in 2025 and CommScope (about 10.5bn, 2026-01-09) plus El.Com and Wilder in Q2 2026; goodwill 17.6bn and intangibles 5.3bn at 2026-06-30 against equity of 15.6bn, so an impairment would be large; purchase accounting for CommScope is still preliminary (10-K Item 1A 'Risks Related to Acquisitions'; 10-Q Note 11).",
+  "dc RISK 5 Leverage and financing: total debt 18.8bn vs 15.5bn at year-end, interest expense 213.7m a quarter (2.6x the prior-year quarter), covenants in the revolver, term loans and senior notes, dependence on capital markets and the credit rating; net leverage 1.3x on Q2 EBITDA (10-K Item 1A 'Risks Related to our Liquidity and Capital Resources'; call).",
+  "dc RISK 6 Tax: China subsidiaries received notices challenging tax positions over up to eight years; 100m charge in Q4 2025 with a stated range of 100m to about 300m, then 290m more booked in Q1 2026 (130m for the unfavourable determinations plus 160m from reassessing prior-year rate assumptions; cumulative 390m against the 10-K's 100m to 300m range for the inquiry) and 39m of other foreign tax reserves in Q2; adjusted tax rate now 27.0% (10-K Item 1A, 'Changes in fiscal and tax policies'; release 2026-07-29 note iii).",
+  "dc RISK 7 Raw materials and supply: gold, silver, palladium, copper, aluminium, steel, titanium, optical fiber and plastics; price swings and shortages have occurred; management says no broad bottleneck today, fiber supply for CommScope secured (10-K Item 1A, global operations; call).",
+  "dc RISK 8 Government contracting and defense: US and foreign government contracts can be terminated for convenience and carry compliance and export-licence obligations; defense was 9% of 2025 sales and 8% of Q2 2026 sales, growing 24% organically (10-K Item 1A 'government contracting risks').",
+  "dc ECON No model in the economics registry fits an interconnect maker (10 models: marketplace, broker, software, consumer innovator, memory, GPU vendor, compute leasing, subscriber network, digital bank, ads); revenue = volume x price is not disclosed (no units or ASP; sales by product are 'impracticable to disclose', 10-K Note 13). The econ case therefore carries lines and segments under card_type hardware_manufacturing and is expected to come back unclassified, not assessed.",
+  "dc SPLIT 2-for-1 stock split (announced 2026-08-06, record 2026-08-17, shares distributed 2026-09-02, split-adjusted trading from 2026-09-03; release 2026-10-28 and 10-Q Note 1). All per-share and share-count items in this fragment are on the POST-split basis: rows copied from the 2026-10-27 run (adjusted EPS, dividends, buyback price, Class A shares, EPS guides, CommScope accretion) were divided or multiplied by 2 here. Release 2026-07-29 and earlier quote pre-split per-share figures (Q3 guide EPS 1.40-1.42 = 0.70-0.71 post-split).",
+  "dc RESULT Q3 2026 (release 2026-10-28, citable from 2026-10-30; 10-Q filed 2026-10-30): sales 10,229.7m (+65% USD, +37% organic, acquisitions +28pp), above the 9.3-9.4bn guide; GAAP operating margin 29.5%, adjusted 29.7% (adjusted incl. 15m IEEPA tariff net benefit; 95m YTD); GAAP diluted EPS 0.79, adjusted 0.80 (above 0.70-0.71 post-split guide); orders 12.2bn, book-to-bill 1.19 (Q2: 10.7bn, 1.23); operating cash flow 2,078.5m, free cash flow about 1.6bn after 457.2m capex (4.5% of sales, above the 3-4% usual range). Segments: Communications 6,583.0m (+99%, +51% organic, 33.1% margin), Harsh Environment 2,042.1m (+35%, +29% organic, 30.1%), Interconnect and Sensor 1,604.6m (+17%, +11% organic, 20.0%).",
+  "dc MGMT Outlook (release 2026-10-28, constant FX, excludes AdvancedPCB, Dexgreen, Humanetics Sensors not yet closed): Q4 2026 sales 10.3-10.5bn (about +60% y/y), adjusted EPS 0.81-0.83 (+65% to +69%); FY2026 sales 36.9-37.1bn (about +60%), adjusted EPS 2.82-2.84 (about +70%). CommScope FY2026 now sales 5.1bn and 0.18 EPS accretion (prior 4.6bn and 0.15 post-split; Jan guide 4.1bn). The implied Q4 sales step is only about +1% to +3% q/q after +17% in Q3.",
+  "dc MGMT Capital allocation (release 2026-10-28): dividend raised 20% to 0.15 per share (from 0.125, payable 2027-01-13); new 3-year 4bn buyback effective 2027-01-01; the remaining 2bn plan to finish by 2026-12-31; Q3 bought 3.0m shares for 245m and paid 308m dividends. M&A: closed Empire Electronics (about 320m FY2026 sales, automotive, ICS segment) early September; signed AdvancedPCB (about 270m sales, Harsh), Dexgreen (about 90m, Comm, closing Q1 2027) and Humanetics Sensors (about 70m, ICS); combined price of the four about 1.6bn, financed with cash and debt; AdvancedPCB and Humanetics expected to close Q4 2026.",
+  "dc BALANCE 2026-09-30 (release balance sheet): cash 4,173.1m plus short-term investments 1,128.3m (5,301.4m, down from 11,434.2m at year-end after CommScope); total debt 17,870.8m carrying (17,009.6m fair value; current 700.7m); net debt about 12.6bn derived; goodwill 17,695.6m, intangibles 5,344.0m against equity 17,123.6m; receivables 7,782.0m and inventories 5,264.5m (vs 4,717.1m and 3,424.9m at year-end); Q3 working-capital drag 415.9m. Q3 debt repayment 937.9m. Interest expense 212.3m (2.6x prior-year 80.7m). Class A shares 2,469,261,188 at 2026-10-27 (post-split).",
+  "dc ONEOFFS Q3 2026: IEEPA tariff net benefit 15.0m pretax inside GAAP and adjusted operating income (0.00 per share); acquisition-related expenses 15.5m pretax (14.2m after tax, 0.01); excess tax benefit on stock compensation 52.2m (0.02; 57.1m in Q3 2025, recurring so kept in the case); discrete tax items 60.0m charge (0.02; foreign tax matters). Adjusted EPS 0.80 = GAAP 0.79 +0.01 +0.02 -0.02. 9M 2026: inventory step-up 132.0m, acquisition expenses 155.9m, discrete tax 389.0m, IEEPA benefit 95.0m.",
+  "dc DISTRIBUTORS Q3 2026 sales channel (10-Q Note 14 table, derived): distributors and resellers 2,824.2m (27.6% of sales; 1,123.3m or 18.1% a year earlier); end customers and contract manufacturers 7,405.5m. No single customer 10% or more (10-K).",
+  "dc LEAD For gather_macro: 8-Ks since the Q2 10-Q include 2026-08-06 (8.01 stock split), 2026-09-04 (8.01), 2026-10-06 (5.02 officer or director change) and 2026-10-28 (2.02, 8.01, 9.01: results, dividend, buyback, acquisitions); not read here beyond the release.",
+  "dc CALL 2026-10-28 Q3 2026 call (1:00 PM EDT): transcript NOT read. Alpha Vantage EARNINGS_CALL_TRANSCRIPT 2026Q3 returned the 25-requests-a-day rate limit (not retried); IR site and webcast not tried. The Q3 end-market percentages and the Q4 end-market outlook from the call are therefore a gap; the Q2 call rows (dc_call_20260729) are the latest read."
+ ],
+ "gaps": [
+  "Q3 2026 call transcript not read (AV rate limit hit once, not retried): Q3 end-market mix, AI-related commentary and Q4 end-market outlook missing; latest read call is Q2 (2026-07-29)",
+  "no RPO or backlog total (company discloses orders and book-to-bill only; contracts mostly under one year)",
+  "no named customer shares (no customer is 10% or more); customers rows are the distributor channel only",
+  "no units, ASP or product-level sales (impracticable to disclose); AI-related sales not disclosed in dollars",
+  "Q3 2026 end-market shares (IT datacom etc.) not in the release or 10-Q text read; last values are Q2 2026 (call)",
+  "after-tax amount of IEEPA tariff recovery not disclosed (Q2 derived from EPS)",
+  "no pro forma Q3 2025 sales including CommScope read; the 65% growth includes 28pp acquisitions"
+ ],
+ "stopped": [
+  "Alpha Vantage Q3 transcript after rate limit (no retry loop)",
+  "econ-review model selection: no registry model fits; not forced",
+  "IR news-release page (404 in earlier run; SEC exhibit 99.1 is the primary release)"
+ ]
+}

@@ -1,0 +1,80 @@
+{
+ "thesis_he": {
+  "bear": "ההשקעה הענקית בבינה מלאכותית (140 מיליארד דולר ב-2026 וגיוס הון במניות) מחזירה רק כ-10% בשנה, קרוב לעלות ההון, ולכן השוק ישלם מכפיל רווח נמוך.",
+  "base": "התשואה על ההון החדש יורדת מהשיא ההיסטורי (כ-30%) לכ-20% בגלל ההשקעות הכבדות, אבל עדיין גבוהה בהרבה מעלות ההון, ולכן מכפיל שיורד בהדרגה ככל שהצמיחה מאטה.",
+  "bull": "הבינה המלאכותית משפרת את הפרסום כך שההשקעות מחזירות כמו בעבר (כ-30% בשנה), והחברה שומרת מכפיל גבוה שהצמיחה והתשואה מצדיקות."
+ },
+ "company_path": {
+  "metric": "eps",
+  "multiple": "forward_pe",
+  "scenarios": {
+   "bear": {
+    "multiple_from": "economics",
+    "roic": 0.1,
+    "justification": "unproven",
+    "reason_he": "ההשקעות קפצו מ-37 מיליארד ב-2024 ל-70 מיליארד ב-2025 ולכ-140 מיליארד ב-2026, והחברה מגייסת הון במניות כדי לממן אותן; התשואה על ההון הנוסף בשלוש השנים האחרונות כבר ירדה לכ-15%. אם המרכזים החדשים לא יגדילו את ההכנסות מפרסום מספיק, התשואה תרד לכ-10%, קרוב לעלות ההון, ואז צמיחה כמעט לא מוסיפה ערך והמכפיל נמוך.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "pf_capex_fy2024",
+     "pf_capex_fy2025",
+     "dc_g_capex_fy2026",
+     "dc_fwp_launch_20261026",
+     "dc_fwp_pricing_20261026",
+     "nm_av_income",
+     "nm_av_balance"
+    ]
+   },
+   "base": {
+    "multiple_from": "economics",
+    "roic": 0.2,
+    "justification": "justified_high",
+    "reason_he": "לאורך 2020-2025 החברה הרוויחה כ-31% בממוצע על ההון שהשקיעה (כולל מוניטין), ובשנה האחרונה כ-29%; על ההון הנוסף של שלוש השנים האחרונות כ-15%, שעדיין לא כולל את כל ההכנסות מההשקעות האחרונות. ההכנסות ברבעון השלישי של 2026 צמחו בכ-26% והחברה עקפה את התחזית שלה בכל שבעת הרבעונים האחרונים, ולכן 20% (בין התשואה על ההון הנוסף לממוצע ההיסטורי) הוא המסלול הסביר ביותר: מעל עלות ההון, אבל לא השיא.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "pf_cf_20260129",
+     "pf_operating_income_fy2025",
+     "nm_av_income",
+     "nm_av_balance",
+     "pf_revenue_q_2026_09_30",
+     "pf_revenue_q_2025_09_30",
+     "pf_rel_20261021_1",
+     "dc_g_capex_fy2026"
+    ]
+   },
+   "bull": {
+    "multiple_from": "economics",
+    "roic": 0.3,
+    "justification": "unproven",
+    "reason_he": "אם מודלי הבינה המלאכותית ממשיכים לשפר את מיקוד הפרסומות ואת זמן השימוש, ההכנסות גדלות מהר מספיק כדי שגם ההשקעה הענקית תחזיר כמו בעבר, כ-30% בשנה (הממוצע של 2020-2025 היה כ-31%); זו התשואה שהחברה כבר הוכיחה, לא שיא חד-פעמי, ולכן מכפיל גבוה מוצדק. עם זאת, התשואה על ההון הנוסף בשלוש השנים האחרונות היא כ-15% בלבד, ולכן 30% על ההשקעה החדשה עדיין לא הוכח בנתונים: זה תנאי של התרחיש השורי, לא עובדה.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "pf_cf_20260129",
+     "pf_cf_20250130",
+     "nm_av_income",
+     "nm_av_balance",
+     "pf_revenue_q_2026_09_30",
+     "pf_rel_20261021_1",
+     "dc_av_call_20261021"
+    ]
+   }
+  },
+  "own_history": {
+   "low": 7.5,
+   "median": 27.1,
+   "high": 39.1,
+   "years": "2022-2026",
+   "evidence_ids": [
+    "nm_ib_history",
+    "nm_av_income",
+    "pf_cf_20260129",
+    "pf_rel_20261021_1"
+   ]
+  }
+ },
+ "gaps": [
+  "peers left out: no evidenced forward P/E for any named competitor (field.json has only trailing market-cap to operating-income multiples: GOOGL ~21.7x, AMZN ~24.8x, AAPL 32.6x; SNAP and PINS loss-making or not meaningful); not retrieved here because in economics mode it would not change the path.",
+  "own_history is trailing GAAP P/E (derived from AV quarterly net income and SEC diluted shares, 2022-06 to 2026-10), not forward P/E; the low 7.5 and high 39.1 are both on trough 2022-23 EPS, and current trailing EPS carries the 9.89bn Q3 2026 and 2.4bn Q2 2026 legal charges (ex Q3 charge ~18.7x vs 20.9x reported). A point-in-time forward-P/E history is not available.",
+  "the 3-year incremental ROIC of ~14.9% (forensic screen, invested capital = equity + debt - cash, goodwill in) is depressed by the FY2025 18.95bn tax provision and by capex not yet earning; the return on the FY2026-27 AI build (capex guidance 135-145bn for FY2026 plus the October 2026 equity and mandatory-convertible financing) is not yet observable, which is the main uncertainty behind the scenario ROICs.",
+  "the forensic ROIC values are computed readings of understand/auto.json without their own evidence id; they are cited through their inputs (nm_av_income, nm_av_balance, pf_cf_20260129)."
+ ]
+}

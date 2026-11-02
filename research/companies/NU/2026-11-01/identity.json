@@ -1,0 +1,149 @@
+{
+ "ticker": "NU",
+ "as_of": "2026-11-01",
+ "stop": false,
+ "name": "Nu Holdings Ltd.",
+ "cik": "1691493",
+ "currency": "USD",
+ "exchange": "NYSE",
+ "fiscal_year_end": "12-31",
+ "sic": 6199,
+ "sic_description": "Finance Services",
+ "annual_form": "20-F",
+ "type": "high_growth / fast_grower (computed by classify_company from SEC companyfacts; the analyst confirms or overrides with reasons)",
+ "evidence_ids": [
+  "pf_10k_20260408"
+ ],
+ "resolved": true,
+ "filings": [
+  {
+   "form": "20-F",
+   "filed": "2026-04-08",
+   "report_date": "2025-12-31",
+   "accession": "0001292814-26-002166",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1691493/000129281426002166/nuform20f_2025.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1691493/000129281426002166/",
+   "what": "annual report"
+  },
+  {
+   "form": "6-K",
+   "filed": "2026-10-23",
+   "report_date": "2026-12-31",
+   "accession": "0001292814-26-005000",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1691493/000129281426005000/nu20261023_6k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1691493/000129281426005000/",
+   "what": "interim report candidate (6-K; the release is an exhibit)"
+  },
+  {
+   "form": "6-K",
+   "filed": "2026-09-30",
+   "report_date": "2026-09-30",
+   "accession": "0001292814-26-004752",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1691493/000129281426004752/nu20260930_6k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1691493/000129281426004752/",
+   "what": "interim report candidate (6-K; the release is an exhibit)"
+  },
+  {
+   "form": "6-K",
+   "filed": "2026-09-10",
+   "report_date": "2026-09-30",
+   "accession": "0001292814-26-004518",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1691493/000129281426004518/nu20260909_6k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1691493/000129281426004518/",
+   "what": "interim report candidate (6-K; the release is an exhibit)"
+  },
+  {
+   "form": "6-K",
+   "filed": "2026-09-02",
+   "report_date": "2026-09-30",
+   "accession": "0001292814-26-004456",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1691493/000129281426004456/nu20260831_6k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1691493/000129281426004456/",
+   "what": "interim report candidate (6-K; the release is an exhibit)"
+  },
+  {
+   "form": "6-K",
+   "filed": "2026-08-13",
+   "report_date": "2026-06-30",
+   "accession": "0001292814-26-004228",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1691493/000129281426004228/nu20260813_6k1.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1691493/000129281426004228/",
+   "what": "interim report candidate (6-K; the release is an exhibit)"
+  },
+  {
+   "form": "6-K",
+   "filed": "2026-08-13",
+   "report_date": "2026-06-30",
+   "accession": "0001292814-26-004226",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1691493/000129281426004226/nu20260813_6k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1691493/000129281426004226/",
+   "what": "interim report candidate (6-K; the release is an exhibit)"
+  },
+  {
+   "form": "6-K",
+   "filed": "2026-08-13",
+   "report_date": "2026-06-30",
+   "accession": "0001292814-26-004225",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1691493/000129281426004225/nufs2q26_6k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1691493/000129281426004225/",
+   "what": "interim report candidate (6-K; the release is an exhibit)"
+  },
+  {
+   "form": "6-K",
+   "filed": "2026-08-13",
+   "report_date": "2026-06-30",
+   "accession": "0001292814-26-004222",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1691493/000129281426004222/nupr2q26_6k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1691493/000129281426004222/",
+   "what": "interim report candidate (6-K; the release is an exhibit)"
+  }
+ ],
+ "computed_type": {
+  "stage": "high_growth",
+  "lynch": "fast_grower",
+  "reasons": [
+   "revenue compounding at 20% or more"
+  ],
+  "flags": []
+ },
+ "identity_check": {
+  "reporting_currency": "USD",
+  "monetary_units": {
+   "USD": 261
+  },
+  "currency_basis": "facts of filing 0001292814-25-001517 (20-F, filed 2025-04-16)",
+  "depositary_shares": false,
+  "stated_shares_per_depositary_share": {
+   "ratio": 1.0,
+   "evidence": "Title of each class \n Trading Symbol \n Name of each exchange on which registered \n\n Class A ordinary shares , par value US$0.000006666666667 per share \n NU \n New York Stock Exchange \n\n Securities\nregi",
+   "candidates": {
+    "1.0": 1
+   },
+   "ambiguous": false
+  },
+  "direct_listing": true,
+  "note": "foreign private issuer: annual reports only (no 10-Q); interim 6-K figures are not in companyfacts",
+  "status": "ok",
+  "reasons": []
+ },
+ "prefetch": {
+  "by": "scripts/ticker_prefetch.py",
+  "at_utc": "2026-11-01T22:15:02+00:00",
+  "to_complete_by_lanes": [
+   "security and share class, quote currency, IBKR contract: gather_numbers (it alone writes identity.json while the lanes run)",
+   "named competitors: gather_field writes them in gather/field.json competitors[] (the canonical list), never here"
+  ]
+ },
+ "security": "Class A ordinary share of Nu Holdings Ltd. (Cayman), listed directly on the NYSE under NU (no ADS ratio); Class B (founder-held, 1,022.6M shares) is not listed; 3,838.0M Class A and 1,022.6M Class B outstanding on 2026-03-01",
+ "quote_currency": "USD",
+ "ib_contract_id": 531212348
+}

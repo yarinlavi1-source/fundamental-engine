@@ -1,0 +1,51 @@
+{
+ "thesis_he": {
+  "bear": "התשואה על ההון החדש יורדת לכ-15%: צמיחה נוספת נקנית ברכישות במחיר מלא (כמו CommScope) בזמן שגל ה-AI נעצר והשוליים חוזרים לכ-21%, ולכן המכפיל נמוך.",
+  "base": "התשואה על ההון החדש כ-25%, קרוב לתשואה של 23%-29% על כל ההון (כולל מוניטין) ב-12 החודשים האחרונים, והמכפיל יורד בהדרגה כשהצמיחה מאטה.",
+  "bull": "התשואה על ההון החדש נשארת כ-32%, כמו ברבעון השיא Q3 2026 בהיקף שנתי, כי צמיחת ה-AI אורגנית וצריכה מעט הון; זו רמת שיא שצריכה להוכיח את עצמה."
+ },
+ "company_path": {
+  "metric": "eps",
+  "multiple": "forward_pe",
+  "scenarios": {
+   "bear": {
+    "multiple_from": "economics",
+    "roic": 0.15,
+    "justification": "unproven",
+    "reason_he": "בתרחיש הדובי ההזמנות מ-AI נעצרות והצמיחה הבאה מגיעה בעיקר מרכישות. רכישת CommScope עלתה כ-11 מיליארד דולר במזומן ב-9 חודשי 2026, ורובה הוא מוניטין, כך שהתשואה עליה נמוכה בהרבה מהתשואה על הפעילות האורגנית. כש-15% היא התשואה על כל דולר חדש, צמיחה מוסיפה מעט ערך והמכפיל נמוך.",
+    "source_tier": "own_history",
+    "evidence_ids": ["dc_fact_acq_cash_9m_2026", "pf_goodwill_fy2025", "pf_equity_fy2025", "dc_fact_total_debt_20251231", "pf_operating_income_fy2023", "pf_revenue_fy2023"]
+   },
+   "base": {
+    "multiple_from": "economics",
+    "roic": 0.25,
+    "justification": "justified_high",
+    "reason_he": "ההון המושקע (הון עצמי + חוב פחות מזומן) עלה מכ-17.5 מיליארד בסוף 2025 לכ-29.8 מיליארד בספטמבר 2026, בעיקר בגלל CommScope. הרווח התפעולי אחרי מס על ההון הזה הוא כ-23% (על ההון בסוף הרבעון) עד כ-28%-29% (על הממוצע), כולל המוניטין. 25% הוא אמצע הטווח: עסק עם תשואה כזו מצדיק מכפיל גבוה, אבל לא מכפיל שיא.",
+    "source_tier": "own_history",
+    "evidence_ids": ["nm_operating_income_ttm_2026_09_30", "nm_total_equity_q_2026_09_30", "dc_fact_total_debt_20260930", "nm_cash_q_2026_09_30", "pf_equity_fy2025", "dc_fact_total_debt_20251231", "pf_cash_fy2025", "pf_10q_20261030"]
+   },
+   "bull": {
+    "multiple_from": "economics",
+    "roic": 0.32,
+    "justification": "peak",
+    "reason_he": "ברבעון השלישי של 2026 הרווח התפעולי היה 3.02 מיליארד; בהיקף שנתי ואחרי מס זו תשואה של כ-30% על כל ההון, כולל המוניטין. התרחיש השורי מניח שהצמיחה מגיעה מהזמנות AI (יחס הזמנות למכירות 1.19) ושהיא צריכה מעט הון חדש, כך שהתשואה על ההון החדש נשארת כ-32%. זה רבעון שיא כפול 4, ולכן הוא מסומן כשיא ולא כקצב מוכח.",
+    "source_tier": "own_history",
+    "evidence_ids": ["pf_operating_income_q_2026_09_30", "pf_capex_q_2026_09_30", "dc_kpi_b2b_q3_2026", "dc_kpi_orders_q3_2026", "nm_total_equity_q_2026_09_30", "dc_fact_total_debt_20260930", "nm_cash_q_2026_09_30"]
+   }
+  },
+  "own_history": {
+   "low": 20.8,
+   "median": 25.1,
+   "high": 28.6,
+   "years": "2021-2025",
+   "evidence_ids": ["nm_ib_history", "pf_eps_diluted_fy2022", "pf_eps_diluted_fy2023", "pf_eps_diluted_fy2024", "pf_eps_diluted_fy2025", "nm_eps_diluted_ttm_2026_09_30_postsplit"]
+  }
+ },
+ "gaps": [
+  "No evidenced forward P/E for any named competitor (TEL, CRDO, GLW, AVGO; Molex is private) in field.json or numbers.json: peers left out, not fetched (TEL is a mature rival at a different growth stage, CRDO a small grower; neither would anchor APH's multiple).",
+  "Incremental ROIC is not a computed series: prefetch forensic roic is unavailable (no debt history per year), and the lane's ROIC check covers only 2025-12-31 to 2026-09-30 (TTM NOPAT at 25% tax 29.1% on average capital, 23.0% on end-Q3 capital, Q3 annualised 30.4%; 28.3% at the company's 27% adjusted tax rate). Goodwill and intangibles (about 22.8B of the 28.9B mid-year capital) are IN the capital; ROIC on tangible capital is far higher.",
+  "Return earned on CommScope by itself is not disclosed; the bear's 15% blends organic growth with acquisitions at full price and is a judgement from the acquisition spend, not a reported figure.",
+  "Own forward P/E history 2021-2025 is ex-post (year-end close over the next year's actual GAAP EPS; the 2025 point uses 2.69, the FY2026 estimate at the time); the trailing range was 22.9 / 34.1 / 44.9 and now 34.6x; on the FY2026 adjusted guide the stock sits at 28.1x, at the top of its own forward range.",
+  "Peak warning carried: Q3 Adjusted EPS 0.80 x 4 and the Q4 guide x 4 already sit near the pre-print FY2027E 3.33; the bull ROIC rests on a peak quarter."
+ ]
+}

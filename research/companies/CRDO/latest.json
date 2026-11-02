@@ -1,0 +1,28 @@
+{
+ "ticker": "CRDO",
+ "as_of": "2026-10-28",
+ "folder": "research/companies/CRDO/2026-10-28",
+ "thesis_id": "CRDO:2026-10-28:09447ebe616f",
+ "status": null,
+ "verdict": "quality_but_expensive",
+ "files": [
+  "casefile_core.json",
+  "casefile_summary.json",
+  "evidence_pack.json",
+  "gather/field.json",
+  "gather/numbers.json",
+  "identity.json",
+  "inputs.json",
+  "paragraph.txt",
+  "position/core.json",
+  "position/field.json",
+  "position/path.json",
+  "review/company_first.json",
+  "review/counter_thesis.json",
+  "review/repair.json",
+  "review/trace.json",
+  "scenarios_he.md",
+  "table_he.md",
+  "understand/business.json"
+ ]
+}

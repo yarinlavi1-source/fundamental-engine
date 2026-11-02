@@ -1,0 +1,93 @@
+{
+ "thesis_he": {
+  "bear": "הצמיחה נבלמת ב-2027 לכ-25% (תקציבי ממשלה, עסקאות שנדחות), שולי הרווח יורדים לכ-36% וה-SBC נשאר גבוה.",
+  "base": "פלנטיר עוברת שוב את התחזית ל-2026 (כ-8.3 מיליארד דולר) וצומחת כ-45% ב-2027, עם שולי רווח תפעולי של כ-45% אחרי SBC.",
+  "bull": "האימוץ של AIP בארה\"ב ממשיך בקצב: צמיחה של כ-65% ב-2027, שולי רווח של כ-50% ו-SBC שממשיך לרדת."
+ },
+ "drivers": {
+  "current_year_revenue": {
+   "source_tier": "guidance",
+   "evidence_ids": ["dc_g_fy_rev", "dc_g_q3_rev", "pf_rel_20260803_1"],
+   "remainder": "dc_g_q3_rev",
+   "adjust_by_track_record": true,
+   "reason": "FY2026 guide 8.150-8.158B raised on 2026-08-03; the company beat its revenue guide in 8 of 8 recorded periods (ratio 1.082), so the ratio is applied to the Q3 guide (the only guided unreported item); the implied Q4 (about 2.42B) is left unadjusted, which keeps the estimate on the cautious side."
+  },
+  "growth_anchor": {
+   "period": "FY2027",
+   "bear": 0.25,
+   "base": 0.45,
+   "bull": 0.65,
+   "source_tier": "own_history",
+   "evidence_ids": ["dc_g_fy_rev", "dc_g_q3_rev", "pf_revenue_q_2026_06_30", "pf_revenue_q_2026_03_31", "dc_k_total_rdv", "dc_k_usc_tcv", "dc_k_ndr", "dc_f_rpo"],
+   "reason": "No FY2027 guidance. The FY2026 guide implies Q4 2026 revenue of about 2.42B (8.154B less Q1 1.633B, Q2 1.935B, Q3 guide 2.162B), so the Q4 run rate alone is about 9.7B, +16-19% over FY2026 with zero further sequential growth. Sequential growth was 16% (Q1) and 19% (Q2); base = sequential growth slowing to about 8% a quarter in 2027 (about 12B, +45%), backed by total remaining deal value 13.1B (+83% y/y), U.S. commercial TCV 2.13B in Q2 (+153%) and NDR 157%. Bear = sequential growth falls to about 2-3% a quarter (government timing, deal slippage): about +25%, close to the exit run rate. Bull = sequential growth near 12% a quarter, as in the U.S. commercial TCV trend: about +65%. Attributed consensus (12.36B, +50%, not citable until 2026-11-03) is a cross-check only."
+  },
+  "mature_margin": {
+   "bear": 0.36,
+   "base": 0.45,
+   "bull": 0.50,
+   "source_tier": "own_history",
+   "evidence_ids": ["pf_operating_income_fy2025", "pf_revenue_fy2025", "pf_operating_income_q_2026_06_30", "pf_revenue_q_2026_06_30", "dc_g_fy_adjoi", "dc_g_fy_rev", "dc_f_sbc_q2"],
+   "reason": "GAAP operating margin after SBC: FY2025 31.6%, TTM to Q2 2026 about 42.8%, Q2 2026 47.1%; the FY2026 guide (adjusted operating income 4.893B on 8.154B revenue, about 60%) less SBC of about 13.5% implies about 46%. Base 45% = the guided FY2026 level held (not the record quarter). Bear 36% = margins fall back toward FY2025 as competition (frontier AI labs, hyperscaler platforms) and the 5.6B cloud commitment press costs. Bull 50% = incremental operating margin (69% y/y in Q2 2026) keeps lifting the average."
+  },
+  "sbc_pct": {
+   "bear": 0.15,
+   "base": 0.13,
+   "bull": 0.11,
+   "source_tier": "own_history",
+   "evidence_ids": ["pf_sbc_fy2024", "pf_revenue_fy2024", "pf_sbc_fy2025", "pf_revenue_fy2025", "dc_f_sbc_q2", "pf_revenue_q_2026_06_30"],
+   "reason": "SBC / revenue fell from 24% (FY2024) to 15.3% (FY2025) and 13.7% (Q2 2026; TTM about 13.6%). Base holds about today's level; bear returns to the FY2025 level (retention grants in a hot AI labour market); bull continues the decline as revenue outgrows grants."
+  }
+ },
+ "forecast_options": {
+  "cyclical": {
+   "treatment": "structural",
+   "reason": "Revenue grew every year FY2020-FY2025 (17%-56%) with no down year and operating margin rose steadily; demand is software adoption (AIP) funded by government programmes and enterprise budgets, not a price cycle.",
+   "evidence_ids": ["pf_revenue_fy2020", "pf_revenue_fy2023", "pf_revenue_fy2025", "pf_operating_income_fy2025"]
+  }
+ },
+ "scenario_events": {
+  "bear": [
+   {"event_he": "הממשלה האמריקאית (כמחצית מההכנסות) מאטה או מבטלת חוזים: רוב החוזים ניתנים לביטול, והאופציות בצבר העסקאות אינן מחייבות.", "evidence_ids": ["dc_s_gov_q2_26", "dc_k_total_rdv", "pf_10q_20260804"]},
+   {"event_he": "שולי הרווח של רבעון השיא (47%) לא מחזיקים: עליית הוצאות עונתית ברבעון השלישי ותחרות מצד מעבדות AI ופלטפורמות ענן.", "evidence_ids": ["pf_operating_income_q_2026_06_30", "dc_call_20260803", "pf_10k_20260217"]},
+   {"event_he": "התחייבות ענן של 5.6 מיליארד דולר עד 2036 הופכת לעלות קבועה כבדה אם הצמיחה נעצרת.", "evidence_ids": ["dc_f_cloud_commit"]},
+   {"event_he": "חשש באירופה מגישת ממשל ארה\"ב לנתונים פוגע בחוזים מחוץ לארה\"ב (כ-20% מההכנסות).", "hypothesis": true}
+  ],
+  "base": [
+   {"event_he": "פלנטיר עוברת שוב את תחזית 2026 (8.15 מיליארד דולר), כמו בכל 8 התקופות האחרונות.", "evidence_ids": ["dc_g_fy_rev", "dc_g_fy_rev_prior", "pf_rel_20260803_1"]},
+   {"event_he": "צבר העסקאות (13.1 מיליארד דולר, +83%) והחוזים החדשים בארה\"ב הופכים להכנסות ב-2027, והצמיחה מאטה בהדרגה לכ-45%.", "evidence_ids": ["dc_k_total_rdv", "dc_k_usc_tcv", "dc_f_rpo"]},
+   {"event_he": "לקוחות קיימים מגדילים הוצאה (שימור הכנסות נטו 157%) ומספר הלקוחות המסחריים בארה\"ב ממשיך לגדול.", "evidence_ids": ["dc_k_ndr", "dc_k_usc_customers", "dc_k_top20"]}
+  ],
+  "bull": [
+   {"event_he": "המסחרי בארה\"ב ממשיך לצמוח מעל 100% בשנה ב-2027, כפי שמרמז קצב החוזים החדשים (+153%).", "evidence_ids": ["dc_k_usc_rev", "dc_k_usc_tcv", "dc_k_usc_rdv"]},
+   {"event_he": "הממשלה מרחיבה את Maven ותוכניות ההגנה; ההכנסה מהפנטגון עדיין פחות מרבע אחוז מתקציבו.", "evidence_ids": ["dc_k_usg_rev", "dc_call_20260803"]},
+   {"event_he": "המינוף התפעולי נמשך (69% רווח שולי על כל דולר הכנסה נוסף) ושולי הרווח עולים ל-50%.", "evidence_ids": ["pf_operating_income_q_2026_06_30", "pf_operating_income_q_2025_06_30", "pf_revenue_q_2025_06_30"]}
+  ]
+ },
+ "key_risk": {
+  "reading_he": "המחיר (כ-157 פעמים הרווח של 12 החודשים האחרונים) כבר מניח שנים של צמיחה מהירה; כמחצית מההכנסות מממשלות בחוזים שניתנים לביטול, ו-81% מההכנסות מארה\"ב, כך שהאטה בתקציבים או בהוצאות AI תפגע מהר במכפיל.",
+  "evidence_ids": ["nm_price_last", "dc_s_gov_q2_26", "dc_k_us_rev_share", "pf_10q_20260804"]
+ },
+ "falsifiers": [
+  {"id": "fx_base_q4", "scenario": "base", "metric": "Q4 2026 revenue (USD)", "threshold": 2300000000, "direction": "below", "by": "2027-02-15", "evidence_ids": ["dc_g_fy_rev", "dc_g_q3_rev"]},
+  {"id": "fx_base_fy27", "scenario": "base", "metric": "FY2027 revenue (USD)", "threshold": 11000000000, "direction": "below", "by": "2028-02-29", "evidence_ids": ["dc_g_fy_rev", "dc_k_total_rdv"]},
+  {"id": "fx_base_margin", "scenario": "base", "metric": "FY2027 GAAP operating margin", "threshold": 0.38, "direction": "below", "by": "2028-02-29", "evidence_ids": ["pf_operating_income_q_2026_06_30", "dc_g_fy_adjoi"]},
+  {"id": "fx_bull_fy27", "scenario": "bull", "metric": "FY2027 revenue (USD)", "threshold": 13000000000, "direction": "below", "by": "2028-02-29", "evidence_ids": ["dc_k_usc_tcv", "dc_k_total_rdv"]},
+  {"id": "fx_bear_q2_27", "scenario": "bear", "metric": "Q2 2027 revenue (USD)", "threshold": 2900000000, "direction": "above", "by": "2027-08-15", "evidence_ids": ["pf_revenue_q_2026_06_30", "dc_k_total_rdv"]}
+ ],
+ "reasons_he": {
+  "bear": "מה נשבר: הצמיחה יורדת לכ-25% ב-2027 כי הממשלה מאטה וחוזים נדחים, ושולי הרווח חוזרים לרמת 2025 (כ-36%).",
+  "base": "למה הכי סביר: החברה עוברת את התחזיות שלה בעקביות, צבר העסקאות גדל 83%, והצמיחה מאטה בהדרגה לכ-45% ב-2027 עם שולי רווח של כ-45%.",
+  "bull": "מה צריך לקרות: המסחרי בארה\"ב ממשיך לצמוח מעל 100%, הממשלה מרחיבה תוכניות, והצמיחה נשארת כ-65% ב-2027 עם שולי רווח של 50%."
+ },
+ "engine_options": {
+  "country_risk": true,
+  "reason": "Revenue by customer HQ is disclosed: U.S. 74% FY2025 (81% Q2 2026), U.K. 10%, rest of world 16%."
+ },
+ "gaps": [
+  "growth_half_life, terminal_growth, sales_to_capital, terminal_roic, tax_rate and cost_of_equity left on the engine rule: no company evidence beyond FY2027",
+  "consensus (AV EARNINGS_ESTIMATES retrieved 2026-11-01) not citable until 2026-11-03: not a driver tier",
+  "Q3 2026 results (2026-11-02/03) after as_of: not citable until two days after release; rerun with a later as_of to use them",
+  "GAAP tax rate about 1.4% (SBC deductions, NOLs) vs 23% long-term: tax path left to the engine",
+  "Europe data-sovereignty exposure unsized (press leads only): hypothesis"
+ ]
+}

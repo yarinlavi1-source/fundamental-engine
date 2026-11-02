@@ -1,0 +1,86 @@
+{
+  "lens": "trace",
+  "findings": [
+    {
+      "severity": "critical",
+      "finding": "Opening debt in the executed case is $12.579B ($7.625B current notes + $4.954B Series D preferred added as a debt adjustment); the $117.712B of non-current notes payable and other borrowings is missing. The 10-Q balance sheet (pf_10q_20260911, reading/10q_2026-09-11.txt line ~291-333) shows current $7,625M and non-current $117,712M; the 10-Q fair-value note gives $125.0B of senior notes and borrowings at 2026-08-31. The pack itself holds the right facts (rp_f_debt_cur_q1fy27, rp_f_debt_nc_q1fy27, nm_debt_noncurrent_q_2026_08_31, rp_f_notes_face_q1fy27) but the engine did not use them. Every value in the table overstates equity by roughly $118B (about $39/share on 3.024B shares).",
+      "where": "companies/ORCL/out/casefile.json fc.spec.opening.debt, val.case.opening.debt, underwriting.opening_reconciliation.debt (12579000000); evidence_pack.json facts rp_f_debt_nc_q1fy27",
+      "fix": "Engine tag-map fix: add us-gaap LongTermNotesAndLoans to facts.INSTANT_TAGS['long_term_debt'] (with the full unittest suite), then rerun ticker-value; confirm opening debt = $125.337B (+ preferred handled once) before any value is shown. Until then the result stays UNVERIFIED."
+    },
+    {
+      "severity": "major",
+      "finding": "Guidance-track basis mismatch: two rows for Q4 FY2026 non-GAAP EPS with different actuals (2.11 and 2.03). The March-2026 guide ($1.96-$2.00 USD, mid 1.98; release_2026-03-10) excludes one-time gains; the June release reports $2.11 including one-time investment gains and $2.03 excluding them (footnote 1). The 2.11 row compares guidance to an actual on a different basis and inflates the beat.",
+      "where": "evidence_pack.json guidance_track: period 'Q4 FY2026', metric eps_non_gaap, actual 2.11 (source_ids pf_rel_20260310_1, pf_rel_20260610_1); the fragment that wrote it (gather/reports.json or gather/numbers.json)",
+      "fix": "Delete the 2.11 row; keep actual 2.03 (ex-gains, same basis as the guide)."
+    },
+    {
+      "severity": "major",
+      "finding": "Duplicate guidance_track rows after merge: Q4 FY2026 revenue, Q1 FY2027 revenue, Q1 FY2027 non-GAAP EPS and FY2026 revenue each appear twice (once from gather_numbers, once from gather_reports), so ticker-check counts n=6 revenue rows for 3 periods; FY2026 revenue's second row cites the 10-K as the reporting source, the first the June release. The numbers lane flagged this itself.",
+      "where": "evidence_pack.json guidance_track (duplicates from gather/reports.json vs gather/numbers.json)",
+      "fix": "Keep one row per (period, metric) in gather/numbers.json (owner of guidance_track per the stage file) and remove the copies from gather/reports.json; re-run ticker-prep/ticker-value."
+    },
+    {
+      "severity": "major",
+      "finding": "FY2027 revenue guidance is 'at least $90 billion' (release_2026-09-10 line 62; June release 'confirm our prior revenue guidance of $90 billion'), a floor, but it is stored as low=high=90B and used as the current_year_revenue midpoint and as the denominator of growth_anchor (FY2028 $130B / $90B - 1 = 44.4%). Treating a floor as a point is acceptable only if labelled; mixing the 2025-10-16 FAM FY2028 target (built on FY27E $85B, constant currency) with the raised FY27 floor makes the 44.4% FY28 growth a hybrid of two vintages and two bases.",
+      "where": "evidence_pack.json guidance rp_g_fy27_rev; drivers.current_year_revenue; drivers.growth_anchor (base 0.4444)",
+      "fix": "Mark rp_g_fy27_rev as a floor (note 'at least'); state in growth_anchor.reason that FY28 $130B is the Oct-2025 constant-currency target on an $85B FY27 base, and either anchor the FY28 growth on the FAM path ($85B->$130B = 52.9%) or on the $130B level, not a ratio of mixed vintages. Recheck after the 2026-10-28 Investor Day 8-K becomes citable (2026-10-30)."
+    },
+    {
+      "severity": "major",
+      "finding": "Long-term guidance (FY2028-FY2030 revenue $130B/$185B/$225B, non-GAAP EPS $10.65/$16.00/$21.00, OCI $73B/$114B/$144B) all comes from the Financial Analyst Meeting deck of 2025-10-16 (rp_fam2025), more than a year old; an 8-K with Investor Day material was filed 2026-10-28 (Items 7.01/9.01) and is not citable until 2026-10-30, so the targets may already be superseded. Values traced correctly to the deck (gather/raw_reports/fam2025_kehring.txt), but they are stated in constant currency and non-GAAP; growth_half_life rests on this one source.",
+      "where": "evidence_pack.json guidance rp_g_fy28_rev_fam, rp_g_fy29_rev_fam, rp_g_fy30_rev_fam, rp_g_fy28..fy30_eps_fam, rp_g_fy27..fy30_oci; drivers.growth_anchor, drivers.growth_half_life",
+      "fix": "Show next to the result that the long-term path is the Oct-2025 target and that the 2026-10-28 update is not yet citable; rerun with as_of >= 2026-10-30 and replace the rows with the updated targets if changed."
+    },
+    {
+      "severity": "major",
+      "finding": "Press items carry company-specific drivers and the key risk: the OpenAI ~$300B contract figure comes from DIGITIMES (search_excerpt) which relays an unread Wall Street Journal report, yet syndicated_from is null; it is cited in drivers.growth_anchor, key_risk, scenario_events.bear and potential.threats. The issuer has not confirmed customer concentration of RPO.",
+      "where": "evidence_pack.json sources un_digitimes_openai_20250911 (syndicated_from null, independent false); drivers.growth_anchor.evidence_ids[11]; key_risk.evidence_ids[6]; scenario_events.bear[0]",
+      "fix": "Set syndicated_from to the WSJ report of 2025-09-10 (register it as the original, not read); label the OpenAI figure as unconfirmed press in key_risk and scenario events; do not let it count as independent corroboration together with the Barchart article (which reports the same claim)."
+    },
+    {
+      "severity": "minor",
+      "finding": "Alpha Vantage INCOME_STATEMENT and BALANCE_SHEET payloads (nm_av_income, nm_av_balance) are dated 2026-10-29, the as_of day, so by LAG_DAYS=2 they are not citable until 2026-10-31 (ticker-trace sources_not_yet_citable). They are used only in the reconciliation note (AV operating income 20,778 vs 10-K 20,606; the filing number stands); no driver, event or key risk cites them.",
+      "where": "evidence_pack.json sources nm_av_income, nm_av_balance; gather/numbers.json notes 'nm RECONCILIATION FY2026'",
+      "fix": "Keep them out of every driver/event/key-risk field (as now); note them as reconciliation-only, not citable until 2026-10-31."
+    },
+    {
+      "severity": "minor",
+      "finding": "The quote $141.80 (nm_ib_price) is an IBKR last trade at 2026-10-29T07:43:30Z (is_close false), before the NYSE open, i.e. overnight/pre-market, not a regular-session price; the lane noted the October bar close to date is $144.54. The gap and discount figures move about 2% depending on which is used.",
+      "where": "evidence_pack.json facts nm_price_last_2026_10_29; companies/ORCL/raw/ib__price-snapshot-ORCL__current.json",
+      "fix": "Label the quote as an overnight last trade with its timestamp in the table, or refresh to a regular-session price on the delivery run."
+    },
+    {
+      "severity": "minor",
+      "finding": "Uncommenced data-center lease commitments are carried as $260B (10-K, 2026-05-31) while the newer 10-Q (2026-08-31) reports $288B; the value-stage gaps quote $288B, so the pack fact and the gap text disagree on the latest figure.",
+      "where": "evidence_pack.json facts rp_f_lease_uncommenced_fy26; reading/10q_2026-09-11.txt ('$ 288 billion of additional lease commitments')",
+      "fix": "Add a Q1 FY2027 fact of $288B from pf_10q_20260911 and use it for the lease/debt-like discussion."
+    },
+    {
+      "severity": "minor",
+      "finding": "RPO schedule uses the 10-K split (12% / 34% / 34% / 20% at 2026-05-31); the 10-Q gives a newer split at 2026-08-31 on $664B (about 13% next 12 months, 37% months 13-36, ...). The value-stage gap says the Q1 maturity split is not disclosed, which is wrong.",
+      "where": "evidence_pack.json facts rp_f_rpo_0_12m_share, rp_f_rpo_13_36m_share, rp_f_rpo_37_60m_share, rp_f_rpo_after60m_share; reading/10q_2026-09-11.txt RPO note",
+      "fix": "Add the 2026-08-31 split from pf_10q_20260911 and correct the gap text."
+    },
+    {
+      "severity": "minor",
+      "finding": "Inconsistent independence flag for issuer documents: earnings releases (pf_rel_*) are independent=true while the issuer's own FAM deck (rp_fam2025) is independent=false; both are issuer statements of guidance.",
+      "where": "evidence_pack.json sources rp_fam2025 vs pf_rel_20260910_1",
+      "fix": "Use one convention for issuer documents across lanes."
+    }
+  ],
+  "checked_ok": [
+    "FY2026 revenue 67,357M, operating income 20,606M, net income 17,087M (pf_cf_20260622 vs 10-K income statement, reading/10k_full.txt ~3250)",
+    "Q1 FY2027 revenue 19,345M vs 14,926M prior year (10-Q income statement)",
+    "Q1 FY2027 cash 36,369M, operating cash flow 23,103M, capex 28,499M, unpaid capex 6,247M, prepayments 11,363M, preferred carrying 4,954M (10-Q)",
+    "Shares outstanding 3,023,736,000 at 2026-09-07 (10-Q cover)",
+    "Debt current 7,625M and non-current 117,712M at 2026-08-31; 7,199M / 122,342M at 2026-05-31 (10-Q balance sheet)",
+    "RPO $664B (10-Q), $638B (10-K)",
+    "Q2 FY2027 guidance: revenue +30-34% USD, cloud +65-71% USD, non-GAAP EPS $1.85-$1.93 USD (release 2026-09-10); derived Q2 revenue 20.875-21.518B = 16,058M x 1.30/1.34 (Q2 FY26 revenue 16,058M, release 2025-12-10)",
+    "FY2027 non-GAAP EPS guide $8.10 (release 2026-09-10)",
+    "Track rows: Q1 FY27 revenue guide 27-29% (mid 19.105B) and EPS $1.72-$1.76 USD (June release); Q4 FY26 revenue guide 19-21% USD and EPS $1.96-$2.00 USD (March release)",
+    "FAM 2025 targets FY28-FY30 revenue 130/185/225 and EPS 10.65/16.00/21.00 match the deck text",
+    "Consensus rows (FY27 revenue 90.4B, EPS 8.14, PT 235.8) cite kind consensus, provider named (Stock Analysis / S&P Global MI), dated 2026-10-27 so citable on 2026-10-29, not used as facts",
+    "No source dated after 2026-10-29 (ticker-trace sources_after_as_of empty); 8-K of 2026-10-28 kept as a gap",
+    "Competitor syndicated copies (fd_aws_q2_2026, fd_gcloud_q2_2026, fd_msft_q4fy26) name their originals and are not independent; competitor rows cite each competitor's own sources"
+  ]
+}

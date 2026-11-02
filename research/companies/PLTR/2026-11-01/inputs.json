@@ -1,0 +1,894 @@
+{
+ "forecast": {
+  "overrides": [
+   {
+    "path": "growth_anchor",
+    "scenario": "bear",
+    "value": 0.25,
+    "reason": "No FY2027 guidance. The FY2026 guide implies Q4 2026 revenue of about 2.42B (8.154B less Q1 1.633B, Q2 1.935B, Q3 guide 2.162B), so the Q4 run rate alone is about 9.7B, +16-19% over FY2026 with zero further sequential growth. Sequential growth was 16% (Q1) and 19% (Q2); base = sequential growth slowing to about 8% a quarter in 2027 (about 12B, +45%), backed by total remaining deal value 13.1B (+83% y/y), U.S. commercial TCV 2.13B in Q2 (+153%) and NDR 157%. Bear = sequential growth falls to about 2-3% a quarter (government timing, deal slippage): about +25%, close to the exit run rate. Bull = sequential growth near 12% a quarter, as in the U.S. commercial TCV trend: about +65%. Attributed consensus (12.36B, +50%, not citable until 2026-11-03) is a cross-check only.",
+    "evidence_ids": [
+     "dc_g_fy_rev",
+     "dc_g_q3_rev",
+     "pf_revenue_q_2026_06_30",
+     "pf_revenue_q_2026_03_31",
+     "dc_k_total_rdv",
+     "dc_k_usc_tcv",
+     "dc_k_ndr",
+     "dc_f_rpo"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "growth_anchor",
+    "scenario": "base",
+    "value": 0.45,
+    "reason": "No FY2027 guidance. The FY2026 guide implies Q4 2026 revenue of about 2.42B (8.154B less Q1 1.633B, Q2 1.935B, Q3 guide 2.162B), so the Q4 run rate alone is about 9.7B, +16-19% over FY2026 with zero further sequential growth. Sequential growth was 16% (Q1) and 19% (Q2); base = sequential growth slowing to about 8% a quarter in 2027 (about 12B, +45%), backed by total remaining deal value 13.1B (+83% y/y), U.S. commercial TCV 2.13B in Q2 (+153%) and NDR 157%. Bear = sequential growth falls to about 2-3% a quarter (government timing, deal slippage): about +25%, close to the exit run rate. Bull = sequential growth near 12% a quarter, as in the U.S. commercial TCV trend: about +65%. Attributed consensus (12.36B, +50%, not citable until 2026-11-03) is a cross-check only.",
+    "evidence_ids": [
+     "dc_g_fy_rev",
+     "dc_g_q3_rev",
+     "pf_revenue_q_2026_06_30",
+     "pf_revenue_q_2026_03_31",
+     "dc_k_total_rdv",
+     "dc_k_usc_tcv",
+     "dc_k_ndr",
+     "dc_f_rpo"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "growth_anchor",
+    "scenario": "bull",
+    "value": 0.65,
+    "reason": "No FY2027 guidance. The FY2026 guide implies Q4 2026 revenue of about 2.42B (8.154B less Q1 1.633B, Q2 1.935B, Q3 guide 2.162B), so the Q4 run rate alone is about 9.7B, +16-19% over FY2026 with zero further sequential growth. Sequential growth was 16% (Q1) and 19% (Q2); base = sequential growth slowing to about 8% a quarter in 2027 (about 12B, +45%), backed by total remaining deal value 13.1B (+83% y/y), U.S. commercial TCV 2.13B in Q2 (+153%) and NDR 157%. Bear = sequential growth falls to about 2-3% a quarter (government timing, deal slippage): about +25%, close to the exit run rate. Bull = sequential growth near 12% a quarter, as in the U.S. commercial TCV trend: about +65%. Attributed consensus (12.36B, +50%, not citable until 2026-11-03) is a cross-check only.",
+    "evidence_ids": [
+     "dc_g_fy_rev",
+     "dc_g_q3_rev",
+     "pf_revenue_q_2026_06_30",
+     "pf_revenue_q_2026_03_31",
+     "dc_k_total_rdv",
+     "dc_k_usc_tcv",
+     "dc_k_ndr",
+     "dc_f_rpo"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "mature_margin",
+    "scenario": "bear",
+    "value": 0.36,
+    "reason": "GAAP operating margin after SBC: FY2025 31.6%, TTM to Q2 2026 about 42.8%, Q2 2026 47.1%; the FY2026 guide (adjusted operating income 4.893B on 8.154B revenue, about 60%) less SBC of about 13.5% implies about 46%. Base 45% = the guided FY2026 level held (not the record quarter). Bear 36% = margins fall back toward FY2025 as competition (frontier AI labs, hyperscaler platforms) and the 5.6B cloud commitment press costs. Bull 50% = incremental operating margin (69% y/y in Q2 2026) keeps lifting the average.",
+    "evidence_ids": [
+     "pf_operating_income_fy2025",
+     "pf_revenue_fy2025",
+     "pf_operating_income_q_2026_06_30",
+     "pf_revenue_q_2026_06_30",
+     "dc_g_fy_adjoi",
+     "dc_g_fy_rev",
+     "dc_f_sbc_q2"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "mature_margin",
+    "scenario": "base",
+    "value": 0.45,
+    "reason": "GAAP operating margin after SBC: FY2025 31.6%, TTM to Q2 2026 about 42.8%, Q2 2026 47.1%; the FY2026 guide (adjusted operating income 4.893B on 8.154B revenue, about 60%) less SBC of about 13.5% implies about 46%. Base 45% = the guided FY2026 level held (not the record quarter). Bear 36% = margins fall back toward FY2025 as competition (frontier AI labs, hyperscaler platforms) and the 5.6B cloud commitment press costs. Bull 50% = incremental operating margin (69% y/y in Q2 2026) keeps lifting the average.",
+    "evidence_ids": [
+     "pf_operating_income_fy2025",
+     "pf_revenue_fy2025",
+     "pf_operating_income_q_2026_06_30",
+     "pf_revenue_q_2026_06_30",
+     "dc_g_fy_adjoi",
+     "dc_g_fy_rev",
+     "dc_f_sbc_q2"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "mature_margin",
+    "scenario": "bull",
+    "value": 0.5,
+    "reason": "GAAP operating margin after SBC: FY2025 31.6%, TTM to Q2 2026 about 42.8%, Q2 2026 47.1%; the FY2026 guide (adjusted operating income 4.893B on 8.154B revenue, about 60%) less SBC of about 13.5% implies about 46%. Base 45% = the guided FY2026 level held (not the record quarter). Bear 36% = margins fall back toward FY2025 as competition (frontier AI labs, hyperscaler platforms) and the 5.6B cloud commitment press costs. Bull 50% = incremental operating margin (69% y/y in Q2 2026) keeps lifting the average.",
+    "evidence_ids": [
+     "pf_operating_income_fy2025",
+     "pf_revenue_fy2025",
+     "pf_operating_income_q_2026_06_30",
+     "pf_revenue_q_2026_06_30",
+     "dc_g_fy_adjoi",
+     "dc_g_fy_rev",
+     "dc_f_sbc_q2"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "sbc_pct",
+    "scenario": "bear",
+    "value": 0.15,
+    "reason": "SBC / revenue fell from 24% (FY2024) to 15.3% (FY2025) and 13.7% (Q2 2026; TTM about 13.6%). Base holds about today's level; bear returns to the FY2025 level (retention grants in a hot AI labour market); bull continues the decline as revenue outgrows grants.",
+    "evidence_ids": [
+     "pf_sbc_fy2024",
+     "pf_revenue_fy2024",
+     "pf_sbc_fy2025",
+     "pf_revenue_fy2025",
+     "dc_f_sbc_q2",
+     "pf_revenue_q_2026_06_30"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "sbc_pct",
+    "scenario": "base",
+    "value": 0.13,
+    "reason": "SBC / revenue fell from 24% (FY2024) to 15.3% (FY2025) and 13.7% (Q2 2026; TTM about 13.6%). Base holds about today's level; bear returns to the FY2025 level (retention grants in a hot AI labour market); bull continues the decline as revenue outgrows grants.",
+    "evidence_ids": [
+     "pf_sbc_fy2024",
+     "pf_revenue_fy2024",
+     "pf_sbc_fy2025",
+     "pf_revenue_fy2025",
+     "dc_f_sbc_q2",
+     "pf_revenue_q_2026_06_30"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "sbc_pct",
+    "scenario": "bull",
+    "value": 0.11,
+    "reason": "SBC / revenue fell from 24% (FY2024) to 15.3% (FY2025) and 13.7% (Q2 2026; TTM about 13.6%). Base holds about today's level; bear returns to the FY2025 level (retention grants in a hot AI labour market); bull continues the decline as revenue outgrows grants.",
+    "evidence_ids": [
+     "pf_sbc_fy2024",
+     "pf_revenue_fy2024",
+     "pf_sbc_fy2025",
+     "pf_revenue_fy2025",
+     "dc_f_sbc_q2",
+     "pf_revenue_q_2026_06_30"
+    ],
+    "source_tier": "own_history"
+   }
+  ],
+  "current_year_revenue": {
+   "value": 8331597490.0,
+   "fiscal_year_end": "2026-12-31",
+   "basis": "FY2026 revenue: company guidance midpoint 8,154,000,000 (8,150,000,000-8,158,000,000, issued 2026-08-03) + (track-record ratio 1.0821 - 1) x the Q3 2026 guided midpoint 2,162,000,000 = 8,331,597,490; FY2026 guide 8.150-8.158B raised on 2026-08-03; the company beat its revenue guide in 8 of 8 recorded periods (ratio 1.082), so the ratio is applied to the Q3 guide (the only guided unreported item); the implied Q4 (about 2.42B) is left unadjusted, which keeps the estimate on the cautious side.",
+   "evidence_ids": [
+    "dc_g_fy_rev",
+    "dc_g_q3_rev",
+    "web:pf_rel_20260803_1"
+   ],
+   "source_tier": "guidance"
+  },
+  "risk_free": {
+   "value": 0.0498,
+   "as_of": "2026-10-29",
+   "source_id": "web:pf_fred_dgs10",
+   "title": "Market yield on US Treasury securities at 10-year constant maturity, percent, daily (FRED DGS10)",
+   "url": "https://fred.stlouisfed.org/series/DGS10"
+  },
+  "equity_risk_premium": {
+   "value": 0.042,
+   "as_of": "2026-10-01",
+   "source_id": "web:pf_erp_implied",
+   "title": "Damodaran implied ERP for the S&P 500 on 1 October 2026 (trailing 12 months, adjusted payout), treasury 5.29%",
+   "url": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/home.htm"
+  },
+  "cyclical": {
+   "treatment": "structural",
+   "reason": "Revenue grew every year FY2020-FY2025 (17%-56%) with no down year and operating margin rose steadily; demand is software adoption (AIP) funded by government programmes and enterprise budgets, not a price cycle.",
+   "evidence_ids": [
+    "pf_revenue_fy2020",
+    "pf_revenue_fy2023",
+    "pf_revenue_fy2025",
+    "pf_operating_income_fy2025"
+   ]
+  }
+ },
+ "company_path": {
+  "metric": "eps",
+  "multiple": "forward_pe",
+  "scenarios": {
+   "bear": {
+    "multiple_from": "economics",
+    "roic": 0.5,
+    "justification": "unproven",
+    "reason_he": "בתרחיש הדובי הצמיחה דורשת יותר הון: יתרת הלקוחות כבר גדלה מהר מההכנסות (פי 2.9 מול פי 2.0 בין 2023 ל־2025), ואם חוזים ממשלתיים מתעכבים או נחקרים ונדרשים יותר מהנדסים בשטח כדי לסגור עסקאות מסחריות, התשואה על כל דולר הון נוסף יורדת לכ־50%. זה עדיין עסק תוכנה רווחי, אבל מכפיל גבוה לא מוצדק כשהצמיחה נחלשת.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "pf_receivables_fy2023",
+     "pf_receivables_fy2025",
+     "pf_revenue_fy2023",
+     "pf_revenue_fy2025",
+     "web:mc_s_pentagon_memo",
+     "web:mc_s_eu_sov"
+    ]
+   },
+   "base": {
+    "multiple_from": "economics",
+    "roic": 1.0,
+    "justification": "justified_high",
+    "reason_he": "ההון התפעולי של פלנטיר (הון עצמי פחות מזומן והשקעות קצרות, בלי חוב, מוניטין זניח) עלה רק בכ־400 מיליון דולר בין 2023 ל־2025 בזמן שהרווח התפעולי עלה ביותר ממיליארד ומאתיים מיליון, כלומר תשואה על ההון הנוסף של מעל 200%; ההשקעות ההוניות זניחות והלקוחות משלמים מראש (התחייבויות חוזיות 1.1 מיליארד). לקחנו בשמרנות 100% כי יתרת הלקוחות גדלה מהר ופיצוי במניות הוא עלות אמיתית שכבר נמצאת ברווח. תשואה כזו מצדיקה מכפיל גבוה כל עוד הצמיחה נמשכת.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "pf_operating_income_fy2023",
+     "pf_operating_income_fy2025",
+     "pf_equity_fy2023",
+     "pf_equity_fy2025",
+     "pf_cash_fy2023",
+     "pf_cash_fy2025",
+     "pf_short_term_investments_fy2023",
+     "pf_short_term_investments_fy2025",
+     "pf_capex_fy2025",
+     "dc_f_contract_liab",
+     "dc_f_debt"
+    ]
+   },
+   "bull": {
+    "multiple_from": "economics",
+    "roic": 1.5,
+    "justification": "justified_high",
+    "reason_he": "בתרחיש השורי הלקוחות הקיימים ממשיכים להגדיל את ההוצאה (שימור הכנסות נטו 157%, הכנסה ממוצעת ל־20 הלקוחות הגדולים עלתה מ־75 ל־124 מיליון דולר בשנה) והצמיחה ממשיכה להגיע כמעט בלי הון: התשואה על ההון הנוסף נשארת ברמה שהחברה כבר הראתה (מעל 200% בין 2023 ל־2025), חסומה בתקרה של 150%. כך המכפיל נשאר גבוה יותר לאורך יותר שנים.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "dc_k_ndr",
+     "dc_k_top20",
+     "dc_k_top20_py",
+     "pf_operating_income_fy2023",
+     "pf_operating_income_fy2025",
+     "pf_equity_fy2025",
+     "pf_short_term_investments_fy2025",
+     "dc_f_rpo",
+     "dc_k_total_rdv"
+    ]
+   }
+  },
+  "own_history": {
+   "low": 90.4,
+   "median": 105.2,
+   "high": 120.0,
+   "years": "2023-2024 (December close / next fiscal year's reported GAAP diluted EPS)",
+   "evidence_ids": [
+    "web:nm_ib_price",
+    "pf_eps_diluted_fy2024",
+    "pf_eps_diluted_fy2025"
+   ]
+  }
+ },
+ "analyst_sheet": {
+  "scenario_events": {
+   "bear": [
+    {
+     "event_he": "הממשלה האמריקאית (כמחצית מההכנסות) מאטה או מבטלת חוזים: רוב החוזים ניתנים לביטול, והאופציות בצבר העסקאות אינן מחייבות.",
+     "evidence_ids": [
+      "dc_s_gov_q2_26",
+      "dc_k_total_rdv",
+      "web:pf_10q_20260804"
+     ]
+    },
+    {
+     "event_he": "שולי הרווח של רבעון השיא (47%) לא מחזיקים: עליית הוצאות עונתית ברבעון השלישי ותחרות מצד מעבדות AI ופלטפורמות ענן.",
+     "evidence_ids": [
+      "pf_operating_income_q_2026_06_30",
+      "web:dc_call_20260803",
+      "web:pf_10k_20260217"
+     ]
+    },
+    {
+     "event_he": "התחייבות ענן של 5.6 מיליארד דולר עד 2036 הופכת לעלות קבועה כבדה אם הצמיחה נעצרת.",
+     "evidence_ids": [
+      "dc_f_cloud_commit"
+     ]
+    },
+    {
+     "event_he": "חשש באירופה מגישת ממשל ארה\"ב לנתונים פוגע בחוזים מחוץ לארה\"ב (כ-20% מההכנסות).",
+     "evidence_ids": []
+    }
+   ],
+   "base": [
+    {
+     "event_he": "פלנטיר עוברת שוב את תחזית 2026 (8.15 מיליארד דולר), כמו בכל 8 התקופות האחרונות.",
+     "evidence_ids": [
+      "dc_g_fy_rev",
+      "dc_g_fy_rev_prior",
+      "web:pf_rel_20260803_1"
+     ]
+    },
+    {
+     "event_he": "צבר העסקאות (13.1 מיליארד דולר, +83%) והחוזים החדשים בארה\"ב הופכים להכנסות ב-2027, והצמיחה מאטה בהדרגה לכ-45%.",
+     "evidence_ids": [
+      "dc_k_total_rdv",
+      "dc_k_usc_tcv",
+      "dc_f_rpo"
+     ]
+    },
+    {
+     "event_he": "לקוחות קיימים מגדילים הוצאה (שימור הכנסות נטו 157%) ומספר הלקוחות המסחריים בארה\"ב ממשיך לגדול.",
+     "evidence_ids": [
+      "dc_k_ndr",
+      "dc_k_usc_customers",
+      "dc_k_top20"
+     ]
+    }
+   ],
+   "bull": [
+    {
+     "event_he": "המסחרי בארה\"ב ממשיך לצמוח מעל 100% בשנה ב-2027, כפי שמרמז קצב החוזים החדשים (+153%).",
+     "evidence_ids": [
+      "dc_k_usc_rev",
+      "dc_k_usc_tcv",
+      "dc_k_usc_rdv"
+     ]
+    },
+    {
+     "event_he": "הממשלה מרחיבה את Maven ותוכניות ההגנה; ההכנסה מהפנטגון עדיין פחות מרבע אחוז מתקציבו.",
+     "evidence_ids": [
+      "dc_k_usg_rev",
+      "web:dc_call_20260803"
+     ]
+    },
+    {
+     "event_he": "המינוף התפעולי נמשך (69% רווח שולי על כל דולר הכנסה נוסף) ושולי הרווח עולים ל-50%.",
+     "evidence_ids": [
+      "pf_operating_income_q_2026_06_30",
+      "pf_operating_income_q_2025_06_30",
+      "pf_revenue_q_2025_06_30"
+     ]
+    }
+   ]
+  },
+  "key_risk": {
+   "reading_he": "המחיר (כ-157 פעמים הרווח של 12 החודשים האחרונים) כבר מניח שנים של צמיחה מהירה; כמחצית מההכנסות מממשלות בחוזים שניתנים לביטול, ו-81% מההכנסות מארה\"ב, כך שהאטה בתקציבים או בהוצאות AI תפגע מהר במכפיל.",
+   "evidence_ids": [
+    "nm_price_last",
+    "dc_s_gov_q2_26",
+    "dc_k_us_rev_share",
+    "web:pf_10q_20260804"
+   ]
+  },
+  "bottleneck": {
+   "reading_he": "PLTR supplies working production deployment of AI on a customer's own operational data inside hard institutions (10-K: high installation cost, failure risk and long sales cycles). Evidence it is scarce: deals of $10M+ closed rose to 73 in Q2 2026 and average revenue per top-20 customer rose to $124M TTM from $75M (+67%), with NDR 157%. The 10-K also says the main competitor is customers' own in-house development, so the scarcity can be built around. How long it lasts and who adds capacity (Databricks, hyperscaler AI platforms, integrators) is not evidenced: duration is a hypothesis, not a driver.",
+   "evidence_ids": [
+    "web:pf_10k_20260217",
+    "dc_k_deals10m",
+    "dc_k_top20",
+    "dc_k_top20_py",
+    "dc_k_ndr"
+   ]
+  },
+  "future": {
+   "reading_he": "Buyers are spending more, on PLTR's own paid numbers: U.S. commercial revenue $764M in Q2 2026 (+149% y/y), U.S. commercial TCV $2.132B (+153% y/y), total TCV $3.373B, total remaining deal value $13.1B (+83% y/y) and U.S. government revenue $809M (+90% y/y). Management says Department of War TTM revenue is under 25 bp of the Pentagon budget (a statement, not a market study). FY2026 revenue guide was raised from $7.656B to $8.154B midpoint (+82% y/y). No attributed third-party market-size study was retrieved: the size of the market is a gap; the direction is read from buyers' paid commitments only.",
+   "evidence_ids": [
+    "dc_k_usc_rev",
+    "dc_k_usc_tcv",
+    "dc_k_tcv",
+    "dc_k_total_rdv",
+    "dc_k_usg_rev",
+    "web:dc_call_20260803",
+    "dc_g_fy_rev",
+    "dc_g_fy_rev_prior",
+    "web:pf_rel_20260803_1"
+   ]
+  }
+ },
+ "card": {
+  "assessments": {
+   "moat": {
+    "assessment": "strong",
+    "evidence_ids": [
+     "dc_k_ndr",
+     "dc_k_top20",
+     "dc_k_top20_py",
+     "pf_gross_profit_fy2025",
+     "pf_operating_income_fy2025",
+     "web:fd_sec_snow",
+     "web:fd_sec_ai"
+    ],
+    "note": "Evidenced source: embedded deployment and expansion inside existing customers (NDR 157%, top-20 average $124M TTM, +67%), with 82% gross margin and 32% GAAP operating margin vs Snowflake (-31% op margin) and C3.ai (-199%). Duration is not proven: the 10-K says in-house builds are the main alternative."
+   },
+   "switching_costs": {
+    "assessment": "strong",
+    "evidence_ids": [
+     "web:pf_10k_20260217",
+     "dc_k_ndr",
+     "dc_k_total_rdv",
+     "dc_f_rpo"
+    ],
+    "note": "10-K: high installation costs and deep integration in customer operations; customers keep expanding (NDR 157%); RDV $13.1B and RPO $4.9B lock in multi-year work. Caveat: most government contracts are terminable for convenience."
+   },
+   "pricing_power": {
+    "assessment": "adequate",
+    "evidence_ids": [
+     "dc_k_adj_gm",
+     "pf_gross_profit_fy2025",
+     "pf_revenue_fy2025"
+    ],
+    "note": "Gross margin rose from 80.6% (FY2023) to 82.4% (FY2025) and adjusted 86% in Q2 2026 while volume grew; no direct price-increase disclosure, so price versus volume is not separated."
+   },
+   "retention": {
+    "assessment": "strong",
+    "evidence_ids": [
+     "dc_k_ndr",
+     "dc_k_usc_customers",
+     "web:dc_call_20260803"
+    ],
+    "note": "Net dollar retention 157% in Q2 2026 (+700 bp q/q); U.S. commercial customers 653 (+35% y/y). Logo churn is not disclosed."
+   },
+   "customer_concentration": {
+    "assessment": "adequate",
+    "evidence_ids": [
+     "mc_f_top3_share",
+     "web:pf_10q_20260804",
+     "dc_s_gov_q2_26",
+     "mc_f_rev_us_h1"
+    ],
+    "note": "No customer above 10%; top three 16% of H1 2026 revenue (17% a year earlier); but government is 52% and U.S. customers 80% of revenue, a concentration in one buyer country and its budget."
+   },
+   "competition": {
+    "assessment": "strong",
+    "evidence_ids": [
+     "pf_revenue_fy2025",
+     "pf_revenue_fy2024",
+     "web:fd_sec_snow",
+     "web:fd_sec_ai",
+     "web:fd_sec_bah"
+    ],
+    "note": "PLTR +56% FY2025 vs Snowflake +29%, C3.ai -36%, Booz Allen -6%; strongest of the named set. Databricks and hyperscaler platforms are unmeasured (gap)."
+   },
+   "substitutes": {
+    "assessment": "adequate",
+    "evidence_ids": [
+     "web:pf_10k_20260217"
+    ],
+    "note": "10-K names customers' in-house development, consultants and open source as the fundamental competition, and frontier AI labs as competitors; the current growth shows PLTR winning, but the substitute is always available."
+   },
+   "management": {
+    "assessment": "strong",
+    "evidence_ids": [
+     "dc_g_q2_rev_prior",
+     "pf_revenue_q_2026_06_30",
+     "dc_g_fy_rev_prior",
+     "dc_g_fy_rev",
+     "web:pf_rel_20260803_1"
+    ],
+    "note": "Delivery vs promises: revenue beat the guided midpoint in all 8 recorded periods (mean actual/guide 1.08; Q2 2026 $1.935B vs $1.799B midpoint) and the FY2026 guide was raised from $7.656B to $8.154B. CEO growth aspirations on the call are statements, not guidance."
+   },
+   "capital_allocation": {
+    "assessment": "adequate",
+    "evidence_ids": [
+     "pf_sbc_fy2025",
+     "pf_buybacks_fy2025",
+     "pf_shares_diluted_wavg_fy2023",
+     "pf_shares_diluted_wavg_fy2025",
+     "pf_operating_income_fy2025",
+     "pf_equity_fy2025",
+     "pf_cash_fy2025",
+     "pf_short_term_investments_fy2025",
+     "dc_f_debt"
+    ],
+    "note": "No debt and $7.2B cash plus short-term investments at FY2025; operating income $1.41B on equity $7.39B that is almost all cash, so operating invested capital is near zero (ROIC not meaningful, very high). Against that, SBC $684M (15% of FY2025 revenue) vs buybacks only $75M; diluted shares rose from 2.298B (FY2023) to 2.565B (FY2025), about 5.7% a year: dilution of current holders is real."
+   },
+   "governance": {
+    "assessment": "weak",
+    "evidence_ids": [
+     "web:pf_10k_20260217",
+     "web:pf_proxy_20260424"
+    ],
+    "note": "10-K risk factors: founders hold concentrated voting power through the multi-class structure, limiting outside holders' influence; SBC-driven dilution (diluted 2.569B vs basic 2.400B shares in Q2 2026)."
+   },
+   "regulation": {
+    "assessment": "adequate",
+    "evidence_ids": [
+     "web:pf_10q_20260804",
+     "web:mc_s_eu_sov",
+     "web:mc_s_ao_suit"
+    ],
+    "note": "Export controls and sanctions apply; AI-related regulatory and reputational scrutiny; European data-sovereignty concerns reported in press (unconfirmed at source, unsized, non-US is about 20% of revenue). No quantified regulatory loss."
+   },
+   "technology_ai": {
+    "assessment": "strong",
+    "evidence_ids": [
+     "dc_k_usc_rev",
+     "dc_k_usc_tcv",
+     "dc_k_deals10m",
+     "web:dc_call_20260803"
+    ],
+    "note": "Paid AIP adoption in the company's own numbers (U.S. commercial +149% y/y, U.S. commercial TCV +153%, 73 deals of $10M+ in Q2 2026), not partner logos; depends on third-party models and cloud (10-K)."
+   },
+   "geopolitics": {
+    "assessment": "adequate",
+    "evidence_ids": [
+     "mc_f_rev_us_fy25",
+     "mc_f_rev_uk_fy25",
+     "mc_f_rev_row_fy25",
+     "web:pf_10q_20260804",
+     "web:mc_s_uk_mod"
+    ],
+    "note": "Western defense spending is a tailwind (UK MoD enterprise deal GBP 240.6M, press); no China revenue by choice; non-US revenue grew more slowly (rest of world 19% of Q2 2026 vs 27% a year earlier) and faces European sovereignty pushback (hypothesis, unsized)."
+   }
+  }
+ },
+ "evidence_pack": {
+  "pack_version": 1,
+  "pack_sha256": "8630cb804ef4aa0e4ec815bd8982f13e91d51ef923a620a1326cda72039aa677",
+  "ticker": "PLTR",
+  "as_of": "2026-11-01",
+  "identity": {
+   "name": "Palantir Technologies Inc.",
+   "currency": "USD",
+   "exchange": "Nasdaq",
+   "security": "Class A common stock (PLTR); Class B (10 votes) and Class F also exist, unlisted; no ADR",
+   "fiscal_year_end": "12-31",
+   "cik": "1321655",
+   "type": "high_growth / fast_grower (computed by classify_company from SEC companyfacts; the analyst confirms or overrides with reasons)",
+   "evidence_ids": [
+    "pf_10k_20260217"
+   ]
+  },
+  "sources": 40,
+  "independent_sources": 25,
+  "guidance_track_record": {
+   "metric": "revenue",
+   "ratio": 1.082145,
+   "n": 8,
+   "beats": 8,
+   "misses": 0,
+   "periods": [
+    {
+     "period": "Q4 2024",
+     "guided_mid": 769.0,
+     "actual": 827.519,
+     "ratio": 1.076098
+    },
+    {
+     "period": "Q1 2025",
+     "guided_mid": 860.0,
+     "actual": 883.855,
+     "ratio": 1.027738
+    },
+    {
+     "period": "Q2 2025",
+     "guided_mid": 936.0,
+     "actual": 1003.697,
+     "ratio": 1.072326
+    },
+    {
+     "period": "Q3 2025",
+     "guided_mid": 1085.0,
+     "actual": 1181.092,
+     "ratio": 1.088564
+    },
+    {
+     "period": "Q4 2025",
+     "guided_mid": 1329.0,
+     "actual": 1406.802,
+     "ratio": 1.058542
+    },
+    {
+     "period": "Q1 2026",
+     "guided_mid": 1534.0,
+     "actual": 1632.583,
+     "ratio": 1.064265
+    },
+    {
+     "period": "Q2 2026",
+     "guided_mid": 1799.0,
+     "actual": 1935.464,
+     "ratio": 1.075855
+    },
+    {
+     "period": "FY2025 (initial Feb-2025 guide)",
+     "guided_mid": 3749.0,
+     "actual": 4475.446,
+     "ratio": 1.193771
+    }
+   ],
+   "rule": "mean of actual / guided midpoint over the recorded periods; applied only where a driver says so"
+  },
+  "guidance_adjustments": [
+   {
+    "lever": "current_year_revenue",
+    "scenario": "all",
+    "before": 8154000000.0,
+    "after": 8331597490.0,
+    "ratio": 1.082145,
+    "remainder": 2162000000.0,
+    "rule": "guided fiscal-year midpoint + (track-record ratio - 1) x the guided midpoint of the remainder not yet reported (the reported quarters are facts, not adjusted)"
+   }
+  ],
+  "competitors": [
+   {
+    "ticker": "SNOW",
+    "name": "Snowflake Inc.",
+    "why": "Enterprise data and AI platform sold to the same large commercial buyers as Foundry/AIP (data layer plus AI apps); competes for the commercial data-platform budget. PLTR 10-K names no company, only 'large enterprise software companies'; this is my classification."
+   },
+   {
+    "ticker": "AI",
+    "name": "C3.ai, Inc.",
+    "why": "Enterprise AI application software vendor selling AI apps to large commercial and government/defense buyers, same buyer set as AIP; small-scale comparator."
+   },
+   {
+    "ticker": "BAH",
+    "name": "Booz Allen Hamilton Holding Corporation",
+    "why": "Government contractor and system integrator (the 10-K names 'government contractors and system integrators' as competitors) selling analytics/AI mission software and services to the same federal agencies as Gotham/Apollo."
+   }
+  ],
+  "consensus": [
+   {
+    "id": "nm_cons_rev_fy2026",
+    "metric": "revenue",
+    "period": "FY2026",
+    "value": 8215174300.0,
+    "n": 30,
+    "low": 8150000000.0,
+    "high": 8559000000.0,
+    "source_id": "nm_av_consensus"
+   },
+   {
+    "id": "nm_cons_rev_fy2027",
+    "metric": "revenue",
+    "period": "FY2027",
+    "value": 12359574000.0,
+    "n": 29,
+    "low": 11000000000.0,
+    "high": 14619778000.0,
+    "source_id": "nm_av_consensus"
+   },
+   {
+    "id": "nm_cons_eps_fy2026",
+    "metric": "eps_diluted",
+    "period": "FY2026",
+    "value": 1.6149,
+    "n": 29,
+    "low": 1.51,
+    "high": 1.74,
+    "source_id": "nm_av_consensus"
+   },
+   {
+    "id": "nm_cons_eps_fy2027",
+    "metric": "eps_diluted",
+    "period": "FY2027",
+    "value": 2.3445,
+    "n": 30,
+    "low": 1.92,
+    "high": 2.84,
+    "source_id": "nm_av_consensus"
+   },
+   {
+    "id": "nm_cons_rev_q3_2026",
+    "metric": "revenue",
+    "period": "Q3 2026",
+    "value": 2180834970.0,
+    "n": 24,
+    "low": 2161000000.0,
+    "high": 2262971840.0,
+    "source_id": "nm_av_consensus"
+   },
+   {
+    "id": "nm_cons_eps_q3_2026",
+    "metric": "eps_diluted",
+    "period": "Q3 2026",
+    "value": 0.4072,
+    "n": 24,
+    "low": 0.38,
+    "high": 0.45,
+    "source_id": "nm_av_consensus"
+   }
+  ],
+  "potential": {
+   "market_direction": {
+    "reading": "Buyers are spending more, on PLTR's own paid numbers: U.S. commercial revenue $764M in Q2 2026 (+149% y/y), U.S. commercial TCV $2.132B (+153% y/y), total TCV $3.373B, total remaining deal value $13.1B (+83% y/y) and U.S. government revenue $809M (+90% y/y). Management says Department of War TTM revenue is under 25 bp of the Pentagon budget (a statement, not a market study). FY2026 revenue guide was raised from $7.656B to $8.154B midpoint (+82% y/y). No attributed third-party market-size study was retrieved: the size of the market is a gap; the direction is read from buyers' paid commitments only.",
+    "evidence_ids": [
+     "dc_k_usc_rev",
+     "dc_k_usc_tcv",
+     "dc_k_tcv",
+     "dc_k_total_rdv",
+     "dc_k_usg_rev",
+     "web:dc_call_20260803",
+     "dc_g_fy_rev",
+     "dc_g_fy_rev_prior",
+     "web:pf_rel_20260803_1"
+    ],
+    "hypothesis": false
+   },
+   "bottleneck_potential": {
+    "reading": "PLTR supplies working production deployment of AI on a customer's own operational data inside hard institutions (10-K: high installation cost, failure risk and long sales cycles). Evidence it is scarce: deals of $10M+ closed rose to 73 in Q2 2026 and average revenue per top-20 customer rose to $124M TTM from $75M (+67%), with NDR 157%. The 10-K also says the main competitor is customers' own in-house development, so the scarcity can be built around. How long it lasts and who adds capacity (Databricks, hyperscaler AI platforms, integrators) is not evidenced: duration is a hypothesis, not a driver.",
+    "evidence_ids": [
+     "web:pf_10k_20260217",
+     "dc_k_deals10m",
+     "dc_k_top20",
+     "dc_k_top20_py",
+     "dc_k_ndr"
+    ],
+    "hypothesis": false
+   },
+   "share_trajectory": {
+    "reading": "On reported revenue growth PLTR is gaining against all three named comparators: PLTR FY2025 +56.2% ($4.475B) vs Snowflake +29.2% (FY Jan-2026, $4.684B), C3.ai -35.7% (FY Apr-2026, $250M) and Booz Allen -6.4% (FY Mar-2026, $11.2B); in Q2 2026 PLTR grew 93% y/y ($1.935B). PLTR's revenue has now roughly matched Snowflake's annual base and is 18x C3.ai's. Fiscal years and segments are not like for like and no share of a defined market is computed.",
+    "evidence_ids": [
+     "pf_revenue_fy2025",
+     "pf_revenue_fy2024",
+     "pf_revenue_q_2026_06_30",
+     "pf_revenue_q_2025_06_30",
+     "web:fd_sec_snow",
+     "web:fd_sec_ai",
+     "web:fd_sec_bah"
+    ],
+    "hypothesis": false
+   },
+   "competitive_position": {
+    "reading": "Stronger than each named competitor on growth and economics: GAAP operating margin 31.6% and gross margin 82.4% in FY2025 vs Snowflake operating margin -30.6% and gross margin 67.2%, C3.ai operating margin -199% and gross margin 30.9%, Booz Allen operating margin 9.2% with shrinking revenue. Adjusted gross margin 86% and segment contribution margins 71% government / 78% commercial in Q2 2026. Weaker on scale against Booz Allen in federal services (BAH $11.2B revenue) and unmeasured against private Databricks and hyperscaler platforms (gap).",
+    "evidence_ids": [
+     "pf_operating_income_fy2025",
+     "pf_gross_profit_fy2025",
+     "pf_revenue_fy2025",
+     "web:fd_sec_snow",
+     "web:fd_sec_ai",
+     "web:fd_sec_bah",
+     "dc_k_adj_gm",
+     "web:pf_10q_20260804"
+    ],
+    "hypothesis": false
+   },
+   "threats": {
+    "reading": "Evidenced threats: (1) in-sourcing, which the 10-K calls the fundamental competition (customers' own development, consultants, open source); (2) U.S. government budget and contracting: government was 52% of H1 2026 revenue, U.S. customers 80%, most government contracts are terminable for convenience and options run at most a year ahead; (3) intense competition from large software firms, integrators and frontier AI labs, plus dependence on third-party cloud ($5.6B hosting commitment to 2036) and models; (4) regulatory and reputational scrutiny, including European data-sovereignty press and a Pentagon sole-source memo questioned in the press (press items unconfirmed at source, unsized). No new entrant is evidenced with numbers.",
+    "evidence_ids": [
+     "web:pf_10k_20260217",
+     "web:pf_10q_20260804",
+     "dc_s_gov_q2_26",
+     "mc_f_rev_us_h1",
+     "dc_f_cloud_commit",
+     "web:mc_s_eu_sov",
+     "web:mc_s_pentagon_memo"
+    ],
+    "hypothesis": false
+   }
+  },
+  "bottlenecks": [
+   {
+    "id": "fd_bn_1",
+    "reading": "What PLTR supplies is the ability to deploy AI on a customer's own operational data inside hard-to-execute institutions (AIP bootcamps, embedded engineers); the scarce part is working production deployment, which the 10-K says high installation costs, failure risk and long sales cycles make hard for smaller vendors. Evidence of paid adoption: U.S. commercial revenue +149% y/y to $764M and U.S. commercial remaining deal value $6.238B (+124% y/y) in Q2 2026 (company release).",
+    "evidence_ids": [
+     "web:pf_10k_20260217",
+     "web:pf_rel_20260803_1"
+    ],
+    "hypothesis": false
+   },
+   {
+    "id": "fd_bn_2",
+    "reading": "U.S. government is the second pillar: revenue from U.S. government customers was $1.9B in FY2025 vs $1.2B in 2024 and $809M in Q2 2026 (+90% y/y); the 10-K says PLTR intends to capture a greater share of federal software spend.",
+    "evidence_ids": [
+     "web:pf_10k_20260217",
+     "web:pf_rel_20260803_1"
+    ],
+    "hypothesis": false
+   },
+   {
+    "id": "fd_bn_3",
+    "reading": "Duration of the shortage and who adds capacity (Databricks, hyperscaler AI platforms, integrators) is not evidenced from sources retrieved in this lane; treat as an open question.",
+    "evidence_ids": [],
+    "hypothesis": true
+   }
+  ],
+  "falsifiers": [
+   {
+    "id": "fx_base_q4",
+    "scenario": "base",
+    "metric": "Q4 2026 revenue (USD)",
+    "threshold": 2300000000,
+    "direction": "below",
+    "by": "2027-02-15",
+    "evidence_ids": [
+     "dc_g_fy_rev",
+     "dc_g_q3_rev"
+    ]
+   },
+   {
+    "id": "fx_base_fy27",
+    "scenario": "base",
+    "metric": "FY2027 revenue (USD)",
+    "threshold": 11000000000,
+    "direction": "below",
+    "by": "2028-02-29",
+    "evidence_ids": [
+     "dc_g_fy_rev",
+     "dc_k_total_rdv"
+    ]
+   },
+   {
+    "id": "fx_base_margin",
+    "scenario": "base",
+    "metric": "FY2027 GAAP operating margin",
+    "threshold": 0.38,
+    "direction": "below",
+    "by": "2028-02-29",
+    "evidence_ids": [
+     "pf_operating_income_q_2026_06_30",
+     "dc_g_fy_adjoi"
+    ]
+   },
+   {
+    "id": "fx_bull_fy27",
+    "scenario": "bull",
+    "metric": "FY2027 revenue (USD)",
+    "threshold": 13000000000,
+    "direction": "below",
+    "by": "2028-02-29",
+    "evidence_ids": [
+     "dc_k_usc_tcv",
+     "dc_k_total_rdv"
+    ]
+   },
+   {
+    "id": "fx_bear_q2_27",
+    "scenario": "bear",
+    "metric": "Q2 2027 revenue (USD)",
+    "threshold": 2900000000,
+    "direction": "above",
+    "by": "2027-08-15",
+    "evidence_ids": [
+     "pf_revenue_q_2026_06_30",
+     "dc_k_total_rdv"
+    ]
+   }
+  ],
+  "notes": [
+   "prefetch 2026-11-01T05:54:11+00:00: SEC documents saved verbatim and their text in reading/ (untrusted); a lane cites a pf_ source only after reading the passage it relies on",
+   "gather fragments reused from /home/user/fundamental-engine/runs/tickers/PLTR_2026-10-27 (as_of 2026-10-27)",
+   "dc CALL 2026-08-03 Q2 2026 earnings call (AV transcript, provider-normalized; raw payload not saved to disk, only read in session)",
+   "dc CONCENTRATION 10-Q Note 2: no customer above 10% of total revenue in the three and six months ended 2026-06-30 and 2025; no named customer shares disclosed. Six months 2026: government 52%, commercial 48%; U.S. 80% of revenue. Top-20 average TTM revenue $124M (+67% from $75M).",
+   "dc SEGMENT CONTRIBUTION (not operating income, excludes SBC, R&D, G&A) Q2 2026: government 701.1M (71%), commercial 734.9M (78%), total 1,436.1M (74%); Q2 2025: government 63%, commercial 64%, total 64%; FY2025: government 66%, commercial 66% (10-K).",
+   "dc RPO 10-Q Note 3: 4.9B at 2026-06-30 (43% within 12 months, 36% months 13-36, remainder after); 4.1B at 2025-12-31 (38% / 36%). RPO excludes terminable-for-convenience and short-term contracts (most government), so total RDV 13.1B (+83% y/y, per call) is the broader measure; RDV and TCV presume all options exercised and no terminations.",
+   "dc COMMIT 10-Q Note 7: March 2026 cloud hosting amendment commits at least $5.6B over ten contract years to 2036-02-29, annual minimums $268M to $979M. No debt; $500M revolver undrawn (matures 2027-03-31). Cash, equivalents and short-term Treasuries $9.2B.",
+   "dc ONEOFF Q2 2026 other income net 91.8M includes unrealized gains on securities (call: SpaceX holdings = 0.03 USD GAAP EPS tailwind, 0.02 adjusted); six-month unrealized/realized securities gains 62.2M (cash flow statement). Interest income 77.5M. Adjusted EPS applies 23.0% long-term tax rate; GAAP tax 15.4M on 1,081M pretax (1.4%).",
+   "dc MGMT (management statements, not facts) raised FY2026 revenue guide midpoint to 8.154B, +82% y/y and +11 points vs prior guide; CEO says he is driving growth 'equal or above' the U.S. commercial rate for the next 18 months (aspiration, not guidance); expense ramps significantly in Q3 on seasonal hiring; adjusted gross margin 86% reflects cloud hosting taken on for one government customer; strategic commercial contracts revenue under 0.5M per remaining quarter.",
+   "dc MGMT call: U.S. commercial TCV 2.132B (+153% y/y, +81% q/q); trailing-12-month U.S. commercial TCV 5.964B (+117%); U.S. commercial customers 653 (+35% y/y, +6% q/q); NDR 157% (+700 bp q/q); total TCV on dollar-weighted duration basis +129% y/y; Dept of War TTM revenue under 25 bp of the Pentagon budget; Maven 25,000+ builders.",
+   "dc RISK 10-K Item 1A: revenue growth may not be sustained (growth is at record rates; Item 1A summary line 1).",
+   "dc RISK 10-K Item 1A: long, unpredictable sales cycle; large share of sales closes in last weeks of a quarter (summary line 2).",
+   "dc RISK 10-K Item 1A: limited number of customers account for a substantial portion of revenue; top-20 averages 124M TTM (summary line 3).",
+   "dc RISK 10-K Item 1A: may not realize full deal value; majority of contracts terminable for convenience, TCV/RDV assume options exercised (summary line 4).",
+   "dc RISK 10-K Item 1A: operating expenses will rise and profitability may not be maintained; Q3 seasonal expense ramp (summary line 5).",
+   "dc RISK 10-K Item 1A: quarterly results fluctuate; reliance on U.S. government budgets and U.S. share of revenue now 81%.",
+   "dc RISK 10-K Item 1A: intense competition (defense contractors, integrators, large software firms, frontier AI labs) and dependence on third-party cloud infrastructure and models; 5.6B cloud commitment to 2036.",
+   "dc RISK 10-K Item 1A: founders' concentrated voting power; SBC and dilution (diluted shares 2.569B vs basic 2.400B); AI-related regulatory and reputational scrutiny.",
+   "dc GAP quarter-results of 2026-11-03 (Q3) are after as_of; guidance above is the latest. Customer share of revenue by named customer not disclosed. Segment operating income not disclosed (contribution only). Raw transcript payload not saved verbatim.",
+   "fd NAMED COMPETITORS (10-K Item 1): the 10-K names NO company. It says PLTR competes 'fundamentally' with customers' internal software development (custom solutions, consultants, IT services, open source), and that competitors include 'large enterprise software companies, government contractors, and system integrators' plus emerging and established entrants (source pf_10k_20260217). The tickers in competitors[] are my own mapping of those categories (SNOW and AI for enterprise software/AI; BAH for government contractor/integrator), each with the reason written down.",
+   "fd PLTR OWN COMPARISON BASE: FY2025 revenue $4,475M (+56.2% vs $2,866M), gross margin 82.4%, operating margin 31.6% (companyfacts history, pf_cf_20260217).",
+   "fd SHARE: PLTR FY2025 revenue growth +56% against SNOW +29% (FY Jan-2026), C3.ai -36% (FY Apr-2026) and BAH -6% (FY Mar-2026): on reported revenue growth PLTR is gaining relative to all three named comparators (sources pf_cf_20260217, fd_sec_snow, fd_sec_ai, fd_sec_bah). Fiscal year ends differ; segments are not like for like, so absolute share of a defined market is not computed.",
+   "fd SHARE HYPOTHESIS: Databricks (private), Microsoft/hyperscaler AI platforms and Anduril/Lockheed-type defense primes are likely further competitors but no source was retrieved for their numbers; hypothesis, not in competitors[].",
+   "fd REUSE: prior run PLTR_2026-10-27 has no field.json fragment copied and no peers.json; competitor numbers were fetched fresh from SEC companyfacts (raw in gather/raw_field/). No new PLTR filings since 2026-10-27 per prefetch.",
+   "mc RATES risk-free 4.98% (FRED DGS10, 2026-10-29) and implied ERP 4.20% (Damodaran, 2026-10-01; re-checked on his page 2026-11-01, still the latest) kept from prefetch; ERP page states treasury 5.29% for its own date, a different basis from the FRED 4.98%.",
+   "mc GEOGRAPHY revenue is by customer HQ: US 74% FY2025 (66% FY2024, 62% FY2023), UK 10% FY2025 (11% FY2024), rest of world 16% (23% FY2024); no other country 10% or more. US 81% in Q2 2026 (73% in Q2 2025), 80% H1 2026. Rest of world fell from 27% to 19% of the quarter's revenue as US grew faster (pf_10k_20260217, pf_10q_20260804). The UK is shown only in the 10-K; the 10-Q groups it in rest of world.",
+   "mc GEOGRAPHY long-lived assets by region are not disclosed in the 10-K or 10-Q text read (asset-light software company, no region table): gap, not estimated.",
+   "mc EXPOSURE US government concentration: government segment revenue Q2 2026 $990.0M of $1,935.5M (51%), H1 $1,848.4M of $3,568.0M (52%) (10-Q note 12, pf_10q_20260804). Contracts carry termination-for-convenience, options cannot be exercised more than one year ahead, and funding lapses or shutdowns and efficiency drives are listed risks (10-Q Item 1A). Candidate bear mechanism: US federal budget or contracting change, sized from the 52% government share (the US-customer share is 80%).",
+   "mc EXPOSURE customer concentration: top three customers were 16% of revenue in H1 2026 (17% in H1 2025); the top-twenty average rose to $124M TTM, up 67% (pf_10q_20260804).",
+   "mc EXPOSURE export controls and sanctions: offerings are subject to US export controls and sanctions with encryption; violations could cost export privileges and government-sales eligibility (10-Q risk factors). No share of revenue is quantified: hypothesis, unsized. Company states it does not sell to the Chinese Communist Party or host platforms in China, and has no revenue from Russia or Palestinian territories (10-Q); China is a self-chosen zero, not a risk to current revenue.",
+   "mc EXPOSURE conflict zones: 10-Q lists Ukraine, Israel and the Middle East incl. recent escalation of hostilities in Iran; operations there are stated as not material to financial results. Unsized beyond that statement.",
+   "mc EXPOSURE Europe data sovereignty: press leads (TechTimes 2026-10-15, citing a 19-outlet investigation) report European contracts above EUR 500M combined and CLOUD Act access concerns; a Dutch pension fund ABP divested. Unconfirmed at source, not independent syndication-wise: hypothesis for the non-US 20% of revenue, unsized.",
+   "mc EXPOSURE legal: securities class action (Colorado, filed 2022) listed in 10-Q note 7, company expects no material adverse impact; law-firm solicitation after the Oct 2025 NGC2 memo drop (lead only, not a filed case in the sources read); American Oversight FOIA suit (Apr 2026) is about federal records, not a claim against the company; Zurich commercial court ruled for Republik on 22 of 23 counts in Palantir's suit (2026-06-12 per IPI).",
+   "mc EXPOSURE tariffs: only the generic forward-looking mention of tariffs; software revenue, no goods supply chain or Taiwan exposure disclosed. No evidenced size.",
+   "mc NEWS filings since the latest periodic report (10-Q filed 2026-08-04): none other found in identity.json filings; the only 8-K after the 10-K besides results is Item 5.07 filed 2026-06-09 (annual meeting vote). prefetch reuse says new_filings_since is empty for 2026-10-27; SEC was not re-queried by this lane for 2026-10-28 to 2026-11-01 (gap).",
+   "mc NEWS 2026-08-04 (press lead): Pentagon memo to spend up to about $244M on Palantir through March 2027 without competitive bidding, with services to be funded for April 2027 to December 2028 (Federal News Network, search excerpt; confirm at source).",
+   "mc NEWS 2026-09 (press lead, secondary excerpt, date approximate): Army TITAN ground-station award of eight systems around Sept 1; NATO NCIA finalized Maven Smart System NATO acquisition (value undisclosed); NATO air command and control award July 7, 2026 shared with Anduril and Athea SAS. Not confirmed at source.",
+   "mc NEWS 2026-01-28 (press lead): UK MoD agreed an enterprise deal, GBP 240.6M direct award under a defence and security exemption, three-year term from April 1 (The Register, Find a Tender notice 006344-2026); relevant to the UK 10% of FY2025 revenue.",
+   "mc NEWS 2026-10 (press leads, aggregator, not independent): stock closed 186.03 on Oct 16 after a 7.2% fall tied to an AI-financing selloff in software, 201.72 on Oct 21, 198.73 on Oct 27; new all-time high on Oct 9 per aggregator; Knox Systems federal-cloud partnership Oct 19; POSCO Future M Foundry/AIP contract Oct 21; Goldman upgrade to Buy ($230) Oct 8, Mizuho target $245 Oct 15 (analyst items are opinions, not facts). One aggregator line states FY2026 revenue guidance of $8.150-8.158B: unverified here, gather_documents owns guidance from the release.",
+   "mc NEWS results-day gap: Q3 2026 results are expected 2026-11-02 (one day after as_of); they are not citable and not in this run. Options-implied move was described as sizable in press; no figure was retrieved.",
+   "mc REGIME FRED regime series are in macro/fred for deep --macro; context only, never moves a value.",
+   "nm IDENTITY PLTR = Palantir Technologies Inc., CIK 1321655, Class A common stock listed on Nasdaq (IB contract id 444857009, USD); Class B (10 votes, 99.2m sh) and Class F (1.0m) unlisted; not an ADR; fiscal year ends 12-31; 10-K cover read (pf_10k_20260217). Sources nm_ib_contract.",
+   "nm PRICE last 184.56 USD at 2026-10-30 23:58 UTC (IB snapshot, status FROZEN = market closed), prior close 196.42 (-6.04% on the day), 52w range 106.37-212.94. Source nm_ib_price. No corporate actions in the 5y history payload (no splits).",
+   "nm RECONCILIATION FY2025 to 10-K: revenue 4,475,446k, operating income 1,414,015k, net income attributable 1,625,033k, CFO 2,134,473k, capex 33,882k, SBC 684,033k, diluted shares 2,565,197k (EPS 0.63): all equal to AV and to the pf_ facts; no difference.",
+   "nm RECONCILIATION Q2 2026 to 10-Q (pf_10q_20260804): revenue 1,935,464k, operating income 912,004k, net income attributable 1,061,890k, diluted shares 2,568,694k (EPS 0.41), H1 CFO 2,115,332k = AV Q1 899,165 + Q2 1,216,167, H1 capex 21,955k = 7,401 + 14,554, H1 SBC 466,801k (10-Q cash flow) = 201,592 + 265,209: all equal. AV 'netIncome' on the income statement is the attributable figure, AV cash flow 'netIncome' includes noncontrolling interests (FY2025 1,634,644k vs 1,625,033k): not a difference of substance. Q2 2026 quarterly CFO 1,216k is derived from AV quarterly (reported YTD in the 10-Q).",
+   "nm ROIC CHECK prefetch/forensic.json roic is 'unavailable' (needs per-year equity, debt, cash). Inputs from AV balance sheet 2026-06-30: equity 9,774m; cash 2,030m plus short-term investments 7,379m (treasuries, investments not operating cash); no financial debt, lease obligations 211m; so invested capital net of all cash and investments is about 9,774 + 211 - 9,409 = 576m against TTM operating income of about 2,987m (Q3'25 393 + Q4'25 575 + Q1'26 754 + Q2'26 912): ROIC is not meaningful on this base (very large). Treat as an asset-light, net-cash software business, ROIC should not drive the valuation; incremental ROIC uncomputed (gap).",
+   "nm OWN MULTIPLE HISTORY (GAAP diluted EPS, price = December month-end): trailing P/E low 190.8 (Dec-2023, EPS 0.09, price 17.17) median 282.1 (Dec-2025) high 398.1 (Dec-2024, EPS 0.19, price 75.63); Dec-2025 close 177.75 on EPS 0.63 = 282.1; now 184.56 on TTM GAAP EPS about 1.17 (net income attributable 3,016.7m Q3'25-Q2'26 / 2,568.7m diluted shares of Q2) = about 157; earlier years had losses (FY2022 EPS -0.18) so no P/E. Years 2023-2026. Forward P/E on attributed consensus EPS (AV, basis not stated, looks adjusted): FY2026 1.6149 -> 114.3, FY2027 2.3445 -> 78.7; there is no forward history, so forward low/median/high are a gap. The multiple has compressed every year as earnings caught up with price; the stock is expensive on every year of its own history. sources pf_eps_diluted_fy2023..fy2025, nm_ib_price, nm_av_consensus. A record quarter x 4 is peak earnings (Q2'26 EPS 0.41 x 4 = 1.64) and is not used as a run rate; growth is 93% y/y, so a run rate is a warning row only.",
+   "nm CONSENSUS (AV EARNINGS_ESTIMATES, attributed expectation, retrieved 2026-11-01): FY2026 revenue 8.215bn (n=30, 8.150-8.559bn) vs management guide 8.150-8.158bn raised 2026-08-03, i.e. consensus sits at or above the top of the guide; FY2027 revenue 12.36bn (n=29, 11.0-14.62bn, +50% y/y), widest dispersion; FY2026 EPS 1.61 (n=29, 1.51-1.74), FY2027 EPS 2.34 (n=30, 1.92-2.84); Q3 2026 revenue 2.181bn (n=24, 2.161-2.263bn) vs guide 2.160-2.164bn. Revisions: FY2026 EPS mean 1.4689 (90 d ago) -> 1.6116 (30 d) -> 1.6149; FY2027 EPS 2.0945 -> 2.3267 -> 2.3445: up about 10-12% over 90 days, flat over the last 30 days (Q3/Q4 2026 EPS means slipped slightly in the last 7-30 days, 2 downward revisions). Q3 2026 results are due about 2026-11-02/03 and are not citable (within 2 days of as_of); consensus for it is shown as an expectation only. No FY2028+ rows. No price targets collected.",
+   "nm TRACK RECORD revenue guided mid vs actual (USD m, quarterly guide issued with the prior quarter's release): Q4'24 769 vs 827.5 (+7.6%), Q1'25 860 vs 883.9 (+2.8%), Q2'25 936 vs 1003.7 (+7.2%), Q3'25 1085 vs 1181.1 (+8.9%), Q4'25 1329 vs 1406.8 (+5.9%), Q1'26 1534 vs 1632.6 (+6.4%), Q2'26 1799 vs 1935.5 (+7.6%), and the initial FY2025 guide 3749 (3741-3757) vs 4475.4 (+19.4%). 8 of 8 beats, 0 misses (see ticker-check for the ratio); the company beats its own guidance conservatively every quarter, mostly by 3-9%, and raises full-year guidance at every release (FY2025 3.75 -> 3.90 -> 4.15 -> 4.40bn; FY2026 7.19 -> 7.66 -> 8.15bn). Guidance is deliberately low, so the guided midpoint is a floor, not a forecast; the beat margin has been stable but acceleration is large (y/y growth 39% -> 48% -> 63% -> 70% -> 85% -> 93%). Releases pf_rel_*. FY2024 initial guide not in the saved releases (earliest saved 2024-11-04), a gap.",
+   "nm ADJUSTED FCF (company-defined, from releases; a non-GAAP measure, not used as a fact here): FY2025 2.270bn (51% margin); guidance for FY2026 raised from 3.925-4.125bn (Feb) to 4.2-4.4bn (May) to 4.5-4.7bn (Aug). GAAP CFO less capex FY2025 = 2,134m - 34m = 2,101m.",
+   "nm BALANCE SHEET 2026-06-30 (AV, equals 10-Q): cash 2.030bn, short-term investments 7.379bn (total 9.41bn), no financial debt, lease obligations 211m, equity 9.77bn; shares outstanding about 2.570bn (AV). Cash and investments excluded from operating capital in ROIC; no restricted cash identified from AV (restricted cash in the 10-Q not checked, a gap).",
+   "nm AV QUOTA used this run: INCOME_STATEMENT, BALANCE_SHEET answered; CASH_FLOW and EARNINGS_ESTIMATES were rate limited on the first call (1/sec burst) and answered on one retry after a few seconds; 4 AV calls plus 2 retries of the 25/day quota; COMPANY_OVERVIEW and FMP statements/analyst not called. AV payloads are saved as extracts (selected fields) not whole.",
+   "nm TRACK RECORD revenue ratio 1.082 over 8 periods, 8 beats, 0 misses (ticker-check; the FY2025 row is annual and inflates the mean, quarterly-only ratio about 1.067)",
+   "driver mature_margin (bear) rests on one independent source",
+   "driver mature_margin (base) rests on one independent source",
+   "driver mature_margin (bull) rests on one independent source",
+   "driver sbc_pct (bear) rests on one independent source",
+   "driver sbc_pct (base) rests on one independent source",
+   "driver sbc_pct (bull) rests on one independent source"
+  ],
+  "meaning": "provenance of these inputs (evidence_pack.to_inputs); evidence ids web:<id> are pack sources registered by the evidence bundle, other ids are pack items"
+ }
+}

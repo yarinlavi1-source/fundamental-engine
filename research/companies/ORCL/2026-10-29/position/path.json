@@ -1,0 +1,49 @@
+{
+ "thesis_he": {
+  "bear": "ההון החדש מרוויח רק כ-6% בשנה, מתחת למחיר ההון, ולכן המכפיל יורד.",
+  "base": "ההון החדש מרוויח כ-11% בשנה, מעט מעל מחיר ההון: מכפיל בינוני שלא חוזר לשיאי 2024-2025.",
+  "bull": "כשהקיבולת מתמלאת, ההון החדש מרוויח כ-16%, כמו אורקל ב-FY2025, ומצדיק מכפיל גבוה מהממוצע."
+ },
+ "company_path": {
+  "metric": "eps",
+  "multiple": "forward_pe",
+  "scenarios": {
+   "bear": {
+    "multiple_from": "economics",
+    "roic": 0.06,
+    "justification": "unproven",
+    "reason_he": "בתרחיש הדובי ההון החדש מרוויח כ-6% בשנה, כמו התשואה השולית של אורקל בין FY2025 ל-FY2026 (6.4%) ומעל ה-3.4% של FY2021-FY2026: ההשקעות של 55.7 מיליארד בשנה ממשיכות, אבל הלקוח הגדול מאט וחוזי השכירות הארוכים נשארים. תשואה מתחת למחיר ההון לא מצדיקה מכפיל גבוה.",
+    "source_tier": "own_history",
+    "evidence_ids": ["pf_operating_income_fy2021", "pf_equity_fy2021", "pf_operating_income_fy2025", "pf_equity_fy2025", "pf_operating_income_fy2026", "pf_equity_fy2026", "nm_debt_noncurrent_fy2026", "rp_f_capex_fy26", "nm_long_lived_assets_total_fy2026"]
+   },
+   "base": {
+    "multiple_from": "economics",
+    "roic": 0.11,
+    "justification": "unproven",
+    "reason_he": "הבסיס מניח כ-11% על ההון החדש: בין ה-6.4% השולי של השנה האחרונה (שבה רוב ההשקעה עוד לא מייצרת הכנסות) לבין התשואה הכוללת של 12.8%-14.8% ב-FY2026. הצבר החתום אומר שהקיבולת תעבוד, אבל שולי הענן לא מפורסמים ומרכזי הנתונים ממומנים בחוב, כך שהתשואה עדיין לא הוכחה.",
+    "source_tier": "own_history",
+    "evidence_ids": ["pf_operating_income_fy2025", "pf_operating_income_fy2026", "pf_equity_fy2025", "pf_equity_fy2026", "nm_debt_current_fy2026", "nm_debt_noncurrent_fy2026", "pf_cash_fy2026", "rp_f_rpo_q1fy27"]
+   },
+   "bull": {
+    "multiple_from": "economics",
+    "roic": 0.16,
+    "justification": "unproven",
+    "reason_he": "בתרחיש השורי, כשהקיבולת מתמלאת, ההון מרוויח כ-16%, כמו אורקל ב-FY2025 (16.6%), ושולי הענן מתקרבים לאלה של AWS וגוגל קלאוד. זה עדיין פחות מה-25.6% של FY2021, כשאורקל הייתה חברת תוכנה בלבד.",
+    "source_tier": "own_history",
+    "evidence_ids": ["pf_operating_income_fy2025", "pf_equity_fy2025", "pf_operating_income_fy2021", "pf_equity_fy2021", "pf_cash_fy2025"]
+   }
+  },
+  "own_history": {
+   "low": 15.4,
+   "median": 37.4,
+   "high": 64.8,
+   "years": "2021-11 to 2026-10 (trailing GAAP P/E, month-end)",
+   "evidence_ids": ["nm_ib_history", "nm_ib_price", "pf_eps_diluted_fy2022", "pf_eps_diluted_fy2025", "pf_eps_diluted_fy2026", "nm_eps_diluted_ttm_2026_08_31"]
+  }
+ },
+ "gaps": [
+  "No forward P/E of the named competitors (FMP quote ACCESS DENIED): peers omitted.",
+  "No forward P/E history (no dated historical consensus): own_history is the trailing GAAP P/E, which today (22.2) includes the one-time Ampere gain.",
+  "OCI's own return on capital is not disclosed: the ROIC per scenario rests on the company-wide history."
+ ]
+}

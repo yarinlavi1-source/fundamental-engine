@@ -1,0 +1,130 @@
+{
+ "ticker": "NBIS",
+ "as_of": "2026-11-01",
+ "at_utc": "2026-11-01T06:37:05+00:00",
+ "verified": false,
+ "label": "UNVERIFIED draft (טיוטה — ההערכה לא אומתה)",
+ "reasons": [
+  "4 critical finding(s) open"
+ ],
+ "engine_ran": true,
+ "engine_review_status": "blocked",
+ "reviews": {
+  "review_trace": {
+   "file": "review/trace.json",
+   "this_attempt": true,
+   "returned": true
+  },
+  "review_numbers": {
+   "file": "review/numbers.json",
+   "this_attempt": true,
+   "returned": true
+  },
+  "review_counter": {
+   "file": "review/counter.json",
+   "this_attempt": true,
+   "returned": true
+  }
+ },
+ "critical": [
+  {
+   "severity": "critical",
+   "finding": "No valuation was executed, but value.json says ran=true with every stage 'ok' and stage_errors []. casefile fc.status = method_not_supported_by_forecast ('cash-cost ratio outside driver bounds'), val.status = not_computed, company_path.status = not_available, summary base/bear/bull = null. Cause: the forecast's starting margin m0 is the FY2025 operating margin -115.5% (forecast.py h['m0'], fiscal-year basis), not a TTM figure. The factbook's latest quarter is 2026-03-31 (av:balance / av:income, revenue_ttm 877.9M) and the Q2 2026 6-K quarters are missing (H1 revenue about 980M, H1 operating loss 303.9M, Q2 -30.2%). The analyst's growth, mature_margin and sales_to_capital overrides were never used. The table correctly shows 'no reliable value', so it is a draft with no conclusion.",
+   "where": "value.json ran/stages/stage_errors; companies/NBIS/out/casefile.json fc.status, val.status, company_path; companies/NBIS/raw/av__income.json (latest quarter 2026-03-31)",
+   "fix": "Repair: load the Q1 and Q2 2026 quarterly income, cash flow and balance sheet facts from dc_6k_q2_fs / dc_6k_q2_ofr (dated 2026-08-12, citable) into the factbook so m0 becomes TTM to 2026-06-30. Then rerun ticker-value. Treat value.json ran as false whenever fc.status or val.status is not computed.",
+   "lens": "numbers"
+  },
+  {
+   "severity": "critical",
+   "finding": "The capital structure is wrong and blocks dataqa. Debt is 18.4M (AV current portion of LTD at 2026-03-31; the vendor total of 9,590.4M disagrees), but financial debt at 2026-06-30 is 8,545.7M (current 46.7 + non-current 8,499.0, dc_6k_q2_fs). After that come the August 4.5B convertible notes (dc_6k_conv) and the October 3.5B Citi facility (dc_6k_citi). The red-team 'debt_complete passed' only checks the wrong number against itself. forecast warning debt_rate_unusual 334% shows the same error. qa.fields.convertibles is 'missing' although H1 convertibles of 4,337.5M gross are in the pack notes.",
+   "where": "casefile qa.fields.debt (status conflict, blocking), qa.fields.convertibles, rv.mechanical.redteam.reported.debt_principal_outstanding; fc.warnings debt_rate_unusual",
+   "fix": "Supply a capital bridge from the 2026-06-30 6-K balance sheet and debt note: financial debt 8,545.7M, convertible instruments with terms, the post-period 4.5B notes (closing to be confirmed) and Citi facility draws. Keep operating leases (1,510.4M non-current) separate. Resolve the debt conflict in qa.resolutions citing dc_6k_q2_fs.",
+   "lens": "numbers"
+  },
+  {
+   "severity": "critical",
+   "finding": "The three parts tell different return stories in every scenario. The core drivers imply a pre-tax return on new capital of mature_margin x sales_to_capital: bear 0.08 x 0.25 = 2.0%, base 0.17 x 0.35 = 6.0% (about 4.7% after tax), bull 0.25 x 0.45 = 11.3%. company_path asks the engine for ROIC of 6% / 12% / 20%, roughly 2-3x higher. The bull reason gets to 20% by using customer prepayments (about 55% of capex). But core.sales_to_capital already counts the same prepayments ('prepayments lower own capital per dollar of revenue: base 0.35'), so they are counted twice. The base path calls 12% 'slightly above the cost of capital', while the base drivers earn below any plausible NBIS cost of equity, so base growth destroys value in the DCF and creates value in the multiple path. No table price depends on it today because valuation was not computed, but every yearly price will depend on it once the repair pass makes the engine run.",
+   "where": "position/path.json company_path.scenarios.{bear,base,bull}.roic vs position/core.json drivers.mature_margin and drivers.sales_to_capital; position/coherence.md all three scenarios",
+   "fix": "Make one return per scenario. Either set path roic to the after-tax return the core drivers imply (about 1.6% / 4.7% / 8.9%), or raise the core margin or sales_to_capital with evidence so the two agree. Count prepayments once (in sales_to_capital, or as a funding line, not both), and state the cost of equity next to each roic.",
+   "lens": "counter"
+  },
+  {
+   "severity": "critical",
+   "finding": "Counter-thesis (pre-mortem, written 2029): NBIS grew revenue as planned, but every dollar of growth earned below its cost of capital, so shareholders lost money. How it happens: (1) GPU capacity is a commodity bought from the same supplier (NVIDIA) as CoreWeave and the hyperscalers. CoreWeave's operating margin went from 16.9% (FY2024) to -0.9% (FY2025) and -1.9% (Q2 2026) as depreciation and interest scaled, and NBIS follows the same curve. (2) Chips age on a 5-year book life that management just lengthened from 4 years (2026), so 2026-2027 earnings are flattered and the write-down comes when Vera Rubin cuts Blackwell rental prices. (3) The base case alone needs about (25.8B - 3.2B) / 0.35 = about 64B of new capital through FY2029 (on top of 20-25B of 2026 capex) against negative FCF (-3.6B in H1 even after 4.4B of prepayments). It is funded by convertibles, ATM sales at falling prices and a 364-day Citi facility, so the share count compounds. (4) 59% of Q2 revenue sits with three customers, and Meta and Microsoft hold service credits and tranche-termination rights on delays (understand/business.json), so one site slip (Vineland) turns into a lost tranche plus refunds of prepayments. Early signs to watch: the AI cloud adjusted EBITDA margin falling below 50% while connected MW rise; depreciation staying above about 40% of revenue after capacity is earning; auction or renewal prices below Blackwell levels after the Rubin launch; diluted share count up more than 15% a year; the Citi facility rolled at a wider spread or not rolled; any tranche termination or service-credit disclosure; CoreWeave bond yields (about 15%) not normalising.",
+   "where": "position/core.json (thesis_he.bear, scenario_events.bear, falsifiers); companies/NBIS/out/scenarios_he.md",
+   "fix": "Put this mechanism (return on new capital below the cost of capital, plus refinancing dilution) into the bear as drivers, not only as events. Add falsifiers for it (see the falsifier finding).",
+   "lens": "counter"
+  }
+ ],
+ "open_critical": [
+  {
+   "severity": "critical",
+   "finding": "No valuation was executed, but value.json says ran=true with every stage 'ok' and stage_errors []. casefile fc.status = method_not_supported_by_forecast ('cash-cost ratio outside driver bounds'), val.status = not_computed, company_path.status = not_available, summary base/bear/bull = null. Cause: the forecast's starting margin m0 is the FY2025 operating margin -115.5% (forecast.py h['m0'], fiscal-year basis), not a TTM figure. The factbook's latest quarter is 2026-03-31 (av:balance / av:income, revenue_ttm 877.9M) and the Q2 2026 6-K quarters are missing (H1 revenue about 980M, H1 operating loss 303.9M, Q2 -30.2%). The analyst's growth, mature_margin and sales_to_capital overrides were never used. The table correctly shows 'no reliable value', so it is a draft with no conclusion.",
+   "where": "value.json ran/stages/stage_errors; companies/NBIS/out/casefile.json fc.status, val.status, company_path; companies/NBIS/raw/av__income.json (latest quarter 2026-03-31)",
+   "fix": "Repair: load the Q1 and Q2 2026 quarterly income, cash flow and balance sheet facts from dc_6k_q2_fs / dc_6k_q2_ofr (dated 2026-08-12, citable) into the factbook so m0 becomes TTM to 2026-06-30. Then rerun ticker-value. Treat value.json ran as false whenever fc.status or val.status is not computed.",
+   "lens": "numbers"
+  },
+  {
+   "severity": "critical",
+   "finding": "The capital structure is wrong and blocks dataqa. Debt is 18.4M (AV current portion of LTD at 2026-03-31; the vendor total of 9,590.4M disagrees), but financial debt at 2026-06-30 is 8,545.7M (current 46.7 + non-current 8,499.0, dc_6k_q2_fs). After that come the August 4.5B convertible notes (dc_6k_conv) and the October 3.5B Citi facility (dc_6k_citi). The red-team 'debt_complete passed' only checks the wrong number against itself. forecast warning debt_rate_unusual 334% shows the same error. qa.fields.convertibles is 'missing' although H1 convertibles of 4,337.5M gross are in the pack notes.",
+   "where": "casefile qa.fields.debt (status conflict, blocking), qa.fields.convertibles, rv.mechanical.redteam.reported.debt_principal_outstanding; fc.warnings debt_rate_unusual",
+   "fix": "Supply a capital bridge from the 2026-06-30 6-K balance sheet and debt note: financial debt 8,545.7M, convertible instruments with terms, the post-period 4.5B notes (closing to be confirmed) and Citi facility draws. Keep operating leases (1,510.4M non-current) separate. Resolve the debt conflict in qa.resolutions citing dc_6k_q2_fs.",
+   "lens": "numbers"
+  },
+  {
+   "severity": "critical",
+   "finding": "The three parts tell different return stories in every scenario. The core drivers imply a pre-tax return on new capital of mature_margin x sales_to_capital: bear 0.08 x 0.25 = 2.0%, base 0.17 x 0.35 = 6.0% (about 4.7% after tax), bull 0.25 x 0.45 = 11.3%. company_path asks the engine for ROIC of 6% / 12% / 20%, roughly 2-3x higher. The bull reason gets to 20% by using customer prepayments (about 55% of capex). But core.sales_to_capital already counts the same prepayments ('prepayments lower own capital per dollar of revenue: base 0.35'), so they are counted twice. The base path calls 12% 'slightly above the cost of capital', while the base drivers earn below any plausible NBIS cost of equity, so base growth destroys value in the DCF and creates value in the multiple path. No table price depends on it today because valuation was not computed, but every yearly price will depend on it once the repair pass makes the engine run.",
+   "where": "position/path.json company_path.scenarios.{bear,base,bull}.roic vs position/core.json drivers.mature_margin and drivers.sales_to_capital; position/coherence.md all three scenarios",
+   "fix": "Make one return per scenario. Either set path roic to the after-tax return the core drivers imply (about 1.6% / 4.7% / 8.9%), or raise the core margin or sales_to_capital with evidence so the two agree. Count prepayments once (in sales_to_capital, or as a funding line, not both), and state the cost of equity next to each roic.",
+   "lens": "counter"
+  },
+  {
+   "severity": "critical",
+   "finding": "Counter-thesis (pre-mortem, written 2029): NBIS grew revenue as planned, but every dollar of growth earned below its cost of capital, so shareholders lost money. How it happens: (1) GPU capacity is a commodity bought from the same supplier (NVIDIA) as CoreWeave and the hyperscalers. CoreWeave's operating margin went from 16.9% (FY2024) to -0.9% (FY2025) and -1.9% (Q2 2026) as depreciation and interest scaled, and NBIS follows the same curve. (2) Chips age on a 5-year book life that management just lengthened from 4 years (2026), so 2026-2027 earnings are flattered and the write-down comes when Vera Rubin cuts Blackwell rental prices. (3) The base case alone needs about (25.8B - 3.2B) / 0.35 = about 64B of new capital through FY2029 (on top of 20-25B of 2026 capex) against negative FCF (-3.6B in H1 even after 4.4B of prepayments). It is funded by convertibles, ATM sales at falling prices and a 364-day Citi facility, so the share count compounds. (4) 59% of Q2 revenue sits with three customers, and Meta and Microsoft hold service credits and tranche-termination rights on delays (understand/business.json), so one site slip (Vineland) turns into a lost tranche plus refunds of prepayments. Early signs to watch: the AI cloud adjusted EBITDA margin falling below 50% while connected MW rise; depreciation staying above about 40% of revenue after capacity is earning; auction or renewal prices below Blackwell levels after the Rubin launch; diluted share count up more than 15% a year; the Citi facility rolled at a wider spread or not rolled; any tranche termination or service-credit disclosure; CoreWeave bond yields (about 15%) not normalising.",
+   "where": "position/core.json (thesis_he.bear, scenario_events.bear, falsifiers); companies/NBIS/out/scenarios_he.md",
+   "fix": "Put this mechanism (return on new capital below the cost of capital, plus refinancing dilution) into the bear as drivers, not only as events. Add falsifiers for it (see the falsifier finding).",
+   "lens": "counter"
+  }
+ ],
+ "repair": null,
+ "returned": [
+  "analyst",
+  "analyst_field",
+  "analyst_path",
+  "gather_documents",
+  "gather_field",
+  "gather_macro",
+  "gather_numbers",
+  "review_counter",
+  "review_numbers",
+  "review_trace"
+ ],
+ "times": {
+  "started_at_utc": "2026-11-01T05:54:11+00:00",
+  "prefetch_finished_at_utc": "2026-11-01T05:54:15+00:00",
+  "minutes_after_start": {
+   "gather/_prefetch.json": 0.1,
+   "gather/documents.json": 22.8,
+   "gather/field.json": 7.3,
+   "gather/macro.json": 8.2,
+   "gather/numbers.json": 6.0,
+   "gather/understand_core.json": 20.4,
+   "understand/auto.json": 13.9,
+   "understand/business.json": 21.2,
+   "understand/econ_case.json": 6.7,
+   "understand/econ_result.json": 6.7,
+   "understand/quarter_case.json": 6.6,
+   "understand/quarter_result.json": 6.6,
+   "prep.json": 13.9,
+   "position/core.json": 22.4,
+   "position/field.json": 21.6,
+   "position/path.json": 23.2,
+   "value.json": 35.1,
+   "review/trace.json": 25.7,
+   "review/numbers.json": 40.0,
+   "review/counter.json": 42.0
+  },
+  "elapsed_minutes": 42.0
+ },
+ "meaning": "verified needs: the engine ran in this attempt, the three reviewers returned (files of this attempt AND the main loop's record), no critical finding open after the one repair pass. The engine's own review status is reported beside it, never replaced by it."
+}

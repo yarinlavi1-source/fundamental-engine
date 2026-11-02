@@ -1,0 +1,104 @@
+{
+ "_note": "Understand stage (master_process phase 3), RESULTS-DAY run: as_of 2026-10-28 is the day of the Q3 2026 release and call; every engine command ran with FE_LAG_DAYS=0, so the release (pf_rel_20261028_1 = rp_rel_20261028, read in full) and the call (rp_call_20261028 / ex_call_q3_2026, a third-party press copy, search_excerpt) are cited on their own date. Built on the GOOGL_2026-10-27 business.json (reuse/understand/business.json), rolled to Q3 2026. Engine readings run here: understand/quarter_result_q3.json (quarter-review of understand/quarter_case_q3.json) and understand/econ_result_q3.json (econ-review of understand/econ_case_q3.json with econ_options_q3.json). No new sources were added (no gather/understand.json): the remaining gaps sit in the Q3 10-Q, not yet filed.",
+ "findings": [
+  {
+   "topic": "economic identity",
+   "finding": "Two engines. (1) An advertising platform: Google advertising 82.0bn of 127.6bn Q3 2026 revenue (64%), Search & other 63.4bn alone 49.7%; Google Services 96.3bn revenue and 39.2bn operating income = 78% of positive segment profit. (2) A capacity-constrained cloud / AI-infrastructure platform: Google Cloud 30.7bn (+103% y/y), segment margin 36.2%, backlog 561bn at 2026-09-30 per the CFO (513.9bn at 2026-06-30 per the 10-Q). The econ review (ads_platform primary, data_platform_software secondary, analyst-selected) cannot close either identity: DAU/ARPU for ads and customer counts / revenue per customer for Cloud are not disclosed; neither model is price-cyclical. Since Q2 2026 Cloud revenue also contains TPU system (hardware) sales recognised on delivery, so Cloud is now part services, part product.",
+   "evidence_ids": ["pf_rel_20261028_1", "rp_seg_svc_q3_26", "rp_seg_cloud_q3_26", "rp_srch_q3_26", "rp_cloud_backlog_q3_26", "rp_cloud_backlog_q2_26", "pf_10k_20260205", "pf_10q_20260723"]
+  },
+  {
+   "topic": "growth split Q3 2026",
+   "finding": "Revenue +25.2bn y/y (+24.7%; +25% in constant currency, so macro/FX is about 0 this quarter, and management expects a slightly larger FX headwind in Q4). Cloud +15.6bn = 62% of the increment; Services +9.3bn (Search & other +6.8bn = +12.0%, subscriptions/platforms/devices +1.4bn = +11.0%, YouTube ads +0.9bn = +9.2%, Network +0.1bn = +1.4%); hedging +0.4bn. Structural: Search (paid demand; query growth claimed by management, paid clicks/CPC for Q3 not yet disclosed), subscriptions (150m+ YouTube Music/Premium subs), Cloud backlog conversion (55% of backlog in 24 months, about 309bn). Mix/reclassification: TPU system product sales inside Cloud (a 'meaningful contributor', amount not disclosed) and Wiz from 2026-03-11; US revenue +39% vs EMEA +9%, APAC +12% is consistent with US-delivered TPU systems. Deceleration in the core: Services growth 16% (Q1) -> 14.5% (Q2) -> 10.6% (Q3), Search 19% -> 16.8% -> 12.0%, YouTube 11% -> 12.9% -> 9.2%; management attributes 'a couple of points' to lapping the late-2025 Search acceleration. Residual: the split of Cloud's +103% into TPU hardware, GCP consumption and Workspace cannot be made from the documents.",
+   "evidence_ids": ["pf_rel_20261028_1", "rp_srch_q3_26", "rp_srch_q3_25", "rp_yt_q3_26", "rp_yt_q3_25", "rp_net_q3_26", "rp_net_q3_25", "rp_subs_q3_26", "rp_subs_q3_25", "rp_cloud_q3_25", "rp_seg_cloud_q3_26", "rp_rev_cc_growth_q3_26", "rp_rev_us_q3_26", "rp_kpi_backlog_24m", "rp_kpi_yt_subs", "rp_call_20261028", "dc_seg_search_q2_2026", "rp_call_20260429"]
+  },
+  {
+   "topic": "who funds the demand",
+   "finding": "Ads: no customer above 10% of revenue (10-K). Cloud: backlog 561bn (+47bn q/q, +3.6x y/y from 155bn), 'the majority related to typical GCP contracts'; just over 55% expected within 24 months (Q2: just over 50%). TPU systems: 'all of the inventory for TPU systems are associated with committed contracts' (inventory 2.4bn -> 13.3bn in nine months); nearly 100 TPU customers; more than 2,600 customers used 100bn+ tokens in 12 months. Firm vs contingent: the backlog is contracted; separately, at 2026-06-30 Alphabet carried contingent exposure to the same AI customer set outside revenue (credit-derivative backstops up to 43.8bn, guarantees 7.6bn, 24.1bn more agreed, a 20.0bn milestone-contingent funding commitment to a private company) and bought 24.2bn of non-marketable securities in 9M 2026 (non-marketable holdings 135.2bn): part of the demand is from companies Alphabet also finances or owns (vendor-financing-like). Backlog concentration by customer and the Q3 update of the contingent items are not disclosed (10-Q pending).",
+   "evidence_ids": ["pf_10k_20260205", "rp_cloud_backlog_q3_26", "rp_cloud_backlog_q3_25", "rp_kpi_backlog_24m", "rp_inv_chg_q3_26", "ex_kpi_tpu_customers_q3_2026", "ex_kpi_100b_token_customers_ttm_q3_2026", "dc_backstop_credit_derivatives_q2_2026", "dc_backstop_guarantees_q2_2026", "dc_backstop_agreed_unfinalized_q2_2026", "dc_private_company_funding_commitment_q2_2026", "rp_nonmkt_purch_ytd_26", "nm_non_marketable_securities_q_2026_09_30"]
+  },
+  {
+   "topic": "structural or cyclical",
+   "finding": "Structural with ad-cycle sensitivity: revenue grew every year FY2020-FY2025 (lowest +8.7% in FY2023); the 2022-23 ad slowdown cut growth and margin (26.5%, 27.4%) but never revenue; the econ review marks neither model price-cyclical; Q3 2026 revenue +25% with Cloud backlog conversion. What is cyclical is the investment cycle: capex 132.0bn in 9M 2026 (FY2026 guide 195-205bn, 2027 to 'increase significantly'), so depreciation (+49% y/y in Q3) and Cloud margins (near-term headwind from third-party capacity) move with the build, not with prices. Carried as a bear mechanism, not as cyclical economics.",
+   "evidence_ids": ["pf_revenue_fy2022", "pf_revenue_fy2023", "pf_operating_income_fy2022", "pf_operating_income_fy2023", "pf_revenue_fy2025", "pf_rel_20261028_1", "rp_g_capex_fy26_oct", "rp_dep_ytd_26", "nm_depreciation_q_2026_09_30", "rp_call_20261028"]
+  },
+  {
+   "topic": "company type",
+   "finding": "Computed mature_growth / stalwart confirmed for the questions (moat, use of excess cash, ROIC on new capital), with a growth/platform overlay: TTM revenue 471.1bn growing about 25% in Q3 with Cloud doubling, i.e. above the stalwart band. The lens stays an FCF DCF with explicit reinvestment, because the business is in a heavy investment phase: TTM capex 159.8bn vs TTM operating cash flow 179.6bn, TTM FCF 19.7bn (company definition), Q3 FCF -9.1bn. The type sets the questions, not a number.",
+   "evidence_ids": ["nm_revenue_ttm_2026_09_30", "nm_capex_ttm_2026_09_30", "nm_cfo_ttm_2026_09_30", "nm_fcf_ttm_2026_09_30", "nm_free_cash_flow_q_2026_09_30", "rp_seg_cloud_q3_26"]
+  },
+  {
+   "topic": "guidance and track record",
+   "finding": "Alphabet gives no revenue, margin, EPS, tax, SBC or share-count guidance; Q4 2026 commentary is qualitative (slightly larger FX headwind; Search lapping 'a couple of points'; TPU system sales scale in Q4 and ramp 'meaningfully' in 2027; Cloud margin headwinds near term; depreciation keeps weighing). The only numeric guide is capex, and its record is: FY2025 initial 75bn -> actual 91.4bn (1.22x the first guide, 0.994x the last mid); Q1 2025 16-18bn -> 17.2bn; FY2026 175-185bn (Feb) -> 180-190bn (Apr) -> 195-205bn (Jul) -> unchanged (Oct), 9M 132.0bn implying Q4 63-73bn. Pattern: first capex guides are raised during the year and the year lands on the last guide; capex guidance is therefore a floor early in a year, not a ceiling. There is no revenue track record to apply.",
+   "evidence_ids": ["rp_g_capex_fy25_feb", "rp_g_capex_fy25_oct", "rp_capex_fy25", "rp_g_capex_q1_25", "rp_capex_q1_25", "rp_g_capex_fy26_feb", "rp_g_capex_fy26_apr", "rp_g_capex_fy26_oct", "nm_capex_ytd_2026_09_30", "rp_call_20261028"]
+  },
+  {
+   "topic": "earnings quality Q3 2026 (symmetric)",
+   "finding": "GAAP EPS 2.12 includes an 8.7bn unrealized loss on equity securities (mainly SpaceX): after tax -6.7bn, -0.55 per share; normalised net income 33.2bn, EPS about 2.67 (quarter-review). Symmetrically, H1 2026 carried +127.5bn YTD equity gains (Q2 +6.26 EPS): TTM EPS 19.16 is 10.95 ex marks. The headline 'operating income +30%' is flattered by lapping the 3.5bn EC fine in Q3 2025 G&A: ex that fine, Alphabet operating income grew about 17% (34.7bn -> 40.6bn) and the Services margin fell from about 42.5% to 40.7% (Services operating income +5.8% ex fine); current-year legal charges partly offset (amount not given). Operating margin 31.8% vs 34.0% in Q2; operating income -0.5% q/q on revenue +6.5% q/q (depreciation +49% y/y, Other Bets loss 2.05bn, Alphabet-level costs 7.66bn +71%). SBC 8.63bn = 6.8% of revenue (+36% y/y) is a real cost. Cash: Q3 FCF -9.1bn, FCF / normalised net income -0.27; OCF also carried a 5.2bn EC fine cash payment (accrued earlier, cash not P&L). Against attributed consensus (AV, n=44, basis not named) EPS 2.12 sat below the lowest estimate 2.25; ex the mark 2.67 is still about 11% under the 3.00 mean, while revenue 127.6bn was in line with 127.8bn: the miss is in costs and depreciation, not demand.",
+   "evidence_ids": ["pf_rel_20261028_1", "nm_equity_securities_gain_q_2026_09_30", "nm_equity_gain_eps_effect_q_2026_09_30", "nm_eps_diluted_ttm_2026_09_30", "nm_eps_ex_equity_gain_ttm_2026_09_30", "nm_ec_fine_q_2025_09_30", "rp_ga_drop", "rp_seg_svc_q3_25", "rp_seg_svc_q3_26", "rp_opm_q3_26", "nm_sbc_q_2026_09_30", "nm_operating_income_alphabet_level_q_2026_09_30", "rp_ec_fine_cash_q3_26", "nm_free_cash_flow_q_2026_09_30", "nm_cons_eps_q_2026_09_30", "nm_cons_revenue_q_2026_09_30"]
+  },
+  {
+   "topic": "forensic screens, ROIC and incremental ROIC",
+   "finding": "Piotroski 7 of 8 (strong; the failed signal is leverage), Altman Z'' 6.8 (safe), Beneish unavailable (inputs missing), Rule of 40 not applicable. ROIC (prefetch definition: NOPAT / equity + debt - cash) 28.9% in FY2025, average 29.3%, incremental FY2023-25 21.8%. The 2026 build lowers the incremental return for now: from 2025-12-31 to 2026-09-30 PP&E rose 126.2bn (246.6 -> 372.8bn), goodwill + intangibles 32.3bn (Wiz), while TTM operating income rose 28.0bn (129.0 -> 157.0bn), about 23bn after tax: roughly 15% on the new operating capital, before most of it produces revenue (a lag-affected reading, not a run rate). Equity-based ROIC is distorted by the unrealized marks in equity (non-marketable 135.2bn, SpaceX stock). Management expects ROIC 'meaningfully above our cost of capital' (statement, not evidence).",
+   "evidence_ids": ["pf_cf_20260205", "pf_operating_income_fy2025", "pf_equity_fy2025", "pf_long_term_debt_fy2025", "pf_cash_fy2025", "nm_ppe_net_q_2026_09_30", "nm_goodwill_q_2026_09_30", "nm_operating_income_ttm_2026_09_30", "nm_non_marketable_securities_q_2026_09_30", "rp_call_20261028"]
+  },
+  {
+   "topic": "moat evidence against named competitors",
+   "finding": "Search: worldwide referral search share about 90% vs Bing 5.3% (StatCounter, attributed; does not count AI assistants); Google Search & other +12% vs Microsoft search and news advertising ex-TAC +12% in the same quarter. Advertising budgets: Google advertising +10.6% vs Meta advertising +25.9% (Q3 2026), so Google is losing relative share in the Google+Meta pool (59.7% -> 56.5%): the ads moat holds on level and margin (Services 40.7%), not on share gains. Cloud/AI compute: Google Cloud +103% (incl. TPU hardware) vs Azure +48% and Oracle OCI +121%, segment margin 36.2% vs 23.7% a year ago; the evidenced moat source is owned silicon (TPU, sold as systems since Q2 2026) plus contracted backlog, against AWS Trainium and Microsoft/Oracle GPU capacity. AWS Q3 is not yet reported. Returns fading toward the cost of capital is the default unless the TPU cost advantage shows up in Cloud margin after depreciation.",
+   "evidence_ids": ["fd_statcounter_202609", "fd_msft_rel_20261028", "fd_meta_rel_20261021", "rp_seg_cloud_q3_26", "rp_cloud_opm_q3_26", "fd_orcl_rel_20260910", "fd_bn_silicon", "fd_amzn_rel_20260730", "rp_svc_opm_q3_26"]
+  },
+  {
+   "topic": "management, financing and dilution",
+   "finding": "Capital return has stopped and outside capital funds the build: buybacks 0 in 9M 2026 (39.8bn in 9M 2025); Q3 ATM sales 12m Class A + 24m Class C shares for 12.4bn net (27.6bn of the 40bn programme left); senior notes 28.7bn net in Q3; long-term debt 46.5bn (2025-12-31) -> 125.1bn; 6.25% mandatory convertible preferred (19m x 1,000) adds 298m of preferred dividends a quarter and converts about 2029; June 2026 equity raise 49.6bn net. Shares outstanding 12,088m -> 12,294m (+1.7% in nine months), diluted weighted shares +1.4% y/y; buybacks minus SBC -8.6bn in Q3. Quarterly interest expense 967m vs interest income 1.77bn. Acquisitions 34.1bn in 9M 2026 (Wiz). Promise vs delivery: in July management said it was not planning to return to equity markets beyond the ATM; in Q3 it used the ATM for 12.4bn (consistent).",
+   "evidence_ids": ["rp_buyback_ytd_26", "rp_atm_a_q3_26", "rp_atm_c_q3_26", "rp_atm_left_q3_26", "rp_notes_q3_26", "nm_long_term_debt_q_2026_09_30", "pf_long_term_debt_fy2025", "nm_preferred_dividends_q_2026_09_30", "nm_equity_raise_net_proceeds_q_2026_06_30", "nm_shares_outstanding_q_2026_09_30", "nm_interest_expense_q_2026_09_30", "nm_interest_income_q_2026_09_30", "rp_acq_ytd_26", "dc_call_20260722"]
+  },
+  {
+   "topic": "non-operating assets, liquidity and commitments",
+   "finding": "Cash, equivalents and marketable securities 265.1bn at 2026-09-30 (cash 56.3bn), but marketable securities include SpaceX stock under sale restrictions (80.0bn short-term and 14.1bn to Q3 2027 at 2026-06-30, before the Q3 -8.7bn mark; Q3 split is a 10-Q gap); non-marketable securities 135.2bn. Spendable liquidity is roughly 170bn against long-term debt 125.1bn. Fixed commitments grew: purchase commitments 924bn at quarter end per the CFO (811bn at 2026-06-30, 707bn of it fixed, mostly through 2030), plus data-center leases not yet commenced; these costs stay if demand slips. Legal: US Search remedies (cross-appeals) touch Search & other (49.7% of revenue), ad tech remedies touch Network (5.8%); EC Android fine 5.2bn paid in cash in Q3.",
+   "evidence_ids": ["nm_cash_q_2026_09_30", "nm_short_term_investments_q_2026_09_30", "dc_spacex_short_restricted_q2_2026", "dc_spacex_long_restricted_q2_2026", "nm_non_marketable_securities_q_2026_09_30", "nm_long_term_debt_q_2026_09_30", "rp_purch_commit_q3_26", "dc_purchase_commitments_q2_2026", "dc_fixed_supply_commitments_q2_2026", "pf_10q_20260723", "mc_reuters_adtech_20260917", "rp_ec_fine_cash_q3_26"]
+  }
+ ],
+ "flags": [
+  "headline_distorted: Q3 2026 GAAP EPS 2.12 includes -0.55 from an unrealized equity-securities loss (normalised about 2.67); TTM EPS 19.16 is 10.95 ex marks, so GAAP P/E understates the operating multiple by about 1.75x",
+  "flattered_comparison: operating income +30% y/y laps the 3.5bn EC fine in Q3 2025; ex that fine about +17%, and the Services margin fell from about 42.5% to 40.7%",
+  "core_deceleration: Services growth 16% (Q1) -> 14.5% (Q2) -> 10.6% (Q3); Search 19% -> 16.8% -> 12.0%; YouTube ads 9.2%; Network +1.4%",
+  "ad_share_loss: Google advertising +10.6% vs Meta advertising +25.9% in Q3 2026; Google's slice of the Google+Meta pool fell from 59.7% to 56.5%",
+  "q3_earnings_miss_on_costs: EPS ex mark about 2.67 vs attributed consensus mean 3.00 (AV, n=44, basis not named) with revenue in line; operating income -0.5% q/q on revenue +6.5% q/q",
+  "weak_cash_conversion: Q3 FCF -9.1bn, TTM FCF 19.7bn on TTM operating income 157.0bn; capex 159.8bn TTM; FY2026 capex guide 195-205bn and 2027 to 'increase significantly'",
+  "depreciation_wave: depreciation +49% y/y in Q3 (8.4bn), 65% of tech-infra capex in 6-year servers/networking; management says it will keep weighing on the P&L and on Cloud margins near term",
+  "commitments: purchase commitments 924bn at 2026-09-30 per the CFO (811bn, 707bn fixed, at 2026-06-30) plus uncommenced data-center leases: fixed costs that stay if demand slips",
+  "contingent_exposure (at 2026-06-30, Q3 update pending): credit-derivative backstops up to 43.8bn, guarantees 7.6bn, 24.1bn more agreed, 20.0bn milestone funding to a private company; 24.2bn of non-marketable purchases in 9M 2026: part of Cloud demand is financed or owned by Alphabet",
+  "customer_concentration_unknown: Cloud backlog (561bn) concentration in AI labs, TPU system share of Cloud revenue and TPU hardware margin are not disclosed",
+  "mix_not_like_for_like: Cloud +103% includes TPU hardware sales recognised on delivery and Wiz (from 2026-03-11): not comparable with prior periods or with AWS/Azure",
+  "leverage_rising (Piotroski leverage signal failed): long-term debt 46.5bn -> 125.1bn in nine months; mandatory convertible preferred dividends 298m a quarter",
+  "dilution: no buybacks in 2026 (39.8bn in 9M 2025), ATM 12.4bn in Q3 (27.6bn left), June equity raise 49.6bn net, mandatory convertible about 2029; shares outstanding +1.7% in nine months; buybacks minus SBC -8.6bn in Q3",
+  "incremental_roic_falling: FY2023-25 incremental ROIC 21.8% below ROIC 28.9%; about 15% on the capital added in 9M 2026 (lag-affected)",
+  "sbc_rising: SBC 8.63bn in Q3 = 6.8% of revenue, +36% y/y",
+  "restricted_not_spendable: SpaceX stock under sale restrictions (80.0bn + 14.1bn at 2026-06-30) and 135.2bn non-marketable securities are not liquidity",
+  "profit_concentration: Google Services 78% of positive segment profit; ads DAU/ARPU not disclosed (econ identity open)",
+  "other_bets_losses_widening: Other Bets operating loss 2.05bn on 0.37bn revenue in Q3 (1.43bn a year earlier)",
+  "legal_regulatory: US Search remedies under cross-appeal touch about half of revenue; effect not estimable (hypothesis)",
+  "call_source_unconfirmed: backlog 561bn, 55%/24m, purchase commitments 924bn and the 5.2bn EC payment come from a third-party copy of the call; the Q3 10-Q confirms or corrects them",
+  "beneish_unavailable: Beneish M-score inputs missing"
+ ],
+ "economics": {
+  "treatment": "structural",
+  "reason": "Revenue grew every year FY2020-FY2025 (lowest +8.7% in FY2023); the 2022-23 ad slowdown hit growth and margin but not revenue; Q3 2026 revenue +25% (+25% constant currency) with Cloud backlog of 561bn (just over 55% in 24 months) and TPU inventory tied to committed contracts; neither econ model is price-cyclical. The AI capacity-investment cycle (capex, depreciation, commitments) is a bear mechanism, not cyclical economics.",
+  "evidence_ids": ["pf_revenue_fy2022", "pf_revenue_fy2023", "pf_operating_income_fy2022", "pf_rel_20261028_1", "rp_cloud_backlog_q3_26", "rp_kpi_backlog_24m", "rp_inv_chg_q3_26", "pf_10k_20260205"]
+ },
+ "type": {
+  "stage": "mature_growth",
+  "lynch": "stalwart",
+  "override_reason": null
+ },
+ "gaps": [
+  "RESULTS-DAY RUN (FE_LAG_DAYS=0): the Q3 2026 release and call are cited on their own date; on a normal 2-day-lag run they are citable only from 2026-10-30",
+  "Q3 2026 10-Q not filed by as_of: RPO by maturity and customer, purchase commitments detail, contingent backstops/guarantees update, debt maturities, SpaceX restricted split after the Q3 mark, paid clicks / CPC / Network impressions for Q3",
+  "Call read only from a third-party AI-assisted copy (search_excerpt, not independent); Alpha Vantage returned an empty Q3 transcript",
+  "No revenue, margin, EPS, SBC or share-count guidance exists; capex is the only guided metric (track record n=3)",
+  "Ads DAU/ARPU, Cloud customer counts, backlog concentration, TPU system revenue and its margin, and Wiz revenue are not disclosed: both econ identities stay open",
+  "Size of the Q3 current-year legal charges in G&A not given, so the ex-fine Services margin comparison is approximate",
+  "Consensus is pre-print (not yet revised for Q3) and its EPS basis is not named; no GAAP operating-income consensus",
+  "AWS and Amazon advertising Q3 2026 not reported by as_of: the cloud and ad share comparisons lack Amazon for Q3",
+  "Size of any Search-remedy or AI-assistant effect on Search queries is not evidenced (hypothesis)"
+ ]
+}

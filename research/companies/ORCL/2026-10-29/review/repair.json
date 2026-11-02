@@ -1,0 +1,43 @@
+{
+  "trigger": "review",
+  "findings": [
+    {"n": 1, "lens": "trace", "fixed": true, "what_changed": "gather/repair.json (new, no retrieval): the 10-Q and 10-K non-current 'Notes payable and other borrowings' lines ($117.712B at 2026-08-31, $122.342B at 2026-05-31) were held under metric debt_noncurrent, which is not a FactBook metric, so they never reached the opening debt. Re-entered as factbook facts with metric 'debt' (FactBook long_term_debt_tagged) cited to pf_10q_20260911 / pf_10k_20260622. After pack-merge, pack-to-inputs and deep: dataqa debt at 2026-08-31 = 125.337B (tagged_plus_current; roll-forward 05-31 -> 08-31 passes, residual -2M), opening debt = 130.291B = 125.337B notes + 4.954B Series D preferred counted once (debt_like_claims). The engine tag change the reviewer proposed (LongTermNotesAndLoans in facts.INSTANT_TAGS) was NOT made: this stage may not edit engine code; it stays an engine follow-up. Residual: dataqa marks the debt scope 'unresolved_conservative' (single_source) and the AV total 155.9B disagrees (it includes ~30.6B of lease liabilities; lease_liabilities_excluded 34.6B)."},
+    {"n": 2, "lens": "company_first", "fixed": true, "what_changed": "No separate edit; follows from finding 1. Base interest is now 3.51B (stub FY2027), 7.83B FY2028, 10.06B FY2029, 11.96B FY2030, 13.34B FY2031 (Q1 FY27 run rate ~5.7B/yr, debt draws on top). Base GAAP EPS after SBC: FY2028 9.32 (below the 10.65 non-GAAP target, rp_g_fy28_eps_fam), FY2029 12.22 (vs 16), FY2030 15.18 (vs 21). The gaps are expected in direction: GAAP EPS includes SBC and amortization and the model's interest on the funded plan; the size of each gap (SBC vs amortization vs interest) was not decomposed in this pass."},
+    {"n": 3, "lens": "counter_thesis", "fixed": false, "what_changed": "Debt is in, and the red-team audit rerun at the run's corrected debt (125.337B reported, scenario values 36.35/213.74/489.85, terminal share 0.766) passes with no failed checks, debt_complete included. The expectation_gap rerun (reviewer's simplified anchors, 10.69%) gives value 135.4 vs the 141.80 quote: the price needs 45.9% growth for 3 years (implied 5y CAGR 41%), or 4 high-growth years, or a 30.5% mature margin (best 3y 30.8%), or sales_to_capital 0.51 -> 'price requires management's plan in full'. Still open: the engine's base value is 213.74 (+51% to base), which disagrees with that reading and is the subject of finding 4; the +51% must not be shown as a discount. Saved: scratchpad eg_repair.py / eg_repair.json."},
+    {"n": 4, "lens": "counter_thesis", "fixed": false, "what_changed": "Not fixable in this stage (engine code; the stage forbids editing engine code and tests). Confirmed on the real run: opening debt 12.579B -> 130.291B moved bear 48.57 -> 36.35, but base 206.22 -> 213.74 and bull 459.26 -> 489.85. Trace pointers: base terminal debt 290.09B with base draws 175.9B (fc.funding.base, all debt, 2028-2032), terminal_share_of_present_value 0.766, base interest year 6 drops to 5.52B on unchanged 290B debt; company_path base today 115.4 vs operating base 213.74. Needs an engine fix with a unit test (more opening debt must not raise equity per share) before any ORCL value is shown."}
+  ],
+  "fixed": [
+    "1 trace: opening debt now 125.337B notes + 4.954B preferred = 130.291B, via gather/repair.json factbook facts (metric debt) from the 10-Q/10-K; no engine change",
+    "2 company_first: with the debt in, base FY2028 GAAP EPS 9.32 < 10.65 non-GAAP target; FY2029 12.22 vs 16, FY2030 15.18 vs 21"
+  ],
+  "open": [
+    "3 counter_thesis: red-team now passes (debt_complete ok) and expectation_gap says the price requires management's plan in full (value 135 vs 141.80), but the engine base value 213.74 (+51%) contradicts it until finding 4 is fixed",
+    "4 counter_thesis: engine anomaly confirmed (base 206->214, bull 459->490 when debt rose 118B); engine code change plus unit test required, outside this stage",
+    "engine follow-up: add LongTermNotesAndLoans to facts.INSTANT_TAGS['long_term_debt'] so companyfacts carries ORCL's non-current notes without a pack fact",
+    "dataqa: debt scope unresolved_conservative (single_source); funding material issues assumed_financing_bear/base/bull unresolved; forensic distress flag unexplained; open item opening_vs_validated_data (preferred reclassification) awaits reviewer acceptance"
+  ],
+  "ran": true,
+  "stages": {"forecast": "ok", "valuation": "ok", "company_path": "ok", "all_other": "ok"},
+  "review_status": "unreviewed_draft",
+  "verdict_status": "draft: promising_funding_conditional (price claim withheld: unresolved assumed financing, forensic distress flag)",
+  "price": 141.8,
+  "index": "generic market assumption: no calibration file of engine 0.14.0 dated on or before 2026-10-29 within 92 days",
+  "operating_values_today": {"bear": 36.35, "base": 213.74, "bull": 489.85, "base_5y_2031_10_29": 353.51},
+  "yearly_table_company_path": {
+    "dates": ["2026-10-29", "2027-10-29", "2028-10-29", "2029-10-29", "2030-10-29", "2031-10-29"],
+    "bear": [37.2, 33.8, 30.0, 23.9, 20.8, 23.9],
+    "base": [115.4, 144.7, 177.1, 209.7, 242.5, 275.9],
+    "bull": [362.3, 417.2, 479.8, 548.2, 622.4, 700.7],
+    "note": "table_he.md withholds every value ('no reliable value to show yet'); these are the executed casefile rows, UNVERIFIED"
+  },
+  "failed_stages": [],
+  "gaps": "assumptions without company data: growth fade pace, discount-rate risk add-on, pace to mature profitability, minimum cash cushion, forecast length",
+  "casefile": "/home/user/fundamental-engine/runs/tickers/ORCL_2026-10-29/companies/ORCL/out/casefile.json",
+  "changed_files": [
+    "/home/user/fundamental-engine/runs/tickers/ORCL_2026-10-29/gather/repair.json",
+    "/home/user/fundamental-engine/runs/tickers/ORCL_2026-10-29/evidence_pack.json",
+    "/home/user/fundamental-engine/runs/tickers/ORCL_2026-10-29/companies/ORCL/inputs.json",
+    "/home/user/fundamental-engine/runs/tickers/ORCL_2026-10-29/companies/ORCL/evidence_bundle.json",
+    "/home/user/fundamental-engine/runs/tickers/ORCL_2026-10-29/companies/ORCL/out/"
+  ]
+}

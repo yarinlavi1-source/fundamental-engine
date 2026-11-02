@@ -1,0 +1,404 @@
+{
+ "thesis_he": {
+  "bear": "מכירות הרכב בארה\"ב ובסין ממשיכות לרדת, ההכנסות מקרדיטים נעלמות וההוצאות על בינה מלאכותית ורובוטים ממשיכות לעלות בלי הכנסות: ההכנסות יורדות כ-3% ב-2027 והרווח התפעולי נשאר סביב 5%.",
+  "base": "ייצור ומכירות עולים לאט כי הסוללות מגבילות, האחסון והשירותים צומחים: ההכנסות עולות כ-9% ב-2027 והרווח התפעולי חוזר בהדרגה לכ-9%, כמו הממוצע של החברה.",
+  "bull": "מגבלת הסוללות נפתרת, FSD מאושר באירופה, Cybercab ו-Semi נכנסים לייצור ומפעל האחסון ביוסטון מתמלא: ההכנסות עולות כ-20% ב-2027 והרווח התפעולי מגיע לכ-15%."
+ },
+ "drivers": {
+  "growth_anchor": {
+   "period": "FY2027",
+   "bear": -0.03,
+   "base": 0.09,
+   "bull": 0.2,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "pf_revenue_q_2026_09_30",
+    "pf_revenue_q_2025_09_30",
+    "pf_revenue_q_2026_06_30",
+    "pf_revenue_q_2025_06_30",
+    "mc_rev_oi_9m26",
+    "mc_rev_us_q326",
+    "mc_rev_us_q325",
+    "pf_revenue_fy2025",
+    "pf_revenue_fy2024",
+    "dc_kpi_production_q3_2026",
+    "dc_kpi_days_supply_q3_2026",
+    "dc_kpi_cap_model3y_q3_2026",
+    "dc_kpi_cap_megapack_q3_2026",
+    "dc_rpo_energy_q3_2026",
+    "dc_seg_line_services_q3_2026",
+    "dc_seg_line_services_q3_2025",
+    "dc_rpo_regcredits_q3_2026",
+    "dc_call_20261021"
+   ],
+   "reason": "No revenue guidance and the consensus is not citable yet, so the FY2027 step is built from Tesla's own record by line. Base +9%: car sales up mid-single digits as production rises (Q3 production 464k vs 408k in Q1, demand above production, days of supply 11, capacity 2.25M a year) but limited by batteries; services and other (+33% a year) and FSD up about 20%; energy up about 20% as the 50 GWh Houston Megafactory ramps (RPO 10.73bn); regulatory credits fall toward zero (RPO 384M). Nine-month 2026 growth was +12.5%, Q3 flat. Bear -3%: a repeat of FY2025 (-2.9%) as US (-14% in Q3) and China demand keep falling and exports meet BYD. Bull +20%: own cells lift the battery limit, Cybercab and Semi volume, Megapack near Houston capacity; close to the nine-month pace plus the new lines."
+  },
+  "mature_margin": {
+   "bear": 0.05,
+   "base": 0.09,
+   "bull": 0.15,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "pf_operating_income_fy2022",
+    "pf_revenue_fy2022",
+    "pf_operating_income_fy2023",
+    "pf_revenue_fy2023",
+    "pf_operating_income_fy2025",
+    "pf_revenue_fy2025",
+    "pf_operating_income_q_2026_09_30",
+    "dc_kpi_gm_services_q3_2026",
+    "dc_kpi_gm_energy_q2_2026",
+    "dc_call_20261021"
+   ],
+   "reason": "GAAP operating margin after SBC. Own record FY2020-FY2025: 6.3%, 12.1%, 16.8%, 9.2%, 7.2%, 4.6% (median about 8.2%); Q3 2026 2.6% with R&D at 10% of revenue. Base 9%: the FY2023 level, reached as R&D intensity falls once Robotaxi, Optimus and Semi are commercialized (the CFO ties the opex rise to that) and services and energy (gross margin 16-20% and 20-30%) take a larger share. Bear 5%: the FY2025 level persists (price competition, no credits, AI spending stays). Bull 15%: near the FY2022 peak of 16.8%, with FSD software and a larger energy business lifting the mix."
+  },
+  "sales_to_capital": {
+   "bear": 0.8,
+   "base": 1.5,
+   "bull": 2.5,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "pf_revenue_fy2020",
+    "pf_revenue_fy2022",
+    "pf_revenue_fy2025",
+    "pf_capex_fy2021",
+    "pf_capex_fy2022",
+    "pf_capex_fy2023",
+    "pf_capex_fy2024",
+    "pf_capex_fy2025",
+    "dc_g_capex_fy2026_oct_10q",
+    "dc_capex_9m_2026"
+   ],
+   "reason": "Revenue added per dollar of net investment (capex less depreciation, history.json). FY2021-FY2025: revenue +63.3bn on about 25.6bn net capex, about 2.5 (the plant ramp years: bull). FY2023-FY2025: revenue +13.4bn on about 16.3bn, about 0.8 (bear: capex into AI compute, cells and new lines that add little revenue). FY2026 capex of about 20bn against roughly 11bn of added revenue sits near the low end; base 1.5 assumes part of today's spending (cells, Megapack, Cybercab and Semi lines) starts to carry revenue."
+  },
+  "maintenance_capex_pct": {
+   "bear": [
+    0.1163,
+    0.1934,
+    0.1951,
+    0.053044,
+    0.053044,
+    0.053044,
+    0.053044,
+    0.053044,
+    0.053044,
+    0.053044,
+    0.053044,
+    0.053044,
+    0.053044,
+    0.053044,
+    0.053044,
+    0.053044,
+    0.053044
+   ],
+   "base": [
+    0.1785,
+    0.1322,
+    0.1191,
+    0.053044,
+    0.053044,
+    0.053044,
+    0.053044,
+    0.053044,
+    0.053044,
+    0.053044,
+    0.053044,
+    0.053044,
+    0.053044,
+    0.053044,
+    0.053044,
+    0.053044,
+    0.053044
+   ],
+   "bull": [
+    0.2069,
+    0.1106,
+    0.0831,
+    0.053044,
+    0.053044,
+    0.053044,
+    0.053044,
+    0.053044,
+    0.053044,
+    0.053044,
+    0.053044,
+    0.053044,
+    0.053044,
+    0.053044,
+    0.053044,
+    0.053044,
+    0.053044
+   ],
+   "source_tier": "guidance",
+   "evidence_ids": [
+    "dc_g_capex_fy2026_oct_call",
+    "dc_g_capex_fy2026_oct_10q",
+    "dc_capex_9m_2026",
+    "dc_call_20261021",
+    "pf_10q_20261022"
+   ],
+   "reason": "Capex floor at management's guide (review repair). Guide: FY2026 capex 'approximately $20 billion' (call) / 'in excess of $20 billion' (10-Q); nine-month capex 13,014M, so Q4 2026 needs at least about 6.99B, prorated 65/92 to about 4.94B for the 2026-10-27..12-31 stub. The CFO said capex 'for the next few years would continue to expand' (Robotaxi fleet, Optimus capacity, solar, compute, a semiconductor fab); Musk: 'tens of billions' in 2028 (not quantified, so held at the 20B floor, not raised). Total capex (maintenance + growth at sales_to_capital) is held at about 4.94B in the stub and 20B in FY2027 and FY2028 in every scenario; the extra over the engine's maintenance rate (5.3% of revenue) sits on this line because it buys Robotaxi, Optimus, compute and the fab, which have no separate modelled revenue, so no revenue is credited for it. From FY2029 the engine rate returns (no company evidence for later years). Depreciation is not raised for the extra spend (no tax shield taken: conservative)."
+  }
+ },
+ "forecast_options": {
+  "cyclical": {
+   "treatment": "structural",
+   "reason": "Automotive is cyclical by industry, but Tesla's revenue history (2020-2025) shows a growth phase and a plateau, not a demand cycle, and the margin fall from 16.8% to 4.6% comes from price cuts, the end of regulatory credits and a deliberate AI/robotics R&D build. Normalizing to a mid-cycle margin would lift a trough that is structural; demand sensitivity to rates and incentives is carried in the bear case.",
+   "evidence_ids": [
+    "pf_operating_income_fy2022",
+    "pf_revenue_fy2022",
+    "pf_operating_income_fy2025",
+    "pf_revenue_fy2025",
+    "dc_rpo_regcredits_q3_2026",
+    "dc_call_20261021",
+    "pf_10k_20260129"
+   ]
+  },
+  "financing": "assumed_debt"
+ },
+ "scenario_events": {
+  "base": [
+   {
+    "event_he": "ההנהלה מדווחת על צבר ההזמנות הגדול מזה ארבע שנים ועל הסוללות כמגבלה (לא כומת); ימי המלאי ירדו ל-11 והייצור עלה ל-464 אלף ברבעון 3, אבל המסירות ירדו 2%; מכירות הרכב שטוחות עד עלייה קטנה.",
+    "evidence_ids": [
+     "dc_call_20261021",
+     "pf_rel_20261021_1",
+     "dc_kpi_days_supply_q3_2026",
+     "dc_kpi_production_q3_2026",
+     "dc_kpi_production_q1_2026",
+     "dc_kpi_deliveries_q3_2026",
+     "dc_kpi_deliveries_q3_2025"
+    ]
+   },
+   {
+    "event_he": "מפעל המגהפאק ביוסטון (50 GWh) התחיל לייצר ברבעון 3; צבר ההזמנות באנרגיה 10.7 מיליארד דולר והמקדמות עלו ל-3.3 מיליארד, ולכן האחסון צומח ב-2027.",
+    "evidence_ids": [
+     "dc_kpi_cap_megapack_q3_2026",
+     "dc_rpo_energy_q3_2026",
+     "dc_defrev_energy_prepay_q3_2026",
+     "dc_defrev_energy_prepay_fy2025"
+    ]
+   },
+   {
+    "event_he": "מנויי FSD ממשיכים לגדול (1.74 מיליון, פי 1.7 בשנה) וההכנסות משירותים צומחות כשליש בשנה.",
+    "evidence_ids": [
+     "dc_kpi_fsd_subs_q3_2026",
+     "dc_kpi_fsd_subs_q3_2025",
+     "dc_seg_line_services_q3_2026",
+     "dc_seg_line_services_q3_2025"
+    ]
+   },
+   {
+    "event_he": "ההנהלה מכוונת להשקעות של כ-20 מיליארד דולר ב-2026 ולהמשך עלייה (רובוטקסי, Optimus, מחשוב ומפעל שבבים); המודל מחזיק השקעות של 20 מיליארד בשנה גם ב-2027 וב-2028 בלי לזקוף להן הכנסות, ולכן הרווחיות והתזרים חוזרים רק בהדרגה.",
+    "evidence_ids": [
+     "dc_call_20261021",
+     "dc_g_capex_fy2026_oct_call",
+     "dc_g_capex_fy2026_oct_10q",
+     "dc_capex_9m_2026",
+     "pf_10q_20261022"
+    ]
+   },
+   {
+    "event_he": "ההכנסות ממכירת קרדיטים רגולטוריים כמעט נעלמות (התחייבויות פתוחות של 384 מיליון בלבד).",
+    "evidence_ids": [
+     "dc_rpo_regcredits_q3_2026",
+     "dc_rpo_regcredits_fy2025",
+     "dc_seg_line_regcredits_q3_2026"
+    ]
+   }
+  ],
+  "bull": [
+   {
+    "event_he": "Cybercab מגיע ללקוחות בסוף 2026 ורכבי לקוחות מצטרפים לשירות הרובוטקסי סביב רבעון 2 של 2027, עם התרחבות לדאלאס וערים נוספות.",
+    "evidence_ids": [
+     "dc_call_20261021",
+     "dc_kpi_cap_cybercab_q3_2026",
+     "dc_kpi_robotaxi_miles_q3_2026"
+    ]
+   },
+   {
+    "event_he": "אישור FSD בכל האיחוד האירופי בתוך חודשים (כבר מאושר ב-9 מדינות), מה שמגדיל ביקוש ומנויים.",
+    "evidence_ids": [
+     "dc_call_20261021",
+     "pf_rel_20261021_1"
+    ]
+   },
+   {
+    "event_he": "ייצור תאי הסוללה העצמי (4680 בטקסס, LFP בנבדה) פותר את מגבלת הסוללות והמסירות מתקרבות לכושר הייצור של 2.25 מיליון רכבים בשנה.",
+    "evidence_ids": [
+     "dc_kpi_cap_4680_q3_2026",
+     "dc_kpi_cap_model3y_q3_2026",
+     "pf_rel_20261021_1"
+    ]
+   },
+   {
+    "event_he": "Semi בייצור סדרתי מרבעון 3 של 2026 (כושר 25 אלף בשנה) ומגהפאק מתקרב לכושר של 110 GWh.",
+    "evidence_ids": [
+     "dc_kpi_cap_semi_q3_2026",
+     "dc_kpi_cap_megapack_q3_2026"
+    ]
+   },
+   {
+    "event_he": "Optimus נמכר ללקוחות חיצוניים מסוף 2027 (תנאי לתרחיש; המודל לא סופר לו הכנסות נפרדות).",
+    "hypothesis": true
+   }
+  ],
+  "bear": [
+   {
+    "event_he": "המכירות בארה\"ב ובסין ממשיכות לרדת (ברבעון 3: ארה\"ב מינוס 14%, סין מינוס 8%), שוק הרכב החשמלי בצפון אמריקה ירד 24% השנה, והצמיחה תלויה רק ביצוא לאירופה ולשווקים אחרים מול BYD.",
+    "evidence_ids": [
+     "mc_rev_us_q326",
+     "mc_rev_us_q325",
+     "mc_rev_cn_q326",
+     "mc_rev_cn_q325",
+     "fd_bmi_ev_sep2026",
+     "mc_press_cpca_sep26",
+     "fd_byd_sales_202609"
+    ]
+   },
+   {
+    "event_he": "ההשקעות נשארות כ-20 מיליארד דולר בשנה בלי הכנסות מרובוטקסי ו-Optimus והרווח התפעולי נשאר נמוך: התזרים החופשי שלילי ב-2027-2028, והחברה מממנת את הפער מכ-21 מיליארד דולר מתוך כ-45 מיליארד המזומנים וההשקעות שלה, בלי למשוך מקווי האשראי.",
+    "evidence_ids": [
+     "pf_operating_income_q_2026_09_30",
+     "pf_revenue_q_2026_09_30",
+     "dc_call_20261021",
+     "dc_g_capex_fy2026_oct_call",
+     "dc_g_capex_fy2026_oct_10q",
+     "pf_10q_20261022"
+    ]
+   },
+   {
+    "event_he": "מכסים וחוק OBBBA מייקרים את תאי הסוללה, בעיקר באנרגיה: הכנסות האנרגיה ירדו 16% ברבעון 3 והרווחיות הגבוהה שם נבעה מהחזרי מכס חד-פעמיים.",
+    "evidence_ids": [
+     "dc_seg_energy_q3_2026",
+     "dc_seg_energy_q3_2025",
+     "mc_ieepa_energy_cogs_q326",
+     "dc_kpi_gm_energy_q2_2026",
+     "pf_10q_20261022"
+    ]
+   },
+   {
+    "event_he": "רגולציה ותביעות סביב נהיגה אוטונומית (בירורי NHTSA, פסק דין Benavides) מעכבות את הרחבת הרובוטקסי.",
+    "evidence_ids": [
+     "pf_10q_20261022",
+     "pf_10k_20260129"
+    ]
+   },
+   {
+    "event_he": "עסקה עם SpaceX (ועדה מיוחדת בוחנת אותה) בתנאים שמדללים את בעלי המניות.",
+    "hypothesis": true
+   }
+  ]
+ },
+ "key_risk": {
+  "reading_he": "המחיר נשען על רובוטקסי, FSD ו-Optimus שעדיין אין להן הכנסות מדווחות, בזמן שהכנסות הרכב לא צמחו: הכנסות רבעון 3 לא צמחו לעומת השנה שעברה, הרווח התפעולי רק 2.6% מההכנסות, וההוצאות על פיתוח והשקעות ממשיכות לעלות.",
+  "evidence_ids": [
+   "pf_revenue_q_2026_09_30",
+   "pf_revenue_q_2025_09_30",
+   "pf_operating_income_q_2026_09_30",
+   "dc_call_20261021",
+   "nm_ib_price"
+  ]
+ },
+ "falsifiers": [
+  {
+   "id": "fx_q4_rev",
+   "scenario": "base",
+   "metric": "Q4 2026 total revenue (USD)",
+   "threshold": 26600000000,
+   "direction": "below",
+   "by": "2027-02-15",
+   "evidence_ids": [
+    "pf_revenue_q_2025_12_31",
+    "pf_revenue_q_2026_09_30"
+   ]
+  },
+  {
+   "id": "fx_q1_deliveries",
+   "scenario": "base",
+   "metric": "Q1 2027 vehicle deliveries (units)",
+   "threshold": 358023,
+   "direction": "below",
+   "by": "2027-04-10",
+   "evidence_ids": [
+    "dc_kpi_deliveries_q1_2026"
+   ]
+  },
+  {
+   "id": "fx_q4_storage",
+   "scenario": "base",
+   "metric": "Q4 2026 energy storage deployed (GWh)",
+   "threshold": 14.2,
+   "direction": "below",
+   "by": "2027-01-10",
+   "evidence_ids": [
+    "dc_kpi_storage_q4_2025",
+    "dc_kpi_cap_megapack_q3_2026"
+   ]
+  },
+  {
+   "id": "fx_fy27_margin",
+   "scenario": "base",
+   "metric": "FY2027 GAAP operating margin",
+   "threshold": 0.04,
+   "direction": "below",
+   "by": "2028-02-15",
+   "evidence_ids": [
+    "pf_operating_income_fy2025",
+    "pf_revenue_fy2025"
+   ]
+  },
+  {
+   "id": "fx_fsd_subs",
+   "scenario": "bull",
+   "metric": "Active FSD subscriptions at 2027-03-31 (million)",
+   "threshold": 2.0,
+   "direction": "below",
+   "by": "2027-04-30",
+   "evidence_ids": [
+    "dc_kpi_fsd_subs_q3_2026",
+    "dc_kpi_fsd_subs_q2_2026"
+   ]
+  },
+  {
+   "id": "fx_q2_rev_bear",
+   "scenario": "bear",
+   "metric": "Q2 2027 total revenue (USD)",
+   "threshold": 31000000000,
+   "direction": "above",
+   "by": "2027-08-15",
+   "evidence_ids": [
+    "pf_revenue_q_2026_06_30"
+   ]
+  },
+  {
+   "id": "fx_cybercab",
+   "scenario": "bull",
+   "metric": "Cumulative Cybercab customer deliveries at 2027-06-30 (units)",
+   "threshold": 1,
+   "direction": "below",
+   "by": "2027-07-31",
+   "evidence_ids": [
+    "dc_call_20261021",
+    "dc_kpi_cap_cybercab_q3_2026"
+   ]
+  }
+ ],
+ "reasons_he": {
+  "bear": "מה נשבר: מכירות הרכב בארה\"ב ובסין ממשיכות לרדת, הקרדיטים נעלמים, מכסים מייקרים סוללות, וההשקעות הענקיות בבינה מלאכותית ורובוטים לא מביאות הכנסות, כך שהרווחיות נתקעת ברמת 2025.",
+  "base": "הכי סביר לפי הנתונים: הביקוש גבוה מהייצור והייצור עולה לאט, האחסון והשירותים צומחים, וההוצאות החדשות מתמתנות בהדרגה; צמיחה של כ-9% ורווחיות שחוזרת לממוצע של החברה, בלי לייחס ערך להכנסות רובוטקסי ו-Optimus שעוד לא דווחו.",
+  "bull": "מה חייב לקרות: סוללות עצמיות מסירות את מגבלת הייצור, FSD מאושר באירופה, Cybercab ו-Semi מגיעים לנפח ומפעל יוסטון מתמלא בתוך 2027; גם אז מענק המניות למנכ\"ל (423.7 מיליון מניות) מדלל את בעלי המניות אם השווי עולה."
+ },
+ "engine_options": {
+  "country_risk": true,
+  "reason": "The 10-K and 10-Q disclose revenue by region (United States, China, Other international) and long-lived assets by location; China is 17.9% of nine-month 2026 revenue and Shanghai about 38% of vehicle capacity."
+ },
+ "gaps": [
+  "current_year_revenue not set: Tesla gives no FY2026 revenue or Q4 guidance; the engine takes the nine-month actual plus its rule for Q4 (shown as a gap).",
+  "growth_anchor is own_history by line, not consensus: the FY2027 consensus (122.3bn, about +13% on the 107.8bn FY2026 consensus) is dated 2026-10-26/27 and is not citable until 2026-10-28/29.",
+  "growth_half_life, terminal_roic, margin_convergence_years, cost_of_equity, tax_rate and sbc_pct left on the engine rules: no company evidence for the fade or the convergence speed; SBC is already inside GAAP operating margin.",
+  "Robotaxi, FSD and Optimus revenue and unit economics are not disclosed: they have no separate revenue line; the bull growth/margin and the base margin recovery assume their commercialization.",
+  "Energy gross margin of 33% in Q3 2026 is not a run rate (tariff refunds, unsized warranty true-down); the base margin does not rest on it.",
+  "No debt_like_claims: resale value guarantees (4.42bn) and the Benavides verdict are contingent, not claims ahead of the shares; finance leases are inside the 9.5bn debt."
+ ]
+}

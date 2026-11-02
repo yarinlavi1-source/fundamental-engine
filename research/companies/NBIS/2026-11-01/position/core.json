@@ -1,0 +1,332 @@
+{
+ "thesis_he": {
+  "bear": "עיכובים באתרים ושוק אשראי סגור לחברות ענן AI: ההכנסות ב-2027 רק כ-6.7 מיליארד דולר, ההון החדש מרוויח כ-2% לפני מס (מרווח 8% כפול 0.25 הכנסה לכל דולר הון), הרבה מתחת לעלות ההון, והחברה ממחזרת חוב ומגייסת הון במחירים נמוכים ומדללת את בעלי המניות.",
+  "base": "החברה עומדת בתחזית 2026 (הכנסות 3.0-3.4 מיליארד, קצב שנתי של כ-8 מיליארד בסוף השנה), מוסיפה יותר מגיגה-וואט ב-2027 ומגיעה לכ-9.6 מיליארד דולר הכנסות ב-2027, ממומנת בחוב ובדילול מתון.",
+  "bull": "החברה מבטיחה 5 גיגה-וואט חוזיים עד סוף 2026, מפעילה Vera Rubin ומרכזי נתונים בבעלותה, וההכנסות ב-2027 מגיעות לכ-12.8 מיליארד דולר עם מימון מגובה נכסים במקום הנפקת מניות."
+ },
+ "drivers": {
+  "current_year_revenue": {
+   "source_tier": "guidance",
+   "evidence_ids": [
+    "dc_g_rev",
+    "dc_call_q2",
+    "nm_rel_q2_2026"
+   ],
+   "adjust_by_track_record": false,
+   "reason": "FY2026 group revenue guidance 3.0-3.4B, issued in May and reaffirmed on 2026-08-12 (implied H2 2.0-2.4B against H1 0.98B). Not adjusted: the only checkable guide is one ARR beat (year-end 2025 ARR 1.25B against 0.9-1.1B, n=1), too thin for a ratio, and no guidance item covers only the unreported H2 remainder. Q3 results on 2026-11-12 are after as_of."
+  },
+  "growth": {
+   "period": "FY2027",
+   "bear": [
+    1.1,
+    0.3,
+    0.15
+   ],
+   "base": [
+    2.0,
+    0.85,
+    0.45
+   ],
+   "bull": [
+    3.0,
+    0.9,
+    0.5
+   ],
+   "source_tier": "contracted",
+   "evidence_ids": [
+    "dc_g_arr",
+    "dc_k_arr",
+    "dc_f_rpo",
+    "dc_k_backlog",
+    "dc_g_mw",
+    "dc_g_cpower",
+    "dc_k_yield",
+    "dc_call_q2",
+    "dc_6k_q2_fs",
+    "pf_10k_20260430"
+   ],
+   "reason": "FY2027 (first value) from the exit run-rate and contracted capacity, on a FY2026 base of about 3.2B: base +200% (about 9.6B) = the guided year-end 2026 ARR midpoint 8B (dc_g_arr) plus part of the more than 1 GW of new 2027 capacity that management says it could sell entirely at 20-25M USD per MW per year (dc_k_yield, dc_call_q2) and the Meta order starting early 2027 (pf_10k_20260430); RPO 37.49B converts 36% within 24 months (about 13.5B, July 2026-June 2028) and the backlog is above 40B. Bear +110% (about 6.7B) = exit ARR below the 7B guide low because sites slip (Vineland) and short-term prices fall. Bull +200% to +300% (about 12.8B) = ARR at the 9B top plus the 2027 capacity online early. FY2028-FY2029: RPO has another 40% (about 15B) in months 25-48 and contracted power targets 5 GW at end 2026 against 0.8-1.0 GW connected, so growth stays high but halves each year (base +85%, +45%), slower in the bear (funding-limited) and faster in the bull. Attributed consensus FY2027 revenue 12.2B (range 8.8-18.0B, retrieved 2026-11-01, not citable at as_of) is a cross-check only: base sits in its lower half."
+  },
+  "mature_margin": {
+   "bear": 0.08,
+   "base": 0.17,
+   "bull": 0.25,
+   "source_tier": "competitor",
+   "competitors": [
+    "CRWV"
+   ],
+   "evidence_ids": [
+    "fd_cw_sec_facts",
+    "dc_k_ebitda_m",
+    "uc_f_da_q2",
+    "dc_call_q2",
+    "dc_6k_q2_fs"
+   ],
+   "reason": "GAAP operating margin after SBC and depreciation at maturity. NBIS has no mature year (Q2 2026 -30.2% while depreciation of not-yet-earning capacity is 44.6% of revenue), so the nearest named competitor is used: CoreWeave (same GPU-cloud model, same customers) earned 16.9% in FY2024, its most mature year, and -0.9% in FY2025 / -1.9% in Q2 2026 as depreciation and interest scaled. Base 17% = CoreWeave FY2024, consistent with NBIS AI cloud adjusted EBITDA margin of 50% less mature depreciation on a 5-year server life. Bear 8% = GPU-hour price declines and leased (not owned) sites keep it between CoreWeave's two readings. Bull 25% = own data centers lower cost from H2 2027 (management) and auction pricing above prior Blackwell rates hold the 50% segment EBITDA margin."
+  },
+  "sales_to_capital": {
+   "bear": 0.25,
+   "base": 0.35,
+   "bull": 0.45,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "dc_k_arr",
+    "dc_g_arr",
+    "dc_g_capex",
+    "mc_f_lla_tot_2025",
+    "dc_k_prepay_cov",
+    "dc_k_prepay",
+    "dc_6k_q2_fs",
+    "pf_10k_20260430"
+   ],
+   "reason": "Revenue per dollar of new invested capital. Today: ARR 3.0B on long-lived assets 14.98B at 2026-06-30 (0.20, much of it construction in progress); year-end 2026 by guidance: ARR 7-9B on about 6.5B assets at end 2025 plus 20-25B capex (about 0.28), with part of that capex building 2027 capacity. Customers prepay about 55% of the associated capex on the Q2 landmark deals and over 9B in 2026, which lowers own capital per dollar of revenue: base 0.35. Bear 0.25 = capacity built but filled late or repriced lower (today's level). Bull 0.45 = more of the build funded by prepayments and the asset-light partnership model."
+  }
+ },
+ "forecast_options": {
+  "cyclical": {
+   "treatment": "structural",
+   "reason": "Revenue is multi-year contracted capacity (RPO 37.5B, about three-quarters beyond 12 months; backlog above 40B) with customer prepayments, and growth comes from capacity added, not from a price cycle. GPU-hour price declines and AI-lab funding are carried as bear events and the key risk.",
+   "evidence_ids": [
+    "dc_f_rpo",
+    "dc_k_backlog",
+    "dc_f_defrev",
+    "pf_10k_20260430"
+   ]
+  },
+  "financing": "assumed"
+ },
+ "scenario_events": {
+  "bear": [
+   {
+    "event_he": "עיכובים באתרים בארה\"ב (למשל Vineland בניו ג'רזי) דוחים חיבור קיבולת; מטא ומיקרוסופט מקבלות זיכויים ויכולות לבטל שלבים בחוזה, והקצב השנתי בסוף 2026 נשאר מתחת ל-7 מיליארד דולר.",
+    "evidence_ids": [
+     "dc_call_q2",
+     "pf_10k_20260430",
+     "dc_g_arr"
+    ]
+   },
+   {
+    "event_he": "אחד משלושת הלקוחות הגדולים (24%, 21% ו-14% מהכנסות הרבעון השני) מאט או לא מחדש: עד כרבע מההכנסות בסיכון.",
+    "evidence_ids": [
+     "dc_c_c_q2",
+     "dc_c_d_q2",
+     "dc_c_e_q2"
+    ]
+   },
+   {
+    "event_he": "שוק האשראי לחברות ענן AI נסגר (אגרות החוב של CoreWeave נסחרו בתשואה של כ-15%): קו האשראי של סיטי ל-364 יום צריך מחזור, והחברה מנפיקה מניות במחיר נמוך ומדללת.",
+    "evidence_ids": [
+     "mc_press_gartner",
+     "mc_press_neocloud",
+     "dc_6k_citi",
+     "dc_6k_conv"
+    ]
+   },
+   {
+    "event_he": "המחיר לשעת GPU יורד ככל שההיצע גדל והביקוש עובר להסקה (inference), והמרווח התפעולי נשאר חד-ספרתי.",
+    "hypothesis": true
+   },
+   {
+    "event_he": "פגיעה באתרים בישראל (4.3% מהנכסים ארוכי הטווח) או החמרה בפיקוח הייצוא האמריקאי על שבבים ולקוחות זרים.",
+    "evidence_ids": [
+     "mc_f_lla_il_2025",
+     "pf_10k_20260430",
+     "mc_fr_bis_2026"
+    ]
+   },
+   {
+    "event_he": "החברה האריכה את חיי השרתים בספרים מ-4 ל-5 שנים ב-2026, כך שהרווח של 2026-2027 נראה טוב יותר; כש-Vera Rubin מוריד את מחירי ההשכרה של Blackwell מגיעה מחיקה והפחת נשאר מעל 40% מההכנסות.",
+    "evidence_ids": [
+     "dc_6k_q2_fs",
+     "uc_f_da_q2",
+     "dc_call_q2"
+    ]
+   }
+  ],
+  "base": [
+   {
+    "event_he": "בדוחות הרבעון השלישי (12.11.2026) והרביעי ההכנסות נכנסות לטווח התחזית 3.0-3.4 מיליארד דולר, והקצב השנתי בסוף 2026 קרוב ל-8 מיליארד.",
+    "evidence_ids": [
+     "dc_g_rev",
+     "dc_g_arr",
+     "mc_ir_q3date"
+    ]
+   },
+   {
+    "event_he": "החוזה עם מטא מתחיל לספק בתחילת 2027 והחוזה עם מיקרוסופט ממשיך; כ-36% מההזמנות החוזיות (37.5 מיליארד) הופכות להכנסה תוך 24 חודשים.",
+    "evidence_ids": [
+     "pf_10k_20260430",
+     "dc_f_rpo"
+    ]
+   },
+   {
+    "event_he": "יותר מגיגה-וואט קיבולת חדשה ב-2027 נמכרת בחוזים של 20-25 מיליון דולר לכל מגה-וואט בשנה, עם מקדמות של כ-55% מעלות ההקמה.",
+    "evidence_ids": [
+     "dc_call_q2",
+     "dc_k_yield",
+     "dc_k_prepay_cov"
+    ]
+   },
+   {
+    "event_he": "המימון נמשך באגרות חוב להמרה, קווי אשראי מגובים ומעט מניות: דילול מתון לבעלי המניות.",
+    "evidence_ids": [
+     "dc_6k_conv",
+     "dc_6k_citi",
+     "dc_6k_q2_fs"
+    ]
+   }
+  ],
+  "bull": [
+   {
+    "event_he": "עד סוף 2026 החברה מגיעה ל-5 גיגה-וואט חוזיים ומפרסמת תחזית 2027 גבוהה מ-12 מיליארד דולר הכנסות.",
+    "evidence_ids": [
+     "dc_g_cpower",
+     "dc_call_q2"
+    ]
+   },
+   {
+    "event_he": "פריסת Vera Rubin בסוף 2026 או תחילת 2027, ומכירות פומביות של קיבולת נסגרות מעל המחירים הקודמים (הראשונה נסגרה 15% מעל המחיר הגבוה של Blackwell).",
+    "evidence_ids": [
+     "dc_call_q2",
+     "mc_press_spot"
+    ]
+   },
+   {
+    "event_he": "מרכזי נתונים בבעלות החברה משפרים את המרווח מהמחצית השנייה של 2027.",
+    "evidence_ids": [
+     "dc_call_q2"
+    ]
+   },
+   {
+    "event_he": "מימון מגובה נכסים על בסיס חוזים של לקוחות בדירוג השקעה (מעל 40 מיליארד) מחליף הנפקות מניות.",
+    "evidence_ids": [
+     "dc_6k_citi",
+     "dc_k_backlog"
+    ]
+   }
+  ]
+ },
+ "key_risk": {
+  "reading_he": "המימון: ב-2026 החברה משקיעה 20-25 מיליארד דולר, והתזרים החופשי שלילי (כ-3.6 מיליארד במחצית הראשונה, גם אחרי מקדמות של לקוחות). היא תלויה בגיוס חוב והון (אגרות חוב להמרה, מכירת מניות, קו אשראי לשנה אחת), ולכן עיכוב באתרים או שוק אשראי סגור יביאו לדילול כבד לבעלי המניות.",
+  "evidence_ids": [
+   "dc_g_capex",
+   "dc_f_capex_h1",
+   "dc_f_ocf_h1",
+   "dc_6k_conv",
+   "dc_6k_citi",
+   "pf_10k_20260430"
+  ]
+ },
+ "falsifiers": [
+  {
+   "id": "fx_rev26",
+   "scenario": "base",
+   "metric": "group revenue FY2026, USD millions",
+   "threshold": 3000,
+   "direction": "below",
+   "by": "2027-03-31",
+   "evidence_ids": [
+    "dc_g_rev"
+   ]
+  },
+  {
+   "id": "fx_arr26",
+   "scenario": "base",
+   "metric": "annualized run-rate revenue at 2026-12-31, USD millions",
+   "threshold": 7000,
+   "direction": "below",
+   "by": "2027-03-31",
+   "evidence_ids": [
+    "dc_g_arr"
+   ]
+  },
+  {
+   "id": "fx_mw26",
+   "scenario": "base",
+   "metric": "connected power at 2026-12-31, MW",
+   "threshold": 800,
+   "direction": "below",
+   "by": "2027-03-31",
+   "evidence_ids": [
+    "dc_g_mw"
+   ]
+  },
+  {
+   "id": "fx_cpower26",
+   "scenario": "bull",
+   "metric": "contracted power at 2026-12-31, MW",
+   "threshold": 5000,
+   "direction": "below",
+   "by": "2027-03-31",
+   "evidence_ids": [
+    "dc_g_cpower"
+   ]
+  },
+  {
+   "id": "fx_bear_rev27",
+   "scenario": "bear",
+   "metric": "group revenue FY2027, USD millions",
+   "threshold": 9000,
+   "direction": "above",
+   "by": "2028-03-31",
+   "evidence_ids": [
+    "dc_g_arr",
+    "dc_f_rpo"
+   ]
+  },
+  {
+   "id": "fx_shares27",
+   "scenario": "base",
+   "metric": "Class A + Class B shares outstanding at 2027-12-31, millions (271.9 at 2026-06-30; base assumes moderate dilution, about 15% a year would be 335)",
+   "threshold": 335,
+   "direction": "above",
+   "by": "2028-03-31",
+   "evidence_ids": [
+    "dc_f_sh_a",
+    "dc_f_sh_b"
+   ]
+  },
+  {
+   "id": "fx_da27",
+   "scenario": "base",
+   "metric": "depreciation and amortization as a share of revenue FY2027, percent (Q2 2026: 44.6%; the base 17% mature margin needs it falling)",
+   "threshold": 40,
+   "direction": "above",
+   "by": "2028-03-31",
+   "evidence_ids": [
+    "uc_f_da_q2",
+    "dc_6k_q2_fs"
+   ]
+  },
+  {
+   "id": "fx_bull_oi27",
+   "scenario": "bull",
+   "metric": "GAAP operating margin FY2027, percent",
+   "threshold": 0,
+   "direction": "below",
+   "by": "2028-03-31",
+   "evidence_ids": [
+    "dc_6k_q2_ofr",
+    "dc_call_q2"
+   ]
+  }
+ ],
+ "reasons_he": {
+  "bear": "מה נשבר: האתרים מתעכבים, לקוח גדול מאט, והמימון מתייקר; ההכנסות ב-2027 רק כ-6.7 מיליארד, המרווח נמוך והגיוסים מדללים.",
+  "base": "למה הכי סביר: התחזית ל-2026 אושרה באוגוסט, ההזמנות החוזיות (37.5 מיליארד) והמקדמות מכסות את הצמיחה ל-2027, והמרווח בבגרות כמו של CoreWeave בשנתה הטובה.",
+  "bull": "מה צריך לקרות: 5 גיגה-וואט חוזיים, תחזית 2027 מעל 12 מיליארד, מרכזי נתונים בבעלות ומימון מגובה חוזים במקום מניות."
+ },
+ "engine_options": {
+  "country_risk": true,
+  "reason": "The 20-F discloses revenue by customer location (US 64%, UK 26%, rest of world 10% in FY2025) and long-lived assets by country."
+ },
+ "gaps": [
+  "growth_half_life after FY2029, terminal_growth, terminal_roic, cost_of_equity, tax_rate and sbc_pct left on the engine rule: no company evidence beyond the contracted horizon; Q2 SBC (102.5M incl. 74.9M Eigen AI one-off) comes from a source not citable at as_of.",
+  "Customer prepayments (deferred revenue 5.98B, over 9B expected in 2026) not set as deferred_revenue_ratio / prepaid_share: the refundable share is not disclosed.",
+  "No FY2027 company guidance; attributed consensus (12.2B) retrieved on 2026-11-01 is not citable until 2026-11-03.",
+  "Post-June capital structure (August 4.5B convertibles, October 3.5B Citi facility, NVIDIA pre-funded warrants) left to the capital bridge; uncommenced leases 12.05B not added as a debt-like claim (operating cost once commenced).",
+  "Acquisitions of 2026 (Tavily, Eigen AI, Inferize) brought immaterial revenue; acquired_revenue not set.",
+  "ClickHouse and Toloka stakes (1,606.7M, uc_f_lti) are non-operating assets kept apart from spendable cash.",
+  "Repair 2026-11-01: the bear mechanism (return on new capital below the cost of capital, refinancing dilution) is carried by the bear drivers (mature_margin 0.08 x sales_to_capital 0.25 = 2% pre-tax) and financing 'assumed'; the size of dilution in the bear is the engine's funding rule, not a company number."
+ ]
+}

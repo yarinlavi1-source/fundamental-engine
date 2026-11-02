@@ -1,0 +1,84 @@
+{
+ "thesis_he": {
+  "bear": "התמריצים לבנקים ממשיכים לטפס מהר מההכנסות, חוק ניתוב הכרטיסים או רשתות מיידיות לוחצים על המחיר, והתשואה על כל דולר שמושקע לצמיחה יורדת לכ-30%; המכפיל יורד בהתאם.",
+  "base": "הצמיחה מאטה בהדרגה לכ-10%-13% בשנה, החברה משקיעה כרבע מהרווח בתמריצים מראש, ברכישות ובטכנולוגיה ומרוויחה על כך כ-50% בשנה; מכפיל גבוה שמוצדק אך יורד לאט עם האטת הצמיחה.",
+  "bull": "שירותי הערך המוסף (אבטחה, נתונים, סטייבלקוין) גדלים מהר ונטל התמריצים מתייצב, כך שהתשואה על ההשקעה לצמיחה עולה לכ-70% והמכפיל נשאר קרוב לחציון ההיסטורי."
+ },
+ "company_path": {
+  "metric": "eps",
+  "multiple": "forward_pe",
+  "scenarios": {
+   "bear": {
+    "multiple_from": "economics",
+    "roic": 0.3,
+    "justification": "justified_high",
+    "reason_he": "בתרחיש הדובי מה שנשבר הוא כוח התמחור: התמריצים לבנקים כבר עלו מ-51.3% ל-52.6% מההכנסה הגולמית של הרשת וגדלו 18%-21% בשנה מול צמיחה של כ-11% בהכנסות הרשת, והחברה מקדימה תשלומי תמריץ (2.7 מיליארד דולר נטו ב-9 חודשים). אם חוק ניתוב הכרטיסים בארה\"ב או רשתות כמו Pix ו-UPI מכריחים עוד תמריצים, כל דולר צמיחה עולה יותר ותשואת ההשקעה לצמיחה יורדת לכ-30%: עדיין עסק מצוין, אבל מכפיל נמוך יותר.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "dc_f_rebates_share_fy25",
+     "dc_f_rebates_share_q3",
+     "dc_f_rebates_g_ytd",
+     "dc_f_prepaid_chg_ytd",
+     "dc_f_amort_incent_ytd",
+     "mc_ccca_paymentsdive"
+    ]
+   },
+   "base": {
+    "multiple_from": "economics",
+    "roic": 0.5,
+    "justification": "justified_high",
+    "reason_he": "התשואה על ההון בספרים (כ-98%) מנופחת כי קניות חוזרות כיווצו את ההון העצמי, ולכן לא השתמשנו בה. במקום זה מדדנו מדוח 10-K כמה כסף החברה באמת משקיעה כדי לצמוח ב-2023-2025: תמריצים ששולמו מראש פחות הפחתתם (0.8, 1.4 ו-1.3 מיליארד דולר), השקעות ברכוש ובתוכנה מעל הפחת (0.3, 0.3 ו-0.1 מיליארד) ורכישות (2.5 מיליארד ב-2024). זה כ-17% מהרווח התפעולי אחרי מס, והרווח התפעולי אחרי מס עלה בכ-3.7 מיליארד דולר על השקעה של כ-5.6 מיליארד, כלומר תשואה של כ-67% על כל דולר שמושקע לצמיחה. ב-2026 ההשקעה גדלה (2.7 מיליארד נטו בתמריצים ב-9 חודשים ועוד BVNK ב-1.4 מיליארד), ולכן הבסיס לוקח 50%, מתחת למה שנמדד: תשואה כזו עדיין מצדיקה מכפיל גבוה שיורד בהדרגה ככל שהצמיחה מאטה.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "pf_operating_income_fy2022",
+     "pf_operating_income_fy2025",
+     "pf_equity_fy2025",
+     "pf_long_term_debt_fy2025",
+     "pf_cash_fy2025",
+     "pf_goodwill_fy2022",
+     "pf_goodwill_fy2025",
+     "pf_capex_fy2025",
+     "pf_d_and_a_fy2025",
+     "dc_f_prepaid_chg_ytd",
+     "dc_f_amort_incent_ytd",
+     "dc_f_bvnk",
+     "pf_10k_20260211"
+    ]
+   },
+   "bull": {
+    "multiple_from": "economics",
+    "roic": 0.7,
+    "justification": "justified_high",
+    "reason_he": "בתרחיש השורי שירותי הערך המוסף, שכבר 41% מההכנסות וגדלים 19%-23% בשנה, ממשיכים לצמוח על אותה תשתית בלי השקעה גדולה נוספת, ונטל התמריצים מתייצב. אז כל דולר צמיחה דורש פחות הון ותשואת ההשקעה לצמיחה עולה לכ-70% (עדיין מתחת ל-120% שמראה החישוב על ההון המכווץ בספרים), והמכפיל נשאר גבוה.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "dc_f_nr_vas_fy25",
+     "dc_f_nr_vas_g_q3",
+     "dc_s_vas_9m_26",
+     "pf_operating_income_fy2025",
+     "pf_operating_income_fy2022",
+     "dc_f_amort_incent_ytd"
+    ]
+   }
+  },
+  "own_history": {
+   "low": 27.5,
+   "median": 35.6,
+   "high": 43.5,
+   "years": "2021-2026",
+   "evidence_ids": [
+    "nm_hist_ib",
+    "nm_price_ib",
+    "nm_eps_diluted_ttm_2026q3",
+    "pf_eps_diluted_fy2025",
+    "pf_eps_diluted_fy2024",
+    "pf_eps_diluted_fy2023"
+   ]
+  }
+ },
+ "gaps": [
+  "own_history is a TRAILING GAAP P/E range (month-end price over interpolated trailing EPS, 2021-11 to 2026-10), not a forward P/E: no point-in-time forward EPS series was saved; a forward range would sit roughly one year's EPS growth lower.",
+  "No named competitor (V, AXP, PYPL) has an evidenced forward P/E in field.json; peers left out.",
+  "ROIC basis (repair 2026-11-01, measured from the saved 10-K cash flow pf_10k_20260211, reading/10k_full.txt lines 1358-1361 and 2214-2245): reinvestment = (purchases of property and equipment + capitalized software - depreciation and amortization) + (prepaid expenses outflow - amortization of customer incentives) + acquisitions: FY2023 289+816+0 = 1,105; FY2024 297+1,395+2,511 = 4,203; FY2025 72+1,290+0 = 1,362 ($m). NOPAT = operating income x (1 - effective tax): FY2023 14,008 x 0.821 = 11,501; FY2024 15,582 x 0.844 = 13,151; FY2025 18,897 x 0.806 = 15,231. Reinvestment rate FY2023-25 = 6,670 / 39,883 = 16.7%. Incremental after-tax return = (15,231 - 11,501) / (4,203 + 1,362) = 0.67 (pre-tax 0.88; the FY2025 tax-rate rise from 15.6% to 19.4% depresses it). Caveats: the 'prepaid expenses' line includes some non-incentive prepaids (overstates reinvestment), D&A includes acquired-intangible amortization (understates net capex). 9M'26 net prepaid incentives (4,688 - 2,030 = 2.66bn) already exceed FY2025's full year, so reinvestment is rising in 2026. Scenario ROICs kept: bull 0.70 ~ the measured 3-year 0.67, base 0.50 below it (rising 2026 incentive intensity), bear 0.30 a hypothesis of further incentive inflation. Expensed rebates (contra-revenue, $20.5bn FY2025) are not capitalized."
+ ]
+}

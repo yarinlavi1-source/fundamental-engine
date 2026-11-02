@@ -1,0 +1,28 @@
+{
+ "ticker": "GOOGL",
+ "as_of": "2026-10-28",
+ "folder": "research/companies/GOOGL/2026-10-28",
+ "thesis_id": "GOOGL:2026-10-28:52b50870224c",
+ "status": "draft",
+ "verdict": "quality_but_expensive",
+ "files": [
+  "casefile_core.json",
+  "casefile_summary.json",
+  "evidence_pack.json",
+  "gather/documents.json",
+  "gather/field.json",
+  "gather/macro.json",
+  "gather/numbers.json",
+  "identity.json",
+  "inputs.json",
+  "paragraph.txt",
+  "review/company_first.json",
+  "review/counter_thesis.json",
+  "review/repair.json",
+  "review/trace.json",
+  "scenarios_he.md",
+  "status.json",
+  "table_he.md",
+  "understand/business.json"
+ ]
+}

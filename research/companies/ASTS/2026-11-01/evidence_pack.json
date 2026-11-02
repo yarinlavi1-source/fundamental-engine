@@ -1,0 +1,4686 @@
+{
+ "pack_version": 1,
+ "ticker": "ASTS",
+ "as_of": "2026-11-01",
+ "identity": {
+  "name": "AST SpaceMobile, Inc.",
+  "currency": "USD",
+  "exchange": "Nasdaq",
+  "security": {
+   "listed_security": "Class A common stock, par $0.0001",
+   "ticker": "ASTS",
+   "exchange": "Nasdaq (Global Select)",
+   "quote_currency": "USD",
+   "ibkr_contract_id": 480745767,
+   "adr": false,
+   "adr_ratio": null,
+   "dual_listing": "no other primary listing; IBKR also shows a Mexico (MEXI) cross-listing of the same Class A shares, quoted in MXN, not used",
+   "share_classes": {
+    "class_a_outstanding_2026-08-06": 299789305,
+    "class_b_2026-08-06": 11215111,
+    "class_c_2026-08-06": 78163078
+   },
+   "structure_note": "Up-C: Class B and Class C carry votes only; economic interest sits in AST & Science LLC common units held by the Class B/C holders, exchangeable 1:1 into Class A (noncontrolling interest). Per-share value must use Class A plus exchangeable LLC units plus warrants/converts (capital_bridge). Class C (Avellan) controls ~72% of votes; controlled company.",
+   "evidence_ids": [
+    "pf_10k_20260302",
+    "pf_10q_20260810",
+    "ibkr_contract_asts"
+   ]
+  },
+  "fiscal_year_end": "12-31",
+  "cik": "1780312",
+  "type": "start_up / fast_grower (computed by classify_company from SEC companyfacts; the analyst confirms or overrides with reasons)",
+  "evidence_ids": [
+   "pf_10k_20260302"
+  ]
+ },
+ "sources": [
+  {
+   "id": "pf_10k_20260302",
+   "kind": "sec_filing",
+   "title": "AST SpaceMobile, Inc. 10-K filed 2026-03-02 (period 2025-12-31)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000178031226000006/asts-20251231.htm",
+   "date": "2026-03-02",
+   "independent": true,
+   "publisher": "AST SpaceMobile, Inc. (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_10q_20260810",
+   "kind": "sec_filing",
+   "title": "AST SpaceMobile, Inc. 10-Q filed 2026-08-10 (period 2026-06-30)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000119312526342550/asts-20260630.htm",
+   "date": "2026-08-10",
+   "independent": true,
+   "publisher": "AST SpaceMobile, Inc. (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_proxy_20260428",
+   "kind": "sec_filing",
+   "title": "AST SpaceMobile, Inc. DEF 14A filed 2026-04-28 (period 2026-04-28)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000149315226019384/formdef14a.htm",
+   "date": "2026-04-28",
+   "independent": true,
+   "publisher": "AST SpaceMobile, Inc. (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_10q_20260511",
+   "kind": "sec_filing",
+   "title": "AST SpaceMobile, Inc. 10-Q filed 2026-05-11 (period 2026-03-31)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000119312526216950/asts-20260331.htm",
+   "date": "2026-05-11",
+   "independent": true,
+   "publisher": "AST SpaceMobile, Inc. (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20260810_1",
+   "kind": "release",
+   "title": "AST SpaceMobile, Inc. earnings 8-K filed 2026-08-10, exhibit asts-ex99_1.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000119312526342540/asts-ex99_1.htm",
+   "date": "2026-08-10",
+   "independent": true,
+   "publisher": "AST SpaceMobile, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20260810_2",
+   "kind": "release",
+   "title": "AST SpaceMobile, Inc. earnings 8-K filed 2026-08-10, exhibit asts-ex99_2.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000119312526342540/asts-ex99_2.htm",
+   "date": "2026-08-10",
+   "independent": true,
+   "publisher": "AST SpaceMobile, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20260715_1",
+   "kind": "release",
+   "title": "AST SpaceMobile, Inc. earnings 8-K filed 2026-07-15, exhibit ex99-1.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000149315226033365/ex99-1.htm",
+   "date": "2026-07-15",
+   "independent": true,
+   "publisher": "AST SpaceMobile, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20260511_1",
+   "kind": "release",
+   "title": "AST SpaceMobile, Inc. earnings 8-K filed 2026-05-11, exhibit asts-ex99_1.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000119312526216946/asts-ex99_1.htm",
+   "date": "2026-05-11",
+   "independent": true,
+   "publisher": "AST SpaceMobile, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20260511_2",
+   "kind": "release",
+   "title": "AST SpaceMobile, Inc. earnings 8-K filed 2026-05-11, exhibit asts-ex99_2.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000119312526216946/asts-ex99_2.htm",
+   "date": "2026-05-11",
+   "independent": true,
+   "publisher": "AST SpaceMobile, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20260302_1",
+   "kind": "release",
+   "title": "AST SpaceMobile, Inc. earnings 8-K filed 2026-03-02, exhibit asts-ex99_1.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000178031226000005/asts-ex99_1.htm",
+   "date": "2026-03-02",
+   "independent": true,
+   "publisher": "AST SpaceMobile, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20260302_2",
+   "kind": "release",
+   "title": "AST SpaceMobile, Inc. earnings 8-K filed 2026-03-02, exhibit asts-ex99_2.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000178031226000005/asts-ex99_2.htm",
+   "date": "2026-03-02",
+   "independent": true,
+   "publisher": "AST SpaceMobile, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20260211_1",
+   "kind": "release",
+   "title": "AST SpaceMobile, Inc. earnings 8-K filed 2026-02-11, exhibit ex99-1.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000149315226006223/ex99-1.htm",
+   "date": "2026-02-11",
+   "independent": true,
+   "publisher": "AST SpaceMobile, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20260211_2",
+   "kind": "release",
+   "title": "AST SpaceMobile, Inc. earnings 8-K filed 2026-02-11, exhibit ex99-2.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000149315226006223/ex99-2.htm",
+   "date": "2026-02-11",
+   "independent": true,
+   "publisher": "AST SpaceMobile, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20260211_3",
+   "kind": "release",
+   "title": "AST SpaceMobile, Inc. earnings 8-K filed 2026-02-11, exhibit ex99-3.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000149315226006223/ex99-3.htm",
+   "date": "2026-02-11",
+   "independent": true,
+   "publisher": "AST SpaceMobile, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20251110_1",
+   "kind": "release",
+   "title": "AST SpaceMobile, Inc. earnings 8-K filed 2025-11-10, exhibit asts-ex99_1.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000119312525274360/asts-ex99_1.htm",
+   "date": "2025-11-10",
+   "independent": true,
+   "publisher": "AST SpaceMobile, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20251110_2",
+   "kind": "release",
+   "title": "AST SpaceMobile, Inc. earnings 8-K filed 2025-11-10, exhibit asts-ex99_2.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000119312525274360/asts-ex99_2.htm",
+   "date": "2025-11-10",
+   "independent": true,
+   "publisher": "AST SpaceMobile, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20251021_1",
+   "kind": "release",
+   "title": "AST SpaceMobile, Inc. earnings 8-K filed 2025-10-21, exhibit ex99-1.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000149315225018802/ex99-1.htm",
+   "date": "2025-10-21",
+   "independent": true,
+   "publisher": "AST SpaceMobile, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20251021_2",
+   "kind": "release",
+   "title": "AST SpaceMobile, Inc. earnings 8-K filed 2025-10-21, exhibit ex99-2.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000149315225018802/ex99-2.htm",
+   "date": "2025-10-21",
+   "independent": true,
+   "publisher": "AST SpaceMobile, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20250811_1",
+   "kind": "release",
+   "title": "AST SpaceMobile, Inc. earnings 8-K filed 2025-08-11, exhibit asts-ex99_1.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000095017025106610/asts-ex99_1.htm",
+   "date": "2025-08-11",
+   "independent": true,
+   "publisher": "AST SpaceMobile, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20250811_2",
+   "kind": "release",
+   "title": "AST SpaceMobile, Inc. earnings 8-K filed 2025-08-11, exhibit asts-ex99_2.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000095017025106610/asts-ex99_2.htm",
+   "date": "2025-08-11",
+   "independent": true,
+   "publisher": "AST SpaceMobile, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_fred_dgs10",
+   "kind": "macro",
+   "title": "Market yield on US Treasury securities at 10-year constant maturity, percent, daily (FRED DGS10)",
+   "url": "https://fred.stlouisfed.org/series/DGS10",
+   "date": "2026-10-29",
+   "independent": true,
+   "publisher": "Federal Reserve Bank of St. Louis (FRED), from the Federal Reserve H.15",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_erp_implied",
+   "kind": "macro",
+   "title": "Damodaran implied ERP for the S&P 500 on 1 October 2026 (trailing 12 months, adjusted payout), treasury 5.29%",
+   "url": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/home.htm",
+   "date": "2026-10-01",
+   "independent": true,
+   "publisher": "Aswath Damodaran (NYU Stern), as saved in runs/macro/market_2026-10-20.json",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20220331",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of AST SpaceMobile, Inc.: facts of the filing(s) of 2022-03-31",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001780312.json#filed=2022-03-31",
+   "date": "2022-03-31",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20210301",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of AST SpaceMobile, Inc.: facts of the filing(s) of 2021-03-01",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001780312.json#filed=2021-03-01",
+   "date": "2021-03-01",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20210816",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of AST SpaceMobile, Inc.: facts of the filing(s) of 2021-08-16",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001780312.json#filed=2021-08-16",
+   "date": "2021-08-16",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20230331",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of AST SpaceMobile, Inc.: facts of the filing(s) of 2023-03-31",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001780312.json#filed=2023-03-31",
+   "date": "2023-03-31",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20240401",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of AST SpaceMobile, Inc.: facts of the filing(s) of 2024-04-01",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001780312.json#filed=2024-04-01",
+   "date": "2024-04-01",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20260302",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of AST SpaceMobile, Inc.: facts of the filing(s) of 2026-03-02",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001780312.json#filed=2026-03-02",
+   "date": "2026-03-02",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20250303",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of AST SpaceMobile, Inc.: facts of the filing(s) of 2025-03-03",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001780312.json#filed=2025-03-03",
+   "date": "2025-03-03",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20251110",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of AST SpaceMobile, Inc.: facts of the filing(s) of 2025-11-10",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001780312.json#filed=2025-11-10",
+   "date": "2025-11-10",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20241114",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of AST SpaceMobile, Inc.: facts of the filing(s) of 2024-11-14",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001780312.json#filed=2024-11-14",
+   "date": "2024-11-14",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20250512",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of AST SpaceMobile, Inc.: facts of the filing(s) of 2025-05-12",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001780312.json#filed=2025-05-12",
+   "date": "2025-05-12",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20250811",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of AST SpaceMobile, Inc.: facts of the filing(s) of 2025-08-11",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001780312.json#filed=2025-08-11",
+   "date": "2025-08-11",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20260511",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of AST SpaceMobile, Inc.: facts of the filing(s) of 2026-05-11",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001780312.json#filed=2026-05-11",
+   "date": "2026-05-11",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20260810",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of AST SpaceMobile, Inc.: facts of the filing(s) of 2026-08-10",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001780312.json#filed=2026-08-10",
+   "date": "2026-08-10",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_peer_IRDM",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Iridium Communications Inc. (IRDM), a named competitor: fiscal years through FY2025",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001418819.json",
+   "date": "2026-02-12",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from IRDM's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_peer_GSAT",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Globalstar, Inc. (GSAT), a named competitor: fiscal years through FY2025",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001366868.json",
+   "date": "2026-02-27",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from GSAT's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_peer_VSAT",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of VIASAT INC (VSAT), a named competitor: fiscal years through FY2026",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000797721.json",
+   "date": "2026-05-29",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from VSAT's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "dc_tr_q2_2026",
+   "kind": "transcript",
+   "title": "AST SpaceMobile Q2 2026 business update call (2026-08-10), transcript/summary page \"AST SpaceMobile Q2 Update\" (AI-translated; contains transcription errors)",
+   "url": "https://www-web.itiger.com/news/1187303485",
+   "date": "2026-08-11",
+   "independent": true,
+   "publisher": "Tiger Brokers / TTM Stock News (transcription of the issuer call)",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "dc_tr_q4_2025",
+   "kind": "transcript",
+   "title": "AST SpaceMobile (ASTS) Q4 2025 earnings call transcript (call 2026-03-02)",
+   "url": "https://www.webull.com/news/14469659440718848",
+   "date": "2026-03-03",
+   "independent": true,
+   "publisher": "The Motley Fool (republished on Webull)",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "dc_mb_q1_2026",
+   "kind": "press",
+   "title": "AST SpaceMobile Q1 Earnings Call Highlights (call 2026-05-11)",
+   "url": "https://www.marketbeat.com/instant-alerts/ast-spacemobile-q1-earnings-call-highlights-2026-05-11/",
+   "date": "2026-05-11",
+   "independent": true,
+   "publisher": "MarketBeat (automated call summary)",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_cf_spcx",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Space Exploration Technologies Corp. (SpaceX, SPCX, Starlink): revenue, cost of revenue, operating income through 10-Q 2026-09-30",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001181412.json",
+   "date": "2026-10-22",
+   "independent": true,
+   "publisher": "SEC EDGAR",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_10q_spcx_20260930",
+   "kind": "sec_filing",
+   "title": "SpaceX (SPCX) 10-Q for the quarter ended 2026-09-30 (segments, Starlink Mobile, EchoStar spectrum)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026066880/spcx-20260930.htm",
+   "date": "2026-10-22",
+   "independent": true,
+   "publisher": "SEC EDGAR",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_fmp_profiles",
+   "kind": "price",
+   "title": "FMP company profiles (price, market cap) of Iridium IRDM, Globalstar GSAT, SpaceX SPCX, Viasat VSAT on 2026-10-29",
+   "url": "connector:mcp__FMP__company",
+   "date": "2026-10-29",
+   "independent": true,
+   "publisher": "Financial Modeling Prep",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_omdia_d2d_2030",
+   "kind": "industry",
+   "title": "Omdia: smartphone satellite direct-to-device service revenue to approach $12 billion by 2030 (Smartphone Satellite D2D Forecast)",
+   "url": "https://omdia.tech.informa.com/pr/2026/mar/smartphone-satellite-direct-to-device-service-revenue-to-approach12-billion-dollars-by-2030",
+   "date": "2026-03-02",
+   "independent": true,
+   "publisher": "Omdia (Informa TechTarget)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_satnews_jv",
+   "kind": "press",
+   "title": "SatNews: AT&T, T-Mobile and Verizon form joint venture to standardize satellite direct-to-device connectivity",
+   "url": "https://satnews.com/2026/10/04/att-t-mobile-and-verizon-form-joint-venture-to-standardize-satellite-direct-to-device-connectivity/",
+   "date": "2026-10-04",
+   "independent": true,
+   "publisher": "SatNews",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_advtv_jv",
+   "kind": "press",
+   "title": "Advanced Television: AT&T, T-Mobile, Verizon for satellite JV (proposed JV announced)",
+   "url": "https://www.advanced-television.com/2026/05/14/att-t-mobile-verizon-for-satellite-jv/",
+   "date": "2026-05-14",
+   "independent": true,
+   "publisher": "Advanced Television",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_8k_20261020",
+   "kind": "sec_filing",
+   "title": "ASTS 8-K filed 2026-10-20 (Item 5.02, CFO/CLO Andrew Johnson employment agreement)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000149315226047766/form8-k.htm",
+   "date": "2026-10-20",
+   "independent": true,
+   "publisher": "SEC EDGAR",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_8k_20260928",
+   "kind": "sec_filing",
+   "title": "ASTS 8-K filed 2026-09-28 (Item 5.02, Senior Management Change of Control Severance Policy)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000149315226044647/form8-k.htm",
+   "date": "2026-09-28",
+   "independent": true,
+   "publisher": "SEC EDGAR",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_press_20260720",
+   "kind": "press",
+   "title": "AST SpaceMobile service launch delayed (developingtelecoms.com, search excerpt, unconfirmed at source)",
+   "url": "https://developingtelecoms.com/telecom-technology/satellite-communications-networks/20554-ast-spacemobile-service-launch-delayed.html.md",
+   "date": "2026-07-20",
+   "independent": false,
+   "publisher": "Developing Telecoms",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_ib_contract",
+   "kind": "price",
+   "title": "IBKR search_contracts ASTS (READ-ONLY): NASDAQ STK conid 480745767, USD",
+   "url": "connector:mcp__Interactive_Brokers__search_contracts",
+   "date": "2026-10-29",
+   "independent": true,
+   "publisher": "Interactive Brokers",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_ib_snapshot",
+   "kind": "price",
+   "title": "IBKR price snapshot ASTS: last 40.94 at 2026-10-30T23:58:51Z (after hours, REALTIME, not a close); prior snapshot 2026-10-29 pre-market 41.12, prior close 42.30; Oct-2026 monthly bar close 40.97; 52w range 36.72-133.86",
+   "url": "connector:mcp__Interactive_Brokers__get_price_snapshot",
+   "date": "2026-10-30",
+   "independent": true,
+   "publisher": "Interactive Brokers",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_ib_history",
+   "kind": "price",
+   "title": "IBKR monthly OHLCV ASTS 2021-11 to 2026-10 (5y), refreshed 2026-11-01; corporate actions requested (none returned)",
+   "url": "connector:mcp__Interactive_Brokers__get_price_history",
+   "date": "2026-10-31",
+   "independent": true,
+   "publisher": "Interactive Brokers",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_cons_stockanalysis",
+   "kind": "consensus",
+   "title": "StockAnalysis ASTS forecast (S&P Global estimates): FY2026 revenue and EPS, price targets; last updated 2026-10-26 (re-read 2026-11-01, unchanged) (aggregates S&P Global estimates)",
+   "url": "https://stockanalysis.com/stocks/asts/forecast/",
+   "date": "2026-10-26",
+   "independent": false,
+   "publisher": "StockAnalysis.com",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_cons_yahoo",
+   "kind": "consensus",
+   "title": "Yahoo Finance ASTS analysis page: revenue and EPS estimates FY2026/FY2027, EPS trend and revisions (read 2026-10-29) (aggregated estimates, provider of record not shown)",
+   "url": "https://finance.yahoo.com/quote/ASTS/analysis/",
+   "date": "2026-10-29",
+   "independent": false,
+   "publisher": "Yahoo Finance",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "uc_tikr_20260930",
+   "kind": "consensus",
+   "title": "TIKR blog: Can AST SpaceMobile Grow Revenue From $71 Million to More Than $3 Billion by 2030? (analyst consensus revenue: ~170M FY2026, ~650M FY2027, ~1.7B FY2028, ~3.4B FY2030; last updated 2026-09-30)",
+   "url": "https://www.tikr.com/blog/can-ast-spacemobile-grow-revenue-from-71-million-to-more-than-3-billion-by-2030",
+   "date": "2026-09-30",
+   "independent": false,
+   "publisher": "TIKR",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "uc_advtv_20260831",
+   "kind": "press",
+   "title": "Advanced Television: AST SpaceMobile updates on progress (BlueBirds 12-13 arrays deployed; an October launch speculated with no date or contractor; Blue Origin New Glenn lost in an explosion on 2026-05-28)",
+   "url": "https://www.advanced-television.com/?p=291170",
+   "date": "2026-08-31",
+   "independent": true,
+   "publisher": "Advanced Television",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  }
+ ],
+ "facts": [
+  {
+   "id": "pf_revenue_fy2020",
+   "metric": "revenue",
+   "period": "FY2020",
+   "value": 5967000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220331"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_gross_profit_fy2020",
+   "metric": "gross_profit",
+   "period": "FY2020",
+   "value": 2942000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220331"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_fy2020",
+   "metric": "operating_income",
+   "period": "FY2020",
+   "value": -1124693.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210301"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_net_income_fy2020",
+   "metric": "net_income",
+   "period": "FY2020",
+   "value": 191177.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210301"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_fy2020",
+   "metric": "cfo",
+   "period": "FY2020",
+   "value": -862597.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210301"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_fy2020",
+   "metric": "capex",
+   "period": "FY2020",
+   "value": 8123000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220331"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_fy2020",
+   "metric": "sbc",
+   "period": "FY2020",
+   "value": 283000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220331"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_d_and_a_fy2020",
+   "metric": "d_and_a",
+   "period": "FY2020",
+   "value": 887000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220331"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_rd_fy2020",
+   "metric": "rd",
+   "period": "FY2020",
+   "value": 1011000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220331"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cash_fy2020",
+   "metric": "cash",
+   "period": "FY2020",
+   "value": 131151.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210301"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_total_assets_fy2020",
+   "metric": "total_assets",
+   "period": "FY2020",
+   "value": 232404895.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210301"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_equity_fy2020",
+   "metric": "equity",
+   "period": "FY2020",
+   "value": 5000004.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210301"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_goodwill_fy2020",
+   "metric": "goodwill",
+   "period": "FY2020",
+   "value": 3912000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210816"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_inventory_fy2020",
+   "metric": "inventory",
+   "period": "FY2020",
+   "value": 2591000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210816"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_receivables_fy2020",
+   "metric": "receivables",
+   "period": "FY2020",
+   "value": 2081000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210816"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_fy2021",
+   "metric": "revenue",
+   "period": "FY2021",
+   "value": 12405000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220331"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_gross_profit_fy2021",
+   "metric": "gross_profit",
+   "period": "FY2021",
+   "value": 4842000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220331"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_fy2021",
+   "metric": "operating_income",
+   "period": "FY2021",
+   "value": -72930000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220331"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_net_income_fy2021",
+   "metric": "net_income",
+   "period": "FY2021",
+   "value": -73261000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220331"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_fy2021",
+   "metric": "cfo",
+   "period": "FY2021",
+   "value": -80095000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220331"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_fy2021",
+   "metric": "capex",
+   "period": "FY2021",
+   "value": 15080000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220331"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_fy2021",
+   "metric": "sbc",
+   "period": "FY2021",
+   "value": 3736000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220331"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_d_and_a_fy2021",
+   "metric": "d_and_a",
+   "period": "FY2021",
+   "value": 2913000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220331"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_rd_fy2021",
+   "metric": "rd",
+   "period": "FY2021",
+   "value": 23440000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220331"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cash_fy2021",
+   "metric": "cash",
+   "period": "FY2021",
+   "value": 321787000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220331"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_short_term_investments_fy2021",
+   "metric": "short_term_investments",
+   "period": "FY2021",
+   "value": 314700000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220331"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_total_assets_fy2021",
+   "metric": "total_assets",
+   "period": "FY2021",
+   "value": 443936000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220331"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_equity_fy2021",
+   "metric": "equity",
+   "period": "FY2021",
+   "value": 351972000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220331"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_long_term_debt_fy2021",
+   "metric": "long_term_debt",
+   "period": "FY2021",
+   "value": 5000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220331"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_goodwill_fy2021",
+   "metric": "goodwill",
+   "period": "FY2021",
+   "value": 3641000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220331"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_inventory_fy2021",
+   "metric": "inventory",
+   "period": "FY2021",
+   "value": 1412000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220331"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_receivables_fy2021",
+   "metric": "receivables",
+   "period": "FY2021",
+   "value": 2173000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220331"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_fy2022",
+   "metric": "revenue",
+   "period": "FY2022",
+   "value": 13825000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230331"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_gross_profit_fy2022",
+   "metric": "gross_profit",
+   "period": "FY2022",
+   "value": 7111000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230331"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_fy2022",
+   "metric": "operating_income",
+   "period": "FY2022",
+   "value": -102296000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240401"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_net_income_fy2022",
+   "metric": "net_income",
+   "period": "FY2022",
+   "value": -31640000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230331"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_fy2022",
+   "metric": "cfo",
+   "period": "FY2022",
+   "value": -156464000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230331"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_fy2022",
+   "metric": "capex",
+   "period": "FY2022",
+   "value": 30317000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230331"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_fy2022",
+   "metric": "sbc",
+   "period": "FY2022",
+   "value": 9391000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230331"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_d_and_a_fy2022",
+   "metric": "d_and_a",
+   "period": "FY2022",
+   "value": 4711000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230331"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_rd_fy2022",
+   "metric": "rd",
+   "period": "FY2022",
+   "value": 45620000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230331"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cash_fy2022",
+   "metric": "cash",
+   "period": "FY2022",
+   "value": 238588000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230331"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_short_term_investments_fy2022",
+   "metric": "short_term_investments",
+   "period": "FY2022",
+   "value": 230700000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230331"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_total_assets_fy2022",
+   "metric": "total_assets",
+   "period": "FY2022",
+   "value": 438372000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230331"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_equity_fy2022",
+   "metric": "equity",
+   "period": "FY2022",
+   "value": 359826000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230331"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_long_term_debt_fy2022",
+   "metric": "long_term_debt",
+   "period": "FY2022",
+   "value": 4758000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230331"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_goodwill_fy2022",
+   "metric": "goodwill",
+   "period": "FY2022",
+   "value": 0.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230331"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_inventory_fy2022",
+   "metric": "inventory",
+   "period": "FY2022",
+   "value": 0.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230331"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_receivables_fy2022",
+   "metric": "receivables",
+   "period": "FY2022",
+   "value": 0.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230331"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_fy2023",
+   "metric": "revenue",
+   "period": "FY2023",
+   "value": 0.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240401"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_gross_profit_fy2023",
+   "metric": "gross_profit",
+   "period": "FY2023",
+   "value": 0.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240401"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_fy2023",
+   "metric": "operating_income",
+   "period": "FY2023",
+   "value": -216496000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240401"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_net_income_fy2023",
+   "metric": "net_income",
+   "period": "FY2023",
+   "value": -87561000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240401"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_fy2023",
+   "metric": "cfo",
+   "period": "FY2023",
+   "value": -148942000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240401"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_fy2023",
+   "metric": "capex",
+   "period": "FY2023",
+   "value": 118807000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240401"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_fy2023",
+   "metric": "sbc",
+   "period": "FY2023",
+   "value": 13289000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240401"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_d_and_a_fy2023",
+   "metric": "d_and_a",
+   "period": "FY2023",
+   "value": 54469000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240401"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_rd_fy2023",
+   "metric": "rd",
+   "period": "FY2023",
+   "value": 47486000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240401"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_shares_diluted_wavg_fy2023",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2023",
+   "value": 81824122.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_cf_20260302"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cash_fy2023",
+   "metric": "cash",
+   "period": "FY2023",
+   "value": 85622000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240401"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_short_term_investments_fy2023",
+   "metric": "short_term_investments",
+   "period": "FY2023",
+   "value": 69700000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240401"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_total_assets_fy2023",
+   "metric": "total_assets",
+   "period": "FY2023",
+   "value": 360892000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240401"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_equity_fy2023",
+   "metric": "equity",
+   "period": "FY2023",
+   "value": 213559000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240401"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_long_term_debt_fy2023",
+   "metric": "long_term_debt",
+   "period": "FY2023",
+   "value": 59252000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240401"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_fy2024",
+   "metric": "revenue",
+   "period": "FY2024",
+   "value": 4400000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250303"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_net_income_fy2024",
+   "metric": "net_income",
+   "period": "FY2024",
+   "value": -300083000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250303"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_fy2024",
+   "metric": "cfo",
+   "period": "FY2024",
+   "value": -126143000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250303"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_fy2024",
+   "metric": "capex",
+   "period": "FY2024",
+   "value": 174127000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250303"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_fy2024",
+   "metric": "sbc",
+   "period": "FY2024",
+   "value": 32039000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250303"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_d_and_a_fy2024",
+   "metric": "d_and_a",
+   "period": "FY2024",
+   "value": 63340000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250303"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_rd_fy2024",
+   "metric": "rd",
+   "period": "FY2024",
+   "value": 28783000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250303"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_shares_diluted_wavg_fy2024",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2024",
+   "value": 154501344.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_cf_20260302"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cash_fy2024",
+   "metric": "cash",
+   "period": "FY2024",
+   "value": 564988000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250303"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_short_term_investments_fy2024",
+   "metric": "short_term_investments",
+   "period": "FY2024",
+   "value": 510400000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250303"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_total_assets_fy2024",
+   "metric": "total_assets",
+   "period": "FY2024",
+   "value": 954561000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250303"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_equity_fy2024",
+   "metric": "equity",
+   "period": "FY2024",
+   "value": 669146000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250303"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_long_term_debt_fy2024",
+   "metric": "long_term_debt",
+   "period": "FY2024",
+   "value": 155573000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250303"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_inventory_fy2024",
+   "metric": "inventory",
+   "period": "FY2024",
+   "value": 1062000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20251110"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_receivables_fy2024",
+   "metric": "receivables",
+   "period": "FY2024",
+   "value": 1400000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20251110"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_fy2025",
+   "metric": "revenue",
+   "period": "FY2025",
+   "value": 70918000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260302"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_net_income_fy2025",
+   "metric": "net_income",
+   "period": "FY2025",
+   "value": -341940000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260302"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_fy2025",
+   "metric": "cfo",
+   "period": "FY2025",
+   "value": -71517000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260302"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_fy2025",
+   "metric": "capex",
+   "period": "FY2025",
+   "value": 1064741000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260302"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_fy2025",
+   "metric": "sbc",
+   "period": "FY2025",
+   "value": 47490000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260302"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_d_and_a_fy2025",
+   "metric": "d_and_a",
+   "period": "FY2025",
+   "value": 51111000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260302"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_rd_fy2025",
+   "metric": "rd",
+   "period": "FY2025",
+   "value": 28115000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260302"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_shares_diluted_wavg_fy2025",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2025",
+   "value": 255982592.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_cf_20260302"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cash_fy2025",
+   "metric": "cash",
+   "period": "FY2025",
+   "value": 2335683000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260302"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_total_assets_fy2025",
+   "metric": "total_assets",
+   "period": "FY2025",
+   "value": 5014387000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260302"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_equity_fy2025",
+   "metric": "equity",
+   "period": "FY2025",
+   "value": 2392325000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260302"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_long_term_debt_fy2025",
+   "metric": "long_term_debt",
+   "period": "FY2025",
+   "value": 2207583000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260302"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_inventory_fy2025",
+   "metric": "inventory",
+   "period": "FY2025",
+   "value": 12007000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260302"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_receivables_fy2025",
+   "metric": "receivables",
+   "period": "FY2025",
+   "value": 37726000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260302"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_q_2024_09_30",
+   "metric": "revenue",
+   "period": "Q@2024-09-30",
+   "value": 1100000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20241114"
+   ],
+   "period_end": "2024-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_q_2024_09_30",
+   "metric": "operating_income",
+   "period": "Q@2024-09-30",
+   "value": -297034000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20241114"
+   ],
+   "period_end": "2024-09-30",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_net_income_q_2024_09_30",
+   "metric": "net_income",
+   "period": "Q@2024-09-30",
+   "value": -171946000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20241114"
+   ],
+   "period_end": "2024-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_q_2024_09_30",
+   "metric": "sbc",
+   "period": "Q@2024-09-30",
+   "value": 6810000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20241114"
+   ],
+   "period_end": "2024-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_q_2024_09_30",
+   "metric": "cfo",
+   "period": "Q@2024-09-30",
+   "value": -33429000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20241114"
+   ],
+   "period_end": "2024-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_q_2024_09_30",
+   "metric": "capex",
+   "period": "Q@2024-09-30",
+   "value": 30325000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20241114"
+   ],
+   "period_end": "2024-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_q_2024_12_31",
+   "metric": "revenue",
+   "period": "Q@2024-12-31",
+   "value": 1900000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250303"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_operating_income_q_2024_12_31",
+   "metric": "operating_income",
+   "period": "Q@2024-12-31",
+   "value": -47940000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250303"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_net_income_q_2024_12_31",
+   "metric": "net_income",
+   "period": "Q@2024-12-31",
+   "value": -35857000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250303"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_sbc_q_2024_12_31",
+   "metric": "sbc",
+   "period": "Q@2024-12-31",
+   "value": 11422000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250303"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_cfo_q_2024_12_31",
+   "metric": "cfo",
+   "period": "Q@2024-12-31",
+   "value": -28440000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250303"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_capex_q_2024_12_31",
+   "metric": "capex",
+   "period": "Q@2024-12-31",
+   "value": 82032000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250303"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_revenue_q_2025_03_31",
+   "metric": "revenue",
+   "period": "Q@2025-03-31",
+   "value": 718000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250512"
+   ],
+   "period_end": "2025-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_q_2025_03_31",
+   "metric": "operating_income",
+   "period": "Q@2025-03-31",
+   "value": -58760000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250512"
+   ],
+   "period_end": "2025-03-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_net_income_q_2025_03_31",
+   "metric": "net_income",
+   "period": "Q@2025-03-31",
+   "value": -45706000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250512"
+   ],
+   "period_end": "2025-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_q_2025_03_31",
+   "metric": "sbc",
+   "period": "Q@2025-03-31",
+   "value": 7826000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250512"
+   ],
+   "period_end": "2025-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_q_2025_03_31",
+   "metric": "cfo",
+   "period": "Q@2025-03-31",
+   "value": -28546000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250512"
+   ],
+   "period_end": "2025-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_q_2025_03_31",
+   "metric": "capex",
+   "period": "Q@2025-03-31",
+   "value": 120456000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250512"
+   ],
+   "period_end": "2025-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_q_2025_06_30",
+   "metric": "revenue",
+   "period": "Q@2025-06-30",
+   "value": 1156000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250811"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_q_2025_06_30",
+   "metric": "operating_income",
+   "period": "Q@2025-06-30",
+   "value": -129461000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250811"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_net_income_q_2025_06_30",
+   "metric": "net_income",
+   "period": "Q@2025-06-30",
+   "value": -99394000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250811"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_q_2025_06_30",
+   "metric": "sbc",
+   "period": "Q@2025-06-30",
+   "value": 10525000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250811"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_q_2025_06_30",
+   "metric": "cfo",
+   "period": "Q@2025-06-30",
+   "value": -43478000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250811"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_q_2025_06_30",
+   "metric": "capex",
+   "period": "Q@2025-06-30",
+   "value": 310166000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250811"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_q_2025_09_30",
+   "metric": "revenue",
+   "period": "Q@2025-09-30",
+   "value": 14739000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20251110"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_q_2025_09_30",
+   "metric": "operating_income",
+   "period": "Q@2025-09-30",
+   "value": -157753000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20251110"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_net_income_q_2025_09_30",
+   "metric": "net_income",
+   "period": "Q@2025-09-30",
+   "value": -122874000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20251110"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_q_2025_09_30",
+   "metric": "sbc",
+   "period": "Q@2025-09-30",
+   "value": 13987000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20251110"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_q_2025_09_30",
+   "metric": "cfo",
+   "period": "Q@2025-09-30",
+   "value": -64462000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20251110"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_q_2025_09_30",
+   "metric": "capex",
+   "period": "Q@2025-09-30",
+   "value": 238423000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20251110"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_q_2025_12_31",
+   "metric": "revenue",
+   "period": "Q@2025-12-31",
+   "value": 54305000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260302"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_operating_income_q_2025_12_31",
+   "metric": "operating_income",
+   "period": "Q@2025-12-31",
+   "value": -79339000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260302"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_net_income_q_2025_12_31",
+   "metric": "net_income",
+   "period": "Q@2025-12-31",
+   "value": -73966000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260302"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_sbc_q_2025_12_31",
+   "metric": "sbc",
+   "period": "Q@2025-12-31",
+   "value": 15152000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260302"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_cfo_q_2025_12_31",
+   "metric": "cfo",
+   "period": "Q@2025-12-31",
+   "value": 64969000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260302"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_capex_q_2025_12_31",
+   "metric": "capex",
+   "period": "Q@2025-12-31",
+   "value": 395696000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260302"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_revenue_q_2026_03_31",
+   "metric": "revenue",
+   "period": "Q@2026-03-31",
+   "value": 14735000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260511"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_q_2026_03_31",
+   "metric": "operating_income",
+   "period": "Q@2026-03-31",
+   "value": -226712000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260511"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_net_income_q_2026_03_31",
+   "metric": "net_income",
+   "period": "Q@2026-03-31",
+   "value": -191012000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260511"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_q_2026_03_31",
+   "metric": "sbc",
+   "period": "Q@2026-03-31",
+   "value": 55353000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260511"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_q_2026_03_31",
+   "metric": "cfo",
+   "period": "Q@2026-03-31",
+   "value": -48058000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260511"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_q_2026_03_31",
+   "metric": "capex",
+   "period": "Q@2026-03-31",
+   "value": 261599000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260511"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_q_2026_06_30",
+   "metric": "revenue",
+   "period": "Q@2026-06-30",
+   "value": 31520000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_net_income_q_2026_06_30",
+   "metric": "net_income",
+   "period": "Q@2026-06-30",
+   "value": -230909000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_q_2026_06_30",
+   "metric": "sbc",
+   "period": "Q@2026-06-30",
+   "value": 63467000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_q_2026_06_30",
+   "metric": "cfo",
+   "period": "Q@2026-06-30",
+   "value": -97154000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_q_2026_06_30",
+   "metric": "capex",
+   "period": "Q@2026-06-30",
+   "value": 597616000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_rev_q2_2026",
+   "metric": "revenue",
+   "period": "Q2 2026",
+   "value": 31500000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260810_1",
+    "pf_10q_20260810"
+   ],
+   "basis": "reported",
+   "period_end": "2026-06-30",
+   "statement": "Revenue $31.5M driven by gateway deliveries and U.S. Government milestones; management: consistent with plans for quarterly revenue ramp during 2026"
+  },
+  {
+   "id": "dc_rev_q1_2026",
+   "metric": "revenue",
+   "period": "Q1 2026",
+   "value": 14700000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260511_1"
+   ],
+   "basis": "reported",
+   "period_end": "2026-03-31"
+  },
+  {
+   "id": "dc_rev_q4_2025",
+   "metric": "revenue",
+   "period": "Q4 2025",
+   "value": 54300000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260302_1"
+   ],
+   "basis": "reported",
+   "period_end": "2025-12-31"
+  },
+  {
+   "id": "dc_rev_q3_2025",
+   "metric": "revenue",
+   "period": "Q3 2025",
+   "value": 14700000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20251110_1"
+   ],
+   "basis": "reported",
+   "period_end": "2025-09-30"
+  },
+  {
+   "id": "dc_rev_fy2025",
+   "metric": "revenue",
+   "period": "FY2025",
+   "value": 70900000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260302_1"
+   ],
+   "basis": "reported",
+   "period_end": "2025-12-31"
+  },
+  {
+   "id": "dc_rev_h2_2025",
+   "metric": "revenue",
+   "period": "H2 2025",
+   "value": 69000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20251110_1",
+    "pf_rel_20260302_1"
+   ],
+   "basis": "derived",
+   "period_end": "2025-12-31",
+   "statement": "Q3 2025 14.7 + Q4 2025 54.3"
+  },
+  {
+   "id": "dc_rev_h1_2026",
+   "metric": "revenue",
+   "period": "H1 2026",
+   "value": 46200000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "basis": "derived",
+   "period_end": "2026-06-30",
+   "statement": "Products 37.8 + Services 8.4 (six months to 2026-06-30)"
+  },
+  {
+   "id": "dc_rev_products_q2_2026",
+   "metric": "revenue_products",
+   "period": "Q2 2026",
+   "value": 24400000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "basis": "reported",
+   "period_end": "2026-06-30",
+   "statement": "Gateway equipment and software sold to MNOs"
+  },
+  {
+   "id": "dc_rev_services_q2_2026",
+   "metric": "revenue_services",
+   "period": "Q2 2026",
+   "value": 7100000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "basis": "reported",
+   "period_end": "2026-06-30",
+   "statement": "Performance obligations under U.S. government agreements (direct or via primes)"
+  },
+  {
+   "id": "dc_cor_products_q2_2026",
+   "metric": "cost_of_revenue_products",
+   "period": "Q2 2026",
+   "value": 22400000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "basis": "reported",
+   "period_end": "2026-06-30",
+   "statement": "Gateway hardware sells near cost: product gross margin ~8% in Q2 2026 (24.4 revenue vs 22.4 cost)"
+  },
+  {
+   "id": "dc_cor_services_q2_2026",
+   "metric": "cost_of_revenue_services",
+   "period": "Q2 2026",
+   "value": 1200000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "basis": "reported",
+   "period_end": "2026-06-30"
+  },
+  {
+   "id": "dc_opex_q2_2026",
+   "metric": "total_operating_expenses",
+   "period": "Q2 2026",
+   "value": 329100000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260810_1",
+    "pf_10q_20260810"
+   ],
+   "basis": "reported",
+   "period_end": "2026-06-30",
+   "statement": "Includes $84.1M D&A+SBC and $125.9M loss on involuntary conversion (BB7)"
+  },
+  {
+   "id": "dc_opex_q1_2026",
+   "metric": "total_operating_expenses",
+   "period": "Q1 2026",
+   "value": 164100000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260511_1"
+   ],
+   "basis": "reported",
+   "period_end": "2026-03-31",
+   "statement": "Includes $73.0M D&A+SBC"
+  },
+  {
+   "id": "dc_opex_q4_2025",
+   "metric": "total_operating_expenses",
+   "period": "Q4 2025",
+   "value": 126600000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260302_1"
+   ],
+   "basis": "reported",
+   "period_end": "2025-12-31"
+  },
+  {
+   "id": "dc_opex_q3_2025",
+   "metric": "total_operating_expenses",
+   "period": "Q3 2025",
+   "value": 94400000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20251110_1"
+   ],
+   "basis": "reported",
+   "period_end": "2025-09-30"
+  },
+  {
+   "id": "dc_adjopex_q2_2026",
+   "metric": "adjusted_operating_expenses",
+   "period": "Q2 2026",
+   "value": 119100000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260810_1"
+   ],
+   "basis": "reported",
+   "period_end": "2026-06-30",
+   "statement": "Non-GAAP (company definition, excludes D&A, SBC, and the BB7 loss)"
+  },
+  {
+   "id": "dc_adjopex_q1_2026",
+   "metric": "adjusted_operating_expenses",
+   "period": "Q1 2026",
+   "value": 91200000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260511_1"
+   ],
+   "basis": "reported",
+   "period_end": "2026-03-31"
+  },
+  {
+   "id": "dc_adjopex_q4_2025",
+   "metric": "adjusted_operating_expenses",
+   "period": "Q4 2025",
+   "value": 95700000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260302_1"
+   ],
+   "basis": "reported",
+   "period_end": "2025-12-31"
+  },
+  {
+   "id": "dc_adjopex_q3_2025",
+   "metric": "adjusted_operating_expenses",
+   "period": "Q3 2025",
+   "value": 67700000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20251110_1"
+   ],
+   "basis": "reported",
+   "period_end": "2025-09-30"
+  },
+  {
+   "id": "dc_adjopex_xcor_q2_2026",
+   "metric": "adjusted_opex_ex_cost_of_revenue",
+   "period": "Q2 2026",
+   "value": 95900000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260810_1"
+   ],
+   "basis": "reported",
+   "period_end": "2026-06-30"
+  },
+  {
+   "id": "dc_adjopex_xcor_q1_2026",
+   "metric": "adjusted_opex_ex_cost_of_revenue",
+   "period": "Q1 2026",
+   "value": 79800000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260810_1"
+   ],
+   "basis": "reported",
+   "period_end": "2026-03-31"
+  },
+  {
+   "id": "dc_bb7_loss_q2_2026",
+   "metric": "one_off_loss_involuntary_conversion",
+   "period": "Q2 2026",
+   "value": 125900000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "basis": "reported",
+   "period_end": "2026-06-30",
+   "statement": "One-off: write-off of BB7 (placed in lower than planned orbit on 2026-04-19 and de-orbited), net of insurance recoveries; company expects a replacement launch under the launch contract"
+  },
+  {
+   "id": "dc_induced_conv_h1_2026",
+   "metric": "one_off_induced_conversion_expense",
+   "period": "H1 2026",
+   "value": 89800000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "basis": "reported",
+   "period_end": "2026-06-30",
+   "statement": "One-off (non-operating): induced conversion expense on Feb 2026 repurchases of 2032 4.25% and 2.375% converts"
+  },
+  {
+   "id": "dc_sbc_q2_2026",
+   "metric": "stock_based_compensation",
+   "period": "Q2 2026",
+   "value": 63467000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "basis": "derived",
+   "period_end": "2026-06-30",
+   "statement": "Engineering 30.120 + G&A 32.953 + cost of services 0.394 ($M); Q2 2025 was 10.5"
+  },
+  {
+   "id": "dc_sbc_h1_2026",
+   "metric": "stock_based_compensation",
+   "period": "H1 2026",
+   "value": 118820000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "basis": "derived",
+   "period_end": "2026-06-30",
+   "statement": "Engineering 69.329 + G&A 48.831 + cost of services 0.660 ($M)"
+  },
+  {
+   "id": "dc_da_q2_2026",
+   "metric": "depreciation_amortization",
+   "period": "Q2 2026",
+   "value": 20700000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "basis": "reported",
+   "period_end": "2026-06-30"
+  },
+  {
+   "id": "dc_intexp_q2_2026",
+   "metric": "interest_expense",
+   "period": "Q2 2026",
+   "value": 26100000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "basis": "reported",
+   "period_end": "2026-06-30"
+  },
+  {
+   "id": "dc_intinc_q2_2026",
+   "metric": "interest_income",
+   "period": "Q2 2026",
+   "value": 27700000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "basis": "reported",
+   "period_end": "2026-06-30"
+  },
+  {
+   "id": "dc_cfo_h1_2026",
+   "metric": "operating_cash_flow_ytd",
+   "period": "H1 2026",
+   "value": -145212000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "basis": "reported",
+   "period_end": "2026-06-30"
+  },
+  {
+   "id": "dc_capex_h1_2026",
+   "metric": "capex_ytd",
+   "period": "H1 2026",
+   "value": 859215000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "basis": "reported",
+   "period_end": "2026-06-30",
+   "statement": "Purchase of property and equipment (satellite materials, launch advances, capital advances); excludes $100M Ligado advance and $42.1M L-band/Crown Castle/revenue-share payments, partly offset by $21.6M insurance proceeds"
+  },
+  {
+   "id": "dc_capex_q1_2026",
+   "metric": "capex",
+   "period": "Q1 2026",
+   "value": 261599000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260511"
+   ],
+   "basis": "reported",
+   "period_end": "2026-03-31"
+  },
+  {
+   "id": "dc_capex_q2_2026",
+   "metric": "capex",
+   "period": "Q2 2026",
+   "value": 597616000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810",
+    "pf_10q_20260511"
+   ],
+   "basis": "derived",
+   "period_end": "2026-06-30",
+   "statement": "H1 859.215 - Q1 261.599 (cash flow basis; CFO said ~$610M on the call)"
+  },
+  {
+   "id": "dc_cash_20260630",
+   "metric": "cash_and_restricted_cash",
+   "period": "Q2 2026",
+   "value": 2700000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260810_1",
+    "pf_10q_20260810"
+   ],
+   "basis": "reported",
+   "period_end": "2026-06-30",
+   "statement": "~$2.7B incl. $434.6M restricted cash (restricted cash not spendable liquidity; partly collateral for the $420M UBS loan)"
+  },
+  {
+   "id": "dc_restricted_20260630",
+   "metric": "restricted_cash",
+   "period": "Q2 2026",
+   "value": 434600000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "basis": "reported",
+   "period_end": "2026-06-30"
+  },
+  {
+   "id": "dc_cash_pf_20260630",
+   "metric": "cash_and_restricted_cash_pro_forma",
+   "period": "Q2 2026",
+   "value": 3700000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260810_1"
+   ],
+   "basis": "reported",
+   "period_end": "2026-06-30",
+   "statement": "Management: over $3.7B pro forma for the July 2026 $1.15B 2034 1.625% convertible notes"
+  },
+  {
+   "id": "dc_rpo_20260630",
+   "metric": "remaining_performance_obligations",
+   "period": "Q2 2026",
+   "value": 1200000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "basis": "reported",
+   "period_end": "2026-06-30",
+   "statement": "~6.6% expected to be recognized within 12 months, remainder thereafter; excludes variable revenue-share consideration with MNOs"
+  },
+  {
+   "id": "dc_rpo_20251231",
+   "metric": "remaining_performance_obligations",
+   "period": "FY2025",
+   "value": 1200000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260302"
+   ],
+   "basis": "reported",
+   "period_end": "2025-12-31"
+  },
+  {
+   "id": "dc_backlog_20260810",
+   "metric": "revenue_backlog_management",
+   "period": "Q2 2026",
+   "value": 1300000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260810_1"
+   ],
+   "basis": "reported",
+   "period_end": "2026-06-30",
+   "statement": "Management figure: ~$1.30B aggregate contracted revenue with commercial partners and U.S. Government awards (not the GAAP RPO)"
+  },
+  {
+   "id": "dc_contract_liab_20260630",
+   "metric": "contract_liabilities",
+   "period": "Q2 2026",
+   "value": 266899999.99999997,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "basis": "reported",
+   "period_end": "2026-06-30",
+   "statement": "Up from $227.0M at 2025-12-31, mainly an advance payment under a commercial service agreement"
+  },
+  {
+   "id": "dc_commitments_20260630",
+   "metric": "purchase_commitments_low",
+   "period": "Q2 2026",
+   "value": 775000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "basis": "reported",
+   "period_end": "2026-06-30",
+   "statement": "$775.0-$795.0M of commitments (R&D, components for >90 BB satellites, gateways), plus launch milestone payments"
+  },
+  {
+   "id": "dc_shares_a_20260806",
+   "metric": "shares_outstanding_class_a",
+   "period": "2026-08-06",
+   "value": 299789305,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "basis": "reported",
+   "period_end": "2026-08-06"
+  },
+  {
+   "id": "dc_shares_b_20260806",
+   "metric": "shares_outstanding_class_b",
+   "period": "2026-08-06",
+   "value": 11215111,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "basis": "reported",
+   "period_end": "2026-08-06",
+   "statement": "Non-economic voting shares; holders own AST LLC units redeemable 1:1 into Class A"
+  },
+  {
+   "id": "dc_shares_c_20260806",
+   "metric": "shares_outstanding_class_c",
+   "period": "2026-08-06",
+   "value": 78163078,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "basis": "reported",
+   "period_end": "2026-08-06",
+   "statement": "Held by CEO Abel Avellan; non-economic super-voting; AST LLC units redeemable 1:1 into Class A"
+  },
+  {
+   "id": "dc_shares_econ_20260806",
+   "metric": "shares_economic_total",
+   "period": "2026-08-06",
+   "value": 389167494,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "basis": "derived",
+   "period_end": "2026-08-06",
+   "statement": "Class A + AST LLC units behind Class B and C (1:1 redeemable)"
+  },
+  {
+   "id": "dc_unvested_awards_20260630",
+   "metric": "share_awards_outstanding",
+   "period": "Q2 2026",
+   "value": 12159478,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "basis": "reported",
+   "period_end": "2026-06-30"
+  },
+  {
+   "id": "dc_cv_2032_425",
+   "metric": "convertible_principal_2032_4.25pct",
+   "period": "Q2 2026",
+   "value": 3500000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "basis": "derived",
+   "period_end": "2026-06-30",
+   "statement": "460.0 issued - 225 - 135 - 50 - 46.5 repurchased; conversion price ~$26.99"
+  },
+  {
+   "id": "dc_cv_2032_2375",
+   "metric": "convertible_principal_2032_2.375pct",
+   "period": "Q2 2026",
+   "value": 325000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "basis": "derived",
+   "period_end": "2026-06-30",
+   "statement": "575.0 issued - 250.0 repurchased Feb 2026; initial conversion price ~$72.07"
+  },
+  {
+   "id": "dc_cv_2036_200",
+   "metric": "convertible_principal_2036_2.00pct",
+   "period": "Q2 2026",
+   "value": 1150000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810",
+    "pf_rel_20251110_1"
+   ],
+   "basis": "reported",
+   "period_end": "2026-06-30",
+   "statement": "Effective conversion price $96.30 (with capped call) per release"
+  },
+  {
+   "id": "dc_cv_2036_225",
+   "metric": "convertible_principal_2036_2.25pct",
+   "period": "Q2 2026",
+   "value": 1075000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "basis": "reported",
+   "period_end": "2026-06-30",
+   "statement": "Initial conversion price ~$116.30"
+  },
+  {
+   "id": "dc_cv_2034_1625",
+   "metric": "convertible_principal_2034_1.625pct",
+   "period": "Q3 2026",
+   "value": 1150000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810",
+    "pf_rel_20260810_1"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-20",
+   "statement": "Issued ~2026-07-20 (after the balance sheet date); initial conversion price ~$79.57, effective $149.20 with capped calls"
+  },
+  {
+   "id": "dc_ubs_loan",
+   "metric": "term_loan_ubs_cash_collateralized",
+   "period": "Q2 2026",
+   "value": 420000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "basis": "reported",
+   "period_end": "2026-06-30",
+   "statement": "Cash-collateralized bridge loan that financed the first $420M Ligado payment"
+  },
+  {
+   "id": "dc_ligado_paid",
+   "metric": "ligado_payments_refundable",
+   "period": "Q2 2026",
+   "value": 520000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810",
+    "pf_rel_20260211_1"
+   ],
+   "basis": "derived",
+   "period_end": "2026-06-30",
+   "statement": "$420M (2025-10-31) + $100M (2026-03-31) paid for the benefit of Inmarsat; refundable via the $520M Backstop Commitment if regulatory approvals are not obtained; $30M more due at closing; ~$81.3M of L-band/Crown Castle annual payments payable in Class A shares at company option"
+  },
+  {
+   "id": "dc_trinity_20260630",
+   "metric": "trinity_capital_equipment_loan_balance",
+   "period": "2026-06-30",
+   "value": 48638000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "basis": "reported",
+   "period_end": "2026-06-30",
+   "statement": "Trinity Capital equipment loan carrying value in the 10-Q debt table; up to $100M MEFA, $50.5M drawn in 2025, up to $49.5M more drawable by 2027-06-30 subject to conditions"
+  },
+  {
+   "id": "dc_totaldebt_20260630",
+   "metric": "total_debt_carrying",
+   "period": "2026-06-30",
+   "value": 3022152000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "basis": "reported",
+   "period_end": "2026-06-30",
+   "statement": "Total debt carrying value (converts, UBS bridge loan $420M, Trinity loan) vs $2,264.4M at 2025-12-31"
+  },
+  {
+   "id": "mc_f_israel_assets",
+   "metric": "israel_share_of_total_assets",
+   "period": "2026-06-30",
+   "value": 0.01,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_f_israel_opex",
+   "metric": "israel_share_of_total_operating_expenses",
+   "period": "6M 2026",
+   "value": 0.05,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_operating_income_fy2025",
+   "metric": "operating_income",
+   "period": "FY2025",
+   "value": -287713000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260302"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_operating_income_fy2024",
+   "metric": "operating_income",
+   "period": "FY2024",
+   "value": -242762000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260302"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_operating_income_q_2026_06_30",
+   "metric": "operating_income",
+   "period": "Q@2026-06-30",
+   "value": -297577000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_revenue_fy2024_recast",
+   "metric": "revenue_as_presented_fy2025_10k",
+   "period": "FY2024",
+   "value": 4418000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260302"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_net_loss_before_nci_fy2025",
+   "metric": "net_loss_before_noncontrolling_interest",
+   "period": "FY2025",
+   "value": -461011000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260302"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_net_loss_before_nci_q_2026_06_30",
+   "metric": "net_loss_before_noncontrolling_interest",
+   "period": "Q@2026-06-30",
+   "value": -299919000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_fy2025",
+   "metric": "eps_diluted",
+   "period": "FY2025",
+   "value": -1.34,
+   "unit": "USD/share",
+   "source_ids": [
+    "pf_10k_20260302"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q_2026_06_30",
+   "metric": "eps_diluted",
+   "period": "Q@2026-06-30",
+   "value": -0.77,
+   "unit": "USD/share",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_h1_2026",
+   "metric": "eps_diluted_six_months",
+   "period": "H1 2026",
+   "value": -1.43,
+   "unit": "USD/share",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_diluted_wavg_q_2026_06_30",
+   "metric": "shares_diluted_wavg",
+   "period": "Q@2026-06-30",
+   "value": 299061662,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_class_a_shares_2026_06_30",
+   "metric": "shares_class_a_outstanding",
+   "period": "2026-06-30",
+   "value": 299731073,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_class_b_shares_2026_06_30",
+   "metric": "shares_class_b_outstanding",
+   "period": "2026-06-30",
+   "value": 11215111,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_class_c_shares_2026_06_30",
+   "metric": "shares_class_c_outstanding",
+   "period": "2026-06-30",
+   "value": 78163078,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_cash_q_2026_06_30",
+   "metric": "cash",
+   "period": "Q@2026-06-30",
+   "value": 2288253000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_restricted_cash_current_q_2026_06_30",
+   "metric": "restricted_cash_current",
+   "period": "Q@2026-06-30",
+   "value": 6181000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_restricted_cash_noncurrent_q_2026_06_30",
+   "metric": "restricted_cash_noncurrent",
+   "period": "Q@2026-06-30",
+   "value": 428400000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_long_term_debt_q_2026_06_30",
+   "metric": "long_term_debt",
+   "period": "Q@2026-06-30",
+   "value": 2963422000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_current_debt_q_2026_06_30",
+   "metric": "current_portion_long_term_debt",
+   "period": "Q@2026-06-30",
+   "value": 8494000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_contract_liab_noncurrent_q_2026_06_30",
+   "metric": "contract_liabilities_noncurrent",
+   "period": "Q@2026-06-30",
+   "value": 252093000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_ppe_net_q_2026_06_30",
+   "metric": "ppe_net",
+   "period": "Q@2026-06-30",
+   "value": 2069336000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_total_assets_q_2026_06_30",
+   "metric": "total_assets",
+   "period": "Q@2026-06-30",
+   "value": 5854885000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_total_liabilities_q_2026_06_30",
+   "metric": "total_liabilities",
+   "period": "Q@2026-06-30",
+   "value": 3457307000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_loss_involuntary_conversion_q_2026_06_30",
+   "metric": "loss_on_involuntary_conversion_bb7",
+   "period": "Q@2026-06-30",
+   "value": 125911000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_induced_conversion_expense_h1_2026",
+   "metric": "induced_conversion_expense_convertible_notes",
+   "period": "H1 2026",
+   "value": 88654000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_cfo_h1_2026",
+   "metric": "cfo_six_months",
+   "period": "H1 2026",
+   "value": -145212000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_capex_h1_2026",
+   "metric": "capex_six_months",
+   "period": "H1 2026",
+   "value": 859215000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_sbc_h1_2026",
+   "metric": "sbc_six_months",
+   "period": "H1 2026",
+   "value": 118820000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_revenue_h2_2025",
+   "metric": "revenue_second_half",
+   "period": "H2 2025",
+   "value": 69044000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260302",
+    "pf_cf_20251110"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_revenue_ttm_q_2026_06_30",
+   "metric": "revenue_ttm",
+   "period": "TTM@2026-06-30",
+   "value": 115299000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810",
+    "pf_cf_20260302",
+    "pf_cf_20251110"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "derived"
+  },
+  {
+   "id": "rf_sti_q_2026_06_30",
+   "metric": "short_term_investments",
+   "period": "Q@2026-06-30",
+   "value": 0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported",
+   "statement": "balance_sheet",
+   "factbook": true
+  },
+  {
+   "id": "rf_sti_q_2026_03_31",
+   "metric": "short_term_investments",
+   "period": "Q@2026-03-31",
+   "value": 0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260511"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported",
+   "statement": "balance_sheet",
+   "factbook": true
+  },
+  {
+   "id": "rf_sti_fy2025",
+   "metric": "short_term_investments",
+   "period": "FY2025",
+   "value": 0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260302"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported",
+   "statement": "balance_sheet",
+   "factbook": true
+  },
+  {
+   "id": "rf_oi_fy2025",
+   "metric": "operating_income",
+   "period": "FY2025",
+   "value": -287713000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260302"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived",
+   "statement": "income_statement",
+   "factbook": true
+  },
+  {
+   "id": "rf_oi_fy2024",
+   "metric": "operating_income",
+   "period": "FY2024",
+   "value": -242762000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260302"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "derived",
+   "statement": "income_statement",
+   "factbook": true
+  },
+  {
+   "id": "rf_oi_q_2026_06_30",
+   "metric": "operating_income",
+   "period": "Q@2026-06-30",
+   "value": -297577000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "derived",
+   "statement": "income_statement",
+   "factbook": true
+  }
+ ],
+ "guidance": [
+  {
+   "id": "dc_g_rev_fy2026",
+   "metric": "revenue",
+   "period": "FY2026",
+   "low": 150000000.0,
+   "high": 200000000.0,
+   "unit": "USD",
+   "issued": "2026-08-10",
+   "source_id": "pf_rel_20260810_1"
+  },
+  {
+   "id": "dc_g_rev_fy2026_orig",
+   "metric": "revenue",
+   "period": "FY2026",
+   "low": 150000000.0,
+   "high": 200000000.0,
+   "unit": "USD",
+   "issued": "2026-03-02",
+   "source_id": "dc_tr_q4_2025"
+  },
+  {
+   "id": "dc_g_rev_fy2026_q1",
+   "metric": "revenue",
+   "period": "FY2026",
+   "low": 150000000.0,
+   "high": 200000000.0,
+   "unit": "USD",
+   "issued": "2026-05-11",
+   "source_id": "pf_rel_20260511_1"
+  },
+  {
+   "id": "dc_g_adjopex_q3_2026",
+   "metric": "adjusted_opex_ex_cost_of_revenue",
+   "period": "Q3 2026",
+   "low": 105000000.0,
+   "high": 115000000.0,
+   "unit": "USD",
+   "issued": "2026-08-10",
+   "source_id": "dc_tr_q2_2026"
+  },
+  {
+   "id": "dc_g_adjopex_avg_fy2026",
+   "metric": "adjusted_opex_ex_cost_of_revenue_avg_per_quarter",
+   "period": "FY2026",
+   "low": 100000000.0,
+   "high": 100000000.0,
+   "unit": "USD",
+   "issued": "2026-08-10",
+   "source_id": "dc_tr_q2_2026"
+  },
+  {
+   "id": "dc_g_adjopex_avg_fy2026_orig",
+   "metric": "adjusted_opex_ex_cost_of_revenue_avg_per_quarter",
+   "period": "FY2026",
+   "low": 70000000.0,
+   "high": 80000000.0,
+   "unit": "USD",
+   "issued": "2026-03-02",
+   "source_id": "dc_tr_q4_2025"
+  },
+  {
+   "id": "dc_g_capex_q3_2026",
+   "metric": "capex",
+   "period": "Q3 2026",
+   "low": 350000000.0,
+   "high": 425000000.0,
+   "unit": "USD",
+   "issued": "2026-08-10",
+   "source_id": "dc_tr_q2_2026"
+  },
+  {
+   "id": "dc_g_sat_cost",
+   "metric": "capital_cost_per_block2_satellite",
+   "period": "Block 2 constellation (>90 satellites), average",
+   "low": 21000000.0,
+   "high": 23000000.0,
+   "unit": "USD",
+   "issued": "2026-08-10",
+   "source_id": "pf_10q_20260810"
+  },
+  {
+   "id": "dc_g_sats_early2027",
+   "metric": "bluebird_satellites_in_orbit",
+   "period": "early 2027",
+   "low": 45,
+   "high": 45,
+   "unit": "count",
+   "issued": "2026-08-10",
+   "source_id": "pf_10q_20260810"
+  },
+  {
+   "id": "dc_g_sats_end2026_may",
+   "metric": "bluebird_satellites_in_orbit",
+   "period": "end of FY2026",
+   "low": 45,
+   "high": 45,
+   "unit": "count",
+   "issued": "2026-05-11",
+   "source_id": "pf_10q_20260511"
+  },
+  {
+   "id": "dc_g_sats_end2026_mar",
+   "metric": "bluebird_satellites_in_orbit",
+   "period": "end of FY2026",
+   "low": 45,
+   "high": 60,
+   "unit": "count",
+   "issued": "2026-03-02",
+   "source_id": "pf_rel_20260302_1"
+  },
+  {
+   "id": "dc_g_rev_h2_2025",
+   "metric": "revenue",
+   "period": "H2 2025",
+   "low": 50000000.0,
+   "high": 75000000.0,
+   "unit": "USD",
+   "issued": "2025-08-11",
+   "source_id": "pf_rel_20250811_1"
+  }
+ ],
+ "guidance_track": [
+  {
+   "period": "H2 2025",
+   "metric": "revenue",
+   "guided_mid": 62500000.0,
+   "actual": 69000000.0,
+   "source_ids": [
+    "pf_rel_20250811_1",
+    "pf_rel_20251110_1",
+    "pf_rel_20260302_1"
+   ]
+  },
+  {
+   "period": "Q1 2026",
+   "metric": "adjusted_opex_ex_cost_of_revenue",
+   "guided_mid": 75000000.0,
+   "actual": 79800000.0,
+   "source_ids": [
+    "dc_tr_q4_2025",
+    "pf_rel_20260810_1"
+   ]
+  },
+  {
+   "period": "Q2 2026",
+   "metric": "adjusted_opex_ex_cost_of_revenue",
+   "guided_mid": 90000000.0,
+   "actual": 95900000.0,
+   "source_ids": [
+    "dc_mb_q1_2026",
+    "pf_rel_20260810_1"
+   ]
+  },
+  {
+   "period": "Q2 2026",
+   "metric": "capex",
+   "guided_mid": 612500000.0,
+   "actual": 597616000.0,
+   "source_ids": [
+    "dc_mb_q1_2026",
+    "pf_10q_20260810",
+    "pf_10q_20260511"
+   ]
+  },
+  {
+   "period": "H2 2025",
+   "metric": "revenue",
+   "guided_mid": 62500000,
+   "actual": 69044000,
+   "source_ids": [
+    "pf_rel_20250811_1",
+    "pf_rel_20260302_1",
+    "pf_cf_20260302",
+    "pf_cf_20251110"
+   ]
+  }
+ ],
+ "consensus": [
+  {
+   "id": "nm_cons_rev_fy2026_sa",
+   "metric": "revenue",
+   "period": "FY2026",
+   "value": 167200000,
+   "n": 12,
+   "low": 151000000,
+   "high": 186000000,
+   "source_id": "nm_cons_stockanalysis"
+  },
+  {
+   "id": "nm_cons_eps_fy2026_sa",
+   "metric": "eps_diluted",
+   "period": "FY2026",
+   "value": -2.03,
+   "n": 12,
+   "low": -2.49,
+   "high": -1.42,
+   "source_id": "nm_cons_stockanalysis"
+  },
+  {
+   "id": "nm_cons_rev_fy2026_yh",
+   "metric": "revenue",
+   "period": "FY2026",
+   "value": 167240000,
+   "n": 12,
+   "low": 150980000,
+   "high": 186000000,
+   "source_id": "nm_cons_yahoo"
+  },
+  {
+   "id": "nm_cons_rev_fy2027_yh",
+   "metric": "revenue",
+   "period": "FY2027",
+   "value": 609100000,
+   "n": 12,
+   "low": 345060000,
+   "high": 911000000,
+   "source_id": "nm_cons_yahoo"
+  },
+  {
+   "id": "nm_cons_eps_fy2026_yh",
+   "metric": "eps_diluted",
+   "period": "FY2026",
+   "value": -2.29,
+   "n": 8,
+   "low": -2.49,
+   "high": -2.04,
+   "source_id": "nm_cons_yahoo"
+  },
+  {
+   "id": "nm_cons_eps_fy2027_yh",
+   "metric": "eps_diluted",
+   "period": "FY2027",
+   "value": -1.28,
+   "n": 9,
+   "low": -1.99,
+   "high": 0.65,
+   "source_id": "nm_cons_yahoo"
+  },
+  {
+   "id": "nm_cons_rev_q3_2026_yh",
+   "metric": "revenue",
+   "period": "Q3 2026",
+   "value": 46000000,
+   "n": 8,
+   "low": 40000000,
+   "high": 50000000,
+   "source_id": "nm_cons_yahoo"
+  },
+  {
+   "id": "nm_cons_rev_q4_2026_yh",
+   "metric": "revenue",
+   "period": "Q4 2026",
+   "value": 71150000,
+   "n": 8,
+   "low": 59800000,
+   "high": 89080000,
+   "source_id": "nm_cons_yahoo"
+  },
+  {
+   "id": "uc_cons_rev_fy2027_tikr",
+   "metric": "revenue",
+   "period": "FY2027",
+   "value": 650000000,
+   "source_id": "uc_tikr_20260930"
+  },
+  {
+   "id": "uc_cons_rev_fy2028_tikr",
+   "metric": "revenue",
+   "period": "FY2028",
+   "value": 1700000000,
+   "source_id": "uc_tikr_20260930"
+  },
+  {
+   "id": "uc_cons_rev_fy2030_tikr",
+   "metric": "revenue",
+   "period": "FY2030",
+   "value": 3400000000,
+   "source_id": "uc_tikr_20260930"
+  }
+ ],
+ "kpis": [
+  {
+   "id": "dc_kpi_sats_orbit",
+   "name": "BlueBird satellites in orbit",
+   "period": "2026-08-10",
+   "value": 13,
+   "unit": "count",
+   "source_ids": [
+    "pf_rel_20260810_1",
+    "pf_10q_20260810"
+   ]
+  },
+  {
+   "id": "dc_kpi_mno",
+   "name": "MNO partners signed (over)",
+   "period": "2026-08-10",
+   "value": 60,
+   "unit": "count",
+   "source_ids": [
+    "pf_rel_20260810_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_mno_subs",
+   "name": "subscribers covered by MNO partners (over)",
+   "period": "2026-08-10",
+   "value": 3000000000.0,
+   "unit": "subscribers",
+   "source_ids": [
+    "pf_rel_20260810_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_microns",
+   "name": "fully assembled satellite microns (sets) incl. shipped/launched",
+   "period": "2026-08-10",
+   "value": 36,
+   "unit": "satellites",
+   "source_ids": [
+    "pf_10q_20260810"
+   ]
+  },
+  {
+   "id": "dc_kpi_prod_cap",
+   "name": "assembly/integration/test capacity, Block 2 satellites per month (up to)",
+   "period": "2026-08-10",
+   "value": 6,
+   "unit": "satellites/month",
+   "source_ids": [
+    "pf_10q_20260810"
+   ]
+  },
+  {
+   "id": "dc_kpi_gateways_delivered",
+   "name": "gateways delivered (customers: 7, continents: 5)",
+   "period": "Q2 2026",
+   "value": 13,
+   "unit": "count",
+   "source_ids": [
+    "dc_tr_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_kpi_gateways_pipeline",
+   "name": "gateways in various stages of completion/installation/planning (nearly)",
+   "period": "2026-08-10",
+   "value": 50,
+   "unit": "count",
+   "source_ids": [
+    "pf_rel_20260810_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_usg_awards",
+   "name": "aggregate value of new U.S. Government awards (over)",
+   "period": "Q2 2026",
+   "value": 125000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260810_1"
+   ]
+  },
+  {
+   "id": "dc_kpi_launches_booked",
+   "name": "launches booked with two providers",
+   "period": "2026-08-10",
+   "value": 10,
+   "unit": "count",
+   "source_ids": [
+    "dc_tr_q2_2026"
+   ]
+  }
+ ],
+ "segments": [
+  {
+   "id": "dc_seg_products_h1_2026",
+   "name": "Products (gateway equipment/software to MNOs)",
+   "period": "H1 2026",
+   "revenue": 37800000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ]
+  },
+  {
+   "id": "dc_seg_services_h1_2026",
+   "name": "Services (U.S. government milestones)",
+   "period": "H1 2026",
+   "revenue": 8400000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ]
+  },
+  {
+   "id": "dc_seg_products_q2_2026",
+   "name": "Products (gateway equipment/software to MNOs)",
+   "period": "Q2 2026",
+   "revenue": 24400000.0,
+   "operating_income": 2000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ]
+  },
+  {
+   "id": "dc_seg_services_q2_2026",
+   "name": "Services (U.S. government milestones)",
+   "period": "Q2 2026",
+   "revenue": 7100000.0,
+   "operating_income": 5900000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260810"
+   ]
+  }
+ ],
+ "competitors": [
+  {
+   "ticker": "SPCX",
+   "name": "Space Exploration Technologies Corp. (SpaceX; Starlink, Starlink Mobile direct-to-cell)",
+   "why": "named first in ASTS 10-K Competition: Starlink LEO constellation competes in the direct-to-device segment for the same MNO partners and smartphone end users; owns its launch and, via the EchoStar AWS-4/H-block/AWS-3 purchase (FCC approved 2026-05-12, licenses in trust since 2026-05-22), its own mobile spectrum",
+   "metrics": {
+    "revenue_growth_9m2026": 0.9748,
+    "revenue_growth_q3_2026": 1.6139,
+    "gross_margin_9m2026": 0.5805,
+    "operating_margin_9m2026": 0.026,
+    "operating_margin_q3_2026": 0.1915,
+    "connectivity_revenue_9m2026_musd": 12796,
+    "connectivity_revenue_growth_9m2026": 0.5683,
+    "connectivity_revenue_growth_q3_2026": 0.6945,
+    "enterprise_government_revenue_incl_starlink_mobile_9m2026_musd": 5042,
+    "enterprise_government_revenue_growth_9m2026": 0.7028,
+    "starlink_consumer_subscribers_m_2026_09_30": 13.6,
+    "starlink_consumer_subscribers_m_2025_09_30": 7.2,
+    "market_cap_usd_2026_10_29": 2011523172301
+   },
+   "source_ids": [
+    "fd_cf_spcx",
+    "fd_10q_spcx_20260930",
+    "fd_fmp_profiles"
+   ]
+  },
+  {
+   "ticker": "IRDM",
+   "name": "Iridium Communications Inc.",
+   "why": "named in ASTS 10-K Competition; LEO mobile satellite operator selling voice, IoT and government (DoD) service; competes with ASTS for U.S. Government satellite-communications contracts and for low-data-rate direct-to-device (NTN) messaging",
+   "metrics": {
+    "revenue_growth_fy2025": 0.0493,
+    "operating_margin_fy2025": 0.2707,
+    "revenue_growth_9m2026": 0.0475,
+    "revenue_growth_q3_2026": 0.0828,
+    "operating_margin_9m2026": 0.1686,
+    "operating_margin_9m2025": 0.2744,
+    "revenue_9m2026_musd": 690.0,
+    "market_cap_usd_2026_10_29": 4868792499
+   },
+   "source_ids": [
+    "pf_peer_IRDM",
+    "fd_fmp_profiles"
+   ]
+  },
+  {
+   "ticker": "GSAT",
+   "name": "Globalstar, Inc.",
+   "why": "named in ASTS 10-K Competition; LEO MSS operator whose constellation and owned MSS spectrum carry satellite messaging to standard smartphones under a wholesale capacity arrangement with a large handset maker, i.e. a direct-to-device alternative for the same end users",
+   "metrics": {
+    "revenue_growth_fy2025": 0.0904,
+    "operating_margin_fy2025": 0.0272,
+    "revenue_growth_h1_2026": 0.0602,
+    "operating_margin_h1_2026": 0.0252,
+    "revenue_h1_2026_musd": 134.8,
+    "market_cap_usd_2026_10_29": 10892361410
+   },
+   "source_ids": [
+    "pf_peer_GSAT",
+    "fd_fmp_profiles"
+   ]
+  },
+  {
+   "ticker": "VSAT",
+   "name": "Viasat, Inc. (owner of Inmarsat Global Limited)",
+   "why": "ASTS 10-K names Inmarsat; Inmarsat is owned by Viasat, so Viasat's filings are the public numbers for it; GEO/L-band mobile satellite services for government, maritime and aviation and an announced direct-to-device effort",
+   "metrics": {
+    "revenue_growth_fy2026_mar": 0.0267,
+    "operating_margin_fy2026_mar": 0.0233,
+    "revenue_growth_q1_fy2027": -0.0124,
+    "operating_margin_q1_fy2027": 0.0409,
+    "market_cap_usd_2026_10_29": 10780769691
+   },
+   "source_ids": [
+    "pf_peer_VSAT",
+    "fd_fmp_profiles"
+   ]
+  },
+  {
+   "ticker": "PRIVATE:SKYLO",
+   "name": "Skylo Technologies (private)",
+   "why": "named in ASTS 10-K Competition; NB-NTN direct-to-device messaging over leased MSS spectrum on partner GEO satellites, sold through MNOs and handset makers",
+   "metrics": {},
+   "source_ids": [
+    "pf_10k_20260302"
+   ]
+  },
+  {
+   "ticker": "PRIVATE:THURAYA",
+   "name": "Thuraya Telecommunications Co. (part of Space42, Abu Dhabi)",
+   "why": "named in ASTS 10-K Competition; regional GEO mobile satellite operator in EMEA/Asia, a regional alternative for MSS voice/data customers",
+   "metrics": {},
+   "source_ids": [
+    "pf_10k_20260302"
+   ]
+  }
+ ],
+ "bottlenecks": [
+  {
+   "id": "fd_b_capacity",
+   "reading": "The scarce thing ASTS supplies is space-based cellular broadband capacity to standard unmodified smartphones using MNO low/mid-band spectrum (Block 1 demonstrated ~98.9 Mbps peak to a phone). Supply is set by satellites in orbit: 13 BlueBirds at 2026-08-10 against a 10-K plan of ~45-60 Block 2 by end-2026 and a 248-satellite FCC filing; BB17-46 are in production. Launch access and manufacturing cadence, not demand, gate ASTS's capacity through 2027; SpaceX adds capacity with its own launches and >11,100 Starlink broadband and mobile satellites.",
+   "evidence_ids": [
+    "pf_10k_20260302",
+    "pf_10q_20260810",
+    "pf_rel_20260810_1",
+    "fd_10q_spcx_20260930"
+   ]
+  },
+  {
+   "id": "fd_b_spectrum",
+   "reading": "Spectrum is the second bottleneck: ASTS relies on MNO spectrum leased under the FCC Supplemental Coverage from Space framework (Verizon, AT&T, FirstNet leases; FCC granted in part / deferred in part in Aug 2025), Ligado L-band and pending 2 GHz applications, targeting ~100 MHz in the U.S. and 60+ MHz globally. Its main competitor bought its own: SpaceX's purchase of EchoStar's 50 MHz AWS-4/H-block plus up to 15 MHz AWS-3 was FCC-approved 2026-05-12 and the licenses moved to a trust on 2026-05-22, removing SpaceX's dependence on a carrier's spectrum.",
+   "evidence_ids": [
+    "pf_10k_20260302",
+    "pf_rel_20260810_1",
+    "fd_10q_spcx_20260930"
+   ]
+  },
+  {
+   "id": "fd_b_paid_adoption",
+   "reading": "Paid adoption of the core service is not yet visible in ASTS's own numbers: the SpaceMobile service has generated no revenue; H1 2026 revenue was $37.8m of gateway products to MNOs plus $8.4m of mostly U.S. Government services; remaining performance obligations ~$1.2bn at 2026-06-30 with only ~6.6% expected within 12 months, and MNO revenue-share consideration is excluded as constrained. Management cites ~$1.30bn contracted backlog and 60+ MNO partners covering 3bn+ subscribers, which are commitments and logos, not paid usage.",
+   "evidence_ids": [
+    "pf_10q_20260810",
+    "pf_rel_20260810_1"
+   ]
+  },
+  {
+   "id": "fd_b_mno_jv",
+   "reading": "Channel power: AT&T, T-Mobile and Verizon announced a joint venture on 2026-10-02 to pool resources for U.S. direct-to-device; AT&T and Verizon keep their ASTS deployments and T-Mobile its Starlink service. Whether the JV standardizes terms that lower the satellite operator's share, or channels pooled spectrum to ASTS, is not disclosed.",
+   "evidence_ids": [
+    "fd_satnews_jv",
+    "fd_advtv_jv"
+   ]
+  },
+  {
+   "id": "fd_b_jv_terms_hypothesis",
+   "reading": "Hypothesis: a carrier JV that pools U.S. spectrum and negotiates jointly with satellite operators could raise ASTS's addressable spectrum but compress its revenue share versus bilateral deals; no term sheet is public.",
+   "hypothesis": true
+  },
+  {
+   "id": "fd_b_market_size",
+   "reading": "Market direction is up but size is uncertain: Omdia (2026-03-02) projects smartphone satellite D2D service revenue of $11.99bn and 411m monthly active users by 2030 (revenue growth ~49% a year 2026-2030) and expects cellular-standard devices to exceed 95% of D2D MAUs, naming Starlink D2C and AST SpaceMobile as cellular-standard examples. This is one attributed study, a warning row on the size of the prize, not a driver.",
+   "evidence_ids": [
+    "fd_omdia_d2d_2030"
+   ]
+  }
+ ],
+ "notes": [
+  "prefetch 2026-11-01T05:54:11+00:00: SEC documents saved verbatim and their text in reading/ (untrusted); a lane cites a pf_ source only after reading the passage it relies on",
+  "gather fragments reused from /home/user/fundamental-engine/runs/tickers/ASTS_2026-10-29 (as_of 2026-10-29)",
+  "repair 2026-11-01: removed pf_operating_income_fy2024/fy2025/q_2026_06_30 (EBIT proxy pretax+interest that does not tie to the statement of operations; filing values in nm_operating_income_*) and pf_short_term_investments_fy2025 (companyfacts ShortTermInvestments tag = money-market funds INSIDE cash and cash equivalents per the 10-K/10-Q fair-value note; no short-term investments line on the balance sheet). Review findings trace/numbers/counter.",
+  "rp: AV EARNINGS_CALL_TRANSCRIPT (ASTS 2026Q2) returned ACCESS DENIED / rate_limit (25 requests/day) once; not retried. Fallback: web transcripts (Tiger/TTM for Q2 2026, Motley Fool via Webull for Q4 2025) and a MarketBeat call summary for Q1 2026; all read through a summarizing fetch (retrieval search_excerpt), so quotes are near-verbatim, not the official transcript.",
+  "rp: Guidance record. FY2026 revenue $150-200M first given on the 2026-03-02 call (\"full-year 2026 revenue in the range of $150 million to $200 million\"), reaffirmed 2026-05-11 (about half expected from existing contracted backlog) and 2026-08-10 (sequential growth each quarter; CFO: revenue likely weighted toward Q4). H1 2026 delivered $46.2M = 23-31% of the range; H2 must deliver $104-154M (vs $69.0M in H2 2025). Track ratio on H2 2025 revenue: 69.0/62.5 = 1.10 (beat, upper half).",
+  "rp: Opex guidance was RAISED: 2026-03-02 CFO guided adjusted opex ex cost of revenue ~$70-80M per quarter for 2026; 2026-08-10 the full-year average became ~$100M per quarter and Q3 2026 $105-115M. Actuals ran above the guided midpoint twice (Q1 79.8 vs 75 mid, ratio 1.06; Q2 95.9 vs 85-95, ratio 1.07, above the top). The company spends more than it guides on opex.",
+  "rp: Capex: Q1 2026 guided \"flat with Q4 2025\" (Q4 number not reached, see gaps); Q1 actual $261.6M came below guidance because a launch payment slipped into Q2 (MarketBeat summary of the CFO). Q2 2026 guided $575-650M, actual $597.6M on the cash-flow line (CFO said ~$610M): inside range. Q3 2026 guided $350-425M.",
+  "rp: Deployment guidance SLIPPED twice: 10-K/FY2025 release (2026-03-02): 45-60 satellites in orbit by end of 2026, launch every 1-2 months, commercial service activation targeted 2H 2026; Q1 10-Q (2026-05-11): approximately 45 by end of 2026; Q2 10-Q (2026-08-10): approximately 45 BB satellites in early 2027 (\"based on our current expectations regarding launch availability\"). On the Q2 call the President said commercial service launches when at least 45 satellites are up and targeted late 2026 for consumer readiness/beta. 13 in orbit at 2026-08-10 (5 Block 1 + BB6 + BB8-13); BB7 was lost 2026-04-19 (New Glenn placed it in a lower than planned orbit).",
+  "rp: Management meaning of the numbers: revenue today is gateway hardware sales to MNOs (near cost: Q2 product margin ~8%) and U.S. government milestone services; no SpaceMobile Service revenue has been recognized to date. Service revenue will be recognized over contract life starting when MNOs get network access; MNO revenue-share consideration is variable and excluded from RPO. RPO ~$1.2B with only ~6.6% inside 12 months: the backlog is mostly service-period revenue after activation. Management \"backlog\" $1.30B is its own broader measure (adds U.S. Government awards).",
+  "rp: One-offs to normalize: Q2 2026 $125.9M loss on involuntary conversion (BB7 write-off net of insurance; replacement launch expected under the contract); H1 2026 $89.8M induced conversion expense; H1 2026 $1.2M warrant remeasurement loss (2025 had $68.2M). SBC rose to $63.5M in Q2 2026 from $10.5M in Q2 2025 (headcount growth plus higher SBC) and is excluded from the company's adjusted opex: treat it as a real recurring cost.",
+  "rp: Capital structure (for capital_bridge): converts outstanding after July 2026 approx. $3.5M 2032 4.25% (conv $26.99), $325M 2032 2.375% (conv $72.07; effective $120.12 with capped call), $1,150M 2036 2.00% (effective $96.30), $1,075M 2036 2.25% (conv $116.30), $1,150M 2034 1.625% (conv $79.57; effective $149.20) = ~$3.70B principal; plus the cash-collateralized $420M UBS loan, an undrawn $550M Sound Point facility (conditional on Ligado closing), and the Trinity equipment loan (balance not extracted). Economic shares at 2026-08-06: 389.2M (Class A 299.8M + 89.4M AST LLC units behind Class B/C). Repeated convert issuance and equitizations (Feb 2026 equitized $296.5M of 2032 notes) are the funding model: management says it will keep raising equity, equity-linked or debt capital.",
+  "rp: Funding statements: management says it is \"fully funded\" for the costs to manufacture and launch ~90 BB satellites (Q2 10-Q) and estimates $21-23M average capital cost per Block 2 satellite (initial launches higher); cash on hand covers the next 12 months; commitments $775-795M plus launch milestone payments. Ligado: $520M paid is refundable via a $520M backstop only if regulatory approvals fail; approvals are still pending and may be affected by litigation with Inmarsat.",
+  "rp: Results-day check: no Q3 2026 release was among the filings found up to 2026-10-29 (latest 2.02 8-K is 2026-08-10); Q3 2026 guidance above (opex, capex) is still open and cannot be tracked yet.",
+  "rp GAP: Official Q2 2026 / Q1 2026 / Q4 2025 call transcripts not read verbatim (AV rate-limited; web copies via summarizing fetch). Q2 2026 call guidance quotes rely on an AI-translated Tiger/TTM page.",
+  "rp GAP: Q4 2025 quarterly capex and the exact Q1 2026 capex guidance number not extracted (CFO said Q1 flat with Q4; FY2025 capex ~$407M per the call, ambiguous whether quarter or year) - numbers lane / 10-K cash flow can fill it.",
+  "rp GAP: Customer concentration (share of revenue by largest customers) not located in the 10-K/10-Q text within budget.",
+  "rp GAP: 8-K Item 5.02 of 2026-10-20 (officer/director change) not read.",
+  "rp GAP: Guidance track has only 4 rows; quarterly revenue is not guided (only annual / half-year), so revenue track before H2 2025 (e.g. FY2024) not reached.",
+  "rp REUSE 2026-11-01: rerun of the 2026-10-29 documents lane; prefetch new_filings_since is empty (no filing after 2026-08-10 other than earlier ones); items kept, Trinity loan balance and total debt added from the 10-Q. Q3 2026 results (typically early-mid Nov) not yet out.",
+  "fd NAMED COMPETITORS (10-K Item 1, Competition, pf_10k_20260302): SpaceX's Starlink (direct-to-device LEO), Inmarsat Global Limited, Globalstar, Thuraya Telecommunications Co., Iridium Communications and Skylo; also regional GEO MSS operators, VSAT operators and, indirectly, terrestrial networks. ASTS positions itself as cellular broadband to unmodified handsets versus competitors' low data rate (SOS) services.",
+  "fd SECTOR POSITION: ASTS sells capacity wholesale to MNOs on a revenue-share basis (10-K Item 1: 'sell our services on a revenue share basis to MNOs'), plus gateway equipment and U.S. Government work (SDA $43.0m testing contract, SDA Europa Track 2 ~$30.0m, MDA SHIELD IDIQ; Q2 2026 release: >$125m of new U.S. Government awards). The revenue-share percentage is not disclosed (pf_10k_20260302, pf_10q_20260810, pf_rel_20260810_1).",
+  "fd SHARE: ASTS H1 2026 revenue $46.2m (products $37.8m + services $8.4m, pf_10q_20260810) against SpaceX Enterprise & Government revenue, which includes Starlink Mobile, of $5,042m in 9M 2026 (+70% y/y; Q3 $2,127m, +91%) (fd_10q_spcx_20260930). Starlink Mobile is not reported separately, so the direct-to-device share cannot be measured from filings; SpaceX is clearly ahead in commercial D2D service (T-Mobile service live) while ASTS is pre-service (beta planned 2026).",
+  "fd SHARE: legacy MSS competitors grow slowly: Iridium revenue +4.8% 9M 2026 with operating margin falling to 16.9% from 27.4% (fd_cf_irdm); Globalstar +6.0% H1 2026 at a 2.5% operating margin (fd_cf_gsat); Viasat/Inmarsat +2.7% FY to Mar-2026, -1.2% in the June 2026 quarter (fd_cf_vsat). None shows share loss to ASTS yet (ASTS has no service revenue); Iridium's margin drop is not attributed in this lane's sources.",
+  "fd COMPETITOR CONTEXT: SpaceX (SPCX) listed 2026-06-12 (FMP profile); its 10-Q for Q3 2026 states it is evaluating a potential combination with Tesla, Inc. with no assurance of an agreement (fd_10q_spcx_20260930). SpaceX's consolidated margins are dominated by its SI (AI) segment after the xAI/Cursor deals, so its consolidated margins say little about Starlink's D2D economics.",
+  "fd COMPETITOR VALUATION (market feed 2026-10-29, fd_fmp_profiles): market caps IRDM $4.87bn, GSAT $10.89bn, VSAT $10.78bn, SPCX $2,011.5bn. Forward P/E and consensus growth not gathered (see gaps).",
+  "fd REFRESH 2026-11-01 (reuse of 2026-10-29 run, no new filings since): fragment kept; FMP peer market caps not refreshed (batch-market-cap ACCESS DENIED, recorded once; 2026-10-29 profile values stand). A WebSearch excerpt (undated, unregistered, hypothesis-grade) says ASTS's 45-satellite target moved to early 2027 for lack of launch capacity and that ASTS may buy a launch provider; compare with the 10-K plan in fd_b_capacity, to be confirmed from a primary document.",
+  "mc RATES 10y UST 4.98% (FRED DGS10, 2026-10-29, pf_fred_dgs10); ERP 4.2% implied (Damodaran 2026-10-01, pf_erp_implied) kept from prefetch; no newer monthly update verified (not refetched).",
+  "mc GEOGRAPHY revenue by region is not disclosed: one operating segment; 10-K/10-Q give no revenue or long-lived assets by country. Revenue is products (gateway equipment/software to MNOs) and services mainly from U.S. government (directly or via primes) [pf_10k_20260302, pf_10q_20260810]. Gap.",
+  "mc EXPOSURE Israel operations: ~1% of consolidated total assets and ~5% of operating expenses in 6M 2026; 10-Q says not materially impacted by Middle East conflict [pf_10q_20260810, mc_f_israel_assets, mc_f_israel_opex]. Sized, small.",
+  "mc EXPOSURE Tariffs: 10-Q says tariffs on supply chain products from several jurisdictions had no material impact to date; future increase could raise capital costs of satellites. Unsized (hypothesis) [pf_10q_20260810].",
+  "mc EXPOSURE Spectrum/FCC: service depends on FCC authorizations (FCC authorization for 248-satellite network incl. low-band IMT frequencies) and on Ligado spectrum usage rights, whose $550M SpectrumCo Sound Point delayed-draw facility is conditioned on FCC approvals and Ligado bankruptcy events, availability until 2026-10-05 with 180-day extension option for 1% fee; no drawdown as of 10-Q [pf_10q_20260810]. Status after 10-Q not confirmed (gap; the extension election is not in the filings list).",
+  "mc EXPOSURE International ops/suppliers: engineering centers in India, Scotland, Spain, Israel; about 418 of 1,126 employees outside U.S.; international suppliers; launch dependence on third-party vehicles (10-K risk factors) [pf_10k_20260302]. Launch-vehicle share not sized here (gap for gather_field).",
+  "mc EXPOSURE Export controls/ITAR: not found in the 10-K risk-factor grep as a sized item; unsized hypothesis only.",
+  "mc NEWS 2026-10-20 8-K Item 5.02: new 3-year employment agreement with CFO/CLO Andrew Johnson (base >= $250k, RSUs eligible); routine, not a departure [mc_8k_20261020].",
+  "mc NEWS 2026-09-28 8-K Item 5.02: Senior Management Change of Control Severance Policy adopted 2026-09-25 [mc_8k_20260928].",
+  "mc NEWS no 8-K since 2026-08-10 other than the two Item 5.02 filings; 8-Ks of 2026-07-20 (Items 1.01, 2.03, 3.02, 8.01) predate the 10-Q and belong to gather_documents/numbers.",
+  "mc NEWS 2026-07-20 press lead (search excerpt, not confirmed at source): commercial D2D service launch reported moved to early 2027 from late 2026, and a BlueBird satellite lost on a Blue Origin launch in April 2026; company said revenue approaching $1B in 2027. Confirm against the 10-Q/call before use; treat as lead only [mc_press_20260720].",
+  "mc NEWS searches for October 2026 events returned nothing dated October; no export-rule, lawsuit or guidance-change item found. Q3 2026 results are not yet out as of 2026-11-01 (not checked at issuer IR).",
+  "nm AV RATELIMIT INCOME_STATEMENT 2026-10-29: 'standard API rate limit is 25 requests per day' (saved raw/av__income__ratelimit.json); not retried; BALANCE_SHEET, CASH_FLOW and EARNINGS_ESTIMATES not called (same daily quota). Second source for statements = the 10-K/10-Q text in reading/ (read directly) plus SEC companyfacts.",
+  "nm RECONCILIATION FY2025 (10-K pf_10k_20260302, statement of operations): revenue 70,918k = pf_revenue_fy2025 OK; net loss attributable to common -341,940k = pf_net_income_fy2025 OK (consolidated net loss before NCI -461,011k, NCI -119,071k: Up-C, see nm_net_loss_before_nci_fy2025); CFO -71,517k = pf_cfo_fy2025 OK; capex (purchase of PP&E) 1,064,741k = pf_capex_fy2025 OK; SBC 47,490k = pf_sbc_fy2025 OK; diluted wavg shares 255,982,592 = pf_shares_diluted_wavg_fy2025 OK (basic = diluted, losses); EPS -1.34.",
+  "nm RECONCILIATION DIFFERENCE operating income: the filing has no separate subtotal; revenue minus total operating expenses gives FY2025 -287,713k (70,918 - 358,631), consistent with pre-tax loss -457,113k less other expense -169,400k. pf_operating_income_fy2025 = -425,313k is WRONG (does not tie to any statement line); same for pf_operating_income_fy2024 -506,302k vs filing -242,762k (4,418 - 247,180) and pf_operating_income_q_2026_06_30 -275,206k vs filing -297,577k (31,520 - 329,097). Use nm_operating_income_* ; prefetch/forensic.json ROIC (NOPAT from the wrong operating income) is overstated in loss.",
+  "nm RECONCILIATION Q2 2026 (10-Q pf_10q_20260810): revenue 31,520k = pf OK (products 24,428k implied, services 7,092k); net loss attributable to common -230,909k = pf OK; SBC Q2 63,467k = pf (6M 118,820k - Q1 55,353k) OK; CFO Q2 -97,154k = 6M -145,212k - Q1 -48,058k OK; capex Q2 597,616k = 6M 859,215k - Q1 261,599k OK; diluted wavg shares Q2 299,061,662 (basic = diluted). Q2 operating expenses include a one-off 125,911k loss on involuntary conversion (BB7 satellite write-off net of insurance recoveries); H1 2026 also 88,654k induced conversion expense on convertible note repurchases (other expense). Excluding the BB7 write-off Q2 operating loss is -171,666k.",
+  "nm RECONCILIATION FY2024 revenue: FY2025 10-K presents FY2024 total revenues 4,418k; companyfacts 'Revenues' FY2024 (filed 2025-03-03) 4,400k (pf_revenue_fy2024): 18k rounding/presentation difference, immaterial. companyfacts RevenueFromContractWithCustomer FY2024 13,825k is a different tag (not used).",
+  "nm BALANCE SHEET CHECK pf_short_term_investments_fy2025 = 2,000,000k does not appear as a line in the 10-K/10-Q balance sheets (cash and cash equivalents 2,335,683k at 2025-12-31; no short-term investments line): treat as a mis-mapped tag, do NOT add to cash. Restricted cash 2026-06-30: current 6,181k, non-current 428,400k (not spendable liquidity). Contract liabilities (MNO/government prepayments) 2026-06-30: current 14,840k, non-current 252,093k.",
+  "nm ROIC CHECK: forensic.json roic_last -26.6% uses NOPAT from pf operating income -425.3M; with the filing's -287.7M (x0.79 = -227.3M) and the same invested capital 2,264.2M (equity 2,392.3M incl. NCI + LT debt 2,207.6M - cash 2,335.7M) ROIC FY2025 is about -10.0%. Invested capital should exclude nothing for restricted cash (443.4M non-current at 2025-12-31 is not cash and was not subtracted; correct). ROIC is not meaningful for a pre-service constellation build (PP&E under construction; satellites not yet in commercial service).",
+  "nm SHARE COUNT 2026-06-30 (10-Q cover/balance sheet): Class A 299,731,073; Class B 11,215,111; Class C 78,163,078 (B and C are voting-only; economic interest via AST LLC units exchangeable 1:1 into Class A). Economic share base ~389.1M before convertibles, warrants and awards (capital_bridge needed). Market cap at 41.12: Class A only ~12.3B USD; all economic units ~16.0B USD.",
+  "nm OWN MULTIPLE HISTORY P/E not meaningful: GAAP diluted EPS negative every year FY2021-FY2025 (FY2025 -1.34, H1 2026 -1.43) and consensus EPS negative for FY2026 and FY2027 (trailing and forward P/E undefined). Substitute, price-to-sales on all economic units: now ~139x TTM revenue 115.3M (16.0B / 115.3M); at 2025-12 month-end ~384x FY2025 revenue (72.63 x 374.84M units = 27.2B / 70.9M); earlier years revenue ~0 (not meaningful). years 2025-2026 sources nm_ib_history nm_ib_snapshot nm_revenue_ttm_q_2026_06_30 pf_revenue_fy2025.",
+  "nm CONSENSUS (expectation, not fact): FY2026 revenue 167.2M (n 12, 151.0-186.0M; StockAnalysis/S&P Global updated 2026-10-23; Yahoo identical), inside company guidance 150-200M. FY2027 revenue 609.1M (n 12, 345.1-911.0M, Yahoo read 2026-10-29: very wide dispersion). EPS FY2026 -2.03 (SA, n 12) vs -2.29 (Yahoo, n 8); FY2027 -1.28 (n 9, -1.99 to +0.65). Revisions: FY2027 EPS cut from -0.69 (90 days ago) to -1.28; FY2026 from -1.39 to -2.29 (after Q2 BB7 write-off and Q2 miss). Quarterly revenue: Q3 2026 46.0M, Q4 2026 71.15M.",
+  "nm OPINION price targets (StockAnalysis, S&P Global poll, 2026-10-23): average 74.68, median 78, low 42.5, high 108, n 13, rating Hold. Opinion only, never a fact or a driver.",
+  "nm TRACK RECORD revenue: only one guided period with a numeric range: H2 2025 guided 50.0-75.0M (release 2025-08-11, reiterated 2025-11-10), delivered 69.0M (Q3 14.7M + Q4 54.3M): ratio 1.10 vs midpoint, 1 beat, 0 misses, n=1 (too few to call a pattern). FY2026 guidance 150-200M (first stated by 2026-03-02/05-11 releases, reiterated 2026-08-10) is outstanding; H1 2026 delivered 46.3M (23-31% of the range) with consensus needing ~117M in H2. Q1 2026 revenue 14.7M was far below then-consensus (press).",
+  "nm PRICE refreshed 2026-11-01: last 40.94 USD at 2026-10-30T23:58:51Z (IBKR REALTIME, not a close; 2026-10-30 was the last session before as_of); Oct-2026 monthly bar close 40.97, month low 36.72, high 64.75 (Sept close 58.86: -30% in October). 52-week high 133.86. Month-end closes: 2021-12 7.94, 2022-12 4.82, 2023-12 6.03, 2024-12 21.10, 2025-12 72.63, 2026-05 113.41 (peak), 2026-09 58.86. No splits or corporate actions in 5 years (nm_ib_snapshot, nm_ib_history).",
+  "nm AV RATELIMIT 2026-11-01: INCOME_STATEMENT again 'standard API rate limit is 25 requests per day' (raw/av__income__ratelimit__2026-11-01.json), not retried; BALANCE_SHEET, CASH_FLOW, EARNINGS_ESTIMATES not called. Second source for statements = 10-K/10-Q text.",
+  "nm CASH RECONCILIATION (defect of 2026-10-29 run): 10-Q balance sheet 2026-06-30 has ONE cash line, 'Cash and cash equivalents' 2,288,253k (money-market funds included), plus restricted cash 6,181k current and 428,400k non-current; NO marketable securities or short-term investments line (10-K 2025-12-31: cash 2,335,683k, restricted 877k + 443,400k). Spendable liquidity = 2,288.3M; restricted 434.6M is separate (total cash+restricted 2.7B per 10-Q liquidity text). Do not add short-term investments (pf_short_term_investments_fy2025 2,000,000k is a mis-mapped tag) nor restricted cash to cash.",
+  "nm OPERATING INCOME RECONCILIATION (defect of 2026-10-29 run): FY2025 10-K statement of operations: total revenues 70,918k - total operating expenses 358,631k = -287,713k (nm_operating_income_fy2025); FY2024 4,418k - 247,180k = -242,762k; Q2 2026 31,520k - 329,097k = -297,577k (includes 125,911k loss on involuntary conversion). Prefetch pf_operating_income_* values (-425,313k FY2025) do not tie to any line: use nm_ facts.",
+  "nm CONSENSUS re-check 2026-11-01: StockAnalysis page (S&P Global) last updated 2026-10-26, FY2026 revenue avg 167.2M (n 12, 151.0-186.0M), EPS -2.03 (n 12, -2.49 to -1.42; page says non-GAAP adjusted basis), targets avg 74.68 median 78 low 42.5 high 108 (n 13): unchanged. Yahoo (read 2026-10-29, now citable under LAG_DAYS 2) supplies FY2027: revenue 609.1M, EPS -1.28; basis (GAAP vs adjusted) not shown.",
+  "nm Q3 2026 results not released as of 2026-11-01 (no new Item 2.02 8-K after 2026-08-10 in prefetch filings; reuse.new_filings_since empty); prior-year Q3 release was 2025-11-10, so expected about 2026-11-10: no results-day lag issue.",
+  "rf: no new retrieval; filing values already read by gather_numbers (nm_operating_income_*, nm_cash_q_2026_06_30) re-entered as FactBook rows so the engine's own companyfacts-derived values (EBIT proxy; ShortTermInvestments tag that is the money-market part of cash equivalents) are overridden through dataqa use_source resolutions citing the 10-K/10-Q. Short-term investments are 0: the balance sheet has one line, cash and cash equivalents (money-market funds included).",
+  "uc CONSENSUS (expectation, not fact): TIKR (2026-09-30) rounded means ~650M FY2027, ~1.7B FY2028, ~3.4B FY2030, no n or range; consistent with Yahoo FY2027 609.1M (n 12, 345-911M, nm_cons_rev_fy2027_yh).",
+  "uc DEPLOYMENT 2026-08-10..2026-11-01: one web search (2026-11-01) found no confirmed BlueBird launch after the 2026-08-10 count of 13; an October launch was only speculated (uc_advtv_20260831, search excerpt). The preferred heavy launcher New Glenn was lost on 2026-05-28 per the same excerpt.",
+  "uc DATA CHECK (10-K p. balance sheet and liquidity note; 10-Q 2026-06-30 note): cash, cash equivalents and restricted cash were 2.78B at 2025-12-31 (444.3M restricted), of which 2.0B money-market funds classified AS cash equivalents, so pf_short_term_investments_fy2025 (2.0B) is inside pf_cash_fy2025 (2,335.7M unrestricted) and must not be added again. At 2026-06-30: unrestricted cash and equivalents 2,288.3M (nm_cash_q_2026_06_30; ~2.3B are money-market cash equivalents), restricted 434.6M (428.4M is collateral for the 420M UBS loan); no marketable securities line.",
+  "uc DATA CHECK (10-K income statement): FY2025 total revenues 70,918k less total operating expenses 358,631k = operating loss 287,713k (nm_operating_income_fy2025). pf_operating_income_fy2025 (-425.3M) is wrong: it does not tie to the statement (it mixes non-operating items such as the 68.2M warrant loss and other expense); quarterly pf operating income for Q3 2025 (-157.8M) likewise does not tie to dc_opex_q3_2025 (94.4M opex on 14.7M revenue)."
+ ],
+ "potential": {
+  "market_direction": {
+   "reading": "The direct-to-device market is growing, but its size is very uncertain. Omdia (2026-03-02) projects about $12bn of smartphone D2D service revenue and 411m monthly users by 2030 and expects cellular-standard devices (Starlink D2C, AST SpaceMobile) to be over 95% of D2D users. The leading competitor's filings confirm paid demand: SpaceX's Enterprise & Government revenue, which includes Starlink Mobile, was $5.04bn in 9M 2026 (+70%). ASTS has signed 60+ MNOs covering 3bn+ subscribers (commitments, not paid usage), and AT&T, T-Mobile and Verizon formed a D2D joint venture on 2026-10-02. Other studies seen only as undated excerpts range from $2.6bn to $28bn, so market size is a warning row, not a driver.",
+   "evidence_ids": [
+    "fd_omdia_d2d_2030",
+    "fd_10q_spcx_20260930",
+    "dc_kpi_mno",
+    "dc_kpi_mno_subs",
+    "fd_satnews_jv"
+   ]
+  },
+  "bottleneck_potential": {
+   "reading": "ASTS can become a capacity bottleneck only once it has satellites in orbit. Its large-array BlueBirds deliver broadband to unmodified phones over MNO spectrum, but supply today is 13 satellites (2026-08-10) against guidance of about 45 in early 2027 (slipped from 45-60 by end-2026) and about 90 for the funded Block 2 build. Capacity is gated by launch access and build rate (up to 6 satellites a month of assembly capacity; 10 launches booked with two providers), not by demand. SpaceX adds D2D capacity faster with its own rockets and its own EchoStar AWS-4/H-block spectrum (FCC approved 2026-05-12), so any scarcity value for ASTS is limited to MNOs that want a second supplier (AT&T, Verizon, Vodafone via SatCo).",
+   "evidence_ids": [
+    "dc_kpi_sats_orbit",
+    "dc_g_sats_end2026_mar",
+    "dc_g_sats_early2027",
+    "dc_kpi_prod_cap",
+    "dc_kpi_launches_booked",
+    "pf_10q_20260810",
+    "fd_10q_spcx_20260930"
+   ]
+  },
+  "share_trajectory": {
+   "reading": "On numbers, SpaceX (SPCX) is taking the D2D share now: its Enterprise & Government revenue including Starlink Mobile was $5.04bn in 9M 2026 (+70%; Q3 +91%) and T-Mobile's service is live. ASTS has recognized no SpaceMobile service revenue; its H1 2026 revenue of $46.2m is $37.8m gateway products (near cost) plus $8.4m mostly U.S. Government services. Legacy MSS names grow slowly: Iridium (IRDM) +4.8% in 9M 2026 with operating margin down to 16.9% from 27.4%, Globalstar (GSAT) +6.0% in H1 2026, Viasat/Inmarsat (VSAT) -1.2% in its June 2026 quarter. None shows a loss to ASTS yet because ASTS is not in service; ASTS's share is a future question decided by deployment.",
+   "evidence_ids": [
+    "fd_10q_spcx_20260930",
+    "pf_10q_20260810",
+    "dc_rev_h1_2026",
+    "dc_seg_products_h1_2026",
+    "dc_seg_services_h1_2026",
+    "pf_peer_IRDM",
+    "pf_peer_GSAT",
+    "pf_peer_VSAT"
+   ]
+  },
+  "competitive_position": {
+   "reading": "Against SpaceX (SPCX) ASTS is weaker on everything that exists today: satellites in orbit (13 vs over 11,000 Starlink), launch (none owned vs owned), spectrum (MNO leases plus pending Ligado L-band, $520m paid and refundable only if approvals fail, vs owned EchoStar AWS-4/H-block) and paid service (zero vs live). It is stronger on carrier contracts outside T-Mobile (AT&T, Verizon, Vodafone/SatCo) and on claimed broadband per beam from its large arrays (Block 1 demonstrated broadband to unmodified phones). Against Iridium, Globalstar and Viasat/Inmarsat, ASTS targets broadband to ordinary phones versus their low-data messaging and voice, but it has no service revenue base yet.",
+   "evidence_ids": [
+    "dc_kpi_sats_orbit",
+    "fd_10q_spcx_20260930",
+    "dc_ligado_paid",
+    "pf_10k_20260302",
+    "pf_10q_20260810",
+    "pf_peer_IRDM",
+    "pf_peer_GSAT",
+    "pf_peer_VSAT"
+   ]
+  },
+  "threats": {
+   "reading": "1) Substitution by SpaceX Starlink D2C, which owns launch and now its own mobile spectrum. 2) Channel power: the AT&T/T-Mobile/Verizon D2D joint venture (2026-10-02) could standardize wholesale terms and compress ASTS's undisclosed revenue share. 3) Launch dependence: BB7 was lost at launch (Q2 2026 write-off $125.9m) and deployment guidance slipped twice to about 45 satellites in early 2027. 4) Regulation: Ligado L-band rights ($520m paid) and SCS licences granted only in part. 5) Funding and dilution: about $3.70bn of convertibles (incl. $1.15bn 2034 notes issued July 2026), H1 2026 capex $859m, and diluted shares up from 81.8m (FY2023) to 299.1m (Q2 2026).",
+   "evidence_ids": [
+    "fd_10q_spcx_20260930",
+    "fd_satnews_jv",
+    "dc_bb7_loss_q2_2026",
+    "dc_g_sats_early2027",
+    "dc_ligado_paid",
+    "dc_cv_2034_1625",
+    "dc_cv_2036_200",
+    "dc_cv_2036_225",
+    "dc_capex_h1_2026",
+    "pf_shares_diluted_wavg_fy2023",
+    "nm_shares_diluted_wavg_q_2026_06_30"
+   ]
+  }
+ },
+ "scenario_events": {
+  "bear": [
+   {
+    "event_he": "השיגורים מתעכבים שוב: ב-10 באוגוסט היו 13 לוויינים במסלול, ועד סוף אוקטובר לא אושר שיגור נוסף. היעד של כ-45 לוויינים כבר נדחה פעמיים, ומשגר New Glenn המועדף התפוצץ במאי 2026.",
+    "evidence_ids": [
+     "dc_kpi_sats_orbit",
+     "dc_g_sats_end2026_mar",
+     "dc_g_sats_early2027",
+     "uc_advtv_20260831"
+    ]
+   },
+   {
+    "event_he": "שריפת המזומנים נמשכת (תזרים חופשי של כ-695 מיליון דולר שלילי ברבעון השני לבד) והחברה מגייסת עוד אג\"ח להמרה או מניות, כמו שעשתה ב-2025-2026: מספר המניות הכלכליות כבר עלה מכ-256 מיליון ל-389 מיליון.",
+    "evidence_ids": [
+     "pf_cfo_q_2026_06_30",
+     "pf_capex_q_2026_06_30",
+     "dc_cv_2034_1625",
+     "pf_shares_diluted_wavg_fy2025",
+     "dc_shares_econ_20260806"
+    ]
+   },
+   {
+    "event_he": "שלוש חברות הסלולר הגדולות בארה\"ב הקימו מיזם משותף לשירות לוויני ישיר לטלפון, ו-Starlink מחזיקה ספקטרום משלה: זה מחליש את כוח המיקוח של ASTS על חלוקת ההכנסות.",
+    "evidence_ids": [
+     "fd_satnews_jv",
+     "fd_10q_spcx_20260930"
+    ]
+   },
+   {
+    "event_he": "אישורי הרגולציה לעסקת Ligado לא מתקבלים או מתעכבים בגלל התביעה מול Inmarsat, ו-520 מיליון הדולר ששולמו חוזרים רק דרך הערבות.",
+    "evidence_ids": [
+     "dc_ligado_paid",
+     "pf_10q_20260810"
+    ]
+   }
+  ],
+  "base": [
+   {
+    "event_he": "החברה עומדת בתחזית ההכנסות ל-2026 (150-200 מיליון דולר), בעיקר ממכירת תחנות קרקע וחוזי ממשלת ארה\"ב.",
+    "evidence_ids": [
+     "dc_g_rev_fy2026",
+     "dc_rev_h1_2026",
+     "dc_kpi_usg_awards",
+     "dc_kpi_gateways_pipeline"
+    ]
+   },
+   {
+    "event_he": "כ-45 לוויינים מגיעים למסלול באמצע 2027, רבעון או שניים אחרי היעד, כי היעד כבר נדחה פעמיים; מפעל ההרכבה יכול לייצר עד 6 לוויינים בחודש ו-10 שיגורים כבר הוזמנו.",
+    "evidence_ids": [
+     "dc_g_sats_early2027",
+     "dc_g_sats_end2026_may",
+     "dc_kpi_prod_cap",
+     "dc_kpi_launches_booked"
+    ]
+   },
+   {
+    "event_he": "השירות המסחרי מתחיל במהלך 2027 ומתחילות הכנסות מחלוקת הכנסות עם חברות הסלולר; רוב צבר החוזים (1.2 מיליארד דולר) מוכר רק אחרי ההפעלה.",
+    "evidence_ids": [
+     "dc_rpo_20260630",
+     "dc_kpi_mno",
+     "dc_contract_liab_20260630"
+    ]
+   }
+  ],
+  "bull": [
+   {
+    "event_he": "45 לוויינים ומעלה במסלול עד תחילת 2027 כמו בהנחיה האחרונה, והשירות המסחרי בארה\"ב מתחיל בזמן.",
+    "evidence_ids": [
+     "dc_g_sats_early2027",
+     "dc_kpi_microns",
+     "dc_kpi_prod_cap"
+    ]
+   },
+   {
+    "event_he": "ההכנסות מגיעות לכ-650 מיליון דולר ב-2027 ולכ-1.7 מיליארד ב-2028, בהתאם לממוצע תחזיות האנליסטים.",
+    "evidence_ids": [
+     "nm_cons_rev_fy2027_yh",
+     "uc_cons_rev_fy2027_tikr",
+     "uc_cons_rev_fy2028_tikr"
+    ]
+   },
+   {
+    "event_he": "יותר מ-60 שותפות סלולר (כ-3 מיליארד מנויים) הופכות למנויים משלמים בהיקף רחב, ושוק השירות הלוויני הישיר לטלפון מתקרב ל-12 מיליארד דולר ב-2030.",
+    "evidence_ids": [
+     "dc_kpi_mno",
+     "dc_kpi_mno_subs",
+     "fd_omdia_d2d_2030"
+    ]
+   }
+  ]
+ },
+ "drivers": {
+  "current_year_revenue": {
+   "source_tier": "guidance",
+   "evidence_ids": [
+    "dc_g_rev_fy2026",
+    "pf_rel_20260810_1"
+   ],
+   "adjust_by_track_record": false,
+   "reason": "FY2026 revenue guidance 150-200M, given 2026-03-02 and reaffirmed 2026-05-11 and 2026-08-10 (midpoint 175M). There is no separate Q4 or H2 revenue guide, so no remainder item. H1 delivered 46.2M, so H2 must bring 104-154M; attributed consensus 167.2M (n 12; Q3 46M + Q4 71M) is a cross-check. The revenue track record is a single period (H2 2025, ratio 1.10), too thin to adjust by."
+  },
+  "growth": {
+   "period": "FY2027",
+   "bear": [
+    0.5,
+    0.8,
+    0.5,
+    0.3,
+    0.15
+   ],
+   "base": [
+    1.5,
+    1.4,
+    0.6,
+    0.35,
+    0.2
+   ],
+   "bull": [
+    2.71,
+    1.62,
+    0.41,
+    0.41,
+    0.25
+   ],
+   "source_tier": {
+    "bear": "contracted",
+    "base": "consensus",
+    "bull": "consensus"
+   },
+   "evidence_ids": [
+    "nm_cons_rev_fy2027_yh",
+    "uc_cons_rev_fy2027_tikr",
+    "uc_cons_rev_fy2028_tikr",
+    "uc_cons_rev_fy2030_tikr",
+    "dc_rpo_20260630",
+    "dc_g_sats_early2027",
+    "dc_g_sats_end2026_may",
+    "dc_g_sats_end2026_mar",
+    "dc_kpi_sats_orbit",
+    "dc_rev_h1_2026",
+    "dc_kpi_usg_awards",
+    "dc_kpi_gateways_pipeline",
+    "pf_10q_20260810"
+   ],
+   "reason": "Growth over the FY2026 base of ~175M. Bull = attributed consensus: Yahoo FY2027 609.1M (n 12, 345-911M) and TIKR ~650M FY2027, ~1.7B FY2028, ~3.4B FY2030; the bull list follows those points (650M, ~1.70B, ~2.40B, ~3.38B, then +25%). It needs ~45 satellites in early 2027 and service starting on time. Base = the same consensus curve shifted about one year (FY2027 ~440M, FY2028 ~1.05B, FY2029 ~1.68B, FY2030 ~2.27B), because ASTS's own deployment guide slipped twice, 13 satellites were in orbit at the last filing with no launch confirmed since, and only 6.6% of the 1.2B RPO is expected within 12 months of 2026-06-30. Bear = contracted and current business only: gateways (~50 in the pipeline) and U.S. Government awards (125M+ new in Q2) near the implied H2 2026 run rate, with service pushed into 2028 (FY2027 ~260M).",
+   "deviation": "Base FY2027 +150% (~440M) is inside the Yahoo consensus range (345-911M) but below its mean (609M): consensus assumes deployment on the current guide, which the company has moved twice, and the RPO timing (6.6% within 12 months) does not support a 600M+ year. The base is a one-year shift of the consensus curve, not a new estimate."
+  },
+  "mature_margin": {
+   "bear": 0.17,
+   "base": 0.27,
+   "bull": 0.274,
+   "source_tier": "competitor",
+   "competitors": [
+    "IRDM"
+   ],
+   "evidence_ids": [
+    "pf_peer_IRDM",
+    "pf_10k_20260302"
+   ],
+   "reason": "ASTS has no operating margin at scale (pre-service). The closest named competitor with a built LEO constellation selling satellite service is Iridium (IRDM, named in the 10-K). Base: its GAAP operating margin after depreciation and SBC, 27.1% in FY2025. Bear: 16.9% in 9M 2026, a squeeze under price competition (Starlink direct-to-cell) and carrier buying power (the AT&T/T-Mobile/Verizon JV). Bull: 27.4% in 9M 2025, Iridium's best recent level; ASTS's wholesale revenue share avoids retail distribution cost but pays the MNO its share, so no premium above Iridium is assumed."
+  },
+  "sales_to_capital": {
+   "bear": 0.5,
+   "base": 1.0,
+   "bull": 1.5,
+   "source_tier": "guidance",
+   "evidence_ids": [
+    "dc_g_sat_cost",
+    "dc_kpi_sats_orbit",
+    "nm_ppe_net_q_2026_06_30",
+    "dc_capex_h1_2026",
+    "dc_g_capex_q3_2026",
+    "dc_commitments_20260630"
+   ],
+   "reason": "Management guides 21-23M of capital per Block 2 satellite for a constellation of over 90. With 13 in orbit, the remaining ~77 cost ~1.7B on top of 2.07B of PP&E already built (purchase commitments 775-795M). Base: the base revenue step from ~175M (FY2026) to ~2.7B (FY2031) on ~1.7B of guided build plus gateways and replacements gives ~1.0-1.5; 1.0 is taken because cost guides have been exceeded before (opex) and one satellite was lost. Bear 0.5: half the revenue on the same build plus overruns and replacements. Bull 1.5: the consensus revenue path on the guided build cost."
+  }
+ },
+ "company_path": {
+  "metric": "eps",
+  "multiple": "forward_pe",
+  "scenarios": {
+   "bear": {
+    "multiple_from": "economics",
+    "roic": 0.04,
+    "justification": "unproven",
+    "reason_he": "בתרחיש הדובי ההכנסות ב-2031 הן כ-0.9 מיליארד דולר על הון של כ-4.3 מיליארד (רכוש קבוע 2.07 מיליארד, עוד כ-1.7 מיליארד ללוויינים לפי 21-23 מיליון ללוויין, ו-520 מיליון לליגדו), והרווחיות התפעולית כמו של Iridium ב-2026 (17%). זה נותן תשואה של כ-4% על ההון אחרי מס, מתחת לעלות ההון: הצמיחה לא יוצרת ערך, ולכן המכפיל נמוך.",
+    "source_tier": "competitor",
+    "competitors": [
+     "IRDM"
+    ],
+    "evidence_ids": [
+     "pf_peer_IRDM",
+     "dc_g_sat_cost",
+     "nm_ppe_net_q_2026_06_30",
+     "dc_ligado_paid"
+    ]
+   },
+   "base": {
+    "multiple_from": "economics",
+    "roic": 0.14,
+    "justification": "unproven",
+    "reason_he": "בתרחיש הבסיסי ההכנסות ב-2031 הן כ-2.7 מיליארד דולר על כל ההון שהחברה צריכה (כ-4.3 מיליארד: מה שכבר נבנה, שאר הלוויינים לפי ההנחיה וליגדו), כלומר כ-0.6 דולר הכנסה לכל דולר הון. ברווחיות של Iridium (27%) ואחרי מס זו תשואה של כ-13-14% על ההון: מעל עלות ההון, אבל ל-AST אין עדיין שנה אחת של תשואה חיובית (כל השנים בין 27%- ל-179%-), ו-Iridium היא רשת ותיקה שכבר הופחתה.",
+    "source_tier": "competitor",
+    "competitors": [
+     "IRDM"
+    ],
+    "evidence_ids": [
+     "pf_peer_IRDM",
+     "dc_g_sat_cost",
+     "nm_ppe_net_q_2026_06_30",
+     "dc_ligado_paid",
+     "nm_cons_rev_fy2027_yh"
+    ]
+   },
+   "bull": {
+    "multiple_from": "economics",
+    "roic": 0.25,
+    "justification": "unproven",
+    "reason_he": "בתרחיש השורי ההכנסות מגיעות לציפיות האנליסטים על אותה עלות בנייה שההנהלה הנחתה (21-23 מיליון ללוויין), כך שכל דולר הון נוסף מביא כדולר וחצי הכנסה, והרווחיות כמו של Iridium בשיאה (27.4%). זו תשואה של כ-25% על ההון החדש: גבוהה, כי AST מוכרת בסיטונאות דרך חברות הסלולר בלי הוצאות שיווק ללקוחות, אבל אף חלק ממנה עוד לא נראה בדוחות.",
+    "source_tier": "competitor",
+    "competitors": [
+     "IRDM"
+    ],
+    "evidence_ids": [
+     "pf_peer_IRDM",
+     "dc_g_sat_cost",
+     "nm_ppe_net_q_2026_06_30",
+     "nm_cons_rev_fy2027_yh"
+    ]
+   }
+  }
+ },
+ "key_risk": {
+  "reading_he": "החברה עדיין לא מכרה שירות בכלל. כל הערך תלוי בשיגור של כ-45 לוויינים (באוגוסט היו 13, ומאז לא אושר שיגור), אבל היעד נדחה כבר פעמיים, לוויין אחד אבד, והשיגורים תלויים בעיקר ב-SpaceX, שהיא גם המתחרה העיקרית. הבנייה ממומנת באג\"ח להמרה (כ-3.7 מיליארד דולר), וכל עיכוב מאריך את שריפת המזומנים ועלול לחייב עוד גיוס שמדלל את בעלי המניות.",
+  "evidence_ids": [
+   "dc_kpi_sats_orbit",
+   "dc_g_sats_early2027",
+   "dc_g_sats_end2026_mar",
+   "dc_bb7_loss_q2_2026",
+   "fd_10q_spcx_20260930",
+   "dc_cv_2034_1625",
+   "dc_cv_2036_200",
+   "dc_cv_2036_225",
+   "dc_shares_econ_20260806"
+  ]
+ },
+ "falsifiers": [
+  {
+   "id": "fx_rev_fy2026",
+   "scenario": "base",
+   "metric": "FY2026 revenue (USD)",
+   "threshold": 150000000,
+   "direction": "below",
+   "by": "2027-03-15",
+   "evidence_ids": [
+    "dc_g_rev_fy2026"
+   ]
+  },
+  {
+   "id": "fx_sats_mid2027",
+   "scenario": "base",
+   "metric": "BlueBird satellites in orbit (company count) at 2027-06-30",
+   "threshold": 30,
+   "direction": "below",
+   "by": "2027-08-15",
+   "evidence_ids": [
+    "dc_g_sats_early2027",
+    "dc_kpi_sats_orbit"
+   ]
+  },
+  {
+   "id": "fx_sats_q1_2027_bull",
+   "scenario": "bull",
+   "metric": "BlueBird satellites in orbit (company count) at 2027-03-31",
+   "threshold": 40,
+   "direction": "below",
+   "by": "2027-05-15",
+   "evidence_ids": [
+    "dc_g_sats_early2027",
+    "dc_kpi_prod_cap"
+   ]
+  },
+  {
+   "id": "fx_rev_fy2027_bull",
+   "scenario": "bull",
+   "metric": "FY2027 revenue (USD)",
+   "threshold": 500000000,
+   "direction": "below",
+   "by": "2028-03-15",
+   "evidence_ids": [
+    "nm_cons_rev_fy2027_yh",
+    "dc_rpo_20260630"
+   ]
+  },
+  {
+   "id": "fx_rev_fy2027_bear",
+   "scenario": "bear",
+   "metric": "FY2027 revenue (USD)",
+   "threshold": 450000000,
+   "direction": "above",
+   "by": "2028-03-15",
+   "evidence_ids": [
+    "dc_rpo_20260630",
+    "dc_rev_h1_2026"
+   ]
+  }
+ ],
+ "assessments": {
+  "moat": {
+   "assessment": "unknown",
+   "evidence_ids": [
+    "pf_10q_20260810",
+    "dc_kpi_mno",
+    "fd_10q_spcx_20260930"
+   ],
+   "note": "Against SpaceX: contracts with 60+ MNOs and leased spectrum exist, but there is no service revenue or return on capital to show a moat; SpaceX competes directly with its own spectrum and launch."
+  },
+  "pricing_power": {
+   "assessment": "unknown",
+   "evidence_ids": [
+    "pf_10k_20260302",
+    "fd_satnews_jv"
+   ],
+   "note": "Revenue share with MNOs is not disclosed; the carriers' joint venture (2026-10-02) strengthens the buyers' side. Gateway products sell near cost (Q2 2026 products revenue $24.4m vs cost $22.4m)."
+  },
+  "customer_concentration": {
+   "assessment": "weak",
+   "evidence_ids": [
+    "dc_kpi_gateways_delivered",
+    "dc_seg_products_h1_2026",
+    "dc_seg_services_h1_2026"
+   ],
+   "note": "All H1 2026 revenue came from gateway sales to a handful of MNOs (13 gateways to 7 customers) and U.S. Government milestones; per-customer percentages were not located this run (gap)."
+  },
+  "market_size": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "fd_omdia_d2d_2030",
+    "fd_10q_spcx_20260930"
+   ],
+   "note": "One attributed study (Omdia ~$12bn by 2030) plus SpaceX's fast-growing E&G segment show a real paid market; size is highly uncertain (other excerpts $2.6-28bn)."
+  },
+  "competition": {
+   "assessment": "weak",
+   "evidence_ids": [
+    "fd_10q_spcx_20260930",
+    "fd_satnews_jv",
+    "dc_kpi_sats_orbit"
+   ],
+   "note": "SpaceX Starlink D2C is ahead commercially (T-Mobile live), owns launch and spectrum; carriers formed a joint D2D venture that negotiates collectively."
+  },
+  "capital_allocation": {
+   "assessment": "weak",
+   "evidence_ids": [
+    "nm_shares_diluted_wavg_q_2026_06_30",
+    "pf_shares_diluted_wavg_fy2023",
+    "dc_induced_conv_h1_2026",
+    "dc_sbc_h1_2026",
+    "dc_cash_20260630",
+    "dc_restricted_20260630"
+   ],
+   "note": "Diluted shares rose about 3.7x since FY2023; $89.8m induced conversion expense and $118.8m SBC in H1 2026 (SBC 2.6x revenue); no buybacks. Cash and restricted cash $2.7bn at 2026-06-30 includes $434.6m restricted (not spendable); the July 2026 $1.15bn notes add to it. Management says the ~90-satellite build is fully funded."
+  },
+  "management": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "dc_g_rev_h2_2025",
+    "nm_revenue_h2_2025",
+    "dc_g_sats_end2026_mar",
+    "dc_g_sats_early2027",
+    "dc_g_adjopex_avg_fy2026_orig",
+    "dc_g_adjopex_avg_fy2026"
+   ],
+   "note": "Revenue guidance met once (H2 2025 $69.0m vs $50-75m), but deployment slipped twice (45-60 by end-2026 to ~45 in early 2027) and opex guidance was raised from $70-80m to about $100m a quarter."
+  },
+  "governance": {
+   "assessment": "weak",
+   "evidence_ids": [
+    "dc_shares_c_20260806",
+    "mc_8k_20260928"
+   ],
+   "note": "The CEO controls the vote through 78.2m Class C super-voting shares; a senior-management change-of-control severance policy was adopted (8-K 2026-09-28)."
+  },
+  "regulation": {
+   "assessment": "unknown",
+   "evidence_ids": [
+    "dc_ligado_paid",
+    "pf_10k_20260302",
+    "pf_10q_20260810"
+   ],
+   "note": "SCS licences granted in part / deferred in part; Ligado L-band approvals pending ($520m paid, refundable only if they fail); Sound Point facility status after 2026-08-10 unconfirmed."
+  },
+  "technology_ai": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "pf_10k_20260302",
+    "pf_rel_20260810_1"
+   ],
+   "note": "Block 1 demonstrated broadband to unmodified phones; not yet proven at commercial load or at Block 2 scale."
+  },
+  "geopolitics": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "mc_f_israel_assets",
+    "mc_f_israel_opex",
+    "pf_10q_20260810"
+   ],
+   "note": "Israel operations are ~1% of assets and ~5% of opex (6M 2026), not materially affected per the 10-Q; tariff exposure on satellite parts is unsized."
+  }
+ },
+ "forecast_options": {
+  "cyclical": {
+   "treatment": "structural",
+   "reason": "Not a demand cycle: a network build stepping from no service to service. Today one-time gateway and government milestone revenue; later contracted MNO revenue share that starts when coverage begins (RPO 1.2B, mostly after activation). The risks are execution (satellites, launches, spectrum), adoption and funding, carried in the scenarios.",
+   "evidence_ids": [
+    "pf_10k_20260302",
+    "dc_rpo_20260630",
+    "dc_g_sats_early2027",
+    "dc_seg_services_q2_2026"
+   ]
+  },
+  "financing": "assumed"
+ },
+ "dataqa_resolutions": [
+  {
+   "field": "cash_and_liquid_investments",
+   "metric": "short_term_investments",
+   "period_end": "2026-06-30",
+   "resolution": "use_source",
+   "source_id": "pf_10q_20260810",
+   "reason": "The filing's balance sheet has one line, cash and cash equivalents; its fair-value note puts the money-market funds (~2.0B at 2025-12-31, ~2.3B at 2026-06-30) INSIDE cash equivalents. companyfacts' ShortTermInvestments tag is that same money-market amount, so adding it to cash double counts it: short-term investments are 0.",
+   "evidence_ids": [
+    "pf_10q_20260810",
+    "rf_sti_q_2026_06_30"
+   ]
+  },
+  {
+   "field": "cash_and_liquid_investments",
+   "metric": "short_term_investments",
+   "period_end": "2026-03-31",
+   "resolution": "use_source",
+   "source_id": "pf_10q_20260511",
+   "reason": "The filing's balance sheet has one line, cash and cash equivalents; its fair-value note puts the money-market funds (~2.0B at 2025-12-31, ~2.3B at 2026-06-30) INSIDE cash equivalents. companyfacts' ShortTermInvestments tag is that same money-market amount, so adding it to cash double counts it: short-term investments are 0.",
+   "evidence_ids": [
+    "pf_10q_20260511",
+    "rf_sti_q_2026_03_31"
+   ]
+  },
+  {
+   "field": "cash_and_liquid_investments",
+   "metric": "short_term_investments",
+   "period_end": "2025-12-31",
+   "resolution": "use_source",
+   "source_id": "pf_10k_20260302",
+   "reason": "The filing's balance sheet has one line, cash and cash equivalents; its fair-value note puts the money-market funds (~2.0B at 2025-12-31, ~2.3B at 2026-06-30) INSIDE cash equivalents. companyfacts' ShortTermInvestments tag is that same money-market amount, so adding it to cash double counts it: short-term investments are 0.",
+   "evidence_ids": [
+    "pf_10k_20260302",
+    "rf_sti_fy2025"
+   ]
+  },
+  {
+   "field": "operating_income_ttm",
+   "metric": "operating_income",
+   "period_end": "2026-06-30",
+   "resolution": "use_source",
+   "source_id": "pf_10q_20260810",
+   "reason": "Statement of operations: Q2 2026 revenue 31,520k less total operating expenses 329,097k = -297,577k (incl. the 125,911k BB7 involuntary-conversion loss); the companyfacts EBIT proxy (pretax income + interest expense) does not tie to any statement line.",
+   "evidence_ids": [
+    "pf_10q_20260810",
+    "rf_oi_q_2026_06_30"
+   ]
+  },
+  {
+   "field": "operating_income_ttm",
+   "metric": "operating_income",
+   "period_end": "2025-12-31",
+   "resolution": "use_source",
+   "source_id": "pf_10k_20260302",
+   "reason": "10-K statement of operations: FY2025 revenue 70,918k less total operating expenses 358,631k = -287,713k; the EBIT proxy -425,313k does not tie.",
+   "evidence_ids": [
+    "pf_10k_20260302",
+    "rf_oi_fy2025"
+   ]
+  }
+ ],
+ "market": {
+  "risk_free": {
+   "value": 0.0498,
+   "as_of": "2026-10-29",
+   "source_id": "pf_fred_dgs10"
+  },
+  "equity_risk_premium": {
+   "value": 0.042,
+   "as_of": "2026-10-01",
+   "source_id": "pf_erp_implied"
+  }
+ }
+}

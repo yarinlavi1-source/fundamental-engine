@@ -1,0 +1,54 @@
+{
+ "thesis_he": {
+  "bear": "האשראי בברזיל מתקלקל (חובות בפיגור שיא, מס גבוה יותר על חברות פיננסיות, הגבלות שיווק אשראי מ-2027) ו-Mercado Pago מתחרה בחוזקה, כך שהיתרון בעלות לא מספיק כדי לשמור על תשואה של 30% על ההון.",
+  "base": "נו שומרת על יתרון עלות ומימון זול מול איטאו ואינטר, ממשיכה לגדול בלקוחות ובהכנסה ללקוח, ומקסיקו מתחילה לתרום כבנק מלא, בזמן שהסיכון בברזיל (מטבע, מסים, אשראי) נשאר גבוה.",
+  "bull": "מקסיקו כבנק מלא חוזרת על הדרך של ברזיל בשוק עם מעט אשראי, רישיון בנק בברזיל מאושר, ונו לוקחת עוד נתח מהבנקים הגדולים בלי שהפיגורים עולים."
+ },
+ "potential": {
+  "market_direction": {
+   "reading": "Large, concentrated, still-growing pool: NU puts the retail revenue pool of Brazil, Mexico and Colombia at US$227.9B with NU about 5% of it, and banking concentration (HHI 889 Brazil, 993 Mexico vs 328 US). Mexico is under-penetrated (about 37% of adults with formal credit, 16% with a bank card) and management's illustrative gross-profit-pool CAGR is about 15% for Mexico vs about 8% for Brazil (not guidance). Direction in Brazil is mixed near term: household default on market-rate credit hit a record 8.09% in September 2026 (6.89% a year earlier) and Selic is still 13.75%.",
+   "evidence_ids": ["pf_10k_20260408", "dc_rel_q2_2026", "mc_rt_default", "mc_bcb_selic"]
+  },
+  "bottleneck_potential": {
+   "reading": "NU is not a supply bottleneck: Pix and Open Finance are open public rails, so access is not scarce. What is scarce is cheap, well-underwritten funding and low cost to serve, where NU leads: deposits US$45.3B at 88% of the interbank rate (-3 pp y/y), cost to serve US$1.0 per active customer per month, efficiency 19.5%. Capacity is being added by rivals in the same unsecured consumer segment: Mercado Pago credit book +75% y/y (US$16B), Inter loans +29%.",
+   "evidence_ids": ["dc_k_cod", "dc_k_deposits", "dc_k_cts", "dc_k_eff", "fd_meli_2q26", "fd_inter_2q26", "pf_10k_20260408"]
+  },
+  "share_trajectory": {
+   "reading": "NU is still taking share: customers 122.7M to 138.9M (+13% y/y), about 118M in Brazil (62% of adults at FY2025, customer growth above the five largest incumbents combined per BCB data in the 20-F); 2Q26 net income +49% vs Itau +7.8% and Inter +34%; Mexico revenue +54% in FY2025 (523.1 to 808.1M) and +79% y/y in 2Q26 (175.7 to 314.6M). The one named rival growing credit faster is Mercado Pago (book +75%, Mexico fintech MAU +45%).",
+   "evidence_ids": ["dc_k_customers_q226", "dc_k_customers_q225", "dc_k_cust_brazil", "pf_10k_20260408", "fd_itub_2q26", "fd_inter_2q26", "fd_meli_2q26", "mc_f_rev_mx", "mc_f_rev_mx24", "dc_s_mx_q226", "dc_s_mx_q225"]
+  },
+  "competitive_position": {
+   "reading": "Stronger than Itau and Inter on returns, cost and engagement: ROE 33% vs Itau 24.3% vs Inter 16.3%; efficiency 19.5% vs Itau Brazil 35.5% vs Inter 42.1% (definitions differ); monthly activity 83.5% vs Inter 58.3% active clients. Weaker on credit quality: NPL 90+ 6.9% vs Itau 1.9% and Banorte 1.5%, a riskier low-income unsecured book. Against Mercado Pago NU is larger and more profitable but MELI grows its credit book faster and has the e-commerce data and distribution.",
+   "evidence_ids": ["dc_k_roe", "dc_k_eff", "dc_k_activity", "dc_k_npl90", "fd_itub_2q26", "fd_inter_2q26", "fd_meli_2q26", "fd_banorte_2q26"]
+  },
+  "threats": {
+   "reading": "Regulation and tax: CSLL for certain financial companies rises to 17.5% from April 2026 and 20% from 2028 (Brazil is about 91% of revenue); BCB resolutions of 23 Oct 2026 limit unsolicited credit marketing from 2027 (a customer-acquisition and limit-increase lever); INSS payroll loans are rate-capped. Country risk: the 25 Oct 2026 election moved BRL about 10% intraday. Competition: Mercado Pago (+75% book) and Inter in the same segment; Open Finance and salary portability lower switching. Credit: record household default in Brazil.",
+   "evidence_ids": ["mc_bnam_fintech_tax", "pf_10k_20260408", "mc_rt_bcb_marketing", "mc_cnbc_election", "mc_aljaz_real", "fd_meli_2q26", "mc_rt_default", "dc_s_br_q226"]
+  }
+ },
+ "assessments": {
+  "moat": {"assessment": "strong", "evidence_ids": ["dc_k_roe", "dc_k_eff", "dc_k_cod", "dc_k_cts", "fd_itub_2q26", "fd_inter_2q26"], "note": "Cost and funding moat, evidenced against Itau (ROE 24.3%, Brazil efficiency 35.5%) and Inter (ROE 16.3%, efficiency 42.1%): NU earns ROE 33% at 19.5% efficiency with deposits at 88% of interbank and US$1.0 monthly cost to serve. ROIC is not computable for a bank (forensic roic unavailable); ROE ran 27-33% for seven quarters. Not access-based: Pix/Open Finance are open, and Mercado Pago is closing in on credit growth."},
+  "switching_costs": {"assessment": "weak", "evidence_ids": ["pf_10k_20260408"], "note": "Pix, Open Finance and salary portability make switching easy in both directions; NU keeps customers through engagement and price, not lock-in."},
+  "retention": {"assessment": "strong", "evidence_ids": ["dc_k_activity", "dc_k_customers_q226", "dc_k_customers_q225", "dc_k_arpac_q226", "dc_k_arpac_q225"], "note": "Monthly activity 83.5% held while customers grew 13% y/y; ARPAC US$12.5 to 17.1 (+22% FXN), so cohorts deepen rather than churn. Inter: 58.3% active."},
+  "pricing_power": {"assessment": "adequate", "evidence_ids": ["dc_k_nim", "dc_k_ranim", "dc_rel_q2_2026", "pf_10k_20260408"], "note": "NIM rose to 22.9% and risk-adjusted NIM to 12.4%, but management ties it to mix toward unsecured and higher-risk segments, not to price increases; payroll loans are rate-capped and incumbents compete on price."},
+  "customer_concentration": {"assessment": "strong", "evidence_ids": ["pf_10k_20260408", "dc_s_br_q226"], "note": "No customer is 10% of revenue (139M retail customers). Geographic concentration is the real concentration: Brazil 91% of revenue (see geopolitics)."},
+  "market_size": {"assessment": "strong", "evidence_ids": ["pf_10k_20260408", "dc_rel_q2_2026"], "note": "NU puts its serviceable retail revenue pool at US$227.9B with about 5% share; Mexico under-penetrated, NU's Mexico gross-profit share under 1% of a US$43B pool (company analysis)."},
+  "competition": {"assessment": "adequate", "evidence_ids": ["fd_meli_2q26", "fd_inter_2q26", "fd_itub_2q26", "fd_bbva_2q26"], "note": "Intense: Mercado Pago book +75% in Brazil and Mexico, Inter +29%, Itau and BBVA Mexico profitable incumbents. NU still grows fastest in net income and customers among the Brazil names."},
+  "substitutes": {"assessment": "adequate", "evidence_ids": ["pf_10k_20260408", "fd_inter_2q26"], "note": "Open rails let any digital bank replicate the account and Pix (NU about 20% of Pix transfers, Inter about 9%); the substitute risk is other digital lenders, not a new technology."},
+  "management": {"assessment": "adequate", "evidence_ids": ["dc_rel_q2_2026", "dc_call_q2_2026", "dc_g_eff_fy26", "dc_k_eff", "dc_6k_cto_20261023"], "note": "Delivery is good: first US$1bn+ quarter, efficiency guided to about 20% for FY2026 and 19.5% in 2Q26, Mexico bank launched. Depth is the concern: new CFO Rob Livingston (from July 2026; change sourced from press) and CTO resignation effective 2026-11-12 with the founder-CEO interim. No numeric guidance track record (gap)."},
+  "capital_allocation": {"assessment": "adequate", "evidence_ids": ["dc_k_buyback", "nm_buybacks_2026h1", "nm_sbc_2026h1", "dc_fs_q2_2026", "uf_6k_us_20260910", "uf_6k_monzo_20260930"], "note": "US$500.4M of buybacks in 1H26 (avg about US$12.31) vs SBC US$216.8M, so net shrink; no dividend. But Brazil prudential CET1 fell 13.0% to 11.9% in six months (RWA +14.7%), and the US launch is a new cost centre with no revenue yet; Monzo talks denied."},
+  "governance": {"assessment": "adequate", "evidence_ids": ["pf_10k_20260408", "dc_rel_q2_2026", "dc_fs_q2_2026"], "note": "Founder David Velez holds about 74.4% of voting power through Class B shares; foreign private issuer (no Form 4). Managerial P&L since Q4'25 is reconciled to IFRS, but the 2Q26 IFRS tax rate of 14.2% (27.6% a year earlier) is not explained in what was read."},
+  "regulation": {"assessment": "weak", "evidence_ids": ["mc_bnam_fintech_tax", "mc_rt_bcb_marketing", "pf_10k_20260408", "mc_rt_nubank_mx"], "note": "Net headwind in Brazil: CSLL to 17.5% then 20% from 2028, credit-marketing limits from 2027, payroll-rate caps, Brazil bank licence (Banco Porto Real) pending BCB approval. Positive: Mexico full bank licence live since August 2026."},
+  "technology_ai": {"assessment": "strong", "evidence_ids": ["dc_rel_q2_2026", "dc_k_cts", "dc_6k_cto_20261023"], "note": "NuFormer model in production on three credit portfolios, AI agents handle over 60% of Brazil support conversations, cost to serve US$1.0/month. CTO departure is a key-person watch item."},
+  "geopolitics": {"assessment": "weak", "evidence_ids": ["dc_s_br_q226", "mc_cnbc_election", "mc_aljaz_real", "mc_bcb_selic"], "note": "About 91% of revenue in BRL, reported in USD; the 25 Oct 2026 election moved BRL about 10% intraday and Brazilian equities sharply; fiscal deficits flagged by analysts. Diversification (Mexico 7%) is small."}
+ },
+ "gaps": [
+  "Outside view (warning only, sets nothing): fast-growing consumer lenders in high-rate emerging markets historically see returns fade in credit downturns; NU's own credit data (NPL 90+ 6.9%, Stage 2 10.1% to 11.9%) is what counts.",
+  "ROIC / incremental ROIC unavailable for a bank (forensic screen); ROE used instead.",
+  "Q3 2026 results due 2026-11-12, after as_of: competitor and NU readings are 2Q26.",
+  "Itau CET1 12.3% and Inter NPL 90+ 5.1% come from secondary sources in the deep notes, not registered: not used as evidence.",
+  "CFO change (effective 2026-07-13) and BofA downgrade from press without a verified publication date: not registered.",
+  "Brazil bank licence (Banco Porto Real) BCB approval not confirmed; cause of the low 2Q26 IFRS tax rate not established.",
+  "Market-share series from BCB/CNBV and MELI/Inter segment revenue not read; share readings rest on customers, revenue and net income growth."
+ ]
+}

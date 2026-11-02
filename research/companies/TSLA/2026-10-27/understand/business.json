@@ -1,0 +1,89 @@
+{
+  "findings": [
+    {
+      "topic": "economic identity",
+      "finding": "Two reportable segments. Automotive (car sales, services and other, regulatory credits, leasing) was 25,165M of Q3 2026 revenue (about 90%) and 4,540M of 5,494M segment gross profit (about 83%); energy generation and storage was 2,881M revenue (about 10%) and 954M gross profit (about 17%). Segment operating income is not disclosed, so the new businesses (Robotaxi, Optimus, AI compute) cannot be separated from the core.",
+      "evidence_ids": ["dc_seg_auto_q3_2026", "dc_seg_energy_q3_2026", "dc_seg_gp_auto_q3_2026", "dc_seg_gp_energy_q3_2026", "pf_10q_20261022"]
+    },
+    {
+      "topic": "growth split",
+      "finding": "Nine-month 2026 revenue 78.67bn was +12.5% on 69.93bn, and all of it came from Other international (28.22bn vs 18.93bn, +49%, Shanghai exports and Europe); United States -1.0% and China -1.4%. Q3 alone was flat (-0.2%): US -14.4%, China -7.9%, Other international +31.8%. Units fell (Q3 deliveries 486,532 vs 497,099, -2.1%), so the residual came from services and other (+33% to 4,605M: used cars, maintenance, paid Supercharging). Structural part: services and FSD; mix part: exports; macro part: US EV market after the tax-credit end.",
+      "evidence_ids": ["mc_rev_oi_9m26", "mc_rev_oi_9m25", "mc_rev_us_9m26", "mc_rev_us_9m25", "mc_rev_us_q326", "mc_rev_us_q325", "dc_kpi_deliveries_q3_2026", "dc_kpi_deliveries_q3_2025", "dc_seg_line_services_q3_2026", "dc_seg_line_services_q3_2025"]
+    },
+    {
+      "topic": "who funds the demand",
+      "finding": "Retail consumers: no customer is 10% of revenue. SpaceX (a related party with the same CEO) bought 626M of Megapacks in nine months, 0.8% of revenue. Leasing with bank partners carries resale value guarantees of up to 4.42bn (3.45bn at year end), a contingent exposure, not a debt.",
+      "evidence_ids": ["dc_cust_spacex_9m_2026", "dc_spacex_megapack_rev_9m_2026", "dc_resale_guarantee_max_q3_2026", "dc_resale_guarantee_max_fy2025", "pf_10q_20261022"]
+    },
+    {
+      "topic": "structural or cyclical",
+      "finding": "Operating margin fell from 16.8% (FY2022) to 4.6% (FY2025) and 2.6% in Q3 2026. The causes are company-specific and structural: lower prices (automotive sales revenue per non-lease delivery about 41.9k), regulatory credits shrinking toward zero (113M in Q3 net of a 475M reversal; the program RPO fell from 841M to 384M) and a deliberate rise in R&D on AI, Robotaxi and Optimus (Q3 R&D 2,761M vs 1,630M a year ago; the CFO says opex keeps rising until the new products are commercialized). Revenue never showed a demand cycle (growth phase 2020-2022, then a plateau), so a mid-cycle normalization would lift a trough that is not cyclical.",
+      "evidence_ids": ["pf_operating_income_fy2022", "pf_revenue_fy2022", "pf_operating_income_fy2025", "pf_revenue_fy2025", "pf_operating_income_q_2026_09_30", "pf_revenue_q_2026_09_30", "dc_kpi_auto_sales_rev_per_nonlease_delivery_q3_2026", "dc_seg_line_regcredits_q3_2026", "dc_rpo_regcredits_q3_2026", "dc_rpo_regcredits_fy2025", "dc_call_20261021"]
+    },
+    {
+      "topic": "guidance and its track record",
+      "finding": "Tesla gives no revenue, delivery or margin guidance. The only numeric guide is FY2026 capex: about 20bn in January, raised to 'in excess of 25bn' in April and July, cut back to about 20bn in October (nine-month capex 13.01bn). With no revenue guide there is no track-record ratio, so no driver uses the guidance tier; FY2026 revenue is left to the engine's year-to-date rule.",
+      "evidence_ids": ["dc_g_capex_fy2026_jan_10k", "dc_g_capex_fy2026_apr_10q", "dc_g_capex_fy2026_jul_10q", "dc_g_capex_fy2026_oct_call", "dc_capex_9m_2026"]
+    },
+    {
+      "topic": "earnings quality",
+      "finding": "Q3 2026 carried one-offs that roughly cancel: tariff refunds +786M in cost of revenues and -339M owed to energy customers in revenue, a 475M regulatory-credit reversal, a 288M bitcoin gain and a 142M SpaceX mark-down (normalized net income 739M vs 787M reported). Energy gross margin 33.1% is lifted by the refunds and an unsized warranty true-down (Q2 was 20.4%), so it is not a run rate. SBC was 1,165M in Q3 (4.2% of revenue, 663M a year ago), 275M of it the 2025 CEO award; it is kept as a cost.",
+      "evidence_ids": ["dc_tariff_refund_cogs_energy_q3_2026", "dc_tariff_refund_cogs_auto_q3_2026", "dc_tariff_refund_rev_energy_q3_2026", "dc_regcredits_reversal_q3_2026", "dc_kpi_gm_energy_q3_2026", "dc_kpi_gm_energy_q2_2026", "pf_sbc_q_2026_09_30", "dc_sbc_ceo_award_q3_2026"]
+    },
+    {
+      "topic": "capital intensity and funding",
+      "finding": "Nine-month capex 13.01bn against operating cash flow 14.90bn; Q3 free cash flow 1.53bn. Management says capex will keep expanding for the next few years (Robotaxi fleet, Optimus, AI compute, a chip fab) and the 10-Q says heightened capex will need funding beyond operating cash flow; Tesla signed 30bn of undrawn unsecured facilities in September 2026 and plans no draws in 2026. Spendable liquidity 45.4bn (restricted 1.15bn excluded) against 9.5bn of debt, almost all non-recourse.",
+      "evidence_ids": ["dc_capex_9m_2026", "dc_ocf_9m_2026", "dc_credit_unused_commitments_q3_2026", "mc_8k_20260929", "dc_g_credit_draws_fy2026", "dc_debt_total_q3_2026", "dc_debt_nonrecourse_q3_2026", "dc_restricted_cash_q3_2026", "pf_10q_20261022"]
+    },
+    {
+      "topic": "dilution and pay",
+      "finding": "Shares outstanding rose from 3,751M (2025-12-31) to 3,953M (2026-10-15), +5.4%, from the 2018 award exercise and the 2025 CEO award's 423.7M unearned restricted shares (about 10.7% of the count; vesting needs market-cap milestones of 2.0tn to 8.5tn plus operating milestones). Unrecognized award cost is 9.74bn for the probable milestone and 105.8bn to 120.4bn if the others become probable. No buyback offsets it.",
+      "evidence_ids": ["dc_shares_out_20261015", "dc_shares_out_fy2025", "dc_ceo_award_2025_shares", "dc_ceo_award_2018_exercised_q2_2026", "dc_sbc_ceo_award_unrecognized_probable", "dc_sbc_ceo_award_unrecognized_not_probable_low", "dc_sbc_ceo_award_unrecognized_not_probable_high"]
+    },
+    {
+      "topic": "new businesses: options, not yet revenue",
+      "finding": "Active FSD subscriptions 1.74M (+67% in a year) and over 75% of North American buyers signing up at delivery; nearly 2M cumulative unsupervised Robotaxi miles, Cybercab rides in Austin since 2026-09-03 and 125k of installed Cybercab capacity; Optimus in early production with no paid customer. None of these discloses revenue or unit economics, so they are not underwritten in the base case.",
+      "evidence_ids": ["dc_kpi_fsd_subs_q3_2026", "dc_kpi_fsd_subs_q3_2025", "dc_kpi_fsd_na_attach_q3_2026", "dc_kpi_robotaxi_miles_q3_2026", "dc_kpi_cap_cybercab_q3_2026", "dc_call_20261021"]
+    },
+    {
+      "topic": "capacity and constraint",
+      "finding": "Management says demand exceeds production, the passenger backlog is the largest in four years and battery availability limits the ramp (days of supply 11). Installed Model 3/Y capacity is at least 2.25M a year against about 1.9M annualized deliveries; Megapack capacity is 110 GWh a year (Houston 50 GWh began production in Q3) against about 50 GWh deployed a year; energy RPO 10.73bn and customer prepayments 3.30bn (2.04bn at year end).",
+      "evidence_ids": ["dc_call_20261021", "dc_kpi_days_supply_q3_2026", "dc_kpi_production_q3_2026", "dc_kpi_cap_model3y_q3_2026", "dc_kpi_cap_megapack_q3_2026", "dc_rpo_energy_q3_2026", "dc_defrev_energy_prepay_q3_2026", "dc_defrev_energy_prepay_fy2025"]
+    },
+    {
+      "topic": "forensic screens",
+      "finding": "Piotroski 5 of 8 (mixed: new shares issued, return on assets not improving, asset turnover lower); Altman Z'' 4.46 (safe); Beneish and ROIC unavailable in the prefetch (missing inputs). Operating margin is at its six-year low while the trailing GAAP P/E is about 446 on EPS of 0.91.",
+      "evidence_ids": ["pf_revenue_fy2025", "pf_operating_income_fy2025", "pf_shares_diluted_wavg_fy2025", "nm_eps_diluted_q_2026_09_30", "nm_ib_price"]
+    }
+  ],
+  "flags": [
+    "negative operating leverage: Q3 2026 operating expenses +39% while revenue -0.2% (quarter review)",
+    "energy segment revenue -16% year over year in Q3 2026 although deployments rose 9.6%; Q3 energy gross margin 33% includes tariff refunds and an unsized warranty true-down",
+    "profit concentration: automotive is about 83% of segment gross profit",
+    "regulatory credits disappearing: revenue 417M to 113M in a year (net of a 475M reversal), program RPO 841M to 384M",
+    "SBC 4.2% of revenue and rising; 2025 CEO award 423.7M unearned shares (about 10.7% of shares outstanding) and 105.8bn to 120.4bn of unrecognized cost if its milestones become probable",
+    "Piotroski 5/8 mixed: share issuance, falling asset turnover, return on assets not improving",
+    "Beneish and ROIC screens unavailable (inputs missing in the prefetch); the numbers lane hand ROIC uses an assumed 21% tax rate",
+    "capital intensity: FY2026 capex about 20bn, rising further; 10-Q says heightened capex will need funding beyond operating cash flow",
+    "resale value guarantee exposure up to 4.42bn (from 3.45bn) and warranty accrual +26% to 10.1bn",
+    "related party and governance: SpaceX is a customer and an investee (2.0bn), a board special committee explores a possible SpaceX combination; key-person dependence on the CEO",
+    "valuation: trailing GAAP P/E about 446; the price rests on Robotaxi, FSD and Optimus, which report no separate revenue"
+  ],
+  "economics": {
+    "treatment": "structural",
+    "reason": "The margin fall since FY2022 comes from price cuts, the end of regulatory-credit income and a deliberate AI/robotics R&D build, all company-specific and lasting; revenue history shows a growth phase and a plateau, not a demand cycle. Automotive demand is still sensitive to rates and incentives: that risk is carried in the bear case, not by normalizing to a mid-cycle margin.",
+    "evidence_ids": ["pf_operating_income_fy2022", "pf_revenue_fy2022", "pf_operating_income_fy2025", "pf_revenue_fy2025", "dc_rpo_regcredits_q3_2026", "dc_call_20261021", "pf_10k_20260129"]
+  },
+  "type": {
+    "stage": "mature_growth",
+    "lynch": "stalwart",
+    "override_reason": "The computed high_growth / fast_grower rests on the 2020-2022 ramp (revenue CAGR 24.6% from FY2020). Since then revenue grew about 7% a year (81.5bn FY2022 to an estimated ~105bn FY2026), fell 2.9% in FY2025 and was flat in Q3 2026 (nine months +12.5%); operating margin is 2.6-4.6%. A large company with moderate growth fits mature_growth; the Robotaxi / Optimus options are a question for the scenarios, not for the type."
+  },
+  "gaps": [
+    "No revenue, delivery or margin guidance: no guidance track record (capex only).",
+    "Segment operating income and the cost of the new programs (Robotaxi, Optimus, AI compute) are not disclosed.",
+    "FSD revenue, Robotaxi revenue and unit economics, vehicle ASP are not disclosed.",
+    "Consensus (FY2026 107.8bn, FY2027 122.3bn revenue) is dated 2026-10-26/27 and not citable until 2026-10-28/29; used only as an uncited cross-check.",
+    "Beneish M-score and ROIC unavailable from the prefetch."
+  ]
+}

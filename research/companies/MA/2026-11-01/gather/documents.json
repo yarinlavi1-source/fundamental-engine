@@ -1,0 +1,1033 @@
+{
+ "lane": "documents",
+ "sources": [
+  {
+   "id": "dc_call_20261029",
+   "kind": "transcript",
+   "title": "Mastercard (MA) Q3 2026 earnings call transcript (Motley Fool copy), call of 2026-10-29 (copy of the issuer call, issuer webcast at investor.mastercard.com)",
+   "url": "https://www.fool.com/earnings/call-transcripts/2026/10/29/mastercard-ma-q3-2026-earnings-call-transcript/",
+   "date": "2026-10-29",
+   "independent": false,
+   "publisher": "The Motley Fool",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  }
+ ],
+ "facts": [
+  {
+   "id": "dc_f_gdv_q3",
+   "metric": "gross dollar volume (Mastercard-branded, USD)",
+   "period": "Q3 2026",
+   "value": 2952,
+   "unit": "USD bn",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_gdv_g_q3",
+   "metric": "gross dollar volume growth, local currency",
+   "period": "Q3 2026",
+   "value": 0.07,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_gdv_ytd",
+   "metric": "gross dollar volume (Mastercard-branded, USD)",
+   "period": "9M 2026",
+   "value": 8523,
+   "unit": "USD bn",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_pv_g_q3",
+   "metric": "purchase volume growth, local currency",
+   "period": "Q3 2026",
+   "value": 0.089,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_xb_g_q3",
+   "metric": "cross-border volume growth, local currency",
+   "period": "Q3 2026",
+   "value": 0.11,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_xb_g_ytd",
+   "metric": "cross-border volume growth, local currency",
+   "period": "9M 2026",
+   "value": 0.12,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_swt_g_q3",
+   "metric": "switched transactions growth",
+   "period": "Q3 2026",
+   "value": 0.09,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_cards_q3",
+   "metric": "Mastercard-branded cards (operating performance table)",
+   "period": "2026-09-30",
+   "value": 3539,
+   "unit": "million",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_nr_pn_q3",
+   "metric": "net revenue, payment network",
+   "period": "Q3 2026",
+   "value": 5749,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_nr_vas_q3",
+   "metric": "net revenue, value-added services and solutions",
+   "period": "Q3 2026",
+   "value": 4058,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_nr_vas_g_q3",
+   "metric": "value-added services and solutions net revenue growth (as reported = currency-neutral)",
+   "period": "Q3 2026",
+   "value": 0.19,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1",
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_nr_pn_g_q3",
+   "metric": "payment network net revenue growth (as reported = currency-neutral)",
+   "period": "Q3 2026",
+   "value": 0.11,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1",
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_nr_g_q3",
+   "metric": "net revenue growth (as reported = currency-neutral)",
+   "period": "Q3 2026",
+   "value": 0.14,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_nr_g_ytd_cn",
+   "metric": "net revenue growth, currency-neutral",
+   "period": "9M 2026",
+   "value": 0.13,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_dom_assess_q3",
+   "metric": "domestic assessments",
+   "period": "Q3 2026",
+   "value": 3211,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_xb_assess_q3",
+   "metric": "cross-border assessments",
+   "period": "Q3 2026",
+   "value": 3841,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_tp_assess_q3",
+   "metric": "transaction processing assessments",
+   "period": "Q3 2026",
+   "value": 4781,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_oth_assess_q3",
+   "metric": "other network assessments",
+   "period": "Q3 2026",
+   "value": 285,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_rebates_q3",
+   "metric": "payment network rebates and incentives (netted in payment network revenue)",
+   "period": "Q3 2026",
+   "value": 6369,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_rebates_g_q3",
+   "metric": "rebates and incentives growth (as reported = currency-neutral)",
+   "period": "Q3 2026",
+   "value": 0.18,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1",
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_rebates_ytd",
+   "metric": "payment network rebates and incentives",
+   "period": "9M 2026",
+   "value": 18005,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_rebates_g_ytd",
+   "metric": "rebates and incentives growth, as reported",
+   "period": "9M 2026",
+   "value": 0.21,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1",
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_rebates_share_q3",
+   "metric": "rebates and incentives as share of gross payment network assessments (rebates / (network net revenue + rebates))",
+   "period": "Q3 2026",
+   "value": 0.526,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "derived"
+  },
+  {
+   "id": "dc_f_rebates_fy25",
+   "metric": "payment network rebates and incentives",
+   "period": "FY2025",
+   "value": 20522,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_rebates_share_fy25",
+   "metric": "rebates and incentives as share of gross payment network assessments (rebates / (network net revenue + rebates))",
+   "period": "FY2025",
+   "value": 0.513,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "dc_f_amort_incent_ytd",
+   "metric": "amortization of customer incentives (cash flow add-back)",
+   "period": "9M 2026",
+   "value": 2030,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_prepaid_chg_ytd",
+   "metric": "change in prepaid expenses (customer incentive prepayments, cash outflow)",
+   "period": "9M 2026",
+   "value": -4688,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_opm_gaap_q3",
+   "metric": "operating margin, GAAP",
+   "period": "Q3 2026",
+   "value": 0.598,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_opm_adj_q3",
+   "metric": "operating margin, adjusted (ex special items)",
+   "period": "Q3 2026",
+   "value": 0.605,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_opm_adj_ytd",
+   "metric": "operating margin, adjusted (ex special items)",
+   "period": "9M 2026",
+   "value": 0.608,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_opex_adj_g_q3",
+   "metric": "adjusted operating expense growth (1 ppt from acquisitions)",
+   "period": "Q3 2026",
+   "value": 0.12,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_eps_adj_q3",
+   "metric": "adjusted diluted EPS",
+   "period": "Q3 2026",
+   "value": 5.31,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_litprov_q3",
+   "metric": "provision for litigation (settlements with U.S. merchant class opt-outs)",
+   "period": "Q3 2026",
+   "value": 74,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_rel_20261029_1",
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_litprov_ytd",
+   "metric": "provision for litigation",
+   "period": "9M 2026",
+   "value": 156,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_rel_20261029_1",
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_litprov_ytd25",
+   "metric": "provision for litigation",
+   "period": "9M 2025",
+   "value": 330,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_accr_lit",
+   "metric": "accrued litigation (balance sheet)",
+   "period": "2026-09-30",
+   "value": 262,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_rel_20261029_1",
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_accr_lit_fy25",
+   "metric": "accrued litigation (balance sheet)",
+   "period": "2025-12-31",
+   "value": 800,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_restructuring_q1",
+   "metric": "restructuring charge (pre-tax, excluded from adjusted)",
+   "period": "Q1 2026",
+   "value": 202,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_bvnk",
+   "metric": "BVNK acquisition cash consideration (closed 2026-08-03); contingent consideration up to $300m",
+   "period": "Q3 2026",
+   "value": 1400,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_cash",
+   "metric": "cash and cash equivalents",
+   "period": "2026-09-30",
+   "value": 10147,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_restr_cash",
+   "metric": "restricted cash and restricted security deposits held for customers (not liquidity)",
+   "period": "2026-09-30",
+   "value": 2795,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "derived"
+  },
+  {
+   "id": "dc_f_debt_st",
+   "metric": "short-term debt",
+   "period": "2026-09-30",
+   "value": 1749,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_debt_lt",
+   "metric": "long-term debt",
+   "period": "2026-09-30",
+   "value": 22189,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_buyback_q3",
+   "metric": "share repurchases (5.3m shares)",
+   "period": "Q3 2026",
+   "value": 3000,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_buyback_remaining",
+   "metric": "remaining repurchase authorization at 2026-09-30",
+   "period": "2026-09-30",
+   "value": 5600,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_shares_out",
+   "metric": "shares outstanding, Class A (+7m Class B)",
+   "period": "2026-09-30",
+   "value": 866,
+   "unit": "million",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_top5_fy25",
+   "metric": "net revenue from five largest customers (no single customer above 10%)",
+   "period": "FY2025",
+   "value": 6900,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_nr_pn_fy25",
+   "metric": "net revenue, payment network",
+   "period": "FY2025",
+   "value": 19476,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_nr_vas_fy25",
+   "metric": "net revenue, value-added services and solutions",
+   "period": "FY2025",
+   "value": 13315,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_xb_assess_fy25",
+   "metric": "cross-border assessments",
+   "period": "FY2025",
+   "value": 12021,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_f_capex_ytd",
+   "metric": "purchases of property and equipment plus capitalized software",
+   "period": "9M 2026",
+   "value": 1141,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "derived"
+  }
+ ],
+ "guidance": [
+  {
+   "id": "dc_g_nr_fy26",
+   "metric": "net revenue growth, currency-neutral, ex inorganic (management: 'high end of low double digits'; 10-13% reading of the words, 12-13% for high end)",
+   "period": "FY2026",
+   "low": 0.12,
+   "high": 0.13,
+   "unit": "ratio y/y",
+   "issued": "2026-10-29",
+   "source_id": "dc_call_20261029"
+  },
+  {
+   "id": "dc_g_nr_q4",
+   "metric": "net revenue growth, currency-neutral (management: 'high end of low double digits')",
+   "period": "Q4 2026",
+   "low": 0.12,
+   "high": 0.13,
+   "unit": "ratio y/y",
+   "issued": "2026-10-29",
+   "source_id": "dc_call_20261029"
+  },
+  {
+   "id": "dc_g_opex_fy26",
+   "metric": "operating expense growth, currency-neutral (management: 'low double digits', in line with previous)",
+   "period": "FY2026",
+   "low": 0.1,
+   "high": 0.13,
+   "unit": "ratio y/y",
+   "issued": "2026-10-29",
+   "source_id": "dc_call_20261029"
+  },
+  {
+   "id": "dc_g_opex_q4",
+   "metric": "operating expense growth (management: 'high end of low double digits'; 1 ppt drag from acquisitions)",
+   "period": "Q4 2026",
+   "low": 0.12,
+   "high": 0.13,
+   "unit": "ratio y/y",
+   "issued": "2026-10-29",
+   "source_id": "dc_call_20261029"
+  },
+  {
+   "id": "dc_g_tax_fy26",
+   "metric": "non-GAAP effective tax rate",
+   "period": "FY2026",
+   "low": 0.2,
+   "high": 0.21,
+   "unit": "ratio",
+   "issued": "2026-10-29",
+   "source_id": "dc_call_20261029"
+  },
+  {
+   "id": "dc_g_tax_q4",
+   "metric": "non-GAAP effective tax rate",
+   "period": "Q4 2026",
+   "low": 0.2,
+   "high": 0.21,
+   "unit": "ratio",
+   "issued": "2026-10-29",
+   "source_id": "dc_call_20261029"
+  },
+  {
+   "id": "dc_g_oie_q4",
+   "metric": "other income (expense), ex equity investment gains/losses (expense)",
+   "period": "Q4 2026",
+   "low": -115,
+   "high": -115,
+   "unit": "USD m",
+   "issued": "2026-10-29",
+   "source_id": "dc_call_20261029"
+  },
+  {
+   "id": "dc_g_fx_rev_fy26",
+   "metric": "FX impact on net revenue growth (tailwind)",
+   "period": "FY2026",
+   "low": 0.01,
+   "high": 0.01,
+   "unit": "ppt of growth",
+   "issued": "2026-10-29",
+   "source_id": "dc_call_20261029"
+  },
+  {
+   "id": "dc_g_fx_rev_q4",
+   "metric": "FX impact on net revenue growth (headwind)",
+   "period": "Q4 2026",
+   "low": -0.01,
+   "high": -0.01,
+   "unit": "ppt of growth",
+   "issued": "2026-10-29",
+   "source_id": "dc_call_20261029"
+  },
+  {
+   "id": "dc_g_fx_opex_fy26",
+   "metric": "FX impact on operating expense growth (headwind)",
+   "period": "FY2026",
+   "low": 0.005,
+   "high": 0.01,
+   "unit": "ppt of growth",
+   "issued": "2026-10-29",
+   "source_id": "dc_call_20261029"
+  },
+  {
+   "id": "dc_g_fx_opex_q4",
+   "metric": "FX impact on operating expense growth (tailwind, lowers expense growth)",
+   "period": "Q4 2026",
+   "low": -0.005,
+   "high": -0.005,
+   "unit": "ppt of growth",
+   "issued": "2026-10-29",
+   "source_id": "dc_call_20261029"
+  }
+ ],
+ "kpis": [
+  {
+   "id": "dc_k_gdv",
+   "name": "Gross dollar volume (USD bn)",
+   "period": "Q3 2026",
+   "value": 2952,
+   "unit": "USD bn",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ]
+  },
+  {
+   "id": "dc_k_gdv_g",
+   "name": "GDV growth, local currency",
+   "period": "Q3 2026",
+   "value": 0.07,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ]
+  },
+  {
+   "id": "dc_k_xb_g",
+   "name": "Cross-border volume growth, local currency",
+   "period": "Q3 2026",
+   "value": 0.11,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ]
+  },
+  {
+   "id": "dc_k_swt_g",
+   "name": "Switched transactions growth",
+   "period": "Q3 2026",
+   "value": 0.09,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ]
+  },
+  {
+   "id": "dc_k_purch_trans",
+   "name": "Purchase transactions (Mastercard-branded)",
+   "period": "Q3 2026",
+   "value": 59480,
+   "unit": "million",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ]
+  },
+  {
+   "id": "dc_k_cards",
+   "name": "Mastercard-branded cards",
+   "period": "2026-09-30",
+   "value": 3539,
+   "unit": "million",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ]
+  },
+  {
+   "id": "dc_k_us_gdv_g",
+   "name": "U.S. GDV growth (local = USD)",
+   "period": "Q3 2026",
+   "value": 0.059,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ]
+  },
+  {
+   "id": "dc_k_us_debit_gdv_g",
+   "name": "U.S. debit GDV growth",
+   "period": "Q3 2026",
+   "value": 0.014,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ]
+  },
+  {
+   "id": "dc_k_europe_gdv_g",
+   "name": "Europe GDV growth, local currency",
+   "period": "Q3 2026",
+   "value": 0.083,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ]
+  },
+  {
+   "id": "dc_k_latam_gdv_g",
+   "name": "Latin America GDV growth, local currency",
+   "period": "Q3 2026",
+   "value": 0.135,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ]
+  },
+  {
+   "id": "dc_k_apmea_gdv_g",
+   "name": "APMEA GDV growth, local currency",
+   "period": "Q3 2026",
+   "value": 0.058,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ]
+  },
+  {
+   "id": "dc_k_rebates_g",
+   "name": "Rebates and incentives growth",
+   "period": "Q3 2026",
+   "value": 0.18,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_10q_20261029"
+   ]
+  },
+  {
+   "id": "dc_k_xb_assess_g",
+   "name": "Cross-border assessments growth (as reported; currency-neutral 16%)",
+   "period": "Q3 2026",
+   "value": 0.16,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_10q_20261029"
+   ]
+  },
+  {
+   "id": "dc_k_tp_assess_g",
+   "name": "Transaction processing assessments growth",
+   "period": "Q3 2026",
+   "value": 0.14,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_10q_20261029"
+   ]
+  },
+  {
+   "id": "dc_k_dom_assess_g",
+   "name": "Domestic assessments growth (currency-neutral 13%)",
+   "period": "Q3 2026",
+   "value": 0.14,
+   "unit": "ratio y/y",
+   "source_ids": [
+    "pf_10q_20261029"
+   ]
+  }
+ ],
+ "segments": [
+  {
+   "id": "dc_s_pn_q3_26",
+   "name": "Payment network",
+   "period": "Q3 2026",
+   "revenue": 5749000000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261029"
+   ]
+  },
+  {
+   "id": "dc_s_vas_q3_26",
+   "name": "Value-added services and solutions",
+   "period": "Q3 2026",
+   "revenue": 4058000000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261029"
+   ]
+  },
+  {
+   "id": "dc_s_pn_q3_25",
+   "name": "Payment network",
+   "period": "Q3 2025",
+   "revenue": 5179000000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261029"
+   ]
+  },
+  {
+   "id": "dc_s_vas_q3_25",
+   "name": "Value-added services and solutions",
+   "period": "Q3 2025",
+   "revenue": 3423000000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261029"
+   ]
+  },
+  {
+   "id": "dc_s_pn_9m_26",
+   "name": "Payment network",
+   "period": "9M 2026",
+   "revenue": 16148000000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261029"
+   ]
+  },
+  {
+   "id": "dc_s_vas_9m_26",
+   "name": "Value-added services and solutions",
+   "period": "9M 2026",
+   "revenue": 11334000000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261029"
+   ]
+  },
+  {
+   "id": "dc_s_pn_fy25",
+   "name": "Payment network",
+   "period": "FY2025",
+   "revenue": 19476000000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ]
+  },
+  {
+   "id": "dc_s_vas_fy25",
+   "name": "Value-added services and solutions",
+   "period": "FY2025",
+   "revenue": 13315000000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ]
+  }
+ ],
+ "customers": [
+  {
+   "id": "dc_c_top5_fy25",
+   "name": "Five largest customers combined (none individually above 10%)",
+   "share": 0.21,
+   "period": "FY2025",
+   "source_ids": [
+    "pf_10k_20260211"
+   ]
+  }
+ ],
+ "notes": [
+  "dc CALL 2026-10-29 Q3 2026 call: CFO Ling Hai, CEO Michael Miebach; transcript read through a WebFetch summary of the Motley Fool copy (search_excerpt, not the full verbatim transcript); Alpha Vantage EARNINGS_CALL_TRANSCRIPT probe was rate-limited (25/day), not retried.",
+  "dc MGMT (call) full-year net revenue growth 'at the high end of the low double digits range' currency-neutral, excluding inorganic activity; Q2 call had already moved expectations higher in the range; Q4 same wording; ~1 ppt FX tailwind FY, ~1 ppt FX headwind Q4. Words are management's; the numeric 12-13% in guidance rows is my reading of the words.",
+  "dc MGMT (call) Q4: slight revenue headwind from timing of services projects and network deals pulled forward into Q3; 'similar offset' in VAS in Q4; rebates and incentives as % of gross assessments higher than Q3; no full-year rebates guidance given. Not addressed: litigation, capex, operating margin outlook; 2027 guidance comes with the next quarter's release.",
+  "dc MGMT (call) cross-border travel 'similar to the end of Q2'; agentic commerce expected to build with holiday shopping (CEO); BVNK impact on Q3 VAS 'minimal'; opex FY 'low double digits' unchanged, Q4 high end of low double digits with 1 ppt drag from acquisitions; non-GAAP tax 20-21%; Q4 other expense ~ $115m.",
+  "dc MGMT (release) CEO Miebach: Agentic Commerce, new Global Money Platform through BVNK (stablecoin infrastructure, acquired 2026-08-03 for $1.4bn cash plus up to $300m contingent).",
+  "dc Q3 RESULT (released 2026-10-29, citable from 2026-10-31): net revenue $9,807m +14% (reported and currency-neutral; payment network +11%, VAS +19%), GDV +7% local to $2.95tn, cross-border volume +11%, switched transactions +9%, GAAP operating margin 59.8% (+0.9 ppt), adjusted 60.5%, adjusted EPS $5.31 (+21%), GAAP EPS $5.28; adjusted opex +12% (1 ppt acquisitions).",
+  "dc REBATES Q3 rebates and incentives $6,369m +18% (9M $18,005m +21%), growing faster than payment network net revenue (+11%) and than GDV (+7%); the release cites new and renewed deals. Share of gross network assessments 52.6% in Q3 2026 vs 51.3% FY2025 (derived).",
+  "dc CASH conversion 9M 2026 operating cash flow $11,859m vs $12,646m (-6%) while net income +18%: prepaid expenses (customer incentive prepayments) outflow $4,688m vs $2,939m; amortization of customer incentives $2,030m vs $1,526m; accrued litigation payments $537m. Gap to be read by the analyst; capex+software $1,141m 9M.",
+  "dc LITIGATION provision for litigation Q3 $74m (settlements with opt-out merchants in U.S. interchange case) vs $83m, 9M $156m vs $330m; accrued litigation fell to $262m from $800m (cash settlements paid). Block and Intuit remain unsettled opt-outs seeking aggregate single damages above $5bn (summary judgment briefing continues through 2026); Rules Relief Class revised settlement preliminarily approved June 2026, final approval hearing November 2026; Damages Class release upheld Sept 2026 against April 2026 putative class action (appeal to Second Circuit); U.S. EMV liability shift class alleges >$1bn single damages against four networks (10-Q Note 14).",
+  "dc LITIGATION UK October 2026: two new proposed UK collective actions served: ~GBP 1.5bn (domestic and cross-border consumer transactions) and ~GBP 0.4bn (online cross-border); existing UK commercial card claim >GBP 1bn; Portugal ~EUR 0.4bn; Netherlands ~EUR 0.3bn; Australia ACCC debit agreements, liability hearing concluded June 2026; ATM operator opt-out settled Aug 2026 and ATM operators class dismissed Sept 2026 (10-Q Note 14). Claimed amounts are plaintiffs' claims, not accruals; the 10-Q accrual is $262m.",
+  "dc LITIGATION DOJ: Civil Investigative Demand received 2023 from DOJ Antitrust Division on U.S. debit program competition (Sherman Act 1 or 2); company cooperating (10-K, Legal Proceedings; the Q3 10-Q text prefetched contains no separate DOJ paragraph). European Commission request for information (2024) on network fees related to acquirers; cooperating.",
+  "dc ONEOFFS Q3 2026 special item: litigation provisions $74m pre-tax (adjusted net income effect +$49m); equity investments net pre-tax loss $5m (adjusted net income effect -$24m per release reconciliation, including tax effects); YTD special items: restructuring $202m (Q1 2026) and litigation $156m; adjusted tax rate 20.1% vs GAAP 19.4% in Q3.",
+  "dc RISK interchange and merchant acceptance-cost activity, surcharging limits and litigation could cut revenue or raise incentive costs (10-K Item 1A, Legal and Regulatory: interchange, surcharging, litigation liabilities).",
+  "dc RISK preferential or protective government actions favouring domestic payment networks, and regulation of privacy, data and AI (10-K Item 1A, Legal and Regulatory).",
+  "dc RISK competition and disintermediation: account-based and real-time payments, wallets, stablecoins, Visa and others; continued intense pricing pressure (10-K Item 1A, Business: Competition).",
+  "dc RISK customer concentration: five largest customers about 21% of FY2025 net revenue ($6.9bn); loss of a large customer or card program and consolidation; incentives rise with renewals (10-K Item 1A, Business: customers; Item 7 notes).",
+  "dc RISK global economy, cross-border travel and spending sensitivity, tariffs and trade policy, currency and FX controls (10-K Item 1A, Global events).",
+  "dc RISK settlement guarantor exposure and information security incidents, service disruptions (10-K Item 1A, Operational).",
+  "dc RISK acquisition integration and entry into new businesses, stablecoin and account-based payments (BVNK) (10-K Item 1A; 10-Q Note 2).",
+  "dc GAP full transcript Q&A not read verbatim (summary of Motley Fool copy only); no customer-level names or per-customer shares disclosed (only top-5 aggregate); no segment operating income (single reportable segment, cannot be split between payment network and VAS); remaining performance obligations, backlog and purchase commitments not extracted (not material to this model); Q2 numeric prior guidance not available as numbers (words only), so prior_low/prior_high left empty."
+ ],
+ "gaps": [
+  "Alpha Vantage EARNINGS_CALL_TRANSCRIPT rate-limited; transcript taken from a public copy via WebFetch summary, not verbatim.",
+  "Guidance is qualitative ('low double digits', 'high end'); numeric low/high in guidance rows are my reading, not management numbers.",
+  "No single-customer shares and no segment operating income disclosed.",
+  "Prior-quarter numeric guidance (Q2 call) not retrievable as numbers."
+ ],
+ "stopped": [
+  "Alpha Vantage transcript branch stopped after one rate-limited probe (25 requests/day quota)."
+ ]
+}

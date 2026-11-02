@@ -1,0 +1,853 @@
+{
+ "lane": "numbers",
+ "sources": [
+  {
+   "id": "nm_ib_snapshot",
+   "kind": "price",
+   "title": "Interactive Brokers real-time snapshot, META Class A (NASDAQ, conid 107113386): last 614.00 USD at 2026-10-30T23:59:56Z (Friday; read 2026-11-01)",
+   "url": "connector:mcp__Interactive_Brokers__get_price_snapshot",
+   "date": "2026-10-30",
+   "independent": true,
+   "publisher": "Interactive Brokers (read-only market data)",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_ib_history",
+   "kind": "price",
+   "title": "Interactive Brokers monthly price history 2022-06 to 2026-10 (October bar close 614.99) with cash-dividend corporate actions, META Class A",
+   "url": "connector:mcp__Interactive_Brokers__get_price_history",
+   "date": "2026-10-30",
+   "independent": true,
+   "publisher": "Interactive Brokers (read-only market data)",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_av_income",
+   "kind": "structured_data",
+   "title": "Alpha Vantage INCOME_STATEMENT META (annual and quarterly, normalized from SEC filings)",
+   "url": "connector:mcp__Alpha_Vantage_MCP_Server__INCOME_STATEMENT",
+   "date": "2026-10-27",
+   "independent": false,
+   "publisher": "Alpha Vantage",
+   "retrieval": "provider_normalized",
+   "syndicated_from": "pf_10q_20261022"
+  },
+  {
+   "id": "nm_av_balance",
+   "kind": "structured_data",
+   "title": "Alpha Vantage BALANCE_SHEET META (annual and quarterly, normalized from SEC filings)",
+   "url": "connector:mcp__Alpha_Vantage_MCP_Server__BALANCE_SHEET",
+   "date": "2026-10-27",
+   "independent": false,
+   "publisher": "Alpha Vantage",
+   "retrieval": "provider_normalized",
+   "syndicated_from": "pf_10q_20261022"
+  },
+  {
+   "id": "nm_av_cashflow",
+   "kind": "structured_data",
+   "title": "Alpha Vantage CASH_FLOW META (annual and quarterly, normalized from SEC filings)",
+   "url": "connector:mcp__Alpha_Vantage_MCP_Server__CASH_FLOW",
+   "date": "2026-10-27",
+   "independent": false,
+   "publisher": "Alpha Vantage",
+   "retrieval": "provider_normalized",
+   "syndicated_from": "pf_10q_20261022"
+  },
+  {
+   "id": "nm_av_estimates",
+   "kind": "consensus",
+   "title": "Alpha Vantage EARNINGS_ESTIMATES META: analyst consensus EPS and revenue by fiscal year and quarter, with analyst counts and 7/30/60/90-day revisions",
+   "url": "connector:mcp__Alpha_Vantage_MCP_Server__EARNINGS_ESTIMATES",
+   "date": "2026-10-27",
+   "independent": true,
+   "publisher": "Alpha Vantage (aggregated analyst estimates; individual brokers not named)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_fwp_launch_20261026",
+   "kind": "sec_filing",
+   "title": "Meta Platforms, Inc. Issuer Free Writing Prospectus filed 2026-10-26: launch of Series A Mandatory Convertible Preferred depositary shares and Class A forward-sale offering; financing plan (about 35 billion USD underwritten equity plus planned about 60 billion USD ATM)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526431036/d116268dfwp.htm",
+   "date": "2026-10-26",
+   "independent": true,
+   "publisher": "Meta Platforms, Inc. (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_fwp_pricing_20261027",
+   "kind": "sec_filing",
+   "title": "Meta Platforms, Inc. pricing term sheet (FWP) dated 2026-10-26, filed 2026-10-27: 40,000,000 Class A shares at 625.00 USD under forward sale agreements; 250,000,000 depositary shares of 6.50% Series A Mandatory Convertible Preferred at 50.00 USD",
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526432549/d382225dfwp.htm",
+   "date": "2026-10-27",
+   "independent": true,
+   "publisher": "Meta Platforms, Inc. (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_8k_20261029",
+   "kind": "sec_filing",
+   "title": "Meta Platforms, Inc. 8-K filed 2026-10-29 (Items 1.01, 3.03, 5.03, 9.01): underwriting agreements, forward sale agreements, certificates of designations; Depositary Shares Offering closed 2026-10-29",
+   "url": "https://www.sec.gov/Archives/edgar/data/1326801/000119312526438017/d183592d8k.htm",
+   "date": "2026-10-29",
+   "independent": true,
+   "publisher": "Meta Platforms, Inc. (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  }
+ ],
+ "facts": [
+  {
+   "id": "nm_eps_diluted_q_2026_09_30",
+   "metric": "eps_diluted",
+   "period": "Q@2026-09-30",
+   "value": 3.83,
+   "unit": "USD/share",
+   "source_ids": [
+    "pf_rel_20261021_1",
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q_2025_09_30",
+   "metric": "eps_diluted",
+   "period": "Q@2025-09-30",
+   "value": 1.05,
+   "unit": "USD/share",
+   "source_ids": [
+    "pf_rel_20261021_1"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q_2026_06_30",
+   "metric": "eps_diluted",
+   "period": "Q@2026-06-30",
+   "value": 6.18,
+   "unit": "USD/share",
+   "source_ids": [
+    "pf_cf_20260730"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q_2026_03_31",
+   "metric": "eps_diluted",
+   "period": "Q@2026-03-31",
+   "value": 10.44,
+   "unit": "USD/share",
+   "source_ids": [
+    "pf_cf_20260430"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_q_2025_12_31",
+   "metric": "eps_diluted",
+   "period": "Q@2025-12-31",
+   "value": 8.88,
+   "unit": "USD/share",
+   "source_ids": [
+    "pf_rel_20260128_1"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_ttm_2026_09_30",
+   "metric": "eps_diluted_ttm",
+   "period": "TTM@2026-09-30",
+   "value": 29.33,
+   "unit": "USD/share",
+   "source_ids": [
+    "pf_rel_20260128_1",
+    "pf_cf_20260430",
+    "pf_cf_20260730",
+    "pf_rel_20261021_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_shares_diluted_wavg_q_2026_09_30",
+   "metric": "shares_diluted_wavg",
+   "period": "Q@2026-09-30",
+   "value": 2573000000,
+   "unit": "shares",
+   "source_ids": [
+    "pf_rel_20261021_1",
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_legal_charge_q_2026_09_30",
+   "metric": "one_off_legal_charge",
+   "period": "Q@2026-09-30",
+   "value": 9890000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261021_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_legal_charge_q_2026_06_30",
+   "metric": "one_off_legal_charge",
+   "period": "Q@2026-06-30",
+   "value": 2400000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260729_1"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_operating_income_ex_legal_q_2026_09_30",
+   "metric": "operating_income_ex_legal_charge",
+   "period": "Q@2026-09-30",
+   "value": 22878000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261021_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_eps_ex_legal_q_2026_09_30",
+   "metric": "eps_diluted_ex_legal_charge",
+   "period": "Q@2026-09-30",
+   "value": 7.4,
+   "unit": "USD/share",
+   "source_ids": [
+    "pf_rel_20261021_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_fcf_q_2026_09_30",
+   "metric": "free_cash_flow",
+   "period": "Q@2026-09-30",
+   "value": -2120000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261021_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_capex_incl_leases_q_2026_09_30",
+   "metric": "capex_incl_finance_leases",
+   "period": "Q@2026-09-30",
+   "value": 34906000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261021_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_capex_incl_leases_fy2025",
+   "metric": "capex_incl_finance_leases",
+   "period": "FY2025",
+   "value": 72215000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260129",
+    "pf_rel_20260128_1"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_total_costs_expenses_fy2025",
+   "metric": "total_costs_and_expenses",
+   "period": "FY2025",
+   "value": 117690000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_fcf_fy2025",
+   "metric": "free_cash_flow",
+   "period": "FY2025",
+   "value": 43585000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260128_1"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_cash_q_2026_09_30",
+   "metric": "cash",
+   "period": "Q@2026-09-30",
+   "value": 11222000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022",
+    "pf_rel_20261021_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_short_term_investments_q_2026_09_30",
+   "metric": "short_term_investments",
+   "period": "Q@2026-09-30",
+   "value": 71227000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022",
+    "pf_rel_20261021_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_long_term_debt_q_2026_09_30",
+   "metric": "long_term_debt",
+   "period": "Q@2026-09-30",
+   "value": 80922000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_long_term_debt_current_q_2026_09_30",
+   "metric": "long_term_debt_current",
+   "period": "Q@2026-09-30",
+   "value": 2747000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_operating_lease_liabilities_q_2026_09_30",
+   "metric": "operating_lease_liabilities",
+   "period": "Q@2026-09-30",
+   "value": 31173000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_equity_q_2026_09_30",
+   "metric": "equity",
+   "period": "Q@2026-09-30",
+   "value": 272386000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_total_assets_q_2026_09_30",
+   "metric": "total_assets",
+   "period": "Q@2026-09-30",
+   "value": 478836000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_ppe_net_q_2026_09_30",
+   "metric": "ppe_net",
+   "period": "Q@2026-09-30",
+   "value": 253222000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261022",
+    "pf_rel_20261021_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_class_a_outstanding_2026_10_16",
+   "metric": "shares_class_a_outstanding",
+   "period": "Q@2026-10-16",
+   "value": 2214472367,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-10-16",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_class_b_outstanding_2026_10_16",
+   "metric": "shares_class_b_outstanding",
+   "period": "Q@2026-10-16",
+   "value": 341768886,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-10-16",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_class_ab_outstanding_2026_10_16",
+   "metric": "shares_class_ab_outstanding",
+   "period": "Q@2026-10-16",
+   "value": 2556241253,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20261022"
+   ],
+   "period_end": "2026-10-16",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_fwd_class_a_shares_2026_10_26",
+   "metric": "forward_sale_class_a_shares",
+   "period": "Q@2026-10-26",
+   "value": 40000000,
+   "unit": "shares",
+   "source_ids": [
+    "nm_fwp_pricing_20261027",
+    "nm_8k_20261029"
+   ],
+   "period_end": "2026-10-26",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_fwd_class_a_option_2026_10_26",
+   "metric": "forward_sale_class_a_option_shares",
+   "period": "Q@2026-10-26",
+   "value": 6000000,
+   "unit": "shares",
+   "source_ids": [
+    "nm_fwp_pricing_20261027",
+    "nm_8k_20261029"
+   ],
+   "period_end": "2026-10-26",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_fwd_offer_price_2026_10_26",
+   "metric": "class_a_offering_price",
+   "period": "Q@2026-10-26",
+   "value": 625.0,
+   "unit": "USD/share",
+   "source_ids": [
+    "nm_fwp_pricing_20261027"
+   ],
+   "period_end": "2026-10-26",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_fwd_initial_forward_price_2026_10_26",
+   "metric": "forward_sale_initial_price",
+   "period": "Q@2026-10-26",
+   "value": 622.91875,
+   "unit": "USD/share",
+   "source_ids": [
+    "nm_fwp_pricing_20261027",
+    "nm_8k_20261029"
+   ],
+   "period_end": "2026-10-26",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_fwd_expected_net_proceeds_2026_10_26",
+   "metric": "forward_sale_expected_net_proceeds",
+   "period": "Q@2026-10-26",
+   "value": 24900000000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_fwp_pricing_20261027"
+   ],
+   "period_end": "2026-10-26",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_pref_depositary_shares_2026_10_29",
+   "metric": "preferred_depositary_shares_issued",
+   "period": "Q@2026-10-29",
+   "value": 250000000,
+   "unit": "shares",
+   "source_ids": [
+    "nm_fwp_pricing_20261027",
+    "nm_8k_20261029"
+   ],
+   "period_end": "2026-10-29",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_pref_shares_2026_10_29",
+   "metric": "preferred_shares_issued",
+   "period": "Q@2026-10-29",
+   "value": 12500000,
+   "unit": "shares",
+   "source_ids": [
+    "nm_fwp_pricing_20261027"
+   ],
+   "period_end": "2026-10-29",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_pref_liquidation_2026_10_29",
+   "metric": "preferred_liquidation_preference",
+   "period": "Q@2026-10-29",
+   "value": 12500000000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_fwp_pricing_20261027",
+    "nm_8k_20261029"
+   ],
+   "period_end": "2026-10-29",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_pref_dividend_rate_2026_10_29",
+   "metric": "preferred_dividend_rate",
+   "period": "Q@2026-10-29",
+   "value": 0.065,
+   "unit": "ratio",
+   "source_ids": [
+    "nm_fwp_pricing_20261027"
+   ],
+   "period_end": "2026-10-29",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_pref_div_annual_2026_10_29",
+   "metric": "preferred_dividend_annual_cash",
+   "period": "Q@2026-10-29",
+   "value": 812500000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_fwp_pricing_20261027"
+   ],
+   "period_end": "2026-10-29",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_pref_max_conv_rate_2026_10_29",
+   "metric": "preferred_max_conversion_rate",
+   "period": "Q@2026-10-29",
+   "value": 1.6,
+   "unit": "class_a_shares_per_preferred_share",
+   "source_ids": [
+    "nm_fwp_pricing_20261027"
+   ],
+   "period_end": "2026-10-29",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_pref_min_conv_rate_2026_10_29",
+   "metric": "preferred_min_conversion_rate",
+   "period": "Q@2026-10-29",
+   "value": 1.362,
+   "unit": "class_a_shares_per_preferred_share",
+   "source_ids": [
+    "nm_fwp_pricing_20261027"
+   ],
+   "period_end": "2026-10-29",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_pref_initial_price_2026_10_29",
+   "metric": "preferred_initial_price",
+   "period": "Q@2026-10-29",
+   "value": 625.0,
+   "unit": "USD/share",
+   "source_ids": [
+    "nm_fwp_pricing_20261027"
+   ],
+   "period_end": "2026-10-29",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_pref_threshold_price_2026_10_29",
+   "metric": "preferred_threshold_appreciation_price",
+   "period": "Q@2026-10-29",
+   "value": 734.2144,
+   "unit": "USD/share",
+   "source_ids": [
+    "nm_fwp_pricing_20261027"
+   ],
+   "period_end": "2026-10-29",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_pref_conv_shares_max_2026_10_29",
+   "metric": "preferred_as_converted_class_a_shares_max",
+   "period": "Q@2026-10-29",
+   "value": 20000000,
+   "unit": "shares",
+   "source_ids": [
+    "nm_fwp_pricing_20261027"
+   ],
+   "period_end": "2026-10-29",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_pref_conv_shares_min_2026_10_29",
+   "metric": "preferred_as_converted_class_a_shares_min",
+   "period": "Q@2026-10-29",
+   "value": 17025000,
+   "unit": "shares",
+   "source_ids": [
+    "nm_fwp_pricing_20261027"
+   ],
+   "period_end": "2026-10-29",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_atm_planned_2026_10_26",
+   "metric": "planned_atm_program_size",
+   "period": "Q@2026-10-26",
+   "value": 60000000000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_fwp_launch_20261026"
+   ],
+   "period_end": "2026-10-26",
+   "basis": "reported"
+  }
+ ],
+ "guidance_track": [
+  {
+   "period": "Q@2025-03-31",
+   "metric": "revenue",
+   "guided_mid": 40650000000,
+   "actual": 42314000000,
+   "source_ids": [
+    "pf_rel_20250129_1",
+    "pf_rel_20250430_1"
+   ]
+  },
+  {
+   "period": "Q@2025-06-30",
+   "metric": "revenue",
+   "guided_mid": 44000000000,
+   "actual": 47516000000,
+   "source_ids": [
+    "pf_rel_20250430_1",
+    "pf_rel_20250730_1"
+   ]
+  },
+  {
+   "period": "Q@2025-09-30",
+   "metric": "revenue",
+   "guided_mid": 49000000000,
+   "actual": 51242000000,
+   "source_ids": [
+    "pf_rel_20250730_1",
+    "pf_rel_20251029_1"
+   ]
+  },
+  {
+   "period": "Q@2025-12-31",
+   "metric": "revenue",
+   "guided_mid": 57500000000,
+   "actual": 59893000000,
+   "source_ids": [
+    "pf_rel_20251029_1",
+    "pf_rel_20260128_1"
+   ]
+  },
+  {
+   "period": "Q@2026-03-31",
+   "metric": "revenue",
+   "guided_mid": 55000000000,
+   "actual": 56311000000,
+   "source_ids": [
+    "pf_rel_20260128_1",
+    "pf_rel_20260429_1"
+   ]
+  },
+  {
+   "period": "Q@2026-06-30",
+   "metric": "revenue",
+   "guided_mid": 59500000000,
+   "actual": 60801000000,
+   "source_ids": [
+    "pf_rel_20260429_1",
+    "pf_rel_20260729_1"
+   ]
+  },
+  {
+   "period": "Q@2026-09-30",
+   "metric": "revenue",
+   "guided_mid": 62500000000,
+   "actual": 64601000000,
+   "source_ids": [
+    "pf_rel_20260729_1",
+    "pf_rel_20261021_1"
+   ]
+  },
+  {
+   "period": "FY2025",
+   "metric": "total_expenses",
+   "guided_mid": 116500000000,
+   "actual": 117690000000,
+   "source_ids": [
+    "pf_rel_20250129_1",
+    "pf_rel_20260128_1"
+   ]
+  },
+  {
+   "period": "FY2025",
+   "metric": "capex_incl_finance_leases",
+   "guided_mid": 62500000000,
+   "actual": 72215000000,
+   "source_ids": [
+    "pf_rel_20250129_1",
+    "pf_rel_20260128_1"
+   ]
+  }
+ ],
+ "consensus": [
+  {
+   "id": "nm_cons_revenue_fy2026",
+   "metric": "revenue",
+   "period": "FY2026",
+   "value": 256547054170,
+   "n": 51,
+   "low": 252535000000,
+   "high": 257640000000,
+   "source_id": "nm_av_estimates"
+  },
+  {
+   "id": "nm_cons_eps_fy2026",
+   "metric": "eps_diluted",
+   "period": "FY2026",
+   "value": 29.2069,
+   "n": 53,
+   "low": 27.77,
+   "high": 32.34,
+   "source_id": "nm_av_estimates"
+  },
+  {
+   "id": "nm_cons_revenue_fy2027",
+   "metric": "revenue",
+   "period": "FY2027",
+   "value": 311469314800,
+   "n": 60,
+   "low": 293559000000,
+   "high": 353304000000,
+   "source_id": "nm_av_estimates"
+  },
+  {
+   "id": "nm_cons_eps_fy2027",
+   "metric": "eps_diluted",
+   "period": "FY2027",
+   "value": 33.9588,
+   "n": 55,
+   "low": 29.44,
+   "high": 41.5,
+   "source_id": "nm_av_estimates"
+  },
+  {
+   "id": "nm_cons_revenue_q_2026_12_31",
+   "metric": "revenue",
+   "period": "Q@2026-12-31",
+   "value": 74946821700,
+   "n": 46,
+   "low": 72558000000,
+   "high": 75927000000,
+   "source_id": "nm_av_estimates"
+  },
+  {
+   "id": "nm_cons_eps_q_2026_12_31",
+   "metric": "eps_diluted",
+   "period": "Q@2026-12-31",
+   "value": 8.3298,
+   "n": 41,
+   "low": 7.68,
+   "high": 9.65,
+   "source_id": "nm_av_estimates"
+  },
+  {
+   "id": "nm_cons_revenue_q_2027_03_31",
+   "metric": "revenue",
+   "period": "Q@2027-03-31",
+   "value": 68361952120,
+   "n": 32,
+   "low": 66433000000,
+   "high": 71410000000,
+   "source_id": "nm_av_estimates"
+  },
+  {
+   "id": "nm_cons_eps_q_2027_03_31",
+   "metric": "eps_diluted",
+   "period": "Q@2027-03-31",
+   "value": 7.6179,
+   "n": 30,
+   "low": 6.31,
+   "high": 9.69,
+   "source_id": "nm_av_estimates"
+  }
+ ],
+ "notes": [
+  "nm IDENTITY Meta Platforms, Inc. (CIK 1326801). Listed security: Class A common stock, $0.000006 par, The Nasdaq Stock Market LLC, symbol META (10-K cover, pf_10k_20260129); IB search_contracts: META PLATFORMS INC-CLASS A, NASDAQ, STK, conid 107113386, USD (other listings seen and not used: MEXI conid 114922621, TSE CDR conid 530091499). Class B is unlisted; no ADR. Calendar fiscal year (FYE 12-31), USD reporting and USD quote. Resolved unambiguously: no stop.",
+  "nm SHARE CLASS EVENT The 2026-10-21 release (pf_rel_20261021_1) and the 10-Q subsequent-events note (pf_10q_20261022) say the Board approved a new listed non-voting Class C common stock, effective 2027-01-19, with a one-time stock dividend of one Class C share per Class A and Class B share (record and payment dates not yet set); the company expects the Class A price to reflect a two-for-one split after payment, voting power unchanged, and a Founder Alignment Agreement with the CEO covers his Class C sales. Stated purposes include capital raising, employee compensation and acquisitions, so Class C is also a future issuance currency (a dilution link for the analyst). Every per-share number here (price 624.51, EPS, consensus EPS, dividend 0.525) is on the pre-split basis; the valuation must state its share basis.",
+  "nm PRICE (nm_ib_snapshot, IB REALTIME, read-only, read 2026-11-01) last 614.00 USD at 2026-10-30T23:59:56Z (Friday, the last session before as_of; is_close false; the October monthly bar closes 614.99, nm_ib_history). Earlier 2026-10-27 snapshot (reused run): 624.51, prior close 630.56 (2026-10-26, the last sale quoted in the offering term sheet); 52-week low 519.79 and high 779.82, price one year ago 747.82 (from the 2026-10-27 snapshot). Month-end closes: 2026-08 572.34, 2026-09 725.18, 2026-10 614.99 (-15.2% in October after the 2026-10-21 print and the 2026-10-26/27 equity raise); 614.00 is 1.8% below the 625.00 Class A offering price and 2.6% below the 630.56 close before pricing (derived). Cash dividend 0.525 per quarter (last ex-date 2026-09-21, IB yield about 0.34%). Market capitalization is not stated by any source: price x 2,556.2 million Class A+B shares (10-Q cover, 2026-10-16) is about 1.57 trillion USD (derived, before the new shares). All per-share figures are on the pre-split (pre-Class C dividend) basis.",
+  "nm RECONCILIATION FY2025 (10-K pf_10k_20260129 vs companyfacts pf_ facts vs Alpha Vantage nm_av_*): revenue 200,966 / operating income 83,276 / net income 60,458 / CFO 115,800 / purchases of property and equipment 69,691 / SBC 20,427 / D&A 18,616 / diluted shares 2,574 million / diluted EPS 23.49 all agree in the three sources, no difference. AV capitalExpenditures 69,691 is purchases of property and equipment only; the company's own capex measure adds finance-lease principal payments 2,524 = 72,215 (release: 72.22 billion).",
+  "nm RECONCILIATION Q3 2026 (release pf_rel_20261021_1 and 10-Q pf_10q_20261022 vs pf_ facts vs AV): revenue 64,601, operating income 12,988, net income 9,860, SBC 7,363, capex (purchases) 33,942, D&A 7,154 and diluted shares 2,573 million agree in all sources. Difference 1: CFO is 32,786 in the release, 10-Q and AV, but pf_cfo_q_2026_09_30 is 32,785 (companyfacts value derived from year-to-date 96,873 minus the first two quarters 32,226 + 31,862 = 32,785: a 1 million rounding artefact, immaterial). Difference 2: Q4 2025 revenue is 59,894 in AV and 59,893 in pf_ (200,966 - 141,073): 1 million rounding. 9M 2026 capex 83,055 = 18,997 + 30,116 + 33,942 ties.",
+  "nm RECONCILIATION AV FIELD DEFECTS (do not use): AV BALANCE_SHEET shortTermDebt 2,522 is the current operating-lease liability, not debt; shortLongTermDebtTotal 112,095 = non-current long-term debt 80,922 + operating lease liabilities 31,173 and omits the current portion of long-term debt 2,747; AV capitalLeaseObligations 31,173 is the operating-lease total (2,522 + 28,651). AV CASH_FLOW proceedsFromRepurchaseOfEquity shows -4,272 for Q4 2025 and -4,423 for Q1 2026, but the release and 10-Q show no buyback in those quarters (all 26,248 of 2025 buybacks fell in the first nine months; none in the first nine months of 2026), so that AV quarterly field is not a repurchase line. Use the filings.",
+  "nm ROIC CHECK prefetch/forensic.json roic_last 28.7% = FY2025 NOPAT 58,589 / average invested capital 203,844, where invested capital = equity + long-term debt - cash (FY2025 end: 217,243 + 58,744 - 35,873 = 240,114; FY2024 end 167,574). Differences found in the inputs: (1) NOPAT uses the FY2025 effective tax rate 29.6% (25,474 / 85,932), which contains the third-quarter 2025 tax provision of 18,954 at an 87% effective rate (release comparative, pf_rel_20261021_1); at the guided 15-17% Q4 2026 rate NOPAT would be about 70 billion and ROIC about 34% (derived, not a restatement). (2) 'cash' is cash and equivalents only; marketable securities 45,719 at FY2025 end are treated as invested capital, so invested capital is overstated if they are cash-like (ex-securities FY2025 end 194,395). (3) Equity includes non-marketable equity investments (27,524 at FY2025, 32,624 at 2026-09-30) that are not operating assets. (4) Debt excludes operating lease liabilities (25,153 at FY2025, 31,173 at 2026-09-30) and finance-lease liabilities (inside other liabilities). (5) Forward effect: at 2026-09-30 equity 272,386 + debt 83,669 - cash 11,222 = 344.8 billion (+104.7 billion in nine months; property and equipment net 253,222 vs 176,400), while last-twelve-month operating income is 79,380 (83,276 - 58,531 + 54,635, after 12.3 billion of 2026 legal charges): the ROIC mechanically falls in FY2026 and incremental ROIC on the AI build-out is not yet visible in reported profit.",
+  "nm OWN MULTIPLE HISTORY trailing GAAP P/E, 53 month-end closes 2022-06 to 2026-10-30: low 7.5 (2022-10, price 93.16 on trough EPS) median 27.1 high 39.1 (2023-07, price 318.60 on trough EPS) now 20.9 (614.00 / 29.33 trailing diluted EPS = Q4'25 8.88 + Q1'26 10.44 + Q2'26 6.18 + Q3'26 3.83; the median and extremes are those computed on the 2026-10-27 run through the 2026-10-26 close, unchanged by the 2026-10-30 price) years 2022-2026 sources nm_ib_history, nm_av_income, pf_cf_20260129, pf_rel_20261021_1. Method: trailing EPS = sum of the last four quarterly net incomes (AV) divided by that fiscal year's diluted shares (SEC net income / EPS), each quarter counted 32 days after its end, so the history is derived, not point-in-time reported EPS. Year-end trailing P/E: 11.3 (2022), 31.3 (2023), 27.6 (2024), 29.0 (2025). Distortions: 2022-23 EPS were depressed (FY2022 8.59), FY2025 EPS 23.49 carries the 18.95 billion Q3 tax provision, and trailing EPS now carries legal charges of 9.89 billion (Q3 2026, 3.57 per share per the company) and 2.4 billion (Q2 2026); ex the Q3 charge trailing EPS would be about 32.90 and the multiple about 18.7 (derived). Forward now: 614.00 / 29.2069 = 21.0 on FY2026 consensus and 614.00 / 33.9588 = 18.1 on FY2027 consensus (expectations, nm_av_estimates; neither is known to include the new shares or the preferred dividend). A forward-P/E history is not available point-in-time (no dated historical consensus).",
+  "nm CONSENSUS Alpha Vantage EARNINGS_ESTIMATES, snapshot retrieved 2026-10-27 after the 2026-10-21 print (an expectation, individual brokers not named). FY2026: EPS 29.21 (n 53, range 27.77-32.34), revenue 256.55 billion (n 51, range 252.54-257.64). FY2027: EPS 33.96 (n 55, range 29.44-41.50), revenue 311.47 billion (n 60, range 293.56-353.30), implying +21% revenue growth on FY2026. Q4 2026: revenue 74.95 billion (n 46) against the company's guide of 73-76 billion; EPS 8.33 (n 41). Q1 2027: revenue 68.36 billion (n 32), EPS 7.62 (n 30). Revisions: FY2026 EPS average 33.05 (90 days ago) -> 31.73 (60) -> 31.23 (30) -> 30.61 (7) -> 29.21 now, the cut reflecting the legal charge and the profit-margin pressure; FY2027 EPS 35.14 (90 days ago) -> 33.92 (60) -> 33.93 (30) -> 33.96 now, i.e. the FY2027 estimate fell about 3% in the last 90 days and was stable in the last 60. FY2027 high-low EPS spread 29.44-41.50 is wide. The Q3 2026 revenue average before the print was 63.41 billion (n 49, range 61.70-65.28); actual 64.60 billion, a 1.9% beat; Q3 EPS average 5.46 (range 2.61-7.64) is not comparable with GAAP 3.83 because analysts differed on including the 9.89 billion charge (ex-charge 7.40). No operating-income, free-cash-flow or FY2028+ consensus is returned by AV (gap). No broker target price collected (gap). Consensus backs no fact.",
+  "nm TRACK RECORD revenue ratio 1.041 over 7 periods, 7 beats, 0 misses (actual / guided midpoint, Q1 2025 to Q3 2026: Q1'25 1.041, Q2'25 1.080, Q3'25 1.046, Q4'25 1.042, Q1'26 1.024, Q2'26 1.022, Q3'26 1.034; guided ranges 39.5-41.8, 42.5-45.5, 47.5-50.5, 56-59, 53.5-56.5, 58-61, 61-64 billion; the actual was above the top of the range in 5 of 7 quarters, Q1'25, Q2'25, Q3'25, Q4'25 and Q3'26, and in the upper part of the range in the other two): the company beats conservatively; the beat has narrowed from 8% (Q2'25) to 2-3% in the last three quarters. The Q4 2026 guide (73-76 billion, midpoint 74.5) is gather_documents' item. Expenses: FY2025 total expenses initial guide 114-119 billion (mid 116.5) vs actual 117.69 (ratio 1.010, upper half). Capex: FY2025 initial guide 60-65 billion (mid 62.5) vs actual 72.22 incl. finance leases (ratio 1.155): capex was raised in every quarterly update (64-72, 66-72, 70-72); FY2026 capex guide moved 115-135 -> 125-145 -> 130-145 -> 135-145 billion (pf_rel_20260128_1 .. pf_rel_20261021_1). ticker-check prints the same revenue ratio (mean 1.041076, n 7).",
+  "nm FUNDING AND CAPITAL (for the dilution and funding link) Q3 2026: CFO 32.79 billion, purchases of property and equipment 33.94 billion plus finance-lease principal 0.96 = capex 34.91 billion, free cash flow -2.12 billion (company definition; 9M 2026 +11.05 billion vs 29.51 billion in 9M 2025; FY2025 43.59 billion). FY2026 capex guide 135-145 billion incl. finance leases vs 9M spent 85.8 billion (83,055 + 2,769), so Q4 implies 49-59 billion. Cash and marketable securities 82.45 billion (11,222 + 71,227) vs long-term debt carrying 83.67 billion (80,922 + 2,747; face 84,000 vs 59,000 at FY2025) plus operating leases 31.17 billion: net debt before leases about -1.2 billion, i.e. roughly neutral at 2026-09-30 (before the 12.5 billion preferred of 2026-10-29: about 11 billion net cash pro forma, derived; see nm EQUITY RAISE), down from net cash of about 22.8 billion at FY2025 (35,873 + 45,719 - 58,744). 25 billion of senior notes were issued in May 2026 (10-Q Note 9; 9M proceeds from long-term debt 24.91 billion). No Class A repurchase in the first nine months of 2026 (10-Q) versus 26.25 billion in 2025; dividends 1.36 billion a quarter. Headcount 66,775, down 15% y/y (release). Legal: an agreement with 52 attorneys general of up to about 18.59 billion, 9.89 billion charged in Q3 2026 (the remainder is not yet expensed; check the 10-Q for payment timing: gather_documents), and youth-related trials scheduled in coming months (CFO commentary).",
+  "nm AV USAGE 2026-10-27: INCOME_STATEMENT first call answered a burst rate_limit ('1 request per second'), the second call a few seconds later succeeded; BALANCE_SHEET first call upstream_timeout, retried once, succeeded; CASH_FLOW returned a preview and the full payload was downloaded from its data_url; EARNINGS_ESTIMATES succeeded with return_full_data. Six AV requests in total, so at most 19 of the 25 daily requests remain for gather_documents (EARNINGS_CALL_TRANSCRIPT). COMPANY_OVERVIEW and FMP statements/analyst endpoints were not called (premium / ACCESS DENIED per session_capabilities).",
+  "nm TIMING Everything cited is citable at as_of 2026-11-01: release pf_rel_20261021_1 (2026-10-21), 10-Q pf_10q_20261022 (2026-10-22), the pricing FWP nm_fwp_pricing_20261027 (2026-10-27, citable from 2026-10-29), the launch FWP nm_fwp_launch_20261026 (citable from 2026-10-28), the 8-K nm_8k_20261029 (2026-10-29, citable from 2026-10-31), IB price on its own date (2026-10-30). nm_av_estimates is dated 2026-10-27 (citable from 2026-10-29). No fact here cites an AV source. No market block written (prefetch and gather_macro own it). Overlap: gather_macro registers the same FWP documents under mc_ ids; merge dedups by URL.",
+  "nm EQUITY RAISE (announced 2026-10-26, priced 2026-10-26/27; issuer documents nm_fwp_launch_20261026, nm_fwp_pricing_20261027, nm_8k_20261029; the share data of the 10-Q cover nm facts are on the pre-raise basis) Financing plan stated by the issuer: about 35 billion USD of concurrent underwritten offerings (about 22.5 billion Class A, later upsized to 25.0 billion, plus about 12.5 billion of preferred) and a FUTURE at-the-market program of about 60 billion USD planned to launch when the new Class C stock starts trading (no agreement entered, timing, size and terms undetermined, no assurance). (1) CLASS A FORWARD SALE: 40,000,000 Class A shares sold at 625.00 USD (46,000,000 if the underwriters' 30-day option for 6,000,000 more is exercised, then with extra forward agreements) by forward sellers borrowing shares; Meta receives NO cash at pricing and issues shares to Morgan Stanley Capital Services and Goldman Sachs only on settlement, at Meta's election on one or more dates on or before 2027-11-19, at the forward price: initial 622.91875 USD (public price less discount), adjusted daily by a floating interest factor (overnight bank funding rate less a spread) and reduced on specified dates by the expected dividends; expected net proceeds about 24.9 billion (about 28.7 billion with the option) before expenses. After the Class C effective date (2027-01-19) each agreement references Class A and Class C and Meta may settle in Class C only, with a forward-price adjustment tied to the Class A / Class C price difference; the purchasers may accelerate (borrow failure, special dividend, ownership thresholds, extraordinary events). Until settlement the shares count in diluted EPS only by the treasury-stock method (not read from the filing; analyst to confirm), so basic shares stay 2,556 million, diluted weighted 2,573 million (Q3). (2) SERIES A MANDATORY CONVERTIBLE PREFERRED: 250,000,000 depositary shares at 50.00 USD (each 1/20 of a preferred share, 12,500,000 preferred shares, liquidation preference 1,000 USD each = 12.5 billion USD gross), over-allotment option 37,500,000 depositary shares (1,875,000 preferred shares, 1.875 billion) for 30 days; the offering closed 2026-10-29 (8-K), so about 12.5 billion of gross cash arrived on 2026-10-29 (underwriting discount not read: the final prospectus supplement was not saved; whether the option was exercised is not known). Dividend 6.50% of the liquidation preference a year = 812.5 million USD a year on 12.5 billion (derived: 203.1 million a quarter, 0.8125 USD per depositary share), cumulative, paid when declared in cash or Class A (later Class C) shares or a mix at the board's choice, quarterly on 2/15, 5/15, 8/15, 11/15 from 2027-02-15 (first payment 19.1389 USD per preferred share = about 239 million) to 2029-08-15 (11 payments, about 2.27 billion in total, derived). Mandatory conversion about 2029-08-15 into Class A (Class C once the trigger event has occurred): 1.6000 shares per preferred share if the price is below the initial price 625.00 USD, 1,000 USD divided by the price between 625.00 and the threshold appreciation price 734.2144 (17.5% above), 1.3620 shares above it; floor price 218.75 USD. As-converted shares 17.0 to 20.0 million (12.5 million preferred shares x 1.3620 to 1.6000, derived), 19.6 to 23.0 million with the option. At 614.00 the preferred converts at the maximum rate into shares worth 982.4 USD per 1,000 USD of preference (derived, price today, not a forecast); early conversion on a fundamental change at table rates (1.3520-1.6000). (3) DILUTION ARITHMETIC (derived from the filed terms, pre-split basis, against 2,556.2 million Class A+B shares on 2026-10-16): forward 40.0 million = +1.6% (46.0 million = +1.8%), preferred 17.0-20.0 million = +0.7-0.8% (19.6-23.0 million with the option), together 57.0-60.0 million = +2.2-2.3% (65.6-69.0 million = +2.6-2.7% with both options); a 60 billion ATM at 614.00 would be about 97.7 million shares (+3.8%, hypothetical because no agreement exists) and everything planned (about 95 billion at 614.00) about 155 million shares (+6.1%, illustrative only). The forward and the preferred are sold at about the same price as the market (625.00 vs 630.56 prior close and 614.00 now), i.e. no discount to the market is embedded beyond the 0.33% forward discount; the cost is the 6.5% preferred coupon (after-tax cost below the common's earnings yield on 614.00 / 29.33 only if the stock is above the conversion price) and the new claim ranking ahead of common. (4) FUNDING CONTEXT: capex guide 2026 135-145 billion incl. finance leases, 9M spent 85.8 billion, Q4 implies 49-59 billion; cash and marketable securities 82.45 billion at 2026-09-30 (issuer statement 'approximately 82 billion', nm_fwp_launch_20261026) plus about 12.5 billion preferred gross on 2026-10-29 gives about 95 billion pro forma (derived); the forward proceeds (about 24.9 billion) arrive only at settlement, by 2027-11-19. Issuer: 'balanced mix of operating cash flow, investment-grade debt, strategic partnerships and equity', Aa3/AA- ratings (issuer statement, not verified). For the analyst: model the 40 million forward shares and the preferred conversion shares as future common issuance, the preferred dividend as a claim ahead of common EPS (about 0.32 USD per share a year on 2,573 million diluted shares, derived), and the ATM as a visible unagreed funding option, never as a base-case fact.",
+  "nm CONSENSUS RECHECK 2026-11-01: Alpha Vantage EARNINGS_ESTIMATES called again (one call): every FY2026, FY2027, Q4 2026 and Q1 2027 average, high, low and analyst count is identical to the 2026-10-27 snapshot (nm_cons_* rows unchanged); revision counts: FY2026 EPS up 1 / down none in 7 days, up 4 / down 6 in 30 days; FY2027 EPS up 1 / none in 7 days, up 7 / down 3 in 30 days; Q1 2027 EPS 7-day-ago average 7.92 -> 7.62 now. The estimates do not say whether they include the forward-sale shares, the preferred dividend or the equity-raise financing cost (unknown); nm_av_estimates stays dated 2026-10-27 (the data are unchanged, nothing was redated). The raw payload of 2026-10-27 stands in raw/av__earnings_estimates.json; the second payload was not saved separately because its values equal it."
+ ],
+ "gaps": [
+  "No point-in-time forward P/E history (no dated historical consensus); only the derived trailing P/E history and today's forward multiples.",
+  "AV EARNINGS_ESTIMATES returns revenue and EPS only: no operating income, free cash flow or FY2028+ consensus; no broker target prices were collected (budget).",
+  "FMP statements and analyst endpoints are ACCESS DENIED on this plan and were not called; AV statements were used as the second source for cross-checks only.",
+  "Trailing EPS history is derived from quarterly net income over the fiscal year's diluted shares (approximate), not from reported quarterly EPS for every quarter.",
+  "Timing of the payments under the 18.59 billion state attorneys general agreement (how much of it is still to be expensed or paid) is not read here (gather_documents).",
+  "Equity raise: the final 424B5 prospectus supplements were not saved (only the preliminary ones, with blanks, the pricing FWPs and the 8-K): the preferred underwriting discount, the exact pro forma share count and whether either 30-day option (6,000,000 Class A shares; 37,500,000 depositary shares) was exercised are not known.",
+  "Equity raise: the treasury-stock effect of the forward on diluted EPS, the preferred's treatment (permanent equity or mezzanine; if-converted test) and whether consensus EPS includes the new shares and the 812.5 million preferred dividend are not read; the ~60 billion ATM has no agreement, size or date.",
+  "Class C stock (effective 2027-01-19) will become a settlement and conversion currency for the forward, the preferred and the ATM: the Class A / Class C price relationship (and the forward-price adjustment for it) is unknown."
+ ],
+ "stopped": [
+  "No branch stopped for cause; EARNINGS_ESTIMATES target prices and a second consensus provider (WebSearch) were skipped to stay within the tool-call budget (the stage ran somewhat over its 28-call budget because of AV retries and the preview download).",
+  "2026-11-01 refresh: AV EARNINGS_ESTIMATES re-called once (unchanged); AV statements not re-called (no new quarterly filing since the 10-Q of 2026-10-22: new_filings_since holds only the 8-K of 2026-10-29); price history and snapshot re-read from IB; no Class A/B repurchase or share count update after 2026-10-16 exists in a filing."
+ ]
+}

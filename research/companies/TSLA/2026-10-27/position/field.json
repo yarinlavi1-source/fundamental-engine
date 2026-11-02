@@ -1,0 +1,348 @@
+{
+ "thesis_he": {
+  "bear": "BYD ויצרנים סיניים לוקחים נתח באירופה ובשווקים המתפתחים שבהם טסלה צומחת, שוק הרכב החשמלי בצפון אמריקה ממשיך לרדת, מכסים ועלויות תאים שוחקים את רווח המגה-פאק, ו-Waymo נשארת לבד בנסיעות אוטונומיות בתשלום: טסלה נשארת יצרנית רכב עם תשואה על ההון מתחת לעלות ההון.",
+  "base": "מכירות הרכב שטוחות עד עלייה קטנה והנתח העולמי יציב עד יורד מעט (צמיחה מחוץ לארה\"ב וסין מקזזת ירידה בבית), האחסון גדל לפי ההזמנות והמקדמות עם יתרון רווחיות ברור על Fluence, ומנויי FSD ממשיכים לגדול; רובוטקסי ו-Optimus עדיין לא מכניסים כסף משמעותי בשנה-שנתיים הקרובות.",
+  "bull": "מה שצריך לקרות: אישור FSD בכל האיחוד האירופי עד בערך רבעון ראשון 2027, רובוטקסי בתשלום בכמה ערים עם Cybercab בהיקף ממשי במהלך 2027, מגה-פאק 'כמעט מכור' ל-2027 עם מחיר ורווחיות עולים, ותאי LFP מקומיים שמשחררים את מגבלת הסוללות: טסלה הופכת לספקית של משאב נדיר (אחסון רשת ונהיגה אוטונומית מורשית)."
+ },
+ "potential": {
+  "market_direction": {
+   "reading": "Vehicles: flat in units and shifting by region. Benchmark Mineral Intelligence (relayed by The EV Report) counts 15.5 million plug-in and electric sales in January-September 2026 (+3% on a year earlier; plug-in hybrids included) and 2.15 million in September (-2%), with Europe +30%, North America -24% and China -13% year to date. Tesla's own revenue follows the same map: Q3 2026 United States -14.4% and China -7.9% while Other international +31.8%; the nine-month total +12.5% came entirely from Other international (+49.1%) (my arithmetic on the 10-Q regional facts). US policy is moving away from EV support: Tesla's regulatory-credit revenue fell from 417M (Q3 2025) to 113M (Q3 2026, after a 475M contractual reversal) and that program's remaining performance obligations from 841M to 384M. Storage: growing and pulled by data centers: record US installations of 18.9 GWh in Q2 2026 (Wood Mackenzie / American Clean Power, US only), Fluence backlog 6.4bn (+30%) with 850M of data-center awards; Tesla's energy customer prepayments rose from 2.04bn to 3.30bn in nine months and its energy RPO is 10.73bn (10.42bn at end-2025). Paid driverless ride-hailing is a real market led by Waymo (about 500,000 paid rides a week earlier in 2026, 11 cities; press relay of Waymo statements). No attributed study sizing the robotaxi or humanoid-robot market was read.",
+   "evidence_ids": [
+    "fd_bmi_ev_sep2026",
+    "mc_rev_us_q326",
+    "mc_rev_us_q325",
+    "mc_rev_cn_q326",
+    "mc_rev_cn_q325",
+    "mc_rev_oi_q326",
+    "mc_rev_oi_q325",
+    "mc_rev_oi_9m26",
+    "mc_rev_oi_9m25",
+    "dc_seg_line_regcredits_q3_2025",
+    "dc_seg_line_regcredits_q3_2026",
+    "dc_regcredits_reversal_q3_2026",
+    "dc_rpo_regcredits_fy2025",
+    "dc_rpo_regcredits_q3_2026",
+    "fd_wm_storage_q2",
+    "fd_flnc_rel_20260805",
+    "dc_defrev_energy_prepay_fy2025",
+    "dc_defrev_energy_prepay_q3_2026",
+    "dc_rpo_energy_q3_2026",
+    "dc_rpo_energy_fy2025",
+    "fd_electrek_waymo_20260708"
+   ]
+  },
+  "bottleneck_potential": {
+   "reading": "Vehicles: Tesla is not a bottleneck. Listed installed capacity is at least 2.525 million a year (Model 3/Y 2.25 million, Cybertruck 125k, Cybercab 125k, Semi 25k) against Q3 2026 production of 464,391 (about 1.86 million annualized, about 74% of the listed floor; my arithmetic). Management says demand exceeds production, with the largest backlog in four years and battery availability as the limit (days of supply 11, versus 15 in Q2 and 27 in Q1): a management reading, while Q3 deliveries were still -2% year on year. Storage is the nearest thing to a bottleneck position: Tesla supplies deployable grid capacity at about 55 GWh a year (13.7 GWh in Q3) from 110 GWh of installed Megapack capacity (Texas 50 GWh began production in Q3); management calls Megapack 'almost sold out' for 2027 (call, opinion) and customer prepayments rose 62% in nine months. The binding input is cells: own LFP cells are 7 GWh in Nevada (early ramp, about 6% of Megapack capacity) and 4680 above 40 GWh, and the 10-K says Tesla relies on Panasonic and CATL with very few fully qualified suppliers. Competitors add capacity too (Fluence contract manufacturing, whose delays cut its fiscal-2026 revenue guide by about 0.4bn), so how long any scarcity lasts is not in the sources. Autonomy: the scarce thing is licensed unsupervised driving at scale; Tesla has the largest paid driver-assistance base (1.74 million active FSD subscriptions, +67% in a year) and nearly 2 million cumulative unsupervised Robotaxi miles, but Waymo holds the licensed paid driverless position today. SI training compute (225 MW installed, 400 MW guided by year end) is for internal use, not a sold scarce product. Optimus is a hypothesis only (early production, no paid customer, price or revenue).",
+   "evidence_ids": [
+    "dc_kpi_cap_model3y_q3_2026",
+    "dc_kpi_cap_cybertruck_q3_2026",
+    "dc_kpi_cap_cybercab_q3_2026",
+    "dc_kpi_cap_semi_q3_2026",
+    "dc_kpi_production_q3_2026",
+    "dc_kpi_days_supply_q3_2026",
+    "dc_kpi_days_supply_q2_2026",
+    "dc_kpi_days_supply_q1_2026",
+    "dc_kpi_deliveries_q3_2026",
+    "dc_kpi_deliveries_q3_2025",
+    "dc_kpi_storage_q3_2026",
+    "dc_kpi_cap_megapack_q3_2026",
+    "dc_defrev_energy_prepay_fy2025",
+    "dc_defrev_energy_prepay_q3_2026",
+    "dc_call_20261021",
+    "dc_kpi_cap_4680_q3_2026",
+    "pf_10k_20260129",
+    "fd_flnc_rel_20260805",
+    "dc_kpi_fsd_subs_q3_2025",
+    "dc_kpi_fsd_subs_q3_2026",
+    "dc_kpi_robotaxi_miles_q3_2026",
+    "fd_electrek_waymo_20260708",
+    "dc_kpi_si_compute_installed_q3_2026",
+    "dc_g_si_compute_mw_ye2026",
+    "pf_rel_20261021_1"
+   ]
+  },
+  "share_trajectory": {
+   "reading": "Vehicles: flat-to-losing globally, gaining abroad. Tesla delivered 1,324,681 vehicles in January-September 2026, about 8.5% of Benchmark's 15.5 million plug-in and electric sales (the denominator includes plug-in hybrids; my arithmetic). Q3 deliveries fell 2% (486,532 vs 497,099) while the global market rose 3% year to date, so share was flat to lower; prior-year nine-month Tesla deliveries are not in the sources, so this is a direction, not a measured share series. BYD is the share-taker where Tesla also sells: overseas passenger and pickup sales of 1,342,960 in nine months (+92%), now equal to Tesla's whole global deliveries, while BYD's domestic units fell 33% (press relay of BYD data). Tesla also gains outside the US and China: Other international revenue +49.1% in nine months and Shanghai exports +58% in September (CPCA preliminary data, press). In the US the legacy makers are retreating from EVs (Ford Model e lost about 919M in Q2 2026 on about 1bn of revenue and discontinued the F-150 Lightning), while Rivian grows from a small base (19,248 deliveries in Q3, +46%, about 4% of Tesla's). Storage: Tesla deployments +9.6% in Q3 (13.7 vs 12.5 GWh) while Fluence's backlog grew 30% and its quarterly revenue 7.9%; no share percentage is computable (Tesla's figure is global, the market total US only). Robotaxi: Waymo leads in paid driverless rides; Tesla is not yet taking share on the numbers.",
+   "evidence_ids": [
+    "dc_kpi_deliveries_q1_2026",
+    "dc_kpi_deliveries_q2_2026",
+    "dc_kpi_deliveries_q3_2026",
+    "dc_kpi_deliveries_q3_2025",
+    "fd_bmi_ev_sep2026",
+    "fd_byd_sales_202609",
+    "mc_rev_oi_9m26",
+    "mc_rev_oi_9m25",
+    "mc_press_cpca_sep26",
+    "fd_ford_q2_2026",
+    "fd_rivn_q3_deliveries",
+    "dc_kpi_storage_q3_2026",
+    "dc_kpi_storage_q3_2025",
+    "fd_flnc_rel_20260805",
+    "fd_electrek_waymo_20260708",
+    "pf_rel_20261021_1"
+   ]
+  },
+  "competitive_position": {
+   "reading": "Stronger than every named US EV maker on unit economics: Tesla's automotive gross margin excluding regulatory credits was 18.1% in Q3 2026 (16.3% in Q2; about 1.3 points of Q3 came from the 260M IEEPA tariff refund in automotive cost of sales, my arithmetic), against Ford Model e EBIT of about -919M on about 1bn of Q2 revenue and Rivian's Q2 2026 gross margin of 10.8% with an operating margin of -50%; GM's Q3 operating margin of 7.2% is company-wide (its EV margin was not verified). Revenue per non-lease delivery was flat (41,896 vs 41,816 a year earlier; the deck says ASP excluding FX was lower), so the lead rests on cost and scale, not price. Against BYD the comparison is open: BYD is larger in units (3.13 million in nine months, plug-in hybrids included) and growing abroad, but its H1 2026 revenue fell 7.1% and net profit 20.5% (net margin about 3.6%, my arithmetic); BYD's vehicle margins were not retrieved, so a cost lead either way is not evidenced. Storage: Tesla's energy gross margin was 33.1% in Q3 (about 23.8% after removing the net 187M of tariff refunds, before the unsized warranty true-down; my arithmetic) and 20.4% in Q2, against Fluence's 5.1% GAAP; Tesla's nine-month energy revenue of 8.43bn is about three times Fluence's fiscal-2026 guide of 2.9-3.1bn. Infrastructure: 84,465 Supercharger connectors (+14% in a year) and a record Services and other gross profit of 734M (15.9% margin). Autonomy: weaker than Waymo in licensed paid driverless operation (about 500,000 paid rides a week in 11 cities versus Tesla's nearly 2 million cumulative unsupervised miles), stronger in paid driver-assistance adoption (1.74 million FSD subscriptions; at least 75% of North American buyers sign up at delivery, with a free month).",
+   "evidence_ids": [
+    "dc_kpi_gm_auto_ex_credits_q3_2026",
+    "dc_kpi_gm_auto_ex_credits_q2_2026",
+    "dc_tariff_refund_cogs_auto_q3_2026",
+    "dc_seg_line_autosales_q3_2026",
+    "fd_ford_q2_2026",
+    "fd_peer_RIVN",
+    "fd_peer_GM",
+    "dc_kpi_auto_sales_rev_per_nonlease_delivery_q3_2026",
+    "dc_kpi_auto_sales_rev_per_nonlease_delivery_q3_2025",
+    "fd_byd_sales_202609",
+    "fd_byd_h1_2026",
+    "dc_kpi_gm_energy_q3_2026",
+    "dc_kpi_gm_energy_q2_2026",
+    "dc_seg_gp_energy_q3_2026",
+    "dc_seg_energy_q3_2026",
+    "dc_tariff_refund_cogs_energy_q3_2026",
+    "dc_tariff_refund_rev_energy_q3_2026",
+    "fd_flnc_rel_20260805",
+    "dc_seg_energy_q1_2026",
+    "dc_seg_energy_q2_2026",
+    "dc_kpi_supercharger_connectors_q3_2026",
+    "dc_kpi_supercharger_connectors_q3_2025",
+    "dc_services_gp_q3_2026",
+    "dc_kpi_gm_services_q3_2026",
+    "fd_electrek_waymo_20260708",
+    "dc_kpi_robotaxi_miles_q3_2026",
+    "dc_kpi_fsd_subs_q3_2026",
+    "dc_kpi_fsd_na_attach_q3_2026"
+   ]
+  },
+  "threats": {
+   "reading": "(1) Chinese exporters, BYD first: BYD's overseas sales rose 92% in nine months to 1.34 million units, in the European and emerging markets that now carry Tesla's growth (Other international revenue +49.1% in nine months while United States -1.0% and China -1.4%). (2) Policy and regulation: US EV support is shrinking (North American EV sales -24% year to date; Tesla regulatory-credit revenue 417M to 113M and that RPO 841M to 384M); the 10-Q says tariffs and the One Big Beautiful Bill Act 'could significantly increase battery cell expenses', with the larger effect on energy storage, while own LFP cell capacity is only 7 GWh against 110 GWh of Megapack capacity; the Q3 tariff refunds (786M in cost of revenues less 339M owed to customers) are one-off. Autonomy needs approvals: the 10-K says EU and national rules may hinder autonomous vehicles and ride-hailing, and the 10-Q lists open NHTSA, SEC and DOJ information requests and the Benavides award (129M plus 200M punitive) on appeal. (3) Substitution in the US: the North American electric market fell 24% year to date and Tesla's US revenue fell 14.4% in Q3, while GM's Q3 operating income rose to 3.6bn from 1.1bn (its EV share of that not verified): a move back to combustion and hybrids is visible in market totals, not measured for Tesla's buyers. (4) A funded rival that already holds the scarce thing in autonomy: Waymo, inside Alphabet (34% operating margin and 44.9bn of capex in Q2 2026). (5) Supplier power in cells (Panasonic, CATL; very few qualified suppliers per the 10-K). (6) China: Shanghai holds about 38% of listed vehicle capacity and 18% of Megapack capacity, and China is 17.9% of nine-month revenue.",
+   "evidence_ids": [
+    "fd_byd_sales_202609",
+    "mc_rev_oi_9m26",
+    "mc_rev_oi_9m25",
+    "mc_rev_us_9m26",
+    "mc_rev_us_9m25",
+    "mc_rev_cn_9m26",
+    "mc_rev_cn_9m25",
+    "fd_bmi_ev_sep2026",
+    "dc_seg_line_regcredits_q3_2025",
+    "dc_seg_line_regcredits_q3_2026",
+    "dc_rpo_regcredits_fy2025",
+    "dc_rpo_regcredits_q3_2026",
+    "pf_10q_20261022",
+    "dc_kpi_cap_4680_q3_2026",
+    "dc_kpi_cap_megapack_q3_2026",
+    "mc_ieepa_energy_cogs_q326",
+    "mc_ieepa_auto_cogs_q326",
+    "mc_ieepa_energy_rev_q326",
+    "pf_10k_20260129",
+    "mc_rev_us_q326",
+    "mc_rev_us_q325",
+    "fd_peer_GM",
+    "fd_peer_GOOGL",
+    "fd_electrek_waymo_20260708",
+    "pf_rel_20261021_1",
+    "dc_kpi_cap_model3y_q3_2026"
+   ]
+  }
+ },
+ "assessments": {
+  "moat": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "dc_kpi_gm_auto_ex_credits_q3_2026",
+    "fd_ford_q2_2026",
+    "fd_peer_RIVN",
+    "dc_kpi_gm_energy_q3_2026",
+    "fd_flnc_rel_20260805",
+    "dc_kpi_supercharger_connectors_q3_2026",
+    "pf_cf_20230131",
+    "pf_cf_20260129",
+    "pf_10q_20261022",
+    "pf_fred_dgs10",
+    "pf_erp_implied",
+    "dc_capex_9m_2026"
+   ],
+   "note": "Evidenced moat source: cost and scale in battery-electric vehicles and storage against named competitors (automotive gross margin ex credits 18.1% versus Ford Model e and Rivian losses; underlying energy margin about 24% versus Fluence 5.1%) plus the Supercharger network (84,465 connectors). Not evidenced against BYD (its margins were not retrieved). The advantage does not show in returns: operating margin fell from 16.8% (FY2022) to 4.6% (FY2025) and 2.6% in Q3 2026; the numbers lane's hand ROIC is about 7.3% for FY2025 and about 5.1% trailing (assumed 21% tax), below the 9.2% market cost of equity (risk-free 5.0% plus ERP 4.2%) before any company premium, and incremental ROIC is negative over the last nine months as capex doubled ahead of returns. Returns are already at or below the cost of capital; no mechanism in the company's numbers yet lifts them (autonomy and storage pricing would have to)."
+  },
+  "pricing_power": {
+   "assessment": "weak",
+   "evidence_ids": [
+    "dc_kpi_auto_sales_rev_per_nonlease_delivery_q3_2026",
+    "dc_kpi_auto_sales_rev_per_nonlease_delivery_q3_2025",
+    "pf_rel_20261021_1",
+    "dc_seg_energy_q3_2026",
+    "dc_seg_energy_q3_2025",
+    "dc_kpi_storage_q3_2026",
+    "dc_kpi_storage_q3_2025",
+    "dc_tariff_refund_rev_energy_q3_2026",
+    "dc_seg_line_regcredits_q3_2026",
+    "dc_call_20261021",
+    "dc_seg_line_services_q3_2026",
+    "dc_seg_line_services_q3_2025"
+   ],
+   "note": "Vehicles: revenue per non-lease delivery flat at 41,896 versus 41,816 a year earlier even with a weaker dollar helping (the deck says ASP excluding FX was lower year over year, mix included). Storage: energy revenue -15.6% to 2,881M while deployments rose 9.6% (lower Megapack ASP, 339M of customer tariff refunds, fewer Powerwalls). Regulatory credits are shrinking. Management expects Megapack ASP to improve (opinion, not yet in the numbers). Services and other (+33%) is the one line with rising revenue."
+  },
+  "retention": {
+   "assessment": "unknown",
+   "evidence_ids": [
+    "dc_kpi_fsd_subs_q3_2025",
+    "dc_kpi_fsd_subs_q3_2026",
+    "dc_kpi_fsd_na_attach_q3_2026"
+   ],
+   "note": "FSD churn, renewal and revenue per subscription are not disclosed. Active subscriptions rose from 1.04 to 1.74 million in a year and at least 75% of North American buyers sign up at delivery, but each delivery carries a free month, so that is a sign-up rate, not retention. Vehicle repurchase rates are not disclosed."
+  },
+  "customer_concentration": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "pf_10q_20261022",
+    "pf_10k_20260129",
+    "dc_cust_spacex_q3_2026",
+    "dc_spacex_receivable_q3_2026"
+   ],
+   "note": "Strong here means low concentration risk: consumer-driven, no customer at 10% or more of revenue. The related party SpaceX is 0.79% of Q3 revenue, but one unnamed customer exceeded 10% of receivables at 2026-09-30 and SpaceX owes 729M (about 16% of receivables), so the receivable, not the revenue, is concentrated."
+  },
+  "market_size": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "fd_bmi_ev_sep2026",
+    "fd_wm_storage_q2",
+    "fd_flnc_rel_20260805",
+    "fd_electrek_waymo_20260708",
+    "dc_rpo_energy_q3_2026"
+   ],
+   "note": "Large and partly growing: 15.5 million plug-in and electric sales in nine months (+3%), record storage installations with data-center demand, and a paid robotaxi market proven by Waymo. Vehicle unit growth is flat, North America is shrinking, and the size of the robotaxi and humanoid markets is not quantified by any attributed study read."
+  },
+  "competition": {
+   "assessment": "weak",
+   "evidence_ids": [
+    "fd_byd_sales_202609",
+    "dc_kpi_deliveries_q3_2026",
+    "dc_kpi_deliveries_q3_2025",
+    "dc_kpi_auto_sales_rev_per_nonlease_delivery_q3_2026",
+    "fd_flnc_rel_20260805",
+    "fd_electrek_waymo_20260708"
+   ],
+   "note": "Weak here means the competitive environment is unfavourable to Tesla's prices: BYD's overseas units +92%, Tesla Q3 deliveries -2% with flat revenue per delivery; in storage Fluence's backlog +30%; in autonomy Waymo leads paid driverless rides. Tesla still gains against US EV makers and outside the US and China."
+  },
+  "substitutes": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "fd_bmi_ev_sep2026",
+    "mc_rev_us_q326",
+    "mc_rev_us_q325",
+    "fd_peer_GM"
+   ],
+   "note": "Combustion and hybrid cars are winning back US buyers as incentives end (North America EV -24% year to date; Tesla US revenue -14.4% in Q3), but Europe's EV market is +30% and the global market +3%. In storage no substitute (gas peakers, other chemistries) was examined."
+  },
+  "management": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "dc_call_20261021",
+    "pf_rel_20261021_1",
+    "dc_g_capex_fy2026_jan_10k",
+    "dc_g_capex_fy2026_apr_10q",
+    "dc_g_capex_fy2026_jul_10q",
+    "dc_g_capex_fy2026_oct_call",
+    "dc_capex_9m_2026",
+    "mc_8k_20260929"
+   ],
+   "note": "Delivered in 2026: Cybercab rides in Austin from 2026-09-03, Megapack Texas (50 GWh) and Semi volume production in Q3, FSD approved in nine EU countries, 30bn of committed credit lines. The only numeric guidance is capex and it moved: about 20bn (January), above 25bn (April, July), about 20bn (October), with 13.0bn spent in nine months. Most statements are timelines without numbers (Robotaxi 'noticeable probably in Q2' 2027, Optimus external deliveries late 2027, about 5 million vehicles a year by about 2030, EU-wide FSD by about Q1 2027): opinions to track, not evidence; no revenue guidance."
+  },
+  "capital_allocation": {
+   "assessment": "weak",
+   "evidence_ids": [
+    "dc_capex_9m_2026",
+    "dc_g_capex_fy2026_oct_call",
+    "dc_call_20261021",
+    "dc_shares_out_fy2025",
+    "dc_shares_out_20261015",
+    "dc_sbc_ceo_award_unrecognized_probable",
+    "dc_sbc_ceo_award_unrecognized_not_probable_low",
+    "dc_sbc_ceo_award_unrecognized_not_probable_high",
+    "dc_spacex_cost_2026_03",
+    "dc_spacex_fv_q3_2026",
+    "dc_digital_assets_q3_2026",
+    "dc_si_hardware_acquisition_q2_2026",
+    "dc_debt_total_q3_2026",
+    "pf_10q_20261022"
+   ],
+   "note": "Capex 13.0bn in nine months (about 20bn for 2026; management: 'tens of billions' by 2028 and Terafab 'north of 100bn' long term) against a hand ROIC of about 5-7% and negative incremental ROIC so far. No buybacks; shares outstanding rose from 3,751M to 3,953M in nine months (+5.4%, CEO award restricted shares); Q3 SBC 1,165M (663M a year earlier), with 9.74bn unrecognized for the 2025 CEO award's probable milestone and 105.8-120.4bn if the rest become probable. Related-party and non-core uses: 2.0bn in SpaceX stock (fair value 2.87bn), 962M of bitcoin, a 1.95bn hardware acquisition paid in stock. The balance sheet is strong (45.4bn cash and investments versus 9.5bn debt and finance leases). Weak on returns evidenced to date; that the front-loaded investment earns its cost is a hypothesis."
+  },
+  "governance": {
+   "assessment": "weak",
+   "evidence_ids": [
+    "pf_proxy_20261019",
+    "pf_10q_20261022",
+    "pf_10k_20260129",
+    "dc_spacex_megapack_rev_9m_2026",
+    "dc_spacex_receivable_q3_2026",
+    "dc_spacex_cost_2026_03",
+    "dc_ceo_award_2025_shares",
+    "dc_shares_out_20261015",
+    "dc_call_20261021"
+   ],
+   "note": "The CEO also leads SpaceX (with xAI inside it, per the proxy) and the 10-K names key-person dependence. Related-party flows are growing: Megapack sales to SpaceX of 626M in nine months, a 729M receivable from SpaceX (588M billed for undelivered Megapacks) and 2.0bn invested in SpaceX stock. A board special committee is exploring a deeper SpaceX relationship 'including a business combination' (10-Q Item 5) and management declined questions on it. The 2025 CEO award holds 423.7M unearned restricted shares (about 10.7% of shares outstanding). The proxy says a management proposal to remove supermajority voting failed at the 2025 meeting."
+  },
+  "regulation": {
+   "assessment": "weak",
+   "evidence_ids": [
+    "dc_seg_line_regcredits_q3_2025",
+    "dc_seg_line_regcredits_q3_2026",
+    "dc_regcredits_reversal_q3_2026",
+    "dc_rpo_regcredits_fy2025",
+    "dc_rpo_regcredits_q3_2026",
+    "fd_bmi_ev_sep2026",
+    "pf_10q_20261022",
+    "pf_10k_20260129",
+    "pf_rel_20261021_1"
+   ],
+   "note": "Headwinds: regulatory-credit revenue 417M to 113M (after a 475M reversal) and its RPO 841M to 384M; US EV demand down 24% as support ends; tariffs and the One Big Beautiful Bill Act may raise cell costs, mostly for storage; Robotaxi and unsupervised FSD need state, federal and EU approvals, with NHTSA, SEC and DOJ information requests and product-liability cases open. In favour: FSD (Supervised) approved in nine EU countries. Unconfirmed press leads (an NHTSA petition on Robotaxi in school zones, a Cybercab certification order) were not used."
+  },
+  "technology_ai": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "dc_kpi_fsd_subs_q3_2025",
+    "dc_kpi_fsd_subs_q3_2026",
+    "dc_kpi_robotaxi_miles_q3_2026",
+    "dc_kpi_si_compute_installed_q3_2026",
+    "dc_g_si_compute_mw_ye2026",
+    "dc_defrev_auto_q3_2026",
+    "dc_defrev_auto_fy2025",
+    "fd_electrek_waymo_20260708",
+    "pf_rel_20261021_1",
+    "dc_call_20261021"
+   ],
+   "note": "Paid adoption is real: 1.74 million active FSD subscriptions (+67% in a year) and automotive deferred revenue for FSD, connectivity and updates of 4.08bn (3.87bn at end-2025); unsupervised Robotaxi miles grew about eightfold in a quarter to nearly 2 million (management) and SI training compute is 225 MW (400 MW guided by year end). But FSD revenue is not disclosed, the 0.30 USD per paid mile Robotaxi goal is not reached, R&D runs at about 10% of revenue, and Waymo is ahead in licensed driverless operation. Not strong until paid unsupervised revenue shows in Tesla's own numbers."
+  },
+  "geopolitics": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "mc_rev_cn_9m26",
+    "mc_rev_cn_fy25",
+    "pf_rel_20261021_1",
+    "mc_cnwc_sep26",
+    "mc_lla_us_sep26",
+    "mc_lla_tot_sep26",
+    "mc_press_cpca_sep26",
+    "pf_10k_20260129",
+    "pf_10q_20261022"
+   ],
+   "note": "China is 17.9% of nine-month revenue (22.1% in FY2025); Shanghai holds about 38% of listed vehicle capacity and 18% of Megapack capacity and now exports about half of its wholesale (CPCA preliminary, press); China working-capital debt is 5.97bn. Mitigants: local production in each main market and 82% of long-lived assets in the US. Cell imports and the tariff rate on them are not disclosed, so the Megapack tariff exposure is unsized."
+  }
+ },
+ "gaps": [
+  "Company type: the computed high_growth / fast_grower rests on 2020-2022 compounding; revenue growth was 18.8%, 0.9% and -2.9% in FY2023-FY2025 and +12.5% in the first nine months of 2026, all of it from Other international. The core part should confirm or override the type with reasons.",
+  "Share: no Tesla market-share series (prior-year nine-month deliveries and North American units are not in the sources); the 8.5% share uses a denominator with plug-in hybrids; the share trend is a direction, not a measurement.",
+  "Storage share: not computable (Tesla deployments are global, the Wood Mackenzie total is US only); Fluence GWh deployed not reported.",
+  "BYD: margins and BEV-only units not retrieved (press relays only), so Tesla's cost position against its main rival is not evidenced either way.",
+  "Autonomy: FSD revenue, ARR, churn, price per subscription and Robotaxi revenue and unit economics are not disclosed; Waymo figures are undated press relays of Waymo statements; Tesla miles and Waymo trips are different units, so the gap is directional.",
+  "ROIC: prefetch ROIC unavailable; the hand ROIC (about 7.3% FY2025, about 5.1% trailing, incremental negative) is the numbers lane's, at an assumed 21% tax rate.",
+  "Energy margin: the Q3 warranty true-down and cell-vendor reimbursement are not sized, so the underlying energy margin (about 23.8% after the net tariff refunds) is an upper bound.",
+  "Market sizing: no attributed study sizes the robotaxi or humanoid-robot market; Optimus has no paid customer, price or revenue (hypothesis only).",
+  "Not used: consensus pages dated 2026-10-26/27 (not citable until 2026-10-28/29); ACEA September registrations (+72.5% in Europe) and NHTSA petition DP26010 / Cybercab certification order (press excerpts without captured dates); Rivian Q3 results (due 2026-10-29).",
+  "Governance: the proxy was searched only for the CEO's other roles and the supermajority vote; board independence, pledged shares and the annual-meeting proposals were not read in full.",
+  "Outside view (warning only, base_rates.outside_view; it sets, caps or fades nothing): in the >$50bn sales class (Base Rate Book 1950-2015) the median real sales CAGR is 1.5%; about 19% of the class grew at least 10% a year nominal over 5 years and about 7% at least 15% a year. Any forecast above those rates must rest on TSLA's own evidenced drivers (storage backlog, FSD paid adoption), not on the class."
+ ]
+}

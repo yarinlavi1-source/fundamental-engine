@@ -1,0 +1,35 @@
+{
+  "lens": "numbers",
+  "findings": [
+    {
+      "severity": "major",
+      "finding": "Legal charges are partly counted twice. The 19.881B litigation claim (legal-related accruals 11.577B current + 8.304B non-current at 2026-09-30, 10-Q) is subtracted as debt-like, and that part is correct: balance-sheet debt is only long-term debt 80.922B + current portion 2.747B = 83.669B, opening debt 116.05B = 83.669 + 12.5 preferred + 19.881 litigation exactly, other_claims 0, so the bridge has no double count. But the margin path starts from the TTM GAAP operating margin of 32.9% (anchors.ttm operating_income 79.38B / revenue 241.606B). That TTM figure already includes the 9.89B Q3 2026 attorneys-general charge and the 2.4B Q2 2026 legal charges, the same accruals that sit in the 19.881B claim. Without those 12.29B the TTM margin is about 37.9%. The base path climbs from 32.9% to 37.0% over 6 years, and the bear's 30% is set as the base minus 7 points, so years 1 to 5 carry the accrued charge as an operating cost a second time. Rough size: about 4 points of margin in year 1 falling to about 1 point in year 6, roughly 12 to 15 USD a share on the base (under 2%). The error is conservative and does not reverse the verdict. A recurring legal allowance can be defended (legal charges recur as a category, pack note 'dc ONEOFF'), but the specific accrued settlement cannot be both a cost in the margin and a claim.",
+      "where": "companies/META/out/casefile.json fc.assumptions margin_base / margin_bear / margin_bull (start 32.9% from fc.anchors.ttm) against inputs.json forecast.debt_like_claims[1] (litigation 19,881,000,000) and val debt_adjustments debt_like_claims_added 32,381,000,000",
+      "fix": "In position/core.json, set the starting margin on an ex-AG/ex-Q2-legal-charge TTM basis (about 37.9%, evidence pf_rel_20261021_1, pf_rel_20260729_1, pf_10q_20261022), plus an evidenced recurring legal allowance if one is wanted, and keep the 19.881B claim. Or keep the 32.9% start and say next to the result that the value is understated by about 12-15 USD a share. Do not remove the claim and do not normalize both."
+    },
+    {
+      "severity": "major",
+      "finding": "The table's base condition line contradicts the executed model. It says the forward sale of 40M shares at 625 USD settles by November 2027 and brings in about 24.9B. The repair removed that equity_proceeds driver, so neither the cash nor the 40M shares are in the computed base (repair_value.json, open). The same line says the 12.5B preferred converts in 2029 into 17-20M shares, but the model carries it as a 12.5B debt-like claim and adds no shares. The value roughly matches (about 10.4-12.3B at 614 USD), so that part only needs labelling.",
+      "where": "companies/META/out/table_he.md base condition bullet ('בסיסי = ...') and out/scenarios_he.md; source position/*.json analyst_sheet.scenario_events.base and thesis_he",
+      "fix": "Reword the base event so it says the forward sale (40M shares, about 24.92B, settlement by 2027-11-19) is a contracted event that is NOT in the computed value (leaving it out moves the base by about +4 USD a share per repair_value.json), and that the preferred is carried as a 12.5B claim in place of its 17-20M conversion shares. Rerun ticker-value so the table is regenerated."
+    },
+    {
+      "severity": "minor",
+      "finding": "Asymmetric bridge for the preferred. The 6.50% Series A mandatory convertible preferred was issued on 2026-10-29, after the 2026-09-30 balance sheet. Its 12.5B liquidation amount is subtracted as a claim, but the issue proceeds (about 12.5B gross, a little less net) are not added to cash: bridge_events [], investment_adjustments []. The fc assumption 'bridge' says post-balance-sheet financing is not reflected. Counting the claim without the cash understates value by about 4.8 USD a share. Combined with the excluded forward sale (+4 USD), the base is understated by about 9 USD (about 1%). The fc assumption 'claims' also still says 'No preferred stock ... recorded', which contradicts debt_like_claims[0].",
+      "where": "inputs.json forecast.debt_like_claims[0] (12,500,000,000; evidence dc_424b5_pref_20261028, dc_8k_20261029) vs casefile fc.spec.opening.unrestricted_cash 11,222,000,000 and fc.assumptions bridge / claims",
+      "fix": "Add the net preferred proceeds as a bridge event (cash) dated 2026-10-29 from the 8-K / 424B5, or drop the claim and the cash together. Either way the claim and the cash net to about zero. Otherwise state the understatement next to the result."
+    },
+    {
+      "severity": "minor",
+      "finding": "Non-marketable equity investments of 32.624B (Q3 2026 10-Q balance sheet; 28.41B at Q1) are left out of the opening investments. Opening marketable_investments of 74.352B = marketable securities 71.227B + 3.125B listed stakes. The dataqa note says long-term investments were 'untagged ... taken as zero only provisionally; confirm on the balance sheet', and the balance sheet does show them. Some of this is strategic and illiquid (for example the 20% equity-method stake in the Louisiana data-center Venture), so leaving it out is a defensible conservative choice. But it is not stated, and at book value it is worth about 12.8 USD a share.",
+      "where": "casefile qa.fields.cash_and_liquid_investments.note and fc.assumptions open_balance; reading/10q_2026-10-22.txt balance sheet 'Non-marketable equity investments 32,624'",
+      "fix": "State the exclusion and its size as an investment asset kept apart from spendable cash, or include the measurement-alternative part at book value with evidence pf_10q_20261022 Note 5."
+    },
+    {
+      "severity": "minor",
+      "finding": "The AG settlement installments (about 12.7B over 10 years) sit inside the 19.881B accrual and are subtracted at face value with no discounting. That is conservative and small, and the 5.3B contingent amount is correctly left out of the claim because it is not accrued. The rest checks out against the casefile: price 614 (after-hours last trade on 2026-10-30 versus the 614.99 close, per review/trace.json), fair value 875 = base_value 874.61, the 5-year potential rows (+85% / +227% / -26% = 1,136 / 2,005 / 454 against 614), base IRR 12.4%, the yearly path prices (company_path economics, ROIC 0.10/0.20/0.30, base multiple 21.2x falling to 17.0x against own median 27.1x, so no peak multiple is paid), and ran true with every stage ok. Current-year revenue is 256.213B = YTD 181.713B + the Q4 guide midpoint 74.5B, with the track-record ratio 1.041 (7 of 7 beats) NOT applied, which is conservative and visible.",
+      "where": "inputs.json forecast.debt_like_claims[1]; companies/META/out/table_he.md; value.json summary and track_record",
+      "fix": "Optionally note that the litigation claim is at face value (undiscounted installments). No other change."
+    }
+  ]
+}

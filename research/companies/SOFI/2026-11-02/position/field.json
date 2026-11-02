@@ -1,0 +1,208 @@
+{
+ "thesis_he": {
+  "bear": "ריבית עולה ומיתון קל פוגעים בשווי ההלוואות ובאשראי, ההון (CET1) נשחק מהר והצמיחה חייבת להאט או לגייס הון שוב, כשהתשואה על ההון נשארת סביב 10%.",
+  "base": "סופי ממשיכה לקחת נתח שוק בהלוואות אישיות ובפיקדונות בזכות רישיון הבנק ומימון זול, אך הרווחיות עולה לאט והתחרות מול רובינהוד וקפיטל וואן נשארת קשה.",
+  "bull": "מימון הפיקדונות הזול, מכירה צולבת ללקוחות הקיימים ועסקי הפלטפורמה מעלים את התשואה על ההון לכיוון 15%+ בלי גיוס הון נוסף, והחברה הופכת לבנק דיגיטלי מוביל בארה\"ב."
+ },
+ "potential": {
+  "market_direction": {
+   "reading": "Demand grows but the macro turned against lenders. US unsecured personal-loan balances reached a record $281B (+9.6% yoy) with originations +19.5% yoy (TransUnion Q2 2026). Rates went the wrong way for SoFi: a quarter-point Fed hike in September 2026 and a hold at 3.75-4.00% on 2026-10-28 with a further hike priced. Labour is softening (September unemployment 4.2%, payrolls +29k) and 4.7% of household debt is in some stage of delinquency (NY Fed 2026Q2). A tailwind on capital rules: the March 2026 Basel III re-proposal estimates lower CET1 requirements for smaller banks (final rule not yet confirmed).",
+   "evidence_ids": [
+    "fd_transunion_q2_2026",
+    "mc_fomc_20261028",
+    "mc_bls_sep2026",
+    "mc_nyfed_2026q2",
+    "mc_basel_20260320"
+   ]
+  },
+  "bottleneck_potential": {
+   "reading": "SoFi is not an industry bottleneck; it owns a cost advantage on the scarce input of the lending business, cheap stable funding. Deposits are $51.3B (+$5.8B in Q3 2026), 90% of average liabilities, priced 145 bp below warehouse lines (about $745M a year of interest saved). Marketplace lenders without a charter (Upstart) cannot fund on balance sheet; LendingClub, Ally and Capital One have the same charter-funding advantage, so it is a moat versus non-banks, not a bottleneck. It lasts while deposit growth keeps pricing below market funding; the shift to time deposits (higher cost) is the erosion signal to watch.",
+   "evidence_ids": [
+    "dc_k_deposits",
+    "dc_k_deposit_rate_vs_warehouse",
+    "pf_rel_20261027_1",
+    "fd_cf_UPST",
+    "fd_cf_LC"
+   ]
+  },
+  "share_trajectory": {
+   "reading": "SoFi is taking share in lending and deposits and losing it in the technology platform. Personal-loan originations $12.6B in Q3 2026 (+69% yoy) against market originations +19.5%; Lending segment adjusted revenue $807.4M vs $481.4M a year earlier, against LendingClub interest income +15.1% and Upstart revenue +41.8% (Q2 2026). Deposits +37% yoy while Ally's FY2025 revenue fell 3.3%. Financial Services revenue $525.1M (+25%) outgrows Robinhood's total revenue (+11.8% in Q3 2026) from a smaller base. Technology Platform revenue fell to $87.4M from $114.6M (-24%) after a large client left. Bases differ (SoFi net revenue vs competitors' XBRL lines): direction only.",
+   "evidence_ids": [
+    "dc_f05_loan_originations_personal",
+    "fd_transunion_q2_2026",
+    "dc_s_lend_q3",
+    "dc_s_lend_q3p",
+    "fd_cf_LC",
+    "fd_cf_UPST",
+    "pf_peer_ALLY",
+    "dc_s_fs_q3",
+    "dc_s_fs_q3p",
+    "fd_cf_HOOD",
+    "dc_s_tech_q3",
+    "dc_s_tech_q3p"
+   ]
+  },
+  "competitive_position": {
+   "reading": "Stronger than LendingClub and Upstart on scale and funding (a $51.3B deposit base; $16.9B quarterly originations). Against Capital One: lower NIM (6.14% vs 8.41%) but more capital (CET1 16.9% vs 13.8%). Weaker than all large peers on returns: ROTE about 10% in Q3 2026 against management's own 20-30% goal. Against Robinhood in investing and cash management SoFi is smaller and less profitable (Robinhood Q3 2026 net income $468M on $1,424M revenue; SoFi total net income $241M on $1,385M). The edge is breadth (17.1M members, 1.56 products per member) rather than a best-in-class single product.",
+   "evidence_ids": [
+    "dc_k_deposits",
+    "dc_f04_loan_originations_total",
+    "dc_k_nim",
+    "dc_k_cet1",
+    "uf_cof_q3_2026",
+    "dc_k_rote",
+    "fd_cf_HOOD",
+    "nm_net_income_q3_2026",
+    "nm_total_net_revenue_q3_2026",
+    "dc_k_members",
+    "dc_k_ppm",
+    "fd_cf_LC",
+    "fd_cf_UPST"
+   ]
+  },
+  "threats": {
+   "reading": "1) Rates: about $1.4B of fair-value premium on $52.5B of fair-value loans; Q3 2026 benchmark +76 bp caused more than $800M of negative marks, offset by about $734M of hedge gains (call), and further hikes repeat this. 2) Capital: CET1 fell to 16.9% (22.8% at end-2025) as risk-weighted assets grew to $56.2B; management targets low-to-mid teens and says 2027 needs no raise, but faster growth or losses would force slower growth or new equity. 3) Credit: unsecured book in a softening labour market; credit-card NCO 7.77%. 4) Loan Platform Business depends on a small number of third-party buyers (10-K). 5) Robinhood moving into banking and cards for the same young customers. 6) Technology Platform client attrition (-24% revenue). 7) Bank supervision (OCC/Fed/CFPB) and capital rules.",
+   "evidence_ids": [
+    "dc_call_20261027",
+    "dc_f26_fair_value_loans_total",
+    "dc_k_cet1",
+    "dc_f21_risk_weighted_assets",
+    "dc_f18_net_charge_off_rate_credit_card",
+    "mc_bls_sep2026",
+    "pf_10k_20260217",
+    "fd_cf_HOOD",
+    "dc_s_tech_q3",
+    "mc_fomc_20261028"
+   ]
+  }
+ },
+ "assessments": {
+  "moat": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "dc_k_deposit_rate_vs_warehouse",
+    "dc_k_deposits",
+    "pf_rel_20261027_1",
+    "fd_cf_UPST"
+   ],
+   "note": "Evidenced source: charter-based deposit funding 145 bp below warehouse (about $745M a year) versus non-bank Upstart; LendingClub, Ally and Capital One share it, so it is not unique. Brand and member scale are not separately evidenced."
+  },
+  "switching_costs": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "dc_k_ppm",
+    "dc_k_members",
+    "dc_k_products",
+    "dc_k_products_prior"
+   ],
+   "note": "Products per member 1.56 (1.47 a year earlier) and about half of new products from existing members show cross-sell; product counts are cumulative and the definition was widened in 2026, so part of the growth is definitional. Deposits are rate-sensitive (time deposits growing), which limits lock-in."
+  },
+  "pricing_power": {
+   "assessment": "weak",
+   "evidence_ids": [
+    "dc_k_fs_rev_per_product",
+    "pf_rel_20261027_1",
+    "pf_10k_20260217"
+   ],
+   "note": "Financial Services revenue per product $90 vs $104 a year earlier: product growth (+44%) outruns monetisation (+25%). Deposits require a competitive APY (10-K). Lending risk-adjusted margin (7.6% core personal loans) is healthy but set by credit and funding, not pricing power."
+  },
+  "customer_concentration": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "pf_10k_20260217",
+    "dc_s_tech_q3",
+    "dc_s_tech_q3p",
+    "dc_f08_loan_platform_business_originations"
+   ],
+   "note": "Consumers are diverse; concentration sits in the Loan Platform Business buyers (10-K: a small number of purchasers, $3.8B originated for them in Q3 2026) and in the Technology Platform, where one client's exit cut segment revenue 24%."
+  },
+  "market_size": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "fd_transunion_q2_2026",
+    "dc_f26_fair_value_loans_total"
+   ],
+   "note": "US unsecured personal loans $281B, 26.9M borrowers, growing; SoFi's balance-sheet loans at fair value $52.5B across personal, student and home leaves room, plus deposits and investing."
+  },
+  "competition": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "fd_transunion_q2_2026",
+    "dc_f05_loan_originations_personal",
+    "fd_cf_LC",
+    "fd_cf_UPST",
+    "fd_cf_HOOD",
+    "pf_peer_ALLY"
+   ],
+   "note": "Crowded field (LendingClub, Upstart, Robinhood, Ally, Capital One, large banks) but SoFi is growing faster than each on the available lines; the 10-K names only competitor classes."
+  },
+  "substitutes": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "pf_10k_20260217",
+    "fd_cf_HOOD"
+   ],
+   "note": "Credit cards substitute for personal loans and brokerages/neobanks for Money and Invest; no evidence of a substitute taking SoFi's volume yet."
+  },
+  "management": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "dc_g_rev26_jan",
+    "dc_g_rev26_jul",
+    "dc_g_rev26",
+    "dc_g_eps26_jan",
+    "dc_g_eps26",
+    "pf_rel_20251028_1",
+    "uf_insider_noto_2026"
+   ],
+   "note": "Revenue guidance raised every quarter in 2025 and 2026 (FY2026 $4.655B -> $5.04B) despite a rate hike instead of the two assumed cuts; caveat: EPS guidance only $0.60 -> $0.61 because the extra revenue is reinvested. CEO open-market purchases in 2026 (aggregator, not verified on EDGAR)."
+  },
+  "capital_allocation": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "nm_shares_outstanding_q3_2026",
+    "nm_sbc_9m_2026",
+    "dc_k_rote",
+    "dc_k_cet1",
+    "dc_k_tbvps",
+    "dc_k_tbvps_prior",
+    "pf_10q_20260806"
+   ],
+   "note": "Equity raised in 2025 at $20.85 and $27.50 (above today's ~$17), shares +18% since Dec-24; SBC $220M in 9M 2026 (about 2% a year dilution), no buybacks. ROIC unavailable in the forensic screen; ROTE about 10% sits near or below a high-beta bank's cost of equity, so growth is not yet clearly value-creating. Most of the TBV/share rise came from raises, not earnings."
+  },
+  "regulation": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "pf_10k_20260217",
+    "mc_basel_20260320",
+    "mc_ed_rap_20261022"
+   ],
+   "note": "Bank holding company under OCC/Fed/CFPB; Basel re-proposal would lower capital requirements (not final); federal student-loan changes (RAP) have an unclear effect on refinance demand."
+  },
+  "technology_ai": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "dc_s_tech_q3",
+    "dc_s_tech_q3p",
+    "dc_k_tech_accounts"
+   ],
+   "note": "Owns its stack (Galileo/Technisys), but the platform shrank to $87.4M revenue and 140M accounts (-11%), margin 16% vs 28%; no evidenced AI-driven advantage."
+  },
+  "geopolitics": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "mc_f_rev_us_2025",
+    "mc_f_rev_foreign_2025"
+   ],
+   "note": "Low exposure: 93.1% of FY2025 revenue in the US, no supply-chain or export-control exposure."
+  }
+ },
+ "gaps": [
+  "Outside view (warning only, sets no number): fast-growing consumer lenders historically see returns fade toward the cost of capital through a credit cycle; it caps nothing here.",
+  "ROIC and incremental ROIC unavailable in the forensic screen (bank financials); ROTE about 10% used as the returns reading.",
+  "Retention/churn and governance (proxy) not evidenced.",
+  "Q3 2026 10-Q not yet filed: Q3 hedge P&L detail, fair-value sensitivity, SBC by line and the October 2026 convert settlement unverified.",
+  "Ally Q3 2026 returns and capital (ROTCE 13.1%, CET1 10.2%) and Nu's comparison were not registered; Capital One figures are a search excerpt.",
+  "No named competitor for the Technology Platform; no comparable deposit-share data for Chime, Ally or Robinhood."
+ ]
+}

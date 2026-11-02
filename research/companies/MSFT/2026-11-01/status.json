@@ -1,0 +1,115 @@
+{
+ "ticker": "MSFT",
+ "as_of": "2026-11-01",
+ "at_utc": "2026-11-01T06:03:36+00:00",
+ "verified": false,
+ "label": "UNVERIFIED draft (טיוטה — ההערכה לא אומתה)",
+ "reasons": [
+  "3 critical finding(s) open"
+ ],
+ "engine_ran": true,
+ "engine_review_status": "unreviewed_draft",
+ "reviews": {
+  "review_trace": {
+   "file": "review/trace.json",
+   "this_attempt": true,
+   "returned": true
+  },
+  "review_numbers": {
+   "file": "review/numbers.json",
+   "this_attempt": true,
+   "returned": true
+  },
+  "review_counter": {
+   "file": "review/counter.json",
+   "this_attempt": true,
+   "returned": true
+  }
+ },
+ "critical": [
+  {
+   "severity": "critical",
+   "finding": "Finance leases are treated two different ways. The bridge deducts the existing 70,973M of finance-lease liabilities as a debt-like claim, which is correct and not double counted (see the minor finding below). But the base sales_to_capital of 0.75 is computed on cash capex minus D&A only, described as 'before finance-lease additions'. D&A is taken net of finance-lease depreciation, but the lease additions themselves are left out. The 10-K lease note (reading/10k_full.txt around line 7408, 'Right-of-use assets obtained in exchange for lease obligations: Finance leases') gives 11,633M in FY2024, 20,511M in FY2025 and 24,608M in FY2026, and the 10-Q gives 5,192M for Q1 FY2027. Adding the 56.8B of FY2024-FY2026 finance-lease additions to the 153.5B of net capex gives 119.9 / 210.3 = 0.57, not 0.78. FY2026 alone is 50.1 / 106.2 = 0.47, not 0.61. So the base 0.75 understates reinvestment by about a quarter during the growth years. The bear's 0.55, described as 'below the FY2026 low', is actually above the lease-inclusive FY2026 figure of 0.47. The fair value of 546 is only 4% above the price of 523, so the table's 'cheap' reading depends on this lever. Future lease-funded datacenter capacity is also left out of reinvestment, including the 364.6B of leases not yet commenced, while the existing leases are deducted as debt. That pairing favors the value.",
+   "where": "companies/MSFT/inputs.json forecast.overrides sales_to_capital (bear 0.55 / base 0.75 / bull 0.95; position part analyst); evidence pf_capex_fy2024-2026, pf_d_and_a_fy2024-2026, dc_capex_incl_leases_q1fy27",
+   "fix": "Register the finance-lease ROU additions from the 10-K lease note (FY2024 11,633M, FY2025 20,511M, FY2026 24,608M; source pf_10k) and from the 10-Q (Q1 FY2027 5,192M; pf_10q_20261028). Recompute sales_to_capital as incremental revenue / (cash capex + finance-lease ROU additions - D&A), which gives a three-year figure of about 0.57 and FY2026 of about 0.47. Reset bear, base and bull around that basis, keeping the bear below the lease-inclusive FY2026 low. Rerun ticker-value. The alternative is to stop treating finance leases as debt and treat their payments as operating costs, but one of the two treatments must be chosen and used throughout.",
+   "lens": "numbers"
+  },
+  {
+   "severity": "critical",
+   "finding": "The table's fair value (546$) and the 'cheap by ~4%' row come from the DCF, whose terminal ROIC is an engine default (CONST, no evidence ids): 38.7% base, 45% bull, 27.1% bear (casefile company_path.scenarios.*.economics.engine_terminal_roic; fc driver_gaps terminal_roic). The analyst's own evidenced path uses ROIC 22% base / 14% bear / 31% bull, in line with the 3-year incremental ROIC of 22.5-23.6% (prefetch/forensic.json roic.incremental_roic; redteam detail incremental_roic_3y 0.225) while capex doubled. The two parts of one base story disagree by ~17 pp of ROIC: at the path's 22% the base value today is 489$ (economics.values year 0), i.e. the stock is ~7% ABOVE base value, not 4% below. The what_must_be_true capital_efficiency lever confirms it: the price holds only if growth needs at most 1.18x the base capital (terminal ROIC >= ~33%).",
+   "where": "companies/MSFT/out/casefile.json fc.driver_gaps[terminal_roic] and company_path.scenarios.{bear,base,bull}.economics (engine_terminal_roic vs roic); companies/MSFT/out/table_he.md rows 'שווי הוגן' and 'המחיר מול השווי'; position/path.json scenarios.*.economics.roic",
+   "fix": "Supply an evidenced terminal_roic per scenario in the driver spec (position/core.json drivers: base ~0.22-0.24 from the 3-year incremental ROIC, bear 0.14, bull 0.31, same evidence ids as position/path.json), rerun ticker-value so the DCF fair value and the path use one return on capital; if the DCF default is kept, show the 489$ path value next to 546$ and say the cheap/expensive sign depends on it.",
+   "lens": "counter"
+  }
+ ],
+ "open_critical": [
+  {
+   "finding": "dc_capex_incl_leases_q1fy27 / q4fy26 in gather/documents.json still carry the call-defined metric name; the reconciliation to the 10-Q (39.367B cash PP&E + 5.192B finance leases = 44.6B vs 45.2B on the call) is noted in gather/repair.json but the documents fragment was not relabelled (major, not critical)"
+  },
+  {
+   "finding": "CY2026 capex guide: only the July ~175B statement was read; the Q1 FY2027 call restatement (~170B per review_trace) was not re-read"
+  },
+  {
+   "finding": "terminal_roic bear 0.14 remains an unevidenced stress hypothesis (analyst tier, visible gap in the table)"
+  }
+ ],
+ "repair": {
+  "fixed": [
+   "critical (numbers) finance leases: registered finance-lease ROU additions as facts (rf_fin_lease_rou_fy2024 11,633M / fy2025 20,511M / fy2026 24,608M from pf_10k_20260729, read at reading/10k_full.txt ~7408; rf_fin_lease_rou_q1fy27 5,192M from pf_10q_20261028) in gather/repair.json; reset drivers.sales_to_capital in position/core.json on the lease-inclusive basis (3-year 0.57, FY2026 0.47, FY2025 0.58, FY2024 0.81): bear 0.42 (below the FY2026 low) / base 0.55 / bull 0.75, so the reinvestment basis matches the finance-lease debt deduction",
+   "critical (counter) terminal ROIC: added drivers.terminal_roic bear 0.14 / base 0.22 / bull 0.31, equal to position/path.json roic, base/bull own_history (lease-inclusive after-tax incremental ROIC 0.25 three-year, 0.20 FY2026, 0.24 FY2025), bear analyst tier (stress hypothesis below the record, shown as a gap); casefile now shows engine_terminal_roic = path roic in every scenario (0.14/0.22/0.31)",
+   "major (counter) OpenAI backlog: registered rf_rpo_growth_total_q4fy26 0.84 and rf_rpo_growth_ex_openai_q4fy26 0.25 (dc_call_fy26q4); added to key_risk reading and evidence, growth_anchor bear reason, and a new evidenced bear scenario event",
+   "major (counter) falsifiers: fx_bear_margin -> FY2028 operating margin above 0.44 by 2028-08-15; fx_bull_rpo threshold -> 750B by 2027-05-15; fx_bear_openai -> RPO growth ex-OpenAI above 0.25 by 2027-08-15; new fx_bear_azure (Azure growth above 0.35 Q4 FY2027 by 2027-08-15)",
+   "major (numbers/trace) guidance track: gather/repair.json guidance_track rows for Q1 FY2027 revenue (mid 90.40B vs 92.279B, ratio 1.021), cost of revenue, opex and the capex floor (45.2B call-defined vs >50B); guidance rows FY2027 operating margin change (-0.01 to 0, 'down less than 1 point', verified in the transcript), FY2027 tax 0.20, CY2026 capex ~175B (July call)",
+   "major (numbers/counter) bear 14% ROIC: labelled in the bear hypothesis event as a stress assumption below every year of the record with a multiple below the 5-year low",
+   "rerun ticker-value: ran true; base fair value moves from 546$ to 473$ (price 523$, now about 11% expensive instead of 4% cheap); base path value year 0 489$"
+  ],
+  "open": [
+   "dc_capex_incl_leases_q1fy27 / q4fy26 in gather/documents.json still carry the call-defined metric name; the reconciliation to the 10-Q (39.367B cash PP&E + 5.192B finance leases = 44.6B vs 45.2B on the call) is noted in gather/repair.json but the documents fragment was not relabelled (major, not critical)",
+   "CY2026 capex guide: only the July ~175B statement was read; the Q1 FY2027 call restatement (~170B per review_trace) was not re-read",
+   "terminal_roic bear 0.14 remains an unevidenced stress hypothesis (analyst tier, visible gap in the table)"
+  ],
+  "ran": true
+ },
+ "returned": [
+  "analyst",
+  "analyst_field",
+  "analyst_path",
+  "gather_documents",
+  "gather_field",
+  "gather_macro",
+  "gather_numbers",
+  "repair",
+  "review_counter",
+  "review_numbers",
+  "review_trace"
+ ],
+ "times": {
+  "started_at_utc": "2026-11-01T05:44:51+00:00",
+  "prefetch_finished_at_utc": "2026-11-01T05:44:55+00:00",
+  "minutes_after_start": {
+   "gather/_prefetch.json": 0.1,
+   "gather/documents.json": 3.2,
+   "gather/field.json": 1.7,
+   "gather/macro.json": 1.7,
+   "gather/numbers.json": 3.5,
+   "gather/repair.json": 13.6,
+   "understand/auto.json": 3.8,
+   "understand/business.json": 6.3,
+   "understand/econ_case.json": 3.5,
+   "understand/econ_result.json": 3.5,
+   "understand/quarter_case.json": 3.4,
+   "understand/quarter_result.json": 3.4,
+   "prep.json": 3.8,
+   "position/core.json": 14.1,
+   "position/field.json": 6.0,
+   "position/path.json": 5.3,
+   "value.json": 14.3,
+   "review/trace.json": 7.0,
+   "review/numbers.json": 11.7,
+   "review/counter.json": 11.0,
+   "review/repair.json": 14.6
+  },
+  "elapsed_minutes": 14.6
+ },
+ "meaning": "verified needs: the engine ran in this attempt, the three reviewers returned (files of this attempt AND the main loop's record), no critical finding open after the one repair pass. The engine's own review status is reported beside it, never replaced by it."
+}

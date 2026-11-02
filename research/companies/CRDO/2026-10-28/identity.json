@@ -1,0 +1,495 @@
+{
+ "ticker": "CRDO",
+ "as_of": "2026-10-28",
+ "stop": false,
+ "stop_reason": null,
+ "resolved": true,
+ "name": "Credo Technology Group Holding Ltd",
+ "cik": "1807794",
+ "cik_source": "id_sec_submissions_20261028",
+ "security": "Ordinary shares, par value $0.00005 (single class; Cayman Islands issuer filing 10-K/10-Q as a US domestic filer; no ADR, no dual class)",
+ "security_source": "pf_10k_20260615 cover (Title of each class: Ordinary shares, CRDO, The Nasdaq Stock Market LLC)",
+ "adr_ratio": null,
+ "depositary_shares": false,
+ "dual_listing": "None material. IBKR shows CRDON on MEXI (Mexican quotation of the same shares, not a separate class); CRDOF (Cerrado Gold) and CRDU/CRD (2x leveraged ETFs on CRDO) are different instruments",
+ "exchange": "Nasdaq (Global Select)",
+ "exchange_source": "id_sec_submissions_20261028; id_ib_contracts_20261028 (NASDAQ STK conid 541265127)",
+ "ib_contract_id": 541265127,
+ "currency": "USD",
+ "reporting_currency": "USD",
+ "quote_currency": "USD",
+ "currency_source": "pf_10k_20260615 (XBRL units USD); id_ib_contracts_20261028",
+ "fiscal_year_end": "04-29",
+ "fiscal_calendar": "52/53-week fiscal year ending on the Saturday closest to April 30: FY2025 ended 2025-05-03, FY2026 ended 2026-05-02 (10-K), Q1 FY2027 ended 2026-08-01 (10-Q); Q2 FY2027 ends about 2026-10-31. Vendors label periods 04-30/07-31.",
+ "fiscal_calendar_source": "id_sec_submissions_20261028 (fiscalYearEnd 0429); pf_10k_20260615; pf_10q_20260902",
+ "sic": 3674,
+ "sic_description": "Semiconductors & Related Devices",
+ "annual_form": "10-K",
+ "filer_category": "Large accelerated filer",
+ "shares_outstanding_cover": {
+  "value": 187951918,
+  "as_of": "2026-08-25",
+  "source": "pf_10q_20260902 cover"
+ },
+ "latest_annual": {
+  "form": "10-K",
+  "period_end": "2026-05-02",
+  "filed": "2026-06-15",
+  "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026043303/crdo-20260502.htm"
+ },
+ "latest_quarterly": {
+  "form": "10-Q",
+  "period_end": "2026-08-01",
+  "filed": "2026-09-02",
+  "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026060111/crdo-20260801.htm"
+ },
+ "latest_earnings_release": {
+  "form": "8-K Item 2.02",
+  "date": "2026-09-01",
+  "quarter": "Q1 FY2027",
+  "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026059795/crdo-20260901.htm"
+ },
+ "latest_earnings_call": {
+  "date": "2026-09-01",
+  "quarter": "Q1 FY2027",
+  "note": "call held after the close on the release date (pattern of prior quarters); transcript is gathered by gather_documents",
+  "source": "8-K 2026-09-01 (Item 2.02)"
+ },
+ "next_results_expected": "Q2 FY2027 (quarter ending ~2026-10-31), typically reported early December; not yet announced as of 2026-10-28 (gap: date unconfirmed)",
+ "filings_since_2026_10_26": "No new 10-K/10-Q/8-K between 2026-10-16 (8-K Item 5.07, annual meeting vote) and 2026-10-28; only Forms 4 (2026-10-21, 2026-10-22). Nothing within the 2-day citability lag.",
+ "filings": [
+  {
+   "form": "8-K",
+   "filed": "2026-10-16",
+   "report_date": "2026-10-16",
+   "accession": "0001628280-26-066139",
+   "items": "5.07",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026066139/crdo-20261016.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026066139/",
+   "source": "sec_submissions"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2026-09-02",
+   "report_date": "2026-08-01",
+   "accession": "0001628280-26-060111",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026060111/crdo-20260801.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026060111/",
+   "source": "sec_submissions"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-09-01",
+   "report_date": "2026-09-01",
+   "accession": "0001628280-26-059795",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026059795/crdo-20260901.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026059795/",
+   "source": "sec_submissions"
+  },
+  {
+   "form": "DEF 14A",
+   "filed": "2026-08-25",
+   "report_date": "2026-08-25",
+   "accession": "0001628280-26-058936",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026058936/crdo-20260825.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026058936/",
+   "source": "sec_submissions"
+  },
+  {
+   "form": "10-K",
+   "filed": "2026-06-15",
+   "report_date": "2026-05-02",
+   "accession": "0001628280-26-043303",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026043303/crdo-20260502.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026043303/",
+   "source": "sec_submissions"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-06-01",
+   "report_date": "2026-05-28",
+   "accession": "0001628280-26-039474",
+   "items": "2.02,5.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026039474/crdo-20260528.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026039474/",
+   "source": "sec_submissions"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-04-13",
+   "report_date": "2026-04-13",
+   "accession": "0001628280-26-024892",
+   "items": "3.02,7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026024892/crdo-20260413.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026024892/",
+   "source": "sec_submissions"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2026-03-03",
+   "report_date": "2026-01-31",
+   "accession": "0001628280-26-014017",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026014017/crdo-20260131.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026014017/",
+   "source": "sec_submissions"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-03-02",
+   "report_date": "2026-03-02",
+   "accession": "0001628280-26-013205",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026013205/crdo-20260302.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026013205/",
+   "source": "sec_submissions"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-02-09",
+   "report_date": "2026-02-09",
+   "accession": "0001628280-26-006370",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026006370/crdo-20260209.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026006370/",
+   "source": "sec_submissions"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2025-12-02",
+   "report_date": "2025-11-01",
+   "accession": "0001628280-25-054549",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828025054549/crdo-20251101.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828025054549/",
+   "source": "sec_submissions"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-12-01",
+   "report_date": "2025-12-01",
+   "accession": "0001628280-25-054428",
+   "items": "9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828025054428/crdo-20251201.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828025054428/",
+   "source": "sec_submissions"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-10-29",
+   "report_date": "2025-10-23",
+   "accession": "0001628280-25-046890",
+   "items": "5.02",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828025046890/crdo-20251023.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828025046890/",
+   "source": "sec_submissions"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-10-16",
+   "report_date": "2025-10-13",
+   "accession": "0001628280-25-045208",
+   "items": "5.07",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828025045208/crdo-20251013.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828025045208/",
+   "source": "sec_submissions"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-10-07",
+   "report_date": "2025-10-06",
+   "accession": "0001628280-25-044360",
+   "items": "8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828025044360/crdo-20251006.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828025044360/",
+   "source": "sec_submissions"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2025-09-04",
+   "report_date": "2025-08-02",
+   "accession": "0001807794-25-000021",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000180779425000021/crdo-20250802.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1807794/000180779425000021/",
+   "source": "sec_submissions"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-09-03",
+   "report_date": "2025-09-03",
+   "accession": "0001807794-25-000018",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000180779425000018/crdo-20250903.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1807794/000180779425000018/",
+   "source": "sec_submissions"
+  },
+  {
+   "form": "DEF 14A",
+   "filed": "2025-08-25",
+   "report_date": "2025-10-13",
+   "accession": "0001807794-25-000010",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000180779425000010/crdo-20250825.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1807794/000180779425000010/",
+   "source": "sec_submissions"
+  },
+  {
+   "form": "10-K",
+   "filed": "2025-07-02",
+   "report_date": "2025-05-03",
+   "accession": "0001628280-25-033813",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828025033813/crdo-20250503.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828025033813/",
+   "source": "sec_submissions"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-06-02",
+   "report_date": "2025-06-02",
+   "accession": "0001628280-25-028827",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828025028827/crdo-20250602.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828025028827/",
+   "source": "sec_submissions"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-03-24",
+   "report_date": "2025-03-24",
+   "accession": "0001628280-25-014501",
+   "items": "5.02",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828025014501/crdo-20250324.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828025014501/",
+   "source": "sec_submissions"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2025-03-10",
+   "report_date": "2025-02-01",
+   "accession": "0001628280-25-011738",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828025011738/crdo-20250201.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828025011738/",
+   "source": "sec_submissions"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-03-04",
+   "report_date": "2025-03-04",
+   "accession": "0001628280-25-009813",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828025009813/crdo-20250304.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828025009813/",
+   "source": "sec_submissions"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2024-12-03",
+   "report_date": "2024-11-02",
+   "accession": "0001628280-24-049786",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828024049786/crdo-20241102.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828024049786/",
+   "source": "sec_submissions"
+  },
+  {
+   "form": "8-K",
+   "filed": "2024-12-02",
+   "report_date": "2024-12-02",
+   "accession": "0001628280-24-049564",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828024049564/crdo-20241202.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828024049564/",
+   "source": "sec_submissions"
+  }
+ ],
+ "type": {
+  "stage": "high_growth",
+  "stage_he": "צמיחה מהירה",
+  "lynch": "fast_grower",
+  "lynch_he": "צומחת מהר",
+  "method": "python -m fundamental_engine classify on SEC companyfacts history (FY2021-FY2026) reused from run CRDO_2026-10-26 (same filings; no annual or quarterly filing since)",
+  "reasons": [
+   "revenue FY2021 $58.7M -> FY2026 $1,335.1M (CAGR ~87%); FY2026 +206% y/y, Q1 FY2027 +115% y/y",
+   "operating margin turned from -19% (FY2024) to +33% (FY2026): a scale-up past breakeven, not mature",
+   "operating cash flow turned positive in FY2024 and reached $464M in FY2026",
+   "flag: FY2026 includes a large acquisition (goodwill jump) — the type is measured on growth excluding that year (65%), still well above 20%"
+  ],
+  "kpis_it_selects": [
+   "revenue growth and its duration (customer concentration at hyperscalers)",
+   "incremental and gross margins",
+   "ROIC and incremental ROIC",
+   "reinvestment rate",
+   "share-based dilution"
+  ],
+  "valuation_lens": "driver DCF with explicit growth fade to maturity and terminal ROIC; reverse DCF for how long the price needs high growth",
+  "history_rows": [
+   {
+    "fiscal_year": "FY2021",
+    "period_end": "2021-04-30",
+    "revenue": 58697000.0,
+    "operating_income": -25234000.0,
+    "operating_cash_flow": -42361000.0,
+    "capex": 6056000.0,
+    "source_ids": [
+     "pf_cf_20220608"
+    ]
+   },
+   {
+    "fiscal_year": "FY2022",
+    "period_end": "2022-04-30",
+    "revenue": 106477000.0,
+    "operating_income": -21968000.0,
+    "operating_cash_flow": -30832000.0,
+    "capex": 17580000.0,
+    "source_ids": [
+     "pf_cf_20220608"
+    ]
+   },
+   {
+    "fiscal_year": "FY2023",
+    "period_end": "2023-04-29",
+    "revenue": 184194000.0,
+    "operating_income": -21235000.0,
+    "operating_cash_flow": -24615000.0,
+    "capex": 21713000.0,
+    "source_ids": [
+     "pf_cf_20230623"
+    ]
+   },
+   {
+    "fiscal_year": "FY2024",
+    "period_end": "2024-04-27",
+    "revenue": 192970000.0,
+    "operating_income": -37058000.0,
+    "operating_cash_flow": 32737000.0,
+    "capex": 15652000.0,
+    "source_ids": [
+     "pf_cf_20240624"
+    ]
+   },
+   {
+    "fiscal_year": "FY2025",
+    "period_end": "2025-05-03",
+    "revenue": 436775000.0,
+    "operating_income": 37124000.0,
+    "operating_cash_flow": 65083000.0,
+    "capex": 36061000.0,
+    "source_ids": [
+     "pf_cf_20250702"
+    ]
+   },
+   {
+    "fiscal_year": "FY2026",
+    "period_end": "2026-05-02",
+    "revenue": 1335116000.0,
+    "operating_income": 445005000.0,
+    "operating_cash_flow": 464292000.0,
+    "capex": 57296000.0,
+    "source_ids": [
+     "pf_cf_20260615"
+    ]
+   }
+  ],
+  "source": "pf_history_companyfacts"
+ },
+ "named_competitors": [
+  {
+   "name": "Broadcom Inc.",
+   "ticker": "AVGO",
+   "why": "named in 10-K Item 1 Competition as a principal competitor (SerDes, optical DSP, retimer/PHY silicon)"
+  },
+  {
+   "name": "Marvell Technology, Inc.",
+   "ticker": "MRVL",
+   "why": "named in 10-K Item 1 Competition as a principal competitor (optical PAM4 DSPs, PHYs, retimers)"
+  },
+  {
+   "name": "Astera Labs, Inc.",
+   "ticker": "ALAB",
+   "why": "named in 10-K Item 1 Competition as a principal competitor (PCIe/Ethernet retimers, smart cable modules)"
+  },
+  {
+   "name": "various cable and optical transceiver suppliers (unnamed)",
+   "ticker": null,
+   "why": "10-K names the category only; no company named"
+  }
+ ],
+ "named_competitors_quote": "Our principal competitors with respect to our products include Broadcom Ltd. (Broadcom), Marvell Technology, Inc. (Marvell) and Astera Labs, Inc. (Astera), as well as various cable and optical transceiver suppliers.",
+ "named_competitors_source": "pf_10k_20260615 Item 1 Business, Competition",
+ "sources": [
+  {
+   "id": "id_sec_submissions_20261028",
+   "kind": "structured_data",
+   "title": "SEC EDGAR submissions JSON, CIK 0001807794 (Credo Technology Group Holding Ltd)",
+   "url": "https://data.sec.gov/submissions/CIK0001807794.json",
+   "date": "2026-10-28",
+   "independent": false,
+   "publisher": "U.S. SEC (filer metadata)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_10k_20260615",
+   "kind": "sec_filing",
+   "title": "Credo 10-K for fiscal year ended 2026-05-02 (cover, Item 1 Competition)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026043303/crdo-20260502.htm",
+   "date": "2026-06-15",
+   "independent": false,
+   "publisher": "Credo Technology Group Holding Ltd",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_10q_20260902",
+   "kind": "sec_filing",
+   "title": "Credo 10-Q for quarter ended 2026-08-01 (cover shares)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1807794/000162828026060111/crdo-20260801.htm",
+   "date": "2026-09-02",
+   "independent": false,
+   "publisher": "Credo Technology Group Holding Ltd",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "id_ib_contracts_20261028",
+   "kind": "price",
+   "title": "Interactive Brokers search_contracts 'CRDO' (read-only)",
+   "url": "connector:mcp__Interactive_Brokers__search_contracts",
+   "date": "2026-10-28",
+   "independent": true,
+   "publisher": "Interactive Brokers",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_history_companyfacts",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts annual rows FY2021-FY2026 (prefetch history.json of run CRDO_2026-10-26, reused)",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001807794.json",
+   "date": "2026-06-15",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  }
+ ],
+ "evidence_ids": [
+  "id_sec_submissions_20261028",
+  "pf_10k_20260615",
+  "pf_10q_20260902",
+  "id_ib_contracts_20261028",
+  "pf_history_companyfacts"
+ ],
+ "identity_checked_by": "identify stage (as_of 2026-10-28): SEC submissions refetched, IBKR contract search, 10-K cover and competition text from the saved reading of the 10-K",
+ "gaps": [
+  "next earnings date (Q2 FY2027) not yet announced",
+  "latest call transcript not read in this stage (gather_documents)"
+ ]
+}

@@ -1,0 +1,275 @@
+{
+ "lane": "field",
+ "sources": [
+  {
+   "id": "fd_cf_spcx",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Space Exploration Technologies Corp. (SpaceX, SPCX, Starlink): revenue, cost of revenue, operating income through 10-Q 2026-09-30",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001181412.json",
+   "date": "2026-10-22",
+   "independent": true,
+   "publisher": "SEC EDGAR",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_10q_spcx_20260930",
+   "kind": "sec_filing",
+   "title": "SpaceX (SPCX) 10-Q for the quarter ended 2026-09-30 (segments, Starlink Mobile, EchoStar spectrum)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1181412/000162828026066880/spcx-20260930.htm",
+   "date": "2026-10-22",
+   "independent": true,
+   "publisher": "SEC EDGAR",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_cf_irdm",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Iridium Communications Inc. (IRDM): revenue and operating income through 10-Q 2026-09-30",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001418819.json",
+   "date": "2026-10-20",
+   "independent": true,
+   "publisher": "SEC EDGAR",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_cf_gsat",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Globalstar, Inc. (GSAT): revenue and operating income through 10-Q 2026-06-30",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001366868.json",
+   "date": "2026-08-06",
+   "independent": true,
+   "publisher": "SEC EDGAR",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_cf_vsat",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of Viasat, Inc. (VSAT, owner of Inmarsat): revenue and operating income through 10-Q 2026-06-30",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000797721.json",
+   "date": "2026-08-06",
+   "independent": true,
+   "publisher": "SEC EDGAR",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_fmp_profiles",
+   "kind": "price",
+   "title": "FMP company profiles (price, market cap) of Iridium IRDM, Globalstar GSAT, SpaceX SPCX, Viasat VSAT on 2026-10-29",
+   "url": "connector:mcp__FMP__company",
+   "date": "2026-10-29",
+   "independent": true,
+   "publisher": "Financial Modeling Prep",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_omdia_d2d_2030",
+   "kind": "industry",
+   "title": "Omdia: smartphone satellite direct-to-device service revenue to approach $12 billion by 2030 (Smartphone Satellite D2D Forecast)",
+   "url": "https://omdia.tech.informa.com/pr/2026/mar/smartphone-satellite-direct-to-device-service-revenue-to-approach12-billion-dollars-by-2030",
+   "date": "2026-03-02",
+   "independent": true,
+   "publisher": "Omdia (Informa TechTarget)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_satnews_jv",
+   "kind": "press",
+   "title": "SatNews: AT&T, T-Mobile and Verizon form joint venture to standardize satellite direct-to-device connectivity",
+   "url": "https://satnews.com/2026/10/04/att-t-mobile-and-verizon-form-joint-venture-to-standardize-satellite-direct-to-device-connectivity/",
+   "date": "2026-10-04",
+   "independent": true,
+   "publisher": "SatNews",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_advtv_jv",
+   "kind": "press",
+   "title": "Advanced Television: AT&T, T-Mobile, Verizon for satellite JV (proposed JV announced)",
+   "url": "https://www.advanced-television.com/2026/05/14/att-t-mobile-verizon-for-satellite-jv/",
+   "date": "2026-05-14",
+   "independent": true,
+   "publisher": "Advanced Television",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  }
+ ],
+ "competitors": [
+  {
+   "ticker": "SPCX",
+   "name": "Space Exploration Technologies Corp. (SpaceX; Starlink, Starlink Mobile direct-to-cell)",
+   "why": "named first in ASTS 10-K Competition: Starlink LEO constellation competes in the direct-to-device segment for the same MNO partners and smartphone end users; owns its launch and, via the EchoStar AWS-4/H-block/AWS-3 purchase (FCC approved 2026-05-12, licenses in trust since 2026-05-22), its own mobile spectrum",
+   "metrics": {
+    "revenue_growth_9m2026": 0.9748,
+    "revenue_growth_q3_2026": 1.6139,
+    "gross_margin_9m2026": 0.5805,
+    "operating_margin_9m2026": 0.026,
+    "operating_margin_q3_2026": 0.1915,
+    "connectivity_revenue_9m2026_musd": 12796,
+    "connectivity_revenue_growth_9m2026": 0.5683,
+    "connectivity_revenue_growth_q3_2026": 0.6945,
+    "enterprise_government_revenue_incl_starlink_mobile_9m2026_musd": 5042,
+    "enterprise_government_revenue_growth_9m2026": 0.7028,
+    "starlink_consumer_subscribers_m_2026_09_30": 13.6,
+    "starlink_consumer_subscribers_m_2025_09_30": 7.2,
+    "market_cap_usd_2026_10_29": 2011523172301
+   },
+   "source_ids": [
+    "fd_cf_spcx",
+    "fd_10q_spcx_20260930",
+    "fd_fmp_profiles"
+   ]
+  },
+  {
+   "ticker": "IRDM",
+   "name": "Iridium Communications Inc.",
+   "why": "named in ASTS 10-K Competition; LEO mobile satellite operator selling voice, IoT and government (DoD) service; competes with ASTS for U.S. Government satellite-communications contracts and for low-data-rate direct-to-device (NTN) messaging",
+   "metrics": {
+    "revenue_growth_fy2025": 0.0493,
+    "operating_margin_fy2025": 0.2707,
+    "revenue_growth_9m2026": 0.0475,
+    "revenue_growth_q3_2026": 0.0828,
+    "operating_margin_9m2026": 0.1686,
+    "operating_margin_9m2025": 0.2744,
+    "revenue_9m2026_musd": 690.0,
+    "market_cap_usd_2026_10_29": 4868792499
+   },
+   "source_ids": [
+    "fd_cf_irdm",
+    "fd_fmp_profiles"
+   ]
+  },
+  {
+   "ticker": "GSAT",
+   "name": "Globalstar, Inc.",
+   "why": "named in ASTS 10-K Competition; LEO MSS operator whose constellation and owned MSS spectrum carry satellite messaging to standard smartphones under a wholesale capacity arrangement with a large handset maker, i.e. a direct-to-device alternative for the same end users",
+   "metrics": {
+    "revenue_growth_fy2025": 0.0904,
+    "operating_margin_fy2025": 0.0272,
+    "revenue_growth_h1_2026": 0.0602,
+    "operating_margin_h1_2026": 0.0252,
+    "revenue_h1_2026_musd": 134.8,
+    "market_cap_usd_2026_10_29": 10892361410
+   },
+   "source_ids": [
+    "fd_cf_gsat",
+    "fd_fmp_profiles"
+   ]
+  },
+  {
+   "ticker": "VSAT",
+   "name": "Viasat, Inc. (owner of Inmarsat Global Limited)",
+   "why": "ASTS 10-K names Inmarsat; Inmarsat is owned by Viasat, so Viasat's filings are the public numbers for it; GEO/L-band mobile satellite services for government, maritime and aviation and an announced direct-to-device effort",
+   "metrics": {
+    "revenue_growth_fy2026_mar": 0.0267,
+    "operating_margin_fy2026_mar": 0.0233,
+    "revenue_growth_q1_fy2027": -0.0124,
+    "operating_margin_q1_fy2027": 0.0409,
+    "market_cap_usd_2026_10_29": 10780769691
+   },
+   "source_ids": [
+    "fd_cf_vsat",
+    "fd_fmp_profiles"
+   ]
+  },
+  {
+   "ticker": "PRIVATE:SKYLO",
+   "name": "Skylo Technologies (private)",
+   "why": "named in ASTS 10-K Competition; NB-NTN direct-to-device messaging over leased MSS spectrum on partner GEO satellites, sold through MNOs and handset makers",
+   "metrics": {},
+   "source_ids": [
+    "pf_10k_20260302"
+   ]
+  },
+  {
+   "ticker": "PRIVATE:THURAYA",
+   "name": "Thuraya Telecommunications Co. (part of Space42, Abu Dhabi)",
+   "why": "named in ASTS 10-K Competition; regional GEO mobile satellite operator in EMEA/Asia, a regional alternative for MSS voice/data customers",
+   "metrics": {},
+   "source_ids": [
+    "pf_10k_20260302"
+   ]
+  }
+ ],
+ "notes": [
+  "fd NAMED COMPETITORS (10-K Item 1, Competition, pf_10k_20260302): SpaceX's Starlink (direct-to-device LEO), Inmarsat Global Limited, Globalstar, Thuraya Telecommunications Co., Iridium Communications and Skylo; also regional GEO MSS operators, VSAT operators and, indirectly, terrestrial networks. ASTS positions itself as cellular broadband to unmodified handsets versus competitors' low data rate (SOS) services.",
+  "fd SECTOR POSITION: ASTS sells capacity wholesale to MNOs on a revenue-share basis (10-K Item 1: 'sell our services on a revenue share basis to MNOs'), plus gateway equipment and U.S. Government work (SDA $43.0m testing contract, SDA Europa Track 2 ~$30.0m, MDA SHIELD IDIQ; Q2 2026 release: >$125m of new U.S. Government awards). The revenue-share percentage is not disclosed (pf_10k_20260302, pf_10q_20260810, pf_rel_20260810_1).",
+  "fd SHARE: ASTS H1 2026 revenue $46.2m (products $37.8m + services $8.4m, pf_10q_20260810) against SpaceX Enterprise & Government revenue, which includes Starlink Mobile, of $5,042m in 9M 2026 (+70% y/y; Q3 $2,127m, +91%) (fd_10q_spcx_20260930). Starlink Mobile is not reported separately, so the direct-to-device share cannot be measured from filings; SpaceX is clearly ahead in commercial D2D service (T-Mobile service live) while ASTS is pre-service (beta planned 2026).",
+  "fd SHARE: legacy MSS competitors grow slowly: Iridium revenue +4.8% 9M 2026 with operating margin falling to 16.9% from 27.4% (fd_cf_irdm); Globalstar +6.0% H1 2026 at a 2.5% operating margin (fd_cf_gsat); Viasat/Inmarsat +2.7% FY to Mar-2026, -1.2% in the June 2026 quarter (fd_cf_vsat). None shows share loss to ASTS yet (ASTS has no service revenue); Iridium's margin drop is not attributed in this lane's sources.",
+  "fd COMPETITOR CONTEXT: SpaceX (SPCX) listed 2026-06-12 (FMP profile); its 10-Q for Q3 2026 states it is evaluating a potential combination with Tesla, Inc. with no assurance of an agreement (fd_10q_spcx_20260930). SpaceX's consolidated margins are dominated by its SI (AI) segment after the xAI/Cursor deals, so its consolidated margins say little about Starlink's D2D economics.",
+  "fd COMPETITOR VALUATION (market feed 2026-10-29, fd_fmp_profiles): market caps IRDM $4.87bn, GSAT $10.89bn, VSAT $10.78bn, SPCX $2,011.5bn. Forward P/E and consensus growth not gathered (see gaps).",
+  "fd REFRESH 2026-11-01 (reuse of 2026-10-29 run, no new filings since): fragment kept; FMP peer market caps not refreshed (batch-market-cap ACCESS DENIED, recorded once; 2026-10-29 profile values stand). A WebSearch excerpt (undated, unregistered, hypothesis-grade) says ASTS's 45-satellite target moved to early 2027 for lack of launch capacity and that ASTS may buy a launch provider; compare with the 10-K plan in fd_b_capacity, to be confirmed from a primary document."
+ ],
+ "gaps": [
+  "fd competitors' forward P/E and consensus growth: FMP batch quote ACCESS DENIED (higher plan, recorded once; fallback FMP profile-symbol gave price and market cap only); Alpha Vantage reserved for numbers/documents lanes",
+  "fd competitors' gross margins for IRDM, GSAT, VSAT not computed: their companyfacts carry no CostOfRevenue tag; SPCX gross margin computed (58.1% 9M 2026, consolidated)",
+  "fd Starlink Mobile (direct-to-cell) revenue, subscribers and pricing are not disclosed separately in SpaceX's 10-Q; T-Mobile T-Satellite current price not confirmed from a dated primary source",
+  "fd Skylo (private) and Thuraya (Space42, ADX-listed) numbers not gathered: not in SEC; low decision value versus SpaceX",
+  "fd Globalstar's share of revenue from its large handset-maker wholesale customer and Iridium's NTN Direct launch status not read from their filings this run",
+  "fd ASTS MNO revenue-share percentage and per-subscriber pricing: not disclosed in ASTS filings; JV terms not public",
+  "fd ASTS Q3 2026 results not yet released at as_of; Iridium Q3 (2026-10-20) and SpaceX Q3 (2026-10-22) are citable",
+  "fd other market studies seen only as search excerpts with undated pages (MarketsandMarkets: $2.64bn D2D market in 2030; Novaspace: ~$15bn by 2033; SatNxt: $27.7bn by 2035) not registered; their spread versus Omdia shows the size estimate is highly uncertain",
+  "fd no market-data refresh since 2026-10-29 for peer prices (FMP batch-market-cap denied); no new carrier-JV or competitor news found for 2026-10-29..11-01"
+ ],
+ "stopped": [
+  "fd further market-size studies (Novaspace, SatNxt, GSMA/Statista): the spread already shown is the decision-relevant reading",
+  "fd retrying FMP quote with other parameters: tier denial, no retry loop",
+  "fd Starlink retail broadband pricing: not a D2D driver for ASTS"
+ ],
+ "bottlenecks": [
+  {
+   "id": "fd_b_capacity",
+   "reading": "The scarce thing ASTS supplies is space-based cellular broadband capacity to standard unmodified smartphones using MNO low/mid-band spectrum (Block 1 demonstrated ~98.9 Mbps peak to a phone). Supply is set by satellites in orbit: 13 BlueBirds at 2026-08-10 against a 10-K plan of ~45-60 Block 2 by end-2026 and a 248-satellite FCC filing; BB17-46 are in production. Launch access and manufacturing cadence, not demand, gate ASTS's capacity through 2027; SpaceX adds capacity with its own launches and >11,100 Starlink broadband and mobile satellites.",
+   "evidence_ids": [
+    "pf_10k_20260302",
+    "pf_10q_20260810",
+    "pf_rel_20260810_1",
+    "fd_10q_spcx_20260930"
+   ]
+  },
+  {
+   "id": "fd_b_spectrum",
+   "reading": "Spectrum is the second bottleneck: ASTS relies on MNO spectrum leased under the FCC Supplemental Coverage from Space framework (Verizon, AT&T, FirstNet leases; FCC granted in part / deferred in part in Aug 2025), Ligado L-band and pending 2 GHz applications, targeting ~100 MHz in the U.S. and 60+ MHz globally. Its main competitor bought its own: SpaceX's purchase of EchoStar's 50 MHz AWS-4/H-block plus up to 15 MHz AWS-3 was FCC-approved 2026-05-12 and the licenses moved to a trust on 2026-05-22, removing SpaceX's dependence on a carrier's spectrum.",
+   "evidence_ids": [
+    "pf_10k_20260302",
+    "pf_rel_20260810_1",
+    "fd_10q_spcx_20260930"
+   ]
+  },
+  {
+   "id": "fd_b_paid_adoption",
+   "reading": "Paid adoption of the core service is not yet visible in ASTS's own numbers: the SpaceMobile service has generated no revenue; H1 2026 revenue was $37.8m of gateway products to MNOs plus $8.4m of mostly U.S. Government services; remaining performance obligations ~$1.2bn at 2026-06-30 with only ~6.6% expected within 12 months, and MNO revenue-share consideration is excluded as constrained. Management cites ~$1.30bn contracted backlog and 60+ MNO partners covering 3bn+ subscribers, which are commitments and logos, not paid usage.",
+   "evidence_ids": [
+    "pf_10q_20260810",
+    "pf_rel_20260810_1"
+   ]
+  },
+  {
+   "id": "fd_b_mno_jv",
+   "reading": "Channel power: AT&T, T-Mobile and Verizon announced a joint venture on 2026-10-02 to pool resources for U.S. direct-to-device; AT&T and Verizon keep their ASTS deployments and T-Mobile its Starlink service. Whether the JV standardizes terms that lower the satellite operator's share, or channels pooled spectrum to ASTS, is not disclosed.",
+   "evidence_ids": [
+    "fd_satnews_jv",
+    "fd_advtv_jv"
+   ]
+  },
+  {
+   "id": "fd_b_jv_terms_hypothesis",
+   "reading": "Hypothesis: a carrier JV that pools U.S. spectrum and negotiates jointly with satellite operators could raise ASTS's addressable spectrum but compress its revenue share versus bilateral deals; no term sheet is public.",
+   "hypothesis": true
+  },
+  {
+   "id": "fd_b_market_size",
+   "reading": "Market direction is up but size is uncertain: Omdia (2026-03-02) projects smartphone satellite D2D service revenue of $11.99bn and 411m monthly active users by 2030 (revenue growth ~49% a year 2026-2030) and expects cellular-standard devices to exceed 95% of D2D MAUs, naming Starlink D2C and AST SpaceMobile as cellular-standard examples. This is one attributed study, a warning row on the size of the prize, not a driver.",
+   "evidence_ids": [
+    "fd_omdia_d2d_2030"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,110 @@
+{
+ "thesis_he": {
+  "bear": "תשובות AI של גוגל ממשיכות לגזול תנועה, מספר המשתמשים היומיים יורד, והמעבר לחובת התחברות מקטין את קהל המודעות; רישוי הנתונים לחברות AI לא גדל.",
+  "base": "התנועה מגוגל נחלשת, אבל המשתמשים המחוברים (מעל 80% מההכנסה) ממשיכים לגדול לאט והמחיר לכל מודעה ממשיך לעלות, כך שההכנסה גדלה מהר יותר מהמתחרים הגדולים גם בלי צמיחה במשתמשים.",
+  "bull": "המעבר לחוויה מחוברת מגדיל את קהל המשתמשים הקבועים, המפרסמים מגדילים תקציב בזכות ההמרות, ורישוי הנתונים לחברות AI הופך לשורת הכנסה משמעותית."
+ },
+ "potential": {
+  "market_direction": {
+   "reading": "Ad budgets keep growing at the scale platforms RDDT names as rivals (FY2025 revenue growth: META +22.2%, GOOGL +15.1%, PINS +15.8%, SNAP +10.6%), and money is moving to measurable lower-funnel outcomes: RDDT says Q3 2026 click volume grew over 50% and conversion volume more than tripled y/y, with pricing outpacing impressions. The other direction is information seeking moving to AI answers: the 10-Q says declining search referral traffic hurt DAUq growth in Q3 2026 and may worsen, and management reports more than 1M fewer referrals per week in October. The ad market is a tailwind; the traffic market is turning against open-web visits.",
+   "evidence_ids": ["fd_META_cf", "fd_GOOGL_cf", "fd_PINS_cf", "fd_SNAP_cf", "dc_call_20261029", "pf_10q_20261030", "dc_search_referral_drop"]
+  },
+  "bottleneck_potential": {
+   "reading": "RDDT owns a scarce, constantly refreshed corpus of human conversation (10-K Item 1 content licensing), but it is not yet a monetised bottleneck: Other revenue (mostly licensing) was $48.0M in Q3 2026 (+35% y/y from $35.6M), 5.4% of revenue, and remaining performance obligations beyond one year are only $62.4M, so contracts are short and renewal-dependent. The planned move to a logged-in experience is aimed at controlling access to that data (press report of the company's stated aims). How long the scarcity lasts depends on renewals with the same AI firms that compete for the user's question; Google renewal status is only a press hypothesis.",
+   "evidence_ids": ["pf_10k_20260206", "dc_seg_oth_q3", "dc_seg_oth_q3py", "dc_rpo_gt1y", "mc_tc_20261029"]
+  },
+  "share_trajectory": {
+   "reading": "RDDT is taking ad-budget share on numbers: Q3 2026 revenue $895.0M (+53% y/y), ad revenue $847.0M (+54%), FY2025 revenue +69% against FY2025 growth of META +22.2%, GOOGL +15.1%, PINS +15.8%, SNAP +10.6%. The gain is monetisation, not attention: global DAUq 130.3M (+12% y/y) but US DAUq 50.7M (-2% y/y), US logged-out 27.3M (-4%), US logged-in 23.4M (+1%); US ARPU $13.82 (+53% y/y). International users grew (DAUq 79.6M, +24%) at a low ARPU of $2.43. Peers' Q3 2026 growth was not retrieved, so the comparison is to their FY2025.",
+   "evidence_ids": ["pf_rel_20261029_1", "dc_seg_ad_q3", "dc_seg_ad_q3py", "pf_revenue_fy2025", "pf_revenue_fy2024", "fd_META_cf", "fd_GOOGL_cf", "fd_PINS_cf", "fd_SNAP_cf", "dc_dauq_g", "dc_dauq_g_py", "dc_dauq_us", "dc_dauq_us_py", "dc_lo_us", "dc_lo_us_py", "dc_li_us", "dc_li_us_py", "dc_arpu_us", "dc_arpu_us_py", "dc_dauq_intl", "dc_dauq_intl_py", "dc_arpu_intl"]
+  },
+  "competitive_position": {
+   "reading": "Stronger than PINS and SNAP, far smaller and weaker than META and GOOGL. Gross margin 91.5% in Q3 2026 vs FY2025 META 82.0%, PINS 80.1%, SNAP 55.0%; FY2025 operating margin 20.1% (Q3 2026 29.2%) vs PINS 7.6% and SNAP -9.0%, but below META 41.4% and GOOGL 32.0%. Scale: FY2025 revenue $2.2B is about 1.1% of META's $201.0B and 52% of PINS's $4.2B. Its edge is intent-rich, topic-organised conversation (conversion volume tripled y/y); its weakness is that GOOGL is at once a rival for the question, the main traffic source, a licensing customer and a cloud vendor ($580M commitment).",
+   "evidence_ids": ["dc_gm_q3", "fd_META_cf", "fd_PINS_cf", "fd_SNAP_cf", "fd_GOOGL_cf", "pf_operating_income_fy2025", "pf_revenue_fy2025", "pf_operating_income_q_2026_09_30", "pf_revenue_q_2026_09_30", "dc_call_20261029", "dc_gcp_commit"]
+  },
+  "threats": {
+   "reading": "Substitution by AI answers is already happening: search referrals fell meaningfully in Q3 and by more than 1M per week in October, and management said that if the trend continues total DAUq could fall in Q4 by a low double-digit percentage from 130M (a management statement, not a forecast). The 10-Q names LLM answer products from Google, Meta, OpenAI and Anthropic as competitors. The company's own response, a logged-in requirement tested in non-US markets from Q4 2026, may reduce total users and ad reach (10-Q). Other threats: 94% of 2025 revenue is advertising, exposed to platform privacy changes; a securities class action on the Google/AI Overviews impact (motion to dismiss due by 2026-11-23); management is 'evaluating' user reporting (disclosure risk).",
+   "evidence_ids": ["dc_call_20261029", "dc_search_referral_drop", "pf_10q_20261030", "pf_10k_20260206"]
+  }
+ },
+ "assessments": {
+  "moat": {
+   "assessment": "adequate",
+   "evidence_ids": ["pf_10k_20260206", "dc_gm_q3", "dc_li_g", "dc_li_g_py", "dc_search_referral_drop"],
+   "note": "Moat source evidenced: a unique user-generated, topic-organised corpus and community network (91.5% gross margin, above META 82%, PINS 80%). Not strong: user acquisition depends on GOOGL search referrals that are falling, and logged-in DAUq grew only 6.6% y/y (53.5M vs 50.2M); the same AI products from GOOGL/META/OpenAI can summarise the content without the visit."
+  },
+  "switching_costs": {
+   "assessment": "weak",
+   "evidence_ids": ["pf_10k_20260206"],
+   "note": "Advertisers buy in auctions and can move budgets among the platforms the 10-K names (Google, Meta, Snap, TikTok, Pinterest, X); no multi-year ad contracts are disclosed. User-side switching costs (community identity, karma) are not measured in the filings."
+  },
+  "pricing_power": {
+   "assessment": "strong",
+   "evidence_ids": ["dc_arpu_us", "dc_arpu_us_py", "dc_arpu_g", "dc_arpu_g_py", "dc_call_20261029"],
+   "note": "US ARPU $13.82 vs $9.04 (+53% y/y) and global ARPU +36% with US users flat; management says pricing outpaced impressions in Q3 2026 while conversions tripled, so the price rise is backed by advertiser outcomes. Still an auction price: it falls if conversions or reach weaken."
+  },
+  "retention": {
+   "assessment": "adequate",
+   "evidence_ids": ["dc_call_20261029", "dc_li_us", "dc_li_us_py", "dc_wauq_us", "dc_wauq_us_py"],
+   "note": "Management cites strong advertiser retention and new-user first-week return up over 50% y/y (management statements, no rates disclosed). Hard numbers are flat in the US: logged-in DAUq 23.4M vs 23.1M, WAUq 188.5M vs 187.8M."
+  },
+  "customer_concentration": {
+   "assessment": "strong",
+   "evidence_ids": ["pf_10q_20261030"],
+   "note": "No customer above 10% of revenue and no country other than the US at 10% or more; active mid-market advertisers grew over 50% y/y. The real concentration is the traffic source (Google), assessed under substitutes, and the revenue type (94% advertising)."
+  },
+  "market_size": {
+   "assessment": "strong",
+   "evidence_ids": ["pf_revenue_fy2025", "fd_META_cf", "fd_GOOGL_cf", "dc_arpu_intl", "dc_arpu_us"],
+   "note": "Headroom relative to named rivals, not a TAM study: RDDT's FY2025 revenue is about 1.1% of META's and 0.5% of GOOGL's; international ARPU $2.43 vs US $13.82 per quarter leaves room if international monetisation catches up."
+  },
+  "competition": {
+   "assessment": "adequate",
+   "evidence_ids": ["fd_META_cf", "fd_PINS_cf", "fd_SNAP_cf", "fd_GOOGL_cf", "pf_rel_20261029_1", "pf_10k_20260206"],
+   "note": "Growing ad revenue about 2-5x faster than META, GOOGL, PINS and SNAP (FY2025 rates) with better margins than PINS and SNAP, but META and GOOGL own far larger audiences, data and ad tooling, and GOOGL controls RDDT's main acquisition channel."
+  },
+  "substitutes": {
+   "assessment": "weak",
+   "evidence_ids": ["pf_10q_20261030", "dc_search_referral_drop", "dc_dauq_us", "dc_dauq_us_py", "dc_lo_g", "dc_call_20261029"],
+   "note": "AI answers (Google AI Overviews/AI Mode, ChatGPT, Gemini, Anthropic) substitute for the logged-out visit: US DAUq -2% y/y, logged-out users are 59% of DAUq (76.8M of 130.3M), referrals down more than 1M per week in October; management warned of a possible low double-digit DAUq fall in Q4."
+  },
+  "management": {
+   "assessment": "strong",
+   "evidence_ids": ["pf_rel_20261029_1", "pf_rel_20260730_1", "pf_rel_20260430_1", "pf_rel_20260205_1", "nm_rel_20241029", "dc_g_rev_q4"],
+   "note": "Revenue beat its own guidance midpoint in 8 of 8 quarters since Q4 2024 (mean actual/guide 1.10; Q3 2026 1.03, the smallest beat); disclosed the traffic problem early with a sized warning. Caveat: it is 'evaluating' user reporting, a disclosure-change risk."
+  },
+  "capital_allocation": {
+   "assessment": "adequate",
+   "evidence_ids": ["dc_buyback_9m_usd", "pf_sbc_q_2026_03_31", "pf_sbc_q_2026_06_30", "pf_sbc_q_2026_09_30", "dc_fdso_q3", "pf_operating_income_fy2025", "pf_equity_fy2025", "pf_cash_fy2025", "pf_short_term_investments_fy2025", "pf_capex_fy2025", "dc_cash_total", "dc_aws_commit", "dc_gcp_commit"],
+   "note": "Buybacks of $340M in 9M 2026 roughly offset SBC of $301M (Q3 SBC $131M = 14.7% of revenue, rising), holding fully diluted shares near 206M; buybacks neutralise dilution rather than shrink the count. Derived ROIC is very high: FY2025 operating income $442M on about $452M invested capital (equity $2,929M less $2,477M cash and securities), because the business needs almost no capital (capex 0.1% of revenue). No debt, $3.03B cash; $1.46B of AWS/Google Cloud commitments through 2029."
+  },
+  "governance": {
+   "assessment": "adequate",
+   "evidence_ids": ["dc_class_a_sh", "dc_class_b_sh", "dc_advance_pct", "pf_proxy_20260423"],
+   "note": "Multi-class structure (46.2M Class B vs 147.0M Class A) concentrates voting control; Advance Magazine Publishers holds about 22% of shares. No evidenced abuse, but outside holders have limited say."
+  },
+  "regulation": {
+   "assessment": "adequate",
+   "evidence_ids": ["pf_10q_20261030", "pf_10k_20260206"],
+   "note": "Exposed to privacy (GDPR, CCPA, FTC), online-safety and content-liability regimes and a securities class action on the Google impact (second amended complaint 2026-10-23; damages unspecified). None is sized as a revenue risk in the filings."
+  },
+  "technology_ai": {
+   "assessment": "adequate",
+   "evidence_ids": ["dc_call_20261029", "dc_seg_oth_q3", "dc_incr_ebitda_margin"],
+   "note": "ML feeds and ad tools are delivering (conversions tripled, incremental adjusted EBITDA margin 53.6% y/y), and the corpus is licensed to AI firms; but AI is also the main substitution threat and licensing is only 5.4% of revenue."
+  },
+  "geopolitics": {
+   "assessment": "adequate",
+   "evidence_ids": ["mc_f_rev_us_q326", "mc_f_rev_row_q326", "pf_10q_20261030"],
+   "note": "About 80% of revenue is US-billed, no other country at 10%, substantially all long-lived assets in the US, Reddit is not directly accessible in China; tariff exposure is indirect through advertisers and unsized."
+  }
+ },
+ "gaps": [
+  "peers' Q3 2026 growth and ad-segment revenue not retrieved: share comparison uses their FY2025 whole-company numbers",
+  "META/PINS ARPU not retrieved: no ARPU-based competitive comparison",
+  "attributed ad-share data (eMarketer or similar) not retrieved",
+  "content-licensing terms, prices and the Google renewal status only from secondary press (hypothesis, fd_b3); licensing is not sized beyond Other revenue and RPO",
+  "ROIC in auto.json was unavailable; the derived FY2025 ROIC in capital_allocation is pre-tax operating income over equity less cash and securities, with SBC expensed",
+  "advertiser retention rates and user cohort retention are management statements without disclosed numbers",
+  "outside view (warning only, sets no number): few companies sustain 50%+ revenue growth for several years and young growth names' returns are concentrated in few winners; RDDT's own deceleration (69% FY2025 to a 40% Q4 2026 guide) is consistent with that fade"
+ ]
+}

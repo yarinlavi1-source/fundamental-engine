@@ -1,0 +1,83 @@
+{
+  "lens": "company_first",
+  "ticker": "GOOGL",
+  "as_of": "2026-10-28",
+  "results_day": true,
+  "verdict": "draft_major",
+  "findings": [
+    {
+      "id": "cf1",
+      "severity": "major",
+      "where": "position.json drivers['terminal.roic'] (base 0.31, bull 0.34) vs company_path.scenarios.base.roic 0.20 / bull 0.29; casefile val terminal_base roic 0.31",
+      "finding": "The headline fair value (367) uses a base terminal ROIC (return on NEW capital in the terminal reinvestment g/ROIC) of 31%. That is the company's AVERAGE return on its old operating capital. The analyst's own company-specific evidence on the ADDED capital points lower. company_path.base says the incremental return was about 22% for 2023-25 and 13-15% on 2026 capital so far, and it prices the yearly path at 20%. casefile company_path flags this itself as roic_minus_engine_terminal_roic = -0.11. Bull has the same gap (0.34 vs 0.29). The DCF value and the yearly table therefore rest on two different company readings. The DCF uses the more generous one while the capital base is roughly doubling (PP&E +126bn in 9 months). Rough check: at 20% the terminal reinvestment rises from 16% to 25% of NOPAT, about -10% on the terminal value, so the fair value falls to roughly 335-345. The sign of the 'cheap' reading likely survives, but the 21% discount and the buy-below row are overstated.",
+      "fix": "Pick one company-evidenced terminal RONIC per scenario and use it in both the DCF and company_path. Either set base terminal.roic to the incremental reading (about 0.20-0.22, own_history, the 2023-25 added-capital calculation with its evidence ids) or explain with evidence why the terminal RONIC should go back to the 31% average. Rerun ticker-value and show the changed discount."
+    },
+    {
+      "id": "cf2",
+      "severity": "major",
+      "where": "position.json drivers.growth_anchor.source_tier {base: contracted, bull: contracted}",
+      "finding": "The source tier is mislabelled. Only part of the base FY2027 +21% is contracted: the Cloud backlog conversion, about 154bn a year from 561bn x 55% / 24 months. Services is about 70% of revenue and its +10% is an own-history extrapolation of the Q3 +10.6% with 'lapping' commentary from the call. The bull is not contracted at all: it puts Cloud at about 210bn, above what the backlog converts (about 154bn a year), with Services +13% on a return to the H1 pace. Labelling the whole anchor 'contracted' presents an extrapolation as contract evidence.",
+      "fix": "Split the tier by component: Cloud conversion = contracted, but only up to the backlog's 24-month conversion; Services = own_history; bull Cloud above conversion and the bull Services re-acceleration = hypothesis or own_history. Keep the numbers if wanted, but label them honestly."
+    },
+    {
+      "id": "cf3",
+      "severity": "major",
+      "where": "drivers.growth_anchor / scenario_events (rp_cloud_backlog_q3_26, rp_kpi_backlog_24m, 924bn commitments) <- rp_call_20261028 / ex_call_q3_2026",
+      "finding": "The 'contracted' base, the bull and the key risk all rest on the 561bn backlog, the 'just over 55% in 24 months' and the 924bn purchase commitments. None of these numbers is in the Q3 2026 earnings release: a text search of 8k_2026-10-28 exhibit 99.1 finds no backlog figure. They come only from an AI-assisted Investing.com copy of the call (search_excerpt, not independent), and the 10-Q is not filed. On a company-first standard, the largest driver has no primary or independent source.",
+      "fix": "Keep the result a draft until the Q3 10-Q (the RPO note and the commitments note) or the issuer's own webcast or transcript confirms 561bn, 55%/24m and 924bn. Until then, mark these evidence items retrieval=search_excerpt, independent=false in the driver reason, and show in the table that the backlog figure is unconfirmed."
+    },
+    {
+      "id": "cf4",
+      "severity": "major",
+      "where": "casefile company_path.scenarios.bull.rows (forward P/E 45.0x at year 0, 39.0x at year 1, 34.8x at year 2) vs own_history high 31.8x, median 17.4x",
+      "finding": "The bull pays a multiple above the company's own peak. 45x and 39x are well above the highest own-history forward P/E (31.8x), and that peak was itself set on depressed FY2022 EPS. No named competitor multiple is on file to support it (FMP access denied, so company_path has no peer multiples). The bull year-1 price of 778$ (+166%) comes mostly from this multiple and is shown to the owner. Its label 'unproven' sits behind the scenes, while the table presents +268% over 5 years as the bull potential.",
+      "fix": "Cap the bull's forward P/E at the own-history high (about 32x), or support anything higher with the forward P/E of a named direct competitor at a comparable stage (MSFT, AMZN, META or ORCL, from the IB price history plus their reported EPS), with the reason it is comparable. Recompute the bull row and the 5-year potential."
+    },
+    {
+      "id": "cf5",
+      "severity": "major",
+      "where": "casefile company_path rows weighted_shares = 12.23bn flat in every scenario and year; val 'dilution' assumption (no incremental shares)",
+      "finding": "The share count is held flat although the company's own evidence shows dilution. Shares rose about 1.7% in 2026, 12.4bn of stock was sold under the ATM in Q3, and 27.6bn remains on the program. There have been no buybacks in 2026. The 6.25% mandatory convertible preferred converts into about 43.6-54.5M common shares in 2029. The base scenario text itself says the build is funded by debt and the ATM, but EPS and the yearly price path assume no new shares. The preferred is treated as a debt-like claim in the DCF (reasonable), but the yearly EPS path has neither the conversion nor the ATM issuance.",
+      "fix": "Model the company-evidenced issuance. Grow shares in base and bear by the ATM remainder at roughly today's price over its expected use, and add the 2029 conversion shares (removing the preferred claim at that point so it is not counted twice). Or state in the dilution assumption, with evidence, why the ATM will not be used. Then rerun company_path."
+    },
+    {
+      "id": "cf6",
+      "severity": "minor",
+      "where": "drivers.sales_to_capital {bear: guidance, base: guidance}; gather/expectations.json guidance[] holds only ex_guid_capex_fy2026_reaffirmed",
+      "finding": "The capex guide (195-205bn) is the only guided metric and it drives two scenarios' reinvestment. Its track record is not recorded: there is no history of earlier FY2026 capex guides and how they were raised, and no actual-versus-guide for FY2024-25. The value-stage gap mentions only the revenue track record. Guidance is used without being read against its history.",
+      "fix": "Add the FY2026 capex guide history (the February, April and July calls) and FY2024-25 guide versus actual from the earlier releases and calls in documents/. Note the direction of misses; repeated raises argue for a lower bear and base sales_to_capital."
+    },
+    {
+      "id": "cf7",
+      "severity": "minor",
+      "where": "companies/GOOGL/out/table_he.md row 'הנחות בלי נתון של החברה' vs position.json gaps (terminal_growth, tax_rate)",
+      "finding": "The table row of levers on engine rules lists half-life, SBC, risk premium, margin convergence, cash cushion and horizon. It leaves out terminal_growth (4.49% bear, 4.99% base and bull) and tax_rate (16.0%, which position.json says is distorted by deferred tax on equity marks). Both are on engine rules per the position gaps, so the row hides part of the default-driven value.",
+      "fix": "Add terminal growth and the tax rate to the engine-default row, or cite company evidence for the 16% rate (cash taxes or the FY2023-25 ETR excluding equity-mark effects)."
+    },
+    {
+      "id": "cf8",
+      "severity": "minor",
+      "where": "casefile company_path.scenarios.base.rows (24.2x FY2027, 22.7x FY2028) vs own_history median 17.4x and today's 292/14.40 = 20.3x",
+      "finding": "The base path prices year 0 at 24.2x forward EPS, about 39% above the company's own median of 17.4x and above today's 20.3x. Part of the base 5-year gain (+71%) is multiple re-rating, labelled 'justified_high' from an assumed 20% ROIC (see cf1). The own-history sample is n=4 (2021-2024), with no peer multiples.",
+      "fix": "After cf1, show how much of the base 5-year change comes from EPS growth and how much from the multiple. Widen own_history beyond n=4, for example 2016-2024 from the IB history with realised EPS."
+    },
+    {
+      "id": "cf9",
+      "severity": "minor",
+      "where": "casefile val assumption terminal_bear rationale",
+      "finding": "The terminal_bear rationale text says 'ROIC 28.0% (strong moat, 70% of the base ROIC)', which is the engine default wording. The applied number is the analyst override of 13%: the terminal reinvestment of 0.345 equals 0.0449/0.13. A reviewer reading the rationale sees a default that was not used.",
+      "fix": "Regenerate the rationale from the applied override (13%, own_history, with the incremental-capital evidence ids) so the stated tier matches the number."
+    },
+    {
+      "id": "cf10",
+      "severity": "minor",
+      "where": "table_he.md row 'כמה התחזית אופטימית' and position.json gaps WARNING",
+      "finding": "This is correctly handled. The size-class base rate (about 3% of companies sustained about 11% real growth for 10 years) and the outside-view warning appear only as warning rows, not as drivers. Named competitors (MSFT, AMZN, META, ORCL) appear with their reason for competing, and their numbers (for example META ad growth of 25.9%) are used only in the bear narrative, not as drivers. No change is needed beyond keeping it so.",
+      "fix": "None. Keep the base rate as a warning row only."
+    }
+  ],
+  "notes": [
+    "Results-day run (FE_LAG_DAYS=0): the release and call of 2026-10-28 were cited on their own date.",
+    "Review limited to the run's files; no new retrieval made. The fair-value sensitivity in cf1 is an approximate hand check (g/ROIC reinvestment 16% -> 25%), not an engine rerun."
+  ]
+}

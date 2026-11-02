@@ -1,0 +1,439 @@
+{
+ "ticker": "GOOGL",
+ "as_of": "2026-10-28",
+ "stop": false,
+ "name": "Alphabet Inc.",
+ "cik": "1652044",
+ "currency": "USD",
+ "exchange": "Nasdaq",
+ "fiscal_year_end": "12-31",
+ "sic": 7370,
+ "sic_description": "Services-Computer Programming, Data Processing, Etc.",
+ "annual_form": "10-K",
+ "type": "mature_growth / stalwart (computed by classify_company from SEC companyfacts; the analyst confirms or overrides with reasons)",
+ "evidence_ids": [
+  "pf_10k_20260205"
+ ],
+ "resolved": true,
+ "filings": [
+  {
+   "form": "10-K",
+   "filed": "2026-02-05",
+   "report_date": "2025-12-31",
+   "accession": "0001652044-26-000018",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/",
+   "what": "annual report"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2026-07-23",
+   "report_date": "2026-06-30",
+   "accession": "0001652044-26-000071",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/",
+   "what": "quarterly report"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2026-04-30",
+   "report_date": "2026-03-31",
+   "accession": "0001652044-26-000048",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/goog-20260331.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/",
+   "what": "quarterly report"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-10-28",
+   "report_date": "2026-10-28",
+   "accession": "0001652044-26-000080",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000080/goog-20261028.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000080/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-07-22",
+   "report_date": "2026-07-22",
+   "accession": "0001652044-26-000066",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000066/goog-20260722.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000066/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-04-29",
+   "report_date": "2026-04-29",
+   "accession": "0001652044-26-000043",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000043/goog-20260429.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000043/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-02-04",
+   "report_date": "2026-02-04",
+   "accession": "0001652044-26-000012",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000012/goog-20260204.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000012/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-10-29",
+   "report_date": "2025-10-29",
+   "accession": "0001652044-25-000087",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000087/goog-20251029.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000087/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-07-23",
+   "report_date": "2025-07-23",
+   "accession": "0001652044-25-000056",
+   "items": "2.02,8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000056/goog-20250723.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000056/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-04-24",
+   "report_date": "2025-04-23",
+   "accession": "0001652044-25-000040",
+   "items": "2.02,8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000040/goog-20250423.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000040/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-02-04",
+   "report_date": "2025-02-04",
+   "accession": "0001652044-25-000010",
+   "items": "2.02,8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000010/goog-20250204.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204425000010/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "DEF 14A",
+   "filed": "2026-04-24",
+   "report_date": "2026-06-05",
+   "accession": "0001308179-26-000342",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000130817926000342/goog-20260424.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000130817926000342/",
+   "what": "proxy statement"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-08-10",
+   "report_date": "2026-08-10",
+   "accession": "0001193125-26-342390",
+   "items": "8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526342390/d171253d8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526342390/",
+   "what": "8-K since the annual report (items 8.01,9.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-06-11",
+   "report_date": "2026-06-05",
+   "accession": "0001193125-26-267578",
+   "items": "5.02,5.07,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526267578/d57679d8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526267578/",
+   "what": "8-K since the annual report (items 5.02,5.07,9.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-06-05",
+   "report_date": "2026-06-05",
+   "accession": "0001193125-26-259830",
+   "items": "1.01,3.03,5.03,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526259830/d36818d8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526259830/",
+   "what": "8-K since the annual report (items 1.01,3.03,5.03,9.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-06-05",
+   "report_date": "2026-06-02",
+   "accession": "0001652044-26-000059",
+   "items": "5.02",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000059/goog-20260602.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000059/",
+   "what": "8-K since the annual report (items 5.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-06-04",
+   "report_date": "2026-06-04",
+   "accession": "0001193125-26-257724",
+   "items": "1.01,7.01,8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526257724/d83560d8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526257724/",
+   "what": "8-K since the annual report (items 1.01,7.01,8.01,9.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-05-21",
+   "report_date": "2026-05-21",
+   "accession": "0001193125-26-234488",
+   "items": "8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526234488/d144566d8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526234488/",
+   "what": "8-K since the annual report (items 8.01,9.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-05-11",
+   "report_date": "2026-05-11",
+   "accession": "0001193125-26-216986",
+   "items": "8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526216986/d109021d8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526216986/",
+   "what": "8-K since the annual report (items 8.01,9.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-04-10",
+   "report_date": "2026-04-07",
+   "accession": "0001652044-26-000034",
+   "items": "5.02",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000034/goog-20260407.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000034/",
+   "what": "8-K since the annual report (items 5.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-04-02",
+   "report_date": "2026-03-30",
+   "accession": "0001652044-26-000031",
+   "items": "5.02",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000031/goog-20260330.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000031/",
+   "what": "8-K since the annual report (items 5.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-03-06",
+   "report_date": "2026-03-04",
+   "accession": "0001652044-26-000026",
+   "items": "5.02",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000026/goog-20260304.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000026/",
+   "what": "8-K since the annual report (items 5.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-02-13",
+   "report_date": "2026-02-13",
+   "accession": "0001193125-26-051423",
+   "items": "8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526051423/d946885d8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526051423/",
+   "what": "8-K since the annual report (items 8.01,9.01)"
+  }
+ ],
+ "computed_type": {
+  "stage": "mature_growth",
+  "lynch": "stalwart",
+  "reasons": [
+   "revenue compounding 8–20% with established operations"
+  ],
+  "flags": []
+ },
+ "identity_check": {
+  "reporting_currency": "USD",
+  "monetary_units": {
+   "USD": 585
+  },
+  "currency_basis": "facts of filing 0001652044-26-000018 (10-K, filed 2026-02-05)",
+  "depositary_shares": false,
+  "status": "ok",
+  "reasons": []
+ },
+ "prefetch": {
+  "by": "scripts/ticker_prefetch.py",
+  "at_utc": "2026-10-28T22:36:36+00:00",
+  "to_complete_by_lanes": [
+   "security and share class, quote currency, IBKR contract: gather_numbers (it alone writes identity.json while the lanes run)",
+   "named competitors: gather_field writes them in gather/field.json competitors[] (the canonical list), never here"
+  ]
+ },
+ "security": "Alphabet Inc. Class A common stock (Nasdaq: GOOGL; voting, $0.001 par), US company, not an ADR; Class C capital stock (GOOG, no vote) is the other listed class, Class B (10 votes, unlisted) is held by insiders; two mandatory convertible preferred depositary share series (GOOGM, GOOGN) were listed in June 2026",
+ "quote_currency": "USD",
+ "ib_contract_id": 208813719,
+ "results_day_mode": {
+  "FE_LAG_DAYS": 0,
+  "note": "Results-day run: Q3 2026 release (8-K 0001652044-26-000080, Exhibit 99.1, filed 2026-10-28) and the call of 2026-10-28 16:30 ET are citable on their own date in this run. The Q3 2026 10-Q is not yet filed as of 2026-10-28 (gap: the latest 10-Q is Q2, filed 2026-07-23)."
+ },
+ "share_class": "Class A common stock GOOGL (1 vote). Class C GOOG (no vote) also listed on Nasdaq; Class B (10 votes) unlisted. Per-share figures in filings are consolidated across A/B/C. Not an ADR, no dual primary listing (IBKR also shows MEXI/EBS secondary lines; the primary is NASDAQ conid 208813719).",
+ "reporting_currency": "USD",
+ "fiscal_calendar": {
+  "fiscal_year_end": "12-31",
+  "quarters": "calendar quarters (Q1 Mar 31, Q2 Jun 30, Q3 Sep 30, Q4 Dec 31)",
+  "latest_reported_quarter": "Q3 2026 (ended 2026-09-30), released 2026-10-28"
+ },
+ "latest_earnings_call": {
+  "date": "2026-10-28",
+  "time": "16:30 ET",
+  "what": "Q3 2026 earnings call (YouTube webcast per release)",
+  "source": "pf_rel_20261028_1"
+ },
+ "latest_filings": [
+  {
+   "form": "10-K",
+   "date": "2026-02-05",
+   "period": "FY2025",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm"
+  },
+  {
+   "form": "10-Q",
+   "date": "2026-04-30",
+   "period": "Q1 2026",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000048/goog-20260331.htm"
+  },
+  {
+   "form": "10-Q",
+   "date": "2026-07-23",
+   "period": "Q2 2026",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000071/goog-20260630.htm"
+  },
+  {
+   "form": "8-K (2.02) Q3 2026 release",
+   "date": "2026-10-28",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000080/googexhibit991q32026.htm"
+  },
+  {
+   "form": "8-K (2.02) Q2 2026 release",
+   "date": "2026-07-22",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000066/goog-20260722.htm"
+  },
+  {
+   "form": "8-K (2.02) Q1 2026 release",
+   "date": "2026-04-29",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000043/goog-20260429.htm"
+  },
+  {
+   "form": "8-K (2.02) Q4 2025 release",
+   "date": "2026-02-04",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000012/goog-20260204.htm"
+  },
+  {
+   "form": "8-K (1.01,3.03,5.03) mandatory convertible preferred",
+   "date": "2026-06-05",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000119312526259830/d36818d8k.htm"
+  },
+  {
+   "form": "DEF 14A",
+   "date": "2026-04-24",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000130817926000342/goog-20260424.htm"
+  }
+ ],
+ "type_detail": {
+  "stage": "mature_growth",
+  "lynch": "stalwart",
+  "by": "classify_company on SEC companyfacts FY2020-FY2025 + Q2 2026 TTM (prefetch/classify.json)",
+  "reasons": [
+   "revenue CAGR 17.2% FY2020-25 with established operations; FY2025 growth 15.1%, operating margin 32.0% (up 9.4 pts over the period, low volatility 3.4 pts)",
+   "Q3 2026 release: revenue +25% y/y to $127.6B, Google Cloud +103% to $30.7B, operating margin 31.8% -> growth re-accelerating above the stalwart band; the analyst should weigh a growth/platform hybrid lens (Services = cash-generative stalwart, Cloud/TPU = high-growth capital-intensive line)",
+   "capex shift: purchases of PP&E $51.4B in Q3 2026 vs OCF $42.3B; FCF negative in Q2 (-$5.9B) and Q3 2026 (-$9.1B), TTM FCF $19.7B on TTM OCF $179.6B -> FCF conversion and ROIC on the AI build-out are the key metrics; peak-margin and capex-funding traps apply",
+   "June 2026 mandatory convertible preferred depositary shares (GOOGM, GOOGN) -> future dilution to carry in the capital bridge"
+  ],
+  "sources": [
+   "pf_10k_20260205",
+   "pf_rel_20261028_1",
+   "prefetch/classify.json",
+   "prefetch/history.json"
+  ],
+  "note": "The type chooses questions, KPIs and the valuation lens, never a number."
+ },
+ "competitors_named_in_10k": {
+  "source": "10-K FY2025 Item 1 'Competition' (reading/10k_item1_business.txt lines 69-81; pf_10k_20260205)",
+  "named_companies": [],
+  "categories": [
+   "general purpose search engines and information services",
+   "vertical search engines and e-commerce providers (travel, jobs, health)",
+   "online advertising platforms and networks, incl. online shopping and streaming services",
+   "offline advertising (billboards, magazines, newspapers, radio, TV)",
+   "digital content and application platform providers",
+   "providers of enterprise cloud services",
+   "AI model developers and providers of AI products and services",
+   "consumer hardware companies with proprietary platforms",
+   "digital video services",
+   "social networks",
+   "workspace communication and connectivity products"
+  ],
+  "note": "The 10-K names competitor CATEGORIES only, no company by name. The canonical named list (with why each competes) is gather/field.json competitors[] (reused from GOOGL_2026-10-27: MSFT, AMZN, META, ORCL); gather_field confirms it."
+ },
+ "sources": [
+  {
+   "id": "pf_10k_20260205",
+   "kind": "sec_filing",
+   "title": "Alphabet Inc. Form 10-K FY2025",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000018/goog-20251231.htm",
+   "date": "2026-02-05",
+   "independent": true,
+   "publisher": "SEC EDGAR / Alphabet Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20261028_1",
+   "kind": "release",
+   "title": "Alphabet Announces Third Quarter 2026 Results (8-K Ex. 99.1)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1652044/000165204426000080/googexhibit991q32026.htm",
+   "date": "2026-10-28",
+   "independent": true,
+   "publisher": "SEC EDGAR / Alphabet Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "sec_submissions",
+   "kind": "sec_filing",
+   "title": "SEC submissions JSON CIK0001652044",
+   "url": "https://data.sec.gov/submissions/CIK0001652044.json",
+   "date": "2026-10-28",
+   "independent": true,
+   "publisher": "SEC EDGAR",
+   "retrieval": "structured_api",
+   "syndicated_from": null
+  },
+  {
+   "id": "sec_companyfacts",
+   "kind": "structured_data",
+   "title": "SEC companyfacts CIK0001652044",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001652044.json",
+   "date": "2026-10-28",
+   "independent": true,
+   "publisher": "SEC EDGAR",
+   "retrieval": "structured_api",
+   "syndicated_from": null
+  },
+  {
+   "id": "ib_contract_googl",
+   "kind": "price",
+   "title": "IBKR search_contracts GOOGL (read-only)",
+   "url": "connector:Interactive_Brokers.search_contracts",
+   "date": "2026-10-27",
+   "independent": true,
+   "publisher": "Interactive Brokers",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  }
+ ]
+}

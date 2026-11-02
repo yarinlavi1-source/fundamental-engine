@@ -1,0 +1,66 @@
+{
+ "thesis_he": {
+  "bear": "מחיר לשעת GPU יורד, השבבים מתיישנים מהר והחוב והריבית אוכלים את הרווח: התשואה על ההון החדש כ-1.6%, הרבה מתחת לעלות ההון, ולכן המכפיל נמוך (כמו CoreWeave שירדה להפסד תפעולי בזמן הצמיחה).",
+  "base": "החוזים נחתמים בכ-20-25 מיליון דולר לשנה לכל מגה-וואט ושולי EBITDA של כ-50% בענן נשמרים, אבל פחת והוצאות מימון כבדים: תשואה של כ-4.7% על ההון החדש, מתחת לעלות ההון, ומכפיל שיורד ככל שהצמיחה מאטה.",
+  "bull": "לקוחות גדולים ממשיכים לממן מראש חלק גדול מההשקעה, תמחור החוזים מחזיק והקיבולת מתמלאת: תשואה של כ-8.9% על ההון החדש, בערך עלות ההון, ומכפיל גבוה יותר שעדיין לא הוכח ברווח."
+ },
+ "company_path": {
+  "metric": "eps",
+  "multiple": "forward_pe",
+  "scenarios": {
+   "bear": {
+    "multiple_from": "economics",
+    "roic": 0.016,
+    "justification": "unproven",
+    "reason_he": "בתרחיש הדובי התשואה על ההון החדש היא כ-1.6% אחרי מס, אותה תשואה שהמנוע מקבל מהמרווח בבגרות (8%) כפול ההכנסה לכל דולר הון (0.25): הרבה מתחת לעלות ההון. ל-Nebius אין עדיין שנה עם תשואה חיובית על ההון (הפסד תפעולי ברבעון השני), ו-CoreWeave, המתחרה הישירה, עברה משולי רווח תפעולי של 17% ב-2024 להפסד ב-2025 וברבעון השני של 2026. צמיחה בתשואה כזו הורסת ערך, ולכן המכפיל נמוך.",
+    "source_tier": "competitor",
+    "competitors": [
+     "CRWV"
+    ],
+    "evidence_ids": [
+     "fd_cw_sec_facts",
+     "pf_cf_20260430",
+     "dc_6k_q2_ofr"
+    ]
+   },
+   "base": {
+    "multiple_from": "economics",
+    "roic": 0.047,
+    "justification": "unproven",
+    "reason_he": "התרחיש הבסיסי: כ-22.5 מיליון דולר הכנסה שנתית לכל מגה-וואט, שולי EBITDA של כ-50% בענן ה-AI וצבר של כ-40 מיליארד דולר. המרווח בבגרות 17% כפול 0.35 דולר הכנסה לכל דולר הון (המקדמות של הלקוחות כבר כלולות פעם אחת ב-0.35) נותן תשואה של כ-4.7% אחרי מס על ההון החדש, מתחת לעלות ההון של החברה. לכן הצמיחה עצמה לא מוסיפה ערך, והמכפיל מתון ויורד עם האטת הצמיחה; זה עוד לא נבדק בדוחות (אין שנה עם רווח תפעולי).",
+    "source_tier": "contracted",
+    "evidence_ids": [
+     "dc_k_yield",
+     "dc_k_ebitda_m",
+     "dc_k_backlog",
+     "dc_call_q2",
+     "dc_6k_q2_ofr"
+    ]
+   },
+   "bull": {
+    "multiple_from": "economics",
+    "roic": 0.089,
+    "justification": "unproven",
+    "reason_he": "בתרחיש השורי המרווח בבגרות 25% כפול 0.45 דולר הכנסה לכל דולר הון (יותר מימון ממקדמות לקוחות ומודל שותפויות קל-נכסים; המקדמות נספרות רק כאן, לא פעם שנייה) נותן כ-8.9% אחרי מס על ההון החדש, בערך כמו עלות ההון. המכפיל גבוה יותר רק כי הצמיחה מהירה וממומנת פחות על ידי בעלי המניות, והכול תלוי בביצוע ועדיין לא נראה ברווח.",
+    "source_tier": "contracted",
+    "evidence_ids": [
+     "dc_k_prepay_cov",
+     "dc_k_prepay",
+     "dc_k_yield",
+     "dc_k_ebitda_m",
+     "dc_g_mw",
+     "dc_call_q2"
+    ]
+   }
+  }
+ },
+ "gaps": [
+  "own_history left out: no meaningful own forward P/E range (GAAP EPS FY2024 -2.28, FY2025 +0.33 only from non-operating gains, consensus FY2026 -2.11 and FY2027 -6.16; listed as an AI cloud only since Oct 2024; the pre-2024 Yandex P/E is a different business). The engine therefore cannot check a peak flag against an own median.",
+  "peers left out: no named competitor has an evidenced forward P/E (CRWV earnings negative; Crusoe and Lambda private; ORCL not collected).",
+  "Capex per MW and GPU useful life not disclosed in the read documents, so the scenario ROICs are judgements from contract yield per MW, AI cloud EBITDA margin and prepayment coverage, not a computed return; NBIS has no year of positive operating ROIC (roic_last -8.7%, incremental ROIC -45% is the Yandex divestiture, not meaningful).",
+  "Goodwill: out of the judgement (the ROICs refer to new data-center and GPU capital; Inferize acquisition of 2026-10-01 not sized).",
+  "Q3 2026 results (date announced 2026-10-30) not in the evidence; if released within 2 days of as_of they are not citable before as_of + 2.",
+  "With consensus FY2027 EPS negative, the engine may give no forward P/E price for the early years of any scenario whose executed EPS is not positive.",
+  "Repair 2026-11-01: scenario ROICs set to the after-tax return the core drivers imply (mature_margin x sales_to_capital x (1 - 21% tax): 1.6% / 4.7% / 8.9%); prepayments counted once, in core sales_to_capital. The cost of equity is the engine's rule (core gaps), so the comparison to it is stated in words, not as a number."
+ ]
+}

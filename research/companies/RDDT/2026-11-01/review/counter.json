@@ -1,0 +1,65 @@
+{
+ "lens": "counter",
+ "findings": [
+  {
+   "severity": "major",
+   "finding": "Counter-thesis (pre-mortem, written in 2029, the investment failed): Reddit's audience was rented from Google. 59% of DAUq (76.8M of 130.3M) were logged-out visitors, mostly arriving from search. Google AI Overviews/AI Mode and LLM answers (OpenAI, Google, Anthropic, named in the 10-Q as competitors and as summarizers of Reddit content) took that visit away for good, and the logged-in-only move cut reach further. US revenue growth in 2025-26 was all ARPU (+53% on a US audience of -2% y/y): ad load and pricing on a flat audience, which cannot compound once the audience shrinks. Data licensing (Other revenue $48M, 5.4%; RPO >1y only $62.4M) was too small to matter, and its buyers are the same firms taking the traffic. SBC around 15% of revenue absorbed the buybacks (shares held flat near 206M). The fixed $1.46B AWS/GCP commitments through 2029 squeezed the margin, growth fell to single digits by 2028 and the stock settled near 13-15x normalized earnings. The market already priced this on 2026-10-30 (-28.9% in a day, 92.2 vs prior close 129.6); at 92.2 the engine's own what_must_be_true says the base needs average growth of -4.5% a year for five years, OR a mature margin of 15.7%, OR a cost of equity of 13.0%. Early signs: Q4 2026 DAUq below 117M (a low-double-digit fall, as warned); logged-in/app DAUq flat or down q/q; US ARPU growth below 30% y/y by Q2 2027; Q1 2027 revenue growth below 25%; Other revenue flat y/y; no Q1 2027 guide above +30%.",
+   "where": "companies/RDDT/out/casefile.json val.what_must_be_true; position/core.json bear events; rk.register biz.substitutes",
+   "fix": "Show it next to the result: the market price sits between the model's bear (DCF 64.6) and base (211), and it is consistent with a sustained audience decline, not a mispricing that has been proven. Add the early-sign metrics above as dated falsifiers of the base (logged-in DAUq q/q and US ARPU y/y are missing today)."
+  },
+  {
+   "severity": "critical",
+   "finding": "Two stories in one base scenario: the DCF and the yearly price path assume different returns on capital. The DCF charges growth capex of $528M in FY2027 and $553M in FY2028 (sales-to-capital 1.19 from history, i.e. an incremental after-tax ROIC of roughly 0.34 x 0.78 x 1.19 = about 30-40%), while company_path.base prices the same EPS at roic 0.95 ('almost no capital needed', capex ~$7M a year). The result: base year-1 price 288 (43.1x FY2028 EPS) against the DCF's own base value of 230 at 2027-12-31, and a 5-year base +311% resting on the path, not on the DCF. Either the DCF's reinvestment is wrong (the business really needs ~no capex, only receivables) or the path's 95% is wrong; both cannot hold in the same scenario.",
+   "where": "companies/RDDT/out/casefile.json val.case.scenarios[base].periods[*].growth_capex and assumption 'reinvestment' vs company_path.scenarios.base.roic=0.95 (position/path.json base)",
+   "fix": "Repair: make one capital intensity per scenario. Either set the reinvestment / sales-to-capital override from the company's operating invested capital (equity less cash and securities, about $580M; capex 0.1-0.3% of revenue; receivables growth as the real need) so the DCF's implied incremental ROIC matches the path's roic, or lower the path's base roic to the DCF's implied level (about 0.3-0.4). Re-run ticker-value and re-render the table; until then the base yearly row is a draft."
+  },
+  {
+   "severity": "critical",
+   "finding": "The bear row shows a gain that the bear's own DCF contradicts. The table's 5-year potential row says bear +35% (path: 101 in year 1 rising to 124, at 21-22x forward EPS from roic 0.30), while the DCF bear values the share at 64.6 today and 74.4 at 2029-12-31, i.e. a loss of about 20-30%. The owner's buy test depends on 'a bear case he can live with', so a bear row of +35% would mislead him. In addition a 21x forward multiple in a bear of a shrinking audience is above where the stock trades today (13x FY2027 consensus EPS, 18.8x trailing on 2%-tax EPS) and near the own-history low of 18.7 set before the traffic shock; the bear is therefore more optimistic than the price.",
+   "where": "companies/RDDT/out/table_he.md row 'פוטנציאל בעוד 5 שנים' and yearly bear column; casefile company_path.scenarios.bear (multiple_path 21.1-22.4, roic 0.3) vs val.result.annual_values bear",
+   "fix": "Repair: align the bear path's capital return with the bear DCF (one roic, see the base finding), and test the bear multiple against today's 13x forward / 18.8x trailing rather than pre-shock history; the table's bear row must not show a gain while the same scenario's DCF shows a loss."
+  },
+  {
+   "severity": "major",
+   "finding": "The bear does not reach the scenario the market is pricing. Management warned of a possible low-double-digit DAUq fall in Q4 2026 (130M base), referrals down more than 1M per week in October, logged-out 59% of DAUq; yet the bear still grows revenue 10% in 2027 and 4.5-8% every year after, with margin only falling from 29% to 25%. No bear year has a revenue decline, no loss of ad pricing power, no 2027 advertiser renewal shortfall. The risk register itself marks biz.substitutes (the key risk) as in_bear_case=false, pricing_status not_priced. The price needs -4.5% average growth in the base: the bear should at least cover a flat-to-down 2027.",
+   "where": "position/core.json drivers.bear (growth_anchor 0.10, mature_margin 0.25); casefile rk.register id biz.substitutes (in_bear_case false)",
+   "fix": "Size the bear from the evidence: logged-out DAUq share (59%) x the share of monetization from logged-out (under 20%, management: logged-in and app over 80%) x a stated loss rate, plus an ARPU deceleration; state the resulting 2027 growth (likely 0-5%) and link biz.substitutes to the bear path."
+  },
+  {
+   "severity": "major",
+   "finding": "Unmodelled options: the 10-Q (2026-10-30) states 9,611,808 options outstanding at 2026-09-30 (8.13M Class A + 1.49M Class B) plus 3.56M shares issuable on RSUs/PRSUs. The model uses 193.1M basic shares with no incremental shares; its own 'dilution' falsifier ('vested options above 1% of shares that are not modelled') is triggered: options alone are about 5.0% of basic shares. Future SBC charged as cash covers future grants and arguably unvested RSUs, but not already-vested in-the-money options. Management's fully diluted count is 206.3M (6.8% above basic). Per-share values are overstated by up to about 3-5% depending on strikes.",
+   "where": "casefile val.case.opening.shares=193093731 and assumption 'dilution'; reading/10q_2026-10-30.txt ('9,611,808 options outstanding'); qa.fields.convertibles status missing",
+   "fix": "Read the 10-Q equity note for vested options and weighted average exercise price; add vested in-the-money options by the treasury method to the opening shares (or document why they are immaterial), and set convertibles to 'none' from the debt note."
+  },
+  {
+   "severity": "major",
+   "finding": "Peak vs justified multiple: the base path re-rates the stock from 13x FY2027 consensus EPS (and 18.8x trailing) to 43.1x forward in one year (+212% in year 1), and the bull to 72.8-91x forward, above the own-history high of 55.6 (Feb-Oct 2026, trailing, a regime before the traffic shock). The own_history used as the tier ('since 2026-02 low 18.7 median 40.3 high 55.6') is the pre-shock regime; the 29% fall on 2026-10-30 is new information about the business, not only volatility. 'justified_high' rests on a TTM ROIC (124%) computed on a 2% tax rate quarter and record Q3 margins; the bull roic 1.3 is already flagged roic_above_100pct.",
+   "where": "casefile company_path.own_history, scenarios.base (justification justified_high, multiple_path starting 43.1) and scenarios.bull (multiple_path 91.1, 72.8, ...)",
+   "fix": "Label the bull 'unproven' (or cap its multiple path at the own-history high) and say next to the table that the base year-1 price assumes a full re-rating back to the pre-shock multiple; recompute the base ROIC on normalized tax and a full year, not the TTM peak."
+  },
+  {
+   "severity": "major",
+   "finding": "Guardrail, volatility vs business risk and 'cheap': the table calls the stock 56% cheap and its expected return 13% a year against the market's 9.2%, but the engine's own price-implied numbers (growth -4.5%/yr, or margin 15.7%, or Ke 13.0%) show the market is pricing a business-risk scenario (audience loss) that the model's base dismisses, and the confidence is 'low' with eight levers lacking company data. The discount is the size of the disagreement with the market on the traffic question, not a measured margin of safety.",
+   "where": "companies/RDDT/out/table_he.md rows 'המחיר מול השווי', 'תשואה שנתית צפויה', 'מה המחיר של היום מניח'",
+   "fix": "Next to the result, say in one line that the discount depends on the base's 25% 2027 growth holding after a warned DAUq decline, and that the market prices roughly no growth; keep the result a draft until the two critical findings are repaired."
+  },
+  {
+   "severity": "minor",
+   "finding": "Bear falsifier is too lax: 'Q1 2027 revenue above $860M refutes the bear's 10% year' requires +30% y/y (Q1 2026 $663.4M); a Q1 2027 at +20-25% ($796-829M) would already be inconsistent with a 10% full year after a +40% Q4 2026, yet would not refute the bear.",
+   "where": "position/core.json falsifiers (bear, Q1 2027 revenue)",
+   "fix": "Lower the threshold to about $800M (+20%), or add a Q2 2027 threshold consistent with a 10% year."
+  },
+  {
+   "severity": "minor",
+   "finding": "Two bear and bull events are hypotheses without evidence ids (advertisers cutting budgets in a downturn; the 'For You' feed raising time spent and ad load), and the base lacks a falsifier on the mechanism that carries it (logged-in/app DAUq growth and US ARPU growth); its two falsifiers only test the Q4 guide.",
+   "where": "position/core.json events (bear: advertiser budgets; bull: For You feed) and falsifiers (base)",
+   "fix": "Keep the hypothesis labels; add base falsifiers: logged-in DAUq q/q below 0 in Q4 2026 or Q1 2027, and US ARPU y/y below 30% by 2027-08-15."
+  },
+  {
+   "severity": "minor",
+   "finding": "Red-team audit and expectation_gap were not run as packages: no capital_structure package exists in the run (debt zero, cash $3.03B, options 9.6M, RSUs 3.56M, $500M undrawn revolver); only the engine's val.what_must_be_true lever-alone solves are available (used above). Forensic screens are partial: Beneish and ROIC unavailable in prefetch/forensic.json, Piotroski 5/7 'mixed' (no_new_shares false, higher_current_ratio false) and these flags are not carried into the risks.",
+   "where": "run root (no capital structure package); prefetch/forensic.json; casefile rk.register",
+   "fix": "Build the capital structure (cash and securities, options by tranche, RSUs, revolver, AWS/GCP commitments as off-balance obligations) and run redteam.audit; add the Piotroski no_new_shares flag to the dilution risk."
+  }
+ ]
+}

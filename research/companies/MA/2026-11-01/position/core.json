@@ -1,0 +1,313 @@
+{
+ "thesis_he": {
+  "bear": "ההנחות לרשת: הנפח ממשיך להאט, ההנחות לבנקים (rebates) אוכלות יותר מההכנסה, וחוק ניתוב בארה\"ב או תקרות עמלה באירופה ובבריטניה לוחצים על המחיר; הצמיחה יורדת לכ-8% והשוליים חוזרים לכ-53%.",
+  "base": "שנת 2026 נסגרת לפי ההנחיה (צמיחה של כ-12-13% בניטרול מטבע), ובשנים הבאות הצמיחה מתמתנת לכ-11% ואז לכ-10%: נפח של כ-7-8%, שירותים נלווים צומחים מהר יותר, וההנחות לבנקים ממשיכות לעלות לאט; השוליים נשארים סביב 58%.",
+  "bull": "השירותים הנלווים, תשלומי סוכני בינה מלאכותית ופלטפורמת הסטייבלקוין שומרים על צמיחה של כ-14% גם ב-2027, החוק בארה\"ב לא עובר וההנחות מתייצבות; השוליים מגיעים לכ-61%."
+ },
+ "drivers": {
+  "growth_anchor": {
+   "period": "FY2027",
+   "bear": 0.08,
+   "base": 0.115,
+   "bull": 0.14,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "dc_f_nr_pn_g_q3",
+    "dc_f_nr_vas_g_q3",
+    "dc_f_gdv_g_q3",
+    "dc_f_xb_g_q3",
+    "dc_f_rebates_share_q3",
+    "dc_f_nr_g_ytd_cn",
+    "pf_revenue_fy2025",
+    "pf_revenue_fy2024"
+   ],
+   "reason": "No FY2027 guidance (given with Q4 results, late Jan 2027) and no attributed post-results consensus, so FY2027 is built from Mastercard's own run rate as volume x yield + VAS. Base 11.5%: payment network (~58% of revenue) at ~9% = GDV +7% plus a little yield, net of rebates still rising faster than gross assessments, plus VAS (~42%) at ~15% organic, slowing from 19% as pricing and the Q3 services timing are lapped; below the 9M 2026 currency-neutral 13%. Bear 8%: GDV slows to ~5-6% (cross-border already down to +11%), rebate share keeps climbing and VAS slows to ~11%. Bull 14%: FY2026's pace holds (VAS ~19%, cross-border re-accelerates, rebate share stabilises)."
+  },
+  "growth": {
+   "period": "FY2027",
+   "bear": [
+    0.08,
+    0.07,
+    0.065
+   ],
+   "base": [
+    0.115,
+    0.11,
+    0.1
+   ],
+   "bull": [
+    0.14,
+    0.135,
+    0.125
+   ],
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "pf_revenue_fy2021",
+    "pf_revenue_fy2022",
+    "pf_revenue_fy2023",
+    "pf_revenue_fy2024",
+    "pf_revenue_fy2025",
+    "dc_f_nr_g_ytd_cn",
+    "dc_f_rebates_share_q3",
+    "dc_f_rebates_share_fy25"
+   ],
+   "reason": "FY2027-FY2029 from MA's own history: revenue growth 23%, 18%, 13%, 12%, 16% (2021-2025, 2021-2022 a post-COVID travel rebound) and 13% currency-neutral 9M 2026, with a slow fade because the volume line has decelerated (GDV +7%) and rebates take a growing share of gross assessments (51.3% -> 52.6%). Bear fades faster on regulation (routing mandate, cross-border caps) and rail substitution; bull keeps VAS-led growth near 13-14%. Years after the list fade by the engine rule."
+  },
+  "mature_margin": {
+   "bear": 0.53,
+   "base": 0.58,
+   "bull": 0.61,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "pf_operating_income_fy2025",
+    "pf_revenue_fy2025",
+    "pf_operating_income_fy2021",
+    "pf_revenue_fy2021",
+    "dc_f_opm_gaap_q3",
+    "dc_f_opm_adj_ytd",
+    "dc_f_litprov_ytd"
+   ],
+   "reason": "GAAP operating margin (litigation and restructuring kept as recurring costs): FY2021 53.4%, FY2025 57.6%, Q3 2026 59.8%, 9M 2026 adjusted 60.8%. Base 58%: FY2025's GAAP level, below the current ~60% that the quarter review flags as a peak run rate, because rebates rise faster than gross assessments and litigation provisions recur. Bear 53%: back to the 2020-2021 level if routing/fee regulation and incentive inflation squeeze the network yield. Bull 61%: today's best adjusted level holds as VAS scales."
+  },
+  "tax_rate": {
+   "all": 0.205,
+   "source_tier": "guidance",
+   "evidence_ids": [
+    "dc_g_tax_fy26",
+    "dc_g_tax_q4"
+   ],
+   "reason": "Non-GAAP effective tax rate guided 20-21% for FY2026 and Q4 2026; midpoint used as the steady rate (GAAP Q3 2026 19.4%)."
+  },
+  "sbc_pct": {
+   "all": 0.019,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "nm_sbc_9m_2026",
+    "nm_sbc_fy2025",
+    "pf_revenue_fy2025"
+   ],
+   "reason": "Share-based compensation 1.8% of revenue in FY2025 ($597m / $32,791m) and 1.9% in 9M 2026 ($525m / $27,482m); treated as a real cost."
+  }
+ },
+ "forecast_options": {
+  "cyclical": {
+   "treatment": "structural",
+   "reason": "Revenue grew every year 2021-2025 with a 53-58% operating margin; the network toll and VAS recur. Cross-border travel is the cyclical piece (cross-border volume +11% in Q3 2026 vs +12% 9M), changing the growth rate, not the economics; scenarios carry it.",
+   "evidence_ids": [
+    "pf_revenue_fy2021",
+    "pf_revenue_fy2025",
+    "pf_operating_income_fy2025",
+    "dc_f_xb_g_q3",
+    "dc_f_xb_g_ytd"
+   ]
+  },
+  "debt_like_claims": [
+   {
+    "kind": "litigation",
+    "amount": 262000000,
+    "reason": "Accrued litigation on the balance sheet at 2026-09-30 (mostly US merchant opt-out settlements), a cash claim ahead of the shares not in the debt lines. Unaccrued claims (Block/Intuit >$5bn single damages, UK collective actions) are plaintiffs' claims, not liabilities: carried in the bear scenario and the key risk, not added here.",
+    "evidence_ids": [
+     "dc_f_accr_lit",
+     "pf_10q_20261029"
+    ]
+   }
+  ]
+ },
+ "scenario_events": {
+  "bear": [
+   {
+    "event_he": "חוק תחרות כרטיסי האשראי (CCCA) בארה\"ב עובר ומחייב בנקים גדולים לאפשר רשת שנייה בכרטיסי אשראי: חלק מהעסקאות עוברות לרשתות זולות והעמלה על הנפח יורדת.",
+    "evidence_ids": [
+     "mc_ccca_congress",
+     "mc_ccca_paymentsdive"
+    ]
+   },
+   {
+    "event_he": "ההנחות והתמריצים לבנקים ממשיכים לצמוח מהר מההכנסה (כבר 52.6% מההכנסה הגולמית של הרשת ברבעון 3, לעומת 51.3% ב-2025), והתשואה נטו על כל דולר נשחקת.",
+    "evidence_ids": [
+     "dc_f_rebates_share_q3",
+     "dc_f_rebates_share_fy25",
+     "dc_f_rebates_g_ytd",
+     "dc_call_20261029"
+    ]
+   },
+   {
+    "event_he": "הנסיעות לחו\"ל מאטות ובריטניה קובעת תקרה לעמלות חוצות גבולות מול אירופה: ההכנסה בעלת התשואה הגבוהה ביותר נחלשת (נפח חוצה גבולות כבר ירד ל-11%).",
+    "evidence_ids": [
+     "dc_f_xb_g_q3",
+     "mc_psr_court"
+    ]
+   },
+   {
+    "event_he": "תביעות סוחרים: Block ו-Intuit דורשות יותר מ-5 מיליארד דולר (לפני הכפלה), ובבריטניה הוגשו באוקטובר 2026 תביעות ייצוגיות חדשות; הסכום שהופרש הוא רק 262 מיליון דולר.",
+    "evidence_ids": [
+     "pf_10q_20261029",
+     "dc_f_accr_lit"
+    ]
+   },
+   {
+    "event_he": "מערכות תשלום מיידיות (UPI בהודו, Pix בברזיל) וסטייבלקוינס לוקחות נתח מהתשלומים המקומיים והחוצי-גבולות בשווקים הצומחים.",
+    "evidence_ids": [
+     "fd_upi_sep26",
+     "mc_genius_rules"
+    ]
+   }
+  ],
+  "base": [
+   {
+    "event_he": "2026 נסגרת בצמיחה של כ-12-13% בניטרול מטבע, לפי ההנחיה, ורבעון 4 מעט חלש יותר בגלל השוואה למחירים שעלו ופרויקטים שהוקדמו לרבעון 3.",
+    "evidence_ids": [
+     "dc_g_nr_fy26",
+     "dc_g_nr_q4",
+     "dc_call_20261029"
+    ]
+   },
+   {
+    "event_he": "השירותים הנלווים (אבטחה, נתונים, אימות) ממשיכים לצמוח מהר מהרשת (19% מול 11% ברבעון 3) ומגיעים לכמעט מחצית ההכנסה.",
+    "evidence_ids": [
+     "dc_f_nr_vas_g_q3",
+     "dc_f_nr_pn_g_q3",
+     "dc_s_vas_9m_26"
+    ]
+   },
+   {
+    "event_he": "החברה ממשיכה לקנות מניות בכ-12 מיליארד דולר בשנה ומספר המניות יורד בכ-3% בשנה, גם במחיר של חוב גבוה יותר.",
+    "evidence_ids": [
+     "pf_buybacks_fy2025",
+     "dc_f_buyback_q3",
+     "dc_f_buyback_remaining",
+     "dc_f_debt_lt"
+    ]
+   },
+   {
+    "event_he": "הוצאות משפטיות ממשיכות להופיע כל רבעון (156 מיליון דולר ב-9 חודשים) ולא נעלמות.",
+    "evidence_ids": [
+     "dc_f_litprov_ytd",
+     "dc_f_litprov_ytd25"
+    ]
+   },
+   {
+    "event_he": "הנחיית 2027 (סוף ינואר 2027) תהיה שוב צמיחה 'דו-ספרתית נמוכה'.",
+    "hypothesis": true
+   }
+  ],
+  "bull": [
+   {
+    "event_he": "פלטפורמת הכסף הגלובלית עם BVNK (סטייבלקוינס) ותשלומי סוכני AI הופכות למנוע הכנסה נוסף בשירותים הנלווים כבר ב-2027.",
+    "evidence_ids": [
+     "mc_ma_bvnk_platform",
+     "mc_ma_stablecoin_security",
+     "dc_f_bvnk"
+    ]
+   },
+   {
+    "event_he": "השירותים הנלווים שומרים על צמיחה של כ-19% והשוליים התפעוליים נשארים מעל 60%, כמו ב-2026.",
+    "evidence_ids": [
+     "dc_f_nr_vas_g_q3",
+     "dc_f_opm_adj_ytd"
+    ]
+   },
+   {
+    "event_he": "חוק הניתוב בארה\"ב לא מגיע להצבעה עד סוף 2027 והתביעה של משרד המשפטים נגד ויזה בתחום הדביט פותחת למסטרקארד נתח שוק.",
+    "hypothesis": true
+   },
+   {
+    "event_he": "הנחיית 2027 בינואר 2027 גבוהה מ'דו-ספרתית נמוכה' (מעל 13%).",
+    "hypothesis": true
+   }
+  ]
+ },
+ "key_risk": {
+  "reading_he": "הסיכון המרכזי הוא שחיקת ה'אגרה' על הרשת: הנפח כבר מאט (GDV צמח 7% בלבד), ההנחות לבנקים צומחות מהר מההכנסה (52.6% מההכנסה הגולמית של הרשת) וגם צורכות מזומן מראש (4.7 מיליארד דולר ב-9 חודשים), ובמקביל חוק הניתוב בארה\"ב ותקרות העמלה בבריטניה עלולים להוריד את המחיר לכל עסקה. מחיר המניה בשיא מניח שהצמיחה הדו-ספרתית והשוליים של 60% יימשכו.",
+  "evidence_ids": [
+   "dc_f_gdv_g_q3",
+   "dc_f_rebates_share_q3",
+   "dc_f_rebates_share_fy25",
+   "dc_f_prepaid_chg_ytd",
+   "mc_ccca_congress",
+   "mc_psr_court",
+   "nm_price_ib"
+  ]
+ },
+ "falsifiers": [
+  {
+   "id": "fx_base_guide27",
+   "scenario": "base",
+   "metric": "FY2027 net revenue growth guidance, currency-neutral, low end of the guided range (Q4 2026 release)",
+   "threshold": 0.1,
+   "direction": "below",
+   "by": "2027-02-15",
+   "evidence_ids": [
+    "dc_g_nr_fy26"
+   ]
+  },
+  {
+   "id": "fx_base_rebates",
+   "scenario": "base",
+   "metric": "FY2026 rebates and incentives as share of gross payment network assessments (rebates / (payment network net revenue + rebates))",
+   "threshold": 0.54,
+   "direction": "above",
+   "by": "2027-02-28",
+   "evidence_ids": [
+    "dc_f_rebates_share_q3",
+    "dc_f_rebates_share_fy25"
+   ]
+  },
+  {
+   "id": "fx_bull_xborder",
+   "scenario": "bull",
+   "metric": "Q4 2026 cross-border volume growth, local currency",
+   "threshold": 0.1,
+   "direction": "below",
+   "by": "2027-02-15",
+   "evidence_ids": [
+    "dc_f_xb_g_q3",
+    "dc_f_xb_g_ytd"
+   ]
+  },
+  {
+   "id": "fx_bear_pn",
+   "scenario": "bear",
+   "metric": "Q2 2027 payment network net revenue growth, year over year",
+   "threshold": 0.1,
+   "direction": "above",
+   "by": "2027-08-15",
+   "evidence_ids": [
+    "dc_f_nr_pn_g_q3"
+   ]
+  },
+  {
+   "id": "fx_bear_rebates",
+   "scenario": "bear",
+   "metric": "FY2027 rebates and incentives as share of gross payment network assessments (rebates / (payment network net revenue + rebates))",
+   "threshold": 0.52,
+   "direction": "below",
+   "by": "2028-02-28",
+   "evidence_ids": [
+    "dc_f_rebates_share_q3",
+    "dc_f_rebates_share_fy25"
+   ]
+  }
+ ],
+ "reasons_he": {
+  "bear": "מה נשבר: הנפח מאט, ההנחות לבנקים אוכלות עוד מההכנסה, ורגולציה (חוק הניתוב בארה\"ב, תקרות בבריטניה) ותביעות מורידות את המחיר לעסקה; הצמיחה יורדת לכ-7-8% והשוליים לכ-53%.",
+  "base": "הסביר ביותר לפי הנתונים של החברה: 2026 לפי ההנחיה, ואחר כך צמיחה של כ-10-11% עם שוליים של כ-58%, קניות מניות מתמשכות ועלויות משפטיות קבועות.",
+  "bull": "מה צריך לקרות: השירותים הנלווים, תשלומי סוכני AI וסטייבלקוינס שומרים על צמיחה של כ-14%, הרגולציה לא פוגעת וההנחות מתייצבות; השוליים נשארים מעל 60%."
+ },
+ "engine_options": {
+  "country_risk": true,
+  "reason": "Mastercard discloses net revenue by region (Americas vs Asia Pacific, Europe, Middle East and Africa) and the US share (29% of FY2025)."
+ },
+ "gaps": [
+  "current_year_revenue not set: Mastercard guides FY2026 as a growth rate in words ('high end of low double digits' currency-neutral, read 12-13%), not as a revenue amount; the engine builds FY2026 from 9M reported ($27,482m) plus its Q4 rule; the Q4 guide (dc_g_nr_q4, 12-13% currency-neutral, about 1 point FX headwind) implies Q4 about $9.8bn and FY2026 about $37.3bn (+13.7%)",
+  "growth FY2027+: no 2027 guidance until late Jan 2027 and no attributed post-results consensus; built from own history (volume x yield + VAS)",
+  "guidance track record unavailable (ratio null): FY2026 guidance used unadjusted",
+  "cost_of_equity, terminal_growth, growth_half_life left on the engine rule (market prices of risk)",
+  "sales_to_capital / terminal_roic left to company_path (one capital intensity per scenario)",
+  "vested options and weighted strike not gathered: options not set",
+  "acquired_revenue not set: BVNK closed 2026-08-03 with 'minimal' Q3 VAS impact per management and no stated revenue; FY2026 guidance excludes inorganic",
+  "unaccrued litigation tails (Block/Intuit >$5bn single damages, UK collective actions) not sized as claims: bear and key risk only",
+  "exposure of revenue to US credit routing (CCCA), UK-EEA cross-border caps and stablecoin substitution is not disclosed: unsized",
+  "cash conversion gap (customer incentive prepayments) not modelled as a separate driver: working_capital_ratio left on history"
+ ]
+}

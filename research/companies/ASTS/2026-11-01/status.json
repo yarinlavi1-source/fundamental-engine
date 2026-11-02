@@ -1,0 +1,139 @@
+{
+ "ticker": "ASTS",
+ "as_of": "2026-11-01",
+ "at_utc": "2026-11-01T10:40:32+00:00",
+ "verified": false,
+ "label": "UNVERIFIED draft (טיוטה — ההערכה לא אומתה)",
+ "reasons": [
+  "review_trace: the main loop did not record it as returned (a file alone is not enough)",
+  "review_numbers: the main loop did not record it as returned (a file alone is not enough)",
+  "review_counter: the main loop did not record it as returned (a file alone is not enough)",
+  "5 critical finding(s) open"
+ ],
+ "engine_ran": true,
+ "engine_review_status": "blocked",
+ "reviews": {
+  "review_trace": {
+   "file": "review/trace.json",
+   "this_attempt": true,
+   "returned": false
+  },
+  "review_numbers": {
+   "file": "review/numbers.json",
+   "this_attempt": true,
+   "returned": false
+  },
+  "review_counter": {
+   "file": "review/counter.json",
+   "this_attempt": true,
+   "returned": false
+  }
+ },
+ "critical": [
+  {
+   "severity": "critical",
+   "finding": "FY2025 operating income in the prefetch is wrong: pf_operating_income_fy2025 = -425,313k ('derived: pretax_income + interest_expense', facts._ebit_proxy) does not tie to the 10-K; statement of operations: total revenues 70,918k - total operating expenses 358,631k = -287,713k (reading/release_2026-03-02__asts-ex99_1.txt lines ~397-459 and the 10-K). Same defect in pf_operating_income_fy2024 (-506,302k vs -242,762k) and pf_operating_income_q_2026_06_30 (-275,206k vs -297,577k = 31,520k - 329,097k). The lane facts nm_operating_income_fy2025/fy2024/q_2026_06_30 carry the right values, so the pack holds two conflicting values for the same metric and period; understand/auto.json already uses the wrong one (FY2025 operating margin -5.997 instead of about -4.06) and prefetch/forensic.json ROIC (-26.6%) is built on it (about -10% with the filing value).",
+   "where": "gather/_prefetch.json facts pf_operating_income_fy2025, pf_operating_income_fy2024, pf_operating_income_q_2026_06_30 (vs gather/numbers.json nm_operating_income_*); understand/auto.json history; prefetch/forensic.json roic_last",
+   "fix": "Drop or supersede the three pf_operating_income_* facts so only nm_operating_income_* reach the pack; rerun ticker-value so history margins, forensic ROIC and any base-year margin use -287.7M (FY2025), -242.8M (FY2024), -297.6M (Q2 2026, incl. the 125.9M BB7 involuntary-conversion loss, a one-off).",
+   "lens": "trace"
+  },
+  {
+   "severity": "critical",
+   "finding": "dataqa is blocked on cash_and_liquid_investments because the pack adds companyfacts ShortTermInvestments 2,300,000k (2026-06-30) on top of cash 2,288,253k = 4,588,253k. The 10-Q (reading/10q_2026-08-10.txt line ~2992) says the ~2.3B (2.0B at 2025-12-31) is the money-market part of cash equivalents, so the tag sits inside cash. The balance sheet has no short-term investments line. That is about 2.3B (~5.9 USD/share) of phantom liquidity. The redteam cash_reconciles check passed only because it compares the model with the same double-counted figure. Because dataqa is blocked, the engine cannot draw a price conclusion.",
+   "where": "gather/_prefetch.json pf_short_term_investments_* (2026-06-30, 2026-03-31, 2025-12-31); casefile qa.fields.cash_and_liquid_investments; rv.mechanical.redteam.reported.short_term_investments",
+   "fix": "Drop or zero the pf_short_term_investments_* facts, citing pf_10q_20260810 (cash equivalents note), or add a qa resolution that cites that note. Spendable cash is 2,288.3M; restricted cash of 434.6M stays excluded. Rerun ticker-value.",
+   "lens": "numbers"
+  },
+  {
+   "severity": "critical",
+   "finding": "No valuation was executed: fc.status = method_not_supported_by_forecast ('cash-cost ratio outside driver bounds'), val not_computed, company_path not_available ('no executed operating or residual-income valuation'). The position part supplied company_path (economics scenarios using IRDM ROIC) and drivers, but none of it ran. Yet value.json says ran=true with every stage 'ok' and no stage_errors. The table shows only 'no reliable value yet' and has no bear/base/bull path, which does not meet the required annual valuation output. A fix to the cash data alone will not unblock it.",
+   "where": "value.json ran/stages/stage_errors; casefile fc.status/fc.reason, val, company_path; position.json company_path",
+   "fix": "Repair: give the forecast a form it can run for a pre-revenue builder. Options: a driver spec / econ_case that starts from the guided FY2026 revenue and treats current losses as build-phase cost, or an engine_options/forecast method that accepts operating loss above 100% of revenue. Then rerun ticker-value so company_path executes. Until then, list fc/val not_computed in stage_errors (ran should not read as a valued result) and deliver as a draft with no value.",
+   "lens": "numbers"
+  },
+  {
+   "severity": "critical",
+   "finding": "No valuation was executed, so the table has no fair value or scenario prices and none of the three scenario stories has been priced. Blocker 1 is a data error that the engine read correctly as a conflict: dataqa cash_and_liquid_investments = 4,588.3M = cash 2,288.3M + 'short_term_investments' 2,300.0M. The 10-Q of 2026-08-10 (reading/10q_2026-08-10.txt, fair-value note near line 2992) says the ~$2.3B is money-market cash equivalents INSIDE cash and cash equivalents, so it is counted twice. Spendable cash is 2,288.3M; the 434.6M of restricted cash (UBS loan collateral 428.4M plus 6.2M) stays out. The analyst flagged this double count in position.json gaps[0] and understand/business.json flags.",
+   "where": "companies/ASTS/out/casefile.json qa.fields.cash_and_liquid_investments (status conflict, blocking) and rv.mechanical.dataqa_blocking; source fact pf_short_term_investments (companyfacts CashEquivalents tag mapped as short-term investments)",
+   "fix": "Repair: set an inputs override of cash_and_liquid_investments = 2,288,253,000 at 2026-06-30 with short_term_investments = 0, citing nm_cash_q_2026_06_30 and pf_10q_20260810 (the cash-equivalents note), then rerun ticker-value.",
+   "lens": "counter"
+  },
+  {
+   "severity": "critical",
+   "finding": "Blocker 2, separate from the cash error: the forecast is method_not_supported_by_forecast, 'cash-cost ratio outside driver bounds (operating losses above 100% of revenue)'. The FY2025 operating margin is -400% to -600%, so even with the cash fixed the scenario_survival_fcff path will not build. Contributing data error: auto.json and the prefetch use pf_operating_income_fy2025 = -425.3M, but the 10-K gives -287.7M (revenue 70.9M less opex 358.6M; nm_operating_income_fy2025). That puts the history margin at -5.997 instead of about -4.06.",
+   "where": "casefile.json fc.status / fc.reason and val.status; understand/auto.json history operating margin FY2025; pf_operating_income_fy2025",
+   "fix": "Repair: override FY2025 operating income to -287.7M (nm_operating_income_fy2025). Then start the forecast from a pre-service build path (the current_year_revenue guidance of 150-200M with the guided opex of ~100M a quarter plus SBC) using the engine's start-up / pre-revenue route if one exists. If no supported route exists, the result stays a visible draft with no price. Do not loosen the bounds by inventing margins.",
+   "lens": "counter"
+  }
+ ],
+ "open_critical": [
+  {
+   "severity": "critical",
+   "finding": "FY2025 operating income in the prefetch is wrong: pf_operating_income_fy2025 = -425,313k ('derived: pretax_income + interest_expense', facts._ebit_proxy) does not tie to the 10-K; statement of operations: total revenues 70,918k - total operating expenses 358,631k = -287,713k (reading/release_2026-03-02__asts-ex99_1.txt lines ~397-459 and the 10-K). Same defect in pf_operating_income_fy2024 (-506,302k vs -242,762k) and pf_operating_income_q_2026_06_30 (-275,206k vs -297,577k = 31,520k - 329,097k). The lane facts nm_operating_income_fy2025/fy2024/q_2026_06_30 carry the right values, so the pack holds two conflicting values for the same metric and period; understand/auto.json already uses the wrong one (FY2025 operating margin -5.997 instead of about -4.06) and prefetch/forensic.json ROIC (-26.6%) is built on it (about -10% with the filing value).",
+   "where": "gather/_prefetch.json facts pf_operating_income_fy2025, pf_operating_income_fy2024, pf_operating_income_q_2026_06_30 (vs gather/numbers.json nm_operating_income_*); understand/auto.json history; prefetch/forensic.json roic_last",
+   "fix": "Drop or supersede the three pf_operating_income_* facts so only nm_operating_income_* reach the pack; rerun ticker-value so history margins, forensic ROIC and any base-year margin use -287.7M (FY2025), -242.8M (FY2024), -297.6M (Q2 2026, incl. the 125.9M BB7 involuntary-conversion loss, a one-off).",
+   "lens": "trace"
+  },
+  {
+   "severity": "critical",
+   "finding": "dataqa is blocked on cash_and_liquid_investments because the pack adds companyfacts ShortTermInvestments 2,300,000k (2026-06-30) on top of cash 2,288,253k = 4,588,253k. The 10-Q (reading/10q_2026-08-10.txt line ~2992) says the ~2.3B (2.0B at 2025-12-31) is the money-market part of cash equivalents, so the tag sits inside cash. The balance sheet has no short-term investments line. That is about 2.3B (~5.9 USD/share) of phantom liquidity. The redteam cash_reconciles check passed only because it compares the model with the same double-counted figure. Because dataqa is blocked, the engine cannot draw a price conclusion.",
+   "where": "gather/_prefetch.json pf_short_term_investments_* (2026-06-30, 2026-03-31, 2025-12-31); casefile qa.fields.cash_and_liquid_investments; rv.mechanical.redteam.reported.short_term_investments",
+   "fix": "Drop or zero the pf_short_term_investments_* facts, citing pf_10q_20260810 (cash equivalents note), or add a qa resolution that cites that note. Spendable cash is 2,288.3M; restricted cash of 434.6M stays excluded. Rerun ticker-value.",
+   "lens": "numbers"
+  },
+  {
+   "severity": "critical",
+   "finding": "No valuation was executed: fc.status = method_not_supported_by_forecast ('cash-cost ratio outside driver bounds'), val not_computed, company_path not_available ('no executed operating or residual-income valuation'). The position part supplied company_path (economics scenarios using IRDM ROIC) and drivers, but none of it ran. Yet value.json says ran=true with every stage 'ok' and no stage_errors. The table shows only 'no reliable value yet' and has no bear/base/bull path, which does not meet the required annual valuation output. A fix to the cash data alone will not unblock it.",
+   "where": "value.json ran/stages/stage_errors; casefile fc.status/fc.reason, val, company_path; position.json company_path",
+   "fix": "Repair: give the forecast a form it can run for a pre-revenue builder. Options: a driver spec / econ_case that starts from the guided FY2026 revenue and treats current losses as build-phase cost, or an engine_options/forecast method that accepts operating loss above 100% of revenue. Then rerun ticker-value so company_path executes. Until then, list fc/val not_computed in stage_errors (ran should not read as a valued result) and deliver as a draft with no value.",
+   "lens": "numbers"
+  },
+  {
+   "severity": "critical",
+   "finding": "No valuation was executed, so the table has no fair value or scenario prices and none of the three scenario stories has been priced. Blocker 1 is a data error that the engine read correctly as a conflict: dataqa cash_and_liquid_investments = 4,588.3M = cash 2,288.3M + 'short_term_investments' 2,300.0M. The 10-Q of 2026-08-10 (reading/10q_2026-08-10.txt, fair-value note near line 2992) says the ~$2.3B is money-market cash equivalents INSIDE cash and cash equivalents, so it is counted twice. Spendable cash is 2,288.3M; the 434.6M of restricted cash (UBS loan collateral 428.4M plus 6.2M) stays out. The analyst flagged this double count in position.json gaps[0] and understand/business.json flags.",
+   "where": "companies/ASTS/out/casefile.json qa.fields.cash_and_liquid_investments (status conflict, blocking) and rv.mechanical.dataqa_blocking; source fact pf_short_term_investments (companyfacts CashEquivalents tag mapped as short-term investments)",
+   "fix": "Repair: set an inputs override of cash_and_liquid_investments = 2,288,253,000 at 2026-06-30 with short_term_investments = 0, citing nm_cash_q_2026_06_30 and pf_10q_20260810 (the cash-equivalents note), then rerun ticker-value.",
+   "lens": "counter"
+  },
+  {
+   "severity": "critical",
+   "finding": "Blocker 2, separate from the cash error: the forecast is method_not_supported_by_forecast, 'cash-cost ratio outside driver bounds (operating losses above 100% of revenue)'. The FY2025 operating margin is -400% to -600%, so even with the cash fixed the scenario_survival_fcff path will not build. Contributing data error: auto.json and the prefetch use pf_operating_income_fy2025 = -425.3M, but the 10-K gives -287.7M (revenue 70.9M less opex 358.6M; nm_operating_income_fy2025). That puts the history margin at -5.997 instead of about -4.06.",
+   "where": "casefile.json fc.status / fc.reason and val.status; understand/auto.json history operating margin FY2025; pf_operating_income_fy2025",
+   "fix": "Repair: override FY2025 operating income to -287.7M (nm_operating_income_fy2025). Then start the forecast from a pre-service build path (the current_year_revenue guidance of 150-200M with the guided opex of ~100M a quarter plus SBC) using the engine's start-up / pre-revenue route if one exists. If no supported route exists, the result stays a visible draft with no price. Do not loosen the bounds by inventing margins.",
+   "lens": "counter"
+  }
+ ],
+ "repair": null,
+ "returned": [
+  "x"
+ ],
+ "times": {
+  "started_at_utc": "2026-11-01T05:54:11+00:00",
+  "prefetch_finished_at_utc": "2026-11-01T05:54:18+00:00",
+  "minutes_after_start": {
+   "gather/_prefetch.json": 49.8,
+   "gather/documents.json": 14.3,
+   "gather/field.json": 9.1,
+   "gather/macro.json": 10.1,
+   "gather/numbers.json": 8.4,
+   "gather/repair.json": 49.8,
+   "gather/understand_core.json": 25.9,
+   "understand/auto.json": 14.3,
+   "understand/business.json": 26.5,
+   "understand/econ_case.json": 9.1,
+   "understand/econ_result.json": 9.1,
+   "understand/quarter_case.json": 14.3,
+   "understand/quarter_result.json": 9.1,
+   "prep.json": 14.3,
+   "position/core.json": 50.0,
+   "position/field.json": 27.7,
+   "position/path.json": 29.0,
+   "value.json": 50.0,
+   "review/trace.json": 31.1,
+   "review/numbers.json": 41.9,
+   "review/counter.json": 44.1
+  },
+  "elapsed_minutes": 50.0
+ },
+ "meaning": "verified needs: the engine ran in this attempt, the three reviewers returned (files of this attempt AND the main loop's record), no critical finding open after the one repair pass. The engine's own review status is reported beside it, never replaced by it."
+}

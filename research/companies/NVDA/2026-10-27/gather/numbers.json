@@ -1,0 +1,1696 @@
+{
+ "lane": "numbers",
+ "sources": [
+  {
+   "id": "nm_sec_8k_20260817",
+   "kind": "sec_filing",
+   "title": "NVIDIA Form 8-K 2026-08-17 (Items 1.01, 2.03, 7.01: SB Energy residual value guaranties)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000069/nvda-20260817.htm",
+   "date": "2026-08-17",
+   "independent": true,
+   "publisher": "NVIDIA Corporation via SEC EDGAR",
+   "retrieval": "primary_document"
+  },
+  {
+   "id": "nm_sec_companyfacts",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts CIK0001045810 (latest filing included: 10-Q filed 2026-08-26)",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001045810.json",
+   "date": "2026-08-26",
+   "independent": true,
+   "publisher": "U.S. SEC (XBRL from NVIDIA filings)",
+   "retrieval": "provider_normalized"
+  },
+  {
+   "id": "nm_ib_snapshot",
+   "kind": "price",
+   "title": "Interactive Brokers price snapshot NVDA conid 4815747 (REALTIME), last 210.77 at 2026-10-26T08:04:58Z (pre-market)",
+   "url": "connector:mcp__Interactive_Brokers__get_price_snapshot",
+   "date": "2026-10-26",
+   "independent": true,
+   "publisher": "Interactive Brokers",
+   "retrieval": "market_feed"
+  },
+  {
+   "id": "nm_ib_history",
+   "kind": "price",
+   "title": "Interactive Brokers monthly price history NVDA conid 4815747, 2021-10 to 2026-10 (last bar 2026-10-23 close), with corporate actions",
+   "url": "connector:mcp__Interactive_Brokers__get_price_history",
+   "date": "2026-10-26",
+   "independent": true,
+   "publisher": "Interactive Brokers",
+   "retrieval": "market_feed"
+  },
+  {
+   "id": "nm_av_estimates",
+   "kind": "consensus",
+   "title": "Alpha Vantage EARNINGS_ESTIMATES NVDA: analyst consensus (provider not named by Alpha Vantage, no as-of date in the payload; FY2027 revenue n, low and high identical to the S&P Global figures of ex_sa_sp, so probably the same dataset), retrieved 2026-10-26",
+   "url": "connector:mcp__Alpha_Vantage_MCP_Server__EARNINGS_ESTIMATES",
+   "date": "2026-10-26",
+   "independent": false,
+   "publisher": "Alpha Vantage (analyst consensus, provider unnamed)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": "ex_sa_sp"
+  }
+ ],
+ "facts": [
+  {
+   "id": "nm_income_tax_fy26",
+   "metric": "income_tax",
+   "period": "FY2026",
+   "value": 21383000000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_sec_companyfacts",
+    "pf_10k_20260225"
+   ],
+   "basis": "reported",
+   "period_end": "2026-01-25"
+  },
+  {
+   "id": "nm_income_tax_q2fy27",
+   "metric": "income_tax",
+   "period": "Q2 FY2027",
+   "value": 11819000000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_sec_companyfacts",
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26"
+  },
+  {
+   "id": "nm_research_and_development_q2fy27",
+   "metric": "research_and_development",
+   "period": "Q2 FY2027",
+   "value": 7054000000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_sec_companyfacts",
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26"
+  },
+  {
+   "id": "nm_eps_diluted_q2fy27",
+   "metric": "eps_diluted",
+   "period": "Q2 FY2027",
+   "value": 2.46,
+   "unit": "USD/share",
+   "source_ids": [
+    "nm_sec_companyfacts",
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26"
+  },
+  {
+   "id": "nm_diluted_shares_weighted_q2fy27",
+   "metric": "diluted_shares_weighted",
+   "period": "Q2 FY2027",
+   "value": 24285000000,
+   "unit": "shares",
+   "source_ids": [
+    "nm_sec_companyfacts",
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26"
+  },
+  {
+   "id": "nm_income_tax_q1fy27",
+   "metric": "income_tax",
+   "period": "Q1 FY2027",
+   "value": 11582000000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_sec_companyfacts"
+   ],
+   "basis": "reported",
+   "period_end": "2026-04-26"
+  },
+  {
+   "id": "nm_research_and_development_q1fy27",
+   "metric": "research_and_development",
+   "period": "Q1 FY2027",
+   "value": 6321000000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_sec_companyfacts"
+   ],
+   "basis": "reported",
+   "period_end": "2026-04-26"
+  },
+  {
+   "id": "nm_eps_diluted_q1fy27",
+   "metric": "eps_diluted",
+   "period": "Q1 FY2027",
+   "value": 2.39,
+   "unit": "USD/share",
+   "source_ids": [
+    "nm_sec_companyfacts"
+   ],
+   "basis": "reported",
+   "period_end": "2026-04-26"
+  },
+  {
+   "id": "nm_diluted_shares_weighted_q1fy27",
+   "metric": "diluted_shares_weighted",
+   "period": "Q1 FY2027",
+   "value": 24391000000,
+   "unit": "shares",
+   "source_ids": [
+    "nm_sec_companyfacts"
+   ],
+   "basis": "reported",
+   "period_end": "2026-04-26"
+  },
+  {
+   "id": "nm_income_tax_q3fy26",
+   "metric": "income_tax",
+   "period": "Q3 FY2026",
+   "value": 6026000000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_sec_companyfacts"
+   ],
+   "basis": "reported",
+   "period_end": "2025-10-26"
+  },
+  {
+   "id": "nm_research_and_development_q3fy26",
+   "metric": "research_and_development",
+   "period": "Q3 FY2026",
+   "value": 4705000000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_sec_companyfacts"
+   ],
+   "basis": "reported",
+   "period_end": "2025-10-26"
+  },
+  {
+   "id": "nm_eps_diluted_q3fy26",
+   "metric": "eps_diluted",
+   "period": "Q3 FY2026",
+   "value": 1.3,
+   "unit": "USD/share",
+   "source_ids": [
+    "nm_sec_companyfacts"
+   ],
+   "basis": "reported",
+   "period_end": "2025-10-26"
+  },
+  {
+   "id": "nm_diluted_shares_weighted_q3fy26",
+   "metric": "diluted_shares_weighted",
+   "period": "Q3 FY2026",
+   "value": 24483000000,
+   "unit": "shares",
+   "source_ids": [
+    "nm_sec_companyfacts"
+   ],
+   "basis": "reported",
+   "period_end": "2025-10-26"
+  },
+  {
+   "id": "nm_cfo_h1fy27",
+   "metric": "cfo",
+   "period": "H1 FY2027",
+   "value": 74421000000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_sec_companyfacts",
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26"
+  },
+  {
+   "id": "nm_capex_h1fy27",
+   "metric": "capex",
+   "period": "H1 FY2027",
+   "value": 4434000000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_sec_companyfacts",
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26",
+   "statement": "purchases related to property and equipment and intangible assets"
+  },
+  {
+   "id": "nm_sbc_h1fy27",
+   "metric": "sbc",
+   "period": "H1 FY2027",
+   "value": 3954000000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_sec_companyfacts",
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26"
+  },
+  {
+   "id": "nm_revenue_ttm_q2fy27",
+   "metric": "revenue",
+   "period": "TTM to 2026-07-26",
+   "value": 302969000000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_sec_companyfacts",
+    "pf_10k_20260225",
+    "pf_10q_20260826"
+   ],
+   "basis": "derived",
+   "period_end": "2026-07-26",
+   "statement": "Q3 FY2026 + Q4 FY2026 (derived) + Q1 FY2027 + Q2 FY2027"
+  },
+  {
+   "id": "nm_net_income_ttm_q2fy27",
+   "metric": "net_income",
+   "period": "TTM to 2026-07-26",
+   "value": 192879000000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_sec_companyfacts",
+    "pf_10k_20260225",
+    "pf_10q_20260826"
+   ],
+   "basis": "derived",
+   "period_end": "2026-07-26",
+   "statement": "same four quarters"
+  },
+  {
+   "id": "nm_eps_diluted_ttm_q2fy27",
+   "metric": "eps_diluted",
+   "period": "TTM to 2026-07-26",
+   "value": 7.91,
+   "unit": "USD/share",
+   "source_ids": [
+    "nm_sec_companyfacts",
+    "pf_10k_20260225",
+    "pf_10q_20260826"
+   ],
+   "basis": "derived",
+   "period_end": "2026-07-26",
+   "statement": "sum of quarterly GAAP diluted EPS 1.30+1.76(Q4 FY2026 = 4.90-3.14)+2.39+2.46; SBC expensed; includes equity-securities gains"
+  },
+  {
+   "id": "nm_other_income_net_q2fy27",
+   "metric": "other_income_net",
+   "period": "Q2 FY2027",
+   "value": 7773000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26"
+  },
+  {
+   "id": "nm_equity_securities_gains_q2fy27",
+   "metric": "equity_securities_gains",
+   "period": "Q2 FY2027",
+   "value": 7771000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26",
+   "statement": "gains from equity securities, net, primarily unrealized; non-operating"
+  },
+  {
+   "id": "nm_equity_securities_gains_h1fy27",
+   "metric": "equity_securities_gains",
+   "period": "H1 FY2027",
+   "value": 23707000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26",
+   "statement": "primarily unrealized"
+  },
+  {
+   "id": "nm_equity_securities_gains_fy26",
+   "metric": "equity_securities_gains",
+   "period": "FY2026",
+   "value": 8918000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260225"
+   ],
+   "basis": "reported",
+   "period_end": "2026-01-25",
+   "statement": "gains on non-marketable and publicly-held equity securities, net (cash-flow add-back)"
+  },
+  {
+   "id": "nm_pretax_income_fy26",
+   "metric": "pretax_income",
+   "period": "FY2026",
+   "value": 141450000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260225"
+   ],
+   "basis": "reported",
+   "period_end": "2026-01-25"
+  },
+  {
+   "id": "nm_pretax_income_h1fy27",
+   "metric": "pretax_income",
+   "period": "H1 FY2027",
+   "value": 141410000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26"
+  },
+  {
+   "id": "nm_pretax_income_q2fy27",
+   "metric": "pretax_income",
+   "period": "Q2 FY2027",
+   "value": 71507000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26"
+  },
+  {
+   "id": "nm_cash_q2fy27",
+   "metric": "cash_and_equivalents",
+   "period": "2026-07-26",
+   "value": 22443000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26",
+   "statement": "spendable cash"
+  },
+  {
+   "id": "nm_marketable_debt_q2fy27",
+   "metric": "marketable_debt_securities",
+   "period": "2026-07-26",
+   "value": 34143000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26",
+   "statement": "investment asset, liquid"
+  },
+  {
+   "id": "nm_marketable_equity_q2fy27",
+   "metric": "marketable_equity_securities",
+   "period": "2026-07-26",
+   "value": 42783000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26",
+   "statement": "publicly-held equity stakes: investment asset, not spendable cash"
+  },
+  {
+   "id": "nm_non_marketable_q2fy27",
+   "metric": "non_marketable_securities",
+   "period": "2026-07-26",
+   "value": 51157000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26",
+   "statement": "privately-held stakes at cost adjusted for observable prices: investment asset, not cash"
+  },
+  {
+   "id": "nm_receivables_q2fy27",
+   "metric": "accounts_receivable",
+   "period": "2026-07-26",
+   "value": 63059000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26"
+  },
+  {
+   "id": "nm_inventory_q2fy27",
+   "metric": "inventories",
+   "period": "2026-07-26",
+   "value": 31575000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26"
+  },
+  {
+   "id": "nm_total_assets_q2fy27",
+   "metric": "total_assets",
+   "period": "2026-07-26",
+   "value": 320272000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26"
+  },
+  {
+   "id": "nm_debt_carrying_q2fy27",
+   "metric": "debt_carrying",
+   "period": "2026-07-26",
+   "value": 33366000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26",
+   "statement": "short-term 1,000 + long-term 32,366; principal $33.5B senior notes; $25.0B of seven tranches issued June 2026; fair value $31.4B"
+  },
+  {
+   "id": "nm_op_lease_lt_q2fy27",
+   "metric": "long_term_operating_lease_liabilities",
+   "period": "2026-07-26",
+   "value": 4985000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26"
+  },
+  {
+   "id": "nm_equity_q2fy27",
+   "metric": "shareholders_equity",
+   "period": "2026-07-26",
+   "value": 228984000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26"
+  },
+  {
+   "id": "nm_commitments_total_q2fy27",
+   "metric": "purchase_and_other_commitments",
+   "period": "2026-07-26",
+   "value": 366000000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26",
+   "statement": "supply and capacity 279B (119B a quarter earlier), cloud service 29B, data center leases not commenced 25B, equity investments 25B, capex 8B"
+  },
+  {
+   "id": "nm_supply_commitments_q2fy27",
+   "metric": "supply_and_capacity_commitments",
+   "period": "2026-07-26",
+   "value": 279000000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26",
+   "statement": "up from $119B at 2026-04-26; some may be cancelable or adjustable before firm orders"
+  },
+  {
+   "id": "nm_equity_investments_q2fy27",
+   "metric": "ecosystem_equity_investments",
+   "period": "2026-07-26",
+   "value": 99000000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26",
+   "statement": "equity investments $99B plus $25B equity investment commitments (MD&A)"
+  },
+  {
+   "id": "nm_sb_energy_guarantee_cap",
+   "metric": "contingent_guarantee_cap",
+   "period": "from FY2029",
+   "value": 105000000000,
+   "unit": "USD",
+   "source_ids": [
+    "nm_sec_8k_20260817",
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "statement": "residual value guaranties for OpenAI-affiliate leases (~4.25 GW) at SB Energy PORTS campus; effective as phases commence (first expected FY2029), triggered by tenant default/non-payment; OpenAI to reimburse; option for ~3.8 GW more"
+  },
+  {
+   "id": "nm_buyback_authorization_remaining",
+   "metric": "buyback_authorization_remaining",
+   "period": "2026-07-26",
+   "value": 99300000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26",
+   "statement": "after an additional $80.0B approved 2026-05-18"
+  },
+  {
+   "id": "nm_buybacks_cash_h1fy27",
+   "metric": "buybacks_cash",
+   "period": "H1 FY2027",
+   "value": 39044000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26"
+  },
+  {
+   "id": "nm_dividends_paid_h1fy27",
+   "metric": "dividends_paid",
+   "period": "H1 FY2027",
+   "value": 6290000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26",
+   "statement": "quarterly dividend raised to $0.25 per share from Q1 FY2027"
+  },
+  {
+   "id": "nm_debt_proceeds_h1fy27",
+   "metric": "debt_issued_net",
+   "period": "H1 FY2027",
+   "value": 24896000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26"
+  },
+  {
+   "id": "nm_groq_payment_fy26",
+   "metric": "groq_payment",
+   "period": "FY2026",
+   "value": 13000000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260225"
+   ],
+   "basis": "reported",
+   "period_end": "2026-01-25",
+   "statement": "investing outflow labelled Groq, Inc.; a Groq non-exclusive license agreement is referenced in the 10-Q liabilities"
+  },
+  {
+   "id": "nm_groq_payment_h1fy27",
+   "metric": "groq_payment",
+   "period": "H1 FY2027",
+   "value": 2944000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26",
+   "statement": "financing outflow labelled Groq, Inc."
+  },
+  {
+   "id": "nm_tax_withholding_fy26",
+   "metric": "employee_stock_tax_withholding",
+   "period": "FY2026",
+   "value": 7948000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260225"
+   ],
+   "basis": "reported",
+   "period_end": "2026-01-25",
+   "statement": "cash paid for employee stock plan taxes"
+  },
+  {
+   "id": "nm_shares_outstanding_q2fy27",
+   "metric": "shares_outstanding",
+   "period": "2026-07-26",
+   "value": 24147000000,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26"
+  },
+  {
+   "id": "nm_shares_outstanding_cover",
+   "metric": "shares_outstanding",
+   "period": "2026-08-21",
+   "value": 24100000000.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20260826",
+    "nm_sec_companyfacts"
+   ],
+   "basis": "reported",
+   "period_end": "2026-08-21",
+   "statement": "10-Q cover: 24.1 billion (rounded)"
+  },
+  {
+   "id": "nm_shares_outstanding_fy26",
+   "metric": "shares_outstanding",
+   "period": "2026-01-25",
+   "value": 24304000000,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10k_20260225"
+   ],
+   "basis": "reported",
+   "period_end": "2026-01-25"
+  },
+  {
+   "id": "nm_geo_rev_united_states_fy26",
+   "metric": "revenue_by_customer_hq_united_states",
+   "period": "FY2026",
+   "value": 149617000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260225"
+   ],
+   "basis": "reported",
+   "period_end": "2026-01-25"
+  },
+  {
+   "id": "nm_geo_share_united_states_fy26",
+   "metric": "revenue_share_by_customer_hq_united_states",
+   "period": "FY2026",
+   "value": 0.6929,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10k_20260225"
+   ],
+   "basis": "derived",
+   "period_end": "2026-01-25",
+   "statement": "customer-headquarters basis; end customer and ship-to may differ"
+  },
+  {
+   "id": "nm_geo_rev_taiwan_fy26",
+   "metric": "revenue_by_customer_hq_taiwan",
+   "period": "FY2026",
+   "value": 42345000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260225"
+   ],
+   "basis": "reported",
+   "period_end": "2026-01-25"
+  },
+  {
+   "id": "nm_geo_share_taiwan_fy26",
+   "metric": "revenue_share_by_customer_hq_taiwan",
+   "period": "FY2026",
+   "value": 0.1961,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10k_20260225"
+   ],
+   "basis": "derived",
+   "period_end": "2026-01-25",
+   "statement": "customer-headquarters basis; end customer and ship-to may differ"
+  },
+  {
+   "id": "nm_geo_rev_china_incl_hong_kong_fy26",
+   "metric": "revenue_by_customer_hq_china_incl_hong_kong",
+   "period": "FY2026",
+   "value": 19677000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260225"
+   ],
+   "basis": "reported",
+   "period_end": "2026-01-25"
+  },
+  {
+   "id": "nm_geo_share_china_incl_hong_kong_fy26",
+   "metric": "revenue_share_by_customer_hq_china_incl_hong_kong",
+   "period": "FY2026",
+   "value": 0.0911,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10k_20260225"
+   ],
+   "basis": "derived",
+   "period_end": "2026-01-25",
+   "statement": "customer-headquarters basis; end customer and ship-to may differ"
+  },
+  {
+   "id": "nm_geo_rev_other_fy26",
+   "metric": "revenue_by_customer_hq_other",
+   "period": "FY2026",
+   "value": 4299000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260225"
+   ],
+   "basis": "reported",
+   "period_end": "2026-01-25"
+  },
+  {
+   "id": "nm_geo_share_other_fy26",
+   "metric": "revenue_share_by_customer_hq_other",
+   "period": "FY2026",
+   "value": 0.0199,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10k_20260225"
+   ],
+   "basis": "derived",
+   "period_end": "2026-01-25",
+   "statement": "customer-headquarters basis; end customer and ship-to may differ"
+  },
+  {
+   "id": "nm_geo_rev_united_states_q2fy27",
+   "metric": "revenue_by_customer_hq_united_states",
+   "period": "Q2 FY2027",
+   "value": 60074000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26"
+  },
+  {
+   "id": "nm_geo_share_united_states_q2fy27",
+   "metric": "revenue_share_by_customer_hq_united_states",
+   "period": "Q2 FY2027",
+   "value": 0.6243,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "basis": "derived",
+   "period_end": "2026-07-26",
+   "statement": "customer-headquarters basis; end customer and ship-to may differ"
+  },
+  {
+   "id": "nm_geo_rev_taiwan_q2fy27",
+   "metric": "revenue_by_customer_hq_taiwan",
+   "period": "Q2 FY2027",
+   "value": 26985000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26"
+  },
+  {
+   "id": "nm_geo_share_taiwan_q2fy27",
+   "metric": "revenue_share_by_customer_hq_taiwan",
+   "period": "Q2 FY2027",
+   "value": 0.2804,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "basis": "derived",
+   "period_end": "2026-07-26",
+   "statement": "customer-headquarters basis; end customer and ship-to may differ"
+  },
+  {
+   "id": "nm_geo_rev_china_incl_hong_kong_q2fy27",
+   "metric": "revenue_by_customer_hq_china_incl_hong_kong",
+   "period": "Q2 FY2027",
+   "value": 7880000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26"
+  },
+  {
+   "id": "nm_geo_share_china_incl_hong_kong_q2fy27",
+   "metric": "revenue_share_by_customer_hq_china_incl_hong_kong",
+   "period": "Q2 FY2027",
+   "value": 0.0819,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "basis": "derived",
+   "period_end": "2026-07-26",
+   "statement": "customer-headquarters basis; end customer and ship-to may differ"
+  },
+  {
+   "id": "nm_geo_rev_other_q2fy27",
+   "metric": "revenue_by_customer_hq_other",
+   "period": "Q2 FY2027",
+   "value": 1282000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26"
+  },
+  {
+   "id": "nm_geo_share_other_q2fy27",
+   "metric": "revenue_share_by_customer_hq_other",
+   "period": "Q2 FY2027",
+   "value": 0.0133,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "basis": "derived",
+   "period_end": "2026-07-26",
+   "statement": "customer-headquarters basis; end customer and ship-to may differ"
+  },
+  {
+   "id": "nm_non_us_rev_share_fy26",
+   "metric": "revenue_share_customers_hq_outside_us",
+   "period": "FY2026",
+   "value": 0.31,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10k_20260225"
+   ],
+   "basis": "reported",
+   "period_end": "2026-01-25"
+  },
+  {
+   "id": "nm_non_us_rev_share_q2fy27",
+   "metric": "revenue_share_customers_hq_outside_us",
+   "period": "Q2 FY2027",
+   "value": 0.38,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26"
+  },
+  {
+   "id": "nm_taiwan_hq_dc_to_us_eu_fy26",
+   "metric": "taiwan_hq_dc_revenue_share_attributed_us_europe",
+   "period": "FY2026",
+   "value": 0.76,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10k_20260225"
+   ],
+   "basis": "reported",
+   "period_end": "2026-01-25",
+   "statement": "estimated share of Data Center revenue from Taiwan-HQ customers attributed to end customers in the US and Europe"
+  },
+  {
+   "id": "nm_lla_united_states_fy26",
+   "metric": "long_lived_assets_united_states",
+   "period": "2026-01-25",
+   "value": 5125000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260225"
+   ],
+   "basis": "reported",
+   "period_end": "2026-01-25",
+   "statement": "property and equipment by country"
+  },
+  {
+   "id": "nm_lla_taiwan_fy26",
+   "metric": "long_lived_assets_taiwan",
+   "period": "2026-01-25",
+   "value": 3219000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260225"
+   ],
+   "basis": "reported",
+   "period_end": "2026-01-25",
+   "statement": "property and equipment by country"
+  },
+  {
+   "id": "nm_lla_israel_fy26",
+   "metric": "long_lived_assets_israel",
+   "period": "2026-01-25",
+   "value": 1471000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260225"
+   ],
+   "basis": "reported",
+   "period_end": "2026-01-25",
+   "statement": "property and equipment by country"
+  },
+  {
+   "id": "nm_lla_other_fy26",
+   "metric": "long_lived_assets_other",
+   "period": "2026-01-25",
+   "value": 568000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260225"
+   ],
+   "basis": "reported",
+   "period_end": "2026-01-25",
+   "statement": "property and equipment by country"
+  },
+  {
+   "id": "nm_lla_taiwan_share_fy26",
+   "metric": "long_lived_assets_share_taiwan",
+   "period": "2026-01-25",
+   "value": 0.31,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10k_20260225"
+   ],
+   "basis": "derived",
+   "period_end": "2026-01-25"
+  },
+  {
+   "id": "nm_exp_h20_charge_q1fy26",
+   "metric": "export_control_charge_h20",
+   "period": "Q1 FY2026",
+   "value": 4500000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2025-04-27",
+   "statement": "H20 excess inventory and purchase obligations after the April 2025 license requirement"
+  },
+  {
+   "id": "nm_exp_h200_charge_h1fy27",
+   "metric": "export_control_charge_h200",
+   "period": "H1 FY2027",
+   "value": 400000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26",
+   "statement": "H200 excess inventory and purchase obligations; PRC restricted licensed sales"
+  },
+  {
+   "id": "nm_exp_china_dc_share_q2fy27",
+   "metric": "china_data_center_shipments_share_of_dc_revenue_upper_bound",
+   "period": "Q2 FY2027",
+   "value": 0.01,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26",
+   "statement": "Hopper/H200 shipments to China were less than 1% of Data Center revenue; the company says it is effectively foreclosed from China data-center compute"
+  },
+  {
+   "id": "nm_exp_h200_tariff",
+   "metric": "tariff_on_licensed_h200_imports",
+   "period": "2026-07-26",
+   "value": 0.25,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "basis": "reported",
+   "period_end": "2026-07-26",
+   "statement": "licensed H200s pass US inspection and bear a 25% import tariff the company has not passed on"
+  },
+  {
+   "id": "nm_cust_conc_top2_fy26",
+   "metric": "direct_customer_concentration_top2",
+   "period": "FY2026",
+   "value": 0.36,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10k_20260225"
+   ],
+   "basis": "derived",
+   "period_end": "2026-01-25",
+   "statement": "22% + 14%"
+  },
+  {
+   "id": "nm_price_last",
+   "metric": "share_price_last",
+   "period": "2026-10-26",
+   "value": 210.77,
+   "unit": "USD",
+   "source_ids": [
+    "nm_ib_snapshot"
+   ],
+   "basis": "reported",
+   "statement": "IB REALTIME last 210.77 at 2026-10-26T08:04:58+00:00 (is_close false: a pre-market trade before the US open); change -0.19 (-0.09%) vs the prior regular close 210.96; bid 210.84 / ask 210.98"
+  },
+  {
+   "id": "nm_price_close_20261023",
+   "metric": "share_price_close",
+   "period": "2026-10-23",
+   "value": 210.96,
+   "unit": "USD",
+   "source_ids": [
+    "nm_ib_history"
+   ],
+   "basis": "reported",
+   "period_end": "2026-10-23",
+   "statement": "last regular-session close (Friday 2026-10-23) = the October bar close of the IB monthly history; the reference price used for the multiples below"
+  },
+  {
+   "id": "nm_price_52w_high",
+   "metric": "share_price_52w_high",
+   "period": "to 2026-10-26",
+   "value": 243.37,
+   "unit": "USD",
+   "source_ids": [
+    "nm_ib_snapshot"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "nm_price_52w_low",
+   "metric": "share_price_52w_low",
+   "period": "to 2026-10-26",
+   "value": 164.08,
+   "unit": "USD",
+   "source_ids": [
+    "nm_ib_snapshot"
+   ],
+   "basis": "reported"
+  },
+  {
+   "id": "nm_pe_trailing_now",
+   "metric": "trailing_pe_gaap",
+   "period": "2026-10-26",
+   "value": 26.7,
+   "unit": "x",
+   "source_ids": [
+    "nm_ib_history",
+    "nm_sec_companyfacts",
+    "pf_10q_20260826"
+   ],
+   "basis": "derived",
+   "statement": "210.96 (last regular close 2026-10-23) / TTM GAAP diluted EPS 7.91 (through 2026-07-26); 26.6x on the 210.77 pre-market last"
+  },
+  {
+   "id": "nm_pe_trailing_ex_gains_now",
+   "metric": "trailing_pe_gaap_ex_equity_gains",
+   "period": "2026-10-26",
+   "value": 30.8,
+   "unit": "x",
+   "source_ids": [
+    "nm_ib_history",
+    "nm_sec_companyfacts",
+    "pf_10k_20260225",
+    "pf_10q_20260826"
+   ],
+   "basis": "derived",
+   "statement": "210.96 / TTM EPS ex equity-securities gains 6.86 (gains 13.3% of TTM pretax income, assumed taxed at the TTM effective rate)"
+  },
+  {
+   "id": "nm_pe_5y_low",
+   "metric": "trailing_pe_gaap_low",
+   "period": "month-ends 2021-10-31 to 2026-10-23",
+   "value": 26.7,
+   "unit": "x",
+   "source_ids": [
+    "nm_ib_history",
+    "nm_sec_companyfacts"
+   ],
+   "basis": "derived",
+   "statement": "61 month-ends; numbers/pe_history.json"
+  },
+  {
+   "id": "nm_pe_5y_median",
+   "metric": "trailing_pe_gaap_median",
+   "period": "month-ends 2021-10-31 to 2026-10-23",
+   "value": 57.0,
+   "unit": "x",
+   "source_ids": [
+    "nm_ib_history",
+    "nm_sec_companyfacts"
+   ],
+   "basis": "derived",
+   "statement": "61 month-ends; numbers/pe_history.json"
+  },
+  {
+   "id": "nm_pe_5y_high",
+   "metric": "trailing_pe_gaap_high",
+   "period": "month-ends 2021-10-31 to 2026-10-23",
+   "value": 248.6,
+   "unit": "x",
+   "source_ids": [
+    "nm_ib_history",
+    "nm_sec_companyfacts"
+   ],
+   "basis": "derived",
+   "statement": "61 month-ends; numbers/pe_history.json"
+  },
+  {
+   "id": "nm_pe_3y_low",
+   "metric": "trailing_pe_gaap_low",
+   "period": "month-ends 2023-10-31 to 2026-10-23",
+   "value": 26.7,
+   "unit": "x",
+   "source_ids": [
+    "nm_ib_history",
+    "nm_sec_companyfacts"
+   ],
+   "basis": "derived",
+   "statement": "37 month-ends; numbers/pe_history.json"
+  },
+  {
+   "id": "nm_pe_3y_median",
+   "metric": "trailing_pe_gaap_median",
+   "period": "month-ends 2023-10-31 to 2026-10-23",
+   "value": 50.8,
+   "unit": "x",
+   "source_ids": [
+    "nm_ib_history",
+    "nm_sec_companyfacts"
+   ],
+   "basis": "derived",
+   "statement": "37 month-ends; numbers/pe_history.json"
+  },
+  {
+   "id": "nm_pe_3y_high",
+   "metric": "trailing_pe_gaap_high",
+   "period": "month-ends 2023-10-31 to 2026-10-23",
+   "value": 99.0,
+   "unit": "x",
+   "source_ids": [
+    "nm_ib_history",
+    "nm_sec_companyfacts"
+   ],
+   "basis": "derived",
+   "statement": "37 month-ends; numbers/pe_history.json"
+  },
+  {
+   "id": "nm_pe_ntm5y_low",
+   "metric": "hindsight_ntm_pe_gaap_low",
+   "period": "month-ends 2021-10-31 to 2026-10-23",
+   "value": 18.4,
+   "unit": "x",
+   "source_ids": [
+    "nm_ib_history",
+    "nm_sec_companyfacts"
+   ],
+   "basis": "derived",
+   "statement": "49 month-ends; numbers/pe_history.json; HINDSIGHT: actual next-four-quarter EPS, not the market forward P/E"
+  },
+  {
+   "id": "nm_pe_ntm5y_median",
+   "metric": "hindsight_ntm_pe_gaap_median",
+   "period": "month-ends 2021-10-31 to 2026-10-23",
+   "value": 27.3,
+   "unit": "x",
+   "source_ids": [
+    "nm_ib_history",
+    "nm_sec_companyfacts"
+   ],
+   "basis": "derived",
+   "statement": "49 month-ends; numbers/pe_history.json; HINDSIGHT: actual next-four-quarter EPS, not the market forward P/E"
+  },
+  {
+   "id": "nm_pe_ntm5y_high",
+   "metric": "hindsight_ntm_pe_gaap_high",
+   "period": "month-ends 2021-10-31 to 2026-10-23",
+   "value": 160.5,
+   "unit": "x",
+   "source_ids": [
+    "nm_ib_history",
+    "nm_sec_companyfacts"
+   ],
+   "basis": "derived",
+   "statement": "49 month-ends; numbers/pe_history.json; HINDSIGHT: actual next-four-quarter EPS, not the market forward P/E"
+  },
+  {
+   "id": "nm_pe_ntm3y_low",
+   "metric": "hindsight_ntm_pe_gaap_low",
+   "period": "month-ends 2023-10-31 to 2026-10-23",
+   "value": 18.4,
+   "unit": "x",
+   "source_ids": [
+    "nm_ib_history",
+    "nm_sec_companyfacts"
+   ],
+   "basis": "derived",
+   "statement": "25 month-ends; numbers/pe_history.json; HINDSIGHT: actual next-four-quarter EPS, not the market forward P/E"
+  },
+  {
+   "id": "nm_pe_ntm3y_median",
+   "metric": "hindsight_ntm_pe_gaap_median",
+   "period": "month-ends 2023-10-31 to 2026-10-23",
+   "value": 26.8,
+   "unit": "x",
+   "source_ids": [
+    "nm_ib_history",
+    "nm_sec_companyfacts"
+   ],
+   "basis": "derived",
+   "statement": "25 month-ends; numbers/pe_history.json; HINDSIGHT: actual next-four-quarter EPS, not the market forward P/E"
+  },
+  {
+   "id": "nm_pe_ntm3y_high",
+   "metric": "hindsight_ntm_pe_gaap_high",
+   "period": "month-ends 2023-10-31 to 2026-10-23",
+   "value": 39.7,
+   "unit": "x",
+   "source_ids": [
+    "nm_ib_history",
+    "nm_sec_companyfacts"
+   ],
+   "basis": "derived",
+   "statement": "25 month-ends; numbers/pe_history.json; HINDSIGHT: actual next-four-quarter EPS, not the market forward P/E"
+  }
+ ],
+ "consensus": [
+  {
+   "id": "nm_c_rev_fy27",
+   "metric": "revenue",
+   "period": "FY2027",
+   "value": 411653417250.0,
+   "n": 54,
+   "low": 403206319550.0,
+   "high": 426885000000.0,
+   "source_id": "nm_av_estimates"
+  },
+  {
+   "id": "nm_c_eps_fy27",
+   "metric": "eps_diluted_non_gaap",
+   "period": "FY2027",
+   "value": 9.3124,
+   "n": 51,
+   "low": 9.01,
+   "high": 10.1,
+   "source_id": "nm_av_estimates"
+  },
+  {
+   "id": "nm_c_rev_fy28",
+   "metric": "revenue",
+   "period": "FY2028",
+   "value": 692206374410.0,
+   "n": 57,
+   "low": 506483000000.0,
+   "high": 778471000000.0,
+   "source_id": "nm_av_estimates"
+  },
+  {
+   "id": "nm_c_eps_fy28",
+   "metric": "eps_diluted_non_gaap",
+   "period": "FY2028",
+   "value": 15.9146,
+   "n": 52,
+   "low": 12.8484,
+   "high": 18.746,
+   "source_id": "nm_av_estimates"
+  },
+  {
+   "id": "nm_c_rev_q3fy27",
+   "metric": "revenue",
+   "period": "Q3 FY2027",
+   "value": 108976833310.0,
+   "n": 45,
+   "low": 104937000000.0,
+   "high": 116251000000.0,
+   "source_id": "nm_av_estimates"
+  },
+  {
+   "id": "nm_c_eps_q3fy27",
+   "metric": "eps_diluted_non_gaap",
+   "period": "Q3 FY2027",
+   "value": 2.4733,
+   "n": 44,
+   "low": 2.34,
+   "high": 2.7,
+   "source_id": "nm_av_estimates"
+  },
+  {
+   "id": "nm_c_rev_q4fy27",
+   "metric": "revenue",
+   "period": "Q4 FY2027",
+   "value": 124482690590.0,
+   "n": 42,
+   "low": 117290260810.0,
+   "high": 138490000000.0,
+   "source_id": "nm_av_estimates"
+  },
+  {
+   "id": "nm_c_eps_q4fy27",
+   "metric": "eps_diluted_non_gaap",
+   "period": "Q4 FY2027",
+   "value": 2.7462,
+   "n": 42,
+   "low": 2.56,
+   "high": 3.117,
+   "source_id": "nm_av_estimates"
+  }
+ ],
+ "kpis": [
+  {
+   "id": "nm_kpi_gm_q2fy27",
+   "name": "gross margin",
+   "period": "Q2 FY2027",
+   "value": 0.75,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10q_20260826"
+   ]
+  },
+  {
+   "id": "nm_kpi_gm_fy26",
+   "name": "gross margin",
+   "period": "FY2026",
+   "value": 0.711,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10k_20260225"
+   ]
+  },
+  {
+   "id": "nm_kpi_dc_yoy_q2fy27",
+   "name": "Data Center revenue growth y/y",
+   "period": "Q2 FY2027",
+   "value": 1.17,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10q_20260826"
+   ]
+  },
+  {
+   "id": "nm_kpi_rev_yoy_q2fy27",
+   "name": "total revenue growth y/y",
+   "period": "Q2 FY2027",
+   "value": 1.06,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10q_20260826"
+   ]
+  },
+  {
+   "id": "nm_kpi_inv_prov_q2fy27",
+   "name": "inventory and purchase-obligation provisions",
+   "period": "Q2 FY2027",
+   "value": 985000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ]
+  }
+ ],
+ "segments": [
+  {
+   "id": "nm_seg_cn_fy26",
+   "name": "Compute & Networking (reportable segment)",
+   "period": "FY2026",
+   "revenue": 193479000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260225"
+   ],
+   "operating_income": 130141000000
+  },
+  {
+   "id": "nm_seg_gr_fy26",
+   "name": "Graphics (reportable segment)",
+   "period": "FY2026",
+   "revenue": 22459000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260225"
+   ],
+   "operating_income": 9156000000
+  },
+  {
+   "id": "nm_seg_cn_q2fy27",
+   "name": "Compute & Networking (reportable segment)",
+   "period": "Q2 FY2027",
+   "revenue": 88299000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "operating_income": 62696000000
+  },
+  {
+   "id": "nm_seg_gr_q2fy27",
+   "name": "Graphics (reportable segment)",
+   "period": "Q2 FY2027",
+   "revenue": 7922000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ],
+   "operating_income": 3899000000
+  },
+  {
+   "id": "nm_plat_dc_q2fy27",
+   "name": "Data Center (market platform)",
+   "period": "Q2 FY2027",
+   "revenue": 89023000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ]
+  },
+  {
+   "id": "nm_plat_hyper_q2fy27",
+   "name": "Data Center: Hyperscale (market platform)",
+   "period": "Q2 FY2027",
+   "revenue": 48710000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ]
+  },
+  {
+   "id": "nm_plat_acie_q2fy27",
+   "name": "Data Center: AI Clouds, Industrial & Enterprise (market platform)",
+   "period": "Q2 FY2027",
+   "revenue": 40313000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ]
+  },
+  {
+   "id": "nm_plat_edge_q2fy27",
+   "name": "Edge Computing (market platform)",
+   "period": "Q2 FY2027",
+   "revenue": 7198000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ]
+  },
+  {
+   "id": "nm_plat_dc_q1fy27",
+   "name": "Data Center (market platform)",
+   "period": "Q1 FY2027",
+   "revenue": 75246000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ]
+  },
+  {
+   "id": "nm_plat_edge_q1fy27",
+   "name": "Edge Computing (market platform)",
+   "period": "Q1 FY2027",
+   "revenue": 6369000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260826"
+   ]
+  },
+  {
+   "id": "nm_end_dc_fy26",
+   "name": "Data Center (end market, old presentation)",
+   "period": "FY2026",
+   "revenue": 193737000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260225"
+   ]
+  },
+  {
+   "id": "nm_end_dccompute_fy26",
+   "name": "Data Center Compute (end market)",
+   "period": "FY2026",
+   "revenue": 162361000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260225"
+   ]
+  },
+  {
+   "id": "nm_end_dcnet_fy26",
+   "name": "Data Center Networking (end market)",
+   "period": "FY2026",
+   "revenue": 31376000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260225"
+   ]
+  },
+  {
+   "id": "nm_end_gaming_fy26",
+   "name": "Gaming (end market)",
+   "period": "FY2026",
+   "revenue": 16042000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260225"
+   ]
+  },
+  {
+   "id": "nm_end_proviz_fy26",
+   "name": "Professional Visualization (end market)",
+   "period": "FY2026",
+   "revenue": 3191000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260225"
+   ]
+  },
+  {
+   "id": "nm_end_auto_fy26",
+   "name": "Automotive (end market)",
+   "period": "FY2026",
+   "revenue": 2349000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260225"
+   ]
+  },
+  {
+   "id": "nm_end_oem_fy26",
+   "name": "OEM and Other (end market)",
+   "period": "FY2026",
+   "revenue": 619000000,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260225"
+   ]
+  }
+ ],
+ "customers": [
+  {
+   "id": "nm_cust_a_fy26",
+   "name": "direct customer A (unnamed in the 10-K)",
+   "share": 0.22,
+   "period": "FY2026",
+   "source_ids": [
+    "pf_10k_20260225"
+   ]
+  },
+  {
+   "id": "nm_cust_b_fy26",
+   "name": "direct customer B (unnamed in the 10-K)",
+   "share": 0.14,
+   "period": "FY2026",
+   "source_ids": [
+    "pf_10k_20260225"
+   ]
+  },
+  {
+   "id": "nm_cust_a_q2fy27",
+   "name": "largest direct customer (unnamed in the 10-Q)",
+   "share": 0.16,
+   "period": "Q2 FY2027",
+   "source_ids": [
+    "pf_10q_20260826"
+   ]
+  },
+  {
+   "id": "nm_cust_1_h1fy27",
+   "name": "direct customer 1 (unnamed in the 10-Q)",
+   "share": 0.16,
+   "period": "H1 FY2027",
+   "source_ids": [
+    "pf_10q_20260826"
+   ]
+  },
+  {
+   "id": "nm_cust_2_h1fy27",
+   "name": "direct customer 2 (unnamed in the 10-Q)",
+   "share": 0.15,
+   "period": "H1 FY2027",
+   "source_ids": [
+    "pf_10q_20260826"
+   ]
+  },
+  {
+   "id": "nm_cust_3_h1fy27",
+   "name": "direct customer 3 (unnamed in the 10-Q)",
+   "share": 0.13,
+   "period": "H1 FY2027",
+   "source_ids": [
+    "pf_10q_20260826"
+   ]
+  }
+ ],
+ "notes": [
+  "nm IDENTITY CHECK (2026-10-26, reused from the 2026-10-25 run and re-confirmed): NVIDIA Corporation, CIK 1045810, common stock $0.001 par, single class (no ADR, no dual class), Nasdaq Global Select, quoted and reported in USD, IB contract id 4815747 (NASDAQ primary line; MEXI, EBS and the Toronto CDR are other lines of the same share); today's IB snapshot on that contract id returned a NASDAQ-scale NVDA quote (210.77 USD, REALTIME). 10-K cover read in reading/10k_full.txt: fiscal year ended 2026-01-25, 24.3 billion shares outstanding on 2026-02-20. Fiscal year ends on the last Sunday of January (FY2026 52 weeks, FY2027 53 weeks). identity.json and company.json were completed earlier (security, exchange, quote_currency, ib_contract_id).",
+  "nm RECONCILIATION FY2026 (10-K vs SEC companyfacts vs Alpha Vantage INCOME_STATEMENT and CASH_FLOW): revenue 215,938; operating income 130,387; net income 120,067; CFO 102,718; capex (purchases related to property and equipment and intangible assets) 6,042; SBC 6,386 (cash-flow statement; 6,387 in the equity statement, 1 rounding); diluted weighted shares 24,514; diluted EPS 4.90: identical in all three, no differences ($ millions; the prefetch facts pf_*_fy2026 carry them). The nm_ copies were retired in favour of the pf_ facts.",
+  "nm RECONCILIATION Q2 FY2027 (10-Q vs SEC companyfacts vs Alpha Vantage): revenue 96,221; operating income 63,734; net income 59,688; diluted weighted shares 24,285; diluted EPS 2.46; CFO 24,077 and capex 2,677 for the quarter (six months 74,421 / 4,434 minus Q1 50,344 / 1,757; the 10-Q presents six-month cash flows only; AV shows the same quarterly figures): identical. One rounding difference: SBC Q2 is 2,027 in the equity statement and in Alpha Vantage, 2,026 in pf_sbc_q_2026_07_26 (six-month cash-flow figure 3,954 minus Q1 1,928); H1 equity statement 3,955 vs cash flow 3,954.",
+  "nm RECONCILIATION Alpha Vantage statements (retrieved 2026-10-26: INCOME_STATEMENT, BALANCE_SHEET, CASH_FLOW; the 25-requests-a-day limit that blocked the 2026-10-25 attempt had reset; saved as raw/av__income.json, av__balance.json, av__cashflow.json): second-source check of the SEC data. Balance sheet 2026-07-26 agrees with the 10-Q: cash 22,443; AV shortTermInvestments 76,926 = marketable debt securities 34,143 + marketable equity securities 42,783; AV longTermInvestments 51,157 = non-marketable securities; receivables 63,059; inventory 31,575; total assets 320,272; equity 228,984; long-term debt 32,366 + current portion 1,000. Differences, all in labels or fields the filing does not support: (a) AV dates periods by calendar month-end (2026-01-31 for the year ended 2026-01-25; 2026-07-31 for the quarter ended 2026-07-26); (b) AV shortTermDebt 1,509 does not match the balance sheet's short-term debt 1,000 (its currentLongTermDebt 1,000 does): the filing is used; (c) AV capitalLeaseObligations 4,985 is the long-term operating lease liability; (d) AV commonStockSharesOutstanding is the diluted weighted average (24,285 for Q2, 24,514 for FY2026), NOT shares outstanding (24,147 at 2026-07-26): never use it for ownership. AV statements are a normalisation of the same filings, so this is a check, not independent evidence.",
+  "nm EARNINGS QUALITY: other income is large and mostly unrealized equity-securities gains: Q2 FY2027 7,771 of 71,507 pretax; H1 FY2027 23,707 of 141,410 pretax (16.8%); FY2026 8,918 of 141,450. TTM gains are 13.3% of TTM pretax income: GAAP EPS overstates operating earning power by roughly that share; investment stakes (marketable equity 42.8B, non-marketable 51.2B) belong in the capital bridge as investment assets, not cash.",
+  "nm CAPITAL STRUCTURE (2026-07-26): spendable cash 22.4B + marketable debt securities 34.1B; senior notes principal 33.5B (carrying 33.4B; $25.0B issued June 2026 in seven tranches, maturities 2028-2056); CP program 25B undrawn; long-term operating leases 5.0B; contingent: SB Energy residual value guaranties capped at $105B (from FY2029, triggered by OpenAI-affiliate tenant default, OpenAI to reimburse); commitments 366B incl. supply/capacity 279B; equity investment commitments 25B. Shares outstanding 24,147M (2026-07-26) and 24.1B (2026-08-21 cover).",
+  "nm PRICE: IB REALTIME last 210.77 at 2026-10-26T08:04:58Z (pre-market, is_close false), bid 210.84 / ask 210.98, change -0.19 (-0.09%) vs the prior regular close; the last regular-session close is 210.96 on Friday 2026-10-23 (October bar of the IB monthly history). 52-week range 164.08-243.37 (13-week low 190.01; high 243.37 reached in the October bar). The multiples below use 210.96; the pre-market last differs by 0.09%. The price source is the IB market feed dated 2026-10-26 (no Sunday-evening 212.90 quote of the earlier attempt is used).",
+  "nm OWN MULTIPLE HISTORY low 26.7 median 57.0 high 248.6 now 26.7 years 2021-2026 sources nm_ib_history,nm_sec_companyfacts (trailing P/E on GAAP diluted EPS after SBC, split-adjusted; 61 month-ends 2021-10-31 to 2026-10-23, EPS counted from each quarter's first filing date; now = 210.96 / TTM EPS 7.91 through 2026-07-26; the 3-year window 2023-10-31 to 2026-10-23 gives low 26.7, median 50.8, high 99.0; today's multiple is the lowest month-end of both windows; the 2022-2023 highs reflect the FY2023 earnings trough, a cyclical low, not a steady-state multiple; ex equity-securities gains the trailing P/E is 30.8x on TTM EPS 6.86). Detail: numbers/pe_history.json.",
+  "nm OWN MULTIPLE HISTORY forward (hindsight, labelled): P/E on the ACTUAL next four quarters' GAAP EPS (perfect foresight, NOT the market forward multiple): 3y low 18.4 / median 26.8 / high 39.7, 5y low 18.4 / median 27.3 / high 160.5 (sources nm_ib_history,nm_sec_companyfacts). Current forward P/E on attributed consensus (an expectation, not a fact; non-GAAP EPS by inference): 22.7x FY2027 EPS 9.31 and 13.3x FY2028 EPS 15.91 at 210.96 (nm_c_eps_fy27, nm_c_eps_fy28). A market forward-P/E history needs dated consensus snapshots (gap). Peak-earnings caution: Q2 FY2027 GAAP EPS 2.46 x 4 = 9.84 is a record quarter and includes about 0.27 per share of equity-securities gains (7,771 pre-tax, 16.5% tax), so it is not a run rate.",
+  "nm ROIC CHECK prefetch/forensic.json roic: FY2026 ROIC 94.9% on the average of opening and closing capital, incremental ROIC 80.4%. Its FY2026 invested capital 154,157 = equity 157,293 + long-term debt 7,469 - cash and equivalents 10,605: it omits the current portion of debt (999) and operating leases (long-term 2,572 at FY2026, 4,985 at 2026-07-26), small effects (full-debt basis 94.5%), and it subtracts ONLY cash and equivalents, so marketable securities (51,951 at FY2026; 76,926 at 2026-07-26 = debt 34,143 + equity 42,783) and non-marketable securities (22,251; 51,157) stay inside invested capital although they are investment assets (they belong in the capital bridge, not in operating capital); equity also carries retained unrealized equity gains (23.7B in H1 FY2027). Excluding them, invested capital is 41,193 (FY2025) and 80,954 (FY2026): FY2026 ROIC 181% on average capital (137% on closing capital); TTM to 2026-07-26 about 172% (NOPAT about 165.9B at the 16.0% TTM effective tax rate over the average of 80,954 and 111,824) against about 84% on the forensic basis. Either basis is far above the 8% reference cost of capital; the forensic figure understates operating returns, and neither is a steady-state number (no restricted cash in the balance sheet lines read).",
+  "nm CONSENSUS (Alpha Vantage EARNINGS_ESTIMATES, retrieved 2026-10-26, provider unnamed, undated; EPS basis inferred non-GAAP because the Q2 FY2027 consensus 2.09 was compared with the non-GAAP 2.22, GAAP 2.46): FY2027 revenue 411.65B (n 54, 403.2B-426.9B), EPS 9.31 (n 51, 9.01-10.10); FY2028 revenue 692.21B (n 57, 506.5B-778.5B: the widest dispersion, high 12.5% and low 26.8% around the mean), EPS 15.91 (n 52, 12.85-18.75); Q3 FY2027 revenue 108.98B (n 45, 104.9B-116.3B) and EPS 2.47; Q4 FY2027 revenue 124.48B (n 42) and EPS 2.75. Consistency: H1 actual 177.84B + Q3 108.98B + Q4 124.48B = 411.30B vs the FY2027 mean 411.65B (0.09%). The values equal the S&P Global figures of ex_sa_sp (FY2027 n 54, low, high identical), so this is probably the same dataset, not a second view; its new content is the FY2028 n/low/high and the revision counts. These rows are dated 2026-10-26 and are not citable until 2026-10-28; the ex_ rows (2026-10-22 and 2026-10-13) already are.",
+  "nm CONSENSUS REVISIONS (AV, mean estimates now vs 7/30/60/90 days ago): FY2028 EPS 15.91 / 15.91 / 15.68 / 13.03 / 12.81 (+24.2% in 90 days; 7 upward and 0 downward revisions in the last 30 days); FY2027 EPS 9.31 / 9.31 / 9.31 / 9.01 / 8.95 (+4.0% in 90 days); Q3 FY2027 EPS flat at 2.47 (one downward revision in 30 days); Q4 FY2027 EPS 2.75 vs 2.65 90 days ago. Consensus revenue Q3 FY2027 108.98B is 0.9% above the guided midpoint 108.0B and inside the guided range 105.84B-110.16B; the range of estimates reaches 116.25B, above the guided top. Past quarters (AV final pre-report consensus vs actual revenue): Q4 FY2026 66.23B vs 68.13B (+2.9%), Q1 FY2027 79.12B vs 81.62B (+3.2%), Q2 FY2027 92.18B vs 96.22B (+4.4%): consensus has stayed below delivery (another provider shows revenue beats in six of six quarters, ex_ notes).",
+  "nm TRACK RECORD revenue ratio 1.0499 over 8 periods, 8 beats, 0 misses: NVIDIA guides a revenue midpoint with a plus-or-minus 2% range and has delivered 2.5% to 7.9% above the midpoint in each of the last 8 guided quarters (Q3 FY2025 to Q2 FY2027: guided 32.5, 37.5, 43.0, 45.0, 54.0, 65.0, 78.0, 91.0 billion; actual 35.08, 39.33, 44.06, 46.74, 57.01, 68.13, 81.62, 96.22), every one above the top of its own range: it guides conservatively. The guided midpoints were re-read against the release text in reading/release_*pr.txt and the Q2 FY2025 release (raw_reports) on 2026-10-26 and match; the rows (27: revenue, GAAP gross margin, GAAP operating expenses; rp_ ids, sources renamed pf_rel_* at merge) are kept in place in gather/reports.json (gather_documents file) so they are not entered twice. The outstanding guide is Q3 FY2027 revenue 108.0B +/-2% (not yet reported). A ratio of this kind says how the guide has been beaten, not that the next quarter will be.",
+  "nm EXPOSURES (share exposed): China (incl. Hong Kong) customer-HQ revenue 9.1% of FY2026 and 8.2% of Q2 FY2027 revenue, but China data-center compute shipments were below 1% of Data Center revenue in Q2 FY2027 and the company calls itself effectively foreclosed from China data-center compute: the data-center China loss is already out of the run rate; residual China exposure is mostly uncontrolled products (gaming/workstation) and customer-HQ attribution. Charges so far: H20 $4.5B (Q1 FY2026), H200 $0.4B (H1 FY2027); licensed H200 imports carry a 25% US tariff not passed on.",
+  "nm EXPOSURES Taiwan: wafers from foundries TSMC and Samsung, CoWoS packaging, supply chain mainly concentrated in Asia (10-K); Taiwan holds 31.0% of long-lived assets (3,219 of 10,383) and Taiwan-HQ customers 19.6% of FY2026 and 28.0% of Q2 FY2027 revenue (76% of FY2026 Taiwan-HQ Data Center revenue attributed to US/European end customers, i.e. ODM pass-through). The share of wafer/packaging capacity located in Taiwan is not disclosed (gap). Regulation: AI Diffusion IFR rescinded May 2025, replacement rule pending (scope unknown); EU AI Act; gaming-GPU export controls possible.",
+  "nm CONCENTRATION: FY2026 two direct customers 22% and 14% of revenue; H1 FY2027 three direct customers 16%, 15%, 13% (44% together); Q2 FY2027 one direct customer 16%.",
+  "nm DIVIDEND: quarterly dividend raised from $0.01 to $0.25 per share (ex-dates 2026-06-04 and 2026-09-10 per IB corporate actions; 10-Q equity statement $0.25 in Q2 FY2027): about $6.0B a quarter.",
+  "nm GAP: no market forward P/E history (it needs dated consensus snapshots; FMP analyst endpoints are ACCESS DENIED on this plan and not called; Alpha Vantage returns only the final consensus of each past quarter) and no consensus beyond FY2028: one web search for FY2029-FY2030 found only inconsistent pages (a Tickflow table with mislabeled periods, a Simply Wall St page with 27 analysts and no per-share figure, a 247wallst model estimate that is not consensus), none usable. Also missing: operating income / EBIT consensus (Alpha Vantage gives revenue and EPS only) and the consensus provider's name and as-of date (Alpha Vantage states neither).",
+  "nm GAP: share of wafer/packaging capacity in Taiwan and the dollar sensitivity of a Taiwan supply interruption are not disclosed; tariff exposure beyond the H200 inspection tariff (e.g. sector Section 232 semiconductor tariffs) not quantified in the filings read.",
+  "nm GAP: the Groq, Inc. payments (13.0B FY2026 investing; 2.9B H1 FY2027 financing; a non-exclusive license agreement) and the FY2026 goodwill jump (5.2B to 20.8B) were not traced to the business-combination note in this lane (reports lane).",
+  "nm GAP: Q3 FY2027 (the quarter ending 2026-10-25) is not reported at as_of; results are expected about 2026-11-18 (a third-party estimate, not confirmed by the company); nothing after the 2026-08-26 release and the 2026-10-26 market data is used, and consensus for that quarter is an expectation only.",
+  "nm CARRIED OVER: the kpis, segments and customers rows inside this file (nm_kpi_*, nm_seg_*, nm_plat_*, nm_end_*, nm_cust_*) come from the earlier attempt, are unchanged and are gather_documents' keys; several of them are repeated in gather/reports.json (rp_) and gather/expectations.json (ex_), which hold the current documents' reading: gather_documents may retire the repeats.",
+  "nm STOPPED: no Alpha Vantage COMPANY_OVERVIEW (premium endpoint, denied 2026-10-25), no FMP call (statements and analyst ACCESS DENIED per session_capabilities), no repeat of the IB search_contracts call (the 2026-10-25 payload is reused and the contract id was confirmed by today's snapshot), no further P/E variants, and the consensus search for FY2029+ stopped after one search that found nothing usable. The risk-free rate (FRED DGS10 4.96% on 2026-10-22) is owned by the prefetch and gather_macro (pf_fred_dgs10), not repeated here."
+ ],
+ "gaps": [
+  "market forward P/E history (needs dated consensus snapshots; not available)",
+  "consensus beyond FY2028 (FY2029-FY2031) and operating income / EBIT consensus not available; the Alpha Vantage consensus provider is unnamed and undated, and its rows are dated at retrieval (2026-10-26): not citable until 2026-10-28",
+  "share of wafer / packaging capacity in Taiwan not disclosed; Groq payments and goodwill jump not traced to the business-combination note",
+  "Q3 FY2027 not reported at as_of (expected about 2026-11-18)"
+ ],
+ "stopped": [
+  "Alpha Vantage COMPANY_OVERVIEW not called (premium, denied 2026-10-25)",
+  "FMP statements and analyst not called (ACCESS DENIED per session_capabilities)",
+  "IB search_contracts not repeated (payload of 2026-10-25 reused, contract id confirmed by today's snapshot)",
+  "consensus search for FY2029+ stopped after one search with nothing usable"
+ ]
+}

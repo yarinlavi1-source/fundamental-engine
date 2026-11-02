@@ -1,0 +1,50 @@
+{
+ "thesis_he": {
+  "bear": "הצמיחה נחלשת (לחץ על חוזי ממשלה ותחרות במסחרי) וכל דולר צמיחה דורש יותר הון (לקוחות שמשלמים לאט, יותר מהנדסים בשטח), ולכן התשואה על ההון הנוסף יורדת לכ־50% והמכפיל מתכווץ מהר.",
+  "base": "העסק ממשיך לצמוח כמעט בלי צורך בהון (השקעות הוניות זניחות, לקוחות משלמים מראש), התשואה על ההון הנוסף נשארת כ־100%, והמכפיל יורד בהדרגה ככל שהצמיחה מאטה.",
+  "bull": "הלקוחות הגדולים ממשיכים להרחיב (שימור הכנסות נטו 157%, הכנסה ממוצעת ללקוח גדול עולה) בלי הון נוסף, התשואה על ההון הנוסף נשארת בתקרה של 150%, והמכפיל נשאר גבוה יותר לאורך זמן."
+ },
+ "company_path": {
+  "metric": "eps",
+  "multiple": "forward_pe",
+  "scenarios": {
+   "bear": {
+    "multiple_from": "economics",
+    "roic": 0.5,
+    "justification": "unproven",
+    "reason_he": "בתרחיש הדובי הצמיחה דורשת יותר הון: יתרת הלקוחות כבר גדלה מהר מההכנסות (פי 2.9 מול פי 2.0 בין 2023 ל־2025), ואם חוזים ממשלתיים מתעכבים או נחקרים ונדרשים יותר מהנדסים בשטח כדי לסגור עסקאות מסחריות, התשואה על כל דולר הון נוסף יורדת לכ־50%. זה עדיין עסק תוכנה רווחי, אבל מכפיל גבוה לא מוצדק כשהצמיחה נחלשת.",
+    "source_tier": "own_history",
+    "evidence_ids": ["pf_receivables_fy2023", "pf_receivables_fy2025", "pf_revenue_fy2023", "pf_revenue_fy2025", "mc_s_pentagon_memo", "mc_s_eu_sov"]
+   },
+   "base": {
+    "multiple_from": "economics",
+    "roic": 1.0,
+    "justification": "justified_high",
+    "reason_he": "ההון התפעולי של פלנטיר (הון עצמי פחות מזומן והשקעות קצרות, בלי חוב, מוניטין זניח) עלה רק בכ־400 מיליון דולר בין 2023 ל־2025 בזמן שהרווח התפעולי עלה ביותר ממיליארד ומאתיים מיליון, כלומר תשואה על ההון הנוסף של מעל 200%; ההשקעות ההוניות זניחות והלקוחות משלמים מראש (התחייבויות חוזיות 1.1 מיליארד). לקחנו בשמרנות 100% כי יתרת הלקוחות גדלה מהר ופיצוי במניות הוא עלות אמיתית שכבר נמצאת ברווח. תשואה כזו מצדיקה מכפיל גבוה כל עוד הצמיחה נמשכת.",
+    "source_tier": "own_history",
+    "evidence_ids": ["pf_operating_income_fy2023", "pf_operating_income_fy2025", "pf_equity_fy2023", "pf_equity_fy2025", "pf_cash_fy2023", "pf_cash_fy2025", "pf_short_term_investments_fy2023", "pf_short_term_investments_fy2025", "pf_capex_fy2025", "dc_f_contract_liab", "dc_f_debt"]
+   },
+   "bull": {
+    "multiple_from": "economics",
+    "roic": 1.5,
+    "justification": "justified_high",
+    "reason_he": "בתרחיש השורי הלקוחות הקיימים ממשיכים להגדיל את ההוצאה (שימור הכנסות נטו 157%, הכנסה ממוצעת ל־20 הלקוחות הגדולים עלתה מ־75 ל־124 מיליון דולר בשנה) והצמיחה ממשיכה להגיע כמעט בלי הון: התשואה על ההון הנוסף נשארת ברמה שהחברה כבר הראתה (מעל 200% בין 2023 ל־2025), חסומה בתקרה של 150%. כך המכפיל נשאר גבוה יותר לאורך יותר שנים.",
+    "source_tier": "own_history",
+    "evidence_ids": ["dc_k_ndr", "dc_k_top20", "dc_k_top20_py", "pf_operating_income_fy2023", "pf_operating_income_fy2025", "pf_equity_fy2025", "pf_short_term_investments_fy2025", "dc_f_rpo", "dc_k_total_rdv"]
+   }
+  },
+  "own_history": {
+   "low": 90.4,
+   "median": 105.2,
+   "high": 120.0,
+   "years": "2023-2024 (December close / next fiscal year's reported GAAP diluted EPS)",
+   "evidence_ids": ["nm_ib_price", "pf_eps_diluted_fy2024", "pf_eps_diluted_fy2025"]
+  }
+ },
+ "gaps": [
+  "Forward P/E history is short: only two realized points (Dec-2023 17.17 / FY2024 EPS 0.19 = 90.4; Dec-2024 75.63 / FY2025 EPS 0.63 = 120.0); median is the midpoint of the two. Trailing GAAP P/E range 190.8-398.1 (2023-2025) is not comparable with a forward multiple and is not used as own_history. Today 184.56 on FY2026 consensus EPS 1.6149 = 114.3 (consensus nm_av_consensus not citable before 2026-11-03).",
+  "Incremental ROIC computed by hand from companyfacts: operating invested capital = equity - cash - short-term investments + debt (0) = -199m FY2023, -227m FY2024, +210m FY2025; NOPAT proxy = operating income after SBC (120m FY2023 -> 1,414m FY2025). Incremental ratio above 200% (above 300% pre-tax), so all scenarios are judgement under the 1.5 cap; long-term investments inside equity were not separated (would lower invested capital further). Forensic ROIC in auto.json was unavailable. Goodwill negligible (38m FY2022), so goodwill in or out does not change the reading.",
+  "No named competitor has an evidenced forward P/E (SNOW and AI are loss-making on GAAP, BAH EPS not gathered); peers omitted, no competitor tier used.",
+  "Q3 2026 results (expected early November 2026) not in evidence; nothing dated after the Q2 release/10-Q used."
+ ]
+}

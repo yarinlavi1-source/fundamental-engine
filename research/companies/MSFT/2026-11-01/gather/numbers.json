@@ -1,0 +1,243 @@
+{
+ "lane": "numbers",
+ "sources": [
+  {
+   "id": "nm_ib_price",
+   "kind": "price",
+   "title": "Interactive Brokers last price snapshot MSFT (NASDAQ, conid 272093), last 522.99 at 2026-10-30 23:59 UTC, prior close 530.14",
+   "url": "connector:Interactive_Brokers__get_price_snapshot",
+   "date": "2026-10-30",
+   "independent": true,
+   "publisher": "Interactive Brokers",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_ib_hist",
+   "kind": "price",
+   "title": "Interactive Brokers monthly price history MSFT 2021-11 to 2026-10 with cash dividends",
+   "url": "connector:Interactive_Brokers__get_price_history",
+   "date": "2026-10-31",
+   "independent": true,
+   "publisher": "Interactive Brokers",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_av_stmts",
+   "kind": "structured_data",
+   "title": "Alpha Vantage INCOME_STATEMENT / BALANCE_SHEET / CASH_FLOW MSFT (retrieved 2026-11-01; latest period 2026-09-30)",
+   "url": "connector:Alpha_Vantage_MCP_Server__INCOME_STATEMENT",
+   "date": "2026-10-28",
+   "independent": true,
+   "publisher": "Alpha Vantage (SEC-mapped normalized data)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_av_consensus",
+   "kind": "consensus",
+   "title": "Alpha Vantage EARNINGS_ESTIMATES MSFT analyst consensus (retrieved 2026-11-01; post-Q1 FY2027 results revisions)",
+   "url": "connector:Alpha_Vantage_MCP_Server__EARNINGS_ESTIMATES",
+   "date": "2026-11-01",
+   "independent": true,
+   "publisher": "Alpha Vantage (analyst consensus aggregate)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  }
+ ],
+ "facts": [
+  {
+   "id": "nm_price_last",
+   "metric": "price_last",
+   "period": "2026-10-30",
+   "value": 522.99,
+   "unit": "USD",
+   "source_ids": [
+    "nm_ib_price"
+   ],
+   "period_end": "2026-10-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_price_prior_close",
+   "metric": "price_prior_close",
+   "period": "2026-10-29",
+   "value": 530.14,
+   "unit": "USD",
+   "source_ids": [
+    "nm_ib_price"
+   ],
+   "period_end": "2026-10-29",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_price_52w_high",
+   "metric": "price_52w_high",
+   "period": "2026-10-30",
+   "value": 551.15,
+   "unit": "USD",
+   "source_ids": [
+    "nm_ib_price"
+   ],
+   "period_end": "2026-10-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_price_52w_low",
+   "metric": "price_52w_low",
+   "period": "2026-10-30",
+   "value": 349.2,
+   "unit": "USD",
+   "source_ids": [
+    "nm_ib_price"
+   ],
+   "period_end": "2026-10-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_ttm_q1fy27",
+   "metric": "eps_diluted_ttm",
+   "period": "TTM to 2026-09-30",
+   "value": 19.15,
+   "unit": "USD per share",
+   "source_ids": [
+    "pf_10q_20261028",
+    "pf_cf_20260729"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_eps_q1fy27",
+   "metric": "eps_diluted",
+   "period": "Q1 FY2027",
+   "value": 4.92,
+   "unit": "USD per share",
+   "source_ids": [
+    "pf_10q_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_q1fy26",
+   "metric": "eps_diluted",
+   "period": "Q1 FY2026",
+   "value": 3.72,
+   "unit": "USD per share",
+   "source_ids": [
+    "pf_10q_20261028"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_diluted_q1fy27",
+   "metric": "shares_diluted_wavg",
+   "period": "Q1 FY2027",
+   "value": 7446000000.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_adj_eps_q1fy27",
+   "metric": "eps_diluted_nongaap_ex_openai",
+   "period": "Q1 FY2027",
+   "value": 4.89,
+   "unit": "USD per share",
+   "source_ids": [
+    "pf_10q_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  }
+ ],
+ "consensus": [
+  {
+   "id": "nm_cons_rev_fy2027",
+   "metric": "revenue",
+   "period": "FY2027",
+   "value": 391583547050.0,
+   "n": 52,
+   "low": 380000000000.0,
+   "high": 402719127430.0,
+   "source_id": "nm_av_consensus"
+  },
+  {
+   "id": "nm_cons_rev_fy2028",
+   "metric": "revenue",
+   "period": "FY2028",
+   "value": 468553774650.0,
+   "n": 52,
+   "low": 433188000000.0,
+   "high": 501989984410.0,
+   "source_id": "nm_av_consensus"
+  },
+  {
+   "id": "nm_cons_eps_fy2027",
+   "metric": "eps_diluted",
+   "period": "FY2027",
+   "value": 19.7599,
+   "n": 34,
+   "low": 19.06,
+   "high": 20.7,
+   "source_id": "nm_av_consensus"
+  },
+  {
+   "id": "nm_cons_eps_fy2028",
+   "metric": "eps_diluted",
+   "period": "FY2028",
+   "value": 23.6897,
+   "n": 33,
+   "low": 22.03,
+   "high": 25.68,
+   "source_id": "nm_av_consensus"
+  },
+  {
+   "id": "nm_cons_rev_q2fy27",
+   "metric": "revenue",
+   "period": "Q2 FY2027",
+   "value": 95646497200.0,
+   "n": 37,
+   "low": 93527000000.0,
+   "high": 98410000000.0,
+   "source_id": "nm_av_consensus"
+  },
+  {
+   "id": "nm_cons_eps_q2fy27",
+   "metric": "eps_diluted",
+   "period": "Q2 FY2027",
+   "value": 4.8171,
+   "n": 25,
+   "low": 4.65,
+   "high": 4.97,
+   "source_id": "nm_av_consensus"
+  }
+ ],
+ "guidance_track": [],
+ "notes": [
+  "nm IDENTITY MSFT = Microsoft Corp common stock, CIK 789019, single class, no ADR/dual listing; IB primary listing NASDAQ conid 272093 USD (other MSFT rows are foreign listings, Swiss/Mexican, Canadian CDR, leveraged ETFs); reporting and quote currency USD; fiscal year ends 30 June; FY2026 = year ended 2026-06-30; latest quarter Q1 FY2027 ended 2026-09-30. Security resolved, no stop.",
+  "nm PRICE last 522.99 (IB, 2026-10-30 close session, prior close 530.14, -1.35%); 52w high 551.15, low 349.20 (IB misc statistics); 5y monthly history saved; cash dividend 0.91 per quarter (last ex-date 2026-08-20), no splits in the window.",
+  "nm RECONCILIATION FY2026 (10-K / companyfacts pf_ facts vs Alpha Vantage): revenue 331,839 / 331,839 USD m, operating income 155,237 / 155,237, net income 133,749 / 133,749, CFO 182,935 / 182,935, capex 115,948 / 115,948, SBC 12,405 / 12,405, diluted EPS 17.95, diluted shares 7,453m: no difference. Alpha Vantage balance sheet shares outstanding 7,453m on 2026-06-30 equals the diluted weighted average listed in pf_ facts (the AV field is not the point-in-time count: read cover page for that).",
+  "nm RECONCILIATION Q1 FY2027 (10-Q text vs pf_ facts vs AV): revenue 92,279 (10-Q) / 92,279 / 92,279 USD m; operating income 45,915 / 45,915 / 45,915; net income 36,629 / 36,629 / 36,629; CFO 58,000 / 58,000 / 58,000; capex 'additions to property and equipment' 39,367 / 39,367 / 39,367; SBC 3,134 / 3,134 / 3,134; diluted EPS 4.92 and diluted shares 7,446m per 10-Q: no difference. Non-GAAP adjusted EPS 4.89 excludes net OpenAI investment gains (+0.03 in Q1 FY27; -0.41 in Q1 FY26 so prior-year EPS 3.72 is depressed: GAAP EPS growth 32% vs adjusted 18%). Capex of 39.4bn is cash additions to PP&E only; finance leases are on top (AV capitalLeaseObligations 21.7bn at 2026-09-30 vs 16.5bn at 2026-06-30). Search-based secondary page quoted a different net income (33.6bn): the 10-Q 36,629 stands.",
+  "nm ROIC CHECK prefetch roic_last 31.1% (FY2026 NOPAT 125.1bn / invested capital 452.5bn): invested capital = equity 442,387 + long-term debt 31,067 - cash 20,935 = 452,519. Differences vs the balance sheet: (a) short-term investments 55.9bn and long-term investments 36.3bn (AV) are not netted as cash, so invested capital is overstated by up to ~56-92bn if treated as excess cash (ROIC would be ~35-39%); (b) current portion of debt (AV 9.2bn), finance leases (AV 16.5bn) and operating leases are not in debt, which pushes the other way (~+26bn plus operating leases); (c) equity 442bn includes the carrying value of the OpenAI investment and goodwill 119.7bn; (d) FY2026 capex 115.9bn vs CFO 182.9bn means invested capital is growing fast (incremental ROIC 23.6%) with most new assets not yet earning (construction in progress). ROIC fell 38.4% (FY22) to 31.1% (FY26) on rising AI datacenter capital. Net: the 31% is a fair middle estimate, direction of the checks offsets.",
+  "nm OWN MULTIPLE HISTORY trailing P/E (month-end close in June / that fiscal year GAAP diluted EPS after SBC): Jun-2022 26.6, Jun-2023 35.2, Jun-2024 37.9, Jun-2025 36.5, Jun-2026 20.8 (close 373.02 at the 2026 low zone vs EPS 17.95); low 20.8 median 35.2 high 37.9 now 27.3 (522.99 / TTM EPS 19.15) years 2022-2026; forward now 26.5x on FY2027 consensus EPS 19.76 and 22.1x on FY2028 EPS 23.69 (consensus, an expectation). Stepwise monthly range over Nov-2021 to Oct-2026 using the latest completed fiscal-year EPS (lagged, crude): low 24.1 median 34.8 high 46.2. FY2026 EPS 17.95 contains OpenAI net gains and FY2025 EPS 13.64 contains OpenAI losses, so EPS growth of 32% in FY2026 is flattered; not a run rate. Sources nm_ib_hist, pf_eps_diluted_fy2022..fy2026, pf_10q_20261028, nm_ib_price, nm_av_consensus.",
+  "nm CONSENSUS Alpha Vantage 2026-11-01 (post results): FY2027 revenue 391.6bn (n 52, 380.0-402.7bn), EPS 19.76 (n 34, 19.06-20.70); FY2028 revenue 468.6bn (n 52, 433.2-502.0bn), EPS 23.69 (n 33, 22.03-25.68); Q2 FY2027 revenue 95.6bn (n 37), EPS 4.82 (n 25). Revisions: FY2028 EPS average 22.59 ninety days ago to 23.69 now (+4.9%), FY2027 EPS 19.38 to 19.76 (+2.0%); trailing 30 days FY2027 5 up / 0 down, FY2028 4 up / 2 down. Operating income estimates are not in the AV payload. Implied consensus revenue growth FY2027 +18.0% on 331.8bn, FY2028 +19.7%. Dispersion is narrow for FY2027 (high/low 6%) and wider for FY2028 (16%). The source is dated 2026-11-01 (retrieval date, no provider publication date), so under the 2-day rule it is not citable until 2026-11-03.",
+  "nm TRACK RECORD gap: Microsoft's releases (reading/release_*.txt, 8 quarters) contain NO numeric outlook ('Microsoft will provide forward-looking guidance ... on its earnings conference call'), so guided midpoints exist only in call transcripts. The transcript lane (gather_documents) owns them; no guidance_track rows are written here because inventing guided midpoints from search excerpts would not be primary. Secondary web reports (CNBC via FourWeekMBA, not used as a fact) say the Q2 FY2027 guide is revenue 96.0-97.1bn with Azure +49-50% cc, above AV consensus 95.6bn; the Q1 FY2027 delivery of 92.3bn vs AV pre-results consensus 90.7bn (n 38) is a beat of about 1.7% (consensus, not guidance). Segment reporting changed to Agents and Infra / Devices and Consumer in FY2027, so old Intelligent Cloud guidance bridges are not like for like.",
+  "nm AV usage: INCOME_STATEMENT, BALANCE_SHEET, CASH_FLOW and EARNINGS_ESTIMATES called once each successfully after a per-second burst rate-limit (first parallel calls returned 'rate_limit', spaced calls worked; daily quota use for this run: 4 successful + 3 burst-limited). FMP statements/analyst skipped (denied on plan). COMPANY_OVERVIEW not called."
+ ],
+ "gaps": [
+  "guidance_track: Microsoft publishes numeric guidance only on the call; transcripts belong to gather_documents; no guided midpoints available in releases",
+  "consensus operating income not available (Alpha Vantage returns revenue and EPS only); consensus source dated 2026-11-01 not citable until 2026-11-03",
+  "own multiple history uses fiscal-year EPS (no quarterly EPS in prefetch facts); trailing P/E points are June year-ends, stepwise monthly range is crude",
+  "AV rate-limited burst on first parallel calls (recovered when spaced)"
+ ],
+ "stopped": [
+  "Search for analyst consensus pages and transcripts stopped after one search: only secondary, unattributed pages; AV consensus used"
+ ]
+}

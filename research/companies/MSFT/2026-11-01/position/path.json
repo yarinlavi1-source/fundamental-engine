@@ -1,0 +1,84 @@
+{
+ "thesis_he": {
+  "bear": "ההשקעה הענקית בחוות שרתים ל-AI מחזירה רק כ-14% על ההון החדש (עודף קיבולת, תלות ב-OpenAI שהיא כ-11% מההכנסות, התחייבויות חכירה עצומות), ולכן המכפיל יורד.",
+  "base": "ההון החדש מרוויח כ-22%, קרוב לתשואה על ההון הנוספת של 3 השנים האחרונות (כ-24%), פחות מהתשואה הכוללת של 31% כי חלק גדול מההשקעה עדיין לא מניב; המכפיל יורד בהדרגה ככל שהצמיחה מאטה.",
+  "bull": "הקיבולת החדשה מתמלאת בביקוש משלם (Azure צומחת כ-48%-50%) ומרוויחה כמו העסק הקיים, כ-31% על ההון, ולכן המכפיל נשאר גבוה."
+ },
+ "company_path": {
+  "metric": "eps",
+  "multiple": "forward_pe",
+  "scenarios": {
+   "bear": {
+    "multiple_from": "economics",
+    "roic": 0.14,
+    "justification": "unproven",
+    "reason_he": "בתרחיש הדובי ההון שמושקע ב-AI (השקעות הוניות של 116 מיליארד דולר בשנה האחרונה ויותר מ-50 מיליארד דולר ברבעון לפי ההנחיה, ועוד התחייבויות חכירה של 443 מיליארד דולר שאינן בחישוב ההון) לא מתמלא בלקוחות משלמים או תלוי מדי ב-OpenAI, ולכן התשואה על ההון הנוסף יורדת לכ-14%: עדיין מעל עלות ההון, אבל רחוק מ-31% של היום. תשואה נמוכה על הצמיחה פירושה שהצמיחה שווה פחות, ולכן המכפיל נמוך.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "pf_capex_fy2026",
+     "pf_cfo_fy2026",
+     "dc_g_capex_q2fy27",
+     "dc_leases_incl_interest_fy26",
+     "dc_kpi_openai_share_rev",
+     "pf_operating_income_fy2026",
+     "pf_equity_fy2026"
+    ]
+   },
+   "base": {
+    "multiple_from": "economics",
+    "roic": 0.22,
+    "justification": "justified_high",
+    "reason_he": "התשואה על ההון הנוסף של מיקרוסופט ב-3 השנים האחרונות הייתה כ-24% (רווח תפעולי עלה מ-88.5 ל-155.2 מיליארד דולר, וההון המושקע גדל מהר), והתשואה הכוללת ירדה מכ-38% בשנת 2022 ל-31% בשנת 2026 בגלל בניית חוות השרתים. ההנחה היא כ-22% על ההון החדש (ההון כולל מוניטין, החכירות לא כלולות ולכן נלקח מעט פחות): תשואה גבוהה בהרבה מעלות ההון שמצדיקה מכפיל גבוה, שיורד בהדרגה ככל שהצמיחה מאטה.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "pf_operating_income_fy2023",
+     "pf_operating_income_fy2026",
+     "pf_equity_fy2023",
+     "pf_equity_fy2026",
+     "pf_long_term_debt_fy2026",
+     "pf_cash_fy2026",
+     "pf_goodwill_fy2026",
+     "pf_capex_fy2026"
+    ]
+   },
+   "bull": {
+    "multiple_from": "economics",
+    "roic": 0.31,
+    "justification": "justified_high",
+    "reason_he": "בתרחיש השורי הקיבולת החדשה מתמלאת בביקוש משלם: Azure צמחה 48% ברבעון האחרון, ההנחיה לרבעון הבא היא 49%-50%, וענן מיקרוסופט צמח 30% ל-63.9 מיליארד דולר. אז ההון החדש מרוויח כמו העסק הקיים, כ-31% (התשואה של שנת 2026), ולא יותר כי זו כבר תשואה אחרי ירידה מ-38%. תשואה כזו על הצמיחה מצדיקה מכפיל גבוה שנשאר גבוה.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "dc_kpi_azure_growth",
+     "dc_g_azure_q2fy27",
+     "dc_kpi_cloud_rev",
+     "dc_kpi_cloud_growth",
+     "pf_operating_income_fy2026",
+     "pf_equity_fy2026",
+     "pf_long_term_debt_fy2026",
+     "pf_cash_fy2026"
+    ]
+   }
+  },
+  "own_history": {
+   "low": 20.8,
+   "median": 35.2,
+   "high": 37.9,
+   "years": "2022-2026",
+   "evidence_ids": [
+    "nm_ib_hist",
+    "pf_eps_diluted_fy2022",
+    "pf_eps_diluted_fy2023",
+    "pf_eps_diluted_fy2024",
+    "pf_eps_diluted_fy2025",
+    "pf_eps_diluted_fy2026"
+   ]
+  }
+ },
+ "gaps": [
+  "peers left out: no evidenced forward P/E for the named competitors AMZN, GOOGL, ORCL in field.json (only whole-company FY revenue and margins); not retrieved because the economics mode does not use peer multiples and it would not change the ROIC choice.",
+  "own_history is trailing P/E at June month-end on that fiscal year's GAAP diluted EPS (2022-2026); FY2026 EPS 17.95 includes OpenAI net gains and FY2025 EPS 13.64 includes OpenAI losses, so the 2025/2026 points are distorted. The lagged monthly range Nov-2021..Oct-2026 is 24.1 / 34.8 / 46.2.",
+  "Consensus EPS (nm_av_consensus) is dated 2026-11-01 and not citable until 2026-11-03: not used as evidence here.",
+  "Incremental ROIC 23.6% (3 years) uses invested capital = equity + long-term debt - cash: goodwill and the OpenAI stake are in, finance and operating leases ($443bn incl. interest) and short-term investments are not netted/added; true return on AI capacity including leases is lower, which is why the base sits slightly below 23.6%.",
+  "No segment-level return on capital for Agents and Infra (new FY2027 segment recast); ROIC is whole-company."
+ ]
+}

@@ -1,0 +1,198 @@
+{
+ "lane": "numbers",
+ "sources": [
+  {
+   "id": "nm_price_ib",
+   "kind": "price",
+   "title": "Interactive Brokers price snapshot MA (last 638.02, prior close 635.70; frozen after close)",
+   "url": "connector:Interactive_Brokers.get_price_snapshot",
+   "date": "2026-10-30",
+   "independent": true,
+   "publisher": "Interactive Brokers",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_hist_ib",
+   "kind": "price",
+   "title": "Interactive Brokers monthly price history MA, 5 years, with corporate actions",
+   "url": "connector:Interactive_Brokers.get_price_history",
+   "date": "2026-10-30",
+   "independent": true,
+   "publisher": "Interactive Brokers",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  }
+ ],
+ "facts": [
+  {
+   "id": "nm_eps_diluted_q3_2026",
+   "metric": "eps_diluted",
+   "period": "Q3 2026",
+   "value": 5.28,
+   "unit": "USD/share",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_9m_2026",
+   "metric": "eps_diluted",
+   "period": "9M 2026",
+   "value": 14.59,
+   "unit": "USD/share",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_eps_diluted_ttm_2026q3",
+   "metric": "eps_diluted",
+   "period": "TTM to 2026-09-30",
+   "value": 19.11,
+   "unit": "USD/share",
+   "source_ids": [
+    "pf_10q_20261029",
+    "pf_10k_20260211"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "derived"
+  },
+  {
+   "id": "nm_cfo_9m_2026",
+   "metric": "operating_cash_flow",
+   "period": "9M 2026",
+   "value": 11859000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_sbc_9m_2026",
+   "metric": "share_based_compensation",
+   "period": "9M 2026",
+   "value": 525000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_capex_ppe_9m_2026",
+   "metric": "capex_ppe",
+   "period": "9M 2026",
+   "value": 667000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_capsw_9m_2026",
+   "metric": "capitalized_software",
+   "period": "9M 2026",
+   "value": 474000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_capsw_fy2025",
+   "metric": "capitalized_software",
+   "period": "FY2025",
+   "value": 726000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_sbc_fy2025",
+   "metric": "share_based_compensation",
+   "period": "FY2025",
+   "value": 597000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_debt_2026q3",
+   "metric": "total_debt",
+   "period": "2026-09-30",
+   "value": 23938000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_restricted_cash_2026q3",
+   "metric": "restricted_cash",
+   "period": "2026-09-30",
+   "value": 564000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "nm_shares_diluted_q3_2026",
+   "metric": "shares_diluted",
+   "period": "Q3 2026",
+   "value": 876000000.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  }
+ ],
+ "consensus": [],
+ "guidance_track": [],
+ "notes": [
+  "nm IDENTITY Mastercard Inc (CIK 1141391), Class A common stock, NYSE, USD, FYE 12-31, 10-K/10-Q filer; IB contract id 38685693 (NYSE, MASTERCARD INC - A); other IB rows (MEXI, EBS, TSE CDR) are secondary listings; no ADR, no stop.",
+  "nm PRICE IB last 638.02 at 2026-10-30 23:47Z (feed status FROZEN = after close), prior close 635.70, +0.36%; 52w range 463.80-644.20 (a new 52w high at the last month bar: high 644.24); month of Oct 2026 closed 638.01 vs 551.47 end Sep (+15.7%), i.e. the price jumped around the 2026-10-29 results. IB has no split; quarterly dividend 0.87 USD (ex 2026-10-09, pay 2026-11-09), raised from 0.76 (about +14%).",
+  "nm AV RATE LIMIT 2026-11-01: INCOME_STATEMENT answered 'standard API rate limit is 25 requests per day'; probed once, BALANCE_SHEET, CASH_FLOW and EARNINGS_ESTIMATES not called, no retry. FMP statements/analyst denied on this plan (session_capabilities). Second statement source therefore missing: reconciliation is against the filings themselves.",
+  "nm RECONCILIATION FY2025 vs 10-K (reading/10k_full.txt): revenue 32,791, operating income 18,897, net income 14,968, diluted EPS 16.52, diluted shares 906, CFO 17,648: all equal the prefetch pf_ facts, no difference. SBC 597 (10-K) not in the prefetch: added as nm_sbc_fy2025. Capex: prefetch capex 489 = purchases of property and equipment only; capitalized software 726 is a separate investing line (total 1,215), so FCF defined as CFO minus capex(PP&E) is overstated by 726 versus CFO minus both lines.",
+  "nm RECONCILIATION Q3 2026 vs 10-Q filed 2026-10-29: revenue 9,807, operating income 5,862, net income 4,628 equal the prefetch quarter facts; diluted EPS 5.28 (Q3) and 14.59 (9M), diluted shares 876 (Q3) / 884 (9M); 9M CFO 11,859 vs 12,646 a year earlier (-6%, while 9M net income +18%: working-capital/settlement timing, check in the 10-Q liquidity section); 9M SBC 525; 9M capex PP&E 667 (vs 377) plus capitalized software 474 (vs 548). Q3 standalone CFO/capex not derived (needs the 1H 10-Q; gap).",
+  "nm ROIC CHECK prefetch roic_last 0.98 (average 0.87) uses invested capital = equity + debt - cash with FY2025 equity 7.7B: equity is depressed by buybacks (11.7B in 2025) and dividends, so ROIC near 100% reflects a tiny capital base, not a measured return on operating assets; restricted cash 564 (2026-09-30, 561 at year end) is outside cash 10,147; total debt rose to 23.9B at 2026-09-30 from 19.0B at year end (+4.9B) and cash fell to 10.1B from 10.6B, so invested capital is up sharply in 2026 and ROIC will decline mechanically; investments that are not cash, operating leases and settlement assets/obligations were not adjusted. Read as 'very high, capital-light', not as a precise figure.",
+  "nm OWN MULTIPLE HISTORY trailing GAAP diluted P/E (month-end price over trailing EPS interpolated between fiscal year EPS 6.37, 8.76, 10.22, 11.83, 13.89, 16.52 and TTM 19.11): low 27.5 (2026-05) median 35.6 high 43.5 (2022-01) now 33.4 (638.02 / 19.11; 38.6 on FY2025 EPS 16.52) years 2021-11 to 2026-10 sources nm_hist_ib, nm_price_ib, pf_eps_diluted_fy2020..fy2025, nm_eps_diluted_ttm_2026q3. Approximate (interpolated EPS, no quarterly EPS series). Today's multiple sits just under the 5-year median after a 16% month. Forward P/E: no usable post-results consensus (see CONSENSUS); on a pre-results web FY2027 EPS 22.51 it would be about 28, attributed and stale. Not a peak-earnings quarter x 4 case: net income rose each quarter, EPS Q3 5.28.",
+  "nm CONSENSUS none registered: AV EARNINGS_ESTIMATES not called (rate limit), FMP analyst denied. One WebSearch returned only pre-Q3 (before 2026-10-29) excerpts with disagreeing figures and no stated provider date: FY2026 EPS 19.52-19.61 (24 analysts, one page) and 20.55 (Chartmill, 47 analysts, 2026-10-18); FY2027 EPS 22.51 (Barchart) / 22.27 (Zacks); FY2026 revenue 37.0B (28 analysts); Q3 2026 EPS estimates 5.13 or 5.31 versus reported 5.28; Q2 2026 reported 5.04 vs 4.77 consensus. These are opinion/expectation excerpts, not citable rows; revenue and EPS consensus after the 2026-10-29 report remain a gap. Analyst price targets on those pages not used.",
+  "nm TRACK RECORD no guidance_track rows: the eight saved earnings releases (2025-01-30 to 2026-10-29) contain no outlook paragraph (grep for outlook/expect/low double digits found nothing); Mastercard gives its outlook on the earnings call (gather_documents' transcript). Reported revenue growth for context: Q2 2026 +14% (12% currency-neutral), Q3 2026 revenue 9,807 vs 8,602 (+14.0%). Guided midpoint vs actual not computable here; gap handed to gather_documents/analyst.",
+  "nm RESULTS DAY the Q3 2026 release (2026-10-29) and 10-Q are dated 2 days before as_of 2026-11-01 and are citable from 2026-10-31, so usable."
+ ],
+ "gaps": [
+  "Alpha Vantage statements and EARNINGS_ESTIMATES not retrieved (daily quota 25 reached: INCOME_STATEMENT rate-limited, rest not called); no second statement source, reconciliation done against the 10-K/10-Q only",
+  "No attributed post-Q3-results consensus (revenue, EPS, operating income) for 2026-2028; web excerpts pre-date results and conflict",
+  "No guidance track record: the saved releases contain no outlook; outlook is on the call",
+  "Q3 2026 standalone CFO and capex not derived (needs the 1H 10-Q)",
+  "Own multiple history is approximate (interpolated trailing EPS); forward P/E history unavailable"
+ ],
+ "stopped": [
+  "Alpha Vantage after one rate-limited probe (not retried); FMP statements/analyst skipped (denied on plan)"
+ ]
+}

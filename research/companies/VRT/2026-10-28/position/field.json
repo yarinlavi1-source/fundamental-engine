@@ -1,0 +1,162 @@
+{
+ "thesis_he": {
+  "bear": "השוק ממשיך לגדול לאורך זמן, אבל המחסור הוא של כל הספקים: Eaton, Schneider, Legrand ו-Delta מוסיפים כושר ייצור וקירור נוזלי, ועצירה בהשקעות של הלקוחות הופכת את הצבר לתחרות מחירים.",
+  "base": "Vertiv היא ספקית מובילה בשוק שמתרחב מהר (צבר כפול, הזמנות שעלו 81%), עם יתרון אמיתי אבל צר מול המתחרים: צומחת כמו Eaton באמריקה ומפסידה נתח באירופה.",
+  "bull": "Vertiv נשארת צוואר בקבוק בחשמל ובקירור לשרתי בינה מלאכותית, לוקחת את התוכן החדש של קירור נוזלי ומתח גבוה, והשירותים על הבסיס המותקן שומרים על כוח התמחור."
+ },
+ "potential": {
+  "market_direction": {
+   "reading": "The market VRT sells into is growing fast and is still accelerating in the customers' and suppliers' own numbers: VRT backlog 15.0bn at 2025-12-31 (+109% y/y) after Q4 2025 organic orders +252%; Eaton Electrical Global backlog +103% and Electrical Americas rolling orders +41% at June 2026; Schneider reports triple-digit data-center demand growth and a record backlog in Q3 2026; Legrand data centers 32% of sales growing >30% organic. The IEA projects global data-centre electricity demand to more than double to about 945 TWh by 2030 (search excerpt of the April 2025 report, not the report itself). Direction: up through 2027 on contracted orders; beyond that it depends on hyperscaler/AI capex, which no attributed supply-demand study retrieved here dates.",
+   "evidence_ids": [
+    "rp_k_backlog_fy25",
+    "rp_k_orders_q4_25",
+    "fd_etn_q2_2026",
+    "fd_su_q3_2026",
+    "fd_lr_h1_2026",
+    "fd_iea_energy_ai"
+   ]
+  },
+  "bottleneck_potential": {
+   "reading": "VRT is today one of the bottlenecks of AI data-center build-outs: book-to-bill about 2.9x in Q4 2025, backlog above one year of sales, Q2 2026 sales held back by supply-chain congestion and project phasing, capacity more than doubled since 2021 and FY2026 capex raised to about 4% of revenue. It is a shared bottleneck, not a unique one: Eaton, Schneider, Legrand and Delta report the same demand and are adding capacity and buying liquid-cooling capability (Schneider-Motivair, Eaton-Boyd Thermal). The scarcity lasts while customer capex grows faster than the combined additions of these five suppliers; no dated balance is evidenced.",
+   "evidence_ids": [
+    "rp_k_btb_q4_25",
+    "rp_k_backlog_fy25",
+    "pf_rel_20260729_1",
+    "rp_g_capex_fy26_jul",
+    "pf_10k_20260213",
+    "fd_etn_q2_2026",
+    "fd_su_q3_2026",
+    "fd_delta_2q26"
+   ]
+  },
+  "share_trajectory": {
+   "reading": "Mixed on numbers. Americas: VRT +21.1% organic in Q2 2026 vs Eaton Electrical Americas +18% organic (VRT slightly ahead; Eaton's segment includes non-data-center markets). Orders: VRT backlog +109% y/y at 2025-12-31 vs Eaton Electrical Americas backlog +33% at June 2026 (periods differ). Total growth: VRT +17.8% organic in Q2 2026 trailed Delta (revenue +48%) and Legrand's data-center business (>30% organic in H1). EMEA: VRT sales -8.4% in H1 2026 while Schneider grew +18.8% organic in Energy Management (Q3) and Legrand +9.8% organic group-wide: VRT is losing share in EMEA. No attributed market-share study was retrieved.",
+   "evidence_ids": [
+    "rp_seg_amer_q2_26",
+    "rp_orggr_q2_26",
+    "rp_seg_emea_h1_26",
+    "pf_rel_20260729_1",
+    "fd_etn_q2_2026",
+    "fd_delta_2q26",
+    "fd_lr_h1_2026",
+    "fd_su_q3_2026"
+   ]
+  },
+  "competitive_position": {
+   "reading": "Against Eaton: about equal (VRT Q2 2026 adjusted operating margin 22.6% vs Eaton Electrical Americas 27.5% and Electrical Global 19.8%; VRT grows slightly faster in the Americas; Eaton is far larger, 27.4bn of FY2025 revenue). Against Schneider: weaker in Europe (share loss) and in scale, comparable in data-center thermal now that Schneider owns Motivair. Against Legrand: stronger in power and thermal systems, Legrand stronger in white space (racks, PDUs) and with a similar margin (20.8% adjusted in H1). Against Delta: higher margin (VRT 22.6% adjusted vs Delta 16.7% operating) but Delta grows faster in AI rack power. Against JCI: VRT is the larger data-center thermal specialist; JCI grows +7.5% group-wide. Edge: the breadth of power plus thermal with a services base (20% of sales, +28.6%), not an exclusive technology.",
+   "evidence_ids": [
+    "pf_rel_20260729_1",
+    "rp_k_services_q2_26",
+    "fd_etn_q2_2026",
+    "fd_etn_cf",
+    "fd_su_q3_2026",
+    "fd_lr_h1_2026",
+    "fd_delta_2q26",
+    "fd_jci_cf"
+   ]
+  },
+  "threats": {
+   "reading": "1) Competitor capacity: every named competitor is adding data-center capacity and liquid cooling, so a pause in customer capex would turn the backlog into price competition. 2) Customer bargaining power: the 10-K says large hyperscale/neocloud customers are a material portion of the base and impose penalties and stricter delivery terms; concentration is not disclosed. 3) Technology shift: higher rack density moves content to liquid cooling and higher-voltage power, the entry path that Schneider (Motivair), Eaton (Boyd Thermal) and Delta bought or built. 4) In-sourcing or direct design by hyperscalers: hypothesis-level here, no evidence retrieved. 5) Growth increasingly bought (UIG 1.45bn plus up to 1.15bn earnout; PurgeRite 1.14bn).",
+   "evidence_ids": [
+    "fd_etn_q2_2026",
+    "fd_su_q3_2026",
+    "fd_delta_2q26",
+    "pf_10k_20260213",
+    "rp_8k_uig_20260902",
+    "rp_uig_earnout"
+   ]
+  }
+ },
+ "assessments": {
+  "moat": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "pf_rel_20260729_1",
+    "rp_k_services_q2_26",
+    "fd_etn_q2_2026",
+    "fd_lr_h1_2026"
+   ],
+   "note": "Scale in power plus thermal and an installed base that feeds services (20% of sales, growing faster than products); margins sit inside the named competitors' range (Eaton Electrical Americas 27.5%, Legrand 20.8%), so the advantage is real but not exclusive."
+  },
+  "pricing_power": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "pf_rel_20260729_1",
+    "rp_adjopm_q2_26",
+    "rp_g_adjopm_q3_26",
+    "fd_etn_q2_2026"
+   ],
+   "note": "Paid pricing in its own numbers (adjusted operating margin 22.6% in Q2 2026, +410 bp y/y, attributed to favorable price-cost incl. tariff countermeasures; Q3 guide 24-25%), but earned in a shortage shared with Eaton and Schneider; not shown through a downturn."
+  },
+  "customer_concentration": {
+   "assessment": "unknown",
+   "evidence_ids": [
+    "pf_10k_20260213"
+   ],
+   "note": "The 10-K says large customers comprise a material portion of the base and impose penalties, but names no 10% customer and gives no top-customer share."
+  },
+  "market_size": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "rp_k_backlog_fy25",
+    "fd_etn_q2_2026",
+    "fd_su_q3_2026",
+    "fd_iea_energy_ai"
+   ],
+   "note": "Backlog 15.0bn (+109%), competitors' data-center demand up double to triple digits; IEA projects data-centre electricity demand more than doubling by 2030 (search excerpt)."
+  },
+  "competition": {
+   "assessment": "weak",
+   "evidence_ids": [
+    "fd_etn_q2_2026",
+    "fd_su_q3_2026",
+    "fd_lr_h1_2026",
+    "fd_delta_2q26",
+    "rp_seg_emea_h1_26"
+   ],
+   "note": "Intense and intensifying: Eaton, Schneider, Legrand and Delta all report surging data-center demand and are adding capacity and liquid cooling; VRT lost share in EMEA (H1 2026 -8.4%) and trailed Delta and Legrand's data-center growth in Q2."
+  },
+  "management": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "rp_g_rev_fy26_jul",
+    "rp_g_rev_fy26_apr",
+    "rp_g_rev_fy26_feb",
+    "pf_operating_income_fy2022",
+    "pf_operating_income_fy2025",
+    "pf_rel_20260729_1"
+   ],
+   "note": "Operating turnaround delivered (operating margin 3.9% FY2022 -> 17.9% FY2025), guidance raised at every 2026 report and profit guidance beaten 7 of 7 quarters; the Q2 2026 revenue miss and the dropped backlog disclosure are the marks against."
+  },
+  "capital_allocation": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "pf_buybacks_fy2024",
+    "pf_shares_diluted_wavg_fy2025",
+    "nm_shares_diluted_wavg_q2_2026",
+    "rp_uig_upfront",
+    "rp_uig_earnout",
+    "rp_contcons_h1_26",
+    "pf_proxy_20260424"
+   ],
+   "note": "ROIC 30% in FY2025 (goodwill included) supports reinvestment, but growth is increasingly bought (PurgeRite 1.14bn, UIG 1.45bn + up to 1.15bn earnout, target economics undisclosed), earnout fair-value losses of 62m in H1 2026, no buybacks since FY2024 while diluted shares rise about 1% a year, and the bonus pays on adjusted FCF that customer advances flatter."
+  },
+  "technology_ai": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "pf_10k_20260213",
+    "fd_su_q3_2026",
+    "fd_etn_q2_2026",
+    "fd_delta_2q26"
+   ],
+   "note": "AI racks raise power and cooling content per MW (VRT's opportunity), but liquid cooling and high-voltage power are exactly where Schneider (Motivair), Eaton (Boyd Thermal) and Delta are entering."
+  }
+ },
+ "gaps": [
+  "No attributed market-share study (Omdia, Dell'Oro) retrieved: share readings are growth comparisons across different periods and segment definitions.",
+  "Forward P/E of the named competitors not retrieved (FMP ACCESS DENIED).",
+  "Hyperscaler in-sourcing or direct design of power/thermal: no evidence retrieved; hypothesis only.",
+  "Huawei, Stulz and Socomec are private: no numbers; Huawei's position in APAC/EMEA unmeasured.",
+  "Outside view (warning only, never a number): a 20% 5-year sales CAGR is reached by about 6% of companies of VRT's size class (Mauboussin/Callahan/Majd 2016)."
+ ]
+}

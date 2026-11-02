@@ -1,0 +1,562 @@
+{
+ "ticker": "VRT",
+ "as_of": "2026-10-28",
+ "stop": false,
+ "name": "Vertiv Holdings Co",
+ "cik": "1674101",
+ "currency": "USD",
+ "exchange": "NYSE",
+ "fiscal_year_end": "12-31",
+ "sic": 3679,
+ "sic_description": "Electronic Components, NEC",
+ "annual_form": "10-K",
+ "type": "mature_growth / stalwart (computed by classify_company from SEC companyfacts; the analyst confirms or overrides with reasons)",
+ "evidence_ids": [
+  "pf_10k_20260213"
+ ],
+ "resolved": true,
+ "filings": [
+  {
+   "form": "10-K",
+   "filed": "2026-02-13",
+   "report_date": "2025-12-31",
+   "accession": "0001674101-26-000008",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000167410126000008/vrt-20251231.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1674101/000167410126000008/",
+   "what": "annual report"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2026-07-29",
+   "report_date": "2026-06-30",
+   "accession": "0001628280-26-050609",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026050609/vrt-20260630.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026050609/",
+   "what": "quarterly report"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2026-04-22",
+   "report_date": "2026-03-31",
+   "accession": "0001628280-26-026556",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026026556/vrt-20260331.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026026556/",
+   "what": "quarterly report"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-07-29",
+   "report_date": "2026-07-29",
+   "accession": "0001628280-26-050323",
+   "items": "2.02,7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026050323/vrt-20260729.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026050323/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-04-22",
+   "report_date": "2026-04-22",
+   "accession": "0001628280-26-026379",
+   "items": "2.02,7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026026379/vrt-20260422.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026026379/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-02-11",
+   "report_date": "2026-02-11",
+   "accession": "0001674101-26-000006",
+   "items": "2.02,7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000167410126000006/vrt-20260211.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1674101/000167410126000006/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-10-22",
+   "report_date": "2025-10-22",
+   "accession": "0001674101-25-000020",
+   "items": "2.02,7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000167410125000020/vrt-20251022.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1674101/000167410125000020/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-07-30",
+   "report_date": "2025-07-30",
+   "accession": "0001674101-25-000006",
+   "items": "2.02,7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000167410125000006/vrt-20250730.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1674101/000167410125000006/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-04-23",
+   "report_date": "2025-04-23",
+   "accession": "0001628280-25-018915",
+   "items": "2.02,7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828025018915/vrt-20250423.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828025018915/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-02-12",
+   "report_date": "2025-02-12",
+   "accession": "0001628280-25-005006",
+   "items": "2.02,7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828025005006/vrt-20250212.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828025005006/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2024-10-23",
+   "report_date": "2024-10-23",
+   "accession": "0001628280-24-043343",
+   "items": "2.02,7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828024043343/vrt-20241023.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828024043343/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "DEF 14A",
+   "filed": "2026-04-24",
+   "report_date": "2026-06-17",
+   "accession": "0001193125-26-174898",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000119312526174898/d18663ddef14a.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1674101/000119312526174898/",
+   "what": "proxy statement"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-10-27",
+   "report_date": "2026-10-27",
+   "accession": "0001628280-26-067393",
+   "items": "2.01,7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026067393/vrt-20261027.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026067393/",
+   "what": "8-K since the annual report (items 2.01,7.01,9.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-10-26",
+   "report_date": "2026-10-26",
+   "accession": "0001628280-26-067127",
+   "items": "7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026067127/vrt-20261026.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026067127/",
+   "what": "8-K since the annual report (items 7.01,9.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-09-24",
+   "report_date": "2026-09-24",
+   "accession": "0001628280-26-063311",
+   "items": "7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026063311/vrt-20260924.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026063311/",
+   "what": "8-K since the annual report (items 7.01,9.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-09-02",
+   "report_date": "2026-09-01",
+   "accession": "0001193125-26-379306",
+   "items": "1.01,7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000119312526379306/d472406d8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1674101/000119312526379306/",
+   "what": "8-K since the annual report (items 1.01,7.01,9.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-09-02",
+   "report_date": "2026-09-02",
+   "accession": "0001628280-26-059961",
+   "items": "8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026059961/vrt-20260902.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026059961/",
+   "what": "8-K since the annual report (items 8.01,9.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-06-18",
+   "report_date": "2026-06-17",
+   "accession": "0001628280-26-044317",
+   "items": "5.07",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026044317/vrt-20260617.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026044317/",
+   "what": "8-K since the annual report (items 5.07)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-06-12",
+   "report_date": "2026-06-12",
+   "accession": "0001628280-26-042641",
+   "items": "7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026042641/vrt-20260612.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026042641/",
+   "what": "8-K since the annual report (items 7.01,9.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-06-03",
+   "report_date": "2026-06-03",
+   "accession": "0001628280-26-040031",
+   "items": "8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026040031/vrt-20260603.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026040031/",
+   "what": "8-K since the annual report (items 8.01,9.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-04-27",
+   "report_date": "2026-04-27",
+   "accession": "0001628280-26-027297",
+   "items": "7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026027297/vrt-20260427.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026027297/",
+   "what": "8-K since the annual report (items 7.01,9.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-04-13",
+   "report_date": "2026-04-13",
+   "accession": "0001628280-26-024824",
+   "items": "7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026024824/vrt-20260413.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026024824/",
+   "what": "8-K since the annual report (items 7.01,9.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-03-24",
+   "report_date": "2026-03-23",
+   "accession": "0001193125-26-120863",
+   "items": "7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000119312526120863/d94872d8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1674101/000119312526120863/",
+   "what": "8-K since the annual report (items 7.01,9.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-03-06",
+   "report_date": "2026-03-06",
+   "accession": "0001628280-26-015494",
+   "items": "8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026015494/vrt-20260306.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026015494/",
+   "what": "8-K since the annual report (items 8.01,9.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-03-03",
+   "report_date": "2026-03-03",
+   "accession": "0001193125-26-088484",
+   "items": "1.01,1.02,2.03,7.01,8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000119312526088484/d105148d8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1674101/000119312526088484/",
+   "what": "8-K since the annual report (items 1.01,1.02,2.03,7.01,8.01,9.01)"
+  }
+ ],
+ "computed_type": {
+  "stage": "mature_growth",
+  "lynch": "stalwart",
+  "reasons": [
+   "growth measured without years with a large acquisition: FY2021",
+   "revenue compounding 8\u201320% with established operations"
+  ],
+  "flags": [
+   {
+    "key": "acquisitions",
+    "he": "\u05d1-FY2021 \u05d4\u05d9\u05d9\u05ea\u05d4 \u05e8\u05db\u05d9\u05e9\u05d4 \u05d2\u05d3\u05d5\u05dc\u05d4 (\u05d4\u05de\u05d5\u05e0\u05d9\u05d8\u05d9\u05df \u05d1\u05de\u05d0\u05d6\u05df \u05e7\u05e4\u05e5). \u05d7\u05dc\u05e7 \u05de\u05d4\u05e6\u05de\u05d9\u05d7\u05d4 \u05e0\u05e7\u05e0\u05d4 \u05d5\u05dc\u05d0 \u05e0\u05d1\u05e0\u05d4 \u2014 \u05dc\u05db\u05df \u05d4\u05e1\u05d9\u05d5\u05d5\u05d2 \u05de\u05e1\u05ea\u05db\u05dc \u05e2\u05dc \u05d4\u05e6\u05de\u05d9\u05d7\u05d4 \u05d1\u05dc\u05d9 \u05d4\u05e9\u05e0\u05d9\u05dd \u05d4\u05d0\u05dc\u05d4. \u05e6\u05e8\u05d9\u05da \u05dc\u05d1\u05d3\u05d5\u05e7 \u05e9\u05d4\u05e8\u05db\u05d9\u05e9\u05d4 \u05de\u05d7\u05d6\u05d9\u05e8\u05d4 \u05d0\u05ea \u05d4\u05de\u05d7\u05d9\u05e8 \u05e9\u05e9\u05d5\u05dc\u05dd."
+   }
+  ]
+ },
+ "identity_check": {
+  "reporting_currency": "USD",
+  "monetary_units": {
+   "USD": 491
+  },
+  "currency_basis": "facts of filing 0001674101-26-000008 (10-K, filed 2026-02-13)",
+  "depositary_shares": false,
+  "status": "ok",
+  "reasons": []
+ },
+ "prefetch": {
+  "by": "scripts/ticker_prefetch.py",
+  "at_utc": "2026-10-28T08:16:29+00:00",
+  "to_complete_by_lanes": [
+   "security and share class, quote currency, IBKR contract: gather_numbers (it alone writes identity.json while the lanes run)",
+   "named competitors: gather_field writes them in gather/field.json competitors[] (the canonical list), never here"
+  ],
+  "phase1_identify_by": "workflow stage identify (2026-10-28)"
+ },
+ "security": {
+  "title": "Class A common stock, $0.0001 par value",
+  "share_class": "Class A (only listed class)",
+  "adr": false,
+  "adr_ratio": null,
+  "primary_listing": "NYSE: VRT",
+  "other_listings": [
+   "BMV Mexico (VRT, cross-listing)",
+   "Cboe Canada/TSE (VRT, CDR-type line, CAD)",
+   "SIX EBS (VRTUSD)"
+  ],
+  "ibkr_contract_id": 402783527,
+  "note": "Use NYSE primary line (USD); foreign lines are secondary quotes, not separate share classes.",
+  "sources": [
+   "src_10k_2025",
+   "src_ibkr_search"
+  ]
+ },
+ "shares_outstanding_cover": {
+  "value": 382598464,
+  "date": "2026-02-09",
+  "source": "src_10k_2025"
+ },
+ "quote_currency": "USD",
+ "sector": "Industrials",
+ "industry": "Electrical equipment: data-center critical digital infrastructure (power management, thermal management, IT management, services)",
+ "fiscal_calendar": {
+  "fiscal_year": "calendar year ending 31 December",
+  "quarters": [
+   "Q1 to 31 Mar",
+   "Q2 to 30 Jun",
+   "Q3 to 30 Sep",
+   "Q4 to 31 Dec"
+  ],
+  "source": "src_10k_2025"
+ },
+ "latest_annual": {
+  "form": "10-K",
+  "period": "2025-12-31",
+  "filed": "2026-02-13",
+  "url": "https://www.sec.gov/Archives/edgar/data/1674101/000167410126000008/vrt-20251231.htm"
+ },
+ "latest_quarterly": {
+  "form": "10-Q",
+  "period": "2026-06-30",
+  "filed": "2026-07-29",
+  "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026050609/vrt-20260630.htm"
+ },
+ "latest_citable_release": {
+  "form": "8-K 99.1",
+  "date": "2026-07-29",
+  "what": "Q2 2026 results",
+  "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026050323/q22026exhibit991vrt07292026.htm"
+ },
+ "latest_earnings_call": {
+  "date": "2026-07-29",
+  "what": "Q2 2026 call (citable)",
+  "next": {
+   "date": "2026-10-28",
+   "what": "Q3 2026 release before market open and call 11:00 ET (announced 2026-10-14)",
+   "citable_from": "2026-10-30",
+   "source": "src_ir_q3_date"
+  }
+ },
+ "results_day_gap": "Q3 2026 results released 2026-10-28 = as_of: not citable until 2026-10-30 (LAG_DAYS=2). Keep them out of drivers, events and key risk, or rerun with as_of 2026-10-30.",
+ "recent_events": [
+  {
+   "date": "2026-10-27",
+   "form": "8-K 2.01",
+   "what": "Closed acquisition of Utility Innovation Holdings (UIG; microgrid, behind-the-meter power for data centers): ~$1.45bn cash upfront plus up to $1.15bn EBITDA-based earnout in 2 tranches. Not citable until 2026-10-29.",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026067393/vrt-20261027.htm"
+  },
+  {
+   "date": "2026-10-26",
+   "form": "8-K 7.01",
+   "what": "Closed acquisition of King Environmental Services Ltd. Not citable until 2026-10-28.",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026067127/vrt-20261026.htm"
+  },
+  {
+   "date": "2026-09-02",
+   "form": "8-K 1.01",
+   "what": "UIG merger agreement dated 2026-09-01.",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000119312526379306/d472406d8k.htm"
+  },
+  {
+   "date": "2026-03-03",
+   "form": "8-K 1.01/1.02/2.03",
+   "what": "Financing agreements (new/terminated debt; direct financial obligation).",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000119312526088484/d105148d8k.htm"
+  }
+ ],
+ "company_type": {
+  "stage": "mature_growth",
+  "lynch": "stalwart (borderline fast grower)",
+  "computed_by": "classify_company on SEC companyfacts (prefetch/classify.json)",
+  "reasons": [
+   "Revenue 4.37bn (FY2020) -> 10.23bn (FY2025): CAGR ~18.5%; ~19.6% excluding FY2021 acquisition year; FY2025 +27.7%; TTM to Q2 2026 +26.2%, Q2 2026 YoY +24.1%.",
+   "Operating margin expanded from ~4-5% (FY2020-22) to 17.9% (FY2025) and 19.5% in Q2 2026: an operating turnaround completed in 2023, now a scaled grower.",
+   "Operating cash flow -153m (FY2022) -> 2.11bn (FY2025); capex 220m (~2% of revenue): cash-generative, capex-light.",
+   "Growth rate above 20% recently argues Lynch fast grower; computed label kept (stalwart) but analyst should test fast-grower framing and cyclical exposure to data-center capex (demand concentrated in hyperscale/colocation/AI build-outs).",
+   "Acquisitions: FY2021 (E+I Engineering) large; 2026 adds UIG (~$1.45bn + earnout) and King Environmental: organic vs acquired growth must be split."
+  ],
+  "questions_and_kpis": [
+   "organic vs acquired growth",
+   "orders, book-to-bill and backlog",
+   "adjusted operating margin and incremental margin",
+   "FCF conversion",
+   "ROIC vs cost of capital incl. 2026 acquisitions",
+   "cyclicality of data-center capex (is the run rate peak-cycle?)",
+   "leverage after UIG"
+  ],
+  "sources": [
+   "src_sec_companyfacts",
+   "src_10k_2025"
+  ]
+ },
+ "named_competitors": {
+  "source": "src_10k_2025 (Item 1 'Competition' and Item 1A risk factor)",
+  "large_scale_global": [
+   {
+    "name": "Schneider Electric S.E."
+   },
+   {
+    "name": "Eaton Corporation plc"
+   },
+   {
+    "name": "Legrand SA"
+   },
+   {
+    "name": "Huawei Investment & Holding Co., Ltd."
+   }
+  ],
+  "offering_specific_niche": [
+   {
+    "name": "Delta Electronics, Inc."
+   },
+   {
+    "name": "Stulz GmbH"
+   },
+   {
+    "name": "Johnson Controls International plc"
+   },
+   {
+    "name": "Socomec Holding SA"
+   }
+  ],
+  "why": "Named by Vertiv as competing directly in its markets (power, thermal, IT infrastructure for data centers) on reliability, quality, price, service and relationships; regional/country competitors also cited without names.",
+  "note": "gather_field keeps the canonical list in gather/field.json competitors[]."
+ },
+ "connector_log": [
+  {
+   "tool": "Alpha_Vantage COMPANY_OVERVIEW",
+   "result": "ACCESS DENIED (premium endpoint)",
+   "fallback": "SEC SIC 3679 + 10-K Item 1 for sector/industry",
+   "retry": false
+  },
+  {
+   "tool": "Alpha_Vantage EARNINGS_CALENDAR",
+   "result": "empty/unparseable payload",
+   "fallback": "issuer IR announcement via web search",
+   "retry": false
+  },
+  {
+   "tool": "Interactive_Brokers search_contracts",
+   "result": "ok: NYSE VRT conid 402783527 'VERTIV HOLDINGS CO-A'",
+   "read_only": true
+  }
+ ],
+ "sources": [
+  {
+   "id": "src_10k_2025",
+   "kind": "sec_filing",
+   "title": "Vertiv Holdings Co Form 10-K FY2025",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000167410126000008/vrt-20251231.htm",
+   "date": "2026-02-13",
+   "independent": false,
+   "publisher": "Vertiv Holdings Co / SEC EDGAR",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "src_sec_submissions",
+   "kind": "sec_filing",
+   "title": "SEC EDGAR submissions JSON, CIK 1674101",
+   "url": "https://data.sec.gov/submissions/CIK0001674101.json",
+   "date": "2026-10-28",
+   "independent": false,
+   "publisher": "SEC EDGAR",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "src_sec_companyfacts",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts, CIK 1674101",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001674101.json",
+   "date": "2026-10-28",
+   "independent": false,
+   "publisher": "SEC EDGAR",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "src_10q_q2_2026",
+   "kind": "sec_filing",
+   "title": "Vertiv 10-Q Q2 2026",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026050609/vrt-20260630.htm",
+   "date": "2026-07-29",
+   "independent": false,
+   "publisher": "Vertiv / SEC EDGAR",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "src_8k_uig_close",
+   "kind": "sec_filing",
+   "title": "Vertiv 8-K Item 2.01 UIG acquisition completed",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026067393/vrt-20261027.htm",
+   "date": "2026-10-27",
+   "independent": false,
+   "publisher": "Vertiv / SEC EDGAR",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "src_8k_king_close",
+   "kind": "sec_filing",
+   "title": "Vertiv 8-K Item 7.01 King Environmental acquisition closed",
+   "url": "https://www.sec.gov/Archives/edgar/data/1674101/000162828026067127/vrt-20261026.htm",
+   "date": "2026-10-26",
+   "independent": false,
+   "publisher": "Vertiv / SEC EDGAR",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "src_ir_q3_date",
+   "kind": "company_ir",
+   "title": "Vertiv Announces Date of Third Quarter 2026 Earnings Release and Conference Call",
+   "url": "https://investors.vertiv.com/news/news-details/2026/Vertiv-Announces-Date-of-Third-Quarter-2026-Earnings-Release-and-Conference-Call/",
+   "date": "2026-10-14",
+   "independent": false,
+   "publisher": "Vertiv IR",
+   "retrieval": "web_search_snippet",
+   "syndicated_from": null
+  },
+  {
+   "id": "src_ibkr_search",
+   "kind": "price",
+   "title": "IBKR search_contracts VRT",
+   "url": "connector:Interactive_Brokers.search_contracts",
+   "date": "2026-10-28",
+   "independent": true,
+   "publisher": "Interactive Brokers",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  }
+ ],
+ "ib_contract_id": 402783527
+}

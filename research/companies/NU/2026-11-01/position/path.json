@@ -1,0 +1,54 @@
+{
+ "_bank_treatment": "Nu is a bank: the 'roic' field carries the return on book equity (ROE, net income / average total equity, goodwill in), the capital a bank's growth needs being equity under its CET1 constraint. The economics formula D = E (1 - g/ROE), TV = E (1 - g/ROE)/(Ke - g) is exactly the justified P/E (and P/B = (ROE - g)/(Ke - g)) of a bank, so ROE vs cost of equity sets the multiple. Earnings are normalized: Q2 2026 IFRS tax 14.2% (175.2/1,236.3) vs FY2025 25.8% (996.7/3,868.4); H1 2026 ROE re-taxed at about 26-27% is about 29%, not the reported 31-33%.",
+ "_roe_record": "NI / avg equity: FY2023 1,030.5 / avg(4,890.8, 6,406.4) = 18.2%; FY2024 1,972.1 / avg(6,406.4, 7,646.3) = 28.1%; FY2025 2,871.7 / avg(7,646.3, 11,290.9) = 30.3%; H1 2026 annualized 3,865 / avg(11,290.9, 13,249.7) = 31.5% reported, about 29% tax-normalized. Incremental ROE: FY2023->FY2025 dNI 1,841 / dEquity 4,885 = 38%; FY2024->FY2025 900 / 3,645 = 25%; FY2025->H1 2026 (normalized, annualized) about 705 / 1,959 = 36%. Equity moves include BRL translation and 500m H1 2026 buybacks, so the incremental figures are noisy.",
+ "thesis_he": {
+  "bear": "מחזור אשראי בברזיל (פיגורים שיא של משקי בית, NPL 90+ של 6.9%) ומס CSLL גבוה יותר מורידים את התשואה על ההון לכ-17%, כמו ב-2023, ולכן המכפיל נמוך.",
+  "base": "התשואה על ההון יורדת מעט מכ-29% (אחרי נרמול המס) לכ-26% בגלל מס גבוה יותר ודרישת הון לצמיחה, ועדיין גבוהה בהרבה ממחיר ההון, ולכן מכפיל גבוה מוצדק.",
+  "bull": "Nu שומרת על תשואה על ההון של כ-32% גם אחרי מס רגיל, בזכות מרווח מותאם סיכון שיא, מימון זול מפיקדונות ומקסיקו שהופכת לרווחית."
+ },
+ "company_path": {
+  "metric": "eps",
+  "multiple": "forward_pe",
+  "scenarios": {
+   "bear": {
+    "multiple_from": "economics",
+    "roic": 0.17,
+    "justification": "unproven",
+    "reason_he": "Nu היא בנק, ולכן התשואה היא על ההון העצמי. בתרחיש הדובי מחזור האשראי בברזיל (פיגורי משקי בית בשיא 8.1%, NPL 90+ ב-6.9% ועלייה בשלב 2) והעלאת CSLL ל-17.5% ואחר כך 20% מחזירים את התשואה על ההון לרמת 2023 (18%) ומטה. התשואה הגבוהה עוד לא הוכחה לאורך מחזור אשראי מלא, ולכן המכפיל יורד.",
+    "source_tier": "own_history",
+    "evidence_ids": ["pf_net_income_fy2023", "pf_equity_fy2022", "pf_equity_fy2023", "dc_k_npl90", "mc_rt_default", "mc_bnam_fintech_tax"]
+   },
+   "base": {
+    "multiple_from": "economics",
+    "roic": 0.26,
+    "justification": "justified_high",
+    "reason_he": "Nu היא בנק, ולכן התשואה נמדדת על ההון העצמי (ROE). היא הייתה 28% ב-2024 ו-30% ב-2025. במחצית הראשונה של 2026 היא כ-29% אחרי נרמול המס הנמוך של הרבעון השני (14.2% מול 25.8% ב-2025). מס CSLL גבוה יותר וההון שהצמיחה דורשת (CET1 ירד מ-13.0% ל-11.9%) מורידים אותה לכ-26%. זה עדיין הרבה מעל מחיר ההון, ולכן מכפיל גבוה מוצדק שיורד ככל שהצמיחה מאטה.",
+    "source_tier": "own_history",
+    "evidence_ids": ["pf_net_income_fy2024", "pf_equity_fy2024", "nm_net_income_fy2025", "nm_equity_fy2025", "nm_net_income_2026h1", "nm_equity_2026q2", "nm_income_tax_2026q2", "nm_pretax_income_2026q2", "nm_income_tax_fy2025", "nm_pretax_income_fy2025", "dc_k_roe"]
+   },
+   "bull": {
+    "multiple_from": "economics",
+    "roic": 0.32,
+    "justification": "unproven",
+    "reason_he": "בתרחיש השורי Nu שומרת על תשואה על ההון של כ-32% גם במס רגיל. זה דורש שהמרווח המותאם לסיכון יישאר קרוב לשיא של 12.4%, שעלות הפיקדונות תישאר נמוכה (88% מהריבית הבין-בנקאית) ושמקסיקו, שהפכה לבנק באוגוסט 2026, תעבור מאיזון לרווח. התשואה השולית על ההון ב-2023 עד 2025 הייתה כ-38%, אבל זה עוד לא הוכח לאורך מחזור.",
+    "source_tier": "own_history",
+    "evidence_ids": ["dc_k_roe", "dc_k_ranim", "dc_k_cod", "nm_net_income_2026h1", "nm_equity_2026q2", "pf_net_income_fy2023", "pf_equity_fy2023", "mc_rt_nubank_mx"]
+   }
+  },
+  "own_history": {
+   "low": 10.3,
+   "median": 18.25,
+   "high": 20.6,
+   "years": "2023-2026",
+   "evidence_ids": ["nm_ib_hist", "nm_ib_price", "pf_eps_diluted_fy2024", "nm_eps_diluted_fy2025", "nm_cons_eps_fy2026", "nm_cons_eps_fy2027"]
+  }
+ },
+ "gaps": [
+  "Own forward P/E history is four points only: year-end close / next fiscal year EPS. Dec 2023 8.33 / FY2024 0.4034 = 20.6; Dec 2024 10.36 / FY2025 0.5846 = 17.7; Dec 2025 16.74 / FY2026 consensus 0.89 = 18.8; now 11.65 / FY2027 consensus 1.13 = 10.3. Realized GAAP EPS is mixed with consensus non-GAAP EPS for the last two points. The trailing P/E series in numbers.json (low 15.8, median 39.9, high 71.1) is inflated by lagged EPS while earnings grew, so it is not used. A secondary 5-year average forward P/E of 21.5x (TIKR) is not a registered source.",
+  "No named competitor (ITUB, INTR, MELI, BBVA, GFNORTE) has an evidenced forward P/E in field.json, so peers are omitted. The ROE of ITUB (24.3%) and INTR (16.3%) in Q2 2026 is context only and is not used as a driver.",
+  "Bank treatment: the roic field is ROE on total book equity with goodwill in. The goodwill amount was not read (gap), but it is small relative to $13.2bn of equity. The same ROE also sets the DCF terminal return and reinvestment. For a bank that reinvestment is retained equity under the CET1 constraint (11.9%, down 110bp in H1 2026).",
+  "EPS normalization belongs to the core part's drivers. The path uses the engine's EPS. If the core part annualizes Q2 2026 net income at the 14.2% tax rate, the path inherits peak earnings. The tax rate should be about 26-27% now and higher from 2028 (CSLL 20%).",
+  "Q3 2026 results (2026-11-12) and the Investor Day (2026-12-08) come after as_of. ROE by country and the cause of the low Q2 tax rate and the $1.1bn DTA build are not established.",
+  "BRL translation: equity and EPS are in USD, so a 10% BRL move changes ROE inputs and EPS about one-for-one. Incremental ROE figures include FX and buybacks ($500m in H1 2026)."
+ ]
+}

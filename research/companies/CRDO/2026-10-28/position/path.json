@@ -1,0 +1,81 @@
+{
+ "thesis_he": {
+  "bear": "ההון שהושקע ברכישות כמעט לא מרוויח, הרווח של היום הוא שיא לפני עיכול, ולכן המכפיל נמוך.",
+  "base": "תשואה על ההון של כ-22% אחרי הרכישה, מעל מחיר ההון, עם צמיחה שמאטה אחרי 2028: מכפיל שיורד בהדרגה.",
+  "bull": "האופטיקה מחזירה את התשואה על ההון לכ-40%, בין 26% אחרי הרכישה ל-72% לפניה: מכפיל גבוה שעדיין לא הוכח."
+ },
+ "company_path": {
+  "metric": "eps",
+  "multiple": "forward_pe",
+  "scenarios": {
+   "bear": {
+    "multiple_from": "economics",
+    "roic": 0.15,
+    "justification": "peak",
+    "reason_he": "בתרחיש הדובי הרווח של היום הוא שיא לפני עיכול: הלקוח הגדול מקטין הזמנות לכמה רבעונים (כמו ב-2024) ו-MaxLinear לוקחת חלק מדור ה-1.6T, ולכן שיעור הרווח אחרי תגמול במניות נשאר כ-22% (היום 25.2%). התשואה על ההון נמדדת על ההון של Credo אחרי רכישת DustPhotonics (כ-1.96 מיליארד דולר: הון עצמי פחות מזומן והשקעות): הכנסות של 12 החודשים האחרונים (1,591 מיליון דולר) כפול 22% הן כ-350 מיליון רווח תפעולי, כ-17.8% לפני מס וכ-15% אחרי מס. זה מעל מחיר ההון, אבל נמוך מהבסיס (כ-22%), ולכן המכפיל נמוך יותר.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "nm_revenue_ttm_q_2026_08_01",
+     "nm_equity_q_2026_08_01",
+     "nm_cash_q_2026_08_01",
+     "nm_short_term_investments_q_2026_08_01",
+     "nm_operating_income_q_2026_08_01",
+     "nm_revenue_q_2026_08_01",
+     "rp_dust_total"
+    ]
+   },
+   "base": {
+    "multiple_from": "economics",
+    "roic": 0.22,
+    "justification": "unproven",
+    "reason_he": "התשואה על ההון לפני מס ב-12 החודשים שאחרי רכישת DustPhotonics היא כ-26% (רווח תפעולי 504.9 מיליון דולר על הון מושקע של כ-1.96 מיליארד), וכ-22% אחרי מס בשיעור של כ-15%. זה מעל מחיר ההון, אבל ההון שנוסף ברכישה עוד לא הוכיח רווח, והצמיחה אחרי 2028 היא הנחה בלי תחזית של החברה או של אנליסטים, ולכן המכפיל לא מוכח.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "nm_operating_income_q_2026_08_01",
+     "nm_equity_q_2026_08_01",
+     "nm_cash_q_2026_08_01",
+     "nm_short_term_investments_q_2026_08_01",
+     "nm_goodwill_q_2026_08_01",
+     "nm_intangible_assets_q_2026_08_01",
+     "pf_history_companyfacts"
+    ]
+   },
+   "bull": {
+    "multiple_from": "economics",
+    "roic": 0.4,
+    "justification": "unproven",
+    "reason_he": "לפני הרכישה התשואה על ההון לפני מס הייתה כ-72% (שנת 2026: רווח תפעולי 445 מיליון דולר על הון מושקע של 620 מיליון). בתרחיש השורי האופטיקה מכניסה מעל 600 מיליון דולר והתשואה חוזרת לכ-40%, באמצע בין 26% אחרי הרכישה ל-72% לפניה. ההכנסות מאופטיקה עדיין לא דווחו בנפרד, ולכן המכפיל לא מוכח.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "nm_operating_income_fy_2026_05_02",
+     "nm_equity_q_2026_08_01",
+     "nm_cash_q_2026_08_01",
+     "nm_short_term_investments_q_2026_08_01",
+     "pf_history_companyfacts",
+     "rp_g_optical_fy27_floor"
+    ]
+   }
+  },
+  "own_history": {
+   "low": 51.6,
+   "median": 108.3,
+   "high": 424.3,
+   "years": "2025-06 to 2026-10 (TRAILING GAAP diluted P/E at 17 month-end closes; no point-in-time forward P/E history exists; the median and high are a tiny-earnings effect, not a norm; now 59.0 at 167.43)",
+   "evidence_ids": [
+    "nm_ib_history",
+    "nm_ib_price",
+    "nm_rel_20250602",
+    "nm_rel_20250903",
+    "nm_rel_20260302",
+    "nm_rel_20260601",
+    "ex_rel_20260901",
+    "pf_history_companyfacts"
+   ]
+  }
+ },
+ "gaps": [
+  "No named competitor (AVGO, MRVL, ALAB, MXL, APH) has an evidenced forward P/E (FMP quote ACCESS DENIED): no peers row.",
+  "Own history is trailing GAAP P/E over 17 months only; forward P/E history is not available point in time. Today's non-GAAP forward multiples on consensus (26.5x FY2027, 17.2x FY2028) exclude SBC and are not comparable.",
+  "ROIC variants are own arithmetic on reported balances (equity less cash and short-term investments, no debt); after-tax base uses a 15% rate (FY2026 effective rate 0.7% is not durable)."
+ ]
+}

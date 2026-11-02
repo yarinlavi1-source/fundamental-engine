@@ -1,0 +1,96 @@
+{
+ "thesis_he": {
+  "bear": "הרכישות הגדולות (Armis, Moveworks, Veza, כ-11 מיליארד דולר) לא מחזירות את ההשקעה, הרווחיות החשבונאית נשארת סביב 10% והתשואה על ההון יורדת לכ-15% - המכפיל יורד בהתאם.",
+  "base": "המנוע האורגני (מנויים, חידוש 98%) ממשיך לצמוח כמעט בלי הון נוסף, אבל הרכישות מדללות את התשואה; תשואה משולבת על ההון החדש כ-22% והמכפיל יורד בהדרגה ככל שהצמיחה מאטה.",
+  "bull": "ה-AI (יעד ACV של 1.7 מיליארד) והרכישות מתחילות להרוויח, הצמיחה נשמרת קרוב ל-20% כמעט בלי הון נוסף; תשואה על ההון החדש כ-45% - מכפיל גבוה יותר, אבל עוד לא הוכח."
+ },
+ "company_path": {
+  "metric": "eps",
+  "multiple": "forward_pe",
+  "scenarios": {
+   "bear": {
+    "multiple_from": "economics",
+    "roic": 0.15,
+    "justification": "justified_high",
+    "reason_he": "התשואה על ההון של החברה הייתה כ-14% בשנה האחרונה וכ-9% בממוצע (רווח תפעולי חשבונאי, כולל מוניטין). אם הרכישות של 2025-2026 (כ-11.2 מיליארד דולר, ממומנות בחלקן בחוב) לא מרוויחות והרווחיות החשבונאית נשארת ב-10% כפי שהונחה ל-2026, כל דולר של צמיחה עולה הרבה הון - ולכן מכפיל נמוך, עדיין מעל מחיר ההון.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "pf_operating_income_fy2025",
+     "pf_equity_fy2025",
+     "pf_cash_fy2025",
+     "pf_short_term_investments_fy2025",
+     "dc_bizcomb_cash_9m_2026",
+     "dc_armis_price",
+     "dc_moveworks_price",
+     "dc_veza_price",
+     "dc_g_fy_opm_gaap",
+     "dc_lt_debt_q3_2026",
+     "dc_st_debt_q3_2026"
+    ]
+   },
+   "base": {
+    "multiple_from": "economics",
+    "roic": 0.22,
+    "justification": "justified_high",
+    "reason_he": "ב-2022-2025 הרווח התפעולי אחרי מס עלה בכ-1.16 מיליארד דולר מול תוספת הון של כ-5.9 מיליארד - כ-20%; החישוב של המנוע לתשואה על ההון הנוסף (3 שנים) נותן 26.2%. הצמיחה האורגנית כמעט לא דורשת הון (השקעות כ-6.5% מההכנסות), אבל הרכישות של כ-11 מיליארד מדללות את התשואה; לכן 22%, בין 20% ל-26%, קרוב לצד הנמוך. אותו מספר משמש גם בהערכת התזרים.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "pf_operating_income_fy2022",
+     "pf_operating_income_fy2025",
+     "pf_equity_fy2022",
+     "pf_equity_fy2025",
+     "pf_cash_fy2022",
+     "pf_cash_fy2025",
+     "pf_short_term_investments_fy2022",
+     "pf_short_term_investments_fy2025",
+     "pf_long_term_debt_fy2022",
+     "pf_capex_fy2025",
+     "pf_revenue_fy2025",
+     "pf_net_income_fy2025",
+     "dc_g_fy_fcf_margin",
+     "dc_bizcomb_cash_9m_2026",
+     "dc_renewal_rate_q3_2026"
+    ]
+   },
+   "bull": {
+    "multiple_from": "economics",
+    "roic": 0.45,
+    "justification": "unproven",
+    "reason_he": "אם יעד ה-AI (ACV של 1.7 מיליארד דולר ל-2026, הועלה מ-1 מיליארד), הצריכה של סוכני AI (פי 13 השנה) והגידול בלקוחות הגדולים (680 מעל 5 מיליון דולר, מ-553) ממשיכים, והרכישות מתחילות להרוויח - הצמיחה נשארת סביב 20% כמעט בלי הון נוסף והתשואה על ההון החדש קרובה לזו של המנוע האורגני. זה עוד לא הוכח בדוחות.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "dc_ai_acv_target_2026",
+     "dc_ai_acv_start_2026_target",
+     "dc_k_agentic_consumption",
+     "dc_customers_5m_q3_2026",
+     "dc_customers_5m_q3_2025",
+     "dc_crpo_q3_2026_growth_cc",
+     "dc_g_fy_fcf_margin",
+     "pf_capex_fy2025",
+     "pf_revenue_fy2025"
+    ]
+   }
+  },
+  "own_history": {
+   "low": 75.8,
+   "median": 91.7,
+   "high": 243,
+   "years": "2022-2026",
+   "evidence_ids": [
+    "pf_eps_diluted_fy2022",
+    "pf_eps_diluted_fy2023",
+    "pf_eps_diluted_fy2024",
+    "pf_eps_diluted_fy2025",
+    "nm_ib_price"
+   ]
+  }
+ },
+ "gaps": [
+  "own_history is TRAILING GAAP P/E at calendar year-ends (Dec-2022 243, Dec-2023 83.9, Dec-2024 155, Dec-2025 91.7, now 75.8), not a forward P/E series; no monthly or forward GAAP P/E history was gathered.",
+  "The numbers lane's note gives median 123; the median of its own five values (75.8, 83.9, 91.7, 155, 243) is 91.7, used here. The 243 high is a small-denominator year (GAAP EPS 0.32 split-adjusted).",
+  "No named competitor (CRM, MSFT, WDAY, ORCL) has an evidenced forward P/E (field lane gap): peers omitted; not retrieved here because the economics path does not need it.",
+  "Incremental ROIC is hand-computed from companyfacts (after-tax rate assumed 21%; FY2025 long-term debt fact missing, taken as ~1.49bn like prior years); auto.json incremental_roic is null. ROIC uses GAAP operating income after SBC, goodwill IN invested capital.",
+  "FY2026 incremental return on the ~9.2bn of acquisitions cash paid in 9M 2026 is not yet observable (Armis closed 2026; GAAP operating margin guided down to 10% from 13.7%): the base 0.22 blends an organic return well above 1.0 with acquisitions earning near zero today; the split is judgement, not measured.",
+  "Q3 2026 release and 10-Q dated 2026-10-28 are citable from 2026-10-30, so usable at as_of 2026-11-01."
+ ]
+}

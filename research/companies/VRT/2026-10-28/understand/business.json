@@ -1,0 +1,206 @@
+{
+ "company": "VRT",
+ "as_of": "2026-10-28",
+ "stage": "understand",
+ "findings": [
+  {
+   "topic": "economic_identity",
+   "finding": "Vertiv sells data-center power and thermal equipment (products 79.6% of Q2 2026 sales, $2,606.4m) plus services and spares (20.4%, $667.9m, +28.6% y/y). Its own revenue identity is orders -> backlog -> shipments by region: backlog $15.0bn at 2025-12-31 (+109% y/y, 'majority firm', shipping within 12-18 months) against the FY2026 sales guide of $13.8-14.2bn. None of the ten registry models fits (econ-review: unclassified, not assessed; understand/econ_result.json), so no KPI identity was reconciled; the backlog-to-revenue conversion cannot be checked for 2026 because Q1/Q2 2026 orders and backlog were not disclosed in the releases or 10-Qs read.",
+   "evidence_ids": [
+    "pf_rel_20260729_1",
+    "pf_10k_20260213",
+    "rp_k_backlog_fy25",
+    "rp_k_services_q2_26",
+    "rp_k_products_q2_26",
+    "rp_g_rev_fy26_jul"
+   ]
+  },
+  {
+   "topic": "growth_split",
+   "finding": "FY2025 revenue +27.7% ($8,011.8m -> $10,229.9m), of which organic +26% (acquisitions and FX ~1.7 pts). Q2 2026 +24.1% reported = organic +17.8% + acquisitions $129.7m (~4.9 pts: Great Lakes, PurgeRite, BMarko, Strategic Thermal Labs, ThermoKey) + FX residual ~1.4 pts (derived). Tags: structural = data-center power/thermal content and installed-base services (services +28.6%); cyclical = hyperscaler/neocloud capex timing and backlog conversion (Q2 2026 slipped 2.3% below the guided midpoint on 'supply chain congestion and multi-phased project execution'); mix = Americas 63% of Q2 sales and 72% of segment profit while EMEA products grew +1.0% (H1 EMEA -8.4%); acquired = rising (UIG, King Environmental closed Oct 2026). Residual: the split of organic growth between volume and price is not disclosed (gap).",
+   "evidence_ids": [
+    "rp_rev_fy25",
+    "rp_rev_fy24",
+    "rp_orggr_fy25",
+    "rp_orggr_q2_26",
+    "rp_acqgr_q2_26",
+    "pf_rel_20260729_1",
+    "rp_seg_amer_q2_26",
+    "rp_seg_emea_h1_26"
+   ]
+  },
+  {
+   "topic": "demand_funding",
+   "finding": "Customers are large hyperscale/cloud (10-K examples Microsoft, AWS, Google Cloud), neocloud (CoreWeave, Nebius), colocation and comms operators; the 10-K says large customers 'comprise a material portion of our customer base' but names no 10% customer and gives no top-customer share (concentration unknown). Customers fund Vertiv, not the reverse: current deferred revenue (advances) doubled from $1,814.7m to $3,633.7m in H1 2026 (+$1,822.7m in CFO), which management tied to advance payments and milestone collections on large projects. No vendor financing, take-or-pay or customer equity stakes found in the documents read. Large projects require bid bonds and advance-payment/performance guarantees from banks (10-K risk factor). The neocloud customers' own funding chain was not examined (gap).",
+   "evidence_ids": [
+    "pf_10k_20260213",
+    "nm_deferred_revenue_q2_2026",
+    "nm_deferred_revenue_change_h1_2026",
+    "pf_10q_20260729",
+    "un_trefis_20260930"
+   ]
+  },
+  {
+   "topic": "economics_treatment",
+   "finding": "STRUCTURAL with a capex-cycle demand risk: operating margin rose every year 3.9% (FY2022) -> 12.7% -> 17.1% -> 17.9% (FY2025) -> 19.5% (Q2 2026) through a management turnaround, price-cost and productivity, and the expansion is broad, not only volume leverage: EMEA segment margin +3.8 pts on +1.7% sales, APAC +2.7 pts, Americas +3.6 pts in Q2 2026. Revenue has not fallen in any year since FY2020. The cyclical element is the demand: orders swing (Q4 2025 organic orders +252%, book-to-bill ~2.9x vs 1.2x in Q2 2025), and the FY2022 price-cost squeeze (margin 3.9%, CFO -$152.8m) shows margins can swing with input costs. The quarter review flags the Q2 2026 margin as above the 6-year history (peak_margin_run_rate, high): carried to the counter-thesis; a hyperscaler capex pause belongs in the bear case rather than in a mid-cycle margin built on the turnaround years.",
+   "evidence_ids": [
+    "pf_operating_income_fy2022",
+    "pf_revenue_fy2022",
+    "pf_cfo_fy2022",
+    "pf_operating_income_fy2025",
+    "pf_revenue_fy2025",
+    "pf_rel_20260729_1",
+    "rp_k_orders_q4_25",
+    "rp_k_btb_q4_25",
+    "rp_k_btb_q2_25"
+   ]
+  },
+  {
+   "topic": "guidance_track",
+   "finding": "Revenue: actual / guided midpoint over 9 periods (Q4 2024-Q2 2026, FY2024, FY2025) mean 1.040, but narrowing: Q4 2025 1.011, FY2025 1.003, Q1 2026 1.019, Q2 2026 0.977 (first miss, inside the range). Adjusted EPS beat the midpoint 7 of 7 quarters (1.05-1.28) and adjusted FCF beat by 14% (FY2024) and 26% (FY2025). FY2026 guidance was raised at each report (sales mid $13.5bn -> $13.75bn -> $14.0bn; adj EPS mid $6.02 -> $6.35 -> $6.70). Reading: profit guidance is a floor (conservative guider); revenue guidance is now about at midpoint, so a ratio near 1.00 (not 1.04) is the evidenced adjustment for the unreported remainder of FY2026 (implied Q4 2026 ~$4.33bn, derived). Q3 2026 results of 2026-10-28 are not citable until 2026-10-30.",
+   "evidence_ids": [
+    "rp_g_rev_fy26_jul",
+    "rp_g_rev_fy26_apr",
+    "rp_g_rev_fy26_feb",
+    "rp_g_adjeps_fy26_jul",
+    "rp_g_rev_q3_26",
+    "pf_rel_20260729_1",
+    "pf_rel_20260422_1",
+    "pf_rel_20260211_1",
+    "pf_rel_20251022_1",
+    "pf_rel_20250730_1",
+    "pf_rel_20250423_1",
+    "pf_rel_20250212_1",
+    "pf_rel_20241023_1"
+   ]
+  },
+  {
+   "topic": "earnings_quality",
+   "finding": "Q2 2026 net income $497.8m normalizes to $520.9m ($1.33 vs $1.27 per diluted share) after adding back the non-cash PurgeRite contingent-consideration loss ($28.8m pre-tax, 19.7% tax); the multi-year restructuring program is recurring and kept (credit $3.9m). Adjusted EPS excludes amortization of acquired intangibles ($151.3m in H1 2026) but not SBC; SBC is small (0.45% of FY2025 revenue). Cash is boosted by customer prepayments: H1 2026 CFO $1,866.6m includes +$1,822.7m from deferred revenue and -$1,048m inventories; without the advances H1 CFO would be ~$44m, so FY2026 FCF (guide $2.4-2.6bn) is pulled forward and reverses as projects ship. Restricted cash $65.0m is excluded from liquidity; spendable cash and short-term investments $3,110.6m vs debt $2,939.8m = net cash $170.8m at 2026-06-30, before UIG.",
+   "evidence_ids": [
+    "pf_10q_20260729",
+    "rp_contcons_h1_26",
+    "nm_cfo_h1_2026",
+    "nm_deferred_revenue_change_h1_2026",
+    "nm_restricted_cash_q2_2026",
+    "nm_cash_q2_2026",
+    "nm_st_investments_q2_2026",
+    "nm_long_term_debt_q2_2026",
+    "rp_g_adjfcf_fy26_jul",
+    "pf_sbc_fy2025"
+   ]
+  },
+  {
+   "topic": "forensics",
+   "finding": "Piotroski 6 of 8 computable (mixed: current ratio fell and new shares were issued); Altman Z'' 3.08 (safe, above 2.6); Beneish not computable from the prefetched lines (gap); Rule of 40 not applicable. ROIC (NOPAT / equity + debt - cash): 7.4% FY2020, 6.0%, 3.5%, 17.7%, 21.5%, 30.4% FY2025, with goodwill from acquisitions included; incremental ROIC FY2020-FY2025 43% and FY2023-FY2025 68% (NOPAT +$648m on invested capital +$951m, derived from prefetch/forensic.json). ROIC excludes operating leases and does not subtract $99.5m of T-bills (small effects).",
+   "evidence_ids": [
+    "pf_cf_20260213",
+    "pf_10k_20260213",
+    "pf_equity_fy2025",
+    "pf_long_term_debt_fy2025",
+    "pf_cash_fy2025"
+   ]
+  },
+  {
+   "topic": "moat",
+   "finding": "Evidenced sources: scale and breadth in power plus thermal with an installed base that generates services and spares (20% of sales, growing faster than products), and pricing (favorable price-cost incl. tariff countermeasures; adjusted operating margin 22.6%, +410 bp). Against named competitors the edge is not exclusive: VRT Americas segment margin 27.6% ~ Eaton Electrical Americas 27.5%; VRT Americas organic +21.1% vs Eaton Electrical Americas +18% (VRT slightly ahead); on total growth VRT (+17.8% organic Q2) trailed Delta (revenue +48%) and Legrand's data-center business (>30% organic H1); VRT is losing share in EMEA (H1 -8.4%) while Schneider Europe grew +8.6% organic in Q3 and Legrand +9.8% group organic. All named competitors are adding capacity and buying liquid cooling (Schneider-Motivair, Eaton-Boyd Thermal). Reading: a real but narrow advantage; excess returns should fade unless the services base and AI-rack design wins keep pricing above Eaton/Schneider.",
+   "evidence_ids": [
+    "pf_rel_20260729_1",
+    "rp_k_services_q2_26",
+    "fd_etn_q2_2026",
+    "fd_su_q3_2026",
+    "fd_lr_h1_2026",
+    "fd_delta_2q26"
+   ]
+  },
+  {
+   "topic": "management_capital_allocation",
+   "finding": "Promises vs delivery: FY2025 and FY2026 guidance raised at every report and delivered on profit; capacity more than doubled since 2021, FY2026 capex ~4% of revenue (high end). Incentives (2025 VIP) pay on adjusted operating profit and adjusted FCF, the latter flattered in 2026 by customer advances; long-term equity includes options; no hedging/pledging; ownership guidelines with a no-sale rule. Capital: $599.9m buyback in FY2024, none in 2025-H1 2026 ($2.4bn of the $3.0bn authorization left to 2027-12-31); diluted shares drifted 386.3m (FY2024) -> 390.7m (FY2025) -> 392.7m (Q2 2026), ~+1%/yr dilution against SBC of $45.9m. Acquisitions accelerated: Great Lakes $203.5m (2025-08), PurgeRite $1,138.3m (2025-12, plus up to $250m earnout), three deals $331.8m (Q2 2026), UIG $1.45bn upfront plus up to $1.15bn contingent cash (agreement 2026-09-01, closed 2026-10-27; target revenue/EBITDA not disclosed), King Environmental (2026-10-26, terms not read). Financing: investment grade since Feb 2026 (Baa3/BBB-), $2.1bn senior notes 2036-2066 replaced the term loan, $850m 4.125% secured notes due 2028, $2.5bn revolver; UIG funded from existing resources turns the $171m net cash into net debt (size depends on H2 cash flow: gap).",
+   "evidence_ids": [
+    "pf_proxy_20260424",
+    "rp_buyback_avail_q2_26",
+    "pf_buybacks_fy2024",
+    "pf_shares_diluted_wavg_fy2024",
+    "pf_shares_diluted_wavg_fy2025",
+    "nm_shares_diluted_wavg_q2_2026",
+    "rp_acq_q2_26",
+    "rp_uig_upfront",
+    "rp_uig_earnout",
+    "rp_8k_uig_20260902",
+    "rp_snotes_2026",
+    "rp_ssn2028_q2_26",
+    "pf_10q_20260729",
+    "pf_10k_20260213"
+   ]
+  },
+  {
+   "topic": "company_type",
+   "finding": "Computed type mature_growth / stalwart (6-year CAGR 18.5% ex the FY2021 acquisition year). Confirmed as mature_growth for the valuation lens (a $10bn+ revenue company with established, investment-grade operations), but the Lynch label is overridden to fast_grower: FY2025 organic growth +26%, FY2026 guide +35-39% reported (+30-32% organic), Q3 2026 guide +34-36% organic. The type sets the questions (backlog conversion, acquired vs organic growth, ROIC after acquisitions, peak margins), never a number.",
+   "evidence_ids": [
+    "rp_orggr_fy25",
+    "rp_g_orggr_fy26_jul",
+    "rp_g_orggr_q3_26",
+    "rp_g_rev_fy26_jul"
+   ]
+  },
+  {
+   "topic": "outside_view_warning",
+   "finding": "Warning row only (base_rates.outside_view, Mauboussin/Callahan/Majd 2016, $7-12bn sales class in 2015 dollars): a 5-year nominal sales CAGR of 20% (17.2% real) was reached by ~5.8% of the class and a 3-year 25% CAGR by ~5.7% (class medians ~3.5-3.7% real). It never sets, caps or fades a number; it marks that a forecast in that range sits in the class's tail.",
+   "evidence_ids": [
+    "pf_revenue_fy2025"
+   ]
+  }
+ ],
+ "flags": [
+  "peak_margin_run_rate (quarter review, high): Q2 2026 operating margin 19.5% vs a 6-year median of 12.7%; quarterly profit x4 is a peak, not a through-cycle run rate.",
+  "profit_concentration (quarter review, medium): Americas 72% of Q2 2026 segment operating profit.",
+  "customer_advances_inflate_cash: H1 2026 CFO includes +$1,822.7m of deferred revenue; without it ~$44m; FY2026 FCF guide is pulled forward and reverses as projects ship.",
+  "incentive_on_adjusted_fcf: the annual incentive pays on adjusted FCF, which customer advances flatter in 2026.",
+  "backlog_disclosure_dropped: 2026 releases stopped giving orders, backlog and book-to-bill (last figure $15.0bn at 2025-12-31); conversion and order momentum are unobservable.",
+  "revenue_guidance_beats_narrowing: actual/guided midpoint 1.011, 1.003, 1.019, then 0.977 (Q2 2026 miss).",
+  "acquisitions (classify flag): growth increasingly bought (PurgeRite $1.14bn, UIG $1.45bn + up to $1.15bn earnout, King Environmental, five smaller deals); acquired ~4.9 pts of Q2 2026 growth; UIG target economics undisclosed; earnout liabilities $234.6m rising (fair-value losses $62.0m in H1 2026).",
+  "net_cash_to_net_debt: UIG funded from existing resources after the last balance sheet; leverage after acquisitions not yet filed.",
+  "emea_share_loss: EMEA sales -8.4% in H1 2026 while Schneider and Legrand grew organically.",
+  "competitor_capacity: Eaton, Schneider, Legrand and Delta all report surging data-center demand and are adding capacity and liquid cooling; the scarcity premium is shared and can turn to price competition if hyperscaler capex pauses.",
+  "customer_bargaining_power: 10-K: large hyperscale/neocloud customers impose penalties and stricter delivery terms; concentration undisclosed.",
+  "piotroski_mixed: 6/8 (current ratio down, share count up).",
+  "dilution_without_buybacks: diluted shares +~1%/yr since FY2024 with no buybacks since FY2024.",
+  "outside_view_tail: a 20% 5-year CAGR is reached by ~6% of companies of this size (warning only)."
+ ],
+ "economics": {
+  "treatment": "structural",
+  "reason": "Margins rose every year since FY2022 through turnaround, price-cost and productivity, and expanded in every segment including shrinking EMEA, so the margin is not only volume leverage at a cyclical peak; revenue never fell since FY2020. The demand side is capex-cycle exposed (orders +252% in Q4 2025, book-to-bill 2.9x vs 1.2x, a Q2 2026 slip): that belongs in the bear scenario (capex pause, backlog cancellation) and in the peak_margin flag, not in a mid-cycle margin anchored on the FY2020-22 turnaround years.",
+  "evidence_ids": [
+   "pf_operating_income_fy2022",
+   "pf_operating_income_fy2025",
+   "pf_rel_20260729_1",
+   "rp_k_orders_q4_25",
+   "rp_k_btb_q4_25",
+   "rp_k_btb_q2_25"
+  ]
+ },
+ "type": {
+  "stage": "mature_growth",
+  "lynch": "fast_grower",
+  "override_reason": "Computed stalwart rests on an 18.5% 6-year CAGR; current organic growth is +26% (FY2025) and guided +30-32% (FY2026) and +34-36% (Q3 2026), above the fast-grower line; the stage stays mature_growth (established, investment-grade, $10bn+ revenue).",
+  "evidence_ids": [
+   "rp_orggr_fy25",
+   "rp_g_orggr_fy26_jul",
+   "rp_g_orggr_q3_26"
+  ]
+ },
+ "reviews": {
+  "econ": "understand/econ_result.json (unclassified: no registry model fits a data-center equipment maker; not assessed)",
+  "quarter": "understand/quarter_result.json from understand/quarter_case.json (Q2 2026)"
+ },
+ "gaps": [
+  "Q1/Q2 2026 orders, backlog and book-to-bill: not disclosed in the releases/10-Qs; Q2 call transcript not obtained (AV rate limit; secondary summary has none). Backlog conversion into 2026-27 revenue cannot be checked.",
+  "Customer concentration and end-market split (data center vs comms vs C&I) not disclosed; the funding chain of neocloud customers not examined.",
+  "Price vs volume split of organic growth not disclosed.",
+  "UIG target revenue/EBITDA, King Environmental terms and the post-acquisition net debt: closing 8-Ks of 2026-10-26/27 not citable until 2026-10-28/29 or not read.",
+  "Beneish M-score not computed (inputs missing in the prefetch lines).",
+  "No economic-model identity in the registry fits Vertiv (econ-review unclassified); the backlog -> shipments identity is described but not reconciled.",
+  "Q3 2026 results and updated guidance (2026-10-28) not citable until 2026-10-30; a rerun with as_of 2026-10-30 would add the Q3 actual vs guide and fresh guidance.",
+  "Acquisition returns (ROIC of PurgeRite and the 2026 deals) not separable from the consolidated figures."
+ ]
+}

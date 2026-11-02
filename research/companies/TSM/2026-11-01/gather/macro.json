@@ -1,0 +1,424 @@
+{
+ "lane": "macro",
+ "sources": [
+  {
+   "id": "mc_6k_20261015",
+   "kind": "release",
+   "title": "TSMC 3Q26 earnings release (6-K Ex 99.1) and 4Q26 outlook",
+   "url": "https://www.sec.gov/Archives/edgar/data/0001046179/000104617926000726/a3q26e_withguidancexfinal.htm",
+   "date": "2026-10-15",
+   "independent": true,
+   "publisher": "TSMC",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_6k_20261022",
+   "kind": "sec_filing",
+   "title": "TSMC 6-K 2026-10-22: month-end shareholdings, appropriations (routine)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000728/tsm-monthend6kx20261022.htm",
+   "date": "2026-10-22",
+   "independent": true,
+   "publisher": "TSMC",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_press_anthropic",
+   "kind": "press",
+   "title": "Anthropic S-1 flags Taiwan/TSMC concentration (secondary report; lead, original filing not read)",
+   "url": "https://www.kucoin.com/news/flash/anthropic-warns-of-ai-chip-supply-risks-due-to-tsmc-s-taiwan-concentration",
+   "date": "2026-10-26",
+   "independent": true,
+   "publisher": "KuCoin News",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_press_tradingkey",
+   "kind": "press",
+   "title": "TSM opened down 3.67% on Oct 30 (market mover note)",
+   "url": "https://www.tradingkey.com/news/market-movers/262260899-market-movers-tsm-20261030",
+   "date": "2026-10-30",
+   "independent": true,
+   "publisher": "TradingKey",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_press_nanjing",
+   "kind": "press",
+   "title": "US grants TSMC annual export license for Nanjing fab (Reuters-based report)",
+   "url": "https://finance.yahoo.com/news/tsmc-secures-one-us-export-023117235.html",
+   "date": "2026-01-01",
+   "independent": false,
+   "publisher": "Yahoo Finance",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_press_232_taiwan",
+   "kind": "press",
+   "title": "US-Taiwan trade deal: tariff relief for chips from TSMC",
+   "url": "https://www.cnbc.com/2026/01/15/us-taiwan-chips-deal-china.html",
+   "date": "2026-01-15",
+   "independent": true,
+   "publisher": "CNBC",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_press_232_proc",
+   "kind": "press",
+   "title": "US Section 232 proclamation imposes 25% tariff on certain semiconductors",
+   "url": "https://taxnews.ey.com/news/2026-0209-us-section-232-proclamation-imposes-25-percent-tariff-on-certain-semiconductors",
+   "date": "2026-02-09",
+   "independent": true,
+   "publisher": "EY Tax News",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  }
+ ],
+ "facts": [
+  {
+   "id": "mc_rev_north_america_fy25",
+   "metric": "revenue_by_region:North America",
+   "period": "FY2025",
+   "value": 2875270,
+   "unit": "NT$ million",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_revpct_north_america_fy25",
+   "metric": "revenue_share_by_region:North America",
+   "period": "FY2025",
+   "value": 0.75,
+   "unit": "share of net revenue (customer HQ basis)",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_north_america_fy24",
+   "metric": "revenue_by_region:North America",
+   "period": "FY2024",
+   "value": 2031326,
+   "unit": "NT$ million",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_asia_pacific_fy25",
+   "metric": "revenue_by_region:Asia Pacific",
+   "period": "FY2025",
+   "value": 329269,
+   "unit": "NT$ million",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_revpct_asia_pacific_fy25",
+   "metric": "revenue_share_by_region:Asia Pacific",
+   "period": "FY2025",
+   "value": 0.09,
+   "unit": "share of net revenue (customer HQ basis)",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_asia_pacific_fy24",
+   "metric": "revenue_by_region:Asia Pacific",
+   "period": "FY2024",
+   "value": 284308,
+   "unit": "NT$ million",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_china_fy25",
+   "metric": "revenue_by_region:China",
+   "period": "FY2025",
+   "value": 327503,
+   "unit": "NT$ million",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_revpct_china_fy25",
+   "metric": "revenue_share_by_region:China",
+   "period": "FY2025",
+   "value": 0.09,
+   "unit": "share of net revenue (customer HQ basis)",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_china_fy24",
+   "metric": "revenue_by_region:China",
+   "period": "FY2024",
+   "value": 331673,
+   "unit": "NT$ million",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_japan_fy25",
+   "metric": "revenue_by_region:Japan",
+   "period": "FY2025",
+   "value": 150428,
+   "unit": "NT$ million",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_revpct_japan_fy25",
+   "metric": "revenue_share_by_region:Japan",
+   "period": "FY2025",
+   "value": 0.04,
+   "unit": "share of net revenue (customer HQ basis)",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_japan_fy24",
+   "metric": "revenue_by_region:Japan",
+   "period": "FY2024",
+   "value": 144240,
+   "unit": "NT$ million",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_emea_fy25",
+   "metric": "revenue_by_region:EMEA",
+   "period": "FY2025",
+   "value": 126584,
+   "unit": "NT$ million",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_revpct_emea_fy25",
+   "metric": "revenue_share_by_region:EMEA",
+   "period": "FY2025",
+   "value": 0.03,
+   "unit": "share of net revenue (customer HQ basis)",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_emea_fy24",
+   "metric": "revenue_by_region:EMEA",
+   "period": "FY2024",
+   "value": 102761,
+   "unit": "NT$ million",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_nca_taiwan_fy25",
+   "metric": "long_lived_assets:Taiwan",
+   "period": "FY2025",
+   "value": 3102343.0,
+   "unit": "NT$ million (noncurrent assets: PP&E, ROU, intangibles, other)",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_nca_taiwan_fy24",
+   "metric": "long_lived_assets:Taiwan",
+   "period": "FY2024",
+   "value": 2613112.2,
+   "unit": "NT$ million (noncurrent assets: PP&E, ROU, intangibles, other)",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_nca_united_states_fy25",
+   "metric": "long_lived_assets:United States",
+   "period": "FY2025",
+   "value": 540057.4,
+   "unit": "NT$ million (noncurrent assets: PP&E, ROU, intangibles, other)",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_nca_united_states_fy24",
+   "metric": "long_lived_assets:United States",
+   "period": "FY2024",
+   "value": 541836.3,
+   "unit": "NT$ million (noncurrent assets: PP&E, ROU, intangibles, other)",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_nca_japan_fy25",
+   "metric": "long_lived_assets:Japan",
+   "period": "FY2025",
+   "value": 117403.2,
+   "unit": "NT$ million (noncurrent assets: PP&E, ROU, intangibles, other)",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_nca_japan_fy24",
+   "metric": "long_lived_assets:Japan",
+   "period": "FY2024",
+   "value": 126600.6,
+   "unit": "NT$ million (noncurrent assets: PP&E, ROU, intangibles, other)",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_nca_china_fy25",
+   "metric": "long_lived_assets:China",
+   "period": "FY2025",
+   "value": 65019.9,
+   "unit": "NT$ million (noncurrent assets: PP&E, ROU, intangibles, other)",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_nca_china_fy24",
+   "metric": "long_lived_assets:China",
+   "period": "FY2024",
+   "value": 82405.8,
+   "unit": "NT$ million (noncurrent assets: PP&E, ROU, intangibles, other)",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_nca_emea_fy25",
+   "metric": "long_lived_assets:EMEA",
+   "period": "FY2025",
+   "value": 51515.1,
+   "unit": "NT$ million (noncurrent assets: PP&E, ROU, intangibles, other)",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_nca_emea_fy24",
+   "metric": "long_lived_assets:EMEA",
+   "period": "FY2024",
+   "value": 19150.1,
+   "unit": "NT$ million (noncurrent assets: PP&E, ROU, intangibles, other)",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_nca_total_fy25",
+   "metric": "long_lived_assets:total",
+   "period": "FY2025",
+   "value": 3876339.8,
+   "unit": "NT$ million",
+   "source_ids": [
+    "pf_10k_20260416"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  }
+ ],
+ "notes": [
+  "mc GEOGRAPHY revenue is classified by customer headquarters, not shipment or end-demand (20-F Item 4): North America 75% of FY2025 net revenue (NT$2,875,270m, +42% y/y), Asia Pacific 9%, China 9% (NT$327,503m, down from 11%), Japan 4%, EMEA 3%. Noncurrent assets FY2025: Taiwan NT$3,102,343m = 80.0% of NT$3,876,340m, US 13.9%, Japan 3.0%, China 1.7%, EMEA 1.3% (note 'Geographic information'). [pf_10k_20260416]",
+  "mc EXPOSURE Taiwan concentration: 20-F risk factor says the majority of principal production facilities and executive officers are in the R.O.C.; 80% of noncurrent assets are in Taiwan; fabs per Item 4: Taiwan (Central and Southern Science Parks), 2 in the US (Arizona, Washington State), 1 Shanghai, 1 Nanjing, 1 Japan (Kumamoto). Named perils: military conflict/outbreak of war, earthquakes (losses NT$3.0bn Q2 2024 and NT$5.3bn Q1 2025 net of insurance), typhoon, drought, electricity and water shortage. Size: the evidenced exposure is ~80% of long-lived assets; revenue exposure to a Taiwan production outage is effectively the Taiwan-fabbed share of wafers, which the filing does not disclose (gap, hypothesis-sized). [pf_10k_20260416]",
+  "mc EXPOSURE US export controls (China): Oct 2022/Oct 2023/Jan 2025 EAR rules; license may be needed for 16nm-and-below shipments to specified destinations. Nanjing fab (Fab 16) lost its VEU in Dec 2025 and now runs on an annual US export license, no assurance of renewal; the company says results have not been materially affected so far. China-HQ customers were 9% of FY2025 revenue (NT$327.5bn) and China noncurrent assets 1.7% (NT$65.0bn), which bounds the sized exposure; a Nanjing share of ~2.4% of 2024 revenue appears in one press lead only (unconfirmed). Chinese blocking statute (Jan 2021) is a counter-risk. [pf_10k_20260416; mc_press_nanjing]",
+  "mc EXPOSURE US tariffs: 20-F states IEEPA tariffs were declared unlawful by the Supreme Court in Feb 2026, replaced by a Section 122 tariff; USTR opened two Section 301 investigations (March 2026) including Taiwan; Section 232 on semiconductors concluded Dec 2025 with a 25% ad valorem tariff on certain advanced computing chips meeting performance thresholds unless imported for designated US use, with a signal of broader tariffs and an offset program; Jan 2026 US-Taiwan agreement caps reciprocal rate at 15% and grants preferential Section 232 treatment to Taiwanese producers investing in US capacity, details unclear after the court ruling. Exposed base: North America customers are 75% of revenue, but wafers are mostly imported by customers/ODMs, so the incidence on TSMC is mainly demand and price negotiation, not a direct duty (hypothesis; share not disclosed). Press lead: investment pledge of $250bn plus $250bn credit guarantees and a quota multiple of planned US capacity that is duty-free during construction (sources disagree on 1.5x vs 2.5x; check Commerce text). [pf_10k_20260416; mc_press_232_taiwan; mc_press_232_proc]",
+  "mc EXPOSURE Customer concentration with US export-policy overlap: FY2025 customers above 10%: Customer A 19% (NT$726,974m), Customer B 17% (NT$645,179m); in 2024 A 12% and B 22%. Any export rule or tariff on advanced AI chips that cuts these two customers' demand hits ~36% of revenue (reported). [pf_10k_20260416]",
+  "mc EXPOSURE Overseas expansion cost and funding: Arizona direct funding agreement with the US Dept of Commerce of up to US$6.6bn plus up to US$5bn government loans (Nov 2024); 2026 capex guidance raised to US$60-64bn (press, from the Oct 2026 call, from US$52-56bn); overseas fabs carry cost and tariff-offset implications for margin (hypothesis, not sized here). [pf_10k_20260416; mc_6k_20261015]",
+  "mc EXPOSURE Energy/water and carbon: Taiwan power and water supply constraints named in Item 4; Taiwan carbon fee payable from 2025 for fabs above the threshold. Not sized in the filing (gap). [pf_10k_20260416]",
+  "mc NEWS 2026-10-15 3Q26 results (6-K): revenue NT$1,494.24bn (+50.9% y/y, +17.6% q/q), US$46.72bn vs guidance US$44.6-45.8bn, gross margin 66.4%, operating margin 58.7%, EPS NT$29.43 (US$4.60 per ADR unit). 2nm 8% of wafer revenue, 3nm 33%, 5nm 28%, 7nm 10%; advanced nodes 79%. 4Q26 guidance: revenue US$52.3-54.3bn at 31.8 NT$/US$, gross margin 65-67%, operating margin 56.5-58.5%. Management expectation, not fact. [mc_6k_20261015]",
+  "mc NEWS 2026-10-15 press leads on the call: 2026 capex raised to US$60-64bn from US$52-56bn; US$40.64bn spent through September; capex 2026-2028 to be significantly higher than the prior three years; Arizona commitment reported as additional US$100bn on top of US$165bn (one source says ~US$265bn total; sources disagree). Unconfirmed at the transcript; gather_documents owns the call. [search leads: fool.com transcript, convergedigest.com]",
+  "mc NEWS 2026-10-22 6-K: routine month-end report (September shareholdings of directors/officers, appropriations, bonds); nothing material seen in the first page read. 2026-10-08 6-K: monthly revenue report (not read). 2026-10-27 SCHEDULE 13G filed on TSMC (holder not read). [mc_6k_20261022]",
+  "mc NEWS 2026-10-26 Anthropic registration statement with the SEC flags concentration of advanced chip manufacturing in Taiwan (military conflict, blockade, tariffs, coercion, natural disaster) as a supply risk, per a secondary report; original filing not read. This is a third-party risk statement, not a change in cross-strait conditions; no reported change in the cross-strait situation itself in October 2026 was found. [mc_press_anthropic]",
+  "mc NEWS 2026-10-30 TSM ADR opened down 3.67%, attributed by a market-mover note to AI-customer capex swings and valuation consolidation (commentary, low reliability). [mc_press_tradingkey]",
+  "mc NEWS 2026-01 BIS moved case review of certain advanced AI chip exports to China from presumption of denial to case-by-case (per an Arm filing cited in search); Applied Materials paid US$252m in Feb 2026 over alleged illegal tool exports to China (search lead only). Nothing found dated after early 2026 on a Phase 2 Section 232 broader semiconductor tariff after the 2026-04-14 report deadline: a gap, check Federal Register / USTR. [search leads]",
+  "mc MACRO rates kept from prefetch: 10-year Treasury 4.98% (FRED DGS10, 2026-10-29) and Damodaran implied ERP 4.20% (2026-10-01; a November 1 update was not checked). ERP note says treasury 5.29% at its date. No override written."
+ ],
+ "gaps": [
+  "Share of wafers fabbed in Taiwan and of revenue at risk in a Taiwan outage not disclosed (hypothesis only)",
+  "Direct duty incidence of Section 232 on TSMC (customers import) and Phase 2 status after 2026-04-14 not found",
+  "Damodaran 2026-11-01 ERP update not checked; prefetch 2026-10-01 ERP kept",
+  "Nanjing revenue share unconfirmed (press lead ~2.4% of 2024)",
+  "Anthropic S-1 and 2026-10-27 Schedule 13G originals not read; BIS/Federal Register/USTR/MOFCOM primary notices not fetched (WebSearch only, budget)",
+  "Oct 2026 6-K monthly revenue not read"
+ ],
+ "stopped": [
+  "Alpha Vantage not used (daily quota exhausted)",
+  "Primary government notices not pursued: further retrieval would not change the sized exposures"
+ ]
+}

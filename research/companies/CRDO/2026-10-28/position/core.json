@@ -1,0 +1,552 @@
+{
+ "thesis_he": {
+  "bear": "לקוח גדול מעכל הזמנות כמו בשנת 2024, האופטיקה מתעכבת ו-MaxLinear נכנסת לכבלי 1.6T: ההכנסות בשנת הכספים 2028 יורדות בכ-5% והרווח התפעולי יורד לכ-20%.",
+  "base": "שנת 2027 נגמרת מעט מעל הרצפה של צמיחה של 85% (כ-2.53 מיליארד דולר), שנת 2028 צומחת בכ-42%, והרווח התפעולי אחרי תגמול במניות עולה מכ-26% לכ-31%.",
+  "bull": "הרבעון הרביעי של 2027 עובר 850 מיליון דולר, הקצב של 8-10% ברבעון נמשך כל שנת 2028 (צמיחה של כ-65%), והרווח התפעולי חוזר לכ-36% כמו ברבעון הטוב ביותר."
+ },
+ "drivers": {
+  "current_year_revenue": {
+   "source_tier": "guidance",
+   "evidence_ids": [
+    "rp_g_rev_fy27_floor",
+    "rp_g_rev_q2fy27",
+    "ex_rel_20260901",
+    "ex_tr_20260901"
+   ],
+   "remainder": "rp_g_rev_q2fy27",
+   "adjust_by_track_record": true,
+   "reason": "FY2027 (ends 2027-04-29): the CFO's 'more than 85%' growth statement on the 2026-09-01 call (ex_tr_20260901, a third-party transcript copy saved verbatim; not restated in the written release ex_rel_20260901) = a FLOOR of 2,470.0M (rp_g_rev_fy27_floor, 1.85 x FY2026 1,335.1M), raised from 'more than 80%' in June. A floor is not a midpoint: Credo has beaten every one of 7 quarterly guides (ratio mean 1.105) and delivered its FY2026 annual statement ('more than 200%' vs +205.7%). The engine adds (1.105 - 1) x the Q2 guide midpoint 530M = about +55.7M, so about 2,525.6M (+89%). This adjustment stands for the 'more than' above the floor, not for an expected 10% Q2 beat: the last two beats were only +1.6% and +1.9%. Cross-check only: attributed consensus FY2027 2,503.1M (range 2,470.0-2,583.7M, 19 analysts). Arithmetic: Q1 479.0M + Q2 530M = 1,009M, so the year needs a second half of about 1,517M (about 640M in Q3 and 877M in Q4): it carries the optical inflection management described (>600M optical), which fx_q3rev, fx_optical and fx_fy27rev test. It replaces the engine's year-to-date extrapolation (about 2.87B in the 2026-10-26 run)."
+  },
+  "growth_anchor": {
+   "period": "FY2028",
+   "bear": -0.05,
+   "base": 0.42,
+   "bull": 0.65,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "rp_rev_q3fy26",
+    "rp_rev_q4fy26",
+    "rp_rev_q1fy27",
+    "rp_g_rev_q2fy27",
+    "rp_g_rev_fy27_floor",
+    "ex_k_rev_qoq_q1fy27",
+    "rp_k_pic_designwins",
+    "rp_deposits_new",
+    "rp_purch_q1fy27",
+    "rp_cu_endD_q1fy27",
+    "rp_cu_A_q1fy27",
+    "rp_rpo_q1fy27",
+    "pf_history_companyfacts",
+    "ex_tr_20260901"
+   ],
+   "reason": "Growth of FY2028 (ends 2028-04-29) on the FY2027 of drivers.current_year_revenue (about 2.53B with a fourth quarter near 850-880M). The FY2027 exit rate alone carries about +35-39% into FY2028 at zero further sequential growth. Base +42% (about 3.59B): the exit carries over and quarterly revenue grows only about 2-3% a quarter through FY2028, because the sequential pace already fell from +51.9% to +7.4%/+9.6% (rp_rev_q3fy26 -> rp_rev_q4fy26 -> rp_rev_q1fy27), the guide beat shrank to about 2%, 71% of revenue sits with two contracting parties on cancellable orders (RPO 4.2M) and MaxLinear now targets 1.6T AECs; offset by what management placed in FY2028 on the 2026-09-01 call: a meaningful 1.6T AEC ramp, two next-generation SiPho PIC design wins ramping (rp_k_pic_designwins), first ALC and OmniConnect revenue, and the extra 102.4M of capacity deposits Credo is paying in FY2027 (rp_deposits_new). Bear -5% (about 2.40B): the largest end customer (33% of Q1 FY2027) cuts about half its purchases for several quarters, as in Credo's own FY2024 (+4.8% after +73%, pf_history_companyfacts), partly offset by optical and newer customers. Bull +65% (about 4.17B): the Q1 FY2027 / Q2-guide sequential pace of about +9.6-10.6% a quarter continues through FY2028 from a Q4 above 850M, with the new products adding. Cross-check only (consensus, not evidence for this tier): FY2028 mean 3,879.6M (3,590.0-4,413.9M), about +54% on 2.53B; the base sits at the low end of that range and the bull above the mean. Growth is a business change in each scenario (customer orders, optical ramp, 1.6T share), not a different multiple."
+  },
+  "mature_margin": {
+   "bear": 0.22,
+   "base": 0.31,
+   "bull": 0.36,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "nm_operating_income_fy_2026_05_02",
+    "nm_revenue_fy_2026_05_02",
+    "nm_rel_20260601",
+    "nm_operating_income_q_2026_08_01",
+    "nm_revenue_q_2026_08_01",
+    "rp_sbc_q1fy27",
+    "nm_share_based_compensation_fy_2026_05_02",
+    "rp_g_gm_q2fy27",
+    "rp_g_opex_q2fy27",
+    "rp_k_ngom_q1fy27",
+    "ex_tr_20260901"
+   ],
+   "reason": "GAAP operating margin AFTER share-based compensation, from Credo's own record: 33.3% in FY2026 (445.0M / 1,335.1M, SBC 13.7% of revenue), the best quarter 35.7% (Q4 FY2026, 155.8M / 437.0M, nm_rel_20260601), 25.2% in Q1 FY2027 (120.7M / 479.0M) after SBC jumped to 18.4% of revenue and acquired-intangible amortization of about 11.6M a quarter began, and about 26% implied by the Q2 guide (GAAP gross margin 63.9% mid, GAAP opex 201.5M mid on 530M). Non-GAAP operating margin is 48.2% and the CFO expects FY2027 non-GAAP gross margin 'broadly consistent' with FY2026. Base 31%: SBC falls back toward the FY2026 share as revenue grows faster than awards and the fixed amortization shrinks as a share, but stays two points below FY2026 for the amortization and some price pressure at 1.6T (MaxLinear, Astera). Bear 22%: about today's level less a few points of gross margin under competitive pricing and an opex base built for growth during a digestion. Bull 36%: the best quarter (Q4 FY2026) held at scale. The yearly path from today's 26% is drivers.cash_cost_ratio."
+  },
+  "cash_cost_ratio": {
+   "bear": [
+    0.566254,
+    0.633644,
+    0.631034,
+    0.628424,
+    0.635814,
+    0.643204,
+    0.643204,
+    0.650595,
+    0.650595,
+    0.650595,
+    0.650595,
+    0.650595,
+    0.650595,
+    0.650595,
+    0.650595,
+    0.650595,
+    0.650595,
+    0.650595,
+    0.650595,
+    0.650595,
+    0.650595,
+    0.650595
+   ],
+   "base": [
+    0.566254,
+    0.553644,
+    0.541034,
+    0.538424,
+    0.545814,
+    0.553204,
+    0.553204,
+    0.560595,
+    0.560595,
+    0.560595,
+    0.560595,
+    0.560595,
+    0.560595,
+    0.560595,
+    0.560595,
+    0.560595,
+    0.560595,
+    0.560595,
+    0.560595,
+    0.560595,
+    0.560595,
+    0.560595
+   ],
+   "bull": [
+    0.566254,
+    0.523644,
+    0.501034,
+    0.488424,
+    0.495814,
+    0.503204,
+    0.503204,
+    0.510595,
+    0.510595,
+    0.510595,
+    0.510595,
+    0.510595,
+    0.510595,
+    0.510595,
+    0.510595,
+    0.510595,
+    0.510595,
+    0.510595,
+    0.510595,
+    0.510595,
+    0.510595,
+    0.510595
+   ],
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "nm_operating_income_q_2026_08_01",
+    "nm_revenue_q_2026_08_01",
+    "rp_g_gm_q2fy27",
+    "rp_g_opex_q2fy27",
+    "ex_rel_20260901",
+    "nm_rel_20260601",
+    "nm_operating_income_fy_2026_05_02",
+    "nm_revenue_fy_2026_05_02",
+    "pf_history_companyfacts"
+   ],
+   "reason": "Sets the yearly GAAP operating margin after SBC (margin = 1 - cash_cost_ratio - sbc_pct - depreciation_pct, using the engine's own sbc_pct path 14.8% fading to 10.3% and depreciation 2.6% of the 2026-10-26 run on the same, unchanged filings), instead of the engine's trailing-twelve-month start of about 31.7%, which contains the best-ever Q4 FY2026 (35.7%) before DustPhotonics. Start (rest of FY2027) 26% in every scenario: Q1 FY2027 actual 25.2% and about 25.9% on the Q2 guide. Bear: the FY2028 digestion year falls to 20% (Credo's own FY2024 digestion cut its operating margin by about 7.7 points, pf_history_companyfacts), then 21% and 22% from FY2030. Base: 28% in FY2028, 30% in FY2029, 31% from FY2030. Bull: 31%, 34%, then 36% from FY2030 (the best quarter, nm_rel_20260601). 22 values per scenario on the engine's period boundaries (FY2027 to FY2031, the five-year interim 2031-10-28, FY2032 to FY2047; the value stage extended the analyst's 17 values by holding the FY2042 value flat for FY2043-FY2047, as the margin is flat from FY2030); if the engine's sbc_pct path differs, the margin moves by the difference and the review should check fc.paths."
+  },
+  "terminal.other_claims": {
+   "all": 310000000,
+   "source_tier": "contracted",
+   "evidence_ids": [
+    "rp_dust_contingent",
+    "ex_10q_20260902"
+   ],
+   "reason": "DustPhotonics contingent consideration (10-Q of 2026-09-02, business-combination note): an earn-out payable in cash and Credo ordinary shares on future financial milestones, recorded at a fair value of 310.0M (10.0M liability, 300.0M equity-classified). Deducted as a claim ahead of today's holders at that filing fair value, standing for the probability-weighted earn-out shares (up to about 2.8-3.2M shares, about 1.5-1.7% of 187.95M; count from the 10-K note and the 2026-04-13 8-K as relayed by the lanes) plus the cash part; the pack has no input for contingent shares, so they are not also added to the share count (claim OR dilution, never both)."
+  },
+  "growth": {
+   "bear": [
+    -0.05,
+    0.2553,
+    0.2044,
+    0.1658,
+    0.1365,
+    0.0,
+    0.1144,
+    0.0976,
+    0.0848,
+    0.0752,
+    0.0679,
+    0.0623,
+    0.0581,
+    0.055,
+    0.0525,
+    0.0507,
+    0.0493,
+    0.0483,
+    0.0475,
+    0.0469,
+    0.0464
+   ],
+   "period": "FY2028",
+   "source_tier": "analyst",
+   "evidence_ids": [
+    "rp_cu_endD_q1fy27",
+    "rp_cu_A_q1fy27",
+    "rp_rpo_q1fy27",
+    "pf_history_companyfacts",
+    "fd_rel_mxl_20261022",
+    "fd_press_stocktwits_20261023",
+    "fd_ind_futurum_mrvl_20261009",
+    "rp_k_pic_designwins"
+   ],
+   "reason": "Bear revenue path, a TEMPORARY digestion and a partial share loss, not a permanent stall (repair of the 2026-10-28 review: the engine fade carried the -5% digestion year into flat revenue for five years). FY2028 -5%: the largest end customer (33% of Q1 FY2027, rp_cu_endD_q1fy27) halves purchases for several quarters, as in Credo's own FY2024 (+4.8% after +73%, pf_history_companyfacts). FY2029 on: orders recover as they did after FY2024 (FY2025 +126%, pf_history_companyfacts), but the bear keeps only 75% of the base's growth above the terminal rate, every year: the 25% cut is the midpoint of MaxLinear's stated 20-30% target share of the 1.6T AEC generation (fd_rel_mxl_20261022, fd_press_stocktwits_20261023), the generation Credo's FY2028-FY2030 growth rests on; optics taking part of in-rack links from 2027-28 (fd_ind_futurum_mrvl_20261009) is unsized and is folded into the same cut. Formula: bear growth = 4.5% + 0.75 x (base growth - 5%) from FY2029 (4.5% and 5% are the bear and base terminal growth). Resulting FY2029-FY2032 growth 25.5%, 20.4%, 16.6%, 13.7%: well below the FY2025 recovery precedent. The 0.75 factor is an analyst judgement sized from MaxLinear's target, not a Credo number; the -5% FY2028 is Credo's own FY2024 record."
+  },
+  "terminal_roic": {
+   "bear": 0.15,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "nm_revenue_ttm_q_2026_08_01",
+    "nm_equity_q_2026_08_01",
+    "nm_cash_q_2026_08_01",
+    "nm_short_term_investments_q_2026_08_01",
+    "nm_operating_income_q_2026_08_01"
+   ],
+   "reason": "Bear terminal ROIC from Credo's own post-acquisition balance sheet at the bear margin, replacing the engine's cross-sectional default (XSEC 10.5%): invested capital after DustPhotonics = equity 2,728.5M - cash 466.9M - short-term investments 297.4M = 1,964.2M (2026-08-01); the trailing-twelve-month revenue 1,591M at the bear operating margin after SBC of 22% (drivers.mature_margin) = 350.0M pre-tax = 17.8% pre-tax, 15.1% after the 15% tax rate the engine uses -> 15%. The base uses the same capital with the actual trailing operating income (about 22% after tax)."
+  }
+ },
+ "forecast_options": {
+  "cyclical": {
+   "treatment": "structural",
+   "reason": "The industry is cyclical by name (semiconductors), but Credo's margin history is a scale-up (operating losses at revenue below 200M through FY2024), not a completed cycle: a mid-cycle margin built on those start-up years would measure scale, not a trough. The demand cycle is carried explicitly instead: the base slows to about +42% in FY2028 from +89%, and the bear is a top-customer digestion sized from Credo's own FY2024 (+4.8% after +73%) with inventory, purchase-commitment and deposit exposure.",
+   "evidence_ids": [
+    "pf_history_companyfacts",
+    "nm_operating_income_fy_2026_05_02",
+    "ex_10k_20260615",
+    "rp_purch_q1fy27",
+    "rp_deposits_q1fy27"
+   ]
+  }
+ },
+ "scenario_events": {
+  "bear": [
+   {
+    "event_he": "הלקוח הסופי הגדול (33% מההכנסות ברבעון הראשון) מקטין את ההזמנות בערך בחצי לכמה רבעונים, כמו שקרה בשנת 2024 (צמיחה של 5% בלבד אחרי 73%). שני לקוחות חוזיים הם 71% מההכנסות (43% ו-28%), וההזמנות ניתנות לביטול: הצבר החוזי הוא 4.2 מיליון דולר בלבד. ההכנסות בשנת 2028 יורדות בכ-5%. זה עיכול זמני: מ-2029 ההזמנות חוזרות כמו אחרי 2024 (אז הצמיחה הייתה 126%), אבל לאט יותר מהבסיס (כ-26% ב-2029), כי חלק מדור ה-1.6T הולך למתחרים.",
+    "evidence_ids": [
+     "rp_cu_endD_q1fy27",
+     "rp_cu_A_q1fy27",
+     "rp_cu_B_q1fy27",
+     "rp_rpo_q1fy27",
+     "pf_history_companyfacts"
+    ]
+   },
+   {
+    "event_he": "קפיצת האופטיקה במחצית השנייה מתעכבת (מוצרים חדשים, מחסור בלייזרי InP), ושנת 2027 נגמרת מתחת לרצפה של 85% (2.47 מיליארד דולר). אז המוניטין מרכישת DustPhotonics (896 מיליון דולר) והתמורה המותנית (310 מיליון) עלולים להימחק בחלקם.",
+    "evidence_ids": [
+     "rp_g_optical_fy27_floor",
+     "rp_g_rev_fy27_floor",
+     "rp_dust_goodwill",
+     "rp_dust_intang",
+     "rp_dust_contingent",
+     "fd_ind_trendforce_20260806"
+    ]
+   },
+   {
+    "event_he": "MaxLinear מכוונת ל-20%-30% משוק כבלי ה-1.6T, הדור שבו Credo אמורה לגדול בשנים 2028-2030, ו-Astera Labs צומחת מהר יותר (27% ברבעון מול 9.6%). בתרחיש הדובי Credo מאבדת כרבע מהצמיחה שמעל הקצב ארוך הטווח (אמצע היעד של MaxLinear), והתחרות לוחצת על המחירים: הרווח התפעולי אחרי תגמול במניות נשאר סביב 22% במקום לעלות.",
+    "evidence_ids": [
+     "fd_press_stocktwits_20261023",
+     "fd_rel_mxl_20261022",
+     "fd_rel_alab_20260804",
+     "fd_cf_alab_20260805",
+     "ex_k_rev_qoq_q1fy27"
+    ]
+   },
+   {
+    "event_he": "המלאי (313 מיליון דולר) והחייבים ממשיכים לגדול מהר יותר מההכנסות, והתזרים מהפעילות נשאר נמוך מהרווח (90 מול 129 מיליון ברבעון הראשון). Credo התחייבה ל-222 מיליון דולר רכש ולפיקדונות קיבולת של 88 ועוד 102 מיליון, בלי התחייבות מקבילה של הלקוחות. בעיכול זה נגמר במחיקת מלאי ובתזרים חלש. זה המנגנון שמאחורי דגל החשבונאות (Beneish): הדגל נובע בעיקר מצמיחה של 206% ומהרכישות (בלי השפעת הצמיחה הציון תקין), אבל הוא לא משוחרר.",
+    "evidence_ids": [
+     "nm_inventory_q_2026_08_01",
+     "nm_receivables_q_2026_08_01",
+     "nm_operating_cash_flow_q_2026_08_01",
+     "nm_net_income_q_2026_08_01",
+     "rp_purch_q1fy27",
+     "rp_deposits_q1fy27",
+     "rp_deposits_new",
+     "pf_history_companyfacts"
+    ]
+   },
+   {
+    "event_he": "כ-19% מהמשלוחים ברבעון הראשון יצאו להונג קונג וכ-15.5% למלזיה (מקום המשלוח, לא מקום הלקוח), וכל הפרוסות מגיעות מ-TSMC בטייוואן. מכסים, הגבלות יצוא או מתיחות סביב טייוואן פוגעים במשלוחים.",
+    "evidence_ids": [
+     "rp_geo_hk_q1fy27",
+     "ex_k_geo_malaysia_q1fy27",
+     "ex_10k_20260615",
+     "nm_ppe_net_taiwan_fy_2026_05_02"
+    ]
+   },
+   {
+    "event_he": "אופטיקה מתחילה לקחת חלק מהחיבורים הקצרים בתוך הארון מ-2027-2028: הנהלת Marvell אמרה שהכנסות של מאות מיליונים מאופטיקה לחיבורי scale-up מתחילות בשנה הבאה.",
+    "evidence_ids": [
+     "fd_ind_futurum_mrvl_20261009"
+    ]
+   },
+   {
+    "event_he": "התגמול במניות (18% מההכנסות ברבעון הראשון) וכמיליוני מניות של התמורה המותנית ממשיכים לדלל: מספר המניות המדוללות עלה ב-5.3% בשנה, ואין קניות חוזרות.",
+    "evidence_ids": [
+     "rp_sbc_q1fy27",
+     "nm_shares_diluted_wavg_q_2026_08_01",
+     "nm_shares_diluted_wavg_q_2025_08_02",
+     "rp_dust_contingent",
+     "rp_g_shares_q2fy27"
+    ]
+   }
+  ],
+  "base": [
+   {
+    "event_he": "ההכנסות ברבעון השני של שנת הכספים 2027 (נגמר בסוף אוקטובר 2026) מגיעות לכ-530-540 מיליון דולר: התחזית עם עקיפה קטנה של כ-2%, כמו בשני הרבעונים האחרונים.",
+    "evidence_ids": [
+     "rp_g_rev_q2fy27",
+     "rp_g_rev_q1fy27",
+     "rp_rev_q1fy27",
+     "rp_g_rev_q4fy26",
+     "rp_rev_q4fy26"
+    ]
+   },
+   {
+    "event_he": "במחצית השנייה של 2027 נכנסות הכנסות אופטיקה של יותר מ-600 מיליון דולר (ZeroFlap, שבבי סיליקון פוטוניקה ו-DSP, כל אחד מעל 100 מיליון). כך השנה נגמרת מעט מעל הרצפה של צמיחה של 85%, בכ-2.53 מיליארד דולר. אלה דברי סמנכ\"ל הכספים בשיחה של ספטמבר 2026 (עותק של צד שלישי), לא בהודעה הכתובה, והחברה לא מדווחת הכנסות אופטיקה בנפרד.",
+    "evidence_ids": [
+     "rp_g_optical_fy27_floor",
+     "rp_g_rev_fy27_floor",
+     "ex_tr_20260901",
+     "rp_g_optical_fy27_apr",
+     "rp_rel_20260413"
+    ]
+   },
+   {
+    "event_he": "בשנת הכספים 2028 הצמיחה מאטה לכ-42%: רוב הצמיחה היא ההמשך של רמת סוף 2027, ועוד צמיחה קטנה מכבלי 1.6T, משני זכיות תכנון בסיליקון פוטוניקה ומהכנסות ראשונות ממוצרים חדשים. מנגד, הלקוחות הגדולים מעכלים חלק ממה שקנו, ו-MaxLinear ו-Astera Labs לוקחות חלק מהשוק.",
+    "evidence_ids": [
+     "ex_tr_20260901",
+     "rp_k_pic_designwins",
+     "rp_deposits_new",
+     "fd_press_stocktwits_20261023",
+     "fd_rel_alab_20260804",
+     "rp_rev_q1fy27"
+    ]
+   },
+   {
+    "event_he": "הרווח התפעולי אחרי תגמול במניות עולה מכ-26% היום (25.2% ברבעון הראשון) לכ-31% מההכנסות, פחות מ-33% בשנת 2026, כי התגמול במניות עלה ל-18% מההכנסות והפחתת הנכסים מהרכישות נמשכת.",
+    "evidence_ids": [
+     "nm_operating_income_q_2026_08_01",
+     "nm_revenue_q_2026_08_01",
+     "rp_sbc_q1fy27",
+     "nm_operating_income_fy_2026_05_02",
+     "nm_revenue_fy_2026_05_02",
+     "rp_g_gm_q2fy27",
+     "rp_g_opex_q2fy27"
+    ]
+   },
+   {
+    "event_he": "בסיס הלקוחות ממשיך להתרחב: ארבעה לקוחות סופיים מעל 10% מההכנסות (הגדול ירד מ-63% בשנת 2025 ל-33%), וההנהלה צופה 3-4 לקוחות כאלה גם בהמשך.",
+    "evidence_ids": [
+     "rp_k_n10_q1fy27",
+     "ex_k_top4_end_q1fy27",
+     "ex_cu_ed_fy25",
+     "rp_cu_endD_q1fy27",
+     "ex_tr_20260901"
+    ]
+   }
+  ],
+  "bull": [
+   {
+    "event_he": "הרבעון הרביעי של שנת הכספים 2027 (נגמר באפריל 2027) עובר 850 מיליון דולר, והשנה עוברת בבירור את הרצפה של צמיחה של 85%.",
+    "evidence_ids": [
+     "rp_g_rev_fy27_floor",
+     "rp_g_optical_fy27_floor",
+     "rp_g_rev_q2fy27",
+     "rp_rev_q1fy27"
+    ]
+   },
+   {
+    "event_he": "Credo משלמת עוד 102 מיליון דולר פיקדונות כדי לשריין קיבולת ייצור, והביקוש מצדיק את זה: הקצב של 9-10% ברבעון נמשך לאורך כל שנת הכספים 2028, וההכנסות צומחות בכ-65%.",
+    "evidence_ids": [
+     "rp_deposits_new",
+     "rp_deposits_q1fy27",
+     "rp_purch_q1fy27",
+     "ex_k_rev_qoq_q1fy27",
+     "rp_g_rev_q2fy27"
+    ]
+   },
+   {
+    "event_he": "בשנת הכספים 2028 כבלי ה-1.6T גדלים בהיקף משמעותי, שתי זכיות התכנון בסיליקון פוטוניקה נכנסות לייצור, ומוצרי ALC ו-OmniConnect מתחילים להכניס, כמו שההנהלה אמרה בשיחה.",
+    "evidence_ids": [
+     "ex_tr_20260901",
+     "rp_k_pic_designwins"
+    ]
+   },
+   {
+    "event_he": "Credo שומרת על רוב השוק בכבלי 1.6T למרות הכניסה של MaxLinear (היום מנכ\"ל MaxLinear מעריך את חלקה ב-93%-99%).",
+    "hypothesis": true
+   },
+   {
+    "event_he": "הרווח התפעולי אחרי תגמול במניות חוזר לכ-36%, כמו ברבעון הטוב ביותר של החברה (הרבעון הרביעי של שנת 2026), כי ההוצאות גדלות לאט יותר מההכנסות.",
+    "evidence_ids": [
+     "nm_rel_20260601",
+     "nm_operating_income_fy_2026_05_02",
+     "nm_revenue_fy_2026_05_02",
+     "rp_k_ngom_q1fy27"
+    ]
+   }
+  ]
+ },
+ "key_risk": {
+  "reading_he": "כ-71% מההכנסות מגיעות משני לקוחות חוזיים (43% ו-28%), וההזמנות ניתנות לביטול: הצבר החוזי הוא 4.2 מיליון דולר בלבד. מנגד, Credo עצמה התחייבה ל-222 מיליון דולר רכש מספקים ולפיקדונות קיבולת של 88 ועוד 102 מיליון. אם לקוח גדול מעכל, כמו בשנת 2024, הצמיחה נעצרת, ונשארים מלאי של 313 מיליון דולר ומוניטין ונכסים מרכישות של כ-1.37 מיליארד דולר.",
+  "evidence_ids": [
+   "rp_cu_A_q1fy27",
+   "rp_cu_B_q1fy27",
+   "rp_rpo_q1fy27",
+   "rp_purch_q1fy27",
+   "rp_deposits_q1fy27",
+   "rp_deposits_new",
+   "pf_history_companyfacts",
+   "nm_goodwill_q_2026_08_01",
+   "nm_intangible_assets_q_2026_08_01",
+   "nm_inventory_q_2026_08_01"
+  ]
+ },
+ "falsifiers": [
+  {
+   "id": "fx_q2rev",
+   "scenario": "base",
+   "metric": "revenue Q2 FY2027 (quarter ending about 2026-10-31), USD: below the low end of the company's own guide",
+   "threshold": 525000000,
+   "direction": "below",
+   "by": "2026-12-15",
+   "evidence_ids": [
+    "rp_g_rev_q2fy27"
+   ]
+  },
+  {
+   "id": "fx_q3rev",
+   "scenario": "base",
+   "metric": "revenue Q3 FY2027 (quarter ending about 2027-01-30), USD: the second-half optical step the base needs (about 640M)",
+   "threshold": 600000000,
+   "direction": "below",
+   "by": "2027-03-15",
+   "evidence_ids": [
+    "rp_g_rev_fy27_floor",
+    "rp_g_rev_q2fy27",
+    "rp_rev_q1fy27"
+   ]
+  },
+  {
+   "id": "fx_fy27rev",
+   "scenario": "base",
+   "metric": "revenue FY2027 (fiscal year ending about 2027-05-01), USD: below management's 'more than 85%' floor",
+   "threshold": 2469964600,
+   "direction": "below",
+   "by": "2027-06-15",
+   "evidence_ids": [
+    "rp_g_rev_fy27_floor",
+    "rp_rev_fy26"
+   ]
+  },
+  {
+   "id": "fx_optical",
+   "scenario": "base",
+   "metric": "FY2027 optical revenue outlook stated by Credo in the Q2 FY2027 release or call, USD (a cut below 'more than 600M' means the second-half step is not confirmed)",
+   "threshold": 600000000,
+   "direction": "below",
+   "by": "2026-12-15",
+   "evidence_ids": [
+    "rp_g_optical_fy27_floor",
+    "rp_g_optical_fy27_apr"
+   ]
+  },
+  {
+   "id": "fx_gaap_om",
+   "scenario": "base",
+   "metric": "GAAP operating margin Q2 FY2027 (after SBC), ratio; the guide implies about 0.26",
+   "threshold": 0.22,
+   "direction": "below",
+   "by": "2026-12-15",
+   "evidence_ids": [
+    "rp_g_gm_q2fy27",
+    "rp_g_opex_q2fy27",
+    "nm_operating_income_q_2026_08_01"
+   ]
+  },
+  {
+   "id": "fx_cash_conv",
+   "scenario": "base",
+   "metric": "operating cash flow / GAAP net income, first half FY2027 (Q1 was 0.70), ratio",
+   "threshold": 0.6,
+   "direction": "below",
+   "by": "2026-12-15",
+   "evidence_ids": [
+    "nm_operating_cash_flow_q_2026_08_01",
+    "nm_net_income_q_2026_08_01"
+   ]
+  },
+  {
+   "id": "fx_inventory",
+   "scenario": "base",
+   "metric": "inventory at the end of Q3 FY2027, USD (313.1M at 2026-08-01): a build far beyond the revenue step means orders are not following",
+   "threshold": 480000000,
+   "direction": "above",
+   "by": "2027-03-15",
+   "evidence_ids": [
+    "nm_inventory_q_2026_08_01",
+    "rp_inv_q1fy27"
+   ]
+  },
+  {
+   "id": "fx_bull_q4",
+   "scenario": "bull",
+   "metric": "revenue Q4 FY2027 (quarter ending about 2027-05-01), USD",
+   "threshold": 850000000,
+   "direction": "below",
+   "by": "2027-06-15",
+   "evidence_ids": [
+    "rp_g_rev_fy27_floor",
+    "rp_g_optical_fy27_floor",
+    "rp_deposits_new"
+   ]
+  },
+  {
+   "id": "fx_bull_q2fy28",
+   "scenario": "bull",
+   "metric": "revenue Q2 FY2028 (quarter ending about 2027-10-30), USD: the +9-10% a quarter path needs about 1,000M",
+   "threshold": 950000000,
+   "direction": "below",
+   "by": "2027-12-15",
+   "evidence_ids": [
+    "ex_k_rev_qoq_q1fy27",
+    "rp_g_rev_q2fy27",
+    "rp_deposits_new"
+   ]
+  },
+  {
+   "id": "fx_bear_q2fy28",
+   "scenario": "bear",
+   "metric": "revenue Q2 FY2028 (quarter ending about 2027-10-30), USD: no digestion visible",
+   "threshold": 850000000,
+   "direction": "above",
+   "by": "2027-12-15",
+   "evidence_ids": [
+    "rp_cu_endD_q1fy27",
+    "pf_history_companyfacts",
+    "rp_rev_q1fy27"
+   ]
+  }
+ ],
+ "reasons_he": {
+  "bear": "מה נשבר: שני לקוחות הם 71% מההכנסות ואין צבר הזמנות חוזי. אם לקוח גדול מעכל כמו בשנת 2024, האופטיקה מתעכבת ו-MaxLinear לוקחת חלק מכבלי ה-1.6T, ההכנסות בשנת 2028 יורדות בכ-5% והרווח התפעולי יורד מכ-26% היום לכ-20%. בנוסף, המלאי והחייבים כבר גדלים מהר מההכנסות (זה גם מה שמאחורי דגל החשבונאות), ויש כ-1.37 מיליארד דולר מוניטין ונכסים מרכישות שעלולים להימחק.",
+  "base": "למה זה התרחיש הסביר ביותר לפי הראיות של החברה: היא עקפה כל תחזית, ולכן השנה הנוכחית נגמרת מעט מעל הרצפה של 85% (כ-2.53 מיליארד דולר). אבל הקצב הרבעוני כבר ירד מ-52% ל-7%-11%, העקיפה הצטמקה ל-2%, ורוב ההכנסות אצל מעט לקוחות. לכן שנת 2028 צומחת בכ-42%, בעיקר מהרמה שבה 2027 נגמרת, והרווח התפעולי אחרי תגמול במניות עולה מכ-26% לכ-31%.",
+  "bull": "מה חייב לקרות: הרבעון הרביעי של 2027 עובר 850 מיליון דולר, כבלי 1.6T, הסיליקון פוטוניקה והמוצרים החדשים מתחילים להכניס בשנת 2028, Credo שומרת על רוב השוק מול MaxLinear, והקצב של 9-10% ברבעון נמשך כל השנה. אז הצמיחה בשנת 2028 היא כ-65% והרווח התפעולי חוזר לכ-36%, כמו ברבעון הטוב ביותר של החברה."
+ },
+ "engine_options": {
+  "country_risk": true,
+  "reason": "Credo discloses revenue by destination of shipment (United States, Hong Kong, Malaysia, mainland China, Taiwan, rest of world); this is where contract manufacturers build, not where the hyperscaler sits, so the exposure-weighted premium may overstate the risk of US end demand."
+ },
+ "gaps": [
+  "growth_half_life, sales_to_capital, terminal_roic, cost_of_equity, tax_rate and working_capital_ratio are left on the engine's rules: no company evidence sets them better (tax: FY2026 effective rate 0.7% is not a durable rate; the engine's 15% stands).",
+  "growth after FY2028 has no company evidence: no guidance and no consensus beyond FY2028; the engine's fade is a rule, not a forecast.",
+  "forecast_options.acquired_revenue not set: DustPhotonics (closed 2026-05-28) had immaterial pre-deal revenue (10-Q: pro forma not presented) and no figure is disclosed; the engine reads the 10-Q note itself.",
+  "the FY2027 floor and the >600M optical figure come from a third-party transcript copy of the 2026-09-01 call, not from the written release.",
+  "Beneish M -0.50 (screen above -1.78) is explained in the bear (growth and acquisition driven; growth-neutral -2.34) but not released; the engine's register may still withhold the price call.",
+  "the cash_cost_ratio list assumes the engine's sbc_pct and depreciation_pct paths are those of the 2026-10-26 run (same filings); check fc.paths after the run.",
+  "Q2 FY2027 results (quarter ending about 2026-10-31) are not reported at as_of; expected early December 2026."
+ ]
+}

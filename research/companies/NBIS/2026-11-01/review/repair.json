@@ -1,0 +1,23 @@
+{
+ "trigger": "review",
+ "fixed": [
+  "numbers critical (capital structure): the 2026-06-30 debt from the 6-K Ex.99.2 balance sheet (current 46.7M + non-current convertible notes 8,499.0M = 8,545.7M; 2025-12-31 comparative 4,127.7M), convertible carrying amount 8,499.0M and cash 8,042.1M added as factbook facts in gather/repair.json (cites dc_6k_q2_fs). After the rerun qa.fields.debt is 'reported' 8,545.7M at 2026-06-30 (was conflict 18.4M at 2026-03-31, blocking); operating leases stay separate.",
+  "numbers critical (part, stale TTM): Q2 2026 revenue 582.3M and operating income -175.9M added as factbook facts (gather/repair.json, dc_6k_q2_ofr/dc_6k_q2_fs). TTM now ends 2026-06-30: revenue 1,355.1M, operating income -668.6M, m0 -49.3% (was TTM to 2026-03-31, -68.8%).",
+  "counter critical (one return per scenario): position/path.json company_path roic set to the after-tax return the core drivers imply (mature_margin x sales_to_capital x 0.79): bear 1.6%, base 4.7%, bull 8.9% (were 6% / 12% / 20%); prepayments counted once, in core sales_to_capital; reasons_he and thesis_he rewritten to say each return sits below / about at the cost of capital.",
+  "counter critical (pre-mortem into the bear): position/core.json bear thesis now states the mechanism as drivers (2% pre-tax return on new capital, refinancing dilution), a bear event on the 4->5 year server-life change and Rubin repricing, and three falsifiers: shares outstanding (A+B) above 335M at 2027-12-31 (base), D&A above 40% of FY2027 revenue (base), FY2027 GAAP operating margin below 0 (bull)."
+ ],
+ "open": [
+  "numbers critical (no valuation executed): fc.status still method_not_supported_by_forecast, val not_computed, company_path not_available, so there are no yearly prices. Cause found: the forecast's depreciation load is FY2025 D&A / FY2025 revenue = 78.9% (forecast._history uses the last fiscal year, not TTM), and because capex (about 489% of revenue) exceeds it, maintenance capex = that same 78.9% and depreciation never rolls off; with SBC about 15.7%, any mature EBIT margin above about 5% gives a negative cash-cost ratio and forecast raises 'cash-cost ratio outside driver bounds'. This is an engine limitation (scale-up D&A on capacity not yet earning held forever), not fixable with evidence inside the rules; it belongs to the engine bug list. value.json ran=true is misleading: the engine ran but did not value.",
+  "dataqa still blocked on convertibles: 'evidence of convertibles without instrument terms (supply a capital structure)'. Conversion prices, maturities and the closing of the August 2026 4.50B notes, Citi facility draws and NVIDIA pre-funded warrant terms were not read in this pass (budget); post-June debt may be understated by up to about 8B.",
+  "Because no valuation ran, the result is an UNVERIFIED draft with no price conclusion."
+ ],
+ "ran": true,
+ "casefile": "/home/user/fundamental-engine/runs/tickers/NBIS_2026-11-01/companies/NBIS/out/casefile.json",
+ "changed_files": [
+  "/home/user/fundamental-engine/runs/tickers/NBIS_2026-11-01/gather/repair.json",
+  "/home/user/fundamental-engine/runs/tickers/NBIS_2026-11-01/position/path.json",
+  "/home/user/fundamental-engine/runs/tickers/NBIS_2026-11-01/position/core.json",
+  "/home/user/fundamental-engine/runs/tickers/NBIS_2026-11-01/value.json",
+  "/home/user/fundamental-engine/runs/tickers/NBIS_2026-11-01/review/repair.json"
+ ]
+}

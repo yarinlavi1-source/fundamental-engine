@@ -1,0 +1,1008 @@
+{
+ "forecast": {
+  "overrides": [
+   {
+    "path": "growth",
+    "scenario": "bear",
+    "value": [
+     0.5,
+     0.8,
+     0.5,
+     0.3,
+     0.15
+    ],
+    "reason": "Growth over the FY2026 base of ~175M. Bull = attributed consensus: Yahoo FY2027 609.1M (n 12, 345-911M) and TIKR ~650M FY2027, ~1.7B FY2028, ~3.4B FY2030; the bull list follows those points (650M, ~1.70B, ~2.40B, ~3.38B, then +25%). It needs ~45 satellites in early 2027 and service starting on time. Base = the same consensus curve shifted about one year (FY2027 ~440M, FY2028 ~1.05B, FY2029 ~1.68B, FY2030 ~2.27B), because ASTS's own deployment guide slipped twice, 13 satellites were in orbit at the last filing with no launch confirmed since, and only 6.6% of the 1.2B RPO is expected within 12 months of 2026-06-30. Bear = contracted and current business only: gateways (~50 in the pipeline) and U.S. Government awards (125M+ new in Q2) near the implied H2 2026 run rate, with service pushed into 2028 (FY2027 ~260M). [deviation from the cited range: Base FY2027 +150% (~440M) is inside the Yahoo consensus range (345-911M) but below its mean (609M): consensus assumes deployment on the current guide, which the company has moved twice, and the RPO timing (6.6% within 12 months) does not support a 600M+ year. The base is a one-year shift of the consensus curve, not a new estimate.]",
+    "evidence_ids": [
+     "web:nm_cons_yahoo",
+     "web:uc_tikr_20260930",
+     "dc_rpo_20260630",
+     "dc_g_sats_early2027",
+     "dc_g_sats_end2026_may",
+     "dc_g_sats_end2026_mar",
+     "dc_kpi_sats_orbit",
+     "dc_rev_h1_2026",
+     "dc_kpi_usg_awards",
+     "dc_kpi_gateways_pipeline",
+     "web:pf_10q_20260810"
+    ],
+    "source_tier": "contracted"
+   },
+   {
+    "path": "growth",
+    "scenario": "base",
+    "value": [
+     1.5,
+     1.4,
+     0.6,
+     0.35,
+     0.2
+    ],
+    "reason": "Growth over the FY2026 base of ~175M. Bull = attributed consensus: Yahoo FY2027 609.1M (n 12, 345-911M) and TIKR ~650M FY2027, ~1.7B FY2028, ~3.4B FY2030; the bull list follows those points (650M, ~1.70B, ~2.40B, ~3.38B, then +25%). It needs ~45 satellites in early 2027 and service starting on time. Base = the same consensus curve shifted about one year (FY2027 ~440M, FY2028 ~1.05B, FY2029 ~1.68B, FY2030 ~2.27B), because ASTS's own deployment guide slipped twice, 13 satellites were in orbit at the last filing with no launch confirmed since, and only 6.6% of the 1.2B RPO is expected within 12 months of 2026-06-30. Bear = contracted and current business only: gateways (~50 in the pipeline) and U.S. Government awards (125M+ new in Q2) near the implied H2 2026 run rate, with service pushed into 2028 (FY2027 ~260M). [deviation from the cited range: Base FY2027 +150% (~440M) is inside the Yahoo consensus range (345-911M) but below its mean (609M): consensus assumes deployment on the current guide, which the company has moved twice, and the RPO timing (6.6% within 12 months) does not support a 600M+ year. The base is a one-year shift of the consensus curve, not a new estimate.]",
+    "evidence_ids": [
+     "web:nm_cons_yahoo",
+     "web:uc_tikr_20260930",
+     "dc_rpo_20260630",
+     "dc_g_sats_early2027",
+     "dc_g_sats_end2026_may",
+     "dc_g_sats_end2026_mar",
+     "dc_kpi_sats_orbit",
+     "dc_rev_h1_2026",
+     "dc_kpi_usg_awards",
+     "dc_kpi_gateways_pipeline",
+     "web:pf_10q_20260810"
+    ],
+    "source_tier": "consensus"
+   },
+   {
+    "path": "growth",
+    "scenario": "bull",
+    "value": [
+     2.71,
+     1.62,
+     0.41,
+     0.41,
+     0.25
+    ],
+    "reason": "Growth over the FY2026 base of ~175M. Bull = attributed consensus: Yahoo FY2027 609.1M (n 12, 345-911M) and TIKR ~650M FY2027, ~1.7B FY2028, ~3.4B FY2030; the bull list follows those points (650M, ~1.70B, ~2.40B, ~3.38B, then +25%). It needs ~45 satellites in early 2027 and service starting on time. Base = the same consensus curve shifted about one year (FY2027 ~440M, FY2028 ~1.05B, FY2029 ~1.68B, FY2030 ~2.27B), because ASTS's own deployment guide slipped twice, 13 satellites were in orbit at the last filing with no launch confirmed since, and only 6.6% of the 1.2B RPO is expected within 12 months of 2026-06-30. Bear = contracted and current business only: gateways (~50 in the pipeline) and U.S. Government awards (125M+ new in Q2) near the implied H2 2026 run rate, with service pushed into 2028 (FY2027 ~260M). [deviation from the cited range: Base FY2027 +150% (~440M) is inside the Yahoo consensus range (345-911M) but below its mean (609M): consensus assumes deployment on the current guide, which the company has moved twice, and the RPO timing (6.6% within 12 months) does not support a 600M+ year. The base is a one-year shift of the consensus curve, not a new estimate.]",
+    "evidence_ids": [
+     "web:nm_cons_yahoo",
+     "web:uc_tikr_20260930",
+     "dc_rpo_20260630",
+     "dc_g_sats_early2027",
+     "dc_g_sats_end2026_may",
+     "dc_g_sats_end2026_mar",
+     "dc_kpi_sats_orbit",
+     "dc_rev_h1_2026",
+     "dc_kpi_usg_awards",
+     "dc_kpi_gateways_pipeline",
+     "web:pf_10q_20260810"
+    ],
+    "source_tier": "consensus"
+   },
+   {
+    "path": "mature_margin",
+    "scenario": "bear",
+    "value": 0.17,
+    "reason": "ASTS has no operating margin at scale (pre-service). The closest named competitor with a built LEO constellation selling satellite service is Iridium (IRDM, named in the 10-K). Base: its GAAP operating margin after depreciation and SBC, 27.1% in FY2025. Bear: 16.9% in 9M 2026, a squeeze under price competition (Starlink direct-to-cell) and carrier buying power (the AT&T/T-Mobile/Verizon JV). Bull: 27.4% in 9M 2025, Iridium's best recent level; ASTS's wholesale revenue share avoids retail distribution cost but pays the MNO its share, so no premium above Iridium is assumed.",
+    "evidence_ids": [
+     "web:pf_peer_IRDM",
+     "web:pf_10k_20260302"
+    ],
+    "source_tier": "competitor",
+    "competitors": [
+     "IRDM"
+    ]
+   },
+   {
+    "path": "mature_margin",
+    "scenario": "base",
+    "value": 0.27,
+    "reason": "ASTS has no operating margin at scale (pre-service). The closest named competitor with a built LEO constellation selling satellite service is Iridium (IRDM, named in the 10-K). Base: its GAAP operating margin after depreciation and SBC, 27.1% in FY2025. Bear: 16.9% in 9M 2026, a squeeze under price competition (Starlink direct-to-cell) and carrier buying power (the AT&T/T-Mobile/Verizon JV). Bull: 27.4% in 9M 2025, Iridium's best recent level; ASTS's wholesale revenue share avoids retail distribution cost but pays the MNO its share, so no premium above Iridium is assumed.",
+    "evidence_ids": [
+     "web:pf_peer_IRDM",
+     "web:pf_10k_20260302"
+    ],
+    "source_tier": "competitor",
+    "competitors": [
+     "IRDM"
+    ]
+   },
+   {
+    "path": "mature_margin",
+    "scenario": "bull",
+    "value": 0.274,
+    "reason": "ASTS has no operating margin at scale (pre-service). The closest named competitor with a built LEO constellation selling satellite service is Iridium (IRDM, named in the 10-K). Base: its GAAP operating margin after depreciation and SBC, 27.1% in FY2025. Bear: 16.9% in 9M 2026, a squeeze under price competition (Starlink direct-to-cell) and carrier buying power (the AT&T/T-Mobile/Verizon JV). Bull: 27.4% in 9M 2025, Iridium's best recent level; ASTS's wholesale revenue share avoids retail distribution cost but pays the MNO its share, so no premium above Iridium is assumed.",
+    "evidence_ids": [
+     "web:pf_peer_IRDM",
+     "web:pf_10k_20260302"
+    ],
+    "source_tier": "competitor",
+    "competitors": [
+     "IRDM"
+    ]
+   },
+   {
+    "path": "sales_to_capital",
+    "scenario": "bear",
+    "value": 0.5,
+    "reason": "Management guides 21-23M of capital per Block 2 satellite for a constellation of over 90. With 13 in orbit, the remaining ~77 cost ~1.7B on top of 2.07B of PP&E already built (purchase commitments 775-795M). Base: the base revenue step from ~175M (FY2026) to ~2.7B (FY2031) on ~1.7B of guided build plus gateways and replacements gives ~1.0-1.5; 1.0 is taken because cost guides have been exceeded before (opex) and one satellite was lost. Bear 0.5: half the revenue on the same build plus overruns and replacements. Bull 1.5: the consensus revenue path on the guided build cost.",
+    "evidence_ids": [
+     "dc_g_sat_cost",
+     "dc_kpi_sats_orbit",
+     "nm_ppe_net_q_2026_06_30",
+     "dc_capex_h1_2026",
+     "dc_g_capex_q3_2026",
+     "dc_commitments_20260630"
+    ],
+    "source_tier": "guidance"
+   },
+   {
+    "path": "sales_to_capital",
+    "scenario": "base",
+    "value": 1.0,
+    "reason": "Management guides 21-23M of capital per Block 2 satellite for a constellation of over 90. With 13 in orbit, the remaining ~77 cost ~1.7B on top of 2.07B of PP&E already built (purchase commitments 775-795M). Base: the base revenue step from ~175M (FY2026) to ~2.7B (FY2031) on ~1.7B of guided build plus gateways and replacements gives ~1.0-1.5; 1.0 is taken because cost guides have been exceeded before (opex) and one satellite was lost. Bear 0.5: half the revenue on the same build plus overruns and replacements. Bull 1.5: the consensus revenue path on the guided build cost.",
+    "evidence_ids": [
+     "dc_g_sat_cost",
+     "dc_kpi_sats_orbit",
+     "nm_ppe_net_q_2026_06_30",
+     "dc_capex_h1_2026",
+     "dc_g_capex_q3_2026",
+     "dc_commitments_20260630"
+    ],
+    "source_tier": "guidance"
+   },
+   {
+    "path": "sales_to_capital",
+    "scenario": "bull",
+    "value": 1.5,
+    "reason": "Management guides 21-23M of capital per Block 2 satellite for a constellation of over 90. With 13 in orbit, the remaining ~77 cost ~1.7B on top of 2.07B of PP&E already built (purchase commitments 775-795M). Base: the base revenue step from ~175M (FY2026) to ~2.7B (FY2031) on ~1.7B of guided build plus gateways and replacements gives ~1.0-1.5; 1.0 is taken because cost guides have been exceeded before (opex) and one satellite was lost. Bear 0.5: half the revenue on the same build plus overruns and replacements. Bull 1.5: the consensus revenue path on the guided build cost.",
+    "evidence_ids": [
+     "dc_g_sat_cost",
+     "dc_kpi_sats_orbit",
+     "nm_ppe_net_q_2026_06_30",
+     "dc_capex_h1_2026",
+     "dc_g_capex_q3_2026",
+     "dc_commitments_20260630"
+    ],
+    "source_tier": "guidance"
+   }
+  ],
+  "current_year_revenue": {
+   "value": 175000000.0,
+   "fiscal_year_end": "2026-12-31",
+   "basis": "FY2026 revenue: company guidance midpoint 175,000,000 (150,000,000-200,000,000, issued 2026-08-10); FY2026 revenue guidance 150-200M, given 2026-03-02 and reaffirmed 2026-05-11 and 2026-08-10 (midpoint 175M). There is no separate Q4 or H2 revenue guide, so no remainder item. H1 delivered 46.2M, so H2 must bring 104-154M; attributed consensus 167.2M (n 12; Q3 46M + Q4 71M) is a cross-check. The revenue track record is a single period (H2 2025, ratio 1.10), too thin to adjust by.",
+   "evidence_ids": [
+    "dc_g_rev_fy2026",
+    "web:pf_rel_20260810_1"
+   ],
+   "source_tier": "guidance"
+  },
+  "risk_free": {
+   "value": 0.0498,
+   "as_of": "2026-10-29",
+   "source_id": "web:pf_fred_dgs10",
+   "title": "Market yield on US Treasury securities at 10-year constant maturity, percent, daily (FRED DGS10)",
+   "url": "https://fred.stlouisfed.org/series/DGS10"
+  },
+  "equity_risk_premium": {
+   "value": 0.042,
+   "as_of": "2026-10-01",
+   "source_id": "web:pf_erp_implied",
+   "title": "Damodaran implied ERP for the S&P 500 on 1 October 2026 (trailing 12 months, adjusted payout), treasury 5.29%",
+   "url": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/home.htm"
+  },
+  "financing": "assumed",
+  "cyclical": {
+   "treatment": "structural",
+   "reason": "Not a demand cycle: a network build stepping from no service to service. Today one-time gateway and government milestone revenue; later contracted MNO revenue share that starts when coverage begins (RPO 1.2B, mostly after activation). The risks are execution (satellites, launches, spectrum), adoption and funding, carried in the scenarios.",
+   "evidence_ids": [
+    "web:pf_10k_20260302",
+    "dc_rpo_20260630",
+    "dc_g_sats_early2027",
+    "dc_seg_services_q2_2026"
+   ]
+  }
+ },
+ "company_path": {
+  "metric": "eps",
+  "multiple": "forward_pe",
+  "scenarios": {
+   "bear": {
+    "multiple_from": "economics",
+    "roic": 0.04,
+    "justification": "unproven",
+    "reason_he": "בתרחיש הדובי ההכנסות ב-2031 הן כ-0.9 מיליארד דולר על הון של כ-4.3 מיליארד (רכוש קבוע 2.07 מיליארד, עוד כ-1.7 מיליארד ללוויינים לפי 21-23 מיליון ללוויין, ו-520 מיליון לליגדו), והרווחיות התפעולית כמו של Iridium ב-2026 (17%). זה נותן תשואה של כ-4% על ההון אחרי מס, מתחת לעלות ההון: הצמיחה לא יוצרת ערך, ולכן המכפיל נמוך.",
+    "source_tier": "competitor",
+    "evidence_ids": [
+     "web:pf_peer_IRDM",
+     "dc_g_sat_cost",
+     "nm_ppe_net_q_2026_06_30",
+     "dc_ligado_paid"
+    ],
+    "competitors": [
+     "IRDM"
+    ]
+   },
+   "base": {
+    "multiple_from": "economics",
+    "roic": 0.14,
+    "justification": "unproven",
+    "reason_he": "בתרחיש הבסיסי ההכנסות ב-2031 הן כ-2.7 מיליארד דולר על כל ההון שהחברה צריכה (כ-4.3 מיליארד: מה שכבר נבנה, שאר הלוויינים לפי ההנחיה וליגדו), כלומר כ-0.6 דולר הכנסה לכל דולר הון. ברווחיות של Iridium (27%) ואחרי מס זו תשואה של כ-13-14% על ההון: מעל עלות ההון, אבל ל-AST אין עדיין שנה אחת של תשואה חיובית (כל השנים בין 27%- ל-179%-), ו-Iridium היא רשת ותיקה שכבר הופחתה.",
+    "source_tier": "competitor",
+    "evidence_ids": [
+     "web:pf_peer_IRDM",
+     "dc_g_sat_cost",
+     "nm_ppe_net_q_2026_06_30",
+     "dc_ligado_paid",
+     "web:nm_cons_yahoo"
+    ],
+    "competitors": [
+     "IRDM"
+    ]
+   },
+   "bull": {
+    "multiple_from": "economics",
+    "roic": 0.25,
+    "justification": "unproven",
+    "reason_he": "בתרחיש השורי ההכנסות מגיעות לציפיות האנליסטים על אותה עלות בנייה שההנהלה הנחתה (21-23 מיליון ללוויין), כך שכל דולר הון נוסף מביא כדולר וחצי הכנסה, והרווחיות כמו של Iridium בשיאה (27.4%). זו תשואה של כ-25% על ההון החדש: גבוהה, כי AST מוכרת בסיטונאות דרך חברות הסלולר בלי הוצאות שיווק ללקוחות, אבל אף חלק ממנה עוד לא נראה בדוחות.",
+    "source_tier": "competitor",
+    "evidence_ids": [
+     "web:pf_peer_IRDM",
+     "dc_g_sat_cost",
+     "nm_ppe_net_q_2026_06_30",
+     "web:nm_cons_yahoo"
+    ],
+    "competitors": [
+     "IRDM"
+    ]
+   }
+  }
+ },
+ "dataqa_resolutions": [
+  {
+   "field": "cash_and_liquid_investments",
+   "metric": "short_term_investments",
+   "resolution": "use_source",
+   "reason": "The filing's balance sheet has one line, cash and cash equivalents; its fair-value note puts the money-market funds (~2.0B at 2025-12-31, ~2.3B at 2026-06-30) INSIDE cash equivalents. companyfacts' ShortTermInvestments tag is that same money-market amount, so adding it to cash double counts it: short-term investments are 0.",
+   "period_end": "2026-06-30",
+   "source_id": "web:pf_10q_20260810",
+   "evidence_ids": [
+    "web:pf_10q_20260810",
+    "rf_sti_q_2026_06_30"
+   ]
+  },
+  {
+   "field": "cash_and_liquid_investments",
+   "metric": "short_term_investments",
+   "resolution": "use_source",
+   "reason": "The filing's balance sheet has one line, cash and cash equivalents; its fair-value note puts the money-market funds (~2.0B at 2025-12-31, ~2.3B at 2026-06-30) INSIDE cash equivalents. companyfacts' ShortTermInvestments tag is that same money-market amount, so adding it to cash double counts it: short-term investments are 0.",
+   "period_end": "2026-03-31",
+   "source_id": "web:pf_10q_20260511",
+   "evidence_ids": [
+    "web:pf_10q_20260511",
+    "rf_sti_q_2026_03_31"
+   ]
+  },
+  {
+   "field": "cash_and_liquid_investments",
+   "metric": "short_term_investments",
+   "resolution": "use_source",
+   "reason": "The filing's balance sheet has one line, cash and cash equivalents; its fair-value note puts the money-market funds (~2.0B at 2025-12-31, ~2.3B at 2026-06-30) INSIDE cash equivalents. companyfacts' ShortTermInvestments tag is that same money-market amount, so adding it to cash double counts it: short-term investments are 0.",
+   "period_end": "2025-12-31",
+   "source_id": "web:pf_10k_20260302",
+   "evidence_ids": [
+    "web:pf_10k_20260302",
+    "rf_sti_fy2025"
+   ]
+  },
+  {
+   "field": "operating_income_ttm",
+   "metric": "operating_income",
+   "resolution": "use_source",
+   "reason": "Statement of operations: Q2 2026 revenue 31,520k less total operating expenses 329,097k = -297,577k (incl. the 125,911k BB7 involuntary-conversion loss); the companyfacts EBIT proxy (pretax income + interest expense) does not tie to any statement line.",
+   "period_end": "2026-06-30",
+   "source_id": "web:pf_10q_20260810",
+   "evidence_ids": [
+    "web:pf_10q_20260810",
+    "rf_oi_q_2026_06_30"
+   ]
+  },
+  {
+   "field": "operating_income_ttm",
+   "metric": "operating_income",
+   "resolution": "use_source",
+   "reason": "10-K statement of operations: FY2025 revenue 70,918k less total operating expenses 358,631k = -287,713k; the EBIT proxy -425,313k does not tie.",
+   "period_end": "2025-12-31",
+   "source_id": "web:pf_10k_20260302",
+   "evidence_ids": [
+    "web:pf_10k_20260302",
+    "rf_oi_fy2025"
+   ]
+  }
+ ],
+ "analyst_sheet": {
+  "scenario_events": {
+   "bear": [
+    {
+     "event_he": "השיגורים מתעכבים שוב: ב-10 באוגוסט היו 13 לוויינים במסלול, ועד סוף אוקטובר לא אושר שיגור נוסף. היעד של כ-45 לוויינים כבר נדחה פעמיים, ומשגר New Glenn המועדף התפוצץ במאי 2026.",
+     "evidence_ids": [
+      "dc_kpi_sats_orbit",
+      "dc_g_sats_end2026_mar",
+      "dc_g_sats_early2027",
+      "web:uc_advtv_20260831"
+     ]
+    },
+    {
+     "event_he": "שריפת המזומנים נמשכת (תזרים חופשי של כ-695 מיליון דולר שלילי ברבעון השני לבד) והחברה מגייסת עוד אג\"ח להמרה או מניות, כמו שעשתה ב-2025-2026: מספר המניות הכלכליות כבר עלה מכ-256 מיליון ל-389 מיליון.",
+     "evidence_ids": [
+      "pf_cfo_q_2026_06_30",
+      "pf_capex_q_2026_06_30",
+      "dc_cv_2034_1625",
+      "pf_shares_diluted_wavg_fy2025",
+      "dc_shares_econ_20260806"
+     ]
+    },
+    {
+     "event_he": "שלוש חברות הסלולר הגדולות בארה\"ב הקימו מיזם משותף לשירות לוויני ישיר לטלפון, ו-Starlink מחזיקה ספקטרום משלה: זה מחליש את כוח המיקוח של ASTS על חלוקת ההכנסות.",
+     "evidence_ids": [
+      "web:fd_satnews_jv",
+      "web:fd_10q_spcx_20260930"
+     ]
+    },
+    {
+     "event_he": "אישורי הרגולציה לעסקת Ligado לא מתקבלים או מתעכבים בגלל התביעה מול Inmarsat, ו-520 מיליון הדולר ששולמו חוזרים רק דרך הערבות.",
+     "evidence_ids": [
+      "dc_ligado_paid",
+      "web:pf_10q_20260810"
+     ]
+    }
+   ],
+   "base": [
+    {
+     "event_he": "החברה עומדת בתחזית ההכנסות ל-2026 (150-200 מיליון דולר), בעיקר ממכירת תחנות קרקע וחוזי ממשלת ארה\"ב.",
+     "evidence_ids": [
+      "dc_g_rev_fy2026",
+      "dc_rev_h1_2026",
+      "dc_kpi_usg_awards",
+      "dc_kpi_gateways_pipeline"
+     ]
+    },
+    {
+     "event_he": "כ-45 לוויינים מגיעים למסלול באמצע 2027, רבעון או שניים אחרי היעד, כי היעד כבר נדחה פעמיים; מפעל ההרכבה יכול לייצר עד 6 לוויינים בחודש ו-10 שיגורים כבר הוזמנו.",
+     "evidence_ids": [
+      "dc_g_sats_early2027",
+      "dc_g_sats_end2026_may",
+      "dc_kpi_prod_cap",
+      "dc_kpi_launches_booked"
+     ]
+    },
+    {
+     "event_he": "השירות המסחרי מתחיל במהלך 2027 ומתחילות הכנסות מחלוקת הכנסות עם חברות הסלולר; רוב צבר החוזים (1.2 מיליארד דולר) מוכר רק אחרי ההפעלה.",
+     "evidence_ids": [
+      "dc_rpo_20260630",
+      "dc_kpi_mno",
+      "dc_contract_liab_20260630"
+     ]
+    }
+   ],
+   "bull": [
+    {
+     "event_he": "45 לוויינים ומעלה במסלול עד תחילת 2027 כמו בהנחיה האחרונה, והשירות המסחרי בארה\"ב מתחיל בזמן.",
+     "evidence_ids": [
+      "dc_g_sats_early2027",
+      "dc_kpi_microns",
+      "dc_kpi_prod_cap"
+     ]
+    },
+    {
+     "event_he": "ההכנסות מגיעות לכ-650 מיליון דולר ב-2027 ולכ-1.7 מיליארד ב-2028, בהתאם לממוצע תחזיות האנליסטים.",
+     "evidence_ids": [
+      "web:nm_cons_yahoo",
+      "web:uc_tikr_20260930"
+     ]
+    },
+    {
+     "event_he": "יותר מ-60 שותפות סלולר (כ-3 מיליארד מנויים) הופכות למנויים משלמים בהיקף רחב, ושוק השירות הלוויני הישיר לטלפון מתקרב ל-12 מיליארד דולר ב-2030.",
+     "evidence_ids": [
+      "dc_kpi_mno",
+      "dc_kpi_mno_subs",
+      "web:fd_omdia_d2d_2030"
+     ]
+    }
+   ]
+  },
+  "key_risk": {
+   "reading_he": "החברה עדיין לא מכרה שירות בכלל. כל הערך תלוי בשיגור של כ-45 לוויינים (באוגוסט היו 13, ומאז לא אושר שיגור), אבל היעד נדחה כבר פעמיים, לוויין אחד אבד, והשיגורים תלויים בעיקר ב-SpaceX, שהיא גם המתחרה העיקרית. הבנייה ממומנת באג\"ח להמרה (כ-3.7 מיליארד דולר), וכל עיכוב מאריך את שריפת המזומנים ועלול לחייב עוד גיוס שמדלל את בעלי המניות.",
+   "evidence_ids": [
+    "dc_kpi_sats_orbit",
+    "dc_g_sats_early2027",
+    "dc_g_sats_end2026_mar",
+    "dc_bb7_loss_q2_2026",
+    "web:fd_10q_spcx_20260930",
+    "dc_cv_2034_1625",
+    "dc_cv_2036_200",
+    "dc_cv_2036_225",
+    "dc_shares_econ_20260806"
+   ]
+  },
+  "bottleneck": {
+   "reading_he": "ASTS can become a capacity bottleneck only once it has satellites in orbit. Its large-array BlueBirds deliver broadband to unmodified phones over MNO spectrum, but supply today is 13 satellites (2026-08-10) against guidance of about 45 in early 2027 (slipped from 45-60 by end-2026) and about 90 for the funded Block 2 build. Capacity is gated by launch access and build rate (up to 6 satellites a month of assembly capacity; 10 launches booked with two providers), not by demand. SpaceX adds D2D capacity faster with its own rockets and its own EchoStar AWS-4/H-block spectrum (FCC approved 2026-05-12), so any scarcity value for ASTS is limited to MNOs that want a second supplier (AT&T, Verizon, Vodafone via SatCo).",
+   "evidence_ids": [
+    "dc_kpi_sats_orbit",
+    "dc_g_sats_end2026_mar",
+    "dc_g_sats_early2027",
+    "dc_kpi_prod_cap",
+    "dc_kpi_launches_booked",
+    "web:pf_10q_20260810",
+    "web:fd_10q_spcx_20260930"
+   ]
+  },
+  "future": {
+   "reading_he": "The direct-to-device market is growing, but its size is very uncertain. Omdia (2026-03-02) projects about $12bn of smartphone D2D service revenue and 411m monthly users by 2030 and expects cellular-standard devices (Starlink D2C, AST SpaceMobile) to be over 95% of D2D users. The leading competitor's filings confirm paid demand: SpaceX's Enterprise & Government revenue, which includes Starlink Mobile, was $5.04bn in 9M 2026 (+70%). ASTS has signed 60+ MNOs covering 3bn+ subscribers (commitments, not paid usage), and AT&T, T-Mobile and Verizon formed a D2D joint venture on 2026-10-02. Other studies seen only as undated excerpts range from $2.6bn to $28bn, so market size is a warning row, not a driver.",
+   "evidence_ids": [
+    "web:fd_omdia_d2d_2030",
+    "web:fd_10q_spcx_20260930",
+    "dc_kpi_mno",
+    "dc_kpi_mno_subs",
+    "web:fd_satnews_jv"
+   ]
+  }
+ },
+ "card": {
+  "assessments": {
+   "moat": {
+    "assessment": "unknown",
+    "evidence_ids": [
+     "web:pf_10q_20260810",
+     "dc_kpi_mno",
+     "web:fd_10q_spcx_20260930"
+    ],
+    "note": "Against SpaceX: contracts with 60+ MNOs and leased spectrum exist, but there is no service revenue or return on capital to show a moat; SpaceX competes directly with its own spectrum and launch."
+   },
+   "pricing_power": {
+    "assessment": "unknown",
+    "evidence_ids": [
+     "web:pf_10k_20260302",
+     "web:fd_satnews_jv"
+    ],
+    "note": "Revenue share with MNOs is not disclosed; the carriers' joint venture (2026-10-02) strengthens the buyers' side. Gateway products sell near cost (Q2 2026 products revenue $24.4m vs cost $22.4m)."
+   },
+   "customer_concentration": {
+    "assessment": "weak",
+    "evidence_ids": [
+     "dc_kpi_gateways_delivered",
+     "dc_seg_products_h1_2026",
+     "dc_seg_services_h1_2026"
+    ],
+    "note": "All H1 2026 revenue came from gateway sales to a handful of MNOs (13 gateways to 7 customers) and U.S. Government milestones; per-customer percentages were not located this run (gap)."
+   },
+   "market_size": {
+    "assessment": "adequate",
+    "evidence_ids": [
+     "web:fd_omdia_d2d_2030",
+     "web:fd_10q_spcx_20260930"
+    ],
+    "note": "One attributed study (Omdia ~$12bn by 2030) plus SpaceX's fast-growing E&G segment show a real paid market; size is highly uncertain (other excerpts $2.6-28bn)."
+   },
+   "competition": {
+    "assessment": "weak",
+    "evidence_ids": [
+     "web:fd_10q_spcx_20260930",
+     "web:fd_satnews_jv",
+     "dc_kpi_sats_orbit"
+    ],
+    "note": "SpaceX Starlink D2C is ahead commercially (T-Mobile live), owns launch and spectrum; carriers formed a joint D2D venture that negotiates collectively."
+   },
+   "capital_allocation": {
+    "assessment": "weak",
+    "evidence_ids": [
+     "nm_shares_diluted_wavg_q_2026_06_30",
+     "pf_shares_diluted_wavg_fy2023",
+     "dc_induced_conv_h1_2026",
+     "dc_sbc_h1_2026",
+     "dc_cash_20260630",
+     "dc_restricted_20260630"
+    ],
+    "note": "Diluted shares rose about 3.7x since FY2023; $89.8m induced conversion expense and $118.8m SBC in H1 2026 (SBC 2.6x revenue); no buybacks. Cash and restricted cash $2.7bn at 2026-06-30 includes $434.6m restricted (not spendable); the July 2026 $1.15bn notes add to it. Management says the ~90-satellite build is fully funded."
+   },
+   "management": {
+    "assessment": "adequate",
+    "evidence_ids": [
+     "dc_g_rev_h2_2025",
+     "nm_revenue_h2_2025",
+     "dc_g_sats_end2026_mar",
+     "dc_g_sats_early2027",
+     "dc_g_adjopex_avg_fy2026_orig",
+     "dc_g_adjopex_avg_fy2026"
+    ],
+    "note": "Revenue guidance met once (H2 2025 $69.0m vs $50-75m), but deployment slipped twice (45-60 by end-2026 to ~45 in early 2027) and opex guidance was raised from $70-80m to about $100m a quarter."
+   },
+   "governance": {
+    "assessment": "weak",
+    "evidence_ids": [
+     "dc_shares_c_20260806",
+     "web:mc_8k_20260928"
+    ],
+    "note": "The CEO controls the vote through 78.2m Class C super-voting shares; a senior-management change-of-control severance policy was adopted (8-K 2026-09-28)."
+   },
+   "regulation": {
+    "assessment": "unknown",
+    "evidence_ids": [
+     "dc_ligado_paid",
+     "web:pf_10k_20260302",
+     "web:pf_10q_20260810"
+    ],
+    "note": "SCS licences granted in part / deferred in part; Ligado L-band approvals pending ($520m paid, refundable only if they fail); Sound Point facility status after 2026-08-10 unconfirmed."
+   },
+   "technology_ai": {
+    "assessment": "adequate",
+    "evidence_ids": [
+     "web:pf_10k_20260302",
+     "web:pf_rel_20260810_1"
+    ],
+    "note": "Block 1 demonstrated broadband to unmodified phones; not yet proven at commercial load or at Block 2 scale."
+   },
+   "geopolitics": {
+    "assessment": "adequate",
+    "evidence_ids": [
+     "mc_f_israel_assets",
+     "mc_f_israel_opex",
+     "web:pf_10q_20260810"
+    ],
+    "note": "Israel operations are ~1% of assets and ~5% of opex (6M 2026), not materially affected per the 10-Q; tariff exposure on satellite parts is unsized."
+   }
+  }
+ },
+ "evidence_pack": {
+  "pack_version": 1,
+  "pack_sha256": "99ea4f113eb489e678b0f9647dd6d830a3b5dafb7ff5229364a07fcd743b53a7",
+  "ticker": "ASTS",
+  "as_of": "2026-11-01",
+  "identity": {
+   "name": "AST SpaceMobile, Inc.",
+   "currency": "USD",
+   "exchange": "Nasdaq",
+   "security": {
+    "listed_security": "Class A common stock, par $0.0001",
+    "ticker": "ASTS",
+    "exchange": "Nasdaq (Global Select)",
+    "quote_currency": "USD",
+    "ibkr_contract_id": 480745767,
+    "adr": false,
+    "adr_ratio": null,
+    "dual_listing": "no other primary listing; IBKR also shows a Mexico (MEXI) cross-listing of the same Class A shares, quoted in MXN, not used",
+    "share_classes": {
+     "class_a_outstanding_2026-08-06": 299789305,
+     "class_b_2026-08-06": 11215111,
+     "class_c_2026-08-06": 78163078
+    },
+    "structure_note": "Up-C: Class B and Class C carry votes only; economic interest sits in AST & Science LLC common units held by the Class B/C holders, exchangeable 1:1 into Class A (noncontrolling interest). Per-share value must use Class A plus exchangeable LLC units plus warrants/converts (capital_bridge). Class C (Avellan) controls ~72% of votes; controlled company.",
+    "evidence_ids": [
+     "pf_10k_20260302",
+     "pf_10q_20260810",
+     "ibkr_contract_asts"
+    ]
+   },
+   "fiscal_year_end": "12-31",
+   "cik": "1780312",
+   "type": "start_up / fast_grower (computed by classify_company from SEC companyfacts; the analyst confirms or overrides with reasons)",
+   "evidence_ids": [
+    "pf_10k_20260302"
+   ]
+  },
+  "sources": 57,
+  "independent_sources": 37,
+  "guidance_track_record": {
+   "metric": "revenue",
+   "ratio": 1.104352,
+   "n": 2,
+   "beats": 2,
+   "misses": 0,
+   "periods": [
+    {
+     "period": "H2 2025",
+     "guided_mid": 62500000.0,
+     "actual": 69000000.0,
+     "ratio": 1.104
+    },
+    {
+     "period": "H2 2025",
+     "guided_mid": 62500000,
+     "actual": 69044000,
+     "ratio": 1.104704
+    }
+   ],
+   "rule": "mean of actual / guided midpoint over the recorded periods; applied only where a driver says so"
+  },
+  "guidance_adjustments": [],
+  "competitors": [
+   {
+    "ticker": "SPCX",
+    "name": "Space Exploration Technologies Corp. (SpaceX; Starlink, Starlink Mobile direct-to-cell)",
+    "why": "named first in ASTS 10-K Competition: Starlink LEO constellation competes in the direct-to-device segment for the same MNO partners and smartphone end users; owns its launch and, via the EchoStar AWS-4/H-block/AWS-3 purchase (FCC approved 2026-05-12, licenses in trust since 2026-05-22), its own mobile spectrum"
+   },
+   {
+    "ticker": "IRDM",
+    "name": "Iridium Communications Inc.",
+    "why": "named in ASTS 10-K Competition; LEO mobile satellite operator selling voice, IoT and government (DoD) service; competes with ASTS for U.S. Government satellite-communications contracts and for low-data-rate direct-to-device (NTN) messaging"
+   },
+   {
+    "ticker": "GSAT",
+    "name": "Globalstar, Inc.",
+    "why": "named in ASTS 10-K Competition; LEO MSS operator whose constellation and owned MSS spectrum carry satellite messaging to standard smartphones under a wholesale capacity arrangement with a large handset maker, i.e. a direct-to-device alternative for the same end users"
+   },
+   {
+    "ticker": "VSAT",
+    "name": "Viasat, Inc. (owner of Inmarsat Global Limited)",
+    "why": "ASTS 10-K names Inmarsat; Inmarsat is owned by Viasat, so Viasat's filings are the public numbers for it; GEO/L-band mobile satellite services for government, maritime and aviation and an announced direct-to-device effort"
+   },
+   {
+    "ticker": "PRIVATE:SKYLO",
+    "name": "Skylo Technologies (private)",
+    "why": "named in ASTS 10-K Competition; NB-NTN direct-to-device messaging over leased MSS spectrum on partner GEO satellites, sold through MNOs and handset makers"
+   },
+   {
+    "ticker": "PRIVATE:THURAYA",
+    "name": "Thuraya Telecommunications Co. (part of Space42, Abu Dhabi)",
+    "why": "named in ASTS 10-K Competition; regional GEO mobile satellite operator in EMEA/Asia, a regional alternative for MSS voice/data customers"
+   }
+  ],
+  "consensus": [
+   {
+    "id": "nm_cons_rev_fy2026_sa",
+    "metric": "revenue",
+    "period": "FY2026",
+    "value": 167200000,
+    "n": 12,
+    "low": 151000000,
+    "high": 186000000,
+    "source_id": "nm_cons_stockanalysis"
+   },
+   {
+    "id": "nm_cons_eps_fy2026_sa",
+    "metric": "eps_diluted",
+    "period": "FY2026",
+    "value": -2.03,
+    "n": 12,
+    "low": -2.49,
+    "high": -1.42,
+    "source_id": "nm_cons_stockanalysis"
+   },
+   {
+    "id": "nm_cons_rev_fy2026_yh",
+    "metric": "revenue",
+    "period": "FY2026",
+    "value": 167240000,
+    "n": 12,
+    "low": 150980000,
+    "high": 186000000,
+    "source_id": "nm_cons_yahoo"
+   },
+   {
+    "id": "nm_cons_rev_fy2027_yh",
+    "metric": "revenue",
+    "period": "FY2027",
+    "value": 609100000,
+    "n": 12,
+    "low": 345060000,
+    "high": 911000000,
+    "source_id": "nm_cons_yahoo"
+   },
+   {
+    "id": "nm_cons_eps_fy2026_yh",
+    "metric": "eps_diluted",
+    "period": "FY2026",
+    "value": -2.29,
+    "n": 8,
+    "low": -2.49,
+    "high": -2.04,
+    "source_id": "nm_cons_yahoo"
+   },
+   {
+    "id": "nm_cons_eps_fy2027_yh",
+    "metric": "eps_diluted",
+    "period": "FY2027",
+    "value": -1.28,
+    "n": 9,
+    "low": -1.99,
+    "high": 0.65,
+    "source_id": "nm_cons_yahoo"
+   },
+   {
+    "id": "nm_cons_rev_q3_2026_yh",
+    "metric": "revenue",
+    "period": "Q3 2026",
+    "value": 46000000,
+    "n": 8,
+    "low": 40000000,
+    "high": 50000000,
+    "source_id": "nm_cons_yahoo"
+   },
+   {
+    "id": "nm_cons_rev_q4_2026_yh",
+    "metric": "revenue",
+    "period": "Q4 2026",
+    "value": 71150000,
+    "n": 8,
+    "low": 59800000,
+    "high": 89080000,
+    "source_id": "nm_cons_yahoo"
+   },
+   {
+    "id": "uc_cons_rev_fy2027_tikr",
+    "metric": "revenue",
+    "period": "FY2027",
+    "value": 650000000,
+    "source_id": "uc_tikr_20260930"
+   },
+   {
+    "id": "uc_cons_rev_fy2028_tikr",
+    "metric": "revenue",
+    "period": "FY2028",
+    "value": 1700000000,
+    "source_id": "uc_tikr_20260930"
+   },
+   {
+    "id": "uc_cons_rev_fy2030_tikr",
+    "metric": "revenue",
+    "period": "FY2030",
+    "value": 3400000000,
+    "source_id": "uc_tikr_20260930"
+   }
+  ],
+  "potential": {
+   "market_direction": {
+    "reading": "The direct-to-device market is growing, but its size is very uncertain. Omdia (2026-03-02) projects about $12bn of smartphone D2D service revenue and 411m monthly users by 2030 and expects cellular-standard devices (Starlink D2C, AST SpaceMobile) to be over 95% of D2D users. The leading competitor's filings confirm paid demand: SpaceX's Enterprise & Government revenue, which includes Starlink Mobile, was $5.04bn in 9M 2026 (+70%). ASTS has signed 60+ MNOs covering 3bn+ subscribers (commitments, not paid usage), and AT&T, T-Mobile and Verizon formed a D2D joint venture on 2026-10-02. Other studies seen only as undated excerpts range from $2.6bn to $28bn, so market size is a warning row, not a driver.",
+    "evidence_ids": [
+     "web:fd_omdia_d2d_2030",
+     "web:fd_10q_spcx_20260930",
+     "dc_kpi_mno",
+     "dc_kpi_mno_subs",
+     "web:fd_satnews_jv"
+    ],
+    "hypothesis": false
+   },
+   "bottleneck_potential": {
+    "reading": "ASTS can become a capacity bottleneck only once it has satellites in orbit. Its large-array BlueBirds deliver broadband to unmodified phones over MNO spectrum, but supply today is 13 satellites (2026-08-10) against guidance of about 45 in early 2027 (slipped from 45-60 by end-2026) and about 90 for the funded Block 2 build. Capacity is gated by launch access and build rate (up to 6 satellites a month of assembly capacity; 10 launches booked with two providers), not by demand. SpaceX adds D2D capacity faster with its own rockets and its own EchoStar AWS-4/H-block spectrum (FCC approved 2026-05-12), so any scarcity value for ASTS is limited to MNOs that want a second supplier (AT&T, Verizon, Vodafone via SatCo).",
+    "evidence_ids": [
+     "dc_kpi_sats_orbit",
+     "dc_g_sats_end2026_mar",
+     "dc_g_sats_early2027",
+     "dc_kpi_prod_cap",
+     "dc_kpi_launches_booked",
+     "web:pf_10q_20260810",
+     "web:fd_10q_spcx_20260930"
+    ],
+    "hypothesis": false
+   },
+   "share_trajectory": {
+    "reading": "On numbers, SpaceX (SPCX) is taking the D2D share now: its Enterprise & Government revenue including Starlink Mobile was $5.04bn in 9M 2026 (+70%; Q3 +91%) and T-Mobile's service is live. ASTS has recognized no SpaceMobile service revenue; its H1 2026 revenue of $46.2m is $37.8m gateway products (near cost) plus $8.4m mostly U.S. Government services. Legacy MSS names grow slowly: Iridium (IRDM) +4.8% in 9M 2026 with operating margin down to 16.9% from 27.4%, Globalstar (GSAT) +6.0% in H1 2026, Viasat/Inmarsat (VSAT) -1.2% in its June 2026 quarter. None shows a loss to ASTS yet because ASTS is not in service; ASTS's share is a future question decided by deployment.",
+    "evidence_ids": [
+     "web:fd_10q_spcx_20260930",
+     "web:pf_10q_20260810",
+     "dc_rev_h1_2026",
+     "dc_seg_products_h1_2026",
+     "dc_seg_services_h1_2026",
+     "web:pf_peer_IRDM",
+     "web:pf_peer_GSAT",
+     "web:pf_peer_VSAT"
+    ],
+    "hypothesis": false
+   },
+   "competitive_position": {
+    "reading": "Against SpaceX (SPCX) ASTS is weaker on everything that exists today: satellites in orbit (13 vs over 11,000 Starlink), launch (none owned vs owned), spectrum (MNO leases plus pending Ligado L-band, $520m paid and refundable only if approvals fail, vs owned EchoStar AWS-4/H-block) and paid service (zero vs live). It is stronger on carrier contracts outside T-Mobile (AT&T, Verizon, Vodafone/SatCo) and on claimed broadband per beam from its large arrays (Block 1 demonstrated broadband to unmodified phones). Against Iridium, Globalstar and Viasat/Inmarsat, ASTS targets broadband to ordinary phones versus their low-data messaging and voice, but it has no service revenue base yet.",
+    "evidence_ids": [
+     "dc_kpi_sats_orbit",
+     "web:fd_10q_spcx_20260930",
+     "dc_ligado_paid",
+     "web:pf_10k_20260302",
+     "web:pf_10q_20260810",
+     "web:pf_peer_IRDM",
+     "web:pf_peer_GSAT",
+     "web:pf_peer_VSAT"
+    ],
+    "hypothesis": false
+   },
+   "threats": {
+    "reading": "1) Substitution by SpaceX Starlink D2C, which owns launch and now its own mobile spectrum. 2) Channel power: the AT&T/T-Mobile/Verizon D2D joint venture (2026-10-02) could standardize wholesale terms and compress ASTS's undisclosed revenue share. 3) Launch dependence: BB7 was lost at launch (Q2 2026 write-off $125.9m) and deployment guidance slipped twice to about 45 satellites in early 2027. 4) Regulation: Ligado L-band rights ($520m paid) and SCS licences granted only in part. 5) Funding and dilution: about $3.70bn of convertibles (incl. $1.15bn 2034 notes issued July 2026), H1 2026 capex $859m, and diluted shares up from 81.8m (FY2023) to 299.1m (Q2 2026).",
+    "evidence_ids": [
+     "web:fd_10q_spcx_20260930",
+     "web:fd_satnews_jv",
+     "dc_bb7_loss_q2_2026",
+     "dc_g_sats_early2027",
+     "dc_ligado_paid",
+     "dc_cv_2034_1625",
+     "dc_cv_2036_200",
+     "dc_cv_2036_225",
+     "dc_capex_h1_2026",
+     "pf_shares_diluted_wavg_fy2023",
+     "nm_shares_diluted_wavg_q_2026_06_30"
+    ],
+    "hypothesis": false
+   }
+  },
+  "bottlenecks": [
+   {
+    "id": "fd_b_capacity",
+    "reading": "The scarce thing ASTS supplies is space-based cellular broadband capacity to standard unmodified smartphones using MNO low/mid-band spectrum (Block 1 demonstrated ~98.9 Mbps peak to a phone). Supply is set by satellites in orbit: 13 BlueBirds at 2026-08-10 against a 10-K plan of ~45-60 Block 2 by end-2026 and a 248-satellite FCC filing; BB17-46 are in production. Launch access and manufacturing cadence, not demand, gate ASTS's capacity through 2027; SpaceX adds capacity with its own launches and >11,100 Starlink broadband and mobile satellites.",
+    "evidence_ids": [
+     "web:pf_10k_20260302",
+     "web:pf_10q_20260810",
+     "web:pf_rel_20260810_1",
+     "web:fd_10q_spcx_20260930"
+    ],
+    "hypothesis": false
+   },
+   {
+    "id": "fd_b_spectrum",
+    "reading": "Spectrum is the second bottleneck: ASTS relies on MNO spectrum leased under the FCC Supplemental Coverage from Space framework (Verizon, AT&T, FirstNet leases; FCC granted in part / deferred in part in Aug 2025), Ligado L-band and pending 2 GHz applications, targeting ~100 MHz in the U.S. and 60+ MHz globally. Its main competitor bought its own: SpaceX's purchase of EchoStar's 50 MHz AWS-4/H-block plus up to 15 MHz AWS-3 was FCC-approved 2026-05-12 and the licenses moved to a trust on 2026-05-22, removing SpaceX's dependence on a carrier's spectrum.",
+    "evidence_ids": [
+     "web:pf_10k_20260302",
+     "web:pf_rel_20260810_1",
+     "web:fd_10q_spcx_20260930"
+    ],
+    "hypothesis": false
+   },
+   {
+    "id": "fd_b_paid_adoption",
+    "reading": "Paid adoption of the core service is not yet visible in ASTS's own numbers: the SpaceMobile service has generated no revenue; H1 2026 revenue was $37.8m of gateway products to MNOs plus $8.4m of mostly U.S. Government services; remaining performance obligations ~$1.2bn at 2026-06-30 with only ~6.6% expected within 12 months, and MNO revenue-share consideration is excluded as constrained. Management cites ~$1.30bn contracted backlog and 60+ MNO partners covering 3bn+ subscribers, which are commitments and logos, not paid usage.",
+    "evidence_ids": [
+     "web:pf_10q_20260810",
+     "web:pf_rel_20260810_1"
+    ],
+    "hypothesis": false
+   },
+   {
+    "id": "fd_b_mno_jv",
+    "reading": "Channel power: AT&T, T-Mobile and Verizon announced a joint venture on 2026-10-02 to pool resources for U.S. direct-to-device; AT&T and Verizon keep their ASTS deployments and T-Mobile its Starlink service. Whether the JV standardizes terms that lower the satellite operator's share, or channels pooled spectrum to ASTS, is not disclosed.",
+    "evidence_ids": [
+     "web:fd_satnews_jv",
+     "web:fd_advtv_jv"
+    ],
+    "hypothesis": false
+   },
+   {
+    "id": "fd_b_jv_terms_hypothesis",
+    "reading": "Hypothesis: a carrier JV that pools U.S. spectrum and negotiates jointly with satellite operators could raise ASTS's addressable spectrum but compress its revenue share versus bilateral deals; no term sheet is public.",
+    "evidence_ids": [],
+    "hypothesis": true
+   },
+   {
+    "id": "fd_b_market_size",
+    "reading": "Market direction is up but size is uncertain: Omdia (2026-03-02) projects smartphone satellite D2D service revenue of $11.99bn and 411m monthly active users by 2030 (revenue growth ~49% a year 2026-2030) and expects cellular-standard devices to exceed 95% of D2D MAUs, naming Starlink D2C and AST SpaceMobile as cellular-standard examples. This is one attributed study, a warning row on the size of the prize, not a driver.",
+    "evidence_ids": [
+     "web:fd_omdia_d2d_2030"
+    ],
+    "hypothesis": false
+   }
+  ],
+  "falsifiers": [
+   {
+    "id": "fx_rev_fy2026",
+    "scenario": "base",
+    "metric": "FY2026 revenue (USD)",
+    "threshold": 150000000,
+    "direction": "below",
+    "by": "2027-03-15",
+    "evidence_ids": [
+     "dc_g_rev_fy2026"
+    ]
+   },
+   {
+    "id": "fx_sats_mid2027",
+    "scenario": "base",
+    "metric": "BlueBird satellites in orbit (company count) at 2027-06-30",
+    "threshold": 30,
+    "direction": "below",
+    "by": "2027-08-15",
+    "evidence_ids": [
+     "dc_g_sats_early2027",
+     "dc_kpi_sats_orbit"
+    ]
+   },
+   {
+    "id": "fx_sats_q1_2027_bull",
+    "scenario": "bull",
+    "metric": "BlueBird satellites in orbit (company count) at 2027-03-31",
+    "threshold": 40,
+    "direction": "below",
+    "by": "2027-05-15",
+    "evidence_ids": [
+     "dc_g_sats_early2027",
+     "dc_kpi_prod_cap"
+    ]
+   },
+   {
+    "id": "fx_rev_fy2027_bull",
+    "scenario": "bull",
+    "metric": "FY2027 revenue (USD)",
+    "threshold": 500000000,
+    "direction": "below",
+    "by": "2028-03-15",
+    "evidence_ids": [
+     "web:nm_cons_yahoo",
+     "dc_rpo_20260630"
+    ]
+   },
+   {
+    "id": "fx_rev_fy2027_bear",
+    "scenario": "bear",
+    "metric": "FY2027 revenue (USD)",
+    "threshold": 450000000,
+    "direction": "above",
+    "by": "2028-03-15",
+    "evidence_ids": [
+     "dc_rpo_20260630",
+     "dc_rev_h1_2026"
+    ]
+   }
+  ],
+  "notes": [
+   "prefetch 2026-11-01T05:54:11+00:00: SEC documents saved verbatim and their text in reading/ (untrusted); a lane cites a pf_ source only after reading the passage it relies on",
+   "gather fragments reused from /home/user/fundamental-engine/runs/tickers/ASTS_2026-10-29 (as_of 2026-10-29)",
+   "repair 2026-11-01: removed pf_operating_income_fy2024/fy2025/q_2026_06_30 (EBIT proxy pretax+interest that does not tie to the statement of operations; filing values in nm_operating_income_*) and pf_short_term_investments_fy2025 (companyfacts ShortTermInvestments tag = money-market funds INSIDE cash and cash equivalents per the 10-K/10-Q fair-value note; no short-term investments line on the balance sheet). Review findings trace/numbers/counter.",
+   "rp: AV EARNINGS_CALL_TRANSCRIPT (ASTS 2026Q2) returned ACCESS DENIED / rate_limit (25 requests/day) once; not retried. Fallback: web transcripts (Tiger/TTM for Q2 2026, Motley Fool via Webull for Q4 2025) and a MarketBeat call summary for Q1 2026; all read through a summarizing fetch (retrieval search_excerpt), so quotes are near-verbatim, not the official transcript.",
+   "rp: Guidance record. FY2026 revenue $150-200M first given on the 2026-03-02 call (\"full-year 2026 revenue in the range of $150 million to $200 million\"), reaffirmed 2026-05-11 (about half expected from existing contracted backlog) and 2026-08-10 (sequential growth each quarter; CFO: revenue likely weighted toward Q4). H1 2026 delivered $46.2M = 23-31% of the range; H2 must deliver $104-154M (vs $69.0M in H2 2025). Track ratio on H2 2025 revenue: 69.0/62.5 = 1.10 (beat, upper half).",
+   "rp: Opex guidance was RAISED: 2026-03-02 CFO guided adjusted opex ex cost of revenue ~$70-80M per quarter for 2026; 2026-08-10 the full-year average became ~$100M per quarter and Q3 2026 $105-115M. Actuals ran above the guided midpoint twice (Q1 79.8 vs 75 mid, ratio 1.06; Q2 95.9 vs 85-95, ratio 1.07, above the top). The company spends more than it guides on opex.",
+   "rp: Capex: Q1 2026 guided \"flat with Q4 2025\" (Q4 number not reached, see gaps); Q1 actual $261.6M came below guidance because a launch payment slipped into Q2 (MarketBeat summary of the CFO). Q2 2026 guided $575-650M, actual $597.6M on the cash-flow line (CFO said ~$610M): inside range. Q3 2026 guided $350-425M.",
+   "rp: Deployment guidance SLIPPED twice: 10-K/FY2025 release (2026-03-02): 45-60 satellites in orbit by end of 2026, launch every 1-2 months, commercial service activation targeted 2H 2026; Q1 10-Q (2026-05-11): approximately 45 by end of 2026; Q2 10-Q (2026-08-10): approximately 45 BB satellites in early 2027 (\"based on our current expectations regarding launch availability\"). On the Q2 call the President said commercial service launches when at least 45 satellites are up and targeted late 2026 for consumer readiness/beta. 13 in orbit at 2026-08-10 (5 Block 1 + BB6 + BB8-13); BB7 was lost 2026-04-19 (New Glenn placed it in a lower than planned orbit).",
+   "rp: Management meaning of the numbers: revenue today is gateway hardware sales to MNOs (near cost: Q2 product margin ~8%) and U.S. government milestone services; no SpaceMobile Service revenue has been recognized to date. Service revenue will be recognized over contract life starting when MNOs get network access; MNO revenue-share consideration is variable and excluded from RPO. RPO ~$1.2B with only ~6.6% inside 12 months: the backlog is mostly service-period revenue after activation. Management \"backlog\" $1.30B is its own broader measure (adds U.S. Government awards).",
+   "rp: One-offs to normalize: Q2 2026 $125.9M loss on involuntary conversion (BB7 write-off net of insurance; replacement launch expected under the contract); H1 2026 $89.8M induced conversion expense; H1 2026 $1.2M warrant remeasurement loss (2025 had $68.2M). SBC rose to $63.5M in Q2 2026 from $10.5M in Q2 2025 (headcount growth plus higher SBC) and is excluded from the company's adjusted opex: treat it as a real recurring cost.",
+   "rp: Capital structure (for capital_bridge): converts outstanding after July 2026 approx. $3.5M 2032 4.25% (conv $26.99), $325M 2032 2.375% (conv $72.07; effective $120.12 with capped call), $1,150M 2036 2.00% (effective $96.30), $1,075M 2036 2.25% (conv $116.30), $1,150M 2034 1.625% (conv $79.57; effective $149.20) = ~$3.70B principal; plus the cash-collateralized $420M UBS loan, an undrawn $550M Sound Point facility (conditional on Ligado closing), and the Trinity equipment loan (balance not extracted). Economic shares at 2026-08-06: 389.2M (Class A 299.8M + 89.4M AST LLC units behind Class B/C). Repeated convert issuance and equitizations (Feb 2026 equitized $296.5M of 2032 notes) are the funding model: management says it will keep raising equity, equity-linked or debt capital.",
+   "rp: Funding statements: management says it is \"fully funded\" for the costs to manufacture and launch ~90 BB satellites (Q2 10-Q) and estimates $21-23M average capital cost per Block 2 satellite (initial launches higher); cash on hand covers the next 12 months; commitments $775-795M plus launch milestone payments. Ligado: $520M paid is refundable via a $520M backstop only if regulatory approvals fail; approvals are still pending and may be affected by litigation with Inmarsat.",
+   "rp: Results-day check: no Q3 2026 release was among the filings found up to 2026-10-29 (latest 2.02 8-K is 2026-08-10); Q3 2026 guidance above (opex, capex) is still open and cannot be tracked yet.",
+   "rp GAP: Official Q2 2026 / Q1 2026 / Q4 2025 call transcripts not read verbatim (AV rate-limited; web copies via summarizing fetch). Q2 2026 call guidance quotes rely on an AI-translated Tiger/TTM page.",
+   "rp GAP: Q4 2025 quarterly capex and the exact Q1 2026 capex guidance number not extracted (CFO said Q1 flat with Q4; FY2025 capex ~$407M per the call, ambiguous whether quarter or year) - numbers lane / 10-K cash flow can fill it.",
+   "rp GAP: Customer concentration (share of revenue by largest customers) not located in the 10-K/10-Q text within budget.",
+   "rp GAP: 8-K Item 5.02 of 2026-10-20 (officer/director change) not read.",
+   "rp GAP: Guidance track has only 4 rows; quarterly revenue is not guided (only annual / half-year), so revenue track before H2 2025 (e.g. FY2024) not reached.",
+   "rp REUSE 2026-11-01: rerun of the 2026-10-29 documents lane; prefetch new_filings_since is empty (no filing after 2026-08-10 other than earlier ones); items kept, Trinity loan balance and total debt added from the 10-Q. Q3 2026 results (typically early-mid Nov) not yet out.",
+   "fd NAMED COMPETITORS (10-K Item 1, Competition, pf_10k_20260302): SpaceX's Starlink (direct-to-device LEO), Inmarsat Global Limited, Globalstar, Thuraya Telecommunications Co., Iridium Communications and Skylo; also regional GEO MSS operators, VSAT operators and, indirectly, terrestrial networks. ASTS positions itself as cellular broadband to unmodified handsets versus competitors' low data rate (SOS) services.",
+   "fd SECTOR POSITION: ASTS sells capacity wholesale to MNOs on a revenue-share basis (10-K Item 1: 'sell our services on a revenue share basis to MNOs'), plus gateway equipment and U.S. Government work (SDA $43.0m testing contract, SDA Europa Track 2 ~$30.0m, MDA SHIELD IDIQ; Q2 2026 release: >$125m of new U.S. Government awards). The revenue-share percentage is not disclosed (pf_10k_20260302, pf_10q_20260810, pf_rel_20260810_1).",
+   "fd SHARE: ASTS H1 2026 revenue $46.2m (products $37.8m + services $8.4m, pf_10q_20260810) against SpaceX Enterprise & Government revenue, which includes Starlink Mobile, of $5,042m in 9M 2026 (+70% y/y; Q3 $2,127m, +91%) (fd_10q_spcx_20260930). Starlink Mobile is not reported separately, so the direct-to-device share cannot be measured from filings; SpaceX is clearly ahead in commercial D2D service (T-Mobile service live) while ASTS is pre-service (beta planned 2026).",
+   "fd SHARE: legacy MSS competitors grow slowly: Iridium revenue +4.8% 9M 2026 with operating margin falling to 16.9% from 27.4% (fd_cf_irdm); Globalstar +6.0% H1 2026 at a 2.5% operating margin (fd_cf_gsat); Viasat/Inmarsat +2.7% FY to Mar-2026, -1.2% in the June 2026 quarter (fd_cf_vsat). None shows share loss to ASTS yet (ASTS has no service revenue); Iridium's margin drop is not attributed in this lane's sources.",
+   "fd COMPETITOR CONTEXT: SpaceX (SPCX) listed 2026-06-12 (FMP profile); its 10-Q for Q3 2026 states it is evaluating a potential combination with Tesla, Inc. with no assurance of an agreement (fd_10q_spcx_20260930). SpaceX's consolidated margins are dominated by its SI (AI) segment after the xAI/Cursor deals, so its consolidated margins say little about Starlink's D2D economics.",
+   "fd COMPETITOR VALUATION (market feed 2026-10-29, fd_fmp_profiles): market caps IRDM $4.87bn, GSAT $10.89bn, VSAT $10.78bn, SPCX $2,011.5bn. Forward P/E and consensus growth not gathered (see gaps).",
+   "fd REFRESH 2026-11-01 (reuse of 2026-10-29 run, no new filings since): fragment kept; FMP peer market caps not refreshed (batch-market-cap ACCESS DENIED, recorded once; 2026-10-29 profile values stand). A WebSearch excerpt (undated, unregistered, hypothesis-grade) says ASTS's 45-satellite target moved to early 2027 for lack of launch capacity and that ASTS may buy a launch provider; compare with the 10-K plan in fd_b_capacity, to be confirmed from a primary document.",
+   "mc RATES 10y UST 4.98% (FRED DGS10, 2026-10-29, pf_fred_dgs10); ERP 4.2% implied (Damodaran 2026-10-01, pf_erp_implied) kept from prefetch; no newer monthly update verified (not refetched).",
+   "mc GEOGRAPHY revenue by region is not disclosed: one operating segment; 10-K/10-Q give no revenue or long-lived assets by country. Revenue is products (gateway equipment/software to MNOs) and services mainly from U.S. government (directly or via primes) [pf_10k_20260302, pf_10q_20260810]. Gap.",
+   "mc EXPOSURE Israel operations: ~1% of consolidated total assets and ~5% of operating expenses in 6M 2026; 10-Q says not materially impacted by Middle East conflict [pf_10q_20260810, mc_f_israel_assets, mc_f_israel_opex]. Sized, small.",
+   "mc EXPOSURE Tariffs: 10-Q says tariffs on supply chain products from several jurisdictions had no material impact to date; future increase could raise capital costs of satellites. Unsized (hypothesis) [pf_10q_20260810].",
+   "mc EXPOSURE Spectrum/FCC: service depends on FCC authorizations (FCC authorization for 248-satellite network incl. low-band IMT frequencies) and on Ligado spectrum usage rights, whose $550M SpectrumCo Sound Point delayed-draw facility is conditioned on FCC approvals and Ligado bankruptcy events, availability until 2026-10-05 with 180-day extension option for 1% fee; no drawdown as of 10-Q [pf_10q_20260810]. Status after 10-Q not confirmed (gap; the extension election is not in the filings list).",
+   "mc EXPOSURE International ops/suppliers: engineering centers in India, Scotland, Spain, Israel; about 418 of 1,126 employees outside U.S.; international suppliers; launch dependence on third-party vehicles (10-K risk factors) [pf_10k_20260302]. Launch-vehicle share not sized here (gap for gather_field).",
+   "mc EXPOSURE Export controls/ITAR: not found in the 10-K risk-factor grep as a sized item; unsized hypothesis only.",
+   "mc NEWS 2026-10-20 8-K Item 5.02: new 3-year employment agreement with CFO/CLO Andrew Johnson (base >= $250k, RSUs eligible); routine, not a departure [mc_8k_20261020].",
+   "mc NEWS 2026-09-28 8-K Item 5.02: Senior Management Change of Control Severance Policy adopted 2026-09-25 [mc_8k_20260928].",
+   "mc NEWS no 8-K since 2026-08-10 other than the two Item 5.02 filings; 8-Ks of 2026-07-20 (Items 1.01, 2.03, 3.02, 8.01) predate the 10-Q and belong to gather_documents/numbers.",
+   "mc NEWS 2026-07-20 press lead (search excerpt, not confirmed at source): commercial D2D service launch reported moved to early 2027 from late 2026, and a BlueBird satellite lost on a Blue Origin launch in April 2026; company said revenue approaching $1B in 2027. Confirm against the 10-Q/call before use; treat as lead only [mc_press_20260720].",
+   "mc NEWS searches for October 2026 events returned nothing dated October; no export-rule, lawsuit or guidance-change item found. Q3 2026 results are not yet out as of 2026-11-01 (not checked at issuer IR).",
+   "nm AV RATELIMIT INCOME_STATEMENT 2026-10-29: 'standard API rate limit is 25 requests per day' (saved raw/av__income__ratelimit.json); not retried; BALANCE_SHEET, CASH_FLOW and EARNINGS_ESTIMATES not called (same daily quota). Second source for statements = the 10-K/10-Q text in reading/ (read directly) plus SEC companyfacts.",
+   "nm RECONCILIATION FY2025 (10-K pf_10k_20260302, statement of operations): revenue 70,918k = pf_revenue_fy2025 OK; net loss attributable to common -341,940k = pf_net_income_fy2025 OK (consolidated net loss before NCI -461,011k, NCI -119,071k: Up-C, see nm_net_loss_before_nci_fy2025); CFO -71,517k = pf_cfo_fy2025 OK; capex (purchase of PP&E) 1,064,741k = pf_capex_fy2025 OK; SBC 47,490k = pf_sbc_fy2025 OK; diluted wavg shares 255,982,592 = pf_shares_diluted_wavg_fy2025 OK (basic = diluted, losses); EPS -1.34.",
+   "nm RECONCILIATION DIFFERENCE operating income: the filing has no separate subtotal; revenue minus total operating expenses gives FY2025 -287,713k (70,918 - 358,631), consistent with pre-tax loss -457,113k less other expense -169,400k. pf_operating_income_fy2025 = -425,313k is WRONG (does not tie to any statement line); same for pf_operating_income_fy2024 -506,302k vs filing -242,762k (4,418 - 247,180) and pf_operating_income_q_2026_06_30 -275,206k vs filing -297,577k (31,520 - 329,097). Use nm_operating_income_* ; prefetch/forensic.json ROIC (NOPAT from the wrong operating income) is overstated in loss.",
+   "nm RECONCILIATION Q2 2026 (10-Q pf_10q_20260810): revenue 31,520k = pf OK (products 24,428k implied, services 7,092k); net loss attributable to common -230,909k = pf OK; SBC Q2 63,467k = pf (6M 118,820k - Q1 55,353k) OK; CFO Q2 -97,154k = 6M -145,212k - Q1 -48,058k OK; capex Q2 597,616k = 6M 859,215k - Q1 261,599k OK; diluted wavg shares Q2 299,061,662 (basic = diluted). Q2 operating expenses include a one-off 125,911k loss on involuntary conversion (BB7 satellite write-off net of insurance recoveries); H1 2026 also 88,654k induced conversion expense on convertible note repurchases (other expense). Excluding the BB7 write-off Q2 operating loss is -171,666k.",
+   "nm RECONCILIATION FY2024 revenue: FY2025 10-K presents FY2024 total revenues 4,418k; companyfacts 'Revenues' FY2024 (filed 2025-03-03) 4,400k (pf_revenue_fy2024): 18k rounding/presentation difference, immaterial. companyfacts RevenueFromContractWithCustomer FY2024 13,825k is a different tag (not used).",
+   "nm BALANCE SHEET CHECK pf_short_term_investments_fy2025 = 2,000,000k does not appear as a line in the 10-K/10-Q balance sheets (cash and cash equivalents 2,335,683k at 2025-12-31; no short-term investments line): treat as a mis-mapped tag, do NOT add to cash. Restricted cash 2026-06-30: current 6,181k, non-current 428,400k (not spendable liquidity). Contract liabilities (MNO/government prepayments) 2026-06-30: current 14,840k, non-current 252,093k.",
+   "nm ROIC CHECK: forensic.json roic_last -26.6% uses NOPAT from pf operating income -425.3M; with the filing's -287.7M (x0.79 = -227.3M) and the same invested capital 2,264.2M (equity 2,392.3M incl. NCI + LT debt 2,207.6M - cash 2,335.7M) ROIC FY2025 is about -10.0%. Invested capital should exclude nothing for restricted cash (443.4M non-current at 2025-12-31 is not cash and was not subtracted; correct). ROIC is not meaningful for a pre-service constellation build (PP&E under construction; satellites not yet in commercial service).",
+   "nm SHARE COUNT 2026-06-30 (10-Q cover/balance sheet): Class A 299,731,073; Class B 11,215,111; Class C 78,163,078 (B and C are voting-only; economic interest via AST LLC units exchangeable 1:1 into Class A). Economic share base ~389.1M before convertibles, warrants and awards (capital_bridge needed). Market cap at 41.12: Class A only ~12.3B USD; all economic units ~16.0B USD.",
+   "nm OWN MULTIPLE HISTORY P/E not meaningful: GAAP diluted EPS negative every year FY2021-FY2025 (FY2025 -1.34, H1 2026 -1.43) and consensus EPS negative for FY2026 and FY2027 (trailing and forward P/E undefined). Substitute, price-to-sales on all economic units: now ~139x TTM revenue 115.3M (16.0B / 115.3M); at 2025-12 month-end ~384x FY2025 revenue (72.63 x 374.84M units = 27.2B / 70.9M); earlier years revenue ~0 (not meaningful). years 2025-2026 sources nm_ib_history nm_ib_snapshot nm_revenue_ttm_q_2026_06_30 pf_revenue_fy2025.",
+   "nm CONSENSUS (expectation, not fact): FY2026 revenue 167.2M (n 12, 151.0-186.0M; StockAnalysis/S&P Global updated 2026-10-23; Yahoo identical), inside company guidance 150-200M. FY2027 revenue 609.1M (n 12, 345.1-911.0M, Yahoo read 2026-10-29: very wide dispersion). EPS FY2026 -2.03 (SA, n 12) vs -2.29 (Yahoo, n 8); FY2027 -1.28 (n 9, -1.99 to +0.65). Revisions: FY2027 EPS cut from -0.69 (90 days ago) to -1.28; FY2026 from -1.39 to -2.29 (after Q2 BB7 write-off and Q2 miss). Quarterly revenue: Q3 2026 46.0M, Q4 2026 71.15M.",
+   "nm OPINION price targets (StockAnalysis, S&P Global poll, 2026-10-23): average 74.68, median 78, low 42.5, high 108, n 13, rating Hold. Opinion only, never a fact or a driver.",
+   "nm TRACK RECORD revenue: only one guided period with a numeric range: H2 2025 guided 50.0-75.0M (release 2025-08-11, reiterated 2025-11-10), delivered 69.0M (Q3 14.7M + Q4 54.3M): ratio 1.10 vs midpoint, 1 beat, 0 misses, n=1 (too few to call a pattern). FY2026 guidance 150-200M (first stated by 2026-03-02/05-11 releases, reiterated 2026-08-10) is outstanding; H1 2026 delivered 46.3M (23-31% of the range) with consensus needing ~117M in H2. Q1 2026 revenue 14.7M was far below then-consensus (press).",
+   "nm PRICE refreshed 2026-11-01: last 40.94 USD at 2026-10-30T23:58:51Z (IBKR REALTIME, not a close; 2026-10-30 was the last session before as_of); Oct-2026 monthly bar close 40.97, month low 36.72, high 64.75 (Sept close 58.86: -30% in October). 52-week high 133.86. Month-end closes: 2021-12 7.94, 2022-12 4.82, 2023-12 6.03, 2024-12 21.10, 2025-12 72.63, 2026-05 113.41 (peak), 2026-09 58.86. No splits or corporate actions in 5 years (nm_ib_snapshot, nm_ib_history).",
+   "nm AV RATELIMIT 2026-11-01: INCOME_STATEMENT again 'standard API rate limit is 25 requests per day' (raw/av__income__ratelimit__2026-11-01.json), not retried; BALANCE_SHEET, CASH_FLOW, EARNINGS_ESTIMATES not called. Second source for statements = 10-K/10-Q text.",
+   "nm CASH RECONCILIATION (defect of 2026-10-29 run): 10-Q balance sheet 2026-06-30 has ONE cash line, 'Cash and cash equivalents' 2,288,253k (money-market funds included), plus restricted cash 6,181k current and 428,400k non-current; NO marketable securities or short-term investments line (10-K 2025-12-31: cash 2,335,683k, restricted 877k + 443,400k). Spendable liquidity = 2,288.3M; restricted 434.6M is separate (total cash+restricted 2.7B per 10-Q liquidity text). Do not add short-term investments (pf_short_term_investments_fy2025 2,000,000k is a mis-mapped tag) nor restricted cash to cash.",
+   "nm OPERATING INCOME RECONCILIATION (defect of 2026-10-29 run): FY2025 10-K statement of operations: total revenues 70,918k - total operating expenses 358,631k = -287,713k (nm_operating_income_fy2025); FY2024 4,418k - 247,180k = -242,762k; Q2 2026 31,520k - 329,097k = -297,577k (includes 125,911k loss on involuntary conversion). Prefetch pf_operating_income_* values (-425,313k FY2025) do not tie to any line: use nm_ facts.",
+   "nm CONSENSUS re-check 2026-11-01: StockAnalysis page (S&P Global) last updated 2026-10-26, FY2026 revenue avg 167.2M (n 12, 151.0-186.0M), EPS -2.03 (n 12, -2.49 to -1.42; page says non-GAAP adjusted basis), targets avg 74.68 median 78 low 42.5 high 108 (n 13): unchanged. Yahoo (read 2026-10-29, now citable under LAG_DAYS 2) supplies FY2027: revenue 609.1M, EPS -1.28; basis (GAAP vs adjusted) not shown.",
+   "nm Q3 2026 results not released as of 2026-11-01 (no new Item 2.02 8-K after 2026-08-10 in prefetch filings; reuse.new_filings_since empty); prior-year Q3 release was 2025-11-10, so expected about 2026-11-10: no results-day lag issue.",
+   "rf: no new retrieval; filing values already read by gather_numbers (nm_operating_income_*, nm_cash_q_2026_06_30) re-entered as FactBook rows so the engine's own companyfacts-derived values (EBIT proxy; ShortTermInvestments tag that is the money-market part of cash equivalents) are overridden through dataqa use_source resolutions citing the 10-K/10-Q. Short-term investments are 0: the balance sheet has one line, cash and cash equivalents (money-market funds included).",
+   "uc CONSENSUS (expectation, not fact): TIKR (2026-09-30) rounded means ~650M FY2027, ~1.7B FY2028, ~3.4B FY2030, no n or range; consistent with Yahoo FY2027 609.1M (n 12, 345-911M, nm_cons_rev_fy2027_yh).",
+   "uc DEPLOYMENT 2026-08-10..2026-11-01: one web search (2026-11-01) found no confirmed BlueBird launch after the 2026-08-10 count of 13; an October launch was only speculated (uc_advtv_20260831, search excerpt). The preferred heavy launcher New Glenn was lost on 2026-05-28 per the same excerpt.",
+   "uc DATA CHECK (10-K p. balance sheet and liquidity note; 10-Q 2026-06-30 note): cash, cash equivalents and restricted cash were 2.78B at 2025-12-31 (444.3M restricted), of which 2.0B money-market funds classified AS cash equivalents, so pf_short_term_investments_fy2025 (2.0B) is inside pf_cash_fy2025 (2,335.7M unrestricted) and must not be added again. At 2026-06-30: unrestricted cash and equivalents 2,288.3M (nm_cash_q_2026_06_30; ~2.3B are money-market cash equivalents), restricted 434.6M (428.4M is collateral for the 420M UBS loan); no marketable securities line.",
+   "uc DATA CHECK (10-K income statement): FY2025 total revenues 70,918k less total operating expenses 358,631k = operating loss 287,713k (nm_operating_income_fy2025). pf_operating_income_fy2025 (-425.3M) is wrong: it does not tie to the statement (it mixes non-operating items such as the 68.2M warrant loss and other expense); quarterly pf operating income for Q3 2025 (-157.8M) likewise does not tie to dc_opex_q3_2025 (94.4M opex on 14.7M revenue).",
+   "driver mature_margin (bear) rests on one independent source",
+   "driver mature_margin (base) rests on one independent source",
+   "driver mature_margin (bull) rests on one independent source"
+  ],
+  "meaning": "provenance of these inputs (evidence_pack.to_inputs); evidence ids web:<id> are pack sources registered by the evidence bundle, other ids are pack items"
+ }
+}

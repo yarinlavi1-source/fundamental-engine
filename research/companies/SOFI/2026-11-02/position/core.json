@@ -1,0 +1,256 @@
+{
+ "thesis_he": {
+  "bear": "ירידה בשווי ההוגן של ההלוואות (ריבית ומרווחי אשראי), הפסדי אשראי שחוזרים לרמת 2025 וצורך בהון חדש מורידים את התשואה על ההון לכ-6% ומשאירים אותה מתחת לעלות ההון.",
+  "base": "סופיי עומדת פחות או יותר בתחזית 2027 (רווח 1.28 מיליארד) והתשואה על ההון עולה בהדרגה מכ-9.5% לכ-12.5% בעוד חמש שנים, קרוב לעלות ההון.",
+  "bull": "המינוף התפעולי ממשיך: הכנסות מעמלות ופיקדונות זולים מעלים את התשואה על ההון מכ-10% לכ-16% בתוך חמש שנים, מעל עלות ההון לאורך זמן."
+ },
+ "drivers": {},
+ "forecast_options": {
+  "cyclical": {
+   "treatment": "structural",
+   "reason": "Growth is member, product and deposit share gain (members +36%, products +44%, deposits +37% y/y) and revenue guidance was raised through a year that brought a rate hike instead of the two cuts assumed; the consumer-credit cycle enters through the ROE path of the bear (fair-value marks and charge-offs), not as a revenue peak.",
+   "evidence_ids": [
+    "dc_k_members",
+    "dc_k_products",
+    "dc_k_deposits",
+    "dc_g_rev26",
+    "dc_g_rev26_jan"
+   ]
+  },
+  "bank_drivers": {
+   "base": {
+    "roe_start": 0.095,
+    "roe_year5": 0.125,
+    "roe_terminal": 0.115,
+    "book_growth_start": 0.095,
+    "payout": 0.0,
+    "terminal_reason": "A deposit franchise of 17.1m members funding loans at 1.45pp below warehouse funding, products per member rising (1.56) and a NIM guided above 5%: a modest edge of about 0.3pp over the cost of equity is kept, far below today's lending spreads.",
+    "source_tier": "guidance",
+    "reason": "Start 9.5%: Q3 2026 annualised ROE 8.6% (ROTE 10%), normalised upward for the $10.9m after-tax servicing-rights fair-value charge and toward the FY2027 guide (net income $1.28bn on an average book of about $12.4bn = about 10.3%, computed). Year 5 12.5%: the 2025-2028 EPS CAGR target of 38-42% and the EBITDA margin rising to 35% imply ROE of about 10.5-11% in 2028 (computed); continuing operating leverage (net income margin from about 17% in 2026 to 20% in 2027) takes it to about 12.5% by 2031. Book growth 9.5% = all profit retained (payout 0); the engine keeps shares constant at the point-in-time count, and SBC (about $290m a year) is a cost inside GAAP net income, so dilution from awards is charged. Past raises are in the opening share count.",
+    "evidence_ids": [
+     "dc_g_ni27",
+     "dc_g_eps27",
+     "dc_g_cagr_eps",
+     "dc_g_ebitda27",
+     "nm_roe_q3_2026_annualised",
+     "nm_rote_q3_2026_annualised",
+     "pf_rel_20261027_1",
+     "pf_10q_20260806"
+    ]
+   },
+   "bear": {
+    "roe_start": 0.06,
+    "roe_year5": 0.085,
+    "roe_terminal": 0.085,
+    "book_growth_start": 0.05,
+    "payout": 0.0,
+    "source_tier": "own_history",
+    "reason": "Start 6%: back to the FY2025 ROE of 5.7%. Mechanisms, sized from SoFi's own filings: (1) fair value - the remaining loan premium is about $1.4bn and a +100bp move cost $1,040.8m before hedges (June 2026 10-Q); losing about half of the premium after tax is about 5% of book; (2) credit - the personal-loan default assumption already rose 4.57% to 5.10%, and an all-in NCO back at the 4.4% of late 2025 on about $31bn of personal loans costs about $300m a year pre-tax; (3) funding/capital - CET1 fell 22.8% to 16.9% in three quarters with RWA +68%, so growth is cut to what retained profit funds (book growth 5%) or new equity is issued below today's price. ROE recovers only to 8.5%, below the cost of equity, also at the terminal.",
+    "evidence_ids": [
+     "nm_roe_fy2025",
+     "pf_10q_20260806",
+     "pf_rel_20261027_1",
+     "dc_f15_net_charge_off_rate_personal_all_in_ex_delinquent_sales",
+     "dc_f19_cet1_ratio",
+     "dc_f21_risk_weighted_assets",
+     "dc_f26_fair_value_loans_total"
+    ]
+   },
+   "bull": {
+    "roe_start": 0.1,
+    "roe_year5": 0.16,
+    "roe_terminal": 0.135,
+    "book_growth_start": 0.1,
+    "payout": 0.0,
+    "terminal_reason": "A national digital bank with a cheap deposit base (1.45pp below warehouse funding), 42% fee-based revenue that needs little capital and products per member rising: part of the excess return survives competition (Ally, Capital One, Nu) at about 2pp over the cost of equity.",
+    "source_tier": "guidance",
+    "reason": "Start 10%: the FY2027 guide (net income $1.28bn, about 10.3% on average book, computed) reached early, consistent with EBITDA beats of 13-23% against guidance. Year 5 16% (ROTE about 18%): the top of the 38-42% EPS CAGR target to 2028 sustained by fee revenue (42% of revenue) growing faster than the capital-consuming loan book, NIM held above the guided 5% floor and marketing growing slower than revenue. Book growth 10% = all profit retained.",
+    "evidence_ids": [
+     "dc_g_ni27",
+     "dc_g_cagr_eps",
+     "dc_g_ebitda27",
+     "dc_g_nim",
+     "dc_k_fee_share",
+     "dc_k_deposit_rate_vs_warehouse",
+     "pf_rel_20261027_1"
+    ]
+   },
+   "regulatory_capital": {
+    "risk_weighted_assets": 48682417000,
+    "required_capital_ratio": 0.07,
+    "as_of": "2026-06-30",
+    "reason": "SoFi Technologies risk-weighted assets $48.68bn at June 30, 2026 and the CET1 requirement of 7.0% including the 2.5% capital conservation buffer, from the 10-Q capital table. The Q3 release shows RWA already at $56.24bn (Sep 30, 2026; CET1 16.9%), so this filing figure understates the current requirement by about 15%.",
+    "evidence_ids": [
+     "pf_10q_20260806",
+     "dc_f21_risk_weighted_assets"
+    ]
+   }
+  }
+ },
+ "scenario_events": {
+  "bear": [
+   {
+    "event_he": "עליית ריבית או התרחבות מרווחי אשראי מוחקת חלק גדול מהפרמיה של כ-1.4 מיליארד דולר על שווי ההלוואות (תוספת של אחוז בריבית = כמיליארד דולר לפני גידור).",
+    "evidence_ids": [
+     "pf_10q_20260806",
+     "pf_rel_20261027_1"
+    ]
+   },
+   {
+    "event_he": "הפסדי האשראי בהלוואות האישיות חוזרים לכ-4.4% (במקום כ-3.4% היום), וההנחה של שיעור החדלות כבר עולה שלושה רבעונים ברצף.",
+    "evidence_ids": [
+     "dc_f15_net_charge_off_rate_personal_all_in_ex_delinquent_sales",
+     "pf_rel_20261027_1"
+    ]
+   },
+   {
+    "event_he": "יחס ההון (CET1) ממשיך לרדת כ-2 נקודות ברבעון; סופיי מאטה את הצמיחה או מגייסת הון שוב, כמו בגיוסים של 2025 ב-20.85 ו-27.50 דולר.",
+    "evidence_ids": [
+     "dc_f19_cet1_ratio",
+     "dc_f21_risk_weighted_assets",
+     "pf_10q_20260806"
+    ]
+   },
+   {
+    "event_he": "הכנסות פלטפורמת ההלוואות והפלטפורמה הטכנולוגית ממשיכות לרדת, וההוצאה על שיווק (כ-55%+) אוכלת את הצמיחה.",
+    "evidence_ids": [
+     "dc_f09_loan_platform_business_revenue",
+     "dc_s_tech_q3",
+     "dc_s_tech_q3p"
+    ]
+   }
+  ],
+  "base": [
+   {
+    "event_he": "סופיי מסיימת את 2026 סביב התחזית (הכנסות כ-5.04 מיליארד, רווח כ-840 מיליון) ומספקת ב-2027 הכנסות של כ-6.4 מיליארד ורווח של כ-1.28 מיליארד.",
+    "evidence_ids": [
+     "dc_g_rev26",
+     "dc_g_ni26",
+     "dc_g_rev27",
+     "dc_g_ni27"
+    ]
+   },
+   {
+    "event_he": "מספר החברים והמוצרים ממשיך לגדול (17.1 מיליון חברים, +36%) והפיקדונות הזולים ממשיכים לממן את ההלוואות.",
+    "evidence_ids": [
+     "dc_k_members",
+     "dc_k_deposits",
+     "dc_k_deposit_rate_vs_warehouse"
+    ]
+   },
+   {
+    "event_he": "התשואה על ההון עולה בהדרגה לכ-10.5%-11% ב-2028, בהתאם ליעד צמיחת הרווח למניה של 38%-42% בשנה.",
+    "evidence_ids": [
+     "dc_g_cagr_eps",
+     "dc_g_eps27"
+    ]
+   }
+  ],
+  "bull": [
+   {
+    "event_he": "סופיי שוב מכה ומעלה את התחזית: רווח 2027 מעל 1.28 מיליארד, כמו ההכאות של 13%-23% ב-EBITDA בשנים האחרונות.",
+    "evidence_ids": [
+     "dc_g_ni27",
+     "dc_g_ebitda27",
+     "dc_g_ebitda26_jan"
+    ]
+   },
+   {
+    "event_he": "הכנסות מעמלות (42% מההכנסות היום) גדלות מהר יותר מספר ההלוואות, כך שהרווח עולה בלי לצרוך הרבה הון.",
+    "evidence_ids": [
+     "dc_k_fee_share",
+     "dc_f12_fee_based_revenue"
+    ]
+   },
+   {
+    "event_he": "הרווח למניה צומח בקצב העליון של היעד (42% בשנה עד 2028) והתשואה על ההון מגיעה לכ-16% עד 2031.",
+    "hypothesis": true
+   }
+  ]
+ },
+ "key_risk": {
+  "reading_he": "הסיכון המרכזי הוא שהרווח וההון של סופיי תלויים בשווי ההוגן של ההלוואות: פרמיה של כ-1.4 מיליארד דולר (כ-14% מההון המוחשי) נשחקה ב-630 מיליון ברבעון אחד, ותוספת של אחוז לריבית מורידה כמיליארד דולר לפני גידור, בזמן שיחס ההון יורד כ-2 נקודות ברבעון.",
+  "evidence_ids": [
+   "pf_rel_20261027_1",
+   "pf_10q_20260806",
+   "dc_f19_cet1_ratio",
+   "dc_f22_tangible_book_value"
+  ]
+ },
+ "falsifiers": [
+  {
+   "id": "fx_ni27",
+   "scenario": "base",
+   "metric": "FY2027 net income (USD)",
+   "threshold": 1100000000,
+   "direction": "below",
+   "by": "2028-03-15",
+   "evidence_ids": [
+    "dc_g_ni27"
+   ]
+  },
+  {
+   "id": "fx_cet1",
+   "scenario": "base",
+   "metric": "CET1 ratio at a quarter end without a new equity raise",
+   "threshold": 0.13,
+   "direction": "below",
+   "by": "2027-12-31",
+   "evidence_ids": [
+    "dc_f19_cet1_ratio"
+   ]
+  },
+  {
+   "id": "fx_rote_bear",
+   "scenario": "bear",
+   "metric": "ROTE annualised, Q4 2027",
+   "threshold": 0.12,
+   "direction": "above",
+   "by": "2028-03-15",
+   "evidence_ids": [
+    "dc_f24_return_on_tangible_common_equity"
+   ]
+  },
+  {
+   "id": "fx_plnco_bear",
+   "scenario": "bear",
+   "metric": "Personal-loan all-in NCO ex delinquent sales, every quarter of 2027",
+   "threshold": 0.035,
+   "direction": "below",
+   "by": "2028-03-15",
+   "evidence_ids": [
+    "dc_f15_net_charge_off_rate_personal_all_in_ex_delinquent_sales"
+   ]
+  },
+  {
+   "id": "fx_rote_bull",
+   "scenario": "bull",
+   "metric": "ROTE annualised, Q4 2027",
+   "threshold": 0.11,
+   "direction": "below",
+   "by": "2028-03-15",
+   "evidence_ids": [
+    "dc_f24_return_on_tangible_common_equity"
+   ]
+  }
+ ],
+ "reasons_he": {
+  "bear": "המחיר הדובי מניח שהפרמיה על שווי ההלוואות נשחקת, הפסדי האשראי חוזרים לרמת סוף 2025 והצורך בהון מאט את הצמיחה או מדלל: התשואה על ההון נשארת מתחת לעלות ההון.",
+  "base": "המחיר הבסיסי מניח שסופיי עומדת בתחזית 2027 ובקצב יעדי 2028, אבל התשואה על ההון מגיעה רק לכ-12.5% בעוד חמש שנים, קרוב לעלות ההון, ולכן השווי קרוב להון העצמי ולא גבוה ממנו בהרבה.",
+  "bull": "המחיר השורי דורש שהמינוף התפעולי יימשך: עמלות ופיקדונות זולים מעלים את התשואה על ההון לכ-16%, ויתרון של כ-2 נקודות מעל עלות ההון נשמר לאורך זמן."
+ },
+ "engine_options": {
+  "country_risk": true,
+  "reason": "The 10-K discloses revenue by region (United States $3.36bn, all foreign countries $0.25bn in FY2025)."
+ },
+ "gaps": [
+  "drivers.current_year_revenue and growth_anchor not set: SoFi's revenue guidance is labelled 'adjusted net revenue' (not the engine's 'revenue' metric), the SEC companyfacts 'revenue' tag (FY2025 $0.62bn) is not total net revenue ($3.61bn), and the residual-income route values the bank on ROE, book growth and payout (forecast_options.bank_drivers), not on revenue. FY2026 guide about $5.04bn and FY2027 about $6.4bn (+27%) are carried in the bank_drivers reasons and scenario events.",
+  "bank_drivers.opening not set: the Q3 2026 book ($11.30bn equity, AOCI -$124.8m, Sep 30 2026) is only in the earnings release (an 8-K exhibit, kind release); the engine accepts a later opening book only from a filing document (10-Q), and the Q3 10-Q is not yet filed. The FactBook's June 2026 book ($11.08bn) is used, about 2% lower.",
+  "regulatory_capital uses the June 2026 10-Q RWA ($48.7bn); the Q3 release RWA is $56.2bn. The engine grows RWA with book growth, while SoFi's RWA grew 68% y/y: the real capital squeeze is larger than the model's check.",
+  "Future equity raises are not modelled as new shares (the residual-income model holds shares constant); the bear expresses the capital constraint through lower book growth and ROE.",
+  "2029 convertible ($862.5m; about 26.4m shares partly covered by capped calls) not added to the share count: conversion terms not extracted.",
+  "Q3 2026 10-Q not filed: hedge P&L on the Q3 rate move and Q3 fair-value sensitivity unknown.",
+  "mature_margin, terminal and operating levers not set: SoFi is valued on the residual-income route (ROE, book growth, payout), where operating margins do not drive value.",
+  "The bull's year-5 ROE of 16% is above anything SoFi has reported (best 10% ROTE): it rests on the EPS CAGR target, not on a record."
+ ]
+}

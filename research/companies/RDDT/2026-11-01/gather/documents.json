@@ -1,0 +1,864 @@
+{
+ "lane": "documents",
+ "sources": [
+  {
+   "id": "dc_call_20261029",
+   "kind": "transcript",
+   "title": "Reddit Q3 2026 earnings call transcript (Alpha Vantage EARNINGS_CALL_TRANSCRIPT, 2026Q3)",
+   "url": "connector:Alpha_Vantage_MCP_Server__EARNINGS_CALL_TRANSCRIPT",
+   "date": "2026-10-29",
+   "independent": false,
+   "publisher": "Alpha Vantage (transcript of the Reddit call)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  }
+ ],
+ "facts": [
+  {
+   "id": "dc_rpo_gt1y",
+   "metric": "remaining_performance_obligations_over_1y",
+   "period": "Q3 FY2026",
+   "value": 62400000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_deferred_rev",
+   "metric": "deferred_revenue",
+   "period": "Q3 FY2026",
+   "value": 38800000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_deferred_rev_fy25",
+   "metric": "deferred_revenue",
+   "period": "FY2025",
+   "value": 18100000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_aws_commit",
+   "metric": "cloud_purchase_commitment_aws_jul2026_jun2029",
+   "period": "Q3 FY2026",
+   "value": 880000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_gcp_commit",
+   "metric": "cloud_purchase_commitment_google_sep2026_aug2029",
+   "period": "Q3 FY2026",
+   "value": 580000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_ad_rev_q3",
+   "metric": "advertising_revenue",
+   "period": "Q3 FY2026",
+   "value": 846996000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_ad_rev_q3_py",
+   "metric": "advertising_revenue",
+   "period": "Q3 FY2025",
+   "value": 549342000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_other_rev_q3",
+   "metric": "other_revenue",
+   "period": "Q3 FY2026",
+   "value": 47961000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_other_rev_q3_py",
+   "metric": "other_revenue",
+   "period": "Q3 FY2025",
+   "value": 35569000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_us_rev_q3",
+   "metric": "revenue_us_billing_address",
+   "period": "Q3 FY2026",
+   "value": 718915000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_row_rev_q3",
+   "metric": "revenue_rest_of_world_billing_address",
+   "period": "Q3 FY2026",
+   "value": 176042000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_adj_ebitda_q3",
+   "metric": "adjusted_ebitda",
+   "period": "Q3 FY2026",
+   "value": 402265000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261029_2"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_adj_ebitda_q3_py",
+   "metric": "adjusted_ebitda",
+   "period": "Q3 FY2025",
+   "value": 236007000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261029_2"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fcf_q3",
+   "metric": "free_cash_flow",
+   "period": "Q3 FY2026",
+   "value": 362568000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261029_1",
+    "pf_rel_20261029_2"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "derived"
+  },
+  {
+   "id": "dc_sbc_taxes_q3",
+   "metric": "sbc_and_related_taxes",
+   "period": "Q3 FY2026",
+   "value": 136419000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261029_2"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_gm_q3",
+   "metric": "gaap_gross_margin",
+   "period": "Q3 FY2026",
+   "value": 0.915,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261029_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_tax_q3",
+   "metric": "income_tax_expense",
+   "period": "Q3 FY2026",
+   "value": 5785000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261029_2"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fdso_q3",
+   "metric": "fully_diluted_shares_outstanding",
+   "period": "Q3 FY2026",
+   "value": 206300000.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_rel_20261029_2"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_class_a_sh",
+   "metric": "class_a_shares_outstanding",
+   "period": "Q3 FY2026",
+   "value": 146964730,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_class_b_sh",
+   "metric": "class_b_shares_outstanding",
+   "period": "Q3 FY2026",
+   "value": 46151604,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_buyback_q3_usd",
+   "metric": "share_repurchases",
+   "period": "Q3 FY2026",
+   "value": 100369000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_buyback_q3_sh",
+   "metric": "shares_repurchased",
+   "period": "Q3 FY2026",
+   "value": 669959,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_buyback_9m_usd",
+   "metric": "share_repurchases",
+   "period": "9M FY2026",
+   "value": 339959000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_buyback_9m_sh",
+   "metric": "shares_repurchased",
+   "period": "9M FY2026",
+   "value": 2193461,
+   "unit": "shares",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_buyback_remaining",
+   "metric": "buyback_authorization_remaining_approx",
+   "period": "Q3 FY2026",
+   "value": 660000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "dc_call_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_buyback_auth",
+   "metric": "buyback_authorization_feb2026",
+   "period": "FY2026",
+   "value": 1000000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-02-04",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_rsu_tax",
+   "metric": "cash_paid_net_share_settlement_taxes",
+   "period": "9M FY2026",
+   "value": 45000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_revolver",
+   "metric": "revolving_credit_facility_size_undrawn_except_5.7m_LCs",
+   "period": "Q3 FY2026",
+   "value": 500000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_debt",
+   "metric": "debt_borrowed",
+   "period": "Q3 FY2026",
+   "value": 0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_cash_total",
+   "metric": "cash_cash_equivalents_marketable_securities",
+   "period": "Q3 FY2026",
+   "value": 3033432000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261029_2"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_advance_pct",
+   "metric": "advance_magazine_publishers_share_of_outstanding",
+   "period": "Q3 FY2026",
+   "value": 0.22,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_headcount_yoy",
+   "metric": "headcount_growth_yoy",
+   "period": "Q3 FY2026",
+   "value": 0.12,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_call_20261029"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_adj_opex_q3",
+   "metric": "non_gaap_operating_expenses",
+   "period": "Q3 FY2026",
+   "value": 417300000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261029_2"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_search_referral_drop",
+   "metric": "weekly_search_referrals_decline_during_october_2026",
+   "period": "Oct 2026",
+   "value": -1000000.0,
+   "unit": "referrals_per_week",
+   "source_ids": [
+    "dc_call_20261029"
+   ],
+   "period_end": "2026-10-31",
+   "basis": "reported"
+  }
+ ],
+ "guidance": [
+  {
+   "id": "dc_g_rev_q4",
+   "metric": "revenue",
+   "period": "Q4 FY2026",
+   "low": 1000000000.0,
+   "high": 1030000000.0,
+   "unit": "USD",
+   "issued": "2026-10-29",
+   "source_id": "pf_rel_20261029_1"
+  },
+  {
+   "id": "dc_g_ebitda_q4",
+   "metric": "adjusted_ebitda",
+   "period": "Q4 FY2026",
+   "low": 480000000.0,
+   "high": 510000000.0,
+   "unit": "USD",
+   "issued": "2026-10-29",
+   "source_id": "pf_rel_20261029_1"
+  }
+ ],
+ "kpis": [
+  {
+   "id": "dc_dauq_g",
+   "name": "DAUq global (average)",
+   "period": "Q3 FY2026",
+   "value": 130.3,
+   "unit": "millions",
+   "source_ids": [
+    "pf_rel_20261029_2"
+   ]
+  },
+  {
+   "id": "dc_dauq_g_py",
+   "name": "DAUq global (average)",
+   "period": "Q3 FY2025",
+   "value": 116.0,
+   "unit": "millions",
+   "source_ids": [
+    "pf_rel_20261029_2"
+   ]
+  },
+  {
+   "id": "dc_dauq_us",
+   "name": "DAUq US",
+   "period": "Q3 FY2026",
+   "value": 50.7,
+   "unit": "millions",
+   "source_ids": [
+    "pf_rel_20261029_2"
+   ]
+  },
+  {
+   "id": "dc_dauq_us_py",
+   "name": "DAUq US",
+   "period": "Q3 FY2025",
+   "value": 51.6,
+   "unit": "millions",
+   "source_ids": [
+    "pf_rel_20261029_2"
+   ]
+  },
+  {
+   "id": "dc_dauq_intl",
+   "name": "DAUq international",
+   "period": "Q3 FY2026",
+   "value": 79.6,
+   "unit": "millions",
+   "source_ids": [
+    "pf_rel_20261029_2"
+   ]
+  },
+  {
+   "id": "dc_dauq_intl_py",
+   "name": "DAUq international",
+   "period": "Q3 FY2025",
+   "value": 64.4,
+   "unit": "millions",
+   "source_ids": [
+    "pf_rel_20261029_2"
+   ]
+  },
+  {
+   "id": "dc_li_g",
+   "name": "Logged-in DAUq global",
+   "period": "Q3 FY2026",
+   "value": 53.5,
+   "unit": "millions",
+   "source_ids": [
+    "pf_rel_20261029_2"
+   ]
+  },
+  {
+   "id": "dc_li_g_py",
+   "name": "Logged-in DAUq global",
+   "period": "Q3 FY2025",
+   "value": 50.2,
+   "unit": "millions",
+   "source_ids": [
+    "pf_rel_20261029_2"
+   ]
+  },
+  {
+   "id": "dc_li_us",
+   "name": "Logged-in DAUq US",
+   "period": "Q3 FY2026",
+   "value": 23.4,
+   "unit": "millions",
+   "source_ids": [
+    "pf_rel_20261029_2"
+   ]
+  },
+  {
+   "id": "dc_li_us_py",
+   "name": "Logged-in DAUq US",
+   "period": "Q3 FY2025",
+   "value": 23.1,
+   "unit": "millions",
+   "source_ids": [
+    "pf_rel_20261029_2"
+   ]
+  },
+  {
+   "id": "dc_lo_g",
+   "name": "Logged-out DAUq global",
+   "period": "Q3 FY2026",
+   "value": 76.8,
+   "unit": "millions",
+   "source_ids": [
+    "pf_rel_20261029_2"
+   ]
+  },
+  {
+   "id": "dc_lo_g_py",
+   "name": "Logged-out DAUq global",
+   "period": "Q3 FY2025",
+   "value": 65.8,
+   "unit": "millions",
+   "source_ids": [
+    "pf_rel_20261029_2"
+   ]
+  },
+  {
+   "id": "dc_lo_us",
+   "name": "Logged-out DAUq US",
+   "period": "Q3 FY2026",
+   "value": 27.3,
+   "unit": "millions",
+   "source_ids": [
+    "pf_rel_20261029_2"
+   ]
+  },
+  {
+   "id": "dc_lo_us_py",
+   "name": "Logged-out DAUq US",
+   "period": "Q3 FY2025",
+   "value": 28.5,
+   "unit": "millions",
+   "source_ids": [
+    "pf_rel_20261029_2"
+   ]
+  },
+  {
+   "id": "dc_wauq_g",
+   "name": "WAUq global (average)",
+   "period": "Q3 FY2026",
+   "value": 515.2,
+   "unit": "millions",
+   "source_ids": [
+    "pf_rel_20261029_2"
+   ]
+  },
+  {
+   "id": "dc_wauq_g_py",
+   "name": "WAUq global (average)",
+   "period": "Q3 FY2025",
+   "value": 443.8,
+   "unit": "millions",
+   "source_ids": [
+    "pf_rel_20261029_2"
+   ]
+  },
+  {
+   "id": "dc_wauq_us",
+   "name": "WAUq US",
+   "period": "Q3 FY2026",
+   "value": 188.5,
+   "unit": "millions",
+   "source_ids": [
+    "pf_rel_20261029_2"
+   ]
+  },
+  {
+   "id": "dc_wauq_us_py",
+   "name": "WAUq US",
+   "period": "Q3 FY2025",
+   "value": 187.8,
+   "unit": "millions",
+   "source_ids": [
+    "pf_rel_20261029_2"
+   ]
+  },
+  {
+   "id": "dc_arpu_g",
+   "name": "ARPU global",
+   "period": "Q3 FY2026",
+   "value": 6.87,
+   "unit": "USD per quarter",
+   "source_ids": [
+    "pf_rel_20261029_2"
+   ]
+  },
+  {
+   "id": "dc_arpu_g_py",
+   "name": "ARPU global",
+   "period": "Q3 FY2025",
+   "value": 5.04,
+   "unit": "USD per quarter",
+   "source_ids": [
+    "pf_rel_20261029_2"
+   ]
+  },
+  {
+   "id": "dc_arpu_us",
+   "name": "ARPU US",
+   "period": "Q3 FY2026",
+   "value": 13.82,
+   "unit": "USD per quarter",
+   "source_ids": [
+    "pf_rel_20261029_2"
+   ]
+  },
+  {
+   "id": "dc_arpu_us_py",
+   "name": "ARPU US",
+   "period": "Q3 FY2025",
+   "value": 9.04,
+   "unit": "USD per quarter",
+   "source_ids": [
+    "pf_rel_20261029_2"
+   ]
+  },
+  {
+   "id": "dc_arpu_intl",
+   "name": "ARPU international",
+   "period": "Q3 FY2026",
+   "value": 2.43,
+   "unit": "USD per quarter",
+   "source_ids": [
+    "pf_rel_20261029_2"
+   ]
+  },
+  {
+   "id": "dc_arpu_intl_py",
+   "name": "ARPU international",
+   "period": "Q3 FY2025",
+   "value": 1.84,
+   "unit": "USD per quarter",
+   "source_ids": [
+    "pf_rel_20261029_2"
+   ]
+  },
+  {
+   "id": "dc_incr_ebitda_margin",
+   "name": "Incremental adjusted EBITDA margin y/y",
+   "period": "Q3 FY2026",
+   "value": 0.536,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261029_2"
+   ]
+  }
+ ],
+ "segments": [
+  {
+   "id": "dc_seg_us_q3",
+   "name": "US (billing address)",
+   "period": "Q3 FY2026",
+   "revenue": 718915000.0,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ]
+  },
+  {
+   "id": "dc_seg_us_q3py",
+   "name": "US (billing address)",
+   "period": "Q3 FY2025",
+   "revenue": 479576000.0,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ]
+  },
+  {
+   "id": "dc_seg_row_q3",
+   "name": "Rest of world (billing address)",
+   "period": "Q3 FY2026",
+   "revenue": 176042000.0,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ]
+  },
+  {
+   "id": "dc_seg_row_q3py",
+   "name": "Rest of world (billing address)",
+   "period": "Q3 FY2025",
+   "revenue": 105335000.0,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ]
+  },
+  {
+   "id": "dc_seg_ad_q3",
+   "name": "Advertising",
+   "period": "Q3 FY2026",
+   "revenue": 846996000.0,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ]
+  },
+  {
+   "id": "dc_seg_ad_q3py",
+   "name": "Advertising",
+   "period": "Q3 FY2025",
+   "revenue": 549342000.0,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ]
+  },
+  {
+   "id": "dc_seg_oth_q3",
+   "name": "Other (content licensing, products)",
+   "period": "Q3 FY2026",
+   "revenue": 47961000.0,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ]
+  },
+  {
+   "id": "dc_seg_oth_q3py",
+   "name": "Other (content licensing, products)",
+   "period": "Q3 FY2025",
+   "revenue": 35569000.0,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ]
+  },
+  {
+   "id": "dc_seg_us_9m",
+   "name": "US (billing address)",
+   "period": "9M FY2026",
+   "revenue": 1882595000.0,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ]
+  },
+  {
+   "id": "dc_seg_row_9m",
+   "name": "Rest of world (billing address)",
+   "period": "9M FY2026",
+   "revenue": 480678000.0,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ]
+  },
+  {
+   "id": "dc_seg_ad_9m",
+   "name": "Advertising",
+   "period": "9M FY2026",
+   "revenue": 2233291000.0,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ]
+  },
+  {
+   "id": "dc_seg_oth_9m",
+   "name": "Other (content licensing, products)",
+   "period": "9M FY2026",
+   "revenue": 129982000.0,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ]
+  }
+ ],
+ "customers": [],
+ "notes": [
+  "dc MGMT (call 2026-10-29, dc_call_20261029) search referral traffic fell meaningfully in Q3 with the decline accelerating late in the quarter and continuing into October (more than 1 million fewer referrals per week on average); management said that if this rate continues total DAUq could fall in Q4 by a low double-digit percentage from the current 130 million base. Management statement, not a forecast; logged-in and app DAUq (over 80% of monetization) grew q/q.",
+  "dc MGMT management plans to move Reddit to a logged-in-only experience, with full tests in select non-US markets from Q4 2026; it will keep reporting logged-in and logged-out DAUq by geography for now and is 'evaluating' user reporting (disclosure-change risk).",
+  "dc MGMT Q4 guide midpoint = revenue about +40% y/y (38-42%) and adjusted EBITDA margin about 49%; guidance is for Q4 only (no full-year or 2027 guide). Q3 beat its own guide: revenue 895 vs 860-870 and adj EBITDA 402 vs 385-395.",
+  "dc CALL 2026-10-29 Reddit Q3 2026 earnings call (AV transcript, raw copy in gather/raw_documents/av_transcript_RDDT_2026Q3.json). Q&A topics: Google search referral decline and AI Overviews, logged-in-only transition, content licensing (existing OpenAI and Google partners), 2027 advertiser renewals.",
+  "dc MGMT taxes: Q3 tax expense $5.8m, effective rate about 2%; full valuation allowances on US federal and state deferred tax assets are being reassessed and 10-Q says a significant release may be possible within 12 months (a one-time GAAP net income gain if released; keep out of recurring earnings).",
+  "dc MGMT capital allocation priorities: invest in the business, M&A, share repurchase; about $660m left on the $1.0bn buyback authorization of 2026-02-04; fully diluted shares 206.3m, 207.0m excluding buybacks, flat q/q; headcount +12% y/y, +3% q/q; consumer marketing mid-single-digit % of revenue.",
+  "dc CUSTOMERS no customer or advertiser share of revenue is disclosed in the 10-Q (no customer over 10% named); other than the US no country is 10% or more of revenue. Content licensing customers (OpenAI, Google named by an analyst on the call) are not quantified: 'Other revenue' is $48m = 5.4% of Q3 revenue; RPO over one year is only $62.4m.",
+  "dc SEGMENT one reportable segment (CEO reviews consolidated net income); segment lines are therefore geography and revenue-type disaggregation from the 10-Q note, with no segment operating income.",
+  "dc ONEOFFS none identified in the Q3 release or 10-Q: no restructuring or impairment lines in the income statement; other income $27.5m is mostly interest and is below operating income; the 2% tax rate reflects valuation allowances (a recurring-until-released benefit, not a one-off).",
+  "dc COMMIT purchase obligations: AWS $880m between July 2026 and June 2029 (addendum signed June 2026); Google Cloud $580m between September 2026 and August 2029 (signed August 2026); all minimums met to date. No debt drawn on the $500m revolver (letters of credit $5.7m). Capex $1.2m in Q3 (0.1% of revenue).",
+  "dc RISK Search dependence: organic traffic from Google and other search engines is a main acquisition channel and Google AI features and algorithm changes can cut referrals (10-K Item 1A, 'rely on search engines'); realized in Q3-Q4 2026 per management.",
+  "dc RISK AI competition: LLMs and AI answer products (Google, Meta, OpenAI, Anthropic) may substitute for visits to Reddit and for information seeking (10-K Item 1A competition).",
+  "dc RISK Advertising concentration: about 94% of 2025 revenue (91% in 2024) is third-party advertising, sensitive to ad budgets, measurement and privacy changes by Apple, Google and Microsoft (10-K Item 1A, advertising and platform changes).",
+  "dc RISK Content licensing is small, fixed-fee and renewal-dependent: 'Other revenue' 5.4% of revenue and RPO over one year $62.4m (10-Q Note on revenue); data-use disputes and scraping litigation risk (10-K Item 1A, IP and data).",
+  "dc RISK Cloud infrastructure dependence on AWS and Google Cloud with $1.46bn of three-year commitments (10-Q Note Commitments; 10-K Item 1A, outages).",
+  "dc RISK Moderation, content and regulatory exposure (privacy, online safety, EU rules, litigation) and dependence on volunteer moderators (10-K Item 1A).",
+  "dc RISK Control and dilution: multi-class structure concentrates voting control (Advance Magazine Publishers holds about 22% of shares); SBC and related taxes $136m in Q3 (15% of revenue) with fully diluted shares held flat only by buybacks (10-K and 10-Q Item 1A).",
+  "dc GAP no transcript fetched beyond the single AV call; no segment operating profit exists; licensing contract counts and prices are not disclosed; customer concentration for advertisers is not disclosed.",
+  "dc DATE the Q3 release and call (2026-10-29) are citable from 2026-10-31 (as_of 2026-11-01 is past that); the 10-Q filed 2026-10-30 is citable from 2026-11-01."
+ ],
+ "gaps": [
+  "no advertiser or licensing customer concentration disclosed",
+  "licensing contract count and prices not disclosed",
+  "no full-year or 2027 guidance exists",
+  "only the AV transcript was read (one call)"
+ ],
+ "stopped": []
+}

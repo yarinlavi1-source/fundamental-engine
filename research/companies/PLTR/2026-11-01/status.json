@@ -1,0 +1,69 @@
+{
+ "ticker": "PLTR",
+ "as_of": "2026-11-01",
+ "at_utc": "2026-11-01T10:40:23+00:00",
+ "verified": true,
+ "label": "verified",
+ "reasons": [],
+ "engine_ran": true,
+ "engine_review_status": "unreviewed_draft",
+ "reviews": {
+  "review_trace": {
+   "file": "review/trace.json",
+   "this_attempt": true,
+   "returned": true
+  },
+  "review_numbers": {
+   "file": "review/numbers.json",
+   "this_attempt": true,
+   "returned": true
+  },
+  "review_counter": {
+   "file": "review/counter.json",
+   "this_attempt": true,
+   "returned": true
+  }
+ },
+ "critical": [],
+ "open_critical": [],
+ "repair": null,
+ "returned": [
+  "analyst",
+  "analyst_field",
+  "analyst_path",
+  "gather_documents",
+  "gather_field",
+  "gather_macro",
+  "gather_numbers",
+  "review_counter",
+  "review_numbers",
+  "review_trace"
+ ],
+ "times": {
+  "started_at_utc": "2026-11-01T05:54:11+00:00",
+  "prefetch_finished_at_utc": "2026-11-01T05:54:15+00:00",
+  "minutes_after_start": {
+   "gather/_prefetch.json": 0.1,
+   "gather/documents.json": 1.7,
+   "gather/field.json": 3.0,
+   "gather/macro.json": 4.1,
+   "gather/numbers.json": 2.8,
+   "understand/auto.json": 13.9,
+   "understand/business.json": 16.3,
+   "understand/econ_case.json": 1.9,
+   "understand/econ_result.json": 2.0,
+   "understand/quarter_case.json": 1.9,
+   "understand/quarter_result.json": 2.0,
+   "prep.json": 13.9,
+   "position/core.json": 17.0,
+   "position/field.json": 16.0,
+   "position/path.json": 17.6,
+   "value.json": 34.9,
+   "review/trace.json": 19.8,
+   "review/numbers.json": 37.3,
+   "review/counter.json": 39.8
+  },
+  "elapsed_minutes": 39.8
+ },
+ "meaning": "verified needs: the engine ran in this attempt, the three reviewers returned (files of this attempt AND the main loop's record), no critical finding open after the one repair pass. The engine's own review status is reported beside it, never replaced by it."
+}

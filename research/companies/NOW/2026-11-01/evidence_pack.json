@@ -1,0 +1,4610 @@
+{
+ "pack_version": 1,
+ "ticker": "NOW",
+ "as_of": "2026-11-01",
+ "identity": {
+  "name": "ServiceNow, Inc.",
+  "currency": "USD",
+  "exchange": "NYSE",
+  "security": "ServiceNow common stock (NYSE: NOW), single class, no ADR; 5-for-1 split effective 2025-12-18",
+  "fiscal_year_end": "12-31",
+  "cik": "1373715",
+  "type": "high_growth / fast_grower (computed by classify_company from SEC companyfacts; the analyst confirms or overrides with reasons)",
+  "evidence_ids": [
+   "pf_10k_20260129"
+  ]
+ },
+ "sources": [
+  {
+   "id": "pf_10k_20260129",
+   "kind": "sec_filing",
+   "title": "ServiceNow, Inc. 10-K filed 2026-01-29 (period 2025-12-31)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1373715/000137371526000007/now-20251231.htm",
+   "date": "2026-01-29",
+   "independent": true,
+   "publisher": "ServiceNow, Inc. (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_10q_20261028",
+   "kind": "sec_filing",
+   "title": "ServiceNow, Inc. 10-Q filed 2026-10-28 (period 2026-09-30)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1373715/000137371526000096/now-20260930.htm",
+   "date": "2026-10-28",
+   "independent": true,
+   "publisher": "ServiceNow, Inc. (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_proxy_20260406",
+   "kind": "sec_filing",
+   "title": "ServiceNow, Inc. DEF 14A filed 2026-04-06 (period 2026-05-21)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1373715/000137371526000039/now-20260406.htm",
+   "date": "2026-04-06",
+   "independent": true,
+   "publisher": "ServiceNow, Inc. (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_10q_20260723",
+   "kind": "sec_filing",
+   "title": "ServiceNow, Inc. 10-Q filed 2026-07-23 (period 2026-06-30)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1373715/000137371526000076/now-20260630.htm",
+   "date": "2026-07-23",
+   "independent": true,
+   "publisher": "ServiceNow, Inc. (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_10q_20260423",
+   "kind": "sec_filing",
+   "title": "ServiceNow, Inc. 10-Q filed 2026-04-23 (period 2026-03-31)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1373715/000137371526000056/now-20260331.htm",
+   "date": "2026-04-23",
+   "independent": true,
+   "publisher": "ServiceNow, Inc. (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20261028_1",
+   "kind": "release",
+   "title": "ServiceNow, Inc. earnings 8-K filed 2026-10-28, exhibit erq3fy26.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1373715/000137371526000092/erq3fy26.htm",
+   "date": "2026-10-28",
+   "independent": true,
+   "publisher": "ServiceNow, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20260722_1",
+   "kind": "release",
+   "title": "ServiceNow, Inc. earnings 8-K filed 2026-07-22, exhibit erq2fy26.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1373715/000137371526000072/erq2fy26.htm",
+   "date": "2026-07-22",
+   "independent": true,
+   "publisher": "ServiceNow, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20260128_1",
+   "kind": "release",
+   "title": "ServiceNow, Inc. earnings 8-K filed 2026-01-28, exhibit erq4fy25.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1373715/000137371526000005/erq4fy25.htm",
+   "date": "2026-01-28",
+   "independent": true,
+   "publisher": "ServiceNow, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20251029_1",
+   "kind": "release",
+   "title": "ServiceNow, Inc. earnings 8-K filed 2025-10-29, exhibit erq3fy25.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1373715/000137371525000305/erq3fy25.htm",
+   "date": "2025-10-29",
+   "independent": true,
+   "publisher": "ServiceNow, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20250723_1",
+   "kind": "release",
+   "title": "ServiceNow, Inc. earnings 8-K filed 2025-07-23, exhibit erq2fy25.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1373715/000137371525000274/erq2fy25.htm",
+   "date": "2025-07-23",
+   "independent": true,
+   "publisher": "ServiceNow, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_rel_20250423_1",
+   "kind": "release",
+   "title": "ServiceNow, Inc. earnings 8-K filed 2025-04-23, exhibit erq1fy25.htm",
+   "url": "https://www.sec.gov/Archives/edgar/data/1373715/000137371525000124/erq1fy25.htm",
+   "date": "2025-04-23",
+   "independent": true,
+   "publisher": "ServiceNow, Inc.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_fred_dgs10",
+   "kind": "macro",
+   "title": "Market yield on US Treasury securities at 10-year constant maturity, percent, daily (FRED DGS10)",
+   "url": "https://fred.stlouisfed.org/series/DGS10",
+   "date": "2026-10-29",
+   "independent": true,
+   "publisher": "Federal Reserve Bank of St. Louis (FRED), from the Federal Reserve H.15",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_erp_implied",
+   "kind": "macro",
+   "title": "Damodaran implied ERP for the S&P 500 on 1 October 2026 (trailing 12 months, adjusted payout), treasury 5.29%",
+   "url": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/home.htm",
+   "date": "2026-10-01",
+   "independent": true,
+   "publisher": "Aswath Damodaran (NYU Stern), as saved in runs/macro/market_2026-10-20.json",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20210212",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of ServiceNow, Inc.: facts of the filing(s) of 2021-02-12",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001373715.json#filed=2021-02-12",
+   "date": "2021-02-12",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20210429",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of ServiceNow, Inc.: facts of the filing(s) of 2021-04-29",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001373715.json#filed=2021-04-29",
+   "date": "2021-04-29",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20220203",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of ServiceNow, Inc.: facts of the filing(s) of 2022-02-03",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001373715.json#filed=2022-02-03",
+   "date": "2022-02-03",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20240125",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of ServiceNow, Inc.: facts of the filing(s) of 2024-01-25",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001373715.json#filed=2024-01-25",
+   "date": "2024-01-25",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20230131",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of ServiceNow, Inc.: facts of the filing(s) of 2023-01-31",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001373715.json#filed=2023-01-31",
+   "date": "2023-01-31",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20250130",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of ServiceNow, Inc.: facts of the filing(s) of 2025-01-30",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001373715.json#filed=2025-01-30",
+   "date": "2025-01-30",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20260129",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of ServiceNow, Inc.: facts of the filing(s) of 2026-01-29",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001373715.json#filed=2026-01-29",
+   "date": "2026-01-29",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20250423",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of ServiceNow, Inc.: facts of the filing(s) of 2025-04-23",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001373715.json#filed=2025-04-23",
+   "date": "2025-04-23",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20250724",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of ServiceNow, Inc.: facts of the filing(s) of 2025-07-24",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001373715.json#filed=2025-07-24",
+   "date": "2025-07-24",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20251030",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of ServiceNow, Inc.: facts of the filing(s) of 2025-10-30",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001373715.json#filed=2025-10-30",
+   "date": "2025-10-30",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20260423",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of ServiceNow, Inc.: facts of the filing(s) of 2026-04-23",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001373715.json#filed=2026-04-23",
+   "date": "2026-04-23",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20260723",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of ServiceNow, Inc.: facts of the filing(s) of 2026-07-23",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001373715.json#filed=2026-07-23",
+   "date": "2026-07-23",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_cf_20261028",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts of ServiceNow, Inc.: facts of the filing(s) of 2026-10-28",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001373715.json#filed=2026-10-28",
+   "date": "2026-10-28",
+   "independent": false,
+   "publisher": "U.S. SEC (XBRL from the filer's own filings)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "dc_call_20261028",
+   "kind": "transcript",
+   "title": "ServiceNow Q3 2026 earnings call transcript (AV EARNINGS_CALL_TRANSCRIPT NOW 2026Q3)",
+   "url": "connector:EARNINGS_CALL_TRANSCRIPT",
+   "date": "2026-10-28",
+   "independent": true,
+   "publisher": "Alpha Vantage (transcript of the ServiceNow, Inc. call of 2026-10-28)",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "dc_rel_20260422",
+   "kind": "release",
+   "title": "ServiceNow 8-K Ex.99.1 Q1 2026 results (filed 2026-04-22)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1373715/000137371526000054/erq1fy26.htm",
+   "date": "2026-04-22",
+   "independent": true,
+   "publisher": "ServiceNow, Inc. (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_sec_crm",
+   "kind": "structured_data",
+   "title": "Salesforce (CRM) SEC companyfacts, 10-K FY ended 2026-01-31",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001108524.json",
+   "date": "2026-03-02",
+   "independent": true,
+   "publisher": "SEC EDGAR",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_sec_msft",
+   "kind": "structured_data",
+   "title": "Microsoft (MSFT) SEC companyfacts, 10-K FY ended 2026-06-30",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000789019.json",
+   "date": "2026-07-29",
+   "independent": true,
+   "publisher": "SEC EDGAR",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_sec_wday",
+   "kind": "structured_data",
+   "title": "Workday (WDAY) SEC companyfacts, 10-K FY ended 2026-01-31",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001327811.json",
+   "date": "2026-03-06",
+   "independent": true,
+   "publisher": "SEC EDGAR",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_sec_orcl",
+   "kind": "structured_data",
+   "title": "Oracle (ORCL) SEC companyfacts, 10-K FY ended 2026-05-31",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001341439.json",
+   "date": "2026-06-22",
+   "independent": true,
+   "publisher": "SEC EDGAR",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_tikr_armis",
+   "kind": "press",
+   "title": "ServiceNow Wants to Be No. 1 in Security. Here's What Its $7.75 Billion Armis Bet Must Show on October 28",
+   "url": "https://www.tikr.com/blog/servicenow-wants-to-be-no-1-in-security-heres-what-its-7-75-billion-armis-bet-must-show-on-october-28",
+   "date": "2026-10-20",
+   "independent": false,
+   "publisher": "TIKR",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_yahoo_q1",
+   "kind": "press",
+   "title": "ServiceNow Q1 2026 earnings: stock drops 17% on margin fears",
+   "url": "https://finance.yahoo.com/markets/stocks/articles/servicenow-q1-2026-earnings-stock-173132844.html",
+   "date": "2026-04-23",
+   "independent": false,
+   "publisher": "Yahoo Finance",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_invezz_jul",
+   "kind": "press",
+   "title": "ServiceNow stock plunges ahead of earnings: how AI will affect the company",
+   "url": "https://invezz.com/au/news/2026/07/22/servicenow-stock-plunges-ahead-of-earnings-how-ai-will-affect-the-company/",
+   "date": "2026-07-22",
+   "independent": false,
+   "publisher": "Invezz",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_8k_20260515",
+   "kind": "sec_filing",
+   "title": "ServiceNow 8-K (Items 1.01, 2.03, 8.01) event 2026-05-12, senior notes",
+   "url": "https://www.sec.gov/Archives/edgar/data/1373715/000119312526226644/d60522d8k.htm",
+   "date": "2026-05-15",
+   "independent": true,
+   "publisher": "SEC EDGAR",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_ib_price",
+   "kind": "price",
+   "title": "Interactive Brokers price snapshot NOW (NYSE), last 105.34, prior close 109.67",
+   "url": "connector:Interactive_Brokers.get_price_snapshot",
+   "date": "2026-10-31",
+   "independent": true,
+   "publisher": "Interactive Brokers",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_av_is",
+   "kind": "structured_data",
+   "title": "Alpha Vantage INCOME_STATEMENT NOW (annual and quarterly, normalized)",
+   "url": "connector:Alpha_Vantage.INCOME_STATEMENT",
+   "date": "2026-10-28",
+   "independent": true,
+   "publisher": "Alpha Vantage",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "nm_cons_chartmill",
+   "kind": "consensus",
+   "title": "Chartmill NOW earnings and revenue estimates page (FY2026 EPS 4.12 non-GAAP-style, 51 analysts, as of 2026-10-17; pre-Q3 report)",
+   "url": "https://www.chartmill.com/stock/quote/NOW/estimates",
+   "date": "2026-10-17",
+   "independent": false,
+   "publisher": "Chartmill (aggregated analyst estimates, provider of underlying data not named)",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  }
+ ],
+ "facts": [
+  {
+   "id": "pf_revenue_fy2020",
+   "metric": "revenue",
+   "period": "FY2020",
+   "value": 4519484000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210212"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_gross_profit_fy2020",
+   "metric": "gross_profit",
+   "period": "FY2020",
+   "value": 3532371000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210212"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_fy2020",
+   "metric": "operating_income",
+   "period": "FY2020",
+   "value": 198863000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210212"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_net_income_fy2020",
+   "metric": "net_income",
+   "period": "FY2020",
+   "value": 118503000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210212"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_fy2020",
+   "metric": "cfo",
+   "period": "FY2020",
+   "value": 1786599000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210212"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_fy2020",
+   "metric": "capex",
+   "period": "FY2020",
+   "value": 419327000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210212"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_fy2020",
+   "metric": "sbc",
+   "period": "FY2020",
+   "value": 870453000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210212"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_d_and_a_fy2020",
+   "metric": "d_and_a",
+   "period": "FY2020",
+   "value": 336381000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210212"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_rd_fy2020",
+   "metric": "rd",
+   "period": "FY2020",
+   "value": 1024327000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210212"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_eps_diluted_fy2020",
+   "metric": "eps_diluted",
+   "period": "FY2020",
+   "value": 0.59,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_cf_20210212"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_shares_diluted_wavg_fy2020",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2020",
+   "value": 202478000.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_cf_20210212"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cash_fy2020",
+   "metric": "cash",
+   "period": "FY2020",
+   "value": 1676794000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210212"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_short_term_investments_fy2020",
+   "metric": "short_term_investments",
+   "period": "FY2020",
+   "value": 1415242000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210212"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_total_assets_fy2020",
+   "metric": "total_assets",
+   "period": "FY2020",
+   "value": 8715057000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210212"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_equity_fy2020",
+   "metric": "equity",
+   "period": "FY2020",
+   "value": 2834481000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210212"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_long_term_debt_fy2020",
+   "metric": "long_term_debt",
+   "period": "FY2020",
+   "value": 1640000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210429"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_goodwill_fy2020",
+   "metric": "goodwill",
+   "period": "FY2020",
+   "value": 240764000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210212"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_receivables_fy2020",
+   "metric": "receivables",
+   "period": "FY2020",
+   "value": 1009415000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20210212"
+   ],
+   "period_end": "2020-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_fy2021",
+   "metric": "revenue",
+   "period": "FY2021",
+   "value": 5896000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220203"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_gross_profit_fy2021",
+   "metric": "gross_profit",
+   "period": "FY2021",
+   "value": 4543000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220203"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_fy2021",
+   "metric": "operating_income",
+   "period": "FY2021",
+   "value": 257000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220203"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_net_income_fy2021",
+   "metric": "net_income",
+   "period": "FY2021",
+   "value": 230141000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220203"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_fy2021",
+   "metric": "cfo",
+   "period": "FY2021",
+   "value": 2191000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220203"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_fy2021",
+   "metric": "capex",
+   "period": "FY2021",
+   "value": 392000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220203"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_fy2021",
+   "metric": "sbc",
+   "period": "FY2021",
+   "value": 1131000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220203"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_d_and_a_fy2021",
+   "metric": "d_and_a",
+   "period": "FY2021",
+   "value": 472000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220203"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_rd_fy2021",
+   "metric": "rd",
+   "period": "FY2021",
+   "value": 1397000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220203"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_eps_diluted_fy2021",
+   "metric": "eps_diluted",
+   "period": "FY2021",
+   "value": 1.13,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_cf_20220203"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_shares_diluted_wavg_fy2021",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2021",
+   "value": 203167000.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_cf_20220203"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_buybacks_fy2021",
+   "metric": "buybacks",
+   "period": "FY2021",
+   "value": 0.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240125"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cash_fy2021",
+   "metric": "cash",
+   "period": "FY2021",
+   "value": 1728000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220203"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_short_term_investments_fy2021",
+   "metric": "short_term_investments",
+   "period": "FY2021",
+   "value": 1576000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220203"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_total_assets_fy2021",
+   "metric": "total_assets",
+   "period": "FY2021",
+   "value": 10798000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220203"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_equity_fy2021",
+   "metric": "equity",
+   "period": "FY2021",
+   "value": 3695000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220203"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_long_term_debt_fy2021",
+   "metric": "long_term_debt",
+   "period": "FY2021",
+   "value": 1484000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220203"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_goodwill_fy2021",
+   "metric": "goodwill",
+   "period": "FY2021",
+   "value": 777000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220203"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_receivables_fy2021",
+   "metric": "receivables",
+   "period": "FY2021",
+   "value": 1390000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20220203"
+   ],
+   "period_end": "2021-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_fy2022",
+   "metric": "revenue",
+   "period": "FY2022",
+   "value": 7245000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230131"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_gross_profit_fy2022",
+   "metric": "gross_profit",
+   "period": "FY2022",
+   "value": 5672000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230131"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_fy2022",
+   "metric": "operating_income",
+   "period": "FY2022",
+   "value": 355000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230131"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_net_income_fy2022",
+   "metric": "net_income",
+   "period": "FY2022",
+   "value": 325000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230131"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_fy2022",
+   "metric": "cfo",
+   "period": "FY2022",
+   "value": 2723000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230131"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_fy2022",
+   "metric": "capex",
+   "period": "FY2022",
+   "value": 550000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230131"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_fy2022",
+   "metric": "sbc",
+   "period": "FY2022",
+   "value": 1401000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230131"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_d_and_a_fy2022",
+   "metric": "d_and_a",
+   "period": "FY2022",
+   "value": 433000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230131"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_rd_fy2022",
+   "metric": "rd",
+   "period": "FY2022",
+   "value": 1768000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230131"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_eps_diluted_fy2022",
+   "metric": "eps_diluted",
+   "period": "FY2022",
+   "value": 1.6,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_cf_20230131"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_shares_diluted_wavg_fy2022",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2022",
+   "value": 203535000.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_cf_20230131"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_buybacks_fy2022",
+   "metric": "buybacks",
+   "period": "FY2022",
+   "value": 0.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240125"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cash_fy2022",
+   "metric": "cash",
+   "period": "FY2022",
+   "value": 1470000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230131"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_short_term_investments_fy2022",
+   "metric": "short_term_investments",
+   "period": "FY2022",
+   "value": 2810000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230131"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_total_assets_fy2022",
+   "metric": "total_assets",
+   "period": "FY2022",
+   "value": 13299000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230131"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_equity_fy2022",
+   "metric": "equity",
+   "period": "FY2022",
+   "value": 5032000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230131"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_long_term_debt_fy2022",
+   "metric": "long_term_debt",
+   "period": "FY2022",
+   "value": 1486000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230131"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_goodwill_fy2022",
+   "metric": "goodwill",
+   "period": "FY2022",
+   "value": 824000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230131"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_receivables_fy2022",
+   "metric": "receivables",
+   "period": "FY2022",
+   "value": 1725000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20230131"
+   ],
+   "period_end": "2022-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_fy2023",
+   "metric": "revenue",
+   "period": "FY2023",
+   "value": 8971000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240125"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_gross_profit_fy2023",
+   "metric": "gross_profit",
+   "period": "FY2023",
+   "value": 7050000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240125"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_fy2023",
+   "metric": "operating_income",
+   "period": "FY2023",
+   "value": 762000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240125"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_net_income_fy2023",
+   "metric": "net_income",
+   "period": "FY2023",
+   "value": 1731000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240125"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_fy2023",
+   "metric": "cfo",
+   "period": "FY2023",
+   "value": 3398000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240125"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_fy2023",
+   "metric": "capex",
+   "period": "FY2023",
+   "value": 694000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240125"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_fy2023",
+   "metric": "sbc",
+   "period": "FY2023",
+   "value": 1604000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240125"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_d_and_a_fy2023",
+   "metric": "d_and_a",
+   "period": "FY2023",
+   "value": 562000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240125"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_rd_fy2023",
+   "metric": "rd",
+   "period": "FY2023",
+   "value": 2124000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240125"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_eps_diluted_fy2023",
+   "metric": "eps_diluted",
+   "period": "FY2023",
+   "value": 8.42,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_cf_20240125"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_shares_diluted_wavg_fy2023",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2023",
+   "value": 205591000.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_cf_20240125"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_buybacks_fy2023",
+   "metric": "buybacks",
+   "period": "FY2023",
+   "value": 538000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240125"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cash_fy2023",
+   "metric": "cash",
+   "period": "FY2023",
+   "value": 1897000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240125"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_short_term_investments_fy2023",
+   "metric": "short_term_investments",
+   "period": "FY2023",
+   "value": 2980000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240125"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_total_assets_fy2023",
+   "metric": "total_assets",
+   "period": "FY2023",
+   "value": 17387000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240125"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_equity_fy2023",
+   "metric": "equity",
+   "period": "FY2023",
+   "value": 7628000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240125"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_long_term_debt_fy2023",
+   "metric": "long_term_debt",
+   "period": "FY2023",
+   "value": 1488000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240125"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_goodwill_fy2023",
+   "metric": "goodwill",
+   "period": "FY2023",
+   "value": 1231000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240125"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_receivables_fy2023",
+   "metric": "receivables",
+   "period": "FY2023",
+   "value": 2036000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20240125"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_fy2024",
+   "metric": "revenue",
+   "period": "FY2024",
+   "value": 10984000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250130"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_gross_profit_fy2024",
+   "metric": "gross_profit",
+   "period": "FY2024",
+   "value": 8697000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250130"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_fy2024",
+   "metric": "operating_income",
+   "period": "FY2024",
+   "value": 1364000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250130"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_net_income_fy2024",
+   "metric": "net_income",
+   "period": "FY2024",
+   "value": 1425000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250130"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_fy2024",
+   "metric": "cfo",
+   "period": "FY2024",
+   "value": 4267000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250130"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_fy2024",
+   "metric": "capex",
+   "period": "FY2024",
+   "value": 852000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250130"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_fy2024",
+   "metric": "sbc",
+   "period": "FY2024",
+   "value": 1746000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250130"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_d_and_a_fy2024",
+   "metric": "d_and_a",
+   "period": "FY2024",
+   "value": 564000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250130"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_rd_fy2024",
+   "metric": "rd",
+   "period": "FY2024",
+   "value": 2543000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250130"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_eps_diluted_fy2024",
+   "metric": "eps_diluted",
+   "period": "FY2024",
+   "value": 6.84,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_cf_20250130"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_shares_diluted_wavg_fy2024",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2024",
+   "value": 208423000.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_cf_20250130"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_buybacks_fy2024",
+   "metric": "buybacks",
+   "period": "FY2024",
+   "value": 696000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250130"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cash_fy2024",
+   "metric": "cash",
+   "period": "FY2024",
+   "value": 2304000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250130"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_short_term_investments_fy2024",
+   "metric": "short_term_investments",
+   "period": "FY2024",
+   "value": 3458000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250130"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_total_assets_fy2024",
+   "metric": "total_assets",
+   "period": "FY2024",
+   "value": 20383000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250130"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_equity_fy2024",
+   "metric": "equity",
+   "period": "FY2024",
+   "value": 9609000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250130"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_long_term_debt_fy2024",
+   "metric": "long_term_debt",
+   "period": "FY2024",
+   "value": 1489000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250130"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_goodwill_fy2024",
+   "metric": "goodwill",
+   "period": "FY2024",
+   "value": 1273000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250130"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_receivables_fy2024",
+   "metric": "receivables",
+   "period": "FY2024",
+   "value": 2240000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250130"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_fy2025",
+   "metric": "revenue",
+   "period": "FY2025",
+   "value": 13278000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_gross_profit_fy2025",
+   "metric": "gross_profit",
+   "period": "FY2025",
+   "value": 10295000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_fy2025",
+   "metric": "operating_income",
+   "period": "FY2025",
+   "value": 1824000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_net_income_fy2025",
+   "metric": "net_income",
+   "period": "FY2025",
+   "value": 1748000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_fy2025",
+   "metric": "cfo",
+   "period": "FY2025",
+   "value": 5444000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_fy2025",
+   "metric": "capex",
+   "period": "FY2025",
+   "value": 868000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_fy2025",
+   "metric": "sbc",
+   "period": "FY2025",
+   "value": 1955000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_d_and_a_fy2025",
+   "metric": "d_and_a",
+   "period": "FY2025",
+   "value": 738000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_rd_fy2025",
+   "metric": "rd",
+   "period": "FY2025",
+   "value": 2960000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_eps_diluted_fy2025",
+   "metric": "eps_diluted",
+   "period": "FY2025",
+   "value": 1.67,
+   "unit": "USD/shares",
+   "source_ids": [
+    "pf_cf_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_shares_diluted_wavg_fy2025",
+   "metric": "shares_diluted_wavg",
+   "period": "FY2025",
+   "value": 1046691000.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_cf_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_buybacks_fy2025",
+   "metric": "buybacks",
+   "period": "FY2025",
+   "value": 1840000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cash_fy2025",
+   "metric": "cash",
+   "period": "FY2025",
+   "value": 3726000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_short_term_investments_fy2025",
+   "metric": "short_term_investments",
+   "period": "FY2025",
+   "value": 2558000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_total_assets_fy2025",
+   "metric": "total_assets",
+   "period": "FY2025",
+   "value": 26038000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_equity_fy2025",
+   "metric": "equity",
+   "period": "FY2025",
+   "value": 12964000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_goodwill_fy2025",
+   "metric": "goodwill",
+   "period": "FY2025",
+   "value": 3578000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_receivables_fy2025",
+   "metric": "receivables",
+   "period": "FY2025",
+   "value": 2627000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_q_2024_12_31",
+   "metric": "revenue",
+   "period": "Q@2024-12-31",
+   "value": 2957000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250130"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_gross_profit_q_2024_12_31",
+   "metric": "gross_profit",
+   "period": "Q@2024-12-31",
+   "value": 2326000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250130"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_operating_income_q_2024_12_31",
+   "metric": "operating_income",
+   "period": "Q@2024-12-31",
+   "value": 374000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250130"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_net_income_q_2024_12_31",
+   "metric": "net_income",
+   "period": "Q@2024-12-31",
+   "value": 384000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250130"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_sbc_q_2024_12_31",
+   "metric": "sbc",
+   "period": "Q@2024-12-31",
+   "value": 454000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250130"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_cfo_q_2024_12_31",
+   "metric": "cfo",
+   "period": "Q@2024-12-31",
+   "value": 1635000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250130"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_capex_q_2024_12_31",
+   "metric": "capex",
+   "period": "Q@2024-12-31",
+   "value": 253000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250130"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_revenue_q_2025_03_31",
+   "metric": "revenue",
+   "period": "Q@2025-03-31",
+   "value": 3088000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250423"
+   ],
+   "period_end": "2025-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_gross_profit_q_2025_03_31",
+   "metric": "gross_profit",
+   "period": "Q@2025-03-31",
+   "value": 2437000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250423"
+   ],
+   "period_end": "2025-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_q_2025_03_31",
+   "metric": "operating_income",
+   "period": "Q@2025-03-31",
+   "value": 451000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250423"
+   ],
+   "period_end": "2025-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_net_income_q_2025_03_31",
+   "metric": "net_income",
+   "period": "Q@2025-03-31",
+   "value": 460000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250423"
+   ],
+   "period_end": "2025-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_q_2025_03_31",
+   "metric": "sbc",
+   "period": "Q@2025-03-31",
+   "value": 470000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250423"
+   ],
+   "period_end": "2025-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_q_2025_03_31",
+   "metric": "cfo",
+   "period": "Q@2025-03-31",
+   "value": 1677000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250423"
+   ],
+   "period_end": "2025-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_q_2025_03_31",
+   "metric": "capex",
+   "period": "Q@2025-03-31",
+   "value": 205000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250423"
+   ],
+   "period_end": "2025-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_q_2025_06_30",
+   "metric": "revenue",
+   "period": "Q@2025-06-30",
+   "value": 3215000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250724"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_gross_profit_q_2025_06_30",
+   "metric": "gross_profit",
+   "period": "Q@2025-06-30",
+   "value": 2491000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250724"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_q_2025_06_30",
+   "metric": "operating_income",
+   "period": "Q@2025-06-30",
+   "value": 358000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250724"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_net_income_q_2025_06_30",
+   "metric": "net_income",
+   "period": "Q@2025-06-30",
+   "value": 385000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250724"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_q_2025_06_30",
+   "metric": "sbc",
+   "period": "Q@2025-06-30",
+   "value": 499000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250724"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_q_2025_06_30",
+   "metric": "cfo",
+   "period": "Q@2025-06-30",
+   "value": 716000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250724"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_q_2025_06_30",
+   "metric": "capex",
+   "period": "Q@2025-06-30",
+   "value": 190000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20250724"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_q_2025_09_30",
+   "metric": "revenue",
+   "period": "Q@2025-09-30",
+   "value": 3407000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20251030"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_gross_profit_q_2025_09_30",
+   "metric": "gross_profit",
+   "period": "Q@2025-09-30",
+   "value": 2633000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20251030"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_q_2025_09_30",
+   "metric": "operating_income",
+   "period": "Q@2025-09-30",
+   "value": 572000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20251030"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_net_income_q_2025_09_30",
+   "metric": "net_income",
+   "period": "Q@2025-09-30",
+   "value": 502000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20251030"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_q_2025_09_30",
+   "metric": "sbc",
+   "period": "Q@2025-09-30",
+   "value": 492000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20251030"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_q_2025_09_30",
+   "metric": "cfo",
+   "period": "Q@2025-09-30",
+   "value": 813000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20251030"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_q_2025_09_30",
+   "metric": "capex",
+   "period": "Q@2025-09-30",
+   "value": 235000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20251030"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_q_2025_12_31",
+   "metric": "revenue",
+   "period": "Q@2025-12-31",
+   "value": 3568000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_gross_profit_q_2025_12_31",
+   "metric": "gross_profit",
+   "period": "Q@2025-12-31",
+   "value": 2734000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_operating_income_q_2025_12_31",
+   "metric": "operating_income",
+   "period": "Q@2025-12-31",
+   "value": 443000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_net_income_q_2025_12_31",
+   "metric": "net_income",
+   "period": "Q@2025-12-31",
+   "value": 401000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_sbc_q_2025_12_31",
+   "metric": "sbc",
+   "period": "Q@2025-12-31",
+   "value": 494000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_cfo_q_2025_12_31",
+   "metric": "cfo",
+   "period": "Q@2025-12-31",
+   "value": 2238000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_capex_q_2025_12_31",
+   "metric": "capex",
+   "period": "Q@2025-12-31",
+   "value": 238000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "derived"
+  },
+  {
+   "id": "pf_revenue_q_2026_03_31",
+   "metric": "revenue",
+   "period": "Q@2026-03-31",
+   "value": 3770000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260423"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_gross_profit_q_2026_03_31",
+   "metric": "gross_profit",
+   "period": "Q@2026-03-31",
+   "value": 2830000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260423"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_q_2026_03_31",
+   "metric": "operating_income",
+   "period": "Q@2026-03-31",
+   "value": 503000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260423"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_net_income_q_2026_03_31",
+   "metric": "net_income",
+   "period": "Q@2026-03-31",
+   "value": 469000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260423"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_q_2026_03_31",
+   "metric": "sbc",
+   "period": "Q@2026-03-31",
+   "value": 547000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260423"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_q_2026_03_31",
+   "metric": "cfo",
+   "period": "Q@2026-03-31",
+   "value": 1670000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260423"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_q_2026_03_31",
+   "metric": "capex",
+   "period": "Q@2026-03-31",
+   "value": 141000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260423"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_q_2026_06_30",
+   "metric": "revenue",
+   "period": "Q@2026-06-30",
+   "value": 3987000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_gross_profit_q_2026_06_30",
+   "metric": "gross_profit",
+   "period": "Q@2026-06-30",
+   "value": 2818000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_q_2026_06_30",
+   "metric": "operating_income",
+   "period": "Q@2026-06-30",
+   "value": 162000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_net_income_q_2026_06_30",
+   "metric": "net_income",
+   "period": "Q@2026-06-30",
+   "value": 298000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_q_2026_06_30",
+   "metric": "sbc",
+   "period": "Q@2026-06-30",
+   "value": 652000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_q_2026_06_30",
+   "metric": "cfo",
+   "period": "Q@2026-06-30",
+   "value": 587000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_q_2026_06_30",
+   "metric": "capex",
+   "period": "Q@2026-06-30",
+   "value": 114000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20260723"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_revenue_q_2026_09_30",
+   "metric": "revenue",
+   "period": "Q@2026-09-30",
+   "value": 4106000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_gross_profit_q_2026_09_30",
+   "metric": "gross_profit",
+   "period": "Q@2026-09-30",
+   "value": 2895000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_operating_income_q_2026_09_30",
+   "metric": "operating_income",
+   "period": "Q@2026-09-30",
+   "value": 385000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_net_income_q_2026_09_30",
+   "metric": "net_income",
+   "period": "Q@2026-09-30",
+   "value": 277000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_sbc_q_2026_09_30",
+   "metric": "sbc",
+   "period": "Q@2026-09-30",
+   "value": 630000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_cfo_q_2026_09_30",
+   "metric": "cfo",
+   "period": "Q@2026-09-30",
+   "value": 839000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "pf_capex_q_2026_09_30",
+   "metric": "capex",
+   "period": "Q@2026-09-30",
+   "value": 91000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_cf_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_sub_rev_q3_2026",
+   "metric": "subscription_revenue",
+   "period": "Q3 2026",
+   "value": 3988000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_ps_rev_q3_2026",
+   "metric": "professional_services_revenue",
+   "period": "Q3 2026",
+   "value": 118000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_sub_rev_q2_2026",
+   "metric": "subscription_revenue",
+   "period": "Q2 2026",
+   "value": 3877000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260722_1"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_sub_rev_q1_2026",
+   "metric": "subscription_revenue",
+   "period": "Q1 2026",
+   "value": 3671000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "dc_rel_20260422"
+   ],
+   "period_end": "2026-03-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_sub_rev_q3_2025",
+   "metric": "subscription_revenue",
+   "period": "Q3 2025",
+   "value": 3299000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_sub_rev_fy2025",
+   "metric": "subscription_revenue",
+   "period": "FY2025",
+   "value": 12883000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_ps_rev_fy2025",
+   "metric": "professional_services_revenue",
+   "period": "FY2025",
+   "value": 395000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_sub_gp_q3_2026",
+   "metric": "subscription_gross_profit",
+   "period": "Q3 2026",
+   "value": 2934000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_ps_gp_q3_2026",
+   "metric": "professional_services_gross_profit",
+   "period": "Q3 2026",
+   "value": -39000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_sub_gm_nongaap_q3_2026",
+   "metric": "subscription_gross_margin_nongaap",
+   "period": "Q3 2026",
+   "value": 0.8,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_op_inc_nongaap_q3_2026",
+   "metric": "operating_income_nongaap",
+   "period": "Q3 2026",
+   "value": 1338000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_op_margin_nongaap_q3_2026",
+   "metric": "operating_margin_nongaap",
+   "period": "Q3 2026",
+   "value": 0.325,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_op_margin_gaap_q3_2026",
+   "metric": "operating_margin_gaap",
+   "period": "Q3 2026",
+   "value": 0.095,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fcf_nongaap_q3_2026",
+   "metric": "free_cash_flow_nongaap",
+   "period": "Q3 2026",
+   "value": 822000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fcf_margin_nongaap_q3_2026",
+   "metric": "free_cash_flow_margin_nongaap",
+   "period": "Q3 2026",
+   "value": 0.2,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fcf_nongaap_9m_2026",
+   "metric": "free_cash_flow_nongaap",
+   "period": "9M 2026",
+   "value": 3121000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_amort_intang_q3_2026",
+   "metric": "amortization_of_purchased_intangibles",
+   "period": "Q3 2026",
+   "value": 198000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_severance_q3_2026",
+   "metric": "severance_costs",
+   "period": "Q3 2026",
+   "value": 87000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_bizcomb_costs_q3_2026",
+   "metric": "business_combination_and_related_costs",
+   "period": "Q3 2026",
+   "value": 35000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_sbc_9m_2026",
+   "metric": "stock_based_compensation",
+   "period": "9M 2026",
+   "value": 1829000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_capex_9m_2026",
+   "metric": "capex",
+   "period": "9M 2026",
+   "value": 346000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_rpo_q3_2026",
+   "metric": "remaining_performance_obligations",
+   "period": "Q3 2026",
+   "value": 29700000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1",
+    "pf_10q_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_rpo_q3_2026_growth_cc",
+   "metric": "remaining_performance_obligations_growth_cc",
+   "period": "Q3 2026",
+   "value": 0.225,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_rpo_12m_share_q3_2026",
+   "metric": "rpo_recognized_next_12_months_share",
+   "period": "Q3 2026",
+   "value": 0.46,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10q_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_crpo_q3_2026",
+   "metric": "current_remaining_performance_obligations",
+   "period": "Q3 2026",
+   "value": 13650000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_crpo_q3_2026_growth_cc",
+   "metric": "current_rpo_growth_cc",
+   "period": "Q3 2026",
+   "value": 0.21,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_crpo_q3_2026_growth_rep",
+   "metric": "current_rpo_growth_reported",
+   "period": "Q3 2026",
+   "value": 0.205,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_rpo_fy2025",
+   "metric": "remaining_performance_obligations",
+   "period": "FY2025",
+   "value": 28200000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_crpo_fy2025",
+   "metric": "current_remaining_performance_obligations",
+   "period": "FY2025",
+   "value": 12850000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20260128_1"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_renewal_rate_q3_2026",
+   "metric": "renewal_rate",
+   "period": "Q3 2026",
+   "value": 0.98,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_call_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_ai_acv_target_2026",
+   "metric": "ai_annual_contract_value_target",
+   "period": "FY2026",
+   "value": 1700000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_ai_acv_start_2026_target",
+   "metric": "ai_annual_contract_value_target_initial",
+   "period": "FY2026",
+   "value": 1000000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fed_partner_rev_share_q3_2026",
+   "metric": "largest_customer_revenue_share",
+   "period": "Q3 2026",
+   "value": 0.12,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10q_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_fed_partner_ar_share_q3_2026",
+   "metric": "largest_customer_receivables_share",
+   "period": "Q3 2026",
+   "value": 0.2,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10q_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_cash_q3_2026",
+   "metric": "cash_and_equivalents",
+   "period": "Q3 2026",
+   "value": 2393000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_mkt_sec_st_q3_2026",
+   "metric": "marketable_securities_short_term",
+   "period": "Q3 2026",
+   "value": 2214000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_mkt_sec_lt_q3_2026",
+   "metric": "marketable_securities_long_term",
+   "period": "Q3 2026",
+   "value": 2354000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_strategic_inv_q3_2026",
+   "metric": "strategic_investments",
+   "period": "Q3 2026",
+   "value": 2050000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_senior_notes_principal_q3_2026",
+   "metric": "senior_notes_principal",
+   "period": "Q3 2026",
+   "value": 5500000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_cp_q3_2026",
+   "metric": "commercial_paper_outstanding",
+   "period": "Q3 2026",
+   "value": 2100000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_st_debt_q3_2026",
+   "metric": "short_term_debt_net",
+   "period": "Q3 2026",
+   "value": 2086000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_lt_debt_q3_2026",
+   "metric": "long_term_debt_net",
+   "period": "Q3 2026",
+   "value": 5438000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_buyback_9m_2026",
+   "metric": "share_repurchases",
+   "period": "9M 2026",
+   "value": 2225000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_buyback_auth_remaining",
+   "metric": "share_repurchase_authorization_remaining",
+   "period": "Q3 2026",
+   "value": 4200000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_armis_price",
+   "metric": "acquisition_purchase_price_armis",
+   "period": "2026-04-20",
+   "value": 7600000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261028"
+   ],
+   "period_end": "2026-04-20",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_veza_price",
+   "metric": "acquisition_purchase_price_veza",
+   "period": "2026-03-02",
+   "value": 1200000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261028"
+   ],
+   "period_end": "2026-03-02",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_moveworks_price",
+   "metric": "acquisition_purchase_price_moveworks",
+   "period": "2025-12-15",
+   "value": 2400000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261028"
+   ],
+   "period_end": "2025-12-15",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_bizcomb_cash_9m_2026",
+   "metric": "business_combinations_cash_paid",
+   "period": "9M 2026",
+   "value": 9167000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_cloud_commit_2026",
+   "metric": "cloud_services_purchase_commitment",
+   "period": "Q4 2026",
+   "value": 262000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_cloud_commit_2027",
+   "metric": "cloud_services_purchase_commitment",
+   "period": "FY2027",
+   "value": 432000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_cloud_commit_2028",
+   "metric": "cloud_services_purchase_commitment",
+   "period": "FY2028",
+   "value": 606000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_cloud_commit_2029",
+   "metric": "cloud_services_purchase_commitment",
+   "period": "FY2029",
+   "value": 737000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_cloud_commit_2030",
+   "metric": "cloud_services_purchase_commitment",
+   "period": "FY2030",
+   "value": 2800000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_it_equip_commit",
+   "metric": "it_equipment_purchase_commitment",
+   "period": "FY2026-FY2030",
+   "value": 1600000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_leases_not_commenced",
+   "metric": "operating_leases_not_yet_commenced",
+   "period": "Q3 2026",
+   "value": 355000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_diluted_shares_q3_2026",
+   "metric": "diluted_weighted_average_shares",
+   "period": "Q3 2026",
+   "value": 1043000000.0,
+   "unit": "shares",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_customers_5m_q3_2026",
+   "metric": "customers_acv_over_5m",
+   "period": "Q3 2026",
+   "value": 680,
+   "unit": "count",
+   "source_ids": [
+    "pf_rel_20261028_1",
+    "pf_10q_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_customers_5m_q3_2025",
+   "metric": "customers_acv_over_5m",
+   "period": "Q3 2025",
+   "value": 553,
+   "unit": "count",
+   "source_ids": [
+    "pf_10q_20261028"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_customers_5m_fy2025",
+   "metric": "customers_acv_over_5m",
+   "period": "FY2025",
+   "value": 603,
+   "unit": "count",
+   "source_ids": [
+    "pf_10k_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_rev_na_q3_2026",
+   "metric": "revenue_north_america",
+   "period": "Q3 2026",
+   "value": 2574000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_rev_emea_q3_2026",
+   "metric": "revenue_emea",
+   "period": "Q3 2026",
+   "value": 1027000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "dc_rev_apac_q3_2026",
+   "metric": "revenue_apac_other",
+   "period": "Q3 2026",
+   "value": 505000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_f01",
+   "metric": "revenue_by_region:North America",
+   "period": "FY2025",
+   "value": 8348,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10k_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_f02",
+   "metric": "revenue_by_region:EMEA",
+   "period": "FY2025",
+   "value": 3402,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10k_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_f03",
+   "metric": "revenue_by_region:Asia Pacific and other",
+   "period": "FY2025",
+   "value": 1528,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10k_20260129"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_f04",
+   "metric": "revenue_by_region:North America",
+   "period": "9M2026",
+   "value": 7455,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10q_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_f05",
+   "metric": "revenue_by_region:EMEA",
+   "period": "9M2026",
+   "value": 3003,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10q_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_f06",
+   "metric": "revenue_by_region:Asia Pacific and other",
+   "period": "9M2026",
+   "value": 1405,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10q_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_f07",
+   "metric": "revenue_by_region:North America",
+   "period": "9M2025",
+   "value": 6102,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10q_20261028"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_f08",
+   "metric": "revenue_by_region:EMEA",
+   "period": "9M2025",
+   "value": 2489,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10q_20261028"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_f09",
+   "metric": "revenue_by_region:Asia Pacific and other",
+   "period": "9M2025",
+   "value": 1119,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10q_20261028"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_f10",
+   "metric": "long_lived_assets:North America",
+   "period": "2026-09-30",
+   "value": 1413,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10q_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_f11",
+   "metric": "long_lived_assets:EMEA",
+   "period": "2026-09-30",
+   "value": 476,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10q_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_f12",
+   "metric": "long_lived_assets:Asia Pacific and other",
+   "period": "2026-09-30",
+   "value": 256,
+   "unit": "USD m",
+   "source_ids": [
+    "pf_10q_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_f13",
+   "metric": "revenue_by_region:United States share of North America",
+   "period": "9M2026",
+   "value": 0.95,
+   "unit": "ratio",
+   "source_ids": [
+    "pf_10q_20261028"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  }
+ ],
+ "guidance": [
+  {
+   "id": "dc_g_q4_sub_rev",
+   "metric": "subscription_revenue",
+   "period": "Q4 2026",
+   "low": 4245000000.0,
+   "high": 4255000000.0,
+   "unit": "USD",
+   "issued": "2026-10-28",
+   "source_id": "pf_rel_20261028_1"
+  },
+  {
+   "id": "dc_g_q4_sub_rev_cc",
+   "metric": "subscription_revenue_growth_cc",
+   "period": "Q4 2026",
+   "low": 0.215,
+   "high": 0.215,
+   "unit": "ratio",
+   "issued": "2026-10-28",
+   "source_id": "pf_rel_20261028_1"
+  },
+  {
+   "id": "dc_g_q4_crpo_cc",
+   "metric": "current_rpo_growth_cc",
+   "period": "Q4 2026",
+   "low": 0.185,
+   "high": 0.185,
+   "unit": "ratio",
+   "issued": "2026-10-28",
+   "source_id": "pf_rel_20261028_1"
+  },
+  {
+   "id": "dc_g_q4_opm_ng",
+   "metric": "operating_margin_nongaap",
+   "period": "Q4 2026",
+   "low": 0.32,
+   "high": 0.32,
+   "unit": "ratio",
+   "issued": "2026-10-28",
+   "source_id": "pf_rel_20261028_1"
+  },
+  {
+   "id": "dc_g_q4_opm_gaap",
+   "metric": "operating_margin_gaap",
+   "period": "Q4 2026",
+   "low": 0.12,
+   "high": 0.12,
+   "unit": "ratio",
+   "issued": "2026-10-28",
+   "source_id": "pf_rel_20261028_1"
+  },
+  {
+   "id": "dc_g_q4_shares",
+   "metric": "diluted_weighted_average_shares",
+   "period": "Q4 2026",
+   "low": 1050000000.0,
+   "high": 1050000000.0,
+   "unit": "shares",
+   "issued": "2026-10-28",
+   "source_id": "pf_rel_20261028_1"
+  },
+  {
+   "id": "dc_g_fy_sub_rev",
+   "metric": "subscription_revenue",
+   "period": "FY2026",
+   "low": 15780000000.0,
+   "high": 15790000000.0,
+   "unit": "USD",
+   "issued": "2026-10-28",
+   "source_id": "pf_rel_20261028_1"
+  },
+  {
+   "id": "dc_g_fy_sub_rev_cc",
+   "metric": "subscription_revenue_growth_cc",
+   "period": "FY2026",
+   "low": 0.21,
+   "high": 0.21,
+   "unit": "ratio",
+   "issued": "2026-10-28",
+   "source_id": "pf_rel_20261028_1"
+  },
+  {
+   "id": "dc_g_fy_sub_gm_ng",
+   "metric": "subscription_gross_margin_nongaap",
+   "period": "FY2026",
+   "low": 0.81,
+   "high": 0.81,
+   "unit": "ratio",
+   "issued": "2026-10-28",
+   "source_id": "pf_rel_20261028_1"
+  },
+  {
+   "id": "dc_g_fy_sub_gm_gaap",
+   "metric": "subscription_gross_margin_gaap",
+   "period": "FY2026",
+   "low": 0.75,
+   "high": 0.75,
+   "unit": "ratio",
+   "issued": "2026-10-28",
+   "source_id": "pf_rel_20261028_1"
+  },
+  {
+   "id": "dc_g_fy_opm_ng",
+   "metric": "operating_margin_nongaap",
+   "period": "FY2026",
+   "low": 0.315,
+   "high": 0.315,
+   "unit": "ratio",
+   "issued": "2026-10-28",
+   "source_id": "pf_rel_20261028_1"
+  },
+  {
+   "id": "dc_g_fy_opm_gaap",
+   "metric": "operating_margin_gaap",
+   "period": "FY2026",
+   "low": 0.1,
+   "high": 0.1,
+   "unit": "ratio",
+   "issued": "2026-10-28",
+   "source_id": "pf_rel_20261028_1"
+  },
+  {
+   "id": "dc_g_fy_fcf_margin",
+   "metric": "free_cash_flow_margin_nongaap",
+   "period": "FY2026",
+   "low": 0.36,
+   "high": 0.36,
+   "unit": "ratio",
+   "issued": "2026-10-28",
+   "source_id": "pf_rel_20261028_1"
+  },
+  {
+   "id": "dc_g_fy_capex_pct",
+   "metric": "capex_pct_revenue",
+   "period": "FY2026",
+   "low": 0.03,
+   "high": 0.03,
+   "unit": "ratio",
+   "issued": "2026-10-28",
+   "source_id": "pf_rel_20261028_1"
+  },
+  {
+   "id": "dc_g_fy_shares",
+   "metric": "diluted_weighted_average_shares",
+   "period": "FY2026",
+   "low": 1040000000.0,
+   "high": 1040000000.0,
+   "unit": "shares",
+   "issued": "2026-10-28",
+   "source_id": "pf_rel_20261028_1"
+  },
+  {
+   "id": "dc_g_q3_sub_rev_prior",
+   "metric": "subscription_revenue",
+   "period": "Q3 2026",
+   "low": 3975000000.0,
+   "high": 3980000000.0,
+   "unit": "USD",
+   "issued": "2026-07-22",
+   "source_id": "pf_rel_20260722_1"
+  },
+  {
+   "id": "dc_g_q3_crpo_cc_prior",
+   "metric": "current_rpo_growth_cc",
+   "period": "Q3 2026",
+   "low": 0.2,
+   "high": 0.2,
+   "unit": "ratio",
+   "issued": "2026-07-22",
+   "source_id": "pf_rel_20260722_1"
+  },
+  {
+   "id": "dc_g_q3_opm_ng_prior",
+   "metric": "operating_margin_nongaap",
+   "period": "Q3 2026",
+   "low": 0.31,
+   "high": 0.31,
+   "unit": "ratio",
+   "issued": "2026-07-22",
+   "source_id": "pf_rel_20260722_1"
+  },
+  {
+   "id": "dc_g_fy_sub_rev_prior_jul",
+   "metric": "subscription_revenue",
+   "period": "FY2026",
+   "low": 15760000000.0,
+   "high": 15780000000.0,
+   "unit": "USD",
+   "issued": "2026-07-22",
+   "source_id": "pf_rel_20260722_1"
+  },
+  {
+   "id": "dc_g_fy_fcf_margin_prior_jul",
+   "metric": "free_cash_flow_margin_nongaap",
+   "period": "FY2026",
+   "low": 0.35,
+   "high": 0.35,
+   "unit": "ratio",
+   "issued": "2026-07-22",
+   "source_id": "pf_rel_20260722_1"
+  },
+  {
+   "id": "dc_g_fy_sub_rev_prior_apr",
+   "metric": "subscription_revenue",
+   "period": "FY2026",
+   "low": 15735000000.0,
+   "high": 15775000000.0,
+   "unit": "USD",
+   "issued": "2026-04-22",
+   "source_id": "dc_rel_20260422"
+  },
+  {
+   "id": "dc_g_fy_sub_gm_prior_apr",
+   "metric": "subscription_gross_margin_nongaap",
+   "period": "FY2026",
+   "low": 0.815,
+   "high": 0.815,
+   "unit": "ratio",
+   "issued": "2026-04-22",
+   "source_id": "dc_rel_20260422"
+  }
+ ],
+ "guidance_track": [
+  {
+   "period": "Q1 2025",
+   "metric": "revenue",
+   "guided_mid": 2997500000.0,
+   "actual": 3005000000.0,
+   "source_ids": [
+    "pf_rel_20250423_1"
+   ]
+  },
+  {
+   "period": "Q2 2025",
+   "metric": "revenue",
+   "guided_mid": 3032500000.0,
+   "actual": 3113000000.0,
+   "source_ids": [
+    "pf_rel_20250423_1",
+    "pf_rel_20250723_1"
+   ]
+  },
+  {
+   "period": "Q3 2025",
+   "metric": "revenue",
+   "guided_mid": 3262500000.0,
+   "actual": 3299000000.0,
+   "source_ids": [
+    "pf_rel_20250723_1",
+    "pf_rel_20251029_1"
+   ]
+  },
+  {
+   "period": "Q4 2025",
+   "metric": "revenue",
+   "guided_mid": 3425000000.0,
+   "actual": 3466000000.0,
+   "source_ids": [
+    "pf_rel_20251029_1",
+    "pf_rel_20260128_1"
+   ]
+  },
+  {
+   "period": "Q1 2026",
+   "metric": "revenue",
+   "guided_mid": 3652500000.0,
+   "actual": 3671000000.0,
+   "source_ids": [
+    "pf_rel_20260128_1",
+    "dc_rel_20260422"
+   ]
+  },
+  {
+   "period": "Q2 2026",
+   "metric": "revenue",
+   "guided_mid": 3817500000.0,
+   "actual": 3877000000.0,
+   "source_ids": [
+    "dc_rel_20260422",
+    "pf_rel_20260722_1"
+   ]
+  },
+  {
+   "period": "Q3 2026",
+   "metric": "revenue",
+   "guided_mid": 3977500000.0,
+   "actual": 3988000000.0,
+   "source_ids": [
+    "pf_rel_20260722_1",
+    "pf_rel_20261028_1"
+   ]
+  }
+ ],
+ "consensus": [
+  {
+   "id": "nm_cons_eps_fy2026",
+   "metric": "eps_diluted_non_gaap",
+   "period": "FY2026",
+   "value": 4.12,
+   "n": 51,
+   "low": 4.12,
+   "high": 4.12,
+   "source_id": "nm_cons_chartmill"
+  }
+ ],
+ "kpis": [
+  {
+   "id": "dc_k_customers_5m",
+   "name": "Customers with ACV above $5 million",
+   "period": "Q3 2026",
+   "value": 680,
+   "unit": "count",
+   "source_ids": [
+    "pf_rel_20261028_1",
+    "pf_10q_20261028"
+   ]
+  },
+  {
+   "id": "dc_k_customers_5m_py",
+   "name": "Customers with ACV above $5 million",
+   "period": "Q3 2025",
+   "value": 553,
+   "unit": "count",
+   "source_ids": [
+    "pf_10q_20261028"
+   ]
+  },
+  {
+   "id": "dc_k_rpo",
+   "name": "Remaining performance obligations",
+   "period": "Q3 2026",
+   "value": 29700000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1",
+    "pf_10q_20261028"
+   ]
+  },
+  {
+   "id": "dc_k_crpo",
+   "name": "Current remaining performance obligations",
+   "period": "Q3 2026",
+   "value": 13650000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ]
+  },
+  {
+   "id": "dc_k_renewal",
+   "name": "Renewal rate",
+   "period": "Q3 2026",
+   "value": 0.98,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_call_20261028"
+   ]
+  },
+  {
+   "id": "dc_k_ai_acv_target",
+   "name": "AI annual contract value, year-end 2026 target",
+   "period": "FY2026",
+   "value": 1700000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ]
+  },
+  {
+   "id": "dc_k_deals_5m",
+   "name": "Transactions above $5 million net new ACV",
+   "period": "Q3 2026",
+   "value": 19,
+   "unit": "count",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ]
+  },
+  {
+   "id": "dc_k_agentic_consumption",
+   "name": "Agentic AI consumption in production, year-to-date growth y/y",
+   "period": "9M 2026",
+   "value": 13,
+   "unit": "multiple",
+   "source_ids": [
+    "pf_rel_20261028_1",
+    "dc_call_20261028"
+   ]
+  },
+  {
+   "id": "dc_k_ai_internal_value",
+   "name": "Annualized value from internal AI use",
+   "period": "Q3 2026",
+   "value": 1000000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "dc_call_20261028"
+   ]
+  },
+  {
+   "id": "dc_k_rule_of",
+   "name": "Rule of 57 (cc subscription growth plus FCF margin), management",
+   "period": "FY2026",
+   "value": 57,
+   "unit": "points",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ]
+  }
+ ],
+ "segments": [
+  {
+   "id": "dc_s_sub_q3",
+   "name": "Subscription",
+   "period": "Q3 2026",
+   "revenue": 3988000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ]
+  },
+  {
+   "id": "dc_s_ps_q3",
+   "name": "Professional services and other",
+   "period": "Q3 2026",
+   "revenue": 118000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_rel_20261028_1"
+   ]
+  },
+  {
+   "id": "dc_s_sub_fy25",
+   "name": "Subscription",
+   "period": "FY2025",
+   "revenue": 12883000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260129"
+   ]
+  },
+  {
+   "id": "dc_s_ps_fy25",
+   "name": "Professional services and other",
+   "period": "FY2025",
+   "revenue": 395000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260129"
+   ]
+  }
+ ],
+ "customers": [
+  {
+   "id": "dc_c_fed_partner_q3",
+   "name": "Customer A (U.S. federal channel partner and systems integrator)",
+   "share": 0.12,
+   "period": "Q3 2026",
+   "source_ids": [
+    "pf_10q_20261028"
+   ]
+  },
+  {
+   "id": "dc_c_fed_partner_fy25",
+   "name": "Customer A (U.S. federal channel partner and systems integrator)",
+   "share": 0.11,
+   "period": "FY2025",
+   "source_ids": [
+    "pf_10k_20260129"
+   ]
+  }
+ ],
+ "competitors": [
+  {
+   "ticker": "CRM",
+   "name": "Salesforce",
+   "why": "Named in NOW 10-K Item 1. Competes for the same enterprise buyers in CRM/customer-service workflows (NOW's CRM and Industry products: case management, quote-to-order) and in AI agents on the enterprise workflow layer.",
+   "metrics": {
+    "fiscal_year": "FY ended 2026-01-31",
+    "revenue_usd": 41525000000.0,
+    "revenue_prior_usd": 37895000000.0,
+    "revenue_growth": 0.0958,
+    "operating_margin": 0.2006,
+    "operating_cash_flow_margin": 0.3611,
+    "gross_margin": 0.7768
+   },
+   "source_ids": [
+    "pf_10k_20260129",
+    "fd_sec_crm"
+   ]
+  },
+  {
+   "ticker": "MSFT",
+   "name": "Microsoft",
+   "why": "Named in NOW 10-K Item 1. Dynamics 365, Power Platform and Copilot compete for workflow automation, ITSM-adjacent and customer-service budgets and for the enterprise AI-agent layer; also a distribution partner.",
+   "metrics": {
+    "fiscal_year": "FY ended 2026-06-30 (whole company)",
+    "revenue_usd": 331839000000.0,
+    "revenue_prior_usd": 281724000000.0,
+    "revenue_growth": 0.1779,
+    "operating_margin": 0.4678,
+    "operating_cash_flow_margin": 0.5513,
+    "gross_margin": 0.6794
+   },
+   "source_ids": [
+    "pf_10k_20260129",
+    "fd_sec_msft"
+   ]
+  },
+  {
+   "ticker": "WDAY",
+   "name": "Workday",
+   "why": "Named in NOW 10-K Item 1. Competes for HR service delivery and employee-workflow budgets (NOW's HR Service Delivery / employee workflow products) and as an enterprise system-of-record vendor adding AI agents.",
+   "metrics": {
+    "fiscal_year": "FY ended 2026-01-31",
+    "revenue_usd": 9552000000.0,
+    "revenue_prior_usd": 8446000000.0,
+    "revenue_growth": 0.1309,
+    "operating_margin": 0.0755,
+    "operating_cash_flow_margin": 0.3077
+   },
+   "source_ids": [
+    "pf_10k_20260129",
+    "fd_sec_wday"
+   ]
+  },
+  {
+   "ticker": "ORCL",
+   "name": "Oracle",
+   "why": "Named in NOW 10-K Item 1. Fusion/NetSuite application suites compete for enterprise back-office workflow and ERP-adjacent budgets; system-of-record operator.",
+   "metrics": {
+    "fiscal_year": "FY ended 2026-05-31 (whole company, includes cloud infrastructure)",
+    "revenue_usd": 67357000000.0,
+    "revenue_prior_usd": 57399000000.0,
+    "revenue_growth": 0.1735,
+    "operating_margin": 0.3059,
+    "operating_cash_flow_margin": 0.4747
+   },
+   "source_ids": [
+    "pf_10k_20260129",
+    "fd_sec_orcl"
+   ]
+  }
+ ],
+ "bottlenecks": [
+  {
+   "id": "fd_b1",
+   "reading": "NOW states in its 10-K Item 1 that enterprises need a layer that unifies disparate systems, enforces business logic and governance and executes workflows, and that AI has intensified rather than removed that need; the scarce thing NOW claims to supply is governed workflow execution across silos. This is management's own positioning, not independent evidence.",
+   "evidence_ids": [
+    "pf_10k_20260129"
+   ]
+  },
+  {
+   "id": "fd_b2",
+   "reading": "Paid AI adoption in NOW's own numbers: management raised its 2026 AI annual contract value target to $1.7bn (up 70% from the start of the year) and RPO is 29.7bn (+22%), cRPO 13.65bn (+20.5%) at Q3 2026. AI ACV is a management-defined target, to be checked by the documents lane against the call.",
+   "evidence_ids": [
+    "pf_rel_20261028_1"
+   ]
+  },
+  {
+   "id": "fd_b3",
+   "reading": "Capacity and duration of the shortage not evidenced by an independent source (no Gartner/IDC/regulator data retrieved): how long enterprises lack governed AI-workflow platforms, and who adds capacity (system-of-record vendors Salesforce, Microsoft, Workday, Oracle, SAP embedding agents; in-house builds; point-solution startups), is a hypothesis.",
+   "hypothesis": true
+  },
+  {
+   "id": "fd_b4",
+   "reading": "Risk to the bottleneck: the 10-K warns that systems-of-record operators may build mechanisms that prevent NOW's solutions from accessing their data, and that competitors may incorporate AI faster; low barriers to entry per Item 1 mean the moat is workflow depth and installed base, not scarcity of technology.",
+   "evidence_ids": [
+    "pf_10k_20260129"
+   ]
+  }
+ ],
+ "notes": [
+  "prefetch 2026-11-01T05:44:35+00:00: SEC documents saved verbatim and their text in reading/ (untrusted); a lane cites a pf_ source only after reading the passage it relies on",
+  "gather fragments reused from /home/user/fundamental-engine/runs/tickers/NOW_2026-10-28 (as_of 2026-10-28)",
+  "dc CALL 2026-10-28 Q3 2026 earnings call (AV transcript read: CFO prepared remarks, Q&A on AI pricing, cRPO, delivery expertise, capex)",
+  "dc SEGMENT one operating and reportable segment (CODM = CEO), 10-Q Note 19; segments here are revenue lines (subscription, professional services), not reportable segments",
+  "dc DOC results of 2026-10-28 are 4 days before as_of 2026-11-01 and citable from 2026-10-30; the call transcript (AV) is dated 2026-10-28 likewise",
+  "dc MGMT (CFO, call) subscription revenue beat passed through half to FY guide (all FX plus half of Q3 beat); the rest withheld because delivery-expertise services for select large AI deals are carved out of subscription revenue into professional services: about 25 bp of growth in Q3, about 50 bp expected in Q4; value returns to subscription on renewal; management does not expect to include it long term",
+  "dc MGMT (CFO, call) Q4 cRPO growth guide 18.5% cc is lower because about half of Q3's cRPO beat came from early renewals pulled from Q4, a higher on-prem mix from public sector (about 25 bp headwind to Q4 cRPO, still lands in revenue) and a rising T4C backlog that counts in revenue but not cRPO",
+  "dc MGMT (CEO/CFO) AI ACV target raised twice in 2026, from $1.0B at start of year to $1.7B by end of 2026; AI net new ACV +65% y/y in Q3; AI deals above $1M grew 4.5x y/y; management target: AI 30% of ACV by 2030; long-term Rule of 60+",
+  "dc MGMT (CFO) FY2026 free cash flow margin target raised from 35% to 36% on lower capex (about 3% of revenue); acquisitions' margin dilution fully offset, FY non-GAAP operating margin 31.5% (+50 bp y/y)",
+  "dc MGMT (CFO) customers are happy with hybrid seat plus consumption pricing and are not asking for outcome-based pricing (answer to analyst question)",
+  "dc MGMT (CEO) Q3 net new ACV: business and consumer services over 3x y/y, technology nearly +40%; US federal deals above $1M +30% y/y and federal net new ACV growth expected to accelerate in Q4; asset management crossed $1B ACV; 19 deals above $5M net new ACV (+135% y/y)",
+  "dc FACT cRPO growth 20.5% reported / 21% cc includes Armis (closed 2026-04-20) and Moveworks (closed 2025-12-15) contribution; the organic rate is not disclosed in the documents read (analyst on the call called organic cRPO stable to modestly decelerating); gap: no organic cRPO figure",
+  "dc FACT GAAP operating margin Q3 2026 9.5% vs 17% a year earlier: amortization of purchased intangibles $198M (5% of revenue vs 1%), severance $87M, business combination costs $35M, SBC $633M (15.5%); non-GAAP margin 32.5% vs 33.5%",
+  "dc FACT balance sheet 2026-09-30: cash 2,393M and marketable securities 2,214M current plus 2,354M long-term, strategic investments 2,050M; debt carrying 7,524M (short-term 2,086M incl. commercial paper 2.1B principal at 4.05% weighted rate, 62 days; long-term 5,438M; senior notes 5.5B principal due May 2028 to May 2056 incl. 1.5B 1.40% due 2030); goodwill 10.0B and intangibles 3.6B after Armis (7.6B cash), Veza (about 1.2B), Moveworks (2.4B)",
+  "dc FACT no share repurchases in Q3 2026; 9M 2026 repurchases 2,225M incl. 2.0B ASR in Q1; 4.2B authorization remaining; diluted shares 1,043M Q3, guided 1.05B for Q4 (five-for-one split effective 2025-12-17, periods restated)",
+  "dc FACT RPO 29.7B, about 46% to be recognized within 12 months, the majority of the rest over months 13 to 36; RPO excludes arrears-billed contracts; average contract duration is lengthening per CFO",
+  "dc FACT purchase commitments (10-Q Note 9): cloud services 262M rest of 2026, 432M 2027, 606M 2028, 737M 2029, 2.8B 2030; IT equipment provider about 1.6B through 2030; leases not yet commenced 355M; unrecognized tax benefits 197M",
+  "dc FACT largest customer: a U.S. federal channel partner and systems integrator, 12% of revenue in Q3 and 9M 2026 (11% in FY2025 and 9M 2025) and 20% of receivables (11% at 2025 year end); management reports no collection concerns",
+  "dc FACT guidance track: subscription revenue beat the guided midpoint in all 7 quarters read (+0.3% to +2.7%); the Q2 2025 row (guide 3,030-3,035 in the Q1 2025 release vs actual 3,113) is recorded as printed in the release text",
+  "dc RISK platform/AI: failure to innovate and adapt in an intensely competitive market, AI incorporation risk (operational, legal, ethical); 10-K Item 1A summary, risks related to ability to grow",
+  "dc RISK public sector: government procurement and contracting rules; a U.S. federal channel partner is 12% of revenue; DOJ investigation of 2023 hire of the Army CIO (resignation of President and COO July 2024; outcome and cost cannot be predicted, 10-Q Note 9 Other)",
+  "dc RISK acquisitions: Armis 7.6B, Veza 1.2B, Moveworks 2.4B in 10 months, integration and dilution risk; 10-K Item 1A (as we acquire or invest in companies), goodwill 10.0B",
+  "dc RISK leverage: debt rose from 1.5B to 7.5B in 2026 (commercial paper 2.1B maturing within about 62 days, refinancing and rate risk); 10-K Item 1A debt service obligations",
+  "dc RISK growth deceleration: management guides Q4 cRPO growth 18.5% cc (from 21% in Q3); 10-K Item 1A 'we expect our revenue growth rate to decline over the long term'",
+  "dc RISK cyber and platform availability: a security event or service disruption could cost customers and create liability; 10-K Item 1A operation risks",
+  "dc RISK partners and deal complexity: reliance on partners for a rising share of revenue; larger deals bring longer cycles, pricing pressure and implementation challenges (10-K Item 1A)",
+  "dc RISK margins: GAAP operating margin 9.5% in Q3 on SBC (15.5% of revenue), intangibles amortization and severance; delivery services for large AI deals run at a professional services gross loss (-32.5% GAAP in Q3)",
+  "repair 2026-11-01: guidance_track metric relabelled subscription_revenue -> revenue so the engine records the track; the guided and actual figures are SUBSCRIPTION revenue (about 97% of total revenue), the only revenue line NOW guides; the duplicate USD-million rows in numbers.json were dropped.",
+  "fd NAMED COMPETITORS (10-K Item 1, source pf_10k_20260129): enterprise application software vendors, cloud and on-premises, such as Microsoft, Oracle, SAP, Salesforce and Workday; new technologies and entrants (point and platform solutions, particularly AI); custom-developed in-house solutions; technology consulting firms; systems integrators; software resellers. Market described as fragmented with low barriers to entry. SAP (foreign private issuer, files 20-F) is named but not recorded with numbers here: gap.",
+  "fd NOW OWN (pf_cf_20260129): FY2025 revenue 13,278m (+20.9% vs 10,984m), gross margin 77.5%, operating margin 13.7% (GAAP, companyfacts).",
+  "fd SHARE revenue growth, latest fiscal year, each company's own filings: NOW +20.9% (FY2025, pf_cf_20260129) vs CRM +9.6% (FY Jan-2026, fd_sec_crm), WDAY +13.1% (FY Jan-2026, fd_sec_wday), MSFT +17.8% (FY Jun-2026, whole company, fd_sec_msft), ORCL +17.4% (FY May-2026, whole company, fd_sec_orcl). NOW grew faster than each named competitor's whole-company growth; segment-level share cannot be computed because the competing segments (Salesforce Service Cloud, Dynamics, Workday HCM service, etc.) were not retrieved: hypothesis that NOW is gaining share in workflow/IT/CRM-service against CRM and WDAY, not proven.",
+  "fd SHARE NOW latest quarter Q3 2026 (release 2026-10-28, pf_rel_20261028_1): total revenue 4,106m +20.5% y/y, subscription 3,988m +21%, cRPO 13.65bn +20.5%, RPO 29.7bn +22%; management AI ACV target raised to 1.7bn for 2026 (management guidance, not a fact). Competitors' same-period quarterly numbers not retrieved (gap).",
+  "fd MARGIN CONTEXT GAAP operating margin: NOW 13.7% (FY2025) vs CRM 20.1%, WDAY 7.5%, MSFT 46.8%, ORCL 30.6%: NOW is below Salesforce and Microsoft on GAAP margin, above Workday; GAAP margins carry different stock-comp and amortization loads, no peer median used.",
+  "fd FORWARD P/E of competitors not retrieved in this lane (no FMP/AV by rule, no peer price data): gap; the valuation stages must not use a peer multiple as a driver.",
+  "mc GEOGRAPHY (10-Q 2026-09-30, by user location, 9M2026): North America 62.8% of revenue (7,455 of 11,863; US = 95% of NA, so ~60% US), EMEA 25.3%, Asia Pacific and other 11.8%. Growth 9M26 vs 9M25: NA +22%, EMEA +21%, APAC +26%. Property and equipment net (2,145): NA 66%, EMEA 22%, APAC 12%; US = 84% of NA. Sources pf_10q_20261028, pf_10k_20260129. No China or Taiwan breakout is disclosed (APAC is one line); no hardware supply chain disclosed.",
+  "mc EXPOSURE export controls/sanctions/FCPA: 10-K risk factor (pf_10k_20260129) names Russia/Belarus sanctions and possible wider restrictions; no revenue share disclosed, so any sizing is hypothesis (non-US revenue is ~40%: EMEA 25% + APAC 12%, an upper bound of what international disruption could touch).",
+  "mc EXPOSURE tariffs: 10-K says ServiceNow pays customs tariffs in certain cases on imports for its operations (data center hardware); no amount disclosed, hypothesis only; a software subscription business, impact expected small but unsized.",
+  "mc EXPOSURE US federal / DOJ: 10-Q 2026-09-30 note (pf_10q_20261028): internal investigation on hiring of the former US Army CIO as Head of Global Public Sector (2023); DOJ opened its own investigation and requested documents; company cannot predict timing or outcome. Federal business is concentrated in a small number of distributors/resellers (10-K risk factor); debarment risk listed; share of revenue from US federal not found in this lane (gap).",
+  "mc EXPOSURE Middle East deal delays: press (mc_yahoo_q1, search excerpt, not primary) attributes part of the Q1 2026 stock drop to Middle East deal delays and Armis margin pressure; unsized, treat as lead until confirmed in call transcript (documents lane).",
+  "mc EXPOSURE AI disruption of seat-based IT service workflows: press (mc_invezz_jul) cites investor worry that AI agents reduce employees handling ITSM tickets; opinion, hypothesis, not sized here.",
+  "mc EXPOSURE data residency / local-partner rules and antitrust: generic risk factors in 10-K, no sizing. Moveworks antitrust review (DOJ second request, 2025 press) ended with closing on 2025-12-15 per 10-Q; no 2026 DOJ merger challenge found in search.",
+  "mc NEWS 2025-12-15 to 2026-04-20: Moveworks acquisition closed 2025-12-15 (10-Q note), Veza closed 2026-03-02 for about $1.2bn, Armis closed 2026-04-20 for preliminary consideration of about $7.6bn in cash (press says $7.75bn headline); nine-month cash paid for business combinations $9,167m (10-Q cash flow). Five other acquisitions for $612m in 9M26.",
+  "mc NEWS 2026-05-15: 8-K (mc_8k_20260515): $4.0bn of five series of senior unsecured notes issued May 2026 (net $3.9bn) to repay the $4.0bn term loan drawn for Armis; total senior notes now $5.5bn (incl. $1.5bn 1.40% 2030 notes), fair value $5.1bn at 2026-09-30 (10-Q).",
+  "mc NEWS 2026-04-23: press (mc_yahoo_q1) reports stock fell about 17% after Q1 2026 results on margin fears from Armis despite beat; press only, approximate.",
+  "mc NEWS 2026-02/05 8-Ks: 2026-02-11 (Item 5.02, officer/director change), 2026-02-17 (7.01), 2026-05-22 (5.02, 5.07 annual meeting results): not read in detail, no material event identified; gap.",
+  "mc NEWS 2026-09-09: press (mc_tikr_armis) says CEO McDermott told Goldman conference ServiceNow is 8th largest security vendor with ambition to be #1; BNP estimate of security and risk ACV about $1.5bn is a third-party estimate, unconfirmed by company.",
+  "mc NEWS 2026-10-28: Q3 2026 results, 10-Q and 8-K filed this day; within 2 days of as_of window was cleared for 10-Q (citable from 2026-10-30), but press coverage of the results was not found in search; no news or 8-K after 2026-10-28 found. Fred regime line is context only.",
+  "mc RATES: risk-free 4.98% (FRED DGS10, 2026-10-29) and implied ERP 4.2% (Damodaran 2026-10-01) kept from prefetch; Damodaran's 2026-11-01 update not checked (retained saved value).",
+  "nm IDENTITY NOW = ServiceNow, Inc., CIK 1373715, NYSE, single class common stock, IB contract id 109911821 (STK, SMART/NYSE, USD), FYE 12-31 calendar quarters. 10-K cover: about 1,046 million shares outstanding at 2026-01-23. 5-for-1 split effective 2025-12-18 (IB corp action, announced 2025-10-29): IB prices are split-adjusted; companyfacts EPS and share counts for FY2020-FY2024 are NOT restated (FY2024 eps 6.84 on 208M shares = 1.37 on 1,042M); FY2025 eps 1.67 is post-split. Divide pre-FY2025 per-share facts by 5 before any comparison.",
+  "nm PRICE last 105.34 (ts 2026-10-31), prior close 109.67, day change -3.95%; 52-week low 81.25, 52-week high 184.43 (split-adjusted), 13-week high 159.50. Price fell about 34% from the 13-week high after the 2026-10-28 results.",
+  "nm RECONCILIATION Q3 2026 (10-Q filed 2026-10-28, reading/10q_2026-10-28.txt): revenue 4,106 (AV 4,106, pf 4,106 match); income from operations 385 (AV 385 match); net income 277 (AV 277 match); diluted EPS 0.27 on 1,043.0 million diluted shares; 9M revenue 11,863, income from operations 1,050, net income 1,044, 9M diluted EPS 1.01. CFO 9M 3,096 less H1 2,257 (10-Q 2026-07-23) = 839 for Q3 (pf_cfo_q_2026_09_30 match); capex 9M 346 less H1 255 = 91 (pf match). SBC: cash-flow statement 9M 1,829 (Q3 630 in pf) versus MD&A table 633 for Q3 and 1,846 for 9M: a 3 and 17 million difference, the MD&A total includes amounts outside the cash-flow line; the pf figure (630) is used, difference is small.",
+  "nm RECONCILIATION FY2025 (10-K, pf facts): revenue 13,278, income from operations 1,824, net income 1,748 all equal AV annual; CFO 5,444, capex 868, SBC 1,955, diluted shares 1,046.7 million, EPS 1.67 per pf (companyfacts). Not independently re-read in the 10-K text for CFO/capex/SBC (AV cash flow and balance sheet were rate limited): single-source (SEC companyfacts) for those lines.",
+  "nm AV RATELIMIT BALANCE_SHEET 2026-11-01: rate limit message (1 request per second burst / 25 per day); saved as av__balance-sheet__ratelimit.json, not retried. CASH_FLOW not called (budget rule: no retry loop after two rate limits). EARNINGS_ESTIMATES also rate limited on its first call (av__earnings-estimates__ratelimit.json); fallback was one WebSearch.",
+  "nm ROIC CHECK prefetch roic_last 0.1397 is FY2024 (FY2025 invested capital missing in the screen, roic null for FY2025). FY2025 NOPAT 1,410 is on 1,824 operating income. Invested capital check at FY2025: equity 12,964 + debt (long-term debt not in pf for FY2025; FY2024 1,489) less cash 3,726 and short-term investments 2,558 gives roughly 8.6-9.3bn before leases; goodwill rose to 3,578 (Moveworks, Armis acquisitions in 2026 will add more invested capital: Armis closed in 2026 per 10-Q), so ROIC on FY2025 about 15-16% before acquisitions and will fall in FY2026. Restricted cash, operating leases not adjusted.",
+  "nm OWN MULTIPLE HISTORY trailing GAAP diluted P/E at calendar year-end close (IB split-adjusted close / GAAP EPS after SBC divided by 5 for pre-2025): Dec-2021 574 (not meaningful, near-zero earnings), Dec-2022 243 (77.65/0.32), Dec-2023 83.9 (141.30/1.684), Dec-2024 155 (212.02/1.368), Dec-2025 91.7 (153.19/1.67). now 75.8 (105.34 / TTM EPS 1.39 = FY2025 1.67 - 9M25 1.29 + 9M26 1.01). low 75.8 median 123 high 243 for years 2022-2025 plus now; the high is a small-denominator year. Forward P/E now: 25.6 on consensus FY2026 non-GAAP EPS 4.12 (non-GAAP, excludes SBC of about 2.5bn: not comparable to the GAAP series). Price/sales now about 105.34 x 1,043M / TTM revenue (13,278 - 9,710 + 11,863 = 15,431) = 7.1x. sources pf_eps_diluted_fy2022, pf_eps_diluted_fy2023, pf_eps_diluted_fy2024, pf_eps_diluted_fy2025, nm_ib_price, nm_cons_chartmill. Q3 2026 GAAP EPS 0.27 vs 0.48 a year ago: the GAAP earnings base is falling (acquisition amortization, SBC +29%), so GAAP P/E is flattering neither past nor present; not a peak-earnings case.",
+  "nm CONSENSUS only a pre-Q3 snapshot was found (attributed, non-independent aggregator, basis not stated): FY2026 EPS 4.12 (51 analysts, 2026-10-17); Q3 2026 consensus before the report: EPS 1.04 and revenue 4,135 (Chartmill preview, a note not a row) versus reported total revenue 4,106 (-0.7%) and GAAP EPS 0.27, so the aggregator's revenue consensus was above the reported figure while the company beat its own subscription guidance (3,988 vs guided 3,975-3,980). Other secondhand figures disagree on basis: FY2026 revenue 16.0-16.2bn, FY2027 revenue about 19bn, FY2027 EPS between 3.0 and 5.0 (GAAP vs non-GAAP unresolved): not registered as rows. No post-2026-10-28 consensus found. Targets, if any, are opinions: none used.",
+  "nm TRACK RECORD subscription revenue vs guided midpoint, 6 periods (Q1 2025 to Q3 2026, Q4 2024 and Q2 2026 guides not in the saved releases): ratios 1.0025, 1.0266, 1.0112, 1.0120, 1.0051, 1.0026, mean about 1.010, 6 beats, 0 misses: conservative guider, beats the midpoint by about 0.3% to 2.7%, bigger beats in 2025 Q2 when FX and the April guide were cautious. Q3 2026 beat the high end (3,988 vs 3,975-3,980) but was only +0.26% over the midpoint, the smallest beat except Q1 2025 and Q3 2026: the cushion is thinning while the stock fell sharply.",
+  "nm NOTE Q3 2026 release of 2026-10-28 is citable from 2026-10-30, as_of 2026-11-01 so it is allowed. Q4 2026 guide (release 2026-10-28): subscription revenues 4,245-4,255, 22.5-23% growth, 21.5% cc, cRPO 18.5%, non-GAAP operating margin 32%, 1.05bn diluted shares (gather_documents owns the guidance rows).",
+  "nm DISPERSION and revisions: not available (no estimates payload).",
+  "nm CONSENSUS DISPERSION low and high of nm_cons_eps_fy2026 are set equal to the mean 4.12 only to satisfy the schema: the real dispersion was not available.",
+  "repair 2026-11-01: guidance_track rows removed (duplicate of documents.json in USD millions; the documents lane track in USD, with Q2 2026, is kept)."
+ ],
+ "potential": {
+  "market_direction": {
+   "reading": "Enterprise buyers are paying more for NOW's workflow and AI layer, measured in NOW's own numbers: customers above $5M ACV 680 vs 553 a year earlier (+23%), 19 deals above $5M net new ACV in Q3 2026 (+135% y/y), RPO $29.7bn (+22%) and cRPO $13.65bn (+20.5% reported, includes Armis and Moveworks), AI ACV target raised from $1.0bn to $1.7bn for end-2026 (management target, not a fact) and agentic AI consumption up 13x year to date. No independent market-size study (Gartner/IDC) was retrieved, so the direction of the whole market beyond NOW's own demand is not evidenced; management itself expects its growth rate to decline over the long term.",
+   "evidence_ids": [
+    "dc_k_customers_5m",
+    "dc_k_customers_5m_py",
+    "dc_k_deals_5m",
+    "dc_k_rpo",
+    "dc_k_crpo",
+    "dc_k_ai_acv_target",
+    "dc_k_agentic_consumption",
+    "pf_10k_20260129"
+   ]
+  },
+  "bottleneck_potential": {
+   "reading": "NOW claims to supply governed workflow execution across disparate systems of record, a need it says AI intensifies (management positioning in the 10-K). The 10-K itself describes a fragmented market with low barriers to entry and warns that system-of-record owners may block NOW's access to their data, so NOW is not a capacity bottleneck in the semiconductor sense: its scarcity is installed workflow depth (98% renewal rate) rather than a resource others cannot add. How long enterprises lack governed AI-workflow platforms, and how fast Salesforce, Microsoft, Workday, Oracle and SAP close it by embedding agents, is not evidenced (hypothesis).",
+   "evidence_ids": [
+    "pf_10k_20260129",
+    "dc_k_renewal"
+   ]
+  },
+  "share_trajectory": {
+   "reading": "On whole-company growth from each company's own filings, NOW (+20.9% FY2025, +20.5% Q3 2026) grew faster than every named competitor: Salesforce +9.6% (FY Jan-2026), Workday +13.1% (FY Jan-2026), Microsoft +17.8% and Oracle +17.4% (whole company, including cloud infrastructure). This suggests NOW is gaining share against Salesforce and Workday in the overlapping workflow budgets, but segment-level share (Service Cloud, Dynamics, Workday HCM service) was not retrieved, and NOW's 2026 growth includes acquired revenue (Moveworks, Veza, Armis) with no organic rate disclosed, so the share gain is directional, not measured.",
+   "evidence_ids": [
+    "pf_cf_20260129",
+    "pf_rel_20261028_1",
+    "fd_sec_crm",
+    "fd_sec_wday",
+    "fd_sec_msft",
+    "fd_sec_orcl"
+   ]
+  },
+  "competitive_position": {
+   "reading": "Stronger than Salesforce and Workday on growth (about 2x Salesforce's rate, 1.6x Workday's) with similar gross margin to Salesforce (77.5% vs 77.7%) and higher GAAP operating margin than Workday (13.7% vs 7.5%), but below Salesforce (20.1%) and far below Microsoft (46.8%) and Oracle (30.6%) on GAAP operating margin. Microsoft is the strongest named rival: far larger, owns Copilot and the Power Platform and is also a distribution partner. NOW's advantages shown in its own data are retention (98% renewal), large-customer expansion (+23% $5M customers) and a seven-for-seven record of beating its subscription guidance; its weakness is a lower GAAP margin after stock compensation (15.5% of Q3 revenue) and acquisition amortization.",
+   "evidence_ids": [
+    "pf_cf_20260129",
+    "fd_sec_crm",
+    "fd_sec_wday",
+    "fd_sec_msft",
+    "fd_sec_orcl",
+    "dc_k_renewal",
+    "dc_k_customers_5m",
+    "dc_k_customers_5m_py",
+    "pf_rel_20261028_1"
+   ]
+  },
+  "threats": {
+   "reading": "Substitution: AI agents could reduce the number of employees handling IT tickets and so the seats NOW charges for (investor worry cited in press, opinion; NOW's answer is hybrid seat plus consumption pricing, which customers accept per the CFO). In-sourcing and new entrants: the 10-K names custom in-house builds, point and platform AI solutions and systems integrators, in a market with low barriers to entry. Systems-of-record owners (Salesforce, Microsoft, Workday, Oracle, SAP) may restrict data access. Regulation and government: a U.S. federal channel partner is 12% of revenue and 20% of receivables, and a DOJ investigation into the 2023 hire of the Army CIO is open with an unpredictable outcome. Deceleration: Q4 cRPO growth guided down to 18.5% cc from 21%.",
+   "evidence_ids": [
+    "mc_invezz_jul",
+    "dc_call_20261028",
+    "pf_10k_20260129",
+    "dc_c_fed_partner_q3",
+    "pf_10q_20261028",
+    "dc_g_q4_crpo_cc"
+   ]
+  }
+ },
+ "scenario_events": {
+  "bear": [
+   {
+    "event_he": "צמיחת ההתחייבויות לשנה הקרובה (cRPO) יורדת מ-21% ל-18.5% ברבעון הרביעי, וחלק מהקצב הנוכחי נקנה ברכישות; ההאטה האורגנית ממשיכה ב-2027.",
+    "evidence_ids": [
+     "dc_g_q4_crpo_cc",
+     "dc_crpo_q3_2026_growth_cc",
+     "dc_call_20261028"
+    ]
+   },
+   {
+    "event_he": "שותף ערוץ פדרלי אחד הוא 12% מההכנסות ו-20% מהחייבים, וחקירת משרד המשפטים עדיין פתוחה; פגיעה בתקציבי הממשל האמריקאי מורידה צמיחה.",
+    "evidence_ids": [
+     "dc_c_fed_partner_q3",
+     "dc_fed_partner_ar_share_q3_2026",
+     "pf_10q_20261028"
+    ]
+   },
+   {
+    "event_he": "רכישות של כ-11.2 מיליארד דולר (Armis, Veza, Moveworks) מעלות את החוב ל-7.5 מיליארד ואת הפחתות הנכסים; הרווח החשבונאי ירד ל-9.5% מההכנסות ברבעון.",
+    "evidence_ids": [
+     "dc_armis_price",
+     "dc_bizcomb_cash_9m_2026",
+     "dc_lt_debt_q3_2026",
+     "dc_op_margin_gaap_q3_2026"
+    ]
+   },
+   {
+    "event_he": "סוכני AI מצמצמים את מספר המושבים שלקוחות קונים ומתחרים כמו מיקרוסופט וסיילספורס לוחצים על המחיר.",
+    "hypothesis": true
+   }
+  ],
+  "base": [
+   {
+    "event_he": "הכנסות המנויים ל-2026 מגיעות לכ-15.8 מיליארד דולר, מעט מעל התחזית כמו בכל שבעת הרבעונים האחרונים.",
+    "evidence_ids": [
+     "dc_g_fy_sub_rev",
+     "dc_g_q4_sub_rev",
+     "dc_sub_rev_q3_2026",
+     "dc_g_q3_sub_rev_prior"
+    ]
+   },
+   {
+    "event_he": "ב-2027 ההכנסות צומחות בערך בקצב ההתחייבויות החוזיות לשנה הקרובה (כ-19%), עם שימור לקוחות של 98%.",
+    "evidence_ids": [
+     "dc_g_q4_crpo_cc",
+     "dc_crpo_q3_2026",
+     "dc_renewal_rate_q3_2026"
+    ]
+   },
+   {
+    "event_he": "שיעור הרווח התפעולי (ללא תגמול במניות) נשאר סביב 31.5%-32% ותזרים המזומנים החופשי כ-36% מההכנסות.",
+    "evidence_ids": [
+     "dc_g_fy_opm_ng",
+     "dc_g_q4_opm_ng",
+     "dc_g_fy_fcf_margin"
+    ]
+   },
+   {
+    "event_he": "מכירות ה-AI מגיעות ליעד של 1.7 מיליארד דולר בשנה עד סוף 2026.",
+    "evidence_ids": [
+     "dc_ai_acv_target_2026",
+     "dc_call_20261028"
+    ]
+   }
+  ],
+  "bull": [
+   {
+    "event_he": "ההנהלה אומרת שההאצה האמיתית מה-AI תגיע ב-2027: מכירות ה-AI עוברות את 1.7 מיליארד, צריכת סוכנים ממשיכה לגדול (פי 13 השנה), והצמיחה עולה מעל 21%.",
+    "evidence_ids": [
+     "dc_call_20261028",
+     "dc_ai_acv_target_2026",
+     "dc_k_agentic_consumption"
+    ]
+   },
+   {
+    "event_he": "העסקאות הגדולות ממשיכות להאיץ: 19 עסקאות מעל 5 מיליון דולר ברבעון (+135%) ו-680 לקוחות מעל 5 מיליון דולר בשנה (+23%).",
+    "evidence_ids": [
+     "dc_k_deals_5m",
+     "dc_customers_5m_q3_2026",
+     "dc_customers_5m_q3_2025"
+    ]
+   },
+   {
+    "event_he": "האבטחה (Armis ו-Veza) והשירות האוטונומי (Moveworks, 100 מיליון דולר בשלושה רבעונים) הופכים למנועי צמיחה נוספים.",
+    "evidence_ids": [
+     "dc_call_20261028",
+     "dc_armis_price"
+    ]
+   },
+   {
+    "event_he": "השימוש הפנימי ב-AI מוריד עלויות ומעלה את הרווחיות לכיוון יעד 'כלל 60'.",
+    "evidence_ids": [
+     "dc_k_ai_internal_value",
+     "dc_call_20261028"
+    ]
+   }
+  ]
+ },
+ "drivers": {
+  "growth_anchor": {
+   "period": "FY2027",
+   "bear": 0.13,
+   "base": 0.19,
+   "bull": 0.22,
+   "source_tier": {
+    "bear": "own_history",
+    "base": "contracted",
+    "bull": "contracted"
+   },
+   "evidence_ids": [
+    "dc_crpo_q3_2026",
+    "dc_crpo_q3_2026_growth_cc",
+    "dc_g_q4_crpo_cc",
+    "dc_rpo_q3_2026_growth_cc",
+    "dc_call_20261028",
+    "pf_revenue_fy2024",
+    "pf_revenue_fy2025",
+    "dc_fed_partner_rev_share_q3_2026",
+    "dc_fed_partner_ar_share_q3_2026",
+    "dc_c_fed_partner_q3"
+   ],
+   "reason": "cRPO (13.65B, revenue contracted for the next 12 months) grew 21% cc in Q3 and is guided to 18.5% cc at Q4; CFO adds about 50 bp of backlog excluded from cRPO by T4C provisions that will be revenue. Base 19% = Q4 cRPO guide plus that backlog. Bull 22% = cRPO holds its Q3 rate (21%) plus total RPO growth 22.5% cc and the CEO's stated AI acceleration in 2027. Bear 13% = organic deceleration (analyst on the call: organic cRPO modestly decelerating; acquisitions inside the reported 21%/18.5% rates, organic share undisclosed) continuing the own-history step-down of about 1.5 points a year from 22.4% (FY2024) and 20.9% (FY2025) to about 16% organic in FY2027, minus about 2-3 points from the federal channel: one federal channel partner is 12% of revenue and 20% of receivables with an open DOJ investigation; if that channel stops growing for a year (budget pressure or a debarment-related pause), 12% x ~19% growth = about 2.3 points of growth is lost. No margin hit is sized beyond the mature margin below.",
+   "deviation": "base and bull sit at or above the Q4 cRPO guide because cRPO excludes T4C backlog and the issuer beats its guides; base and bull include acquired growth (Armis closed 2026-04-20, Moveworks 2025-12-15) whose size is undisclosed (visible gap); bear sits below it as an organic deceleration plus federal-channel stall case"
+  },
+  "growth_half_life": {
+   "bear": 3.0,
+   "base": 5.0,
+   "bull": 7.0,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "pf_revenue_fy2020",
+    "pf_revenue_fy2021",
+    "pf_revenue_fy2022",
+    "pf_revenue_fy2023",
+    "pf_revenue_fy2024",
+    "pf_revenue_fy2025"
+   ],
+   "reason": "Own history: growth went from 30.5% (FY2021) to 20.9% (FY2025); excess over a ~4.5% terminal fell from about 26 to 16 points in 4 years, a half-life of about 6 years. Base 5 (slightly faster than history: larger base, AI pricing debate), bull 7 (AI ACV sustains the pace), bear 3 (seat compression and agent competition speed the fade)."
+  },
+  "mature_margin": {
+   "bear": 0.14,
+   "base": 0.26,
+   "bull": 0.3,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "dc_g_fy_opm_ng",
+    "dc_op_margin_nongaap_q3_2026",
+    "dc_op_margin_gaap_q3_2026",
+    "dc_sbc_9m_2026",
+    "pf_sbc_fy2025",
+    "pf_operating_income_fy2025",
+    "pf_revenue_fy2025",
+    "dc_amort_intang_q3_2026"
+   ],
+   "reason": "Mature operating margin after SBC. FY2026 non-GAAP operating margin guided 31.5% (+50 bp a year), Q3 32.5%; SBC about 15% of revenue (9M 1,829M); GAAP operating margin 13.7% FY2025, 9.5% Q3 2026 after amortization of acquired intangibles. Base 26% = non-GAAP rising to about 36% with SBC fading to about 10%. Bull 30% = Rule-of-60 path, non-GAAP near 38% with SBC under 9%. Bear 14% = the best reported GAAP operating margin (13.7% FY2025; 9.5% Q3 2026) held: no evidenced SBC fade (SBC 14.7% of revenue FY2025, about 15.5% in Q3 2026 and rising), so the bear keeps SBC near the reported ~15% (sbc_pct) and the margin after SBC near the GAAP record."
+  },
+  "sbc_pct": {
+   "bear": 0.15,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "pf_sbc_fy2025",
+    "pf_revenue_fy2025",
+    "dc_sbc_9m_2026",
+    "pf_sbc_q_2026_09_30"
+   ],
+   "reason": "Bear holds SBC at the reported level: 14.7% of revenue FY2025 (pf_sbc_fy2025 / pf_revenue_fy2025), about 15% in 9M 2026 (1,829M) and about 15.5% in Q3 2026; no company evidence of a fade. Base and bull keep the engine fade from the TTM ratio (visible gap: the fade is unevidenced)."
+  },
+  "sales_to_capital": {
+   "bear": 1.41,
+   "base": 1.95,
+   "bull": 1.95,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "pf_revenue_fy2020",
+    "pf_revenue_fy2022",
+    "pf_revenue_fy2025",
+    "pf_equity_fy2020",
+    "pf_equity_fy2022",
+    "pf_equity_fy2025",
+    "pf_cash_fy2022",
+    "pf_cash_fy2025"
+   ],
+   "reason": "Own history of incremental sales-to-capital: 1.41 over 3 years (FY2022-FY2025, period of acquisitions and capital build) and 1.95 over 5 years (FY2020-FY2025), per the engine's own computation from companyfacts. Bear takes the 3-year 1.41 (acquisitions keep capital heavy), base and bull the 5-year 1.95 (the engine's own choice)."
+  },
+  "terminal_roic": {
+   "bear": 0.15,
+   "base": 0.22,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "pf_operating_income_fy2022",
+    "pf_operating_income_fy2025",
+    "pf_equity_fy2022",
+    "pf_equity_fy2025",
+    "pf_cash_fy2022",
+    "pf_cash_fy2025"
+   ],
+   "reason": "Same return on capital as company_path, so the DCF and the yearly path use one number: base 22% = hand-computed incremental after-tax operating income / added capital FY2022-FY2025 about 20%, engine incremental ROIC (3y) 26.2%, pulled toward the lower end because the 11.2B of 2025-2026 acquisitions dilute returns; bear 15% = last-year ROIC about 14% with the acquisitions earning little. Bull left on the engine rule (its 45% path return is unproven)."
+  }
+ },
+ "company_path": {
+  "metric": "eps",
+  "multiple": "forward_pe",
+  "scenarios": {
+   "bear": {
+    "multiple_from": "economics",
+    "roic": 0.15,
+    "justification": "justified_high",
+    "reason_he": "התשואה על ההון של החברה הייתה כ-14% בשנה האחרונה וכ-9% בממוצע (רווח תפעולי חשבונאי, כולל מוניטין). אם הרכישות של 2025-2026 (כ-11.2 מיליארד דולר, ממומנות בחלקן בחוב) לא מרוויחות והרווחיות החשבונאית נשארת ב-10% כפי שהונחה ל-2026, כל דולר של צמיחה עולה הרבה הון - ולכן מכפיל נמוך, עדיין מעל מחיר ההון.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "pf_operating_income_fy2025",
+     "pf_equity_fy2025",
+     "pf_cash_fy2025",
+     "pf_short_term_investments_fy2025",
+     "dc_bizcomb_cash_9m_2026",
+     "dc_armis_price",
+     "dc_moveworks_price",
+     "dc_veza_price",
+     "dc_g_fy_opm_gaap",
+     "dc_lt_debt_q3_2026",
+     "dc_st_debt_q3_2026"
+    ]
+   },
+   "base": {
+    "multiple_from": "economics",
+    "roic": 0.22,
+    "justification": "justified_high",
+    "reason_he": "ב-2022-2025 הרווח התפעולי אחרי מס עלה בכ-1.16 מיליארד דולר מול תוספת הון של כ-5.9 מיליארד - כ-20%; החישוב של המנוע לתשואה על ההון הנוסף (3 שנים) נותן 26.2%. הצמיחה האורגנית כמעט לא דורשת הון (השקעות כ-6.5% מההכנסות), אבל הרכישות של כ-11 מיליארד מדללות את התשואה; לכן 22%, בין 20% ל-26%, קרוב לצד הנמוך. אותו מספר משמש גם בהערכת התזרים.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "pf_operating_income_fy2022",
+     "pf_operating_income_fy2025",
+     "pf_equity_fy2022",
+     "pf_equity_fy2025",
+     "pf_cash_fy2022",
+     "pf_cash_fy2025",
+     "pf_short_term_investments_fy2022",
+     "pf_short_term_investments_fy2025",
+     "pf_long_term_debt_fy2022",
+     "pf_capex_fy2025",
+     "pf_revenue_fy2025",
+     "pf_net_income_fy2025",
+     "dc_g_fy_fcf_margin",
+     "dc_bizcomb_cash_9m_2026",
+     "dc_renewal_rate_q3_2026"
+    ]
+   },
+   "bull": {
+    "multiple_from": "economics",
+    "roic": 0.45,
+    "justification": "unproven",
+    "reason_he": "אם יעד ה-AI (ACV של 1.7 מיליארד דולר ל-2026, הועלה מ-1 מיליארד), הצריכה של סוכני AI (פי 13 השנה) והגידול בלקוחות הגדולים (680 מעל 5 מיליון דולר, מ-553) ממשיכים, והרכישות מתחילות להרוויח - הצמיחה נשארת סביב 20% כמעט בלי הון נוסף והתשואה על ההון החדש קרובה לזו של המנוע האורגני. זה עוד לא הוכח בדוחות.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "dc_ai_acv_target_2026",
+     "dc_ai_acv_start_2026_target",
+     "dc_k_agentic_consumption",
+     "dc_customers_5m_q3_2026",
+     "dc_customers_5m_q3_2025",
+     "dc_crpo_q3_2026_growth_cc",
+     "dc_g_fy_fcf_margin",
+     "pf_capex_fy2025",
+     "pf_revenue_fy2025"
+    ]
+   }
+  },
+  "own_history": {
+   "low": 75.8,
+   "median": 91.7,
+   "high": 243,
+   "years": "2022-2026",
+   "evidence_ids": [
+    "pf_eps_diluted_fy2022",
+    "pf_eps_diluted_fy2023",
+    "pf_eps_diluted_fy2024",
+    "pf_eps_diluted_fy2025",
+    "nm_ib_price"
+   ]
+  }
+ },
+ "key_risk": {
+  "reading_he": "הצמיחה האורגנית מאטה: ההתחייבויות לשנה הקרובה צפויות לצמוח רק 18.5% ברבעון הרביעי לעומת 21%, חלק מהקצב בא מרכישות, ובמקביל תגמול במניות של כ-15% מההכנסות והפחתות הרכישות שומרים את הרווח החשבונאי נמוך (9.5% ברבעון).",
+  "evidence_ids": [
+   "dc_g_q4_crpo_cc",
+   "dc_crpo_q3_2026_growth_cc",
+   "dc_call_20261028",
+   "dc_sbc_9m_2026",
+   "dc_op_margin_gaap_q3_2026"
+  ]
+ },
+ "falsifiers": [
+  {
+   "id": "fx_base_crpo_q4",
+   "scenario": "base",
+   "metric": "current RPO growth cc, Q4 2026",
+   "threshold": 0.17,
+   "direction": "below",
+   "by": "2027-02-15",
+   "evidence_ids": [
+    "dc_g_q4_crpo_cc"
+   ]
+  },
+  {
+   "id": "fx_bull_crpo_q2_27",
+   "scenario": "bull",
+   "metric": "current RPO growth cc, Q2 2027",
+   "threshold": 0.19,
+   "direction": "below",
+   "by": "2027-08-15",
+   "evidence_ids": [
+    "dc_crpo_q3_2026_growth_cc"
+   ]
+  },
+  {
+   "id": "fx_bear_crpo_q2_27",
+   "scenario": "bear",
+   "metric": "current RPO growth cc, Q2 2027",
+   "threshold": 0.2,
+   "direction": "above",
+   "by": "2027-08-15",
+   "evidence_ids": [
+    "dc_crpo_q3_2026_growth_cc",
+    "dc_g_q4_crpo_cc"
+   ]
+  },
+  {
+   "id": "fx_base_opm_fy27",
+   "scenario": "base",
+   "metric": "non-GAAP operating margin FY2027",
+   "threshold": 0.31,
+   "direction": "below",
+   "by": "2028-02-15",
+   "evidence_ids": [
+    "dc_g_fy_opm_ng"
+   ]
+  },
+  {
+   "id": "fx_base_renewal",
+   "scenario": "base",
+   "metric": "renewal rate (reported), FY2027",
+   "threshold": 0.97,
+   "direction": "below",
+   "by": "2028-02-15",
+   "evidence_ids": [
+    "dc_renewal_rate_q3_2026",
+    "dc_k_renewal"
+   ]
+  },
+  {
+   "id": "fx_base_sbc_fy27",
+   "scenario": "base",
+   "metric": "SBC / revenue FY2027 (GAAP)",
+   "threshold": 0.16,
+   "direction": "above",
+   "by": "2028-02-15",
+   "evidence_ids": [
+    "dc_sbc_9m_2026",
+    "pf_sbc_fy2025",
+    "pf_revenue_fy2025"
+   ]
+  },
+  {
+   "id": "fx_bull_subgrowth_fy27",
+   "scenario": "bull",
+   "metric": "subscription revenue growth cc FY2027",
+   "threshold": 0.2,
+   "direction": "below",
+   "by": "2028-02-15",
+   "evidence_ids": [
+    "dc_crpo_q3_2026_growth_cc",
+    "dc_g_fy_sub_rev"
+   ]
+  },
+  {
+   "id": "fx_bear_gaap_opm_fy27",
+   "scenario": "bear",
+   "metric": "GAAP operating margin FY2027",
+   "threshold": 0.15,
+   "direction": "above",
+   "by": "2028-02-15",
+   "evidence_ids": [
+    "dc_op_margin_gaap_q3_2026",
+    "dc_g_fy_opm_gaap",
+    "pf_operating_income_fy2025",
+    "pf_revenue_fy2025"
+   ]
+  }
+ ],
+ "assessments": {
+  "moat": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "dc_k_renewal",
+    "pf_cf_20260129",
+    "pf_10k_20260129",
+    "fd_sec_crm",
+    "fd_sec_wday"
+   ],
+   "note": "Evidenced moat source is switching costs on the installed workflow base (98% renewal) plus faster growth than Salesforce and Workday; but GAAP ROIC was about 14% last year and about 9% on average against an 8% reference, close to the cost of capital once stock compensation is counted, the 10-K describes low barriers to entry, and goodwill rose to about $10bn in 2026, which will weigh on returns on capital. Strong cash economics (FCF margin above 30% for six years) do not yet show up as high GAAP returns."
+  },
+  "switching_costs": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "dc_k_renewal",
+    "dc_k_rpo",
+    "pf_10q_20261028"
+   ],
+   "note": "98% renewal rate, RPO $29.7bn with average contract duration lengthening per the CFO; workflows embedded across IT, HR and customer service are costly to replace versus Microsoft or Salesforce alternatives."
+  },
+  "retention": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "dc_k_renewal",
+    "dc_k_customers_5m",
+    "dc_k_customers_5m_py"
+   ],
+   "note": "Renewal rate 98%; customers above $5M ACV grew 23% y/y. Net revenue retention is not disclosed (gap)."
+  },
+  "pricing_power": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "dc_call_20261028",
+    "dc_g_fy_sub_gm_ng",
+    "dc_g_fy_sub_gm_prior_apr",
+    "dc_ps_gp_q3_2026"
+   ],
+   "note": "Customers accept hybrid seat plus consumption pricing for AI (CFO); but the FY2026 non-GAAP subscription gross margin guide slipped from 81.5% to 81%, and delivery services for large AI deals are given at a gross loss (professional services gross profit -$39M in Q3), a concession to win AI deals."
+  },
+  "customer_concentration": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "dc_c_fed_partner_q3",
+    "dc_c_fed_partner_fy25",
+    "pf_10q_20261028"
+   ],
+   "note": "One U.S. federal channel partner and systems integrator is 12% of revenue (11% in FY2025) and 20% of receivables; it is a channel for many agencies rather than one end buyer, but it ties a large slice to U.S. federal procurement."
+  },
+  "competition": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "pf_10k_20260129",
+    "fd_sec_crm",
+    "fd_sec_wday",
+    "fd_sec_msft",
+    "fd_sec_orcl",
+    "pf_cf_20260129"
+   ],
+   "note": "NOW out-grows each named competitor (Salesforce, Workday, Microsoft, Oracle) on whole-company numbers, but all of them are embedding AI agents in their own systems of record and Microsoft is far larger and more profitable; the 10-K calls the market fragmented with low barriers to entry."
+  },
+  "substitutes": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "mc_invezz_jul",
+    "dc_call_20261028",
+    "dc_k_agentic_consumption"
+   ],
+   "note": "AI agents shrinking ticket-handling headcount is a real substitution risk to seat revenue (opinion, unsized); NOW's own agentic consumption grew 13x year to date and pricing is hybrid, so far evidence that NOW captures the agent layer rather than being replaced by it."
+  },
+  "management": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "pf_rel_20250423_1",
+    "pf_rel_20250723_1",
+    "pf_rel_20251029_1",
+    "pf_rel_20260128_1",
+    "dc_rel_20260422",
+    "pf_rel_20260722_1",
+    "pf_rel_20261028_1"
+   ],
+   "note": "Subscription revenue beat the guided midpoint in all 7 quarters read (+0.3% to +2.7%) and the AI ACV target was raised twice in 2026; management also states plainly that growth will decline over the long term."
+  },
+  "capital_allocation": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "dc_armis_price",
+    "dc_veza_price",
+    "dc_moveworks_price",
+    "dc_buyback_9m_2026",
+    "dc_sbc_9m_2026",
+    "pf_sbc_q_2025_09_30",
+    "pf_sbc_q_2026_09_30",
+    "dc_diluted_shares_q3_2026",
+    "dc_g_q4_shares",
+    "pf_10q_20261028"
+   ],
+   "note": "About $11.2bn spent on Moveworks, Veza and Armis in ten months, funded partly with debt (carrying debt about $7.5bn from about $1.5bn); returns on these acquisitions are not yet evidenced and the organic growth rate is not disclosed. Buybacks of $2.2bn in 9M 2026 roughly offset stock compensation of $1.8bn (quarterly SBC $630M vs $492M a year earlier, +28%), so share count is flat (1.043bn Q3, 1.05bn guided for Q4) rather than falling."
+  },
+  "governance": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "pf_10q_20261028"
+   ],
+   "note": "Open DOJ investigation into the 2023 hiring of the former U.S. Army CIO (President and COO resigned July 2024); timing and outcome cannot be predicted per the 10-Q."
+  },
+  "regulation": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "pf_10k_20260129",
+    "dc_c_fed_partner_q3"
+   ],
+   "note": "Government procurement rules and possible debarment matter because a federal channel partner is 12% of revenue; data-residency and AI rules are generic risk factors, unsized."
+  },
+  "technology_ai": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "dc_k_ai_acv_target",
+    "dc_k_agentic_consumption",
+    "dc_call_20261028",
+    "pf_rel_20261028_1"
+   ],
+   "note": "Paid AI adoption shows in NOW's own numbers: AI net new ACV +65% y/y in Q3, AI deals above $1M up 4.5x, agentic consumption up 13x year to date, AI ACV target $1.7bn for end-2026 (management-defined metric, target not yet reported as achieved)."
+  },
+  "geopolitics": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "mc_f04",
+    "mc_f05",
+    "mc_f06",
+    "pf_10q_20261028",
+    "pf_10k_20260129"
+   ],
+   "note": "About 63% of 9M 2026 revenue from North America (about 60% U.S.), EMEA 25%, APAC 12%, no China breakout; sanctions and tariffs are generic 10-K risks with no revenue sized; a software subscription business with limited hardware exposure."
+  }
+ },
+ "forecast_options": {
+  "cyclical": {
+   "treatment": "structural",
+   "reason": "Subscription revenue under multi-year contracts (renewal rate 98%, RPO 29.7B) and growth of 21-30% every year FY2021-FY2025, including 2022; no cycle in the history.",
+   "evidence_ids": [
+    "dc_renewal_rate_q3_2026",
+    "dc_rpo_q3_2026",
+    "pf_revenue_fy2022",
+    "pf_revenue_fy2023"
+   ]
+  }
+ },
+ "market": {
+  "risk_free": {
+   "value": 0.0498,
+   "as_of": "2026-10-29",
+   "source_id": "pf_fred_dgs10"
+  },
+  "equity_risk_premium": {
+   "value": 0.042,
+   "as_of": "2026-10-01",
+   "source_id": "pf_erp_implied"
+  }
+ }
+}

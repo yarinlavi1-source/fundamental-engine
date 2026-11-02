@@ -1,0 +1,53 @@
+{
+  "lens": "counter",
+  "findings": [
+    {
+      "severity": "critical",
+      "finding": "The price claim is withheld and the table shows no fair value because the forecast material issue 'possible_lender' (liabilities 88% of assets, no cost-of-revenue line) is unresolved. The evidence says MA is NOT a lender: the 10-Q at 2026-09-30 (reading/10q_2026-10-29.txt, balance sheet) shows no loan book; liabilities of $51.4bn are accrued expenses $13.95bn (largely accrued customer/merchant incentives, an operating liability), debt $23.9bn (ST $1.749bn + LT $22.189bn), settlement obligations $2.151bn matched by settlement assets $1.593bn, restricted security deposits held for customers $2.231bn matched one-for-one by the same asset line, accrued litigation $0.262bn; equity is small ($6.74bn) because of cumulative buybacks, not deposit funding. Revenue/assets 0.61 and capex 1.5% of revenue (prefetch/classify.json) confirm an operating asset base. The bridge already uses unrestricted cash $10.147bn and excludes restricted cash ($0.564bn) and customer deposits ($2.231bn), which is correct.",
+      "where": "companies/MA/out/casefile.json val.case.underwriting.material_issues[id=possible_lender] and assumption id 'classification' (review_status unreviewed); fc warning code possible_lender; dc withheld_reasons; table_he.md 'שווי הוגן: אין עדיין שווי אמין להצגה'",
+      "fix": "Repair: confirm the operating classification with evidence (cite pf_ 10-Q 2026-10-29 balance sheet: settlement and customer-deposit lines are pass-through and offset; no loans or deposits funding a spread; equity reduced by treasury stock) and mark the 'classification' assumption reviewed so possible_lender resolves; keep the operating FCFF route (residual income would be wrong for a payment network). Then rerun ticker-value so the table can show values."
+    },
+    {
+      "severity": "major",
+      "finding": "Counter-thesis (pre-mortem, Nov 2029: MA has returned little or lost money from $638). (1) The toll erodes: rebates and incentives keep outgrowing payment-network revenue (18-23% vs 8-11% FXn in 2026; 52.6% of gross PN in Q3'26 vs ~50.5% in 2024 and 51.3% in FY2025, CFO guided Q4 higher) and incentive prepayments keep consuming cash (9M'26 prepaid outflow $4.69bn vs $2.94bn; operating cash flow -6% while net income +18%), so reported earnings grow faster than cash. (2) A regulatory step lands: the Trump-endorsed CCCA (Jan 2026) passes in some form, UK PSR sets the UK-EEA CNP cap, the Rules Relief settlement (final hearing Nov 2026) widens surcharging, and a DOJ v. Visa debit remedy restricts incentive contracts industry-wide (it also legitimises scrutiny of MA's deals). (3) Volume growth keeps fading (GDV 12%->7%, cross-border 20%->11% in 8 quarters) while Pix/UPI/Wero/digital euro take domestic and intra-European share where MA is strongest (Europe). (4) VAS (41% of revenue, the growth engine) slows as acquired contribution (3-4 pp in 2025) and pricing actions lap and Q3'26 project timing reverses. (5) The multiple de-rates from ~36x trailing FCF to the own-history low ~27.5x: with the stock at an all-time high after +35% from the June low, the Street mean target only ~5% above the price and Berkshire out in Q1 2026, there is no cushion. Litigation tails (Block/Intuit >$5bn single damages before trebling; UK claims >GBP 3bn in aggregate incl. the Oct 2026 ~GBP 1.5bn action) add cash risk; 2008 shows litigation can produce a loss year (forensic ROIC -43%). Early signs: FY2026 rebates/gross PN above 54%; FY2027 guide (late Jan 2027) below 'low double digits' FXn; organic VAS growth below 15%; cross-border below 10%; a CCCA committee markup or floor vote; prepaid-incentive outflow growing faster than net revenue again in 2027.",
+      "where": "position/core.json (bear) and position/field.json; gather/deep_notes.md Part A threats 1-6 and Part B sentiment",
+      "fix": "State this counter-thesis next to the result (scenarios_he.md bear reasons and the deliver explanations); make sure each early sign above is a dated numeric falsifier or watch item (see the falsifier finding)."
+    },
+    {
+      "severity": "major",
+      "finding": "What the price assumes depends on the terminal spread. The engine's base uses terminal growth 4.98% (the 10y Treasury, engine convention) against a terminal cost of equity 8.18%: a 3.2 pp spread, terminal share ~68% of value, terminal multiple ~28x. An approximate expectation_gap run by this reviewer (anchor: forward revenue $40.4bn, growth 11.5% for 3 years then fade, EBIT after SBC 57.5%, tax 20.5%, discount 8.68%, terminal growth 4.0%, unrestricted cash $10.147bn, debt $23.9bn, 876m shares) gives $561/share, 12% below the price; to reach $638 one lever alone must be: growth 14.7% for 3 years (5y CAGR 13.6% vs demonstrated 3y CAGR ~12.8%), or 11.5% growth held 8 years instead of 3, or a mature EBIT margin after SBC of 64.7% (best 3y 57.6% GAAP). So the base value above price ($726) rests mostly on the terminal convention, not on evidence of faster growth; the base 5y IRR 9.1% is only ~0.4 pp above the model cost of equity and below the 10.68% hurdle; the bull IRR is 9.9%, also below the hurdle. redteam_audit not run: no reported-package (capital_structure + reported cash/debt) exists in the run; manual check: cash reconciles (10,147 unrestricted, restricted excluded); engine debt $24.2bn vs reported $23.94bn principal (+1.1%, explain or align).",
+      "where": "companies/MA/out/casefile.json company_path.scenarios.base.economics (terminal_growth 0.0498, terminal_cost_of_equity 0.0818); dc.expected_return; val.case.opening.debt",
+      "fix": "Show next to the table that the base value is sensitive to the terminal spread (state the base at a 4% terminal growth) and that the price needs either ~14-15% growth for 3 years or ~65% margins on a plain FCFF; build the capital_structure package and run redteam_audit in the repair pass; reconcile opening debt 24.2bn to the 10-Q principal (1,749 + 22,189)."
+    },
+    {
+      "severity": "major",
+      "finding": "Base story vs base numbers: the base events say the share count falls ~3% a year (about $12bn of buybacks a year), but every scenario's EPS path holds weighted shares flat at 871.2m for all five years, so the buybacks are treated as distributions (D_k) and the year-t prices are ex-distribution. The table's 'פוטנציאל בעוד 5 שנים' row (year-5 base $967 vs $638) therefore omits ~2-2.3% a year of cash returned (dc.expected_return.decomposition cash_yield 0.0227), and the EPS growth shown (~9-10%/yr) is below what holders see per share (EPS +~12-13% with buybacks). Valuation-neutral, but the owner's buy test (base vs index over 5 years) reads the wrong number.",
+      "where": "companies/MA/out/casefile.json company_path.scenarios.*.rows[].weighted_shares (871176114 every year) vs position/core.json base event 'החברה ממשיכה לקנות מניות... מספר המניות יורד בכ-3% בשנה'",
+      "fix": "Either label the year-5 prices as excluding dividends and buybacks and show the total-return line, or accrete the buyback into the per-share path; keep one convention across table and scenarios."
+    },
+    {
+      "severity": "minor",
+      "finding": "Coherence of the base margin: core base mature margin 58% (engine 58.6% FY2027 falling to 58.0%) while field base says profitability stays ~60% and 9M 2026 GAAP operating margin is ~59.5% (Q1 58.4%, Q2 60.2%, Q3 59.8%; adjusted 60.5-61.1%). The base is a mild margin decline, i.e. a conservative rather than most-likely path, unless the 58% is meant to absorb recurring litigation provisions ($74-280m a quarter) and Q4 seasonality (Q4'25 55.8%).",
+      "where": "position/core.json base drivers mature_margin 0.58 vs position/field.json base reading; coherence.md base",
+      "fix": "Write in core.json base why 58% (GAAP incl. recurring litigation and acquisition amortization) or align field's '~60%' to the GAAP basis; no change needed if the basis is stated."
+    },
+    {
+      "severity": "minor",
+      "finding": "Bull is close to extrapolating a flattered quarter: 14% growth = VAS ~19% x 41% + payment network ~10.5% x 59%, i.e. Q3'26 rates held, but Q3'26 VAS was helped by services projects pulled from Q4 (CFO) and BVNK's VAS contribution was 'minimal'; the stablecoin/agentic engines named in the bull have no revenue evidence yet. The bull events carrying this are hypothesis-labelled (good), but the bull ROIC 0.7 path keeps a ~40x multiple at year 0, above the own-history median 35.6x.",
+      "where": "position/core.json bull drivers growth 0.14; position/path.json bull roic 0.7; company_path.scenarios.bull.multiple_path[0]=40.2",
+      "fix": "Note in the bull reason that it requires Q3'26 growth rates to persist after the timing reversal and that BVNK/agentic revenue is not yet evidenced; no number change required."
+    },
+    {
+      "severity": "minor",
+      "finding": "Bear sizing: the bear moves growth (8%) and margin (53%) and the multiple (ROIC 0.3, ~23x, below the own-history low 27.5x), so it changes the business, but its mechanisms are not sized from evidence: no estimate of the US credit share exposed to CCCA routing, of UK-EEA cross-border CNP revenue exposed to the PSR cap, or of a litigation cash claim (Block/Intuit >$5bn single damages shared with Visa; UK claims). A litigation claim of a few $bn is under 1% of value, so the effect on the number is small, but the bear's 5.6 pp margin cut is asserted rather than derived.",
+      "where": "position/core.json bear drivers and events; val.case opening (no litigation claim)",
+      "fix": "Add one sizing line per bear mechanism (exposed revenue share x plausible yield cut) or label the 53% margin a hypothesis; optionally add a contingent litigation claim to the bear bridge."
+    },
+    {
+      "severity": "minor",
+      "finding": "Falsifiers: the bear falsifier (Q2 2027 payment-network net revenue growth above 10%) would not refute a bear driven by legislation and incentive inflation, since one quarter of PN growth can coexist with a CCCA passage; the base rebates-ratio falsifier (>54%) is good. The quality line 'roic_durability: weak (-43%)' is the 2008 litigation-settlement year, a one-off, but it is also the evidence that litigation can wipe a year's earnings.",
+      "where": "position/core.json bear falsifiers; casefile dc.assessments.business_quality.reasons roic_durability",
+      "fix": "Add a bear falsifier on the mechanism (e.g. FY2027 rebates/gross PN below 0.52 by 2028-02-28, or CCCA not passed by 2027-12-31) and note the 2008 one-off next to roic_durability."
+    }
+  ]
+}

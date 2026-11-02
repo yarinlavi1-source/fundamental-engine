@@ -1,0 +1,123 @@
+{
+ "thesis_he": {
+  "bear": "ההון החדש שטסלה משקיעה (מחשוב לבינה מלאכותית, רובוטקסי, Cybercab, Semi, יותר מ־20 מיליארד דולר ב־2026) מרוויח רק כ־6% בשנה, כמו העסק כולו היום, כי ברכבים הביקוש והמחיר הם המגבלה; לכן המכפיל נמוך מאוד.",
+  "base": "ההון החדש מרוויח כ־12% בשנה, כמו הממוצע של טסלה בשנים 2023 עד 2025 אחרי השיא, כי האנרגיה והשירותים מרוויחים יותר מהרכבים, אבל הרובוטקסי והמחשוב עוד לא הוכיחו רווח; לכן מכפיל בינוני שיורד ככל שהצמיחה מאטה.",
+  "bull": "ההון החדש מרוויח כ־20% בשנה, כמו בשנים 2020 עד 2023 כשהמפעלים החדשים התמלאו, כי תוכנת הנהיגה העצמית, הרובוטקסי ו־Megapack הופכים להכנסות רווחיות; לכן מכפיל גבוה יותר, אבל זה עוד לא הוכח."
+ },
+ "company_path": {
+  "metric": "eps",
+  "multiple": "forward_pe",
+  "scenarios": {
+   "bear": {
+    "multiple_from": "economics",
+    "roic": 0.06,
+    "justification": "unproven",
+    "reason_he": "בתרחיש הדובי ההון החדש מרוויח רק כ־6% בשנה, כמו העסק כולו היום: ב־12 החודשים עד ספטמבר 2026 הרווח התפעולי היה 3.47 מיליארד דולר, כלומר כ־2.7 מיליארד אחרי מס (מס מונח 21%), על הון תפעולי של כ־54 מיליארד דולר (הון עצמי ועוד חוב, פחות 45 מיליארד מזומן והשקעות; מוניטין זניח נשאר בפנים) = כ־5%; ב־2025 כ־7%. מה נשבר: ההשקעות ב־2026 (13 מיליארד בתשעה חודשים, יותר מ־20 מיליארד בשנה, בעיקר מחשוב לבינה מלאכותית) והוצאות המחקר (עלו ב־69% ברבעון השלישי) לא מייצרות רווח נוסף; ברכבים המגבלה היא ביקוש ומחיר, ההכנסות מקרדיטים רגולטוריים נעלמות (113 מיליון ברבעון אחרי החזר של 475 מיליון), והרווחיות באנרגיה ברבעון השלישי כללה החזרי מכס חד־פעמיים. תשואה קרובה לצמיחה ארוכת הטווח (5%) ונמוכה ממחיר ההון נותנת מכפיל נמוך מאוד.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "pf_operating_income_q_2025_12_31",
+     "pf_operating_income_q_2026_03_31",
+     "pf_operating_income_q_2026_06_30",
+     "pf_operating_income_q_2026_09_30",
+     "pf_operating_income_fy2025",
+     "pf_equity_fy2025",
+     "pf_cash_fy2025",
+     "pf_short_term_investments_fy2025",
+     "pf_10q_20261022",
+     "dc_debt_total_q3_2026",
+     "dc_cash_equivalents_q3_2026",
+     "dc_capex_9m_2026",
+     "dc_g_capex_fy2026_oct_10q",
+     "dc_seg_line_regcredits_q3_2026",
+     "dc_regcredits_reversal_q3_2026",
+     "dc_rpo_regcredits_q3_2026",
+     "dc_tariff_refund_cogs_energy_q3_2026",
+     "dc_kpi_gm_energy_q2_2026"
+    ]
+   },
+   "base": {
+    "multiple_from": "economics",
+    "roic": 0.12,
+    "justification": "unproven",
+    "reason_he": "בתרחיש הבסיסי ההון החדש מרוויח כ־12% בשנה. זה בערך הממוצע של טסלה בשנים 2023 עד 2025, אחרי שנת השיא: הרווח התפעולי אחרי מס (מס מונח 21%) היה 7.0, 5.6 ו־3.4 מיליארד דולר על הון תפעולי של כ־34, 36 ו־47 מיליארד (הון עצמי פחות מזומן והשקעות), כלומר כ־14% בממוצע (קצת פחות עם החוב, שלא נכלל ב־2023 ו־2024). זה פחות מ־15% של 2024 ויותר מ־5% עד 7% של היום, כי חלק גדול מההשקעה של 2026 עוד בבנייה ולא מרוויח, הרווחיות ברכבים בלי קרדיטים עלתה מ־16.3% ל־18.1%, והאנרגיה (רווח גולמי 3.8 מיליארד על 12.8 מיליארד הכנסות ב־2025, קיבולת של 110 GWh) מרוויחה יותר מהרכבים. הרובוטקסי והמחשוב לבינה מלאכותית עוד לא הוכיחו רווח, ולכן לא מניחים יותר. תשואה כזו, מעט מעל מחיר ההון, נותנת מכפיל בינוני ולא מכפיל של חברת צמיחה מוכחת.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "pf_operating_income_fy2023",
+     "pf_operating_income_fy2024",
+     "pf_operating_income_fy2025",
+     "pf_equity_fy2023",
+     "pf_equity_fy2024",
+     "pf_equity_fy2025",
+     "pf_cash_fy2023",
+     "pf_cash_fy2024",
+     "pf_cash_fy2025",
+     "pf_short_term_investments_fy2023",
+     "pf_short_term_investments_fy2024",
+     "pf_short_term_investments_fy2025",
+     "pf_goodwill_fy2025",
+     "dc_kpi_gm_auto_ex_credits_q2_2026",
+     "dc_kpi_gm_auto_ex_credits_q3_2026",
+     "dc_seg_gp_energy_fy2025",
+     "dc_seg_energy_fy2025",
+     "dc_kpi_cap_megapack_q3_2026",
+     "dc_capex_9m_2026",
+     "dc_g_capex_fy2026_oct_10q"
+    ]
+   },
+   "bull": {
+    "multiple_from": "economics",
+    "roic": 0.2,
+    "justification": "unproven",
+    "reason_he": "בתרחיש השורי ההון החדש מרוויח כ־20% בשנה, כמו בפעם האחרונה שההשקעות של טסלה הצליחו: מ־2020 עד 2023, כשמפעלי שנגחאי, ברלין וטקסס התמלאו, הרווח התפעולי אחרי מס עלה בכ־5.4 מיליארד דולר על כ־31 מיליארד הון נוסף (כ־18%), ובשנת 2023 התשואה על ההון הייתה כ־21% עד 25%. לא לוקחים את שנות השיא 2021 עד 2022 (40% ומעלה), כי אלה היו מחירי רכב ורווחיות של שיא. כדי שזה יקרה, תוכנת הנהיגה העצמית צריכה להמשיך לגדול (1.7 מיליון מנויים לעומת 1.04 מיליון לפני שנה), הרובוטקסי ו־Cybercab (קיבולת 125 אלף בשנה) צריכים להפוך לשירות בתשלום רווחי, ו־Megapack צריך למלא את הקיבולת של 110 GWh (צבר הזמנות של 10.7 מיליארד דולר ומקדמות שעלו ל־3.3 מיליארד). הכלכלה של הרובוטקסי לא מדווחת, ולכן זה עוד לא הוכח.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "pf_operating_income_fy2020",
+     "pf_operating_income_fy2023",
+     "pf_equity_fy2020",
+     "pf_equity_fy2023",
+     "pf_cash_fy2020",
+     "pf_cash_fy2023",
+     "pf_short_term_investments_fy2023",
+     "dc_kpi_fsd_subs_q3_2025",
+     "dc_kpi_fsd_subs_q3_2026",
+     "dc_kpi_robotaxi_miles_q3_2026",
+     "dc_kpi_cap_cybercab_q3_2026",
+     "dc_kpi_cap_megapack_q3_2026",
+     "dc_rpo_energy_q3_2026",
+     "dc_defrev_energy_prepay_q3_2026",
+     "dc_defrev_energy_prepay_fy2025"
+    ]
+   }
+  },
+  "own_history": {
+   "low": 28.6,
+   "median": 103.1,
+   "high": 488.7,
+   "years": "2021-2025 (16 quarter-end points 2021-12 to 2025-09: month-end price over the GAAP diluted EPS realised in the next four quarters, a hindsight proxy for the forward P/E)",
+   "evidence_ids": [
+    "nm_ib_history",
+    "nm_eps_diluted_q_2025_03_31",
+    "nm_eps_diluted_q_2025_06_30",
+    "nm_eps_diluted_q_2025_09_30",
+    "nm_eps_diluted_q_2025_12_31",
+    "nm_eps_diluted_q_2026_03_31",
+    "nm_eps_diluted_q_2026_06_30",
+    "nm_eps_diluted_q_2026_09_30",
+    "pf_eps_diluted_fy2021",
+    "pf_eps_diluted_fy2022",
+    "pf_eps_diluted_fy2023",
+    "pf_eps_diluted_fy2024",
+    "pf_eps_diluted_fy2025"
+   ]
+  }
+ },
+ "gaps": [
+  "peers left out: none of the six named competitors of field.json (BYD, GM, F, RIVN, FLNC, GOOGL) has an evidenced forward P/E (FMP analyst and quote for FLNC/BYDDY ACCESS DENIED, Alpha Vantage quota reserved for other lanes; field.json has only GM trailing P/E 17.4 and Rivian price to sales 2.9); not retrieved in this stage because the economics path does not use them and a consensus page dated at as_of would not be citable until 2026-10-29",
+  "ROIC is hand-computed (prefetch forensic ROIC unavailable): NOPAT = GAAP operating income after SBC x (1 - 21%), the 21% tax rate an assumption (10-Q effective rate 16% in Q3 2026, 20% for nine months); invested capital = equity - cash - short-term investments for FY2020 to FY2024 (debt and finance leases are not in the evidence for those years, so their ROIC is overstated and the FY2020 base is very small), and equity + noncontrolling interests + debt and finance leases - cash and investments for FY2025 (47.2B) and 2026-09-30 (54.0B, numbers lane)",
+  "Own-history ROIC readings used: FY2022 peak about 48% to 62% (operating margin 16.8%), FY2023 21% to 25%, FY2024 15% to 16%, FY2025 7.3%, trailing four quarters 5.1%; incremental 2020 to 2023 about 18%, 2021 to 2024 about 2%, 2022 to 2025 negative, 2020 to 2025 about 4%; the last three years' incremental return is negative because 2026 capex is front-loaded (PP&E 50.6B versus 40.6B, other non-current assets 12.6B versus 5.0B in the 10-Q) and not yet earning",
+  "Returns of the new businesses (Robotaxi, FSD, Optimus, SI compute) cannot be measured: Tesla discloses no segment operating income, no FSD revenue or ARR and no Robotaxi unit economics, so the base and bull ROICs rest on the whole company's own record, not on the new capital's own returns",
+  "Formula limit for the reviewer: the economics path charges every EPS increase as reinvestment at the scenario ROIC; part of Tesla's EPS recovery from a depressed base (heavy R&D, 3.35B nine-month SBC, margins at 2.6% in Q3 2026) would come from capacity already built, so the bear and base multiples may be understated if the core part's EPS path is mostly margin recovery",
+  "own_history uses the forward proxy on realised next-four-quarter GAAP EPS (hindsight, not the consensus of the time); its low end (2022 to 2024) rests on earnings lifted by a 5.96B FY2023 valuation-allowance tax release and peak 2022 margins, and its high end (2024 to 2025) on depressed earnings, so neither end is a normal-earnings multiple; the trailing version is low 34.0, median 98.4, high 416.4, now 446.0",
+  "Terminal growth of the engine is the risk-free rate (5.0% DGS10 of 2026-10-23), so the bear ROIC of 6% sits only 1 point above it: its terminal multiple will be very low by construction"
+ ]
+}

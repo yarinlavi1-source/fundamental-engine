@@ -1,0 +1,48 @@
+{
+"lane": "macro",
+"sources": [
+{"id":"mc_tc_20261029","kind":"press","title":"As search traffic dries up, Reddit announces it's shifting to a logged-in experience (TechCrunch)","url":"https://techcrunch.com/2026/10/29/as-search-traffic-dries-up-reddit-announces-its-shifting-to-a-logged-in-experience/","date":"2026-10-29","independent":true,"publisher":"TechCrunch","retrieval":"search_excerpt","syndicated_from":null},
+{"id":"mc_tc_20261028","kind":"press","title":"Reddit is the latest platform to embrace the 'For You' feed (TechCrunch)","url":"https://techcrunch.com/2026/10/28/reddit-is-the-latest-platform-to-embrace-the-for-you-feed/","date":"2026-10-28","independent":true,"publisher":"TechCrunch","retrieval":"search_excerpt","syndicated_from":null},
+{"id":"mc_cnbc_20261030","kind":"press","title":"Reddit stock plunges 29% after weak outlook (CNBC, via search summary)","url":"https://www.cnbc.com/quotes/RDDT","date":"2026-10-30","independent":true,"publisher":"CNBC","retrieval":"search_excerpt","syndicated_from":null}
+],
+"facts": [
+{"id":"mc_f_rev_us_9m26","metric":"revenue_by_region:United States","period":"9M 2026","value":1882595,"unit":"USD thousands","source_ids":["pf_10q_20261030"],"period_end":"2026-09-30","basis":"reported"},
+{"id":"mc_f_rev_row_9m26","metric":"revenue_by_region:Rest of world","period":"9M 2026","value":480678,"unit":"USD thousands","source_ids":["pf_10q_20261030"],"period_end":"2026-09-30","basis":"reported"},
+{"id":"mc_f_rev_us_q326","metric":"revenue_by_region:United States","period":"Q3 2026","value":718915,"unit":"USD thousands","source_ids":["pf_10q_20261030"],"period_end":"2026-09-30","basis":"reported"},
+{"id":"mc_f_rev_row_q326","metric":"revenue_by_region:Rest of world","period":"Q3 2026","value":176042,"unit":"USD thousands","source_ids":["pf_10q_20261030"],"period_end":"2026-09-30","basis":"reported"},
+{"id":"mc_f_rev_us_fy25","metric":"revenue_by_region:United States","period":"FY 2025","value":1785554,"unit":"USD thousands","source_ids":["pf_10k_20260206"],"period_end":"2025-12-31","basis":"reported"},
+{"id":"mc_f_rev_row_fy25","metric":"revenue_by_region:Rest of world","period":"FY 2025","value":416952,"unit":"USD thousands","source_ids":["pf_10k_20260206"],"period_end":"2025-12-31","basis":"reported"},
+{"id":"mc_f_rev_us_fy24","metric":"revenue_by_region:United States","period":"FY 2024","value":1063556,"unit":"USD thousands","source_ids":["pf_10k_20260206"],"period_end":"2024-12-31","basis":"reported"},
+{"id":"mc_f_rev_row_fy24","metric":"revenue_by_region:Rest of world","period":"FY 2024","value":236649,"unit":"USD thousands","source_ids":["pf_10k_20260206"],"period_end":"2024-12-31","basis":"reported"}
+],
+"market": {
+ "risk_free": {"value":0.0498,"as_of":"2026-10-29","source_id":"pf_fred_dgs10"},
+ "equity_risk_premium": {"value":0.042,"as_of":"2026-10-01","source_id":"pf_erp_implied"}
+},
+"notes": [
+"mc RATES risk-free 4.98% (FRED DGS10, 2026-10-29) and ERP 4.20% (Damodaran implied, 2026-10-01) kept from the prefetch; Damodaran's 1 November update not yet verifiable, so the 1 October value stands.",
+"mc GEOGRAPHY revenue by customer billing address, 9M 2026: US $1,882.6M (79.7%), rest of world $480.7M (20.3%); Q3 2026 US 80.3% / ROW 19.7%; no single non-US country is 10% or more of revenue (10-Q). ROW grew 75% (9M) and 67% (Q3) y/y vs US 57% / 50%. Evidence: pf_10q_20261030.",
+"mc GEOGRAPHY long-lived assets: the 10-K states substantially all long-lived assets are in the United States (no regional amounts disclosed); a regional table is a gap. Evidence: pf_10k_20260206. About 3% of cash and securities is held outside the US (10-Q).",
+"mc EXPOSURE search-engine dependence (Google organic referral and AI Overviews): the 10-Q says declines in referral traffic adversely affected DAUq growth in Q3 2026 and may continue and worsen; US DAUq 50.7M (-2% y/y, -5% q/q per 10-Q), logged-out DAUq 76.8M of 130.3M global (59%), US logged-out 27.3M (-4% y/y). Largest sized bear mechanism; sizing from logged-out share. Evidence: pf_10q_20261030, pf_rel_20261029_1.",
+"mc EXPOSURE management warning (press report of the Q3 call, not read at source): if the search referral trend continues DAUq could fall by a low-double-digit percentage by next quarter; referrals fell by more than 1M per week in October. Attributed to management via mc_tc_20261029 (press lead, transcript to be confirmed by gather_documents).",
+"mc EXPOSURE platform dependence on Google Search, plus Apple/Microsoft/Google browser and OS privacy changes that impair ad measurement (10-Q risk factors); cloud hosted on AWS and Google Cloud Platform (concentration). Not sized by a revenue share: hypothesis. Evidence: pf_10q_20261030.",
+"mc EXPOSURE AI competition: 10-Q names LLMs and AI answer products from Google, Meta, OpenAI and Anthropic as competitors for user attention and as summarizers of Reddit content. Not sized: hypothesis. Evidence: pf_10q_20261030.",
+"mc EXPOSURE regulation: GDPR/UK GDPR, CCPA, FTC Act, EU/UK content-liability regimes; export control and sanctions law (no sanctioned-country revenue stated; China where Reddit is not directly accessible). International is 20% of revenue, no country 10% or more, so tariff exposure is indirect (advertisers) and unsized: hypothesis. Evidence: pf_10q_20261030, pf_10k_20260206.",
+"mc EXPOSURE litigation: securities class action (N.D. Cal., filed June 2025) alleging misstatements on Google Search/AI Overviews impact; complaint dismissed with leave to amend 2026-08-13, second amended complaint filed 2026-10-23, motion to dismiss due on or before 2026-11-23. Damages unspecified. Evidence: pf_10q_20261030.",
+"mc EXPOSURE logged-in transition: from Q4 2026 Reddit will test login requirements in one or more international markets, then intends some form of logged-in restriction globally including the US; the 10-Q warns this could reduce total users and ad reach. Evidence: pf_10q_20261030.",
+"mc NEWS 2026-10-29 Q3 2026 results (8-K Item 2.02): revenue $895.0M (+53% vs $584.9M), global DAUq 130.3M flat q/q (+12% y/y), US ARPU $13.82. Q4 2026 guidance: revenue $1,000-1,030M, Adjusted EBITDA $480-510M (issuer release). Evidence: pf_rel_20261029_1, pf_10q_20261030.",
+"mc NEWS 2026-10-29 company moves toward a mainly logged-in experience as search referrals fall; stated aims: protect data from AI scraping and pursue licensing with model providers; tests begin in select non-US markets in Q4, no global timeline; an 'incognito mode' is being rebuilt (press report). Evidence: mc_tc_20261029.",
+"mc NEWS 2026-10-28 new 'For You' and 'Following' home feed announced (press). Evidence: mc_tc_20261028.",
+"mc NEWS 2026-10-30 market reaction per CNBC search summary: shares fell about 29% after the outlook, worst day on record; JPMorgan cut its price target to $150 from $185 (analyst opinion, attributed; summary of search result, primary article not read). Evidence: mc_cnbc_20261030.",
+"mc NEWS 2026-10-30 law-firm solicitation of investors (Block & Leviton) after the drop: a lead only, no claim evidence.",
+"mc NEWS no other 8-K than the 2026-10-29 earnings release found since the 2026-07-31 10-Q in the prefetch filings list; no export-control, tariff or sanctions action specific to Reddit found."
+],
+"gaps": [
+"long-lived assets by region not disclosed beyond 'substantially all in the United States'",
+"Q3 call transcript not read by this lane; management's DAUq warning rests on press (mc_tc_20261029) and must be confirmed by gather_documents",
+"CNBC and JPMorgan items are search-summary leads; primary articles not opened",
+"Damodaran 1 November 2026 ERP update not checked; 1 October value kept",
+"no BIS/USTR/EU notice searched: no evidenced export-control or tariff exposure for an ad-supported platform with 80% US revenue"
+],
+"stopped": ["no further press searches: the next retrieval would not change the exposure list; budget kept small"]
+}

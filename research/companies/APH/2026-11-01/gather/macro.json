@@ -1,0 +1,703 @@
+{
+ "lane": "macro",
+ "sources": [
+  {
+   "id": "mc_8k_20260806",
+   "kind": "sec_filing",
+   "title": "AMPHENOL CORP /DE/ 8-K filed 2026-08-06 (Item 8.01, two-for-one stock split approved)",
+   "url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926091969/tm2622441d1_8k.htm",
+   "date": "2026-08-06",
+   "independent": true,
+   "publisher": "AMPHENOL CORP /DE/ (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_8k_20260904",
+   "kind": "sec_filing",
+   "title": "AMPHENOL CORP /DE/ 8-K filed 2026-09-04 (Item 8.01, split effected 2026-09-02; Q3 dividend $0.125 post-split)",
+   "url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926105485/tm2624775d1_8k.htm",
+   "date": "2026-09-04",
+   "independent": true,
+   "publisher": "AMPHENOL CORP /DE/ (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_8k_20261006",
+   "kind": "sec_filing",
+   "title": "AMPHENOL CORP /DE/ 8-K filed 2026-10-06 (Item 5.02, Harsh Environment Solutions division president succession)",
+   "url": "https://www.sec.gov/Archives/edgar/data/820313/000110465926114035/tm2627036d1_8k.htm",
+   "date": "2026-10-06",
+   "independent": true,
+   "publisher": "AMPHENOL CORP /DE/ (SEC EDGAR)",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_fred_regime",
+   "kind": "macro",
+   "title": "FRED regime context: T10Y2Y 0.38 on 2026-10-30, VIXCLS 17.20 and BAA10Y 1.49 on 2026-10-29 (saved under macro/fred)",
+   "url": "https://fred.stlouisfed.org/series/VIXCLS",
+   "date": "2026-10-30",
+   "independent": true,
+   "publisher": "Federal Reserve Bank of St. Louis (FRED)",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_dla_ieepa",
+   "kind": "industry",
+   "title": "DLA Piper: US Supreme Court holds IEEPA does not authorize tariffs (24 February 2026)",
+   "url": "https://www.dlapiper.com/insights/publications/2026/02/us-supreme-court-holds-ieepa-does-not-authorize-tariffs",
+   "date": "2026-02-24",
+   "independent": true,
+   "publisher": "DLA Piper",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_uhy_s301",
+   "kind": "industry",
+   "title": "UHY: Tariff reset, Section 122 expires as Section 301 duties expand (24 July 2026)",
+   "url": "https://uhy-us.com/insights/news/2026/july/tariff-reset-section-122-expires-as-section-301-duties-expand",
+   "date": "2026-07-24",
+   "independent": true,
+   "publisher": "UHY LLP",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_cba_truce",
+   "kind": "press",
+   "title": "Commonwealth Bank of Australia: the November deadline hanging over this week's Trump-Xi meeting (22 September 2026)",
+   "url": "https://www.commbank.com.au/articles/newsroom/2026/09/trump-xi-summit-rare-earths-november-deadline.html",
+   "date": "2026-09-22",
+   "independent": true,
+   "publisher": "Commonwealth Bank of Australia (newsroom)",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "mc_ree_truce",
+   "kind": "press",
+   "title": "Rare Earth Exchanges: US China trade truce extended to January 2027 (date shown is the announcement date of the extension reported by Bessent; page date not shown)",
+   "url": "https://rareearthexchanges.com/news/us-china-trade-truce-rare-earth-chokepoints/",
+   "date": "2026-09-23",
+   "independent": true,
+   "publisher": "Rare Earth Exchanges",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  }
+ ],
+ "facts": [
+  {
+   "id": "mc_rev_us_fy2025",
+   "metric": "revenue_by_region:United States",
+   "period": "FY2025",
+   "value": 7987700000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_cn_fy2025",
+   "metric": "revenue_by_region:China",
+   "period": "FY2025",
+   "value": 3673100000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_other_fy2025",
+   "metric": "revenue_by_region:Other foreign locations",
+   "period": "FY2025",
+   "value": 11433900000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_total_fy2025",
+   "metric": "revenue_by_region:Total",
+   "period": "FY2025",
+   "value": 23094700000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_us_fy2024",
+   "metric": "revenue_by_region:United States",
+   "period": "FY2024",
+   "value": 5272300000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_cn_fy2024",
+   "metric": "revenue_by_region:China",
+   "period": "FY2024",
+   "value": 3399900000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_other_fy2024",
+   "metric": "revenue_by_region:Other foreign locations",
+   "period": "FY2024",
+   "value": 6550500000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_total_fy2024",
+   "metric": "revenue_by_region:Total",
+   "period": "FY2024",
+   "value": 15222700000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_us_fy2023",
+   "metric": "revenue_by_region:United States",
+   "period": "FY2023",
+   "value": 4405400000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_cn_fy2023",
+   "metric": "revenue_by_region:China",
+   "period": "FY2023",
+   "value": 2884000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_other_fy2023",
+   "metric": "revenue_by_region:Other foreign locations",
+   "period": "FY2023",
+   "value": 5265300000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_total_fy2023",
+   "metric": "revenue_by_region:Total",
+   "period": "FY2023",
+   "value": 12554700000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_lla_us_fy2025",
+   "metric": "long_lived_assets:United States",
+   "period": "FY2025",
+   "value": 598800000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_lla_cn_fy2025",
+   "metric": "long_lived_assets:China",
+   "period": "FY2025",
+   "value": 1050400000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_lla_other_fy2025",
+   "metric": "long_lived_assets:Other foreign locations",
+   "period": "FY2025",
+   "value": 1215400000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_lla_total_fy2025",
+   "metric": "long_lived_assets:Total",
+   "period": "FY2025",
+   "value": 2864600000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2025-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_lla_us_fy2024",
+   "metric": "long_lived_assets:United States",
+   "period": "FY2024",
+   "value": 576400000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_lla_cn_fy2024",
+   "metric": "long_lived_assets:China",
+   "period": "FY2024",
+   "value": 617900000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_lla_other_fy2024",
+   "metric": "long_lived_assets:Other foreign locations",
+   "period": "FY2024",
+   "value": 901900000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_lla_total_fy2024",
+   "metric": "long_lived_assets:Total",
+   "period": "FY2024",
+   "value": 2096200000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2024-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_lla_us_fy2023",
+   "metric": "long_lived_assets:United States",
+   "period": "FY2023",
+   "value": 442600000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_lla_cn_fy2023",
+   "metric": "long_lived_assets:China",
+   "period": "FY2023",
+   "value": 455500000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_lla_other_fy2023",
+   "metric": "long_lived_assets:Other foreign locations",
+   "period": "FY2023",
+   "value": 718100000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_lla_total_fy2023",
+   "metric": "long_lived_assets:Total",
+   "period": "FY2023",
+   "value": 1616200000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10k_20260211"
+   ],
+   "period_end": "2023-12-31",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_us_q20260630",
+   "metric": "revenue_by_region:United States",
+   "period": "Q@2026-06-30",
+   "value": 3413800000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260731"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_cn_q20260630",
+   "metric": "revenue_by_region:China",
+   "period": "Q@2026-06-30",
+   "value": 1113000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260731"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_other_q20260630",
+   "metric": "revenue_by_region:Other foreign locations",
+   "period": "Q@2026-06-30",
+   "value": 4231300000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260731"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_total_q20260630",
+   "metric": "revenue_by_region:Total",
+   "period": "Q@2026-06-30",
+   "value": 8758100000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260731"
+   ],
+   "period_end": "2026-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_us_q20250630",
+   "metric": "revenue_by_region:United States",
+   "period": "Q@2025-06-30",
+   "value": 1937300000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260731"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_cn_q20250630",
+   "metric": "revenue_by_region:China",
+   "period": "Q@2025-06-30",
+   "value": 882200000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260731"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_other_q20250630",
+   "metric": "revenue_by_region:Other foreign locations",
+   "period": "Q@2025-06-30",
+   "value": 2830800000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260731"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_total_q20250630",
+   "metric": "revenue_by_region:Total",
+   "period": "Q@2025-06-30",
+   "value": 5650300000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20260731"
+   ],
+   "period_end": "2025-06-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_us_q20260930",
+   "metric": "revenue_by_region:United States",
+   "period": "Q@2026-09-30",
+   "value": 3972600000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_cn_q20260930",
+   "metric": "revenue_by_region:China",
+   "period": "Q@2026-09-30",
+   "value": 1441100000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_other_q20260930",
+   "metric": "revenue_by_region:Other foreign locations",
+   "period": "Q@2026-09-30",
+   "value": 4816000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_total_q20260930",
+   "metric": "revenue_by_region:Total",
+   "period": "Q@2026-09-30",
+   "value": 10229700000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_us_q20250930",
+   "metric": "revenue_by_region:United States",
+   "period": "Q@2025-09-30",
+   "value": 2206800000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_cn_q20250930",
+   "metric": "revenue_by_region:China",
+   "period": "Q@2025-09-30",
+   "value": 948600000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_other_q20250930",
+   "metric": "revenue_by_region:Other foreign locations",
+   "period": "Q@2025-09-30",
+   "value": 3039000000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_total_q20250930",
+   "metric": "revenue_by_region:Total",
+   "period": "Q@2025-09-30",
+   "value": 6194400000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_us_m920260930",
+   "metric": "revenue_by_region:United States",
+   "period": "9M@2026-09-30",
+   "value": 10338300000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_cn_m920260930",
+   "metric": "revenue_by_region:China",
+   "period": "9M@2026-09-30",
+   "value": 3492100000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_other_m920260930",
+   "metric": "revenue_by_region:Other foreign locations",
+   "period": "9M@2026-09-30",
+   "value": 12777500000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_total_m920260930",
+   "metric": "revenue_by_region:Total",
+   "period": "9M@2026-09-30",
+   "value": 26607900000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2026-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_us_m920250930",
+   "metric": "revenue_by_region:United States",
+   "period": "9M@2025-09-30",
+   "value": 5787600000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_cn_m920250930",
+   "metric": "revenue_by_region:China",
+   "period": "9M@2025-09-30",
+   "value": 2624700000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_other_m920250930",
+   "metric": "revenue_by_region:Other foreign locations",
+   "period": "9M@2025-09-30",
+   "value": 8243400000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  },
+  {
+   "id": "mc_rev_total_m920250930",
+   "metric": "revenue_by_region:Total",
+   "period": "9M@2025-09-30",
+   "value": 16655700000.0,
+   "unit": "USD",
+   "source_ids": [
+    "pf_10q_20261030"
+   ],
+   "period_end": "2025-09-30",
+   "basis": "reported"
+  }
+ ],
+ "notes": [
+  "mc EXPOSURE china_demand: China (customer location of shipment) was $3,673.1M = 15.9% of FY2025 net sales of $23,094.7M (10-K says approx. 16%), and $1,113.0M = 12.7% of Q2 2026 net sales of $8,758.1M (+26% on Q2 2025's $882.2M; its share fell from 22.3% in FY2024 as the AI, datacom and acquisition-driven sales grew faster elsewhere). The 10-K names BIS export-control rules, the Entity List and China's own Unreliable Entity List and says none has had a material adverse effect to date. Candidate bear mechanism sized from the evidenced share: loss or restriction of the China-destination sales (12.7%-15.9% of sales); the product mix sold into China is not disclosed (gap). Evidence: pf_10k_20260211, pf_10q_20260731, mc_rev_cn_fy2025, mc_rev_cn_q20260630. UPDATE 2026-11-01 (10-Q filed 2026-10-30, pf_10q_20261030): China was $1,441.1M = 14.1% of Q3 2026 net sales of $10,229.7M (+52% on $948.6M, 15.3% of $6,194.4M a year earlier) and $3,492.1M = 13.1% of the nine months' $26,607.9M (nine months 2025: $2,624.7M = 15.8% of $16,655.7M). Sums computed from the 10-Q geography table; the table is by customer shipping location. Evidence: mc_rev_cn_q20260930, mc_rev_cn_m920260930.",
+  "mc EXPOSURE china_assets: long-lived assets (PP&E net plus operating lease right-of-use) in China were $1,050.4M = 36.7% of the $2,864.6M total at 2025-12-31 (29.5% a year earlier: $617.9M of $2,096.2M; +70% in a year); United States $598.8M = 20.9%; other foreign $1,215.4M = 42.4%. The 10-K attributes the rise to investment for AI-related products and says about 79% of long-lived assets and about 90% of the workforce are outside the United States. Candidate bear mechanism: seizure, shutdown or tariff-driven stranding of China capacity, sized by the evidenced 36.7% of long-lived assets (about $1.05B of PP&E and leases, equal to about 4.5% of FY2025 net sales, so the exposure is to supply continuity and margin, not to book value). The 10-Q has no long-lived-asset table: the figures are as of 2025-12-31 and predate the CommScope acquisition of 2026-01-09 (gap). Evidence: pf_10k_20260211, mc_lla_cn_fy2025.",
+  "mc EXPOSURE china_tax: tax authorities in China challenged the tax positions of Chinese subsidiaries over up to an eight-year period. Recorded: $100.0M charge in Q4 2025 (10-K), $130.0M more in Q1 2026 (payment notices total $230.0M, paid in full in Q2 2026 per the 10-Q), plus $160.0M of additional tax obligations in Q1 2026 from reassessing the tax-rate assumptions applied to prior-year results not under inquiry. The effective tax rate was 32.4% for the first half of 2026 against 20.2% a year earlier (Q2 2026: 25.3% against 18.3%). It is a one-off that the numbers and review stages should normalise symmetrically; the residual risk is a higher structural cash tax rate on China-booked profits, size not disclosed (gap, labelled hypothesis). Evidence: pf_10k_20260211, pf_10q_20260731. UPDATE 2026-11-01 (pf_10q_20261030, pf_rel_20261028_1): Q3 2026 effective tax rate 27.4% (Q3 2025 23.5%) and nine months 30.3% (21.6%); Q3 includes a further discrete $60.0M for settlements of foreign tax matters, nine-month discrete items $389.0M ($39.0M reserves, $60.0M, $130.0M and $160.0M China); the company raised its Adjusted Effective Tax Rate to 27.0% citing the China matter and a continued shift of income to higher-tax jurisdictions. The earlier first-half rates above are superseded for the run-rate: use 27.0% adjusted as the company's own stated structural level (reported, issuer).",
+  "mc EXPOSURE tariffs: the 10-K says U.S. tariffs imposed through 2025 and retaliatory measures have in certain cases raised costs, that the company cannot predict further actions, and that it cannot be sure to mitigate fully by pricing. After the Supreme Court held on 2026-02-20 that IEEPA does not authorize tariffs (mc_dla_ieepa, secondary source), the Q2 2026 results include a net $80.0M benefit (about $0.04 per pre-split share) from the recovery of IEEPA tariffs: 0.9% of Q2 sales and 3.1% of Q2 operating income of $2,584.6M, inside the adjusted operating margin of 29.8% (pf_10q_20260731, pf_rel_20260729_1); the Q3 2026 outlook states that it does not include any additional tariff recoveries. A one-off to strip from run-rate margin: about 0.9 points in Q2. The replacement tariff layer (Section 122 at 10% from 2026-02-24 to 2026-07-24, then Section 301 duties of 10% or 12.5% on 60 economies from 2026-07-24 with no statutory expiry, per mc_uhy_s301, secondary source) is not tied to any APH disclosure: the share of U.S. sales (34.6% of FY2025 net sales by shipping destination) imported from non-U.S. factories, and the pass-through to customers, are not disclosed, so the tariff-cost bear mechanism is an unsized hypothesis. UPDATE 2026-11-01: IEEPA tariff recovery net benefit was about $15.0M in Q3 2026 (about $0.00 per share) and about $95.0M for the nine months (about $0.03 per share) in GAAP and adjusted operating income (pf_10q_20261030, pf_rel_20261028_1), so Q3 margin carries about 0.1 points of one-off benefit against about 0.9 points in Q2.",
+  "mc EXPOSURE export_controls_defense: sales into the defense market were about 9% of FY2025 net sales (about $2.08B; 10-K Item 1); the 10-K says export licences, in particular within the defense market, are subject to complex rules that can change frequently and with limited notice, and that the company must comply with sanctions and trade embargoes and with government-contracting rules. Candidate bear mechanism sized from the evidenced 9%: licence delays or denials on defense programmes. No BIS, USTR, EU or MOFCOM action naming APH or its connector product classes was found in the searches made (gap: no Federal Register or MOFCOM notice was read directly). Evidence: pf_10k_20260211.",
+  "mc EXPOSURE us_china_truce_rare_earth: SUPERSEDES the earlier text. Search results of 2026-11-01 (secondary, search excerpts; mc_ree_truce) report that after the Trump-Xi summit the US Treasury Secretary announced on 2026-09-23 that the truce, including China's suspension of its broader rare-earth export controls and the tariff truce, was extended from 2026-11-10 to 2027-01-10, with no resolution on tariffs, technology restrictions or rare-earth supply; US rare-earth-magnet imports from China were reported low in August. The new date is not read at a primary source (gap). Whether APH uses rare earths or other China-controlled inputs is not stated in the 10-K risk factors: unsized hypothesis, no revenue or cost share evidenced. Earlier context: mc_cba_truce.",
+  "mc EXPOSURE no_taiwan_single_region: the words Taiwan, Mexico and India do not appear in the 10-K text or the Q2 10-Q text read (grep of reading/10k_full.txt and reading/10q_2026-07-31.txt), and the filings give no manufacturing split by country beyond United States, China and other foreign locations (about 40 countries, 90% of staff outside the U.S.). Absence of a mention is not evidence of no exposure: single-region supply, if any, is a visible gap, not a finding. Sanctions and Russia-Ukraine appear only as generic risk-factor text, with no revenue share. Antitrust does not appear in the 10-K; the 10-Q Note 15 says no existing legal or regulatory action is expected to have a material adverse effect. Evidence: pf_10k_20260211, pf_10q_20260731.",
+  "mc EXPOSURE fx_tax_regulation: the company sells in many currencies and its Q3 2026 outlook assumes constant exchange rates; no currency split of sales is in the text read (gap). Pillar Two minimum-tax rules and the U.S. tax law changes are described in the 10-K as raising tax complexity and possibly the provision for income taxes, without a figure: unsized hypothesis. Evidence: pf_10k_20260211, pf_10q_20260731.",
+  "mc GEOGRAPHY mix: net sales by customer shipping location, FY2025 / FY2024 / FY2023 in $M: United States 7,987.7 / 5,272.3 / 4,405.4 (34.6% / 34.6% / 35.1%), China 3,673.1 / 3,399.9 / 2,884.0 (15.9% / 22.3% / 23.0%), other foreign 11,433.9 / 6,550.5 / 5,265.3 (49.5% / 43.0% / 41.9%). Q2 2026 against Q2 2025: United States 3,413.8 (39.0%) against 1,937.3 (34.3%), China 1,113.0 (12.7%) against 882.2 (15.6%), other foreign 4,231.3 (48.3%) against 2,830.8 (50.1%), total 8,758.1 against 5,650.3. Sums reconcile to the reported totals. No single customer was 10% or more of net sales in 2023-2025. Evidence: pf_10k_20260211, pf_10q_20260731.",
+  "mc RATES: prefetch risk-free 4.98% (FRED DGS10, 2026-10-29, pf_fred_dgs10, market_feed) is the newest observation on or before 2026-11-01 and is kept; the earlier reading of 4.96% (2026-10-22) and 5.13% (2026-10-21) shows the level moves a few bp a day. The saved ERP of 4.2% (Damodaran implied, 2026-10-01, pf_erp_implied) is kept: a search on 2026-11-01 found no newer monthly figure (the 2026-11-01 monthly update was not found; gap). FRED regime context only, never moves a value: T10Y2Y 0.38 (2026-10-30), VIX 17.20 and Baa-10y spread 1.49 (2026-10-29) (mc_fred_regime).",
+  "mc NEWS 2026-08-06: 8-K Item 8.01 (mc_8k_20260806): the Board approved a two-for-one split of the Class A common stock as a stock dividend, record date 2026-08-17, distributed 2026-09-02; with the Q3 dividend of $0.25 per share announced the same day. The 8-K of 2026-09-04 (mc_8k_20260904) confirms the split has been effected and the dividend to be paid 2026-10-14 to holders of record 2026-09-22 is $0.125 per share. A WebSearch result said it found no split, but the SEC filings are the primary source and settle it. Consequence for every lane and the engine: per-share data (price, EPS, shares, dividends, targets, the Q3 2026 outlook of adjusted diluted EPS $1.40-$1.42 issued 2026-07-29 before the split = $0.70-$0.71 post-split) must be on one basis; check that prices, XBRL per-share facts and consensus EPS are split-adjusted and say which basis each uses.",
+  "mc NEWS 2026-10-06: 8-K Item 5.02 (mc_8k_20261006): after 43 years, Luc Walter, President of the Harsh Environment Solutions division, moves to Senior Vice President, Strategic Programs effective 2027-01-01; Ryan Fisher, now Group General Manager of the North American Military Group, succeeds him as division president from the same date. Planned internal succession, no financial terms; low materiality.",
+  "mc NEWS 2026-07-29 (before the latest 10-Q of 2026-07-31, context for the period since the filing): the Q2 2026 release (pf_rel_20260729_1) reports sales of $8.8B (+55%), completion of two acquisitions in Q2 (El.Com, Leno, Italy, about $150M annual sales, Interconnect and Sensor Systems; Wilder Technologies, Vancouver, Washington, about $15M, Communications Solutions), a raised 2026 expectation for the CommScope CCS acquisition (closed 2026-01-09, about $10.5B) to $4.6B of sales and $0.30 of adjusted EPS accretion from $4.1B and $0.15, a book-to-bill of 1.23:1, and the Q3 2026 outlook of sales $9.3B-$9.4B (+50% to +52%) and adjusted diluted EPS $1.40-$1.42 (pre-split), excluding additional tariff recoveries. Detail belongs to gather_documents.",
+  "mc NEWS 2026-10-28: Q3 2026 results (8-K Items 2.02, 8.01, 9.01; pf_rel_20261028_1; 10-Q filed 2026-10-30, pf_10q_20261030) are citable from 2026-10-30. Items relevant to this lane: sales $10.2B (+65%), book-to-bill 1.19:1, adjusted operating margin 29.7%; Q4 2026 outlook sales $10.3-$10.5B and adjusted diluted EPS $0.81-$0.83, full year $36.9-$37.1B and $2.82-$2.84 (post-split basis, excluding AdvancedPCB, Dexgreen and Humanetics Sensors not yet closed); CommScope 2026 expectation raised to $5.1B sales and $0.18 accretion; Empire Electronics (about $320M annual sales, automotive) closed early September; three new definitive agreements (AdvancedPCB about $270M sales, US defense and industrial PCBs, Harsh Environment Solutions, closing expected Q4 2026 subject to regulatory approvals; Dexgreen about $90M, Ireland fibre, closing Q1 2027; Humanetics Sensors about $70M, Q4 2026), combined price about $1.6B of cash and debt for the four; buyback of 3.0M shares for $245M and dividends of $308M in Q3. Dividend raised 20% to $0.15 per share and a new three-year $4B repurchase programme announced (issuer release headline; amounts per search excerpt of the issuer IR page, not read in full here). Detail belongs to gather_documents.",
+  "mc NEWS none_found: filings list shows no 8-K besides 2026-08-06, 2026-09-04, 2026-10-06 and 2026-10-28 since the Q2 10-Q of 2026-07-31 (identity.json filings, refreshed by this attempt's prefetch); searches of 2026-11-01 for APH news found only the Q3 results coverage, product notes and a Redburn price-target cut to $107 reported on 2026-11-01 (opinion, German secondary page, not registered, for the consensus lane). Trade-press mentions of tax friction in China and a 54% rise in inventory are secondary leads for the numbers lane, not confirmed here. No APH-specific lawsuit, export-rule action or capacity announcement was found; absence is a lead, not proof."
+ ],
+ "gaps": [
+  "Long-lived assets by region are as of 2025-12-31 only (the 10-Q has no table); they predate the CommScope CCS acquisition of 2026-01-09 and the 2026 China build-out.",
+  "No disclosure of the product mix sold into China, of the share of U.S. sales imported from non-U.S. factories, of tariff pass-through, of single-country supply (no Taiwan, Mexico or India mention) or of currency split: the tariff, supply-concentration and FX bear mechanisms are unsized hypotheses.",
+  "Residual China tax risk after the $230.0M paid and $160.0M reassessment is not sized by the company.",
+  "No Federal Register, BIS, USTR or MOFCOM notice read at the source: tariff regime and the 2026-11-10 truce deadline rest on secondary sources (DLA Piper, UHY, Commonwealth Bank).",
+  "Two-for-one split of 2026-09-02: per-share basis of prices, XBRL facts and consensus must be checked by the numbers lane.",
+  "Q3 2026 10-Q has no long-lived-asset table by region (only the 2025-12-31 figures exist) and no product mix into China.",
+  "US-China truce extension to 2027-01-10 rests on secondary search excerpts, not a primary notice.",
+  "Damodaran ERP for 2026-11-01 not found; the 2026-10-01 value is kept."
+ ],
+ "stopped": [
+  "Federal Register, BIS and MOFCOM primary-notice reading: the searches gave no APH-relevant action, and the next retrieval would not change the decision.",
+  "Damodaran ERP refetch: the saved 2026-10-01 value is already the latest monthly update on or before 2026-10-26.",
+  "Damodaran 2026-11 refetch: one search found no newer figure; stopped."
+ ]
+}

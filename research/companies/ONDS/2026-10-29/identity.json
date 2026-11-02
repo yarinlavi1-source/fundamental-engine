@@ -1,0 +1,326 @@
+{
+ "ticker": "ONDS",
+ "as_of": "2026-10-29",
+ "stop": false,
+ "stop_reason": null,
+ "issuer": {
+  "name": "Ondas Inc.",
+  "former_names": [
+   "Ondas Holdings Inc. (2018-10-15 to 2026-01-12)",
+   "ZEV Ventures Inc. (2015-2018)"
+  ],
+  "state_of_incorporation": "NV",
+  "hq": "West Palm Beach, FL",
+  "sources": [
+   "sec_submissions",
+   "10k_fy2025"
+  ]
+ },
+ "security": {
+  "class": "Common Stock, par value $0.0001",
+  "ticker": "ONDS",
+  "exchange": "NASDAQ (The Nasdaq Stock Market LLC)",
+  "adr": null,
+  "adr_ratio": null,
+  "dual_listing": null,
+  "single_class": true,
+  "note": "Only one class registered under 12(b); no ADR. Subsidiary-level instruments (e.g. OAS common stock from converted OAS notes, Dec 2025) exist below the parent: capital-structure lane must check minority interests.",
+  "sources": [
+   "10k_fy2025",
+   "sec_submissions"
+  ]
+ },
+ "shares_outstanding_cover": {
+  "value": 467133265,
+  "date": "2026-03-25",
+  "note": "10-K cover; many 3.02 share issuances since (acquisitions, offerings): point-in-time count must come from the Q2 10-Q cover / later 8-Ks",
+  "source": "10k_fy2025"
+ },
+ "currency": {
+  "reporting": "USD",
+  "quote": "USD",
+  "sources": [
+   "10k_fy2025"
+  ]
+ },
+ "fiscal_calendar": {
+  "fiscal_year_end": "12-31",
+  "quarters": [
+   "Mar 31",
+   "Jun 30",
+   "Sep 30",
+   "Dec 31"
+  ],
+  "source": "sec_submissions"
+ },
+ "filer_status": {
+  "category": "Non-accelerated filer / Smaller reporting company (EDGAR header; 10-K cover marks well-known seasoned issuer)",
+  "sic": "3663",
+  "sic_description": "Radio & TV Broadcasting & Communications Equipment",
+  "source": "sec_submissions"
+ },
+ "cik": "0001646188",
+ "cik_source": "sec_submissions",
+ "latest_filings": [
+  {
+   "form": "10-K",
+   "date": "2026-03-30",
+   "period": "2025-12-31",
+   "url": "https://www.sec.gov/Archives/edgar/data/1646188/000121390026035981/ea0282911-10k_ondas.htm",
+   "note": "FY2025 annual report",
+   "source": "sec_submissions"
+  },
+  {
+   "form": "10-Q",
+   "date": "2026-05-15",
+   "period": "2026-03-31",
+   "url": "https://www.sec.gov/Archives/edgar/data/1646188/000121390026057859/ea0290102-10q_ondas.htm",
+   "note": "Q1 2026",
+   "source": "sec_submissions"
+  },
+  {
+   "form": "10-Q",
+   "date": "2026-08-13",
+   "period": "2026-06-30",
+   "url": "https://www.sec.gov/Archives/edgar/data/1646188/000119312526349288/onds-20260630.htm",
+   "note": "Q2 2026 (latest quarterly report)",
+   "source": "sec_submissions"
+  },
+  {
+   "form": "8-K",
+   "date": "2026-03-23",
+   "period": "2026-03-23",
+   "url": "https://www.sec.gov/Archives/edgar/data/1646188/000121390026032678/ea0282944-8k_ondas.htm",
+   "note": "Item 2.02 results",
+   "source": "sec_submissions"
+  },
+  {
+   "form": "8-K",
+   "date": "2026-03-25",
+   "period": "2026-03-25",
+   "url": "https://www.sec.gov/Archives/edgar/data/1646188/000121390026033852/ea0283318-8k_ondas.htm",
+   "note": "Item 2.02 results (FY2025)",
+   "source": "sec_submissions"
+  },
+  {
+   "form": "8-K",
+   "date": "2026-05-14",
+   "period": "2026-05-14",
+   "url": "https://www.sec.gov/Archives/edgar/data/1646188/000121390026056235/ea0290690-8k_ondas.htm",
+   "note": "Item 2.02 Q1 2026 earnings release",
+   "source": "sec_submissions"
+  },
+  {
+   "form": "8-K",
+   "date": "2026-08-13",
+   "period": "2026-08-13",
+   "url": "https://www.sec.gov/Archives/edgar/data/1646188/000119312526347973/onds-20260813.htm",
+   "note": "Item 2.02 Q2 2026 earnings release (Ex.99.1 release, Ex.99.2 deck); call 2026-08-13 08:30 ET",
+   "source": "sec_submissions"
+  },
+  {
+   "form": "8-K",
+   "date": "2026-08-10",
+   "period": "2026-08-10",
+   "url": "https://www.sec.gov/Archives/edgar/data/1646188/000119312526341399/onds-20260810.htm",
+   "note": "Item 2.01/3.02 acquisition completion + unregistered shares",
+   "source": "sec_submissions"
+  },
+  {
+   "form": "8-K",
+   "date": "2026-09-14",
+   "period": "2026-09-14",
+   "url": "https://www.sec.gov/Archives/edgar/data/1646188/000121390026099531/ea0304980-8k_ondas.htm",
+   "note": "Items 1.01/2.01/3.02 agreement + acquisition completion",
+   "source": "sec_submissions"
+  },
+  {
+   "form": "8-K",
+   "date": "2026-09-23",
+   "period": "2026-09-23",
+   "url": "https://www.sec.gov/Archives/edgar/data/1646188/000121390026102458/ea0306273-8k_ondas.htm",
+   "note": "Item 3.02 unregistered share issuance",
+   "source": "sec_submissions"
+  },
+  {
+   "form": "8-K",
+   "date": "2026-10-13",
+   "period": "2026-10-12",
+   "url": "https://www.sec.gov/Archives/edgar/data/1646188/000121390026108757/ea0308390-8k_ondas.htm",
+   "note": "Items 7.01/8.01 formation of Regna AI (latest filing before as_of)",
+   "source": "sec_submissions"
+  },
+  {
+   "form": "DEF 14A",
+   "date": "2026-04-21",
+   "period": "2026-05-28",
+   "url": "https://www.sec.gov/Archives/edgar/data/1646188/000121390026045735/ea0285575-02.htm",
+   "note": "2026 annual meeting proxy",
+   "source": "sec_submissions"
+  },
+  {
+   "form": "10-K",
+   "date": "2025-03-12",
+   "period": "2024-12-31",
+   "url": "https://www.sec.gov/Archives/edgar/data/1646188/000121390025022968/ea0232702-10k_ondashold.htm",
+   "note": "FY2024 annual report (as Ondas Holdings Inc.)",
+   "source": "sec_submissions"
+  }
+ ],
+ "latest_earnings": {
+  "release_date": "2026-08-13",
+  "period": "Q2 2026",
+  "call_date": "2026-08-13",
+  "call_time": "08:30 ET",
+  "source": "q2_2026_release",
+  "headline_facts_from_release": "Q2 revenue $83.8m (Q1 $50.1m, Q2-25 $6.3m); backlog ~$613m (pro forma $757m incl. DZYNE, Cyberhawk closed Q3); FY2026 revenue target raised to $525-550m (management guidance); $1.4bn cash, restricted cash and ST investments at 2026-06-30 (company figure)"
+ },
+ "next_earnings": {
+  "period": "Q3 2026",
+  "date": null,
+  "note": "Not announced in any filing dated on or before 2026-10-29; last year Q3 was released 2025-11-13. Q3 results are after as_of: gap."
+ },
+ "company_type": {
+  "stage": "young_growth",
+  "lynch": "fast_grower",
+  "plain_stage": "emerging",
+  "reasons": [
+   "growth measured without years with a large acquisition: FY2025",
+   "fast growth while still loss-making",
+   "classify run on SEC XBRL annual FY2021-FY2025 and quarterly rows (understand/history_classify.json -> understand/classify_out.json)",
+   "Revenue $2.9m (2021) -> $50.7m (2025) -> $83.8m in Q2 2026 alone; operating loss every year (FY2025 -$58.4m, Q2 2026 -$162.9m)",
+   "Growth is heavily acquisition-driven: goodwill $27.8m (2024) -> $251.8m (2025) -> $661.4m (2026-06-30); total assets $110m -> $2.99bn; acquisitions also closed in Q3 2026 (DZYNE, Cyberhawk)",
+   "Funded by repeated equity issuance (dozens of Item 3.02 8-Ks, S-3ASR, 424B5s): dilution and funding are first-order questions",
+   "Operator's judgment: young-growth / roll-up (acquisitive serial issuer) in defense autonomy; not a cyclical, not a mature compounder. Q1 2026 net income +$362.8m is non-operating (likely fair-value gains) and must not be read as profitability"
+  ],
+  "flags": [
+   {
+    "key": "acquisitions",
+    "he": "ב-FY2025 הייתה רכישה גדולה (המוניטין במאזן קפץ). חלק מהצמיחה נקנה ולא נבנה — לכן הסיווג מסתכל על הצמיחה בלי השנים האלה. צריך לבדוק שהרכישה מחזירה את המחיר ששולם."
+   }
+  ],
+  "key_metrics": [
+   "revenue growth and its source (volume/price/new customers)",
+   "gross margin trend",
+   "operating loss as % of revenue trend",
+   "cash runway",
+   "share count growth",
+   "unit economics / retention",
+   "organic vs acquired revenue (company pro forma same-portfolio growth)",
+   "backlog and book-to-bill",
+   "share count and dilution per acquisition",
+   "goodwill impairment risk",
+   "adjusted EBITDA vs GAAP incl. stock comp"
+  ],
+  "packets": [
+   "company_type",
+   "potential",
+   "funding",
+   "expectations"
+  ],
+  "sources": [
+   "sec_companyfacts",
+   "q2_2026_release"
+  ]
+ },
+ "history_rows_used": "understand/history_classify.json",
+ "competitors_named_in_10k": {
+  "named_companies": [],
+  "categories_named": [
+   "OAS: other drone OEMs providing inspection, security, asset tracking and other applications",
+   "Ondas Networks: public cellular data networks",
+   "Unlicensed point-to-multipoint wireless (e.g. Wi-Fi)",
+   "Private licensed narrowband wireless radios",
+   "Satellite technologies",
+   "Low-power wide-area networks (LoRa, NB-IoT)"
+  ],
+  "note": "The FY2025 10-K Competition section (Item 1) names NO competitor companies, only categories. Checked for DJI, Skydio, Percepto, AeroVironment, Anduril, Red Cat, Elbit, Rafael, Dedrone, D-Fend, Motorola, Nokia, Ericsson, Siemens: zero mentions. Direct named competitors must come from the gather_field lane (other sources, each with why it competes) or stay a gap.",
+  "source": "10k_fy2025"
+ },
+ "sources": [
+  {
+   "id": "sec_submissions",
+   "kind": "sec_filing",
+   "title": "SEC EDGAR submissions JSON, CIK 0001646188 (Ondas Inc.)",
+   "url": "https://data.sec.gov/submissions/CIK0001646188.json",
+   "date": "2026-10-13",
+   "independent": true,
+   "publisher": "SEC EDGAR",
+   "retrieval": "structured_data",
+   "syndicated_from": null,
+   "local": "companies/ONDS/raw/sec_submissions.json"
+  },
+  {
+   "id": "sec_companyfacts",
+   "kind": "structured_data",
+   "title": "SEC XBRL companyfacts, CIK 0001646188",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001646188.json",
+   "date": "2026-08-13",
+   "independent": true,
+   "publisher": "SEC EDGAR",
+   "retrieval": "structured_data",
+   "syndicated_from": null,
+   "local": "companies/ONDS/raw/sec_companyfacts.json"
+  },
+  {
+   "id": "10k_fy2025",
+   "kind": "sec_filing",
+   "title": "Ondas Inc. Form 10-K for FY2025 (cover page, Item 1 Business - Competition)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1646188/000121390026035981/ea0282911-10k_ondas.htm",
+   "date": "2026-03-30",
+   "independent": true,
+   "publisher": "Ondas Inc. via SEC EDGAR",
+   "retrieval": "primary_document",
+   "syndicated_from": null,
+   "local": "companies/ONDS/raw/10k_2025.htm"
+  },
+  {
+   "id": "q2_2026_release",
+   "kind": "release",
+   "title": "Ondas Posts Record Q2 2026 Revenue of $83.8 Million ... Raises Full-Year Outlook (8-K Ex. 99.1)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1646188/000119312526347973/onds-ex99_1.htm",
+   "date": "2026-08-13",
+   "independent": false,
+   "publisher": "Ondas Inc. via SEC EDGAR",
+   "retrieval": "primary_document",
+   "syndicated_from": null,
+   "local": "companies/ONDS/raw/q2_2026_release_ex99_1.htm"
+  },
+  {
+   "id": "8k_2026_10_13",
+   "kind": "sec_filing",
+   "title": "Form 8-K: formation of Regna AI (fact sheet, CEO letter, release)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1646188/000121390026108757/ea0308390-8k_ondas.htm",
+   "date": "2026-10-13",
+   "independent": false,
+   "publisher": "Ondas Inc. via SEC EDGAR",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "av_overview_denied",
+   "kind": "structured_data",
+   "title": "Alpha Vantage COMPANY_OVERVIEW ONDS: premium endpoint denied (recorded once, not retried)",
+   "url": "connector:mcp__Alpha_Vantage_MCP_Server__COMPANY_OVERVIEW",
+   "date": "2026-10-29",
+   "independent": true,
+   "publisher": "Alpha Vantage",
+   "retrieval": "structured_data",
+   "syndicated_from": null,
+   "local": "companies/ONDS/raw/av_company_overview_DENIED.json"
+  }
+ ],
+ "gaps": [
+  "10-K names no competitor companies (categories only)",
+  "Q3 2026 results date not announced by as_of; Q3 not citable",
+  "Alpha Vantage COMPANY_OVERVIEW denied (premium); not retried, SEC used as fallback",
+  "Point-in-time share count after 2026-03-25 not resolved in this phase (many issuances since)",
+  "Organic vs acquired split of 2026 revenue not resolved here (company gives pro forma same-portfolio +85% YoY for Q2)",
+  "2026-10-13 8-K (Regna AI) dated within the 2-day lag window? No: 2026-10-13 + 2 = 2026-10-15 < as_of, citable"
+ ],
+ "name": "Ondas Inc.",
+ "fiscal_year_end": "12-31",
+ "exchange": "NASDAQ",
+ "quote_currency": "USD",
+ "ib_contract_id": 455415330
+}

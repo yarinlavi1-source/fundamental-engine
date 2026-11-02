@@ -1,0 +1,45 @@
+{
+ "thesis_he": {
+  "bear": "השוק ממשיך לגדול אבל אורקל נשענת על לקוח אחד גדול ועל קיבולת שהמתחרים הגדולים בונים מהר יותר; התוכנה הישנה נשחקת.",
+  "base": "אורקל לוקחת נתח בשוק תשתיות הענן (צמיחה של 121% מול 37% ב-AWS) מבסיס קטן, ושומרת על בסיס התמיכה בתוכנה.",
+  "bull": "אורקל הופכת לספקית מחשוב AI מרכזית בזכות הצבר, מסד הנתונים שנמכר גם בעננים של המתחרים, והיכולת לספק קיבולת בזמן מחסור."
+ },
+ "potential": {
+  "market_direction": {
+   "reading": "Cloud infrastructure keeps growing fast: Synergy (attributed) puts worldwide cloud infrastructure spending at $143B in Q2 2026, the highest growth rate in eight years; the named competitors' own numbers agree (AWS +37% to $42.2B, Google Cloud +82% to $24.8B, Azure +43%). Contracted demand runs ahead of revenue: ORCL RPO $664B at 2026-08-31 (+46% y/y), AWS backlog about $496B and Google Cloud about $514B at June 2026 (different definitions, not additive). The IEA expects data-centre electricity use to roughly double to about 945 TWh by 2030. ORCL's legacy market (licences -15%, support -1%) shrinks slowly.",
+   "evidence_ids": ["fd_synergy_q2_2026", "fd_aws_q2_2026", "fd_gcloud_q2_2026", "fd_msft_q4fy26", "rp_f_rpo_q1fy27", "rp_f_rpo_q1fy26", "fd_iea_energy_ai", "rp_f_lic_q1fy27", "rp_f_sup_q1fy27"]
+  },
+  "bottleneck_potential": {
+   "reading": "ORCL sells the scarce input of this cycle, AI compute with power and data-centre space: management says AI cloud demand 'continues to grow faster than supply'; in Q1 FY2027 it delivered 850 MW and more than 300,000 GPUs and booked more than $30B of new AI contracts. Its own binding constraint is delivery (sites, power, GPUs, financing of third-party developers per the 10-K), not demand. It is a bottleneck supplier only while compute stays short: the three larger named competitors spend 2-4x ORCL's capex on the same input, so the scarcity rent is temporary; how long it lasts is a hypothesis (through FY2028).",
+   "evidence_ids": ["pf_rel_20260910_1", "rp_k_mw_q1fy27", "rp_k_gpus_q1fy27", "rp_k_ai_bookings_q1fy27", "pf_10k_20260622", "fd_aws_q2_2026", "fd_gcloud_q2_2026", "fd_msft_q4fy26", "rp_f_capex_fy26"]
+  },
+  "share_trajectory": {
+   "reading": "IaaS: ORCL is gaining share on the numbers: OCI $7.4B in Jun-Aug 2026, +121% y/y (about $29.6B annualised) vs AWS $42.2B +37%, Google Cloud $24.8B +82% (incl. Workspace) and Azure +43%; it grows about 3x faster than AWS from a base about one sixth its size. Synergy gives AWS 28% (about -2 pts), Microsoft 20%, Google 15% (+2 pts) and places Oracle only in an unquantified tier two. Applications: ORCL is NOT gaining share: cloud applications +10% vs SAP cloud ERP suite +25% and Workday +12.8%, roughly level with Salesforce (+10.8%).",
+   "evidence_ids": ["rp_f_oci_q1fy27", "rp_f_oci_q1fy26", "rp_k_oci_growth_q1fy27", "fd_aws_q2_2026", "fd_gcloud_q2_2026", "fd_msft_q4fy26", "fd_synergy_q2_2026", "rp_k_saas_growth_q1fy27", "fd_sap_q2_2026", "fd_cf_wday", "fd_cf_crm"]
+  },
+  "competitive_position": {
+   "reading": "Vs AWS (AMZN), Azure (MSFT) and Google Cloud (GOOGL): weaker on scale, balance sheet and margin evidence (AWS segment margin about 39%, Google Cloud about 35.5%; ORCL discloses no OCI margin, net debt about $88B vs their net cash-rich balance sheets) but stronger on near-term growth and on the database: Oracle Database runs inside all three clouds (multicloud database revenue +404% y/y in Q4 FY2026). Vs SAP and Workday: weaker in growth of cloud ERP/HCM; vs Salesforce: about level. Support revenue ($19.8B in FY2026, renewed by substantially all customers) is an installed-base strength none of the IaaS competitors has in databases.",
+   "evidence_ids": ["fd_aws_q2_2026", "fd_gcloud_q2_2026", "fd_cf_amzn", "fd_cf_googl", "fd_cf_msft", "rp_k_multicloud_q4fy26", "rp_f_sup_fy26", "rp_f_notes_face_q1fy27", "rp_f_cash_q1fy27", "fd_sap_q2_2026", "fd_cf_wday", "fd_cf_crm", "pf_10k_20260622"]
+  },
+  "threats": {
+   "reading": "1) Counterparty concentration: press reports put about half of RPO in one ~$300B OpenAI contract; the 10-K says some large OCI customers are highly leveraged. 2) Duration mismatch: $288B of 15-19 year leases vs 1-5 year customer contracts. 3) Capacity race: AWS (~$220B 2026 capex guide), Alphabet ($195-205B) and Microsoft ($115.9B FY2026) end the shortage and pull renewal prices down. 4) Funding: negative FCF (-$23.7B FY2026), $20B ATM and further dilution. 5) Substitution in applications by SAP, Workday and Salesforce, and AI tools that let customers build their own. A securities class action over OCI statements is pending.",
+   "evidence_ids": ["un_barchart_20260220", "un_digitimes_openai_20250911", "pf_10k_20260622", "rp_f_lease_uncommenced_q1fy27", "fd_aws_q2_2026", "fd_gcloud_q2_2026", "fd_msft_q4fy26", "nm_fcf_fy2026", "nm_atm_equity_proceeds_q_2026_08_31", "fd_sap_q2_2026", "pf_10q_20260911"]
+  }
+ },
+ "assessments": {
+  "moat": {"assessment": "adequate", "evidence_ids": ["rp_f_sup_fy26", "rp_k_multicloud_q4fy26", "pf_10k_20260622", "fd_aws_q2_2026"], "note": "Strong in the database and support base (renewed by substantially all customers; the database is sold inside AWS, Azure and Google Cloud); no evidenced moat in OCI against AWS, Azure and Google Cloud beyond available capacity and won contracts."},
+  "switching_costs": {"assessment": "strong", "evidence_ids": ["rp_f_sup_fy26", "pf_10k_20260622", "rp_f_rpo_q1fy27"], "note": "Support $19.8B a year renewed by substantially all customers; OCI capacity on multi-year contracts (RPO $664B)."},
+  "customer_concentration": {"assessment": "weak", "evidence_ids": ["pf_10k_20260622", "un_barchart_20260220", "un_rpo_tracker_20260610", "rp_k_prepaid_hw_fy26"], "note": "No customer was 10% of revenue through FY2026, but press reports put about half of RPO in one AI lab and the 10-K says some large OCI customers are highly leveraged."},
+  "market_size": {"assessment": "strong", "evidence_ids": ["fd_synergy_q2_2026", "fd_iea_energy_ai", "rp_f_rpo_q1fy27"], "note": "Cloud infrastructure $143B a quarter and growing fast; data-centre power demand about doubling by 2030."},
+  "competition": {"assessment": "weak", "evidence_ids": ["fd_aws_q2_2026", "fd_gcloud_q2_2026", "fd_msft_q4fy26", "rp_f_capex_fy26", "fd_sap_q2_2026"], "note": "Three larger, better-funded IaaS competitors (AMZN, GOOGL, MSFT) out-invest ORCL 2-4x; SAP and Workday grow faster in applications."},
+  "capital_allocation": {"assessment": "weak", "evidence_ids": ["rp_f_capex_fy26", "nm_fcf_fy2026", "rp_f_atm_shares_q1fy27", "rp_f_sbc_fy26", "pf_buybacks_fy2026", "pf_proxy_20260925"], "note": "Capex over-ran guidance ($55.7B vs $50B), FCF -$23.7B, 141M new shares in one quarter, buybacks ($0.1B) no longer offset SBC ($4.8B); executive bonuses pay on non-GAAP operating income growth and bookings, not on ROIC or FCF."},
+  "management": {"assessment": "adequate", "evidence_ids": ["pf_rel_20260910_1", "pf_rel_20260610_1", "rp_g_fy27_rev", "rp_f_rev_q1fy27"], "note": "Revenue guidance met or beaten in all six recorded periods (ratio 1.008); capex guidance repeatedly exceeded."},
+  "governance": {"assessment": "adequate", "evidence_ids": ["pf_proxy_20260925", "pf_10q_20260911"], "note": "Founder-chairman control; say-on-pay about 82% (2025); a securities class action over OCI statements is pending."},
+  "technology_ai": {"assessment": "strong", "evidence_ids": ["rp_k_gpus_q1fy27", "rp_k_mw_q1fy27", "rp_k_oci_growth_q1fy27", "rp_k_multicloud_q4fy26"], "note": "Delivers large GPU clusters at scale (300,000+ GPUs, 850 MW in one quarter); OCI +121%."}
+ },
+ "gaps": [
+  "No attributed IaaS share figure for Oracle (Synergy tier two only); no share figures for cloud ERP, HCM or CRM.",
+  "Competitor cloud-segment figures come from search excerpts of their releases; competitors' calendar Q3 2026 results are not citable yet.",
+  "OCI margin and unit economics not disclosed: competitor margins are context only."
+ ]
+}

@@ -1,0 +1,353 @@
+{
+ "thesis_he": {
+  "bear": "השיגורים מתעכבים שוב, השירות המסחרי נדחה ל-2028, Starlink והמיזם של שלוש חברות הסלולר לוחצים על התנאים, ונדרש עוד גיוס הון שמדלל את בעלי המניות: ההכנסות ב-2027 הן בעיקר ציוד וחוזי ממשלה (כ-260 מיליון דולר).",
+  "base": "כ-45 לוויינים רק באמצע 2027, כרבעון או שניים אחרי היעד. השירות המסחרי מתחיל במהלך 2027 וההכנסות מגיעות לכ-440 מיליון דולר, מתחת לציפיות האנליסטים, והבנייה ממשיכה להיות ממומנת באג\"ח להמרה.",
+  "bull": "45 לוויינים ומעלה עד תחילת 2027 והשירות מתחיל בזמן. ההכנסות מגיעות לכ-650 מיליון דולר ב-2027, לכ-1.7 מיליארד ב-2028 ולכ-3.4 מיליארד ב-2030, כמו שהאנליסטים מצפים."
+ },
+ "drivers": {
+  "current_year_revenue": {
+   "source_tier": "guidance",
+   "evidence_ids": [
+    "dc_g_rev_fy2026",
+    "pf_rel_20260810_1"
+   ],
+   "adjust_by_track_record": false,
+   "reason": "FY2026 revenue guidance 150-200M, given 2026-03-02 and reaffirmed 2026-05-11 and 2026-08-10 (midpoint 175M). There is no separate Q4 or H2 revenue guide, so no remainder item. H1 delivered 46.2M, so H2 must bring 104-154M; attributed consensus 167.2M (n 12; Q3 46M + Q4 71M) is a cross-check. The revenue track record is a single period (H2 2025, ratio 1.10), too thin to adjust by."
+  },
+  "growth": {
+   "period": "FY2027",
+   "bear": [
+    0.5,
+    0.8,
+    0.5,
+    0.3,
+    0.15
+   ],
+   "base": [
+    1.5,
+    1.4,
+    0.6,
+    0.35,
+    0.2
+   ],
+   "bull": [
+    2.71,
+    1.62,
+    0.41,
+    0.41,
+    0.25
+   ],
+   "source_tier": {
+    "bear": "contracted",
+    "base": "consensus",
+    "bull": "consensus"
+   },
+   "evidence_ids": [
+    "nm_cons_rev_fy2027_yh",
+    "uc_cons_rev_fy2027_tikr",
+    "uc_cons_rev_fy2028_tikr",
+    "uc_cons_rev_fy2030_tikr",
+    "dc_rpo_20260630",
+    "dc_g_sats_early2027",
+    "dc_g_sats_end2026_may",
+    "dc_g_sats_end2026_mar",
+    "dc_kpi_sats_orbit",
+    "dc_rev_h1_2026",
+    "dc_kpi_usg_awards",
+    "dc_kpi_gateways_pipeline",
+    "pf_10q_20260810"
+   ],
+   "reason": "Growth over the FY2026 base of ~175M. Bull = attributed consensus: Yahoo FY2027 609.1M (n 12, 345-911M) and TIKR ~650M FY2027, ~1.7B FY2028, ~3.4B FY2030; the bull list follows those points (650M, ~1.70B, ~2.40B, ~3.38B, then +25%). It needs ~45 satellites in early 2027 and service starting on time. Base = the same consensus curve shifted about one year (FY2027 ~440M, FY2028 ~1.05B, FY2029 ~1.68B, FY2030 ~2.27B), because ASTS's own deployment guide slipped twice, 13 satellites were in orbit at the last filing with no launch confirmed since, and only 6.6% of the 1.2B RPO is expected within 12 months of 2026-06-30. Bear = contracted and current business only: gateways (~50 in the pipeline) and U.S. Government awards (125M+ new in Q2) near the implied H2 2026 run rate, with service pushed into 2028 (FY2027 ~260M).",
+   "deviation": "Base FY2027 +150% (~440M) is inside the Yahoo consensus range (345-911M) but below its mean (609M): consensus assumes deployment on the current guide, which the company has moved twice, and the RPO timing (6.6% within 12 months) does not support a 600M+ year. The base is a one-year shift of the consensus curve, not a new estimate."
+  },
+  "mature_margin": {
+   "bear": 0.17,
+   "base": 0.27,
+   "bull": 0.274,
+   "source_tier": "competitor",
+   "competitors": [
+    "IRDM"
+   ],
+   "evidence_ids": [
+    "pf_peer_IRDM",
+    "pf_10k_20260302"
+   ],
+   "reason": "ASTS has no operating margin at scale (pre-service). The closest named competitor with a built LEO constellation selling satellite service is Iridium (IRDM, named in the 10-K). Base: its GAAP operating margin after depreciation and SBC, 27.1% in FY2025. Bear: 16.9% in 9M 2026, a squeeze under price competition (Starlink direct-to-cell) and carrier buying power (the AT&T/T-Mobile/Verizon JV). Bull: 27.4% in 9M 2025, Iridium's best recent level; ASTS's wholesale revenue share avoids retail distribution cost but pays the MNO its share, so no premium above Iridium is assumed."
+  },
+  "sales_to_capital": {
+   "bear": 0.5,
+   "base": 1.0,
+   "bull": 1.5,
+   "source_tier": "guidance",
+   "evidence_ids": [
+    "dc_g_sat_cost",
+    "dc_kpi_sats_orbit",
+    "nm_ppe_net_q_2026_06_30",
+    "dc_capex_h1_2026",
+    "dc_g_capex_q3_2026",
+    "dc_commitments_20260630"
+   ],
+   "reason": "Management guides 21-23M of capital per Block 2 satellite for a constellation of over 90. With 13 in orbit, the remaining ~77 cost ~1.7B on top of 2.07B of PP&E already built (purchase commitments 775-795M). Base: the base revenue step from ~175M (FY2026) to ~2.7B (FY2031) on ~1.7B of guided build plus gateways and replacements gives ~1.0-1.5; 1.0 is taken because cost guides have been exceeded before (opex) and one satellite was lost. Bear 0.5: half the revenue on the same build plus overruns and replacements. Bull 1.5: the consensus revenue path on the guided build cost."
+  }
+ },
+ "forecast_options": {
+  "cyclical": {
+   "treatment": "structural",
+   "reason": "Not a demand cycle: a network build stepping from no service to service. Today one-time gateway and government milestone revenue; later contracted MNO revenue share that starts when coverage begins (RPO 1.2B, mostly after activation). The risks are execution (satellites, launches, spectrum), adoption and funding, carried in the scenarios.",
+   "evidence_ids": [
+    "pf_10k_20260302",
+    "dc_rpo_20260630",
+    "dc_g_sats_early2027",
+    "dc_seg_services_q2_2026"
+   ]
+  },
+  "financing": "assumed"
+ },
+ "scenario_events": {
+  "bear": [
+   {
+    "event_he": "השיגורים מתעכבים שוב: ב-10 באוגוסט היו 13 לוויינים במסלול, ועד סוף אוקטובר לא אושר שיגור נוסף. היעד של כ-45 לוויינים כבר נדחה פעמיים, ומשגר New Glenn המועדף התפוצץ במאי 2026.",
+    "evidence_ids": [
+     "dc_kpi_sats_orbit",
+     "dc_g_sats_end2026_mar",
+     "dc_g_sats_early2027",
+     "uc_advtv_20260831"
+    ]
+   },
+   {
+    "event_he": "שריפת המזומנים נמשכת (תזרים חופשי של כ-695 מיליון דולר שלילי ברבעון השני לבד) והחברה מגייסת עוד אג\"ח להמרה או מניות, כמו שעשתה ב-2025-2026: מספר המניות הכלכליות כבר עלה מכ-256 מיליון ל-389 מיליון.",
+    "evidence_ids": [
+     "pf_cfo_q_2026_06_30",
+     "pf_capex_q_2026_06_30",
+     "dc_cv_2034_1625",
+     "pf_shares_diluted_wavg_fy2025",
+     "dc_shares_econ_20260806"
+    ]
+   },
+   {
+    "event_he": "שלוש חברות הסלולר הגדולות בארה\"ב הקימו מיזם משותף לשירות לוויני ישיר לטלפון, ו-Starlink מחזיקה ספקטרום משלה: זה מחליש את כוח המיקוח של ASTS על חלוקת ההכנסות.",
+    "evidence_ids": [
+     "fd_satnews_jv",
+     "fd_10q_spcx_20260930"
+    ]
+   },
+   {
+    "event_he": "אישורי הרגולציה לעסקת Ligado לא מתקבלים או מתעכבים בגלל התביעה מול Inmarsat, ו-520 מיליון הדולר ששולמו חוזרים רק דרך הערבות.",
+    "evidence_ids": [
+     "dc_ligado_paid",
+     "pf_10q_20260810"
+    ]
+   }
+  ],
+  "base": [
+   {
+    "event_he": "החברה עומדת בתחזית ההכנסות ל-2026 (150-200 מיליון דולר), בעיקר ממכירת תחנות קרקע וחוזי ממשלת ארה\"ב.",
+    "evidence_ids": [
+     "dc_g_rev_fy2026",
+     "dc_rev_h1_2026",
+     "dc_kpi_usg_awards",
+     "dc_kpi_gateways_pipeline"
+    ]
+   },
+   {
+    "event_he": "כ-45 לוויינים מגיעים למסלול באמצע 2027, רבעון או שניים אחרי היעד, כי היעד כבר נדחה פעמיים; מפעל ההרכבה יכול לייצר עד 6 לוויינים בחודש ו-10 שיגורים כבר הוזמנו.",
+    "evidence_ids": [
+     "dc_g_sats_early2027",
+     "dc_g_sats_end2026_may",
+     "dc_kpi_prod_cap",
+     "dc_kpi_launches_booked"
+    ]
+   },
+   {
+    "event_he": "השירות המסחרי מתחיל במהלך 2027 ומתחילות הכנסות מחלוקת הכנסות עם חברות הסלולר; רוב צבר החוזים (1.2 מיליארד דולר) מוכר רק אחרי ההפעלה.",
+    "evidence_ids": [
+     "dc_rpo_20260630",
+     "dc_kpi_mno",
+     "dc_contract_liab_20260630"
+    ]
+   }
+  ],
+  "bull": [
+   {
+    "event_he": "45 לוויינים ומעלה במסלול עד תחילת 2027 כמו בהנחיה האחרונה, והשירות המסחרי בארה\"ב מתחיל בזמן.",
+    "evidence_ids": [
+     "dc_g_sats_early2027",
+     "dc_kpi_microns",
+     "dc_kpi_prod_cap"
+    ]
+   },
+   {
+    "event_he": "ההכנסות מגיעות לכ-650 מיליון דולר ב-2027 ולכ-1.7 מיליארד ב-2028, בהתאם לממוצע תחזיות האנליסטים.",
+    "evidence_ids": [
+     "nm_cons_rev_fy2027_yh",
+     "uc_cons_rev_fy2027_tikr",
+     "uc_cons_rev_fy2028_tikr"
+    ]
+   },
+   {
+    "event_he": "יותר מ-60 שותפות סלולר (כ-3 מיליארד מנויים) הופכות למנויים משלמים בהיקף רחב, ושוק השירות הלוויני הישיר לטלפון מתקרב ל-12 מיליארד דולר ב-2030.",
+    "evidence_ids": [
+     "dc_kpi_mno",
+     "dc_kpi_mno_subs",
+     "fd_omdia_d2d_2030"
+    ]
+   }
+  ]
+ },
+ "key_risk": {
+  "reading_he": "החברה עדיין לא מכרה שירות בכלל. כל הערך תלוי בשיגור של כ-45 לוויינים (באוגוסט היו 13, ומאז לא אושר שיגור), אבל היעד נדחה כבר פעמיים, לוויין אחד אבד, והשיגורים תלויים בעיקר ב-SpaceX, שהיא גם המתחרה העיקרית. הבנייה ממומנת באג\"ח להמרה (כ-3.7 מיליארד דולר), וכל עיכוב מאריך את שריפת המזומנים ועלול לחייב עוד גיוס שמדלל את בעלי המניות.",
+  "evidence_ids": [
+   "dc_kpi_sats_orbit",
+   "dc_g_sats_early2027",
+   "dc_g_sats_end2026_mar",
+   "dc_bb7_loss_q2_2026",
+   "fd_10q_spcx_20260930",
+   "dc_cv_2034_1625",
+   "dc_cv_2036_200",
+   "dc_cv_2036_225",
+   "dc_shares_econ_20260806"
+  ]
+ },
+ "falsifiers": [
+  {
+   "id": "fx_rev_fy2026",
+   "scenario": "base",
+   "metric": "FY2026 revenue (USD)",
+   "threshold": 150000000,
+   "direction": "below",
+   "by": "2027-03-15",
+   "evidence_ids": [
+    "dc_g_rev_fy2026"
+   ]
+  },
+  {
+   "id": "fx_sats_mid2027",
+   "scenario": "base",
+   "metric": "BlueBird satellites in orbit (company count) at 2027-06-30",
+   "threshold": 30,
+   "direction": "below",
+   "by": "2027-08-15",
+   "evidence_ids": [
+    "dc_g_sats_early2027",
+    "dc_kpi_sats_orbit"
+   ]
+  },
+  {
+   "id": "fx_sats_q1_2027_bull",
+   "scenario": "bull",
+   "metric": "BlueBird satellites in orbit (company count) at 2027-03-31",
+   "threshold": 40,
+   "direction": "below",
+   "by": "2027-05-15",
+   "evidence_ids": [
+    "dc_g_sats_early2027",
+    "dc_kpi_prod_cap"
+   ]
+  },
+  {
+   "id": "fx_rev_fy2027_bull",
+   "scenario": "bull",
+   "metric": "FY2027 revenue (USD)",
+   "threshold": 500000000,
+   "direction": "below",
+   "by": "2028-03-15",
+   "evidence_ids": [
+    "nm_cons_rev_fy2027_yh",
+    "dc_rpo_20260630"
+   ]
+  },
+  {
+   "id": "fx_rev_fy2027_bear",
+   "scenario": "bear",
+   "metric": "FY2027 revenue (USD)",
+   "threshold": 450000000,
+   "direction": "above",
+   "by": "2028-03-15",
+   "evidence_ids": [
+    "dc_rpo_20260630",
+    "dc_rev_h1_2026"
+   ]
+  }
+ ],
+ "reasons_he": {
+  "bear": "המחיר הזה מניח שהשירות נדחה ל-2028, ההכנסות נשארות בעיקר ציוד וחוזי ממשלה, הרווחיות בבגרות נמוכה בגלל תחרות מ-Starlink, וכל עיכוב ממומן בגיוס נוסף שמדלל את בעלי המניות.",
+  "base": "זה המסלול הסביר לפי הראיות: אותה עקומת הכנסות של האנליסטים, אבל שנה מאוחר יותר, כי יעד הלוויינים כבר נדחה פעמיים ורק חלק קטן מצבר החוזים צפוי להיות מוכר בשנה הקרובה; רווחיות בבגרות כמו של Iridium.",
+  "bull": "כדי להגיע למחיר הזה צריך 45 לוויינים עד תחילת 2027, שירות שמתחיל בזמן והכנסות של כ-650 מיליון דולר ב-2027 וכ-3.4 מיליארד ב-2030, כמו שהאנליסטים מצפים."
+ },
+ "engine_options": {
+  "country_risk": false,
+  "reason": "ASTS does not disclose revenue by country or region in the sections read; revenue is U.S. Government services plus gateway sales to MNOs. Israel is ~1% of assets and ~5% of H1 2026 opex (operations, not revenue)."
+ },
+ "gaps": [
+  "Opening balance (checked against the filings): use unrestricted cash and cash equivalents 2,288.3M at 2026-06-30 (nm_cash_q_2026_06_30); money-market funds are cash equivalents inside that figure, so no short-term investments are added; 434.6M restricted cash is excluded (UBS loan collateral). At 2025-12-31 pf_short_term_investments_fy2025 (2.0B) is inside pf_cash_fy2025 (2,335.7M): adding both double counts. If dataqa shows liquid_assets_within_current_assets failing, it is this double count, not a real asset.",
+  "FY2025 operating loss is -287.7M (10-K: revenue 70.918M less operating expenses 358.631M; nm_operating_income_fy2025); pf_operating_income_fy2025 (-425.3M) and auto.json history operating margin -5.997 for FY2025 are wrong (the correct margin is about -4.06). Treat any engine reading built on the pf value as defective.",
+  "Capital bridge: the 1.15B 2034 1.625% notes were issued ~2026-07-20, after the 2026-06-30 balance sheet, with their cash; the core part has no allowed key to add a post-statement debt issue (capital_events cover share issues only), so the opening balance carries neither the notes nor their ~1.1B of cash (roughly neutral to equity value, but it understates the runway, so financing='assumed' may raise earlier than the company needs). Conversion prices 72-149 decide dilution versus debt.",
+  "cost_of_equity, terminal_roic, terminal_growth, tax_rate and minimum_cash_months left on the engine rules: no evidenced company figure (full valuation allowance, pre-service).",
+  "sbc_pct left on the engine rule (TTM SBC / TTM revenue with its stage fade): SBC was 63.5M in Q2 2026 and is a real cost; no company guide for a yearly path.",
+  "Unit economics unknown: the MNO revenue-share percentage, ARPU and paid capacity per satellite are undisclosed, so revenue beyond FY2028 rests on consensus points shifted by the deployment record, not on a bottom-up build.",
+  "Q3 2026 results not released at as_of (expected mid-November); satellite launches after 2026-08-10 unconfirmed (one search excerpt). A rerun after the Q3 release (+2 days) would update the satellite count and the FY2026 guide.",
+  "Outside view (warning row only): ~16B market value on 115.3M TTM revenue (~139x sales) for a pre-service constellation; this neither sets nor caps any number."
+ ],
+ "dataqa_resolutions": [
+  {
+   "field": "cash_and_liquid_investments",
+   "metric": "short_term_investments",
+   "period_end": "2026-06-30",
+   "resolution": "use_source",
+   "source_id": "pf_10q_20260810",
+   "reason": "The filing's balance sheet has one line, cash and cash equivalents; its fair-value note puts the money-market funds (~2.0B at 2025-12-31, ~2.3B at 2026-06-30) INSIDE cash equivalents. companyfacts' ShortTermInvestments tag is that same money-market amount, so adding it to cash double counts it: short-term investments are 0.",
+   "evidence_ids": [
+    "pf_10q_20260810",
+    "rf_sti_q_2026_06_30"
+   ]
+  },
+  {
+   "field": "cash_and_liquid_investments",
+   "metric": "short_term_investments",
+   "period_end": "2026-03-31",
+   "resolution": "use_source",
+   "source_id": "pf_10q_20260511",
+   "reason": "The filing's balance sheet has one line, cash and cash equivalents; its fair-value note puts the money-market funds (~2.0B at 2025-12-31, ~2.3B at 2026-06-30) INSIDE cash equivalents. companyfacts' ShortTermInvestments tag is that same money-market amount, so adding it to cash double counts it: short-term investments are 0.",
+   "evidence_ids": [
+    "pf_10q_20260511",
+    "rf_sti_q_2026_03_31"
+   ]
+  },
+  {
+   "field": "cash_and_liquid_investments",
+   "metric": "short_term_investments",
+   "period_end": "2025-12-31",
+   "resolution": "use_source",
+   "source_id": "pf_10k_20260302",
+   "reason": "The filing's balance sheet has one line, cash and cash equivalents; its fair-value note puts the money-market funds (~2.0B at 2025-12-31, ~2.3B at 2026-06-30) INSIDE cash equivalents. companyfacts' ShortTermInvestments tag is that same money-market amount, so adding it to cash double counts it: short-term investments are 0.",
+   "evidence_ids": [
+    "pf_10k_20260302",
+    "rf_sti_fy2025"
+   ]
+  },
+  {
+   "field": "operating_income_ttm",
+   "metric": "operating_income",
+   "period_end": "2026-06-30",
+   "resolution": "use_source",
+   "source_id": "pf_10q_20260810",
+   "reason": "Statement of operations: Q2 2026 revenue 31,520k less total operating expenses 329,097k = -297,577k (incl. the 125,911k BB7 involuntary-conversion loss); the companyfacts EBIT proxy (pretax income + interest expense) does not tie to any statement line.",
+   "evidence_ids": [
+    "pf_10q_20260810",
+    "rf_oi_q_2026_06_30"
+   ]
+  },
+  {
+   "field": "operating_income_ttm",
+   "metric": "operating_income",
+   "period_end": "2025-12-31",
+   "resolution": "use_source",
+   "source_id": "pf_10k_20260302",
+   "reason": "10-K statement of operations: FY2025 revenue 70,918k less total operating expenses 358,631k = -287,713k; the EBIT proxy -425,313k does not tie.",
+   "evidence_ids": [
+    "pf_10k_20260302",
+    "rf_oi_fy2025"
+   ]
+  }
+ ]
+}

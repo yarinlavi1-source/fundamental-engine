@@ -1,0 +1,187 @@
+{
+ "lane": "field",
+ "sources": [
+  {
+   "id": "fd_META_cf",
+   "kind": "structured_data",
+   "title": "Meta Platforms SEC companyfacts (FY2023-FY2025, 10-K filed 2026-01-29)",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001326801.json",
+   "date": "2026-01-29",
+   "independent": true,
+   "publisher": "SEC EDGAR / Meta Platforms",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_PINS_cf",
+   "kind": "structured_data",
+   "title": "Pinterest SEC companyfacts (FY2023-FY2025, 10-K filed 2026-02-12)",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001506293.json",
+   "date": "2026-02-12",
+   "independent": true,
+   "publisher": "SEC EDGAR / Pinterest",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_SNAP_cf",
+   "kind": "structured_data",
+   "title": "Snap SEC companyfacts (FY2023-FY2025, 10-K filed 2026-02-05)",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001564408.json",
+   "date": "2026-02-05",
+   "independent": true,
+   "publisher": "SEC EDGAR / Snap",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_GOOGL_cf",
+   "kind": "structured_data",
+   "title": "Alphabet SEC companyfacts (FY2023-FY2025, 10-K filed 2026-02-05)",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001652044.json",
+   "date": "2026-02-05",
+   "independent": true,
+   "publisher": "SEC EDGAR / Alphabet",
+   "retrieval": "provider_normalized",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_press_google_ai",
+   "kind": "press",
+   "title": "Reddit faces Q4 drop from 130m daily users, blaming Google AI Mode (secondary press, search excerpt)",
+   "url": "https://ppc.land/reddit-faces-q4-drop-from-130m-daily-users-blaming-google-ai-mode/",
+   "date": "2026-10-29",
+   "independent": false,
+   "publisher": "ppc.land",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "fd_press_licensing",
+   "kind": "press",
+   "title": "Reddit's data licensing revenue grows 24% to $43M as OpenAI and Google lead the buyer list (secondary press, search excerpt; deal values are third-party estimates)",
+   "url": "https://cryptobriefing.com/reddit-data-licensing-revenue-openai-google/",
+   "date": "2026-07-30",
+   "independent": false,
+   "publisher": "cryptobriefing.com",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  }
+ ],
+ "competitors": [
+  {
+   "ticker": "META",
+   "name": "Meta Platforms",
+   "why": "Named in RDDT 10-K Item 1 for entertainment time and for advertisers (Facebook Groups for passions, Marketplace for commerce); competes for the same performance/brand ad budgets and user time",
+   "metrics": {
+    "fy2025_revenue_usd_m": 200966,
+    "fy2025_revenue_growth_pct": 22.2,
+    "fy2024_revenue_growth_pct": 21.9,
+    "fy2025_gross_margin_pct": 82.0,
+    "fy2025_operating_margin_pct": 41.4,
+    "basis": "derived from FY revenue, cost of revenue and operating income in own 10-K via SEC companyfacts; whole company, segment split and forward P/E not retrieved"
+   },
+   "source_ids": [
+    "pf_10k_20260206",
+    "fd_META_cf"
+   ]
+  },
+  {
+   "ticker": "PINS",
+   "name": "Pinterest",
+   "why": "Named in RDDT 10-K Item 1 for advertisers and for passions and hobbies; interest-based discovery platform selling to the same advertisers",
+   "metrics": {
+    "fy2025_revenue_usd_m": 4221.8,
+    "fy2025_revenue_growth_pct": 15.8,
+    "fy2024_revenue_growth_pct": 19.3,
+    "fy2025_gross_margin_pct": 80.1,
+    "fy2025_operating_margin_pct": 7.6,
+    "basis": "derived from own 10-K via SEC companyfacts (GAAP operating income); forward P/E not retrieved"
+   },
+   "source_ids": [
+    "pf_10k_20260206",
+    "fd_PINS_cf"
+   ]
+  },
+  {
+   "ticker": "SNAP",
+   "name": "Snap",
+   "why": "Named in RDDT 10-K Item 1 for entertainment and as a direct competitor for ad spend; closest size peer among advertising platforms",
+   "metrics": {
+    "fy2025_revenue_usd_m": 5931.4,
+    "fy2025_revenue_growth_pct": 10.6,
+    "fy2024_revenue_growth_pct": 16.4,
+    "fy2025_gross_margin_pct": 55.0,
+    "fy2025_operating_margin_pct": -9.0,
+    "basis": "derived from own 10-K via SEC companyfacts (GAAP operating loss); forward P/E not meaningful/not retrieved"
+   },
+   "source_ids": [
+    "pf_10k_20260206",
+    "fd_SNAP_cf"
+   ]
+  },
+  {
+   "ticker": "GOOGL",
+   "name": "Alphabet (Google, YouTube)",
+   "why": "Named in RDDT 10-K Item 1 for seeking information (Search, Gemini, YouTube) and for advertisers; also the largest content-licensing customer and the main source of Reddit's logged-out search traffic",
+   "metrics": {
+    "fy2025_revenue_usd_m": 402836,
+    "fy2025_revenue_growth_pct": 15.1,
+    "fy2024_revenue_growth_pct": 13.9,
+    "fy2025_gross_margin_pct": 59.7,
+    "fy2025_operating_margin_pct": 32.0,
+    "basis": "derived from own 10-K via SEC companyfacts, whole company; advertising segment split not retrieved"
+   },
+   "source_ids": [
+    "pf_10k_20260206",
+    "fd_GOOGL_cf"
+   ]
+  }
+ ],
+ "bottlenecks": [
+  {
+   "id": "fd_b1",
+   "reading": "What RDDT supplies that is scarce: a large, constantly refreshed corpus of authentic human conversation (10-K Item 1 Content Licensing) used for LLM search and run-time inference, plus intent-rich community audiences for advertisers. Paid adoption in its own numbers: Other revenue (mostly data licensing) was $43M in Q2 2026, +24% y/y, against Ad revenue $762M +64% (Q2 2026 release). Licensing is small next to ads, so the scarce data asset is monetised mostly via ads and is not yet a large separate line.",
+   "evidence_ids": [
+    "pf_10k_20260206",
+    "pf_rel_20260730_1"
+   ]
+  },
+  {
+   "id": "fd_b2",
+   "reading": "Traffic dependency: logged-out DAUq grew 27% y/y to 77.7M in Q2 2026 (US +10%, International +41%) while logged-in DAUq grew only 7% to 52.6M (US +1%, 23.1M); growth rests on logged-out, largely search-referred users. Rivals (Google AI answers, ChatGPT/Gemini, named in Item 1) can substitute the answer without the visit, so the shortage RDDT supplies could be bypassed by AI summaries of its own content.",
+   "evidence_ids": [
+    "pf_rel_20260730_1",
+    "pf_10k_20260206"
+   ]
+  },
+  {
+   "id": "fd_b3",
+   "reading": "HYPOTHESIS (secondary press, dated at/after results day, not citable as fact): Reddit told shareholders in October 2026 that Google AI search features cut search referrals by more than 1M per week, plans to test mandatory logins in some international markets, and the roughly $60M a year Google licensing deal is nearing expiry with renewal uncertain; OpenAI deal value (~$70M a year) is a third-party estimate.",
+   "hypothesis": true
+  },
+  {
+   "id": "fd_b4",
+   "reading": "HYPOTHESIS: capacity to replace the corpus is added by others slowly (competing communities Discord, Facebook Groups, X, and LLM-generated content), but the 10-K lists these as competitors for the same time, so the moat is user-generated depth, not exclusivity; Reddit has sued scrapers (press, unverified), so access control is part of the bottleneck value.",
+   "hypothesis": true
+  }
+ ],
+ "notes": [
+  "fd NAMED COMPETITORS (10-K Item 1, pf_10k_20260206): Seeking information: Google, Amazon, YouTube, Wikipedia, X, other news sites, LLMs (ChatGPT, Gemini, Anthropic). Entertainment: Meta (Facebook, Instagram, Threads, WhatsApp), YouTube, Snap, X, TikTok, Roblox, Twitch. Passions and hobbies: Facebook Groups, Discord, X, Pinterest. Peer-to-peer commerce: Facebook Marketplace, Nextdoor, Craigslist, Poshmark, Etsy, Roblox. Advertising: Google, Meta, Snapchat, TikTok, Pinterest, X. Content licensing faces competition from news, publishing, entertainment and social media sources. Competitors tracked on own numbers: META, PINS, SNAP, GOOGL (all SEC-registered, direct ad-budget rivals); TikTok, X, Discord, Roblox are private or part of non-comparable parents and not tracked.",
+  "fd SHARE revenue growth FY2025 (own 10-Ks): RDDT +69% (FY2025 $2,203M vs $1,300M, pf_rel_20260205_1) vs META +22.2% (fd_META_cf), PINS +15.8% (fd_PINS_cf), SNAP +10.6% (fd_SNAP_cf), GOOGL +15.1% (fd_GOOGL_cf). RDDT is gaining ad share fastest from a very small base: FY2025 revenue $2.2B is about 1.1% of META's $201.0B and 52% of PINS's $4.22B.",
+  "fd SHARE trajectory: RDDT Q2 2026 revenue $805M +61% y/y (pf_rel_20260730_1), growth decelerating from 70% (Q4 2025) and 71% (Q4 2024 year-ago base); still far above peers' FY2025 growth. Attributed segment-level ad share (ad revenue by platform) not retrieved: gap.",
+  "fd SHARE margin comparison FY2025 (derived): META operating margin 41.4%, GOOGL 32.0%, PINS 7.6%, SNAP -9.0%; RDDT's own margin is in gather_numbers/documents lanes. Scale peers show the margin ceiling ad platforms reach (META gross 82%, PINS 80%, SNAP 55%).",
+  "fd NOTE results of 2026-10-29 (Q3 2026 release pf_rel_20261029_*, 10-Q filed 2026-10-30) not citable until 2026-10-31/11-01 per 2-day lag: release dated 10-29 is citable from 10-31, 10-Q from 11-01; press items of 10-29 onward kept as hypothesis in bottlenecks, not as facts.",
+  "fd NOTE peers: prefetch had no --peers/peers.json; peer numbers fetched directly from SEC companyfacts (saved gather/raw_field/sec_companyfacts_<T>.json). Forward P/E and growth at comparable stage for peers not retrieved (FMP/AV not used by this lane): gap."
+ ],
+ "gaps": [
+  "forward P/E and consensus growth for META, PINS, SNAP, GOOGL not retrieved",
+  "attributed ad-share data (eMarketer or similar) not retrieved",
+  "advertising segment revenue per competitor not retrieved (whole-company numbers only)",
+  "Google and OpenAI licensing terms and renewal status only from secondary press (hypothesis)",
+  "Q3 2026 results of 2026-10-29 / 10-Q 2026-10-30 near-citability limit"
+ ],
+ "stopped": [
+  "did not chase Google/OpenAI deal value beyond one search: secondary press only, would not change the decision"
+ ]
+}

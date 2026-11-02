@@ -12,6 +12,7 @@ source ledger, not on this subset.
 """
 import json
 import os
+import re
 import shutil
 
 from .ledger import Ledger, parse
@@ -104,6 +105,18 @@ def append_ledger(rows, path):
     return len(new)
 
 
+_EMAIL = re.compile(r'[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}')
+
+
+def _copy_scrubbed(src, out):
+    """Copy a run file into the tracked store with e-mail addresses replaced by <contact> (a lane may echo the SEC
+    User-Agent contact in a note); research/ is committed, so no contact detail may travel with it."""
+    with open(src, encoding='utf-8', errors='replace') as f:
+        text = f.read()
+    with open(out, 'w', encoding='utf-8') as f:
+        f.write(_EMAIL.sub('<contact>', text))
+
+
 def save(run, root='.', ledger_path=None):
     """Copy a finished run into research/companies/<T>/<as_of>/, append its frozen thesis to research/forecast_ledger.jsonl
     and point research/companies/<T>/latest.json at it (when it is the newest)."""
@@ -121,7 +134,7 @@ def save(run, root='.', ledger_path=None):
             continue
         out = os.path.join(dest, rel.replace(f'companies/{t}/out/', '').replace(f'companies/{t}/', ''))
         os.makedirs(os.path.dirname(out), exist_ok=True)
-        shutil.copyfile(src, out)
+        _copy_scrubbed(src, out)
         copied.append(os.path.relpath(out, dest))
     cfp = os.path.join(run, 'companies', t, 'out', 'casefile.json')
     summary = None

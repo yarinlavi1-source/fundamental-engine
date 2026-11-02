@@ -1,0 +1,47 @@
+{
+ "thesis_he": {
+  "bear": "הרשת נבנית אבל ההכנסות נשארות נמוכות ביחס לכסף שהושקע (כ-4.3 מיליארד דולר), והרווחיות כמו של Iridium בתקופה חלשה: התשואה על ההון כ-4%, מתחת לעלות ההון, ולכן מכפיל רווח נמוך.",
+  "base": "הרשת עובדת מ-2027 והרווחיות דומה ל-Iridium (27%), אבל ההכנסות ב-2031 (כ-2.7 מיליארד) הן רק כ-0.6 מהכסף שהושקע: תשואה של כ-14% על ההון, טובה אבל לא הוכחה.",
+  "bull": "ההכנסות מגיעות לציפיות האנליסטים (כ-3.4 מיליארד ב-2030) על אותה עלות בנייה שההנהלה הנחתה, והרווחיות כמו של Iridium בשיאה: תשואה של כ-25% על ההון, עדיין לא מוכחת."
+ },
+ "company_path": {
+  "metric": "eps",
+  "multiple": "forward_pe",
+  "scenarios": {
+   "bear": {
+    "multiple_from": "economics",
+    "roic": 0.04,
+    "justification": "unproven",
+    "reason_he": "בתרחיש הדובי ההכנסות ב-2031 הן כ-0.9 מיליארד דולר על הון של כ-4.3 מיליארד (רכוש קבוע 2.07 מיליארד, עוד כ-1.7 מיליארד ללוויינים לפי 21-23 מיליון ללוויין, ו-520 מיליון לליגדו), והרווחיות התפעולית כמו של Iridium ב-2026 (17%). זה נותן תשואה של כ-4% על ההון אחרי מס, מתחת לעלות ההון: הצמיחה לא יוצרת ערך, ולכן המכפיל נמוך.",
+    "source_tier": "competitor",
+    "competitors": ["IRDM"],
+    "evidence_ids": ["pf_peer_IRDM", "dc_g_sat_cost", "nm_ppe_net_q_2026_06_30", "dc_ligado_paid"]
+   },
+   "base": {
+    "multiple_from": "economics",
+    "roic": 0.14,
+    "justification": "unproven",
+    "reason_he": "בתרחיש הבסיסי ההכנסות ב-2031 הן כ-2.7 מיליארד דולר על כל ההון שהחברה צריכה (כ-4.3 מיליארד: מה שכבר נבנה, שאר הלוויינים לפי ההנחיה וליגדו), כלומר כ-0.6 דולר הכנסה לכל דולר הון. ברווחיות של Iridium (27%) ואחרי מס זו תשואה של כ-13-14% על ההון: מעל עלות ההון, אבל ל-AST אין עדיין שנה אחת של תשואה חיובית (כל השנים בין 27%- ל-179%-), ו-Iridium היא רשת ותיקה שכבר הופחתה.",
+    "source_tier": "competitor",
+    "competitors": ["IRDM"],
+    "evidence_ids": ["pf_peer_IRDM", "dc_g_sat_cost", "nm_ppe_net_q_2026_06_30", "dc_ligado_paid", "nm_cons_rev_fy2027_yh"]
+   },
+   "bull": {
+    "multiple_from": "economics",
+    "roic": 0.25,
+    "justification": "unproven",
+    "reason_he": "בתרחיש השורי ההכנסות מגיעות לציפיות האנליסטים על אותה עלות בנייה שההנהלה הנחתה (21-23 מיליון ללוויין), כך שכל דולר הון נוסף מביא כדולר וחצי הכנסה, והרווחיות כמו של Iridium בשיאה (27.4%). זו תשואה של כ-25% על ההון החדש: גבוהה, כי AST מוכרת בסיטונאות דרך חברות הסלולר בלי הוצאות שיווק ללקוחות, אבל אף חלק ממנה עוד לא נראה בדוחות.",
+    "source_tier": "competitor",
+    "competitors": ["IRDM"],
+    "evidence_ids": ["pf_peer_IRDM", "dc_g_sat_cost", "nm_ppe_net_q_2026_06_30", "nm_cons_rev_fy2027_yh"]
+   }
+  }
+ },
+ "gaps": [
+  "own_history omitted: GAAP diluted EPS negative every year FY2021-FY2025 and H1 2026, consensus EPS negative FY2026 and FY2027 (nm_cons_eps_fy2026_yh, nm_cons_eps_fy2027_yh), so no P/E range exists; context only (not a P/E): price-to-sales ~139x TTM revenue now and ~384x FY2025 revenue at 2025-12 (numbers.json note 'nm OWN MULTIPLE HISTORY'). A premium multiple therefore cannot be checked against an own P/E range.",
+  "peers omitted: no named competitor (SPCX, IRDM, GSAT, VSAT) has an evidenced forward P/E in field.json; FMP profiles give market caps only.",
+  "ROIC is not ASTS's own record: ASTS ROIC has been negative every year (forensic roic_last -26.6%, earlier down to -179%); the margin reference IRDM is a mature, largely depreciated network, so all three paths are labelled unproven.",
+  "Capital base used for the ROIC: PP&E 2.07B (nm_ppe_net_q_2026_06_30) + ~1.7B for the remaining ~77 Block 2 satellites at the guided 21-23M each (dc_g_sat_cost) + 520M Ligado payments (dc_ligado_paid, goodwill-free; intangible spectrum rights in); satellite replacement capex after year ~7 and gateway build are not costed (unit economics undisclosed), so ROIC may be overstated.",
+  "Revenue share terms with MNOs and the AT&T/T-Mobile/Verizon JV (fd_satnews_jv) are undisclosed: the main unknown behind the margin and so the ROIC in every scenario."
+ ]
+}

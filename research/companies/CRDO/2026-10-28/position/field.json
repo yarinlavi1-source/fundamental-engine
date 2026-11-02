@@ -1,0 +1,92 @@
+{
+ "thesis_he": {
+  "bear": "צוואר הבקבוק בנחושת מתחלק: MaxLinear נכנסת לכבלי 1.6T, Astera Labs צומחת מהר יותר, ואופטיקה מתחילה לקחת חיבורים קצרים מ-2027-2028.",
+  "base": "Credo נשארת ספקית מובילה של כבלי נחושת פעילים לחברות הענן, השוק ממשיך לגדול, אבל חלקה בשוק יורד בהדרגה מול מתחרים בשמם.",
+  "bull": "Credo שומרת על רוב שוק הכבלים גם בדור 1.6T ומוסיפה שוק אופטיקה משלה, כך שהמעבר לאופטיקה לא פוגע בה."
+ },
+ "potential": {
+  "market_direction": {
+   "reading": "Up, steeply, on reported numbers. Credo's revenue rose from 436.8M (FY2025) to 1,335.1M (FY2026, +206%) and was 479.0M in Q1 FY2027 (+114.7% y/y); AEC unit volume at hyperscalers made over 99% of the FY2026 increase and over 90% of the Q1 increase. The 10-K says 200G-per-lane electrical PAM4 is planned for mass deployment in 2027, so each lane-speed step shortens passive copper reach and widens the need for active links. The named competitors' own releases show the same pool growing: Broadcom AI semiconductors 16.7B in its quarter to 2026-08-02 (+221% y/y, guided 21.7B next quarter), Astera Labs +104.5% y/y with 540-560M guided, Marvell data center +45.7% y/y, MaxLinear infrastructure +210% y/y, Amphenol book-to-bill 1.23. Management expects FY2027 revenue growth above 85% with optical above 600M (call statements, a floor, not fact). Gap: the hyperscalers' own capex filings were not read.",
+   "evidence_ids": ["ex_10k_20260615", "ex_10q_20260902", "ex_rel_20260901", "rp_rev_fy25", "rp_rev_fy26", "rp_k_aec_share_inc_fy26", "rp_k_aec_share_inc_q1fy27", "fd_rel_avgo_20260902", "fd_rel_alab_20260804", "fd_rel_mrvl_20260827", "fd_rel_mxl_20261022", "fd_rel_aph_20260729", "rp_g_growth_fy27_floor", "rp_g_optical_fy27_floor"]
+  },
+  "bottleneck_potential": {
+   "reading": "A real but shared and time-limited bottleneck: reliable, low-power electrical links over the shortest AI-rack reaches. Paid adoption is in Credo's own numbers: AEC was over 99% of FY2026's 898.3M increase, five hyperscalers per management, and non-GAAP gross margin held at 68.0% (guide 67-69%) while revenue more than doubled, so the scarcity is being paid for, not discounted away. It is not a sole-source chokepoint: the 10-K names Broadcom, Marvell and Astera Labs plus cable suppliers, and Credo's own constraint is subcontractor capacity it is paying to reserve (88.4M refundable deposits at 2026-08-01, 102.4M more payable in FY2027). How long: a named competitor's management (Marvell Investor Day, relayed by Futurum) said 100% of XPU-to-XPU links run on copper today, copper reach at 200G per lane is 2.5 metres, and scale-up optics go from virtually zero revenue to multi-hundred-million revenue starting next year; so copper's place is evidenced for the 2026-2027 generation and contested from about 2027-2028. An attributed Jefferies estimate (press excerpt) puts AEC at 8.6M units in 2026 and 12.3M in 2027: an expectation. The InP laser shortage (TrendForce excerpt) constrains the optical alternative through 2027; how much that helps copper is a hypothesis.",
+   "evidence_ids": ["ex_10k_20260615", "rp_k_aec_share_inc_fy26", "rp_k_hyperscalers", "rp_k_nggm_q1fy27", "rp_g_nggm_q2fy27", "rp_deposits_q1fy27", "rp_deposits_new", "fd_ind_futurum_mrvl_20261009", "fd_press_invezz_20260413", "fd_ind_trendforce_20260806"]
+  },
+  "share_trajectory": {
+   "reading": "Taking share is NOT evidenced on reported numbers, and the latest quarter points the other way. Over 12 months Credo grew +114.7% against Astera Labs +104.5% (the nearest like-for-like, single segment), Marvell data center +45.7% and Broadcom AI semiconductors +221% (includes custom XPUs, not like-for-like). Sequentially Credo grew +9.6% against Astera +27.3%, Marvell data center +18.5%, Broadcom AI +54% and MaxLinear +29%; on each issuer's own guidance Credo's next quarter is +10.6% (525-535M) against Astera about +40% (540-560M), so Credo's revenue relative to Astera falls from 1.22x (479.0M vs 392.4M) to about 0.96x on guided midpoints (quarter-ends differ by about a month). No competitor discloses AEC, retimer or DSP revenue, so AEC share cannot be computed: MaxLinear's CEO put Credo at 93-99% of AECs and targets 20-30% of 1.6T AECs for MaxLinear (press relay of its call), the generation Credo ramps in FY2028; Jefferies saw 70% by 2027 in a bull case (press excerpt). Inside its own base Credo is broadening: the largest end customer fell from 63% (FY2025) to 33% (Q1 FY2027) and four end customers are at or above 10%.",
+   "evidence_ids": ["rp_rev_q1fy27", "rp_rev_q1fy26", "ex_k_rev_qoq_q1fy27", "rp_g_rev_q2fy27", "fd_rel_alab_20260804", "fd_cf_alab_20260805", "fd_rel_mrvl_20260827", "fd_rel_avgo_20260902", "fd_rel_mxl_20261022", "fd_press_stocktwits_20261023", "fd_press_invezz_20260413", "ex_cu_ed_fy25", "rp_cu_endD_q1fy27", "rp_k_n10_q1fy27"]
+  },
+  "competitive_position": {
+   "reading": "Against Astera Labs (retimers, smart cable modules, scale-up fabric): Credo is larger in the last reported quarter (479.0M vs 392.4M) and slightly more profitable on GAAP operating margin (25.2% vs 22.7%), but has a lower GAAP gross margin (64.5% vs 73.3%, consistent with cable assembly in the mix), grows slower now and lacks a scale-up switch line (Scorpio). Against Broadcom: far smaller (Broadcom quarter 29.6B, GAAP operating margin 53.9%). Against Marvell: higher GAAP operating margin (25.2% vs 16.8%) on a far smaller base (Marvell data center 2.17B a quarter); Marvell targets multi-hundred-million scale-up optics revenue from next year. Against MaxLinear (not named by Credo): Credo is larger and more profitable (MaxLinear quarter 218.1M, GAAP operating margin 13.9%) but MaxLinear sells 1.6T AEC silicon to cable makers and aims at 20-30% of that market. Against cable makers such as Amphenol (not named by Credo; the overlap is an inference): Credo owns the SerDes/DSP inside the cable. Credo's evidenced strengths are delivery (7 of 7 quarters above the guided range, the beat narrowing to about 2%) and breadth (five hyperscalers, four 10% end customers).",
+   "evidence_ids": ["rp_rev_q1fy27", "rp_k_gm_q1fy27", "nm_operating_income_q_2026_08_01", "fd_rel_alab_20260804", "fd_cf_alab_20260805", "fd_rel_avgo_20260902", "fd_cf_avgo_20260910", "fd_rel_mrvl_20260827", "fd_ind_futurum_mrvl_20261009", "fd_rel_mxl_20261022", "fd_10q_mxl_20261022", "fd_press_stocktwits_20261023", "fd_rel_aph_20260729", "ex_10k_20260615", "rp_k_hyperscalers", "rp_k_n10_q1fy27"]
+  },
+  "threats": {
+   "reading": "1) Substitution by optics in scale-up links from about 2027-2028 (Marvell management, relayed); Credo hedges by moving into optics itself (FY2027 optical above 600M per the call; DustPhotonics bought for 1,251.1M with 895.8M goodwill), which may partly cannibalise its AECs. 2) A new AEC entrant at 1.6T (MaxLinear, 20-30% target) and Astera Labs growing faster and expanding into optical interconnect; design wins are re-run each lane-speed generation. 3) Customer concentration and no committed demand: contracting parties 43% and 28% of Q1 FY2027 revenue, top 10 about 90% of FY2026, RPO only 4.2M against 222.2M of non-cancelable purchase obligations. 4) Supply and geopolitics: all wafers from TSMC in Taiwan, most PP&E in Taiwan, about 19% of Q1 shipments to Hong Kong and 15.5% to Malaysia. 5) In-sourcing by hyperscalers (own cables or SerDes integrated into switches and accelerators) is a 10-K risk theme without an evidenced case: hypothesis.",
+   "evidence_ids": ["fd_ind_futurum_mrvl_20261009", "rp_g_optical_fy27_floor", "rp_dust_total", "rp_dust_goodwill", "fd_press_stocktwits_20261023", "fd_rel_mxl_20261022", "fd_rel_alab_20260804", "rp_cu_A_q1fy27", "rp_cu_B_q1fy27", "rp_k_top10_fy26", "rp_rpo_q1fy27", "rp_purch_q1fy27", "ex_10k_20260615", "nm_ppe_net_taiwan_fy_2026_05_02", "rp_geo_hk_q1fy27", "ex_k_geo_malaysia_q1fy27"]
+  }
+ },
+ "assessments": {
+  "moat": {
+   "assessment": "adequate",
+   "evidence_ids": ["rp_k_aec_share_inc_fy26", "rp_k_hyperscalers", "rp_k_nggm_q1fy27", "fd_rel_alab_20260804", "fd_press_stocktwits_20261023"],
+   "note": "Evidenced source: SerDes/DSP know-how plus system reliability qualified at five hyperscalers, paid for at a steady ~68% non-GAAP gross margin. Not strong: Broadcom, Marvell and Astera Labs are named on every line, Astera is growing faster now, MaxLinear targets 1.6T AECs, and every lane-speed generation is a new design-win contest."
+  },
+  "switching_costs": {
+   "assessment": "adequate",
+   "evidence_ids": ["ex_10k_20260615", "rp_rpo_q1fy27"],
+   "note": "Qualification at a hyperscaler takes months (10-K), which protects a won generation; but sales are on cancellable purchase orders (RPO 4.2M) and the lock-in resets at each speed transition."
+  },
+  "pricing_power": {
+   "assessment": "adequate",
+   "evidence_ids": ["rp_k_nggm_q1fy27", "rp_g_nggm_q2fy27", "ex_tr_20260901", "rp_k_gm_q1fy27", "fd_rel_alab_20260804"],
+   "note": "Non-GAAP gross margin 68.0% and guided 67-69%, FY2027 'broadly consistent' with FY2026, while volume more than doubled: no visible price erosion yet. GAAP gross margin 64.5% is below Astera Labs (73.3%); no ASP is disclosed and a 1.6T entrant (MaxLinear) can press prices."
+  },
+  "retention": {
+   "assessment": "adequate",
+   "evidence_ids": ["ex_cu_a_fy25", "ex_cu_a_fy26", "ex_cu_a_q1fy27", "rp_k_n10_q1fy27"],
+   "note": "The largest contracting customer's share fell (67% FY2025, 49% FY2026, 43% Q1 FY2027) while revenue tripled, so its dollars grew; no customer loss is disclosed. No contractual retention measure exists."
+  },
+  "customer_concentration": {
+   "assessment": "weak",
+   "evidence_ids": ["rp_cu_A_q1fy27", "rp_cu_B_q1fy27", "rp_k_top10_fy26", "ex_k_top4_end_q1fy27", "ex_cu_ed_fy25"],
+   "note": "Two contracting parties 43% and 28% of Q1 FY2027 revenue, four end customers 84%, top 10 about 90% of FY2026; improving (largest end customer 63% in FY2025, 33% now)."
+  },
+  "market_size": {
+   "assessment": "strong",
+   "evidence_ids": ["fd_rel_avgo_20260902", "fd_rel_alab_20260804", "fd_rel_mrvl_20260827", "rp_rev_fy26", "ex_10k_20260615"],
+   "note": "The AI-connectivity pool is large and growing on the named competitors' and Credo's own reported numbers; the size of the AEC market itself rests only on an attributed Jefferies estimate (press excerpt)."
+  },
+  "competition": {
+   "assessment": "weak",
+   "evidence_ids": ["ex_10k_20260615", "fd_rel_alab_20260804", "fd_rel_mrvl_20260827", "fd_rel_avgo_20260902", "fd_press_stocktwits_20261023", "rp_g_rev_q2fy27"],
+   "note": "Read as how favourable the field is for Credo: three named principal competitors, two far larger, Astera Labs guiding above Credo's next quarter (540-560M vs 525-535M) with about +40% sequential growth against +10.6%, and MaxLinear entering 1.6T AECs."
+  },
+  "substitutes": {
+   "assessment": "adequate",
+   "evidence_ids": ["fd_ind_futurum_mrvl_20261009", "rp_g_optical_fy27_floor", "ex_10k_20260615"],
+   "note": "Copper holds XPU-to-XPU links today; scale-up optics revenue starts from about 2027 (Marvell management, relayed). Credo is building its own optical line (above 600M in FY2027 per the call), so substitution is partly hedged inside the company; the copper window beyond 2028 is not evidenced."
+  },
+  "management": {
+   "assessment": "strong",
+   "evidence_ids": ["rp_g_rev_q3fy25", "rp_g_rev_q1fy26", "rp_g_rev_q3fy26", "rp_g_rev_q4fy26", "rp_g_rev_q1fy27", "rp_rev_fy26", "rp_ngopex_q1fy27"],
+   "note": "Revenue above the guided range in 7 of 7 quarters (mean 1.105x) and the FY2026 annual statement delivered (+205.7% vs 'more than 200%'); the beat narrowed to about 2%, opex ran above guide three quarters running, and the FY2027 floor needs a second-half optical inflection not yet in reported revenue."
+  },
+  "capital_allocation": {
+   "assessment": "adequate",
+   "evidence_ids": ["nm_operating_income_fy_2026_05_02", "nm_equity_q_2026_08_01", "nm_cash_q_2026_08_01", "nm_short_term_investments_q_2026_08_01", "nm_goodwill_q_2026_08_01", "nm_intangible_assets_q_2026_08_01", "rp_dust_total", "rp_sbc_q1fy27", "nm_shares_diluted_wavg_q_2026_08_01", "nm_shares_diluted_wavg_q_2025_08_02"],
+   "note": "Pre-tax return on equity less cash and short-term investments about 72% in FY2026, about 26% on the trailing year after DustPhotonics (1,251.1M, no disclosed revenue yet) tripled invested capital: still above the cost of capital, but the acquisition's return is unproven. No buybacks; SBC 18.4% of Q1 revenue; diluted shares +5.3% in a year."
+  },
+  "geopolitics": {
+   "assessment": "adequate",
+   "evidence_ids": ["rp_geo_hk_q1fy27", "ex_k_geo_malaysia_q1fy27", "rp_geo_cn_q1fy27", "rp_geo_cn_q1fy26", "ex_10k_20260615", "nm_ppe_net_taiwan_fy_2026_05_02"],
+   "note": "Mainland China shipments fell from 51.8M (Q1 FY2026) to 1.1M; Hong Kong 19% and Malaysia 15.5% of Q1 FY2027 shipments are manufacturing locations, not end demand; wafers come only from TSMC in Taiwan (10-K)."
+  }
+ },
+ "gaps": [
+  "No competitor discloses AEC, retimer or optical DSP revenue: AEC share on reported numbers cannot be computed; the 93-99% and 70% figures are press relays.",
+  "Forward P/E and growth of the named competitors: FMP quote ACCESS DENIED, no dated attributed source.",
+  "CPO / scale-up substitution timing rests on a relayed competitor statement (Futurum on Marvell) and undated excerpts; the primary reports were not read.",
+  "Astera Labs Q3 2026 results come on 2026-11-03, after as_of."
+ ]
+}

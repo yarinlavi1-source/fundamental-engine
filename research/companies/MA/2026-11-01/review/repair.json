@@ -1,0 +1,29 @@
+{"trigger": "review",
+ "fixed": [
+  "possible_lender (critical, numbers + counter): forecast.reviews.classification = {status reviewed, reviewer 'review_numbers + review_counter (MA fast run, 2026-11-01), applied by the repair stage', note: operating fee platform, not a lender (client funds 4,382 = 8.5% of liabilities matched by restricted assets; debt 23,938 corporate bonds deducted in the bridge; accrued customer incentives 10,333; 88% ratio from treasury stock 95,201; no loan book), evidence pf_10q_20261029}. Saved in review/classification_review.json and merged into companies/MA/inputs.json forecast.reviews at ticker-value time (the evidence pack has no key that carries forecast reviews, so ticker-value was run through ticker_run.value with EP.to_inputs wrapped to add it; no engine source edited). Casefile: material issue possible_lender now 'resolved'; table_he.md shows fair value 726$ (12% below) and the yearly table.",
+  "ROIC basis (major, numbers): reinvestment measured over FY2023-25 from the saved 10-K cash flow (pf_10k_20260211): reinvestment 1,105 / 4,203 / 1,362 $m, 16.7% of NOPAT; incremental after-tax return (15,231-11,501)/(4,203+1,362) = 0.67. Scenario ROICs kept (bull 0.70 ~ measured, base 0.50 below it because 9M'26 net prepaid incentives 2.66bn already exceed FY2025's 1.29bn, bear 0.30 hypothesis). position/path.json: base reason_he rewritten on the 3-year measure, pf_10k_20260211 added to base evidence, ROIC gap replaced by the measured arithmetic and its caveats.",
+  "Bear falsifier on the mechanism (minor, counter): position/core.json falsifiers + fx_bear_rebates (FY2027 rebates / gross payment network below 0.52 by 2028-02-28).",
+  "Opening debt 24,200 vs 23,938 (minor, numbers/counter): no change needed: 24,200 = 23,938 10-Q debt + 262 accrued litigation entered as a debt-like claim (forecast_options.debt_like_claims); stated in the classification note."
+ ],
+ "open": [
+  "Result stays a DRAFT: the casefile verdict is withheld for review status unreviewed_draft (no independent review bound to valuation_sha256/inputs_sha256; forecast reviews signers are author notes by engine rule).",
+  "The classification review lives outside the evidence pack: a plain `ticker-value` rerun would drop it and bring possible_lender back; rerun with the same wrapper or re-add forecast.reviews from review/classification_review.json.",
+  "Guidance: 12-13% FY2026 revenue and opex ranges are the lane's reading of 'high end of low double digits' / 'low double digits', not management numbers; no guidance track record (guidance_track empty).",
+  "dc_call_20261029 (Motley Fool copy) keeps syndicated_from null: the issuer call is not a pack source, and ticker-check rejects a free-text original; quotes were verified verbatim by review_trace.",
+  "Multiples: base year-0 33.7x forward is above the forward-equivalent own median (~31-32x); bull 40.2x near the trailing peak; no evidenced Visa forward P/E.",
+  "Terminal spread: base value relies on terminal growth 4.98% vs cost of equity ~8.2-8.7%; reviewer's approximate expectation gap at 4% terminal growth gives ~561$ (below price); capital_structure package and redteam_audit not run in this pass.",
+  "Yearly prices hold shares flat (buybacks treated as distributions): year-5 prices exclude dividends and buybacks; label in delivery.",
+  "Bear mechanisms (CCCA, UK cap, litigation) are not sized from evidence; Q4 2026 current-year revenue extrapolated at 14.6% vs guided 12-13% (immaterial); PYPL/AXP figures context only; ERP/risk-free dates not paired."
+ ],
+ "ran": true,
+ "casefile": "/home/user/fundamental-engine/runs/tickers/MA_2026-11-01/companies/MA/out/casefile.json",
+ "changed_files": [
+  "/home/user/fundamental-engine/runs/tickers/MA_2026-11-01/review/classification_review.json",
+  "/home/user/fundamental-engine/runs/tickers/MA_2026-11-01/position/path.json",
+  "/home/user/fundamental-engine/runs/tickers/MA_2026-11-01/position/core.json",
+  "/home/user/fundamental-engine/runs/tickers/MA_2026-11-01/companies/MA/inputs.json",
+  "/home/user/fundamental-engine/runs/tickers/MA_2026-11-01/value.json",
+  "/home/user/fundamental-engine/runs/tickers/MA_2026-11-01/review/repair.json"
+ ],
+ "values": {"price": 638.02, "today": {"bear": 461, "base": 726, "bull": 894}, "year5_2031_11": {"bear": 588, "base": 967, "bull": 1207}, "base_irr_at_price": "~9.1%/yr vs market ~9.2%", "entry_with_margin": 437}
+}

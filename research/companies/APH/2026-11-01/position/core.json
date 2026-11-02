@@ -1,0 +1,424 @@
+{
+ "thesis_he": {
+  "bear": "ענקיות הענן עוצרות את השקעות ה-AI בתחילת 2027: המכירות ב-2027 לא צומחות בכלל לעומת 2026 ושיעור הרווח התפעולי חוזר לכ-21%, הרמה שלפני גל ה-AI.",
+  "base": "2026 מסתיימת מעל התחזית (כמו ב-8 הרבעונים האחרונים), וב-2027 המכירות צומחות בכ-23% כי ההזמנות עדיין גבוהות מהמכירות, אבל שיעור הרווח התפעולי יורד מהשיא של 29.5% לכ-26%.",
+  "bull": "גל ה-AI נמשך: יחס ההזמנות למכירות נשאר מעל 1.15, המכירות ב-2027 צומחות בכ-32% ושיעור הרווח התפעולי נשאר סביב 29%."
+ },
+ "drivers": {
+  "current_year_revenue": {
+   "source_tier": "guidance",
+   "evidence_ids": [
+    "dc_guid_fy26_rev",
+    "dc_guid_q4_rev",
+    "pf_rel_20261028_1"
+   ],
+   "remainder": "dc_guid_q4_rev",
+   "adjust_by_track_record": true,
+   "reason": "First fiscal-year revenue guide: 36.9-37.1B (issued 2026-10-28 with Q3 results; 9M reported 26.61B, so the remainder is the Q4 guide 10.3-10.5B). Amphenol beat its quarterly revenue guide midpoint in every recorded quarter (ratio 1.06-1.19, mean 1.11; Q3 2026 1.094) and Q3 orders were 12.2B (book-to-bill 1.19), above the Q4 guide: the track-record ratio applied to the Q4 remainder is the honest reading."
+  },
+  "growth_anchor": {
+   "period": "FY2027",
+   "bear": 0.0,
+   "base": 0.23,
+   "bull": 0.32,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "dc_kpi_orders_q3_2026",
+    "dc_kpi_b2b_q3_2026",
+    "dc_kpi_b2b_q2_2026",
+    "dc_kpi_b2b_q1_2026",
+    "dc_kpi_org_growth_q3_2026",
+    "dc_kpi_org_growth_q2_2026",
+    "dc_kpi_org_growth_q1_2026",
+    "dc_kpi_org_growth_q4_2025",
+    "dc_guid_q4_rev",
+    "pf_revenue_q_2026_09_30",
+    "dc_kpi_mkt_itdc_share_q2_2026",
+    "dc_kpi_mkt_itdc_org_q2_2026",
+    "pf_revenue_fy2022",
+    "pf_revenue_fy2023"
+   ],
+   "reason": "FY2027 growth is almost all organic (CommScope closed 2026-01-09, inside FY2026). Most of it is carry-over: FY2026 is about 38B with the track-record-adjusted Q4 (about 11.5B), so four flat quarters at the Q4 run rate already give about +20%. Base 23%: sequential growth slows to about 1% a quarter in 2027 even though Q3 orders (12.2B, book-to-bill 1.19) still run above sales and organic growth re-accelerated to 37% in Q3 (after 41, 41, 37, 33, 30): the base assumes the order surplus fades rather than extrapolating it. Bull 32%: book-to-bill stays above about 1.15 through 2027, sequential growth about 4% a quarter (Q3 2026 was +17% q/q), driven by AI datacom (43% of sales, +63% organic in Q2). Bear 0%: a hyperscaler capex pause from early 2027 cuts IT datacom by about 35-40% from its Q4 2026 run rate while the other markets grow a few percent, so 2027 sales fall back to the FY2026 level (FY2023 was -0.5% after +16%, but AI concentration now makes the dip deeper). Consensus not used (pre-print AV rows not citable; no post-print consensus)."
+  },
+  "mature_margin": {
+   "bear": 0.21,
+   "base": 0.26,
+   "bull": 0.29,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "pf_operating_income_fy2020",
+    "pf_revenue_fy2020",
+    "pf_operating_income_fy2022",
+    "pf_revenue_fy2022",
+    "pf_operating_income_fy2024",
+    "pf_revenue_fy2024",
+    "pf_operating_income_fy2025",
+    "pf_revenue_fy2025",
+    "nm_operating_income_ttm_2026_09_30",
+    "nm_revenue_ttm_2026_09_30",
+    "pf_operating_income_q_2026_09_30",
+    "pf_revenue_q_2026_09_30",
+    "dc_fact_adj_opm_q3_2026",
+    "dc_fact_ieepa_q3_2026"
+   ],
+   "reason": "GAAP operating margin (after SBC and acquisition amortization) 19.1-20.7% in FY2020-FY2024, 25.4% in FY2025, 27.7% TTM to September 2026, 29.5% in Q2 and Q3 2026 (Q3 tariff recovery only 15M, so the run rate is real). Base 26%: between FY2025 and TTM: the AI-mix step (about +5-6 points over the pre-AI 20.5%) stays, the peak operating leverage of a 65%-growth quarter is given back. Bull 29%: the Q3 run rate holds as AI mix stays high and CommScope's margin keeps improving (accretion guide raised three times). Bear 21%: back to the company's own 2020-2024 range as AI volumes fall."
+  },
+  "tax_rate": {
+   "all": 0.25,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "dc_fact_etr_gaap_q3_2026",
+    "dc_fact_etr_adj_q3_2026",
+    "dc_fact_discrete_tax_q3_2026",
+    "dc_fact_excess_tax_benefit_q3_2026",
+    "dc_fact_etr_gaap_q2_2026",
+    "dc_fact_excess_tax_benefit_sbc_q2_2026"
+   ],
+   "reason": "GAAP Q3 2026 rate 27.4% includes 60M of discrete foreign tax items (about 2.1 points on about 2.8B pre-tax), a one-off; Q2 GAAP 25.3%. The adjusted rate (27.0%) strips the recurring excess tax benefit on stock compensation (52.2M in Q3, 80.5M in Q2, about 2-3 points). Recurring rate about 25%."
+  },
+  "sales_to_capital": {
+   "all": 1.43,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "pf_revenue_fy2024",
+    "pf_revenue_fy2025",
+    "pf_capex_fy2024",
+    "pf_capex_fy2025",
+    "pf_cfo_fy2025",
+    "pf_capex_q_2026_09_30",
+    "pf_cfo_q_2026_09_30",
+    "dc_fact_capex_9m_2026",
+    "dc_fact_ocf_9m_2026",
+    "dc_kpi_capex_pct_q3_2026",
+    "pf_10q_20261030",
+    "pf_10k_20260211"
+   ],
+   "reason": "Amphenol's own 3-year incremental sales-to-capital (engine series, 2026-10-26 run) is 1.43, and it counts acquisition goodwill as capital, so it is conservative for organic growth. The organic record needs less: FY2025 revenue +51.7% (about +38% organic) with capex 4.3% of revenue; 9M 2026 capex 1.10B = 4.2% of sales with operating cash flow 4.76B; Q3 capex 4.47% of sales and FCF 1.62B. Same in all scenarios: the bear is a demand fall, not a change in the capital a dollar of sales needs."
+  },
+  "terminal_roic": {
+   "bear": 0.164,
+   "base": 0.2,
+   "bull": 0.245,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "pf_operating_income_fy2020",
+    "pf_operating_income_fy2022",
+    "pf_operating_income_fy2024",
+    "pf_operating_income_fy2025",
+    "pf_10k_20260211",
+    "pf_goodwill_fy2025"
+   ],
+   "reason": "From the engine's ROIC series on Amphenol's companyfacts (2026-10-26 run; NOPAT over equity + debt - cash - investments, goodwill included), FY2006-FY2025: minimum 16.4% (FY2017), median 19.4%, average 20.4%, FY2025 29.3% (AI peak, not used). Base 20% = 20-year average; bear 16.4% = 20-year low (CommScope's 10.5B of capital earning about 6% so far pulls toward it); bull 24.5% = best pre-AI year."
+  },
+  "minimum_cash_months": {
+   "all": 1.6,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "pf_cash_fy2021",
+    "pf_cash_fy2022",
+    "pf_cash_fy2023",
+    "pf_revenue_fy2021",
+    "pf_revenue_fy2022",
+    "pf_revenue_fy2023",
+    "pf_operating_income_fy2021",
+    "pf_operating_income_fy2022",
+    "pf_operating_income_fy2023",
+    "nm_cash_q_2026_09_30",
+    "pf_10q_20261030"
+   ],
+   "reason": "Amphenol's own operating cash before acquisition pre-funding: year-end cash / monthly costs = 1.64 months FY2021, 1.64 FY2022, 1.77 FY2023 (FY2024-FY2025 held the Andrew and CommScope purchase money). The company runs on a thin cash buffer with commercial paper backed by its revolver; the 3-month default would lock up most of today's 4.17B cash."
+  },
+  "interest_rate": {
+   "all": 0.0475,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "dc_fact_interest_expense_q3_2026",
+    "dc_fact_total_debt_20260930",
+    "dc_fact_interest_expense_q2_2026",
+    "dc_fact_total_debt_20260630",
+    "pf_rel_20261028_1"
+   ],
+   "reason": "Q3 2026 interest expense 212.3M annualised = 849M over total debt 17,870.8M at 2026-09-30 = 4.75% (Q2: 213.7M on 18,811.3M = 4.54%): full quarters with the CommScope financing in place."
+  }
+ },
+ "forecast_options": {
+  "cyclical": {
+   "treatment": "structural",
+   "reason": "Structural with a cyclical overlay handled explicitly. Seven end markets and no 10% customer: revenue fell only once in 2020-2025 (FY2023 -0.5% after +16%) and operating margin held 19-21% through it. A mid-cycle revenue normalisation would revert the acquired CommScope revenue (about 5.1B in 2026) to an old trend. The peak is not extrapolated: base mature margin 26% against 29.5% now, growth slows to 23% with sequential growth near flat, and the AI-capex pause is the bear (0% growth, 21% margin).",
+   "evidence_ids": [
+    "pf_revenue_fy2022",
+    "pf_revenue_fy2023",
+    "pf_operating_income_fy2023",
+    "pf_operating_income_fy2025",
+    "pf_revenue_fy2025",
+    "pf_operating_income_q_2026_09_30",
+    "dc_kpi_acq_impact_q3_2026",
+    "dc_guid_commscope_sales_fy26_oct",
+    "pf_10k_20260211"
+   ]
+  },
+  "acquired_revenue": {
+   "value": 3600000000,
+   "acquisition": "CommScope Connectivity and Cable Solutions (CCS)",
+   "closed": "2026-01-09",
+   "reason": "Pre-deal size from the Q3 2026 10-Q pro forma note (CommScope included from 2025-01-01): pro forma 9M 2025 net sales 19,368.6M against reported 16,655.7M = 2,712.9M for nine months, about 3.6B a year. The 2026 contribution is guided at 5.1B; the step above the pre-deal size is CommScope's own growth and stays charged as growth. The 10.5B price is already in the opening debt.",
+   "evidence_ids": [
+    "pf_10q_20261030",
+    "mc_rev_total_m920250930",
+    "dc_fact_commscope_price",
+    "dc_guid_commscope_sales_fy26_oct"
+   ]
+  }
+ },
+ "scenario_events": {
+  "bear": [
+   {
+    "event_he": "ענקיות הענן עוצרות את השקעות ה-AI בתחילת 2027: מכירות שוק מרכזי הנתונים (43% מהמכירות) יורדות בכ-35%-40% מהקצב של סוף 2026, והמכירות של 2027 נשארות ברמה של 2026, כמו העצירה של 2023 אבל עמוקה יותר.",
+    "evidence_ids": [
+     "dc_kpi_mkt_itdc_share_q2_2026",
+     "dc_kpi_mkt_itdc_org_q2_2026",
+     "pf_revenue_fy2022",
+     "pf_revenue_fy2023"
+    ]
+   },
+   {
+    "event_he": "שיעור הרווח התפעולי חוזר מ-29.5% לכ-21%, הרמה של 2020-2024, כשהנפח יורד.",
+    "evidence_ids": [
+     "pf_operating_income_q_2026_09_30",
+     "pf_revenue_q_2026_09_30",
+     "pf_operating_income_fy2022",
+     "pf_revenue_fy2022",
+     "pf_operating_income_fy2024",
+     "pf_revenue_fy2024"
+    ]
+   },
+   {
+    "event_he": "רכישת CommScope ב-10.5 מיליארד דולר מחזירה עד עכשיו כ-6% בשנה, החוב 17.9 מיליארד והריבית לרבעון פי 2.6 משנה קודם; המוניטין (17.7 מיליארד) גבוה מההון העצמי, ובירידה זה מכביד.",
+    "evidence_ids": [
+     "dc_fact_commscope_price",
+     "dc_fact_commscope_ni_since_close_20260930",
+     "dc_fact_total_debt_20260930",
+     "dc_fact_interest_expense_q3_2026",
+     "dc_fact_interest_expense_q3_2025",
+     "dc_fact_goodwill_20260930",
+     "dc_fact_equity_20260930"
+    ]
+   },
+   {
+    "event_he": "סין: 14% מהמכירות ו-37% מהנכסים הקבועים; ההפוגה במכסים מול סין לא מוארכת אחרי ינואר 2027, וחקירות המס בסין (100 מיליון + 290 מיליון דולר, ועוד 60 מיליון פריטי מס חד-פעמיים ברבעון השלישי) ממשיכות.",
+    "evidence_ids": [
+     "mc_rev_cn_q20260930",
+     "mc_rev_total_q20260930",
+     "mc_lla_cn_fy2025",
+     "mc_ree_truce",
+     "dc_fact_china_tax_charge_q4_2025",
+     "dc_fact_china_tax_accrual_h1_2026",
+     "dc_fact_discrete_tax_q3_2026"
+    ]
+   },
+   {
+    "event_he": "שינוי ארכיטקטורה בשרתי AI (סיבים אופטיים צמודים לשבב או לוח מעגל במקום כבלי נחושת בדור Kyber) מקטין את התוכן של החברה בכל מתלה.",
+    "hypothesis": true
+   }
+  ],
+  "base": [
+   {
+    "event_he": "הרבעון הרביעי של 2026 יוצא מעל התחזית של 10.3-10.5 מיליארד דולר: החברה עקפה את תחזית המכירות שלה בכל הרבעונים שנמדדו (ברבעון השלישי 10.23 מיליארד מול 9.3-9.4), וההזמנות ברבעון השלישי היו 12.2 מיליארד.",
+    "evidence_ids": [
+     "dc_guid_q4_rev",
+     "dc_guid_fy26_rev",
+     "dc_guid_q3_rev",
+     "pf_revenue_q_2026_09_30",
+     "dc_kpi_orders_q3_2026",
+     "pf_rel_20261028_1"
+    ]
+   },
+   {
+    "event_he": "ההזמנות גבוהות מהמכירות (יחס 1.19 ברבעון השלישי) ומושכות את המכירות לתוך 2027, אבל הצמיחה הרבעונית מאטה לכ-1% ברבעון והצמיחה השנתית ב-2027 היא כ-23%.",
+    "evidence_ids": [
+     "dc_kpi_b2b_q3_2026",
+     "dc_kpi_orders_q3_2026",
+     "dc_kpi_org_growth_q3_2026"
+    ]
+   },
+   {
+    "event_he": "CommScope מוסיפה כ-5.1 מיליארד דולר מכירות ב-2026 (התחזית הועלתה מ-4.1 ל-4.6 ול-5.1), ולכן ב-2027 כמעט כל הצמיחה אורגנית ולא קנויה.",
+    "evidence_ids": [
+     "dc_guid_commscope_sales_fy26_oct",
+     "dc_guid_commscope_sales_fy26",
+     "dc_guid_commscope_sales_fy26_prior",
+     "dc_kpi_acq_impact_q3_2026"
+    ]
+   },
+   {
+    "event_he": "שיעור הרווח התפעולי יורד מ-29.5% לכ-26%, בין רמת 2025 לרמת 12 החודשים האחרונים, כשהצמיחה מאטה.",
+    "evidence_ids": [
+     "pf_operating_income_q_2026_09_30",
+     "pf_operating_income_fy2025",
+     "pf_revenue_fy2025",
+     "nm_operating_income_ttm_2026_09_30",
+     "nm_revenue_ttm_2026_09_30"
+    ]
+   }
+  ],
+  "bull": [
+   {
+    "event_he": "יחס ההזמנות למכירות נשאר מעל 1.15 בדוחות של הרבעון הרביעי 2026 (סוף ינואר 2027) ושל הרבעון הראשון 2027, והמכירות ב-2027 צומחות בכ-32%.",
+    "evidence_ids": [
+     "dc_kpi_b2b_q3_2026",
+     "dc_kpi_b2b_q2_2026",
+     "dc_kpi_b2b_q1_2026",
+     "dc_kpi_mkt_itdc_org_q2_2026"
+    ]
+   },
+   {
+    "event_he": "הדור הבא של שרתי ה-AI (Vera Rubin) ממשיך להשתמש בחיבורי נחושת בתוך המתלה, והחברה מוכרת יותר תוכן לכל מתלה.",
+    "evidence_ids": [
+     "fd_semianalysis_20260225",
+     "dc_call_20260729"
+    ]
+   },
+   {
+    "event_he": "שיעור הרווח התפעולי נשאר סביב 29% (רמת הרבעון השלישי, כמעט בלי החזר מכס), כי CommScope משתפרת: התחזית לתרומתה לרווח למניה עלתה מ-0.075 ל-0.15 ול-0.18 דולר.",
+    "evidence_ids": [
+     "dc_fact_adj_opm_q3_2026",
+     "dc_fact_ieepa_q3_2026",
+     "dc_guid_commscope_eps_fy26_oct",
+     "dc_guid_commscope_eps_fy26_prior"
+    ]
+   },
+   {
+    "event_he": "החברה תופסת נתח בשוק הכבלים האקטיביים (AEC) אחרי הסכם הרישיון עם Credo.",
+    "hypothesis": true
+   }
+  ]
+ },
+ "key_risk": {
+  "reading_he": "התלות בגל ה-AI: 43% מהמכירות מגיעות משוק מרכזי הנתונים וכמעט כל הצמיחה שם היא מ-AI, ושיעור הרווח התפעולי (29.5%) גבוה בהרבה מ-19%-21% של 2020-2024. עצירה בהשקעות של ענקיות הענן תפגע במכירות וברווחיות יחד, בזמן שהחוב גבוה (17.9 מיליארד דולר) אחרי רכישת CommScope.",
+  "evidence_ids": [
+   "dc_kpi_mkt_itdc_share_q2_2026",
+   "dc_kpi_mkt_itdc_org_q2_2026",
+   "pf_operating_income_q_2026_09_30",
+   "pf_revenue_q_2026_09_30",
+   "pf_operating_income_fy2022",
+   "pf_revenue_fy2022",
+   "dc_fact_total_debt_20260930",
+   "dc_call_20260729"
+  ]
+ },
+ "falsifiers": [
+  {
+   "id": "fx_q4rev",
+   "scenario": "base",
+   "metric": "revenue Q4 2026 (USD)",
+   "threshold": 10300000000,
+   "direction": "below",
+   "by": "2027-02-15",
+   "evidence_ids": [
+    "dc_guid_q4_rev",
+    "pf_rel_20261028_1"
+   ]
+  },
+  {
+   "id": "fx_b2b",
+   "scenario": "base",
+   "metric": "book-to-bill Q4 2026 (ratio)",
+   "threshold": 1.0,
+   "direction": "below",
+   "by": "2027-02-15",
+   "evidence_ids": [
+    "dc_kpi_b2b_q3_2026",
+    "dc_kpi_b2b_q2_2026"
+   ]
+  },
+  {
+   "id": "fx_rev27",
+   "scenario": "base",
+   "metric": "revenue FY2027 (USD)",
+   "threshold": 42000000000,
+   "direction": "below",
+   "by": "2028-02-28",
+   "evidence_ids": [
+    "dc_guid_fy26_rev",
+    "dc_kpi_orders_q3_2026"
+   ]
+  },
+  {
+   "id": "fx_opm_base",
+   "scenario": "base",
+   "metric": "GAAP operating margin FY2027 (ratio)",
+   "threshold": 0.23,
+   "direction": "below",
+   "by": "2028-02-28",
+   "evidence_ids": [
+    "pf_operating_income_fy2025",
+    "pf_revenue_fy2025"
+   ]
+  },
+  {
+   "id": "fx_b2b_bull",
+   "scenario": "bull",
+   "metric": "book-to-bill Q1 2027 (ratio)",
+   "threshold": 1.1,
+   "direction": "below",
+   "by": "2027-05-15",
+   "evidence_ids": [
+    "dc_kpi_b2b_q3_2026"
+   ]
+  },
+  {
+   "id": "fx_opm_bull",
+   "scenario": "bull",
+   "metric": "GAAP operating margin FY2027 (ratio)",
+   "threshold": 0.27,
+   "direction": "below",
+   "by": "2028-02-28",
+   "evidence_ids": [
+    "dc_fact_adj_opm_q3_2026",
+    "pf_operating_income_q_2026_09_30"
+   ]
+  },
+  {
+   "id": "fx_h1_bear",
+   "scenario": "bear",
+   "metric": "revenue H1 2027, Q1 + Q2 (USD)",
+   "threshold": 22000000000,
+   "direction": "above",
+   "by": "2027-08-15",
+   "evidence_ids": [
+    "dc_guid_q4_rev",
+    "pf_revenue_q_2026_09_30"
+   ]
+  },
+  {
+   "id": "fx_itdc_bear",
+   "scenario": "bear",
+   "metric": "IT datacom organic growth y/y Q2 2027 (ratio)",
+   "threshold": 0.1,
+   "direction": "above",
+   "by": "2027-08-15",
+   "evidence_ids": [
+    "dc_kpi_mkt_itdc_org_q2_2026"
+   ]
+  }
+ ],
+ "reasons_he": {
+  "bear": "מה נשבר: כמעט חצי מהמכירות תלויות בחוות שרתים ל-AI. אם הלקוחות יעצרו השקעות, כמו ב-2023 כשהמכירות ירדו, המכירות והרווחיות ייפלו יחד, והחוב שנלקח לרכישת CommScope יכביד.",
+  "base": "למה הכי סביר: ההזמנות ברבעון השלישי (12.2 מיליארד) גבוהות ב-19% מהמכירות והחברה עקפה את התחזית שלה בכל רבעון שנמדד, לכן 2026 תסתיים מעל התחזית והמכירות ימשיכו לעלות ב-2027 אבל לאט יותר; הרווחיות של שיא הצמיחה לא נשארת כולה.",
+  "bull": "מה צריך לקרות: הזמנות מעל המכירות (יחס מעל 1.15) גם בדוחות של תחילת 2027, הדור הבא של שרתי Nvidia ממשיך להשתמש בחיבורי הנחושת של החברה, ו-CommScope ממשיכה לשפר רווחיות."
+ },
+ "engine_options": {
+  "country_risk": true,
+  "reason": "The 10-K and 10-Q disclose net sales by customer location: United States, China and other foreign locations (China 15.9% of FY2025, 14.1% of Q3 2026)."
+ },
+ "gaps": [
+  "growth_half_life and margin_convergence_years left on the engine rule: no company evidence beyond the history the engine already reads.",
+  "cost_of_equity and terminal_growth left on the engine rule (market prices of risk).",
+  "No consensus-tier lever: pre-print Alpha Vantage rows (2026-10-26) are not citable and sit below the company's own FY2026 guide; no post-Q3 consensus was retrieved.",
+  "Q3 2026 call transcript not read: Q3 end-market split, AI commentary and any 2027 color are missing; IT datacom share/growth still Q2 2026.",
+  "terminal_roic and sales_to_capital carried from the 2026-10-26 run's engine ROIC/incremental series (the 11-01 forensic screen did not compute ROIC).",
+  "Vested in-the-money options are not in the share count (2026-10-26 run: about 97M treasury-method shares, about 4% of shares): per-share values are biased upward by about that much.",
+  "Pending acquisitions (AdvancedPCB, Humanetics Sensors in Q4 2026, Dexgreen in Q1 2027; 1.6B combined price incl. Empire) are not modelled as revenue or cash outflow; Empire (about 320M a year, closed September) is a small part of the FY2026 step not in acquired_revenue.",
+  "acquired_revenue uses the 9M 2025 pro forma difference annualised (Q4 2025 CommScope pre-deal sales not disclosed in the documents read)."
+ ]
+}

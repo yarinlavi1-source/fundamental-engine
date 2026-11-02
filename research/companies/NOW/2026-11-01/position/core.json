@@ -1,0 +1,347 @@
+{
+ "thesis_he": {
+  "bear": "הצמיחה האורגנית יורדת לכ-13% ב-2027 (האטה אורגנית ועצירה בערוץ הפדרלי, 12% מההכנסות), סוכני AI ומתחרים לוחצים על מחיר ומושבים, ותגמול במניות נשאר כ-15% - הרווחיות בבגרות נשארת כ-14%, כמו השיא החשבונאי.",
+  "base": "הצמיחה ב-2027 בערך כמו ההתחייבויות החוזיות לשנה הקרובה (כ-19%), מאטה לאט כמו בהיסטוריה, והרווחיות עולה בהדרגה לכ-26% אחרי תגמול במניות.",
+  "bull": "ה-AI מאיץ את הצמיחה ב-2027 לכ-22% כפי שההנהלה אומרת, הצמיחה מאטה לאט מאוד, והרווחיות בבגרות מגיעה לכ-30% אחרי תגמול במניות."
+ },
+ "drivers": {
+  "growth_anchor": {
+   "period": "FY2027",
+   "bear": 0.13,
+   "base": 0.19,
+   "bull": 0.22,
+   "source_tier": {
+    "bear": "own_history",
+    "base": "contracted",
+    "bull": "contracted"
+   },
+   "evidence_ids": [
+    "dc_crpo_q3_2026",
+    "dc_crpo_q3_2026_growth_cc",
+    "dc_g_q4_crpo_cc",
+    "dc_rpo_q3_2026_growth_cc",
+    "dc_call_20261028",
+    "pf_revenue_fy2024",
+    "pf_revenue_fy2025",
+    "dc_fed_partner_rev_share_q3_2026",
+    "dc_fed_partner_ar_share_q3_2026",
+    "dc_c_fed_partner_q3"
+   ],
+   "reason": "cRPO (13.65B, revenue contracted for the next 12 months) grew 21% cc in Q3 and is guided to 18.5% cc at Q4; CFO adds about 50 bp of backlog excluded from cRPO by T4C provisions that will be revenue. Base 19% = Q4 cRPO guide plus that backlog. Bull 22% = cRPO holds its Q3 rate (21%) plus total RPO growth 22.5% cc and the CEO's stated AI acceleration in 2027. Bear 13% = organic deceleration (analyst on the call: organic cRPO modestly decelerating; acquisitions inside the reported 21%/18.5% rates, organic share undisclosed) continuing the own-history step-down of about 1.5 points a year from 22.4% (FY2024) and 20.9% (FY2025) to about 16% organic in FY2027, minus about 2-3 points from the federal channel: one federal channel partner is 12% of revenue and 20% of receivables with an open DOJ investigation; if that channel stops growing for a year (budget pressure or a debarment-related pause), 12% x ~19% growth = about 2.3 points of growth is lost. No margin hit is sized beyond the mature margin below.",
+   "deviation": "base and bull sit at or above the Q4 cRPO guide because cRPO excludes T4C backlog and the issuer beats its guides; base and bull include acquired growth (Armis closed 2026-04-20, Moveworks 2025-12-15) whose size is undisclosed (visible gap); bear sits below it as an organic deceleration plus federal-channel stall case"
+  },
+  "growth_half_life": {
+   "bear": 3.0,
+   "base": 5.0,
+   "bull": 7.0,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "pf_revenue_fy2020",
+    "pf_revenue_fy2021",
+    "pf_revenue_fy2022",
+    "pf_revenue_fy2023",
+    "pf_revenue_fy2024",
+    "pf_revenue_fy2025"
+   ],
+   "reason": "Own history: growth went from 30.5% (FY2021) to 20.9% (FY2025); excess over a ~4.5% terminal fell from about 26 to 16 points in 4 years, a half-life of about 6 years. Base 5 (slightly faster than history: larger base, AI pricing debate), bull 7 (AI ACV sustains the pace), bear 3 (seat compression and agent competition speed the fade)."
+  },
+  "mature_margin": {
+   "bear": 0.14,
+   "base": 0.26,
+   "bull": 0.3,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "dc_g_fy_opm_ng",
+    "dc_op_margin_nongaap_q3_2026",
+    "dc_op_margin_gaap_q3_2026",
+    "dc_sbc_9m_2026",
+    "pf_sbc_fy2025",
+    "pf_operating_income_fy2025",
+    "pf_revenue_fy2025",
+    "dc_amort_intang_q3_2026"
+   ],
+   "reason": "Mature operating margin after SBC. FY2026 non-GAAP operating margin guided 31.5% (+50 bp a year), Q3 32.5%; SBC about 15% of revenue (9M 1,829M); GAAP operating margin 13.7% FY2025, 9.5% Q3 2026 after amortization of acquired intangibles. Base 26% = non-GAAP rising to about 36% with SBC fading to about 10%. Bull 30% = Rule-of-60 path, non-GAAP near 38% with SBC under 9%. Bear 14% = the best reported GAAP operating margin (13.7% FY2025; 9.5% Q3 2026) held: no evidenced SBC fade (SBC 14.7% of revenue FY2025, about 15.5% in Q3 2026 and rising), so the bear keeps SBC near the reported ~15% (sbc_pct) and the margin after SBC near the GAAP record."
+  },
+  "sbc_pct": {
+   "bear": 0.15,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "pf_sbc_fy2025",
+    "pf_revenue_fy2025",
+    "dc_sbc_9m_2026",
+    "pf_sbc_q_2026_09_30"
+   ],
+   "reason": "Bear holds SBC at the reported level: 14.7% of revenue FY2025 (pf_sbc_fy2025 / pf_revenue_fy2025), about 15% in 9M 2026 (1,829M) and about 15.5% in Q3 2026; no company evidence of a fade. Base and bull keep the engine fade from the TTM ratio (visible gap: the fade is unevidenced)."
+  },
+  "sales_to_capital": {
+   "bear": 1.41,
+   "base": 1.95,
+   "bull": 1.95,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "pf_revenue_fy2020",
+    "pf_revenue_fy2022",
+    "pf_revenue_fy2025",
+    "pf_equity_fy2020",
+    "pf_equity_fy2022",
+    "pf_equity_fy2025",
+    "pf_cash_fy2022",
+    "pf_cash_fy2025"
+   ],
+   "reason": "Own history of incremental sales-to-capital: 1.41 over 3 years (FY2022-FY2025, period of acquisitions and capital build) and 1.95 over 5 years (FY2020-FY2025), per the engine's own computation from companyfacts. Bear takes the 3-year 1.41 (acquisitions keep capital heavy), base and bull the 5-year 1.95 (the engine's own choice)."
+  },
+  "terminal_roic": {
+   "bear": 0.15,
+   "base": 0.22,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "pf_operating_income_fy2022",
+    "pf_operating_income_fy2025",
+    "pf_equity_fy2022",
+    "pf_equity_fy2025",
+    "pf_cash_fy2022",
+    "pf_cash_fy2025",
+    "pf_operating_income_fy2025"
+   ],
+   "reason": "Same return on capital as company_path, so the DCF and the yearly path use one number: base 22% = hand-computed incremental after-tax operating income / added capital FY2022-FY2025 about 20%, engine incremental ROIC (3y) 26.2%, pulled toward the lower end because the 11.2B of 2025-2026 acquisitions dilute returns; bear 15% = last-year ROIC about 14% with the acquisitions earning little. Bull left on the engine rule (its 45% path return is unproven)."
+  }
+ },
+ "forecast_options": {
+  "cyclical": {
+   "treatment": "structural",
+   "reason": "Subscription revenue under multi-year contracts (renewal rate 98%, RPO 29.7B) and growth of 21-30% every year FY2021-FY2025, including 2022; no cycle in the history.",
+   "evidence_ids": [
+    "dc_renewal_rate_q3_2026",
+    "dc_rpo_q3_2026",
+    "pf_revenue_fy2022",
+    "pf_revenue_fy2023"
+   ]
+  }
+ },
+ "scenario_events": {
+  "bear": [
+   {
+    "event_he": "צמיחת ההתחייבויות לשנה הקרובה (cRPO) יורדת מ-21% ל-18.5% ברבעון הרביעי, וחלק מהקצב הנוכחי נקנה ברכישות; ההאטה האורגנית ממשיכה ב-2027.",
+    "evidence_ids": [
+     "dc_g_q4_crpo_cc",
+     "dc_crpo_q3_2026_growth_cc",
+     "dc_call_20261028"
+    ]
+   },
+   {
+    "event_he": "שותף ערוץ פדרלי אחד הוא 12% מההכנסות ו-20% מהחייבים, וחקירת משרד המשפטים עדיין פתוחה; פגיעה בתקציבי הממשל האמריקאי מורידה צמיחה.",
+    "evidence_ids": [
+     "dc_c_fed_partner_q3",
+     "dc_fed_partner_ar_share_q3_2026",
+     "pf_10q_20261028"
+    ]
+   },
+   {
+    "event_he": "רכישות של כ-11.2 מיליארד דולר (Armis, Veza, Moveworks) מעלות את החוב ל-7.5 מיליארד ואת הפחתות הנכסים; הרווח החשבונאי ירד ל-9.5% מההכנסות ברבעון.",
+    "evidence_ids": [
+     "dc_armis_price",
+     "dc_bizcomb_cash_9m_2026",
+     "dc_lt_debt_q3_2026",
+     "dc_op_margin_gaap_q3_2026"
+    ]
+   },
+   {
+    "event_he": "סוכני AI מצמצמים את מספר המושבים שלקוחות קונים ומתחרים כמו מיקרוסופט וסיילספורס לוחצים על המחיר.",
+    "hypothesis": true
+   }
+  ],
+  "base": [
+   {
+    "event_he": "הכנסות המנויים ל-2026 מגיעות לכ-15.8 מיליארד דולר, מעט מעל התחזית כמו בכל שבעת הרבעונים האחרונים.",
+    "evidence_ids": [
+     "dc_g_fy_sub_rev",
+     "dc_g_q4_sub_rev",
+     "dc_sub_rev_q3_2026",
+     "dc_g_q3_sub_rev_prior"
+    ]
+   },
+   {
+    "event_he": "ב-2027 ההכנסות צומחות בערך בקצב ההתחייבויות החוזיות לשנה הקרובה (כ-19%), עם שימור לקוחות של 98%.",
+    "evidence_ids": [
+     "dc_g_q4_crpo_cc",
+     "dc_crpo_q3_2026",
+     "dc_renewal_rate_q3_2026"
+    ]
+   },
+   {
+    "event_he": "שיעור הרווח התפעולי (ללא תגמול במניות) נשאר סביב 31.5%-32% ותזרים המזומנים החופשי כ-36% מההכנסות.",
+    "evidence_ids": [
+     "dc_g_fy_opm_ng",
+     "dc_g_q4_opm_ng",
+     "dc_g_fy_fcf_margin"
+    ]
+   },
+   {
+    "event_he": "מכירות ה-AI מגיעות ליעד של 1.7 מיליארד דולר בשנה עד סוף 2026.",
+    "evidence_ids": [
+     "dc_ai_acv_target_2026",
+     "dc_call_20261028"
+    ]
+   }
+  ],
+  "bull": [
+   {
+    "event_he": "ההנהלה אומרת שההאצה האמיתית מה-AI תגיע ב-2027: מכירות ה-AI עוברות את 1.7 מיליארד, צריכת סוכנים ממשיכה לגדול (פי 13 השנה), והצמיחה עולה מעל 21%.",
+    "evidence_ids": [
+     "dc_call_20261028",
+     "dc_ai_acv_target_2026",
+     "dc_k_agentic_consumption"
+    ]
+   },
+   {
+    "event_he": "העסקאות הגדולות ממשיכות להאיץ: 19 עסקאות מעל 5 מיליון דולר ברבעון (+135%) ו-680 לקוחות מעל 5 מיליון דולר בשנה (+23%).",
+    "evidence_ids": [
+     "dc_k_deals_5m",
+     "dc_customers_5m_q3_2026",
+     "dc_customers_5m_q3_2025"
+    ]
+   },
+   {
+    "event_he": "האבטחה (Armis ו-Veza) והשירות האוטונומי (Moveworks, 100 מיליון דולר בשלושה רבעונים) הופכים למנועי צמיחה נוספים.",
+    "evidence_ids": [
+     "dc_call_20261028",
+     "dc_armis_price"
+    ]
+   },
+   {
+    "event_he": "השימוש הפנימי ב-AI מוריד עלויות ומעלה את הרווחיות לכיוון יעד 'כלל 60'.",
+    "evidence_ids": [
+     "dc_k_ai_internal_value",
+     "dc_call_20261028"
+    ]
+   }
+  ]
+ },
+ "key_risk": {
+  "reading_he": "הצמיחה האורגנית מאטה: ההתחייבויות לשנה הקרובה צפויות לצמוח רק 18.5% ברבעון הרביעי לעומת 21%, חלק מהקצב בא מרכישות, ובמקביל תגמול במניות של כ-15% מההכנסות והפחתות הרכישות שומרים את הרווח החשבונאי נמוך (9.5% ברבעון).",
+  "evidence_ids": [
+   "dc_g_q4_crpo_cc",
+   "dc_crpo_q3_2026_growth_cc",
+   "dc_call_20261028",
+   "dc_sbc_9m_2026",
+   "dc_op_margin_gaap_q3_2026"
+  ]
+ },
+ "falsifiers": [
+  {
+   "id": "fx_base_crpo_q4",
+   "scenario": "base",
+   "metric": "current RPO growth cc, Q4 2026",
+   "threshold": 0.17,
+   "direction": "below",
+   "by": "2027-02-15",
+   "evidence_ids": [
+    "dc_g_q4_crpo_cc"
+   ]
+  },
+  {
+   "id": "fx_bull_crpo_q2_27",
+   "scenario": "bull",
+   "metric": "current RPO growth cc, Q2 2027",
+   "threshold": 0.19,
+   "direction": "below",
+   "by": "2027-08-15",
+   "evidence_ids": [
+    "dc_crpo_q3_2026_growth_cc"
+   ]
+  },
+  {
+   "id": "fx_bear_crpo_q2_27",
+   "scenario": "bear",
+   "metric": "current RPO growth cc, Q2 2027",
+   "threshold": 0.2,
+   "direction": "above",
+   "by": "2027-08-15",
+   "evidence_ids": [
+    "dc_crpo_q3_2026_growth_cc",
+    "dc_g_q4_crpo_cc"
+   ]
+  },
+  {
+   "id": "fx_base_opm_fy27",
+   "scenario": "base",
+   "metric": "non-GAAP operating margin FY2027",
+   "threshold": 0.31,
+   "direction": "below",
+   "by": "2028-02-15",
+   "evidence_ids": [
+    "dc_g_fy_opm_ng"
+   ]
+  },
+  {
+   "id": "fx_base_renewal",
+   "scenario": "base",
+   "metric": "renewal rate (reported), FY2027",
+   "threshold": 0.97,
+   "direction": "below",
+   "by": "2028-02-15",
+   "evidence_ids": [
+    "dc_renewal_rate_q3_2026",
+    "dc_k_renewal"
+   ]
+  },
+  {
+   "id": "fx_base_sbc_fy27",
+   "scenario": "base",
+   "metric": "SBC / revenue FY2027 (GAAP)",
+   "threshold": 0.16,
+   "direction": "above",
+   "by": "2028-02-15",
+   "evidence_ids": [
+    "dc_sbc_9m_2026",
+    "pf_sbc_fy2025",
+    "pf_revenue_fy2025"
+   ]
+  },
+  {
+   "id": "fx_bull_subgrowth_fy27",
+   "scenario": "bull",
+   "metric": "subscription revenue growth cc FY2027",
+   "threshold": 0.2,
+   "direction": "below",
+   "by": "2028-02-15",
+   "evidence_ids": [
+    "dc_crpo_q3_2026_growth_cc",
+    "dc_g_fy_sub_rev"
+   ]
+  },
+  {
+   "id": "fx_bear_gaap_opm_fy27",
+   "scenario": "bear",
+   "metric": "GAAP operating margin FY2027",
+   "threshold": 0.15,
+   "direction": "above",
+   "by": "2028-02-15",
+   "evidence_ids": [
+    "dc_op_margin_gaap_q3_2026",
+    "dc_g_fy_opm_gaap",
+    "pf_operating_income_fy2025",
+    "pf_revenue_fy2025"
+   ]
+  }
+ ],
+ "reasons_he": {
+  "bear": "המחיר הדובי מניח שההאטה אורגנית ונמשכת, שהערוץ הפדרלי (12% מההכנסות, חקירה פתוחה) מפסיק לצמוח לשנה, שתגמול במניות נשאר כ-15% מההכנסות, ושהרווחיות האמיתית לא עולה מעל השיא החשבונאי של כ-14%.",
+  "base": "המחיר הבסיסי בנוי על מה שכבר חתום בחוזים (צמיחה של כ-19% ב-2027), על חברה שעומדת בתחזיות שלה כבר שבעה רבעונים ברציפות, ועל האטה איטית כמו בעבר.",
+  "bull": "המחיר השורי דורש שה-AI באמת יאיץ את הצמיחה ב-2027 כפי שההנהלה מבטיחה, שהרכישות באבטחה יתחילו לתרום, ושהרווחיות תעלה לכ-30%."
+ },
+ "engine_options": {
+  "country_risk": true,
+  "reason": "The 10-Q discloses revenue by region (North America 63%, EMEA 25%, Asia Pacific and other 12% in Q3 2026; US 95% of North America)."
+ },
+ "gaps": [
+  "current_year_revenue not set: NOW guides only SUBSCRIPTION revenue for FY2026 (15.78-15.79B, Q4 4.245-4.255B), not total revenue (professional services about 0.1B a quarter); relabeling it as revenue would be wrong, so the engine uses its own anchor for FY2026 (reported 9M 11,863M + its quarter rule) and shows the gap. Implied FY2026 total revenue from the guide is about 16.2-16.3B; the issuer beat its subscription guide midpoint in all 7 quarters read",
+  "cost_of_equity, terminal_growth, tax_rate left on the engine rule; sales_to_capital set from own history (1.41 / 1.95); terminal_roic bear/base set equal to the company_path returns, bull on the engine rule",
+  "sbc_pct: bear held at the reported ~15%; base and bull left on the engine fade from the TTM ratio (about 15%), an unevidenced fade; mature_margin is set after SBC",
+  "acquired_revenue not set: the 10-Q says the 2026 acquisitions were not material to revenue and gives no pro forma",
+  "no FY2027 guidance and no post-Q3 attributed consensus: growth_anchor rests on cRPO (contracted) and own history",
+  "organic cRPO not disclosed: the bear deceleration size is a judgement from the analyst remark and own history",
+  "seat compression from AI agents is a hypothesis (no customer-level evidence)",
+  "base and bull growth_anchor include acquired growth (Armis, Moveworks) of undisclosed size; organic cRPO not disclosed"
+ ]
+}

@@ -1,0 +1,352 @@
+{
+ "thesis_he": {
+  "bear": "ענן ה-AI מאט: OpenAI (כ-11% מההכנסות) מקצצת, Azure יורד לצמיחה של 15%-20%, הצמיחה ב-FY2028 יורדת לכ-8% והפחת על השרתים מוריד את שולי הרווח התפעולי לכ-38%.",
+  "base": "הצבר החוזי (677 מיליארד דולר) הופך להכנסות: צמיחה של כ-17% ב-FY2028, שולי רווח תפעולי של כ-44% אחרי עליית הפחת, והשקעות כבדות שמחזירות פחות מבעבר.",
+  "bull": "מגבלת הקיבולת משתחררת במחצית השנייה של FY2027, Azure נשאר מעל 40% צמיחה, הצמיחה ב-FY2028 כ-23% ושולי הרווח נשארים קרוב ל-48%."
+ },
+ "drivers": {
+  "growth_anchor": {
+   "period": "FY2028",
+   "bear": 0.08,
+   "base": 0.17,
+   "bull": 0.23,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "pf_revenue_q_2026_09_30",
+    "pf_revenue_q_2025_09_30",
+    "pf_revenue_q_2025_12_31",
+    "dc_g_rev_q2fy27",
+    "dc_kpi_azure_growth",
+    "dc_g_azure_q2fy27",
+    "dc_rpo_commercial_q1fy27",
+    "dc_rpo_commercial_growth_q1fy27",
+    "dc_rpo_12m_share_q1fy27",
+    "dc_openai_rev_q1fy27",
+    "dc_kpi_windows_oem_growth",
+    "rf_rpo_growth_total_q4fy26",
+    "rf_rpo_growth_ex_openai_q4fy26"
+   ],
+   "reason": "Own run rate: Q1 FY2027 revenue +18.8% y/y and the Q2 guide midpoint +18.8% (96.55B vs 81.27B). Azure (about 36% of revenue) grows 48% and is guided 49-50%; the rest grows mid-single digits (Windows OEM -22%). Base 17%: Azure decelerates on a larger base toward the mid-30s while ~30% of the 677B commercial RPO (about 203B) is recognized within 12 months, so contracted demand covers more than half of next year's revenue. Bull 23%: the GPU capacity that slipped into H2 FY2027 arrives and RPO (+73%) converts with Azure above 40%. Bear 8%: OpenAI (10.8% of revenue, partly funded by MSFT, and most of the backlog growth: commercial RPO +84% in FY2026 but +25% excluding OpenAI) flattens its spend and Azure falls to 15-20% growth while the consumer/PC lines keep shrinking. Consensus (dated 2026-11-01) is not citable until 2026-11-03 and is not used."
+  },
+  "mature_margin": {
+   "bear": 0.38,
+   "base": 0.44,
+   "bull": 0.48,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "pf_cf_20210729",
+    "pf_cf_20230727",
+    "pf_cf_20260729",
+    "pf_operating_income_q_2026_09_30",
+    "pf_revenue_q_2026_09_30",
+    "pf_d_and_a_fy2026",
+    "pf_d_and_a_fy2025",
+    "dc_g_cogs_q2fy27",
+    "dc_g_opex_q2fy27",
+    "dc_g_rev_q2fy27"
+   ],
+   "reason": "Operating margin was 41.6%-46.8% in FY2021-FY2026 (median 44.6%), 49.8% in Q1 FY2027 (flag peak_margin_run_rate) and about 46.8% implied by the Q2 guide. Base 44%: the history median, because depreciation of mostly short-lived AI servers (D&A 34.3B in FY2026 vs 22.0B in FY2025, capex doubling) keeps eating the gross margin (-125 bp y/y). Bull 48%: Q1-level operating leverage (opex +6% vs revenue +19%) persists. Bear 38%: AI pricing falls while the depreciation and 364.6B of not-yet-commenced leases are fixed, taking the margin below the FY2021 low."
+  },
+  "sales_to_capital": {
+   "bear": 0.42,
+   "base": 0.55,
+   "bull": 0.75,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "pf_revenue_fy2023",
+    "pf_revenue_fy2024",
+    "pf_revenue_fy2025",
+    "pf_revenue_fy2026",
+    "pf_capex_fy2024",
+    "pf_capex_fy2025",
+    "pf_capex_fy2026",
+    "pf_d_and_a_fy2024",
+    "pf_d_and_a_fy2025",
+    "pf_d_and_a_fy2026",
+    "rf_fin_lease_rou_fy2024",
+    "rf_fin_lease_rou_fy2025",
+    "rf_fin_lease_rou_fy2026",
+    "rf_fin_lease_rou_q1fy27",
+    "dc_capex_cash_q1fy27",
+    "rf_g_capex_cy26"
+   ],
+   "reason": "Lease-inclusive basis, consistent with the finance-lease liabilities deducted as debt: incremental revenue / (cash capex + finance-lease ROU additions from the 10-K/10-Q lease note - D&A). FY2024-FY2026: 119.9B / 210.2B = 0.57; FY2026 0.47 (50.1B / 106.3B), FY2025 0.58, FY2024 0.81. Base 0.55: near the three-year figure, slightly below it because capex keeps rising (Q1 FY2027 cash PP&E 39.4B plus 5.2B finance leases; CY2026 capex guided ~175B). Bear 0.42: below the FY2026 low of 0.47 (capex above 50B a quarter while growth slows). Bull 0.75: capex flattens as the fleet fills and conversion moves back toward FY2024 (0.81). Future datacenter leases shift to operating leases (outside capex, inside operating costs), and the 364.6B of leases not yet commenced are outside this capital base: their cost is carried in the margin lever, not here."
+  },
+  "tax_rate": {
+   "all": 0.2,
+   "source_tier": "guidance",
+   "evidence_ids": [
+    "dc_g_tax_q2fy27",
+    "dc_g_tax_q1fy27"
+   ],
+   "reason": "Management guides an effective tax rate of about 20% for Q1 and Q2 FY2027; held in every scenario."
+  },
+  "sbc_pct": {
+   "all": 0.037,
+   "source_tier": "own_history",
+   "evidence_ids": [
+    "pf_sbc_fy2026",
+    "pf_revenue_fy2026",
+    "pf_sbc_fy2025",
+    "pf_sbc_fy2024"
+   ],
+   "reason": "SBC 12.4B = 3.7% of FY2026 revenue (4.25% FY2025, 4.4% FY2024, falling as revenue outgrows grants); charged as a real cost at the latest level."
+  },
+  "terminal_roic": {
+   "bear": 0.14,
+   "base": 0.22,
+   "bull": 0.31,
+   "source_tier": {
+    "bear": "analyst",
+    "base": "own_history",
+    "bull": "own_history"
+   },
+   "evidence_ids": [
+    "pf_revenue_fy2023",
+    "pf_revenue_fy2024",
+    "pf_revenue_fy2025",
+    "pf_revenue_fy2026",
+    "pf_capex_fy2024",
+    "pf_capex_fy2025",
+    "pf_capex_fy2026",
+    "pf_d_and_a_fy2024",
+    "pf_d_and_a_fy2025",
+    "pf_d_and_a_fy2026",
+    "rf_fin_lease_rou_fy2024",
+    "rf_fin_lease_rou_fy2025",
+    "rf_fin_lease_rou_fy2026",
+    "rf_fin_lease_rou_q1fy27",
+    "dc_capex_cash_q1fy27",
+    "rf_g_capex_cy26",
+    "pf_operating_income_fy2023",
+    "pf_operating_income_fy2024",
+    "pf_operating_income_fy2025",
+    "pf_operating_income_fy2026",
+    "pf_equity_fy2026",
+    "pf_long_term_debt_fy2026",
+    "pf_cash_fy2026"
+   ],
+   "reason": "One return on capital for the DCF and the company path (position/path.json roic bear 0.14 / base 0.22 / bull 0.31). Lease-inclusive after-tax (20%) incremental ROIC from MSFT's own figures: FY2024-FY2026 53.4B / 210.2B = 0.25, FY2026 0.20, FY2025 0.24. Base 0.22: inside that record, below the three-year figure because the newest year is the lowest. Bull 0.31: the company's overall return on invested capital, reached if the new AI capacity earns like the existing business. Bear 0.14: a stress hypothesis below anything in the record (lowest year 0.20), for AI overcapacity and price competition; not evidenced, hence analyst tier."
+  }
+ },
+ "forecast_options": {
+  "cyclical": {
+   "treatment": "structural",
+   "reason": "Revenue grew every year FY2021-FY2026 and operating margin stayed within 41.6%-46.8%; recurring cloud and subscription revenue backed by a 677B commercial RPO. The AI capacity build carries an overbuild risk (10-Q risk factor), handled in the bear, not an industry price cycle.",
+   "evidence_ids": [
+    "pf_cf_20210729",
+    "pf_cf_20260729",
+    "dc_rpo_commercial_q1fy27",
+    "pf_10q_20261028"
+   ]
+  },
+  "debt_like_claims": [
+   {
+    "kind": "finance_leases",
+    "amount": 70973000000,
+    "reason": "Total finance lease liabilities 70,973M at 2026-09-30 (other current liabilities 5,005M + other long-term liabilities 65,968M; 10-Q lease note). They are outside the 35.5B debt lines and their payments are amortisation and interest, not operating costs.",
+    "evidence_ids": [
+     "pf_10q_20261028"
+    ]
+   }
+  ]
+ },
+ "scenario_events": {
+  "bear": [
+   {
+    "event_he": "OpenAI, שמהווה כ-11% מההכנסות וממומנת בחלקה על ידי מיקרוסופט (12 מיליארד דולר כבר הועברו), מקצצת את ההוצאה על Azure או מתקשה לשלם (יתרת חוב של 7.2 מיליארד דולר).",
+    "evidence_ids": [
+     "dc_openai_rev_q1fy27",
+     "dc_openai_ar_q1fy27",
+     "dc_openai_funding_funded",
+     "pf_10q_20261028"
+    ]
+   },
+   {
+    "event_he": "צבר ההזמנות מתברר כתלוי ב-OpenAI: הצבר המסחרי צמח ב-84% בשנת 2026 אבל רק ב-25% בלי OpenAI, כך שקיצוץ של OpenAI פוגע בצמיחה העתידית הרבה יותר מחלקה של 11% בהכנסות של היום.",
+    "evidence_ids": [
+     "rf_rpo_growth_total_q4fy26",
+     "rf_rpo_growth_ex_openai_q4fy26",
+     "dc_rpo_commercial_q1fy27",
+     "dc_openai_rev_q1fy27"
+    ]
+   },
+   {
+    "event_he": "הביקוש ל-AI מתברר כנמוך מהקיבולת שנבנתה: 364.6 מיליארד דולר של חכירות מרכזי נתונים שעוד לא התחילו ו-169 מיליארד התחייבויות רכש לשנה הקרובה הופכים לעלות קבועה, והשוליים יורדים.",
+    "evidence_ids": [
+     "dc_leases_not_commenced_q1fy27",
+     "dc_purchase_commitments_1y_fy26",
+     "pf_10q_20261028"
+    ]
+   },
+   {
+    "event_he": "שוק המחשבים ממשיך להיחלש: Windows OEM ומכשירים ירדו 22% ברבעון, ותחום המכשירים והצרכנים מתכווץ.",
+    "evidence_ids": [
+     "dc_kpi_windows_oem_growth",
+     "dc_seg_dc_q1fy27",
+     "dc_seg_dc_q1fy26"
+    ]
+   },
+   {
+    "event_he": "מחירי שירותי AI יורדים בגלל תחרות של AWS, Google Cloud ו-Oracle על אותם לקוחות. (בתרחיש הזה התשואה על ההון החדש היא כ-14%, מתחת לכל שנה ברקורד של החברה, ומכפיל הרווח יורד מתחת לשפל של 5 השנים: זו הנחת לחץ, לא נתון.)",
+    "hypothesis": true
+   }
+  ],
+  "base": [
+   {
+    "event_he": "ברבעון השני של FY2027 ההכנסות בטווח ההנחיה, 96.0-97.1 מיליארד דולר, ו-Azure צומח 49%-50%.",
+    "evidence_ids": [
+     "dc_g_rev_q2fy27",
+     "dc_g_azure_q2fy27",
+     "dc_g_rev_q1fy27",
+     "pf_revenue_q_2026_09_30"
+    ]
+   },
+   {
+    "event_he": "כ-30% מהצבר החוזי של 677 מיליארד דולר (כ-203 מיליארד) הופכים להכנסה בתוך 12 חודשים.",
+    "evidence_ids": [
+     "dc_rpo_commercial_q1fy27",
+     "dc_rpo_12m_share_q1fy27",
+     "dc_rpo_duration_q1fy27"
+    ]
+   },
+   {
+    "event_he": "ההשקעות נשארות מעל 50 מיליארד דולר לרבעון, והפחת העולה מוריד את שולי הרווח הגולמי בהדרגה.",
+    "evidence_ids": [
+     "dc_g_capex_q2fy27",
+     "dc_capex_incl_leases_q1fy27",
+     "pf_d_and_a_fy2026"
+    ]
+   }
+  ],
+  "bull": [
+   {
+    "event_he": "יכולת המחשוב של צד שלישי (GPU) שנדחתה למחצית השנייה של FY2027 מגיעה, והביקוש שעולה על ההיצע הופך להכנסות.",
+    "evidence_ids": [
+     "dc_call_fy27q1",
+     "pf_10q_20261028"
+    ]
+   },
+   {
+    "event_he": "הצבר החוזי המסחרי, שגדל 73% בשנה, ממשיך לגדול ו-Azure נשאר מעל 40% צמיחה גם ב-FY2028.",
+    "evidence_ids": [
+     "dc_rpo_commercial_growth_q1fy27",
+     "dc_kpi_azure_growth",
+     "dc_g_azure_q2fy27"
+    ]
+   },
+   {
+    "event_he": "Copilot וסוכני AI מתרחבים בבסיס לקוחות Microsoft 365 (מספר הלקוחות עם יותר מ-50 אלף רישיונות גדל פי 8), ומוסיפים הכנסה בשוליים גבוהים.",
+    "evidence_ids": [
+     "dc_kpi_copilot_large_seat_customers",
+     "dc_kpi_m365c_growth"
+    ]
+   }
+  ]
+ },
+ "key_risk": {
+  "reading_he": "מיקרוסופט משקיעה כ-45-50 מיליארד דולר ברבעון ומתחייבת ל-364.6 מיליארד דולר חכירות מרכזי נתונים נוספות, בעוד לקוח אחד, OpenAI, הוא כ-11% מההכנסות, מקבל ממנה מימון, ואחראי לרוב הגידול בצבר ההזמנות: הצבר המסחרי צמח ב-84% בשנה, אבל רק ב-25% בלי OpenAI. אם הביקוש של OpenAI או של שוק ה-AI נחלש, ההכנסות מאטות אבל עלויות הפחת והחכירות נשארות, והתזרים החופשי (כבר ירד ל-20% מההכנסות) נשחק.",
+  "evidence_ids": [
+   "dc_capex_incl_leases_q1fy27",
+   "dc_g_capex_q2fy27",
+   "dc_leases_not_commenced_q1fy27",
+   "dc_openai_rev_q1fy27",
+   "dc_openai_funding_funded",
+   "pf_cfo_q_2026_09_30",
+   "pf_capex_q_2026_09_30",
+   "rf_rpo_growth_total_q4fy26",
+   "rf_rpo_growth_ex_openai_q4fy26",
+   "rf_fin_lease_rou_q1fy27"
+  ]
+ },
+ "falsifiers": [
+  {
+   "id": "fx_base_q2rev",
+   "scenario": "base",
+   "metric": "revenue Q2 FY2027 (USD)",
+   "threshold": 96000000000,
+   "direction": "below",
+   "by": "2027-02-15",
+   "evidence_ids": [
+    "dc_g_rev_q2fy27"
+   ]
+  },
+  {
+   "id": "fx_base_azure",
+   "scenario": "base",
+   "metric": "Azure revenue growth y/y Q2 FY2027",
+   "threshold": 0.4,
+   "direction": "below",
+   "by": "2027-02-15",
+   "evidence_ids": [
+    "dc_g_azure_q2fy27",
+    "dc_kpi_azure_growth"
+   ]
+  },
+  {
+   "id": "fx_bull_rpo",
+   "scenario": "bull",
+   "metric": "commercial remaining performance obligation Q3 FY2027 (USD)",
+   "threshold": 750000000000,
+   "direction": "below",
+   "by": "2027-05-15",
+   "evidence_ids": [
+    "dc_rpo_commercial_q1fy27"
+   ]
+  },
+  {
+   "id": "fx_bear_margin",
+   "scenario": "bear",
+   "metric": "operating margin FY2028",
+   "threshold": 0.44,
+   "direction": "above",
+   "by": "2028-08-15",
+   "evidence_ids": [
+    "pf_operating_income_fy2026",
+    "pf_revenue_fy2026",
+    "rf_g_opmargin_chg_fy27"
+   ]
+  },
+  {
+   "id": "fx_bear_openai",
+   "scenario": "bear",
+   "metric": "commercial RPO growth y/y excluding OpenAI (FY2027 Q4 call)",
+   "threshold": 0.25,
+   "direction": "above",
+   "by": "2027-08-15",
+   "evidence_ids": [
+    "rf_rpo_growth_ex_openai_q4fy26",
+    "rf_rpo_growth_total_q4fy26"
+   ]
+  },
+  {
+   "id": "fx_bear_azure",
+   "scenario": "bear",
+   "metric": "Azure revenue growth y/y Q4 FY2027",
+   "threshold": 0.35,
+   "direction": "above",
+   "by": "2027-08-15",
+   "evidence_ids": [
+    "dc_kpi_azure_growth",
+    "dc_g_azure_q2fy27"
+   ]
+  }
+ ],
+ "reasons_he": {
+  "bear": "המחיר הדובי מניח שהשקעת הענק ב-AI נתקלת בביקוש חלש מהצפוי: OpenAI מקצצת, Azure מאט חזק, הפחת והחכירות נשארים, והשוליים והתשואה על ההון יורדים.",
+  "base": "המחיר הבסיסי הוא המסלול הסביר לפי הנתונים של החברה: הצבר החוזי מבטיח חלק גדול מההכנסות של השנה הבאה, הצמיחה מאטה בהדרגה מ-19% ל-17%, והשוליים חוזרים לממוצע ההיסטורי בגלל הפחת.",
+  "bull": "המחיר השורי מחייב שהקיבולת החדשה תגיע במחצית השנייה של FY2027, ש-Azure ימשיך לצמוח מעל 40%, שהצבר ימשיך לגדול ושההשקעות יתחילו להתייצב."
+ },
+ "engine_options": {
+  "country_risk": true,
+  "reason": "The 10-K discloses revenue by region (United States 170.8B, other countries 161.0B in FY2026), though only as US vs other countries."
+ },
+ "gaps": [
+  "drivers.current_year_revenue not set: Microsoft gives no fiscal-year revenue guidance; the engine takes Q1 FY2027 reported + the Q2 guide (dc_g_rev_q2fy27) + its quarter-step rule",
+  "growth_half_life, terminal_growth, terminal_roic, cost_of_equity left on the engine rule: no company evidence beyond the 2.3-year RPO duration",
+  "consensus (nm_cons_*) dated 2026-11-01 not citable until 2026-11-03: not used as a tier or cross-check; a rerun after that date can add it",
+  "guidance track record: one observation only (Q1 FY2027 beat the midpoint by ~2%); adjust_by_track_record not applicable without a fiscal-year guidance item",
+  "OpenAI share of commercial RPO not disclosed: the bear's OpenAI cut is sized by its 10.8% revenue share only",
+  "Q1 FY2027 call read through a secondary summary (dc_call_fy27q1); calendar-year capex of about 170B has an unverified period and is not used"
+ ]
+}

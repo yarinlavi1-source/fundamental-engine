@@ -1,0 +1,228 @@
+{
+ "lane": "field",
+ "sources": [
+  {"id": "fd_peer_GM", "kind": "structured_data", "title": "SEC XBRL companyfacts of General Motors Co (GM), a named competitor: filings through the 10-Q filed 2026-10-20 (quarter ended 2026-09-30)", "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001467858.json", "date": "2026-10-20", "independent": false, "publisher": "U.S. SEC (XBRL from GM's own filings)", "retrieval": "provider_normalized", "syndicated_from": null},
+  {"id": "fd_peer_F", "kind": "structured_data", "title": "SEC XBRL companyfacts of Ford Motor Co (F), a named competitor: filings through the 10-Q filed 2026-04-30 (quarter ended 2026-03-31; Ford's later 10-Q is not in the payload)", "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0000037996.json", "date": "2026-04-30", "independent": false, "publisher": "U.S. SEC (XBRL from Ford's own filings)", "retrieval": "provider_normalized", "syndicated_from": null},
+  {"id": "fd_peer_RIVN", "kind": "structured_data", "title": "SEC XBRL companyfacts of Rivian Automotive, Inc. (RIVN), a named competitor: filings through the 10-Q filed 2026-07-30 (quarter ended 2026-06-30)", "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001874178.json", "date": "2026-07-30", "independent": false, "publisher": "U.S. SEC (XBRL from Rivian's own filings)", "retrieval": "provider_normalized", "syndicated_from": null},
+  {"id": "fd_peer_FLNC", "kind": "structured_data", "title": "SEC XBRL companyfacts of Fluence Energy, Inc. (FLNC), a named competitor: filings through the 10-Q filed 2026-08-05 (quarter ended 2026-06-30)", "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001868941.json", "date": "2026-08-05", "independent": false, "publisher": "U.S. SEC (XBRL from Fluence's own filings)", "retrieval": "provider_normalized", "syndicated_from": null},
+  {"id": "fd_peer_GOOGL", "kind": "structured_data", "title": "SEC XBRL companyfacts of Alphabet Inc. (GOOGL, owner of Waymo), a named competitor: filings through the 10-Q filed 2026-07-23 (quarter ended 2026-06-30)", "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001652044.json", "date": "2026-07-23", "independent": false, "publisher": "U.S. SEC (XBRL from Alphabet's own filings)", "retrieval": "provider_normalized", "syndicated_from": null},
+  {"id": "fd_flnc_rel_20260805", "kind": "release", "title": "Fluence Energy, Inc. Reports Third Fiscal Quarter 2026 Results (8-K Exhibit 99.1, quarter ended 2026-06-30)", "url": "https://www.sec.gov/Archives/edgar/data/0001868941/000186894126000028/flncq3fy26earningspressrel.htm", "date": "2026-08-05", "independent": true, "publisher": "Fluence Energy, Inc.", "retrieval": "primary_document", "syndicated_from": null},
+  {"id": "fd_fmp_quotes_20261027", "kind": "price", "title": "FMP stock quote for GM, F and RIVN on 2026-10-27 (FMP quote denied for FLNC and BYDDY on this plan)", "url": "connector:mcp__FMP__quote", "date": "2026-10-27", "independent": true, "publisher": "Financial Modeling Prep", "retrieval": "market_feed", "syndicated_from": null},
+  {"id": "fd_byd_sales_202609", "kind": "press", "title": "just-auto, 2026-10-08: BYD's global sales rise 17% in September (September, year-to-date and overseas unit sales; passenger vehicles and pickups overseas)", "url": "https://www.just-auto.com/news/byds-global-sales-rise-17-in-september/", "date": "2026-10-08", "independent": false, "publisher": "just-auto.com", "retrieval": "search_excerpt", "syndicated_from": null},
+  {"id": "fd_byd_h1_2026", "kind": "press", "title": "CarNewsChina, 2026-08-29: BYD sees export surge yet H1 2026 sales hit by second-gen Blade battery shortages (H1 2026 revenue, net profit, overseas revenue)", "url": "https://carnewschina.com/2026/08/29/byd-sees-export-surge-yet-h1-2026-sales-hit-by-second-gen-blade-battery-shortages/", "date": "2026-08-29", "independent": false, "publisher": "CarNewsChina", "retrieval": "search_excerpt", "syndicated_from": null},
+  {"id": "fd_bmi_ev_sep2026", "kind": "press", "title": "The EV Report, 2026-10-19: Global EV sales September 2026 (data provider Benchmark Mineral Intelligence; totals include plug-in hybrids)", "url": "https://theevreport.com/global-ev-sales-september-2026", "date": "2026-10-19", "independent": false, "publisher": "The EV Report (data: Benchmark Mineral Intelligence)", "retrieval": "search_excerpt", "syndicated_from": null},
+  {"id": "fd_wm_storage_q2", "kind": "press", "title": "ESS News, 2026-10-01: US energy storage deployments hit record 18.9 GWh in Q2 2026 (Wood Mackenzie / American Clean Power US Energy Storage Monitor)", "url": "https://www.ess-news.com/2026/10/01/us-energy-storage-deployments-hit-record-18-9-gwh-in-q2/", "date": "2026-10-01", "independent": false, "publisher": "ESS News", "retrieval": "search_excerpt", "syndicated_from": null},
+  {"id": "fd_electrek_waymo_20260708", "kind": "press", "title": "Electrek, 2026-07-08: Waymo goes driverless in Las Vegas (Waymo: about 500,000 paid rides a week 'earlier this year', roughly 3,500 robotaxis, over 20 million trips, 11 driverless cities)", "url": "https://electrek.co/2026/07/08/waymo-driverless-las-vegas-four-new-cities/", "date": "2026-07-08", "independent": true, "publisher": "Electrek", "retrieval": "search_excerpt", "syndicated_from": null},
+  {"id": "fd_rivn_q3_deliveries", "kind": "press", "title": "EVWire, 2026-10-02: Rivian Q3 2026 deliveries 19,248, production 19,751, 2026 delivery guidance 65,000 to 70,000", "url": "https://evwire.com/p/rivian-q3-2026-deliveries-results", "date": "2026-10-02", "independent": false, "publisher": "EVWire", "retrieval": "search_excerpt", "syndicated_from": null},
+  {"id": "fd_ford_q2_2026", "kind": "company_ir", "title": "Ford Motor Company Q2 2026 Corporate Earnings Presentation (Model e segment: EBIT loss about $919 million on about $1 billion revenue; F-150 Lightning discontinued; 2026 Model e loss about $4.5 billion): figures seen through a search summary, not read in the PDF", "url": "https://s205.q4cdn.com/882619693/files/doc_financials/2026/q2/Ford-Motor-Company-Q2-2026-Corporate-Earnings-Presentation.pdf", "date": "2026-07-28", "independent": true, "publisher": "Ford Motor Company", "retrieval": "search_excerpt", "syndicated_from": null},
+  {"id": "fd_electrive_ford_q1", "kind": "press", "title": "electrive, 2026-04-30: Ford's EV losses narrow to $777M in Q1 2026 amid Model e profitability efforts", "url": "https://www.electrive.com/2026/04/30/fords-ev-losses-narrow-to-777m-in-q1-2026-amid-model-e-profitability-efforts/", "date": "2026-04-30", "independent": false, "publisher": "electrive.com", "retrieval": "search_excerpt", "syndicated_from": null}
+ ],
+ "competitors": [
+  {
+   "ticker": "BYD",
+   "name": "BYD Company Limited (Hong Kong 1211; US OTC BYDDY)",
+   "why": "Largest battery-electric and plug-in maker by units and the main rival to Model 3 / Model Y in China, Europe and emerging markets, where it is adding overseas volume fast (Item 1: Model 3 and Model Y compete with small to medium-sized sedans and compact SUVs, and many manufacturers sell electric vehicles in the U.S., China and Europe). Also sells stationary storage. The 10-K does not name it: lane selection. No SEC filings: numbers are from the press relaying BYD's own releases.",
+   "metrics": {
+    "sales_units_2026_9m_total": 3131576,
+    "sales_units_2026_9m_total_yoy": -0.04,
+    "sales_units_2026_9m_domestic": 1788616,
+    "sales_units_2026_9m_domestic_yoy": -0.33,
+    "sales_units_2026_9m_overseas_passenger_and_pickup": 1342960,
+    "sales_units_2026_9m_overseas_yoy": 0.92,
+    "overseas_share_of_2026_9m_units": 0.43,
+    "sales_units_2026_09_total": 463561,
+    "sales_units_2026_09_total_yoy": 0.17,
+    "sales_units_2026_09_overseas": 180700,
+    "sales_units_2026_09_overseas_yoy": 1.54,
+    "revenue_h1_2026_cny_bn": 344.8,
+    "revenue_h1_2026_yoy": -0.0713,
+    "net_profit_attributable_h1_2026_cny_bn": 12.3,
+    "net_profit_attributable_h1_2026_yoy": -0.2054,
+    "overseas_revenue_h1_2026_cny_bn": 181.3,
+    "overseas_revenue_h1_2026_yoy": 0.34,
+    "overseas_share_of_h1_2026_revenue": 0.526,
+    "note": "units include plug-in hybrids and exclude 53,032 commercial vehicles in the 9M total as the source states; overseas revenue includes electronics, battery and storage, not only vehicles; gross and operating margin and forward P/E not retrieved (gap)"
+   },
+   "source_ids": ["fd_byd_sales_202609", "fd_byd_h1_2026"]
+  },
+  {
+   "ticker": "GM",
+   "name": "General Motors Company",
+   "why": "Largest US legacy maker with an EV line-up (Chevrolet, Cadillac, GMC) selling to the same US customers as Model 3 / Model Y and, in pickups, against Cybertruck; Item 1: Cybertruck competes with other pickup trucks and 'many major automobile manufacturers have electric vehicles available today'. The 10-K does not name it: lane selection.",
+   "metrics": {
+    "revenue_q3_2026_usd_bn": 50.015,
+    "revenue_q3_2026_yoy": 0.0293,
+    "revenue_9m_2026_usd_bn": 141.665,
+    "revenue_9m_2026_yoy": 0.0138,
+    "operating_income_q3_2026_usd_bn": 3.598,
+    "operating_margin_q3_2026": 0.0719,
+    "operating_income_q3_2025_usd_bn": 1.076,
+    "revenue_fy2025_usd_bn": 185.019,
+    "revenue_fy2025_yoy": -0.0127,
+    "operating_income_fy2025_usd_bn": 2.909,
+    "operating_margin_fy2025": 0.0157,
+    "net_income_last_4_quarters_usd_bn": 3.957,
+    "market_cap_2026_10_27_usd_bn": 68.75,
+    "price_2026_10_27_usd": 80.975,
+    "trailing_gaap_pe_market_cap_over_last_4_quarters_net_income": 17.4,
+    "note": "GAAP operating income, no gross margin line in the XBRL read; the Q4 2025 quarter carried a GAAP operating loss of 3.646 usd bn; the competing EV volumes and EV segment margin were not verified (gap); not a forward P/E"
+   },
+   "source_ids": ["fd_peer_GM", "fd_fmp_quotes_20261027"]
+  },
+  {
+   "ticker": "F",
+   "name": "Ford Motor Company",
+   "why": "US pickup and EV competitor: F-150 and Mustang Mach-E sell against Cybertruck and Model Y (Item 1: Cybertruck competes with other pickup trucks). Its Q2 2026 materials say the F-150 Lightning has been discontinued and Mach-E production cut to demand, so Ford now competes mainly with Mach-E and its combustion and hybrid pickups. The 10-K does not name it: lane selection.",
+   "metrics": {
+    "revenue_fy2025_usd_bn": 187.267,
+    "revenue_fy2025_yoy": 0.0123,
+    "operating_income_fy2025_usd_bn": -9.169,
+    "operating_margin_fy2025": -0.049,
+    "revenue_q1_2026_usd_bn": 43.253,
+    "revenue_q1_2026_yoy": 0.0638,
+    "operating_income_q1_2026_usd_bn": 2.329,
+    "operating_margin_q1_2026": 0.0538,
+    "model_e_ebit_q1_2026_usd_mn": -777,
+    "model_e_ebit_q2_2026_usd_mn": -919,
+    "model_e_revenue_q2_2026_usd_bn_approx": 1.0,
+    "model_e_ebit_2026_guided_usd_bn_approx": -4.5,
+    "market_cap_2026_10_27_usd_bn": 46.69,
+    "price_2026_10_27_usd": 11.71,
+    "note": "Ford's Q2 and Q3 2026 10-Qs are not in the companyfacts payload read, so company-level numbers stop at Q1 2026; the Model e Q2 2026 figures come from a search summary of Ford's presentation (not read in the PDF); no forward P/E (gap)"
+   },
+   "source_ids": ["fd_peer_F", "fd_ford_q2_2026", "fd_electrive_ford_q1", "fd_fmp_quotes_20261027"]
+  },
+  {
+   "ticker": "RIVN",
+   "name": "Rivian Automotive, Inc.",
+   "why": "US pure-play electric vehicle maker: R1T pickup against Cybertruck, R1S against Model X / Model Y, R2 (deliveries since June 2026, 'sub-$50K' class per press) toward Model Y, plus its own software and autonomy road-map. Same start-up growth-stage questions (unit economics, funding) as Tesla's earlier years. The 10-K does not name it: lane selection.",
+   "metrics": {
+    "revenue_fy2025_usd_bn": 5.387,
+    "revenue_fy2025_yoy": 0.0839,
+    "gross_profit_fy2025_usd_bn": 0.144,
+    "gross_margin_fy2025": 0.0267,
+    "operating_income_fy2025_usd_bn": -3.585,
+    "operating_margin_fy2025": -0.6655,
+    "revenue_q2_2026_usd_bn": 1.658,
+    "revenue_q2_2026_yoy": 0.2724,
+    "gross_margin_q2_2026": 0.108,
+    "operating_margin_q2_2026": -0.5042,
+    "deliveries_q3_2026_units": 19248,
+    "deliveries_q3_2025_units": 13201,
+    "deliveries_q3_2026_yoy": 0.4581,
+    "deliveries_q2_2026_units": 12194,
+    "production_q3_2026_units": 19751,
+    "deliveries_2026_guided_units_low": 65000,
+    "deliveries_2026_guided_units_high": 70000,
+    "market_cap_2026_10_27_usd_bn": 16.87,
+    "price_2026_10_27_usd": 11.68,
+    "price_to_sales_last_4_reported_quarters": 2.9,
+    "note": "Q3 2026 financial results are due 2026-10-29, after the as_of date; price-to-sales uses revenue of the four quarters through Q2 2026; no forward P/E (gap)"
+   },
+   "source_ids": ["fd_peer_RIVN", "fd_rivn_q3_deliveries", "fd_fmp_quotes_20261027"]
+  },
+  {
+   "ticker": "FLNC",
+   "name": "Fluence Energy, Inc.",
+   "why": "Grid-scale battery storage integrator bidding for the same utility, developer and data-center projects as Megapack (Item 1: 'both established and emerging companies have introduced products and services that are similar to our product portfolio'; competition on price, energy density, efficiency, optimization and performance). The 10-K does not name it: lane selection.",
+   "metrics": {
+    "revenue_fy2025_sep_usd_bn": 2.2628,
+    "revenue_fy2025_sep_yoy": -0.1615,
+    "gross_margin_fy2025_sep": 0.1307,
+    "operating_margin_fy2025_sep": -0.0197,
+    "revenue_q3_fy2026_jun_usd_bn": 0.6498,
+    "revenue_q3_fy2026_yoy": 0.0785,
+    "gross_margin_q3_fy2026_gaap": 0.051,
+    "operating_margin_q3_fy2026": -0.0669,
+    "backlog_2026_06_30_usd_bn": 6.4,
+    "backlog_yoy_more_than": 0.30,
+    "order_intake_q3_fy2026_usd_bn_more_than": 1.44,
+    "data_center_awards_through_july_2026_usd_mn": 850,
+    "fy2026_revenue_guided_usd_bn_low": 2.9,
+    "fy2026_revenue_guided_usd_bn_high": 3.1,
+    "fy2026_adjusted_ebitda_guided_usd_mn_low": -30,
+    "fy2026_adjusted_ebitda_guided_usd_mn_high": 10,
+    "note": "guidance issued 2026-08-05 after a cut of about 0.4 usd bn at the revenue midpoint for production delays at new contract-manufacturing sites; market quote denied on this FMP plan, no forward P/E (gap); GWh deployed not reported in the release read"
+   },
+   "source_ids": ["fd_peer_FLNC", "fd_flnc_rel_20260805"]
+  },
+  {
+   "ticker": "GOOGL",
+   "name": "Alphabet Inc. (Waymo, Other Bets)",
+   "why": "Owner of Waymo, the operating paid driverless ride-hailing service that Tesla's Robotaxi (Austin, Cybercab) competes with and is measured against (Item 1: 'We expect our Robotaxi service to compete in this developing market, along with traditional ride-hailing and taxi services'). Alphabet is a whole-company proxy for its funding capacity; Waymo's own revenue is inside Other Bets and is not separated in the XBRL read. The 10-K does not name it: lane selection.",
+   "metrics": {
+    "waymo_paid_rides_per_week_approx": 500000,
+    "waymo_robotaxi_fleet_approx": 3500,
+    "waymo_cumulative_trips_more_than": 20000000,
+    "waymo_driverless_cities": 11,
+    "alphabet_revenue_fy2025_usd_bn": 402.836,
+    "alphabet_revenue_fy2025_yoy": 0.1509,
+    "alphabet_operating_margin_fy2025": 0.3203,
+    "alphabet_revenue_q2_2026_usd_bn": 119.796,
+    "alphabet_revenue_q2_2026_yoy": 0.2423,
+    "alphabet_operating_margin_q2_2026": 0.3403,
+    "alphabet_capex_q2_2026_usd_bn": 44.924,
+    "note": "Waymo figures are Waymo statements relayed by the press (the weekly rides figure is 'earlier this year', undated); Waymo revenue and operating loss are in Other Bets and not retrieved; Alphabet Q3 2026 10-Q not in the payload by the as_of date; no forward P/E (gap)"
+   },
+   "source_ids": ["fd_peer_GOOGL", "fd_electrek_waymo_20260708"]
+  }
+ ],
+ "bottlenecks": [
+  {
+   "id": "fd_bn_grid_storage",
+   "reading": "What TSLA supplies that is scarce: deployable firm power and grid-compliance capacity, from stock, for utilities and data centers, through Megapack. Tesla's own Q3 2026 update says storage demand is its 'highest-ever order rate and backlog' (no figure given), calls storage 'the fastest way to add power to the existing grid' and ties it to data-center uptime, while Q3 deployments were 13.7 GWh (+9.6% on Q3 2025's 12.5) and Q3 energy revenue fell 15.6% to 2,881 usd mn (tariff-related customer refunds named by management). The market is growing: US installations hit a record 18.9 GWh in Q2 2026 (Wood Mackenzie / American Clean Power); competitor Fluence reports a record 6.4 usd bn backlog (+30% on a year earlier), 1.44 usd bn of orders in its June quarter, and 850 usd mn of data-center awards through July. Who adds capacity: Tesla lists 110 GWh of installed Megapack capacity (California 40, Shanghai 20, Texas 50; Texas began production in Q3) against a Q3 deployment pace of about 55 GWh a year; Fluence is adding contract manufacturing but delays cut its fiscal 2026 revenue guide by 0.4 usd bn at the midpoint. So integration capacity is being added faster than deployments; the binding constraints are cells and delivery execution, and how long the shortage lasts is not in the sources (the data-center link is management's reading).",
+   "evidence_ids": ["pf_rel_20261021_1", "fd_wm_storage_q2", "fd_flnc_rel_20260805", "fd_peer_FLNC"]
+  },
+  {
+   "id": "fd_bn_cells_lfp",
+   "reading": "Battery cells (and the lithium behind them) are the scarce input for both vehicles and storage. Tesla's 10-K says it relies on suppliers such as Panasonic and CATL for cells and has so far fully qualified only a very limited number of suppliers; in response it is building its own supply: 4680 cells above 40 GWh in Texas (production), LFP cells 7 GWh in Nevada (early ramp), lithium refining 30 GWh of cathode-equivalent capacity in Texas (early ramp; the in-house lithium refinery began operating in January 2026) and the first Megapacks with U.S.-built LFP cells shipped in Q3 2026. Competitors show the same bottleneck: BYD's first-half 2026 sales were hit by second-generation Blade battery shortages (press), and Fluence booked about 15 usd mn of upfront cost for a long-term international battery supply agreement. The duration of the constraint and the in-house ramp rates are not quantified in the sources.",
+   "evidence_ids": ["pf_10k_20260129", "pf_rel_20261021_1", "fd_byd_h1_2026", "fd_flnc_rel_20260805"]
+  },
+  {
+   "id": "fd_bn_vehicle_demand",
+   "reading": "In vehicles TSLA does not supply a scarce thing today: demand and price are the constraint, not capacity. Q3 2026 deliveries were 486,532 against 497,099 a year earlier (-2%), with global days of supply at 11 and installed vehicle capacity far above deliveries; global plug-in and electric sales were 2.15 million in September 2026 (-2% on a year earlier) and 15.5 million year to date (+3%), with Europe +30%, North America -24% and China -13% year to date (Benchmark Mineral Intelligence via The EV Report). Management still describes demand as strong in several markets; the sources show a market that is flat in units and moving to Europe and exports, where BYD is adding volume.",
+   "evidence_ids": ["pf_rel_20261002_1", "pf_rel_20261021_1", "fd_bmi_ev_sep2026", "fd_byd_sales_202609"]
+  },
+  {
+   "id": "fd_bn_autonomy",
+   "reading": "The scarce thing in autonomy is licensed, safety-validated unsupervised driving at scale. Waymo, the benchmark, reports about 500,000 paid rides a week earlier in 2026, roughly 3,500 robotaxis, over 20 million trips and driverless service in 11 cities (press relay of Waymo statements). Tesla's own Q3 update reports nearly 2 million cumulative unsupervised Robotaxi miles by quarter-end, Austin hours 6 am to midnight, first Cybercab units added to the Austin fleet, and FSD (Supervised) approved in nine EU countries with over 100,000 customers there; the 10-K warns that EU and national rules 'may hinder or complicate' autonomous vehicles and a ride-hailing business. Paid adoption in Tesla's own numbers so far is FSD subscriptions lifting automotive ancillary sales and a record Services and Other gross profit of 734 usd mn (a wider line than FSD). Units differ (Tesla miles, Waymo trips), so the scale gap is directional, not a ratio.",
+   "evidence_ids": ["pf_rel_20261021_1", "pf_10k_20260129", "fd_electrek_waymo_20260708"]
+  },
+  {
+   "id": "fd_bn_optimus",
+   "reading": "Hypothesis only: humanoid robots (Optimus) as a scarce, high-value product. The Q3 2026 update says production of Optimus began on the Fremont high-volume lines ('early ramp') with a Texas plant under construction; the documents read give no paid customers, price or revenue, so there is no paid adoption to underwrite.",
+   "hypothesis": true
+  }
+ ],
+ "notes": [
+  "fd NAMED COMPETITORS (10-K Item 1): the 10-K filed 2026-01-29 (pf_10k_20260129) names NO competitor company. Item 1 'Competition' describes classes only: automotive (Cybertruck vs other pickup trucks, Model S/X vs premium sedans and SUVs, Model 3/Y vs small-to-medium sedans and compact SUVs; 'internal combustion vehicles from more established automobile manufacturers' and 'many established and new automobile manufacturers' entering EVs; the Robotaxi service vs 'traditional ride-hailing and taxi services' and 'competition in the fields of AI and robotics'), energy storage ('established and emerging companies' compete on price, energy density, efficiency, optimization, performance) and energy generation (local utilities and 'solar energy companies'). Named companies in Item 1 and 1A are suppliers or partners only (Panasonic and CATL for cells, Samsung for chips), not competitors. The competitor list in this fragment (BYD, GM, F, RIVN, FLNC, GOOGL/Waymo) is the lane's selection by 10-K segment class, each with its reason; it is an analyst choice, not a company statement. Not covered: Lucid, Xiaomi, Hyundai/Kia, Volkswagen, Toyota, Wartsila, Sungrow, CATL's storage unit, solar installers.",
+  "fd SEGMENT WEIGHT (pf_rel_20261021_1): Q3 2026 revenue 28,046 usd mn = automotive 20,560 (73%; of which sales 20,094, regulatory credits 113, leasing 353), energy generation and storage 2,881 (10%), services and other 4,605 (16%). Competitors were chosen against these: automotive (BYD, GM, F, RIVN), energy storage (FLNC), robotaxi inside services and other (Waymo).",
+  "fd SHARE EV UNITS (derived, labelled): Tesla delivered 1,324,681 vehicles in the first nine months of 2026 (358,023 + 480,126 + 486,532; pf_rel_20261021_1) which is 8.5% of the 15.5 million global plug-in and electric sales Benchmark reports for the same period (fd_bmi_ev_sep2026; includes plug-in hybrids, Tesla is battery-electric only, so the ratio understates Tesla's share of battery-electric). Prior-year year-to-date Tesla deliveries are not in the sources read, so the share TREND is a hypothesis: Q3 deliveries fell 2% on a year earlier while the market rose 3% year to date, which points to flat-to-lower share.",
+  "fd SHARE BYD: BYD's nine-month 2026 overseas sales of passenger vehicles and pickups, 1,342,960 units (+92%), now equal Tesla's whole nine-month global deliveries of 1,324,681 (BYD +1.4%); BYD's domestic units fell 33% and total units fell 4% to 3,131,576, so BYD is gaining abroad where Tesla also sells, and losing at home (fd_byd_sales_202609, pf_rel_20261021_1). BYD includes plug-in hybrids, Tesla does not. BYD's first-half 2026 revenue fell 7.1% and net profit fell 20.5% (fd_byd_h1_2026): volume abroad is not yet lifting group profit.",
+  "fd SHARE RIVIAN: Rivian delivered 19,248 vehicles in Q3 2026, +46% on a year earlier and +58% on Q2, a company record on the R2 ramp, which is 4.0% of Tesla's 486,532 deliveries that quarter (-2%); Rivian guides 65,000 to 70,000 for 2026 (fd_rivn_q3_deliveries, pf_rel_20261002_1). It gains share from a very small base; its Q2 2026 operating margin was -50% (fd_peer_RIVN).",
+  "fd SHARE LEGACY US (GM, Ford): GM's Q3 2026 revenue grew 2.9% to 50.0 usd bn with a 7.2% GAAP operating margin, i.e. its profit is in combustion and trucks (fd_peer_GM). Ford's Model e lost 777 usd mn in Q1 2026 and about 919 usd mn in Q2 2026 on roughly 1 usd bn of quarterly revenue, with the F-150 Lightning discontinued and a guided 2026 Model e loss of about 4.5 usd bn (fd_electrive_ford_q1, fd_ford_q2_2026). Both are cutting rather than adding battery-electric volume in North America, where the market is down 24% year to date (fd_bmi_ev_sep2026). Reading (hypothesis, no Tesla North America units in the sources read here): Tesla's share of a shrinking North American electric market is more likely stable-to-up than down, while its pressure comes from BYD abroad.",
+  "fd SHARE STORAGE (derived, labelled): Tesla deployed 13.7 GWh in Q3 2026 (+9.6% on 12.5 in Q3 2025) while Tesla storage revenue fell 15.6%; Tesla's Q3 energy gross margin was 33.1% (2,881 revenue, 1,927 cost of revenue) against 31.4% a year earlier (pf_rel_20261021_1); Fluence's Q3 fiscal 2026 gross margin was 5.1% GAAP, revenue +7.9% on a year earlier, backlog +30% (fd_flnc_rel_20260805). Tesla's energy line also holds Powerwall and solar, so margins are not like for like. Tesla's 13.5 GWh in Q2 is a global figure and the 18.9 GWh Wood Mackenzie / American Clean Power total is US only (fd_wm_storage_q2), so NO share percentage is computed. Another outlet cites 20.2 GWh from SEIA / Benchmark for the same quarter (undated, not registered). Direction (hypothesis): Fluence's orders and backlog are growing at least as fast as Tesla's storage deployments, and Tesla's gross margin lead is large.",
+  "fd SHARE ROBOTAXI: Waymo is far ahead in scale (about 500,000 paid rides a week, 11 driverless cities, 3,500 vehicles; fd_electrek_waymo_20260708) against Tesla's nearly 2 million cumulative unsupervised miles and one city (Austin) at the end of Q3 2026 (pf_rel_20261021_1). Units differ; the gap is directional. Tesla is not taking robotaxi share yet on the numbers read; its case rests on cost per mile and Cybercab volume, which no source here quantifies (hypothesis).",
+  "fd CAPACITY (TSLA own, pf_rel_20261021_1): installed annual vehicle capacity listed above 2.5 million (California above 550,000, Shanghai above 950,000, Berlin above 375,000, Texas Model Y above 375,000, Cybertruck above 125,000, Cybercab above 125,000, Semi 25,000) against Q3 2026 production of 464,391 a quarter; Megapack 110 GWh against 13.7 GWh a quarter. Spare capacity, not scarcity, is the position in both lines.",
+  "fd VALUATION OF NAMED COMPETITORS (market feed 2026-10-27, fd_fmp_quotes_20261027, with filings): GM market cap 68.75 usd bn, last-four-quarters GAAP net income 3.957 usd bn, trailing GAAP P/E about 17.4 (depressed by EV charges, not forward); Rivian market cap 16.87 usd bn, price to sales about 2.9 on the four reported quarters through Q2 2026; Ford market cap 46.69 usd bn (earnings not computable, Q2 and Q3 2026 filings missing from the payload). Forward P/E and consensus growth for every competitor are a gap (FMP analyst is denied on this plan; Alpha Vantage is reserved for other lanes). No peer median is used as a driver.",
+  "fd SOURCE QUALITY: competitor company numbers come from each company's own SEC filings via XBRL (GM, Ford, Rivian, Fluence, Alphabet) or its release (Fluence); BYD, Waymo, Benchmark, Wood Mackenzie and Ford's Model e Q2 figures are press relays read through search summaries or page extracts, flagged retrieval search_excerpt and not independent where they relay a company or provider release. A GM EV unit-sales report and a GM Q3 'EBIT-adjusted' figure from single secondary outlets were NOT used because the page was blocked (403) or the date could not be established."
+ ],
+ "gaps": [
+  "The 10-K names no competitor: the list is the lane's selection by segment class (an analyst choice).",
+  "BYD: no primary document read (no SEC filing; HKEX interim report not fetched); numbers are press relays; gross and operating margin, BEV-only units and the competing segment's profit are missing; FMP quote BYDDY ACCESS DENIED on this plan.",
+  "Ford: Q2 and Q3 2026 10-Qs are not in the companyfacts payload, so company numbers stop at Q1 2026; Model e Q2 2026 figures are from a search summary of Ford's presentation, not read in the PDF; Ford reports no gross profit line in the XBRL read.",
+  "GM: battery-electric unit sales and EV-segment margin not verified (GM Authority page blocked, 403); GM Q3 'EBIT-adjusted' not verified at the primary document.",
+  "Rivian: Q3 2026 financial results are due 2026-10-29, after the as_of date; only Q2 2026 financials and Q3 deliveries are used.",
+  "Alphabet / Waymo: Other Bets revenue and operating loss are not separated in the data read; Waymo ride, fleet and city counts are undated press relays of Waymo statements ('earlier this year'); Alphabet's Q3 2026 10-Q is not in the payload.",
+  "Forward P/E and consensus growth for all six competitors: not retrieved (FMP analyst denied on this plan, FMP quote denied for FLNC and BYDDY, Alpha Vantage reserved for gather_numbers / gather_documents); only trailing GM P/E and Rivian price to sales are derived.",
+  "Storage: no company-level US or global market-share ranking found; Tesla's deployments are global and the Wood Mackenzie total is US only, so no share percentage is computed; Fluence GWh deployed not in the release read.",
+  "Auto share trend: prior-year year-to-date Tesla deliveries and Tesla North America units are not in the sources read by this lane (gather_macro has revenue by country); the Benchmark global total includes plug-in hybrids.",
+  "Not covered: Lucid, Xiaomi, Hyundai/Kia, Volkswagen, Toyota, Wartsila, Sungrow, solar installers (Tesla energy generation is small and not examined)."
+ ],
+ "stopped": [
+  "FMP quote for FLNC and BYDDY: ACCESS DENIED (plan limit), recorded once and not retried.",
+  "GM Authority page (GM EV unit sales): HTTP 403, not retried; figures from its search summary left out.",
+  "BYD primary documents (HKEX interim report, Q3 2026 results due late October): stopped, the budget was spent on the six competitors' own numbers and sector sizing.",
+  "Further storage-share and robotaxi searches: stopped after the Wood Mackenzie, Fluence and Waymo reads, as another search would not change the reading."
+ ]
+}

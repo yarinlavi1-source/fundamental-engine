@@ -1,0 +1,77 @@
+{
+ "lens": "counter",
+ "findings": [
+  {
+   "severity": "critical",
+   "finding": "Counter-thesis (pre-mortem, written from 2029-11): NU failed because the 2025-26 ROE of ~30% was a peak built on three things that all reversed together. (1) Credit: management deliberately moved into 'higher-risk, higher-return segments' (dc_rel_q2_2026), secured lending growth stalled (~+3% QoQ in Q2'26 vs +133% y/y in Q3'25), Stage 2 rose 10.1% -> 11.9% of gross and NPL 90+ hit 6.9% (7-quarter high) while Brazil household defaults hit a record 8.09% (mc_rt_default); IFRS 9 front-loading on a 44%-growing book hid the true loss rate until growth slowed, then cost of risk jumped and ROE fell to the 2023 level (~17%) or below. (2) Capital: CET1 fell 13.0% -> 11.9% in six months (RWA +14.7% vs CET1 +5.4%, dc_fs_q2_2026) while US$1bn was spent on buybacks; capital forced a slowdown in loan growth exactly when growth was the thesis. (3) Brazil macro/policy: Lula's re-election (2026-10-25) weakened BRL ~10% intraday, 91% of revenue is Brazilian, CSLL rises to 20% from 2028 and BCB limits unsolicited credit marketing from 2027; meanwhile the 14.2% Q2'26 tax rate (671m deferred-tax benefit) normalized, cutting reported EPS ~15%. Add management turnover (CFO replaced July 2026, CTO resigned effective 2026-11-12) and a new US cost centre with no revenue. Early signals: Q3'26 (2026-11-12) NPL 90+ >= 7.0% and NPL 15-90 not falling seasonally; Stage 2 share > 12%; CET1 < 11.5% or buyback paused; IFRS effective tax back >= 25%; ECL growth > portfolio growth for a second quarter; BRL/USD not recovering by the 2026-12-08 Investor Day; risk-adjusted NIM back below 10%.",
+   "where": "position/core.json scenario_events.bear; gather/deep_notes.md A4, A5, A9; companies/NU/out/casefile.json rk.register",
+   "fix": "Carry this as the counter-thesis in the delivery; the engine bear must express these mechanisms (see the findings below) rather than a generic lower-quartile ROE fade."
+  },
+  {
+   "severity": "critical",
+   "finding": "The base case contradicts its own story. Core/field/path base say the credit book keeps growing fast (+44% y/y, dc_k_portfolio) at a normalized ROE of 26-28%, but the residual-income engine assumes payout 73-77% every year (assumption 'payout': 'no distribution history: 50% assumed ... book growth bounded 3.0%-8.0%'), i.e. book equity growth capped at 8%. Actual parent equity grew 11.29bn -> 13.25bn in H1'26 alone (~+17% in six months) and Nu pays no dividend. Result: base EPS path FY2027 0.684, +6-7% a year thereafter (company_path.scenarios.base.economics.fiscal_years), BELOW the FY2026 run-rate (H1'26 diluted EPS 0.3936; FY2025 0.5846). A base in which EPS falls from 2026 to 2027 while the book grows 40% is not the most likely path; the base value 7.14 (-39% vs 11.65) rests on this cap. The same 75% payout is also incompatible with the CET1 constraint argued in the bear (a bank growing RWA ~30%/yr must retain, not distribute).",
+   "where": "companies/NU/out/casefile.json val.case.scenarios[base].periods[].payout_fraction and assumptions id=payout; company_path.scenarios.base.economics.fiscal_years; position/core.json thesis_he.base",
+   "fix": "Supply a company-driven bank spec: payout = actual buyback plan (US$1bn/12 months, ~1/3 of earnings) and book/RWA growth from the evidenced portfolio trajectory (fading from ~40% with CET1 held >= ~11.5%), so EPS growth in base follows the base story; or state explicitly that base assumes growth stops and change the base narrative. Rerun ticker-value."
+  },
+  {
+   "severity": "critical",
+   "finding": "Opening balance is stale and its own falsifier has already tripped: open_balance uses common book equity 11,290,948k at 2025-12-31, while the Q2'26 IFRS statements (dc_fs_q2_2026, cited elsewhere in the pack) show total equity 13,252m at 2026-06-30 (+17%, falsifier threshold 2%). shares_point 4,855.7m is the 2025-12-31 cover count (305 days old) and ignores 40.66m shares bought back in Q2'26. dataqa marks shares, debt, revenue_ttm and cash 'stale' or 'conflict' (cash_rollforward fails). Every scenario value starts from the wrong book.",
+   "where": "companies/NU/out/casefile.json val.case.opening (book_equity, shares), assumptions open_balance / shares_point; qa.fields.shares_outstanding, cash_and_liquid_investments",
+   "fix": "Set opening book equity and point-in-time shares from the 2026-06-30 6-K (dc_fs_q2_2026; shares net of the Q2 buyback, or the latest count in a 6-K) with retrieval primary_document, then rerun ticker-value."
+  },
+  {
+   "severity": "major",
+   "finding": "Cost of equity 11.18% (risk-free 4.98% + ERP 4.20% + add-ons) carries no Brazil country-risk premium for a bank with 91.1% of revenue in Brazil (dc_s_br_q226), BRL earnings translated to USD and an election-driven BRL drop of ~10% in one day (mc_aljaz_real). The table itself says 'country risk not computed'. The conclusion is very sensitive to it: at ROE ~29% and P/B ~4.3x (price 11.65 / book 13.25bn / ~4.82bn shares), the price implies ~5.8% perpetual growth at Ke 11.2% but ~9% at Ke 14%. Discount-rate band: base 6.22-8.39 for +/-1pt.",
+   "where": "companies/NU/out/casefile.json val.case.scenarios[].cost_of_equity and assumptions id=cost_of_equity; out/table_he.md (country risk line); casefile val.diagnostics.discount_rate_band",
+   "fix": "Add an evidenced Brazil country-risk premium (sovereign USD spread or CDS dated <= 2026-11-01, scaled by the 91% Brazil revenue share) or show the value at both rates; say next to the result that the sign of the gap depends on it."
+  },
+  {
+   "severity": "major",
+   "finding": "Three different stories per scenario. Bear: core 'ROE toward 20%', path roic 0.17, engine RI bear 18.1% fading to a terminal 10.18% BELOW the 11.18% cost of equity (perpetual value destruction), giving 2.42 against path bear 4.11 for the same scenario (company_path.flags capital_intensity_gap, severity high). Base: core 26-28% after tax normalization, path 0.26, engine RI base starts at 29.2% (trailing ROE that includes the 14.2%-tax Q2) fading to 19.6%. Bull: core '>30% for years', path 0.32, engine RI bull 29.2% fading to 24.3% - the engine bull is below the analyst's bull. The analyst's only driver (tax_rate 0.28/0.26/0.24) is recorded as not moving the engine ('this lever records the analyst's normalization ... does not move the engine's number'), so the tax normalization at the centre of the base story is not in the value.",
+   "where": "position/coherence.md (all three scenarios); position/core.json drivers.tax_rate.reason; companies/NU/out/casefile.json val.case.scenarios[].periods[].roe and terminal.roe; company_path.flags",
+   "fix": "Feed the analyst's ROE per scenario (after the tax normalization: base ~26-28%, bear ~17% with growth slowed, bull ~32%) into the residual-income case so the RI value and the path use one ROE story per scenario; justify a bear terminal ROE below Ke or lift it to ~Ke."
+  },
+  {
+   "severity": "major",
+   "finding": "The bear changes only ROE, not growth, funding or FX. Evidenced exposures are in the risk register as 'not_priced, not in the bear path': BRL/geopolitics (biz.geopolitics, 91% Brazil revenue), regulation (biz.regulation: CSLL to 20% from 2028, credit-marketing limits from 2027, Porto Real licence pending), CET1 11.9% capping growth or buybacks. None is sized: no BRL translation hit to USD book/EPS, no slower loan growth from capital, no cost-of-risk path (derived CoR 17.7% Q2'26, +1.3pp y/y). Bear book growth uses the same 3-8% cap as base, so 'growth stops' is not a bear mechanism here.",
+   "where": "companies/NU/out/casefile.json rk.register (biz.geopolitics, biz.regulation, in_bear_case false); val.case.scenarios[bear]",
+   "fix": "Size the bear from evidence: e.g. BRL -10% sustained on 91% of book/earnings, cost of risk +2-3pp on the portfolio (Stage 2 migration), loan growth constrained to CET1 >= 11%, CSLL 20% from 2028; mark these risks in_bear_case true."
+  },
+  {
+   "severity": "major",
+   "finding": "Year-5 path artifact: the fiscal-year split at 2031-11-01 creates a stub fiscal year (2031-11-01 to 2031-12-31) with EPS 0.058/0.151/0.160 (bear/base/bull), so next_fiscal_year_eps at year 5 collapses and the year-5 multiples read 68.6x / 67.9x / 78.6x (year 4: 13.3x/13.5x/15.6x on an already-partial 2031 EPS of 0.298/0.736/0.772). Any year-5 'potential' row or multiple label built on this is meaningless.",
+   "where": "companies/NU/out/casefile.json company_path.scenarios.<s>.multiple_path and economics.values[4..5], economics.fiscal_years (2031-11-01, 2031-12-31)",
+   "fix": "Use full fiscal-year EPS (FY2031, FY2032) for the year-4/5 multiples, or drop the 2031-11-01 report date from the fiscal-year list; repair pass to flag it to the engine owner; do not show year-5 multiples until fixed."
+  },
+  {
+   "severity": "major",
+   "finding": "Expectation gap and what-must-be-true were not executed: val.what_must_be_true is null with error \"'boundaries'\", reverse_price and stress require an operating model. So there is no statement of what the 11.65 price assumes. Rough check: at Ke 11.2% and ROE held at 29%, P/B ~4.3x implies ~5.8% perpetual book growth - i.e. the price does not require heroic growth if ROE holds; the debate is ROE durability and Ke, not growth. Red-team verdict 'unable_to_verify' (critical unverifiable: revenue_basis, reinvestment; sbc, terminal_share also unverified) - correct that no price conclusion is shown.",
+   "where": "companies/NU/out/casefile.json val.errors, val.what_must_be_true, rv.mechanical.redteam.result",
+   "fix": "For a bank, state what must be true in ROE/growth/Ke terms (implied ROE at base growth, implied growth at base ROE), and declare revenue_basis (managerial vs IFRS), reinvestment (retention vs RWA growth), SBC treatment and terminal share so the red-team can complete."
+  },
+  {
+   "severity": "major",
+   "finding": "SBC/dilution not underwritten: shares are held constant ('buybacks are treated like dividends') while SBC was 216.8m in H1'26 (~11% of net income) and the forensic screen flags no_new_shares=false. The red-team 'sbc' check is unable_to_verify. If the buyback (499.6m left, to June 2027) is not renewed, dilution resumes.",
+   "where": "companies/NU/out/casefile.json assumptions id=shares_point; prefetch/forensic.json piotroski.signals.no_new_shares; rv.mechanical.redteam.result.checks sbc",
+   "fix": "Model net share change (SBC issuance minus evidenced buyback) per year, or deduct SBC as an expense in the ROE path, and declare SBC treatment."
+  },
+  {
+   "severity": "major",
+   "finding": "Bull is not specific and dated: Banco Porto Real approval has no date and only one evidence id (dc_fs_q2_2026, which says approval is pending); Mexico 'doubles its revenue share' has no year; US/Nu Global is a hypothesis. The only bull falsifier is a growth floor (portfolio growth < 25% by 2027-08-31); nothing would refute the bull's central claim (ROE > 30% after tax normalization, NPL 90+ < 6.5%).",
+   "where": "position/core.json scenario_events.bull and falsifiers (bull)",
+   "fix": "Date each bull milestone (e.g. BCB approval of Porto Real by 2027-06-30; Mexico >= 12% of revenue by FY2028) and add numeric bull falsifiers: quarterly ROE below 0.30 in Q2 2027, NPL 90+ above 0.065 by 2027-08-31."
+  },
+  {
+   "severity": "minor",
+   "finding": "Guardrail: a non-bank metric is used as a high-severity risk. fin.coverage 'Interest coverage 1.8x (operating income / interest expense)' is meaningless for a deposit-funded bank (interest expense is cost of funding, not financing risk) and the red-team's cash_reconciles treats 15.0bn of cash that backs customer deposits as spendable cash (no effect on the residual-income value, but wrong if shown).",
+   "where": "companies/NU/out/casefile.json rk.register id=fin.coverage; rv.mechanical.redteam.reported.cash_and_equivalents",
+   "fix": "Drop interest coverage for the financials archetype (use CET1/CAR and LDR instead) and label cash as funding liquidity, not spendable cash."
+  },
+  {
+   "severity": "minor",
+   "finding": "Peak vs justified: own_history forward P/E 10.3-20.6x (median 18.25x) over 2023-2026; company_path base multiples 11.5-12.2x (justified_high) and bull 13.3-14.2x are below the own-history median, so the path is not built on a peak multiple. But the starting EPS is near-peak: Q2'26 net income at a 14.2% tax rate x 4 would overstate run-rate by ~15%; the analyst normalized this in the reasoning but (see above) the engine ROE does not apply it. Labels 'unproven' for bear 0.17 is odd: 17% is NU's own 2023 ROE (evidenced, not unproven).",
+   "where": "companies/NU/out/casefile.json company_path.own_history and scenarios.<s>.justification",
+   "fix": "Relabel bear justification as own_history evidenced; ensure the starting EPS/ROE is the tax-normalized one."
+  }
+ ]
+}

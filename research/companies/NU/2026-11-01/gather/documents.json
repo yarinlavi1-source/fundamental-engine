@@ -1,0 +1,485 @@
+{
+ "lane": "documents",
+ "sources": [
+  {
+   "id": "dc_rel_q2_2026",
+   "kind": "release",
+   "title": "Nu Holdings Ltd. Reports Second Quarter 2026 Financial Results (6-K)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1691493/000129281426004222/nupr2q26_6k.htm",
+   "date": "2026-08-13",
+   "independent": true,
+   "publisher": "Nu Holdings Ltd.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "dc_fs_q2_2026",
+   "kind": "sec_filing",
+   "title": "Nu Holdings Q2 2026 unaudited interim condensed consolidated financial statements, IFRS (6-K)",
+   "url": "https://www.sec.gov/Archives/edgar/data/1691493/000129281426004225/nufs2q26_6k.htm",
+   "date": "2026-08-13",
+   "independent": true,
+   "publisher": "Nu Holdings Ltd.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "dc_call_q2_2026",
+   "kind": "transcript",
+   "title": "Nu (NU) Q2 2026 earnings call transcript (Motley Fool page; call held 2026-08-13; read as a model summary of the page, not verbatim)",
+   "url": "https://www.fool.com/earnings/call-transcripts/2026/08/20/nu-nu-q2-2026-earnings-call-transcript/",
+   "date": "2026-08-20",
+   "independent": false,
+   "publisher": "The Motley Fool",
+   "retrieval": "search_excerpt",
+   "syndicated_from": null
+  },
+  {
+   "id": "dc_6k_cto_20261023",
+   "kind": "sec_filing",
+   "title": "Nu Holdings 6-K notice to the market: CTO Eric Young resigns",
+   "url": "https://www.sec.gov/Archives/edgar/data/1691493/000129281426005000/nu20261023_6k.htm",
+   "date": "2026-10-23",
+   "independent": true,
+   "publisher": "Nu Holdings Ltd.",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  }
+ ],
+ "kpis": [
+  {
+   "id": "dc_k_customers_q226",
+   "name": "Customers, total",
+   "period": "Q2 2026",
+   "value": 138.9,
+   "unit": "millions",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_customers_q225",
+   "name": "Customers, total",
+   "period": "Q2 2025",
+   "value": 122.7,
+   "unit": "millions",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_customers_q126",
+   "name": "Customers, total",
+   "period": "Q1 2026",
+   "value": 135.2,
+   "unit": "millions",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_cust_brazil",
+   "name": "Customers Brazil (almost)",
+   "period": "Q2 2026",
+   "value": 118,
+   "unit": "millions",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_cust_mexico",
+   "name": "Customers Mexico",
+   "period": "Q2 2026",
+   "value": 15.8,
+   "unit": "millions",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_cust_colombia",
+   "name": "Customers Colombia (surpassed)",
+   "period": "Q2 2026",
+   "value": 5.0,
+   "unit": "millions",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_activity",
+   "name": "Monthly activity rate",
+   "period": "Q2 2026",
+   "value": 0.835,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_arpac_q226",
+   "name": "Monthly ARPAC",
+   "period": "Q2 2026",
+   "value": 17.1,
+   "unit": "USD per active customer per month",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_arpac_q225",
+   "name": "Monthly ARPAC",
+   "period": "Q2 2025",
+   "value": 12.5,
+   "unit": "USD per active customer per month",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_arpac_q126",
+   "name": "Monthly ARPAC",
+   "period": "Q1 2026",
+   "value": 15.9,
+   "unit": "USD per active customer per month",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_arpac_mexico",
+   "name": "Mexico ARPAC at 16.5% adult penetration (management comparison with Brazil 5.6)",
+   "period": "Q2 2026",
+   "value": 12.3,
+   "unit": "USD per month",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_cts",
+   "name": "Monthly cost to serve per active customer",
+   "period": "Q2 2026",
+   "value": 1.0,
+   "unit": "USD per active customer per month",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_purchase_vol",
+   "name": "Purchase volume",
+   "period": "Q2 2026",
+   "value": 43.4,
+   "unit": "USD billions",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_portfolio",
+   "name": "Total credit portfolio (cards 26.0, unsecured 10.3, secured 3.1)",
+   "period": "Q2 2026",
+   "value": 39.4,
+   "unit": "USD billions",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_portfolio_q225",
+   "name": "Total credit portfolio",
+   "period": "Q2 2025",
+   "value": 27.3,
+   "unit": "USD billions",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_deposits",
+   "name": "Total deposits (Brazil 36.4, Mexico 5.7, Colombia 3.3)",
+   "period": "Q2 2026",
+   "value": 45.3,
+   "unit": "USD billions",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_deposits_q225",
+   "name": "Total deposits",
+   "period": "Q2 2025",
+   "value": 36.6,
+   "unit": "USD billions",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_cod",
+   "name": "Consolidated cost of deposits, share of interbank rate (3 pp lower y/y)",
+   "period": "Q2 2026",
+   "value": 0.88,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_nim",
+   "name": "Net interest margin (managerial, +180 bps q/q)",
+   "period": "Q2 2026",
+   "value": 0.229,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_ranim",
+   "name": "Risk-adjusted NIM",
+   "period": "Q2 2026",
+   "value": 0.124,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_ranim_q126",
+   "name": "Risk-adjusted NIM",
+   "period": "Q1 2026",
+   "value": 0.095,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_coc",
+   "name": "Cost of credit (managerial)",
+   "period": "Q2 2026",
+   "value": 1.6908,
+   "unit": "USD billions",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_npl1590",
+   "name": "NPL 15-90",
+   "period": "Q2 2026",
+   "value": 0.048,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_npl90",
+   "name": "NPL 90+",
+   "period": "Q2 2026",
+   "value": 0.069,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_roe",
+   "name": "ROE",
+   "period": "Q2 2026",
+   "value": 0.33,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_eff",
+   "name": "Efficiency ratio",
+   "period": "Q2 2026",
+   "value": 0.195,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_eff_q126",
+   "name": "Efficiency ratio",
+   "period": "Q1 2026",
+   "value": 0.176,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_eff_q225",
+   "name": "Efficiency ratio",
+   "period": "Q2 2025",
+   "value": 0.213,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_mix_credit",
+   "name": "Credit share of gross profit (fees 25%, float 34%)",
+   "period": "Q2 2026",
+   "value": 0.41,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_allow",
+   "name": "Allowance for credit losses; 90+ NPL coverage 244% (call)",
+   "period": "Q2 2026",
+   "value": 6.6,
+   "unit": "USD billions",
+   "source_ids": [
+    "dc_call_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_ltd_mexico",
+   "name": "Mexico loan-to-deposit ratio",
+   "period": "Q2 2026",
+   "value": 0.35,
+   "unit": "ratio",
+   "source_ids": [
+    "dc_rel_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_k_buyback",
+   "name": "Share repurchases under the US$1.0bn program (40,659,600 Class A shares); 499.6m remains to 2027-06-03",
+   "period": "Q2 2026",
+   "value": 500.4,
+   "unit": "USD millions",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ]
+  }
+ ],
+ "segments": [
+  {
+   "id": "dc_s_br_q226",
+   "name": "Brazil (IFRS revenue by geography)",
+   "period": "Q2 2026",
+   "revenue": 3990286000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_s_br_q225",
+   "name": "Brazil (IFRS revenue by geography)",
+   "period": "Q2 2025",
+   "revenue": 2621626000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_s_mx_q226",
+   "name": "Mexico (IFRS revenue by geography)",
+   "period": "Q2 2026",
+   "revenue": 314603000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_s_mx_q225",
+   "name": "Mexico (IFRS revenue by geography)",
+   "period": "Q2 2025",
+   "revenue": 175693000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_s_ot_q226",
+   "name": "Other countries incl. Colombia (IFRS revenue by geography)",
+   "period": "Q2 2026",
+   "revenue": 76038000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ]
+  },
+  {
+   "id": "dc_s_ot_q225",
+   "name": "Other countries incl. Colombia (IFRS revenue by geography)",
+   "period": "Q2 2025",
+   "revenue": 56201000,
+   "operating_income": null,
+   "unit": "USD",
+   "source_ids": [
+    "dc_fs_q2_2026"
+   ]
+  }
+ ],
+ "guidance": [
+  {
+   "id": "dc_g_eff_fy26",
+   "metric": "efficiency ratio",
+   "period": "FY2026",
+   "low": 0.2,
+   "high": 0.2,
+   "unit": "ratio",
+   "issued": "2026-08-13",
+   "source_id": "dc_call_q2_2026"
+  }
+ ],
+ "notes": [
+  "dc CALL 2026-08-13: Q2 2026 call (Vélez, CFO Rob Livingston); AV EARNINGS_CALL_TRANSCRIPT hit the 25/day rate limit on the single probe; transcript read via Motley Fool page as a summary (search_excerpt), not verbatim.",
+  "dc FORM Nu is a 20-F/6-K filer; the Q2 release (6-K) is the managerial view, the IFRS financial statements (6-K) are the audited-basis view. Managerial net income equals IFRS net income (1,061.1m) but revenue (5,875.7 vs 5,513.2m), funding cost, cost of credit (1,690.8 vs 1,482.2m) and taxes (revenue-based taxes 240.9m moved above gross profit; income taxes 569.2 managerial vs 175.2 IFRS) are reclassified: use one basis per ratio. Growth rates in the release are FX neutral; IFRS USD growth differs (revenue +50% y/y IFRS USD).",
+  "dc FACT IFRS Q2 2026 (USD m): total revenue 5,513.2 (Q2 25: 3,668.5); interest income and gains 4,760.6; fee and commission income 752.6; ECL 1,482.2 (1,012.2); gross profit 2,346.5 (1,548.0); G&A 599.8; income before tax 1,236.3; income taxes 175.2 (effective rate 14.2%; Q2 25: 27.6%); net income 1,061.1 (637.0); diluted EPS 0.2162 (0.1300); diluted weighted shares 4,904.8m.",
+  "dc FACT IFRS balance sheet 2026-06-30 (USD m): total assets 82,753; 'loans to customers' statement line 11,317 (excludes credit card receivables shown elsewhere; the 39.4bn managerial portfolio is the headline); deposits 45,328 (Dec 25: 41,925); borrowings and financing 4,682 (4,398); repurchase agreements 1,058; payables to network 15,542; cash and cash equivalents 13,552 (includes funds that back deposits: not spendable corporate liquidity); securities 3,777; compulsory deposits at central banks 9,149; total equity 13,252 (Dec 25: 11,322); total liabilities 69,502; lease liabilities 66.",
+  "dc FACT Six months to 2026-06-30: net income 1,932.5m (1,194.2m); ECL 3,200.2m (1,985.7m); interest received 5,976m; income tax paid 1,789m. Q1 2026 derived as six months minus Q2: revenue 4,968.0m, gross profit 1,864.9m, net income 871.4m.",
+  "dc FACT Geography: Brazil 91.1% of Q2 26 IFRS revenue interest-and-fee basis (3,990.3 of 4,380.9m), Mexico 7.2% (314.6m, +79% y/y), other 1.7%. No customer is 10% or more of revenue (note 34 segment information; one reportable segment, CODM is the CEO).",
+  "dc FACT Mexico bank: CNBV operations authorization notified 2026-07-09 (license obtained 2025-04-24); began operating as a multiple bank 2026-08-06. 15.8m customers in Q2, 16m in July. Mexico deposits 5.7bn, loan-to-deposit 35%, deposits declining modestly by design (deposit optimization).",
+  "dc FACT Brazil banking license: 2026-07-20 share purchase agreement to acquire 100% of Banco Porto Real de Investimentos S.A. to add a banking license (Joint Resolution No. 17 brand-name rule); subject to Central Bank of Brazil approval; price not disclosed in the notes; no additional capital or liquidity requirement claimed. Colombia: Nu Colombia Compania de Financiamiento (financing company, not a bank): 5m+ customers, deposits 3.3bn.",
+  "dc FACT Capital return: Board approved on 2026-06-03 a US$1.0bn buyback for 12 months from 2026-06-04; 40.66m Class A shares bought for US$500.4m in Q2 (avg about US$12.31), held in treasury, 499.6m remaining; no dividend.",
+  "dc FACT Subsequent: 2026-10-23 6-K: CTO Eric Young resigns (stays to 2026-11-12); CEO Vélez and CISO John Walton interim; search under way. Not a number; a management-depth item.",
+  "dc MGMT Release (2026-08-13): net income above US$1bn for the first time, ROE 33%, 'more than a billion dollars in quarterly net income'; Mexico bank launched, 'largest digital bank in the country with 16 million customers'; NuFormer foundation model in production on three portfolios (cards Brazil and Mexico, unsecured Brazil), SME and Colombia cards in test; AI agents handle over 60% of Brazil support conversations; Croma tier for Super Core launched July.",
+  "dc MGMT Release: efficiency ratio rose to 19.5% from 17.6% because real estate and marketing costs shifted from Q1 into Q2 plus international expansion; 15-90 NPL improved 16 bps to 4.8% mostly seasonality, 'partially offset by intentional expansions into higher-risk, higher-return segments'; 90+ NPL +35 bps to 6.9% on seasonal migration of Q1 early delinquencies; NIM +180 bps to 22.9% on portfolio growth, mix toward unsecured and the risk expansions announced last quarter; cost of credit -9% q/q.",
+  "dc MGMT Call (summary, secondary): efficiency ratio to average about 20% for 2026 and Q1's 17.6% not a run rate; risk-adjusted NIM expected 'in the same region' (CFO did not call 12% a floor); allowance 6.6bn, 90+ coverage 244%; Desenrola renegotiation program touched cost of credit by about 5% (1.8m customers); US entry spend capped at about 100 bps of efficiency ratio, US credit models 12 to 30 months; headcount about 10,400, US hiring from about 1% to 2%; underwriting assumes conditions worse than history; private payroll lending described as an asymmetric bet, scaled slowly. Not issuer numeric guidance: no revenue or earnings guidance is issued.",
+  "dc GUIDANCE Nu issues no numeric revenue, NIM, cost-of-risk or earnings guidance in the release; only the call statements above (efficiency ratio about 20% FY2026, risk-adjusted NIM same region). Track record from guidance therefore unavailable (gap).",
+  "dc RISK Credit risk management failure (20-F Item 3.D summary): unsecured and card lending in high-rate Brazil; 90+ NPL 6.9% and intentional expansion into higher-risk segments (release).",
+  "dc RISK International expansion (Mexico, Colombia, US plans) may not succeed or may carry added risk (20-F 3.D summary; release: efficiency ratio pressure from expansion).",
+  "dc RISK Regulation: extensive oversight as payment institution; pending Brazilian Congress, BCB and Ministry of Finance initiatives on payments and finance; tax law changes (20-F 3.D summary). Brazil banking license is being added via Banco Porto Real, pending BCB approval.",
+  "dc RISK Macro and rates: FX and interest-rate instability, Brazil government influence; Brazilian presidential elections October 2026 flagged in the 20-F as a volatility source (20-F 3.D summary). Q3 results (mid-November, not yet out at as_of) will show the election-period read.",
+  "dc RISK Technology: dependence on IT systems and third-party data centers and clouds; AI-use legal, reputational and cost risks (20-F 3.D summary); CTO resignation 2026-10-23.",
+  "dc RISK Brand and concentration of control: brand reliance; founder David Vélez holds 88.3% of Class B shares and about 74.4% of voting power (20-F 3.D summary, 2025 report).",
+  "dc RISK Income tax rate: IFRS effective rate 14.2% in Q2 26 vs 27.6% in Q2 25; part of the y/y net income growth (+67% IFRS) comes from the lower rate; managerial view puts income taxes at 569.2m (35%): check which the net income rests on.",
+  "dc GAP Q3 2026 results are not out at as_of 2026-11-01 (Nu reports mid-November); no 10-Q equivalent exists for a 20-F filer, so no quarterly 10-Q reading file; the 6-K IFRS statements serve instead. Cost-of-risk as a percentage and 90+ NPL by cohort, CET1/capital ratios and Brazil Selic exposure were not extracted."
+ ],
+ "gaps": [
+  "AV EARNINGS_CALL_TRANSCRIPT rate-limited (25/day exhausted); transcript from Motley Fool page summary only (search_excerpt, secondary)",
+  "No numeric issuer guidance (Nu issues none); call statements only; guidance track record unavailable",
+  "Q3 2026 results not yet out; prefetch saved no releases or quarter/econ cases for this 20-F filer: cases built by hand from the 6-K release and IFRS statements",
+  "Net charge-off rate, cost of risk as % of portfolio, CET1/capital ratio, Banco Porto Real price and customers by country share not extracted; Colombia is a financing company licence, not a bank",
+  "Earlier 6-Ks of 2026-09-02/09-10/09-30 returned not found on direct URL; content unread"
+ ],
+ "stopped": [
+  "transcript branch after AV rate limit and one web read: further transcript reads would not change the decision"
+ ]
+}

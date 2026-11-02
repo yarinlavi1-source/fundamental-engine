@@ -1,0 +1,1100 @@
+{
+ "forecast": {
+  "overrides": [
+   {
+    "path": "growth_anchor",
+    "scenario": "bear",
+    "value": 0.1,
+    "reason": "No 2027 guidance exists. Base 25%: the Q4 2026 guide midpoint $1,015M is +40% y/y and already includes the warned DAUq drop; Q1-Q2 2027 compare with +69% and +61% quarters, and US growth is all ARPU (+53%) on a US audience down 2%, so growth fades through 2027. Bull 36%: the guided exit rate holds most of the year because logged-in users (over 80% of monetization) keep growing and international DAUq (+24%) and ARPU (+32%) continue. Bear 10%: the low-double-digit DAUq fall persists and spreads, the logged-in-only tests cut reach, and ARPU gains slow to single digits.",
+    "evidence_ids": [
+     "dc_g_rev_q4",
+     "web:pf_rel_20261029_1",
+     "web:dc_call_20261029",
+     "dc_dauq_us",
+     "dc_dauq_us_py",
+     "dc_arpu_us",
+     "dc_arpu_us_py",
+     "dc_lo_g",
+     "web:pf_10q_20261030"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "growth_anchor",
+    "scenario": "base",
+    "value": 0.25,
+    "reason": "No 2027 guidance exists. Base 25%: the Q4 2026 guide midpoint $1,015M is +40% y/y and already includes the warned DAUq drop; Q1-Q2 2027 compare with +69% and +61% quarters, and US growth is all ARPU (+53%) on a US audience down 2%, so growth fades through 2027. Bull 36%: the guided exit rate holds most of the year because logged-in users (over 80% of monetization) keep growing and international DAUq (+24%) and ARPU (+32%) continue. Bear 10%: the low-double-digit DAUq fall persists and spreads, the logged-in-only tests cut reach, and ARPU gains slow to single digits.",
+    "evidence_ids": [
+     "dc_g_rev_q4",
+     "web:pf_rel_20261029_1",
+     "web:dc_call_20261029",
+     "dc_dauq_us",
+     "dc_dauq_us_py",
+     "dc_arpu_us",
+     "dc_arpu_us_py",
+     "dc_lo_g",
+     "web:pf_10q_20261030"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "growth_anchor",
+    "scenario": "bull",
+    "value": 0.36,
+    "reason": "No 2027 guidance exists. Base 25%: the Q4 2026 guide midpoint $1,015M is +40% y/y and already includes the warned DAUq drop; Q1-Q2 2027 compare with +69% and +61% quarters, and US growth is all ARPU (+53%) on a US audience down 2%, so growth fades through 2027. Bull 36%: the guided exit rate holds most of the year because logged-in users (over 80% of monetization) keep growing and international DAUq (+24%) and ARPU (+32%) continue. Bear 10%: the low-double-digit DAUq fall persists and spreads, the logged-in-only tests cut reach, and ARPU gains slow to single digits.",
+    "evidence_ids": [
+     "dc_g_rev_q4",
+     "web:pf_rel_20261029_1",
+     "web:dc_call_20261029",
+     "dc_dauq_us",
+     "dc_dauq_us_py",
+     "dc_arpu_us",
+     "dc_arpu_us_py",
+     "dc_lo_g",
+     "web:pf_10q_20261030"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "mature_margin",
+    "scenario": "bear",
+    "value": 0.25,
+    "reason": "EBIT after SBC. Q3 2026 GAAP operating margin was 29.2% after 14.7% SBC; the Q4 guide (adjusted EBITDA about 49% of revenue) less SBC of about 14-15% and negligible D&A implies about 34% GAAP, the base. Bull 40%: incremental adjusted EBITDA margin 53.6% and incremental operating margin 40% keep lifting the margin with scale. Bear 25%: below Q3's 29%, because a shrinking audience removes the operating leverage while SBC (rising in dollars) and the fixed $1.46B cloud commitments stay.",
+    "evidence_ids": [
+     "web:pf_rel_20261029_1",
+     "dc_g_ebitda_q4",
+     "dc_adj_ebitda_q3",
+     "dc_incr_ebitda_margin",
+     "dc_sbc_taxes_q3",
+     "web:pf_10q_20261030"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "mature_margin",
+    "scenario": "base",
+    "value": 0.34,
+    "reason": "EBIT after SBC. Q3 2026 GAAP operating margin was 29.2% after 14.7% SBC; the Q4 guide (adjusted EBITDA about 49% of revenue) less SBC of about 14-15% and negligible D&A implies about 34% GAAP, the base. Bull 40%: incremental adjusted EBITDA margin 53.6% and incremental operating margin 40% keep lifting the margin with scale. Bear 25%: below Q3's 29%, because a shrinking audience removes the operating leverage while SBC (rising in dollars) and the fixed $1.46B cloud commitments stay.",
+    "evidence_ids": [
+     "web:pf_rel_20261029_1",
+     "dc_g_ebitda_q4",
+     "dc_adj_ebitda_q3",
+     "dc_incr_ebitda_margin",
+     "dc_sbc_taxes_q3",
+     "web:pf_10q_20261030"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "mature_margin",
+    "scenario": "bull",
+    "value": 0.4,
+    "reason": "EBIT after SBC. Q3 2026 GAAP operating margin was 29.2% after 14.7% SBC; the Q4 guide (adjusted EBITDA about 49% of revenue) less SBC of about 14-15% and negligible D&A implies about 34% GAAP, the base. Bull 40%: incremental adjusted EBITDA margin 53.6% and incremental operating margin 40% keep lifting the margin with scale. Bear 25%: below Q3's 29%, because a shrinking audience removes the operating leverage while SBC (rising in dollars) and the fixed $1.46B cloud commitments stay.",
+    "evidence_ids": [
+     "web:pf_rel_20261029_1",
+     "dc_g_ebitda_q4",
+     "dc_adj_ebitda_q3",
+     "dc_incr_ebitda_margin",
+     "dc_sbc_taxes_q3",
+     "web:pf_10q_20261030"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "tax_rate",
+    "scenario": "all",
+    "value": 0.22,
+    "reason": "The 2% Q3 rate reflects a full valuation allowance on US deferred tax assets that the 10-Q says may be released within 12 months; the recurring rate normalizes to the US federal 21% plus state taxes (80% of revenue is US). The release itself is a one-time gain kept out of recurring earnings.",
+    "evidence_ids": [
+     "web:pf_10q_20261030",
+     "dc_tax_q3",
+     "web:pf_10k_20260206"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "terminal_roic",
+    "scenario": "bear",
+    "value": 0.3,
+    "reason": "One capital intensity per scenario, from Reddit's operating invested capital (equity less cash and securities; the cash pile is not operating capital): FY2024 290M on revenue 1,300M, FY2025 452M on 2,203M, Q3 2026 580M (incl. 31M leases) on TTM 3,089M; incremental sales-to-capital 5.6 (2024-25) and 9.2 (2025-TTM); receivables are 23.6% of TTM revenue (receivables-only bound about 4.2); capex 0.2-0.3% of revenue. Return on that capital at a normalized 22% tax (not the 2% valuation-allowance rate): FY2025 345M NOPAT on average capital 371M = 0.93; TTM 708M on 580M = 1.22. terminal_roic = the company_path roic of the same scenario (bear 0.30, base 0.95, bull 1.00) and sales_to_capital = that roic / (mature margin x (1 - 22%)), so the DCF reinvestment and the yearly price path rest on the same return. Base 0.95 sits between FY2025 and TTM; bull 1.00: the TTM 1.22 capped at the valuation's 100% limit; bear 0.30 assumes the logged-in transition, product spend and M&A (a stated capital priority) need about three times the evidenced capital per dollar of sales (unproven, a stress).",
+    "evidence_ids": [
+     "pf_equity_fy2024",
+     "pf_cash_fy2024",
+     "pf_short_term_investments_fy2024",
+     "pf_equity_fy2025",
+     "pf_cash_fy2025",
+     "pf_short_term_investments_fy2025",
+     "pf_receivables_fy2025",
+     "nm_cash_marketable_q_2026_09_30",
+     "web:pf_10q_20261030",
+     "pf_operating_income_fy2025",
+     "pf_operating_income_q_2026_09_30",
+     "pf_capex_fy2025"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "terminal_roic",
+    "scenario": "base",
+    "value": 0.95,
+    "reason": "One capital intensity per scenario, from Reddit's operating invested capital (equity less cash and securities; the cash pile is not operating capital): FY2024 290M on revenue 1,300M, FY2025 452M on 2,203M, Q3 2026 580M (incl. 31M leases) on TTM 3,089M; incremental sales-to-capital 5.6 (2024-25) and 9.2 (2025-TTM); receivables are 23.6% of TTM revenue (receivables-only bound about 4.2); capex 0.2-0.3% of revenue. Return on that capital at a normalized 22% tax (not the 2% valuation-allowance rate): FY2025 345M NOPAT on average capital 371M = 0.93; TTM 708M on 580M = 1.22. terminal_roic = the company_path roic of the same scenario (bear 0.30, base 0.95, bull 1.00) and sales_to_capital = that roic / (mature margin x (1 - 22%)), so the DCF reinvestment and the yearly price path rest on the same return. Base 0.95 sits between FY2025 and TTM; bull 1.00: the TTM 1.22 capped at the valuation's 100% limit; bear 0.30 assumes the logged-in transition, product spend and M&A (a stated capital priority) need about three times the evidenced capital per dollar of sales (unproven, a stress).",
+    "evidence_ids": [
+     "pf_equity_fy2024",
+     "pf_cash_fy2024",
+     "pf_short_term_investments_fy2024",
+     "pf_equity_fy2025",
+     "pf_cash_fy2025",
+     "pf_short_term_investments_fy2025",
+     "pf_receivables_fy2025",
+     "nm_cash_marketable_q_2026_09_30",
+     "web:pf_10q_20261030",
+     "pf_operating_income_fy2025",
+     "pf_operating_income_q_2026_09_30",
+     "pf_capex_fy2025"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "terminal_roic",
+    "scenario": "bull",
+    "value": 1.0,
+    "reason": "One capital intensity per scenario, from Reddit's operating invested capital (equity less cash and securities; the cash pile is not operating capital): FY2024 290M on revenue 1,300M, FY2025 452M on 2,203M, Q3 2026 580M (incl. 31M leases) on TTM 3,089M; incremental sales-to-capital 5.6 (2024-25) and 9.2 (2025-TTM); receivables are 23.6% of TTM revenue (receivables-only bound about 4.2); capex 0.2-0.3% of revenue. Return on that capital at a normalized 22% tax (not the 2% valuation-allowance rate): FY2025 345M NOPAT on average capital 371M = 0.93; TTM 708M on 580M = 1.22. terminal_roic = the company_path roic of the same scenario (bear 0.30, base 0.95, bull 1.00) and sales_to_capital = that roic / (mature margin x (1 - 22%)), so the DCF reinvestment and the yearly price path rest on the same return. Base 0.95 sits between FY2025 and TTM; bull 1.00: the TTM 1.22 capped at the valuation's 100% limit; bear 0.30 assumes the logged-in transition, product spend and M&A (a stated capital priority) need about three times the evidenced capital per dollar of sales (unproven, a stress).",
+    "evidence_ids": [
+     "pf_equity_fy2024",
+     "pf_cash_fy2024",
+     "pf_short_term_investments_fy2024",
+     "pf_equity_fy2025",
+     "pf_cash_fy2025",
+     "pf_short_term_investments_fy2025",
+     "pf_receivables_fy2025",
+     "nm_cash_marketable_q_2026_09_30",
+     "web:pf_10q_20261030",
+     "pf_operating_income_fy2025",
+     "pf_operating_income_q_2026_09_30",
+     "pf_capex_fy2025"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "sales_to_capital",
+    "scenario": "bear",
+    "value": 1.54,
+    "reason": "One capital intensity per scenario, from Reddit's operating invested capital (equity less cash and securities; the cash pile is not operating capital): FY2024 290M on revenue 1,300M, FY2025 452M on 2,203M, Q3 2026 580M (incl. 31M leases) on TTM 3,089M; incremental sales-to-capital 5.6 (2024-25) and 9.2 (2025-TTM); receivables are 23.6% of TTM revenue (receivables-only bound about 4.2); capex 0.2-0.3% of revenue. Return on that capital at a normalized 22% tax (not the 2% valuation-allowance rate): FY2025 345M NOPAT on average capital 371M = 0.93; TTM 708M on 580M = 1.22. terminal_roic = the company_path roic of the same scenario (bear 0.30, base 0.95, bull 1.00) and sales_to_capital = that roic / (mature margin x (1 - 22%)), so the DCF reinvestment and the yearly price path rest on the same return. Base 0.95 sits between FY2025 and TTM; bull 1.00: the TTM 1.22 capped at the valuation's 100% limit; bear 0.30 assumes the logged-in transition, product spend and M&A (a stated capital priority) need about three times the evidenced capital per dollar of sales (unproven, a stress).",
+    "evidence_ids": [
+     "pf_equity_fy2024",
+     "pf_cash_fy2024",
+     "pf_short_term_investments_fy2024",
+     "pf_equity_fy2025",
+     "pf_cash_fy2025",
+     "pf_short_term_investments_fy2025",
+     "pf_receivables_fy2025",
+     "nm_cash_marketable_q_2026_09_30",
+     "web:pf_10q_20261030",
+     "pf_operating_income_fy2025",
+     "pf_operating_income_q_2026_09_30",
+     "pf_capex_fy2025"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "sales_to_capital",
+    "scenario": "base",
+    "value": 3.58,
+    "reason": "One capital intensity per scenario, from Reddit's operating invested capital (equity less cash and securities; the cash pile is not operating capital): FY2024 290M on revenue 1,300M, FY2025 452M on 2,203M, Q3 2026 580M (incl. 31M leases) on TTM 3,089M; incremental sales-to-capital 5.6 (2024-25) and 9.2 (2025-TTM); receivables are 23.6% of TTM revenue (receivables-only bound about 4.2); capex 0.2-0.3% of revenue. Return on that capital at a normalized 22% tax (not the 2% valuation-allowance rate): FY2025 345M NOPAT on average capital 371M = 0.93; TTM 708M on 580M = 1.22. terminal_roic = the company_path roic of the same scenario (bear 0.30, base 0.95, bull 1.00) and sales_to_capital = that roic / (mature margin x (1 - 22%)), so the DCF reinvestment and the yearly price path rest on the same return. Base 0.95 sits between FY2025 and TTM; bull 1.00: the TTM 1.22 capped at the valuation's 100% limit; bear 0.30 assumes the logged-in transition, product spend and M&A (a stated capital priority) need about three times the evidenced capital per dollar of sales (unproven, a stress).",
+    "evidence_ids": [
+     "pf_equity_fy2024",
+     "pf_cash_fy2024",
+     "pf_short_term_investments_fy2024",
+     "pf_equity_fy2025",
+     "pf_cash_fy2025",
+     "pf_short_term_investments_fy2025",
+     "pf_receivables_fy2025",
+     "nm_cash_marketable_q_2026_09_30",
+     "web:pf_10q_20261030",
+     "pf_operating_income_fy2025",
+     "pf_operating_income_q_2026_09_30",
+     "pf_capex_fy2025"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "sales_to_capital",
+    "scenario": "bull",
+    "value": 3.21,
+    "reason": "One capital intensity per scenario, from Reddit's operating invested capital (equity less cash and securities; the cash pile is not operating capital): FY2024 290M on revenue 1,300M, FY2025 452M on 2,203M, Q3 2026 580M (incl. 31M leases) on TTM 3,089M; incremental sales-to-capital 5.6 (2024-25) and 9.2 (2025-TTM); receivables are 23.6% of TTM revenue (receivables-only bound about 4.2); capex 0.2-0.3% of revenue. Return on that capital at a normalized 22% tax (not the 2% valuation-allowance rate): FY2025 345M NOPAT on average capital 371M = 0.93; TTM 708M on 580M = 1.22. terminal_roic = the company_path roic of the same scenario (bear 0.30, base 0.95, bull 1.00) and sales_to_capital = that roic / (mature margin x (1 - 22%)), so the DCF reinvestment and the yearly price path rest on the same return. Base 0.95 sits between FY2025 and TTM; bull 1.00: the TTM 1.22 capped at the valuation's 100% limit; bear 0.30 assumes the logged-in transition, product spend and M&A (a stated capital priority) need about three times the evidenced capital per dollar of sales (unproven, a stress).",
+    "evidence_ids": [
+     "pf_equity_fy2024",
+     "pf_cash_fy2024",
+     "pf_short_term_investments_fy2024",
+     "pf_equity_fy2025",
+     "pf_cash_fy2025",
+     "pf_short_term_investments_fy2025",
+     "pf_receivables_fy2025",
+     "nm_cash_marketable_q_2026_09_30",
+     "web:pf_10q_20261030",
+     "pf_operating_income_fy2025",
+     "pf_operating_income_q_2026_09_30",
+     "pf_capex_fy2025"
+    ],
+    "source_tier": "own_history"
+   },
+   {
+    "path": "terminal_growth",
+    "scenario": "bear",
+    "value": 0.025,
+    "reason": "Bear only (base and bull stay on the engine rule). The bear is a shrinking audience: search referrals down more than 1M a week in October, US logged-out DAUq down y/y (28.5M to 27.3M), management's warned low-double-digit Q4 fall from 130M total DAUq; logged-out users are 59% of DAUq but under 20% of monetization. A business whose audience shrinks does not grow with nominal GDP forever: after 2041 the bear grows at about inflation (2.5%, no real growth). Multiple test: at the engine's 4.5% the bear's computed forward multiple was 21-22x, above today's ~13x forward (consensus FY2027 EPS) and above the own-history trailing low of 18.7x; this lever brings it inside that range.",
+    "evidence_ids": [
+     "dc_search_referral_drop",
+     "dc_lo_us",
+     "dc_lo_us_py",
+     "dc_lo_g",
+     "dc_dauq_g",
+     "web:dc_call_20261029",
+     "web:pf_rel_20261029_2"
+    ],
+    "source_tier": "own_history"
+   }
+  ],
+  "risk_free": {
+   "value": 0.0498,
+   "as_of": "2026-10-29",
+   "source_id": "web:pf_fred_dgs10",
+   "title": "Market yield on US Treasury securities at 10-year constant maturity, percent, daily (FRED DGS10)",
+   "url": "https://fred.stlouisfed.org/series/DGS10"
+  },
+  "equity_risk_premium": {
+   "value": 0.042,
+   "as_of": "2026-10-01",
+   "source_id": "web:pf_erp_implied",
+   "title": "Damodaran implied ERP for the S&P 500 on 1 October 2026 (trailing 12 months, adjusted payout), treasury 5.29%",
+   "url": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/home.htm"
+  },
+  "financing": "none",
+  "cyclical": {
+   "treatment": "structural",
+   "reason": "Four years of history are a scale-up (revenue $667M in 2022 to $2,203M in 2025, operating margin -26% to +20%) with no completed ad cycle; the ads_platform model is not price-cyclical. Ad-budget sensitivity and the search-traffic shock are carried as bear mechanisms, not a cycle-average margin.",
+   "evidence_ids": [
+    "web:pf_cf_20250213",
+    "web:pf_cf_20260206",
+    "web:pf_10k_20260206"
+   ]
+  }
+ },
+ "company_path": {
+  "metric": "eps",
+  "multiple": "forward_pe",
+  "scenarios": {
+   "bear": {
+    "multiple_from": "economics",
+    "roic": 0.3,
+    "justification": "unproven",
+    "reason_he": "באוקטובר 2026 ההפניות מחיפוש ירדו בכמיליון בשבוע ומשתמשי ה-US הלא-מחוברים ירדו משנה לשנה (28.5 ל-27.3 מיליון); אם זה נמשך, רדיט תשלם כדי לגדול (שיווק, מוצר, התחייבויות ענן של 1.46 מיליארד דולר שנשארות קבועות), והתשואה יורדת לרמה של התשואה על כל ההון כולל המזומן (כ-20%-30%). תשואה כזו מצדיקה מכפיל נמוך.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "dc_search_referral_drop",
+     "dc_lo_us",
+     "dc_lo_us_py",
+     "dc_aws_commit",
+     "dc_gcp_commit",
+     "dc_g_rev_q4",
+     "pf_operating_income_fy2025",
+     "pf_equity_fy2025",
+     "pf_equity_fy2024",
+     "pf_cash_fy2024",
+     "pf_short_term_investments_fy2024",
+     "pf_short_term_investments_fy2025",
+     "nm_cash_marketable_q_2026_09_30"
+    ]
+   },
+   "base": {
+    "multiple_from": "economics",
+    "roic": 0.95,
+    "justification": "justified_high",
+    "reason_he": "רדיט כמעט לא צריכה הון כדי לגדול: השקעות ציוד של כ-7 מיליון דולר בשנה על הכנסות של מיליארדים, וההון התפעולי (הון עצמי פחות 3.0 מיליארד מזומן) הוא כ-580 מיליון. ב-2025 הרווח התפעולי אחרי מס רגיל היה כ-77% מההון הזה וב-12 החודשים האחרונים כ-124% (רווח תפעולי 908 מיליון). הבסיס לוקח כ-95% - מתחת לשנה האחרונה, כי הצמיחה מאטה (תחזית רבעון 4 מתחת לציפיות) והמס יעלה מ-2% לרמה רגילה. תשואה גבוהה כזו מצדיקה מכפיל גבוה מהשוק.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "pf_operating_income_q_2025_12_31",
+     "pf_operating_income_q_2026_03_31",
+     "pf_operating_income_q_2026_06_30",
+     "pf_operating_income_q_2026_09_30",
+     "pf_operating_income_fy2025",
+     "pf_equity_fy2025",
+     "pf_cash_fy2025",
+     "pf_short_term_investments_fy2025",
+     "nm_cash_marketable_q_2026_09_30",
+     "pf_capex_fy2025",
+     "pf_receivables_fy2025",
+     "dc_g_rev_q4",
+     "pf_equity_fy2024",
+     "pf_cash_fy2024",
+     "pf_short_term_investments_fy2024"
+    ]
+   },
+   "bull": {
+    "multiple_from": "economics",
+    "roic": 1.0,
+    "justification": "justified_high",
+    "reason_he": "אם המעבר לחוויה מחוברת ולפיד 'בשבילך' מחזיק את המשתמשים, הצמיחה ממשיכה להגיע ממחיר פרסום גבוה יותר למשתמש (ARPU בארה\"ב עלה מ-9.04 ל-13.82 דולר ברבעון בשנה) ולא מהשקעות; אז נשמרת התשואה של 12 החודשים האחרונים (כ-122% על ההון התפעולי במס רגיל של 22%; כאן 100%, התקרה של מודל השווי), והמרווח התפעולי ממשיך לעלות (רווח תפעולי ברבעון 3 עלה ל-262 מיליון). זה מצדיק מכפיל גבוה, בתנאי שהשימוש לא נשחק.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "dc_arpu_us",
+     "dc_arpu_us_py",
+     "dc_incr_ebitda_margin",
+     "dc_li_g",
+     "dc_li_g_py",
+     "pf_operating_income_q_2026_09_30",
+     "pf_operating_income_q_2025_09_30",
+     "nm_cash_marketable_q_2026_09_30",
+     "pf_capex_q_2026_09_30",
+     "web:mc_tc_20261029",
+     "pf_equity_fy2024",
+     "pf_cash_fy2024",
+     "pf_short_term_investments_fy2024",
+     "pf_equity_fy2025",
+     "pf_short_term_investments_fy2025"
+    ]
+   }
+  },
+  "own_history": {
+   "low": 18.7,
+   "median": 40.3,
+   "high": 55.6,
+   "years": "2026-02 to 2026-10 (trailing GAAP P/E, month-end; 2025 values 120-215x were on tiny first earnings and are excluded)",
+   "evidence_ids": [
+    "web:nm_ib_history",
+    "nm_ttm_net_income_2026_09_30",
+    "web:nm_ib_price"
+   ]
+  }
+ },
+ "analyst_sheet": {
+  "scenario_events": {
+   "bear": [
+    {
+     "event_he": "ירידת ההפניות מחיפוש בגוגל נמשכת (יותר ממיליון הפניות פחות בשבוע באוקטובר) והמשתמשים היומיים יורדים בשיעור דו-ספרתי, כפי שההנהלה הזהירה.",
+     "evidence_ids": [
+      "web:dc_call_20261029",
+      "dc_search_referral_drop",
+      "web:pf_10q_20261030"
+     ]
+    },
+    {
+     "event_he": "המעבר לחוויה עם חובת התחברות, שנבדק מהרבעון הרביעי בשווקים מחוץ לארה\"ב, מקטין את מספר המשתמשים ואת החשיפה לפרסומות.",
+     "evidence_ids": [
+      "web:pf_10q_20261030",
+      "web:mc_tc_20261029"
+     ]
+    },
+    {
+     "event_he": "המשתמשים הלא-מחוברים, 59% מהקהל היומי, נשחקים גם בארה\"ב (כבר ירידה של 4% בשנה) והעלייה בהכנסה למשתמש לא מפצה.",
+     "evidence_ids": [
+      "dc_lo_g",
+      "dc_lo_us",
+      "dc_lo_us_py"
+     ]
+    },
+    {
+     "event_he": "תגמול במניות עולה (15% מההכנסות ברבעון השלישי) וההתחייבויות לענן (1.46 מיליארד דולר עד 2029) נשארות כשהצמיחה נעצרת, ולכן הרווחיות יורדת.",
+     "evidence_ids": [
+      "dc_sbc_taxes_q3",
+      "dc_aws_commit",
+      "dc_gcp_commit"
+     ]
+    },
+    {
+     "event_he": "מפרסמים מקצצים תקציבים בהאטה כלכלית; 94% מההכנסות הן פרסום.",
+     "evidence_ids": []
+    }
+   ],
+   "base": [
+    {
+     "event_he": "ההכנסות ברבעון הרביעי של 2026 בטווח התחזית, 1.0-1.03 מיליארד דולר (כ-40% צמיחה), ו-EBITDA מתואם של 480-510 מיליון.",
+     "evidence_ids": [
+      "dc_g_rev_q4",
+      "dc_g_ebitda_q4",
+      "web:pf_rel_20261029_1"
+     ]
+    },
+    {
+     "event_he": "ההכנסה למשתמש בארה\"ב ממשיכה לעלות (53% ברבעון השלישי) גם כשהקהל האמריקאי לא גדל, והקהל הבינלאומי ממשיך לגדול (24%).",
+     "evidence_ids": [
+      "dc_arpu_us",
+      "dc_arpu_us_py",
+      "dc_dauq_us",
+      "dc_dauq_intl",
+      "dc_dauq_intl_py"
+     ]
+    },
+    {
+     "event_he": "המשתמשים המחוברים ובאפליקציה, שמביאים מעל 80% מההכנסות, ממשיכים לגדול לאט, ולכן ירידת הקהל הלא-מחובר פוגעת פחות בהכנסות.",
+     "evidence_ids": [
+      "web:dc_call_20261029",
+      "dc_li_g",
+      "dc_li_g_py"
+     ]
+    },
+    {
+     "event_he": "החברה ממשיכה לקנות מניות בחזרה (340 מיליון דולר בתשעה חודשים, נותרו כ-660 מיליון) כך שמספר המניות נשאר יציב.",
+     "evidence_ids": [
+      "dc_buyback_9m_usd",
+      "dc_buyback_remaining",
+      "dc_fdso_q3"
+     ]
+    }
+   ],
+   "bull": [
+    {
+     "event_he": "הירידה בקהל היומי נעצרת עד אמצע 2027 והקהל הבינלאומי ממשיך לצמוח מעל 20% בשנה.",
+     "evidence_ids": [
+      "dc_dauq_intl",
+      "dc_dauq_intl_py",
+      "web:dc_call_20261029"
+     ]
+    },
+    {
+     "event_he": "הכנסות הרישוי מחברות בינה מלאכותית (כיום כ-5% מההכנסות) גדלות, כי חובת ההתחברות מגינה על התוכן מגריפה ומחזקת את המיקוח מול OpenAI וגוגל.",
+     "evidence_ids": [
+      "dc_seg_oth_q3",
+      "web:mc_tc_20261029",
+      "web:fd_press_licensing"
+     ]
+    },
+    {
+     "event_he": "המינוף התפעולי נמשך: כל דולר הכנסה נוסף מביא כ-54 סנט EBITDA מתואם, והרווח התפעולי מגיע לכ-40%.",
+     "evidence_ids": [
+      "dc_incr_ebitda_margin",
+      "web:pf_rel_20261029_1"
+     ]
+    },
+    {
+     "event_he": "הפיד החדש 'בשבילך' מגדיל את זמן השהייה ואת העומס הפרסומי אצל המשתמשים המחוברים.",
+     "evidence_ids": []
+    }
+   ]
+  },
+  "key_risk": {
+   "reading_he": "רדיט תלויה בתנועה מגוגל: 59% מהמשתמשים היומיים אינם מחוברים ורובם מגיעים מחיפוש, ההפניות ירדו ביותר ממיליון בשבוע באוקטובר, וההנהלה הזהירה מירידה דו-ספרתית בקהל ברבעון הרביעי. אם הקהל ממשיך לרדת, העלייה בהכנסה למשתמש לבדה לא תחזיק צמיחה גבוהה.",
+   "evidence_ids": [
+    "web:dc_call_20261029",
+    "dc_search_referral_drop",
+    "dc_lo_g",
+    "web:pf_10q_20261030"
+   ]
+  },
+  "bottleneck": {
+   "reading_he": "RDDT owns a scarce, constantly refreshed corpus of human conversation (10-K Item 1 content licensing), but it is not yet a monetised bottleneck: Other revenue (mostly licensing) was $48.0M in Q3 2026 (+35% y/y from $35.6M), 5.4% of revenue, and remaining performance obligations beyond one year are only $62.4M, so contracts are short and renewal-dependent. The planned move to a logged-in experience is aimed at controlling access to that data (press report of the company's stated aims). How long the scarcity lasts depends on renewals with the same AI firms that compete for the user's question; Google renewal status is only a press hypothesis.",
+   "evidence_ids": [
+    "web:pf_10k_20260206",
+    "dc_seg_oth_q3",
+    "dc_seg_oth_q3py",
+    "dc_rpo_gt1y",
+    "web:mc_tc_20261029"
+   ]
+  },
+  "future": {
+   "reading_he": "Ad budgets keep growing at the scale platforms RDDT names as rivals (FY2025 revenue growth: META +22.2%, GOOGL +15.1%, PINS +15.8%, SNAP +10.6%), and money is moving to measurable lower-funnel outcomes: RDDT says Q3 2026 click volume grew over 50% and conversion volume more than tripled y/y, with pricing outpacing impressions. The other direction is information seeking moving to AI answers: the 10-Q says declining search referral traffic hurt DAUq growth in Q3 2026 and may worsen, and management reports more than 1M fewer referrals per week in October. The ad market is a tailwind; the traffic market is turning against open-web visits.",
+   "evidence_ids": [
+    "web:fd_META_cf",
+    "web:fd_GOOGL_cf",
+    "web:fd_PINS_cf",
+    "web:fd_SNAP_cf",
+    "web:dc_call_20261029",
+    "web:pf_10q_20261030",
+    "dc_search_referral_drop"
+   ]
+  }
+ },
+ "card": {
+  "assessments": {
+   "moat": {
+    "assessment": "adequate",
+    "evidence_ids": [
+     "web:pf_10k_20260206",
+     "dc_gm_q3",
+     "dc_li_g",
+     "dc_li_g_py",
+     "dc_search_referral_drop"
+    ],
+    "note": "Moat source evidenced: a unique user-generated, topic-organised corpus and community network (91.5% gross margin, above META 82%, PINS 80%). Not strong: user acquisition depends on GOOGL search referrals that are falling, and logged-in DAUq grew only 6.6% y/y (53.5M vs 50.2M); the same AI products from GOOGL/META/OpenAI can summarise the content without the visit."
+   },
+   "switching_costs": {
+    "assessment": "weak",
+    "evidence_ids": [
+     "web:pf_10k_20260206"
+    ],
+    "note": "Advertisers buy in auctions and can move budgets among the platforms the 10-K names (Google, Meta, Snap, TikTok, Pinterest, X); no multi-year ad contracts are disclosed. User-side switching costs (community identity, karma) are not measured in the filings."
+   },
+   "pricing_power": {
+    "assessment": "strong",
+    "evidence_ids": [
+     "dc_arpu_us",
+     "dc_arpu_us_py",
+     "dc_arpu_g",
+     "dc_arpu_g_py",
+     "web:dc_call_20261029"
+    ],
+    "note": "US ARPU $13.82 vs $9.04 (+53% y/y) and global ARPU +36% with US users flat; management says pricing outpaced impressions in Q3 2026 while conversions tripled, so the price rise is backed by advertiser outcomes. Still an auction price: it falls if conversions or reach weaken."
+   },
+   "retention": {
+    "assessment": "adequate",
+    "evidence_ids": [
+     "web:dc_call_20261029",
+     "dc_li_us",
+     "dc_li_us_py",
+     "dc_wauq_us",
+     "dc_wauq_us_py"
+    ],
+    "note": "Management cites strong advertiser retention and new-user first-week return up over 50% y/y (management statements, no rates disclosed). Hard numbers are flat in the US: logged-in DAUq 23.4M vs 23.1M, WAUq 188.5M vs 187.8M."
+   },
+   "customer_concentration": {
+    "assessment": "strong",
+    "evidence_ids": [
+     "web:pf_10q_20261030"
+    ],
+    "note": "No customer above 10% of revenue and no country other than the US at 10% or more; active mid-market advertisers grew over 50% y/y. The real concentration is the traffic source (Google), assessed under substitutes, and the revenue type (94% advertising)."
+   },
+   "market_size": {
+    "assessment": "strong",
+    "evidence_ids": [
+     "pf_revenue_fy2025",
+     "web:fd_META_cf",
+     "web:fd_GOOGL_cf",
+     "dc_arpu_intl",
+     "dc_arpu_us"
+    ],
+    "note": "Headroom relative to named rivals, not a TAM study: RDDT's FY2025 revenue is about 1.1% of META's and 0.5% of GOOGL's; international ARPU $2.43 vs US $13.82 per quarter leaves room if international monetisation catches up."
+   },
+   "competition": {
+    "assessment": "adequate",
+    "evidence_ids": [
+     "web:fd_META_cf",
+     "web:fd_PINS_cf",
+     "web:fd_SNAP_cf",
+     "web:fd_GOOGL_cf",
+     "web:pf_rel_20261029_1",
+     "web:pf_10k_20260206"
+    ],
+    "note": "Growing ad revenue about 2-5x faster than META, GOOGL, PINS and SNAP (FY2025 rates) with better margins than PINS and SNAP, but META and GOOGL own far larger audiences, data and ad tooling, and GOOGL controls RDDT's main acquisition channel."
+   },
+   "substitutes": {
+    "assessment": "weak",
+    "evidence_ids": [
+     "web:pf_10q_20261030",
+     "dc_search_referral_drop",
+     "dc_dauq_us",
+     "dc_dauq_us_py",
+     "dc_lo_g",
+     "web:dc_call_20261029"
+    ],
+    "note": "AI answers (Google AI Overviews/AI Mode, ChatGPT, Gemini, Anthropic) substitute for the logged-out visit: US DAUq -2% y/y, logged-out users are 59% of DAUq (76.8M of 130.3M), referrals down more than 1M per week in October; management warned of a possible low double-digit DAUq fall in Q4."
+   },
+   "management": {
+    "assessment": "strong",
+    "evidence_ids": [
+     "web:pf_rel_20261029_1",
+     "web:pf_rel_20260730_1",
+     "web:pf_rel_20260430_1",
+     "web:pf_rel_20260205_1",
+     "web:nm_rel_20241029",
+     "dc_g_rev_q4"
+    ],
+    "note": "Revenue beat its own guidance midpoint in 8 of 8 quarters since Q4 2024 (mean actual/guide 1.10; Q3 2026 1.03, the smallest beat); disclosed the traffic problem early with a sized warning. Caveat: it is 'evaluating' user reporting, a disclosure-change risk."
+   },
+   "capital_allocation": {
+    "assessment": "adequate",
+    "evidence_ids": [
+     "dc_buyback_9m_usd",
+     "pf_sbc_q_2026_03_31",
+     "pf_sbc_q_2026_06_30",
+     "pf_sbc_q_2026_09_30",
+     "dc_fdso_q3",
+     "pf_operating_income_fy2025",
+     "pf_equity_fy2025",
+     "pf_cash_fy2025",
+     "pf_short_term_investments_fy2025",
+     "pf_capex_fy2025",
+     "dc_cash_total",
+     "dc_aws_commit",
+     "dc_gcp_commit"
+    ],
+    "note": "Buybacks of $340M in 9M 2026 roughly offset SBC of $301M (Q3 SBC $131M = 14.7% of revenue, rising), holding fully diluted shares near 206M; buybacks neutralise dilution rather than shrink the count. Derived ROIC is very high: FY2025 operating income $442M on about $452M invested capital (equity $2,929M less $2,477M cash and securities), because the business needs almost no capital (capex 0.1% of revenue). No debt, $3.03B cash; $1.46B of AWS/Google Cloud commitments through 2029."
+   },
+   "governance": {
+    "assessment": "adequate",
+    "evidence_ids": [
+     "dc_class_a_sh",
+     "dc_class_b_sh",
+     "dc_advance_pct",
+     "web:pf_proxy_20260423"
+    ],
+    "note": "Multi-class structure (46.2M Class B vs 147.0M Class A) concentrates voting control; Advance Magazine Publishers holds about 22% of shares. No evidenced abuse, but outside holders have limited say."
+   },
+   "regulation": {
+    "assessment": "adequate",
+    "evidence_ids": [
+     "web:pf_10q_20261030",
+     "web:pf_10k_20260206"
+    ],
+    "note": "Exposed to privacy (GDPR, CCPA, FTC), online-safety and content-liability regimes and a securities class action on the Google impact (second amended complaint 2026-10-23; damages unspecified). None is sized as a revenue risk in the filings."
+   },
+   "technology_ai": {
+    "assessment": "adequate",
+    "evidence_ids": [
+     "web:dc_call_20261029",
+     "dc_seg_oth_q3",
+     "dc_incr_ebitda_margin"
+    ],
+    "note": "ML feeds and ad tools are delivering (conversions tripled, incremental adjusted EBITDA margin 53.6% y/y), and the corpus is licensed to AI firms; but AI is also the main substitution threat and licensing is only 5.4% of revenue."
+   },
+   "geopolitics": {
+    "assessment": "adequate",
+    "evidence_ids": [
+     "mc_f_rev_us_q326",
+     "mc_f_rev_row_q326",
+     "web:pf_10q_20261030"
+    ],
+    "note": "About 80% of revenue is US-billed, no other country at 10%, substantially all long-lived assets in the US, Reddit is not directly accessible in China; tariff exposure is indirect through advertisers and unsized."
+   }
+  }
+ },
+ "evidence_pack": {
+  "pack_version": 1,
+  "pack_sha256": "9e20bef95b02ac8822b2d1edf16e6b0929152c0dc7b68a428dc781a51efc3dd0",
+  "ticker": "RDDT",
+  "as_of": "2026-11-01",
+  "identity": {
+   "name": "Reddit, Inc.",
+   "currency": "USD",
+   "exchange": "NYSE",
+   "security": "Reddit, Inc. Class A common stock (Class B, 10 votes, unlisted, held by insiders; price is Class A; shares outstanding 2026-10-28: 146,942,127 A + 46,151,604 B)",
+   "fiscal_year_end": "12-31",
+   "cik": "1713445",
+   "type": "high_growth / fast_grower (computed by classify_company from SEC companyfacts; the analyst confirms or overrides with reasons)",
+   "evidence_ids": [
+    "pf_10k_20260206"
+   ]
+  },
+  "sources": 47,
+  "independent_sources": 34,
+  "guidance_track_record": {
+   "metric": "revenue",
+   "ratio": 1.099383,
+   "n": 8,
+   "beats": 8,
+   "misses": 0,
+   "periods": [
+    {
+     "period": "Q4 2024",
+     "guided_mid": 392500000.0,
+     "actual": 427707000.0,
+     "ratio": 1.089699
+    },
+    {
+     "period": "Q1 2025",
+     "guided_mid": 365000000.0,
+     "actual": 392361000.0,
+     "ratio": 1.074962
+    },
+    {
+     "period": "Q2 2025",
+     "guided_mid": 420000000.0,
+     "actual": 499627000.0,
+     "ratio": 1.189588
+    },
+    {
+     "period": "Q3 2025",
+     "guided_mid": 540000000.0,
+     "actual": 584911000.0,
+     "ratio": 1.083169
+    },
+    {
+     "period": "Q4 2025",
+     "guided_mid": 660000000.0,
+     "actual": 725607000.0,
+     "ratio": 1.099405
+    },
+    {
+     "period": "Q1 2026",
+     "guided_mid": 600000000.0,
+     "actual": 663411000.0,
+     "ratio": 1.105685
+    },
+    {
+     "period": "Q2 2026",
+     "guided_mid": 720000000.0,
+     "actual": 804905000.0,
+     "ratio": 1.117924
+    },
+    {
+     "period": "Q3 2026",
+     "guided_mid": 865000000.0,
+     "actual": 894957000.0,
+     "ratio": 1.034632
+    }
+   ],
+   "rule": "mean of actual / guided midpoint over the recorded periods; applied only where a driver says so"
+  },
+  "guidance_adjustments": [],
+  "competitors": [
+   {
+    "ticker": "META",
+    "name": "Meta Platforms",
+    "why": "Named in RDDT 10-K Item 1 for entertainment time and for advertisers (Facebook Groups for passions, Marketplace for commerce); competes for the same performance/brand ad budgets and user time"
+   },
+   {
+    "ticker": "PINS",
+    "name": "Pinterest",
+    "why": "Named in RDDT 10-K Item 1 for advertisers and for passions and hobbies; interest-based discovery platform selling to the same advertisers"
+   },
+   {
+    "ticker": "SNAP",
+    "name": "Snap",
+    "why": "Named in RDDT 10-K Item 1 for entertainment and as a direct competitor for ad spend; closest size peer among advertising platforms"
+   },
+   {
+    "ticker": "GOOGL",
+    "name": "Alphabet (Google, YouTube)",
+    "why": "Named in RDDT 10-K Item 1 for seeking information (Search, Gemini, YouTube) and for advertisers; also the largest content-licensing customer and the main source of Reddit's logged-out search traffic"
+   }
+  ],
+  "consensus": [
+   {
+    "id": "nm_cons_rev_fy2026",
+    "metric": "revenue",
+    "period": "FY2026",
+    "value": 3391270800.0,
+    "n": 31,
+    "low": 3273000000.0,
+    "high": 3520807190.0,
+    "source_id": "nm_av_estimates"
+   },
+   {
+    "id": "nm_cons_rev_fy2027",
+    "metric": "revenue",
+    "period": "FY2027",
+    "value": 4477065900.0,
+    "n": 33,
+    "low": 3881000000.0,
+    "high": 4866000000.0,
+    "source_id": "nm_av_estimates"
+   },
+   {
+    "id": "nm_cons_eps_fy2026",
+    "metric": "eps_diluted",
+    "period": "FY2026",
+    "value": 5.3945,
+    "n": 29,
+    "low": 4.76,
+    "high": 6.2468,
+    "source_id": "nm_av_estimates"
+   },
+   {
+    "id": "nm_cons_eps_fy2027",
+    "metric": "eps_diluted",
+    "period": "FY2027",
+    "value": 7.1074,
+    "n": 29,
+    "low": 4.35,
+    "high": 8.59,
+    "source_id": "nm_av_estimates"
+   },
+   {
+    "id": "nm_cons_rev_q4_2026",
+    "metric": "revenue",
+    "period": "Q4 2026",
+    "value": 1045313590.0,
+    "n": 26,
+    "low": 947000000.0,
+    "high": 1129000000.0,
+    "source_id": "nm_av_estimates"
+   },
+   {
+    "id": "nm_cons_eps_q4_2026",
+    "metric": "eps_diluted",
+    "period": "Q4 2026",
+    "value": 1.8295,
+    "n": 23,
+    "low": 1.38,
+    "high": 2.11,
+    "source_id": "nm_av_estimates"
+   }
+  ],
+  "potential": {
+   "market_direction": {
+    "reading": "Ad budgets keep growing at the scale platforms RDDT names as rivals (FY2025 revenue growth: META +22.2%, GOOGL +15.1%, PINS +15.8%, SNAP +10.6%), and money is moving to measurable lower-funnel outcomes: RDDT says Q3 2026 click volume grew over 50% and conversion volume more than tripled y/y, with pricing outpacing impressions. The other direction is information seeking moving to AI answers: the 10-Q says declining search referral traffic hurt DAUq growth in Q3 2026 and may worsen, and management reports more than 1M fewer referrals per week in October. The ad market is a tailwind; the traffic market is turning against open-web visits.",
+    "evidence_ids": [
+     "web:fd_META_cf",
+     "web:fd_GOOGL_cf",
+     "web:fd_PINS_cf",
+     "web:fd_SNAP_cf",
+     "web:dc_call_20261029",
+     "web:pf_10q_20261030",
+     "dc_search_referral_drop"
+    ],
+    "hypothesis": false
+   },
+   "bottleneck_potential": {
+    "reading": "RDDT owns a scarce, constantly refreshed corpus of human conversation (10-K Item 1 content licensing), but it is not yet a monetised bottleneck: Other revenue (mostly licensing) was $48.0M in Q3 2026 (+35% y/y from $35.6M), 5.4% of revenue, and remaining performance obligations beyond one year are only $62.4M, so contracts are short and renewal-dependent. The planned move to a logged-in experience is aimed at controlling access to that data (press report of the company's stated aims). How long the scarcity lasts depends on renewals with the same AI firms that compete for the user's question; Google renewal status is only a press hypothesis.",
+    "evidence_ids": [
+     "web:pf_10k_20260206",
+     "dc_seg_oth_q3",
+     "dc_seg_oth_q3py",
+     "dc_rpo_gt1y",
+     "web:mc_tc_20261029"
+    ],
+    "hypothesis": false
+   },
+   "share_trajectory": {
+    "reading": "RDDT is taking ad-budget share on numbers: Q3 2026 revenue $895.0M (+53% y/y), ad revenue $847.0M (+54%), FY2025 revenue +69% against FY2025 growth of META +22.2%, GOOGL +15.1%, PINS +15.8%, SNAP +10.6%. The gain is monetisation, not attention: global DAUq 130.3M (+12% y/y) but US DAUq 50.7M (-2% y/y), US logged-out 27.3M (-4%), US logged-in 23.4M (+1%); US ARPU $13.82 (+53% y/y). International users grew (DAUq 79.6M, +24%) at a low ARPU of $2.43. Peers' Q3 2026 growth was not retrieved, so the comparison is to their FY2025.",
+    "evidence_ids": [
+     "web:pf_rel_20261029_1",
+     "dc_seg_ad_q3",
+     "dc_seg_ad_q3py",
+     "pf_revenue_fy2025",
+     "pf_revenue_fy2024",
+     "web:fd_META_cf",
+     "web:fd_GOOGL_cf",
+     "web:fd_PINS_cf",
+     "web:fd_SNAP_cf",
+     "dc_dauq_g",
+     "dc_dauq_g_py",
+     "dc_dauq_us",
+     "dc_dauq_us_py",
+     "dc_lo_us",
+     "dc_lo_us_py",
+     "dc_li_us",
+     "dc_li_us_py",
+     "dc_arpu_us",
+     "dc_arpu_us_py",
+     "dc_dauq_intl",
+     "dc_dauq_intl_py",
+     "dc_arpu_intl"
+    ],
+    "hypothesis": false
+   },
+   "competitive_position": {
+    "reading": "Stronger than PINS and SNAP, far smaller and weaker than META and GOOGL. Gross margin 91.5% in Q3 2026 vs FY2025 META 82.0%, PINS 80.1%, SNAP 55.0%; FY2025 operating margin 20.1% (Q3 2026 29.2%) vs PINS 7.6% and SNAP -9.0%, but below META 41.4% and GOOGL 32.0%. Scale: FY2025 revenue $2.2B is about 1.1% of META's $201.0B and 52% of PINS's $4.2B. Its edge is intent-rich, topic-organised conversation (conversion volume tripled y/y); its weakness is that GOOGL is at once a rival for the question, the main traffic source, a licensing customer and a cloud vendor ($580M commitment).",
+    "evidence_ids": [
+     "dc_gm_q3",
+     "web:fd_META_cf",
+     "web:fd_PINS_cf",
+     "web:fd_SNAP_cf",
+     "web:fd_GOOGL_cf",
+     "pf_operating_income_fy2025",
+     "pf_revenue_fy2025",
+     "pf_operating_income_q_2026_09_30",
+     "pf_revenue_q_2026_09_30",
+     "web:dc_call_20261029",
+     "dc_gcp_commit"
+    ],
+    "hypothesis": false
+   },
+   "threats": {
+    "reading": "Substitution by AI answers is already happening: search referrals fell meaningfully in Q3 and by more than 1M per week in October, and management said that if the trend continues total DAUq could fall in Q4 by a low double-digit percentage from 130M (a management statement, not a forecast). The 10-Q names LLM answer products from Google, Meta, OpenAI and Anthropic as competitors. The company's own response, a logged-in requirement tested in non-US markets from Q4 2026, may reduce total users and ad reach (10-Q). Other threats: 94% of 2025 revenue is advertising, exposed to platform privacy changes; a securities class action on the Google/AI Overviews impact (motion to dismiss due by 2026-11-23); management is 'evaluating' user reporting (disclosure risk).",
+    "evidence_ids": [
+     "web:dc_call_20261029",
+     "dc_search_referral_drop",
+     "web:pf_10q_20261030",
+     "web:pf_10k_20260206"
+    ],
+    "hypothesis": false
+   }
+  },
+  "bottlenecks": [
+   {
+    "id": "fd_b1",
+    "reading": "What RDDT supplies that is scarce: a large, constantly refreshed corpus of authentic human conversation (10-K Item 1 Content Licensing) used for LLM search and run-time inference, plus intent-rich community audiences for advertisers. Paid adoption in its own numbers: Other revenue (mostly data licensing) was $43M in Q2 2026, +24% y/y, against Ad revenue $762M +64% (Q2 2026 release). Licensing is small next to ads, so the scarce data asset is monetised mostly via ads and is not yet a large separate line.",
+    "evidence_ids": [
+     "web:pf_10k_20260206",
+     "web:pf_rel_20260730_1"
+    ],
+    "hypothesis": false
+   },
+   {
+    "id": "fd_b2",
+    "reading": "Traffic dependency: logged-out DAUq grew 27% y/y to 77.7M in Q2 2026 (US +10%, International +41%) while logged-in DAUq grew only 7% to 52.6M (US +1%, 23.1M); growth rests on logged-out, largely search-referred users. Rivals (Google AI answers, ChatGPT/Gemini, named in Item 1) can substitute the answer without the visit, so the shortage RDDT supplies could be bypassed by AI summaries of its own content.",
+    "evidence_ids": [
+     "web:pf_rel_20260730_1",
+     "web:pf_10k_20260206"
+    ],
+    "hypothesis": false
+   },
+   {
+    "id": "fd_b3",
+    "reading": "HYPOTHESIS (secondary press, dated at/after results day, not citable as fact): Reddit told shareholders in October 2026 that Google AI search features cut search referrals by more than 1M per week, plans to test mandatory logins in some international markets, and the roughly $60M a year Google licensing deal is nearing expiry with renewal uncertain; OpenAI deal value (~$70M a year) is a third-party estimate.",
+    "evidence_ids": [],
+    "hypothesis": true
+   },
+   {
+    "id": "fd_b4",
+    "reading": "HYPOTHESIS: capacity to replace the corpus is added by others slowly (competing communities Discord, Facebook Groups, X, and LLM-generated content), but the 10-K lists these as competitors for the same time, so the moat is user-generated depth, not exclusivity; Reddit has sued scrapers (press, unverified), so access control is part of the bottleneck value.",
+    "evidence_ids": [],
+    "hypothesis": true
+   }
+  ],
+  "falsifiers": [
+   {
+    "id": "fx_q4rev_base",
+    "scenario": "base",
+    "metric": "Q4 2026 revenue, USD",
+    "threshold": 1000000000,
+    "direction": "below",
+    "by": "2027-02-20",
+    "evidence_ids": [
+     "dc_g_rev_q4"
+    ]
+   },
+   {
+    "id": "fx_q4ebitda_base",
+    "scenario": "base",
+    "metric": "Q4 2026 adjusted EBITDA, USD",
+    "threshold": 480000000,
+    "direction": "below",
+    "by": "2027-02-20",
+    "evidence_ids": [
+     "dc_g_ebitda_q4"
+    ]
+   },
+   {
+    "id": "fx_q1rev_bear",
+    "scenario": "bear",
+    "metric": "Q1 2027 revenue, USD (above = bear refuted: the bear's FY2027 +10% implies about 730M at 2026's Q1 share of 19.6%; 800M = +21% y/y on Q1 2026's 663.4M)",
+    "threshold": 800000000,
+    "direction": "above",
+    "by": "2027-05-15",
+    "evidence_ids": [
+     "web:pf_rel_20260430_1"
+    ]
+   },
+   {
+    "id": "fx_q1rev_bull",
+    "scenario": "bull",
+    "metric": "Q1 2027 revenue, USD (below = bull's 36% year refuted)",
+    "threshold": 880000000,
+    "direction": "below",
+    "by": "2027-05-15",
+    "evidence_ids": [
+     "web:pf_rel_20260430_1"
+    ]
+   },
+   {
+    "id": "fx_dau_bull",
+    "scenario": "bull",
+    "metric": "Q4 2026 global DAUq, millions (below = traffic decline not contained)",
+    "threshold": 117,
+    "direction": "below",
+    "by": "2027-02-20",
+    "evidence_ids": [
+     "dc_dauq_g",
+     "web:dc_call_20261029"
+    ]
+   },
+   {
+    "id": "fx_li_q4_base",
+    "scenario": "base",
+    "metric": "Q4 2026 logged-in DAUq global, millions (below Q3's 53.5 = logged-in users, over 80% of monetization, no longer growing q/q: base refuted)",
+    "threshold": 53.5,
+    "direction": "below",
+    "by": "2027-02-20",
+    "evidence_ids": [
+     "dc_li_g",
+     "dc_li_g_py",
+     "web:pf_rel_20261029_2"
+    ]
+   },
+   {
+    "id": "fx_arpu_us_base",
+    "scenario": "base",
+    "metric": "Q3 2027 US ARPU, USD per quarter (below 15.20 = less than +10% y/y on Q3 2026's 13.82; base's 25% FY2027 on a flat US audience needs ARPU growth)",
+    "threshold": 15.2,
+    "direction": "below",
+    "by": "2027-11-15",
+    "evidence_ids": [
+     "dc_arpu_us",
+     "dc_arpu_us_py",
+     "dc_li_us",
+     "dc_li_us_py"
+    ]
+   },
+   {
+    "id": "fx_li_q1_bear",
+    "scenario": "bear",
+    "metric": "Q1 2027 logged-in DAUq global, millions (above 55.0 = logged-in growth holds at least +4% y/y through the logged-in-only tests: bear's reach loss refuted)",
+    "threshold": 55.0,
+    "direction": "above",
+    "by": "2027-05-15",
+    "evidence_ids": [
+     "dc_li_g",
+     "dc_li_g_py",
+     "web:pf_rel_20261029_2"
+    ]
+   }
+  ],
+  "notes": [
+   "prefetch 2026-11-01T05:44:40+00:00: SEC documents saved verbatim and their text in reading/ (untrusted); a lane cites a pf_ source only after reading the passage it relies on",
+   "gather fragments reused from /home/user/fundamental-engine/runs/tickers/RDDT_2026-10-27 (as_of 2026-10-27)",
+   "dc MGMT (call 2026-10-29, dc_call_20261029) search referral traffic fell meaningfully in Q3 with the decline accelerating late in the quarter and continuing into October (more than 1 million fewer referrals per week on average); management said that if this rate continues total DAUq could fall in Q4 by a low double-digit percentage from the current 130 million base. Management statement, not a forecast; logged-in and app DAUq (over 80% of monetization) grew q/q.",
+   "dc MGMT management plans to move Reddit to a logged-in-only experience, with full tests in select non-US markets from Q4 2026; it will keep reporting logged-in and logged-out DAUq by geography for now and is 'evaluating' user reporting (disclosure-change risk).",
+   "dc MGMT Q4 guide midpoint = revenue about +40% y/y (38-42%) and adjusted EBITDA margin about 49%; guidance is for Q4 only (no full-year or 2027 guide). Q3 beat its own guide: revenue 895 vs 860-870 and adj EBITDA 402 vs 385-395.",
+   "dc CALL 2026-10-29 Reddit Q3 2026 earnings call (AV transcript, raw copy in gather/raw_documents/av_transcript_RDDT_2026Q3.json). Q&A topics: Google search referral decline and AI Overviews, logged-in-only transition, content licensing (existing OpenAI and Google partners), 2027 advertiser renewals.",
+   "dc MGMT taxes: Q3 tax expense $5.8m, effective rate about 2%; full valuation allowances on US federal and state deferred tax assets are being reassessed and 10-Q says a significant release may be possible within 12 months (a one-time GAAP net income gain if released; keep out of recurring earnings).",
+   "dc MGMT capital allocation priorities: invest in the business, M&A, share repurchase; about $660m left on the $1.0bn buyback authorization of 2026-02-04; fully diluted shares 206.3m, 207.0m excluding buybacks, flat q/q; headcount +12% y/y, +3% q/q; consumer marketing mid-single-digit % of revenue.",
+   "dc CUSTOMERS no customer or advertiser share of revenue is disclosed in the 10-Q (no customer over 10% named); other than the US no country is 10% or more of revenue. Content licensing customers (OpenAI, Google named by an analyst on the call) are not quantified: 'Other revenue' is $48m = 5.4% of Q3 revenue; RPO over one year is only $62.4m.",
+   "dc SEGMENT one reportable segment (CEO reviews consolidated net income); segment lines are therefore geography and revenue-type disaggregation from the 10-Q note, with no segment operating income.",
+   "dc ONEOFFS none identified in the Q3 release or 10-Q: no restructuring or impairment lines in the income statement; other income $27.5m is mostly interest and is below operating income; the 2% tax rate reflects valuation allowances (a recurring-until-released benefit, not a one-off).",
+   "dc COMMIT purchase obligations: AWS $880m between July 2026 and June 2029 (addendum signed June 2026); Google Cloud $580m between September 2026 and August 2029 (signed August 2026); all minimums met to date. No debt drawn on the $500m revolver (letters of credit $5.7m). Capex $1.2m in Q3 (0.1% of revenue).",
+   "dc RISK Search dependence: organic traffic from Google and other search engines is a main acquisition channel and Google AI features and algorithm changes can cut referrals (10-K Item 1A, 'rely on search engines'); realized in Q3-Q4 2026 per management.",
+   "dc RISK AI competition: LLMs and AI answer products (Google, Meta, OpenAI, Anthropic) may substitute for visits to Reddit and for information seeking (10-K Item 1A competition).",
+   "dc RISK Advertising concentration: about 94% of 2025 revenue (91% in 2024) is third-party advertising, sensitive to ad budgets, measurement and privacy changes by Apple, Google and Microsoft (10-K Item 1A, advertising and platform changes).",
+   "dc RISK Content licensing is small, fixed-fee and renewal-dependent: 'Other revenue' 5.4% of revenue and RPO over one year $62.4m (10-Q Note on revenue); data-use disputes and scraping litigation risk (10-K Item 1A, IP and data).",
+   "dc RISK Cloud infrastructure dependence on AWS and Google Cloud with $1.46bn of three-year commitments (10-Q Note Commitments; 10-K Item 1A, outages).",
+   "dc RISK Moderation, content and regulatory exposure (privacy, online safety, EU rules, litigation) and dependence on volunteer moderators (10-K Item 1A).",
+   "dc RISK Control and dilution: multi-class structure concentrates voting control (Advance Magazine Publishers holds about 22% of shares); SBC and related taxes $136m in Q3 (15% of revenue) with fully diluted shares held flat only by buybacks (10-K and 10-Q Item 1A).",
+   "dc GAP no transcript fetched beyond the single AV call; no segment operating profit exists; licensing contract counts and prices are not disclosed; customer concentration for advertisers is not disclosed.",
+   "dc DATE the Q3 release and call (2026-10-29) are citable from 2026-10-31 (as_of 2026-11-01 is past that); the 10-Q filed 2026-10-30 is citable from 2026-11-01.",
+   "fd NAMED COMPETITORS (10-K Item 1, pf_10k_20260206): Seeking information: Google, Amazon, YouTube, Wikipedia, X, other news sites, LLMs (ChatGPT, Gemini, Anthropic). Entertainment: Meta (Facebook, Instagram, Threads, WhatsApp), YouTube, Snap, X, TikTok, Roblox, Twitch. Passions and hobbies: Facebook Groups, Discord, X, Pinterest. Peer-to-peer commerce: Facebook Marketplace, Nextdoor, Craigslist, Poshmark, Etsy, Roblox. Advertising: Google, Meta, Snapchat, TikTok, Pinterest, X. Content licensing faces competition from news, publishing, entertainment and social media sources. Competitors tracked on own numbers: META, PINS, SNAP, GOOGL (all SEC-registered, direct ad-budget rivals); TikTok, X, Discord, Roblox are private or part of non-comparable parents and not tracked.",
+   "fd SHARE revenue growth FY2025 (own 10-Ks): RDDT +69% (FY2025 $2,203M vs $1,300M, pf_rel_20260205_1) vs META +22.2% (fd_META_cf), PINS +15.8% (fd_PINS_cf), SNAP +10.6% (fd_SNAP_cf), GOOGL +15.1% (fd_GOOGL_cf). RDDT is gaining ad share fastest from a very small base: FY2025 revenue $2.2B is about 1.1% of META's $201.0B and 52% of PINS's $4.22B.",
+   "fd SHARE trajectory: RDDT Q2 2026 revenue $805M +61% y/y (pf_rel_20260730_1), growth decelerating from 70% (Q4 2025) and 71% (Q4 2024 year-ago base); still far above peers' FY2025 growth. Attributed segment-level ad share (ad revenue by platform) not retrieved: gap.",
+   "fd SHARE margin comparison FY2025 (derived): META operating margin 41.4%, GOOGL 32.0%, PINS 7.6%, SNAP -9.0%; RDDT's own margin is in gather_numbers/documents lanes. Scale peers show the margin ceiling ad platforms reach (META gross 82%, PINS 80%, SNAP 55%).",
+   "fd NOTE results of 2026-10-29 (Q3 2026 release pf_rel_20261029_*, 10-Q filed 2026-10-30) not citable until 2026-10-31/11-01 per 2-day lag: release dated 10-29 is citable from 10-31, 10-Q from 11-01; press items of 10-29 onward kept as hypothesis in bottlenecks, not as facts.",
+   "fd NOTE peers: prefetch had no --peers/peers.json; peer numbers fetched directly from SEC companyfacts (saved gather/raw_field/sec_companyfacts_<T>.json). Forward P/E and growth at comparable stage for peers not retrieved (FMP/AV not used by this lane): gap.",
+   "mc RATES risk-free 4.98% (FRED DGS10, 2026-10-29) and ERP 4.20% (Damodaran implied, 2026-10-01) kept from the prefetch; Damodaran's 1 November update not yet verifiable, so the 1 October value stands.",
+   "mc GEOGRAPHY revenue by customer billing address, 9M 2026: US $1,882.6M (79.7%), rest of world $480.7M (20.3%); Q3 2026 US 80.3% / ROW 19.7%; no single non-US country is 10% or more of revenue (10-Q). ROW grew 75% (9M) and 67% (Q3) y/y vs US 57% / 50%. Evidence: pf_10q_20261030.",
+   "mc GEOGRAPHY long-lived assets: the 10-K states substantially all long-lived assets are in the United States (no regional amounts disclosed); a regional table is a gap. Evidence: pf_10k_20260206. About 3% of cash and securities is held outside the US (10-Q).",
+   "mc EXPOSURE search-engine dependence (Google organic referral and AI Overviews): the 10-Q says declines in referral traffic adversely affected DAUq growth in Q3 2026 and may continue and worsen; US DAUq 50.7M (-2% y/y, -5% q/q per 10-Q), logged-out DAUq 76.8M of 130.3M global (59%), US logged-out 27.3M (-4% y/y). Largest sized bear mechanism; sizing from logged-out share. Evidence: pf_10q_20261030, pf_rel_20261029_1.",
+   "mc EXPOSURE management warning (press report of the Q3 call, not read at source): if the search referral trend continues DAUq could fall by a low-double-digit percentage by next quarter; referrals fell by more than 1M per week in October. Attributed to management via mc_tc_20261029 (press lead, transcript to be confirmed by gather_documents).",
+   "mc EXPOSURE platform dependence on Google Search, plus Apple/Microsoft/Google browser and OS privacy changes that impair ad measurement (10-Q risk factors); cloud hosted on AWS and Google Cloud Platform (concentration). Not sized by a revenue share: hypothesis. Evidence: pf_10q_20261030.",
+   "mc EXPOSURE AI competition: 10-Q names LLMs and AI answer products from Google, Meta, OpenAI and Anthropic as competitors for user attention and as summarizers of Reddit content. Not sized: hypothesis. Evidence: pf_10q_20261030.",
+   "mc EXPOSURE regulation: GDPR/UK GDPR, CCPA, FTC Act, EU/UK content-liability regimes; export control and sanctions law (no sanctioned-country revenue stated; China where Reddit is not directly accessible). International is 20% of revenue, no country 10% or more, so tariff exposure is indirect (advertisers) and unsized: hypothesis. Evidence: pf_10q_20261030, pf_10k_20260206.",
+   "mc EXPOSURE litigation: securities class action (N.D. Cal., filed June 2025) alleging misstatements on Google Search/AI Overviews impact; complaint dismissed with leave to amend 2026-08-13, second amended complaint filed 2026-10-23, motion to dismiss due on or before 2026-11-23. Damages unspecified. Evidence: pf_10q_20261030.",
+   "mc EXPOSURE logged-in transition: from Q4 2026 Reddit will test login requirements in one or more international markets, then intends some form of logged-in restriction globally including the US; the 10-Q warns this could reduce total users and ad reach. Evidence: pf_10q_20261030.",
+   "mc NEWS 2026-10-29 Q3 2026 results (8-K Item 2.02): revenue $895.0M (+53% vs $584.9M), global DAUq 130.3M flat q/q (+12% y/y), US ARPU $13.82. Q4 2026 guidance: revenue $1,000-1,030M, Adjusted EBITDA $480-510M (issuer release). Evidence: pf_rel_20261029_1, pf_10q_20261030.",
+   "mc NEWS 2026-10-29 company moves toward a mainly logged-in experience as search referrals fall; stated aims: protect data from AI scraping and pursue licensing with model providers; tests begin in select non-US markets in Q4, no global timeline; an 'incognito mode' is being rebuilt (press report). Evidence: mc_tc_20261029.",
+   "mc NEWS 2026-10-28 new 'For You' and 'Following' home feed announced (press). Evidence: mc_tc_20261028.",
+   "mc NEWS 2026-10-30 market reaction per CNBC search summary: shares fell about 29% after the outlook, worst day on record; JPMorgan cut its price target to $150 from $185 (analyst opinion, attributed; summary of search result, primary article not read). Evidence: mc_cnbc_20261030.",
+   "mc NEWS 2026-10-30 law-firm solicitation of investors (Block & Leviton) after the drop: a lead only, no claim evidence.",
+   "mc NEWS no other 8-K than the 2026-10-29 earnings release found since the 2026-07-31 10-Q in the prefetch filings list; no export-control, tariff or sanctions action specific to Reddit found.",
+   "nm IDENTITY RDDT = Reddit, Inc. Class A common stock, NYSE, USD, FYE 12-31, CIK 1713445, IB contract 692025016 (SMART/NYSE; a TSE row for RDDT also exists, CAD-type listing, not used). Class B (10 votes, unlisted) 46.2M shares vs Class A 146.9M on 2026-10-28 (10-Q cover); EPS and diluted shares are for A+B combined. No ADR. Sources pf_10q_20261030, pf_10k_20260206.",
+   "nm PRICE last 92.20 at close of Fri 2026-10-30 (ts 23:59 UTC), prior close 129.60, -28.86% on the reaction to the 2026-10-29 results (Q4 revenue guide 1,000-1,030 vs AV consensus 1,045 for Q4, adjusted EBITDA guide 480-510); 52-week high 263.32, low 89.28 (13-week low too). Nov 1 2026 is a Sunday: no later price exists. Source nm_ib_price.",
+   "nm MARKET CAP basis about 146.9M A + 46.2M B = 193.1M shares x 92.20 = ~17.8B basic; diluted weighted 201.9M gives ~18.6B. Cash 1,357.6M plus marketable securities 1,675.8M = 3,033.4M (pf_10q_20261030), lease debt ~31.4M, no financial debt: net cash ~3.0B, about 16% of market cap.",
+   "nm RECONCILIATION FY2025 (10-K vs AV vs companyfacts pf_): revenue 2,202.506M, operating income 441.984M, net income 529.721M, CFO 690.875M, capex 6.706M, SBC 343.180M, diluted EPS 2.62 and diluted shares 202,107,978 all agree exactly, no difference. Note: AV annual 'commonStockSharesOutstanding' 202,107,978 is the diluted weighted figure, not point-in-time shares (10-K cover 2026-02-04: 139,649,508 A + 51,386,276 B = 191.0M).",
+   "nm RECONCILIATION Q3 2026 (10-Q filed 2026-10-30 vs AV vs pf_): revenue 894.957M, income from operations 261.586M, net income 283.264M, diluted EPS 1.40, diluted shares 201,860,245, CFO 363.797M (10-Q text 363.8M), capex 1.229M, SBC 131.306M all agree. 9M check: CFO 312.253+261.876+363.797 = 937.926M = 10-Q 937.9M; SBC 68.336+100.952+131.306 = 300.594M = 10-Q 300.594M; FCF 9M 934.5M per 10-Q. No differences. AV quarterly cash flow rows carry reportedCurrency None for the newest quarter only (cosmetic).",
+   "nm QUALITY OF EARNINGS Q3 2026 net income 283.3M includes other income 27.5M (interest on 3.0B cash and securities) and tax of only 5.8M (2.0% rate: US losses/valuation allowance; FY2025 tax was a net benefit of 1.0M after the valuation-allowance release). Operating income 261.6M (29% margin, GAAP after 131.3M SBC = 14.7% of revenue; SBC rose from 85.2M in Q4 2025). Repurchases 340.0M in 9M 2026 (Q2 234.6M, Q3 100.4M) vs none in 2025: dilution from SBC is partly offset; basic shares 192.6M vs 188.0M a year earlier. A tax rate will normalize upward: do not capitalize 2% tax.",
+   "nm ROIC CHECK prefetch/forensic.json roic is unavailable (inputs missing). Own check from 10-Q: TTM GAAP operating income (231.828+182.912+231.716+261.586) = 908.0M; invested capital: equity 3,581.7M + lease debt 31.4M - cash and marketable securities 3,033.4M = 579.7M operating capital, so NOPAT (21% tax, 717M) / operating capital = ~124% (essentially an asset-light business whose capital is its cash pile). On total capital incl. the 3.0B of cash and securities (3,613M) ROIC is ~20%. Goodwill 42.2M, intangibles 10.1M, receivables 730.1M (up 40% year on year vs revenue up 53%: no sign of stretched collections). Restricted cash is not material per the balance sheet. Operating leases are inside the 31.4M. Sources pf_10q_20261030, nm_av_statements.",
+   "nm AV DENIED none; EARNINGS_ESTIMATES rate limited once (1 request/second burst) on 2026-11-01 and succeeded on the next call; INCOME_STATEMENT, CASH_FLOW, BALANCE_SHEET answered. FMP statements and analyst were not called (ACCESS DENIED on this plan per session_capabilities). Raw AV files are key-field extracts (values verbatim), not the full payloads, see MANIFEST note.",
+   "nm CONSENSUS (attributed to Alpha Vantage EARNINGS_ESTIMATES, pulled 2026-11-01; an expectation, not a fact): FY2026 revenue 3,391M (n 31, 3,273-3,521M), EPS 5.39 (n 29, 4.76-6.25); FY2027 revenue 4,477M (n 33, 3,881-4,866M, +32% over FY2026), EPS 7.11 (n 29, 4.35-8.59); Q4 2026 revenue 1,045M (n 26, 947-1,129M), EPS 1.83 (n 23). FY2026 EPS average was 4.98 90 days ago and 5.38 30 days ago, so revisions were up (2 up, 0 down in 30 days). CAUTION: the feed still shows the Q3 2026 revenue estimate as 874.9M (actual 895.0M) and FY2026 totals that equal 9M actual + pre-print Q4, so the rows seem not yet revised for the 2026-10-29 print and 'revisions' lag it; expect Q4 revenue estimates to fall toward the 1,000-1,030M guide. EPS basis not stated by AV (GAAP Q3 actual 1.40 vs estimate 1.33). Consensus FY2027 EPS 7.11 implies P/E 13.0 at 92.20; FY2026 5.39 implies 17.1.",
+   "nm OWN MULTIPLE HISTORY low 18.7 median 53.5 high 214.7 now 18.8 years 2025-2026 (trailing P/E on month-end closes with TTM GAAP diluted EPS after SBC, TTM net income / 202M diluted shares; history is short: IPO 2024-03, TTM EPS first positive 2025-Q2, so 2025 values 120-215x are on tiny earnings; since 2026-02 low 18.7 median 40.3 high 55.6). Forward P/E now 17.1 on FY2026 consensus EPS 5.39 and 13.0 on FY2027 7.11 (consensus history not available: forward range cannot be built, a gap). Peak-earnings caution: Q3 2026 EPS 1.40 x 4 = 5.60 is not a run rate to capitalize without the tax normalization (2% tax) and the quarter-on-quarter margin expansion (operating margin 29% vs 10% a year earlier on 53% growth). Sources nm_ib_history, pf_net_income_q_2025_03_31 ... pf_net_income_q_2026_09_30, nm_av_estimates.",
+   "nm TRACK RECORD revenue: actual/guided-midpoint ratios Q4'24 1.090, Q1'25 1.075, Q2'25 1.190, Q3'25 1.083, Q4'25 1.099, Q1'26 1.106, Q2'26 1.118, Q3'26 1.035 (8 of 8 guided quarters beat the top of the range; mean about 1.10). Adjusted EBITDA beat the guide midpoint every quarter as well (ratios 1.31, 1.36, 1.39, 1.24, 1.17, 1.24, 1.18, 1.03). The company guides conservatively, but the beat margin on revenue fell to 3.5% in Q3 2026, the smallest in 8 quarters, and the Q4 2026 guide midpoint 1,015M sits below the AV consensus 1,045M: the first time the guide midpoint is under the street. Applying the historical ~1.03-1.10 beat to 1,015M gives ~1,045-1,115M, so the guide itself is not a bearish signal for Q4 revenue; the market reacted to the gap and to deceleration (growth 53% in Q3 vs 61% Q2, 69% Q1). Sources pf_rel_* releases and nm_rel_20241029.",
+   "nm RESULTS DAY the 2026-10-29 release (pf_rel_20261029_1/2) is dated within 2 days of as_of 2026-11-01: citable from 2026-10-31 (ok); the 10-Q filed 2026-10-30 is citable from 2026-11-01 (ok); the AV consensus of 2026-11-01 only from 2026-11-03: consensus rows are expectations, not drivers.",
+   "nm GAP no multi-year forward P/E history (no consensus archive); no price-target page (AV has none; opinions omitted); IB corporate actions: none returned (no splits since the 2024 IPO).",
+   "driver terminal_roic (bear) rests on one independent source",
+   "driver terminal_roic (base) rests on one independent source",
+   "driver terminal_roic (bull) rests on one independent source",
+   "driver sales_to_capital (bear) rests on one independent source",
+   "driver sales_to_capital (base) rests on one independent source",
+   "driver sales_to_capital (bull) rests on one independent source",
+   "driver terminal_growth (bear) rests on one independent source"
+  ],
+  "meaning": "provenance of these inputs (evidence_pack.to_inputs); evidence ids web:<id> are pack sources registered by the evidence bundle, other ids are pack items"
+ }
+}

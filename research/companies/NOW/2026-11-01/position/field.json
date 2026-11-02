@@ -1,0 +1,210 @@
+{
+ "thesis_he": {
+  "bear": "סוכני AI של מיקרוסופט וסיילספורס ובניה פנימית מצמצמים את הצורך במושבים, הצמיחה האורגנית מאטה מתחת ל-15% והרכישות היקרות (Armis ועוד, כ-11 מיליארד דולר) לא מחזירות את מחירן.",
+  "base": "ServiceNow ממשיכה לגדול מהר יותר מכל המתחרים שנקראו בשמם, שימור לקוחות של 98% נשמר, ו-AI מתווסף כהכנסה בתשלום (יעד 1.7 מיליארד דולר ACV) בלי לאכול את המושבים; הצמיחה מאטה בהדרגה כפי שההנהלה עצמה צופה.",
+  "bull": "ServiceNow הופכת לשכבת ההפעלה המנוהלת של סוכני AI בארגונים: AI מגיע ל-30% מה-ACV עד 2030 כפי שההנהלה מכוונת, אבטחה (Armis) מתחברת לפלטפורמה והצמיחה נשארת סביב 20% לאורך יותר שנים."
+ },
+ "potential": {
+  "market_direction": {
+   "reading": "Enterprise buyers are paying more for NOW's workflow and AI layer, measured in NOW's own numbers: customers above $5M ACV 680 vs 553 a year earlier (+23%), 19 deals above $5M net new ACV in Q3 2026 (+135% y/y), RPO $29.7bn (+22%) and cRPO $13.65bn (+20.5% reported, includes Armis and Moveworks), AI ACV target raised from $1.0bn to $1.7bn for end-2026 (management target, not a fact) and agentic AI consumption up 13x year to date. No independent market-size study (Gartner/IDC) was retrieved, so the direction of the whole market beyond NOW's own demand is not evidenced; management itself expects its growth rate to decline over the long term.",
+   "evidence_ids": [
+    "dc_k_customers_5m",
+    "dc_k_customers_5m_py",
+    "dc_k_deals_5m",
+    "dc_k_rpo",
+    "dc_k_crpo",
+    "dc_k_ai_acv_target",
+    "dc_k_agentic_consumption",
+    "pf_10k_20260129"
+   ]
+  },
+  "bottleneck_potential": {
+   "reading": "NOW claims to supply governed workflow execution across disparate systems of record, a need it says AI intensifies (management positioning in the 10-K). The 10-K itself describes a fragmented market with low barriers to entry and warns that system-of-record owners may block NOW's access to their data, so NOW is not a capacity bottleneck in the semiconductor sense: its scarcity is installed workflow depth (98% renewal rate) rather than a resource others cannot add. How long enterprises lack governed AI-workflow platforms, and how fast Salesforce, Microsoft, Workday, Oracle and SAP close it by embedding agents, is not evidenced (hypothesis).",
+   "evidence_ids": [
+    "pf_10k_20260129",
+    "dc_k_renewal"
+   ]
+  },
+  "share_trajectory": {
+   "reading": "On whole-company growth from each company's own filings, NOW (+20.9% FY2025, +20.5% Q3 2026) grew faster than every named competitor: Salesforce +9.6% (FY Jan-2026), Workday +13.1% (FY Jan-2026), Microsoft +17.8% and Oracle +17.4% (whole company, including cloud infrastructure). This suggests NOW is gaining share against Salesforce and Workday in the overlapping workflow budgets, but segment-level share (Service Cloud, Dynamics, Workday HCM service) was not retrieved, and NOW's 2026 growth includes acquired revenue (Moveworks, Veza, Armis) with no organic rate disclosed, so the share gain is directional, not measured.",
+   "evidence_ids": [
+    "pf_cf_20260129",
+    "pf_rel_20261028_1",
+    "fd_sec_crm",
+    "fd_sec_wday",
+    "fd_sec_msft",
+    "fd_sec_orcl"
+   ]
+  },
+  "competitive_position": {
+   "reading": "Stronger than Salesforce and Workday on growth (about 2x Salesforce's rate, 1.6x Workday's) with similar gross margin to Salesforce (77.5% vs 77.7%) and higher GAAP operating margin than Workday (13.7% vs 7.5%), but below Salesforce (20.1%) and far below Microsoft (46.8%) and Oracle (30.6%) on GAAP operating margin. Microsoft is the strongest named rival: far larger, owns Copilot and the Power Platform and is also a distribution partner. NOW's advantages shown in its own data are retention (98% renewal), large-customer expansion (+23% $5M customers) and a seven-for-seven record of beating its subscription guidance; its weakness is a lower GAAP margin after stock compensation (15.5% of Q3 revenue) and acquisition amortization.",
+   "evidence_ids": [
+    "pf_cf_20260129",
+    "fd_sec_crm",
+    "fd_sec_wday",
+    "fd_sec_msft",
+    "fd_sec_orcl",
+    "dc_k_renewal",
+    "dc_k_customers_5m",
+    "dc_k_customers_5m_py",
+    "pf_rel_20261028_1"
+   ]
+  },
+  "threats": {
+   "reading": "Substitution: AI agents could reduce the number of employees handling IT tickets and so the seats NOW charges for (investor worry cited in press, opinion; NOW's answer is hybrid seat plus consumption pricing, which customers accept per the CFO). In-sourcing and new entrants: the 10-K names custom in-house builds, point and platform AI solutions and systems integrators, in a market with low barriers to entry. Systems-of-record owners (Salesforce, Microsoft, Workday, Oracle, SAP) may restrict data access. Regulation and government: a U.S. federal channel partner is 12% of revenue and 20% of receivables, and a DOJ investigation into the 2023 hire of the Army CIO is open with an unpredictable outcome. Deceleration: Q4 cRPO growth guided down to 18.5% cc from 21%.",
+   "evidence_ids": [
+    "mc_invezz_jul",
+    "dc_call_20261028",
+    "pf_10k_20260129",
+    "dc_c_fed_partner_q3",
+    "pf_10q_20261028",
+    "dc_g_q4_crpo_cc"
+   ]
+  }
+ },
+ "assessments": {
+  "moat": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "dc_k_renewal",
+    "pf_cf_20260129",
+    "pf_10k_20260129",
+    "fd_sec_crm",
+    "fd_sec_wday"
+   ],
+   "note": "Evidenced moat source is switching costs on the installed workflow base (98% renewal) plus faster growth than Salesforce and Workday; but GAAP ROIC was about 14% last year and about 9% on average against an 8% reference, close to the cost of capital once stock compensation is counted, the 10-K describes low barriers to entry, and goodwill rose to about $10bn in 2026, which will weigh on returns on capital. Strong cash economics (FCF margin above 30% for six years) do not yet show up as high GAAP returns."
+  },
+  "switching_costs": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "dc_k_renewal",
+    "dc_k_rpo",
+    "pf_10q_20261028"
+   ],
+   "note": "98% renewal rate, RPO $29.7bn with average contract duration lengthening per the CFO; workflows embedded across IT, HR and customer service are costly to replace versus Microsoft or Salesforce alternatives."
+  },
+  "retention": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "dc_k_renewal",
+    "dc_k_customers_5m",
+    "dc_k_customers_5m_py"
+   ],
+   "note": "Renewal rate 98%; customers above $5M ACV grew 23% y/y. Net revenue retention is not disclosed (gap)."
+  },
+  "pricing_power": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "dc_call_20261028",
+    "dc_g_fy_sub_gm_ng",
+    "dc_g_fy_sub_gm_prior_apr",
+    "dc_ps_gp_q3_2026"
+   ],
+   "note": "Customers accept hybrid seat plus consumption pricing for AI (CFO); but the FY2026 non-GAAP subscription gross margin guide slipped from 81.5% to 81%, and delivery services for large AI deals are given at a gross loss (professional services gross profit -$39M in Q3), a concession to win AI deals."
+  },
+  "customer_concentration": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "dc_c_fed_partner_q3",
+    "dc_c_fed_partner_fy25",
+    "pf_10q_20261028"
+   ],
+   "note": "One U.S. federal channel partner and systems integrator is 12% of revenue (11% in FY2025) and 20% of receivables; it is a channel for many agencies rather than one end buyer, but it ties a large slice to U.S. federal procurement."
+  },
+  "competition": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "pf_10k_20260129",
+    "fd_sec_crm",
+    "fd_sec_wday",
+    "fd_sec_msft",
+    "fd_sec_orcl",
+    "pf_cf_20260129"
+   ],
+   "note": "NOW out-grows each named competitor (Salesforce, Workday, Microsoft, Oracle) on whole-company numbers, but all of them are embedding AI agents in their own systems of record and Microsoft is far larger and more profitable; the 10-K calls the market fragmented with low barriers to entry."
+  },
+  "substitutes": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "mc_invezz_jul",
+    "dc_call_20261028",
+    "dc_k_agentic_consumption"
+   ],
+   "note": "AI agents shrinking ticket-handling headcount is a real substitution risk to seat revenue (opinion, unsized); NOW's own agentic consumption grew 13x year to date and pricing is hybrid, so far evidence that NOW captures the agent layer rather than being replaced by it."
+  },
+  "management": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "pf_rel_20250423_1",
+    "pf_rel_20250723_1",
+    "pf_rel_20251029_1",
+    "pf_rel_20260128_1",
+    "dc_rel_20260422",
+    "pf_rel_20260722_1",
+    "pf_rel_20261028_1"
+   ],
+   "note": "Subscription revenue beat the guided midpoint in all 7 quarters read (+0.3% to +2.7%) and the AI ACV target was raised twice in 2026; management also states plainly that growth will decline over the long term."
+  },
+  "capital_allocation": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "dc_armis_price",
+    "dc_veza_price",
+    "dc_moveworks_price",
+    "dc_buyback_9m_2026",
+    "dc_sbc_9m_2026",
+    "pf_sbc_q_2025_09_30",
+    "pf_sbc_q_2026_09_30",
+    "dc_diluted_shares_q3_2026",
+    "dc_g_q4_shares",
+    "pf_10q_20261028"
+   ],
+   "note": "About $11.2bn spent on Moveworks, Veza and Armis in ten months, funded partly with debt (carrying debt about $7.5bn from about $1.5bn); returns on these acquisitions are not yet evidenced and the organic growth rate is not disclosed. Buybacks of $2.2bn in 9M 2026 roughly offset stock compensation of $1.8bn (quarterly SBC $630M vs $492M a year earlier, +28%), so share count is flat (1.043bn Q3, 1.05bn guided for Q4) rather than falling."
+  },
+  "governance": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "pf_10q_20261028"
+   ],
+   "note": "Open DOJ investigation into the 2023 hiring of the former U.S. Army CIO (President and COO resigned July 2024); timing and outcome cannot be predicted per the 10-Q."
+  },
+  "regulation": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "pf_10k_20260129",
+    "dc_c_fed_partner_q3"
+   ],
+   "note": "Government procurement rules and possible debarment matter because a federal channel partner is 12% of revenue; data-residency and AI rules are generic risk factors, unsized."
+  },
+  "technology_ai": {
+   "assessment": "strong",
+   "evidence_ids": [
+    "dc_k_ai_acv_target",
+    "dc_k_agentic_consumption",
+    "dc_call_20261028",
+    "pf_rel_20261028_1"
+   ],
+   "note": "Paid AI adoption shows in NOW's own numbers: AI net new ACV +65% y/y in Q3, AI deals above $1M up 4.5x, agentic consumption up 13x year to date, AI ACV target $1.7bn for end-2026 (management-defined metric, target not yet reported as achieved)."
+  },
+  "geopolitics": {
+   "assessment": "adequate",
+   "evidence_ids": [
+    "mc_f04",
+    "mc_f05",
+    "mc_f06",
+    "pf_10q_20261028",
+    "pf_10k_20260129"
+   ],
+   "note": "About 63% of 9M 2026 revenue from North America (about 60% U.S.), EMEA 25%, APAC 12%, no China breakout; sanctions and tariffs are generic 10-K risks with no revenue sized; a software subscription business with limited hardware exposure."
+  }
+ },
+ "gaps": [
+  "no independent market-size or share source (Gartner/IDC) retrieved: market_size is unknown and market direction rests on NOW's own bookings",
+  "segment-level share against Salesforce Service Cloud, Microsoft Dynamics/Power Platform, Workday HCM and SAP not retrieved: share trajectory is whole-company growth only",
+  "organic (ex-acquisition) subscription and cRPO growth not disclosed: 2026 growth includes Moveworks, Veza and Armis",
+  "net revenue retention not disclosed (renewal rate 98% only)",
+  "incremental ROIC not computed by the engine (null); acquisition returns on Armis, Veza and Moveworks not yet evidenced",
+  "SAP named by the 10-K but no numbers recorded (20-F filer)",
+  "outside-view warning only: high-growth software companies' growth rates historically decay toward the market; this sets, caps or fades no number here"
+ ]
+}

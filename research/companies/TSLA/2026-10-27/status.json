@@ -1,0 +1,126 @@
+{
+ "ticker": "TSLA",
+ "as_of": "2026-10-27",
+ "at_utc": "2026-10-27T16:54:42+00:00",
+ "verified": false,
+ "label": "UNVERIFIED draft (טיוטה — ההערכה לא אומתה)",
+ "reasons": [
+  "8 critical finding(s) open"
+ ],
+ "engine_ran": true,
+ "engine_review_status": "unreviewed_draft",
+ "reviews": {
+  "review_trace": {
+   "file": "review/trace.json",
+   "this_attempt": true,
+   "returned": true
+  },
+  "review_numbers": {
+   "file": "review/numbers.json",
+   "this_attempt": true,
+   "returned": true
+  },
+  "review_counter": {
+   "file": "review/counter.json",
+   "this_attempt": true,
+   "returned": true
+  }
+ },
+ "critical": [
+  {
+   "severity": "critical",
+   "finding": "The executed capex runs at about half of management's guide, and the table's own scenario conditions say the opposite of the numbers. Guide: FY2026 capex is 'approximately $20 billion' (call) or 'in excess of $20 billion' (10-Q). Nine-month capex was 13,014M, so Q4 2026 needs at least about 7.0B. The CFO said capex 'for the next few years would continue to expand' (Robotaxi fleet, Optimus capacity, solar, compute, a semiconductor fab). The executed capex (maintenance_capex + growth_capex) is: stub 2026-10-27..12-31 bear 3.69B, base 2.46B, bull 1.89B; FY2027 bear 5.5B, base 10.8B, bull 12.6B; FY2028 bear 5.4B, base 11.7B, bull 15.5B. Bear growth capex is zero in 2027-2028. The base condition in table_he.md says investment keeps rising until the new products sell ('about 20bn in 2026'), and the bear condition says R&D and investment keep rising. The executed paths cut capex roughly in half (base) or by three quarters (bear). The deviation from the guide is not stated anywhere: the sales_to_capital reason mentions the 20bn but not that the paths spend about half of it. In FY2027 alone, base free cash flow is overstated by about 9B even if capex only stays at the 2026 level. That is about twice the base FY2027 after-tax operating profit (~4.7B). Holding capex at even 20B a year through 2028 would cut the fair value (38.9) by roughly 10-20%. CLAUDE.md requires forecasts to be linked to investment and funding.",
+   "where": "companies/TSLA/inputs.json forecast.overrides sales_to_capital (bear 0.8 / base 1.5 / bull 2.5); casefile val.result.scenarios[bear|base|bull].forecast[0..2] maintenance_capex + growth_capex; guidance dc_g_capex_fy2026_oct_call, dc_g_capex_fy2026_oct_10q, fact dc_capex_9m_2026, CFO statement in dc_call_20261021; inputs.json analyst_sheet.scenario_events.base[3] and .bear[1]; out/table_he.md base and bear condition lines",
+   "fix": "Choose one and rerun ticker-value. (a) Make the executed reinvestment follow the guide: Q4 2026 at about 7.0B, and 2027-2028 at least the 2026 level as the CFO says. For example, use an early-years sales_to_capital near the company's own current reading (fc.anchors.sales_to_capital.history 0.62; FY2026 about 0.8 on the guide) that fades to the scenario values, and say where the extra revenue from that capital lands. (b) Keep the levers, but state next to the result that every path invests about half the guided capex, and rewrite the base and bear conditions (scenario_events base[3], bear[1]) so they match the executed numbers.",
+   "lens": "numbers"
+  }
+ ],
+ "open_critical": [
+  {
+   "finding": "Share count (numbers major + trace major + counter major): opening shares stay 3,952,757,946 (cover count incl. 423,743,904 unearned 2025 CEO award shares) while the award's expense stays inside SBC/margin, a double count. No position/pack input sets the opening share count (dataqa picks the point-in-time cover count) and lowering sbc_pct does not move value (the evidenced margin is after SBC); fixing it needs an engine input for unearned restricted stock. Effect: every per-share value about 12% too low (x 3,952.76/3,529.01 = 1.120: base ~34.4 -> ~38.5); verdict unchanged."
+  },
+  {
+   "finding": "Counter major 'what the price assumes': no scenario or single engine lever reaches 405.83; the table has no row saying the price pays for Robotaxi/FSD/Optimus options no scenario values (render change, outside the position inputs)."
+  },
+  {
+   "finding": "Counter major path multiples below Tesla's own forward P/E history (low 28.6, median 103.1) with no line under the yearly table, and the multiple-source note reads like a historical multiple (render change)."
+  },
+  {
+   "finding": "Counter major bear margin 5% above TTM 3.3% / Q3 2.6% (bear does not break the margin); counter major terminal ROIC on engine rules (9.6/10.6/12.6%) vs path ROIC 6/12/20%; counter major '5.3% expected annual return' row is an r-close-to-g artifact; counter major evidenced flags (warranty +26% to 10.1B, RVG 4.42B, Piotroski) absent from bear and risks. Not changed in this pass."
+  },
+  {
+   "finding": "growth_anchor base 0.09 vs the line arithmetic (~6.5-7.5% with car volume +2-3%): kept; verifier rates it minor with a value effect of a few percent."
+  },
+  {
+   "finding": "Trace majors: consensus EPS rows are non-GAAP but labelled eps_diluted (no driver uses consensus; not citable until 2026-10-28/29), left as written; capex guidance stored as point values where the 10-Q says 'in excess of' (the new floor uses 20B as the minimum, not a midpoint)."
+  },
+  {
+   "finding": "Bear falsifiers for capex/funding (FY2027 capex vs 20B, any facility draw), energy gross margin ex-refunds, EU-wide FSD and customer-car robotaxi not added."
+  },
+  {
+   "finding": "Musk's 'tens of billions in 2028' is not quantified, so FY2028 capex is held at the 20B floor; a higher 2028 spend would lower values further."
+  }
+ ],
+ "repair": {
+  "fixed": [
+   "numbers critical (verifier: confirmed, major) capex at about half the guide: position/core.json gets a guidance-tier driver maintenance_capex_pct (yearly list per scenario) that holds total capex (maintenance + growth at sales_to_capital) at about 4.94B in the 2026-10-27..12-31 stub (Q4 floor 20B - 13.014B nine-month = 6.99B, prorated 65/92) and 20B in FY2027 and FY2028 in every scenario, citing dc_g_capex_fy2026_oct_call, dc_g_capex_fy2026_oct_10q, dc_capex_9m_2026, dc_call_20261021, pf_10q_20261022; the extra buys Robotaxi/Optimus/compute/fab and is credited no revenue; engine rate (5.3% of revenue) from FY2029; no extra depreciation tax shield (conservative). Executed capex now 4.94/20.0/20.0B in all three paths. Values today: bear 17.82 -> 11.09, base 38.90 -> 34.41, bull 115.66 -> 112.25; buy-below 22.2 -> 17.9; verdict index_preferable unchanged (draft).",
+   "numbers critical, text side: scenario_events.base[3] rewritten (management guides ~20B for 2026 and rising; the model holds 20B a year in 2027-2028 with no revenue for it), so the base condition line now matches the executed path.",
+   "numbers major bear funding not executed: after the capex fix fc.funding.bear is self_funded, no debt or equity, about 21.1B of investments liquidated in 2026-2028, payout from 2029-12-31; scenario_events.bear[1] rewritten to exactly that (negative FCF in 2027-2028, gap funded from ~21B of the ~45B cash and investments, no credit-line draw); the 30B credit-line claim and its boilerplate citation removed.",
+   "counter major core/field base story conflict (verifier: minor): scenario_events.base[0] reworded as management's attributed, unquantified backlog claim with the reported Q3 numbers (days of supply 11, production 464k, deliveries -2%) and 'car sales flat to slightly up'; field.json thesis_he.base changed to the same wording; key_risk 'עסק הרכב שטוח' -> 'הכנסות הרכב לא צמחו'. growth_anchor base 0.09 kept (value barely depends on it; see open).",
+   "counter major falsifiers/counter-thesis (partly): fx_q4_rev threshold 24.9B -> 26.6B; fx_fy27_margin 3% -> 4% (base path itself is 4.76%, so not 5%); new bull falsifier fx_cybercab (no Cybercab customer deliveries by 2027-06-30); bull Optimus event no longer says it brings significant revenue (a condition, not counted in the number); core gaps reworded: Robotaxi/FSD/Optimus have no separate revenue line, the bull growth/margin and the base margin recovery assume their commercialization.",
+   "Reran ticker-value twice (ran true); table_he.md and scenarios_he.md regenerated from the corrected parts."
+  ],
+  "open": [
+   "Share count (numbers major + trace major + counter major): opening shares stay 3,952,757,946 (cover count incl. 423,743,904 unearned 2025 CEO award shares) while the award's expense stays inside SBC/margin, a double count. No position/pack input sets the opening share count (dataqa picks the point-in-time cover count) and lowering sbc_pct does not move value (the evidenced margin is after SBC); fixing it needs an engine input for unearned restricted stock. Effect: every per-share value about 12% too low (x 3,952.76/3,529.01 = 1.120: base ~34.4 -> ~38.5); verdict unchanged.",
+   "Counter major 'what the price assumes': no scenario or single engine lever reaches 405.83; the table has no row saying the price pays for Robotaxi/FSD/Optimus options no scenario values (render change, outside the position inputs).",
+   "Counter major path multiples below Tesla's own forward P/E history (low 28.6, median 103.1) with no line under the yearly table, and the multiple-source note reads like a historical multiple (render change).",
+   "Counter major bear margin 5% above TTM 3.3% / Q3 2.6% (bear does not break the margin); counter major terminal ROIC on engine rules (9.6/10.6/12.6%) vs path ROIC 6/12/20%; counter major '5.3% expected annual return' row is an r-close-to-g artifact; counter major evidenced flags (warranty +26% to 10.1B, RVG 4.42B, Piotroski) absent from bear and risks. Not changed in this pass.",
+   "growth_anchor base 0.09 vs the line arithmetic (~6.5-7.5% with car volume +2-3%): kept; verifier rates it minor with a value effect of a few percent.",
+   "Trace majors: consensus EPS rows are non-GAAP but labelled eps_diluted (no driver uses consensus; not citable until 2026-10-28/29), left as written; capex guidance stored as point values where the 10-Q says 'in excess of' (the new floor uses 20B as the minimum, not a midpoint).",
+   "Bear falsifiers for capex/funding (FY2027 capex vs 20B, any facility draw), energy gross margin ex-refunds, EU-wide FSD and customer-car robotaxi not added.",
+   "Musk's 'tens of billions in 2028' is not quantified, so FY2028 capex is held at the 20B floor; a higher 2028 spend would lower values further."
+  ],
+  "ran": true
+ },
+ "returned": [
+  "analyst",
+  "analyst_field",
+  "analyst_path",
+  "gather_documents",
+  "gather_field",
+  "gather_macro",
+  "gather_numbers",
+  "repair",
+  "review_counter",
+  "review_numbers",
+  "review_trace"
+ ],
+ "times": {
+  "started_at_utc": "2026-10-27T16:10:50+00:00",
+  "prefetch_finished_at_utc": "2026-10-27T16:11:04+00:00",
+  "minutes_after_start": {
+   "gather/_prefetch.json": 0.2,
+   "gather/documents.json": 11.7,
+   "gather/field.json": 9.0,
+   "gather/macro.json": 6.8,
+   "gather/numbers.json": 9.5,
+   "understand/auto.json": 12.0,
+   "understand/business.json": 16.4,
+   "understand/econ_case.json": 7.9,
+   "understand/econ_result.json": 8.1,
+   "understand/quarter_case.json": 7.4,
+   "understand/quarter_result.json": 8.1,
+   "prep.json": 12.0,
+   "position/core.json": 37.7,
+   "position/field.json": 37.2,
+   "position/path.json": 15.6,
+   "value.json": 37.8,
+   "review/trace.json": 16.5,
+   "review/numbers.json": 26.1,
+   "review/counter.json": 25.1,
+   "review/repair.json": 38.2
+  },
+  "elapsed_minutes": 38.2
+ },
+ "meaning": "verified needs: the engine ran in this attempt, the three reviewers returned (files of this attempt AND the main loop's record), no critical finding open after the one repair pass. The engine's own review status is reported beside it, never replaced by it."
+}

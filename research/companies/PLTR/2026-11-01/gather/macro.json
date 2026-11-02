@@ -1,0 +1,58 @@
+{
+ "lane": "macro",
+ "sources": [
+  {"id":"mc_s_news_oct","kind":"press","title":"Palantir Stock News (Oct 22 and Oct 28, 2026) - heygotrade","url":"https://www.heygotrade.com/en/news/palantir-pltr-stock-news-october-28-2026/","date":"2026-10-28","independent":false,"publisher":"heygotrade (aggregator)","retrieval":"search_excerpt","syndicated_from":null},
+  {"id":"mc_s_uk_mod","kind":"press","title":"Britain's Ministry of Defence agrees deal with Palantir","url":"https://www.theregister.com/on-prem/2026/01/28/britains-ministry-of-defence-agrees-deal-with-palantir/4189160","date":"2026-01-28","independent":true,"publisher":"The Register","retrieval":"search_excerpt","syndicated_from":null},
+  {"id":"mc_s_pentagon_memo","kind":"press","title":"Pentagon wants to spend millions on Palantir with few details","url":"https://federalnewsnetwork.com/contracting/2026/08/pentagon-wants-to-spend-millions-on-palantir-with-few-details/","date":"2026-08-12","independent":true,"publisher":"Federal News Network","retrieval":"search_excerpt","syndicated_from":null},
+  {"id":"mc_s_eu_sov","kind":"press","title":"Palantir Controls EU Spy Agency Data: US Law Gives Washington Back-Door Access","url":"https://www.techtimes.com/articles/329130/20261015/palantir-controls-eu-spy-agency-data-us-law-gives-washington-back-door-access.htm","date":"2026-10-15","independent":false,"publisher":"TechTimes","retrieval":"search_excerpt","syndicated_from":null},
+  {"id":"mc_s_ao_suit","kind":"press","title":"American Oversight sues for records on federal use of Palantir tools","url":"https://americanoversight.org/palantir-data-collection-tools-foia/","date":"2026-04-30","independent":true,"publisher":"American Oversight","retrieval":"search_excerpt","syndicated_from":null},
+  {"id":"mc_s_republik","kind":"press","title":"Switzerland: IPI welcomes court ruling dismissing Palantir lawsuit against Republik","url":"https://ipi.media/switzerland-ipi-welcomes-court-ruling-dismissing-palantir-lawsuit-against-republik/","date":"2026-06-12","independent":true,"publisher":"International Press Institute","retrieval":"search_excerpt","syndicated_from":null}
+ ],
+ "facts": [
+  {"id":"mc_f_rev_us_fy25","metric":"revenue_by_region:United States","period":"FY2025","value":3320043000,"unit":"USD","source_ids":["pf_10k_20260217"],"period_end":"2025-12-31","basis":"reported"},
+  {"id":"mc_f_rev_uk_fy25","metric":"revenue_by_region:United Kingdom","period":"FY2025","value":427398000,"unit":"USD","source_ids":["pf_10k_20260217"],"period_end":"2025-12-31","basis":"reported"},
+  {"id":"mc_f_rev_row_fy25","metric":"revenue_by_region:Rest of world","period":"FY2025","value":728005000,"unit":"USD","source_ids":["pf_10k_20260217"],"period_end":"2025-12-31","basis":"reported"},
+  {"id":"mc_f_rev_us_fy24","metric":"revenue_by_region:United States","period":"FY2024","value":1900247000,"unit":"USD","source_ids":["pf_10k_20260217"],"period_end":"2024-12-31","basis":"reported"},
+  {"id":"mc_f_rev_uk_fy24","metric":"revenue_by_region:United Kingdom","period":"FY2024","value":304575000,"unit":"USD","source_ids":["pf_10k_20260217"],"period_end":"2024-12-31","basis":"reported"},
+  {"id":"mc_f_rev_row_fy24","metric":"revenue_by_region:Rest of world","period":"FY2024","value":660685000,"unit":"USD","source_ids":["pf_10k_20260217"],"period_end":"2024-12-31","basis":"reported"},
+  {"id":"mc_f_rev_us_q2","metric":"revenue_by_region:United States","period":"Q2 2026","value":1573047000,"unit":"USD","source_ids":["pf_10q_20260804"],"period_end":"2026-06-30","basis":"reported"},
+  {"id":"mc_f_rev_row_q2","metric":"revenue_by_region:Rest of world","period":"Q2 2026","value":362417000,"unit":"USD","source_ids":["pf_10q_20260804"],"period_end":"2026-06-30","basis":"reported"},
+  {"id":"mc_f_rev_us_q2_25","metric":"revenue_by_region:United States","period":"Q2 2025","value":732592000,"unit":"USD","source_ids":["pf_10q_20260804"],"period_end":"2025-06-30","basis":"reported"},
+  {"id":"mc_f_rev_row_q2_25","metric":"revenue_by_region:Rest of world","period":"Q2 2025","value":271105000,"unit":"USD","source_ids":["pf_10q_20260804"],"period_end":"2025-06-30","basis":"reported"},
+  {"id":"mc_f_rev_us_h1","metric":"revenue_by_region:United States","period":"H1 2026","value":2855113000,"unit":"USD","source_ids":["pf_10q_20260804"],"period_end":"2026-06-30","basis":"reported"},
+  {"id":"mc_f_rev_row_h1","metric":"revenue_by_region:Rest of world","period":"H1 2026","value":712934000,"unit":"USD","source_ids":["pf_10q_20260804"],"period_end":"2026-06-30","basis":"reported"},
+  {"id":"mc_f_top3_share","metric":"top_three_customers_revenue_share","period":"H1 2026","value":0.16,"unit":"ratio","source_ids":["pf_10q_20260804"],"period_end":"2026-06-30","basis":"reported"}
+ ],
+ "market": {
+  "risk_free": {"value":0.0498,"as_of":"2026-10-29","source_id":"pf_fred_dgs10"},
+  "equity_risk_premium": {"value":0.042,"as_of":"2026-10-01","source_id":"pf_erp_implied"}
+ },
+ "notes": [
+  "mc RATES risk-free 4.98% (FRED DGS10, 2026-10-29) and implied ERP 4.20% (Damodaran, 2026-10-01; re-checked on his page 2026-11-01, still the latest) kept from prefetch; ERP page states treasury 5.29% for its own date, a different basis from the FRED 4.98%.",
+  "mc GEOGRAPHY revenue is by customer HQ: US 74% FY2025 (66% FY2024, 62% FY2023), UK 10% FY2025 (11% FY2024), rest of world 16% (23% FY2024); no other country 10% or more. US 81% in Q2 2026 (73% in Q2 2025), 80% H1 2026. Rest of world fell from 27% to 19% of the quarter's revenue as US grew faster (pf_10k_20260217, pf_10q_20260804). The UK is shown only in the 10-K; the 10-Q groups it in rest of world.",
+  "mc GEOGRAPHY long-lived assets by region are not disclosed in the 10-K or 10-Q text read (asset-light software company, no region table): gap, not estimated.",
+  "mc EXPOSURE US government concentration: government segment revenue Q2 2026 $990.0M of $1,935.5M (51%), H1 $1,848.4M of $3,568.0M (52%) (10-Q note 12, pf_10q_20260804). Contracts carry termination-for-convenience, options cannot be exercised more than one year ahead, and funding lapses or shutdowns and efficiency drives are listed risks (10-Q Item 1A). Candidate bear mechanism: US federal budget or contracting change, sized from the 52% government share (the US-customer share is 80%).",
+  "mc EXPOSURE customer concentration: top three customers were 16% of revenue in H1 2026 (17% in H1 2025); the top-twenty average rose to $124M TTM, up 67% (pf_10q_20260804).",
+  "mc EXPOSURE export controls and sanctions: offerings are subject to US export controls and sanctions with encryption; violations could cost export privileges and government-sales eligibility (10-Q risk factors). No share of revenue is quantified: hypothesis, unsized. Company states it does not sell to the Chinese Communist Party or host platforms in China, and has no revenue from Russia or Palestinian territories (10-Q); China is a self-chosen zero, not a risk to current revenue.",
+  "mc EXPOSURE conflict zones: 10-Q lists Ukraine, Israel and the Middle East incl. recent escalation of hostilities in Iran; operations there are stated as not material to financial results. Unsized beyond that statement.",
+  "mc EXPOSURE Europe data sovereignty: press leads (TechTimes 2026-10-15, citing a 19-outlet investigation) report European contracts above EUR 500M combined and CLOUD Act access concerns; a Dutch pension fund ABP divested. Unconfirmed at source, not independent syndication-wise: hypothesis for the non-US 20% of revenue, unsized.",
+  "mc EXPOSURE legal: securities class action (Colorado, filed 2022) listed in 10-Q note 7, company expects no material adverse impact; law-firm solicitation after the Oct 2025 NGC2 memo drop (lead only, not a filed case in the sources read); American Oversight FOIA suit (Apr 2026) is about federal records, not a claim against the company; Zurich commercial court ruled for Republik on 22 of 23 counts in Palantir's suit (2026-06-12 per IPI).",
+  "mc EXPOSURE tariffs: only the generic forward-looking mention of tariffs; software revenue, no goods supply chain or Taiwan exposure disclosed. No evidenced size.",
+  "mc NEWS filings since the latest periodic report (10-Q filed 2026-08-04): none other found in identity.json filings; the only 8-K after the 10-K besides results is Item 5.07 filed 2026-06-09 (annual meeting vote). prefetch reuse says new_filings_since is empty for 2026-10-27; SEC was not re-queried by this lane for 2026-10-28 to 2026-11-01 (gap).",
+  "mc NEWS 2026-08-04 (press lead): Pentagon memo to spend up to about $244M on Palantir through March 2027 without competitive bidding, with services to be funded for April 2027 to December 2028 (Federal News Network, search excerpt; confirm at source).",
+  "mc NEWS 2026-09 (press lead, secondary excerpt, date approximate): Army TITAN ground-station award of eight systems around Sept 1; NATO NCIA finalized Maven Smart System NATO acquisition (value undisclosed); NATO air command and control award July 7, 2026 shared with Anduril and Athea SAS. Not confirmed at source.",
+  "mc NEWS 2026-01-28 (press lead): UK MoD agreed an enterprise deal, GBP 240.6M direct award under a defence and security exemption, three-year term from April 1 (The Register, Find a Tender notice 006344-2026); relevant to the UK 10% of FY2025 revenue.",
+  "mc NEWS 2026-10 (press leads, aggregator, not independent): stock closed 186.03 on Oct 16 after a 7.2% fall tied to an AI-financing selloff in software, 201.72 on Oct 21, 198.73 on Oct 27; new all-time high on Oct 9 per aggregator; Knox Systems federal-cloud partnership Oct 19; POSCO Future M Foundry/AIP contract Oct 21; Goldman upgrade to Buy ($230) Oct 8, Mizuho target $245 Oct 15 (analyst items are opinions, not facts). One aggregator line states FY2026 revenue guidance of $8.150-8.158B: unverified here, gather_documents owns guidance from the release.",
+  "mc NEWS results-day gap: Q3 2026 results are expected 2026-11-02 (one day after as_of); they are not citable and not in this run. Options-implied move was described as sizable in press; no figure was retrieved.",
+  "mc REGIME FRED regime series are in macro/fred for deep --macro; context only, never moves a value."
+ ],
+ "gaps": [
+  "long-lived assets by region not disclosed in the filings read",
+  "UK revenue for 2026 periods not separately disclosed in the 10-Q (grouped in rest of world)",
+  "SEC EDGAR not re-queried for 8-Ks filed 2026-10-28 to 2026-11-01; prefetch reuse lists none since 2026-10-27",
+  "export-control, Europe sovereignty and tariff exposures have no evidenced revenue share (hypotheses)",
+  "press leads (Pentagon memo, TITAN, NATO, POSCO, Knox) not confirmed at the source document",
+  "Q3 2026 results of 2026-11-02 are after as_of"
+ ],
+ "stopped": ["Did not chase primary documents for press leads after the stop rule: none would change the exposure sizing."]
+}

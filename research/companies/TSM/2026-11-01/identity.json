@@ -1,0 +1,153 @@
+{
+ "ticker": "TSM",
+ "as_of": "2026-11-01",
+ "stop": false,
+ "name": "TAIWAN SEMICONDUCTOR MANUFACTURING CO LTD",
+ "cik": "1046179",
+ "currency": "TWD",
+ "exchange": "NYSE",
+ "fiscal_year_end": "12-31",
+ "sic": 3674,
+ "sic_description": "Semiconductors & Related Devices",
+ "annual_form": "20-F",
+ "type": "mature_growth / stalwart (computed by classify_company from SEC companyfacts; the analyst confirms or overrides with reasons)",
+ "evidence_ids": [
+  "pf_10k_20260416"
+ ],
+ "resolved": true,
+ "filings": [
+  {
+   "form": "20-F",
+   "filed": "2026-04-16",
+   "report_date": "2025-12-31",
+   "accession": "0001628280-26-025362",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000162828026025362/tsm-20251231.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1046179/000162828026025362/",
+   "what": "annual report"
+  },
+  {
+   "form": "6-K",
+   "filed": "2026-10-22",
+   "report_date": "2026-09-30",
+   "accession": "0001046179-26-000728",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000728/tsm-monthend6kx20261022.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000728/",
+   "what": "interim report candidate (6-K; the release is an exhibit)"
+  },
+  {
+   "form": "6-K",
+   "filed": "2026-10-15",
+   "report_date": "2026-09-30",
+   "accession": "0001046179-26-000726",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000726/tsm-20261015x6k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000726/",
+   "what": "interim report candidate (6-K; the release is an exhibit)"
+  },
+  {
+   "form": "6-K",
+   "filed": "2026-10-08",
+   "report_date": "2026-09-30",
+   "accession": "0001046179-26-000680",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000680/tsm-revenue20261008.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000680/",
+   "what": "interim report candidate (6-K; the release is an exhibit)"
+  },
+  {
+   "form": "6-K",
+   "filed": "2026-09-24",
+   "report_date": "2026-08-31",
+   "accession": "0001046179-26-000660",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000660/tsm-monthend6kx20260924.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000660/",
+   "what": "interim report candidate (6-K; the release is an exhibit)"
+  },
+  {
+   "form": "6-K",
+   "filed": "2026-09-10",
+   "report_date": "2026-08-31",
+   "accession": "0001046179-26-000658",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000658/tsm-revenue20260910.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000658/",
+   "what": "interim report candidate (6-K; the release is an exhibit)"
+  },
+  {
+   "form": "6-K",
+   "filed": "2026-09-01",
+   "report_date": "2026-09-01",
+   "accession": "0001046179-26-000552",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000552/tsm-dividendadjustmentx202.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000552/",
+   "what": "interim report candidate (6-K; the release is an exhibit)"
+  },
+  {
+   "form": "6-K",
+   "filed": "2026-08-25",
+   "report_date": "2026-07-31",
+   "accession": "0001046179-26-000545",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000545/tsm-monthend6kx20260825.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000545/",
+   "what": "interim report candidate (6-K; the release is an exhibit)"
+  },
+  {
+   "form": "6-K",
+   "filed": "2026-08-14",
+   "report_date": "2026-06-30",
+   "accession": "0001046179-26-000541",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000541/tsm-fsx20260814x6k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1046179/000104617926000541/",
+   "what": "interim report candidate (6-K; the release is an exhibit)"
+  }
+ ],
+ "computed_type": {
+  "stage": "mature_growth",
+  "lynch": "stalwart",
+  "reasons": [
+   "fast growth, but a very large, highly profitable dividend payer: judged as a mature compounder"
+  ],
+  "flags": []
+ },
+ "identity_check": {
+  "reporting_currency": "TWD",
+  "monetary_units": {
+   "TWD": 547,
+   "USD": 116
+  },
+  "currency_basis": "facts of filing 0001193125-25-083423 (20-F, filed 2025-04-17)",
+  "depositary_shares": true,
+  "stated_shares_per_depositary_share": {
+   "ratio": 5,
+   "evidence": "shares and \n shares held in the form of ADSs (each ADS represents five (5) common shares) held by such indiv",
+   "candidates": {
+    "5": 1
+   },
+   "ambiguous": false
+  },
+  "direct_listing": false,
+  "implied_shares_per_ads": null,
+  "note": "reporting currency TWD: valued in TWD; the quote is converted at the FRED H.10 rate (DEXTAUS) dated on or within 7 days before the quote; foreign private issuer: annual reports only (no 10-Q); interim 6-K figures are not in companyfacts",
+  "status": "ok",
+  "reasons": []
+ },
+ "prefetch": {
+  "by": "scripts/ticker_prefetch.py",
+  "at_utc": "2026-11-01T14:41:42+00:00",
+  "to_complete_by_lanes": [
+   "security and share class, quote currency, IBKR contract: gather_numbers (it alone writes identity.json while the lanes run)",
+   "named competitors: gather_field writes them in gather/field.json competitors[] (the canonical list), never here"
+  ]
+ },
+ "security": "TSM American Depositary Shares (1 ADS = 5 common shares), NYSE; home line TWSE 2330",
+ "quote_currency": "USD",
+ "ib_contract_id": 6223250,
+ "reporting_currency": "TWD",
+ "adr_ratio": 5
+}

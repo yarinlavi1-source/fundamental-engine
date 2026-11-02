@@ -1,0 +1,102 @@
+{
+ "thesis_he": {
+  "bear": "התנועה מגוגל ממשיכה לרדת (AI Mode), רדיט צריכה להוציא הרבה כדי להעביר משתמשים לחשבון מחובר, והתשואה על ההון החדש יורדת לכ-30% - ולכן המכפיל נמוך.",
+  "base": "העסק נשאר קל-הון: כמעט אין השקעות ציוד, וההון שהצמיחה דורשת הוא בעיקר לקוחות שעוד לא שילמו; תשואה של כ-95% על ההון הנוסף, קצת מתחת לשנה האחרונה, כי הצמיחה מאטה והמעבר למשתמשים מחוברים עולה כסף.",
+  "bull": "המעבר למשתמשים מחוברים ולפיד מותאם אישית מצליח, ההכנסה לכל משתמש ממשיכה לעלות בלי השקעות גדולות, והתשואה על ההון הנוסף נשארת ברמה של 12 החודשים האחרונים (כ-122% במס רגיל; כאן 100%)."
+ },
+ "company_path": {
+  "metric": "eps",
+  "multiple": "forward_pe",
+  "scenarios": {
+   "bear": {
+    "multiple_from": "economics",
+    "roic": 0.3,
+    "justification": "unproven",
+    "reason_he": "באוקטובר 2026 ההפניות מחיפוש ירדו בכמיליון בשבוע ומשתמשי ה-US הלא-מחוברים ירדו משנה לשנה (28.5 ל-27.3 מיליון); אם זה נמשך, רדיט תשלם כדי לגדול (שיווק, מוצר, התחייבויות ענן של 1.46 מיליארד דולר שנשארות קבועות), והתשואה יורדת לרמה של התשואה על כל ההון כולל המזומן (כ-20%-30%). תשואה כזו מצדיקה מכפיל נמוך.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "dc_search_referral_drop",
+     "dc_lo_us",
+     "dc_lo_us_py",
+     "dc_aws_commit",
+     "dc_gcp_commit",
+     "dc_g_rev_q4",
+     "pf_operating_income_fy2025",
+     "pf_equity_fy2025",
+     "pf_equity_fy2024",
+     "pf_cash_fy2024",
+     "pf_short_term_investments_fy2024",
+     "pf_short_term_investments_fy2025",
+     "nm_cash_marketable_q_2026_09_30"
+    ]
+   },
+   "base": {
+    "multiple_from": "economics",
+    "roic": 0.95,
+    "justification": "justified_high",
+    "reason_he": "רדיט כמעט לא צריכה הון כדי לגדול: השקעות ציוד של כ-7 מיליון דולר בשנה על הכנסות של מיליארדים, וההון התפעולי (הון עצמי פחות 3.0 מיליארד מזומן) הוא כ-580 מיליון. ב-2025 הרווח התפעולי אחרי מס רגיל היה כ-77% מההון הזה וב-12 החודשים האחרונים כ-124% (רווח תפעולי 908 מיליון). הבסיס לוקח כ-95% - מתחת לשנה האחרונה, כי הצמיחה מאטה (תחזית רבעון 4 מתחת לציפיות) והמס יעלה מ-2% לרמה רגילה. תשואה גבוהה כזו מצדיקה מכפיל גבוה מהשוק.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "pf_operating_income_q_2025_12_31",
+     "pf_operating_income_q_2026_03_31",
+     "pf_operating_income_q_2026_06_30",
+     "pf_operating_income_q_2026_09_30",
+     "pf_operating_income_fy2025",
+     "pf_equity_fy2025",
+     "pf_cash_fy2025",
+     "pf_short_term_investments_fy2025",
+     "nm_cash_marketable_q_2026_09_30",
+     "pf_capex_fy2025",
+     "pf_receivables_fy2025",
+     "dc_g_rev_q4",
+     "pf_equity_fy2024",
+     "pf_cash_fy2024",
+     "pf_short_term_investments_fy2024"
+    ]
+   },
+   "bull": {
+    "multiple_from": "economics",
+    "roic": 1.0,
+    "justification": "justified_high",
+    "reason_he": "אם המעבר לחוויה מחוברת ולפיד 'בשבילך' מחזיק את המשתמשים, הצמיחה ממשיכה להגיע ממחיר פרסום גבוה יותר למשתמש (ARPU בארה\"ב עלה מ-9.04 ל-13.82 דולר ברבעון בשנה) ולא מהשקעות; אז נשמרת התשואה של 12 החודשים האחרונים (כ-122% על ההון התפעולי במס רגיל של 22%; כאן 100%, התקרה של מודל השווי), והמרווח התפעולי ממשיך לעלות (רווח תפעולי ברבעון 3 עלה ל-262 מיליון). זה מצדיק מכפיל גבוה, בתנאי שהשימוש לא נשחק.",
+    "source_tier": "own_history",
+    "evidence_ids": [
+     "dc_arpu_us",
+     "dc_arpu_us_py",
+     "dc_incr_ebitda_margin",
+     "dc_li_g",
+     "dc_li_g_py",
+     "pf_operating_income_q_2026_09_30",
+     "pf_operating_income_q_2025_09_30",
+     "nm_cash_marketable_q_2026_09_30",
+     "pf_capex_q_2026_09_30",
+     "mc_tc_20261029",
+     "pf_equity_fy2024",
+     "pf_cash_fy2024",
+     "pf_short_term_investments_fy2024",
+     "pf_equity_fy2025",
+     "pf_short_term_investments_fy2025"
+    ]
+   }
+  },
+  "own_history": {
+   "low": 18.7,
+   "median": 40.3,
+   "high": 55.6,
+   "years": "2026-02 to 2026-10 (trailing GAAP P/E, month-end; 2025 values 120-215x were on tiny first earnings and are excluded)",
+   "evidence_ids": [
+    "nm_ib_history",
+    "nm_ttm_net_income_2026_09_30",
+    "nm_ib_price"
+   ]
+  }
+ },
+ "gaps": [
+  "No named competitor (META, PINS, SNAP, GOOGL) has an evidenced forward P/E in field.json; peers left out (not retrieved in this stage's budget).",
+  "No forward P/E history (no consensus archive): own_history is trailing GAAP P/E only, and only since 2026-02 once earnings were meaningful (full 2025-2026 range: low 18.7, median 53.5, high 214.7); short history, IPO 2024-03.",
+  "ROIC is computed by hand from the filings (numbers.json note 'ROIC CHECK'): operating capital = equity + leases - cash and securities, about 580M at Q3 2026; goodwill (42M) is inside; the prefetch forensic ROIC was unavailable. On total capital incl. the 3.0B cash, ROIC is about 20%.",
+  "Tax rate is 2% (valuation allowance); the ROICs assume a normal 21% tax on operating income; the core part's EPS path must normalize tax too or the multiple is applied to peak earnings.",
+  "Q4 2026 DAU decline and the Google AI Mode traffic impact (fd_press_google_ai, mc_cnbc_20261030) are press reports dated on the results days; their size beyond October search referrals is not yet in a filing.",
+  "Repair 2026-11-01: each scenario's roic is now also the DCF's terminal_roic and sets its sales_to_capital (position/core.json drivers), so the yearly path and the DCF share one capital intensity; bull lowered from 1.30 to 1.00 (TTM normalized-tax 1.22 capped at the valuation's 100% roic limit)."
+ ]
+}

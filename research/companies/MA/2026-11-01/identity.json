@@ -1,0 +1,219 @@
+{
+ "ticker": "MA",
+ "as_of": "2026-11-01",
+ "stop": false,
+ "name": "Mastercard Inc",
+ "cik": "1141391",
+ "currency": "USD",
+ "exchange": "NYSE",
+ "fiscal_year_end": "12-31",
+ "sic": 7389,
+ "sic_description": "Services-Business Services, NEC",
+ "annual_form": "10-K",
+ "type": "mature_growth / stalwart (computed by classify_company from SEC companyfacts; the analyst confirms or overrides with reasons)",
+ "evidence_ids": [
+  "pf_10k_20260211"
+ ],
+ "resolved": true,
+ "filings": [
+  {
+   "form": "10-K",
+   "filed": "2026-02-11",
+   "report_date": "2025-12-31",
+   "accession": "0001141391-26-000013",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000013/ma-20251231.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000013/",
+   "what": "annual report"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2026-10-29",
+   "report_date": "2026-09-30",
+   "accession": "0001141391-26-000124",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000124/ma-20260930.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000124/",
+   "what": "quarterly report"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2026-07-30",
+   "report_date": "2026-06-30",
+   "accession": "0001141391-26-000083",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000083/ma-20260630.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000083/",
+   "what": "quarterly report"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2026-04-30",
+   "report_date": "2026-03-31",
+   "accession": "0001141391-26-000031",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000031/ma-20260331.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000031/",
+   "what": "quarterly report"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-10-29",
+   "report_date": "2026-10-29",
+   "accession": "0001141391-26-000122",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000122/ma-20261029.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000122/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-07-30",
+   "report_date": "2026-07-30",
+   "accession": "0001141391-26-000081",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000081/ma-20260730.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000081/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-04-30",
+   "report_date": "2026-04-30",
+   "accession": "0001141391-26-000029",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000029/ma-20260430.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000029/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-01-29",
+   "report_date": "2026-01-29",
+   "accession": "0001141391-26-000003",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000003/ma-20260129.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000003/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-10-30",
+   "report_date": "2025-10-30",
+   "accession": "0001141391-25-000191",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139125000191/ma-20251030.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139125000191/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-07-31",
+   "report_date": "2025-07-31",
+   "accession": "0001141391-25-000170",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139125000170/ma-20250731.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139125000170/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-05-01",
+   "report_date": "2025-05-01",
+   "accession": "0001141391-25-000088",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139125000088/ma-20250501.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139125000088/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-01-30",
+   "report_date": "2025-01-30",
+   "accession": "0001141391-25-000003",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139125000003/ma-20250130.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139125000003/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "DEF 14A",
+   "filed": "2026-04-27",
+   "report_date": "2026-04-27",
+   "accession": "0001141391-26-000021",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000021/ma-20260427.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000021/",
+   "what": "proxy statement"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-06-17",
+   "report_date": "2026-06-16",
+   "accession": "0001141391-26-000041",
+   "items": "5.07",
+   "url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000041/ma-20260616.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000041/",
+   "what": "8-K since the annual report (items 5.07)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-06-08",
+   "report_date": "2026-06-04",
+   "accession": "0001193125-26-261669",
+   "items": "8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1141391/000119312526261669/d128075d8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1141391/000119312526261669/",
+   "what": "8-K since the annual report (items 8.01,9.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-06-02",
+   "report_date": "2026-05-29",
+   "accession": "0001141391-26-000037",
+   "items": "5.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000037/ma-20260529.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000037/",
+   "what": "8-K since the annual report (items 5.02,9.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-05-07",
+   "report_date": "2026-05-05",
+   "accession": "0001141391-26-000034",
+   "items": "5.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000034/ma-20260505.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1141391/000114139126000034/",
+   "what": "8-K since the annual report (items 5.02,9.01)"
+  }
+ ],
+ "computed_type": {
+  "stage": "mature_growth",
+  "lynch": "stalwart",
+  "reasons": [
+   "revenue compounding 8\u201320% with established operations"
+  ],
+  "flags": []
+ },
+ "identity_check": {
+  "reporting_currency": "USD",
+  "monetary_units": {
+   "USD": 518
+  },
+  "currency_basis": "facts of filing 0001141391-26-000013 (10-K, filed 2026-02-11)",
+  "depositary_shares": false,
+  "status": "ok",
+  "reasons": []
+ },
+ "prefetch": {
+  "by": "scripts/ticker_prefetch.py",
+  "at_utc": "2026-11-01T22:15:09+00:00",
+  "to_complete_by_lanes": [
+   "security and share class, quote currency, IBKR contract: gather_numbers (it alone writes identity.json while the lanes run)",
+   "named competitors: gather_field writes them in gather/field.json competitors[] (the canonical list), never here"
+  ]
+ },
+ "security": "Mastercard Inc Class A common stock (MA), US primary listing; single listing, no ADR; Class B not listed",
+ "quote_currency": "USD",
+ "ib_contract_id": 38685693
+}

@@ -1,0 +1,60 @@
+{
+ "lens": "trace",
+ "checked": "33 numbers traced to the saved text or payloads, all matching in value, period, unit and basis: price 405.83 (raw/ib__price-snapshot-TSLA__current.json); FY2025 revenue 94,827M, income from operations 4,355M, net income attributable 3,794M, segment gross profit 13,292M / 3,802M, RPO energy 10.42B / 4.96B, regulatory-credit RPO 841M (10-K); Q3 2026 revenue 28,046M, income from operations 718M, net income 804M / 787M attributable, diluted EPS 0.22, basic / diluted weighted shares 3,240M / 3,541M (+301M awards), cover shares 3,952,757,946 at 2026-10-15, RPO energy 10.73B / 4.80B, regulatory-credit RPO 384M / 201M, 475M credit reversal, deferred revenue 4.08B / 1.00B and energy prepayments 3.30B, debt and finance leases 9,523M (recourse 2M, China facility 5,966M), 30B unused commitments and the term-loan step-down, resale guarantees 4.42B, letters of credit 1.62B, warranty 10,138M, cash 17,853M plus investments 27,594M, SpaceX 2,865M fair value / 2,002M cost / 863M nine-month gain, SpaceX Megapack revenue 221M / 626M, receivable 729M, deferred revenue 648M, IEEPA refunds 526M / 260M / 339M, CEO award 423,743,904 shares, 9.74B and 105.82B-120.37B unrecognized SBC, 304.0M options exercised, 96M forfeited, 1.95B SI hardware acquisition (10-Q 2026-10-22); quarterly diluted EPS 0.12 / 0.33 / 0.39 / 0.13 / 0.32 and Q4 2025 0.24 derived as 1.08 - 0.84 (10-Qs, 10-K); capex guidance 'in excess of $20 billion' (10-K, 10-Q Oct), 'in excess of $25 billion' (10-Q Apr, Jul), 'approximately $20 billion' and 'no draws this calendar year' (call transcript); 400 MW SI compute guide, >225 MW installed, deliveries 486,532, production 464,391, storage 13.7 GWh, FSD subscriptions 1.74M, Megapack capacity 110 GWh, nine-month capex 13,014M, deferred revenue 8,787M, services GP 734M, total automotive GM 18.5% / 17.0%, energy GM 33.1% / 20.4% (release 2026-10-21, 10-Q); geographic revenue and long-lived assets summing to the totals (macro lane); GM Q3 2026 revenue 50.015B and operating income 3.598B, Rivian FY2025 gross profit 144M and operating loss 3,585M, Q2 2026 margins (their own SEC companyfacts); risk-free 5.00% on 2026-10-23 (macro/fred/DGS10.csv); ERP 4.2% (runs/macro/market_2026-10-20.json). No source dated after 2026-10-27; the Q3 release, call and 10-Q became citable on 2026-10-23 / 2026-10-24. guidance_track is empty in numbers.json and ticker-check computes no ratio, consistent (no numeric revenue, EPS or margin guide exists).",
+ "findings": [
+  {
+   "severity": "major",
+   "finding": "Consensus EPS rows carry metric 'eps_diluted' (the GAAP metric of the reported facts nm_eps_diluted_*), but the lane's own note shows the street figures are on an adjusted, non-GAAP basis: nine-month GAAP diluted EPS is 0.67, so the FY2026 street 1.76 would need 1.09 in Q4. Any comparison of these rows with GAAP EPS (expectation gap, forward P/E, beat/miss) mixes bases.",
+   "where": "gather/numbers.json consensus nm_cons_eps_fy2026 (1.76) and nm_cons_eps_fy2027 (2.18), source nm_cons_stockanalysis",
+   "fix": "Mark both rows as non-GAAP (metric eps_adjusted or basis 'non_gaap_adjusted') and never set them against GAAP diluted EPS or the GAAP P/E history; if a GAAP comparison is needed, show it as a gap."
+  },
+  {
+   "severity": "major",
+   "finding": "Share-count scope: the point-in-time count 3,952,757,946 (2026-10-15) includes 423,743,904 unearned 2025 CEO Performance Award restricted shares (milestones mostly 'not probable'; 105.82B-120.37B of their SBC unrecognized) and about 286.5M restricted shares from the 2018 award exercise vesting 2028-01-19. These shares are excluded from the 3,541M diluted weighted count. Valuing per share on 3,953M while also forecasting the award's SBC (9.74B probable plus the not-probable tranches) counts the same dilution twice; on 3,541M it is missed. The two counts differ by about 11.6% of per-share value.",
+   "where": "gather/numbers.json facts nm_shares_outstanding_cover_2026_10_15 and nm_shares_diluted_wavg_q_2026_09_30; gather/documents.json facts dc_shares_out_20261015, dc_ceo_award_2025_shares, dc_ceo_award_2018_exercised_q2_2026, dc_sbc_ceo_award_unrecognized_probable",
+   "fix": "In the capital bridge, pick one treatment and state it next to the result: either count the award shares in the point-in-time count and leave the 2025 award's future SBC out of forecast costs, or leave the unearned shares out and keep that SBC (with the probable/not-probable split) as a cost."
+  },
+  {
+   "severity": "minor",
+   "finding": "Capital-expenditure guides worded as floors ('in excess of $20 billion' and 'in excess of $25 billion') are stored as point ranges (low = high), the same form as the call's 'approximately $20 billion'. A floor read as a midpoint understates the guide: nine-month capex is 13,014M, so the 10-Q floor implies Q4 capex of at least 7.0B.",
+   "where": "gather/documents.json guidance dc_g_capex_fy2026_oct_10q, dc_g_capex_fy2026_jul_10q, dc_g_capex_fy2026_apr_10q, dc_g_capex_fy2026_jan_10k",
+   "fix": "Store floor guides with low = the floor and high = null (or note 'floor'), and keep dc_g_capex_fy2026_oct_call (approximately 20B) as the point guide for FY2026."
+  },
+  {
+   "severity": "minor",
+   "finding": "Consensus and price-target figures come from a page that was not saved verbatim: ticker-trace finds no local match for 107.79B / 122.32B, so the rows cannot be traced. The source is also dated 2026-10-27 (= as_of), so it is not citable until 2026-10-29 (LAG_DAYS). The lane noted this, and the engine's citable() keeps it out of drivers.",
+   "where": "gather/numbers.json consensus nm_cons_revenue_fy2026, nm_cons_eps_fy2026, nm_cons_revenue_fy2027, nm_cons_eps_fy2027; source nm_cons_stockanalysis",
+   "fix": "Keep the rows as context only (no driver, event or key-risk evidence) until a rerun at as_of 2026-10-29; save the page text under gather/ on that rerun."
+  },
+  {
+   "severity": "minor",
+   "finding": "Alpha Vantage statements are dated with the retrieval date (2026-10-27) rather than the publication date of the data they normalize (the latest quarter comes from the 10-Q of 2026-10-22). That makes the source uncitable until 2026-10-29. No fact cites it; it is only the reconciliation's second source.",
+   "where": "gather/numbers.json sources nm_av_statements",
+   "fix": "Leave it uncited, or date it 2026-10-22 (the latest filing it reflects) with a note; never cite it in place of the pf_ filing facts."
+  },
+  {
+   "severity": "minor",
+   "finding": "Syndication not named: the call transcript is a provider copy of Tesla's webcast, and the BYD and Waymo figures are press relays of company statements, but syndicated_from is null. fd_electrek_waymo_20260708 is marked independent although it relays Waymo's own claims. nm_cons_marketbeat is marked independent although its analyst population overlaps StockAnalysis's (the lane says so).",
+   "where": "gather/documents.json sources dc_call_20261021; gather/field.json sources fd_byd_sales_202609, fd_byd_h1_2026, fd_electrek_waymo_20260708; gather/numbers.json sources nm_cons_marketbeat",
+   "fix": "Set syndicated_from to the original (Tesla Q3 2026 webcast at ir.tesla.com; BYD monthly sales and interim report; Waymo statements) and independent false for these four."
+  },
+  {
+   "severity": "minor",
+   "finding": "Period labels: the cover-page share count has period Q@2026-09-30 but period_end 2026-10-15. Balance-sheet instants in the macro lane are labelled as flows (Q@ / FY) instead of I@. The macro lane uses 9M@ while the documents lane uses YTD@.",
+   "where": "gather/numbers.json facts nm_shares_outstanding_cover_2026_10_15; gather/macro.json facts mc_lla_* and mc_cnwc_sep26 / mc_cnwc_dec25, mc_rev_*_9m26 / 9m25",
+   "fix": "Relabel as I@2026-10-15, I@2026-09-30, I@2025-12-31 and I@2024-12-31, and use one year-to-date notation."
+  },
+  {
+   "severity": "minor",
+   "finding": "The same filing numbers are entered twice under different ids by two lanes: IEEPA refunds 526M / 260M / 339M, China working-capital facility 5,966M, basic weighted shares 3,240M, cover shares 3,952,757,946. The values agree, but downstream sums or counts could double them.",
+   "where": "gather/macro.json mc_ieepa_energy_cogs_q326, mc_ieepa_auto_cogs_q326, mc_ieepa_energy_rev_q326, mc_cnwc_sep26 vs gather/documents.json dc_tariff_refund_*_q3_2026, dc_debt_china_wc_q3_2026; gather/numbers.json nm_shares_basic_wavg_q_2026_09_30, nm_shares_outstanding_cover_2026_10_15 vs documents dc_shares_basic_wavg_q3_2026, dc_shares_out_20261015",
+   "fix": "Cite one id per number in the position parts (prefer the documents lane ids) and never add the duplicates together."
+  },
+  {
+   "severity": "minor",
+   "finding": "Cost-of-equity inputs are paired across dates: the implied ERP 4.2% (2026-10-01) was derived against a 5.29% treasury, while the risk-free used is 5.00% (DGS10 2026-10-23). The market return implied today is about 0.3 point below that ERP's own pairing.",
+   "where": "market.json risk_free / equity_risk_premium; gather/_prefetch.json sources pf_fred_dgs10, pf_erp_implied",
+   "fix": "State the date mismatch next to the discount rate, or refresh the implied ERP nearer 2026-10-27; do not change the engine convention ad hoc."
+  }
+ ]
+}

@@ -1,0 +1,390 @@
+{
+ "ticker": "ASTS",
+ "as_of": "2026-11-01",
+ "stop": false,
+ "name": "AST SpaceMobile, Inc.",
+ "cik": "1780312",
+ "currency": "USD",
+ "exchange": "Nasdaq",
+ "fiscal_year_end": "12-31",
+ "sic": 4899,
+ "sic_description": "Communications Services, NEC",
+ "annual_form": "10-K",
+ "type": "start_up / fast_grower (computed by classify_company from SEC companyfacts; the analyst confirms or overrides with reasons)",
+ "evidence_ids": [
+  "pf_10k_20260302"
+ ],
+ "resolved": true,
+ "filings": [
+  {
+   "form": "10-K",
+   "filed": "2026-03-02",
+   "report_date": "2025-12-31",
+   "accession": "0001780312-26-000006",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000178031226000006/asts-20251231.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1780312/000178031226000006/",
+   "what": "annual report"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2026-08-10",
+   "report_date": "2026-06-30",
+   "accession": "0001193125-26-342550",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000119312526342550/asts-20260630.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1780312/000119312526342550/",
+   "what": "quarterly report"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2026-05-11",
+   "report_date": "2026-03-31",
+   "accession": "0001193125-26-216950",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000119312526216950/asts-20260331.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1780312/000119312526216950/",
+   "what": "quarterly report"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-08-10",
+   "report_date": "2026-08-10",
+   "accession": "0001193125-26-342540",
+   "items": "2.02,7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000119312526342540/asts-20260810.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1780312/000119312526342540/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-07-15",
+   "report_date": "2026-07-15",
+   "accession": "0001493152-26-033365",
+   "items": "2.02,7.01,8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000149315226033365/form8-k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1780312/000149315226033365/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-05-11",
+   "report_date": "2026-05-11",
+   "accession": "0001193125-26-216946",
+   "items": "2.02,7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000119312526216946/asts-20260511.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1780312/000119312526216946/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-03-02",
+   "report_date": "2026-03-02",
+   "accession": "0001780312-26-000005",
+   "items": "2.02,7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000178031226000005/asts-20260302.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1780312/000178031226000005/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-02-11",
+   "report_date": "2026-02-11",
+   "accession": "0001493152-26-006223",
+   "items": "2.02,7.01,8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000149315226006223/form8-k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1780312/000149315226006223/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-11-10",
+   "report_date": "2025-11-10",
+   "accession": "0001193125-25-274360",
+   "items": "2.02,7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000119312525274360/asts-20251110.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1780312/000119312525274360/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-10-21",
+   "report_date": "2025-10-21",
+   "accession": "0001493152-25-018802",
+   "items": "2.02,8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000149315225018802/form8-k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1780312/000149315225018802/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-08-11",
+   "report_date": "2025-08-11",
+   "accession": "0000950170-25-106610",
+   "items": "2.02,7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000095017025106610/asts-20250811.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1780312/000095017025106610/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "DEF 14A",
+   "filed": "2026-04-28",
+   "report_date": "2026-04-28",
+   "accession": "0001493152-26-019384",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000149315226019384/formdef14a.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1780312/000149315226019384/",
+   "what": "proxy statement"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-10-20",
+   "report_date": "2026-10-14",
+   "accession": "0001493152-26-047766",
+   "items": "5.02",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000149315226047766/form8-k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1780312/000149315226047766/",
+   "what": "8-K since the annual report (items 5.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-09-28",
+   "report_date": "2026-09-25",
+   "accession": "0001493152-26-044647",
+   "items": "5.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000149315226044647/form8-k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1780312/000149315226044647/",
+   "what": "8-K since the annual report (items 5.02,9.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-07-20",
+   "report_date": "2026-07-15",
+   "accession": "0001493152-26-033912",
+   "items": "1.01,2.03,3.02,8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000149315226033912/form8-k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1780312/000149315226033912/",
+   "what": "8-K since the annual report (items 1.01,2.03,3.02,8.01,9.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-06-15",
+   "report_date": "2026-06-12",
+   "accession": "0001493152-26-028544",
+   "items": "5.07,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000149315226028544/form8-k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1780312/000149315226028544/",
+   "what": "8-K since the annual report (items 5.07,9.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-04-20",
+   "report_date": "2026-04-19",
+   "accession": "0001493152-26-018012",
+   "items": "7.01,8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000149315226018012/form8-k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1780312/000149315226018012/",
+   "what": "8-K since the annual report (items 7.01,8.01,9.01)"
+  }
+ ],
+ "computed_type": {
+  "stage": "start_up",
+  "lynch": "fast_grower",
+  "reasons": [
+   "large losses relative to revenue and very early revenue base"
+  ],
+  "flags": []
+ },
+ "identity_check": {
+  "reporting_currency": "USD",
+  "monetary_units": {
+   "USD": 412
+  },
+  "currency_basis": "facts of filing 0001780312-26-000006 (10-K, filed 2026-03-02)",
+  "depositary_shares": false,
+  "status": "ok",
+  "reasons": []
+ },
+ "prefetch": {
+  "by": "scripts/ticker_prefetch.py",
+  "at_utc": "2026-11-01T05:54:18+00:00",
+  "to_complete_by_lanes": [
+   "security and share class, quote currency, IBKR contract: gather_numbers (it alone writes identity.json while the lanes run)",
+   "named competitors: gather_field writes them in gather/field.json competitors[] (the canonical list), never here"
+  ]
+ },
+ "sources": [
+  {
+   "id": "pf_10k_20260302",
+   "kind": "sec_filing",
+   "title": "AST SpaceMobile 10-K FY2025",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000178031226000006/asts-20251231.htm",
+   "date": "2026-03-02",
+   "independent": true,
+   "publisher": "SEC EDGAR",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_10q_20260810",
+   "kind": "sec_filing",
+   "title": "AST SpaceMobile 10-Q Q2 2026",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000119312526342550/asts-20260630.htm",
+   "date": "2026-08-10",
+   "independent": true,
+   "publisher": "SEC EDGAR",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_submissions",
+   "kind": "structured_data",
+   "title": "SEC submissions JSON CIK 0001780312",
+   "url": "https://data.sec.gov/submissions/CIK0001780312.json",
+   "date": "2026-10-29",
+   "independent": true,
+   "publisher": "SEC EDGAR",
+   "retrieval": "structured_api",
+   "syndicated_from": null
+  },
+  {
+   "id": "pf_companyfacts",
+   "kind": "structured_data",
+   "title": "SEC companyfacts CIK 0001780312",
+   "url": "https://data.sec.gov/api/xbrl/companyfacts/CIK0001780312.json",
+   "date": "2026-10-29",
+   "independent": true,
+   "publisher": "SEC EDGAR",
+   "retrieval": "structured_api",
+   "syndicated_from": null
+  },
+  {
+   "id": "ibkr_contract_asts",
+   "kind": "price",
+   "title": "IBKR search_contracts ASTS (read-only)",
+   "url": "connector:mcp__Interactive_Brokers__search_contracts",
+   "date": "2026-10-29",
+   "independent": true,
+   "publisher": "Interactive Brokers",
+   "retrieval": "market_feed",
+   "syndicated_from": null
+  },
+  {
+   "id": "rel_20260810",
+   "kind": "release",
+   "title": "Q2 2026 business update release (8-K Ex.99.1), call 2026-08-10 5pm ET",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000119312526342540/asts-20260810.htm",
+   "date": "2026-08-10",
+   "independent": true,
+   "publisher": "SEC EDGAR",
+   "retrieval": "primary_document",
+   "syndicated_from": null
+  }
+ ],
+ "security": {
+  "listed_security": "Class A common stock, par $0.0001",
+  "ticker": "ASTS",
+  "exchange": "Nasdaq (Global Select)",
+  "quote_currency": "USD",
+  "ibkr_contract_id": 480745767,
+  "adr": false,
+  "adr_ratio": null,
+  "dual_listing": "no other primary listing; IBKR also shows a Mexico (MEXI) cross-listing of the same Class A shares, quoted in MXN, not used",
+  "share_classes": {
+   "class_a_outstanding_2026-08-06": 299789305,
+   "class_b_2026-08-06": 11215111,
+   "class_c_2026-08-06": 78163078
+  },
+  "structure_note": "Up-C: Class B and Class C carry votes only; economic interest sits in AST & Science LLC common units held by the Class B/C holders, exchangeable 1:1 into Class A (noncontrolling interest). Per-share value must use Class A plus exchangeable LLC units plus warrants/converts (capital_bridge). Class C (Avellan) controls ~72% of votes; controlled company.",
+  "evidence_ids": [
+   "pf_10k_20260302",
+   "pf_10q_20260810",
+   "ibkr_contract_asts"
+  ]
+ },
+ "quote_currency": "USD",
+ "reporting_currency": "USD",
+ "fiscal_calendar": {
+  "fiscal_year_end": "12-31",
+  "quarters": "calendar quarters (Q1 Mar 31, Q2 Jun 30, Q3 Sep 30)",
+  "evidence_ids": [
+   "pf_10k_20260302"
+  ]
+ },
+ "latest": {
+  "annual": {
+   "form": "10-K",
+   "period": "2025-12-31",
+   "filed": "2026-03-02",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000178031226000006/asts-20251231.htm"
+  },
+  "quarterly": {
+   "form": "10-Q",
+   "period": "2026-06-30",
+   "filed": "2026-08-10",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000119312526342550/asts-20260630.htm"
+  },
+  "earnings_release": {
+   "form": "8-K Item 2.02",
+   "filed": "2026-08-10",
+   "url": "https://www.sec.gov/Archives/edgar/data/1780312/000119312526342540/asts-20260810.htm"
+  },
+  "earnings_call": {
+   "date": "2026-08-10",
+   "note": "Q2 2026 business update call, 5:00 pm ET (per release)",
+   "evidence_ids": [
+    "rel_20260810"
+   ]
+  },
+  "next_results": "Q3 2026 (period 2026-09-30) not filed as of 2026-10-29; no 10-Q or Item 2.02 8-K after 2026-08-10 in the submissions JSON (latest 8-K 2026-10-20, Item 5.02)"
+ },
+ "type_reasons": [
+  "Damodaran start-up: revenue tiny vs losses (FY2025 revenue $70.9M, operating loss $425.3M; FY2024 $4.4M vs -$506.3M); operating cash flow negative every year FY2021-FY2025",
+  "Pre-commercial build-out: capex $1,064.7M in FY2025 vs $174.1M FY2024 (satellite constellation deployment) funded by equity and converts",
+  "Revenue base not continuous: FY2020-FY2022 revenue ($6.0M/$12.4M/$13.8M) came from NanoAvionics, sold in 2022; FY2023 revenue 0; SpaceMobile service revenue starts FY2024-FY2025, so the 64% CAGR in classify is not a meaningful growth rate",
+  "Lynch fast_grower is the potential category only; questions and KPIs: satellites launched/in service, MNO definitive agreements and prepayments, government contracts, spectrum, cash runway and dilution per share"
+ ],
+ "type_evidence_ids": [
+  "pf_companyfacts",
+  "pf_10k_20260302"
+ ],
+ "history_caveats": [
+  "FY2020 row in prefetch/history.json mixes SPAC (New Providence) shell values; treat FY2020 as non-comparable"
+ ],
+ "named_competitors": {
+  "source": "10-K FY2025 Item 1 Competition (pf_10k_20260302)",
+  "list": [
+   {
+    "name": "SpaceX Starlink (direct-to-cell)",
+    "why": "named: developing LEO constellation for direct-to-device mobile service"
+   },
+   {
+    "name": "Inmarsat Global Limited",
+    "why": "named: existing mobile satellite service provider"
+   },
+   {
+    "name": "Globalstar",
+    "why": "named: existing mobile satellite service provider"
+   },
+   {
+    "name": "Thuraya Telecommunications Co.",
+    "why": "named: existing mobile satellite service provider"
+   },
+   {
+    "name": "Iridium Communications",
+    "why": "named: existing mobile satellite service provider"
+   },
+   {
+    "name": "Skylo",
+    "why": "named: existing direct-to-device/NTN service provider"
+   }
+  ],
+  "also_named_generic": [
+   "regional GEO mobile satellite operators",
+   "VSAT operators",
+   "terrestrial wireline and wireless networks (indirect)"
+  ],
+  "note": "canonical competitor list for valuation is gather/field.json competitors[] (gather_field lane)"
+ },
+ "ib_contract_id": 480745767
+}
