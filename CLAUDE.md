@@ -265,3 +265,10 @@ scenario.
 Add judgement about the future (02.11.2026, owner): where the world and the industry are heading, whether the business can
 still evolve or only erode, and historical analogs (companies that faced the same threat or shift and what happened to them,
 with their numbers), ending in an explicit, labelled subjective probability per scenario (Claude's judgement, not engine odds).
+
+## User preference: fresh pull on every answer about a company (03.11.2026)
+
+Never answer about a company only from an earlier run or saved valuation. Before any recommendation (buy, add, trim,
+where to put money), do a fresh pull: current price, filings or releases since the saved as_of, news and analyst moves,
+and anything material for the thesis (deals, guidance, lawsuits, partner changes). Say what is new and whether it changes
+the view; if nothing material is new, say so in one line. Quick answers that reuse prior work must say they do.
