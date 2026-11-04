@@ -11,7 +11,7 @@ The params file has keys: ticker, as_of, price, rf, erp, beta, beta_mature, shar
 negative = net debt), rev0_m (base-year revenue), base_year, tax, cash_yield, debt_rate, roic_terminal,
 days_to_base_year_end, years_to_horizon, buy_return, probabilities {bear, base, bull}, and scenarios
 {bear|base|bull: {g[6], m[6] (operating margin after SBC), conv[6] (FCF / NOPAT), pe (exit P/E on next-year
-operating EPS), charge {year index: $M after tax}}}.
+operating EPS), charge {year index: $M after tax}, optional shares_m}}.
 Converts, puts, warrants, leases and patent cliffs are NOT modelled here. Put them into the inputs (net cash, shares,
 growth/margin paths, charges) from the filings fine-print lane, or use a custom model.
 """
@@ -27,7 +27,7 @@ def _ke_path(p, n):
 
 def run_scenario(p, d):
     """One scenario. Revenue index 0 = base year; g/m/conv index i = base year + 1 + i (6 years)."""
-    tax, sh = p['tax'], p['shares_m']
+    tax, sh = p['tax'], d.get('shares_m', p['shares_m'])  # per-scenario shares (e.g. warrants vesting with the deals)
     rev = [p['rev0_m']]
     opi, eps_op, fcf = [], [], []
     charge = {int(k): v for k, v in (d.get('charge') or {}).items()}
