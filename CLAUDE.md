@@ -272,3 +272,14 @@ Never answer about a company only from an earlier run or saved valuation. Before
 where to put money), do a fresh pull: current price, filings or releases since the saved as_of, news and analyst moves,
 and anything material for the thesis (deals, guidance, lawsuits, partner changes). Say what is new and whether it changes
 the view; if nothing material is new, say so in one line. Quick answers that reuse prior work must say they do.
+
+## User preference: lean deep research (04.11.2026)
+
+The owner found the full multi-agent deep research (5 lanes, model agent, 2-3 reviewers, repair agent; ~60 min) too slow
+and costly. Default deep check on a ticker: two gather agents on sonnet in parallel (web: call, guidance, consensus,
+competition, multiple history; filings: a fixed fine-print checklist such as converts and puts, patents and loss of
+exclusivity, customer concentration, deferred revenue, commitments, contingencies, one-offs, dilution), each capped at
+~15 tool calls; Claude builds the model itself (two methods, three scenarios, yearly table); ONE combined reviewer
+(numbers + red team); Claude fixes the findings directly, no repair agent. Target ~15-25 minutes; report the real time.
+The full workflow only when the owner asks for the deepest pass. The fine-print checklist is what caught the NBIX and
+CIFR errors; never drop it.
