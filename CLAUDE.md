@@ -273,13 +273,30 @@ where to put money), do a fresh pull: current price, filings or releases since t
 and anything material for the thesis (deals, guidance, lawsuits, partner changes). Say what is new and whether it changes
 the view; if nothing material is new, say so in one line. Quick answers that reuse prior work must say they do.
 
-## User preference: lean deep research (04.11.2026)
+## User preference: 5-minute ticker check (04.11.2026, replaces the 20-25 minute lean version)
 
-The owner found the full multi-agent deep research (5 lanes, model agent, 2-3 reviewers, repair agent; ~60 min) too slow
-and costly. Default deep check on a ticker: two gather agents on sonnet in parallel (web: call, guidance, consensus,
-competition, multiple history; filings: a fixed fine-print checklist such as converts and puts, patents and loss of
-exclusivity, customer concentration, deferred revenue, commitments, contingencies, one-offs, dilution), each capped at
-~15 tool calls; Claude builds the model itself (two methods, three scenarios, yearly table); ONE combined reviewer
-(numbers + red team); Claude fixes the findings directly, no repair agent. Target ~15-25 minutes; report the real time.
-The full workflow only when the owner asks for the deepest pass. The fine-print checklist is what caught the NBIX and
-CIFR errors; never drop it.
+The owner wants a ticker answered in at most ~5 minutes, as accurate as the data allows. Default procedure:
+1. Turn 1 (t=0), all at once: `python scripts/ticker_prefetch.py T D --reuse auto` as a background Bash; IBKR
+   get_price_snapshot; two sonnet agents in the background, each limited to ~8 tool calls and ~3 minutes, returning what
+   they found and GAP for the rest:
+   - filings lane: the prefetched reading/ files and the latest release, on the fixed fine-print checklist (converts and
+     puts, debt and maturities, patents and loss of exclusivity, customer concentration, deferred revenue and backlog,
+     inventory and purchase commitments, contingencies, one-offs, dilution, buybacks);
+   - web lane: the latest call, guidance and its track record, attributed consensus and target moves, direct competitors,
+     material news since the last filing.
+2. While they run, Claude reads the latest release statements and fills the base-year inputs of `scripts/lean_model.py`
+   (revenue, margin after SBC, cash/debt, shares, tax).
+3. When both lanes are back: set the three scenarios from the guidance and the fine print, run lean_model (instant),
+   then the self-check below, and deliver.
+Self-check, in place of a reviewer agent (these are the errors reviewers found on NBIX, CIFR and ANET):
+- the guided year sits at the guide, and later years sit inside the segment and guidance evidence, not at its floor;
+- the bull reflects the company's guidance-beat record;
+- the bear carries the company-specific hit (inventory and commitments, puts, patent cliff, dilution);
+- converts, puts, warrants and leases are in net cash and shares, or lean_model is not the right model;
+- the value is as of today, with cash at face and no double count;
+- the reverse DCF holds the guided year;
+- the probabilities are labelled subjective.
+A reviewer agent runs in the background only for a large decision or a flagged self-check, and its result is reported
+only if it changes the verdict. Complex structures (project debt, converts with puts, biotech patent cliffs) need a custom
+model, about 15-25 minutes: say so up front. The full multi-agent workflow runs only on the owner's request. Report the real
+time of every run.
