@@ -281,7 +281,9 @@ The owner wants a ticker answered in at most ~5 minutes, as accurate as the data
    they found and GAP for the rest:
    - filings lane: the prefetched reading/ files and the latest release, on the fixed fine-print checklist (converts and
      puts, debt and maturities, patents and loss of exclusivity, customer concentration, deferred revenue and backlog,
-     inventory and purchase commitments, contingencies, one-offs, dilution, buybacks);
+     inventory and purchase commitments, contingencies, one-offs, dilution, buybacks; for asset-heavy businesses also
+     capital intensity: D&A as a share of revenue, any useful-life change and its stated effect, assets not yet in use,
+     and whether the margin used after depreciation is consistent with the asset life (the NBIS lesson, 04.11.2026));
    - web lane: the latest call, guidance and its track record, attributed consensus and target moves, direct competitors,
      material news since the last filing.
 2. While they run, Claude reads the latest release statements and fills the base-year inputs of `scripts/lean_model.py`
