@@ -71,7 +71,7 @@ def run_scenario(p, d):
 
     dcf = [dcf_at(t) for t in range(6)]
     mul = [mult_at(t) for t in range(6)]
-    val = [(a + b) / 2 for a, b in zip(dcf, mul)]
+    val = [max((a + b) / 2, 0.01) for a, b in zip(dcf, mul)]   # equity cannot go below zero: a negative path means the scenario needs a restructuring the model does not show
     today = val[0] / (1 + ke[0]) ** (p['days_to_base_year_end'] / 365)
     ret = (val[5] / p['price']) ** (1 / p['years_to_horizon']) - 1
     y0 = p['base_year']
