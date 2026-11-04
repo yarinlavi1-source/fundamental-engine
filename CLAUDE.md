@@ -300,3 +300,12 @@ A reviewer agent runs in the background only for a large decision or a flagged s
 only if it changes the verdict. Complex structures (project debt, converts with puts, biotech patent cliffs) need a custom
 model, about 15-25 minutes: say so up front. The full multi-agent workflow runs only on the owner's request. Report the real
 time of every run.
+
+## User preference: a buy recommendation carries no unverified claims (04.11.2026)
+
+The owner's instruction after the NU case: when the answer is "buy", every number and event in it must be checked against
+a primary source (filing, company release or IR notice, central bank or exchange data) before delivery; a dated event may
+rest on a cited news report. Nothing in a buy answer may be "from memory" or "not verified": close the gap first, drop the
+claim, or label the whole answer a draft. The 5-minute check decides whether a name deserves this; the buy answer itself
+gets the verification pass (parallel lanes on the fixed checklist plus one red-team reviewer), and the business must be
+understood in depth (unit economics, segments, competition, management, regulation) before the verdict.
