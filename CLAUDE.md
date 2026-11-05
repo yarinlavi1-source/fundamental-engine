@@ -318,6 +318,18 @@ Judge whether holding today's multiple is credible (not for a GAAP P/E inflated 
 Score every published base case in runs/portfolio_*/forecast_tracker.md after each report (revenue, margin, EPS vs our
 path; price vs our year-end value) and change rules only through a preregistered test, never by fitting one result.
 
+## User preference: stable valuations, 5 minutes per stock, no new building (05.11.2026)
+
+The owner stopped a 2-hour build: use what exists (lean_model with its two lenses, the deep files already saved), never start
+building tools or long multi-agent workflows unless he asks, and keep any one stock to about 5 minutes. Valuations must not
+swing between runs: the latest saved one per company is the baseline (META: runs/tickers/META_2026-11-05/deep3/final.md,
+base $508; others: runs/tickers/<T>_2026-11-04/deep/params_final.json or params.json). Update it only from report to report
+or on a material fact, changing only the inputs that fact touches, and state in one line what moved the value and by how
+much. Locked judgement rules (no re-choosing per run): exit P/E = the company's own long-run forward P/E median unless a
+stated fact argues otherwise; beta = the 2-year weekly beta vs SPY, adjusted (0.67 x raw + 0.33); capex beyond guidance
+follows commitments, then fades toward the company's own pre-surge capex share; D&A from the capex vintages. Every answer
+gives a 2-year and a 5-year range (bear-base-bull) and says plainly that the 1-2 year number is the noisiest.
+
 ## User preference: a buy recommendation carries no unverified claims (04.11.2026)
 
 The owner's instruction after the NU case: when the answer is "buy", every number and event in it must be checked against
