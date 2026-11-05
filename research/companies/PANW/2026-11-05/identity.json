@@ -1,0 +1,152 @@
+{
+ "ticker": "PANW",
+ "as_of": "2026-11-05",
+ "stop": false,
+ "name": "Palo Alto Networks Inc",
+ "cik": "1327567",
+ "currency": "USD",
+ "exchange": "Nasdaq",
+ "fiscal_year_end": "07-31",
+ "sic": 3577,
+ "sic_description": "Computer Peripheral Equipment, NEC",
+ "annual_form": "10-K",
+ "type": "high_growth / fast_grower (computed by classify_company from SEC companyfacts; the analyst confirms or overrides with reasons)",
+ "evidence_ids": [
+  "pf_10k_20260910"
+ ],
+ "resolved": true,
+ "filings": [
+  {
+   "form": "10-K",
+   "filed": "2026-09-10",
+   "report_date": "2026-07-31",
+   "accession": "0001327567-26-000023",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1327567/000132756726000023/panw-20260731.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1327567/000132756726000023/",
+   "what": "annual report"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-09-01",
+   "report_date": "2026-09-01",
+   "accession": "0001327567-26-000019",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1327567/000132756726000019/panw-20260901.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1327567/000132756726000019/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-06-02",
+   "report_date": "2026-06-02",
+   "accession": "0001327567-26-000012",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1327567/000132756726000012/panw-20260602.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1327567/000132756726000012/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-02-17",
+   "report_date": "2026-02-17",
+   "accession": "0001327567-26-000003",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1327567/000132756726000003/panw-20260217.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1327567/000132756726000003/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-11-19",
+   "report_date": "2025-11-19",
+   "accession": "0001327567-25-000032",
+   "items": "2.02,7.01,8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1327567/000132756725000032/panw-20251119.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1327567/000132756725000032/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-08-18",
+   "report_date": "2025-08-13",
+   "accession": "0001327567-25-000024",
+   "items": "2.02,5.02,5.03,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1327567/000132756725000024/panw-20250813.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1327567/000132756725000024/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-05-20",
+   "report_date": "2025-05-20",
+   "accession": "0001327567-25-000015",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1327567/000132756725000015/panw-20250520.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1327567/000132756725000015/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-02-13",
+   "report_date": "2025-02-13",
+   "accession": "0001327567-25-000006",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1327567/000132756725000006/panw-20250213.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1327567/000132756725000006/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2024-11-20",
+   "report_date": "2024-11-20",
+   "accession": "0001327567-24-000036",
+   "items": "2.02,8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1327567/000132756724000036/panw-20241120.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1327567/000132756724000036/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "DEF 14A",
+   "filed": "2026-10-27",
+   "report_date": "2026-12-08",
+   "accession": "0001308179-26-000432",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1327567/000130817926000432/panw-20261027.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1327567/000130817926000432/",
+   "what": "proxy statement"
+  }
+ ],
+ "computed_type": {
+  "stage": "high_growth",
+  "lynch": "fast_grower",
+  "reasons": [
+   "growth measured without years with a large acquisition: FY2026",
+   "revenue compounding at 20% or more"
+  ],
+  "flags": [
+   {
+    "key": "acquisitions",
+    "he": "ב-FY2026 הייתה רכישה גדולה (המוניטין במאזן קפץ). חלק מהצמיחה נקנה ולא נבנה — לכן הסיווג מסתכל על הצמיחה בלי השנים האלה. צריך לבדוק שהרכישה מחזירה את המחיר ששולם."
+   }
+  ]
+ },
+ "identity_check": {
+  "reporting_currency": "USD",
+  "monetary_units": {
+   "USD": 489
+  },
+  "currency_basis": "facts of filing 0001327567-26-000023 (10-K, filed 2026-09-10)",
+  "depositary_shares": false,
+  "status": "ok",
+  "reasons": []
+ },
+ "prefetch": {
+  "by": "scripts/ticker_prefetch.py",
+  "at_utc": "2026-11-05T21:24:26+00:00",
+  "to_complete_by_lanes": [
+   "security and share class, quote currency, IBKR contract: gather_numbers (it alone writes identity.json while the lanes run)",
+   "named competitors: gather_field writes them in gather/field.json competitors[] (the canonical list), never here"
+  ]
+ }
+}

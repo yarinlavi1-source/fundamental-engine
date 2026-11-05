@@ -1,0 +1,136 @@
+{
+ "ticker": "PANW",
+ "as_of": "2026-11-05",
+ "price": 315.74,
+ "rf": 0.049,
+ "erp": 0.042,
+ "beta": 1.32,
+ "beta_mature": 1.1,
+ "shares_m": 820.0,
+ "net_cash_m": 6439.0,
+ "rev0_m": 11480.0,
+ "base_year": 2026,
+ "tax": 0.22,
+ "cash_yield": 0.036,
+ "debt_rate": 0.045,
+ "roic_terminal": 1.0,
+ "days_to_base_year_end": -97,
+ "years_to_horizon": 4.74,
+ "buy_return": 0.12,
+ "probabilities": {
+  "bear": 0.3,
+  "base": 0.5,
+  "bull": 0.2,
+  "label": "subjective (Claude judgement)"
+ },
+ "notes": {
+  "base_year": "FY2026 (ended 31.7.2026) actual: revenue 11,480 (release 1.9.2026), incl. CyberArk from 11.2.2026 and Chronosphere from Jan 2026 (930 of revenue). Pro forma combined FY26 12,312 (10-K). FY27 guide 14,100-14,200 = +23.3% reported, ~+15% on pro forma",
+  "margin": "op margin after SBC = non-GAAP op margin - SBC-related charges. FY26 (3,356-1,712)/11,480 = 14.3% (Q4 15.4%). FY27 guide non-GAAP 29.5% minus SBC ~15% (full-year CyberArk replacement awards) = 14.5%; base +1.5-2pt/yr to 21.5% by FY32 (non-GAAP ~33%, SBC ~11.5%)",
+  "net_cash": "31.7.2026: cash 2,514 + ST 557 + LT investments 4,835 = 7,906 minus CyberArk 2030 converts at fair value 1,774 = 6,132; FY27 cash deals (Console 500, Embrace) as a charge in year 0",
+  "shares": "818M outstanding 31.8.2026 (10-K cover); FY27 guide 844-847M diluted -> 846; SBC expensed in the margin, shares held flat (buybacks offset issuance)",
+  "conv": "FCF after SBC (cash-flow SBC 1,774) less after-tax interest / NOPAT: FY26 2,079/1,250 = 1.66; FY27 guide (38% adj FCF) ~1.8; FY28 40% adj FCF target ~1.85; fades to 1.45 as deferred-revenue growth slows and annual billing rises (30% of bookings)",
+  "beta": "2-year weekly vs SPY (IBKR, 105 weeks) raw 1.48 -> adjusted 1.32",
+  "tax": "non-GAAP long-term rate ~22% (history lane CALC); cash taxes only $199M in FY26 (deductible CyberArk goodwill) -> the cash advantage sits in conv",
+  "charges": "FY27 cash deals Embrace 325 + Console 500, IBM QRadar contingent consideration 206 -> 1,000 in year 0",
+  "pe": "lean_model P/E is on after-SBC operating EPS. PANW own forward non-GAAP P/E median Nov-2021..Jul-2026 = 48x (p25 41, p75 53; IBKR monthly closes / release non-GAAP EPS, CALC). Non-GAAP/after-SBC EPS ratio ~1.53 at FY32 -> 48x = ~73x after SBC. Ours: base 45 (~29x non-GAAP: growth decelerates to ~10%), bear 25 (~16x, Check Point/Cisco-like de-rating), bull 60 (~39x). Calibrated lens: own median 73 (today 147x after SBC / 75.6x non-GAAP is not credible to hold)",
+  "growth": "FY27 at guide midpoint (+23.3% reported; ~+15% on pro forma 12,312). Base FY28 +15% (consensus 16.23B = +14.5%, AV 47 analysts), then 13.5/12/11/10. Bull = FY30 $20B NGS ARR target path (+19/18/16/14/12) plus a 1.5% beat in FY27 (revenue beat the guide midpoint by +1.1% on average over 8 quarters). Bear = organic decel to high single digits after the firewall refresh and platformization incentives, bundling by Microsoft/hyperscalers, identity slowing toward Okta-like growth: +10/7/6/5/5",
+  "review_1105": "red team (3 reviewers) applied: FY27 margin 15.0% (Q4 SBC run-rate 14.3%), tax 0.22 (non-GAAP rate), shares 820 (818 outstanding 31.8.2026; unvested RSU/PSU cost is future SBC already in the margin), net cash 6,439 (2030 notes at exchange value ~1,620 at $315.74 + capped calls 153), charge 1,031 (Embrace 325, Console 500, IBM contingent 206), terminal ROIC 1.0 (deferred-revenue float; lean_model otherwise drops FCF/NOPAT from 1.45 to 0.81), bear margins rise slowly (SBC roll-off) with exit 30x after-SBC (~16-17x non-GAAP), base exit 63x after-SBC = own p25 41x non-GAAP (stated fact: organic growth slowed 29% FY22 -> 14.4% FY26; exit-year growth ~10%), calibrated 78x = own median 48x ex cash",
+  "pe_history": "own forward non-GAAP P/E Nov-2021..Jul-2026 (IBKR monthly closes / release non-GAAP EPS FY21-FY27 guide, NTM blend): median 48x, p25 41x, p75 53x, min 29x (2022), max 83x (Jun 2026); today 75.6x FY27 guide"
+ },
+ "scenarios": {
+  "bear": {
+   "g": [
+    0.225,
+    0.1,
+    0.07,
+    0.06,
+    0.05,
+    0.05
+   ],
+   "m": [
+    0.14,
+    0.145,
+    0.155,
+    0.165,
+    0.17,
+    0.175
+   ],
+   "conv": [
+    1.75,
+    1.5,
+    1.4,
+    1.3,
+    1.25,
+    1.2
+   ],
+   "pe": 30,
+   "charge": {
+    "0": 1031
+   }
+  },
+  "base": {
+   "g": [
+    0.233,
+    0.15,
+    0.135,
+    0.12,
+    0.11,
+    0.1
+   ],
+   "m": [
+    0.15,
+    0.17,
+    0.185,
+    0.2,
+    0.21,
+    0.22
+   ],
+   "conv": [
+    1.85,
+    1.85,
+    1.75,
+    1.65,
+    1.55,
+    1.45
+   ],
+   "pe": 63,
+   "charge": {
+    "0": 1031
+   }
+  },
+  "bull": {
+   "g": [
+    0.251,
+    0.19,
+    0.18,
+    0.16,
+    0.14,
+    0.12
+   ],
+   "m": [
+    0.155,
+    0.18,
+    0.2,
+    0.22,
+    0.235,
+    0.245
+   ],
+   "conv": [
+    1.85,
+    1.9,
+    1.8,
+    1.7,
+    1.6,
+    1.5
+   ],
+   "pe": 80,
+   "charge": {
+    "0": 1031
+   }
+  }
+ },
+ "calibrated": {
+  "pe": 78,
+  "why": "today's 147x after-SBC (75.6x non-GAAP) cannot be held; PANW's own 5-year forward non-GAAP median 48x, ex cash/interest ~50.8x, x1.53 to the after-SBC basis at FY32 = 78x"
+ }
+}
