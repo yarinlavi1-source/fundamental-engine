@@ -36,6 +36,26 @@ class LeanModelTest(unittest.TestCase):
         hi = lean_model.run_scenario(dict(p, debt_rate=0.0), self.p['scenarios']['base'])['year_end_values'][2028]
         self.assertLess(lo, hi)
 
+    def test_calibrated_lens_holds_todays_multiple_and_margin(self):
+        r = lean_model.run(self.p)
+        cal, base = r['two_lens']['calibrated'], r['scenarios']['base']
+        eps0 = base['eps_operating'][min(base['eps_operating'])]
+        self.assertAlmostEqual(cal['pe_used'], self.p['price'] / eps0, delta=0.06)
+        m0 = self.p['scenarios']['base']['m'][0]
+        self.assertTrue(all(x >= m0 - 1e-9 for x in cal['margin_used']))
+        self.assertIn(r['two_lens']['ours']['band'], ('buy', 'hold', 'lagging', 'sell'))
+        self.assertEqual(r['two_lens']['agree'], cal['band'] == r['two_lens']['ours']['band'])
+        # the lens changes only the exit multiple and the margin floor: with both equal to the base it reproduces the base
+        same = dict(self.p, calibrated={'pe': self.p['scenarios']['base']['pe'], 'm': self.p['scenarios']['base']['m']})
+        self.assertAlmostEqual(lean_model.run(same)['two_lens']['calibrated']['value_today'], base['value_today'], delta=0.01)
+
+    def test_calibrated_override_and_bands(self):
+        r = lean_model.run(dict(self.p, calibrated={'pe': 10.0, 'why': 'test'}))
+        self.assertTrue(r['two_lens']['calibrated']['pe_overridden'])
+        self.assertEqual(r['two_lens']['calibrated']['pe_used'], 10.0)
+        self.assertEqual([lean_model.band(x) for x in (13, 12, 9, 6, 4, 3, 2.9)],
+                         ['buy', 'buy', 'hold', 'hold', 'lagging', 'lagging', 'sell'])
+
 
 if __name__ == '__main__':
     unittest.main()

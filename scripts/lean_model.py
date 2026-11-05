@@ -14,6 +14,16 @@ days_to_base_year_end, years_to_horizon, buy_return, probabilities {bear, base, 
 operating EPS), charge {year index: $M after tax}, optional shares_m}}.
 Converts, puts, warrants, leases and patent cliffs are NOT modelled here. Put them into the inputs (net cash, shares,
 growth/margin paths, charges) from the filings fine-print lane, or use a custom model.
+
+Two lenses (owner preference 05.11.2026, CLAUDE.md): the result also carries a calibrated lens of the base case. It keeps
+the base's revenue, conversion and charges but holds today's forward P/E (price / first forecast year's operating EPS) as
+the exit multiple and does not let the margin fall below the first forecast year. Reason: in the 2016-2025 price-path
+walk-forward (docs/PRICE_PATH_V2_RESULTS_2026-10-25.md) fading the multiple and cutting margins were the two largest
+sources of a low bias. Optional params key "calibrated": {"pe": exit P/E to use when today's multiple is not credible
+(e.g. a GAAP P/E inflated by temporarily depressed earnings), "m": [6 margins] when a margin cut is hard and evidenced
+(e.g. a quantified depreciation wave), "why": text}. The two lenses are not averaged: both historical analogues erred low
+in the same direction (3-year median bias x0.73 and x0.89), so an average cannot remove that shared bias. A buy, sell or
+trim call is made only where both lenses fall in the same band ("bands": buy/hold/lagging thresholds in % a year).
 """
 import argparse
 import json
@@ -89,6 +99,41 @@ def run_scenario(p, d):
     }
 
 
+BANDS = {'buy': 12.0, 'hold': 6.0, 'lagging': 3.0}   # owner's bands on the base-case yearly return (CLAUDE.md, 05.11.2026)
+
+
+def band(ret_pct, bands=None):
+    b = bands or BANDS
+    if ret_pct >= b['buy']:
+        return 'buy'
+    if ret_pct >= b['hold']:
+        return 'hold'
+    if ret_pct >= b['lagging']:
+        return 'lagging'
+    return 'sell'
+
+
+def calibrated_lens(p, d):
+    """The base case with today's forward P/E held and the margin floored at the first forecast year (see the docstring)."""
+    cal = p.get('calibrated') or {}
+    first = run_scenario(p, d)
+    eps0 = first['eps_operating'][min(first['eps_operating'])]
+    pe_today = p['price'] / eps0 if eps0 > 0 else None
+    pe = cal.get('pe', pe_today)
+    m = cal.get('m') or [max(d['m'][0], x) for x in d['m']]
+    out = {'pe_today': round(pe_today, 1) if pe_today else None, 'pe_used': round(pe, 1) if pe else None,
+           'pe_overridden': 'pe' in cal, 'margin_used': [round(x, 4) for x in m], 'margin_overridden': bool(cal.get('m')),
+           'why': cal.get('why', '')}
+    if pe is None:
+        out['note'] = 'no positive first-year EPS: the calibrated lens needs "calibrated.pe"'
+        return out
+    r = run_scenario(p, dict(d, pe=pe, m=m))
+    out.update(value_today=r['value_today'], year_end_values=r['year_end_values'], annual_return_pct=r['annual_return_pct'])
+    if pe_today and pe_today > 40 and 'pe' not in cal:
+        out['note'] = 'today\'s multiple is above 40: holding it for five years is not credible; set "calibrated.pe"'
+    return out
+
+
 def run(p):
     out = {k: run_scenario(p, d) for k, d in p['scenarios'].items()}
     pr = p['probabilities']
@@ -124,6 +169,17 @@ def run(p):
         r = run_scenario(p, dict(base, pe=pe))
         sens[f'exit P/E {pe:g}'] = [r['value_today'], r['annual_return_pct']]
     res['sensitivity_base'] = sens
+    cal = calibrated_lens(p, base)
+    bands = p.get('bands')
+    ours_ret = out['base']['annual_return_pct']
+    lens = {'ours': {'value_today': out['base']['value_today'], 'annual_return_pct': ours_ret, 'band': band(ours_ret, bands),
+                     'pe_exit': base['pe']}, 'calibrated': cal}
+    if 'annual_return_pct' in cal:
+        cal['band'] = band(cal['annual_return_pct'], bands)
+        lens['agree'] = cal['band'] == lens['ours']['band']
+        lens['rule'] = ('both lenses in the same band: act on it' if lens['agree'] else
+                        'lenses disagree: hold, or stage the trade around the next report')
+    res['two_lens'] = lens
     return res
 
 
