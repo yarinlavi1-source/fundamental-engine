@@ -304,6 +304,20 @@ only if it changes the verdict. Complex structures (project debt, converts with 
 model, about 15-25 minutes: say so up front. The full multi-agent workflow runs only on the owner's request. Report the real
 time of every run.
 
+## User preference: two lenses before any buy/sell call (05.11.2026)
+
+The owner wants forecasts that are relatively accurate. Our own measured errors (docs/PRICE_PATH_V2_RESULTS_2026-10-25.md,
+docs/CHANGELOG.md 0.13.0): fading the exit multiple biased 5-year paths low (multiple term -0.22 log; holding the market's
+multiple cut it to -0.04); the largest remaining error is margins forecast too low (-0.09 / -0.17 log at 3 / 5 years);
+revenue is small (-0.02 / -0.07); a plain 7% drift beat every fundamental path; engine value/price had no ranking power.
+So every valuation shows two lenses: (1) our fundamental base (lean_model as built), (2) the calibrated lens: the same base
+with today's forward P/E held as the exit multiple and the margin not cut below the first forecast year unless a hard,
+evidenced cost (e.g. a quantified depreciation wave) is named, and then shown as its own line. A buy/sell/trim call is
+made only where both lenses agree on the band; where they disagree, hold or stage the trade around the next report.
+Judge whether holding today's multiple is credible (not for a GAAP P/E inflated by temporarily depressed earnings).
+Score every published base case in runs/portfolio_*/forecast_tracker.md after each report (revenue, margin, EPS vs our
+path; price vs our year-end value) and change rules only through a preregistered test, never by fitting one result.
+
 ## User preference: a buy recommendation carries no unverified claims (04.11.2026)
 
 The owner's instruction after the NU case: when the answer is "buy", every number and event in it must be checked against
