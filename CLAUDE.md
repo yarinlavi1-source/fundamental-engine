@@ -183,6 +183,7 @@ some steadier ones; the common denominator is quality proven in data, not storie
 (evidenced trajectory, potential, geopolitics) because the price does not show the potential at first; counter with the
 evidence on expensive growth (most fail; returns concentrate in few winners) through position sizing and letting
 winners run, not by excluding the sleeve.
+His long-term core (05.11.2026, his decision after hearing the counter-case): besides the index he wants to build the portfolio for years around META, MSFT and NVDA and keep them through expensive periods, adding when they are cheap. Respect it: do not push to sell them on valuation alone; give add-below levels, sizing limits for their shared AI-capex risk, and the evidence (capex guides, margins) that would change the view, and say plainly when the evidence turns.
 His buy test (29.10.2026): not a bargain hunt. A great company at a fair price qualifies when its base case beats the index
 over 5 years (the table's expected annual return vs the market row) with a bull case well above it and a bear case he can
 live with; the entry price with a margin of safety is where to add more, not a condition to own it.
