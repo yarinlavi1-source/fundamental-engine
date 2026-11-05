@@ -328,7 +328,8 @@ path; price vs our year-end value) and change rules only through a preregistered
 ## User preference: stable valuations, 5 minutes per stock, no new building (05.11.2026)
 
 The owner stopped a 2-hour build: use what exists (lean_model with its two lenses, the deep files already saved), never start
-building tools or long multi-agent workflows unless he asks, and keep any one stock to about 5 minutes. Valuations must not
+building tools or long multi-agent workflows unless he asks. Per stock: no hard 5-minute cap (his correction, 05.11.2026): check
+what the answer needs, usually 5-15 minutes, but never half an hour or more without saying so first. Valuations must not
 swing between runs: the latest saved one per company is the baseline (META: runs/tickers/META_2026-11-05/deep3/final.md,
 base $508; others: runs/tickers/<T>_2026-11-04/deep/params_final.json or params.json). Update it only from report to report
 or on a material fact, changing only the inputs that fact touches, and state in one line what moved the value and by how
