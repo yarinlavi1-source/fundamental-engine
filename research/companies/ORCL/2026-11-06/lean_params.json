@@ -1,0 +1,142 @@
+{
+ "ticker": "ORCL",
+ "as_of": "2026-11-06",
+ "price": 116.4,
+ "rf": 0.049,
+ "erp": 0.042,
+ "beta": 1.58,
+ "beta_mature": 1.2,
+ "shares_m": 3175.0,
+ "net_cash_m": -75500.0,
+ "rev0_m": 67357.0,
+ "base_year": 2026,
+ "tax": 0.19,
+ "cash_yield": 0.036,
+ "debt_rate": 0.065,
+ "roic_terminal": 0.2,
+ "days_to_base_year_end": -159,
+ "years_to_horizon": 4.57,
+ "buy_return": 0.12,
+ "probabilities": {
+  "bear": 0.35,
+  "base": 0.45,
+  "bull": 0.2,
+  "label": "subjective (Claude judgement)"
+ },
+ "notes": {
+  "units": "fiscal years end 31 May; base year FY2026 (actual); index 0 = FY2027; year-end values are 31 May of each year; horizon FY2031 (31.5.2031, 4.57 years)",
+  "base_year": "FY2026 revenue 67,357 (10-K / release 10.6.2026)",
+  "net_cash": "31.5.2026: notes and borrowings 129,541 + finance leases 7,701 - cash and securities 31,900 = -105,342; + net proceeds of the equity raised since (ATM 19.9B in Q1 FY27 + 9.9B on 4.11.2026 = 29.8B) because those shares are in the count -> about -75,500. The 10B notes of 4.11.2026 add cash and debt equally. Operating leases (34.6B on balance sheet, 288B not yet commenced) are operating costs inside the margins, not debt here",
+  "shares": "3,109.9M after the 4.11.2026 offering (424B5) + up to 31.2M from the 6.50% mandatory convertible preferred + modest employee dilution -> 3,200 base; bull 3,150; bear 3,600 (another ~$40B raised at low prices)",
+  "margin": "after SBC, before amortization of acquired intangibles: Q1 FY27 non-GAAP operating margin 42.4% minus SBC ~5.5% of revenue -> ~36.5% in FY27. Management FY30: non-GAAP 40%+ (after SBC ~37-38%). Base fades to 31.5% (AI infrastructure is lower margin: depreciation doubled, 288B of data-center leases commence FY27-FY29; the cloud-and-software segment margin fell 59.6% -> 54.5% in a year); bull holds ~37%; bear 25% (stranded capacity, lease costs keep running)",
+  "growth": "FY27 at the guide (at least $90B = +33.6%). Bull = management path (FY28 $130B, FY29 $185B, FY30 $225B, Investor Day 28.10.2026; consensus FY28 $131.7B). Base haircut for execution, financing and OpenAI concentration: +40/+30/+18/+10/+8. Bear: OpenAI (reportedly ~45% of RPO) cannot pay in full: +22/+6/+2/+3/+3",
+  "conv": "FCF / NOPAT: FY27 capex $90-95B (call, secondary), net of customer prepayments up to $70B -> FCF about -25B on NOPAT ~26.6B -> -0.94; management: FCF positive in 2H FY28 and $30B+ in FY29 -> base -0.15 FY28, 0.5 FY29, rising to 0.9",
+  "beta": "2-year weekly vs SPY raw 1.87 -> adjusted 1.58",
+  "pe": "P/E on after-SBC operating EPS before interest (net debt is subtracted separately). Oracle as an asset-heavy AI landlord no longer earns its old software multiple; today 116.40 / FY27E non-GAAP EPS 8.10 = 14.4x. Base 15, bull 20, bear 10",
+  "review_1106": "one reviewer: base terminal ROIC 0.25 -> 0.20, later conversion 0.65/0.75/0.80 (consistent with the ROIC), FY27 margin 34.5% (guidance-consistent), customer-prepayment unwind 6B/yr FY28-FY31, debt rate 6.5% (new notes 7.0-8.65%), shares 3,175; bear margin to 22% (lease + depreciation stack ~$40-53B a year) and cash credit +24B for its 400M extra shares. The bear fails the -10%/yr floor in every variant"
+ },
+ "scenarios": {
+  "bear": {
+   "g": [
+    0.32,
+    0.22,
+    0.06,
+    0.02,
+    0.03,
+    0.03
+   ],
+   "m": [
+    0.35,
+    0.29,
+    0.24,
+    0.22,
+    0.22,
+    0.22
+   ],
+   "conv": [
+    -1.0,
+    -0.5,
+    0.2,
+    0.6,
+    0.8,
+    0.8
+   ],
+   "pe": 10,
+   "shares_m": 3600.0,
+   "charge": {
+    "0": -24000,
+    "1": 6000,
+    "2": 6000,
+    "3": 6000,
+    "4": 6000
+   }
+  },
+  "base": {
+   "g": [
+    0.336,
+    0.4,
+    0.3,
+    0.18,
+    0.1,
+    0.08
+   ],
+   "m": [
+    0.345,
+    0.345,
+    0.335,
+    0.32,
+    0.315,
+    0.315
+   ],
+   "conv": [
+    -0.99,
+    -0.15,
+    0.5,
+    0.65,
+    0.75,
+    0.8
+   ],
+   "pe": 15,
+   "charge": {
+    "1": 6000,
+    "2": 6000,
+    "3": 6000,
+    "4": 6000
+   }
+  },
+  "bull": {
+   "g": [
+    0.345,
+    0.44,
+    0.42,
+    0.22,
+    0.12,
+    0.1
+   ],
+   "m": [
+    0.35,
+    0.36,
+    0.365,
+    0.37,
+    0.37,
+    0.37
+   ],
+   "conv": [
+    -0.95,
+    0.0,
+    0.6,
+    0.7,
+    0.8,
+    0.85
+   ],
+   "pe": 20,
+   "shares_m": 3150.0,
+   "charge": {
+    "1": 6000,
+    "2": 6000,
+    "3": 6000,
+    "4": 6000
+   }
+  }
+ }
+}
