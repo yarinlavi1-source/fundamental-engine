@@ -370,3 +370,15 @@ of safety, verdict, next check). The answer to the owner uses the same order: bo
 and in five years; the thesis; key points from the reports; risks; what would change the view; sources. Update the file after
 each report or material fact and move the old value to its history line. Company research only: no positions, costs or
 advice about his holdings in research/ (those stay in runs/portfolio_*, gitignored).
+
+## User preference: how to choose which stocks get a deep check (06.11.2026)
+
+Deep checks only for 1-2 names at a time (the owner stopped a 10-name batch). Choose them with a cheap funnel of about 5-10
+minutes: (1) where the world is heading over 5 years, as Claude's labelled judgement (e.g. AI moving from building to use,
+power and physical bottlenecks, deglobalization and defense, aging and drug pricing, emerging-market digital finance, rates
+staying higher, autonomy), naming sectors with tailwinds and threats, and asking whether the price already holds the theme;
+(2) quality from the SEC rows; (3) price before news: the own-history multiple, the growth the price assumes vs guidance, and
+every saved valuation in runs/ and research/ (never propose a name whose saved valuation fails the buy test: the MSFT slip of
+06.11.2026); (4) news: why is it cheap, temporary or structural; (5) supporting signals: insider clusters, new 13F positions of
+quality investors, beat-and-raise; social media only for ideas and as a hype gauge; (6) trend: no falling knife without a known
+reason. AI-linked names are not excluded; the correlation is a sizing question. The world view is judgement, not a forecast.
