@@ -360,3 +360,13 @@ separate assessments and then one verdict:
    count); bank -> P/TBV against ROE; cyclical -> mid-cycle earnings times mid-cycle multiple; levered or complex structures
    (project debt, converts with puts) -> the custom model only.
 Verdict: when both reports say cheap, it is a strong signal; when they disagree, say so plainly and keep any position small.
+
+## User preference: the thesis book and one clean answer format (06.11.2026)
+
+Every valuation ends in the thesis book: research/companies/<T>/thesis_he.md (template research/THESIS_TEMPLATE_he.md,
+finished example research/companies/UBER/thesis_he.md) plus its row in the index research/THESES_he.md (company, date, price
+then, fair value today / in one year / in five years with bear-base-bull, historical-multiple value, entry price with a margin
+of safety, verdict, next check). The answer to the owner uses the same order: bottom line first; fair value today, in one year
+and in five years; the thesis; key points from the reports; risks; what would change the view; sources. Update the file after
+each report or material fact and move the old value to its history line. Company research only: no positions, costs or
+advice about his holdings in research/ (those stay in runs/portfolio_*, gitignored).
