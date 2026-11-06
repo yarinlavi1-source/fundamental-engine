@@ -1,0 +1,131 @@
+{
+ "ticker": "APH",
+ "as_of": "2026-11-06",
+ "price": 74.09,
+ "rf": 0.0494,
+ "erp": 0.042,
+ "beta": 1.53,
+ "beta_mature": 1.1,
+ "shares_m": 2583,
+ "net_cash_m": -12300,
+ "rev0_m": 37000,
+ "base_year": 2026,
+ "tax": 0.27,
+ "cash_yield": 0.036,
+ "debt_rate": 0.05,
+ "roic_terminal": 0.2,
+ "days_to_base_year_end": 55,
+ "years_to_horizon": 5.15,
+ "buy_return": 0.1137,
+ "probabilities": {
+  "bear": 0.3,
+  "base": 0.5,
+  "bull": 0.2,
+  "label": "SUBJECTIVE, Claude's judgement 2026-11-04, not engine odds"
+ },
+ "scenarios": {
+  "bear": {
+   "g": [
+    0.12,
+    -0.12,
+    0.0,
+    0.05,
+    0.05,
+    0.04
+   ],
+   "m": [
+    0.275,
+    0.255,
+    0.255,
+    0.26,
+    0.26,
+    0.26
+   ],
+   "conv": [
+    0.85,
+    1.05,
+    0.95,
+    0.92,
+    0.92,
+    0.92
+   ],
+   "pe": 17,
+   "charge": {
+    "1": 400
+   }
+  },
+  "base": {
+   "g": [
+    0.25,
+    0.08,
+    0.07,
+    0.06,
+    0.06,
+    0.06
+   ],
+   "m": [
+    0.295,
+    0.29,
+    0.285,
+    0.28,
+    0.28,
+    0.28
+   ],
+   "conv": [
+    0.83,
+    0.9,
+    0.905,
+    0.905,
+    0.905,
+    0.905
+   ],
+   "pe": 25
+  },
+  "bull": {
+   "g": [
+    0.32,
+    0.15,
+    0.09,
+    0.08,
+    0.07,
+    0.07
+   ],
+   "m": [
+    0.305,
+    0.305,
+    0.3,
+    0.295,
+    0.29,
+    0.29
+   ],
+   "conv": [
+    0.8,
+    0.88,
+    0.92,
+    0.93,
+    0.93,
+    0.93
+   ],
+   "pe": 27
+  }
+ },
+ "notes": {
+  "basis": "ALL per-share figures POST the 2-for-1 split (record 2026-08-17, distributed 2026-09-02, split-adjusted trading from 2026-09-03; CFO on the Q3 call: all per-share data reflects the split). Diluted shares 2,582.9M (R-Q3'26). Market cap at $78.40 = $202.5B; EV about $215B with net debt. The 1.11 draft ($136 fair value) and the $165-215 analyst targets are on the pre-split basis (divide by 2: $68 and $83-108).",
+  "price": "IBKR snapshot 2026-11-06 09:44 UTC (pre-market, REALTIME): bid 73.61 / ask 74.56, midpoint 74.09 used; last print 74.99 (+4.68% vs the 2026-11-05 regular close 71.64, IBKR daily bars; the 11-05 session fell 9.3% from 79.01, cause not found). Path review of 2026-11-06.",
+  "rf_erp_beta": "rf 4.94% 10y UST (main loop), ERP 4.2%, beta 1.53 = 2-year weekly vs SPY (main loop), mature beta 1.1. ke today 11.4%, mature 9.6%, index = rf+ERP = 9.1%.",
+  "shares_m": "2,583M diluted Q3'26 (R-Q3'26). No converts, no warrants (10-Q debt note lists only senior notes, DDTL and CP). SBC 0.5% of sales is inside the GAAP margin. Buybacks ($4B 2027-29 plan) are not modelled: the model keeps the cash instead, which is value-neutral at fair value.",
+  "net_cash_m": "-13,000 at end-2026: 9/30/26 net debt 12,569 (debt 17,870.8 carrying less cash 4,173.1 and STI 1,128.3; 10-Q), less Q4 FCF about 2,000 (Q4 seasonally strong: Q4'25 FCF 1,469 on 6.4B sales; Q3'26 1,621), plus Q4 dividend 390 (0.15 x 2,583M), plus about 400 buyback to finish the $2B plan, plus about 1,200 for the signed deals AdvancedPCB, Humanetics, Dexgreen (10-Q line 10723: about $1,200 for the three; Dexgreen closes Q1'27 but is charged here), = about 12,560; plus operating lease liabilities about 700 (565.7 at 12/31/25 per 10-K, grown by new and acquired leases per 10-Q MD&A; exact 9/30 figure GAP) = 13,260, rounded to 13,000 because the Q4 FCF is an estimate. Debt rate 5.0%: gross interest about 850 annualized on 17.9B = 4.75%; the 10-K guided net interest about $800M for 2026.",
+  "rev0_m": "2026 sales 37,000 = 9M actual 26,607.9 + Q4 guide midpoint 10,400 (guide 10.3-10.5B; FY guide 36.9-37.1B, R-Q3'26). The guided quarter sits at the guide midpoint, not above it, despite the 5/5 beat record.",
+  "tax": "27.0% = the company's Adjusted Effective Tax Rate for 2026 (10-Q line 9496; raised from 25.5% after the China tax matter and the shift of income to higher-tax jurisdictions). GAAP 9M rate 30.3% includes $229M discrete accruals.",
+  "margins": "GAAP operating margin after SBC. 2026 implied: 9M GAAP 27.95% (7,437.2/26,607.9) and Q4 about 30% adjusted (EPS guide 0.82 x 2,585M = 2,120 net, /0.73 = 2,904 pretax, + net interest about 215 = 3,120 on 10,400). Q3'26 GAAP 29.5%, adjusted 29.7% (incl. $15M tariff recovery). Segment margins Q3: Comm Solutions 33.1%, HES 30.1%, ISS 20.0%. CommScope already 'in the low 20s' operating margin (CFO, Q3 call). Base fades 29.5% (2027) to 28% (2030-32) as the IT datacom mix (48% of Q3 sales) normalizes, offset by CCS improvement; the 2020-24 margin was 19-21.5%, 2025 about 25.5%. Bear: 23-24% = the 2028 digestion year with under-absorbed capacity (2009 analog: margin fell from 19.5% to 17.6% on -12% sales; 2001-02: from about 19% to 14%). Bull: 30-30.5%, the Q4'26 run-rate held.",
+  "growth": "Base 2027 +22% to 45.1B vs consensus 45.9B (+24%, 16 analysts, AV 2026-11-04; range 41.8-48.8B): the Q4 run-rate (41.6B) plus backlog (orders exceeded sales by about 5.8B in 9M26: book-to-bill 1.24/1.23/1.19) plus the pending deals (about 430M/yr) plus organic growth decelerating (IT datacom guided only mid-single-digit sequential growth for Q4 after +30% in Q3). Base 2028 +8%, then 7/6/6/6% = Amphenol's own 2010-2024 organic record (about 6-7%/yr average, cyclical: 2020 -4%, 2023 -5%, 2022 +17%, 2024 +13%) with acquisitions EXCLUDED from both growth and FCF. Bear: 2027 +12% (backlog carries H1, AI orders stop in H2), 2028 -12% = IT datacom (about half of sales) -25% with the other markets +2%, then flat 2029 and 4-5% recovery; analogs: APH 2001-02 sales -22% peak to trough, 2009 -12%, TE FY2009 -29%. Bull: 2027 +32% = the consensus high end (48.8B) and the 5/5 record of beating the guide top by 5.6-12.6%; then 15/9/8/7/7%.",
+  "conv": "FCF/NOPAT: D&A 3.4% of sales (Q3'26) roughly offsets capex 4.3-4.5% (Q3 4.5%, 9M 4.15%), working capital about 15% of incremental sales (9M26 outflow 1,592 on +10B sales; DSO 67, inventory days 76, DPO 66), so 2027 at +22% growth = 0.83, settling at 0.92-0.93. 9M26 actual conv was 0.67 (FCF 3,653 / NOPAT 5,429) at +60% growth with CCS integration. Bear 2028 conv 1.05 = working-capital release in the down year (2009: APH FCF rose while sales fell). Acquisition spend is excluded from FCF and acquired growth from revenue (treated as value-neutral; Amphenol's record of lifting acquired margins is upside not modelled).",
+  "charge": "Bear 2028: $400M after tax cash costs = inventory write-down about 200 (inventory 5,264 at 9/30; purchase commitments 2,007 for 2026 at 12/31/25) plus restructuring about 200. A CommScope goodwill impairment (goodwill 6,961 from the deal; total goodwill 17,696) is NON-cash and is not charged here; it would hit GAAP EPS, not FCF.",
+  "pe": "PATH REVIEW 2026-11-06 (locked CLAUDE.md rule: exit P/E = own long-run forward P/E median unless a stated fact argues otherwise). Own forward P/E, verified: IBKR split-adjusted monthly closes / realised adjusted diluted EPS of the next 4 reported quarters (APH 8-K ex99.1 releases 2018-2026, post-2026-split basis): 10-year (2016-12..2026-11, n 116) median 25.2x, p25 23.6x, p75 26.9x, min 19.5x (2020-03); 5-year (n 61) median 25.6x, p25 23.8x, p75 27.1x; stable in every sub-period (2017-19 24.4x, 2020-21 25.6x, 2022-23 25.6x, 2024-26 25.3x). Base exit 20 -> 25 (the median, rounded down); the 04.11 reason for 20 was 'the 2015-19 P/E history is unverified' (now verified at 24.4x) plus a Gordon P/E of 16.3x, which is a model output, not a fact about the company; our own measured errors show a faded exit multiple biases 5-year paths low (-0.22 log). Caveat: realised (perfect-foresight) forward P/E sits BELOW the consensus forward P/E of the time in beat years (APH beat the top of its EPS guide in 17 of 17 guided quarters 2022-2026), so 25x is if anything low. Bull 26 -> 27 (own 10-year p75 26.9x). Bear 17 kept: a stated fact-based de-rating (AI digestion plus in-rack copper losing to co-packaged optics from the 2028 Feynman generation), below the own 10-year minimum of 19.5x. Today's forward P/E 20.8x on the 11-05 close (21.4x at 74.09) on NTM EPS 3.45 (Q4'26 guide 0.82 + Q1-Q3'27 from consensus 3.59) is in the bottom 5% of its own 10-year range. Peer TE Connectivity (TEL): 206.36 (IBKR 11-05 close) / FY26 adjusted EPS 11.52 = 17.9x trailing; / (Q1 FY27 guide 3.30 x 4 = 13.20) = 15.6x run-rate forward (TE 8-K ex99.1 2026-10-28).",
+  "roic_terminal": "20% on new capital (acquisitions included); current NOPAT/invested capital (equity + net debt, goodwill included) about 30-35%.",
+  "horizon": "57 days to 2026-12-31; 5.16 years to end-2031; buy_return 13% = owner's hurdle for an entry with a margin of safety (index 9.1% + this company's premium); the owner sets no required return.",
+  "probabilities": "SUBJECTIVE (Claude): bear 30% (an AI-capex digestion within five years is likely at some point; the question is whether it is 2028-sized and whether optics takes the in-rack copper), base 50%, bull 20%."
+ },
+ "review_changes": "reviewer 04.11: 2027 base growth 22%->25% (orders $12.17B annualize to $48.7B, book-to-bill 1.19, 5/5 beats above the top of the guide; consensus $45.9B); FCF conversion tail 0.905 (working capital ~15-20% of incremental sales); bear margin 23%->25.5% (2001-02 and 2009 decrementals ~33%, not 60%); exit P/E 22->20 (model-justified 16.3x vs today 21.8x; the 2015-19 P/E history is unverified); net debt -12.3B (leases out, Q4 dividend timing, buyback remaining 240). The 2028 deceleration to +8% is the thesis, not data (no hyperscaler 2027 capex evidence). buy_return = ke0.",
+ "review_changes_2026_11_06": "path review: price 78.40 -> 74.09 (IBKR mid); timing 55 days / 5.15 years; base exit P/E 20 -> 25 and bull 26 -> 27 (own verified forward P/E median and p75); growth, margins, conversion, tax, shares, net debt, bear unchanged (reviewed, see path.md)."
+}
