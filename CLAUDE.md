@@ -346,3 +346,17 @@ rest on a cited news report. Nothing in a buy answer may be "from memory" or "no
 claim, or label the whole answer a draft. The 5-minute check decides whether a name deserves this; the buy answer itself
 gets the verification pass (parallel lanes on the fixed checklist plus one red-team reviewer), and the business must be
 understood in depth (unit economics, segments, competition, management, regulation) before the verdict.
+
+## User preference: two separate reports per stock, method by company type (06.11.2026)
+
+No universe tests or backtests unless the owner asks (he stopped the planned one). When he asks about a stock, deliver two
+separate assessments and then one verdict:
+1. Fundamental report: the existing lean_model valuation with its two lenses (unchanged method).
+2. Historical-multiple report: next-year earnings (company guidance plus its usual beat, else attributed consensus) times the
+   company's own 5-year median multiple, with the p25-p75 range as the fair-value range, labelled 'שווי לפי המכפיל ההיסטורי'.
+   Identify the company type first and use the matching anchor: stable and profitable -> forward P/E; profitable grower whose
+   growth rate changed -> forward P/E plus a note that the old multiple belonged to a different growth rate, and direct peers at
+   today's growth; little or no profit -> next-year revenue times own median EV/sales (net cash added, SBC dilution in the share
+   count); bank -> P/TBV against ROE; cyclical -> mid-cycle earnings times mid-cycle multiple; levered or complex structures
+   (project debt, converts with puts) -> the custom model only.
+Verdict: when both reports say cheap, it is a strong signal; when they disagree, say so plainly and keep any position small.
