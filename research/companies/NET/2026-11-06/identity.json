@@ -1,0 +1,206 @@
+{
+ "ticker": "NET",
+ "as_of": "2026-11-06",
+ "stop": false,
+ "name": "Cloudflare, Inc.",
+ "cik": "1477333",
+ "currency": "USD",
+ "exchange": "NYSE",
+ "fiscal_year_end": "12-31",
+ "sic": 7372,
+ "sic_description": "Services-Prepackaged Software",
+ "annual_form": "10-K",
+ "type": "young_growth / fast_grower (computed by classify_company from SEC companyfacts; the analyst confirms or overrides with reasons)",
+ "evidence_ids": [
+  "pf_10k_20260226"
+ ],
+ "resolved": true,
+ "filings": [
+  {
+   "form": "10-K",
+   "filed": "2026-02-26",
+   "report_date": "2025-12-31",
+   "accession": "0001477333-26-000016",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1477333/000147733326000016/cloud-20251231.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1477333/000147733326000016/",
+   "what": "annual report"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2026-11-05",
+   "report_date": "2026-09-30",
+   "accession": "0001477333-26-000061",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1477333/000147733326000061/cloud-20260930.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1477333/000147733326000061/",
+   "what": "quarterly report"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2026-08-06",
+   "report_date": "2026-06-30",
+   "accession": "0001477333-26-000054",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1477333/000147733326000054/cloud-20260630.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1477333/000147733326000054/",
+   "what": "quarterly report"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2026-05-08",
+   "report_date": "2026-03-31",
+   "accession": "0001477333-26-000038",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1477333/000147733326000038/cloud-20260331.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1477333/000147733326000038/",
+   "what": "quarterly report"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-11-05",
+   "report_date": "2026-11-05",
+   "accession": "0001477333-26-000060",
+   "items": "2.02,7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1477333/000147733326000060/cloud-20261105.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1477333/000147733326000060/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-08-06",
+   "report_date": "2026-08-06",
+   "accession": "0001477333-26-000053",
+   "items": "2.02,7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1477333/000147733326000053/cloud-20260806.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1477333/000147733326000053/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K/A",
+   "filed": "2026-05-07",
+   "report_date": "2026-05-07",
+   "accession": "0001477333-26-000035",
+   "items": "2.02,2.05,7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1477333/000147733326000035/cloud-20260507.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1477333/000147733326000035/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-05-07",
+   "report_date": "2026-05-07",
+   "accession": "0001477333-26-000033",
+   "items": "2.02,7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1477333/000147733326000033/cloud-20260507.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1477333/000147733326000033/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-02-10",
+   "report_date": "2026-02-10",
+   "accession": "0001477333-26-000008",
+   "items": "2.02,7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1477333/000147733326000008/cloud-20260210.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1477333/000147733326000008/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-10-30",
+   "report_date": "2025-10-30",
+   "accession": "0001477333-25-000140",
+   "items": "2.02,7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1477333/000147733325000140/cloud-20251030.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1477333/000147733325000140/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-07-31",
+   "report_date": "2025-07-31",
+   "accession": "0001477333-25-000136",
+   "items": "2.02,7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1477333/000147733325000136/cloud-20250731.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1477333/000147733325000136/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-05-08",
+   "report_date": "2025-05-08",
+   "accession": "0001477333-25-000081",
+   "items": "2.02,7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1477333/000147733325000081/cloud-20250508.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1477333/000147733325000081/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "DEF 14A",
+   "filed": "2026-06-09",
+   "report_date": "2026-06-30",
+   "accession": "0001193125-26-263809",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1477333/000119312526263809/d160227ddef14a.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1477333/000119312526263809/",
+   "what": "proxy statement"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-08-13",
+   "report_date": "2026-08-10",
+   "accession": "0000950103-26-012340",
+   "items": "1.01,2.03,3.02,8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1477333/000095010326012340/dp251721_8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1477333/000095010326012340/",
+   "what": "8-K since the annual report (items 1.01,2.03,3.02,8.01,9.01)"
+  },
+  {
+   "form": "8-K/A",
+   "filed": "2026-07-01",
+   "report_date": "2026-06-30",
+   "accession": "0001477333-26-000044",
+   "items": "5.02,5.07,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1477333/000147733326000044/cloud-20260630.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1477333/000147733326000044/",
+   "what": "8-K since the annual report (items 5.02,5.07,9.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-06-30",
+   "report_date": "2026-06-30",
+   "accession": "0001477333-26-000042",
+   "items": "5.02,5.07,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1477333/000147733326000042/cloud-20260630.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1477333/000147733326000042/",
+   "what": "8-K since the annual report (items 5.02,5.07,9.01)"
+  }
+ ],
+ "computed_type": {
+  "stage": "young_growth",
+  "lynch": "fast_grower",
+  "reasons": [
+   "fast growth while still loss-making"
+  ],
+  "flags": []
+ },
+ "identity_check": {
+  "reporting_currency": "USD",
+  "monetary_units": {
+   "USD": 452
+  },
+  "currency_basis": "facts of filing 0001477333-26-000016 (10-K, filed 2026-02-26)",
+  "depositary_shares": false,
+  "status": "ok",
+  "reasons": []
+ },
+ "prefetch": {
+  "by": "scripts/ticker_prefetch.py",
+  "at_utc": "2026-11-06T04:07:58+00:00",
+  "to_complete_by_lanes": [
+   "security and share class, quote currency, IBKR contract: gather_numbers (it alone writes identity.json while the lanes run)",
+   "named competitors: gather_field writes them in gather/field.json competitors[] (the canonical list), never here"
+  ]
+ }
+}

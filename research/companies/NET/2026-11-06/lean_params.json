@@ -1,0 +1,149 @@
+{
+ "ticker": "NET",
+ "as_of": "2026-11-06",
+ "price": 275.7,
+ "rf": 0.049,
+ "erp": 0.042,
+ "beta": 1.41,
+ "beta_mature": 1.15,
+ "shares_m": 363.0,
+ "net_cash_m": 1335.0,
+ "rev0_m": 2963.5,
+ "base_year": 2026,
+ "tax": 0.22,
+ "cash_yield": 0.036,
+ "debt_rate": 0.045,
+ "roic_terminal": 0.5,
+ "days_to_base_year_end": 55,
+ "years_to_horizon": 5.15,
+ "buy_return": 0.12,
+ "probabilities": {
+  "bear": 0.3,
+  "base": 0.45,
+  "bull": 0.25,
+  "label": "subjective (Claude judgement)"
+ },
+ "calibrated": {
+  "pe": 100,
+  "why": "no positive after-SBC EPS today and NET has no meaningful own P/E history (non-GAAP P/E 150-500x); held multiple = ~60x non-GAAP (premium-platform level, e.g. what high-quality 20%+ growers have been paid) x 1.65 non-GAAP/after-SBC ratio at FY32"
+ },
+ "notes": {
+  "price": "IBKR last 275.70 pre-market 6.11.2026 after the Q3 report (close 5.11 244.51, +12.8%); the regular session had not opened",
+  "base_year": "FY2026 guide midpoint 2,963.5 (Q3 release 5.11.2026; 9M actual 2,118.3 + Q4 guide 845-846)",
+  "margin": "op margin after SBC = non-GAAP op margin - SBC incl. payroll tax: Q3 17.5% - 22.2% = -4.7%; FY26 guide 15.6% - ~21% = -5.4%; base reaches 17% by FY32 (non-GAAP ~28%, SBC ~11%)",
+  "reinvestment": "conv 1.0 plus a charge = net reinvestment (capex beyond D&A, network/GPU) as % of revenue: base 6.5% FY27 falling to 4% FY32 (FY25 capex incl. software 342.5 vs D&A ~185 = ~7% of revenue; network capex guide 14-15% of revenue; Q3 capex 17%); bear 8%->5.5%; bull 6%->3.5%; FY27 also +27 Deno",
+  "net_cash": "30.9.2026 cash+AFS 5,128.7 - convert principal 4,500 (2030 notes 2,000 conv $247.67, in the money but capped calls to $469.73 offset the excess; 2031 notes 2,500 conv $496.94) = 628.7; + Q4 FCF ~90 - Deno 27 -> ~690 at 31.12.2026; restricted cash excluded; leases are operating costs",
+  "shares": "358.4M A+B on 22.10.2026 (10-Q cover) + 4.3M options = 363; RSU/PSU (8.6M) cost is future SBC already in the margin; 2031 notes out of the money",
+  "beta": "2-year weekly vs SPY (IBKR, 104 weeks) raw 1.61 -> adjusted 1.41",
+  "growth": "FY27 base +30% (pre-report consensus +24.9% will rise: Q4 guide 845.5 = +37.6% y/y, revenue beat the guide midpoint by +3.5% on average over 8 quarters, +6.2% in Q3; BTIG high-20s through 2028), fading to 17% by FY32. Bull = acceleration persists (+36% FY27). Bear = Fastly/Akamai pattern: pool-of-funds consumption normalises, hyperscaler and PANW/ZS competition, +24% FY27 fading to 10%",
+  "pe": "P/E on after-SBC operating EPS; non-GAAP/after-SBC ratio ~1.65 at FY32. Base 55 (~33x non-GAAP for a 17% grower), bear 30 (~18x, Akamai-like), bull 75 (~45x)",
+  "review_1106": "red team (2 reviewers): FY27 base +33% (Q4 guide +37.6% y/y, beats above the range 8 of 8 quarters); net cash 690 +480 (PV of the 0% coupon on 4,500 of converts vs 3.6% on gross cash) +340 (PV of federal NOLs 1,859) -175 (Q4 SBC basis) = 1,335; Deno double count removed from charges; terminal ROIC 0.5 (charges imply ~0.52-0.56 incremental ROIC)"
+ },
+ "scenarios": {
+  "bear": {
+   "g": [
+    0.24,
+    0.18,
+    0.15,
+    0.13,
+    0.11,
+    0.1
+   ],
+   "m": [
+    -0.02,
+    0.0,
+    0.03,
+    0.05,
+    0.07,
+    0.09
+   ],
+   "conv": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "pe": 30,
+   "charge": {
+    "0": 294,
+    "1": 325,
+    "2": 349,
+    "3": 366,
+    "4": 375,
+    "5": 378
+   }
+  },
+  "base": {
+   "g": [
+    0.33,
+    0.26,
+    0.23,
+    0.21,
+    0.19,
+    0.17
+   ],
+   "m": [
+    0.0,
+    0.04,
+    0.08,
+    0.11,
+    0.14,
+    0.17
+   ],
+   "conv": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "pe": 55,
+   "charge": {
+    "0": 256,
+    "1": 291,
+    "2": 328,
+    "3": 361,
+    "4": 387,
+    "5": 402
+   }
+  },
+  "bull": {
+   "g": [
+    0.36,
+    0.32,
+    0.28,
+    0.25,
+    0.22,
+    0.2
+   ],
+   "m": [
+    0.01,
+    0.06,
+    0.1,
+    0.14,
+    0.17,
+    0.2
+   ],
+   "conv": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "pe": 75,
+   "charge": {
+    "0": 242,
+    "1": 293,
+    "2": 340,
+    "3": 383,
+    "4": 415,
+    "5": 436
+   }
+  }
+ }
+}

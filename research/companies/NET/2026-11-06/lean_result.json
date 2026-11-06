@@ -1,0 +1,207 @@
+{
+ "scenarios": {
+  "bear": {
+   "revenue_m": {
+    "2026": 2964,
+    "2027": 3675,
+    "2028": 4336,
+    "2029": 4987,
+    "2030": 5635,
+    "2031": 6255,
+    "2032": 6880
+   },
+   "op_margin": {
+    "2027": -0.02,
+    "2028": 0.0,
+    "2029": 0.03,
+    "2030": 0.05,
+    "2031": 0.07,
+    "2032": 0.09
+   },
+   "eps_operating": {
+    "2027": -0.16,
+    "2028": 0.0,
+    "2029": 0.32,
+    "2030": 0.61,
+    "2031": 0.94,
+    "2032": 1.33
+   },
+   "eps_with_interest": {
+    "2027": -0.05,
+    "2028": 0.08,
+    "2029": 0.38,
+    "2030": 0.65,
+    "2031": 0.97,
+    "2032": 1.36
+   },
+   "dcf_today": 17.71,
+   "multiple_today": 25.0,
+   "value_today": 21.36,
+   "year_end_values": {
+    "2027": 23.74,
+    "2028": 26.06,
+    "2029": 28.67,
+    "2030": 31.57,
+    "2031": 34.77
+   },
+   "annual_return_pct": -33.1,
+   "ke0_pct": 10.82
+  },
+  "base": {
+   "revenue_m": {
+    "2026": 2964,
+    "2027": 3941,
+    "2028": 4966,
+    "2029": 6108,
+    "2030": 7391,
+    "2031": 8796,
+    "2032": 10291
+   },
+   "op_margin": {
+    "2027": 0.0,
+    "2028": 0.04,
+    "2029": 0.08,
+    "2030": 0.11,
+    "2031": 0.14,
+    "2032": 0.17
+   },
+   "eps_operating": {
+    "2027": 0.0,
+    "2028": 0.43,
+    "2029": 1.05,
+    "2030": 1.75,
+    "2031": 2.65,
+    "2032": 3.76
+   },
+   "eps_with_interest": {
+    "2027": 0.1,
+    "2028": 0.51,
+    "2029": 1.13,
+    "2030": 1.83,
+    "2031": 2.75,
+    "2032": 3.91
+   },
+   "dcf_today": 62.56,
+   "multiple_today": 127.23,
+   "value_today": 94.9,
+   "year_end_values": {
+    "2027": 106.51,
+    "2028": 117.68,
+    "2029": 129.94,
+    "2030": 143.34,
+    "2031": 157.94
+   },
+   "annual_return_pct": -10.3,
+   "ke0_pct": 10.82
+  },
+  "bull": {
+   "revenue_m": {
+    "2026": 2964,
+    "2027": 4030,
+    "2028": 5320,
+    "2029": 6810,
+    "2030": 8512,
+    "2031": 10385,
+    "2032": 12462
+   },
+   "op_margin": {
+    "2027": 0.01,
+    "2028": 0.06,
+    "2029": 0.1,
+    "2030": 0.14,
+    "2031": 0.17,
+    "2032": 0.2
+   },
+   "eps_operating": {
+    "2027": 0.09,
+    "2028": 0.69,
+    "2029": 1.46,
+    "2030": 2.56,
+    "2031": 3.79,
+    "2032": 5.36
+   },
+   "eps_with_interest": {
+    "2027": 0.19,
+    "2028": 0.78,
+    "2029": 1.55,
+    "2030": 2.67,
+    "2031": 3.94,
+    "2032": 5.59
+   },
+   "dcf_today": 96.86,
+   "multiple_today": 244.9,
+   "value_today": 170.88,
+   "year_end_values": {
+    "2027": 192.03,
+    "2028": 212.35,
+    "2029": 234.62,
+    "2030": 258.95,
+    "2031": 285.44
+   },
+   "annual_return_pct": 0.7,
+   "ke0_pct": 10.82
+  }
+ },
+ "weighted_value_today": 91.83,
+ "weighted_end_value": 152.86,
+ "weighted_return_pct": -10.8,
+ "index_return_pct": 9.1,
+ "buy_price": 88.11,
+ "index_parity_price": 100.85,
+ "market_implied_growth_pct": [
+  33.0,
+  54.6,
+  48.3,
+  44.1,
+  39.9,
+  35.7
+ ],
+ "market_implied_end_revenue_m": 18239,
+ "sensitivity_base": {
+  "beta 1.11": 99.88,
+  "beta 1.71": 90.21,
+  "exit P/E 50": [
+   89.3,
+   -11.3
+  ],
+  "exit P/E 60": [
+   100.49,
+   -9.2
+  ]
+ },
+ "two_lens": {
+  "ours": {
+   "value_today": 94.9,
+   "annual_return_pct": -10.3,
+   "band": "sell",
+   "pe_exit": 55
+  },
+  "calibrated": {
+   "pe_today": null,
+   "pe_used": 100,
+   "pe_overridden": true,
+   "margin_used": [
+    0.0,
+    0.04,
+    0.08,
+    0.11,
+    0.14,
+    0.17
+   ],
+   "margin_overridden": false,
+   "why": "no positive after-SBC EPS today and NET has no meaningful own P/E history (non-GAAP P/E 150-500x); held multiple = ~60x non-GAAP (premium-platform level, e.g. what high-quality 20%+ growers have been paid) x 1.65 non-GAAP/after-SBC ratio at FY32",
+   "value_today": 145.21,
+   "year_end_values": {
+    "2027": 163.14,
+    "2028": 180.38,
+    "2029": 199.28,
+    "2030": 219.97,
+    "2031": 242.52
+   },
+   "annual_return_pct": -2.5,
+   "band": "sell"
+  },
+  "agree": true,
+  "rule": "both lenses in the same band: act on it"
+ }
+}
