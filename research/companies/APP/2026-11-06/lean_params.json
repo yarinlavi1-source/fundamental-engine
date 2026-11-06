@@ -122,6 +122,18 @@
   "pe": "exit P/E unchanged: base 18 = own median realized forward P/E since earnings became meaningful (Feb-2023 to Nov-2026: 18.8x, p25 15.3, p75 33.4); the full 5-year median 24.3x is inflated by 2022 months on near-zero EPS. Bull 24, bear 9. Today 348 / base 2027 operating EPS ~19.1 = ~18.2x",
   "tax": "20% kept: Q3 effective 17.5%, 9M 16.4%; cash taxes 926M in 9M (~20% of pretax)",
   "governance": "NEW: 8-K 4.11.2026 item 5.07: holders of ~67% of the votes (Foroughi, Chen and affiliates; Class B 20 votes) approved by written consent moving the company from Delaware to Nevada (effective 20+ days after the Schedule 14C mailing). Weaker minority-holder remedies; not modelled in cash flows",
-  "buy_return": "0.13 kept (engine hurdle ~ cost of equity 13.3%)"
+  "buy_return": "0.13 kept (engine hurdle ~ cost of equity 13.3%)",
+  "change_line": "Base value today 395.57 -> 415.15 (+19.6, +5%): FY2026 revenue 8,090 -> 8,331 on the Q3 beat and Q4 guide (+11.8), shares 335 -> 331.3 (+4.6), net cash 0 -> +1,000 (+3.0); bear 94.88 -> 100.52 (litigation charge -1.3). Price 244 -> 348 (+43%) cuts the base return 23.1% -> 15.9%/yr.",
+  "self_check": {
+   "guided_year_at_guide": "yes: FY2026 = 9M actual + Q4 guide midpoint",
+   "later_years_inside_evidence": "yes, conservative side: 2027 +25% = ~3.7% sequential a quarter vs ~8% in 2026; not at the floor (+14% with zero sequential growth)",
+   "bull_reflects_beat_record": "yes: +35% 2027; 3 of 4 beats, avg +3.7%",
+   "bear_company_specific_hit": "yes: platform/regulatory revenue shock -32% over two years, margin to 65%, P/E 9, $500M class-action charge",
+   "converts_puts_warrants_leases": "none outstanding; senior notes at principal in net cash",
+   "value_today_no_double_count": "yes: Q4 FCF in year-end cash, shares held flat, no Q4 buyback assumed",
+   "reverse_dcf_holds_first_year": "yes: market implies 25%, 12.5, 9.7, 8.4, 7.0, 5.6 (about half our base growth after 2027)",
+   "probabilities_subjective": "labelled",
+   "buy_test": "base 15.9 and calibrated 16.0 >= 12 pass; bull 26.6 >= 17 pass; bear -12.5 < -10 FAIL -> not a buy at 348; all tests pass at ~300 (bear binding); base alone passes up to ~416"
+  }
  }
 }
