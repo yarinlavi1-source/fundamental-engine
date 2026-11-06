@@ -1,0 +1,226 @@
+{
+ "ticker": "UBER",
+ "as_of": "2026-11-06",
+ "stop": false,
+ "name": "Uber Technologies, Inc",
+ "cik": "1543151",
+ "currency": "USD",
+ "exchange": "NYSE",
+ "fiscal_year_end": "12-31",
+ "sic": 7389,
+ "sic_description": "Services-Business Services, NEC",
+ "annual_form": "10-K",
+ "type": "high_growth / fast_grower (computed by classify_company from SEC companyfacts; the analyst confirms or overrides with reasons)",
+ "evidence_ids": [
+  "pf_10k_20260213"
+ ],
+ "resolved": true,
+ "filings": [
+  {
+   "form": "10-K",
+   "filed": "2026-02-13",
+   "report_date": "2025-12-31",
+   "accession": "0001543151-26-000015",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1543151/000154315126000015/uber-20251231.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1543151/000154315126000015/",
+   "what": "annual report"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2026-11-04",
+   "report_date": "2026-09-30",
+   "accession": "0001543151-26-000041",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1543151/000154315126000041/uber-20260930.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1543151/000154315126000041/",
+   "what": "quarterly report"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2026-08-05",
+   "report_date": "2026-06-30",
+   "accession": "0001543151-26-000032",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1543151/000154315126000032/uber-20260630.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1543151/000154315126000032/",
+   "what": "quarterly report"
+  },
+  {
+   "form": "10-Q",
+   "filed": "2026-05-06",
+   "report_date": "2026-03-31",
+   "accession": "0001543151-26-000022",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1543151/000154315126000022/uber-20260331.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1543151/000154315126000022/",
+   "what": "quarterly report"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-11-04",
+   "report_date": "2026-11-04",
+   "accession": "0001543151-26-000039",
+   "items": "2.02,5.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1543151/000154315126000039/uber-20261104.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1543151/000154315126000039/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-08-05",
+   "report_date": "2026-08-05",
+   "accession": "0001543151-26-000027",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1543151/000154315126000027/uber-20260805.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1543151/000154315126000027/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-05-06",
+   "report_date": "2026-05-06",
+   "accession": "0001543151-26-000019",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1543151/000154315126000019/uber-20260506.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1543151/000154315126000019/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-02-04",
+   "report_date": "2026-01-30",
+   "accession": "0001543151-26-000011",
+   "items": "2.02,5.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1543151/000154315126000011/uber-20260130.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1543151/000154315126000011/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-11-04",
+   "report_date": "2025-11-04",
+   "accession": "0001543151-25-000030",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1543151/000154315125000030/uber-20251104.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1543151/000154315125000030/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-08-06",
+   "report_date": "2025-07-28",
+   "accession": "0001543151-25-000020",
+   "items": "2.02,8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1543151/000154315125000020/uber-20250728.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1543151/000154315125000020/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-05-07",
+   "report_date": "2025-05-07",
+   "accession": "0001543151-25-000012",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1543151/000154315125000012/uber-20250507.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1543151/000154315125000012/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2025-02-05",
+   "report_date": "2025-02-05",
+   "accession": "0001543151-25-000004",
+   "items": "2.02,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1543151/000154315125000004/uber-20250205.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1543151/000154315125000004/",
+   "what": "earnings release (8-K Item 2.02)"
+  },
+  {
+   "form": "DEF 14A",
+   "filed": "2026-03-23",
+   "report_date": "2026-05-04",
+   "accession": "0001308179-26-000125",
+   "items": null,
+   "url": "https://www.sec.gov/Archives/edgar/data/1543151/000130817926000125/uber014597-def14a.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1543151/000130817926000125/",
+   "what": "proxy statement"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-09-15",
+   "report_date": "2026-09-15",
+   "accession": "0001552781-26-000486",
+   "items": "8.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1543151/000155278126000486/e26383_uber-8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1543151/000155278126000486/",
+   "what": "8-K since the annual report (items 8.01,9.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-08-07",
+   "report_date": "2026-08-06",
+   "accession": "0001552781-26-000414",
+   "items": "1.01,1.02,2.03,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1543151/000155278126000414/e26328_uber-8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1543151/000155278126000414/",
+   "what": "8-K since the annual report (items 1.01,1.02,2.03,9.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-07-16",
+   "report_date": "2026-07-16",
+   "accession": "0001552781-26-000382",
+   "items": "1.01,2.03,7.01,9.01",
+   "url": "https://www.sec.gov/Archives/edgar/data/1543151/000155278126000382/e26302_uber-8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1543151/000155278126000382/",
+   "what": "8-K since the annual report (items 1.01,2.03,7.01,9.01)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-05-11",
+   "report_date": "2026-05-05",
+   "accession": "0001552781-26-000320",
+   "items": "5.02",
+   "url": "https://www.sec.gov/Archives/edgar/data/1543151/000155278126000320/e26247_uber-8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1543151/000155278126000320/",
+   "what": "8-K since the annual report (items 5.02)"
+  },
+  {
+   "form": "8-K",
+   "filed": "2026-05-08",
+   "report_date": "2026-05-04",
+   "accession": "0001552781-26-000314",
+   "items": "5.07",
+   "url": "https://www.sec.gov/Archives/edgar/data/1543151/000155278126000314/e26243_uber-8k.htm",
+   "index_url": "https://www.sec.gov/Archives/edgar/data/1543151/000155278126000314/",
+   "what": "8-K since the annual report (items 5.07)"
+  }
+ ],
+ "computed_type": {
+  "stage": "high_growth",
+  "lynch": "fast_grower",
+  "reasons": [
+   "revenue compounding at 20% or more"
+  ],
+  "flags": []
+ },
+ "identity_check": {
+  "reporting_currency": "USD",
+  "monetary_units": {
+   "USD": 555
+  },
+  "currency_basis": "facts of filing 0001543151-26-000015 (10-K, filed 2026-02-13)",
+  "depositary_shares": false,
+  "status": "ok",
+  "reasons": []
+ },
+ "prefetch": {
+  "by": "scripts/ticker_prefetch.py",
+  "at_utc": "2026-11-06T05:35:46+00:00",
+  "to_complete_by_lanes": [
+   "security and share class, quote currency, IBKR contract: gather_numbers (it alone writes identity.json while the lanes run)",
+   "named competitors: gather_field writes them in gather/field.json competitors[] (the canonical list), never here"
+  ]
+ }
+}

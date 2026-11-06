@@ -1,0 +1,121 @@
+{
+ "ticker": "UBER",
+ "as_of": "2026-11-06",
+ "price": 67.8,
+ "rf": 0.049,
+ "erp": 0.042,
+ "beta": 1.11,
+ "beta_mature": 1.0,
+ "shares_m": 2050.0,
+ "net_cash_m": 1700.0,
+ "rev0_m": 57700.0,
+ "base_year": 2026,
+ "tax": 0.23,
+ "cash_yield": 0.036,
+ "debt_rate": 0.045,
+ "roic_terminal": 0.4,
+ "days_to_base_year_end": 55,
+ "years_to_horizon": 5.15,
+ "buy_return": 0.12,
+ "probabilities": {
+  "bear": 0.3,
+  "base": 0.5,
+  "bull": 0.2,
+  "label": "subjective (Claude judgement)"
+ },
+ "notes": {
+  "price": "IBKR 67.80 pre-market 6.11.2026 (close 5.11 68.78); 52-week 64.04-95.18",
+  "base_year": "FY2026 revenue: 9M 42,160 (10-Q) + Q4 ~15,870 (GB guide mid 64.25B x Q3 revenue/GB 24.7%) = ~58,030; AV consensus 57,880 -> 57,950",
+  "margin": "after SBC (Uber non-GAAP operating income keeps SBC as a cost) and after a recurring legal/regulatory/tax charge ~1.0-1.2% of revenue (Q3 2026 484, YTD 496, Q3 2025 479): Q3 non-GAAP OI 2,304/14,766 = 15.6% -> ~14.5%; base +1-1.5pt/yr to 20.5% (Adj EBITDA/GB 4.2% Q4-24 -> 5.0% Q3-26, ~+0.1pt a quarter)",
+  "growth": "FY27 base +16% (consensus FY27 revenue 66,758 = +15.2%; Q4 GB guide +18-22% cc; the UK business-model change that cut 2026 revenue growth by ~8pt laps in 2027), fading to 9%. Bull = GB beat record (+1.3% vs midpoint, 8 of 8 quarters at or above) and 20% GB growth persists longer. Bear = AV disruption: Waymo/Tesla go direct in big US cities, take rates and prices fall",
+  "conv": "FCF after SBC / NOPAT: 9M26 FCF 7,613 - SBC 1,623 = 5,990 vs NOPAT ~4.8B -> ~1.25 (insurance-reserve build +1,253 YTD and deferred-tax shield ~0.9B YTD); fades to 1.0",
+  "net_cash": "30.9.2026 debt principal 15,787 vs unrestricted cash+ST 10,068 = -5,719; + equity stakes at 80% (Didi 2,061, Grab 1,667, Aurora 870, other marketable 1,080, non-marketable 2,297, Delivery Hero stake at market 3,100, DH total-return swaps 1,477 = 12,552 -> 10,042); - UK VAT cash call 1,500 at 50% = -750; - ezCater 2,300 cash; + Q4 FCF ~2,700 - Q4 buyback ~1,000 -> ~3,000 at 31.12.2026. Restricted cash/investments (11.4B, insurance collateral) excluded. NOT modelled: the pending Delivery Hero takeover (~$11B cash for the remaining ~75%, close 2H 2027) treated as value-neutral",
+  "shares": "2,041.9M on 30.10.2026 (10-Q cover) + options/dilution -> 2,050 (Q3 diluted 2,050.3); buybacks offset SBC (SBC expensed in the margin)",
+  "beta": "2-year weekly vs SPY raw 1.16 -> adjusted 1.11",
+  "pe": "P/E on after-SBC operating EPS (close to Uber non-GAAP EPS). Today 21.7x FY26 / 15.2x FY27 consensus (3.18 / 4.53, Alpha Vantage). Forward P/E history is a GAP; checkable: market cap / trailing (FCF - SBC) 25.4x Dec-2024, 21.7x Dec-2025, 16.8x Sep-2026 (releases, CALC). Exit: base 16 (about today), bull 22, bear 12 (disrupted platform)",
+  "review_1106": "buy-verification pass (numbers + red team): bear replaced by an AV-disruption bear (growth 12/6/2/0/0/2, margin to 12%, P/E 12); base cut to growth 15.5->8%, margin to 18.5%, exit 16x, terminal ROIC 0.4; net cash 3,000 -> 1,700 (UK VAT expected value +950, Australia payroll-tax accrual -371, minority interests -1,304, Delivery Hero premium transfer ~-1,600, Q4 buyback double count +1,000); rev0 57,700 (Q4 seasonality). Tail (not in the table): growth 12/3/-3/-5/-3/0, margin to 10%, conversion 0.9, P/E 10"
+ },
+ "scenarios": {
+  "bear": {
+   "g": [
+    0.12,
+    0.06,
+    0.02,
+    0.0,
+    0.0,
+    0.02
+   ],
+   "m": [
+    0.15,
+    0.14,
+    0.13,
+    0.125,
+    0.12,
+    0.12
+   ],
+   "conv": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "pe": 12
+  },
+  "base": {
+   "g": [
+    0.155,
+    0.13,
+    0.11,
+    0.1,
+    0.09,
+    0.08
+   ],
+   "m": [
+    0.155,
+    0.165,
+    0.172,
+    0.178,
+    0.182,
+    0.185
+   ],
+   "conv": [
+    1.2,
+    1.15,
+    1.1,
+    1.05,
+    1.0,
+    1.0
+   ],
+   "pe": 16
+  },
+  "bull": {
+   "g": [
+    0.19,
+    0.17,
+    0.15,
+    0.13,
+    0.11,
+    0.1
+   ],
+   "m": [
+    0.165,
+    0.18,
+    0.195,
+    0.205,
+    0.215,
+    0.22
+   ],
+   "conv": [
+    1.25,
+    1.2,
+    1.15,
+    1.1,
+    1.05,
+    1.0
+   ],
+   "pe": 22
+  }
+ }
+}

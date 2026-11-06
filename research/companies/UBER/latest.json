@@ -1,0 +1,11 @@
+{
+ "ticker": "UBER",
+ "as_of": "2026-11-06",
+ "folder": "research/companies/UBER/2026-11-06",
+ "thesis_id": null,
+ "status": null,
+ "verdict": null,
+ "files": [
+  "identity.json"
+ ]
+}
