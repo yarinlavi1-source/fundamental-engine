@@ -1,0 +1,130 @@
+{
+ "ticker": "MELI",
+ "as_of": "2026-11-06",
+ "price": 1532.29,
+ "rf": 0.049,
+ "erp": 0.042,
+ "beta": 1.05,
+ "beta_mature": 1.0,
+ "shares_m": 50.7,
+ "net_cash_m": 1000.0,
+ "rev0_m": 41860.0,
+ "base_year": 2026,
+ "tax": 0.27,
+ "cash_yield": 0.04,
+ "debt_rate": 0.05,
+ "roic_terminal": 0.25,
+ "days_to_base_year_end": 55,
+ "years_to_horizon": 5.15,
+ "buy_return": 0.12,
+ "probabilities": {
+  "bear": 0.3,
+  "base": 0.5,
+  "bull": 0.2,
+  "label": "subjective (Claude judgement)"
+ },
+ "notes": {
+  "price": "IBKR realtime last 1,532.29 at 07:44 UTC 6.11.2026 (pre-market); prior close 5.11 1,530.28 (-12.05% on the day, Reuters/MarketScreener page quote); 52-week 1,469.01-2,342",
+  "type": "commerce + fintech hybrid; lean_model fits only with the fintech balance sheet inside operations: credit-book interest income, funding cost and provisions are already inside income from operations (cost of net revenues and financial expenses; provision for doubtful accounts), so the credit book and its funding are operating items, not net cash",
+  "base_year": "FY2026 revenue 41,860 = 9M 29,764 (10-Q) + Q4e 12,096 (+38% vs Q4'25 8,759); = stockanalysis consensus FY26 41.86B (26 analysts, 5.11.2026)",
+  "margin": "GAAP income from operations (MELI's LTRP retention pay is cash-settled and already expensed: 235 in 9M26; no equity SBC). FY23 14.6%, FY24 12.7%, FY25 11.1%, 9M26 6.6% (Q3 6.3%: shipping -60bp QoQ, S&M +40bp; card investment ~450 LTM). FY27 base 7.3% = just under the consensus-implied ~7.5% (FY27 EPS 55.89 on revenue 54.07B, likely not yet fully cut after the Q3 miss; no company guidance; CFO: the Q3 capacity squeeze reverses next quarter). Then +0.5-0.9pt/yr to 11.0% in 2032, below the 2023-24 level 12.7-14.6% because management keeps reinvesting (free shipping Argentina, card in Mexico/Argentina, fulfillment)",
+  "growth": "FY27 base +27% USD (consensus 54.07B = +29%; FX-neutral growth 41% in Q3 includes Argentine inflation; fintech decelerating 65%->40% FX-neutral over 5 quarters; lending 'a bit more conservative' per CFO), fading 21/17/14/12/10. Bull = revenue beat record (Q3 10.75B vs 10.66-10.69B consensus; growth 37-49% USD every year 2023-2026). Bear = Shopee/Temu/Amazon pressure in Brazil + Brazil/Argentina credit cycle + FX: 20/15/12/10/8/7",
+  "conv": "FCF / NOPAT using MELI adjusted FCF (after capex and after credit-book growth net of fintech funding = the equity the credit book absorbs): FY24 1,215 / NOPAT 1,921 = 0.63; FY25 1,481 / 2,337 = 0.63; 9M26 443 (Q3 285 after capex 503, credit growth 2,100, fintech funding 1,500). Base 0.60 rising to 0.85 as credit growth slows from 62% and capex/D&A (1,215/844 in 9M26) normalises",
+  "net_cash": "Treatment of the fintech balance sheet: customer funds (17,400) and their restricted cash (14,559) excluded; loans receivable, card receivables and all fintech funding (bank loans, CDB/deposit certificates, securitisations, commercial/promissory notes, ~10.8B) treated as operating (their cost is in the margin); operating leases (2,964) excluded because lease cost is in the margin. Corporate: available cash+investments 8,126 (company definition, ex restricted) - customer funds not covered by restricted cash/investments ~2,368 (17,400-14,559-473) = 5,758, of which 50% kept as the fintech liquidity/regulatory buffer -> 2,879; - corporate senior notes 2,253 (2031 537, 2033 742, 2036 974) - finance leases 116 = +510 at 30.9.2026; + Q4 adjusted FCF ~700 (Q4'25 763) - expected value of 'reasonably possible' unaccrued legal claims (up to 768, 25%) ~200 -> ~1,000 at 31.12.2026. Sensitivity: no buffer haircut +2,879 (+$57/share)",
+  "shares": "50,696,802 outstanding 4.11.2026 (10-Q cover); diluted weighted 50,697,106 in Q3; no equity SBC, buybacks negligible (1M in 9M) -> 50.7",
+  "beta": "2-year weekly vs SPY (IBKR, 104 weeks to 5.11.2026): raw 1.074, adjusted 0.67x+0.33 = 1.05",
+  "tax": "9M26 effective 25.5% (455/1,786), FY25 30.2%; normalised 27%",
+  "pe": "Own 5-year median forward P/E (realised next-4-quarter EPS, Nov 2021-Jan 2026) = 55.6x (p25 48.5, p75 64.4). A stated fact argues against it as an exit multiple: it belonged to a phase when EPS grew 4x in 3 years (9.53 in 2022 -> 39.40 in 2025) from a depressed margin; at exit (2032) base growth is ~10%. Exit P/E on operating EPS: base 22 (about where the multiple method agrees with the DCF terminal; below today's ~27x on FY27 base operating EPS), bull 28 (growth still ~13% in 2032), bear 16 (slower, lower-margin EM hybrid)",
+  "q3_drop": "5.11.2026 -12%: Q3 EPS 8.83 vs FactSet 9.27; op margin 6.3% vs ~7% LSEG; net income 448 vs 476 LSEG; revenue beat (10.75B vs 10.66B). Causes per company/CFO: fulfillment space +20% QoQ ahead of peak, free shipping (Brazil threshold, Argentina extension), affiliate marketing Brazil, fuel; fintech revenue growth slowed to 40% FX-neutral; lending more conservative in Brazil/Argentina; Mexico GMV +21% FX-neutral (tax reform, weak consumption)",
+  "bear": "Bear = the company-specific hit: Brazil/Argentina credit cycle (provisions already 13% of revenue in 9M26; unused card lines 14,892 off balance sheet), Shopee/Temu/Amazon forcing permanent shipping subsidies, BRL/MXN/ARS depreciation: growth 20->7%, margin 6%->8%, conversion 0.5-0.7, P/E 16, plus an 800 after-tax credit-loss/FX charge in 2027",
+  "first_run": "first run (base margin to 11.5%, growth 28->10, exit 25) gave base 2,989 / 24.2%/yr; trimmed after the self-check because it sat above every analyst target (high 2,800) and management keeps choosing growth over margin",
+  "tail": "tail check (not in the table): growth 15/10/8/6/5/5, margin 5% flat, conversion 0.5, P/E 14, charge 800 -> 583 today, -9.8%/yr (just above the -10% floor)",
+  "crp": "no country-risk premium in the locked cost of equity (rf + beta x ERP); with +2pt for Brazil/Argentina/Mexico risk the base falls to ~2,030 and ~17%/yr (still above 12%)"
+ },
+ "scenarios": {
+  "bear": {
+   "g": [
+    0.2,
+    0.15,
+    0.12,
+    0.1,
+    0.08,
+    0.07
+   ],
+   "m": [
+    0.06,
+    0.065,
+    0.07,
+    0.075,
+    0.08,
+    0.08
+   ],
+   "conv": [
+    0.5,
+    0.55,
+    0.6,
+    0.65,
+    0.7,
+    0.7
+   ],
+   "pe": 16,
+   "charge": {
+    "0": 800
+   }
+  },
+  "base": {
+   "g": [
+    0.27,
+    0.21,
+    0.17,
+    0.14,
+    0.12,
+    0.1
+   ],
+   "m": [
+    0.073,
+    0.082,
+    0.09,
+    0.098,
+    0.105,
+    0.11
+   ],
+   "conv": [
+    0.6,
+    0.65,
+    0.7,
+    0.75,
+    0.8,
+    0.85
+   ],
+   "pe": 22
+  },
+  "bull": {
+   "g": [
+    0.34,
+    0.28,
+    0.23,
+    0.19,
+    0.16,
+    0.13
+   ],
+   "m": [
+    0.085,
+    0.105,
+    0.12,
+    0.135,
+    0.145,
+    0.15
+   ],
+   "conv": [
+    0.65,
+    0.7,
+    0.75,
+    0.8,
+    0.85,
+    0.9
+   ],
+   "pe": 28
+  }
+ }
+}
