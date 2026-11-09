@@ -17,7 +17,12 @@
  "days_to_base_year_end": 173,
  "years_to_horizon": 5.47,
  "buy_return": 0.12,
- "probabilities": {"bear": 0.30, "base": 0.45, "bull": 0.25, "label": "subjective (Claude judgement)"},
+ "probabilities": {
+  "bear": 0.3,
+  "base": 0.45,
+  "bull": 0.25,
+  "label": "subjective (Claude judgement)"
+ },
  "notes": {
   "price": "IBKR realtime last 132.83 on 9.11.2026 ~15:20 UTC (conid 541265127; +10.2% on the day; 52-week 86.49-308.67; 13-week low 110.83)",
   "fiscal_year": "52/53-week year ending the Saturday nearest 30 April. Base year FY2027 ends 1.5.2027 (173 days from 9.11.2026). Forecast years FY2028-FY2033; exit at end of FY2032 on FY2033 EPS",
@@ -31,11 +36,96 @@
   "tax": "FQ1 FY27 GAAP ETR -0.5%, non-GAAP tax ~1% of non-GAAP pre-tax income; FY2026 rate ~7% (Cayman parent). OECD Pillar Two (15% minimum) is named as a risk and Credo crossed EUR 750M revenue in FY2026: 12% used as a blended long-run rate (ASSUMPTION, not a company figure)",
   "beta": "2-year weekly vs SPY (IBKR, 103 weekly returns to 6.11.2026): raw 3.61 -> adjusted 0.67 x 3.61 + 0.33 = 2.75 (locked rule). Mature beta 1.3 (fabless semiconductor)",
   "pe": "Exit P/E on after-SBC operating EPS, forward (FY2033 EPS at end of FY2032). Own forward P/E median 31.5x (non-GAAP NTM EPS, Jan 2024-Oct 2026, 34 months; p25 26.1, p75 37.7) belonged to a 100%+ grower and is on EPS before SBC; at the horizon growth is ~8-10%, so the stated fact overrides: base 22, bull 26, bear 15. Peers today (IBKR price / AV consensus): MRVL 153.08 / FY1.2028 7.34 = 20.9x; ALAB 213.98 / 2027 6.67 = 32.1x; CRDO 132.83 / FY2028 9.71 = 13.7x (all non-GAAP)",
-  "calibrated": "Today's forward P/E is price / FY2028 after-SBC operating EPS of the base (lean_model computes it)"
+  "calibrated": "Today's forward P/E is price / FY2028 after-SBC operating EPS of the base (lean_model computes it)",
+  "redteam": "Red-team set 9.11.2026: bear = loss/halving of one end-customer program with SBC sticky (8.3M RSUs at $104 avg grant value) and 300M inventory/commitment/deposit charge; base = original path with one -10% digestion year in FY30 (analogs: CRDO FY24 +5% after a -41% quarter, LITE FY24 -23%, AAOI 2018 -30%, ACIA 2017 -19%) and slower SBC fade; bull unchanged."
  },
  "scenarios": {
-  "bear": {"g": [0.12, 0.05, 0.08, 0.06, 0.05, 0.04], "m": [0.27, 0.25, 0.25, 0.26, 0.26, 0.26], "conv": [0.90, 0.95, 0.95, 0.95, 0.95, 0.95], "pe": 15, "charge": {"0": 150.0}, "shares_m": 196.5},
-  "base": {"g": [0.50, 0.28, 0.18, 0.13, 0.10, 0.08], "m": [0.34, 0.36, 0.37, 0.375, 0.38, 0.38], "conv": [0.72, 0.82, 0.88, 0.92, 0.94, 0.95], "pe": 22, "shares_m": 198.0},
-  "bull": {"g": [0.65, 0.38, 0.25, 0.18, 0.14, 0.11], "m": [0.36, 0.39, 0.40, 0.41, 0.41, 0.41], "conv": [0.68, 0.78, 0.85, 0.90, 0.92, 0.94], "pe": 26, "shares_m": 199.5}
+  "bear": {
+   "g": [
+    -0.2,
+    -0.05,
+    0.08,
+    0.08,
+    0.06,
+    0.05
+   ],
+   "m": [
+    0.15,
+    0.17,
+    0.21,
+    0.23,
+    0.24,
+    0.24
+   ],
+   "conv": [
+    1.0,
+    0.95,
+    0.95,
+    0.95,
+    0.95,
+    0.95
+   ],
+   "pe": 15,
+   "charge": {
+    "0": 300.0
+   },
+   "shares_m": 196.5
+  },
+  "base": {
+   "g": [
+    0.5,
+    0.25,
+    -0.1,
+    0.2,
+    0.12,
+    0.08
+   ],
+   "m": [
+    0.34,
+    0.35,
+    0.3,
+    0.35,
+    0.36,
+    0.36
+   ],
+   "conv": [
+    0.72,
+    0.82,
+    1.0,
+    0.88,
+    0.92,
+    0.94
+   ],
+   "pe": 22,
+   "shares_m": 198.0
+  },
+  "bull": {
+   "g": [
+    0.65,
+    0.38,
+    0.25,
+    0.18,
+    0.14,
+    0.11
+   ],
+   "m": [
+    0.36,
+    0.39,
+    0.4,
+    0.41,
+    0.41,
+    0.41
+   ],
+   "conv": [
+    0.68,
+    0.78,
+    0.85,
+    0.9,
+    0.92,
+    0.94
+   ],
+   "pe": 26,
+   "shares_m": 199.5
+  }
  }
 }
