@@ -1,0 +1,41 @@
+{
+ "ticker": "V",
+ "as_of": "2026-11-09",
+ "price": 425.52,
+ "rf": 0.049,
+ "erp": 0.042,
+ "beta": 0.80,
+ "beta_mature": 1.0,
+ "shares_m": 1872.0,
+ "net_cash_m": -11200.0,
+ "rev0_m": 45903.0,
+ "base_year": 2026,
+ "tax": 0.19,
+ "cash_yield": 0.036,
+ "debt_rate": 0.035,
+ "roic_terminal": 0.6,
+ "days_to_base_year_end": -40,
+ "years_to_horizon": 4.89,
+ "buy_return": 0.12,
+ "probabilities": {"bear": 0.25, "base": 0.55, "bull": 0.20, "label": "subjective (Claude judgement)"},
+ "notes": {
+  "price": "IBKR realtime last 425.52 on 9.11.2026 (bid 423.57 / ask 429.13); 52-week 293.29-442.00; 52 weeks ago 334.95",
+  "fiscal_year": "Fiscal year ends 30 September. Base year = FY2026 (ended 30.9.2026, reported 27.10.2026). Forecast years FY2027-FY2032; year-end values are at 30 September. days_to_base_year_end = -40 (30.9.2026 -> 9.11.2026); years_to_horizon 4.89 (9.11.2026 -> 30.9.2031)",
+  "base_year": "FY2026 net revenue 45,903 (+15%, +14% cc); service 19,918, data processing 23,374, international transaction 15,251, other 5,677, client incentives -18,317 (8-K Ex.99.1, 27.10.2026)",
+  "margin": "after SBC (Visa non-GAAP opex keeps SBC, 928 in FY26). FY26 non-GAAP operating income 45,903 - 14,919 = 30,984 = 67.5%. Deducted ~0.3pt for recurring severance/uncovered legal costs that non-GAAP removes (severance 563 FY26, 213 FY25) -> 67.2% base-year equivalent. FY27: management guides adjusted opex growth slightly below net revenue growth -> +0.2pt to 67.4%; later +0.1-0.2pt a year (history ~67-68% flat because Visa reinvests). Bull to 70% (VAS +30% in FY26, operating leverage). Bear to 64% (pricing cuts from CCCA/DOJ remedies, incentive pressure, legal costs)",
+  "growth": "FY27 guide (call 27.10.2026, secondary coverage: Zacks/TIKR/Benzinga): adjusted net revenue growth low double digits, Q1 low double digits, Q2 the low point; adjusted EPS growth low double digits to low teens; VAS +low-to-mid 20s; ~25% of payments volume up for renewal (20% in FY26); pricing similar to FY26, mostly 2H. Base FY27 +11.5% (consensus revenue 51,054 = +11.2%, AV), FY28 +10.5% (consensus 56,478 = +10.6%), then 10/9.5/9/8.5%. Drivers FY26: payments volume +9% cc, cross-border ex-Europe +12% (Q4 +14%), processed transactions +9% (Q4 +10%). Bull = beat record: FY26 +15% revenue / +16% EPS vs a low-double-digit start; EPS beat 8 of 8 last quarters (+0.3% to +6.8%, AV). Bear = incentives outgrow gross revenue in the record renewal year, then US credit routing (CCCA) / DOJ debit remedies and EU/UK caps from FY29, plus stablecoin/A2A pressure on cross-border FX",
+  "conv": "FCF after SBC / NOPAT ~0.95: FY26 OCF 23,728 - capex 1,671 - SBC 928 = 21,129, + US covered litigation paid 3,677 (borne by class B via conversion-rate cuts) less ~0.8B tax shield = ~24.0B vs NOPAT ~25.4B -> 0.94; FY25 ~0.97. Base 0.95, bull 0.97, bear 0.93",
+  "net_cash": "30.9.2026: cash 12,938 + investment securities 1,145 + 94 = 14,177; senior notes principal 22,600 (10-K; 2,750 due Apr-Sep 2027) -> -8,423; - BioCatch acquisition 2,400 cash (signed 3.8.2026, close by FQ2-2027; its revenue is not in the organic path, so the cash is taken out) -> -10,823; - accrued litigation not funded by the escrow (990 total - 623 U.S. covered, which the 628 restricted escrow funds) = -367 -> ~-11,200. EXCLUDED as not spendable: customer collateral 4,349 (matched liability), restricted U.S. litigation escrow 628, settlement receivable/payable (working capital)",
+  "shares": "As-converted class A at 30.9.2026 = 1,867M (10-K Note 15: class A 1,728; series A pref 6; series B 1; series C 2; class B-1 3; class B-2 1; class B-3 90 (61M x 1.4773); class C 36 (9M x 4)) + ~5M RSU/option dilution = 1,872 (Q4 weighted diluted 1.88B, falling with buybacks). Escrow deposits reduce class B conversion rates (405M deposit 18.9.2026 at $366.81 had the effect of a buyback): future U.S. covered litigation is borne by class B holders, so it does not reduce class A value per share. Europe (VE) covered losses are recovered through series B/C preferred conversion rates. Buybacks (FY26: 61M shares, 20,451) are not modelled as share cuts: FCF accumulates as cash at the cash yield (value-neutral at fair price); the EPS-with-buybacks column in eps_by_year adds ~2.5%/yr share shrink",
+  "tax": "non-GAAP effective tax 17.9% FY26, Q4 18.4%; a change in U.S. taxation of certain foreign earnings was flagged in FY26 special items -> 19% assumed (FY27 tax guide not verified)",
+  "beta": "2-year weekly vs SPY (IBKR, 104 weeks to 6.11.2026): raw 0.707 -> adjusted 0.67 x 0.707 + 0.33 = 0.804; beta_mature 1.0 (engine convention, as UBER/MELI)",
+  "pe": "Exit P/E on next-year after-SBC operating EPS (close to non-GAAP EPS). Own 5-year forward P/E (price / next-12-month non-GAAP EPS, Nov-2021..Oct-2026, 60 months, IBKR monthly closes, AV annual EPS, FY27/28 consensus): median 24.8x, p25 23.6x, p75 26.6x, min 20.3x, max 29.7x; on a consensus basis ~2-3% higher (Visa beats). Today 27.7x NTM / 28.5x FY27 op EPS. Base 25 (own median), bull 28 (today; TIKR cites a ~27-28x longer average), bear 20 (5-year low; regulated-utility de-rating)",
+  "bear_charge": "4,000 pre-tax / ~3,000 after tax in FY29 (index 2): ASSUMPTION for an uncovered settlement of the U.S. debit class actions (merchants and cardholders, claims back to 2012; motions to dismiss partly denied Oct-2025; no accrual disclosed). Not a company figure",
+  "terminal_roic": "0.6: Visa's ROIC incl. goodwill/intangibles ~45-50%, far higher ex goodwill; 0.6 keeps room for acquisitions (BioCatch, Featurespace, Pismo) as part of growth"
+ },
+ "scenarios": {
+  "bear": {"g": [0.09, 0.07, 0.04, 0.04, 0.05, 0.05], "m": [0.67, 0.66, 0.645, 0.64, 0.64, 0.64], "conv": [0.93, 0.93, 0.93, 0.93, 0.93, 0.93], "pe": 20, "charge": {"2": 3000}},
+  "base": {"g": [0.115, 0.105, 0.10, 0.095, 0.09, 0.085], "m": [0.674, 0.676, 0.678, 0.68, 0.681, 0.682], "conv": [0.95, 0.95, 0.95, 0.95, 0.95, 0.95], "pe": 25},
+  "bull": {"g": [0.135, 0.125, 0.12, 0.11, 0.105, 0.10], "m": [0.678, 0.684, 0.69, 0.695, 0.70, 0.70], "conv": [0.97, 0.97, 0.97, 0.97, 0.97, 0.97], "pe": 28}
+ }
+}
