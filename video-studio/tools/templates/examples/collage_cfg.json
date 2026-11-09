@@ -1,0 +1,58 @@
+{
+ "duration": 5.9,
+ "text": "",
+ "collages": [
+  {
+   "images": [
+    "products/1144032-CHE_1.webp",
+    "products/1144032-CHE_5.webp",
+    "products/1144032-CHE_2.webp",
+    "products/1144032-CHE_4.webp"
+   ],
+   "tint": [
+    1.0,
+    0.9,
+    0.76
+   ]
+  },
+  {
+   "images": [
+    "products/1144032-BLK_2.webp",
+    "products/1144032-BLK_5.webp",
+    "products/1144032-BLK_1.webp",
+    "products/1144032-BLK_4.webp"
+   ],
+   "tint": [
+    0.98,
+    0.88,
+    0.78
+   ]
+  },
+  {
+   "images": [
+    "products/1144032-HCK_7.webp",
+    "products/1144032-HCK_5.webp",
+    "products/1144032-HCK_1.webp",
+    "products/1144032-HCK_4.webp"
+   ],
+   "tint": [
+    1.0,
+    0.88,
+    0.74
+   ]
+  },
+  {
+   "images": [
+    "products/1144032-SAN_7.webp",
+    "products/1144032-SAN_5.webp",
+    "products/1144032-SAN_4.webp",
+    "products/1144032-SAN_6.webp"
+   ],
+   "tint": [
+    1.0,
+    0.91,
+    0.8
+   ]
+  }
+ ]
+}
