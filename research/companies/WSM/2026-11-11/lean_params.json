@@ -1,0 +1,39 @@
+{
+ "ticker": "WSM",
+ "as_of": "2026-11-11",
+ "price": 262.2,
+ "rf": 0.049,
+ "erp": 0.042,
+ "beta": 1.21,
+ "beta_mature": 1.0,
+ "shares_m": 118.9,
+ "net_cash_m": 1450.0,
+ "rev0_m": 8272.0,
+ "base_year": 2026,
+ "tax": 0.26,
+ "cash_yield": 0.03,
+ "debt_rate": 0.055,
+ "roic_terminal": 0.35,
+ "days_to_base_year_end": 81,
+ "years_to_horizon": 5.22,
+ "buy_return": 0.12,
+ "probabilities": {"bear": 0.25, "base": 0.55, "bull": 0.2, "label": "subjective (Claude judgement)"},
+ "notes": {
+  "price": "IBKR last 262.20 at 20:59:30 UTC 11.11.2026 (regular-session close, REALTIME); 52-week 165.44-273.57; dividend yield 1.12%",
+  "base_year": "Fiscal 2026 = 52 weeks to 31.1.2027 (FY2025 ended 1.2.2026). Revenue 8,272 = guide mid (+4.7% to +7.2% on FY2025 7,806.8 -> 8,173-8,369, 8-K 26.8.2026) = AV consensus 8,272. Guided non-GAAP operating margin 17.8-18.2% (mid 18.0%); H1 non-GAAP 16.7% (630.2/3,765.2), implied H2 ~19.1% vs H2 FY2025 18.8%",
+  "margin": "Operating margin after SBC (SBC 1.4% of revenue is in SG&A) and after occupancy/lease cost (in COGS). Non-GAAP excludes only the one-off IEEPA refund items. History (SEC XBRL, GAAP OI/revenue): FY2015-19 7.7-9.8%; FY2020 13.4%; FY2021 17.6%; FY2022 17.3%; FY2023 16.1% (housing slump, revenue -10.6%); FY2024 18.5%; FY2025 18.1%. Long-term target 'mid-to-high teens'. Base 18.3-18.4% then 18.0% (Section 232 upholstery 25->30% and cabinets/vanities 25->50% on 1.1.2027 absorbed by mitigation, as in FY2025-26). Bull to 20% (beat record). Bear: tariff hit -250bp (Q2 FY26 peak merchandise-margin hit was -230bp) plus -150bp deleverage on a housing slump -> 14.0% trough, recovering to 15.5%",
+  "growth": "Base FY27 +5.2% (AV consensus FY27 revenue 8,704, 21 analysts), 5.5/5.5/5/4.5/4% after; FY2019->FY2025 revenue CAGR 4.8% (5,898->7,807); LT target mid-to-high single digit. Bull = guidance-beat record (8 of 8 quarters beat EPS consensus, +2.4% to +12.7%, average ~7.6%; FY2026 guide raised in Q1 and Q2): 7/7/6.5/6/5.5/5%. Bear = housing slump like FY2023 (-10.6%) or RH FY2022-23 (-19% peak-to-trough): -6%, -3%, then +3/5/4.5/4%",
+  "conv": "FCF / NOPAT: FY2025 (OCF 1,314.9 - capex 259.4) / (OI 1,415.7 x 0.75) = 0.99; FY2024 1.06; FY2023 1.60 (inventory release in the downturn). Base 0.97 (capex rising slightly); bear 1.05 early (inventory release), bull 1.0",
+  "net_cash": "Cash 1,028.9 at 2.8.2026, no debt (revolver $600M undrawn, matures 26.6.2030; LCs 13.6 undrawn). + H2 FY26 FCF ~800 (H2 FY2025 FCF 764 = OCF 913.2 - capex 149.1) - H2 dividends ~180 ($0.76/qtr x 117.8M x 2) - 200 operating-cash reserve -> 1,450 at 31.1.2027. No buybacks assumed after 23.8.2026 (shares held at today's count). Gift-card/deferred revenue 619 is matched by inventory (non-cash working capital ~ +35), so the cash is not payables-funded. LEASES: operating lease liabilities 1,527.9 (217.0 current + 1,310.9 long-term) are NOT added to debt because rent is already inside the operating margin (no double count). Purchase obligations ~1.1B are normal open inventory POs (10-K FY2025)",
+  "shares": "117,779,173 outstanding on 23.8.2026 (10-Q cover) + ~1.1M dilutive RSU/PSU = 118.9M (Q2 FY26 diluted 118,892K). No converts, warrants, preferred or minorities. Buybacks: 1,608,253 shares for $287.8M in H1 FY26, none in Q2; $50.8M left on the Sept-2024 authorization + new $1.0B (Nov 2025). Shares fell from 128.0M diluted (FY2024) to 123.2M (FY2025) to 118.9M (Q2 FY26)",
+  "beta": "2-year weekly vs SPY (IBKR, 104 weekly returns to 9.11.2026): raw 1.309 -> adjusted 0.67 x 1.309 + 0.33 = 1.21; correlation 0.48",
+  "pe": "Own 5-year forward P/E (price / next-4-quarter non-GAAP EPS; realized EPS as the forward proxy, consensus for unreported quarters), 61 month-ends Nov-2021..Nov-2026: median 16.0x, p25 8.7x, p75 20.6x; today 25.8x (5-year high). Exit: base 16 (median, locked rule), bull 21 (~p75), bear 12. Today's multiple is at the top of the range, so the calibrated lens (holding ~26x) is the optimistic lens here",
+  "tax": "26% non-GAAP effective tax rate guided for FY2026 (H1 25.1%)",
+  "rf_erp": "house values of this run date (rf 4.9%, ERP 4.2%), same as other 11.2026 runs"
+ },
+ "scenarios": {
+  "bear": {"g": [-0.06, -0.03, 0.03, 0.05, 0.045, 0.04], "m": [0.15, 0.14, 0.148, 0.155, 0.155, 0.155], "conv": [1.05, 1.05, 1.0, 0.97, 0.97, 0.97], "pe": 12},
+  "base": {"g": [0.052, 0.055, 0.055, 0.05, 0.045, 0.04], "m": [0.183, 0.184, 0.184, 0.182, 0.18, 0.18], "conv": [0.97, 0.97, 0.97, 0.97, 0.97, 0.97], "pe": 16},
+  "bull": {"g": [0.07, 0.07, 0.065, 0.06, 0.055, 0.05], "m": [0.188, 0.192, 0.195, 0.197, 0.198, 0.2], "conv": [1.0, 1.0, 1.0, 1.0, 1.0, 1.0], "pe": 21}
+ }
+}
