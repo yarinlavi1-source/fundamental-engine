@@ -1,0 +1,39 @@
+{
+ "ticker": "DELL",
+ "as_of": "2026-11-11",
+ "price": 361.78,
+ "rf": 0.049,
+ "erp": 0.042,
+ "beta": 1.81,
+ "beta_mature": 1.1,
+ "shares_m": 643.0,
+ "net_cash_m": 3000.0,
+ "rev0_m": 192000.0,
+ "base_year": 2027,
+ "tax": 0.19,
+ "cash_yield": 0.036,
+ "debt_rate": 0.052,
+ "roic_terminal": 0.3,
+ "days_to_base_year_end": 79,
+ "years_to_horizon": 5.21,
+ "buy_return": 0.12,
+ "probabilities": {"bear": 0.3, "base": 0.5, "bull": 0.2, "label": "subjective (Claude judgement)"},
+ "notes": {
+  "fiscal_years": "Labels are Dell fiscal years: base_year 2027 = FY27 ending 29.1.2027; index 0 = FY28 (Feb 2027-Jan 2028) ... FY32 ends ~28.1.2032 (the 5-year horizon), FY33 is the exit-earnings year.",
+  "price": "IBKR realtime last 361.78 on 11.11.2026 ~14:00 UTC (+8.2% on the day); 52-week 109.75-595.51; close 5.11 316.91 after -14.9% (TIKR, trefis)",
+  "base_year": "FY27 revenue = company guide $192.0B (raised from $167B on 1.9.2026, Q2 FY27 release 8-K ex.99.1); AI-optimized servers guide $74B; Q3 guide $49.0B / non-GAAP EPS $6.50; FY non-GAAP EPS guide $25.50, GAAP $24.37. AV consensus FY27 rev $193.5B / EPS $25.91 (27 analysts)",
+  "margin": "Operating margin AFTER SBC and after 'other corporate expenses' (severance, payroll tax on SBC, transaction costs), before amortization of EMC-era intangibles (non-cash, fading). Q2 FY27: non-GAAP OI 5,929 - SBC 184 - other corporate 264 = 5,481 / 46,971 = 11.7%; H1 FY27 9,234 / 90,813 = 10.2%; FY27 guide implies ~10.3%. Pre-AI (FY24-FY25) ~7.5-8%. Base FY28 9.8% (AV FY28 consensus EPS 28.21 on rev $231B implies ~9.4-10% on this basis), fading to 9.5% (AI mix = lower margin, memory costs, competition); bull holds 11%; bear falls to 7.5% (pre-AI level) after a digestion",
+  "growth": "Base FY28 +18% (AV consensus rev $231B = +20%; AI backlog $95B at 31.7.2026, Q2 AI orders $60.9B, RPO $132B with 77% in 12 months, 10-Q note 9), FY29 +3% (AI capex digestion), then +5/+5/+4/+4. Bull = beat-and-raise record (Q1 FY27 EPS beat +66%, Q2 +43% vs AV consensus; FY guide raised $167B -> $192B): +25/+10/+8/+7/+6/+5. Bear = AI digestion + PC cycle down: +8/-12/-3/+3/+3/+3",
+  "conv": "FCF after SBC / NOPAT. Dell runs negative working capital (payables 49.7B vs receivables 22.9B + inventory 21.3B, 31.7.2026). DFS financing receivables are funded 7:1 by DFS-related debt (10-Q MD&A), so FCF here = adjusted FCF less the 1/8 equity share of DFS asset growth. Base 0.95 in FY28 (growth absorbs inventory), 1.0 after; bear 0.9 then 1.0 plus a $1.6B after-tax inventory/commitment charge in FY29",
+  "net_cash": "DFS TREATMENT: DFS-related debt (DFS debt $9.618B + DFS-allocated core debt $11.042B = $20.66B) is matched by DFS-owned assets $23.612B (financing receivables 20.43B + operating-lease equipment 3.18B) and is NOT counted as corporate net debt; DFS earnings sit inside segment income. Corporate: cash 11,569 - core debt 13,983 - other debt 104 = -2,518 at 31.7.2026. 15.9.2026 notes $5.0B (5.1% 2029 1.25B, 5.4% 2031 1.25B, 5.6% 2033 1.5B, 5.9% 2037 1.0B) = cash and debt both up, neutral. + H2 FY27 equity FCF after SBC est. +6,000 (CALC, not guided) - dividends ~800 - August buyback est. ~1,500 (shares taken at the 1.9.2026 count) + strategic investments 2,679 x 75% = 2,009 -> ~+3,200, rounded down to +3,000 at 29.1.2027",
+  "shares": "635.81M outstanding on 1.9.2026 (10-Q cover: Class C 315.43M, Class A 276.74M, Class B 43.64M) + ~7M dilutive (Q2 diluted 652 vs basic 645) = 643M. Buybacks ($15.2B authorization after 26.2.2026; $5.4B bought in H1) treated as value-neutral (cash out = shares out); SBC is expensed in the margin",
+  "beta": "2-year weekly vs SPY (IBKR, 104 weeks to 11.11.2026): raw 2.20 -> adjusted 0.67x2.20+0.33 = 1.81 (locked rule). It is inflated by the 2026 AI re-rating (115 -> 595 -> 317); 1-year raw 2.60. Mature beta 1.1 (hardware, cyclical)",
+  "pe": "Exit P/E on after-SBC operating EPS (about non-GAAP EPS minus ~$0.9). Own forward P/E (price / next-4-quarter AV consensus, monthly, Nov-2021..Nov-2026): median 9.1x, p25 8.1x, p75 12.8x; AI era (Mar-2024..) median 12.0x; TIKR: 5-year average 12x. The proxy is biased low in Dec-2025..Apr-2026 (final estimates far above the consensus of the time). Base 11x (between 9.1x and 12x: the mix moved to faster-growing AI servers); bear 8x (pre-AI median 8.6x, digestion); bull 14x (p75 and peers HPE ~14-16x, SMCI ~14.5x, dates unclear)",
+  "ignored": "Amortization of intangibles ($0.4B/yr, non-cash, EMC purchase accounting) excluded from margins; Texas reincorporation and shareholder-proposal limits (8-K 2.7.2026) = governance, not modelled; GC retirement (8-K 21.10.2026) immaterial"
+ },
+ "scenarios": {
+  "bear": {"g": [0.08, -0.12, -0.03, 0.03, 0.03, 0.03], "m": [0.09, 0.075, 0.075, 0.075, 0.075, 0.075], "conv": [0.9, 1.0, 1.0, 1.0, 1.0, 1.0], "pe": 8, "charge": {"1": 1600}},
+  "base": {"g": [0.18, 0.03, 0.05, 0.05, 0.04, 0.04], "m": [0.098, 0.096, 0.095, 0.095, 0.095, 0.095], "conv": [0.95, 1.0, 1.0, 1.0, 1.0, 1.0], "pe": 11},
+  "bull": {"g": [0.25, 0.10, 0.08, 0.07, 0.06, 0.05], "m": [0.11, 0.11, 0.11, 0.11, 0.11, 0.11], "conv": [1.0, 1.0, 1.0, 1.0, 1.0, 1.0], "pe": 14}
+ }
+}
