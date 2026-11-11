@@ -1,0 +1,152 @@
+{
+ "ticker": "NBIS",
+ "as_of": "2026-11-11",
+ "price": 149.65,
+ "rf": 0.0494,
+ "erp": 0.042,
+ "beta": 2.37,
+ "beta_mature": 1.3,
+ "shares_m": 318.0,
+ "net_cash_m": -7228.0,
+ "rev0_m": 3300.0,
+ "base_year": 2026,
+ "tax": 0.15,
+ "cash_yield": 0.036,
+ "debt_rate": 0.06,
+ "roic_terminal": 0.13,
+ "days_to_base_year_end": 50,
+ "years_to_horizon": 5.14,
+ "buy_return": 0.12,
+ "probabilities": {
+  "bear": 0.25,
+  "base": 0.55,
+  "bull": 0.2,
+  "label": "subjective (Claude judgement): the bear needs all four shocks at once"
+ },
+ "calibrated": {
+  "pe": 22,
+  "why": "today's forward P/E is not meaningful (FY2027 consensus EPS -6.16; our FY2027 operating EPS ~$0.95 gives ~157x) and NBIS has no own P/E history (losses since the 2024 relisting); 22 = a market-average multiple held for a business still growing ~7% in 2032 (judgement, not an observed NBIS multiple). Holding today's EV/NTM sales (~5x) would equal ~34x P/E at the 2032 base margin: not credible for a 13%-ROIC, capital-heavy business."
+ },
+ "notes": {
+  "price": "IBKR last 149.65 (overnight session, 2026-11-11 06:50 UTC; +11.68% vs prior close); 52-week 73.52-299.86 (IBKR misc_statistics)",
+  "timing": "Q3 2026 is reported 2026-11-12 before the open: this valuation rests on Q2 2026 (6-K 2026-08-12) and guidance reaffirmed in August (2026 revenue $3.0-3.4B, end-2026 ARR $7-9B, adj. EBITDA margin ~40%, capex $20-25B (secondary)).",
+  "base_year": "FY2026 revenue 3,300: guide $3.0-3.4B; H1 981.3 (6-K) + Q3 consensus 905.7 + Q4 consensus 1,461.9 (AV, 17 analysts) = 3,349",
+  "growth": "2027 base 11,500 (AV consensus 12,242, 22 analysts, range 8,809-17,987; end-2026 ARR guide $7-9B; RPO 37,490.6 at 30.6.2026 with 36% recognised by 6.2028 and 40% in months 25-48; beat record mixed: Q1-26 +2.7%, Q2-26 +1.5% vs consensus, Q3-25 and Q4-25 misses). Then +52/+26/+16/+10/+7%. Bull 13,500 (ARR exit ~$9B+ and faster 2027 capacity: management said it deploys significantly more capacity in 2027 than 2026). Bear 8,000 (a large tranche delayed/terminated under the Microsoft delay rights, ARR exit ~$7B), then a GPU price collapse from 2028: growth capex stops after 2027, the fleet runs off.",
+  "margin": "operating margin after SBC and D&A from the capex-vintage side model (side.py, side_model_output.txt): revenue per $ of average gross in-service PP&E 0.44 in 2026-27 rising to 0.48 (observed: Q2-26 AI-cloud revenue x4 / average in-service gross ~0.46; ARR $3.0B / in-service gross 6,313 at 30.6.2026 = 0.475); servers 85% of capex depreciated over the disclosed 5-year life (changed from 4 years on 1.1.2026, 6-K note), other 15% over 15 years -> D&A ~37% of revenue and ~18% of gross in-service PP&E (Q2-26 actual: D&A 259.7 = 44.6% of revenue during ramp); group adj. EBITDA 46% (2027) -> 55% (AI-cloud segment Q2-26 49.7%; CoreWeave runs ~60%; the $12.05B of leases not yet commenced add lease cost); SBC 2% -> 1.5% (recurring H1-26 SBC ~63 = 6.4% of revenue, ex the 74.9 Eigen AI one-off). Base margins 3.1% (2027) -> 17.4% (2032). Bull: 0.52 turnover, 60% EBITDA -> 25%. Bear: 4-year economic life, turnover falling to 0.32, EBITDA 40-42% -> -17% to -11% in 2027-30; 2031-32 set to 5% (run-off fleet; the side model's accounting margin is inflated by fully depreciated assets; cash kept equal through the charges).",
+  "conv_charges": "conv = 1; charge[i] = capex - D&A - change in customer prepayments ($M), so FCF = NOPAT + D&A - capex + prepayment change. Prepayments: deferred revenue ~9,000 at end-2026 (company expects >$9B of prepayments in 2026, H1 +4,395), new prepayments = 35% of growth capex (~70% of deals prepay 50-60% of capex, Q2 call, secondary), recognised over ~3 years. Replacement of servers at 5-6 years (half at 5, half at 6). Bull charge[0] also adds back 12,985 = (Sep-2025 notes 3,400 + Mar-2026 notes 4,450 + Aug-2030 notes 3,450) x 1.149, because in the bull these notes convert into shares (shares +57.6M) and stop being debt.",
+  "net_cash": "end-2026 estimate: cash 30.6.2026 8,042.1 + Aug-2026 converts net ~5,670 (gross 5,750) + secured facility 775 + Citi facility 3,500 (assumed drawn; 364-day maturity, SOFR+2.75-3.50%) + H2 operating cash ~5,400 (adj. EBITDA ~954 - interest ~150 + prepayments ~4,600) - H2 capex 13,900 (2026 capex 22,000 in the $20-25B guide less H1 cash capex 8,130.3) = cash ~9,490; debt (today's claims): Sep-2030/2032 notes 3,400 (conversion value 22.77M sh x $149.65 = 3,408; break-even at maturity ~$160), Mar-2031/2033 notes ~4,450 accreted (original 4,337.5), Aug-2030/2034 notes 5,750, secured 775, Citi 3,500 = 17,875 -> -8,388; + investment assets at a conservative value, separate from spendable cash: ClickHouse carried 1,517.7 x 70% = 1,060, Toloka preferred/equity ~100, Avride and TripleTen 0 (their losses sit in the group margin) -> -7,228. Leases (1,510 on the balance sheet, 12,054 not commenced) are treated as operating costs inside EBITDA. Q3 ATM sales (up to 12.27M shares) not known: GAP.",
+  "shares": "318.0M: Class A 238.4 + Class B 33.5 (30.6.2026) + 15.8 issued in the Aug-2026 note exchange + NVIDIA pre-funded warrants 21.07 + Jun-2029/2031 notes left after the exchange (original 200 x 19.4363 = 3.89M, conversion $51.45) + ~5 for RSUs/options (GAP). Class C 2.1M technical shares excluded. Sep-2025 notes (22.77M sh at $138.75), Mar-2026 notes (23.83M at $180-183) and Aug-2026 notes (11.01M at $313.46; 7.08M at $324.65) are debt in bear/base. Bull 375.6M (Sep + Mar + Aug-2030 notes convert). Bear 366M = 318 x 1.15 (a distressed equity raise in a refinancing squeeze).",
+  "beta": "2-year weekly vs SPY (IBKR, 103 weeks to 2026-11-06): raw 3.05 (correlation 0.41) -> adjusted 0.67 x 3.05 + 0.33 = 2.37; mature 1.3",
+  "pe": "no own P/E history (losses since the Oct-2024 relisting as the former Yandex N.V.): exit P/E per scenario by judgement, as in the 2026-11-04 baseline: base 16 (capital-heavy infrastructure growing ~7% with ~13% ROIC), bull 20, bear 8 (run-off fleet).",
+  "roic_terminal": "0.13 = base 2032 NOPAT / net PP&E (~55% of gross) in the side model (bull ~0.20, life-4 base ~0.08, life-6 base ~0.165)"
+ },
+ "scenarios": {
+  "bear": {
+   "g": [
+    1.4242,
+    0.1875,
+    -0.0211,
+    -0.0753,
+    -0.1047,
+    -0.1039
+   ],
+   "m": [
+    -0.1713,
+    -0.1365,
+    -0.1291,
+    -0.1131,
+    0.05,
+    0.05
+   ],
+   "conv": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "charge": {
+    "0": 1027,
+    "1": -2688,
+    "2": -3342,
+    "3": -3201,
+    "4": -1846,
+    "5": -1598
+   },
+   "pe": 8,
+   "shares_m": 366.0
+  },
+  "base": {
+   "g": [
+    2.4848,
+    0.5217,
+    0.2571,
+    0.1591,
+    0.098,
+    0.0714
+   ],
+   "m": [
+    0.0309,
+    0.1003,
+    0.1409,
+    0.1623,
+    0.165,
+    0.1743
+   ],
+   "conv": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "charge": {
+    "0": 5509,
+    "1": 2346,
+    "2": 187,
+    "3": -1861,
+    "4": -2347,
+    "5": 3507
+   },
+   "pe": 16
+  },
+  "bull": {
+   "g": [
+    3.0909,
+    0.6296,
+    0.2955,
+    0.193,
+    0.1176,
+    0.0921
+   ],
+   "m": [
+    0.0687,
+    0.1532,
+    0.2095,
+    0.2405,
+    0.2425,
+    0.2502
+   ],
+   "conv": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "charge": {
+    "0": -5744,
+    "1": 2979,
+    "2": 1241,
+    "3": -1714,
+    "4": -2551,
+    "5": 4306
+   },
+   "pe": 20,
+   "shares_m": 375.6
+  }
+ }
+}
