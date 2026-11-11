@@ -1,0 +1,112 @@
+{
+ "ticker": "BNY",
+ "company": "The Bank of New York Mellon Corporation",
+ "as_of": "2026-11-11",
+ "price": 152.7,
+ "price_source": "IBKR last 152.70, conid 44986804, ts 2026-11-11 21:00 UTC (REALTIME)",
+ "rf": 0.049,
+ "erp": 0.042,
+ "beta": 0.934,
+ "beta_mature": 1.0,
+ "days_to_base_year_end": 50,
+ "years_to_horizon": 5.14,
+ "buy_return": 0.12,
+ "index_return": 0.091,
+ "tce_q3_m": 21681,
+ "shares_q3_m": 672.898,
+ "q4_2026": {
+  "buyback_m": 1000,
+  "dividend_ps": 0.63
+ },
+ "dividend_payout": 0.27,
+ "dilution_m": 3.0,
+ "sbc_issuance_m": 6.0,
+ "terminal_g": 0.049,
+ "fade_years": 10,
+ "probabilities": {
+  "bear": 0.25,
+  "base": 0.55,
+  "bull": 0.2,
+  "label": "subjective (Claude judgement)"
+ },
+ "scenarios": {
+  "bear": {
+   "eps_2026": 9.35,
+   "ni_g": [
+    -0.12,
+    0.03,
+    0.05,
+    0.05,
+    0.04,
+    0.04
+   ],
+   "payout": [
+    0.6,
+    0.8,
+    0.85,
+    0.85,
+    0.85,
+    0.85
+   ],
+   "rotce_terminal": 0.18,
+   "pe_exit": 10.1,
+   "why": "2027: market drawdown ~20% cuts fee assets (AUC/A, AUM fees), Fed cuts plus a deposit run-off (NIB deposits -$5bn+) cut NII ~8-10%, fee pressure on renewals; an operational/cyber event costs a year of buybacks (payout 60%). Exit P/E 10.1 = own 5-year median (old ROTCE regime)."
+  },
+  "base": {
+   "eps_2026": 9.45,
+   "ni_g": [
+    0.058,
+    0.065,
+    0.06,
+    0.055,
+    0.05,
+    0.05
+   ],
+   "payout": [
+    0.88,
+    0.88,
+    0.88,
+    0.88,
+    0.88,
+    0.88
+   ],
+   "rotce_terminal": 0.24,
+   "pe_exit": 12.3,
+   "why": "2026 at guidance (revenue +12-13%, expenses +7-8%, NII +15%) and consensus 9.43; 2027 NI +5.8% (after ~$89M/yr Series O preferred dividends) lands EPS at consensus ~10.44; then fee growth ~6%, NII low single digits, positive operating leverage fading. Payout 88% keeps Tier 1 leverage in the 5.5-6.0% band with ~4% balance-sheet growth. Exit P/E 12.3 = median forward P/E of the last 24 months (the ROTCE ~26-30% regime)."
+  },
+  "bull": {
+   "eps_2026": 9.52,
+   "ni_g": [
+    0.1,
+    0.09,
+    0.08,
+    0.075,
+    0.07,
+    0.07
+   ],
+   "payout": [
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9,
+    0.9
+   ],
+   "rotce_terminal": 0.28,
+   "pe_exit": 14.5,
+   "why": "Beat record (EPS above consensus 8 of 8 recent quarters, avg ~+9%) continues; platform model keeps ~2 pts/yr operating leverage, digital assets/tokenization and corporate trust add fees. Exit P/E 14.5 ~ today's 14.6x FY27."
+  }
+ },
+ "calibrated": {
+  "why": "base path, today's forward P/E (price / base 2027 EPS) held as exit multiple"
+ },
+ "notes": {
+  "method": "Bank/custody: lean_model's FCF DCF does not fit (deposits are raw material, not debt; capital is regulatory). Value = average of (1) residual income on tangible common equity and (2) exit P/E x next-year EPS plus distributions, both on total common equity / shares. Preferreds are outside TCE; NI is to common after preferred dividends.",
+  "tce": "TBVPS $32.22 x 672.898M shares at 30.9.2026 (3Q26 release, p.6). End-2026 TCE = TCE_Q3 + Q4 NI - Q4 dividends - Q4 buyback ($1.0bn assumed, Q3 was $937M).",
+  "beta": "2-year weekly vs SPY raw 0.902 -> adjusted 0.934 (beta.json)",
+  "rf_erp": "4.9% / 4.2%: same market prices of risk as the 6-9.11.2026 runs (UBER, V)",
+  "capital": "CET1 10.9% vs requirement 8.5% (4.5 + SCB 2.5 + G-SIB 1.5); Tier 1 leverage 5.7% vs management range 5.5-6.0% (Q3 call). Payout 85-90% is the binding constraint; YTD payout 86%.",
+  "preferred": "Preferred $4.26bn at 30.9.2026 (XBRL) + Series O $1.25bn issued 28.10.2026 at 7.125% (~$89M/yr dividends), deducted before common earnings.",
+  "dilution": "Net share count fell 688.2M -> 672.9M in 9M 2026 while ~21M were bought back: ~6M/yr issued to employees (sbc_issuance_m)."
+ }
+}
