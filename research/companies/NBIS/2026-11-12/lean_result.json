@@ -44,7 +44,7 @@
     "2030": 0.01,
     "2031": 0.01
    },
-   "annual_return_pct": -84.1,
+   "annual_return_pct": -84.2,
    "ke0_pct": 14.89
   },
   "base": {
@@ -91,7 +91,7 @@
     "2030": 150.74,
     "2031": 175.54
    },
-   "annual_return_pct": 7.0,
+   "annual_return_pct": 6.0,
    "ke0_pct": 14.89
   },
   "bull": {
@@ -138,46 +138,46 @@
     "2030": 428.98,
     "2031": 485.21
    },
-   "annual_return_pct": 30.4,
+   "annual_return_pct": 29.2,
    "ke0_pct": 14.89
   }
  },
  "weighted_value_today": 81.05,
  "weighted_end_value": 184.81,
- "weighted_return_pct": 8.0,
+ "weighted_return_pct": 7.0,
  "index_return_pct": 9.1,
  "buy_price": 98.15,
  "index_parity_price": 112.08,
  "market_implied_growth_pct": [
   300.0,
-  111.0,
-  35.9,
-  22.2,
-  13.7,
-  10.0
+  114.0,
+  36.8,
+  22.8,
+  14.0,
+  10.2
  ],
- "market_implied_end_revenue_m": 47761,
+ "market_implied_end_revenue_m": 49182,
  "sensitivity_base": {
   "beta 2.07": 74.12,
   "beta 2.67": 60.13,
   "exit P/E 11": [
    46.2,
-   1.6
+   0.7
   ],
   "exit P/E 21": [
    87.61,
-   11.4
+   10.3
   ]
  },
  "two_lens": {
   "ours": {
    "value_today": 66.91,
-   "annual_return_pct": 7.0,
+   "annual_return_pct": 6.0,
    "band": "hold",
    "pe_exit": 16
   },
   "calibrated": {
-   "pe_today": 248.5,
+   "pe_today": 261.0,
    "pe_used": 22,
    "pe_overridden": true,
    "margin_used": [
@@ -189,7 +189,7 @@
     0.167
    ],
    "margin_overridden": false,
-   "why": "same rule as the 11.11 baseline: today's forward P/E is not meaningful (our FY2027 operating EPS ~$0.50 gives ~247x; FY2027 consensus EPS -6.16, pre-report) and NBIS has no own P/E history (losses since the 2024 relisting); 22 = a market-average multiple held for a business still growing ~7% in 2032 (judgement, not an observed NBIS multiple). Holding today's EV/NTM sales (~4.3x) would equal ~31x P/E at the 2032 base margin: not credible for a 13%-ROIC, capital-heavy business.",
+   "why": "same rule as the 11.11 baseline: today's forward P/E is not meaningful (our FY2027 operating EPS ~$0.50 gives ~260x; FY2027 consensus EPS -6.16, pre-report) and NBIS has no own P/E history (losses since the 2024 relisting); 22 = a market-average multiple held for a business still growing ~7% in 2032 (judgement, not an observed NBIS multiple). Holding today's EV/NTM sales (~4.5x) would equal ~32x P/E at the 2032 base margin: not credible for a 13%-ROIC, capital-heavy business.",
    "value_today": 91.75,
    "year_end_values": {
     "2027": 110.74,
@@ -198,10 +198,10 @@
     "2030": 193.82,
     "2031": 224.26
    },
-   "annual_return_pct": 12.2,
-   "band": "buy"
+   "annual_return_pct": 11.1,
+   "band": "hold"
   },
-  "agree": false,
-  "rule": "lenses disagree: hold, or stage the trade around the next report"
+  "agree": true,
+  "rule": "both lenses in the same band: act on it"
  }
 }
