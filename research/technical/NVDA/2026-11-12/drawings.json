@@ -6,13 +6,15 @@
  "timeframe": "1D",
  "object_prefix": "NVDA-1112-",
  "price_basis": "split-adjusted, NOT dividend-adjusted (in TradingView: 'Adjust data for dividends' OFF). Regular session bars.",
+ "time_convention": "Every date is an exchange trading date (America/New_York) and names the 1D bar of that session, never an intraday moment. Put the point on the bar whose date on the TradingView time axis equals this date; if the tool needs a timestamp, read it from that bar, do not build it from local midnight. After drawing, read each object back and confirm its bar date. 2026-11-13, 2026-11-17, 2026-11-18, 2026-11-20 and 2026-12-31 are trading days after the last bar.",
  "reference_prices": {
   "last_close_2026-11-11": 173.73,
   "pre_market_2026-11-12_08:12_UTC": 161.75,
   "pre_market_2026-11-12_08:40_UTC": 162.75,
   "high_52w_2026-10-06": 243.37,
   "closing_high_52w_2026-10-06": 239.24,
-  "low_52w_before_2026-11-12": 164.07
+  "low_52w_before_2026-11-12": 164.27,
+  "pivot_low_2025-09-05_lower_edge_of_the_floor_zone": 164.07
  },
  "data_alignment_checks": [
   {
@@ -27,8 +29,8 @@
   },
   {
    "date": "2026-03-30",
-   "field": "low",
-   "value": 164.27
+   "field": "close",
+   "value": 165.17
   },
   {
    "date": "2025-04-07",
@@ -42,10 +44,37 @@
   }
  ],
  "tolerance": {
-  "price_levels_pct": 0.1,
+  "data_alignment_close_pct": 0.1,
+  "data_alignment_high_low_pct": 0.25,
+  "fib_levels_abs_usd": 0.3,
   "moving_averages_pct": 0.5,
   "anchored_vwap_pct": 1.5,
   "rsi_points": 1.0
+ },
+ "tolerance_note": "The numbers here come from consolidated daily bars; TradingView can show one exchange, so highs and lows can differ by cents. A Fibonacci anchor that differs by cents moves its levels by cents: that is fine.",
+ "label_rules": {
+  "language": "he",
+  "object_name": "object_prefix + id, e.g. NVDA-1112-S-floor-165; the name is the object-tree name and is not shown on the chart",
+  "visible_text": "label_he / text_he only (use label_en / text_en only if Hebrew renders broken, and then for all objects)",
+  "rectangles": "text inside the box, vertically centred, small; kind support/resistance right-aligned; kind gap left-aligned",
+  "horizontal_lines": "text on the line, small; S-1465 and F-* at the right end; L-* at the left end",
+  "fib_retracements": "FIB-2025 level labels on the left, FIB-2022 on the right; show level and price",
+  "vertical_lines": "text horizontal at the top of the line"
+ },
+ "style_rules": {
+  "opacity": "fill opacity on a 0-1 scale: 0.22 = 22% opaque = TradingView background transparency 78%",
+  "rectangle_border": "same colour, width 1, 45% opaque",
+  "line_style": {
+   "solid": 0,
+   "dotted": 1,
+   "dashed": 2
+  },
+  "line_width": {
+   "S-1465": 2,
+   "F-buy-*": 2,
+   "all other lines": 1
+  },
+  "horizontal_lines_extent": "full-width TradingView horizontal lines, no start or end date"
  },
  "default_time_span": {
   "from": "2026-08-03",
@@ -77,9 +106,9 @@
     "time_to": "2026-12-31",
     "color": "#1b9e77",
     "opacity": 0.22,
-    "label_en": "S 164.1-165.9: 52-week-low floor",
-    "label_he": "רצפת השפל השנתי 164.1-165.9",
-    "evidence": "pivot lows 164.07 (5.9.2025), 164.27 (30.3.2026), 164.58 (22.7.2025); 50% retracement of 86.62-243.37 = 165.0. Pre-market 12.11 (161.75) is BELOW it: broken unless a daily close gets back above 164.07."
+    "label_en": "S 164.1-165.9: the floor (three prior lows)",
+    "label_he": "הרצפה 164.1-165.9 (שלושה שפלים קודמים)",
+    "evidence": "pivot lows 164.07 (5.9.2025), 164.27 (30.3.2026, the 52-week low), 164.58 (22.7.2025); 50% retracement of 86.62-243.37 = 165.0. Pre-market 12.11 (161.75) is BELOW it: broken unless a daily close gets back above 164.07."
    },
    {
     "id": "S-154",
@@ -340,34 +369,44 @@
     "note": "high 140.76 (20.6.2024) and low 140.85 (13.6.2025)."
    },
    {
-    "id": "F-entry-168",
-    "kind": "fundamental_entry",
-    "price": 168.0,
+    "id": "F-buy-210",
+    "kind": "fundamental_buy_test",
+    "price": 210.0,
     "style": "solid",
     "color": "#1f77b4",
-    "label_en": "ENTRY 168: buy test passes if the succession is orderly",
-    "label_he": "מחיר כניסה 168: עובר את מבחן הקנייה אם ההחלפה מסודרת",
-    "note": "Fundamental model 12.11.2026: base return >= 12%/yr below about 168 in the 'orderly internal succession' scenario."
+    "label_en": "BUY TEST 210: passes below this if Huang stays",
+    "label_he": "מבחן הקנייה 210: עובר מתחת למחיר הזה אם הואנג נשאר",
+    "note": "Fundamental model 12.11.2026: base return >= 12%/yr in both lenses below about 210 in the 'Huang stays' scenario (215 on the fundamental lens alone)."
    },
    {
-    "id": "F-entry-157",
-    "kind": "fundamental_entry",
+    "id": "F-buy-176",
+    "kind": "fundamental_buy_test",
+    "price": 176.0,
+    "style": "solid",
+    "color": "#1f77b4",
+    "label_en": "BUY TEST 176: passes below this if the succession is orderly",
+    "label_he": "מבחן הקנייה 176: עובר מתחת למחיר הזה אם ההחלפה מסודרת",
+    "note": "Base return >= 12%/yr below about 176 in the 'orderly internal succession' scenario."
+   },
+   {
+    "id": "F-buy-157",
+    "kind": "fundamental_buy_test",
     "price": 157.0,
     "style": "solid",
     "color": "#1f77b4",
-    "label_en": "ENTRY 157: passes even with a messy succession",
-    "label_he": "מחיר כניסה 157: עובר גם בעזיבה מבולגנת",
-    "note": "Fundamental model: base return >= 12%/yr below about 157 in the 'messy exit' scenario. No technical support at this price (air pocket 150-164)."
+    "label_en": "BUY TEST 157: passes below this even with a messy succession",
+    "label_he": "מבחן הקנייה 157: עובר מתחת למחיר הזה גם בעזיבה מבולגנת",
+    "note": "Base return >= 12%/yr below about 157 in the 'messy exit' scenario. No technical support at this price (air pocket 150-164)."
    },
    {
-    "id": "F-entry-144",
-    "kind": "fundamental_entry",
+    "id": "F-buy-144",
+    "kind": "fundamental_buy_test",
     "price": 144.0,
     "style": "solid",
     "color": "#1f77b4",
-    "label_en": "ENTRY 144: passes in all four scenarios",
-    "label_he": "מחיר כניסה 144: עובר בכל ארבעת המצבים",
-    "note": "Fundamental model: base return >= 12%/yr below about 144 in every scenario."
+    "label_en": "BUY TEST 144: passes below this in all four scenarios",
+    "label_he": "מבחן הקנייה 144: עובר מתחת למחיר הזה בכל ארבעת המצבים",
+    "note": "Base return >= 12%/yr below about 144 in every scenario, including an export / diversion finding."
    },
    {
     "id": "F-value-222",
@@ -422,13 +461,20 @@
   ],
   "trend_lines": [],
   "trend_lines_note": "No trend line was verified. Do not add one.",
+  "text_rules": {
+   "anchor": "time and price are the left edge and vertical middle of the text",
+   "wrap_chars": 60,
+   "font_size": 12,
+   "color": "#222222",
+   "background": "none"
+  },
   "texts": [
    {
     "id": "N-verdict",
     "time": "2026-08-10",
-    "price": 238.0,
-    "text_en": "NVDA 12.11.2026 | HOLD. Add only after 17-18.11 if: Q4 guide >= $122B, gross-margin guide >= 72%, Huang stays or an internal successor is named, no DOJ/BIS action.",
-    "text_he": "NVDA 12.11.2026 | להחזיק. להוסיף רק אחרי 17-18.11 אם: תחזית לרבעון 4 של 122 מיליארד $ ומעלה, רווח גולמי צפוי 72% ומעלה, הואנג נשאר או מחליף מבפנים, ואין צעד של משרד המשפטים או רשות הייצוא."
+    "price": 250.0,
+    "text_en": "NVDA 12.11.2026 | Research verdict: HOLD; not a buy before 17-18.11. After that a buy only if: Q4 guide >= $122B, gross-margin guide >= 72%, FY2028 comments fit growth of about 60%+, Huang stays or an internal successor is named, no DOJ/BIS action.",
+    "text_he": "NVDA 12.11.2026 | מסקנת המחקר: החזקה; לא קנייה לפני 17-18.11. אחר כך קנייה רק אם: תחזית לרבעון 4 של 122 מיליארד $ ומעלה, רווח גולמי צפוי 72% ומעלה, דברים על 2028 שמתאימים לצמיחה של כ-60% ומעלה, הואנג נשאר או מחליף מבפנים, ואין צעד של משרד המשפטים או רשות הייצוא."
    },
    {
     "id": "N-floor",
@@ -440,20 +486,20 @@
    {
     "id": "N-pocket",
     "time": "2026-08-10",
-    "price": 158.3,
-    "text_en": "Air pocket 150-164: only about 2.5% of two-year volume traded here. Entry 157 has no technical support.",
-    "text_he": "כיס אוויר 150-164: רק כ-2.5% מהמחזור של שנתיים נסחר כאן. למחיר הכניסה 157 אין תמיכה טכנית."
+    "price": 158.6,
+    "text_en": "Air pocket 150-164: only about 2.5% of two-year volume traded here. The 157 buy-test price has no technical support.",
+    "text_he": "כיס אוויר 150-164: רק כ-2.5% מהמחזור של שנתיים נסחר כאן. למחיר 157 של מבחן הקנייה אין תמיכה טכנית."
    },
    {
     "id": "N-supply",
     "time": "2026-08-10",
-    "price": 190.5,
+    "price": 193.2,
     "text_en": "Overhead supply 175.5-188.5: the unfilled 9.11 gap and the 1-year and 2-year volume peaks. Fair values 182 and 185 are inside.",
     "text_he": "היצע מעל המחיר 175.5-188.5: הפער הפתוח מ-9.11 ושיאי המחזור של שנה ושנתיים. השווי ההוגן 182 ו-185 בתוכו."
    },
    {
     "id": "N-options",
-    "time": "2026-11-13",
+    "time": "2026-11-20",
     "price": 228.0,
     "text_en": "Results 17.11 after the close. Options (11.11 closing marks) priced about +-7.5% for the day and +-10% to 20.11.",
     "text_he": "דוח ב-17.11 אחרי הסגירה. האופציות (מחירי הסגירה של 11.11) תמחרו כ-7.5% ליום הדוח וכ-10% עד 20.11."
@@ -465,7 +511,6 @@
    {
     "id": "V-high",
     "date": "2026-10-06",
-    "time": null,
     "color": "#7f7f7f",
     "style": "dashed",
     "label_en": "52-week high 243.37",
@@ -474,7 +519,6 @@
    {
     "id": "V-1105",
     "date": "2026-11-05",
-    "time": null,
     "color": "#7f7f7f",
     "style": "dashed",
     "label_en": "5.11: market-wide AI selloff, before the CEO news (NVDA -9.3%, SMH -11.2%)",
@@ -483,7 +527,6 @@
    {
     "id": "V-1109",
     "date": "2026-11-09",
-    "time": null,
     "color": "#d6604d",
     "style": "dashed",
     "label_en": "9.11: first session after the board announced the investigation (463M shares)",
@@ -492,16 +535,15 @@
    {
     "id": "V-results",
     "date": "2026-11-17",
-    "time": "16:20 America/New_York",
     "color": "#7b3294",
     "style": "dashed",
     "label_en": "17.11: Q3 FY2027 results after the close",
-    "label_he": "17.11: דוח רבעון 3 אחרי הסגירה"
+    "label_he": "17.11: דוח רבעון 3 אחרי הסגירה",
+    "event_note": "results are published about 16:20 America/New_York, after the close; on the 1D chart the line sits on the 2026-11-17 bar"
    },
    {
     "id": "V-briefing",
     "date": "2026-11-18",
-    "time": null,
     "color": "#7b3294",
     "style": "dashed",
     "label_en": "18.11: first reaction session; closed House briefing",
@@ -514,6 +556,8 @@
     "draw": true,
     "label_en": "Advance from the April 2025 low",
     "label_he": "העלייה מהשפל של אפריל 2025",
+    "point_1": "low",
+    "point_2": "high",
     "low": {
      "date": "2025-04-07",
      "price": 86.62
@@ -536,6 +580,8 @@
     "draw": true,
     "label_en": "Whole advance from the October 2022 low",
     "label_he": "כל העלייה מהשפל של אוקטובר 2022",
+    "point_1": "low",
+    "point_2": "high",
     "low": {
      "date": "2022-10-13",
      "price": 10.81
@@ -576,7 +622,7 @@
     "color": "#7f7f7f"
    }
   ],
-  "fib_convention": "level price = high - pct x (high - low). Check each drawn level against the listed price.",
+  "fib_convention": "level price = high - pct x (high - low). Point 1 (first click) = the LOW, point 2 (second click) = the HIGH; the tool should then show 0 at the high and 1 at the low. Test: the 0.236 level must sit near the high (FIB-2025: 206.38). If it sits near the low (123.61) the points are reversed: swap them or tick 'Reverse'. Show only 0, 0.236, 0.382, 0.5, 0.618, 0.786, 1; switch off all other levels, the background fill and 'extend lines left'. Check each drawn level against the listed price (tolerance in 'tolerance').",
   "anchored_vwaps": [
    {
     "id": "AVWAP-high",
@@ -703,19 +749,32 @@
   ],
   "base_value_in_one_year_jan_2028": 211,
   "base_value_in_five_years_jan_2032": 318,
-  "buy_test_ceiling_if_huang_stays": 206,
+  "margin_of_safety_entry_prices_13pct_per_scenario": {
+   "huang_stays": 206,
+   "orderly_succession": 168,
+   "messy_succession": 150,
+   "export_finding": 138
+  },
+  "buy_test_prices_12pct_per_scenario_drawn_as_F-buy_lines": {
+   "huang_stays": 210,
+   "orderly_succession": 176,
+   "messy_succession": 157,
+   "export_finding": 144
+  },
   "options_implied": {
    "results_day_expected_abs_move_pct": 7.5,
    "results_day_one_sigma_pct": 9.4,
    "straddle_to_2026-11-20_pct": 9.9,
    "basis": "closing marks of 11.11.2026, strike 172.5, before the overnight reports; stale"
   },
-  "weak_zone_not_drawn": "224.0-224.7 (Fibonacci of a fully retraced leg plus one volume node)"
+  "weak_zone_not_drawn": "224.0-224.7 (Fibonacci of a fully retraced leg plus one volume node)",
+  "unfilled_gaps_not_drawn": "228.86-229.11 (12.10.2026, $0.25 wide); below 133: 132.68-132.92, 123.00-124.47, 118.23-120.28, 108.92-110.82",
+  "regression_channel": "not drawn: the reading depends on the window"
  },
  "rules_for_the_drawing_session": [
   "Draw only what this file lists, with these prices. Do not add trend lines, patterns, targets or stops.",
-  "This is a research map, not a trade plan. It contains no order, alert, entry size or stop. Do not create orders or alerts from it.",
-  "Prefix every object name with object_prefix so the set can be removed or replaced by a later package.",
-  "If a data_alignment_check fails, stop and report: the chart is on a different price basis."
+  "This is a research map, not a trade plan. It contains no order, alert, position size or stop. Do not create orders or alerts from it.",
+  "Name every drawing (rectangle, horizontal line, text, vertical line, Fibonacci, anchored VWAP) object_prefix + id, e.g. NVDA-1112-S-floor-165. The name is the object-tree name, not the visible label. Indicators are not renamed. If the tool cannot set names, write a list of id -> TradingView object id in the session report so a later package can remove the set.",
+  "If a data_alignment_check is outside its tolerance, stop and report: the chart is on a different price basis."
  ]
 }
