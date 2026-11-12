@@ -1,0 +1,721 @@
+{
+ "schema": "technical-drawings/1",
+ "ticker": "NVDA",
+ "tradingview_symbol": "NASDAQ:NVDA",
+ "as_of": "2026-11-12",
+ "timeframe": "1D",
+ "object_prefix": "NVDA-1112-",
+ "price_basis": "split-adjusted, NOT dividend-adjusted (in TradingView: 'Adjust data for dividends' OFF). Regular session bars.",
+ "reference_prices": {
+  "last_close_2026-11-11": 173.73,
+  "pre_market_2026-11-12_08:12_UTC": 161.75,
+  "pre_market_2026-11-12_08:40_UTC": 162.75,
+  "high_52w_2026-10-06": 243.37,
+  "closing_high_52w_2026-10-06": 239.24,
+  "low_52w_before_2026-11-12": 164.07
+ },
+ "data_alignment_checks": [
+  {
+   "date": "2026-11-11",
+   "field": "close",
+   "value": 173.73
+  },
+  {
+   "date": "2026-10-06",
+   "field": "high",
+   "value": 243.37
+  },
+  {
+   "date": "2026-03-30",
+   "field": "low",
+   "value": 164.27
+  },
+  {
+   "date": "2025-04-07",
+   "field": "low",
+   "value": 86.62
+  },
+  {
+   "date": "2022-10-13",
+   "field": "low",
+   "value": 10.81
+  }
+ ],
+ "tolerance": {
+  "price_levels_pct": 0.1,
+  "moving_averages_pct": 0.5,
+  "anchored_vwap_pct": 1.5,
+  "rsi_points": 1.0
+ },
+ "default_time_span": {
+  "from": "2026-08-03",
+  "to": "2026-12-31"
+ },
+ "watcher": {
+  "rectangles": [
+   {
+    "id": "S-soft-170",
+    "kind": "support",
+    "strength": "soft",
+    "price_low": 169.55,
+    "price_high": 171.03,
+    "time_from": "2026-08-03",
+    "time_to": "2026-12-31",
+    "color": "#1b9e77",
+    "opacity": 0.14,
+    "label_en": "S 169.6-171.0 (soft)",
+    "label_he": "תמיכה רכה 169.6-171.0",
+    "evidence": "pivot lows 169.55 (25.11.2025), 170.31 (17.12.2025), 170.89 (1.8.2025), 171.03 (5.2.2026); 1-year value-area low 171. Above the pre-market price of 12.11."
+   },
+   {
+    "id": "S-floor-165",
+    "kind": "support",
+    "strength": "confirmed",
+    "price_low": 164.07,
+    "price_high": 165.89,
+    "time_from": "2026-08-03",
+    "time_to": "2026-12-31",
+    "color": "#1b9e77",
+    "opacity": 0.22,
+    "label_en": "S 164.1-165.9: 52-week-low floor",
+    "label_he": "רצפת השפל השנתי 164.1-165.9",
+    "evidence": "pivot lows 164.07 (5.9.2025), 164.27 (30.3.2026), 164.58 (22.7.2025); 50% retracement of 86.62-243.37 = 165.0. Pre-market 12.11 (161.75) is BELOW it: broken unless a daily close gets back above 164.07."
+   },
+   {
+    "id": "S-154",
+    "kind": "support",
+    "strength": "confirmed",
+    "price_low": 152.89,
+    "price_high": 154.53,
+    "time_from": "2026-08-03",
+    "time_to": "2026-12-31",
+    "color": "#1b9e77",
+    "opacity": 0.22,
+    "label_en": "S 152.9-154.5: first verified support below",
+    "label_he": "התמיכה המאומתת הראשונה מלמטה 152.9-154.5",
+    "evidence": "prior highs 152.89 (21.11.2024) and 153.13 (7.1.2025); 38.2% retracement of 10.81-243.37 = 154.53."
+   },
+   {
+    "id": "S-137",
+    "kind": "support",
+    "strength": "confirmed",
+    "price_low": 136.15,
+    "price_high": 137.0,
+    "time_from": "2026-08-03",
+    "time_to": "2026-12-31",
+    "color": "#1b9e77",
+    "opacity": 0.22,
+    "label_en": "S 136.2-137.0",
+    "label_he": "תמיכה 136.2-137.0",
+    "evidence": "July 2024 high 136.15; 2-year value-area low 137-138 and volume nodes 135.5-138.5."
+   },
+   {
+    "id": "R-178",
+    "kind": "resistance",
+    "strength": "confirmed",
+    "price_low": 175.5,
+    "price_high": 181.2,
+    "time_from": "2026-08-03",
+    "time_to": "2026-12-31",
+    "color": "#d6604d",
+    "opacity": 0.22,
+    "label_en": "R 175.5-181.2: lower part of the supply band",
+    "label_he": "התנגדות 175.5-181.2: תחתית רצועת ההיצע",
+    "evidence": "volume nodes 175.5-177.5, anchored VWAP from 5.11 (177.41), pivot lows 176.76-179.18, lower edge of the 9.11 gap 179.92."
+   },
+   {
+    "id": "R-185",
+    "kind": "resistance",
+    "strength": "confirmed",
+    "price_low": 182.5,
+    "price_high": 188.49,
+    "time_from": "2026-08-03",
+    "time_to": "2026-12-31",
+    "color": "#d6604d",
+    "opacity": 0.22,
+    "label_en": "R 182.5-188.5: densest supply (1y+2y volume peaks)",
+    "label_he": "התנגדות 182.5-188.5: ההיצע הצפוף ביותר",
+    "evidence": "2-year volume peak 182.5 and 1-year volume peak 187.5, 38.2% retracement from 86.62 at 183.49, Aug-Sep 2025 highs 184.5, upper edge of the 9.11 gap 185.22, 23.6% of the whole advance 188.49. Fair values 182 and 185 are inside."
+   },
+   {
+    "id": "R-197",
+    "kind": "resistance",
+    "strength": "confirmed",
+    "price_low": 194.49,
+    "price_high": 200.37,
+    "time_from": "2026-08-03",
+    "time_to": "2026-12-31",
+    "color": "#d6604d",
+    "opacity": 0.22,
+    "label_en": "R 194.5-200.4",
+    "label_he": "התנגדות 194.5-200.4",
+    "evidence": "5.11 gap 196.25-199.68, 10-month average 199.07, anchored VWAP 2026 (200.19) and from the 6.10 high (200.37)."
+   },
+   {
+    "id": "R-204",
+    "kind": "resistance",
+    "strength": "confirmed",
+    "price_low": 201.5,
+    "price_high": 207.88,
+    "time_from": "2026-08-03",
+    "time_to": "2026-12-31",
+    "color": "#d6604d",
+    "opacity": 0.22,
+    "label_en": "R 201.5-207.9: 200-day average 204.5",
+    "label_he": "התנגדות 201.5-207.9: ממוצע 200 יום 204.5",
+    "evidence": "200-day average 204.47 (= 40-week average), 20-day average 203.8, anchored VWAP from the 30.3.2026 low 207.88, volume node 200.5-202.5."
+   },
+   {
+    "id": "R-211",
+    "kind": "resistance",
+    "strength": "confirmed",
+    "price_low": 208.78,
+    "price_high": 214.39,
+    "time_from": "2026-08-03",
+    "time_to": "2026-12-31",
+    "color": "#d6604d",
+    "opacity": 0.22,
+    "label_en": "R 208.8-214.4",
+    "label_he": "התנגדות 208.8-214.4",
+    "evidence": "30.10 gap 209.98-212.08, volume peak since 30.3.2026 at 209.5-210.5, 100-day 212.96 and 150-day 211.91 averages, anchored VWAP after the August results 211.5, October 2025 high 212.19."
+   },
+   {
+    "id": "R-217",
+    "kind": "resistance",
+    "strength": "confirmed",
+    "price_low": 216.83,
+    "price_high": 218.5,
+    "time_from": "2026-08-03",
+    "time_to": "2026-12-31",
+    "color": "#d6604d",
+    "opacity": 0.22,
+    "label_en": "R 216.8-218.5: 50-day average 217.1",
+    "label_he": "התנגדות 216.8-218.5: ממוצע 50 יום 217.1",
+    "evidence": "50-day average 217.12, volume node 217.5-218.5, April 2026 high 216.83."
+   },
+   {
+    "id": "R-weak-191",
+    "kind": "resistance",
+    "strength": "weak",
+    "price_low": 189.8,
+    "price_high": 192.0,
+    "time_from": "2026-08-03",
+    "time_to": "2026-12-31",
+    "color": "#d6604d",
+    "opacity": 0.1,
+    "label_en": "R 189.8-192.0 (weak: pivots only)",
+    "label_he": "התנגדות חלשה 189.8-192.0",
+    "evidence": "pivots 189.80, 190.01, 190.44 only."
+   },
+   {
+    "id": "GAP-1109",
+    "kind": "gap",
+    "strength": "fact",
+    "gap_date": "2026-11-09",
+    "price_low": 179.92,
+    "price_high": 185.22,
+    "time_from": "2026-11-06",
+    "time_to": "2026-12-31",
+    "color": "#7f7f7f",
+    "opacity": 0.18,
+    "label_en": "unfilled gap 9.11: 179.9-185.2",
+    "label_he": "פער פתוח מ-9.11: 179.9-185.2",
+    "evidence": "unfilled daily gap, measured on intraday highs and lows"
+   },
+   {
+    "id": "GAP-1105",
+    "kind": "gap",
+    "strength": "fact",
+    "gap_date": "2026-11-05",
+    "price_low": 196.25,
+    "price_high": 199.68,
+    "time_from": "2026-11-04",
+    "time_to": "2026-12-31",
+    "color": "#7f7f7f",
+    "opacity": 0.18,
+    "label_en": "unfilled gap 5.11: 196.3-199.7",
+    "label_he": "פער פתוח מ-5.11: 196.3-199.7",
+    "evidence": "unfilled daily gap, measured on intraday highs and lows"
+   },
+   {
+    "id": "GAP-1030",
+    "kind": "gap",
+    "strength": "fact",
+    "gap_date": "2026-10-30",
+    "price_low": 209.98,
+    "price_high": 212.08,
+    "time_from": "2026-10-29",
+    "time_to": "2026-12-31",
+    "color": "#7f7f7f",
+    "opacity": 0.18,
+    "label_en": "unfilled gap 30.10: 210.0-212.1",
+    "label_he": "פער פתוח מ-30.10: 210.0-212.1",
+    "evidence": "unfilled daily gap, measured on intraday highs and lows"
+   },
+   {
+    "id": "GAP-0709",
+    "kind": "gap",
+    "strength": "fact",
+    "gap_date": "2025-07-09",
+    "price_low": 160.22,
+    "price_high": 161.16,
+    "time_from": "2026-08-03",
+    "time_to": "2026-12-31",
+    "color": "#7f7f7f",
+    "opacity": 0.18,
+    "label_en": "small unfilled gap 9.7.2025: 160.2-161.2",
+    "label_he": "פער קטן פתוח מ-9.7.2025: 160.2-161.2",
+    "evidence": "unfilled daily gap, measured on intraday highs and lows"
+   },
+   {
+    "id": "GAP-0625",
+    "kind": "gap",
+    "strength": "fact",
+    "gap_date": "2025-06-25",
+    "price_low": 147.96,
+    "price_high": 149.26,
+    "time_from": "2026-08-03",
+    "time_to": "2026-12-31",
+    "color": "#7f7f7f",
+    "opacity": 0.18,
+    "label_en": "small unfilled gap 25.6.2025: 148.0-149.3",
+    "label_he": "פער קטן פתוח מ-25.6.2025: 148.0-149.3",
+    "evidence": "unfilled daily gap, measured on intraday highs and lows"
+   },
+   {
+    "id": "GAP-0624",
+    "kind": "gap",
+    "strength": "fact",
+    "gap_date": "2025-06-24",
+    "price_low": 144.78,
+    "price_high": 145.5,
+    "time_from": "2026-08-03",
+    "time_to": "2026-12-31",
+    "color": "#7f7f7f",
+    "opacity": 0.18,
+    "label_en": "small unfilled gap 24.6.2025: 144.8-145.5",
+    "label_he": "פער קטן פתוח מ-24.6.2025: 144.8-145.5",
+    "evidence": "unfilled daily gap, measured on intraday highs and lows"
+   }
+  ],
+  "horizontal_lines": [
+   {
+    "id": "S-1465",
+    "kind": "support_confirmed",
+    "price": 146.5,
+    "style": "solid",
+    "color": "#1b9e77",
+    "label_en": "S 146.5: 61.8% retracement + Dec-2024 high",
+    "label_he": "תמיכה 146.5: תיקון 61.8% והשיא של דצמבר 2024",
+    "note": "61.8% retracement of 86.62-243.37 = 146.50; 5.12.2024 high 146.54."
+   },
+   {
+    "id": "L-149",
+    "kind": "single_level",
+    "price": 148.97,
+    "style": "dotted",
+    "color": "#1b9e77",
+    "label_en": "149.0 single pivot",
+    "label_he": "149.0 רמה בודדת",
+    "note": "one pivot (24.1.2025)."
+   },
+   {
+    "id": "L-1434",
+    "kind": "single_level",
+    "price": 143.44,
+    "style": "dotted",
+    "color": "#1b9e77",
+    "label_en": "143.4 single pivot",
+    "label_he": "143.4 רמה בודדת",
+    "note": "one pivot (18.2.2025)."
+   },
+   {
+    "id": "L-1408",
+    "kind": "single_level",
+    "price": 140.76,
+    "style": "dotted",
+    "color": "#1b9e77",
+    "label_en": "140.8 single pivot",
+    "label_he": "140.8 רמה בודדת",
+    "note": "high 140.76 (20.6.2024) and low 140.85 (13.6.2025)."
+   },
+   {
+    "id": "F-entry-168",
+    "kind": "fundamental_entry",
+    "price": 168.0,
+    "style": "solid",
+    "color": "#1f77b4",
+    "label_en": "ENTRY 168: buy test passes if the succession is orderly",
+    "label_he": "מחיר כניסה 168: עובר את מבחן הקנייה אם ההחלפה מסודרת",
+    "note": "Fundamental model 12.11.2026: base return >= 12%/yr below about 168 in the 'orderly internal succession' scenario."
+   },
+   {
+    "id": "F-entry-157",
+    "kind": "fundamental_entry",
+    "price": 157.0,
+    "style": "solid",
+    "color": "#1f77b4",
+    "label_en": "ENTRY 157: passes even with a messy succession",
+    "label_he": "מחיר כניסה 157: עובר גם בעזיבה מבולגנת",
+    "note": "Fundamental model: base return >= 12%/yr below about 157 in the 'messy exit' scenario. No technical support at this price (air pocket 150-164)."
+   },
+   {
+    "id": "F-entry-144",
+    "kind": "fundamental_entry",
+    "price": 144.0,
+    "style": "solid",
+    "color": "#1f77b4",
+    "label_en": "ENTRY 144: passes in all four scenarios",
+    "label_he": "מחיר כניסה 144: עובר בכל ארבעת המצבים",
+    "note": "Fundamental model: base return >= 12%/yr below about 144 in every scenario."
+   },
+   {
+    "id": "F-value-222",
+    "kind": "fundamental_value",
+    "price": 222.0,
+    "style": "dashed",
+    "color": "#7b3294",
+    "label_en": "VALUE 222: base value if Huang stays (30%)",
+    "label_he": "שווי 222: אם הואנג נשאר (30%)",
+    "note": ""
+   },
+   {
+    "id": "F-value-185",
+    "kind": "fundamental_value",
+    "price": 185.0,
+    "style": "dashed",
+    "color": "#7b3294",
+    "label_en": "VALUE 185: probability-weighted base value",
+    "label_he": "שווי 185: ממוצע משוקלל של ארבעת המצבים",
+    "note": ""
+   },
+   {
+    "id": "F-value-182",
+    "kind": "fundamental_value",
+    "price": 182.0,
+    "style": "dashed",
+    "color": "#7b3294",
+    "label_en": "VALUE 182: orderly internal succession (35%)",
+    "label_he": "שווי 182: עזיבה מסודרת (35%)",
+    "note": ""
+   },
+   {
+    "id": "F-value-163",
+    "kind": "fundamental_value",
+    "price": 163.0,
+    "style": "dashed",
+    "color": "#7b3294",
+    "label_en": "VALUE 163: messy succession (20%)",
+    "label_he": "שווי 163: עזיבה מבולגנת (20%)",
+    "note": ""
+   },
+   {
+    "id": "F-value-150",
+    "kind": "fundamental_value",
+    "price": 150.0,
+    "style": "dashed",
+    "color": "#7b3294",
+    "label_en": "VALUE 150: export / diversion finding (15%)",
+    "label_he": "שווי 150: פגיעה בייצוא (15%)",
+    "note": ""
+   }
+  ],
+  "trend_lines": [],
+  "trend_lines_note": "No trend line was verified. Do not add one.",
+  "texts": [
+   {
+    "id": "N-verdict",
+    "time": "2026-08-10",
+    "price": 238.0,
+    "text_en": "NVDA 12.11.2026 | HOLD. Add only after 17-18.11 if: Q4 guide >= $122B, gross-margin guide >= 72%, Huang stays or an internal successor is named, no DOJ/BIS action.",
+    "text_he": "NVDA 12.11.2026 | להחזיק. להוסיף רק אחרי 17-18.11 אם: תחזית לרבעון 4 של 122 מיליארד $ ומעלה, רווח גולמי צפוי 72% ומעלה, הואנג נשאר או מחליף מבפנים, ואין צעד של משרד המשפטים או רשות הייצוא."
+   },
+   {
+    "id": "N-floor",
+    "time": "2026-08-10",
+    "price": 167.2,
+    "text_en": "Floor 164.1-165.9 was broken pre-market on 12.11 (161.75). First repair sign: a daily close back above 164.07.",
+    "text_he": "הרצפה 164.1-165.9 נשברה לפני הפתיחה ב-12.11 (161.75). סימן תיקון ראשון: סגירה יומית חזרה מעל 164.07."
+   },
+   {
+    "id": "N-pocket",
+    "time": "2026-08-10",
+    "price": 158.3,
+    "text_en": "Air pocket 150-164: only about 2.5% of two-year volume traded here. Entry 157 has no technical support.",
+    "text_he": "כיס אוויר 150-164: רק כ-2.5% מהמחזור של שנתיים נסחר כאן. למחיר הכניסה 157 אין תמיכה טכנית."
+   },
+   {
+    "id": "N-supply",
+    "time": "2026-08-10",
+    "price": 190.5,
+    "text_en": "Overhead supply 175.5-188.5: the unfilled 9.11 gap and the 1-year and 2-year volume peaks. Fair values 182 and 185 are inside.",
+    "text_he": "היצע מעל המחיר 175.5-188.5: הפער הפתוח מ-9.11 ושיאי המחזור של שנה ושנתיים. השווי ההוגן 182 ו-185 בתוכו."
+   },
+   {
+    "id": "N-options",
+    "time": "2026-11-13",
+    "price": 228.0,
+    "text_en": "Results 17.11 after the close. Options (11.11 closing marks) priced about +-7.5% for the day and +-10% to 20.11.",
+    "text_he": "דוח ב-17.11 אחרי הסגירה. האופציות (מחירי הסגירה של 11.11) תמחרו כ-7.5% ליום הדוח וכ-10% עד 20.11."
+   }
+  ]
+ },
+ "direct": {
+  "vertical_lines": [
+   {
+    "id": "V-high",
+    "date": "2026-10-06",
+    "time": null,
+    "color": "#7f7f7f",
+    "style": "dashed",
+    "label_en": "52-week high 243.37",
+    "label_he": "שיא שנתי 243.37"
+   },
+   {
+    "id": "V-1105",
+    "date": "2026-11-05",
+    "time": null,
+    "color": "#7f7f7f",
+    "style": "dashed",
+    "label_en": "5.11: market-wide AI selloff, before the CEO news (NVDA -9.3%, SMH -11.2%)",
+    "label_he": "5.11: ירידה של כל הסקטור, לפני הידיעות על המנכ\"ל"
+   },
+   {
+    "id": "V-1109",
+    "date": "2026-11-09",
+    "time": null,
+    "color": "#d6604d",
+    "style": "dashed",
+    "label_en": "9.11: first session after the board announced the investigation (463M shares)",
+    "label_he": "9.11: היום הראשון אחרי הודעת הדירקטוריון (463 מיליון מניות)"
+   },
+   {
+    "id": "V-results",
+    "date": "2026-11-17",
+    "time": "16:20 America/New_York",
+    "color": "#7b3294",
+    "style": "dashed",
+    "label_en": "17.11: Q3 FY2027 results after the close",
+    "label_he": "17.11: דוח רבעון 3 אחרי הסגירה"
+   },
+   {
+    "id": "V-briefing",
+    "date": "2026-11-18",
+    "time": null,
+    "color": "#7b3294",
+    "style": "dashed",
+    "label_en": "18.11: first reaction session; closed House briefing",
+    "label_he": "18.11: יום התגובה לדוח; תדריך סגור בקונגרס"
+   }
+  ],
+  "fib_retracements": [
+   {
+    "id": "FIB-2025",
+    "draw": true,
+    "label_en": "Advance from the April 2025 low",
+    "label_he": "העלייה מהשפל של אפריל 2025",
+    "low": {
+     "date": "2025-04-07",
+     "price": 86.62
+    },
+    "high": {
+     "date": "2026-10-06",
+     "price": 243.37
+    },
+    "levels": {
+     "23.6": 206.38,
+     "38.2": 183.49,
+     "50": 165.0,
+     "61.8": 146.5,
+     "78.6": 120.16
+    },
+    "color": "#e08214"
+   },
+   {
+    "id": "FIB-2022",
+    "draw": true,
+    "label_en": "Whole advance from the October 2022 low",
+    "label_he": "כל העלייה מהשפל של אוקטובר 2022",
+    "low": {
+     "date": "2022-10-13",
+     "price": 10.81
+    },
+    "high": {
+     "date": "2026-10-06",
+     "price": 243.37
+    },
+    "levels": {
+     "23.6": 188.49,
+     "38.2": 154.53,
+     "50": 127.09,
+     "61.8": 99.65,
+     "78.6": 60.58
+    },
+    "color": "#7f7f7f"
+   },
+   {
+    "id": "FIB-upleg",
+    "draw": false,
+    "label_en": "Last up-leg 30.3.2026 to 6.10.2026 (do NOT draw: fully retraced at 161.75)",
+    "label_he": "הרגל האחרונה (לא לשרטט: תוקנה במלואה)",
+    "low": {
+     "date": "2026-03-30",
+     "price": 164.27
+    },
+    "high": {
+     "date": "2026-10-06",
+     "price": 243.37
+    },
+    "levels": {
+     "23.6": 224.7,
+     "38.2": 213.15,
+     "50": 203.82,
+     "61.8": 194.49,
+     "78.6": 181.2
+    },
+    "color": "#7f7f7f"
+   }
+  ],
+  "fib_convention": "level price = high - pct x (high - low). Check each drawn level against the listed price.",
+  "anchored_vwaps": [
+   {
+    "id": "AVWAP-high",
+    "anchor_date": "2026-10-06",
+    "source": "hlc3",
+    "value_at_2026-11-11_close": 200.37,
+    "draw_on_daily": true,
+    "color": "#e08214",
+    "label_en": "from the 6.10.2026 high",
+    "label_he": "מהשיא של 6.10.2026"
+   },
+   {
+    "id": "AVWAP-1105",
+    "anchor_date": "2026-11-05",
+    "source": "hlc3",
+    "value_at_2026-11-11_close": 177.41,
+    "draw_on_daily": true,
+    "color": "#e08214",
+    "label_en": "from the 5.11.2026 breakdown",
+    "label_he": "מהשבירה של 5.11.2026"
+   },
+   {
+    "id": "AVWAP-low26",
+    "anchor_date": "2026-03-30",
+    "source": "hlc3",
+    "value_at_2026-11-11_close": 207.88,
+    "draw_on_daily": true,
+    "color": "#e08214",
+    "label_en": "from the 30.3.2026 low",
+    "label_he": "מהשפל של 30.3.2026"
+   },
+   {
+    "id": "AVWAP-results",
+    "anchor_date": "2026-08-27",
+    "source": "hlc3",
+    "value_at_2026-11-11_close": 211.5,
+    "draw_on_daily": false,
+    "color": "#e08214",
+    "label_en": "from the first session after the August results",
+    "label_he": "מהיום שאחרי דוח אוגוסט"
+   },
+   {
+    "id": "AVWAP-2026",
+    "anchor_date": "2026-01-02",
+    "source": "hlc3",
+    "value_at_2026-11-11_close": 200.19,
+    "draw_on_daily": false,
+    "color": "#e08214",
+    "label_en": "from the first session of 2026",
+    "label_he": "מתחילת 2026"
+   },
+   {
+    "id": "AVWAP-2022",
+    "anchor_date": "2022-10-13",
+    "source": "hlc3",
+    "value_at_2026-11-11_close": 88.18,
+    "draw_on_daily": false,
+    "color": "#e08214",
+    "label_en": "from the October 2022 low (weekly chart only)",
+    "label_he": "מהשפל של אוקטובר 2022 (לגרף שבועי בלבד)"
+   }
+  ]
+ },
+ "indicators": [
+  {
+   "id": "SMA20",
+   "type": "SMA",
+   "length": 20,
+   "timeframe": "1D",
+   "source": "close",
+   "value_at_2026-11-11_close": 203.8,
+   "color": "#7570b3"
+  },
+  {
+   "id": "SMA50",
+   "type": "SMA",
+   "length": 50,
+   "timeframe": "1D",
+   "source": "close",
+   "value_at_2026-11-11_close": 217.12,
+   "color": "#e6ab02"
+  },
+  {
+   "id": "SMA200",
+   "type": "SMA",
+   "length": 200,
+   "timeframe": "1D",
+   "source": "close",
+   "value_at_2026-11-11_close": 204.47,
+   "color": "#1f78b4"
+  },
+  {
+   "id": "SMA40W",
+   "type": "SMA",
+   "length": 40,
+   "timeframe": "1W",
+   "source": "close",
+   "value_at_last_full_week_2026-11-06": 204.04,
+   "optional": true,
+   "note": "weekly chart only; it is the same average as the 200-day"
+  },
+  {
+   "id": "RSI14",
+   "type": "RSI",
+   "length": 14,
+   "timeframe": "1D",
+   "pane": "separate",
+   "value_at_2026-11-11_close": 28.74,
+   "note": "Wilder smoothing (TradingView default RSI)"
+  },
+  {
+   "id": "VOL",
+   "type": "Volume",
+   "ma_length": 50,
+   "pane": "separate",
+   "note": "9.11.2026 volume was 462.7M shares on consolidated data; the exchange-only figure in TradingView can be lower"
+  }
+ ],
+ "not_drawn": {
+  "bear_base_bull_today_central_scenario": [
+   72,
+   182,
+   303
+  ],
+  "base_value_in_one_year_jan_2028": 211,
+  "base_value_in_five_years_jan_2032": 318,
+  "buy_test_ceiling_if_huang_stays": 206,
+  "options_implied": {
+   "results_day_expected_abs_move_pct": 7.5,
+   "results_day_one_sigma_pct": 9.4,
+   "straddle_to_2026-11-20_pct": 9.9,
+   "basis": "closing marks of 11.11.2026, strike 172.5, before the overnight reports; stale"
+  },
+  "weak_zone_not_drawn": "224.0-224.7 (Fibonacci of a fully retraced leg plus one volume node)"
+ },
+ "rules_for_the_drawing_session": [
+  "Draw only what this file lists, with these prices. Do not add trend lines, patterns, targets or stops.",
+  "This is a research map, not a trade plan. It contains no order, alert, entry size or stop. Do not create orders or alerts from it.",
+  "Prefix every object name with object_prefix so the set can be removed or replaced by a later package.",
+  "If a data_alignment_check fails, stop and report: the chart is on a different price basis."
+ ]
+}

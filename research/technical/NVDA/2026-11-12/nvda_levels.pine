@@ -1,0 +1,117 @@
+//@version=5
+// NVDA levels, 12.11.2026: technical zones + fundamental values. Generated from drawings.json (same numbers).
+// Research map only: not a trade plan, no orders, no alerts. Use on NASDAQ:NVDA, 1D, dividend adjustment OFF.
+indicator("NVDA plan 12.11.2026 (technical + fundamental)", shorttitle="NVDA plan 1112", overlay=true, max_boxes_count=80, max_lines_count=200, max_labels_count=200)
+
+showZones  = input.bool(true,  "Support / resistance zones")
+showWeak   = input.bool(true,  "Soft and weak zones, single levels")
+showGaps   = input.bool(true,  "Unfilled gaps")
+showFund   = input.bool(true,  "Fundamental levels (entry prices, fair values)")
+showFib    = input.bool(true,  "Fibonacci levels")
+showEvents = input.bool(true,  "Event lines")
+showNotes  = input.bool(true,  "Summary table")
+showMA     = input.bool(true,  "Daily averages 20 / 50 / 200")
+showAVWAP  = input.bool(true,  "Anchored VWAPs")
+
+TZ = "America/New_York"
+tStart = timestamp(TZ, 2026, 8, 3, 9, 30)
+tEnd   = timestamp(TZ, 2026, 12, 31, 16, 0)
+
+f_zone(float lo, float hi, string txt, color c, int transp, int tLeft) =>
+    box.new(left=tLeft, top=hi, right=tEnd, bottom=lo, xloc=xloc.bar_time, bgcolor=color.new(c, transp), border_color=color.new(c, 55), border_width=1, text=txt, text_size=size.small, text_color=color.new(c, 0), text_halign=text.align_right, text_valign=text.align_center)
+
+f_level(float p, string txt, color c, string st, int w) =>
+    line.new(x1=tStart, y1=p, x2=tEnd, y2=p, xloc=xloc.bar_time, color=c, style=st, width=w)
+    label.new(x=tEnd, y=p, text=txt, xloc=xloc.bar_time, style=label.style_label_left, color=color.new(c, 100), textcolor=c, size=size.small)
+
+f_vline(int t, float yText, string txt, color c) =>
+    line.new(x1=t, y1=100.0, x2=t, y2=200.0, xloc=xloc.bar_time, extend=extend.both, color=c, style=line.style_dashed, width=1)
+    label.new(x=t, y=yText, text=txt, xloc=xloc.bar_time, style=label.style_label_down, color=color.new(c, 100), textcolor=c, size=size.small)
+
+f_avwap(int anchor) =>
+    var float pv = 0.0
+    var float vv = 0.0
+    if time >= anchor
+        pv += hlc3 * volume
+        vv += volume
+    vv > 0 ? pv / vv : na
+
+cSup = #1b9e77
+cRes = #d6604d
+cGap = #7f7f7f
+cEntry = #1f77b4
+cValue = #7b3294
+cFib = #e08214
+cEvt = #7b3294
+
+if barstate.islastconfirmedhistory
+    if showZones
+        f_zone(164.07, 165.89, "S 164.1-165.9: 52-week-low floor", cSup, 80, tStart)
+        f_zone(152.89, 154.53, "S 152.9-154.5: first verified support below", cSup, 80, tStart)
+        f_zone(136.15, 137.00, "S 136.2-137.0", cSup, 80, tStart)
+        f_zone(175.50, 181.20, "R 175.5-181.2: lower part of the supply band", cRes, 80, tStart)
+        f_zone(182.50, 188.49, "R 182.5-188.5: densest supply (1y+2y volume peaks)", cRes, 80, tStart)
+        f_zone(194.49, 200.37, "R 194.5-200.4", cRes, 80, tStart)
+        f_zone(201.50, 207.88, "R 201.5-207.9: 200-day average 204.5", cRes, 80, tStart)
+        f_zone(208.78, 214.39, "R 208.8-214.4", cRes, 80, tStart)
+        f_zone(216.83, 218.50, "R 216.8-218.5: 50-day average 217.1", cRes, 80, tStart)
+        f_level(146.50, "S 146.5: 61.8% retracement + Dec-2024 high", cSup, line.style_solid, 2)
+    if showWeak
+        f_zone(169.55, 171.03, "S 169.6-171.0 (soft)", cSup, 90, tStart)
+        f_zone(189.80, 192.00, "R 189.8-192.0 (weak: pivots only)", cRes, 90, tStart)
+        f_level(148.97, "149.0 single pivot", cSup, line.style_dotted, 1)
+        f_level(143.44, "143.4 single pivot", cSup, line.style_dotted, 1)
+        f_level(140.76, "140.8 single pivot", cSup, line.style_dotted, 1)
+    if showGaps
+        f_zone(179.92, 185.22, "unfilled gap 9.11: 179.9-185.2", cGap, 82, timestamp(TZ, 2026, 11, 6, 9, 30))
+        f_zone(196.25, 199.68, "unfilled gap 5.11: 196.3-199.7", cGap, 82, timestamp(TZ, 2026, 11, 4, 9, 30))
+        f_zone(209.98, 212.08, "unfilled gap 30.10: 210.0-212.1", cGap, 82, timestamp(TZ, 2026, 10, 29, 9, 30))
+        f_zone(160.22, 161.16, "small unfilled gap 9.7.2025: 160.2-161.2", cGap, 82, timestamp(TZ, 2026, 8, 3, 9, 30))
+        f_zone(147.96, 149.26, "small unfilled gap 25.6.2025: 148.0-149.3", cGap, 82, timestamp(TZ, 2026, 8, 3, 9, 30))
+        f_zone(144.78, 145.50, "small unfilled gap 24.6.2025: 144.8-145.5", cGap, 82, timestamp(TZ, 2026, 8, 3, 9, 30))
+    if showFund
+        f_level(168.00, "ENTRY 168: buy test passes if the succession is orderly", cEntry, line.style_solid, 2)
+        f_level(157.00, "ENTRY 157: passes even with a messy succession", cEntry, line.style_solid, 2)
+        f_level(144.00, "ENTRY 144: passes in all four scenarios", cEntry, line.style_solid, 2)
+        f_level(222.00, "VALUE 222: base value if Huang stays (30%)", cValue, line.style_dashed, 1)
+        f_level(185.00, "VALUE 185: probability-weighted base value", cValue, line.style_dashed, 1)
+        f_level(182.00, "VALUE 182: orderly internal succession (35%)", cValue, line.style_dashed, 1)
+        f_level(163.00, "VALUE 163: messy succession (20%)", cValue, line.style_dashed, 1)
+        f_level(150.00, "VALUE 150: export / diversion finding (15%)", cValue, line.style_dashed, 1)
+    if showFib
+        f_level(206.38, "Fib 2025 low 23.6%: 206.38", cFib, line.style_dotted, 1)
+        f_level(183.49, "Fib 2025 low 38.2%: 183.49", cFib, line.style_dotted, 1)
+        f_level(165.00, "Fib 2025 low 50%: 165.00", cFib, line.style_dotted, 1)
+        f_level(146.50, "Fib 2025 low 61.8%: 146.50", cFib, line.style_dotted, 1)
+        f_level(120.16, "Fib 2025 low 78.6%: 120.16", cFib, line.style_dotted, 1)
+        f_level(188.49, "Fib 2022 low 23.6%: 188.49", cGap, line.style_dotted, 1)
+        f_level(154.53, "Fib 2022 low 38.2%: 154.53", cGap, line.style_dotted, 1)
+        f_level(127.09, "Fib 2022 low 50%: 127.09", cGap, line.style_dotted, 1)
+    if showEvents
+        f_vline(timestamp(TZ, 2026, 10, 6, 9, 30), 252.0, "52-week high 243.37", cGap)
+        f_vline(timestamp(TZ, 2026, 11, 5, 9, 30), 232.0, "5.11: market-wide AI selloff, before the CEO news (NVDA -9.3%, SMH -11.2%)", cGap)
+        f_vline(timestamp(TZ, 2026, 11, 9, 9, 30), 224.0, "9.11: first session after the board announced the investigation (463M shares)", cRes)
+        f_vline(timestamp(TZ, 2026, 11, 17, 16, 20), 246.0, "17.11: Q3 FY2027 results after the close", cEvt)
+        f_vline(timestamp(TZ, 2026, 11, 18, 9, 30), 238.0, "18.11: first reaction session; closed House briefing", cEvt)
+
+var table tb = table.new(position.top_right, 1, 5, bgcolor=color.new(color.white, 10), border_width=1, border_color=color.new(color.gray, 60))
+if barstate.islast and showNotes
+    table.cell(tb, 0, 0, "NVDA 12.11.2026: HOLD. Add only after 17-18.11 on conditions", text_color=color.black, text_size=size.small, text_halign=text.align_left)
+    table.cell(tb, 0, 1, "Conditions: Q4 guide >= $122B, GM guide >= 72%, Huang stays or internal successor, no DOJ/BIS action", text_color=color.black, text_size=size.small, text_halign=text.align_left)
+    table.cell(tb, 0, 2, "Floor 164.1-165.9 broken pre-market; next support 152.9-154.5, then 146.5, 136-137", text_color=color.black, text_size=size.small, text_halign=text.align_left)
+    table.cell(tb, 0, 3, "Overhead supply 175.5-188.5 (9.11 gap, volume peaks); 200-day 204.5; 50-day 217.1", text_color=color.black, text_size=size.small, text_halign=text.align_left)
+    table.cell(tb, 0, 4, "Entry prices 168 / 157 / 144. Values 222 / 182 / 163 / 150 (weighted 185). Not a forecast", text_color=color.black, text_size=size.small, text_halign=text.align_left)
+
+d20  = request.security(syminfo.tickerid, "D", ta.sma(close, 20))
+d50  = request.security(syminfo.tickerid, "D", ta.sma(close, 50))
+d200 = request.security(syminfo.tickerid, "D", ta.sma(close, 200))
+plot(showMA ? d20  : na, "SMA 20 (daily)",  color=#7570b3, linewidth=1)
+plot(showMA ? d50  : na, "SMA 50 (daily)",  color=#e6ab02, linewidth=2)
+plot(showMA ? d200 : na, "SMA 200 (daily)", color=#1f78b4, linewidth=2)
+
+av_high = f_avwap(timestamp(TZ, 2026, 10, 6, 9, 30))
+plot(showAVWAP ? av_high : na, "AVWAP from the 6.10.2026 high (about 200.37 on 11.11)", color=color.new(#e08214, 0), linewidth=1, style=plot.style_linebr)
+av_1105 = f_avwap(timestamp(TZ, 2026, 11, 5, 9, 30))
+plot(showAVWAP ? av_1105 : na, "AVWAP from the 5.11.2026 breakdown (about 177.41 on 11.11)", color=color.new(#e08214, 0), linewidth=1, style=plot.style_linebr)
+av_lowx = f_avwap(timestamp(TZ, 2026, 3, 30, 9, 30))
+plot(showAVWAP ? av_lowx : na, "AVWAP from the 30.3.2026 low (about 207.88 on 11.11)", color=color.new(#e08214, 0), linewidth=1, style=plot.style_linebr)
