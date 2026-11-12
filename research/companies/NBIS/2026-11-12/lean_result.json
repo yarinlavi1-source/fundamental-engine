@@ -11,31 +11,31 @@
     "2032": 8194
    },
    "op_margin": {
-    "2027": -0.1721,
-    "2028": -0.1391,
-    "2029": -0.1372,
-    "2030": -0.1344,
+    "2027": -0.1871,
+    "2028": -0.1521,
+    "2029": -0.1472,
+    "2030": -0.1444,
     "2031": 0.05,
     "2032": 0.05
    },
    "eps_operating": {
-    "2027": -3.74,
-    "2028": -3.59,
-    "2029": -3.47,
-    "2030": -3.14,
+    "2027": -4.07,
+    "2028": -3.93,
+    "2029": -3.72,
+    "2030": -3.38,
     "2031": 1.05,
     "2032": 0.94
    },
    "eps_with_interest": {
-    "2027": -5.4,
-    "2028": -7.64,
-    "2029": -8.0,
-    "2030": -7.88,
-    "2031": -3.78,
-    "2032": -3.93
+    "2027": -6.0,
+    "2028": -8.69,
+    "2029": -9.11,
+    "2030": -9.07,
+    "2031": -4.81,
+    "2032": -5.05
    },
-   "dcf_today": -64.67,
-   "multiple_today": -66.67,
+   "dcf_today": -65.59,
+   "multiple_today": -67.56,
    "value_today": 0.01,
    "year_end_values": {
     "2027": 0.01,
@@ -44,54 +44,54 @@
     "2030": 0.01,
     "2031": 0.01
    },
-   "annual_return_pct": -84.2,
+   "annual_return_pct": -84.1,
    "ke0_pct": 14.89
   },
   "base": {
    "revenue_m": {
     "2026": 3000,
-    "2027": 12250,
-    "2028": 22000,
-    "2029": 27656,
-    "2030": 32056,
-    "2031": 35197,
-    "2032": 37710
+    "2027": 12000,
+    "2028": 21551,
+    "2029": 27094,
+    "2030": 31404,
+    "2031": 34482,
+    "2032": 36944
    },
    "op_margin": {
-    "2027": 0.0309,
-    "2028": 0.1002,
-    "2029": 0.1407,
-    "2030": 0.1618,
-    "2031": 0.1639,
-    "2032": 0.1719
+    "2027": 0.0159,
+    "2028": 0.0872,
+    "2029": 0.1307,
+    "2030": 0.1518,
+    "2031": 0.159,
+    "2032": 0.167
    },
    "eps_operating": {
-    "2027": 1.0,
-    "2028": 5.8,
-    "2029": 10.24,
-    "2030": 13.65,
-    "2031": 15.19,
-    "2032": 17.06
+    "2027": 0.5,
+    "2028": 4.95,
+    "2029": 9.32,
+    "2030": 12.55,
+    "2031": 14.43,
+    "2032": 16.24
    },
    "eps_with_interest": {
-    "2027": -0.91,
-    "2028": 0.27,
-    "2029": 4.67,
-    "2030": 8.97,
-    "2031": 12.05,
-    "2032": 15.27
+    "2027": -1.72,
+    "2028": -1.57,
+    "2029": 2.61,
+    "2030": 6.72,
+    "2031": 10.22,
+    "2032": 13.63
    },
-   "dcf_today": 53.77,
-   "multiple_today": 97.23,
-   "value_today": 75.5,
+   "dcf_today": 46.31,
+   "multiple_today": 87.51,
+   "value_today": 66.91,
    "year_end_values": {
-    "2027": 92.03,
-    "2028": 115.46,
-    "2029": 141.33,
-    "2030": 168.22,
-    "2031": 195.17
+    "2027": 81.66,
+    "2028": 102.76,
+    "2029": 126.21,
+    "2030": 150.74,
+    "2031": 175.54
    },
-   "annual_return_pct": 8.2,
+   "annual_return_pct": 7.0,
    "ke0_pct": 14.89
   },
   "bull": {
@@ -105,100 +105,100 @@
     "2032": 52817
    },
    "op_margin": {
-    "2027": 0.0687,
-    "2028": 0.1532,
-    "2029": 0.2094,
-    "2030": 0.2402,
-    "2031": 0.2417,
-    "2032": 0.2475
+    "2027": 0.0537,
+    "2028": 0.1402,
+    "2029": 0.1994,
+    "2030": 0.2302,
+    "2031": 0.2367,
+    "2032": 0.2425
    },
    "eps_operating": {
-    "2027": 2.0,
-    "2028": 9.58,
-    "2029": 16.97,
-    "2030": 23.22,
-    "2031": 26.11,
-    "2032": 29.2
+    "2027": 1.56,
+    "2028": 8.77,
+    "2029": 16.16,
+    "2030": 22.25,
+    "2031": 25.57,
+    "2032": 28.61
    },
    "eps_with_interest": {
-    "2027": 0.38,
-    "2028": 6.88,
-    "2029": 14.72,
-    "2030": 21.98,
-    "2031": 26.24,
-    "2032": 30.45
+    "2027": -0.33,
+    "2028": 5.58,
+    "2029": 13.42,
+    "2030": 20.6,
+    "2031": 25.54,
+    "2032": 29.7
    },
-   "dcf_today": 181.31,
-   "multiple_today": 308.75,
-   "value_today": 245.03,
+   "dcf_today": 175.48,
+   "multiple_today": 300.39,
+   "value_today": 237.94,
    "year_end_values": {
-    "2027": 289.93,
-    "2028": 336.75,
-    "2029": 387.8,
-    "2030": 442.39,
-    "2031": 499.91
+    "2027": 281.35,
+    "2028": 326.55,
+    "2029": 375.95,
+    "2030": 428.98,
+    "2031": 485.21
    },
-   "annual_return_pct": 30.0,
+   "annual_return_pct": 30.4,
    "ke0_pct": 14.89
   }
  },
- "weighted_value_today": 86.76,
- "weighted_end_value": 197.57,
- "weighted_return_pct": 8.5,
+ "weighted_value_today": 81.05,
+ "weighted_end_value": 184.81,
+ "weighted_return_pct": 8.0,
  "index_return_pct": 9.1,
- "buy_price": 109.13,
- "index_parity_price": 124.61,
+ "buy_price": 98.15,
+ "index_parity_price": 112.08,
  "market_implied_growth_pct": [
-  308.3,
-  108.3,
-  35.0,
-  21.6,
-  13.3,
-  9.7
+  300.0,
+  111.0,
+  35.9,
+  22.2,
+  13.7,
+  10.0
  ],
- "market_implied_end_revenue_m": 47482,
+ "market_implied_end_revenue_m": 47761,
  "sensitivity_base": {
-  "beta 2.07": 83.09,
-  "beta 2.67": 68.37,
+  "beta 2.07": 74.12,
+  "beta 2.67": 60.13,
   "exit P/E 11": [
-   53.75,
-   3.1
+   46.2,
+   1.6
   ],
   "exit P/E 21": [
-   97.25,
-   12.5
+   87.61,
+   11.4
   ]
  },
  "two_lens": {
   "ours": {
-   "value_today": 75.5,
-   "annual_return_pct": 8.2,
+   "value_today": 66.91,
+   "annual_return_pct": 7.0,
    "band": "hold",
    "pe_exit": 16
   },
   "calibrated": {
-   "pe_today": 130.2,
+   "pe_today": 248.5,
    "pe_used": 22,
    "pe_overridden": true,
    "margin_used": [
-    0.0309,
-    0.1002,
-    0.1407,
-    0.1618,
-    0.1639,
-    0.1719
+    0.0159,
+    0.0872,
+    0.1307,
+    0.1518,
+    0.159,
+    0.167
    ],
    "margin_overridden": false,
-   "why": "same rule as the 11.11 baseline: today's forward P/E is not meaningful (our FY2027 operating EPS ~$1.00 gives ~131x; FY2027 consensus EPS -6.16, pre-report) and NBIS has no own P/E history (losses since the 2024 relisting); 22 = a market-average multiple held for a business still growing ~7% in 2032 (judgement, not an observed NBIS multiple). Holding today's EV/NTM sales (~4.4x) would equal ~30x P/E at the 2032 base margin: not credible for a 13%-ROIC, capital-heavy business.",
-   "value_today": 101.6,
+   "why": "same rule as the 11.11 baseline: today's forward P/E is not meaningful (our FY2027 operating EPS ~$0.50 gives ~247x; FY2027 consensus EPS -6.16, pre-report) and NBIS has no own P/E history (losses since the 2024 relisting); 22 = a market-average multiple held for a business still growing ~7% in 2032 (judgement, not an observed NBIS multiple). Holding today's EV/NTM sales (~4.3x) would equal ~31x P/E at the 2032 base margin: not credible for a 13%-ROIC, capital-heavy business.",
+   "value_today": 91.75,
    "year_end_values": {
-    "2027": 122.59,
-    "2028": 150.43,
-    "2029": 181.19,
-    "2030": 213.49,
-    "2031": 246.36
+    "2027": 110.74,
+    "2028": 136.04,
+    "2029": 164.15,
+    "2030": 193.82,
+    "2031": 224.26
    },
-   "annual_return_pct": 13.2,
+   "annual_return_pct": 12.2,
    "band": "buy"
   },
   "agree": false,
