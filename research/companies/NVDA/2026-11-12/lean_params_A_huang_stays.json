@@ -1,0 +1,130 @@
+{
+ "ticker": "NVDA",
+ "as_of": "2026-11-12",
+ "price": 161.5,
+ "rf": 0.0494,
+ "erp": 0.042,
+ "beta": 1.84,
+ "beta_mature": 1.2,
+ "shares_m": 24700.0,
+ "net_cash_m": 45000.0,
+ "rev0_m": 410000.0,
+ "base_year": 2027,
+ "tax": 0.165,
+ "cash_yield": 0.036,
+ "debt_rate": 0.045,
+ "roic_terminal": 0.35,
+ "days_to_base_year_end": 78,
+ "years_to_horizon": 5.2,
+ "buy_return": 0.13,
+ "probabilities": {
+  "bear": 0.25,
+  "base": 0.5,
+  "bull": 0.25
+ },
+ "notes": {
+  "base_year": "FY27 ends 24.1.2027: H1 actual 177.8B + Q3 guide 108.0B + Q4 consensus 124.5B = ~410B (consensus 411.7B); GAAP op margin FY27 ~65% (Q1 65.6%, Q2 66.2%, Q3 guide ~65.5%, Q4 ~64% at the 71-72% GM one source cites)",
+  "net_cash": "26.7.2026: cash+marketable debt 56.6B - debt 33.4B = 23.2B spendable; marketable equity 42.8B counted at 85% (tax) = 36.4B; H2 FCF (~70B) assumed to fund buybacks (~40B), dividends (~12B) and the 18B equity-investment commitment -> ~60B at FY27 end. NOT counted: non-marketable securities 51.2B + 25B committed (OpenAI, Anthropic, xAI, Intel; ~3/share) and the 108.5B lease guarantees (contingent)",
+  "shares": "24,285M diluted Q2 FY27, falling ~1.3%/yr on buybacks; 24,200 at FY27 end; held flat after (buyback cash stays in the model as cash)",
+  "scenarios": "g/m/conv index 0 = FY28 (ends Jan 2028). Base FY28 +62% (consensus +68%, CFO preliminary ~+70% supply-constrained; haircut for memory supply and China excluded), then digestion to single digits by FY31; margin fades 62%->53% (Q4 GM guided to 71-72% from 75%, memory costs, TPU/MI450/ASIC competition). Bear = 2027-28 capex digestion after FY28 +35%: revenue -15% FY29, margin to low-40s, charges: FY29 inventory/commitment write-down 20B (279B supply commitments, mostly memory) + 15B investment impairments; FY30 15B lease/guarantee cost (108.5B exposure, OpenAI leases). Bull = Rubin + sovereign + hyperscaler 2027 capex >1T: FY28 +75%, FY29 +35%, margin held 63-65%",
+  "charges_base": "haircut of 8B/8B/5B after tax on the ~25B/yr strategic investments (treated as 1/3 lost)",
+  "refresh_2026-11-07": "price only (IBKR last 188.70, 6.11.2026 close); all other inputs = 4.11 reviewed baseline"
+ },
+ "scenarios": {
+  "bear": {
+   "g": [
+    0.35,
+    -0.2,
+    -0.08,
+    0.05,
+    0.05,
+    0.04
+   ],
+   "m": [
+    0.58,
+    0.44,
+    0.4,
+    0.42,
+    0.42,
+    0.42
+   ],
+   "conv": [
+    0.75,
+    0.85,
+    0.95,
+    0.95,
+    0.95,
+    0.95
+   ],
+   "pe": 14,
+   "charge": {
+    "0": 18000,
+    "1": 40000,
+    "2": 25000,
+    "3": 10000,
+    "4": 10000
+   }
+  },
+  "base": {
+   "g": [
+    0.66,
+    0.2,
+    0.08,
+    0.05,
+    0.04,
+    0.04
+   ],
+   "m": [
+    0.63,
+    0.61,
+    0.59,
+    0.57,
+    0.55,
+    0.53
+   ],
+   "conv": [
+    0.8,
+    0.85,
+    0.92,
+    0.95,
+    0.97,
+    0.97
+   ],
+   "pe": 18,
+   "charge": {
+    "0": 8000,
+    "1": 8000,
+    "2": 5000
+   }
+  },
+  "bull": {
+   "g": [
+    0.75,
+    0.35,
+    0.15,
+    0.08,
+    0.06,
+    0.05
+   ],
+   "m": [
+    0.65,
+    0.65,
+    0.64,
+    0.63,
+    0.62,
+    0.6
+   ],
+   "conv": [
+    0.78,
+    0.85,
+    0.9,
+    0.95,
+    0.97,
+    0.97
+   ],
+   "pe": 24
+  }
+ },
+ "probabilities_note": "subjective judgement (Claude), not engine odds",
+ "review_changes": "exit P/E 22->18 (justified ~17x at ke 10%, g 4.9%, ROIC 35%); base FY28 +62%->+66% (consensus +68%, AV); FY28 margin 63%; shares 24,700; cash 45B; bear harsher: FY29 -20%, FY30 -8%, conv 0.85-0.95, charges FY28 18B (strategic equity halves) / FY29 40B / FY30 25B / FY31 10B / FY32 10B (guarantee phases FY29-32), P/E 14; bull P/E 24"
+}

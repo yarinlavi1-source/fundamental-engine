@@ -1,0 +1,128 @@
+{
+ "ticker": "NVDA",
+ "as_of": "2026-11-12",
+ "price": 161.5,
+ "rf": 0.0494,
+ "erp": 0.042,
+ "beta": 1.84,
+ "beta_mature": 1.2,
+ "shares_m": 24700.0,
+ "net_cash_m": 45000.0,
+ "rev0_m": 410000.0,
+ "base_year": 2027,
+ "tax": 0.165,
+ "cash_yield": 0.036,
+ "debt_rate": 0.045,
+ "roic_terminal": 0.35,
+ "days_to_base_year_end": 78,
+ "years_to_horizon": 5.2,
+ "buy_return": 0.13,
+ "probabilities": {
+  "bear": 0.25,
+  "base": 0.5,
+  "bull": 0.25
+ },
+ "notes": {
+  "variant": "World C (12.11.2026, judgement stress): a finding on chip diversion to China or new export rules hurt the business. Exit P/E -5 (base 13, bull 19, bear 11); base FY28 +55%, FY29 +12%; margins -3pt (bear -2pt); +10B one-off charge in FY28 (fines, H200 write-down ~5B per Baird, compliance). Not evidence-based guidance."
+ },
+ "scenarios": {
+  "bear": {
+   "g": [
+    0.35,
+    -0.2,
+    -0.08,
+    0.05,
+    0.05,
+    0.04
+   ],
+   "m": [
+    0.5599999999999999,
+    0.42,
+    0.38,
+    0.39999999999999997,
+    0.39999999999999997,
+    0.39999999999999997
+   ],
+   "conv": [
+    0.75,
+    0.85,
+    0.95,
+    0.95,
+    0.95,
+    0.95
+   ],
+   "pe": 10,
+   "charge": {
+    "0": 28000,
+    "1": 40000,
+    "2": 25000,
+    "3": 10000,
+    "4": 10000
+   }
+  },
+  "base": {
+   "g": [
+    0.55,
+    0.12,
+    0.05,
+    0.04,
+    0.04,
+    0.04
+   ],
+   "m": [
+    0.6,
+    0.58,
+    0.5599999999999999,
+    0.5399999999999999,
+    0.52,
+    0.5
+   ],
+   "conv": [
+    0.8,
+    0.85,
+    0.92,
+    0.95,
+    0.97,
+    0.97
+   ],
+   "pe": 11,
+   "charge": {
+    "0": 18000,
+    "1": 8000,
+    "2": 5000
+   }
+  },
+  "bull": {
+   "g": [
+    0.65,
+    0.25,
+    0.1,
+    0.06,
+    0.05,
+    0.05
+   ],
+   "m": [
+    0.62,
+    0.62,
+    0.61,
+    0.6,
+    0.59,
+    0.57
+   ],
+   "conv": [
+    0.78,
+    0.85,
+    0.9,
+    0.95,
+    0.97,
+    0.97
+   ],
+   "pe": 16,
+   "charge": {
+    "0": 10000
+   }
+  }
+ },
+ "probabilities_note": "subjective judgement (Claude), not engine odds",
+ "review_changes": "exit P/E 22->18 (justified ~17x at ke 10%, g 4.9%, ROIC 35%); base FY28 +62%->+66% (consensus +68%, AV); FY28 margin 63%; shares 24,700; cash 45B; bear harsher: FY29 -20%, FY30 -8%, conv 0.85-0.95, charges FY28 18B (strategic equity halves) / FY29 40B / FY30 25B / FY31 10B / FY32 10B (guarantee phases FY29-32), P/E 14; bull P/E 24"
+}
