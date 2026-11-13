@@ -1,20 +1,102 @@
 {
- "schema": "technical-drawings/1",
+ "schema": "technical-drawings/2",
+ "spec": "research/technical/PACKAGE_SPEC_v2_he.md (13.11.2026)",
  "ticker": "NU",
  "tradingview_symbol": "NYSE:NU",
  "as_of": "2026-11-13",
  "timeframe": "1D",
  "object_prefix": "NU-1113-",
  "price_basis": "split-adjusted, NOT dividend-adjusted (NU pays no dividend, so both bases agree). Regular session bars.",
- "time_convention": "Every date is an exchange trading date (America/New_York) and names the 1D bar of that session, never an intraday moment. Put the point on the bar whose date on the TradingView time axis equals this date; if the tool needs a timestamp, read it from that bar, do not build it from local midnight. After drawing, read each object back and confirm its bar date. 2026-11-13, 2026-11-16, 2026-12-21 and 2027-03-31 are trading days at or after the last bar in the data (12.11.2026); on 13.11 the bar may still be forming.",
+ "time_convention": "Every date is an exchange trading date (America/New_York) and names the 1D bar of that session, never an intraday moment. Put the point on the bar whose date on the TradingView time axis equals this date; if the tool needs a timestamp, read it from that bar, do not build it from local midnight. After drawing, read each object back and confirm its bar date. 2026-11-13, 2027-02-22 and 2027-03-31 are trading days at or after the last bar in the data (12.11.2026); on 13.11 the bar may still be forming.",
  "reference_prices": {
   "last_close_2026-11-12": 11.83,
   "pre_market_2026-11-13_05:50_UTC": 12.08,
-  "pre_market_2026-11-13_06:36_UTC_ibkr_last": 12.12,
-  "high_52w_2026-01-29": 18.98,
-  "low_52w_2026-06-03": 11.2,
-  "low_2026-11-05_retest": 11.21,
+  "ibkr_last_2026-11-13_09:28_UTC_pre_market": 12.24,
+  "high_52w": {
+   "date": "2026-01-29",
+   "price": 18.98,
+   "pct_above_reference": 57.1
+  },
+  "low_52w": {
+   "date": "2026-06-03",
+   "price": 11.2
+  },
   "post_gap_range_top_2026-10-27_high": 13.0
+ },
+ "atr14": {
+  "value": 0.604,
+  "method": "Wilder, daily, at the 2026-11-12 close",
+  "pct_of_reference": 5.0
+ },
+ "display_rule": "primary (8): the three decision lines (trigger 13.00, invalidation, buy test 13.64), the nearest open gap above (GAP-1026, 13.00-14.57, also the first overhead zone), ONE S/R zone above inside that gap (the one with the most touches, nearest on a tie; zones that contain a decision line are carried by the line), the floor zone below (S-1120), the next report and the note. context (6): the zone around the trigger, the next two zones above, the next support below, and the post-gap anchored VWAP. hidden: everything else (drawn and hidden). Anchored VWAPs (evidence grade D) get no primary slot: the 8 slots go to decision lines, zones, the gap, the report and the note (grades A-C); spec 3.7 caps primary AVWAPs at one.",
+ "touch_rule": "Over the 252 sessions ending 2026-11-12 (daily bars, CSV): a visit = a run of consecutive bars whose high-low range overlaps the zone; visits separated by fewer than 5 sessions outside the zone are one visit. A visit is a TOUCH when the close before it and the close after it are on the same side of the zone (entered and exited without crossing) and no close inside the visit is beyond the far edge. A visit that exits on the other side is a CROSS. A visit still open at the last bar is not counted.",
+ "gap_type_rule": "Gap on day d (down gap: high[d] < low[d-1]; up gap: low[d] > high[d-1]). EXHAUSTION: the 20 sessions before d moved at least 3 ATR in the gap direction AND the gap was fully filled within 10 sessions. BREAKAWAY (if not exhaustion): the close of d is beyond the prior 20-session low (down) / high (up) AND volume[d] >= 1.5 x its 50-session average. AREA: every other gap. news = d is a report reaction session (Alpha Vantage report dates, all after the close) OR EWZ gapped the same way on d by at least 1 EWZ ATR (a Brazil-wide event). For a breakaway gap the near edge is an invalidation boundary, not a fill target.",
+ "zone_width_rule": "width_atr = (price_high - price_low) / ATR14. Zones wider than 1 ATR would be split or dropped (none is). Zones narrower than 0.5 ATR are kept and flagged in width_note: a thin band where several kinds of evidence meet, not a 0.5-1 ATR zone.",
+ "round_number_rule": "round_number = a whole-dollar price lies inside the zone or within 2 cents of it.",
+ "near_52w_high_rule": "near_52w_high = the zone top is within 5% of the 52-week high.",
+ "events": {
+  "next_earnings": {
+   "date": "2027-02-22",
+   "confirmed": false,
+   "fiscal_period": "Q4 2026",
+   "time": "after the close (every NU report since IPO); reaction on the next session",
+   "date_rule": "median day-of-month of the past Q4 report dates ['2022-02-22', '2023-02-14', '2024-02-22', '2025-02-20', '2026-02-25'] = 22 February, rolled to a weekday; window 02-14 to 02-25",
+   "implied_move_pct": 7.3,
+   "implied_move_basis": "HISTORICAL, not option-implied: mean absolute report reaction-day move (close of the report day to the next close), n=19 reports 2022-02 to 2026-08; median 5.7%. Options could not isolate the report move (see options_ibkr_v2.json).",
+   "options_context": "19.3.2027 strike-12 straddle about 22.7% to expiry (12.11 closing quotes; includes the report, not a one-day move)"
+  },
+  "last_earnings": {
+   "date": "2026-11-12",
+   "time": "after the close",
+   "reaction_session": "2026-11-13",
+   "options_priced_report_day_pct": 7.2,
+   "options_basis": "12.11 closing marks, strike 12 straddle to 13.11 (v1 options_ibkr.json)"
+  },
+  "other_events_rule": "only report days and gap days above 2 ATR (spec 3.4); the two hidden lines V-high / V-low mark the 52-week high and low dates (spec section 2, grade A: price and date), not behaviour-change events"
+ },
+ "relative_strength": {
+  "vs": "SPY",
+  "sector_etf": "EWZ",
+  "sector_etf_reason": "NU is a Brazilian digital bank (Brazil carries most of its customers and revenue; Mexico and Colombia are small): its sector is Brazilian financials, and EWZ (iShares MSCI Brazil, heavy in Brazilian banks) is the ETF in the data that carries that exposure. XLF is US financials, a different economy and rate cycle; it is shown for reference only. The 26.10.2026 gap was Brazil-wide (EWZ moved with NU).",
+  "definition": "12-1 momentum = adjusted close 21 sessions ago / adjusted close 252 sessions ago - 1 (skips the last month). rs_12_1_pct = NU minus the other, in percentage points. RS line = NU / other (adjusted closes); rs_trend: 'down' when the line fell over 63 sessions AND sits below its 50-session average, 'up' when both are the opposite, else 'flat'.",
+  "mom_12_1_pct": {
+   "NU": -8.9,
+   "SPY": 13.9,
+   "EWZ": 32.9,
+   "XLF": 4.1
+  },
+  "rs_12_1_pct": -22.8,
+  "rs_12_1_vs_sector_pct": -41.8,
+  "rs_12_1_vs_xlf_pct": -13.0,
+  "rs_trend": "down",
+  "rs_line_63d_change_pct": -20.5,
+  "rs_line_vs_50d_avg_pct": -13.4,
+  "rs_trend_vs_sector": "flat",
+  "rs_sector_line_63d_change_pct": -17.1,
+  "rs_sector_line_vs_50d_avg_pct": 1.6,
+  "stock_vs_sector": "lagging",
+  "as_of_bar": "2026-11-12"
+ },
+ "regime": {
+  "spx_proxy": "SPY (adjusted closes)",
+  "spx_vs_10m_ma": "above",
+  "spy_last": 757.12,
+  "spy_10m_ma_complete_months": 725.56,
+  "spy_vs_10m_ma_pct": 4.3,
+  "spx_3y_return_sign": "+",
+  "spy_3y_return_pct": 79.7,
+  "vix": "normal",
+  "vix_close": 18.7,
+  "vix_percentile_252d": 71.0,
+  "label": "risk-on",
+  "rule": "risk-on = SPY above its 10-month average (10 complete month-ends, Jan-Oct 2026) AND SPY 3-year return > 0 AND VIX < 20; risk-off = SPY below the 10-month average AND VIX >= 25; otherwise mixed. VIX bands: < 15 low, 15-20 normal, 20-30 elevated, >= 30 high.",
+  "use": "one line in the note; changes confidence, not a drawing (spec section 2, grade B)"
+ },
+ "fundamental_vs_technical": {
+  "agree_or_conflict": "CONFLICT",
+  "fundamental": "cheap by the buy test: 12.08 < 13.64 (base return >= 12%/yr), about 10% below base value 13.38; the add is blocked by credit (NPL 90+ 7.3% vs <= 7.2%), not by price.",
+  "technical": "RS 12-1 vs SPY -22.8 pts and the RS line trend is down; lagging EWZ by -41.8 pts; close 11.83 below SMA200 14.20, whose 20-session change is -0.45 (falling).",
+  "reading": "Spec 3.10: cheap but RS falling and under a falling 200-day average = a possible value trap. Value + momentum together beat either alone (Asness 2013); here only value is present, so the technical side says wait for the trigger rather than add early. Consistent with the research verdict (hold, do not add)."
  },
  "data_alignment_checks": [
   {
@@ -53,14 +135,14 @@
    "value": 3.26
   }
  ],
- "data_alignment_source": "runs/tickers/NU_2026-11-13/ta/data/NU_daily.csv (Yahoo consolidated daily bars), read by build_package.py",
+ "data_alignment_source": "runs/tickers/NU_2026-11-13/ta/data/NU_daily.csv (Yahoo consolidated daily bars), read by build_package_v2.py",
  "tolerance": {
   "data_alignment_close_pct": 0.1,
   "data_alignment_high_low_pct": 0.25,
   "fib_levels_abs_usd": 0.03,
   "moving_averages_pct": 0.5,
   "anchored_vwap_pct": 1.5,
-  "rsi_points": 1.0
+  "volume_ma_pct": 15
  },
  "tolerance_note": "The numbers here come from consolidated daily bars; TradingView can show one exchange, so highs and lows can differ by a cent. At NU's price a cent is about 0.1%: a 0.25% high/low tolerance is about 3 cents. A Fibonacci anchor that differs by a cent moves its levels by about a cent: that is fine.",
  "label_rules": {
@@ -69,8 +151,10 @@
   "visible_text": "label_he / text_he only (use label_en / text_en only if Hebrew renders broken, and then for all objects)",
   "rectangles": "text inside the box, vertically centred, small; kind support/resistance/pivot right-aligned; kind gap left-aligned; kind range: text at the top-left corner, outside the zones",
   "horizontal_lines": "text on the line, small; L-* at the left end; F-* at the right end",
-  "fib_retracements": "FIB-decline level labels on the left, FIB-advance on the right; show level and price",
-  "vertical_lines": "text horizontal at the top of the line"
+  "fib_retracements": "hidden only (not drawn on screen)",
+  "vertical_lines": "text horizontal at the top of the line",
+  "length": "label_he at most about 30 characters; the full explanation stays in evidence / note / rule",
+  "display": "primary = normal style; context = dimmed (about half opacity); hidden = drawn and hidden in the object tree"
  },
  "style_rules": {
   "opacity": "fill opacity on a 0-1 scale: 0.22 = 22% opaque = TradingView background transparency 78%",
@@ -80,15 +164,14 @@
    "dotted": 1,
    "dashed": 2
   },
+  "horizontal_lines_extent": "full-width TradingView horizontal lines, no start or end date",
+  "price_scale": "Prices are between 11 and 17. Several zones are only 2-20 cents tall: zoom the price axis so that 11-17 fills the chart, or the thin zones look like lines (that is correct).",
   "line_width": {
    "L-jump-1300": 2,
-   "L-break-1120": 2,
+   "X-1093": 2,
    "F-buy-1364": 2,
-   "F-entry-1303": 2,
    "all other lines": 1
-  },
-  "horizontal_lines_extent": "full-width TradingView horizontal lines, no start or end date",
-  "price_scale": "Prices are between 11 and 17. Several zones are only 2-20 cents tall: zoom the price axis so that 11-17 fills the chart, or the thin zones look like lines (that is correct)."
+  }
  },
  "default_time_span": {
   "from": "2026-05-15",
@@ -97,192 +180,419 @@
  "watcher": {
   "rectangles": [
    {
-    "id": "S-1150",
-    "kind": "support",
-    "strength": "soft",
-    "price_low": 11.5,
-    "price_high": 11.64,
-    "time_from": "2026-05-15",
-    "time_to": "2027-03-31",
-    "color": "#1b9e77",
-    "opacity": 0.14,
-    "label_en": "S 11.50-11.64 (soft)",
-    "label_he": "תמיכה רכה 11.50-11.64",
-    "evidence": "2-year value-area low 11.50; lowest post-gap close 11.61 and the 10% zigzag low 11.62 (26.10) are the same lows; AVWAP from the 2022 low 11.64 (weak anchor). Passes the two-kinds rule (volume profile + price lows), soft."
-   },
-   {
     "id": "S-1120",
     "kind": "support",
-    "strength": "confirmed",
+    "display": "primary",
     "price_low": 11.0,
     "price_high": 11.21,
+    "touches": 2,
+    "crosses": 0,
+    "touch_dates": [
+     "2026-06-03",
+     "2026-11-05"
+    ],
+    "width_atr": 0.35,
+    "width_note": "narrower than 0.5 ATR: kept (spec allows), a thin band of confluence",
+    "round_number": true,
+    "round_level": 11.0,
+    "near_52w_high": false,
+    "pct_below_52w_high": 40.9,
     "time_from": "2026-05-15",
     "time_to": "2027-03-31",
     "color": "#1b9e77",
     "opacity": 0.22,
-    "label_en": "S 11.00-11.21: the floor (double low 3.6 and 5.11)",
-    "label_he": "הרצפה 11.00-11.21 (שפל כפול 3.6 ו-5.11)",
-    "evidence": "double low 11.20 (3.6.2026, the 52-week low) and 11.21 (5.11.2026); 50% retracement of 3.26-18.98 = 11.12; round 11. A daily close below 11.20 is the breakdown."
+    "label_he": "רצפה 11.00-11.21 (2 נגיעות)",
+    "label_en": "S 11.00-11.21 (2 touches)",
+    "evidence": "double low 11.20 (3.6.2026, the 52-week low) and 11.21 (5.11.2026); round 11. The base low: the invalidation line sits 0.45 ATR below it. (The 50% retracement 11.12 also falls here: Fibonacci gets no credit.)"
+   },
+   {
+    "id": "S-1150",
+    "kind": "support",
+    "display": "context",
+    "price_low": 11.5,
+    "price_high": 11.64,
+    "touches": 2,
+    "crosses": 0,
+    "touch_dates": [
+     "2026-06-02",
+     "2026-10-26"
+    ],
+    "width_atr": 0.23,
+    "width_note": "narrower than 0.5 ATR: kept (spec allows), a thin band of confluence",
+    "round_number": false,
+    "round_level": null,
+    "near_52w_high": false,
+    "pct_below_52w_high": 38.7,
+    "time_from": "2026-05-15",
+    "time_to": "2027-03-31",
+    "color": "#1b9e77",
+    "opacity": 0.12,
+    "label_he": "תמיכה 11.50-11.64 (2 נגיעות)",
+    "label_en": "S 11.50-11.64 (2 touches)",
+    "evidence": "2-year value-area low 11.50; lowest post-gap close 11.61 and the 10% zigzag low 11.62 (26.10). Two kinds: volume profile + price lows. Fundamental weighted value with a heavier bear (35/50/15) 11.50 is at the lower edge (folded here, not a separate line)."
    },
    {
     "id": "P-1190",
     "kind": "pivot",
-    "strength": "soft",
+    "display": "hidden",
     "price_low": 11.78,
     "price_high": 12.0,
+    "touches": 1,
+    "crosses": 0,
+    "touch_dates": [
+     "2026-05-15"
+    ],
+    "width_atr": 0.36,
+    "width_note": "narrower than 0.5 ATR: kept (spec allows), a thin band of confluence",
+    "round_number": true,
+    "round_level": 12.0,
+    "near_52w_high": false,
+    "pct_below_52w_high": 36.8,
     "time_from": "2026-05-15",
     "time_to": "2027-03-31",
     "color": "#7f7f7f",
-    "opacity": 0.14,
-    "label_en": "Pivot 11.78-12.00 (at the price)",
-    "label_he": "ציר 11.78-12.00 (במחיר עצמו)",
-    "evidence": "10% zigzag low 11.78 (15.5.2026); 1-year value-area low 12.00; AVWAP from the 5.11 low 12.00; round 12. Straddles the pre-market price: neither support nor resistance."
+    "opacity": 0.12,
+    "label_he": "ציר 11.78-12.00 (1 נגיעה)",
+    "label_en": "Pivot 11.78-12.00 (1 touch)",
+    "evidence": "10% zigzag low 11.78 (15.5.2026); 1-year value-area low 12.00; round 12. Straddles the reference price: neither support nor resistance."
    },
    {
     "id": "R-1300",
     "kind": "resistance",
-    "strength": "confirmed",
+    "display": "context",
     "price_low": 12.87,
     "price_high": 13.04,
+    "touches": 1,
+    "crosses": 3,
+    "touch_dates": [
+     "2026-10-27"
+    ],
+    "width_atr": 0.28,
+    "width_note": "narrower than 0.5 ATR: kept (spec allows), a thin band of confluence",
+    "round_number": true,
+    "round_level": 13.0,
+    "near_52w_high": false,
+    "pct_below_52w_high": 31.3,
     "time_from": "2026-05-15",
     "time_to": "2027-03-31",
     "color": "#d6604d",
-    "opacity": 0.22,
-    "label_en": "R 12.87-13.04: the jump line (range top 13.00)",
-    "label_he": "התנגדות 12.87-13.04: קו הקפיצה (תקרת הטווח 13.00)",
-    "evidence": "post-gap range top 13.00 (27.10 high) = lower edge of the open 26.10 gap; 38.2% retracement of 3.26-18.98 = 12.97; 23.6% of 18.98-11.20 = 13.04; SMA20 12.87 (moving: 12.74 if 13.11 closes at 12.08); round 13. The fundamental margin-of-safety entry 13.03 is inside. Range top, zigzag high and gap edge are one high (27.10)."
+    "opacity": 0.12,
+    "label_he": "התנגדות 12.87-13.04 (1 נגיעה)",
+    "label_en": "R 12.87-13.04 (1 touch)",
+    "evidence": "post-gap range top 13.00 (27.10 high) = lower edge of the open 26.10 gap; SMA20 12.87; round 13. The trigger line 13.00 is inside. Fundamental margin-of-safety entry 13.03 is inside (folded here, not a separate line). (Fibonacci 12.97 / 13.04: no credit.)"
    },
    {
     "id": "R-1340",
     "kind": "resistance",
-    "strength": "weak",
+    "display": "primary",
     "price_low": 13.3,
     "price_high": 13.53,
+    "touches": 6,
+    "crosses": 2,
+    "touch_dates": [
+     "2026-03-19",
+     "2026-03-30",
+     "2026-05-21",
+     "2026-06-17",
+     "2026-07-17",
+     "2026-08-11"
+    ],
+    "width_atr": 0.38,
+    "width_note": "narrower than 0.5 ATR: kept (spec allows), a thin band of confluence",
+    "round_number": false,
+    "round_level": null,
+    "near_52w_high": false,
+    "pct_below_52w_high": 28.7,
     "time_from": "2026-05-15",
     "time_to": "2027-03-31",
     "color": "#d6604d",
-    "opacity": 0.1,
-    "label_en": "R 13.30-13.53 (weak)",
-    "label_he": "התנגדות חלשה 13.30-13.53",
-    "evidence": "10% zigzag high 13.30 (21.5.2026); 10-month average 13.53 (includes the partial November; 14.12 on complete months). Fundamental base value today 13.38 is inside."
+    "opacity": 0.22,
+    "label_he": "התנגדות 13.30-13.53 (6 נגיעות)",
+    "label_en": "R 13.30-13.53 (6 touches)",
+    "evidence": "10% zigzag high 13.30 (21.5.2026); 10-month average 13.53 (partial November; 14.12 on complete months). Fundamental base value today 13.38 is inside (folded here, not a separate line)."
    },
    {
     "id": "R-1385",
     "kind": "resistance",
-    "strength": "confirmed",
+    "display": "context",
     "price_low": 13.75,
     "price_high": 14.0,
+    "touches": 0,
+    "crosses": 3,
+    "touch_dates": [],
+    "width_atr": 0.41,
+    "width_note": "narrower than 0.5 ATR: kept (spec allows), a thin band of confluence",
+    "round_number": true,
+    "round_level": 14.0,
+    "near_52w_high": false,
+    "pct_below_52w_high": 26.2,
     "time_from": "2026-05-15",
     "time_to": "2027-03-31",
     "color": "#d6604d",
-    "opacity": 0.22,
-    "label_en": "R 13.75-14.00: SMA50/100, AVWAPs",
-    "label_he": "התנגדות 13.75-14.00: ממוצעי 50 ו-100 יום",
-    "evidence": "AVWAP from the 3.6.2026 low 13.75; SMA50 13.81; AVWAP from the Q2 reaction (14.8.2026) 13.91; SMA100 13.95; 40-week average 14.00; round 14. Buy-test price 13.64 is just below."
+    "opacity": 0.12,
+    "label_he": "התנגדות 13.75-14.00 (0 נגיעות)",
+    "label_en": "R 13.75-14.00 (0 touches)",
+    "evidence": "SMA50 13.81; SMA100 13.95; AVWAP from the 3.6.2026 low 13.75; 40-week average 14.00; round 14. The buy-test line 13.64 is just below (0.18 ATR), not inside."
    },
    {
     "id": "R-1420",
     "kind": "resistance",
-    "strength": "confirmed",
+    "display": "context",
     "price_low": 14.07,
     "price_high": 14.28,
+    "touches": 1,
+    "crosses": 2,
+    "touch_dates": [
+     "2026-08-19"
+    ],
+    "width_atr": 0.35,
+    "width_note": "narrower than 0.5 ATR: kept (spec allows), a thin band of confluence",
+    "round_number": false,
+    "round_level": null,
+    "near_52w_high": false,
+    "pct_below_52w_high": 24.8,
     "time_from": "2026-05-15",
     "time_to": "2027-03-31",
     "color": "#d6604d",
-    "opacity": 0.22,
-    "label_en": "R 14.07-14.28: SMA200 14.20",
-    "label_he": "התנגדות 14.07-14.28: ממוצע 200 יום 14.20",
-    "evidence": "AVWAP from the 52-week high 14.07; 1-year volume node 14.12; 10% zigzag low 14.14 (20.8.2026); 38.2% retracement of 18.98-11.20 = 14.17; SMA200 14.20; AVWAP from the start of 2026 14.28."
+    "opacity": 0.12,
+    "label_he": "התנגדות 14.07-14.28 (1 נגיעה)",
+    "label_en": "R 14.07-14.28 (1 touch)",
+    "evidence": "SMA200 14.20; AVWAP from the 52-week high 14.07; 1-year volume node 14.12; 10% zigzag low 14.14 (20.8.2026); AVWAP from the start of 2026 14.28. (Fibonacci 14.17: no credit.)"
    },
    {
     "id": "R-1450",
     "kind": "resistance",
-    "strength": "confirmed",
+    "display": "hidden",
     "price_low": 14.38,
     "price_high": 14.57,
+    "touches": 1,
+    "crosses": 3,
+    "touch_dates": [
+     "2026-07-07"
+    ],
+    "width_atr": 0.31,
+    "width_note": "narrower than 0.5 ATR: kept (spec allows), a thin band of confluence",
+    "round_number": false,
+    "round_level": null,
+    "near_52w_high": false,
+    "pct_below_52w_high": 23.2,
     "time_from": "2026-05-15",
     "time_to": "2027-03-31",
     "color": "#d6604d",
-    "opacity": 0.22,
-    "label_en": "R 14.38-14.57: gap fill + 1y volume peak",
-    "label_he": "התנגדות 14.38-14.57: סגירת הפער ושיא המחזור השנתי",
-    "evidence": "1-year point of control 14.375; upper edge of the 26.10 gap 14.57 (23.10 low). A trade at 14.57 fills the gap."
-   },
-   {
-    "id": "R-1510",
-    "kind": "resistance",
-    "strength": "weak",
-    "price_low": 15.0,
-    "price_high": 15.27,
-    "time_from": "2026-05-15",
-    "time_to": "2027-03-31",
-    "color": "#d6604d",
-    "opacity": 0.1,
-    "label_en": "R 15.00-15.27 (weak)",
-    "label_he": "התנגדות חלשה 15.00-15.27",
-    "evidence": "round 15; 50% retracement of 18.98-11.20 = 15.09; 23.6% of 3.26-18.98 = 15.27. Fibonacci + round number only."
+    "opacity": 0.12,
+    "label_he": "התנגדות 14.38-14.57 (1 נגיעה)",
+    "label_en": "R 14.38-14.57 (1 touch)",
+    "evidence": "1-year point of control 14.375; upper edge of the 26.10 gap 14.57 (23.10 low)."
    },
    {
     "id": "R-1550",
     "kind": "resistance",
-    "strength": "soft",
+    "display": "hidden",
     "price_low": 15.44,
     "price_high": 15.57,
+    "touches": 2,
+    "crosses": 1,
+    "touch_dates": [
+     "2026-04-14",
+     "2026-08-14"
+    ],
+    "width_atr": 0.22,
+    "width_note": "narrower than 0.5 ATR: kept (spec allows), a thin band of confluence",
+    "round_number": false,
+    "round_level": null,
+    "near_52w_high": false,
+    "pct_below_52w_high": 18.0,
     "time_from": "2026-05-15",
     "time_to": "2027-03-31",
     "color": "#d6604d",
-    "opacity": 0.14,
-    "label_en": "R 15.44-15.57 (soft)",
-    "label_he": "התנגדות רכה 15.44-15.57",
-    "evidence": "open 14.10 gap 15.44-15.57; 2-year value-area high 15.50. Fundamental 1-year base value 15.42 is just below."
+    "opacity": 0.12,
+    "label_he": "התנגדות 15.44-15.57 (2 נגיעות)",
+    "label_en": "R 15.44-15.57 (2 touches)",
+    "evidence": "open 14.10 gap 15.44-15.57; 2-year value-area high 15.50."
    },
    {
     "id": "R-1590",
     "kind": "resistance",
-    "strength": "confirmed",
+    "display": "hidden",
     "price_low": 15.75,
     "price_high": 16.01,
+    "touches": 4,
+    "crosses": 1,
+    "touch_dates": [
+     "2025-12-17",
+     "2026-04-17",
+     "2026-08-14",
+     "2026-09-03"
+    ],
+    "width_atr": 0.43,
+    "width_note": "narrower than 0.5 ATR: kept (spec allows), a thin band of confluence",
+    "round_number": true,
+    "round_level": 16.0,
+    "near_52w_high": false,
+    "pct_below_52w_high": 15.6,
     "time_from": "2026-05-15",
     "time_to": "2027-03-31",
     "color": "#d6604d",
-    "opacity": 0.22,
-    "label_en": "R 15.75-16.01",
-    "label_he": "התנגדות 15.75-16.01",
-    "evidence": "1-year value-area high 15.75; 10% zigzag high 15.84 (3.9.2026); open 13.10 gap 15.86-15.95; round 16; 61.8% retracement of 18.98-11.20 = 16.01."
+    "opacity": 0.12,
+    "label_he": "התנגדות 15.75-16.01 (4 נגיעות)",
+    "label_en": "R 15.75-16.01 (4 touches)",
+    "evidence": "1-year value-area high 15.75; 10% zigzag high 15.84 (3.9.2026); open 13.10 gap 15.86-15.95; round 16. (Fibonacci 16.01: no credit.)"
    },
    {
     "id": "R-1622",
     "kind": "resistance",
-    "strength": "confirmed",
+    "display": "hidden",
     "price_low": 16.19,
     "price_high": 16.22,
+    "touches": 3,
+    "crosses": 2,
+    "touch_dates": [
+     "2026-02-23",
+     "2026-08-14",
+     "2026-10-12"
+    ],
+    "width_atr": 0.05,
+    "width_note": "narrower than 0.5 ATR: kept (spec allows), a thin band of confluence",
+    "round_number": false,
+    "round_level": null,
+    "near_52w_high": false,
+    "pct_below_52w_high": 14.5,
     "time_from": "2026-05-15",
     "time_to": "2027-03-31",
     "color": "#d6604d",
-    "opacity": 0.22,
-    "label_en": "R 16.19-16.22: top of the 6-month range",
-    "label_he": "התנגדות 16.19-16.22: תקרת הטווח של חצי שנה",
-    "evidence": "highs 16.22 (14.8.2026) and 16.19 (12.10.2026); the zone sits inside the 26.2 gap (originally 15.94-16.52, open part 16.22-16.52). The open part's lower edge 16.22 is the same 14.8 high, so the kinds are price pivots + the gap. A daily close above ends the 6-month range."
+    "opacity": 0.12,
+    "label_he": "התנגדות 16.19-16.22 (3 נגיעות)",
+    "label_en": "R 16.19-16.22 (3 touches)",
+    "evidence": "highs 16.22 (14.8.2026) and 16.19 (12.10.2026); inside the 26.2 gap (open part 16.22-16.52). Top of the 6-month range."
    },
    {
-    "id": "RANGE-post-gap",
-    "kind": "range",
-    "strength": "fact",
-    "price_low": 11.21,
-    "price_high": 13.0,
-    "time_from": "2026-10-26",
+    "id": "GAP-1026",
+    "kind": "gap",
+    "display": "primary",
+    "gap_type": "area",
+    "news": true,
+    "gap_date": "2026-10-26",
+    "direction": "down",
+    "price_low": 13.0,
+    "price_high": 14.57,
+    "original_gap": [
+     12.79,
+     14.57
+    ],
+    "gap_size_atr": 2.99,
+    "day_move_pct": -17.0,
+    "prior20_move_atr": 2.63,
+    "close_beyond_prior20": false,
+    "volume_x_50d": 4.38,
+    "filled_within_10": false,
+    "report_reaction": false,
+    "ewz_same_day_gap_atr": 7.1,
+    "ewz_day_move_pct": -19.8,
+    "time_from": "2026-10-23",
     "time_to": "2027-03-31",
-    "color": "#2c7fb8",
-    "opacity": 0.04,
-    "border_style": "dashed",
-    "label_en": "post-gap range 11.21-13.00 (14 sessions)",
-    "label_he": "הטווח שאחרי הפער 11.21-13.00 (14 ימי מסחר)",
-    "evidence": "since the 26.10 gap: intraday 11.21 (5.11) to 13.00 (27.10); closes 11.61-12.59. A narrow shelf inside a volatile regime, not a squeeze."
+    "color": "#7f7f7f",
+    "opacity": 0.18,
+    "label_he": "פער חדשות 13.00-14.57 (26.10)",
+    "label_en": "area news gap 13.00-14.57 (26.10)",
+    "evidence": "Brazil-wide news gap (EWZ -19.8% the same day, its own gap 7.1 EWZ ATR; NU -17.0%, volume 4.38x the 50-session average). By the stated rule it is an AREA gap, not breakaway: the 26.10 close 12.59 stayed above the 30.9.2026 low 12.13, so price fell back into its earlier range (the 6-month range 11.20-16.22), and the prior 20 sessions moved 2.63 ATR (< 3, not exhaustion). Caveat: the spec's 85-90% fill rate for area gaps comes mostly from gaps without news; volume on news tends to continue, and this gap is 13 sessions old and unfilled. Its lower edge 13.00 is the trigger: a daily close above it enters the gap; 14.57 fills it."
+   },
+   {
+    "id": "GAP-1014",
+    "kind": "gap",
+    "display": "hidden",
+    "gap_type": "area",
+    "news": false,
+    "gap_date": "2026-10-14",
+    "direction": "down",
+    "price_low": 15.44,
+    "price_high": 15.57,
+    "original_gap": [
+     15.44,
+     15.57
+    ],
+    "gap_size_atr": 0.22,
+    "day_move_pct": -4.2,
+    "prior20_move_atr": 2.35,
+    "close_beyond_prior20": false,
+    "volume_x_50d": 1.08,
+    "filled_within_10": false,
+    "report_reaction": false,
+    "ewz_same_day_gap_atr": 0.05,
+    "ewz_day_move_pct": -0.6,
+    "time_from": "2026-10-13",
+    "time_to": "2027-03-31",
+    "color": "#7f7f7f",
+    "opacity": 0.1,
+    "label_he": "פער 15.44-15.57 (14.10)",
+    "label_en": "area gap 15.44-15.57 (14.10)",
+    "evidence": "unfilled daily gap, measured on intraday highs and lows"
+   },
+   {
+    "id": "GAP-1013",
+    "kind": "gap",
+    "display": "hidden",
+    "gap_type": "area",
+    "news": false,
+    "gap_date": "2026-10-13",
+    "direction": "down",
+    "price_low": 15.86,
+    "price_high": 15.95,
+    "original_gap": [
+     15.86,
+     15.95
+    ],
+    "gap_size_atr": 0.15,
+    "day_move_pct": -2.7,
+    "prior20_move_atr": 2.65,
+    "close_beyond_prior20": false,
+    "volume_x_50d": 0.8,
+    "filled_within_10": false,
+    "report_reaction": false,
+    "ewz_same_day_gap_atr": 0.23,
+    "ewz_day_move_pct": -1.5,
+    "time_from": "2026-10-12",
+    "time_to": "2027-03-31",
+    "color": "#7f7f7f",
+    "opacity": 0.1,
+    "label_he": "פער 15.86-15.95 (13.10)",
+    "label_en": "area gap 15.86-15.95 (13.10)",
+    "evidence": "unfilled daily gap, measured on intraday highs and lows"
+   },
+   {
+    "id": "GAP-0226",
+    "kind": "gap",
+    "display": "hidden",
+    "gap_type": "breakaway",
+    "news": true,
+    "gap_date": "2026-02-26",
+    "direction": "down",
+    "price_low": 16.22,
+    "price_high": 16.52,
+    "original_gap": [
+     15.94,
+     16.52
+    ],
+    "gap_size_atr": 0.88,
+    "day_move_pct": -9.5,
+    "prior20_move_atr": -2.92,
+    "close_beyond_prior20": true,
+    "volume_x_50d": 3.16,
+    "filled_within_10": false,
+    "report_reaction": true,
+    "ewz_same_day_gap_atr": -0.08,
+    "ewz_day_move_pct": -1.2,
+    "time_from": "2026-05-15",
+    "time_to": "2027-03-31",
+    "color": "#7f7f7f",
+    "opacity": 0.1,
+    "label_he": "פער חדשות 16.22-16.52 (26.2)",
+    "label_en": "breakaway news gap 16.22-16.52 (26.2)",
+    "evidence": "Q4 2025 report reaction session (news)."
    },
    {
     "id": "RANGE-6m",
     "kind": "range",
-    "strength": "fact",
+    "display": "hidden",
     "price_low": 11.2,
     "price_high": 16.22,
     "time_from": "2026-05-15",
@@ -290,151 +600,74 @@
     "color": "#2c7fb8",
     "opacity": 0.04,
     "border_style": "dashed",
-    "label_en": "6-month range 11.20-16.22 (126 sessions)",
-    "label_he": "הטווח של חצי שנה 11.20-16.22 (126 ימי מסחר)",
-    "evidence": "since 15.5.2026 (start chosen after the fact; equals the 120-session Donchian channel); 44.8% wide; the 12.11 close sits in its bottom 12.5%."
-   },
-   {
-    "id": "GAP-1026",
-    "kind": "gap",
-    "strength": "fact",
-    "gap_date": "2026-10-26",
-    "price_low": 13.0,
-    "price_high": 14.57,
-    "time_from": "2026-10-23",
-    "time_to": "2027-03-31",
-    "color": "#7f7f7f",
-    "opacity": 0.18,
-    "label_en": "open gap 26.10: 13.00-14.57",
-    "label_he": "פער פתוח מ-26.10: 13.00-14.57",
-    "evidence": "unfilled daily gap, measured on intraday highs and lows"
-   },
-   {
-    "id": "GAP-1014",
-    "kind": "gap",
-    "strength": "fact",
-    "gap_date": "2026-10-14",
-    "price_low": 15.44,
-    "price_high": 15.57,
-    "time_from": "2026-10-13",
-    "time_to": "2027-03-31",
-    "color": "#7f7f7f",
-    "opacity": 0.18,
-    "label_en": "open gap 14.10: 15.44-15.57",
-    "label_he": "פער פתוח מ-14.10: 15.44-15.57",
-    "evidence": "unfilled daily gap, measured on intraday highs and lows"
-   },
-   {
-    "id": "GAP-1013",
-    "kind": "gap",
-    "strength": "fact",
-    "gap_date": "2026-10-13",
-    "price_low": 15.86,
-    "price_high": 15.95,
-    "time_from": "2026-10-12",
-    "time_to": "2027-03-31",
-    "color": "#7f7f7f",
-    "opacity": 0.18,
-    "label_en": "open gap 13.10: 15.86-15.95",
-    "label_he": "פער פתוח מ-13.10: 15.86-15.95",
-    "evidence": "unfilled daily gap, measured on intraday highs and lows"
-   },
-   {
-    "id": "GAP-0226",
-    "kind": "gap",
-    "strength": "fact",
-    "gap_date": "2026-02-26",
-    "price_low": 16.22,
-    "price_high": 16.52,
-    "time_from": "2026-05-15",
-    "time_to": "2027-03-31",
-    "color": "#7f7f7f",
-    "opacity": 0.18,
-    "label_en": "open gap 26.2: 16.22-16.52",
-    "label_he": "פער פתוח מ-26.2: 16.22-16.52",
-    "evidence": "unfilled daily gap, measured on intraday highs and lows"
+    "label_he": "טווח חצי שנה 11.20-16.22",
+    "label_en": "6-month range 11.20-16.22",
+    "evidence": "since 15.5.2026 (start chosen after the fact; equals the 120-session Donchian channel); 44.8% wide"
    }
   ],
   "horizontal_lines": [
    {
     "id": "L-jump-1300",
-    "kind": "breakout_level",
+    "kind": "trigger",
+    "display": "primary",
     "price": 13.0,
+    "basis": "daily_close",
+    "direction": "above",
     "style": "solid",
+    "width": 2,
     "color": "#d6604d",
-    "label_en": "JUMP: daily close above 13.00",
-    "label_he": "הקפיצה: סגירה יומית מעל 13.00",
-    "note": "top of the post-gap range (27.10 high) and lower edge of the 26.10 gap. +7.6% from the 12.08 pre-market price."
+    "label_he": "טריגר: סגירה מעל 13.00",
+    "label_en": "TRIGGER: daily close > 13.00",
+    "note": "top of the post-gap range (27.10 high) = lower edge of the open 26.10 news gap (an AREA gap by the stated rule, see GAP-1026). Never an intraday touch."
    },
    {
-    "id": "L-break-1120",
-    "kind": "breakdown_level",
-    "price": 11.2,
+    "id": "X-1093",
+    "kind": "invalidation",
+    "display": "primary",
+    "price": 10.93,
+    "basis": "daily_close",
+    "direction": "below",
+    "atr_distance": 0.45,
     "style": "solid",
+    "width": 2,
     "color": "#1b9e77",
-    "label_en": "BREAKDOWN: daily close below 11.20",
-    "label_he": "שבירה: סגירה יומית מתחת ל-11.20",
-    "note": "double low 11.20 (3.6.2026) / 11.21 (5.11.2026); IBKR 52-week low 11.205. -7.3% from 12.08."
-   },
-   {
-    "id": "F-entry-1303",
-    "kind": "fundamental_entry",
-    "price": 13.03,
-    "style": "solid",
-    "color": "#1f77b4",
-    "label_en": "ENTRY 13.03: margin of safety (13%/yr)",
-    "label_he": "מחיר כניסה עם מרווח ביטחון 13.03",
-    "note": "Fundamental valuation 13.11.2026: base return 13%/yr below 13.03."
+    "label_he": "פסילה: סגירה מתחת 10.93",
+    "label_en": "INVALIDATION: daily close < 10.93",
+    "rule": "base low 11.20 (3.6.2026 / 11.21 on 5.11.2026) minus 0.45 x ATR14 (0.604) = 10.93; not on a round number (11.00 is 0.07 above). Below the floor zone S-1120, so a retest of the floor does not invalidate."
    },
    {
     "id": "F-buy-1364",
     "kind": "fundamental_buy_test",
+    "display": "primary",
     "price": 13.64,
     "style": "solid",
+    "width": 2,
     "color": "#1f77b4",
-    "label_en": "BUY TEST 13.64: base 12%/yr below this",
-    "label_he": "מבחן הקנייה 13.64: מתחת למחיר הזה הבסיס נותן 12% בשנה",
-    "note": "Base return >= 12%/yr below about 13.64. The add conditions also need credit quality (NPL 90+ <= 7.2%; it was 7.3% in Q3)."
-   },
-   {
-    "id": "F-value-1338",
-    "kind": "fundamental_value",
-    "price": 13.38,
-    "style": "dashed",
-    "color": "#7b3294",
-    "label_en": "VALUE 13.38: base value today",
-    "label_he": "שווי 13.38: שווי הבסיס היום",
-    "note": ""
+    "label_he": "מבחן הקנייה 13.64",
+    "label_en": "BUY TEST 13.64 (12%/yr below)",
+    "note": "the only fundamental line on screen: base return >= 12%/yr below about 13.64. Not inside a technical S/R zone (R-1340 ends 13.53, R-1385 starts 13.75); it is inside the open gap 13.00-14.57. The add conditions also need credit quality (NPL 90+ <= 7.2%; Q3: 7.3%)."
    },
    {
     "id": "F-value-1542",
     "kind": "fundamental_value",
+    "display": "hidden",
     "price": 15.42,
     "style": "dashed",
+    "width": 1,
     "color": "#7b3294",
-    "label_en": "VALUE 15.42: base value in one year",
-    "label_he": "שווי 15.42: שווי הבסיס בעוד שנה",
-    "note": ""
+    "label_he": "שווי בסיס בעוד שנה 15.42",
+    "label_en": "VALUE 15.42 (1-year base)"
    },
    {
     "id": "F-value-1226",
     "kind": "fundamental_value",
+    "display": "hidden",
     "price": 12.26,
     "style": "dashed",
+    "width": 1,
     "color": "#7b3294",
-    "label_en": "VALUE 12.26: weighted bear/base/bull (30/50/20)",
-    "label_he": "שווי 12.26: ממוצע משוקלל של שלושת התרחישים (30/50/20)",
-    "note": ""
-   },
-   {
-    "id": "F-value-1150",
-    "kind": "fundamental_value",
-    "price": 11.5,
-    "style": "dashed",
-    "color": "#7b3294",
-    "label_en": "VALUE 11.50: weighted with a heavier bear (35/50/15)",
-    "label_he": "שווי 11.50: ממוצע משוקלל עם משקל גבוה לדובי (35/50/15)",
-    "note": ""
+    "label_he": "שווי משוקלל 12.26",
+    "label_en": "VALUE 12.26 (weighted 30/50/20)"
    }
   ],
   "trend_lines": [],
@@ -449,100 +682,81 @@
   "texts": [
    {
     "id": "N-verdict",
+    "display": "primary",
     "time": "2026-05-20",
     "price": 17.6,
-    "text_en": "NU 13.11.2026 | Research verdict: HOLD, do not add now (credit test failed: NPL 90+ 7.3% vs <= 7.2%). Not stuck by law: 13.00 is the jump line, 11.20 the breakdown line. Next check: Q4 report, February 2027.",
-    "text_he": "NU 13.11.2026 | מסקנת המחקר: החזקה, לא להוסיף עכשיו (מבחן האשראי נכשל: פיגורים מעל 90 יום 7.3% מול סף של 7.2%). קו הקפיצה 13.00, קו השבירה 11.20. הבדיקה הבאה: דוח רבעון 4, פברואר 2027."
-   },
-   {
-    "id": "N-range",
-    "time": "2026-11-16",
-    "price": 10.75,
-    "text_en": "Post-gap shelf: 14 sessions, closes 11.61-12.59. History: breakout direction tells little, 60-77% of breakouts (by definition) were back inside within 10 sessions.",
-    "text_he": "מדף אחרי הפער: 14 ימי מסחר, סגירות 11.61-12.59. בעבר כיוון היציאה מטווח אמר מעט, ו-60%-77% מהיציאות (לפי ההגדרה) חזרו פנימה תוך 10 ימים."
-   },
-   {
-    "id": "N-gap",
-    "time": "2026-11-16",
-    "price": 13.8,
-    "text_en": "Open gap 13.00-14.57 from the 26.10 Brazil-wide drop (EWZ -19.8%, NU -17.0%). Most of the overhead supply sits here: SMA50, SMA200, AVWAPs.",
-    "text_he": "פער פתוח 13.00-14.57 מהנפילה של כל ברזיל ב-26.10 (EWZ ‎-19.8%‎, NU ‎-17.0%‎). כאן רוב ההיצע מעל המחיר: ממוצעי 50 ו-200 יום ו-VWAP מעוגנים."
-   },
-   {
-    "id": "N-options",
-    "time": "2026-12-21",
-    "price": 12.6,
-    "text_en": "Q3 reported 12.11 after the close. Options (12.11 closing marks) priced about 7.2% for the report day, 8.9% to 20.11, 13.4% to 18.12.",
-    "text_he": "דוח רבעון 3 ב-12.11 אחרי הסגירה. האופציות (מחירי הסגירה של 12.11) תמחרו כ-7.2% ליום הדוח, 8.9% עד 20.11 ו-13.4% עד 18.12."
+    "text_he": "NU 13.11.2026 | משטר: risk-on | RS: מפגרת (12-1: -8.9% מול SPY +13.9%)\nמסקנה: החזקה, לא להוסיף | מעל 13 בעוד 3 ח' (סגירה): ~37% (\"לא סביר\")\nטריגר: סגירה > 13.00 | פסילה: סגירה < 10.93 (0.45 ATR מתחת לשפל 11.20)\nATR 0.60 | דוח הבא: ~22.2.2027 (משוער; ממוצע עבר ±7.3%)\nפונדמנטלי מול טכני: סותרים (זול מול 13.64, RS יורד, מתחת לממוצע 200)",
+    "text_en": "NU 13.11.2026 | regime: risk-on | RS: lagging (12-1: -8.9% vs SPY +13.9%)\nVerdict: hold, do not add | close > 13 in 3 months: ~37% (Kent: probably not)\nTrigger: daily close > 13.00 | Invalidation: daily close < 10.93 (0.45 ATR below the 11.20 low)\nATR 0.60 | next report: ~22.2.2027 (est.; historical avg move +/-7.3%)\nFundamental vs technical: CONFLICT (cheap vs 13.64, RS falling, below SMA200)",
+    "probability_basis": "subjective table of analysis_he.md (3-month closing price): 13.00-14.57 20% + above 14.57 17% = 37%. Kent scale: 93 almost certain, 75 probable, 50 about even, 30 probably not; 37% is nearest 30 (Kent band about 20-40%)."
    }
   ]
  },
  "direct": {
   "vertical_lines": [
    {
-    "id": "V-high",
-    "date": "2026-01-29",
-    "color": "#7f7f7f",
-    "style": "dashed",
-    "label_en": "52-week high 18.98",
-    "label_he": "שיא שנתי 18.98"
-   },
-   {
-    "id": "V-low",
-    "date": "2026-06-03",
-    "color": "#7f7f7f",
-    "style": "dashed",
-    "label_en": "52-week low 11.20",
-    "label_he": "שפל שנתי 11.20"
-   },
-   {
-    "id": "V-q2",
-    "date": "2026-08-14",
+    "id": "V-next-q4",
+    "date": "2027-02-22",
+    "display": "primary",
+    "estimated": true,
     "color": "#7b3294",
     "style": "dashed",
-    "label_en": "14.8: Q2 reaction session, range top 16.22",
-    "label_he": "14.8: יום התגובה לדוח רבעון 2, תקרת הטווח 16.22"
-   },
-   {
-    "id": "V-gap",
-    "date": "2026-10-26",
-    "color": "#d6604d",
-    "style": "dashed",
-    "label_en": "26.10: Brazil-wide gap (NU -17.0%, EWZ -19.8%)",
-    "label_he": "26.10: פער של כל ברזיל (NU ‎-17.0%‎, EWZ ‎-19.8%‎)"
-   },
-   {
-    "id": "V-retest",
-    "date": "2026-11-05",
-    "color": "#7f7f7f",
-    "style": "dashed",
-    "label_en": "5.11: retest of the low (11.21)",
-    "label_he": "5.11: חזרה לשפל (11.21)"
+    "label_he": "דוח רבעון 4 משוער ~22.2",
+    "label_en": "Q4 report est. ~22.2 (unconfirmed)"
    },
    {
     "id": "V-results",
     "date": "2026-11-12",
+    "display": "hidden",
     "color": "#7b3294",
     "style": "dashed",
-    "label_en": "12.11: Q3 2026 results after the close",
-    "label_he": "12.11: דוח רבעון 3 אחרי הסגירה",
-    "event_note": "results are published after the close (America/New_York); on the 1D chart the line sits on the 2026-11-12 bar, the reaction on the 2026-11-13 bar"
+    "label_he": "דוח רבעון 3 (12.11)",
+    "label_en": "Q3 report 12.11 (after close)",
+    "event_note": "after the close: the line sits on the 2026-11-12 bar, the reaction on the 2026-11-13 bar"
    },
    {
-    "id": "V-reaction",
-    "date": "2026-11-13",
+    "id": "V-gap",
+    "date": "2026-10-26",
+    "display": "hidden",
+    "color": "#d6604d",
+    "style": "dashed",
+    "open_gap_atr": 5.81,
+    "label_he": "פער ברזיל 26.10",
+    "label_en": "26.10 Brazil-wide gap"
+   },
+   {
+    "id": "V-q2",
+    "date": "2026-08-14",
+    "display": "hidden",
     "color": "#7b3294",
     "style": "dashed",
-    "label_en": "13.11: first reaction session",
-    "label_he": "13.11: יום התגובה לדוח"
+    "label_he": "תגובה לדוח רבעון 2 (14.8)",
+    "label_en": "Q2 reaction 14.8"
+   },
+   {
+    "id": "V-high",
+    "date": "2026-01-29",
+    "display": "hidden",
+    "color": "#7f7f7f",
+    "style": "dashed",
+    "label_he": "שיא 52 שבועות 18.98",
+    "label_en": "52w high 18.98"
+   },
+   {
+    "id": "V-low",
+    "date": "2026-06-03",
+    "display": "hidden",
+    "color": "#7f7f7f",
+    "style": "dashed",
+    "label_he": "שפל 52 שבועות 11.20",
+    "label_en": "52w low 11.20"
    }
   ],
   "fib_retracements": [
    {
     "id": "FIB-decline",
-    "draw": true,
-    "label_en": "Decline 29.1.2026 high to 3.6.2026 low",
-    "label_he": "הירידה מהשיא של 29.1.2026 לשפל של 3.6.2026",
+    "draw": false,
+    "label_en": "Fib decline 29.1-3.6",
+    "label_he": "פיבו ירידה 29.1-3.6",
     "point_1": "high",
     "point_2": "low",
     "high": {
@@ -562,13 +776,16 @@
     },
     "level_formula": "low + pct x (high - low)",
     "check": "0.236 must sit at 13.04, near the LOW; if it sits at 17.14 the points are reversed",
-    "color": "#e08214"
+    "color": "#e08214",
+    "display": "hidden",
+    "evidence_grade": "F",
+    "note": "hidden only: Fibonacci levels were not different from random levels (Tsinaslanidis 2022); zones that overlap a level get the credit, the level gets none."
    },
    {
     "id": "FIB-advance",
-    "draw": true,
-    "label_en": "Advance 25.5.2022 low to 29.1.2026 high",
-    "label_he": "העלייה מהשפל של 25.5.2022 לשיא של 29.1.2026",
+    "draw": false,
+    "label_en": "Fib advance 2022-2026",
+    "label_he": "פיבו עלייה 2022-2026",
     "point_1": "low",
     "point_2": "high",
     "low": {
@@ -588,7 +805,10 @@
     },
     "level_formula": "high - pct x (high - low)",
     "check": "0.382 must sit at 12.97 and 0.5 at 11.12; if 0.236 sits at 6.97 the points are reversed",
-    "color": "#7f7f7f"
+    "color": "#7f7f7f",
+    "display": "hidden",
+    "evidence_grade": "F",
+    "note": "hidden only: Fibonacci levels were not different from random levels (Tsinaslanidis 2022); zones that overlap a level get the credit, the level gets none."
    }
   ],
   "fib_convention": "TradingView level price = point_2 + level x (point_1 - point_2), so level 0 sits at point_2 and level 1 at point_1. FIB-decline: point 1 (first click) = the HIGH 18.98 (29.1.2026), point 2 = the LOW 11.20 (3.6.2026): 0 at 11.20, 0.236 at 13.04. FIB-advance: point 1 = the LOW 3.26 (25.5.2022), point 2 = the HIGH 18.98 (29.1.2026): 0 at 18.98, 0.382 at 12.97, 0.5 at 11.12. If a test level is at the wrong end, the points are reversed: swap them or tick 'Reverse'. Show only 0, 0.236, 0.382, 0.5, 0.618, 0.786, 1; switch off all other levels, the background fill and 'extend lines left'. Check each drawn level against the listed price (tolerance in 'tolerance').",
@@ -596,82 +816,54 @@
    {
     "id": "AVWAP-gap",
     "anchor_date": "2026-10-26",
+    "anchor_reason": "news_gap_day",
+    "display": "context",
+    "draw_on_daily": true,
     "source": "hlc3",
     "value_at_2026-11-12_close": 12.07,
-    "draw_on_daily": true,
+    "if_2026-11-13_closes_12.08": 12.07,
     "color": "#e08214",
-    "label_en": "from the 26.10.2026 gap",
-    "label_he": "מהפער של 26.10.2026"
-   },
-   {
-    "id": "AVWAP-1105",
-    "anchor_date": "2026-11-05",
-    "source": "hlc3",
-    "value_at_2026-11-12_close": 12.0,
-    "draw_on_daily": true,
-    "color": "#e08214",
-    "label_en": "from the 5.11.2026 low",
-    "label_he": "מהשפל של 5.11.2026"
-   },
-   {
-    "id": "AVWAP-low",
-    "anchor_date": "2026-06-03",
-    "source": "hlc3",
-    "value_at_2026-11-12_close": 13.75,
-    "draw_on_daily": true,
-    "color": "#e08214",
-    "label_en": "from the 3.6.2026 52-week low",
-    "label_he": "מהשפל השנתי של 3.6.2026"
+    "label_he": "VWAP מפער 26.10",
+    "label_en": "AVWAP from 26.10 gap"
    },
    {
     "id": "AVWAP-high",
     "anchor_date": "2026-01-29",
+    "anchor_reason": "52w_high",
+    "display": "hidden",
+    "draw_on_daily": true,
     "source": "hlc3",
     "value_at_2026-11-12_close": 14.07,
-    "draw_on_daily": true,
+    "if_2026-11-13_closes_12.08": 14.06,
     "color": "#e08214",
-    "label_en": "from the 29.1.2026 52-week high",
-    "label_he": "מהשיא השנתי של 29.1.2026"
+    "label_he": "VWAP משיא 29.1",
+    "label_en": "AVWAP from 52w high 29.1"
    },
    {
-    "id": "AVWAP-q2",
-    "anchor_date": "2026-08-14",
-    "source": "hlc3",
-    "value_at_2026-11-12_close": 13.91,
+    "id": "AVWAP-low",
+    "anchor_date": "2026-06-03",
+    "anchor_reason": "52w_low",
+    "display": "hidden",
     "draw_on_daily": false,
-    "color": "#e08214",
-    "label_en": "from the Q2 reaction session 14.8.2026",
-    "label_he": "מיום התגובה לדוח רבעון 2"
-   },
-   {
-    "id": "AVWAP-2026",
-    "anchor_date": "2026-01-02",
     "source": "hlc3",
-    "value_at_2026-11-12_close": 14.28,
-    "draw_on_daily": false,
+    "value_at_2026-11-12_close": 13.75,
+    "if_2026-11-13_closes_12.08": 13.74,
     "color": "#e08214",
-    "label_en": "from the first session of 2026",
-    "label_he": "מתחילת 2026"
+    "label_he": "VWAP משפל 3.6",
+    "label_en": "AVWAP from 52w low 3.6"
    },
    {
     "id": "AVWAP-q3",
     "anchor_date": "2026-11-12",
+    "anchor_reason": "last_report_day",
+    "display": "hidden",
+    "draw_on_daily": false,
     "source": "hlc3",
     "value_at_2026-11-12_close": 11.96,
-    "draw_on_daily": false,
+    "if_2026-11-13_closes_12.08": 12.03,
     "color": "#e08214",
-    "label_en": "from the Q3 release day 12.11.2026 (one bar old)",
-    "label_he": "מיום הדוח 12.11.2026"
-   },
-   {
-    "id": "AVWAP-2022",
-    "anchor_date": "2022-05-25",
-    "source": "hlc3",
-    "value_at_2026-11-12_close": 11.64,
-    "draw_on_daily": false,
-    "color": "#e08214",
-    "label_en": "from the 2022 low (weekly chart only)",
-    "label_he": "מהשפל של 2022 (לגרף שבועי בלבד)"
+    "label_he": "VWAP מיום הדוח 12.11",
+    "label_en": "AVWAP from report day 12.11"
    }
   ]
  },
@@ -704,34 +896,17 @@
    "source": "close",
    "value_at_2026-11-12_close": 14.2,
    "if_2026-11-13_closes_12.08": 14.17,
-   "color": "#1f78b4"
-  },
-  {
-   "id": "SMA40W",
-   "type": "SMA",
-   "length": 40,
-   "timeframe": "1W",
-   "source": "close",
-   "value_at_2026-11-12": 14.0,
-   "optional": true,
-   "note": "weekly chart only"
-  },
-  {
-   "id": "RSI14",
-   "type": "RSI",
-   "length": 14,
-   "timeframe": "1D",
-   "pane": "separate",
-   "value_at_2026-11-12_close": 38.1,
-   "if_2026-11-13_closes_12.08": 41.2,
-   "note": "Wilder smoothing (TradingView default RSI)"
+   "color": "#1f78b4",
+   "context": "close below a falling SMA200 (20-session change -0.45): context, not a signal"
   },
   {
    "id": "VOL",
    "type": "Volume",
    "ma_length": 50,
    "pane": "separate",
-   "note": "26.10.2026 volume was 339.7M shares on consolidated data; the exchange-only figure in TradingView can be lower"
+   "volume_2026-11-12": 59604100,
+   "volume_ma50_at_2026-11-12": 82130882,
+   "note": "consolidated volume (Yahoo); TradingView exchange-only volume can be lower. 26.10.2026: 339.7M shares (4.1x the 50-session average) on Brazil-wide news"
   }
  ],
  "not_drawn": {
@@ -745,23 +920,30 @@
    "fundamental": 14.7,
    "calibrated": 15.2
   },
-  "add_conditions_failed": "credit: NPL 90+ 7.3% (6.5 -> 6.9 -> 7.3) vs <= 7.2%; NPL 15-90 4.86%. Next check: Q4 2026 report, February 2027 (date not yet announced).",
-  "options_implied": {
-   "report_day_straddle_pct": 7.2,
-   "straddle_to_2026-11-20_pct": 8.9,
-   "straddle_to_2026-12-18_pct": 13.4,
-   "basis": "IBKR closing marks of 12.11.2026, strike 12, before the after-close release; implied-vol percentile 94 of 52 weeks; stale for 13.11"
+  "folded_fundamental_values": {
+   "13.03 entry": "R-1300",
+   "13.38 base value today": "R-1340",
+   "11.50 weighted 35/50/15": "S-1150"
   },
-  "pivot_not_drawn": "12.07-12.13 (AVWAP from the gap 12.07 is drawn as a line; the 2-year volume peak 12.125 depends on the binning method: 13.6-13.75 with other allocations)",
-  "zone_not_drawn": "12.40-12.59 (high of 9.11 and the highest post-gap close: one kind of evidence, the same price action)",
-  "unfilled_gaps_not_drawn": "none between 9 and 19 besides the four drawn",
-  "rsi_divergence": "not drawn: a single pair of lows, an anecdote",
-  "regression_channel": "not drawn: the reading depends on the window"
+  "add_conditions_failed": "credit: NPL 90+ 7.3% (6.5 -> 6.9 -> 7.3) vs <= 7.2%; NPL 15-90 4.86%. Next check: Q4 2026 report (estimated, unconfirmed).",
+  "dropped_from_v1": {
+   "R-1510 (15.00-15.27)": "v1 evidence was Fibonacci 15.09 / 15.27 + round 15 only. Without Fibonacci credit one kind of evidence is left: dropped.",
+   "RANGE-post-gap (11.21-13.00)": "duplicates the decision lines (trigger 13.00, base low 11.20): dropped (spec section 4).",
+   "L-break-1120": "replaced by the invalidation line X-1093 (daily close below 10.93); 11.20 stays as the lower edge of S-1120.",
+   "F-entry-1303": "inside R-1300: folded into that zone's evidence (spec 3.10).",
+   "F-value-1338": "inside R-1340: folded into that zone's evidence (spec 3.10).",
+   "F-value-1150": "on the lower edge of S-1150: folded into that zone's evidence.",
+   "texts N-range, N-gap, N-options": "moved to analysis_he.md (one note on the chart, spec 3.9).",
+   "the v1 oscillator pane and its expected values": "no oscillators on the chart or in the checks (spec sections 1 and 4).",
+   "AVWAP-1105, AVWAP-q2, AVWAP-2026, AVWAP-2022": "anchors outside the closed list (last report day, 52-week high/low, news-gap day).",
+   "V-retest (5.11)": "not a report day or a gap day above 2 ATR (spec 3.4)."
+  }
  },
  "rules_for_the_drawing_session": [
   "Draw only what this file lists, with these prices. Do not add trend lines, patterns, targets or stops.",
-  "This is a research map, not a trade plan. It contains no order, alert, position size or stop. Do not create orders or alerts from it.",
-  "Name every drawing (rectangle, horizontal line, text, vertical line, Fibonacci, anchored VWAP) object_prefix + id, e.g. NU-1113-R-1300. The name is the object-tree name, not the visible label. Indicators are not renamed. If the tool cannot set names, write a list of id -> TradingView object id in the session report so a later package can remove the set.",
+  "This is a research map, not a trade plan. It contains no order, alert, position size or stop. Do not create orders or alerts from it. The trigger and invalidation lines are research conditions on a daily close, not orders.",
+  "Respect display: primary visible, context dimmed, hidden drawn and hidden. Do not promote an object.",
+  "Name every drawing object_prefix + id, e.g. NU-1113-R-1385. The name is the object-tree name, not the visible label. Indicators are not renamed. If the tool cannot set names, write a list of id -> TradingView object id in the session report so a later package can remove the set.",
   "If a data_alignment_check is outside its tolerance, stop and report: the chart is on a different price basis."
  ]
 }

@@ -1,0 +1,84 @@
+{
+ "peer_multiple_value_per_share": {
+  "low": 34.32,
+  "mid": 47.19,
+  "high": 60.06
+ },
+ "peer_inputs_2027": {
+  "conn_ebitda": 16.7,
+  "space_core_ebitda": 3.8,
+  "starship_rd": 4.6,
+  "si_rev": 62.2,
+  "cash_after_echostar": 33.2
+ },
+ "own_range_on_our_ntm": {
+  "p_min_9.0x": 64.4,
+  "median_12.2x": 85.86,
+  "max_17.0x": 118.05
+ },
+ "our_ntm_revenue_bn": 88.4,
+ "consensus_ntm_revenue_bn": 158.2,
+ "separate_bets": {
+  "starship_full_reuse": {
+   "extra_nopat_2031": 6.5,
+   "prob": 0.4,
+   "what": "Connectivity capex falls to ~12% of revenue (base 20%) and ~$10bn of new heavy-lift/HLS/defence revenue at 40% EBIT by 2031",
+   "value_per_share_if_it_happens": 5.51,
+   "expected_per_share": 2.2
+  },
+  "direct_to_cell_at_scale": {
+   "extra_nopat_2031": 5.7,
+   "prob": 0.3,
+   "what": "150m paying D2C users at ~$8/month, 50% EBIT after D2C satellite capex (spectrum cost already in the base)",
+   "value_per_share_if_it_happens": 4.83,
+   "expected_per_share": 1.45
+  },
+  "xai_frontier_lab_win": {
+   "extra_nopat_2031": 55.2,
+   "prob": 0.1,
+   "what": "Grok/xAI becomes a top-two frontier lab: SI revenue ~$250bn at 35% EBIT in 2031 (base SI ~$146bn at 12%)",
+   "value_per_share_if_it_happens": 46.8,
+   "expected_per_share": 4.68
+  },
+  "mars": {
+   "extra_nopat_2031": 0.0,
+   "prob": 0.0,
+   "what": "no cash value inside the horizon; a 1m-person colony is the vesting condition of 1,000m Musk restricted shares",
+   "value_per_share_if_it_happens": 0.0,
+   "expected_per_share": 0.0
+  },
+  "ai_in_space": {
+   "extra_nopat_2031": 0.0,
+   "prob": 0.03,
+   "what": "orbital data centres: no filed milestone; 100 TW in space vests 302m Musk shares; not sizeable",
+   "value_per_share_if_it_happens": 0.0,
+   "expected_per_share": 0.0
+  }
+ },
+ "bets_expected_sum": 8.33,
+ "bets_all_succeed_sum": 57.14,
+ "tesla_merger": {
+  "at_market_ratio": {
+   "ratio_spcx_per_tsla": 2.84,
+   "spcx_holders_share_of_combined": 0.544,
+   "intrinsic_per_spcx_share": 20.54,
+   "vs_standalone": -7.07,
+   "market_value_per_spcx_share": 140.33
+  },
+  "spcx_holders_get_15pct_more": {
+   "ratio_spcx_per_tsla": 2.414,
+   "spcx_holders_share_of_combined": 0.584,
+   "intrinsic_per_spcx_share": 22.05,
+   "vs_standalone": -5.56,
+   "market_value_per_spcx_share": 150.65
+  },
+  "tsla_holders_get_15pct_premium": {
+   "ratio_spcx_per_tsla": 3.266,
+   "spcx_holders_share_of_combined": 0.509,
+   "intrinsic_per_spcx_share": 19.22,
+   "vs_standalone": -8.39,
+   "market_value_per_spcx_share": 131.34
+  }
+ },
+ "tesla_merger_note": "At the market ratio the deal moves value between holders only as far as the two prices are wrong relative to value. On our numbers both trade far above value (SPCX ~5x, TSLA ~12x on a draft base), so an SPCX holder swapping into a combined company at the market ratio gives up intrinsic value; a premium for SPCX holders reduces that. Musk restricted shares (1,302m) and Tesla CEO awards would need terms."
+}
