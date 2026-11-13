@@ -1,0 +1,63 @@
+{
+ "ticker": "NBIS",
+ "as_of": "2026-11-12 (after Q3, 6-K and call)",
+ "price": 130.5,
+ "price_time_utc": "2026-11-12T16:18Z",
+ "verdict_he": "לא לקנות במחיר הזה: 3 מתוך 4 תנאי הכניסה לא מתקיימים; בתרחיש הדובי החוב מוחק את ההון",
+ "buy_test_price": 98.15,
+ "margin_of_safety_price": null,
+ "values": {
+  "today": {
+   "bear": 0.01,
+   "base": 66.91,
+   "bull": 237.94
+  },
+  "end_2027": {
+   "base": 81.66,
+   "bull": 281.35
+  },
+  "end_2031": {
+   "base": 175.54,
+   "bull": 485.21
+  },
+  "weighted_today": 81.05
+ },
+ "scenarios": {
+  "bear": {
+   "prob": 0.3,
+   "he": "מחירי GPU קורסים, עיכובים, קושי במימון"
+  },
+  "base": {
+   "prob": 0.5,
+   "he": "2027 בקצה התחתון של התחזית"
+  },
+  "bull": {
+   "prob": 0.2,
+   "he": "קיבולת בזמן ומחירים מחזיקים"
+  },
+  "label": "subjective"
+ },
+ "annual_return_pct": {
+  "bear": "about -100",
+  "base": 6.0,
+  "bull": 29.2,
+  "calibrated": 11.1
+ },
+ "conditions": {
+  "entry_conditions_11_11": [
+   "ARR ויעד שנתי של 9 מיליארד $ ומעלה: לא מתקיים",
+   "רווחיות לא יורדת וחיי שרתים של 5 שנים: כנראה לא מתקיים",
+   "אין הנפקה זולה, ויש תוכנית להלוואת Citi: לא מתקיים",
+   "מחיר לא רחוק מעל 150-160$: מתקיים"
+  ]
+ },
+ "next_report": {
+  "date": "Q3 notes 6-K expected by ~2026-11-19; Q4 report Feb-Mar 2027",
+  "confirmed": false
+ },
+ "thesis_link": "research/companies/NBIS/thesis_he.md",
+ "notes_he": [
+  "כ-325 מיליון $ מהכנסות רבעון 3 הן חד-פעמיות",
+  "ב-2027 חסרים 6-11 מיליארד $ של מימון שאין להם מקור"
+ ]
+}

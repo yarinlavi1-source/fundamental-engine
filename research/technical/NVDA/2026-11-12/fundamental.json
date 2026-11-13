@@ -1,0 +1,96 @@
+{
+ "ticker": "NVDA",
+ "as_of": "2026-11-12 (after the CEO resignation)",
+ "price": 155.39,
+ "price_time_utc": "2026-11-12T14:07Z",
+ "verdict_he": "להחזיק; לא לקנות לפני הדוח של 17.11. אחרי הדוח, קנייה רק אם התנאים מתקיימים",
+ "buy_test_price": {
+  "orderly_succession": 176,
+  "messy_succession": 157,
+  "export_finding": 144
+ },
+ "margin_of_safety_price": {
+  "orderly_succession": 168,
+  "messy_succession": 150,
+  "export_finding": 138
+ },
+ "values": {
+  "today_base_by_world": {
+   "orderly_succession_45pct": 182,
+   "messy_succession_35pct": 163,
+   "export_finding_20pct": 150
+  },
+  "weighted_base_today": 169,
+  "central_world_bear_base_bull_today": [
+   72,
+   182,
+   303
+  ],
+  "central_world_jan_2028": [
+   83,
+   211,
+   350
+  ],
+  "central_world_jan_2032": [
+   124,
+   318,
+   533
+  ]
+ },
+ "scenarios": {
+  "orderly_succession": {
+   "prob": 0.45,
+   "he": "מחליף מסודר מבפנים, הדוח עומד בתנאים"
+  },
+  "messy_succession": {
+   "prob": 0.35,
+   "he": "ירושה מבולגנת או מנכ\"ל מבחוץ"
+  },
+  "export_finding": {
+   "prob": 0.2,
+   "he": "ממצא על הברחת שבבים או כללי ייצוא חדשים"
+  },
+  "label": "subjective"
+ },
+ "annual_return_pct": {
+  "at_price": 155.39,
+  "orderly": {
+   "bear": -4.3,
+   "base": 14.8,
+   "bull": 26.8,
+   "calibrated": 16.1
+  },
+  "messy": {
+   "base": 12.2,
+   "calibrated": 14.9
+  },
+  "export": {
+   "base": 10.4,
+   "calibrated": 14.4
+  },
+  "weighted_base": 13.0
+ },
+ "conditions": {
+  "add": [
+   "תחזית לרבעון 4 של 122 מיליארד $ ומעלה",
+   "רווח גולמי צפוי 72% ומעלה",
+   "דברים על 2028 שמתאימים לצמיחה של כ-60% ומעלה",
+   "מחליף קבוע מתוך החברה (8-K), בלי עזיבות בכירים",
+   "אין צעד פומבי של משרד המשפטים או של רשות הייצוא"
+  ],
+  "sell": [
+   "ממצא שפוגע ברישיונות הייצוא או בחוזים עם הממשלה",
+   "תחזית נמוכה בבירור מ-115 מיליארד $ או רווח גולמי מתחת ל-70%"
+  ]
+ },
+ "next_report": {
+  "date": "2026-11-17",
+  "time": "after the close",
+  "confirmed": true
+ },
+ "thesis_link": "research/companies/NVDA/thesis_he.md",
+ "notes_he": [
+  "הואנג התפטר ב-11.11 (8-K); קרס מנכ\"לית זמנית",
+  "השוק משלם כ-10-11 פעמים הרווח הצפוי לשנה הבאה"
+ ]
+}

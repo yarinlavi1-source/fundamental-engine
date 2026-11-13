@@ -382,3 +382,11 @@ every saved valuation in runs/ and research/ (never propose a name whose saved v
 06.11.2026); (4) news: why is it cheap, temporary or structural; (5) supporting signals: insider clusters, new 13F positions of
 quality investors, beat-and-raise; social media only for ideas and as a hype gauge; (6) trend: no falling knife without a known
 reason. AI-linked names are not excluded; the correlation is a sizing question. The world view is judgement, not a forecast.
+
+## User preference: technical analysis belongs to the drawing session (13.11.2026)
+
+The owner's rule: this repo brings only the FUNDAMENTAL picture; the local TradingView session does all technical work
+(levels, touches, ATR, relative strength, regime, display). After every valuation or report update, write
+research/technical/<T>/<date>/fundamental.json in the format of research/technical/FUNDAMENTAL_HANDOFF_he.md (values,
+buy-test and entry prices, scenario conditions, next report, add/sell conditions, verdict). Do not build technical
+packages, charts or Pine scripts unless he asks for one explicitly.
