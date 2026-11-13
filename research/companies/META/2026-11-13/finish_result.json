@@ -1,0 +1,94 @@
+{
+ "price": 634.68,
+ "pe_held": 18.68,
+ "eps32_cal": 56.1,
+ "eps32_pe_lane": 47.2,
+ "eps33_pe_lane": 57.58,
+ "path_years": [
+  2027,
+  2034
+ ],
+ "lines": {
+  "fundamental": {
+   "v31": 866.0,
+   "ret_today": 6.54,
+   "12.0": 491,
+   "9.14": 561,
+   "6.0": 651,
+   "3.0": 755
+  },
+  "calibrated_frozen": {
+   "v31": 1043.7,
+   "ret_today": 10.43,
+   "12.0": 590,
+   "9.14": 674,
+   "6.0": 783,
+   "3.0": 907
+  },
+  "depwave_evidenced": {
+   "v31": 965.2,
+   "ret_today": 8.78,
+   "12.0": 547,
+   "9.14": 624,
+   "6.0": 725,
+   "3.0": 840
+  },
+  "depwave_peak_year": {
+   "v31": 877.4,
+   "ret_today": 6.81,
+   "12.0": 497,
+   "9.14": 568,
+   "6.0": 660,
+   "3.0": 765
+  }
+ },
+ "rule_both": {
+  "add": 491,
+  "parity": 674,
+  "trim": 783,
+  "sell": 907
+ },
+ "claude_alt_both": {
+  "add": 491,
+  "parity": 624,
+  "trim": 725,
+  "sell": 840
+ },
+ "dated_end2027": {
+  "calibrated_sell": 1023,
+  "calibrated_trim": 886,
+  "fundamental_sell_approx": 837,
+  "fundamental_trim_approx": 725,
+  "fundamental_add_approx": 551,
+  "depwave_sell": 1022,
+  "depwave_trim": 886
+ },
+ "upward_alternatives": {
+  "cal_at_20_35x_sell": 988,
+  "cal_consensus_scaled_sell": 984,
+  "capex_fade_rule_depwave_sell": 972
+ },
+ "post_split": {
+  "rule": {
+   "add": 245.5,
+   "parity": 337.0,
+   "trim": 391.5,
+   "sell": 453.5
+  },
+  "alt": {
+   "add": 245.5,
+   "parity": 312.0,
+   "trim": 362.5,
+   "sell": 420.0
+  },
+  "dated_end2027": {
+   "calibrated_sell": 511.5,
+   "calibrated_trim": 443.0,
+   "fundamental_sell_approx": 418.5,
+   "fundamental_trim_approx": 362.5,
+   "fundamental_add_approx": 275.5,
+   "depwave_sell": 511.0,
+   "depwave_trim": 443.0
+  }
+ }
+}
