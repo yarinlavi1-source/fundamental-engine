@@ -1,0 +1,207 @@
+{
+ "scenarios": {
+  "bear": {
+   "revenue_m": {
+    "2026": 3000,
+    "2027": 9500,
+    "2028": 11281,
+    "2029": 11044,
+    "2030": 10213,
+    "2031": 9145,
+    "2032": 8194
+   },
+   "op_margin": {
+    "2027": -0.1871,
+    "2028": -0.1521,
+    "2029": -0.1472,
+    "2030": -0.1444,
+    "2031": 0.05,
+    "2032": 0.05
+   },
+   "eps_operating": {
+    "2027": -4.05,
+    "2028": -3.91,
+    "2029": -3.71,
+    "2030": -3.36,
+    "2031": 1.04,
+    "2032": 0.93
+   },
+   "eps_with_interest": {
+    "2027": -6.03,
+    "2028": -8.71,
+    "2029": -9.13,
+    "2030": -9.09,
+    "2031": -4.86,
+    "2032": -5.09
+   },
+   "dcf_today": -66.21,
+   "multiple_today": -68.17,
+   "value_today": 0.01,
+   "year_end_values": {
+    "2027": 0.01,
+    "2028": 0.01,
+    "2029": 0.01,
+    "2030": 0.01,
+    "2031": 0.01
+   },
+   "annual_return_pct": -83.7,
+   "ke0_pct": 14.89
+  },
+  "base": {
+   "revenue_m": {
+    "2026": 3000,
+    "2027": 12000,
+    "2028": 21551,
+    "2029": 27094,
+    "2030": 31404,
+    "2031": 34482,
+    "2032": 36944
+   },
+   "op_margin": {
+    "2027": -0.0141,
+    "2028": 0.0672,
+    "2029": 0.1207,
+    "2030": 0.1518,
+    "2031": 0.159,
+    "2032": 0.167
+   },
+   "eps_operating": {
+    "2027": -0.44,
+    "2028": 3.8,
+    "2029": 8.58,
+    "2030": 12.5,
+    "2031": 14.38,
+    "2032": 16.18
+   },
+   "eps_with_interest": {
+    "2027": -2.72,
+    "2028": -2.81,
+    "2029": 1.7,
+    "2030": 6.45,
+    "2031": 9.92,
+    "2032": 13.3
+   },
+   "dcf_today": 43.07,
+   "multiple_today": 84.14,
+   "value_today": 63.6,
+   "year_end_values": {
+    "2027": 77.84,
+    "2028": 98.52,
+    "2029": 121.6,
+    "2030": 145.8,
+    "2031": 170.25
+   },
+   "annual_return_pct": 8.8,
+   "ke0_pct": 14.89
+  },
+  "bull": {
+   "revenue_m": {
+    "2026": 3000,
+    "2027": 13000,
+    "2028": 27999,
+    "2029": 36273,
+    "2030": 43274,
+    "2031": 48363,
+    "2032": 52817
+   },
+   "op_margin": {
+    "2027": 0.0337,
+    "2028": 0.1302,
+    "2029": 0.1994,
+    "2030": 0.2302,
+    "2031": 0.2367,
+    "2032": 0.2425
+   },
+   "eps_operating": {
+    "2027": 0.98,
+    "2028": 8.12,
+    "2029": 16.11,
+    "2030": 22.18,
+    "2031": 25.49,
+    "2032": 28.52
+   },
+   "eps_with_interest": {
+    "2027": -0.95,
+    "2028": 4.85,
+    "2029": 13.26,
+    "2030": 20.41,
+    "2031": 25.32,
+    "2032": 29.53
+   },
+   "dcf_today": 173.3,
+   "multiple_today": 297.87,
+   "value_today": 235.59,
+   "year_end_values": {
+    "2027": 278.56,
+    "2028": 323.46,
+    "2029": 372.59,
+    "2030": 425.32,
+    "2031": 481.23
+   },
+   "annual_return_pct": 33.2,
+   "ke0_pct": 14.89
+  }
+ },
+ "weighted_value_today": 78.92,
+ "weighted_end_value": 181.37,
+ "weighted_return_pct": 10.1,
+ "index_return_pct": 9.1,
+ "buy_price": 95.19,
+ "index_parity_price": 108.7,
+ "market_implied_growth_pct": [
+  300.0,
+  106.0,
+  34.2,
+  21.2,
+  13.0,
+  9.5
+ ],
+ "market_implied_end_revenue_m": 45454,
+ "sensitivity_base": {
+  "beta 2.07": 70.75,
+  "beta 2.67": 56.89,
+  "exit P/E 11": [
+   42.97,
+   3.2
+  ],
+  "exit P/E 21": [
+   84.24,
+   13.4
+  ]
+ },
+ "two_lens": {
+  "ours": {
+   "value_today": 63.6,
+   "annual_return_pct": 8.8,
+   "band": "hold",
+   "pe_exit": 16
+  },
+  "calibrated": {
+   "pe_today": null,
+   "pe_used": 22,
+   "pe_overridden": true,
+   "margin_used": [
+    -0.0141,
+    0.0672,
+    0.1207,
+    0.1518,
+    0.159,
+    0.167
+   ],
+   "margin_overridden": false,
+   "why": "same rule as the 11.11 baseline: today's forward P/E is undefined (our FY2027 operating margin is -1.4% in the base, so FY2027 operating EPS is negative; FY2027 consensus EPS -6.16, pre-report) and NBIS has no own P/E history (losses since the 2024 relisting); 22 kept = a market-average multiple held for a business still growing ~7% in 2032 (judgement, not an observed NBIS multiple). Holding a sales multiple instead is not credible for a 13%-ROIC, capital-heavy business.",
+   "value_today": 88.37,
+   "year_end_values": {
+    "2027": 106.81,
+    "2028": 131.68,
+    "2029": 159.41,
+    "2030": 188.73,
+    "2031": 218.79
+   },
+   "annual_return_pct": 14.3,
+   "band": "buy"
+  },
+  "agree": false,
+  "rule": "lenses disagree: hold, or stage the trade around the next report"
+ }
+}

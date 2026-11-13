@@ -1,0 +1,116 @@
+{
+ "ticker": "NBIS",
+ "as_of": "2026-11-13 (after the Q3 interim-statements 6-K, notes 1-16)",
+ "price": 110.46,
+ "price_time_utc": "2026-11-13T15:30:53Z",
+ "verdict_he": "לא לקנות במחיר הזה: הבסיסי כ-9% בשנה (כמו המדד), העדשה השנייה כ-12% במימון ריאלי (על הגבול), ובתרחיש הדובי רוב ההון אובד",
+ "buy_test_price": 95.19,
+ "buy_test_price_calibrated": 122.33,
+ "buy_test_price_financing_realistic": {
+  "ours": 88.93,
+  "calibrated": 111.64,
+  "note": "debt 8.5% + $6B of shares at $95"
+ },
+ "index_parity_price": {
+  "base": 108.7,
+  "weighted_subjective": 115.8
+ },
+ "margin_of_safety_price": null,
+ "buy_test_passes_at_any_price": false,
+ "values": {
+  "today": {
+   "bear": "0-20 (model 0.01)",
+   "base": 63.6,
+   "bull": 235.59,
+   "calibrated": 88.37
+  },
+  "end_2027": {
+   "bear": 0.01,
+   "base": 77.84,
+   "bull": 278.56,
+   "calibrated": 106.81
+  },
+  "end_2028": {
+   "bear": 0.01,
+   "base": 98.52,
+   "bull": 323.46,
+   "calibrated": 131.68
+  },
+  "end_2031": {
+   "bear": 0.01,
+   "base": 170.25,
+   "bull": 481.23,
+   "calibrated": 218.79
+  },
+  "weighted_today": 78.92,
+  "weighted_end_2031": 181.37
+ },
+ "scenarios": {
+  "bear": {
+   "prob": 0.3,
+   "he": "עיכובים חוזרים, לקוח מבטל חלק, מימון יקר ו-Citi לא מוחזרת: רוב ההון אובד (תרחיש חמור)"
+  },
+  "base": {
+   "prob": 0.5,
+   "he": "2027 בקצה התחתון של התחזית (12 מיליארד $), 2028 כ-21.6 מיליארד $ שדורשים כ-13 מיליארד $ חוזים חדשים"
+  },
+  "bull": {
+   "prob": 0.2,
+   "he": "קיבולת בזמן, 2027 בראש התחזית (13 מיליארד $) ומחירים מחזיקים"
+  },
+  "label": "subjective"
+ },
+ "annual_return_pct": {
+  "bear": "-80 to -100",
+  "base": 8.8,
+  "bull": 33.2,
+  "calibrated": 14.3,
+  "financing_realistic": {
+   "ours": 7.4,
+   "calibrated": 12.2
+  },
+  "weighted_subjective": 10.1,
+  "index": 9.1,
+  "two_year_to_end_2028": {
+   "base_ours": -5.2,
+   "calibrated": 8.6,
+   "bull": 65.6,
+   "note": "the noisiest numbers"
+  }
+ },
+ "conditions": {
+  "add_small_bet_only_if_all": [
+   "דוח רבעון 4 מראה רווחיות חוזרת בענן של כ-40% ומעלה (לפני פחת)",
+   "החוב של לקוח E (כ-404 מיליון $, ההכנסה מהשותפות) נגבה",
+   "מחזור או הארכה ל-Citi, או מקור ידוע ל-6-11 מיליארד $ של 2027",
+   "מחיר כ-95$ ומטה, או שהבסיס במימון ריאלי מגיע ל-12% בשנה"
+  ],
+  "exit_falsifiers": [
+   "תחזית 2027 מתחת ל-12 מיליארד $",
+   "Microsoft מבטלת חלק או מקבלת פיצוי",
+   "גיוס של יותר מ-3 מיליארד $ במחיר מתחת ל-100$",
+   "ההכנסה מהשותפות לא נגבית או נמחקת עד דוח רבעון 4",
+   "Citi לא מוחזרת או מוארכת עד אמצע 2027",
+   "קיצור חיי השרתים או מחיקה",
+   "התחייבויות ל-24 חודשים מתחת לכ-20 מיליארד $ בדוח רבעון 1 2027"
+  ],
+  "entry_conditions_11_11": [
+   "ARR ויעד שנתי של 9 מיליארד $ ומעלה: לא מתקיים",
+   "רווחיות לא יורדת וחיי שרתים של 5 שנים: לא מתקיים (חיי שרתים אושרו, הרווחיות הנקייה ירדה כנראה)",
+   "אין הנפקה זולה, ויש תוכנית ל-Citi: לא מתקיים (אין תוכנית)",
+   "מחיר לא רחוק מעל 150-160$: מתקיים"
+  ],
+  "source": "6-K 0001104659-26-126238 (12.11.2026); runs/tickers/NBIS_2026-11-12/deep/notes13/change_log.md"
+ },
+ "next_report": {
+  "date": "Q4 2026 report, Feb-Mar 2027",
+  "confirmed": false,
+  "check": "clean recurring margin, collection of the ~4.04B receivables (Customer D ~3.03B, Customer E ~404), Citi plan, 24-month RPO bucket, any equity raise"
+ },
+ "thesis_link": "research/companies/NBIS/thesis_he.md",
+ "notes_he": [
+  "הכנסות 2028 הן הנתון הרגיש: כל 1.5 מיליארד $ פחות מורידים כ-8-10$ מהשווי הבסיסי",
+  "ב-2027 חסרים 6-11 מיליארד $ של מימון בלי מקור, והלוואת Citi (3.5 מיליארד $) צריכה מחזור באוקטובר 2027",
+  "השווי הבסיסי ירד ב-13.11 מ-67$ ל-64$ בגלל הביאורים, בעיקר רווחיות נקייה נמוכה יותר"
+ ]
+}

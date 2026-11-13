@@ -1,0 +1,155 @@
+{
+ "ticker": "NBIS",
+ "as_of": "2026-11-13",
+ "price": 110.46,
+ "rf": 0.0494,
+ "erp": 0.042,
+ "beta": 2.37,
+ "beta_mature": 1.3,
+ "shares_m": 324.1,
+ "net_cash_m": -12374.0,
+ "rev0_m": 3000.0,
+ "base_year": 2026,
+ "tax": 0.15,
+ "cash_yield": 0.036,
+ "debt_rate": 0.07,
+ "roic_terminal": 0.13,
+ "days_to_base_year_end": 48,
+ "years_to_horizon": 5.13,
+ "buy_return": 0.12,
+ "probabilities": {
+  "bear": 0.3,
+  "base": 0.5,
+  "bull": 0.2,
+  "label": "subjective (Claude judgement), 12.11.2026: bear raised from 0.25 to 0.30 and base cut from 0.55 to 0.50 because one of the bear's shocks (delivery delays at third-party sites, incl. the Microsoft New Jersey tranches) has happened and the 2027 plan needs $6-11B of funding not yet arranged"
+ },
+ "calibrated": {
+  "pe": 22,
+  "why": "same rule as the 11.11 baseline: today's forward P/E is undefined (our FY2027 operating margin is -1.4% in the base, so FY2027 operating EPS is negative; FY2027 consensus EPS -6.16, pre-report) and NBIS has no own P/E history (losses since the 2024 relisting); 22 kept = a market-average multiple held for a business still growing ~7% in 2032 (judgement, not an observed NBIS multiple). Holding a sales multiple instead is not credible for a 13%-ROIC, capital-heavy business."
+ },
+ "notes": {
+  "what_this_is": "13.11.2026 update of the 12.11 final (../params.json, base $66.91 at $130.50) after the interim-statements 6-K 0001104659-26-126238 (MD&A + Notes 1-16, notes13/notes.md) and the 13.11 price. Changed inputs only: shares, Feb-2030/2034 notes at accreted claim, the 1.10 VIE note advance, Customer E receivable timing, 2027-29 EBITDA anchor; each with its effect in notes13/change_log.md.",
+  "price": "110.46: IBKR realtime snapshot 2026-11-13 15:30:53 UTC (Yahoo 110.43 at 15:31); -14.1% vs the 12.11 close 128.64, -28.6% vs the 11.11 close 154.69",
+  "after_the_checks": "12.11.2026 repair pass (numbers verifier + red team; change_log.md section 'After the checks'). Three inputs moved: (1) 2027 base revenue 12,250 -> 12,000, the low end of the $12-13B outlook, later growth rates the same (2028 21,551): 2026 reaches the low end of its guide only with ~325 of non-recurring revenue (2,675 without it) and the remaining Microsoft New Jersey tranches slipped to 2Q27; (2) SBC 2% -> 3.5% of revenue in 2027, 3% in 2028, 2.5% in 2029-30, 2% after (all scenarios): Q3 SBC was 58.7 = 6.0% of revenue, about twice the recurring H1 pace, and the old 2% of 2027 revenue equalled the Q3 run-rate with no growth; (3) debt rate 6% -> 7%: the 2027 plan needs about $22-24B of net new external capital; NBIS's own secured facilities are SOFR + 2.50% (asset-backed, investment-grade contract) and Term SOFR + 2.75% rising to 3.50% (Citi, 364 days), and the part not covered by asset-backed debt costs more. First-pass files: params_pre_checks.json, result_pre_checks.json (base $75.50).",
+  "base_year": "FY2026 revenue 3,000 (was 3,300): 'We now expect revenue at the low end of our $3.0-3.4 billion range' (letter). Nine months 1,962.1 (fact) -> Q4 ~1,038. About $325M of Q3 revenue is non-recurring (asset-light model); it stays in 2026 revenue because the guide includes it.",
+  "growth": "2027 base 12,000 (was 11,500 on 11.11; 12,250 in the first pass): first company outlook '$12-13 billion', called conservative by management; the base sits at the low end because the 2026 guide is met at its low end only with ~325 of non-recurring revenue and the Microsoft New Jersey tranches moved to 2Q27 (each month of slip costs about $1.0-1.1B of 2027 revenue). 2028 base 21,551 = +80% (was +52% = 17,500): the 2027 outlook itself implies a December-2027 run-rate of about $17-18B (February above $7B rising through the year), so the old +52% would mean no growth at all after December 2027 while the company spends $40-45B in 2027 'sized for more than 1 GW of new capacity' and expects 'more than 1 GW of new capacity each year'; 21,551 = that exit run-rate plus about 80% of the 2027 pace of additions (first pass 22,000 on 12,250). 17.5B = no growth after December 2027 on a linear ramp (derived; the December run-rate is $15.5-18.5B depending on the shape of the ramp), ceiling ~33B (the guided capex fully in service at 0.47). 2029-2032 growth RATES unchanged from the baseline (+26/+16/+10/+7%), so the LEVELS are 23% above the 11.11 path (2032: 36.9B against 30.0B); the report gives no number after 2027 except 'more than 1 GW of new capacity each year' and RPO of $38.7B (+3% q/q), so this lift is judgement and carries about $20 of the base value (old levels one year early: see change_log.md). Bull 13,000 (top of the outlook; the record gives no reason for a beat above it), 2028 28,000, then the baseline bull rates. Bear 9,500 (outlook missed by ~24%: delays repeat and one tranche lapses), then the baseline bear run-off rates.",
+  "margin": "side13.py: group adj. EBITDA base 43% (2027) / 48% / 52% / 55% (was 46/50/53/55); bull 46/52/57/60 (was 48/53/57/60); bear unchanged (at the floor). Reason: the 11.11 anchor was AI cloud Q2-26 49.7%, but Q2 held ~84 of point-in-time strategic-partnership revenue (6-K MD&A: $409.1M nine months vs $325.1M Q3; Customer E 14% of Q2 revenue). Clean AI cloud adj. EBITDA margin 41.1% (Q2) and 29.8%-41.1% (Q3, depending on the undisclosed cost of the item). Long-run 55% (CoreWeave ~60%) unchanged. Everything else as 12.11: SBC 3.5%->2%, turnover 0.44->0.48, server life 5 (6-K Note 1 confirms; no impairment, Note 7/9).",
+  "conv_charges": "conv = 1; charge[i] = capex - D&A - change in customer prepayments. NEW: 2027 capex at the guide, 42,500 ('$40-$45 billion, sized for more than 1 GW of new capacity'), against 11,098 in the 11.11 model. Capex above the in-service need of the year is carried as assets not yet in service and used by later growth before new cash is spent (base and bull: timing only; bear: stranded). That is why base capex is ~0.2-1.3B in 2028-2030: the 2027 spend already paid for that growth. 2026 capex 27,000 (was 22,000) sits in net cash; the extra 5,000 less the extra fleet 2027 needs is carried as prebuild. Prepayments: 2027 received at the guide 18,500 ('$17-20 billion'; bull 20,000), deferred revenue at end-2026 11,000 (9,409.2 at 30.9, fact; was 9,000), recognised over ~3 years; other years 35% of cash growth capex as before. Bull charge[0] also adds back 12834 = (Sep notes 3,270 + Mar notes 4,450 + Aug-2030 notes 3,450) x (1 + cost of equity), because in the bull these notes convert into shares.",
+  "net_cash": "end-2026 estimate rebuilt from the 30.9.2026 balance sheet: cash 7,425.6 (fact; restricted 1,215.5 excluded) + Q4 adj. EBITDA 368.5 (guide-implied) - interest ~150 + prepayment cash 4,930.7 (deferred revenue rising from 9,409.2 to ~11,000 net of recognition, plus the 4,039.9 receivable collected down to ~700 by year-end: assumption, GAP) - Q4 capex 11,569.3 (27,000 guide - 15,430.7 paid) + Citi 3,500 (drawn amount GAP, assumed drawn) = cash 4,506; debt at today's claims: Sep-2030/2032 notes 3,270 (accreted principal; out of the money at today's price), Mar-2031/2033 notes 4,450, Aug-2030/2034 notes 5,750, asset-backed facility 751.8 (fact), Citi 3,500 = 17,722 (cross-check: 6-K Note 12 carrying debt 14,162.8 at 30.9; principal at maturity 16,478.0; the June notes (175 original principal left) are in shares, not debt) -> -13,216; + stakes at the baseline's conservative value 1,160 -> -12,056. Was -7,228. Customer prepayments are not counted as spendable beyond the cash already received; leases stay operating costs inside EBITDA. ATM sales after 30.9: GAP (none assumed). 13.11 changes: Feb-2030/2034 notes at accreted claim 3485.4+2325.8 (DERIVED: end points 110% at Feb-2030 / 125% at Feb-2034 REPORTED, the staged schedule is not in the 6-K, so the 31.12.2026 amounts are our interpolation, effect < $0.05/share; was 5,750 original); 1.10.2026 VIE note advance -230.6 (REPORTED subsequent event; not counted as an asset, like the 348.6); Customer E receivable ~404 (DERIVED = the uncollected partnership revenue) not cash at end-2026, kept as a claim of 377.6 (face, one year late at 7%). Result -12,374.",
+  "shares": "324.1M = outstanding 30.9 292.902 + NVIDIA pre-funded warrants 21.066 + June-2029/2031 notes 3.40 (REPORTED 87.5 left in each series x 19.4363; was 3.89) + unvested RSUs 5.493 (REPORTED; was ~5 for RSUs+options) + options 6.735M at $90.18 by treasury method at $110.46 (1.24M). ATM after 30.9 GAP (7.64M left; none assumed). Bull +57.6 (Sep + Mar + Feb-2030 notes convert), bear x1.15.",
+  "unchanged": "rf 4.94%, ERP 4.2%, beta 2.37 (2-year weekly, adjusted; not re-pulled after one day), mature beta 1.3, tax 15%, cash yield 3.6%, terminal ROIC 0.13 (side model recomputed: 0.124), exit P/E 16 / 20 / 8, calibrated P/E 22, EBITDA path, turnover 2027+, server life 5, 2029-2032 growth rates, stakes value.",
+  "funding_note": "The model funds every deficit with debt at 7% and no new shares; that mix is not the likely one (95% of the nine-month external financing was equity or equity-linked), so a $4B share sale in 2027 is shown next to the verdict (repair.py). The 2027 base cash deficit is ~22.6B after 18.5B of prepayments booked as cash (they are 'committed'; 43% of deferred revenue at 30.9 was an uncollected receivable). The only asset-backed facility closed so far is $775M (company: prepayments + asset-backed financing cover 75-85% of capex, leaving $6-11B from other sources). An equity raise instead is shown in sens.py (rows 'equity raise'). The Citi 364-day $3.5B facility matures October 2027 with no refinancing plan stated.",
+  "pe": "exit P/E per scenario by judgement as in the baseline: base 16, bull 20, bear 8.",
+  "roic_terminal": "0.13 as in the baseline (side model base 2032: 0.124; life-4 0.073; life-6 0.161)",
+  "after_the_checks_13": "13.11 checks (change_log.md 'After the checks'): no base input moved; text fixes only (calibrated.why, debt cross-check, accreted-claim label). Added next to the verdict: financing-realistic line (debt 8.5% + $6B of shares at $95: ours 7.4%/yr, calibrated 12.2%/yr), 2028 revenue rows (19,000: base $47.53, 4.6%/10.2%; 17,500: $38.07, 1.8%/7.5%), VIE 662.2 rows; all in checks/checks.json (checks13.py)."
+ },
+ "scenarios": {
+  "bear": {
+   "g": [
+    2.1667,
+    0.1875,
+    -0.021,
+    -0.0753,
+    -0.1046,
+    -0.1039
+   ],
+   "m": [
+    -0.1871,
+    -0.1521,
+    -0.1472,
+    -0.1444,
+    0.05,
+    0.05
+   ],
+   "conv": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "charge": {
+    "0": 15422,
+    "1": 662,
+    "2": -1470,
+    "3": -2292,
+    "4": -1025,
+    "5": -1097
+   },
+   "pe": 8,
+   "shares_m": 372.7
+  },
+  "base": {
+   "g": [
+    3.0,
+    0.7959,
+    0.2572,
+    0.1591,
+    0.098,
+    0.0714
+   ],
+   "m": [
+    -0.0141,
+    0.0672,
+    0.1207,
+    0.1518,
+    0.159,
+    0.167
+   ],
+   "conv": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "charge": {
+    "0": 22758,
+    "1": 522,
+    "2": -3922,
+    "3": -6617,
+    "4": -5365,
+    "5": 1836
+   },
+   "pe": 16
+  },
+  "bull": {
+   "g": [
+    3.3333,
+    1.1538,
+    0.2955,
+    0.193,
+    0.1176,
+    0.0921
+   ],
+   "m": [
+    0.0337,
+    0.1302,
+    0.1994,
+    0.2302,
+    0.2367,
+    0.2425
+   ],
+   "conv": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "charge": {
+    "0": 8206,
+    "1": -805,
+    "2": -1845,
+    "3": -2491,
+    "4": -3989,
+    "5": 1890
+   },
+   "pe": 20,
+   "shares_m": 381.7
+  }
+ }
+}
