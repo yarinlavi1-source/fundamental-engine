@@ -77,6 +77,12 @@ def run_scenario(p, s, overrides=None):
         capex = s['si']['capex'][i]
         si_capex[y] = capex
         srv = {v: c * srv_share for v, c in si_capex.items()}
+        if p.get('si_cip_lag_half'):   # repair 13.11: half of each year's server spend enters service the next year (CIP 23.7bn at 30.09.2026)
+            lag = {}
+            for v, c in srv.items():
+                lag[v] = lag.get(v, 0) + 0.5 * c
+                lag[v + 1] = lag.get(v + 1, 0) + 0.5 * c
+            srv = lag
         start = in_service_gross(srv, p['server_life'], y - 1)
         end = in_service_gross(srv, p['server_life'], y)
         compute_rev = s['si']['yield'][i] * (start + end) / 2

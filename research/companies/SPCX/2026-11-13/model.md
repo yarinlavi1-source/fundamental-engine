@@ -137,3 +137,92 @@ Starship refuelling and rapid reuse in 2027, or a Tesla deal ratio that pays SPC
 Gaps: no company guidance; call (20.10) outlook not read; Customer A/B unnamed; Musk's 350m option strike; Apollo lease
 rate; 800 MHz price; FY2028 consensus; peers' forward P/E; Starlink segment detail (maritime/aviation/Starshield/D2C);
 beta history (5 months only); TSLA value used in the merger arithmetic is a DRAFT engine base (27.10.2026).
+
+## 8. After the checks (repair, 13.11.2026). THIS SECTION REPLACES THE NUMBERS ABOVE
+The pre-repair files are in deep/pre_repair/. Sections 1-7 above are kept as the first pass. Their value ($27.61) is withdrawn.
+
+**Primary-source check of the critical finding.** The Q3 release (8-K 20.10.2026, EX-99.1) has no numeric outlook. It points to the
+call. The call transcript was read in full from Alpha Vantage's transcript service. It is a second transcript, independent of the
+singjupost copy the red team used, and the two agree word for word on every number below. The IR replay at ir.spacex.com was not
+fetched, so the guidance is "call transcript (2 providers)", not a filing. On the call:
+- CFO: "We now see total company revenues in the range of $33 billion to $37 billion for Q1 of 2027".
+- CFO: "fourth-quarter capital expenditures to now be in the range of $35 billion to $40 billion".
+- CFO: "on track to deliver our previously stated goal of $100 billion in ARR by the end of this year, defined as annualized revenue based on the month of December".
+- CFO: payback "of less than a year"; pricing "slightly above the high end of the $30 to $50 per watt range".
+- CFO: backlog $63bn, of which ~$42bn within a year.
+- Musk: "highly confident of 10" GW added in 2027 (13 GW in total); "rent at effectively the spot-market rate"; compute split ~50/50 between internal use and rental.
+- Musk: SpaceX ARR "between $500 billion and $1 trillion" by end-2027. This is a CEO aspiration, not guidance, and it is not used.
+So section 6 ("no company guidance exists") was wrong. **Finding 1 is accepted.**
+
+**What changed (all in mkparams.py; model.py gains one switch, `si_cip_lag_half`)**
+| Change | From | To | Source / reason |
+|---|---|---|---|
+| 2026 SI capex | 57.0 | 74.3 | 9M 40.0 (10-Q) + Q4 ~34.3 (CFO Q4 total $35-40bn less ~3.2 for Starlink/Space) |
+| Net cash end-2026 | +39.5 | +25.0 | +50.9 at 30.09 less Q4 capex ~37.5 plus Q4 EBITDA/other ~11.6 (Q4 revenue ~$22bn on the $100bn December ARR; Q4 gross margin "consistent with Q2") (judgement) |
+| SI in service | in service in the year of spend | half of each year's servers in service the next year | CIP $23.7bn at 30.09 (10-Q). D&A still starts in the year of spend (conservative) |
+| SI capex 2027-32, base | 85/75/65/65/70/75 | 200/180/140/120/120/120 | Musk is "highly confident" of +10 GW in 2027. 2026's ~2.4 GW cost ~$74bn. Base takes ~2/3 of that pace because Musk's dates slip. The Apollo lease (~$40bn) is inside |
+| SI yield, base (revenue per $ of in-service servers) | 0.60 -> 0.48 | 1.40 -> 0.65 (2032) | 2027 sits at the guide (below). Then it fades: rental is at spot and terminable on 90 days' notice, half the fleet serves internal use, and new GPU generations reprice the older fleet. 0.65 by 2032 is still above the NBIS saved model (0.44-0.48) |
+| Bull SI | capex 95/90/85..., yield 0.68 -> 0.55 | capex 250/220/180/150..., yield 1.50 -> 0.90 | guided capacity (~13 GW) at today's claimed pricing, mostly held (finding 2). The xAI frontier-lab bet is folded in here, not added on top |
+| Bear SI | capex 75 then 12-15, yield 0.50 -> 0.33 | capex 180 (committed 2027 build), then 60/30/30/35/40; yield 1.20 -> 0.45 | build-out, then a spot glut down to neocloud yields (NBIS 0.44-0.48) and Customer B leaving (finding 4) |
+| Starlink base | ARPU 67 -> 60; subs to 43.5m | ARPU 66 -> 55; subs to 48m (~6m adds a year) | ARPU fell ~12%/yr (99 -> 69); adds were +6.4m y/y (finding 6) |
+| Shares | 13,191m gross | 13,151m treasury method | Musk options 352.5m at $8.40 (424B4 p.238); Cursor's 389m in the outstanding count (10-Q Note 12, 8-K) |
+| SI 2026 D&A target | 7.9 | 8.9 | 9M 5.851 + Q4 ~3.05 |
+| Calibrated "why" | ">100x" | "~39x" (our 2027 EPS 3.61) | results.json |
+
+**Check of the guided year.** Base 2027 revenue is $172bn: Starlink 26.8, Space 5.3, SI 140.0. Q1'27 at the guide ($33-37bn) times 4 is $132-148bn. With
+10 GW coming on through 2027, a full year above Q1x4 is the guide's own direction. It sits just under the FY2027 consensus mean of $180bn. The
+implied Q4'26 revenue is about $22bn (December ARR $100bn), above the lowest analyst estimate ($19.09bn).
+
+**Results after the checks** ($ per share, 13,151m shares, price $140.66)
+| | Bear | Base | Bull |
+|---|---|---|---|
+| Today | 1.42 | **70.06** (DCF 47.06 / P/E path 93.06) | 231.51 |
+| End-2027 | 1.43 | 80.19 | 265.44 |
+| End-2028 (2 years: the noisiest) | 2.23 | 90.93 | 299.72 |
+| End-2031 | 4.79 | 130.29 | 422.74 |
+| Annual return to end-2031 | -48.3% | **-1.5%** | +23.9% |
+| Subjective probability | 30% | 50% | 20% |
+- Weighted: today $81.76, end-2031 $151.13, +1.4%/yr (finding 3 minor, weighted arithmetic: now computed by results.json and copied as is).
+- Base path ($bn): revenue 172 / 300 / 390 / 431 / 446 / 443 (2027-32); EBIT margin 30% -> 23%. FCF -137 (2027), -49, +32, +69, +78.
+  Net debt peaks at **-$164bn in 2028**. Operating EPS 3.61 / 5.80 / 6.87 / 6.54 / 6.22 / 6.15.
+- Calibrated lens (35x held, margin floored at 2027's 30%): **$112.41, +7.8%/yr (hold band)**. Our lens: -1.5%/yr (sell band).
+  **The lenses disagree** (sell vs hold). The rule says no trade on a disagreement. The calibrated lens is weak evidence here: base revenue
+  is flat in 2031-32, so 35x on 2032 EPS is generous.
+- Buy test: base >= 12% in both lenses NO; bull >= 17% **YES** (+23.9%); bear >= -10% NO. Price for 12%/yr on the base: **$72.85**. Calibrated
+  lens at 12%: $115.75. The bear passes only below ~$8: the bear is a near-wipeout of equity, so no price makes it comfortable.
+- Sum of parts (DCF, base): Starlink $17.44 ($21.78 at beta 1.1), Space -$1.47, SI **+$28.22** (2032 ROIC 14%), cash +$2.04, total $46.23.
+- Sensitivity (base): server life 4y $43.6; exit P/E 22 $59.9 / 34 $80.2; beta 1.5 $75.4 / 2.6 $61.7; SI yield held at 1.40 $247.9.
+- Reverse reading (finding 3 accepted): at the base capex, $140.66 needs an SI yield of **1.96 in 2027 fading only to 0.91 by 2032**. That means today's
+  claimed pricing (more than $50/W a year, payback under a year) holds for 5 years while the fleet grows about 5x and is rented at spot. Or
+  2031 group revenue of ~$590bn (base $446bn). Or a 40% group EBIT margin at base revenue (base 23%). **This is the single swing factor of the stock.**
+- Funding (finding 4, partly accepted): base net debt peaks at $164bn and bull at $171bn. Both are above an assumed debt capacity of ~$100bn (judgement; the $25bn notes'
+  lien cap is 7.5% of assets). About $60-70bn would have to come from equity, vendor or customer financing. In our arithmetic, equity sold above
+  our value raises value per share. It hurts only when sold below value, which is the bear world, and the bear is near zero anyway. So no
+  per-share dilution is modelled. The funding need is shown instead as a risk line. **Rejected part:** "dilution lowers every scenario" does not follow when the issue price is above value.
+
+**Report 2 (historical-multiple report, peers since there is no own history):** Starlink EBITDA x 12/16/20 (IRDM, TMUS), Space core x 12/14.5/17 (LMT) less
+3 years of Starship R&D, SI revenue x 3/4.5/6 EV/sales (NBIS) -> **$51 / $73 / $94**. The stock's own IPO-to-date EV/NTM sales (9.0-17.0x, median 12.2x)
+on our NTM revenue ($151bn; consensus $158bn) -> $107 / $144 / $199. The market's own multiple on our revenue is about the price, so that line
+is circular and not an independent check.
+
+**Separate bets (not in the base):** Starship full reuse $5.53 if it happens (40%, expected $2.21); direct-to-cell at scale $4.85 (30%, $1.45);
+xAI frontier-lab win now folded into the bull (finding 2); Mars 0; AI in space ~0. Expected $3.66; all succeed $10.38. The claim "bull + all bets
+< price" is deleted: it was false.
+
+**Tesla merger:** at the market ratio (2.84 SPCX per TSLA) SPCX holders would own ~54% of the combined company. On our base ($70.06) and the
+**DRAFT** TSLA engine base ($34.4), intrinsic value per SPCX share would fall to ~$43.6. Present it only as a mechanism: who gains depends on the
+ratio against the two intrinsic values. The TSLA number is a draft, and Musk's restricted shares and Tesla's CEO award need terms.
+
+**Findings rejected or partly rejected**
+- Finding (major) "set base yield 0.67 -> 0.54": superseded. With the CIP lag, the Q3 yield on in-service servers is about 1.0, and the Q1'27 guide implies more. The base now starts at 1.40.
+- Finding (critical) restated base "$45-50": rejected as a number. The red team's own capex150 variant puts 2027 at $117bn, below the Q1 guide x4,
+  so it breaks the guided-year rule it cites. The base at the guide is $70.
+- Finding 4, dilution: partly rejected (above).
+
+**Gaps closed:** Musk options strike ($8.40; 424B4 p.238); Cursor shares in the outstanding count. **Gaps open:** guidance from the call transcript
+(2 providers), not the IR replay; the GW behind the base capex; interest on cash (3.8%) vs debt (6%); EchoStar trust support payments; 800 MHz price;
+deferred-revenue unwind if Customer B terminates; beta (1.9, judgement); TSLA draft base; Customer B unnamed.
+
+**Verdict after the checks: not a buy at $140.66. HOLD-band territory at best, and only in the calibrated lens.** Base $70 (-1.5%/yr, sell band) vs calibrated
+$112 (+7.8%/yr, hold band). The bull ($232, +24%/yr) shows real upside if AI-cloud pricing holds at 13 GW, but the bear is near zero (build-out, then
+a glut, with ~$110-160bn of net debt). Starlink alone is ~$17-22 a share: excellent, but not the swing factor. Price for 12%/yr: ~$73.

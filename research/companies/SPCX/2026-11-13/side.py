@@ -23,7 +23,7 @@ out['peer_multiple_value_per_share'] = peer
 out['peer_inputs_2027'] = dict(conn_ebitda=round(conn_ebitda27, 1), space_core_ebitda=round(space_core27, 1),
                                starship_rd=base['space']['rd'][0], si_rev=round(si_rev27, 1), cash_after_echostar=round(cash, 1))
 # Own (IPO-to-date) EV/NTM sales range 9.0-17.0x (median 12.2x, market lane) applied to OUR NTM revenue
-ntm = 17.5 + 0.75 * y27['rev']           # Q4'26 estimate + 3/4 of base 2027
+ntm = 22.0 + 0.75 * y27['rev']           # repair: Q4'26 ~22 (ARR $100bn exit-2026 guide) + 3/4 of base 2027
 nc = 51.3 + 2.2                            # net cash at 30.09 as the market lane computed EV (+ BTC/equity stakes)
 out['own_range_on_our_ntm'] = {k: round((ntm * m + nc) * 1000 / sh, 2) for k, m in {'p_min_9.0x': 9.0, 'median_12.2x': 12.2, 'max_17.0x': 17.0}.items()}
 out['our_ntm_revenue_bn'] = round(ntm, 1)
@@ -39,8 +39,8 @@ bets = {
      what='Connectivity capex falls to ~12% of revenue (base 20%) and ~$10bn of new heavy-lift/HLS/defence revenue at 40% EBIT by 2031'),
  'direct_to_cell_at_scale': dict(extra_nopat_2031=round(150e6 * 8 * 12 / 1e9 * 0.50 * 0.79, 1), prob=0.30,
      what='150m paying D2C users at ~$8/month, 50% EBIT after D2C satellite capex (spectrum cost already in the base)'),
- 'xai_frontier_lab_win': dict(extra_nopat_2031=round((250 * 0.35 - b['2031']['si_rev'] * b['2031']['si_ebit_m']) * 0.79, 1), prob=0.10,
-     what='Grok/xAI becomes a top-two frontier lab: SI revenue ~$250bn at 35% EBIT in 2031 (base SI ~$146bn at 12%)'),
+ 'xai_frontier_lab_win': dict(extra_nopat_2031=0.0, prob=0.0,
+     what='repair 13.11: folded into the bull (SI pricing holds near today at guided capacity: SI ~$590bn revenue at ~35% EBIT in 2031); not added on top'),
  'mars': dict(extra_nopat_2031=0.0, prob=0.0, what='no cash value inside the horizon; a 1m-person colony is the vesting condition of 1,000m Musk restricted shares'),
  'ai_in_space': dict(extra_nopat_2031=0.0, prob=0.03, what='orbital data centres: no filed milestone; 100 TW in space vests 302m Musk shares; not sizeable'),
 }

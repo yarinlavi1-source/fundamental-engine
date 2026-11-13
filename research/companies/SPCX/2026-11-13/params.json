@@ -6,8 +6,9 @@
  "erp": 0.042,
  "beta": 1.9,
  "beta_mature": 1.2,
- "shares_m": 13191.0,
- "net_cash_end2026": 39.5,
+ "shares_m": 13151.0,
+ "net_cash_end2026": 25.0,
+ "si_cip_lag_half": true,
  "investment_assets": 2.2,
  "net_ppe_end2026": 106.6,
  "net_ppe_split": {
@@ -64,13 +65,13 @@
    "2023": 0.463,
    "2024": 5.633,
    "2025": 12.727,
-   "2026": 57.0
+   "2026": 74.3
   }
  },
  "legacy_da_scale": {
   "conn": 1.098,
   "space": 0.584,
-  "si": 1.019
+  "si": 0.971
  },
  "x_ads_g": 0.03,
  "base_2026": {
@@ -79,7 +80,7 @@
   "space_rev": 4.75,
   "cursor_rev": 1.9,
   "x_ads_rev": 1.85,
-  "fy2026_rev_est": 44.6
+  "fy2026_rev_est": 49.1
  },
  "one_off_cash": {
   "2027": 8.5
@@ -92,26 +93,26 @@
  },
  "calibrated": {
   "pe": 35,
-  "why": "today's forward P/E on our own 2027 operating EPS is >100x and not credible to hold; 35 = the market's multiple on the FY2027 consensus EPS ($4.04, AV n=34, P/E 34.8) and inside the IPO-to-date FY27 P/E range 26.8-49.9x (median 36.2x). Margin floored at the 2027 group EBIT margin."
+  "why": "repair 13.11: our own forward P/E on 2027 operating EPS is ~39x (3.61); 35 = the market's multiple on the FY2027 consensus EPS ($4.04, AV n=34, P/E 34.8) and inside the IPO-to-date FY27 P/E range 26.8-49.9x (median 36.2x). Margin floored at the 2027 group EBIT margin. Weak evidence here: revenue is flat 2031-32 in the base, so holding 35x on 2032 EPS is generous."
  },
  "scenarios": {
   "base": {
    "conn": {
     "subs_end_m": [
      21.0,
-     26.5,
-     31.5,
-     36.0,
-     40.0,
-     43.5
+     27.0,
+     33.0,
+     38.5,
+     43.5,
+     48.0
     ],
     "arpu": [
-     67,
-     65,
+     66,
      63,
-     62,
-     61,
-     60
+     60,
+     58,
+     56,
+     55
     ],
     "hw_factor": [
      1.15,
@@ -182,20 +183,20 @@
    },
    "si": {
     "capex": [
-     85,
-     75,
-     65,
-     65,
-     70,
-     75
+     200,
+     180,
+     140,
+     120,
+     120,
+     120
     ],
     "yield": [
-     0.6,
-     0.55,
-     0.52,
-     0.5,
-     0.48,
-     0.48
+     1.4,
+     1.15,
+     0.95,
+     0.8,
+     0.7,
+     0.65
     ],
     "cursor_rev_2027": 7.0,
     "cursor_g": [
@@ -305,20 +306,20 @@
    },
    "si": {
     "capex": [
-     75,
-     12,
-     10,
-     10,
-     12,
-     15
+     180,
+     60,
+     30,
+     30,
+     35,
+     40
     ],
     "yield": [
+     1.2,
+     0.8,
+     0.6,
      0.5,
-     0.4,
-     0.36,
-     0.34,
-     0.33,
-     0.33
+     0.45,
+     0.45
     ],
     "cursor_rev_2027": 5.5,
     "cursor_g": [
@@ -428,20 +429,20 @@
    },
    "si": {
     "capex": [
-     95,
-     90,
-     85,
-     85,
-     90,
-     95
+     250,
+     220,
+     180,
+     150,
+     150,
+     150
     ],
     "yield": [
-     0.68,
-     0.64,
-     0.6,
-     0.58,
-     0.56,
-     0.55
+     1.5,
+     1.35,
+     1.2,
+     1.05,
+     0.95,
+     0.9
     ],
     "cursor_rev_2027": 8.5,
     "cursor_g": [
