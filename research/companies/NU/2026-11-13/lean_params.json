@@ -1,0 +1,117 @@
+{
+ "ticker": "NU",
+ "as_of": "2026-11-13",
+ "price": 12.08,
+ "rf": 0.0494,
+ "erp": 0.042,
+ "beta": 2.0,
+ "beta_mature": 1.7,
+ "shares_m": 4892.0,
+ "net_cash_m": 0.0,
+ "rev0_m": 4094.0,
+ "base_year": 2026,
+ "tax": 0.0,
+ "cash_yield": 0.0,
+ "debt_rate": 0.0,
+ "roic_terminal": 0.25,
+ "days_to_base_year_end": 48,
+ "years_to_horizon": 5.13,
+ "buy_return": 0.13,
+ "probabilities": {
+  "bear": 0.3,
+  "base": 0.5,
+  "bull": 0.2
+ },
+ "scenarios": {
+  "bear": {
+   "g": [
+    -0.0983,
+    -0.25,
+    0.1,
+    0.1,
+    0.09,
+    0.08
+   ],
+   "m": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "conv": [
+    0.2,
+    0.0,
+    0.444,
+    0.444,
+    0.5,
+    0.556
+   ],
+   "pe": 8.5
+  },
+  "base": {
+   "g": [
+    0.1369,
+    0.155,
+    0.16,
+    0.13,
+    0.11,
+    0.09
+   ],
+   "m": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "conv": [
+    0.446,
+    0.429,
+    0.536,
+    0.607,
+    0.679,
+    0.679
+   ],
+   "pe": 12.0
+  },
+  "bull": {
+   "g": [
+    0.2741,
+    0.28,
+    0.22,
+    0.17,
+    0.14,
+    0.11
+   ],
+   "m": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "conv": [
+    0.125,
+    0.312,
+    0.469,
+    0.562,
+    0.656,
+    0.656
+   ],
+   "pe": 15.0
+  }
+ },
+ "notes": {
+  "basis": "Earnings model: rev0_m = 2026E net income (US$M, IFRS, after SBC and tax), m=1, tax=0; g = USD net income growth; conv = payout (1 - g_next/ROE). Baseline: runs/tickers/NU_2026-11-04/deep/params.json.",
+  "rev0_m": "4,094 = 9M26 NI 3,024.1 (871.4+1,061.1+1,091.6, 6-K PR/FS) + Q4E 1,069.9 (Q3 1,091.6 x 1.04 FXN QoQ x 5.1371/5.4508 BRL avg). Was 4,120.",
+  "g0": "2027 NI level = baseline 2027 level x BRL 5.4935/5.6408 (AV FX_DAILY 12.11 close); later growth unchanged. Repair 13.11: the 2027 tax factor (21.6%->23.5%) was dropped: no baseline ETR anchor (9M'26 ETR 14.6% reported, 16.3% ex CSLL remeasurement, FS note 30), CSLL has no 2027 step (17.5%/12% 'for the 2026 and 2027 period', 20%/15% 'from 2028 onwards', FS note 30 (ii)), accounting vs managerial ETR (19.2% vs 37.4% on the same NI) and the guide is secondary (transcript unread). Shown as a sensitivity line only.",
+  "shares_m": "4,892 = Q3 diluted wavg 4,881.1 (FS note 9) + CEO restricted grant 13.58M less 2.72M swapped RSUs (subsequent event 15.10.2026).",
+  "price": "12.08 IBKR pre-market 13.11.2026 05:50 UTC (12.11 close 11.83).",
+  "unchanged": "rf 4.94%, ERP 4.2%, beta 2.0 (see beta note), ROE/payout path, exit P/E 12/8.5/15, probabilities 30/50/20 (subjective), 2028-32 growth. Not modelled: the 2028 CSLL step (17.5%->20%, about -3.7% of 2028 NI per the 4.11 review 3b).",
+  "beta": "2.0 = measured 2y weekly adjusted beta 1.15 vs SPY (raw 1.23, 103 weekly IBKR closes to 6.11.2026; redteam/beta.py) + an implicit Brazil premium of about 3.6% (0.85 x 4.2%); conservative vs 1.15 + 2.8% CRP (CRP level unverified). Kept at 2.0 for stability."
+ }
+}
