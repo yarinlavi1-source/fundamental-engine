@@ -1,0 +1,129 @@
+//@version=5
+// NU levels, 13.11.2026: technical zones + fundamental values. Generated from drawings.json (same numbers).
+// Research map only: not a trade plan, no orders, no alerts. Use on NYSE:NU, 1D.
+// Anchored VWAPs are plotted on the 1D chart only (on other timeframes the anchors and values would differ).
+indicator("NU plan 13.11.2026 (technical + fundamental)", shorttitle="NU plan 1113", overlay=true, max_boxes_count=80, max_lines_count=200, max_labels_count=200)
+
+showZones  = input.bool(true,  "Support / resistance zones")
+showWeak   = input.bool(true,  "Soft, weak and pivot zones")
+showRanges = input.bool(true,  "Ranges (post-gap and 6-month)")
+showKey    = input.bool(true,  "Jump and breakdown lines")
+showGaps   = input.bool(true,  "Unfilled gaps")
+showFund   = input.bool(true,  "Fundamental levels (entry prices, fair values)")
+showFib    = input.bool(true,  "Fibonacci levels")
+showEvents = input.bool(true,  "Event lines")
+showNotes  = input.bool(true,  "Summary table")
+showMA     = input.bool(true,  "Daily averages 20 / 50 / 200")
+showAVWAP  = input.bool(true,  "Anchored VWAPs")
+
+TZ = "America/New_York"
+tStart = timestamp(TZ, 2026, 5, 15, 9, 30)
+tEnd   = timestamp(TZ, 2027, 3, 31, 16, 0)
+
+f_zone(float lo, float hi, string txt, color c, int transp, int tLeft, string ha) =>
+    box.new(left=tLeft, top=hi, right=tEnd, bottom=lo, xloc=xloc.bar_time, bgcolor=color.new(c, transp), border_color=color.new(c, 55), border_width=1, text=txt, text_size=size.small, text_color=color.new(c, 0), text_halign=ha, text_valign=text.align_center)
+
+f_range(float lo, float hi, string txt, color c, int tLeft) =>
+    box.new(left=tLeft, top=hi, right=tEnd, bottom=lo, xloc=xloc.bar_time, bgcolor=color.new(c, 96), border_color=color.new(c, 30), border_width=1, border_style=line.style_dashed, text=txt, text_size=size.small, text_color=color.new(c, 0), text_halign=text.align_left, text_valign=text.align_top)
+
+f_level(float p, string txt, color c, string st, int w, bool leftLab) =>
+    line.new(x1=tStart, y1=p, x2=tEnd, y2=p, xloc=xloc.bar_time, color=c, style=st, width=w)
+    label.new(x=leftLab ? tStart : tEnd, y=p, text=txt, xloc=xloc.bar_time, style=leftLab ? label.style_label_right : label.style_label_left, color=color.new(c, 100), textcolor=c, size=size.small)
+
+f_vline(int t, float yText, string txt, color c) =>
+    line.new(x1=t, y1=10.0, x2=t, y2=20.0, xloc=xloc.bar_time, extend=extend.both, color=c, style=line.style_dashed, width=1)
+    label.new(x=t, y=yText, text=txt, xloc=xloc.bar_time, style=label.style_label_down, color=color.new(c, 100), textcolor=c, size=size.small)
+
+f_avwap(int anchor) =>
+    var float pv = 0.0
+    var float vv = 0.0
+    if time >= anchor
+        pv += hlc3 * volume
+        vv += volume
+    vv > 0 ? pv / vv : na
+
+cSup = #1b9e77
+cRes = #d6604d
+cPiv = #7f7f7f
+cGap = #7f7f7f
+cRange = #2c7fb8
+cEntry = #1f77b4
+cValue = #7b3294
+cFib = #e08214
+cEvt = #7b3294
+
+if barstate.islastconfirmedhistory
+    if showZones
+        f_zone(11.00, 11.21, "S 11.00-11.21: the floor (double low 3.6 and 5.11)", cSup, 78, tStart, text.align_right)
+        f_zone(12.87, 13.04, "R 12.87-13.04: the jump line (range top 13.00)", cRes, 78, tStart, text.align_right)
+        f_zone(13.75, 14.00, "R 13.75-14.00: SMA50/100, AVWAPs", cRes, 78, tStart, text.align_right)
+        f_zone(14.07, 14.28, "R 14.07-14.28: SMA200 14.20", cRes, 78, tStart, text.align_right)
+        f_zone(14.38, 14.57, "R 14.38-14.57: gap fill + 1y volume peak", cRes, 78, tStart, text.align_right)
+        f_zone(15.75, 16.01, "R 15.75-16.01", cRes, 78, tStart, text.align_right)
+        f_zone(16.19, 16.22, "R 16.19-16.22: top of the 6-month range", cRes, 78, tStart, text.align_right)
+    if showWeak
+        f_zone(11.50, 11.64, "S 11.50-11.64 (soft)", cSup, 86, tStart, text.align_right)
+        f_zone(11.78, 12.00, "Pivot 11.78-12.00 (at the price)", cPiv, 86, tStart, text.align_right)
+        f_zone(13.30, 13.53, "R 13.30-13.53 (weak)", cRes, 90, tStart, text.align_right)
+        f_zone(15.00, 15.27, "R 15.00-15.27 (weak)", cRes, 90, tStart, text.align_right)
+        f_zone(15.44, 15.57, "R 15.44-15.57 (soft)", cRes, 86, tStart, text.align_right)
+    if showRanges
+        f_range(11.21, 13.00, "post-gap range 11.21-13.00 (14 sessions)", cRange, timestamp(TZ, 2026, 10, 26, 9, 30))
+        f_range(11.20, 16.22, "6-month range 11.20-16.22 (126 sessions)", cRange, timestamp(TZ, 2026, 5, 15, 9, 30))
+    if showKey
+        f_level(13.00, "JUMP: daily close above 13.00", cRes, line.style_solid, 2, true)
+        f_level(11.20, "BREAKDOWN: daily close below 11.20", cSup, line.style_solid, 2, true)
+    if showGaps
+        f_zone(13.00, 14.57, "open gap 26.10: 13.00-14.57", cGap, 82, timestamp(TZ, 2026, 10, 23, 9, 30), text.align_left)
+        f_zone(15.44, 15.57, "open gap 14.10: 15.44-15.57", cGap, 82, timestamp(TZ, 2026, 10, 13, 9, 30), text.align_left)
+        f_zone(15.86, 15.95, "open gap 13.10: 15.86-15.95", cGap, 82, timestamp(TZ, 2026, 10, 12, 9, 30), text.align_left)
+        f_zone(16.22, 16.52, "open gap 26.2: 16.22-16.52", cGap, 82, timestamp(TZ, 2026, 5, 15, 9, 30), text.align_left)
+    if showFund
+        f_level(13.03, "ENTRY 13.03: margin of safety (13%/yr)", cEntry, line.style_solid, 2, false)
+        f_level(13.64, "BUY TEST 13.64: base 12%/yr below this", cEntry, line.style_solid, 2, false)
+        f_level(13.38, "VALUE 13.38: base value today", cValue, line.style_dashed, 1, false)
+        f_level(15.42, "VALUE 15.42: base value in one year", cValue, line.style_dashed, 1, false)
+        f_level(12.26, "VALUE 12.26: weighted bear/base/bull (30/50/20)", cValue, line.style_dashed, 1, false)
+        f_level(11.50, "VALUE 11.50: weighted with a heavier bear (35/50/15)", cValue, line.style_dashed, 1, false)
+    if showFib
+        f_level(13.04, "Fib decline 23.6%: 13.04", cFib, line.style_dotted, 1, true)
+        f_level(14.17, "Fib decline 38.2%: 14.17", cFib, line.style_dotted, 1, true)
+        f_level(15.09, "Fib decline 50%: 15.09", cFib, line.style_dotted, 1, true)
+        f_level(16.01, "Fib decline 61.8%: 16.01", cFib, line.style_dotted, 1, true)
+        f_level(17.32, "Fib decline 78.6%: 17.32", cFib, line.style_dotted, 1, true)
+        f_level(15.27, "Fib 2022-26 advance 23.6%: 15.27", cGap, line.style_dotted, 1, true)
+        f_level(12.97, "Fib 2022-26 advance 38.2%: 12.97", cGap, line.style_dotted, 1, true)
+        f_level(11.12, "Fib 2022-26 advance 50%: 11.12", cGap, line.style_dotted, 1, true)
+        f_level(9.27, "Fib 2022-26 advance 61.8%: 9.27", cGap, line.style_dotted, 1, true)
+    if showEvents
+        f_vline(timestamp(TZ, 2026, 1, 29, 9, 30), 19.4, "52-week high 18.98", cGap)
+        f_vline(timestamp(TZ, 2026, 6, 3, 9, 30), 10.6, "52-week low 11.20", cGap)
+        f_vline(timestamp(TZ, 2026, 8, 14, 9, 30), 16.9, "14.8: Q2 reaction session, range top 16.22", cEvt)
+        f_vline(timestamp(TZ, 2026, 10, 26, 9, 30), 16.6, "26.10: Brazil-wide gap (NU -17.0%, EWZ -19.8%)", cRes)
+        f_vline(timestamp(TZ, 2026, 11, 5, 9, 30), 10.4, "5.11: retest of the low (11.21)", cGap)
+        f_vline(timestamp(TZ, 2026, 11, 12, 9, 30), 17.6, "12.11: Q3 2026 results after the close", cEvt)
+        f_vline(timestamp(TZ, 2026, 11, 13, 9, 30), 17.2, "13.11: first reaction session", cEvt)
+
+var table tb = table.new(position.top_right, 1, 5, bgcolor=color.new(color.white, 10), border_width=1, border_color=color.new(color.gray, 60))
+if barstate.islast and showNotes
+    table.cell(tb, 0, 0, "NU 13.11.2026 research verdict: HOLD, do not add now (credit test failed: NPL 90+ 7.3% vs <= 7.2%)", text_color=color.black, text_size=size.small, text_halign=text.align_left)
+    table.cell(tb, 0, 1, "Post-gap range 11.21-13.00 (14 sessions); 6-month range 11.20-16.22 (126 sessions)", text_color=color.black, text_size=size.small, text_halign=text.align_left)
+    table.cell(tb, 0, 2, "Jump: daily close above 13.00, then gap fill 14.57, then 16.22. Breakdown: daily close below 11.20", text_color=color.black, text_size=size.small, text_halign=text.align_left)
+    table.cell(tb, 0, 3, "Overhead supply 13.75-14.57: SMA50 13.81, SMA200 14.20, AVWAPs, 1y volume peak 14.38", text_color=color.black, text_size=size.small, text_halign=text.align_left)
+    table.cell(tb, 0, 4, "Buy test below 13.64, entry 13.03; values 13.38 today / 15.42 in a year (weighted 12.26). Not a forecast", text_color=color.black, text_size=size.small, text_halign=text.align_left)
+
+d20  = request.security(syminfo.tickerid, "D", ta.sma(close, 20))
+d50  = request.security(syminfo.tickerid, "D", ta.sma(close, 50))
+d200 = request.security(syminfo.tickerid, "D", ta.sma(close, 200))
+plot(showMA ? d20  : na, "SMA 20 (daily)",  color=#7570b3, linewidth=1)
+plot(showMA ? d50  : na, "SMA 50 (daily)",  color=#e6ab02, linewidth=2)
+plot(showMA ? d200 : na, "SMA 200 (daily)", color=#1f78b4, linewidth=2)
+
+av_gap = f_avwap(timestamp(TZ, 2026, 10, 26, 0, 0))
+plot(showAVWAP and timeframe.isdaily ? av_gap : na, "AVWAP from the 26.10.2026 gap (about 12.07 on 12.11)", color=color.new(#e08214, 0), linewidth=1, style=plot.style_linebr)
+av_1105 = f_avwap(timestamp(TZ, 2026, 11, 5, 0, 0))
+plot(showAVWAP and timeframe.isdaily ? av_1105 : na, "AVWAP from the 5.11.2026 low (about 12.00 on 12.11)", color=color.new(#e08214, 0), linewidth=1, style=plot.style_linebr)
+av_low = f_avwap(timestamp(TZ, 2026, 6, 3, 0, 0))
+plot(showAVWAP and timeframe.isdaily ? av_low : na, "AVWAP from the 3.6.2026 52-week low (about 13.75 on 12.11)", color=color.new(#e08214, 0), linewidth=1, style=plot.style_linebr)
+av_high = f_avwap(timestamp(TZ, 2026, 1, 29, 0, 0))
+plot(showAVWAP and timeframe.isdaily ? av_high : na, "AVWAP from the 29.1.2026 52-week high (about 14.07 on 12.11)", color=color.new(#e08214, 0), linewidth=1, style=plot.style_linebr)
