@@ -10,6 +10,7 @@
 הסביבה נפרדת לגמרי ממנוע המחקר `fundamental_engine` ולא משנה אותו.
 
 **לפני כל סרטון לחנות: [SOCIAL_PLAYBOOK.md](SOCIAL_PLAYBOOK.md)** — מדריך הסושיאל המבוסס-מחקר (פורמטים, פתיחות, הפקת AI, מדידה, סיכונים).
+טרנדים עדכניים מה-For You: [TRENDS_LOG.md](TRENDS_LOG.md).
 
 ## דרישות
 
