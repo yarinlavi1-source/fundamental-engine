@@ -306,6 +306,19 @@ Self-check, in place of a reviewer agent (these are the errors reviewers found o
 - the value is as of today, with cash at face and no double count;
 - the reverse DCF holds the guided year;
 - the probabilities are labelled subjective.
+Added 15.11.2026 (errors found this week on NBIS, NVDA, NU and META; lean_model now reports most of them as numbers):
+- one-off revenue is taken out of the base year before growth is applied (NBIS: about $325M of partnership revenue in one
+  quarter), and receivables are read against deferred revenue (revenue booked but not collected is not a run rate);
+- capex the company has announced is funded in the model: lean_model's `funding` shows the low point of net cash; a gap
+  goes into shares or net debt, or the answer says the plan is unfunded;
+- one hurdle per price ladder: `price_ladder` and `buy_test` label each price with its return (12% buy test, the
+  margin-of-safety return, the index, 6%, 3%); never quote a 13% price inside a 12% ladder;
+- the calibrated lens is read with `calibrated_diagnostics`: when the margin floor does not bind, the two lenses differ
+  only by the multiple, and when the held multiple is inflated the calibrated lens is not a second opinion;
+- convert caps, puts and legal judgments in the notes are in net cash, shares or a charge (META: the New Mexico judgment);
+- every answer names the input that moves the value most (`sensitivity`) and gives the 2-year and 5-year ranges (`ranges`);
+- after each report the base case is scored (`python scripts/forecast_tracker.py`, research/FORECAST_TRACKER_he.md): the
+  tracker measures; rules change only through a preregistered test.
 A reviewer agent runs in the background only for a large decision or a flagged self-check, and its result is reported
 only if it changes the verdict. Complex structures (project debt, converts with puts, biotech patent cliffs) need a custom
 model, about 15-25 minutes: say so up front. The full multi-agent workflow runs only on the owner's request. Report the real
@@ -371,17 +384,31 @@ and in five years; the thesis; key points from the reports; risks; what would ch
 each report or material fact and move the old value to its history line. Company research only: no positions, costs or
 advice about his holdings in research/ (those stay in runs/portfolio_*, gitignored).
 
-## User preference: how to choose which stocks get a deep check (06.11.2026)
+## User preference: how to choose which stocks get a deep check (15.11.2026, replaces the 06.11 funnel)
 
-Deep checks only for 1-2 names at a time (the owner stopped a 10-name batch). Choose them with a cheap funnel of about 5-10
-minutes: (1) where the world is heading over 5 years, as Claude's labelled judgement (e.g. AI moving from building to use,
-power and physical bottlenecks, deglobalization and defense, aging and drug pricing, emerging-market digital finance, rates
-staying higher, autonomy), naming sectors with tailwinds and threats, and asking whether the price already holds the theme;
-(2) quality from the SEC rows; (3) price before news: the own-history multiple, the growth the price assumes vs guidance, and
-every saved valuation in runs/ and research/ (never propose a name whose saved valuation fails the buy test: the MSFT slip of
-06.11.2026); (4) news: why is it cheap, temporary or structural; (5) supporting signals: insider clusters, new 13F positions of
-quality investors, beat-and-raise; social media only for ideas and as a hype gauge; (6) trend: no falling knife without a known
-reason. AI-linked names are not excluded; the correlation is a sizing question. The world view is judgement, not a forecast.
+The owner rejected the 13.11 search: it looked for names that fell 20% or more from their highs and returned broken companies
+(INTU, NFLX, ADBE style) that had already collapsed and were not recovering. Never screen on "fell a lot"; a fall is a
+question to answer, not a reason to look. Deep checks stay limited to 1-2 names at a time. The search is
+`python scripts/quality_momentum_screen.py <out_dir> --as-of D` (SEC XBRL frames, the Nasdaq listing feed, Yahoo daily
+prices; output screen.json and screen_he.md under runs/screens/, gitignored), then a short triage, in this order:
+1. Quality (hard gates from the latest filings): revenue growing about 15% a year or more (latest year and latest quarter
+   year on year), operating profit positive and the operating margin not falling, free cash flow positive, share count not
+   rising more than about 3% a year, market value above about $5B. Banks and insurers are read on their own measures (ROE,
+   book value growth), never forced through these gates.
+2. Trend: 12-month return (skipping the last month) above the S&P 500's, price above a rising 200-day average, and not more
+   than about 25% below the 52-week high. A name failing this is a falling knife for the screen, whatever its value looks like.
+3. Estimates (triage, from attributed sources): beat in the last two quarters, guidance raised or held, consensus rising.
+4. Price sanity: the growth the price requires is not above the company's own guidance or record, and the multiple is not at
+   the top of its own 5-year range without a growth step-up that explains it. Every saved valuation in research/ and runs/ is
+   checked first: never propose a name whose saved valuation fails the buy test (the MSFT slip of 06.11.2026).
+5. World view (labelled judgement): where the industry is heading over 5 years, and whether the price already holds the theme.
+6. The best 1-2 go to the deep check and then to the normal buy test (both lenses). The screen never values a company and is
+   not a buy signal: a name that passes it can still fail the buy test on price.
+Honest limits: the screen is not backtested here (the owner stopped universe tests); the engine's own 2016-2025 test found
+that momentum near a high is a timing signal, not a source of selection, and that "cheap versus computed value" had no
+ranking power, so the screen only decides where research time goes. A near miss on one gate is listed with its reason, not
+dropped silently. AI-linked names are not excluded; the correlation is a sizing question. Supporting signals (insider
+clusters, new 13F positions of quality investors) and social media (ideas and a hype gauge only) stay secondary.
 
 ## User preference: technical analysis belongs to the drawing session (13.11.2026)
 
