@@ -1,0 +1,1 @@
+lean_params_pre_review.json: copied byte-for-byte on 2026-11-15 from the private run folder runs/tickers/UBER_2026-11-06/deep/params_v1_pre_review.json = the params before the review pass (base 150.04 before, 114.35 after, at the same price 67.80); lean_params.json in this folder is the published, post-review file; copied, no fresh pull.

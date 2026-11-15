@@ -86,6 +86,155 @@ META thesis adds $12.3 of dividends to the 2031 value, so its 12% price is about
 them); "margin of safety" is `buy_return` in lean_model and in the theses but 13% in the handoff format
 (`research/technical/FUNDAMENTAL_HANDOFF_he.md`): one definition is still to be chosen.
 
+### Wave 1 of the end-to-end upgrade (15.11.2026)
+### P0-preserve-baselines (15.11.2026): the inputs of every in-force valuation are now in research/
+
+Data copy only: no value was recomputed differently, no existing file under research/ was edited, no fresh pull.
+
+- **Lean baselines that lived only in runs/**: `research/companies/{GOOGL,MSFT,NOW,RDDT}/2026-11-04/` and
+  `research/companies/TSM/2026-11-05/` now hold `lean_params.json` (byte copy of the saved params), `lean_result.json`
+  (the current `scripts/lean_model.py` on that copy) and a one-line `SOURCE.md`. Base values equal the handoffs:
+  GOOGL 239.41, MSFT 433.83, NOW 87.23, RDDT 154.56, TSM 427.63 (bear and bull, the calibrated value and the buy-test
+  price match too). `scripts/forecast_tracker.py` now lists these five as lean valuations instead of "custom".
+- **META custom model**: `research/companies/META/2026-11-13/model/` (model13.py, finish.py, the two lane models, their
+  three input files, the red-team variants and the printout). Only path lines were changed in the copies (marked
+  "research copy"); results go to `META_RERUN_OUT` or a temp folder, never over the saved files. The rerun reproduces
+  `model_result.json` and `finish_result.json` byte for byte (base 513.2 today, 866.0 at end-2031).
+- **NBIS**: `research/companies/NBIS/2026-11-13/checks13.py` and `checks13_result.json`, the script behind the published
+  "financing realistic" figures (7.4% / 12.2% a year, 12% prices 88.93 / 111.64); it reruns to the same file. The 12.11
+  repair pass (`repair.py`, `repair_output.json`) is kept in `2026-11-12/` as a record (not runnable from the copy).
+- **Pre-review params** as `lean_params_pre_review.json` in 13 dated folders: UBER 06.11 and 13.11, ORCL, NET, PANW,
+  NBIS 12.11, NU 13.11, GOOGL, MSFT, NOW, AVGO, CRDO, MELI. The tracker lists them as variants, not scored.
+- **`review_findings.json`** (reviewer verdict, finding titles, base before and after the review) for NBIS 12.11 and
+  13.11, META 13.11, UBER 13.11, NU 13.11, SPCX 13.11. One critical finding on record: SPCX (the first pass missed the
+  company's guidance; base 27.61 -> 70.06).
+- **`research/rejected.jsonl`**: one line per check that ended "not a buy" and has no research folder: CIFR, NBIX,
+  AMD, ANET, AAOI, HOOD, KNSL (price, base value, base return, and the buy-test price where the check is a lean file).
+- Privacy: every copied file was read or scanned first; deep3 `final.json`/`final.md`, the briefs and the reviewer
+  files carry portfolio lines and were not copied; sizing sections were left out of the findings files.
+### P1-golden-test (15.11.2026): a model change can no longer move a published value silently
+
+Test only: `tests/test_saved_valuations.py` (new, about 1.3 seconds). It reads research/ and writes nothing there; no saved
+params or result file was touched, and every saved result reproduced on the first run.
+
+- **Lean files**: every `research/companies/<T>/<date>/lean_params*.json` in lean format (read from its keys, not its
+  name) is run through `lean_model.run()` and compared with the `lean_result*.json` of the same suffix. Every key the saved
+  result holds must come back with exactly the same value (the model's own rounding, after the JSON round trip the command
+  line does); keys the saved result does not hold are ignored, so results saved before the 15.11 reporting keys still
+  pass. On 15.11: 41 lean-format params files, 28 with a saved result (5,467 values compared), 13 without one (the
+  pre-review files: run only).
+- **Custom models**, each run as a command with its output in a temp folder and compared in both directions with the
+  saved file: BNY `bank_model.py`; SPCX `model.py`, `mkparams.py` (rebuilds `params.json`) and `side.py`; META 13.11
+  `finish.py` (`model_result.json`, `finish_result.json`) and `redteam_variants.py`; NBIS 13.11 `checks13.py` (the
+  "financing realistic" figures). META and NBIS call `scripts/lean_model.py`, so a change to `run_scenario` fails them too.
+  The test also fails when a rerun writes into research/.
+- **Coverage, each a failure with the file named**: one of the 28 listed lean baselines is missing (a baseline may be
+  joined by a newer folder, never removed); a `lean_params*.json` that is not in lean format and is not the input of a
+  listed custom model; a `lean_result*.json` with no params of the same suffix; a script under research/companies/ that is
+  neither rerun nor listed with a reason (`repair.py` of NBIS 12.11 and META's `reverse_model.py` are listed); a company
+  with `thesis_he.md` but no dated folder holding a lean params file with its saved result, no listed custom model and
+  no `SOURCE.md` / note saying "custom, not runnable". All 16 thesis companies pass today.
+- **A failure reads** `research/companies/<T>/<date>/lean_result.json :: scenarios/base/value_today: saved 239.41, rerun
+  240.1`, up to 15 keys per file with the count of the rest.
+- **Limits**: 23 of the 28 saved lean results were saved before the reporting keys existed, so `price_ladder`,
+  `buy_test`, `ranges`, `funding`, `sensitivity`, `reverse_reading`, `calibrated_diagnostics` and `warnings` are guarded
+  only for GOOGL, MSFT, NOW, RDDT and TSM until the other results are saved again with those keys. The pre-review params
+  have no saved result to compare with. Old-engine folders (casefile, table) are outside this test.
+- **When it fails after a model change**: the change moved a published number. Either the change is wrong, or the
+  valuation is republished on purpose as a new dated folder; the old folder keeps its files. A new custom model is added
+  to `CUSTOM` in the test, a new lean baseline is picked up by itself.
+## Unreleased — published lean valuations are frozen in a tracked, chained ledger (15.11.2026)
+
+New code and one new data file: no valuation changed, no saved params or result file was edited, and
+`fundamental_engine/ledger.py`, `monitor.py` and the legacy `research/forecast_ledger.jsonl` are byte-identical.
+
+- `research/ledger.jsonl`: the ledger of the lean path, written through the existing `Ledger` API (hash chain, system
+  clock, supersedes, one outcome per forecast). Its first row is a note holding the sha256 of the legacy
+  `research/forecast_ledger.jsonl` (a deduplicated copy whose chain cannot be verified or appended to; it stays as it is).
+  A fresh checkout can append outcomes and events to the new file.
+- `fundamental_engine/lean_freeze.py`:
+  - `freeze_folder(folder, ledger, root=, run=, lean_model_path=, next_report=, falsifiers=)` records one valuation folder
+    (`research/companies/<T>/<date>/`); `freeze(params_path, result_path, falsifiers=None, ledger=...)` does the same from
+    the two files; `freeze_all(root, ledger, ...)` takes every lean or custom valuation folder in as_of order;
+    `status(ledger)` verifies the chain and lists the theses in force.
+  - Thesis row: ticker, as_of, price, sha256 of the params (file and content) and of the saved result, the
+    `scripts/lean_model.py` file hash, bear/base/bull value today, the year-end values with their dates, the calibrated
+    base, the buy test (from the saved result; for results saved before that key existed, from a rerun, and the row says
+    so), the margin-of-safety and index prices, the pre-review base (rerun of `lean_params_pre_review.json`) next to the
+    post-review base and the numbers of `review_findings.json`, the named variants by hash and value, whether the current
+    lean_model still reproduces the saved result, the next report date with its source, `on_time`, and the falsifiers
+    when supplied.
+  - Forecast rows: base revenue (`reported_revenue`), operating margin (`operating_income_after_sbc/revenue`) and
+    operating EPS per model year, each with the bear and bull values; revenue also for a base year that has not ended.
+    A fiscal year that ended before the freeze is not written (it is not a forecast).
+  - Numbers come from the saved result, never from a rerun.
+  - Time: `made_at` is the params as_of; the ledger is opened with the 7-day refusal off, so an older valuation is
+    recorded and the ledger's own rule flags it late. `on_time` is separate: true when the row was recorded before the
+    next report, false after it, null when no date is known or the recording falls inside an approximate window
+    ('~date' = 3 days either side, a named month = the whole month).
+  - Idempotent: unchanged inputs and published numbers add nothing (a result file rewritten with more keys but the same
+    numbers is not a new valuation). Changed inputs add a thesis that supersedes the old one, dated by the clock, with
+    each forecast row naming the row it replaces; a newer valuation of the same company supersedes the previous one the
+    same way. Falsifiers on file are kept when a later freeze does not supply them.
+  - Custom models get a thesis row from their saved result with the note 'custom model': the bank model (BNY, with EPS
+    and net income rows), the segment model (SPCX, with group revenue and EBIT margin rows on their own basis), the
+    three-lane model (META) and a lean file whose revenue line is not sales (NU), the last two without forecast rows.
+  - `freeze_all`: a next report date keyed by the ticker alone is the company's upcoming report and is given only to
+    the latest valuation of that company; an older valuation needs its own `T/<date>` key or its handoff, else its
+    `on_time` is unknown (the upcoming date would call a freeze made after an earlier report on time).
+- `scripts/lean_freeze.py <folder> | --all [--skip T,..] [--next-reports FILE] | --verify`: the command for the last
+  step of a delivery.
+- `tests/test_lean_freeze.py`: 13 tests, 12 on a temp ledger (chain verifies; a second run adds nothing; changed params
+  supersede; a newer valuation supersedes; an older valuation frozen later is dated by the clock; late rows are flagged,
+  not refused; on_time; an outcome appended in a fresh copy; variants and pre-review; custom models; --all order; a
+  ticker-keyed next report date goes to the latest valuation only; a named pair) and
+  one on the repository ledger (it verifies and the legacy file still has the recorded sha256).
+- Backfill on 15.11.2026: 26 valuations frozen (467 rows: 1 note, 26 theses, 440 forecast rows), chain ok. 22 are lean,
+  4 custom (BNY, META, NU, SPCX). NVDA 12.11 is on file before its report of 17.11. 13 valuations dated 04-07.11 are
+  flagged late by the 7-day rule (244 forecast rows). on_time: 23 yes, 1 no (NBIS 11.11, frozen after the 12.11 report),
+  2 unknown (NET: no date on file; SPCX: 'early 2027').
+- Not done here: nothing reads the new ledger yet (tracker, holdings check, CLAUDE.md step 5 still name the old file);
+  typed falsifiers are stored only when supplied; a weighting across variants (NVDA) is in no file and is not frozen.
+## Unreleased — locked judgement rules as code (15.11.2026)
+
+New code and one data file: no valuation changed and no saved params or result file was edited.
+
+- `fundamental_engine/locked_rules.py` (pure functions, no network): the owner's locked rules computed one way, with their
+  working returned so it can be stored.
+  - `beta_2y_weekly(prices, spy_prices, as_of=None, weeks=104)` -> raw, adjusted (0.67 x raw + 0.33), weeks, window,
+    correlation. The two series (weekly or daily closes) are aligned by calendar week; with `as_of` only weeks whose Friday
+    has passed count, so a partial week is never used; the last 104 weekly simple returns; fewer than 20 raises, fewer than
+    52 is flagged `short_history`.
+  - `multiple_history(prices, figures, basis, months=60, as_of=None)` -> median, p25, p75, min, max, months, window,
+    latest, on basis `forward_pe`, `ev_sales` or `p_tbv`. Months with a zero or negative figure are left out and counted
+    (`skipped_nonpositive`). Quartiles by linear interpolation; the saved BNY history is reproduced to 0.01.
+  - `hist_multiple_value(company_type, next_year_figure, history, net_cash_per_share=0)` -> value, low (p25), high (p75),
+    labelled 'שווי לפי המכפיל ההיסטורי'. Company types and anchors as in the 06.11.2026 rule: `stable_profitable` and
+    `grower_growth_changed` (forward P/E; the second carries the growth-rate note and an optional `peer_multiple` shown as
+    a separate `peer_value`), `low_profit` (EV/sales, net cash added), `bank` (P/TBV, read against ROE), `cyclical`
+    (mid-cycle EPS x median multiple), `levered_complex` (no value: custom model only). A history on the wrong basis, a
+    non-positive figure or net cash added to a P/E value is refused.
+  - `validate_judgement(block, params=None, market=None)` -> ok, errors, warnings, rule. The params `judgement` block:
+    beta {raw, adjusted, weeks, window, used, reason_if_different}; exit_pe {own_median, p25, p75, months, basis,
+    ratio_to_model_eps, used, reason_if_different}; hist_multiple {company_type, basis, next_year_figure, source, median,
+    p25, p75, months, value, low, high}; beta_mature and roic_terminal {value, source}; market {rf, erp, source,
+    reason_if_different}. `used` may differ from the rule (beta by more than 0.005, exit P/E by more than 0.5 from own
+    median x ratio, rf/erp from research/market.json) only with a non-empty reason; a block without the measurement needs
+    a reason; with `params` the block must equal the numbers the model runs on. Helpers: `beta_block`, `exit_pe_block`,
+    `market_in_force`, `check_market`, `load_market`, `percentile`.
+- `research/market.json`: the dated rf and ERP of the lean path. One entry, in force from 04.11.2026: rf 0.0494 (10-year
+  Treasury, 29-30.10.2026 market row, as recorded in the saved params) and ERP 0.042 (Damodaran implied ERP, 1.10.2026),
+  with the update rule (append-only entries; one rf and ERP per valuation date; a saved valuation takes a new entry at its
+  next update). Not set: how far the yield may move before a new entry is added (owner's decision).
+- `scripts/locked_rules.py TICKER [--as-of D] [--weeks N] [--save FILE]`: fetches weekly closes of the ticker and SPY
+  (Yahoo chart API) and prints the `judgement.beta` block as JSON. Bars are dated in the exchange's own time zone: with a
+  fixed offset a daylight-saving hour moved bars into the previous week and changed the UBER beta from 1.13 to 1.07.
+- `tests/test_locked_rules.py`: 25 tests on fixed series (known beta, 104-week window, partial week, known quartiles, each
+  company type, a judgement block whose `used` differs without a reason is rejected, the market file, the fetch dating).
+- Not done here: lean_model does not read the block or research/market.json yet, and no saved params file has a
+  `judgement` block. The audit of the 24 saved lean params files (rf 0.049 in 12 of them against 0.0494, beta and exit
+  P/E deviations with and without a stated reason) is in runs/engine_upgrade_2026-11-15/locked_rules_audit.md.
+
 ## 0.14.3 — bank revenue, residual-income honesty, routing audit fixes (02.11.2026)
 
 Known bugs of the week and the real critical/major findings of the 02.11 routing and process audits. Owner-facing summary of

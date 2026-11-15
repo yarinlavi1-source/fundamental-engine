@@ -1,0 +1,69 @@
+{
+ "V1_at_700": {
+  "fundamental": 4.52,
+  "calibrated_fixed_18_68": 8.35,
+  "calibrated_literal_pe": 20.61,
+  "calibrated_literal_ret": 10.42
+ },
+ "V1_at_907": {
+  "fundamental": -0.62,
+  "calibrated_fixed_18_68": 3.01,
+  "calibrated_literal_pe": 26.7,
+  "calibrated_literal_ret": 10.39
+ },
+ "V0_implied_pre_DA_lease_margin": {
+  "y2027": 0.488,
+  "cal_2032": 0.612,
+  "fund_2032": 0.571
+ },
+ "V2_cal_at_20.35x": {
+  "v31": 1137.2,
+  "sell3": 988,
+  "trim6": 853
+ },
+ "V3_cal_consensus_scaled": {
+  "v31": 1132.6,
+  "sell3": 984,
+  "trim6": 849
+ },
+ "V4_depwave_pe_lane": {
+  "eps32": 47.2,
+  "v31": 877.4,
+  "sell3": 765,
+  "trim6": 660
+ },
+ "V5_depwave_pe_lane_exit_normalised": {
+  "eps33": 57.58,
+  "v31": 965.2,
+  "sell3": 840,
+  "trim6": 725
+ },
+ "V6_capex_fade_rule": {
+  "capex": [
+   215,
+   185,
+   140,
+   109.2,
+   120.5,
+   131.3,
+   141.8,
+   151.7
+  ],
+  "eps32": 60.14,
+  "da32": 0.203,
+  "pe_lane_v_today": 725.7,
+  "pe_lane_v_today_base": 571.6,
+  "depwave_line_v31": 1119.2,
+  "depwave_sell3": 972
+ },
+ "V7_depwave_lease12y": {
+  "eps32": 44.03,
+  "sell3": 714
+ },
+ "V8_sell_line_end2027": {
+  "calibrated": 1023,
+  "fundamental_approx": 837,
+  "post_split_calibrated": 511.6,
+  "div_5y": 12.4
+ }
+}

@@ -1,0 +1,134 @@
+{
+ "ticker": "MSFT",
+ "as_of": "2026-11-04",
+ "price": 554.51,
+ "rf": 0.0494,
+ "erp": 0.042,
+ "beta": 1.12,
+ "beta_mature": 1.0,
+ "shares_m": 7446,
+ "net_cash_m": -65000,
+ "rev0_m": 396000,
+ "base_year": 2027,
+ "tax": 0.2,
+ "cash_yield": 0.036,
+ "debt_rate": 0.05,
+ "roic_terminal": 0.18,
+ "days_to_base_year_end": 238,
+ "years_to_horizon": 5.65,
+ "buy_return": 0.0964,
+ "probabilities": {
+  "bear": 0.25,
+  "base": 0.5,
+  "bull": 0.25
+ },
+ "probabilities_note": "SUBJECTIVE (Claude's judgement, not engine odds)",
+ "scenarios": {
+  "bear": {
+   "g": [
+    0.12,
+    0.09,
+    0.07,
+    0.06,
+    0.05,
+    0.05
+   ],
+   "m": [
+    0.4,
+    0.37,
+    0.36,
+    0.365,
+    0.375,
+    0.385
+   ],
+   "conv": [
+    0.145,
+    0.54,
+    0.77,
+    0.86,
+    0.84,
+    0.82
+   ],
+   "pe": 18,
+   "charge": {
+    "0": 10000,
+    "1": 20000
+   }
+  },
+  "base": {
+   "g": [
+    0.18,
+    0.14,
+    0.11,
+    0.09,
+    0.08,
+    0.07
+   ],
+   "m": [
+    0.445,
+    0.43,
+    0.42,
+    0.42,
+    0.43,
+    0.44
+   ],
+   "conv": [
+    0.21,
+    0.33,
+    0.47,
+    0.58,
+    0.65,
+    0.7
+   ],
+   "pe": 20,
+   "charge": {}
+  },
+  "bull": {
+   "g": [
+    0.22,
+    0.18,
+    0.15,
+    0.12,
+    0.1,
+    0.09
+   ],
+   "m": [
+    0.46,
+    0.455,
+    0.455,
+    0.465,
+    0.475,
+    0.49
+   ],
+   "conv": [
+    0.26,
+    0.38,
+    0.51,
+    0.62,
+    0.69,
+    0.74
+   ],
+   "pe": 26,
+   "charge": {}
+  }
+ },
+ "notes": {
+  "price": "IBKR snapshot 2026-11-04 18:55 UTC, $554.51",
+  "rf_erp_beta": "rf 4.94% (10y UST, 29-30.10.2026 market row of the 1.11 draft); ERP 4.2% (implied, same source); beta 1.12 = 2-year weekly vs SPY (given by the main loop); ke0 = 9.64%, fading to 9.14% (beta 1.0) over 10 years; terminal growth = rf (engine convention)",
+  "shares_m": "7,446 diluted weighted Q1 FY27 (release 2026-10-28). Buybacks ($4.4B/qtr) roughly offset SBC dilution (shares -0.3% y/y); held flat, which is slightly conservative",
+  "rev0_m": "FY27 (June 2027) revenue 396,000: Q1 actual 92,279 + Q2 guide 96,000-97,100 (call 28.10.2026, mid 96,550) + H2 ~207,000 at ~+19% y/y; equals AV consensus FY27 395,771 (39 analysts, 4.11.2026). FY26 actual 331,839 -> +19.3%",
+  "fy27_margin": "FY27 GAAP operating margin ~46.5% (Q1 49.8%; Q2 guide: rev 96.55, COGS 32.8, opex 18.55 -> 46.8%, 'down slightly y/y'; H2 ~45.5%/44.5% as D&A rises). Cross-check: AV consensus FY27 EPS 20.02 -> NI 149B -> EBIT ~184B = 46.5%",
+  "tax": "0.19: Q1 FY27 effective 20.3%; FY26 ~18-19%; 19% used",
+  "net_cash_m": "End FY27 (June 2027), $M: cash+ST investments ~58,000 (64,509 at 30.9.2026 less ~6B net of FCF after dividends 6.8B/qtr and buybacks 4.4B/qtr over Q2-Q4) minus debt 35,000 (35,481 at 30.9.2026, assumed refinanced) minus finance-lease liabilities ~88,000 (70,973 at 30.9.2026 + ~7.4B new finance leases/qtr per Hood less ~1B principal/qtr) = -65,000; minus 36,000 = 10% of the $364.6B leases not yet commenced (10-Q Note, FY27-FY34, terms 1-20 years) treated as debt-like at a 90% HAIRCUT: 90% is excluded because those leases' cost enters the margin path (operating-lease rent in COGS) or the capex path (finance leases counted as capex at commencement) once they start, so counting them as debt too would double count; the 10% is a deliberate stranded-capacity reserve for the leases 'subject to conditions'. Result -101,000 (= -$13.6/share). Equity investments (37.8B incl. the OpenAI stake) are NOT added: non-spendable, carrying value uncertain",
+  "capex_path": "Capex all-in (cash PP&E + finance leases at commencement), $B: FY27 190 (Q1 45.2 all-in / 39.4 cash; Hood: H2 accelerates on CPUs, memory, GPUs and the third-party capacity shifted to H2; April 2026 FY27 guide 'roughly $190B incl ~$25B component pricing'; press reports $170-175B cash). Base: FY28 215, FY29 230, FY30-33 235 (plateau, 46%->32% of revenue). Bear: 200, 160, 140, 130, 130, 130 (cut with a lag). Bull: 215, 240, 255, 260, 260, 260",
+  "da_path": "D&A $B from the capex cohorts (servers/network 2-6 years ~75% of capex; buildings 5-15 years, 25-year change NOT found in the 10-Q): FY27 54 (Q1 11.7, 12.7% of revenue, +44% y/y). Base: FY28 80, FY29 105, FY30 128, FY31 142, FY32 150, FY33 155 (17-22% of revenue). Bear: 80, 100, 110, 110, 105, 100. Bull: 80, 108, 135, 152, 162, 168",
+  "margin_path": "m = EBITDA margin minus D&A share. Base EBITDA margin 61->64.5% (opex +9% vs revenue +19% gives leverage; COGS ex-D&A rises with Azure mix, energy and third-party GPU leases) less D&A 17->22% -> op margin 44% FY28 falling to 41% FY30 and recovering to 43% FY33. This is BELOW consensus (FY28 EPS 24.14 implies ~47%): my judgement is that consensus under-weights the D&A wave. Bear: EBITDA 57->55.5% (price pressure, underused fleet, fixed lease cost) -> 39% to 32% and back to 37.5%. Bull: EBITDA 62->67% (Copilot ARPU, usage billing, Maia efficiency) -> 45.5-48%",
+  "conv": "FCF/NOPAT per year from the explicit build: FCF = NOPAT + D&A - capex (all-in) + working capital (+3B/yr base, deferred revenue growth; 0 bear; +4B bull). SBC is NOT added back (FCF after SBC, 3.4% of revenue). Base FY28: 467*0.44*0.81=166 + 80 - 215 + 3 = 34 -> 0.21; FY29 59/181 = 0.33; FY30 92/196 = 0.47; FY31 124/214 = 0.58; FY32 155/237 = 0.65; FY33 183/260 = 0.70",
+  "growth": "Base FY28 +18%: Azure ~+35% (Dec-q guide 49-50% cc; capacity still constrained; H2 third-party capacity; OpenAI's $250B Azure commitment; ~30% of $677B RPO = $203B in 12 months, +29% y/y), M365 commercial cloud ~+15% (guide 19% cc, accelerating through FY27), Devices and Consumer flat (Windows OEM -27%, Xbox -2%). Then 14, 11, 9, 8, 7 (fade to the size-class and the RPO duration 2.3 years). Consensus FY28 475B (+20%). Bear: 12, 7, 5, 4, 4, 4 (OpenAI demand/credit event, Azure +22% then +10%, seat compression, PC decline). Bull: 22, 18, 15, 12, 10, 9 (Azure >40% in FY28, agents monetized, bookings record)",
+  "pe": "Exit forward P/E at June 2032 on FY33 operating EPS. Gordon at mature ke 9.14%, g = rf 4.94%, payout 1-g/ROIC(18%) = 73% -> 17.4x; with growth still 7% in FY33 fading over 9 years a justified multiple is ~21-22x -> base 22. Bear 16 (growth 4%, lower ROIC). Bull 26 (growth 9% fading, MSFT 10-year range 25-35x forward)",
+  "charges_bear": "After-tax $M: index 0 (FY28) 10,000 = OpenAI receivable ($7.2B at 30.9.2026) and part of the equity-method carrying value written down; index 1 (FY29) 29,000 = 10% of the $364.6B not-yet-commenced leases stranded (36B pre-tax, 19% tax); index 2 (FY30) 15,000 = about half of the IRS NOPA $28.9B (2004-2013 transfer pricing; company disputes; not tax-deductible). Base and bull: none (IRS treated as reserved per the 10-Q)",
+  "roic_terminal": "0.18: FY33 NOPAT ~260B on invested capital ~1,100B (net P&E ~1,000B after the capex wave) = 24% on the total; incremental AI-infrastructure returns lower; 18% used",
+  "what_is_not_modelled": "Buybacks/dividends (cash accumulates at cash_yield instead); the OpenAI stake's market value (27% of a ~$500B valuation in press, ~$135B, is NOT added: no primary source, no liquidity, HLBV carrying value far lower); FX; the 25-year useful-life change (not in the 10-Q; if adopted, D&A falls and the margin path rises ~1 point)"
+ },
+ "review_changes": "reviewer 04.11: $36B uncommenced-lease reserve removed from net cash (kept only as the bear charge); tax 19%->20% (FY27 guide); 15->25-year building life IS adopted from FY27 (Hood, FY26 Q4 call): margins +0.5-1pt; bear made a 25% case (OpenAI 10B + stranded leases 20B, IRS reserved per Note 13), P/E 18; base exit P/E 22->20 (two-stage justified ~17.8x). Finance->operating lease shift may overstate FY28+ capex (GAP). OpenAI stake (~$18/share at the press $135B) not in the value. buy_return = ke0."
+}

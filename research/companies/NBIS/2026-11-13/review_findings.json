@@ -1,0 +1,107 @@
+{
+ "ticker": "NBIS",
+ "valuation_date": "2026-11-13",
+ "built_on": "2026-11-15",
+ "note": "Built on 2026-11-15 from the reviewer files of the private run folder (not copied): verdict, finding titles and the base value before and after the review pass. Titles only; no fresh pull. Lines about position size or the portfolio were left out (research/ is company research only).",
+ "pre_review": {
+  "base_today": 63.6,
+  "price": 110.46,
+  "file": null,
+  "note": "the checks moved no base input (text fixes only), so there is no separate pre-review params file"
+ },
+ "final": {
+  "base_today": 63.6,
+  "file": "lean_params.json"
+ },
+ "base_changed_by_review": false,
+ "added_by_review": "financing-realistic line (debt 8.5% + $6B of shares at $95: 7.4% a year ours, 12.2% calibrated; checks13.py), 2028 revenue rows, VIE rows",
+ "critical_findings": 0,
+ "reviews": [
+  {
+   "lane": "numbers",
+   "run_file": "runs/tickers/NBIS_2026-11-12/deep/notes13/check_numbers.md",
+   "verdict": "agree with changes",
+   "findings": [
+    {
+     "n": 1,
+     "severity": "minor",
+     "title": "Index-parity price is the base's, shown next to the weighted value."
+    },
+    {
+     "n": 2,
+     "severity": "minor",
+     "title": "VIE: the intended further $662.2 is neither in the bridge nor a sensitivity, and the \"VIE at face\" line counts only part of the notes.",
+     "title_note": "second half of the title paraphrased from the finding text"
+    },
+    {
+     "n": 3,
+     "severity": "minor",
+     "title": "Feb notes accretion labelled REPORTED."
+    },
+    {
+     "n": 4,
+     "severity": "minor",
+     "title": "Stale text inside params.json (no value effect)."
+    },
+    {
+     "n": 5,
+     "severity": "minor",
+     "title": "Step 4 evidence understated (strengthens the change)."
+    }
+   ]
+  },
+  {
+   "lane": "red team",
+   "run_file": "runs/tickers/NBIS_2026-11-12/deep/notes13/redteam.md",
+   "verdict": "agree with changes",
+   "findings": [
+    {
+     "n": "A1",
+     "severity": "major",
+     "title": "The calibrated \"buy band\" (14.3%/yr) depends on all funding being debt at 7% with no new shares"
+    },
+    {
+     "n": "A2",
+     "severity": "major",
+     "title": "The 2028 revenue level is now the swing input; the new RPO buckets touch it but no number moved"
+    },
+    {
+     "n": "A3",
+     "severity": "minor",
+     "title": "Signs of vendor financing in the notes, mostly on the supplier side; value treated conservatively, but the partnership revenue is low quality"
+    },
+    {
+     "n": "A4",
+     "severity": "minor",
+     "title": "Microsoft credits"
+    },
+    {
+     "n": "B1",
+     "severity": "none",
+     "title": "Does the price already discount the slip? No: the price still assumes more than the base"
+    },
+    {
+     "n": "B2",
+     "severity": "none",
+     "title": "What the notes show that is better than feared (a real offset, but small)"
+    },
+    {
+     "n": "B3",
+     "severity": "minor",
+     "title": "The bear \"wipe-out at any price\" is right in direction, overstated in wording"
+    },
+    {
+     "n": "C1",
+     "severity": "major",
+     "title": "The entry conditions must hold together (AND), not as alternatives (OR)",
+     "title_note": "reworded: the original title refers to portfolio rules"
+    },
+    {
+     "n": "D",
+     "severity": "minor",
+     "title": "Presentation: the index-parity price is the base case's, and the calibrated P/E of 22 is a judgement, not an observed multiple"
+    }
+   ]
+  }
+ ]
+}

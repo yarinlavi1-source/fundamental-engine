@@ -1,0 +1,77 @@
+{
+ "ticker": "META",
+ "valuation_date": "2026-11-13",
+ "built_on": "2026-11-15",
+ "note": "Built on 2026-11-15 from the reviewer files of the private run folder (not copied): verdict, finding titles and the base value before and after the review pass. Titles only; no fresh pull. Lines about position size or the portfolio were left out (research/ is company research only).",
+ "pre_review": {
+  "base_today": 513.2,
+  "price": 634.68,
+  "file": "model_result.json",
+  "note": "custom model; the red team changed the price ladder, not the base"
+ },
+ "final": {
+  "base_today": 513.2,
+  "file": "model_result.json (values), finish_result.json (ladder after the checks)"
+ },
+ "base_changed_by_review": false,
+ "changed_by_review": "the ladder: the calibrated lens freezes the multiple at 18.68x, lines are dated, the evidenced depreciation-wave line is modelled on the P/E lane; falsifiers rewritten",
+ "critical_findings": 0,
+ "reviews": [
+  {
+   "lane": "red team",
+   "run_file": "runs/tickers/META_2026-11-13/deep/redteam.md",
+   "applied_in": "runs/tickers/META_2026-11-13/deep/finish/after_checks.md",
+   "verdict": "agree with changes",
+   "findings": [
+    {
+     "n": 1,
+     "severity": "major",
+     "title": "The literal calibrated rule never says sell.",
+     "outcome": "applied"
+    },
+    {
+     "n": 2,
+     "severity": "major",
+     "title": "The sell line drifts up about 11% a year, so the post-split $453.5 goes stale fast.",
+     "outcome": "applied"
+    },
+    {
+     "n": 3,
+     "severity": "major",
+     "title": "The judgement first step at $855 uses an unmodelled 1.5-point floor cut. The rule's own depreciation-wave line ($715) is biased low.",
+     "outcome": "applied"
+    },
+    {
+     "n": 4,
+     "severity": "major",
+     "title": "The calibrated margin floor implies an unprecedented margin expansion. (too-high side)",
+     "outcome": "applied as a label"
+    },
+    {
+     "n": 5,
+     "severity": "major",
+     "title": "The base capex path does not follow the locked capex rule. (too-low side)",
+     "outcome": "not applied to the base; disclosed as upside risk"
+    },
+    {
+     "n": 6,
+     "severity": "minor",
+     "title": "The held multiple and the EPS path are on different EPS bases.",
+     "outcome": "applied as disclosure"
+    },
+    {
+     "n": 7,
+     "severity": "minor",
+     "title": "Some falsifiers are not measurable or not dated.",
+     "outcome": "applied"
+    },
+    {
+     "n": 8,
+     "severity": "minor",
+     "title": "The post-split divisor of 2 is right for the A+C pair.",
+     "outcome": "applied"
+    }
+   ]
+  }
+ ]
+}

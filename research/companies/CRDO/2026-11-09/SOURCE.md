@@ -1,0 +1,1 @@
+lean_params_pre_review.json: copied byte-for-byte on 2026-11-15 from the private run folder runs/tickers/CRDO_2026-11-09/deep/params.json = the params before the review pass (base 139.50 before, 108.37 after, at the same price 132.83); lean_params.json in this folder is the published, post-review file; copied, no fresh pull.

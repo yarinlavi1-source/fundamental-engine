@@ -1,0 +1,120 @@
+{
+ "ticker": "NBIS",
+ "valuation_date": "2026-11-12",
+ "built_on": "2026-11-15",
+ "note": "Built on 2026-11-15 from the reviewer files of the private run folder (not copied): verdict, finding titles and the base value before and after the review pass. Titles only; no fresh pull. Lines about position size or the portfolio were left out (research/ is company research only).",
+ "pre_review": {
+  "base_today": 75.5,
+  "price": 130.25,
+  "file": "lean_params_pre_review.json",
+  "note": "first pass, pre-market price"
+ },
+ "final": {
+  "base_today": 66.91,
+  "file": "lean_params.json"
+ },
+ "base_changed_by_review": true,
+ "bridge": "2027 revenue at the low end 12,000 (-3.07), stock-based pay path raised (-5.52), debt at 7% (0.00 today, lower later values); repair_output.json",
+ "critical_findings": 0,
+ "reviews": [
+  {
+   "lane": "numbers",
+   "run_file": "runs/tickers/NBIS_2026-11-12/deep/check_numbers.md",
+   "verdict": "agree with changes",
+   "findings": [
+    {
+     "n": 1,
+     "severity": "major",
+     "title": "The price is stale."
+    },
+    {
+     "n": 2,
+     "severity": "major",
+     "title": "\"2029-2032 unchanged\" hides a 26% rise in every later year."
+    },
+    {
+     "n": 3,
+     "severity": "minor",
+     "title": "Base capex after 2027 is close to zero and that is not stated."
+    },
+    {
+     "n": 4,
+     "severity": "minor",
+     "title": "Condition 1, first half: the clean ARR range is too wide."
+    },
+    {
+     "n": 5,
+     "severity": "minor",
+     "title": "RPO is missing from the evidence for 2028."
+    },
+    {
+     "n": 6,
+     "severity": "minor",
+     "title": "A coincidence to check in the 6-K."
+    },
+    {
+     "n": 7,
+     "severity": "minor",
+     "title": "Small items."
+    }
+   ]
+  },
+  {
+   "lane": "red team",
+   "run_file": "runs/tickers/NBIS_2026-11-12/deep/check_redteam.md",
+   "verdict": "agree with changes",
+   "findings": [
+    {
+     "n": 1,
+     "severity": "major",
+     "title": "the price moved after the model was run, during the call nobody has read"
+    },
+    {
+     "n": 2,
+     "severity": "major",
+     "title": "the 2026 record is worse than \"low end, two months late\", and the 2027 base has no slip allowance"
+    },
+    {
+     "n": 3,
+     "severity": "major",
+     "title": "the slip is treated as a two-month timing shift; the Microsoft part is four to six months, power-related, and Microsoft has delay rights"
+    },
+    {
+     "n": 4,
+     "severity": "major",
+     "title": "funding is scored \"partly met\"; on the facts it is not met, and the base's funding mix is the least likely one"
+    },
+    {
+     "n": 5,
+     "severity": "major",
+     "title": "conditions and verdict wording"
+    },
+    {
+     "n": 6,
+     "severity": "major",
+     "title": "Q3 quality; two new items of the same size are not connected"
+    },
+    {
+     "n": 7,
+     "severity": "minor",
+     "title": "stock-based pay is held flat while revenue quadruples"
+    },
+    {
+     "n": 8,
+     "severity": "minor",
+     "title": "2028 and the build-out after 2027"
+    },
+    {
+     "n": 9,
+     "severity": "minor",
+     "title": "sector news not weighed"
+    },
+    {
+     "n": 10,
+     "severity": "minor",
+     "title": "statements that read as facts but are estimates"
+    }
+   ]
+  }
+ ]
+}

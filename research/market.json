@@ -1,0 +1,37 @@
+{
+ "schema": 1,
+ "purpose": "The one dated risk-free rate and equity risk premium of the lean valuation path (scripts/lean_model.py params rf and erp). Company research only. The heavy engine's dated inputs are a separate file (deep --market).",
+ "in_force": [
+  {
+   "from": "2026-11-04",
+   "rf": {
+    "value": 0.0494,
+    "as_of": "2026-10-30",
+    "title": "US 10-year Treasury yield, 29-30.10.2026 market row",
+    "evidence": "research/companies/MSFT/2026-11-04/lean_params.json notes.rf_erp_beta ('rf 4.94% (10y UST, 29-30.10.2026 market row of the 1.11 draft)'); same value in the APH, GOOGL and NOW params of 04.11.2026",
+    "retrieval": "recorded from saved params; not re-read from a market feed when this file was written"
+   },
+   "erp": {
+    "value": 0.042,
+    "as_of": "2026-10-01",
+    "title": "Damodaran implied ERP for the S&P 500 on 1 October 2026 (trailing 12 months, adjusted payout)",
+    "url": "https://pages.stern.nyu.edu/~adamodar/New_Home_Page/home.htm",
+    "evidence": "docs/CHANGELOG.md (dated market inputs, 20.10.2026: Damodaran's implied ERP 4.20%); used by every saved lean params file",
+    "retrieval": "provider_normalized"
+   },
+   "index_return": 0.0914
+  }
+ ],
+ "convention": [
+  "rf is the 10-year US Treasury yield; erp is Damodaran's implied ERP for the S&P 500; the index return of the lean path is rf + erp.",
+  "Terminal growth = rf: the implied ERP is solved with perpetual growth at the Treasury yield, so the two are used as a pair (docs/CHANGELOG.md 0.13.0)."
+ ],
+ "update_rule": [
+  "One rf and one erp per valuation date: a lean params file dated D takes both from the entry in force on D (the latest entry whose `from` is on or before D).",
+  "Entries are append-only. A new reading of the 10-year yield or a new monthly implied ERP is added as a new entry with its own `from`, source and as_of; an existing entry is never edited.",
+  "A saved valuation is not rerun because a new entry appeared (stable-valuation rule): it takes the entry in force at its next update, and that update states in one line what the change of rf or erp moved.",
+  "A params file that uses another value states the reason in judgement.market.reason_if_different (fundamental_engine/locked_rules.validate_judgement).",
+  "How far the 10-year yield may move before a new entry is added is not set: that is the owner's decision. No entry has been added since 04.11.2026."
+ ],
+ "known_deviations": "Saved lean params dated 05.11-13.11.2026 use rf 0.049 (the same reading rounded to one decimal; no saved note cites a separate source for it) next to 0.0494 in others, including on the same day (13.11.2026). Those files are not changed; the list is in the locked-rules audit of 15.11.2026."
+}

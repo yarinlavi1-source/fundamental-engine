@@ -1,0 +1,121 @@
+{
+ "ticker": "UBER",
+ "valuation_date": "2026-11-13",
+ "built_on": "2026-11-15",
+ "note": "Built on 2026-11-15 from the reviewer files of the private run folder (not copied): verdict, finding titles and the base value before and after the review pass. Titles only; no fresh pull. Lines about position size or the portfolio were left out (research/ is company research only).",
+ "pre_review": {
+  "base_today": 114.55,
+  "price": 69.27,
+  "file": "lean_params_pre_review.json",
+  "note": "numbers lane: price and date roll only"
+ },
+ "final": {
+  "base_today": 114.14,
+  "file": "lean_params.json"
+ },
+ "base_changed_by_review": true,
+ "bridge": "2028 convert net-share-settled above the cap added to the base and bull share counts (-0.41)",
+ "critical_findings": 0,
+ "earlier_pass": {
+  "valuation_date": "2026-11-06",
+  "pre_review_base": 150.04,
+  "final_base": 114.35,
+  "price": 67.8,
+  "note": "buy-verification pass of 6.11 (numbers + red team); its reviewer files were not found in the run folder, the changes are listed in lean_params.json notes.review_1106 of 2026-11-06"
+ },
+ "reviews": [
+  {
+   "lane": "numbers",
+   "run_file": "runs/tickers/UBER_2026-11-13/deep/numbers_check.md",
+   "verdict": "no input found wrong enough to change; corrected inputs: price and the date roll only",
+   "findings": [
+    {
+     "n": 1,
+     "severity": "small",
+     "title": "Exchangeable notes inside debt at fair value 1,200 vs principal 1,150."
+    },
+    {
+     "n": 2,
+     "severity": "small",
+     "title": "2028 convertible above the capped-call price: dilution only above $95.81; not modelled.",
+     "outcome": "applied at finalize (shares)"
+    },
+    {
+     "n": 3,
+     "severity": "small",
+     "title": "SBC 1,623 vs 1,614: conversion note only; no input change."
+    },
+    {
+     "n": 4,
+     "severity": "small",
+     "title": "Delivery Hero \"~15% premium\" and the -1,600 premium transfer: the premium % is not in the primary filings.",
+     "outcome": "claim dropped; haircut labelled a judgement"
+    },
+    {
+     "n": 5,
+     "severity": "small",
+     "title": "AV offtake/funding commitments: undisclosed amount (gap stays open)."
+    }
+   ]
+  },
+  {
+   "lane": "red team",
+   "run_file": "runs/tickers/UBER_2026-11-13/deep/redteam.md",
+   "verdict": "BUY_WITH_CHANGES",
+   "findings": [
+    {
+     "n": 1,
+     "severity": "minor",
+     "title": "Is the bear (0%/yr) harsh enough for AV disintermediation? Yes, for AV alone."
+    },
+    {
+     "n": 2,
+     "severity": "major (tail)",
+     "title": "Harsher AV tail: does the -10%/yr floor hold? Mostly; it breaks only with everything stacked."
+    },
+    {
+     "n": 3,
+     "severity": "major (wording in a buy answer)",
+     "title": "Does the price really assume no growth after 2027? No: the claim is overstated."
+    },
+    {
+     "n": 4,
+     "severity": "major (process)",
+     "title": "Is the calibrated lens credible? It is credible, but it is not an independent check."
+    },
+    {
+     "n": 5,
+     "severity": "minor",
+     "title": "Is the bull too generous? Somewhat, but it does not matter."
+    },
+    {
+     "n": 6,
+     "severity": "minor",
+     "title": "DCF half and terminal assumptions."
+    },
+    {
+     "n": 7,
+     "severity": "minor (value), major (verification)",
+     "title": "Delivery Hero, leverage, tax and regulation."
+    },
+    {
+     "n": 8,
+     "severity": "major",
+     "title": "Position size and correlation.",
+     "title_note": "the section is about the portfolio; its content was not copied"
+    },
+    {
+     "n": 9,
+     "severity": "none",
+     "title": "Falsifiers to add (numeric, from filed lines)."
+    }
+   ]
+  },
+  {
+   "lane": "news",
+   "run_file": "runs/tickers/UBER_2026-11-13/deep/news_check.md",
+   "verdict": "no input changed",
+   "findings": []
+  }
+ ]
+}

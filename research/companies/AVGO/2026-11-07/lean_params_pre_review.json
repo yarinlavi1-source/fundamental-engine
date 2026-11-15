@@ -1,0 +1,131 @@
+{
+ "ticker": "AVGO",
+ "as_of": "2026-11-07",
+ "price": 293.69,
+ "rf": 0.049,
+ "erp": 0.042,
+ "beta": 1.86,
+ "beta_mature": 1.1,
+ "shares_m": 4890.0,
+ "net_cash_m": -28900.0,
+ "rev0_m": 105889.0,
+ "base_year": 2026,
+ "tax": 0.17,
+ "cash_yield": 0.036,
+ "debt_rate": 0.046,
+ "roic_terminal": 0.3,
+ "days_to_base_year_end": -6,
+ "years_to_horizon": 4.98,
+ "buy_return": 0.12,
+ "probabilities": {
+  "bear": 0.3,
+  "base": 0.5,
+  "bull": 0.2,
+  "label": "subjective (Claude judgement)"
+ },
+ "notes": {
+  "price": "IBKR: regular-session close 6.11.2026 = 293.69 (weekly/monthly bar close); last trade 295.27 after hours (00:59 UTC 7.11). 52-week range 289.48-494.23; down 41% from the June 2026 high. Today is Saturday 7.11.2026.",
+  "fiscal_year": "Fiscal year ends on the Sunday closest to 31 October: FY26 ended 1.11.2026 (Q4 not yet reported, due ~10.12.2026). Base year = FY26; forecast years FY27..FY32; the 5-year point = end FY31 (~31.10.2031), 4.98 years from today.",
+  "base_year": "FY26 revenue = 9M actual 71,089 (Q1 19,311 / Q2 22,187 / Q3 29,591, Q3 release 2.9.2026) + Q4 guide 34,800 = 105,889 (AV consensus 105,985).",
+  "growth": "FY27 base +58.3% = AI semis ~115,000 (management on the Q3 call: 'secured the supply to again double AI revenue to approximately $115 billion' in FY27, from ~58,000 in FY26; secondary sources, transcript not read) + non-AI semis 17,600 (Q4 guide 26.1B semis - 21.7B AI = 4.4B a quarter, flat) + software 35,000 (FY26 22,726 + Q4 guide 8,700 = 31,426; +11%, ARR +15%) = 167,600. Consensus FY27 revenue 174,227 (AV, 49 analysts, range 114.7-200.1B). FY28 base +37.8% = AI 175,000 (management target ~230,000 haircut 24% for Google multisourcing to MediaTek (Macquarie: Broadcom share of TPU 95% in 2026 -> 80% 2027 -> 65% 2028, attributed), deployment/financing risk of the Anthropic 10 GW and OpenAI >5 GW plans) + non-AI 18,000 + software 38,000 = 231,000. Then +12/+8/+6/+5%. Bull = AI beat record (Q3 AI 16.7B vs 16.0B target; FY26 AI ~58B vs prior 56B) and the full 230B FY28 target: +69% (AI 125B), +60.6% (AI 230B), +20/+12/+9/+7. Bear = hyperscaler capex digestion + Google moving TPU share to MediaTek + customers using rival design partners (Marvell, Alchip) or in-house + VMware churn: FY27 +29.4% (AI flat at the Q4 run rate ~87B, software +2%), FY28 -7%, FY29 -16% (AI ~60B), then +2/+4/+4.",
+  "margin": "Operating margin AFTER SBC; acquired-intangible amortization excluded (not an economic cost), restructuring ~0.3% ignored. Q3 FY26: non-GAAP OI 20,095 / 29,591 = 67.9% - SBC 2,019 (6.8%) = 61.1%. Q4 guide: non-GAAP OM ~66% (CFO) - SBC ~2.0B/34.8B (5.7%) = ~60.3%. Non-GAAP GM falls with XPU/rack mix: 78.4% Q3 FY25 -> 77.1% Q2 FY26 -> 75.0% Q3 FY26 -> ~73% Q4 guide; Hock Tan on the Q3 call: 'we expect to be able to sustain operating margin even as mix of products dilutes the gross margin'. FY27 base 60% = the guided ~66% non-GAAP OM less SBC ~5.4% of revenue (~9B), fading to 57% by FY31 (pricing pressure as Google multisources TPU to MediaTek and labs use rival design partners). Bull 61->62% (management's FY28 plan: '>$30 EPS'). Bear 54->46% (rack GM + price pressure + deleverage when revenue falls; FY25 after-SBC margin was ~54%).",
+  "conv": "FCF after SBC / NOPAT. 9M FY26: FCF 31,937 - SBC 6,287 = 25,650 + after-tax interest ~1,840 = 27,490 vs NOPAT (47,849 - 6,287) x 0.84 = 34,910 -> 0.79 (receivables +6.5B, inventory +2.3B in 9M; cash taxes 2.2B vs non-GAAP provision 7.4B). Base 0.80/0.85/0.95/1.0; bear releases working capital as revenue falls (0.85/1.0/1.05/1.0).",
+  "tax": "Non-GAAP tax ~16% for Q4 and FY26 (Q3 call, secondary; Q3 computed 3,118/19,490 = 16.0%). 17% used for the global minimum tax (10-Q: 2,186 global minimum tax payable at 2.8.2026).",
+  "net_cash": "2.8.2026: cash 23,975 - debt principal 61,079 (senior notes 59,329 + term loans 1,750; book 59,419) = -37,104. + Q4 FCF estimate ~13,500 (CALC, not reported: Q3 FCF 13,665, Q4 capex guide 1.4B) - Q4 dividend 3,103 (paid 30.9.2026) - global minimum tax payable 2,186 = ~-28,900 at 1.11.2026. Debt maturities: ~2.3B due in FY26-27 (752 Sep-2026, 1,500 Aug-2026 VMware), FY28 ~5.1B, FY29 ~2.4B, FY30 ~8.3B, the rest 2031-2056; effective rates 2.1-5.8%, mostly 4.2-5.3% (10-Q Note 6). Q4 buybacks unknown (10.1B authorization left on 2.8.2026, none bought in Q3): ignored, value-neutral. NOT in net cash: (1) AI-rack lease backstops: max undiscounted ~29B (June tranche, 85% of lease minus rack value, 10-Q) + ~43B (8-K 27.10.2026, 72.5%, Anthropic per TIKR) = ~72B contingent; (2) the customer may issue Broadcom convertible notes up to 42B (vendor financing, none issued at 2.8.2026). Handled as charges in base (2B) and bear (10B), tail outside the table.",
+  "shares": "GAAP diluted 4,887M Q3 FY26 (non-GAAP diluted 4,937M, which ignores future SBC; basic 4,774M on 2.8.2026). 4,890 used because SBC is expensed in the margin. Buybacks: 8,450 in 9M FY26 (25M shares) offset vesting.",
+  "beta": "IBKR weekly closes 7.11.2024-6.11.2026 (104 returns) vs SPY: raw 2.28, correlation 0.69 -> adjusted 0.67 x 2.28 + 0.33 = 1.86. Mature beta 1.1 (semis + software).",
+  "pe": "Exit P/E on after-SBC operating EPS. Own 5-year forward P/E median 22.1 (NTM non-GAAP EPS, Nov-2021..Oct-2026, p25 14.9, p75 25.9; pre-AI median 14.8, AI era 25.2; hist_multiple.md). Applying the non-GAAP-based median to after-SBC EPS is ~6-7% conservative (SBC ~5% of revenue). Base 22, bull 26 (AI-era p75), bear 15 (pre-AI median/p25). Today: 15.1x FY27 consensus non-GAAP EPS 19.47.",
+  "charges": "Base: 2,000 after tax in FY29 = expected value of the rack-lease backstops (subjective: ~7% chance of a ~28B payout). Bear: 5,000 in FY28 (inventory and purchase-commitment losses: unconditional purchase commitments 52.7B FY27 and 73.0B FY28, 10-Q Note 10) + 10,000 in FY29 (partial backstop payout). Tail (not in the table): an AI-lab default with a ~28B+ backstop payout and losses on the up-to-42B customer notes.",
+  "guide_fy28": "Q3 call (2.9.2026, Webull/Benzinga automated transcript): 'In 2027 we have secured the supply to again double AI revenue to approximately $115 billion'; 'line of sight for fiscal 2028 AI semiconductor revenue growth to again double to $230 billion'; 'very much on target to exceed $30 in earnings per share in fiscal 2028'; software 'to stabilize at approximately 8.7 billion' a quarter. Customers: Anthropic 1 GW Ironwood 2026, +5 GW TPU v8i 2027, +10 GW 2028 ('largest XPU customer in 2027'); OpenAI 1.3 GW Jalapeno 2027, >5 GW 2028; Meta 3 GW of MTIA through 2028; Google 'multi tens of billions of dollars of TPUs annually'; six XPU customers. The bull = management's plan (AI 230B FY28, after-SBC EPS ~30 = non-GAAP ~32); the base haircuts FY28 AI to 175B."
+ },
+ "scenarios": {
+  "bear": {
+   "g": [
+    0.294,
+    -0.07,
+    -0.16,
+    0.02,
+    0.04,
+    0.04
+   ],
+   "m": [
+    0.54,
+    0.5,
+    0.46,
+    0.46,
+    0.46,
+    0.46
+   ],
+   "conv": [
+    0.85,
+    1.0,
+    1.05,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "pe": 15,
+   "charge": {
+    "1": 5000,
+    "2": 10000
+   }
+  },
+  "base": {
+   "g": [
+    0.583,
+    0.378,
+    0.12,
+    0.08,
+    0.06,
+    0.05
+   ],
+   "m": [
+    0.6,
+    0.59,
+    0.58,
+    0.575,
+    0.57,
+    0.57
+   ],
+   "conv": [
+    0.8,
+    0.85,
+    0.95,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "pe": 22,
+   "charge": {
+    "2": 2000
+   }
+  },
+  "bull": {
+   "g": [
+    0.69,
+    0.606,
+    0.2,
+    0.12,
+    0.09,
+    0.07
+   ],
+   "m": [
+    0.61,
+    0.62,
+    0.62,
+    0.62,
+    0.62,
+    0.62
+   ],
+   "conv": [
+    0.8,
+    0.85,
+    0.95,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "pe": 26
+  }
+ }
+}

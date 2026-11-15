@@ -1,0 +1,118 @@
+{
+ "ticker": "TSM",
+ "as_of": "2026-11-05",
+ "price": 362.13,
+ "rf": 0.0494,
+ "erp": 0.042,
+ "beta": 1.31,
+ "beta_mature": 1.1,
+ "shares_m": 5186.0,
+ "net_cash_m": 95000.0,
+ "rev0_m": 175000.0,
+ "base_year": 2026,
+ "tax": 0.16,
+ "cash_yield": 0.036,
+ "debt_rate": 0.04,
+ "roic_terminal": 0.25,
+ "days_to_base_year_end": 56,
+ "years_to_horizon": 5.15,
+ "buy_return": 0.1045,
+ "probabilities": {
+  "bear": 0.25,
+  "base": 0.5,
+  "bull": 0.25,
+  "label": "subjective (Claude judgement)"
+ },
+ "notes": {
+  "units": "per ADR (1 ADR = 5 common shares); 25,930M shares = 5,186M ADR units (Q3 release l.53-54)",
+  "rev0": "2026 USD revenue ~175B: FY2025 ~US$121B (HPC NT$2,192.9bn was 58% of FY2025 revenue -> total ~NT$3,781bn, ~US$121B at ~31; ESTIMATE) x 1.44 (management guide ~+44% USD); cross-check: Q3 2026 US$46.7B + Q4 guide mid 53.3B = H2 100B, H1 ~75B. Q3 EPS US$4.60 per ADR (release l.10).",
+  "margin": "Q3 operating margin 58.7%, GM 66.4%; Q4 GM guide ~66% with N2 and overseas-fab dilution widening to 3-4 pts (Q3 call); base fades 56% -> 52%",
+  "net_cash": "cash+marketable US$126B minus long-term debt NT$818bn (~US$26B) and current portion (~5B) = ~95B (ESTIMATE)",
+  "conv": "capex 2026 US$60-64B and 2026-28 'significantly higher' (Q3 call): FCF/NOPAT ~0.5 in 2027-28 rising to ~0.72",
+  "pe": "exit P/E 18 base = TSMC's long-run forward P/E median ~17-18x (MEMORY, 2015-2025), bull 22, bear 12",
+  "adr": "ADR 355.55 implies 2,349 TWD/share at 33.03 vs Taiwan close 2,240 on 5.11 (before the US drop): ADR premium ~5%"
+ },
+ "scenarios": {
+  "bear": {
+   "g": [
+    0.12,
+    -0.12,
+    0.05,
+    0.07,
+    0.07,
+    0.06
+   ],
+   "m": [
+    0.54,
+    0.45,
+    0.46,
+    0.47,
+    0.47,
+    0.47
+   ],
+   "conv": [
+    0.55,
+    0.7,
+    0.75,
+    0.8,
+    0.8,
+    0.8
+   ],
+   "pe": 12
+  },
+  "base": {
+   "g": [
+    0.25,
+    0.18,
+    0.14,
+    0.11,
+    0.09,
+    0.08
+   ],
+   "m": [
+    0.56,
+    0.55,
+    0.54,
+    0.53,
+    0.52,
+    0.52
+   ],
+   "conv": [
+    0.5,
+    0.5,
+    0.55,
+    0.62,
+    0.68,
+    0.72
+   ],
+   "pe": 18
+  },
+  "bull": {
+   "g": [
+    0.32,
+    0.25,
+    0.2,
+    0.15,
+    0.12,
+    0.1
+   ],
+   "m": [
+    0.58,
+    0.58,
+    0.58,
+    0.58,
+    0.58,
+    0.58
+   ],
+   "conv": [
+    0.45,
+    0.48,
+    0.55,
+    0.62,
+    0.68,
+    0.72
+   ],
+   "pe": 22
+  }
+ }
+}

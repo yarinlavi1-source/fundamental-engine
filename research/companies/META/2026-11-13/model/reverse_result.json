@@ -1,0 +1,1076 @@
+{
+ "scenarios": {
+  "bear": {
+   "revenue_m": {
+    "2026": 257000,
+    "2027": 288999,
+    "2028": 301498,
+    "2029": 329697,
+    "2030": 354197,
+    "2031": 376799,
+    "2032": 397522
+   },
+   "op_margin": {
+    "2027": 0.3068,
+    "2028": 0.2457,
+    "2029": 0.2269,
+    "2030": 0.2024,
+    "2031": 0.2,
+    "2032": 0.2101
+   },
+   "eps_operating": {
+    "2027": 28.29,
+    "2028": 23.63,
+    "2029": 23.87,
+    "2030": 22.87,
+    "2031": 24.04,
+    "2032": 26.65
+   },
+   "eps_with_interest": {
+    "2027": 28.52,
+    "2028": 22.56,
+    "2029": 21.64,
+    "2030": 20.33,
+    "2031": 21.37,
+    "2032": 24.22
+   },
+   "dcf_today": 211.13,
+   "multiple_today": 186.88,
+   "value_today": 199.01,
+   "year_end_values": {
+    "2027": 223.53,
+    "2028": 248.66,
+    "2029": 277.41,
+    "2030": 309.07,
+    "2031": 343.64
+   },
+   "annual_return_pct": -11.2,
+   "ke0_pct": 10.82
+  },
+  "base": {
+   "revenue_m": {
+    "2026": 257000,
+    "2027": 309801,
+    "2028": 359799,
+    "2029": 408498,
+    "2030": 455198,
+    "2031": 501896,
+    "2032": 547067
+   },
+   "op_margin": {
+    "2027": 0.3346,
+    "2028": 0.3111,
+    "2029": 0.2899,
+    "2030": 0.2653,
+    "2031": 0.2609,
+    "2032": 0.2648
+   },
+   "eps_operating": {
+    "2027": 33.09,
+    "2028": 35.73,
+    "2029": 37.8,
+    "2030": 38.55,
+    "2031": 41.8,
+    "2032": 46.24
+   },
+   "eps_with_interest": {
+    "2027": 33.32,
+    "2028": 34.79,
+    "2029": 35.66,
+    "2030": 35.83,
+    "2031": 39.03,
+    "2032": 43.9
+   },
+   "dcf_today": 420.29,
+   "multiple_today": 461.95,
+   "value_today": 441.12,
+   "year_end_values": {
+    "2027": 496.1,
+    "2028": 550.17,
+    "2029": 610.56,
+    "2030": 677.0,
+    "2031": 749.31
+   },
+   "annual_return_pct": 3.3,
+   "ke0_pct": 10.82
+  },
+  "bull": {
+   "revenue_m": {
+    "2026": 257000,
+    "2027": 325999,
+    "2028": 396298,
+    "2029": 470299,
+    "2030": 548396,
+    "2031": 628396,
+    "2032": 706946
+   },
+   "op_margin": {
+    "2027": 0.3547,
+    "2028": 0.341,
+    "2029": 0.3329,
+    "2030": 0.3171,
+    "2031": 0.3176,
+    "2032": 0.3163
+   },
+   "eps_operating": {
+    "2027": 36.93,
+    "2028": 43.16,
+    "2029": 50.0,
+    "2030": 55.54,
+    "2031": 63.74,
+    "2032": 71.42
+   },
+   "eps_with_interest": {
+    "2027": 37.16,
+    "2028": 42.28,
+    "2029": 48.01,
+    "2030": 52.83,
+    "2031": 60.9,
+    "2032": 69.09
+   },
+   "dcf_today": 713.61,
+   "multiple_today": 903.21,
+   "value_today": 808.41,
+   "year_end_values": {
+    "2027": 909.6,
+    "2028": 1007.73,
+    "2029": 1116.11,
+    "2030": 1235.02,
+    "2031": 1364.52
+   },
+   "annual_return_pct": 16.0,
+   "ke0_pct": 10.82
+  }
+ },
+ "weighted_value_today": 472.41,
+ "weighted_end_value": 801.69,
+ "weighted_return_pct": 4.7,
+ "index_return_pct": 9.1,
+ "buy_price": 417.87,
+ "index_parity_price": 477.45,
+ "market_implied_growth_pct": [
+  20.5,
+  25.1,
+  21.0,
+  17.8,
+  15.9,
+  14.0
+ ],
+ "market_implied_end_revenue_m": 640507,
+ "sensitivity_base": {
+  "beta 1.10": 467.7,
+  "beta 1.70": 416.24,
+  "exit P/E 13": [
+   372.12,
+   -0.0
+  ],
+  "exit P/E 23": [
+   510.11,
+   6.2
+  ]
+ },
+ "two_lens": {
+  "ours": {
+   "value_today": 441.12,
+   "annual_return_pct": 3.3,
+   "band": "lagging",
+   "pe_exit": 18.0
+  },
+  "calibrated": {
+   "pe_today": 19.2,
+   "pe_used": 19.2,
+   "pe_overridden": false,
+   "margin_used": [
+    0.3346,
+    0.3346,
+    0.3346,
+    0.3346,
+    0.3346,
+    0.3346
+   ],
+   "margin_overridden": false,
+   "why": "",
+   "value_today": 586.54,
+   "year_end_values": {
+    "2027": 659.82,
+    "2028": 731.36,
+    "2029": 810.92,
+    "2030": 898.32,
+    "2031": 993.44
+   },
+   "annual_return_pct": 9.1,
+   "band": "hold"
+  },
+  "agree": false,
+  "rule": "lenses disagree: hold, or stage the trade around the next report"
+ },
+ "atm_if_sold_at_price": {
+  "value_today_per_share": {
+   "bear": 214.1,
+   "base": 447.81,
+   "bull": 802.34
+  },
+  "new_shares_m": 94.7,
+  "why_not_in_base": "no agreement entered; the funding gap it would cover is already in the base as net debt at 5.8%; sold near $634 it is accretive in bear/base, dilutive in bull, about +-1%"
+ },
+ "judgement": {
+  "label": "SUBJECTIVE probabilities (Claude judgement), not engine odds",
+  "revenue_alone": {
+   "p": 0.12,
+   "why": "2031 revenue ~$581B (17.7% CAGR) with base margins and capex: >$50B base-rate share 3.3% (Base Rate Book, 5y real); raised for META-specific evidence (6 quarters >20%, price per ad +12-14% on measured AI conversion gains, consensus 2031 ~$535B) but still above consensus"
+  },
+  "ebitda_alone": {
+   "p": 0.1,
+   "why": "EBITDA after SBC ~+8.6 pts every year (2031 57.6%): equals META's 2017 peak (57.1%, FACT hist.json) while $355.7B of leases commence (FACT 10-Q) and 2026 fell to ~46.8%"
+  },
+  "capex_alone": {
+   "p": 0.1,
+   "why": "capex back to ~$118-133B a year from 2028 (24% of revenue by 2031) with no loss of revenue: contradicts the $60B ATM plan, the $454.5B commitments and the $355.7B leases (FACT)"
+  },
+  "exit_pe_alone": {
+   "p": 0.05,
+   "why": "32x forward operating EPS at end-2031 (24x if only the multiple method counts); META realized forward P/E median 20.4x 2016-24, >=24x in 2 of 9 year-ends (FACT analysis.json)"
+  },
+  "discount_rate_alone": {
+   "p": 0.05,
+   "why": "flat beta ~0.72 (cost of equity ~8.0%); every measured window is 1.25-2.23 (beta.json)"
+  },
+  "market_story_joint": {
+   "p": 0.27,
+   "why": "consensus revenue ($312B 2027 -> ~$535B 2031) AND EBITDA after SBC rising to ~54-56% by 2031 (Family of Apps holds ~55% while Reality Labs losses go to ~0) with base capex: P(revenue at consensus) ~0.4 x P(margin recovery | revenue) ~0.65"
+  },
+  "p_value_at_least_price": 0.3,
+  "scenario_probabilities": {
+   "bear": 0.25,
+   "base": 0.5,
+   "bull": 0.25
+  },
+  "scenario_basis": {
+   "bear": "revenue 8.0% CAGR (base-rate share 25.6%), EBITDA 43-44.5%, capex cut to $135B, P/E 14x, legal/tax/RVG charges ~$39B; precedent 2022 (revenue -1%, op margin 24.8%)",
+   "base": "revenue 14.3% CAGR (share 7.9%; consensus -6% by 2030), EBITDA 46.5 -> 49%, capex $195-220B, D&A to ~23% of revenue, P/E 18x",
+   "bull": "revenue 19.6% CAGR (share 2.5%), EBITDA 48 -> 53%, capex up to $270B, P/E 22x"
+  }
+ },
+ "drivers": {
+  "da_model": {
+   "s_eq": 0.5,
+   "lag_eq": 0.0,
+   "fit_errors_2021_26": [
+    -0.043,
+    0.154,
+    0.086,
+    -0.052,
+    0.015,
+    -0.034
+   ]
+  },
+  "net_cash_2026_items_bn": {
+   "cash_and_securities_2026-09-30 (FACT filings.md s3, R3Q26:48)": 82.449,
+   "notes_face_2026-09-30 (FACT Q3_10Q:702-720)": -84.0,
+   "Q4_2026_company_FCF (ESTIMATE: OCF ~37 - capex 54.2 = guide mid 140 - 9M 85.82)": -17.2,
+   "Q4_2026_dividends_and_RSU_tax_withholding (ESTIMATE from 9M FACT run-rate)": -5.7,
+   "mandatory_convertible_preferred_net_proceeds (FACT 8k_1029: 250M dep. shares x $50; ~2% fees ESTIMATE)": 12.25,
+   "USD_15.0B_and_EUR_9.0B_notes (FACT fwp_1103/fwp_1104): cash in = debt in": 0.0,
+   "forward_sale_40M_sh_x_$622.92 (FACT 8k_1029), settle by 19.11.2027, PV (ESTIMATE)": 24.6,
+   "AG_settlement_payable ~$12.7B over 10y (FACT filings.md s6), after-tax PV (ESTIMATE)": -9.0,
+   "non-marketable_equity_investments $21.1B book (FACT filings.md s3) at 70% (ESTIMATE, investment asset)": 14.8
+  },
+  "net_cash_2026_bn": 18.2,
+  "opm_2026_ex_legal": 0.3591,
+  "ebitda_2026_ex_legal": 0.4681,
+  "detail": {
+   "bear": [
+    {
+     "year": 2027,
+     "revenue": 289.0,
+     "growth": 0.1245,
+     "ebitda_margin_after_sbc": 0.445,
+     "da": 39.9,
+     "da_pct_rev": 0.1382,
+     "op_margin": 0.3068,
+     "capex": 195,
+     "capex_pct_rev": 0.6747,
+     "tax_deferral": 8.9,
+     "nopat": 74.5,
+     "fcf_after_sbc": -71.7,
+     "conv": -0.963
+    },
+    {
+     "year": 2028,
+     "revenue": 301.5,
+     "growth": 0.0433,
+     "ebitda_margin_after_sbc": 0.43,
+     "da": 55.6,
+     "da_pct_rev": 0.1843,
+     "op_margin": 0.2457,
+     "capex": 165,
+     "capex_pct_rev": 0.5473,
+     "tax_deferral": 7.1,
+     "nopat": 62.2,
+     "fcf_after_sbc": -40.1,
+     "conv": -0.645
+    },
+    {
+     "year": 2029,
+     "revenue": 329.7,
+     "growth": 0.0935,
+     "ebitda_margin_after_sbc": 0.435,
+     "da": 68.6,
+     "da_pct_rev": 0.2081,
+     "op_margin": 0.2269,
+     "capex": 145,
+     "capex_pct_rev": 0.4398,
+     "tax_deferral": 2.9,
+     "nopat": 62.8,
+     "fcf_after_sbc": -10.6,
+     "conv": -0.169
+    },
+    {
+     "year": 2030,
+     "revenue": 354.2,
+     "growth": 0.0743,
+     "ebitda_margin_after_sbc": 0.44,
+     "da": 84.1,
+     "da_pct_rev": 0.2376,
+     "op_margin": 0.2024,
+     "capex": 135,
+     "capex_pct_rev": 0.3811,
+     "tax_deferral": 0.0,
+     "nopat": 60.2,
+     "fcf_after_sbc": 9.4,
+     "conv": 0.156
+    },
+    {
+     "year": 2031,
+     "revenue": 376.8,
+     "growth": 0.0638,
+     "ebitda_margin_after_sbc": 0.445,
+     "da": 92.3,
+     "da_pct_rev": 0.245,
+     "op_margin": 0.2,
+     "capex": 135,
+     "capex_pct_rev": 0.3583,
+     "tax_deferral": 0.0,
+     "nopat": 63.3,
+     "fcf_after_sbc": 20.6,
+     "conv": 0.326
+    },
+    {
+     "year": 2032,
+     "revenue": 397.5,
+     "growth": 0.055,
+     "ebitda_margin_after_sbc": 0.445,
+     "da": 93.4,
+     "da_pct_rev": 0.2349,
+     "op_margin": 0.2101,
+     "capex": 117.5,
+     "capex_pct_rev": 0.2955,
+     "tax_deferral": 0.0,
+     "nopat": 70.2,
+     "fcf_after_sbc": 46.1,
+     "conv": 0.656
+    }
+   ],
+   "base": [
+    {
+     "year": 2027,
+     "revenue": 309.8,
+     "growth": 0.2054,
+     "ebitda_margin_after_sbc": 0.465,
+     "da": 40.4,
+     "da_pct_rev": 0.1304,
+     "op_margin": 0.3346,
+     "capex": 205,
+     "capex_pct_rev": 0.6617,
+     "tax_deferral": 10.4,
+     "nopat": 87.1,
+     "fcf_after_sbc": -67.2,
+     "conv": -0.771
+    },
+    {
+     "year": 2028,
+     "revenue": 359.8,
+     "growth": 0.1614,
+     "ebitda_margin_after_sbc": 0.475,
+     "da": 59.0,
+     "da_pct_rev": 0.1639,
+     "op_margin": 0.3111,
+     "capex": 220,
+     "capex_pct_rev": 0.6115,
+     "tax_deferral": 11.2,
+     "nopat": 94.0,
+     "fcf_after_sbc": -55.8,
+     "conv": -0.594
+    },
+    {
+     "year": 2029,
+     "revenue": 408.5,
+     "growth": 0.1354,
+     "ebitda_margin_after_sbc": 0.48,
+     "da": 77.6,
+     "da_pct_rev": 0.1901,
+     "op_margin": 0.2899,
+     "capex": 210,
+     "capex_pct_rev": 0.5141,
+     "tax_deferral": 7.9,
+     "nopat": 99.5,
+     "fcf_after_sbc": -25.0,
+     "conv": -0.251
+    },
+    {
+     "year": 2030,
+     "revenue": 455.2,
+     "growth": 0.1143,
+     "ebitda_margin_after_sbc": 0.485,
+     "da": 100.0,
+     "da_pct_rev": 0.2197,
+     "op_margin": 0.2653,
+     "capex": 200,
+     "capex_pct_rev": 0.4394,
+     "tax_deferral": 2.9,
+     "nopat": 101.4,
+     "fcf_after_sbc": 4.4,
+     "conv": 0.043
+    },
+    {
+     "year": 2031,
+     "revenue": 501.9,
+     "growth": 0.1026,
+     "ebitda_margin_after_sbc": 0.49,
+     "da": 115.0,
+     "da_pct_rev": 0.2291,
+     "op_margin": 0.2609,
+     "capex": 195,
+     "capex_pct_rev": 0.3885,
+     "tax_deferral": 0.0,
+     "nopat": 110.0,
+     "fcf_after_sbc": 30.0,
+     "conv": 0.273
+    },
+    {
+     "year": 2032,
+     "revenue": 547.1,
+     "growth": 0.09,
+     "ebitda_margin_after_sbc": 0.49,
+     "da": 123.2,
+     "da_pct_rev": 0.2252,
+     "op_margin": 0.2648,
+     "capex": 191.7,
+     "capex_pct_rev": 0.3503,
+     "tax_deferral": 0.0,
+     "nopat": 121.7,
+     "fcf_after_sbc": 53.2,
+     "conv": 0.438
+    }
+   ],
+   "bull": [
+    {
+     "year": 2027,
+     "revenue": 326.0,
+     "growth": 0.2685,
+     "ebitda_margin_after_sbc": 0.48,
+     "da": 40.8,
+     "da_pct_rev": 0.1253,
+     "op_margin": 0.3547,
+     "capex": 215,
+     "capex_pct_rev": 0.6595,
+     "tax_deferral": 11.6,
+     "nopat": 97.1,
+     "fcf_after_sbc": -65.5,
+     "conv": -0.674
+    },
+    {
+     "year": 2028,
+     "revenue": 396.3,
+     "growth": 0.2156,
+     "ebitda_margin_after_sbc": 0.495,
+     "da": 61.0,
+     "da_pct_rev": 0.154,
+     "op_margin": 0.341,
+     "capex": 245,
+     "capex_pct_rev": 0.6182,
+     "tax_deferral": 13.5,
+     "nopat": 113.5,
+     "fcf_after_sbc": -56.9,
+     "conv": -0.502
+    },
+    {
+     "year": 2029,
+     "revenue": 470.3,
+     "growth": 0.1867,
+     "ebitda_margin_after_sbc": 0.51,
+     "da": 83.3,
+     "da_pct_rev": 0.1771,
+     "op_margin": 0.3329,
+     "capex": 260,
+     "capex_pct_rev": 0.5528,
+     "tax_deferral": 12.0,
+     "nopat": 131.5,
+     "fcf_after_sbc": -33.2,
+     "conv": -0.253
+    },
+    {
+     "year": 2030,
+     "revenue": 548.4,
+     "growth": 0.1661,
+     "ebitda_margin_after_sbc": 0.52,
+     "da": 111.3,
+     "da_pct_rev": 0.2029,
+     "op_margin": 0.3171,
+     "capex": 265,
+     "capex_pct_rev": 0.4832,
+     "tax_deferral": 7.5,
+     "nopat": 146.1,
+     "fcf_after_sbc": -0.2,
+     "conv": -0.001
+    },
+    {
+     "year": 2031,
+     "revenue": 628.4,
+     "growth": 0.1459,
+     "ebitda_margin_after_sbc": 0.53,
+     "da": 133.5,
+     "da_pct_rev": 0.2124,
+     "op_margin": 0.3176,
+     "capex": 270,
+     "capex_pct_rev": 0.4297,
+     "tax_deferral": 4.3,
+     "nopat": 167.6,
+     "fcf_after_sbc": 35.4,
+     "conv": 0.211
+    },
+    {
+     "year": 2032,
+     "revenue": 707.0,
+     "growth": 0.125,
+     "ebitda_margin_after_sbc": 0.53,
+     "da": 151.1,
+     "da_pct_rev": 0.2137,
+     "op_margin": 0.3163,
+     "capex": 297.8,
+     "capex_pct_rev": 0.4213,
+     "tax_deferral": 0.0,
+     "nopat": 187.8,
+     "fcf_after_sbc": 41.1,
+     "conv": 0.219
+    }
+   ]
+  }
+ },
+ "reverse": {
+  "levers_alone": {
+   "revenue_alone": {
+    "growth_scale_2028_32": 1.327,
+    "revenue_2031": 580.6,
+    "cagr_2026_31": 0.177,
+    "growth_path": [
+     0.205,
+     0.214,
+     0.18,
+     0.152,
+     0.136,
+     0.119
+    ],
+    "op_margin_2031": 0.292,
+    "base_rate_share_>=cagr_5y_real": 0.033
+   },
+   "ebitda_margin_alone": {
+    "add_pts": 8.62,
+    "ebitda_2031": 0.5762,
+    "op_margin_2027": 0.4208,
+    "op_margin_2031": 0.3471
+   },
+   "capex_alone": {
+    "capex_scale_2028_31": 0.606,
+    "capex_path": [
+     205,
+     133.3,
+     127.3,
+     121.2,
+     118.2
+    ],
+    "capex_pct_rev_2031": 0.2355,
+    "op_margin_2031": 0.3186,
+    "fcf_2031": 102.2
+   },
+   "exit_pe_alone": {
+    "pe_on_2032_op_eps": 32.0
+   },
+   "exit_pe_multiple_method_alone": 24.2,
+   "flat_beta_alone": {
+    "beta_today_and_mature": 0.723,
+    "cost_of_equity": 0.0797,
+    "note": "the starting beta alone (mature 1.05 kept) cannot reach the price even at 0"
+   },
+   "terminal_roic_alone": "not reachable below 200%"
+  },
+  "market_story": {
+   "base_capex": {
+    "ebitda_+0pts": {
+     "value_today": 508.88,
+     "op_margin_2027_2031": [
+      0.3357,
+      0.3165,
+      0.3012,
+      0.2793,
+      0.2751
+     ],
+     "capex_pct_rev_2031": 0.3645
+    },
+    "ebitda_+3pts": {
+     "value_today": 580.08,
+     "op_margin_2027_2031": [
+      0.3657,
+      0.3465,
+      0.3312,
+      0.3093,
+      0.3051
+     ],
+     "capex_pct_rev_2031": 0.3645
+    },
+    "ebitda_+6pts": {
+     "value_today": 651.37,
+     "op_margin_2027_2031": [
+      0.3957,
+      0.3765,
+      0.3612,
+      0.3393,
+      0.3351
+     ],
+     "capex_pct_rev_2031": 0.3645
+    }
+   },
+   "street_capex_flat_225": {
+    "ebitda_+0pts": {
+     "value_today": 452.39,
+     "op_margin_2027_2031": [
+      0.3328,
+      0.311,
+      0.2936,
+      0.2686,
+      0.2602
+     ],
+     "capex_pct_rev_2031": 0.4206
+    },
+    "ebitda_+3pts": {
+     "value_today": 523.68,
+     "op_margin_2027_2031": [
+      0.3628,
+      0.341,
+      0.3236,
+      0.2986,
+      0.2902
+     ],
+     "capex_pct_rev_2031": 0.4206
+    },
+    "ebitda_+6pts": {
+     "value_today": 594.97,
+     "op_margin_2027_2031": [
+      0.3928,
+      0.371,
+      0.3536,
+      0.3286,
+      0.3202
+     ],
+     "capex_pct_rev_2031": 0.4206
+    }
+   },
+   "capex_falls_to_35pct": {
+    "ebitda_+0pts": {
+     "value_today": 531.31,
+     "op_margin_2027_2031": [
+      0.3357,
+      0.3171,
+      0.3033,
+      0.2837,
+      0.2813
+     ],
+     "capex_pct_rev_2031": 0.3496
+    },
+    "ebitda_+3pts": {
+     "value_today": 602.41,
+     "op_margin_2027_2031": [
+      0.3657,
+      0.3471,
+      0.3333,
+      0.3137,
+      0.3113
+     ],
+     "capex_pct_rev_2031": 0.3496
+    },
+    "ebitda_+6pts": {
+     "value_today": 673.51,
+     "op_margin_2027_2031": [
+      0.3957,
+      0.3771,
+      0.3633,
+      0.3437,
+      0.3413
+     ],
+     "capex_pct_rev_2031": 0.3496
+    }
+   },
+   "solve_base_capex": {
+    "ebitda_add_pts": 5.26,
+    "ebitda_2027_2031": [
+     0.5176,
+     0.5276,
+     0.5326,
+     0.5376,
+     0.5426
+    ],
+    "op_margin_2027_2031": [
+     0.3883,
+     0.3691,
+     0.3538,
+     0.3319,
+     0.3277
+    ],
+    "revenue_2031": 534.9
+   },
+   "solve_capex_falls_to_35pct": {
+    "ebitda_add_pts": 4.32,
+    "ebitda_2027_2031": [
+     0.5082,
+     0.5182,
+     0.5232,
+     0.5282,
+     0.5332
+    ],
+    "op_margin_2027_2031": [
+     0.3789,
+     0.3603,
+     0.3465,
+     0.327,
+     0.3246
+    ],
+    "revenue_2031": 534.9
+   },
+   "solve_base_capex_ramped": {
+    "ebitda_2031_needed": 0.5488,
+    "ebitda_2027_2031": [
+     0.465,
+     0.4897,
+     0.5094,
+     0.5291,
+     0.5488
+    ],
+    "op_margin_2027_2031": [
+     0.3357,
+     0.3312,
+     0.3306,
+     0.3234,
+     0.3338
+    ],
+    "revenue_2031": 534.9
+   },
+   "consensus_eps_check": {
+    "eps_2030_consensus": 55.82,
+    "at_18.7x": 1044.0,
+    "at_15x": 837.0,
+    "note": "consensus per-share figures mostly predate the forward, preferred and ATM"
+   }
+  },
+  "grid_base_capex": [
+   {
+    "rev_2031": 406.9,
+    "cagr": 0.0963,
+    "ebitda_2031": 0.46,
+    "op_margin_2031": 0.1774,
+    "value_today": 168.1
+   },
+   {
+    "rev_2031": 406.9,
+    "cagr": 0.0963,
+    "ebitda_2031": 0.49,
+    "op_margin_2031": 0.2074,
+    "value_today": 221.43
+   },
+   {
+    "rev_2031": 406.9,
+    "cagr": 0.0963,
+    "ebitda_2031": 0.52,
+    "op_margin_2031": 0.2374,
+    "value_today": 274.88
+   },
+   {
+    "rev_2031": 406.9,
+    "cagr": 0.0963,
+    "ebitda_2031": 0.55,
+    "op_margin_2031": 0.2674,
+    "value_today": 328.19
+   },
+   {
+    "rev_2031": 406.9,
+    "cagr": 0.0963,
+    "ebitda_2031": 0.58,
+    "op_margin_2031": 0.2974,
+    "value_today": 381.2
+   },
+   {
+    "rev_2031": 457.9,
+    "cagr": 0.1225,
+    "ebitda_2031": 0.46,
+    "op_margin_2031": 0.2089,
+    "value_today": 276.71
+   },
+   {
+    "rev_2031": 457.9,
+    "cagr": 0.1225,
+    "ebitda_2031": 0.49,
+    "op_margin_2031": 0.2389,
+    "value_today": 337.35
+   },
+   {
+    "rev_2031": 457.9,
+    "cagr": 0.1225,
+    "ebitda_2031": 0.52,
+    "op_margin_2031": 0.2689,
+    "value_today": 398.16
+   },
+   {
+    "rev_2031": 457.9,
+    "cagr": 0.1225,
+    "ebitda_2031": 0.55,
+    "op_margin_2031": 0.2989,
+    "value_today": 458.75
+   },
+   {
+    "rev_2031": 457.9,
+    "cagr": 0.1225,
+    "ebitda_2031": 0.58,
+    "op_margin_2031": 0.3289,
+    "value_today": 519.08
+   },
+   {
+    "rev_2031": 501.9,
+    "cagr": 0.1432,
+    "ebitda_2031": 0.46,
+    "op_margin_2031": 0.2309,
+    "value_today": 373.66
+   },
+   {
+    "rev_2031": 501.9,
+    "cagr": 0.1432,
+    "ebitda_2031": 0.49,
+    "op_margin_2031": 0.2609,
+    "value_today": 441.12
+   },
+   {
+    "rev_2031": 501.9,
+    "cagr": 0.1432,
+    "ebitda_2031": 0.52,
+    "op_margin_2031": 0.2909,
+    "value_today": 508.35
+   },
+   {
+    "rev_2031": 501.9,
+    "cagr": 0.1432,
+    "ebitda_2031": 0.55,
+    "op_margin_2031": 0.3209,
+    "value_today": 575.3
+   },
+   {
+    "rev_2031": 501.9,
+    "cagr": 0.1432,
+    "ebitda_2031": 0.58,
+    "op_margin_2031": 0.3509,
+    "value_today": 642.44
+   },
+   {
+    "rev_2031": 549.0,
+    "cagr": 0.1639,
+    "ebitda_2031": 0.46,
+    "op_margin_2031": 0.2506,
+    "value_today": 480.74
+   },
+   {
+    "rev_2031": 549.0,
+    "cagr": 0.1639,
+    "ebitda_2031": 0.49,
+    "op_margin_2031": 0.2806,
+    "value_today": 555.34
+   },
+   {
+    "rev_2031": 549.0,
+    "cagr": 0.1639,
+    "ebitda_2031": 0.52,
+    "op_margin_2031": 0.3106,
+    "value_today": 629.73
+   },
+   {
+    "rev_2031": 549.0,
+    "cagr": 0.1639,
+    "ebitda_2031": 0.55,
+    "op_margin_2031": 0.3406,
+    "value_today": 703.99
+   },
+   {
+    "rev_2031": 549.0,
+    "cagr": 0.1639,
+    "ebitda_2031": 0.58,
+    "op_margin_2031": 0.3706,
+    "value_today": 778.25
+   },
+   {
+    "rev_2031": 599.3,
+    "cagr": 0.1845,
+    "ebitda_2031": 0.46,
+    "op_margin_2031": 0.2682,
+    "value_today": 598.61
+   },
+   {
+    "rev_2031": 599.3,
+    "cagr": 0.1845,
+    "ebitda_2031": 0.49,
+    "op_margin_2031": 0.2982,
+    "value_today": 681.25
+   },
+   {
+    "rev_2031": 599.3,
+    "cagr": 0.1845,
+    "ebitda_2031": 0.52,
+    "op_margin_2031": 0.3282,
+    "value_today": 763.55
+   },
+   {
+    "rev_2031": 599.3,
+    "cagr": 0.1845,
+    "ebitda_2031": 0.55,
+    "op_margin_2031": 0.3582,
+    "value_today": 845.84
+   },
+   {
+    "rev_2031": 599.3,
+    "cagr": 0.1845,
+    "ebitda_2031": 0.58,
+    "op_margin_2031": 0.3882,
+    "value_today": 927.92
+   },
+   {
+    "rev_2031": 653.0,
+    "cagr": 0.205,
+    "ebitda_2031": 0.46,
+    "op_margin_2031": 0.2839,
+    "value_today": 728.48
+   },
+   {
+    "rev_2031": 653.0,
+    "cagr": 0.205,
+    "ebitda_2031": 0.49,
+    "op_margin_2031": 0.3139,
+    "value_today": 819.84
+   },
+   {
+    "rev_2031": 653.0,
+    "cagr": 0.205,
+    "ebitda_2031": 0.52,
+    "op_margin_2031": 0.3439,
+    "value_today": 910.73
+   },
+   {
+    "rev_2031": 653.0,
+    "cagr": 0.205,
+    "ebitda_2031": 0.55,
+    "op_margin_2031": 0.3739,
+    "value_today": 1001.89
+   },
+   {
+    "rev_2031": 653.0,
+    "cagr": 0.205,
+    "ebitda_2031": 0.58,
+    "op_margin_2031": 0.4039,
+    "value_today": 1092.78
+   }
+  ]
+ },
+ "base_rates_revenue": {
+  "bear": {
+   "rev_2031": 376.8,
+   "cagr": 0.0795,
+   "class": ">$50,000m",
+   "share_reaching_5y_real": 0.2557
+  },
+  "base": {
+   "rev_2031": 501.9,
+   "cagr": 0.1432,
+   "class": ">$50,000m",
+   "share_reaching_5y_real": 0.0791
+  },
+  "bull": {
+   "rev_2031": 628.4,
+   "cagr": 0.1958,
+   "class": ">$50,000m",
+   "share_reaching_5y_real": 0.0245
+  }
+ },
+ "returns_on_build": {
+  "bear": {
+   "net_ppe_2031": 733.0,
+   "nopat_2031": 63.3,
+   "roic_on_net_ppe_2031": 0.086,
+   "incremental_roic_2026_31": -0.033,
+   "cum_fcf_after_sbc_2027_31": -92.0
+  },
+  "base": {
+   "net_ppe_2031": 937.0,
+   "nopat_2031": 110.0,
+   "roic_on_net_ppe_2031": 0.117,
+   "incremental_roic_2026_31": 0.051,
+   "cum_fcf_after_sbc_2027_31": -114.0
+  },
+  "bull": {
+   "net_ppe_2031": 1124.0,
+   "nopat_2031": 167.6,
+   "roic_on_net_ppe_2031": 0.149,
+   "incremental_roic_2026_31": 0.109,
+   "cum_fcf_after_sbc_2027_31": -120.0
+  }
+ },
+ "discount_rate_sensitivity": {
+  "beta 1.68 -> mature 1.05": {
+   "value_today": 417.85,
+   "ret_pct": 3.1
+  },
+  "beta 1.4 -> mature 1.05": {
+   "value_today": 441.12,
+   "ret_pct": 3.3
+  },
+  "beta 1.25 -> mature 1.0": {
+   "value_today": 467.08,
+   "ret_pct": 3.9
+  },
+  "beta 1.4 -> mature 1.0": {
+   "value_today": 453.6,
+   "ret_pct": 3.8
+  },
+  "beta 1.68 -> mature 1.2": {
+   "value_today": 388.27,
+   "ret_pct": 1.8
+  }
+ },
+ "calibrated_lens_with_da_wave": {
+  "pe_today": 19.2,
+  "pe_used": 19.2,
+  "pe_overridden": false,
+  "margin_used": [
+   0.3346,
+   0.3111,
+   0.2899,
+   0.2653,
+   0.2609,
+   0.2648
+  ],
+  "margin_overridden": true,
+  "why": "base margins kept: D&A wave from the capex vintage model (2026 FACT/GUIDANCE capex 140B, 2027 commitments)",
+  "value_today": 457.04,
+  "year_end_values": {
+   "2027": 514.02,
+   "2028": 570.0,
+   "2029": 632.48,
+   "2030": 701.2,
+   "2031": 775.99
+  },
+  "annual_return_pct": 4.0
+ }
+}

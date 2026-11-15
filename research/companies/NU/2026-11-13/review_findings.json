@@ -1,0 +1,91 @@
+{
+ "ticker": "NU",
+ "valuation_date": "2026-11-13",
+ "built_on": "2026-11-15",
+ "note": "Built on 2026-11-15 from the reviewer files of the private run folder (not copied): verdict, finding titles and the base value before and after the review pass. Titles only; no fresh pull. Lines about position size or the portfolio were left out (research/ is company research only).",
+ "pre_review": {
+  "base_today": 13.06,
+  "price": 12.08,
+  "file": "lean_params_pre_review.json",
+  "note": "before the repair pass"
+ },
+ "final": {
+  "base_today": 13.38,
+  "file": "lean_params.json"
+ },
+ "base_changed_by_review": true,
+ "bridge": "the -$0.33 tax adjustment for 2027 was reverted (unanchored base rate, secondary source) and is shown as a sensitivity line",
+ "critical_findings": 0,
+ "reviews": [
+  {
+   "lane": "numbers",
+   "run_file": "runs/tickers/NU_2026-11-13/deep/check_numbers.md",
+   "verdict": "every reported number matches the primary filings and the model reproduces; one major issue; the verdict stands either way",
+   "findings": [
+    {
+     "n": 1,
+     "severity": "major",
+     "title": "the 2027 tax cut (-$0.33) rests on an unanchored base rate and a secondary source",
+     "outcome": "applied"
+    },
+    {
+     "n": 2,
+     "severity": "minor",
+     "title": "Q4E does carry the Q3 one-offs, contrary to the text"
+    },
+    {
+     "n": 3,
+     "severity": "minor",
+     "title": "FX wording"
+    },
+    {
+     "n": 4,
+     "severity": "minor",
+     "title": "the share count is slightly conservative, which is acceptable"
+    }
+   ]
+  },
+  {
+   "lane": "red team",
+   "run_file": "runs/tickers/NU_2026-11-13/deep/check_redteam.md",
+   "verdict": "agree with changes",
+   "findings": [
+    {
+     "n": 1,
+     "severity": "major",
+     "title": "The credit trend under the headline is worse than \"missed by 0.1 point, partly mix\""
+    },
+    {
+     "n": 2,
+     "severity": "major",
+     "title": "\"The model alone passes the buy test\" is fragile on the bear leg"
+    },
+    {
+     "n": 3,
+     "severity": "major",
+     "title": "Beta 2.0 can now be labelled: the locked rule gives 1.15"
+    },
+    {
+     "n": 4,
+     "severity": "major",
+     "title": "\"Both reports say cheap, a strong signal\" overstates the historical-multiple report"
+    },
+    {
+     "n": 5,
+     "severity": "minor",
+     "title": "The calibrated lens uses our EPS as the denominator"
+    },
+    {
+     "n": 6,
+     "severity": "minor",
+     "title": "The base out-year path carries the margin over 12%"
+    },
+    {
+     "n": 7,
+     "severity": "minor",
+     "title": "Primary-source gaps and secondary-source numbers to label"
+    }
+   ]
+  }
+ ]
+}

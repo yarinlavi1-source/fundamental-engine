@@ -1,0 +1,493 @@
+{
+ "price": 124.25,
+ "bridge_after_checks": [
+  [
+   "first-pass base at $130.25 (must be 75.50 / 8.2%)",
+   {
+    "today": 75.5,
+    "ret": 8.2,
+    "y2027": 92.03,
+    "y2028": 115.46,
+    "y2031": 195.17,
+    "cal_today": 101.6,
+    "cal_ret": 13.2,
+    "price_for_12pct": 109.13
+   },
+   null
+  ],
+  [
+   "price $124.25 (value unchanged)",
+   {
+    "today": 75.5,
+    "ret": 9.2,
+    "y2027": 92.03,
+    "y2028": 115.46,
+    "y2031": 195.17,
+    "cal_today": 101.6,
+    "cal_ret": 14.3,
+    "price_for_12pct": 109.13
+   },
+   0.0
+  ],
+  [
+   "2027 revenue at the low end 12,000, later growth rates same (2028 21,551)",
+   {
+    "today": 72.43,
+    "ret": 8.6,
+    "y2027": 88.44,
+    "y2028": 111.37,
+    "y2031": 189.74,
+    "cal_today": 98.01,
+    "cal_ret": 13.7,
+    "price_for_12pct": 106.09
+   },
+   -3.07
+  ],
+  [
+   "SBC 3.5% (2027), 3%, 2.5%, 2.5%, 2%, 2% of revenue (was 2 / 1.7 / 1.5)",
+   {
+    "today": 66.91,
+    "ret": 7.4,
+    "y2027": 81.97,
+    "y2028": 104.02,
+    "y2031": 179.54,
+    "cal_today": 91.75,
+    "cal_ret": 12.6,
+    "price_for_12pct": 100.39
+   },
+   -5.52
+  ],
+  [
+   "debt at 7% (was 6%)  = FINAL base",
+   {
+    "today": 66.91,
+    "ret": 7.0,
+    "y2027": 81.66,
+    "y2028": 102.76,
+    "y2031": 175.54,
+    "cal_today": 91.75,
+    "cal_ret": 12.2,
+    "price_for_12pct": 98.15
+   },
+   0.0
+  ]
+ ],
+ "alone_on_first_pass": [
+  [
+   "alone: 2027 at 12,000",
+   {
+    "today": 72.43,
+    "ret": 8.6,
+    "y2027": 88.44,
+    "y2028": 111.37,
+    "y2031": 189.74,
+    "cal_today": 98.01,
+    "cal_ret": 13.7,
+    "price_for_12pct": 106.09
+   },
+   -3.07
+  ],
+  [
+   "alone: SBC path",
+   {
+    "today": 69.86,
+    "ret": 8.0,
+    "y2027": 85.44,
+    "y2028": 107.95,
+    "y2031": 184.77,
+    "cal_today": 95.21,
+    "cal_ret": 13.2,
+    "price_for_12pct": 103.31
+   },
+   -5.64
+  ],
+  [
+   "alone: debt 7%",
+   {
+    "today": 75.5,
+    "ret": 8.8,
+    "y2027": 91.71,
+    "y2028": 114.2,
+    "y2031": 191.28,
+    "cal_today": 101.6,
+    "cal_ret": 13.9,
+    "price_for_12pct": 106.95
+   },
+   0.0
+  ]
+ ],
+ "final_base_sensitivity": [
+  [
+   "final base",
+   {
+    "today": 66.91,
+    "ret": 7.0,
+    "y2027": 81.66,
+    "y2028": 102.76,
+    "y2031": 175.54,
+    "cal_today": 91.75,
+    "cal_ret": 12.2,
+    "price_for_12pct": 98.15
+   },
+   0.0
+  ],
+  [
+   "2027 at 12,250 (first-pass choice), later rates same",
+   {
+    "today": 69.88,
+    "ret": 7.6,
+    "y2027": 85.13,
+    "y2028": 106.71,
+    "y2031": 180.84,
+    "cal_today": 95.22,
+    "cal_ret": 12.8,
+    "price_for_12pct": 101.11
+   },
+   2.97
+  ],
+  [
+   "2027 at the midpoint 12,500, later rates same",
+   {
+    "today": 72.57,
+    "ret": 8.2,
+    "y2027": 88.29,
+    "y2028": 110.29,
+    "y2031": 185.78,
+    "cal_today": 98.44,
+    "cal_ret": 13.4,
+    "price_for_12pct": 103.87
+   },
+   5.66
+  ],
+  [
+   "2027 at the top 13,000, later rates same",
+   {
+    "today": 77.69,
+    "ret": 9.2,
+    "y2027": 94.28,
+    "y2028": 117.1,
+    "y2031": 195.22,
+    "cal_today": 104.58,
+    "cal_ret": 14.4,
+    "price_for_12pct": 109.15
+   },
+   10.78
+  ],
+  [
+   "one more month of slip: 2027 11,200, 2028 21,000, later rates same",
+   {
+    "today": 62.78,
+    "ret": 6.1,
+    "y2027": 76.82,
+    "y2028": 97.31,
+    "y2031": 168.35,
+    "cal_today": 86.94,
+    "cal_ret": 11.4,
+    "price_for_12pct": 94.13
+   },
+   -4.13
+  ],
+  [
+   "MIDDLE CASE the 2026 two-month slip repeats, business intact: 2027 10,200, 2028 20,000",
+   {
+    "today": 54.22,
+    "ret": 4.1,
+    "y2027": 66.8,
+    "y2028": 85.96,
+    "y2031": 152.96,
+    "cal_today": 77.19,
+    "cal_ret": 9.5,
+    "price_for_12pct": 85.52
+   },
+   -12.69
+  ],
+  [
+   "2028 with no growth after Dec-2027 (17,500), later rates same",
+   {
+    "today": 31.37,
+    "ret": -2.5,
+    "y2027": 40.06,
+    "y2028": 55.15,
+    "y2031": 109.32,
+    "cal_today": 51.88,
+    "cal_ret": 3.7,
+    "price_for_12pct": 61.12
+   },
+   -35.54
+  ],
+  [
+   "2028 at the 2027 pace of additions (24,500), later rates same",
+   {
+    "today": 82.54,
+    "ret": 10.3,
+    "y2027": 99.95,
+    "y2028": 123.7,
+    "y2031": 204.98,
+    "cal_today": 110.55,
+    "cal_ret": 15.5,
+    "price_for_12pct": 114.61
+   },
+   15.63
+  ],
+  [
+   "2028 as base, then the 11.11 revenue LEVELS one year early (2029 25.5B ... 2032 31.8B)",
+   {
+    "today": 47.98,
+    "ret": 2.2,
+    "y2027": 59.5,
+    "y2028": 77.4,
+    "y2031": 139.18,
+    "cal_today": 69.6,
+    "cal_ret": 7.7,
+    "price_for_12pct": 77.82
+   },
+   -18.93
+  ],
+  [
+   "a quarter of the 2027 prebuild never earns",
+   {
+    "today": 57.71,
+    "ret": 4.8,
+    "y2027": 70.89,
+    "y2028": 90.43,
+    "y2031": 158.24,
+    "cal_today": 82.55,
+    "cal_ret": 10.5,
+    "price_for_12pct": 88.48
+   },
+   -9.2
+  ],
+  [
+   "half of the 2027 prebuild never earns",
+   {
+    "today": 46.36,
+    "ret": 2.1,
+    "y2027": 57.61,
+    "y2028": 75.24,
+    "y2031": 138.17,
+    "cal_today": 71.21,
+    "cal_ret": 8.3,
+    "price_for_12pct": 77.25
+   },
+   -20.55
+  ],
+  [
+   "none of the 2027 prebuild earns",
+   {
+    "today": 19.78,
+    "ret": -5.3,
+    "y2027": 26.5,
+    "y2028": 39.63,
+    "y2031": 93.86,
+    "cal_today": 44.63,
+    "cal_ret": 2.7,
+    "price_for_12pct": 52.48
+   },
+   -47.13
+  ],
+  [
+   "adj. EBITDA 43% in 2027 and 48% in 2028 (was 46 / 50), later same",
+   {
+    "today": 65.25,
+    "ret": 6.7,
+    "y2027": 79.72,
+    "y2028": 100.62,
+    "y2031": 173.0,
+    "cal_today": 90.1,
+    "cal_ret": 12.0,
+    "price_for_12pct": 96.73
+   },
+   -1.66
+  ],
+  [
+   "EBITDA margin -5 points from 2028",
+   {
+    "today": 23.87,
+    "ret": -5.5,
+    "y2027": 31.28,
+    "y2028": 45.1,
+    "y2031": 92.79,
+    "cal_today": 41.27,
+    "cal_ret": 0.4,
+    "price_for_12pct": 51.88
+   },
+   -43.04
+  ],
+  [
+   "EBITDA margin +5 points from 2028",
+   {
+    "today": 109.95,
+    "ret": 15.3,
+    "y2027": 132.04,
+    "y2028": 160.42,
+    "y2031": 258.3,
+    "cal_today": 142.23,
+    "cal_ret": 20.4,
+    "price_for_12pct": 144.42
+   },
+   43.04
+  ],
+  [
+   "$4B of share sales in 2027 at today's $124.25 (32.2M shares)",
+   {
+    "today": 71.9,
+    "ret": 6.9,
+    "y2027": 86.19,
+    "y2028": 106.09,
+    "y2031": 174.67,
+    "cal_today": 94.49,
+    "cal_ret": 11.7,
+    "price_for_12pct": 97.66
+   },
+   4.99
+  ],
+  [
+   "$4B of share sales in 2027 at $100 (40M shares)",
+   {
+    "today": 70.35,
+    "ret": 6.4,
+    "y2027": 84.34,
+    "y2028": 103.8,
+    "y2031": 170.91,
+    "cal_today": 92.46,
+    "cal_ret": 11.2,
+    "price_for_12pct": 95.56
+   },
+   3.44
+  ],
+  [
+   "$8.5B of share sales at today's $124.25 (68.4M shares)",
+   {
+    "today": 76.53,
+    "ret": 6.8,
+    "y2027": 90.4,
+    "y2028": 109.18,
+    "y2031": 173.85,
+    "cal_today": 97.03,
+    "cal_ret": 11.2,
+    "price_for_12pct": 97.2
+   },
+   9.62
+  ],
+  [
+   "$8.5B of share sales at $100 (85M shares)",
+   {
+    "today": 73.42,
+    "ret": 5.9,
+    "y2027": 86.72,
+    "y2028": 104.74,
+    "y2031": 166.78,
+    "cal_today": 93.09,
+    "cal_ret": 10.3,
+    "price_for_12pct": 93.25
+   },
+   6.51
+  ],
+  [
+   "30.9 receivable of ~3.3B never collected",
+   {
+    "today": 56.75,
+    "ret": 5.3,
+    "y2027": 70.7,
+    "y2028": 91.15,
+    "y2031": 161.73,
+    "cal_today": 81.6,
+    "cal_ret": 10.8,
+    "price_for_12pct": 90.43
+   },
+   -10.16
+  ],
+  [
+   "Q4 other operating outflows repeat Q3 (-365.6)",
+   {
+    "today": 65.8,
+    "ret": 6.8,
+    "y2027": 80.46,
+    "y2028": 101.49,
+    "y2031": 174.03,
+    "cal_today": 90.64,
+    "cal_ret": 12.1,
+    "price_for_12pct": 97.31
+   },
+   -1.11
+  ],
+  [
+   "debt at 6% (first pass)",
+   {
+    "today": 66.91,
+    "ret": 7.4,
+    "y2027": 81.97,
+    "y2028": 104.02,
+    "y2031": 179.54,
+    "cal_today": 91.75,
+    "cal_ret": 12.6,
+    "price_for_12pct": 100.39
+   },
+   0.0
+  ],
+  [
+   "debt at 7.5%",
+   {
+    "today": 66.91,
+    "ret": 6.7,
+    "y2027": 81.5,
+    "y2028": 102.12,
+    "y2031": 173.49,
+    "cal_today": 91.75,
+    "cal_ret": 12.0,
+    "price_for_12pct": 97.0
+   },
+   0.0
+  ],
+  [
+   "SBC as in the first pass (2 / 1.7 / 1.5%)",
+   {
+    "today": 72.43,
+    "ret": 8.2,
+    "y2027": 88.12,
+    "y2028": 110.11,
+    "y2031": 185.79,
+    "cal_today": 98.01,
+    "cal_ret": 13.3,
+    "price_for_12pct": 103.88
+   },
+   5.52
+  ],
+  [
+   "server life 4 years",
+   {
+    "today": 3.85,
+    "ret": -15.6,
+    "y2027": 7.85,
+    "y2028": 18.24,
+    "y2031": 52.14,
+    "cal_today": 18.47,
+    "cal_ret": -8.0,
+    "price_for_12pct": 29.15
+   },
+   -63.06
+  ],
+  [
+   "server life 6 years",
+   {
+    "today": 107.38,
+    "ret": 15.0,
+    "y2027": 129.03,
+    "y2028": 157.0,
+    "y2031": 254.93,
+    "cal_today": 139.69,
+    "cal_ret": 20.1,
+    "price_for_12pct": 142.54
+   },
+   40.47
+  ]
+ ],
+ "new odds 0.30/0.50/0.20": {
+  "today": 81.05,
+  "end_2031": 184.81
+ },
+ "old odds 0.25/0.55/0.20": {
+  "today": 84.39,
+  "end_2031": 193.59
+ }
+}

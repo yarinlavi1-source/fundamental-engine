@@ -1,0 +1,1 @@
+Lean params copied byte-for-byte from the private run folder runs/tickers/TSM_2026-11-05/deep/verify_v0.json (valuation date 2026-11-05, per ADR); lean_result.json is the current scripts/lean_model.py run on that copy on 2026-11-15 (same bear/base/bull values as the saved run and the handoff research/technical/TSM/2026-11-05/fundamental.json); copied, no fresh pull.

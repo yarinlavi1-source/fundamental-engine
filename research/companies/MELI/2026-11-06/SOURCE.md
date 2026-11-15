@@ -1,0 +1,1 @@
+lean_params_pre_review.json: copied byte-for-byte on 2026-11-15 from the private run folder runs/tickers/MELI_2026-11-06/deep/params.json = the params before the review pass (base 2607.99 before, 2177.11 after, at the same price 1532.29); lean_params.json in this folder is the published, post-review file; copied, no fresh pull.

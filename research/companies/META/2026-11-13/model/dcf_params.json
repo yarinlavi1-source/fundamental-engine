@@ -1,0 +1,366 @@
+{
+ "ticker": "META",
+ "as_of": "2026-11-05",
+ "price": 633.8,
+ "price_source": "IBKR 09:15 UTC (task brief)",
+ "units": "USD billions unless stated; shares in millions; per-share values on today's pre-Class-C-dividend basis",
+ "rf": 0.0494,
+ "erp": 0.042,
+ "beta": 1.45,
+ "beta_mature": 1.1,
+ "beta_fade_years": 10,
+ "beta_why": "ESTIMATE. Measured 2-year weekly vs SPY 1.68 (task brief), Blume-adjusted 0.67*1.68+0.33 = 1.46; the 1-year 2.22 is the 2026 AI-capex sell-off window and is not used as the anchor. Fades to a mature 1.10 over 10 years (mega-cap, net-debt and lease-heavy after 2026, so not 1.0).",
+ "days_to_base_year_end": 56,
+ "years_to_horizon": 5.15,
+ "mid_year": true,
+ "base_2026": {
+  "revenue": 257.0,
+  "revenue_src": "ESTIMATE: 9M26 181.7 FACT (filings.md sec.1) + Q4 ~75.3 vs GUIDANCE $73-76B (R3Q26:57) with 4-of-5 beat record",
+  "op_income_ex_charges": 93.5,
+  "op_income_src": "ESTIMATE: revenue 257.0 - total expenses ex charges 163.5 (GUIDANCE 2026 total expenses $175-179B incl. $9.89B + $2.40B legal and $1.18B severance, R3Q26:59, filings.md sec.2/7)",
+  "da": 28.0,
+  "da_src": "ESTIMATE: 9M26 D&A 19.51 FACT (filings.md sec.4) + Q4 ~8.5 (Q3 7.15, +12.6% q/q)",
+  "rl_rev": 2.2,
+  "rl_op_loss": 18.5,
+  "rl_da": 1.5,
+  "rl_src": "GUIDANCE RL loss $18-19B (R3Q26:63); RL D&A ~1.5 ESTIMATE",
+  "capex": 140.0,
+  "capex_src": "GUIDANCE $135-145B incl. finance-lease principal (R3Q26:65)"
+ },
+ "capex_hist": {
+  "2010": 0.293,
+  "2011": 0.606,
+  "2012": 1.235,
+  "2013": 1.362,
+  "2014": 1.831,
+  "2015": 2.523,
+  "2016": 4.491,
+  "2017": 6.733,
+  "2018": 13.915,
+  "2019": 15.654,
+  "2020": 15.767,
+  "2021": 19.367,
+  "2022": 32.036,
+  "2023": 28.103,
+  "2024": 39.225,
+  "2025": 72.215
+ },
+ "da_hist": {
+  "2018": 4.315,
+  "2019": 5.741,
+  "2020": 6.862,
+  "2021": 7.967,
+  "2022": 8.686,
+  "2023": 11.178,
+  "2024": 15.498,
+  "2025": 18.616
+ },
+ "da_hist_src": "FACT SEC companyfacts via deep3/hist.json (capex incl. finance-lease principal; D&A cash-flow tag)",
+ "da_model_base": {
+  "L": 6,
+  "fit": "alpha_c_on_2018_2026E",
+  "note": "D&A_t = c*[alpha*SL6(capex, no delay) + (1-alpha)*SL6(capex, 1-year CIP delay)], c and alpha fitted on 2018-2025 FACT + 2026E; same family as evidence_history.md (L6 d0 c=0.688 / L6 d1 c=0.896)"
+ },
+ "tax": {
+  "book": 0.16,
+  "book_src": "GUIDANCE Q4'26 tax rate 15-17% (R3Q26:67)",
+  "equip_share_capex": 0.6,
+  "equip_share_da": 0.85,
+  "cash_tax_src": "ESTIMATE calibrated to FACT cash taxes paid $7.58B 2025 (10K:2099) and $2.93B 9M26 (Q3_10Q:388, 1442): 100% bonus depreciation on servers (~60% of gross PP&E additions 2025-26, Q3_10Q:637-650) keeps cash tax well below book while capex grows"
+ },
+ "net_financial_end_2026": {
+  "cash_securities_sep30": 82.449,
+  "cash_src": "FACT R3Q26:48",
+  "q4_fcf": -18.2,
+  "q4_fcf_src": "ESTIMATE: Q4 OCF ~36.0 (Q4'25 36.2, Q3'26 32.8 FACT) - Q4 capex 54.18 (GUIDANCE mid 140 - 9M 85.82 FACT)",
+  "q4_dividend": -1.37,
+  "q4_div_src": "FACT run-rate $1.36B/qtr (R3Q26:47)",
+  "preferred_net": 14.3,
+  "preferred_src": "FACT ~$14.3B net with over-allotment exercised in full (final_1028:506; final_1104 S-3: over-allotment net $1,869M)",
+  "usd_notes_net": 14.9,
+  "usd_notes_face": 15.0,
+  "usd_src": "FACT $15.0B 5.85%-7.50% notes (fwp_1103:13-17); fees ESTIMATE",
+  "eur_notes_net": 10.3,
+  "eur_notes_face": 10.35,
+  "eur_src": "FACT EUR 9.0B 4.30%-6.40% (fwp_1104:13-18); EUR/USD 1.15 ESTIMATE (no rate in the filing); neutral to net cash",
+  "debt_face_sep30": 84.0,
+  "debt_src": "FACT filings.md sec.3 (Q3_10Q:702-720)",
+  "forward_proceeds": 24.9,
+  "forward_src": "FACT ~$24.9B net for 40.0M Class A at initial forward price $622.91875, settle by 19.11.2027 (8k_1029 Item 1.01; fwp_1027:83); 6.0M option status not found (GAP, excluded)",
+  "escrow_pv": 9.8,
+  "escrow_src": "FACT $10.80B restricted escrow released 2028-2030 (Q3_10Q:750); PV ESTIMATE",
+  "debt_coupon_blended": 0.0464,
+  "coupon_src": "ESTIMATE: $84B at ~4.2% (Q3 net interest on notes $882M FACT) + $15B at 6.60% avg + EUR at 5.32% avg (FACT coupons)",
+  "cash_yield": 0.04,
+  "marginal_funding_rate": 0.06
+ },
+ "preferred": {
+  "liq_pref": 14.375,
+  "div_rate": 0.065,
+  "div_by_year": {
+   "2027": 1.03,
+   "2028": 0.934,
+   "2029": 0.7
+  },
+  "conv_min_m": 19.58,
+  "conv_max_m": 23.0,
+  "conv_src": "FACT 14.375M preferred shares x 1.3620-1.6000 Class A (8k_1029 Item 3.03; fwp_1027:122-131); converts ~15.8.2029; count depends on the 2029 market price (<= $625 -> 23.0M, >= $734.21 -> 19.58M)"
+ },
+ "shares_basic_m": 2556.24,
+ "shares_src": "FACT Class A 2,214,472,367 + Class B 341,768,886 at 16.10.2026 (Q3_10Q:57-58); basic not diluted because SBC is charged as a cost",
+ "forward_shares_m": 40.0,
+ "dps": 2.1,
+ "dps_src": "FACT $0.525/qtr",
+ "ag_settlement": {
+  "payable": 12.7,
+  "years": 10,
+  "src": "FACT ~$12.7B payable in annual installments over 10 years (Q3_10Q Note 10); ~$5.3B contingent not accrued"
+ },
+ "lease_wave": {
+  "uncommenced": 355.73,
+  "operating_share": 0.85,
+  "avg_term_years": 18,
+  "commenced_frac_end": {
+   "2026": 0.04,
+   "2027": 0.15,
+   "2028": 0.3,
+   "2029": 0.46,
+   "2030": 0.61,
+   "2031": 0.73,
+   "2032": 0.83,
+   "2033": 0.9,
+   "2034": 0.95,
+   "2035": 0.99,
+   "2036": 1.0
+  },
+  "src": "FACT $355.73B leases not yet commenced, commencing rest of 2026 through 2036, terms >1 to 30 years (Q3_10Q:748). Operating share, 18-year average term and commencement curve are ESTIMATES (existing book: operating 25.2 vs finance 1.2 PV, 12.3-year remaining term, 10K:2600-2610). Handled ONCE: as an operating cost; neither these nor the $31.2B booked operating leases are deducted as debt; finance-lease principal is inside the capex definition."
+ },
+ "ic_2026": 322.3,
+ "ic_src": "ESTIMATE: net PP&E 253.2 at 30.9.2026 FACT + Q4 capex 54.2 - Q4 D&A 8.5 + goodwill 23.4 FACT (Q3_10Q balance sheet); op-lease ROU excluded (leases are an operating cost here)",
+ "nonop_investments": 21.08,
+ "nonop_src": "FACT non-marketable equity investments under the measurement alternative $21.08B (filings.md sec.3); equity-method data-center ventures excluded (operating, tied to lease-backs)",
+ "probabilities": {
+  "bear": 0.3,
+  "base": 0.5,
+  "bull": 0.2,
+  "label": "Claude's subjective judgement, not engine odds: size base rates (Base Rate Book >$50bn class: 25.6% reach the bear's 8% revenue CAGR, 7.9% the base's 14.3%, 2.5% the bull's 19.6%) pulled against Meta's measured momentum (Q4 guide +22-27%, 2027 consensus +21.6%); the bull also needs the capex to earn"
+ },
+ "bands": {
+  "buy": 12.0,
+  "hold": 6.0,
+  "lagging": 3.0
+ },
+ "scenarios": {
+  "base": {
+   "revenue": [
+    309.8,
+    359.8,
+    408.5,
+    455.2,
+    501.9
+   ],
+   "growth_after": [
+    0.09,
+    0.08,
+    0.07,
+    0.06,
+    0.05
+   ],
+   "revenue_src": "evidence_revenue.md sec.7 base (2027 at consensus -0.8%); 2032 9% per that lane, fading to rf",
+   "capex": [
+    220,
+    225,
+    205,
+    190,
+    180
+   ],
+   "capex_rev_after": [
+    0.305,
+    0.29,
+    0.28,
+    0.27,
+    0.27
+   ],
+   "capex_src": "ESTIMATE: 2027 220 between pre-Q3 street ~193 and Wedbush 249, consistent with the Oct-Nov raise (~$54B + $25B forward + $60B ATM plan) and S&P's ~$71B 2027 FOCF deficit (unverified); commitments $121.4B due 2027 and ~$287B after (Q3_10Q:750) keep 2028 high; digestion from 2029 to 27% of revenue by 2035 (between Meta's 2016-24 ~21% and today's hyperscaler 35-45%)",
+   "foa_margin": [
+    0.52,
+    0.522,
+    0.527,
+    0.532,
+    0.537,
+    0.54,
+    0.543,
+    0.545,
+    0.545,
+    0.545
+   ],
+   "foa_margin_src": "ESTIMATE. FoA cash margin = (FoA op income + D&A ex RL)/FoA revenue, after SBC, ex charges: ~60% 2025 -> 54.4% 2026E -> Q4'26 exit ~52% implied by the expense guide mid; 2027 52.0% (cloud capacity, AI tokens, serving costs up; headcount -15% and scale offset); +0.5pp/yr leverage to 54.5%",
+   "rl_rev": [
+    2.4,
+    2.8,
+    3.3,
+    3.9,
+    4.5
+   ],
+   "rl_rev_growth_after": 0.08,
+   "rl_cash_loss": [
+    13.5,
+    12.5,
+    11.0,
+    9.5,
+    8.0,
+    7.0,
+    6.0,
+    5.0,
+    4.0,
+    3.5
+   ],
+   "rl_src": "GUIDANCE ~$15B RL loss 2027 (R3Q26:77) less ~1.5 D&A; 'trending toward profitability' -> ESTIMATE fade",
+   "pref_conv_m": 21.3,
+   "nonop_haircut": 0.5,
+   "extra_claims": {}
+  },
+  "bear": {
+   "revenue": [
+    289.0,
+    301.5,
+    329.7,
+    354.2,
+    376.8
+   ],
+   "growth_after": [
+    0.055,
+    0.053,
+    0.051,
+    0.05,
+    0.0494
+   ],
+   "revenue_src": "evidence_revenue.md sec.7 bear (2028 ad downturn, assistants take commercial intent, EU/youth rules)",
+   "capex": [
+    215,
+    195,
+    165,
+    140,
+    125
+   ],
+   "capex_rev_after": [
+    0.31,
+    0.3,
+    0.3,
+    0.29,
+    0.29
+   ],
+   "capex_src": "ESTIMATE: committed spend keeps 2027 high (2022 analog: capex +65% while revenue -1%); then cut as in 2023 (capex -12%), but stays near 30% of revenue (arms race, low returns on AI compute)",
+   "foa_margin": [
+    0.51,
+    0.49,
+    0.505,
+    0.515,
+    0.52,
+    0.52,
+    0.52,
+    0.52,
+    0.52,
+    0.52
+   ],
+   "foa_margin_src": "ESTIMATE: 2028 squeeze in a soft revenue year (2022: op margin 39.6% -> 24.8%), then a partial efficiency response (2023: 34.7%), to 52% (below base 54.5%)",
+   "rl_rev": [
+    2.3,
+    2.4,
+    2.6,
+    2.8,
+    3.0
+   ],
+   "rl_rev_growth_after": 0.05,
+   "rl_cash_loss": [
+    14.5,
+    14.0,
+    12.5,
+    11.0,
+    10.0,
+    9.0,
+    8.0,
+    7.0,
+    6.5,
+    6.0
+   ],
+   "rl_src": "ESTIMATE: loss at/above the ~$15B guide in 2027, cut more slowly than base",
+   "pref_conv_m": 23.0,
+   "nonop_haircut": 0.25,
+   "extra_claims": {
+    "2027": 5.3,
+    "2028": 20.0
+   },
+   "extra_claims_src": "FACT ~$5.3B contingent AG amount not accrued (Q3_10Q Note 10); IRS 2017-19 deficiency $15.89B plus interest (Q3_10Q:925-927) assumed lost ~$20B (ESTIMATE)"
+  },
+  "bull": {
+   "revenue": [
+    326.0,
+    396.3,
+    470.3,
+    548.4,
+    628.4
+   ],
+   "growth_after": [
+    0.125,
+    0.105,
+    0.085,
+    0.065,
+    0.05
+   ],
+   "revenue_src": "evidence_revenue.md sec.7 bull (2026 repeated, Muse/Meta One/business AI to ~$40B, ~40% of digital ads)",
+   "capex": [
+    235,
+    255,
+    260,
+    250,
+    240
+   ],
+   "capex_rev_after": [
+    0.33,
+    0.3,
+    0.28,
+    0.26,
+    0.25
+   ],
+   "capex_src": "ESTIMATE: more compute because it earns; intensity falls with scale and cost per token",
+   "foa_margin": [
+    0.535,
+    0.545,
+    0.555,
+    0.56,
+    0.565,
+    0.57,
+    0.57,
+    0.57,
+    0.57,
+    0.57
+   ],
+   "foa_margin_src": "ESTIMATE: AI efficiency and new paid lines; still below 2025's ~60%",
+   "rl_rev": [
+    3.0,
+    4.0,
+    5.5,
+    7.0,
+    9.0
+   ],
+   "rl_rev_growth_after": 0.1,
+   "rl_cash_loss": [
+    13.0,
+    10.5,
+    8.0,
+    5.5,
+    3.0,
+    1.5,
+    0.5,
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rl_src": "ESTIMATE: glasses scale, RL near break-even by 2033",
+   "pref_conv_m": 19.58,
+   "nonop_haircut": 0.0,
+   "extra_claims": {}
+  }
+ }
+}

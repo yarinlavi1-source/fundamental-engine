@@ -1,0 +1,382 @@
+{
+ "ticker": "GOOGL",
+ "as_of": "2026-11-04",
+ "price": 290.75,
+ "rf": 0.0494,
+ "erp": 0.042,
+ "beta": 1.27,
+ "beta_mature": 1.0,
+ "shares_m": 12517,
+ "net_cash_m": 105000,
+ "rev0_m": 499300,
+ "base_year": 2026,
+ "tax": 0.19,
+ "cash_yield": 0.036,
+ "debt_rate": 0.05,
+ "roic_terminal": 0.18,
+ "days_to_base_year_end": 57,
+ "years_to_horizon": 5.16,
+ "buy_return": 0.13,
+ "probabilities": {
+  "bear": 0.25,
+  "base": 0.5,
+  "bull": 0.25,
+  "label": "SUBJECTIVE - Claude's judgement, not engine odds"
+ },
+ "scenarios": {
+  "bear": {
+   "g": [
+    0.15,
+    0.08,
+    0.05,
+    0.035,
+    0.025,
+    0.02
+   ],
+   "m": [
+    0.29,
+    0.26,
+    0.235,
+    0.22,
+    0.215,
+    0.215
+   ],
+   "conv": [
+    -0.816,
+    -0.462,
+    0.072,
+    0.442,
+    0.634,
+    0.698
+   ],
+   "pe": 14,
+   "charge": {
+    "0": 12000,
+    "1": 5000,
+    "2": 3000
+   }
+  },
+  "base": {
+   "g": [
+    0.242,
+    0.165,
+    0.135,
+    0.12,
+    0.102,
+    0.086
+   ],
+   "m": [
+    0.318,
+    0.3,
+    0.285,
+    0.275,
+    0.27,
+    0.268
+   ],
+   "conv": [
+    -0.531,
+    -0.287,
+    0.076,
+    0.384,
+    0.63,
+    0.778
+   ],
+   "pe": 19,
+   "charge": {
+    "0": 8000,
+    "1": 2000
+   }
+  },
+  "bull": {
+   "g": [
+    0.295,
+    0.237,
+    0.193,
+    0.165,
+    0.142,
+    0.12
+   ],
+   "m": [
+    0.33,
+    0.32,
+    0.312,
+    0.311,
+    0.311,
+    0.312
+   ],
+   "conv": [
+    -0.527,
+    -0.259,
+    0.079,
+    0.379,
+    0.597,
+    0.724
+   ],
+   "pe": 24,
+   "charge": {
+    "0": 5000
+   }
+  }
+ },
+ "fcf_build_bn": {
+  "bear": [
+   {
+    "year": 2027,
+    "rev": 574.2,
+    "op_inc": 166.5,
+    "nopat": 134.9,
+    "da": 50,
+    "da_pct_rev": 8.7,
+    "capex": 290,
+    "capex_pct_rev": 50.5,
+    "wc": -5,
+    "fcf": -110.1,
+    "conv": -0.816
+   },
+   {
+    "year": 2028,
+    "rev": 620.1,
+    "op_inc": 161.2,
+    "nopat": 130.6,
+    "da": 77,
+    "da_pct_rev": 12.4,
+    "capex": 265,
+    "capex_pct_rev": 42.7,
+    "wc": -3,
+    "fcf": -60.4,
+    "conv": -0.462
+   },
+   {
+    "year": 2029,
+    "rev": 651.1,
+    "op_inc": 153.0,
+    "nopat": 123.9,
+    "da": 102,
+    "da_pct_rev": 15.7,
+    "capex": 215,
+    "capex_pct_rev": 33.0,
+    "wc": -2,
+    "fcf": 8.9,
+    "conv": 0.072
+   },
+   {
+    "year": 2030,
+    "rev": 673.9,
+    "op_inc": 148.3,
+    "nopat": 120.1,
+    "da": 118,
+    "da_pct_rev": 17.5,
+    "capex": 185,
+    "capex_pct_rev": 27.5,
+    "wc": 0,
+    "fcf": 53.1,
+    "conv": 0.442
+   },
+   {
+    "year": 2031,
+    "rev": 690.8,
+    "op_inc": 148.5,
+    "nopat": 120.3,
+    "da": 126,
+    "da_pct_rev": 18.2,
+    "capex": 170,
+    "capex_pct_rev": 24.6,
+    "wc": 0,
+    "fcf": 76.3,
+    "conv": 0.634
+   },
+   {
+    "year": 2032,
+    "rev": 704.6,
+    "op_inc": 151.5,
+    "nopat": 122.7,
+    "da": 128,
+    "da_pct_rev": 18.2,
+    "capex": 165,
+    "capex_pct_rev": 23.4,
+    "wc": 0,
+    "fcf": 85.7,
+    "conv": 0.698
+   }
+  ],
+  "base": [
+   {
+    "year": 2027,
+    "rev": 620.1,
+    "op_inc": 197.2,
+    "nopat": 159.7,
+    "da": 50.5,
+    "da_pct_rev": 8.1,
+    "capex": 290,
+    "capex_pct_rev": 46.8,
+    "wc": -5,
+    "fcf": -84.8,
+    "conv": -0.531
+   },
+   {
+    "year": 2028,
+    "rev": 722.5,
+    "op_inc": 216.7,
+    "nopat": 175.6,
+    "da": 78,
+    "da_pct_rev": 10.8,
+    "capex": 300,
+    "capex_pct_rev": 41.5,
+    "wc": -4,
+    "fcf": -50.4,
+    "conv": -0.287
+   },
+   {
+    "year": 2029,
+    "rev": 820.0,
+    "op_inc": 233.7,
+    "nopat": 189.3,
+    "da": 108,
+    "da_pct_rev": 13.2,
+    "capex": 280,
+    "capex_pct_rev": 34.1,
+    "wc": -3,
+    "fcf": 14.3,
+    "conv": 0.076
+   },
+   {
+    "year": 2030,
+    "rev": 918.4,
+    "op_inc": 252.6,
+    "nopat": 204.6,
+    "da": 137,
+    "da_pct_rev": 14.9,
+    "capex": 260,
+    "capex_pct_rev": 28.3,
+    "wc": -3,
+    "fcf": 78.6,
+    "conv": 0.384
+   },
+   {
+    "year": 2031,
+    "rev": 1012.1,
+    "op_inc": 273.3,
+    "nopat": 221.3,
+    "da": 166,
+    "da_pct_rev": 16.4,
+    "capex": 245,
+    "capex_pct_rev": 24.2,
+    "wc": -3,
+    "fcf": 139.3,
+    "conv": 0.63
+   },
+   {
+    "year": 2032,
+    "rev": 1099.1,
+    "op_inc": 294.6,
+    "nopat": 238.6,
+    "da": 190,
+    "da_pct_rev": 17.3,
+    "capex": 240,
+    "capex_pct_rev": 21.8,
+    "wc": -3,
+    "fcf": 185.6,
+    "conv": 0.778
+   }
+  ],
+  "bull": [
+   {
+    "year": 2027,
+    "rev": 646.6,
+    "op_inc": 213.4,
+    "nopat": 172.8,
+    "da": 52,
+    "da_pct_rev": 8.0,
+    "capex": 310,
+    "capex_pct_rev": 47.9,
+    "wc": -6,
+    "fcf": -91.2,
+    "conv": -0.527
+   },
+   {
+    "year": 2028,
+    "rev": 799.8,
+    "op_inc": 255.9,
+    "nopat": 207.3,
+    "da": 84,
+    "da_pct_rev": 10.5,
+    "capex": 340,
+    "capex_pct_rev": 42.5,
+    "wc": -5,
+    "fcf": -53.7,
+    "conv": -0.259
+   },
+   {
+    "year": 2029,
+    "rev": 954.2,
+    "op_inc": 297.7,
+    "nopat": 241.1,
+    "da": 122,
+    "da_pct_rev": 12.8,
+    "capex": 340,
+    "capex_pct_rev": 35.6,
+    "wc": -4,
+    "fcf": 19.1,
+    "conv": 0.079
+   },
+   {
+    "year": 2030,
+    "rev": 1111.6,
+    "op_inc": 345.7,
+    "nopat": 280.0,
+    "da": 160,
+    "da_pct_rev": 14.4,
+    "capex": 330,
+    "capex_pct_rev": 29.7,
+    "wc": -4,
+    "fcf": 106.0,
+    "conv": 0.379
+   },
+   {
+    "year": 2031,
+    "rev": 1269.5,
+    "op_inc": 394.8,
+    "nopat": 319.8,
+    "da": 195,
+    "da_pct_rev": 15.4,
+    "capex": 320,
+    "capex_pct_rev": 25.2,
+    "wc": -4,
+    "fcf": 190.8,
+    "conv": 0.597
+   },
+   {
+    "year": 2032,
+    "rev": 1421.8,
+    "op_inc": 443.6,
+    "nopat": 359.3,
+    "da": 225,
+    "da_pct_rev": 15.8,
+    "capex": 320,
+    "capex_pct_rev": 22.5,
+    "wc": -4,
+    "fcf": 260.3,
+    "conv": 0.724
+   }
+  ]
+ },
+ "notes": {
+  "price": "IBKR snapshot 290.75, 2026-11-04 18:55 UTC",
+  "rf_erp_beta": "rf 4.94% (10y UST, task input), ERP 4.2% (task input), beta 1.27 = 2-year weekly vs SPY (task input), fades to 1.0 over 10 years -> ke0 10.27%, mature 9.14% = index return",
+  "shares_m": "Q3'26 diluted 12,368M (release) + 53.5M for the 6.25% mandatory convertible preferred (19M pref shares x max rate 2.816/2.842, 10-Q line 1410; at 290.75 < the 355 reference price the MAX rate applies; anti-dilutive in Q3 EPS so not in 12,368) + 95M for the remaining 27.6B ATM program at ~290 (10-Q: 12.4B issued in Q3, 27.6B of 40B left) = 12,517M. SBC (6.8% of revenue) is expensed in the GAAP margin, so no further SBC share creep is added (would double count). No buybacks assumed (none in 2026; 69.5B authorization unused).",
+  "net_cash_m": "End-2026 estimate, $B: cash 56.3 + debt securities 118.4 (208.8 marketable less 90.4 marketable equity) = 174.7 at 9/30 (10-Q); Q4 OCF ~48, capex ~68 (guide midpoint 200 less 9M 132), dividends 3.2 -> 150.7; less debt at face 128.5 (127.5 LT + 1.0 current; Waymo's 5.0B Oct loan adds cash and debt equally) = 22.2; less on-balance-sheet lease liabilities 20.5 (operating 16.8 + finance 3.7) at a 50% haircut = -10.3 (the lease cost is also inside the GAAP margin, so a full deduction would double count; the 130.5B of leases not yet commenced is NOT deducted: it is capacity whose cost enters the 2027+ opex/D&A path); plus marketable equity at a haircut: non-SpaceX 15.2 x 0.85 = 12.9, SpaceX 75.2 x 0.70 = 52.6 (restricted, marked: Q3 loss 8.7B; after-tax ~20% + liquidity haircut); plus ATM proceeds 27.6 (shares counted above) = 105.0. EXCLUDED: non-marketable equity 135.2B carrying value (128.2B 'primarily one private company', name not stated) = $10.8/share on 12,517M, shown separately, not in the value. Accrued fines 13.8B are paid through the 2027-28 charges.",
+  "rev0_m": "2026 = 9M actual 357,269 (Q1 109,896 + Q2 119,796 + Q3 127,577) + Q4 estimate 142,000 (consensus 142,357, 35 analysts, AV EARNINGS_ESTIMATES 2026-11-04; Q4'25 113,828 x 1.25; Services lapping ~2 pts and FX headwind per CFO, offset by Cloud/TPU scaling) = 499,300 (consensus FY 499,571)",
+  "tax": "9M'26 effective rate 19.0% (10-Q line 1552)",
+  "roic_terminal": "18%: between the ad business's historical ~30% and a hyperscaler compute business's ~12-15%; 2032 base NOPAT ~233B on ~1.4T invested capital = ~16%, incremental ~30% in 2032",
+  "pe": "exit P/E on 2032 operating EPS: base 19 (justified P/E at ke 9.14%, ROIC 18%, growth fading 8.6% -> 4.9%: steady state 17x, fade years ~19-20x), bear 14 (ex-growth, margin-compressed; GOOGL traded ~17x in Nov 2022, MSFT ~12x in 2010), bull 24 (12% growth exiting 2032, Cloud at AWS-like scale)",
+  "g_base": "2027 +24.2% to 620B (consensus 634.5B, range 545-741B; Cloud ~200B +81% on backlog 560.8B with >55% in 24 months and TPU supply agreements whose 'significant majority' lands in 2027 (10-Q line 1670), capped by the stated supply constraint; Services +8% with Q4 lapping, AI Mode ads scaling globally); then Cloud 270/335/400/460/515B and Services +7/6.5/6/5.5/5%; Other Bets 2.5->18B",
+  "g_bear": "Search erodes to AI chat (Search +4%, +1%, 0, -1%, -1%, -1%), Network -8%, YouTube +6%, subs +8%; Cloud 2027 +55% (capacity, then a lab customer cuts), then +22/14/9/6/4% -> revenue 574B (2027) to 704B (2032)",
+  "g_bull": "Search +12% (AI Mode ads global, highest query growth in 5 years), subs +15%, Cloud 215/320/425/530/635/730B (TPU systems 'ramp meaningfully in 2027', ~100 TPU customers, Oracle/Crux partnerships), Waymo to 35B",
+  "m": "GAAP operating margin (SBC inside). Built as EBITDA margin minus D&A/revenue. Base EBITDA 39.5->44% (Services ~48%, Cloud to ~52% at scale, Alphabet-level AI R&D -7.7B/qtr growing). D&A from the asset base: gross in-service PP&E 454.6B at 9/30 (341.1 net + 113.5 acc. dep.), 145.3B not yet in service flowing in, plus the capex path; depreciation rate 8.0% rising to 9.5% of gross in service (Q3'26 annualized 7.4%; mix shifting to ~6-year servers). Base D&A 50.5/78/108/137/166/190B = 8.1/10.8/13.2/15.0/16.4/17.3% of revenue vs 6.3% in 2026 -> op margin 31.8% (2027) falling to 26.8% (2032). Consensus 2027 (~34%) implies D&A ~42B; the gap is the depreciation wave. Bear: EBITDA 37.5->36%, D&A to 18.5% of revenue (committed capex, flat revenue) -> 17.5%. Bull: EBITDA 41->47%, D&A to 15.8% -> ~31%.",
+  "conv": "FCF built explicitly per year (fcf_build_bn): NOPAT + D&A - capex - working capital. Capex base 2026 ~200B (guide 195-205B), 2027 290B ('significant increase', CNBC reading >300B is not company text), 2028 300B, then 280/260/245/240B as TPU customers and third-party facilities fund more of the build (CFO: 'offsets the need for us to prebuild facilities'). Bear 290/260/200/170/150/140 (cuts after the committed 213B due within 12 months). Bull 310/340/340/330/320/320. Working capital: TPU inventory build (13.3B at 9/30) net of payables.",
+  "charge": "After-tax $M (fines are not deductible): base 2027 8,000 + 2028 2,000 = paydown of accrued fines 13.8B (EU ad tech 3.5B, PriceRunner 2.1B, DMA 1.0B, others) net of those already paid; bear adds new DMA/ad-tech fines (12,000/5,000/3,000); bull 5,000. The 6.25% preferred dividend (1.19B/yr to May 2029) is inside the share count (if-converted), not charged again.",
+  "probabilities": "SUBJECTIVE (Claude): bear 25%, base 50%, bull 25%",
+  "horizon": "days_to_base_year_end 57 (2026-11-04 -> 12-31); years_to_horizon 5.16 (to end-2031); buy_return 13% = owner's add-more hurdle label, not his requirement",
+  "m_bear": "EBITDA 38% falling to 33.5% (AI serving cost in Search without matching ads, cloud price competition, TPU hardware mix); D&A 8.7% -> 18.2% of revenue on the committed capex (213B due within 12 months) -> op margin 29% -> 21.5%; capex cut from 2028 (290/265/215/185/170/165)"
+ }
+}

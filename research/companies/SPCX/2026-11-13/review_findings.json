@@ -1,0 +1,121 @@
+{
+ "ticker": "SPCX",
+ "valuation_date": "2026-11-13",
+ "built_on": "2026-11-15",
+ "note": "Built on 2026-11-15 from the reviewer files of the private run folder (not copied): verdict, finding titles and the base value before and after the review pass. Titles only; no fresh pull. Lines about position size or the portfolio were left out (research/ is company research only).",
+ "pre_review": {
+  "base_today": 27.61,
+  "base_return_pct": -18.1,
+  "file": null,
+  "note": "custom segment model before the repair pass (run folder deep/pre_repair/, not copied)"
+ },
+ "final": {
+  "base_today": 70.06,
+  "base_return_pct": -1.5,
+  "file": "params.json, results.json"
+ },
+ "base_changed_by_review": true,
+ "bridge": "red-team finding 1 accepted: the first pass said no company guidance exists, but the Q3 call gave guidance and the model broke it; the repair pass replaced the first-pass numbers (model.md section 8); the first-pass value 27.61 is withdrawn",
+ "critical_findings": 1,
+ "reviews": [
+  {
+   "lane": "numbers",
+   "run_file": "runs/tickers/SPCX_2026-11-13/deep/check_numbers.md",
+   "verdict": "every reported number matches the filings and the model reproduces; the one material judgement is the SI yield; \"not a buy\" stands",
+   "findings": [
+    {
+     "n": 1,
+     "severity": "major",
+     "title": "the SI yield in 2027 starts ~10% below the Q3 2026 actual on the model's own convention."
+    },
+    {
+     "n": 2,
+     "severity": "major (disclosure)",
+     "title": "the consensus year is contradicted further than \"near the low end\" says."
+    },
+    {
+     "n": 3,
+     "severity": "minor",
+     "title": "the weighted end-2031 value and return in the summary are wrong."
+    },
+    {
+     "n": 4,
+     "severity": "minor",
+     "title": "the calibrated-lens rationale misstates our forward P/E."
+    },
+    {
+     "n": 5,
+     "severity": "minor (gap closable)",
+     "title": "the strike of Musk's options is in the 424B4."
+    },
+    {
+     "n": 6,
+     "severity": "minor",
+     "title": "SI D&A for 2026 is set at 7.9bn."
+    },
+    {
+     "n": 7,
+     "severity": "minor",
+     "title": "not modelled, noted (interest on cash, EchoStar interest support, 800 MHz spectrum price, Customer B termination)."
+    }
+   ]
+  },
+  {
+   "lane": "red team",
+   "run_file": "runs/tickers/SPCX_2026-11-13/deep/check_redteam.md",
+   "verdict": "AGREE_WITH_CHANGES",
+   "findings": [
+    {
+     "n": 1,
+     "severity": "critical",
+     "title": "company guidance exists and the model breaks it"
+    },
+    {
+     "n": 2,
+     "severity": "major",
+     "title": "the bull is not a bull on the main driver, so \"even the bull plus all bets is below the price\" is wrong"
+    },
+    {
+     "n": 3,
+     "severity": "major",
+     "title": "the reverse reading overstates the gap"
+    },
+    {
+     "n": 4,
+     "severity": "major",
+     "title": "the bear omits the levered spot-glut case, and dilution from funding is not modelled"
+    },
+    {
+     "n": 5,
+     "severity": "minor",
+     "title": "SI revenue timing ignores construction in progress"
+    },
+    {
+     "n": 6,
+     "severity": "minor",
+     "title": "Starlink path. ARPU is a little generous, subscribers a little cautious, net effect immaterial"
+    },
+    {
+     "n": 7,
+     "severity": "minor",
+     "title": "Starship treatment is honest, with one asymmetry"
+    },
+    {
+     "n": 8,
+     "severity": "minor",
+     "title": "unproven bets vs the base; spectrum"
+    },
+    {
+     "n": 9,
+     "severity": "minor",
+     "title": "the calibrated lens on a story stock"
+    },
+    {
+     "n": 10,
+     "severity": "minor",
+     "title": "numbers without a primary source in the summary"
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,41 @@
+{
+ "ticker": "CRDO",
+ "as_of": "2026-11-09",
+ "price": 132.83,
+ "rf": 0.049,
+ "erp": 0.042,
+ "beta": 2.75,
+ "beta_mature": 1.3,
+ "shares_m": 198.0,
+ "net_cash_m": 1000.0,
+ "rev0_m": 2510.0,
+ "base_year": 2027,
+ "tax": 0.12,
+ "cash_yield": 0.04,
+ "debt_rate": 0.06,
+ "roic_terminal": 0.35,
+ "days_to_base_year_end": 173,
+ "years_to_horizon": 5.47,
+ "buy_return": 0.12,
+ "probabilities": {"bear": 0.30, "base": 0.45, "bull": 0.25, "label": "subjective (Claude judgement)"},
+ "notes": {
+  "price": "IBKR realtime last 132.83 on 9.11.2026 ~15:20 UTC (conid 541265127; +10.2% on the day; 52-week 86.49-308.67; 13-week low 110.83)",
+  "fiscal_year": "52/53-week year ending the Saturday nearest 30 April. Base year FY2027 ends 1.5.2027 (173 days from 9.11.2026). Forecast years FY2028-FY2033; exit at end of FY2032 on FY2033 EPS",
+  "base_year": "FY2027 revenue 2,510M: company guide 'more than 85% growth' on FY2026 1,335.1M (10-K) = floor 2,470M; Q1 479.0M actual + Q2 guide 525-535M; AV consensus FY27 2,503M (19 analysts). Guide-beat record: 7 of 7 guided quarters beaten, mean +10.5%, but the last two only +1.6% and +1.9%",
+  "growth": "Base FY28 +50% (exit run-rate Q4 FY27 ~830-850M per consensus = 3.3-3.4B annualized; AV consensus FY28 3,880M = +55%; optical >$600M in FY27 mostly in H2 per the FQ1 call), then +28/+18/+13/+10/+8. Bull = beat record and 1.6T AEC + optical ramps: +65/+38/+25/+18/+14/+11 (consensus high FY28 4,414M = +76%). Bear = hyperscaler digestion year like FY2024 (+5% after +73%) plus copper-to-optics/CPO shift in scale-up (NVIDIA Feynman offers CPO), dual-sourcing (MaxLinear, Astera, Marvell+Lumentum, Chinese AEC makers): +12/+5/+8/+6/+5/+4",
+  "margin": "Operating margin AFTER SBC, excluding acquired-intangible amortization and one-off integration costs. FQ1 FY27: non-GAAP OI 230.6 - SBC 88.0 = 142.7 / 479.0 = 29.8%; FQ2 guide: GM 68% x 530 - opex 102.5 = 257.9 - SBC ~103.9 (97.0 opex + 1.3% COGS) = ~29.1%. SBC 18.4% of revenue in FQ1 (FY26 13.7%). Base: 34/36/37/37.5/38/38 as SBC falls toward ~11% of revenue and non-GAAP opex to ~16% with GM ~65-66% (optical mix). Bull 36/39/40/41/41/41. Bear: GM pressure to ~58-60% from optics mix and AEC price competition, SBC sticky: 27/25/25/26/26/26",
+  "conv": "FCF after SBC / NOPAT. FQ1 FY27: OCF 90.2 vs NI 129.4 + SBC 88.0 + D&A 20.2: working capital absorbed ~147 (inventory +61.5, receivables +54.5, deposits/other +25.3). Working capital ~25% of incremental revenue -> base 0.72/0.82/0.88/0.92/0.94/0.95; bull 0.68/0.78/0.85/0.90/0.92/0.94; bear 0.90-0.95 (working capital released) with a FY28 charge",
+  "charge": "Bear FY28 charge 150M after tax: inventory write-down and capacity-deposit/commitment losses in a digestion year (inventory 313.1M, non-cancelable purchase commitments 212.7M, capacity deposits 88.4M + 102.4M due in FY27, 10-Q 1.8.2026)",
+  "net_cash": "1.8.2026 cash 466.9 + short-term investments 297.4 = 764.3M, no debt (10-Q). To 1.5.2027: + Q2-Q4 non-GAAP net income ~1,020 - SBC ~330 (SBC treated as a cost) - working-capital build ~350 - capex ~40 - technology licence payments ~15 - contingent cash consideration 10 = ~1,040; capacity deposits (102.4M due in FY27) treated as refundable working capital, net zero. Rounded to 1,000. Leases (operating, 26M) ignored as immaterial",
+  "shares": "187.95M outstanding on 25.8.2026 (10-Q cover); Q1 diluted weighted 194.4M (options 1.7M at $2.34, RSUs 8.3M, PSUs 3.1M via treasury method); + ~1.5M issued since; DustPhotonics earn-out up to 3.21M shares on milestones (recorded fair value $300M equity): base +1.6M (about half), bull +3.2M, bear 0. Future grants not added: SBC is expensed in the margin",
+  "tax": "FQ1 FY27 GAAP ETR -0.5%, non-GAAP tax ~1% of non-GAAP pre-tax income; FY2026 rate ~7% (Cayman parent). OECD Pillar Two (15% minimum) is named as a risk and Credo crossed EUR 750M revenue in FY2026: 12% used as a blended long-run rate (ASSUMPTION, not a company figure)",
+  "beta": "2-year weekly vs SPY (IBKR, 103 weekly returns to 6.11.2026): raw 3.61 -> adjusted 0.67 x 3.61 + 0.33 = 2.75 (locked rule). Mature beta 1.3 (fabless semiconductor)",
+  "pe": "Exit P/E on after-SBC operating EPS, forward (FY2033 EPS at end of FY2032). Own forward P/E median 31.5x (non-GAAP NTM EPS, Jan 2024-Oct 2026, 34 months; p25 26.1, p75 37.7) belonged to a 100%+ grower and is on EPS before SBC; at the horizon growth is ~8-10%, so the stated fact overrides: base 22, bull 26, bear 15. Peers today (IBKR price / AV consensus): MRVL 153.08 / FY1.2028 7.34 = 20.9x; ALAB 213.98 / 2027 6.67 = 32.1x; CRDO 132.83 / FY2028 9.71 = 13.7x (all non-GAAP)",
+  "calibrated": "Today's forward P/E is price / FY2028 after-SBC operating EPS of the base (lean_model computes it)"
+ },
+ "scenarios": {
+  "bear": {"g": [0.12, 0.05, 0.08, 0.06, 0.05, 0.04], "m": [0.27, 0.25, 0.25, 0.26, 0.26, 0.26], "conv": [0.90, 0.95, 0.95, 0.95, 0.95, 0.95], "pe": 15, "charge": {"0": 150.0}, "shares_m": 196.5},
+  "base": {"g": [0.50, 0.28, 0.18, 0.13, 0.10, 0.08], "m": [0.34, 0.36, 0.37, 0.375, 0.38, 0.38], "conv": [0.72, 0.82, 0.88, 0.92, 0.94, 0.95], "pe": 22, "shares_m": 198.0},
+  "bull": {"g": [0.65, 0.38, 0.25, 0.18, 0.14, 0.11], "m": [0.36, 0.39, 0.40, 0.41, 0.41, 0.41], "conv": [0.68, 0.78, 0.85, 0.90, 0.92, 0.94], "pe": 26, "shares_m": 199.5}
+ }
+}

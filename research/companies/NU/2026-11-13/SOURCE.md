@@ -1,0 +1,1 @@
+lean_params_pre_review.json: copied byte-for-byte on 2026-11-15 from the private run folder runs/tickers/NU_2026-11-13/deep/repair_prev_params.json = the params before the review pass (the params before the repair pass: base 13.06 before, 13.38 after, at the same price 12.08); lean_params.json in this folder is the published, post-review file; copied, no fresh pull.
