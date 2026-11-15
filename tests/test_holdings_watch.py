@@ -116,6 +116,204 @@ class HoldingsWatchTests(unittest.TestCase):
         self.assertEqual(r['start_from'], os.path.join('research', 'companies', 'ADBE', self.th['as_of']))
 
 
+def picture(root, t, d, **over):
+    """A synthetic saved fundamental picture (research/technical/<T>/<date>/fundamental.json)."""
+    folder = os.path.join(root, 'research', 'technical', t, d)
+    os.makedirs(folder, exist_ok=True)
+    obj = {'ticker': t, 'as_of': d, 'price': 240.0, 'verdict_he': 'החזקה (סינתטי)', 'buy_test_price': 230.0,
+           'margin_of_safety_price': 221.0,
+           'values': {'today': {'bear': 150.0, 'base': 270.0, 'bull': 380.0}, 'end_2027': {'bear': 160.0, 'base': 300.0, 'bull': 420.0},
+                      'end_2031': {'bear': 200.0, 'base': 450.0, 'bull': 640.0}},
+           'annual_return_pct': {'bear': -3.0, 'base': 13.0, 'bull': 21.0}}
+    obj.update(over)
+    with open(os.path.join(folder, 'fundamental.json'), 'w', encoding='utf-8') as f:
+        json.dump(obj, f, ensure_ascii=False)
+
+
+class IndexFundAndBaselineTests(unittest.TestCase):
+    """The two failures of 15.11.2026 (synthetic data): an index fund reported as a company to value, and a value
+    printed from a thesis in another currency / share unit or from an older thesis than the saved picture."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.dir = tempfile.mkdtemp()
+        cls.ledger = os.path.join(cls.dir, 'ledger.jsonl')
+        cls.th = thesis()
+        L = Ledger(cls.ledger, clock=Clock('2026-10-19T15:00:00+00:00'))
+        M.freeze(L, cls.th)
+        # the same synthetic thesis recorded in another currency per ordinary share (a foreign filer held as an ADR)
+        cls.tw = dict(cls.th, ticker='TWCO', thesis_id='TWCO:2026-10-19:synthetic', currency='TWD',
+                      price_at_analysis=dict(cls.th['price_at_analysis'], currency='TWD'))
+        M.freeze(L, cls.tw)
+
+    def update(self, rows, root=None, as_of='2026-12-01', **pos_over):
+        pos = positions(as_of, rows)
+        pos.update(pos_over)
+
+        def factbook_for(t, d, th):
+            fb = later_fb(as_of=as_of, fy26={})
+            fb['company'] = dict(fb['company'], ticker=t, currency=th.get('currency') or 'USD')     # same synthetic books
+            return fb
+        return HW.update(pos, self.ledger, as_of, factbook_for, root=root)
+
+    def row(self, res, t):
+        return next(r for r in res['rows'] if r['ticker'] == t)
+
+    def test_index_fund_is_not_a_new_holding(self):
+        pos = positions('2026-12-01', [('CSPX', 800.0, .5), ('NEWCO', 50.0, .2)])
+        pos['rows'].append({'t': 'BONDX', 'asset_class': 'ETF', 'price': 20.0, 'weight': .1})
+        pos['rows'].append({'t': 'WIDE', 'kind': 'fund', 'price': 30.0, 'weight': .1})
+        pos['rows'].append({'t': 'spy', 'sec_type': 'STK', 'price': 600.0, 'weight': .05})      # brokers type ETFs as STK
+        pos['rows'].append({'t': 'NAMEDX', 'name': 'Some S&P 500 Index Fund ETF', 'price': 9.0, 'weight': .05})
+        res = HW.update(pos, self.ledger, '2026-12-01', lambda *a: None)
+        for t in ('CSPX', 'BONDX', 'WIDE', 'SPY'):
+            r = self.row(res, t)
+            self.assertEqual((r['status'], r['action']), ('index_fund', 'none'), t)
+            self.assertNotIn('value_comparison', r)
+        self.assertIn('INDEX_FUNDS', self.row(res, 'CSPX')['reason'])
+        self.assertIn('type ETF', self.row(res, 'BONDX')['reason'])
+        self.assertEqual(self.row(res, 'NAMEDX')['status'], 'new_holding')        # never guessed from the name
+        self.assertEqual(sorted(res['index_funds']), ['BONDX', 'CSPX', 'SPY', 'WIDE'])
+        self.assertEqual(sorted(res['full_rerun']), ['NAMEDX', 'NEWCO'])
+        self.assertEqual(res['counts']['index_fund'], 4)
+        self.assertEqual(res['skipped_non_stock'], [])
+        md = HW.render_he(res)
+        line = next(x for x in md.splitlines() if x.startswith('| CSPX |'))
+        self.assertIn('קרן מדד, לא חברה: לא מוערכת', line)
+        self.assertNotIn('הרצה מלאה', line)
+        self.assertEqual(HW.stock_rows(pos)[1], [])                              # funds are not 'skipped' rows either
+
+    def test_named_set_is_one_constant(self):
+        self.assertEqual(HW.INDEX_FUNDS, {'CSPX', 'VOO', 'SPY', 'IVV', 'VTI', 'VUAA', 'SXR8', 'QQQ', 'VWRA', 'IWDA'})
+
+    def test_other_currency_gives_the_reason_not_a_value(self):
+        res = self.update([('TWCO', 40.0, 1.0)])
+        r = self.row(res, 'TWCO')
+        vc = r['value_comparison']
+        self.assertIsNone(vc['source'])
+        self.assertIsNone(vc['base_value_today'])
+        self.assertEqual(vc['skipped_sources'][0]['code'], 'currency')
+        self.assertIn('TWD', vc['reason'])
+        self.assertNotIn('view', r)                                                # no stale price view either
+        self.assertTrue(r['position_currency_assumed'])
+        self.assertEqual(r['status'], 'no_new_report')                             # the filing check still ran
+        line = next(x for x in HW.render_he(res).splitlines() if x.startswith('| TWCO |'))
+        self.assertIn('אין השוואה', line)
+        self.assertIn('TWD', line)
+        self.assertNotIn('מתחת לשווי', line)
+        self.assertNotIn('מחוץ לטווח', line)
+        # the same thesis against a position stated in its own currency is compared
+        same = self.update([('TWCO', 245.0, 1.0)], currency='TWD')
+        self.assertEqual(self.row(same, 'TWCO')['value_comparison']['source'], 'ledger_thesis')
+
+    def test_other_share_unit_gives_the_reason(self):
+        res = self.update([('ADBE', 245.0 * 5, 1.0)])                              # e.g. one ADR = 5 ordinary shares
+        vc = self.row(res, 'ADBE')['value_comparison']
+        self.assertEqual((vc['source'], vc['skipped_sources'][0]['code']), (None, 'price_scale'))
+        pos = positions('2026-12-01', [('ADBE', 245.0, 1.0)])
+        pos['rows'][0]['unit'] = 'ADR'
+        th = dict(self.th, ticker='UNITCO', thesis_id='UNITCO:2026-10-19:synthetic', unit='ordinary share')
+        led = os.path.join(tempfile.mkdtemp(), 'l.jsonl')
+        M.freeze(Ledger(led, clock=Clock('2026-10-19T15:00:00+00:00')), th)
+        pos['rows'][0]['t'] = 'UNITCO'
+        res = HW.update(pos, led, '2026-12-01', lambda *a: later_fb(as_of='2026-12-01', fy26={}))
+        self.assertEqual(self.row(res, 'UNITCO')['value_comparison']['skipped_sources'][0]['code'], 'unit')
+
+    def test_newer_fundamental_picture_is_preferred(self):
+        root = tempfile.mkdtemp()
+        picture(root, 'ADBE', '2026-10-01')                                        # older than the thesis: ignored
+        res = self.update([('ADBE', 245.0, 1.0)], root=root)
+        self.assertEqual(self.row(res, 'ADBE')['value_comparison']['source'], 'ledger_thesis')
+        picture(root, 'ADBE', '2026-11-20')
+        res = self.update([('ADBE', 245.0, 1.0)], root=root)
+        r = self.row(res, 'ADBE')
+        vc = r['value_comparison']
+        self.assertEqual((vc['source'], vc['date']), ('fundamental_picture', '2026-11-20'))
+        self.assertEqual(vc['path'], os.path.join('research', 'technical', 'ADBE', '2026-11-20', 'fundamental.json'))
+        self.assertEqual((vc['base_value_today'], vc['bear_value_today'], vc['bull_value_today']), (270.0, 150.0, 380.0))
+        self.assertAlmostEqual(vc['discount_to_base'], 1 - 245.0 / 270.0)
+        self.assertEqual((vc['buy_test_price'], vc['margin_of_safety_price']), (230.0, 221.0))
+        self.assertEqual(vc['last_year']['date'], '2031-12-31')
+        yrs = 5 + 30 / 365.25
+        self.assertAlmostEqual(vc['expected_return']['value'], (450.0 / 245.0) ** (1 / yrs) - 1, places=3)
+        self.assertEqual(vc['expected_return']['kind'], 'proxy')
+        self.assertIsNotNone(r['view']['base_value_today'])                        # the old key stays (ledger thesis view)
+        self.assertEqual(r['status'], 'no_new_report')
+        md = HW.render_he(res)
+        line = next(x for x in md.splitlines() if x.startswith('| ADBE |'))
+        self.assertIn('270 מול 245.00', line)
+        self.assertIn('הערכה שמורה 2026-11-20', line)
+        self.assertIn('מחיר מבחן הקנייה 230', md)
+        self.assertIn('החזקה (סינתטי)', md)
+        ledger_line = next(x for x in HW.render_he(self.update([('ADBE', 245.0, 1.0)])).splitlines() if x.startswith('| ADBE |'))
+        self.assertIn('תזה מוקפאת 2026-10-19', ledger_line)
+
+    def test_picture_replaces_a_thesis_in_another_currency(self):
+        root = tempfile.mkdtemp()
+        picture(root, 'TWCO', '2026-11-20', price=41.0, values={'today': {'bear': 20.0, 'base': 44.0, 'bull': 60.0}})
+        vc = self.row(self.update([('TWCO', 40.0, 1.0)], root=root), 'TWCO')['value_comparison']
+        self.assertEqual((vc['source'], vc['base_value_today']), ('fundamental_picture', 44.0))
+        self.assertEqual(vc['skipped_sources'][0]['source'], 'ledger_thesis')
+        self.assertIsNone(vc['expected_return']['value'])                          # no year-end value in this picture
+
+    def test_older_picture_used_for_lack_of_a_comparable_thesis_is_not_called_newer(self):
+        root = tempfile.mkdtemp()
+        picture(root, 'TWCO', '2026-10-01', price=41.0,                              # older than the thesis of 2026-10-19
+                values={'today': {'bear': 20.0, 'base': 44.0, 'bull': 60.0}, 'end_2031': {'base': -5.0}})
+        res = self.update([('TWCO', 40.0, 1.0)], root=root)
+        r = self.row(res, 'TWCO')
+        vc = r['value_comparison']
+        self.assertEqual((vc['source'], vc['older_than_thesis']), ('fundamental_picture', True))
+        self.assertNotIn('חדשה יותר', r['line_he'])
+        self.assertIn('ישנה מהתזה המוקפאת', r['line_he'])
+        self.assertIsNone(vc['expected_return']['value'])                          # a negative year-end value gives no return
+        self.assertIn('| TWCO |', HW.render_he(res))
+
+    def test_picture_without_standard_base_or_on_another_scale_falls_back(self):
+        root = tempfile.mkdtemp()
+        picture(root, 'ADBE', '2026-11-20', values={'by_world': {'a': 1}})
+        vc = self.row(self.update([('ADBE', 245.0, 1.0)], root=root), 'ADBE')['value_comparison']
+        self.assertEqual(vc['source'], 'ledger_thesis')
+        self.assertEqual(vc['skipped_sources'][0]['code'], 'no_base_value')
+        picture(root, 'ADBE', '2026-11-21', price=500.0)                           # built on a price twice today's
+        vc = self.row(self.update([('ADBE', 245.0, 1.0)], root=root), 'ADBE')['value_comparison']
+        self.assertEqual((vc['source'], vc['skipped_sources'][0]['code']), ('ledger_thesis', 'price_scale'))
+        picture(root, 'ADBE', '2026-11-22', values={'weighted_base_today': 260, 'by_world': {}}, buy_test_price={'a': 250, 'b': 230})
+        res = self.update([('ADBE', 245.0, 1.0)], root=root)
+        vc = self.row(res, 'ADBE')['value_comparison']
+        self.assertEqual((vc['source'], vc['base_value_today']), ('fundamental_picture', 260.0))
+        self.assertIn('weighted', vc['base_basis'])
+        self.assertIn('a: 250, b: 230', HW.render_he(res))
+
+    def test_picture_without_a_thesis_is_not_a_new_holding(self):
+        root = tempfile.mkdtemp()
+        picture(root, 'NEWCO', '2026-11-20', price=50.0, values={'today': {'bear': 30.0, 'base': 60.0, 'bull': 80.0}})
+        res = self.update([('NEWCO', 50.0, 1.0)], root=root)
+        r = self.row(res, 'NEWCO')
+        self.assertEqual((r['status'], r['action']), ('valuation_only', 'none'))
+        self.assertEqual(r['value_comparison']['base_value_today'], 60.0)
+        self.assertEqual(res['full_rerun'], [])
+        self.assertIn('אין תזה מוקפאת', HW.render_he(res))
+
+    def test_newer_run_not_read_here_is_flagged(self):
+        root = tempfile.mkdtemp()
+        for d in ('ADBE_2026-10-19', 'ADBE_2026-11-04', 'ADBE_2026-11-09_review', 'ADBEX_2026-11-30'):
+            os.makedirs(os.path.join(root, 'runs', 'tickers', d))
+        res = self.update([('ADBE', 245.0, 1.0)], root=root)
+        r = self.row(res, 'ADBE')
+        self.assertEqual(r['newer_saved_run'], {'date': '2026-11-04', 'path': os.path.join('runs', 'tickers', 'ADBE_2026-11-04')})
+        self.assertIn('הערך בטבלה ישן', r['line_he'])
+        picture(root, 'ADBE', '2026-11-20')                                        # the picture is the newest: no flag
+        self.assertNotIn('newer_saved_run', self.row(self.update([('ADBE', 245.0, 1.0)], root=root), 'ADBE'))
+
+    def test_old_result_without_the_new_keys_still_renders(self):
+        res = self.update([('ADBE', 245.0, 1.0)])
+        for r in res['rows']:
+            r.pop('value_comparison', None)
+        res.pop('index_funds')
+        self.assertIn('תזה מוקפאת 2026-10-19', HW.render_he(res))
+
+
 class ResearchStoreTests(unittest.TestCase):
     def make_run(self, root, t='SYN', d='2026-10-19'):
         run = os.path.join(root, 'runs', 'tickers', f'{t}_{d}')

@@ -1,3 +1,41 @@
+## Unreleased — lean_model reporting keys (15.11.2026)
+
+Reporting only: no valuation changed. `scripts/lean_model.py` gains eight top-level keys that read the model's own numbers;
+every key that existed before keeps its value.
+
+- `price_ladder`: the price today at which the base 5-year return equals each hurdle, for the fundamental base and the
+  calibrated lens, always as year-end value at the horizon / (1 + return) ^ years_to_horizon. Rungs: buy test (the 'buy'
+  band, 12%), margin of safety (`buy_return`, equal to `buy_price`), index (rf + erp, equal to `index_parity_price`), hold
+  floor (6%), sell line (3%). Every rung carries its return, so a 13% price cannot be quoted inside a 12% ladder again.
+- `buy_test`: the owner's rule as numbers (base >= 12% a year in both lenses, bull >= 17%, bear >= -10%): return, threshold,
+  pass and highest passing price per leg, the overall pass, `max_price_passing` (the lowest of the four) and the binding
+  leg. A bear case wiped at the horizon gives no passing price. `rerun`: the calibrated leg holds the multiple of today's
+  price, so below today's price a rerun holds a lower multiple; `rerun.max_price_passing` is the price a rerun confirms,
+  and a warning is raised when it is more than 1% below the stated one. Not shown when `calibrated.pe` is set.
+- `ranges`: bear/base/bull (and the calibrated base) today, at the 2-year and at the 5-year year-end, with the yearly
+  return, and the note that the 1-2 year number is the noisiest.
+- `calibrated_diagnostics`: whether the margin floor binds and in which years, the held multiple against the base exit
+  multiple, the gap between the lenses split into multiple and margin, and `inflated_multiple_warning` when the held
+  multiple is above 1.5x the base exit multiple or the first forecast year's operating EPS is under 2% of the price.
+- `funding`: the model's own net-cash path by year in each scenario (face value at the base year-end, plus free cash flow and
+  after-tax interest), its low point and year, and a flag when net debt at the low point is above 3x that year's after-tax
+  operating profit or the path borrows more than today's balance sheet holds (outside money that is in neither the shares
+  nor net cash). `equity_wiped` marks a scenario whose value today is zero or less; the 0.01 floor itself is unchanged.
+- `sensitivity`: the change in the base value today and in the base 5-year return for one input at a time (operating margin
+  +/- 1 point, revenue growth +/- 1 point, exit P/E +/- 2 turns, beta +/- 0.1, FCF conversion +/- 5 points), sorted by
+  absolute effect. Model arithmetic, not a forecast. `sensitivity_base` is kept as it was.
+- `reverse_reading`: the growth the price needs on the base margin path (the existing `market_implied_growth_pct`) next to
+  the growth it needs with the margin held at the first forecast year; `solved` false when no scaling reaches the price.
+- `warnings`: every flag above in one list. `--summary` prints a short plain table instead of the JSON (`--out` still writes
+  the JSON). `run_scenario(p, d, detail=True)` also returns the unrounded internals; the default call is unchanged.
+
+Verification: the old script and the new one were run on all 268 saved params files (research/companies, runs/tickers,
+runs/portfolio_*, the test fixture; 268 ran in both): 0 old keys with a different or missing value, and the new output
+without the eight new keys is byte-identical to the old output in 268 of 268 files; the margin-of-safety and index rungs
+equal `buy_price` and `index_parity_price` in all 268. `python -m unittest tests.test_lean_model`: 21 tests (5 old, 16 new).
+The full suite was not run for this entry. Known limit: the calibrated rungs of the ladder hold today's multiple and are
+not re-solved per rung (only the buy-test rung is, in `buy_test.rerun`).
+
 ## 0.14.3 — bank revenue, residual-income honesty, routing audit fixes (02.11.2026)
 
 Known bugs of the week and the real critical/major findings of the 02.11 routing and process audits. Owner-facing summary of
