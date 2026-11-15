@@ -25,3 +25,35 @@
 - **זה מחקר על החברה בלבד.** אין בקובץ כמויות, עלויות או נתונים מהתיק.
 - **השווי הוא ערך כלכלי לפי המודל,** לא מחיר שהמניה בטוח תגיע אליו.
 - **התאמות פונדמנטליות שמגיעות מהשרטוט:** אם הסשן המשרטט מוצא שקו פונדמנטלי נופל בתוך אזור טכני, או שהשניים סותרים, הוא כותב את זה בצד שלו. הקובץ הזה לא משתנה בגלל הגרף.
+
+## גרסה 2 (מ-15.11.2026): שדות שנוספו
+
+כל השדות של גרסה 1 שלמעלה נשארים באותו שם ובאותה משמעות. מי שקורא רק אותם לא צריך לשנות דבר.
+הקובץ נכתב מעכשיו על ידי `scripts/publish_valuation.py` מתוך רשומת ההערכה `research/companies/<TICKER>/<תאריך>/valuation.json`, ולא ביד.
+
+מה נוסף:
+| שדה | מה יש בו |
+|---|---|
+| `schema_version` | המספר 2 |
+| `v2` | אובייקט אחד עם כל השדות החדשים. שדות שכבר היו בקבצים ישנים (למשל `price_ladder`, `buy_test`, `sell_price`) נשארים כמו שהם |
+| `v2.currency`, `v2.share_basis`, `v2.known_split` | המטבע, בסיס המניות, ופיצול ידוע: `{effective, ratio}` או null |
+| `v2.model_kind`, `v2.record` | סוג המודל (lean / lean_remapped / bank / segment / three_lane) והנתיב לרשומה |
+| `v2.buy_test` | `price_all_legs`: המחיר הגבוה ביותר שבו כל ארבעת חלקי מבחן הקנייה עוברים (המחיר בהרצה חוזרת כשהמודל מזהיר); `stated_price`, `rerun_price`, `base_12_price`, `binding_leg`, `legs` |
+| `v2.price_ladder` | תאריך האופק, והמדרגות: לכל מדרגה `id`, `return_pct`, `price`, `price_second_lens` |
+| `v2.entry_price` | `{value, rung}`: מחיר הכניסה ושם המדרגה שממנה הוא נלקח |
+| `v2.index_parity_price`, `v2.hold_floor_price`, `v2.sell_line_price` | המחירים שבהם התשואה הצפויה שווה למדד, ל-6% ול-3% בשנה |
+| `v2.values_dated` | השווי עם תאריכים מלאים: `today`, `year_ends` (לכל סוף שנת כספים), `at` (בדיוק בעוד שנה, שנתיים ו-5 שנים), `published` (מה שמוצג באינדקס ובתזה) |
+| `v2.wiped` | לכל תרחיש: האם ההון נמחק. במקרה כזה השווי 0 והתשואה null |
+| `v2.second_lens` | העדשה השנייה: שווי, תשואה, תחום, האם שתי העדשות מסכימות, והאם המכפיל של היום נראה מנופח |
+| `v2.historical_multiple` | שווי לפי המכפיל ההיסטורי: `value`, `low`, `high`, `basis` |
+| `v2.conditions_typed`, `v2.falsifiers` | תנאים ומבחני הפרכה במבנה קבוע: `{id, kind, metric, op, threshold, by_date, text_he, state}`. `kind` הוא exit / trim / add / too_low |
+| `v2.next_report` | `date` בפורמט ISO או null, `window` עם `from` ו-`to` כשאין תאריך מדויק, ו-`confirmed` |
+| `v2.last_fresh_pull`, `v2.verdict` | מתי נמשך מידע טרי, והמסקנה: `{code, text_he, draft}` |
+| `carried_from_previous` | שמות השדות שהועתקו כמו שהם מהקובץ הקודם של אותו תאריך |
+
+כללים של גרסה 2:
+- **מספר הוא מספר או null.** אין טקסט בשדה מספרי. ההסבר נכתב בשדה `note` נפרד.
+- **`as_of` הוא תאריך בלבד** (YYYY-MM-DD).
+- **`buy_test_price` לא שינה משמעות:** המחיר שהמודל נותן למבחן הקנייה במחיר של יום ההערכה. המחיר בהרצה חוזרת נמצא ב-`v2.buy_test.price_all_legs`.
+- **`margin_of_safety_price`** הוא תמיד המדרגה של 13% בשנה, או null כשהמודל לא מחשב אותה.
+- **בדיקה:** `python scripts/publish_valuation.py --check` נכשל כשמחיר או שווי בסיסי בקובץ הזה שונים מהרשומה, מהתזה או מהאינדקס.

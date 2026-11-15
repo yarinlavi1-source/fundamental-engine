@@ -7,13 +7,30 @@ FCF to the horizon, plus cash today.
 Value = average of the two. Year-end values are conditional values on each path, not price forecasts.
 
 Usage: python scripts/lean_model.py params.json [--out result.json] [--summary]
---summary prints a short plain table (values, 2-year and 5-year ranges, returns, ladder, buy test, top sensitivities,
-warnings) instead of the JSON; --out still writes the full JSON.
+                                    [--price P] [--as-of YYYY-MM-DD] [--params-out repriced_params.json]
+--summary prints a short plain table (values, 2-year and 5-year ranges, values in exactly 1, 2 and 5 years, returns, the
+return with distributions, ladder, buy test, method gap, sensitivities, warnings) instead of the JSON; --out still writes
+the full JSON.
+--price and --as-of reprice a saved params file without copying it by hand: the price is replaced, and the dates are
+recomputed only when the file has base_year_end. Without base_year_end only the price changes and the output says that
+the dates were not moved (inputs.repriced and a warning). --params-out writes the repriced params (with a "repriced"
+record) so they can be saved next to the result. Every other input stays the file's.
 The params file has keys: ticker, as_of, price, rf, erp, beta, beta_mature, shares_m, net_cash_m (end of the base year;
 negative = net debt), rev0_m (base-year revenue), base_year, tax, cash_yield, debt_rate, roic_terminal,
 days_to_base_year_end, years_to_horizon, buy_return, probabilities {bear, base, bull}, and scenarios
 {bear|base|bull: {g[6], m[6] (operating margin after SBC), conv[6] (FCF / NOPAT), pe (exit P/E on next-year
-operating EPS), charge {year index: $M after tax}, optional shares_m}}.
+operating EPS), charge {year index 0-5: $M after tax}, optional shares_m}}.
+Optional base_year_end (ISO date of the base fiscal year-end): with as_of it gives days_to_base_year_end (the days
+between them) and years_to_horizon (5 + days / 365, two decimals, the convention of the saved files), so the two are no
+longer typed by hand; hand-entered values that differ from the derived ones by more than 0.02 year raise a warning and
+the derived ones are used. Without base_year_end nothing changes. Keep the two hand keys in the file as well: the
+tracker, the freeze and the golden test still read them.
+
+Input checks (15.11.2026, check_params; they run before the model): required keys, six numbers in every g/m/conv
+list, numeric probabilities for the scenarios that sum to 1 (tolerance 1e-6), positive price, shares and base revenue,
+scenario names bear/base/bull with a base, fractions where fractions are meant (rf, erp, tax, margins), charge keys
+0-5. A broken input stops the run with every problem listed (ParamsError; the command exits with code 2). Suspicious
+but usable inputs are warnings in the output (inputs.warnings, repeated in warnings).
 Converts, puts, warrants, leases and patent cliffs are NOT modelled here. Put them into the inputs (net cash, shares,
 growth/margin paths, charges) from the filings fine-print lane, or use a custom model.
 
@@ -47,10 +64,320 @@ Reporting keys (15.11.2026; they read the model above and change none of its num
   It is the model's own arithmetic, not a forecast. sensitivity_base (older, wider steps) is kept as it was.
 - reverse_reading: the growth the price needs on the base margin path (= market_implied_growth_pct) and at a margin
   held flat at the first forecast year, so the reading is not dominated by the margin path.
-- warnings: every flag above in one list.
+- warnings: every flag above in one list, plus the input warnings.
+
+Reporting keys of the engine upgrade (15.11.2026, second set; additive, no earlier key changes its value):
+- inputs: the dates the run used (as_of, base_year_end and where it came from, days_to_base_year_end, years_to_horizon,
+  whether they were derived, the horizon date), the input warnings, and "repriced" when --price / --as-of were used.
+- dated_values: an ISO date on every year-end value, and the bear/base/bull (and calibrated) values at exactly as_of + 1,
+  2 and 5 years, by log-linear (geometric) interpolation between the dated points, the same rule as
+  forecast_tracker.value_at. "In one year" therefore always means one year. A date after the last year-end (as_of after
+  the base year-end) is extended at the last year's rate and marked beyond_last_year_end_days.
+- method_gap: per scenario, what each method gives alone (value today, value at the horizon, 5-year return, band), the
+  exit P/E next to the P/E the DCF itself implies at the horizon, and a warning when the two methods land in different
+  bands. The published value stays the plain average; the warnings are listed in method_gap.warnings.
+- sensitivity_terminal: the same one-at-a-time table for the terminal inputs (mature beta, terminal ROIC, terminal
+  growth), which sensitivity does not cover; moves_most_overall names the largest row of both tables.
+- return_with_distributions: the 5-year return if the free cash the model accumulates above today's net cash were paid
+  out each year and reinvested at the cost of equity (the heavy engine's 0.14.1 entry: cash left at the cash yield reads
+  low against an index that reinvests). A second line beside the headline return, never a replacement for it.
+- price_ladder.rungs.margin_of_safety_13: a fixed 13% rung, the handoff's margin_of_safety_price. The older
+  margin_of_safety rung is the company hurdle (buy_return): its key, label and prices are unchanged and "meaning" says so.
+In these new keys a wiped scenario is value 0 and return null (the older keys keep the 0.01 floor).
 """
 import argparse
+import copy
+import datetime
 import json
+import math
+import re
+import sys
+
+
+# ---- input checks and dates (15.11.2026): they run before the model and change no number of a valid file ----
+
+SCENARIO_NAMES = ('bear', 'base', 'bull')
+REQUIRED = ('price', 'rf', 'erp', 'beta', 'beta_mature', 'shares_m', 'net_cash_m', 'rev0_m', 'base_year', 'tax',
+            'cash_yield', 'roic_terminal', 'buy_return', 'probabilities', 'scenarios')
+NUMERIC = ('price', 'rf', 'erp', 'beta', 'beta_mature', 'shares_m', 'net_cash_m', 'rev0_m', 'tax', 'cash_yield',
+           'roic_terminal', 'buy_return', 'debt_rate', 'days_to_base_year_end', 'years_to_horizon')
+DATE_TOLERANCE_YEARS = 0.02
+_ISO = re.compile(r'^\d{4}-\d{2}-\d{2}$')
+
+
+class ParamsError(ValueError):
+    """The params cannot give meaningful numbers. problems: every reason, in plain words."""
+
+    def __init__(self, problems):
+        self.problems = list(problems)
+        super().__init__(f'invalid lean_model params ({len(self.problems)} problem(s)): ' + '; '.join(self.problems))
+
+
+def _num(x):
+    return isinstance(x, (int, float)) and not isinstance(x, bool) and math.isfinite(x)
+
+
+def _date(x):
+    """An ISO date string (YYYY-MM-DD) as a date, else None."""
+    if isinstance(x, str) and _ISO.match(x):
+        try:
+            return datetime.date.fromisoformat(x)
+        except ValueError:
+            return None
+    return None
+
+
+def _shift_years(d, years):
+    try:
+        return d.replace(year=d.year + years)
+    except ValueError:                       # 29 February
+        return d.replace(year=d.year + years, day=28)
+
+
+def _dates(p):
+    """The dates the run uses: (info, errors, warnings). With base_year_end and as_of the two hand keys are derived."""
+    errors, warns = [], []
+    as_of, end = _date(p.get('as_of')), _date(p.get('base_year_end'))
+    days, years = p.get('days_to_base_year_end'), p.get('years_to_horizon')
+    info = {'as_of': p.get('as_of') if as_of else None, 'base_year_end': None, 'base_year_end_source': None,
+            'days_to_base_year_end': days, 'years_to_horizon': years, 'dates_derived': False, 'horizon_date': None}
+    if 'as_of' not in p:
+        warns.append('no as_of: the values carry no dates (dated_values is not available)')
+    elif as_of is None:
+        warns.append(f'as_of {p.get("as_of")!r} is not an ISO date (YYYY-MM-DD): the values carry no dates')
+    if p.get('base_year_end') is not None and end is None:
+        errors.append(f'base_year_end {p.get("base_year_end")!r} is not an ISO date (YYYY-MM-DD)')
+    elif end is not None and as_of is None:
+        errors.append('base_year_end needs an ISO as_of to derive the days and years from')
+    elif end is not None:
+        d_days = (end - as_of).days
+        d_years = round(5 + d_days / 365, 2)
+        entered = {}
+        if _num(days):
+            entered['days_to_base_year_end'] = days
+            if abs(days - d_days) / 365 > DATE_TOLERANCE_YEARS:
+                warns.append(f'days_to_base_year_end {days:g} in the file differs from the {d_days} days between as_of '
+                             f'{p["as_of"]} and base_year_end {p["base_year_end"]}: the derived value is used')
+        if _num(years):
+            entered['years_to_horizon'] = years
+            if abs(years - d_years) > DATE_TOLERANCE_YEARS:
+                warns.append(f'years_to_horizon {years:g} in the file differs from the derived {d_years:g} (5 + {d_days} '
+                             'days / 365): the derived value is used')
+        info.update(base_year_end=p['base_year_end'], base_year_end_source='base_year_end', days_to_base_year_end=d_days,
+                    years_to_horizon=d_years, dates_derived=True, entered=entered)
+        if _num(p.get('base_year')) and abs(end.year - p['base_year']) > 1:
+            warns.append(f'base_year_end {p["base_year_end"]} is more than a year away from base_year {p["base_year"]:g}')
+        days, years = d_days, d_years
+    else:
+        for key, val in (('days_to_base_year_end', days), ('years_to_horizon', years)):
+            if key not in p:
+                errors.append(f'missing key: {key} (or give base_year_end and as_of, from which it is derived)')
+        if as_of is not None and _num(days):
+            info.update(base_year_end=(as_of + datetime.timedelta(days=days)).isoformat(),
+                        base_year_end_source='as_of + days_to_base_year_end')
+    if _num(years) and years <= 0:
+        errors.append(f'years_to_horizon must be positive (got {years:g})')
+    if _num(days) and abs(days) > 366:
+        warns.append(f'days_to_base_year_end is {days:g}: the base year-end is more than a year from as_of')
+    if info['base_year_end']:
+        info['horizon_date'] = _shift_years(_date(info['base_year_end']), 5).isoformat()
+    return info, errors, warns
+
+
+def check_params(p):
+    """(errors, warnings, dates) for a params object. Errors are inputs that make the numbers meaningless."""
+    if not isinstance(p, dict):
+        return ['the params are not a JSON object'], [], {}
+    errors = [f'missing key: {k}' for k in REQUIRED if k not in p]
+    warns = []
+    for k in NUMERIC:
+        if k in p and not _num(p[k]):
+            errors.append(f'{k} must be a number (got {p[k]!r})')
+
+    def ok(k):
+        return _num(p.get(k))
+
+    for k in ('price', 'shares_m', 'rev0_m'):
+        if ok(k) and p[k] <= 0:
+            errors.append(f'{k} must be positive (got {p[k]:g})')
+    if 'base_year' in p and not (isinstance(p['base_year'], int) and not isinstance(p['base_year'], bool)):
+        errors.append(f'base_year must be a whole year (got {p["base_year"]!r})')
+    for k, hi in (('rf', 0.25), ('erp', 0.25), ('buy_return', 1.0)):
+        if ok(k) and not 0 < p[k] < hi:
+            errors.append(f'{k} must be a fraction between 0 and {hi:g}, e.g. 0.049 for 4.9% (got {p[k]:g})')
+    for k, hi in (('cash_yield', 0.25), ('debt_rate', 0.5)):
+        if ok(k) and not 0 <= p[k] < hi:
+            errors.append(f'{k} must be a fraction from 0 to under {hi:g}, e.g. 0.036 for 3.6% (got {p[k]:g})')
+    if ok('tax') and not 0 <= p['tax'] < 1:
+        errors.append(f'tax must be a fraction from 0 to under 1 (got {p["tax"]:g})')
+    for k in ('beta', 'beta_mature'):
+        if ok(k) and p[k] <= 0:
+            errors.append(f'{k} must be positive (got {p[k]:g}): the cost of equity has to be above the risk-free rate')
+    if ok('roic_terminal') and ok('rf') and p['roic_terminal'] <= p['rf']:
+        errors.append(f'roic_terminal {p["roic_terminal"]:g} must be above rf {p["rf"]:g} (the terminal growth): at or below '
+                      'it the terminal year reinvests all of its profit or more')
+
+    sc = p.get('scenarios')
+    names = []
+    if 'scenarios' in p:
+        if not isinstance(sc, dict) or not sc:
+            errors.append('scenarios must be an object with the scenarios bear, base and bull')
+        else:
+            names = list(sc)
+            unknown = [k for k in names if k not in SCENARIO_NAMES]
+            if unknown:
+                errors.append(f'unknown scenario name(s) {unknown}: the names are {", ".join(SCENARIO_NAMES)}')
+            if 'base' not in sc:
+                errors.append('there is no base scenario')
+            missing = [k for k in SCENARIO_NAMES if k not in sc and k != 'base']
+            if missing and not unknown:
+                warns.append(f'no {" and no ".join(missing)} scenario: the buy test cannot be complete')
+            for k, d in sc.items():
+                errors += _check_scenario(k, d, warns)
+    pr = p.get('probabilities')
+    if 'probabilities' in p:
+        if not isinstance(pr, dict):
+            errors.append('probabilities must be an object {bear, base, bull}')
+        elif isinstance(sc, dict) and sc:
+            bad = [k for k in sc if not _num(pr.get(k))]
+            if bad:
+                errors.append(f'probabilities must hold a number for every scenario (missing or not a number: {bad})')
+            else:
+                out = [k for k in sc if not 0 <= pr[k] <= 1]
+                if out:
+                    errors.append(f'probabilities must be between 0 and 1 (got {", ".join(f"{k} {pr[k]:g}" for k in out)})')
+                total = sum(pr[k] for k in sc)
+                if abs(total - 1) > 1e-6:
+                    errors.append(f'the probabilities of {", ".join(sc)} sum to {total:.6g}, not 1')
+                extra = [k for k in pr if k not in sc and _num(pr[k])]
+                if extra:
+                    warns.append(f'probabilities for {extra} have no scenario and are not used')
+    cal = p.get('calibrated')
+    if cal is not None:
+        if not isinstance(cal, dict):
+            errors.append('calibrated must be an object {pe, m, why}')
+        else:
+            if 'pe' in cal and not (_num(cal['pe']) and cal['pe'] > 0):
+                errors.append(f'calibrated.pe must be a positive number (got {cal["pe"]!r})')
+            if cal.get('m') and not (isinstance(cal['m'], list) and len(cal['m']) == 6 and all(_num(x) for x in cal['m'])):
+                errors.append('calibrated.m must be a list of six numbers')
+    bands = p.get('bands')
+    if bands is not None:
+        if not (isinstance(bands, dict) and all(_num(bands.get(k)) for k in ('buy', 'hold', 'lagging'))):
+            errors.append('bands must be an object with the numbers buy, hold and lagging (% a year)')
+        elif not bands['buy'] > bands['hold'] > bands['lagging']:
+            warns.append('bands are not in the order buy > hold > lagging')
+    dates, d_err, d_warn = _dates(p)
+    return errors + d_err, warns + d_warn, dates
+
+
+def _check_scenario(name, d, warns):
+    if not isinstance(d, dict):
+        return [f'scenario {name} must be an object']
+    errors = []
+    for k in ('g', 'm', 'conv'):
+        v = d.get(k)
+        if k not in d:
+            errors.append(f'scenario {name}: missing key {k}')
+        elif not isinstance(v, list) or len(v) != 6:
+            n = f'{len(v)} values' if isinstance(v, list) else repr(v)
+            errors.append(f'scenario {name}: {k} must be a list of six numbers, base year + 1 to base year + 6 (got {n})')
+        elif not all(_num(x) for x in v):
+            errors.append(f'scenario {name}: {k} holds a value that is not a number')
+    if 'pe' not in d:
+        errors.append(f'scenario {name}: missing key pe')
+    elif not (_num(d['pe']) and d['pe'] > 0):
+        errors.append(f'scenario {name}: pe must be a positive number (got {d["pe"]!r})')
+    if 'shares_m' in d and not (_num(d['shares_m']) and d['shares_m'] > 0):
+        errors.append(f'scenario {name}: shares_m must be a positive number (got {d["shares_m"]!r})')
+    if errors:
+        return errors
+    if min(d['g']) <= -1:
+        errors.append(f'scenario {name}: a growth of {min(d["g"]):g} takes revenue to zero or below (growth is a fraction: 0.15 = 15%)')
+    if max(d['m']) > 1 + 1e-9:
+        errors.append(f'scenario {name}: an operating margin of {max(d["m"]):g} is above 100% (the margin is a fraction: 0.45 = 45%)')
+    if max(d['g']) > 5:
+        warns.append(f'scenario {name}: growth of {max(d["g"]):g} is above 500% a year: check that growth is a fraction (0.15 = 15%)')
+    if min(d['m']) < -1:
+        warns.append(f'scenario {name}: an operating margin of {min(d["m"]):g} is a loss larger than revenue: check the unit')
+    if max(abs(x) for x in d['conv']) > 5:
+        warns.append(f'scenario {name}: a free-cash-flow conversion of {max(d["conv"], key=abs):g} is above 5x the after-tax profit: check the unit')
+    charge = d.get('charge')
+    if charge is not None:
+        if not isinstance(charge, dict):
+            errors.append(f'scenario {name}: charge must be an object {{year index 0-5: $M after tax}}')
+        else:
+            for k, v in charge.items():
+                try:
+                    i = int(k)
+                except (TypeError, ValueError):
+                    i = None
+                if i is None or not 0 <= i <= 5:
+                    errors.append(f'scenario {name}: charge key {k!r} is not a year index 0-5 (0 = base year + 1, not a calendar '
+                                  'year); the model would drop the charge')
+                elif not _num(v):
+                    errors.append(f'scenario {name}: charge {k!r} must be a number (got {v!r})')
+    return errors
+
+
+def prepare(p):
+    """The params the model runs on (a copy with the derived dates) and the inputs record. Raises ParamsError."""
+    errors, warns, dates = check_params(p)
+    if errors:
+        raise ParamsError(errors)
+    q = dict(p)
+    if dates['dates_derived']:
+        q['days_to_base_year_end'], q['years_to_horizon'] = dates['days_to_base_year_end'], dates['years_to_horizon']
+    rp = p.get('repriced')
+    if isinstance(rp, dict):
+        dates['repriced'] = rp
+        if rp.get('as_of_requested') and not rp.get('dates_moved'):
+            warns.append(f'repriced: the dates were not moved to {rp["as_of_requested"]} (the file has no base_year_end); '
+                         f'as_of, days_to_base_year_end and years_to_horizon are those of the file ({p.get("as_of")})')
+    dates['warnings'] = warns
+    return q, dates
+
+
+def reprice(p, price=None, as_of=None):
+    """A copy of the params at another price and/or date, with a "repriced" record. Nothing else is changed.
+
+    The dates move only when the file has base_year_end: then as_of is replaced and the two hand keys are rewritten from
+    it. Without base_year_end only the price changes and the record says the dates were not moved."""
+    q = copy.deepcopy(p)
+    info = {'price_from': p.get('price'), 'as_of_from': p.get('as_of')}
+    problems = []
+    if price is not None:
+        if not (_num(price) and price > 0):
+            problems.append(f'--price must be a positive number (got {price!r})')
+        q['price'] = price
+    if as_of is not None and _date(as_of) is None:
+        problems.append(f'--as-of {as_of!r} is not an ISO date (YYYY-MM-DD)')
+    if problems:
+        raise ParamsError(problems)
+    info['price'] = q.get('price')
+    moved = False
+    if as_of is not None:
+        info['as_of_requested'] = as_of
+        if _date(p.get('base_year_end')) is not None:
+            q['as_of'] = as_of
+            dates, _, _ = _dates(q)
+            q['days_to_base_year_end'], q['years_to_horizon'] = dates['days_to_base_year_end'], dates['years_to_horizon']
+            moved = True
+    info['as_of'] = q.get('as_of')
+    info['dates_moved'] = moved
+    if moved:
+        info['note'] = (f'as_of moved from {p.get("as_of")} to {as_of}; days_to_base_year_end and years_to_horizon '
+                        f'recomputed from base_year_end {p["base_year_end"]}')
+    elif as_of is not None:
+        what = 'only the price was changed' if price is not None else 'nothing was changed'
+        info['note'] = (f'{what}: the file has no base_year_end, so the dates were not moved to {as_of} '
+                        f'(as_of, days_to_base_year_end and years_to_horizon are those of the file, {p.get("as_of")})')
+    else:
+        info['note'] = f'only the price was changed; the dates are those of the file ({p.get("as_of")})'
+    info['held'] = ('every other input is the file\'s (net cash, shares, growth, margins, exit multiples); without '
+                    'calibrated.pe the calibrated lens holds the multiple of the new price')
+    q['repriced'] = info
+    return q
 
 
 def _ke_path(p, n):
@@ -59,8 +386,10 @@ def _ke_path(p, n):
     return [k0 + (km - k0) * min(i, 10) / 10 for i in range(n)]
 
 
-def run_scenario(p, d, detail=False):
-    """One scenario. Revenue index 0 = base year; g/m/conv index i = base year + 1 + i (6 years)."""
+def run_scenario(p, d, detail=False, tg=None):
+    """One scenario. Revenue index 0 = base year; g/m/conv index i = base year + 1 + i (6 years).
+
+    tg: terminal growth for the sensitivity rows only; None = the risk-free rate, the model's rule."""
     tax, sh = p['tax'], d.get('shares_m', p['shares_m'])  # per-scenario shares (e.g. warrants vesting with the deals)
     rev = [p['rev0_m']]
     opi, eps_op, fcf = [], [], []
@@ -73,7 +402,7 @@ def run_scenario(p, d, detail=False):
         nopat = oi * (1 - tax)
         eps_op.append(nopat / sh)
         fcf.append(nopat * d['conv'][i] - charge.get(i, 0.0))
-    tg, roic = p['rf'], p['roic_terminal']
+    tg, roic = (p['rf'] if tg is None else tg), p['roic_terminal']
     g_last, n_last = d['g'][-1], opi[-1] * (1 - tax)
     for j in range(1, 10):
         g = g_last + (tg - g_last) * j / 9
@@ -123,7 +452,8 @@ def run_scenario(p, d, detail=False):
     }
     if detail:   # unrounded internals for the reporting keys; the result above is unchanged
         return res, {'shares_m': sh, 'nopat': [x * (1 - tax) for x in opi], 'fcf': fcf[:5], 'cash': cash,
-                     'val_raw': [(a + b) / 2 for a, b in zip(dcf, mul)], 'val': val, 'today': today, 'ret': ret}
+                     'val_raw': [(a + b) / 2 for a, b in zip(dcf, mul)], 'val': val, 'today': today, 'ret': ret,
+                     'dcf': dcf, 'mul': mul, 'eps_op': eps_op, 'ke': ke}
     return res
 
 
@@ -170,6 +500,7 @@ def calibrated_lens(p, d):
 # ---- reporting (15.11.2026): reads the model above, changes none of its numbers ----
 
 BUY_TEST = {'bull': 17.0, 'bear': -10.0}   # with the 'buy' band for the base in both lenses (owner's sleeve rule, 05.11.2026)
+MARGIN_OF_SAFETY_PCT = 13.0   # the one fixed margin-of-safety return (research/technical/FUNDAMENTAL_HANDOFF_he.md)
 NOISE_NOTE = ('the 1-2 year value is the noisiest number here: over one or two years the price follows the multiple and '
               'the news far more than the value; the 5-year value rests on the business path')
 
@@ -218,6 +549,8 @@ def price_ladder(p, out, cal, bands=None):
     mos = round(p['buy_return'] * 100, 2)
     spec = [('buy_test', f'buy test: base return {b["buy"]:g}% a year', b['buy'], None),
             ('margin_of_safety', f'entry with a margin of safety: buy_return {mos:g}% a year', mos, 'buy_price'),
+            ('margin_of_safety_13', f'margin of safety: fixed {MARGIN_OF_SAFETY_PCT:g}% a year for every company',
+             MARGIN_OF_SAFETY_PCT, None),
             ('index', f'index return (rf + erp) {idx:g}% a year', idx, 'index_parity_price'),
             ('hold_floor', f'hold floor: {b["hold"]:g}% a year', b['hold'], None),
             ('sell_line', f'sell line: {b["lagging"]:g}% a year', b['lagging'], None)]
@@ -228,6 +561,9 @@ def price_ladder(p, out, cal, bands=None):
                 'calibrated': _price_at(ends['base_calibrated'], h, years, f) if ends['base_calibrated'] is not None else None}
         if same:
             rung['same_as'] = same
+        if key == 'margin_of_safety':   # the label is kept as saved results hold it; this is what the rung is
+            rung['meaning'] = f'company hurdle (buy_return): {mos:g}% a year'
+            rung['note'] = 'not the fixed margin of safety: that is the margin_of_safety_13 rung'
         rungs[key] = rung
     return {'method': 'price today = year-end value at the horizon / (1 + return) ^ years_to_horizon; one return per rung',
             'horizon_year': p['base_year'] + 5, 'years_to_horizon': years, 'price': p['price'],
@@ -444,6 +780,232 @@ def reverse_reading(p, base, res):
     }
 
 
+# ---- reporting, second set (engine upgrade 15.11.2026): new keys only; a wiped scenario is value 0 and return null ----
+
+def _lens_scenarios(p, cal_out):
+    """The scenarios plus the calibrated base (as 'base_calibrated') when that lens has a value."""
+    sc = dict(p['scenarios'])
+    if 'value_today' in cal_out:
+        _, _, _, pe, m = _calibrated_inputs(p, p['scenarios']['base'])
+        sc['base_calibrated'] = dict(p['scenarios']['base'], pe=pe, m=m)
+    return sc
+
+
+def _pct(end, price, years):
+    return round(((end / price) ** (1 / years) - 1) * 100, 1) + 0.0 if end > 0 else None   # + 0.0: never -0.0
+
+
+def _value_at(points, when):
+    """(value, flags) on a dated path: log-linear between the points, as forecast_tracker.value_at does.
+
+    After the last point the last segment's rate is carried on (flag beyond_days). A segment that touches a wiped
+    year-end (value 0) gives 0 (flag wiped)."""
+    if when <= points[0][0]:
+        return points[0][1], ({'wiped': True} if points[0][1] <= 0 else {})
+    beyond = when > points[-1][0]
+    pairs = [points[-2:]] if beyond else [pq for pq in zip(points, points[1:]) if pq[0][0] <= when <= pq[1][0]][:1]
+    (d0, v0), (d1, v1) = pairs[0]
+    flags = {'beyond_days': (when - d1).days} if beyond else {}
+    if v0 <= 0 or v1 <= 0:
+        return 0.0, dict(flags, wiped=True)
+    w = (when - d0).days / max((d1 - d0).days, 1)
+    return math.exp(math.log(v0) + w * (math.log(v1) - math.log(v0))), flags
+
+
+def dated_values(p, out, cal_out, inputs):
+    """An ISO date on every year-end value, and the values at exactly as_of + 1, 2 and 5 years."""
+    as_of, end0 = _date(inputs.get('as_of')), _date(inputs.get('base_year_end'))
+    if as_of is None or end0 is None:
+        return {'available': False, 'note': 'no ISO as_of in the params: the values cannot be dated'}
+    y0, price, days = p['base_year'], p['price'], p['days_to_base_year_end']
+    ke0 = out['base']['ke0_pct'] / 100
+    paths, year_ends = {}, {y0 + t: {'date': _shift_years(end0, t).isoformat()} for t in range(1, 6)}
+    today = {'date': as_of.isoformat()}
+    for k, d in _lens_scenarios(p, cal_out).items():
+        r = cal_out if k == 'base_calibrated' else out[k]
+        raw = run_scenario(p, d, detail=True)[1]['val_raw']
+        v_today = r['value_today'] if raw[0] > 0 else 0.0
+        today[k] = v_today
+        pts = [(as_of, v_today)]
+        if end0 > as_of:   # the base year-end, carried from today at the first year's cost of equity (as the tracker does)
+            pts.append((end0, v_today * (1 + (r.get('ke0_pct', ke0 * 100) / 100)) ** (days / 365)))
+        for t in range(1, 6):
+            v = r['year_end_values'][y0 + t] if raw[t] > 0 else 0.0
+            year_ends[y0 + t][k] = v
+            if _shift_years(end0, t) > as_of:   # a year-end already behind as_of is not on the path from today
+                pts.append((_shift_years(end0, t), v))
+        paths[k] = pts
+    at = {}
+    for name, n in (('one_year', 1), ('two_year', 2), ('five_year', 5)):
+        when = _shift_years(as_of, n)
+        row, rets, wiped = {'date': when.isoformat(), 'years_from_today': n}, {}, []
+        for k, pts in paths.items():
+            v, flags = _value_at(pts, when)
+            row[k] = round(v, 2)
+            rets[k] = _pct(v, price, n)
+            if flags.get('wiped'):
+                wiped.append(k)
+            if 'beyond_days' in flags:
+                row['beyond_last_year_end_days'] = flags['beyond_days']
+        row['return_pct'] = rets
+        if wiped:
+            row['wiped'] = wiped
+        at[name] = row
+    return {'available': True, 'as_of': as_of.isoformat(), 'base_year_end': end0.isoformat(),
+            'base_year_end_source': inputs.get('base_year_end_source'), 'price': price,
+            'today': today, 'year_ends': year_ends, 'at': at,
+            'method': ('log-linear (geometric) interpolation between today, the base year-end and the dated year-end values, '
+                       'the same rule as forecast_tracker.value_at; return_pct is the yearly rate from today\'s price to the '
+                       'value on that date'),
+            'note': ('conditional values on each path at a calendar date, not price forecasts; a wiped scenario is 0 with a '
+                     'null return; beyond_last_year_end_days = the date is after the last modelled year-end and the last '
+                     'year\'s rate was carried on. ' + NOISE_NOTE)}
+
+
+PE_GAP_RANGE = (0.8, 1.25)   # exit P/E against the P/E the DCF implies: outside this the two methods tell different stories
+
+
+def method_gap(p, out, cal_out, bands=None):
+    """What each of the two methods gives alone, per scenario. The published value stays their plain average."""
+    price, years, days = p['price'], p['years_to_horizon'], p['days_to_base_year_end']
+    rows, warns = {}, []
+    for k, d in _lens_scenarios(p, cal_out).items():
+        det = run_scenario(p, d, detail=True)[1]
+        stub = (1 + det['ke'][0]) ** (days / 365)
+
+        def alone(series):
+            end, ret = series[5], _pct(series[5], price, years)
+            row = {'value_today': round(series[0] / stub, 2) if series[0] > 0 else 0.0,
+                   'end_value': round(end, 2) if end > 0 else 0.0, 'return_pct': ret,
+                   'band': None if ret is None else band(ret, bands)}
+            if end <= 0:
+                row['wiped'] = True
+            return row
+
+        dcf, mul = alone(det['dcf']), alone(det['mul'])
+        avg_ret = _pct(det['val_raw'][5], price, years)
+        nopat_next = det['eps_op'][5] * det['shares_m']
+        implied = (det['dcf'][5] * det['shares_m'] - det['cash'][5]) / nopat_next if nopat_next > 0 else None
+        ratio = d['pe'] / implied if implied and implied > 0 else None
+        row = {'dcf': dcf, 'exit_multiple': mul,
+               'averaged': {'value_today': round(det['today'], 2) if det['val_raw'][0] > 0 else 0.0,
+                            'end_value': round(det['val_raw'][5], 2) if det['val_raw'][5] > 0 else 0.0,
+                            'return_pct': avg_ret, 'band': None if avg_ret is None else band(avg_ret, bands)},
+               'exit_pe': round(d['pe'], 2), 'dcf_implied_exit_pe': None if implied is None else round(implied, 1),
+               'exit_pe_to_dcf_implied': None if ratio is None else round(ratio, 2),
+               'pe_gap_wide': None if ratio is None else not PE_GAP_RANGE[0] <= ratio <= PE_GAP_RANGE[1],
+               'bands_differ': dcf['band'] != mul['band']}
+        if row['bands_differ']:
+            def say(m):
+                return 'equity wiped' if m['return_pct'] is None else f'{m["return_pct"]:g}% a year ({m["band"]})'
+            pe = ('' if implied is None else f'; the exit P/E {round(d["pe"], 1):g} against {implied:.1f} implied by the DCF'
+                  + ('' if ratio is None else f' ({ratio:.2f}x)'))
+            row['warning'] = (f'{k}: the two methods land in different bands: DCF alone {say(dcf)}, exit multiple alone '
+                              f'{say(mul)}, averaged {say(row["averaged"])}{pe}. Say which side is believed and why')
+            warns.append(row['warning'])
+        rows[k] = row
+    return {'note': ('each method alone, from the same inputs: return = that method\'s value at the horizon year-end against '
+                     'today\'s price; dcf_implied_exit_pe = the DCF\'s value of the business at the horizon (cash taken out) '
+                     'over the next year\'s after-tax operating profit, to read against the exit P/E. The published value is '
+                     'the plain average of the two; nothing here changes it'),
+            'pe_gap_range': list(PE_GAP_RANGE), 'scenarios': rows, 'warnings': warns}
+
+
+def sensitivity_terminal(p, base, sens):
+    """The one-at-a-time table for the terminal inputs that sensitivity() does not cover."""
+    r0, d0 = run_scenario(p, base, detail=True)
+    floored = d0['val_raw'][0] <= 0
+    spread = p['beta_mature'] * p['erp']   # mature cost of equity less the risk-free rate
+
+    def side(q=None, tg=None):
+        q = q or p
+        g = q['rf'] if tg is None else tg
+        if q['beta_mature'] * q['erp'] + q['rf'] - g <= 1e-9 or q['roic_terminal'] <= g:
+            return None   # no terminal value at this input: the discount rate or the ROIC is at or below the growth
+        r, det = run_scenario(q, base, detail=True, tg=tg)
+        dv = det['today'] - d0['today']
+        return {'value_today': r['value_today'], 'd_value': round(dv, 2),
+                'd_value_pct': None if floored else round(dv / d0['today'] * 100, 1),
+                'annual_return_pct': r['annual_return_pct'], 'd_return_pts': round((det['ret'] - d0['ret']) * 100, 2)}
+
+    rf = p['rf']
+    rows = [{'input': 'mature beta', 'change': '+/- 0.1 (beta_mature)',
+             'down': side(dict(p, beta_mature=p['beta_mature'] - 0.1)), 'up': side(dict(p, beta_mature=p['beta_mature'] + 0.1))},
+            {'input': 'terminal ROIC', 'change': '+/- 5 points (roic_terminal)',
+             'down': side(dict(p, roic_terminal=p['roic_terminal'] - 0.05)), 'up': side(dict(p, roic_terminal=p['roic_terminal'] + 0.05))},
+            {'input': 'terminal growth', 'change': '+/- 0.5 point (the model uses the risk-free rate)',
+             'down': side(tg=rf - 0.005), 'up': side(tg=rf + 0.005), 'at_3pct': side(tg=0.03)}]
+    for row in rows:
+        row['abs_effect_value'] = max([abs(x['d_value']) for x in (row['down'], row['up']) if x] or [0.0])
+    rows.sort(key=lambda r: -r['abs_effect_value'])
+    both = [(r['input'], r['abs_effect_value']) for r in sens['rows'] + rows]
+    top = max(both, key=lambda x: x[1])
+    return {'note': ('the terminal inputs, one changed at a time on the base case: model arithmetic, not a forecast; a null '
+                     'side means the input leaves no terminal value (discount rate or ROIC at or below the growth); '
+                     'at_3pct = terminal growth of 3% instead of the risk-free rate'),
+            'base': {'value_today': r0['value_today'], 'annual_return_pct': r0['annual_return_pct'],
+                     'beta_mature': p['beta_mature'], 'roic_terminal': p['roic_terminal'], 'terminal_growth': rf,
+                     'mature_cost_of_equity_less_growth': round(spread, 4)},
+            'rows': rows, 'moves_most': rows[0]['input'],
+            'moves_most_overall': {'input': top[0], 'abs_effect_value': top[1]}}
+
+
+def _paid_out(p, det, rates):
+    """The year-5 value per share if the cash above today's net cash (or above zero, for net debt) were paid out at each
+    year-end and reinvested at `rates` (one yearly rate per model year). Returns (value, the amounts paid by year index)."""
+    tax, cash, fcf = p['tax'], det['cash'], det['fcf']
+    floor = max(cash[0], 0.0)   # today's net cash stays in the company; debt is repaid first, as in the model
+    bal, paid = cash[0], []
+    for t in range(5):
+        rate = p['cash_yield'] if bal >= 0 else p.get('debt_rate', p['cash_yield'])
+        bal += fcf[t] + bal * rate * (1 - tax)
+        out = max(bal - floor, 0.0)
+        bal -= out
+        paid.append(out)
+    grown = 0.0
+    for t, x in enumerate(paid):   # paid at the year-end of model year t + 1, held to the year-end of model year 5
+        f = 1.0
+        for i in range(t + 1, 5):
+            f *= 1 + rates[i]
+        grown += x * f
+    return det['val_raw'][5] + (bal - cash[5] + grown) / det['shares_m'], paid
+
+
+def return_with_distributions(p, out, cal_out, bands=None):
+    """The 5-year return with the accumulated free cash paid out and reinvested at the cost of equity: a second line."""
+    price, years, y0 = p['price'], p['years_to_horizon'], p['base_year']
+    index = p['rf'] + p['erp']
+    rows, crosses = {}, []
+    for k, d in _lens_scenarios(p, cal_out).items():
+        det = run_scenario(p, d, detail=True)[1]
+        head = (cal_out if k == 'base_calibrated' else out[k])['annual_return_pct']
+        if det['val_raw'][5] <= 0:
+            rows[k] = {'wiped': True, 'end_value': 0.0, 'return_pct': None, 'end_value_with_distributions': 0.0,
+                       'return_with_distributions_pct': None, 'return_with_distributions_at_index_pct': None}
+            continue
+        end_ke, paid = _paid_out(p, det, det['ke'])
+        end_ix, _ = _paid_out(p, det, [index] * 5)
+        ret = _pct(end_ke, price, years)
+        row = {'end_value': round(det['val_raw'][5], 2), 'return_pct': head,
+               'end_value_with_distributions': round(end_ke, 2), 'return_with_distributions_pct': ret,
+               'd_return_pts': round(((end_ke / price) ** (1 / years) - (det['val_raw'][5] / price) ** (1 / years)) * 100, 1),
+               'return_with_distributions_at_index_pct': _pct(end_ix, price, years),
+               'paid_out_m': {y0 + 1 + t: round(x) for t, x in enumerate(paid)},
+               'accumulated_cash_share_of_end_value_pct': round((det['cash'][5] - max(det['cash'][0], 0.0)) / det['shares_m']
+                                                                / det['val_raw'][5] * 100, 1),
+               'band': band(head, bands), 'band_with_distributions': band(ret, bands)}
+        if row['band'] != row['band_with_distributions']:
+            crosses.append(k)
+        rows[k] = row
+    return {'note': ('a second line, never the headline: the model leaves each year\'s free cash in the company at the cash '
+                     'yield, while the index it is compared with reinvests its distributions. Here the cash above today\'s net '
+                     'cash (above zero for a company in net debt, which repays first) is paid out at each year-end and '
+                     'reinvested at the cost of equity to the horizon; return_with_distributions_at_index_pct reinvests it '
+                     'at the index return instead. Changing the headline needs a preregistered test'),
+            'reinvestment_rate_pct': [round(x * 100, 2) for x in run_scenario(p, p['scenarios']['base'], detail=True)[1]['ke'][:5]],
+            'index_return_pct': round(index * 100, 2), 'scenarios': rows, 'band_changes': crosses}
+
+
 def collect_warnings(p, res):
     w = []
     lens = res['two_lens']
@@ -474,8 +1036,11 @@ def collect_warnings(p, res):
     return w
 
 
-def add_reporting(p, res):
+def add_reporting(p, res, inputs=None):
     """New keys only: every key that existed before keeps its value."""
+    if inputs is None:
+        inputs = _dates(p)[0]
+        inputs['warnings'] = []
     out, base, bands = res['scenarios'], p['scenarios']['base'], p.get('bands')
     cal = res['two_lens']['calibrated']
     res['price_ladder'] = price_ladder(p, out, cal, bands)
@@ -486,7 +1051,13 @@ def add_reporting(p, res):
     res['funding'] = fund
     res['sensitivity'] = sensitivity(p, base)
     res['reverse_reading'] = reverse_reading(p, base, res)
-    res['warnings'] = collect_warnings(p, res)
+    res['warnings'] = inputs['warnings'] + collect_warnings(p, res)
+    # second set (engine upgrade 15.11.2026)
+    res['inputs'] = inputs
+    res['dated_values'] = dated_values(p, out, cal, inputs)
+    res['method_gap'] = method_gap(p, out, cal, bands)
+    res['sensitivity_terminal'] = sensitivity_terminal(p, base, res['sensitivity'])
+    res['return_with_distributions'] = return_with_distributions(p, out, cal, bands)
     return res
 
 
@@ -506,8 +1077,16 @@ def summary(p, res):
             return f'{"wiped":>12}'
         return _fmt(v, 12)
 
+    inp, dv, rwd = res['inputs'], res['dated_values'], res['return_with_distributions']['scenarios']
     L = [f'{p.get("ticker", "?")}  as of {p.get("as_of", "?")}  price {p["price"]:,.2f}   '
-         '(conditional values on each path, not price forecasts)', '',
+         '(conditional values on each path, not price forecasts)']
+    if inp.get('base_year_end'):
+        how = 'derived from base_year_end' if inp['dates_derived'] else 'from as_of + days_to_base_year_end, as typed in the file'
+        L.append(f'Dates: base year-end {inp["base_year_end"]}, {inp["days_to_base_year_end"]:g} days from as_of; '
+                 f'{inp["years_to_horizon"]:g} years to the horizon year-end {inp["horizon_date"]} ({how})')
+    if inp.get('repriced'):
+        L.append('Repriced: ' + inp['repriced']['note'])
+    L += ['',
          f'{"":<24}' + ''.join(f'{("base (cal.)" if k == "base_calibrated" else k):>12}' for k in cols),
          f'{"value today":<24}' + ''.join(cell(k, rg['today'][k], today=True) for k in cols)]
     for key in ('two_year', 'five_year'):
@@ -516,12 +1095,26 @@ def summary(p, res):
                  + ''.join(cell(k, r[k], year=r['year']) for k in cols))
         if 'return_pct' in r:
             L.append(f'{"  return % a year":<24}' + ''.join(_fmt(r['return_pct'][k], 12, 1) for k in cols))
+    L.append(f'{"  with distributions":<24}' + ''.join(_fmt(rwd.get(k, {}).get('return_with_distributions_pct'), 12, 1) for k in cols)
+             + '   (second line, not the headline)')
+    if dv.get('available'):
+        for key, name in (('one_year', 'in 1 year'), ('two_year', 'in 2 years'), ('five_year', 'in 5 years')):
+            r = dv['at'][key]
+            L.append(f'{name + " (" + r["date"] + ")":<24}'
+                     + ''.join((f'{"wiped":>12}' if k in r.get('wiped', []) else _fmt(r.get(k), 12)) for k in cols)
+                     + (f'   ({r["beyond_last_year_end_days"]} days after the last year-end: carried on)'
+                        if 'beyond_last_year_end_days' in r else ''))
+        L.append(f'{"  return % a year":<24}' + ''.join(_fmt(dv['at']['five_year']['return_pct'].get(k), 12, 1) for k in cols))
+    else:
+        L.append('Values at exactly 1, 2 and 5 years: not available (' + dv['note'] + ')')
     L += [f'{"index % a year":<24}{res["index_return_pct"]:>12,.1f}   weighted return {res["weighted_return_pct"]:.1f}% a year '
-          '(subjective probabilities)', 'Note: ' + rg['note'] + '.', '',
+          '(subjective probabilities)', 'Note: ' + rg['note'] + '.',
+          'With distributions: the 5-year return if the free cash the model accumulates were paid out each year and '
+          'reinvested at the cost of equity.', '',
           f'Price ladder: price today at which the base return to end {lad["horizon_year"]} equals each hurdle',
           f'{"  hurdle":<58}{"ours":>10}{"calibrated":>12}']
     for rung in lad['rungs'].values():
-        L.append(f'  {rung["label"]:<56}{_fmt(rung["ours"])}{_fmt(rung["calibrated"], 12)}')
+        L.append(f'  {rung.get("meaning", rung["label"]):<56}{_fmt(rung["ours"])}{_fmt(rung["calibrated"], 12)}')
     L += ['',
           f'Buy test: {"PASS" if bt["pass"] else "FAIL"}   ({bt["rule"]})',
           f'{"  leg":<20}{"return %":>10}{"threshold %":>13}{"pass":>7}{"max price":>12}']
@@ -536,12 +1129,31 @@ def summary(p, res):
     if bt.get('rerun', {}).get('lower_than_stated'):
         L.append(f'  on a rerun at that price (its own multiple held): {bt["rerun"]["max_price_passing"]:,.2f}, binding leg: '
                  f'{bt["rerun"]["binding_leg"]}')
+    mg = res['method_gap']
+    L += ['', 'Method gap: what each method gives alone (the value is the plain average of the two)',
+          f'{"  scenario":<18}{"DCF today":>10}{"ret %":>7}{"band":>9}{"multiple today":>16}{"ret %":>7}{"band":>9}'
+          f'{"exit P/E":>10}{"DCF implies":>13}']
+    for k, row in mg['scenarios'].items():
+        a, b = row['dcf'], row['exit_multiple']
+        L.append(f'  {("base (cal.)" if k == "base_calibrated" else k):<16}{_fmt(a["value_today"])}{_fmt(a["return_pct"], 7, 1)}'
+                 f'{(a["band"] or "wiped"):>9}{_fmt(b["value_today"], 16)}{_fmt(b["return_pct"], 7, 1)}{(b["band"] or "wiped"):>9}'
+                 f'{_fmt(row["exit_pe"], 10, 1)}{_fmt(row["dcf_implied_exit_pe"], 13, 1)}')
+    L += ['  ! ' + x for x in mg['warnings']]
     L += ['', 'What moves the base value most (one input at a time; model arithmetic, not a forecast)']
     for i, r in enumerate(res['sensitivity']['rows'][:3], 1):
         dn, up = r['down'], r['up']
         pct = '' if dn['d_value_pct'] is None else f' ({dn["d_value_pct"]:+.1f}% / {up["d_value_pct"]:+.1f}%)'
         L.append(f'  {i}. {r["input"]} {r["change"]}: value today {dn["d_value"]:+,.2f} / {up["d_value"]:+,.2f}{pct}, '
                  f'5-year return {dn["d_return_pts"]:+.2f} / {up["d_return_pts"]:+.2f} points')
+    L.append('  terminal inputs (not in the list above):')
+    for r in res['sensitivity_terminal']['rows']:
+        dn, up = r['down'], r['up']
+
+        def one(x, key, f):
+            return 'n/a' if x is None or x[key] is None else format(x[key], f)
+        extra = '' if 'at_3pct' not in r or r['at_3pct'] is None else f'; at 3% growth {r["at_3pct"]["d_value"]:+,.2f}'
+        L.append(f'  - {r["input"]} {r["change"]}: value today {one(dn, "d_value", "+,.2f")} / {one(up, "d_value", "+,.2f")}'
+                 f' ({one(dn, "d_value_pct", "+.1f")}% / {one(up, "d_value_pct", "+.1f")}%){extra}')
     rv, cd = res['reverse_reading'], res['calibrated_diagnostics']
     L += ['', f'Price needs growth % (first year held): {rv["base_margin_path"]["growth_pct"]} on the base margin path; '
           f'{rv["flat_margin"]["growth_pct"]} at a flat {rv["flat_margin"]["margin_held"] * 100:g}% margin; base '
@@ -569,6 +1181,8 @@ def _reverse_growth(p, base):
 
 
 def run(p):
+    """The full result. The params are checked first (ParamsError) and the dates derived when base_year_end is given."""
+    p, inputs = prepare(p)
     out = {k: run_scenario(p, d) for k, d in p['scenarios'].items()}
     pr = p['probabilities']
     last = str(p['base_year'] + 5)
@@ -606,7 +1220,7 @@ def run(p):
         lens['rule'] = ('both lenses in the same band: act on it' if lens['agree'] else
                         'lenses disagree: hold, or stage the trade around the next report')
     res['two_lens'] = lens
-    return add_reporting(p, res)
+    return add_reporting(p, res, inputs)
 
 
 def main():
@@ -614,9 +1228,23 @@ def main():
     ap.add_argument('params')
     ap.add_argument('--out')
     ap.add_argument('--summary', action='store_true', help='print a short plain table instead of the JSON')
+    ap.add_argument('--price', type=float, help='reprice: run the saved params at this price')
+    ap.add_argument('--as-of', dest='as_of', help='reprice: run at this date (YYYY-MM-DD); the dates are recomputed only '
+                    'when the params hold base_year_end')
+    ap.add_argument('--params-out', help='write the repriced params (with a "repriced" record) to this file')
     a = ap.parse_args()
     p = json.load(open(a.params))
-    res = run(p)
+    try:
+        if a.price is not None or a.as_of is not None:
+            p = reprice(p, a.price, a.as_of)
+        res = run(p)
+    except ParamsError as e:
+        print(f'lean_model: {a.params} cannot be run ({len(e.problems)} problem(s)):', file=sys.stderr)
+        for x in e.problems:
+            print('  - ' + x, file=sys.stderr)
+        sys.exit(2)
+    if a.params_out:
+        open(a.params_out, 'w').write(json.dumps(p, indent=1))
     txt = json.dumps(res, indent=1)
     if a.out:
         open(a.out, 'w').write(txt)

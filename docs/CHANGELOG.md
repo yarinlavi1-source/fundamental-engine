@@ -86,6 +86,157 @@ META thesis adds $12.3 of dividends to the 2031 value, so its 12% price is about
 them); "margin of safety" is `buy_return` in lean_model and in the theses but 13% in the handoff format
 (`research/technical/FUNDAMENTAL_HANDOFF_he.md`): one definition is still to be chosen.
 
+### Wave 2 of the end-to-end upgrade (15.11.2026)
+# P3-lean-model-core (15.11.2026)
+
+Files: `scripts/lean_model.py`, `tests/test_lean_model.py`, `tests/fixtures/lean_model_dated.json` (new).
+
+All additive. On the 296 saved params files under research/, runs/ and tests/fixtures/, every key of the output of
+`scripts/lean_model.py` at git HEAD keeps its exact value (0 differences; the old part of each output is byte-identical
+once the new keys are removed). The golden test `tests/test_saved_valuations.py` passes untouched.
+
+## Added
+
+- Input checks before the model runs (`check_params`, `prepare`, `ParamsError`): required keys, six numbers per
+  g/m/conv list, numeric probabilities for the scenarios that sum to 1 (tolerance 1e-6), positive price, shares and base
+  revenue, scenario names bear/base/bull with a base, fractions where fractions are meant (rf, erp, tax, margins up to
+  100%), charge keys 0-5 (a calendar year as a charge key was silently dropped before). A broken file stops with every
+  problem listed; the command exits with code 2 and writes no result. Suspicious but usable inputs (growth above 500%, a
+  missing bear or bull, no as_of) are warnings in `inputs.warnings`, repeated at the start of `warnings`.
+  All 296 saved files pass with no error and no input warning.
+- Optional `base_year_end` (ISO date). With `as_of` it gives `days_to_base_year_end` (the days between them) and
+  `years_to_horizon` (5 + days / 365, two decimals, the convention of the saved files). Hand-entered values that differ by
+  more than 0.02 year raise a warning and the derived ones are used. Without `base_year_end` nothing changes.
+  Keep the two hand keys in the file as well: the tracker, the freeze and the golden test still read them.
+- `--price`, `--as-of`, `--params-out` and `reprice(p, price, as_of)`: reprice a saved file without copying it. The dates
+  move only when the file has `base_year_end`; otherwise only the price changes and the output says the dates were not
+  moved (`inputs.repriced`, a warning, a line in `--summary`). The saved file is never written.
+- New top-level keys: `inputs` (dates used, input warnings, reprice record); `dated_values` (an ISO date on every
+  year-end value; bear/base/bull/calibrated values at exactly as_of + 1, 2 and 5 years by the tracker's log-linear
+  interpolation; a date after the last year-end is carried on at the last year's rate and marked);
+  `method_gap` (per scenario: DCF alone and exit multiple alone with value today, value at the horizon, 5-year return
+  and band, the exit P/E against the P/E the DCF implies, a warning when the two bands differ, listed in
+  `method_gap.warnings`); `sensitivity_terminal` (mature beta +/- 0.1, terminal ROIC +/- 5 points, terminal growth
+  +/- 0.5 point and at 3%); `return_with_distributions` (the 5-year return if the cash the model accumulates above
+  today's net cash were paid out each year and reinvested at the cost of equity, also at the index return; a second line,
+  never the headline; `band_changes` names a scenario whose band would differ).
+- `price_ladder.rungs.margin_of_safety_13`: a fixed 13% rung. The older `margin_of_safety` rung keeps its key, label and
+  prices and gains `meaning` = "company hurdle (buy_return): N% a year" and a `note`; `--summary` prints the meaning.
+- In the new keys a wiped scenario is value 0 and return null. The older keys keep the 0.01 floor.
+- `run_scenario(..., tg=None)`: terminal growth override used only by the sensitivity rows; None = the risk-free rate.
+- `--summary` shows the dates line, the reprice line, the return with distributions, the values in exactly 1, 2 and 5
+  years, the 13% rung, the method gap table and the terminal sensitivity rows.
+
+## Kept as it was, on purpose
+
+- `warnings` holds what it held (plus input warnings, which no saved file has). The method-gap warnings are in
+  `method_gap.warnings` only, because seven saved results hold the `warnings` list and the golden test compares it.
+- The label text of the `margin_of_safety` rung is unchanged for the same reason; the new wording is in `meaning`.
+- `sensitivity` is unchanged; the terminal rows are a separate key so `moves_most` does not move.
+- No model convention changed: the value is still the plain average, cash still earns the cash yield in the headline.
+
+## Not built here
+
+- Plan items (6) per-scenario funding input and (7) weighted "worlds" input were not in this package's task text.
+- A file that holds only `base_year_end` (no hand keys) runs in lean_model, but forecast_tracker, lean_freeze and the
+  golden test's format check still read `days_to_base_year_end` / `years_to_horizon` from the params file. The derived
+  values are in `inputs` for those tools to switch to.
+- research/ledger.jsonl rows carry the hash of the lean_model file at freeze time; the file changed, so later freezes
+  carry a new hash. No saved number moved.
+
+## Tests
+
+`python -m unittest tests.test_lean_model tests.test_saved_valuations tests.test_lean_freeze tests.test_forecast_tracker`:
+93 tests, OK (tests.test_lean_model: 54, of which 30 new). Regression proof:
+`runs/engine_upgrade_2026-11-15/p3_regression/` (snapshot of HEAD and of the new script on every params file, compare.py).
+## Unreleased — one machine record per valuation and one command that writes the published files (15.11.2026)
+
+New code, two additive spec edits. No valuation changed: no saved params or result file was edited, no thesis, index
+row or handoff was rewritten (the command was run only on fixtures and on a temp copy of research/).
+
+- `fundamental_engine/valuation_record.py`
+  - The record `research/companies/<T>/<date>/valuation.json` (`valuation_record/1`): ticker, as_of, price with its time
+    and source, currency, share basis and known split, model kind with the params, result and code hashes, scenarios
+    (probability, condition, value today, dated year-end values, the values at exactly +1, +2 and +5 years, return,
+    wiped flag), the weighted value, the second lens with its diagnostics, the base path per fiscal year, the hurdles
+    (the ladder's rungs, the all-legs buy-test price with its binding leg and the rerun price, the 13% price, index
+    parity, hold floor, sell line, the entry price and the rung it is), the historical-multiple inputs and value
+    (computed by `locked_rules.hist_multiple_value` when the inputs are given), typed conditions and falsifiers
+    `{id, kind exit|trim|add|too_low, metric, op, threshold, by_date, text_he, state}`, next report (ISO date or a
+    window, confirmed), last fresh pull, verdict.
+  - `validate(record)`: numbers are numbers or null (the reason goes in a note field), ISO dates, probabilities sum
+    to 1, the entry price must be a ladder rung, typed items complete.
+  - `build_from_lean(params, result)`; adapters `adapt_bank` (BNY), `adapt_segment` (SPCX), `adapt_three_lane` (META);
+    NU's file (lean format remapped to net income) goes through the lean builder as `lean_remapped`. A rung a custom
+    model does not compute is null with a note.
+  - `latest_valuation(root, ticker)`: the newest dated folder of any kind with its record (the saved valuation.json,
+    else one built in memory from the lean or custom files, else none for a heavy-engine or gather-only folder).
+  - `project_handoff(record, previous)`: fundamental.json with every v1 key in its v1 meaning, `schema_version: 2` and
+    one new object `v2`; keys the previous file holds and the projection does not write are carried over.
+  - `index_row`, `numbers_block`, `replace_block`, `replace_index_row`, and `check_tree` (the checks of `--check`).
+- `scripts/publish_valuation.py`
+  - `publish <lean_params.json | custom folder> [--thesis-inputs file]`: runs lean_model, writes lean_result.json with
+    the reporting keys (refused when a saved result is not reproduced), valuation.json, the handoff, the company's
+    single index row, and the numbers block of thesis_he.md between its two markers (without markers: prints the
+    block, changes nothing). Custom folders are read, not rerun.
+  - `--check [research folder]`: read-only; one line per problem, exit code 1: a thesis without a handoff or the
+    reverse, more than one index row per company, a price or base value that differs between the params, the record,
+    the thesis numbers block, the index row and the handoff, an entry price that is not a ladder rung, text in a
+    numeric field, a saved lean result that no longer equals a rerun.
+- `research/technical/FUNDAMENTAL_HANDOFF_he.md`: a "גרסה 2" section listing the added fields; the v1 list is unchanged.
+- `research/THESIS_TEMPLATE_he.md`: the numbers-block markers and the one-line definitions of "מחיר מבחן הקנייה" and
+  "מחיר כניסה עם מרווח ביטחון"; the existing text is unchanged.
+- Tests: `tests/test_valuation_record.py` (13), `tests/test_publish.py` (9).
+- Dry run for the owner: `runs/engine_upgrade_2026-11-15/publish_dry_run.md` (25 valuations published into a temp copy;
+  46 published numbers or cells would change; 56 `--check` problems on the real tree).
+
+Not done: `latest.json` is not updated by publish (it belongs to research-save and points at heavy-engine folders);
+multi-variant valuations (NVDA's four worlds) have no weighted value in the record because lean_model has no worlds
+input; no saved valuation stores its multiple history, so the historical-multiple value is computed only when
+`--thesis-inputs` supplies it; conditions imported from a v1 handoff are text only (metric, op, threshold null).
+## P7-check-and-lessons (15.11.2026)
+
+The prose self-check of the lean path is now a command, and the list of past errors is a file code reads.
+
+New files
+- `research/lessons.jsonl`: 40 lessons, one JSON line each (id, date, company, what_went_wrong, category, check,
+  enforcement, blocks_buy, source; manual lessons also carry `ask`: always | buy | prev | asset_heavy | never).
+  L01-L27 are the learning reader's list; S01-S05 the self-check items of CLAUDE.md the 27 do not hold; P01-P08 the
+  errors the upgrade audit found. Enforcement: 19 `auto: lean_check.<function>`, 6 `test: <module>.<test>`, 15 manual; 18 block a buy.
+  L27 (wrong contract id) has the source "session note, not on file": its facts are still not recorded.
+- `fundamental_engine/lean_check.py` (logic, no file access) and `scripts/lean_check.py` (the command):
+  `lean_check params [--prev prev] [--facts companyfacts.json] [--price P] [--answers file] [--today D]
+  [--facts-cutoff D] [--json] [--all] [--save]`. It runs lean_model, then 21 automatic items (model warnings, input
+  reconciliation against SEC companyfacts, the guided year, the price, the locked rules and market rates, the diff
+  against the previous params) and the manual questions of lessons.jsonl that apply. Statuses: pass / fail / open /
+  not applicable. Exit code 1 when a blocks-buy item is failed or open while the buy test passes; 0 for "not a buy";
+  2 when the params cannot be run. `--save` writes lean_check.json next to the params; nothing else is written and
+  no params value is changed.
+- `research/RULE_CHANGES_he.md`: a check may be added from one case; a modelling rule changes only through a forward
+  test written down before the data arrives (hypothesis, measure, at least 8 scored reports from at least 3
+  companies, the reading date). It replaces the universe backtests stopped on 06.11.2026.
+- `tests/test_lean_check.py`: 38 tests.
+
+Optional params keys read by lean_check (additive; lean_model ignores them): `guidance` {year, revenue_low,
+revenue_high, margin_low, margin_high, source} or a list of them; `tags` (capex_cycle, cyclical, asset_heavy,
+not_capex_cycle, not_asset_heavy); `reconciliation` {revenue, shares, net_cash}; `one_off_revenue_m`;
+`price_time_utc` (already in two saved files). The answers file is {"<lesson id>": "one line"}; a
+`lean_check_answers.json` next to the params is read by default.
+
+Thresholds (constants at the top of fundamental_engine/lean_check.py): 3% for revenue, shares and the price move;
+3% of the market value for net cash; 3 trading days for the price (weekdays; holidays are not known); a slowdown
+year = negative growth, a dip of 10 points or more that recovers, or growth of 5% or less after a year of 15% or more.
+
+Not done / limits
+- Nothing is hashed into a valuation record yet (the record is P4's); lean_check.json is ready for it.
+- The check that the price snapshot's contract belongs to the ticker (lesson 27) is a manual question: the params
+  hold no contract id to test.
+- Revenue reconciliation before the base year is complete uses "year to date plus the rest of last year at the
+  year-to-date growth"; for an accelerating or 52/53-week company it is a rough expectation, so a gap asks for a
+  stated reason and does not say the input is wrong.
+- Net cash is compared with the cash, investment and debt tags of the latest balance sheet, while the params hold the
+  end of the base year: the gap is shown as a share of the market value and needs a note, nothing more.
+
 ### Wave 1 of the end-to-end upgrade (15.11.2026)
 ### P0-preserve-baselines (15.11.2026): the inputs of every in-force valuation are now in research/
 
