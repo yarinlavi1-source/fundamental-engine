@@ -1,0 +1,145 @@
+{
+ "ticker": "FIVE",
+ "as_of": "2026-11-15",
+ "price": 246.68,
+ "price_time_utc": "2026-11-13 21:00 UTC (NASDAQ close, Friday 13.11.2026; no later trade: checked Sunday 15.11.2026 about 21:30 UTC, market closed)",
+ "rf": 0.051,
+ "erp": 0.042,
+ "beta": 1.411,
+ "beta_mature": 1.0,
+ "shares_m": 55.4,
+ "net_cash_m": 1470.0,
+ "rev0_m": 5670.0,
+ "base_year": 2026,
+ "tax": 0.25,
+ "cash_yield": 0.036,
+ "debt_rate": 0.05,
+ "roic_terminal": 0.3,
+ "days_to_base_year_end": 76,
+ "years_to_horizon": 5.21,
+ "buy_return": 0.12,
+ "bands": {
+  "buy": 12.0,
+  "hold": 6.0,
+  "lagging": 3.0
+ },
+ "probabilities": {
+  "bear": 0.3,
+  "base": 0.45,
+  "bull": 0.25,
+  "label": "subjective (Claude judgement)"
+ },
+ "notes": {
+  "fiscal_years": "base_year 2026 = fiscal 2026, the 52 weeks to 30.1.2027 (guided year). Year labels are fiscal years: 'end 2031' = 31.1.2032. 76 days from 15.11.2026 to 30.1.2027; horizon 5.21 years.",
+  "price": "last close 13.11.2026 $246.68 = also the latest quote: IBKR snapshot (read-only) last 246.68 stamped 2026-11-13 21:00:01 UTC, status frozen, prior close 247.16; Alpha Vantage quote: latest trading day 2026-11-13, 246.68. 52-week 144.19-263.88 (Yahoo chart)",
+  "rev0": "FY26 sales guide $5.63-5.71B, midpoint 5,670 (8-K 2.9.2026). H1 actual 2,547.1; Q3 guide 1,210-1,230; implied Q4 1,853-1,953. Consensus 5,714 (Alpha Vantage, 24 analysts) sits at the guide top: not used for the base.",
+  "growth": "drivers_build.py: sales = existing stores (prior sales x (1 + 0.95 x comp)) + new stores (prior sales x k x growth of the average store count). Base: comps +3.5% then +3%, 150 net new stores a year (FY25 and FY26 pace), k 0.95 -> FY27 6,263 (consensus 6,243). Bull: FY26 lands 2.5% above the guide midpoint (last four quarters beat the sales midpoint by 6-8%), comps +6/+5/+4.5/+4, 175-200 stores, k 1.0. Bear: comps -3/-1/+1/+2 (FY22 -2.0% after +30%; FY24 -2.7%), openings cut to 120/90/70, k 0.88.",
+  "margin": "operating margin after stock compensation (the company's adjusted operating income keeps regular stock compensation as a cost; it excludes only the tariff refund, retention awards and small one-offs). FY26 guide: adjusted net income 546-572 (mid 559) / 0.755 - interest income ~34 = adjusted operating income ~706 = 12.5% of 5,670 (call summary: 'about 12.5%'). The $163.6M IEEPA refund and $5.9M interest are out. History (SEC companyfacts): FY2014-19 11.2-12.3%, FY2021 13.3% (peak), FY2024 8.4% (adjusted 9.2%), FY2025 9.6% (adjusted 9.9%). Base 12.3% -> 12.5% (consensus FY27 implies ~12.3%); bull to 14.2% (above the 13.3% peak, on sales per store above $3.4M); bear to 9.0% (the FY2024 trough). REVIEW 15.11.2026: base held flat at 12.3% (was 12.3% rising to 12.5%): the guided year is 12.35-12.45% on interest income of about 40, comps of +3% only cover wage and rent inflation, and no driver for a rise is named; not cut to 12.0% (no hard, evidenced cost; consensus FY27 implies 12.3%). Bull capped at the record 13.3% of FY2021 (was 14.2%): no year above it has been printed.",
+  "conv": "FCF after stock compensation / NOPAT. FY25: (411.7 - 34.7) / 341.7 = 1.10 (capex 174.7 below D&A 192.1); FY24 0.38 and FY23 0.51 (shipcenter build, capex 8-9% of sales). FY26: NOPAT ~530 + D&A ~208 - capex 255 - working capital ~40 = ~445 -> 0.84. Capex FY27 ~5.0% of sales (management: refund reinvested mostly through capex; remodels $40-45K a store; ~150 stores ~$100M) fading to ~4.2% vs D&A ~3.6-3.7% (vintages: gross PP&E 2,155 / D&A 192 = ~11-year life; no D&A wave), working capital ~40 a year (inventory per store up 18%). REVIEW 15.11.2026: base working capital at 9.2% of the sales increase (FY2025 10-K cash flow: inventories -187.1, payables +105.5 = 81.6 on +888 of sales) instead of 40 a year = 55-65 a year -> base conv 0.75, 0.81, 0.85, 0.86, 0.87, 0.87 (was 0.78 to 0.90). One year of evidence.",
+  "net_cash": "1.8.2026 cash 561.1 + short-term investments 626.8 = 1,187.9; no debt ($225M ABL undrawn). H2 FY26: net income ~342 (guide) + D&A 106 + stock comp 17 - working capital ~30 - capex ~145 = FCF ~290 (H2 FY25: +262 change in cash and investments) - tax withholding ~5 -> ~1,470 at 30.1.2027, before any buyback (the guide excludes buybacks). The refund cash (169.5 pre-tax) is already inside the 1,187.9. Operating lease liabilities 2,038.6 are NOT deducted: rent (lease cost 449.9 in FY25) stays in cost of goods sold.",
+  "shares": "55.05M outstanding on 2.9.2026 (10-Q cover) + ~0.35M dilutive RSU/PSU = 55.4M (Q3 guide 55.4M diluted). Flat in every scenario: stock compensation (34.7 in FY25, 0.7% of sales) is expensed in the margin; the $600M buyback authorization (29.8.2026, ~4.4% of the market value, no expiry) is carried as retained cash, which is the same value when shares are bought at fair value. No converts, options or warrants.",
+  "beta": "2-year weekly vs SPY (104 returns to 9.11.2026): raw 1.613 -> adjusted 0.67 x raw + 0.33 = 1.411 (deep/beta.py). beta_mature 1.0 (convention).",
+  "rf_erp": "rf 5.10% = 10-year Treasury 12.11.2026 (FRED DGS10); erp 4.2% = implied ERP 1.10.2026 (Damodaran), as in the saved params. Index return 9.3%.",
+  "roic_terminal": "0.30: book return on invested capital excluding leases and cash (rent is an operating cost): FY26 NOPAT ~530 / (equity 2,476 - cash and investments 1,188) = ~41% at a record margin; FY25 ~28%; FY24 roughly 20%. Through-cycle ~0.30. New-store model: $0.4M net investment, ~$2.0M first-year sales, payback about one year (10-K).",
+  "pe": "exit P/E on next-year operating EPS (before interest), with cash added at face. Base 22, bull 26, bear 15: unchanged by the review, but the reason is restated. The first history (deep/multiple_history.py: median 23.9, last 24 months about 17) divided past prices by earnings reported later and is withdrawn. Own five-year forward P/E on what was known at each month-end (60 month-ends 11.2021-10.2026): on the company EPS guide in force, rolled 12 months, median 28.6, middle half 22.2-30.2, last 24 months 26.7 (deep/verify_guide_pe.py, 20 SEC exhibits 99.1); on the quarterly consensus as it stood before each report (Alpha Vantage, deep/review_consensus_pe.py) 24.6; consensus ran above the guide, so the centre is about 27 on total EPS = about 25.5 in this model's terms (22 here = 23.9x total EPS at the horizon, where cash is $84 a share). So 22 is about 3.5 turns under the locked rule, not 1.9. Stated facts for the departure: (1) the median was formed while the store count grew 11-15% a year and, in 2025-26, on guidance far below what was earned; at the horizon stores grow about 5.5% and sales 8%; (2) peers at this growth: Ollie's 19.1x, Dollar Tree 17.5x (Alpha Vantage consensus, 13.11.2026, not re-pulled); (3) the model's own cash flows support about 21x at the horizon; (4) the price today is 21.1x net of cash. Variant at the rule (25.5): see deep/review_answers.md. Bear 15 kept: on the guide in force the 7.2024-4.2025 trough was 13-19x, not 10-12x.",
+  "charge": "judgement, not disclosed amounts: no accrual in the filings. Securities class action (class certified 3.8.2026) and consumer class actions over IEEPA tariff pass-through (filed 6-7.2026; the refund was 163.6 pre-tax). Base 40 after tax in FY28; bear 170 (the refund disgorged ~123 after tax + ~47 securities); bull 20.",
+  "calibrated": "overridden to 21.1 = (price 246.68 - net cash 26.53 a share) / FY2027 operating EPS 10.43. The default 23.65 divides the whole price by earnings before interest and the model then adds the cash again (cash is 10.8% of the price). With the base margin flat the floor does not bind: the lens differs from ours only by the multiple (21.1 against 22).",
+  "review_1115": "numbers check + red team, 15.11.2026 (deep/verify.md, deep/redteam.md; answers in deep/review_answers.md). Changed: calibrated.pe 21.1; base margin flat 12.3%; base conv; bull margin cap 13.3%. Not changed: exit P/E 22/26/15, net cash 1,470, rev0 5,670, probabilities, charges, beta, rates. Base value 267.92 -> 263.05; calibrated 275.75 -> 258.85; bull 390.56 -> 368.79; bear 137.31 unchanged."
+ },
+ "scenarios": {
+  "bear": {
+   "g": [
+    0.031,
+    0.0339,
+    0.041,
+    0.0456,
+    0.0448,
+    0.0441
+   ],
+   "m": [
+    0.103,
+    0.093,
+    0.09,
+    0.09,
+    0.09,
+    0.09
+   ],
+   "conv": [
+    0.8,
+    0.9,
+    0.95,
+    0.95,
+    0.95,
+    0.95
+   ],
+   "pe": 15,
+   "charge": {
+    "1": 170
+   }
+  },
+  "base": {
+   "g": [
+    0.1046,
+    0.0949,
+    0.0906,
+    0.0868,
+    0.0834,
+    0.0804
+   ],
+   "m": [
+    0.123,
+    0.123,
+    0.123,
+    0.123,
+    0.123,
+    0.123
+   ],
+   "conv": [
+    0.75,
+    0.81,
+    0.85,
+    0.86,
+    0.87,
+    0.87
+   ],
+   "pe": 22,
+   "charge": {
+    "1": 40
+   }
+  },
+  "bull": {
+   "g": [
+    0.1669,
+    0.132,
+    0.126,
+    0.1169,
+    0.1111,
+    0.1061
+   ],
+   "m": [
+    0.13,
+    0.133,
+    0.133,
+    0.133,
+    0.133,
+    0.133
+   ],
+   "conv": [
+    0.75,
+    0.8,
+    0.84,
+    0.86,
+    0.88,
+    0.9
+   ],
+   "pe": 26,
+   "charge": {
+    "1": 20
+   }
+  }
+ },
+ "calibrated": {
+  "pe": 21.1,
+  "why": "today's price less year-end net cash per share (26.53), over FY2027 operating EPS (10.43): the default (23.65) counts the net cash twice, because the exit value adds cash at face on top of a multiple of earnings before interest"
+ }
+}

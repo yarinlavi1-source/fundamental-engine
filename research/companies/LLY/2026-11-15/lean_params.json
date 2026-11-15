@@ -1,0 +1,230 @@
+{
+ "ticker": "LLY",
+ "as_of": "2026-11-15",
+ "price": 1443.5,
+ "rf": 0.0494,
+ "erp": 0.042,
+ "beta": 0.59,
+ "beta_mature": 1.0,
+ "shares_m": 893.0,
+ "net_cash_m": -44000.0,
+ "rev0_m": 89500.0,
+ "base_year": 2026,
+ "tax": 0.2,
+ "cash_yield": 0.036,
+ "debt_rate": 0.035,
+ "roic_terminal": 0.3,
+ "days_to_base_year_end": 46,
+ "years_to_horizon": 5.13,
+ "buy_return": 0.12,
+ "probabilities": {
+  "bear": 0.25,
+  "base": 0.55,
+  "bull": 0.2,
+  "label": "subjective (analyst judgement, not engine odds)"
+ },
+ "calibrated": {
+  "why": "no override: the lens holds today's multiple on the model's own EPS (price / 2027 operating EPS after business development), as the rule defines it. The first version held 24x and called it the five-year low of the forward multiple; that low (23.1x) is on conventional EPS and is a hindsight figure, so 24x on the model's EPS was about 20-21x conventional, under anything paid in five years. The held multiple is 1.7x the base exit multiple: the model flags it, and the lens is not an independent second opinion here (the two lenses differ only by the multiple)"
+ },
+ "scenarios": {
+  "bear": {
+   "g": [
+    0.09944,
+    0.0437,
+    0.00097,
+    0.00778,
+    -0.01931,
+    -0.02362
+   ],
+   "m": [
+    0.39854,
+    0.38737,
+    0.37245,
+    0.36313,
+    0.35142,
+    0.33927
+   ],
+   "conv": [
+    0.6008,
+    0.7117,
+    0.8523,
+    0.907,
+    0.944,
+    0.9651
+   ],
+   "pe": 14,
+   "charge": {
+    "1": 4000.0,
+    "2": 2000.0,
+    "5": 74660
+   }
+  },
+  "base": {
+   "g": [
+    0.17765,
+    0.13283,
+    0.08543,
+    0.08565,
+    0.04122,
+    0.00956
+   ],
+   "m": [
+    0.43761,
+    0.45262,
+    0.45356,
+    0.45761,
+    0.44815,
+    0.43674
+   ],
+   "conv": [
+    0.6131,
+    0.6854,
+    0.7693,
+    0.8277,
+    0.8867,
+    0.9236
+   ],
+   "pe": 20,
+   "charge": {
+    "5": 121590
+   }
+  },
+  "bull": {
+   "g": [
+    0.24581,
+    0.21076,
+    0.15926,
+    0.14185,
+    0.09457,
+    0.06646
+   ],
+   "m": [
+    0.45928,
+    0.48463,
+    0.4961,
+    0.50624,
+    0.50621,
+    0.50008
+   ],
+   "conv": [
+    0.6021,
+    0.6776,
+    0.7589,
+    0.8155,
+    0.8633,
+    0.8892
+   ],
+   "pe": 28,
+   "charge": {
+    "5": 128677
+   }
+  }
+ },
+ "judgement": {
+  "beta": {
+   "raw": 0.3841,
+   "adjusted": 0.5873,
+   "weeks": 104,
+   "window": {
+    "from": "2024-11-11",
+    "to": "2026-11-13"
+   },
+   "used": 0.59,
+   "reason_if_different": "",
+   "source": "scripts/locked_rules.py LLY --as-of 2026-11-15 (Yahoo weekly closes vs SPY; correlation 0.144)"
+  },
+  "exit_pe": {
+   "own_median": 38.7,
+   "p25": 29.5,
+   "p75": 46.7,
+   "months": 60,
+   "basis": "forward_pe",
+   "ratio_to_model_eps": 1.168,
+   "used": 20,
+   "reason_if_different": "the own median (38.7x on conventional EPS, a hindsight series of the five years in which EPS grew 46-105% a year = 45.2x on the model's 2032 EPS after business development) is not used: in the exit years the base grows revenue 1-4% and operating EPS about 0-2% a year; tirzepatide (56% of 2032 base revenue) loses its US compound patent in 2036, with generic filings made in 2026 (10-Q Note 9); US generic semaglutide is possible from 2032 (Novo Nordisk 20-F); direct peers trade at a median 17.6x forward today (NVO 12.4, AZN 16.6, MRK 17.6, ABBV 18.8, AMGN 19.2; stockanalysis.com, not re-verified). 20x on the model's EPS is about 17.1x conventional EPS in 2032 (before interest). The literal rule is a variant line and does not change the verdict"
+  },
+  "hist_multiple": {
+   "company_type": "grower_growth_changed",
+   "basis": "forward_pe",
+   "next_year_figure": 50.64,
+   "source": "Alpha Vantage EARNINGS_ESTIMATES 2026-11-15: FY2027 EPS average, 28 analysts (no company guide until January 2027)",
+   "median": 38.7,
+   "p25": 29.5,
+   "p75": 46.7,
+   "months": 60,
+   "net_cash_per_share": 0,
+   "value": 1959.77,
+   "low": 1493.88,
+   "high": 2364.89,
+   "series_note": "hindsight series: month-end price / EPS reported later (2021-2025 actuals, 2026-27 today's consensus), not the forward multiple the market paid at the time; a provider's real-time forward P/E history was not obtained (gap)",
+   "like_for_like": {
+    "ntm_eps": 49.37,
+    "value": 1910.62,
+    "low": 1456.41,
+    "high": 2305.58,
+    "note": "the 38.7x median is a next-12-month blend; on the next-12-month EPS (1/12 of FY2026 35.39 + 11/12 of FY2027 50.64)"
+   },
+   "calendar_year_basis": {
+    "median": 32.0,
+    "p25": 23.7,
+    "p75": 39.7,
+    "value": 1620.48,
+    "low": 1200.17,
+    "high": 2010.41,
+    "note": "the same series on next-calendar-year EPS (deep/multiple_history.py)"
+   },
+   "peer_value": {
+    "median_multiple": 17.6,
+    "value": 891.26,
+    "low": 627.94,
+    "high": 972.29,
+    "note": "direct peers' forward P/E today (stockanalysis.com, 15.11.2026; not re-verified)"
+   }
+  },
+  "beta_mature": {
+   "value": 1.0,
+   "source": "book convention for mature large caps (V, GOOGL, MSFT, UBER saved params)"
+  },
+  "roic_terminal": {
+   "value": 0.3,
+   "source": "R&D and business development are expensed in the margin, so terminal reinvestment covers only net capex and working capital; in the first version the 2032 base reinvested 9% of NOPAT at 3% growth (implied 0.33); not changed in the review"
+  },
+  "market": {
+   "rf": 0.0494,
+   "erp": 0.042,
+   "source": "research/market.json",
+   "reason_if_different": ""
+  },
+  "review": {
+   "date": "2026-11-15",
+   "pre_review_file": "lean_params_pre_review.json",
+   "answers_file": "review_findings.json"
+  }
+ },
+ "notes": {
+  "price": "last close 2026-11-13 $1,443.50 (NYSE close 21:00 UTC; Yahoo daily bar; Alpha Vantage GLOBAL_QUOTE fetched 2026-11-15 agrees: latest trading day 2026-11-13, previous close 1,425.57); also the 52-week closing high (closing range 851.21-1,443.50, web lane). Latest quote: IBKR last $1,439.99 at 2026-11-14 00:57 UTC (after-hours trade of 13.11, frozen snapshot; markets closed 14-15.11). The model runs on the close",
+  "rf_erp_beta": "rf 4.94% and ERP 4.2% = the entry in force in research/market.json (one rate per valuation date; index return 9.14%). The 10-year yield itself was 5.15% on 2026-11-13 (Yahoo ^TNX; FRED DGS10 5.10% on 11-12): variant only; adding a market entry is the owner's decision. beta 0.59 = the locked rule's own script (raw 0.384 on 104 complete weeks 11.11.2024-13.11.2026 vs SPY, adjusted 0.587); the first version used 0.62 from 105 weekly returns. beta_mature 1.0 (book convention). ke0 7.42% rising to 9.14% over 10 years; terminal growth = rf (engine convention)",
+  "base_year": "FY2026 at the guide midpoint 91,500 (release 29.10.2026: 91.0-92.0B; 9M 67,170 + implied Q4 23.8-24.8B) less ~2,000 of one-time revenue = 89,500. One-time: Q3 call (CFO): '2026 revenue benefited from approximately $2 billion of one-time items, primarily milestone payments and changes in estimates for rebates and discounts, that we do not expect to recur'; filings: Jardiance sales-based milestones 910 in 9M (none remain, 10-Q) + favorable prior-period rebate adjustments ~2% of US revenue (10-Q; ~0.8-1.1B). Consensus FY26 revenue 91.67B (Alpha Vantage, 25 analysts)",
+  "drivers": "revenue is the sum of seven parts (deep/drivers.md, deep/build_params.py): tirzepatide (Mounjaro + Zepbound), Foundayo (orforglipron), retatrutide, later incretins, new growth products (Jaypirca, Ebglyss, Kisunla, Omvoh, Inluriyo, later launches), the four products that lose exclusivity by 2031 (Trulicity, Jardiance, Taltz, Verzenio) and the rest. Final driver table after the review: deep/drivers_tables_final.json (base tirzepatide 2032 at 83B; working capital 25% of added revenue)",
+  "margin": "operating margin after stock compensation and after recurring business development: performance margin (gross margin - R&D - MS&A, non-GAAP; SBC is inside; guide 52.0-52.5% for 2026, 51.2% after removing the one-time revenue) less 0.7pt recurring special charges (2024 861, 2025 484, 9M26 1,285) less business development as a cost ($9.0-9.8B a year in the base = 8.5% of revenue falling to 6.5%; history: IPR&D purchases + acquisitions 5.0B in 2023, 4.3B in 2024, 3.7B in 2025, 18.2B in 9M 2026; Lilly itself keeps acquired IPR&D inside non-GAAP EPS). Amortization of acquired intangibles (~0.5B) is left out because the purchase cash is already counted. Base performance margin 53.0% in 2027 (consensus-implied ~54.6%), 53.5%, 53.0%, 53.0%, 52.0%, 51.0%: price erosion and the depreciation wave (depreciation 1.8% of revenue in 2026 to 3.6% in 2032) against MS&A leverage; the Jardiance collaboration share (near-100% margin) ends after 2028",
+  "tax": "20% on income after business development (guide 19-20% non-GAAP for 2026 including nondeductible IPR&D; FY2025 19.8%; 9M 2026 21.0%)",
+  "conv": "FCF / NOPAT built from capex, depreciation and working capital: capex 12.5B (2027), 13.0, 12.0, 10.5, 9.5, 9.0 (TTM 11.0B; 9M 2026 8.4B; no capex guide: GAP; commitments: Houston $6.5B and Richmond $5B plants, +$4.5B Indiana, CIP 13.0B at Dec 2025; then fading to ~6% of revenue, the pre-surge share, which is not in the files read: judgement); depreciation from the capex vintages 2.2B rising to 5.4B (FY2025 1,314); working capital and other operating assets absorb 25% of added revenue (cash-flow statements: FY2025 8.1B absorbed on +20.1B of revenue = 40%; 9M 2026 1.9B on +21.3B = 9%, receivables +4.3B and inventory +4.5B offset by the rebate liability +6.8B; pooled 24%. The first version used 30% and cited the wrong year)",
+  "net_cash": "30.9.2026 (10-Q): cash 4,885 + short-term investments 74 - total debt 49,503 = -44,544; + investments 2,600 (AFS debt 355, marketable equity 760, other 84 at face; non-marketable 1,191 and equity-method 1,623 at 50%); - contingent consideration liabilities 2,888 (fair value; maximum Kelonia 3,750 + Centessa 1,542); + Q4 flows ~+0.8B (operating cash ~9.0B - capex 3.2B - business development ~3.0B incl. Merida - dividends 1.55B - buybacks 0.5B) = about -44,000. Operating leases 1,362 (Dec 2025) excluded: rent is in the margin. Pension position and litigation accruals: GAP",
+  "shares": "893.0M diluted: cover 940.7M (26.10.2026) less 50M held by the employee benefit trust (10-K Note 13; not outstanding for EPS) = 890.7M + dilutive awards; Q3 diluted 893.4M; guide assumes ~894M. No converts, puts or warrants found (filings lane). Buybacks (~0.3% a year net of issuance at today's price) and dividends are not modelled as a share path: free cash flow accrues as net cash",
+  "roic_terminal": "0.30: R&D and business development are expensed in the margin, so terminal reinvestment covers only net capex and working capital; in the first version the 2032 base reinvested 9% of NOPAT at 3% growth (implied 0.33); not changed in the review",
+  "pe": "exit multiple on next-year operating EPS AFTER business development. Locked rule = own long-run forward P/E median: 38.7x over Nov 2021-Oct 2026, 34.7x since 2023 (deep/multiple_history.py, hindsight series). NOT used, stated facts: (1) that median was paid for EPS growing +105% (2024), +86% (2025), +46% (2026), +43% (2027 consensus); in the exit years the base path grows operating EPS about 0-2% a year; (2) tirzepatide, ~56% of 2032 base revenue, loses US compound-patent protection in 2036 (10-K) and generic ANDAs were filed in 2026 (10-Q Note 9); (3) direct peers today: NVO 12.4x, AZN 16.6x, MRK 17.6x, ABBV 18.8x, AMGN 19.2x forward (stockanalysis.com statistics pages, 2026-11-15), median 17.6x. Base 20x on after-BD operating EPS (= 17.1x on a conventional EPS before future business development and special charges in 2032, before interest; the direct-peer median today is 17.6x); bull 28x (24.8x conventional); bear 14x (10.8x conventional, about Novo Nordisk today). The conversion uses the 2032 ratio of conventional to model EPS (1.168; in 2027 it is 1.211, and consensus / model is 1.226). The locked-rule multiple on that basis is 45.2x: a variant line",
+  "patent_cliff": "the model's fade years (2033-2041) grow NOPAT from the 2032 rate up to rf and cannot show the 2036 US / 2037 EU tirzepatide loss of exclusivity. It is put in as a charge in 2032 (index 5) = present value at 2032 of losing 15% (base), 8% (bull), 20% (bear) of the model's own after-tax path from 2038 on, phased over 2036-2038 (deep/build_params.py cliff_charge). The charge enters the DCF; the exit-multiple method carries the cliff in the multiple",
+  "bear": "company-specific: net price falls faster than volume grows (price -13% to -15% a year in 2026 per releases; Medicare coverage at government prices; more entrants: Novo oral and CagriSema, Pfizer monthly from 2028), tirzepatide flat at 66-69B then down to 59B; successors slower; performance margin 50% falling to 44%; business development stays at 9B; charges after tax: 4,000 in 2028 for inventory (18.2B, +32% in 9M) and take-or-pay supply commitments (up to ~10B, 10-K), 2,000 in 2029 for litigation (product-liability MDLs, pricing, 340B; self-insured). A harsher tail (tirzepatide down to 51B by 2032, margin to 41%) is worth about $250 and is not in the table",
+  "bull": "the guidance-beat record: first revenue guide beaten by about +11% (2023; the guide from a secondary source), +9.9% (2024: 45.04B against a 41.0B midpoint), +9.5% (2025: 65.18B against 59.5B) and the 2026 guide raised +12.3% in three steps (releases); bull 2027 revenue 111.5B = +4.7% above consensus 106.5B (analyst high 114.3B); incretin franchise 145.5B in 2030 (124.5B in 2029), which is close to the whole 2030 market in the published forecasts found (TD Cowen about 150B, via an aggregator; not read in the original); performance margin to 57%",
+  "probabilities": "subjective judgement, not engine odds: bear 25%, base 55%, bull 20% (first version 25/50/25; the bull needs a 2030 incretin market far above the published forecasts found, and its 2030 revenue is about 35% above the 2030 consensus while the bear is about 22% below)",
+  "base_review": "review of 15.11.2026: (1) US generic semaglutide: Novo Nordisk's 20-F (FY2023) gives 2032 as the US patent expiry of Ozempic, Rybelsus and Wegovy; secondary sources differ between December 2031 and December 2032 and later patents may delay entry. Base tirzepatide 2032 lowered from 86B to 83B (about half a year of a 7% first-year effect; judgement). The bear (59B) and the bull are unchanged. (2) The base far years are at or above the published long-range numbers found (2030 consensus revenue about 132B, TIKR 02.10.2026, before the Q3 raise; base 140.7B): the gap to the analysts is the multiple and the deal cost, not revenue. (3) Base 2027 revenue 105.4B is at about consensus (106.5B) and below the company's beat record; the beat record is in the bull. (4) The Medicare GLP-1 Bridge ends 31.12.2027 (10-Q) with no agreed successor: a named falsifier, no input change",
+  "calibrated": "no override: the lens holds today's multiple on the model's own EPS (price / 2027 operating EPS after business development), as the rule defines it. The first version held 24x and called it the five-year low of the forward multiple; that low (23.1x) is on conventional EPS and is a hindsight figure, so 24x on the model's EPS was about 20-21x conventional, under anything paid in five years. The held multiple is 1.7x the base exit multiple: the model flags it, and the lens is not an independent second opinion here (the two lenses differ only by the multiple)",
+  "hist_multiple": "hindsight series: month-end price / EPS reported later (2021-2025 actuals, 2026-27 today's consensus), not the forward multiple the market paid at the time; a provider's real-time forward P/E history was not obtained (gap). Rule value 50.64 x 38.7 = 1,960 (1,494-2,365); like for like on next-12-month EPS 49.37: 1911 (1456-2306); on the calendar-year series (median 32.0x): 1620 (1200-2010); at the direct-peer median 17.6x: 891 (628-972)"
+ },
+ "price_time_utc": "2026-11-13 21:00 (NYSE close)",
+ "latest_quote": {
+  "price": 1439.99,
+  "time_utc": "2026-11-14 00:57",
+  "source": "IBKR snapshot (frozen; after-hours last of 13.11.2026)"
+ }
+}

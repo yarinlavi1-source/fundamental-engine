@@ -1,0 +1,152 @@
+{
+ "ticker": "LLY",
+ "as_of": "2026-11-15",
+ "price": 1443.5,
+ "price_time_utc": "2026-11-13 21:00 (NYSE close); latest quote 1439.99 at 2026-11-14 00:57 UTC (IBKR, after-hours, frozen)",
+ "verdict_he": "לא לקנות במחיר הזה: עסק מצוין, אבל המחיר מגלם יותר מהתרחיש השורי; כל ארבעת חלקי מבחן הקנייה נכשלים",
+ "buy_test_price": 668.81,
+ "buy_test_price_rerun": 569.1,
+ "margin_of_safety_price": 638.99,
+ "margin_of_safety_price_rerun": 528.53,
+ "values": {
+  "today": {
+   "bear": 342.23,
+   "base": 818.1,
+   "bull": 1682.22
+  },
+  "end_2027": {
+   "bear": 373.22,
+   "base": 889.03,
+   "bull": 1825.65
+  },
+  "end_2028": {
+   "bear": 402.96,
+   "base": 957.72,
+   "bull": 1965.32
+  },
+  "end_2031": {
+   "bear": 503.78,
+   "base": 1196.16,
+   "bull": 2459.36
+  },
+  "weighted_today_25_55_20": 871.96,
+  "calibrated_today": 1114.87,
+  "calibrated_end_2027": 1210.7,
+  "calibrated_end_2028": 1303.81,
+  "calibrated_end_2031": 1631.34,
+  "historical_multiple": {
+   "value": 1910.62,
+   "low": 1456.42,
+   "high": 2305.58,
+   "rule_value": 1959.77,
+   "calendar_year_basis": 1620.48,
+   "peer_multiple_value": 891.26,
+   "note_he": "סדרת מכפילים שחושבה בדיעבד; המכפיל הישן שייך לשנים של צמיחת רווח של 46-105% בשנה"
+  }
+ },
+ "scenarios": {
+  "bear": {
+   "prob": 0.25,
+   "he": "המחיר יורד מהר מהכמויות; tirzepatide נעצרת ב-66-69 מיליארד $ ויורדת ל-59; שיעור רווח 44%; מכפיל 14"
+  },
+  "base": {
+   "prob": 0.55,
+   "he": "tirzepatide עד 89 מיליארד $ ב-2030 ואז 83 ב-2032; הכדור ו-retatrutide מגיעים ל-35 מיליארד $; רכישות 9-10 מיליארד $ בשנה; מכפיל 20"
+  },
+  "bull": {
+   "prob": 0.2,
+   "he": "ממשיכה לעקוף תחזיות; תרופות ההשמנה והסוכרת 145.5 מיליארד $ ב-2030; שיעור רווח 57%; מכפיל 28"
+  },
+  "label": "subjective"
+ },
+ "annual_return_pct": {
+  "bear": -18.6,
+  "base": -3.6,
+  "bull": 10.9,
+  "calibrated": 2.4,
+  "weighted": -2.4,
+  "index": 9.14,
+  "to_end_2028": {
+   "bear": -45.1,
+   "base": -17.5,
+   "bull": 15.6,
+   "calibrated": -4.7
+  }
+ },
+ "price_ladder": {
+  "buy_test_12pct": {
+   "ours": 668.81,
+   "calibrated": 912.13
+  },
+  "index_9_14pct": {
+   "ours": 763.72,
+   "calibrated": 1041.57
+  },
+  "hold_floor_6pct": {
+   "ours": 887.1,
+   "calibrated": 1209.83
+  },
+  "sell_line_3pct": {
+   "ours": 1027.86,
+   "calibrated": 1401.81
+  }
+ },
+ "buy_test": {
+  "pass": false,
+  "legs": {
+   "base_ours": {
+    "return_pct": -3.6,
+    "needs": 12.0,
+    "max_price": 668.81
+   },
+   "base_calibrated": {
+    "return_pct": 2.4,
+    "needs": 12.0,
+    "max_price": 912.13
+   },
+   "bull": {
+    "return_pct": 10.9,
+    "needs": 17.0,
+    "max_price": 1099.08
+   },
+   "bear": {
+    "return_pct": -18.6,
+    "needs": -10.0,
+    "max_price": 864.92
+   }
+  },
+  "binding_leg": "base_ours",
+  "max_price_passing": 668.81,
+  "rerun_max_price_passing": 569.1,
+  "rerun_binding_leg": "base_calibrated"
+ },
+ "conditions": {
+  "would_pass_buy_test": [
+   "המחיר מתחת לכ-669$ (בהרצה חוזרת כ-569$): כל חלקי מבחן הקנייה עוברים",
+   "או שהעסק עולה למסלול השורי: תחזית 2027 של 112 מיליארד $ ומעלה עם שיעור רווח 54.5% ומעלה (הודעת התוצאות של רבעון 4)"
+  ],
+  "would_improve_view": [
+   "ירידת המחיר נטו של התרופות מאטה אל מתחת ל-10% בשנה (2026: 13-15%, הודעות התוצאות)",
+   "הסכם קבוע לכיסוי Medicare אחרי 31.12.2027 (10-Q)",
+   "אישור רחב ל-retatrutide ו-Foundayo מעל מיליארד $ ברבעון במהלך 2027",
+   "רכישות חוזרות לכ-4-5 מיליארד $ בשנה (2023-2025: 3.7-5.0; תשעה חודשים של 2026: 18.2)"
+  ],
+  "would_worsen_view": [
+   "הפסד במשפט הפטנטים על tirzepatide (פטנט בארה\"ב עד 2036; בקשות גנריות הוגשו ב-2026, 10-Q)",
+   "גרסה גנרית של semaglutide בארה\"ב מוקדם מ-2032 (Novo Nordisk 20-F)",
+   "אין הסכם Medicare עד אמצע 2027",
+   "בעיית בטיחות, או עוד שנת רכישות כמו 2026"
+  ]
+ },
+ "next_report": {
+  "date": "~2027-02-03",
+  "confirmed": false,
+  "check": "תחזית 2027 (הכנסות ושיעור רווח), ירידת המחיר מול הכמויות, Medicare, Foundayo ו-retatrutide, היקף הרכישות; יום משקיעים ב-7.12.2026"
+ },
+ "thesis_link": "research/companies/LLY/thesis_he.md",
+ "notes_he": [
+  "המחיר הוא שיא סגירה של 52 שבועות; כדי להצדיק אותו ההכנסות צריכות להגיע ל-246 מיליארד $ ב-2031 (בסיסי 146.5, שורי 196)",
+  "העדשה השנייה (המכפיל של היום נשמר) אינה דעה שנייה עצמאית כאן: המודל מזהיר שהמכפיל גבוה פי 1.75 ממכפיל היציאה שלנו",
+  "המספר לשנה-שנתיים הוא הכי רועש"
+ ]
+}

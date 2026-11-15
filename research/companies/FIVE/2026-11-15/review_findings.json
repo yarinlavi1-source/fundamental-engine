@@ -1,0 +1,172 @@
+{
+ "ticker": "FIVE",
+ "valuation_date": "2026-11-15",
+ "built_on": "2026-11-15",
+ "note": "Findings of the numbers check and the red team on the first version of the deep valuation, with the answer to each (right / partly / wrong) and what changed. Reviewer files and scripts are in the private run folder runs/tickers/FIVE_2026-11-15/deep/ (verify.md, redteam.md, review_answers.md). Company research only.",
+ "price": 246.68,
+ "price_time_utc": "2026-11-13 21:00 UTC (last close; no later trade)",
+ "pre_review": {
+  "file": "lean_params_pre_review.json",
+  "base_today": 267.92,
+  "base_return_pct": 11.4,
+  "calibrated_today": 275.75,
+  "calibrated_return_pct": 12.0,
+  "bear_today": 137.31,
+  "bull_today": 390.56,
+  "weighted_today": 259.4,
+  "max_price_passing": 239.84,
+  "binding_leg": "base_ours"
+ },
+ "final": {
+  "file": "lean_params.json",
+  "base_today": 263.05,
+  "base_return_pct": 11.0,
+  "calibrated_today": 258.85,
+  "calibrated_return_pct": 10.6,
+  "bear_today": 137.31,
+  "bull_today": 368.79,
+  "weighted_today": 251.76,
+  "max_price_passing": 231.47,
+  "binding_leg": "base_calibrated",
+  "max_price_passing_rerun": 220.47,
+  "price_13pct": {
+   "ours": 224.76,
+   "calibrated": 220.99
+  }
+ },
+ "base_changed_by_review": true,
+ "bridge": [
+  {
+   "change": "calibrated.pe 21.1 (price net of cash over FY2027 operating EPS; the default 23.65 counted the cash twice)",
+   "effect": "second lens 275.75 -> 263.65; 12.0% -> 11.0% a year; base unchanged"
+  },
+  {
+   "change": "base operating margin flat at 12.3% (was 12.3% rising to 12.5%)",
+   "effect": "base 267.92 -> 264.34 (-3.58); 11.4% -> 11.1%"
+  },
+  {
+   "change": "base cash conversion 0.75-0.87 (was 0.78-0.90): working capital at 9.2% of the sales increase (FY2025 10-K)",
+   "effect": "base 264.34 -> 263.05 (-1.29); 11.1% -> 11.0%"
+  },
+  {
+   "change": "bull margin capped at the record 13.3% (was up to 14.2%)",
+   "effect": "bull 390.56 -> 368.79; 20.1% -> 18.7%"
+  }
+ ],
+ "verdict_changed": false,
+ "verdict": "not a buy at 246.68; wait for the Q3 report. The buy test fails in both lenses (11.0% and 10.6% a year against 12%).",
+ "critical_findings": 0,
+ "reviews": [
+  {
+   "lane": "numbers",
+   "verdict": "arithmetic and filing inputs clean; verdict holds as 'on the line'",
+   "findings": [
+    {
+     "n": 1,
+     "severity": "major",
+     "title": "The 'own five-year forward P/E' divided past prices by earnings reported later; on what was known the median is about 27-28.6, not 23.9",
+     "answer": "right",
+     "outcome": "historical-multiple value about 299 (range 246-334) instead of 265; own check gives a bracket of 24.6-28.6, centre about 27; no model input"
+    },
+    {
+     "n": 2,
+     "severity": "major",
+     "title": "Exit multiple 22 is 4-5 turns under the locked rule, not 1.9; at the rule our lens passes",
+     "answer": "partly",
+     "outcome": "departure restated (about 3.5 turns in the model's terms) with four stated facts; multiple kept at 22; variant at 25.5: 279.38 and 12.4% a year, the second lens still fails"
+    },
+    {
+     "n": 3,
+     "severity": "major",
+     "title": "The calibrated lens counts the cash twice (23.65x on earnings before interest, cash added again)",
+     "answer": "right",
+     "outcome": "calibrated.pe 21.1"
+    },
+    {
+     "n": 4,
+     "severity": "small",
+     "title": "Guided-year margin is 12.35-12.45%, not 12.5% (interest income about 40)",
+     "answer": "right",
+     "outcome": "supports the flat 12.3% base margin"
+    }
+   ]
+  },
+  {
+   "lane": "red team",
+   "verdict": "verdict holds and is firmer; base biased high by 5-14 a share",
+   "findings": [
+    {
+     "n": 1,
+     "severity": "major",
+     "title": "The second lens counts cash twice",
+     "answer": "right",
+     "outcome": "same as numbers finding 3"
+    },
+    {
+     "n": 2,
+     "severity": "major",
+     "title": "Base exit multiple 22 is an expansion from today's 21.2 net of cash; use 21 or 20",
+     "answer": "partly",
+     "outcome": "no change: holding today's multiple is the second lens (now 21.1); variants 21: 258.38 / 10.6%, 20: 253.72 / 10.2%"
+    },
+    {
+     "n": 3,
+     "severity": "major",
+     "title": "Historical-multiple anchor mixes two regimes; point value about 232, range 185-265",
+     "answer": "mostly wrong",
+     "outcome": "built on the same realized-EPS history; on what was known the stock traded at 25-34x from 5.2025 to 5.2026. Accepted: the two reports disagree, and that is stated"
+    },
+    {
+     "n": 4,
+     "severity": "major",
+     "title": "Base margin holds a record level flat for six years; use 12.0% from FY2028",
+     "answer": "partly",
+     "outcome": "the rise to 12.5% removed (flat 12.3%); no cut to 12.0% without a hard, evidenced cost; variant at 12.0%: 257.42 / 10.5%"
+    },
+    {
+     "n": 5,
+     "severity": "minor",
+     "title": "Net cash taken at the seasonal peak; use 1,320",
+     "answer": "partly",
+     "outcome": "no change (January-to-January cash and cash flow are consistent); variant: 260.40"
+    },
+    {
+     "n": 6,
+     "severity": "minor",
+     "title": "Low bias: base year at the guide midpoint after four beats of 6-8%",
+     "answer": "right on the fact",
+     "outcome": "no change: the rule keeps the guided year at the guide; with FY2027 held at 6,263 the value does not move"
+    },
+    {
+     "n": 7,
+     "severity": "minor",
+     "title": "Bull margin above any year the company has printed",
+     "answer": "right",
+     "outcome": "bull margin capped at 13.3%"
+    },
+    {
+     "n": 8,
+     "severity": "minor",
+     "title": "Bear exit multiple above the own trough; use 12",
+     "answer": "wrong",
+     "outcome": "the 10-12x trough comes from the flawed history; on the guide in force the trough was 13-19x; variant at 13: 132.16 / -3.5%"
+    },
+    {
+     "n": 9,
+     "severity": "minor",
+     "title": "Working capital 55-65 a year, not 40",
+     "answer": "partly",
+     "outcome": "accepted at the evidenced size: conversion lower by 0.02-0.03, not 0.05"
+    }
+   ]
+  }
+ ],
+ "open_gaps": [
+  "Q3 report date not confirmed (last year 3.12.2025)",
+  "call figures rest on an automated transcript summary",
+  "shrink benefit and tariff rates inside the guide are not disclosed",
+  "no dated consensus history: the own-multiple median is a bracket",
+  "peer multiples not re-pulled",
+  "legal charges are judgement; nothing is accrued"
+ ]
+}
