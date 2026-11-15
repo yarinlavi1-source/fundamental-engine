@@ -245,6 +245,10 @@ class IndexFundAndBaselineTests(unittest.TestCase):
         self.assertIn('הערכה שמורה 2026-11-20', line)
         self.assertIn('מחיר מבחן הקנייה 230', md)
         self.assertIn('החזקה (סינתטי)', md)
+        early = self.update([('ADBE', 245.0, 1.0)], root=root, as_of='2026-11-10')   # before the picture's date: not read
+        self.assertEqual(self.row(early, 'ADBE')['value_comparison']['source'], 'ledger_thesis')
+        self.assertEqual(HW.fundamental_picture(root, 'ADBE', '2026-11-10')['date'], '2026-10-01')
+        self.assertEqual(HW.fundamental_picture(root, 'ADBE')['date'], '2026-11-20')
         ledger_line = next(x for x in HW.render_he(self.update([('ADBE', 245.0, 1.0)])).splitlines() if x.startswith('| ADBE |'))
         self.assertIn('תזה מוקפאת 2026-10-19', ledger_line)
 

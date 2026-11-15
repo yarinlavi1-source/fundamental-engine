@@ -31,7 +31,9 @@ dirty = bool(subprocess.run(['git', '-C', here, 'status', '--porcelain', '--', '
 CODE = git + ('-dirty' if dirty else '')
 ZIP_RETRIEVED = dt.datetime.utcfromtimestamp(os.path.getmtime(zpath)).strftime('%Y-%m-%dT%H:%M:%SZ')
 ZIP_SHA = S.sha256_file(zpath)
-UA = {'User-Agent': 'Yarin Lavi research yarinlavi1@gmail.com'}  # same SEC contact header as scripts/gap_card.py
+if fetch and not os.environ.get('SEC_USER_AGENT'):  # SEC contact header: from the environment only, never in a file
+    sys.exit('set SEC_USER_AGENT="<app name> <contact e-mail>" in the environment')
+UA = {'User-Agent': os.environ.get('SEC_USER_AGENT', '')}
 FIELDS = {
     'shares_out_cover': [('dei', 'EntityCommonStockSharesOutstanding')],
     'shares_out_bs': [('us-gaap', 'CommonStockSharesOutstanding')],

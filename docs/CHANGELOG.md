@@ -36,6 +36,56 @@ equal `buy_price` and `index_parity_price` in all 268. `python -m unittest tests
 The full suite was not run for this entry. Known limit: the calibrated rungs of the ladder hold today's multiple and are
 not re-solved per rung (only the buy-test rung is, in `buy_test.rerun`).
 
+Also unreleased (15.11.2026), holdings update and forecast tracker:
+
+- `holdings-update` (`fundamental_engine/holdings_watch.py`): the value compared with today's price is now named with its
+  source and date (`value_comparison`). It is the latest saved fundamental picture
+  (`research/technical/<T>/<date>/fundamental.json`) when that is newer than the ledger thesis, else the ledger thesis. A
+  value in another currency or share unit, or a position price beyond 1.8x the source's own price, is not compared: the row
+  prints the reason. Two row kinds: `index_fund` (listed, never valued) and `valuation_only` (a saved picture without a
+  frozen thesis). `newer_saved_run` flags a later dated valuation folder the table does not read. The filing check on the
+  ledger thesis is unchanged; no revaluation and no orders.
+- Fundamental pictures backfilled so the table stops showing the stale ledger values: GOOGL, NOW, RDDT and MSFT (copies of
+  the lean valuations of 04.11.2026) and TSM (05.11.2026, USD per ADR), each dated with its valuation and stating that no
+  fresh pull was made; NVDA 12.11 gains `values.today` (base = the scenario-weighted value over the three succession
+  worlds; bear and bull = the central world's published numbers) and META 13.11 has a plain `buy_test_price` on the
+  pre-dividend share basis with the post-dividend number in `buy_test_price_post_class_c_dividend`. Ladder and buy-test
+  prices in the five new files come from the saved params run through the current `scripts/lean_model.py`; values are the
+  saved ones. `margin_of_safety_price` is null where the saved params do not carry a 13% return (the rung at the params'
+  own return is in `price_ladder`).
+- Forecast tracker (`fundamental_engine/forecast_tracker.py`, `scripts/forecast_tracker.py`): scores every published lean
+  base case in `research/companies/<T>/<date>/lean_params*.json` against SEC-reported results after the valuation date
+  (completed year: revenue, operating margin, operating EPS; year in progress: year-to-date growth and margin, labelled
+  rough) and against the latest close, and writes `research/FORECAST_TRACKER_he.md` and `research/forecast_tracker.json`.
+  Measurement only: medians are reported with their counts and `too few to conclude` under 8 scored rows; rules change only
+  through a preregistered test. Custom models are listed and scored by hand.
+
+Tests run for these lines: `python -m unittest tests.test_holdings_watch tests.test_forecast_tracker` (38 tests, OK). The full
+suite was not run. Known limits: the picture's expected return is a proxy from its last calendar year-end value (NVDA has
+none in the standard keys, so its cell is empty; MSFT's June year-ends are kept under `june_<YYYY>` keys and are not read),
+and NVDA's table cell no longer carries the 'weighted' label now that `values.today.base` exists (the file's
+`values.today_note` says it).
+
+Review fixes (15.11.2026, one round; new keys and notes only, no valuation changed):
+
+- `scripts/lean_model.py`: `buy_test.on_the_line` and a warning when the test passes at a price above
+  `max_price_passing` (the legs compare returns rounded to 0.1 point, as the bands do, so a base return of 11.95-11.99%
+  read as a pass beside a highest passing price below today's price). `ranges.two_year` gives no yearly return for a
+  period under a quarter of a year.
+- `fundamental_engine/forecast_tracker.py`: a period first filed after the scoring date is not read (a rerun with an
+  earlier `--as-of` no longer sees later reports); a completed year that may already have been in the valuation is not
+  scored beside a later report that was not; a year-to-date or full-year period filed after the valuation that does not
+  start at the model's fiscal year start is named in the row's notes instead of being dropped silently.
+- `fundamental_engine/holdings_watch.py`: a saved fundamental picture dated after `--as-of` is not read.
+
+Checks: the old `scripts/lean_model.py` (the commit before the reporting keys) against the current one on the 268 saved
+params files: every old key identical in 268 of 268. `python -m unittest tests.test_lean_model tests.test_forecast_tracker
+tests.test_holdings_watch`: 65 tests, OK (24 + 18 + 23). The tracker and the holdings table were rerun after the fixes:
+both identical to the published ones. Known limits kept: lean_model returns and ladder prices leave dividends out (the
+META thesis adds $12.3 of dividends to the 2031 value, so its 12% price is about $7 above the same formula without
+them); "margin of safety" is `buy_return` in lean_model and in the theses but 13% in the handoff format
+(`research/technical/FUNDAMENTAL_HANDOFF_he.md`): one definition is still to be chosen.
+
 ## 0.14.3 — bank revenue, residual-income honesty, routing audit fixes (02.11.2026)
 
 Known bugs of the week and the real critical/major findings of the 02.11 routing and process audits. Owner-facing summary of

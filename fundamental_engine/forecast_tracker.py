@@ -235,13 +235,14 @@ def score(ticker, params, result, payload, today, price=None, release_dates=None
         return row
     rev = per['revenue']
     row['annual_filer'] = per['annual_only']
-    new = []
+    new, off_calendar = [], False
     for (s, e), r in rev.items():
-        if r['first_filed'] <= as_of or e > today or (path['as_of'] - _d(e)).days > MAX_PERIOD_AGE_DAYS:
+        if r['first_filed'] <= as_of or r['first_filed'] > today or e > today or (path['as_of'] - _d(e)).days > MAX_PERIOD_AGE_DAYS:
             continue                                             # an old period refiled under a new tag is not a new report
         label, fy_end, fy_start = fiscal_year(e, path)
         span = _span(s, e)
         if span is None or abs((_d(s) - fy_start).days) > DATE_TOL:
+            off_calendar = off_calendar or span in ('H1', '9M', 'FY')
             continue                                             # a single later quarter: the year-to-date period is used
         on, basis = _reported_on(e, r['first_filed'], release_dates)
         if on <= as_of:
@@ -253,6 +254,9 @@ def score(ticker, params, result, payload, today, price=None, release_dates=None
     new.sort(key=lambda x: x['end'])
     row['reported'] = [{k: x[k] for k in ('fiscal_year', 'period', 'end', 'reported_on', 'reported_basis', 'may_be_in_valuation')}
                        for x in new]
+    if off_calendar:
+        row['notes'].append("a period filed after the valuation does not start at the model's fiscal year start: check "
+                            'base_year and days_to_base_year_end against the fiscal calendar (that period is not scored)')
     if not new:
         row.update(status='no_report_since', read='no_report')
         if per['annual_only']:
@@ -261,7 +265,8 @@ def score(ticker, params, result, payload, today, price=None, release_dates=None
     row['status'] = 'scored'
     row['in_sample_suspected'] = all(x['may_be_in_valuation'] for x in new)
     opi, sh = per['operating_income'], per['diluted_shares']
-    full = [x for x in new if x['period'] == 'FY']
+    # a year that may already have been in the valuation is not scored beside a later report that was not
+    full = [x for x in new if x['period'] == 'FY' and (row['in_sample_suspected'] or not x['may_be_in_valuation'])]
     items = []
     if full:
         x = full[-1]

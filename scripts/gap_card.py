@@ -6,14 +6,17 @@ The uniform model is the pre-registered screening model, NOT a company-specific 
 expectation_gap with company drivers + capital_bridge for that. Foreign filers (20-F/6-K) are
 usually missing quarterly XBRL and will report insufficient data.
 """
-import json, sys, urllib.request, http.cookiejar
+import json, os, sys, urllib.request, http.cookiejar
 from datetime import date
 import numpy as np
 from fundamental_engine.pit import company, latest_at, ttm_at, available, shares_at
 from fundamental_engine.inflection import features, scorecard
 from fundamental_engine.expectations_vec import solve_growth
 
-UA = {'User-Agent': 'Yarin Lavi research yarinlavi1@gmail.com'}
+# SEC asks for a contact in the User-Agent: it is read from the environment and never written to a file.
+if not os.environ.get('SEC_USER_AGENT'):
+    sys.exit('set SEC_USER_AGENT="<app name> <contact e-mail>" in the environment')
+UA = {'User-Agent': os.environ['SEC_USER_AGENT']}
 tk, table_path = sys.argv[1].upper(), sys.argv[2]
 out = sys.argv[3] if len(sys.argv) > 3 else None
 m = json.loads(urllib.request.urlopen(urllib.request.Request('https://www.sec.gov/files/company_tickers.json', headers=UA), timeout=60).read())

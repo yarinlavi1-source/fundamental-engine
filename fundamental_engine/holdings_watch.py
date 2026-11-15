@@ -116,17 +116,18 @@ def stock_rows(positions):
     return stocks, skipped
 
 
-def fundamental_picture(root, ticker):
+def fundamental_picture(root, ticker, as_of=None):
     """The latest saved fundamental picture of a ticker (research/technical/<T>/<date>/fundamental.json, the folder
-    name is its date), reduced to the keys the table needs; None when there is none. The files are hand-written, so
-    every key is optional: a missing base value is a visible gap, never a guess."""
+    name is its date; with as_of, not one dated after it), reduced to the keys the table needs; None when there is
+    none. The files are hand-written, so every key is optional: a missing base value is a visible gap, never a guess."""
     if root is None:
         return None
     best = None
     for p in glob.glob(os.path.join(root, TECHNICAL, ticker, '*', 'fundamental.json')):
         d = os.path.basename(os.path.dirname(p))
         try:
-            day(d)
+            if day(d) > day(as_of or d):
+                continue
         except (ValueError, TypeError):
             continue
         if best is None or d > best[0]:
@@ -381,7 +382,7 @@ def update(positions, ledger_path, as_of, factbook_for, price_for=None, casefile
         pos_cur = str(cur_given or DEFAULT_POSITION_CURRENCY).upper()
         pos_unit = pos.get('unit') or pos.get('share_unit')
         row.update(position_currency=pos_cur, position_currency_assumed=not cur_given)
-        pic = fundamental_picture(root, t)
+        pic = fundamental_picture(root, t, as_of)
         skipped_src, pic_cmp = [], None
         if pic is not None:
             row['picture_date'] = pic['date']

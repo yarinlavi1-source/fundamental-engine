@@ -156,6 +156,25 @@ class LeanModelReportingTest(unittest.TestCase):
         self.assertFalse(lean_model.run(dict(fixed, price=top * 1.02))['buy_test']['pass'])
         self.assertNotIn('rerun', lean_model.run(fixed)['buy_test'])
 
+    def test_a_pass_that_rests_on_rounding_is_marked(self):
+        fixed = dict(self.p, calibrated={'pe': 30.0}, years_to_horizon=5.0)
+        top = lean_model.run(fixed)['buy_test']
+        leg = top['legs'][top['binding_leg']]
+        k = 1 + (leg['threshold_pct'] - 0.03) / 100            # a price at which the binding leg returns 0.03 point less
+        price = top['max_price_passing'] * ((1 + leg['threshold_pct'] / 100) / k) ** 5.0
+        r = lean_model.run(dict(fixed, price=round(price, 4)))
+        bt = r['buy_test']
+        self.assertGreater(bt['price'], bt['max_price_passing'])
+        self.assertEqual(bt['legs'][top['binding_leg']]['return_pct'], leg['threshold_pct'])    # rounded onto the line
+        self.assertTrue(bt['pass'] and bt['on_the_line'])
+        self.assertTrue(any('rests on rounding' in w for w in r['warnings']))
+        self.assertNotIn('on_the_line', lean_model.run(dict(fixed, price=top['max_price_passing'] * 0.99))['buy_test'])
+        self.assertNotIn('on_the_line', lean_model.run(dict(fixed, price=top['max_price_passing'] * 1.02))['buy_test'])
+
+    def test_two_year_return_needs_at_least_a_quarter(self):
+        self.assertIn('return_pct', self.at_price(100.0, years_to_horizon=3.5)['ranges']['two_year'])
+        self.assertNotIn('return_pct', self.at_price(100.0, years_to_horizon=3.001)['ranges']['two_year'])
+
     def test_buy_test_rerun_price_holds_the_multiple_of_its_own_price(self):
         # the bull and bear legs made easy, so the calibrated leg decides
         p = dict(self.p, scenarios=dict(self.p['scenarios'], base=dict(self.base, pe=40.0),

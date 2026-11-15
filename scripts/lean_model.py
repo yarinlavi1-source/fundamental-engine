@@ -33,6 +33,7 @@ Reporting keys (15.11.2026; they read the model above and change none of its num
   margin-of-safety return = buy_return, the index = rf + erp, hold floor, sell line), so two hurdles cannot be mixed.
 - buy_test: the owner's rule as numbers (base >= 12% a year in both lenses, bull >= 17%, bear >= -10%), each leg with
   its return, threshold, pass and highest passing price; max_price_passing is the lowest of the four, with the leg named.
+  The legs compare returns rounded to 0.1 point (as the bands do); on_the_line marks a pass at a price above that price.
   buy_test.rerun: the calibrated leg holds today's multiple, so at a lower price a rerun holds a lower one; rerun gives
   the price a rerun confirms (absent when calibrated.pe is set).
 - ranges: bear/base/bull value today, at the 2-year and at the 5-year year-end. The 1-2 year number is the noisiest.
@@ -265,6 +266,8 @@ def buy_test(p, out, cal, base, fund, bands=None):
         res['binding_leg'] = min(priced, key=priced.get)
         res['max_price_passing'] = priced[res['binding_leg']]
         res['max_price_vs_price_pct'] = round((res['max_price_passing'] / p['price'] - 1) * 100, 1)
+        if res['pass'] and p['price'] > res['max_price_passing']:
+            res['on_the_line'] = True   # the legs compare returns rounded to 0.1 point, the price is the exact one
     if not wiped and legs['base_calibrated']['max_price'] is not None and 'pe' not in (p.get('calibrated') or {}):
         # the calibrated leg holds today's multiple; at another price a rerun holds that price's multiple
         rp = _repriced(p, base, b['buy'])
@@ -291,7 +294,7 @@ def ranges(p, out, cal):
         r.update(vals)
         if t == 5:
             r['return_pct'] = {k: (out[k] if k in out else cal)['annual_return_pct'] for k in vals}
-        elif years > 0:
+        elif years >= 0.25:   # under a quarter a yearly rate says nothing
             r['return_pct'] = {k: round(((v / price) ** (1 / years) - 1) * 100, 1) for k, v in vals.items()}
         return r
 
@@ -456,6 +459,9 @@ def collect_warnings(p, res):
         elif f.get('equity_wiped_year_ends'):
             w.append(f'{k}: equity wiped at the year-ends {f["equity_wiped_year_ends"]}')
         w += [f'{k} funding: {x}' for x in f['reasons']]
+    if res['buy_test'].get('on_the_line'):
+        w.append(f'buy test: the pass rests on rounding (the price is above the highest passing price '
+                 f'{res["buy_test"]["max_price_passing"]:,.2f}, within 0.05 point of return): read it as on the line')
     rr = res['buy_test'].get('rerun')
     if rr and rr['lower_than_stated']:
         w.append(f'buy test: at the stated highest passing price {res["buy_test"]["max_price_passing"]:,.2f} a rerun would hold a '

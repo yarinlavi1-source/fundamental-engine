@@ -152,6 +152,30 @@ class ForecastTrackerTests(unittest.TestCase):
         self.assertAlmostEqual(after['in_progress']['revenue_growth']['ytd_actual'], 9700 / 7300 - 1)
         self.assertAlmostEqual(after['in_progress']['revenue_growth']['model_full_year'], 13352.3 / 10000 - 1, places=3)
 
+    def test_a_year_that_may_be_in_the_valuation_is_not_scored_beside_a_later_report(self):
+        p = dict(self.p, as_of='2027-02-10', days_to_base_year_end=-41)             # valued after the year-end results
+        res = lean_model.run(p)
+        r = FT.score('SYN', p, res, payload(), '2027-06-01')                        # annual report 16.2, first quarter 5.5
+        self.assertEqual([x['may_be_in_valuation'] for x in r['reported']], [True, False])
+        self.assertFalse(r['in_sample_suspected'])
+        self.assertIsNone(r['completed'])                                           # the 2026 year is not scored
+        self.assertEqual(r['in_progress']['fiscal_year'], 2027)
+        alone = FT.score('SYN', p, res, payload(), '2027-03-01')                    # only the annual report so far
+        self.assertTrue(alone['in_sample_suspected'])
+        self.assertEqual(alone['completed']['fiscal_year'], 2026)                   # shown, and kept out of the summary
+        self.assertEqual(FT.summarize([alone])['scored_rows'], 0)
+
+    def test_a_filing_after_the_scoring_date_is_not_read(self):
+        self.assertEqual(self.score('2027-02-10')['status'], 'no_report_since')     # the year ended, filed 16.2
+        self.assertEqual(self.score('2027-02-16')['status'], 'scored')
+
+    def test_a_period_off_the_models_fiscal_calendar_is_named(self):
+        p = dict(self.p, days_to_base_year_end=148)                                 # a model year ending 31.3.2027
+        r = FT.score('SYN', p, lean_model.run(p), payload(), '2027-03-01')
+        self.assertEqual(r['status'], 'no_report_since')
+        self.assertTrue(any('fiscal calendar' in n for n in r['notes']))
+        self.assertFalse(any('fiscal calendar' in n for n in self.score('2027-09-01')['notes']))
+
     def test_price_against_the_value_path(self):
         v0 = self.base['value_today']
         same_day = self.score('2026-11-04', price={'value': 182.95, 'date': '2026-11-04'})['price']

@@ -530,13 +530,45 @@ price_only},"alerts","confirmations","price","not_checked"}`; `monitor.freeze(le
 `ledger.Ledger(path, clock=None, max_recording_lag_days=7)`: append-only, hash-chained; refuses made_at more than the lag
 before the system recording time; late rows are excluded from coverage, returns and learning.
 `holdings_watch.update(positions, ledger_path, as_of, factbook_for, price_for=None, casefile_for=None, root=None) ->
-{"as_of","rows": [{"ticker","weight","status": new_holding|data_unavailable|no_new_report|light_update|full_rerun_needed,
-"view": {"price","base_value_today","discount_to_base","expected_return": {"value","kind": implied_irr|proxy}},
+{"holdings_update_version","as_of","positions_as_of","rows": [{"ticker","weight","status": new_holding|data_unavailable|
+no_new_report|light_update|full_rerun_needed|index_fund|valuation_only,"position_currency","position_currency_assumed",
+"picture_date","view": {"price","base_value_today","discount_to_base","expected_return": {"value","kind": implied_irr|proxy}},
+"value_comparison": {"source": fundamental_picture|ledger_thesis|null,"date","path","base_value_today","base_basis",
+"base_is_weighted","bear_value_today","bull_value_today","discount_to_base","outside_band","last_year","buy_test_price",
+"margin_of_safety_price","verdict_he","expected_return","price_at_valuation","skipped_sources": [{"code": currency|unit|
+price_scale|no_base_value,"reason","reason_he","source","date"}]},"newer_saved_run": {"date","path"},
 "detail": {"changes","falsifiers_tripped","confirmations","alerts","to_check"},"value_signal","conclusion","start_from",
-"line_he"}],"removed","skipped_non_stock","counts","full_rerun"}`: the latest frozen thesis per ticker (union of the ledgers by
-thesis_id) checked with `monitor.check` against a fresh FactBook; full_rerun_needed on a high-severity alert or a tripped
-assumption falsifier. `factbook_for(ticker, as_of, thesis)` is injected (CLI: `sec_factbook_for`, SEC companyfacts, the saved
-copy unless `--refresh`); `holdings_watch.render_he(res)` is the Hebrew table. No revaluation, no orders.
+"line_he"}],"removed","skipped_non_stock","index_funds","counts","full_rerun","meaning"}`: the latest frozen thesis per ticker
+(union of the ledgers by thesis_id) checked with `monitor.check` against a fresh FactBook; full_rerun_needed on a
+high-severity alert or a tripped assumption falsifier. `factbook_for(ticker, as_of, thesis)` is injected (CLI:
+`sec_factbook_for`, SEC companyfacts, the saved copy unless `--refresh`); `holdings_watch.render_he(res)` is the Hebrew table
+(a value column with its source and date, and a detail list of the saved pictures used). No revaluation, no orders.
+Rows added 15.11.2026: `index_fund` (a fund is listed and never valued: an explicit ETF / FUND / INDEX type on the position
+row, or the named set `INDEX_FUNDS` for an untyped or stock-typed row; never by name pattern) and `valuation_only` (no frozen
+thesis but a saved fundamental picture: its values are shown, no filing check).
+`holdings_watch.fundamental_picture(root, ticker)` reads the newest `research/technical/<T>/<date>/fundamental.json` (the
+folder name is its date) and uses only the standard keys: `price`, `currency`, `unit` / `share_unit`, `share_basis`,
+`values.today.{bear,base,bull}` (else `values.weighted_base_today`, marked weighted), the latest `values.end_<YYYY>` (read as
+31 December of that year: a fiscal year that ends in another month must not use this key), `buy_test_price`,
+`margin_of_safety_price`, `verdict_he`, `annual_return_pct.base`. Every key is optional; a picture without a base value in
+these keys is skipped with the reason `no_base_value`. `value_comparison` takes the picture when it is newer than the ledger
+thesis, else the thesis; a value in another currency or share unit, or a position price beyond `PRICE_SCALE_LIMIT` (1.8x) of
+the source's own price, is not compared and the reason is printed instead. The expected return of a picture row is a proxy:
+(last year-end base value / price)^(1/years) - 1, distributions excluded. The filing check still runs on the ledger thesis.
+`newer_saved_run` names a dated valuation folder later than the value shown that this table does not read.
+`forecast_tracker` (pure logic, no network or file access; `scripts/forecast_tracker.py` reads
+`research/companies/<T>/<date>/lean_params*.json`, runs `scripts/lean_model.py`, fetches SEC companyfacts, results-release
+dates and daily closes, and writes `research/FORECAST_TRACKER_he.md` and `research/forecast_tracker.json`):
+`forecast_tracker.score(ticker, params, result, payload, today, price=None, release_dates=None, params_path=None) ->
+{"ticker","valuation_date","params_path","status": scored|no_report_since|custom_model|not_scorable,"reported","completed",
+"in_progress": {"fiscal_year","period","end","revenue_growth","margin","note"},"price","read": on_track|ahead|behind|mixed|
+no_report|custom|not_scorable,"in_sample_suspected","notes"}`: the base scenario against what was reported after the
+valuation's as_of (a completed fiscal year: revenue, operating margin, operating EPS; the year in progress: year-to-date
+growth and margin against the full-year path, labelled rough; price: the latest close against the base value path).
+`forecast_tracker.summarize(rows)` -> median error per item with its count, `too few to conclude` under `MIN_ROWS` (8) scored
+rows; `forecast_tracker.build(rows, custom, as_of, sources=None) -> {"forecast_tracker_version","as_of","rows","custom_model",
+"summary","sources","thresholds","meaning"}`; `forecast_tracker.render_he(doc)` is the Hebrew page. Measurement only: no model
+or rule is changed from it; a params file that is not in the lean format is a custom model, listed and scored by hand.
 `research_store.save(run, root='.', ledger_path=None)` copies a finished run's essentials (inputs, evidence pack, position
 parts, reviews, table_he/scenarios_he, identity.json, understand/business.json, the four gather fragments, the casefile summary
 with assumption ids and values, and `casefile_core.json`: `research_store.casefile_core(cf)`, the extract
