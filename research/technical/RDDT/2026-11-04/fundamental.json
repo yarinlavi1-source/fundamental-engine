@@ -1,0 +1,134 @@
+{
+ "ticker": "RDDT",
+ "as_of": "2026-11-04",
+ "price": 103.03,
+ "price_time_utc": "2026-11-04 (time not recorded in the saved params)",
+ "currency": "USD",
+ "source": {
+  "copy_of": "the saved valuation of 2026-11-04 (runs/tickers/RDDT_2026-11-04/deep/params.json, private run folder)",
+  "fresh_pull": false,
+  "note": "Copy of the valuation of 2026-11-04 at the price of that day. No fresh pull of price, filings or news was made for this file. Values are the saved model's; the price ladder and the buy test were computed from the same saved params with the current scripts/lean_model.py (reporting keys only, no value changed). Next report: early February 2027 (not confirmed)."
+ },
+ "verdict_he": "עוברת את מבחן הקנייה במחיר של 4.11 (103$): בסיסי 20.2% בשנה, עדשה שנייה 19.4%; הימור קטן בלבד, כי הכול תלוי במספר המשתמשים היומי",
+ "buy_test_price": 143.3,
+ "margin_of_safety_price": 141.64,
+ "price_ladder": {
+  "meaning": "price on the valuation date at which the base return to the end of 2031 equals each return; one return per rung",
+  "years_to_horizon": 5.16,
+  "rungs": {
+   "margin_of_safety": {
+    "return_pct": 13.0,
+    "ours": 141.64,
+    "calibrated": 136.87
+   },
+   "buy_test": {
+    "return_pct": 12.0,
+    "ours": 148.29,
+    "calibrated": 143.3
+   },
+   "index": {
+    "return_pct": 9.14,
+    "ours": 169.47,
+    "calibrated": 163.76
+   },
+   "hold_floor": {
+    "return_pct": 6.0,
+    "ours": 197.01,
+    "calibrated": 190.38
+   },
+   "sell_line": {
+    "return_pct": 3.0,
+    "ours": 228.47,
+    "calibrated": 220.78
+   }
+  }
+ },
+ "buy_test": {
+  "rule": "base >= 12% a year in both lenses, bull >= 17%, bear >= -10%",
+  "pass_at_price": true,
+  "binding_leg": "base_calibrated",
+  "max_price_by_leg": {
+   "base_ours": 148.29,
+   "base_calibrated": 143.3,
+   "bull": 196.71,
+   "bear": 157.02
+  },
+  "rerun_max_price": 148.29
+ },
+ "values": {
+  "today": {
+   "bear": 56.92,
+   "base": 154.56,
+   "bull": 252.23
+  },
+  "end_2027": {
+   "bear": 64.06,
+   "base": 176.42,
+   "bull": 288.83
+  },
+  "end_2028": {
+   "bear": 70.35,
+   "base": 196.76,
+   "bull": 323.27
+  },
+  "end_2031": {
+   "bear": 91.17,
+   "base": 266.12,
+   "bull": 442.25
+  },
+  "weighted_today_35_45_20": 139.92,
+  "calibrated_today": 149.64,
+  "calibrated_end_2031": 257.16
+ },
+ "scenarios": {
+  "bear": {
+   "prob": 0.35,
+   "he": "התנועה מגוגל נחלשת והמשתמשים המחוברים יורדים: צמיחה 5% ב-2027 ו-‎-8%‎ ב-2028, שיעור רווח תפעולי 21%-26%, מכפיל 12"
+  },
+  "base": {
+   "prob": 0.45,
+   "he": "צמיחה 22% ב-2027 שדועכת ל-8%, שיעור רווח תפעולי עולה מ-30% ל-36%, מכפיל 22"
+  },
+  "bull": {
+   "prob": 0.2,
+   "he": "צמיחה 32% ב-2027 שדועכת ל-10%, שיעור רווח תפעולי עולה ל-42%, מכפיל 26"
+  },
+  "label": "subjective"
+ },
+ "annual_return_pct": {
+  "to": "סוף 2031",
+  "bear": -2.3,
+  "base": 20.2,
+  "bull": 32.6,
+  "weighted": 17.8,
+  "calibrated": 19.4,
+  "index": 9.1
+ },
+ "conditions": {
+  "add": [
+   "המחיר מתחת לכ-143$: התרחיש הבסיסי נותן 12% בשנה ומעלה בשתי העדשות",
+   "משתמשים יומיים (DAUq) 115 מיליון ומעלה, והמשתמשים המחוברים לא יורדים מ-53.5 מיליון"
+  ],
+  "proposed_trim": [
+   "המחיר מעל כ-197$: התשואה הבסיסית יורדת מתחת ל-6% בשנה בשתי העדשות"
+  ],
+  "proposed_exit": [
+   "משתמשים יומיים (DAUq) מתחת לכ-115 מיליון, או משתמשים מחוברים מתחת ל-53.5 מיליון",
+   "צמיחת ההכנסה למשתמש בארה\"ב מתחת לכ-30% בזמן שמספר המשתמשים בארה\"ב ממשיך לרדת",
+   "המחיר מעל כ-228$: התשואה הבסיסית יורדת מתחת ל-3% בשנה בשתי העדשות"
+  ]
+ },
+ "next_report": {
+  "date": "early February 2027",
+  "confirmed": false,
+  "check": "משתמשים יומיים (DAUq) ומשתמשים מחוברים, ההכנסה למשתמש בארה\"ב, התנועה מגוגל"
+ },
+ "thesis_link": null,
+ "thesis_note": "no thesis_he.md yet for RDDT; the saved valuation is the lean model of 2026-11-04",
+ "notes_he": [
+  "העתק של הערכת השווי מ-4.11.2026 במחיר של אותו יום; לא נעשתה משיכה חדשה של מחיר, דוחות או חדשות. הדוח הבא: תחילת פברואר 2027 (לא מאושר)",
+  "מה שמזיז את השווי הכי הרבה: צמיחת ההכנסות: נקודה אחת בכל שנה משנה את השווי בכ-5%-6%",
+  "המספר לשנה-שנתיים הוא הכי רועש"
+ ],
+ "model_warnings": []
+}

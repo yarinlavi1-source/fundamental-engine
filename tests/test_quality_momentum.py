@@ -37,9 +37,16 @@ def ytd_facts(vals):
     return out
 
 
-def series(rev, op, cfo, capex, shares=(100, 100), equity=(1000, 1100), ni=None):
+def year_facts(by_year):
+    """Full-year revenue facts for earlier fiscal years: {2022: 200, ...}."""
+    return [{'start': f'{y}-01-01', 'end': f'{y}-12-31', 'val': v} for y, v in sorted(by_year.items())]
+
+
+def series(rev, op, cfo, capex, shares=(100, 100), equity=(1000, 1100), ni=None, history=None):
+    """history: full-year revenue before 2024 (default 200 and 260: with 320 and 400 after them, 26% a year, no down year)."""
+    history = {2022: 200, 2023: 260} if history is None else history
     return {'taxonomy': 'us-gaap', 'currency': 'USD', 'forms': {'10-Q': '2026-10-30', '10-K': '2026-02-20'},
-            'durations': {'revenue': income_facts(rev), 'operating_income': income_facts(op), 'cfo': ytd_facts(cfo),
+            'durations': {'revenue': year_facts(history) + income_facts(rev), 'operating_income': income_facts(op), 'cfo': ytd_facts(cfo),
                           'capex': ytd_facts(capex), 'net_income': income_facts(ni or op),
                           'diluted_shares': [{'start': '2025-07-01', 'end': '2025-09-30', 'val': shares[0]},
                                              {'start': '2026-07-01', 'end': '2026-09-30', 'val': shares[1]}]},
@@ -54,13 +61,17 @@ CAPEX = [1] * 8 + [5, 5, 5]
 
 def metrics(**kw):
     m = {'basis': 'quarterly', 'rev_growth_ttm': 0.20, 'rev_growth_q': 0.20, 'operating_income': 5., 'margin_change_pts': 0.5,
-         'fcf': 3., 'share_change': 0.01}
+         'fcf': 3., 'share_change': 0.01, 'rev_cagr_3y': 0.20, 'rev_min_year_growth': 0.05}
     m.update(kw)
     return m
 
 
 def passes(gates, name):
     return next(g['pass'] for g in gates if g['gate'] == name)
+
+
+def gate(gates, name):
+    return next(g for g in gates if g['gate'] == name)
 
 
 class Series(unittest.TestCase):
@@ -210,6 +221,30 @@ class Series(unittest.TestCase):
         self.assertTrue(m['stale'])
         self.assertTrue(any('five months' in g for g in m['gaps']))
 
+    def test_durability_reads_four_completed_fiscal_years(self):
+        d = qm.durability(year_facts({2022: 200, 2023: 260}) + income_facts(REV))
+        self.assertEqual(d['fy_ends'], ['2022-12-31', '2023-12-31', '2024-12-31', '2025-12-31'])
+        self.assertEqual(d['fy_revenue'], [200, 260, 320, 400])
+        self.assertAlmostEqual(d['rev_cagr_3y'], 2 ** (1 / 3) - 1)
+        self.assertAlmostEqual(d['rev_min_year_growth'], 320 / 260 - 1)
+        self.assertIsNone(qm.durability(year_facts({2023: 260}) + income_facts(REV)))             # three years only
+        self.assertIsNone(qm.durability(year_facts({2021: 150, 2023: 260}) + income_facts(REV)))  # a year is missing
+        # the concept in use is short: the merge of every revenue concept is read and named
+        d = qm.durability(income_facts(REV), year_facts({2022: 200, 2023: 260}) + income_facts(REV))
+        self.assertEqual(d['durability_basis'], 'merged_revenue_concepts')
+
+    def test_fiscal_year_filed_after_the_as_of_date_is_not_a_completed_year(self):
+        s = series(REV, OP, CFO, CAPEX)
+        for f in s['durations']['revenue']:
+            f['filed'] = '2027-02-20' if f['end'] == '2025-12-31' and f['start'] == '2025-01-01' else '2026-10-30'
+        self.assertIsNone(qm.fundamentals(s, AS_OF).get('rev_cagr_3y'))        # 2022-2024 only: three years
+
+    def test_margin_jump_is_flagged_not_gated(self):
+        m = qm.fundamentals(series(REV, [-8, -8, -8, -8, -10, -10, -10, -10, 20, 22, 26], CFO, CAPEX), AS_OF)
+        self.assertTrue(m['margin_jump'])
+        self.assertTrue(passes(qm.quality_gates(m), 'margin_change_pts'))
+        self.assertFalse(qm.fundamentals(series(REV, OP, CFO, CAPEX), AS_OF)['margin_jump'])
+
     def test_annual_only_filer(self):
         s = {'taxonomy': 'ifrs-full', 'currency': 'TWD', 'forms': {'20-F': '2026-04-15'}, 'instants': {},
              'durations': {'revenue': [{'start': '2024-01-01', 'end': '2024-12-31', 'val': 100}, {'start': '2025-01-01', 'end': '2025-12-31', 'val': 130}],
@@ -218,12 +253,15 @@ class Series(unittest.TestCase):
         self.assertEqual((r['route'], r['basis']), ('annual_only', 'annual'))
         self.assertAlmostEqual(r['rev_growth_ttm'], 0.30)
         self.assertNotIn('rev_growth_q', [g['gate'] for g in r['quality']])
+        self.assertTrue(r['stale'])                                  # a year that ended 10 months ago is flagged as old
+        self.assertIsNone(passes(r['quality'], 'durability'))       # two years of history: the three-year gate is missing
 
 
 class Gates(unittest.TestCase):
     def test_all_pass(self):
         self.assertTrue(all(g['pass'] for g in qm.quality_gates(metrics())))
-        self.assertEqual(len(qm.quality_gates(metrics())), 6)
+        self.assertEqual(len(qm.quality_gates(metrics())), 7)
+        self.assertEqual(len(qm.quality_gates(metrics(basis='annual'))), 6)
 
     def test_boundaries(self):
         for name, key, ok, bad in (('rev_growth_ttm', 'rev_growth_ttm', 0.15, 0.1499), ('rev_growth_q', 'rev_growth_q', 0.15, 0.1499),
@@ -231,6 +269,22 @@ class Gates(unittest.TestCase):
                                    ('fcf', 'fcf', 0.01, 0.), ('share_change', 'share_change', 0.03, 0.0301)):
             self.assertTrue(passes(qm.quality_gates(metrics(**{key: ok})), name), name)
             self.assertFalse(passes(qm.quality_gates(metrics(**{key: bad})), name), name)
+
+    def test_durability_gate_needs_both_no_down_year_and_ten_percent_a_year(self):
+        for cagr, worst, ok in ((0.10, 0.0, True), (0.0999, 0.05, False), (0.30, -0.001, False), (0.30, 0.0, True)):
+            g = qm.quality_gates(metrics(rev_cagr_3y=cagr, rev_min_year_growth=worst))
+            self.assertEqual(passes(g, 'durability'), ok, (cagr, worst))
+        g = qm.quality_gates(metrics(rev_cagr_3y=None, rev_min_year_growth=None))
+        self.assertIsNone(passes(g, 'durability'))
+        self.assertEqual(qm.classify(g, good_trend()), 'incomplete')            # a short history is not a pass
+
+    def test_one_strong_year_after_a_fall_fails_durability(self):
+        # a commodity upswing: the latest 12 months and the latest quarter grow fast, the fiscal years before fell
+        r = qm.evaluate({'symbol': 'O', 'sector': 'Technology'}, series(REV, OP, CFO, CAPEX, history={2022: 500, 2023: 380}), '7372', AS_OF)
+        self.assertTrue(passes(r['quality'], 'rev_growth_ttm') and passes(r['quality'], 'rev_growth_q'))
+        self.assertFalse(passes(r['quality'], 'durability'))
+        self.assertAlmostEqual(r['rev_min_year_growth'], 380 / 500 - 1)
+        self.assertEqual(gate(r['quality'], 'durability')['worst_year'], r['rev_min_year_growth'])
 
     def test_boundary_survives_float_arithmetic(self):
         self.assertTrue(passes(qm.quality_gates(metrics(rev_growth_ttm=115 / 100 - 1)), 'rev_growth_ttm'))
@@ -348,6 +402,18 @@ class Routing(unittest.TestCase):
         self.assertEqual(r['route'], 'standard')
         self.assertTrue(all(g['pass'] for g in r['quality']))
 
+    def test_commodity_names_are_routed_to_their_own_table(self):
+        for sic in ('1311', '2911', '1040', '3312', '2873', '4412', '4922', 1381):
+            self.assertTrue(qm.is_commodity(sic, 'X Corp'), sic)
+        for sic in ('7372', '3674', '3357', '5500', None, 'n/a'):
+            self.assertFalse(qm.is_commodity(sic, 'X Corp'), sic)
+        self.assertTrue(qm.is_commodity('4400', 'International Seaways Inc. Common Stock'))
+        self.assertFalse(qm.is_commodity('4400', 'Royal Caribbean Cruises Ltd. Common Stock'))
+        r = qm.evaluate({'symbol': 'O', 'name': 'Oil Co', 'sector': 'Energy'}, series(REV, OP, CFO, CAPEX), '1311', AS_OF)
+        self.assertEqual(r['route'], 'commodity')                   # every gate passes, and it is still not a standard row
+        self.assertTrue(all(g['pass'] for g in r['quality']))
+        self.assertEqual(r['commodity_group'], 'crude petroleum and natural gas')
+
     def test_universe(self):
         rows = [{'symbol': 'AAA', 'name': 'Alpha Inc. Class A Common Stock', 'marketCap': '9000000000', 'lastsale': '$10', 'volume': '100'},
                 {'symbol': 'AAB', 'name': 'Alpha Inc. Class B Common Stock', 'marketCap': '9000000000', 'lastsale': '$10', 'volume': '900'},
@@ -396,18 +462,23 @@ class Report(unittest.TestCase):
         r['trend'] = qm.trend_gates(r['trend_measures'], spy)
         r['rel_strength'] = r['trend_measures']['ret_12_1'] - spy['ret_12_1']
         r.update(qm.price_columns(r, r['market_cap']), status='pass', failed=[], missing=[])
-        miss = dict(r, symbol='M', status='near_miss', failed=[dict(r['quality'][5], value=0.05)])
+        miss = dict(r, symbol='M', status='near_miss', failed=[dict(gate(r['quality'], 'share_change'), value=0.05)])
+        slow = dict(r, symbol='D', status='near_miss', failed=[dict(gate(r['quality'], 'durability'), value=0.04, worst_year=-0.02)])
+        oil = dict(r, symbol='O', route='commodity', sic='1311', status='pass')
         bank = dict(r, symbol='B', status='near_miss', failed=[qm.financial_gates({'rev_growth_ttm': 0.1, 'roe': 0.13, 'bvps_growth': 0.1})[1]])
-        gap = dict(r, symbol='U', status='incomplete', failed=[], missing=[dict(r['quality'][4], value=None, **{'pass': None})])
+        gap = dict(r, symbol='U', status='incomplete', failed=[], missing=[dict(gate(r['quality'], 'fcf'), value=None, **{'pass': None})])
         res = {'as_of': AS_OF, 'min_cap': 5e9, 'spy': spy, 'counts': {'companies': 2, 'passers': 1, 'near_misses': 1},
-               'counts_he': [['x', 1]], 'gaps_he': ['g'], 'passers': qm.rank([r]), 'near_misses': [miss], 'financials': [],
+               'counts_he': [['x', 1]], 'gaps_he': ['g'], 'passers': qm.rank([r]), 'near_misses': [miss, slow], 'commodity': [oil], 'financials': [],
                'financial_near_misses': [bank], 'unread': [gap],
                'annual_only': [], 'thesis_book': [dict(r), {'symbol': 'Z', 'status': 'not_found', 'note': 'n'}]}
         text = qm.render_he(res)
         for needle in ('לא הערכת שווי ולא המלצת קנייה', 'לא נבדק על העבר', '| S |', 'מספר המניות לא גדל מעל 3%', '+5.0%',
                        'B (תשואה על ההון 15% ומעלה: +13.0%)', '| U |', 'תזרים מזומנים חופשי חיובי', '2026-09-30',
-                       'ברבעון האחרון מול אותו רבעון לפני שנה (15% ומעלה)'):
+                       'ברבעון האחרון מול אותו רבעון לפני שנה (15% ומעלה)', 'לא ירדו באף אחת משלוש שנות הכספים',
+                       '+4.0% בשנה, השנה החלשה -2.0%', 'חברות סחורות מחזוריות: הצמיחה הולכת אחרי המחירים', '| O |', 'עברה את התנאים'):
             self.assertIn(needle, text)
+        passers = text.split('## כמעט עברו')[0]
+        self.assertNotIn('| O |', passers)
 
 
 if __name__ == '__main__':

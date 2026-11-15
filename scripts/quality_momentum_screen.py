@@ -257,6 +257,8 @@ def main(argv=None):
     unread = sorted([r for r in inu if r['status'] == 'incomplete' and r['basis'] and not r['failed'] and r.get('trend')
                      and not r.get('behind_latest_filing')],
                     key=lambda r: -r['market_cap'])
+    commodity = sorted([r for r in inu if r['route'] == 'commodity' and r['status'] in ('pass', 'near_miss')],
+                       key=lambda r: (r['status'] != 'pass', -r['market_cap']))
     ann = sorted([r for r in inu if r['route'] == 'annual_only' and r['status'] in ('pass', 'near_miss')],
                  key=lambda r: (r['status'] != 'pass', -r['market_cap']))
     by_sym = {r['symbol']: r for r in rows}
@@ -273,14 +275,16 @@ def main(argv=None):
             gate_fails[g['gate']] = gate_fails.get(g['gate'], 0) + 1
     counts.update({
         'no_cik': len(no_cik), 'facts_missing': sum(1 for r in inu if not r['basis']),
-        'route_standard': len(std), 'route_financial': sum(1 for r in inu if r['route'] == 'financial'),
+        'route_standard': len(std), 'route_commodity': sum(1 for r in inu if r['route'] == 'commodity'),
+        'commodity_pass': sum(1 for r in commodity if r['status'] == 'pass'),
+        'commodity_near_miss': sum(1 for r in commodity if r['status'] == 'near_miss'), 'route_financial': sum(1 for r in inu if r['route'] == 'financial'),
         'route_annual_only': sum(1 for r in inu if r['route'] == 'annual_only'),
         'standard_quality_all_pass': sum(1 for r in std if not qm.failed(r['quality']) and not qm.missing(r['quality'])),
         'standard_quality_one_fail': sum(1 for r in std if len(qm.failed(r['quality'])) == 1 and not qm.missing(r['quality'])),
         'standard_incomplete': sum(1 for r in std if r['status'] == 'incomplete'),
         'trend_fetched': len(want), 'passers': len(passers), 'near_misses': len(near),
         'financial_pass': len(fins), 'financial_near_miss': len(fin_near), 'no_gate_failed_but_incomplete': len(unread),
-        'stale_quarter': sum(1 for r in inu if r.get('stale')), 'behind_latest_filing': sum(1 for r in inu if r.get('behind_latest_filing')),
+        'stale_period': sum(1 for r in inu if r.get('stale')), 'behind_latest_filing': sum(1 for r in inu if r.get('behind_latest_filing')),
         'annual_only_pass': sum(1 for r in ann if r['status'] == 'pass'),
         'annual_only_near_miss': sum(1 for r in ann if r['status'] == 'near_miss'),
         'standard_quality_gate_fails': gate_fails,
@@ -294,12 +298,15 @@ def main(argv=None):
         'method': {'gates': qm.GATES, 'rank_keys': list(qm.RANK_KEYS), 'rank': 'plain sum of percentile ranks among the passers, no weights',
                    'trend_prices': 'Yahoo daily adjusted closes', 'market_cap': 'Nasdaq listing feed snapshot',
                    'fundamentals': 'SEC XBRL companyfacts as reported (no adjustment for one-offs or acquisitions)',
+                   'durability': 'revenue did not fall in any of the last 3 completed fiscal years; 3-year growth rate >= 10% a year',
+                   'commodity_sic': {str(k): v for k, v in sorted(qm.COMMODITY_SIC.items())},
                    'coarse_pass': 'none: companyfacts were read for every company above the floor',
                    'not': 'not a valuation, not a buy signal, not backtested'},
         'spy': spy, 'fx': fx, 'counts': counts,
         'counts_he': [['מניות ברשימת Nasdaq', counts['listed']], ['שווי שוק מעל הסף', counts['cap_ok']],
                       ['מניות רגילות (בלי בכורה, אופציות, יחידות, קרנות)', counts['common']], ['עם מספר CIK ב-SEC', counts['with_cik']],
                       ['חברות (סוג מניה אחד לחברה)', counts['companies']], ['מסלול רגיל', counts['route_standard']],
+                      ['חברות סחורות (טבלה נפרדת)', counts['route_commodity']],
                       ['פיננסים', counts['route_financial']], ['זרות עם נתונים שנתיים בלבד', counts['route_annual_only']],
                       ['רגיל: עברו את כל תנאי האיכות', counts['standard_quality_all_pass']],
                       ['רגיל: נכשלו בתנאי איכות אחד', counts['standard_quality_one_fail']],
@@ -307,7 +314,7 @@ def main(argv=None):
                       ['כמעט עברו', counts['near_misses']], ['חסר נתון (לא נספרו כעוברות)', counts['standard_incomplete']]],
         'gaps': {'no_cik': no_cik, 'incomplete': incomplete, 'prices': price_gaps,
                  'revenue_mixed_tags': [r['symbol'] for r in inu if r.get('revenue_mixed_tags')],
-                 'stale_quarter': [{'symbol': r['symbol'], 'period_end': r.get('period_end'), 'status': r['status']} for r in inu if r.get('stale')],
+                 'stale_period': [{'symbol': r['symbol'], 'period_end': r.get('period_end'), 'status': r['status']} for r in inu if r.get('stale')],
                  'behind_latest_filing': [{'symbol': r['symbol'], 'period_end': r.get('period_end'), 'latest_filing': r.get('latest_filing')}
                                           for r in inu if r.get('behind_latest_filing')],
                  'stale_annual_filers': [{'symbol': r['symbol'], 'market_cap': r['market_cap'], 'gaps': r['gaps']} for r in stale]},
@@ -319,8 +326,8 @@ def main(argv=None):
                     'חברות שההכנסות שלהן מתויגות בדוחות תחת מושגים שונים בתקופות שונות (הצמיחה לא אמינה, לא נספרו כעוברות): '
                     + (', '.join(r['symbol'] for r in sorted(inu, key=lambda r: -r['market_cap']) if r.get('revenue_mixed_tags') and
                                  len(qm.failed(r['quality'])) <= 1) or 'אין'),
-                    *([f"{sum(1 for r in inu if r.get('stale'))} חברות שהרבעון האחרון שלהן בנתונים הסתיים לפני יותר מחמישה חודשים (מסומנות; מהן ברשימות: "
-                       + (', '.join(r['symbol'] for r in passers + near if r.get('stale')) or 'אין') + ').'] if any(r.get('stale') for r in inu) else []),
+                    *([f"{sum(1 for r in inu if r.get('stale'))} חברות שהתקופה האחרונה שלהן בנתונים הסתיימה לפני יותר מחמישה חודשים (מסומנות \"ישן\"; מהן ברשימות: "
+                       + (', '.join(r['symbol'] for r in passers + near + commodity + fins + ann if r.get('stale')) or 'אין') + ').'] if any(r.get('stale') for r in inu) else []),
                     *([f"{sum(1 for r in inu if r.get('behind_latest_filing'))} חברות שהגישו דוח חדש יותר מהתקופה שנמצאה בנתוני ה-SEC "
                        '(הדוח האחרון חסר שם או בלי שורת הכנסות): לא נבדקו ולא נספרו, לא כעוברות ולא כנכשלות: '
                        + ', '.join(r['symbol'] for r in sorted(inu, key=lambda r: -r['market_cap']) if r.get('behind_latest_filing'))]
@@ -330,7 +337,7 @@ def main(argv=None):
                     'הוצאות הון: שורת הסך בדוח התזרים, או סכום שורות הרכיבים (בארות נפט, ציוד אחר) כשהוא גדול יותר.',
                     'תזרים חופשי = תזרים מפעילות פחות רכישת רכוש קבוע; פיתוח תוכנה מהוון ותגמול במניות לא נוכו.',
                     'צמיחה כוללת רכישות; לא נעשתה התאמה לצמיחה אורגנית.'],
-        'passers': passers, 'near_misses': near, 'financials': fins, 'financial_near_misses': fin_near, 'unread': unread,
+        'passers': passers, 'near_misses': near, 'commodity': commodity, 'financials': fins, 'financial_near_misses': fin_near, 'unread': unread,
         'annual_only': ann, 'thesis_book': book_rows,
         'rows': rows,
     }

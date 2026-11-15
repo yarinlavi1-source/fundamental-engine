@@ -1,0 +1,137 @@
+{
+ "ticker": "TSM",
+ "as_of": "2026-11-05",
+ "price": 362.13,
+ "price_time_utc": "2026-11-05 (time not recorded in the saved params)",
+ "currency": "USD",
+ "unit": "ADR",
+ "unit_note": "1 ADR = 5 common shares; every price and value here is in USD per ADR",
+ "source": {
+  "copy_of": "the saved valuation of 2026-11-05 (runs/tickers/TSM_2026-11-05/deep/verify_v0.json, private run folder)",
+  "fresh_pull": false,
+  "note": "Copy of the valuation of 2026-11-05 at the price of that day. No fresh pull of price, filings or news was made for this file. Values are the saved model's; the price ladder and the buy test were computed from the same saved params with the current scripts/lean_model.py (reporting keys only, no value changed). Next report: ~2027-01-15 (not confirmed)."
+ },
+ "verdict_he": "עוברת את מבחן הקנייה במחיר של 5.11 (362$ ל-ADR): בסיסי 13.3% בשנה, עדשה שנייה 15.0%; מבחן הקנייה עובר עד כ-385$. סיכון טייוואן לא במודל",
+ "buy_test_price": 384.66,
+ "margin_of_safety_price": null,
+ "margin_of_safety_note": "null: the saved params carry buy_return 10.45% (the company's own cost of equity), not the 13% margin-of-safety return; the price at that return is in price_ladder.rungs.cost_of_equity_10_45pct",
+ "price_ladder": {
+  "meaning": "price on the valuation date at which the base return to the end of 2031 equals each return; one return per rung",
+  "years_to_horizon": 5.15,
+  "rungs": {
+   "buy_test": {
+    "return_pct": 12.0,
+    "ours": 384.66,
+    "calibrated": 414.36
+   },
+   "cost_of_equity_10_45pct": {
+    "return_pct": 10.45,
+    "ours": 413.28,
+    "calibrated": 445.2
+   },
+   "index": {
+    "return_pct": 9.14,
+    "ours": 439.47,
+    "calibrated": 473.41
+   },
+   "hold_floor": {
+    "return_pct": 6.0,
+    "ours": 510.77,
+    "calibrated": 550.21
+   },
+   "sell_line": {
+    "return_pct": 3.0,
+    "ours": 592.15,
+    "calibrated": 637.89
+   }
+  }
+ },
+ "buy_test": {
+  "rule": "base >= 12% a year in both lenses, bull >= 17%, bear >= -10%",
+  "pass_at_price": true,
+  "binding_leg": "base_ours",
+  "max_price_by_leg": {
+   "base_ours": 384.66,
+   "base_calibrated": 414.36,
+   "bull": 478.82,
+   "bear": 559.24
+  },
+  "rerun_max_price": 384.66
+ },
+ "values": {
+  "today": {
+   "bear": 206.31,
+   "base": 427.63,
+   "bull": 661.21
+  },
+  "end_2027": {
+   "bear": 229.99,
+   "base": 478.18,
+   "bull": 740.1
+  },
+  "end_2028": {
+   "bear": 251.73,
+   "base": 525.58,
+   "bull": 814.63
+  },
+  "end_2031": {
+   "bear": 325.05,
+   "base": 689.52,
+   "bull": 1074.8
+  },
+  "weighted_today_25_50_25": 430.69,
+  "calibrated_today": 459.93,
+  "calibrated_end_2031": 742.77
+ },
+ "scenarios": {
+  "bear": {
+   "prob": 0.25,
+   "he": "מחזור יורד: צמיחה 12% ב-2027 ו-‎-12%‎ ב-2028, שיעור רווח תפעולי יורד ל-45%-47%, מכפיל 12"
+  },
+  "base": {
+   "prob": 0.5,
+   "he": "צמיחה 25% ב-2027 שדועכת ל-8%; שיעור רווח תפעולי יורד מ-56% ל-52% (דור N2 ומפעלים מחוץ לטייוואן); מכפיל 18"
+  },
+  "bull": {
+   "prob": 0.25,
+   "he": "צמיחה 32% ב-2027 שדועכת ל-10%, שיעור רווח תפעולי נשאר 58%, מכפיל 22"
+  },
+  "label": "subjective"
+ },
+ "annual_return_pct": {
+  "to": "סוף 2031",
+  "bear": -2.1,
+  "base": 13.3,
+  "bull": 23.5,
+  "weighted": 13.5,
+  "calibrated": 15.0,
+  "index": 9.1
+ },
+ "conditions": {
+  "add": [
+   "המחיר מתחת לכ-385$ ל-ADR: התרחיש הבסיסי נותן 12% בשנה ומעלה בשתי העדשות",
+   "תחזית הכנסות ל-2027 של כ-215 מיליארד $ ומעלה ותחזית רווח גולמי של 60% ומעלה"
+  ],
+  "proposed_trim": [
+   "המחיר מעל כ-550$ ל-ADR: התשואה הבסיסית יורדת מתחת ל-6% בשנה בשתי העדשות"
+  ],
+  "proposed_exit": [
+   "תחזית הכנסות ל-2027 מתחת לכ-215 מיליארד $ (מתחת לקצב של רבעון 4), או תחזית רווח גולמי מתחת ל-60%",
+   "סגר ימי או עימות צבאי סביב טייוואן: יציאה בלי קשר למחיר",
+   "המחיר מעל כ-638$ ל-ADR: התשואה הבסיסית יורדת מתחת ל-3% בשנה בשתי העדשות"
+  ]
+ },
+ "next_report": {
+  "date": "~2027-01-15",
+  "confirmed": false,
+  "check": "תחזית ההכנסות והרווח הגולמי ל-2027, ההשקעות, והביקוש לשבבי AI"
+ },
+ "thesis_link": null,
+ "thesis_note": "no thesis_he.md yet for TSM; the saved valuation is the lean model of 2026-11-05",
+ "notes_he": [
+  "העתק של הערכת השווי מ-5.11.2026 במחיר של אותו יום; לא נעשתה משיכה חדשה של מחיר, דוחות או חדשות. הדוח הבא: בסביבות 15.1.2027 (לא מאושר)",
+  "מה שמזיז את השווי הכי הרבה: צמיחת ההכנסות: נקודה אחת בכל שנה משנה את השווי בכ-6%",
+  "המספר לשנה-שנתיים הוא הכי רועש"
+ ],
+ "model_warnings": []
+}

@@ -51,7 +51,7 @@ CAPEX_PARTS = {'us-gaap': ['PaymentsToAcquireOilAndGasPropertyAndEquipment', 'Pa
                'ifrs-full': []}
 CAPEX_NET = {'us-gaap': ['PaymentsForProceedsFromProductiveAssets'], 'ifrs-full': []}
 PROXY_FORM = re.compile(r'14[AC]')              # proxy statements repeat a few facts, often in another scale
-STALE_DAYS = 153                                # a latest quarter older than about five months is flagged
+STALE_DAYS = 153                                # a latest period older than about five months is flagged
 INSTANT = ('equity',)
 SHARE_METRICS = ('diluted_shares',)
 ANNUAL_FORMS = ('20-F', '40-F', '20-F/A', '40-F/A')
@@ -429,9 +429,9 @@ def fundamentals(series, as_of):
         return out
     out['period_end'] = end
     out['period_filed'] = max((f.get('filed') or '' for f in rev if f['end'] == end), default='') or None
-    out['stale'] = out['basis'] == 'quarterly' and _days(end, as_of) > STALE_DAYS
+    out['stale'] = _days(end, as_of) > STALE_DAYS              # also a full year read in place of quarters
     if out['stale']:
-        gaps.append('latest quarter ended %s, more than five months before %s' % (end, as_of))
+        gaps.append('latest period ended %s, more than five months before %s' % (end, as_of))
 
     def pair(metric):
         """(latest 12 months, the 12 months before) for one flow metric."""
@@ -652,7 +652,7 @@ def evaluate(row, series, sic, as_of):
 # ---------------------------------------------------------------- Hebrew report
 
 GATE_HE = {'rev_growth_ttm': 'צמיחת הכנסות ב-12 חודשים', 'rev_growth_q': 'צמיחת הרבעון האחרון מול שנה קודם',
-           'operating_income': 'רווח תפעולי חיובי', 'margin_change_pts': 'שולי רווח תפעולי לא יורדים',
+           'durability': 'צמיחה עקבית בשלוש השנים האחרונות', 'operating_income': 'רווח תפעולי חיובי', 'margin_change_pts': 'שולי רווח תפעולי לא יורדים',
            'fcf': 'תזרים מזומנים חופשי חיובי', 'share_change': 'מספר המניות לא גדל מעל 3%',
            'rel_strength': 'תשואת 12 חודשים מעל ה-S&P 500', 'above_rising_200d': 'מחיר מעל ממוצע 200 יום עולה',
            'near_high': 'לא יותר מ-25% מתחת לשיא השנתי', 'roe': 'תשואה על ההון 15% ומעלה',
@@ -678,6 +678,8 @@ def gate_value_he(g):
         return 'אין נתון'
     if g['gate'] == 'margin_change_pts':
         return f'{v:+.1f} נק׳'
+    if g['gate'] == 'durability':
+        return f"{v * 100:+.1f}% בשנה, השנה החלשה {g.get('worst_year', 0) * 100:+.1f}%"
     if g['gate'] in PCT_GATES:
         return f'{v * 100:+.1f}%'
     return f'{v / 1e9:+.2f} מיליארד'
@@ -695,17 +697,23 @@ def _table(head, lines):
 def _std_line(r):
     t = r.get('trend_measures') or {}
     return [r['symbol'], r['name'][:28], r.get('sector') or '—', _cap(r['market_cap']), _pct(r.get('rev_growth_ttm')),
-            _pct(r.get('rev_growth_q')), _pct(r.get('op_margin')), '—' if r.get('margin_change_pts') is None else f"{r['margin_change_pts']:+.1f}",
+            _pct(r.get('rev_growth_q')), _pct(r.get('rev_cagr_3y')), _pct(r.get('op_margin')),
+            '—' if r.get('margin_change_pts') is None else f"{r['margin_change_pts']:+.1f}" + ('*' if r.get('margin_jump') else ''),
             _pct(r.get('fcf_margin')), _pct(r.get('share_change'), True), _pct(t.get('ret_12_1'), True), _pct(t.get('below_high'), True),
             _x(r.get('pe'), 0), _x(r.get('ps')), _pct(r.get('fcf_yield'))]
 
 
-STD_HEAD = ['סימול', 'חברה', 'ענף', 'שווי שוק', 'צמיחה 12ח׳', 'צמיחת רבעון', 'שולי תפעול', 'שינוי שוליים (נק׳)', 'שולי תזרים חופשי',
+def _period(r):
+    return (r.get('period_end') or '—') + (' (ישן)' if r.get('stale') else '')
+
+
+STD_HEAD = ['סימול', 'חברה', 'ענף', 'שווי שוק', 'צמיחה 12ח׳', 'צמיחת רבעון', 'צמיחה לשנה ב-3 שנים', 'שולי תפעול', 'שינוי שוליים (נק׳)', 'שולי תזרים חופשי',
             'שינוי מניות', 'תשואה 12-1', 'מרחק מהשיא', 'מכפיל רווח', 'מכפיל מכירות', 'תשואת תזרים']
 
 
 def render_he(res, top=40):
-    """screen_he.md: passers, near misses, financials, annual-only filers, thesis-book names, and what the screen is not."""
+    """screen_he.md: passers, near misses, commodity names, financials, annual-only filers, thesis-book names, and what the
+    screen is not."""
     c, spy = res['counts'], res.get('spy') or {}
     L = [f"# חיפוש מניות: איכות + מגמה ({res['as_of']})", '',
          f"נסרקו {c['companies']} חברות בשווי שוק מעל {res['min_cap'] / 1e9:.0f} מיליארד דולר. "
@@ -716,12 +724,15 @@ def render_he(res, top=40):
          '- הוא **לא הערכת שווי ולא המלצת קנייה**: חברה שעוברת אותו יכולה להיות יקרה מדי ולהיכשל במבחן הקנייה.',
          '- הוא **לא נבדק על העבר** (לא נעשה מבחן היסטורי), ולכן אין לו שיעור הצלחה מוכח.',
          '- הנתונים מדוחות ה-SEC כפי שדווחו (בלי התאמות לאירועים חד-פעמיים); חברה שרכשה חברה אחרת תיראה צומחת מהר יותר ממה שהיא באמת.',
-         '- הוא לא מבחין בין צמיחה שנובעת ממחיר סחורה (נפט, פלדה, ספנות) לבין צמיחה של העסק עצמו; את זה בודקים במיון שאחריו.', '',
+         '- חברות סחורות (נפט וזיקוק, מכרות, פלדה, דשנים, ספנות, צינורות גז) מוצגות בטבלה נפרדת ולא ברשימת העוברות: '
+         'ההכנסות שלהן עולות ויורדות עם מחיר הסחורה, ושנה טובה אחת אינה צמיחה של העסק. הסיווג לפי קוד הענף של ה-SEC, והוא גס.', '',
          '## התנאים', '',
          f"- איכות (מהדוחות האחרונים): ההכנסות גדלו {GATES['rev_growth_ttm'] * 100:.0f}% ומעלה ב-12 החודשים האחרונים וגם ברבעון האחרון מול "
          f"אותו רבעון לפני שנה ({GATES['rev_growth_q'] * 100:.0f}% ומעלה); רווח תפעולי חיובי; שולי הרווח התפעולי לא ירדו "
          f"(ירידה של עד {GATES['margin_drop_pts']:.0f} נקודת אחוז נחשבת יציבה); תזרים מזומנים חופשי חיובי; מספר המניות לא גדל ביותר מ-"
          f"{GATES['share_growth'] * 100:.0f}% בשנה.",
+         f"- צמיחה עקבית: ההכנסות לא ירדו באף אחת משלוש שנות הכספים האחרונות שהסתיימו, וגדלו בממוצע {GATES['rev_cagr_3y'] * 100:.0f}% "
+         'בשנה ומעלה לאורכן. שנה טובה אחת לא מספיקה.',
          f"- מגמה: תשואת 12 חודשים בלי החודש האחרון מעל זו של ה-S&P 500; מחיר מעל ממוצע 200 יום שעולה; לא יותר מ-"
          f"{GATES['max_below_high'] * 100:.0f}% מתחת לשיא של 52 שבועות.",
          '- חברה שנכשלת בתנאי אחד בלבד מופיעה ברשימת "כמעט עברו" עם הסיבה. חברה שחסר לה נתון לא נספרת כעוברת.', '',
@@ -729,30 +740,51 @@ def render_he(res, top=40):
          'הדירוג: סכום פשוט של ארבעה דירוגי אחוזון (צמיחה, שינוי שוליים, שולי תזרים חופשי, עוצמה מול המדד), בלי משקלות.', '']
     ps = res['passers']
     L += _table(['#'] + STD_HEAD + ['רבעון אחרון עד', 'ציון דירוג'],
-                [[i + 1] + _std_line(r) + [(r.get('period_end') or '—') + (' (ישן)' if r.get('stale') else ''), f"{r['rank_score']:.0f}"]
+                [[i + 1] + _std_line(r) + [_period(r), f"{r['rank_score']:.0f}"]
                  for i, r in enumerate(ps[:top])])
+    if any(r.get('margin_jump') for r in ps):
+        L += ['', '* קפיצה חריגה בשולי הרווח (יותר מ-10 נקודות, או מעבר מהפסד לרווח): לרוב הוצאה חד-פעמית בשנה הקודמת ולא שיפור בעסק. לבדוק: '
+              + ', '.join(r['symbol'] for r in ps if r.get('margin_jump'))]
     if any(r.get('stale') for r in ps):
-        L += ['', '"ישן": הרבעון האחרון בנתונים הסתיים לפני יותר מחמישה חודשים.']
+        L += ['', '"ישן": התקופה האחרונה בנתונים הסתיימה לפני יותר מחמישה חודשים.']
     if any(r.get('operating_income_basis') == 'pretax_income_proxy' for r in ps):
         L += ['', 'בלי שורת רווח תפעולי בדוח (נלקח הרווח לפני מס במקומו): '
               + ', '.join(r['symbol'] for r in ps if r.get('operating_income_basis') == 'pretax_income_proxy')]
+    scores = [r['rank_score'] for r in ps[:top]]
+    if len(set(scores)) < len(scores):
+        L += ['', 'חברות עם אותו ציון דירוג שוות בדירוג; הסדר ביניהן אלפביתי בלבד.']
     if len(ps) > top:
         L += ['', 'עוד עוברות (הפירוט המלא ב-screen.json): ' + ', '.join(r['symbol'] for r in ps[top:])]
     L += ['', 'רכיבי הדירוג (אחוזון 0-100 לכל רכיב):', '']
     L += _table(['סימול', 'צמיחה', 'שינוי שוליים', 'שולי תזרים', 'עוצמה מול המדד', 'סכום'],
                 [[r['symbol']] + [f"{r['rank_parts'][k]:.0f}" for k in RANK_KEYS] + [f"{r['rank_score']:.0f}"] for r in ps[:top]])
     L += ['', f"## כמעט עברו: נכשלו בתנאי אחד בלבד ({c['near_misses']})", '']
-    L += _table(['סימול', 'חברה', 'שווי שוק', 'התנאי שנכשל', 'המספר', 'צמיחה 12ח׳', 'שולי תפעול', 'תשואה 12-1', 'מרחק מהשיא'],
+    L += _table(['סימול', 'חברה', 'שווי שוק', 'התנאי שנכשל', 'המספר', 'צמיחה 12ח׳', 'צמיחה לשנה ב-3 שנים', 'שולי תפעול', 'תשואה 12-1', 'מרחק מהשיא'],
                 [[r['symbol'], r['name'][:28], _cap(r['market_cap']), GATE_HE[r['failed'][0]['gate']], gate_value_he(r['failed'][0]),
-                  _pct(r.get('rev_growth_ttm')), _pct(r.get('op_margin')), _pct((r.get('trend_measures') or {}).get('ret_12_1'), True),
+                  _pct(r.get('rev_growth_ttm')), _pct(r.get('rev_cagr_3y')), _pct(r.get('op_margin')), _pct((r.get('trend_measures') or {}).get('ret_12_1'), True),
                   _pct((r.get('trend_measures') or {}).get('below_high'), True)] for r in res['near_misses']])
+    cm = res.get('commodity') or []
+    L += ['', f"## חברות סחורות מחזוריות: הצמיחה הולכת אחרי המחירים ({len(cm)} מתוך {c.get('route_commodity', len(cm))})", '',
+          'נפט וגז, זיקוק, מכרות, פלדה, דשנים, ספנות וצינורות. הן לא נכנסות לרשימת העוברות גם כשהמספרים נראים טוב. '
+          'מוצגות אלה שעברו את התנאים או נכשלו בתנאי אחד בלבד; השאר ב-screen.json.', '']
+    L += _table(['סימול', 'חברה', 'תחום (קוד SEC)', 'שווי שוק', 'צמיחה 12ח׳', 'צמיחת רבעון', 'צמיחה לשנה ב-3 שנים', 'השנה החלשה', 'שולי תפעול',
+                 'שינוי שוליים (נק׳)', 'שולי תזרים חופשי', 'תשואה 12-1', 'מרחק מהשיא', 'מכפיל רווח', 'נתונים עד', 'מצב'],
+                [[r['symbol'], r['name'][:28], f"{r.get('sic')}", _cap(r['market_cap']), _pct(r.get('rev_growth_ttm')), _pct(r.get('rev_growth_q')),
+                  _pct(r.get('rev_cagr_3y')), _pct(r.get('rev_min_year_growth'), True), _pct(r.get('op_margin')),
+                  '—' if r.get('margin_change_pts') is None else f"{r['margin_change_pts']:+.1f}", _pct(r.get('fcf_margin')),
+                  _pct((r.get('trend_measures') or {}).get('ret_12_1'), True), _pct((r.get('trend_measures') or {}).get('below_high'), True),
+                  _x(r.get('pe'), 0), _period(r),
+                  'עברה את התנאים' if r['status'] == 'pass' else 'נכשלה ב: ' + GATE_HE[r['failed'][0]['gate']] + ' (' + gate_value_he(r['failed'][0]) + ')']
+                 for r in cm])
     L += ['', f"## בנקים, ביטוח ופיננסים (נמדדים בנפרד; {len(res['financials'])} עברו)", '',
           'תנאים: הכנסות גדלות, תשואה על ההון 15% ומעלה, הון עצמי למניה גדל, ושלושת תנאי המגמה.', '']
-    L += _table(['סימול', 'חברה', 'שווי שוק', 'צמיחת הכנסות', 'תשואה על ההון', 'גידול הון למניה', 'תשואה 12-1', 'מרחק מהשיא', 'מכפיל רווח', 'נתונים'],
+    L += _table(['סימול', 'חברה', 'שווי שוק', 'צמיחת הכנסות', 'תשואה על ההון', 'גידול הון למניה', 'תשואה 12-1', 'מרחק מהשיא', 'מכפיל רווח', 'נתונים', 'נתונים עד'],
                 [[r['symbol'], r['name'][:28], _cap(r['market_cap']), _pct(r.get('rev_growth_ttm')), _pct(r.get('roe')),
                   _pct(r.get('bvps_growth'), True), _pct((r.get('trend_measures') or {}).get('ret_12_1'), True),
                   _pct((r.get('trend_measures') or {}).get('below_high'), True), _x(r.get('pe'), 0),
-                  'שנתי בלבד' if r.get('basis') == 'annual' else 'רבעוני'] for r in res['financials']])
+                  'שנתי בלבד' if r.get('basis') == 'annual' else 'רבעוני', _period(r)] for r in res['financials']])
+    if any(r.get('stale') for r in cm + res['financials']):
+        L += ['', '"ישן": התקופה האחרונה בנתונים הסתיימה לפני יותר מחמישה חודשים (דוח שנתי בלבד).']
     fn = res.get('financial_near_misses') or []
     if fn:
         L += ['', f'פיננסים שנכשלו בתנאי אחד בלבד ({len(fn)}): '
@@ -760,20 +792,21 @@ def render_he(res, top=40):
     L += ['', f"## חברות זרות עם נתונים שנתיים בלבד ({len(res['annual_only'])})", '',
           'חברות שמדווחות ל-SEC רק דוח שנתי (20-F / 40-F): **נתונים שנתיים בלבד**, בלי תנאי הרבעון, ולכן הנתון יכול להיות ישן עד שנה. '
           'מוצגות אלה שעברו או נכשלו בתנאי אחד.', '']
-    L += _table(['סימול', 'חברה', 'שווי שוק', 'שנת הדוח עד', 'צמיחה שנתית', 'שולי תפעול', 'שינוי שוליים (נק׳)', 'שולי תזרים חופשי', 'שינוי מניות',
+    L += _table(['סימול', 'חברה', 'שווי שוק', 'שנת הדוח עד', 'צמיחה שנתית', 'צמיחה לשנה ב-3 שנים', 'שולי תפעול', 'שינוי שוליים (נק׳)', 'שולי תזרים חופשי', 'שינוי מניות',
                  'תשואה 12-1', 'מרחק מהשיא', 'מצב'],
-                [[r['symbol'], r['name'][:28], _cap(r['market_cap']), r.get('period_end') or '—', _pct(r.get('rev_growth_ttm')), _pct(r.get('op_margin')),
+                [[r['symbol'], r['name'][:28], _cap(r['market_cap']), _period(r), _pct(r.get('rev_growth_ttm')),
+                  _pct(r.get('rev_cagr_3y')), _pct(r.get('op_margin')),
                   '—' if r.get('margin_change_pts') is None else f"{r['margin_change_pts']:+.1f}", _pct(r.get('fcf_margin')),
                   _pct(r.get('share_change'), True), _pct((r.get('trend_measures') or {}).get('ret_12_1'), True),
                   _pct((r.get('trend_measures') or {}).get('below_high'), True),
                   'עברה' if r['status'] == 'pass' else 'נכשלה ב: ' + GATE_HE[r['failed'][0]['gate']] + ' (' + gate_value_he(r['failed'][0]) + ')']
                  for r in res['annual_only']])
     L += ['', '## החברות שכבר בספר התזות', '', 'איפה עומדת כל חברה מוכרת מול אותם תנאים (✓ עבר, ✗ נכשל, ? אין נתון).', '']
-    L += _table(['סימול', 'מסלול', 'מצב', 'צמיחה 12ח׳', 'צמיחת רבעון', 'שולי תפעול', 'שינוי שוליים (נק׳)', 'שולי תזרים חופשי', 'שינוי מניות',
+    L += _table(['סימול', 'מסלול', 'מצב', 'צמיחה 12ח׳', 'צמיחת רבעון', 'צמיחה לשנה ב-3 שנים', 'שולי תפעול', 'שינוי שוליים (נק׳)', 'שולי תזרים חופשי', 'שינוי מניות',
                  'תשואה 12-1', 'מרחק מהשיא', 'מה נכשל או חסר'],
-                [[r['symbol'], {'standard': 'רגיל', 'financial': 'פיננסים', 'annual_only': 'שנתי בלבד'}.get(r.get('route'), '—'),
+                [[r['symbol'], {'standard': 'רגיל', 'financial': 'פיננסים', 'annual_only': 'שנתי בלבד', 'commodity': 'סחורות'}.get(r.get('route'), '—'),
                   {'pass': 'עברה', 'near_miss': 'כמעט', 'fail': 'נכשלה', 'incomplete': 'חסר נתון', 'not_found': 'לא נמצאה'}[r['status']],
-                  _pct(r.get('rev_growth_ttm')), _pct(r.get('rev_growth_q')), _pct(r.get('op_margin')),
+                  _pct(r.get('rev_growth_ttm')), _pct(r.get('rev_growth_q')), _pct(r.get('rev_cagr_3y')), _pct(r.get('op_margin')),
                   '—' if r.get('margin_change_pts') is None else f"{r['margin_change_pts']:+.1f}", _pct(r.get('fcf_margin')),
                   _pct(r.get('share_change'), True), _pct((r.get('trend_measures') or {}).get('ret_12_1'), True),
                   _pct((r.get('trend_measures') or {}).get('below_high'), True),

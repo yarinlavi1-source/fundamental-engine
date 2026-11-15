@@ -1,0 +1,139 @@
+{
+ "ticker": "MSFT",
+ "as_of": "2026-11-04",
+ "price": 554.51,
+ "price_time_utc": "2026-11-04T18:55Z (IBKR snapshot, from the saved params)",
+ "currency": "USD",
+ "source": {
+  "copy_of": "the saved valuation of 2026-11-04 (runs/tickers/MSFT_2026-11-04/deep/params_final.json, private run folder)",
+  "fresh_pull": false,
+  "note": "Copy of the valuation of 2026-11-04 at the price of that day. No fresh pull of price, filings or news was made for this file. Values are the saved model's; the price ladder and the buy test were computed from the same saved params with the current scripts/lean_model.py (reporting keys only, no value changed). Next report: late January 2027 (not confirmed)."
+ },
+ "verdict_he": "לא לקנות במחיר הזה: התרחיש הבסיסי נותן כ-4.8% בשנה והעדשה השנייה 7.2%; מבחן הקנייה עובר רק מתחת לכ-382$ (בהרצה חוזרת במחיר הזה: כ-344$)",
+ "buy_test_price": 381.64,
+ "margin_of_safety_price": null,
+ "margin_of_safety_note": "null: the saved params carry buy_return 9.64% (the company's own cost of equity), not the 13% margin-of-safety return; the price at that return is in price_ladder.rungs.cost_of_equity_9_64pct",
+ "price_ladder": {
+  "meaning": "price on the valuation date at which the base return to 30 June 2032 equals each return; one return per rung",
+  "years_to_horizon": 5.65,
+  "rungs": {
+   "buy_test": {
+    "return_pct": 12.0,
+    "ours": 381.64,
+    "calibrated": 432.41
+   },
+   "cost_of_equity_9_64pct": {
+    "return_pct": 9.64,
+    "ours": 430.44,
+    "calibrated": 487.7
+   },
+   "index": {
+    "return_pct": 9.14,
+    "ours": 441.7,
+    "calibrated": 500.46
+   },
+   "hold_floor": {
+    "return_pct": 6.0,
+    "ours": 520.91,
+    "calibrated": 590.2
+   },
+   "sell_line": {
+    "return_pct": 3.0,
+    "ours": 612.64,
+    "calibrated": 694.14
+   }
+  }
+ },
+ "buy_test": {
+  "rule": "base >= 12% a year in both lenses, bull >= 17%, bear >= -10%",
+  "pass_at_price": false,
+  "binding_leg": "base_ours",
+  "max_price_by_leg": {
+   "base_ours": 381.64,
+   "base_calibrated": 432.41,
+   "bull": 460.17,
+   "bear": 898.63
+  },
+  "rerun_max_price": 343.95
+ },
+ "values": {
+  "today": {
+   "bear": 297.06,
+   "base": 433.83,
+   "bull": 669.79
+  },
+  "june_2028": {
+   "bear": 346.35,
+   "base": 505.59,
+   "bull": 780.32
+  },
+  "june_2029": {
+   "bear": 380.01,
+   "base": 554.34,
+   "bull": 855.34
+  },
+  "june_2032": {
+   "bear": 495.51,
+   "base": 724.0,
+   "bull": 1117.3
+  },
+  "weighted_today_25_50_25": 458.63,
+  "calibrated_today": 491.46,
+  "calibrated_june_2032": 820.31,
+  "fiscal_year_note": "MSFT fiscal years end 30 June: june_2028 is the value at 30.6.2028 (about 1.65 years after the valuation date), june_2029 about 2.65 years, june_2032 about 5.65 years. No calendar year-end key is given."
+ },
+ "scenarios": {
+  "bear": {
+   "prob": 0.25,
+   "he": "אירוע ביקוש או אשראי אצל OpenAI ו-Azure מאט: צמיחה 12% שיורדת ל-5%, שיעור רווח תפעולי 36%-40%, מחיקות של כ-30 מיליארד $, מכפיל 18"
+  },
+  "base": {
+   "prob": 0.5,
+   "he": "צמיחה 18% בשנת הכספים 2028 שדועכת ל-7%; גל הפחת מוריד את שיעור הרווח התפעולי מ-44.5% ל-42% ובחזרה ל-44%; מכפיל 20"
+  },
+  "bull": {
+   "prob": 0.25,
+   "he": "Azure צומח מעל 40% וסוכני AI מכניסים כסף: צמיחה 22% שדועכת ל-9%, שיעור רווח תפעולי עולה ל-49%, מכפיל 26"
+  },
+  "label": "subjective"
+ },
+ "annual_return_pct": {
+  "to": "30.6.2032",
+  "bear": -2.0,
+  "base": 4.8,
+  "bull": 13.2,
+  "weighted": 5.9,
+  "calibrated": 7.2,
+  "index": 9.1
+ },
+ "conditions": {
+  "add": [
+   "המחיר מתחת לכ-382$: התרחיש הבסיסי נותן 12% בשנה ומעלה בשתי העדשות (בהרצה חוזרת במחיר הזה העדשה השנייה עוברת רק מתחת לכ-344$)"
+  ],
+  "would_raise_value": [
+   "שיעור רווח תפעולי של 46% ומעלה שנשמר עד שנת הכספים 2028: סימן שהתחזית שלנו נמוכה מדי"
+  ],
+  "proposed_trim": [
+   "המחיר מעל כ-590$: התשואה הבסיסית יורדת מתחת ל-6% בשנה בשתי העדשות"
+  ],
+  "proposed_exit": [
+   "המחיר מעל כ-694$: התשואה הבסיסית יורדת מתחת ל-3% בשנה בשתי העדשות"
+  ]
+ },
+ "next_report": {
+  "date": "late January 2027",
+  "confirmed": false,
+  "check": "צמיחת Azure, שיעור הרווח התפעולי, ההשקעות והפחת"
+ },
+ "thesis_link": null,
+ "thesis_note": "no thesis_he.md yet for MSFT; the saved valuation is the lean model of 2026-11-04",
+ "notes_he": [
+  "העתק של הערכת השווי מ-4.11.2026 במחיר של אותו יום; לא נעשתה משיכה חדשה של מחיר, דוחות או חדשות. הדוח הבא: סוף ינואר 2027 (לא מאושר)",
+  "מה שמזיז את השווי הכי הרבה: צמיחת ההכנסות: נקודה אחת בכל שנה משנה את השווי בכ-6%",
+  "המספר לשנה-שנתיים הוא הכי רועש"
+ ],
+ "model_warnings": [
+  "lenses disagree (ours lagging, calibrated hold): hold, or stage the trade around the next report",
+  "buy test: at the stated highest passing price 381.64 a rerun would hold a lower multiple; with the multiple of its own price held the highest passing price is 343.95 (binding leg: base_calibrated)"
+ ]
+}

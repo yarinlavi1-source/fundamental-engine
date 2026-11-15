@@ -3,6 +3,7 @@
  "as_of": "2026-11-12 (after the CEO resignation)",
  "price": 155.39,
  "price_time_utc": "2026-11-12T14:07Z",
+ "currency": "USD",
  "verdict_he": "להחזיק; לא לקנות לפני הדוח של 17.11. אחרי הדוח, קנייה רק אם התנאים מתקיימים",
  "buy_test_price": {
   "orderly_succession": 176,
@@ -15,6 +16,12 @@
   "export_finding": 138
  },
  "values": {
+  "today": {
+   "bear": 72,
+   "base": 169,
+   "bull": 303
+  },
+  "today_note": "standard keys added 15.11.2026 from the numbers already published in this file, no revaluation: base = the scenario-weighted base value over the three succession worlds (45% / 35% / 20%), the same number as weighted_base_today; bear and bull = the published bear and bull of the central world (orderly succession), because no weighted bear or bull was published",
   "today_base_by_world": {
    "orderly_succession_45pct": 182,
    "messy_succession_35pct": 163,

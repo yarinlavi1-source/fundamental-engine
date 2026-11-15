@@ -5,10 +5,9 @@
  "price_time_utc": "2026-11-13 14:58 UTC (Yahoo chart API, intraday; IBKR returned 502)",
  "share_basis": "pre Class C 1-for-1 stock dividend (effective 19.1.2027, paid within 5 business days); post = pre / 2, tested against the average of the A and C quotes",
  "verdict_he": "החזקה: התרחיש הבסיסי נותן כ-6.5% בשנה והעדשה השנייה 10.4%, שתיהן באזור החזקה; לא מוסיפים מעל 491$ ולא מוכרים בין דוחות",
- "buy_test_price": {
-  "pre": 491,
-  "post": 245.5
- },
+ "buy_test_price": 491,
+ "buy_test_price_basis": "pre Class C stock dividend share basis (the basis of price and values in this file)",
+ "buy_test_price_post_class_c_dividend": 245.5,
  "margin_of_safety_price": null,
  "sell_price": {
   "rule_both_lenses": {
