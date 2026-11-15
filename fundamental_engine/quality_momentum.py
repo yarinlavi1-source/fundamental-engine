@@ -9,7 +9,9 @@ import re
 from datetime import date, timedelta
 
 GATES = {'rev_growth_ttm': 0.15, 'rev_growth_q': 0.15, 'margin_drop_pts': 1.0, 'share_growth': 0.03,
-         'max_below_high': 0.25, 'roe': 0.15}
+         'max_below_high': 0.25, 'roe': 0.15, 'rev_cagr_3y': 0.10}
+HISTORY_DAYS = 1650                             # facts kept: four completed fiscal years back from the as-of date
+MARGIN_JUMP_PTS = 10.0                          # a larger one-year margin change is flagged as a likely one-off (no gate)
 EPS = 1e-9
 RANK_KEYS = ('rev_growth_ttm', 'margin_change_pts', 'fcf_margin', 'rel_strength')
 
@@ -53,6 +55,25 @@ STALE_DAYS = 153                                # a latest quarter older than ab
 INSTANT = ('equity',)
 SHARE_METRICS = ('diluted_shares',)
 ANNUAL_FORMS = ('20-F', '40-F', '20-F/A', '40-F/A')
+# Commodity producers and processors by SIC code: revenue follows the price of the product, so one strong year passes a
+# growth gate. They are read on the same gates but shown in their own table, never in the passers list.
+COMMODITY_SIC = {
+    1000: 'metal mining', 1040: 'gold and silver ores', 1090: 'miscellaneous metal ores',
+    1220: 'coal mining', 1221: 'coal mining',
+    1311: 'crude petroleum and natural gas', 1381: 'drilling oil and gas wells', 1382: 'oil and gas field exploration services',
+    1389: 'oil and gas field services',
+    2870: 'agricultural chemicals and fertilizers', 2873: 'nitrogenous fertilizers', 2874: 'phosphatic fertilizers',
+    2875: 'fertilizer mixing',
+    2911: 'petroleum refining', 2990: 'petroleum and coal products',
+    3310: 'steel works and rolling mills', 3312: 'steel works and rolling mills', 3317: 'steel pipe and tubes',
+    3330: 'primary smelting of nonferrous metals', 3334: 'primary aluminum', 3341: 'secondary smelting of nonferrous metals',
+    4400: 'water transportation', 4412: 'deep sea freight transportation',
+    4610: 'pipelines (no natural gas)', 4922: 'natural gas transmission', 4923: 'natural gas transmission and distribution',
+    4924: 'natural gas distribution',
+    5051: 'metals service centers', 5171: 'petroleum bulk stations', 5172: 'petroleum products wholesale',
+    6792: 'oil royalty traders', 6795: 'mineral royalty traders',
+}
+_PASSENGER_LINE = re.compile(r'cruise|carnival|viking', re.I)       # SIC 4400 also holds passenger lines: not freight
 
 
 def _d(s):
@@ -141,6 +162,17 @@ def is_financial(sic, sector):
     except (TypeError, ValueError):
         pass
     return (sector or '').strip().lower() == 'finance'
+
+
+def is_commodity(sic, name=''):
+    """A commodity producer or processor by SIC code (COMMODITY_SIC); passenger shipping lines are not."""
+    try:
+        code = int(sic)
+    except (TypeError, ValueError):
+        return False
+    if code not in COMMODITY_SIC:
+        return False
+    return not (code == 4400 and _PASSENGER_LINE.search(name or ''))
 
 
 # ---------------------------------------------------------------- companyfacts -> series
@@ -331,6 +363,32 @@ def _ratio(a, b):
     return a / b if a is not None and b not in (None, 0) and b > 0 else None
 
 
+def durability(facts, fallback=()):
+    """Revenue over the last three completed fiscal years (four full-year values). facts: the revenue facts in use;
+    fallback: the per-period merge of every revenue concept, read when the first has under four years.
+    Returns fy_ends (oldest first), rev_year_growth (three changes), rev_min_year_growth, rev_cagr_3y; None when short."""
+    for basis, fs in (('revenue', facts), ('merged_revenue_concepts', fallback)):
+        a = annual(fs)
+        if not a:
+            continue
+        ends = [max(a)]
+        while len(ends) < 4:
+            prev = _year_before(sorted(a), ends[-1])
+            if prev is None:
+                break
+            ends.append(prev)
+        if len(ends) < 4:
+            continue
+        ends.reverse()
+        vals = [a[e] for e in ends]
+        if min(vals) <= 0:
+            continue
+        growth = [vals[i + 1] / vals[i] - 1 for i in range(3)]
+        return {'fy_ends': ends, 'fy_revenue': vals, 'rev_year_growth': growth, 'rev_min_year_growth': min(growth),
+                'rev_cagr_3y': (vals[3] / vals[0]) ** (1 / 3) - 1, 'durability_basis': basis}
+    return None
+
+
 def _known(facts, as_of):
     """Facts for periods that ended, and were filed, on or before as_of (no look-ahead)."""
     return [f for f in facts if f['end'] <= as_of and (f.get('filed') or '') <= as_of]
@@ -344,6 +402,7 @@ def fundamentals(series, as_of):
            for m, v in (series.get('durations') or {}).items()}
     out = {'basis': None, 'currency': series.get('currency'), 'taxonomy': series.get('taxonomy'), 'gaps': gaps}
     rev, mixed = pick_revenue(dur, as_of)
+    merged_rev = dur.get('revenue', [])
     out['revenue_mixed_tags'] = mixed
     if mixed:
         gaps.append('revenue is tagged under different XBRL concepts in different periods: growth not relied on')
@@ -386,6 +445,12 @@ def fundamentals(series, as_of):
     r1, r0 = pair('revenue')
     out['revenue'], out['revenue_prior'] = r1, r0
     out['rev_growth_ttm'] = r1 / r0 - 1 if _ratio(r1, r0) else None
+    dy = durability(rev, merged_rev)
+    out.update(dy or {'rev_cagr_3y': None, 'rev_min_year_growth': None})
+    if dy is None:
+        gaps.append('fewer than four completed fiscal years of revenue in XBRL: three-year growth not read')
+    elif dy['durability_basis'] != 'revenue':
+        gaps.append('three-year growth read across several revenue concepts')
     if out['basis'] == 'quarterly':
         chain = _chain(rq, end, 5)
         out['q_revenue'], out['q_revenue_year_ago'] = rq[end], rq[chain[4]]
@@ -403,6 +468,10 @@ def fundamentals(series, as_of):
     out['op_margin'], out['op_margin_prior'] = _ratio(o1, r1), _ratio(o0, r0)
     out['margin_change_pts'] = ((out['op_margin'] - out['op_margin_prior']) * 100
                                 if out['op_margin'] is not None and out['op_margin_prior'] is not None else None)
+    out['margin_jump'] = out['margin_change_pts'] is not None and (out['margin_change_pts'] > MARGIN_JUMP_PTS
+                                                                   or (o0 is not None and o0 <= 0 < (o1 or 0)))
+    if out['margin_jump']:
+        gaps.append('operating margin up %.1f points in a year: check for a one-off charge in the earlier year' % out['margin_change_pts'])
     c1, _ = pair('cfo')
     x1, _ = pair('capex')
     out['cfo'], out['capex'] = c1, x1
@@ -442,13 +511,17 @@ def _gate(name, value, ok, rule):
 
 
 def quality_gates(m):
-    """The six quality gates (five on annual data: no quarter). pass None = the number is missing."""
+    """The seven quality gates (six on annual data: no quarter). pass None = the number is missing."""
     v = m.get
     g = [_gate('rev_growth_ttm', v('rev_growth_ttm'), v('rev_growth_ttm') is not None and v('rev_growth_ttm') >= GATES['rev_growth_ttm'] - EPS,
                'revenue growth, last 12 months >= 15%')]
     if m.get('basis') != 'annual':
         g.append(_gate('rev_growth_q', v('rev_growth_q'), v('rev_growth_q') is not None and v('rev_growth_q') >= GATES['rev_growth_q'] - EPS,
                        'latest quarter against a year earlier >= 15%'))
+    cagr, worst = v('rev_cagr_3y'), v('rev_min_year_growth')
+    g.append(dict(_gate('durability', cagr, cagr is not None and cagr >= GATES['rev_cagr_3y'] - EPS and worst >= -EPS,
+                        'revenue did not fall in any of the last 3 fiscal years and grew >= 10% a year over them'),
+                  worst_year=worst))
     g += [_gate('operating_income', v('operating_income'), v('operating_income') is not None and v('operating_income') > 0,
                 'operating income, last 12 months > 0'),
           _gate('margin_change_pts', v('margin_change_pts'), v('margin_change_pts') is not None and v('margin_change_pts') >= -GATES['margin_drop_pts'] - EPS,
@@ -555,10 +628,13 @@ def price_columns(m, market_cap, fx=1.):
 
 
 def evaluate(row, series, sic, as_of):
-    """One company -> row with route ('standard', 'financial', 'annual_only'), metrics and its fundamental gates."""
+    """One company -> row with route ('standard', 'commodity', 'financial', 'annual_only'), metrics and its fundamental gates."""
     m = fundamentals(series, as_of)
     out = dict(row, sic=sic, **{k: v for k, v in m.items() if k != 'gaps'}, gaps=list(m['gaps']))
-    if is_financial(sic, row.get('sector')):
+    if is_commodity(sic, row.get('name')):
+        out['route'], out['quality'] = 'commodity', quality_gates(m)
+        out['commodity_group'] = COMMODITY_SIC[int(sic)]
+    elif is_financial(sic, row.get('sector')):
         out['route'], out['quality'] = 'financial', financial_gates(m)
     elif m['basis'] != 'quarterly' and m.get('annual_filer'):
         out['route'], out['quality'] = 'annual_only', quality_gates(dict(m, basis='annual'))

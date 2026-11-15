@@ -78,18 +78,28 @@ def get_listing(out, reuse):
     return listing, ciks
 
 
-FACTS_V = 3      # 3: proxy-statement facts dropped, capex from total or component lines, nothing filed after as_of
+def _keep(path, rec):
+    """Saves a fetched record unless the fetch itself failed (a failed company is tried again on the next run)."""
+    if not any(x.endswith('Error') or 'RuntimeError' in x for x in rec['errors']):
+        _save(path, rec)
+    return rec
+
+
+FACTS_V = 4      # 4: four completed fiscal years of history (the three-year growth gate)
 
 
 def get_facts(cik, out, reuse, throttle, since, as_of):
     """Extracted series + SIC for one CIK, cached as facts/CIK<10 digits>.json (older extraction versions are refetched)."""
     path = os.path.join(out, 'facts', f'CIK{cik:010d}.json')
+    old_sub = None
     if reuse and os.path.exists(path):
         rec = _load(path)
         if rec.get('v', 1) >= FACTS_V and rec.get('as_of') == as_of:
             return rec
+        if rec.get('as_of') == as_of:
+            old_sub = rec.get('sub')                               # an older extraction: only the facts are read again
     h = {'User-Agent': os.environ['SEC_USER_AGENT'], 'Accept-Encoding': 'gzip'}
-    rec = {'cik': cik, 'v': FACTS_V, 'as_of': as_of, 'retrieved_at_utc': _now(), 'series': None, 'sub': None, 'errors': []}
+    rec = {'cik': cik, 'v': FACTS_V, 'as_of': as_of, 'retrieved_at_utc': _now(), 'series': None, 'sub': old_sub, 'errors': []}
     try:
         throttle.wait()
         status, body = fetch(FACTS.format(cik), h)
@@ -100,6 +110,8 @@ def get_facts(cik, out, reuse, throttle, since, as_of):
     except Exception as e:                                         # noqa: BLE001 (a failed company is a recorded gap)
         rec['errors'].append(f'companyfacts {type(e).__name__}')
     try:
+        if old_sub is not None:
+            return _keep(path, rec)
         throttle.wait()
         status, body = fetch(SUBS.format(cik), h)
         if status == 200:
@@ -114,9 +126,7 @@ def get_facts(cik, out, reuse, throttle, since, as_of):
             rec['errors'].append(f'submissions {status}')
     except Exception as e:                                         # noqa: BLE001
         rec['errors'].append(f'submissions {type(e).__name__}')
-    if not any(x.endswith('Error') or 'RuntimeError' in x for x in rec['errors']):
-        _save(path, rec)
-    return rec
+    return _keep(path, rec)
 
 
 def get_prices(symbol, out, reuse, throttle, as_of):
@@ -179,7 +189,7 @@ def main(argv=None):
     universe, counts, no_cik = qm.build_universe(listing, ciks, a.min_cap, keep=book)
     print(json.dumps({'step': 'universe', **counts, 'no_cik': len(no_cik)}), flush=True)
 
-    since = (date.fromisoformat(a.as_of) - timedelta(days=1250)).isoformat()
+    since = (date.fromisoformat(a.as_of) - timedelta(days=qm.HISTORY_DAYS)).isoformat()
     sec = Throttle(0.14)                                           # about 7 requests a second, under the SEC limit
     with ThreadPoolExecutor(4) as ex:
         facts = list(ex.map(lambda r: get_facts(r['cik'], a.out, a.reuse, sec, since, a.as_of), universe))

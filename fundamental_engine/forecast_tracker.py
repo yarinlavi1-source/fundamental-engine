@@ -234,6 +234,7 @@ def score(ticker, params, result, payload, today, price=None, release_dates=None
                    reason=f"SEC facts are in {per['currency'] or 'no currency'}, the model in USD: scored by hand")
         return row
     rev = per['revenue']
+    row['annual_filer'] = per['annual_only']
     new = []
     for (s, e), r in rev.items():
         if r['first_filed'] <= as_of or e > today or (path['as_of'] - _d(e)).days > MAX_PERIOD_AGE_DAYS:
@@ -347,7 +348,8 @@ def summarize(rows):
     ages = [p['age_days'] for p in px]
     young = bool(px) and _median(ages) < MIN_PRICE_AGE_DAYS
     out['items']['price_vs_value_path'] = {
-        'label_he': 'מחיר מול מסלול השווי הבסיסי', 'unit': 'pct', 'n': len(px), 'median': _median([p['vs_value_path'] for p in px]),
+        'label_he': 'מחיר מול מסלול השווי הבסיסי', 'unit': 'pct', 'n': len(px),
+        'companies': len({r['ticker'] for r in rows if r.get('price')}), 'median': _median([p['vs_value_path'] for p in px]),
         'median_gap_at_valuation': _median([p['gap_at_valuation'] for p in px]), 'median_age_days': _median(ages),
         'conclusion': TOO_FEW if len(px) < MIN_ROWS or young else 'median over the priced rows',
         'note': 'a gap in level between price and value, mostly the gap that existed on the valuation day; it tests the '
@@ -382,6 +384,8 @@ def _pts(x):
 def _row_he(r):
     if r['status'] == 'no_report_since':
         what, rv, mg = 'אין דוח מאז', '—', '—'
+        if r.get('annual_filer'):
+            what = 'אין דוח שנתי מאז (ל-SEC החברה מגישה מספרים רק פעם בשנה: דוח רבעוני לא נראה כאן, ניקוד ידני)'
     elif r['status'] != 'scored':
         what, rv, mg = 'לא נוקד: ' + ('הנתונים ב-SEC לא במטבע של המודל או חסרים' if r['status'] == 'not_scorable' else 'מודל מותאם'), '—', '—'
     else:
@@ -425,7 +429,8 @@ def render_he(doc):
         lines.append(f"- מודל מותאם או מודל אחר (אין מודל רזה שאפשר לנקד), ניקוד ידני: {', '.join(custom)}.")
     lines += ['', '## סיכום', '',
               f"- שורות: {s['rows']}; עם דוח מאז ההערכה שנוקד: {s['scored_rows']} ({s['scored_companies']} חברות); "
-              f"בלי דוח מאז: {s['no_report_since']}; מודל מותאם (ניקוד ידני): {s['custom_model']}; לא נוקדו: {s['not_scorable']}."]
+              f"בלי דוח מאז: {s['no_report_since']}; מודל רזה שבנוי אחרת (ניקוד ידני): {s['custom_model']}; לא נוקדו: {s['not_scorable']}. "
+              f"חברות בלי מודל רזה בכלל (ניקוד ידני): {len(doc['custom_model'])}."]
     if s['scored_rows'] < s['min_rows']:
         lines.append(f"- פחות מ-{s['min_rows']} שורות מנוקדות: מעט מדי כדי להסיק מסקנה (too few to conclude).")
     for key, it in s['items'].items():
@@ -439,7 +444,7 @@ def render_he(doc):
         tail = ('; ההערכות צעירות (גיל חציוני ' + f"{it['median_age_days']:.0f}" + ' ימים), לכן זה פער ברמה ולא מבחן של המסלול: '
                 'מעט מדי כדי להסיק (too few to conclude)') if it['conclusion'] == TOO_FEW else ''
         lines.append(f"- {it['label_he']}: חציון {_p(it['median'], d=0)} (ביום ההערכה {_p(it['median_gap_at_valuation'], d=0)}), "
-                     f"מספר שורות {it['n']}{tail}.")
+                     f"מספר שורות {it['n']}" + (f" ({it['companies']} חברות)" if it.get('companies') else '') + f"{tail}.")
     lines += ['', '## איך לקרוא', '',
               '- שנה שעדיין לא הסתיימה: משווים את הצמיחה מתחילת השנה (מול אותה תקופה לפני שנה) לצמיחה שהמודל מניח לשנה המלאה, '
               'ואת שיעור הרווח מתחילת השנה לשיעור של המודל לאותה שנה. זו השוואה של חלק משנה למסלול של שנה מלאה, ולכן היא גסה.',

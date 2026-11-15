@@ -73,6 +73,13 @@ class ForecastTrackerTests(unittest.TestCase):
         self.assertEqual((r['status'], r['read'], r['reported']), ('no_report_since', 'no_report', []))
         self.assertIn('אין דוח מאז', FT._row_he(r))
 
+    def test_annual_filer_without_a_new_annual_report_says_so(self):
+        facts = [(REV, '2025-01-01', '2025-12-31', 10000 * M, '2026-04-30', '20-F')]      # no quarters in XBRL
+        r = self.score('2026-11-20', facts=facts)
+        self.assertEqual((r['status'], r['annual_filer']), ('no_report_since', True))
+        self.assertIn('רק פעם בשנה', FT._row_he(r))
+        self.assertFalse(self.score('2026-11-20')['annual_filer'])
+
     def test_completed_base_year_scores_revenue_only(self):
         r = self.score('2027-03-01')
         self.assertEqual(r['status'], 'scored')

@@ -21,6 +21,7 @@
    },
    "read": "no_report",
    "notes": [],
+   "annual_filer": false,
    "cik": 820313,
    "variants_not_scored": [],
    "data_note": "cached copy"
@@ -44,6 +45,7 @@
    },
    "read": "no_report",
    "notes": [],
+   "annual_filer": false,
    "cik": 1751008,
    "variants_not_scored": [],
    "data_note": "cached copy"
@@ -67,6 +69,7 @@
    },
    "read": "no_report",
    "notes": [],
+   "annual_filer": false,
    "cik": 1730168,
    "variants_not_scored": [
     "research/companies/AVGO/2026-11-07/lean_params_no_slowdown.json"
@@ -105,6 +108,7 @@
    },
    "read": "no_report",
    "notes": [],
+   "annual_filer": false,
    "cik": 1807794,
    "variants_not_scored": [
     "research/companies/CRDO/2026-11-09/lean_params_no_digestion.json"
@@ -130,6 +134,7 @@
    },
    "read": "no_report",
    "notes": [],
+   "annual_filer": false,
    "cik": 1571996,
    "variants_not_scored": [],
    "data_note": "cached copy"
@@ -153,6 +158,7 @@
    },
    "read": "no_report",
    "notes": [],
+   "annual_filer": false,
    "cik": 1099590,
    "variants_not_scored": [],
    "data_note": "cached copy"
@@ -178,6 +184,7 @@
    "notes": [
     "annual filer: quarters are not in SEC XBRL, so a quarterly report shows here only with the annual one"
    ],
+   "annual_filer": true,
    "cik": 1513845,
    "variants_not_scored": [],
    "data_note": "cached copy"
@@ -203,6 +210,7 @@
    "notes": [
     "annual filer: quarters are not in SEC XBRL, so a quarterly report shows here only with the annual one"
    ],
+   "annual_filer": true,
    "cik": 1513845,
    "variants_not_scored": [],
    "data_note": "cached copy"
@@ -228,6 +236,7 @@
    "notes": [
     "annual filer: quarters are not in SEC XBRL, so a quarterly report shows here only with the annual one"
    ],
+   "annual_filer": true,
    "cik": 1513845,
    "variants_not_scored": [],
    "data_note": "cached copy"
@@ -251,6 +260,7 @@
    },
    "read": "no_report",
    "notes": [],
+   "annual_filer": false,
    "cik": 1477333,
    "variants_not_scored": [],
    "data_note": "cached copy"
@@ -287,6 +297,7 @@
    },
    "read": "no_report",
    "notes": [],
+   "annual_filer": false,
    "cik": 1045810,
    "variants_not_scored": [
     "research/companies/NVDA/2026-11-12/lean_params_A_huang_stays.json",
@@ -314,6 +325,7 @@
    },
    "read": "no_report",
    "notes": [],
+   "annual_filer": false,
    "cik": 1341439,
    "variants_not_scored": [],
    "data_note": "cached copy"
@@ -337,6 +349,7 @@
    },
    "read": "no_report",
    "notes": [],
+   "annual_filer": false,
    "cik": 1327567,
    "variants_not_scored": [],
    "data_note": "cached copy"
@@ -360,6 +373,7 @@
    },
    "read": "no_report",
    "notes": [],
+   "annual_filer": false,
    "cik": 1543151,
    "variants_not_scored": [],
    "data_note": "cached copy"
@@ -383,6 +397,7 @@
    },
    "read": "no_report",
    "notes": [],
+   "annual_filer": false,
    "cik": 1543151,
    "variants_not_scored": [],
    "data_note": "cached copy"
@@ -406,6 +421,7 @@
    },
    "read": "no_report",
    "notes": [],
+   "annual_filer": false,
    "cik": 1403161,
    "variants_not_scored": [],
    "data_note": "cached copy"
@@ -429,6 +445,7 @@
    },
    "read": "no_report",
    "notes": [],
+   "annual_filer": false,
    "cik": 719955,
    "variants_not_scored": [],
    "data_note": "cached copy"
@@ -545,6 +562,7 @@
     "label_he": "מחיר מול מסלול השווי הבסיסי",
     "unit": "pct",
     "n": 17,
+    "companies": 14,
     "median": 0.1160629386427312,
     "median_gap_at_valuation": -0.008105643554324637,
     "median_age_days": 4,
