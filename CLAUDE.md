@@ -5,6 +5,23 @@ regenerate and the latest-state documents; finish every session by merging to ma
 connections in Claude. Reuse those capabilities; this repository is the RESEARCH
 BRAIN, executable math and local research memory, not a replacement provider stack.
 
+## Daily path (lean): read this first (16.11.2026)
+
+Every ticker question, results day, portfolio check and stock search takes the lean path; its runbook, with every command
+and output file, is docs/LEAN_PATH.md. The heavy pipeline ("On a ticker" below, the Workflow `ticker`) is a cross-check that
+runs only when the owner asks for the deepest pass. Where two rules below differ, the latest dated owner preference wins.
+- Ticker: `research-latest T` (the valuation in force) -> fresh pull -> a new folder research/companies/T/D from that baseline,
+  changing only what new facts touch -> `lean_model.py --summary` -> `locked_rules.py` (beta, own multiple) ->
+  `lean_check.py --prev ... --save` -> for a buy: verification pass and one red team -> `publish_valuation.py` (numbers block,
+  one index row, fundamental.json) -> `lean_freeze.py` (research/ledger.jsonl) -> answer in the thesis-book order.
+- Results day: `due.py` -> fresh pull -> touched inputs only -> `lean_check.py --prev` -> publish -> freeze ->
+  `forecast_tracker.py` (scorecard.json for custom models). Portfolio: IBKR positions (read-only) -> `holdings-update` ->
+  `portfolio_health.py` -> `due.py`, all outputs under runs/. Search: `quality_momentum_screen.py` -> triage.
+- "מחיר מבחן הקנייה" = the highest price at which all four buy-test legs pass at 12% (the rerun price when the model warns);
+  "מחיר כניסה עם מרווח ביטחון" = the same test with the base at 13% instead of 12% (never above the buy-test price). Owner
+  decisions still open (16.11.2026): this definition, the lagging-core rule, and the CLAUDE.md cleanup in
+  runs/engine_upgrade_2026-11-15/claude_md_proposal.md.
+
 ## On a ticker (fast procedure; the owner's limit is 10-20 minutes for one ticker)
 
 When the owner sends a ticker T, the main loop orchestrates (as_of D = today; RUN = <repo>/runs/tickers/T_D, gitignored).
@@ -335,7 +352,8 @@ with today's forward P/E held as the exit multiple and the margin not cut below 
 evidenced cost (e.g. a quantified depreciation wave) is named, and then shown as its own line. A buy/sell/trim call is
 made only where both lenses agree on the band; where they disagree, hold or stage the trade around the next report.
 Judge whether holding today's multiple is credible (not for a GAAP P/E inflated by temporarily depressed earnings).
-Score every published base case in runs/portfolio_*/forecast_tracker.md after each report (revenue, margin, EPS vs our
+Score every published base case with `python scripts/forecast_tracker.py` (research/FORECAST_TRACKER_he.md; the old
+hand-kept runs/portfolio_*/forecast_tracker.md is history) after each report (revenue, margin, EPS vs our
 path; price vs our year-end value) and change rules only through a preregistered test, never by fitting one result.
 
 ## User preference: stable valuations, 5 minutes per stock, no new building (05.11.2026)
@@ -343,8 +361,9 @@ path; price vs our year-end value) and change rules only through a preregistered
 The owner stopped a 2-hour build: use what exists (lean_model with its two lenses, the deep files already saved), never start
 building tools or long multi-agent workflows unless he asks. Per stock: no hard 5-minute cap (his correction, 05.11.2026): check
 what the answer needs, usually 5-15 minutes, but never half an hour or more without saying so first. Valuations must not
-swing between runs: the latest saved one per company is the baseline (META: runs/tickers/META_2026-11-05/deep3/final.md,
-base $508; others: runs/tickers/<T>_2026-11-04/deep/params_final.json or params.json). Update it only from report to report
+swing between runs: the latest saved one per company is the baseline (16.11.2026: the folder `research-latest T` prints,
+research/companies/T/<date>/ with lean_params.json, or META's three-lane model in research/companies/META/2026-11-13/model/;
+the earlier runs/ pointers and META $508 are history). Update it only from report to report
 or on a material fact, changing only the inputs that fact touches, and state in one line what moved the value and by how
 much. Locked judgement rules (no re-choosing per run): exit P/E = the company's own long-run forward P/E median unless a
 stated fact argues otherwise; beta = the 2-year weekly beta vs SPY, adjusted (0.67 x raw + 0.33); capex beyond guidance
@@ -389,7 +408,7 @@ advice about his holdings in research/ (those stay in runs/portfolio_*, gitignor
 The owner rejected the 13.11 search: it looked for names that fell 20% or more from their highs and returned broken companies
 (INTU, NFLX, ADBE style) that had already collapsed and were not recovering. Never screen on "fell a lot"; a fall is a
 question to answer, not a reason to look. Deep checks stay limited to 1-2 names at a time. The search is
-`python scripts/quality_momentum_screen.py <out_dir> --as-of D` (SEC XBRL frames, the Nasdaq listing feed, Yahoo daily
+`python scripts/quality_momentum_screen.py <out_dir> --as-of D` (SEC companyfacts per company, the Nasdaq listing feed, Yahoo daily
 prices; output screen.json and screen_he.md under runs/screens/, gitignored), then a short triage, in this order:
 1. Quality (hard gates from the latest filings): revenue growing about 15% a year or more (latest year and latest quarter
    year on year), operating profit positive and the operating margin not falling, free cash flow positive, share count not
@@ -399,8 +418,8 @@ prices; output screen.json and screen_he.md under runs/screens/, gitignored), th
    than about 25% below the 52-week high. A name failing this is a falling knife for the screen, whatever its value looks like.
 3. Estimates (triage, from attributed sources): beat in the last two quarters, guidance raised or held, consensus rising.
 4. Price sanity: the growth the price requires is not above the company's own guidance or record, and the multiple is not at
-   the top of its own 5-year range without a growth step-up that explains it. Every saved valuation in research/ and runs/ is
-   checked first: never propose a name whose saved valuation fails the buy test (the MSFT slip of 06.11.2026).
+   the top of its own 5-year range without a growth step-up that explains it. The screen marks every name whose saved valuation
+   (research/) or rejected check (research/rejected.jsonl) fails the buy test at its price ('הערכה שמורה'): never propose a name whose saved valuation fails the buy test (the MSFT slip of 06.11.2026).
 5. World view (labelled judgement): where the industry is heading over 5 years, and whether the price already holds the theme.
 6. The best 1-2 go to the deep check and then to the normal buy test (both lenses). The screen never values a company and is
    not a buy signal: a name that passes it can still fail the buy test on price.
@@ -414,6 +433,6 @@ clusters, new 13F positions of quality investors) and social media (ideas and a 
 
 The owner's rule: this repo brings only the FUNDAMENTAL picture; the local TradingView session does all technical work
 (levels, touches, ATR, relative strength, regime, display). After every valuation or report update, write
-research/technical/<T>/<date>/fundamental.json in the format of research/technical/FUNDAMENTAL_HANDOFF_he.md (values,
+research/technical/<T>/<date>/fundamental.json (`publish_valuation.py` writes it: v1 keys kept, v2 added) in the format of research/technical/FUNDAMENTAL_HANDOFF_he.md (values,
 buy-test and entry prices, scenario conditions, next report, add/sell conditions, verdict). Do not build technical
 packages, charts or Pine scripts unless he asks for one explicitly.
