@@ -22,7 +22,7 @@ Rules that hold on every step:
 | Label shown to the owner | Definition | Where the number is |
 |---|---|---|
 | מחיר מבחן הקנייה | The highest price today at which all four legs of the buy test pass: base >= 12% a year in both lenses, bull >= 17%, bear >= -10% (yearly return from the price to the horizon year-end). When lean_model warns that a rerun at that price holds a lower multiple, it is the rerun price. | `valuation.json` `hurdles.buy_test_price`; `fundamental.json` `v2.buy_test.price_all_legs`; lean_model `buy_test.max_price_passing`, or `buy_test.rerun.max_price_passing` when `buy_test.rerun.lower_than_stated` is true |
-| מחיר כניסה עם מרווח ביטחון | The price today at which the base scenario (our lens) gives 13% a year to the horizon year-end. The same 13% for every company. It is never called the owner's requirement or target. | lean_model `price_ladder.rungs.margin_of_safety_13`; `valuation.json` `hurdles.margin_of_safety_price`; `fundamental.json` `margin_of_safety_price` |
+| מחיר כניסה עם מרווח ביטחון | The same buy test with the base at 13% a year in both lenses instead of 12% (bull >= 17%, bear >= -10% unchanged): the highest price at which all four legs pass, the rerun price when the model warns. So it is never above the buy-test price (16.11.2026; until then it was the base alone at 13%, which could lie above the buy-test price and above today's price: ORCL, APP). The same 13% for every company. It is never called the owner's requirement or target. | lean_model `buy_test.margin_of_safety_price` (with `margin_of_safety_binding_leg`, `margin_of_safety_rerun`); weighted worlds: `worlds.weighted.buy_test.margin_of_safety_price`; `valuation.json` `hurdles.margin_of_safety_price` and `hurdles.entry_price`; `fundamental.json` `margin_of_safety_price` and `v2.buy_test.margin_of_safety` |
 | שווי לפי המכפיל ההיסטורי | The next-year figure times the company's own 5-year median multiple, with the p25-p75 range. The anchor follows the company type (06.11.2026 rule). | `locked_rules.hist_multiple_value`; `valuation.json` `historical_multiple` |
 
 - The other rungs are always quoted with their return: index parity (rf + ERP from `research/market.json`, about 9.1%),
@@ -30,6 +30,20 @@ Rules that hold on every step:
 - The ladder rung `margin_of_safety` in `lean_result.json` (id `company_hurdle` in the record) is the file's own
   `buy_return`. Its old label text says "entry with a margin of safety", but it is **not** the margin-of-safety price.
   Never quote it under that name.
+- The ladder rung `margin_of_safety_13` (record `hurdles.base_13_price`) is the base case alone at 13% a year. Its
+  label says "margin of safety: fixed 13%", but since 16.11.2026 it is **not** the margin-of-safety price either: it is a
+  rung, quoted only with its return.
+- `fundamental.json` `buy_test_price` (v1) is null, with `buy_test_price_note`, when no price passes all four legs or the
+  model computes none; the base-alone 12% price is `v2.buy_test.base_12_price`.
+- Second lens tied to the price (16.11.2026, optional): `calibrated.pe_rule: "net_of_cash"` holds (price - net cash per
+  share at the base year-end) / first-year operating EPS at every price, so the buy-test rerun and `--price` move it. The
+  default (price / EPS) is unchanged; for a saved valuation the rule goes in a sidecar `calibrated_rule.json` beside
+  `lean_params.json` (`lean_model.py --calibrated-rule`; `publish_valuation.py` applies it to the record and keeps
+  `lean_result.json` the params' own result). In force for FIVE only; the measurement for every saved valuation is in
+  runs/engine_upgrade_2026-11-15/calibrated_cash_measure.md (an owner decision). `lean_freeze.py`, the screen
+  (`quality_momentum`) and `portfolio_health` do not read the sidecar yet: the frozen FIVE row keeps the saved second
+  lens, and a rerun of FIVE at another price holds the fixed 21.1 (the screen gives 231.47 at 246.68, the record
+  220.47). For FIVE, take the buy-test price from `valuation.json` or `lean_model.py --calibrated-rule`.
 - `fundamental.json` `buy_test_price` (v1) keeps its v1 meaning for the drawing session. It can differ from
   `v2.buy_test.price_all_legs` when the rerun price is used. The owner is told the v2 number.
 - Two lenses: "ours" is lean_model as built. "Second lens" (calibrated) holds today's forward P/E as the exit multiple

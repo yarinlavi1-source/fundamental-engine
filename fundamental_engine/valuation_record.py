@@ -58,6 +58,16 @@ LABELS_HE = {'buy_test': 'מחיר מבחן הקנייה', 'margin_of_safety': '
              'hist': locked_rules.LABEL_HE}
 # keys of a handoff that hold text by design; every other leaf under the numeric keys must be a number or null
 HANDOFF_NUMERIC_KEYS = ('price', 'buy_test_price', 'margin_of_safety_price', 'values', 'annual_return_pct')
+MOS_RUNG = 'buy_test.margin_of_safety_price'   # the entry price (16.11.2026): the buy test with the base at 13%
+DEFINITIONS = {
+    'buy_test_price': ('the highest price at which all four buy-test legs pass: base >= 12% a year in both lenses, bull >= '
+                       '17%, bear >= -10%; the rerun price when the model warns that a rerun at that price holds a lower multiple'),
+    'margin_of_safety_price': ('the same test with the base at 13% a year in both lenses (bull >= 17%, bear >= -10% '
+                               'unchanged), the rerun price when the model warns: never above buy_test_price (16.11.2026)'),
+    'base_13_price': 'the base case alone (our lens) at 13% a year: a ladder rung, not an entry price'}
+MOS_NOTE = ('the buy test with the base at 13% a year in both lenses (bull >= 17%, bear >= -10%): the highest price at which '
+            'all four legs pass, the rerun price when the model warns; never above the buy-test price (definition of '
+            '16.11.2026; the base-alone 13% price is the rung margin_of_safety_13 in v2.price_ladder)')
 TEXT_LEAF = re.compile(r'(note|basis|label|source|^to$|_he$|^he$|text|method|why|rule|date)')
 RECORD_TEXT = re.compile(r'(note|basis|label|source|band|date|rule|_he$|^id$|leg$|rung|meaning|company_type|anchor|fiscal_year_end|base_year_end|moves_most|^at_add_price$|leg_results)')
 NUMERIC_CONTAINERS = re.compile(r'^(rungs|dated_values|at_add_price)$')   # their names match a text key, their leaves are numbers
@@ -135,16 +145,27 @@ def is_lean_params(p):
             and all(isinstance(d, dict) and all(k in d for k in ('g', 'm', 'conv', 'pe')) for d in sc.values()))
 
 
+_LEAN = []
+
+
+def lean_model_module():
+    """scripts/lean_model.py of this checkout as a module (loaded once), or None when the script is not there."""
+    if not _LEAN:
+        path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'scripts', 'lean_model.py')
+        if not os.path.isfile(path):
+            return None
+        import importlib.util
+        spec = importlib.util.spec_from_file_location('lean_model', path)
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+        _LEAN.append(mod)
+    return _LEAN[0]
+
+
 def default_run():
     """lean_model.run from scripts/lean_model.py of this checkout, or None when the script is not there."""
-    path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'scripts', 'lean_model.py')
-    if not os.path.isfile(path):
-        return None
-    import importlib.util
-    spec = importlib.util.spec_from_file_location('lean_model', path)
-    mod = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(mod)
-    return mod.run
+    mod = lean_model_module()
+    return mod.run if mod else None
 
 
 REPORTING_KEYS = ('price_ladder', 'buy_test', 'dated_values', 'two_lens')
@@ -200,7 +221,8 @@ def rung_prices(record):
             if is_number(r.get(key)):
                 out[f'{r.get("id")}{lens}'] = r[key]
     bt = h.get('buy_test') or {}
-    for key in ('price', 'stated_price', 'rerun_price'):
+    for key in ('price', 'stated_price', 'rerun_price', 'margin_of_safety_price', 'margin_of_safety_stated_price',
+                'margin_of_safety_rerun_price'):
         if is_number(bt.get(key)):
             out[f'buy_test.{key}'] = bt[key]
     for leg, v in (bt.get('legs') or {}).items():
@@ -384,6 +406,27 @@ def inputs_from_handoff(h):
     return out
 
 
+def inputs_from_record(rec):
+    """Thesis inputs read back from a saved valuation.json (16.11.2026): every judgement field the record holds, typed
+    conditions included, so a republish after a code change keeps the judgement exactly (inputs_from_handoff keeps
+    texts only). The entry price is not carried: it follows the record's rule unless the record named another rung."""
+    sb, price = rec.get('share_basis') or {}, rec.get('price') or {}
+    out = {'company': rec.get('company'), 'price_time_utc': price.get('time_utc'), 'price_source': price.get('source'),
+           'currency': rec.get('currency'), 'share_basis': sb.get('basis'), 'known_split': sb.get('known_split'),
+           'scenarios': {k: v.get('condition_he') for k, v in (rec.get('scenarios') or {}).items() if isinstance(v, dict)},
+           'verdict': dict(rec.get('verdict') or {}), 'conditions': rec.get('conditions') or [],
+           'falsifiers': rec.get('falsifiers') or [], 'next_report': rec.get('next_report') or {},
+           'last_fresh_pull': rec.get('last_fresh_pull') or {}, 'notes_he': list(rec.get('notes_he') or []),
+           'historical_multiple': {k: v for k, v in (rec.get('historical_multiple') or {}).items() if k not in ('label_he', 'computed')}}
+    if rec.get('index_texts'):
+        out['index'] = rec['index_texts']
+    if rec.get('judgement_source'):
+        out['imported_from_handoff'] = True
+    if not any(v is not None for k, v in out['historical_multiple'].items() if k != 'note'):
+        out['historical_multiple'] = None
+    return out
+
+
 def _next_report(nr):
     nr = nr if isinstance(nr, dict) else {'date': nr} if nr else {}
     text = nr.get('text') or (str(nr['date']) if nr.get('date') else None)
@@ -498,11 +541,15 @@ def _assemble(core, inputs):
         rec['index_texts'] = inputs['index']
     if inputs.get('imported_from_handoff'):
         rec['judgement_source'] = 'imported from the v1 handoff of the same valuation (texts only)'
-    # the entry price: a ladder rung by its id, the fixed 13% rung unless the inputs name another
-    want = (inputs.get('entry_price') or {}).get('rung') or 'margin_of_safety_13'
+    # the entry price: a ladder rung by its id; the margin-of-safety price (the buy test at 13%, 16.11.2026) unless the
+    # inputs name another. 'margin_of_safety_13' (the base alone at 13%, the rule of 15.11.2026) is never the entry price
+    # any more: it can lie above the buy-test price and above today's price (ORCL, APP).
+    want = (inputs.get('entry_price') or {}).get('rung') or MOS_RUNG
+    if want == 'margin_of_safety_13':
+        want = MOS_RUNG
     prices = rung_prices(rec)
     if want not in prices:
-        want = next((k for k in ('margin_of_safety_13', 'buy_test.price', 'buy_test') if k in prices), None)
+        want = next((k for k in (MOS_RUNG, 'buy_test.price') if k in prices), None)
     rec['hurdles']['entry_price'] = {'value': prices.get(want), 'rung': want,
                                      'note': None if want else 'the model has no ladder: no entry price'}
     return rec
@@ -515,9 +562,11 @@ def _hurdles(rungs, buy_test, horizon_date, years, note=None):
         return (by.get(rid) or {}).get('price')
     h = {'horizon_date': horizon_date, 'years_to_horizon': years, 'rungs': rungs, 'buy_test': buy_test,
          'buy_test_price': buy_test.get('price'), 'base_12_price': price('buy_test'),
-         'margin_of_safety_price': price('margin_of_safety_13'), 'index_parity_price': price('index'),
+         'margin_of_safety_price': buy_test.get('margin_of_safety_price'), 'base_13_price': price('margin_of_safety_13'),
+         'index_parity_price': price('index'),
          'hold_floor_price': price('hold_floor'), 'sell_line_price': price('sell_line'),
-         'labels_he': {'buy_test_price': LABELS_HE['buy_test'], 'margin_of_safety_price': LABELS_HE['margin_of_safety']}}
+         'labels_he': {'buy_test_price': LABELS_HE['buy_test'], 'margin_of_safety_price': LABELS_HE['margin_of_safety']},
+         'rule_definitions': DEFINITIONS}
     if note:
         h['note'] = note
     return h
@@ -602,6 +651,7 @@ def build_from_lean(params, result, inputs=None, files=None):
             'rule': bt.get('rule'),
             'note': (bt.get('no_price_passes') or ('the model warns that a rerun at the stated price fails the second-lens leg: '
                                                    'the rerun price is used' if warns else None))}
+    test.update(_mos_fields(bt))
     core = {
         'ticker': params['ticker'], 'as_of': params['as_of'], 'price': params['price'], 'shares_m': params.get('shares_m'),
         'model': {'kind': 'lean_remapped' if remapped else 'lean', 'reproducible': True, **(files or {})},
@@ -625,6 +675,28 @@ def build_from_lean(params, result, inputs=None, files=None):
                                     'values have no single path')
         rec['model_reading']['worlds'] = len(rec['worlds']['worlds'])
     return rec
+
+
+def _mos_fields(bt):
+    """The margin-of-safety part of a lean buy test (lean_model buy_test.margin_of_safety_*, 16.11.2026)."""
+    if 'margin_of_safety_rule' not in bt:
+        return {'margin_of_safety_price': None, 'margin_of_safety_note': 'the result has no margin-of-safety price: rerun the params'}
+    rr = bt.get('margin_of_safety_rerun') or {}
+    out = {'margin_of_safety_price': _num(bt.get('margin_of_safety_price')),
+           'margin_of_safety_stated_price': _num(bt.get('margin_of_safety_stated_price')),
+           'margin_of_safety_rerun_price': _num(rr.get('max_price_passing')), 'margin_of_safety_rerun_used': bool(rr.get('used')),
+           'margin_of_safety_binding_leg': bt.get('margin_of_safety_binding_leg'), 'margin_of_safety_rule': bt.get('margin_of_safety_rule')}
+    if bt.get('margin_of_safety_note') or bt.get('margin_of_safety_capped_at_buy_test'):
+        out['margin_of_safety_note'] = bt.get('margin_of_safety_note') or 'capped at the buy-test price'
+    return out
+
+
+def calibrated_rule(folder):
+    """(rule, path) of a calibrated-rule sidecar beside lean_params.json (scripts/lean_model.py --calibrated-rule), or
+    (None, None)."""
+    mod = lean_model_module()
+    fp = os.path.join(folder, getattr(mod, 'CALIBRATED_RULE_NAME', 'calibrated_rule.json'))
+    return (load(fp), fp) if os.path.isfile(fp) else (None, None)
 
 
 def worlds_spec(folder, params):
@@ -669,10 +741,14 @@ def _worlds_block(worlds):
         rows.append({'name': x['name'], 'label_he': x.get('label_he'), 'weight': x.get('weight'),
                      'params': {'path': x.get('file'), 'sha256': x.get('sha256')},
                      'value_today': x.get('value_today'), 'annual_return_pct': x.get('annual_return_pct'),
-                     'buy_test_price': bt.get('rerun_max_price_passing', bt.get('max_price_passing')),
-                     'buy_test_pass': bt.get('pass'), 'margin_of_safety_price': m13.get('ours'),
-                     'margin_of_safety_price_second_lens': m13.get('calibrated'), 'base_band': x.get('base_band'),
-                     'two_lens_agree': x.get('two_lens_agree')})
+                     # the record's rule: the rerun price only when the model warns (a world run before 16.11 has no rerun_used)
+                     'buy_test_price': (bt.get('rerun_max_price_passing') if bt.get('rerun_used', True) and bt.get('rerun_max_price_passing') is not None
+                                        else bt.get('max_price_passing')),
+                     'buy_test_pass': bt.get('pass'),
+                     # 16.11.2026: the world's buy test at 13% (never above its buy-test price); the base alone at 13% beside it
+                     'margin_of_safety_price': bt.get('margin_of_safety_price'),
+                     'base_13_price': m13.get('ours'), 'base_13_price_second_lens': m13.get('calibrated'),
+                     'base_band': x.get('base_band'), 'two_lens_agree': x.get('two_lens_agree')})
     return {'source': worlds.get('source'), 'weights_label': 'subjective (judgement, not engine odds)',
             'note': worlds.get('note'), 'worlds': rows,
             'weighted_value_today': (worlds.get('weighted') or {}).get('value_today'),
@@ -761,6 +837,7 @@ def adapt_segment(params, result, inputs=None, files=None):
             'pass_at_price': all(bt.values()) if bt else None, 'complete': bool(bt), 'legs': {},
             'leg_results': bt, 'rule': 'base >= 12% in both lenses, bull >= 17%, bear >= -10%',
             'note': 'the segment model saves pass/fail per leg and the base 12% price only; no all-legs price'}
+    test.update(_segment_legs(params, result))
     core = {
         'ticker': params['ticker'], 'as_of': params['as_of'], 'price': params['price'], 'shares_m': params.get('shares_m'),
         'model': {'kind': 'segment', 'reproducible': True, **(files or {})},
@@ -779,13 +856,48 @@ def adapt_segment(params, result, inputs=None, files=None):
                                          'op_margin': _num(row.get('ebit_m')), 'eps_operating': _num(row.get('eps_operating') or row.get('eps'))}
                                 for y, row in sorted(base.get('path', {}).items(), key=lambda kv: int(kv[0]))}},
         'hurdles': _hurdles(rungs, test, date_of(2031), _num(params.get('years_to_horizon')),
-                            'margin_of_safety, hold-floor and sell-line prices are null: the segment model does not compute them'),
+                            'hold-floor and sell-line prices are null: the segment model does not compute them; the buy-test and '
+                            'margin-of-safety prices are computed from its saved horizon values (_segment_legs)'),
         'model_reading': {'band_ours': result['two_lens']['ours'].get('band'), 'band_second_lens': result['two_lens']['calibrated'].get('band'),
                           'lenses_agree': result['two_lens'].get('agree'), 'buy_test_pass': all(bt.values()) if bt else None},
     }
     inputs = dict(inputs or {})
-    inputs.setdefault('entry_price', {'rung': 'buy_test'})
+    inputs.setdefault('entry_price', {'rung': MOS_RUNG})
     return _assemble(core, inputs)
+
+
+def _segment_legs(params, result):
+    """The four buy-test legs of the segment model from its saved horizon values (16.11.2026), with the lean formula:
+    the leg's highest price = horizon year-end value / (1 + threshold) ^ years_to_horizon; the base leg of our lens is the
+    model's own 12% price. The all-legs price is the lowest leg; the margin-of-safety price is the same with both base
+    legs at 13%. No rerun: the second lens of this model holds a fixed multiple (calibrated.pe). {} when a value is missing."""
+    yrs, sc, cal = params.get('years_to_horizon'), result.get('scenarios') or {}, result.get('calibrated') or {}
+    last = str(max(int(y) for y in (sc.get('base') or {}).get('year_end_values') or {'0': 0}))
+
+    def end(d):
+        ye = (d or {}).get('year_end_values') or {}
+        return ye.get(last, ye.get(int(last)) if last.isdigit() else None)
+    ends = {'base_ours': end(sc.get('base')), 'base_calibrated': end(cal), 'bull': end(sc.get('bull')), 'bear': end(sc.get('bear'))}
+    rets = {'base_ours': (sc.get('base') or {}).get('annual_return_pct'), 'base_calibrated': cal.get('annual_return_pct'),
+            'bull': (sc.get('bull') or {}).get('annual_return_pct'), 'bear': (sc.get('bear') or {}).get('annual_return_pct')}
+    thr = {'base_ours': 12.0, 'base_calibrated': 12.0, 'bull': 17.0, 'bear': -10.0}
+    if not is_number(yrs) or not all(is_number(v) and v > 0 for v in ends.values()) or not all(is_number(v) for v in rets.values()):
+        return {}
+
+    def price(k, h):
+        if k == 'base_ours' and h == 12.0 and is_number(result.get('price_for_12pct')):
+            return result['price_for_12pct']
+        return round(ends[k] / (1 + h / 100) ** yrs, 2)
+    legs = {k: {'return_pct': rets[k], 'threshold_pct': thr[k], 'pass': rets[k] >= thr[k], 'max_price': price(k, thr[k])} for k in thr}
+    lead = min(legs, key=lambda k: legs[k]['max_price'])
+    mos = {k: price(k, 13.0 if k.startswith('base') else thr[k]) for k in thr}
+    m_lead = min(mos, key=mos.get)
+    return {'price': legs[lead]['max_price'], 'stated_price': legs[lead]['max_price'], 'binding_leg': lead, 'legs': legs,
+            'note': ('the leg prices are computed here from the segment model\'s saved horizon values (horizon year-end value / '
+                     '(1 + threshold) ^ years); the second lens holds a fixed multiple, so there is no rerun price'),
+            'margin_of_safety_price': mos[m_lead], 'margin_of_safety_stated_price': mos[m_lead], 'margin_of_safety_rerun_price': None,
+            'margin_of_safety_rerun_used': False, 'margin_of_safety_binding_leg': m_lead,
+            'margin_of_safety_rule': 'the same four legs with the base at 13% a year in both lenses (bull >= 17%, bear >= -10%)'}
 
 
 def adapt_three_lane(ticker, as_of, model_result, finish_result=None, inputs=None, files=None):
@@ -819,7 +931,8 @@ def adapt_three_lane(ticker, as_of, model_result, finish_result=None, inputs=Non
         'model': {'kind': 'three_lane', 'reproducible': True, **(files or {})},
         'scenarios': scen,
         'weighted': {'value_today': _num(pw.get('today')), 'end_value': _num(pw.get('end_2031')), 'annual_return_pct': _num(pw.get('return_pct')),
-                     'index_return_pct': float(idx.rstrip('%'))},
+                     # one decimal, as every other record (the ladder rung keeps the model's 9.14 that its price uses)
+                     'index_return_pct': round(float(idx.rstrip('%')), 1)},
         'second_lens': {'value_today': None, 'annual_return_pct': _num(lenses['calibrated']['return_pct']), 'band': lenses['calibrated']['band'],
                         'band_ours': lenses['fundamental']['band'], 'agree': lenses['calibrated']['band'] == lenses['fundamental']['band'],
                         'pe_held': _num(lenses.get('pe_today_held')),
@@ -869,17 +982,37 @@ def record_for_folder(folder, root, inputs=None, result=None, run=None):
         res = result if result is not None else load(os.path.join(folder, spec['result']))
         if run is not None and result is None and (any(k not in res for k in REPORTING_KEYS)
                                                    or 'margin_of_safety_13' not in res['price_ladder'].get('rungs', {})
-                                                   or 'rerun' not in res['buy_test'] and 'no_price_passes' not in res['buy_test']):
+                                                   or 'rerun' not in res['buy_test'] and 'no_price_passes' not in res['buy_test']
+                                                   or 'margin_of_safety_rule' not in res['buy_test']):
             # a result saved before today's reporting keys: the rerun supplies them, the saved model values stay
             res = dict(json.loads(json.dumps(run(params))), **{k: res[k] for k in SAVED_VALUE_KEYS if k in res})
+        rule, rule_path = calibrated_rule(folder)
+        run_params = params
+        if rule is not None:
+            # a calibrated-rule sidecar (16.11.2026): the second lens holds a multiple tied to the price, so the record is a
+            # rerun with the rule; lean_result.json stays the params' own result and the params file is never edited
+            run_params = lean_model_module().apply_calibrated_rule(params, rule)
+            res = json.loads(json.dumps((run or default_run())(run_params)))
         wspec, wdir = worlds_spec(folder, params) if spec['kind'] == 'lean' else (None, None)
         if wspec is not None and 'worlds' not in res:
             # the weighted worlds are computed, never saved into lean_result.json (its keys are the single file's)
-            res = dict(res, worlds=json.loads(json.dumps((run or default_run())(params, worlds=wspec, base_dir=wdir)))['worlds'])
+            res = dict(res, worlds=json.loads(json.dumps((run or default_run())(run_params, worlds=wspec, base_dir=wdir)))['worlds'])
         files = _files(folder, root, spec['params'], spec['result'], 'scripts/lean_model.py')
         if wspec is not None and 'worlds' not in params:
             files['worlds'] = file_ref(os.path.join(folder, WORLDS_NAME), os.path.dirname(root))
+        if rule is not None:
+            files['calibrated_rule'] = file_ref(rule_path, os.path.dirname(root))
         rec = build_from_lean(params, res, inputs, files)
+        if rule is not None:
+            cal = res['two_lens']['calibrated']
+            rec['second_lens'].update(pe_rule=cal.get('pe_rule'), pe_held_exact=_num(cal.get('pe_held_exact')),
+                                      net_cash_per_share=_num(cal.get('net_cash_per_share')),
+                                      replaced_pe=_num((run_params.get('calibrated') or {}).get('replaced_pe')),
+                                      pe_rule_note=(f'{os.path.basename(rule_path)}: the second lens holds (price - net cash per share) / '
+                                                    'first-year operating EPS at every price, so the buy-test rerun and a reprice move it; '
+                                                    'the fixed calibrated.pe of the params is not used'))
+            rec['warnings'].append(f'the second lens, the buy test and the ladder are a rerun with {os.path.basename(rule_path)} '
+                                   f'(calibrated.pe_rule {rule.get("pe_rule")}); {spec["result"]} is the params\' own result')
         var = _variants(folder, os.path.dirname(root))
         if var:
             rec['variants'] = var
@@ -1034,7 +1167,9 @@ def project_handoff(record, previous=None):
         'ticker': record['ticker'], 'as_of': record['as_of'], 'price': record['price']['value'],
         'price_time_utc': record['price'].get('time_utc'),
         'verdict_he': record['verdict']['text_he'],
-        'buy_test_price': h['buy_test'].get('stated_price') if h['buy_test'].get('stated_price') is not None else h.get('base_12_price'),
+        # v1 meaning: the model's all-legs price at the valuation-day multiple; null when no price passes or the model
+        # computes none (16.11.2026: no longer the base-alone 12% price in that case, see buy_test_price_note)
+        'buy_test_price': h['buy_test'].get('stated_price'),
         'margin_of_safety_price': h.get('margin_of_safety_price'),
         'values': values,
         'scenarios': dict({k: {'prob': sc[k]['probability'], 'he': sc[k]['condition_he']} for k in order}, label='subjective'),
@@ -1047,6 +1182,10 @@ def project_handoff(record, previous=None):
         # ---- v2 (added; a v1 reader ignores them): one new object, so no key an older file already uses changes shape
         'schema_version': HANDOFF_SCHEMA_VERSION,
     }
+    if out['buy_test_price'] is None:
+        out['buy_test_price_note'] = ((h['buy_test'].get('note') or 'no price passes all four legs of the buy test')
+                                      + (f'; the base case alone gives 12% a year up to {h["base_12_price"]:g} (v2.buy_test.base_12_price): '
+                                         'that is not the buy-test price' if is_number(h.get('base_12_price')) else ''))
     out['v2'] = {
         'currency': record['currency'],
         'share_basis': record['share_basis'].get('basis'),
@@ -1056,7 +1195,13 @@ def project_handoff(record, previous=None):
         'buy_test': {'price_all_legs': h.get('buy_test_price'), 'stated_price': h['buy_test'].get('stated_price'),
                      'rerun_price': h['buy_test'].get('rerun_price'), 'base_12_price': h.get('base_12_price'), 'binding_leg': h['buy_test'].get('binding_leg'),
                      'pass_at_price': h['buy_test'].get('pass_at_price'), 'rerun_used': h['buy_test'].get('rerun_used'),
-                     'legs': h['buy_test'].get('legs'), 'note': h['buy_test'].get('note')},
+                     'legs': h['buy_test'].get('legs'), 'note': h['buy_test'].get('note'),
+                     'margin_of_safety': {'price_all_legs': h.get('margin_of_safety_price'),
+                                          'stated_price': h['buy_test'].get('margin_of_safety_stated_price'),
+                                          'rerun_price': h['buy_test'].get('margin_of_safety_rerun_price'),
+                                          'rerun_used': h['buy_test'].get('margin_of_safety_rerun_used'),
+                                          'binding_leg': h['buy_test'].get('margin_of_safety_binding_leg'),
+                                          'base_13_price': h.get('base_13_price'), 'rule': h['buy_test'].get('margin_of_safety_rule')}},
         'price_ladder': {'horizon_date': h.get('horizon_date'), 'years_to_horizon': h.get('years_to_horizon'),
                          'rungs': [{k: r.get(k) for k in ('id', 'return_pct', 'price', 'price_second_lens')} for r in h.get('rungs') or []]},
         'entry_price': h.get('entry_price'),
@@ -1111,6 +1256,8 @@ def project_handoff(record, previous=None):
     if previous:
         carried = []
         for k, v in previous.items():
+            if k == 'carried_from_previous':
+                continue                          # recomputed below: never carried, never listed in itself
             if k not in out:
                 out[k] = v
                 carried.append(k)
@@ -1122,12 +1269,14 @@ def project_handoff(record, previous=None):
         if isinstance(previous.get('thesis_note'), str) and previous.get('thesis_link') is None and out.get('thesis_link'):
             out['thesis_note'] = f'the thesis is {out["thesis_link"]}'   # the old note said there was none
             carried = [k for k in carried if k != 'thesis_note']
-        if (isinstance(previous.get('margin_of_safety_note'), str) and previous.get('margin_of_safety_price') is None
-                and out.get('margin_of_safety_price') is not None):
-            # the old note explained a null that is now filled: it would contradict the number beside it
-            out['margin_of_safety_note'] = ('the fixed 13% rung of the price ladder (one definition for every company since '
-                                            '15.11.2026); the company\'s own hurdle price stays in price_ladder.rungs')
+        if isinstance(previous.get('margin_of_safety_note'), str) and out.get('margin_of_safety_price') is not None:
+            # an old note explained a null that is now filled, or the 15.11 definition (the base alone at 13%): either
+            # would contradict the number beside it
+            out['margin_of_safety_note'] = MOS_NOTE
             carried = [k for k in carried if k != 'margin_of_safety_note']
+        if 'buy_test_price_note' in previous and out.get('buy_test_price') is not None:
+            carried = [k for k in carried if k != 'buy_test_price_note']
+            out.pop('buy_test_price_note', None)
         if carried:
             out['carried_from_previous'] = sorted(carried)
     return out
@@ -1143,6 +1292,19 @@ def _carry(new, old, path, carried):
             _carry(new[k], v, f'{path}.{k}', carried)
 
 
+def _mos_he(h):
+    """The short Hebrew condition behind the margin-of-safety price (16.11.2026)."""
+    bt = h.get('buy_test') or {}
+    return 'כל מבחני הקנייה עם 13% בשנה' + (', בהרצה חוזרת' if bt.get('margin_of_safety_rerun_used') else '')
+
+
+def _no_mos_he(h):
+    bt = h.get('buy_test') or {}
+    if bt.get('margin_of_safety_binding_leg') and bt.get('margin_of_safety_price') is None and 'margin_of_safety_rule' in bt:
+        return 'אין מחיר שעובר את כל המבחנים עם 13%'
+    return 'אין מחיר ל-13% במודל הזה'
+
+
 def index_row(record, keep=None):
     """The company's single row of research/THESES_he.md (ten cells, the header's order). keep: the cells of the row
     being replaced; its judgement cells (the date note, the historical multiple, the verdict, the next check) stay
@@ -1156,10 +1318,10 @@ def index_row(record, keep=None):
                                   f'כ-{_money(hm["value"], like=base)}' + (f' ({_money(hm["low"], like=base)[:-1]}-{_money(hm["high"], like=base)})'
                                                                              if hm.get('low') is not None and hm.get('high') is not None else ''))
     ep = h.get('entry_price') or {}
-    if h.get('margin_of_safety_price') is not None and ep.get('rung') == 'margin_of_safety_13':
-        entry = f'{_money(ep["value"], 2)} (13% בשנה)'
+    if h.get('margin_of_safety_price') is not None and ep.get('rung') == MOS_RUNG:
+        entry = f'{_money(ep["value"], 2)} ({_mos_he(h)})'
     elif h.get('margin_of_safety_price') is None:
-        entry = 'אין מחיר ל-13% במודל הזה'
+        entry = _no_mos_he(h)
     else:
         entry = f'{_money(ep["value"], 2)} ({ep.get("rung")})'
     if record.get('worlds'):
@@ -1225,8 +1387,13 @@ def numbers_block(record):
     lines.append(f'- **{LABELS_HE["buy_test"]}:** ' + ('אין מחיר שעובר את כל ארבעת המבחנים' + why
                                                      if h.get('buy_test_price') is None else
                                                      f'{_money(h["buy_test_price"], 2)}' + (' (בהרצה חוזרת)' if bt.get('rerun_used') else '')) + '.')
-    lines.append(f'- **{LABELS_HE["margin_of_safety"]}:** ' + ('אין (המודל לא מחשב מחיר ל-13%)' if h.get('margin_of_safety_price') is None
-                                                             else f'{_money(h["margin_of_safety_price"], 2)} (13% בשנה)') + '.')
+    if h.get('margin_of_safety_price') is not None:
+        mos = f'{_money(h["margin_of_safety_price"], 2)} ({_mos_he(h)})'
+    elif _no_mos_he(h) == 'אין מחיר ל-13% במודל הזה':
+        mos = 'אין (המודל לא מחשב מחיר ל-13%)'
+    else:
+        mos = 'אין מחיר שעובר את כל המבחנים עם 13%' + why
+    lines.append(f'- **{LABELS_HE["margin_of_safety"]}:** ' + mos + '.')
     rest = [(n, h.get(k)) for n, k in (('מחיר שבו התשואה שווה למדד', 'index_parity_price'), ('6% בשנה', 'hold_floor_price'), ('3% בשנה', 'sell_line_price'))
             if h.get(k) is not None]
     if rest:

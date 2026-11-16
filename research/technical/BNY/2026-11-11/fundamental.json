@@ -118,7 +118,16 @@
      "max_price": 283.5
     }
    },
-   "note": "returns include dividends; the bank model saves no 13%, index, 6% or 3% rung"
+   "note": "returns include dividends; the bank model saves no 13%, index, 6% or 3% rung",
+   "margin_of_safety": {
+    "price_all_legs": null,
+    "stated_price": null,
+    "rerun_price": null,
+    "rerun_used": null,
+    "binding_leg": null,
+    "base_13_price": null,
+    "rule": null
+   }
   },
   "price_ladder": {
    "horizon_date": "2031-12-31",

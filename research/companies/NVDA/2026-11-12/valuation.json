@@ -23,15 +23,15 @@
   },
   "result": {
    "path": "research/companies/NVDA/2026-11-12/lean_result.json",
-   "sha256": "c62d0f0391163a3175026b51082347e28c25826c2b73b4807bd5d2f70a8fd22e"
+   "sha256": "6c541c84eadede3646aeeea6b05ee73fd78bd35bcec8525edc8354e8ce557050"
   },
   "code": {
    "path": "scripts/lean_model.py",
-   "sha256": "f68ccbb09a393572535fad409d70445c7dc9512720d8e94d380f3c5be42ab963"
+   "sha256": "ec6effe867a9485878e81fcb43fed1182a12fa4e176b28e9343553e1d1f68c54"
   },
   "worlds": {
    "path": "research/companies/NVDA/2026-11-12/worlds.json",
-   "sha256": "11e037a70e51ffb0b491a5bd6a31b7bedc00d05f130c5dc782932f196880269f"
+   "sha256": "bca05efb7275630a8e39181d52524837546334ca194204379d646793b103ead8"
   }
  },
  "scenarios": {
@@ -389,11 +389,18 @@
     }
    },
    "rule": "base >= 12% a year in both lenses, bull >= 17%, bear >= -10% (yearly returns from today's price to the horizon year-end)",
-   "note": null
+   "note": null,
+   "margin_of_safety_price": 155.78,
+   "margin_of_safety_stated_price": 155.78,
+   "margin_of_safety_rerun_price": 155.78,
+   "margin_of_safety_rerun_used": false,
+   "margin_of_safety_binding_leg": "base_ours",
+   "margin_of_safety_rule": "the buy test with the base at 13% a year in both lenses (bull >= 17%, bear >= -10%): the highest price at which all four legs pass; the rerun price when a rerun at that price holds a lower multiple"
   },
   "buy_test_price": 163.15,
   "base_12_price": 163.15,
   "margin_of_safety_price": 155.78,
+  "base_13_price": 155.78,
   "index_parity_price": 186.64,
   "hold_floor_price": 217.23,
   "sell_line_price": 252.21,
@@ -401,9 +408,14 @@
    "buy_test_price": "מחיר מבחן הקנייה",
    "margin_of_safety_price": "מחיר כניסה עם מרווח ביטחון"
   },
+  "rule_definitions": {
+   "buy_test_price": "the highest price at which all four buy-test legs pass: base >= 12% a year in both lenses, bull >= 17%, bear >= -10%; the rerun price when the model warns that a rerun at that price holds a lower multiple",
+   "margin_of_safety_price": "the same test with the base at 13% a year in both lenses (bull >= 17%, bear >= -10% unchanged), the rerun price when the model warns: never above buy_test_price (16.11.2026)",
+   "base_13_price": "the base case alone (our lens) at 13% a year: a ladder rung, not an entry price"
+  },
   "entry_price": {
    "value": 155.78,
-   "rung": "margin_of_safety_13",
+   "rung": "buy_test.margin_of_safety_price",
    "note": null
   }
  },
@@ -576,7 +588,8 @@
     "buy_test_price": 176.38,
     "buy_test_pass": true,
     "margin_of_safety_price": 168.41,
-    "margin_of_safety_price_second_lens": 180.76,
+    "base_13_price": 168.41,
+    "base_13_price_second_lens": 180.76,
     "base_band": "buy",
     "two_lens_agree": true
    },
@@ -603,7 +616,8 @@
     "buy_test_price": 157.05,
     "buy_test_pass": false,
     "margin_of_safety_price": 149.96,
-    "margin_of_safety_price_second_lens": 171.35,
+    "base_13_price": 149.96,
+    "base_13_price_second_lens": 171.35,
     "base_band": "hold",
     "two_lens_agree": false
    },
@@ -630,7 +644,8 @@
     "buy_test_price": 144.03,
     "buy_test_pass": false,
     "margin_of_safety_price": 137.52,
-    "margin_of_safety_price_second_lens": 167.56,
+    "base_13_price": 137.52,
+    "base_13_price_second_lens": 167.56,
     "base_band": "hold",
     "two_lens_agree": false
    }

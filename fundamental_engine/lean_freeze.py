@@ -27,6 +27,15 @@ supersedes the old one (both stay on file). A newer valuation of the same compan
 
 The first row of a new ledger is a note holding the sha256 of the legacy research/forecast_ledger.jsonl (heavy-engine
 theses to 02.11.2026; a deduplicated copy whose chain cannot be verified or appended to): that file is never touched.
+
+Weighted worlds (16.11.2026): when the main params carry a "worlds" key or a worlds.json sits beside lean_params.json,
+the published values are the weighted worlds (fundamental_engine/valuation_record.py), so the thesis row holds them:
+bear/base/bull today, the dated year-end values, the calibrated base, the buy test and the entry prices of
+lean_model.run(params, worlds=...), with each world's weight, values and file sha256 and the sha256 of worlds.json. The
+forecast rows hold the weighted base path (weight x each world's base revenue, operating margin and operating EPS; a
+simple weighted mean, also for the margin) and, as bear and bull, the envelope across the worlds and their scenarios
+(each world's own paths come from a lean_model rerun of its file; the saved results are the main file's only). A folder
+frozen before without its worlds gets a superseding thesis row and new forecast rows; a second run adds nothing.
 """
 import calendar
 import glob
@@ -54,6 +63,12 @@ CUSTOM_NOTE = 'custom model'
 SAVED_BUY_KEYS = ('buy_test', 'buy_test_today', 'buy_test_at_fundamental_add_price', 'entry_prices', 'entry_price_all_tests',
                   'price_for_12pct', 'combined')
 MONTHS = {m[:3].lower(): i for i, m in enumerate(calendar.month_name) if m}
+WORLDS_NAME = 'worlds.json'      # beside lean_params.json (valuation_record.WORLDS_NAME; scripts/lean_model.py --worlds)
+CALIBRATED_RULE_NAME = 'calibrated_rule.json'   # beside lean_params.json (scripts/lean_model.py --calibrated-rule)
+WORLDS_LABEL = 'subjective (judgement, not engine odds)'
+WORLDS_PATH_NOTE = ("weighted path over the worlds ({weights}; judgement, not engine odds): base = sum of weight x each "
+                    "world's base path; bear and bull = the envelope (lowest and highest) across the worlds and their scenarios")
+ROUND = {'revenue': 0, 'operating_margin': 6, 'eps_operating': 4}
 
 
 # ------------------------------------------------------------------ files and hashes
@@ -280,10 +295,24 @@ def _differences(saved, new, path='', out=None):
     return out
 
 
-def _run(run, params):
-    """lean_model.run on a copy, with JSON key types (years as strings), or (None, reason)."""
+def _apply_calibrated_rule(params, rule):
+    """The params with a calibrated-rule sidecar applied, as scripts/lean_model.py apply_calibrated_rule does (a fixed
+    calibrated.pe is dropped from the copy and kept as replaced_pe; the saved file is never edited)."""
+    q = json.loads(json.dumps(params))
+    cal = dict(q.get('calibrated') or {})
+    if 'pe' in cal:
+        cal['replaced_pe'] = cal.pop('pe')
+        cal['replaced_why'] = cal.get('why', '')
+    cal['pe_rule'] = rule.get('pe_rule')
+    cal['why'] = rule.get('why') or cal.get('why', '')
+    q['calibrated'] = cal
+    return q
+
+
+def _run(run, params, **kw):
+    """lean_model.run on a copy, with JSON key types (years as strings), or (None, reason). kw: worlds, base_dir."""
     try:
-        return json.loads(json.dumps(run(json.loads(json.dumps(params))))), None
+        return json.loads(json.dumps(run(json.loads(json.dumps(params)), **kw))), None
     except Exception as e:   # a params file the current model cannot run is a fact to record, not a crash
         return None, f'{type(e).__name__}: {e}'
 
@@ -324,8 +353,106 @@ def _order(b, m, u):
     return 'ascending' if b <= m <= u else 'descending' if b >= m >= u else 'crossing'
 
 
-def _forecasts(paths, base_year, base_end, as_of, today):
-    """(forecast specs, [fiscal years that are not forecasts any more])."""
+# ------------------------------------------------------------------ weighted worlds
+
+def worlds_spec(folder, spec, params):
+    """(worlds spec, worlds.json path or None) of a lean valuation: the params' own "worlds" key, else a worlds.json
+    beside the main lean_params.json (the same rule as valuation_record.worlds_spec); (None, None) without worlds."""
+    if spec.get('kind') != 'lean':
+        return None, None
+    if isinstance(params, dict) and params.get('worlds') is not None:
+        return params['worlds'], None
+    path = os.path.join(folder, WORLDS_NAME)
+    if spec.get('params') == 'lean_params.json' and os.path.isfile(path):
+        return _load(path), path
+    return None, None
+
+
+def _weighted_paths(runs, cur):
+    """([(metric, unit, currency, basis, {bear: low, base: weighted, bull: high})], {metric: {year: detail}}) from the
+    single runs of the worlds [(name, weight, result)]: base = sum of weight x each world's base; bear / bull = the
+    envelope across every world and scenario. A metric a world lacks is left out."""
+    specs = (('revenue', cur, cur, BASES['revenue'], 'revenue_m', 1e6),
+             ('operating_margin', 'ratio', None, BASES['operating_margin'], 'op_margin', 1.0),
+             ('eps_operating', cur, cur, EPS_BASIS, 'eps_operating', 1.0))
+    out, extra = [], {}
+    for metric, unit, c, basis, key, scale in specs:
+        per = [(name, wt, _series(res, key, scale)) for name, wt, res in runs]
+        if any(s is None for _, _, s in per):
+            continue
+        series, detail = {k: {} for k in SCEN}, {}
+        for y in sorted(set.intersection(*[set(s['base']) for _, _, s in per])):
+            if any(s[k].get(y) is None for _, _, s in per for k in SCEN):
+                continue
+            vals = [s[k][y] for _, _, s in per for k in SCEN]
+            lo, hi = min(vals), max(vals)
+            wb = min(max(round(sum(wt * s['base'][y] for _, wt, s in per), ROUND[metric]), lo), hi)
+            series['bear'][y], series['base'][y], series['bull'][y] = lo, wb, hi
+            detail[y] = {'base_by_world': {name: s['base'][y] for name, _, s in per},
+                         'weighted_scenarios': {k: round(sum(wt * s[k][y] for _, wt, s in per), ROUND[metric]) for k in SCEN},
+                         'envelope': {'low': lo, 'high': hi, 'across': 'every world x bear / base / bull'}}
+        if series['base']:
+            out.append((metric, unit, c, basis, series))
+            extra[metric] = detail
+    return out, extra
+
+
+def _worlds(run, new, folder, root, wfile, cur, saved_scen):
+    """The weighted-worlds part of a thesis: (block, scen, cal, buy test, entry prices, two_lens, paths, path detail).
+    new: lean_model.run(params, worlds=...) as JSON. Each world file is rerun alone for its yearly paths."""
+    wd = new['worlds']
+    w = wd['weighted']
+    keys = [k for k in SCEN if k in w['value_today']]
+    scen = {k: {'value_today': w['value_today'][k], 'year_end': {int(y): v[k] for y, v in w['year_end_values'].items()},
+                'annual_return_pct': w['annual_return_pct'][k]} for k in keys}
+    tl = w.get('two_lens') or {}
+    cal = None
+    if 'base_calibrated' in w['value_today']:
+        cal = {'value_today': w['value_today']['base_calibrated'],
+               'year_end': {int(y): v['base_calibrated'] for y, v in w['year_end_values'].items()},
+               'annual_return_pct': w['annual_return_pct']['base_calibrated'], 'band': tl.get('calibrated'), 'pe_used': None,
+               'note': "weighted worlds: each world's second lens holds its own multiple"}
+    rows, runs = [], []
+    for x in wd['worlds']:
+        path = x['file'] if os.path.isabs(x['file']) else os.path.join(folder, x['file'])
+        wp = _load(path)
+        res, err = _run(run, {k: v for k, v in wp.items() if k != 'worlds'})
+        if res is None:
+            raise ValueError(f"world {x['name']!r} ({x['file']}) cannot be run: {err}")
+        runs.append((x['name'], x['weight'], res))
+        bt = x.get('buy_test') or {}
+        rows.append({'name': x['name'], 'label_he': x.get('label_he'), 'weight': x['weight'],
+                     'params': {'path': _rel(path, root), 'sha256': sha256_file(path), 'canonical_sha256': canonical_sha256(wp)},
+                     'value_today': x.get('value_today'), 'base_value_today': (x.get('value_today') or {}).get('base'),
+                     'annual_return_pct': x.get('annual_return_pct'), 'base_band': x.get('base_band'),
+                     'buy_test': {'pass': bt.get('pass'), 'max_price_passing': bt.get('max_price_passing'),
+                                  'rerun_max_price_passing': bt.get('rerun_max_price_passing')},
+                     'margin_of_safety_13': x.get('margin_of_safety_13')})
+    block = {'source': _rel(wfile, root) if wfile else 'the params key "worlds"',
+             'file': {'path': _rel(wfile, root), 'sha256': sha256_file(wfile), 'canonical_sha256': canonical_sha256(_load(wfile))}
+             if wfile else None,
+             'weights_label': WORLDS_LABEL, 'weights': wd['weights'], 'worlds': rows,
+             'probability_weighted_value_today': w.get('probability_weighted_value_today'),
+             'main_file_values_today': {k: v['value_today'] for k, v in saved_scen.items()},
+             'warnings': wd.get('warnings') or [],
+             'note': ('values, second lens, buy test and entry prices = the weighted worlds of lean_model.run(params, worlds=...) '
+                      '(weight x value of each world, per scenario and date); main_file_values_today = the saved lean_result.json '
+                      '(the main file alone); the forecast rows are the weighted path')}
+    bt = _buy_test({'buy_test': w['buy_test']}, scen, cal)
+    bt['source'] = 'weighted worlds: lean_model.run(params, worlds=...) at freeze'
+    rungs = (w.get('price_ladder') or {}).get('rungs') or {}
+    entry = {'buy_price': (rungs.get('margin_of_safety') or {}).get('ours'), 'index_parity_price': (rungs.get('index') or {}).get('ours'),
+             'index_return_pct': (rungs.get('index') or {}).get('return_pct'),
+             'margin_of_safety_13': (rungs.get('margin_of_safety_13') or {}).get('ours'),
+             'buy_test_rung': (rungs.get('buy_test') or {}).get('ours'), 'source': 'the weighted price ladder'}
+    two = {'agree': tl.get('agree'), 'rule': None if tl.get('agree') is None else
+           'both lenses in the same band: act on it' if tl['agree'] else 'lenses disagree: hold, or stage the trade around the next report'}
+    paths, detail = _weighted_paths(runs, cur)
+    return block, scen, cal, bt, entry, two, paths, detail
+
+
+def _forecasts(paths, base_year, base_end, as_of, today, detail=None):
+    """(forecast specs, [fiscal years that are not forecasts any more]). detail: {metric: {year: ...}} of a weighted path."""
     specs, past = [], []
     for metric, unit, cur, basis, series in paths:
         for y in sorted(series['base']):
@@ -339,7 +466,8 @@ def _forecasts(paths, base_year, base_end, as_of, today):
                 continue
             specs.append({'metric': metric, 'fiscal_year': y, 'period_end': end.isoformat(), 'unit': unit, 'currency': cur,
                           'basis': basis, 'scenarios': vals, 'scenario_order': _order(*[vals[k] for k in SCEN]),
-                          'horizon_years': round((end - as_of).days / 365.25, 2)})
+                          'horizon_years': round((end - as_of).days / 365.25, 2),
+                          'weighted': ((detail or {}).get(metric) or {}).get(y)})
     return specs, past
 
 
@@ -377,6 +505,33 @@ def build_record(folder, root, spec=None, run=None, lean_model_path=None, falsif
     scen, cal = _scenarios(result), _calibrated(result)
     if 'base' not in scen:
         raise ValueError('the saved result has no base scenario')
+    wspec, wfile = worlds_spec(folder, spec, params)
+    worlds, new_w = None, None
+    if wspec is not None:
+        # the published values are the weighted worlds: they are frozen, never the main file alone
+        if not run:
+            raise ValueError('a valuation with weighted worlds needs lean_model.run: its published values are the weighted ones')
+        new_w, err = _run(run, params, worlds=wspec, base_dir=folder)
+        if new_w is None or 'worlds' not in new_w:
+            raise ValueError(f'the weighted worlds cannot be run: {err}')
+        worlds, scen, cal, w_bt, w_entry, w_two, w_paths, w_detail = _worlds(run, new_w, folder, root, wfile, cur, scen)
+        files['worlds'] = worlds['file'] or {'path': None, 'note': 'the params key "worlds"'}
+    # a calibrated-rule sidecar (calibrated_rule.json beside lean_params.json) is part of the published valuation: the
+    # second lens and the buy test are the ones with the rule applied (valuation_record.record_for_folder does the same)
+    crule, rule_new = None, None
+    rule_path = os.path.join(folder, CALIBRATED_RULE_NAME)
+    if wspec is None and spec.get('params') == 'lean_params.json' and os.path.isfile(rule_path):
+        if not run:
+            raise ValueError('a valuation with a calibrated-rule sidecar needs lean_model.run: its published second lens is '
+                             'the one with the rule applied')
+        rule = _load(rule_path)
+        rule_new, err = _run(run, _apply_calibrated_rule(params, rule))
+        if rule_new is None:
+            raise ValueError(f'the calibrated rule cannot be run: {err}')
+        crule = {'path': _rel(rule_path, root), 'sha256': sha256_file(rule_path), 'canonical_sha256': canonical_sha256(rule),
+                 'pe_rule': rule.get('pe_rule')}
+        files['calibrated_rule'] = crule
+        cal = _calibrated(rule_new)
     # dates of the year-ends: the base fiscal year ends days_to_base_year_end after the date the params were built on
     years = sorted(scen['base']['year_end'])
     dates_from = params
@@ -393,7 +548,7 @@ def build_record(folder, root, spec=None, run=None, lean_model_path=None, falsif
 
     rerun, rerun_bt, review = None, None, None
     if run and (lean or spec['model'] == 'remapped_lean'):
-        new, err = _run(run, params)
+        new, err = (new_w, None) if new_w is not None else _run(run, params)
         diff = None if new is None else _differences(result, new)
         rerun = {'reproduces_saved_result': None if new is None else not diff, 'differing_keys': (diff or [])[:12], 'error': err}
         rerun_bt = new.get('buy_test') if new else None
@@ -431,14 +586,26 @@ def build_record(folder, root, spec=None, run=None, lean_model_path=None, falsif
         variants.append({'name': name, 'params_sha256': sha256_file(vp), 'result_sha256': sha256_file(vr),
                          'value_today': {k: v['value_today'] for k, v in vs.items()},
                          'base_return_pct': (vs.get('base') or {}).get('annual_return_pct')})
-    if variants:
+    if variants and worlds:
+        weight_of = {os.path.basename(x['params']['path']): x['weight'] for x in worlds['worlds']}
+        for v in variants:
+            v['weight'] = weight_of.get(f"lean_params_{v['name']}.json", 0.0)
+        notes.append('the named variants are frozen by hash and value; weight = their weight in the worlds (0: saved next to '
+                     'the main file, not one of the worlds in force)')
+    elif variants:
         notes.append('the named variants are frozen by hash and value; a weighting across them is not in any file')
+    if worlds:
+        notes.append(f"the values are the weighted worlds of {worlds['source']} ({len(worlds['worlds'])} worlds, weights "
+                     f"{', '.join(f'{k} {v:g}' for k, v in worlds['weights'].items())}: judgement); the forecast rows are the "
+                     'weighted path')
 
     values = {'today': {k: v['value_today'] for k, v in scen.items()}, 'weighted_today': result.get('weighted_value_today',
               (result.get('probability_weighted') or {}).get('today')),
               'year_end_dates': year_end_dates, 'year_end': {k: v['year_end'] for k, v in scen.items()},
               'annual_return_pct': {k: v['annual_return_pct'] for k, v in scen.items()},
               'probabilities': {k: v for k, v in (params.get('probabilities') or {}).items() if k in SCEN} or None}
+    if worlds:
+        values['weighted_today'] = worlds['probability_weighted_value_today']
     record = {'frozen_by': FROZEN_BY, 'kind': spec['kind'], 'model': spec['model'], 'ticker': ticker, 'as_of': as_of, 'price': price,
               'currency': cur, 'folder': _rel(folder, root), 'files': files, 'values': values, 'calibrated': cal,
               'two_lens': {k: (result.get('two_lens') or {}).get(k) for k in ('agree', 'rule')} if result.get('two_lens') else None,
@@ -446,16 +613,31 @@ def build_record(folder, root, spec=None, run=None, lean_model_path=None, falsif
               'entry_prices': {k: result.get(k) for k in ('buy_price', 'index_parity_price', 'index_return_pct') if k in result} or None,
               'buy_return': params.get('buy_return'), 'review': review, 'variants': variants or None, 'rerun': rerun,
               'falsifiers': list(falsifiers) if falsifiers else None}
+    if worlds:
+        record.update(two_lens=w_two, buy_test=w_bt, entry_prices=w_entry, worlds=worlds)
+    if crule:
+        record.update(buy_test=_buy_test(rule_new, scen, cal), calibrated_rule=crule,
+                      two_lens={k: (rule_new.get('two_lens') or {}).get(k) for k in ('agree', 'rule')} if rule_new.get('two_lens')
+                      else record['two_lens'])
+        notes.append(f"the second lens and the buy test use the calibrated rule {crule['pe_rule']} ({crule['path']}); the "
+                     'scenario values are the saved result')
     if not lean:
         record['note'] = f"{CUSTOM_NOTE}: {spec.get('why')}; values from the saved result file"
-    paths = _paths(spec['model'], result, cur)
+    paths, detail = (w_paths, w_detail) if worlds else (_paths(spec['model'], result, cur), None)
     if not lean and not paths:
         notes.append('no forecast rows: the saved result has no per-year path this module reads')
     record['notes'] = notes
-    record['fingerprint'] = canonical_sha256({
-        'params': files.get('params', {}).get('canonical_sha256'), 'inputs': inputs, 'values': values, 'calibrated': cal,
-        'paths': [[m, b, s] for m, _, _, b, s in paths], 'falsifiers': record['falsifiers']})
-    return record, {'paths': paths, 'base_year': base_year, 'base_end': base_end}
+    fp = {'params': files.get('params', {}).get('canonical_sha256'), 'inputs': inputs, 'values': values, 'calibrated': cal,
+          'paths': [[m, b, s] for m, _, _, b, s in paths], 'falsifiers': record['falsifiers']}
+    if crule:            # only here, as for the worlds: other folders keep the fingerprint they always had
+        fp['calibrated_rule'] = crule['canonical_sha256']
+    if worlds:           # only here: the fingerprint of a valuation without worlds is what it always was
+        fp['worlds'] = {'file': (worlds['file'] or {}).get('canonical_sha256'), 'weights': worlds['weights'],
+                        'files': {x['name']: x['params']['canonical_sha256'] for x in worlds['worlds']}}
+    record['fingerprint'] = canonical_sha256(fp)
+    return record, {'paths': paths, 'base_year': base_year, 'base_end': base_end, 'detail': detail,
+                    'weighted_note': WORLDS_PATH_NOTE.format(weights=', '.join(f'{k} {v:g}' for k, v in worlds['weights'].items()))
+                    if worlds else None}
 
 
 # ------------------------------------------------------------------ freeze
@@ -496,7 +678,12 @@ def freeze_folder(folder, ledger, *, root=None, run=None, lean_model_path=None, 
                                            and (r['record']['kind'] != 'lean' or record['kind'] != 'lean'
                                                 or os.path.basename(r['record']['files']['result']['path']) == name)), None)
         latest = max((r['made_at'] for r in rows if r.get('made_at')), key=day, default=None)
-        if same:
+        no_worlds_before = bool(same and record.get('worlds') and not same[-1]['record'].get('worlds'))
+        no_rule_before = bool(same and record.get('calibrated_rule') and not same[-1]['record'].get('calibrated_rule'))
+        if no_worlds_before:
+            made, basis = today.isoformat(), ('recording day: the frozen row of this valuation was made without the weighted '
+                                              'worlds it publishes')
+        elif same:
             made, basis = today.isoformat(), 'recording day: the inputs of a frozen valuation changed after its freeze'
         elif latest and day(latest) > _d(as_of):
             made, basis = today.isoformat(), f'recording day: as_of {as_of} is earlier than an entry already on file ({latest})'
@@ -507,7 +694,13 @@ def freeze_folder(folder, ledger, *, root=None, run=None, lean_model_path=None, 
         record.update(made_at_basis=basis, next_report=_next_report(nr, 'supplied to the freeze'), on_time=on_time(today, nr),
                       recording_lag_days=lag, late_recording=lag > LATE_RECORDING_DAYS,
                       supersedes=prev['thesis_id'] if prev else None,
-                      supersede_reason=None if not prev else 'the inputs of this valuation changed after its freeze' if same
+                      supersede_reason=None if not prev else
+                      (f"the frozen row was made without the weighted worlds this valuation publishes ({record['worlds']['source']}): "
+                       'the values and the forecast path are now the weighted ones') if no_worlds_before
+                      else (f"the frozen row was made without the calibrated rule this valuation publishes "
+                            f"({record['calibrated_rule']['path']}): the second lens and the buy test are now the rule's")
+                      if no_rule_before
+                      else 'the inputs of this valuation changed after its freeze' if same
                       else 'a newer valuation of the same company')
         tid = f"lean:{ticker}:{as_of}:{record['fingerprint'][:12]}"
         n = sum(r['thesis_id'].startswith(tid) for r in mine)
@@ -516,7 +709,7 @@ def freeze_folder(folder, ledger, *, root=None, run=None, lean_model_path=None, 
         L.thesis(thesis_id=tid, entity=ticker, made_at=made, model_version=version, record=record)
         out['rows_written'] += 1
         status = 'superseded an earlier freeze' if same else 'frozen'
-    specs, past = (_forecasts(meta['paths'], meta['base_year'], meta['base_end'], _d(as_of), today)
+    specs, past = (_forecasts(meta['paths'], meta['base_year'], meta['base_end'], _d(as_of), today, meta.get('detail'))
                    if meta['paths'] and meta['base_end'] else ([], []))
     rows = L.lines()
     ids = {r.get('id') for r in rows}
@@ -531,19 +724,24 @@ def freeze_folder(folder, ledger, *, root=None, run=None, lean_model_path=None, 
         ctx = {'thesis_id': tid, 'frozen_by': FROZEN_BY, 'fiscal_year': f['fiscal_year'], 'period_kind': 'fiscal_year',
                'horizon_years': f['horizon_years'], 'sided': 'two', 'vintage': 'revision' if prior else 'original',
                'on_time': record.get('on_time')}
+        note = 'scenario paths cross for this metric' if f['scenario_order'] == 'crossing' else ''
+        if f.get('weighted'):
+            ctx.update(path='weighted_worlds', weights=(record.get('worlds') or {}).get('weights'), weighted_worlds=f['weighted'])
+            note = '; '.join(x for x in (meta.get('weighted_note'), note) if x)
         try:
             L.forecast(id=fid, entity=ticker, made_at=made, metric=f['metric'], period_end=f['period_end'], scenarios=f['scenarios'],
                        unit=f['unit'], currency=f['currency'], basis=f['basis'], model_version=version, price=record['price'],
                        inputs_hash=(record['files'].get('params') or record['files']['result'])['sha256'], thesis_id=tid,
                        supersedes=prior[-1]['id'] if prior else None, scenario_order=f['scenario_order'], context=ctx,
-                       note='scenario paths cross for this metric' if f['scenario_order'] == 'crossing' else '')
+                       note=note)
             out['forecasts_written'] += 1
         except ValueError as e:
             out['rejected'].append({'id': fid, 'reason': str(e)})
     out['rows_written'] += out['forecasts_written']
     out.update(status=status if status != 'unchanged' or not out['forecasts_written'] else 'completed missing forecast rows',
                thesis_id=tid, made_at=made, on_time=record.get('on_time'), late_recording=record.get('late_recording'),
-               supersedes=record.get('supersedes'), not_forecast=past, notes=record.get('notes') or [])
+               supersedes=record.get('supersedes'), not_forecast=past, notes=record.get('notes') or [],
+               worlds=(record.get('worlds') or {}).get('weights'))
     return out
 
 
@@ -590,4 +788,5 @@ def status(ledger):
             'forecasts': sum(r.get('type') == 'forecast' for r in rows), 'outcomes': sum(r.get('type') == 'outcome' for r in rows),
             'in_force': [{'thesis_id': r['thesis_id'], 'ticker': r['entity'], 'as_of': r['record'].get('as_of'),
                           'base_value_today': r['record']['values']['today'].get('base'), 'on_time': r['record'].get('on_time'),
-                          'late_recording': r['record'].get('late_recording')} for r in theses if r['thesis_id'] not in replaced]}
+                          'late_recording': r['record'].get('late_recording'),
+                          'worlds': (r['record'].get('worlds') or {}).get('weights')} for r in theses if r['thesis_id'] not in replaced]}

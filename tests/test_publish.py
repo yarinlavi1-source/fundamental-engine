@@ -197,6 +197,32 @@ class PublishTest(unittest.TestCase):
         self.assertEqual(h['next_report']['date'], 'late January 2027')    # the v1 key keeps its text
         self.assertEqual(self.t.kinds(), [])
 
+    def test_a_republish_without_inputs_keeps_the_judgement_of_the_saved_record(self):
+        self.t.publish()
+        first = json.loads(self.t.read('companies/ANET/2026-11-04/valuation.json'))
+        self.t.said.clear()
+        self.t.publish(inputs=False)                     # e.g. after a code change: no --thesis-inputs
+        again = json.loads(self.t.read('companies/ANET/2026-11-04/valuation.json'))
+        for k in ('verdict', 'conditions', 'falsifiers', 'next_report', 'last_fresh_pull', 'notes_he', 'historical_multiple', 'price'):
+            self.assertEqual(again[k], first[k], k)
+        self.assertEqual({k: v['condition_he'] for k, v in again['scenarios'].items()},
+                         {k: v['condition_he'] for k, v in first['scenarios'].items()})
+        self.assertTrue(any('valuation.json' in x for x in self.t.said))
+        self.assertEqual(self.t.kinds(), [])
+
+    def test_a_calibrated_rule_sidecar_is_applied_to_the_record_only(self):
+        self.t.publish()
+        saved = json.loads(self.t.read('companies/ANET/2026-11-04/lean_result.json'))
+        self.t.write('companies/ANET/2026-11-04/calibrated_rule.json', json.dumps({'pe_rule': 'net_of_cash', 'why': 'test'}))
+        self.t.publish(inputs=False)
+        self.assertEqual(json.loads(self.t.read('companies/ANET/2026-11-04/lean_result.json'))['two_lens'], saved['two_lens'])
+        rec = json.loads(self.t.read('companies/ANET/2026-11-04/valuation.json'))
+        self.assertEqual(rec['second_lens']['pe_rule'], 'net_of_cash')
+        self.assertIn('calibrated_rule', rec['model'])
+        self.assertLess(rec['second_lens']['value_today'], saved['two_lens']['calibrated']['value_today'])  # ANET holds net cash
+        self.assertLessEqual(rec['hurdles']['margin_of_safety_price'], rec['hurdles']['buy_test_price'])
+        self.assertEqual(self.t.kinds(), [])
+
     def test_bad_params_and_variants_are_refused(self):
         p = json.loads(self.t.read('companies/ANET/2026-11-04/lean_params.json'))
         p['probabilities']['base'] = 0.9

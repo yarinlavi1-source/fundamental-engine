@@ -12,6 +12,10 @@ operating EPS per model year with the bear-bull envelope). --all: every lean or 
 research/companies in as_of order. Idempotent: a second run adds nothing when nothing changed; changed inputs add a
 thesis that supersedes the old one. Custom models (bank, segment, three-lane, a remapped lean file) get a thesis row
 from their saved result file with the note 'custom model'.
+Weighted worlds: a folder with a worlds.json beside lean_params.json (or a "worlds" key in the params) is frozen with the
+weighted values the book publishes (lean_model.run(params, worlds=...)): each world's weight, values and file sha256 and
+the sha256 of worlds.json in the thesis row; forecast rows = the weighted base path with the envelope across worlds and
+scenarios as bear and bull. A row frozen before without its worlds is superseded once; freeze after any republish.
 --next-report: the date of the company's next report ('2026-11-17', '~2027-02-04', 'late January 2027'); default: the
 next_report of research/technical/<T>/<date>/fundamental.json. --next-reports: a JSON file {'T' or 'T/<date>': the
 same}. --falsifiers: a JSON list stored with the thesis. Company research only: nothing private is read or written.
@@ -41,6 +45,7 @@ def _line(r):
     return (f"{r['ticker']:<6}{r['as_of']:<12}{r['model']:<14}base {r['base_value_today']!s:>9}  rows {r['rows_written']:>3}  "
             f"{r['status']}; on time: {'yes' if r['on_time'] else 'no' if r['on_time'] is False else 'unknown'}"
             f"{'; recorded late' if r.get('late_recording') else ''}"
+            f"{'; weighted worlds ' + ' / '.join(f'{k} {v:g}' for k, v in r['worlds'].items()) if r.get('worlds') else ''}"
             f"{'; rejected ' + str(len(r['rejected'])) if r['rejected'] else ''}{'; ' + r['note'] if r.get('note') else ''}")
 
 

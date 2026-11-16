@@ -5,7 +5,7 @@
  "price_time_utc": "2026-11-04 (time not recorded in the saved params)",
  "verdict_he": "עוברת את מבחן הקנייה במחיר של 4.11 (103$): בסיסי 20.2% בשנה, עדשה שנייה 19.4%; הימור קטן בלבד, כי הכול תלוי במספר המשתמשים היומי",
  "buy_test_price": 143.3,
- "margin_of_safety_price": 141.64,
+ "margin_of_safety_price": 136.87,
  "values": {
   "today": {
    "bear": 56.92,
@@ -133,7 +133,16 @@
      "max_price": 157.02
     }
    },
-   "note": null
+   "note": null,
+   "margin_of_safety": {
+    "price_all_legs": 136.87,
+    "stated_price": 136.87,
+    "rerun_price": 141.64,
+    "rerun_used": false,
+    "binding_leg": "base_calibrated",
+    "base_13_price": 141.64,
+    "rule": "the buy test with the base at 13% a year in both lenses (bull >= 17%, bear >= -10%): the highest price at which all four legs pass; the rerun price when a rerun at that price holds a lower multiple"
+   }
   },
   "price_ladder": {
    "horizon_date": "2031-12-31",
@@ -178,8 +187,8 @@
    ]
   },
   "entry_price": {
-   "value": 141.64,
-   "rung": "margin_of_safety_13",
+   "value": 136.87,
+   "rung": "buy_test.margin_of_safety_price",
    "note": null
   },
   "index_parity_price": 169.47,
@@ -445,6 +454,7 @@
   "model_warnings",
   "price_ladder",
   "source",
+  "thesis_note",
   "values.calibrated_end_2031"
  ]
 }

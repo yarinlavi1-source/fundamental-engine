@@ -4,8 +4,8 @@
  "price": 110.46,
  "price_time_utc": "2026-11-13T15:30:53Z",
  "verdict_he": "לא לקנות במחיר הזה: הבסיסי כ-9% בשנה (כמו המדד), העדשה השנייה כ-12% במימון ריאלי (על הגבול), ובתרחיש הדובי רוב ההון אובד",
- "buy_test_price": 95.19,
- "margin_of_safety_price": 90.95,
+ "buy_test_price": null,
+ "margin_of_safety_price": null,
  "values": {
   "today": {
    "bear": 0.0,
@@ -119,6 +119,7 @@
   "השווי הבסיסי ירד ב-13.11 מ-67$ ל-64$ בגלל הביאורים, בעיקר רווחיות נקייה נמוכה יותר"
  ],
  "schema_version": 2,
+ "buy_test_price_note": "the bear case wipes the equity at the horizon: no price passes that leg; the base case alone gives 12% a year up to 95.19 (v2.buy_test.base_12_price): that is not the buy-test price",
  "v2": {
   "currency": "USD",
   "share_basis": null,
@@ -161,7 +162,16 @@
      "max_price": null
     }
    },
-   "note": "the bear case wipes the equity at the horizon: no price passes that leg"
+   "note": "the bear case wipes the equity at the horizon: no price passes that leg",
+   "margin_of_safety": {
+    "price_all_legs": null,
+    "stated_price": null,
+    "rerun_price": null,
+    "rerun_used": false,
+    "binding_leg": "bear",
+    "base_13_price": 90.95,
+    "rule": "the buy test with the base at 13% a year in both lenses (bull >= 17%, bear >= -10%): the highest price at which all four legs pass; the rerun price when a rerun at that price holds a lower multiple"
+   }
   },
   "price_ladder": {
    "horizon_date": "2031-12-31",
@@ -206,9 +216,9 @@
    ]
   },
   "entry_price": {
-   "value": 90.95,
-   "rung": "margin_of_safety_13",
-   "note": null
+   "value": null,
+   "rung": null,
+   "note": "the model has no ladder: no entry price"
   },
   "index_parity_price": 108.7,
   "hold_floor_price": 126.26,

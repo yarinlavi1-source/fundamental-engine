@@ -23,11 +23,11 @@
   },
   "result": {
    "path": "research/companies/NBIS/2026-11-13/lean_result.json",
-   "sha256": "594ca792acbc93185fc53809da5625aa93cf4961eca5ab31043cdd6eaaa56cf5"
+   "sha256": "20ada97b4c5818eed0283804bc7b99907cb99038ec8f118010f9c9d8fc201972"
   },
   "code": {
    "path": "scripts/lean_model.py",
-   "sha256": "f68ccbb09a393572535fad409d70445c7dc9512720d8e94d380f3c5be42ab963"
+   "sha256": "ec6effe867a9485878e81fcb43fed1182a12fa4e176b28e9343553e1d1f68c54"
   }
  },
  "scenarios": {
@@ -385,11 +385,19 @@
     }
    },
    "rule": "base >= 12% a year in both lenses, bull >= 17%, bear >= -10% (yearly returns from today's price to the horizon year-end)",
-   "note": "the bear case wipes the equity at the horizon: no price passes that leg"
+   "note": "the bear case wipes the equity at the horizon: no price passes that leg",
+   "margin_of_safety_price": null,
+   "margin_of_safety_stated_price": null,
+   "margin_of_safety_rerun_price": null,
+   "margin_of_safety_rerun_used": false,
+   "margin_of_safety_binding_leg": "bear",
+   "margin_of_safety_rule": "the buy test with the base at 13% a year in both lenses (bull >= 17%, bear >= -10%): the highest price at which all four legs pass; the rerun price when a rerun at that price holds a lower multiple",
+   "margin_of_safety_note": "the bear case wipes the equity at the horizon: no price passes that leg"
   },
   "buy_test_price": null,
   "base_12_price": 95.19,
-  "margin_of_safety_price": 90.95,
+  "margin_of_safety_price": null,
+  "base_13_price": 90.95,
   "index_parity_price": 108.7,
   "hold_floor_price": 126.26,
   "sell_line_price": 146.3,
@@ -397,10 +405,15 @@
    "buy_test_price": "מחיר מבחן הקנייה",
    "margin_of_safety_price": "מחיר כניסה עם מרווח ביטחון"
   },
+  "rule_definitions": {
+   "buy_test_price": "the highest price at which all four buy-test legs pass: base >= 12% a year in both lenses, bull >= 17%, bear >= -10%; the rerun price when the model warns that a rerun at that price holds a lower multiple",
+   "margin_of_safety_price": "the same test with the base at 13% a year in both lenses (bull >= 17%, bear >= -10% unchanged), the rerun price when the model warns: never above buy_test_price (16.11.2026)",
+   "base_13_price": "the base case alone (our lens) at 13% a year: a ladder rung, not an entry price"
+  },
   "entry_price": {
-   "value": 90.95,
-   "rung": "margin_of_safety_13",
-   "note": null
+   "value": null,
+   "rung": null,
+   "note": "the model has no ladder: no entry price"
   }
  },
  "display": {

@@ -71,7 +71,7 @@
   "bull": 19.01,
   "calibrated": 10.43,
   "weighted": 7.46,
-  "index": 9.14,
+  "index": 9.1,
   "depwave_evidenced": 8.78,
   "calibrated_full_depwave_weighted": 5.43
  },
@@ -134,7 +134,16 @@
      "max_price": 590.0
     }
    },
-   "note": "the ladder is saved at whole dollars; no 13% rung"
+   "note": "the ladder is saved at whole dollars; no 13% rung",
+   "margin_of_safety": {
+    "price_all_legs": null,
+    "stated_price": null,
+    "rerun_price": null,
+    "rerun_used": null,
+    "binding_leg": null,
+    "base_13_price": null,
+    "rule": null
+   }
   },
   "price_ladder": {
    "horizon_date": "2031-12-30",

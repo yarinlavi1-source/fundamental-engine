@@ -294,25 +294,57 @@
    }
   ],
   "buy_test": {
-   "price": null,
-   "stated_price": null,
+   "price": 8.22,
+   "stated_price": 8.22,
    "rerun_price": null,
    "rerun_used": false,
-   "binding_leg": null,
+   "binding_leg": "bear",
    "pass_at_price": false,
    "complete": true,
-   "legs": {},
+   "legs": {
+    "base_ours": {
+     "return_pct": -1.5,
+     "threshold_pct": 12.0,
+     "pass": false,
+     "max_price": 72.85
+    },
+    "base_calibrated": {
+     "return_pct": 7.8,
+     "threshold_pct": 12.0,
+     "pass": false,
+     "max_price": 115.75
+    },
+    "bull": {
+     "return_pct": 23.9,
+     "threshold_pct": 17.0,
+     "pass": true,
+     "max_price": 188.92
+    },
+    "bear": {
+     "return_pct": -48.3,
+     "threshold_pct": -10.0,
+     "pass": false,
+     "max_price": 8.22
+    }
+   },
    "leg_results": {
     "base_ge_12_both": false,
     "bull_ge_17": true,
     "bear_ge_minus10": false
    },
    "rule": "base >= 12% in both lenses, bull >= 17%, bear >= -10%",
-   "note": "the segment model saves pass/fail per leg and the base 12% price only; no all-legs price"
+   "note": "the leg prices are computed here from the segment model's saved horizon values (horizon year-end value / (1 + threshold) ^ years); the second lens holds a fixed multiple, so there is no rerun price",
+   "margin_of_safety_price": 8.22,
+   "margin_of_safety_stated_price": 8.22,
+   "margin_of_safety_rerun_price": null,
+   "margin_of_safety_rerun_used": false,
+   "margin_of_safety_binding_leg": "bear",
+   "margin_of_safety_rule": "the same four legs with the base at 13% a year in both lenses (bull >= 17%, bear >= -10%)"
   },
-  "buy_test_price": null,
+  "buy_test_price": 8.22,
   "base_12_price": 72.85,
-  "margin_of_safety_price": null,
+  "margin_of_safety_price": 8.22,
+  "base_13_price": null,
   "index_parity_price": 83.19,
   "hold_floor_price": null,
   "sell_line_price": null,
@@ -320,10 +352,15 @@
    "buy_test_price": "מחיר מבחן הקנייה",
    "margin_of_safety_price": "מחיר כניסה עם מרווח ביטחון"
   },
-  "note": "margin_of_safety, hold-floor and sell-line prices are null: the segment model does not compute them",
+  "rule_definitions": {
+   "buy_test_price": "the highest price at which all four buy-test legs pass: base >= 12% a year in both lenses, bull >= 17%, bear >= -10%; the rerun price when the model warns that a rerun at that price holds a lower multiple",
+   "margin_of_safety_price": "the same test with the base at 13% a year in both lenses (bull >= 17%, bear >= -10% unchanged), the rerun price when the model warns: never above buy_test_price (16.11.2026)",
+   "base_13_price": "the base case alone (our lens) at 13% a year: a ladder rung, not an entry price"
+  },
+  "note": "hold-floor and sell-line prices are null: the segment model does not compute them; the buy-test and margin-of-safety prices are computed from its saved horizon values (_segment_legs)",
   "entry_price": {
-   "value": 72.85,
-   "rung": "buy_test",
+   "value": 8.22,
+   "rung": "buy_test.margin_of_safety_price",
    "note": null
   }
  },

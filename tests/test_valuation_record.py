@@ -24,6 +24,46 @@ def fixture_record(inputs=None):
     return p, vr.build_from_lean(p, res, inputs, files)
 
 
+class MarginOfSafetyRecordTest(unittest.TestCase):
+    """16.11.2026: the entry price is the buy test at 13% (never above the buy-test price); the v1 buy_test_price is the
+    model's all-legs price or null with a note; the judgement of a saved record round-trips."""
+
+    def test_entry_price_is_the_margin_of_safety_and_an_old_rung_name_maps_to_it(self):
+        _, rec = fixture_record({'entry_price': {'rung': 'margin_of_safety_13'}})
+        self.assertEqual(rec['hurdles']['entry_price']['rung'], vr.MOS_RUNG)
+        self.assertIn('rule_definitions', rec['hurdles'])
+        self.assertEqual(vr.validate(rec), [])
+
+    def test_v1_buy_test_price_is_null_with_a_note_when_no_price_passes(self):
+        _, rec = fixture_record()
+        rec = copy.deepcopy(rec)
+        rec['hurdles']['buy_test'].update(price=None, stated_price=None, note='the bear case wipes the equity at the horizon')
+        rec['hurdles']['buy_test_price'] = None
+        h = vr.project_handoff(rec)
+        self.assertIsNone(h['buy_test_price'])
+        self.assertIn('wipes the equity', h['buy_test_price_note'])
+        self.assertIn('not the buy-test price', h['buy_test_price_note'])
+
+    def test_segment_legs_from_the_saved_horizon_values(self):
+        folder = os.path.join(RESEARCH, 'companies', 'SPCX', '2026-11-13')
+        rec, _ = vr.record_for_folder(folder, RESEARCH, run=lean_model.run)
+        bt, h = rec['hurdles']['buy_test'], rec['hurdles']
+        self.assertEqual(set(bt['legs']), {'base_ours', 'base_calibrated', 'bull', 'bear'})
+        self.assertEqual(bt['legs']['base_ours']['max_price'], h['base_12_price'])
+        self.assertEqual(h['buy_test_price'], min(v['max_price'] for v in bt['legs'].values()))
+        self.assertLessEqual(h['margin_of_safety_price'], h['buy_test_price'])
+        self.assertEqual({k: v['pass'] for k, v in bt['legs'].items() if k in ('bull', 'bear')},
+                         {'bull': bt['leg_results']['bull_ge_17'], 'bear': bt['leg_results']['bear_ge_minus10']})
+
+    def test_inputs_from_a_saved_record_round_trip(self):
+        _, rec = fixture_record({'verdict': {'code': 'hold', 'text_he': 'החזקה'}, 'scenarios': {'base': 'לפי התחזית'},
+                                 'falsifiers': [{'kind': 'exit', 'metric': 'growth', 'op': '<', 'threshold': 0.1, 'text_he': 'צמיחה'}],
+                                 'next_report': {'date': '2027-02-16', 'confirmed': True}, 'notes_he': ['הערה']})
+        _, again = fixture_record(vr.inputs_from_record(rec))
+        for k in ('verdict', 'conditions', 'falsifiers', 'next_report', 'notes_he', 'historical_multiple', 'last_fresh_pull'):
+            self.assertEqual(again[k], rec[k], k)
+
+
 class RecordTest(unittest.TestCase):
     def test_lean_record_is_valid_and_holds_the_model_numbers(self):
         p, rec = fixture_record()
@@ -31,10 +71,13 @@ class RecordTest(unittest.TestCase):
         res = json.loads(json.dumps(lean_model.run(p)))
         self.assertEqual(rec['price']['value'], p['price'])
         self.assertEqual(rec['scenarios']['base']['value_today'], res['scenarios']['base']['value_today'])
-        self.assertEqual(rec['hurdles']['margin_of_safety_price'], res['price_ladder']['rungs']['margin_of_safety_13']['ours'])
+        # 16.11.2026: the margin-of-safety price is the buy test at 13% (here the base leg binds, so it equals the base-alone rung)
+        self.assertEqual(rec['hurdles']['margin_of_safety_price'], res['buy_test']['margin_of_safety_price'])
+        self.assertEqual(rec['hurdles']['base_13_price'], res['price_ladder']['rungs']['margin_of_safety_13']['ours'])
+        self.assertLessEqual(rec['hurdles']['margin_of_safety_price'], rec['hurdles']['buy_test_price'])
         self.assertEqual(rec['hurdles']['index_parity_price'], res['index_parity_price'])
         self.assertEqual(rec['hurdles']['entry_price'], {'value': rec['hurdles']['margin_of_safety_price'],
-                                                         'rung': 'margin_of_safety_13', 'note': None})
+                                                         'rung': vr.MOS_RUNG, 'note': None})
         years = rec['base_path']['years']
         self.assertEqual(len(years), 6)
         self.assertTrue(all(vr._iso(y['fiscal_year_end']) for y in years.values()))
@@ -133,6 +176,10 @@ class RecordTest(unittest.TestCase):
         self.assertEqual(h['annual_return_pct']['tail'], -10.7)
         self.assertEqual(h['carried_from_previous'], ['annual_return_pct.tail', 'sell_price', 'values.tail_end_2031'])
         self.assertEqual(vr.check_handoff_numbers(h), [])
+        # a republish over that file: the list is recomputed, never carried into itself
+        again = vr.project_handoff(rec, json.loads(json.dumps(h)))
+        self.assertEqual(again['carried_from_previous'], ['annual_return_pct.tail', 'sell_price', 'values.tail_end_2031'])
+        self.assertEqual(again, h)
 
     def test_inputs_from_a_v1_handoff(self):
         h = vr.load(os.path.join(RESEARCH, 'technical', 'UBER', '2026-11-13', 'fundamental.json'))

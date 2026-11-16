@@ -98,6 +98,35 @@ class TestWeightedWorlds(unittest.TestCase):
         self.assertIn('176.38$', block)
 
 
+class TestMarginOfSafety(unittest.TestCase):
+    """16.11.2026 (w3_6 defects 2, 5, 7): one margin-of-safety price, never above the buy-test price."""
+
+    def test_every_published_entry_price_is_at_or_below_the_buy_test_price(self):
+        for t in sorted(os.listdir(os.path.join(RESEARCH, 'companies'))):
+            latest = vr.latest_valuation(RESEARCH, t, lean_model.run)
+            rec = latest and latest['record']
+            if not rec or latest['record_source'] != vr.RECORD_NAME:
+                continue
+            h = rec['hurdles']
+            if h.get('margin_of_safety_price') is not None and h.get('buy_test_price') is not None:
+                self.assertLessEqual(h['margin_of_safety_price'], h['buy_test_price'], t)
+            if h.get('margin_of_safety_price') is not None:
+                self.assertEqual(h['entry_price']['value'], h['margin_of_safety_price'], t)
+
+    def test_five_publishes_the_rerun_price_with_the_price_tied_multiple(self):
+        rec = vr.load(os.path.join(RESEARCH, 'companies', 'FIVE', '2026-11-15', vr.RECORD_NAME))
+        self.assertEqual(rec['second_lens']['pe_rule'], 'net_of_cash')
+        self.assertEqual(rec['hurdles']['buy_test_price'], 220.47)
+        self.assertTrue(rec['hurdles']['buy_test']['rerun_used'])
+        self.assertEqual(rec['hurdles']['margin_of_safety_price'], 203.79)
+        self.assertEqual(rec['model']['calibrated_rule']['path'], 'research/companies/FIVE/2026-11-15/calibrated_rule.json')
+
+    def test_orcl_and_app_entry_prices_are_not_above_the_valuation_day_price(self):
+        for t, d in (('ORCL', '2026-11-06'), ('APP', '2026-11-06')):
+            rec = vr.load(os.path.join(RESEARCH, 'companies', t, d, vr.RECORD_NAME))
+            self.assertLess(rec['hurdles']['entry_price']['value'], rec['price']['value'], t)
+
+
 class TestProjectionFixes(unittest.TestCase):
     def test_a_stale_null_note_is_replaced_when_the_number_exists(self):
         rec = _record('GOOGL', '2026-11-04')
@@ -108,9 +137,9 @@ class TestProjectionFixes(unittest.TestCase):
         self.assertNotIn('null:', h['margin_of_safety_note'])
         self.assertNotIn('no thesis', h['thesis_note'])
         self.assertNotIn('margin_of_safety_note', h.get('carried_from_previous') or [])
-        # a note beside a number that was already there is carried as it is
+        # 16.11.2026: a note beside a number is the current definition (the 15.11 one, the base alone at 13%, is stale)
         keep = vr.project_handoff(rec, dict(prev, margin_of_safety_price=207.07))
-        self.assertEqual(keep['margin_of_safety_note'], prev['margin_of_safety_note'])
+        self.assertEqual(keep['margin_of_safety_note'], vr.MOS_NOTE)
 
     def test_a_wiped_scenario_reads_equity_wiped_in_the_index_row(self):
         rec = _record('NBIS', '2026-11-13')

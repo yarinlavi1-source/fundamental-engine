@@ -180,7 +180,11 @@ def reprice_lean(folder, spec, price, when, lm=None):
     as_of = max(when, str(p.get('as_of'))[:10])
     wpath = os.path.join(folder, 'worlds.json')
     tmp, worlds = None, None
+    crule = (VR.calibrated_rule(folder)[0]
+             if spec['params'] == 'lean_params.json' and not os.path.isfile(wpath) else None)
     try:
+        if crule is not None:                        # the published second lens is the one with the rule (FIVE)
+            q = lm.apply_calibrated_rule(q, crule)
         rq = lm.reprice(q, price=price, as_of=as_of)
         if os.path.isfile(wpath) and spec['params'] == 'lean_params.json':
             ws = VR.load(wpath)

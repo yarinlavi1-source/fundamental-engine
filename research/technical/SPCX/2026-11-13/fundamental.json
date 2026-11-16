@@ -4,8 +4,8 @@
  "price": 140.66,
  "price_time_utc": "2026-11-13T09:36Z",
  "verdict_he": "לא לקנות במחיר הזה: הכול תלוי במחיר השכרת שרתי AI; העדשות לא מסכימות",
- "buy_test_price": 72.85,
- "margin_of_safety_price": null,
+ "buy_test_price": 8.22,
+ "margin_of_safety_price": 8.22,
  "values": {
   "today": {
    "bear": 1.42,
@@ -104,15 +104,49 @@
    "path": "research/companies/SPCX/2026-11-13/valuation.json"
   },
   "buy_test": {
-   "price_all_legs": null,
-   "stated_price": null,
+   "price_all_legs": 8.22,
+   "stated_price": 8.22,
    "rerun_price": null,
    "base_12_price": 72.85,
-   "binding_leg": null,
+   "binding_leg": "bear",
    "pass_at_price": false,
    "rerun_used": false,
-   "legs": {},
-   "note": "the segment model saves pass/fail per leg and the base 12% price only; no all-legs price"
+   "legs": {
+    "base_ours": {
+     "return_pct": -1.5,
+     "threshold_pct": 12.0,
+     "pass": false,
+     "max_price": 72.85
+    },
+    "base_calibrated": {
+     "return_pct": 7.8,
+     "threshold_pct": 12.0,
+     "pass": false,
+     "max_price": 115.75
+    },
+    "bull": {
+     "return_pct": 23.9,
+     "threshold_pct": 17.0,
+     "pass": true,
+     "max_price": 188.92
+    },
+    "bear": {
+     "return_pct": -48.3,
+     "threshold_pct": -10.0,
+     "pass": false,
+     "max_price": 8.22
+    }
+   },
+   "note": "the leg prices are computed here from the segment model's saved horizon values (horizon year-end value / (1 + threshold) ^ years); the second lens holds a fixed multiple, so there is no rerun price",
+   "margin_of_safety": {
+    "price_all_legs": 8.22,
+    "stated_price": 8.22,
+    "rerun_price": null,
+    "rerun_used": false,
+    "binding_leg": "bear",
+    "base_13_price": null,
+    "rule": "the same four legs with the base at 13% a year in both lenses (bull >= 17%, bear >= -10%)"
+   }
   },
   "price_ladder": {
    "horizon_date": "2031-12-31",
@@ -133,8 +167,8 @@
    ]
   },
   "entry_price": {
-   "value": 72.85,
-   "rung": "buy_test",
+   "value": 8.22,
+   "rung": "buy_test.margin_of_safety_price",
    "note": null
   },
   "index_parity_price": 83.19,

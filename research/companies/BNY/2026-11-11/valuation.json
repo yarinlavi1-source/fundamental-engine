@@ -346,12 +346,18 @@
   "buy_test_price": 131.58,
   "base_12_price": 133.59,
   "margin_of_safety_price": null,
+  "base_13_price": null,
   "index_parity_price": null,
   "hold_floor_price": null,
   "sell_line_price": null,
   "labels_he": {
    "buy_test_price": "מחיר מבחן הקנייה",
    "margin_of_safety_price": "מחיר כניסה עם מרווח ביטחון"
+  },
+  "rule_definitions": {
+   "buy_test_price": "the highest price at which all four buy-test legs pass: base >= 12% a year in both lenses, bull >= 17%, bear >= -10%; the rerun price when the model warns that a rerun at that price holds a lower multiple",
+   "margin_of_safety_price": "the same test with the base at 13% a year in both lenses (bull >= 17%, bear >= -10% unchanged), the rerun price when the model warns: never above buy_test_price (16.11.2026)",
+   "base_13_price": "the base case alone (our lens) at 13% a year: a ladder rung, not an entry price"
   },
   "note": "margin_of_safety, index, hold-floor and sell-line prices are null: the bank model does not compute them",
   "entry_price": {

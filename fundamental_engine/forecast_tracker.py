@@ -12,7 +12,9 @@ What is a test (v2, 15.11.2026):
   and the fiscal calendar), and a changed file is reported;
 - one row per company and reported period: the latest valuation frozen BEFORE that report (recorded day < report day).
   A valuation frozen after the report, or never frozen, gives a row labelled 'descriptive only' that no summary counts.
-  Three revisions of one company before one report are one row;
+  Three revisions of one company before one report are one row; a thesis superseded by a row frozen before the report
+  (lean_freeze's supersedes) is never scored (in_force). A valuation with weighted worlds is scored against the weighted
+  path its forecast rows hold (weight x each world's path), which is what the book publishes;
 - a completed fiscal year: revenue, operating margin and operating EPS against the model's year (the base year has a
   revenue estimate only: the model's margins and EPS start one year later), with an on-track / ahead / behind word;
 - a year in progress: the newly reported part (the year to date now minus the year to date already reported before
@@ -162,11 +164,14 @@ def ledger_path(thesis, params=None):
     points += sorted((ye_dates[int(y)], v) for y, v in ((vals.get('year_end') or {}).get('base') or {}).items()
                      if int(y) in ye_dates and ye_dates[int(y)] > as_of)
     points = [(d, v) for d, v in points if _num(v)]
+    worlds = rec.get('worlds') or {}
     return {'as_of': as_of, 'base_year': base_year, 'base_end': base_end, 'tax': params.get('tax') if params else None,
             'price': rec.get('price'), 'revenue': revenue,
             'growth': {y: revenue[y] / revenue[y - 1] - 1 for y in revenue if revenue.get(y - 1)},
             'margin': series.get('operating_margin', {}), 'eps_operating': series.get('eps_operating', {}),
             'value_points': points, 'source': 'ledger', 'thesis_id': thesis.get('thesis_id'),
+            'supersedes': rec.get('supersedes'),
+            'weighted_worlds': worlds.get('weights') if worlds else None,
             'known_split': (rec.get('share_basis') or {}).get('known_split') or rec.get('known_split')}
 
 
@@ -357,6 +362,10 @@ def score(ticker, params, result, payload, today, price=None, release_dates=None
     row['price'] = px
     if note:
         row['notes'].append(note)
+    if path.get('weighted_worlds'):
+        row['weighted_worlds'] = path['weighted_worlds']
+        row['notes'].append('the base path is the weighted worlds path of the frozen thesis (weight x each world\'s path; weights '
+                            + ', '.join(f'{k} {v:g}' for k, v in path['weighted_worlds'].items()) + ', judgement): the published values')
     if payload is None:
         row.update(status='not_scorable', read='not_scorable', reason='no SEC companyfacts for this company')
         return row
@@ -515,7 +524,8 @@ def file_check(record, now):
     elif r == files['result']['sha256']:
         out['result'] = 'same'
     else:
-        frozen = (record.get('values') or {}).get('today') or {}
+        # weighted worlds: the result file holds the main file alone, whose values the thesis keeps beside the weighted ones
+        frozen = ((record.get('worlds') or {}).get('main_file_values_today') or (record.get('values') or {}).get('today') or {})
         cur = now.get('result_values_today') or {}
         out['result'] = 'rewritten' if frozen and all(cur.get(k) == v for k, v in frozen.items()) else 'changed'
     out['holds'] = out['params'] in (None, 'same') and out['result'] in ('same', 'rewritten')
@@ -525,11 +535,23 @@ def file_check(record, now):
     return out
 
 
+def _supersedes(c):
+    return (c.get('path') or {}).get('supersedes') or c.get('supersedes')
+
+
+def in_force(candidates):
+    """The candidates no other candidate in the list supersedes (a superseded thesis is never scored once the row
+    that replaces it is on file before the report; a newer valuation made after the report is not in the list)."""
+    gone = {_supersedes(c) for c in candidates} - {None}
+    return [c for c in candidates if not (c.get('thesis_id') and c['thesis_id'] in gone)]
+
+
 def choose(candidates, reported_on):
-    """(candidate, 'test' | 'descriptive', reason) for a report: the latest valuation frozen before the report day; else
-    the latest valuation made before it, labelled descriptive only; (None, None, None) when there is none."""
+    """(candidate, 'test' | 'descriptive', reason) for a report: the latest valuation frozen before the report day and
+    not superseded by another row frozen before it; else the latest valuation made before it, labelled descriptive
+    only; (None, None, None) when there is none."""
     before = [c for c in candidates if c['as_of'] < reported_on]
-    frozen = [c for c in before if c.get('recorded_at') and c['recorded_at'][:10] < reported_on]
+    frozen = in_force([c for c in before if c.get('recorded_at') and c['recorded_at'][:10] < reported_on])
     if frozen:
         return max(frozen, key=lambda c: (c['recorded_at'], c['as_of'])), 'test', None
     if before:
@@ -548,7 +570,7 @@ def company_rows(ticker, candidates, payload, today, price=None, release_dates=N
     cands = sorted(candidates, key=lambda c: (c['as_of'], c.get('recorded_at') or ''))
     if not cands:
         return []
-    newest, earliest = cands[-1], cands[0]['as_of']
+    newest, earliest = (in_force(cands) or cands)[-1], cands[0]['as_of']
     rows, report_days = [], []
     lean = [c for c in cands if c['kind'] == 'lean' and c.get('path') and c['path'].get('base_end')]
     if lean and payload is not None:
@@ -913,7 +935,8 @@ def _row_he(r):
     pr = (f"{px['price']:,.2f} מול {px['value_path']:,.2f} ({_p(px['vs_value_path'], d=0)}; ביום ההערכה {_p(px['gap_at_valuation'], d=0)})"
           if px else '—')
     mode = {'test': 'מבחן', 'descriptive': 'תיאור בלבד'}.get(r.get('mode', 'test'), '—')
-    return (f"| {r['ticker']} | {r.get('valuation_date') or '—'} | {_what(r)} | {rv} | {mg} | {pr} | {mode} | "
+    vd = (r.get('valuation_date') or '—') + (' (ממוצע משוקלל של העולמות)' if r.get('weighted_worlds') else '')
+    return (f"| {r['ticker']} | {vd} | {_what(r)} | {rv} | {mg} | {pr} | {mode} | "
             f"{READ_HE.get(r['read'], r['read'])} |")
 
 

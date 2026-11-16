@@ -118,7 +118,16 @@
      "max_price": 2427.31
     }
    },
-   "note": null
+   "note": null,
+   "margin_of_safety": {
+    "price_all_legs": 1812.57,
+    "stated_price": 1812.57,
+    "rerun_price": null,
+    "rerun_used": false,
+    "binding_leg": "base_ours",
+    "base_13_price": 1812.57,
+    "rule": "the buy test with the base at 13% a year in both lenses (bull >= 17%, bear >= -10%): the highest price at which all four legs pass; the rerun price when a rerun at that price holds a lower multiple"
+   }
   },
   "price_ladder": {
    "horizon_date": "2031-12-31",
@@ -164,7 +173,7 @@
   },
   "entry_price": {
    "value": 1812.57,
-   "rung": "margin_of_safety_13",
+   "rung": "buy_test.margin_of_safety_price",
    "note": null
   },
   "index_parity_price": 2171.96,

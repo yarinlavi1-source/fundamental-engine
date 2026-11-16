@@ -86,6 +86,141 @@ META thesis adds $12.3 of dividends to the 2031 value, so its 12% price is about
 them); "margin of safety" is `buy_return` in lean_model and in the theses but 13% in the handoff format
 (`research/technical/FUNDAMENTAL_HANDOFF_he.md`): one definition is still to be chosen.
 
+### Wave 3b fixes (16.11.2026)
+# W3b-A (16.11.2026): NVDA's frozen forecast is the weighted worlds before the 17.11 report
+
+Closes open defects 1, 3 and 4 of w3_6.md.
+
+- **lean_freeze and weighted worlds** (`fundamental_engine/lean_freeze.py`, `scripts/lean_freeze.py`): when a folder has
+  a `worlds.json` beside `lean_params.json`, or the params carry a `worlds` key, the thesis row holds what the book
+  publishes. That is the output of `lean_model.run(params, worlds=...)`: bear/base/bull today, the dated year-end values,
+  the calibrated base, the buy test, the entry prices and the two-lens agreement. A new `worlds` block lists each
+  world's weight, values, buy test and params sha256, the sha256 of worlds.json, and the main file's own values.
+  - The forecast rows hold the weighted base path: weight x each world's base revenue, operating margin and operating
+    EPS. The margin is a simple weighted mean. Each world's path comes from a lean_model rerun of its own file.
+  - As bear and bull, the forecast rows hold the envelope (lowest and highest value) across every world and scenario.
+    The row note and `context.weighted_worlds` say so, and the context also carries each world's base and the weighted
+    bear/base/bull.
+  - A folder frozen before without its worlds gets one superseding thesis row and revised forecast rows, with the reason
+    stated in the row. A second run adds nothing. A worlds valuation is never frozen without the model: it raises an
+    error instead of freezing the main file alone.
+  - The fingerprint of a folder without worlds is unchanged: a check over all 28 frozen folders shows only NVDA would be
+    frozen again.
+- **forecast_tracker** (`fundamental_engine/forecast_tracker.py`): `in_force()` drops a thesis when another row recorded
+  before the report supersedes it, so a superseded row is never scored. `choose` and the newest row both use it.
+  - `ledger_path` carries `supersedes` and `weighted_worlds`. A scored row says it is scored against the weighted path,
+    and the Hebrew table marks it ("ממוצע משוקלל של העולמות").
+  - `file_check` compares a rewritten result file with the main file's values for a worlds thesis.
+- **NVDA** (research/):
+  - `worlds.json`: only the stale note changed. The published figures are at 161.50, and 155.39 is history. Its sha256
+    went from 11e037a7... to bca05efb....
+  - Republished with `--thesis-inputs` built from the saved record, so the verdict code and the price source are kept.
+    `valuation.json` changed only in `model.worlds.sha256`. The handoff changed only by the publish quirk below.
+  - Frozen after the republish. The new row `lean:NVDA:2026-11-12:23d65c1b86a9` supersedes `...:8f0762821d89`:
+    - values: base 169.02, bear 69.77, bull 284.23; calibrated base 189.05 (+14.7%/yr); base return +12.2%/yr;
+    - buy test: passes, at prices up to 163.15; 13% price 155.78;
+    - 20 rows were appended (1 thesis, 19 forecasts), and the ledger now has 527 entries and verifies.
+- **NVDA thesis prose**:
+  - The header price 161.47$ is now 161.50$.
+  - The old central-world table now has a heading. It says the table is the orderly-succession world alone (45%), not the
+    published value, which is the weighted 169$.
+  - One history line was added.
+- Tests:
+  - `test_weighted_worlds_are_frozen_and_supersede_a_row_made_without_them`
+  - `test_weighted_worlds_need_the_model_and_a_params_key_works`
+  - `test_the_weighted_worlds_path_is_scored_and_a_superseded_row_never_is`
+
+Left open:
+- `valuation_record.project_handoff` lists `carried_from_previous` inside its own list on every republish.
+- The thesis section heading "## שווי הוגן (המצב המרכזי: ...)" above the weighted numbers block was kept word for word.
+- FY2027 is NVDA's base year, so the model has no FY2027 margin. The 17.11 report can be compared on revenue only:
+  the margin of the new part is shown without a model figure.
+### W3b-B (16.11.2026): one margin-of-safety price, a second-lens multiple tied to the price, the cash double count measured
+
+Closes w3_6 open defects 2, 5, 6 and 7 and the FIVE review finding (calibrated lens counting cash twice).
+- **Margin-of-safety price, one definition.** `scripts/lean_model.py` `buy_test` gains `margin_of_safety_price` (the four
+  buy-test legs with the base at 13% a year in both lenses, bull >= 17%, bear >= -10%; the rerun price when the model
+  warns), `margin_of_safety_binding_leg`, `margin_of_safety_stated_price`, `margin_of_safety_rerun`,
+  `margin_of_safety_rule`; the weighted-worlds buy test and each world row carry it. It is never above the buy-test
+  price. `price_ladder.rungs.margin_of_safety_13` keeps its name, label and prices (the base alone at 13%) and gains
+  `meaning`/`note`. The record (`hurdles.margin_of_safety_price`, `hurdles.entry_price` rung
+  `buy_test.margin_of_safety_price`, new `hurdles.base_13_price` and `rule_definitions`), the index cell, the handoff v1
+  `margin_of_safety_price` (+ `v2.buy_test.margin_of_safety`) and the thesis numbers block use it.
+- **Second lens tied to the price (optional).** `calibrated.pe_rule: "net_of_cash"`: held multiple = (price - net cash
+  per share) / first-year operating EPS at any price, so the buy-test rerun and `--price` work. The default lens is
+  unchanged (every saved value reproduces: tests.test_saved_valuations). `--calibrated-rule FILE` and a sidecar
+  `calibrated_rule.json` beside lean_params.json (read by `valuation_record.record_for_folder` and so by
+  `publish_valuation.py`); `pe` with `pe_rule` is refused. In force for FIVE: buy-test price 231.47 -> 220.47 (rerun,
+  the review's number), margin-of-safety 224.76 -> 203.79, second lens 258.85 -> 258.88 (21.107 vs 21.1, 10.6% in both).
+- **Measurement (report only):** runs/engine_upgrade_2026-11-15/calibrated_cash_measure.md. On the default lens the
+  band changes in 1 of 17 main valuations (WSM hold -> lagging, 6.3% -> 5.9%), lens agreement in 0.
+- **SPCX:** the four legs are computed from the segment model's saved 2031 values (`_segment_legs`): buy-test and
+  margin-of-safety price 8.22 (the bear leg binds) instead of "no price passes" / 72.85 (the base alone at 12%).
+- **Handoff v1 `buy_test_price`:** the model's all-legs price at the valuation-day multiple, null with
+  `buy_test_price_note` when none (NBIS 95.19 -> null); a stale `margin_of_safety_note` is replaced by the 16.11 definition.
+- **META:** `annual_return_pct.index` 9.14 -> 9.1 (record `weighted.index_return_pct` rounded to one decimal).
+- **Republish without loss:** `valuation_record.inputs_from_record` and `publish_valuation.py` carry the judgement of the
+  saved valuation.json (typed conditions included) when no --thesis-inputs is given.
+- Republished all 23 thesis-book companies; changes in book_backfill_changes.md ("Fix B"); history lines in 11 theses;
+  docs/LEAN_PATH.md, research/THESIS_TEMPLATE_he.md and research/technical/FUNDAMENTAL_HANDOFF_he.md definitions updated.
+- Not done: `fundamental_engine/lean_freeze.py` does not read calibrated_rule.json, so the frozen FIVE row keeps
+  258.85 / 231.47 (a freeze would write nothing: the fingerprint is unchanged; the base path is unchanged).
+### W3b-review (16.11.2026): one review round over Fix A and Fix B
+
+Checks (all passed):
+- **lean_model.** The script at git HEAD was run against the working tree on 299 runs: research 47, NVDA weighted worlds 1,
+  runs 249 and tests 2. No pre-existing key changed. The only new keys are `buy_test.margin_of_safety_*` and the
+  `meaning`/`note` of the `margin_of_safety_13` rung. `margin_of_safety_capped_at_buy_test` never appears.
+- **The margin-of-safety price is never above the buy-test price.** This holds in all 23 records, in all handoffs (v1
+  and v2, NVDA per world included) and in the NVDA world rows. The entry price equals it wherever it exists.
+- **Hand computation.** I recomputed the prices by bisection on a reprice, not with `_solve_rerun`. They match the
+  records:
+
+  | Company | Buy-test price | Margin-of-safety price | Note |
+  |---|---|---|---|
+  | UBER | 99.14 | 94.72 | |
+  | ORCL | 73.19 | 73.19 | bear leg binds |
+  | APP | 300.12 | 300.12 | bear leg binds |
+  | FIVE | 220.46 (record 220.47) | 203.78 (record 203.79) | rerun |
+
+- **FIVE.**
+  - The rule holds a multiple of 21.107 at 246.68. The second lens moves from 258.85 to 258.88.
+  - No scenario value moved.
+  - `lean_result.json` only gained keys.
+- **NVDA.**
+  - The ledger's in-force row is `lean:NVDA:2026-11-12:23d65c1b86a9`: weighted base 169.02, bear 69.77, bull 284.23.
+  - `--verify` is ok on 527 entries, and the first 507 rows are byte-identical to HEAD.
+  - The tracker (offline, `--no-ledger`) picks the new row and marks it "(ממוצע משוקלל של העולמות)".
+  - The thesis prose changed only where Fix A said.
+- **Publishing.** `publish_valuation.py --check` gives 0 problems. The v1 handoff keys keep their types, except three
+  number <-> null changes that the documented "number or null" rule allows: NBIS buy-test and margin-of-safety prices
+  (now null), SPCX margin-of-safety price (now 8.22).
+- **Privacy.** A grep over the lines added to the 106 changed files found nothing.
+
+Fixed:
+- `valuation_record.project_handoff` no longer copies `carried_from_previous` from the old handoff or lists it inside
+  itself. Fix A had left this open; it affected 13 handoffs. Test: a second projection over the first one's output gives
+  the same file (`tests/test_valuation_record.py`).
+- All 23 valuations were republished. Only two things changed: the 13 `carried_from_previous` lists, and
+  `model.code.sha256` in the 20 lean records. Those records held 0638eac..., but `scripts/lean_model.py` was edited at
+  08:54, after the 08:50 republish. They now hold ec6effe..., the current file. No number, thesis, index row,
+  lean_result or ledger row changed.
+- docs/LEAN_PATH.md: the sidecar note now names every reader that ignores it.
+
+Open:
+- The screen (`quality_momentum._from_folder`) and `portfolio_health.reprice_lean` ignore FIVE's `calibrated_rule.json`.
+  - Both rerun FIVE with the fixed 21.1. At 246.68 the screen gives 231.47, against the record's 220.47.
+  - At 225 the screen says pass, but the published rule says fail.
+  - Fix: apply `valuation_record.calibrated_rule(folder)` with `lean_model.apply_calibrated_rule` before reprice/run in
+    both. These files are outside this wave's diff.
+- `lean_freeze` ignores the sidecar. The frozen FIVE thesis keeps a second lens of 258.85 and a buy-test price of 231.47.
+  The base path is unchanged, so scoring is not affected. Fixing it needs one superseding FIVE row.
+- The NVDA thesis keeps "מ-161.47$" in the old single-world table, outside the markers and under the new heading. The
+  rule keeps it.
+- The v1 handoff's `buy_test_price` is the stated price, while `margin_of_safety_price` is the rerun price when the
+  model warns. Both are documented: APH 61.3 / 49.58, FIVE 231.5 / 203.79. The owner is told the v2 number.
+- Calibrated-rule sidecar now read by lean_freeze (superseding thesis row when a folder gains one), the screen and portfolio_health, so FIVE is tested at the published rule everywhere (buy-test price 220.47, second lens 258.88); FIVE prose prices corrected with a history line.
+
 ### Wave 3 of the end-to-end upgrade (16.11.2026)
 # P3b-worlds-and-funding (15.11.2026)
 

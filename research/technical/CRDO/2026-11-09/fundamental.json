@@ -5,7 +5,7 @@
  "price_time_utc": null,
  "verdict_he": "לא לקנות עכשיו; תלוי באי-עיכול ובשמירה על הלקוחות",
  "buy_test_price": 95.29,
- "margin_of_safety_price": 115.55,
+ "margin_of_safety_price": 95.29,
  "values": {
   "today": {
    "bear": 26.99,
@@ -118,7 +118,16 @@
      "max_price": 95.29
     }
    },
-   "note": null
+   "note": null,
+   "margin_of_safety": {
+    "price_all_legs": 95.29,
+    "stated_price": 95.29,
+    "rerun_price": 95.29,
+    "rerun_used": false,
+    "binding_leg": "bear",
+    "base_13_price": 115.55,
+    "rule": "the buy test with the base at 13% a year in both lenses (bull >= 17%, bear >= -10%): the highest price at which all four legs pass; the rerun price when a rerun at that price holds a lower multiple"
+   }
   },
   "price_ladder": {
    "horizon_date": "2032-05-01",
@@ -163,8 +172,8 @@
    ]
   },
   "entry_price": {
-   "value": 115.55,
-   "rung": "margin_of_safety_13",
+   "value": 95.29,
+   "rung": "buy_test.margin_of_safety_price",
    "note": null
   },
   "index_parity_price": 140.03,

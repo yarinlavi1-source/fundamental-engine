@@ -218,7 +218,9 @@
     "label": "margin of safety: fixed 13% a year for every company",
     "return_pct": 13.0,
     "ours": 1812.57,
-    "calibrated": 1891.24
+    "calibrated": 1891.24,
+    "meaning": "the base case alone at 13% a year",
+    "note": "not the margin-of-safety price: that is buy_test.margin_of_safety_price (all four buy-test legs with the base at 13%), never above the buy-test price"
    },
    "buy_test": {
     "label": "buy test: base return 12% a year",
@@ -290,7 +292,11 @@
   "pass": true,
   "binding_leg": "base_ours",
   "max_price_passing": 1897.47,
-  "max_price_vs_price_pct": 23.8
+  "max_price_vs_price_pct": 23.8,
+  "margin_of_safety_rule": "the buy test with the base at 13% a year in both lenses (bull >= 17%, bear >= -10%): the highest price at which all four legs pass; the rerun price when a rerun at that price holds a lower multiple",
+  "margin_of_safety_price": 1812.57,
+  "margin_of_safety_binding_leg": "base_ours",
+  "margin_of_safety_stated_price": 1812.57
  },
  "ranges": {
   "today": {

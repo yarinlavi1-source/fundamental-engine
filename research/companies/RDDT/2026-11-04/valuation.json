@@ -23,11 +23,11 @@
   },
   "result": {
    "path": "research/companies/RDDT/2026-11-04/lean_result.json",
-   "sha256": "29c1daa389c4112ae5e5d0ab838c86067884c73ada2a6bb94f8945fe8e7468f1"
+   "sha256": "a8a0fd2c755ec0d9020d31b4092d948cc9e06765dd75875367ebdfcbbcd440a4"
   },
   "code": {
    "path": "scripts/lean_model.py",
-   "sha256": "f68ccbb09a393572535fad409d70445c7dc9512720d8e94d380f3c5be42ab963"
+   "sha256": "ec6effe867a9485878e81fcb43fed1182a12fa4e176b28e9343553e1d1f68c54"
   }
  },
  "scenarios": {
@@ -384,11 +384,18 @@
     }
    },
    "rule": "base >= 12% a year in both lenses, bull >= 17%, bear >= -10% (yearly returns from today's price to the horizon year-end)",
-   "note": null
+   "note": null,
+   "margin_of_safety_price": 136.87,
+   "margin_of_safety_stated_price": 136.87,
+   "margin_of_safety_rerun_price": 141.64,
+   "margin_of_safety_rerun_used": false,
+   "margin_of_safety_binding_leg": "base_calibrated",
+   "margin_of_safety_rule": "the buy test with the base at 13% a year in both lenses (bull >= 17%, bear >= -10%): the highest price at which all four legs pass; the rerun price when a rerun at that price holds a lower multiple"
   },
   "buy_test_price": 143.3,
   "base_12_price": 148.29,
-  "margin_of_safety_price": 141.64,
+  "margin_of_safety_price": 136.87,
+  "base_13_price": 141.64,
   "index_parity_price": 169.47,
   "hold_floor_price": 197.01,
   "sell_line_price": 228.47,
@@ -396,9 +403,14 @@
    "buy_test_price": "מחיר מבחן הקנייה",
    "margin_of_safety_price": "מחיר כניסה עם מרווח ביטחון"
   },
+  "rule_definitions": {
+   "buy_test_price": "the highest price at which all four buy-test legs pass: base >= 12% a year in both lenses, bull >= 17%, bear >= -10%; the rerun price when the model warns that a rerun at that price holds a lower multiple",
+   "margin_of_safety_price": "the same test with the base at 13% a year in both lenses (bull >= 17%, bear >= -10% unchanged), the rerun price when the model warns: never above buy_test_price (16.11.2026)",
+   "base_13_price": "the base case alone (our lens) at 13% a year: a ladder rung, not an entry price"
+  },
   "entry_price": {
-   "value": 141.64,
-   "rung": "margin_of_safety_13",
+   "value": 136.87,
+   "rung": "buy_test.margin_of_safety_price",
    "note": null
   }
  },

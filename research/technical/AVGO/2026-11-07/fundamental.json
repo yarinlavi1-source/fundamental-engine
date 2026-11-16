@@ -5,7 +5,7 @@
  "price_time_utc": null,
  "verdict_he": "לא לקנות עכשיו; תלוי באי-האטה בהשקעות AI",
  "buy_test_price": 273.58,
- "margin_of_safety_price": 277.43,
+ "margin_of_safety_price": 243.81,
  "values": {
   "today": {
    "bear": 110.35,
@@ -118,7 +118,16 @@
      "max_price": 318.72
     }
    },
-   "note": "the model warns that a rerun at the stated price fails the second-lens leg: the rerun price is used"
+   "note": "the model warns that a rerun at the stated price fails the second-lens leg: the rerun price is used",
+   "margin_of_safety": {
+    "price_all_legs": 243.81,
+    "stated_price": 261.73,
+    "rerun_price": 243.81,
+    "rerun_used": true,
+    "binding_leg": "base_calibrated",
+    "base_13_price": 277.43,
+    "rule": "the buy test with the base at 13% a year in both lenses (bull >= 17%, bear >= -10%): the highest price at which all four legs pass; the rerun price when a rerun at that price holds a lower multiple"
+   }
   },
   "price_ladder": {
    "horizon_date": "2031-11-01",
@@ -163,8 +172,8 @@
    ]
   },
   "entry_price": {
-   "value": 277.43,
-   "rung": "margin_of_safety_13",
+   "value": 243.81,
+   "rung": "buy_test.margin_of_safety_price",
    "note": null
   },
   "index_parity_price": 330.45,

@@ -4,8 +4,8 @@
  "price": 246.68,
  "price_time_utc": "2026-11-13 21:00 (NASDAQ close; no later trade as of 2026-11-15 21:30 UTC)",
  "verdict_he": "לא לקנות במחיר הזה, להמתין לדוח רבעון 3: התרחיש הבסיסי נותן כ-11% בשנה בשתי העדשות מול 12% במבחן הקנייה, והשווי נשען על שיעור רווח שיא",
- "buy_test_price": 231.47,
- "margin_of_safety_price": 224.76,
+ "buy_test_price": 231.5,
+ "margin_of_safety_price": 203.79,
  "values": {
   "today": {
    "bear": 137.31,
@@ -38,7 +38,7 @@
    "bull": 602.94
   },
   "weighted_today_30_45_25": 251.76,
-  "calibrated_today": 258.85,
+  "calibrated_today": 258.88,
   "end_fy2027_jan_2028": {
    "bear": 153.6,
    "base": 296.27,
@@ -130,13 +130,13 @@
    "path": "research/companies/FIVE/2026-11-15/valuation.json"
   },
   "buy_test": {
-   "price_all_legs": 231.47,
-   "stated_price": 231.47,
-   "rerun_price": null,
+   "price_all_legs": 220.47,
+   "stated_price": 231.5,
+   "rerun_price": 220.47,
    "base_12_price": 235.42,
    "binding_leg": "base_calibrated",
    "pass_at_price": false,
-   "rerun_used": false,
+   "rerun_used": true,
    "legs": {
     "base_ours": {
      "return_pct": 11.0,
@@ -148,7 +148,7 @@
      "return_pct": 10.6,
      "threshold_pct": 12.0,
      "pass": false,
-     "max_price": 231.47
+     "max_price": 231.5
     },
     "bull": {
      "return_pct": 18.7,
@@ -163,7 +163,16 @@
      "max_price": 370.59
     }
    },
-   "note": null
+   "note": "the model warns that a rerun at the stated price fails the second-lens leg: the rerun price is used",
+   "margin_of_safety": {
+    "price_all_legs": 203.79,
+    "stated_price": 221.02,
+    "rerun_price": 203.79,
+    "rerun_used": true,
+    "binding_leg": "base_calibrated",
+    "base_13_price": 224.76,
+    "rule": "the buy test with the base at 13% a year in both lenses (bull >= 17%, bear >= -10%): the highest price at which all four legs pass; the rerun price when a rerun at that price holds a lower multiple"
+   }
   },
   "price_ladder": {
    "horizon_date": "2032-01-30",
@@ -173,43 +182,43 @@
      "id": "margin_of_safety_13",
      "return_pct": 13.0,
      "price": 224.76,
-     "price_second_lens": 220.99
+     "price_second_lens": 221.02
     },
     {
      "id": "buy_test",
      "return_pct": 12.0,
      "price": 235.42,
-     "price_second_lens": 231.47
+     "price_second_lens": 231.5
     },
     {
      "id": "company_hurdle",
      "return_pct": 12.0,
      "price": 235.42,
-     "price_second_lens": 231.47
+     "price_second_lens": 231.5
     },
     {
      "id": "index",
      "return_pct": 9.3,
      "price": 267.33,
-     "price_second_lens": 262.85
+     "price_second_lens": 262.88
     },
     {
      "id": "hold_floor",
      "return_pct": 6.0,
      "price": 313.63,
-     "price_second_lens": 308.37
+     "price_second_lens": 308.41
     },
     {
      "id": "sell_line",
      "return_pct": 3.0,
      "price": 364.24,
-     "price_second_lens": 358.12
+     "price_second_lens": 358.17
     }
    ]
   },
   "entry_price": {
-   "value": 224.76,
-   "rung": "margin_of_safety_13",
+   "value": 203.79,
+   "rung": "buy_test.margin_of_safety_price",
    "note": null
   },
   "index_parity_price": 267.33,
@@ -221,7 +230,7 @@
     "base": 263.05,
     "bull": 368.79,
     "date": "2026-11-15",
-    "base_calibrated": 258.85
+    "base_calibrated": 258.88
    },
    "year_ends": [
     {
@@ -230,7 +239,7 @@
      "bull": 416.26,
      "fiscal_year": 2027,
      "date": "2028-01-30",
-     "base_calibrated": 291.51
+     "base_calibrated": 291.55
     },
     {
      "bear": 167.51,
@@ -238,7 +247,7 @@
      "bull": 458.51,
      "fiscal_year": 2028,
      "date": "2029-01-30",
-     "base_calibrated": 320.29
+     "base_calibrated": 320.33
     },
     {
      "bear": 182.34,
@@ -246,7 +255,7 @@
      "bull": 503.7,
      "fiscal_year": 2029,
      "date": "2030-01-30",
-     "base_calibrated": 350.94
+     "base_calibrated": 350.99
     },
     {
      "bear": 197.84,
@@ -254,7 +263,7 @@
      "bull": 551.83,
      "fiscal_year": 2030,
      "date": "2031-01-30",
-     "base_calibrated": 383.42
+     "base_calibrated": 383.47
     },
     {
      "bear": 214.04,
@@ -262,7 +271,7 @@
      "bull": 602.94,
      "fiscal_year": 2031,
      "date": "2032-01-30",
-     "base_calibrated": 417.75
+     "base_calibrated": 417.8
     }
    ],
    "at": {
@@ -271,21 +280,21 @@
      "base": 290.34,
      "bull": 407.74,
      "date": "2027-11-15",
-     "base_calibrated": 285.68
+     "base_calibrated": 285.72
     },
     "two_year": {
      "bear": 164.52,
      "base": 319.26,
      "bull": 449.4,
      "date": "2028-11-15",
-     "base_calibrated": 314.09
+     "base_calibrated": 314.13
     },
     "five_year": {
      "bear": 210.56,
      "base": 417.34,
      "bull": 591.92,
      "date": "2031-11-15",
-     "base_calibrated": 410.36
+     "base_calibrated": 410.41
     }
    },
    "published": {
@@ -295,7 +304,7 @@
      "bear": 153.6,
      "base": 296.27,
      "bull": 416.26,
-     "second_lens": 291.51
+     "second_lens": 291.55
     },
     "five_year": {
      "date": "2032-01-30",
@@ -303,7 +312,7 @@
      "bear": 214.04,
      "base": 424.88,
      "bull": 602.94,
-     "second_lens": 417.75
+     "second_lens": 417.8
     }
    }
   },
@@ -313,7 +322,7 @@
    "bull": false
   },
   "second_lens": {
-   "value_today": 258.85,
+   "value_today": 258.88,
    "annual_return_pct": 10.6,
    "band": "hold",
    "band_ours": "hold",

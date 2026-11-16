@@ -5,7 +5,7 @@
  "price_time_utc": "2026-11-04T18:55Z (IBKR snapshot, from the saved params)",
  "verdict_he": "לא לקנות במחיר הזה: התרחיש הבסיסי נותן כ-4.8% בשנה והעדשה השנייה 7.2%; מבחן הקנייה עובר רק מתחת לכ-382$ (בהרצה חוזרת במחיר הזה: כ-344$)",
  "buy_test_price": 381.64,
- "margin_of_safety_price": 362.95,
+ "margin_of_safety_price": 315.89,
  "values": {
   "today": {
    "bear": 297.06,
@@ -149,7 +149,16 @@
      "max_price": 898.63
     }
    },
-   "note": "the model warns that a rerun at the stated price fails the second-lens leg: the rerun price is used"
+   "note": "the model warns that a rerun at the stated price fails the second-lens leg: the rerun price is used",
+   "margin_of_safety": {
+    "price_all_legs": 315.89,
+    "stated_price": 362.95,
+    "rerun_price": 315.89,
+    "rerun_used": true,
+    "binding_leg": "base_calibrated",
+    "base_13_price": 362.95,
+    "rule": "the buy test with the base at 13% a year in both lenses (bull >= 17%, bear >= -10%): the highest price at which all four legs pass; the rerun price when a rerun at that price holds a lower multiple"
+   }
   },
   "price_ladder": {
    "horizon_date": "2032-06-30",
@@ -194,8 +203,8 @@
    ]
   },
   "entry_price": {
-   "value": 362.95,
-   "rung": "margin_of_safety_13",
+   "value": 315.89,
+   "rung": "buy_test.margin_of_safety_price",
    "note": null
   },
   "index_parity_price": 441.7,
@@ -387,7 +396,7 @@
   "fresh_pull": false,
   "note": "Copy of the valuation of 2026-11-04 at the price of that day. No fresh pull of price, filings or news was made for this file. Values are the saved model's; the price ladder and the buy test were computed from the same saved params with the current scripts/lean_model.py (reporting keys only, no value changed). Next report: late January 2027 (not confirmed)."
  },
- "margin_of_safety_note": "the fixed 13% rung of the price ladder (one definition for every company since 15.11.2026); the company's own hurdle price stays in price_ladder.rungs",
+ "margin_of_safety_note": "the buy test with the base at 13% a year in both lenses (bull >= 17%, bear >= -10%): the highest price at which all four legs pass, the rerun price when the model warns; never above the buy-test price (definition of 16.11.2026; the base-alone 13% price is the rung margin_of_safety_13 in v2.price_ladder)",
  "price_ladder": {
   "meaning": "price on the valuation date at which the base return to 30 June 2032 equals each return; one return per rung",
   "years_to_horizon": 5.65,
@@ -444,6 +453,7 @@
   "model_warnings",
   "price_ladder",
   "source",
+  "thesis_note",
   "values.calibrated_june_2032",
   "values.fiscal_year_note",
   "values.june_2028",

@@ -786,7 +786,11 @@ def _from_folder(out, lv, price, price_date, lean, root):
         # weighted one (valuation_record), so the screen tests that one too
         wspec, wdir = (valuation_record.worlds_spec(lv['folder'], params)
                        if spec['params'] == 'lean_params.json' or params.get('worlds') is not None else (None, None))
+        crule = (valuation_record.calibrated_rule(lv['folder'])[0]
+                 if wspec is None and spec['params'] == 'lean_params.json' else None)
         try:
+            if crule is not None:                    # the published second lens is the one with the rule (FIVE)
+                params = lean.apply_calibrated_rule(params, crule)
             q = lean.reprice(params, price=price, as_of=later)
             bt = (lean.run(q, worlds=wspec, base_dir=wdir)['worlds']['weighted']['buy_test'] if wspec is not None
                   else lean.run(q)['buy_test'])

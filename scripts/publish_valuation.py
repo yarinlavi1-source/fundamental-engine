@@ -14,7 +14,10 @@ A custom folder is not rerun (tests/test_saved_valuations.py reruns those models
 
 The judgement no model computes (verdict, scenario conditions, typed conditions and falsifiers, next report, the
 historical-multiple inputs, the index texts) comes from --thesis-inputs (keys: valuation_record.THESIS_INPUTS_KEYS).
-Without it the texts of the handoff already saved for that date are carried over, untyped.
+Without it the judgement of the valuation.json already saved in the folder is carried over exactly (16.11.2026: a
+republish after a code change keeps typed conditions); without that, the texts of the handoff saved for that date,
+untyped. A calibrated_rule.json beside lean_params.json (lean_model --calibrated-rule) is applied to the record; the
+lean_result.json written here stays the params' own result.
 
 --check reads only. One line per problem, exit code 1 when there is any: a thesis without a handoff or the reverse,
 more than one index row per company, a price or base value that differs between the params, the record, the thesis
@@ -90,6 +93,9 @@ def publish(target, thesis_inputs=None, root=None, out=print):
         unknown = sorted(set(inputs) - set(vr.THESIS_INPUTS_KEYS))
         if unknown:
             raise PublishError('unknown thesis-inputs key(s): ' + ', '.join(unknown))
+    elif os.path.isfile(os.path.join(folder, vr.RECORD_NAME)):
+        inputs = vr.inputs_from_record(vr.load(os.path.join(folder, vr.RECORD_NAME)))
+        out(f'no --thesis-inputs: the judgement of the saved {vr.RECORD_NAME} ({as_of}) is carried over, typed conditions included')
     elif previous is not None:
         inputs = vr.inputs_from_handoff(previous)
         out(f'no --thesis-inputs: the texts of the saved handoff {as_of} are carried over (conditions untyped)')

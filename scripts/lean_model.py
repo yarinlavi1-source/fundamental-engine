@@ -8,7 +8,7 @@ Value = average of the two. Year-end values are conditional values on each path,
 
 Usage: python scripts/lean_model.py params.json [--out result.json] [--summary]
                                     [--price P] [--as-of YYYY-MM-DD] [--params-out repriced_params.json]
-                                    [--worlds worlds.json]
+                                    [--worlds worlds.json] [--calibrated-rule calibrated_rule.json]
 --summary prints a short plain table (values, 2-year and 5-year ranges, values in exactly 1, 2 and 5 years, returns, the
 return with distributions, ladder, buy test, method gap, sensitivities, warnings) instead of the JSON; --out still writes
 the full JSON.
@@ -85,6 +85,20 @@ Reporting keys of the engine upgrade (15.11.2026, second set; additive, no earli
 - price_ladder.rungs.margin_of_safety_13: a fixed 13% rung, the handoff's margin_of_safety_price. The older
   margin_of_safety rung is the company hurdle (buy_return): its key, label and prices are unchanged and "meaning" says so.
 In these new keys a wiped scenario is value 0 and return null (the older keys keep the 0.01 floor).
+
+Fix B (16.11.2026; new keys only, no earlier key changes its value):
+- buy_test.margin_of_safety_price: the margin-of-safety price = the buy test's four legs with the base at 13% a year in
+  both lenses (bull >= 17%, bear >= -10% unchanged), the highest price at which all pass, and the rerun price when a rerun
+  at that price holds a lower multiple (margin_of_safety_rerun.used), exactly as the buy-test price at 12%. It is never
+  above the buy-test price. With margin_of_safety_binding_leg, margin_of_safety_stated_price, margin_of_safety_rerun and
+  margin_of_safety_rule; the weighted worlds' buy test carries the same keys. price_ladder.rungs.margin_of_safety_13 keeps
+  its name, label and prices (the base alone at 13%) and gains "meaning" and "note" saying it is not that price.
+- Optional calibrated.pe_rule "net_of_cash": the second lens holds (price - net cash per share at the base year-end) /
+  first-year operating EPS, recomputed at any price (the buy-test rerun and --price move it), because the exit value adds
+  the cash at face on top of a multiple of earnings before interest. Absent = the default lens, unchanged. pe and pe_rule
+  together are refused. --calibrated-rule FILE (a sidecar such as calibrated_rule.json beside the params, {"pe_rule",
+  "why"}) applies the rule to this run without editing the params: a fixed calibrated.pe is dropped (kept as
+  calibrated.replaced_pe). The lens then also reports pe_rule, pe_held_exact and net_cash_per_share.
 
 Optional inputs of the engine upgrade (15.11.2026, P3b; absent = the output is identical, key for key):
 - Per-scenario "funding": scenarios.<k>.funding = {"equity_raise_m": {year index: $M}, "issue_price": number or "model",
@@ -286,6 +300,11 @@ def check_params(p):
         else:
             if 'pe' in cal and not (_num(cal['pe']) and cal['pe'] > 0):
                 errors.append(f'calibrated.pe must be a positive number (got {cal["pe"]!r})')
+            if 'pe_rule' in cal:
+                if cal['pe_rule'] not in PE_RULES:
+                    errors.append(f'calibrated.pe_rule must be one of {", ".join(PE_RULES)} (got {cal["pe_rule"]!r})')
+                elif 'pe' in cal:
+                    errors.append('calibrated: give pe (a fixed multiple) or pe_rule (a multiple tied to the price), not both')
             if cal.get('m') and not (isinstance(cal['m'], list) and len(cal['m']) == 6 and all(_num(x) for x in cal['m'])):
                 errors.append('calibrated.m must be a list of six numbers')
     bands = p.get('bands')
@@ -446,6 +465,28 @@ def reprice(p, price=None, as_of=None):
     info['held'] = ('every other input is the file\'s (net cash, shares, growth, margins, exit multiples); without '
                     'calibrated.pe the calibrated lens holds the multiple of the new price')
     q['repriced'] = info
+    return q
+
+
+CALIBRATED_RULE_NAME = 'calibrated_rule.json'   # a sidecar beside lean_params.json, read like worlds.json (16.11.2026)
+
+
+def apply_calibrated_rule(p, rule):
+    """A copy of the params with a calibrated-rule sidecar applied: calibrated.pe_rule = rule["pe_rule"]. A fixed
+    calibrated.pe of the file is dropped from the copy (kept as calibrated.replaced_pe, with its why as replaced_why),
+    because a fixed multiple cannot move with the price. calibrated.m stays. The saved params file is never edited.
+    Raises ParamsError when the sidecar names no known rule."""
+    if not isinstance(rule, dict) or rule.get('pe_rule') not in PE_RULES:
+        raise ParamsError([f'the calibrated rule must be {{"pe_rule": one of {", ".join(PE_RULES)}, "why": text}} '
+                           f'(got {rule.get("pe_rule") if isinstance(rule, dict) else rule!r})'])
+    q = copy.deepcopy(p)
+    cal = dict(q.get('calibrated') or {})
+    if 'pe' in cal:
+        cal['replaced_pe'] = cal.pop('pe')
+        cal['replaced_why'] = cal.get('why', '')
+    cal['pe_rule'] = rule['pe_rule']
+    cal['why'] = rule.get('why') or cal.get('why', '')
+    q['calibrated'] = cal
     return q
 
 
@@ -658,12 +699,36 @@ def band(ret_pct, bands=None):
     return 'sell'
 
 
+PE_RULES = ('net_of_cash',)   # calibrated.pe_rule (16.11.2026): a held multiple tied to the price, see _held_pe
+
+
+def _net_cash_per_share(p, d):
+    """Net cash at the base year-end per share of the scenario (negative = net debt per share)."""
+    return p['net_cash_m'] / d.get('shares_m', p['shares_m'])
+
+
+def _held_pe(p, d, price, eps0):
+    """The multiple the calibrated lens holds at a given price, by the params' rule (None: no multiple to hold).
+
+    Default: price / first-year operating EPS. calibrated.pe_rule "net_of_cash": (price - net cash per share) / first-year
+    operating EPS, because the exit value adds the cash at face on top of a multiple of earnings before interest; the
+    default counts the cash twice for a cash-rich company and too little for an indebted one. Either rule is recomputed
+    at any trial price, so the buy-test rerun and a reprice hold the multiple of that price."""
+    if not eps0 > 0:
+        return None
+    if ((p.get('calibrated') or {}).get('pe_rule')) == 'net_of_cash':
+        return (price - _net_cash_per_share(p, d)) / eps0
+    return price / eps0
+
+
 def _calibrated_inputs(p, d):
     cal = p.get('calibrated') or {}
     first = run_scenario(p, d)
     eps0 = first['eps_operating'][min(first['eps_operating'])]
     pe_today = p['price'] / eps0 if eps0 > 0 else None
-    pe = cal.get('pe', pe_today)
+    pe = cal['pe'] if 'pe' in cal else _held_pe(p, d, p['price'], eps0)
+    if pe is not None and pe <= 0:
+        pe = None   # net_of_cash at a price under the net cash per share: no positive multiple to hold
     m = cal.get('m') or [max(d['m'][0], x) for x in d['m']]
     return cal, eps0, pe_today, pe, m
 
@@ -674,13 +739,20 @@ def calibrated_lens(p, d):
     out = {'pe_today': round(pe_today, 1) if pe_today else None, 'pe_used': round(pe, 1) if pe else None,
            'pe_overridden': 'pe' in cal, 'margin_used': [round(x, 4) for x in m], 'margin_overridden': bool(cal.get('m')),
            'why': cal.get('why', '')}
+    if cal.get('pe_rule'):   # new keys only when the rule is set: a lens without it is key for key what it was
+        out.update(pe_rule=cal['pe_rule'], pe_held_exact=round(pe, 3) if pe else None,
+                   net_cash_per_share=round(_net_cash_per_share(p, d), 2))
     if pe is None:
-        out['note'] = 'no positive first-year EPS: the calibrated lens needs "calibrated.pe"'
+        out['note'] = ('the price is not above the net cash per share: no positive multiple to hold (calibrated.pe_rule '
+                       'net_of_cash)' if cal.get('pe_rule') and eps0 > 0 else
+                       'no positive first-year EPS: the calibrated lens needs "calibrated.pe"')
         return out
     r = run_scenario(p, dict(d, pe=pe, m=m))
     out.update(value_today=r['value_today'], year_end_values=r['year_end_values'], annual_return_pct=r['annual_return_pct'])
-    if pe_today and pe_today > 40 and 'pe' not in cal:
+    if pe_today and pe_today > 40 and 'pe' not in cal and not cal.get('pe_rule'):
         out['note'] = 'today\'s multiple is above 40: holding it for five years is not credible; set "calibrated.pe"'
+    elif cal.get('pe_rule') and pe > 40:
+        out['note'] = 'the held multiple is above 40: holding it for five years is not credible; set "calibrated.pe"'
     return out
 
 
@@ -715,8 +787,8 @@ def _repriced(p, base, hurdle_pct):
     if 'pe' in cal or not pe_today:
         return None
 
-    def end(price):
-        return run_scenario(p, dict(base, pe=price / eps0, m=m), detail=True)[1]['val_raw'][5]
+    def end(price):   # the held multiple of that price (linear in the price under either rule)
+        return run_scenario(p, dict(base, pe=_held_pe(p, base, price, eps0), m=m), detail=True)[1]['val_raw'][5]
 
     return _solve_rerun(end, p['price'], (1 + hurdle_pct / 100) ** p['years_to_horizon'])
 
@@ -756,6 +828,10 @@ def price_ladder(p, out, cal, bands=None):
         if key == 'margin_of_safety':   # the label is kept as saved results hold it; this is what the rung is
             rung['meaning'] = f'company hurdle (buy_return): {mos:g}% a year'
             rung['note'] = 'not the fixed margin of safety: that is the margin_of_safety_13 rung'
+        if key == 'margin_of_safety_13':   # 16.11.2026: the label is kept as saved results hold it
+            rung['meaning'] = f'the base case alone at {MARGIN_OF_SAFETY_PCT:g}% a year'
+            rung['note'] = ('not the margin-of-safety price: that is buy_test.margin_of_safety_price (all four buy-test legs '
+                            f'with the base at {MARGIN_OF_SAFETY_PCT:g}%), never above the buy-test price')
         rungs[key] = rung
     return {'method': 'price today = year-end value at the horizon / (1 + return) ^ years_to_horizon; one return per rung',
             'horizon_year': p['base_year'] + 5, 'years_to_horizon': years, 'price': p['price'],
@@ -798,9 +874,12 @@ def buy_test(p, out, cal, base, fund, bands=None, rerun=None):
         res['max_price_vs_price_pct'] = round((res['max_price_passing'] / p['price'] - 1) * 100, 1)
         if res['pass'] and p['price'] > res['max_price_passing']:
             res['on_the_line'] = True   # the legs compare returns rounded to 0.1 point, the price is the exact one
-    if not wiped and legs['base_calibrated']['max_price'] is not None and 'pe' not in (p.get('calibrated') or {}):
+    rerun_fn = rerun
+    can_rerun = (not wiped and legs['base_calibrated']['max_price'] is not None
+                 and 'pe' not in (p.get('calibrated') or {}))
+    if can_rerun:
         # the calibrated leg holds today's multiple; at another price a rerun holds that price's multiple
-        rp = rerun(b['buy']) if rerun else _repriced(p, base, b['buy'])
+        rp = rerun_fn(b['buy']) if rerun_fn else _repriced(p, base, b['buy'])
         rerun = dict(priced, base_calibrated=rp) if rp is not None else {k: v for k, v in priced.items() if k != 'base_calibrated'}
         lead = min(rerun, key=rerun.get)
         res['rerun'] = {'calibrated_max_price': rp, 'max_price_passing': rerun[lead], 'binding_leg': lead,
@@ -810,7 +889,54 @@ def buy_test(p, out, cal, base, fund, bands=None, rerun=None):
                                  'crosses the hurdle, so the leg is left out')}
     if not res['complete']:
         res['note'] = 'a leg has no value (no calibrated lens or a missing scenario): the test cannot pass'
+    res.update(_margin_of_safety(p, legs, ends, years, wiped, res, rerun_fn if can_rerun else None,
+                                 base if can_rerun and not rerun_fn else None))
     return res
+
+
+def _margin_of_safety(p, legs, ends, years, wiped, res, rerun_fn, base):
+    """The margin-of-safety price (16.11.2026): the buy test's four legs with the base raised to 13% a year in both
+    lenses (bull >= 17% and bear >= -10% unchanged), the highest price at which all four pass, and the rerun price when
+    the model warns, exactly as the buy-test price at 12%. So it is never above the buy-test price. New keys only."""
+    h = MARGIN_OF_SAFETY_PCT
+    out = {'margin_of_safety_rule': (f'the buy test with the base at {h:g}% a year in both lenses (bull >= {BUY_TEST["bull"]:g}%, '
+                                     f'bear >= {BUY_TEST["bear"]:g}%): the highest price at which all four legs pass; the '
+                                     'rerun price when a rerun at that price holds a lower multiple'),
+           'margin_of_safety_price': None, 'margin_of_safety_binding_leg': None, 'margin_of_safety_stated_price': None}
+    if wiped:
+        out.update(margin_of_safety_binding_leg=wiped[0],
+                   margin_of_safety_note=f'the {wiped[0]} case wipes the equity at the horizon: no price passes that leg')
+        return out
+    ends_of = {'base_ours': 'base', 'base_calibrated': 'base_calibrated'}
+    priced = {}
+    for k, leg in legs.items():
+        if k in ends_of:
+            end = ends.get(ends_of[k])
+            mp = None if end is None else _price_at(end, h, years)
+        else:
+            mp = leg['max_price']
+        if mp is not None:
+            priced[k] = mp
+    if not priced:
+        return out
+    lead = min(priced, key=priced.get)
+    out.update(margin_of_safety_stated_price=priced[lead], margin_of_safety_price=priced[lead], margin_of_safety_binding_leg=lead)
+    if rerun_fn or base is not None:
+        rp = rerun_fn(h) if rerun_fn else _repriced(p, base, h)
+        rr = dict(priced, base_calibrated=rp) if rp is not None else {k: v for k, v in priced.items() if k != 'base_calibrated'}
+        if rr:
+            lead_r = min(rr, key=rr.get)
+            lower = rr[lead_r] < priced[lead] * 0.99
+            out['margin_of_safety_rerun'] = {'calibrated_max_price': rp, 'max_price_passing': rr[lead_r], 'binding_leg': lead_r,
+                                             'lower_than_stated': lower, 'used': lower}
+            if lower:
+                out.update(margin_of_safety_price=rr[lead_r], margin_of_safety_binding_leg=lead_r)
+    # never above the buy-test price (the one the record publishes: the rerun price when the model warns at 12%)
+    rr12 = res.get('rerun') or {}
+    bt = rr12['max_price_passing'] if rr12.get('lower_than_stated') else res.get('max_price_passing')
+    if bt is not None and out['margin_of_safety_price'] > bt:
+        out.update(margin_of_safety_price=bt, margin_of_safety_capped_at_buy_test=True)
+    return out
 
 
 def ranges(p, out, cal):
@@ -1362,7 +1488,7 @@ def _calibrated_end_fn(p):
     if 'pe' in cal or not pe_today:
         const = run_scenario(p, dict(base, pe=pe, m=m), detail=True)[1]['val_raw'][5]
         return (lambda x: const), False
-    return (lambda x: run_scenario(p, dict(base, pe=x / eps0, m=m), detail=True)[1]['val_raw'][5]), True
+    return (lambda x: run_scenario(p, dict(base, pe=_held_pe(p, base, x, eps0), m=m), detail=True)[1]['val_raw'][5]), True
 
 
 def worlds_report(p, raw, spec, base_dir=None, source=None):
@@ -1411,7 +1537,10 @@ def worlds_report(p, raw, spec, base_dir=None, source=None):
             'base_band': wres['two_lens']['ours']['band'], 'two_lens_agree': wres['two_lens'].get('agree'),
             'buy_test': {'pass': bt['pass'], 'max_price_passing': bt.get('max_price_passing'),
                          'binding_leg': bt.get('binding_leg'),
-                         'rerun_max_price_passing': (bt.get('rerun') or {}).get('max_price_passing')},
+                         'rerun_max_price_passing': (bt.get('rerun') or {}).get('max_price_passing'),
+                         'rerun_used': bool((bt.get('rerun') or {}).get('lower_than_stated')),
+                         'margin_of_safety_price': bt.get('margin_of_safety_price'),
+                         'margin_of_safety_binding_leg': bt.get('margin_of_safety_binding_leg')},
             'margin_of_safety_13': {'ours': lad['margin_of_safety_13']['ours'],
                                     'calibrated': lad['margin_of_safety_13']['calibrated']}})
     keys = [k for k in LENS_KEYS if all(k in v[1] for v in vals)]
@@ -1535,6 +1664,10 @@ def summary(p, res):
     if bt.get('rerun', {}).get('lower_than_stated'):
         L.append(f'  on a rerun at that price (its own multiple held): {bt["rerun"]["max_price_passing"]:,.2f}, binding leg: '
                  f'{bt["rerun"]["binding_leg"]}')
+    if bt.get('margin_of_safety_price') is not None:
+        L.append(f'  margin-of-safety price (the same four legs, base at {MARGIN_OF_SAFETY_PCT:g}% in both lenses): '
+                 f'{bt["margin_of_safety_price"]:,.2f}, binding leg: {bt["margin_of_safety_binding_leg"]}'
+                 + (' (rerun price)' if (bt.get('margin_of_safety_rerun') or {}).get('used') else ''))
     mg = res['method_gap']
     L += ['', 'Method gap: what each method gives alone (the value is the plain average of the two)',
           f'{"  scenario":<18}{"DCF today":>10}{"ret %":>7}{"band":>9}{"multiple today":>16}{"ret %":>7}{"band":>9}'
@@ -1606,11 +1739,12 @@ def summary_worlds(wd):
     L.append(f'  weighted lenses: ours {W["two_lens"]["ours"]}, calibrated {W["two_lens"]["calibrated"]}; probability-weighted '
              f'value today {W["probability_weighted_value_today"]:,.2f}')
     if lad:
-        L.append(f'  weighted 13% price {_fmt(lad["rungs"]["margin_of_safety_13"]["ours"], 0).strip()} (calibrated '
+        L.append(f'  weighted 13% price of the base alone {_fmt(lad["rungs"]["margin_of_safety_13"]["ours"], 0).strip()} (calibrated '
                  f'{_fmt(lad["rungs"]["margin_of_safety_13"]["calibrated"], 0).strip()}); buy test '
                  f'{"PASS" if bt["pass"] else "FAIL"}, highest passing price {_fmt(bt.get("max_price_passing"), 0).strip()} '
                  f'(binding: {bt.get("binding_leg")})'
-                 + (f'; on a rerun {bt["rerun"]["max_price_passing"]:,.2f}' if bt.get('rerun', {}).get('lower_than_stated') else ''))
+                 + (f'; on a rerun {bt["rerun"]["max_price_passing"]:,.2f}' if bt.get('rerun', {}).get('lower_than_stated') else '')
+                 + f'; margin-of-safety price {_fmt(bt.get("margin_of_safety_price"), 0).strip()}')
     L += ['  ! ' + x for x in wd['warnings']]
     return L
 
@@ -1695,8 +1829,18 @@ def main():
     ap.add_argument('--params-out', help='write the repriced params (with a "repriced" record) to this file')
     ap.add_argument('--worlds', help='a worlds file {"worlds": [{"name", "file", "weight"}]} (files relative to it): adds '
                     'the "worlds" key with the weighted values; the other keys describe the params file')
+    ap.add_argument('--calibrated-rule', dest='calibrated_rule',
+                    help='a calibrated-rule sidecar {"pe_rule": "net_of_cash", "why": ...} (e.g. calibrated_rule.json beside '
+                         'the params): the second lens holds a multiple tied to the price; a fixed calibrated.pe of the '
+                         'params is dropped for this run (the params file is not edited)')
     a = ap.parse_args()
     p = json.load(open(a.params))
+    if a.calibrated_rule:
+        try:
+            p = apply_calibrated_rule(p, json.load(open(a.calibrated_rule)))
+        except ParamsError as e:
+            print(f'lean_model: {a.calibrated_rule}: ' + '; '.join(e.problems), file=sys.stderr)
+            sys.exit(2)
     spec, wdir, src = None, None, None
     if a.worlds:
         spec, wdir, src = json.load(open(a.worlds)), os.path.dirname(os.path.abspath(a.worlds)), a.worlds

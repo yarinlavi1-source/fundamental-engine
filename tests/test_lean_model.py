@@ -937,7 +937,8 @@ class LeanModelReportingTwoTest(unittest.TestCase):
         for want in ('Dates: base year-end 2026-12-31, 57 days from as_of; 5.16 years to the horizon year-end 2031-12-31',
                      'in 1 year (2027-11-04)', 'in 2 years (2028-11-04)', 'in 5 years (2031-11-04)',
                      'with distributions', 'second line, not the headline', 'Method gap', 'DCF implies', 'base (cal.)',
-                     'margin of safety: fixed 13% a year', 'terminal inputs', '- mature beta +/- 0.1',
+                     'the base case alone at 13% a year', 'margin-of-safety price (the same four legs, base at 13%',
+                     'terminal inputs', '- mature beta +/- 0.1',
                      '- terminal growth +/- 0.5 point', 'at 3% growth', '- terminal ROIC +/- 5 points'):
             self.assertIn(want, txt)
         at = self.r['dated_values']['at']
@@ -1241,3 +1242,101 @@ class LeanModelWorldsTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class MarginOfSafetyAndPriceTiedMultipleTest(unittest.TestCase):
+    """16.11.2026 (Fix B): the margin-of-safety price is the buy test at 13%, never above the buy-test price; the
+    optional calibrated.pe_rule net_of_cash holds (price - net cash per share) / first-year EPS at every price."""
+
+    def setUp(self):
+        self.p = json.load(open(os.path.join(ROOT, 'tests', 'fixtures', 'lean_model_anet.json')))
+
+    @staticmethod
+    def _published_bt(bt):
+        rr = bt.get('rerun') or {}
+        return rr['max_price_passing'] if rr.get('lower_than_stated') else bt.get('max_price_passing')
+
+    def test_mos_is_the_four_legs_at_13_and_never_above_the_buy_test_price(self):
+        import glob
+        n = 0
+        for fp in sorted(glob.glob(os.path.join(ROOT, 'research', 'companies', '*', '*', 'lean_params*.json'))):
+            p = json.load(open(fp))
+            if not all(k in p for k in ('scenarios', 'buy_return', 'years_to_horizon')):
+                continue
+            try:
+                bt = lean_model.run(p)['buy_test']
+            except lean_model.ParamsError:
+                continue
+            n += 1
+            mos, top = bt['margin_of_safety_price'], self._published_bt(bt)
+            if top is None:
+                self.assertIsNone(mos, fp)
+                continue
+            self.assertLessEqual(mos, top + 1e-9, fp)
+            self.assertNotIn('margin_of_safety_capped_at_buy_test', bt, fp)   # the cap is a guard, never needed on file
+            legs = bt['legs']
+            years = p['years_to_horizon']
+            stated = min(legs['bull']['max_price'], legs['bear']['max_price'],
+                         *(round(legs[k]['max_price'] * (1.12 / 1.13) ** years, 2) for k in ('base_ours', 'base_calibrated')))
+            self.assertAlmostEqual(bt['margin_of_safety_stated_price'], stated, delta=0.02, msg=fp)
+        self.assertGreater(n, 20)
+
+    def test_a_binding_bear_leg_sets_both_prices(self):
+        p = json.loads(json.dumps(self.p))
+        p['scenarios']['bear']['g'] = [-0.3] * 6   # a deep bear: its -10% leg binds far below the base legs
+        bt = lean_model.run(p)['buy_test']
+        self.assertEqual(bt['binding_leg'], 'bear')
+        self.assertEqual(bt['margin_of_safety_binding_leg'], 'bear')
+        self.assertEqual(bt['margin_of_safety_price'], bt['max_price_passing'])
+        rung = lean_model.run(p)['price_ladder']['rungs']['margin_of_safety_13']
+        self.assertGreater(rung['ours'], bt['margin_of_safety_price'])   # the base alone at 13% is above: not the entry price
+        self.assertIn('base case alone', rung['meaning'])
+
+    def test_pe_rule_net_of_cash_is_tied_to_the_price(self):
+        p = dict(self.p, calibrated={'pe_rule': 'net_of_cash'})
+        r = lean_model.run(p)
+        base = p['scenarios']['base']
+        eps0 = lean_model.run_scenario(p, base)['eps_operating'][p['base_year'] + 1]
+        ncps = p['net_cash_m'] / p['shares_m']
+        cal = r['two_lens']['calibrated']
+        self.assertAlmostEqual(cal['pe_held_exact'], round((p['price'] - ncps) / eps0, 3))
+        self.assertEqual(cal['pe_rule'], 'net_of_cash')
+        # a reprice holds the multiple of the new price
+        q = lean_model.run(lean_model.reprice(p, price=p['price'] * 0.8))['two_lens']['calibrated']
+        self.assertAlmostEqual(q['pe_held_exact'], round((p['price'] * 0.8 - ncps) / eps0, 3))
+        # the rerun price gives 12% when the model is rerun at that price
+        bt = r['buy_test']
+        x = bt['rerun']['calibrated_max_price']
+        self.assertIsNotNone(x)
+        again = lean_model.run(lean_model.reprice(p, price=x))['two_lens']['calibrated']['annual_return_pct']
+        self.assertAlmostEqual(again, 12.0, delta=0.06)
+        # without the rule the lens is what it always was (price / EPS)
+        self.assertNotIn('pe_rule', lean_model.run(self.p)['two_lens']['calibrated'])
+        self.assertAlmostEqual(lean_model.run(self.p)['two_lens']['calibrated']['pe_used'], round(p['price'] / eps0, 1))
+
+    def test_pe_rule_inputs_are_checked_and_the_sidecar_drops_a_fixed_pe(self):
+        for cal in ({'pe': 20, 'pe_rule': 'net_of_cash'}, {'pe_rule': 'gross'}):
+            with self.assertRaises(lean_model.ParamsError):
+                lean_model.run(dict(self.p, calibrated=cal))
+        q = lean_model.apply_calibrated_rule(dict(self.p, calibrated={'pe': 20, 'why': 'old'}), {'pe_rule': 'net_of_cash', 'why': 'new'})
+        self.assertEqual(q['calibrated'], {'replaced_pe': 20, 'replaced_why': 'old', 'pe_rule': 'net_of_cash', 'why': 'new'})
+        self.assertEqual(self.p.get('calibrated'), None)   # the input is not edited
+        with self.assertRaises(lean_model.ParamsError):
+            lean_model.apply_calibrated_rule(self.p, {'pe_rule': 'gross'})
+
+    def test_five_sidecar_reproduces_the_saved_second_lens_and_gives_the_rerun_price(self):
+        folder = os.path.join(ROOT, 'research', 'companies', 'FIVE', '2026-11-15')
+        p = json.load(open(os.path.join(folder, 'lean_params.json')))
+        saved = json.load(open(os.path.join(folder, 'lean_result.json')))
+        rule = json.load(open(os.path.join(folder, lean_model.CALIBRATED_RULE_NAME)))
+        r = lean_model.run(lean_model.apply_calibrated_rule(p, rule))
+        cal, was = r['two_lens']['calibrated'], saved['two_lens']['calibrated']
+        self.assertEqual(cal['pe_used'], was['pe_used'])                      # 21.107 rounds to the saved 21.1
+        self.assertAlmostEqual(cal['pe_held_exact'], 21.107, places=3)
+        self.assertAlmostEqual(cal['value_today'], was['value_today'], delta=0.05)
+        self.assertEqual(cal['annual_return_pct'], was['annual_return_pct'])
+        bt = r['buy_test']
+        self.assertTrue(bt['rerun']['lower_than_stated'])
+        self.assertEqual(bt['rerun']['max_price_passing'], 220.47)            # review_findings.json final rerun price
+        self.assertEqual(bt['margin_of_safety_price'], 203.79)
+        self.assertLessEqual(bt['margin_of_safety_price'], bt['rerun']['max_price_passing'])

@@ -5,7 +5,7 @@
  "price_time_utc": null,
  "verdict_he": "לא לקנות במחיר הזה (התרחיש הדובי נכשל)",
  "buy_test_price": 300.12,
- "margin_of_safety_price": 397.2,
+ "margin_of_safety_price": 300.12,
  "values": {
   "today": {
    "bear": 100.52,
@@ -118,7 +118,16 @@
      "max_price": 300.12
     }
    },
-   "note": null
+   "note": null,
+   "margin_of_safety": {
+    "price_all_legs": 300.12,
+    "stated_price": 300.12,
+    "rerun_price": 300.12,
+    "rerun_used": false,
+    "binding_leg": "bear",
+    "base_13_price": 397.2,
+    "rule": "the buy test with the base at 13% a year in both lenses (bull >= 17%, bear >= -10%): the highest price at which all four legs pass; the rerun price when a rerun at that price holds a lower multiple"
+   }
   },
   "price_ladder": {
    "horizon_date": "2031-12-31",
@@ -163,8 +172,8 @@
    ]
   },
   "entry_price": {
-   "value": 397.2,
-   "rung": "margin_of_safety_13",
+   "value": 300.12,
+   "rung": "buy_test.margin_of_safety_price",
    "note": null
   },
   "index_parity_price": 475.05,

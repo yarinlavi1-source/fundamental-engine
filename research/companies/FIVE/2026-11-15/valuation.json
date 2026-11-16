@@ -23,11 +23,15 @@
   },
   "result": {
    "path": "research/companies/FIVE/2026-11-15/lean_result.json",
-   "sha256": "3161f5cccfc98ff20225ce97a11597a29035d6cc01489784f0a6caf8a366243f"
+   "sha256": "cd275f3f633a913c782aecd819a677c0f3b5c377f7727ce64ad372f3b3482274"
   },
   "code": {
    "path": "scripts/lean_model.py",
-   "sha256": "f68ccbb09a393572535fad409d70445c7dc9512720d8e94d380f3c5be42ab963"
+   "sha256": "ec6effe867a9485878e81fcb43fed1182a12fa4e176b28e9343553e1d1f68c54"
+  },
+  "calibrated_rule": {
+   "path": "research/companies/FIVE/2026-11-15/calibrated_rule.json",
+   "sha256": "de3bf523fb299e71ca4a069d9fa702f223e1c35121cb80ddda0ff948ce4cd77d"
   }
  },
  "scenarios": {
@@ -193,7 +197,7 @@
   "index_return_pct": 9.3
  },
  "second_lens": {
-  "value_today": 258.85,
+  "value_today": 258.88,
   "annual_return_pct": 10.6,
   "band": "hold",
   "band_ours": "hold",
@@ -204,55 +208,60 @@
    {
     "fiscal_year": 2027,
     "date": "2028-01-30",
-    "value": 291.51
+    "value": 291.55
    },
    {
     "fiscal_year": 2028,
     "date": "2029-01-30",
-    "value": 320.29
+    "value": 320.33
    },
    {
     "fiscal_year": 2029,
     "date": "2030-01-30",
-    "value": 350.94
+    "value": 350.99
    },
    {
     "fiscal_year": 2030,
     "date": "2031-01-30",
-    "value": 383.42
+    "value": 383.47
    },
    {
     "fiscal_year": 2031,
     "date": "2032-01-30",
-    "value": 417.75
+    "value": 417.8
    }
   ],
   "at": {
    "one_year": {
     "date": "2027-11-15",
-    "value": 285.68,
+    "value": 285.72,
     "return_pct": 15.8
    },
    "two_year": {
     "date": "2028-11-15",
-    "value": 314.09,
+    "value": 314.13,
     "return_pct": 12.8
    },
    "five_year": {
     "date": "2031-11-15",
-    "value": 410.36,
+    "value": 410.41,
     "return_pct": 10.7
    }
   },
   "diagnostics": {
    "margin_floor_binds": false,
    "differs_from_base_only_by_multiple": true,
-   "pe_held": 21.1,
+   "pe_held": 21.11,
    "pe_base_exit": 22,
    "pe_held_to_base_exit": 0.96,
    "inflated_multiple_warning": false
   },
-  "diagnostics_note": "the margin floor does not bind: the two lenses differ only by the exit multiple"
+  "diagnostics_note": "the margin floor does not bind: the two lenses differ only by the exit multiple",
+  "pe_rule": "net_of_cash",
+  "pe_held_exact": 21.107,
+  "net_cash_per_share": 26.53,
+  "replaced_pe": 21.1,
+  "pe_rule_note": "calibrated_rule.json: the second lens holds (price - net cash per share) / first-year operating EPS at every price, so the buy-test rerun and a reprice move it; the fixed calibrated.pe of the params is not used"
  },
  "base_path": {
   "basis": {
@@ -310,50 +319,50 @@
     "id": "margin_of_safety_13",
     "return_pct": 13.0,
     "price": 224.76,
-    "price_second_lens": 220.99,
+    "price_second_lens": 221.02,
     "label": "margin of safety: fixed 13% a year for every company"
    },
    {
     "id": "buy_test",
     "return_pct": 12.0,
     "price": 235.42,
-    "price_second_lens": 231.47,
+    "price_second_lens": 231.5,
     "label": "buy test: base return 12% a year"
    },
    {
     "id": "company_hurdle",
     "return_pct": 12.0,
     "price": 235.42,
-    "price_second_lens": 231.47,
+    "price_second_lens": 231.5,
     "label": "entry with a margin of safety: buy_return 12% a year"
    },
    {
     "id": "index",
     "return_pct": 9.3,
     "price": 267.33,
-    "price_second_lens": 262.85,
+    "price_second_lens": 262.88,
     "label": "index return (rf + erp) 9.3% a year"
    },
    {
     "id": "hold_floor",
     "return_pct": 6.0,
     "price": 313.63,
-    "price_second_lens": 308.37,
+    "price_second_lens": 308.41,
     "label": "hold floor: 6% a year"
    },
    {
     "id": "sell_line",
     "return_pct": 3.0,
     "price": 364.24,
-    "price_second_lens": 358.12,
+    "price_second_lens": 358.17,
     "label": "sell line: 3% a year"
    }
   ],
   "buy_test": {
-   "price": 231.47,
-   "stated_price": 231.47,
-   "rerun_price": null,
-   "rerun_used": false,
+   "price": 220.47,
+   "stated_price": 231.5,
+   "rerun_price": 220.47,
+   "rerun_used": true,
    "binding_leg": "base_calibrated",
    "pass_at_price": false,
    "complete": true,
@@ -368,7 +377,7 @@
      "return_pct": 10.6,
      "threshold_pct": 12.0,
      "pass": false,
-     "max_price": 231.47
+     "max_price": 231.5
     },
     "bull": {
      "return_pct": 18.7,
@@ -384,11 +393,18 @@
     }
    },
    "rule": "base >= 12% a year in both lenses, bull >= 17%, bear >= -10% (yearly returns from today's price to the horizon year-end)",
-   "note": null
+   "note": "the model warns that a rerun at the stated price fails the second-lens leg: the rerun price is used",
+   "margin_of_safety_price": 203.79,
+   "margin_of_safety_stated_price": 221.02,
+   "margin_of_safety_rerun_price": 203.79,
+   "margin_of_safety_rerun_used": true,
+   "margin_of_safety_binding_leg": "base_calibrated",
+   "margin_of_safety_rule": "the buy test with the base at 13% a year in both lenses (bull >= 17%, bear >= -10%): the highest price at which all four legs pass; the rerun price when a rerun at that price holds a lower multiple"
   },
-  "buy_test_price": 231.47,
+  "buy_test_price": 220.47,
   "base_12_price": 235.42,
-  "margin_of_safety_price": 224.76,
+  "margin_of_safety_price": 203.79,
+  "base_13_price": 224.76,
   "index_parity_price": 267.33,
   "hold_floor_price": 313.63,
   "sell_line_price": 364.24,
@@ -396,9 +412,14 @@
    "buy_test_price": "מחיר מבחן הקנייה",
    "margin_of_safety_price": "מחיר כניסה עם מרווח ביטחון"
   },
+  "rule_definitions": {
+   "buy_test_price": "the highest price at which all four buy-test legs pass: base >= 12% a year in both lenses, bull >= 17%, bear >= -10%; the rerun price when the model warns that a rerun at that price holds a lower multiple",
+   "margin_of_safety_price": "the same test with the base at 13% a year in both lenses (bull >= 17%, bear >= -10% unchanged), the rerun price when the model warns: never above buy_test_price (16.11.2026)",
+   "base_13_price": "the base case alone (our lens) at 13% a year: a ladder rung, not an entry price"
+  },
   "entry_price": {
-   "value": 224.76,
-   "rung": "margin_of_safety_13",
+   "value": 203.79,
+   "rung": "buy_test.margin_of_safety_price",
    "note": null
   }
  },
@@ -555,6 +576,9 @@
   "המספר לשנה-שנתיים הוא הכי רועש; שנת הכספים נגמרת בסוף ינואר, ולכן '5 שנים' הוא ינואר 2032"
  ],
  "thesis_link": "research/companies/FIVE/thesis_he.md",
- "warnings": [],
+ "warnings": [
+  "buy test: at the stated highest passing price 231.50 a rerun would hold a lower multiple; with the multiple of its own price held the highest passing price is 220.47 (binding leg: base_calibrated)",
+  "the second lens, the buy test and the ladder are a rerun with calibrated_rule.json (calibrated.pe_rule net_of_cash); lean_result.json is the params' own result"
+ ],
  "judgement_source": "imported from the v1 handoff of the same valuation (texts only)"
 }

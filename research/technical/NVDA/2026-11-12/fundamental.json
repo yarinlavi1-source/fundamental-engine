@@ -194,7 +194,16 @@
      "max_price": 207.64
     }
    },
-   "note": null
+   "note": null,
+   "margin_of_safety": {
+    "price_all_legs": 155.78,
+    "stated_price": 155.78,
+    "rerun_price": 155.78,
+    "rerun_used": false,
+    "binding_leg": "base_ours",
+    "base_13_price": 155.78,
+    "rule": "the buy test with the base at 13% a year in both lenses (bull >= 17%, bear >= -10%): the highest price at which all four legs pass; the rerun price when a rerun at that price holds a lower multiple"
+   }
   },
   "price_ladder": {
    "horizon_date": "2032-01-29",
@@ -240,7 +249,7 @@
   },
   "entry_price": {
    "value": 155.78,
-   "rung": "margin_of_safety_13",
+   "rung": "buy_test.margin_of_safety_price",
    "note": null
   },
   "index_parity_price": 186.64,
@@ -488,7 +497,8 @@
      "buy_test_price": 176.38,
      "buy_test_pass": true,
      "margin_of_safety_price": 168.41,
-     "margin_of_safety_price_second_lens": 180.76,
+     "base_13_price": 168.41,
+     "base_13_price_second_lens": 180.76,
      "base_band": "buy",
      "two_lens_agree": true
     },
@@ -515,7 +525,8 @@
      "buy_test_price": 157.05,
      "buy_test_pass": false,
      "margin_of_safety_price": 149.96,
-     "margin_of_safety_price_second_lens": 171.35,
+     "base_13_price": 149.96,
+     "base_13_price_second_lens": 171.35,
      "base_band": "hold",
      "two_lens_agree": false
     },
@@ -542,7 +553,8 @@
      "buy_test_price": 144.03,
      "buy_test_pass": false,
      "margin_of_safety_price": 137.52,
-     "margin_of_safety_price_second_lens": 167.56,
+     "base_13_price": 137.52,
+     "base_13_price_second_lens": 167.56,
      "base_band": "hold",
      "two_lens_agree": false
     }

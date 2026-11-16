@@ -272,6 +272,113 @@ class LeanFreezeTest(unittest.TestCase):
         out = LF.freeze_all(self.root, self.L, run=lean_model.run, lean_model_path=LEAN_MODEL, next_reports={'AAA': 'February 2027'})
         self.assertEqual([(r['as_of'], r['on_time']) for r in out['frozen']], [('2026-11-11', None), ('2026-11-13', True)])
 
+    def worlds_folder(self, with_worlds=True):
+        """The ANET fixture as a 60% world and a lower-margin, lower-multiple 40% world (synthetic)."""
+        low = copy.deepcopy(self.params)
+        for s in low['scenarios'].values():
+            s['m'] = [x - 0.03 for x in s['m']]
+            s['pe'] = s['pe'] - 4
+        files = {'lean_params_low.json': low, 'lean_result_low.json': lean_model.run(low)}
+        spec = {'worlds': [{'name': 'main', 'file': 'lean_params.json', 'weight': 0.6, 'label_he': 'עולם ראשי'},
+                           {'name': 'low', 'file': 'lean_params_low.json', 'weight': 0.4}]}
+        if with_worlds:
+            files['worlds.json'] = spec
+        d = self.folder()
+        self.folder(files=files)
+        return d, low, spec
+
+    def test_weighted_worlds_are_frozen_and_supersede_a_row_made_without_them(self):
+        d, low, spec = self.worlds_folder(with_worlds=False)
+        first = self.freeze(d, next_report='2027-02-10')            # frozen before the worlds file existed: the main file alone
+        self.assertIsNone(self.rows('thesis')[0]['record'].get('worlds'))
+        dump(spec, os.path.join(d, 'worlds.json'))
+        self.clock.t = '2026-11-08T10:00:00+00:00'
+        out = self.freeze(d, next_report='2027-02-10')
+        self.assertEqual((out['status'], out['supersedes']), ('superseded an earlier freeze', first['thesis_id']))
+        old, new = self.rows('thesis')
+        rec = new['record']
+        full = json.loads(json.dumps(lean_model.run(self.params, worlds=spec, base_dir=d)))
+        w = full['worlds']['weighted']
+        self.assertEqual(rec['values']['today'], {k: w['value_today'][k] for k in LF.SCEN})
+        self.assertEqual(rec['values']['year_end']['base']['2031'], w['year_end_values']['2031']['base'])
+        self.assertEqual(rec['values']['annual_return_pct']['base'], w['annual_return_pct']['base'])
+        self.assertEqual(rec['calibrated']['value_today'], w['value_today']['base_calibrated'])
+        self.assertEqual((rec['buy_test']['pass'], rec['buy_test']['max_price_passing']), (w['buy_test']['pass'], w['buy_test']['max_price_passing']))
+        self.assertEqual(rec['entry_prices']['margin_of_safety_13'], w['price_ladder']['rungs']['margin_of_safety_13']['ours'])
+        self.assertNotEqual(rec['values']['today']['base'], old['record']['values']['today']['base'])
+        wd = rec['worlds']
+        self.assertEqual(wd['weights'], {'main': 0.6, 'low': 0.4})
+        self.assertEqual(wd['file']['sha256'], sha(os.path.join(d, 'worlds.json')))
+        self.assertEqual([x['params']['sha256'] for x in wd['worlds']],
+                         [sha(os.path.join(d, 'lean_params.json')), sha(os.path.join(d, 'lean_params_low.json'))])
+        self.assertEqual([x['base_value_today'] for x in wd['worlds']],
+                         [lean_model.run(p)['scenarios']['base']['value_today'] for p in (self.params, low)])
+        self.assertEqual(wd['main_file_values_today'], old['record']['values']['today'])
+        self.assertEqual(rec['variants'][0]['weight'], 0.4)
+        self.assertEqual(new['made_at'], '2026-11-08')
+        self.assertIn('without the weighted worlds', rec['supersede_reason'])
+        # forecast rows: the weighted base path with the envelope across worlds and scenarios
+        a, b = lean_model.run(self.params)['scenarios'], lean_model.run(low)['scenarios']
+        fc = [f for f in self.rows('forecast') if f['thesis_id'] == new['thesis_id']]
+        self.assertEqual(len(fc), 19)
+        m = next(f for f in fc if f['metric'] == 'operating_margin' and f['context']['fiscal_year'] == 2028)
+        self.assertAlmostEqual(m['scenarios']['base'], 0.6 * a['base']['op_margin'][2028] + 0.4 * b['base']['op_margin'][2028], places=6)
+        self.assertEqual(m['scenarios']['bear'], min(s[k]['op_margin'][2028] for s in (a, b) for k in LF.SCEN))
+        self.assertEqual(m['scenarios']['bull'], max(s[k]['op_margin'][2028] for s in (a, b) for k in LF.SCEN))
+        self.assertIn('weighted path', m['note'])
+        self.assertEqual(m['context']['path'], 'weighted_worlds')
+        self.assertEqual(m['context']['weighted_worlds']['base_by_world'], {'main': a['base']['op_margin'][2028], 'low': b['base']['op_margin'][2028]})
+        r = next(f for f in fc if f['metric'] == 'revenue' and f['context']['fiscal_year'] == 2028)
+        self.assertEqual(r['scenarios']['base'], round(0.6 * a['base']['revenue_m'][2028] * 1e6 + 0.4 * b['base']['revenue_m'][2028] * 1e6))
+        for f in fc:
+            self.assertEqual(f['supersedes'], f"{old['thesis_id']}:{f['metric']}:{f['context']['fiscal_year']}")
+        self.assertEqual([x['thesis_id'] for x in LF.status(self.L)['in_force']], [new['thesis_id']])
+        n = len(self.rows())                                          # a second run adds nothing
+        self.clock.t = '2026-11-09T10:00:00+00:00'
+        again = self.freeze(d, next_report='2027-02-10')
+        self.assertEqual((again['status'], again['rows_written'], len(self.rows())), ('unchanged', 0, n))
+        # a changed worlds file (a note) is a new thesis that supersedes, and the record holds its new hash
+        dump(dict(spec, note='text only'), os.path.join(d, 'worlds.json'))
+        third = self.freeze(d, next_report='2027-02-10')
+        self.assertEqual(third['supersedes'], new['thesis_id'])
+        self.assertEqual(self.rows('thesis')[-1]['record']['worlds']['file']['sha256'], sha(os.path.join(d, 'worlds.json')))
+        self.assertTrue(self.L.verify()['ok'])
+
+    def test_calibrated_rule_sidecar_is_frozen_and_supersedes_a_row_made_without_it(self):
+        d = self.folder()
+        first = self.freeze(d, next_report='2027-02-10')
+        rule = {'pe_rule': 'net_of_cash', 'why': 'test'}
+        dump(rule, os.path.join(d, 'calibrated_rule.json'))
+        self.clock.t = '2026-11-08T10:00:00+00:00'
+        out = self.freeze(d, next_report='2027-02-10')
+        self.assertEqual(out['supersedes'], first['thesis_id'])
+        rec = self.rows('thesis')[-1]['record']
+        full = json.loads(json.dumps(lean_model.run(lean_model.apply_calibrated_rule(self.params, rule))))
+        cal = full['two_lens']['calibrated']
+        self.assertEqual(rec['calibrated']['value_today'], cal['value_today'])
+        self.assertEqual(rec['buy_test']['max_price_passing'], full['buy_test']['max_price_passing'])
+        self.assertEqual(rec['values']['today']['base'], lean_model.run(self.params)['scenarios']['base']['value_today'])
+        self.assertEqual(rec['calibrated_rule']['sha256'], sha(os.path.join(d, 'calibrated_rule.json')))
+        self.assertIn('without the calibrated rule', rec['supersede_reason'])
+        n = len(self.rows())
+        again = self.freeze(d, next_report='2027-02-10')
+        self.assertEqual((again['status'], len(self.rows())), ('unchanged', n))
+        self.assertTrue(self.L.verify()['ok'])
+
+    def test_weighted_worlds_need_the_model_and_a_params_key_works(self):
+        d, low, spec = self.worlds_folder()
+        with self.assertRaises(ValueError):
+            LF.freeze_folder(d, self.L, root=self.root, run=None)   # never the main file alone in place of the published values
+        self.assertEqual(self.rows('thesis') + self.rows('forecast'), [])
+        p = dict(copy.deepcopy(self.params), worlds=spec['worlds'], ticker='KEY')
+        k = self.folder(ticker='KEY', files={'lean_params.json': p, 'lean_result.json': lean_model.run(dict(p, worlds=None)),
+                                              'lean_params_low.json': dict(low, ticker='KEY')})
+        out = self.freeze(k)
+        rec = self.rows('thesis')[-1]['record']
+        self.assertEqual((out['status'], rec['worlds']['source'], rec['worlds']['file']), ('frozen', 'the params key "worlds"', None))
+        self.assertEqual(rec['values']['today']['base'],
+                         lean_model.run(p, base_dir=k)['worlds']['weighted']['value_today']['base'])
+
     def test_named_pair(self):
         d = self.folder()
         with self.assertRaises(ValueError):

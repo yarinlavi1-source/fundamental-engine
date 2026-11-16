@@ -23,11 +23,11 @@
   },
   "result": {
    "path": "research/companies/TSM/2026-11-05/lean_result.json",
-   "sha256": "3665225e341d8f5b45bce0b8c8723ac86b6ea5d7833401172447e676f9e35945"
+   "sha256": "7abb0f19f02218f7c9ed65a5d5dbbd16c3447e7c67cadbfffc2f285f41381e26"
   },
   "code": {
    "path": "scripts/lean_model.py",
-   "sha256": "f68ccbb09a393572535fad409d70445c7dc9512720d8e94d380f3c5be42ab963"
+   "sha256": "ec6effe867a9485878e81fcb43fed1182a12fa4e176b28e9343553e1d1f68c54"
   }
  },
  "scenarios": {
@@ -384,11 +384,18 @@
     }
    },
    "rule": "base >= 12% a year in both lenses, bull >= 17%, bear >= -10% (yearly returns from today's price to the horizon year-end)",
-   "note": null
+   "note": null,
+   "margin_of_safety_price": 367.45,
+   "margin_of_safety_stated_price": 367.45,
+   "margin_of_safety_rerun_price": 367.45,
+   "margin_of_safety_rerun_used": false,
+   "margin_of_safety_binding_leg": "base_ours",
+   "margin_of_safety_rule": "the buy test with the base at 13% a year in both lenses (bull >= 17%, bear >= -10%): the highest price at which all four legs pass; the rerun price when a rerun at that price holds a lower multiple"
   },
   "buy_test_price": 384.66,
   "base_12_price": 384.66,
   "margin_of_safety_price": 367.45,
+  "base_13_price": 367.45,
   "index_parity_price": 439.47,
   "hold_floor_price": 510.77,
   "sell_line_price": 592.15,
@@ -396,9 +403,14 @@
    "buy_test_price": "מחיר מבחן הקנייה",
    "margin_of_safety_price": "מחיר כניסה עם מרווח ביטחון"
   },
+  "rule_definitions": {
+   "buy_test_price": "the highest price at which all four buy-test legs pass: base >= 12% a year in both lenses, bull >= 17%, bear >= -10%; the rerun price when the model warns that a rerun at that price holds a lower multiple",
+   "margin_of_safety_price": "the same test with the base at 13% a year in both lenses (bull >= 17%, bear >= -10% unchanged), the rerun price when the model warns: never above buy_test_price (16.11.2026)",
+   "base_13_price": "the base case alone (our lens) at 13% a year: a ladder rung, not an entry price"
+  },
   "entry_price": {
    "value": 367.45,
-   "rung": "margin_of_safety_13",
+   "rung": "buy_test.margin_of_safety_price",
    "note": null
   }
  },

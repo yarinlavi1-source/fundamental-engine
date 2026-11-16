@@ -1,0 +1,8 @@
+{
+ "pe_rule": "net_of_cash",
+ "why": "the second lens holds (price - net cash per share at the base year-end, 1,470 / 55.4 = 26.53) / FY2027 operating EPS (10.43) at every price: the exit value adds the cash at face on top of a multiple of earnings before interest, so price / EPS would count the cash twice (both reviewers, 15.11.2026). Tied to the price, the multiple moves in a rerun at another price, which the fixed calibrated.pe 21.1 of lean_params.json could not (that 21.1 is this rule at 246.68, rounded: 21.107).",
+ "added": "2026-11-16",
+ "replaces": "calibrated.pe 21.1 of lean_params.json for the published record only; the params file is not edited and lean_result.json stays its own result",
+ "check_at_saved_price": "at 246.68 the rule holds 21.107 (lean_params.json: 21.1); second lens 258.88 against the saved 258.85, 10.6% a year in both",
+ "source": "research/companies/FIVE/2026-11-15/review_findings.json (numbers lane finding 3; final.max_price_passing_rerun 220.47)"
+}

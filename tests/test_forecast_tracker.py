@@ -351,6 +351,48 @@ class ForecastTrackerTests(unittest.TestCase):
         self.assertIn('frozen on 2027-02-20, after the report', rows[0]['descriptive_reason'])
         self.assertEqual(FT.summarize(rows)['scored_rows'], 0)
 
+    def test_the_weighted_worlds_path_is_scored_and_a_superseded_row_never_is(self):
+        root = tempfile.mkdtemp()
+        folder, first = self._freeze(root, '2026-11-04', self.p, datetime(2026, 11, 5, tzinfo=timezone.utc))   # main file alone
+        low = copy.deepcopy(self.p)                                 # a synthetic second world: slower and thinner
+        for s in low['scenarios'].values():
+            s['g'] = [g - 0.05 for g in s['g']]
+            s['m'] = [x - 0.03 for x in s['m']]
+        with open(os.path.join(folder, 'lean_params_low.json'), 'w') as f:
+            json.dump(low, f)
+        with open(os.path.join(folder, 'worlds.json'), 'w') as f:
+            json.dump({'worlds': [{'name': 'main', 'file': 'lean_params.json', 'weight': 0.6},
+                                  {'name': 'low', 'file': 'lean_params_low.json', 'weight': 0.4}]}, f)
+        L = LF.open_ledger(os.path.join(root, 'research', 'ledger.jsonl'), clock=lambda: datetime(2026, 11, 6, tzinfo=timezone.utc))
+        second = LF.freeze_folder(folder, L, root=root, run=lean_model.run, next_report='2027-02-16', legacy_path='')
+        self.assertEqual(second['supersedes'], first['thesis_id'])
+        theses, cands, _ = self._cands(root)
+        self.assertEqual(len(cands['SYN']), 2)                      # both stay on file
+        a, b = self.base, lean_model.run(low)['scenarios']['base']
+        new = next(c for c in cands['SYN'] if c['thesis_id'] == second['thesis_id'])
+        self.assertEqual((new['path']['weighted_worlds'], new['path']['supersedes']), ({'main': 0.6, 'low': 0.4}, first['thesis_id']))
+        w_rev = 0.6 * a['revenue_m'][2027] * M + 0.4 * b['revenue_m'][2027] * M
+        w_margin = 0.6 * a['op_margin'][2027] + 0.4 * b['op_margin'][2027]
+        self.assertAlmostEqual(new['path']['revenue'][2027], w_rev, delta=1)
+        self.assertAlmostEqual(new['path']['margin'][2027], w_margin, places=6)
+        self.assertTrue(new['file_check']['holds'])
+        # the superseded row is never scored, even listed last or with a later recording time than the row replacing it
+        old = next(c for c in cands['SYN'] if c['thesis_id'] == first['thesis_id'])
+        for cs in (cands['SYN'], [new, old], [new, dict(old, recorded_at='2026-11-07T00:00:00+00:00')]):
+            rows = FT.company_rows('SYN', cs, payload(), '2027-05-10')
+            scored = [r for r in rows if r['status'] == 'scored']
+            self.assertEqual([(r['thesis_id'], r['mode']) for r in scored], [(second['thesis_id'], 'test')] * 2)
+            ip = scored[-1]['in_progress']                          # the Q1 2027 report against the weighted 2027 year
+            self.assertAlmostEqual(ip['revenue']['model_year'], w_rev, delta=1)
+            self.assertAlmostEqual(ip['margin']['model_year'], w_margin, places=6)
+            self.assertAlmostEqual(ip['margin']['diff_pts'], 1800 / 4200 - w_margin, places=5)
+            self.assertTrue(any('weighted worlds path' in n for n in scored[-1]['notes']))
+        self.assertIn('ממוצע משוקלל של העולמות', FT._row_he(scored[-1]))
+        # a row that replaces the frozen one only after the report does not take the report: the earlier freeze is the test
+        late = dict(new, recorded_at='2027-02-20T00:00:00+00:00')
+        rows = FT.company_rows('SYN', [old, late], payload(), '2027-03-01')
+        self.assertEqual([(r['thesis_id'], r['mode']) for r in rows if r['status'] == 'scored'], [(first['thesis_id'], 'test')])
+
     def test_a_folder_never_frozen_is_descriptive_only(self):
         root = tempfile.mkdtemp()
         folder = os.path.join(root, 'research', 'companies', 'SYN', '2026-11-04')
